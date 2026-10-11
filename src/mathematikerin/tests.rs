@@ -2464,25 +2464,25 @@ fn erfc_approx(x: f64) -> f64 {
 }
 
 fn kernel_omega(kernel_id: u8, d: f64, extent: f64, global_scale: f64, absorption: f64) -> f64 {
-    let perceptual_extent = extent.max(global_scale);
-    let e2 = (perceptual_extent * perceptual_extent).max(1e-30);
+    let e2 = (extent * extent).max(1e-30);
     let s2 = (global_scale * global_scale).max(1e-30);
+    let cut2 = e2 + s2;
+    let cut = cut2.sqrt();
     let d2 = d * d;
     match kernel_id {
-        0 => 1.0 / (d2 + e2),
-        1 => (-d2 / (2.0 * e2)).exp() / (d2 + e2),
-        3 => erfc_approx(d / (perceptual_extent * std::f64::consts::SQRT_2).max(global_scale)),
-        4 => (-d / perceptual_extent.max(global_scale)).exp(),
+        0 => 1.0 / (d2 + cut2),
+        1 => (-d2 / (2.0 * cut2)).exp() / (d2 + cut2),
+        3 => erfc_approx(d / (cut * std::f64::consts::SQRT_2)),
+        4 => (-d / cut).exp(),
         5 => {
             let alpha = absorption.clamp(0.0, 1.0);
             let beta = 1.6;
-            let e = e2.max(s2);
-            let core = (-d2 / (2.0 * e)).exp();
-            let tail = e.powf(beta * 0.5) / (d2 + s2).max(s2).powf(beta * 0.5);
+            let core = (-d2 / (2.0 * cut2)).exp();
+            let tail = cut2.powf(beta * 0.5) / (d2 + s2).max(s2).powf(beta * 0.5);
             (1.0 - alpha) * core + alpha * tail
         }
-        6 => 1.0 / (d + perceptual_extent),
-        _ => (-d2 / (2.0 * e2.max(s2))).exp() / (d2 + s2).max(s2),
+        6 => 1.0 / (d + cut),
+        _ => (-d2 / (2.0 * cut2)).exp() / (d2 + s2).max(s2),
     }
 }
 
@@ -2496,42 +2496,40 @@ fn kernel_omega_grad(
     if d > 1e13 {
         return 0.0;
     }
-    let perceptual_extent = extent.max(global_scale);
-    let e2 = (perceptual_extent * perceptual_extent).max(1e-30);
+    let e2 = (extent * extent).max(1e-30);
     let s2 = (global_scale * global_scale).max(1e-30);
+    let cut2 = e2 + s2;
+    let cut = cut2.sqrt();
     let d2 = d * d;
     match kernel_id {
         0 => {
-            let denom = d2 + e2;
+            let denom = d2 + cut2;
             -2.0 * d / (denom * denom)
         }
         1 => {
-            let denom = d2 + e2;
-            -(-d2 / (2.0 * e2)).exp() * d * (denom / e2 + 2.0) / (denom * denom)
+            let denom = d2 + cut2;
+            -(-d2 / (2.0 * cut2)).exp() * d * (denom / cut2 + 2.0) / (denom * denom)
         }
         3 => {
-            let scale = (perceptual_extent * std::f64::consts::SQRT_2).max(global_scale);
+            let scale = cut * std::f64::consts::SQRT_2;
             -2.0 / std::f64::consts::PI.sqrt() * (-d2 / (scale * scale)).exp() / scale
         }
-        4 => {
-            let scale = perceptual_extent.max(global_scale);
-            -(-d / scale).exp() / scale
-        }
+        4 => -(-d / cut).exp() / cut,
         5 => {
             let alpha = absorption.clamp(0.0, 1.0);
             let beta = 1.6;
-            let e = e2.max(s2);
+            let e = cut2;
             let core_grad = -d / e * (-d2 / (2.0 * e)).exp();
             let denom = (d2 + s2).max(s2);
             let tail_grad = -beta * d * e.powf(beta * 0.5) / denom.powf(beta * 0.5 + 1.0);
             (1.0 - alpha) * core_grad + alpha * tail_grad
         }
         6 => {
-            let denom = d + perceptual_extent;
+            let denom = d + cut;
             -1.0 / (denom * denom)
         }
         _ => {
-            let e = e2.max(s2);
+            let e = cut2;
             let denom = (d2 + s2).max(s2);
             -(-d2 / (2.0 * e)).exp() * (d / e * denom + 2.0 * d) / (denom * denom)
         }
@@ -2615,5 +2613,317 @@ fn multipole_error_cluster_vs_barycenter() {
         err_near > F32_EPS_REF,
         "near-field multipole error {} is below F32_EPS (cluster collapsed to a monopole)",
         err_near
+    );
+}
+
+#[test]
+fn field_spatial_fold_wgsl_cpu_parity() {
+    const FOLD_WGSL: &str = r#"
+fn erfc(x: f32) -> f32 {
+    let xa = abs(x);
+    let t = 1.0 / (1.0 + 0.3275911 * xa);
+    let poly = t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429))));
+    let y = poly * exp(-xa * xa);
+    return select(y, 2.0 - y, x < 0.0);
+}
+
+fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale: f32, absorption: f32) -> f32 {
+    let e2 = max(extent * extent, 1e-30);
+    let s2 = max(global_scale * global_scale, 1e-30);
+    let cut2 = e2 + s2;
+    let cut = sqrt(cut2);
+
+    if (kernel_id == 0u) {
+        return 1.0 / (d2 + cut2);
+    } else if (kernel_id == 1u) {
+        return exp(-d2 / (2.0 * cut2)) / (d2 + cut2);
+    } else if (kernel_id == 2u) {
+        if (d2 <= e2) {
+            return 1.0;
+        } else {
+            return 0.0;
+        }
+    } else if (kernel_id == 3u) {
+        return erfc(d_mag / (cut * sqrt(2.0)));
+    } else if (kernel_id == 4u) {
+        return exp(-d_mag / cut);
+    } else if (kernel_id == 5u) {
+        let alpha = clamp(absorption, 0.0, 1.0);
+        let beta = 1.6;
+        let core = exp(-d2 / (2.0 * cut2));
+        let tail = pow(cut2, beta * 0.5) / pow(max(d2 + s2, s2), beta * 0.5);
+        return (1.0 - alpha) * core + alpha * tail;
+    } else if (kernel_id == 6u) {
+        return 1.0 / (d_mag + cut);
+    } else {
+        return exp(-d2 / (2.0 * cut2)) / max(d2 + s2, s2);
+    }
+}
+
+fn field_spatial_grad(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale: f32, absorption: f32) -> f32 {
+    if (d_mag > 1e13) {
+        return 0.0;
+    }
+    let e2 = max(extent * extent, 1e-30);
+    let s2 = max(global_scale * global_scale, 1e-30);
+    let cut2 = e2 + s2;
+    let cut = sqrt(cut2);
+    let d = max(d_mag, 1e-9);
+
+    if (kernel_id == 0u) {
+        let denom = d2 + cut2;
+        return -2.0 * d / (denom * denom);
+    } else if (kernel_id == 1u) {
+        let denom = d2 + cut2;
+        return -exp(-d2 / (2.0 * cut2)) * d * (denom / cut2 + 2.0) / (denom * denom);
+    } else if (kernel_id == 2u) {
+        return 0.0;
+    } else if (kernel_id == 3u) {
+        let scale = cut * sqrt(2.0);
+        return -2.0 / sqrt(3.141592653589793) * exp(-d2 / (scale * scale)) / scale;
+    } else if (kernel_id == 4u) {
+        return -exp(-d / cut) / cut;
+    } else if (kernel_id == 5u) {
+        let alpha = clamp(absorption, 0.0, 1.0);
+        let beta = 1.6;
+        let e = cut2;
+        let core_grad = -d / e * exp(-d2 / (2.0 * e));
+        let denom = max(d2 + s2, s2);
+        let tail_grad = -beta * d * pow(e, beta * 0.5) / pow(denom, beta * 0.5 + 1.0);
+        return (1.0 - alpha) * core_grad + alpha * tail_grad;
+    } else if (kernel_id == 6u) {
+        let denom = d_mag + cut;
+        return -1.0 / (denom * denom);
+    } else {
+        let e = cut2;
+        let denom = max(d2 + s2, s2);
+        return -exp(-d2 / (2.0 * e)) * (d / e * denom + 2.0 * d) / (denom * denom);
+    }
+}
+
+@group(0) @binding(0) var<storage, read> rows: array<f32>;
+@group(0) @binding(1) var<storage, read_write> out: array<f32>;
+
+@compute @workgroup_size(64)
+fn fold_crosscheck(@builtin(global_invocation_id) gid: vec3<u32>) {
+    let n = arrayLength(&rows) / 6u;
+    let i = gid.x;
+    if (i >= n) {
+        return;
+    }
+    let base = i * 6u;
+    let kernel_id = u32(rows[base + 0u]);
+    let d = rows[base + 1u];
+    let d2 = rows[base + 2u];
+    let extent = rows[base + 3u];
+    let global_scale = rows[base + 4u];
+    let absorption = rows[base + 5u];
+    out[i * 2u + 0u] = field_spatial(d2, d, extent, kernel_id, global_scale, absorption);
+    out[i * 2u + 1u] = field_spatial_grad(d2, d, extent, kernel_id, global_scale, absorption);
+}
+"#;
+
+    let hard_ball = |d2: f64, extent: f64| -> f64 { if d2 <= extent * extent { 1.0 } else { 0.0 } };
+    assert_eq!(hard_ball(0.0, 0.5), 1.0, "hard-ball centre");
+    assert_eq!(
+        hard_ball(0.25, 0.5),
+        1.0,
+        "hard-ball support boundary is inclusive"
+    );
+    assert_eq!(hard_ball(0.2500001, 0.5), 0.0, "just outside the support");
+    assert_eq!(hard_ball(9.0, 0.5), 0.0, "far outside the support");
+
+    let kernels = [0u32, 1, 3, 4, 5, 6, 7];
+    let ds = [0.05f64, 0.3, 1.0, 3.0, 10.0, 50.0];
+    let extents = [0.5f64, 2.0];
+    let scales = [0.2f64, 1.5, 4.0];
+    let alphas = [0.0f64, 0.5, 1.0];
+
+    let mut params: Vec<f32> = Vec::new();
+    let mut meta: Vec<[f64; 6]> = Vec::new();
+    let mut expected: Vec<(f64, f64)> = Vec::new();
+    for &k in &kernels {
+        let abs_list: &[f64] = if k == 5 { &alphas } else { &[0.0] };
+        for &abs in abs_list {
+            for &d in &ds {
+                for &extent in &extents {
+                    for &scale in &scales {
+                        let d2 = d * d;
+                        params.extend_from_slice(&[
+                            k as f32,
+                            d as f32,
+                            d2 as f32,
+                            extent as f32,
+                            scale as f32,
+                            abs as f32,
+                        ]);
+                        meta.push([k as f64, d, extent, scale, abs, d2]);
+                        expected.push((
+                            kernel_omega(k as u8, d, extent, scale, abs),
+                            kernel_omega_grad(k as u8, d, extent, scale, abs),
+                        ));
+                    }
+                }
+            }
+        }
+    }
+    let rows = expected.len();
+
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+    let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+        power_preference: wgpu::PowerPreference::None,
+        compatible_surface: None,
+        force_fallback_adapter: false,
+    })) {
+        Some(a) => a,
+        None => {
+            eprintln!("adapter request returned void — field_spatial fold crosscheck skipped");
+            return;
+        }
+    };
+    let (device, queue) = match pollster::block_on(
+        adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
+    ) {
+        Ok(dq) => dq,
+        Err(e) => {
+            eprintln!("device request returned: {}", e);
+            return;
+        }
+    };
+
+    let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: None,
+        source: wgpu::ShaderSource::Wgsl(FOLD_WGSL.into()),
+    });
+    let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: None,
+        entries: &[
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                e.binding = 0;
+                e
+            },
+            {
+                let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                e.binding = 1;
+                e
+            },
+        ],
+    });
+    let pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: None,
+        bind_group_layouts: &[&layout],
+        push_constant_ranges: &[],
+    });
+    let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+        label: None,
+        layout: Some(&pipe_layout),
+        module: &module,
+        entry_point: Some("fold_crosscheck"),
+        compilation_options: Default::default(),
+        cache: None,
+    });
+
+    let in_bytes = (params.len() * 4) as u64;
+    let out_bytes = (rows * 2 * 4) as u64;
+    let in_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: in_bytes,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let out_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: out_bytes,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+        mapped_at_creation: false,
+    });
+    let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: out_bytes,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: None,
+        layout: &layout,
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: in_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: out_buf.as_entire_binding(),
+            },
+        ],
+    });
+    queue.write_buffer(&in_buf, 0, &le_bytes_f32(&params));
+
+    let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+        pass.set_pipeline(&pipe);
+        pass.set_bind_group(0, &bind, &[]);
+        pass.dispatch_workgroups((rows as u32).div_ceil(64), 1, 1);
+    }
+    enc.copy_buffer_to_buffer(&out_buf, 0, &read_buf, 0, out_bytes);
+    queue.submit(std::iter::once(enc.finish()));
+
+    let mapped = Arc::new(AtomicBool::new(false));
+    let m2 = mapped.clone();
+    let slice = read_buf.slice(..);
+    slice.map_async(wgpu::MapMode::Read, move |r| {
+        m2.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped.load(Ordering::SeqCst),
+        "field_spatial fold readback returned void"
+    );
+    let mapped_data = slice.get_mapped_range();
+    let mut got = vec![0f32; rows * 2];
+    for k in 0..rows * 2 {
+        let mut b = [0u8; 4];
+        b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
+        got[k] = f32::from_le_bytes(b);
+    }
+    drop(mapped_data);
+    read_buf.unmap();
+
+    let mut violations = 0usize;
+    let mut skipped = 0usize;
+    for i in 0..rows {
+        let (cpu_f, cpu_g) = expected[i];
+        if !cpu_f.is_finite() || !cpu_g.is_finite() {
+            skipped += 1;
+            continue;
+        }
+        let gpu_f = got[i * 2] as f64;
+        let gpu_g = got[i * 2 + 1] as f64;
+        let tol_f = 1e-5 + 1e-3 * cpu_f.abs();
+        let tol_g = 1e-5 + 1e-3 * cpu_g.abs();
+        if (gpu_f - cpu_f).abs() > tol_f || (gpu_g - cpu_g).abs() > tol_g {
+            violations += 1;
+            if violations <= 8 {
+                let m = meta[i];
+                eprintln!(
+                    "fold row {} kernel {} d {} extent {} scale {} abs {}: field gpu {} cpu {} | grad gpu {} cpu {}",
+                    i, m[0], m[1], m[2], m[3], m[4], gpu_f, cpu_f, gpu_g, cpu_g
+                );
+            }
+        }
+    }
+    assert_eq!(
+        violations, 0,
+        "field_spatial fold wgsl/cpu parity: {} of {} rows diverge",
+        violations, rows
+    );
+    eprintln!(
+        "field_spatial fold crosscheck: {} rows, {} non-finite skipped, {} violations",
+        rows, skipped, violations
     );
 }

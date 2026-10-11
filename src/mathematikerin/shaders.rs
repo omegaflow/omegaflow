@@ -38,14 +38,15 @@ fn erfc(x: f32) -> f32 {
 }
 
 fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale: f32, absorption: f32) -> f32 {
-    let perceptual_extent = max(extent, global_scale);
-    let e2 = max(perceptual_extent * perceptual_extent, 1e-30);
+    let e2 = max(extent * extent, 1e-30);
     let s2 = max(global_scale * global_scale, 1e-30);
+    let cut2 = e2 + s2;
+    let cut = sqrt(cut2);
 
     if (kernel_id == 0u) {
-        return 1.0 / (d2 + e2);
+        return 1.0 / (d2 + cut2);
     } else if (kernel_id == 1u) {
-        return exp(-d2 / (2.0 * e2)) / (d2 + e2);
+        return exp(-d2 / (2.0 * cut2)) / (d2 + cut2);
     } else if (kernel_id == 2u) {
         if (d2 <= e2) {
             return 1.0;
@@ -53,19 +54,19 @@ fn field_spatial(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_scale:
             return 0.0;
         }
     } else if (kernel_id == 3u) {
-        return erfc(d_mag / max(perceptual_extent * sqrt(2.0), global_scale));
+        return erfc(d_mag / (cut * sqrt(2.0)));
     } else if (kernel_id == 4u) {
-        return exp(-d_mag / max(perceptual_extent, global_scale));
+        return exp(-d_mag / cut);
     } else if (kernel_id == 5u) {
         let alpha = clamp(absorption, 0.0, 1.0);
         let beta = 1.6;
-        let core = exp(-d2 / (2.0 * max(e2, s2)));
-        let tail = pow(max(e2, s2), beta * 0.5) / pow(max(d2 + s2, s2), beta * 0.5);
+        let core = exp(-d2 / (2.0 * cut2));
+        let tail = pow(cut2, beta * 0.5) / pow(max(d2 + s2, s2), beta * 0.5);
         return (1.0 - alpha) * core + alpha * tail;
     } else if (kernel_id == 6u) {
-        return 1.0 / (d_mag + perceptual_extent);
+        return 1.0 / (d_mag + cut);
     } else {
-        return exp(-d2 / (2.0 * max(e2, s2))) / max(d2 + s2, s2);
+        return exp(-d2 / (2.0 * cut2)) / max(d2 + s2, s2);
     }
 }
 
@@ -73,38 +74,38 @@ fn field_spatial_grad(d2: f32, d_mag: f32, extent: f32, kernel_id: u32, global_s
     if (d_mag > 1e13) {
         return 0.0;
     }
-    let perceptual_extent = max(extent, global_scale);
-    let e2 = max(perceptual_extent * perceptual_extent, 1e-30);
+    let e2 = max(extent * extent, 1e-30);
     let s2 = max(global_scale * global_scale, 1e-30);
+    let cut2 = e2 + s2;
+    let cut = sqrt(cut2);
     let d = max(d_mag, 1e-9);
 
     if (kernel_id == 0u) {
-        let denom = d2 + e2;
+        let denom = d2 + cut2;
         return -2.0 * d / (denom * denom);
     } else if (kernel_id == 1u) {
-        let denom = d2 + e2;
-        return -exp(-d2 / (2.0 * e2)) * d * (denom / e2 + 2.0) / (denom * denom);
+        let denom = d2 + cut2;
+        return -exp(-d2 / (2.0 * cut2)) * d * (denom / cut2 + 2.0) / (denom * denom);
     } else if (kernel_id == 2u) {
         return 0.0;
     } else if (kernel_id == 3u) {
-        let scale = max(perceptual_extent * sqrt(2.0), global_scale);
+        let scale = cut * sqrt(2.0);
         return -2.0 / sqrt(3.141592653589793) * exp(-d2 / (scale * scale)) / scale;
     } else if (kernel_id == 4u) {
-        let scale = max(perceptual_extent, global_scale);
-        return -exp(-d / scale) / scale;
+        return -exp(-d / cut) / cut;
     } else if (kernel_id == 5u) {
         let alpha = clamp(absorption, 0.0, 1.0);
         let beta = 1.6;
-        let e = max(e2, s2);
+        let e = cut2;
         let core_grad = -d / e * exp(-d2 / (2.0 * e));
         let denom = max(d2 + s2, s2);
         let tail_grad = -beta * d * pow(e, beta * 0.5) / pow(denom, beta * 0.5 + 1.0);
         return (1.0 - alpha) * core_grad + alpha * tail_grad;
     } else if (kernel_id == 6u) {
-        let denom = d_mag + perceptual_extent;
+        let denom = d_mag + cut;
         return -1.0 / (denom * denom);
     } else {
-        let e = max(e2, s2);
+        let e = cut2;
         let denom = max(d2 + s2, s2);
         return -exp(-d2 / (2.0 * e)) * (d / e * denom + 2.0 * d) / (denom * denom);
     }

@@ -1,5 +1,20 @@
 use crate::archivar::types::C_LIGHT;
 
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ReceiverAperture {
+    pub extent_m: f64,
+}
+
+impl ReceiverAperture {
+    pub fn declared(extent_m: f64) -> Option<Self> {
+        if extent_m.is_finite() && extent_m > 0.0 {
+            Some(Self { extent_m })
+        } else {
+            None
+        }
+    }
+}
+
 pub const TWO_WAY_DOPPLER_CONVENTION: &str = "t_bounce from classical downlink light-time (<=10 steps, 1e-12 s); t_tx from classical uplink light-time against the bounce state; roundtrip_s = t_rx - t_tx + shapiro_s; range_rate_m_s is the downlink line-of-sight rate (positive receding), m/s; downlink_hz = f_ref * turn_ratio * (1 - rho_dot_dn/c); uplink_hz = f_ref * (1 - rho_dot_up/c); observable_hz = f_ref * turn_ratio * (1 - rho_dot_up/c) * (1 - rho_dot_dn/c); the gravitating body (its ICRS position and GM) is an explicit parameter of the reduction, a declared worldline, never the ICRS origin";
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -2334,5 +2349,14 @@ mod tests {
         assert!(d < 1.0e-9, "norm drift {d}");
         assert!(itrf_to_icrs(station, f64::NAN, 2451545.0, &eop).is_none());
         assert!(itrf_to_icrs(station, 2451545.0, f64::NAN, &eop).is_none());
+    }
+
+    #[test]
+    fn aperture_extent_is_declared_positive_finite_only() {
+        assert_eq!(ReceiverAperture::declared(0.0), None);
+        assert_eq!(ReceiverAperture::declared(-1.0), None);
+        assert_eq!(ReceiverAperture::declared(f64::NAN), None);
+        assert_eq!(ReceiverAperture::declared(f64::INFINITY), None);
+        assert!(ReceiverAperture::declared(0.001).is_some());
     }
 }
