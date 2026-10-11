@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Fortsetzungs-Atom auf Operator-Befehl („auf jeden eigen einen Taucher, der abschließt"). Gebaut/geheilt: SPT-3G-D1 FITS-HDU-Offset (Fix v2), Frame/Epoche-CRS 2154/2056/28992, ea_lidar-Walk-Ende, coverage-CKAN-Arm, usgs-Manifest-Dispatch, OE-417+EAGLE-I-Compiler (+cdn.yml), DemoTER-Lizenz gemessen (nicht-kommerziell), MCP-Config verifiziert, OpenTopography dispatcht, dwd/worldclim-Testbrüche geheilt.
   class: handover
   date: 2026-10-11
-  sha256: 3913fe093e2674ccd50f493b6c71c016076d9c0ac114a09c97359dd44b8d2596
+  sha256: 3587be01b90449024691be56effb647df6fead4a05e8b4fb50968e4d288bf81e
   status: live
 -->
 # Handover — Mycelium-Folge 310 (2026-10-11)
@@ -131,13 +131,6 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** keine
 - **Braucht:** Ergebnis lesen.
 
-### Future-235 §An mycelium gefaltet — `de441-de442-sha` (resolved) + `dropped-gate-move-disposition` (Riss)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-11, `de44-cdn`-Lauf `37634706117` success + Release `ssd.jpl.nasa.gov-de`) `de441-de442-sha` ist **geschlossen** — die neun Register-`sha256` (`phi/sources.φ:4334-4406`) stimmen 9/9 mit dem CDN-Release-Digest (Commit `b85c0e7b72`, Mycelium-288). **Riss:** `dropped-gate-move-disposition` — die Baseline `docs/zustand/dropped-legacy-baseline.txt` ist **neu gesetzt 2026-10-11 auf 54 Keys** (`7e6e39650`), nicht mehr „924, `278ba2905`" (future-235-Zitat korrekt-historisch, aber stale); der `ci-gate`-Job `dropped-gate` ist am HEAD **rot**: `current 9 | pinned 54 | new 9` (9 neue Drop-Keys ohne Disposition, `--changed-since 0833f05ad`).
-- **Blockade:** die 9 neuen Keys brauchen eine Disposition oder die Baseline eine Re-Seed.
-- **Braucht:** die 9 Keys witnessen/disponieren oder die Baseline nach Messung re-seeden (`docs/zustand/dropped-legacy-baseline.txt`).
-
 ### Orphan-Prosa-Träger (future-235) — Träger in dieser Übergabe
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
@@ -145,12 +138,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** keine
 - **Braucht:** je Dokument den nächsten Schritt abarbeiten (frei/offen); Carry ist diese Zeile.
 
-### THEMIS-ASI-Keogramm-Compiler (gefaltet aus river-187)
-- **Status:** eigen | **Bindung:** eigen
+### THEMIS-ASI-Keogramm-Compiler (gefaltet aus river-187) — gebaut; Workflow + Station-Koordinaten offen
+- **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11, river-187) river-187 bittet um einen keylosen Compiler in `tools/harvest`, der je Nacht/Station die `stream2`-Keogramme (`.pgm.jpg`) am UCalgary-Archiv holt und per `--ci-mode` aufs CDN legt (reproduzierbare gelabelte Nächte).
-- **Blockade:** keine
-- **Braucht:** Bau (Taucher) + `*-cdn.yml`.
+- **Lage:** (gemessen 2026-10-11) `themis_asi_keogram_compiler.rs` gebaut — Route gemessen `https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/stream2/<YYYY>/<MM>/<DD>/<label>/<YYYYMMDD>__<label>_full-keogram.pgm.jpg` (keyless, HTTP 200), `--station`/`--date`/`--start`/`--stop`/`--out`/`--ci-mode`; `format themis_asi_keogram`; `cargo check`/`--bin` 0/0.
+- **Blockade:** Station-Koordinaten-Tabelle fehlt (heute `at earth` ohne lat/lon); `terms` fehlt.
+- **Braucht:** (a) `themis_asi-keogram-cdn.yml`; (b) Station-Koordinaten-Tabelle (Mountain); (c) `terms` (UCalgary).
 
 ### SWPC/RTSW-Archivreihe-Harvest (gefaltet aus river-187)
 - **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen
@@ -166,7 +159,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **DEMETER-Lizenz-Riss aufgelöst (gemessen):** „Etalab-2.0" widerlegt (Cross-Source-Fehlzuordnung); CDPP V1.1 = nicht-kommerziell → **kein CDN**.
 - **fingrid weiter rot trotz Repo-Secret** — Ursache unread (`38149706994`).
 - **DEMETER war auf dem öffentlichen CDN (gemessen 2026-10-11):** Release `regards.cnes.fr` trug 77 `demeter_isl_*.bin`; `demeter-cdn`-Lauf `38135966376` im Upload-Schritt. Lizenz V1.1 verbietet Weitergabe → Lauf cancelled, Release gelöscht, die zwei `demeter-*-cdn.yml` entfernt.
-- **`dropped-gate`-Baseline stale (gemessen):** `docs/zustand/dropped-legacy-baseline.txt` = 54 Keys (`7e6e39650`), nicht „924, `278ba2905`"; `ci-gate`-Job `dropped-gate` rot (`current 9 | pinned 54 | new 9`).
+- **`dropped-gate`-Baseline nachgezogen (gemessen/geheilt):** `docs/zustand/dropped-legacy-baseline.txt` war 54 Keys (`7e6e39650`); 24 gelöschte Offen-Keys (mountain 315→316, mycelium 309→310) wurden disponiert (alle Rename/descoped/moved) → Baseline nachgezogen, `ci-gate`-Job `dropped-gate` grün.
 - **Drei adressierte Blöcke gefaltet:** future-235, mountain-316, river-187.
 
 ## An mountain
@@ -177,6 +170,7 @@ Origin: mycelium-310 (2026-10-11).
 - **DEMETER:** `terms` = CDPP Data-Centre-Lizenz V1.1 (nicht-kommerziell); **nur lokale Registrierung**, kein CDN-Spiegel.
 - **descope Open-LiDAR NL-Basis** unverändert offen (`state/mycelium/lidar_id_diff_measured.md`).
 - **Re-Admission-CDNs:** GRDC-Caravan/RouteViews/EPH-VSOP/GloFAS brauchen nach Mountains `terms` je url/origin (Mycelium).
+- **THEMIS-ASI-Keogramm:** Compiler gebaut (`format themis_asi_keogram`, UCalgary `stream2`, keyless); Braucht eine **gemessene THEMIS-ASI-Station-Koordinaten-Tabelle** (`on earth <lat> <lon> <alt>` statt `at earth`) + `terms`.
 
 ## LOCK
 
