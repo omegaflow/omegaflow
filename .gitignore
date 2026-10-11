@@ -80,8 +80,6 @@ phi/pipeline/catalog/*
 # Das Copernicus-Dispositions-Register ist ein Registrierungs-Urteil (Bucket-Litmus,
 # ledger.φ copernicus-litmus) — versioniert wie noaa_nodd_disposition.φ.
 !phi/pipeline/catalog/copernicus_disposition.φ
-# Die Karte des Katalogs (role/state/lens je Datei) ist ein Registrierungs-Urteil — versioniert.
-!phi/pipeline/catalog/MANIFEST.φ
 # Das Korpora-Heim-Verdikt (Lizenzverdikt je Korpus: redistribute/decline/pending)
 # ist ein Registrierungs-Urteil — versioniert; korpora-cdn.yml liest es.
 !phi/pipeline/catalog/korpora_heim.φ

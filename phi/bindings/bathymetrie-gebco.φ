@@ -1,6 +1,0 @@
-binding bathymetrie-gebco
-url https://api.opentopodata.org/v1/gebco2020?locations=<lat>,<lng>
-url https://api.opentopodata.org/v1/eudem25m?locations=<lat>,<lng>
-unit m
-witness gestalt
-note GEBCO2020-Bathymetrie (2026-09-07 HTTP 200): Elevation in Metern, negativ unter dem Meeresspiegel; Land eudem25m. Gestalt (Körperfläche), τ geologische Stabilität, gbco-Records, nie Oszillator/Kraftfeld. docs/concepts/bindings-dust-maske-gebco.md.
