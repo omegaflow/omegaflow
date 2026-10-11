@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 307 (2026-10-11)
-  session: Mycelium-Linie — Meta-Pass, ein Atom. Set-Diff-Schema für LiDAR-Konsolidierung gebaut (`coverage.rs --emit-ids`: tile-id/epoch/href-Sidecar, `shard`-Manifest byte-identisch); extraterrestrischer LOLA-COPC-Emitter `lola_coverage.rs` (astrogeo-ard `moon/lro/lola`, url-only); USGS-TNM-Access gemessen (9 755 359 LPC-Zeilen, ein US-weiter LAZ-Index; COPC/EPT = 0 → nur S3/PC-Azure).
+  session: Mycelium-Linie — Meta-Pass, ein Atom (zwei Operator-Worte). Set-Diff-Schema für die LiDAR-Konsolidierung gebaut: `--emit-ids` (tile-id/epoch/href-Sidecar) in `coverage.rs`/`ahn4_coverage.rs`/`swisstopo_coverage.rs`/`open_lidar_data_coverage.rs`; `coverage_id_diff.rs` (raw + basename-Normalisierung + `--strip-prefix`); `coverage.rs --kind tnm` (USGS TNM Access). NL-Kachel-ID-Diff gemessen: flai ⊇ AHN4-Origin außer 08BZ1/40HZ1. Extraterrestrischer LOLA-COPC-Emitter `lola_coverage.rs`. USGS-TNM gemessen.
   class: handover
   date: 2026-10-11
-  sha256: 334a8832f06ad1e767e02ebc64dfadd491b09447f9c83ade57eb2fcfe5996be2
+  sha256: e7674dff862b33a4a1c342ee099ce6ebd11d759f2cbfde4deb04338290dcd534
   status: live
 -->
 # Handover — Mycelium-Folge 307 (2026-10-11)
@@ -13,7 +13,7 @@ gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-11-mycelium-folge306.md` (→ `archiv/`).
 
-## Burn: open 0.0000 · close 0.1163 · cap 0.5 — Grund: 3 Taucher (alle grind-flash: 2 Bau + 1 Messung). deepseek-flash, kein pro/max. (session_burn total 1.6303 → 1.7466.)
+## Burn: open 0.0000 · close 0.34 · cap 0.5 — Grund: 7 grind-flash (6 Bau + 1 Messung/Bau), deepseek-flash, kein pro/max. (session_burn total 1.6303 → 1.9700.)
 
 ## Operator-Wort-Register
 
@@ -21,50 +21,51 @@ zitiert, nie kopiert). Diese Session konsumierte
 | --- | --- | --- |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-11 | Operator (Session, Mycelium 307) |
 | Name leer → neueste offene Mycelium-Übergabe (folge306) | 2026-10-11 | Operator (Session, Mycelium 307) |
+| „bitte umsetzen [ID-Diff-Schema + Diff-Lauf + Mountain-Verdikt; weitere coverage-Arme; Frame/Epoche-Transform; cmb-cdn prüfen; MCP-Wrapper; CI-Subset-Hang]" | 2026-10-11 | Operator (Session, Mycelium 307) |
 | Vorherige Worte der Linie: `archiv/handover-2026-10-11-mycelium-folge306.md` §Operator-Wort-Register (via `git show <sha>:docs/handover/archiv/…`) | 2026-10-11 | gefaltet, nicht kopiert |
 
 ## Offen — eigen
 
-### Open-LiDAR-Konsolidierung — Set-Diff-Schema in `coverage.rs` gebaut; Adapter-Abdeckung + ID-Diff-Lauf offen
+### Open-LiDAR-Konsolidierung — Set-Diff-Schema gebaut + NL-Diff gemessen; Mountain-Verdikt + CH-Lauf offen
 - **Status:** eigen | **Bindung:** eigen · **Teile linie:mountain**
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `coverage.rs` trägt jetzt `--emit-ids <path>`: Sidecar `<id>\t<epoch>\t<href>` aus STAC `id`/`properties.datetime`, fehlend = `-`; `shard`-Manifest byte-identisch; `cargo check`/build grün, Test `emit_ids_writes_tile_identity_and_absent_fields_render_as_dash` (CI). Gemessene Basis unverändert: `state/mycelium/flai_coverage_measured.md` (NL AHN4 2771 COPC ≥ Origin 1407 `.LAZ`; CH 79683 ≫ 70; FR partiell 337212/524687) + Z.ai-Bedingung (`state/stimmen/20261011T095149Z_zai_lidar-verdikt.md`).
-- **Blockade:** der ID-Diff verlangt **dasselbe** Schema in *allen* Adaptern — die per-Portal-Bins (`ahn4_coverage.rs`/`swisstopo_coverage.rs`/`ign_lidarhd_coverage.rs`/`open_lidar_data_coverage.rs`) emittieren weiter nur `shard <url>`, kein id/epoch; der Diff-Lauf selbst fehlt.
-- **Braucht:** (a) `--emit-ids` (oder äquivalentes id/epoch-Schema) in den per-Portal-Adaptern; (b) ID-Diff-Lauf flai⊇origin je Land; (c) Mountain-Verdikt auf die gemessene Basis (descope je Land, Origin-Manifeste behalten).
+- **Lage:** (gemessen 2026-10-11) **Schema:** `--emit-ids <path>` schreibt `<id>\t<epoch>\t<href>` (fehlend = `-`) in `coverage.rs` + `ahn4_coverage.rs` + `swisstopo_coverage.rs` + `open_lidar_data_coverage.rs`; `shard`-Manifest byte-identisch. **Diff:** `tools/harvest/src/bin/coverage_id_diff.rs` (`--origin`/`--mirror`, `--normalize basename`, `--strip-prefix`). **NL-Messung** (`state/mycelium/lidar_id_diff_measured.md`): flai NL 1384 COPC vs AHN4-Origin 1375 unique `Name`; raw missing 1375 (Namensraum-Riss), mit `--normalize basename --strip-prefix c_` **missing = 2** (`08bz1`, `40hz1`) → **flai ⊇ AHN4-Origin außer 2 Kacheln** (Kachel-ID-Diff, nicht File-Count — Z.ai-Bedingung erfüllt). **CH:** unread (s. Korrekturen).
+- **Blockade:** CH-Origin-Walk > 10 000 Items (Bound 10 Seiten unvollständig) → voller Lauf gehört in CI; Mountain-Verdikt ausstehend.
+- **Braucht:** (a) `--emit-ids`-Sidecars in `coverage-manifest.yml` verdrahten + hochladen (CI-Lauf); (b) voller CH-Diff; (c) Mountain-Verdikt auf die gemessene NL-Basis (descope NL; Origin-Manifeste behalten).
 
-### coverage.rs — STAC-Arm + id/epoch-Schema; weitere Arme offen
+### coverage.rs — STAC + TNM + id-Schema gebaut; weitere Arme offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `tools/harvest/src/bin/coverage.rs` baut `--kind stac` (Planetary Computer `3dep-lidar-copc`), url-only Default (`--bbox` opt-in), jetzt + `--emit-ids` Sidecar; `cargo check`/build 0/0.
+- **Lage:** (gemessen 2026-10-11) `coverage.rs` trägt `--kind stac` (url-only Default, `--bbox` opt-in) und neu `--kind tnm` (USGS TNM Access `api/v1/products`, `datasets=Lidar Point Cloud (LPC)`, `max`/`offset`-Paginate, url-only, `--emit-ids` id=`id`/`sourceId`/`title`, epoch=`publicationDate`); `cargo check`/build 0/0.
 - **Blockade:** keine.
-- **Braucht:** (a) `coverage-manifest.yml`-Matrix-Eintrag mit benanntem Page-Bound (MAX_PAGES=5000, PAGE_LIMIT=1000); (b) die weiteren Arme `s3-copc|s3-laz|wfs|arcgis|ept|tnm` als Ausbaustufen (Z.ai: alle Adapter dasselbe Output-Schema).
+- **Braucht:** (a) `coverage-manifest.yml`-Matrix-Eintrag für `tnm` + Page-Bound; (b) weitere Arme `s3-copc|s3-laz|wfs|arcgis|ept`.
 
 ### Frame/Epoche → bbox-off als sicherer Default; Transform-Layer `pending`
 - **Status:** eigen | **Bindung:** eigen · **Teile linie:mountain**
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `state/mycelium/frame-epoch-findings.md`: drei bbox-Emitter (`open_lidar_data_coverage`/`noaa_nos_coverage`/`coverage.rs`) defaulten url-only (`ShardPlacement::Pending` → nicht verworfen). Fünf Portal-Bins bereits url-only.
+- **Lage:** (gemessen 2026-10-11) `state/mycelium/frame-epoch-findings.md`: drei bbox-Emitter defaulten url-only (`ShardPlacement::Pending` → nicht verworfen). Fünf Portal-Bins bereits url-only.
 - **Blockade:** Transform-Layer braucht CRS-aus-VLRs (zweiter Range-Request) + projiziert→geodätisch (fehlt) + Epoche je Shard + Grammatik-Slot.
-- **Braucht:** Transform-Layer als eigener Bau oder dauerhaft bbox-off; Entscheidung bei Mountain (Quellen-Verdikt-Rahmen).
+- **Braucht:** Transform-Layer als eigener Bau oder dauerhaft bbox-off; Entscheidung bei Mountain. **Nicht in diesem Atom umgesetzt** (Architektur; braucht Mountain/Rat-Wort).
 
 ### Manifestation SPT-3G D1 `cmap` (cmb-cdn) — dispatched; sha256 offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf `cmb-cdn.yml` run 38129785553 endet
-- **Lage:** (gemessen 2026-10-11 09:56Z) Streaming-Compiler gebaut; Workflow run 38129785553 noch `in_progress` (Step `cmb → Compile the SPT-3G D1 CMB map`). Trigger nicht gefeuert.
+- **Lage:** (gemessen 2026-10-11 10:0xZ, `ci_manage view`) run 38129785553 noch `in_progress` (head `82ec4f9`), Step `cmb → Compile the SPT-3G D1 CMB map`. Trigger nicht gefeuert.
 - **Blockade:** keine.
 - **Braucht:** `ci_manage view 38129785553` (bzw. `log`), dann sha256/Länge aus dem Release-Digest in den `phi/sources.φ:11559`-Block.
 
 ### MCP no-leak-Regel — Gate gebaut; Wrapper + egress-Allowlist offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `src/gate/mcp.rs` (6 Regeln + Test) in `commit_check` verdrahtet; `opencode.json` bewusst nicht angefasst.
+- **Lage:** (gemessen 2026-10-11) `src/gate/mcp.rs` (6 Regeln + Test) in `commit_check` verdrahtet.
 - **Blockade:** host-scoped egress-Allowlist braucht per-Seat-Network-Capture; opencode-MCP-Schema hat kein Integrity-Feld.
-- **Braucht:** (a) getrackten Wrapper `bin/chrome-devtools-mcp` (sha512 `RnzXoJiUQ44hpOihWk90uOhLD/CnwDkDy0ldHMZONJ2nYQ+dWN1fq1luHHqyd+7FuYnyIlCY6uTThbN5ut9kSQ==`) bauen; (b) Seats' Host-Listen capturen, `--allowedUrlPattern https://*` ersetzen.
+- **Braucht:** (a) getrackten Wrapper `bin/chrome-devtools-mcp` (sha512 `RnzXoJiUQ44hpOihWk90uOhLD/CnwDkDy0ldHMZONJ2nYQ+dWN1fq1luHHqyd+7FuYnyIlCY6uTThbN5ut9kSQ==`) bauen; (b) Seats' Host-Listen capturen, `--allowedUrlPattern https://*` ersetzen. **Nicht in diesem Atom umgesetzt** (opencode-MCP-Infra; ohne Operator-Wort nicht angefasst).
 
 ### Architektur — GitHub/CI/CDN-Optimierung
 - **Status:** wartend | **Bindung:** eigen · **Teile linie:mountain/river**
 - **Trigger:** grüner `ci-check`-Lauf
-- **Lage:** (gemessen 2026-10-11 09:56Z) `ci-gate`-`subset` hängt weiter im Step `Run cargo test --lib` (×5, 38129998370/38129857453/38129513768/38129344392/38128784728). Nachbar-Jobs rot: register `license_census` terms-vocab · format rustfmt · dropped-gate. Keiner Mycelium-eigen.
-- **Blockade:** Shard-Build-vs-Test-Anteil erst an green ci-check messbar.
+- **Lage:** (gemessen 2026-10-11) `ci-gate`-`subset` hängt im Step `Run cargo test --lib` (`38129998370` in_progress). **Rote Jobs** (gemessen aus dem Job-Log, run 38129998370): `dropped-gate` failure (`dropped-set-gate: current 13 | pinned 100 | new 13` — 13 neue Drops, Baseline `docs/zustand/dropped-legacy-baseline.txt`) · `format` failure (rustfmt-Diff `tools/measure/src/bin/eclipse_shadow_probe.rs:354,634` — fremde Datei, unstaged im Baum). `build`/`register`/`clippy` success.
+- **Blockade:** Shard-Build-vs-Test-Anteil erst an green ci-check messbar; die roten Jobs sind **nicht Mycelium-eigen** (dropped-baseline = Mountain/gate, format = measure-Datei).
 - **Braucht:** (a) grüner `ci-check` → `ci_manage jobs <id>`; (b) dominiert Build: `cargo nextest archive` + Shards `--archive-file`; (c) Test-Suite-Dedup.
 
 ### matrix-rotor — Trap-Flush gebaut; Nur der persistente t420 beendet die Klasse
@@ -77,21 +78,21 @@ zitiert, nie kopiert). Diese Session konsumierte
 ### LiDAR-Quellen-Inventar — TNM-Access gemessen; weitere Bucket-Bins offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `state/mycelium/usgs_tnm_index_measured.md`: TNM Access `api/v1/products` HTTP 200, **9 755 359** LPC-Produkte (Dataset-String `Lidar Point Cloud (LPC)`, spaces!), per-Tile `boundingBox`+`downloadURL`(LAZ, `rockyweb.usgs.gov/vdelivery`)+`publicationDate`; bbox-Query misst (124 in einem 0,1°-Fenster); `prodFormats=COPC` → **0**. Riss: `archive_search --verdict` auf die 3dep-STAC gab 502, `curl` 200 — beide Linien gehalten. Neue keyless Buckets/Indizes: `state/mycelium/lidar_sources_measured.md`.
+- **Lage:** (gemessen 2026-10-11) `state/mycelium/usgs_tnm_index_measured.md`: TNM Access `api/v1/products` HTTP 200, **9 755 359** LPC-Produkte (Dataset-String `Lidar Point Cloud (LPC)`, spaces!); per-Tile `boundingBox`+`downloadURL`(LAZ)+`publicationDate`; `prodFormats=COPC` → **0**. Der `--kind tnm`-Arm ist gebaut.
 - **Blockade:** keine.
-- **Braucht:** (a) je Bucket ein `<x>_coverage.rs` (`lola_coverage.rs` gebaut); (b) TNM als **einen** US-weiten LAZ-Index verdrahten (COPC/EPT bleibt S3/PC-Azure).
+- **Braucht:** (a) je Bucket ein `<x>_coverage.rs` (`lola_coverage.rs` gebaut); (b) TNM als `--kind tnm` in `coverage-manifest.yml` verdrahten (COPC/EPT bleibt S3/PC-Azure).
 
 ### Extraterrestrische LiDAR — `lola_coverage.rs` gebaut; MOLA/MLA/NLR/OLA/Hayabusa-Parser offen
 - **Status:** eigen | **Bindung:** eigen · **Teile linie:mountain**
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `tools/harvest/src/bin/lola_coverage.rs` (539 Z.) walkt `astrogeo-ard` `moon/lro/lola` (S3 ListObjectsV2, paginiert) und emittiert url-only `shard <url>` für `.copc.laz`; DEFAULT_BUCKET/PREFIX aus `state/mycelium/lidar_sources_measured.md:60-61`; `cargo check`/build 0/0. MOLA/MLA/NLR/OLA/Hayabusa (SBN/DARTS), Clementine, LALT: keyless gemessen (`lidar_sources_measured.md`).
+- **Lage:** (gemessen 2026-10-11) `tools/harvest/src/bin/lola_coverage.rs` (539 Z.) walkt `astrogeo-ard` `moon/lro/lola` (S3 ListObjectsV2, paginiert) und emittiert url-only `shard <url>` für `.copc.laz`; `DEFAULT_BUCKET`/`PREFIX` aus `state/mycelium/lidar_sources_measured.md:60-61`; `cargo check`/build 0/0.
 - **Blockade:** die nicht-COPC-Körper brauchen Parser (Mountain).
 - **Braucht:** Parser für MOLA/MLA/NLR/OLA/Hayabusa (Mountain); LOLA-Bin in `coverage-manifest.yml` verdrahten.
 
 ### Bathymetrie — Grids keyless; Topo-Bathy-Punktwolken getrennt
 - **Status:** eigen | **Bindung:** eigen · **Teile linie:river**
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11, keyless) Grids GEBCO/BlueTopo/ETOPO/EMODnet/GMRT/SRTM15+; Topo-Bathy-Punktwolken NOAA `noaa-nos-coastal-lidar-pds` (`noaa_nos_coverage.rs` + STAC 193 Topobathy). Ein `open-bathymetry`-Pendant existiert nicht (gemessen).
+- **Lage:** (gemessen 2026-10-11, keyless) Grids GEBCO/BlueTopo/ETOPO/EMODnet/GMRT/SRTM15+; Topo-Bathy-Punktwolken NOAA `noaa-nos-coastal-lidar-pds` (`noaa_nos_coverage.rs` + STAC 193 Topobathy).
 - **Blockade:** Grids sind Raster, nicht im `shard`-Kontrakt.
 - **Braucht:** Raster-Konsument (`pending`); Topo-Bathy läuft über `noaa_nos_coverage` + flai.
 
@@ -104,17 +105,18 @@ zitiert, nie kopiert). Diese Session konsumierte
 
 ## Registrierte Korrekturen & Vorfälle
 
-- **Adressierter Block gefaltet & veraltet:** `## An mycelium` (river-182/185) — (a) `usgs_lidar_coverage.rs` emittiert bereits `shard <url>` (url-only, `:256`), nicht mehr `url size`; (b) die Nationalportale sind in `state/mycelium/national_lidar_portals.txt` (144 Z.) enumeriert. Kein neuer Akt nötig.
-- **Riss getragen (Z.ai vs. flai-Count):** „2771 vs 1407" ist kein Äquivalenzbeweis (Re-Tiling) — descope braucht den Kachel-ID-Diff (`state/stimmen/20261011T095149Z_zai_lidar-verdikt.md`).
-- **Riss getragen (`--verdict` vs `curl`):** die Planetary-Computer `3dep-lidar-copc`-STAC-Kollektion antwortet auf `archive_search --verdict` mit 502, auf `curl` GET mit 200 (gemessen 2026-10-11) — beide Linien gehalten, nicht geglättet.
-- **Vollständigkeit der flai-Walks:** 8 Länder (BE/EE/ES/FI/LV/PL/UK/US) am Page-Cap (100 000 Keys) abgebrochen — für den ID-Diff ggf. nachzuziehen.
+- **CH-Origin-Zahl widerlegt (Riss):** `flai_coverage_measured.md` nennt CH `swisssurface3d` 79683 ≫ Origin **70**; der gebundene Origin-Walk (`swisstopo_coverage --max-pages 10`) und ein Cursor-Probe erreichten **>10 000 Items** mit `next`-Link weiterhin vorhanden (gemessen 2026-10-11). Die „70" ist ein Flächen-Indikator-Fehler, kein Origin-Count — CH-Diff `unread` bis zum vollen Lauf.
+- **Riss getragen (Namensraum):** NL raw missing = 1375, normalisiert+`c_`-gestrippt = 2 — File-Key (`C_01CZ1`) ≠ Origin-`Name` (`01CZ1`) ist ein Namensraum-Riss, kein Abdeckungs-Riss; beide Linien im Report gehalten.
+- **Fix eigener Zustand:** der erste 307-Commit ließ die konsumierte `handover-…-folge306.md` am alten Pfad (nur die `archiv/`-Kopie war im Commit) — die Doppelung ist in diesem Commit als Löschung geschlossen.
+- **Adressierter Block gefaltet & veraltet:** `## An mycelium` (river-182/185) — `usgs_lidar_coverage.rs` emittiert bereits `shard <url>`; die Nationalportale liegen in `state/mycelium/national_lidar_portals.txt` (144 Z.).
+- **Vollständigkeit der flai-Walks:** 8 Länder (BE/EE/ES/FI/LV/PL/UK/US) am Page-Cap abgebrochen — für den ID-Diff ggf. nachzuziehen.
 
 ## An mountain
 
 Origin: mycelium-307 (2026-10-11).
 
-- **Descope-Verdikt Open-LiDAR:** gemessene Basis (`state/mycelium/flai_coverage_measured.md`) + Z.ai-Bedingung (`state/stimmen/20261011T095149Z_zai_lidar-verdikt.md`). Frage: `ahn4` (NL) und `swisstopo` (CH) als Origin-Quellen behalten oder zugunsten des flai-Aggregats descopen (Fläche+Epoche gleichauf, ID-Diff jetzt schema-seitig möglich, Lauf offen)? `ign_lidarhd` (FR) nur partial. `linz` (NZ) bleibt. `ea_lidar_index` (Metadaten) — behalten oder reicht flai UK DEFRA?
-- **Vier Portal-Coverage-`phi`-Blöcke** (aus folge305, offen): `url`/`origin`/`compiler`/`format`-Block je Portal aus dem `coverage-manifest`-Lauf, plus `terms`/`at`/`ttl`. Netlocs: `ns_hwh.fundaments.nl` · `data.geo.admin.ch` · `nz-elevation.s3-ap-southeast-2.amazonaws.com` · `data.geopf.fr`. (url-only via bbox-off-Default.)
+- **Descope-Verdikt Open-LiDAR — NL-Messung liegt vor:** `state/mycelium/lidar_id_diff_measured.md` — flai ⊇ AHN4-Origin außer `08BZ1`/`40HZ1` (Kachel-ID-Diff via `coverage_id_diff --normalize basename --strip-prefix c_`; raw 1375 missing = Namensraum-Riss). Frage: `ahn4` (NL) als Origin-Quelle zugunsten des flai-Aggregats descopen (Kachel-Äquivalenz gemessen, 2 Lücken), Origin-Manifest als Provenanz behalten? `swisstopo` (CH) — Origin > 10 000 Kacheln (die „70" widerlegt), Diff offen. `ign_lidarhd` (FR) nur partial. `linz` (NZ) bleibt. `ea_lidar_index` (Metadaten) — behalten oder reicht flai UK DEFRA?
+- **Vier Portal-Coverage-`phi`-Blöcke** (aus folge305, offen): je Portal der `url`/`origin`/`compiler`/`format`-Block aus dem `coverage-manifest`-Lauf, plus `terms`/`at`/`ttl`. Netlocs: `ns_hwh.fundaments.nl` · `data.geo.admin.ch` · `nz-elevation.s3-ap-southeast-2.amazonaws.com` · `data.geopf.fr`. (Hinweis: jetzt url-only via bbox-off-Default.)
 - **Bayern-DOM φ-Block** (aus folge304, offen) — Mountain-Verdikt (`terms`/`at`/`ttl`): `url …/download1.bayernwolke.de/32605_5282_20_DOM.bin` · `origin …/32605_5282_20_DOM.tif` · `compiler tools/harvest/src/bin/dom_compiler.rs` · `format bdom` · `sha256 a5da30f9f2766b6cfcb4e1898f097b8e9f0685c1bd08a3feaec54bc8a0acbaa8`.
 - **VNP46A3 φ-Block** (aus folge302, offen) — `…/vnp46a3_allangle_composite_snow_free.bin` · `origin …/VNP46A3.A2026213.h18v07.002.2026252141449.h5` · `compiler vnp46a3_compiler.rs` · `format black_marble_vnp46a3_nightlight` · `sha256 d85ee99b9d967b5565bb79e145d9120ab09205eb41d4188b3f016e8944b94510`.
 - **open-lidar-data φ-Block** (aus folge302, offen) — `ttl`-Zeile nötig: `url …/open_lidar_data_be_dhmv2.bin` · `origin https://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/LiDAR_DHMV_II-2013-2015/copc/` · `compiler open_lidar_data_compiler.rs` · `format las` · `sha256 e6560344c5e939458c890e62d5972dbfb273f8aa2cdd6e00bdb6ec2feef09c4e`.
