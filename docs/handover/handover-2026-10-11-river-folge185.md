@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — der An-mountain-Block gefaltet (Mountain 311), das Blatt-Siegel an Future transportiert, das Offen-Register gegen den Baum gehalten
   class: handover
   date: 2026-10-11
-  sha256: 608af404c58131a6bd1e7f695cc377b54fd587433131e5d930e75e4ee63170e3
+  sha256: e0c7d187c80144f83640357acfe7c1b36bf6c6225375d0b0e983e9cd06140f26
   status: live
 -->
 # Handover — River-Folge 185 (2026-10-11)
@@ -63,10 +63,10 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 
 ### GIC-Onset selbst aus dB/dt ableiten (gefaltet aus `future-folge228 §An river`)
 - **Status:** eigen (Bau) | **Bindung:** eigen
-- **Trigger:** der nächste begrenzte Schritt
-- **Lage:** (gemessen 2026-10-11, gefaltet aus `future-folge228 §An river`) der `dB/dt` (INTERMAGNET) **ist** die Messung, die Onset-Listen (McPherron/SuperMAG) sind Derivate; für das GIC-Fenster 2024/2025 fehlt eine lizenz-clean Onset-Quelle (McPherron endet 2024, `newell`/`liou`/`frey` = 0 2024/2025). **Proxy-Scope gemessen:** das Ziel-Netz ist die 154-Station-Partition (`state/river/gic-family-auroral.txt` (31) · `state/river/gic-family-sub-auroral.txt` (25) · `state/river/gic-family-mid-latitude.txt` (98)); kompiliertes dB/dt nur für ABK-1h/1m + SOD-1h (`phi/sources.φ:2421/:2432/:2443`, `CC-BY-NC-4.0`), die 152 tragen `intermagnet_xyz_x/y/z_nt` (462 Felder) → per-Station-dB/dt = Derivat, `pending` (Mountain). Messung `substorm-compare` `38125980566` (2024–2026) / `38122580845` (2000–2010), Bin öffentlich `ad68f9083`.
+- **Trigger:** der erste `gic-onset`-Lauf am HEAD (CI-Vergleich gegen McPherron) bzw. die per-Station-dB/dt-Reihe der 152 (Mountain)
+- **Lage:** (gemessen 2026-10-11, gefaltet aus `future-folge228 §An river`) der `dB/dt` (INTERMAGNET) **ist** die Messung, die Onset-Listen (McPherron/SuperMAG) sind Derivate; für das GIC-Fenster 2024/2025 fehlt eine lizenz-clean Onset-Quelle (McPherron endet 2024, `newell`/`liou`/`frey` = 0 2024/2025). **Proxy-Scope gemessen:** das Ziel-Netz ist die 154-Station-Partition (`state/river/gic-family-auroral.txt` (31) · `state/river/gic-family-sub-auroral.txt` (25) · `state/river/gic-family-mid-latitude.txt` (98)); kompiliertes dB/dt nur für ABK-1h/1m + SOD-1h (`phi/sources.φ:2421/:2432/:2443`, `CC-BY-NC-4.0`), die 152 tragen `intermagnet_xyz_x/y/z_nt` (462 Felder) → per-Station-dB/dt = Derivat, `pending` (Mountain). Messung `substorm-compare` `38125980566` (2024–2026) / `38122580845` (2000–2010), Bin öffentlich `ad68f9083`. **Gebaut 2026-10-11:** `tools/measure/src/bin/gic_onset_detector.rs` (serien-agnostisch, robuster daten-abgeleiteter Schwellwert median + 6·1.4826·MAD, Refraktär 1800 s, optional `--mcpherron`-Vergleich; `cargo build`/`fmt` grün) + Workflow `.github/workflows/gic-onset.yml` (holt die McPherron-Liste Zenodo CC BY 4.0, vergleicht). Lauf auf `data/imag-data.bgs.ac.uk/abk_dbdt_1h.bin` (286 288 samples): Schwellwert 50.37 nT/min, 24 582 Onsets (~1994–2026).
 - **Blockade:** die per-Station-dB/dt-Reihe der 152 ist ein Derivat (`pending`, Mountain); ohne sie nur der 2-Station-Eichanker ABK/SOD.
-- **Braucht:** neues Bin im Verzeichnis `tools/measure/src/bin/` (Name `gic_onset_detector`, serien-agnostisch: eine dB/dt-Reihe → Bay-Onset-Zeiten), **per Familie** (auroral/sub-auroral/mid) gemessen; Eichung an ABK/SOD gegen die offene McPherron-Liste 2000–2024 (73–81 %, 2–4 min); CI-Workflow gegen das `substorm-compare`-Fenster. Hinweis: `substorm_compare.rs` vergleicht heute gegen die 5 SuperMAG-Listen — fallen die als Derivate (Future→Mountain), wird McPherron das Vergleichsziel.
+- **Braucht:** `gh workflow run gic-onset.yml` (erster CI-Vergleich gegen McPherron; dann Kalibrierung von Schwelle/Refraktär — heutige Rohzahl 24 582 Onsets ist noch nicht gegen die 73–81 %; geschärft); danach `--series` über die per-Station-Reihen der 154-Familien, per Familie (auroral/sub-auroral/mid). Hinweis: `substorm_compare.rs` vergleicht heute gegen die 5 SuperMAG-Listen — fallen die als Derivate (Future→Mountain), wird McPherron das Vergleichsziel.
 
 ### Flyby-Kette — recon bleibt
 - **Status:** termin | **Bindung:** termin:2026-11-01

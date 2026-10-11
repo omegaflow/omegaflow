@@ -1,0 +1,42 @@
+name: gic-onset
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      series:
+        description: dB/dt IMDT bin URL (per-bucket peak |dB/dt|, nT/min)
+        required: true
+        type: string
+        default: "https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/abk_dbdt_1h.bin"
+
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the McPherron onset list (Zenodo, CC BY 4.0)
+        run: |
+          set -euo pipefail
+          curl -sSL -o /tmp/CorrOnsFiles.zip https://zenodo.org/api/records/22711679/files/CorrOnsFiles.zip/content
+          unzip -q /tmp/CorrOnsFiles.zip -d /tmp/mcpherron
+      - name: Fetch the dB/dt series
+        run: |
+          set -euo pipefail
+          curl -sSL -o /tmp/dbdt.bin "${{ inputs.series }}"
+      - name: Bay-onset detector — self-derived onsets against McPherron
+        run: |
+          set -euo pipefail
+          cargo run -p omegaflow-measure --release --bin gic_onset_detector -- \
+            --series /tmp/dbdt.bin \
+            --station abk \
+            --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt
