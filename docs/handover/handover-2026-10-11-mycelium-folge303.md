@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Roten harvest-dispatch gemessen und geheilt (phi/harvest.φ lro_trk/losc-Reihenfolge), Coverage-Manifestator bbox-Emission gebaut (LAS-Header-Range-GET -> shard <url> <6 f64>), te-ground-truth-Artefakt gelesen (Produktionsarm NOT PASS, Riss gegen den Skalararm), sieben CDN-Manifestationen dispatcht.
   class: handover
   date: 2026-10-11
-  sha256: 931f2fbf19c080822f6369e95c666e415e2e9c8fafbb44f259141754362e8a99
+  sha256: 9be324c5fe54c208a406a20a54e17009e9e6042bfca14efc39e3cc5a9a2d8fcb
   status: live
 -->
 # Handover — Mycelium-Folge 303 (2026-10-11)
@@ -17,7 +17,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 (SURFRAD/ECAD/DWD/WorldClim/AODN-Compiler + Asservatenkammer-Träger, siehe
 `## Offen — eigen` und `## An mountain`); kein erneuter Falt-Akt.
 
-## Burn: open 0.0000 · close 0.0661 · cap 0.5 — Grund: dieses Atom 1× line ($0.0564) + 1× grind-flash ($0.0097, bbox-Emission) · deepseek-flash, kein pro/max.
+## Burn: open 0.0000 · close 0.0798 · cap 0.5 — Grund: dieses Atom 1× line ($0.0798) + 2× grind-flash (bbox open_lidar + noaa) + 1× general (ECAD-Koordinaten) · deepseek-flash, kein pro/max.
 
 ## Operator-Wort-Register
 
@@ -43,19 +43,22 @@ zitiert, nie kopiert). Diese Session konsumierte
 ### Coverage-Manifest — bbox-Emission gebaut; River-Wiring + nationale Portale offen
 - **Status:** eigen | **Bindung:** eigen (Core-Archivar) · Teile linie:river
 - **Trigger:** Faltung des `## An river`-Blocks (Fetch-Loop `main_flow.rs`)
-- **Lage:** (gemessen 2026-10-11) `tools/harvest/src/bin/open_lidar_data_coverage.rs`
-  emittiert jetzt `shard <url> <6 f64>` statt blanker URLs: `parse_las_bbox` (Magic
-  `LASF`, f64 LE bei 179/187/195/203/211/219, alle sechs finit -> bbox
-  minx miny minz maxx maxy maxz) + `copc_bbox` (Range-GET `bytes=0-374` via
-  `fetch_raw_bytes_headers`); `shard <url>` ohne Doubles -> `Pending` (kein
-  fabriziertes 0). `cargo check` sauber; Roundtrip durch
-  `parse_coverage_manifest` bestätigt.
+- **Lage:** (gemessen 2026-10-11) **zwei** der drei Manifestatoren emittieren jetzt
+  `shard <url> <6 f64>` statt blanker URLs: `open_lidar_data_coverage.rs` und
+  `noaa_nos_coverage.rs` (je `parse_las_bbox` — Magic `LASF`, f64 LE bei
+  179/187/195/203/211/219, alle sechs finit -> bbox minx miny minz maxx maxy maxz —
+  + `copc_bbox`, Range-GET `bytes=0-374` via `fetch_raw_bytes_headers`); `shard <url>`
+  ohne Doubles -> `Pending` (kein fabriziertes 0). `cargo check` sauber; Roundtrip
+  durch `parse_coverage_manifest` bestätigt. **`usgs_lidar_coverage.rs`** emittiert
+  weiter `url size`-Zeilen (mischt COPC mit `ept.json`/`boundary.json`) — eigener
+  Manifest-Schnitt nötig, nicht derselbe Fall.
 - **Blockade:** (b) der Fetch-Loop liegt in `main_flow.rs` = River-Membran (fremde
   Domäne, kein Mycelium-Schreibakt) — `## An river`. `state/mycelium/national_lidar_portals.txt`
   ist **absent** (0 Treffer, `archive_search --root state`) — die 104-Portal-Tabelle
   lebt in `docs/surveys/survey-2026-10-10-worldwide-lidar-quellen.md`.
-- **Braucht:** (b) `## An river` — Fetch-Loop über `format coverage_manifest`; danach
-  die 104 Nationalportale aus der Survey enumerieren.
+- **Braucht:** (a) `usgs_lidar_coverage.rs`-Manifest auf `shard`-Form entscheiden;
+  (b) `## An river` — Fetch-Loop über `format coverage_manifest`; danach die 104
+  Nationalportale aus der Survey enumerieren.
 
 ### Bayern-DOM (`geodaten.bayern.de`) — Lauf dispatcht
 - **Status:** wartend | **Bindung:** eigen
@@ -74,13 +77,13 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Lage:** (gemessen 2026-10-11) Blöcke stehen in `phi/sources.φ`. Dispatcht:
   surfrad `38117149584`, dwd-cdc `38117152122`, worldclim `38117153770`, aodn
   `38117301397` (var=TEMP, url=origin, start=0, count=64). **ECAD**: Asset
-  **absent** (`--verdict` 404 auf `ecad_eca_tx_TX_STAID000001.bin`); `ecad-cdn.yml`
-  verlangt `station`/`lat`/`lon`/`alt` — die Stationskoordinaten stehen **nicht** im
-  Block. **KNMI**: wartet auf das Repo-Secret `KNMI_API_KEY`.
-- **Blockade:** knmi auf Operator-Hand; ecad auf die ungemessenen Stationskoordinaten.
-- **Braucht:** (a) `archive_search --verdict` je Asset nach Lauf; (b) ECA&D-Koordinaten
-  für STAID000001 messen, dann `gh workflow run ecad-cdn.yml -f element=tx -f station=000001
-  -f lat=… -f lon=… -f alt=…`; (c) knmi erst nach dem Secret.
+  **absent** (`--verdict` 404 auf `ecad_eca_tx_TX_STAID000001.bin`); STAID 1 =
+  VAEXJOE/SE, lat 56.866667, lon 14.800000, alt 166 m (gemessen 2026-10-11 via
+  `ECA_blend_station_tx.txt`, `knmi-ecad-assets-prd.s3.amazonaws.com/download/`),
+  dispatcht `38117743707`. **KNMI**: wartet auf das Repo-Secret `KNMI_API_KEY`.
+- **Blockade:** knmi auf Operator-Hand.
+- **Braucht:** (a) `archive_search --verdict` je Asset nach Lauf; (b) knmi erst nach
+  dem Secret.
 
 ### Planetary Radar — Manifestation dispatcht
 - **Status:** wartend | **Bindung:** eigen (Manifestation)
