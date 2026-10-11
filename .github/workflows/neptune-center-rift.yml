@@ -27,12 +27,13 @@ jobs:
                  "neptune-center-rift: ephemeris_neptune_c.bin returned void from the CDN" \
                  "curl on the CDN did not reach the DE441-consistent planet-center bin. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
-          curl -sSfL --retry 3 --max-time 5400 -o data/ftp.imcce.fr/ephemeris_inpop_neptune.bin \
-            https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_neptune.bin \
+          curl -sSfL --retry 3 --max-time 5400 -o inpop19a_spice.tar.gz \
+            https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-                 "neptune-center-rift: ephemeris_inpop_neptune.bin returned void from the CDN" \
-                 "curl on the CDN did not reach the INPOP Neptune bin. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 "neptune-center-rift: the inpop19a spice tar returned void" \
+                 "curl on ftp.imcce.fr did not reach the tar. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
+          cargo run -p omegaflow-harvest --release --bin inpop_compiler -- inpop19a_spice.tar.gz
           curl -sSfL --retry 3 --max-time 5400 -o data/ftp.iaaras.ru/ephemeris_epm_neptune.bin \
             https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_neptune.bin \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \

@@ -1,0 +1,39 @@
+name: epm-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '37 5 2 * *'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  epm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the ftp.iaaras.ru release exists on the CDN
+        run: |
+          if ! gh release view ftp.iaaras.ru --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ftp.iaaras.ru --repo omegaflow/sources \
+              --title "ftp.iaaras.ru" \
+              --notes "raw EPM ephemeris bins compiled for omegaflow measure tools (CDN tag = netloc)"
+          fi
+      - name: Compile the EPM2021 bins (with body-fixed orientation) and upload
+        run: |
+          curl -sfL -o epm2021.bsp https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "epm-cdn: the epm2021 bsp returned void" \
+                 "curl on ftp.iaaras.ru did not reach the bsp. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          echo "epm2021.bsp sha256: $(sha256sum epm2021.bsp | cut -d' ' -f1)"
+          echo "epm2021.bsp bytes: $(stat -c%s epm2021.bsp)"
+          cargo run -p omegaflow-harvest --release --bin epm_compiler -- epm2021.bsp --ci-mode

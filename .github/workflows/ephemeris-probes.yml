@@ -71,15 +71,19 @@ jobs:
           gh release upload anderson-residuals "$seed" --repo omegaflow/sources --clobber
           mkdir -p data/flyby2
           cp "$seed" data/flyby2/anderson_residuals.tsv
-      - name: Die drei Erd-Haus-Linien aus dem CDN laden
+      - name: Die drei Erd-Haus-Linien laden (INPOP lokal kompiliert, kein CDN-Spiegel)
         run: |
           mkdir -p data/ssd.jpl.nasa.gov-de data/ftp.imcce.fr data/ftp.iaaras.ru
           gh release download ssd.jpl.nasa.gov-de --repo omegaflow/sources \
             --pattern ephemeris_de441_earth.bin --clobber -D data/ssd.jpl.nasa.gov-de
-          gh release download ftp.imcce.fr --repo omegaflow/sources \
-            --pattern ephemeris_inpop_earth.bin --clobber -D data/ftp.imcce.fr
           gh release download ftp.iaaras.ru --repo omegaflow/sources \
             --pattern ephemeris_epm_earth.bin --clobber -D data/ftp.iaaras.ru
+          curl -sfL -o inpop19a_spice.tar.gz https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "ephemeris-probes: the inpop19a spice tar returned void" \
+                 "curl on ftp.imcce.fr did not reach the tar. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          cargo run -p omegaflow-harvest --release --bin inpop_compiler -- inpop19a_spice.tar.gz
       - name: Die Anderson-Flyby-Anomalie gegen die drei Häuser messen
         run: |
           {
