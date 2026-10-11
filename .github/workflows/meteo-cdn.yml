@@ -8,9 +8,8 @@ on:
   workflow_dispatch:
     inputs:
       event:
-        description: Event config (phi/meteo/*.json)
+        description: Event config file name (on demand; place phi/meteo/<event>.json)
         required: true
-        default: tibet-flut-2026.json
 
 permissions:
   contents: write
