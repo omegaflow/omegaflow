@@ -3537,8 +3537,7 @@ mod tests {
     use super::*;
     use std::path::Path;
 
-    const SSI_2026: &str =
-        "src/archivar/testdata/ncei_ssi/ssi_v03r00-preliminary_monthly_s202604_e202606_c20260804.nc";
+    const SSI_2026: &str = "src/archivar/testdata/ncei_ssi/ssi_v03r00-preliminary_monthly_s202604_e202606_c20260804.nc";
     const SSI_1874: &str =
         "src/archivar/testdata/ncei_ssi/ssi_v03r00_monthly_s187405_e187412_c20240831.nc";
     const FILTERS: &str = "src/archivar/testdata/ncei_ssi/filters.h5";

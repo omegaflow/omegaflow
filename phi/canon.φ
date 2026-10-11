@@ -14,18 +14,18 @@ phi/blocked_sources.φ
 section Harvest-Master
 phi/harvest.φ
 
-section Bindings
-phi/bindings/dust-maske.φ
-phi/bindings/bands.φ
-
 section Stationstabellen
 phi/nrs_stations.φ
 
+section Bindings
+phi/dust-maske.φ
+phi/bands.φ
+
+section Such-Linse
+phi/library.φ
+
 section Reports
-phi/reports/scan_coverage.φ
+phi/scan_coverage.φ
 
-section Pipeline-Register
-phi/pipeline/library.φ
-
-section Katalog
-phi/pipeline/catalog/korpora_heim.φ
+section Korpora
+phi/korpora_heim.φ

@@ -249,20 +249,14 @@ Vermutung:** der Eintrag verlangt den gemessenen **401 MIT dem vorhandenen Token
 (`.secrets.local`) — ein 401 ohne Token ist kein Key-Gap (der IONEX-Eintrag
 2026-09-16 widerlegt: mit `EARTHDATA_EDL_TOKEN` → HTTP 200). Erst messen, dann fordern.
 **Authentifizierung ist kein Ausschlusskriterium** (Operator-Wort 2026-10-08): ein `blocked account`/`blocked key` ist **kein Quellen-Verdikt**, sondern eine `pending`-Operator-Aufgabe — wo der Operator zugangsberechtigt ist oder ein Key bereits besteht, wird die Quelle über die **Auth-Route** geführt (Registrierung/Key als Operator-Hand), nie als `declined` gestrichen. Gilt generell für Quellen.
-Work surface: `phi/pipeline/`
-(`stage/` conversion outputs, `ledger.φ` state register, `index.φ` index,
-`prompt.φ` port template). Holdings: `phi/pipeline/catalog/`. Register: `phi/sources.φ` +
+Work surface: the flat `phi/` registers. The source-port backlog (`queue/`/`stage/`/`probe_*`/`ledger.φ`/`index.φ`) and the static catalog dispositions are `descoped` (2026-10-11) — live arms and `archive_search` supersede; the 12 real pending compilers stand in `state/zustand/wartend.φ`. Register: `phi/sources.φ` +
 `phi/dead_sources.φ` + `phi/declined_sources.φ` + `phi/blocked_sources.φ`. The
 registers are the queue: `register_lookup --open` surfaces the state registers
 owner-tagged — `phi/blocked_sources.φ` (`blocked parser-def` → mountain,
 `blocked account`/`blocked key` → future → operator, `blocked ip-blocked`/`pending`
-→ mycelium), `phi/pipeline/ledger.φ` (`ausstehend`/`verifiziert`/
-`kompiliert` → mycelium, `parser-gap` → mountain, `void`/`disponiert` released),
-`phi/sources.φ` + `witnesses.φ` + `footprints.φ` + `nrs_stations.φ` + `harvest.φ`
-(offene Marker → mycelium, `asset fehlt` → mountain), the `probe_*` drafts, and the catalog
-candidate pools as a count line; every state maps to an owner (gate-tested). The
-`queue/grind_*` draft path is `descoped` with measurement (2026-09-18:
-`phi/pipeline/queue/` carries no `.φ`) — never built, not needed. Harvested data that stays belongs on the local machine in `data/` (final
+→ mycelium), `phi/sources.φ` + `witnesses.φ` + `footprints.φ` + `nrs_stations.φ` + `harvest.φ`
+(offene Marker → mycelium, `asset fehlt` → mountain); every state maps to an owner (gate-tested).
+Harvested data that stays belongs on the local machine in `data/` (final
 datasets as gitignored working copies `data/<netloc>/<datei>`) or the archivar
 `cache/`; its durable home is the CDN asset registered as a `url`-line in
 `phi/sources.φ` (the CDN-Manifestation duty below) — a kept dataset is never an

@@ -49,9 +49,9 @@ Nichts hier muss erst gesammelt werden. Der Webstuhl hat sein Material:
   `distance`/`redshift`, `unit_direction()`) und der gebaute S²-Sinn
   (`s2.rs`, `S2_WGSL`, `omega.rs`).
 - **Die unabhängigen Linien:** die vier lebenden TAP-Legs (ALeRCE, SIMBAD,
-   Gaia-ARI, NED), die MPC-Bahnen
-   (`mpcorb.bin`, registriert `phi/sources.φ:2395`), die
-  INPOP25c-Asteroidenmassen (gravity-Katalog-Route) und das solare ΩG.
+  Gaia-ARI, NED), die MPC-Bahnen
+  (`mpcorb.bin`, registriert `phi/sources.φ:2395`) und die
+  INPOP25c-Asteroidenmassen (gravity-Katalog-Route).
 
 ## 2. Der Webstuhl — ICRS·TDB als das eine Blatt
 
