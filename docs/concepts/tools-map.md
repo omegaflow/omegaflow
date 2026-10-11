@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-29
-  sha256: 78d3997f2d27ba3dbe9bbbef262f0e08f59f4e55e7536ecc41f25da96bc81d66
+  sha256: 13bf136eb37f220bcf30ae8fd44c209c411b28a2b8094c90a66dbac65cabaadb
   status: live
   see-also: AGENTS.md
 -->
@@ -371,7 +371,7 @@ Vier Pfade sind vier Identitäten (A = A), je mit gemessener Rolle. Messung + Ve
   Gemessen 2026-09-23 am selben Profil: Transport-Roundtrip ~10–20 ms (gleichauf mit Pfad 1);
   Navigation default `dom-quiet`-Settle läuft in den Timeout (~2,7 s — spürbar langsam), mit
   `waitUntil:load` + `settle:{exists,selector}` ~130 ms (schneller als Pfad 1, das ~180–480 ms
-  wartet); Text/Observe ~13–60 ms. Koexistenz beider Brücken am selben Profil gemessen. Der
+  braucht); Text/Observe ~13–60 ms. Koexistenz beider Brücken am selben Profil gemessen. Der
   Adapter ist in der OpenCode-1.18.x-`{ id, server() }`-Path-Plugin-Form **und** mit dem
   V2-Vertrag gebaut → ein opencode-2.0-Umstieg wird von Pfad 4 nicht blockiert (Pfad 1 ist
   V1-only). CLI-Kante: der globale bin-Symlink triggert `main()` in 1.7.2 nicht — Aufruf über

@@ -1,0 +1,61 @@
+# harvest: format=coverage_manifest arm=glofas_ewds_compiler pattern=^glofas_ewds_coverage\.manifest$ idempotent=true timeout=120 tag=ewds.climate.copernicus.eu
+
+name: glofas-ewds-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/glofas_ewds_compiler.rs'
+      - '.github/workflows/glofas-ewds-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  glofas-ewds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the manifest already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view ewds.climate.copernicus.eu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "glofas_ewds_coverage.manifest"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset glofas_ewds_coverage.manifest already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset glofas_ewds_coverage.manifest missing — compiling and manifesting"
+          fi
+      - name: Ensure the ewds.climate.copernicus.eu release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view ewds.climate.copernicus.eu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ewds.climate.copernicus.eu --repo omegaflow/sources \
+              --title "ewds.climate.copernicus.eu" \
+              --notes "Copernicus Early Warning Data Store (EWDS) — GloFAS catalogue coverage compiled to a coverage manifest (CDN tag = netloc)"
+          fi
+      - name: 'Materialize the CDS API key (the measured retrieve auth PRIVATE-TOKEN: CDS_API_KEY; read_secret reads .secrets.local)'
+        if: steps.idempotence.outputs.present == 'false'
+        env:
+          CDS_API_KEY: ${{ secrets.CDS_API_KEY }}
+        run: |
+          printf 'CDS_API_KEY=%s\n' "$CDS_API_KEY" > .secrets.local
+      - name: Compile and manifest the GloFAS EWDS catalogue coverage to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin glofas_ewds_compiler -- \
+            --out data/ewds.climate.copernicus.eu/glofas_ewds_coverage.manifest \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "glofas-ewds-cdn: glofas_ewds_coverage.manifest returned void" \
+                 "glofas_ewds_compiler returned void for the EWDS GloFAS catalogue listing. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

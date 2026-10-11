@@ -2,7 +2,7 @@
   title: Source-Port: Der eine Pfad
   class: concept
   date: 2026-10-11
-  sha256: f5659ddc309b48018a444587a5bf5e2687e2e59eed76439e2d326302cb63ce7e
+  sha256: 06825581e95d664a094fd3a26d82aa7ecb38827192565c3b240d7d60fc5680fa
   status: live
   see-also: docs/README.md AGENTS.md phi/sources.φ
 -->
@@ -371,11 +371,13 @@ Nur die **Schlüsselnamen** werden je gelesen, nie die Werte (Secret-Hygiene).
 
 - Name = Implementation. Keine Kommentare in φ-Dateien; Wissen lebt im
   Register und im Handover.
-- **Provenienz.** Ein behaltenes Fetch-Artefakt trägt an seinem lokalen Pfad
-  seine Quell-URL: über ein Werkzeug, das den Sidecar schreibt (`archive_search
-  --pdf-image`/`--arxiv-src` → `<artefakt>.src`), oder über den Ort
-  `data/<netloc>/<datei>`; ein rohes `curl -o`/Shell-Redirect schreibt im selben
-  Schritt `<artefakt>.src` (erste Zeile = exakte URL) — sonst keine kanonische
+- **Provenienz.** Ein behaltenes Fetch-Artefakt liegt als `data/<netloc>/<datei>`
+  (netloc = Host der Quell-URL) und trägt als Sidecar `<artefakt>.src` seine
+  Quell-URL (erste Zeile = exakte URL). Das Werkzeug schreibt den Sidecar an
+  seinen Schreibstellen (`archive_search --pdf-image`/`--arxiv-src` →
+  `<artefakt>.src`); ein rohes `curl -o`/Shell-Redirect schreibt im selben
+  Schritt `<artefakt>.src` und legt die Datei unter `data/<netloc>/` ab — ein
+  Artefakt ohne Sidecar oder außerhalb `data/<netloc>/` trägt keine kanonische
   Einordnung.
 - Ein Commit = ein Häkchen: das Handover-Register im selben Commit; Erledigtes
   wird entfernt.

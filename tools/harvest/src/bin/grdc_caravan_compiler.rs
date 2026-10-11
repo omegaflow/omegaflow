@@ -1,3 +1,4 @@
+use omegaflow::archivar::fetch::{RetryPolicy, fetch_raw_to_file_with};
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Hdf5Attribute, Hdf5File};
@@ -14,6 +15,7 @@ const COMPILER: &str = "tools/harvest/src/bin/grdc_caravan_compiler.rs";
 const ORIGIN: &str =
     "https://zenodo.org/api/records/15349031/files/GRDC_Caravan_extension_nc.zip/content";
 const TTL: f64 = 86400.0;
+const GRDC_TRANSFER_BOUND_S: u64 = 3 * 3600;
 
 const STREAMFLOW_VAR: &str = "streamflow";
 const TIME_VAR: &str = "time";
@@ -48,17 +50,8 @@ fn arg_values(args: &[String], name: &str) -> Vec<String> {
     out
 }
 
-fn curl_to_file(url: &str, path: &Path) -> bool {
-    Command::new("curl")
-        .arg("-sSL")
-        .arg("-m")
-        .arg("3600")
-        .arg("-o")
-        .arg(path)
-        .arg(url)
-        .output()
-        .map(|out| out.status.success())
-        .unwrap_or(false)
+fn fetch_to_file(url: &str, path: &Path) -> bool {
+    fetch_raw_to_file_with(url, RetryPolicy::All, GRDC_TRANSFER_BOUND_S, path).is_some()
 }
 
 fn attr_text(attr: &Hdf5Attribute) -> String {
@@ -448,7 +441,7 @@ fn main() {
     }
     for url in arg_values(&args, "--url") {
         let tmp = std::env::temp_dir().join(format!("grdc_{}.zip", std::process::id()));
-        if !curl_to_file(&url, &tmp) {
+        if !fetch_to_file(&url, &tmp) {
             eprintln!("{url}: fetch void — the bin stays unwritten (0 honored)");
             std::process::exit(1);
         }

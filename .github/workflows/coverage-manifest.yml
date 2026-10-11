@@ -67,6 +67,12 @@ jobs:
             # CNRA CKAN package_search (q=title:lidar, keyless); an offset walk bounded by the fixed
             # MAX_PAGES=200 / PAGE_SIZE=100 constants (this bin carries no bound flag)
             args: "--emit-ids data/data.cnra.ca.gov/ckan_coverage.ids"
+          - bin: usgs_lidar_coverage
+            netloc: usgs-lidar-public.s3.amazonaws.com
+            out: usgs_lidar_coverage.manifest
+            # the S3 walk of the USGS lidar public bucket follows continuation tokens to the end
+            # (bucket via flag; the listing is the 3DEP public archive of .laz/.copc.laz shards)
+            args: "--bucket usgs-lidar-public --jobs 8"
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
