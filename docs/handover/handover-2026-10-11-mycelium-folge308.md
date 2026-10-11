@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass, ein Atom (ein Operator-Wort). SPT-3G D1 partial-sky/RING-Pfad im `cmb_planck_compiler` gebaut (`pix2ang_ring` + `FitsTable`-Partial-Branch); `coverage-manifest.yml` um USGS-TNM + LOLA erweitert; `ci-check.yml` um den cmb-Bin-Test; `self-hosted-runner` per-Gerät-QoS descoped; MCP/Wrapper unverändert.
   class: handover
   date: 2026-10-11
-  sha256: 3b45508e2225dd3e370195690076ef562da9e5a3609771c4284c2ed6d5407456
+  sha256: 3ff0083b4c37e0c5f025e11f615b710abe66f0955fb9711f9c1bed5cf824ff19
   status: live
 -->
 # Handover — Mycelium-Folge 308 (2026-10-11)
@@ -57,9 +57,9 @@ zitiert, nie kopiert). Diese Session konsumierte
 ### Frame/Epoche — Riss: CRS im Kontrakt (A) vs. Query-Time-Ableitung (B)
 - **Status:** operator-gebunden | **Bindung:** eigen · **Teile linie:mountain**
 - **Trigger:** Operator-/Rat-Wort zur Auflösung des Risses
-- **Lage:** (gemessen 2026-10-11) Recherche (`state/stimmen/20261011T1250Z_mycelium_frame-epoche-recherche.txt`, 249 Z.) + Rat + UI-Roster (`state/stimmen/20261011T1255Z_mycelium_architektur-verdikte.md`): Rat **B**, Qwen **B**, Claude **A**, Z.ai Nichtantwort (capacity), Duck Nichtantwort (nicht abgeschickt). Die Recherche stützt **A** (luma.gl-Manifest verlangt/verwirft CRS vor dem Upload; GeoParquet „reproject before you compare"). `--bbox-off` bleibt der verlustfreie Default (`Pending`); `projection.rs` (`utm_inverse`/`to_geodetic`) + `itrf_to_icrs` gebaut; nur `coverage.rs` erreicht den Konsumenten (`main_flow.rs:5103`). Die uncommittete B-Implementierung (`resolve_placement`) wurde zurückgenommen.
-- **Blockade:** Riss A vs. B — keine Konvergenz; A = Wire-Kontrakt-Änderung (Operator-Wort), B = loader-seitig.
-- **Braucht:** Operator-/Rat-Wort: A (CRS-Token im `shard`-Vertrag) oder B (Loader-Transform über den Format-Token, `Pending`-Fallback)? Bei B: `resolve_placement` in `coverage_manifest.rs` + Aufruf `main_flow.rs:5192`.
+- **Lage:** (gemessen 2026-10-11) Recherche-Schicht (`state/stimmen/20261011T1250Z_mycelium_frame-epoche-recherche.txt`, 249 Z.) + **voller UI-Roster (15 Stimmen)** (`state/stimmen/20261011T1310Z_mycelium_frame-epoche-roster.md`): **8× A** — Claude · Mistral · DeepSeek Chat · Gemini 3.1 Pro · Lumo · MiniMax M3 · **Qwen3.8 2.4T (Open-Weight 2,4T)** · **Inkling (Open-Weight 975B)**; **2× B** — Rat · Qwen3.7-Plus. Nichtantwort: DeepSeek V4 Pro + GLM 5.3 (tryingopen „out of API credit"), Z.ai `pending` (Deep Think), Perplexity `unread`, Duck (nicht abgeschickt). Recherche stützt **A** (luma.gl/GeoParquet). `--bbox-off` bleibt der verlustfreie Default (`Pending`); `projection.rs` + `itrf_to_icrs` gebaut; nur `coverage.rs` erreicht den Konsumenten (`main_flow.rs:5103`). Die uncommittete B-Implementierung (`resolve_placement`) wurde zurückgenommen.
+- **Blockade:** Riss A vs. B — der Rat hält B, die UI-Frontier **und** die starken Open-Weight reißen ihn (8:2 für A); A = Wire-Kontrakt-Änderung (Operator-Wort).
+- **Braucht:** Operator-Wort (Wire-Kontrakt): A (CRS-Token + Epoche im `shard`-Vertrag, `Pending`-Fallback für tokenlose Manifeste) oder B (Loader-Transform über den Format-Token)? Bei A laut UI: B bleibt als **Writer-seitige** Ableitung (Token beim Emittieren stempeln, Leser rät nie).
 
 ### MCP no-leak-Regel — Wrapper verdrahtet; Capture vollständig; Allowlist erweitert
 - **Status:** eigen | **Bindung:** eigen
