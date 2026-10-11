@@ -4418,6 +4418,7 @@ struct RungMeasurement {
     te: Option<f64>,
     p: f64,
     tau_s: Vec<Option<f64>>,
+    lag: Option<usize>,
     pass: bool,
 }
 
@@ -4437,6 +4438,7 @@ fn measure_rung(
         te: None,
         p: 1.0,
         tau_s: required_native.to_vec(),
+        lag: None,
         pass: false,
     };
     let Ok((cell_columns, _, _)) = align_many(req_arms, seasonal, Some(rung.delta_s)) else {
@@ -4471,6 +4473,7 @@ fn measure_rung(
     ) {
         measurement.n_eff = cell.n_eff;
         measurement.te = Some(cell.te);
+        measurement.lag = Some(cell.lag);
         measurement.p = surrogate_rank_p_value(cell.te, &cell.surrogates).unwrap_or(1.0);
     }
     measurement
@@ -4612,6 +4615,7 @@ fn joint_columns(cols: &[&[Option<f64>]]) -> Vec<Vec<f32>> {
 struct CellTe {
     te: f64,
     n_eff: Option<f64>,
+    lag: usize,
     surrogates: Vec<f64>,
 }
 
@@ -4657,6 +4661,7 @@ fn cell_te_and_surrogates(
     Some(CellTe {
         te,
         n_eff: binned_n_eff(target, driver, lag, bins),
+        lag,
         surrogates: surr_max?,
     })
 }
@@ -5421,7 +5426,93 @@ fn run_pair_matrix(
         passed,
         outcomes.len()
     );
+    summary_graph_from_rungs(&outcomes);
     0
+}
+
+fn summary_edge(ladder: &[RungMeasurement]) -> Option<&RungMeasurement> {
+    ladder
+        .iter()
+        .filter(|m| m.te.is_some())
+        .min_by(|a, b| a.p.partial_cmp(&b.p).unwrap_or(std::cmp::Ordering::Equal))
+}
+
+fn summary_graph_from_rungs(outcomes: &[MatrixCellOutcome]) {
+    let mut edges = 0usize;
+    println!();
+    println!("summary graph — min-p rung per pair (Assaad 2022, no resampling)");
+    for o in outcomes {
+        match summary_edge(&o.ladder) {
+            Some(m) => {
+                let lag = match m.lag {
+                    Some(l) => format!("{l}"),
+                    None => "pending".to_string(),
+                };
+                let te = match m.te {
+                    Some(v) => format!("{v:.4e}"),
+                    None => "absent".to_string(),
+                };
+                println!(
+                    "summary {} | scale {:.0}s | lag {} | n {} | te {} | p {:.4} | {}",
+                    o.id,
+                    m.delta_s,
+                    lag,
+                    m.n,
+                    te,
+                    m.p,
+                    if m.pass { "pass" } else { "silent" }
+                );
+                if m.pass {
+                    edges += 1;
+                }
+            }
+            None => println!("summary {} | pending — no measured rung", o.id),
+        }
+    }
+    println!("summary graph: {edges} edge(s) pass at their native rung");
+}
+
+#[cfg(test)]
+mod summary_graph_tests {
+    use super::*;
+
+    fn rung(delta_s: f64, p: f64, te: Option<f64>) -> RungMeasurement {
+        RungMeasurement {
+            delta_s,
+            roles: Vec::new(),
+            n: 100,
+            n_eff: None,
+            te,
+            p,
+            tau_s: Vec::new(),
+            lag: Some(1),
+            pass: p < 0.05,
+        }
+    }
+
+    #[test]
+    fn summary_edge_takes_the_min_p_measured_rung() {
+        let ladder = vec![
+            rung(3600.0, 0.5, Some(0.1)),
+            rung(7200.0, 0.01, Some(0.2)),
+            rung(14400.0, 0.02, Some(0.3)),
+        ];
+        let edge = summary_edge(&ladder).expect("a measured rung exists");
+        assert_eq!(edge.delta_s, 7200.0);
+    }
+
+    #[test]
+    fn summary_edge_skips_rungs_without_a_measurement() {
+        let ladder = vec![rung(3600.0, 0.001, None), rung(7200.0, 0.5, Some(0.2))];
+        let edge = summary_edge(&ladder).expect("the measured rung survives");
+        assert_eq!(edge.delta_s, 7200.0);
+    }
+
+    #[test]
+    fn summary_edge_is_pending_without_a_measured_rung() {
+        let ladder = vec![rung(3600.0, 0.4, None), rung(7200.0, 0.7, None)];
+        assert!(summary_edge(&ladder).is_none());
+    }
 }
 
 fn period_means(
