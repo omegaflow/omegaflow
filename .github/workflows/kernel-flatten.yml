@@ -61,7 +61,6 @@ jobs:
             --systems planets,jupiter,saturn,mars,uranus,neptune,pluto,juice \
             --dest kernels \
             --ci-mode \
-            --omega-g phi/pipeline/catalog/solar_omega_g.φ \
             --index phi/sources_index.φ
       - name: Compile JUICE CoG attitude-referenced ephemeris and upload to CDN
         run: |
