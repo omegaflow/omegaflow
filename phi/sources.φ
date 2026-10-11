@@ -31400,6 +31400,15 @@ lat 0
 lon 1
 quantity 2 venera15_16_surface_radius_km inverse-square geometry km 33554432.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/download1.bayernwolke.de/32605_5282_20_DOM.bin
+terms CC-BY-4.0 https://www.geodaten.bayern.de/odd/m/3/html/nutzungsbedingungen.html
+format bdom
+origin https://download1.bayernwolke.de/a/dom20/DOM/32605_5282_20_DOM.tif
+compiler tools/harvest/src/bin/dom_compiler.rs
+sha256 a5da30f9f2766b6cfcb4e1898f097b8e9f0685c1bd08a3feaec54bc8a0acbaa8
+at earth
+ttl 63072000
+
 url https://github.com/omegaflow/sources/releases/download/geodata.ucdavis.edu/worldclim_tavg_10m.bin
 terms non-commercial https://www.worldclim.org/about.html
 format worldclim

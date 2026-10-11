@@ -4,7 +4,7 @@
   date: 2026-09-18
   sha256: c1d50f25f34a9b42a354ebf1f7f08250ddb655bb9309e511a72d40bef3822627
   status: live
-  see-also: phi/bindings/dust-maske.φ, phi/bindings/bathymetrie-gebco.φ, phi/canon.φ
+  see-also: tools/harvest/data/dust-maske.φ
 -->
 # Bindings — dust-maske + bathymetrie-gebco
 

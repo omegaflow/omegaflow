@@ -52,11 +52,11 @@ abk_dbdt_daily.tsv
 abk_dbdt_1h_SOD_2024.tsv
 fam_state_SOD_2024.txt
 
-# A=A: der verbindliche Register-Kanon ist in phi/canon.φ deklariert; eine
-# neue getrackte phi/*.φ-Datei ist ein Architektur-Akt (Operator/Council-Wort
-# + Kanon-Deklaration im selben Commit). Alle Register liegen flach in phi/.
+# A=A: der verbindliche Register-Kanon sind die 7 lebenden Register, fest im
+# Gate-Code deklariert (`REGISTER_CLASSES`, src/gate/commit_gate.rs); eine neue
+# getrackte phi/*.φ-Datei ist ein Architektur-Akt (Operator/Council-Wort +
+# REGISTER_CLASSES-Eintrag im selben Commit). Alle Register liegen flach in phi/.
 phi/*
-!phi/canon.φ
 !phi/sources.φ
 !phi/dead_sources.φ
 !phi/declined_sources.φ
