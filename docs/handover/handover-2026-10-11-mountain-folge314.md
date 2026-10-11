@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Taucherstaffel (10 Taucher) über alle offenen Punkte der folge313: Messungen, Riss-Auflösungen, verdikt-reife Vorlagen
   class: handover
   date: 2026-10-11
-  sha256: 411dfb84d4f274339470ad97aca416bf4fbdbb669abd4142efee97e18a57e762
+  sha256: 88fdeb248495fd79f9df4175d5f4dabcbaf3c3adaa7d403bfa24dbd16d5fcb7a
   status: live
 -->
 # Handover — Mountain-Folge 314 (2026-10-11)
@@ -55,22 +55,22 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 - **Status:** eigen (Register) | **Bindung:** eigen
 - **Trigger:** der nächste Register-Pass
 - **Lage:** (gemessen 2026-10-11) alle vier Portal-Coverage-Blöcke (`phi:11772`/`11105`/`11780`/`11113`) **und** Bayern-DOM (`:31728`)/VNP46A3 (`:2051`)/open-lidar-data (`:11788`) **stehen** — kein Set-Auftrag. Bayern-DOM **deckungsgleich** mit dem Vorschlag. Risse: **VNP46A3** `origin` = LAADS-Verzeichnis statt `.h5`; **open-lidar-data** `terms` CC-BY-3.0 (Vlaanderen) vs. CC0-1.0.
-- **Blockade:** `phi/sources.φ` trägt **fremde uncommittete Hunks** (40 deletions, nicht eigene) → Register-Edit erst bei sauberer Datei.
+- **Blockade:** die zwei Werte-Risse brauchen je eine Quellen-Messung (VNP46A3: LAADS-Verzeichnis vs. `.h5`; open-lidar-data: Vlaanderen CC-BY-3.0 vs. CC0-1.0).
 - **Braucht:** VNP46A3-`origin` und open-lidar-data-`terms` je gegen die Quelle messen, dann Verdikt setzen.
 
-### Riss — PDS/ESA-Missionsrouten `at`
-- **Status:** eigen (Register) | **Bindung:** eigen
-- **Trigger:** der nächste Register-Pass
-- **Lage:** (gemessen 2026-10-11) der Riss **löst sich**: ein ODF/ODR/RSR/TNF/RSS-Observable ist der Bodenstation-Empfang (DSN/ESA) — `at earth` ist physikalisch korrekt (alle Tracking-Compiler hart `at earth`; Rosetta-Felder `carrier_level_dbm`/`polar_angle_cycles` = IFMS-AGC am Boden). Die verglichenen Geschwister (`at galileo`/`at cassini`/…) sind eine **andere Datenklasse** (Ephemeride/in-situ/Gravimetrie), kein Widerspruch. **Ein echter Rest:** `voyager1_merged`/`voyager2_merged` (`phi:19831`/`:19843`) tragen In-situ-Felder (B, speed, density, temp) → `at earth` falsch; Geschwister `wind_waves` nutzt `at wind` → **`at voyager1`/`at voyager2`**.
-- **Blockade:** `phi/sources.φ` fremd-modifiziert (s. o.).
-- **Braucht:** `at voyager1`/`at voyager2` setzen, sobald das Register sauber ist.
+### PDS/ESA-Missionsrouten `at` — geklärt
+- **Status:** descoped | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) der Riss **löste sich**: ODF/ODR/RSR/TNF/RSS = Bodenstation-Empfang → `at earth` korrekt (Compiler hart `at earth`; Rosetta-AGC am Boden). Die Körper-Frame-Geschwister sind eine andere Datenklasse. Der eine echte Rest — `voyager1_merged`/`voyager2_merged` (In-situ-Felder B/Dichte/Temp) — ist **korrigiert** (`at voyager1`/`at voyager2`, `phi:19835`/`:19847`).
+- **Blockade:** keine.
+- **Braucht:** —
 
-### SuperMAG-Derivate — Keep-Entscheid + Riss (uncommittete Löschung)
-- **Status:** eigen (Register) | **Bindung:** eigen
-- **Trigger:** der nächste Register-Pass
-- **Lage:** (gemessen 2026-10-11) `sgrep -i substorm src tools` = Konsumenten **vorhanden**: `src/archivar/substorm.rs`, `tools/measure/src/bin/substorm_compare.rs`, `gic_onset_detector.rs`, `nobel_probe_bz.rs` → **Keep**. **Riss:** `phi/sources.φ` trägt **uncommittete** Arbeitsbaum-Deletionen (`git diff --numstat` = 0 add / 40 del) — genau die 5 `substorm_{forsyth,frey,liou,newell,ohtani}`-Blöcke (`:20011-20050`); **kein committeter Autor** (letzter phi-Commit `8d0b4c633` = Mountain 313, die Blöcke sind darin); nicht aus dieser Session. Die Deletion würde die vier Konsumenten orpharen.
-- **Blockade:** die uncommittete Fremd-Deletion steht im Weg jedes phi-Edits (nicht sweepbar ohne fremde Arbeit mitzunehmen).
-- **Braucht:** **Klärung des Autors** der Deletion (Operator/concurrent line?) — entweder die Blöcke **wiederherstellen** (Konsumenten-Beleg) oder die Konsumenten mit-abschaffen; erst danach die übrigen Mountain-Register-Verdikte setzen.
+### SuperMAG-Derivate — descoped (River, Redistribution)
+- **Status:** descoped | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) River committete `599cfd45b`: die 5 `substorm_{forsyth,frey,liou,newell,ohtani}`-Blöcke sind aus `phi/sources.φ` entfernt — Befund **„cannot be redistributed"** (Lizenz). Die vier Konsumenten (`src/archivar/substorm.rs`, `substorm_compare`, `gic_onset_detector`, `nobel_probe_bz`) verlieren ihre `.bin`-Quelle; `gic_onset_detector --null` ist im selben Commit.
+- **Blockade:** keine.
+- **Braucht:** — (River-Verdikt maßgeblich; der Konsumenten-Orphan ist mit dem Commit getragen).
 
 ### future-232 — MODVOLC/ITS_LIVE/MASIE Verdikt
 - **Status:** eigen (Register) | **Bindung:** eigen
@@ -142,12 +142,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 - **Blockade:** `phi/sources.φ` fremd-modifiziert (s. SuperMAG-Riss).
 - **Braucht:** je Klasse die `field`-Zeilen aus dem Reader-Schema setzen.
 
-### Mindat Level-1 — Wiedervorlage
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Freigabe Level 1 — Wiedervorlage 2026-10-13
-- **Lage:** (gemessen 2026-10-11, `state/zustand/wartend.φ:29`) kein keyless Bulk-Pfad (OpenMindat tokenpflichtig; `mindat.org/copyrights.php` CC-SA noch nicht in Kraft); `MINDAT_TOKEN` Level 0.
-- **Blockade:** externe Freigabe.
-- **Braucht:** Wiedervorlage 2026-10-13.
+### Mindat Level-1 — descoped (Operator-Wort)
+- **Status:** descoped | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) kein keyless Bulk-Pfad (OpenMindat tokenpflichtig, `MINDAT_TOKEN` Level 0); der Operator descopte es (Alternativen für Mineralkunde existieren). Zeile aus `state/zustand/wartend.φ` entfernt.
+- **Blockade:** keine.
+- **Braucht:** —
 
 ### iEEG — registriertes Wort maßgeblich
 - **Status:** wartend | **Bindung:** eigen
@@ -182,6 +182,7 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 - **„hä wir bitte du solltest eine taucherstaffel losschicken und du hast dich nur um copernicus gekümmert du sollst alle offenen punkte die die letzte session aufwändig dokumentiert hat umsetzen"** | 2026-10-11 | Operator-Session (mountain) — die Taucherstaffel über den gesamten Wartend-Auftrag losschicken, nicht nur einen Punkt.
 - **„die brauchen wir aber, oder hast du irgendeine idee, wie wir sie bekommen können? Nur A4 (ESA PSA) und A7 (ESA SPICE) Lizenz bleiben unmeasured"** | 2026-10-11 | Operator-Session (mountain) — A4/A7-Lizenz ist nötig; gemessen: ESA Science Archives = CC BY-NC 3.0 IGO. Lücke geschlossen.
 - **„bitte lasse eine taucherstaffel auf ALLE offenen punkte los"** | 2026-10-11 | Operator-Session (mountain) — die Taucherstaffel auf alle offenen Punkte der folge313; diese Session hat 10 Taucher dispatcht und jeden Punkt gemessen/zu seiner Kante gearbeitet.
+- **„Mindat Level-1 ist descoped ausser es dient als faden aber dann gibt es alternativen"** | 2026-10-11 | Operator-Session (mountain) — Mindat Level-1 descoped; die Wartend-Zeile entfernt.
 
 ## Abschluss
 
