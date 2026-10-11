@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — THEMIS-ASI-Querprobe GILL gemessen (kein aufgelöster Breakup; stream2-Keogramm achsenlos/nahezu leer), JUICE/Flyby-Trägerschaft von Sensory gefaltet
   class: handover
   date: 2026-10-11
-  sha256: c48abe4d0cb9f15ef62308d5e7792f20e4f26095b13a39b8fea89afd6bf4a8ad
+  sha256: ad3f3792777ddc15fe4ac79748a88d0b2f9c65f6f7083e0b0a23e935cd2c0d34
   status: live
 -->
 # Handover — River-Folge 188 (2026-10-11)
@@ -104,6 +104,7 @@ Origin: river-187 (2026-10-11).
 Origin: river-188 (2026-10-11).
 
 - **Optische Zeugenquelle — BGS-GIC + UCalgary `terms`/`ttl`:** (1) **BGS-GIC** liegt unter `https://geomag.bgs.ac.uk/data_service/space_weather/gic_services.html` (HTTP 200) — trägt aber nur den **B_GIC-Index** (Bild `images/delB.png`) + modelliertes UK-Geoelektrikfeld (15-min-Modell, Bilder), **keine Messreihe**; `wdc.bgs.ac.uk` = 206 in `state`. (2) UCalgary-SDR (`data.phys.ucalgary.ca` `stream0`/`stream2`) + `aurorax.space` brauchen `terms`/`ttl`; Berkeley `themis_asi` trägt bereits `terms free-open` (`phi/sources.φ:20854`). (3) **NERC-GMD**: `gmd-event-list` + Geschwister `gmd-training`/`gmd-reference-documents` (HTTP 200), aber **keine Event-Records** im DOM/XHR (nur Analytik); Roh-GMD hinter `eroportal.nerc.net` (Login) → nicht offen maschinenlesbar.
+- **Verdikt + `terms`/`ttl` + Form für die McPherron-Onset-Liste:** Zenodo **`10.5281/zenodo.22711679`**, **`cc-by-4.0`** (Zenodo-API gemessen 2026-10-11), Datei `CorrOnsFiles.zip` **10 193 824 B**, md5 `52951d852f4d5bf7ac092a7d304f2b26`. Die Liste ist ein **Onset-Katalog/Witness** (negative Bay / Substurm-Expansion), kein Feld — **Form-Entscheidung + `ttl`** (Mountain). Sie ist der **CDN-fähige, disjunkte Zwilling** der SuperMAG-Listen (die lokal-only bleiben, `substorm_compiler.rs:131-133`).
 
 ## An mycelium
 
@@ -118,6 +119,7 @@ Origin: river-187 (2026-10-11).
 Origin: river-188 (2026-10-11).
 
 - **Getimetes THEMIS-ASI-Keogramm:** ein kleiner Compiler, der aus den UCalgary-`stream0`-per-Minute-Frames (`…_full.pgm[.gz]`, UT im Dateinamen, 256×256 P5) **oder** der Berkeley `themis_asi`-CDF ein **getimtes** Keogramm (UT-Achse mitgeliefert) baut — die `stream2`-Keogramme sind achsenlos (gemessen 2026-10-11). Erst damit ist die Onset-Label-Methode verankerbar (River-188 §Disjunkter optischer Zeuge).
+- **McPherron-Onset-Liste auf CDN (CC-BY-4.0; heute nur live geholt):** ein neuer Harvest-Compiler `mcpherron_compiler.rs`, der `https://zenodo.org/api/records/22711679/files/CorrOnsFiles.zip/content` (10.2 MB) holt, die Onset-Reihe (`ftims.txt`) parst und als `.bin` schreibt; `--ci-mode` → CDN-Release `zenodo.org`; dazu `mcpherron-cdn.yml` (CI-only, Idempotenz-Guard wie `fmi-gic-cdn.yml`). Heute holt **nur** `substorm-compare.yml:35` die Liste live — kein Register, kein CDN. **SuperMAG bleibt lokal-only** (der Compiler verweigert `--ci-mode`), die McPherron-Liste ist der disjunkte, weiterverbreitbare Zwilling.
 
 ## An future
 
