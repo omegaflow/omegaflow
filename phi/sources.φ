@@ -220,24 +220,6 @@ at sun
 last flux noaa_goes_xray_flux_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.05-0.4nm
 last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.1-0.8nm
 
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H2_MFI&time.min=2010-01-01T00:00:00Z&time.max=2024-07-01T00:00:00Z&parameters=Magnitude,BGSM&format=json
-terms PD https://cdaweb.gsfc.nasa.gov/
-ttl 3600
-at sun
-hapi Magnitude=magnetosphere_imf_bt_nt BGSM.1=magnetosphere_imf_by_nt BGSM.2=magnetosphere_imf_bz_nt
-field magnetosphere_imf_bt_nt magnetosphere_imf_bt_nt inverse-square em nT 3600 0.0 0.0
-field magnetosphere_imf_by_nt magnetosphere_imf_by_nt inverse-square em nT 3600 0.0 0.0
-field magnetosphere_imf_bz_nt magnetosphere_imf_bz_nt inverse-square em nT 3600 0.0 0.0
-
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H2_SWE&time.min=2010-01-01T00:00:00Z&time.max=2024-07-01T00:00:00Z&parameters=Np,Vp,Tpr&format=json
-terms PD https://cdaweb.gsfc.nasa.gov/
-ttl 3600
-at sun
-hapi Np=solar_wind_density_cm3 Vp=solar_wind_speed_km_s Tpr=solar_wind_temp_k
-field solar_wind_speed_km_s solar_wind_speed_km_s patch-levy advective km/s 3600 0.0 400000.0
-field solar_wind_density_cm3 solar_wind_density_cm3 gaussian-inverse-square diffusion 1/cm3 3600 0.0 0.0
-field solar_wind_temp_k solar_wind_temp_k exponential-decay thermal K 3600 0.0 0.0
-
 url https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Lightning__Global_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 terms unknown https://services6.arcgis.com/
 ttl 60
@@ -708,6 +690,24 @@ lon lon
 field temp pirep_air_temp_c exponential-decay thermal C 360 0.0 0.0
 field wdir pirep_wind_direction_deg patch-levy advective deg 360 0.0 0.0
 field wspd pirep_wind_speed_knot patch-levy advective knot 360 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H2_MFI&time.min=2010-01-01T00:00:00Z&time.max=2024-07-01T00:00:00Z&parameters=Magnitude,BGSM&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
+ttl 3600
+at sun
+hapi Magnitude=magnetosphere_imf_bt_nt BGSM.1=magnetosphere_imf_by_nt BGSM.2=magnetosphere_imf_bz_nt
+field magnetosphere_imf_bt_nt magnetosphere_imf_bt_nt inverse-square em nT 3600 0.0 0.0
+field magnetosphere_imf_by_nt magnetosphere_imf_by_nt inverse-square em nT 3600 0.0 0.0
+field magnetosphere_imf_bz_nt magnetosphere_imf_bz_nt inverse-square em nT 3600 0.0 0.0
+
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H2_SWE&time.min=2010-01-01T00:00:00Z&time.max=2024-07-01T00:00:00Z&parameters=Np,Vp,Tpr&format=json
+terms PD https://cdaweb.gsfc.nasa.gov/
+ttl 3600
+at sun
+hapi Np=solar_wind_density_cm3 Vp=solar_wind_speed_km_s Tpr=solar_wind_temp_k
+field solar_wind_speed_km_s solar_wind_speed_km_s patch-levy advective km/s 3600 0.0 400000.0
+field solar_wind_density_cm3 solar_wind_density_cm3 gaussian-inverse-square diffusion 1/cm3 3600 0.0 0.0
+field solar_wind_temp_k solar_wind_temp_k exponential-decay thermal K 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_EDP_FAST_L2_DCE&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_edp_dce_gse_fast_l2&format=json
 terms PD https://cdaweb.gsfc.nasa.gov/
@@ -31288,6 +31288,10 @@ record sky1
 force em
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/bicepkeck.org/bk18_bandpowers_20210607.txt
+origin http://bicepkeck.org/BK18_datarelease/BK18_bandpowers_20210607.txt
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/crystallography.net/eels_acoustic.bin
 origin https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content
 compiler tools/harvest/src/bin/crystal_compiler.rs
@@ -31375,6 +31379,18 @@ origin procedure: Sentinel-1 GRD post-vs-pre SAR difference via s1_sar_compiler
 compiler tools/harvest/src/bin/s1_sar_compiler.rs
 format s1_sar
 at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ser.im-ldi.com/mariner_m10_edr.bin
+format mariner_m10_edr
+origin https://ser.im-ldi.com/M10/MVM/mvm_0001.tgz
+compiler tools/harvest/src/bin/mariner_m10_edr_compiler.rs
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_rst.bin
+format mariner_rst
+origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner4/celestial_mechanics/PSCM-00021_DD001528_05-DEC-64.tar ; https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/PSCM-00017_DD005408_05-MAR-69.tar ; https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner7/celestial_mechanics/2_way_doppler_radio_tracking/PSCM-00014_DD005409_12-APR-69.tar
+compiler tools/harvest/src/bin/mariner_rst_compiler.rs
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
@@ -32018,6 +32034,20 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at vesta
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_voyager1_spk.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/voyager_1.ST+1991_a54418u.merged.bsp
+compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
+at voyager1
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_voyager2_spk.bin
+format ephemeris_binary
+origin https://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/voyager_2.ST+1992_m05208u.merged.bsp
+compiler tools/harvest/src/bin/spacecraft_ephemeris_compiler.rs
+at voyager2
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_cassini.bin
 format ephemeris_binary
 terms PD https://ssd.jpl.nasa.gov/
@@ -32156,6 +32186,10 @@ compiler tools/harvest/src/bin/zcta_gazetteer_compiler.rs
 format zcta_gazetteer
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/jades_early_galaxies.tar
+origin https://zenodo.org/api/records/7460116/files/jades-early-galaxies.tar/content
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/llr.bin
 terms CC-BY-4.0 https://zenodo.org/records/7818557
 format llr
@@ -32175,6 +32209,10 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_
 witness substance
 record rixs
 force em
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/uncover_dr4_sps_catalog.fits
+origin https://zenodo.org/api/records/14281664/files/UNCOVER_DR4_SPS_catalog.fits/content
 no-cadence
 
 url https://gracedb.ligo.org/api/superevents/S250207bg/files/
