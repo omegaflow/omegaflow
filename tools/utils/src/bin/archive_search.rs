@@ -32,6 +32,8 @@ mod copernicus;
 mod core_api;
 #[path = "archive_search/datacite.rs"]
 mod datacite;
+#[path = "archive_search/dataeuropa.rs"]
+mod dataeuropa;
 #[path = "archive_search/dataverse.rs"]
 mod dataverse;
 #[path = "archive_search/doaj.rs"]
@@ -441,6 +443,7 @@ fn main() {
             "--googlecse" => mode = Mode::Net("googlecse"),
             "--ckan" => mode = Mode::Net("ckan"),
             "--cmr" => mode = Mode::Net("cmr"),
+            "--dataeuropa" => mode = Mode::Net("dataeuropa"),
             "--tap" => mode = Mode::Net("tap"),
             "--pangaea" => mode = Mode::Net("pangaea"),
             "--re3data" => mode = Mode::Net("re3data"),
@@ -854,6 +857,9 @@ fn usage() {
     );
     eprintln!(
         "  --cmr       NASA Earthdata CMR collection search (cmr.earthdata.nasa.gov), keyless; url + title/short_name/provider/summary"
+    );
+    eprintln!(
+        "  --dataeuropa EU Open Data Portal search (data.europa.eu/api/hub/search), keyless; url + title/publisher/country/issued/description"
     );
     eprintln!(
         "  --dryad     Dryad research-data search (datadryad.org/api/v2/search), keyless; doi + title/authors/abstract"
