@@ -1,16 +1,44 @@
 const BZ_MAX_CODE_LEN: usize = 23;
 
-struct Bits<'a> {
+trait ByteSource {
+    fn next(&mut self) -> Option<u8>;
+}
+
+struct SliceSource<'a> {
     data: &'a [u8],
+    pos: usize,
+}
+
+impl ByteSource for SliceSource<'_> {
+    fn next(&mut self) -> Option<u8> {
+        let b = *self.data.get(self.pos)?;
+        self.pos += 1;
+        Some(b)
+    }
+}
+
+struct ReaderSource<R> {
+    reader: R,
+}
+
+impl<R: std::io::Read> ByteSource for ReaderSource<R> {
+    fn next(&mut self) -> Option<u8> {
+        let mut b = [0u8; 1];
+        self.reader.read_exact(&mut b).ok().map(|()| b[0])
+    }
+}
+
+struct Bits<S: ByteSource> {
+    src: S,
     pos: usize,
     buf: u64,
     live: u32,
 }
 
-impl<'a> Bits<'a> {
-    fn new(data: &'a [u8]) -> Self {
+impl<S: ByteSource> Bits<S> {
+    fn new(src: S) -> Self {
         Bits {
-            data,
+            src,
             pos: 0,
             buf: 0,
             live: 0,
@@ -19,7 +47,7 @@ impl<'a> Bits<'a> {
 
     fn read(&mut self, n: u32) -> Option<u64> {
         while self.live < n {
-            let b = *self.data.get(self.pos)? as u64;
+            let b = self.src.next()? as u64;
             self.pos += 1;
             self.buf = (self.buf << 8) | b;
             self.live += 8;
@@ -89,7 +117,7 @@ fn build_table(lengths: &[u8]) -> Option<DecodeTable> {
     })
 }
 
-fn decode_sym(bits: &mut Bits, tab: &DecodeTable) -> Option<u16> {
+fn decode_sym<S: ByteSource>(bits: &mut Bits<S>, tab: &DecodeTable) -> Option<u16> {
     let mut zn = tab.min_len as u32;
     let mut zvec = bits.read(zn)? as i32;
     loop {
@@ -106,8 +134,8 @@ fn decode_sym(bits: &mut Bits, tab: &DecodeTable) -> Option<u16> {
     tab.perm.get(idx).copied()
 }
 
-fn next_sym(
-    bits: &mut Bits,
+fn next_sym<S: ByteSource>(
+    bits: &mut Bits<S>,
     selector: &[u8],
     tabs: &[DecodeTable],
     group_no: &mut i32,
@@ -181,7 +209,7 @@ fn rle_expand(block: &[u8]) -> Option<Vec<u8>> {
     Some(out)
 }
 
-fn decode_block(bits: &mut Bits, orig_ptr: usize) -> Option<Vec<u8>> {
+fn decode_block<S: ByteSource>(bits: &mut Bits<S>, orig_ptr: usize) -> Option<Vec<u8>> {
     let used_map = bits.read(16)? as u16;
     let mut in_use = [false; 256];
     let mut n_in_use = 0usize;
@@ -369,7 +397,10 @@ pub fn decompress(data: &[u8]) -> Option<Vec<u8>> {
         if !(b'1'..=b'9').contains(&stream[3]) {
             break;
         }
-        let mut bits = Bits::new(&stream[4..]);
+        let mut bits = Bits::new(SliceSource {
+            data: &stream[4..],
+            pos: 0,
+        });
         let mut combined_crc = 0u32;
         loop {
             let magic = bits.read(48)?;
@@ -406,6 +437,133 @@ pub fn decompress(data: &[u8]) -> Option<Vec<u8>> {
     if out.is_empty() { None } else { Some(out) }
 }
 
+pub struct Bz2Decoder<R: std::io::Read> {
+    bits: Bits<ReaderSource<R>>,
+    block: Vec<u8>,
+    block_pos: usize,
+    combined_crc: u32,
+    done: bool,
+}
+
+impl<R: std::io::Read> Bz2Decoder<R> {
+    pub fn new(reader: R) -> std::io::Result<Self> {
+        let mut bits = Bits::new(ReaderSource { reader });
+        let mut header = [0u8; 4];
+        for slot in header.iter_mut() {
+            *slot = bits.src.next().ok_or_else(|| {
+                std::io::Error::new(std::io::ErrorKind::InvalidData, "bzip2 header absent")
+            })?;
+        }
+        if &header[0..3] != b"BZh" || !(b'1'..=b'9').contains(&header[3]) {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "bzip2 header malformed",
+            ));
+        }
+        Ok(Bz2Decoder {
+            bits,
+            block: Vec::new(),
+            block_pos: 0,
+            combined_crc: 0,
+            done: false,
+        })
+    }
+
+    fn next_block(&mut self) -> std::io::Result<()> {
+        let magic = self.bits.read(48).ok_or_else(|| {
+            std::io::Error::new(
+                std::io::ErrorKind::UnexpectedEof,
+                "bzip2 stream ended early",
+            )
+        })?;
+        if magic == 0x177245385090 {
+            let stored = self.bits.read(32).ok_or_else(|| {
+                std::io::Error::new(std::io::ErrorKind::UnexpectedEof, "bzip2 stream CRC absent")
+            })? as u32;
+            if stored != self.combined_crc {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    "bzip2 combined CRC mismatch",
+                ));
+            }
+            self.done = true;
+            return Ok(());
+        }
+        if magic != 0x314159265359 {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "bzip2 block magic absent",
+            ));
+        }
+        let stored_block_crc = self.bits.read(32).ok_or_else(|| {
+            std::io::Error::new(std::io::ErrorKind::UnexpectedEof, "bzip2 block CRC absent")
+        })? as u32;
+        let randomised = self.bits.read(1).ok_or_else(|| {
+            std::io::Error::new(
+                std::io::ErrorKind::UnexpectedEof,
+                "bzip2 randomised bit absent",
+            )
+        })?;
+        if randomised != 0 {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "bzip2 randomised block refused",
+            ));
+        }
+        let orig_ptr = self.bits.read(24).ok_or_else(|| {
+            std::io::Error::new(
+                std::io::ErrorKind::UnexpectedEof,
+                "bzip2 orig pointer absent",
+            )
+        })? as usize;
+        let block = decode_block(&mut self.bits, orig_ptr).ok_or_else(|| {
+            std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "bzip2 block decode returned void",
+            )
+        })?;
+        if crc32(&block) != stored_block_crc {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "bzip2 block CRC mismatch",
+            ));
+        }
+        self.combined_crc = self.combined_crc.rotate_left(1);
+        self.combined_crc ^= stored_block_crc;
+        self.block = block;
+        self.block_pos = 0;
+        Ok(())
+    }
+}
+
+impl<R: std::io::Read> std::io::Read for Bz2Decoder<R> {
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        if buf.is_empty() {
+            return Ok(0);
+        }
+        loop {
+            if self.block_pos < self.block.len() {
+                let n = buf.len().min(self.block.len() - self.block_pos);
+                buf[..n].copy_from_slice(&self.block[self.block_pos..self.block_pos + n]);
+                self.block_pos += n;
+                return Ok(n);
+            }
+            if self.done {
+                return Ok(0);
+            }
+            self.next_block()?;
+        }
+    }
+}
+
+pub fn decompress_reader<R: std::io::Read, W: std::io::Write>(
+    reader: R,
+    out: &mut W,
+) -> std::io::Result<u64> {
+    let mut dec = Bz2Decoder::new(reader)?;
+    std::io::copy(&mut dec, out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -433,5 +591,25 @@ mod tests {
         assert!(decompress(b"").is_none());
         assert!(decompress(b"PK\x03\x04").is_none());
         assert!(decompress(b"BZh9").is_none());
+    }
+
+    #[test]
+    fn decompress_reader_matches_decompress() {
+        let bz = from_hex(
+            "425a6839314159265359e400c03c000054d980001040017fe03ffffff02000890ca8f500320034d01a34055290f5340d\
+             34001a6869e9a91f8a1a0402178d83c6425343820704d428acf6458566d371bce0718e91acf6d9117aa5e7c315c6660e\
+             64cc5484982a4cac92e4d245a5cadba16a4b13796589d145a86f570e2fc5dc914e14243900300f00",
+        );
+        let expected = decompress(&bz).unwrap();
+        let mut out = Vec::new();
+        let n = decompress_reader(std::io::Cursor::new(&bz), &mut out).unwrap();
+        assert_eq!(n as usize, expected.len());
+        assert_eq!(out, expected);
+    }
+
+    #[test]
+    fn decompress_reader_rejects_foreign_bytes() {
+        let mut out = Vec::new();
+        assert!(decompress_reader(std::io::Cursor::new(b"PK\x03\x04"), &mut out).is_err());
     }
 }
