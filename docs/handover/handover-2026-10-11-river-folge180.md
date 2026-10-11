@@ -3,7 +3,7 @@
   session: River-Folge 180
   class: handover
   date: 2026-10-11
-  sha256: 1c5c357802b34a45fa9bf98b826cf36ad01267fd967d55f73bdcb67291eb0fa0
+  sha256: dc338902e1ed2f5d57dfa293f033913e462a35eb71f08dbaaa1f81838becb709
   status: live
 -->
 # Handover — River-Folge 180 (2026-10-11)
@@ -20,7 +20,7 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
 **parallel** abgearbeitet; jeder wird **aufgeschlüsselt** geführt
 (**Trigger** / **Lage** / **Blockade** / **Braucht**).
 
-## Burn: open 0.0000 · close 0.0599 · cap 0.15 — Grund: River F180 Ein-Pass (deepseek-flash), kein pro/max, kein Diver; ein eigener Bin-Bau (`cargo build -p omegaflow-measure --bin field_te_query`) + `cargo check` + `cargo fmt` grün; die eigene `line`-Session „River-Linie Übergabe in einem Pass" bei $0.0599 (opencode.db zur Messzeit).
+## Burn: open 0.0000 · close 0.0728 · cap 0.15 — Grund: River F180 Ein-Pass (deepseek-flash), kein pro/max, kein Diver; ein eigener Bin-Bau (`cargo build -p omegaflow-measure --bin field_te_query`) + `cargo check` + `cargo fmt` grün; die eigene `line`-Session „River-Linie Übergabe in einem Pass" bei $0.0728 (opencode.db zur Messzeit).
 
 ## Operator-Wort-Register
 
