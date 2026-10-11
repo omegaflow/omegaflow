@@ -7,6 +7,8 @@ use std::path::Path;
 const COMPILER: &str = "tools/harvest/src/bin/coverage.rs";
 const DEFAULT_COLLECTION: &str = "3dep-lidar-copc";
 const DEFAULT_ROOT: &str = "https://planetarycomputer.microsoft.com/api/stac/v1";
+const TNM_ROOT: &str = "https://tnmaccess.nationalmap.gov/api/v1/products";
+const TNM_DATASET: &str = "Lidar Point Cloud (LPC)";
 const MANIFEST_NAME: &str = "coverage.manifest";
 const PAGE_LIMIT: usize = 1000;
 const MAX_PAGES: usize = 5000;
@@ -430,6 +432,132 @@ fn enumerate(
     Ok((tiles, pages))
 }
 
+fn encode_query(value: &str) -> String {
+    let mut out = String::with_capacity(value.len());
+    for b in value.bytes() {
+        match b {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                out.push(b as char)
+            }
+            _ => out.push_str(&format!("%{b:02X}")),
+        }
+    }
+    out
+}
+
+fn tnm_items_url(root: &str, dataset: &str, max: usize, offset: usize) -> String {
+    format!(
+        "{}?datasets={}&outputFormat=JSON&max={max}&offset={offset}",
+        root.trim_end_matches('/'),
+        encode_query(dataset)
+    )
+}
+
+fn tnm_id(item: &Json) -> Option<String> {
+    for key in ["id", "sourceId", "title"] {
+        if let Some(value) = item
+            .get(key)
+            .and_then(Json::as_str)
+            .filter(|s| !s.is_empty())
+        {
+            return Some(value.to_string());
+        }
+    }
+    None
+}
+
+fn tnm_laz_href(item: &Json) -> Option<String> {
+    for key in ["downloadURL", "downloadLazURL"] {
+        if let Some(href) = item
+            .get(key)
+            .and_then(Json::as_str)
+            .filter(|h| h.starts_with("http"))
+        {
+            return Some(href.to_string());
+        }
+    }
+    if let Some(urls) = item.get("urls").and_then(Json::as_arr) {
+        for entry in urls {
+            let href = entry
+                .as_str()
+                .or_else(|| entry.get("url").and_then(Json::as_str));
+            if let Some(href) = href.filter(|h| h.starts_with("http")) {
+                return Some(href.to_string());
+            }
+        }
+    }
+    None
+}
+
+fn parse_tnm_page(body: &str) -> Result<(Vec<Tile>, usize, Option<usize>), String> {
+    let root = parse_json(body)?;
+    let mut tiles = Vec::new();
+    let mut raw = 0usize;
+    if let Some(items) = root.get("items").and_then(Json::as_arr) {
+        raw = items.len();
+        for item in items {
+            if let Some(href) = tnm_laz_href(item) {
+                tiles.push(Tile {
+                    href,
+                    bbox: None,
+                    id: tnm_id(item),
+                    epoch: item
+                        .get("publicationDate")
+                        .and_then(Json::as_str)
+                        .map(|s| s.to_string()),
+                });
+            }
+        }
+    }
+    let total = root.get("total").and_then(Json::as_f64).and_then(|t| {
+        if t.is_finite() && t >= 0.0 {
+            Some(t as usize)
+        } else {
+            None
+        }
+    });
+    Ok((tiles, raw, total))
+}
+
+fn tnm_enumerate(
+    root: &str,
+    dataset: &str,
+    max: usize,
+    max_pages: usize,
+) -> Result<(Vec<Tile>, usize, String), String> {
+    let first = tnm_items_url(root, dataset, max, 0);
+    let mut tiles = Vec::new();
+    let mut pages = 0usize;
+    let mut offset = 0usize;
+    loop {
+        let url = tnm_items_url(root, dataset, max, offset);
+        let body = stac_fetch(&url).ok_or_else(|| {
+            format!(
+                "TNM page {} returned void ({url}) — the walk stays incomplete",
+                pages + 1
+            )
+        })?;
+        let (page, raw, total) = parse_tnm_page(&body)?;
+        pages += 1;
+        tiles.extend(page);
+        offset += raw;
+        if raw < max {
+            break;
+        }
+        if let Some(total) = total {
+            if offset >= total {
+                break;
+            }
+        }
+        if pages >= max_pages {
+            return Err(format!(
+                "TNM walk reached the page bound {max_pages} — the walk stays incomplete"
+            ));
+        }
+    }
+    Ok((tiles, pages, first))
+}
+
 fn manifest_lines(tiles: &[Tile], emit_bbox: bool) -> Vec<String> {
     let mut out = Vec::with_capacity(tiles.len());
     for t in tiles {
@@ -457,7 +585,7 @@ fn id_lines(tiles: &[Tile]) -> Vec<String> {
 fn run(args: &[String]) -> Result<(), String> {
     if args.iter().any(|a| a == "--help") {
         eprintln!(
-            "usage: coverage --kind stac [--collection <id>] [--url <stac-root>] [--out <manifest>] [--limit <n>] [--jobs <n>] [--bbox|--bbox-off] [--emit-ids <path>] [--ci-mode]  (default: url-only shard lines; --bbox emits the STAC bbox; --emit-ids writes a tile-id sidecar)"
+            "usage: coverage --kind <stac|tnm> [--collection <id>] [--url <root>] [--out <manifest>] [--limit <n>] [--jobs <n>] [--bbox|--bbox-off] [--emit-ids <path>] [--ci-mode]  (default: url-only shard lines). stac: <stac-root>/collections/<id>/items, a next-link chain, page bound {MAX_PAGES}; tnm: https://tnmaccess.nationalmap.gov/api/v1/products?datasets=Lidar%20Point%20Cloud%20(LPC), an offset walk (max {PAGE_LIMIT}), page bound {MAX_PAGES}. --bbox emits the STAC bbox; the TNM bbox stays absent (lon/lat degrees, no ICRS transform), so tnm is url-only; --emit-ids writes a tile-id sidecar"
         );
         return Ok(());
     }
@@ -465,18 +593,27 @@ fn run(args: &[String]) -> Result<(), String> {
         Some(k) => k,
         None => return Err("--kind absent — no arm selected".to_string()),
     };
-    if kind != "stac" {
-        return Err(format!(
-            "--kind {kind}: this build carries the stac arm only"
-        ));
-    }
-    let collection = match arg_value(args, "--collection").filter(|c| !c.is_empty()) {
-        Some(c) => c,
-        None => DEFAULT_COLLECTION.to_string(),
+    let tnm = match kind.as_str() {
+        "stac" => false,
+        "tnm" => true,
+        other => {
+            return Err(format!(
+                "--kind {other}: this build carries the stac and tnm arms"
+            ));
+        }
     };
-    if collection.contains('/')
-        || collection.contains('?')
-        || collection.contains(char::is_whitespace)
+    let collection = if tnm {
+        String::new()
+    } else {
+        match arg_value(args, "--collection").filter(|c| !c.is_empty()) {
+            Some(c) => c,
+            None => DEFAULT_COLLECTION.to_string(),
+        }
+    };
+    if !tnm
+        && (collection.contains('/')
+            || collection.contains('?')
+            || collection.contains(char::is_whitespace))
     {
         return Err(format!(
             "--collection {collection}: not a collection id — refused"
@@ -484,6 +621,7 @@ fn run(args: &[String]) -> Result<(), String> {
     }
     let root = match arg_value(args, "--url").filter(|u| !u.is_empty()) {
         Some(u) => u,
+        None if tnm => TNM_ROOT.to_string(),
         None => DEFAULT_ROOT.to_string(),
     };
     let netloc = netloc_of(&root).ok_or_else(|| format!("--url {root}: no host readable"))?;
@@ -508,15 +646,20 @@ fn run(args: &[String]) -> Result<(), String> {
     };
     if jobs > 1 {
         eprintln!(
-            "coverage: the STAC items walk is a next-link chain — {jobs} workers collapse to one"
+            "coverage: the {kind} walk is a single-cursor chain — {jobs} workers collapse to one"
         );
     }
 
-    let items_url = items_url(&root, &collection, limit);
-    let (mut tiles, pages) = enumerate(&root, &collection, limit, MAX_PAGES)?;
+    let (mut tiles, pages, origin_url) = if tnm {
+        tnm_enumerate(&root, TNM_DATASET, limit, MAX_PAGES)?
+    } else {
+        let origin = items_url(&root, &collection, limit);
+        let (tiles, pages) = enumerate(&root, &collection, limit, MAX_PAGES)?;
+        (tiles, pages, origin)
+    };
     if pages == 0 || tiles.is_empty() {
         return Err(format!(
-            "{collection}: the STAC walk carries no COPC tile — nothing manifestiert (0 honored)"
+            "{kind}: the walk carries no shard — nothing manifestiert (0 honored)"
         ));
     }
     tiles.sort_by(|a, b| a.href.cmp(&b.href));
@@ -544,7 +687,7 @@ fn run(args: &[String]) -> Result<(), String> {
         ));
     }
     eprintln!(
-        "coverage: {collection}: {pages} pages, {} tiles -> {out}",
+        "coverage: {kind}: {pages} pages, {} tiles -> {out}",
         tiles.len()
     );
 
@@ -566,7 +709,7 @@ fn run(args: &[String]) -> Result<(), String> {
     }
 
     println!("url {CDN_BASE}/{netloc}/{out_name}");
-    println!("origin {items_url}");
+    println!("origin {origin_url}");
     println!("compiler {COMPILER}");
     println!("format coverage_manifest");
 
@@ -650,5 +793,29 @@ mod tests {
             "tile-a\t2021-05-01T00:00:00Z\thttps://storage.example/tile-a.copc.laz"
         );
         assert_eq!(lines[1], "-\t-\thttps://storage.example/tile-b.copc.laz");
+    }
+
+    #[test]
+    fn tnm_page_keeps_the_laz_url_and_skips_an_item_without_one() {
+        let body = r#"{"total":9755359,"items":[
+{"title":"MD_AnneArundel_2018","publicationDate":"2018-05-01","downloadURL":"https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/Projects/MD_AnneArundel_2018/tile.laz","boundingBox":{"minX":-76.6,"maxX":-76.4,"minY":38.9,"maxY":39.1}},
+{"title":"no-laz-here","publicationDate":"2019-01-01","boundingBox":{"minX":-77.0,"maxX":-76.9,"minY":39.0,"maxY":39.1}}
+]}"#;
+        let (tiles, raw, total) = parse_tnm_page(body).expect("page parses");
+        assert_eq!(raw, 2);
+        assert_eq!(total, Some(9755359));
+        assert_eq!(tiles.len(), 1);
+        assert_eq!(
+            tiles[0].href,
+            "https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/Projects/MD_AnneArundel_2018/tile.laz"
+        );
+        assert_eq!(tiles[0].id.as_deref(), Some("MD_AnneArundel_2018"));
+        assert_eq!(tiles[0].epoch.as_deref(), Some("2018-05-01"));
+        assert_eq!(
+            manifest_lines(&tiles, true),
+            vec![
+                "shard https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/Projects/MD_AnneArundel_2018/tile.laz".to_string()
+            ]
+        );
     }
 }

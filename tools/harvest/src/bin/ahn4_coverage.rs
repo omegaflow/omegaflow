@@ -9,6 +9,7 @@ const COMPILER: &str = "tools/harvest/src/bin/ahn4_coverage.rs";
 const NETLOC: &str = "ns_hwh.fundaments.nl";
 const FEATURE_SERVER: &str = "https://services.arcgis.com/nSZVuSZjHpEZZbRo/arcgis/rest/services/Kaartbladen_AHN4/FeatureServer/0";
 const LAZ_FIELD: &str = "AHN4_LAZ";
+const ID_FIELD: &str = "Name";
 const PAGE_LIMIT: usize = 2000;
 const MAX_PAGES: usize = 100;
 
@@ -16,7 +17,7 @@ const MAX_PAGES: usize = 100;
 enum Json {
     Null,
     Bool(bool),
-    Num,
+    Num(String),
     Str(String),
     Arr(Vec<Json>),
     Obj(Vec<(String, Json)>),
@@ -87,7 +88,7 @@ impl<'a> JsonParser<'a> {
         let raw = std::str::from_utf8(&self.b[start..self.i])
             .map_err(|_| "json: number not utf8".to_string())?;
         raw.parse::<f64>()
-            .map(|_| Json::Num)
+            .map(|_| Json::Num(raw.to_string()))
             .map_err(|_| format!("json: number '{raw}' unreadable"))
     }
 
@@ -260,6 +261,13 @@ impl Json {
         }
     }
 
+    fn as_num_str(&self) -> Option<&str> {
+        match self {
+            Json::Num(s) => Some(s),
+            _ => None,
+        }
+    }
+
     fn as_arr(&self) -> Option<&[Json]> {
         match self {
             Json::Arr(a) => Some(a),
@@ -270,6 +278,8 @@ impl Json {
 
 struct Tile {
     url: String,
+    id: Option<String>,
+    epoch: Option<String>,
 }
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -289,6 +299,16 @@ fn is_lidar_url(url: &str) -> bool {
     path.ends_with(".laz") || path.ends_with(".las") || path.ends_with(".copc.laz")
 }
 
+fn tile_id(attributes: &Json) -> Option<String> {
+    if let Some(name) = attributes.get(ID_FIELD).and_then(Json::as_str) {
+        return Some(name.to_string());
+    }
+    attributes
+        .get("OBJECTID")
+        .and_then(Json::as_num_str)
+        .map(|s| s.to_string())
+}
+
 fn parse_tiles(body: &str) -> Result<(Vec<Tile>, bool), String> {
     let root = parse_json(body)?;
     let features = root.get("features").and_then(Json::as_arr).ok_or_else(|| {
@@ -296,13 +316,14 @@ fn parse_tiles(body: &str) -> Result<(Vec<Tile>, bool), String> {
     })?;
     let mut tiles = Vec::new();
     for feature in features {
-        if let Some(url) = feature
-            .get("attributes")
-            .and_then(|a| a.get(LAZ_FIELD))
-            .and_then(Json::as_str)
-        {
+        let Some(attributes) = feature.get("attributes") else {
+            continue;
+        };
+        if let Some(url) = attributes.get(LAZ_FIELD).and_then(Json::as_str) {
             tiles.push(Tile {
                 url: url.to_string(),
+                id: tile_id(attributes),
+                epoch: None,
             });
         }
     }
@@ -312,7 +333,7 @@ fn parse_tiles(body: &str) -> Result<(Vec<Tile>, bool), String> {
 
 fn query_url(base: &str, offset: usize) -> String {
     format!(
-        "{base}/query?where=1%3D1&outFields={LAZ_FIELD}&returnGeometry=false&resultRecordCount={PAGE_LIMIT}&resultOffset={offset}&f=json"
+        "{base}/query?where=1%3D1&outFields={ID_FIELD},{LAZ_FIELD}&returnGeometry=false&resultRecordCount={PAGE_LIMIT}&resultOffset={offset}&f=json"
     )
 }
 
@@ -349,26 +370,49 @@ fn enumerate(base: &str) -> Result<(Vec<Tile>, usize), String> {
     Ok((tiles, pages))
 }
 
+fn shard_url(base: &str, url: &str) -> String {
+    if url.starts_with("http://") || url.starts_with("https://") {
+        url.to_string()
+    } else {
+        format!(
+            "{}/{}",
+            base.trim_end_matches('/'),
+            url.trim_start_matches('/')
+        )
+    }
+}
+
 fn manifest_lines(base: &str, tiles: &[Tile]) -> Vec<String> {
     let mut out = Vec::new();
     for tile in tiles {
         if !is_lidar_url(&tile.url) {
             continue;
         }
-        if tile.url.starts_with("http://") || tile.url.starts_with("https://") {
-            out.push(format!("shard {}", tile.url));
-        } else {
-            out.push(format!(
-                "shard {}/{}",
-                base.trim_end_matches('/'),
-                tile.url.trim_start_matches('/')
-            ));
+        out.push(format!("shard {}", shard_url(base, &tile.url)));
+    }
+    out
+}
+
+fn id_lines(base: &str, tiles: &[Tile]) -> Vec<String> {
+    let mut out = Vec::new();
+    for tile in tiles {
+        if !is_lidar_url(&tile.url) {
+            continue;
         }
+        let id = tile.id.as_deref().unwrap_or("-");
+        let epoch = tile.epoch.as_deref().unwrap_or("-");
+        out.push(format!("{id}\t{epoch}\t{}", shard_url(base, &tile.url)));
     }
     out
 }
 
 fn run(args: &[String]) -> Result<(), String> {
+    if args.iter().any(|a| a == "--help") {
+        eprintln!(
+            "usage: ahn4_coverage [--base <feature-server-layer>] [--out <manifest>] [--emit-ids <path>] [--ci-mode]  (default: url-only shard lines; --emit-ids writes a tile-id sidecar)"
+        );
+        return Ok(());
+    }
     let base = match arg_value(args, "--base").filter(|b| !b.is_empty()) {
         Some(b) => b,
         None => FEATURE_SERVER.to_string(),
@@ -382,6 +426,7 @@ fn run(args: &[String]) -> Result<(), String> {
         None => MANIFEST_NAME.to_string(),
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let emit_ids = arg_value(args, "--emit-ids").filter(|p| !p.is_empty());
 
     let (tiles, pages) = enumerate(&base)?;
     if pages == 0 || tiles.is_empty() {
@@ -423,8 +468,25 @@ fn run(args: &[String]) -> Result<(), String> {
         lines.len()
     );
 
+    if let Some(path) = emit_ids.as_deref() {
+        let id_lines = id_lines(&format!("https://{NETLOC}"), &tiles);
+        let mut id_text = String::with_capacity(id_lines.len() * 112);
+        for line in &id_lines {
+            id_text.push_str(line);
+            id_text.push('\n');
+        }
+        if let Some(parent) = Path::new(path).parent() {
+            if !parent.as_os_str().is_empty() {
+                fs::create_dir_all(parent)
+                    .map_err(|e| format!("create {} returned void: {e}", parent.display()))?;
+            }
+        }
+        fs::write(path, &id_text).map_err(|e| format!("write {path} returned void: {e}"))?;
+        eprintln!("ahn4_coverage: {} tile ids -> {path}", id_lines.len());
+    }
+
     println!("url {CDN_BASE}/{NETLOC}/{out_name}");
-    println!("origin {base}/query?where=1%3D1&outFields={LAZ_FIELD}");
+    println!("origin {base}/query?where=1%3D1&outFields={ID_FIELD},{LAZ_FIELD}");
     println!("compiler {COMPILER}");
     println!("format ahn4_coverage");
 
@@ -491,8 +553,25 @@ mod tests {
     fn the_query_url_carries_the_offset_and_the_laz_field() {
         let url = query_url(FEATURE_SERVER, 2000);
         assert!(url.starts_with(FEATURE_SERVER));
-        assert!(url.contains("outFields=AHN4_LAZ"));
+        assert!(url.contains("outFields=Name,AHN4_LAZ"));
         assert!(url.contains("resultOffset=2000"));
         assert!(url.contains("returnGeometry=false"));
+    }
+
+    #[test]
+    fn emit_ids_writes_the_tile_name_and_absent_fields_render_as_dash() {
+        let (tiles, _) = parse_tiles(PAGE).expect("measured page parses");
+        let lines = id_lines("https://ns_hwh.fundaments.nl", &tiles);
+        assert_eq!(lines.len(), 2);
+        assert_eq!(
+            lines[0],
+            "01CZ1\t-\thttps://ns_hwh.fundaments.nl/hwh-ahn/ahn4/01_LAZ/C_01CZ1.LAZ"
+        );
+        let body = r#"{"features":[{"attributes":{"AHN4_LAZ":"https://ns_hwh.fundaments.nl/hwh-ahn/ahn4/01_LAZ/C_01DZ9.LAZ"}}]}"#;
+        let (tiles, _) = parse_tiles(body).expect("feature parses");
+        assert_eq!(
+            id_lines("https://ns_hwh.fundaments.nl", &tiles)[0],
+            "-\t-\thttps://ns_hwh.fundaments.nl/hwh-ahn/ahn4/01_LAZ/C_01DZ9.LAZ"
+        );
     }
 }

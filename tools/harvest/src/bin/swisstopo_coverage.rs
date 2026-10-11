@@ -289,16 +289,32 @@ fn is_lidar_href(href: &str) -> bool {
         || path.ends_with(".laz.zip")
 }
 
+struct Asset {
+    href: String,
+    id: Option<String>,
+    epoch: Option<String>,
+}
+
 struct StacPage {
-    hrefs: Vec<String>,
+    hrefs: Vec<Asset>,
     next: Option<String>,
 }
 
-fn collect_assets(node: &Json, out: &mut Vec<String>) {
+fn collect_assets(node: &Json, out: &mut Vec<Asset>) {
+    let id = node.get("id").and_then(Json::as_str).map(|s| s.to_string());
+    let epoch = node
+        .get("properties")
+        .and_then(|p| p.get("datetime"))
+        .and_then(Json::as_str)
+        .map(|s| s.to_string());
     if let Some(Json::Obj(assets)) = node.get("assets") {
         for (_, asset) in assets {
             if let Some(href) = asset.get("href").and_then(Json::as_str) {
-                out.push(href.to_string());
+                out.push(Asset {
+                    href: href.to_string(),
+                    id: id.clone(),
+                    epoch: epoch.clone(),
+                });
             }
         }
     }
@@ -337,7 +353,7 @@ fn enumerate(
     collection: &str,
     max_pages: usize,
     filter: &str,
-) -> Result<(Vec<String>, usize), String> {
+) -> Result<(Vec<Asset>, usize), String> {
     let mut hrefs = Vec::new();
     let mut pages = 0usize;
     let mut url = items_url(base, collection, filter);
@@ -370,26 +386,49 @@ fn enumerate(
     Ok((hrefs, pages))
 }
 
-fn manifest_lines(base: &str, hrefs: &[String]) -> Vec<String> {
+fn shard_href(base: &str, href: &str) -> String {
+    if href.starts_with("http://") || href.starts_with("https://") {
+        href.to_string()
+    } else {
+        format!(
+            "{}/{}",
+            base.trim_end_matches('/'),
+            href.trim_start_matches('/')
+        )
+    }
+}
+
+fn manifest_lines(base: &str, hrefs: &[Asset]) -> Vec<String> {
     let mut out = Vec::new();
-    for href in hrefs {
-        if !is_lidar_href(href) {
+    for asset in hrefs {
+        if !is_lidar_href(&asset.href) {
             continue;
         }
-        if href.starts_with("http://") || href.starts_with("https://") {
-            out.push(format!("shard {href}"));
-        } else {
-            out.push(format!(
-                "shard {}/{}",
-                base.trim_end_matches('/'),
-                href.trim_start_matches('/')
-            ));
+        out.push(format!("shard {}", shard_href(base, &asset.href)));
+    }
+    out
+}
+
+fn id_lines(base: &str, hrefs: &[Asset]) -> Vec<String> {
+    let mut out = Vec::new();
+    for asset in hrefs {
+        if !is_lidar_href(&asset.href) {
+            continue;
         }
+        let id = asset.id.as_deref().unwrap_or("-");
+        let epoch = asset.epoch.as_deref().unwrap_or("-");
+        out.push(format!("{id}\t{epoch}\t{}", shard_href(base, &asset.href)));
     }
     out
 }
 
 fn run(args: &[String]) -> Result<(), String> {
+    if args.iter().any(|a| a == "--help") {
+        eprintln!(
+            "usage: swisstopo_coverage [--base <stac-root>] [--collection <id>] [--out <manifest>] [--bbox <w,s,e,n>] [--datetime <range>] [--max-pages <n>] [--emit-ids <path>] [--ci-mode]  (default: url-only shard lines; --emit-ids writes a tile-id sidecar)"
+        );
+        return Ok(());
+    }
     let base = match arg_value(args, "--base").filter(|b| !b.is_empty()) {
         Some(b) => b,
         None => STAC_BASE.to_string(),
@@ -415,6 +454,7 @@ fn run(args: &[String]) -> Result<(), String> {
         None => MANIFEST_NAME.to_string(),
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let emit_ids = arg_value(args, "--emit-ids").filter(|p| !p.is_empty());
     let max_pages = match arg_value(args, "--max-pages").and_then(|v| v.parse::<usize>().ok()) {
         Some(p) if p > 0 => p,
         _ => MAX_PAGES,
@@ -468,6 +508,23 @@ fn run(args: &[String]) -> Result<(), String> {
         hrefs.len(),
         lines.len()
     );
+
+    if let Some(path) = emit_ids.as_deref() {
+        let id_lines = id_lines(&base, &hrefs);
+        let mut id_text = String::with_capacity(id_lines.len() * 128);
+        for line in &id_lines {
+            id_text.push_str(line);
+            id_text.push('\n');
+        }
+        if let Some(parent) = Path::new(path).parent() {
+            if !parent.as_os_str().is_empty() {
+                fs::create_dir_all(parent)
+                    .map_err(|e| format!("create {} returned void: {e}", parent.display()))?;
+            }
+        }
+        fs::write(path, &id_text).map_err(|e| format!("write {path} returned void: {e}"))?;
+        eprintln!("swisstopo_coverage: {} tile ids -> {path}", id_lines.len());
+    }
 
     println!("url {CDN_BASE}/{NETLOC}/{out_name}");
     println!("origin {base}/collections/{collection}/items");
@@ -534,5 +591,24 @@ mod tests {
         assert_eq!(page.hrefs.len(), 2);
         let lines = manifest_lines(STAC_BASE, &page.hrefs);
         assert!(lines.is_empty());
+    }
+
+    #[test]
+    fn emit_ids_writes_item_identity_and_absent_fields_render_as_dash() {
+        let body = r#"{"type":"FeatureCollection","features":[
+{"id":"swisssurface3d_2015_2494-1140","properties":{"datetime":"2015-01-01T00:00:00Z"},"assets":{"data":{"href":"https://data.geo.admin.ch/ch.swisstopo.swisssurface3d/swisssurface3d_2015_2494-1140/swisssurface3d_2015_2494-1140_2056_5728.copc.laz"}}},
+{"assets":{"data":{"href":"https://data.geo.admin.ch/ch.swisstopo.swisssurface3d/x/x_2056_1.copc.laz"}}}
+]}"#;
+        let page = parse_items(body).expect("page parses");
+        let lines = id_lines(STAC_BASE, &page.hrefs);
+        assert_eq!(lines.len(), 2);
+        assert_eq!(
+            lines[0],
+            "swisssurface3d_2015_2494-1140\t2015-01-01T00:00:00Z\thttps://data.geo.admin.ch/ch.swisstopo.swisssurface3d/swisssurface3d_2015_2494-1140/swisssurface3d_2015_2494-1140_2056_5728.copc.laz"
+        );
+        assert_eq!(
+            lines[1],
+            "-\t-\thttps://data.geo.admin.ch/ch.swisstopo.swisssurface3d/x/x_2056_1.copc.laz"
+        );
     }
 }

@@ -157,6 +157,16 @@ fn shard_line(url: &str, bbox: Option<[f64; 6]>, emit_bbox: bool) -> String {
     }
 }
 
+fn id_lines(urls: &[String]) -> Vec<String> {
+    let prefix = format!("{BASE}/");
+    let mut out = Vec::with_capacity(urls.len());
+    for url in urls {
+        let id = url.strip_prefix(&prefix).unwrap_or(url.as_str());
+        out.push(format!("{id}\t-\t{url}"));
+    }
+    out
+}
+
 fn coverage(keys: &[String]) -> (Vec<String>, Vec<String>) {
     let mut urls = Vec::new();
     let mut countries: BTreeSet<String> = BTreeSet::new();
@@ -177,9 +187,10 @@ fn coverage(keys: &[String]) -> (Vec<String>, Vec<String>) {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let usage = "usage: open_lidar_data_coverage [--prefix <data/>] [--out <manifest>] [--bbox|--bbox-off] [--ci-mode]  (default: url-only shard lines; --bbox emits the LAS header bbox)";
+    let usage = "usage: open_lidar_data_coverage [--prefix <data/>] [--out <manifest>] [--bbox|--bbox-off] [--emit-ids <path>] [--ci-mode]  (default: url-only shard lines; --bbox emits the LAS header bbox; --emit-ids writes a tile-id sidecar)";
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let emit_bbox = args.iter().any(|a| a == "--bbox") && !args.iter().any(|a| a == "--bbox-off");
+    let emit_ids = arg_value(&args, "--emit-ids").filter(|p| !p.is_empty());
     let prefix = match arg_value(&args, "--prefix") {
         Some(p) if !p.is_empty() => p,
         _ => DEFAULT_PREFIX.to_string(),
@@ -243,6 +254,28 @@ fn main() {
         text.len()
     );
 
+    if let Some(path) = emit_ids {
+        let id_lines = id_lines(&urls);
+        let mut id_text = String::with_capacity(id_lines.len() * 128);
+        for line in &id_lines {
+            id_text.push_str(line);
+            id_text.push('\n');
+        }
+        if let Some(parent) = std::path::Path::new(&path).parent() {
+            if !parent.as_os_str().is_empty() {
+                let _ = std::fs::create_dir_all(parent);
+            }
+        }
+        if let Err(e) = std::fs::write(&path, &id_text) {
+            eprintln!("write {path}: {e}");
+            std::process::exit(1);
+        }
+        eprintln!(
+            "open_lidar_data_coverage: {} tile ids -> {path}",
+            id_lines.len()
+        );
+    }
+
     println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{MANIFEST_NAME}");
     println!("origin {BASE}/?list-type=2&prefix={prefix}");
     println!("compiler {COMPILER}");
@@ -297,6 +330,25 @@ mod tests {
         assert_eq!(
             shard_line("https://x/a.copc.laz", None, true),
             "shard https://x/a.copc.laz"
+        );
+    }
+
+    #[test]
+    fn emit_ids_writes_the_object_key_and_epoch_renders_absent() {
+        let keys = vec![
+            "data/BE/EODaS/copc/a.copc.laz".to_string(),
+            "data/US/USGS/foo/copc/b.copc.laz".to_string(),
+        ];
+        let (urls, _) = coverage(&keys);
+        let lines = id_lines(&urls);
+        assert_eq!(lines.len(), 2);
+        assert_eq!(
+            lines[0],
+            "data/BE/EODaS/copc/a.copc.laz\t-\thttps://open-lidar-data.s3.amazonaws.com/data/BE/EODaS/copc/a.copc.laz"
+        );
+        assert_eq!(
+            lines[1],
+            "data/US/USGS/foo/copc/b.copc.laz\t-\thttps://open-lidar-data.s3.amazonaws.com/data/US/USGS/foo/copc/b.copc.laz"
         );
     }
 }
