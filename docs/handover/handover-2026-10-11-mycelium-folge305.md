@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Taucher-Batterie(n): cmb-cdn-Streaming vollständig (tar_stream/bzip2_tar_stream/fetch_raw_to_file_with + beide Compiler-Arme); vier Portal-Coverage-Manifestatoren + coverage-manifest-Workflow; MCP-no-leak-Gate (src/gate/mcp.rs) in commit_check; t420-Throttle-Boot-Lücke + matrix-rotor-Trap-Flush; keyless-OGC-EA-Index (ea_lidar_index.rs). **Korrektur: UK EA ist NICHT account-gated** — keyless via flai `open-lidar-data` S3 + EA `/tiles` (gemessen). Das flai-Aggregat ist bereits getrackt (`open_lidar_data_coverage.rs`, Welt). Extraterrestrische + Bathymetrie-LiDAR-Landschaft gemessen. OpenTopography-Key eingetragen.
   class: handover
   date: 2026-10-11
-  sha256: 5ecf3f27fa6e113151b82a4478ca5db89c482ae31a6405995ea77d9ded2a0a9a
+  sha256: f89de63e745a60f85fae4c1389f5a966cd67f2530d1e46f1b4e4885904c2f812
   status: live
 -->
 # Handover — Mycelium-Folge 305 (2026-10-11)
@@ -93,6 +93,13 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Lage:** (gemessen 2026-10-11 via 3 Taucher) **FMHY trägt kein LiDAR** (word-boundary `\ylidar\y` = 0; nur Geo-Viewer/Atlas in `docs/misc.md #Maps` + `docs/educational.md`; Sammel-Querverweise `simsieg/awesome-maps` · `awesomedata/awesome-public-datasets` · `osmlab/awesome-openstreetmap` · `jnv/lists`). Von den Sammelseiten nennt nur `freegisdata.rtwilson.com` Punktwolken (OpenTopography · 3DEP · Puget Sound · NCEI). **Neue keyless Buckets** (end-to-end verifiziert): `japan-pointcloud` + `kanagawa-pointcloud` (JP, CC-BY 4.0) · `canelevation-lidar-point-clouds` (CA, COPC, OGL-CA) · `srsp-open-data` (Schottland, OGL v3) · `giselevationingov` (Indiana, COPC, CC0) · `njogis-elevation` (NJ) · `dc-lidar-2015/-2018` · `colorado-public-elevation-data` (CC0) · `ept-m3dc-pmsp` + `laz-m3dc-pmsp` (São Paulo, EPT/LAZ, erster SAM-Aggregat) · `nz-coastal` (COG). **Neue keyless Indizes:** USGS TNM Access API (`tnmaccess.nationalmap.gov`, **9 755 359** LiDAR-Produkte) · OpenTopography-Catalog-API (`otCatalog`, ~500). Vollinventar: `state/mycelium/lidar_sources_measured.md`. Riss aufgelöst: `astrogeo-ard` **trägt** LOLA-COPC (`moon/lro/lola/*.copc.laz`, 206, 151 418 128 B) — der negative Kollektor-Fund war ein Teil-Listing.
 - **Blockade:** keine.
 - **Braucht:** je neuer Bucket ein `<x>_coverage.rs` (`shard <url>`); Reihenfolge/Umfang offen (Operator/Mountain); USGS-TNM-Access als **ein** US-weiter Index prüfen statt Einzelbuckets.
+
+### Rat + Roster — LiDAR-Konsolidierung: Verdikt + Riss
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) Forschungsschicht `state/mycelium/rat-vorbereitung-lidar-2026-10-11.txt` (987 Z.); **Rat** (5 Verfassungsstimmen) + **Max-Roster** (Qwen3.7-Plus · Duck.ai/GPT-6 Luna · Claude · tryingopen/GLM 5.3 Flash · **starke Open-Weights: DeepSeek V4 Pro · Qwen3.8 2.4T · Nemotron 3 Ultra**; **Z.ai `pending`** — hing >5 min im „Deep Think Max") befragt; Vollprotokoll `state/mycelium/rat-roster-lidar-verdikt-2026-10-11.md`. **Konvergenz (alle Linien):** EIN generischer `coverage.rs --kind <s3-copc|s3-laz|stac|wfs|arcgis|ept|tnm>`; LOLA-COPC unter denselben Kontrakt; PDS-Tabellen (MOLA/MLA) zweite Parser-Klasse (Emitter; Loader COPC-only); Bathymetrie-Grids außerhalb; **US-Index: Planetary Computer `3dep-lidar-copc` (STAC)** primär, USGS TNM nur Fallback (starke Modelle + Claude einig); **Frame/Epoche-Konfound** (bbox-CRS WGS84/ETRS/CH1903+/IAU-2015/2009 ≠ ICRS, Epoche, Vertikaldatum/Radius **je Shard**; Präsenzhülle je Frame, sonst still falsch). **Riss (getragen):** Rat+Qwen3.7-Plus+tryingopen nennen flai **kanonisch** (Bins `ahn4`/`swisstopo`/`ign` `descoped`); **Duck.ai+Claude + die drei starken Open-Weights (DeepSeek V4 Pro · Qwen3.8 2.4T · Nemotron 3 Ultra)** nennen flai einen **Spiegel/Snapshot** (README **16** Länder, nicht 18; DE nur Sachsen, NL nur AHN4, US nur NOAA-Topobathy, **CA fehlt**) → `descoped` **nur wo Fläche+Epoche gleichauf** (Messung fehlt). Die starken Modelle **kippen die Ratsmehrheit**; `linz` bleibt (alle).
+- **Blockade:** die flai-Abdeckung-je-Land-Messung fehlt.
+- **Braucht:** (a) flai-Abdeckung je Land gegen die Origin-Portale messen (Fläche **und** Epoche) → dann `descoped`-Verdikt; (b) `coverage.rs --kind stac` (Planetary Computer `3dep-lidar-copc`) als erster Arm; (c) Frame/Epoche-Transform-Schicht (Ellipsoid/IAU→ICRS) oder bbox-off; (d) Z.ai nachfassen (`pending`).
 
 ### Extraterrestrische LiDAR — keyless Bestand gemessen; LOLA passt in den shard-Kontrakt
 - **Status:** eigen | **Bindung:** eigen · **Teile linie:mountain**
