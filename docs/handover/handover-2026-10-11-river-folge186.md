@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — Null-Baseline gemessen, SuperMAG-Weiterverbreitung zurückgenommen, Zeugen-/Netzdaten-Landschaft gemessen
   class: handover
   date: 2026-10-11
-  sha256: 805a6d2ae142ae55b311fe18c80e38738d48d7a33357de1256f736cd0bf7d294
+  sha256: 04d4e30e1a21958551ee04c5c3bd1f26794627cf8c928ecd18f2a87ec20e7974
   status: live
 -->
 # Handover — River-Folge 186 (2026-10-11)
@@ -51,6 +51,8 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 - `state/stimmen/2026-10-11-river-gic-onset-method-rat.md` — der Rat (5 Stimmen) + Qwen/Claude/GLM 5.3/DeepSeek V4 Pro (open-weight-ui) zur GIC-Onset-Methode (Riss-Behandlung, AL-Einhüllende), mit der Forschungs-Schicht `archive_search --all`/`--crossref` (Iyemori & Rao 1996).
 - `state/river/gic_null_baseline_measured.md` — die in diesem Atom gemessene zeitverschobene Null-Baseline.
 - `state/river/gic-sources-and-grid-outage-research-2026-10-11.md` — die Quellen-/Zeugen-/Netzausfall-Landschaft (`--all`).
+- `state/river/gic-sources-broad-2026-10-11.md` — **das Recherche-Dossier**: die breite `--all`-Landschaft (7 Läufe); disjunkte Zeugen, Indizes, TSO-/GIC-Messkampagnen (Fingrid/FMI/BPA/BGS), Auth-Key-Mapping, PC/CSES-Auflösung, Browser-Nachmessung.
+- `state/river/registrierungen-2026-10-11.md` — ENTSO-E + Fingrid ausgefüllt-vorbereitet (Operator-Akt).
 - `state/stimmen/2026-10-11-river-gic-zeugen-rat.md` — der Rat (fünf Stimmen) zu Kalibrier-Zeugen, SuperMAG-Grenze, Netz-End-Validator.
 - `docs/blatt/blatt-gic-breitenband-familien.md` (`status: unsealed`) — Siegel = Operator-Wort, als `## An future` transportiert.
 - `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` — Asservatenkammer (11 offen).
@@ -71,7 +73,8 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 - **Trigger:** der nächste Mess-Schritt (EAGLE-I-Download bzw. disjunkter Zeuge).
 - **Lage:** (gemessen 2026-10-11 via `archive_search --all` + `--verdict`; Rat `state/stimmen/2026-10-11-river-gic-zeugen-rat.md`) zwei SML-Zeugen (McPherron + Ohtani) sind *ein* Zeuge, zweimal gezählt (Riss). **Disjunkter optischer Zeuge:** IMAGE-FUV-Onset-Katalog (Frey & Mende) = **CC0 1.0**, aber nur **2000–2005**, Datei-Host `ftp://apollo.ssl.berkeley.edu` tot (403); Ledvina et al. THEMIS-ASI (Zenodo `10.5281/zenodo.23003126`, CC BY 4.0) nur **2007–2016**; **kein** offenes Riometer-Onset-Archiv → **2017–2025 `pending`**. **Echte Netz-Daten:** EAGLE-I (figshare `10.6084/m9.figshare.24237376`, CC BY 4.0, 2014–2025, keylos) und DOE OE-417 (openenergyhub.ornl.gov, PD, 2023) sind sofort lesbar; NERC-GMD / AltaLink-TNG / Svenska (Rosenqvist 2025) / ENTSO-E teils Anfrage/Account (Operator-Hand).
 - **Blockade:** kein lizenz-cleaner, disjunkter Onset-Zeuge für das GIC-Fenster 2024/25; Netz-Daten stark, aber konfundiert (viele Ausfall-Ursachen).
-- **Braucht:** EAGLE-I-Jahres-CSV (`ndownloader.figshare.com/files/42547717`) + OE-417-CSV (`openenergyhub.ornl.gov/api/records/1.0/download/?dataset=oe-417-annual-summaries&format=csv`) lokal holen → erste End-zu-End-Messreihe; disjunkten Zeugen weiter als `pending` tragen (nie McPherron/Ohtani als unabhängig etikettieren).
+- **Braucht:** EAGLE-I-Jahres-CSV (`ndownloader.figshare.com/files/42547717`) + OE-417-CSV (`openenergyhub.ornl.gov/api/records/1.0/download/?dataset=oe-417-annual-summaries&format=csv`) lokal holen → erste End-zu-End-Messreihe; disjunkten Zeugen weiter als `pending` tragen (nie McPherron/Ohtani als unabhängig etikettieren). **Offene Indizes/Satellit (2 Taucher):** PCN offen `ftp.space.dtu.dk/WDC/indices/pcn/` (CC BY 4.0, 1-min, ab 1975), PCS `isgi.unistra.fr/indices_pc.php` (ab 1995); CSES-Magnetfeld offen via Zenodo `13329652` (CC BY 4.0); `cses.space` = DNS NXDOMAIN, `pcindex.org` tot — die Daten liegen bei DTU/ISGI/Zenodo. **CSES:** kein neuer Compiler — der **Zenodo-Mirror** (`13329652`, open, CC BY 4.0, **12,6 GB**; `8082201`, 1,25 MB HDF5) wird vom bestehenden `zenodo_record_harvester.rs` geholt; Registrierung = Mountain/Mycelium. Der `archive_search`-`--leos`-Eingriff ist **zurückgebaut** (Recherche-Tool ≠ Harvest). **EU-Route (Operator-Wunsch):** **Fingrid gebaut + live** — `tools/harvest/src/bin/fingrid_compiler.rs` (liest `FINGRID_API_KEY` selbst, nie Ausgabe; `--ci-mode` → CDN), Build grün, Lauf → **HTTP 200** Datasets-JSON. **ENTSO-E:** Zugriffs-E-Mail gesendet (2026-10-11, `{id:01a12b40…}`), Token folgt nach ~3 Werktagen (My Account → Generate) → `ENTSOE_API_TOKEN`; dann zweiter Compiler. Register-Einträge (Fingrid/ENTSO-E) = Mountain/Mycelium. `state/river/registrierungen-2026-10-11.md`.
+- Die UI-Runde (gemessen 2026-10-11) bestätigt den Rat aus drei Seats: Claude (Sonnet 5.5), Qwen (Qwen3.7-Plus) und Qwen3.8 2.4T (open-weight, via tryingopen) — ein Zeuge reicht, ein zweiter SML-Zeuge ist wertlos, der disjunkte Zeuge ist der optische Aurora-Breakup, Sonnenwind = Treiber; Netz-Ausfalldaten zu konfundiert für ein Label (nur schwacher Null-Check), gemessenes GIC der ehrliche Validator. Kleinster Schritt: ~30–50 klare THEMIS-ASI-Nächte 2024/25 blind labeln. Artefakte `state/stimmen/2026-10-11-river-gic-zeugen-claude.md`, `state/stimmen/2026-10-11-river-gic-zeugen-qwen.md`, `state/stimmen/2026-10-11-river-gic-zeugen-qwen38-24t.md`. `pending` (gemessen): DeepSeek V4 Pro (Site „run out of API credit"), Inkling 975B (Rückfrage, kein Verdikt), Z.ai (Deep Think), Duck.ai (kein Render).
 
 ### Flyby-Kette — recon bleibt
 - **Status:** termin | **Bindung:** termin:2026-11-01
