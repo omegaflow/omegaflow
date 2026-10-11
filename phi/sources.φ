@@ -10870,6 +10870,14 @@ ttl 604800
 field carrier_level_dbm rosetta_odf_carrier_level_dbm inverse-square em dbm 604800 0.0 0.0
 field polar_angle_cycles rosetta_odf_polar_angle_cycles inverse-square em cycle 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/astrogeo-ard.s3.amazonaws.com/lola_coverage.manifest
+terms PD https://astrogeology.usgs.gov/
+format lola_coverage
+origin https://astrogeo-ard.s3.amazonaws.com/?list-type=2
+compiler tools/harvest/src/bin/lola_coverage.rs
+at moon
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassini_odf.bin
 terms PD https://pds.nasa.gov/
 format cassini_odf
@@ -11264,6 +11272,14 @@ format eea_noise
 origin https://noise.discomap.eea.europa.eu/arcgis/rest/services/noiseStoryMap/Noise_exposure_2025/MapServer/76/query?where=1=1&outFields=SNLD55,SNLD65,SNLD75,SNLN50,SNLN60,SNLN70,NLD5559,NLD6064,NLD6569,NLD7074,NLN5054,NLN5559,NLN6064,NLN6569,N_INHAB&returnGeometry=false&resultRecordCount=2000&f=json
 compiler tools/harvest/src/bin/eea_noise_compiler.rs
 sha256 30607524467e524acf70ef30a9d06784da000c1dc67b0469d7c01cf119ae7b43
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/environment.data.gov.uk/ea_lidar_index.manifest
+terms OGL-UK-3.0 https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+format ea_lidar_index
+origin https://environment.data.gov.uk/geoservices/datasets/9f0fa3fc-a860-4729-adc9-47fe53f658d0/ogc/features/v1/collections/LIDAR_Point_Cloud_Index_Catalogue/items
+compiler tools/harvest/src/bin/ea_lidar_index.rs
 at earth
 ttl 604800
 
@@ -20820,6 +20836,14 @@ terms free-open https://themis.ssl.berkeley.edu/roadrules.shtml
 format themis_asi
 origin https://themis.ssl.berkeley.edu/data/themis/thg/l1/asi/fsim/2022/01/thg_l1_ast_fsim_20220131_v01.cdf
 compiler tools/harvest/src/bin/themis_asi_compiler.rs
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/tnmaccess.nationalmap.gov/coverage_tnm.manifest
+terms PD https://www.usgs.gov/
+format coverage_manifest
+origin https://tnmaccess.nationalmap.gov/api/v1/products?datasets=Lidar%20Point%20Cloud%20(LPC)
+compiler tools/harvest/src/bin/coverage.rs
 at earth
 ttl 604800
 
