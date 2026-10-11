@@ -1285,12 +1285,12 @@ fn load_field_across_sources(
         return Ok(Some(loaded.remove(0).1));
     }
     let cadences: Vec<Option<f64>> = loaded.iter().map(|(_, s)| median_dt(s)).collect();
+    let cadence_of = |i: usize| match cadences[i] {
+        Some(d) => d,
+        None => f64::INFINITY,
+    };
     let mut order: Vec<usize> = (0..loaded.len()).collect();
-    order.sort_by(|&a, &b| {
-        cadences[a]
-            .unwrap_or(f64::INFINITY)
-            .total_cmp(&cadences[b].unwrap_or(f64::INFINITY))
-    });
+    order.sort_by(|&a, &b| cadence_of(a).total_cmp(&cadence_of(b)));
     let fine_idx = order[0];
     let Some(fine_dt) = cadences[fine_idx] else {
         return Err(format!(
@@ -1329,11 +1329,12 @@ fn load_field_across_sources(
     }
     let witness = loaded[fine_idx].0.clone();
     let series = loaded.swap_remove(fine_idx).1;
+    let dt = match median_dt(&series) {
+        Some(d) => format!("{d:.0}"),
+        None => "pending".to_string(),
+    };
     println!(
-        "  witness {witness} | '{name}' | median_dt {}s | n {} (finest of {} gleichartige registrations)",
-        median_dt(&series)
-            .map(|d| format!("{d:.0}"))
-            .unwrap_or_else(|| "pending".to_string()),
+        "  witness {witness} | '{name}' | median_dt {dt}s | n {} (finest of {} gleichartige registrations)",
         series.len(),
         cadences.len()
     );
