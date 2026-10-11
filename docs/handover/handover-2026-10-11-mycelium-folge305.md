@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Taucher-Batterie(n): cmb-cdn-Streaming vollständig (tar_stream/bzip2_tar_stream/fetch_raw_to_file_with + beide Compiler-Arme); vier Portal-Coverage-Manifestatoren + coverage-manifest-Workflow; MCP-no-leak-Gate (src/gate/mcp.rs) in commit_check; t420-Throttle-Boot-Lücke + matrix-rotor-Trap-Flush; keyless-OGC-EA-Index (ea_lidar_index.rs). **Korrektur: UK EA ist NICHT account-gated** — keyless via flai `open-lidar-data` S3 + EA `/tiles` (gemessen). Das flai-Aggregat ist bereits getrackt (`open_lidar_data_coverage.rs`, Welt). Extraterrestrische + Bathymetrie-LiDAR-Landschaft gemessen. OpenTopography-Key eingetragen.
   class: handover
   date: 2026-10-11
-  sha256: 611a64ccdbbfd066581652db85348f08f9b89c0080c9181e169ab839ac2e42e5
+  sha256: 5ecf3f27fa6e113151b82a4478ca5db89c482ae31a6405995ea77d9ded2a0a9a
   status: live
 -->
 # Handover — Mycelium-Folge 305 (2026-10-11)
@@ -86,6 +86,13 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Lage:** (gemessen 2026-10-11) `open-lidar-data` (eu-central-1) ist das **globale Aggregat** (18 Länder BE·CH·DE·DK·EE·ES·FI·FR·IE·LT·LU·LV·NL·PL·SE·SI·UK·US; COPC; OGL/CC). **Getrackt:** `open_lidar_data_coverage.rs` manifestiert den **ganzen** Bucket (`--prefix data/`, `shard <url> <6 bbox>` via COPC-Header-Range-Fetch) — der Welt-Manifestator **existiert schon**; dazu `noaa_nos_coverage.rs` (NOAA Küste/Topo-Bathy), `usgs_lidar_coverage.rs` (USGS 3DEP), `open_lidar_data_compiler.rs` (Belgien-EODaS). **Überlappung:** flai trägt NL AHN4, CH swisssurface3d, FR IGN, UK DEFRA → `ahn4_coverage`/`swisstopo_coverage`/`ign_lidarhd_coverage` **duplizieren** es (ohne bbox); **NZ fehlt in flai** → `linz_coverage` bleibt eigenständig. `ea_lidar_index.rs` ist ein Metadaten-Index (kein Tile-Manifest).
 - **Blockade:** keine.
 - **Braucht:** Mountain-Verdikt — `ahn4`/`swisstopo`/`ign` als Origin-Quellen behalten oder `descoped` zugunsten des bbox-tragenden flai-Aggregats? Brauchen wir `ea_lidar_index` oder reicht flai UK DEFRA?
+
+### LiDAR-Quellen-Inventar — FMHY + Sammelseiten + neue keyless Buckets (gemessen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11 via 3 Taucher) **FMHY trägt kein LiDAR** (word-boundary `\ylidar\y` = 0; nur Geo-Viewer/Atlas in `docs/misc.md #Maps` + `docs/educational.md`; Sammel-Querverweise `simsieg/awesome-maps` · `awesomedata/awesome-public-datasets` · `osmlab/awesome-openstreetmap` · `jnv/lists`). Von den Sammelseiten nennt nur `freegisdata.rtwilson.com` Punktwolken (OpenTopography · 3DEP · Puget Sound · NCEI). **Neue keyless Buckets** (end-to-end verifiziert): `japan-pointcloud` + `kanagawa-pointcloud` (JP, CC-BY 4.0) · `canelevation-lidar-point-clouds` (CA, COPC, OGL-CA) · `srsp-open-data` (Schottland, OGL v3) · `giselevationingov` (Indiana, COPC, CC0) · `njogis-elevation` (NJ) · `dc-lidar-2015/-2018` · `colorado-public-elevation-data` (CC0) · `ept-m3dc-pmsp` + `laz-m3dc-pmsp` (São Paulo, EPT/LAZ, erster SAM-Aggregat) · `nz-coastal` (COG). **Neue keyless Indizes:** USGS TNM Access API (`tnmaccess.nationalmap.gov`, **9 755 359** LiDAR-Produkte) · OpenTopography-Catalog-API (`otCatalog`, ~500). Vollinventar: `state/mycelium/lidar_sources_measured.md`. Riss aufgelöst: `astrogeo-ard` **trägt** LOLA-COPC (`moon/lro/lola/*.copc.laz`, 206, 151 418 128 B) — der negative Kollektor-Fund war ein Teil-Listing.
+- **Blockade:** keine.
+- **Braucht:** je neuer Bucket ein `<x>_coverage.rs` (`shard <url>`); Reihenfolge/Umfang offen (Operator/Mountain); USGS-TNM-Access als **ein** US-weiter Index prüfen statt Einzelbuckets.
 
 ### Extraterrestrische LiDAR — keyless Bestand gemessen; LOLA passt in den shard-Kontrakt
 - **Status:** eigen | **Bindung:** eigen · **Teile linie:mountain**
