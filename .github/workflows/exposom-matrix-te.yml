@@ -1,0 +1,111 @@
+# exposom-matrix — the exposom TE pair matrix in CI (survey-2026-10-04-exposom-matrix §E).
+#
+# Chosen path (survey §E:240): `te_pair_probe` — two channel files, one number per
+# line, `--a <y.csv> --b <x.csv> --name-a <klasse> --name-b <domaene>`. One dispatch
+# row = one matrix row = one `te_pair_probe` run. No class is pre-selected and no
+# domain is excluded; the row carries the pair the caller names.
+#
+# The measured open x-core series are four (survey §F:279-280): OpenAQ (206),
+# Open-Meteo (200), NASA POWER (206), OMNIWeb (200). The y-series of the matrix
+# classes are not yet registered in `phi/sources.φ` (handover
+# 2026-10-06-mycelium-folge239-241: "die y-Serien der Matrix-Klassen sind
+# unregistriert") — the run therefore takes both channel sources as dispatch
+# inputs, never as a fabricated default.
+#
+# Kollokations-Gate (survey §E:262-268): a row without a common site runs the
+# temporal coupling only and is marked `time-only` — the missing spatial axis is
+# carried as `pending`, never as 0. A row with a documented study `site` runs a
+# spatial proxy coupling at the site anchor (site-level, geocoded_inferred /
+# centroid_only). The ort axis is declared by the caller, never invented here.
+
+name: exposom-matrix-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      klasse:
+        description: 'y outcome class of the matrix row (e.g. depression, metabolisch)'
+        required: true
+        type: string
+      domaene:
+        description: 'x exposom domain / series of the row (e.g. openaq, open-meteo, nasa-power, omniweb)'
+        required: true
+        type: string
+      y_quelle:
+        description: 'URL of the y outcome series (one measured value per line)'
+        required: true
+        type: string
+      x_quelle:
+        description: 'URL of the x exposom series (one measured value per line)'
+        required: true
+        type: string
+      ort_achse:
+        description: 'spatial axis of the row: time-only | site — the missing axis stays pending, never 0'
+        required: true
+        type: choice
+        options:
+          - time-only
+          - site
+      lags:
+        description: 'lag list, comma-separated; empty = the compiler default (never a fabricated lag set)'
+        required: false
+        type: string
+        default: ''
+      surrogate:
+        description: 'phase-randomized surrogates; empty = the compiler default'
+        required: false
+        type: string
+        default: ''
+permissions:
+  contents: read
+  issues: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  row:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the two channel series (y outcome, x exposom)
+        run: |
+          for attempt in 1 2 3; do
+            curl -sSfL --retry 3 --max-time 300 -o y.csv "${{ inputs.y_quelle }}" \
+              && curl -sSfL --retry 3 --max-time 300 -o x.csv "${{ inputs.x_quelle }}" \
+              && break
+            echo "channel fetch attempt ${attempt} void — retrying"
+            sleep 60
+          done
+          test -s y.csv
+          test -s x.csv
+      - name: Run the exposom TE pair row (te_pair_probe)
+        run: |
+          extra=""
+          [ -n "${{ inputs.lags }}" ] && extra="$extra --lags ${{ inputs.lags }}"
+          [ -n "${{ inputs.surrogate }}" ] && extra="$extra --surrogat ${{ inputs.surrogate }}"
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "matrix row: ${{ inputs.klasse }} <-> ${{ inputs.domaene }} (ort: ${{ inputs.ort_achse }})"
+            echo "kollokation: time-only carries no spatial coupling — the ort axis stays pending, never 0"
+            cargo run --release -p omegaflow-measure --bin te_pair_probe -- \
+              --a y.csv --b x.csv \
+              --name-a "${{ inputs.klasse }}" --name-b "${{ inputs.domaene }}" $extra
+          } > "exposom-${{ inputs.klasse }}-${{ inputs.domaene }}.txt"
+      - name: Raise an issue when the matrix row carries a finding
+        if: failure()
+        run: |
+          bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+               "exposom-matrix-cdn: a matrix row carries a finding" \
+               "The exposom row ${{ inputs.klasse }} <-> ${{ inputs.domaene }} returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+               health
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: exposom-row
+          path: exposom-*.txt
