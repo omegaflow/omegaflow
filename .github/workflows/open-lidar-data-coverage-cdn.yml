@@ -1,0 +1,51 @@
+# auto-dispatch: manual — the full bucket listing is multi-hour and multi-million objects (measured 2026-10-11: >2,742,000 COPC keys, still truncated, still in data/BE/); the run is operator-triggered and prefix-scoped so the asset stays bounded
+name: open-lidar-data-coverage-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      prefix:
+        description: 'S3 key prefix to cover (e.g. data/ for every country, or data/BE/ for one country)'
+        required: true
+        default: 'data/'
+        type: string
+      manifest:
+        description: 'manifest asset name'
+        required: true
+        default: 'open_lidar_data_coverage.manifest'
+        type: string
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  open-lidar-data-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the open-lidar-data.s3.amazonaws.com release exists on the CDN
+        run: |
+          if ! gh release view open-lidar-data.s3.amazonaws.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create open-lidar-data.s3.amazonaws.com --repo omegaflow/sources \
+              --title "open-lidar-data.s3.amazonaws.com" \
+              --notes "AWS Open Data lidar COPC clouds compiled to ICRS point samples. CRS read from the file's own projection VLRs and inverted to geodetic, earth body-fixed to ICRS via the ssd.jpl.nasa.gov ephemeris. Record stride: t_tdb s (f64 LE), x/y/z ICRS m (f64 LE), intensity (u16 LE), classification (u8). Magic LAS1."
+          fi
+      - name: Compiler tests
+        run: cargo test -p omegaflow-harvest --release --bin open_lidar_data_coverage
+      - name: List the bucket and upload the coverage manifest
+        run: |
+          cargo run -p omegaflow-harvest --release --bin open_lidar_data_coverage -- \
+            --prefix "${{ inputs.prefix }}" \
+            --out "${{ inputs.manifest }}" \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "open-lidar-data-coverage-cdn: ${{ inputs.manifest }} returned void" \
+                 "open_lidar_data_coverage returned void for prefix ${{ inputs.prefix }}. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
