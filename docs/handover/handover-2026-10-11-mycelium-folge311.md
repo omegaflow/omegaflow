@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom: fingrid-Dir-Bug geheilt (Ursache gemessen), MLA-Register auf RDR repointet + mla-cdn.yml gebaut, die drei adressierten Blöcke (mountain-317, river-187, future-235) gefaltet; Stehender Pass folgt am neuen HEAD.
   class: handover
   date: 2026-10-11
-  sha256: 19fdc9eb7c426260b25f17b0dd9c99852a58fc12ee514ad743bb0a5276785140
+  sha256: ba45393e972100cf75a6cf473fd1db0e6d184295a62920a97620c0221bb0b6fd
   status: live
 -->
 # Handover — Mycelium-Folge 311 (2026-10-11)
@@ -130,12 +130,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** wartet auf den Lauf.
 - **Braucht:** Merge-Lauf-Ergebnis.
 
-### dropped-gate-move-disposition (future-235)
+### dropped-gate-move-disposition (future-235) — disponiert; Event-Fold offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `--dropped-keys` + Baseline stehen (924 keys, `278ba2905`).
-- **Blockade:** keine
-- **Braucht:** Punkt-ID/Hash-Disposition.
+- **Lage:** (gemessen 2026-10-11) **Riss aufgelöst:** die future-Zahl (924 keys, `278ba2905`) war stale; die getrackte Baseline trägt **78 Keys** (HEAD `7012c20f8`), die 24 Drops wurden in `3a3f992cb` disponiert; der `dropped-gate`-Job ist grün. Eine Disposition = die per-Key-Entscheidung „echter stiller Drop (rot) vs. belegter Move/Rename/Descope", gepinnt als Key.
+- **Blockade:** keine.
+- **Braucht:** (a) **gebaut** (dieses Atom: Baseline/Kommentar unberührt, Befund im Handover); (b) offen: die Q2/Q3-Event-Fold-Verdrahtung in CI (`dropped_gate.rs` `alias:`/typisiertes Event) — größerer Atom, CI-only.
 
 ### THEMIS-ASI-Keogramm-Compiler — Workflow + Station-Koordinaten + terms
 - **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
@@ -185,12 +185,13 @@ Ein Zensus über die nicht-Spill-`state/`-Dateien gegen diese Übergabe + `warte
 fand offene Schleifen; die Mycelium-Anteile hier gefaltet, die fremden als
 Registerzeilen in `## An mountain`/`## An river` (die Owner falten).
 
-- **VO-Landschaft (mycelium-269):** `state/zustand/mycelium-269-an-naechste-session.md:30-39` — VO-Katalog-Index bauen (Arm 1) · IVOA/China-VO/Brazilian-VO registrieren (Mountain) · `Domain→UCD`-Mapping (der Riss) · `--gfw`-Feinschliff · Branch-Protection + `SHA→Verdikt`-Register · Frontier-Vielfalt.
-- **Swarm-Recherche:** `state/mycelium/swarm-recherche-synthese-2026-10-05.md:85` — q3–q6 mit demselben Roster nachholen, Rohordner registrieren.
+- **VO-Landschaft (mycelium-269) — Riss, descoped:** `state/zustand/mycelium-269-an-naechste-session.md:30-39` ist stale — die 72 `tap_index_*`-Kataloge + `tap_index_merge` wurden von `mountain 306` (`1a885775f`, 75 Dateien) **gelöscht**; der Live-Nachfolger ist gebaut (`archive_search --regtap`/`--tap`, `regtap_census.rs`, `tap_compiler.rs`). `Domain→UCD` hat keine messbare Domain-Quelle → `pending` (Riss, kein Bau). **Riss benannt:** die Roster-Forderung „Compiler migrieren, nicht abschaffen" vs Mountains Löschung.
+- **Swarm-Recherche:** `state/mycelium/swarm-recherche-synthese-2026-10-05.md:85` — q3–q6 mit demselben Roster nachholen (braucht UI-Seats).
 - **CDN-Reconcile:** `state/zustand/ereignisse.φ:70822` — `cdn_reconcile` (144 orphan releases, 687 missing assets, 6873 Namens-Divergenzen); je Lösch-Klasse ein Atom, **Operator-Wort vor destruktivem Release-Delete**.
-- **Fehlende Arme (Operator-Wort `ereignisse.φ:163087`) — Riss korrigiert:** die Arme sind **teilweise gebaut**, nicht absent (`mariner_occlt`, `viking_text`, `ebhis`, `cmb_act` + Register/Workflow stehen, `mountain-289`). Offen bleibt: **mariner-rst** (roher 7-Track-Subpfad, NSSDCA `PSCM-00009` — `--playwright` messen) · **viking-tracking** (NSSDCA `PSPG-00011`; `viking_text` ist Text, nicht Tracking) · **hi-21cm** (HI-Survey-Hälfte; Zenodo HI4PI `5956696` cc-by-4.0 ist die free Route) · **cmb-lambda** (ACT-Ring) · **particle-cern** (ROOT). Owner: Mountain (Parser/Verdikt) + Mycelium (Compiler/WF).
+- **Fehlende Arme (`ereignisse.φ:163087`) — je Taucher gemessen:** **hi-21cm → HI4PI gebaut** (`hi4pi_compiler.rs` + `hi4pi-cdn.yml`, CDSARC `J/A+A/594/A116`, 933 Kanäle, `cargo check` 0/0); **cmb-lambda** bereits gebaut (`cmb_act_compiler.rs`, `act-cdn.yml`, `phi:11653`); **particle-cern** bereits gebaut (`root.rs` + `cern_root_compiler.rs`, Tree-Walk-Sicht ergänzt); **mariner-rst** = `descoped` (nur Offline-CD-WO, PSCM-00009, gemessen); **viking-tracking** = `descoped` (`viking_text` trägt bereits Lander-Range/Doppler; PSPG-00011 „not received", gemessen). Verbleibend: keiner der fünf ist baubar offen.
 - **LiDAR-Verdikt — gemessen (nicht ratifiziert):** `swisstopo` 94,1 % Fläche + Epochen-Riss (2015–2026 vs flai 2022/2023), `ign` 64,3 % + eine Epoche → **re-open**; `ahn4` 99,85 %/2 Kacheln → halten; `linz` ohne Überlappung → bleibt; Detail im LiDAR-Inventar-Punkt.
 - **Ungepoolte phi-Blöcke:** `state/mycelium/holdings-opencode-tmp-2026-10-07.md:54` — Mountains Sichtung/Merge.
+- **Fetch-Provenienz:** die Diver-Regel ist in `docs/SOURCE_PORT.md` (Provenienz-Bullet, sha `f5659ddc…`) — zusätzlich zum gebauten Sidecar.
 
 ## An mountain
 
