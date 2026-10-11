@@ -1,199 +1,162 @@
-note Zeugen: s2-direction (distanzlos, τ=0), point-event (Skalar an Ort+Zeit, fünfte Art, 2026-10-01), gestalt, substance, presence. Record: magic_identity. NRS1/noaa_nrs_psd declined spectral-series (c3f33f6, Council C1); CDN-Record bleibt.
-note PTLM/pioneer10_telemetry declined witness (Council 2026-10-01): die Maschine misst sich selbst — Haushalts-Skalare (AGC dB, W, °F, PSIA), kein Welt-Zeugnis; Modell-Input für pioneer_link_correction_probe; CDN-Asset bleibt Telemetrie-Record.
-
 witness s2-direction
 url https://api.antares.noirlab.edu/v1/loci?page%5Blimit%5D=1000&page%5Boffset%5D=0
 record skydirection
 force em
-note ANTARES-REST anonym offen (2026-09-24 verdict 200, 2023595 B, sha256 080c40f0…): alert_magnitude-Felder vorhanden, kein band (Band absent, 0 honored); meta.count=10000; 15 Gaia-Parallax, 469 NED-z, Rest DirectionOnly. S²-Richtung (τ=0).
 
 witness s2-direction
 url https://api.lsst.fink-portal.org/api/v1/conesearch
 record skydirection
 force em
-note Fink-LSST cone conesearch (2026-09-24 verdict 200, 42 B anonym; conesearch?ra/dec/radius JSON): GET ra/dec/radius liefert JSON; r:band, r:apFlux, r:psFlux (em-Photometrie, nJy, TAI→TDB); S²-Richtung absent (0 honored), nie 0.0.
 
 witness s2-direction
 url https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
 record sky1
 force em
-note 1LHAASO-Gammaquellen-Katalog (2026-09-13): table.csv mit Ra/Dec + N0 — echte Gamma-Messungen ohne Distanz (kein plx/dist/z, 0 honored). S²-Richtung (τ=0), kind gamma, em. Kompiliert als lhaaso_sky1.sky1 (144 Quellen) via lhaaso_compiler, CDN live.
 
 witness s2-direction
 url https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml
 record sky1
 force em
-note HAWC-2HWC-Quellenkatalog (2026-09-13 HTTP 200): je Quelle name/RA/Dec + flux; Fiduzial-Fluss = 7-TeV-Fluss. S²-Richtung (τ=0), kind gamma, em. Kompiliert als hawc_2hwc.sky1 via hawc_compiler, CDN. Flusslose Quelle ausgelassen, nie 0.0 fabriziert.
 
 witness s2-direction
 url https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml
 record sky1
 force em
-note HAWC-3HWC-Quellenkatalog (2026-09-13 HTTP 200): je Quelle name/RA/Dec + flux; Fiduzial-Fluss = 7-TeV-Fluss. S²-Richtung (τ=0), kind gamma, em. Kompiliert als hawc_3hwc.sky1 via hawc_compiler, CDN. 3HWC J0659+147 ohne flux, nie 0.0 fabriziert.
 
 witness s2-direction
 url https://dataverse.harvard.edu/api/access/datafile/7502710
 record s2e1 sky1
 force em
-note IceCat-1-IceCube-Neutrino-Katalog (2026-09-24 verdict 200, 66698 B, sha256 c4db13b8…): 348 Ereignisse, TSV ENERGY+FAR vorhanden (fehlend → absent, nie 0.0). icecat_events.s2e1 + icecat_sky1.sky1, CDN live.
 
 witness s2-direction
 url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
 record amn1
 force em
-note AMON-IceCube-Gold/Bronze-Alert-Index (2026-09-06 HTTP 200); je Notice .amon unter notices_amon_g_b/ mit RUN_NUM/EVENT_NUM, SRC_RA/SRC_DEC. S²-Richtung (τ=0), neutrino, em. Kompiliert als icecube_alerts.amn1 via amon_compiler, CDN.
 
 witness s2-direction
 url https://github.com/VERITAS-Observatory/VERITAS-VTSCat
 record sky1
 force em
-note VTSCat — VERITAS-Datenkatalog (GitHub, CC0): Spektral-Flusspunkte je Publikation als ECSV/YAML. S²-Richtung (τ=0), kind gamma, em; vtscat_flux.sky1 via vtscat_compiler — CDN live (sources.φ:9723, 3853 B, sha256 ca6ea9aa…, run 35144789674).
 
 witness s2-direction
 url https://gracedb.ligo.org/api/superevents/S250207bg/files/
 record sky1
 force gravity
-note GraceDB-Superevent-Datei-Route (2026-09-07 HTTP 200): bayestar.multiorder.fits. S²-Richtung (τ=0), kind gravity. Kompiliert als gw250207_115645.sky1 via gw_skymap_compiler, CDN (Sky-Integral = 1.0). Compile braucht echtes Superevent.
 
 witness s2-direction
 url https://gsaweb.ast.cam.ac.uk/alerts/alertsindex
 record skydirection
 force em
-note Gaia-DR3-Alerts-Index (2026-09-21 HTTP 200, 10601266 B sha256 03a5c67d…). S²-Richtung (τ=0), em. gaia_alerts.bin CDN live (1651644 B sha256 73368daf…); Merge skydirections.bin live (Tag ssd.jpl.nasa.gov, 704778 B); SKD1-magic in zeuge.rs:18,101.
 
 witness s2-direction
 url https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
 record sky1
 force em
-note H.E.S.S. DL3 DR1 (2026-09-16 HTTP 206/200). S²-Richtung (τ=0), kind gamma, em. Reduktion dl3::parse_events + reduce_grid; kompiliert als hess_dl3.sky1 via dl3_skymap_compiler --telescope hess — CDN live (sources.φ:9733, 168133 B, run 35251318800).
 
 witness s2-direction
 url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
 record skydirection
 force em
-note Lasair-ZTF (2026-09-06 HTTP 200 mit LASAIR_TOKEN, anonym 401): skydirection_compiler erntet das objects-Window. gmag NUR mit Einzel-Detektions-Epoche; Multi-Detektions-gmag ungehalten (0 honored). LASAIR_TOKEN in .secrets.local.
 
 witness s2-direction
 url https://opendata.auger.org/catalog/data.zip
 record pao1
 force em
-note Pierre-Auger-Open-Data (109 Ereignisse); data.zip (2026-09-06 HTTP 200) enthält 109 PAO*.json mit sdrec.ra/dec, sdrec.energy [EeV]. S²-Richtung (τ=0), CR (Proton), em. Kompiliert als auger_catalog.pao1 via auger_compiler, CDN live.
 
 witness s2-direction
 url https://opendata.magic.pic.es
 record sky1
 force em
-note MAGIC Open Data Repository (PIC) — Low-level-DL3. S²-Richtung (τ=0), kind gamma, em; dl3::parse_events; magic_dl3.sky1 via dl3_skymap_compiler --telescope magic — CDN live (sources.φ:9778, 473 B, sha256 0085e395…, run 35268770926).
 
 witness s2-direction
 url https://vo.km3net.de/ant20_01/nu/cone/form
 record s2e1 sky1
 force em
-note ANTARES-2007-2017-Ereignisliste (2026-09-24 verdict 200, 10549 B, sha256 f43308ab…): KM3NeT-VO-Konus-Form; 8754 Track-Neutrino-Ereignisse als CSV, Energie-Spalte fehlt (absent, 0 honored); antares_events_2007_2017.s2e1 CDN live.
 
 witness gestalt
 url https://api.opentopodata.org/v1/gebco2020?locations=<lat>,<lng>
 record gbco
-note GEBCO2020-Bathymetrie (2026-09-07 HTTP 200): Elevation in Metern, negativ unter dem Meeresspiegel; Land-Geschwister eudem25m. Gestalt (Körperfläche), τ = geologische Stabilität, gbco-Records, nie Oszillator/Kraftfeld. Heim bathymetrie-gebco.φ.
 
 witness gestalt
 url https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N{lat}_00_E{lon}_00_DEM/Copernicus_DSM_COG_10_N{lat}_00_E{lon}_00_DEM.tif
 record gl30
-note Copernicus GLO-30 Land-DEM (2026-09-12 HTTP 200): COG-GeoTIFF, 1 arcsec. Gestalt (Körperfläche), τ = geologische Stabilität, Raster. Socket gl30 gefällt (2026-09-14, Magic GL30). Deckt S1-Layover-Lücke; Konsument nächstes Atom.
 
 witness gestalt
 url https://topex.ucsd.edu/pub/srtm15_plus/SRTM15_V2.6.nc
 record srtm
-note SRTM15+ V2.6 (2026-10-04 HTTP 206): Topo-/Bathymetrie 15 arcsec, Elevation m, negativ unter dem Meeresspiegel. Gestalt (Körperfläche), τ = geologische Stabilität, SRTM-Records; Geschwister/Ersatz für gmrt (gmr1). Konsument nächstes Atom.
 
 witness gestalt
 url https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=geotiff
 record gmr1
-note GMRT-Bathymetrie (2026-09-23 HTTP 200, 1100202 B sha256 f26f41a3…): Elevation m, negativ unter dem Meeresspiegel. Gestalt (Körperfläche), τ = geologische Stabilität, GMR1-Records, nie Oszillator/Kraftfeld. gmrt_compiler.
 
 witness s2-direction
 url http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
 record sky1
 force em
-note FUGIN-12CO-Moment-0 (FUGIN Region 01100+0000): NAXIS=3-VRAD-Cube zu moment-0 (K·m/s je nativem Pixel), kind generic. Negative Rauschpixel sind echte Messungen (signed), nie positiv gegated. Compiler fugin_skymap_compiler.rs.
 
 witness s2-direction
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vlies_density.vlde
 record vlde
 force em
-note Vlies-Dichte (Council 2026-09-29): Stern-zahl-Zensus je HEALPix-Pixel aus dr3_stars.bin; distanzlos, bandlos — kein Kraftfeld. S²-Richtung, Träger em. vlies_density_compiler.rs. Schließt die Weberin-Lücke.
 
 witness substance
 url https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content
 record rixs
 force em
-note RIXS-Spin (Kuprat; Zenodo 7286412, 2026-09-29 verdict 206, 15508391 B, sha256 72391e2c…): sw_spin.txt, S(q,ω) relative Intensität über Dotierungs-Achse. Substance (Materialprobe), Träger em. rixs_spin.bin via crystal_compiler --rixs.
 
 witness substance
 url https://zenodo.org/api/records/15179114/files/data.zip/content
 record rixc
 force em
-note RIXS-Charge/Plasmon (Kuprat; Zenodo 15179114, 2026-09-29 verdict 206, 1659079 B, sha256 d2a707f8…): Bi-2223, Verlustseite e>0. Substance (Materialprobe), Träger em. rixs_charge.bin via crystal_compiler --plasmon.
 
 witness substance
 url https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
 record srd6
 force em
-note NIST SRD 62 Eindringtiefe (Kuprat; 2026-09-29 verdict 200, 32452 B, sha256 c11b5fd4…): ρ_s(T)-Penetration-Depth-Serien. Substance (Materialprobe), Träger em. srd62_suprastrom.bin via srd62_compiler.
 
 witness substance
 url https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content
 record eels
 force em
-note EELS-Phononen (Zhang; Zenodo 21859473, 2026-09-29 verdict 206, 125099 B, sha256 f8d20197…): eels_lineprofile 25×1205 + ene 1×1205 (meV), Bi-2212. Substance (Materialprobe), Träger em. eels_acoustic.bin via crystal_compiler --eels.
 
 witness point-event
 url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 record erbq
 force seismic-body
-note Chile-Erdbeben 2015 Illapel (2026-10-03: Layer 0 = Einzel-Feature; Layer 1 = 6, M8.3 + 5 Nachbeben, `returnCountOnly`). properties.mag (Mw), properties.depth km, properties.latitude/longitude, properties.time_ (epoch ms). quake_ptevent_compiler.
 
 witness point-event
 url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/5/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 record erbq
 force seismic-body
-note Tohoku-Seismizität (2026-10-03: Layer 0 = Einzel-Feature; Layer 5 „USGS - 1 century" = 198). properties.mag (Mw), properties.depth km, properties.latitude/longitude, properties.time (ISO 8601 UTC). quake_ptevent_compiler.
 
 witness point-event
 url https://www.jma.go.jp/bosai/quake/data/list.json
 record erbq
 force seismic-body
-note JMA-Erdbebenliste (2026-10-01 gemessen, JSON): cod "+lat+lon-depth/", mag, at (ISO 8601 JST); depth in m, fehlendes cod → lat/lon/depth absent, mag "Ｍ不明" → absent; nie 0.0. quake_ptevent_compiler.
 
 witness substance
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_UD_0p33_0.txt
 record rixs
 force em
-note Epochen-Textserie des --spectral-Arms (Eloss/weight/err aus sw_spin.txt): UD q=(0.33,0), Zenodo 7286412, Zip im rixs_series_compiler entpackt. Paar mit OD1_0p33_0. Substance, em.
 
 witness substance
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_OD1_0p33_0.txt
 record rixs
 force em
-note Epochen-Textserie des --spectral-Arms (Eloss/weight/err aus sw_spin.txt): OD1 q=(0.33,0), Zenodo 7286412, Zip im rixs_series_compiler entpackt. Paar mit UD_0p33_0. Substance, em.
 
 witness point-event
 url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/5/query?where=OBJECTID%20IN%20(1,2,3,4,5,6,7,9,12,13,14,16,17,18,21,22,23,24,25,26,30,31,32,33,34,35,36,37,38,40,42,43,44,45,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,70,72,73,75,76,77,81,82,83,85,87,89,90,91,92,94,95,96,98,101,102,103,105,107,108,109,110,111,112,113,115,117,118,120,121,122,123,124,125,126,127,128,130,134,135,137,138,139,140,142,143,144,145,146,147,148,149,150,151,155,156,157,158,160,161,162,163,164,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,183,184,187,188,189,190,191,192,193,194,195,196,197,198)&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 record erbq_mainshock
 force seismic-body
-note Declustered Mainshock-Set (magnitude-local-maxima, Gardner-Knopoff 1974: L=10^(0.1238M+0.983) km, T=10^(0.032M+2.738) d): 153 of 198 Tohoku M>=7 mainshocks (1911-2021); the query filters the 153 OBJECTIDs.
 
 witness gestalt
 url https://dap.ceda.ac.uk/thredds/dodsC/bodc/gebco/global/gebco_2023/ice_surface_elevation/netcdf/GEBCO_2023_CF.nc.ascii?elevation[0:215:43199][0:431:86399]
 record gbco
-note GEBCO_2023 ice_surface_elevation (CEDA OPeNDAP-ASCII, 2026-10-04 HTTP 200, 261329 B): Jahresgitter-Subset elevation[0:215:43199][0:431:86399]; Epochen-Paar mit GEBCO_2026. Gestalt, geologische Stabilitaet.
 
 witness gestalt
 url https://dap.ceda.ac.uk/thredds/dodsC/bodc/gebco/global/gebco_2026/ice_surface_elevation/netcdf/GEBCO_2026.nc.ascii?elevation[0:215:43199][0:431:86399]
 record gbco
-note GEBCO_2026 ice_surface_elevation (CEDA OPeNDAP-ASCII, 2026-10-04 HTTP 200, 261378 B): Jahresgitter-Subset elevation[0:215:43199][0:431:86399]; Epochen-Paar mit GEBCO_2023. Gestalt, geologische Stabilitaet.
 
 witness gestalt
 url https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=esriascii
 record gmr1
-note GMRT GridServer format=esriascii (2026-10-04 HTTP 200, 1719152 B): Textgitter Elevation m; nur das aktuelle Gitter — kein Versions-Schalter, kein zweiter gmrt-Epoch-Block moeglich. Gestalt, geologische Stabilitaet.
