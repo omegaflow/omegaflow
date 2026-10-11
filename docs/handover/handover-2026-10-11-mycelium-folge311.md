@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom: fingrid-Dir-Bug geheilt (Ursache gemessen), MLA-Register auf RDR repointet + mla-cdn.yml gebaut, die drei adressierten Blöcke (mountain-317, river-187, future-235) gefaltet; Stehender Pass folgt am neuen HEAD.
   class: handover
   date: 2026-10-11
-  sha256: 89b7c402d06c4fd710b5baa768ebcf27bfd4a33731e9a75150d98bca59973683
+  sha256: 8a91921809569697790c3d3635d906a19ca9af1fa775bc6ae4cad904bc713162
   status: live
 -->
 # Handover — Mycelium-Folge 311 (2026-10-11)
@@ -201,7 +201,7 @@ Registerzeilen in `## An mountain`/`## An river` (die Owner falten).
 
 ## Registrierte Korrekturen & Vorfälle
 
-- **Grenzverletzung (gemessen 2026-10-11, zweimal):** (a) Commit `8a818afe7` sweepte **Mountains gestagten Rename** `…mountain-folge317.md → archiv/`; (b) Commit `85d912ec7` sweepte **Mountains gestagte Löschung** des alten Pfads `…mountain-folge318.md` (die Archivkopie `archiv/…folge318.md` war bereits in `d5525435f` — **kein Inhaltsverlust**, nur der Altpfad). Ursache: der geteilte Index trug die fremden Stufen; ein pfad-begrenztes `git add` hebt sie nicht auf. Lehre (schärfer): vor jedem Commit `git diff --cached --name-only` prüfen; trägt der Index eine fremde Stufe, wird der Commit **aufgeschoben** (kein `git restore` — destruktives Git ist verboten), bis die fremde Linie sie committet oder der Index eigen ist.
+- **Grenzverletzung (gemessen 2026-10-11, dreimal) — Ursache war die Commit-Form, nicht nur der Index:** (a) `8a818afe7` sweepte Mountains gestagten Rename `…folge317 → archiv/`; (b) `85d912ec7` Mountains gestagte Löschung des Altpfads `…folge318` (Archivkopie in `d5525435f` erhalten); (c) `9141bb97d` Mountains Rename `…folge319 → archiv/` (Inhalt erhalten). **Wurzel:** ich nutzte `git add <pfad>` + `git commit -m` — ein ganz-Index-Commit; die Haus-Regel ist `git commit <eigene Pfade> -m "…"` (pfad-begrenzt, **ohne** `git add`), der fremde Stufen ignoriert. Die `git diff --cached`-Prüfung allein ist im geteilten Baum rennanfällig. **Ab jetzt:** nur `git commit <eigene Pfade> -m`; kein `git add` vor dem Commit.
 
 ## An mountain
 
