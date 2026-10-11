@@ -10,7 +10,9 @@ use omegaflow::mathematikerin::receiver::{
     TwoWayDopplerInputs, two_way_doppler, two_way_light_time,
 };
 use omegaflow::mathematikerin::tropo::slant_delay_m;
-use omegaflow::odf::{parse_p11r_bin, parse_podf_bin, ref_uplink_hz, write_p11r_bin};
+use omegaflow::odf::{
+    odf_turn_ratio, parse_p11r_bin, parse_podf_bin_bands, ref_uplink_hz, write_p11r_bin,
+};
 use omegaflow::odp::{dsn_host, dsn_station};
 
 const PROG: &str = "witness-resid";
@@ -55,7 +57,7 @@ struct Witness {
     odf_path: &'static str,
     residuum_path: &'static str,
     tag: &'static str,
-    parser: fn(&[u8]) -> Option<Vec<[f64; 9]>>,
+    parser: fn(&[u8]) -> Option<(Vec<[f64; 9]>, Vec<Option<i64>>)>,
 }
 
 const WITNESSES: [Witness; 2] = [
@@ -64,14 +66,14 @@ const WITNESSES: [Witness; 2] = [
         odf_path: "data/spdf.gsfc.nasa.gov/pioneer10_odf.bin",
         residuum_path: "data/spdf.gsfc.nasa.gov/pioneer10_residuum.bin",
         tag: "w10-resid",
-        parser: parse_podf_bin,
+        parser: parse_podf_bin_bands,
     },
     Witness {
         body: "galileo_e1",
         odf_path: "data/pds-ppi.igpp.ucla.edu/galileo_odf.bin",
         residuum_path: "data/pds-ppi.igpp.ucla.edu/galileo_residuum.bin",
         tag: "gal-resid",
-        parser: parse_podf_bin,
+        parser: parse_podf_bin_bands,
     },
 ];
 
@@ -100,21 +102,9 @@ const MIN_CELL: usize = 500;
 
 const BEAT_BOUND: f64 = 5.0e5;
 
-const ODF_S_BAND_DOWNLINK: i64 = 1;
-const ODF_X_BAND_DOWNLINK: i64 = 2;
-const ODF_S_BAND_TURN_RATIO: f64 = 240.0 / 221.0;
-const ODF_X_BAND_TURN_RATIO: f64 = 880.0 / 749.0;
 const METRES_PER_KM: f64 = 1000.0;
 
-const ODF_DOPPLER_CONVENTION: &str = "the ODF observable is a residual frequency in Hz; the receiver chain returns an absolute downlink observable_hz, so the comparable modeled residual is observable_hz - f_ref_hz * turn_ratio; the per-pass fit consumes the equivalent two-way range-rate (nominal_hz - observable_hz) * C_LIGHT / nominal_hz with nominal_hz = f_ref_hz * turn_ratio (positive receding, m/s), which is the retired downlink_rate_core + uplink_rate sum; f_ref_hz = ref_uplink_hz(data_type, odf_ref_hz); turn_ratio = 240/221 for Downlink Band ID 1 and 880/749 for ID 2 (DSN TRK-2-18 T-transmitter pair + X-band exciters); a one-way observation (data_type 11) uses the chain's downlink_hz leg; station and target ICRS vectors are metres and are scaled into km for the receiver chain; the gravitator worldline is declared per act (--gravitator <body>, loaded from ephemeris_<body>.bin) at the bounce epoch; the Shapiro GM is GM_SUN_M3_S2";
-
-fn odf_turn_ratio(downlink_band: i64) -> Option<f64> {
-    match downlink_band {
-        ODF_S_BAND_DOWNLINK => Some(ODF_S_BAND_TURN_RATIO),
-        ODF_X_BAND_DOWNLINK => Some(ODF_X_BAND_TURN_RATIO),
-        _ => None,
-    }
-}
+const ODF_DOPPLER_CONVENTION: &str = "the ODF observable is a residual frequency in Hz; the receiver chain returns an absolute downlink observable_hz, so the comparable modeled residual is observable_hz - f_ref_hz * turn_ratio; the per-pass fit consumes the equivalent two-way range-rate (nominal_hz - observable_hz) * C_LIGHT / nominal_hz with nominal_hz = f_ref_hz * turn_ratio (positive receding, m/s), which is the retired downlink_rate_core + uplink_rate sum; f_ref_hz = ref_uplink_hz(data_type, odf_ref_hz); turn_ratio follows the (uplink, downlink) band pair per JPL 810-005 module 201 Rev F Table 1 (S/S 240/221, S/X 880/221, X/S 240/749, X/X 880/749); the uplink band id travels in the companion BND1 section of the ODF bin (absent -> no model, 0 honored) — the downlink band alone does not determine the ratio (channel 28: S- or X-uplink with a coherent X-downlink); a one-way observation (data_type 11) uses the chain's downlink_hz leg; station and target ICRS vectors are metres and are scaled into km for the receiver chain; the gravitator worldline is declared per act (--gravitator <body>, loaded from ephemeris_<body>.bin) at the bounce epoch; the Shapiro GM is GM_SUN_M3_S2";
 
 fn jd_date(tdb: f64) -> String {
     let jd = tdb / 86400.0 + 2451545.0;
@@ -384,7 +374,7 @@ fn run(witness: Witness, gravitator: &str) {
         eprintln!("{tag} ODF bin void ({podf})");
         return;
     };
-    let Some(records) = (witness.parser)(&bytes) else {
+    let Some((records, bands)) = (witness.parser)(&bytes) else {
         eprintln!("{tag} ODF bin parse void ({podf})");
         return;
     };
@@ -484,7 +474,7 @@ fn run(witness: Witness, gravitator: &str) {
     let mut no_comp = 0usize;
     let mut tropo_used = 0usize;
     let mut tropo_held = 0usize;
-    for r in &records {
+    for (r, uplink) in records.iter().zip(bands.iter()) {
         if r[8] < 2.0 {
             no_comp += 1;
             continue;
@@ -512,7 +502,11 @@ fn run(witness: Witness, gravitator: &str) {
             None
         };
         let t3 = r[0];
-        let Some(turn_ratio) = odf_turn_ratio(r[6] as i64) else {
+        let Some(uplink_band) = uplink else {
+            no_model += 1;
+            continue;
+        };
+        let Some(turn_ratio) = odf_turn_ratio(*uplink_band, r[6] as i64) else {
             no_model += 1;
             continue;
         };

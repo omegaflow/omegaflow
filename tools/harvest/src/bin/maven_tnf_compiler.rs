@@ -41,8 +41,8 @@ fn products(text: &str) -> Vec<(String, String, String)> {
     out
 }
 
-fn write_and_verify(records: &[[f64; 9]], out: &str) -> Vec<u8> {
-    let bin = odf::write_podf_bin(records);
+fn write_and_verify(records: &[[f64; 9]], bands: &[Option<i64>], out: &str) -> Vec<u8> {
+    let bin = odf::write_podf_bin_bands(records, bands);
     if std::fs::write(out, &bin).is_err() {
         eprintln!("write {out} void");
         std::process::exit(1);
@@ -84,24 +84,25 @@ fn main() {
     };
     let prods = products(text);
     eprintln!("maven tnf collection: {} products", prods.len());
-    let mut merged: Vec<[f64; 9]> = Vec::new();
+    let mut paired: Vec<([f64; 9], Option<i64>)> = Vec::new();
     for (name, year, month) in &prods {
         let url = format!("{BASE}{year}/{month}/{name}");
         let Some(bytes) = fetch_raw_bytes(&url) else {
             eprintln!("{name}: fetch void ({url})");
             continue;
         };
-        let Some(recs) = odf::tnf_rows(&bytes, &lsk) else {
+        let Some((recs, rec_bands)) = odf::tnf_rows_bands(&bytes, &lsk) else {
             eprintln!("{name}: tnf scan void — {} B", bytes.len());
             continue;
         };
-        merged.extend(recs);
+        paired.extend(recs.into_iter().zip(rec_bands));
     }
-    if merged.is_empty() {
+    if paired.is_empty() {
         eprintln!("no maven TNF samples — the series stays unwritten (0 honored)");
         return;
     }
-    merged.sort_by(|a, b| a[0].total_cmp(&b[0]));
+    paired.sort_by(|a, b| a.0[0].total_cmp(&b.0[0]));
+    let (merged, bands): (Vec<[f64; 9]>, Vec<Option<i64>>) = paired.into_iter().unzip();
     let mut codes: std::collections::BTreeMap<i64, usize> = std::collections::BTreeMap::new();
     for r in &merged {
         *codes.entry(r[odf::TNF_ROW_FORMAT] as i64).or_insert(0) += 1;
@@ -112,7 +113,7 @@ fn main() {
     let ranges = odf::podf_shard_ranges(merged.len(), odf::PODF_SHARD_BUDGET);
     if ranges.len() == 1 {
         let out = format!("{DIR}/{PREFIX}.bin");
-        write_and_verify(&merged, &out);
+        write_and_verify(&merged, &bands, &out);
         if ci_mode && !upload_release(NETLOC, &out) {
             std::process::exit(1);
         }
@@ -130,7 +131,7 @@ fn main() {
         }
         names.push(name.clone());
         let path = format!("{DIR}/{name}");
-        let bin = write_and_verify(&merged[lo..hi], &path);
+        let bin = write_and_verify(&merged[lo..hi], &bands[lo..hi], &path);
         if bin.len() > odf::PODF_SHARD_LIMIT {
             eprintln!(
                 "{path}: {}-byte shard exceeds the {}-byte CDN asset limit — the series stays unwritten (0 honored)",

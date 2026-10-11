@@ -49,7 +49,7 @@ fn main() {
         eprintln!("naif0012 table void — the series stays unwritten (0 honored)");
         std::process::exit(1);
     };
-    let rows = match odf::tnf_rows(&bytes, &lsk) {
+    let (rows, bands) = match odf::tnf_rows_bands(&bytes, &lsk) {
         Some(r) => r,
         None => {
             eprintln!("TNF SFDU scan void — the series stays unwritten (0 honored)");
@@ -68,7 +68,7 @@ fn main() {
     if let Some(parent) = std::path::Path::new(&out).parent() {
         let _ = std::fs::create_dir_all(parent);
     }
-    let bin = odf::write_podf_bin(&rows);
+    let bin = odf::write_podf_bin_bands(&rows, &bands);
     if std::fs::write(&out, &bin).is_err() {
         eprintln!("write {out} returned void");
         std::process::exit(1);

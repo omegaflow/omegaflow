@@ -153,7 +153,8 @@ pub fn parse_podf_bin(data: &[u8]) -> Option<Vec<[f64; 9]>> {
         return None;
     }
     let count = u32::from_le_bytes(data[4..8].try_into().ok()?) as usize;
-    if data.len() != 8 + count * 72 {
+    let records_end = 8 + count * 72;
+    if data.len() != records_end && !band_trailer_valid(data, records_end, count) {
         return None;
     }
     let mut out = Vec::with_capacity(count);
@@ -168,6 +169,64 @@ pub fn parse_podf_bin(data: &[u8]) -> Option<Vec<[f64; 9]>> {
         out.push(r);
     }
     Some(out)
+}
+
+pub const PODF_BANDS_MAGIC: [u8; 4] = *b"BND1";
+pub const ODF_BAND_NONE: i64 = 0;
+
+fn band_trailer_valid(data: &[u8], records_end: usize, count: usize) -> bool {
+    data.len() == records_end + 8 + count * 8
+        && &data[records_end..records_end + 4] == &PODF_BANDS_MAGIC
+        && u32::from_le_bytes(
+            data[records_end + 4..records_end + 8]
+                .try_into()
+                .unwrap_or([0; 4]),
+        ) as usize
+            == count
+}
+
+pub const ODF_TURN_RATIO_CONVENTION: &str = "the coherent turnaround ratio follows the (uplink, downlink) band pair per JPL 810-005 module 201 Rev F Table 1: S/S 240/221, S/X 880/221, X/S 240/749, X/X 880/749; the Ka/K rows are negotiated per project, so they stay absent";
+
+pub fn odf_turn_ratio(uplink_band: i64, downlink_band: i64) -> Option<f64> {
+    match (uplink_band, downlink_band) {
+        (1, 1) => Some(240.0 / 221.0),
+        (1, 2) => Some(880.0 / 221.0),
+        (2, 1) => Some(240.0 / 749.0),
+        (2, 2) => Some(880.0 / 749.0),
+        _ => None,
+    }
+}
+
+pub fn write_podf_bin_bands(records: &[[f64; 9]], uplink_bands: &[Option<i64>]) -> Vec<u8> {
+    let mut out = write_podf_bin(records);
+    if uplink_bands.len() != records.len() || uplink_bands.iter().all(Option::is_none) {
+        return out;
+    }
+    out.extend_from_slice(&PODF_BANDS_MAGIC);
+    out.extend_from_slice(&(records.len() as u32).to_le_bytes());
+    for b in uplink_bands {
+        out.extend_from_slice(&(b.unwrap_or(ODF_BAND_NONE) as f64).to_le_bytes());
+    }
+    out
+}
+
+pub fn parse_podf_bin_bands(data: &[u8]) -> Option<(Vec<[f64; 9]>, Vec<Option<i64>>)> {
+    let rows = parse_podf_bin(data)?;
+    let n = rows.len();
+    let mut bands = vec![None; n];
+    let records_end = 8 + n * 72;
+    if band_trailer_valid(data, records_end, n) {
+        for (i, slot) in bands.iter_mut().enumerate() {
+            let off = records_end + 8 + i * 8;
+            let mut buf = [0u8; 8];
+            buf.copy_from_slice(&data[off..off + 8]);
+            let v = f64::from_le_bytes(buf).round() as i64;
+            if v != ODF_BAND_NONE {
+                *slot = Some(v);
+            }
+        }
+    }
+    Some((rows, bands))
 }
 
 fn observable_series_of(rows: &[[f64; 9]]) -> Vec<(f64, f64, u32)> {
@@ -2131,8 +2190,39 @@ fn tnf_row(frame: &TnfSfdu, bytes: &[u8], tdb: f64) -> Option<[f64; 9]> {
 }
 
 pub fn tnf_rows(bytes: &[u8], lsk: &crate::archivar::lsk::LeapSeconds) -> Option<Vec<[f64; 9]>> {
+    tnf_rows_bands(bytes, lsk).map(|(rows, _)| rows)
+}
+
+fn tnf_row_uplink_band(format_code: u8, band: f64) -> Option<i64> {
+    let carries_uplink = matches!(
+        format_code,
+        TNF_FORMAT_UL_CARRIER_PHASE
+            | TNF_FORMAT_UL_SEQ_RANGING_PHASE
+            | TNF_FORMAT_UL_PN_RANGING_PHASE
+            | TNF_FORMAT_DOPPLER_COUNT
+            | TNF_FORMAT_SEQUENTIAL_RANGE
+            | TNF_FORMAT_ANGLE
+            | TNF_FORMAT_RAMP
+            | TNF_FORMAT_DRVID
+            | TNF_FORMAT_PN_RANGE
+            | TNF_FORMAT_TONE_RANGE
+            | TNF_FORMAT_CARRIER_OBSERVABLE
+            | TNF_FORMAT_TOTAL_PHASE_OBSERVABLE
+    );
+    if carries_uplink && band > 0.0 {
+        Some(band as i64)
+    } else {
+        None
+    }
+}
+
+pub fn tnf_rows_bands(
+    bytes: &[u8],
+    lsk: &crate::archivar::lsk::LeapSeconds,
+) -> Option<(Vec<[f64; 9]>, Vec<Option<i64>>)> {
     let frames = scan_tnf_sfdus(bytes)?;
     let mut out = Vec::with_capacity(frames.len());
+    let mut bands = Vec::with_capacity(frames.len());
     for f in &frames {
         let Some(day0) = crate::archivar::lsk::days_from_civil(f.year as i64, 1, 1) else {
             continue;
@@ -2145,9 +2235,10 @@ pub fn tnf_rows(bytes: &[u8], lsk: &crate::archivar::lsk::LeapSeconds) -> Option
         let Some(row) = tnf_row(f, sfdu, tdb) else {
             continue;
         };
+        bands.push(tnf_row_uplink_band(f.format_code, row[TNF_ROW_BAND]));
         out.push(row);
     }
-    Some(out)
+    Some((out, bands))
 }
 
 pub fn tnf_parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
@@ -2884,6 +2975,54 @@ mod tests {
             }
         }
         out
+    }
+
+    #[test]
+    fn turn_ratio_follows_the_band_pair_not_the_downlink_band_alone() {
+        assert_eq!(odf_turn_ratio(1, 1), Some(240.0 / 221.0));
+        assert_eq!(odf_turn_ratio(1, 2), Some(880.0 / 221.0));
+        assert_eq!(odf_turn_ratio(2, 1), Some(240.0 / 749.0));
+        assert_eq!(odf_turn_ratio(2, 2), Some(880.0 / 749.0));
+        assert_eq!(
+            odf_turn_ratio(0, 2),
+            None,
+            "an absent uplink band carries no ratio (0 honored)"
+        );
+        assert_eq!(
+            odf_turn_ratio(1, 3),
+            None,
+            "a Ka-downlink is negotiated per project, never assumed"
+        );
+    }
+
+    #[test]
+    fn band_trailer_roundtrips_and_leaves_the_nine_field_record_untouched() {
+        let rows = [[1.0, 2.0, 3.0, 4.0, 5.0, 12.0, 2.0, 23.0, 1.0]];
+        let bands = [Some(1i64)];
+        let bytes = write_podf_bin_bands(&rows, &bands);
+        assert_eq!(
+            bytes.len(),
+            8 + 72 + 8 + 8,
+            "9-field records stay at 72 B; the BND1 section follows"
+        );
+        let plain = parse_podf_bin(&bytes).unwrap();
+        assert_eq!(
+            plain.len(),
+            1,
+            "a reader that ignores the bands still parses the records"
+        );
+        let (parsed, got) = parse_podf_bin_bands(&bytes).unwrap();
+        assert_eq!(parsed[0][6], 2.0);
+        assert_eq!(got, vec![Some(1)]);
+    }
+
+    #[test]
+    fn absent_uplink_band_omits_the_trailer() {
+        let rows = [[1.0, 2.0, 3.0, 4.0, 5.0, 12.0, 2.0, 23.0, 1.0]];
+        let bytes = write_podf_bin_bands(&rows, &[None]);
+        assert_eq!(bytes.len(), 8 + 72);
+        let (_, got) = parse_podf_bin_bands(&bytes).unwrap();
+        assert_eq!(got, vec![None]);
     }
 
     #[test]
