@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom: PCN-sha256 aus dem CDN-Release-Digest, usgs_lidar_coverage (Block + coverage-manifest-Matrix-Arm) und glofas_ewds_coverage (Compiler + Workflow + Block) registriert, GRDC-1h-curl-Cap geheilt (7.06 GB / ~86 min) auf den Streaming-Helper, GloFAS-EWDS-Route gebaut, SOURCE_PORT-Sidecar-Regel geschärft, Prosa-Marker (free-voices/tools-map) + Frame/Epoche-Wire-Doc; Stehender Pass folgt am neuen HEAD.
   class: handover
   date: 2026-10-11
-  sha256: 7aaec6c56b6d033fd10bc7fd50f037ef61d878f693b263528d338e5444a92fae
+  sha256: ecb1af15b073682bb2d0cbf05fbcf842a342fbefd1572cc4dcd2e91cb1022f19
   status: live
 -->
 # Handover — Mycelium-Folge 313 (2026-10-11)
@@ -89,12 +89,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** der Daten-Arm liegt hinter dem authentifizierten `retrieve` (401); der Katalog-Walk liefert nur die Kollektions-Links.
 - **Braucht:** ersten Lauf lesen; `retrieve`-Auth (Key/Header — Auth-Route, Operator); `terms` (CEMS FLOODS) (Mountain).
 
-### NIST NCNR NSE — Route gebaut + registriert; Lauf queued
+### NIST NCNR NSE — Route gebaut + registriert; Lauf grün
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** erster `nist-ncnr-nse-cdn`-Lauf endet
-- **Lage:** (gemessen 2026-10-11) `nist_ncnr_nse_compiler.rs` + Workflow + Block (`phi/sources.φ:11711`, `format coverage_manifest`); Lauf `38169555257` **queued** (`38169549839` cancelled). Ersetzt das descopte `trisp-keller` als offene NSE-Route für `kuprat-complex-te`.
-- **Blockade:** Lauf läuft; `field`-Riss der coverage-Klasse.
-- **Braucht:** Log via `ci_manage log`; `terms` (US-PD) + `field` (Mountain); Riss `format opentopography_coverage` (`phi/sources.φ:20023`) vs Loader-Arm (`main_flow.rs:5106`).
+- **Trigger:** Mountains `terms`/`field`-Verdikt
+- **Lage:** (gemessen 2026-10-11) `nist_ncnr_nse_compiler.rs` + Workflow + Block (`phi/sources.φ`, `format coverage_manifest`); Lauf `38170359508` **success** → Asset `nist_ncnr_nse_coverage.manifest` 3149 B, sha256 `eee1e943…` (in den Block geschrieben). Ersetzt das descopte `trisp-keller` als offene NSE-Route für `kuprat-complex-te`.
+- **Blockade:** `field`-Riss der coverage-Klasse.
+- **Braucht:** `terms` (US-PD) + `field` (Mountain); Riss `format opentopography_coverage` (`phi/sources.φ:20023`) vs Loader-Arm (`main_flow.rs:5106`).
 
 ### Coverage-Manifest-Fetch-Loop — USGS-Manifest registriert
 - **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
