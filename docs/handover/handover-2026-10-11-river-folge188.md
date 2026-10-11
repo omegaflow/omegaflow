@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — THEMIS-ASI-Querprobe GILL gemessen (kein aufgelöster Breakup; stream2-Keogramm achsenlos/nahezu leer), JUICE/Flyby-Trägerschaft von Sensory gefaltet
   class: handover
   date: 2026-10-11
-  sha256: debc16f1402eff5dba8fcf5dc50c6defe3aaf50e9b4b9adda63a28e66bcfabd3
+  sha256: 155f9d120590b9c5d1f63267d26165659aea7ece4d35786087587c44562628cf
   status: live
 -->
 # Handover — River-Folge 188 (2026-10-11)
@@ -54,7 +54,7 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 - `docs/paper/flyby-path-2-addendum-2026-09-29.md` — die Zellen der Flugbahn stehen `pending` (nach dem Flyby gefüllt); der `pending`-Rest ist die 1-σ-Kovarianz (siehe §Flyby-Kette). (future-235-orphan + sensory-255)
 - `docs/auftrag/auftrag-flyby2-kette.md` — Auftrag der Flyby-2-Kette; Marker sichten und schließen oder terminieren. (future-235-orphan + sensory-255)
 - `state/river/gic-research-dossier-2026-10-11.md` — das konsolidierte Dossier; §9-Nachtrag (OE-417 ohne GMD; THEMIS-ASI erreichbar; `doe417.pnnl.gov`; `fingrid-cdn.yml` steht).
-- `state/river/themis/` — Kapuskasing `kapu_themis21` **und** (dieses Atom) Gillam `gill_themis19`, 2024-05-10: KAPU `stream2`-Keogramme + `stream0`-Full-PNGs, GILL `20240510__gill_themis19_full-keogram.pgm.jpg` (5517 B, sha256 `d739f161…`).
+- `state/river/themis/` — Kapuskasing `kapu_themis21` **und** Gillam `gill_themis19`, 2024-05-10: KAPU `stream2`-Keogramme + `stream0`-Full-PNGs; GILL **stream0**-Anker `20240510_0606_gill_themis19_full_stream0.png` (aus dem 256×256-P5-Frame konvertiert) + `20240510__gill_themis19_full-keogram_raw.png` + `…_full-keogram.pgm.jpg` (5517 B, sha256 `d739f161…`).
 - `state/river/gic_null_baseline_measured.md` — die gemessene zeitverschobene Null-Baseline.
 - `state/river/gic-sources-broad-2026-10-11.md` + `state/river/gic-sources-and-grid-outage-research-2026-10-11.md` — die Quellen-/Zeugenlandschaft.
 - `state/river/registrierungen-2026-10-11.md` — ENTSO-E + Fingrid ausgefüllt-vorbereitet (Operator-Akt).
@@ -72,19 +72,19 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 - **Blockade:** die per-Station-`<code>_xyz_1m.bin`-Assets fehlen (Harvest läuft); ohne sie nur der 2-Station-Eichanker ABK/SOD.
 - **Braucht:** nach Abschluss `ci_manage view 38130172276` lesen; dann je Familie `al_network_proxy --family state/river/gic-family-auroral.txt --dir <pfad> --decl auto --baseline-block 60 --min-stations 2` und die Enveloppe mit `gic_onset_detector --null 200` gegen McPherron messen. (CDN-Registrierung + McPherron-`terms CC-BY-4.0` = Mountain/Mycelium.)
 
-### Disjunkter optischer Onset-Zeuge (THEMIS-ASI) — GILL-Querprobe negativ, stream2-Keogramm achsenlos
+### Disjunkter optischer Onset-Zeuge (THEMIS-ASI) — Quelle gebaut, Label-Methode an der getimten Achse
 - **Status:** eigen (Messung) | **Bindung:** eigen
-- **Trigger:** der nächste Mess-Schritt (Label-Methode auf dem `stream0`-Pfad verankern).
-- **Lage:** (gemessen 2026-10-11 via `archive_search --verdict`/`--playwright` + `curl`) die Plattform ist **`aurorax.space`** (NICHT `aurorax.ca` = Restaurant-SaaS); API `https://api.aurorax.space` **lesend ohne Key**; Programm-String **`themis-asi`**; Rohdaten offen am UCalgary-SRS-Archiv `data.phys.ucalgary.ca` (HTTP + anon-FTP + rsync + REST), **Keogramme** unter `…/THEMIS/asi/stream2/YYYY/MM/DD/<station>_themis<NN>/…-full-keogram.pgm.jpg`. **Querprobe GILL (dieses Atom):** `gill_themis19` 2024-05-10 geholt (HTTP 200, **720×256 px**, **5517 B**, sha256 `d739f161aa92f7d04119eea26b6b7984d32775cf53cabde46ca28067267f2800`, magic `ff d8 ff e0`); der `vision`-Read findet **keine aufgelöste Breakup-Kante** — das Bild ist zu **82 % uniform weiß** mit einem einzigen dunklen Rechteck (x≈123–250, volle Höhe), **ohne Achsen/Ticks/Text** → Polarität/Achsenrichtung nicht aus dem Bild bestimmbar; KAPU (`kapu_themis21`, 9952 B) ist fast doppelt so groß. Damit ist die polwärtige-Expansions-Querprobe **nicht falsifiziert und nicht bestätigt** — die `stream2`-Keogrammform trägt keine Zeitachse. Zustand bleibt *roh erreichbar, Liste ungebaut*. **Kein fertiger Onset-Katalog 2017–2025** (Ledvina = 2007–2016; `SuperMAG and THEMIS image data are not redistributed`) — bestätigt.
-- **Blockade:** die 720×256-`stream2`-Keogramme tragen keine Achsen/Ticks und sind für ruhige Fenster nahezu leer — die Label-Methode (was ist ein „Onset" und **wann**) ist darauf nicht verankerbar.
-- **Braucht:** den **`stream0`-Pfad** (Vollbild-ASI-Frames PGM/PNG mit UT-Zeitstempel im Namen, `…/THEMIS/asi/stream0/`) für die Label-Methode nutzen statt der achsenlosen `stream2`-Keogramme; eine aktive Referenznacht als Anker, um Polarität/Auflösung zu verifizieren. `ffmpeg` ist lokal (PGM→PNG). CDN/Compiler = Mycelium (Compiler `themis_asi_keogram_compiler.rs` steht), Verdikt/`terms` = Mountain.
+- **Trigger:** der nächste Mess-Schritt (getimetes Keogramm + erste gelabelte Referenznacht).
+- **Lage:** (gemessen 2026-10-11 gegen den Baum) der optische Zeuge ist **gebaut**: Quelle `themis_asi` (Berkeley G-ASI CDF, `phi/sources.φ:20853`, Compiler `tools/harvest/src/bin/themis_asi_compiler.rs`, `terms free-open`, CDN-Asset vorhanden) **plus** UCalgary-SDR (`aurorax.space` lesend keylos, `data.phys.ucalgary.ca`). **UCalgary `stream0` in diesem Atom gemessen:** per-Minute-Vollbilder `YYYYMMDD_HHMM_<st>_themis<NN>_full.pgm[.gz]` (P5, grau16le, **256×256**, UT im Dateinamen), GILL 2024-05-10 = **249 Frames** (Dark-Window ut04–ut08; ut03 nur `_wide`); die `stream2`-Keogramme `…_full-keogram.pgm` (368 KB) existieren, tragen aber **keine lesbare Achse** (`vision`: schmaler schwarzer Streifen + uniformes Grau — ein 16→8-bit-Render-Artefakt; die frühere `.pgm.jpg` 720×256, 5517 B, sha256 `d739f161…`). GILL-Frames 0409/0606 rendern **überwiegend dunkel** (nur Limb-Emission + Sternpunkte) — **named, nicht geglättet:** der `ffmpeg`-16→8-bit-Convert kann schwaches Signal kappen, daher **nicht** als „ruhige Nacht" gewertet. Kein fertiger Onset-Katalog 2017–2025 (Ledvina = 2007–2016; `SuperMAG and THEMIS image data are not redistributed`) — bestätigt.
+- **Blockade:** die `stream2`-Keogramme sind achsenlos; die Label-Methode (was ist ein „Onset" und **wann**) braucht ein **getimetes** Keogramm, keine achsenlose Lookup-Grafik.
+- **Braucht:** die Label-Methode auf der **gebauten** Quelle verankern — (1) aus `themis_asi`-CDF (Zeit-+Image-Variablen) **oder** den UCalgary-`stream0`-per-Minute-Frames die meridionale Aurora-Intensität zu einem **getimten Keogramm** (UT-Achse aus Dateiname/CDF-Zeit) verdichten; (2) eine Referenznacht aus der registrierten Substurm-Onset-Liste wählen, deren Time mit dem Dark-Window der Station (GILL ~ut04–ut08) zusammenfällt; (3) Onset = ko-lokalisierte scharfe Helligkeitszunahme + polwärtige Expansion zwischen aufeinanderfolgenden Frames. Compiler = Mycelium; UCalgary-`terms`/`ttl` = Mountain.
 
-### Netz-End-Validator (EAGLE-I / OE-417) — GMD-Kategorie fehlt (Riss)
+### Netz-End-Validator — GIC-Validator gebaut (FMI/BPA), OE-417 ohne GMD (Riss)
 - **Status:** eigen (Messung) | **Bindung:** eigen
-- **Trigger:** der nächste Mess-Schritt (NERC-/DOE-GMD-Berichte bzw. gemessenes GIC).
-- **Lage:** (gemessen 2026-10-11 via `archive_search --playwright` + `curl` + `sgrep`) **OE-417 trägt keine GMD-/geomagnetisch-Kategorie** — die 24 Jahres-Summaries 2002–2025 (`data/eia.gov/`, Portal `doe417.pnnl.gov`) und die PNNL-Roh-Taxonomie (Cause = „Weather or natural disaster", kein geomagnetic) sind gemessen ohne `geomag`/`magnetic`/`GMD`/`solar`/`space weather` (positive Kontrollen `weather`/`vandalism` > 0). Die EIA-Seite `eia.gov/electricity/data/eia417/` ist **tot** (Redirect nach `eia.gov/electricity/`). EAGLE-I-Jahres-CSVs alle > 60 MB (2024 = 1,38 GB), nicht geladen; ORNL-Spiegel nur 2023. **Riss:** die Dossier-Prämisse „OE-417 → GMD↔Netz-Korrelation (Sierra Porta et al. 2025)" wird von der Baum-Messung widerlegt — der Riss wird getragen, nie geglättet.
-- **Blockade:** kein GMD-Label in OE-417; EAGLE-I „Event-correlated Outage" ist nicht geomagnetisch klassifiziert.
-- **Braucht:** GMD-gekoppelte Netzstörungen aus **NERC-GMD-/DOE-GMD-Berichten** (nicht OE-417) oder **gemessenes GIC** (FMI/BPA/BGS) als das ehrliche Ende; EAGLE-I nur als schwacher Null-Check.
+- **Trigger:** der nächste Mess-Schritt (BGS-GIC-Endpunkt + GIC↔Onset-Korrelation).
+- **Lage:** (gemessen 2026-10-11 gegen den Baum) der harte Validator ist **gebaut**: `fmi_gic_1min` (`phi/sources.φ:20233`, Compiler `tools/harvest/src/bin/fmi_gic_compiler.rs`) und `bpa_gic` mit 11 Trafo-Kanälen (`phi/sources.φ:358`, `bpa_gic_compiler.rs`); beide CDN-Assets vorhanden (`…/space.fmi.fi/fmi_gic_1min.bin`, `…/transmission.bpa.gov/bpa_gic.bin`). OE-417 (**echtes Portal `doe417.pnnl.gov`**, `eia.gov` tot) + EAGLE-I sind von Mycelium registriert (`oe417-cdn`/`eaglei-cdn` = success, `mycelium-311`). **Riss:** OE-417 trägt **keine GMD-Kategorie** — 24 Jahressummaries 2002–2025 (`data/eia.gov/`) + PNNL-Taxonomie ohne `geomag`/`magnetic`/`GMD`/`solar`/`space weather` (positive Kontrollen `weather`/`vandalism` > 0) → die Dossier-Prämisse „OE-417 → GMD↔Netz (Sierra Porta 2025)" ist widerlegt. **NERC-GMD-Event-Liste** (`nerc.com/…/gmd-event-list`) ist erreichbar (HTTP 200), liefert aber **keine statischen Ereignisse** (gerendert nur Navigation, Events JS/API-geladen) — kein einfacher maschinenlesbarer Pfad. BGS-GIC-Endpunkt `geomag.bgs.ac.uk/data_service/space_weather/gic.html` = **404** (gemessen).
+- **Blockade:** kein GMD-Label in OE-417; NERC-GMD-Events nur JS/API; BGS-GIC-Pfad 404.
+- **Braucht:** den korrekten BGS-GIC-Endpunkt messen/registrieren (Mountain); dann die GIC-Reihen (FMI/BPA, gebaut) gegen die Detektor-Onsets korrelieren (`nur_gic_relation_probe`, `docs/paper/gic-causal-driver.md`); EAGLE-I nur als schwacher Null-Check.
 
 ### Flyby-Kette — recon bleibt (`ephemeris-juice-recon` + `flyby-path2-recon`)
 - **Status:** termin | **Bindung:** termin:2026-11-01
@@ -101,6 +101,10 @@ Origin: river-187 (2026-10-11).
 - **Freie GIC-/Space-Weather-Quellen (river-186, ungefaltet):** CSES Zenodo `13329652`/`8082201`; PCN/PCS; EAGLE-I `24237376`/OEDI `6458` + OE-417 + NERC GMD; FMI/BPA/BGS GIC. **Braucht:** Verdikt + `terms`/`ttl`.
 - **SWPC/RTSW-Kurzreihen decken die Vlies-Matrix nicht (gemessen 2026-10-11, Lauf `38119733631` Job `matrix-vlies`):** 126 der 210 Matrix-Zellen bleiben `alignment pending` — die SWPC-Livereihen (`magnetosphere_imf_bz_nt`/`bt_nt`, `solar_wind_speed_km_s`/`density_cm3`) decken ~1 Tag, das OMNI-Archiv endet 2026-10-05; kein Zeitüberlappung → die Zellen alignen nie. **Braucht:** Verdikt + `ttl` für eine **statische, überlappende SWPC/RTSW-Archivreihe** (URL) — oder die Entscheidung, die Kurzreihen als nicht-alignbar zu führen.
 
+Origin: river-188 (2026-10-11).
+
+- **Optische Zeugenquelle — BGS-GIC + UCalgary `terms`/`ttl`:** (1) der korrekte **BGS-GIC**-Endpunkt fehlt (gemessen: `geomag.bgs.ac.uk/data_service/space_weather/gic.html` = 404; die Wurzel `wdc.bgs.ac.uk` = 206 in `state`). (2) UCalgary-SDR (`data.phys.ucalgary.ca` `stream0`/`stream2`) + `aurorax.space` brauchen `terms`/`ttl`; Berkeley `themis_asi` trägt bereits `terms free-open` (`phi/sources.φ:20854`). (3) **NERC-GMD-Event-Liste** (`nerc.com/…/gmd-event-list`, HTTP 200) liefert nur JS/API-Ereignisse — falls als Quelle geführt, braucht sie den API-Arm + Verdikt.
+
 ## An mycelium
 
 Origin: river-182 (2026-10-11), ungefaltet.
@@ -110,6 +114,10 @@ Origin: river-182 (2026-10-11), ungefaltet.
 Origin: river-187 (2026-10-11).
 
 - **Harvest der überlappenden SWPC/RTSW-Archivreihe:** sobald Mountain Quelle + `ttl` nennt, ein Compiler + `*-cdn.yml`, der die **Archivreihe** (statt der ~1-Tag-Livereihe) manifestiert — dann schließen die 126 `alignment pending`-Zellen der Vlies-Matrix (gemessen 2026-10-11, Lauf `38119733631` Job `matrix-vlies`). Vorher ist es ein Quellen-/Gitter-Thema, kein River-Bau.
+
+Origin: river-188 (2026-10-11).
+
+- **Getimetes THEMIS-ASI-Keogramm:** ein kleiner Compiler, der aus den UCalgary-`stream0`-per-Minute-Frames (`…_full.pgm[.gz]`, UT im Dateinamen, 256×256 P5) **oder** der Berkeley `themis_asi`-CDF ein **getimtes** Keogramm (UT-Achse mitgeliefert) baut — die `stream2`-Keogramme sind achsenlos (gemessen 2026-10-11). Erst damit ist die Onset-Label-Methode verankerbar (River-188 §Disjunkter optischer Zeuge).
 
 ## An future
 
