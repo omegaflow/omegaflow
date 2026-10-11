@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom: fingrid-Dir-Bug geheilt (Ursache gemessen), MLA-Register auf RDR repointet + mla-cdn.yml gebaut, die drei adressierten Blöcke (mountain-317, river-187, future-235) gefaltet; Stehender Pass folgt am neuen HEAD.
   class: handover
   date: 2026-10-11
-  sha256: 2078c450f735e638e8a288f263b14a293df80e6676a1144ac0cac66ce9ad606c
+  sha256: eb653aaaf07bef86f1ad1d1e331fc910abda480fc9fd6edf26c2a5fec2639d31
   status: live
 -->
 # Handover — Mycelium-Folge 311 (2026-10-11)
@@ -60,12 +60,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** die url/origin/compiler-Direktiven fehlen in `phi/sources.φ` (sgrep leer).
 - **Braucht:** Register-Block OpenTopography (Mycelium url/origin + Mountain terms/field).
 
-### GIC OE-417 + EAGLE-I — Workflows success; Register-Block offen
+### GIC OE-417 + EAGLE-I — url/origin registriert; Mountains `terms`/`field` offen
 - **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `oe417-cdn 38151005570` **success**; `eaglei-cdn 38151003530` **success**. Die Compiler emittieren die Direktiven (url/origin/compiler/sha256/format/ttl/at earth/quantity), kein `terms`. Register-Blöcke fehlen in `phi/sources.φ` (sgrep leer).
-- **Blockade:** Mountains `terms`/`field` (OE-417 Public Domain / EAGLE-I CC-BY-4.0 sind im `An mountain`-Block angefragt).
-- **Braucht:** Register-Block (Mycelium url/origin + Mountain terms/field), wie in `## An mountain`.
+- **Lage:** (gemessen 2026-10-11) `oe417-cdn 38151005570` **success**; `eaglei-cdn 38151003530` **success**. **url/origin/compiler/sha256/format/ttl/quantity registriert** (Mycelium-Hälfte; `phi/sources.φ:11847` OE-417, `:11332` EAGLE-I; `register_sort` canonical über 2791 Blöcke). Direktiven aus den Lauf-Logs gemessen (OE-417 sha `282bc3a1…`, EAGLE-I sha `c791efe0…`).
+- **Blockade:** Mountains `terms`/`field` (OE-417 Public Domain / EAGLE-I CC-BY-4.0 im `## An mountain`-Block angefragt — zusätzlich Riss: der ORNL-Mirror `openenergyhub.ornl.gov` ist nicht die von Mountain gemessene `eia.gov`/`doe417.pnnl.gov`-Quelle).
+- **Braucht:** Mountain trägt `terms` + `field` nach.
 
 ### DEMETER — CDN-Spiegel entfernt; lokale Registrierung + terms
 - **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen
@@ -140,9 +140,9 @@ zitiert, nie kopiert). Diese Session konsumierte
 ### Re-Admission-CDNs (mountain-317/316)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Mountains `terms`-Verdikt je Quelle
-- **Lage:** (gemessen 2026-10-11) GRDC-Caravan / RouteViews / EPH-VSOP / GloFAS neu-admittiert; url/origin je Quelle nach Mountains `terms`.
-- **Blockade:** Mountains `terms` fehlt.
-- **Braucht:** nach `terms` je url/origin (Mycelium).
+- **Lage:** (gemessen 2026-10-11) GRDC-Caravan / RouteViews / EPH-VSOP / GloFAS neu-admittiert; Mountains `terms`-Verdikte stehen (GRDC-Caravan Zenodo `15349031` CC-BY-4.0 · RouteViews CC-BY-4.0 · EPH-VSOP Zenodo `17142232` CC-BY-4.0 · GloFAS Copernicus). **Aber:** für RouteViews/Vsop/GloFAS/GRDC-Caravan existiert **noch kein Compiler** (`sgrep -l` leer) — die url/origin-Registrierung braucht je einen manifestierenden Arm, sonst zeigt eine url auf ein nicht existierendes Asset.
+- **Blockade:** der Compiler/Arm je Quelle (Bau) fehlt; Mycelium schreibt die url/origin erst nach dem ersten grünen Manifest-Lauf.
+- **Braucht:** je Quelle Compiler + `*-cdn.yml` + erster Lauf; danach url/origin (Mycelium) + `terms`/`field` (Mountain).
 
 ### SWPC/RTSW-Archivreihe-Harvest (river-187)
 - **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen

@@ -11329,6 +11329,15 @@ at sun
 ttl 604800
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/figshare.com/eaglei_2014.bin
+origin https://ndownloader.figshare.com/files/42547717
+compiler tools/harvest/src/bin/eaglei_compiler.rs
+sha256 c791efe081d52248a1fc14a89b56b1030bc4885432daf61bc6e2ef5fa8aef064
+format eaglei_outage
+ttl 604800
+at earth
+quantity eaglei_customers_out eaglei_customers_out inverse-square relative count 900 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/frdr-dfdr.ca/superdarn_rawacf.bin
 terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
 format superdarn_rawacf
@@ -11834,6 +11843,16 @@ field las_y_icrs_m las_y_icrs_m inverse-linear em m 86400 0.0 0.0
 field las_z_icrs_m las_z_icrs_m inverse-linear em m 86400 0.0 0.0
 field las_intensity_dn las_intensity_dn gaussian-inverse-square em 1 86400 0.0 0.0
 field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/openenergyhub.ornl.gov/oe417.bin
+origin https://openenergyhub.ornl.gov/api/records/1.0/download/?dataset=oe-417-annual-summaries&format=csv
+compiler tools/harvest/src/bin/oe417_compiler.rs
+sha256 282bc3a1cdc173d9031bd82f966f5adcd75e316c642ac7e6b92ffe68e9e5e848
+format oe417
+ttl 604800
+at earth
+quantity oe417_demand_loss_mw oe417_demand_loss_mw inverse-square source-parameter MW 86400 0.0 0.0
+quantity oe417_customers_affected oe417_customers_affected inverse-square relative count 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/magellan_odf.bin
 terms PD https://pds-geosciences.wustl.edu/
