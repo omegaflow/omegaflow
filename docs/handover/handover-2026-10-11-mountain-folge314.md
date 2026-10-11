@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Taucherstaffel (10 Taucher) über alle offenen Punkte der folge313: Messungen, Riss-Auflösungen, verdikt-reife Vorlagen
   class: handover
   date: 2026-10-11
-  sha256: 2fe5c5586c6716404d3929d234d76cce0f990e9c9a4541e30d27d22cd1903cf5
+  sha256: 6e6bd3ef72178b126e8568501ce7636595f35b02d4c696b2d5ab38d86ab4d918
   status: live
 -->
 # Handover — Mountain-Folge 314 (2026-10-11)
@@ -82,14 +82,14 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 ### copernicus B1–B6 — Workflows angelegt, Lauf offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der erste `copernicus-<dataset>-cdn`-Lauf je Dataset
-- **Lage:** (gemessen 2026-10-11 via `git status`: sechs Workflows neu angelegt) `copernicus-{surface-land,uscrn,igra,woudc,gruan,gnss}-cdn.yml` (je `--year`/`--area`/`--out`/`--lsk kernels/naif0012.tls`/`--ci-mode`; `CDS_API_KEY`, netloc `cds.climate.copernicus.eu`). Bins gebaut/grün. Kein Lauf dispatcht.
+- **Lage:** (gemessen 2026-10-11 via `git status`: sechs Workflows neu angelegt; dispatcht via `gh workflow run`) `copernicus-{surface-land,uscrn,igra,woudc,gruan,gnss}-cdn.yml` (je `--year`/`--area`/`--out`/`--lsk kernels/naif0012.tls`/`--ci-mode`; `CDS_API_KEY`, netloc `cds.climate.copernicus.eu`). Läufe dispatcht: uscrn `38136104626`, surface-land `38136110423`, igra `38136112567`, woudc `38136114532`, gruan `38136116720`, gnss `38136118542`.
 - **Blockade:** kein Lauf.
 - **Braucht:** die sechs Workflows dispatchen; bei Void Variable/Version korrigieren. Riss: `uscrn` `time_aggregation=daily` / `gnss` `network_type=igs_daily` sind Wahlen ohne Default.
 
 ### NOAA S3-Compiler B7/B8 — Workflows angelegt, Lauf offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der erste `noaa-nos-lidar`/`noaa-eri`-CDN-Lauf
-- **Lage:** (gemessen 2026-10-11 via `git status`: zwei Workflows neu angelegt) `noaa-nos-lidar-cdn.yml` + `noaa-eri-cdn.yml` nach `noaa-nrs-psd-cdn.yml`/`noaa-ocs-hydrodata-cdn.yml`; Bins gebaut/grün. Kein Lauf dispatcht.
+- **Lage:** (gemessen 2026-10-11 via `git status`: zwei Workflows neu angelegt; dispatcht via `gh workflow run`) `noaa-nos-lidar-cdn.yml` + `noaa-eri-cdn.yml` nach `noaa-nrs-psd-cdn.yml`/`noaa-ocs-hydrodata-cdn.yml`; Bins gebaut/grün. Läufe: nos-lidar `38136120891`, eri `38136123058`.
 - **Blockade:** kein Lauf.
 - **Braucht:** die zwei Workflows dispatchen.
 
