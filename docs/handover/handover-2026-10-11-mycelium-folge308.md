@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass, ein Atom (ein Operator-Wort). SPT-3G D1 partial-sky/RING-Pfad im `cmb_planck_compiler` gebaut (`pix2ang_ring` + `FitsTable`-Partial-Branch); `coverage-manifest.yml` um USGS-TNM + LOLA erweitert; `ci-check.yml` um den cmb-Bin-Test; `self-hosted-runner` per-Gerät-QoS descoped; MCP/Wrapper unverändert.
   class: handover
   date: 2026-10-11
-  sha256: 01c3c2474c1f491b57761dd3c280b300c41740c566e4746c60f976146eb2f5b6
+  sha256: 3b45508e2225dd3e370195690076ef562da9e5a3609771c4284c2ed6d5407456
   status: live
 -->
 # Handover — Mycelium-Folge 308 (2026-10-11)
@@ -54,19 +54,19 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** keine.
 - **Braucht:** (a) **Riss korrigiert (gemessen 2026-10-11):** `usgs_lidar_coverage.rs` emittiert bereits `shard <url>` (der Parser lädt das als `ShardPlacement::Pending`, `coverage_manifest.rs:39-45,78`); die alte „`url size`"-Behauptung ist stale (Commit `8739dffaa`). Der echte Gap: der Lader dispatcht nur auf `format == "coverage_manifest"` (`main_flow.rs:5103`), `usgs_lidar_coverage.rs:475` deklariert aber `format usgs_lidar_coverage`, und das Manifest ist **nicht** in `phi/sources.φ` registriert → Manifest mit `format coverage_manifest` registrieren (oder den Dispatch erweitern). (b) Portal-Inventar gemessen (2026-10-11): das Survey trägt **124** Tabellenzeilen (+9 DE-Prosa; „104" steht nirgends im Survey — Riss), `national_lidar_portals.txt` 143 Datenzeilen; neue Arme nach Portal-Zahl: **CKAN-REST** (größter Block: sk/es/pt/tw/qld/nsw/vic/ca/cnra/uy/cl/pacificdata) > **Earthdata-Granule-Index** (GEDI L2A/L4A, ATL03/08) > **CSW/OGC-API-Records** (INSPIRE).
 
-### Frame/Epoche — bbox-off bleibt; Transform gehört an den Query-Time-Loader (Rat+UI bestätigt)
-- **Status:** eigen | **Bindung:** eigen · **Teile linie:mountain**
-- **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) Research `state/mycelium/frame-epoch-feasibility.md` + Rat + UI (`state/stimmen/20261011T1035Z_mycelium_architektur-verdikte.md`): `--bbox-off` bleibt der verlustfreie Default (`ShardPlacement::Pending` → `coverage_manifest.rs:78`); der Frame-Transform gehört an den Query-Time-Loader. Die ICRS-Hälfte ist gebaut (`itrf_to_icrs`, `receiver.rs:1918`); `src/archivar/projection.rs` (`utm_inverse`, `to_geodetic`) gebaut, `cargo check` 0/0. Nur `coverage.rs` erreicht den Konsumenten (`main_flow.rs:5103`).
-- **Blockade:** eine 7. Token/Grammatik-Slot-Erweiterung des `shard`-Vertrags = Wire-Kontrakt-Änderung (Operator/Rat-Wort), nicht Session-Schreibakt.
-- **Braucht:** (a) Loader-**Wiring** (Shard-File-CRS lesen + `to_geodetic` anwenden) offen; (b) **wenn** je ein Grammatik-Slot erwogen wird → Operator/Rat-Wort; sonst bleibt bbox-off permanent.
+### Frame/Epoche — Riss: CRS im Kontrakt (A) vs. Query-Time-Ableitung (B)
+- **Status:** operator-gebunden | **Bindung:** eigen · **Teile linie:mountain**
+- **Trigger:** Operator-/Rat-Wort zur Auflösung des Risses
+- **Lage:** (gemessen 2026-10-11) Recherche (`state/stimmen/20261011T1250Z_mycelium_frame-epoche-recherche.txt`, 249 Z.) + Rat + UI-Roster (`state/stimmen/20261011T1255Z_mycelium_architektur-verdikte.md`): Rat **B**, Qwen **B**, Claude **A**, Z.ai Nichtantwort (capacity), Duck Nichtantwort (nicht abgeschickt). Die Recherche stützt **A** (luma.gl-Manifest verlangt/verwirft CRS vor dem Upload; GeoParquet „reproject before you compare"). `--bbox-off` bleibt der verlustfreie Default (`Pending`); `projection.rs` (`utm_inverse`/`to_geodetic`) + `itrf_to_icrs` gebaut; nur `coverage.rs` erreicht den Konsumenten (`main_flow.rs:5103`). Die uncommittete B-Implementierung (`resolve_placement`) wurde zurückgenommen.
+- **Blockade:** Riss A vs. B — keine Konvergenz; A = Wire-Kontrakt-Änderung (Operator-Wort), B = loader-seitig.
+- **Braucht:** Operator-/Rat-Wort: A (CRS-Token im `shard`-Vertrag) oder B (Loader-Transform über den Format-Token, `Pending`-Fallback)? Bei B: `resolve_placement` in `coverage_manifest.rs` + Aufruf `main_flow.rs:5192`.
 
-### MCP no-leak-Regel — Wrapper verdrahtet; Allowlist-Capture Z.ai/DeepSeek offen
+### MCP no-leak-Regel — Wrapper verdrahtet; Capture vollständig; Allowlist erweitert
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `src/gate/mcp.rs` (6 Regeln + Test) in `commit_check` verdrahtet; getrackter Wrapper `bin/chrome-devtools-mcp` (Pin `chrome-devtools-mcp@1.9.0`), beide `opencode.json`-MCP-Einträge laufen über ihn; `chrome-devtools-voices` trägt `--no-javascript-evaluation`. Capture (`state/mycelium/mcp_allowlist_capture_measured.md`): Duck = `duck.ai`+`improving.duckduckgo.com`, Qwen = `chat.qwen.ai`+`aplus.qwen.ai` → same-origin; **Z.ai/DeepSeek `pending`** (Capture leer/Timeout). `https://*` bleibt vorerst.
-- **Blockade:** eine enge Allowlist blockt Subressourcen; die restliche Host-Menge ist ohne Capture unbekannt.
-- **Braucht:** (a) Z.ai/DeepSeek-Capture nachziehen; (b) nach dem Config-Restart die Seats prüfen; (c) `(2)` härter prüfen verlangt den `Gestalt`-Slot-Umfang — offen.
+- **Lage:** (gemessen 2026-10-11) `src/gate/mcp.rs` (6 Regeln + Test) in `commit_check` verdrahtet; Wrapper `bin/chrome-devtools-mcp` (Pin `chrome-devtools-mcp@1.9.0`), beide `opencode.json`-MCP-Einträge laufen über ihn; `chrome-devtools-voices` trägt `--no-javascript-evaluation`. **Capture vollständig** (`state/mycelium/mcp_allowlist_capture_measured.md`): Duck/Qwen same-origin; Z.ai funktional nur `chat.z.ai` (+ Telemetrie reddit/facebook/google, geblockt); DeepSeek braucht **`fe-static.deepseek.com`** (JS/WASM) + **`challenges.cloudflare.com`** (turnstile) + `cdn.deepseek.com`. **Allowlist in `opencode.json` um diese 3 Hosts erweitert** (`jaq -e` gültig).
+- **Blockade:** eine enge Allowlist blockt Subressourcen.
+- **Braucht:** (a) nach dem Config-Restart die Seats prüfen; (b) `(2)` härter prüfen verlangt den `Gestalt`-Slot-Umfang — offen.
 
 ### OpenTopography — Konsument gebaut; CI-Secret gesetzt
 - **Status:** eigen | **Bindung:** eigen
@@ -125,6 +125,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Riss — `usgs_lidar_coverage`-Format:** die Behauptung „emittiert weiter `url size`" (307/Braucht) ist widerlegt — der Baum emittiert `shard <url>` (Commit `8739dffaa`); der echte Gap ist der `format`-Dispatch (`main_flow.rs:5103`).
 - **Riss — „104 Nationalportale":** die Zahl steht nicht im Survey (gemessen: 124 Tabellenzeilen / 143 txt-Zeilen).
 - **Riss — DEMETER-Komponenten:** der Adressblock nannte ein „ICE-E-Feld"; die Bin trägt 6 ISL-Langmuir-Sonden-Größen (kein E-Feld), und die Monats-Assets fehlen noch (77 Prä-Fix-Namen).
+- **Rat-Prozess korrigiert (Operator-Wort 2026-10-11):** eine Ratsfrage läuft **zuerst** durch die Recherche-Schicht (`archive_search`) **und** den UI-Roster (alle Seats der Linie) — dann den Rat. Die Frame/Epoche-Frage ist danach ein **Riss** (A vs. B), kein Verdikt; die B-Implementierung wurde zurückgenommen.
 
 ## An mountain
 
