@@ -101,13 +101,15 @@ fn read_secret(name: &str) -> Option<String> {
 fn fetch(url: &str) -> Result<Vec<u8>, String> {
     let out = Command::new("curl")
         .args([
-            "-sSfL",
+            "-sSL",
             "--retry",
             "3",
             "--max-time",
             "120",
             "--connect-timeout",
             "15",
+            "--write-out",
+            "\n%{http_code}",
             url,
         ])
         .output()
@@ -115,10 +117,23 @@ fn fetch(url: &str) -> Result<Vec<u8>, String> {
     if !out.status.success() {
         return Err(format!("curl status {:?}", out.status.code()));
     }
-    if out.stdout.is_empty() {
+    let raw = out.stdout;
+    let Some(split) = raw.iter().rposition(|b| *b == b'\n') else {
+        return Err("response carries no status line".to_string());
+    };
+    let code = String::from_utf8_lossy(&raw[split + 1..])
+        .trim()
+        .to_string();
+    let body = &raw[..split];
+    if !code.starts_with('2') {
+        let head = String::from_utf8_lossy(&body[..body.len().min(200)]);
+        let head = head.replace('\n', " ").replace('\r', " ");
+        return Err(format!("HTTP {code}: {head}"));
+    }
+    if body.is_empty() {
         return Err("response carries no bytes".to_string());
     }
-    Ok(out.stdout)
+    Ok(body.to_vec())
 }
 
 fn tag_text(xml: &str, tag: &str) -> Option<String> {
