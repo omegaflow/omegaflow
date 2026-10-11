@@ -267,11 +267,7 @@ fn jd_year(jd: f64) -> f64 {
 }
 
 fn print_rotation_audit(line: &Line, t_great: f64, pierce_lat: f64) {
-    let Some(props) = line
-        .map
-        .get(line.earth_key)
-        .and_then(|e| e.props.as_ref())
-    else {
+    let Some(props) = line.map.get(line.earth_key).and_then(|e| e.props.as_ref()) else {
         println!(
             "eclipse {} rotation audit: the earth bin carries no BodyProperties",
             line.word
@@ -354,10 +350,10 @@ fn magnitude_at(line: &Line, t: f64, obs: [f64; 3]) -> Option<f64> {
 }
 
 fn sunlit(line: &Line, t: f64, obs: [f64; 3], geo: [f64; 3]) -> bool {
-    let Some(sun) =
-        light_time_worldline(obs, t, &|s| body_barycenter_position(line.sun_key, s, &line.map))
-            .map(|(p, _)| p)
-    else {
+    let Some(sun) = light_time_worldline(obs, t, &|s| {
+        body_barycenter_position(line.sun_key, s, &line.map)
+    })
+    .map(|(p, _)| p) else {
         return false;
     };
     let (Some(outward), Some(sun_dir)) = (vunit(vsub(obs, geo)), vunit(vsub(sun, obs))) else {
@@ -634,8 +630,14 @@ fn run_line(line: &Line, day_tdb: f64, lsk: &LeapSeconds) -> Option<(f64, f64, f
     let pierce = deepest_pierce(line, t_great, None)?;
     let obs = body_fixed_to_icrs_smooth(line.earth_key, cov.lat, cov.lon, 0.0, cov.t, &line.map)?;
     let ratio_cov = diameter_ratio_at(line, cov.t, obs)?;
-    let obs_p =
-        body_fixed_to_icrs_smooth(line.earth_key, pierce.lat, pierce.lon, 0.0, t_great, &line.map)?;
+    let obs_p = body_fixed_to_icrs_smooth(
+        line.earth_key,
+        pierce.lat,
+        pierce.lon,
+        0.0,
+        t_great,
+        &line.map,
+    )?;
     let ratio_p = diameter_ratio_at(line, t_great, obs_p)?;
     let utc_syz = lsk.tdb_to_unix(t_syz)?;
     let utc_great = lsk.tdb_to_unix(t_great)?;
