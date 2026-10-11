@@ -39,6 +39,23 @@ fn rotate_h(x: f64, y: f64, decl_deg: f64) -> f64 {
     x * r.cos() + y * r.sin()
 }
 
+fn derive_declination(samples: &[(f64, f64, f64, f64)]) -> Option<f64> {
+    let mut sx = 0.0;
+    let mut sy = 0.0;
+    let mut n = 0usize;
+    for (_, x, y, _) in samples {
+        if x.is_finite() && y.is_finite() {
+            sx += x;
+            sy += y;
+            n += 1;
+        }
+    }
+    if n == 0 {
+        return None;
+    }
+    Some((sy / n as f64).atan2(sx / n as f64).to_degrees())
+}
+
 fn block_median_baseline(values: &[f64], block: usize) -> Vec<f64> {
     let mut out = Vec::with_capacity(values.len());
     let mut i = 0;
@@ -57,18 +74,28 @@ fn block_median_baseline(values: &[f64], block: usize) -> Vec<f64> {
     out
 }
 
-fn station_dh(samples: &[(f64, f64, f64, f64)], decl_deg: f64, block: usize) -> Vec<(f64, f64)> {
+fn station_dh(
+    samples: &[(f64, f64, f64, f64)],
+    decl: Option<f64>,
+    block: usize,
+) -> Option<Vec<(f64, f64)>> {
+    let d = match decl {
+        Some(v) => v,
+        None => derive_declination(samples)?,
+    };
     let h: Vec<f64> = samples
         .iter()
-        .map(|(_, x, y, _)| rotate_h(*x, *y, decl_deg))
+        .map(|(_, x, y, _)| rotate_h(*x, *y, d))
         .collect();
     let baseline = block_median_baseline(&h, block);
-    samples
-        .iter()
-        .zip(h.iter())
-        .zip(baseline.iter())
-        .map(|((s, hv), b)| (s.0, hv - b))
-        .collect()
+    Some(
+        samples
+            .iter()
+            .zip(h.iter())
+            .zip(baseline.iter())
+            .map(|((s, hv), b)| (s.0, hv - b))
+            .collect(),
+    )
 }
 
 fn envelope(stations: &[Vec<(f64, f64)>], min_stations: usize) -> Vec<(f64, f64)> {
@@ -91,7 +118,7 @@ fn envelope(stations: &[Vec<(f64, f64)>], min_stations: usize) -> Vec<(f64, f64)
     out
 }
 
-fn load_manifest(path: &str) -> Vec<(String, f64, String)> {
+fn load_manifest(path: &str) -> Vec<(String, Option<f64>, String)> {
     let Ok(text) = std::fs::read_to_string(path) else {
         eprintln!("al_network_proxy: {path} read void");
         std::process::exit(1);
@@ -104,12 +131,22 @@ fn load_manifest(path: &str) -> Vec<(String, f64, String)> {
         }
         let parts: Vec<&str> = line.split_whitespace().collect();
         if parts.len() < 3 {
-            eprintln!("al_network_proxy: manifest line needs `CODE decl_deg bin-path`: {line}");
+            eprintln!("al_network_proxy: manifest line needs `CODE decl|auto bin-path`: {line}");
             std::process::exit(1);
         }
-        let Ok(decl) = parts[1].parse::<f64>() else {
-            eprintln!("al_network_proxy: declination is no number: {}", parts[1]);
-            std::process::exit(1);
+        let decl = if parts[1] == "auto" {
+            None
+        } else {
+            match parts[1].parse::<f64>() {
+                Ok(v) => Some(v),
+                Err(_) => {
+                    eprintln!(
+                        "al_network_proxy: declination is neither `auto` nor a number: {}",
+                        parts[1]
+                    );
+                    std::process::exit(1);
+                }
+            }
         };
         out.push((parts[0].to_string(), decl, parts[2].to_string()));
     }
@@ -163,11 +200,19 @@ fn main() {
             eprintln!("al_network_proxy: {code} {path} carries no sample");
             std::process::exit(1);
         }
+        let Some(dh) = station_dh(&samples, *decl, block) else {
+            eprintln!("al_network_proxy: {code} cannot derive a declination (no finite sample)");
+            std::process::exit(1);
+        };
+        let dword = match decl {
+            Some(v) => format!("{v}"),
+            None => "auto".to_string(),
+        };
         println!(
-            "station {code} decl {decl} samples {} baseline_block {block}",
+            "station {code} decl {dword} samples {} baseline_block {block}",
             samples.len()
         );
-        series.push(station_dh(&samples, *decl, block));
+        series.push(dh);
     }
     let env = envelope(&series, min_stations);
     if env.is_empty() {
@@ -220,8 +265,23 @@ mod tests {
             (60.0, 12.0, 0.0, 0.0),
             (120.0, 14.0, 0.0, 0.0),
         ];
-        let dh = station_dh(&samples, 0.0, 3);
+        let dh = station_dh(&samples, Some(0.0), 3).expect("declination given");
         assert_eq!(dh, vec![(0.0, -2.0), (60.0, 0.0), (120.0, 2.0)]);
+    }
+
+    #[test]
+    fn the_declination_derives_from_the_own_mean_field() {
+        let samples = vec![(0.0, 1.0, 1.0, 0.0), (60.0, 1.0, 1.0, 0.0)];
+        let d = derive_declination(&samples).expect("a mean field exists");
+        assert!((d - 45.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn auto_declination_rotates_the_mean_field_onto_north() {
+        let samples = vec![(0.0, 1.0, 1.0, 0.0), (60.0, 3.0, 3.0, 0.0)];
+        let dh = station_dh(&samples, None, 2).expect("declination derives");
+        assert!(dh[0].1.abs() < 1e-9);
+        assert!(dh[1].1.abs() < 1e-9);
     }
 
     #[test]

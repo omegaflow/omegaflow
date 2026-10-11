@@ -1,0 +1,60 @@
+# auto-dispatch: manual — the start year is a per-act input; auto-dispatch cannot supply it
+name: intermagnet-xyz-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      station:
+        description: INTERMAGNET code (e.g. ABK, SOD)
+        required: true
+        type: string
+        default: ABK
+      start:
+        description: start year (YYYY)
+        required: true
+        type: string
+      end:
+        description: end year (YYYY); empty = current year
+        required: false
+        type: string
+        default: ""
+      asset:
+        description: output asset name on the CDN (netloc imag-data.bgs.ac.uk)
+        required: true
+        type: string
+        default: abk_xyz_1m.bin
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  intermagnet-xyz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view imag-data.bgs.ac.uk --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "${{ inputs.asset }}"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ inputs.asset }} already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ inputs.asset }} missing — compiling and manifesting"
+          fi
+      - name: Compile and manifest the station xyz series
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          end_arg=""
+          if [ -n "${{ inputs.end }}" ]; then end_arg="--end ${{ inputs.end }}"; fi
+          cargo run --release -p omegaflow-harvest --bin intermagnet_xyz_compiler -- \
+            --station "${{ inputs.station }}" --start "${{ inputs.start }}" $end_arg \
+            --out "${{ inputs.asset }}" --ci-mode
