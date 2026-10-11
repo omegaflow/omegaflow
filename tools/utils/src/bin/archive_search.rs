@@ -1046,14 +1046,15 @@ fn print_lines(lines: &[String]) {
 }
 
 fn run_pdf_image(input: &str, out_dir: Option<&str>) -> Vec<String> {
-    let (bytes, stem) = if input.starts_with("http://") || input.starts_with("https://") {
+    let (bytes, stem, source_url) = if input.starts_with("http://") || input.starts_with("https://")
+    {
         match net::get(input, &[], "60") {
-            Some(f) => (f.raw, url_stem(input)),
+            Some(f) => (f.raw, url_stem(input), Some(input)),
             None => return vec![format!("pending — no answer for {input}")],
         }
     } else {
         match fs::read(input) {
-            Ok(b) => (b, file_stem(input)),
+            Ok(b) => (b, file_stem(input), None),
             Err(e) => return vec![format!("absent — {input}: {e}")],
         }
     };
@@ -1077,7 +1078,7 @@ fn run_pdf_image(input: &str, out_dir: Option<&str>) -> Vec<String> {
             _ => continue,
         };
         let path = dir.join(format!("{stem}_img{k}.{ext}"));
-        match fs::write(&path, &img.data) {
+        match write_fetched(&path, &img.data, source_url) {
             Ok(()) => lines.push(format!(
                 "{} {}x{} {} {}",
                 path.display(),
@@ -1142,6 +1143,26 @@ fn sanitize_stem(s: &str) -> String {
             }
         })
         .collect()
+}
+
+fn write_fetched(path: &Path, bytes: &[u8], source_url: Option<&str>) -> std::io::Result<()> {
+    fs::write(path, bytes)?;
+    let Some(url) = source_url.filter(|u| !u.is_empty()) else {
+        return Ok(());
+    };
+    let Some(file_name) = path.file_name() else {
+        return Ok(());
+    };
+    let mut name = file_name.to_os_string();
+    name.push(".src");
+    let src = path.with_file_name(name);
+    match fs::write(&src, format!("{url}\n")) {
+        Ok(()) => Ok(()),
+        Err(e) => {
+            eprintln!("provenance {}: sidecar void — {e}", src.display());
+            Ok(())
+        }
+    }
 }
 
 fn now_unix() -> i64 {

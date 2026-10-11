@@ -23,7 +23,7 @@ pub fn run_lines(input: &str, out_dir: Option<&str>) -> Vec<String> {
     } else {
         fetch.raw
     };
-    render(&payload, input, out_dir)
+    render(&payload, input, &url, out_dir)
 }
 
 fn resolve_id(input: &str) -> Option<String> {
@@ -238,7 +238,7 @@ fn safe_name(name: &str) -> String {
     }
 }
 
-fn render(payload: &[u8], input: &str, out_dir: Option<&str>) -> Vec<String> {
+fn render(payload: &[u8], input: &str, source_url: &str, out_dir: Option<&str>) -> Vec<String> {
     if payload.is_empty() {
         return vec![format!("pending — no LaTeX source in {input}")];
     }
@@ -275,7 +275,7 @@ fn render(payload: &[u8], input: &str, out_dir: Option<&str>) -> Vec<String> {
                 {
                     continue;
                 }
-                if fs::write(&path, &f.content).is_err() {
+                if crate::write_fetched(&path, &f.content, Some(source_url)).is_err() {
                     continue;
                 }
                 paths.push(path.to_string_lossy().to_string());
@@ -339,7 +339,12 @@ mod tests {
     fn archive_without_tex_is_pending() {
         let archive = tar_entry("README.txt", b"no source here\n");
         assert_eq!(
-            render(&archive, "2208.03865", None),
+            render(
+                &archive,
+                "2208.03865",
+                "https://arxiv.org/e-print/2208.03865",
+                None
+            ),
             vec!["pending — no LaTeX source in 2208.03865".to_string()]
         );
         assert_eq!(
