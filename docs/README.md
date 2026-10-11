@@ -45,8 +45,6 @@ Code-gelesen (Archivar/Compiler lesen sie direkt):
 | Datei | Rolle | Fundort |
 |---|---|---|
 | `sources.φ` | Live-Quell-Register | main.rs:5134 |
-| `dead_sources.φ` | abgelehnte/erledigte Quellen (learn-gate negativ) | main.rs:11389 |
-| `blocked_sources.φ` | gesperrte Quellen (key-needed u. a.) | main.rs:11401 |
 | `sources_index.φ` | Kernel-Index (ephemeris_compiler --index) | ephemeris_compiler.rs |
 | `pipeline/library.φ` | gewichtete Tags (--learn-gate) | main.rs:11430 |
 | `pipeline/frame_learned.φ` | Route→Frame-Lernen | main.rs:11207 |
@@ -64,7 +62,7 @@ Arbeitsfläche des Source-Ports (Register/Agent, kein Code-Leser): ledger.φ
 park/ (parser-gap), stage/*_converted.φ (Konvertierungs-Ausgänge).
 
 Eingefroren: `pipeline/interesting_domains.φ` — abgeleiteter Kandidaten-Pool (Stand
-2026-08-17) aus blocked_sources.φ + dead_sources.φ; kein Code-Leser.
+2026-08-17) aus den früheren Dispositions-Registern (entfernt 2026-10-11); kein Code-Leser.
 
 Stehende Ref-Listen zur phi-Register-Landschaft: `specs/ref-phi-register.md`,
 `specs/ref-auth-apis.md`.

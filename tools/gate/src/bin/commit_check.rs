@@ -1,9 +1,8 @@
 use omegaflow::commit_gate::{
-    Gate, addressed_origin_violations, canon_diff, check_handover_burn,
-    declared_canon, doc_open_marker_line, ereignis_folge_violations, handover_dupe_violations,
-    integrated_twin, is_test_file_path, json_write, prose_violation_for,
-    register_field_unit_issues, status_proof_violations, unbacked_mirror_violations,
-    word_register_origin_violations,
+    Gate, addressed_origin_violations, canon_diff, check_handover_burn, declared_canon,
+    doc_open_marker_line, ereignis_folge_violations, handover_dupe_violations,
+    is_test_file_path, json_write, prose_violation_for, register_field_unit_issues,
+    status_proof_violations, unbacked_mirror_violations, word_register_origin_violations,
 };
 use omegaflow::json::JsonVal;
 use std::collections::HashMap;
@@ -161,29 +160,6 @@ fn main() {
         }
     }
     let staged: Vec<&str> = files.lines().map(str::trim).collect();
-    let sources = match std::fs::read_to_string("phi/sources.φ") {
-        Ok(s) => s,
-        Err(_) => String::new(),
-    };
-    for register in ["phi/blocked_sources.φ", "phi/declined_sources.φ"] {
-        if !staged.contains(&register) {
-            continue;
-        }
-        let out = Command::new("git")
-            .args(["show", &format!(":{register}")])
-            .output()
-            .expect("git");
-        let content = String::from_utf8_lossy(&out.stdout).to_string();
-        if let Some(v) = integrated_twin(register, &content, &sources) {
-            let loc = if v.line > 0 {
-                format!("{register}:{}", v.line)
-            } else {
-                register.to_string()
-            };
-            eprintln!("commit_check: {loc}: {} - {}", v.rule, v.feedback);
-            fail = true;
-        }
-    }
     if staged.contains(&"phi/sources.φ") {
         match std::fs::read_to_string("docs/specs/force-unit-baseline.txt") {
             Ok(baseline) => {

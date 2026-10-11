@@ -45,20 +45,6 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
         .cloned()
 }
 
-fn read_blocked_urls(path: &str) -> Vec<String> {
-    match fs::read_to_string(path) {
-        Ok(content) => content
-            .lines()
-            .map(str::trim)
-            .filter_map(|l| l.strip_prefix("url "))
-            .map(str::trim)
-            .filter(|u| u.starts_with("http"))
-            .map(str::to_string)
-            .collect(),
-        Err(_) => Vec::new(),
-    }
-}
-
 fn host_key(url: &str) -> String {
     match extract_netloc(url) {
         Some(n) => n.to_string(),
@@ -192,7 +178,6 @@ fn p90_per_host(blocks: &[Block]) -> Vec<(String, f64, usize)> {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let limit: Option<usize> = arg_value(&args, "--limit").and_then(|s| s.parse().ok());
-    let include_blocked = args.iter().any(|a| a == "--blocked");
     let out = arg_value(&args, "--out").unwrap_or(DEFAULT_OUT.to_string());
     let time_cap_s: u64 = arg_value(&args, "--time-cap")
         .and_then(|s| s.parse().ok())
@@ -208,14 +193,6 @@ fn main() {
             headers: s.headers,
         })
         .collect();
-    if include_blocked {
-        for u in read_blocked_urls("phi/blocked_sources.φ") {
-            targets.push(Target {
-                url: u,
-                headers: Vec::new(),
-            });
-        }
-    }
     targets.sort_by(|a, b| host_key(&a.url).cmp(&host_key(&b.url)));
 
     let started = Instant::now();

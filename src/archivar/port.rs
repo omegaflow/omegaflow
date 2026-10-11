@@ -3719,7 +3719,7 @@ pub fn draft_context_mode(path: &str) -> i32 {
     }
     let registry = build_frame_registry();
     let mut reg = String::from(
-        "# frame-registry — route (host/path, query stripped) → frame, self-learning from sources.φ + dead_sources.φ + blocked_sources.φ + frame_learned.φ\n",
+        "# frame-registry — route (host/path, query stripped) → frame, self-learning from sources.φ + witnesses.φ + frame_learned.φ\n",
     );
     let mut reg_keys: Vec<(&String, &String)> = registry.iter().collect();
     reg_keys.sort();
@@ -3810,39 +3810,6 @@ pub fn gate_learn_mode() -> i32 {
             }
         }
     }
-    if let Ok(content) = std::fs::read_to_string("phi/dead_sources.φ") {
-        for line in content.lines() {
-            let t = line.trim();
-            if let Some(rest) = t.strip_prefix("url ")
-                && let Some(nl) = extract_netloc(rest.trim())
-                && seen.insert(format!("-{}", nl))
-            {
-                delta.push((-4, "-".to_string(), nl.to_string()));
-            }
-        }
-    }
-    if let Ok(content) = std::fs::read_to_string("phi/declined_sources.φ") {
-        for line in content.lines() {
-            let t = line.trim();
-            if let Some(rest) = t.strip_prefix("url ")
-                && let Some(nl) = extract_netloc(rest.trim())
-                && seen.insert(format!("-{}", nl))
-            {
-                delta.push((-4, "-".to_string(), nl.to_string()));
-            }
-        }
-    }
-    if let Ok(content) = std::fs::read_to_string("phi/blocked_sources.φ") {
-        for line in content.lines() {
-            let t = line.trim();
-            if let Some(rest) = t.strip_prefix("url ")
-                && let Some(nl) = extract_netloc(rest.trim())
-                && seen.insert(format!("b{}", nl))
-            {
-                delta.push((-2, "b".to_string(), nl.to_string()));
-            }
-        }
-    }
     if let Ok(content) = std::fs::read_to_string("phi/witnesses.φ") {
         for line in content.lines() {
             let t = line.trim();
@@ -3863,7 +3830,7 @@ pub fn gate_learn_mode() -> i32 {
         }
     }
     let mut d = String::from(
-        "# gate-delta — netloc weights, self-learning from sources.φ (+) + dead_sources.φ (−) + blocked_sources.φ (b) + witnesses.φ (w)\n",
+        "# gate-delta — netloc weights, self-learning from sources.φ (+) + witnesses.φ (w)\n",
     );
     for (w, f, tag) in &delta {
         d.push_str(&format!("{} {} {}\n", w, f, tag));

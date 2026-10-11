@@ -7,9 +7,6 @@ use std::process::{Command, Stdio};
 
 const REGISTER: &[(&str, &str)] = &[
     ("phi/sources.\u{3c6}", "live"),
-    ("phi/dead_sources.\u{3c6}", "dead"),
-    ("phi/declined_sources.\u{3c6}", "declined"),
-    ("phi/blocked_sources.\u{3c6}", "blocked"),
     ("phi/witnesses.\u{3c6}", "witness"),
     ("phi/pipeline/ledger.\u{3c6}", "ledger"),
 ];
@@ -64,9 +61,6 @@ const PROBE_PATHS: &[&str] = &[
 ];
 const CATALOG_DIR: &str = "phi/pipeline/catalog";
 const DISPOSITION_REGISTER_PATHS: &[&str] = &[
-    "phi/declined_sources.\u{3c6}",
-    "phi/dead_sources.\u{3c6}",
-    "phi/blocked_sources.\u{3c6}",
     "phi/sources.\u{3c6}",
     "phi/pipeline/ledger.\u{3c6}",
     "phi/pipeline/index.\u{3c6}",
@@ -472,114 +466,6 @@ fn emit_classified(
             ));
         }
     }
-}
-
-fn scan_dispositions_text(
-    text: &str,
-    path: &str,
-    open_out: &mut Vec<String>,
-    released_out: &mut Vec<String>,
-) -> usize {
-    let mut blocks: Vec<(usize, Vec<(usize, &str)>)> = Vec::new();
-    let mut current: Vec<(usize, &str)> = Vec::new();
-    let mut block_start = 1usize;
-    for (idx, line) in text.lines().enumerate() {
-        let lineno = idx + 1;
-        if line.trim().is_empty() {
-            if !current.is_empty() {
-                blocks.push((block_start, std::mem::take(&mut current)));
-            }
-        } else {
-            if current.is_empty() {
-                block_start = lineno;
-            }
-            current.push((lineno, line));
-        }
-    }
-    if !current.is_empty() {
-        blocks.push((block_start, current));
-    }
-
-    let mut n = 0;
-    for (start_line, lines) in blocks {
-        let state = lines[0].1.trim();
-        if state.is_empty() || state.starts_with("note") {
-            continue;
-        }
-        let note = lines
-            .iter()
-            .find(|(_, l)| l.trim_start().starts_with("note "))
-            .map(|(_, l)| l.trim())
-            .unwrap_or("");
-        let url = lines
-            .iter()
-            .find(|(_, l)| l.trim_start().starts_with("url "))
-            .map(|(_, l)| l.trim())
-            .unwrap_or("");
-        let step = if note.is_empty() {
-            snippet(url, 160)
-        } else {
-            snippet(note, 160)
-        };
-        if state == "descoped" || state == "released" {
-            released_out.push(format!(
-                "RELEASED\t{}:{}\t{} | {}",
-                path, start_line, state, step
-            ));
-            n += 1;
-            continue;
-        }
-        match disposition_owner(state) {
-            Some(owner) => {
-                let tag = if state == "pending" && note.to_lowercase().contains("antwort offen") {
-                    "wartend"
-                } else {
-                    owner
-                };
-                open_out.push(format!(
-                    "DISPOSITION\t{}:{}\t[{}] {} | {}",
-                    path, start_line, tag, state, step
-                ));
-            }
-            None => open_out.push(format!(
-                "DISPOSITION_UNMAPPED\t{}:{}\t{} | {}",
-                path, start_line, state, step
-            )),
-        }
-        n += 1;
-
-        if !state.starts_with("terms ") {
-            if let Some((tline, tvalue)) =
-                lines.iter().find(|(_, l)| l.trim().starts_with("terms "))
-            {
-                let tstate = tvalue.trim();
-                match disposition_owner(tstate) {
-                    Some(owner) => open_out.push(format!(
-                        "DISPOSITION\t{}:{}\t[{}] {} | {}",
-                        path, tline, owner, tstate, step
-                    )),
-                    None => open_out.push(format!(
-                        "DISPOSITION_UNMAPPED\t{}:{}\t{} | {}",
-                        path, tline, tstate, step
-                    )),
-                }
-                n += 1;
-            }
-        }
-    }
-    n
-}
-
-fn scan_dispositions(
-    path: &Path,
-    open_out: &mut Vec<String>,
-    released_out: &mut Vec<String>,
-) -> usize {
-    let text = match fs::read_to_string(path) {
-        Ok(t) => t,
-        Err(_) => return 0,
-    };
-    scan_dispositions_text(&text, &path.to_string_lossy(), open_out, released_out)
 }
 
 struct OrphanCandidate {
@@ -1484,12 +1370,7 @@ fn run_open() {
         now_min,
         &mut zustand_out,
     );
-    let mut dispo_out: Vec<String> = Vec::new();
-    let dispo = scan_dispositions(
-        Path::new("phi/blocked_sources.\u{3c6}"),
-        &mut dispo_out,
-        &mut released,
-    );
+    let dispo = 0;
 
     for line in &docs {
         println!("{}", line);
@@ -1501,9 +1382,6 @@ fn run_open() {
         println!("{}", line);
     }
     for line in &opens {
-        println!("{}", line);
-    }
-    for line in &dispo_out {
         println!("{}", line);
     }
     let (orphan_lines, orphan_summary) = orphan_report(Path::new("."));
@@ -4444,66 +4322,6 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
     }
 
     #[test]
-    fn scan_dispositions_tags_owner_and_splits_descoped() {
-        let text = "note preamble\n\npending\nurl https://a\nnote offen\n\ndescoped\nurl https://b\nnote nie gebaut\n\nblocked account\nurl https://c\nnote Konto\n";
-        let mut open_out = Vec::new();
-        let mut released_out = Vec::new();
-        let n = scan_dispositions_text(text, "b.\u{3c6}", &mut open_out, &mut released_out);
-        assert_eq!(n, 3);
-        assert_eq!(open_out.len(), 2);
-        assert_eq!(released_out.len(), 1);
-        assert!(open_out[0].starts_with("DISPOSITION\tb.\u{3c6}:3\t[mycelium] pending"));
-        assert!(open_out[1].contains("[future] blocked account"));
-        assert!(released_out[0].starts_with("RELEASED\tb.\u{3c6}:7\t"));
-        assert!(released_out[0].contains("descoped"));
-    }
-
-    #[test]
-    fn scan_dispositions_tags_released_as_released() {
-        let text = "released\nurl https://x\nnote → phi/sources.φ:15349\n";
-        let mut open_out = Vec::new();
-        let mut released_out = Vec::new();
-        let n = scan_dispositions_text(text, "b.\u{3c6}", &mut open_out, &mut released_out);
-        assert_eq!(n, 1);
-        assert!(open_out.is_empty());
-        assert!(released_out[0].starts_with("RELEASED\tb.\u{3c6}:1\t"));
-        assert!(released_out[0].contains("released"));
-    }
-
-    #[test]
-    fn scan_dispositions_flags_an_unmapped_state() {
-        let text = "blocked mystery\nurl https://x\nnote y\n";
-        let mut open_out = Vec::new();
-        let mut released_out = Vec::new();
-        scan_dispositions_text(text, "b.\u{3c6}", &mut open_out, &mut released_out);
-        assert_eq!(open_out.len(), 1);
-        assert!(open_out[0].starts_with("DISPOSITION_UNMAPPED\tb.\u{3c6}:1\t"));
-    }
-
-    #[test]
-    fn scan_dispositions_marks_a_pending_request_as_waiting() {
-        let text = "pending\nurl https://x\nnote Anfrage 2026-09-16, Antwort offen.\n";
-        let mut open_out = Vec::new();
-        let mut released_out = Vec::new();
-        scan_dispositions_text(text, "b.\u{3c6}", &mut open_out, &mut released_out);
-        assert_eq!(open_out.len(), 1);
-        assert!(open_out[0].starts_with("DISPOSITION\tb.\u{3c6}:1\t[wartend] pending"));
-    }
-
-    #[test]
-    fn scan_dispositions_reads_the_terms_field_orthogonal_to_the_head() {
-        let text =
-            "pending\nurl https://example.org/x\nterms unknown\nnote keine Lizenz-Direktive\n";
-        let mut open_out = Vec::new();
-        let mut released_out = Vec::new();
-        let n = scan_dispositions_text(text, "b.\u{3c6}", &mut open_out, &mut released_out);
-        assert_eq!(n, 2, "{:?}", open_out);
-        assert_eq!(open_out.len(), 2);
-        assert!(open_out[0].starts_with("DISPOSITION\tb.\u{3c6}:1\t[mycelium] pending"));
-        assert!(open_out[1].starts_with("DISPOSITION\tb.\u{3c6}:3\t[mountain] terms unknown"));
-    }
-
-    #[test]
     fn state_class_maps_every_register_state() {
         let table: &[(&str, Option<StateClass>)] = &[
             ("ausstehend", Some(StateClass::Open("mycelium"))),
@@ -4901,7 +4719,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         )
         .unwrap();
         fs::write(
-            base.join("phi/blocked_sources.\u{3c6}"),
+            base.join("phi/sources.\u{3c6}"),
             "parser-def json\nurl https://example.org/held\nnote Argo BGC cores: unit absent\n\nparser-def json\nurl https://example.org/lost\nnote MIROVA: unit absent\n",
         )
         .unwrap();
@@ -4909,7 +4727,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         assert_eq!(orphan_total(&summary), 1, "{:?}", lines);
         assert_eq!(summary.get("mountain"), Some(&(0usize, 1usize)));
         assert!(lines.iter().any(|l| l.starts_with(
-            "ORPHAN_UNCOMMITTED\tphi/blocked_sources.\u{3c6}:5\t[mountain]\thttps://example.org/lost"
+            "ORPHAN_UNCOMMITTED\tphi/sources.\u{3c6}:5\t[mountain]\thttps://example.org/lost"
         )));
         assert!(
             lines
@@ -4926,7 +4744,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         fs::create_dir_all(base.join("docs/handover")).unwrap();
         fs::create_dir_all(base.join("phi")).unwrap();
         fs::write(
-            base.join("phi/blocked_sources.\u{3c6}"),
+            base.join("phi/sources.\u{3c6}"),
             "blocked account\nurl https://moon.bao.ac.cn/\nnote Chang'e GRAS: Konto-gated\n",
         )
         .unwrap();
@@ -4934,7 +4752,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         let (lines, summary) = orphan_report_with(&base, &|_| None);
         assert!(
             lines.iter().any(|l| l.starts_with(
-                "UNVERIFIABLE_PRIVATE\tphi/blocked_sources.\u{3c6}:1\t[future]\thttps://moon.bao.ac.cn/"
+                "UNVERIFIABLE_PRIVATE\tphi/sources.\u{3c6}:1\t[future]\thttps://moon.bao.ac.cn/"
             )),
             "{:?}",
             lines
@@ -4951,7 +4769,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         fs::create_dir_all(base.join("docs/handover")).unwrap();
         fs::create_dir_all(base.join("phi")).unwrap();
         fs::write(
-            base.join("phi/blocked_sources.\u{3c6}"),
+            base.join("phi/sources.\u{3c6}"),
             "parser-def json\nurl https://example.org/lost\nnote MIROVA: unit absent\n",
         )
         .unwrap();
@@ -4965,8 +4783,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         assert!(
             lines
                 .iter()
-                .any(|l| l
-                    .starts_with("ORPHAN_COMMITTED\tphi/blocked_sources.\u{3c6}:1\t[mountain]"))
+                .any(|l| l.starts_with("ORPHAN_COMMITTED\tphi/sources.\u{3c6}:1\t[mountain]"))
         );
         let _ = fs::remove_dir_all(&base);
     }
@@ -5029,11 +4846,11 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         fs::create_dir_all(base.join("phi")).unwrap();
         fs::write(
             base.join("docs/handover/handover-2026-09-25-mountain-folge150.md"),
-            "### Class carrier\n- **Braucht:** fix phi/blocked_sources.\u{3c6}::gap:unit-auto-detect \u{d7}2\n",
+            "### Class carrier\n- **Braucht:** fix phi/sources.\u{3c6}::gap:unit-auto-detect \u{d7}2\n",
         )
         .unwrap();
         fs::write(
-            base.join("phi/blocked_sources.\u{3c6}"),
+            base.join("phi/sources.\u{3c6}"),
             "parser-def json\ngap unit-auto-detect\nurl https://example.org/a\nnote Alpha: unit absent\n\nparser-def json\ngap unit-auto-detect\nurl https://example.org/b\nnote Beta: unit absent\n\nparser-def json\ngap force-undetermined\nurl https://example.org/c\nnote Gamma: force undetermined\n",
         )
         .unwrap();
@@ -5043,7 +4860,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         assert!(lines.iter().all(|l| !l.contains("https://example.org/b")));
         assert!(lines.iter().any(|l| l.contains("https://example.org/c")));
         assert!(lines.iter().any(|l| l.starts_with(
-            "ORPHAN_CLASS\tphi/blocked_sources.\u{3c6}::gap:force-undetermined\t[mountain]\t1"
+            "ORPHAN_CLASS\tphi/sources.\u{3c6}::gap:force-undetermined\t[mountain]\t1"
         )));
         assert!(
             lines.iter().all(|l| !l.starts_with("CARRIER_DRIFT")),
@@ -5061,18 +4878,18 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         fs::create_dir_all(base.join("phi")).unwrap();
         fs::write(
             base.join("docs/handover/handover-2026-09-25-mountain-folge150.md"),
-            "phi/blocked_sources.\u{3c6}::gap:unit-auto-detect \u{d7}5\n",
+            "phi/sources.\u{3c6}::gap:unit-auto-detect \u{d7}5\n",
         )
         .unwrap();
         fs::write(
-            base.join("phi/blocked_sources.\u{3c6}"),
+            base.join("phi/sources.\u{3c6}"),
             "parser-def json\ngap unit-auto-detect\nurl https://example.org/a\nnote Alpha: unit absent\n",
         )
         .unwrap();
         let (lines, _) = orphan_report_with(&base, &|_| None);
         assert!(
             lines.iter().any(|l| l.starts_with(
-                "CARRIER_DRIFT\tphi/blocked_sources.\u{3c6}::gap:unit-auto-detect\tcarrier=5\tlive=1"
+                "CARRIER_DRIFT\tphi/sources.\u{3c6}::gap:unit-auto-detect\tcarrier=5\tlive=1"
             )),
             "{:?}",
             lines

@@ -2,7 +2,7 @@
   title: GitHub-Pipeline — der Kreislauf: Ernte, Disposition, Manifestation auf GitHub
   class: concept
   date: 2026-09-28
-  sha256: 28bbefd2e01c49cc91c7bafde99f89f22a981b94fc918922e8c5251af9e08a8a
+  sha256: 8ae93cb840aaeca9a2420e935218f610fd5a2871af6b7411285ab385e2111830
   status: live
   see-also: docs/SOURCE_PORT.md docs/handover/archiv/handover-2026-09-10-autonom.md docs/handover/archiv/handover-2026-09-10-nicht-autonom.md
 -->
@@ -52,7 +52,7 @@ Die Survivors gehen als PR mit vorgeschlagener Disposition ein.
 `decline_lens.φ` + `bucket_litmus` (gebaut 2026-09-09, kalibriert FP 3 / FN 12)
 klassifizieren automatisch. Der Operator reviewt, entscheidet nur die
 Urteils-Fälle (Force-Gate, „echter Oszillator?", Duplikat), der Merge schreibt
-in `sources.φ` / `dead_sources.φ`. Der Copilot-cloud-agent kann neuartige
+in `sources.φ`. Der Copilot-cloud-agent kann neuartige
 Kandidaten vorschlagen.
 
 ### Stufe 3 — Manifestation (läuft schon)

@@ -712,10 +712,10 @@ mod tests {
     #[test]
     fn ignores_globs_and_register_class_keys() {
         assert!(normalize("phi/*.\u{3c6}").is_none());
-        assert!(normalize("phi/blocked_sources.\u{3c6}::gap:unit-auto-detect").is_none());
+        assert!(normalize("phi/sources.\u{3c6}::gap:unit-auto-detect").is_none());
         assert_eq!(
-            normalize("phi/blocked_sources.\u{3c6}").as_deref(),
-            Some("phi/blocked_sources.\u{3c6}")
+            normalize("phi/sources.\u{3c6}").as_deref(),
+            Some("phi/sources.\u{3c6}")
         );
     }
 
