@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 316
   class: handover
   date: 2026-10-12
-  sha256: 67070e2636bfcbceb5d95d2d5129d1ea1febda942b0188bfe34eb5d5d18f683d
+  sha256: d5065a6ef97fe0ca39d6f6557be519bcd80fa54ea38a6793a8e244f4c780a022
   status: live
 -->
 # Handover — Mycelium-Folge 316 (2026-10-12)
@@ -50,9 +50,9 @@ adressierten Blöcke (future-238, mountain-320, river-192) und schrieb die
 ### THEMIS-ASI getimetes Keogramm — Registerform-Riss + Compiler-MIRACLE-Form offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Registerform in `phi/sources.φ` entschieden (Mountain/Rat)
-- **Lage:** (gemessen 2026-10-12, River-Meldung + `sgrep`) `format themis_asi_timed_keogram` = **0 Treffer**; der Compiler `tools/harvest/src/bin/themis_asi_timed_keogram_compiler.rs:325` emittiert `at earth` (nicht die MIRACLE-Form `on earth <lat> <lon> <alt>` + `station <CODE>`) — an Mycelium benannt. Per-Nacht-Assets `themis_asi_timed_keogram_<date>_<station>.bin`; Block in `a736fa44d` entfernt (Riss: feste `url` trägt keine Per-Nacht-Familie; `cdn_reconcile` `shard_base`/`is_shard_of` `tools/register/src/bin/cdn_reconcile.rs:242-267` trägt sie nicht). **Orientierung (River):** roh row0 = N, Spalte 0 = Ost, Spalten nach West; das 16-Spalten-Band tastet den N–S-Meridian. **FOV-Riss:** 160° (THEMIS-GBO) vs 170° (NASA SPASE), getragen. **Stationen:** `gill` 56.3539/−94.6557/0.0 (CSV weicht ab); `kapu`-Alt `pending`.
-- **Blockade:** Registerform (Shard-Familie vs. feste `url`) unentschieden (Mountain/Rat); Stations-Koordinatentabelle unvollständig (nur `gill` gemessen) — kein `on earth`-Emit ohne gemessene Koordinaten (0 honored).
-- **Braucht:** Form-Entscheidung (Mountain/Rat); vollständige Stations-Koordinatentabelle (Mountain/River) → dann `emit()` auf die MIRACLE-Form (`on earth` + `station`) umstellen (Mycelium), `format`-Zeile + erster per-Nacht-Lauf; `terms` (UCalgary).
+- **Lage:** (gemessen 2026-10-12, River-Meldung + `sgrep` + Recherche) `format themis_asi_timed_keogram` = **0 Treffer**; der Compiler `tools/harvest/src/bin/themis_asi_timed_keogram_compiler.rs:325` emittiert `at earth` (nicht die MIRACLE-Form `on earth <lat> <lon> <alt>` + `station <CODE>`) — an Mycelium benannt. Per-Nacht-Assets `themis_asi_timed_keogram_<date>_<station>.bin`; Block in `a736fa44d` entfernt (Riss: feste `url` trägt keine Per-Nacht-Familie; `cdn_reconcile` `shard_base`/`is_shard_of` `tools/register/src/bin/cdn_reconcile.rs:242-267` trägt sie nicht). **Orientierung (River):** roh row0 = N, Spalte 0 = Ost, Spalten nach West; das 16-Spalten-Band tastet den N–S-Meridian. **Stationstabelle recherchiert:** Kanonliste `https://themis.ssl.berkeley.edu/gbo/THEMIS_ASI_Station_List_Rev_B.htm` (Rev B, **24** ASI-Stationen, `Geog Lat/Long` 0–360° ostwärts); Kreuzprobe `GILL` 56.354/265.344 → −94.656 passt zu Rivers 56.3539/−94.6557 (Δ < 0.001°), `KAPU` 49.392/−82.320. **FOV-Riss erklärt:** 160° = auf 110 km projiziertes Gesamtfeld (THEMIS-GBO, Mende), 170° = Fisheye-Gesamtapertur (SPASE/GBO-CDR) — zwei **verschiedene** Größen, getragen, nie gemittelt.
+- **Blockade:** Stations-**Höhe `pending`** — keine gemessene Quelle trägt sie (SPASE-Observatory-Record hat kein `Elevation`-Feld); Registerform (Per-Nacht vs. feste `url`) unentschieden (Mountain/Rat).
+- **Braucht:** Höhen-Konvention (Mountain/Rat: `alt` ist real, kein 0-Pad) und Form-Entscheidung → dann `emit()` auf die MIRACLE-Form umstellen (Mycelium, Tabelle aus der Berkeley-Kanonliste), `format`-Zeile + erster per-Nacht-Lauf; `terms` (UCalgary).
 
 ### GRDC-Caravan — 1h-curl-Cap geheilt; Reader-Arm + field/terms offen
 - **Status:** wartend | **Bindung:** eigen
