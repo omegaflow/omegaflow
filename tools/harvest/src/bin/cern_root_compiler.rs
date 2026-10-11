@@ -1,5 +1,5 @@
 use omegaflow::archivar::fetch_raw_bytes;
-use omegaflow::archivar::root::{RootFile, read_file};
+use omegaflow::archivar::root::{RootFile, TreeEntry, read_file, tree_index, walk_trees};
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.iter()
@@ -44,6 +44,43 @@ fn report(file: &RootFile, source: &str) {
     }
 }
 
+fn tree_path(entry: &TreeEntry) -> String {
+    if entry.directory.is_empty() {
+        entry.tree.name.clone()
+    } else {
+        format!("{}/{}", entry.directory, entry.tree.name)
+    }
+}
+
+fn report_trees(bytes: &[u8]) {
+    let trees = match walk_trees(bytes) {
+        Ok(trees) => trees,
+        Err(gap) => {
+            println!("trees absent: {gap}");
+            return;
+        }
+    };
+    println!("trees {}", trees.len());
+    for entry in &trees {
+        let path = tree_path(entry);
+        match tree_index(bytes, entry) {
+            Ok(index) => {
+                println!("  {path}  branches {}", index.branches.len());
+                for b in &index.branches {
+                    println!(
+                        "    {:<28} {:<12} entries {:>12} baskets {:>5}",
+                        b.name,
+                        b.leaf_type,
+                        b.entries,
+                        b.basket_bytes.len()
+                    );
+                }
+            }
+            Err(gap) => println!("  {path}  branches absent: {gap}"),
+        }
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(source) = arg_value(&args, "--probe") else {
@@ -55,7 +92,10 @@ fn main() {
         std::process::exit(2);
     };
     match read_file(&bytes) {
-        Ok(file) => report(&file, &source),
+        Ok(file) => {
+            report(&file, &source);
+            report_trees(&bytes);
+        }
         Err(gap) => {
             eprintln!("{source}: {gap}");
             std::process::exit(2);

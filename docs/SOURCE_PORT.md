@@ -2,7 +2,7 @@
   title: Source-Port: Der eine Pfad
   class: concept
   date: 2026-10-11
-  sha256: 0fb3105af7ffbcc2949083782d470bfc5cdc9e0bc7a9df08cedbfd61e9d6e57d
+  sha256: f5659ddc309b48018a444587a5bf5e2687e2e59eed76439e2d326302cb63ce7e
   status: live
   see-also: docs/README.md AGENTS.md phi/sources.φ
 -->
@@ -371,6 +371,12 @@ Nur die **Schlüsselnamen** werden je gelesen, nie die Werte (Secret-Hygiene).
 
 - Name = Implementation. Keine Kommentare in φ-Dateien; Wissen lebt im
   Register und im Handover.
+- **Provenienz.** Ein behaltenes Fetch-Artefakt trägt an seinem lokalen Pfad
+  seine Quell-URL: über ein Werkzeug, das den Sidecar schreibt (`archive_search
+  --pdf-image`/`--arxiv-src` → `<artefakt>.src`), oder über den Ort
+  `data/<netloc>/<datei>`; ein rohes `curl -o`/Shell-Redirect schreibt im selben
+  Schritt `<artefakt>.src` (erste Zeile = exakte URL) — sonst keine kanonische
+  Einordnung.
 - Ein Commit = ein Häkchen: das Handover-Register im selben Commit; Erledigtes
   wird entfernt.
 - `cargo check` 0 Errors, 0 Warnings; `cargo check` prüft nur Syntax — die
