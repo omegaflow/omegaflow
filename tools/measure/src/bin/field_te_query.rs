@@ -1246,6 +1246,20 @@ fn field_sources(sources: &[SourceConfig], name: &str) -> Vec<(SourceConfig, Fie
     out
 }
 
+const AGGREGATION_IDENTITY_CORR: f64 = 0.99;
+
+fn aggregation_correlation(fine: &[(f64, f64)], coarse: &[(f64, f64)], period: f64) -> Option<f64> {
+    let cm = period_means(coarse, period);
+    let fm = period_means(fine, period);
+    let mut aligned: Vec<(f64, f64, f64)> = Vec::new();
+    for (key, &(cs, cn)) in &cm {
+        if let Some(&(fs, fnn)) = fm.get(key) {
+            aligned.push((*key as f64 * period, cs / cn as f64, fs / fnn as f64));
+        }
+    }
+    compare_spectral_epochs(&aligned).and_then(|cmp| cmp.correlation)
+}
+
 fn load_field_across_sources(
     sources: &[SourceConfig],
     name: &str,
@@ -1256,14 +1270,74 @@ fn load_field_across_sources(
         return load_dbdt_across_sources(sources, name, anchor);
     }
     let mut reason = String::new();
+    let mut loaded: Vec<(String, Vec<(f64, f64)>)> = Vec::new();
     for (source, field) in candidates {
         match load_field(&source, &field, anchor) {
-            Ok(series) => return Ok(Some(series)),
+            Ok(series) => loaded.push((resolve_time_markers(&source.url), series)),
             Err(first) if reason.is_empty() => reason = first,
             Err(_) => {}
         }
     }
-    Err(reason)
+    if loaded.is_empty() {
+        return Err(reason);
+    }
+    if loaded.len() == 1 {
+        return Ok(Some(loaded.remove(0).1));
+    }
+    let cadences: Vec<Option<f64>> = loaded.iter().map(|(_, s)| median_dt(s)).collect();
+    let mut order: Vec<usize> = (0..loaded.len()).collect();
+    order.sort_by(|&a, &b| {
+        cadences[a]
+            .unwrap_or(f64::INFINITY)
+            .total_cmp(&cadences[b].unwrap_or(f64::INFINITY))
+    });
+    let fine_idx = order[0];
+    let Some(fine_dt) = cadences[fine_idx] else {
+        return Err(format!(
+            "riss — '{name}' carries {} registrations but no cadence was measurable; register order selects nothing",
+            loaded.len()
+        ));
+    };
+    for &k in &order[1..] {
+        let coarse_dt = match cadences[k] {
+            Some(d) => d,
+            None => {
+                return Err(format!(
+                    "riss — '{name}' carries a witness without a measurable cadence ({} vs {}s); register order selects nothing",
+                    loaded[k].0, fine_dt
+                ));
+            }
+        };
+        if coarse_dt <= fine_dt {
+            continue;
+        }
+        match aggregation_correlation(&loaded[fine_idx].1, &loaded[k].1, coarse_dt) {
+            Some(r) if r >= AGGREGATION_IDENTITY_CORR => {}
+            Some(r) => {
+                return Err(format!(
+                    "riss — '{name}' resolves across differing aggregations: {} median_dt {:.0}s vs {} median_dt {:.0}s (overlap corr {:.4}); register order selects nothing",
+                    loaded[fine_idx].0, fine_dt, loaded[k].0, coarse_dt, r
+                ));
+            }
+            None => {
+                return Err(format!(
+                    "riss — '{name}' resolves across differing aggregations: {} median_dt {:.0}s vs {} median_dt {:.0}s (overlap corr pending); register order selects nothing",
+                    loaded[fine_idx].0, fine_dt, loaded[k].0, coarse_dt
+                ));
+            }
+        }
+    }
+    let witness = loaded[fine_idx].0.clone();
+    let series = loaded.swap_remove(fine_idx).1;
+    println!(
+        "  witness {witness} | '{name}' | median_dt {}s | n {} (finest of {} gleichartige registrations)",
+        median_dt(&series)
+            .map(|d| format!("{d:.0}"))
+            .unwrap_or_else(|| "pending".to_string()),
+        series.len(),
+        cadences.len()
+    );
+    Ok(Some(series))
 }
 
 fn align_xyz(xs: &[(f64, f64)], ys: &[(f64, f64)], zs: &[(f64, f64)]) -> Vec<(f64, [f64; 3])> {
@@ -6190,6 +6264,31 @@ mod tests {
             fold: None,
             aperture: omegaflow::archivar::Aperture::None,
         }
+    }
+
+    #[test]
+    fn aggregation_correlation_separates_same_from_different_aggregation() {
+        let fine: Vec<(f64, f64)> = (0..(30 * 24))
+            .map(|i| (i as f64 * 3600.0, (i as f64 * TAU / 240.0).sin()))
+            .collect();
+        let coarse_same: Vec<(f64, f64)> = period_means(&fine, 86400.0)
+            .into_iter()
+            .map(|(k, (s, n))| (k as f64 * 86400.0, s / n as f64))
+            .collect();
+        let same = aggregation_correlation(&fine, &coarse_same, 86400.0)
+            .expect("same-aggregation correlation");
+        assert!(
+            same >= AGGREGATION_IDENTITY_CORR,
+            "the daily mean of the hourly series must read as the same aggregation (corr {same})"
+        );
+
+        let coarse_other: Vec<(f64, f64)> = coarse_same.iter().map(|&(t, v)| (t, -v)).collect();
+        let other = aggregation_correlation(&fine, &coarse_other, 86400.0)
+            .expect("different-aggregation correlation");
+        assert!(
+            other < AGGREGATION_IDENTITY_CORR,
+            "an inverted daily series must not clear the identity bound (corr {other})"
+        );
     }
 
     fn source_cfg(field: FieldConfig, station: Option<&str>) -> SourceConfig {
