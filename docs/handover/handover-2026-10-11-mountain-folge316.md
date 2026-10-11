@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — register_sort canonical + mla/ola fmt geheilt (ci-gate register/format), te-bias-n dispatcht, DEMETER-Lizenz-Riss + GIC/Re-Admission-Verdikte gemessen; vier Taucher-Dossiers
   class: handover
   date: 2026-10-11
-  sha256: 245d593d0121a9c64740a48480777796d59f8331c01aef0c0282c4c5055616f9
+  sha256: 5fd73358b3d6ddd1d1dd512089bcb85e97e684e38d652bf00f1a199dee243c9c
   status: live
 -->
 # Handover — Mountain-Folge 316 (2026-10-11)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge315.md` (→ `archiv/`).
 
-## Burn: open 0.0076 · close 0.19 (Linien-Session 0.048 + 4 Taucher ≈0.145) · cap 0.30 · reason: Mountain-Linien-Session + vier grind-flash Taucher (CI-Triage/GIC/Re-Admission/DEMETER) + register_sort + te-bias-n-Dispatch; Fenster-Aggregat 0.5980 über 21 Sessions (fremde Linien inkl., Linien-Anteil nicht exakt isolierbar); deepseek-flash, kein pro/max; gemessen via `session_burn`.
+## Burn: open 0.0076 · close 0.37 (Linien-Session 0.131 + Taucher ≈0.24) · cap 0.45 · reason: Mountain-Linien-Session + sieben grind-flash Taucher (CI-Triage, GIC, Re-Admission, DEMETER, MLA-RDR/Coverage, eigene-Ephemeride-Survey, Witness-Bin) + register_sort + te-bias-n; Fenster-Aggregat 1.2101 über 29 Sessions (fremde Linien inkl., Linien-Anteil nicht exakt isolierbar); deepseek-flash, kein pro/max; gemessen via `session_burn`.
 
 ## Offen (aufgeschlüsselt)
 
@@ -86,12 +86,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge315.md` (→ `archiv/`).
 - **Blockade:** Architektur.
 - **Braucht:** Rat-Linse über den Transform-Layer.
 
-### PEP + Tudat — Schritt 3 (mehrere Bahnen)
-- **Status:** eigen (Register + Bau) | **Bindung:** eigen
-- **Trigger:** Schritt 3 — weitere Zeugen (Merkur/Venus Radar + VEX-Ranging) durch die Kette
-- **Lage:** (gemessen 2026-10-11 via folge315-Register) (folge315, unverändert) vier Häuser als `ephemeris_*` registriert.
-- **Blockade:** keine.
-- **Braucht:** weitere Zeugen durch die Kette, Kette CI-nah verankern.
+### Eigene Ephemeride (PEP/Tudat) — Kette gemessen; Witness-Residuum-Bin gebaut (Step 3)
+- **Status:** eigen (Bau) | **Bindung:** eigen
+- **Trigger:** der nächste begrenzte Schritt (den vollen `two_way_doppler`-Operator an das Witness-Residuum binden)
+- **Lage:** (gemessen 2026-10-11 via `sread` + `cargo check`; Träger `docs/concepts/eigene-ephemeride.md`) **Step 0 (Operator/Kalibration): teil** — Zeit `src/archivar/lsk.rs unix_to_tdb` ✓, Rahmen `src/mathematikerin/receiver.rs` (`precession_matrix_fw06`/`nutation_angles_2000a` 1365-Term/`cirs_to_gcrs`/`itrf_to_icrs`) ✓, Lichtzeit+Shapiro `receiver.rs two_way_doppler`/`shapiro_leg_s` ✓ — **aber `two_way_doppler` wird von keinem Bin gerufen** (nur Tests); die Residuen-Tools nutzen den alten Teil-Pfad `odp.rs downlink_rate_core` (downlink only, kein Shapiro/EOP). **Step 0e Medien/Troposphäre: absent** (VMF3/IONEX nur als Harvest-Compiler). **Step 1/2: teil** (Pioneer-Residuen-Tools, je hartkodiert `const SC_BODY`). **Step 3 vorher absent → in diesem Atom gebaut:** `tools/measure/src/bin/witness_odf_residuum.rs` (Registry `witness_source` + `--body`; pioneer10/galileo_e1 registriert; `cargo check` + build 0/0). **Step 4: `least_squares.rs` gebaut, nicht an ein Bahn-Residuum verdrahtet.** Riss: Konzept/Handover nennen `observer.rs` — die Datei heißt seit `55e06c189` `receiver.rs`.
+- **Blockade:** der volle Operator passt nicht ohne Adapter — `two_way_doppler` liefert `observable_hz` (nicht range-rate), braucht `turn_ratio` + einen deklarierten Sonnen-Gravitator + `t_tx` aus der Lichtzeit-Iteration (nicht exponiert).
+- **Braucht:** `t1` aus dem Lichtzeit-Helper zurückgeben, `turn_ratio` + `ephemeris_sun.bin`-Position/`GM_SUN_M3_S2` deklarieren, dann den Fit auf `observable_hz` umstellen (nächster begrenzter Schritt); parallel Step 0e Medien (VMF3) an die Kette binden. PEP/Tudat bleiben Lizenz-/Verfahrens-Referenz.
 
 ### particle-cern — Baskets + Sample-Verifikation
 - **Status:** wartend | **Bindung:** eigen
