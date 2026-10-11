@@ -388,7 +388,7 @@ pub struct Vmf3Product {
 }
 
 fn is_leap(year: u32) -> bool {
-    (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
+    (year.is_multiple_of(4) && !year.is_multiple_of(100)) || year.is_multiple_of(400)
 }
 
 fn doy_from_mjd(mjd: f64) -> Option<f64> {
@@ -401,8 +401,8 @@ fn doy_from_mjd(mjd: f64) -> Option<f64> {
         return None;
     }
     let mut doy = 0u32;
-    for k in 0..(month as usize - 1) {
-        doy += MONTH_DAYS[k];
+    for days in MONTH_DAYS.iter().take(month as usize - 1) {
+        doy += *days;
     }
     if is_leap(year) && month > 2 {
         doy += 1;

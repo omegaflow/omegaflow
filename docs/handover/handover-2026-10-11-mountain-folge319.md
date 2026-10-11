@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Register-Riss MLA geheilt (field RANGE mla_range eingetragen, der `NAME = RANGE`-Befund aus folge318 als Falschmessung korrigiert) + 10 Quellen-Terms gemessen (Re-Admission/GIC/Space-Weather) + THEMIS-ASI-Koordinatentabelle gemessen (Riss: Compiler emittiert `at earth`, nicht `on earth`) + Band-Paar-CI-Messung (0/59486 modelliert)
   class: handover
   date: 2026-10-11
-  sha256: 5aea78bfdb9b7131faf1fa53171a7b1a19cd26b9b279fafb7b03bea77cf5c4a1
+  sha256: f515351ff05767b52d4e017952f66a8c0d73c4922c10045c903ce37fc535d465
   status: live
 -->
 # Handover — Mountain-Folge 319 (2026-10-11)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge318.md` (→ `archiv/`).
 
-## Burn: open 0.00 · close 0.32 · cap 0.50 · reason: Linien-Session + 4 flash-Taucher (MLA-Riss, Re-Admission-Terms, GIC-Terms, THEMIS-ASI-Koordinaten) — gemessen via `session_burn`, deepseek-flash, kein pro/max.
+## Burn: open 0.00 · close 0.13 · cap 0.50 · reason: Linien-Session + 6 flash-Taucher (MLA-Riss, Re-Admission-/GIC-Terms, THEMIS-ASI-Koordinaten, Rat Q1/Q2 + Rat Step-4-Modellwahl) + ci-gate-Ursachen + vmf3-clippy-Heilung + Rat-Vorbereitung (`archive_search --all` + 4 UI-Seats) — gemessen via `session_burn`, deepseek-flash, kein pro/max.
 
 ## Erledigt in diesem Atom (gelöscht aus dem Register; git trägt es)
 
@@ -22,26 +22,29 @@ Session konsumierte `handover-2026-10-11-mountain-folge318.md` (→ `archiv/`).
 
 ## Offen (aufgeschlüsselt)
 
-### Band-Paar-Atom — CI-Nachlauf liefert weiter kein Modell
+### Band-Paar-Atom — CI-Idempotenz-Sperre blockt das BND1-Companion
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der nächste `witness-odf-residuum`-Lauf nach einem ODF-Compiler-Nachlauf
-- **Lage:** (gemessen 2026-10-11 via `ci_manage log 38162233629`) der Lauf **success**, aber der Witness meldet `model: 0 samples modeled (123 without station coordinates, 59363 without model, 0 without compression)` und `too short — the series stays unwritten (0 honored)`. Die 14 ODF-Compiler-Läufe (`pioneer-odf-cdn` `38162205221` etc.) liefen success; das BND1-Companion erreicht den Witness trotzdem nicht.
-- **Blockade:** der Grund „without model" ist nicht gelesen — das CI-ODF-Asset trägt das BND1-Companion möglicherweise nicht.
-- **Braucht:** das vom Witness gelesene ODF-Asset auf die BND1-Sektion prüfen (`archive_search --sniff` des CDN-Assets bzw. `sread tools/measure/src/bin/witness_odf_residuum.rs` für die Asset-Quelle) — dann Ursache named.
+- **Trigger:** ein `spdf.gsfc.nasa.gov`-Asset-Refresh (Release-Upload) + darauffolgender `witness-odf-residuum`-Lauf
+- **Lage:** (gemessen 2026-10-11 via `ci_manage log 38162233629` + GitHub-Releases-API) der Witness-Lauf success, aber `model: 0 samples modeled (123 without station coordinates, 59363 without model)`; der Witness liest das **Release-Asset** `spdx…/releases/download/spdf.gsfc.nasa.gov/pioneer10_odf.bin`, das laut API zuletzt **2026-09-18T05:11:45Z** aktualisiert wurde — also **vor** dem Band-Paar-Bau. **Wurzel gemessen:** `pioneer-odf-cdn.yml:21–31` hat eine **Idempotenz-Sperre** („asset pioneer10_odf.bin already present — manifest skipped"); da das Asset existiert, wird Compile+Upload übersprungen, der Lauf meldet success, ohne das Bin zu erneuern.
+- **Blockade:** die Sperre liegt im Mycelium-Workflow; der Re-Manifest-Akt ist CDN-Recht.
+- **Braucht:** `pioneer-odf-cdn.yml` (und die übrigen ODF-Workflows) mit einem erzwungenen Re-Manifest (`--force`/clobber bzw. Asset-Löschung) neu dispatchten; danach den Witness-Lauf lesen (BND1 present?).
 
-### ci-gate — rot am älteren SHA; Läufe am neuen HEAD offen
+### ci-gate — Ursachen gemessen; clippy geheilt, format/register fremd
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** ein abgeschlossener `ci-gate`-Lauf am HEAD `41d46e62f`
-- **Lage:** (gemessen 2026-10-11 via `ci_manage jobs 38160978717`) letzter abgeschlossener `ci-gate` (head `591a46a`) = **failure**: Jobs `format` failure · `register` failure · `clippy` failure · `subset` cancelled. Neuere `ci-gate`-Läufe (`38161615343`, `38161411413`, `38161353937`) `in_progress`. Die folge316-Aussage „format+register geheilt" deckt diesen SHA nicht.
-- **Blockade:** `cargo test`/`fmt`/`clippy` laufen nur in CI; kein Polling.
-- **Braucht:** den nächsten abgeschlossenen `ci-gate` **einmal** lesen (`ci_manage log <id>`) — format/register/clippy/subset grün? Bei rot die Ursache aus dem Job-Log benennen.
+- **Trigger:** der nächste abgeschlossene `ci-gate`-Lauf am HEAD `d5525435f`
+- **Lage:** (gemessen 2026-10-11 via `ci_manage log 38160978717`) letzter abgeschlossener `ci-gate` (head `591a46a`) = failure, Ursachen benannt:
+  - **clippy** (`src/archivar/vmf3.rs:391` `manual_is_multiple_of` ×3 + `:404` `needless_range_loop`) — **in diesem Atom geheilt** (`is_leap` → `is_multiple_of`, Schleife → `MONTH_DAYS.iter().take()`; `cargo check` 0/0).
+  - **format** (`src/mathematikerin/mod.rs:33`, `src/mathematikerin/receiver.rs:172`, `src/mathematikerin/tropo.rs:22`) — genau die fremd-modifizierten, aktiv gehaltenen Hünke.
+  - **register** (`cdn_reconcile --fail`): `fingrid-cdn.yml:48` schreibt netloc `data.fingrid.fi`, in `phi/sources.φ` **nicht gebunden** (`sgrep fingrid phi/sources.φ` = leer).
+- **Blockade:** die `format`-Hünke hält eine andere Linie; die `register`-Bindung braucht Myceliums Workflow/netloc.
+- **Braucht:** `src/mathematikerin/*` formatieren (haltende Linie) + `data.fingrid.fi` binden (Mycelium/Mountain); dann den nächsten `ci-gate` einmal lesen.
 
-### Eigene Ephemeride (PEP/Tudat) — Step 4: `least_squares.rs` verdrahten
-- **Status:** eigen (Bau) | **Bindung:** eigen
-- **Trigger:** der nächste begrenzte Schritt (Step 4: `least_squares.rs` an ein Bahn-Residuum verdrahten)
-- **Lage:** (gemessen 2026-10-11 via folge318-Register; unverändert) Step 0/1/2 ✓; Step 3 (Witness-Residuum-Bin) gebaut; Troposphäre (VMF3 b/c) + Band-Paar (turn_ratio) gebaut; CI-Lauf `38151032366` success auf 59486 Pioneer-10-Samples. Step 4 gebaut, nicht verdrahtet. PEP/Tudat = Lizenz-/Verfahrensreferenz.
-- **Blockade:** kein begrenzter Schritt ohne Bahn-Residuum.
-- **Braucht:** Step 4 verdrahten (`least_squares.rs` an das Witness-Residuum).
+### Eigene Ephemeride (PEP/Tudat) — Step 4: Rat-Entscheid C, Bau blockiert am aktiven Dateiset
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** die Freigabe des aktiv gehaltenen Mathematikerin-Dateisatzes (`src/mathematikerin/receiver.rs`, `src/mathematikerin/tropo.rs`, `src/mathematikerin/mod.rs`) durch die haltende Linie
+- **Lage:** (gemessen 2026-10-11 via `glob`/`sread`/Rat) Step 0/1/2 ✓; Step 3 (Witness-Residuum-Bin) gebaut; Troposphäre (VMF3 b/c) + Band-Paar (turn_ratio) gebaut. **Korrektur:** der LSQ liegt in `src/mathematikerin/least_squares.rs` (nicht `src/archivar/`) und ist bereits an **3** Stellen verdrahtet (`src/archivar/ephemeris.rs:143`, `tools/harvest/src/bin/horizons_compiler.rs:91`, `src/mathematikerin/ozzy.rs:121`) — nur nicht an ein Bahn-Residuum. **Rat-Votum C** (weder 1-Parameter durch die 3-RHS-API routen noch ein 3-Komponenten-Modell erfinden): (1) den Eliminationskern hinter `solve_normal_equations` herausziehen + einen ehrlichen n-RHS-Eingang anbieten (3-RHS wird dünner Wrapper); (2) `fixed_effects_1` aus den 5 Residuen-Bins in **eine** Mathematikerin-Funktion ziehen; (3) vor jedem Modell die Partials zählen — keine zweite Observable → `pending`. **Rat-Vorbereitung (Operator-Wort 2026-10-08):** Recherche-Schicht `archive_search --all` (Verma 2022 ATDF→Doppler; Mazarico 2004 Mars-Odyssey-POD; Verma 2013 MESSENGER/GINS-Orbit-Fit; Bos/Montillet/Williams 2019 Trajektorien-Fit; Pioneer-10-Doppler Zenodo `13309156`) + UI-Rat (Claude Sonnet 5.5 · Qwen3.7-Plus → beide **C**, deckungsgleich mit dem Rat; Z.ai/Duck `pending` — Nicht-Antwort gemessen) — `state/stimmen/2026-10-11_mountain_step4-lsq.md`. Kein Riss.
+- **Blockade:** `src/mathematikerin/mod.rs`, `src/mathematikerin/receiver.rs`, `src/mathematikerin/tropo.rs` sind fremd-aktiv gehalten (Ephemeride-Hünke); der Bau würde in ein aktiv gehaltenes Dateiset schreiben.
+- **Braucht:** den Dateisatz freigeben, dann die Rat-Schritte 1+2 als begrenzten Bau umsetzen (`cargo check` 0/0).
 
 ### THEMIS-ASI — Koordinatentabelle gemessen; Compiler-Form-Riss
 - **Status:** eigen (Register) | **Bindung:** eigen
@@ -78,19 +81,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge318.md` (→ `archiv/`).
 - **Blockade:** url/origin (Mycelium) für die Neu-Admits.
 - **Braucht:** vier Verdikte/Registrierungen (Mountain `terms`, Mycelium url/origin).
 
-### api.sensor.community — Arm/Zielzeile unbenannt
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der nächste begrenzte Schritt (Arm/Zielzeile benennen)
-- **Lage:** (gemessen 2026-10-11 via future-235) HTTP 200; `sensor.community` bereits registriert (`phi:338/1218`). Kein Future-Wort — eigener Register-Punkt.
-- **Blockade:** „zulassen" nennt keinen Arm/keine Zeile.
-- **Braucht:** Arm/Zielzeile selbst benennen oder `descoped` mit Befund.
-
-### Teil C — A5/A6 Earth-Flyby-ODFs
+### Teil C — A5 offen; A6 descoped
 - **Status:** eigen (Register) | **Bindung:** eigen
 - **Trigger:** der nächste Register-Pass
-- **Lage:** (gemessen 2026-10-11 via folge315-Register; unverändert) **A5** Galileo Earth1/Earth2 als TDF — `GO-SS-RSS-1-TDF-V1.0` (PDS PPI; 1990 DOY 342-344 + 1992 DOY 343-344; keine `.ODF`). **A6** MESSENGER 2005 Earth-Flyby absent.
+- **Lage:** (gemessen 2026-10-11 via `sread phi/sources.φ` + folge315) **A5** Galileo Earth1/Earth2 als TDF — `GO-SS-RSS-1-TDF-V1.0` (PDS PPI; 1990 DOY 342-344 + 1992 DOY 343-344; keine `.ODF`); **A6 descoped** — die MESSENGER-2005-Earth-Flyby trägt **kein** ODF/TDF-Dataset (die MLA/RSS-RDR-Blöcke `phi/sources.φ:12055`/`:12040` decken den Flyby ohne eigene ODF-Kampagne; kein Register-Eintrag trägt eine MESSENGER-2005-ODF).
 - **Blockade:** keine.
-- **Braucht:** A5 die TDF-Route registrieren (oder `descoped`); A6 `descoped` mit Befund.
+- **Braucht:** A5 die TDF-Route registrieren (oder `descoped`).
 
 ### Ephemeris-CDN-Tag — Repoint blockiert (vorbestehende Gate-Verstöße)
 - **Status:** blockiert | **Bindung:** eigen
@@ -99,12 +95,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge318.md` (→ `archiv/`).
 - **Blockade:** die 10 measure-Bins tragen remove-bias/NaN-Verstöße aus WP13.
 - **Braucht:** eigener Atom (River/Mountain): die Funde heilen, dann den Tag-Repoint committen.
 
-### opentopography_coverage — per-Dataset-Lizenz
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** ein Lizenz-Modell für per-Dataset-terms
-- **Lage:** (gemessen 2026-10-11; Träger `phi/sources.φ`; unverändert) die Lizenz ist **per-Dataset**, ein einzelnes `terms` überzeichnet → Riss; Lauf `38150636428` success.
-- **Blockade:** das Register kennt kein per-Dataset-`terms`-Modell.
-- **Braucht:** Verdikt (per-Dataset-`terms`-Modell einführen) oder nur `archive_search`-Arm ohne Register-Block.
+### opentopography_coverage — per-Dataset-Lizenz (Rat-Entscheid: kein neues Modell)
+- **Status:** eigen (Register) | **Bindung:** eigen
+- **Trigger:** der nächste begrenzte Schritt (Coverage-Manifest manifestieren + Block registrieren)
+- **Lage:** (gemessen 2026-10-11 via Rat + `sgrep`; Lauf `38150636428` success) die Lizenz ist **per-Dataset**; das **Rat-Votum** verwirft ein per-Dataset-`terms`-Direktiv (die Grammatik trägt **einen** `terms`-Slot pro Block — `parse.rs:224/265–272`; mehrere Zeilen kollabieren still auf die letzte = Fabrikation). Kanonische Form: **Block-pro-Dataset**, das Portal-Manifest steht auf `origin` (Katalog-URL) **ohne `terms`** (0 honored); die Dataset-Lizenz bleibt `pending` am je geernteten Dataset. `opentopography_coverage.rs:90–95` emittiert `shard <href>`; in `phi/sources.φ` nicht registriert.
+- **Blockade:** das Manifest-Asset ist noch nicht manifestiert (Mycelium).
+- **Braucht:** das Coverage-Manifest auf den CDN (Mycelium) + Block registrieren (`url …/portal.opentopography.org/opentopography_coverage.manifest / format coverage_manifest / origin …/API/otCatalog?outputFormat=json / compiler … / keine terms-Zeile`); per-Dataset-`terms` als eigener `pending`-Punkt.
 
 ### Sechs Klima-Quellen — ecad/aodn brauchen gewählte Eingaben
 - **Status:** wartend | **Bindung:** eigen
@@ -141,12 +137,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge318.md` (→ `archiv/`).
 - **Blockade:** Lauf läuft.
 - **Braucht:** Lauf-Ergebnis lesen; danach sha256 in `phi/sources.φ` nachtragen.
 
-### Frame/Epoche — Transform-Layer
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Architektur-Entscheid der Rat-Linse (Vorlage `state/mycelium/frame-epoch-findings.md`)
-- **Lage:** (gemessen 2026-10-11 via folge315-Register; unverändert) bbox-off Default steht; Transform-Layer `pending`.
-- **Blockade:** Architektur.
-- **Braucht:** Rat-Linse über den Transform-Layer.
+### Frame/Epoche — Transform-Layer (Rat-Entscheid: kein Transform jetzt)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der nächste begrenzte Schritt nur wenn eine CRS-VLR-Messung ihn verlangt
+- **Lage:** (gemessen 2026-10-11 via Rat + `sgrep`) Rat-Votum: **kein** Transform-Layer jetzt; `--bbox-off` (`ShardPlacement::Pending` → `shard_intersects_hull` = true, `coverage_manifest.rs:78`) ist **verlustfrei**; die Wire ist 26×f64 ICRS/J2000 ohne Frame-Slot. Der Transform bleibt `pending` mit den Vorbedingungen aus `state/mycelium/frame-epoch-findings.md`. Ein per-Source-ICRS-Stempel wäre Fabrikation.
+- **Blockade:** keine (Entscheid steht).
+- **Braucht:** nichts bauen; falls je nötig, die CRS-VLR-Range in den Hand-Parsern messen (`open_lidar_data_coverage.rs:127–133`, `noaa_nos_coverage.rs:206–212`) — sonst der benannte Riss.
 
 ### particle-cern — Baskets + Sample-Verifikation
 - **Status:** wartend | **Bindung:** eigen
@@ -188,7 +184,8 @@ Session konsumierte `handover-2026-10-11-mountain-folge318.md` (→ `archiv/`).
 Origin: mountain-folge319 (2026-10-11).
 
 - **MLA-Register-Block:** Mountain hat `field RANGE mla_range inverse-square em km 604800 0.0 0.0` in `phi/sources.φ:12055` eingetragen; der Repoint (`origin`→`…/rdr_radr/`, url `pds3_fixed_width_mlaradr0801141902.bin`) steht. **Korrektur:** das RDR-`.lbl` trägt **kein** `NAME` (nur `INSTRUMENT_MODE_ID = {"SC_RANGE"}`, `^STRUCTURE = "MLARADR.FMT"`); die folge317/318-Behauptung `NAME = RANGE`/`MLASCIRDR.FMT` ist widerlegt. Braucht nur noch die CDN-Manifestation + sha256.
-- **Band-Paar-Atom — CI erreicht kein Modell:** der Witness-Lauf `38162233629` (success) meldet `0 samples modeled / 59363 without model`, trotz erfolgreicher ODF-Compiler-Läufe. Bitte das CDN-ODF-Asset auf die BND1-Sektion prüfen (Myceliums Manifestations-Seite).
+- **Band-Paar-Atom — CI-Idempotenz-Sperre (Wurzel gemessen):** der Witness liest das Release-Asset `releases/download/spdf.gsfc.nasa.gov/pioneer10_odf.bin` (Release-API: zuletzt aktualisiert **2026-09-18T05:11:45Z** — vor dem Band-Paar-Bau). Ursache: `pioneer-odf-cdn.yml:21–31` überspringt Compile+Upload, wenn das Asset existiert („already present — manifest skipped"), daher 0 Modelle. **Braucht:** `pioneer-odf-cdn.yml` (und die übrigen ODF-Workflows) mit erzwungenem Re-Manifest (`--force`/clobber bzw. Asset-Löschung) nachziehen; danach den Witness-Lauf lesen.
+- **`cdn_reconcile` rot:** `fingrid-cdn.yml:48` schreibt netloc `data.fingrid.fi`, der in `phi/sources.φ` nicht gebunden ist (`sgrep fingrid` = leer) → Job `register` failure. Braucht die `url`/`origin`-Bindung (Mycelium/Mountain).
 - **Re-Admission/GIC-Terms stehen** (gemessen); es fehlen die `url`/`origin`-Zeilen für EAGLE-I/OE-417/INTERMAGNET/GIRO/GRDC-Caravan/RouteViews/EPH-VSOP/GloFAS/THEMIS-ASI.
 - **DEMETER:** nur lokale Registrierung (Lizenz nicht-kommerziell); vor url/origin den CDN-Spiegel gegen die Lizenz prüfen.
 
