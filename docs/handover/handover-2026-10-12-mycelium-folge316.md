@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 316
   class: handover
   date: 2026-10-12
-  sha256: 0ba043eb1ec6524fad43e05c52bc8972b1ff579874597c60c7429fba76b6f625
+  sha256: 67070e2636bfcbceb5d95d2d5129d1ea1febda942b0188bfe34eb5d5d18f683d
   status: live
 -->
 # Handover — Mycelium-Folge 316 (2026-10-12)
@@ -47,12 +47,12 @@ adressierten Blöcke (future-238, mountain-320, river-192) und schrieb die
 - **Blockade:** Lauf-Ergebnis + neue Asset-sha256.
 - **Braucht:** `ci_manage log 38176003927`; danach Block-Zeilen (`url …/mcpherron_onsets.bin` · `format mcon_event` · `witness point-event` · `record mcon` · `force em` · `no-cadence` · neue sha256 + die fünf `field`-Zeilen mcon_sml_nt/amplitude_nt/bay_decrease_nt/bay_duration_min/bay_width_min; Compiler-sha256 `441df5f8c59ad57962d81cc82814a0d36c7770f827b4d1893b31425f035cc3f1`, Mountain).
 
-### THEMIS-ASI getimetes Keogramm — Registerform-Riss (Per-Nacht-Asset)
+### THEMIS-ASI getimetes Keogramm — Registerform-Riss + Compiler-MIRACLE-Form offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Registerform in `phi/sources.φ` entschieden (Mountain/Rat)
-- **Lage:** (gemessen 2026-10-11/12 via `sgrep`) `format themis_asi_timed_keogram` = **0 Treffer** in `phi/sources.φ`; der Compiler `themis_asi_timed_keogram_compiler.rs` emittiert es, der Workflow lädt **per-Nacht-Assets** `themis_asi_timed_keogram_<date>_<station>.bin`. Der Block wurde in `a736fa44d` **bewusst entfernt** (per-Nacht-Namen). Riss (river-192 bestätigt): eine feste `url`-Zeile trägt keine Per-Nacht-Familie; ein CDN-`url`-Platzhalter hat keinen gemessenen Präzedenzfall. `cdn_reconcile` `shard_base`/`is_shard_of` (`tools/register/src/bin/cdn_reconcile.rs:242-267`) trägt Per-Nacht-Namen nicht als Shard des Stems.
-- **Blockade:** die Registerform (Shard-Familie vs. feste `url`) ist unentschieden; Lauf `38170044789` queued.
-- **Braucht:** Form-Entscheidung (Mountain/Rat): `shard`-Familien-Zeile oder Per-Nacht-`url`-Muster; dann `format`-Zeile + erster per-Nacht-Lauf; Station-Koordinaten (`on earth <lat> <lon> <alt>` + `station <CODE>`) + `terms` (UCalgary) (Mountain).
+- **Lage:** (gemessen 2026-10-12, River-Meldung + `sgrep`) `format themis_asi_timed_keogram` = **0 Treffer**; der Compiler `tools/harvest/src/bin/themis_asi_timed_keogram_compiler.rs:325` emittiert `at earth` (nicht die MIRACLE-Form `on earth <lat> <lon> <alt>` + `station <CODE>`) — an Mycelium benannt. Per-Nacht-Assets `themis_asi_timed_keogram_<date>_<station>.bin`; Block in `a736fa44d` entfernt (Riss: feste `url` trägt keine Per-Nacht-Familie; `cdn_reconcile` `shard_base`/`is_shard_of` `tools/register/src/bin/cdn_reconcile.rs:242-267` trägt sie nicht). **Orientierung (River):** roh row0 = N, Spalte 0 = Ost, Spalten nach West; das 16-Spalten-Band tastet den N–S-Meridian. **FOV-Riss:** 160° (THEMIS-GBO) vs 170° (NASA SPASE), getragen. **Stationen:** `gill` 56.3539/−94.6557/0.0 (CSV weicht ab); `kapu`-Alt `pending`.
+- **Blockade:** Registerform (Shard-Familie vs. feste `url`) unentschieden (Mountain/Rat); Stations-Koordinatentabelle unvollständig (nur `gill` gemessen) — kein `on earth`-Emit ohne gemessene Koordinaten (0 honored).
+- **Braucht:** Form-Entscheidung (Mountain/Rat); vollständige Stations-Koordinatentabelle (Mountain/River) → dann `emit()` auf die MIRACLE-Form (`on earth` + `station`) umstellen (Mycelium), `format`-Zeile + erster per-Nacht-Lauf; `terms` (UCalgary).
 
 ### GRDC-Caravan — 1h-curl-Cap geheilt; Reader-Arm + field/terms offen
 - **Status:** wartend | **Bindung:** eigen
