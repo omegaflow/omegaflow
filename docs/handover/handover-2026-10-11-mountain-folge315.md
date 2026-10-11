@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — ci-check-Wurzel gemessen (1 Test, 393 CDN-Blöcke), Test an die Domänengrenze angepasst; Register fortgeschrieben
   class: handover
   date: 2026-10-11
-  sha256: 6faa66b4cf16956dcc04de9ab312e8d415634f74f870e31e562f6e8eac069ce0
+  sha256: 542cc87ffec822e784ffef35b5cd59c86b766e7270ab0f3492e35516172a2fa6
   status: live
 -->
 # Handover — Mountain-Folge 315 (2026-10-11)
@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge314.md` (→ `archiv/`).
 
-## Burn: open 0.00 · close 0.1704 · cap 0.20 · reason: der Taucher-Roster war das Operator-Wort (Taucherstaffel losschicken) — flash line + 3 grind-flash, kein pro/max; gemessen via `session_burn`.
+## Burn: open 0.00 · close 0.2212 · cap 0.30 · reason: ci-check-Wurzel + 388 compiler-Zeilen + 4 grind-flash Taucher (MODVOLC/ITS_LIVE/MASIE-Compiler + MASIE-Loader-Arm) — Operator-Wort Taucherstaffel; kein pro/max; gemessen via `session_burn`.
 
 ## Offen (aufgeschlüsselt)
 
@@ -77,7 +77,7 @@ Session konsumierte `handover-2026-10-11-mountain-folge314.md` (→ `archiv/`).
 - **Trigger:** der nächste CDN-Manifestations-Lauf je Quelle
 - **Lage:** (gemessen 2026-10-11 via `cargo check -p omegaflow-harvest` 0/0) drei neue Compiler: `modvolc_compiler.rs` (MODVOLC `MODVOLC.A<YYYY><DDD>.<HHMM>.061.NRT.dat`, 12 Spalten, B21→B22-Sättigungs-Fallback, 8 Alerts am Realgranule 2019/365), `its_live_compiler.rs` (STAC `stac.itslive.cloud` → netCDF `v` int16, Polar-Stereo-3413, 8/8 Test, 2000 Zellen), `masie_compiler.rs` (MASIE G02186 4km-CSV, 510 Records = 30 d × 17 Regionen). **Registriert:** MODVOLC (`field … inverse-square em w/m2/sr/um`), ITS_LIVE (`field … patch-levy advective m/yr` + Baseline-Eintrag), MASIE (`phi:1619` **korrigiert** — die alte `nsidc0792`-URL war auth-gated **und** fehl-identifiziert: G02186 ist MASIE, public; 17 `quantity … area m2`).
 - **Blockade:** kein `*-cdn.yml` (Manifestation fehlt); `--body <name>` ist Pflicht (Empfänger deklariert, nie defaulted).
-- **Braucht:** je Quelle einen `*-cdn.yml`-Workflow (`--body earth --ci-mode`) → Mycelium (s. `## An mycelium`); MASIE-Loader-Arm in `src/archivar` `pending`.
+- **Braucht:** je Quelle einen `*-cdn.yml`-Workflow (`--body earth --ci-mode`) → Mycelium (s. `## An mycelium`). MASIE-Loader-Arm **gebaut** (`src/archivar/masie.rs` + `masie_ice_extent` in `extract.rs`/`main_flow.rs`, `3718f5a71`, `cargo check --tests` 0/0).
 
 ### copernicus B1–B6 — Workflows angelegt, Lauf offen
 - **Status:** wartend | **Bindung:** eigen
@@ -167,7 +167,7 @@ Session konsumierte `handover-2026-10-11-mountain-folge314.md` (→ `archiv/`).
 
 Origin: mountain-folge315 (2026-10-11).
 
-- **Drei neue Compiler brauchen je einen `*-cdn.yml`** (Manifestation; gebaut + registriert 2026-10-11): `modvolc_compiler.rs`, `its_live_compiler.rs`, `masie_compiler.rs` (Crate `omegaflow-harvest`), registriert in `phi/sources.φ` (`modis.higp.hawaii.edu/modvolc_thermal.bin`, `stac.itslive.cloud/its_live_velocity.bin`, `noaadata.apps.nsidc.org/masie_ice_extent.bin`). Die Compiler verlangen `--body <name>` (Empfänger deklariert, nie defaulted). Bitte je einen `*-cdn.yml` mit `--body earth --ci-mode` verdrahten; MASIE braucht in `src/archivar` einen Loader-Arm (`pending`).
+- **Drei neue Compiler brauchen je einen `*-cdn.yml`** (Manifestation; gebaut + registriert 2026-10-11): `modvolc_compiler.rs`, `its_live_compiler.rs`, `masie_compiler.rs` (Crate `omegaflow-harvest`), registriert in `phi/sources.φ` (`modis.higp.hawaii.edu/modvolc_thermal.bin`, `stac.itslive.cloud/its_live_velocity.bin`, `noaadata.apps.nsidc.org/masie_ice_extent.bin`). Die Compiler verlangen `--body <name>` (Empfänger deklariert, nie defaulted). Bitte je einen `*-cdn.yml` mit `--body earth --ci-mode` verdrahten. Der MASIE-Loader-Arm steht (`src/archivar/masie.rs`, `3718f5a71`).
 - **Die 388 `pds3_fixed_width`-`compiler`-Zeilen sind gesetzt** (Operator-Wort: bauen; `tools/register/src/bin/register_add_compiler.rs`, Commit `93a3d546c`) — kein offener Mycelium-Auftrag mehr.
 
 ## Operator-Wort-Register
