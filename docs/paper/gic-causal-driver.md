@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 4e2f4feb38f342a14f60af4fc65c55e2b06cc8d70236cd5de6a5fc9ba0aeee75
+  sha256: 878370930538d5a6c41f8760ceb1b6d9a20b99e513243af28d75be794b4f2981
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -14,7 +14,7 @@
 
 ## Abstract
 
-Geomagnetically induced currents (GIC) are driven by the induced geoelectric field; dB/dt is the proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a round-maximum family bound whose AR(1) calibration showed a near-nominal rate but does not establish family-wise error control for this dependent, non-stationary design (§3.2). At the minute grain Bz→dB/dt peaks at lag 60 min but stays family bound in a 22-hour window. At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in Abisko 2024/2025 and Sodankylä 2024 (0.12670 vs 0.10557; 0.13309 vs 0.12136; 0.11695 vs 0.10571), but the arrows sit at the lag-0/1 edge bin, so the lag is not resolved (§3.1, §5). The hardened quarterly witness (n_surr = 100) keeps all rows family bound; density never clears the bound, and the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate. PCMCI removes the conditioned edge in 13/16 shards. The estimator's ground-truth verdict is NOT PASS; the riss stands.
+Geomagnetically induced currents (GIC) are driven by the induced geoelectric field; dB/dt is the proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to hourly and daily maxima of dB/dt at INTERMAGNET Abisko (68.36° N), with phase-randomized surrogates and a round-maximum family bound whose AR(1) calibration showed a near-nominal rate but does not establish family-wise error control for this dependent, non-stationary design (§3.2). At the minute grain Bz→dB/dt peaks at lag 60 min but stays family bound in a 22-hour window. At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in Abisko 2024/2025 and Sodankylä 2024 (0.12670 vs 0.10557; 0.13309 vs 0.12136; 0.11695 vs 0.10571), but the arrows sit at the lag-0/1 edge bin, so the lag is not resolved (§3.1, §5). The hardened quarterly witness (n_surr = 100) keeps all rows family bound; density never clears the bound, and the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate. PCMCI removes the conditioned edge in 13/16 shards. The estimator's ground-truth verdict is NOT PASS on two arms: the production Takens-embedded KSG arm nulls the reverse channel at strong coupling yet does not reconstruct its c = 0 null control, while the scalar Silverman-KDE reference does not null the reverse channel at strong coupling — the riss between the two arms stands.
 
 ## Key Points
 
@@ -222,7 +222,8 @@ round here and the hardened quarterly round — are carried as a riss
 
 ### 3.5 Estimator validation against known ground truth
 
-Before interpreting the geophysical results, the estimator is validated on
+Before interpreting the geophysical results, the scalar Silverman-KDE
+estimator (`transfer_entropy_lag`, §3.1) is validated on
 the Schreiber (2000) benchmark: unidirectionally coupled Hénon maps,
 x_{n+1} = 1.4 − x_n² + 0.3 x_{n−1}, y_{n+1} = 1.4 − (c·x_n·y_n +
 (1−c)·y_n²) + 0.3 y_{n−1}, n = 10 000, lag 1, with the same null machinery
@@ -237,6 +238,25 @@ reverse channel at strong coupling: at c = 0.20 the reverse TE exceeds the
 family bound, and the machine's own ground-truth verdict is therefore
 **NOT PASS** for the strict criterion "only the known direction against the
 family bound."
+
+The same benchmark is measured with the production arm — the Takens-embedded
+KSG estimator (dim 3, `topological_te_estimate`, `src/mathematikerin/te.rs:3392`;
+the flux runs the same estimator as `topological_te_phase` and the `te_compute`
+pipeline) — under the same null (10 phase-randomized surrogates, per-run
+threshold, round family bound). With c = 0.20 the known direction X→Y carries
+TE(X→Y) = 2.6483e-1 (thr −8.2944e-3), while the reverse
+TE(Y→X) = −1.2535e-2 (thr −7.4906e-3) stays still: the production arm nulls the
+reverse channel that the scalar arm, at the same coupling, leaves as an arrow
+(scalar TE(Y→X) = 3.6416e-2 > thr 2.0105e-2). With c = 0 the null control is not
+reconstructed: both directions read as arrows against their per-run thresholds
+(TE(X→Y) = −1.1298e-2 > −1.4008e-2; TE(Y→X) = −6.5337e-3 > −1.2298e-2), and
+TE(Y→X) = −6.5337e-3 clears the round family bound fam = −8.5123e-3, so the
+machine's ground-truth verdict is **NOT PASS**. The two arms fail different
+gates — the scalar arm the reverse-null at strong coupling, the production arm
+the c = 0 control — and the riss is carried un-smoothed, never averaged.
+(Measured: `tools/measure/src/bin/te_ground_truth.rs`,
+`.github/workflows/te-bias-n.yml`, CI run 38038722712, artifact `te-bias-n`
+11664873110, HEAD ea4025b2.)
 
 A (c, n) sweep (c = 0.05–0.50; n = 1 000, 3 000, 10 000) locates the
 character of this reverse response. The reverse TE(Y→X) decreases as n grows
@@ -703,11 +723,13 @@ Schreiber (2000) and the ETE criticism of Marschinski & Kantz (2002)
 - **Daily grain uses stride 3** (every third day; lag 1 = 3 days). The
   full-density daily run is 9× costlier and left for a future run; the
   stride is named, not hidden.
-- **Estimator validation (reverse channel).** The scalar TE estimator is the
-  untouched canonical reference of the system; on the Schreiber-2000
+- **Estimator validation (two arms, reverse channel).** The scalar TE
+  estimator is the untouched canonical reference; on the Schreiber-2000
   benchmark it recovers the known direction with asymmetry 6.75 but does not
-  null the reverse channel at strong coupling (ground-truth verdict NOT
-  PASS for absolute reverse silence; §3.5). The direction in the real data
+  null the reverse channel at strong coupling. The production Takens-embedded
+  KSG arm nulls the reverse channel at strong coupling yet does not
+  reconstruct its c = 0 null control; both arms carry the ground-truth verdict
+  NOT PASS (§3.5). The direction in the real data
   is argued from the forward-over-reverse asymmetry and the silent density
   control, not from an absolute reverse null. A KDE-h bandwidth sweep on
   Bz→dB/dt (factors 0.5–3.0) is carried by the hourly probe
@@ -838,10 +860,12 @@ density control stays below the bound throughout; the forward direction
 exceeds the reverse in every yearly round (ratios 1.20 and 1.14 at ABK
 2024/2025, 1.09 at SOD 2024 — below the benchmark floor 2.1, §3.5); the
 daily grain is empty because
-daily medians wash the driver out; and the reverse channel shows a weak,
-response under strong coupling — the estimator's ground-truth
-verdict is NOT PASS (§3.5), which tempers every strictly
-one-way reading. A family-clearing driver at the hourly
+daily medians wash the driver out; and the estimator's ground-truth
+verdict is NOT PASS (§3.5) on two arms — the production Takens-embedded
+KSG arm nulls the reverse channel at strong coupling yet does not
+reconstruct its c = 0 null control, while the scalar Silverman-KDE
+reference does not null the reverse channel at strong coupling — a riss
+carried un-smoothed, which tempers every strictly one-way reading. A family-clearing driver at the hourly
 grain is not established. For the grid operator: watch Bz at L1 rather than
 the daily average — the yearly-round evidence points there, unconfirmed by
 the hardened quarterly round — and read the

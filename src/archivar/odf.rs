@@ -2215,6 +2215,32 @@ pub fn tnf_phase_series(bytes: &[u8]) -> Option<Vec<TnfPhaseRow>> {
     Some(out)
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ReferenceStage {
+    Beacon,
+    UplinkCarrier,
+    Tsf,
+}
+
+pub const TSF_TO_CARRIER_RATIO: f64 = 96.0;
+
+pub fn reference_stage(data_type: i32, ref_hz: f64) -> ReferenceStage {
+    if data_type == 11 {
+        ReferenceStage::Beacon
+    } else if ref_hz >= 1.0e9 {
+        ReferenceStage::UplinkCarrier
+    } else {
+        ReferenceStage::Tsf
+    }
+}
+
+pub fn ref_uplink_hz(data_type: i32, ref_hz: f64) -> f64 {
+    match reference_stage(data_type, ref_hz) {
+        ReferenceStage::Tsf => ref_hz * TSF_TO_CARRIER_RATIO,
+        _ => ref_hz,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -3157,5 +3183,21 @@ mod tests {
         assert_eq!(d.int_time, 60);
         assert_eq!(d.percent_data_used, 98.5);
         assert_eq!(d.new_01sec, 1);
+    }
+
+    #[test]
+    fn reference_stage_separates_beacon_uplink_carrier_and_tsf() {
+        assert_eq!(reference_stage(11, 2_292_035_640.0), ReferenceStage::Beacon);
+        assert_eq!(ref_uplink_hz(11, 2_292_035_640.0), 2_292_035_640.0);
+
+        assert_eq!(reference_stage(12, 21_986_930.0), ReferenceStage::Tsf);
+        let up = ref_uplink_hz(12, 21_986_930.0);
+        assert!((up - 2.110745e9).abs() < 1.0e3, "got {up}");
+
+        assert_eq!(
+            reference_stage(12, 2_110_274_976.0),
+            ReferenceStage::UplinkCarrier
+        );
+        assert_eq!(ref_uplink_hz(12, 2_110_274_976.0), 2_110_274_976.0);
     }
 }
