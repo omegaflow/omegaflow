@@ -34,6 +34,8 @@ mod core_api;
 mod datacite;
 #[path = "archive_search/dataeuropa.rs"]
 mod dataeuropa;
+#[path = "archive_search/opensn.rs"]
+mod opensn;
 #[path = "archive_search/dataverse.rs"]
 mod dataverse;
 #[path = "archive_search/doaj.rs"]
@@ -48,6 +50,8 @@ mod ensembl;
 mod entrez;
 #[path = "archive_search/europepmc.rs"]
 mod europepmc;
+#[path = "archive_search/frbcat.rs"]
+mod frbcat;
 #[path = "archive_search/gemini.rs"]
 mod gemini;
 #[path = "archive_search/git.rs"]
@@ -444,6 +448,7 @@ fn main() {
             "--ckan" => mode = Mode::Net("ckan"),
             "--cmr" => mode = Mode::Net("cmr"),
             "--dataeuropa" => mode = Mode::Net("dataeuropa"),
+            "--opensn" => mode = Mode::Net("opensn"),
             "--tap" => mode = Mode::Net("tap"),
             "--pangaea" => mode = Mode::Net("pangaea"),
             "--re3data" => mode = Mode::Net("re3data"),
@@ -455,6 +460,7 @@ fn main() {
             "--vires" => mode = Mode::Net("vires"),
             "--oai-pmh" => mode = Mode::Net("oai-pmh"),
             "--dryad" => mode = Mode::Net("dryad"),
+            "--frbcat" => mode = Mode::Net("frbcat"),
             "--go" => mode = Mode::Net("go"),
             "--unpaywall" => mode = Mode::Net("unpaywall"),
             "--reactome" => mode = Mode::Net("reactome"),
@@ -793,7 +799,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -862,7 +868,13 @@ fn usage() {
         "  --dataeuropa EU Open Data Portal search (data.europa.eu/api/hub/search), keyless; url + title/publisher/country/issued/description"
     );
     eprintln!(
+        "  --opensn    Open Supernova Catalog search (github.com/astrocatalogs sne-* range repos), keyless; url + name/type/redshift/ra/dec/discoverdate from the OSC object JSON"
+    );
+    eprintln!(
         "  --dryad     Dryad research-data search (datadryad.org/api/v2/search), keyless; doi + title/authors/abstract"
+    );
+    eprintln!(
+        "  --frbcat    FRBSTATS fast-radio-burst catalogue (live gviz CSV, the sheet fetch_catalogue.py reads; falls back to the repo's raw catalogue.csv), keyless; url + frb/ra/dec/redshift (full result in the temp file)"
     );
     eprintln!(
         "  --tap       IVOA TAP sync ADQL query: `--tap \"endpoint=<tap-sync-url> SELECT ...\"`, keyless; rows as col=val (find a service with `--regtap`)"
