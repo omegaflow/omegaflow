@@ -495,6 +495,8 @@ pub struct SourceConfig {
     pub url: String,
     pub origin: Option<String>,
     pub terms: Option<String>,
+    pub band: Option<String>,
+    pub footprint: Option<String>,
     pub rights_identifier: Option<String>,
     pub rights_scheme: Option<String>,
     pub rights_uri: Option<String>,

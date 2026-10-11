@@ -1,3 +1,5 @@
+# harvest: format=osm_nodes asset=present arm=osm_pbf_compiler pattern=^monaco_nodes\.bin$ idempotent=true timeout=240 tag=download.geofabrik.de
+
 name: osm-pbf-cdn
 
 concurrency:

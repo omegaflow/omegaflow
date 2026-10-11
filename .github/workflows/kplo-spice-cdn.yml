@@ -1,3 +1,5 @@
+# harvest: format=ephemeris_binary asset=present arm=kplo_spice_compiler pattern=^ephemeris_kplo\.bin$ idempotent=true tag=www.kari.re.kr
+
 name: kplo-spice-cdn
 
 concurrency:

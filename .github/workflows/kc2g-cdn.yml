@@ -1,3 +1,5 @@
+# harvest: format=kc2g_stations asset=present arm=kc2g_stations pattern=^kc2g_stations\.csv$ idempotent=true timeout=120 tag=prop.kc2g.com
+
 name: kc2g-cdn
 
 concurrency:

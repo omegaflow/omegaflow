@@ -1,3 +1,5 @@
+# harvest: format=ebhis_hpx_series asset=present arm=ebhis_compiler pattern=^ebhis_hpx190\.bin$ idempotent=true timeout=120 tag=cdsarc.cds.unistra.fr
+
 name: ebhis-cdn
 
 concurrency:

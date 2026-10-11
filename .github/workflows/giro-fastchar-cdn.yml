@@ -1,3 +1,5 @@
+# harvest: format=giro_fastchar asset=present arm=giro_fastchar_compiler pattern=^giro_fastchar_.*\.bin$ idempotent=true timeout=120 tag=lgdc.uml.edu
+
 name: giro-fastchar-cdn
 
 concurrency:

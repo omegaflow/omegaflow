@@ -1,3 +1,5 @@
+# harvest: format=tao_wnd_zonal asset=present arm=tao_wnd_compiler pattern=^tao_wnd_zonal\.csv$ idempotent=true timeout=120 tag=data.pmel.noaa.gov
+
 name: tao-wnd-cdn
 
 concurrency:

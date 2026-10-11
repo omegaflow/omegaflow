@@ -1,3 +1,5 @@
+# harvest: format=ampere_fac asset=present arm=ampere_fac_compiler pattern=^ampere_fac\.bin$ idempotent=true timeout=600 tag=zenodo.org
+
 name: ampere-fac-cdn
 
 concurrency:

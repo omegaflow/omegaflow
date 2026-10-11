@@ -1,3 +1,5 @@
+# harvest: format=ephemeris_petrel19 asset=present arm=de_compiler pattern=^ephemeris_petrel19_[a-z]+\.bin$ idempotent=true tag=github.com
+
 name: petrel19-cdn
 
 concurrency:

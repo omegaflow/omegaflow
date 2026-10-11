@@ -1,3 +1,5 @@
+# harvest: format=pds_ppi asset=present arm=pds_ppi_compiler pattern=^pds_ppi_.+\.bin$ idempotent=true timeout=240 tag=pds-ppi.igpp.ucla.edu args=--table galileo_hic_jup_raw.epn_core
+
 name: pds-ppi-cdn
 
 concurrency:

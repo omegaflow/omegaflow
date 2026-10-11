@@ -1,3 +1,5 @@
+# harvest: format=pds4_fixed_width asset=present arm=pds4_fixed_width_compiler pattern=^pds4_fixed_width_.+\.bin$ idempotent=true timeout=240 tag=sbnarchive.psi.edu
+
 name: pds4-fixed-width-cdn
 
 concurrency:

@@ -1,3 +1,5 @@
+# harvest: format=ersstv5_nino34 asset=present arm=ersstv5_compiler pattern=^ersstv5_nino34\.bin$ idempotent=true tag=coastwatch.pfeg.noaa.gov
+
 name: ersstv5-cdn
 
 concurrency:

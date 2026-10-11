@@ -1,3 +1,5 @@
+# harvest: format=exofop_toi asset=present arm=exofop_compiler pattern=^exofop_toi\.bin$ idempotent=true timeout=120 tag=exofop.ipac.caltech.edu
+
 name: exofop-cdn
 
 concurrency:

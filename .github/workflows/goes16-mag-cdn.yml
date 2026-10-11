@@ -1,3 +1,5 @@
+# harvest: format=goes16_mag asset=present arm=goes16_mag_compiler pattern=^goes16_mag\.bin$ idempotent=true timeout=120 tag=cdaweb.gsfc.nasa.gov
+
 name: goes16-mag-cdn
 
 concurrency:

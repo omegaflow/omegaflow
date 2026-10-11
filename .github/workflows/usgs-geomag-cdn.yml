@@ -1,3 +1,5 @@
+# harvest: format=usgs_geomag_efield asset=present arm=usgs_geomag_compiler pattern=^usgs_geomag_efield_[A-Z0-9]+\.bin$ idempotent=true timeout=240 tag=geomag.usgs.gov
+
 name: usgs-geomag-cdn
 
 concurrency:

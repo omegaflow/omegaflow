@@ -1,3 +1,5 @@
+# harvest: format=pds4_fixed_width_acs asset=present arm=pds4_binary_compiler pattern=^pds4_fixed_width_acs_.+\.bin$ idempotent=true timeout=240 tag=archives.esac.esa.int
+
 name: pds4-binary-cdn
 
 concurrency:

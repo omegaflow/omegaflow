@@ -1,3 +1,5 @@
+# harvest: format=superdarn_cpcp asset=present arm=superdarn_cpcp_compiler pattern=^superdarn_cpcp\.bin$ idempotent=true timeout=14400 tag=zenodo.org
+
 name: superdarn-cpcp-cdn
 
 concurrency:

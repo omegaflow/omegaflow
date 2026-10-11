@@ -1,3 +1,5 @@
+# harvest: format=ceein_infrasound asset=present arm=ceein_infrasound_compiler pattern=^ceein_infrasound\.bin$ idempotent=true timeout=240 tag=ceein.infp.ro
+
 name: ceein-infrasound-cdn
 
 concurrency:

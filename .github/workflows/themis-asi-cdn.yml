@@ -1,3 +1,5 @@
+# harvest: format=themis_asi asset=present arm=themis_asi_compiler pattern=^themis_asi\.bin$ idempotent=true timeout=120 tag=themis.ssl.berkeley.edu
+
 name: themis-asi-cdn
 
 concurrency:

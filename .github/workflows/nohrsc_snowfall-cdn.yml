@@ -1,3 +1,5 @@
+# harvest: format=nohrsc_snowfall asset=present arm=nohrsc_snowfall_compiler pattern=^nohrsc_snowfall\.bin$ idempotent=true timeout=120 tag=www.nohrsc.noaa.gov
+
 name: nohrsc_snowfall-cdn
 
 concurrency:

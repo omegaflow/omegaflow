@@ -1,3 +1,5 @@
+# harvest: format=bepicolombo_plasma asset=present arm=bepicolombo_plasma_compiler pattern=^bepicolombo_plasma\.bin$ idempotent=true timeout=120 tag=zenodo.org
+
 name: bepicolombo-cdn
 
 concurrency:

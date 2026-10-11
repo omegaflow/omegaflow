@@ -1,3 +1,5 @@
+# harvest: format=dmsp16_ssj asset=present arm=dmsp16_ssj_compiler pattern=^dmsp16_ssj\.bin$ idempotent=true timeout=120 tag=cdaweb.gsfc.nasa.gov
+
 name: dmsp16-ssj-cdn
 
 concurrency:

@@ -1,3 +1,5 @@
+# harvest: format=pds3_img asset=present arm=pds3_img_compiler pattern=^pds3_img_.+\.bin$ idempotent=true timeout=240 tag=pds-geosciences.wustl.edu
+
 name: pds3-img-cdn
 
 concurrency:

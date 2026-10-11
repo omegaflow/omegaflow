@@ -30589,6 +30589,42 @@ field vco_rs_sigma_observed_xband_frequency "SIGMA OBSERVED X-BAND ANTENNA FREQU
 field vco_rs_signal_level_xband "SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
 field vco_rs_sigma_signal_level_xband "SIGMA SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/datalab.noirlab.edu/des_dr2_coverage.fp01
+origin https://datalab.noirlab.edu/tap/sync (table des_dr2.coverage)
+terms unknown https://datalab.noirlab.edu/
+format fp01
+compiler tools/harvest/src/bin/des_coverage_compiler.rs
+band g i r y z
+footprint des_dr2_coverage.fp01
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/2mass_binary.fp01
+origin https://irsa.ipac.caltech.edu/TAP/sync
+terms PD https://irsa.ipac.caltech.edu/
+format fp01
+compiler tools/harvest/src/bin/2mass_binary_compiler.rs
+band j h ks
+footprint 2mass_binary.fp01
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/allwise_coverage.fp01
+origin https://irsa.ipac.caltech.edu/ibe/data/wise/allwise/p3am_cdd/
+terms PD https://irsa.ipac.caltech.edu/
+format fp01
+compiler tools/harvest/src/bin/wise_coverage_combiner.rs
+band w1 w2 w3 w4
+footprint allwise_coverage.fp01
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ps1images.stsci.edu/ps1_dr2_binary.fp01
+origin https://ps1images.stsci.edu/rings.v3.skycell/
+terms unknown https://ps1images.stsci.edu/rings.v3.skycell/
+format fp01
+compiler tools/harvest/src/bin/ps1_binary_compiler.rs
+band g r i z y
+footprint ps1_dr2_binary.fp01
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/sentinel1euwest.blob.core.windows.net/s1_sar_diff.bin
 terms free-open https://www.copernicus.eu/en/access-data/copyright-and-licences
 origin procedure: Sentinel-1 GRD post-vs-pre SAR difference via s1_sar_compiler

@@ -121,7 +121,6 @@ fn main() {
             let mut paths = vec![
                 "phi/sources.φ".to_string(),
                 "phi/witnesses.φ".to_string(),
-                "phi/footprints.φ".to_string(),
                 "phi/pipeline/ledger.φ".to_string(),
             ];
             if let Some(p) = &ledger_path {

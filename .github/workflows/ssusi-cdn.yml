@@ -1,3 +1,5 @@
+# harvest: format=ssusi_aurora asset=present arm=ssusi_compiler pattern=^ssusi_aurora\.bin$ idempotent=true timeout=60 tag=cdaweb.gsfc.nasa.gov
+
 name: ssusi-cdn
 
 concurrency:

@@ -1,3 +1,5 @@
+# harvest: format=mars_dust asset=present arm=mars_dust_compiler pattern=^mars_dust_MY[0-9]+_[0-9]+FpSol\.bin$ idempotent=true timeout=240 tag=vo.lmd.jussieu.fr
+
 name: mars-dust-cdn
 
 concurrency:

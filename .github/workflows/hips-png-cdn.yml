@@ -80,14 +80,14 @@ jobs:
       - name: Read the registered HiPS arm and gate on the reader record
         id: gate
         run: |
-          cargo run -q -p omegaflow-utils --bin harvest_reg -- --lookup hips_png > block.txt \
-            || { echo "no measured hips_png block in phi/harvest.φ — register duty"; exit 1; }
-          tag=$(sed -n 's/^tag //p' block.txt)
-          pattern=$(sed -n 's/^pattern //p' block.txt)
-          arm=$(sed -n 's/^arm //p' block.txt)
-          args=$(sed -n 's/^args //p' block.txt)
+          line=$(grep -m1 "^# harvest: format=hips_png " .github/workflows/harvest.yml || true)
+          if [ -z "$line" ]; then echo "no measured hips_png harvest header in harvest.yml — register duty"; exit 1; fi
+          tag=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]tag=\([^ ]*\).*/\1/p')
+          pattern=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]pattern=\([^ ]*\).*/\1/p')
+          arm=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]arm=\([^ ]*\).*/\1/p')
+          args=$(printf '%s\n' "$line" | sed -n 's/.*[[:space:]]args=//p')
           if [ -z "$tag" ] || [ -z "$pattern" ] || [ -z "$arm" ] || [ -z "$args" ]; then
-            echo "hips_png block incomplete (tag/pattern/arm/args) — register duty"; exit 1
+            echo "hips_png harvest header incomplete (tag/pattern/arm/args) — register duty"; exit 1
           fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "arm=$arm" >> "$GITHUB_OUTPUT"

@@ -1,3 +1,5 @@
+# harvest: format=pds4_fixed_width_akatsuki asset=present arm=pds4_binary_compiler pattern=^pds4_fixed_width_.+\.bin$ idempotent=true timeout=240 tag=data.darts.isas.jaxa.jp args=--netloc data.darts.isas.jaxa.jp --dat https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20190704_105329_whm30_l2_v10.tab --label https://data.darts.isas.jaxa.jp/pub/pds4/data/vco/vco_rs/data_calibrated/l2/rs_20190704_105329_whm30_l2_v10.lblx
+
 name: vco-rs-cdn
 
 concurrency:

@@ -1,3 +1,5 @@
+# harvest: format=pds3_binary_kaguya_lrs asset=present arm=pds3_binary_compiler pattern=^pds3_binary_lrs_.+\.bin$ idempotent=true timeout=240 tag=data.darts.isas.jaxa.jp args=--dir https://data.darts.isas.jaxa.jp/pub/pds3/sln-l-lrs-2-sndr-waveform-high-v1.0/20071120/data/
+
 name: kaguya-lrs-cdn
 
 concurrency:

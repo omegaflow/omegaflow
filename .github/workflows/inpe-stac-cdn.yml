@@ -1,3 +1,5 @@
+# harvest: format=inpe_stac_samet_daily asset=present arm=inpe_stac_compiler pattern=^inpe_stac_samet_daily\.bin$ idempotent=true timeout=60 tag=data.inpe.br
+
 name: inpe-stac-cdn
 
 concurrency:

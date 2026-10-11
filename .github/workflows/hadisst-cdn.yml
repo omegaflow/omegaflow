@@ -1,3 +1,5 @@
+# harvest: format=hadisst_sst asset=present arm=hadisst_compiler pattern=^hadisst_sst\.bin$ idempotent=true timeout=600 tag=metoffice.gov.uk
+
 name: hadisst-cdn
 
 on:
