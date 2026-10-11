@@ -3,13 +3,156 @@ use omegaflow::archivar::{RetryPolicy, TRANSFER_BOUND_S, fetch_raw_with};
 use omegaflow::cdn::{CDN_BASE, upload_release};
 use std::env;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::process::Command;
 
 const COMPILER: &str = "tools/harvest/src/bin/glofas_ewds_compiler.rs";
 const CATALOG_URL: &str = "https://ewds.climate.copernicus.eu/api/catalogue/v1/collections";
 const DEFAULT_PREFIX: &str = "cems-glofas";
 const MANIFEST_NAME: &str = "glofas_ewds_coverage.manifest";
 const MAX_ENTRIES: usize = 1_000;
+const KEY_NAME: &str = "EWDS_API_TOKEN";
+const EXECUTION_URL: &str =
+    "https://ewds.climate.copernicus.eu/api/retrieve/v1/processes/cems-glofas-historical/execution";
+const PROBE_BODY: &str = r#"{"inputs":{"system_version":"version_4_0","hydrological_model":"lisflood","product_type":"consolidated","timespan":"time_mean","variable":"average_river_discharge_in_the_last_24_hours","year":"2020","month":"01","day":"01","data_format":"grib2","download_format":"unarchived"}}"#;
+
+fn find_repo_root() -> Option<PathBuf> {
+    if let Ok(env_root) = env::var("OMEGAFLOW_REPO") {
+        if !env_root.is_empty() {
+            let root = PathBuf::from(env_root);
+            if root.join("phi").join("sources.\u{3c6}").is_file() {
+                return Some(root);
+            }
+            return None;
+        }
+    }
+    let mut starts: Vec<PathBuf> = Vec::new();
+    if let Ok(cwd) = env::current_dir() {
+        starts.push(cwd);
+    }
+    if let Ok(exe) = env::current_exe() {
+        if let Some(dir) = exe.parent() {
+            starts.push(dir.to_path_buf());
+        }
+    }
+    for start in starts {
+        let mut dir = start;
+        loop {
+            if dir.join("phi").join("sources.\u{3c6}").is_file() {
+                return Some(dir);
+            }
+            match dir.parent() {
+                Some(parent) => dir = parent.to_path_buf(),
+                None => break,
+            }
+        }
+    }
+    None
+}
+
+fn read_secret(name: &str) -> Option<String> {
+    let root = find_repo_root()?;
+    let text = std::fs::read_to_string(root.join(".secrets.local")).ok()?;
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        if let Some(eq) = line.find('=') {
+            if line[..eq].trim() == name {
+                let value = line[eq + 1..].trim().trim_matches(['"', '\'']);
+                if !value.is_empty() {
+                    return Some(value.to_string());
+                }
+            }
+        }
+    }
+    None
+}
+
+fn scalar_text(value: &JsonVal) -> Option<String> {
+    match value {
+        JsonVal::Str(s) if !s.is_empty() => Some(s.clone()),
+        JsonVal::Num(n) => Some(format!("{n}")),
+        JsonVal::Bool(b) => Some(format!("{b}")),
+        JsonVal::Obj(map) => match map.get("msg") {
+            Some(JsonVal::Str(s)) if !s.is_empty() => Some(s.clone()),
+            _ => None,
+        },
+        _ => None,
+    }
+}
+
+fn scalar_field(value: &JsonVal, key: &str) -> Option<String> {
+    match value {
+        JsonVal::Obj(map) => match map.get(key) {
+            Some(JsonVal::Arr(items)) => {
+                let parts: Vec<String> = items.iter().filter_map(scalar_text).collect();
+                if parts.is_empty() {
+                    None
+                } else {
+                    Some(parts.join("; "))
+                }
+            }
+            Some(other) => scalar_text(other),
+            None => None,
+        },
+        _ => None,
+    }
+}
+
+fn probe() -> Result<(), String> {
+    let token = read_secret(KEY_NAME).ok_or_else(|| {
+        format!("{KEY_NAME} absent from .secrets.local — the data arm stays unmeasured")
+    })?;
+    let out = Command::new("curl")
+        .args([
+            "-sS",
+            "--max-time",
+            "60",
+            "--connect-timeout",
+            "15",
+            "-X",
+            "POST",
+            EXECUTION_URL,
+            "-H",
+            "Content-Type: application/json",
+            "-H",
+            &format!("PRIVATE-TOKEN: {token}"),
+            "-d",
+            PROBE_BODY,
+            "-w",
+            "\n@@STATUS@@%{http_code}",
+        ])
+        .output()
+        .map_err(|e| format!("curl invocation void: {e}"))?;
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let (body, status_text) = stdout
+        .rsplit_once("@@STATUS@@")
+        .ok_or_else(|| "execution: the response carries no HTTP status".to_string())?;
+    let status: u16 = status_text
+        .trim()
+        .parse()
+        .map_err(|_| format!("execution: HTTP status '{status_text}' is no code"))?;
+    println!("http {status}");
+    if let Some(root) = parse_json(body) {
+        if (200..300).contains(&status) {
+            if let Some(job) = str_field(&root, "jobID") {
+                println!("jobID {job}");
+            }
+        } else if let Some(detail) = scalar_field(&root, "detail") {
+            println!("detail {detail}");
+        } else if let Some(title) = scalar_field(&root, "title") {
+            println!("title {title}");
+        }
+    }
+    if status == 401 || status == 403 {
+        return Err(format!(
+            "execution returned HTTP {status} — the key does not open the data arm"
+        ));
+    }
+    Ok(())
+}
 
 struct GlofasCollection {
     id: String,
@@ -107,9 +250,12 @@ fn manifest_lines(collections: &[GlofasCollection]) -> Vec<String> {
 fn run(args: &[String]) -> Result<(), String> {
     if args.iter().any(|a| a == "--help") {
         eprintln!(
-            "usage: glofas_ewds_compiler [--url <catalog>] [--prefix <id-prefix>] [--out <manifest>] [--limit <n>] [--ci-mode]  (shard `<url>` lines). The EWDS catalogue ({CATALOG_URL}) carries one Collection per dataset; the {DEFAULT_PREFIX}* family is emitted as `shard <collection-url>`. The catalogue is public; the retrieve execution endpoint (.../processes/<id>/execution) carries the GloFAS data behind PRIVATE-TOKEN: CDS_API_KEY (measured 2026-10-11: 401 without the key; the STAC items endpoint answers 501). entry bound {MAX_ENTRIES}"
+            "usage: glofas_ewds_compiler [--url <catalog>] [--prefix <id-prefix>] [--out <manifest>] [--limit <n>] [--ci-mode] [--probe]  (shard `<url>` lines). The EWDS catalogue ({CATALOG_URL}) carries one Collection per dataset; the {DEFAULT_PREFIX}* family is emitted as `shard <collection-url>`. The catalogue is public; `--probe` POSTs the minimal valid request to {EXECUTION_URL} behind PRIVATE-TOKEN: {KEY_NAME} (read from .secrets.local; measured 2026-10-11: 401 without the key; the STAC items endpoint answers 501) and prints only the HTTP status and any jobID/detail. entry bound {MAX_ENTRIES}"
         );
         return Ok(());
+    }
+    if args.iter().any(|a| a == "--probe") {
+        return probe();
     }
     let root = match arg_value(args, "--url").filter(|u| !u.is_empty()) {
         Some(u) => u,

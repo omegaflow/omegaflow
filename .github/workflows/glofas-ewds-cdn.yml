@@ -43,12 +43,12 @@ jobs:
               --title "ewds.climate.copernicus.eu" \
               --notes "Copernicus Early Warning Data Store (EWDS) — GloFAS catalogue coverage compiled to a coverage manifest (CDN tag = netloc)"
           fi
-      - name: 'Materialize the CDS API key (the measured retrieve auth PRIVATE-TOKEN: CDS_API_KEY; read_secret reads .secrets.local)'
+      - name: 'Materialize the EWDS API token (the measured retrieve auth PRIVATE-TOKEN: EWDS_API_TOKEN; read_secret reads .secrets.local)'
         if: steps.idempotence.outputs.present == 'false'
         env:
-          CDS_API_KEY: ${{ secrets.CDS_API_KEY }}
+          EWDS_API_TOKEN: ${{ secrets.EWDS_API_TOKEN }}
         run: |
-          printf 'CDS_API_KEY=%s\n' "$CDS_API_KEY" > .secrets.local
+          printf 'EWDS_API_TOKEN=%s\n' "$EWDS_API_TOKEN" > .secrets.local
       - name: Compile and manifest the GloFAS EWDS catalogue coverage to the CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
