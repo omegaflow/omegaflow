@@ -1,3 +1,5 @@
+# harvest: format=cses_lap asset=present arm=cses_lap_compiler pattern=^cses_lap\.bin$ idempotent=true timeout=60 tag=scidb.cn
+
 name: cses-lap-cdn
 
 concurrency:

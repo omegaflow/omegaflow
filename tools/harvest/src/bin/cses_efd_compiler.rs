@@ -5,16 +5,21 @@ use omegaflow::archivar::geo::{
     COMP_CSES_EFD_VLF_EZ, GeoRec, MAGIC_CSES_EFD, verify_bin, write_bin,
 };
 use omegaflow::archivar::rinex::{ecef_to_geodetic, receiver_ellipsoid_for_compiler};
+use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Endian, Hdf5File};
 use omegaflow::lsk::days_from_civil;
 use omegaflow::spectral::SPECTRAL_NO_BAND;
 
 const NETLOC: &str = "scidb.cn";
+const FORMAT: &str = "cses_efd";
+const COMPILER: &str = "tools/harvest/src/bin/cses_efd_compiler.rs";
 const FILETREE_URL: &str = "https://www.scidb.cn/api/sdb-filetree-service/getAllUrl?dataSetId=30660a0fa4f04312b49689c3365fb474&type=personal&version=V1&global=en";
 const DEFAULT_FILE_ID: &str = "6398427cbae2f1393c118b54";
 const DOWNLOAD: &str = "https://download.scidb.cn/download?fileId=";
 const DAY_S: f64 = 86400.0;
+const TTL_S: f64 = 604800.0;
+const FIELD_TAU_S: f64 = 86400.0;
 const BIN: &str = "cses_efd_compiler";
 
 struct EfdBand {
@@ -466,9 +471,9 @@ fn main() {
     };
     let band = arg_value(&args, "--band");
 
-    let bytes = if let Some(path) = arg_value(&args, "--input") {
+    let (bytes, source) = if let Some(path) = arg_value(&args, "--input") {
         match std::fs::read(&path) {
-            Ok(b) => b,
+            Ok(b) => (b, path),
             Err(e) => {
                 eprintln!("cses_efd_compiler: read {path}: {e} — the file stays unread");
                 std::process::exit(1);
@@ -483,7 +488,7 @@ fn main() {
             },
         };
         match fetch_raw_bytes(&url) {
-            Some(b) => b,
+            Some(b) => (b, url),
             None => {
                 eprintln!("cses_efd_compiler: fetch void ({url}); filetree {FILETREE_URL}");
                 std::process::exit(1);
@@ -531,6 +536,29 @@ fn main() {
             std::process::exit(1);
         }
     }
+    let out_name = match std::path::Path::new(&out).file_name() {
+        Some(n) => n.to_string_lossy().into_owned(),
+        None => out.to_string(),
+    };
+    println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{out_name}");
+    println!("origin {source}");
+    println!("compiler {COMPILER}");
+    println!("sha256 {}", sha256_hex(&bin));
+    println!("format {FORMAT}");
+    println!("ttl {}", TTL_S as u64);
+    println!("at earth");
+    println!(
+        "field X_WAVE cses_efd_ulf_ex_v_m inverse-square electric V/m {} 0.0 0.0",
+        FIELD_TAU_S as u64
+    );
+    println!(
+        "field Y_WAVE cses_efd_ulf_ey_v_m inverse-square electric V/m {} 0.0 0.0",
+        FIELD_TAU_S as u64
+    );
+    println!(
+        "field Z_WAVE cses_efd_ulf_ez_v_m inverse-square electric V/m {} 0.0 0.0",
+        FIELD_TAU_S as u64
+    );
     if ci_mode && !upload_release(NETLOC, &out) {
         eprintln!("cses_efd_compiler: upload {out} did not reach the CDN");
         std::process::exit(1);
