@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 316
   class: handover
   date: 2026-10-12
-  sha256: 9501383c8f1e40c0629e70cdf1246ca0d0bf5206c77cf258d2397524dad2333a
+  sha256: 0ba043eb1ec6524fad43e05c52bc8972b1ff579874597c60c7429fba76b6f625
   status: live
 -->
 # Handover — Mycelium-Folge 316 (2026-10-12)
@@ -99,9 +99,9 @@ adressierten Blöcke (future-238, mountain-320, river-192) und schrieb die
 ### Offene-Prosa-Träger — Census gemessen; je ein eigener Rest-Akt
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** nächste Berührung je Dokument
-- **Lage:** (gemessen 2026-10-12) `register_lookup --orphan-docs` = 0. `daten-holdings-inventur.md`: Registry-Verdikt der Mess-Datensätze steht (omni2/cmb_planck/cosmicflows/pioneer10 = registriert); nur `abk_dbdt_daily.tsv` ist unregistriert; Kern (Move/Löschung ~50 G) operator-gated. `orphan-verdicts.md:106`: Census gemessen — **169** Netloc-Dirs unter `data/`, **71** kanonisch, **98** ohne Register-`url` (~89 host-förmige Orphans); die 13 Step-5-Netlocs fast alle kanonisch (`ftp.imcce.fr` + `modis_lst_cmg` offen); offen bleibt die Workflow-Umbindung (Release-Menge → `sources.φ`) vor dem destruktiven Dedup. `fmhy-research-landscape.md:53`: `aistudio.xiaomimimo.com` direkt `pending`, via Proton-Exit **HTTP 200** — Direkt-Seat braucht eine Gretchenfrage (UI-Turn).
+- **Lage:** (gemessen 2026-10-12) `register_lookup --orphan-docs` = 1 → `docs/concepts/ui-seats.md:63-65` (Sakana/SciSpace/Gemini-Notebook `pending`), hier getragen; nächster Schritt: Seat-Re-Probe bzw. Login-Wall benennen. `daten-holdings-inventur.md`: Registry-Verdikt der Mess-Datensätze steht (omni2/cmb_planck/cosmicflows/pioneer10 = registriert); nur `abk_dbdt_daily.tsv` ist unregistriert; Kern (Move/Löschung ~50 G) operator-gated. `orphan-verdicts.md:106`: Census gemessen — **169** Netloc-Dirs unter `data/`, **71** kanonisch, **98** ohne Register-`url` (~89 host-förmige Orphans); die 13 Step-5-Netlocs fast alle kanonisch (`ftp.imcce.fr` + `modis_lst_cmg` offen); offen bleibt die Workflow-Umbindung (Release-Menge → `sources.φ`) vor dem destruktiven Dedup. `fmhy-research-landscape.md:53`: `aistudio.xiaomimimo.com` direkt `pending`, via Proton-Exit **HTTP 200** — Direkt-Seat braucht eine Gretchenfrage (UI-Turn).
 - **Blockade:** je Dokument ein eigener Akt (operator-gated / destruktiv / UI-Seat).
-- **Braucht:** `abk_dbdt_daily.tsv`-Registrierung (eigener Bau; Kante `archive_search --verdict`); orphan-verdicts Workflow-Umbindung (eigener Bau); fmhy Gretchenfrage (UI-Turn).
+- **Braucht:** `abk_dbdt_daily.tsv`-Registrierung (eigener Bau; Kante `archive_search --verdict`); orphan-verdicts Workflow-Umbindung (eigener Bau); fmhy + ui-seats Seat-Re-Probe (UI-Turn).
 
 ### MCP no-leak — Runtime-Hälfte offen
 - **Status:** wartend | **Bindung:** eigen
