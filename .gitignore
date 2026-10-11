@@ -74,12 +74,6 @@ phi/pipeline/*
 !phi/pipeline/catalog/
 phi/pipeline/catalog/*
 !phi/pipeline/catalog/solar_omega_g.φ
-# Das NOAA-NODD-Dispositions-Register ist ein Registrierungs-Urteil (Bucket-Litmus,
-# ledger.φ:937) — versioniert wie dead_sources.φ/blocked_sources.φ.
-!phi/pipeline/catalog/noaa_nodd_disposition.φ
-# Das Copernicus-Dispositions-Register ist ein Registrierungs-Urteil (Bucket-Litmus,
-# ledger.φ copernicus-litmus) — versioniert wie noaa_nodd_disposition.φ.
-!phi/pipeline/catalog/copernicus_disposition.φ
 # Das Korpora-Heim-Verdikt (Lizenzverdikt je Korpus: redistribute/decline/pending)
 # ist ein Registrierungs-Urteil — versioniert; korpora-cdn.yml liest es.
 !phi/pipeline/catalog/korpora_heim.φ
