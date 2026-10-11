@@ -1,7 +1,7 @@
 <!--
   title: OMEGAFLOW — AGNOSTIC MEMBRANE MANIFESTATION & ARCHAEOLOGY DIRECTIVE
   class: concept
-  sha256: bdc7ef4167eae3873948e1063563db562c9c8c83d46bf9998c02205900a753b3
+  sha256: 8727c375189c35c03f053faccc9409722ef8ebd702a8ef3a99315b312fda96ba
 -->
 Here is the **complete, unabridged, fully agnostic document**.
 
@@ -69,9 +69,9 @@ e93a30f     │    59bdd60   │              be6f7df      34d7d3a   b3546ff    
 **Point size (the galaxy key):**
 | Commit | Formula |
 |---|---|
-| `a9d87bd` | `point_size_px = max((extent / dist), 1.0) * 2.0` — angular size, 2px floor → galaxy visible at EVERY zoom level |
+| `a9d87bd` | `point_size_px = max((extent / dist), 1.0) * 2.0` — angular size, 2px floor → galaxy visible at EVERY zoom level (the 2px form already stands in `090b1662`, 2026-07-30) |
 | `87ef197`→`00dc55c` | `clamp(phys_extent / scale, 0.5, w_f)` — 0.5px floor → sub-pixel sources vanish |
-| `eadc980` | + 64px cap |
+| `eadc980` | + 64px cap (introduced by `56878394`, 2026-08-11 — „clamp max point_size_px to 64") |
 | `1954f44` | `1.0` fixed |
 | Nebra `34d7d3a` / Grid / HEAD | — (no quads) |
 
