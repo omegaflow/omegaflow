@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Faltung des river-`## An mycelium`-Blocks (OMNI2 1h present), usgs_lidar_coverage-Manifest auf shard-Form geschnitten (ept.json/boundary.json heraus), ECAD/WorldClim-sha256 auf die materialisierten Bytes gesetzt, ECAD/DWD/WorldClim/AODN/SURFRAD/Radar-Assets gemessen, cmb-cdn/surfrad-cdn/omni2-cdn neu dispatcht.
   class: handover
   date: 2026-10-11
-  sha256: 940eecc0bba46fc18afb29778c31f4199d6b9a3ac1482cd4f16affe2966995a4
+  sha256: e12d4fb67a092bf3d00461e437ba26dad80c39d4f2c5dd77aed15f75c4cab2f1
   status: live
 -->
 # Handover — Mycelium-Folge 304 (2026-10-11)
@@ -94,12 +94,17 @@ zitiert, nie kopiert). Diese Session konsumierte
   `dsn_snapshot.bin` 719 B) — **nichts verbrannt**; die meisten `cdn-manifest`-Läufe
   greifen die Idempotenz-Skip (Asset present) und spiegeln gar nicht.
 - **Blockade:** keine.
-- **Braucht:** **Cap gesetzt** — `r2_mirror` überspringt Dateien über `R2_MIRROR_MAX_BYTES`
-  = 16 MiB (`OMEGAFLOW_R2_MIRROR_MAX_BYTES` überschreibbar; Commit `70a66b9d6`), die
-  Dataset-Klasse bleibt auf dem Release. Misswerkzeug: `r2_probe --list` (Commit `210c34b7f`).
-  Der **Schwellwert 16 MiB** folgt dem Rat-Satz „kleine Manifeste/Indizes"; **offen** bleibt
-  die **Eviction-Policy** (Roster `:262`: LRU nach CI-Zugriffszeit) — ein eigener Rat-Punkt,
-  kein Operator-Wort.
+- **Braucht:** **Policy entschieden (Rat + Roster, 2026-10-11): Admission, nicht Eviction.**
+  Die Aufnahme-Regel ist der Schnitt — `r2_mirror` überspringt Dateien über
+  `R2_MIRROR_MAX_BYTES` = 16 MiB (`OMEGAFLOW_R2_MIRROR_MAX_BYTES` überschreibbar; Commit
+  `70a66b9d6`). Füllt sich der Tier trotzdem, ist ein Datenblock hineingerutscht
+  (Writer-Bug, kein Policy-Problem). **Kein LRU/LFU** solange kein Leser — kein Seat kann
+  „Zugriff" messen (Riss, getragen); weiches Cap **~8 GB → Alarm** statt Auto-Löschung
+  (Duck 9 · Claude 8 · Z.ai 8 GB). Jede Entfernung als `phi/sources.φ`-`url`-Zeile; LRU
+  erst, wenn der Verifier-Worker Reads als Zähler meldet. Misswerkzeug `r2_probe --list`
+  (`210c34b7f`); Roster-Wortlaut `state/stimmen/2026-10-11_mycelium_r2-eviction-roster.md`.
+  **Nächster Bau:** 8-GB-Alarm (CI-Prüfung auf `r2_probe --list`) — Trigger: Bucket nähert
+  sich 8 GB (heute 519 KB).
 
 ### MCP — lokale no-leak-Server (Rat-Verdikt: Regel vor Knoten)
 - **Status:** eigen | **Bindung:** eigen
