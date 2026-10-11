@@ -1,4 +1,4 @@
-use omegaflow::archivar::fetch_raw;
+use omegaflow::archivar::{fetch_raw, fetch_raw_bytes_headers};
 use omegaflow::cdn::upload_release;
 use std::collections::BTreeSet;
 use std::io::Write;
@@ -114,6 +114,39 @@ fn object_url(key: &str) -> String {
     format!("{BASE}/{key}")
 }
 
+const LAS_HEADER_RANGE: usize = 375;
+
+fn parse_las_bbox(bytes: &[u8]) -> Option<[f64; 6]> {
+    if bytes.get(0..4)? != b"LASF" {
+        return None;
+    }
+    let f64_at = |offset: usize| -> Option<f64> {
+        let raw: [u8; 8] = bytes.get(offset..offset + 8)?.try_into().ok()?;
+        Some(f64::from_le_bytes(raw))
+    };
+    let minx = f64_at(179)?;
+    let maxx = f64_at(187)?;
+    let miny = f64_at(195)?;
+    let maxy = f64_at(203)?;
+    let minz = f64_at(211)?;
+    let maxz = f64_at(219)?;
+    let bbox = [minx, miny, minz, maxx, maxy, maxz];
+    if bbox.iter().all(|v| v.is_finite()) {
+        Some(bbox)
+    } else {
+        None
+    }
+}
+
+fn copc_bbox(url: &str) -> Option<[f64; 6]> {
+    let headers = [(
+        "Range".to_string(),
+        format!("bytes=0-{}", LAS_HEADER_RANGE - 1),
+    )];
+    let bytes = fetch_raw_bytes_headers(url, &headers)?;
+    parse_las_bbox(&bytes)
+}
+
 fn coverage(keys: &[String]) -> (Vec<String>, Vec<String>) {
     let mut urls = Vec::new();
     let mut countries: BTreeSet<String> = BTreeSet::new();
@@ -168,8 +201,13 @@ fn main() {
 
     let mut text = String::new();
     for u in &urls {
-        text.push_str(u);
-        text.push('\n');
+        match copc_bbox(u) {
+            Some(b) => text.push_str(&format!(
+                "shard {u} {} {} {} {} {} {}\n",
+                b[0], b[1], b[2], b[3], b[4], b[5]
+            )),
+            None => text.push_str(&format!("shard {u}\n")),
+        }
     }
     if let Some(parent) = std::path::Path::new(&out_path).parent() {
         if !parent.as_os_str().is_empty() {
