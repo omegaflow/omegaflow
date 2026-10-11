@@ -331,15 +331,17 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 enum FetchOutcome {
     Body(String),
-    NotFound,
+    End,
     Void,
 }
 
 fn fetch_page(url: &str) -> FetchOutcome {
     match fetch_raw_with(url, None, &[], RetryPolicy::All, TRANSFER_BOUND_S) {
         Some(body) => FetchOutcome::Body(body),
-        None if http_code(url, &[]) == Some(404) => FetchOutcome::NotFound,
-        None => FetchOutcome::Void,
+        None => match http_code(url, &[]) {
+            Some(code) if (400..500).contains(&code) => FetchOutcome::End,
+            _ => FetchOutcome::Void,
+        },
     }
 }
 
@@ -353,6 +355,7 @@ where
 {
     let mut pages = 0usize;
     let mut lines: Vec<String> = Vec::new();
+    let mut carried = false;
     loop {
         if let Some(m) = max_pages {
             if pages >= m {
@@ -371,6 +374,9 @@ where
                     }
                 };
                 pages += 1;
+                if page.number_returned > 0 {
+                    carried = true;
+                }
                 #[cfg(not(test))]
                 eprintln!(
                     "ea_lidar_index: page {pages} carried {} feature(s), {} tile line(s) — the walk continues",
@@ -385,8 +391,15 @@ where
                     _ => break,
                 }
             }
-            FetchOutcome::NotFound if pages >= 1 => break,
-            FetchOutcome::NotFound | FetchOutcome::Void => {
+            FetchOutcome::End if carried => {
+                #[cfg(not(test))]
+                eprintln!(
+                    "ea_lidar_index: the catalogue end stands at {pages} page(s), {} tile line(s) — the index past the last carried page was refused with a 4xx ({url})",
+                    lines.len()
+                );
+                break;
+            }
+            FetchOutcome::End | FetchOutcome::Void => {
                 return Err(format!(
                     "page {} returned void ({url}) — the walk stays incomplete",
                     pages + 1
@@ -537,15 +550,15 @@ mod tests {
     }
 
     #[test]
-    fn a_terminal_404_ends_the_walk_with_the_accumulated_tiles() {
+    fn a_terminal_4xx_ends_the_walk_with_the_accumulated_tiles() {
         let mut calls = 0usize;
         let fetched = walk_catalogue(
             |_url| {
                 calls += 1;
                 match calls {
                     1 => FetchOutcome::Body(PAGE.to_string()),
-                    2 => FetchOutcome::NotFound,
-                    n => panic!("the walk stops at the terminal 404 (call {n})"),
+                    2 => FetchOutcome::End,
+                    n => panic!("the walk stops at the terminal 4xx (call {n})"),
                 }
             },
             "https://environment.data.gov.uk/items".to_string(),
@@ -553,7 +566,7 @@ mod tests {
         );
         let (pages, lines) = match fetched {
             Ok(v) => v,
-            Err(e) => panic!("the terminal 404 ends the walk: {e}"),
+            Err(e) => panic!("the terminal 4xx ends the walk: {e}"),
         };
         assert_eq!(calls, 2);
         assert_eq!(pages, 1);
@@ -567,9 +580,9 @@ mod tests {
     }
 
     #[test]
-    fn a_first_page_404_stays_a_real_void() {
+    fn a_first_page_4xx_stays_a_real_void() {
         let fetched = walk_catalogue(
-            |_url| FetchOutcome::NotFound,
+            |_url| FetchOutcome::End,
             "https://environment.data.gov.uk/items".to_string(),
             None,
         );

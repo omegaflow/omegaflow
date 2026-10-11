@@ -11134,6 +11134,7 @@ url https://github.com/omegaflow/sources/releases/download/data.fingrid.fi/fingr
 origin https://data.fingrid.fi/api/datasets
 compiler tools/harvest/src/bin/fingrid_compiler.rs
 format fingrid_datasets
+sha256 1779eabe9aed7fff9344a49ed147df064bd8914b3759faf09af443e929084439
 at earth
 ttl 604800
 
@@ -11216,6 +11217,13 @@ compiler tools/harvest/src/bin/onc_hydrophone_compiler.rs
 at earth
 ttl 604800
 field onc_hydrophone_psd_db onc_hydrophone_psd_db gaussian-inverse-square acoustic dB 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.phys.ucalgary.ca/themis_asi_timed_keogram.bin
+origin https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/stream0/<YYYY>/<MM>/<DD>/<label>/ut<HH>/<YYYYMMDD>_<HHMM>_<label>_full.pgm.gz
+compiler tools/harvest/src/bin/themis_asi_timed_keogram_compiler.rs
+format themis_asi_timed_keogram
+at earth
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/datacenter.iers.org/iers_eop_c04_lod.bin
 terms unknown https://datacenter.iers.org/data/latestVersion/EOP_20_C04_one_file_1962-now.txt
@@ -11706,6 +11714,13 @@ dec dec
 dist dist_au
 dist_scale 1.495978707e11
 field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ncnr.nist.gov/nist_ncnr_nse_coverage.manifest
+origin https://ncnr.nist.gov/pub/ncnrdata/nse/
+compiler tools/harvest/src/bin/nist_ncnr_nse_compiler.rs
+format coverage_manifest
+at earth
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/ned.ipac.caltech.edu-byparams/ned_byparams_redshift.json
 terms PD https://ned.ipac.caltech.edu/
@@ -21492,6 +21507,13 @@ sha256 d4b7397a17f65a46e107a36e57e0a92300cca74cfed1ed89739fe029b660d6fd
 at mars
 ttl 604800
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/grdc_caravan.bin
+origin https://zenodo.org/api/records/15349031/files/GRDC_Caravan_extension_nc.zip/content
+compiler tools/harvest/src/bin/grdc_caravan_compiler.rs
+format grdc_caravan
+at earth
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/iaga_text.bin
 terms CC-BY-4.0 https://zenodo.org/records/10594301
 format iaga_text
@@ -21508,6 +21530,14 @@ ttl 604800
 origin https://zenodo.org/records/8098323/files/data.zip
 at earth
 field surface_pressure_hpa kyoto_pressure_surface_pressure_hpa gaussian-inverse-square acoustic hPa 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/mcpherron.bin
+origin https://zenodo.org/api/records/22711679/files/CorrOnsFiles.zip/content
+compiler tools/harvest/src/bin/mcpherron_compiler.rs
+format substorm
+sha256 0c99e7d8552ef3ba7abfbc93aaf7fc846520a295fd64de2721a3554ba7500523
+at earth
+ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/quaoar_occlt.bin
 terms CC-BY-4.0 https://zenodo.org/records/21185812

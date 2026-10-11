@@ -124,8 +124,10 @@ fn run(args: &[String]) -> Result<(), String> {
 
     let mut stations: Vec<String> = arg_values(args, "--station");
     if stations.is_empty() {
-        return Err("--station <label|code> is absent — the keogram stays unfetched (0 honored)"
-            .to_string());
+        return Err(
+            "--station <label|code> is absent — the keogram stays unfetched (0 honored)"
+                .to_string(),
+        );
     }
     stations.sort();
     stations.dedup();

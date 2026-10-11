@@ -85,3 +85,12 @@ vier portal-coverage-φ-blöcke mycelium-305
 weberin-lücke prosa-träger membran-ladearchitektur
 worldwide-lidar-quellen-survey träger mycelium
 φ-manifestation surfrad dwd cdc worldclim aodn
+# Erweitert 2026-10-11 (Mycelium-Linie, 311→312): die 5 Handover-Churn-Namen des ci-gate-Laufs
+# 38165122495 (mountain folge318→319/320, `dropped-set-gate: new 5`) — je Rename/Move/Descope
+# mit belegendem Commit (d5525435f, f63baf001, 8f23c7a71/393cc26fe, eb029c452), keiner ein echter
+# stiller Drop. Nur der case-sensitive Wort-Match (`register_lookup` scan_words_case) trennt sie.
+asservatenkammer-survey vier marker mycelium-308
+band-paar-atom ci-nachlauf
+demeter lizenz-riss etalab-2 0 widerlegt
+eigene ephemeride pep tudat kette band-paar
+lidar-inventar extraterrestrisch mla-compiler auf rdr gebaut

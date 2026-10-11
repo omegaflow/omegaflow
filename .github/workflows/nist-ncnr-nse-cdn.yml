@@ -1,0 +1,55 @@
+# harvest: format=coverage_manifest arm=nist_ncnr_nse_compiler pattern=^nist_ncnr_nse_coverage\.manifest$ idempotent=true timeout=120 tag=ncnr.nist.gov
+
+name: nist-ncnr-nse-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/nist_ncnr_nse_compiler.rs'
+      - '.github/workflows/nist-ncnr-nse-cdn.yml'
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  nist-ncnr-nse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the manifest already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view ncnr.nist.gov --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "nist_ncnr_nse_coverage.manifest"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset nist_ncnr_nse_coverage.manifest already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset nist_ncnr_nse_coverage.manifest missing — compiling and manifesting"
+          fi
+      - name: Ensure the ncnr.nist.gov release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view ncnr.nist.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ncnr.nist.gov --repo omegaflow/sources \
+              --title "ncnr.nist.gov" \
+              --notes "NIST Center for Neutron Research (NCNR) public data — neutron spin echo (NSE) monthly sets compiled to a coverage manifest (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the NIST NCNR NSE coverage to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin nist_ncnr_nse_compiler -- \
+            --out data/ncnr.nist.gov/nist_ncnr_nse_coverage.manifest \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "nist-ncnr-nse-cdn: nist_ncnr_nse_coverage.manifest returned void" \
+                 "nist_ncnr_nse_compiler returned void for the NIST NCNR NSE set listing. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
