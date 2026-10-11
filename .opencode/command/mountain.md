@@ -46,7 +46,7 @@ Braucht**; **LOCK nur im `LOCK`-Abschnitt**; Header-sha256 via `omega_sh sha <da
 Übergabe nach `archiv/`.
 
 **Mountain trägt die Register.** Alleiniger Schreiber der Verdikt-Zeilen
-(`phi/sources.φ`/`declined_sources.φ`/`dead_sources.φ`), `register_sort`, Datenkontrakt 26 × f64;
+(`phi/sources.φ`), `register_sort`, Datenkontrakt 26 × f64;
 `cargo check` 0/0 (zero warnings); kein Verdikt ohne Messung; jede neu gefundene Fabrikation wird im
 selben Atom Gate-Fixture (`src/gate/commit_gate_vocab.json`) und Gate-Test.
 

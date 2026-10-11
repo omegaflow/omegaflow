@@ -2112,13 +2112,10 @@ pub fn canon_diff(tracked: &[String], declared: &[String]) -> (Vec<String>, Vec<
     (tracked_not_declared, declared_not_tracked)
 }
 
-pub const REGISTER_CLASSES: [&str; 7] = [
+pub const REGISTER_CLASSES: [&str; 4] = [
     "phi/sources.φ",
     "phi/witnesses.φ",
     "phi/footprints.φ",
-    "phi/dead_sources.φ",
-    "phi/declined_sources.φ",
-    "phi/blocked_sources.φ",
     "phi/harvest.φ",
 ];
 
@@ -2181,75 +2178,6 @@ pub fn unbacked_mirror_violations(added: &[&str]) -> Vec<(usize, String)> {
         i += 1;
     }
     out
-}
-
-fn entry_carries_move_note(content: &str, url_idx: usize) -> bool {
-    for line in content.lines().skip(url_idx + 1) {
-        let t = line.trim();
-        if t.is_empty() {
-            break;
-        }
-        if let Some(n) = t.strip_prefix("note ") {
-            return n.contains("integriert") || n.contains("phi/sources.φ");
-        }
-    }
-    false
-}
-
-pub fn integrated_twin(path: &str, content: &str, sources_text: &str) -> Option<Verdict> {
-    let closed = path == "phi/blocked_sources.φ";
-    let declined = path == "phi/declined_sources.φ";
-    if !closed && !declined {
-        return None;
-    }
-    let sources_urls: HashSet<&str> = sources_text
-        .lines()
-        .filter_map(|l| l.strip_prefix("url "))
-        .map(str::trim)
-        .collect();
-    if sources_urls.is_empty() {
-        return None;
-    }
-    let mut state: Option<&str> = None;
-    let mut has_gap = false;
-    for (idx, line) in content.lines().enumerate() {
-        let t = line.trim();
-        if t.is_empty() {
-            state = None;
-            has_gap = false;
-            continue;
-        }
-        if state.is_none() {
-            state = Some(t);
-            continue;
-        }
-        if t.starts_with("gap ") {
-            has_gap = true;
-            continue;
-        }
-        if let Some(u) = t.strip_prefix("url ") {
-            let twin = sources_urls.contains(u.trim());
-            let open_gap = closed && has_gap && state != Some("descoped") && twin;
-            let descoped_without_move = closed
-                && state == Some("descoped")
-                && twin
-                && !entry_carries_move_note(content, idx);
-            let declined_without_move = declined
-                && matches!(state, Some(s) if s.starts_with("decline"))
-                && twin
-                && !entry_carries_move_note(content, idx);
-            if open_gap || descoped_without_move || declined_without_move {
-                return Some(Verdict {
-                    severity: Severity::Hard,
-                    rule: "integrated-twin".to_string(),
-                    line: idx + 1,
-                    feedback: feedback("integrated-twin").to_string(),
-                    quote: clip(u.trim(), 90),
-                });
-            }
-        }
-    }
-    None
 }
 
 pub const DOC_OPEN_MARKERS: [&str; 11] = [
@@ -4669,104 +4597,6 @@ mod tests {
     }
 
     #[test]
-    fn fp_integrated_twin_open_state_flagged() {
-        let v = integrated_twin(
-            "phi/blocked_sources.φ",
-            &fx("blocked_twin_blocked_open"),
-            &fx("blocked_twin_sources"),
-        )
-        .unwrap();
-        assert_eq!(v.rule, "integrated-twin");
-        assert_eq!(v.severity, Severity::Hard);
-        assert_eq!(v.line, 3, "the url line of the open twin is named");
-    }
-
-    #[test]
-    fn fp_integrated_twin_descoped_without_move_flagged() {
-        let blocked =
-            "descoped\nurl https://example.org/b\nnote descoped (gemessen: keine Einheit)\n";
-        let v = integrated_twin(
-            "phi/blocked_sources.φ",
-            blocked,
-            &fx("blocked_twin_sources"),
-        )
-        .unwrap();
-        assert_eq!(v.rule, "integrated-twin");
-        assert_eq!(v.line, 2, "the url line of the descoped twin is named");
-    }
-
-    #[test]
-    fn fn_integrated_twin_descoped_released_passes() {
-        let blocked = "descoped\nurl https://example.org/b\nnote descoped (gemessen: integriert → phi/sources.φ:3)\n";
-        assert!(
-            integrated_twin(
-                "phi/blocked_sources.φ",
-                blocked,
-                &fx("blocked_twin_sources")
-            )
-            .is_none(),
-            "a descoped twin carries the integration as its Befund, not as a violation"
-        );
-    }
-
-    #[test]
-    fn fn_integrated_twin_gap_less_entry_passes() {
-        let blocked = "pending\nurl https://example.org/b\nnote HTTP 500 2026-09-25 — server error, retry duty\n";
-        assert!(
-            integrated_twin(
-                "phi/blocked_sources.φ",
-                blocked,
-                &fx("blocked_twin_sources")
-            )
-            .is_none(),
-            "the twin gate holds only gap-class entries — a pending retry duty is another class"
-        );
-    }
-
-    #[test]
-    fn fn_integrated_twin_other_register_passes() {
-        assert!(
-            integrated_twin(
-                "phi/dead_sources.φ",
-                &fx("blocked_twin_blocked_open"),
-                &fx("blocked_twin_sources")
-            )
-            .is_none()
-        );
-    }
-
-    #[test]
-    fn fp_integrated_twin_declined_without_move_flagged() {
-        let declined = "decline model-forecast\nurl https://example.org/b\nnote Flare-Wahrscheinlichkeiten, kein Feldwert\n";
-        let v = integrated_twin(
-            "phi/declined_sources.φ",
-            declined,
-            &fx("blocked_twin_sources"),
-        )
-        .unwrap();
-        assert_eq!(v.rule, "integrated-twin");
-        assert_eq!(v.severity, Severity::Hard);
-        assert_eq!(
-            v.line, 2,
-            "the url line of the stale declined twin is named"
-        );
-    }
-
-    #[test]
-    fn fn_integrated_twin_declined_with_move_passes() {
-        let declined = "decline superseded-by-integrated\nurl https://example.org/b\nnote integriert in phi/sources.φ (Beispiel)\n";
-        assert!(
-            integrated_twin(
-                "phi/declined_sources.φ",
-                declined,
-                &fx("blocked_twin_sources")
-            )
-            .is_none(),
-            "a declined twin carries the integration as its Befund, not as a violation"
-        );
-    }
-
-    #[test]
     fn fp_prose_note_257_chars_blocked() {
         let line = format!("note {}", "x".repeat(PHI_NOTE_MAX + 1 - "note ".len()));
         assert_eq!(line.chars().count(), PHI_NOTE_MAX + 1);
@@ -4790,9 +4620,9 @@ mod tests {
     }
 
     #[test]
-    fn fn_register_classes_are_the_seven_living_registers() {
+    fn fn_register_classes_are_the_four_living_registers() {
         let classes = register_classes();
-        assert_eq!(classes.len(), 7);
+        assert_eq!(classes.len(), 4);
         assert!(classes.iter().any(|p| p == "phi/sources.φ"));
         assert!(classes.iter().any(|p| p == "phi/witnesses.φ"));
         assert!(!classes.iter().any(|p| p == "phi/canon.φ"));
@@ -4813,13 +4643,13 @@ mod tests {
     }
 
     #[test]
-    fn fp_sources_note_blocked_dead_blocked_kept() {
+    fn fp_sources_note_blocked_other_registers_kept() {
         assert_eq!(
             prose_violation_for("phi/sources.φ", &fx("phi_sources_note")),
             Some("phi-sources-note")
         );
-        assert!(prose_violation_for("phi/dead_sources.φ", &fx("phi_sources_note")).is_none());
-        assert!(prose_violation_for("phi/blocked_sources.φ", &fx("phi_sources_note")).is_none());
+        assert!(prose_violation_for("phi/witnesses.φ", &fx("phi_sources_note")).is_none());
+        assert!(prose_violation_for("phi/footprints.φ", &fx("phi_sources_note")).is_none());
     }
 
     #[test]
@@ -4872,7 +4702,7 @@ mod tests {
     #[test]
     fn fn_register_classes_hold_registers_not_canon() {
         let classes = register_classes();
-        assert_eq!(classes.len(), 7);
+        assert_eq!(classes.len(), 4);
         assert!(classes.iter().any(|p| p == "phi/sources.φ"));
         assert!(classes.iter().any(|p| p == "phi/witnesses.φ"));
         assert!(!classes.iter().any(|p| p == "phi/canon.φ"));

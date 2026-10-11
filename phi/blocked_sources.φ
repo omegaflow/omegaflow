@@ -1,4 +1,0 @@
-blocked parser-def
-url https://opendata.cern.ch/record/1120
-gap particle-cern
-note 2026-10-11: parse_tree: TBranchElement+Ref-Tags; parse_streamer_elements: fArrayLength/fArrayDim/fMaxIndex[5]/fTypeName+Class-Ref; cargo check 0/0; offen fBasketBytes/fBasketEntry/fBasketSeek; Verifikation AliVSD_Masterclass_6.root (/tmp/opencode/).

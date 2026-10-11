@@ -2,7 +2,7 @@
   title: Source-Port: Der eine Pfad
   class: concept
   date: 2026-10-11
-  sha256: 1fd98ed45ec8238dc2f5edbadfaa4bce76598d598da67e60ca6236b15abe09ff
+  sha256: 0fb3105af7ffbcc2949083782d470bfc5cdc9e0bc7a9df08cedbfd61e9d6e57d
   status: live
   see-also: docs/README.md AGENTS.md phi/sources.φ
 -->
@@ -28,8 +28,8 @@ Register ersetzen sie.
 Der Zustand offener Arbeit liegt **nicht** mehr in einem Pipeline-Ledger: er
 liegt in `state/zustand/wartend.φ` (12 pending Compiler + Zugangs-Waits;
 gitignored, lokal) und wird owner-getaggt mit `register_lookup --open` gelesen.
-`phi/` trägt die **7 lebenden Register** (`sources`, `dead_sources`,
-`declined_sources`, `blocked_sources`, `witnesses`, `footprints`, `harvest`),
+`phi/` trägt die **4 lebenden Register** (`sources`,
+`witnesses`, `footprints`, `harvest`),
 kein weiteres.
 
 ## 2. Pfadkarte (gemessen 2026-10-11)
@@ -37,9 +37,6 @@ kein weiteres.
 | Pfad | Was es IST |
 |------|------------|
 | `phi/sources.φ` | Das kanonische Register (Annahme-Ziel). 2730 `url`-Blöcke. |
-| `phi/declined_sources.φ` | Dispositionen: Verdikt. 1528 Einträge. |
-| `phi/dead_sources.φ` | Dispositionen: `dead` (unerreichbar — Re-Check-Pflicht). 259 Einträge. |
-| `phi/blocked_sources.φ` | Dispositionen: Zutritt gesperrt. Gemessen 2026-10-11 **1** Eintrag: `blocked parser-def` (particle-cern). |
 | `phi/witnesses.φ` | Das Zeugen-Register (S²-Richtung, Gestalt, Presence …). 34 Einträge. |
 | `phi/footprints.φ` | Die Coverage-Records `.fp01`. 5 Einträge. |
 | `phi/harvest.φ` | Das Harvest-Master-Register: ein Block je Arm/Format, Felder `asset` (present/fehlt), `format`, `tag`, `arm`, `workflow`, `pattern`, `idempotent`, `timeout`; 77 Formate. `harvest.yml` liest den Block und reicht die Felder dem Arm weiter; `harvest_reg --check` whitelistet sie, ein fehlendes Pflicht-Argument verweigert der Arm selbst (exit 2). |
@@ -72,46 +69,17 @@ natürliche Kadenz (ein statisches Archiv): der Parser setzt den Guard 2²⁵ s 
 (reservierter Wert), das Wort überlebt den Round-trip; eine explizite `ttl` dieses
 Werts liest sich als `no-cadence`.
 
-`phi/dead_sources.φ`: Einträge sortiert nach `url`; eine Dispositionszeile,
-eine `url`-Zeile, eine `note`-Zeile; Leerzeile zwischen Einträgen; keine
-Duplikate pro URL. Enthält NUR `dead` (URL antwortet nicht — die
-Re-Check-Pflicht; gemessene Klassen `dead 404`/`dns-unresolved`/
-`redirect-maintenance`/`unreachable`/`5xx`/`ssl`/`frozen`/`absent`).
-
-`phi/declined_sources.φ`: gleiches Format. Enthält das **Verdikt** — die
-Quelle lebt, aber sie trägt kein physikalisches Feld. Keine Re-Check-Pflicht:
-die Erreichbarkeit ist nicht die Frage, das Verdikt ist die Frage (die
-getrennte Datei hält den Re-Check bei den `dead`-URLs, nicht beim Verdikt).
-Die Klassen sind freie, gemessene Verdikt-Worte (`decline no-physical-force`,
-`registry/katalog`, `model-forecast`, `superseded-by-integrated`,
-`redistribution`, `presence-catalog`, `variant`, `static` …).
-
-`phi/blocked_sources.φ`: gleiches Format; die **Zugangs**-Sperre. Trägt
-`blocked key`/`blocked account`/`blocked ip-blocked`/`blocked parser-def`
-(+ `reg <url>`-Zeile, Registrierungsseite) — blockiert, gewollt, nicht tot.
-Gemessen 2026-10-11 trägt es genau **einen** Eintrag: `blocked parser-def`
-(particle-cern). Die account-/key-Waits leben ihrer Natur nach als Zeilen in
-`state/zustand/wartend.φ` (Aufnehmer-Pflicht); `blocked` bleibt das Register
-der gemessenen Zugangs-Sperre.
-
-**Die Grenze declined/blocked (Operator-Wort 2026-09-15).** Die Frage
-entscheidet, nicht die Quelle:
-
-- `blocked` = die **Zugangs**-Frage: die Messung ist echt + gewollt, der
-  Zugang ist gesperrt (`key`/`account`/`ip-blocked`) oder das Format unlesbar
-  (`parser-def`). Die Sperre hebt sich (Key gefüllt, Parser gebaut) — kein
-  Verdikt.
-- `declined` = die **Verdikt**-Frage: die Quelle lebt, aber sie trägt kein
-  physikalisches Feld (Oszillator-Gate), ist Modell/Forecast, Registry/Katalog,
-  **kommerziell** (`redistribution`), superseded/redundant oder Infrastruktur.
-  Die Erreichbarkeit ist nicht die Frage.
+Die drei früheren Dispositions-Register (`dead_sources.φ`/`declined_sources.φ`/
+`blocked_sources.φ`) sind mit dem Architektur-Akt (Operator-Wort 2026-10-11) aus
+dem Kanon entfernt: `phi/` trägt nur noch `sources`/`witnesses`/`footprints`/
+`harvest`. Die Verdikt-, `dead`- und Zugangs-Zustände leben nicht mehr als
+eigene Register; die Zugangs-/Verdikt-Grenze (Operator-Wort 2026-09-15) bleibt
+als Prinzip in `AGENTS.md` (Source-Curation) beschrieben.
 
 **Der Konsument ist kein Kriterium der Grenze.** Die Presence bewegt sich frei
 durch den 4D-Block: eine physikalische Messung ist intrinsisch wertvoll, auch
 wenn heute kein ω()-Konsument sie liest. „kein gebauter Konsument" ist eine
-**Bau-Reihenfolge**, keine Quellen-Identität — es hält keine physikalische,
-zugängliche Quelle aus `sources.φ` heraus und verschiebt sie nicht nach
-`declined`.
+**Bau-Reihenfolge**, keine Quellen-Identität.
 
 ## 4. Der Zustand — wartend.φ + register_lookup --open
 
@@ -121,16 +89,14 @@ descoped, 2026-10-11). Der Zustand lebt an zwei Orten:
 
 - **Die Register selbst** sind das Ledger: eine entdeckte Quelle ist bis zur
   Disposition `pending` (Ernte/Prüfung ungebaut), danach steht ihr Verdikt in
-  genau einem Register. `phi/sources.φ` + `blocked_sources.φ` +
-  `declined_sources.φ` + `dead_sources.φ` tragen den einen Pfad.
+  `phi/sources.φ`. Die drei früheren Dispositions-Register sind entfernt.
 - **`state/zustand/wartend.φ`** trägt das Warten: eine Zeile je Wait,
   `key | Gegenüber | Trigger | Aufnehmer | Lage`. Der Aufnehmer arbeitet die
   Zeile im selben Atom, in dem der Trigger feuert. Die 12 pending Compiler
   (copernicus-insitu ×8, noaa ×4) und die Zugangs-Waits stehen dort.
 
 `register_lookup --open` ist die Queue: es liest die Zustands-Register
-owner-getaggt (`blocked parser-def`/`parser-gap`/`asset fehlt` → mountain,
-`blocked account`/`blocked key` → future → operator, `blocked ip-blocked`/
+owner-getaggt (`parser-gap`/`asset fehlt` → mountain,
 `pending` → mycelium, released → released) und legt die Zeilen dem Owner vor.
 
 ## 5. Der eine Pfad (Prozedur)
@@ -150,10 +116,10 @@ Pro Quelle, in einem Atom:
 3. **Gate.** Oszillator-Gate (§8), τ-Bestimmung (§8), Weberin-Eignung (§8).
 4. **Disponieren.** `accepted` → `phi/sources.φ` (Format §1.0, plus
    `url`/`origin`/`compiler`/`sha256`; Manifestation via `*-cdn.yml`).
-   `parser-def` → `phi/blocked_sources.φ` mit `gap`-Verweis. `key`/`account`/
-   `ip-blocked` → `phi/blocked_sources.φ` mit `reg`-Zeile (die Operator-/
-   Aufnehmer-Seite als Zeile in `state/zustand/wartend.φ`). `decline` →
-   `phi/declined_sources.φ`. Endpunkt tot → erst die tote-Endpoint-Recherche
+   Eine abgewiesene Quelle (`decline`/`dead`/Zugangssperre) wird als gemessener
+   Befund getragen (Handover-Register), nicht in ein eigenes Register
+   geschrieben — die drei Dispositions-Register sind 2026-10-11 entfernt.
+   Endpunkt tot → erst die tote-Endpoint-Recherche
    (§9), dann `dead` mit `note`, die den Recherche-Stand nennt.
 5. **Manifestieren.** Eine neue/geänderte Quelle wird in `phi/sources.φ`
    registriert, damit der CI-Manifestator (`*-cdn.yml --ci-mode`) das Asset auf
@@ -231,11 +197,9 @@ exponential-decay, advective → patch-levy. Eine deklarierte Zeile bindet: der
 Parser liest den Token zuerst (`parse.rs:759/1167`), der Konverter materialisiert
 den Default nur im Synthese-/Entwurfspfad (`port.rs:18/1214/1237`).
 
-Klassifikation: (accepted) → `sources.φ`; `parser-def` (Format
-unkonsumierbar) → `blocked_sources.φ` mit `gap`-Verweis; `key-needed`/
-`account`/`ip-blocked` → `blocked_sources.φ` mit `reg`-Zeile (die Operator-/
-Aufnehmer-Seite als Zeile in `state/zustand/wartend.φ`); `decline`
-(Oszillator-Gate) → `declined_sources.φ`.
+Klassifikation: `accepted` → `sources.φ`; jede abgewiesene Quelle wird als
+gemessener Befund getragen (Handover-Register), nicht in ein eigenes Register
+geschrieben — die drei Dispositions-Register sind 2026-10-11 entfernt.
 
 **Weberin-Eignung — die vierte Prüfung (Operator-Wort 2026-10-02).** Nach
 `force`/τ/Klassifikation wird jede Quelle zusätzlich auf die *komplette*
@@ -415,31 +379,30 @@ Nur die **Schlüsselnamen** werden je gelesen, nie die Werte (Secret-Hygiene).
   Prozedur (§5) — kein halber Port.
 - 0 honored: eine leere/absente Diagnose ist eine vollständige Disposition,
   kein Fehler. Absent ist erst nach Recherche absent (`pending` bis dahin).
-- Blocked-Kanon (2026-08-19, verbindlich): Auth-Formen —
-  `blocked key` (API-Key/Ticket), `blocked account` (Konto/Login/
-  Registrierung), `blocked ip-blocked` (Bot-/IP-Sperre), `blocked parser-def`
+- Zugangs-/Format-Sperren (2026-08-19, verbindlich): Auth-Formen —
+  `key` (API-Key/Ticket), `account` (Konto/Login/
+  Registrierung), `ip-blocked` (Bot-/IP-Sperre), `parser-def`
   (Format unkonsumierbar, trägt immer den Dateityp html/json/xml/csv, nie
-  nackt). Je Zugangs-Eintrag eine `reg <url>`-Zeile (Registrierungsseite).
+  nackt). Sie sind gemessene Befunde, kein eigenes Register: Key-/Account-Waits
+  stehen als Zeile in `state/zustand/wartend.φ` (Aufnehmer-Pflicht), der Rest
+  als Handover-Punkt.
   Mirror-Gate: nur Quellen bleiben, deren Daten gespiegelt werden dürfen (CDN)
   — Open-Data, Regierungs-Open-Data, Forschungsdaten → bleibt, Mirror-
   Einordnung in der `note`; kommerzielle ToS/Redistribution →
-  `decline redistribution`. Sortierung: blocked (key, account, ip-blocked) dann
-  parser-def, jeweils alphabetisch nach URL. Kaskaden-200 (Proton-Exit/
-  Wayback) = entblockt → der Eintrag verlässt `blocked_sources.φ`; sein Zielort
-  ist `phi/sources.φ` über die Prozedur (§5). `register_lookup --open` ist die
-  Queue — es liest die Zustands-Register owner-getaggt (`blocked`/`parser-def`/
-  `asset fehlt` → mountain, `blocked account`/`blocked key` → future →
-  operator, `blocked ip-blocked`/`pending` → mycelium, released → released) und
+  `decline redistribution`. Kaskaden-200 (Proton-Exit/
+  Wayback) = entblockt → der Befund wird ein `phi/sources.φ`-Eintrag über die Prozedur (§5). `register_lookup --open` ist die
+  Queue — es liest die Zustands-Register owner-getaggt (`parser-def`/
+  `asset fehlt` → mountain, `pending` → mycelium, released → released) und
   `state/zustand/wartend.φ`; es gibt keinen `phi/pipeline/`-Draft-Pfad
   (descoped 2026-10-11).
-- Grenze declined/blocked (Operator-Wort 2026-09-15): **kommerziell →
-  `decline redistribution`** (nicht blocked — der Zugang ist nicht gesperrt,
+- Grenze Zugang/Verdikt (Operator-Wort 2026-09-15): **kommerziell →
+  `decline redistribution`** (nicht Zugangs-Sperre — der Zugang ist nicht gesperrt,
   das Verdikt ist kommerziell); **der Konsument ist kein Kriterium** — die
   Presence bewegt sich frei durch den 4D-Block, eine physikalische,
   zugängliche Messung gehört ins Register (der Konsument ist eine
   Bau-Reihenfolge, kein Quellen-Verdikt).
 - **Authentifizierung ist kein Ausschlusskriterium** (Operator-Wort 2026-10-08):
-  ein `blocked account`/`blocked key` ist eine `pending`-Operator-Aufgabe, kein
+  ein `key`/`account` ist eine `pending`-Operator-Aufgabe, kein
   Quellen-Verdikt — wo der Operator zugangsberechtigt ist oder ein Key besteht,
   führt die **Auth-Route** zur Quelle, nie ein `decline`.
 

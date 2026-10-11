@@ -25,8 +25,8 @@
 #   eine geosphärische Antwort, nicht Peer seiner Erzeuger. Die Wiring in den Matrix-Lauf ist offen.
 # Kp magnetosphere_kp_3h: NICHT als Peer-Feld/Treiber (Schwarm 2026-10-06 + Rat: ein globaler
 #   13-Stationen-Response ohne Worldline). Register-Riss, benannt, nicht geglättet: `sources.φ:1211`
-#   admittiert den GFZ-JSON als `last` :1214, `declined_sources.φ:2607-2609` verweigert dasselbe
-#   Aggregat als positionsloses Feld. Träte Kp ein, dann nur als deklarierter Response-/Referenzknoten
+#   admittiert den GFZ-JSON als `last` :1214, der frühere Dispositions-Eintrag (Register entfernt
+#   2026-10-11) verweigerte dasselbe Aggregat als positionsloses Feld. Träte Kp ein, dann nur als deklarierter Response-/Referenzknoten
 #   (Claude, GPT-5.6, Mistral, DeepSeek-Pro) oder als stationsauflösende lokale K-Indizes statt des
 #   Aggregats (GLM, Qwen) — beide Wege offen, nicht dieses Laufs. GFZ Hp30 (30-min) wäre die feinere
 #   Reihe, wenn der Response-Weg gewählt wird.

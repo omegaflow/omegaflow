@@ -26,7 +26,7 @@ fn main() {
 
     let registry = build_frame_registry();
     let mut reg = String::from(
-        "# frame-registry — route (host/path, query stripped) → frame, self-learning from sources.φ + dead_sources.φ + blocked_sources.φ + frame_learned.φ\n",
+        "# frame-registry — route (host/path, query stripped) → frame, self-learning from sources.φ + witnesses.φ + frame_learned.φ\n",
     );
     let mut reg_keys: Vec<(&String, &String)> = registry.iter().collect();
     reg_keys.sort();
