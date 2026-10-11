@@ -5442,22 +5442,33 @@ fn period_means(
 
 fn resolution_probe(names: &[&str], sources: &[SourceConfig], anchor: &QueryAnchor) {
     for name in names {
+        let registered = field_sources(sources, name);
+        if registered.len() < 2 {
+            continue;
+        }
+        println!(
+            "resolution {name}: {} candidate registrations",
+            registered.len()
+        );
         let mut cands: Vec<(String, Vec<(f64, f64)>)> = Vec::new();
-        for (src, field) in field_sources(sources, name) {
-            if let Ok(series) = load_field(&src, &field, anchor) {
-                cands.push((resolve_time_markers(&src.url), series));
+        for (src, field) in &registered {
+            let witness = resolve_time_markers(&src.url);
+            match load_field(src, field, anchor) {
+                Ok(series) => {
+                    let dt = match median_dt(&series) {
+                        Some(d) => format!("{d:.0}"),
+                        None => "pending".to_string(),
+                    };
+                    println!("  witness {witness} | median_dt {dt}s | n {}", series.len());
+                    cands.push((witness, series));
+                }
+                Err(reason) => {
+                    println!("  witness {witness} | pending — {reason}");
+                }
             }
         }
         if cands.len() < 2 {
             continue;
-        }
-        println!("resolution {name}: {} candidate registrations", cands.len());
-        for (witness, series) in &cands {
-            let dt = match median_dt(series) {
-                Some(d) => format!("{d:.0}"),
-                None => "pending".to_string(),
-            };
-            println!("  witness {witness} | median_dt {dt}s | n {}", series.len());
         }
         let cadence: Vec<Option<f64>> = cands.iter().map(|(_, s)| median_dt(s)).collect();
         let mut order: Vec<usize> = (0..cands.len()).collect();
@@ -5592,6 +5603,24 @@ fn run_summary_panel(
     let (columns, _grid, grid_dt) = match align_many(&arms, Seasonal::None, Some(delta)) {
         Ok(aligned) => aligned,
         Err(reason) => {
+            for (name, series) in &loaded {
+                let span = match (series.first(), series.last()) {
+                    (Some(a), Some(b)) => {
+                        let dt = match median_dt(series) {
+                            Some(d) => format!("{d:.0}"),
+                            None => "pending".to_string(),
+                        };
+                        format!(
+                            "{:.0}..{:.0} (median_dt {dt}s, n {})",
+                            a.0,
+                            b.0,
+                            series.len()
+                        )
+                    }
+                    _ => "no stamped sample".to_string(),
+                };
+                println!("  arm '{name}' span {span}");
+            }
             println!("panel pending — {reason}");
             return 0;
         }
