@@ -16,6 +16,7 @@ const PGM_MAXVAL: u32 = 65535;
 
 const ORIENTATION: &str = "raw stream0 row0=north (measured 2026-10-11: ucalgary-srs/pyUCalgarySRS _themis.py and mshumko/asilib themis.py both flip N-S to render north-up, so the stored PGM row0 is north); poleward = decreasing row";
 
+#[derive(Debug)]
 struct Frame {
     epoch: f64,
     profile: Vec<u16>,
