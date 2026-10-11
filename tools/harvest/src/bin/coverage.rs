@@ -339,6 +339,8 @@ fn bbox_of(feature: &Json) -> Option<[f64; 6]> {
 struct Tile {
     href: String,
     bbox: Option<[f64; 6]>,
+    id: Option<String>,
+    epoch: Option<String>,
 }
 
 struct StacPage {
@@ -352,9 +354,20 @@ fn parse_items(body: &str) -> Result<StacPage, String> {
     if let Some(features) = root.get("features").and_then(Json::as_arr) {
         for feature in features {
             if let Some(href) = copc_href(feature) {
+                let id = feature
+                    .get("id")
+                    .and_then(Json::as_str)
+                    .map(|s| s.to_string());
+                let epoch = feature
+                    .get("properties")
+                    .and_then(|p| p.get("datetime"))
+                    .and_then(Json::as_str)
+                    .map(|s| s.to_string());
                 tiles.push(Tile {
                     href,
                     bbox: bbox_of(feature),
+                    id,
+                    epoch,
                 });
             }
         }
@@ -431,10 +444,20 @@ fn manifest_lines(tiles: &[Tile], emit_bbox: bool) -> Vec<String> {
     out
 }
 
+fn id_lines(tiles: &[Tile]) -> Vec<String> {
+    let mut out = Vec::with_capacity(tiles.len());
+    for t in tiles {
+        let id = t.id.as_deref().unwrap_or("-");
+        let epoch = t.epoch.as_deref().unwrap_or("-");
+        out.push(format!("{id}\t{epoch}\t{}", t.href));
+    }
+    out
+}
+
 fn run(args: &[String]) -> Result<(), String> {
     if args.iter().any(|a| a == "--help") {
         eprintln!(
-            "usage: coverage --kind stac [--collection <id>] [--url <stac-root>] [--out <manifest>] [--limit <n>] [--jobs <n>] [--bbox|--bbox-off] [--ci-mode]  (default: url-only shard lines; --bbox emits the STAC bbox)"
+            "usage: coverage --kind stac [--collection <id>] [--url <stac-root>] [--out <manifest>] [--limit <n>] [--jobs <n>] [--bbox|--bbox-off] [--emit-ids <path>] [--ci-mode]  (default: url-only shard lines; --bbox emits the STAC bbox; --emit-ids writes a tile-id sidecar)"
         );
         return Ok(());
     }
@@ -473,6 +496,7 @@ fn run(args: &[String]) -> Result<(), String> {
         None => MANIFEST_NAME.to_string(),
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let emit_ids = arg_value(args, "--emit-ids").filter(|p| !p.is_empty());
     let emit_bbox = args.iter().any(|a| a == "--bbox") && !args.iter().any(|a| a == "--bbox-off");
     let limit = match arg_value(args, "--limit").and_then(|v| v.parse::<usize>().ok()) {
         Some(n) if n > 0 => n,
@@ -523,6 +547,23 @@ fn run(args: &[String]) -> Result<(), String> {
         "coverage: {collection}: {pages} pages, {} tiles -> {out}",
         tiles.len()
     );
+
+    if let Some(path) = emit_ids.as_deref() {
+        let id_lines = id_lines(&tiles);
+        let mut id_text = String::with_capacity(id_lines.len() * 128);
+        for line in &id_lines {
+            id_text.push_str(line);
+            id_text.push('\n');
+        }
+        if let Some(parent) = Path::new(path).parent() {
+            if !parent.as_os_str().is_empty() {
+                fs::create_dir_all(parent)
+                    .map_err(|e| format!("create {} returned void: {e}", parent.display()))?;
+            }
+        }
+        fs::write(path, &id_text).map_err(|e| format!("write {path} returned void: {e}"))?;
+        eprintln!("coverage: {} tile ids -> {path}", id_lines.len());
+    }
 
     println!("url {CDN_BASE}/{netloc}/{out_name}");
     println!("origin {items_url}");
@@ -593,5 +634,21 @@ mod tests {
             Some("planetarycomputer.microsoft.com")
         );
         assert_eq!(netloc_of("ftp://x/y"), None);
+    }
+
+    #[test]
+    fn emit_ids_writes_tile_identity_and_absent_fields_render_as_dash() {
+        let body = r#"{"type":"FeatureCollection","features":[
+{"type":"Feature","id":"tile-a","properties":{"datetime":"2021-05-01T00:00:00Z"},"assets":{"data":{"href":"https://storage.example/tile-a.copc.laz"}}},
+{"type":"Feature","assets":{"data":{"href":"https://storage.example/tile-b.copc.laz"}}}
+]}"#;
+        let page = parse_items(body).expect("page parses");
+        let lines = id_lines(&page.tiles);
+        assert_eq!(lines.len(), 2);
+        assert_eq!(
+            lines[0],
+            "tile-a\t2021-05-01T00:00:00Z\thttps://storage.example/tile-a.copc.laz"
+        );
+        assert_eq!(lines[1], "-\t-\thttps://storage.example/tile-b.copc.laz");
     }
 }
