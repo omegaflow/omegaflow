@@ -67,6 +67,44 @@ where
     Some((t_bounce, pos, vel))
 }
 
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct TwoWayLightTime {
+    pub t_bounce_tdb: f64,
+    pub t_tx_tdb: f64,
+    pub bounce_pos_icrs_km: [f64; 3],
+    pub bounce_vel_icrs_km_s: [f64; 3],
+}
+
+pub fn two_way_light_time<S>(
+    t_rx_tdb: f64,
+    station_rx_icrs_km: [f64; 3],
+    station_tx_icrs_km: [f64; 3],
+    target_state: S,
+) -> Option<TwoWayLightTime>
+where
+    S: Fn(f64) -> Option<([f64; 3], [f64; 3])>,
+{
+    if !t_rx_tdb.is_finite() || !finite3(station_rx_icrs_km) || !finite3(station_tx_icrs_km) {
+        return None;
+    }
+    let c_km_s = C_LIGHT / 1000.0;
+    let (t_bounce, pos, vel) = downlink_bounce(t_rx_tdb, station_rx_icrs_km, &target_state)?;
+    let d_up = norm(sub(pos, station_tx_icrs_km));
+    if d_up <= 0.0 || !d_up.is_finite() {
+        return None;
+    }
+    let t_tx = t_bounce - d_up / c_km_s;
+    if !t_tx.is_finite() {
+        return None;
+    }
+    Some(TwoWayLightTime {
+        t_bounce_tdb: t_bounce,
+        t_tx_tdb: t_tx,
+        bounce_pos_icrs_km: pos,
+        bounce_vel_icrs_km_s: vel,
+    })
+}
+
 pub fn shapiro_leg_s(
     station_icrs_km: [f64; 3],
     target_icrs_km: [f64; 3],
@@ -107,8 +145,8 @@ pub struct TwoWayDopplerInputs {
     pub station_tx_icrs_km: [f64; 3],
     pub f_ref_hz: f64,
     pub turn_ratio: f64,
-    pub gravitator_icrs_km: [f64; 3],
-    pub gm_gravitator_m3_s2: f64,
+    pub gravitator_icrs_km: Option<[f64; 3]>,
+    pub gm_gravitator_m3_s2: Option<f64>,
 }
 
 pub fn two_way_doppler<S>(inputs: TwoWayDopplerInputs, target_state: S) -> Option<TwoWayDoppler>
@@ -134,8 +172,16 @@ where
     {
         return None;
     }
-    let c_km_s = C_LIGHT / 1000.0;
-    let (t_bounce, pos, vel) = downlink_bounce(t_rx_tdb, station_rx_icrs_km, &target_state)?;
+    let (gravitator_icrs_km, gm_gravitator_m3_s2) =
+        match (gravitator_icrs_km, gm_gravitator_m3_s2) {
+            (Some(g), Some(gm)) => (g, gm),
+            _ => return None,
+        };
+    let light = two_way_light_time(t_rx_tdb, station_rx_icrs_km, station_tx_icrs_km, target_state)?;
+    let t_bounce = light.t_bounce_tdb;
+    let t_tx = light.t_tx_tdb;
+    let pos = light.bounce_pos_icrs_km;
+    let vel = light.bounce_vel_icrs_km_s;
     let r_dn = sub(pos, station_rx_icrs_km);
     let d_dn = norm(r_dn);
     let r_up = sub(pos, station_tx_icrs_km);
@@ -143,7 +189,6 @@ where
     if d_dn <= 0.0 || d_up <= 0.0 || !d_dn.is_finite() || !d_up.is_finite() {
         return None;
     }
-    let t_tx = t_bounce - d_up / c_km_s;
     let shapiro_s = shapiro_leg_s(
         station_rx_icrs_km,
         pos,
@@ -1954,8 +1999,8 @@ mod tests {
                 station_tx_icrs_km: station,
                 f_ref_hz: 2.0e9,
                 turn_ratio: 880.0 / 749.0,
-                gravitator_icrs_km: [0.0, 0.0, 0.0],
-                gm_gravitator_m3_s2: GM_SUN_M3_S2,
+                gravitator_icrs_km: Some([0.0, 0.0, 0.0]),
+                gm_gravitator_m3_s2: Some(GM_SUN_M3_S2),
             },
             &orbit,
         )
@@ -1983,8 +2028,8 @@ mod tests {
                 station_tx_icrs_km: station,
                 f_ref_hz: 2.0e9,
                 turn_ratio: 880.0 / 749.0,
-                gravitator_icrs_km: [0.0, 0.0, 0.0],
-                gm_gravitator_m3_s2: GM_SUN_M3_S2,
+                gravitator_icrs_km: Some([0.0, 0.0, 0.0]),
+                gm_gravitator_m3_s2: Some(GM_SUN_M3_S2),
             },
             orbit,
         )
@@ -2025,10 +2070,47 @@ mod tests {
                     station_tx_icrs_km: station,
                     f_ref_hz: 2.0e9,
                     turn_ratio: 880.0 / 749.0,
-                    gravitator_icrs_km: [0.0, 0.0, 0.0],
-                    gm_gravitator_m3_s2: GM_SUN_M3_S2,
+                    gravitator_icrs_km: Some([0.0, 0.0, 0.0]),
+                    gm_gravitator_m3_s2: Some(GM_SUN_M3_S2),
                 },
                 absent
+            )
+            .is_none()
+        );
+    }
+
+    #[test]
+    fn two_way_light_time_exposes_the_transmit_epoch() {
+        let orbit = circular_orbit();
+        let station = [0.0, -AU_KM, 0.0];
+        let light = two_way_light_time(0.0, station, station, &orbit).unwrap();
+        let (pos, _vel) = orbit(light.t_bounce_tdb).unwrap();
+        let d_up = norm(sub(pos, station));
+        let expected_t_tx = light.t_bounce_tdb - d_up * 1000.0 / C_LIGHT;
+        assert!(
+            (light.t_tx_tdb - expected_t_tx).abs() < 1.0e-9,
+            "t_tx {} vs {expected_t_tx}",
+            light.t_tx_tdb
+        );
+        assert!(light.t_tx_tdb < light.t_bounce_tdb);
+    }
+
+    #[test]
+    fn two_way_refuses_an_undeclared_gravitator() {
+        let orbit = circular_orbit();
+        let station = [0.0, -AU_KM, 0.0];
+        assert!(
+            two_way_doppler(
+                TwoWayDopplerInputs {
+                    t_rx_tdb: 0.0,
+                    station_rx_icrs_km: station,
+                    station_tx_icrs_km: station,
+                    f_ref_hz: 2.0e9,
+                    turn_ratio: 880.0 / 749.0,
+                    gravitator_icrs_km: None,
+                    gm_gravitator_m3_s2: None,
+                },
+                &orbit
             )
             .is_none()
         );
@@ -2045,8 +2127,8 @@ mod tests {
                 station_tx_icrs_km: station,
                 f_ref_hz: 2.0e9,
                 turn_ratio: 880.0 / 749.0,
-                gravitator_icrs_km: [0.0, 0.0, 0.0],
-                gm_gravitator_m3_s2: GM_SUN_M3_S2,
+                gravitator_icrs_km: Some([0.0, 0.0, 0.0]),
+                gm_gravitator_m3_s2: Some(GM_SUN_M3_S2),
             },
             orbit,
         )
@@ -2071,8 +2153,8 @@ mod tests {
                 station_tx_icrs_km: station,
                 f_ref_hz: 2.0e9,
                 turn_ratio: 880.0 / 749.0,
-                gravitator_icrs_km: [0.0, 0.0, 0.0],
-                gm_gravitator_m3_s2: GM_SUN_M3_S2,
+                gravitator_icrs_km: Some([0.0, 0.0, 0.0]),
+                gm_gravitator_m3_s2: Some(GM_SUN_M3_S2),
             },
             orbit,
         )
