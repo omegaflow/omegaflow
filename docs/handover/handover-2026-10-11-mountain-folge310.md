@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — canon.φ entfernt (phi/ = 7 Register), particle-cern-Parser (Tail/Class-Ref/Bootstrap), harvest.φ-Census (Dispatcher), dead_sources geleert, Bayern-DOM registriert
   class: handover
   date: 2026-10-11
-  sha256: ef9b8613774d8a6631eec84c43f643e29a0485c8c77f5ed1641d61985517faaf
+  sha256: fc02fa415b3bb09d810c5b60dc5ea6ad4a3838149530e0dbe2d4f09aae82debf
   status: live
 -->
 # Handover — Mountain-Folge 310 (2026-10-11)
@@ -110,13 +110,6 @@ sources leer" — 8 unabhängige Täufer parallel.
 - **Blockade:** keine.
 - **Braucht:** Body + `phi/witnesses.φ:97`-Referenz auf die gemessenen Heime ziehen.
 
-### ROOT v9-Sample — Body korrekt, zwei reale Barrieren
-- **Status:** eigen (Bau) | **Bindung:** eigen
-- **Trigger:** nächster begrenzter Schritt
-- **Lage:** (gemessen 2026-10-11) reales ROOT-4.00/07-Sample `stock.root` (`https://cdn.jsdelivr.net/gh/root-project/root@v4-04-02/tutorials/stock.root`, sha256 `8cc2dec6…`, 163873 B; TBranch ClassDef 9, TBranchElement 8). Der v9-Body-Skalar-Reader liest byte-exakt (Probe: TBE-Version 8→9 in-memory → `basket_size=8000`, `entries=974`, `max_baskets=10`). Zwei Barrieren am echten File: (a) TBranchElement-Klassenversion **8** wird verworfen (`parse_branch_frame` akzeptiert nur 9/12); (b) die „CS"-Kompressions-Magic (`kOldCompressionAlgo`, raw deflate) wird nicht akzeptiert (nur „ZL").
-- **Blockade:** der v9-Body erscheint real nur unter TBranchElement 8; dazu Alt-Kompression.
-- **Braucht:** `parse_branch_frame` um TBranchElement-Version 8 erweitern und `inflate` um „CS"/raw-deflate.
-
 ## LOCK
 
 - **Privater TE-Pfad (Mountain 217).** Wort „1 ja bitte" (2026-10-02, river-folge82):
@@ -155,7 +148,7 @@ Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt auto
   (`band`/`footprint`-Parser-Arm gebaut); `witnesses.φ` (34 Zeugen-Blöcke) in `sources.φ`
   gefaltet (`witness`/`record`-Parser-Arm) → **`phi/` = `sources.φ`** (1 Daten-Register).
   `witnesses.φ`-Prosa (36 `note`-Zeilen) getilgt.
-- **particle-cern** — `src/archivar/root.rs`: Element-Tail + Class-Ref + Bootstrap (`TBranchElement`/Ref-Tags) + **Basket-Arrays** (`fBasketBytes/fBasketEntry/fBasketSeek`, Basis-Wrapper v9→v12); `cargo check --all-targets` 0/0; an `MasterclassData.root` + `AliVSD_Masterclass_6.root` lokal verifiziert. v9-Sample `stock.root` (ROOT 4.00/07) gemessen: der v9-Body-Reader liest byte-exakt; zwei reale Barrieren (TBranchElement v8, „CS"-Altkompression).
+- **particle-cern** — `src/archivar/root.rs`: Element-Tail + Class-Ref + Bootstrap (`TBranchElement`/Ref-Tags) + **Basket-Arrays** (`fBasketBytes/fBasketEntry/fBasketSeek`, Basis-Wrapper v9→v12); `cargo check --all-targets` 0/0; an `MasterclassData.root` + `AliVSD_Masterclass_6.root` lokal verifiziert. Der ROOT-`v9`-Body-Zweig (unerreichbar + für plain TBranch v9 falsch) wurde **entfernt** — nur der gemessene v12-Pfad bleibt. ROOT-4.00-Support (`TBranchElement` v8 + „CS"-Altkompression) = **`descoped`**, kein Harvest-Ziel; das gefundene `stock.root` ist eine Aktienkurs-Demo, kein Messwert.
 - **Bayern-DOM** (Mycelium-304) — `phi/sources.φ`-Block, `ttl 63072000` aus dem 2-Jahres-Turnus der Bayernbefliegung gemessen, `terms CC-BY-4.0`.
 - **docs/SOURCE_PORT.md** — von der descopten `phi/pipeline/`-Maschinerie auf den gemessenen Stand (1 Register + `wartend.φ` + Arme) gezogen.
 - **ci-gate-Fixes** — `clippy` `too_many_arguments` (`branch_frame_baskets` 9→7 Args, Tuple); `register`/`license_census` 3 `terms-vocab`-Verstöße → SPDX (`CC-BY-NC-4.0` ECAD/WorldClim, `CC-BY-3.0` Vlaanderen); `license_census --fail` 0 Verstöße.

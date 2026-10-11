@@ -726,60 +726,19 @@ fn read_basket_long_v12(c: &mut Cursor<'_>, n: usize) -> Option<Vec<i64>> {
     Some(out)
 }
 
-fn read_basket_bytes_v9(c: &mut Cursor<'_>, n: usize) -> Option<Vec<i32>> {
-    c.u8()?;
-    let mut out = Vec::with_capacity(n);
-    for _ in 0..n {
-        out.push(c.i32()?);
-    }
-    Some(out)
-}
-
-fn read_basket_entry_v9(c: &mut Cursor<'_>, n: usize) -> Option<Vec<i64>> {
-    c.u8()?;
-    let mut out = Vec::with_capacity(n);
-    for _ in 0..n {
-        out.push(c.i32()? as i64);
-    }
-    Some(out)
-}
-
-fn read_basket_seek_v9(c: &mut Cursor<'_>, n: usize) -> Option<Vec<i64>> {
-    let wide = c.u8()? == 2;
-    let mut out = Vec::with_capacity(n);
-    for _ in 0..n {
-        out.push(if wide { c.i64()? } else { c.i32()? as i64 });
-    }
-    Some(out)
-}
-
-fn parse_branch_body(c: &mut Cursor<'_>, version: i16) -> Option<BranchBaskets> {
+fn parse_branch_body(c: &mut Cursor<'_>) -> Option<BranchBaskets> {
     c.i32()?;
     let basket_size = c.i32()?;
     c.i32()?;
     let write_basket = c.i32()?;
-    let max_baskets;
-    let entries;
-    if version > 9 {
-        c.i64()?;
-        c.i32()?;
-        max_baskets = c.i32()?;
-        c.i32()?;
-        entries = c.i64()?;
-        c.i64()?;
-        c.i64()?;
-        c.i64()?;
-    } else {
-        c.i32()?;
-        c.i32()?;
-        max_baskets = c.i32()?;
-        if version > 6 {
-            c.i32()?;
-        }
-        entries = c.f64()? as i64;
-        c.f64()?;
-        c.f64()?;
-    }
+    c.i64()?;
+    c.i32()?;
+    let max_baskets = c.i32()?;
+    c.i32()?;
+    let entries = c.i64()?;
+    c.i64()?;
+    c.i64()?;
+    c.i64()?;
     if max_baskets < 0 {
         return None;
     }
@@ -787,19 +746,9 @@ fn parse_branch_body(c: &mut Cursor<'_>, version: i16) -> Option<BranchBaskets> 
     skip_tobjarray(c)?;
     skip_tobjarray(c)?;
     skip_tobjarray(c)?;
-    let (basket_bytes, basket_entry, basket_seek) = if version > 9 {
-        (
-            read_basket_bytes_v12(c, n)?,
-            read_basket_long_v12(c, n)?,
-            read_basket_long_v12(c, n)?,
-        )
-    } else {
-        (
-            read_basket_bytes_v9(c, n)?,
-            read_basket_entry_v9(c, n)?,
-            read_basket_seek_v9(c, n)?,
-        )
-    };
+    let basket_bytes = read_basket_bytes_v12(c, n)?;
+    let basket_entry = read_basket_long_v12(c, n)?;
+    let basket_seek = read_basket_long_v12(c, n)?;
     let file_name = c.tstring()?;
     Some(BranchBaskets {
         basket_size,
@@ -842,6 +791,9 @@ fn parse_branch_frame(obj: &[u8], start: usize) -> Option<(BranchMeta, u32, usiz
     } else {
         version
     };
+    if base_version != BRANCH_VERSION {
+        return None;
+    }
     c.read_version()?;
     c.skip_version()?;
     c.u32()?;
@@ -849,12 +801,10 @@ fn parse_branch_frame(obj: &[u8], start: usize) -> Option<(BranchMeta, u32, usiz
     let name = c.tstring()?;
     let title = c.tstring()?;
     let leaf_type = leaf_type_from_title(&title);
-    if base_version > 7 {
-        c.read_version()?;
-        c.i16()?;
-        c.i16()?;
-    }
-    let body = parse_branch_body(&mut c, base_version)?;
+    c.read_version()?;
+    c.i16()?;
+    c.i16()?;
+    let body = parse_branch_body(&mut c)?;
     Some((
         BranchMeta {
             name,
@@ -1432,7 +1382,6 @@ mod tests {
         tag: u32,
         class_name: Option<&str>,
         version: i16,
-        base_version: i16,
         name: &str,
         title: &str,
         baskets: (&[i32], &[i64], &[i64]),
@@ -1447,62 +1396,35 @@ mod tests {
         push_u32(&mut base, 0);
         push_tstring(&mut base, name);
         push_tstring(&mut base, title);
-        if base_version > 7 {
-            push_u32(&mut base, 6 | K_BYTE_COUNT_MASK);
-            push_i16(&mut base, 1);
-            push_i16(&mut base, 0);
-            push_i16(&mut base, 0);
-        }
+        push_u32(&mut base, 6 | K_BYTE_COUNT_MASK);
+        push_i16(&mut base, 1);
+        push_i16(&mut base, 0);
+        push_i16(&mut base, 0);
         push_i32(&mut base, 0);
         push_i32(&mut base, 0);
         push_i32(&mut base, 0);
         push_i32(&mut base, 0);
-        if base_version > 9 {
+        base.extend_from_slice(&0i64.to_be_bytes());
+        push_i32(&mut base, 0);
+        push_i32(&mut base, count);
+        push_i32(&mut base, 0);
+        for _ in 0..4 {
             base.extend_from_slice(&0i64.to_be_bytes());
-            push_i32(&mut base, 0);
-            push_i32(&mut base, count);
-            push_i32(&mut base, 0);
-            for _ in 0..4 {
-                base.extend_from_slice(&0i64.to_be_bytes());
-            }
-        } else {
-            push_i32(&mut base, 0);
-            push_i32(&mut base, 0);
-            push_i32(&mut base, count);
-            push_i32(&mut base, 0);
-            for _ in 0..3 {
-                base.extend_from_slice(&0f64.to_be_bytes());
-            }
         }
         push_tobjarray_empty(&mut base);
         push_tobjarray_empty(&mut base);
         push_tobjarray_empty(&mut base);
-        if base_version > 9 {
-            base.push(1);
-            for value in basket_bytes {
-                push_i32(&mut base, *value);
-            }
-            base.push(1);
-            for value in basket_entry {
-                base.extend_from_slice(&value.to_be_bytes());
-            }
-            base.push(1);
-            for value in basket_seek {
-                base.extend_from_slice(&value.to_be_bytes());
-            }
-        } else {
-            base.push(1);
-            for value in basket_bytes {
-                push_i32(&mut base, *value);
-            }
-            base.push(1);
-            for value in basket_entry {
-                push_i32(&mut base, *value as i32);
-            }
-            base.push(1);
-            for value in basket_seek {
-                push_i32(&mut base, *value as i32);
-            }
+        base.push(1);
+        for value in basket_bytes {
+            push_i32(&mut base, *value);
+        }
+        base.push(1);
+        for value in basket_entry {
+            base.extend_from_slice(&value.to_be_bytes());
+        }
+        base.push(1);
+        for value in basket_seek {
+            base.extend_from_slice(&value.to_be_bytes());
         }
         push_tstring(&mut base, "");
 
@@ -1512,7 +1434,7 @@ mod tests {
                 &mut class_body,
                 ((base.len() as u32) + 2) | K_BYTE_COUNT_MASK,
             );
-            push_i16(&mut class_body, base_version);
+            push_i16(&mut class_body, BRANCH_VERSION);
         }
         class_body.extend_from_slice(&base);
 
@@ -1536,15 +1458,7 @@ mod tests {
     }
 
     fn branch_frame(tag: u32, class_name: Option<&str>, version: i16) -> Vec<u8> {
-        branch_frame_baskets(
-            tag,
-            class_name,
-            version,
-            version,
-            "px",
-            "px/F",
-            (&[], &[], &[]),
-        )
+        branch_frame_baskets(tag, class_name, version, "px", "px/F", (&[], &[], &[]))
     }
 
     fn tree_key(obj: &[u8]) -> RootKey {
@@ -1587,7 +1501,6 @@ mod tests {
             K_NEW_CLASS_TAG,
             Some("TBranch"),
             BRANCH_VERSION,
-            BRANCH_VERSION,
             "px",
             "px/F",
             (&[11, 22], &[33, 44], &[55, 66]),
@@ -1605,33 +1518,11 @@ mod tests {
     }
 
     #[test]
-    fn branch_frame_v9_reads_int_entry_and_seek_arrays() {
-        let obj = branch_frame_baskets(
-            K_NEW_CLASS_TAG,
-            Some("TBranchElement"),
-            BRANCH_ELEMENT_VERSION,
-            BRANCH_ELEMENT_VERSION,
-            "t",
-            "t/I",
-            (&[7], &[9], &[13]),
-        );
-        let index = parse_tree(&obj, &tree_key(&obj)).expect("v9 branch with baskets parses");
-        assert_eq!(index.branches.len(), 1);
-        let branch = &index.branches[0];
-        assert_eq!(branch.version, BRANCH_ELEMENT_VERSION);
-        assert_eq!(branch.max_baskets, 1);
-        assert_eq!(branch.basket_bytes, vec![7]);
-        assert_eq!(branch.basket_entry, vec![9]);
-        assert_eq!(branch.basket_seek, vec![13]);
-    }
-
-    #[test]
     fn branch_frame_element_v9_base12_reads_v12_basket_arrays() {
         let obj = branch_frame_baskets(
             K_NEW_CLASS_TAG,
             Some("TBranchElement"),
             BRANCH_ELEMENT_VERSION,
-            BRANCH_VERSION,
             "fDetId",
             "fDetId/I",
             (&[17, 34], &[51, 68], &[85, 102]),
@@ -1653,7 +1544,6 @@ mod tests {
         let mut obj = branch_frame_baskets(
             K_NEW_CLASS_TAG,
             Some("TBranch"),
-            BRANCH_VERSION,
             BRANCH_VERSION,
             "px",
             "px/F",
