@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Ephemeriden Schritt 1 gefahren (Pioneer-10/11-ODF-Residuum gemessen), Asservatenkammer 9/9, FMHY-Klasse verortet
   class: handover
   date: 2026-10-11
-  sha256: 372bab5bd1c1ebd32d9155d3d387b5ad0546f4bac4ac97893d62958cd035ebb9
+  sha256: ef5ece166919d1fb932efddc91929db8358658b04664c6bd3a933ea1ae7003db
   status: live
 -->
 # Handover — Mountain-Folge 306 (2026-10-11)
@@ -134,7 +134,7 @@ zu machen" — **Schritt 1 der Ephemeriden-Kette ist jetzt gefahren, nicht neu a
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-11) **`phi/` = 8 Dateien** (von **308**): die **7 lebenden Register** `sources`/`dead_sources`/`declined_sources`/`blocked_sources`/`witnesses`/`footprints`/`harvest` (jeder Planungs-Pass bzw. jeder Harvest-Dispatch liest sie) + `canon.φ`. Die **Werkzeug-Eingaben** sind zu ihren Werkzeugen gezogen (`ff6f4315f`) — nicht mehr ins Register: `nrs_stations.φ` + `dust-maske.φ` → `tools/harvest/data/` · `bands.φ` → `tools/register/data/` · `library.φ` (gelernte Such-Linse) → `tools/utils/data/` · `scan_coverage.φ` (Nadel-V-Experiment) → `tools/measure/data/`; alle Konsumenten-Pfade gezogen. Das **Gate** trägt die Register-Klassen jetzt **fest im Code** (`REGISTER_CLASSES`, `src/gate/commit_gate.rs`) statt aus `canon.φ` — canon ist damit eine **Tautologie**. Frühere Descopes: Katalog-Dumps ~40 MB + `tap_index_*`(72) + `research`(98)·`stage`(33)·`queue`(2) · `meteo/*.json`(4) + probe-sweep(2) · statische Corpora · `supermag_stations`/`frame_registry`/`prompt`/`MANIFEST`/`bayestar19`/`bathymetrie-gebco`/`gate_state`/`sources_index` · die 2 Katalog-Dispositionen (`3bc61e8af`) · `korpora_heim` + `korpora-cdn.yml` (`df537e0fa`) · `solar_omega_g` (`a52d9f176`).
 - **Blockade:** keine.
-- **Braucht:** `phi/canon.φ` **entfernen**, sobald die frische `commit_check`-Release (`tools-build 38103741757`, dispatcht) lokal greift — der **stale** lokale Pre-commit-Hook liest `canon.φ` noch (deshalb steht sie vorerst auf den 7 Registern). Danach ist `phi/` = 7 Register. **Zwei offene Risse:** 533 `terms unknown` in `sources.φ` (Lizenzpflicht nicht überall erfüllt) · `docs/SOURCE_PORT.md` beschreibt noch die descopte `phi/pipeline/`-Maschinerie (~25 Pfad-Zeilen).
+- **Braucht:** `phi/canon.φ` **entfernen**, sobald die frische `commit_check`-Release (`tools-build 38103741757`, noch `pending`) lokal greift — der stale Hook überschreibt jede lokale Fassung (`bin/.tools_ensure`, TTL/sha-Refresh). Danach `phi/` = 7 Register. **Footprints gedämpft** (`1e9c6c1ff`): 38 → 27 Z., je Survey Verdict + Provenienz. **Nächster Atom:** `harvest.φ` auflösen — 77 Formate → ~60 `*-cdn.yml`: Format/Timeout/Args/Idempotenz in die Jobs, der Dispatcher (`harvest-dispatch.yml`) scannt statt zu lesen; heute deklarieren nur **4** Jobs einen `format:`-Input. **Zwei offene Risse:** 533 `terms unknown` in `sources.φ` · `docs/SOURCE_PORT.md` beschreibt noch die descopte `phi/pipeline/`-Maschinerie.
 
 ### api.sensor.community — zulassen (der neue Faden), Zielzeile unbenannt
 - **Status:** eigen (Register) | **Bindung:** eigen
