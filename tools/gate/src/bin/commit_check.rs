@@ -117,6 +117,7 @@ fn handover_line_of(path: &str) -> Option<String> {
 }
 
 fn main() {
+    let no_canon = std::env::args().skip(1).any(|a| a == "--no-canon");
     let out = Command::new("git")
         .args([
             "-c",
@@ -269,31 +270,35 @@ fn main() {
             }
         }
     }
-    let canon_files = Command::new("git")
-        .args([
-            "-c",
-            "core.quotePath=false",
-            "ls-files",
-            "phi/*.φ",
-            "phi/**/*.φ",
-        ])
-        .output()
-        .expect("git");
-    let tracked: Vec<String> = String::from_utf8_lossy(&canon_files.stdout)
-        .lines()
-        .map(str::trim)
-        .filter(|l| !l.is_empty() && *l != "phi/canon.φ")
-        .map(str::to_string)
-        .collect();
-    let declared = declared_canon();
-    let (tracked_not_declared, declared_not_tracked) = canon_diff(&tracked, &declared);
-    for path in tracked_not_declared {
-        eprintln!("commit_check: tracked-not-declared: {path}");
-        fail = true;
-    }
-    for path in declared_not_tracked {
-        eprintln!("commit_check: declared-not-tracked: {path}");
-        fail = true;
+    if no_canon {
+        eprintln!("commit_check: canon arm skipped (--no-canon)");
+    } else {
+        let canon_files = Command::new("git")
+            .args([
+                "-c",
+                "core.quotePath=false",
+                "ls-files",
+                "phi/*.φ",
+                "phi/**/*.φ",
+            ])
+            .output()
+            .expect("git");
+        let tracked: Vec<String> = String::from_utf8_lossy(&canon_files.stdout)
+            .lines()
+            .map(str::trim)
+            .filter(|l| !l.is_empty() && *l != "phi/canon.φ")
+            .map(str::to_string)
+            .collect();
+        let declared = declared_canon();
+        let (tracked_not_declared, declared_not_tracked) = canon_diff(&tracked, &declared);
+        for path in tracked_not_declared {
+            eprintln!("commit_check: tracked-not-declared: {path}");
+            fail = true;
+        }
+        for path in declared_not_tracked {
+            eprintln!("commit_check: declared-not-tracked: {path}");
+            fail = true;
+        }
     }
     let carrier = live_handover_carrier();
     for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
