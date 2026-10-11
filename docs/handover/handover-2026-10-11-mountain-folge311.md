@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Gate-Release-Frische geheilt (river-Commit entblockt), adressierte Blöcke gefaltet, register_sort-Gap mit dem Register gefallen, Offen-Register fortgeschrieben
   class: handover
   date: 2026-10-11
-  sha256: 4b28749767c97a079470786668e037387c616cae0232f4a5ea894bf12436ddf1
+  sha256: 2078e694393ee7d2eb6e6319e2eb2759d7bd5329fff8d809e4ba9b558bd3a938
   status: live
 -->
 # Handover — Mountain-Folge 311 (2026-10-11)
@@ -108,13 +108,6 @@ fixen" (river-Commit-Gate-Blockade).
 
 ### — gefaltet: `river-folge184` → mountain
 
-### `omni_imf_bz_gsm_nt` — Dreifach-Registrierung entflechten
-- **Status:** eigen (Register/Parser) | **Bindung:** eigen
-- **Trigger:** der Rat-Befund (`state/stimmen/2026-10-11-river-panel-aufloesung-rat.md`) liegt vor
-- **Lage:** (gemessen 2026-10-11) `phi/sources.φ:742` HAPI-Live (3600) · `:1935` Tages-Bin `omni2_serie.bin` (86400) · `:1950` 1h-Bin `omni2_serie_1h.bin` (3600); Überlappungs-Korrelation Tages- vs 1h-Bz = 0.6277 über 19935 gemeinsame 86400s-Perioden (Artefakt `38119733631/field-te-panel-vlies.txt`) — die zwei Registrierungen tragen nicht dieselbe Größe. Codeweg gebaut (`3093e9432`): `load_field_across_sources` liest `median_dt` je Kandidat, nennt den Zeugen; verschiedene Aggregation → Riss.
-- **Blockade:** die drei Zeilen tragen denselben Namen über verschiedene Aggregation.
-- **Braucht:** die drei Zeilen entflechten (getrennte Namen je Aggregation), den HAPI-Text-Arm um `omni_imf_bz_gsm_nt` ergänzen.
-
 ### omegaflow-measure — zwei Bins rot (river-184)
 - **Status:** eigen (Bau) | **Bindung:** eigen
 - **Trigger:** nächster begrenzter Schritt
@@ -184,6 +177,7 @@ Wort | Datum | Quelle
 --- | --- | ---
 „mach das ab jetzt automatisch — committe und pushe selbst" | 2026-10-07 | Operator (Session, Mountain 264)
 „kannst du das bitte fixen river schreibt: Der Commit ist bereit, aber der Gate blockiert" | 2026-10-11 | Operator (Session, Mountain 311)
+„kannst du das bitte umsetzen … phi/sources.φ:742/:1935/:1950 tragen omni_imf_bz_gsm_nt dreifach über verschiedene Aggregationen" | 2026-10-11 | Operator (Session, Mountain 311)
 „alle 5 an agenten und weitere agenten für 3" | 2026-10-11 | Operator (Session, Mountain 310)
 „verstehst du nicht ich will die dead sources leer haben kein mensch interessiert was da drin steht ausser tote quellen die wir haben wollen" | 2026-10-11 | Operator (Session, Mountain 310)
 „harvest ... sind arbeitsanweisungen die anderen drei sind daten ... und es sind nur 5 footprints müssen die nicht wirklich in die yamls" | 2026-10-11 | Operator (Session, Mountain 310)
@@ -203,10 +197,18 @@ Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt auto
   gestagtes Stück angefasst.
 - **Adressierte Blöcke gefaltet:** `future-folge228` (MODVOLC/ITS_LIVE/MASIE-Zulassung, SuperMAG-Ersatz),
   `mycelium-folge305` (VNP46A3, open-lidar-data, vier Portal-Coverage-Blöcke, sechs Klima-Quellen,
-  te-ground-truth-Riss), `river-folge184` (omni_imf-Dreifach-Registrierung, omegaflow-measure rot).
+  te-ground-truth-Riss), `river-folge184` (omegaflow-measure rot).
+- **`omni_imf_bz_gsm_nt`-Dreifach-Registrierung entflochten** (Rat 2026-10-11, Überlappungs-Korrelation
+  0.6277 = verschiedene Aggregation). Der Tages-Bin `omni2_serie.bin` trägt jetzt `format omni2_serie_daily`
+  und `_daily`-Feldnamen (`phi/sources.φ:1924,1930-1936`); der Stunden-Name `omni_imf_bz_gsm_nt` lebt nur
+  noch im HAPI-Live-Block (`:742/:748`) und im 1h-Bin (`:1950`) — beide 3600 s, kein Riss. Code:
+  `series_parse_bin`/`series_component_name` um den `omni2_serie_daily`-Arm (`src/archivar/extract.rs:9,532`);
+  Tests `omni2_daily_series_carries_its_own_names_not_the_hourly_ones` (`extract.rs`) und
+  `omni2_daily_bin_carries_its_own_aggregation_names` (`tests.rs`); `cargo check` 0/0.
 - **register_sort-Gap mit dem Register gefallen:** `phi/blocked_sources.φ` existiert nicht mehr
   (`phi/` = `sources.φ`); `register_sort phi/sources.φ` = canonical (rc=0) — der `blocked`-Opener-Punkt entfällt.
 - Stehender Pass zitiert, nicht kopiert. Geteilter Baum unangetastet:
   `docs/concepts/4d-membrane.md`, `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md`,
-  `src/archivar/*`, `tools/utils/src/bin/archive_search.rs`, die river-/mycelium-handover-Stücke.
-- Commit dieses Atoms: `Mountain 311` (dieses Handover + Archiv-Move).
+  `tools/utils/src/bin/archive_search.rs`, die river-/mycelium-handover-Stücke.
+- Commits dieses Atoms: `Mountain 311` (Handover + Archiv-Move) · `Mountain 311` (Register-Disentanglement
+  + Parser-Arm + Tests).

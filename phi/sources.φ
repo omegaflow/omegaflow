@@ -1921,19 +1921,19 @@ field goes16_mag_by_nt goes16_mag_by_nt inverse-square em nT 86400 0.0 0.0
 field goes16_mag_bz_nt goes16_mag_bz_nt inverse-square em nT 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie.bin
-format omni2_serie
+format omni2_serie_daily
 origin https://cdaweb.gsfc.nasa.gov/hapi
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/omni2_compiler.rs
 at sun
 ttl 86400
-field omni_solarwind_flow_speed_kms omni_solarwind_flow_speed_kms patch-levy advective km/s 86400 0.0 0.0
-field omni_solarwind_density_percc omni_solarwind_density_percc gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
-field omni_solarwind_temp_k omni_solarwind_temp_k exponential-decay thermal K 86400 0.0 0.0
-field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 86400 0.0 0.0
-field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 86400 0.0 0.0
-field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 86400 0.0 0.0
-field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 86400 0.0 0.0
+field omni_solarwind_flow_speed_kms_daily omni_solarwind_flow_speed_kms_daily patch-levy advective km/s 86400 0.0 0.0
+field omni_solarwind_density_percc_daily omni_solarwind_density_percc_daily gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field omni_solarwind_temp_k_daily omni_solarwind_temp_k_daily exponential-decay thermal K 86400 0.0 0.0
+field omni_imf_bx_gse_nt_daily omni_imf_bx_gse_nt_daily inverse-square em nT 86400 0.0 0.0
+field omni_imf_by_gsm_nt_daily omni_imf_by_gsm_nt_daily inverse-square em nT 86400 0.0 0.0
+field omni_imf_bz_gsm_nt_daily omni_imf_bz_gsm_nt_daily inverse-square em nT 86400 0.0 0.0
+field omni_solarwind_pressure_npa_daily omni_solarwind_pressure_npa_daily patch-levy advective nPa 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie_1h.bin
 format omni2_serie

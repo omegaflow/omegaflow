@@ -6,6 +6,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "goes_xrs" => goes::parse_bin(bytes),
         "intermagnet_dbdt" => intermagnet::parse_bin(bytes),
         "omni2_serie" => omni2::parse_bin(bytes),
+        "omni2_serie_daily" => omni2::parse_bin(bytes),
         "omni_hro" => omni_hro::parse_bin(bytes),
         "mitdb" => mitdb::parse_bin(bytes),
         "circor" => phonocardiogram::parse_bin(bytes),
@@ -526,6 +527,21 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             omni2::COMP_AU => Some("magnetosphere_au_nt"),
             omni2::COMP_SYMH => Some("magnetosphere_symh_nt"),
             omni2::COMP_DST => Some("magnetosphere_dst_nt"),
+            _ => None,
+        },
+        "omni2_serie_daily" => match comp {
+            omni2::COMP_V1800 => Some("omni_solarwind_flow_speed_kms_daily"),
+            omni2::COMP_N1800 => Some("omni_solarwind_density_percc_daily"),
+            omni2::COMP_T1800 => Some("omni_solarwind_temp_k_daily"),
+            omni2::COMP_BX => Some("omni_imf_bx_gse_nt_daily"),
+            omni2::COMP_BY => Some("omni_imf_by_gsm_nt_daily"),
+            omni2::COMP_BZ => Some("omni_imf_bz_gsm_nt_daily"),
+            omni2::COMP_PRESSURE => Some("omni_solarwind_pressure_npa_daily"),
+            omni2::COMP_AE => Some("magnetosphere_ae_nt_daily"),
+            omni2::COMP_AL => Some("magnetosphere_al_nt_daily"),
+            omni2::COMP_AU => Some("magnetosphere_au_nt_daily"),
+            omni2::COMP_SYMH => Some("magnetosphere_symh_nt_daily"),
+            omni2::COMP_DST => Some("magnetosphere_dst_nt_daily"),
             _ => None,
         },
         "omni_hro" => match comp {
@@ -7333,6 +7349,29 @@ mod fixed_width_series_tests {
         let series = series_parse_bin("hapi_csv", &bin).expect("series parses");
         assert_eq!(series, vec![(1.0, 5.0, 1), (2.0, 6.0, 2)]);
         assert!(series_parse_bin("hapi_csv", b"XXXX").is_none());
+    }
+
+    #[test]
+    fn omni2_daily_series_carries_its_own_names_not_the_hourly_ones() {
+        let bin = omni2::write_bin(&[(1.0, -3.2, omni2::COMP_BZ), (2.0, 4.1, omni2::COMP_BY)]);
+        let series = series_parse_bin("omni2_serie_daily", &bin).expect("daily series parses");
+        assert_eq!(
+            series,
+            vec![(1.0, -3.2, omni2::COMP_BZ), (2.0, 4.1, omni2::COMP_BY)]
+        );
+        assert_eq!(
+            series_component_name("omni2_serie_daily", omni2::COMP_BZ),
+            Some("omni_imf_bz_gsm_nt_daily")
+        );
+        assert_eq!(
+            series_component_name("omni2_serie", omni2::COMP_BZ),
+            Some("omni_imf_bz_gsm_nt")
+        );
+        assert_ne!(
+            series_component_name("omni2_serie_daily", omni2::COMP_BZ),
+            series_component_name("omni2_serie", omni2::COMP_BZ)
+        );
+        assert!(series_parse_bin("omni2_serie_daily", b"XXXX").is_none());
     }
 
     #[test]
