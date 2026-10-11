@@ -17,7 +17,7 @@ pub enum FieldIdentity {
 
 pub fn magic_identity(magic: [u8; 4]) -> Option<FieldIdentity> {
     match &magic {
-        b"AMN1" | b"PAO1" | b"S2E1" | b"ERBQ" => {
+        b"AMN1" | b"PAO1" | b"S2E1" | b"ERBQ" | b"MCON" => {
             Some(FieldIdentity::Witness(WitnessKind::PointEvent))
         }
         b"SKY1" | b"SKD1" | b"VLDE" => Some(FieldIdentity::Witness(WitnessKind::S2Direction)),
@@ -115,7 +115,7 @@ mod tests {
 
     #[test]
     fn transient_event_records_are_point_events() {
-        for m in [*b"AMN1", *b"PAO1", *b"S2E1", *b"ERBQ"] {
+        for m in [*b"AMN1", *b"PAO1", *b"S2E1", *b"ERBQ", *b"MCON"] {
             assert_eq!(
                 magic_identity(m),
                 Some(FieldIdentity::Witness(WitnessKind::PointEvent))
