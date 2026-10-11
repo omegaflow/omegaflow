@@ -3727,6 +3727,7 @@ const QUERY_MODES: &[&str] = &[
     "tap",
     "pangaea",
     "re3data",
+    "seanoe",
 ];
 
 pub fn query_mode_count() -> usize {
@@ -4153,6 +4154,7 @@ pub fn run_lines_max(
         "tap" => crate::tap::tap_lines(query, max),
         "pangaea" => crate::pangaea::pangaea_lines(query, max),
         "re3data" => crate::re3data::re3data_lines(query, max),
+        "seanoe" => crate::seanoe::seanoe_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         "wayback-available" => wayback_available_lines(query),
@@ -4384,6 +4386,7 @@ mod tests {
             "tap",
             "pangaea",
             "re3data",
+            "seanoe",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
