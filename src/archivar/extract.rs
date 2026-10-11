@@ -97,6 +97,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "pds4_acs_nir" => acs_nir::parse_series(bytes),
         "iris" => iris::parse_bin(bytes),
         "themis_asi" => themis_asi::parse_bin(bytes),
+        "mariner_m10_edr" => mariner_m10_edr::parse_bin(bytes),
         "bepicolombo_plasma" => bepicolombo::parse_bin(bytes),
         "keogram" => keogram::parse_bin(bytes).map(|rows| {
             rows.into_iter()
