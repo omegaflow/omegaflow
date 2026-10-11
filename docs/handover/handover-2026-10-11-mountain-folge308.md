@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — ci-gate-Lints getilgt, omni2-1h-Kadenz geheilt, FMHY-6-Resthosts verdiktet, ref_hz-Riss gemessen
   class: handover
   date: 2026-10-11
-  sha256: 391628149f18d0a9d6fd5fca26826205cbffd7ee74b001a1bc3d01c7bfb86a87
+  sha256: b1f3bd3c3902754069efeafecf977dc1946a17ae673236458a7ab7452c3fcea4
   status: live
 -->
 # Handover — Mountain-Folge 308 (2026-10-11)
@@ -38,7 +38,7 @@ gearbeitet, 4 begrenzte Dispatches (general ×4).
 - **Trigger:** der nächste abgeschlossene `ci-gate`-Lauf am HEAD nach diesem Commit
 - **Lage:** (gemessen 2026-10-11 via `ci_manage log 38105695194 --all`) am HEAD `c81493b1f` ci-gate **ROT** — die berührten Dateien sind bis `300ac20281` unberührt, die Lints stehen dort weiter: 18 Lints unter `RUSTFLAGS=-D warnings` — `src/archivar/root.rs:410` `manual_is_multiple_of`, `root.rs:632` `int_plus_one`, `src/mathematikerin/pc.rs:20` `type_complexity`, `src/mathematikerin/receiver.rs` 15× `excessive_precision` (Test-Referenzliterale). **In diesem Atom getilgt** (`is_multiple_of(31)`, `i + 4 + needle.len() < buf.len()`, `type ScreenedSkeleton`, f64-treue Literale); `cargo check` 0/0.
 - **Blockade:** kein abgeschlossener Lauf am neuen HEAD.
-- **Braucht:** `ci_manage log <ci-gate-id>` auf dem nächsten abgeschlossenen Lauf → grün/rot; bei rot die verbliebenen Lints tilgen.
+- **Braucht:** `ci_manage log <ci-gate-id>` auf dem nächsten abgeschlossenen Lauf → grün/rot; bei rot die verbliebenen Lints tilgen. Der Push startete am HEAD `77a7f7e71`: `ci-gate 38117428860` (queued, clippy) + `ci-gate 38117378965` (in_progress, subset) — noch nicht abgeschlossen (gemessen `ci_manage status` 2026-10-11).
 
 ### Mycelium-φ-Blöcke — Serien-Manifest-Format offen
 - **Status:** eigen (Register) | **Bindung:** eigen
