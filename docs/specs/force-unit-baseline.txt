@@ -70,3 +70,7 @@
 em gw
 electric kv
 electric mv/km
+# Mountain 315 (2026-10-11): ITS_LIVE glacier surface velocity — `advective m/yr`
+# (ice-flow speed, the product's native unit; advective owns m/mm/m/s but no yearly
+# rate). Frozen until the registry carries m/yr, then deleted.
+advective m/yr
