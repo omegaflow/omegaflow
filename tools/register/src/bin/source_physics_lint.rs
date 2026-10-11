@@ -37,9 +37,9 @@ const REGISTERS: [&str; 6] = [
     "phi/sources.φ",
     "phi/declined_sources.φ",
     "phi/pipeline/ledger.φ",
-    "phi/pipeline/library.φ",
+    "phi/library.φ",
     "phi/witnesses.φ",
-    "phi/bindings/bands.φ",
+    "phi/bands.φ",
 ];
 
 fn is_force(token: &str) -> bool {

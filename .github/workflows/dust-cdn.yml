@@ -41,6 +41,6 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin dust_map_compiler -- \
             --input kernels/dl07_av.fits --nside 512 --column 3 \
             --screen-pc "${{ inputs.screen_pc }}" --out planck_dust_av_rq_n512.json \
-            --mask-run --binding phi/bindings/dust-maske.φ --ci-mode
+            --mask-run --binding phi/dust-maske.φ --ci-mode
           gh release upload irsa.ipac.caltech.edu kernels/dl07_av.fits.sha256 \
             --repo omegaflow/sources --clobber

@@ -4911,8 +4911,8 @@ mod tests {
         assert!(classes.iter().any(|p| p == "phi/witnesses.φ"));
         assert!(!classes.iter().any(|p| p == "phi/canon.φ"));
         assert!(!classes.iter().any(|p| p.starts_with("phi/pipeline/")));
-        assert!(classes.iter().any(|p| p == "phi/bindings/dust-maske.φ"));
-        assert!(classes.iter().any(|p| p == "phi/reports/scan_coverage.φ"));
+        assert!(classes.iter().any(|p| p == "phi/dust-maske.φ"));
+        assert!(classes.iter().any(|p| p == "phi/scan_coverage.φ"));
     }
 
     fn point(

@@ -3871,10 +3871,10 @@ pub fn gate_learn_mode() -> i32 {
     if std::fs::write("phi/pipeline/library_gate_delta.φ", d).is_err() {
         eprintln!("write phi/pipeline/library_gate_delta.φ: the register does not remember");
     }
-    let library = match std::fs::read_to_string("phi/pipeline/library.φ") {
+    let library = match std::fs::read_to_string("phi/library.φ") {
         Ok(c) => c,
         Err(e) => {
-            eprintln!("learn-gate: read phi/pipeline/library.φ: {}", e);
+            eprintln!("learn-gate: read phi/library.φ: {}", e);
             String::new()
         }
     };
@@ -3902,8 +3902,8 @@ pub fn gate_learn_mode() -> i32 {
             out.push('\n');
         }
     }
-    if std::fs::write("phi/pipeline/library.φ", out).is_err() {
-        eprintln!("write phi/pipeline/library.φ: the register does not remember");
+    if std::fs::write("phi/library.φ", out).is_err() {
+        eprintln!("write phi/library.φ: the register does not remember");
     }
     eprintln!(
         "--learn-gate: {} netloc-Gewichte ({} positiv, {} negativ) → library.φ + library_gate_delta.φ",
