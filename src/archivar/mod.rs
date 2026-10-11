@@ -218,6 +218,8 @@ pub mod viking_text;
 pub mod vlf_awesome;
 pub mod vlies;
 pub mod vmf3;
+pub mod vmf3_sh;
+pub mod vmf3_sh_data;
 pub mod volume;
 pub mod voyager_merged;
 pub mod voyager_occlt;
