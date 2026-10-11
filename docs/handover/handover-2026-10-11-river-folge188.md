@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — THEMIS-ASI-Querprobe GILL gemessen (kein aufgelöster Breakup; stream2-Keogramm achsenlos/nahezu leer), JUICE/Flyby-Trägerschaft von Sensory gefaltet
   class: handover
   date: 2026-10-11
-  sha256: 500af040c9048108d70ed86c5ae2186fc6815407d1984ef7f1d4243af93b2e76
+  sha256: 666c82ae477e4addc8bf7e3bbd23830a1aef9930d1007594ec410de5b83625de
   status: live
 -->
 # Handover — River-Folge 188 (2026-10-11)
@@ -76,6 +76,7 @@ Gemessen 2026-10-11. Quellen: `state/future/space-weather-service-kante.md` §Ad
 - **Amprion** (DE) — **keyless CSV-Outage-API** (`…/api/grid-data/items/csv/KRAFTWERKS_UND_LASTAUSFAELLE/<from>/<to>`).
 - **TenneT** (DE) — 403 geo-block.
 - **50Hertz** (DE) — PDF-only.
+- **TransnetBW** (DE) — **keine** eigene maschinenlesbare Outage-Reihe; die Ausfall-Seite **delegiert an die ENTSO-E-Plattform** (`…/outage-domain/r2/unavailabilityintransmissiongrid`, EIC `10YDE-ENBW-----N`); `/api`/CSV = 404; `api.transnetbw.de` = 200, `/docs` :8080 nicht erreichbar; `nutzungsbedingungen` = Nachdruck nur mit vorheriger Zustimmung.
 - **Svenska Kraftnät** (SE) — `data.svk.se` CKAN, kein Outage.
 
 Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die Netzbetreiber aus `state` referenzieren, nicht re-suchen.
