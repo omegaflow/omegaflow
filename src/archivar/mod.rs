@@ -140,6 +140,7 @@ pub mod llr;
 pub mod lro_utf;
 pub mod lsk;
 pub mod lzw;
+pub mod mariner_m10_edr;
 pub mod mariner_occlt;
 pub mod masie;
 pub mod mat4;

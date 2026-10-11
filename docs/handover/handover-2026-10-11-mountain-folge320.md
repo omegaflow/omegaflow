@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mountain-Folge 320 (2026-10-11)
-  session: Mountain-Linie in einem Pass — zwei Register-Form-Risse durch Rat + Research + UI-Roster entschieden (McPherron-Onset-Liste → witness point-event, Riss gegen River gemessen: die Liste trägt SML-Werte/Bay-Properties, nicht nur Onsets; THEMIS-ASI-Stationstabelle → Compiler-Eingabe, Riss asilib-23 vs Berkeley-20) + 7 Quellen-Terms/Verdikte gemessen (OE-417/THEMIS-ASI/PCN/CSES/BGS-GIC/NERC-GMD/McPherron) + McPherron-Schema exakt gemessen + `MCON`-Punkt-Event-Form gebaut + Future-236s Rätsel/Mariner gefaltet (Mariner-Rohbänder gemessen: GNU-tar/IBM-7094-Framing, M10-imaging-EDR 968-B + DSC-73-M6/7-Layout via 2 Vision-Reads, `NSSDC_USER`/`NSSDC_PASS` bestätigt)
+  session: Mountain-Linie in einem Pass — zwei Register-Form-Risse durch Rat + Research + UI-Roster entschieden (McPherron-Onset-Liste → witness point-event, Riss gegen River gemessen: die Liste trägt SML-Werte/Bay-Properties, nicht nur Onsets; THEMIS-ASI-Stationstabelle → Compiler-Eingabe, Riss asilib-23 vs Berkeley-20) + 7 Quellen-Terms/Verdikte gemessen (OE-417/THEMIS-ASI/PCN/CSES/BGS-GIC/NERC-GMD/McPherron) + McPherron-Schema exakt gemessen + `MCON`-Punkt-Event-Form gebaut + Future-236s Rätsel/Mariner gefaltet (Mariner-Rohbänder gemessen: GNU-tar/IBM-7094-Framing, M10-imaging-EDR 968-B + DSC-73-M6/7-Layout via 2 Vision-Reads, `NSSDC_USER`/`NSSDC_PASS` bestätigt; Mariner-10-Imaging-EDR-Format `mariner_m10_edr` + Compiler gebaut, `cargo check` 0/0; M6/7-Tracking an ungemessenem 36-bit-Packing blockiert)
   class: handover
   date: 2026-10-11
-  sha256: 495c171af5fd9ba0e44c2f47e7b7d06cde167a063af46cdfe4d407c736296e51
+  sha256: 1976f8ae8889bf547eeff6a34c474e7d0f820bcc642bb2a51d86a6e4e7337064
   status: live
 -->
 # Handover — Mountain-Folge 320 (2026-10-11)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`; der d
 genannte HEAD war `537c5dc09`, aktueller HEAD dieser Session `7517e6016`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge319.md` (→ `archiv/`).
 
-## Burn: open 0.00 · close 0.13 · cap 0.50 · reason: Linien-Session + 1 general-Taucher (Quellen-Terms) + 1 grind-flash-Taucher (McPherron-Schema) + 1 council (2 Form-Risse) + 2 UI-Seats (Claude Sonnet 5.5 Extra hoch · GLM-5.3 Deep Think Max) + `archive_search --all`/Fach-Modi als Research-Schicht — gemessen via `session_burn`, deepseek-flash, kein pro/max.
+## Burn: open 0.00 · close 0.18 · cap 0.50 · reason: Linien-Session + 1 general-Taucher (Quellen-Terms) + 1 grind-flash-Taucher (McPherron-Schema) + 1 council (2 Form-Risse) + 2 UI-Seats (Claude Sonnet 5.5 Extra hoch · GLM-5.3 Deep Think Max) + `archive_search --all`/Fach-Modi als Research-Schicht — gemessen via `session_burn`, deepseek-flash, kein pro/max.
 
 ## Erledigt in diesem Atom (gelöscht aus dem Register; git trägt es)
 
@@ -31,15 +31,16 @@ Session konsumierte `handover-2026-10-11-mountain-folge319.md` (→ `archiv/`).
 - **McPherron-Schema exakt gemessen (grind-flash-Taucher, `unzip`/`tr`/`awk`):** `CorrOnsFiles.zip` (md5 `52951d852f4d5bf7ac092a7d304f2b26` bestätigt) → `ftims.txt` (11 Spalten: 6 Zeit + 5 Relativzeiten in min), `fvals.txt` (11 Spalten: 6 Zeit + **SML-Werte** an den 5 Zeitpunkten), `fadd.txt` (10 Spalten: 6 Zeit + **Amplitude nT, Bay-Depth nT, Bay-Duration min, Bay-Width min**); **314 560 Ereignisse**, 1966-01-01→2024-05-29, Zeit = `[year month day hour minute second=00]` (Kalender-Vektor, **kein** doy/Epoche), `NaN`-Sentinel für unbestimmte Werte → `Option`, nie `0.0`. Kein MLT/MLAT/GLON/GLAT, kein Onset-Typ-Flag.
 - **`MCON`-Punkt-Event-Form gebaut (Mountain, dieser Atom).** Neues Modul `src/archivar/mcon_event.rs` (MAGIC `MCON`, Header 13 B, Record 32 B, `present`-Bits, Komponenten `mcon_sml_nt`/`mcon_amplitude_nt`/`mcon_bay_decrease_nt`/`mcon_bay_duration_min`/`mcon_bay_width_min`), `extract.rs`-Arm `"mcon_event"`, `MCON` im Punkt-Event-Arm `witness.rs` (+ Test `transient_event_records_are_point_events`), Compiler `mcpherron_compiler.rs` auf ftims/fvals/fadd-Umbau (Join per Zeile, `NaN`→absent). `cargo check` **0/0**; Compiler-Lauf gegen das Archiv: **314 555 Onsets** (10 065 773 B), sha256 `441df5f8c59ad57962d81cc82814a0d36c7770f827b4d1893b31425f035cc3f1`. 5 Zeilen ohne gemessenen Skalar bleiben aus (BareCoordinate, 0 honored).
 - **Mariner-Rohbänder gemessen + per Vision entschlüsselt (future-236 `## An mountain` gefaltet).** (1) **Framing (grind-flash):** die SPDF-Tars sind **GNU-tar** mit genau zwei Membern `<name>.dir/<name>_F1.DAT`; kanonischer Stream = **`u16 BE Recordlänge + Payload`**; `attrib/<name>_att` (PVL, `NSSDC_ATTRIBUTE_OBJECT` v3) trägt **keine Feldtabelle**, nur `FORMAT_IDENTIFIER` NSSD1311 (M6) / NSSD1310 (M7) / NSSD1312 (M4), `MACHINE_REPRESENTATION = IBM 7044/7090/7094`, `MAXIMUM_RECORD_LENGTH_BYTES` 1208/1112/908; Tar-sha256 je Datei gemessen. (2) **Mariner-10-Imaging-EDR (ASU-Spiegel):** Vision-Read `pict_app_a.pdf` (PICT Appendix A, JPL-Pub 85-50) + `aareadme.txt` ergeben exakt: logischer Record **968 B = 832 B Pixellinie + 136 B Engineering**; **22 Blöcke × 31 944 B = 702 768 B/Datei**; Block 1 = VICAR-Label (360 B, **EBCDIC**) + Filler (608 B); 700 Zeilen, 832×700, 8 bit; 231 Dateien max. (3) **Mariner 6/7-Tracking:** Vision-Read `dsc_0073.pdf` (NSSDC DSC-73) — **IBM-7094-36-bit-Wörter**; Header-Records (FILE LABEL BCD · MISSION NUMBER BI · 15 Stationen × Datentyp-Zähler BI · Startzeiten DPFP), Datensatz-Records mit **CODES-WORD** (Bits 1–15 = anwesende Datentypen) + DPFP-Felder; die NSSD1312-Spec (M4) bleibt `pending` (kein DSC im digitalisierten Satz). (4) **Secrets:** `NSSDC_USER`/`NSSDC_PASS` existieren in `.secrets.local` (gemessen via `bin/secrets_keys`, Namen only).
+- **Mariner-10-Imaging-EDR: Format + Parser + Compiler gebaut (Mountain).** (a) **`.tgz` gemessen (grind-flash):** `mvm_0001.tgz` = gzip-tar, 144 349 050 B, **1367 Member** (11 Verzeichnisse + 1356 Dateien); **677 Bilddateien** `MVE_00N/IMAGES/MVE_00N.NNN` à **702 768 B** = 726 × 968 B; Records sind **nackte 968-B-Einheiten** ohne Längenpräfix; Record 0 = 360-B-EBCDIC-VICAR-Label, Records 1–700 = Bildzeilen (B[968·(r+1)+c]), Records 701–725 = Null-Pad. (b) **Gebaut:** `src/archivar/mariner_m10_edr.rs` (MAGIC `M10E`, Spaltenmittel-Bin, `parse_bin`/`write_bin` + Tests), `extract.rs`-Arm `"mariner_m10_edr"`, Compiler `mariner_m10_edr_compiler.rs` (gunzip → `tar_members` → je Bild EBCDIC-Label-`ERT YR/DAY/GMT`-Epoche + 832 Spaltenmittel über 700 Zeilen). `cargo check` **0/0**, Bin baut clean. Der volle 144-MB-Lauf ist **CI** (schwere Rechnung gehört nicht auf die Operator-Maschine).
 
 ## Offen (aufgeschlüsselt)
 
-### Mariner-Rohband-Parser — zwei neue Format-Arme (eigen; Spec jetzt gemessen)
+### Mariner-6/7-Tracking-Parser (`mariner_rst`) — 36-bit-Packing ungemessen (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der nächste begrenzte Bau-Schritt
-- **Lage:** (gemessen 2026-10-11 via grind-flash + vision) `mariner-rst` (M6/7 Tracking): GNU-tar → `*_F1.DAT`, `u16 BE`-Recordlänge + IBM-7094-36-bit-Payload, DSC-73-Feldtabelle transkribiert. `mariner_m10_edr` (M10 Imaging): 968-B-Record = 832 Pixels + 136 Engineering, 22 Blöcke, EBCDIC-VICAR-Label. Das vorhandene `mariner_occlt`-Asset ist **nicht** die Rohbänder.
-- **Blockade:** zwei neue Format-Arme sind Architektur-Akte; NSSD1312-Feldtabelle (M4) `pending` (kein DSC digitalisiert) — M4 bleibt ohne Feldtabelle.
-- **Braucht:** `src/archivar/mariner_rst.rs` (IBM-7094, DSC-73-Felder) + `mariner_m10_edr.rs` (VICAR/EBCDIC, 968-B) + `extract.rs`-Arme + Compiler + `cargo check` 0/0; `url`-Zeilen `spdf.gsfc.nasa.gov/.../PSCM-0001{4,7}_*` und `ser.im-ldi.com/M10/MVM/mvm_0001.tgz` (Mycelium).
+- **Trigger:** der nächste begrenzte Schritt (Packing empirisch messen)
+- **Lage:** (gemessen 2026-10-11 via grind-flash + vision) die Tars sind GNU-tar → `<name>.dir/<name>_F1.DAT`; kanonischer Stream = **`u16 BE Länge + Payload`** (erste M6-Records `00 3c`=60, `04 b6`=1206; M4 `00 2e`=46, `03 8a`=906); DSC-73-Feldtabelle transkribiert (Header-Records + Datensatz-Record: Wort 0 = Wortzahl, Wörter 2–3 = Zeit DPFP seit 1950-01-01, Wörter 4–5 = Senderfrequenz DPFP, Wort 6 = Pass-ID BCD, Wort 7 = CODES-WORD). **Offen:** ob die Länge Bytes oder 36-bit-Wörter meint und wie die IBM-7094-Wörter gepackt sind (4×36 bit = 18 B? 2 Wörter = 9 B?) — **ungemessen**; eine Vermutung wäre Fabrikation. DSC-Tabelle nur für M6/7; **NSSD1312 (M4) `pending`**.
+- **Blockade:** das 36-bit-Packing ist nicht gemessen (NSSDC-Control-Authority-Spec nicht öffentlich).
+- **Braucht:** je Tar die Recordlänge + Payload-Struktur empirisch messen (Länge gegen Nutzbytes abgleichen, Wortgrenzen prüfen); dann `src/archivar/mariner_rst.rs` + `mariner_rst_compiler.rs` (IBM-7094 DPFP/BI/BCD) + `extract.rs`-Arm + `cargo check` 0/0; `url`-Zeilen `spdf.gsfc.nasa.gov/.../PSCM-0001{4,7}_*` (Mycelium).
 
 ### Mariner 10 RSS PSCM-00009 — Auth-Kante (NSSDCA)
 - **Status:** wartend | **Bindung:** eigen (Vorbereitung) / Operator (Auth-Route)
@@ -169,8 +170,8 @@ Origin: mountain-folge320 (2026-10-11).
 Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt
 automatisch", 2026-10-07) trägt Commit und Push. In diesem Atom: die eigenen
 Dateien committen — `docs/handover/*`, `src/archivar/mcon_event.rs`,
-`src/archivar/{mod,witness,extract}.rs`,
-`tools/harvest/src/bin/mcpherron_compiler.rs`; `phi/sources.φ`,
+`src/archivar/mariner_m10_edr.rs`, `src/archivar/{mod,witness,extract}.rs`,
+`tools/harvest/src/bin/{mcpherron_compiler,mariner_m10_edr_compiler}.rs`; `phi/sources.φ`,
 `src/mathematikerin/*`, `tools/harvest/src/bin/{ea_lidar_index,themis_asi_keogram_compiler}.rs`
 und `tools/measure/src/bin/themis_asi_timed_keogram.rs` sind fremd-aktiv gehalten
 und werden nicht angetastet („Commit als Letzter").
