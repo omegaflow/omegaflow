@@ -6,33 +6,27 @@ url https://datalab.noirlab.edu/tap/sync
 table des_dr2.coverage
 asset des_dr2_coverage.fp01
 band g i r y z
-note DES-Bindung: die zwei Katalog-Tafeln II/357/des_dr1 und des_dr2 laufen gegen die fp01-Maske; Fussabdruck-Feld = Zeilen-Richtung ra/dec im hpix_4096-Nside-4096-nest-Raster wie des_dr2.coverage; die Maske ist das Gate, nie ein Feld ihrer Zeilen.
-note DES-DR2 (DECam Y6A2) NOIRLab TAP sync anonym 2026-09-07: 25.239.595 Zeilen ~5171 deg2; frac_det = Flaechen-Coverage je Band; NULL=0, Nullen null-echt; MAX je (pixel,band); Compiler des_coverage_compiler; 10.311.965 Records, 0 invalid; Asset CDN.
+note Fraktional; die fp01-Maske ist das Gate, nie ein Feld ihrer Zeilen; Compiler des_coverage_compiler (Provenienz 2026-09-07: 25 239 595 Zeilen ~5171 deg2, 10 311 965 Records, Asset CDN).
 
-note Survey-Plural (2026-09-24): PS1+AllWISE per-Pixel-Coverage; SDSS refused (SkyServerWS-TAP 404, keine Tabelle); 2MASS XSC-FITS secii6ff3.fits 200, 1601280 B, fits.
 footprint ps1
 url https://ps1images.stsci.edu/rings.v3.skycell/
 asset ps1_dr2_binary.fp01
 band g r i z y
-note PS1-Binaer-Asset (2026-09-09): Archiv-Existenz Skycell-Tiles (ps1grid + ps1filenames, ~7900 Probes), frac=1.0; Fehlerrichtung beobachtet - Suedsaum <=1 Tile + 1.6e-3 deg2 Polarloch ueberzeichnet; Compiler ps1_binary_compiler.rs; 35.906.245 B.
-note PS1-Fraktional (2026-09-08): stack.num/stack.exp FITS; count->Fraction num/Nenntiefe; ps1_coverage_compiler.rs; 389.074.034 Pixel, g(150,2) 0.898. DR2-Asset: Order 10 (Nside 1024) gegen 2-GB-Grenze; 187 Order-12-Parts descoped, Census steht.
-note PS1-DR2-Coverage Final (2026-09-24): 35855330990 success; ps1_dr2_coverage.fp01 404, 9 B, sha256 0019dfc4…; Parts 637-671, band_max 2643, final combine nicht erreicht. Bindung: PS1-fraktional (Council 2026-09-20).
+note Binaer (frac=1.0) + fraktional; Compiler ps1_binary_compiler/ps1_coverage_compiler (Provenienz: Council 2026-09-20; Order 10 gegen 2-GB-Grenze, 187 Order-12-Parts descoped).
 
 footprint sdss
 url https://skyserver.sdss.org/dr18/
 band u g r i z
-note SDSS - absent (2026-09-08, anonym): dr18 CAS anonym SQL-lesbar; 132 User-Tabellen, KEINE per-Pixel-Coverage-Tabelle; Imaging-Fenster als Mangle-Geometrie (0/1); TAP/SIA 404; PhotoObjAll refused; absent, nie pending.
+note absent (2026-09-08): dr18 CAS anonym SQL-lesbar, KEINE per-Pixel-Coverage-Tabelle, TAP/SIA 404; absent, nie pending.
 
 footprint 2mass
 url https://irsa.ipac.caltech.edu/TAP/sync
 asset 2mass_binary.fp01
 band j h ks
-note 2MASS (2026-09-09): fp_scan_dat 59.731 Kacheln (4 Ecken + Zentrum, 0 NULL), Join Coadd deckungsgleich, frac=1.0 J/H/Ks simultan; Fehlerrichtung beobachtet (geblankte Sub-Regionen coadd_frac<1 ueberzeichnet); Compiler 2mass_binary_compiler.rs.
-note 2MASS (Probe 2026-09-09): keine Coverage-Tabelle; fp_scan_dat/fp_coadd_dat tragen das Scan-/Atlas-Inventar; fp_scan_dat unterscheidet nie-beobachtet/beobachtet (Archivexistenz); fp_coadd_dat-Ecken im U-Scan-Pixel-Frame; Gator-Coverage refused.
+note Binaer (frac=1.0; fp_scan_dat 59 731 Kacheln, Join Coadd deckungsgleich); Compiler 2mass_binary_compiler.
 
 footprint allwise
 url https://irsa.ipac.caltech.edu/ibe/data/wise/allwise/p3am_cdd/
 asset allwise_coverage.fp01
 band w1 w2 w3 w4
-note AllWISE-Fraktional (Operator-Wort 2026-09-09): count->Fraction effektive-Pixel/Nenntiefe; Nside 1024 (order 10, ~600 MB; 4096 ~9,6 GB > 2-GB-CDN-Grenze); Chunked-Autoresume --coadd-lo/hi, Combiner wise_coverage_combiner; Workflow allwise-cdn.yml.
-note AllWISE (Quelle 2026-09-08): cov-3.fits.gz (4095px float32, BUNIT effective pixels); count max w1 323.8 -> Fraction effektive-Pixel/Nenntiefe; TAP wise.wise_allwise_p3am_cdd 18.240 coadd_ids/72.960 rows; 2026-09-09, Ernte-Dispatch Operator-Wort.
+note Fraktional (Nside 1024, order 10 gegen 2-GB-Grenze); Combiner wise_coverage_combiner; Workflow allwise-cdn.yml.
