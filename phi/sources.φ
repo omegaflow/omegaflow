@@ -19832,7 +19832,7 @@ format voyager1_merged
 origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/merged/voyager1_daily.asc
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/voyager_merged_compiler.rs
-at earth
+at voyager1
 ttl 604800
 field voyager1_b_nt voyager1_b_nt inverse-square em nT 604800 0.0 0.0
 field voyager1_speed_km_s voyager1_speed_km_s patch-levy advective km/s 604800 0.0 0.0
@@ -19844,7 +19844,7 @@ format voyager2_merged
 origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/merged/voyager2_daily.asc
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/voyager_merged_compiler.rs
-at earth
+at voyager2
 ttl 604800
 field voyager2_b_nt voyager2_b_nt inverse-square em nT 604800 0.0 0.0
 field voyager2_speed_km_s voyager2_speed_km_s patch-levy advective km/s 604800 0.0 0.0
