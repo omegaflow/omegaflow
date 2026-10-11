@@ -11,6 +11,7 @@ pub const MAGIC_GBCO: [u8; 4] = *b"GBCO";
 pub const MAGIC_SLB2: [u8; 4] = *b"SLB2";
 pub const MAGIC_OCS: [u8; 4] = *b"OCS1";
 pub const MAGIC_GMR: [u8; 4] = *b"GMR1";
+pub const MAGIC_EMOD: [u8; 4] = *b"EMOD";
 pub const MAGIC_ISSLIS: [u8; 4] = *b"ISL1";
 pub const MAGIC_LISOTD: [u8; 4] = *b"LOT1";
 pub const MAGIC_TRMMLIS: [u8; 4] = *b"TRL1";
@@ -703,6 +704,49 @@ pub fn write_gmr(records: &[GbcoRec]) -> Vec<u8> {
 
 pub fn parse_gmr(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
     if bytes.len() < 8 || bytes[0..4] != MAGIC_GMR {
+        return None;
+    }
+    let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    if bytes.len() != 8 + n * GBCO_REC_BYTES {
+        return None;
+    }
+    let mut out = Vec::with_capacity(n);
+    let mut off = 8usize;
+    for _ in 0..n {
+        let f64_of = |off: usize| {
+            bytes
+                .get(off..off + 8)
+                .and_then(|b| b.try_into().ok())
+                .map(f64::from_le_bytes)
+        };
+        let lat = f64_of(off)?;
+        off += 8;
+        let lon = f64_of(off)?;
+        off += 8;
+        let elev = f64_of(off)?;
+        off += 8;
+        if !lat.is_finite() || !lon.is_finite() || !elev.is_finite() {
+            return None;
+        }
+        out.push(GbcoRec { lat, lon, elev });
+    }
+    Some(out)
+}
+
+pub fn write_emod(records: &[GbcoRec]) -> Vec<u8> {
+    let mut buf = Vec::with_capacity(8 + records.len() * GBCO_REC_BYTES);
+    buf.extend_from_slice(&MAGIC_EMOD);
+    buf.extend_from_slice(&(records.len() as u32).to_le_bytes());
+    for r in records {
+        buf.extend_from_slice(&r.lat.to_le_bytes());
+        buf.extend_from_slice(&r.lon.to_le_bytes());
+        buf.extend_from_slice(&r.elev.to_le_bytes());
+    }
+    buf
+}
+
+pub fn parse_emod(bytes: &[u8]) -> Option<Vec<GbcoRec>> {
+    if bytes.len() < 8 || bytes[0..4] != MAGIC_EMOD {
         return None;
     }
     let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;

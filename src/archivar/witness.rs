@@ -22,7 +22,7 @@ pub fn magic_identity(magic: [u8; 4]) -> Option<FieldIdentity> {
         }
         b"SKY1" | b"SKD1" | b"VLDE" => Some(FieldIdentity::Witness(WitnessKind::S2Direction)),
         b"GBCO" | b"GL30" | b"GL90" | b"SLB2" | b"OCS1" | b"ERI1" | b"GMR1" | b"G3D1" | b"SRTM"
-        | b"BDOM" => Some(FieldIdentity::Witness(WitnessKind::Gestalt)),
+        | b"BDOM" | b"EMOD" => Some(FieldIdentity::Witness(WitnessKind::Gestalt)),
         b"ISCB" | b"EHB1" => Some(FieldIdentity::Witness(WitnessKind::Presence)),
         b"RIXS" | b"RIXC" | b"EELS" | b"SRD6" => {
             Some(FieldIdentity::Witness(WitnessKind::Substance))
