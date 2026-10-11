@@ -1534,7 +1534,7 @@ fn summarize(index_path: &str, out_path: &str) {
           walk, pointer monotonicity gate, per-body DAF-in-RAM with a uniform address\n\
           shift — and compiles the TNOs with sources.φ blocks: eris 2136199,\n\
           haumea 2136108, makemake 2136472; GM from IOM Table 1 via\n\
-          phi/pipeline/catalog/asteroid_gm_sb441.φ; roundtrip gate against the\n\
+          tools/harvest/data/asteroid/asteroid_gm_sb441.φ; roundtrip gate against the\n\
           stream, 400 epochs, ≤ 100 m). The remaining 370 n373 bodies stay named\n\
           pending (sources.φ blocks = SOURCE_PORT curation); the 12 bodies without\n\
           an SPK segment carry the Horizons 12-month windows; DASTCOM (K03) carries\n\

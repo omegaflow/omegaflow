@@ -39,8 +39,6 @@ phi/pipeline/frame_registry.φ
 
 section Katalog
 phi/pipeline/catalog/MANIFEST.φ
-phi/pipeline/catalog/asteroid_gm_inpop25c.φ
-phi/pipeline/catalog/asteroid_gm_sb441.φ
 phi/pipeline/catalog/copernicus_disposition.φ
 phi/pipeline/catalog/dryad_catalog.φ
 phi/pipeline/catalog/korpora_heim.φ
