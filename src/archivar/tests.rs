@@ -178,6 +178,7 @@ fn source_fixture(format: &str, extracts: Vec<Extract>) -> SourceConfig {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     }
@@ -908,6 +909,7 @@ fn test_render_source_url_substitutions() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -1199,6 +1201,7 @@ fn test_post_body_rendering() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -1276,6 +1279,7 @@ fn test_csv_zip_post_body_resolves_secret() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -1430,6 +1434,7 @@ fn test_celestial_map_redshift_distance() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -1542,6 +1547,7 @@ fn test_extract_csv_zip_end_to_end() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -1870,6 +1876,7 @@ fn test_extract_cmap_dist_scale_kpc() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -1975,6 +1982,7 @@ fn test_extract_cmap_epoch_mjd_converts_to_tdb() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -2075,6 +2083,7 @@ fn test_extract_cmap_dist_without_scale_is_absent() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -2172,6 +2181,7 @@ fn test_extract_cmap_rv_without_scale_is_absent() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -2277,6 +2287,7 @@ fn test_extract_cmap_pm_radvel_plx() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -2414,6 +2425,7 @@ fn test_extract_cmap_no_distance_skipped() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -2508,6 +2520,7 @@ fn test_extract_cmap_null_dist_skipped() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -2807,6 +2820,7 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -3981,6 +3995,7 @@ fn test_parse_station_entries() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -4047,6 +4062,7 @@ fn test_parse_station_entries_flatten_filter() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -5163,6 +5179,7 @@ fn test_erddap_argo_map_extract() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -5885,6 +5902,7 @@ fn test_anchor_body_agnostic() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -6040,6 +6058,7 @@ fn test_anchor_applies_declared_unit() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -8574,6 +8593,7 @@ fn test_diagnose_no_samples() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -8669,6 +8689,7 @@ fn test_ci_body_verdict() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -8920,6 +8941,7 @@ fn test_map_single_object_alt_scale_epoch_default() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -9031,6 +9053,7 @@ fn test_map_vel_unit_and_tau_key_override() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -9146,11 +9169,15 @@ fn test_parse_sky1_cdn_asset_block() {
             }
         }
     }
-    let witness = "witness s2-direction\nurl https://github.com/VERITAS-Observatory/VERITAS-VTSCat\nrecord sky1\nforce em\nnote VTSCat\n";
-    assert!(
-        super::parse_sources(witness).is_empty(),
-        "a witness block alone carries no ttl/field and is not a field source"
+    let witness = "url https://github.com/VERITAS-Observatory/VERITAS-VTSCat\nwitness s2-direction\nrecord sky1\nforce em\nno-cadence\n";
+    let witness_srcs = super::parse_sources(witness);
+    assert_eq!(
+        witness_srcs.len(),
+        1,
+        "a witness block carries the witness kind, not a field extract"
     );
+    assert_eq!(witness_srcs[0].witness.as_deref(), Some("s2-direction"));
+    assert!(witness_srcs[0].extracts.is_empty());
 }
 
 #[test]
@@ -9320,6 +9347,7 @@ fn test_fold_directive_parse_and_extract() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -9449,6 +9477,7 @@ fn test_keplermap_elements_to_icrs() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -9787,6 +9816,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -9897,6 +9927,7 @@ fn test_flux_from_mag_manifests() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -9999,6 +10030,7 @@ fn test_map_lat_sign_lon_sign() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -10123,6 +10155,7 @@ fn test_mag_type_gating() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };
@@ -11730,6 +11763,7 @@ fn fits_format_extracts_last_row() {
         cgm_source: None,
         geomag_lat: None,
         weberin_role: None,
+        witness: None,
         band: None,
         footprint: None,
     };

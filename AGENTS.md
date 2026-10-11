@@ -249,10 +249,9 @@ Vermutung:** der Eintrag verlangt den gemessenen **401 MIT dem vorhandenen Token
 (`.secrets.local`) — ein 401 ohne Token ist kein Key-Gap (der IONEX-Eintrag
 2026-09-16 widerlegt: mit `EARTHDATA_EDL_TOKEN` → HTTP 200). Erst messen, dann fordern.
 **Authentifizierung ist kein Ausschlusskriterium** (Operator-Wort 2026-10-08): ein `blocked account`/`blocked key` ist **kein Quellen-Verdikt**, sondern eine `pending`-Operator-Aufgabe — wo der Operator zugangsberechtigt ist oder ein Key bereits besteht, wird die Quelle über die **Auth-Route** geführt (Registrierung/Key als Operator-Hand), nie als `declined` gestrichen. Gilt generell für Quellen.
-Work surface: the flat `phi/` registers. The source-port backlog (`queue/`/`stage/`/`probe_*`/`ledger.φ`/`index.φ`) and the static catalog dispositions are `descoped` (2026-10-11) — live arms and `archive_search` supersede; the 12 real pending compilers stand in `state/zustand/wartend.φ`. Register: `phi/sources.φ` +
-`phi/witnesses.φ`. The
+Work surface: the flat `phi/` registers. The source-port backlog (`queue/`/`stage/`/`probe_*`/`ledger.φ`/`index.φ`) and the static catalog dispositions are `descoped` (2026-10-11) — live arms and `archive_search` supersede; the 12 real pending compilers stand in `state/zustand/wartend.φ`. Register: `phi/sources.φ` — the one data register; the `witness`/`record` blocks (the non-radiating witnesses) live inside it, the `field`/`force_type` blocks carry the force sources. The
 registers are the queue: `register_lookup --open` surfaces the state registers
-owner-tagged (`phi/sources.φ` + `witnesses.φ` + `nrs_stations.φ`;
+owner-tagged (`phi/sources.φ` + `nrs_stations.φ`;
 offene Marker → mycelium, `asset fehlt` → mountain); every state maps to an owner (gate-tested).
 Harvested data that stays belongs on the local machine in `data/` (final
 datasets as gitignored working copies `data/<netloc>/<datei>`) or the archivar
@@ -269,7 +268,7 @@ new session reads exactly that one document.
 
 The tracked `phi/*.φ` set is the canon, declared in `REGISTER_CLASSES` (`src/gate/commit_gate.rs`). A new tracked `phi/*.φ` file is an architecture act — it needs the operator/council word and a `REGISTER_CLASSES` entry in the same commit; the canon gate blocks silent creation.
 
-A register `note` carries the measured line only — at most 256 characters, no narration: the measurement tokens (code, hash, timestamp, host) stay, the story falls; the `note` is the measured evidence of the verdict, never documentation. `#` comments do not live in tracked registers (`prompt.φ` rule 1). The prose gate blocks new `note`-essays and register comments; the existing mass is relaxed register by register, never carried as a reason to inflate a new line. In `phi/sources.φ` the `note` directive is forbidden outright — it has no parser arm (writing it produces nothing); the Maschinen-Register carries directives only. The data registers carry directives only: since 2026-10-11 `phi/witnesses.φ` carries no `note` either (operator word — prose has no place in a data register; its blocks are `witness`/`url`/`record`/`force`). The gate blocks a new `note` in `phi/sources.φ` (`phi-sources-note`); over both stands the length/comment gate (`phi-note-length`, `phi-register-comment`).
+A register `note` carries the measured line only — at most 256 characters, no narration: the measurement tokens (code, hash, timestamp, host) stay, the story falls; the `note` is the measured evidence of the verdict, never documentation. `#` comments do not live in tracked registers (`prompt.φ` rule 1). The prose gate blocks new `note`-essays and register comments; the existing mass is relaxed register by register, never carried as a reason to inflate a new line. In `phi/sources.φ` the `note` directive is forbidden outright — it has no parser arm (writing it produces nothing); the Maschinen-Register carries directives only. The one data register carries directives only: since 2026-10-11 the witness blocks folded from the former `phi/witnesses.φ` into `phi/sources.φ` carry no `note` either (operator word — prose has no place in a data register; their blocks are `witness`/`url`/`record`/`force`). The gate blocks a new `note` in `phi/sources.φ` (`phi-sources-note`); over both stands the length/comment gate (`phi-note-length`, `phi-register-comment`).
 
 ### PII und Mail-Inhalte — nie getrackt
 

@@ -30555,6 +30555,35 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
+url http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
+witness s2-direction
+record sky1
+force em
+no-cadence
+
+url https://api.antares.noirlab.edu/v1/loci?page%5Blimit%5D=1000&page%5Boffset%5D=0
+witness s2-direction
+record skydirection
+force em
+no-cadence
+
+url https://api.lsst.fink-portal.org/api/v1/conesearch
+witness s2-direction
+record skydirection
+force em
+no-cadence
+
+url https://api.opentopodata.org/v1/gebco2020?locations=<lat>,<lng>
+witness gestalt
+record gbco
+no-cadence
+
+url https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
+witness s2-direction
+record sky1
+force em
+no-cadence
+
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_SWE&time.min=1994-12-29T00:00:00Z&time.max=2001-05-31T23:59:57Z&parameters=Te,el_bulk_vel_magn,el_density&format=json
 terms PD https://cdaweb.gsfc.nasa.gov/
 no-cadence
@@ -30571,6 +30600,51 @@ origin https://cedar.openmadrigal.org
 on earth 42.619 288.510 0.146
 no-cadence
 field NE openmadrigal_ne_m3 inverse-square em 1/m3 33554432.0 0.0 0.0
+
+url https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N{lat}_00_E{lon}_00_DEM/Copernicus_DSM_COG_10_N{lat}_00_E{lon}_00_DEM.tif
+witness gestalt
+record gl30
+no-cadence
+
+url https://dap.ceda.ac.uk/thredds/dodsC/bodc/gebco/global/gebco_2023/ice_surface_elevation/netcdf/GEBCO_2023_CF.nc.ascii?elevation[0:215:43199][0:431:86399]
+witness gestalt
+record gbco
+no-cadence
+
+url https://dap.ceda.ac.uk/thredds/dodsC/bodc/gebco/global/gebco_2026/ice_surface_elevation/netcdf/GEBCO_2026.nc.ascii?elevation[0:215:43199][0:431:86399]
+witness gestalt
+record gbco
+no-cadence
+
+url https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml
+witness s2-direction
+record sky1
+force em
+no-cadence
+
+url https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml
+witness s2-direction
+record sky1
+force em
+no-cadence
+
+url https://dataverse.harvard.edu/api/access/datafile/7502710
+witness s2-direction
+record s2e1 sky1
+force em
+no-cadence
+
+url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+witness s2-direction
+record amn1
+force em
+no-cadence
+
+url https://github.com/VERITAS-Observatory/VERITAS-VTSCat
+witness s2-direction
+record sky1
+force em
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/data.darts.isas.jaxa.jp/pds4_fixed_width_rs_20190704_105329_whm30_l2_v10.bin
 terms CC-BY-4.0 https://www.isas.jaxa.jp/en/researchers/data-policy/
@@ -31391,6 +31465,12 @@ sha256 8d716add977f245f207f2467962b5c55d86566858855adef37995f7f5d9a9682
 at voyager2
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vlies_density.vlde
+witness s2-direction
+record vlde
+force em
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/www.kari.re.kr/ephemeris_kplo.bin
 terms unknown https://www.kari.re.kr/
 format ephemeris_binary
@@ -31415,6 +31495,54 @@ sha256 f2b3afdc0a20f55eb07afbc52c97f189b39712ba1bb656c46c47d5cce47b74de
 at moon
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_OD1_0p33_0.txt
+witness substance
+record rixs
+force em
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_UD_0p33_0.txt
+witness substance
+record rixs
+force em
+no-cadence
+
+url https://gracedb.ligo.org/api/superevents/S250207bg/files/
+witness s2-direction
+record sky1
+force gravity
+no-cadence
+
+url https://gsaweb.ast.cam.ac.uk/alerts/alertsindex
+witness s2-direction
+record skydirection
+force em
+no-cadence
+
+url https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
+witness s2-direction
+record sky1
+force em
+no-cadence
+
+url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
+witness s2-direction
+record skydirection
+force em
+no-cadence
+
+url https://opendata.auger.org/catalog/data.zip
+witness s2-direction
+record pao1
+force em
+no-cadence
+
+url https://opendata.magic.pic.es
+witness s2-direction
+record sky1
+force em
+no-cadence
+
 url https://pds-geosciences.wustl.edu/venera/mpi-radiometry.dat
 terms PD https://pds-geosciences.wustl.edu/
 no-cadence
@@ -31435,6 +31563,75 @@ rows .
 lat 0
 lon 1
 quantity 2 venera15_16_surface_radius_km inverse-square geometry km 33554432.0 0.0 0.0
+
+url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+witness point-event
+record erbq
+force seismic-body
+no-cadence
+
+url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/5/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+witness point-event
+record erbq
+force seismic-body
+no-cadence
+
+url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/5/query?where=OBJECTID%20IN%20(1,2,3,4,5,6,7,9,12,13,14,16,17,18,21,22,23,24,25,26,30,31,32,33,34,35,36,37,38,40,42,43,44,45,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,70,72,73,75,76,77,81,82,83,85,87,89,90,91,92,94,95,96,98,101,102,103,105,107,108,109,110,111,112,113,115,117,118,120,121,122,123,124,125,126,127,128,130,134,135,137,138,139,140,142,143,144,145,146,147,148,149,150,151,155,156,157,158,160,161,162,163,164,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,183,184,187,188,189,190,191,192,193,194,195,196,197,198)&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+witness point-event
+record erbq_mainshock
+force seismic-body
+no-cadence
+
+url https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
+witness substance
+record srd6
+force em
+no-cadence
+
+url https://topex.ucsd.edu/pub/srtm15_plus/SRTM15_V2.6.nc
+witness gestalt
+record srtm
+no-cadence
+
+url https://vo.km3net.de/ant20_01/nu/cone/form
+witness s2-direction
+record s2e1 sky1
+force em
+no-cadence
+
+url https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=esriascii
+witness gestalt
+record gmr1
+no-cadence
+
+url https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=geotiff
+witness gestalt
+record gmr1
+no-cadence
+
+url https://www.jma.go.jp/bosai/quake/data/list.json
+witness point-event
+record erbq
+force seismic-body
+no-cadence
+
+url https://zenodo.org/api/records/15179114/files/data.zip/content
+witness substance
+record rixc
+force em
+no-cadence
+
+url https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content
+witness substance
+record eels
+force em
+no-cadence
+
+url https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content
+witness substance
+record rixs
+force em
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/download1.bayernwolke.de/32605_5282_20_DOM.bin
 terms CC-BY-4.0 https://www.geodaten.bayern.de/odd/m/3/html/nutzungsbedingungen.html

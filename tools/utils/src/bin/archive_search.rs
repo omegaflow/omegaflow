@@ -34,8 +34,6 @@ mod core_api;
 mod datacite;
 #[path = "archive_search/dataeuropa.rs"]
 mod dataeuropa;
-#[path = "archive_search/opensn.rs"]
-mod opensn;
 #[path = "archive_search/dataverse.rs"]
 mod dataverse;
 #[path = "archive_search/doaj.rs"]
@@ -96,6 +94,8 @@ mod openalex;
 mod openfda;
 #[path = "archive_search/openlibrary.rs"]
 mod openlibrary;
+#[path = "archive_search/opensn.rs"]
+mod opensn;
 #[path = "archive_search/osf.rs"]
 mod osf;
 #[path = "archive_search/paged.rs"]
@@ -1269,17 +1269,8 @@ fn collect_leads(
             sources_path.display()
         )
     })?;
-    let mut register_docs: Vec<String> = Vec::with_capacity(4);
+    let mut register_docs: Vec<String> = Vec::with_capacity(2);
     register_docs.push(sources);
-    if let Some(text) = optional_text(&repo.join("phi").join("blocked_sources.\u{3c6}")) {
-        register_docs.push(text);
-    }
-    if let Some(text) = optional_text(&repo.join("phi").join("dead_sources.\u{3c6}")) {
-        register_docs.push(text);
-    }
-    if let Some(text) = optional_text(&repo.join("phi").join("declined_sources.\u{3c6}")) {
-        register_docs.push(text);
-    }
     if let Some(text) = optional_text(&repo.join("phi").join("witnesses.\u{3c6}")) {
         register_docs.push(text);
     }
