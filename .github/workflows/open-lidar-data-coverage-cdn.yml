@@ -44,6 +44,7 @@ jobs:
           cargo run -p omegaflow-harvest --release --bin open_lidar_data_coverage -- \
             --prefix "${{ inputs.prefix }}" \
             --out "${{ inputs.manifest }}" \
+            --emit-ids data/open-lidar-data.s3.amazonaws.com/open_lidar_data_coverage.ids \
             --ci-mode \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "open-lidar-data-coverage-cdn: ${{ inputs.manifest }} returned void" \

@@ -26,12 +26,12 @@ jobs:
             netloc: ns_hwh.fundaments.nl
             out: ahn4_coverage.manifest
             # the walk is bounded in the bin itself (MAX_PAGES=100, PAGE_LIMIT=2000) — no bound flag
-            args: ""
+            args: "--emit-ids data/ns_hwh.fundaments.nl/ahn4_coverage.ids"
           - bin: swisstopo_coverage
             netloc: data.geo.admin.ch
             out: swisstopo_coverage.manifest
             # bounded default: 40 pages x 1000 assets = ~40k, one year of swisssurface3d
-            args: "--max-pages 40"
+            args: "--max-pages 40 --emit-ids data/data.geo.admin.ch/swisstopo_coverage.ids"
           - bin: linz_coverage
             netloc: nz-elevation.s3-ap-southeast-2.amazonaws.com
             out: linz_coverage.manifest
@@ -54,7 +54,7 @@ jobs:
             out: coverage_tnm.manifest
             # USGS TNM Access (Lidar Point Cloud LPC); an offset chain bounded by the fixed
             # MAX_PAGES=5000 constant (this bin carries no --max-pages flag); --limit is the page size
-            args: "--kind tnm --limit 1000"
+            args: "--kind tnm --limit 1000 --emit-ids data/tnmaccess.nationalmap.gov/coverage_tnm.ids"
           - bin: lola_coverage
             netloc: astrogeo-ard.s3.amazonaws.com
             out: lola_coverage.manifest

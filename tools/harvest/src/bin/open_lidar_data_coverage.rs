@@ -254,7 +254,7 @@ fn main() {
         text.len()
     );
 
-    if let Some(path) = emit_ids {
+    if let Some(path) = emit_ids.as_deref() {
         let id_lines = id_lines(&urls);
         let mut id_text = String::with_capacity(id_lines.len() * 128);
         for line in &id_lines {
@@ -274,6 +274,14 @@ fn main() {
             "open_lidar_data_coverage: {} tile ids -> {path}",
             id_lines.len()
         );
+    }
+    if ci_mode {
+        if let Some(path) = emit_ids.as_deref() {
+            if !upload_release(NETLOC, path) {
+                eprintln!("upload: {path} did not reach the CDN");
+                std::process::exit(1);
+            }
+        }
     }
 
     println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{MANIFEST_NAME}");

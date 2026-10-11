@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass, ein Atom (ein Operator-Wort). SPT-3G D1 partial-sky/RING-Pfad im `cmb_planck_compiler` gebaut (`pix2ang_ring` + `FitsTable`-Partial-Branch); `coverage-manifest.yml` um USGS-TNM + LOLA erweitert; `ci-check.yml` um den cmb-Bin-Test; `self-hosted-runner` per-Gerät-QoS descoped; MCP/Wrapper unverändert.
   class: handover
   date: 2026-10-11
-  sha256: fd929adce6cf0444de353d06856ea7c77d2dc2aa6bd05c5b6894058c256696e2
+  sha256: 01c3c2474c1f491b57761dd3c280b300c41740c566e4746c60f976146eb2f5b6
   status: live
 -->
 # Handover — Mycelium-Folge 308 (2026-10-11)
@@ -36,9 +36,9 @@ zitiert, nie kopiert). Diese Session konsumierte
 ### Open-LiDAR-Konsolidierung — Set-Diff + NL-Diff gemessen; Sidecar-Upload + CH-Lauf + Mountain-Verdikt offen
 - **Status:** eigen | **Bindung:** eigen · **Teile linie:mountain**
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) Schema `--emit-ids <id>\t<epoch>\t<href>` in `coverage.rs`/`ahn4_coverage.rs`/`swisstopo_coverage.rs`/`open_lidar_data_coverage.rs`; `coverage_id_diff.rs`. NL-Diff (`state/mycelium/lidar_id_diff_measured.md`): flai ⊇ AHN4-Origin außer `08BZ1`/`40HZ1` (raw 1375 missing = Namensraum-Riss). **Neu gemessen:** `--ci-mode` lädt nur das Haupt-Manifest hoch (`coverage.rs:716`, `ahn4_coverage.rs:493`, `swisstopo_coverage.rs:534`, `open_lidar_data_coverage.rs:286`) — der `--emit-ids`-Sidecar erreicht den CDN **nicht** (die `emit_ids`-Blöcke schreiben nur lokal).
-- **Blockade:** Sidecar-Upload fehlt; CH-Origin-Walk > 10 000 Items (Bound unvollständig).
-- **Braucht:** (a) Sidecar-Upload verdrahten — Option B (hält den R2-Mirror): nach dem `emit_ids`-Block `if ci_mode && !upload_release(&netloc, ids_pfad) { return Err(...) }` in den vier Bins; Option A: Workflow-Schritt `gh release upload "${{ matrix.netloc }}" <ids> --clobber --repo omegaflow/sources` (bypasst den R2-Mirror); (b) voller CH-Lauf in CI; (c) Mountain-Verdikt auf die gemessene NL-Basis (descope NL; Origin-Manifest behalten).
+- **Lage:** (gemessen 2026-10-11) Schema `--emit-ids <id>\t<epoch>\t<href>` in `coverage.rs`/`ahn4_coverage.rs`/`swisstopo_coverage.rs`/`open_lidar_data_coverage.rs`; `coverage_id_diff.rs`. NL-Diff (`state/mycelium/lidar_id_diff_measured.md`): flai ⊇ AHN4-Origin außer `08BZ1`/`40HZ1` (raw 1375 missing = Namensraum-Riss). **Neu (dieses Sub-Atom):** der Sidecar-Upload ist verdrahtet — die vier Bins laden den `--emit-ids`-Sidecar bin-seitig über `upload_release` (hält den R2-Mirror), `coverage-manifest.yml` übergibt `--emit-ids …` an ahn4/swisstopo/coverage-tnm, `open-lidar-data-coverage-cdn.yml` an open_lidar_data; 4 Bin-Builds + `cargo check` 0/0.
+- **Blockade:** CH-Origin-Walk > 10 000 Items (Bound unvollständig).
+- **Braucht:** (a) voller CH-Lauf in CI; (b) Mountain-Verdikt auf die gemessene NL-Basis (descope NL; Origin-Manifest behalten).
 
 ### coverage-manifest — USGS-TNM + LOLA verdrahtet; weitere Arme offen
 - **Status:** eigen | **Bindung:** eigen
@@ -47,12 +47,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** keine.
 - **Braucht:** (a) weitere Arme `s3-copc|s3-laz|wfs|arcgis|ept`; (b) STAC-Arm als eigene Matrix-Zeile (Planetary Computer) bei Bedarf.
 
-### Coverage-Manifest-Fetch-Loop (aus river-folge186 §An mycelium gefaltet) — usgs-Format + 104 Portale offen
+### Coverage-Manifest-Fetch-Loop (aus river-folge186 §An mycelium gefaltet) — usgs-Registrierung + nationales Portal-Inventar offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
 - **Lage:** (gemessen 2026-10-11, river-folge186) Der Arm `format coverage_manifest` steht in `src/archivar/main_flow.rs:5102-5224` (Manifest fetchen → `parse_coverage_manifest` → `shard_intersects_hull` über die eine `enclosure_rho` → überlappende Shards in den Cache; `cargo check`/`fmt` grün).
 - **Blockade:** keine.
-- **Braucht:** (a) `usgs_lidar_coverage.rs`-Manifest auf `shard <url> <6 f64>` entscheiden (emittiert weiter `url size`); (b) die 104 Nationalportale (`docs/surveys/survey-2026-10-10-worldwide-lidar-quellen.md`) enumerieren.
+- **Braucht:** (a) **Riss korrigiert (gemessen 2026-10-11):** `usgs_lidar_coverage.rs` emittiert bereits `shard <url>` (der Parser lädt das als `ShardPlacement::Pending`, `coverage_manifest.rs:39-45,78`); die alte „`url size`"-Behauptung ist stale (Commit `8739dffaa`). Der echte Gap: der Lader dispatcht nur auf `format == "coverage_manifest"` (`main_flow.rs:5103`), `usgs_lidar_coverage.rs:475` deklariert aber `format usgs_lidar_coverage`, und das Manifest ist **nicht** in `phi/sources.φ` registriert → Manifest mit `format coverage_manifest` registrieren (oder den Dispatch erweitern). (b) Portal-Inventar gemessen (2026-10-11): das Survey trägt **124** Tabellenzeilen (+9 DE-Prosa; „104" steht nirgends im Survey — Riss), `national_lidar_portals.txt` 143 Datenzeilen; neue Arme nach Portal-Zahl: **CKAN-REST** (größter Block: sk/es/pt/tw/qld/nsw/vic/ca/cnra/uy/cl/pacificdata) > **Earthdata-Granule-Index** (GEDI L2A/L4A, ATL03/08) > **CSW/OGC-API-Records** (INSPIRE).
 
 ### Frame/Epoche — bbox-off bleibt; Transform gehört an den Query-Time-Loader (Rat+UI bestätigt)
 - **Status:** eigen | **Bindung:** eigen · **Teile linie:mountain**
@@ -113,15 +113,18 @@ zitiert, nie kopiert). Diese Session konsumierte
 ### DEMETER (CDPP/REGARDS) — CI-Pfad dispatched; Register-Zeile offen (aus future-folge233 §An mycelium gefaltet)
 - **Status:** wartend | **Bindung:** eigen · **Teile linie:mountain**
 - **Trigger:** Lauf `demeter-cdn` run `38135966376` endet
-- **Lage:** (gemessen 2026-10-11) CI-Pfad stand: `.github/workflows/demeter-cdn.yml` (+ `demeter-aggregate-cdn.yml`), `demeter_compiler.rs` (CDN-Tag `regards.cnes.fr`, Monats-Assets `demeter_isl_YYYYMM.bin`, 64 B/record); Konsument `src/archivar/demeter.rs` + `demeter_harvest.rs`. Lizenz (gemessen): `cdpp.cnes.fr` **Licence Etalab-2.0** → redistributable mit Attribution. Lauf `38135966376` dispatcht (queued). `phi/sources.φ` trägt noch **keine** DEMETER-Zeile.
-- **Blockade:** eine neue Quellen-Zeile = gemeinsamer Akt (url/origin/compiler = Mycelium; Admission/terms/field = Mountain); kein Allein-Schreibakt.
-- **Braucht:** (a) `ci_manage view 38135966376`; (b) Register-Block DEMETER in `phi/sources.φ` (url/origin/compiler/CDN-Tag `regards.cnes.fr` + Mountain terms `Etalab-2.0`/admission/field).
+- **Lage:** (gemessen 2026-10-11) CI-Pfad stand: `.github/workflows/demeter-cdn.yml` (+ `demeter-aggregate-cdn.yml`), `demeter_compiler.rs` (CDN-Tag `regards.cnes.fr`, Monats-Assets `demeter_isl_YYYYMM.bin`, 64 B/record); Konsument `src/archivar/demeter.rs` + `demeter_harvest.rs`. Lizenz (gemessen): `cdpp.cnes.fr` **Licence Etalab-2.0** → redistributable mit Attribution. **Korrektur (gemessen 2026-10-11):** die Bin trägt **6 ISL-Langmuir-Sonden-Größen** — `demeter_isl_{orbit_count,ne_cm3,ni_cm3,te_k,vf_v,vi0_ms}`; **kein** ICE-E-Feld (der Adressblock war hier falsch). Die Monats-Assets `demeter_isl_20YYMM.bin` existieren **noch nicht** — der Release `regards.cnes.fr` trägt 77 Prä-Fix-Orbit-Namen (`cb20426b5`); Lauf `38135966376` queued. `phi/sources.φ` trägt noch **keine** DEMETER-Zeile.
+- **Blockade:** eine neue Quellen-Zeile = gemeinsamer Akt (url/origin/compiler = Mycelium; terms/field = Mountain); kein Allein-Schreibakt.
+- **Braucht:** (a) `ci_manage view 38135966376`, danach die Monats-Asset-Namen des Tags messen; (b) Register-Block DEMETER — **kein `admission`-Direktiv existiert** (nur `terms`/`field`, `src/archivar/parse.rs:123-135`); Mycelium: `url https://github.com/omegaflow/sources/releases/download/regards.cnes.fr/demeter_isl_YYYYMM.bin` · `format demeter_isl` · `origin https://regards.cnes.fr/api/v1/rs-catalog/engines/legacy/dataobjects/search?q=DatasetName:DMT_N1_1144` · `compiler tools/harvest/src/bin/demeter_compiler.rs` · `at earth` · `ttl 604800`; Mountain: `terms Etalab-2.0 <terms-URL>` + 6 `field`-Zeilen.
 
 ## Registrierte Korrekturen & Vorfälle
 
 - **cmb-cdn-Lauf rot, Ursache gemessen (2026-10-11):** `38129785553` failure im Compile-Step; Log: `NAXIS2 36557509 != 12*NSIDE^2 (8192)`. Kein Infra-Fehler — der SPT-3G-D1-Kopf ist partial-sky/RING/explizit (Range-Fetch gemessen); der Fix ist gebaut (s. offener Punkt).
 - **Router-QoS als descoped gemessen (2026-10-11, FRITZ!Box 7530):** keine Geräte-Priorisierung; `self-hosted-runner.md:68-73` fortgeschrieben; Operator-Akt fair-share gesetzt (kein Geräte-Vorrang).
 - **Zwei adressierte Blöcke gefaltet:** `future-folge233 §An mycelium` (KNMI-Incident geschlossen, t420-Throttle von Future gefahren, DEMETER, Router) und `river-folge186 §An mycelium` (Coverage-Manifest-Fetch-Loop).
+- **Riss — `usgs_lidar_coverage`-Format:** die Behauptung „emittiert weiter `url size`" (307/Braucht) ist widerlegt — der Baum emittiert `shard <url>` (Commit `8739dffaa`); der echte Gap ist der `format`-Dispatch (`main_flow.rs:5103`).
+- **Riss — „104 Nationalportale":** die Zahl steht nicht im Survey (gemessen: 124 Tabellenzeilen / 143 txt-Zeilen).
+- **Riss — DEMETER-Komponenten:** der Adressblock nannte ein „ICE-E-Feld"; die Bin trägt 6 ISL-Langmuir-Sonden-Größen (kein E-Feld), und die Monats-Assets fehlen noch (77 Prä-Fix-Namen).
 
 ## An mountain
 
@@ -130,7 +133,7 @@ Origin: mycelium-308 (2026-10-11).
 - **Descope-Verdikt Open-LiDAR — NL-Messung liegt vor:** `state/mycelium/lidar_id_diff_measured.md` — flai ⊇ AHN4-Origin außer `08BZ1`/`40HZ1` (Kachel-ID-Diff via `coverage_id_diff --normalize basename --strip-prefix c_`). Frage: `ahn4` (NL) als Origin-Quelle zugunsten des flai-Aggregats descopen? `swisstopo` (CH) — Origin > 10 000 Kacheln, Diff offen. `ign_lidarhd` (FR) nur partial. `linz` (NZ) bleibt. `ea_lidar_index` — behalten oder reicht flai UK DEFRA?
 - **Vier Portal-Coverage-`phi`-Blöcke** (aus folge305, offen): je Portal `url`/`origin`/`compiler`/`format` + `terms`/`at`/`ttl`. Netlocs: `ns_hwh.fundaments.nl` · `data.geo.admin.ch` · `nz-elevation.s3-ap-southeast-2.amazonaws.com` · `data.geopf.fr`.
 - **Bayern-DOM φ-Block** (aus folge304, offen) — `url …/download1.bayernwolke.de/32605_5282_20_DOM.bin` · `origin …/32605_5282_20_DOM.tif` · `compiler tools/harvest/src/bin/dom_compiler.rs` · `format bdom` · `sha256 a5da30f9f2766b6cfcb4e1898f097b8e9f0685c1bd08a3feaec54bc8a0acbaa8`.
-- **DEMETER Register-Block** (neu, mit mycelium): `regards.cnes.fr` — Admission/terms `Etalab-2.0`/Felder (ICE-E-Feld + ISL-Elektronendichte), parallel zu Myceliums url/origin/compiler.
+- **DEMETER Register-Block** (neu, mit mycelium): `regards.cnes.fr` — `terms Etalab-2.0 <URL>` + 6 `field`-Zeilen (`demeter_isl_{orbit_count,ne_cm3,ni_cm3,te_k,vf_v,vi0_ms}`; **kein** `admission`-Direktiv), parallel zu Myceliums url/origin/compiler.
 - **Asservatenkammer-Survey** `docs/surveys/survey-2026-10-08-research-api-mcp.md` — vier Marker auf den gemessenen Stand setzen (Perplexity live · Consensus 429 transient · Elicit descoped · SciSpace pending).
 
 ## LOCK
