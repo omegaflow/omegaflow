@@ -46,6 +46,16 @@ pub struct StreamerInfoHeader {
     pub class_name: String,
     pub checksum: u32,
     pub n_members: i32,
+    pub elements_offset: usize,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct StreamerElement {
+    pub class_name: String,
+    pub name: String,
+    pub title: String,
+    pub element_type: i32,
+    pub size: i32,
 }
 
 struct Cursor<'a> {
@@ -836,6 +846,7 @@ pub fn parse_streamer_info_header(bytes: &[u8]) -> Option<StreamerInfoHeader> {
     if n_members < 0 {
         return None;
     }
+    let elements_offset = c.pos;
 
     Some(StreamerInfoHeader {
         version,
@@ -843,7 +854,62 @@ pub fn parse_streamer_info_header(bytes: &[u8]) -> Option<StreamerInfoHeader> {
         class_name,
         checksum,
         n_members,
+        elements_offset,
     })
+}
+
+pub fn parse_streamer_elements(
+    obj: &[u8],
+    start: usize,
+    n_members: u32,
+) -> Result<Vec<StreamerElement>, &'static str> {
+    let mut c = Cursor::new(obj, start);
+    let mut elements = Vec::with_capacity(n_members as usize);
+    for _ in 0..n_members {
+        let frame_start = c.pos;
+        let outer = c.u32().ok_or("streamer element frame count absent")?;
+        if outer & K_BYTE_COUNT_MASK == 0 {
+            return Err("streamer element frame count absent");
+        }
+        let frame_end = frame_start
+            .checked_add(4)
+            .and_then(|pos| pos.checked_add((outer & !K_BYTE_COUNT_MASK) as usize))
+            .ok_or("streamer element frame end overflow")?;
+        if frame_end > obj.len() {
+            return Err("streamer element frame end beyond object");
+        }
+        let tag = c.u32().ok_or("streamer element class tag absent")?;
+        let class_name = if tag == K_NEW_CLASS_TAG {
+            c.class_tag_name()
+                .ok_or("streamer element class name absent")?
+                .to_string()
+        } else {
+            String::new()
+        };
+        c.read_version().ok_or("streamer element version absent")?;
+        c.read_version()
+            .ok_or("streamer element TNamed version absent")?;
+        c.skip_version()
+            .ok_or("streamer element TObject version absent")?;
+        c.u32().ok_or("streamer element fUniqueID absent")?;
+        c.u32().ok_or("streamer element fBits absent")?;
+        let name = c.tstring().ok_or("streamer element fName absent")?;
+        let title = c.tstring().ok_or("streamer element fTitle absent")?;
+        let element_type = c.i32().ok_or("streamer element fType absent")?;
+        let size = c.i32().ok_or("streamer element fSize absent")?;
+        if c.pos > frame_end {
+            return Err("streamer element body exceeds its frame");
+        }
+        elements.push(StreamerElement {
+            class_name,
+            name,
+            title,
+            element_type,
+            size,
+        });
+        c.pos = frame_end;
+    }
+    Ok(elements)
 }
 
 #[cfg(test)]
