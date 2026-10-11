@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass. Faltung des river-`## An mycelium`-Blocks (OMNI2 1h present), usgs_lidar_coverage-Manifest auf shard-Form geschnitten (ept.json/boundary.json heraus), ECAD/WorldClim-sha256 auf die materialisierten Bytes gesetzt, ECAD/DWD/WorldClim/AODN/SURFRAD/Radar-Assets gemessen, cmb-cdn/surfrad-cdn/omni2-cdn neu dispatcht.
   class: handover
   date: 2026-10-11
-  sha256: d7ef690ec83d276bb91226d84ee83059dd6c3402f5a853c26d638eacc8cca25b
+  sha256: 940eecc0bba46fc18afb29778c31f4199d6b9a3ac1482cd4f16affe2966995a4
   status: live
 -->
 # Handover — Mycelium-Folge 304 (2026-10-11)
@@ -85,7 +85,10 @@ zitiert, nie kopiert). Diese Session konsumierte
   Katalog-Caller mit GB-Asset verbraucht worden. Die **großen** Compiler (Bayern-DOM
   100 MB, WorldClim 2 GB, cmb) sind **standalone** (kein `OMEGAFLOW_R2_MIRROR`) und
   spiegeln **nicht** — der Burn käme aus der `cdn-manifest`-Familie, nicht von Dominosteinen.
-  Absicht laut folge295:165: „R2 **10 GB frei** trägt nur Manifeste/Indizes".
+  **Absicht (Rat-Verdikt `survey-2026-10-10-github-ci-cdn-optimierung.md:90/242`):** R2 =
+  **Hot-Tier für kleine Manifeste/Indizes**, Bulk bleibt GitHub-Release-Assets ($0, 1,76 TB);
+  keine Bulk-Migration. **Kein R2-Leser im Baum** (`main_flow.rs` liest Releases) — der
+  Spiegel ist vorgebaut, sein Wert `pending` bis zum gemessenen Leser.
 - **Bucket-Stand (gemessen 2026-10-11 `r2_probe --list`, signiertes ListObjectsV2):
   `omegaflow-sources` = 2 Objekte, 519 127 B = 0,001 GB** (`impc_roti.bin` 518 408 B,
   `dsn_snapshot.bin` 719 B) — **nichts verbrannt**; die meisten `cdn-manifest`-Läufe
@@ -94,8 +97,9 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Braucht:** **Cap gesetzt** — `r2_mirror` überspringt Dateien über `R2_MIRROR_MAX_BYTES`
   = 16 MiB (`OMEGAFLOW_R2_MIRROR_MAX_BYTES` überschreibbar; Commit `70a66b9d6`), die
   Dataset-Klasse bleibt auf dem Release. Misswerkzeug: `r2_probe --list` (Commit `210c34b7f`).
-  Der **Schwellwert 16 MiB** ist eine Setzung (Manifest-/Index-Größe) — ein anderes Maß
-  ist ein Operator-/Rat-Wort.
+  Der **Schwellwert 16 MiB** folgt dem Rat-Satz „kleine Manifeste/Indizes"; **offen** bleibt
+  die **Eviction-Policy** (Roster `:262`: LRU nach CI-Zugriffszeit) — ein eigener Rat-Punkt,
+  kein Operator-Wort.
 
 ### MCP — lokale no-leak-Server (Rat-Verdikt: Regel vor Knoten)
 - **Status:** eigen | **Bindung:** eigen
