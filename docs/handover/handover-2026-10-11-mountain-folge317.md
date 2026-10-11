@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — MLA-Compiler auf die RDR-Route (rdr_radr/, rekursiver Jahr/Monat-Walk) umgebaut + gebaut; te-bias-n-CI success; ci-gate/subset laufen am neuen HEAD; adressierte Blöcke gefaltet
   class: handover
   date: 2026-10-11
-  sha256: f52131cf2970d5ee67515c210a4d948f44cfddde254f8a8cf563e8292537b68a
+  sha256: 5cf54095542a059bc61f35b695f3a7fc054b23d2d51487557c2cee1ac35bd551
   status: live
 -->
 # Handover — Mountain-Folge 317 (2026-10-11)
@@ -19,7 +19,7 @@ Session konsumierte `handover-2026-10-11-mountain-folge316.md` (→ `archiv/`).
 ### ci-gate — format + register geheilt; Läufe am neuen HEAD
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der nächste `ci-gate`-Lauf am neuen HEAD
-- **Lage:** (gemessen 2026-10-11 via `ci_manage list`) am HEAD `393cc26fe` laufen mehrere `ci-gate` (`38151750211`/`38151695723`/`38151330684`/`38150985884`, alle `in_progress`); der letzte abgeschlossene `ci-gate` `38143265804` trug `format`+`register` failure (in folge316 geheilt: `cargo fmt` der zwei Compiler, `register_sort --write`). Zusätzlich rot: `ci-check` `38150999644` (`test (4)`, Träger Mycelium/Stehender Pass).
+- **Lage:** (gemessen 2026-10-11 via `ci_manage list`) am HEAD `393cc26fe` laufen mehrere `ci-gate` (`38151750211`/`38151695723`/`38151330684`/`38150985884`, alle `in_progress`); der letzte abgeschlossene `ci-gate` `38143265804` trug `format`+`register` failure (in folge316 geheilt: `cargo fmt` der zwei Compiler, `register_sort --write`). Zusätzlich rot: `ci-check` `38150999644` (`test (4)`, Träger Mycelium/Stehender Pass). Post-push `tools-build` `38152726843` dispatcht (MLA-Compiler bin).
 - **Blockade:** `cargo test` läuft nur in CI; kein Polling.
 - **Braucht:** einen der `in_progress`-Läufe **einmal** lesen (`ci_manage log <id>`), sobald abgeschlossen — format/register/subset grün?
 
