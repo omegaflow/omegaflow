@@ -1,4 +1,4 @@
-use omegaflow::archivar::{RetryPolicy, TRANSFER_BOUND_S, fetch_raw_with};
+use omegaflow::archivar::{RetryPolicy, TRANSFER_BOUND_S, fetch_raw_with, http_code};
 use omegaflow::cdn::{CDN_BASE, upload_release};
 use std::env;
 use std::fs;
@@ -329,8 +329,72 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
         .cloned()
 }
 
-fn fetch_page(url: &str) -> Option<String> {
-    fetch_raw_with(url, None, &[], RetryPolicy::All, TRANSFER_BOUND_S)
+enum FetchOutcome {
+    Body(String),
+    NotFound,
+    Void,
+}
+
+fn fetch_page(url: &str) -> FetchOutcome {
+    match fetch_raw_with(url, None, &[], RetryPolicy::All, TRANSFER_BOUND_S) {
+        Some(body) => FetchOutcome::Body(body),
+        None if http_code(url, &[]) == Some(404) => FetchOutcome::NotFound,
+        None => FetchOutcome::Void,
+    }
+}
+
+fn walk_catalogue<F>(
+    mut fetch: F,
+    mut url: String,
+    max_pages: Option<usize>,
+) -> Result<(usize, Vec<String>), String>
+where
+    F: FnMut(&str) -> FetchOutcome,
+{
+    let mut pages = 0usize;
+    let mut lines: Vec<String> = Vec::new();
+    loop {
+        if let Some(m) = max_pages {
+            if pages >= m {
+                break;
+            }
+        }
+        match fetch(&url) {
+            FetchOutcome::Body(body) => {
+                let page = match page_of(&body) {
+                    Some(p) => p,
+                    None => {
+                        return Err(format!(
+                            "page {} did not read as a FeatureCollection ({url}) — the walk stays incomplete",
+                            pages + 1
+                        ));
+                    }
+                };
+                pages += 1;
+                #[cfg(not(test))]
+                eprintln!(
+                    "ea_lidar_index: page {pages} carried {} feature(s), {} tile line(s) — the walk continues",
+                    page.number_returned,
+                    page.tiles.len()
+                );
+                lines.extend(page.tiles);
+                match page.next_href {
+                    Some(h) if page.number_returned > 0 => {
+                        url = resolve_href(&url, &h);
+                    }
+                    _ => break,
+                }
+            }
+            FetchOutcome::NotFound if pages >= 1 => break,
+            FetchOutcome::NotFound | FetchOutcome::Void => {
+                return Err(format!(
+                    "page {} returned void ({url}) — the walk stays incomplete",
+                    pages + 1
+                ));
+            }
+        }
+    }
+    Ok((pages, lines))
 }
 
 fn page_url(limit: usize) -> String {
@@ -374,41 +438,7 @@ fn run(args: &[String]) -> Result<(), String> {
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
 
-    let mut url = page_url(limit);
-    let mut pages = 0usize;
-    let mut lines: Vec<String> = Vec::new();
-    loop {
-        if let Some(m) = max_pages {
-            if pages >= m {
-                break;
-            }
-        }
-        let body = fetch_page(&url).ok_or_else(|| {
-            format!(
-                "page {} returned void ({url}) — the walk stays incomplete",
-                pages + 1
-            )
-        })?;
-        let page = page_of(&body).ok_or_else(|| {
-            format!(
-                "page {} did not read as a FeatureCollection ({url}) — the walk stays incomplete",
-                pages + 1
-            )
-        })?;
-        pages += 1;
-        eprintln!(
-            "ea_lidar_index: page {pages} carried {} feature(s), {} tile line(s) — the walk continues",
-            page.number_returned,
-            page.tiles.len()
-        );
-        lines.extend(page.tiles);
-        match page.next_href {
-            Some(h) if page.number_returned > 0 => {
-                url = resolve_href(&url, &h);
-            }
-            _ => break,
-        }
-    }
+    let (pages, lines) = walk_catalogue(fetch_page, page_url(limit), max_pages)?;
 
     if lines.is_empty() {
         return Err(format!(
@@ -504,5 +534,83 @@ mod tests {
             None => panic!("the page reads"),
         };
         assert!(page.tiles.is_empty());
+    }
+
+    #[test]
+    fn a_terminal_404_ends_the_walk_with_the_accumulated_tiles() {
+        let mut calls = 0usize;
+        let fetched = walk_catalogue(
+            |_url| {
+                calls += 1;
+                match calls {
+                    1 => FetchOutcome::Body(PAGE.to_string()),
+                    2 => FetchOutcome::NotFound,
+                    n => panic!("the walk stops at the terminal 404 (call {n})"),
+                }
+            },
+            "https://environment.data.gov.uk/items".to_string(),
+            None,
+        );
+        let (pages, lines) = match fetched {
+            Ok(v) => v,
+            Err(e) => panic!("the terminal 404 ends the walk: {e}"),
+        };
+        assert_eq!(calls, 2);
+        assert_eq!(pages, 1);
+        assert_eq!(
+            lines,
+            vec![
+                "tile TF7044_P_11243_20171107_20171107.laz 0.529889 52.966211 0.541508 52.984397 1218591"
+                    .to_string()
+            ]
+        );
+    }
+
+    #[test]
+    fn a_first_page_404_stays_a_real_void() {
+        let fetched = walk_catalogue(
+            |_url| FetchOutcome::NotFound,
+            "https://environment.data.gov.uk/items".to_string(),
+            None,
+        );
+        assert!(fetched.is_err());
+    }
+
+    #[test]
+    fn a_transient_void_after_a_walked_page_stays_incomplete() {
+        let mut calls = 0usize;
+        let fetched = walk_catalogue(
+            |_url| {
+                calls += 1;
+                if calls == 1 {
+                    FetchOutcome::Body(PAGE.to_string())
+                } else {
+                    FetchOutcome::Void
+                }
+            },
+            "https://environment.data.gov.uk/items".to_string(),
+            None,
+        );
+        assert!(fetched.is_err());
+    }
+
+    #[test]
+    fn max_pages_bounds_the_walk() {
+        let mut calls = 0usize;
+        let fetched = walk_catalogue(
+            |_url| {
+                calls += 1;
+                FetchOutcome::Body(PAGE.to_string())
+            },
+            "https://environment.data.gov.uk/items".to_string(),
+            Some(2),
+        );
+        let (pages, lines) = match fetched {
+            Ok(v) => v,
+            Err(e) => panic!("the bounded walk reads: {e}"),
+        };
+        assert_eq!(calls, 2);
+        assert_eq!(pages, 2);
+        assert_eq!(lines.len(), 2);
     }
 }

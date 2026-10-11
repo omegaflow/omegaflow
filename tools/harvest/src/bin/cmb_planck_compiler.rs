@@ -138,8 +138,8 @@ fn read_table(bytes: &[u8]) -> Option<(Table, String)> {
 
 fn read_table_partial(bytes: &[u8]) -> Option<(PartialTable, String)> {
     let (_, off) = FitsHeader::parse(bytes, 0)?;
-    let (h, hdu_start) = FitsHeader::parse(bytes, off)?;
-    let (fits, _) = FitsTable::parse(bytes, hdu_start)?;
+    let (h, _) = FitsHeader::parse(bytes, off)?;
+    let (fits, _) = FitsTable::parse(bytes, off)?;
     let nside = h.int("NSIDE")?;
     if nside <= 0 || (nside & (nside - 1)) != 0 {
         eprintln!("NSIDE {nside} is not a positive power of two — the map stays unwritten");
@@ -198,14 +198,14 @@ fn read_table_partial(bytes: &[u8]) -> Option<(PartialTable, String)> {
 
 fn read_map(bytes: &[u8]) -> Option<Map> {
     let (_, off) = FitsHeader::parse(bytes, 0)?;
-    let (h, hdu_start) = FitsHeader::parse(bytes, off)?;
+    let (h, _) = FitsHeader::parse(bytes, off)?;
     let ordering = h
         .str_unescaped("ORDERING")
         .map(|s| s.trim().to_ascii_uppercase());
     let indxschm = h
         .str_unescaped("INDXSCHM")
         .map(|s| s.trim().to_ascii_uppercase());
-    let has_pixel = FitsTable::parse(bytes, hdu_start)
+    let has_pixel = FitsTable::parse(bytes, off)
         .map(|(t, _)| t.column("PIXEL").is_some())
         .unwrap_or(false);
     let partial =

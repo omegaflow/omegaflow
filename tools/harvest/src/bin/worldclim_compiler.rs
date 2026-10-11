@@ -37,7 +37,7 @@ const PREC_MAX_MM: f64 = 65535.0;
 const NODATA_ABS: f64 = 3.0e38;
 const REFERENCE_SURFACE_ALT: f64 = 0.0;
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Variable {
     Tavg,
     Tmin,

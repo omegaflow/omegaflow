@@ -60,6 +60,12 @@ jobs:
             out: lola_coverage.manifest
             # LOLA COPC emitter; the S3 walk follows continuation tokens to the end (bucket/prefix defaults)
             args: ""
+          - bin: ckan_coverage
+            netloc: data.cnra.ca.gov
+            out: ckan_coverage.manifest
+            # CNRA CKAN package_search (q=title:lidar, keyless); an offset walk bounded by the fixed
+            # MAX_PAGES=200 / PAGE_SIZE=100 constants (this bin carries no bound flag)
+            args: "--emit-ids data/data.cnra.ca.gov/ckan_coverage.ids"
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1

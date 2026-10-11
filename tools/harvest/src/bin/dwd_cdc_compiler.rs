@@ -198,6 +198,7 @@ struct Row {
     values: [Option<f64>; NFIELDS],
 }
 
+#[derive(Debug, PartialEq)]
 struct Station {
     lat: f64,
     lon: f64,
