@@ -26,6 +26,3 @@ phi/library.φ
 
 section Reports
 phi/scan_coverage.φ
-
-section Korpora
-phi/korpora_heim.φ

@@ -69,7 +69,6 @@ phi/*
 !phi/bands.φ
 !phi/library.φ
 !phi/scan_coverage.φ
-!phi/korpora_heim.φ
 # Asteroid-Diameter-Kataloge sind Compiler-Eingaben (dastcom_compiler/kernel-flatten) — groß und nicht auf dem CI-Runner; die gm-Kataloge sind getrackt, die Diameter bleiben lokal.
 tools/harvest/data/asteroid/asteroid_diameters_*.φ
 
