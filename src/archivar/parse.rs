@@ -2912,39 +2912,42 @@ mod tests {
     }
 
     #[test]
-    fn every_cdn_source_carries_its_origin_and_compiler_or_is_a_reference() {
+    fn every_cdn_source_carries_its_origin_and_producer_or_is_a_reference() {
         let content = std::fs::read_to_string("phi/sources.φ").expect("phi/sources.φ reads");
         let mut missing: Vec<String> = Vec::new();
         let mut url = String::new();
         let mut cdn = false;
         let mut origin = false;
         let mut compiler = false;
-        let mut reference = false;
+        let mut format = false;
+        let mut witness = false;
         for line in content.lines() {
             let mut words = line.split_whitespace();
             match words.next() {
                 Some("url") => {
-                    if cdn && !(origin && (compiler || reference)) {
+                    if cdn && !witness && !(origin && (compiler || format)) {
                         missing.push(url.clone());
                     }
                     url = words.next().map_or(String::new(), str::to_string);
                     cdn = url.contains("/releases/download/");
                     origin = false;
                     compiler = false;
-                    reference = false;
+                    format = false;
+                    witness = false;
                 }
                 Some("origin") => origin = true,
                 Some("compiler") => compiler = true,
-                Some("format") => reference = words.next() == Some("reference"),
+                Some("format") => format = true,
+                Some("witness") => witness = true,
                 _ => {}
             }
         }
-        if cdn && !(origin && (compiler || reference)) {
+        if cdn && !witness && !(origin && (compiler || format)) {
             missing.push(url);
         }
         assert!(
             missing.is_empty(),
-            "CDN sources without origin/compiler: {missing:?}"
+            "CDN sources without origin/producer: {missing:?}"
         );
     }
 
