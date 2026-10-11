@@ -11218,13 +11218,6 @@ at earth
 ttl 604800
 field onc_hydrophone_psd_db onc_hydrophone_psd_db gaussian-inverse-square acoustic dB 300 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/data.phys.ucalgary.ca/themis_asi_timed_keogram.bin
-origin https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/stream0/<YYYY>/<MM>/<DD>/<label>/ut<HH>/<YYYYMMDD>_<HHMM>_<label>_full.pgm.gz
-compiler tools/harvest/src/bin/themis_asi_timed_keogram_compiler.rs
-format themis_asi_timed_keogram
-at earth
-ttl 604800
-
 url https://github.com/omegaflow/sources/releases/download/datacenter.iers.org/iers_eop_c04_lod.bin
 terms unknown https://datacenter.iers.org/data/latestVersion/EOP_20_C04_one_file_1962-now.txt
 format iers_eop_c04_lod

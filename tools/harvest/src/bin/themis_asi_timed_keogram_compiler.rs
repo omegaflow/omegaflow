@@ -10,7 +10,6 @@ const BASE: &str = "https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/str
 const COMPILER: &str = "tools/harvest/src/bin/themis_asi_timed_keogram_compiler.rs";
 const FORMAT: &str = "themis_asi_timed_keogram";
 const TTL: u64 = 604800;
-const ASSET: &str = "themis_asi_timed_keogram.bin";
 const SUFFIX: &str = "_full.pgm.gz";
 
 const FRAME_W: usize = 256;
@@ -431,7 +430,11 @@ fn run(args: &[String]) -> Result<(), String> {
         frames.len(),
         bytes.len()
     );
-    emit(ASSET, origin_template(), &sha);
+    let asset = match out.rsplit('/').next() {
+        Some(name) if !name.is_empty() => name,
+        _ => out.as_str(),
+    };
+    emit(asset, origin_template(), &sha);
     if ci_mode && !upload_release(NETLOC, &out) {
         return Err(format!("{out}: CDN upload returned void"));
     }

@@ -2410,12 +2410,13 @@ fn is_word_byte(b: u8) -> bool {
 }
 
 fn offer_word(word: &str, pending: &mut BTreeSet<String>, found: &mut BTreeSet<String>) {
-    if pending.remove(word) {
-        found.insert(word.to_string());
+    let lower = word.to_lowercase();
+    if pending.remove(&lower) {
+        found.insert(lower);
         return;
     }
-    if word.contains('-') {
-        for part in word.split('-') {
+    if lower.contains('-') {
+        for part in lower.split('-') {
             if !part.is_empty() && pending.remove(part) {
                 found.insert(part.to_string());
             }
@@ -3950,6 +3951,17 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         assert_eq!(entries[1].binary, "weberin_verdicts_compiler");
         assert_eq!(entries[1].format, None);
         assert_eq!(entries[1].anchor, None);
+    }
+
+    #[test]
+    fn offer_word_matches_the_lowercased_pending_token() {
+        let mut pending: BTreeSet<String> = ["asservatenkammer".to_string()]
+            .into_iter()
+            .collect();
+        let mut found: BTreeSet<String> = BTreeSet::new();
+        offer_word("Asservatenkammer-Survey", &mut pending, &mut found);
+        assert!(found.contains("asservatenkammer"));
+        assert!(!pending.contains("asservatenkammer"));
     }
 
     #[test]
