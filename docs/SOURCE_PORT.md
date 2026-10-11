@@ -374,8 +374,8 @@ Nur die **Schlüsselnamen** werden je gelesen, nie die Werte (Secret-Hygiene).
 - **Provenienz.** Ein behaltenes Fetch-Artefakt liegt als `data/<netloc>/<datei>`
   (netloc = Host der Quell-URL) und trägt als Sidecar `<artefakt>.src` seine
   Quell-URL (erste Zeile = exakte URL). Das Werkzeug schreibt den Sidecar an
-  seinen Schreibstellen (`archive_search --pdf-image`/`--arxiv-src` →
-  `<artefakt>.src`); ein rohes `curl -o`/Shell-Redirect schreibt im selben
+  seinen Schreibstellen (`archive_search --pdf-image`/`--arxiv-src`/
+  `--alphaxiv-call --out` → `<artefakt>.src`); ein rohes `curl -o`/Shell-Redirect schreibt im selben
   Schritt `<artefakt>.src` und legt die Datei unter `data/<netloc>/` ab — ein
   Artefakt ohne Sidecar oder außerhalb `data/<netloc>/` trägt keine kanonische
   Einordnung.
