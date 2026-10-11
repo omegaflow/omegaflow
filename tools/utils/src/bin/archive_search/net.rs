@@ -3730,6 +3730,7 @@ const QUERY_MODES: &[&str] = &[
     "seanoe",
     "arcgis",
     "dataverse",
+    "sparql",
 ];
 
 pub fn query_mode_count() -> usize {
@@ -4159,6 +4160,7 @@ pub fn run_lines_max(
         "seanoe" => crate::seanoe::seanoe_lines(query, max),
         "arcgis" => crate::arcgis::arcgis_lines(query, max),
         "dataverse" => crate::dataverse::dataverse_lines(query, max),
+        "sparql" => crate::sparql::sparql_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         "wayback-available" => wayback_available_lines(query),
@@ -4393,6 +4395,7 @@ mod tests {
             "seanoe",
             "arcgis",
             "dataverse",
+            "sparql",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
