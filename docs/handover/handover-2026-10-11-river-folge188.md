@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — THEMIS-ASI-Querprobe GILL gemessen (kein aufgelöster Breakup; stream2-Keogramm achsenlos/nahezu leer), JUICE/Flyby-Trägerschaft von Sensory gefaltet
   class: handover
   date: 2026-10-11
-  sha256: 155f9d120590b9c5d1f63267d26165659aea7ece4d35786087587c44562628cf
+  sha256: c48abe4d0cb9f15ef62308d5e7792f20e4f26095b13a39b8fea89afd6bf4a8ad
   status: live
 -->
 # Handover — River-Folge 188 (2026-10-11)
@@ -82,9 +82,9 @@ Verbatim: `state/operator-gespraeche/2026-10-11-river.md`, `2026-10-10-river.md`
 ### Netz-End-Validator — GIC-Validator gebaut (FMI/BPA), OE-417 ohne GMD (Riss)
 - **Status:** eigen (Messung) | **Bindung:** eigen
 - **Trigger:** der nächste Mess-Schritt (BGS-GIC-Endpunkt + GIC↔Onset-Korrelation).
-- **Lage:** (gemessen 2026-10-11 gegen den Baum) der harte Validator ist **gebaut**: `fmi_gic_1min` (`phi/sources.φ:20233`, Compiler `tools/harvest/src/bin/fmi_gic_compiler.rs`) und `bpa_gic` mit 11 Trafo-Kanälen (`phi/sources.φ:358`, `bpa_gic_compiler.rs`); beide CDN-Assets vorhanden (`…/space.fmi.fi/fmi_gic_1min.bin`, `…/transmission.bpa.gov/bpa_gic.bin`). OE-417 (**echtes Portal `doe417.pnnl.gov`**, `eia.gov` tot) + EAGLE-I sind von Mycelium registriert (`oe417-cdn`/`eaglei-cdn` = success, `mycelium-311`). **Riss:** OE-417 trägt **keine GMD-Kategorie** — 24 Jahressummaries 2002–2025 (`data/eia.gov/`) + PNNL-Taxonomie ohne `geomag`/`magnetic`/`GMD`/`solar`/`space weather` (positive Kontrollen `weather`/`vandalism` > 0) → die Dossier-Prämisse „OE-417 → GMD↔Netz (Sierra Porta 2025)" ist widerlegt. **NERC-GMD-Event-Liste** (`nerc.com/…/gmd-event-list`) ist erreichbar (HTTP 200), liefert aber **keine statischen Ereignisse** (gerendert nur Navigation, Events JS/API-geladen) — kein einfacher maschinenlesbarer Pfad. BGS-GIC-Endpunkt `geomag.bgs.ac.uk/data_service/space_weather/gic.html` = **404** (gemessen).
-- **Blockade:** kein GMD-Label in OE-417; NERC-GMD-Events nur JS/API; BGS-GIC-Pfad 404.
-- **Braucht:** den korrekten BGS-GIC-Endpunkt messen/registrieren (Mountain); dann die GIC-Reihen (FMI/BPA, gebaut) gegen die Detektor-Onsets korrelieren (`nur_gic_relation_probe`, `docs/paper/gic-causal-driver.md`); EAGLE-I nur als schwacher Null-Check.
+- **Lage:** (gemessen 2026-10-11 gegen den Baum) der harte Validator ist **gebaut**: `fmi_gic_1min` (`phi/sources.φ:20233`, Compiler `tools/harvest/src/bin/fmi_gic_compiler.rs`) und `bpa_gic` mit 11 Trafo-Kanälen (`phi/sources.φ:358`, `bpa_gic_compiler.rs`); beide CDN-Assets vorhanden (`…/space.fmi.fi/fmi_gic_1min.bin`, `…/transmission.bpa.gov/bpa_gic.bin`). OE-417 (**echtes Portal `doe417.pnnl.gov`**, `eia.gov` tot) + EAGLE-I sind von Mycelium registriert (`oe417-cdn`/`eaglei-cdn` = success, `mycelium-311`). **Riss:** OE-417 trägt **keine GMD-Kategorie** — 24 Jahressummaries 2002–2025 (`data/eia.gov/`) + PNNL-Taxonomie ohne `geomag`/`magnetic`/`GMD`/`solar`/`space weather` (positive Kontrollen `weather`/`vandalism` > 0) → die Dossier-Prämisse „OE-417 → GMD↔Netz (Sierra Porta 2025)" ist widerlegt. **NERC-GMD-Event-Liste** (`nerc.com/…/gmd-event-list`) ist erreichbar (HTTP 200), liefert aber **keine statischen Ereignisse** (gerendert nur Navigation, Events JS/API-geladen) — kein einfacher maschinenlesbarer Pfad. **BGS-GIC** liegt unter `https://geomag.bgs.ac.uk/data_service/space_weather/gic_services.html` (HTTP 200) — die Seite trägt aber nur den **B_GIC-Index** (Near-Real-Time-**Bild** `images/delB.png`) + das **modellierte** UK-Geoelektrikfeld (15-min-Modell, Bilder), **keine messbare GIC-Reihe** (gemessen 2026-10-11).
+- **Blockade:** kein GMD-Label in OE-417; NERC-GMD-Events nicht offen maschinenlesbar (DOM/XHR leer, Roh-GMD hinter `eroportal.nerc.net`-Login); BGS ist Index/Modell, keine Messreihe.
+- **Braucht:** die GIC-Reihen (FMI/BPA, gebaut) gegen die Detektor-Onsets korrelieren (`nur_gic_relation_probe`, `docs/paper/gic-causal-driver.md`); BGS nur als abgeleiteter Index (`gic_services.html`, Bild), EAGLE-I nur als schwacher Null-Check. BGS-`terms`/`ttl` = Mountain, falls der Index als Quelle geführt wird.
 
 ### Flyby-Kette — recon bleibt (`ephemeris-juice-recon` + `flyby-path2-recon`)
 - **Status:** termin | **Bindung:** termin:2026-11-01
@@ -103,7 +103,7 @@ Origin: river-187 (2026-10-11).
 
 Origin: river-188 (2026-10-11).
 
-- **Optische Zeugenquelle — BGS-GIC + UCalgary `terms`/`ttl`:** (1) der korrekte **BGS-GIC**-Endpunkt fehlt (gemessen: `geomag.bgs.ac.uk/data_service/space_weather/gic.html` = 404; die Wurzel `wdc.bgs.ac.uk` = 206 in `state`). (2) UCalgary-SDR (`data.phys.ucalgary.ca` `stream0`/`stream2`) + `aurorax.space` brauchen `terms`/`ttl`; Berkeley `themis_asi` trägt bereits `terms free-open` (`phi/sources.φ:20854`). (3) **NERC-GMD-Event-Liste** (`nerc.com/…/gmd-event-list`, HTTP 200) liefert nur JS/API-Ereignisse — falls als Quelle geführt, braucht sie den API-Arm + Verdikt.
+- **Optische Zeugenquelle — BGS-GIC + UCalgary `terms`/`ttl`:** (1) **BGS-GIC** liegt unter `https://geomag.bgs.ac.uk/data_service/space_weather/gic_services.html` (HTTP 200) — trägt aber nur den **B_GIC-Index** (Bild `images/delB.png`) + modelliertes UK-Geoelektrikfeld (15-min-Modell, Bilder), **keine Messreihe**; `wdc.bgs.ac.uk` = 206 in `state`. (2) UCalgary-SDR (`data.phys.ucalgary.ca` `stream0`/`stream2`) + `aurorax.space` brauchen `terms`/`ttl`; Berkeley `themis_asi` trägt bereits `terms free-open` (`phi/sources.φ:20854`). (3) **NERC-GMD**: `gmd-event-list` + Geschwister `gmd-training`/`gmd-reference-documents` (HTTP 200), aber **keine Event-Records** im DOM/XHR (nur Analytik); Roh-GMD hinter `eroportal.nerc.net` (Login) → nicht offen maschinenlesbar.
 
 ## An mycelium
 
