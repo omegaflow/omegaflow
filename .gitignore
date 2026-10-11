@@ -73,7 +73,6 @@ phi/*
 phi/pipeline/*
 !phi/pipeline/catalog/
 phi/pipeline/catalog/*
-!phi/pipeline/catalog/solar_omega_g.φ
 # Das Korpora-Heim-Verdikt (Lizenzverdikt je Korpus: redistribute/decline/pending)
 # ist ein Registrierungs-Urteil — versioniert; korpora-cdn.yml liest es.
 !phi/pipeline/catalog/korpora_heim.φ
