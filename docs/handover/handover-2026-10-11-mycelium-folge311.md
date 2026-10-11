@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom: fingrid-Dir-Bug geheilt (Ursache gemessen), MLA-Register auf RDR repointet + mla-cdn.yml gebaut, die drei adressierten Blöcke (mountain-317, river-187, future-235) gefaltet; Stehender Pass folgt am neuen HEAD.
   class: handover
   date: 2026-10-11
-  sha256: e99f416bd651eaf9974563505f431ba4fecafc39a21d32bcce631087ef953150
+  sha256: 19fdc9eb7c426260b25f17b0dd9c99852a58fc12ee514ad743bb0a5276785140
   status: live
 -->
 # Handover — Mycelium-Folge 311 (2026-10-11)
@@ -39,12 +39,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** **Riss:** mountain-317 behauptet, das RDR-`.lbl` trage `NAME = RANGE`; der Taucher maß **kein `NAME`** im `.lbl` (nur `PRODUCT_ID`, `INSTRUMENT_MODE_ID = {"SC_RANGE"}`, `RECORD_BYTES = 180`). Der `.lbl`-`^TABLE`-Pointer ist uppercase (`.TAB`) gegen die lowercase Datei — die Compiler-Paarung (`<stem>.lbl`↔`<stem>.tab`) ist case-tolerant.
 - **Braucht:** (a) `mla-cdn`-Ergebnis lesen; (b) Mountain: `field RANGE …`-Zeile + NAME-Riss auflösen.
 
-### SPT-3G D1 `cmap` (cmb-cdn) — Fix v2 unter Test
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Lauf `38150991206` endet
-- **Lage:** (gemessen 2026-10-11) Fix v2 (FITS-HDU-Header-Start statt DATA-Start) in `8f23c7a71`; `cargo check`/`--bin` 0/0; Lauf in_progress.
+### SPT-3G D1 `cmap` (cmb-cdn) — Fix v2 grün; sha256 offen
+- **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-11) Fix v2 (FITS-HDU-Header-Start statt DATA-Start) in `8f23c7a71`; Lauf `38150991206` **success** (15:56Z).
 - **Blockade:** keine
-- **Braucht:** Ergebnis lesen; bei grün sha256 in `phi/sources.φ:11620` (Mountain-Aufenthalt).
+- **Braucht:** sha256/Länge aus dem Release-Digest in `phi/sources.φ:11620` (Mountain-Aufenthalt).
 
 ### Open-LiDAR / coverage-manifest — swisstopo-Bound entfernt; re-dispatcht
 - **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen
@@ -88,12 +88,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** keine (Lizenz erzwingt lokal-only).
 - **Braucht:** lokale Registrierung (kein CDN-Asset); `terms` = CDPP V1.1 (Mountain).
 
-### Coverage-Manifest-Fetch-Loop — USGS-Manifest-Registrierung + `shard`-Entscheidung
+### Coverage-Manifest-Fetch-Loop — `shard`-Form steht; USGS-Register + `field`-Riss
 - **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) `main_flow.rs:5103` dispatcht `coverage_manifest` **und** `usgs_lidar_coverage`; `cargo check` 0/0.
-- **Blockade:** das USGS-Manifest ist nicht in `phi/sources.φ` registriert; `usgs_lidar_coverage.rs` emittiert `url size` statt `shard <url> <6 f64>`.
-- **Braucht:** `shard`-Form entscheiden; USGS-Manifest registrieren (Mountain terms + Mycelium url).
+- **Lage:** (gemessen 2026-10-11) **Riss aufgelöst:** die Übergabe behauptete `url size`; der Baum trägt bereits `shard <url>` (`usgs_lidar_coverage.rs:256`, Test `:507-518`, Commit `8739dffaa`) — der Parser (`src/archivar/coverage_manifest.rs:53-60`) akzeptiert `shard <url> [6 f64 [EPSG [epoch]]]`; eine bbox-lose Liste ist bare `shard <url>` (→ Pending, alle Shards). Kein Code-Change. Draft-Registerblock bereit (url/origin/compiler/format/at earth/ttl 604800).
+- **Blockade:** `field`-Riss: `main_flow.rs:5173-5180` bricht mit „field undeclared" ab — die kanonischen coverage-Blöcke (`lola_coverage` `:10873`, `coverage_manifest` `:20861`) tragen **kein** `field`. Mountain-Zeilenklasse.
+- **Braucht:** USGS-Manifest registrieren (url = Mycelium, `terms`/`field` = Mountain).
 
 ### Frame/Epoche — CRS gebaut; Wire-Doc offen
 - **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
@@ -116,12 +116,12 @@ zitiert, nie kopiert). Diese Session konsumierte
 - **Blockade:** keine
 - **Braucht:** je Dokument den benannten nächsten Schritt; die zwei Falsch-Positive bei nächster Doku-Berührung rewording (kein Marker).
 
-### Fetch-Provenienz (future-235) — Taucher-Sidecar
+### Fetch-Provenienz (future-235) — Sidecar gebaut; Roh-`curl`-Wege offen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) die Provenienz liegt in `opencode.db`; `state/research/README.md` §Provenienz hat 76 Dateien nach `data/<netloc>/` gehoben. Der wirkliche Fix bleibt: die Taucher schreiben die URL **beim Fetch** mit (Sidecar `<datei>.src`).
-- **Blockade:** keine
-- **Braucht:** Sidecar-Schreibpfad in den Fetch-Weg (Werkzeug) + Mountain-Seite.
+- **Lage:** (gemessen 2026-10-11) `write_fetched` in `tools/utils/src/bin/archive_search.rs` schreibt `<artifact>.src` (genau die Quell-URL) an den zwei Tool-Schreibstellen (`--pdf-image`, `--arxiv-src`); URL absent → keine Sidecar (0 honored, stderr-Benennung); `cargo check` 0/0. Die Provenienz liegt sonst in `opencode.db`; `state/research/README.md` §Provenienz hat 76 Dateien nach `data/<netloc>/` gehoben.
+- **Blockade:** die divers' rohen `curl -o`/Redirect-Artefakte laufen an jedem Projekt-Tool vorbei (kein Sidecar-Site).
+- **Braucht:** die Taucher-Anweisungen auf den Sidecar-Weg/`data/<netloc>/` umstellen; `src/archivar/fetch.rs` (Compiler-Cache) ist netloc-keyed und unberührt.
 
 ### de441-de442-sha (future-235)
 - **Status:** wartend | **Bindung:** eigen
@@ -147,16 +147,16 @@ zitiert, nie kopiert). Diese Session konsumierte
 ### LiDAR-Inventar / extraterr. LiDAR / Bathymetrie — Teile mountain
 - **Status:** eigen · **Teile linie:mountain** | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) TNM + LOLA + CKAN verdrahtet; `bluetopo`/`emodnet_bathymetry`-Compiler stehen.
+- **Lage:** (gemessen 2026-10-11) TNM + LOLA + CKAN verdrahtet; `bluetopo`/`emodnet_bathymetry`-Compiler stehen. **Ratifikations-Messung (Taucher, Kachel-ID-Diff):** die Portal-Bin-Descopes sind **nicht** ratifiziert — `swisstopo` flai 39514/41982 (94,1 %; Epoche 2015–2026 gegen flai nur 2022/2023) und `ign` flai 337207/524687 (64,3 %; eine Kampagnen-Epoche) fallen Fläche **und** Epoche; `ahn4` 1373/1375 (99,85 %, 2 Kacheln `08bz1`/`40hz1` fehlen); `linz` ohne flai-Überlappung → bleibt.
 - **Blockade:** Parser/Register-Blöcke bei Mountain.
-- **Braucht:** (a) je weiterer Bucket ein `<x>_coverage.rs`; (b) Parser MOLA/MLA/NLR/OLA/Hayabusa (Mountain); (c) BlueTopo-Gestalt + Register-Blöcke (Mountain).
+- **Braucht:** (a) die 2 fehlenden ahn4-Kacheln + swisstopo/ign-Epochen nachziehen oder die Descopes neu messen; (b) je weiterer Bucket ein `<x>_coverage.rs`; (c) Parser MOLA/MLA/NLR/OLA/Hayabusa (Mountain); (d) BlueTopo-Gestalt + Register-Blöcke (Mountain).
 
 ### Re-Admission-CDNs (mountain-317/316)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Mountains `terms`-Verdikt je Quelle
-- **Lage:** (gemessen 2026-10-11) GRDC-Caravan / RouteViews / EPH-VSOP / GloFAS neu-admittiert; Mountains `terms`-Verdikte stehen (GRDC-Caravan Zenodo `15349031` CC-BY-4.0 · RouteViews CC-BY-4.0 · EPH-VSOP Zenodo `17142232` CC-BY-4.0 · GloFAS Copernicus). **Aber:** für RouteViews/Vsop/GloFAS/GRDC-Caravan existiert **noch kein Compiler** (`sgrep -l` leer) — die url/origin-Registrierung braucht je einen manifestierenden Arm, sonst zeigt eine url auf ein nicht existierendes Asset.
-- **Blockade:** der Compiler/Arm je Quelle (Bau) fehlt; Mycelium schreibt die url/origin erst nach dem ersten grünen Manifest-Lauf.
-- **Braucht:** je Quelle Compiler + `*-cdn.yml` + erster Lauf; danach url/origin (Mycelium) + `terms`/`field` (Mountain).
+- **Lage:** (gemessen 2026-10-11) Mountains `terms`-Verdikte stehen (GRDC-Caravan Zenodo `15349031` CC-BY-4.0 · RouteViews CC-BY-4.0 · EPH-VSOP Zenodo `17142232` CC-BY-4.0 · GloFAS Copernicus). **GRDC-Caravan ist gebaut** (`grdc_caravan_compiler.rs` + `grdc-caravan-cdn.yml`; Lauf läuft). **RouteViews/EPH-VSOP** brauchen zuerst Mountains `field`-Verdikt (RouteViews = Infrastruktur, VSOP = eine C-Bibliothek, kein Datenprodukt — Risse). **GloFAS** läuft über **EWDS** (`ewds.climate.copernicus.eu`), nicht CDS — der bestehende `copernicus::API`-Host erreicht es nicht (Riss); ein eigener Arm fehlt.
+- **Blockade:** je Quelle ein manifestierender Arm + (RouteViews/VSOP) Mountains `field`-Verdikt.
+- **Braucht:** GRDC-Caravan-Lauf + Registerblock (Mycelium url, Mountain `field` mm/d/`terms`); GloFAS-EWDS-Arm; RouteViews/VSOP-`field`-Verdikt.
 
 ### SWPC/RTSW-Archivreihe-Harvest (river-187)
 - **Status:** wartend · **Teile linie:mountain** | **Bindung:** eigen
@@ -188,8 +188,8 @@ Registerzeilen in `## An mountain`/`## An river` (die Owner falten).
 - **VO-Landschaft (mycelium-269):** `state/zustand/mycelium-269-an-naechste-session.md:30-39` — VO-Katalog-Index bauen (Arm 1) · IVOA/China-VO/Brazilian-VO registrieren (Mountain) · `Domain→UCD`-Mapping (der Riss) · `--gfw`-Feinschliff · Branch-Protection + `SHA→Verdikt`-Register · Frontier-Vielfalt.
 - **Swarm-Recherche:** `state/mycelium/swarm-recherche-synthese-2026-10-05.md:85` — q3–q6 mit demselben Roster nachholen, Rohordner registrieren.
 - **CDN-Reconcile:** `state/zustand/ereignisse.φ:70822` — `cdn_reconcile` (144 orphan releases, 687 missing assets, 6873 Namens-Divergenzen); je Lösch-Klasse ein Atom, **Operator-Wort vor destruktivem Release-Delete**.
-- **Fehlende Arme (Operator-Wort `ereignisse.φ:163087`):** mariner-rst (7-Track) · viking-tracking · hi-21cm (HI+EBHIS) · cmb-lambda (ACT-Ring) · particle-cern (ROOT) — je Compiler + Block (blinkverse ist gebaut).
-- **LiDAR-Verdikt unratifiziert:** `state/mycelium/rat-roster-lidar-verdikt-2026-10-11.md:31-32` — per-Portal-Fläche/Epoche-Gleichauf messen (Kachel-ID-Diff, nicht Count) für `ahn4`/`swisstopo`/`ign`.
+- **Fehlende Arme (Operator-Wort `ereignisse.φ:163087`) — Riss korrigiert:** die Arme sind **teilweise gebaut**, nicht absent (`mariner_occlt`, `viking_text`, `ebhis`, `cmb_act` + Register/Workflow stehen, `mountain-289`). Offen bleibt: **mariner-rst** (roher 7-Track-Subpfad, NSSDCA `PSCM-00009` — `--playwright` messen) · **viking-tracking** (NSSDCA `PSPG-00011`; `viking_text` ist Text, nicht Tracking) · **hi-21cm** (HI-Survey-Hälfte; Zenodo HI4PI `5956696` cc-by-4.0 ist die free Route) · **cmb-lambda** (ACT-Ring) · **particle-cern** (ROOT). Owner: Mountain (Parser/Verdikt) + Mycelium (Compiler/WF).
+- **LiDAR-Verdikt — gemessen (nicht ratifiziert):** `swisstopo` 94,1 % Fläche + Epochen-Riss (2015–2026 vs flai 2022/2023), `ign` 64,3 % + eine Epoche → **re-open**; `ahn4` 99,85 %/2 Kacheln → halten; `linz` ohne Überlappung → bleibt; Detail im LiDAR-Inventar-Punkt.
 - **Ungepoolte phi-Blöcke:** `state/mycelium/holdings-opencode-tmp-2026-10-07.md:54` — Mountains Sichtung/Merge.
 
 ## An mountain
