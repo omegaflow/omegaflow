@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — NSSDC-Arm gebaut (NASA NSSDCA Master Catalog + China NSSDC/VSSO coreMetadata; cargo check 0/0, live verifiziert) + Mariner 4 Rohband-Framing/6-bit-Packing gemessen (Zeit→1964) + Mariner 10 Imaging-EDR end-to-end gegen die realen Bytes verifiziert
   class: handover
   date: 2026-10-11
-  sha256: 19979238a81a051515d7c217499c2830db2b94e6b88d03196ea69c902d928e19
+  sha256: 1ab9e5f07e86a254c72ab061edc79de4706a80f3d797659bdf17686cdfa5c01c
   status: live
 -->
 # Handover — Mountain-Folge 321 (2026-10-11)
@@ -23,12 +23,19 @@ Session konsumierte `handover-2026-10-11-mountain-folge320.md` (→ `archiv/`).
 - **Blockade:** keine für den Arm; die Ausgabe-Route ist kein Maschinenakt.
 - **Braucht:** `NSSDC_USER`/`NSSDC_PASS` gehören nach Messung zum **China**-NSSDC (CAS/Captcha-gated, `state/river/gic-sources-broad-2026-10-11.md:57`), **nicht** zum NASA-NSSDCA — der Riss ist benannt; für CSES der Operator-Antrag (Future), sonst `descoped`.
 
-### Mariner 4 `mariner4_odg` — Parser offen, Format + DSC-Spec gemessen (eigen)
+### Mariner 4 `mariner4_odg` — gebaut + lokal verifiziert (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der nächste Bau-Pass
-- **Lage:** (gemessen 2026-10-11 via grind-flash + `od` + `vision` + `awk`) die zwei SPDF-Tapes `PSCM-00021_DD001528_05-DEC-64.tar` (389 120 B, sha256 `709c739c…e43a0ba`) und `…_DD001529_28-NOV-64.tar` (40 960 B, sha256 `a7d86a10…1c71ef3`) tragen je ein Member `<name>.dir/<name>_F1.DAT`; Framing `u16 BE Recordlänge + Payload` (Walk `2+L` konsumiert beide Dateien exakt); Payload = **6-bit-Zeichen, 4 pro 3 Bytes, big-endian** (NICHT das M6/7-Schema „1 Zeichen/Byte ≤ 0x3F" — `mariner_rst` korrumpiert M4); 36-bit-Wort = 6 Zeichen; die 72-bit-Zeit floatet → **1964-11-28 15:35:41** (529) / **1964-12-05 16:33:21** (528), deckt die Attribut-Spannen. **Struktur über die ganze Datei gemessen** (awk-Walk): 528 = 427 Records = 3 Header + **424 Daten-Records**, alle L=906 (201 Wörter) → **424 × 25 = 10 600 logische 8-Wort-Records**, Stride durchweg 8 (nur **1** von 10 600 mit abweichendem Lead-Wort). **DSC 0119 vollständig gelesen** (16 Seiten `--pdf-image` + `vision`, Format-Transkription in `state/mountain/mariner4_dsc0119_format.md`): ODG Data File (Label 9 BCD + Check-Sum; Station-Summary 201 W; Datentypen 1–15) · ODP Logical Record (W0 = #Wörter · W1–2 DP-Zeit s past 1950.0 · W3 Freq-Increment · W4 Pass · W5 Code Word · W6 Observable No.1 · W7 Weight Code Word) · Code-Word-Bit-Legende (1 Range … 11 RU) · Weight-Code-Word · Fig. 2. Identität: `64-077A-09A`, Tapes `D-01528`/`D-01529` = JPL `A55822`/`A55823`. `TM GTB900-1` (Format-Spec, im DSC zitiert) und `TR32-1106` sind **nicht online** (NTRS/IA/Serper leer, mehrere Messungen).
-- **Blockade:** die **Code-Word-Datentyp-Kodierung** ist nicht gepinnt — die Bit-Achse im Scan ist klein/verblasst, und die beobachteten Code-Wörter variieren breit (tx/rx-ID, Mittelungszeit, Band); ohne die exakte Achse/Table 3 wäre ein Observable-Parser fabriziert.
-- **Braucht:** die Feld-/Record-Beschreibung aus einem Ersatz-Dokument (Mariner-Mars-1964-Project-Reports NTRS `19660019455`/`19660024428`/`19660026657`/`19670009296`, DSN SPS 37-40/37-41 `19660029256`/`19670005092`/`19670006372`, Orbit-Study `19670005094`) — oder den Code Word an einem Datentape mit bekannter Datentyp-Zählung (Station-Summary) korrelieren; dann `mariner4_odg` + Compiler + `extract.rs`-Arm.
+- **Trigger:** der nächste Register-Pass
+- **Lage:** (gemessen 2026-10-11) **Parser gebaut:** `src/archivar/mariner4_odg.rs` (MAGIC `M4OD`), `tools/harvest/src/bin/mariner4_odg_compiler.rs` (4-per-3-Zeichen → 36-bit-Wörter), `extract.rs`-Arm; `cargo check` **0/0**. **Lokaler Lauf:** 528 → **10 600** Observablen (424 Daten-Records × 25 logische), 0 Records ohne Code Word, t **1964-12-05…1967-12-07**; 529 → **1025** (41 × 25), t **1964-11-28 15:35:41…1964-12-05** — beide decken die JPL-Tape-Spannen (`A55822`/`A55823`) exakt. Format-Transkription in `state/mountain/mariner4_dsc0119_format.md`.
+- **Blockade:** keine (Parserseite); die **Observable-Einheit/Skalierung** (datatype 8 = Two-way-Doppler CPS) ist beschrieben, die a-priori-Gewichtung nicht angewandt.
+- **Braucht:** `url`/`origin`/`compiler`/`format mariner4_odg`-Zeilen (Mycelium) + CDN-Lauf; `terms` NASA-PD (Mountain).
+
+### Mariner 4 — Code-Word-Achse + Rest-Riss (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der nächste Register-Pass
+- **Lage:** (gemessen 2026-10-11 via `vision`-Hochauflösung + NTRS-Volltextsuchen) DSC 0119 II.1.1 Bit-Achse: `b`(1) + **11 Datentyp-Bits** + `n×5` + `o` + `a` + `x×4` (tx-ID) + `r×4` (rx-ID) + `t×8` (Doppler-Mittelungszeit); Datentyp i ↔ LSB-Bit `35-i`; 528/529 tragen durchweg Bit 27 → **Datentyp 8 = Two-way-Doppler (CPS)**. `TM GTB900-1` (Format-Spec) und `TR32-1106` sind **nicht online** — auch unter dem korrigierten Namen `GTB900-1` (NTRS/IA/Serper leer); die NTRS-Mariner-Mars-1964-Project-Reports (`19660019455`, `19660024428`, `19660026657`, `19670009296`, `19660029256`, `19670005092`) tragen **kein** ODP-Format (Volltextsuche `logical record`/`Range Units`/`Master File`/`Weight Code` → 0).
+- **Blockade:** keine.
+- **Braucht:** nichts — der Riss ist geschlossen; der Eintrag dient als Beleg.
 
 ### Mariner 10 Imaging-EDR — verifiziert; Bild-Erkennungspfad offen (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -141,7 +148,7 @@ Origin: mountain-folge321 (2026-10-11).
 
 - **`phi/sources.φ` aktiv gehalten:** uncommittete url/origin/compiler-Zeilen im Baum (plus `src/mathematikerin/*`); bitte committen, damit Mountains Verdikt-Zeilen (7 Terms) ohne Hunk-Kollision geschrieben werden können.
 - **`themis_asi_keogram_compiler.rs` aktiv gehalten:** uncommittet modifiziert; bitte committen (Fix `at earth`→`on earth` wartet).
-- **Mariner-Rohband-CDN:** die neuen Parser-Arme (`mariner_rst` gebaut; `mariner4_odg` im Bau) gehören in CI → CDN; `url`-Zeilen für `spdf.gsfc.nasa.gov/pub/data/mariner/{mariner4,6,7}/…` (NASA-PD) und den M10-Imaging-Spiegel `ser.im-ldi.com/M10/MVM/mvm_0001.tgz` (144 349 050 B, sha256 `44fcfd39…4888ef7`). Das **NASA-NSSDCA** ist kein CDN-Host (request-only via CRUSO).
+- **Mariner-Rohband-CDN:** die neuen Parser-Arme (`mariner_rst` + `mariner4_odg` gebaut) gehören in CI → CDN; `url`-Zeilen für `spdf.gsfc.nasa.gov/pub/data/mariner/{mariner4,6,7}/…` (NASA-PD) und den M10-Imaging-Spiegel `ser.im-ldi.com/M10/MVM/mvm_0001.tgz` (144 349 050 B, sha256 `44fcfd39…4888ef7`). Register-Block M4: `compiler tools/harvest/src/bin/mariner4_odg_compiler.rs` · `format mariner4_odg` · Asset `mariner4_odg.bin` (lokal sha256 528 `9219108f…39a4e8` / 529 `44f8c630…f365bf`). Das **NASA-NSSDCA** ist kein CDN-Host (request-only via CRUSO).
 - **Rätsel-/NSE-Routen (future-235/236):** `url`/`origin` für NAIF Voyager SPK, Zenodo UNCOVER `14281664`/JADES `7460116`, BK18 `bicepkeck.org`, FMI NUR, NIST NCNR NSE — je `url` durch Mycelium, dann `terms`/`format` durch Mountain.
 
 ## Operator-Wort-Register
