@@ -45,7 +45,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/erbq-solar.te | tee field-te-witness.txt
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor src/mathematikerin/descriptors/erbq-solar.te | tee field-te-witness.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -61,7 +61,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/erbq-event-q2.te | tee field-te-count.txt
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor src/mathematikerin/descriptors/erbq-event-q2.te | tee field-te-count.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -93,7 +93,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/corona_confound_matrix.te | tee field-te-matrix-corona.txt
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor src/mathematikerin/descriptors/corona_confound_matrix.te | tee field-te-matrix-corona.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -109,7 +109,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/dispersion_solar.te | tee field-te-matrix-dispersion.txt
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor src/mathematikerin/descriptors/dispersion_solar.te | tee field-te-matrix-dispersion.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -125,7 +125,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/vlies_matrix.te | tee field-te-matrix-vlies.txt
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor src/mathematikerin/descriptors/vlies_matrix.te | tee field-te-matrix-vlies.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -141,7 +141,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/vlies_panel.te | tee field-te-panel-vlies.txt
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor src/mathematikerin/descriptors/vlies_panel.te | tee field-te-panel-vlies.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -157,7 +157,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/newell_geospheric.te | tee field-te-matrix-newell.txt
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor src/mathematikerin/descriptors/newell_geospheric.te | tee field-te-matrix-newell.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -173,7 +173,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/newell_geospheric_omni.te | tee field-te-matrix-newell-omni.txt
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor src/mathematikerin/descriptors/newell_geospheric_omni.te | tee field-te-matrix-newell-omni.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -189,7 +189,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/gic_auroral.te | tee field-te-matrix-gic-auroral.txt
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor src/mathematikerin/descriptors/gic_auroral.te | tee field-te-matrix-gic-auroral.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -205,7 +205,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/gic_subauroral.te | tee field-te-matrix-gic-subauroral.txt
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor src/mathematikerin/descriptors/gic_subauroral.te | tee field-te-matrix-gic-subauroral.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -221,7 +221,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor phi/pipeline/descriptors/gic_midlat.te | tee field-te-matrix-gic-midlat.txt
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor src/mathematikerin/descriptors/gic_midlat.te | tee field-te-matrix-gic-midlat.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:

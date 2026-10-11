@@ -5424,6 +5424,97 @@ fn run_pair_matrix(
     0
 }
 
+fn period_means(
+    series: &[(f64, f64)],
+    period: f64,
+) -> std::collections::BTreeMap<i64, (f64, usize)> {
+    let mut m: std::collections::BTreeMap<i64, (f64, usize)> = std::collections::BTreeMap::new();
+    for &(t, v) in series {
+        if !v.is_finite() {
+            continue;
+        }
+        let e = m.entry((t / period).floor() as i64).or_insert((0.0, 0));
+        e.0 += v;
+        e.1 += 1;
+    }
+    m
+}
+
+fn resolution_probe(names: &[&str], sources: &[SourceConfig], anchor: &QueryAnchor) {
+    for name in names {
+        let mut cands: Vec<(String, Vec<(f64, f64)>)> = Vec::new();
+        for (src, field) in field_sources(sources, name) {
+            if let Ok(series) = load_field(&src, &field, anchor) {
+                cands.push((resolve_time_markers(&src.url), series));
+            }
+        }
+        if cands.len() < 2 {
+            continue;
+        }
+        println!("resolution {name}: {} candidate registrations", cands.len());
+        for (witness, series) in &cands {
+            let dt = match median_dt(series) {
+                Some(d) => format!("{d:.0}"),
+                None => "pending".to_string(),
+            };
+            println!("  witness {witness} | median_dt {dt}s | n {}", series.len());
+        }
+        let cadence: Vec<Option<f64>> = cands.iter().map(|(_, s)| median_dt(s)).collect();
+        let mut order: Vec<usize> = (0..cands.len()).collect();
+        order.sort_by(|&a, &b| {
+            cadence[a]
+                .unwrap_or(f64::INFINITY)
+                .total_cmp(&cadence[b].unwrap_or(f64::INFINITY))
+        });
+        let fine_idx = order[0];
+        let Some(fine_dt) = cadence[fine_idx] else {
+            continue;
+        };
+        for &k in &order[1..] {
+            let Some(coarse_dt) = cadence[k] else {
+                println!(
+                    "  overlap corr({}, {}) pending — cadence unmeasured",
+                    cands[k].0, cands[fine_idx].0
+                );
+                continue;
+            };
+            if coarse_dt <= fine_dt {
+                println!(
+                    "  overlap corr({}, {}) pending — cadence unmeasured",
+                    cands[k].0, cands[fine_idx].0
+                );
+                continue;
+            }
+            let cmean = period_means(&cands[k].1, coarse_dt);
+            let fmean = period_means(&cands[fine_idx].1, coarse_dt);
+            let mut aligned: Vec<(f64, f64, f64)> = Vec::new();
+            for (key, &(cs, cn)) in &cmean {
+                if let Some(&(fs, fnn)) = fmean.get(key) {
+                    aligned.push((*key as f64 * coarse_dt, cs / cn as f64, fs / fnn as f64));
+                }
+            }
+            match compare_spectral_epochs(&aligned) {
+                Some(cmp) => match cmp.correlation {
+                    Some(r) => println!(
+                        "  overlap corr({}, {}) = {:.4} over {} {:.0}s periods",
+                        cands[k].0, cands[fine_idx].0, r, cmp.n, coarse_dt
+                    ),
+                    None => println!(
+                        "  overlap corr({}, {}) pending — one witness carries no variance over {} periods",
+                        cands[k].0, cands[fine_idx].0, cmp.n
+                    ),
+                },
+                None => println!(
+                    "  overlap corr({}, {}) pending — {} shared periods",
+                    cands[k].0,
+                    cands[fine_idx].0,
+                    aligned.len()
+                ),
+            }
+        }
+    }
+}
+
 fn run_summary_panel(
     label: &str,
     channels: &str,
@@ -5448,6 +5539,7 @@ fn run_summary_panel(
         );
         return 2;
     }
+    resolution_probe(&names, sources, anchor);
     let mut loaded: Vec<(&str, Vec<(f64, f64)>)> = Vec::new();
     for name in &names {
         match load_matrix_arm(name, sources, witnesses, anchor, &[]) {
@@ -5562,6 +5654,12 @@ fn run_summary_panel(
                     link.fdr_pass
                 );
             }
+        }
+        for edge in &graph.screened {
+            println!(
+                "window {} -> {} lag {} | screened (ParCorr p={:.4}, untested by TE) — pending",
+                names[edge.driver], names[edge.target], edge.lag, edge.p_pc
+            );
         }
     }
     0
