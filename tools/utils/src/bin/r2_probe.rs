@@ -61,7 +61,105 @@ fn named_reason(label: &str, output: &std::process::Output) -> String {
     format!("r2_probe: {} failed — {}", label, stderr.trim())
 }
 
+fn url_encode(s: &str) -> String {
+    let mut out = String::new();
+    for &b in s.as_bytes() {
+        match b {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                out.push(b as char)
+            }
+            _ => out.push_str(&format!("%{:02X}", b)),
+        }
+    }
+    out
+}
+
+fn xml_elem<'a>(block: &'a str, name: &str) -> Option<&'a str> {
+    let open = format!("<{name}>");
+    let close = format!("</{name}>");
+    let s = block.find(&open)? + open.len();
+    let e = block[s..].find(&close)? + s;
+    Some(&block[s..e])
+}
+
+fn list_bucket(
+    access_key: &str,
+    secret_key: &str,
+    host: &str,
+    endpoint: &str,
+    bucket: &str,
+    amz_date: &str,
+    date_stamp: &str,
+) -> Result<(), String> {
+    let canonical_uri = format!("/{}", bucket);
+    let mut token: Option<String> = None;
+    let mut objects = 0usize;
+    let mut bytes = 0u64;
+    let mut largest: Vec<(u64, String)> = Vec::new();
+    loop {
+        let query = match &token {
+            Some(t) => format!(
+                "continuation-token={}&list-type=2&max-keys=1000",
+                url_encode(t)
+            ),
+            None => "list-type=2&max-keys=1000".to_string(),
+        };
+        let headers = sigv4_headers(&Sigv4Args {
+            access_key,
+            secret_key,
+            region: R2_REGION,
+            host,
+            canonical_uri: &canonical_uri,
+            canonical_query: &query,
+            range: None,
+            amz_date,
+            date_stamp,
+            session_token: None,
+        });
+        let url = format!("{}/{}?{}", endpoint, bucket, query);
+        let out = send("GET", &url, &headers, None)
+            .map_err(|e| format!("r2_probe: list spawn failed — {}", e))?;
+        if !out.status.success() {
+            return Err(named_reason("list", &out));
+        }
+        let body = String::from_utf8_lossy(&out.stdout).to_string();
+        let mut rest: &str = &body;
+        while let Some(p) = rest.find("<Contents>") {
+            rest = &rest[p + "<Contents>".len()..];
+            let Some(e) = rest.find("</Contents>") else {
+                break;
+            };
+            let block = &rest[..e];
+            let key = xml_elem(block, "Key").unwrap_or("").to_string();
+            if let Some(n) = xml_elem(block, "Size").and_then(|v| v.parse::<u64>().ok()) {
+                bytes += n;
+                largest.push((n, key));
+            }
+            objects += 1;
+            rest = &rest[e + "</Contents>".len()..];
+        }
+        let truncated = xml_elem(&body, "IsTruncated") == Some("true");
+        token = xml_elem(&body, "NextContinuationToken").map(|s| s.to_string());
+        if !truncated || token.is_none() {
+            break;
+        }
+    }
+    largest.sort_by(|a, b| b.0.cmp(&a.0));
+    println!(
+        "r2_probe: list — bucket={} objects={} bytes={} ({:.3} GB)",
+        bucket,
+        objects,
+        bytes,
+        bytes as f64 / 1e9
+    );
+    for (n, k) in largest.iter().take(10) {
+        println!("r2_probe:   {} B  {}", n, k);
+    }
+    Ok(())
+}
+
 fn run() -> Result<(), String> {
+    let args: Vec<String> = std::env::args().skip(1).collect();
     let env = load_env();
     for key in [
         "R2_ACCESS_KEY_ID",
@@ -90,6 +188,18 @@ fn run() -> Result<(), String> {
         .as_secs();
     let date_stamp = date_str(unix).replace('-', "");
     let amz_date = hour_str(unix).replace(['-', ':'], "");
+
+    if args.iter().any(|a| a.as_str() == "--list") {
+        return list_bucket(
+            access_key,
+            secret_key,
+            &host,
+            endpoint,
+            bucket,
+            &amz_date,
+            &date_stamp,
+        );
+    }
 
     let headers = sigv4_put_headers(&Sigv4PutArgs {
         method: "PUT",
