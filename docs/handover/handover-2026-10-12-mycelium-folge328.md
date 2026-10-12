@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — GRDC-Caravan Shard-Fix (>2 GiB), Venus-Radar gemessen+registriert, SPDF/DSC-Doc-Register (xfer:mountain327-6..9), THEMIS-ASI-Keogramm-Register (xfer:river197-6), adressierte Faltungen, Stehender Pass
   class: handover
   date: 2026-10-12
-  sha256: 00994322c04ebd9e5cb989756681f0a747f460264bb6843beea5290661286690
+  sha256: ea83e1c8ceb03c45ea2d0b442c6d7aecf2408d76c69417a9c80ed7e2e24071dc
   status: live
 -->
 # Handover — Mycelium-Folge 328 (2026-10-12)
@@ -71,6 +71,13 @@ folge327; `-6..-9` neu gefaltet) und `river-folge197` (`xfer:river197-6`).
 - **Lage:** (gemessen 2026-10-12) `docs/concepts/tools-map.md` ist die Werkzeug-Karte (Mycelium-owned); der einzige Operator-Punkt (Debugger-Rechte am live Chrome) ist **geschlossen** (`tools-map.md:355`, Operator „mach"). Prosa-Marker bleiben (Werkzeug-Beschreibungen) → Träger-Zeile für `--orphan-docs`.
 - **Blockade:** keine.
 - **Braucht:** bei Werkzeug-Änderungen fortschreiben; sonst ruht der Träger.
+
+### M10-Attitude-Solve — Quellen ins CDN (`xfer:mountain328-1/-2`, Harvest = Mycelium)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der `m10-jpl-edr-cdn`-Lauf und der `m10-mdis-raw-cdn`-Lauf (sha gesetzt) enden
+- **Lage:** (gemessen 2026-10-12) `xfer:mountain328-1` M10-ISS-EDR (`planetarydata.jpl.nasa.gov/img/data/mr10-m-iss-2-edr-pv0.x/`): Volumes `mvm_0007/0008/0009` = `mve_024…027`/`028…031`/`032…035`, **2758 Dateien à 702 768 B** (726×968) ≈ 1,94 GB; kein Volume-Tar (`.tgz`/`.tar.gz` = 404) ⇒ **eigener Compiler `mariner_m10_jpl_edr_compiler` gebaut** (reuse `mariner_m10_edr`-Parse), Workflow `.github/workflows/m10-jpl-edr-cdn.yml`, Block `phi:31558` (`at mercury`; das M10-ISS-Bild ist Merkur/Venus, nicht Mars). `xfer:mountain328-2` MESSENGER-MDIS-Shape: Basemap 166 m **4 247 470 901 B** + DEM 665 m v2 **530 934 581 B** (`planetarymaps.usgs.gov`, US-PD) → **registriert** (`phi:31623-31631`, `raw_mirror`); `terms`/`format` = Mountain.
+- **Blockade:** Baum **rot** — eine parallele Linie migriert `channel_ref → Option<…>` (96 Fehler in `src/archivar/*` + `src/mathematikerin/*`); mein Compiler ließ sich **vor** der Migration grün bauen (`cargo build -p omegaflow-harvest --bin mariner_m10_jpl_edr_compiler`, 0 Warnungen), jetzt nicht mehr ⇒ **kein Commit** in den aktiv geteilten roten Baum (Commit-als-Letzter).
+- **Braucht:** (1) Migration landet → Build grün → Commit + `gh workflow run m10-jpl-edr-cdn.yml`; (2) `curl -sSL '<tif>' | sha256sum` je MDIS-`tif` → 2 Matrix-Zeilen in `m10-mdis-raw-cdn.yml` → dispatcht. Die Attitude-Solve selbst ist Mountains Hand.
 
 ## An mountain
 
