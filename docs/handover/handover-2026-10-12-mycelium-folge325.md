@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (ENTSØ-E-Fehlerkörper, USGS-Mosaik-sha + DSC-0119-Zeile, INPOP/NOE4-Workflow, Spill-Wurzel im Wrapper)
   class: handover
   date: 2026-10-12
-  sha256: 1ac42f9c3930be6c5fc07c785b3f97e996c6d79fc2931b1a0a35e3e07643723a
+  sha256: 1b0fc61b1ff2ff7a40ff3df913596361c601b53c59df68df8d2af97aac8fbbbc
   status: live
 -->
 # Handover — Mycelium-Folge 325 (2026-10-12)
@@ -65,12 +65,12 @@ MCP/MCON · GIC-Onset sind **River-eigen** (river-196) und hier entfernt;
 - **Blockade:** keine.
 - **Braucht:** `ci_manage log 38236601893`.
 
-### CI-Messzeilen durabel in den Baum (Rat-Verdikt 2026-10-12) — Architektur-Akt
+### CI-Messzeilen durabel in den Baum — Architektur-Akt (Rat 2026-10-12)
 - **Status:** operator-gebunden | **Bindung:** eigen (Vorbereitung)
-- **Trigger:** das Kanon-Wort des Operators (oder ein expliziter Ratsspruch, der die Gate-Invariante ändert)
-- **Lage:** (gemessen 2026-10-12) Rat-Verdikt (5 Stimmen): neues getracktes append-only Register `phi/ci_measurements.φ`, terminaler `fold`-Job je Workflow (`field-te-query.yml` als Pilot); Block `run_id`/`head_sha`/`descriptor` + rohe Beobachtung. **Blocker gemessen:** `REGISTER_CLASSES` ist `[&str; 1] = ["phi/sources.φ"]` (`src/gate/commit_gate.rs:2281`) und der Test `fn_register_classes_are_the_one_living_register` (`:4793`) verankert genau **ein** lebendes Register — die neue Klasse ändert diese Invariante.
-- **Blockade:** die Gate-Invariante „das eine lebende Register" — ein Architektur-Akt, nicht ein Bau.
-- **Braucht:** Operator-/Ratswort zur Invarianten-Änderung; danach `REGISTER_CLASSES`-Eintrag + Test-Anpassung + `phi/ci_measurements.φ`-Skelett + `fold`-Job (Pilot `field-te-query.yml`).
+- **Trigger:** das Kanon-Wort des Operators
+- **Lage:** (gemessen 2026-10-12) **Rat (5 Stimmen), auf die Frage „ist `phi/` der richtige Ort?"** — Ja, **eigene Datei `phi/ci_measurements.φ`** (kein Block in `phi/sources.φ`): `phi/` ist der einzige getrackte Register-Container (`git ls-files phi` = `phi/sources.φ`; `state/` vollständig gitignored, `docs/` Prosa); die **Writer-Trennung** (der `fold`-Job schreibt als Mycelium/CI, nie in Mountains `sources.φ`) trägt, nicht der Witness-Präzedenzfall (jene Blöcke sind Quellen-Zeugen, geschrieben vom Owner). Die Gate-Invariante `REGISTER_CLASSES = [&str; 1] = ["phi/sources.φ"]` (`src/gate/commit_gate.rs:2281`) + Test `fn_register_classes_are_the_one_living_register` wird auf eine gezählte Menge mit Namenträger gehoben — der explizite Eintrag **ist** das Wort (kein stilles Register). Register trägt nur die rohe Beobachtung (`run_id`/`head_sha`/`descriptor` + Wert); p_adj/Verdikt/Riss werden zur Lesezeit abgeleitet; 0-Kanon (übersprungen = `absent`, echter Null = 0.0, ungemessen = `pending`); `fold` ist Archivar-IO, Statistik rechnet der Job. **Quelle:** `state/stimmen/`-Round (Rat, council/flash).
+- **Blockade:** die Gate-Invariante „das eine lebende Register" — ein Architektur-Akt, der das Operator-Wort verlangt.
+- **Braucht:** das Operator-Wort (Ja) → dann `REGISTER_CLASSES`-Eintrag + Test-Anpassung + `phi/ci_measurements.φ`-Skelett + `fold`-Job (Pilot `field-te-query.yml`).
 
 ### de441/de442-sha · SWPC/RTSW · Domain→UCD (getrennt, je ein Gegenüber)
 - **Status:** wartend | **Bindung:** eigen
