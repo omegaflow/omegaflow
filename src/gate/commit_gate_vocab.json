@@ -122,7 +122,10 @@
     ["Maxwell => \"energy\"", "maxwell is quantity-bounded within {Energy, Momentum} — the conserved quantity comes from the <quantity> token, not an Energy default (Rat 2026-10-10)"],
     ["Poisson => \"mass\"", "poisson is quantity-bounded within {Mass, Charge} — the conserved quantity comes from the <quantity> token, not a Mass default (Rat 2026-10-10)"],
     ["\"gravity\" => TransportOp", "the interaction token drives the operator — interaction is derived over the mechanisms FK, never the reverse (Rat 2026-10-10)"],
-    ["\"em\" => TransportOp", "the interaction token drives the operator — interaction is derived over the mechanisms FK, never the reverse (Rat 2026-10-10)"]
+    ["\"em\" => TransportOp", "the interaction token drives the operator — interaction is derived over the mechanisms FK, never the reverse (Rat 2026-10-10)"],
+    ["s.rate.unwrap_or(", "a coupling rate that is pending (Option::None) defaulted via unwrap_or fabricates a measured 0.0 — the rate is absent, never zero (coupling-pending-zero)"],
+    [".resolve(&s.from).unwrap_or", "an unresolved coupling alias defaulted via unwrap_or fabricates a channel identity — an alias that names no channel is refused, never a fallback channel (coupling-ref-unresolved)"],
+    ["self.aliases.insert(name.to_string(), target.hash())", "an alias assigned unconditionally overwrites an existing channel binding — an alias that already names a different channel is refused, never silently reassigned (channel-alias-reassign)"]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
