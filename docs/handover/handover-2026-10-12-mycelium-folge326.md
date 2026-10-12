@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (ENTSØ-E-WAF-Messung, NIST-Abschluss, adressierte Faltungen, Stehender Pass)
   class: handover
   date: 2026-10-12
-  sha256: 6d96e7e8bcc617f3d5333183da2d6bf8ace51e75e22caa9f924c1aa2d710a02f
+  sha256: 646cfbce5620d90f396d23d11a06e92376a28d91984b11b90372cee1ad82559a
   status: live
 -->
 # Handover — Mycelium-Folge 326 (2026-10-12)
@@ -24,7 +24,7 @@ sind **registriert**. Offen aus der Faltung bleibt die **Sonke/Robinson-Tabellen
 (keine Zeile im Register). **Geschlossen:** NIST-Arm (Lauf `38233919420` grün),
 Prosa-Träger `tools-map.md` (`--orphan-docs` = 0).
 
-## Burn: open 0.00 · close 0.13 · cap 0.15 — Grund: Mycelium-Folge 326 in einem Atom (deepseek-flash); kein pro/max.
+## Burn: open 0.00 · close 0.26 · cap 0.30 — Grund: Mycelium-Folge 326 in einem Atom (deepseek-flash; ENTSØ-E-Diagnose + adressierte Faltungen + Stehender Pass); kein pro/max.
 
 ## Operator-Wort-Register
 
@@ -37,12 +37,12 @@ Prosa-Träger `tools-map.md` (`--orphan-docs` = 0).
 
 ## Offen — eigen
 
-### ENTSØ-E A78 — Fehlerkörper erweitert; Lauf rot (HTML-Fehlerseite)
+### ENTSØ-E A78 — Diagnose-Körper gebaut; Lauf `38239778850` dispatcht
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** nächster `entsoe-cdn`-Lauf
-- **Lage:** (gemessen 2026-10-12 via `ci_manage log 38237220726`) `38237220726` (head `e0510663b`) **rot**: `10YFI-1--------U: fetch void — HTTP 400 (5772 B): <!DOCTYPE html> … plain.error-page-wrapper …`, the domain stays unharvested. Der erweiterte Fehlerkörper greift (5772 B statt 200 B); der Body ist eine HTML-Fehlerseite ohne Parameter-Diagnose.
-- **Blockade:** die Zone `10YFI-1--------U` liefert eine HTML-Fehlerseite (Gateway/WAF-Stil); kein Parameterhinweis im Body.
-- **Braucht:** aus dem Body WAF vs. Parameter entscheiden; danach den `url`/`origin`/`compiler`/`sha256`/`format`/`ttl`-Block in `phi/sources.φ` eintragen.
+- **Trigger:** `entsoe-cdn`-Lauf `38239778850` endet
+- **Lage:** (gemessen 2026-10-12) `38237220726` **rot**: `10YFI-1--------U: fetch void — HTTP 400 (5772 B): <!DOCTYPE html> …` — der Body-Anfang ist **reines `<style>`-CSS**, keine Diagnose. **Gemessen:** die ENTSO-E-API gibt ihre Fehler als **XML** (`Acknowledgement_MarketDocument`, `<Reason><code>999</code>`) aus — 401/833 B (kein Token), 401/859 B (ungültiges Token), 401 (leerer Token), root 404 `text/plain`; **nie HTML**. Der 400-HTML-Körper stammt daher nicht aus der normalen API-Validierung (Schicht davor: Gateway/CDN/WAF — unentschieden). **Gebaut:** `error_head` in `entsoe_compiler.rs` strippt `<style>`/`<script>` und Tags, kappt auf 1500 B (Unit-Test `error_head_hides_the_stylesheet`); der nächste Lauf nennt Titel/Text.
+- **Blockade:** die Ursache ist bis zur nächsten Diagnose `unread`; die API selbst antwortet XML.
+- **Braucht:** `ci_manage log 38239778850` — der neue Körper nennt HTML-Titel/Text (WAF vs. Parameter); danach den `url`/`origin`/`compiler`/`sha256`/`format`/`ttl`-Block in `phi/sources.φ` eintragen.
 
 ### GRDC-Caravan — Resume-Fix gebaut; Verifikationslauf läuft
 - **Status:** wartend | **Bindung:** eigen
