@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (ENTSØ-E-Fehlerkörper, USGS-Mosaik-sha + DSC-0119-Zeile, INPOP/NOE4-Workflow, Spill-Wurzel im Wrapper)
   class: handover
   date: 2026-10-12
-  sha256: 1b0fc61b1ff2ff7a40ff3df913596361c601b53c59df68df8d2af97aac8fbbbc
+  sha256: 64c22626688b17a332bf9718e49535a1b35c93ea6254767c03d536c77d838088
   status: live
 -->
 # Handover — Mycelium-Folge 325 (2026-10-12)
@@ -65,12 +65,12 @@ MCP/MCON · GIC-Onset sind **River-eigen** (river-196) und hier entfernt;
 - **Blockade:** keine.
 - **Braucht:** `ci_manage log 38236601893`.
 
-### CI-Messzeilen durabel in den Baum — Architektur-Akt (Rat 2026-10-12)
-- **Status:** operator-gebunden | **Bindung:** eigen (Vorbereitung)
-- **Trigger:** das Kanon-Wort des Operators
-- **Lage:** (gemessen 2026-10-12) **Rat (5 Stimmen), auf die Frage „ist `phi/` der richtige Ort?"** — Ja, **eigene Datei `phi/ci_measurements.φ`** (kein Block in `phi/sources.φ`): `phi/` ist der einzige getrackte Register-Container (`git ls-files phi` = `phi/sources.φ`; `state/` vollständig gitignored, `docs/` Prosa); die **Writer-Trennung** (der `fold`-Job schreibt als Mycelium/CI, nie in Mountains `sources.φ`) trägt, nicht der Witness-Präzedenzfall (jene Blöcke sind Quellen-Zeugen, geschrieben vom Owner). Die Gate-Invariante `REGISTER_CLASSES = [&str; 1] = ["phi/sources.φ"]` (`src/gate/commit_gate.rs:2281`) + Test `fn_register_classes_are_the_one_living_register` wird auf eine gezählte Menge mit Namenträger gehoben — der explizite Eintrag **ist** das Wort (kein stilles Register). Register trägt nur die rohe Beobachtung (`run_id`/`head_sha`/`descriptor` + Wert); p_adj/Verdikt/Riss werden zur Lesezeit abgeleitet; 0-Kanon (übersprungen = `absent`, echter Null = 0.0, ungemessen = `pending`); `fold` ist Archivar-IO, Statistik rechnet der Job. **Quelle:** `state/stimmen/`-Round (Rat, council/flash).
-- **Blockade:** die Gate-Invariante „das eine lebende Register" — ein Architektur-Akt, der das Operator-Wort verlangt.
-- **Braucht:** das Operator-Wort (Ja) → dann `REGISTER_CLASSES`-Eintrag + Test-Anpassung + `phi/ci_measurements.φ`-Skelett + `fold`-Job (Pilot `field-te-query.yml`).
+### CI-Messzeilen durabel in den Baum — Ort korrigiert: **Tool-Register**, nicht `phi/`
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der erste `fold`-Job eines messenden Workflows (`.github/workflows/field-te-query.yml`) läuft
+- **Lage:** (gemessen 2026-10-12) **Operator-Wort (Session 326):** „ich möchte [den `phi/`-Müll] nicht wieder anfangen — gehört das nicht zu den jobs oder tools?" — **Der Baum bestätigt es:** sechs getrackte Werkzeug-Register existieren bereits: `tools/harvest/data/{asteroid_gm_inpop25c,asteroid_gm_sb441,dust-maske,nrs_stations}.φ` · `tools/measure/data/scan_coverage.φ` · `tools/register/data/bands.φ` · `tools/utils/data/library.φ`. Der Ort ist **`tools/measure/data/ci_measurements.φ`** — beim produzierenden Werkzeug, neben `scan_coverage.φ`. **Kein `REGISTER_CLASSES`-Eingriff** (jener Kanon-Riegel gilt nur für `phi/*.φ`); `phi/` bleibt die eine Datei. Die Tool-Register erlauben `note` (anders als `phi/sources.φ`). **Riss benannt:** der Rat sprach `phi/ci_measurements.φ` — seine Prämisse „`phi/` ist der einzige Register-Container" ist gemessen falsch; der Baum (und der Operator) trägt.
+- **Blockade:** keine.
+- **Braucht:** `tools/measure/data/ci_measurements.φ`-Skelett (Kopf + Blockform: `run`/`head`/`descriptor` + rohe Beobachtung; 0-Kanon) + `fold`-Job im Pilot-Workflow `field-te-query.yml` (Commit via `block_commit` privat-Index + CAS).
 
 ### de441/de442-sha · SWPC/RTSW · Domain→UCD (getrennt, je ein Gegenüber)
 - **Status:** wartend | **Bindung:** eigen
