@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: 5cf3fa5f6a4eee0c89374f77d78e515c8aec73e38c4e61ca4b17aa7099b85e13
+  sha256: 6084b6b5af98876be891311c08306adfaa18dde4c4814b3d241251852387dbab
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -90,13 +90,15 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
   „10+201+Datenrecords"-Annahme verschöbe jeden Datenrecord um 97). Quellen:
   `state/mountain/mariner4_dsc0119_format.md:13-20`, `state/research/…/mariner/RESULT.md:32-34`,
   Rohwalk DD005407/5409 (L = 60/1206/582 B = 10/201/97 Wörter).
-  **Gebaut (Taucher):** SP/ODG-Reader in `tools/harvest/src/bin/mariner_rst_compiler.rs`
-  (`sp_odg_data_records`, `sp_odg_record_observables`, `--sp`-Zweig; malformed/mehrdeutige Datentypen → skip;
-  Test `sp_odg_reader_decodes_one_record_and_skips_malformed`; `cargo check -p omegaflow-harvest --bin mariner_rst_compiler` 0/0);
+  **Gebaut (Taucher):** SP/ODG-Reader in `tools/harvest/src/bin/mariner_rst_compiler.rs`;
+  **auf variablen D-Record umgestellt** (Table 3: `D = 6 + 2·N`; `sp_odg_logical_records` liest `D` aus Wort 0 und
+  springt um `D`, nicht um feste 8; `sp_odg_record_observables` dekodiert je gesetztem Datentyp-Bit 1–15 das
+  Observable-Paar; Tests `sp_odg_two_datatypes_read_variable_d` (D=10), `sp_odg_single_datatype_read_variable_d` (D=8),
+  `sp_odg_code_length_mismatch_stays_empty`; `cargo check -p omegaflow-harvest --bin mariner_rst_compiler` 0/0);
   der DP-Pfad bleibt unangetastet.
 - **Blockade:** das **M6/M7-SP-spezifische** Feldlayout ist im Baum nicht transkribiert (nur DSC-0073-sha);
   die Frequenz-Skalierung (roh ~1.08e12, /2⁹ ≈ 2114 MHz) ist auf der DSC-0073-Seite nicht dokumentiert.
-- **Braucht:** DSC-0073-SPFP-Layout pinnen (TM GTB900-1 / Table 3) + Frequenz-Skalierung gegen DSC 0119/Odf-Spec
+- **Braucht:** DSC-0073-SPFP-Layout pinnen + Frequenz-Skalierung gegen DSC 0119/Odf-Spec
   oder `pending`; SP-Band-`url` via Mycelium (`…/PSCM-00017_DD005407_…tar`, verdict HTTP 206).
 
 ### DSC 0119 / M4-Feldtabelle — Parser-Arm (eigen)

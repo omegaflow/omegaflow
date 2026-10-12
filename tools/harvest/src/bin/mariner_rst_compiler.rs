@@ -60,59 +60,70 @@ fn code_bits(code: u64) -> Vec<u32> {
 const SP_ODG_MASTER_LABEL_WORDS: usize = 10;
 const SP_ODG_STATION_SUMMARY_WORDS: usize = 201;
 const SP_ODG_SUMMARY_CONTINUATION_WORDS: usize = 97;
-const SP_ODG_DATA_RECORD_WORDS: usize = 201;
-const SP_ODG_LOGICAL_PAYLOAD_WORDS: usize = 200;
-const SP_ODG_LOGICAL_RECORD_WORDS: usize = 8;
+const SP_ODG_MIN_LOGICAL_WORDS: usize = 6;
+const SP_ODG_MAX_LOGICAL_WORDS: usize = 36;
 
 fn sp_odg_header_words() -> usize {
     SP_ODG_MASTER_LABEL_WORDS + SP_ODG_STATION_SUMMARY_WORDS + SP_ODG_SUMMARY_CONTINUATION_WORDS
 }
 
-fn sp_odg_data_records(words: &[u64]) -> Vec<&[u64]> {
-    match words.get(sp_odg_header_words()..) {
-        Some(body) => body.chunks_exact(SP_ODG_DATA_RECORD_WORDS).collect(),
-        None => Vec::new(),
+fn sp_odg_logical_records(words: &[u64]) -> Vec<&[u64]> {
+    let mut out = Vec::new();
+    let mut p = sp_odg_header_words();
+    while p < words.len() {
+        let d = words[p] as usize;
+        if d < SP_ODG_MIN_LOGICAL_WORDS || d > SP_ODG_MAX_LOGICAL_WORDS || d % 2 != 0 {
+            break;
+        }
+        let Some(record) = words.get(p..p + d) else {
+            break;
+        };
+        out.push(record);
+        p += d;
     }
+    out
 }
 
-fn single_datatype(code: u64) -> Option<u32> {
-    let mut found = None;
-    for k in 1..=12u32 {
-        if (code >> (36 - k)) & 1 == 1 {
-            if found.is_some() {
-                return None;
-            }
-            found = Some(k);
-        }
-    }
-    found
+fn logical_code_bits(code: u64) -> Vec<u32> {
+    (1..=15u32)
+        .filter(|&k| (code >> (36 - k)) & 1 == 1)
+        .collect()
 }
 
 fn sp_odg_record_observables(record: &[u64]) -> Vec<(f64, f64, u32)> {
+    let Some(&dw) = record.first() else {
+        return Vec::new();
+    };
+    let d = dw as usize;
+    if d < SP_ODG_MIN_LOGICAL_WORDS
+        || d > SP_ODG_MAX_LOGICAL_WORDS
+        || d % 2 != 0
+        || d != record.len()
+    {
+        return Vec::new();
+    }
+    let (Some(&w1), Some(&w2), Some(&code)) = (record.get(1), record.get(2), record.get(5)) else {
+        return Vec::new();
+    };
+    let bits = logical_code_bits(code);
+    if 6 + 2 * bits.len() != d {
+        return Vec::new();
+    }
+    let Some(t) = unix_from_words(w1, w2) else {
+        return Vec::new();
+    };
+    if !(-252_460_800.0..=189_345_600.0).contains(&t) {
+        return Vec::new();
+    }
     let mut out = Vec::new();
-    for base in (0..SP_ODG_LOGICAL_PAYLOAD_WORDS).step_by(SP_ODG_LOGICAL_RECORD_WORDS) {
-        let (Some(code), Some(w1), Some(w2), Some(obs)) = (
-            record.get(base + 5).copied(),
-            record.get(base + 1).copied(),
-            record.get(base + 2).copied(),
-            record.get(base + 6).copied(),
-        ) else {
+    for (pair, &dtype) in bits.iter().enumerate() {
+        let Some(&obs) = record.get(6 + 2 * pair) else {
             break;
         };
-        let Some(dtype) = single_datatype(code) else {
-            continue;
-        };
-        let Some(t) = unix_from_words(w1, w2) else {
-            continue;
-        };
-        if !(-252_460_800.0..=189_345_600.0).contains(&t) {
-            continue;
-        }
         let v = hex_single(obs);
-        if !v.is_finite() {
-            continue;
+        if v.is_finite() {
+            out.push((t, v, dtype));
         }
-        out.push((t, v, dtype));
     }
     out
 }
@@ -167,7 +178,7 @@ fn run(args: &[String]) -> Result<(), String> {
                 words.extend(words_of(&data[payload..end]));
                 off = end;
             }
-            for record in sp_odg_data_records(&words) {
+            for record in sp_odg_logical_records(&words) {
                 rows.extend(sp_odg_record_observables(record));
             }
             continue;
@@ -257,33 +268,73 @@ mod tests {
         ((v >> 36) as u64, (v & ((1u128 << 36) - 1)) as u64)
     }
 
-    #[test]
-    fn sp_odg_reader_decodes_one_record_and_skips_malformed() {
-        let (t1, t2) = dp_time_words(605_059_200);
-        let mut words = vec![0u64; sp_odg_header_words()];
-        let mut record = vec![0u64; SP_ODG_DATA_RECORD_WORDS];
-        record[0] = SP_ODG_LOGICAL_RECORD_WORDS as u64;
+    fn logical_record(code: u64, pairs: &[u64], t1: u64, t2: u64) -> Vec<u64> {
+        let mut record = vec![0u64; 6 + 2 * pairs.len()];
+        record[0] = record.len() as u64;
         record[1] = t1;
         record[2] = t2;
-        record[5] = 1u64 << 35;
-        record[6] = (64u64 << 28) | (1u64 << 27);
-        words.extend_from_slice(&record);
+        record[5] = code;
+        for (k, &obs) in pairs.iter().enumerate() {
+            record[6 + 2 * k] = obs;
+        }
+        record
+    }
 
-        let decoded = words_of(&pack_words(&words));
-        let records = sp_odg_data_records(&decoded);
+    fn stream(records: &[Vec<u64>]) -> Vec<u64> {
+        let mut words = vec![0u64; sp_odg_header_words()];
+        for record in records {
+            words.extend_from_slice(record);
+        }
+        words_of(&pack_words(&words))
+    }
+
+    #[test]
+    fn sp_odg_two_datatypes_read_variable_d() {
+        let (t1, t2) = dp_time_words(605_059_200);
+        let code = (1u64 << 35) | (1u64 << 27);
+        let record = logical_record(
+            code,
+            &[(64u64 << 28) | (1u64 << 27), (64u64 << 28) | (1u64 << 26)],
+            t1,
+            t2,
+        );
+        assert_eq!(record[0], 10);
+        let decoded = stream(&[record]);
+        let records = sp_odg_logical_records(&decoded);
         assert_eq!(records.len(), 1);
+        assert_eq!(records[0][0], 10);
+        let obs = sp_odg_record_observables(records[0]);
+        assert_eq!(obs.len(), 2);
+        assert_eq!(obs[0].2, 1);
+        assert_eq!(obs[1].2, 9);
+        assert!((obs[0].1 - 0.5).abs() < 1e-12);
+        assert!((obs[1].1 - 0.25).abs() < 1e-12);
+    }
+
+    #[test]
+    fn sp_odg_single_datatype_read_variable_d() {
+        let (t1, t2) = dp_time_words(605_059_200);
+        let code = 1u64 << 35;
+        let record = logical_record(code, &[(64u64 << 28) | (1u64 << 27)], t1, t2);
+        assert_eq!(record[0], 8);
+        let decoded = stream(&[record]);
+        let records = sp_odg_logical_records(&decoded);
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0][0], 8);
         let obs = sp_odg_record_observables(records[0]);
         assert_eq!(obs.len(), 1);
         assert_eq!(obs[0].2, 1);
         assert!((obs[0].1 - 0.5).abs() < 1e-12);
+    }
 
-        let mut malformed = vec![0u64; SP_ODG_DATA_RECORD_WORDS];
-        malformed[5] = (1u64 << 35) | (1u64 << 34);
-        words.extend_from_slice(&malformed);
-        words.push(0x2A);
-        let decoded2 = words_of(&pack_words(&words));
-        let records2 = sp_odg_data_records(&decoded2);
-        assert_eq!(records2.len(), 2);
-        assert!(sp_odg_record_observables(records2[1]).is_empty());
+    #[test]
+    fn sp_odg_code_length_mismatch_stays_empty() {
+        let (t1, t2) = dp_time_words(605_059_200);
+        let record = logical_record(1u64 << 35, &[64u64 << 27, 1u64 << 27], t1, t2);
+        assert_eq!(record[0], 10);
+        let decoded = stream(&[record]);
+        let records = sp_odg_logical_records(&decoded);
+        assert_eq!(records.len(), 1);
+        assert!(sp_odg_record_observables(records[0]).is_empty());
     }
 }
