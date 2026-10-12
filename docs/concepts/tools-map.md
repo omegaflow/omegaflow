@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-29
-  sha256: b2b747b27087d3b32f5e4c963c37d83ae9e24f22b5a68b22a07833a69ac7518c
+  sha256: 8eea52bf9a277f27d5025246130525ae5d7e97aaa7a6ea9d8b9d48f39e223228
   status: live
   see-also: AGENTS.md
 -->
@@ -273,6 +273,104 @@ die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --h
   Anzeigefelder (Default: `name`), `max=` die lokale Zeilengrenze. Je Treffer
   `url https://www.ebi.ac.uk/biomodels/<id>` + die Felder. Kein Eintrag → `absent`.
 
+**Astronomie/Raumfahrt:**
+- `archive_search --arxiv <query>` — arXiv-Keyword-Modus (keine Detailzeile im `--help`).
+- `archive_search --arxiv-oai [set] [--pages <n>]` — arXiv OAI-PMH Bulk-Harvest (ListRecords + resumptionToken bis zum Ende; `set` = optionaler setSpec-Filter, `--pages` kappt die Seitenzahl) — Katalog-Record-Format `identifier | title`.
+- `archive_search --ads <query>` — ADS-Keyword-Modus (keine Detailzeile im `--help`).
+- `archive_search --ntrs <query>` — eine bloße Citation-ID löst über den Citation-Pfad auf, jede andere Query sucht.
+- `archive_search --opensn <query>` — Open Supernova Catalog (`github.com/astrocatalogs` sne-*-Repos), keyless; `url` + Name/Typ/Rotverschiebung/RA/Dec/Discoverdate aus dem OSC-Objekt-JSON.
+- `archive_search --frbcat <query>` — FRBSTATS Fast-Radio-Burst-Katalog (live gviz CSV, Fallback Repo-`catalogue.csv`), keyless; `url` + FRB/RA/Dec/Rotverschiebung (voll im Temp-File).
+- `archive_search --simbad <query>` — SIMBAD-Objektsuche (`simbad.u-strasbg.fr/simbad/sim-tap`, ADQL `ident.id LIKE`), keyless; sim-id-`url` + main_id/RA/Dec.
+- `archive_search --vizier <query>` — VizieR-Katalogsuche (`tapvizier.cds.unistra.fr/TAPVizieR`, TAP_SCHEMA.tables), keyless; VizieR-`url` + table/description.
+- `archive_search --exoplanet-archive <query>` — NASA Exoplanet Archive Planetensuche (`exoplanetarchive.ipac.caltech.edu/TAP`, pscomppars), keyless; overview-`url` + pl_name/hostname/year.
+- `archive_search --ned <query>` — NED-Objektsuche (`ned.ipac.caltech.edu/tap` NEDTAP.objdir, prefname-Präfix), keyless; byname-`url` + main_id/RA/Dec.
+- `archive_search --mast <query>` — MAST Name Resolver (`mast.stsci.edu`, Mast.Name.Lookup), keyless; id/name/RA/Dec/type.
+- `archive_search --gaia <query>` — Gaia-Archiv TAP source_id-Lookup (`gea.esac.esa.int`), keyless; numerische source_id + RA/Dec/g_mag (Textnamen laufen in den Timeout).
+- `archive_search --horizons <query>` — JPL Small-Body Database Lookup (`ssd-api.jpl.nasa.gov/sbdb.api`), keyless; sbdb-`url` + des/a/e/i.
+- `archive_search --lasair <query>` — Lasair LSST-Objektabfrage (`api.lasair.lsst.ac.uk`), `LASAIR_LSST_TOKEN`; objectId → diaObject-Felder (direkt, dann socks5h 127.0.0.1:25344).
+- `archive_search --gosat <product> [<start> <end>]` — GOSAT-GW TANSO-3 Produktsuche (cookie-authed via `GOSAT_GW_MAIL`/`GOSAT_GW_PASS`; Default-Produkt GWT3F_L1B, Default letzte 30 Tage).
+- `archive_search --lpf <start> <end> [hdu]` — LISA-Pathfinder-DRS-Verfügbarkeit aus dem HEASARC-Selektor (start/end als MJD oder ISO; Default hdu=SCI_SCIENCE_1Hz; der Binärbody wird gemessen, nie gedruckt).
+- `archive_search --nssdca <query>` — NASA NSSDCA Master Catalog (public; Datenkollektions-Name, key=value spacecraft/experiment/pi, oder bare NSSDCA-ID wie PSCM-00009 für das Dataset-Detail).
+- `archive_search --nssdc <query>` — China NSSDC/VSSO coreMetadata-Suche (`vsso.nssdc.ac.cn`, public; der Download ist CAS/Captcha- und application-gated).
+
+**Geo/Erdwissenschaften:**
+- `archive_search --cc <url>` — Common Crawl Index JSON-lines (`index.commoncrawl.org/<index>-index?url=…&output=json`), keyless; Default-Index CC-MAIN-2024-51, Override index=<id>.
+- `archive_search --wayback-available <url>` — Availability API, nächster Snapshot (`archive.org/wayback/available?url=…`).
+- `archive_search --wayback-timemap <url>` — Memento-Timemap-JSON (`web.archive.org/web/timemap/json/<url>`).
+- `archive_search --ckan <query>` — Datenkatalog-Suche (CKAN package_search), keyless; `portal=<host>` (Default ckan.publishing.service.gov.uk = data.gov.uk); `url` + Titel/Organisation/Ressourcen/Notes.
+- `archive_search --cmr <query>` — NASA Earthdata CMR Collection-Suche (`cmr.earthdata.nasa.gov`), keyless; `url` + short_name/provider/summary.
+- `archive_search --dataeuropa <query>` — EU Open Data Portal (`data.europa.eu/api/hub/search`), keyless; `url` + Titel/Publisher/Land/issued/description.
+- `archive_search --dryad <query>` — Dryad research-data (`datadryad.org/api/v2/search`), keyless; doi + Titel/Autoren/Abstract.
+- `archive_search --tap "<endpoint=… SELECT …>"` — IVOA TAP sync ADQL, keyless; Zeilen als col=val (Service mit `--regtap` finden).
+- `archive_search --pangaea <query>` — PANGAEA earth-science (`pangaea.de/advanced/search.php`), keyless; doi + Titel/Abstract.
+- `archive_search --re3data <query>` — re3data Repository-Suche (`re3data.org/api/v1`), keyless; id + name/doi.
+- `archive_search --seanoe <query>` — SEANOE ocean-data (`seanoe.org/?q=`), keyless; Dataset-`url` (gescrapte Ergebnislinks).
+- `archive_search --arcgis <query>` — ArcGIS Online Item-Suche (`arcgis.com/sharing/rest/search`), keyless; `url` + Titel/Typ/Owner/Snippet.
+- `archive_search --dataverse <query>` — Dataverse Dataset-Suche (`entrepot.recherche.data.gouv.fr/api/search`), keyless; `host=<host>`; `url` + Titel/Publisher/Subjects/Description.
+- `archive_search --sparql "<endpoint=… SELECT …>"` — generisches SPARQL, keyless; Zeilen als var=value.
+- `archive_search --copernicus <query>` — Copernicus CDS/CAMS Collection-Filter (catalogue v1 STAC), keyless; `url` + Titel/Description (Substring-Filter).
+- `archive_search --vires <query>` — VirES HAPI Dataset-Katalog-Filter (`vires.services/hapi`), keyless; Dataset-`url` (Substring-Filter).
+- `archive_search --oai-pmh "endpoint=<oai-url> [set=<set>]"` — generisches OAI-PMH ListRecords, keyless; id + Titel.
+- `archive_search --stac "endpoint=<url> [collection=<id>] [bbox=w,s,e,n] [datetime=a/b]"` — generische STAC-Suche, keyless; `url` + collection/id/datetime.
+- `archive_search --erddap "server=<url> searchFor=<kw> [itemsPerPage=N]"` — generische ERDDAP-Dataset-Suche, keyless; `url` + Titel/Institution/id.
+- `archive_search --overpass <query>` — OSM Overpass Namenssuche (`overpass-api.de`, Overpass QL), keyless; openstreetmap-`url` + Name/Typ.
+- `archive_search --nominatim <query>` — OSM Nominatim Geocoding (`nominatim.openstreetmap.org`, User-Agent nötig), keyless; openstreetmap-`url` + Name/lat/lon.
+- `archive_search --open-meteo <query>` — Open-Meteo Geocoding (`geocoding-api.open-meteo.com/v1`), keyless; Name/Land/lat/lon.
+- `archive_search --gbif <query>` — GBIF Artensuche (`api.gbif.org/v1/species/search`), keyless; GBIF-Art-`url` + scientific_name/rank/status.
+- `archive_search --fdsn <query>` — FDSN Stationssuche (`service.iris.edu/fdsnws/station/1`, Text-Tabelle), keyless; network/station/lat/lon.
+- `archive_search --ngmdb <query>` — USGS National Geologic Map DB (`ngmdb.usgs.gov` ArcGIS REST), keyless; `url` + Titel/Bundesstaat/Jahr.
+- `archive_search --gfw "dataset=<name> [sql=<select>]"` — Global Forest Watch Data API (`data-api.globalforestwatch.org`), `x-api-key`.
+- `archive_search --opencellid "mcc=.. mnc=.. lac=.. cellid=.. [radio=..]"` — OpenCelliD Zell-Lookup (`opencellid.org/cell/get`), Key; lat/lon/range.
+- `archive_search --regtap <query>` — IVOA RegTAP Registry-Suche (`dc.g-vo.org/tap`, ADQL über rr.resource), keyless; ivoid + Titel/Description.
+- `archive_search --isc "start=.. end=.. [minmag=.. minlat=.. maxlat=.. minlon=.. maxlon=..]"` — ISC-Erdbebenkatalog, key=value.
+
+**Life-Sciences/Daten/Literatur:**
+- `archive_search --base <query>` — BASE — Bielefeld Academic Search Engine (~400M offene Dokumente, `api.base-search.net`), keyless; `url` + Titel/Autoren/Jahr/doi.
+- `archive_search --osf <query>` — OSF-Preprints-Titelsuche (`api.osf.io/v2/preprints`), keyless; `url` + Titel/Autoren/doi/Datum/Abstract.
+- `archive_search --openaire <query>` — OpenAIRE Graph research-product (`api.openaire.eu/graph/v1`), keyless; `url` (DOI) + Titel/Datum/Publisher.
+- `archive_search --figshare <query>` — Figshare research-data (`api.figshare.com/v2/articles/search`, POST), keyless; `url` + Titel/doi.
+- `archive_search --dataone <query>` — DataONE Solr (`cn.dataone.org/cn/v2/query/solr`), keyless; search.dataone.org-`url` + Titel/Format.
+- `archive_search --huggingface <query>` — HuggingFace Datasets API (`huggingface.co/api/datasets`), keyless; Dataset-`url` + Autor/Downloads.
+- `archive_search --dblp <query>` — DBLP-Publikationssuche (`dblp.org/search/publ/api`), keyless; `url` + Titel/Venue/Jahr (aktuell JS-gated: `pending`).
+- `archive_search --orcid <query>` — ORCID Forschersuche (`pub.orcid.org/v3.0/expanded-search`), keyless; orcid-`url` + Name/Institution.
+- `archive_search --ror <query>` — ROR Organisationssuche (`api.ror.org/organizations`), keyless; ror.org-`url` + Name/Land.
+- `archive_search --opencitations <DOI>` — OpenCitations Citation-Count (`opencitations.net/index/api/v1`, DOI-only), keyless; doi + citations.
+- `archive_search --scholexplorer <query>` — OpenAIRE Scholexplorer Links (`api.scholexplorer.openaire.eu/v3/Links`, DOI/PMID), keyless; target + Relationstyp.
+- `archive_search --mendeley <query>` — Mendeley Data (`data.mendeley.com/api/datasets`), keyless; Dataset-`url` + Titel/doi.
+- `archive_search --openlibrary <query>` — Open Library Katalogsuche (`openlibrary.org/search.json`), keyless; `url` + Titel/Autoren/Jahr/Editions.
+- `archive_search --stackexchange <query>` — Stack Exchange Q&A (`api.stackexchange.com/2.3`, site=stackoverflow), keyless; `url` + Titel/Score/answered/answers/tags.
+- `archive_search --sourcegraph <query>` — Sourcegraph Code-Suche (`sourcegraph.com/.api/search/stream`), keyless; repo/path/line/match.
+- `archive_search --grepapp <query>` — grep.app Code-Suche (`grep.app/api/search`), keyless; repo/path (Vercel-Checkpoint kann 429 antworten).
+- `archive_search --oeis <query>` — OEIS Integer-Sequenz-Suche (`oeis.org/search?fmt=json`), keyless; `url` + Titel/data.
+- `archive_search --hal <query>` — HAL Open Archive (`api.archives-ouvertes.fr/search`), keyless; `url` + Titel/doi/published.
+
+**Web/Misc:**
+- `archive_search --wiki <query>` — Wiki-Keyword-Modus (keine Detailzeile im `--help`).
+- `archive_search --crossref <query>` — Crossref-Keyword-Modus (keine Detailzeile im `--help`).
+- `archive_search --github <query>` — GitHub-Keyword-Modus (keine Detailzeile im `--help`).
+- `archive_search --crates <query>` — crates-Keyword-Modus (keine Detailzeile im `--help`).
+- `archive_search --datacite <query>` — DataCite-Keyword-Modus (keine Detailzeile im `--help`).
+- `archive_search --zenodo <query>` — Zenodo-Keyword-Modus (keine Detailzeile im `--help`).
+- `archive_search --openalex <query>` — OpenAlex-Keyword-Modus (keine Detailzeile im `--help`).
+- `archive_search --wayback <query>` — Wayback-Keyword-Modus (keine Detailzeile im `--help`).
+- `archive_search --duckduckgo-instant <query>` — DuckDuckGo Instant Answer (`api.duckduckgo.com`), keyless; answer/abstract + related-topic url/title.
+- `archive_search --searxng <query>` — SearXNG Meta-Suche (Instanz aus `$OMEGAFLOW_SEARXNG`, sonst public JSON-Instanzen; keyless); `url` + Titel/Content/engine.
+- `archive_search --serper <query>` — Serper Google SERP (`google.serper.dev/search`, X-API-KEY); `url` + Titel/Position/Snippet.
+- `archive_search --firecrawl <query>` — Firecrawl (`api.firecrawl.dev/v1/search`, Bearer; OSS self-host Fallback); `url` + Titel/Description.
+- `archive_search --searchapi <query>` — SearchApi.io (`searchapi.io/api/v1/search`, Bearer); `url` + Titel/Position/Snippet.
+- `archive_search --serpapi <query>` — SerpApi (`serpapi.com/search.json`, api_key); `url` + Titel/Position/Snippet.
+- `archive_search --gemini <query>` — Google Gemini answer+search (`generativelanguage.googleapis.com`), `GEMINI_API_KEY`; Antworttext + Google-Search-Grounding-Quellen.
+- `archive_search --wikidata <query>` — Wikidata Entity-Suche (`wikidata.org/w/api.php` wbsearchentities), keyless; id/label/description.
+- `archive_search --googlecse <query>` — Google Programmable Search (`googleapis.com/customsearch/v1`), `GOOGLE_CSE_API_KEY` + `GOOGLE_CSE_CX`; `url` + Titel/Snippet.
+- `archive_search --wiby <query>` — Wiby unabhängige Websuche (`wiby.me/json`), keyless; `url` + Titel/Description.
+- `archive_search --ia-search <query>` — Internet Archive Fulltext/Metadata (`archive.org/advancedsearch.php`), keyless; `url` + Titel/Mediatype.
+- `archive_search --rss-bridge "bridge=<name> <key>=<value>..."` — rss-bridge JSON-Feed (`rss-bridge.org`), keyless; `url` + Titel/Content.
+- `archive_search --kiwix <query>` — Kiwix OPDS-Katalog (`opds.library.kiwix.org`), keyless; `url` + Titel/Summary.
+- `archive_search --scrape "<url> [selector=<css>]"` — scraper.workers.dev Seitentext, keyless; `url` + Text.
+- `archive_search --shodan <query>` — Shodan Host-Suche (`api.shodan.io/shodan/host/search`), Key; ip/port/org/country.
+- `archive_search --apis <query>` — API-Verzeichnis (`apis.io/api/v1/apis` primary, `api.apis.guru/v2/list.json` Fallback), keyless; spec-`url` + Titel/Provider.
+- `archive_search --oapen "set=<setSpec>"` — OAPEN OAI-PMH (`library.oapen.org/oai/request`; keine Freitextsuche — ListSets oder `set=<setSpec>`), keyless; `url` + Titel.
+
 ## Gemessen — übrige lokale Werkzeuge
 
 | Werkzeug | Zeit | Bemerkung |
@@ -307,7 +405,7 @@ die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --h
 
 | Werkzeug | Kann | Scope | Profile |
 |---|---|---|---|
-| `archive_search` (PATH, Symlink auf `bin/archive_search`) | Inhalt, Pfade, NTFS, 19 Netz-Modi, `--playwright`, `--all`, `--leads`, `--serve`, `--count/--case/--path` | lokal + Netz | P1–P5 |
+| `archive_search` (PATH, Symlink auf `bin/archive_search`) | Inhalt, Pfade, NTFS, 106 Netz-Modi (gemessen 2026-10-12 aus `archive_search --help` — `--all` nennt 106 Aufrufe), `--playwright`, `--all`, `--leads`, `--serve`, `--count/--case/--path` | lokal + Netz | P1–P5 |
 | `bin/archive_search` (Wrapper) | execs `bin/.tools_ensure`, sonst `exec` | lokal | P1–P5 |
 | `sgrep` | Zeilensuche über `git ls-files`; `--all` incl. gitignorierter Dateien | lokal | P1–P5 |
 | `sfetch` / `omega_sh` | fetch / reports-status-search-fetch-jwst-sha-check | Netz / lokal | P3 (fetch), P1 (alle) |
