@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: 06fad881bb733a6cbfed49b51697393354ee6395bdf46d62596c85d33fb7ef23
+  sha256: f61feed1f694b2b53361fc977771cc097d992d61381ab284a311d3bb2dc1ee7b
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -229,8 +229,9 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** der nächste Register-/Verdikt-Pass
 - **Lage:** (gemessen 2026-10-12/327, `grind-flash`-Taucher aus dem 106 349-Zeilen-Volltext) **194 Einträge** (Mariner 2/4/5/6/7/9 · Pioneer 6/7/8/9/10); **2 registriert, 192 ohne Registerzeile**. Index: `state/research/ntrs-19740012502/mariner-venus-pioneer-index.txt`. **Ephemeriden-relevanter Kern (Experiment „Celestial Mechanics"):**
   `64-077A-09` / `-09A` „Trajectory Parameters vs Time on Tape" (**registriert** via DSC 0119 + `PSCM-00021`) · `64-077A-09B` „Celestial Mechanics Listing (2-way Doppler vs Time) on 16-mm microfilm" · `67-060A-07`/`-07A` „Celestial Mechanics / Doppler Radio Tracking Data on Tape" (Mariner 5) · `69-014A-05`/`-05A` „Range and Range-Rate Listing on Magnetic Tape" (Mariner 6) · `69-030A-05`/`-05A` (Mariner 7) · `65-105A-07`/`-07A` „Doppler Radio Tracking Data on Tape" (Pioneer 6) · `72-012A-00D` „Preliminary Trajectory Chart on Hardcopy" (Pioneer 10). Mariner 9 trägt **keinen** Celestial-Mechanics-Eintrag; Mariner 10/Pioneer 11 sind 1973 noch nicht im Katalog (Pioneer Venus 1978, kein Venera).
-- **Blockade:** die Einträge sind NSSDC-Datenbeschreibungen (Tape/Microfilm/Hardcopy), kein Download — request-only.
-- **Braucht:** je ID die Online-Route messen (`nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=<ID>`, `--verdict`); die erreichbaren als `url` (Mycelium) führen; die Mariner-6/7-`-05A` gegen die schon registrierten SPDF-M6/M7-Rohbänder (`phi:31526/31534`) abgleichen.
+  **Online-Audit (gemessen 2026-10-12/327, `nssdc-route-audit.txt`):** die zweistelligen IDs (`64-077A-…`) sind von **keinem** NMC-Route akzeptiert (`dataset/`/`experiment/display.action?id=<ID>` → HTTP 200 mit *„A valid … ID must be specified"*); die vierstellige Basis (`1964-077A-09` … `1965-105A-07`) löst als **Experiment-Seite** auf, die nur eine Collection-**Query** nennt (kein `PSCM`/`PSPG`-ID eingebettet). **Abgleich:** `69-014A-05A` (Mariner 6) → gedeckt durch das registrierte `mariner_rst` (`PSCM-00017`, `phi:31532-31538`); `69-030A-05A` (Mariner 7) → `mariner_rst` (`PSCM-00014`); `64-077A-09B` → `mariner4_odg` (`PSCM-00021`). (`NSSD1311`/`NSSD1310` = **0** Treffer in phi — die Rohbänder sind über die PSCM-IDs registriert, nicht über die NSSD-Nummern.)
+- **Blockade:** die ID-Fläche der NMC-Routen deckt die 1973er Datensatz-IDs nicht ab; datensatz-genaue Identität ist über NMC nicht belegbar.
+- **Braucht:** für die **weiterhin fehlenden** Mariner 5 (`67-060A-07/-07A`), Pioneer 6 (`65-105A-07/-07A`), Pioneer 10 (`72-012A-00D`) je die Online-Route/Anfrage prüfen (NSSDC-Kontakt = Operator-Hand); die gedeckten IDs als Zuordnung in den vorhandenen Blöcken vermerken.
 
 ## An mycelium
 
