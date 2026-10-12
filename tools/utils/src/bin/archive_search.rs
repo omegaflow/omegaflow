@@ -168,6 +168,8 @@ mod refine;
 mod ror;
 #[path = "archive_search/scholexplorer.rs"]
 mod scholexplorer;
+#[path = "archive_search/scopus.rs"]
+mod scopus;
 #[path = "archive_search/seanoe.rs"]
 mod seanoe;
 #[path = "archive_search/secrets.rs"]
@@ -196,6 +198,8 @@ mod token;
 mod uniprot;
 #[path = "archive_search/unpaywall.rs"]
 mod unpaywall;
+#[path = "archive_search/usgs.rs"]
+mod usgs;
 #[path = "archive_search/vires.rs"]
 mod vires;
 #[path = "archive_search/vizier.rs"]
@@ -536,6 +540,8 @@ fn main() {
             "--grepapp" => mode = Mode::Net("grepapp"),
             "--scholexplorer" => mode = Mode::Net("scholexplorer"),
             "--mendeley" => mode = Mode::Net("mendeley"),
+            "--usgs" => mode = Mode::Net("usgs"),
+            "--scopus" => mode = Mode::Net("scopus"),
             "--dryad" => mode = Mode::Net("dryad"),
             "--frbcat" => mode = Mode::Net("frbcat"),
             "--go" => mode = Mode::Net("go"),
@@ -878,7 +884,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc|--nssdc|--nssdca <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc|--nssdc|--nssdca <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -1058,7 +1064,13 @@ fn usage() {
         "  --scholexplorer OpenAIRE Scholexplorer links (api.scholexplorer.openaire.eu/v3/Links, DOI/PMID), keyless; target + relation type"
     );
     eprintln!(
-        "  --mendeley  Mendeley Data search (data.mendeley.com/api/datasets), keyless; dataset url + title/doi"
+        "  --mendeley  Mendeley Data search (data.mendeley.com/api/datasets), keyless; dataset url + title/doi/version/date"
+    );
+    eprintln!(
+        "  --usgs      USGS data search (earthquake.usgs.gov fdsnws event feed; place filtered), keyless; event url + place/mag"
+    );
+    eprintln!(
+        "  --scopus    Elsevier Scopus search (api.elsevier.com/content/search/scopus), ELSEVIER_API_KEY; url + title/author/journal/date"
     );
     eprintln!(
         "  --wiby      Wiby independent web search (wiby.me/json), keyless; url + title/description"

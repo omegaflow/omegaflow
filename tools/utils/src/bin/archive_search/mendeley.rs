@@ -54,6 +54,16 @@ fn parse_mendeley(body: &str) -> Option<Vec<String>> {
         {
             line.push_str(&format!("\tdoi: {}", doi));
         }
+        if let Some(version) = item.get("version").and_then(|v| v.as_scalar_string()) {
+            line.push_str(&format!("\tversion: {}", version));
+        }
+        if let Some(date) = item
+            .get("publish_date")
+            .and_then(|d| d.as_str())
+            .filter(|d| !d.is_empty())
+        {
+            line.push_str(&format!("\tdate: {}", date));
+        }
         out.push(line);
     }
     Some(out)
@@ -65,10 +75,10 @@ mod tests {
 
     #[test]
     fn reads_the_entry_fields() {
-        let body = r#"{"data":{"results":[{"id":"jxj8bn2vyf","doi":{"id":"10.17632/jxj8bn2vyf.3","status":"allocated"},"name":"Paleomagnetic study of a volcanic sequence","version":3}]}}"#;
+        let body = r#"{"data":{"results":[{"id":"jxj8bn2vyf","doi":{"id":"10.17632/jxj8bn2vyf.3","status":"allocated"},"name":"Paleomagnetic study of a volcanic sequence","version":3,"publish_date":"2020-05-01T00:00:00Z"}]}}"#;
         assert_eq!(
             parse_mendeley(body),
-            Some(vec!["url https://data.mendeley.com/datasets/jxj8bn2vyf\ttitle: Paleomagnetic study of a volcanic sequence\tdoi: 10.17632/jxj8bn2vyf.3".to_string()])
+            Some(vec!["url https://data.mendeley.com/datasets/jxj8bn2vyf\ttitle: Paleomagnetic study of a volcanic sequence\tdoi: 10.17632/jxj8bn2vyf.3\tversion: 3\tdate: 2020-05-01T00:00:00Z".to_string()])
         );
     }
 
