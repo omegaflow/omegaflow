@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: e543f423acdc6d787673bddc2dea95932bd7dd3bfb8c874f8a406a12d9cc085e
+  sha256: fc25203196f0ccfd0b8cb4e23768404ffa220bcea0280f0cb96a7ed09a2820aa
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -295,6 +295,7 @@ Origin: mountain-folge335 (2026-10-12).
 - **„ja bitte" (CDN-Produzenten zulassungsbewusst machen)** | 2026-10-13 | Operator-Session (mountain 335) — nicht abschalten (Aktualität!), sondern an `phi/sources.φ` binden: `register_source_state`-Guard + `geoazur.fr` declinet.
 - **„die regel ist doch ganz einfach ein cdn darf nur erstellt werden wenn es in sources steht"** | 2026-10-13 | Operator-Session (mountain 335) — Positiv-Riegel in `upload_release` (`registered_netlocs()`), **kein** neuer Register; kein Decline-Matching.
 - **„wie oft soll ich euch noch sagen dass der müll nichts in sources zu suchen hat"** | 2026-10-13 | Operator-Session (mountain 335) — **die 1821 `decline`-Zeilen aus `phi/sources.φ` entfernt**; der Register ist sources-only (2572 `url`-Blöcke), git trägt die Verdikte.
+- **„ja mach deine vorsicht ist absolut unbegründet jeder von euch sucht noch mit archive search und kann sofort entscheiden ob eine quelle geeignet ist oder nicht"** | 2026-10-13 | Operator-Session (mountain 335) — **kein Verdikt-Ledger**: `register_block_decline` + `register_source_state` entfernt, `register_block_remove` gebaut (Block entfernen, **kein Grabstein**); jede Session entscheidet live via `archive_search`.
 
 ## Abschluss
 
