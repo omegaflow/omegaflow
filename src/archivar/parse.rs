@@ -1,7 +1,7 @@
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
 use crate::mathematikerin::channel::{
-    ChannelDescriptor, Conserved, FluxKind, Interaction, Medium, PdeType, QuantityRole, Regime,
+    ChannelDescriptor, Conserved, FluxKind, Interaction, Medium, PdeRegime, PdeType, QuantityRole,
     TransportOp, channel_ref_of_descriptor, conserved_for_quantity, conserved_name,
     descriptor_from_axes, interaction_of, unit_token,
 };
@@ -1271,7 +1271,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     && QuantityRole::parse(parts[3]).is_some()
                     && Conserved::parse(parts[4]).is_some() =>
             {
-                let (i, declared_regime) = match Regime::parse(parts[9]) {
+                let (i, declared_regime) = match PdeRegime::parse(parts[9]) {
                     Some(r) => (10, Some(r)),
                     None => (9, None),
                 };
