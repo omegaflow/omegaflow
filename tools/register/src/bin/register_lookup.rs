@@ -1154,6 +1154,10 @@ fn collect_disposed_urls(paths: &[&str]) -> BTreeSet<String> {
                 if !url.is_empty() {
                     urls.insert(url.to_string());
                 }
+            } else if let Some(rest) = t.strip_prefix("decline ") {
+                if let Some(url) = rest.split_whitespace().nth(1) {
+                    urls.insert(url.to_string());
+                }
             }
         }
     }

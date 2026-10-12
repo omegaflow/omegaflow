@@ -165,7 +165,7 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 | Solar Orbiter RPW e-field | in-register + built | live hapi + rpw_efield.bin |
 | Heart/physiology channel (BIDSleep HRV — register electric label) | in-register | human sensor |
 | **Geomagnetically induced currents (GIC)** | in-register + built — `fmi_gic.bin` (`sources.φ`:6907); Nachzug 2026-09-17 | leads |
-| **Lightning networks (WWLLN / ground)** | in-register + built (Nachzug 2026-09-27: `wwlln_th.csv`, `phi/sources.φ`:11467, `wwlln_compiler`) | leads |
+| **Lightning networks (WWLLN / ground)** | declined — `decline commercial`, UW-copyright (Verdikt `5b980d570`, 2026-10-12 re-gehomt); keine Registerzeile | — |
 | **SuperDARN polar radar** | in-register + built (Nachzug 2026-09-27: `superdarn_rawacf.bin`/`superdarn_fitacf.bin`, `phi/sources.φ`:9814/11487, `superdarn_*_compiler`) | leads |
 | INTERMAGNET dB/dt (induction driver for GIC) | built (2 stations) | abk/sod 1-h bins |
 
