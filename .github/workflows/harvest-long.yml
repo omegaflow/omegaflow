@@ -1,4 +1,4 @@
-# harvest: format=lro_trk asset=present arm=lro_trk_compiler pattern=^lro_trk(_t[0-9]+_[0-9]+(_[0-9]+)?)?\.bin$ idempotent=true timeout=240 tag=imbrium.mit.edu shard=1
+# (lro_trk / imbrium.mit.edu producer removed 2026-10-13 — imbrium declined all-rights-reserved; the deleted lro-trk-cdn.yml was not the only producer)
 
 name: harvest-long
 
