@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: ab14bda2144e2edcf564b16e15439c6ff520073d1879f947184796eb05c809c3
+  sha256: 0fb61e4b4a0c373173bebe48c6e86bc0f038c12ccb53b3aebec5039d678b4b15
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -92,10 +92,12 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
   Rohwalk DD005407/5409 (L = 60/1206/582 B = 10/201/97 Wörter).
   **Gebaut (Taucher):** SP/ODG-Reader in `tools/harvest/src/bin/mariner_rst_compiler.rs`;
   **auf variablen D-Record umgestellt** (Table 3: `D = 6 + 2·N`; `sp_odg_logical_records` liest `D` aus Wort 0 und
-  springt um `D`, nicht um feste 8; `sp_odg_record_observables` dekodiert je gesetztem Datentyp-Bit 1–15 das
-  Observable-Paar; Tests `sp_odg_two_datatypes_read_variable_d` (D=10), `sp_odg_single_datatype_read_variable_d` (D=8),
-  `sp_odg_code_length_mismatch_stays_empty`; `cargo check -p omegaflow-harvest --bin mariner_rst_compiler` 0/0);
-  der DP-Pfad bleibt unangetastet.
+  springt um `D`) **und auf die 201-Wort-Daten-Record-Grenze** (Fig. 2: 308-Wort-Kopf, dann je 200 Payload + 1 Check-Sum;
+  das Check-Sum wird per Konstruktion übersprungen; ein unvollständiger Tail wird gedroppt, nie fabriziert;
+  `sp_odg_record_observables` dekodiert je gesetztem Datentyp-Bit 1–15 das Observable-Paar; Tests
+  `sp_odg_single_datatype_read_variable_d`, `sp_odg_two_logical_records_in_one_payload`, `sp_odg_partial_payload_tail_dropped`,
+  `sp_odg_two_datatypes_read_variable_d`, `sp_odg_code_length_mismatch_stays_empty`;
+  `cargo check -p omegaflow-harvest --bin mariner_rst_compiler` 0/0); der DP-Pfad bleibt unangetastet.
 - **Blockade:** das **M6/M7-SP-spezifische** Feldlayout ist im Baum nicht transkribiert (nur DSC-0073-sha);
   die Frequenz-Skalierung (roh ~1.08e12, /2⁹ ≈ 2114 MHz) ist auf der DSC-0073-Seite nicht dokumentiert.
 - **Braucht:** DSC-0073-SPFP-Layout pinnen + Frequenz-Skalierung gegen DSC 0119/Odf-Spec
@@ -116,8 +118,9 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
   **Ferner vollständig transkribiert (Vision, 2026-10-12/327):** Table 1 (Master-File-Label/Summary/Station-Summary),
   Table 2 (TDP-Master-Logical-Record, Wörter 0–11), Fig. 1/2, Appendix A (DC1–DC7). **Fig. 2:** die Band-Records
   sind 10 / 201 / 97 / je 201 Wörter; die variablen `D`-Logikrecords liegen **innerhalb** des 200-Wort-Payloads,
-  je Daten-Record mit eigenem Check-Sum-Wort. **Riss im gerade gebauten Arm:** `sp_odg_logical_records` walkt den
-  Stream flach mit variablem D und **ignoriert die 201-Wort-Record-Grenze + Check-Sum** → Umbau auf die Record-Grenzen (Sprung 201).
+  je Daten-Record mit eigenem Check-Sum-Wort. **Riss im Arm geheilt (2026-10-12/327):** `sp_odg_logical_records`
+  walkt jetzt die 201-Wort-Daten-Records (200 Payload + Check-Sum) und darin die gepackten variablen `D`-Logikrecords
+  (s. `mariner_rst`-Punkt).
   **Registriert:** die *Auszug*-Datei `phi:31588-31590`; die **Volldatei** ist noch nicht registriert (s. `## An mycelium`).
 - **Blockade:** keine (Feldtabellen vollständig gelesen).
 - **Braucht:** den SP-ODG-Arm auf **variablen D-Record** umstellen (`mariner_rst_compiler.rs`); die Volldatei als `url` (Mycelium).
@@ -236,6 +239,12 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
 - **Blockade:** die ID-Fläche der NMC-Routen deckt die 1973er Datensatz-IDs nicht ab; datensatz-genaue Identität ist über NMC nicht belegbar.
 - **Braucht:** für die **weiterhin fehlenden** Mariner 5 (`67-060A-07/-07A`), Pioneer 6 (`65-105A-07/-07A`), Pioneer 10 (`72-012A-00D`) je die Online-Route/Anfrage prüfen (NSSDC-Kontakt = Operator-Hand); die gedeckten IDs als Zuordnung in den vorhandenen Blöcken vermerken.
 
+### DSC-Nummer → Mission — Zuordnung gebaut (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** der nächste Inventar-Pass
+- **Lage:** (gemessen 2026-10-12/327, `general`-Taucher) die Kreuzreferenz liegt **nicht** unter `renamed_dataset_catalogs/` (HTTP 404), sondern unter **`old_data_doc/spreadsheet_dsc.xls`** (HTTP 200, 424 448 B, sha `b1f8523dd90eecfb307fbc35878b47dc5d18f99b37a94e92fc267f6bc5470ea3` — deckt die früher genannte `b1f8523d…`); lokal `state/research/spdf-catalogs/spreadsheet_dsc.xls`. **Map gebaut:** `state/research/spdf-catalogs/dsc-number-map.txt` — **114 Zeilen** (36 Mariner · 81 Pioneer · 28 Venus, Überlappungen), Form `DSC_<n> | <NSSDCA-id> <mission> <instrument>`, extrahiert aus den `renamed_dataset_catalogs`-Dateinamen (die XLS selbst ist ein BIFF-Workbook und unter dem erlaubten Werkzeugprofil **nicht** spaltentreu lesbar — `sgrep` bestätigt die Spaltenköpfe `DSC# | Data Set Old ID | Mission | Data Set Name | Agent | Form`).
+- **Blockade:** das XLS-Format (BIFF) ist mit den erlaubten Werkzeugen nicht in Zeilen zerlegbar.
+- **Braucht:** die Map aus den Filenamen ist da (114); für den vollen 614er-Satz die XLS mit einem Rust-Reader (BIFF) öffnen — oder die `renamed_dataset_catalogs`-Dateinamen als Quelle belassen (832 DSC-PDFs dort).
+
 ## An mycelium
 
 Origin: mountain-folge327 (2026-10-12). **Echo:** `handover-2026-10-12-mycelium-folge326.md`
@@ -280,6 +289,10 @@ NIST) — nur die Sonke/Robinson-Tabellen bleiben dort offen.
   `ec3c41eb…` ist nur ein Auszug). Der Ordner `all_catalogs/` trägt die **komplette NSSDC-DSC-Serie**
   (`dsc_0001.pdf` … 614 Einträge); Listing in `state/research/spdf-catalogs/all_catalogs/index.html` (77 797 B).
   Lokale Kopie `state/research/spdf-catalogs/all_catalogs/dsc_0119.pdf` + Volltext `dsc_0119.txt`.
+- **SPDF DSC-Kreuzreferenz `spreadsheet_dsc.xls` (US-PD) — `url`/`origin`-Zeile.** `xfer:mountain327-9`
+  `https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/old_data_doc/spreadsheet_dsc.xls`
+  (HTTP 200, 424 448 B, sha `b1f8523d…`) — die `DSC# | Data Set Old ID | Mission | Data Set Name | Agent | Form`-Tabelle;
+  lokal `state/research/spdf-catalogs/spreadsheet_dsc.xls`. Sie ist der Nummer→Mission-Schlüssel der 614er-Serie.
 
 ## An river
 
