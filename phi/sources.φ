@@ -31300,6 +31300,33 @@ url https://github.com/omegaflow/sources/releases/download/bicepkeck.org/bk18_ba
 terms CC-BY-4.0 http://bicepkeck.org/bk18_2021_release.html
 origin http://bicepkeck.org/BK18_datarelease/BK18_bandpowers_20210607.txt
 no-cadence
+format text
+at earth
+rows .
+field 0 bk18_bin point em 1 33554432.0 0.0 0.0
+field 1 bk18_ell point em 1 33554432.0 0.0 0.0
+field 2 bk18_k95xk95_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 3 bk18_k95xk95_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 4 bk18_b95xb95_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 5 bk18_b95xb95_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 6 bk18_150x150_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 7 bk18_150x150_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 8 bk18_220x220_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 9 bk18_220x220_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 10 bk18_w23xw23_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 11 bk18_w23xw23_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 12 bk18_p30xp30_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 13 bk18_p30xp30_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 14 bk18_w33xw33_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 15 bk18_w33xw33_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 16 bk18_p44xp44_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 17 bk18_p44xp44_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 18 bk18_p143xp143_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 19 bk18_p143xp143_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 20 bk18_p217xp217_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 21 bk18_p217xp217_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 22 bk18_p353xp353_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
+field 23 bk18_p353xp353_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/crystallography.net/eels_acoustic.bin
 origin https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content
@@ -32257,6 +32284,7 @@ no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/jades_early_galaxies.tar
 terms CC-BY-4.0 https://zenodo.org/records/7460116
+format tar_fits
 origin https://zenodo.org/api/records/7460116/files/jades-early-galaxies.tar/content
 no-cadence
 

@@ -74,3 +74,8 @@ electric mv/km
 # (ice-flow speed, the product's native unit; advective owns m/mm/m/s but no yearly
 # rate). Frozen until the registry carries m/yr, then deleted.
 advective m/yr
+# Mountain 326 (2026-10-12): BK18 CMB bandpowers — D_ell = ell(ell+1)C_ell/2pi in
+# uK_CMB^2 (phi/sources.φ:31308-31329, measured at the origin). `thermal uk^2`
+# admitted to src/archivar/units.rs (normalize_unit maps uK^2 -> uk^2). Frozen
+# until tools-latest republishes the gate, then deleted.
+thermal uk^2
