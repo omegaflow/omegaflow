@@ -15,6 +15,9 @@ Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
   by the next session to continue, consumed into code/register/commits.
   Immutable. The date is the document's own date, never invented. Open points
   stay named in the handover; the session that works them off takes them up.
+  **Jeder Punkt nennt seine Datei(en)/Pfade** (Operator-Wort 2026-10-12) —
+  der nächste Pass findet ihn ohne Suche; ein Punkt ohne Pfad ist eine Spur
+  ohne Ort.
   Same-day handovers with similar slugs may coexist (in the archive or live) —
   the name carries the day and the line, and the next session reads the one it
   needs. A line handover's slug is uniform: `<line>-folge<N>` — line one of
