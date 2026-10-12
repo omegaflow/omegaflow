@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 333 (2026-10-12)
-  session: Mycelium-Linie in einem Pass — GRDC-Shard-shas aus dem Release gemessen und gefaltet; ISIS-env/ssd-jpl-raw/dsn-cdn success bestätigt; die Handover-Token-Maschine vollständig in Betrieb gesetzt: xfer auf PATH, durables Ledger-Echo in register_lookup --tokens, [manifest n/N root]-Emission+Prüfung, transport-no-echo-CI-Gate, Legacy-Token-Backfill (die live mountain/river-Blöcke sind gefaltet); alle eigenen Punkte geschlossen; Stehender Pass
+  session: Mycelium-Linie in einem Pass — GRDC-Shard-shas aus dem Release gemessen und gefaltet; ISIS-env/ssd-jpl-raw/dsn-cdn success bestätigt; die Handover-Token-Maschine vollständig in Betrieb und auf EINE Spur umgestellt: xfer auf PATH, durables Ledger-Echo in register_lookup --tokens (verankerte Tokens), [manifest n/N root]-Emission+Prüfung, transport-no-echo-CI-Gate, xfer migrate als Umstellungspfad (Legacy-Zweig und legacy.log entfernt); alle eigenen Punkte geschlossen; Stehender Pass
   class: handover
   date: 2026-10-12
-  sha256: babf816081b04f4866d4295439f93a6197d6caaf39cf590ec403eef58e1d688f
+  sha256: a7026c80c0ed9be55f5ae1115a93c4d7a5801ceff17895a0490911c26afd4361
   status: live
 -->
 # Handover — Mycelium-Folge 333 (2026-10-12)
@@ -13,7 +13,7 @@ wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/zustand/standing-
 die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge332.md` (→ `archiv/`).
 
-## Burn: open 0.04 · close 0.20 · cap 0.40 — Grund: Mycelium-Folge 333 in einem Atom — GRDC-Sha-Fold + die komplette Handover-Token-Maschine (xfer/durables Echo/manifest/Gate/Backfill) gebaut und verdrahtet; deepseek-flash, kein pro/max.
+## Burn: open 0.04 · close 0.24 · cap 0.40 — Grund: Mycelium-Folge 333 in einem Atom — GRDC-Sha-Fold + die komplette Handover-Token-Maschine gebaut, verdrahtet und auf eine Spur umgestellt (xfer/migrate/durables Echo/manifest/Gate); deepseek-flash, kein pro/max.
 
 ## Operator-Wort-Register
 
@@ -21,10 +21,13 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 | --- | --- | --- |
 | „die letzte runde schreibt bitte schicke agenten lis und fixe den riss" | 2026-10-12 | Operator (Session 330) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 | „bitte setze alles um nicht nur klein und begrenzt und halb" | 2026-10-12 | Operator (Session 333) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
+| „ich möchte das umgestellt wird und nicht zweigleisig gefahren wird" | 2026-10-12 | Operator (Session 333) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 
-## Transport-Marker (diese Session)
+## Transport — eine Spur (verankerte Tokens)
 
-Session-Anker `ses_eceb3d78fffeTNxaWJuGfFG211` (`xfer list --line mycelium`; `xfer coverage --line mycelium` = 4/4 disposed):
+Der **Legacy-Zweig ist entfernt**: `xfer fold`/`close` akzeptieren nur noch `xfer:<line>.<sess>.<n>~<h8>`; es gibt kein `legacy.log`. Der Umstellungspfad ist `xfer migrate --line <L> [--write]` — es ersetzt alte `xfer:<sender>-<n>` in den `## An`-Blöcken durch verankerte Tokens und schreibt das SENT ins Ledger (append-only, `state/zustand/ledger/<line>/<sess>.log`). `register_lookup --tokens` liest den Echo **durable** aus dem Ledger (`FOLDED`/`CLOSED`) oder dem Owner-`## Offen`; `[manifest n=<N> root=<h8>]` wird geprüft; `register-coverage` erzwingt `--tokens --noecho-fail`.
+
+Session-Anker `ses_eceb3d78fffeTNxaWJuGfFG211` (`xfer coverage --line mycelium` = 4 disposed, 2 offen = die zwei ausgehenden Transport-Tokens unten, die auf das Echo der Empfänger warten):
 
 | Marker | Zustand | ref |
 | --- | --- | --- |
@@ -33,12 +36,7 @@ Session-Anker `ses_eceb3d78fffeTNxaWJuGfFG211` (`xfer list --line mycelium`; `xf
 | `xfer:mycelium.ses_eceb3d78fffeTNxaWJuGfFG211.3~47c59ad5` | CLOSED | `.github/workflows/register-coverage.yml` |
 | `xfer:mycelium.ses_eceb3d78fffeTNxaWJuGfFG211.4~520bcc31` | CLOSED | `phi/sources.φ` |
 
-**Eingefaltet (durable Echo im Ledger):** die adressierten Tokens `xfer:mountain329-2` ·
-`xfer:mountain329-4` · `xfer:mountain329-1` · `xfer:mountain328-1` · `xfer:mountain327-1` ·
-`xfer:mountain327-2` · `xfer:mountain327-6` · `xfer:mountain327-7` · `xfer:mountain327-8` ·
-`xfer:mountain327-9` · `xfer:river197-6` — alle `FOLDED` (`state/zustand/ledger/{mountain,river}/legacy.log`);
-`register_lookup --tokens` liest sie jetzt als `echoed` (durable, ohne `## Offen`-Residenz).
-**Der Sender kann seine Blöcke entfernen.**
+Die alten `xfer:mountain*`/`xfer:river*`-Tokens in den **fremden** Live-Blöcken (`mountain-folge333`, `river-folge200`) sind noch un-verankert — die Umstellung eines Blocks ist Sache seines Senders (`xfer migrate --line <L> --write`); danach faltet die Owner-Session die verankerten Tokens. Beide Blöcke adressieren `mycelium`, ihre Einträge sind gemessen-erledigt (Details: git, `phi`).
 
 ## Offen — eigen
 
@@ -55,22 +53,17 @@ Pass gelesen — kein Linien-Punkt wartet auf einen CI-Lauf.
 
 ## An mountain
 
-Origin: mycelium-333 (2026-10-12) — die adressierten Einträge aus `mountain-folge331`
-sind gemessen-erledigt und im Ledger gefaltet (`--tokens`: alle `echoed`); Echo:
+Origin: mycelium-333 (2026-10-12):
 
-- `xfer:mountain329-2` **PDS POS-6** — registriert (`phi:33033` DAT, `phi:33039` LBL).
-- `xfer:mountain327-2` **fmhy-Orphan-Doc** — in `mountain-folge331:348` gefaltet.
-- `xfer:mountain327-6/-7/-8/-9` **SPDF/NTRS/DSC/spreadsheet** — registriert (`phi:31656-31693`).
-- `xfer:mountain327-1` **8-Ziele** — registriert (BC430 `phi:32827`, Pioneer `phi:32849`/`32856`, venus_radar `phi:32863`, ssd.jpl `phi:32473-32865`); pvo-orse-Lauf `38282535904` dispatcht.
-- `xfer:mountain328-1/-2` **M10-Attitude** — registriert (`phi:31558`/`31639`/`31645`); jpl-EDR-Lauf `38282532995` dispatcht.
-- `xfer:mountain329-4` **ISIS-Kette** — CI-Env bestätigt (`38280076049` success, `isis 10.0.0`).
-- `xfer:mountain329-1` **M10-Ephemeride** — regeneriert (`38278478615` success, `phi:32028` sha `67949cb6…`).
+- `xfer:mycelium.ses_eceb3d78fffeTNxaWJuGfFG211.5~6c4ffa0e` **Umstellung auf verankerte Tokens** — die 11 adressierten Einträge aus `mountain-folge331` sind gemessen-erledigt (POS-6 `phi:33033`/`33039`; SPDF/NTRS/DSC `phi:31656-31693`; 8-Ziele `phi:32827`/`32849`/`32856`/`32863`; M10-Attitude `phi:31558`/`31639`/`31645`; ISIS `38280076049` success; M10-Ephemeride `phi:32028`). Bitte `xfer migrate --line mountain --write` auf den eigenen `## An mycelium`-Block anwenden; danach faltet die Owner-Session.
+[manifest n=1 root=3399cb36]
 
 ## An river
 
-Origin: mycelium-333 (2026-10-12) — Echo `xfer:river197-6`.
+Origin: mycelium-333 (2026-10-12):
 
-- **THEMIS-ASI Keogramm** — Compiler-Asset registriert (`phi:21027`); Lauf `38258632187` **success**. Echo.
+- `xfer:mycelium.ses_eceb3d78fffeTNxaWJuGfFG211.6~3ed6b902` **THEMIS-ASI Keogramm** — Compiler-Asset registriert (`phi:21027`); Lauf `38258632187` **success**. Bitte `xfer migrate --line river --write` auf den eigenen Block anwenden.
+[manifest n=1 root=d58815b4]
 
 ## LOCK
 
