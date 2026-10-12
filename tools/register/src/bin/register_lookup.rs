@@ -3513,6 +3513,34 @@ fn block_entries(block: &str) -> Vec<String> {
     out
 }
 
+fn anchored_token_at(entry: &str, i: usize) -> Option<String> {
+    let bytes = entry.as_bytes();
+    let mut j = i + 5;
+    while j < bytes.len() {
+        let c = bytes[j];
+        if c.is_ascii_alphanumeric() || c == b'.' || c == b'_' || c == b'~' || c == b'-' {
+            j += 1;
+        } else {
+            break;
+        }
+    }
+    let tok = &entry[i..j];
+    let rest = tok.strip_prefix("xfer:")?;
+    let (left, h8) = rest.split_once('~')?;
+    if h8.len() != 8 || !h8.bytes().all(|b| b.is_ascii_hexdigit()) {
+        return None;
+    }
+    let (head, n) = left.rsplit_once('.')?;
+    if n.is_empty() || !n.bytes().all(|b| b.is_ascii_digit()) {
+        return None;
+    }
+    let (line, sess) = head.rsplit_once('.')?;
+    if line.is_empty() || sess.is_empty() {
+        return None;
+    }
+    Some(tok.to_string())
+}
+
 fn entry_token(entry: &str) -> Option<String> {
     let bytes = entry.as_bytes();
     let needle = b"xfer:";
@@ -3526,6 +3554,9 @@ fn entry_token(entry: &str) -> Option<String> {
         if !boundary {
             i += 1;
             continue;
+        }
+        if let Some(tok) = anchored_token_at(entry, i) {
+            return Some(tok);
         }
         let mut j = i + needle.len();
         let line_start = j;
@@ -5592,6 +5623,18 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         );
         assert_eq!(entry_token("- no token in this entry").as_deref(), None);
         assert_eq!(entry_token("- axfer:river-1 glued").as_deref(), None);
+        assert_eq!(
+            entry_token("- `xfer:mountain.ses_1.3~deadbeef` point").as_deref(),
+            Some("xfer:mountain.ses_1.3~deadbeef")
+        );
+        assert_eq!(
+            entry_token("bare xfer:future.abc.12~0a1b2c3d trailing").as_deref(),
+            Some("xfer:future.abc.12~0a1b2c3d")
+        );
+        assert_eq!(
+            entry_token("- xfer:mountain.ses_1~deadbeef").as_deref(),
+            None
+        );
     }
 
     #[test]

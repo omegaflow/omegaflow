@@ -54,6 +54,7 @@ fn usage() {
          xfer fold <tok> --line <L> --into <target>           append FOLDED (the folding session)\n\
          xfer close <tok> --line <L> --ref <commit|path>      append CLOSED with its reference\n\
          xfer manifest --line <L> --to <target> [--file <p>]  print [manifest n=<N> root=<h8>] per An-<target> block\n\
+         xfer migrate --line <L> [--handover <p>] [--write]   convert legacy xfer:<sender>-<n> in the line's An-blocks to anchored tokens (single track)\n\
          xfer coverage --line <L>                             emitted vs disposed; exit 2 while any token is open\n\
          \n\
          --line falls back to OMEGAFLOW_LINE; the session id to OMEGAFLOW_SESSION, then\n\
@@ -408,35 +409,25 @@ fn cmd_transition(args: &[String], state: &str) -> i32 {
         Some(t) => t,
         None => fail(&format!("{}: token absent", state.to_lowercase())),
     };
-    let line_opt_str = match resolve_line(line_opt) {
+    let parsed = match parse_token(&tok) {
+        Some(t) => t,
+        None => fail(&format!(
+            "{}: token malformed — the anchored form xfer:<line>.<sess>.<n>~<h8> is required (run `xfer migrate` to convert a legacy token): {tok}",
+            state.to_lowercase()
+        )),
+    };
+    let line = match resolve_line(line_opt) {
         Ok(l) => l,
         Err(e) => fail(&e),
     };
-    if !valid_component(&line_opt_str) {
+    if line != parsed.line {
         fail(&format!(
-            "{}: --line carries a forbidden character",
-            state.to_lowercase()
+            "{}: --line {} differs from the token line {}",
+            state.to_lowercase(),
+            line,
+            parsed.line
         ));
     }
-    let (line, sess_for_file) = match parse_token(&tok) {
-        Some(p) => {
-            if line_opt_str != p.line {
-                fail(&format!(
-                    "{}: --line {} differs from the token line {}",
-                    state.to_lowercase(),
-                    line_opt_str,
-                    p.line
-                ));
-            }
-            (p.line, p.sess)
-        }
-        None => {
-            if !tok.starts_with("xfer:") || tok.len() <= "xfer:".len() {
-                fail(&format!("{}: token malformed: {tok}", state.to_lowercase()));
-            }
-            (line_opt_str, "legacy".to_string())
-        }
-    };
     let extra = match extra {
         Some(e) => e,
         None => fail(&format!("{}: {extra_flag} absent", state.to_lowercase())),
@@ -448,7 +439,7 @@ fn cmd_transition(args: &[String], state: &str) -> i32 {
     let key = if state == "FOLDED" { "into" } else { "ref" };
     let file = ledger_dir()
         .join(&line)
-        .join(format!("{sess_for_file}.log"));
+        .join(format!("{}.log", parsed.sess));
     let rec = format!(
         "{} {} {} by={}.{} {}={}",
         utc_now(),
@@ -640,6 +631,145 @@ fn cmd_manifest(args: &[String]) -> i32 {
     0
 }
 
+fn replace_legacy_in_line(raw: &str, mint: &mut dyn FnMut(&str) -> String) -> (String, usize) {
+    let bytes = raw.as_bytes();
+    let mut out = String::new();
+    let mut last = 0usize;
+    let mut i = 0usize;
+    let mut count = 0usize;
+    while i + 5 <= bytes.len() {
+        if &bytes[i..i + 5] == b"xfer:" {
+            let start = i;
+            let mut j = i + 5;
+            while j < bytes.len() {
+                let c = bytes[j] as char;
+                if c.is_ascii_alphanumeric() || c == '-' || c == '_' || c == '.' || c == '~' {
+                    j += 1;
+                } else {
+                    break;
+                }
+            }
+            let t = &raw[start..j];
+            if !t.contains('~') {
+                out.push_str(&raw[last..start]);
+                out.push_str(&mint(t));
+                last = j;
+                count += 1;
+            }
+            i = j;
+        } else {
+            i += 1;
+        }
+    }
+    out.push_str(&raw[last..]);
+    (out, count)
+}
+
+fn cmd_migrate(args: &[String]) -> i32 {
+    let mut line_opt: Option<String> = None;
+    let mut handover_opt: Option<String> = None;
+    let mut write = false;
+    let mut i = 0;
+    while i < args.len() {
+        if let Some(v) = parse_flag(args, &mut i, "--line") {
+            line_opt = Some(v.clone());
+        } else if let Some(v) = parse_flag(args, &mut i, "--handover") {
+            handover_opt = Some(v.clone());
+        } else if args[i] == "--write" {
+            write = true;
+        }
+        i += 1;
+    }
+    let line_name = match resolve_line(line_opt) {
+        Ok(l) => l,
+        Err(e) => fail(&e),
+    };
+    if !valid_component(&line_name) {
+        fail("migrate: --line carries a forbidden character");
+    }
+    let sess = match resolve_sess() {
+        Ok(s) => s,
+        Err(e) => fail(&e),
+    };
+    if !valid_component(&sess) {
+        fail("migrate: session id carries a forbidden character");
+    }
+    let files = match handover_opt {
+        Some(f) => vec![PathBuf::from(f)],
+        None => discover_handovers(&line_name),
+    };
+    let file = ledger_dir().join(&line_name).join(format!("{sess}.log"));
+    let existing: Vec<Token> = read_file_events(&file)
+        .iter()
+        .filter_map(|(_, t)| parse_token(t))
+        .filter(|t| t.sess == sess)
+        .collect();
+    let mut next = next_index(&existing);
+    let mut records: Vec<String> = Vec::new();
+    let mut migrated = 0usize;
+
+    for path in files {
+        let Ok(text) = fs::read_to_string(&path) else {
+            continue;
+        };
+        let mut out = String::new();
+        let mut target: Option<String> = None;
+        for raw in text.lines() {
+            if let Some(h) = raw.trim_start().strip_prefix("## ") {
+                target = h.trim().strip_prefix("An ").map(|t| t.trim().to_string());
+                out.push_str(raw);
+                out.push('\n');
+                continue;
+            }
+            match &target {
+                Some(tgt) => {
+                    let mut mint = |legacy: &str| -> String {
+                        let h8 = sha256_hex8(&canonicalize(legacy));
+                        let token = format!("xfer:{line_name}.{sess}.{next}~{h8}");
+                        records.push(format!(
+                            "{} SENT {} by={}.{} to={}",
+                            utc_now(),
+                            token,
+                            line_name,
+                            sess,
+                            tgt
+                        ));
+                        next += 1;
+                        token
+                    };
+                    let (newline, c) = replace_legacy_in_line(raw, &mut mint);
+                    migrated += c;
+                    out.push_str(&newline);
+                    out.push('\n');
+                }
+                None => {
+                    out.push_str(raw);
+                    out.push('\n');
+                }
+            }
+        }
+        if write {
+            if let Err(e) = fs::write(&path, &out) {
+                fail(&format!("{}: {e}", path.display()));
+            }
+        } else {
+            print!("{out}");
+        }
+    }
+    if write {
+        for r in &records {
+            if let Err(e) = append_ledger(&file, r) {
+                fail(&e);
+            }
+        }
+    }
+    println!(
+        "xfer migrate: {migrated} legacy token(s) -> {line_name}.{sess} (next index {next}){}",
+        if write { "" } else { " [dry-run]" }
+    );
+    0
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let cmd = match args.first() {
@@ -656,6 +786,7 @@ fn main() {
         "fold" => cmd_transition(rest, "FOLDED"),
         "close" => cmd_transition(rest, "CLOSED"),
         "manifest" => cmd_manifest(rest),
+        "migrate" => cmd_migrate(rest),
         "coverage" => cmd_coverage(rest),
         "-h" | "--help" => {
             usage();
@@ -885,5 +1016,22 @@ mod tests {
             "xfer:b.1~bbbbbbbb".to_string(),
         ];
         assert_eq!(manifest_root(&a), manifest_root(&b));
+    }
+
+    #[test]
+    fn legacy_tokens_are_replaced_by_anchored_ones() {
+        let mut n = 0u64;
+        let mut mint = |_legacy: &str| {
+            n += 1;
+            format!("xfer:mycelium.s.{n}~deadbeef")
+        };
+        let (out, c) = replace_legacy_in_line(
+            "- keep xfer:mountain-7 here and xfer:future.s.2~aaaaaaaa",
+            &mut mint,
+        );
+        assert_eq!(c, 1);
+        assert!(out.contains("xfer:mycelium.s.1~deadbeef"), "{out}");
+        assert!(out.contains("xfer:future.s.2~aaaaaaaa"), "{out}");
+        assert!(!out.contains("xfer:mountain-7"), "{out}");
     }
 }
