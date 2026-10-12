@@ -1,12 +1,12 @@
 <!--
-  title: Handover — Sensory-Folge 255 (2026-10-11)
-  session: Sensory-Folge 255
+  title: Handover — Sensory-Folge 256 (2026-10-12)
+  session: Sensory-Folge 256
   class: handover
-  date: 2026-10-11
-  sha256: 39df8ffaa7f0c51c24eafa7af4d7d31ff5b287219e4eddd4e91c3793ae68d1e8
+  date: 2026-10-12
+  sha256: dc7fed232b45ed83be3212db6f17c4c7e50c7a102b6dbd7d896c985026201ddf
   status: live
 -->
-# Handover — Sensory-Folge 255 (2026-10-11)
+# Handover — Sensory-Folge 256 (2026-10-12)
 
 Dieses Register trägt nur Offenes — Erledigtes ist gelöscht, nicht erklärt; git trägt,
 was gemacht wurde. Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks —
@@ -18,45 +18,31 @@ Es gibt keine Rangfolge und keinen `härtesten Punkt` — die offenen Punkte wer
 Messstempel) / **Blockade** / **Braucht**. Sortierung: **umsetzbar zuerst**; der
 Akteur steht pro Punkt in `Bindung`.
 
-Dieses Register konsumiert `docs/handover/archiv/handover-2026-10-11-sensory-folge254.md`
-(die F254-Übergabe, aus `docs/handover/` nach `archiv/` verschoben); diese Folge ist 255.
+Dieses Register konsumiert `docs/handover/archiv/handover-2026-10-11-sensory-folge255.md`
+(die F255-Übergabe, aus `docs/handover/` nach `archiv/` verschoben); diese Folge ist 256.
 Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md` (gelesen
-2026-10-11 F255; Pass-Stand HEAD `94faa9e2d`, Pass-Messung 2026-10-11T13:45Z — zitiert,
-nicht kopiert). Der eigene Atom-HEAD ist seither weitergerückt (`889dc3dee`).
-Eigene Messung dieses Atoms (2026-10-11 F255): HEAD `889dc3dee` == `origin/main`; der
-Arbeitsbaum trägt fremde uncommittete Hünke (`tools/harvest/src/bin/mla_compiler.rs`,
-`tools/harvest/src/bin/ola_compiler.rs`, `?? .github/workflows/masie-cdn.yml`) — nicht
-überschrieben (gemessen `git status --short`).
-Eigener Register-Pass (2026-10-11 F255): `register_lookup --fired sensory` = 0;
-`--stale sensory --persist 3` = 0; `--addressed sensory` = 0; `--orphan-docs` = 21
-(fremde Linien: `remove-bias.md`, `flyby-path-2-addendum`, `survey-*-ephemeris-quellen.md`
-u. a. ohne Live-Träger; nicht Sensory); `open_points_check` F254 = 3 absent / 0
-stale-citations / 0 done-carried / 0 word-carried / 0 guardians / 0 format-gaps /
-0 owner-drift / 0 post-md — die 3 „absent" sind Parser-Artefakte: zwei sind
-Curly-Brace-Verweise (`tools/harvest/src/bin/{cmb_planck,mla,ola}_compiler.rs`, real
-vorhanden), einer ein Backtick-verkürzter Pfad (`phi/sources.φ`-Zeile → real vorhanden,
-Key `at europa_clipper`); kein echter Pfad fehlt. Zeilennummern in `phi/sources.φ`
-werden nicht zitiert — `register_sort` verschiebt sie (`at europa_clipper` wandert). Die Form-Karte
-`docs/concepts/tool-forms.md` wurde als erste Handlung gelesen.
-Gearbeitet dieses Atoms (2026-10-11 F255): kein sensory-eigener Trigger gefeuert —
-beide `eigen`-Punkte (ox64-m2c `wartend`, europa-clipper `termin`) stehen unverändert,
-ihre Trigger (physische Zustellung / Flyby 2026-12-03) sind nicht gefeuert. Der
-ox64-Status wurde **nicht** erneut am Baum gemessen (unverändert seit 2026-10-10); der
-headless `--playwright`-Render wurde einmal gefahren (lesbar) und bestätigt die
-Übergabe-Lage: er liefert den JS-Paketstatus nicht (nur Kopf/FAQ/Links), die Route für
-den echten Status bleibt die Bridge (`state/zustand/wartend.φ`, Key `ox64-m2c`). Beide Zitate in
-dieser Übergabe sind auf den Baum gezogen (Lage „gemessen 2026-10-11"). Kein
-Operator-Wort nötig; nichts vorzulegen. Die CI-Lage wird aus dem Stehenden Pass
-zitiert, nicht kopiert. Nachzug 2026-10-11 F255 (Orphan-Zensus nach Future-235):
-`register_lookup --orphan-docs` = 18 trägerlose Prosa-Dokumente; gemessen ist **keines**
-Sensorys — `survey-2026-10-10-ephemeris-quellen.md` deklariert „durchgeführt … Mountain",
-`survey-raetsel-bestand.md` trägt „Fremde Feder (Mountain)", `survey-2026-10-09-domaenen.md`
-ist das Future-Dossier (`state/future/omegaflow-ist-stand-2026-10-09.md`); die sensory-nahen
-Dokumente (Exposom-Matrix, medizinische-datenquellen, weberin-*) sind bereits getragen. Der
-einzige sensory-seitige Träger-Defekt ist die **JUICE-Gruppe** — nach dem registrierten Wort
-River zugeordnet und im `## An river`-Block abgegeben.
+2026-10-12 F256; Pass-Stand HEAD `37bd2a618`, Pass-Messung 2026-10-12T19:13Z — zitiert,
+nicht kopiert).
 
-## Haus — Sensorik, Hardware & Fundstellen (Stand 2026-10-11)
+Eigener Register-Pass (2026-10-12 F256): `register_lookup --fired sensory` = 0;
+`--stale sensory --persist 3` = 0; `--addressed sensory` = 1 (`mycelium-334`, gefaltet);
+`--orphans` = 0; `--descoped-check` = 0 widerlegt; `--orphan-docs` = 11 (fremde Linien,
+nicht Sensory); `open_points_check` F255 = 2 absent (Parser-Artefakte: Curly-Brace-Verweis
+`tools/harvest/src/bin/{cmb_planck,mla,ola}_compiler.rs` + Backtick-verkürzter Pfad
+`phi/sources.φ`-Zeile, beide real vorhanden), 0 stale-citations / 0 done-carried /
+0 word-carried / 0 format-gaps / 0 owner-drift / 0 post-md. Die adressierte
+mycelium-334-Auflage ist gefaltet: die vier `## An river`-Transport-Einträge
+(JUICE/Flyby-Path-2-Träger-Abgabe) tragen jetzt verankerte Übergabe-Tokens
+(`xfer mark --line sensory --to river`, gemessen mit dem frisch gebauten
+`register_lookup --tokens`: 4 × `XFER unbeglichen`, kein `XFER-MISSING` mehr) und den
+`[manifest n=4 root=7e193e88]`-Block. Kein sensory-eigener Trigger gefeuert — beide
+`eigen`-Punkte (ox64-m2c `wartend`, europa-clipper `termin`) stehen unverändert, ihre
+Trigger (physische Zustellung / Flyby 2026-12-03) sind nicht gefeuert. Die Form-Karte
+`docs/concepts/tool-forms.md` wurde als erste Handlung gelesen; die CI-Lage wird aus
+dem Stehenden Pass zitiert, nicht kopiert. Zeilennummern in `phi/sources.φ` werden nicht
+zitiert — `register_sort` verschiebt sie (`at europa_clipper` wandert).
+
+## Haus — Sensorik, Hardware & Fundstellen (Stand 2026-10-12)
 
 Diese Übergabe **ist** das Haus: jeder Sensor-/Hardware-Stand, jede Route, jeder Punkt steht hier
 mit Zustand (Operator-Wort 2026-09-29). Ein Punkt, der nur in `state/` lebt und hier fehlt, ist
@@ -88,7 +74,7 @@ breiter messen.
   *(gemessen 2026-09-29: `~/archive/archive-root` existiert, `~/backup/archive-root` fehlt —
   Pfad-Korrektur nachgezogen.)*
 
-## Operator-Wort-Register (Stand 2026-10-11)
+## Operator-Wort-Register (Stand 2026-10-12)
 
 - **Wort:** „nein dann passt es nicht" (vDEC descoped) | 2026-09-26 | Operator (Session).
 - **Wort:** „kein onboard ciq" | 2026-09-26 | Operator (Session).
@@ -275,6 +261,7 @@ breiter messen.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes. … **Die Übergabe IST der Stand.** … **1 · Still messen, nur Fälliges.** … **2 · Bekanntes direkt bis zur Kante arbeiten.** … **3 · Nur Ungeklärtes vorlegen.** **LOCK nie vorlegen**. **Wartend nie vorlegen** … **4 · Grenze bleibt.** Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt. **5 · Übergabe zuletzt.** … **Sensory liest die Hardware nur nach Operator-Wort**; jedes Aufzeichnen fragt vorher (Sensor-Konsens); Korrelat ≠ Erleben; Figuren/OCR via `vision`. … Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen …" | 2026-10-10 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent (nicht das Commit-Wort), Sensory-Folge 253; Verbatim `state/operator-gespraeche/2026-10-10-sensory.md`.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes. Ist ein Name genannt, nimm diesen; sonst die neueste offene Sensory-Übergabe. … **Die Übergabe IST der Stand.** … **1 · Still messen, nur Fälliges.** … **2 · Bekanntes direkt bis zur Kante arbeiten.** … **3 · Nur Ungeklärtes vorlegen.** **LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `state/zustand/wartend.φ`). … **4 · Grenze bleibt.** Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt. **5 · Übergabe zuletzt.** … **Sensory liest die Hardware nur nach Operator-Wort**; jedes Aufzeichnen fragt vorher (Sensor-Konsens); Korrelat ≠ Erleben; Figuren/OCR via `vision`. … Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen …" | 2026-10-11 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent (nicht das Commit-Wort), Sensory-Folge 254; Verbatim `state/operator-gespraeche/2026-10-11-sensory.md`.
 - **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes. Ist ein Name genannt, nimm diesen; sonst die neueste offene Sensory-Übergabe. … **Die Übergabe IST der Stand.** … **1 · Still messen, nur Fälliges.** … **2 · Bekanntes direkt bis zur Kante arbeiten.** … **3 · Nur Ungeklärtes vorlegen.** **LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `state/zustand/wartend.φ`). … **4 · Grenze bleibt.** Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt. **5 · Übergabe zuletzt.** … **Sensory liest die Hardware nur nach Operator-Wort**; jedes Aufzeichnen fragt vorher (Sensor-Konsens); Korrelat ≠ Erleben; Figuren/OCR via `vision`. … Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen …" | 2026-10-11 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent (nicht das Commit-Wort), Sensory-Folge 255; Verbatim `state/operator-gespraeche/2026-10-11-sensory.md`.
+- **Wort:** „Erste Handlung: `sread docs/concepts/tool-forms.md` … Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes. Ist ein Name genannt, nimm diesen; sonst die neueste offene Sensory-Übergabe. … **Die Übergabe IST der Stand.** … **1 · Still messen, nur Fälliges.** … **2 · Bekanntes direkt bis zur Kante arbeiten.** … **3 · Nur Ungeklärtes vorlegen.** **LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `state/zustand/wartend.φ`). … **4 · Grenze bleibt.** Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt. **5 · Übergabe zuletzt.** … **Sensory liest die Hardware nur nach Operator-Wort**; jedes Aufzeichnen fragt vorher (Sensor-Konsens); Korrelat ≠ Erleben; Figuren/OCR via `vision`. … Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen …" | 2026-10-12 | Operator (Session) — Session-Start-Befehl + session-weiter Delegations-Consent (nicht das Commit-Wort), Sensory-Folge 256; Verbatim `state/operator-gespraeche/2026-10-12-sensory.md`.
 
 ## Offen (aufgeschlüsselt)
 
@@ -414,11 +401,12 @@ werden getragen, nie geglättet (0 honored).
 
 Origin: sensory-255
 
-**Träger-Abgabe JUICE / Flyby-Path-2 (2026-10-11).** Sensory hält diese Trägerschaft nicht mehr — registriertes Operator-Wort 2026-09-27 „bitte prüfe, was wirklich dir gehört" → **JUICE → River** (Register dieser Übergabe `:114`); `state/zustand/wartend.φ` Key `flyby-path2-recon` trägt Aufnehmer **river**; Future (`future-folge235`) hat den Flyby-Punkt bereits auf deine Zeile verwiesen. Bitte in deinen Träger-Abschnitt falten:
-- `docs/concepts/der-paradigmenwechsel.md` (9 offene Marker)
-- `docs/paper/flyby-path-2-falsification-metric-addendum.md` (4)
-- `docs/paper/flyby-path-2-preregistration.md` (1)
-- dazu die **trägerlosen** Flyby-Orphans: `docs/auftrag/auftrag-flyby2-kette.md` (3, `register_lookup --orphan-docs`; see-also genau die beiden Paper oben) und `docs/paper/flyby-path-2-addendum-2026-09-29.md` (Future nannte 27 Marker; im aktuellen `--orphan-docs`-Zensus von 18 nicht enthalten).
+**Träger-Abgabe JUICE / Flyby-Path-2 (2026-10-11).** Sensory hält diese Trägerschaft nicht mehr — registriertes Operator-Wort 2026-09-27 „bitte prüfe, was wirklich dir gehört" → **JUICE → River** (Register dieser Übergabe `:114`); `state/zustand/wartend.φ` Key `flyby-path2-recon` trägt Aufnehmer **river**; Future (`future-folge235`) hat den Flyby-Punkt bereits auf deine Zeile verwiesen. Bitte in deinen Träger-Abschnitt falten — jeder Eintrag trägt seinen verankerten Übergabe-Token (gemintet 2026-10-12, mycelium-334-`XFER-MISSING` beantwortet):
+- `docs/concepts/der-paradigmenwechsel.md` (9 offene Marker) · xfer:sensory.ses_ece7532c3ffe16Z417fBRj8b31.1~4844adaa
+- `docs/paper/flyby-path-2-falsification-metric-addendum.md` (4) · xfer:sensory.ses_ece7532c3ffe16Z417fBRj8b31.2~5243b5f0
+- `docs/paper/flyby-path-2-preregistration.md` (1) · xfer:sensory.ses_ece7532c3ffe16Z417fBRj8b31.3~1f5f2109
+- dazu die **trägerlosen** Flyby-Orphans: `docs/auftrag/auftrag-flyby2-kette.md` (3, `register_lookup --orphan-docs`; see-also genau die beiden Paper oben) und `docs/paper/flyby-path-2-addendum-2026-09-29.md` (Future nannte 27 Marker; im aktuellen `--orphan-docs`-Zensus von 18 nicht enthalten) · xfer:sensory.ses_ece7532c3ffe16Z417fBRj8b31.4~59f0ba87
+[manifest n=4 root=7e193e88]
 
 Nach dem Fold fällt die JUICE-Zeile aus dem Sensory-Träger; bis dahin liegt die Trägerschaft der drei Dokumente in **diesem** Block (Sender-Register), nicht in meinem Träger.
 
@@ -429,7 +417,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0000 · close 0.0364 · cap 0.15 · Grund: F255 — Line-Session (deepseek-flash), Ein-Pass; kein sensory-eigener Trigger gefeuert (beide `eigen`-Punkte wartend/termin; `--fired`/`--stale`/`--addressed` = 0), Register-Pass (`--orphan-docs` = 21 = fremde Linien, `open_points_check` F254 = 3 Parser-Artefakte, kein echter absent) + `git_safety --snapshot`; ox64 headless `--playwright` einmal gefahren (kein JS-Status — bestätigt die Route `wartend.φ`, Key `ox64-m2c`), Status sonst unverändert (same day, nicht remessen); konsumierte F254 nach `archiv/` (`git mv`). Burn gemessen `session_burn` 2026-10-11 F255 — Laufzeit-Fenster 14 Sessions $0.1949; die eigene Line-Session steht im Fenster als $0.0364; eine exakte Isolation der laufenden Session gibt das Werkzeug nicht her (Fenster umfasst die parallel gestarteten Linien).
+## Burn: open 0.0000 · close 0.0000 · cap 0.15 · Grund: F256 — Line-Session (deepseek-flash), Ein-Pass; die adressierte `mycelium-334`-Auflage gefaltet (vier tokenlose `## An river`-Einträge → vier verankerte Tokens + `[manifest n=4 root=7e193e88]`, mit dem frisch gebauten `register_lookup --tokens` als 4 × `XFER unbeglichen` verifiziert, kein `XFER-MISSING`); kein sensory-eigener Trigger gefeuert (beide `eigen`-Punkte wartend/termin; `--fired`/`--stale` = 0); Register-Pass (`--orphan-docs` = 11 fremde Linien, `open_points_check` F255 = 2 Parser-Artefakte) + `git_safety --snapshot`; konsumierte F255 nach `archiv/`. Die close-Zahl setzt `session_burn` nach Session-Ende.
 
 ## Abschluss
 
@@ -439,12 +427,11 @@ seine eigenen Pfade pfad-begrenzt (der Session-Start-Befehl trägt die
 Commit-Anweisung); fremde uncommittete Hünke bleiben unberührt.
 
 Eigene Pfade dieses Atoms:
-- `docs/handover/handover-2026-10-11-sensory-folge255.md` (diese Übergabe),
-- `docs/handover/archiv/handover-2026-10-11-sensory-folge254.md` (die konsumierte F254, `git mv`).
+- `docs/handover/handover-2026-10-12-sensory-folge256.md` (diese Übergabe),
+- `docs/handover/archiv/handover-2026-10-11-sensory-folge255.md` (die konsumierte F255, `git mv`).
 
 `state/zustand/`, `state/operator-gespraeche/`, `state/sensory/` sind gitignored
 (`/state/`) — lokal, nicht committet. Nur eigene Pfade committen.
 
-Arbeitsbaum bei Atom-Ende (gemessen 2026-10-11 F255): fremde uncommittete Hünke
-(`tools/harvest/src/bin/mla_compiler.rs`, `tools/harvest/src/bin/ola_compiler.rs`,
-`?? .github/workflows/masie-cdn.yml`) blieben unberührt und außerhalb dieses Commits.
+Arbeitsbaum bei Atom-Ende (gemessen 2026-10-12 F256): fremde uncommittete Hünke
+bleiben unberührt und außerhalb dieses Commits.
