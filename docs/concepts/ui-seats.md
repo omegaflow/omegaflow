@@ -28,6 +28,22 @@ Rolle) steht im AGENTS.md; diese Karte trägt das **Wie**.
   Antworten sind Rohmaterial, das Verdikt trägt die Session/Rat.
 - **Nicht-Antwort ist `pending`:** Tageslimit / Login-Wall / Rate-Limit wird **gemessen**
   benannt, nie als stille Null gelesen.
+- **Runden-Reihenfolge — das langsamste Seat zuerst.** Die Reasoning-Seats (GLM 5.3 **Deep
+  Think Max**, Perplexity/Sakana Deep Research) rechnen Minuten. Sie werden **zuerst**
+  gestellt, dann die schnellen Seats (Qwen/DeepSeek/Duck) gefahren, und das langsamste
+  **zuletzt abgeholt**. Nicht Duck→Claude→Qwen→GLM, sondern **GLM zuerst hinein, GLM zuletzt
+  heraus** — die schnellen antworten ohnehin, während Deep Think noch rechnet.
+- **`pending` erst nach gemessener Frist, nie nach 90 s.** Ein Seat, der „Thinking…" zeigt,
+  ist **nicht** `pending`: die Antwort persistiert im Chat (Sidebar / eigene `chat.z.ai/c/<id>`-URL)
+  und ist per `chrome-devtools_evaluate_script` (`document.body.innerText`) abholbar, wenn
+  die Bridge den Sidebar-Chat nicht als `<a>` findet. `pending` ist erst nach einer **echten**
+  Frist mit **benanntem** Grund (Tageslimit, Login-Wall, Modell antwortet nicht). **Lehre
+  (gemessen 2026-10-12, Mountain):** GLM zweimal nach 90 s als `pending` verbucht, Tab zu früh
+  geschlossen — die Deep-Think-Max-Antwort war vollständig und trug den tiefsten Riss
+  („das System ist an den Rändern an DE verankert; gute Residuen bestätigen eine Unabhängigkeit,
+  die ihr nicht habt"). **Das langsamste Seat trägt den tiefsten Konfund; ein `pending` nach
+  90 s ist ein Abbruch, keine Messung.** Der kostenfreie Weg reicht — er kostet Zeit, nicht Geld;
+  ein Kauf (GLM/Kimi/Claude/OpenRouter) kauft **Tempo**, nie Urteil.
 
 ## Feste UI-Seats
 
