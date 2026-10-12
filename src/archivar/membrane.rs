@@ -1,4 +1,7 @@
 use super::*;
+use crate::mathematikerin::channel::{
+    Boundary, FluxKind, Medium, TransportOp, descriptor_for_channel_ref,
+};
 
 pub const NAIF_LSK_TTL_SECS: u64 = 86400;
 
@@ -308,15 +311,29 @@ pub fn medium_reach(
     if age == 0.0 {
         return Some(0.0);
     }
-    match channel_ref {
-        2 => Some(medium?.sound_speed_m_s * age),
-        3 => Some(medium?.p_wave_m_s * age),
-        4 => Some(medium?.s_wave_m_s * age),
-        5 => Some((2.0 * medium?.thermal_diffusivity_m2_s * age).sqrt()),
-        6 => Some((2.0 * medium?.molecular_diffusivity_m2_s * age).sqrt()),
-        7 => slot_measured(advection).then_some(advection * age),
-        0 | 1 | 8 => Some(C_LIGHT * age),
-        _ => None,
+    let desc = descriptor_for_channel_ref(channel_ref)?;
+    match desc.op {
+        TransportOp::Maxwell | TransportOp::Poisson => Some(C_LIGHT * age),
+        TransportOp::Wave => match desc.medium {
+            Medium::ElasticSolid => {
+                let speed = if desc.boundary == Boundary::FreeSurface {
+                    medium?.s_wave_m_s
+                } else {
+                    medium?.p_wave_m_s
+                };
+                Some(speed * age)
+            }
+            Medium::Fluid => Some(medium?.sound_speed_m_s * age),
+            Medium::Vacuum => None,
+        },
+        TransportOp::Flux(FluxKind::Fourier) => {
+            Some((2.0 * medium?.thermal_diffusivity_m2_s * age).sqrt())
+        }
+        TransportOp::Flux(FluxKind::Fick) => {
+            Some((2.0 * medium?.molecular_diffusivity_m2_s * age).sqrt())
+        }
+        TransportOp::Flux(_) => None,
+        TransportOp::Advective => slot_measured(advection).then_some(advection * age),
     }
 }
 
@@ -356,6 +373,10 @@ pub fn body_anchor_samples(
         eprintln!("body {name}: granules carry no finite span — no anchor");
         return out;
     };
+    let Some(gravity) = force_id_of("gravity") else {
+        eprintln!("body {name}: the registry carries no gravity handle — no anchor");
+        return out;
+    };
     let motion = Motion::Barycenter {
         body_name: name.to_string(),
         scale: 1.0,
@@ -371,8 +392,8 @@ pub fn body_anchor_samples(
             extent: radius,
             tau,
             kernel_id: 0.0,
-            channel_ref: Some(1.0),
-            absorption: absorption_for_force(1, 0.0),
+            channel_ref: Some(gravity as f64),
+            absorption: absorption_for_force(gravity, 0.0),
             advection: 0.0,
             anchor_vmax,
             anchor_amax,
@@ -463,9 +484,10 @@ pub fn anchor_velocity(
 }
 
 pub fn flat_propagation_speed(channel_ref: f64, advection: f64) -> Option<f64> {
-    match channel_ref as u8 {
-        0 | 1 | 8 => Some(C_LIGHT),
-        7 => slot_measured(advection).then_some(advection),
+    let desc = descriptor_for_channel_ref(channel_ref as u8)?;
+    match desc.op {
+        TransportOp::Maxwell | TransportOp::Poisson => Some(C_LIGHT),
+        TransportOp::Advective => slot_measured(advection).then_some(advection),
         _ => None,
     }
 }
@@ -492,11 +514,11 @@ pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
         || kl.contains("temp")
         || kl == "thermistor"
     {
-        (5, 3, 60.0, "", Some(3600.0))
+        (force_id_of("thermal")?, 3, 60.0, "", Some(3600.0))
     } else if kl.contains("pressure") || kl.contains("baro") || kl == "pres" {
-        (6, 3, 60.0, "", Some(3600.0))
+        (force_id_of("diffusion")?, 3, 60.0, "", Some(3600.0))
     } else if kl.contains("humidity") || kl.contains("humid") || kl == "rh" || kl == "moisture" {
-        (5, 3, 300.0, "", Some(3600.0))
+        (force_id_of("thermal")?, 3, 300.0, "", Some(3600.0))
     } else if (kl.contains("wind") && kl.contains("speed"))
         || kl == "windspeed"
         || kl == "anemometer"
@@ -505,51 +527,51 @@ pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
         || kl == "winddir"
         || kl == "vane"
     {
-        (6, 3, 10.0, "", Some(3600.0))
+        (force_id_of("diffusion")?, 3, 10.0, "", Some(3600.0))
     } else if kl.contains("mic")
         || kl.contains("audio")
         || kl.contains("sound")
         || kl.contains("noise")
         || kl == "spl"
     {
-        (2, 1, 0.01, "", None)
+        (force_id_of("acoustic")?, 1, 0.01, "", None)
     } else if kl.contains("light")
         || kl.contains("lux")
         || kl.contains("lumin")
         || kl.contains("irradiance")
     {
-        (0, 0, 10.0, "", None)
+        (force_id_of("em")?, 0, 10.0, "", None)
     } else if kl.contains("battery")
         && (kl.contains("level") || kl.contains("pct") || kl.contains("soc"))
     {
-        (8, 0, 60.0, "%", Some(60.0))
+        (force_id_of("electric")?, 0, 60.0, "%", Some(60.0))
     } else if kl.contains("battery") && (kl.contains("volt") || kl == "voltage") {
-        (8, 0, 60.0, "v", Some(60.0))
+        (force_id_of("electric")?, 0, 60.0, "v", Some(60.0))
     } else if kl.contains("battery") && kl.contains("current") {
-        (8, 0, 10.0, "a", Some(10.0))
+        (force_id_of("electric")?, 0, 10.0, "a", Some(10.0))
     } else if kl.contains("co2")
         || kl.contains("voc")
         || kl.contains("pm2")
         || kl.contains("pm10")
         || kl.contains("gas")
     {
-        (5, 3, 300.0, "", None)
+        (force_id_of("thermal")?, 3, 300.0, "", None)
     } else if kl.contains("spo2") || kl.contains("oxygen") || kl.contains("sao2") || kl == "o2" {
-        (6, 3, 10.0, "%", None)
+        (force_id_of("diffusion")?, 3, 10.0, "%", None)
     } else if kl.contains("magnet") || kl.contains("compass") || kl.contains("b_field") {
-        (0, 0, 10.0, "", None)
+        (force_id_of("em")?, 0, 10.0, "", None)
     } else if kl.contains("accelerometer")
         || kl.contains("acc")
         || kl.contains("vibration")
         || kl.contains("gyro")
     {
-        (3, 1, 1.0, "", None)
+        (force_id_of("seismic-body")?, 1, 1.0, "", None)
     } else if kl.contains("gravity") {
-        (1, 0, 10.0, "", None)
+        (force_id_of("gravity")?, 0, 10.0, "", None)
     } else if kl.contains("camera") || kl.contains("video") {
-        (0, 0, 1.0 / 30.0, "", None)
+        (force_id_of("em")?, 0, 1.0 / 30.0, "", None)
     } else if kl.contains("battery") && kl.contains("charging") {
-        (8, 0, 60.0, "1", Some(60.0))
+        (force_id_of("electric")?, 0, 60.0, "1", Some(60.0))
     } else if kl.contains("gps")
         || kl.contains("gnss")
         || kl.contains("speed")
@@ -560,22 +582,22 @@ pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
         || kl.contains("bearing")
     {
         if kl.contains("speed") || kl.contains("velocity") {
-            (7, 1, 10.0, "m/s", None)
+            (force_id_of("advective")?, 1, 10.0, "m/s", None)
         } else if kl.contains("track")
             || kl.contains("heading")
             || kl.contains("course")
             || kl.contains("bearing")
         {
-            (0, 0, 10.0, "deg", None)
+            (force_id_of("em")?, 0, 10.0, "deg", None)
         } else {
             return None;
         }
     } else if kl == "hr" || kl.contains("heart") || kl.contains("bpm") {
-        (6, 3, 10.0, "bpm", None)
+        (force_id_of("diffusion")?, 3, 10.0, "bpm", None)
     } else if kl.contains("cadence") {
-        (7, 1, 10.0, "1/min", None)
+        (force_id_of("advective")?, 1, 10.0, "1/min", None)
     } else if kl.starts_with("event.") {
-        (0, 0, 10.0, "", None)
+        (force_id_of("em")?, 0, 10.0, "", None)
     } else {
         return None;
     };
@@ -605,25 +627,25 @@ mod tests {
     fn the_battery_family_carries_the_electric_force() {
         assert_eq!(
             sensor_config("battery.level").expect("sensor").channel_ref,
-            8
+            6
         );
         assert_eq!(
             sensor_config("battery.voltage")
                 .expect("sensor")
                 .channel_ref,
-            8
+            6
         );
         assert_eq!(
             sensor_config("battery.current")
                 .expect("sensor")
                 .channel_ref,
-            8
+            6
         );
         assert_eq!(
             sensor_config("battery.charging")
                 .expect("sensor")
                 .channel_ref,
-            8
+            6
         );
     }
 
@@ -687,7 +709,7 @@ mod tests {
     fn the_spo2_sensor_carries_the_diffusion_force_and_percent_unit() {
         let spo2 = sensor_config("spo2").expect("sensor");
         assert_eq!(spo2.unit, "%");
-        assert_eq!(spo2.channel_ref, 6);
+        assert_eq!(spo2.channel_ref, 3);
         assert_eq!(spo2.kernel, 3);
         assert_eq!(spo2.tau, None);
     }
@@ -696,7 +718,7 @@ mod tests {
     fn the_gnss_speed_carries_the_advective_force_and_metre_per_second() {
         let speed = sensor_config("gnss.speed").expect("sensor");
         assert_eq!(speed.unit, "m/s");
-        assert_eq!(speed.channel_ref, 7);
+        assert_eq!(speed.channel_ref, 4);
         assert_eq!(speed.kernel, 1);
     }
 
@@ -719,13 +741,13 @@ mod tests {
 
     #[test]
     fn a_shelf_covered_band_answers_the_measured_v_through_the_wiring() {
-        let v = propagation_speed(4.0, 0.0, 0.05, 0.0166667)
+        let v = propagation_speed(5.0, 0.0, 0.05, 0.0166667)
             .expect("the 0.05 Hz Rayleigh band carries a speed");
         assert!(
             (v - 2899.8).abs() < 1e-6,
             "the cone carries the measured 2899.8 m/s, not the flat 3000: {v}"
         );
-        let reach = signal_reach(4.0, 0.0, 10.0, 0.05, 0.0166667)
+        let reach = signal_reach(5.0, 0.0, 10.0, 0.05, 0.0166667)
             .expect("the Rayleigh band carries a reach");
         assert!(
             (reach - 2899.8 * 10.0).abs() < 1e-6,
@@ -736,7 +758,7 @@ mod tests {
     #[test]
     fn an_uncovered_earth_band_carries_no_flat_fallback() {
         assert_eq!(
-            propagation_speed(4.0, 0.0, 0.07, 0.0),
+            propagation_speed(5.0, 0.0, 0.07, 0.0),
             None,
             "0.07 Hz lies above the Rayleigh rows — no earth speed is invented"
         );
@@ -746,27 +768,27 @@ mod tests {
             "an em band without a shelf row carries c"
         );
         assert_eq!(
-            propagation_speed(2.0, 0.0, 440.0, 0.0),
+            propagation_speed(8.0, 0.0, 440.0, 0.0),
             None,
             "acoustic carries no flat carrier without a body medium"
         );
         assert_eq!(
-            propagation_speed(7.0, 12.5, 0.0, 0.0),
+            propagation_speed(4.0, 12.5, 0.0, 0.0),
             Some(12.5),
             "the advective force carries its advection, not the shelf"
         );
         assert_eq!(
-            propagation_speed(7.0, 0.0, 0.0, 0.0),
+            propagation_speed(4.0, 0.0, 0.0, 0.0),
             Some(0.0),
             "a measured 0.0 advection carries speed 0, never the base"
         );
         assert_eq!(
-            propagation_speed(7.0, SLOT_ABSENT, 0.0, 0.0),
+            propagation_speed(4.0, SLOT_ABSENT, 0.0, 0.0),
             None,
             "absent advection has no propagation term"
         );
         assert_eq!(
-            signal_reach(4.0, 0.0, 10.0, 0.07, 0.0),
+            signal_reach(5.0, 0.0, 10.0, 0.07, 0.0),
             None,
             "an uncovered earth band carries no flat cone"
         );
@@ -774,33 +796,27 @@ mod tests {
 
     #[test]
     fn the_f32_wgsl_selection_stays_within_tolerance_of_the_f64_wiring() {
-        let flat = |ft: u8, advection: f32, advection_measured: bool| -> Option<f32> {
+        let flat = |ft: u8, advection: f32| -> Option<f32> {
             match ft {
-                0 | 1 | 8 => Some(C_LIGHT as f32),
-                7 => {
-                    if advection_measured {
-                        Some(advection)
-                    } else {
-                        None
-                    }
-                }
+                0 | 2 | 6 => Some(C_LIGHT as f32),
+                4 => slot_measured(advection as f64).then_some(advection),
                 _ => None,
             }
         };
-        let fixtures: [(u8, f64, f64, f64, bool); 8] = [
-            (4, 0.0, 0.05, 0.0166667, false),
-            (4, 0.0, 0.005, 0.0016667, false),
-            (4, 0.0, 0.07, 0.0, false),
-            (0, 0.0, 9.861594e15, 0.0, false),
-            (0, 0.0, 5.0e14, 0.0, false),
-            (7, 12.5, 0.0, 0.0, true),
-            (7, 0.0, 0.0, 0.0, true),
-            (7, -1.0, 0.0, 0.0, false),
+        let fixtures: [(u8, f64, f64, f64); 8] = [
+            (5, 0.0, 0.05, 0.0166667),
+            (5, 0.0, 0.005, 0.0016667),
+            (5, 0.0, 0.07, 0.0),
+            (0, 0.0, 9.861594e15, 0.0),
+            (0, 0.0, 5.0e14, 0.0),
+            (4, 12.5, 0.0, 0.0),
+            (4, 0.0, 0.0, 0.0),
+            (4, -1.0, 0.0, 0.0),
         ];
-        for (ft, adv, freq, bw, present) in fixtures {
+        for (ft, adv, freq, bw) in fixtures {
             let cpu = propagation_speed(ft as f64, adv, freq, bw);
             let gpu = crate::mathematikerin::dispersion::v_at_f32(ft, freq as f32, bw as f32)
-                .or_else(|| flat(ft, adv as f32, present));
+                .or_else(|| flat(ft, adv as f32));
             match (cpu, gpu) {
                 (Some(c), Some(g)) => {
                     if c == 0.0 {

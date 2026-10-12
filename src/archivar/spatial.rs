@@ -431,6 +431,9 @@ pub fn build_buffer(
 pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
     let eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut samples: Vec<Sample> = Vec::new();
+    let Some(gravity) = force_id_of("gravity") else {
+        return samples;
+    };
     for chunk in bytes.as_chunks::<RECORD_STRIDE>().0 {
         let rec = match parse_record(chunk) {
             Some(r) => r,
@@ -461,7 +464,7 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
             extent: body_radius_m,
             tau: f64::INFINITY,
             kernel_id: 0.0,
-            channel_ref: Some(1.0),
+            channel_ref: Some(gravity as f64),
             absorption: 0.0,
             advection: 0.0,
             anchor_vmax,
@@ -484,7 +487,7 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
                 extent: body_radius_m,
                 tau: f64::INFINITY,
                 kernel_id: 1.0,
-                channel_ref: Some(1.0),
+                channel_ref: Some(gravity as f64),
                 absorption: 0.0,
                 advection: 0.0,
                 anchor_vmax,

@@ -70,12 +70,12 @@ pub fn force_opaque(id: u8) -> Option<bool> {
     match id {
         0 => Some(true),
         1 => Some(false),
-        2 => Some(true),
+        2 => Some(false),
         3 => Some(false),
         4 => Some(false),
-        5 => Some(true),
-        6 => Some(false),
-        7 => Some(false),
+        5 => Some(false),
+        6 => Some(true),
+        7 => Some(true),
         8 => Some(true),
         _ => None,
     }
@@ -340,12 +340,12 @@ mod tests {
     fn test_force_opacity() {
         assert_eq!(force_opaque(0), Some(true));
         assert_eq!(force_opaque(1), Some(false));
-        assert_eq!(force_opaque(2), Some(true));
+        assert_eq!(force_opaque(2), Some(false));
         assert_eq!(force_opaque(3), Some(false));
         assert_eq!(force_opaque(4), Some(false));
-        assert_eq!(force_opaque(5), Some(true));
-        assert_eq!(force_opaque(6), Some(false));
-        assert_eq!(force_opaque(7), Some(false));
+        assert_eq!(force_opaque(5), Some(false));
+        assert_eq!(force_opaque(6), Some(true));
+        assert_eq!(force_opaque(7), Some(true));
         assert_eq!(force_opaque(8), Some(true));
         assert_eq!(force_opaque(9), None);
     }
@@ -375,7 +375,7 @@ mod tests {
         let lib = sample_lib();
         let g = gate_weigh("Station data sea_water_temperature", &lib);
         assert_eq!(g.weight, 12);
-        assert_eq!(g.force, Some(5));
+        assert_eq!(g.force, Some(7));
         assert!(!g.matched.iter().any(|m| m == "absent:position"));
     }
 

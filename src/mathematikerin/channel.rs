@@ -878,34 +878,16 @@ pub const FIXED_CHANNELS: [FixedChannel; 9] = [
         medium: Medium::Vacuum,
     },
     FixedChannel {
-        tag: "gravity",
-        conserved: Conserved::Mass,
-        unit: "m/s^2",
-        medium: Medium::Vacuum,
-    },
-    FixedChannel {
-        tag: "acoustic",
-        conserved: Conserved::Energy,
-        unit: "Pa",
-        medium: Medium::Fluid,
-    },
-    FixedChannel {
         tag: "seismic-body",
         conserved: Conserved::Energy,
         unit: "Pa",
         medium: Medium::ElasticSolid,
     },
     FixedChannel {
-        tag: "seismic-surface",
-        conserved: Conserved::Energy,
-        unit: "Pa",
-        medium: Medium::ElasticSolid,
-    },
-    FixedChannel {
-        tag: "thermal",
-        conserved: Conserved::Energy,
-        unit: "K",
-        medium: Medium::Fluid,
+        tag: "gravity",
+        conserved: Conserved::Mass,
+        unit: "m/s^2",
+        medium: Medium::Vacuum,
     },
     FixedChannel {
         tag: "diffusion",
@@ -920,10 +902,28 @@ pub const FIXED_CHANNELS: [FixedChannel; 9] = [
         medium: Medium::Fluid,
     },
     FixedChannel {
+        tag: "seismic-surface",
+        conserved: Conserved::Energy,
+        unit: "Pa",
+        medium: Medium::ElasticSolid,
+    },
+    FixedChannel {
         tag: "electric",
         conserved: Conserved::Energy,
         unit: "V/m",
         medium: Medium::Vacuum,
+    },
+    FixedChannel {
+        tag: "thermal",
+        conserved: Conserved::Energy,
+        unit: "K",
+        medium: Medium::Fluid,
+    },
+    FixedChannel {
+        tag: "acoustic",
+        conserved: Conserved::Energy,
+        unit: "Pa",
+        medium: Medium::Fluid,
     },
 ];
 
@@ -1993,8 +1993,8 @@ mod tests {
             assert_eq!(interaction_of(ft), expected, "force type {ft}");
         }
         assert_eq!(interaction_of(0), Some(Interaction::Em));
-        assert_eq!(interaction_of(1), Some(Interaction::Gravity));
-        assert_eq!(interaction_of(2), None);
+        assert_eq!(interaction_of(1), None);
+        assert_eq!(interaction_of(2), Some(Interaction::Gravity));
         assert_eq!(Interaction::parse("em"), Some(Interaction::Em));
         assert_eq!(Interaction::parse("gravity"), Some(Interaction::Gravity));
         assert_eq!(Interaction::parse("weak"), None);
@@ -2818,7 +2818,7 @@ mod tests {
         let em = descriptor_for_force("em", Medium::Vacuum).expect("em");
         let electric = descriptor_for_force("electric", Medium::Vacuum).expect("electric");
         assert_eq!(channel_ref_of_descriptor(&em), Some(0));
-        assert_eq!(channel_ref_of_descriptor(&electric), Some(8));
+        assert_eq!(channel_ref_of_descriptor(&electric), Some(6));
     }
 
     #[test]
@@ -2832,7 +2832,7 @@ mod tests {
         )
         .expect("electric axes");
         assert_eq!(derived.regime, Regime::QuasiStatic);
-        assert_eq!(channel_ref_of_descriptor(&derived), Some(8));
+        assert_eq!(channel_ref_of_descriptor(&derived), Some(6));
     }
 
     #[test]

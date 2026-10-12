@@ -171,7 +171,7 @@ mod matrix_record_tests {
                 name: name.to_string(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 7,
+                channel_ref: Some(4),
                 tau: 21600.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -211,7 +211,7 @@ mod matrix_record_tests {
         assert_eq!(m.rings["ndbc_a_wspd"], vec![(21600.0, 3.5), (43200.0, 5.0)]);
         assert_eq!(m.rings["ndbc_b_wtmp"], vec![(21600.0, 20.0)]);
         assert!(m.metas.contains_key("ndbc_a_wspd"));
-        assert_eq!(m.metas["ndbc_a_wspd"].channel_ref, 7);
+        assert_eq!(m.metas["ndbc_a_wspd"].channel_ref, 4);
     }
 
     #[test]
@@ -379,7 +379,7 @@ mod matrix_rebuild_tests {
                 name: name.to_string(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 1,
+                channel_ref: Some(1),
                 tau: 21600.0,
                 absorption: 0.0,
                 advection: 0.0,

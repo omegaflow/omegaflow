@@ -4410,8 +4410,8 @@ mod tests {
 
     #[test]
     fn diffusion_owns_mass_kg() {
-        assert!(allowed_units_for_force(6).contains(&"kg"));
-        assert!(!allowed_units_for_force(6).contains(&"m/s"));
+        assert!(allowed_units_for_force(3).contains(&"kg"));
+        assert!(!allowed_units_for_force(3).contains(&"m/s"));
     }
 
     #[test]
