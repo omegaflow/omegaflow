@@ -3,6 +3,7 @@ use crate::net::{get, urlencode};
 
 pub fn europepmc_lines(query: &str, max: usize) -> Vec<String> {
     let mut cursor: Option<String> = Some("*".to_string());
+    let mut total: Option<usize> = None;
     let (mut lines, stop) = crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |_| {
         let mut url = format!(
             "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query={}&format=json&pageSize={}",
@@ -24,6 +25,13 @@ pub fn europepmc_lines(query: &str, max: usize) -> Vec<String> {
                         .map(str::to_string);
                     let has_more = next.is_some();
                     cursor = next;
+                    let total_n = v
+                        .get("hitCount")
+                        .and_then(|h| h.as_scalar_string())
+                        .and_then(|h| h.parse::<usize>().ok());
+                    if total_n.is_some() {
+                        total = total_n;
+                    }
                     (out, has_more)
                 }
                 None => (
@@ -42,6 +50,9 @@ pub fn europepmc_lines(query: &str, max: usize) -> Vec<String> {
         vec![format!("absent — europepmc carries no entry: {}", query)]
     } else {
         lines.push(format!("end: {}", stop.label()));
+        if let Some(n) = total {
+            lines.push(format!("total: {}", n));
+        }
         lines
     }
 }

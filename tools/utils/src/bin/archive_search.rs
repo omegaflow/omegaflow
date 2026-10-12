@@ -50,6 +50,10 @@ mod entrez;
 mod erddap;
 #[path = "archive_search/europepmc.rs"]
 mod europepmc;
+#[path = "archive_search/exoplanet_archive.rs"]
+mod exoplanet_archive;
+#[path = "archive_search/figshare.rs"]
+mod figshare;
 #[path = "archive_search/frbcat.rs"]
 mod frbcat;
 #[path = "archive_search/gemini.rs"]
@@ -92,6 +96,8 @@ mod ntfs;
 mod oai;
 #[path = "archive_search/oai_pmh.rs"]
 mod oai_pmh;
+#[path = "archive_search/openaire.rs"]
+mod openaire;
 #[path = "archive_search/openalex.rs"]
 mod openalex;
 #[path = "archive_search/openfda.rs"]
@@ -134,6 +140,8 @@ mod secrets;
 mod semanticscholar;
 #[path = "archive_search/server.rs"]
 mod server;
+#[path = "archive_search/simbad.rs"]
+mod simbad;
 #[path = "archive_search/sourcegraph.rs"]
 mod sourcegraph;
 #[path = "archive_search/sparql.rs"]
@@ -154,6 +162,8 @@ mod uniprot;
 mod unpaywall;
 #[path = "archive_search/vires.rs"]
 mod vires;
+#[path = "archive_search/vizier.rs"]
+mod vizier;
 #[path = "archive_search/web.rs"]
 mod web;
 #[path = "archive_search/wikidata.rs"]
@@ -467,6 +477,11 @@ fn main() {
             "--oai-pmh" => mode = Mode::Net("oai-pmh"),
             "--stac" => mode = Mode::Net("stac"),
             "--erddap" => mode = Mode::Net("erddap"),
+            "--openaire" => mode = Mode::Net("openaire"),
+            "--figshare" => mode = Mode::Net("figshare"),
+            "--simbad" => mode = Mode::Net("simbad"),
+            "--vizier" => mode = Mode::Net("vizier"),
+            "--exoplanet-archive" => mode = Mode::Net("exoplanet-archive"),
             "--dryad" => mode = Mode::Net("dryad"),
             "--frbcat" => mode = Mode::Net("frbcat"),
             "--go" => mode = Mode::Net("go"),
@@ -809,7 +824,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc|--nssdc|--nssdca <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc|--nssdc|--nssdca <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -921,6 +936,21 @@ fn usage() {
     );
     eprintln!(
         "  --erddap    Generic ERDDAP dataset search: `--erddap \"server=<url> searchFor=<kw> [itemsPerPage=N]\"`, keyless; url (tabledap/griddap) + title/institution/id (search/advanced.json)"
+    );
+    eprintln!(
+        "  --openaire  OpenAIRE Graph research-product search (api.openaire.eu/graph/v1), keyless; url (DOI) + title/date/publisher"
+    );
+    eprintln!(
+        "  --figshare  Figshare research-data search (api.figshare.com/v2/articles/search, POST), keyless; url + title/doi"
+    );
+    eprintln!(
+        "  --simbad    SIMBAD object search (simbad.u-strasbg.fr/simbad/sim-tap, ADQL ident.id LIKE), keyless; sim-id url + main_id/ra/dec"
+    );
+    eprintln!(
+        "  --vizier    VizieR catalogue search (tapvizier.cds.unistra.fr/TAPVizieR, TAP_SCHEMA.tables description), keyless; VizieR url + table/description"
+    );
+    eprintln!(
+        "  --exoplanet-archive NASA Exoplanet Archive planet search (exoplanetarchive.ipac.caltech.edu/TAP, pscomppars), keyless; overview url + pl_name/hostname/year"
     );
     eprintln!(
         "  --wiby      Wiby independent web search (wiby.me/json), keyless; url + title/description"
@@ -1037,8 +1067,8 @@ fn usage() {
         "  --nssdc     <query>   (China NSSDC/VSSO coreMetadata search, vsso.nssdc.ac.cn — public metadata; the download is CAS/captcha + application-gated)"
     );
     eprintln!(
-        "  --all       the query through every keyword search mode ({} calls — the last move, never the first; --brave is excluded while its quota is spent)",
-        net::query_mode_count()
+        "  --all       the query through every keyword search mode, parameter arms held ({} calls — the last move, never the first; --brave is excluded while its quota is spent)",
+        net::keyword_mode_count()
     );
     eprintln!();
     eprintln!(

@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 334 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: 19c4af6861ee448f77041173a7c5d92af1287ebb40ae73787cced94c3ad97783
+  sha256: a625d2f5e7544496e7878a6c160dd518c9fa76d40f3e874719a34b911f48b468
   status: live
 -->
 # Handover — Mountain-Folge 334 (2026-10-12)
@@ -58,6 +58,21 @@ gefaltet). **Jeder offene Punkt nennt seine Datei(en)/Pfade.**
   --bin archive_search` 0/0, `rustfmt` sauber; verifiziert am Debug-Bin gegen
   `earth-search.aws.element84.com` (STAC: Sentinel-2-Items) und `erddap.emodnet-physics.eu`
   (ERDDAP: Salinity-Datasets mit Endpunkt+Einheit).
+- **Report-Empfehlungen (a)–(e) umgesetzt** (`state/research/archive-search-landscape/REPORT-2026-10-12.md`,
+  Operator-Wort „gleich alle"):
+  **(a)** `all_lines` (net.rs) hält die 5 Parameter-Arme (`tap`/`sparql`/`oai-pmh`/`stac`/`erddap`)
+  zurück und druckt eine Coverage-Zeile („88 of 93 …"); `keyword_mode_count()` speist die
+  `--all`-Help statt der Gesamtzahl. **(b)** `total: N` je paged Arm: zenodo (`hits.total` =
+  255689 gemessen), openalex (`meta.count` = 55018), europepmc (`hitCount` = 11182).
+  **(c)** `--openaire` (OpenAIRE Graph `researchProducts`) + `--figshare` (POST `articles/search`,
+  GET verworfen weil `search_for` ignoriert) gebaut. **(d)** `--simbad` (SIMBAD TAP, `ident.id LIKE`)
+  · `--vizier` (TAP_SCHEMA.tables `description LIKE`) · `--exoplanet-archive` (`pscomppars`)
+  gebaut. **(e)** `docs/concepts/tools-map.md:100` auf „Σ der Keyword-Modi (88; `--help` = Kanon)"
+  gezogen. Alle fünf neuen Arme live verifiziert (openaire/figshare/simbad/vizier/exoplanet-archive);
+  `QUERY_MODES` = 93, `--all` = 88; je Arm 2-4 Unit-Tests; `cargo build -p omegaflow-utils
+  --bin archive_search` 0/0, rustfmt sauber. **Bewusst nicht gebaut (Rest §5b):** Gaia/NED/MAST,
+  Overpass/OSM, Open-Meteo, GeoNames, GBIF, FDSN, PANGAEA, DataONE, HF-datasets, DBLP,
+  OpenCitations, ORCID/ROR — die §5b-Erweiterung ist größer als die §6-Liste und eigene Atome.
 - **mariner10-Ephemeride geschlossen**: `phi:32031` trägt sha `67949cb6…` == die geheilte
   Sun-Ketten-Komposition (Mycelium-Lauf `38278478615` success).
 - **Stale WWLLN-Zeile korrigiert**: `survey-2026-09-07-weberin-thread-matrix.md:168`
