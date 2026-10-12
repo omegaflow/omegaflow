@@ -1,9 +1,9 @@
 <!--
   title: Handover — River-Folge 201 (2026-10-12)
-  session: River-Linie in einem Pass (river-201) — P7.1-Kopplungsauflösung gebaut (ChannelRegistry::index_of + CouplingRegistry::term = Σ C·φ_from·φ_to über die Deskriptor-Hash→Index-Auflösung; cargo check 0/0, rustfmt clean); adressierte Blöcke gefaltet (mountain-333 Antworten auf river200-1/2 + river197-1 · mycelium-333 THEMIS-Keogramm `phi:21027`/Lauf `38258632187` · sensory-255 JUICE-Trägerschaft); folge200 konsumiert/archiviert; ω()-Loop-Injektion + `coupling`/`interface`-Parser-Arm messbar blockiert (quadratischer PDE-Quellterm vs. linearer `omega_sum`; Direktiven-Grammatik undefiniert)
+  session: River-Linie in einem Pass (river-201) — P7.1-Kopplungsauflösung gebaut (ChannelRegistry::index_of + CouplingRegistry::term) + form-bewusster CouplingRegistry::exchange (friction Differenz-förmig, equal-and-opposite über Dichten; Produkt-kinds unberührt); cargo check 0/0; die zwei Blockaden in der Kette research > roster > rat gehalten (Rat: Slot (b) signed PDE-Quelle, früherer Produkt-Term nur für Reaktion, Reibung Differenz-förmig → eigener kind; exakter Injektions-Ort pending seiner Messung; Grammatik-Minimum entschieden); adressierte Blöcke gefaltet; xfer-Riss gemessen (Quelle trägt migrate, ausgeliefertes Bin nicht → Mycelium); folge200 konsumiert/archiviert
   class: handover
   date: 2026-10-12
-  sha256: 58e8e8eeeb52cd44a2de14f9a17fe408df2bc29ba85dc0c0e9979f1c12a55141
+  sha256: 9c9ab07420520ebb3e9c4abb85eb1574f8a0012abea8723d5e54a495526b8dec
   status: live
 -->
 # Handover — River-Folge 201 (2026-10-12)
@@ -79,12 +79,20 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 
 ## Offen (aufgeschlüsselt)
 
-### P7.1 Kopplung/Interface — Hash→Index-Auflösung + `coupling_term` gebaut; Loop-Injektion + Direktiven-Grammatik blockiert
+### P7.1 Kopplung/Interface — Form-Resolver gebaut; Injektions-Ort + Direktiven-Grammatik rat-entschieden
 - **Status:** eigen (teilgebaut) | **Bindung:** eigen
-- **Trigger:** kein — die Auflösung steht.
-- **Lage:** (gemessen 2026-10-12 river-201, `cargo check` 0/0, `rustfmt --edition 2024 --check src/mathematikerin/channel.rs` clean) **gebaut:** `ChannelRegistry::index_of(hash) -> Option<usize>` + `CouplingRegistry::term(phi, channels) -> Option<f32>` = Σ C_k·φ_from·φ_to über die Deskriptor-Hash→Index-Auflösung (None-Koeffizient = `absent` übersprungen, unaufgelöster Hash übersprungen, kein beitragendes Paar → `None` — nie 0.0); Tests `coupling_term_sums_pairs_over_resolved_indices` · `an_absent_coupling_coefficient_contributes_nothing` · `an_unresolved_coupling_hash_is_skipped`; `channel_reduce` unberührt (`a_registered_coupling_leaves_the_reduction_untouched`). Davor (river-200) schon gebaut: `Plasma`-Medium (`042eecc33`), `Regime`→`PdeRegime`+`PlasmaParameters` außerhalb `hash`/`PartialEq` (`64866d660`), `CouplingRegistry` (`8404624aa`), `InterfaceRegistry` (`599523d35`).
-- **Blockade:** (1) die ω()-Loop-Injektion — der Term ist **quadratisch** in φ (Σ C·φ_from·φ_to), der Loop-Aggregat `omega_sum` ist **linear**; ein naives Addieren mischt die Einheiten, der Injektions-Slot (PDE-Quellterm in der Feld-Eval) ist nicht entschieden. (2) die `coupling`/`interface`-Direktiven-Grammatik ist undefiniert (`sgrep coupling docs/concepts/kanal-ontologie-komplettbau.md` = 0, `sgrep coupling phi/sources.φ` = 0) → der Parser-Arm hat keine Form.
-- **Braucht:** (1) den Injektions-Slot als Architekturfrage durch den Rat entscheiden (quadratische Quelle — welches Feld/WGSL-Punkt); (2) die Direktiven-Grammatik festlegen (Rat/Operator); dann Mountain (Registerzeilen) + River (Parser-Arm).
+- **Trigger:** kein — Auflösung + Form-Resolver stehen; der exakte Injektions-Ort wartet auf seine Messung.
+- **Lage:** (gemessen 2026-10-12 river-201; `cargo check` 0/0, `rustfmt --edition 2024 --check src/mathematikerin/channel.rs` clean) **gebaut:** `ChannelRegistry::index_of(hash)->Option<usize>` + `CouplingRegistry::term(phi,channels)->Option<f32>` = Σ C_k·φ_from·φ_to über die Deskriptor-Hash→Index-Auflösung (None-Koeffizient/None-Hash übersprungen, kein Paar → `None`, nie 0.0) **und** der form-bewusste `CouplingRegistry::exchange` (friction-kind `IonNeutralFriction`: `from_delta=+rate·(φ_to−φ_from)`, `to_delta=−rate·(φ_to−φ_from)·(ρ_from/ρ_to)` → `ρ_from·from_delta+ρ_to·to_delta≡0` per Konstruktion; Produkt-kinds: `coeff·φ_i·φ_j`; Tests `a_friction_exchange_is_antisymmetric_through_density` · `an_absent_coupling_coefficient_yields_no_exchange` · `an_unresolved_exchange_hash_is_skipped`). `term`/`channel_reduce` unberührt. Davor (river-200): `Plasma` (`042eecc33`), `PdeRegime`+`PlasmaParameters` außerhalb `hash`/`PartialEq` (`64866d660`), `CouplingRegistry` (`8404624aa`), `InterfaceRegistry` (`599523d35`).
+- **Rat (2026-10-12 river-201, Kette research > roster > rat; Blätter `state/stimmen/2026-10-12-river-p71-injection-grammar-{roster,rat}.md`, `archive_search --all`-Spill `state/research/spill/omegaflow_all_1791832926_…txt`):** **Slot (b)** — signed PDE-Quelle im Feld-Eval, **nicht** (a) das lineare Aggregat `omega_sum` (`omega.rs:1835`), **nicht** (c) das Atmungs-Target (`omega.rs:1853`; c nur read-only Diagnose-Tap). **Riss (gehalten, nicht geglättet):** der frühere Rat („coupling_term = Σ C·φ_from·φ_to, additiv im ω()-Loop", `…-coupling-interface-regime-rat-roster.md:25`) ist Produkt-förmig und gilt **nur für die Reaktions**-Klasse; ion-neutral-Reibung ist **Differenz**-förmig (`ρ_i ν_in(u_n−u_i)`, equal-and-opposite, `ρ_i ν_in=ρ_n ν_ni`; GITM/three-fluid generalized Ohm, DOI `10.1029/2012JA017637`/`10.1029/2021JA029421`) → **eigener `kind`**. Erhaltung: ungeordnetes Paar (canonical hash), **eine** Rate `ν_in` + beide live Dichten, `ν_ni=(ρ_i/ρ_n)·ν_in` hergeleitet, `+P/−P` aus einer Auswertung, Laufzeit-Invariante `Σ_c ρ_c Δu_c ≡ 0`. Grammatik-Minimum: `kind · unordered pair {a,b} · rate ν_in|pending · frame · density_refs · region · conserves · status`; `kind` bleibt getrennt von `op`/`pde_type` (Kopplung = Relation zweier Kanäle). Roster konvergent (Qwen3.7-Plus · Claude Sonnet 5.5 Extra hoch · GLM-5.3 Max); Duck.ai `pending` (kein Gespräch geöffnet).
+- **Blockade:** (1) der konkrete Injektions-Ort ist `pending` seiner Messung — messen, **wo beide Kanal-Dichten pro Zelle gleichzeitig live sind** ((i) per-Zelle-Akkumulator im Fold `shaders.rs:199-233`, (ii) separater Coupling-Pass, (iii) WGSL-Kernel-Änderung); CPU-Referenz zuerst, dann WGSL-Parität. (2) die `coupling`-Direktive ist rat-entschieden, aber noch nicht in `phi/sources.φ` (Mountain-Feder) noch im Parser (River-Arm).
+- **Braucht:** (1) die Ort-Messung (Q2) als nächsten begrenzten Schritt; (2) danach Mountains Register-Direktiven + Rivers Parser-Arm.
+
+### `xfer`-Riss — Quelle trägt `migrate`, ausgeliefertes Bin nicht (gemessen)
+- **Status:** eigen (an Mycelium geroutet) | **Bindung:** linie:mycelium
+- **Trigger:** kein — gemessen.
+- **Lage:** (gemessen 2026-10-12 river-201) mycelium-333 bat um `xfer migrate --line river --write`; die Quelle trägt `migrate` (`tools/register/src/bin/xfer.rs:57/668/789`, `cmd_migrate`), aber `target/release/xfer` (aus `tools-latest` via `bin/.tools_ensure`) meldet `unknown subcommand: migrate` (`xfer --help` = mark/list/fold/close/coverage). Der Stehende-Pass-Claim „`xfer migrate` als Umstellungspfad" ist damit nicht am ausgelieferten Artefakt — ein **Manifestations-/Frische-Gap**, keine fehlende Funktion.
+- **Blockade:** `tools-latest` ist älter als `a3a6a1185`'s `migrate`-Bau.
+- **Braucht:** Mycelium stößt `tools-build`/die `tools-latest`-Republikation an; danach `xfer migrate --line river --write` (Sender-Umstellung).
 
 ### P10 flache Tokens → Kanal-Deskriptor (`force_id_of`/`FIXED_CHANNELS`/Modul `force` weg) — gated
 - **Status:** wartend | **Bindung:** eigen
@@ -175,15 +183,19 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 
 ## Abschluss
 
-river-201: die P7.1-Hash→Index-Auflösung + `CouplingRegistry::term` (Σ C·φ_from·φ_to,
-`cargo check` 0/0, rustfmt clean) sind gebaut — der ω()-Loop-Injektions-Slot und die
-`coupling`/`interface`-Direktiven-Grammatik sind als messbare Blockaden getragen (quadratischer
-Term vs. linearer `omega_sum`; Grammatik undefiniert), nicht vertagt. Die drei adressierten Blöcke
-sind gefaltet (mountain-333: river200-1 WWLLN-Survey korrigiert, river200-2 §D als Offen-Punkt,
-river197-1 f107 getragen; mycelium-333: THEMIS-Keogramm `phi:21027`/Lauf `38258632187`;
-sensory-255: JUICE/Flyby-Path-2-Trägerschaft — schon im Träger-Abschnitt). **Riss (gemessen):**
-mycelium-333 bat um `xfer migrate --line river --write`, die installierte `xfer`-Hilfe kennt
-jedoch **kein** `migrate`-Subkommando (`xfer --help` = mark/list/fold/close/coverage) — die
-Werkzeug-Frische-Claim des Stehenden Passes (`xfer migrate als Umstellungspfad`) widerlegt der
-Aufruf; als Punkt geführt. Kein `smail --send`, kein Window-Edit. `/consent` ist der session-weite
-Delegations-Consent, nie das Commit-Wort.
+river-201: gebaut ist die P7.1-Hash→Index-Auflösung + `CouplingRegistry::term` (Σ C·φ_from·φ_to)
+**und** der form-bewusste `CouplingRegistry::exchange` (friction Differenz-förmig, equal-and-opposite
+über Dichten; Produkt-kinds unberührt) — `cargo check` 0/0, rustfmt clean. Die drei als blockiert
+gemeldeten Punkte wurden in der geworteten Kette **research > roster > rat** gehalten:
+`archive_search --all` + `general`-Digest; Roster (Qwen3.7-Plus · Claude Sonnet 5.5 Extra hoch ·
+GLM-5.3 Max, konvergent; Duck.ai `pending`); dann der Rat (fünf Stimmen). **Der Rat hält den Riss:**
+der frühere Produkt-Term („additiv im ω()") gilt nur für die **Reaktions**-Klasse; Reibung ist eine
+**Differenz**-förmige signed PDE-Quelle im Feld-Eval (Slot b) → eigener `kind`; der exakte
+Injektions-Ort ist `pending` seiner Messung. Grammatik-Minimum entschieden (`kind · unordered pair ·
+rate ν_in · frame · density_refs · region · conserves · status`; `kind` getrennt von `op`/`pde_type`).
+Die drei adressierten Blöcke sind gefaltet (mountain-333: river200-1 WWLLN-Survey korrigiert,
+river200-2 §D als Offen-Punkt, river197-1 f107 getragen; mycelium-333: THEMIS-Keogramm `phi:21027`/
+Lauf `38258632187`; sensory-255: JUICE/Flyby-Path-2-Trägerschaft). Der `xfer`-Riss ist gemessen
+(Quelle `xfer.rs:668` trägt `migrate`, ausgeliefertes `target/release/xfer` nicht → an Mycelium).
+Kein `smail --send`, kein Window-Edit. `/consent` ist der session-weite Delegations-Consent, nie
+das Commit-Wort.

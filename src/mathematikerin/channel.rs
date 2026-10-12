@@ -1584,6 +1584,34 @@ impl CouplingRegistry {
         if contributed { Some(acc) } else { None }
     }
 
+    pub fn exchange(
+        &self,
+        c: &Coupling,
+        phi: &[f32],
+        rho: &[f32],
+        channels: &ChannelRegistry,
+    ) -> Option<(usize, f32, usize, f32)> {
+        let coeff = c.coefficient? as f32;
+        let i = channels.index_of(c.from)?;
+        let j = channels.index_of(c.to)?;
+        if i >= phi.len() || j >= phi.len() || i >= rho.len() || j >= rho.len() {
+            return None;
+        }
+        let (from_delta, to_delta) = match c.kind {
+            CouplingKind::IonNeutralFriction => {
+                let d = phi[j] - phi[i];
+                let from_delta = coeff * d;
+                let to_delta = -coeff * d * (rho[i] / rho[j]);
+                (from_delta, to_delta)
+            }
+            CouplingKind::Thermoelectric | CouplingKind::Hall | CouplingKind::Pedersen => {
+                let product = coeff * phi[i] * phi[j];
+                (product, product)
+            }
+        };
+        Some((i, from_delta, j, to_delta))
+    }
+
     pub fn schema_hash(&self) -> u32 {
         let mut h: u64 = 0xcbf29ce484222325;
         for c in &self.pairs {
@@ -3252,6 +3280,134 @@ mod tests {
             pairs.term(&phi, &channels),
             None,
             "a hash with no channel contributes nothing"
+        );
+    }
+
+    #[test]
+    fn a_friction_exchange_is_antisymmetric_through_density() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let from = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg / (m2 s)",
+        );
+        let to = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Charge,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Ohm),
+            PdeType::Elliptic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "A / m2",
+        );
+        let i = channels.register(from.clone());
+        let j = channels.register(to.clone());
+        let rate = 0.25f64;
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::IonNeutralFriction,
+            from: from.hash(),
+            to: to.hash(),
+            coefficient: Some(rate),
+            unit: "kg/(m^3 s)",
+            region: None,
+        });
+        let c = pairs
+            .coupling_of(from.hash(), to.hash(), CouplingKind::IonNeutralFriction)
+            .expect("the registered friction pair resolves");
+        let phi = [2.0f32, 5.0];
+        let rho = [3.0f32, 7.0];
+        let (fi, from_delta, ti, to_delta) = pairs
+            .exchange(c, &phi, &rho, &channels)
+            .expect("the resolved friction pair exchanges");
+        assert_eq!(fi, i);
+        assert_eq!(ti, j);
+        assert_eq!(from_delta, rate as f32 * (phi[j] - phi[i]));
+        let net = rho[i] * from_delta + rho[j] * to_delta;
+        assert!(net.abs() < 1e-4, "rho-weighted exchange sums to zero");
+    }
+
+    #[test]
+    fn an_absent_coupling_coefficient_yields_no_exchange() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let from = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg / (m2 s)",
+        );
+        let to = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Charge,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Ohm),
+            PdeType::Elliptic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "A / m2",
+        );
+        channels.register(from.clone());
+        channels.register(to.clone());
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::IonNeutralFriction,
+            from: from.hash(),
+            to: to.hash(),
+            coefficient: None,
+            unit: "kg/(m^3 s)",
+            region: None,
+        });
+        let c = pairs
+            .coupling_of(from.hash(), to.hash(), CouplingKind::IonNeutralFriction)
+            .expect("the registered friction pair resolves");
+        let phi = [1.0f32, 2.0];
+        let rho = [1.0f32, 1.0];
+        assert_eq!(
+            pairs.exchange(c, &phi, &rho, &channels),
+            None,
+            "an absent coefficient stays absent, never 0.0"
+        );
+    }
+
+    #[test]
+    fn an_unresolved_exchange_hash_is_skipped() {
+        let channels = ChannelRegistry::with_capacity(2);
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::IonNeutralFriction,
+            from: 0xAA,
+            to: 0xBB,
+            coefficient: Some(0.5),
+            unit: "kg/(m^3 s)",
+            region: None,
+        });
+        let c = pairs
+            .coupling_of(0xAA, 0xBB, CouplingKind::IonNeutralFriction)
+            .expect("the registered friction pair resolves");
+        let phi = [1.0f32, 2.0];
+        let rho = [1.0f32, 1.0];
+        assert_eq!(
+            pairs.exchange(c, &phi, &rho, &channels),
+            None,
+            "a hash with no channel exchanges nothing"
         );
     }
 
