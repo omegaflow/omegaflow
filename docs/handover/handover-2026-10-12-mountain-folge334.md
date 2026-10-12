@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 334 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: c70f765ef6e6689697b8b8e087c3152cdacace2b19d83f1b6befecd09aa62c74
+  sha256: a9b7dcb5749ed86ff04ea15532824e5086bfc8bd1488a94001c92f42d2c98c3a
   status: live
 -->
 # Handover — Mountain-Folge 334 (2026-10-12)
@@ -93,6 +93,18 @@ gefaltet). **Jeder offene Punkt nennt seine Datei(en)/Pfade.**
   **Nebenwirkung geheilt:** zwei Taucher nutzten `cargo fmt -- <pfad>` (crate-weit) → 10
   `src/archivar/*`-Dateien format-only geändert; aus Snapshot `refs/safety/1791835876` sauber
   restauriert (kein fremder Hunk im Commit).
+- **§5b-Nachzügler + Key-Status (Operator-Session).** `--usgs` (USGS-Erdbeben-Katalog
+  `earthquake.usgs.gov/fdsnws/event`, keyless, Ortsfilter; ScienceBase ist Cloudflare-403 →
+  gemessener Fallback) · `--scopus` (Elsevier Scopus `api.elsevier.com/content/search/scopus`,
+  liest `ELSEVIER_API_KEY`; live gegen den Key verifiziert) · `--mendeley` um `version`/`date`
+  erweitert (gemessene Felder). `QUERY_MODES` = 113, `--all` = 108; `cargo build -p omegaflow-utils
+  --bin archive_search` 0/0. **Key-Stand** (`.secrets.local`, nur Namen gelesen): `GEMINI_API_KEY`,
+  `EXA_API_KEY`, `CONSENSUS_API_KEY`, `ELSEVIER_API_KEY` gesetzt (Exa/Consensus je doppelt →
+  mögliche Dubletten, Operator prüfen); **`GEONAMES_USER` fehlt noch** (das Konto `johannes_tyroller`
+  ist für die freien Web-Services freigeschaltet seit 2026-10-12 23:05). **Dimensions** = kein
+  Self-Serve-Key (institutionell/Abo, „Request Demo") → `blocked account`; **Scite** = nicht frei;
+  **Google CSE** (Karte) verworfen. `--dblp`/`--grepapp` bleiben Bot-Gate-`pending`. Damit wachen
+  mit den vorhandenen Keys `--gemini`/`--exa`/`--consensus`/`--scopus` ohne Codeänderung auf.
 - **mariner10-Ephemeride geschlossen**: `phi:32031` trägt sha `67949cb6…` == die geheilte
   Sun-Ketten-Komposition (Mycelium-Lauf `38278478615` success).
 - **Stale WWLLN-Zeile korrigiert**: `survey-2026-09-07-weberin-thread-matrix.md:168`

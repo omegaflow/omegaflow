@@ -3769,6 +3769,8 @@ const QUERY_MODES: &[&str] = &[
     "grepapp",
     "scholexplorer",
     "mendeley",
+    "usgs",
+    "scopus",
 ];
 
 const PARAMETER_MODES: &[&str] = &["tap", "sparql", "oai-pmh", "stac", "erddap"];
@@ -4280,6 +4282,8 @@ pub fn run_lines_max(
         "grepapp" => crate::grepapp::grepapp_lines(query, max),
         "scholexplorer" => crate::scholexplorer::scholexplorer_lines(query, max),
         "mendeley" => crate::mendeley::mendeley_lines(query, max),
+        "usgs" => crate::usgs::usgs_lines(query, max),
+        "scopus" => crate::scopus::scopus_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         "wayback-available" => wayback_available_lines(query),
@@ -4555,6 +4559,8 @@ mod tests {
             "grepapp",
             "scholexplorer",
             "mendeley",
+            "usgs",
+            "scopus",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
