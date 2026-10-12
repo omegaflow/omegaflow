@@ -191,6 +191,27 @@ pub fn fetch_raw_bytes(url: &str) -> Option<Vec<u8>> {
     fetch_raw_bytes_with(url, RetryPolicy::Transient, TRANSFER_BOUND_S)
 }
 
+pub fn fetch_release_or_parts(url: &str) -> Option<Vec<u8>> {
+    if let Some(body) = fetch_raw_bytes(url) {
+        return Some(body);
+    }
+    let manifest_text = fetch_raw(&format!("{url}.parts"), None, &[])?;
+    let manifest = crate::archivar::cdn::parse_parts_manifest(&manifest_text)?;
+    let base = url.rsplit_once('/').map(|(dir, _)| dir)?;
+    let mut body = Vec::new();
+    for (name, sha, len) in &manifest.parts {
+        let part = fetch_raw_bytes(&format!("{base}/{name}"))?;
+        if part.len() as u64 != *len || crate::archivar::sha256::sha256_hex(&part) != *sha {
+            return None;
+        }
+        body.extend_from_slice(&part);
+    }
+    if crate::archivar::sha256::sha256_hex(&body) != manifest.total_sha256 {
+        return None;
+    }
+    Some(body)
+}
+
 pub fn fetch_raw_bytes_headers_with(
     url: &str,
     headers: &[(String, String)],
@@ -588,13 +609,7 @@ pub fn record_in_enclosure(
         .and_then(|channel_ref| medium_reach(channel_ref, age, medium, fc.advection))
         .or_else(|| {
             fc.channel_ref.and_then(|channel_ref| {
-                signal_reach(
-                    channel_ref as f64,
-                    fc.advection,
-                    age,
-                    fc.freq,
-                    fc.bin_width,
-                )
+                signal_reach(channel_ref as f64, fc.advection, age, fc.freq, fc.bin_width)
             })
         })
     else {
