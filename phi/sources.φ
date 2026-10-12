@@ -31405,6 +31405,40 @@ compiler tools/harvest/src/bin/mariner_rst_compiler.rs
 sha256 fdde35e23c4e4f615147bea7aff70df67fccc11ec6247b4af8d60ba24b2853b5
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/iopscience.iop.org/psjae32f5t1_ascii.txt
+origin https://iopscience.iop.org/2632-3338/7/2/35/suppdata/psjae32f5t1_ascii.txt?doi=10.3847/PSJ/ae32f5
+sha256 78fd71f65f8cafca76b67d8a57709797c4a0ef8f865717699b36661b4209a9b3
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/iopscience.iop.org/psjae32f5t2_ascii.txt
+origin https://iopscience.iop.org/2632-3338/7/2/35/suppdata/psjae32f5t2_ascii.txt?doi=10.3847/PSJ/ae32f5
+sha256 f9b943756144e1f8ad55d529e2f24f01639f888096e35d79ce0652c4072d5606
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/iopscience.iop.org/psjae32f5t3_ascii.txt
+origin https://iopscience.iop.org/2632-3338/7/2/35/suppdata/psjae32f5t3_ascii.txt?doi=10.3847/PSJ/ae32f5
+sha256 ad3c8471d11913ceef3da198551603294e9d8c61b3131f37f3bda6fffe91d4b5
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/content.cld.iop.org/psjae32f5t4_mrt.txt
+origin https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt
+sha256 1e8f7dd43b2527a292159b90206d848a6c95a847f04b5aa476333ee39183d225
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ser.im-ldi.com/mariner_m10_camera_angles.txt
+origin https://ser.im-ldi.com/M10/M10_ISIS/camera_angles.txt
+sha256 0a65df59c8685e22004ce7f7afa21cf54f7aedc39c2ecb5965b8fcad3dae97bd
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/www.hou.usra.edu/lpsc2024_2663.pdf
+origin https://www.hou.usra.edu/meetings/lpsc2024/pdf/2663.pdf
+sha256 40085b523011849870f2d10ac9311d7c02d1f064c650a22a6e013fbba396f787
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/planetarymaps.usgs.gov/Mercury_M1_M2_M3_M10_mosaic_global_2010.tif
+origin https://planetarymaps.usgs.gov/mosaic/Mercury_M1_M2_M3_M10_mosaic_global_2010.tif
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
 terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
