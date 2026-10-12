@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — f107-Identitäts-Riss durch den Rat + die Forschungsschicht (`archive_search --all`) + 7 UI-Seats untermauert und im Resolver implementiert (gemessene Diskrepanz → benannter Riss statt stiller Auswahl; `None == None`-Fabrikation gefixt); camera_angles-`terms` auf PD gesetzt; adressierte Blöcke (mycelium-330, river-200) gefaltet
   class: handover
   date: 2026-10-12
-  sha256: e42e2d4487eff20d733e9985ca1423fcf089c0a5b00ccafb81582591246fc896
+  sha256: cb4d4dd5f839452c69137522b4ecc2857eebc5109a88790e522b33d31c3b0d5c
   status: live
 -->
 # Handover — Mountain-Folge 331 (2026-10-12)
@@ -107,8 +107,7 @@ Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese Session
   `cargo check -p omegaflow-harvest --bin mariner_rst_compiler` 0/0); der DP-Pfad bleibt unangetastet.
 - **Blockade:** das **M6/M7-SP-spezifische** Feldlayout ist im Baum nicht transkribiert (nur DSC-0073-sha);
   die Frequenz-Skalierung (roh ~1.08e12, /2⁹ ≈ 2114 MHz) ist auf der DSC-0073-Seite nicht dokumentiert.
-- **Braucht:** DSC-0073-SPFP-Layout pinnen + Frequenz-Skalierung gegen DSC 0119/Odf-Spec
-  oder `pending`; SP-Band-`url` via Mycelium (`…/PSCM-00017_DD005407_…tar`, verdict HTTP 206).
+- **Braucht:** **Taucher-Messung (2026-10-12/331): `pending` — die Skalierung ist in keiner Baum-/Netzquelle belegt.** Der DSC-0073-Datenrecord typisiert die Frequenz als **DPFP, nicht SPFP** (DSC 0073 Anlage W. 4-5 „TRANSMITTER FREQUENCY — DPFP"; OCR `state/research/scratch/recherche-2026-10-12/mariner-texte/dsc73_ocr.txt:274-275`); der `/2^9`-Faktor ist ein **numerischer Fit** (M6 1,082359e12 → 2113,98 MHz; M7 1,083311e12 → 2115,84 MHz; `…/mariner-texte/RESULT.md:48-53`), keine dokumentierte Regel. Die DSN-Tape-Format-Spezifikation (`TM GTB900-1`, im Begleitschreiben zitiert) fehlt im Baum; NTRS `19730023976` ist `METADATA_ONLY` (`"downloads":[]`), NTRS-Suchen leer. **Riss:** die Aufgabe fragt nach SPFP-M6/7 — deren Record ist DPFP. Ferner: `state/research/spdf-catalogs/all_catalogs/dsc_0119.txt` ist **leer** (65 B, 1 Leerzeile) — kein Volltext, Quelle ist allein der PDF-Scan (`archive_search --pdf-text` → `pending — no text layer`). SP-Band-`url` via Mycelium (`…/PSCM-00017_DD005407_…tar`, verdict HTTP 206) offen.
 
 ### DSC 0119 / M4-Feldtabelle — Parser-Arm (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -145,7 +144,13 @@ Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese Session
   eine Band-Summary. `tar_fits` in `fetch.rs::format_readable` + Port-Skip-Liste aufgenommen (`cargo check` 0/0).
 - **Blockade:** keine.
 - **Braucht:** der JADES-Block braucht **36 `field`-Zeilen** (Member-Key = `<objekt>/data_<band>`) mit force/unit
-  → Kanäle; der Extraction-JSON-Pfad (`<member>` → `[0].mean`) muss dafür gemessen werden.
+  → Kanäle. **Taucher-Messung (2026-10-12/331):** der Extraction-Pfad ist gemessen — `format tar_fits` →
+  `tar_fits_to_json`/`tar_fits_bytes_to_json` (`src/archivar/extract.rs:3598-3637`) → je Member `fits_to_json`,
+  ohne BINTABLE Fallback `fits_image_bands_to_json` (`:3489-3596`); der Wert liest sich als `<member-key>.0.mean`
+  (`jnum`/`jpath_val`, `src/archivar/json.rs:290-360`). `field`-Kernform (`src/archivar/parse.rs:1588-1697`):
+  `field <member>.0.mean <channel-name> inverse-square em <unit> 33554432.0 0.0 0.0 <nu_hz>`. **Offen:** die
+  **BUNIT** je Member (aus dem FITS-Header) muss vor dem Schreiben der 36 Zeilen gemessen werden; `µm` ist kein
+  zulässiges `unit`-Token (`units.rs` `allowed_units_for_force(0)` trägt `nm`, normalisiert `um`) → Einheit wählen/ableiten.
 
 ### THEMIS-ASI Stationstabelle — an River übergeben (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -364,7 +369,7 @@ NIST) — nur die Sonke/Robinson-Tabellen bleiben dort offen. **Echo (mycelium-3
   — **65 S.**, 5 746 835 B, sha `fee7b06e…` (die Volldatei; die 21-S.-`renamed_dataset_catalogs`-Datei
   `ec3c41eb…` ist nur ein Auszug). Der Ordner `all_catalogs/` trägt die **komplette NSSDC-DSC-Serie**
   (`dsc_0001.pdf` … 614 Einträge); Listing in `state/research/spdf-catalogs/all_catalogs/index.html` (77 797 B).
-  Lokale Kopie `state/research/spdf-catalogs/all_catalogs/dsc_0119.pdf` + Volltext `dsc_0119.txt`.
+  Lokale Kopie `state/research/spdf-catalogs/all_catalogs/dsc_0119.pdf`; die Datei `dsc_0119.txt` ist **leer** (65 B, 1 Leerzeile, gemessen 2026-10-12/331 — kein Volltext, `archive_search --pdf-text` → `pending — no text layer`, Quelle ist der PDF-Bildscan).
 - **SPDF DSC-Kreuzreferenz `spreadsheet_dsc.xls` (US-PD) — `url`/`origin`-Zeile.** `xfer:mountain327-9`
   `https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/old_data_doc/spreadsheet_dsc.xls`
   (HTTP 200, 424 448 B, sha `b1f8523d…`) — die `DSC# | Data Set Old ID | Mission | Data Set Name | Agent | Form`-Tabelle;
