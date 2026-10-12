@@ -1,0 +1,86 @@
+name: pvo-orse-odr-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: ODR source URL
+        required: false
+        default: https://pds-ppi.igpp.ucla.edu/data/PVO-V-ORSE-1-ODR-OPENLOOP--V1.0/DATA/19840818_19841101/ODR8231.ODR
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  pvo-orse-odr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "pvo_orse_odr.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset pvo_orse_odr.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset pvo_orse_odr.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the pds-ppi.igpp.ucla.edu release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+              --title "pds-ppi.igpp.ucla.edu" \
+              --notes "PVO ORSE open-loop ODR files packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile and manifest the PVO ORSE ODR open-loop file to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin pvo_orse_odr_compiler -- \
+            --url "${{ inputs.url }}" \
+            --year 1984 \
+            --out pvo_orse_odr.bin \
+            --ci-mode
+
+  pvo-orse-odr-series:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the series shards already exist on the CDN
+        id: idempotence
+        run: |
+          if gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^pvo_orse_odr_s"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "pvo_orse_odr_s* shards already present — harvest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "pvo_orse_odr_s* shards missing — harvesting the series"
+          fi
+      - name: Ensure the pds-ppi.igpp.ucla.edu release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view pds-ppi.igpp.ucla.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-ppi.igpp.ucla.edu --repo omegaflow/sources \
+              --title "pds-ppi.igpp.ucla.edu" \
+              --notes "PVO ORSE open-loop ODR files packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Harvest the PVO ORSE ODR series and manifest the shards to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          curl -fsSL https://pds-ppi.igpp.ucla.edu/data/PVO-V-ORSE-1-ODR-OPENLOOP--V1.0/INDEX/INDEX.TAB -o INDEX.TAB
+          cargo run --release -p omegaflow-harvest --bin pvo_orse_odr_compiler -- \
+            --index INDEX.TAB \
+            --base https://pds-ppi.igpp.ucla.edu/data/PVO-V-ORSE-1-ODR-OPENLOOP--V1.0/ \
+            --ci-mode

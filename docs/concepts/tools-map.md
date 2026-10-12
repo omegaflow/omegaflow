@@ -352,7 +352,7 @@ Vier Pfade sind vier Identitäten (A = A), je mit gemessener Rolle. Messung + Ve
 - **(i) Membran-Debug** → **Chrome DevTools MCP** (Konsole/Netz/Performance via CDP auf
   dem Pfad-1-Chrome) — **gebunden** (`opencode.json:172-178`: `chrome-devtools-mcp@1.9.0`
   mit `--no-usage-statistics --no-performance-crux --autoConnect`, Commit `7e79c194d`,
-  2026-09-20); offen bleibt allein das Operator-Wort (Debugger-Rechte am live Chrome).
+  2026-09-20); das Operator-Wort (Debugger-Rechte am live Chrome) ist **gegeben** (2026-10-12, Operator „mach", `state/operator-gespraeche/2026-10-12-mycelium.md`) — die Bindung ist damit aktiv.
 - **(iii) Captcha** — Option (a) gesetzt: die Operatorin löst selbst im sichtbaren
   Browser. Option (b) Buster (dessant/buster, GPL-3.0, reCAPTCHA-Audio, lokal per
   Whisper möglich) ist **descoped mit Befund**, solange das Operator-Wort ausbleibt.

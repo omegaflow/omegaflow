@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — GRDC-Caravan Shard-Fix (>2 GiB), Venus-Radar gemessen+registriert, SPDF/DSC-Doc-Register (xfer:mountain327-6..9), THEMIS-ASI-Keogramm-Register (xfer:river197-6), adressierte Faltungen, Stehender Pass
   class: handover
   date: 2026-10-12
-  sha256: 16daa4bd0232fbb43d9b4d43d22d70b5ae49cb3016a7ef8130313fcac015401e
+  sha256: b773d04103faa147fbc4fce134c3b7818ec1968e48960ab10acf5b151ddb6f19
   status: live
 -->
 # Handover — Mycelium-Folge 328 (2026-10-12)
@@ -16,7 +16,7 @@ River (`b9375fb01`/`ed536cde9`) weiter). Diese Session konsumierte
 `--addressed mycelium`-Blöcke `mountain-folge328` (`xfer:mountain327-1/-2` ge-echot aus
 folge327; `-6..-9` neu gefaltet) und `river-folge197` (`xfer:river197-6`).
 
-## Burn: open 0.00 · close 0.07 · cap 0.40 — Grund: Mycelium-Folge 328 in einem Atom — GRDC-Shard-Fix (compiler+workflow+register) · Venus-Radar `Processed.zip` gemessen+registriert+Matrix · SPDF/DSC-Register (7 Blöcke) · THEMIS-ASI-Keogramm-Register+Dispatch · Stehender Pass; deepseek-flash, kein pro/max. (Session-Burn via `session_burn` am Schluss gemessen; Riss: die `session_burn`-Summe misst zwischen Läufen inkonsistent.)
+## Burn: open 0.00 · close 0.12 · cap 0.40 — Grund: Mycelium-Folge 328 in einem Atom — GRDC-Shard-Fix (compiler+workflow+register) · Venus-Radar `Processed.zip` gemessen+registriert+Matrix · SPDF/DSC-Register (7 Blöcke) · THEMIS-ASI-Keogramm-Register+Dispatch · 8-Ziele-Rest (`pvo_orse`-Compiler gebaut, 48 JPL-`obs_data`-Dateien registriert, PDS-Geosciences disponiert) · Stehender Pass; deepseek-flash, 5×grind-flash-Dispatches (getrennt ~0.20), kein pro/max. (Session-Burn via `session_burn`; Riss: die Summe misst zwischen Läufen inkonsistent.)
 
 ## Operator-Wort-Register
 
@@ -26,6 +26,7 @@ folge327; `-6..-9` neu gefaltet) und `river-folge197` (`xfer:river197-6`).
 | „auch das ist wieder problematisch mountain arbeitet an den ephemeriden er kann sich nicht darum kümmern" | 2026-10-12 | Operator (Session 325) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 | „ist das wirklich alles Trigger oder was kannst du davon selbst bis zur Kante abarbeiten?" | 2026-10-12 | Operator (Session 326) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes" | 2026-10-12 | Operator (Start Mycelium-328) · session-weiter Delegations-Consent, nicht das Commit-Wort |
+| „mach" (8-Ziele-Rest + Debugger-Rechte am live Chrome) | 2026-10-12 | Operator (Session 329) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 
 ## Gefaltet (gemessen 2026-10-12)
 
@@ -56,19 +57,19 @@ folge327; `-6..-9` neu gefaltet) und `river-folge197` (`xfer:river197-6`).
 - **Blockade:** keine.
 - **Braucht:** `ci_manage log <neuer fold-run-id>` + `sread tools/measure/data/ci_measurements.φ`.
 
-### 8-Ziele-Rest — PDS-Geosciences / PDS-PPI PVO-ORSE / JPL `obs_data.html`
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der nächste `--orphan-docs`/Register-Pass
-- **Lage:** (gemessen 2026-10-12 via `archive_search --verdict`) alle drei **HTTP 206** (direct); es sind **Index-/Routen-Seiten ohne Compiler-Arm** — `pds-geosciences.wustl.edu/missions/venus_radar/index.htm`, `pds-ppi.igpp.ucla.edu/data/PVO-V-ORSE-1-ODR-OPENLOOP--V1.0/`, `ssd.jpl.nasa.gov/planets/obs_data.html`. Die Venus-Radar-Daten selbst sind über Zenodo registriert (`phi:32490`). Die PDS-PPI-`PVO-V-ORSE`-ODR-Serie ist echter Rohdaten-Kandidat (Muster `voyager_odr_compiler`) — **pending** (kein Compiler).
-- **Blockade:** kein Compiler / keine explizite Lizenz (PDS-geosciences: kostenlos+TSPA; JPL: `unverified`).
-- **Braucht:** Verdikt (Mountain, Zulassung/terms) über die drei Routen + ggf. ein `pvo_orse`-Compiler (Muster `voyager_odr_compiler.rs`).
-
-### tools-map.md — Träger (Operator-Wort Debugger-Rechte)
+### 8-Ziele-Rest — PDS-PPI PVO-ORSE gebaut; JPL `obs_data` registriert; PDS-Geosciences disponiert
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Operator-Wort (Debugger-Rechte am live Chrome)
-- **Lage:** (gemessen 2026-10-12) `docs/concepts/tools-map.md:349`; die Route ist gebunden (`opencode.json:172-178`, Commit `7e79c194d`). Träger-Zeile für `--orphan-docs`.
-- **Blockade:** der Akt ist operator-gebunden.
-- **Braucht:** das Operator-Wort — liegt in Futures Operator-Queue.
+- **Trigger:** der `pvo-orse-odr-cdn`- und der `ssd-jpl-raw-cdn`-Lauf (push-getriggert) enden
+- **Lage:** (gemessen 2026-10-12) **PDS-PPI `PVO-V-ORSE-1-ODR-OPENLOOP--V1.0`**: `INDEX.TAB` = 1108 ODR-Produkte; Record-Format gemessen (RSC-11-9/-10, word-3-Recordlänge; die Label-`FILE_RECORDS` widersprechen der gemessenen Rahmung → Baum gewinnt) ⇒ **`pvo_orse_odr_compiler` gebaut** (`src/archivar/pvo_orse.rs` 431 Z., `tools/harvest/src/bin/pvo_orse_odr_compiler.rs` 387 Z., `.github/workflows/pvo-orse-odr-cdn.yml`; `cargo build -p omegaflow-harvest --bin pvo_orse_odr_compiler` grün), Register `phi:12473-12479` (`pvo_orse_odr_s0.bin`, `terms unknown`). **JPL `ssd.jpl.nasa.gov/planets/obs_data.html`**: 50 Textdateien in vier Formaten (optisches Kartenformat / DSN-Ranging-Doppler / VLBI / Radar) ⇒ **48 via `raw_mirror` registriert** (`phi:32450-32785`) + `.github/workflows/ssd-jpl-raw-cdn.yml` (die 2 Viking-Dateien trägt bereits `viking_text_compiler`, `phi:20582`). **PDS-Geosciences `venus_radar`**: Level-2 ⊂ Zenodo (`phi:32490`); Roh-Delay-Doppler (~490 GB, `BAND_STORAGE_TYPE`-Arm fehlt) ⇒ `state/zustand/wartend.φ:36`.
+- **Blockade:** keine (Compiler + Register stehen); shas/shard-Zahl folgen aus CI.
+- **Braucht:** `ci_manage log <pvo-orse-odr-run-id>` / `<ssd-jpl-raw-run-id>`; die gedruckten Register-Zeilen (sha je Shard) falten. **Terms-Riss (gemessen):** `docs/plans/ref-ephemeriden-quellen-index.md:31,47` sagt JPL-SSD/PDS „keine Lizenz-Aussage → nicht als PD"; die 48 JPL-Blöcke + `pvo_orse` tragen darum `terms unknown`; die **Alt-Blöcke** `voyager_odr`/`viking_text`/`horizons` tragen weiter `terms PD` (Mountain-Domäne, als Riss gemeldet).
+
+### tools-map.md — Träger (Werkzeug-Karte)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der nächste `--orphan-docs`-Pass
+- **Lage:** (gemessen 2026-10-12) `docs/concepts/tools-map.md` ist die Werkzeug-Karte (Mycelium-owned); der einzige Operator-Punkt (Debugger-Rechte am live Chrome) ist **geschlossen** (`tools-map.md:355`, Operator „mach"). Prosa-Marker bleiben (Werkzeug-Beschreibungen) → Träger-Zeile für `--orphan-docs`.
+- **Blockade:** keine.
+- **Braucht:** bei Werkzeug-Änderungen fortschreiben; sonst ruht der Träger.
 
 ## An mountain
 
