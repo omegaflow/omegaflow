@@ -2,7 +2,7 @@
   title: Survey — Weltweite LiDAR-/Punktwolken-Landschaft (offene Quellen)
   class: survey
   date: 2026-10-10
-  sha256: f674341bc81e9bc20192a6e40a4fbf25579446b6664e76eaa3fc55e08bbb33da
+  sha256: 05197c93c6b9a4e2928295c60db9805309d45bf735b1bdfc669830731d513b3d
   status: live
   see-also: docs/handover/archiv/handover-2026-10-10-mycelium-folge297.md
 -->
@@ -398,4 +398,15 @@ Die zuvor als `pending` geführten Hosts wurden mit `archive_search --verdict`
 
 Geo-Blocks sind Zugangs-Zustände, kein Quellen-Verdikt; ein weiterer Exit
 (`bin/proton-wg.sh suggest <host>`) braucht Operator-Wort.
+
+## Nachtrag 2026-10-12 (river-196) — Orthofoto-Lücke + THEMIS-ASI-Dom
+
+Diese Survey deckt **Punktwolken**, aber keine **Orthofotos** — eine Lücke. Für die
+Lokalisierung des THEMIS-ASI-Doms (AUGO I, Athabasca AB; Rev-B 54.714/−113.314) ist
+Orthofoto + LiDAR kombiniert der Weg, aber mit **ESRI World Imagery (~0.33 m/px)** ist
+ein 2–3 m-Dom **nicht auflösbar** (6–9 px; Vision-Leser: kein bestätigter Dom, aber das
+offene Mähfeld westlich des Campus stützt Rev-B). Nur **OpenAerialMap** (Drohnen-Orthos,
+CC) steht in der Survey. Offen: provinzielle Orthos (Alberta/**Altalis**, 5–10 cm),
+Street-Level (**Google Street View** / Mapillary / KartaView), AUGO-Site-Plan.
+Anker: `state/river/themis/calibration-2026-10-12.md` §LiDAR.
 
