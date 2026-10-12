@@ -3596,14 +3596,13 @@ fn fits_image_bands_to_json(buf: &[u8], member: &str) -> Option<JsonVal> {
 }
 
 fn tar_fits_member_key(name: &str) -> String {
-    let base = name.rsplit('/').next().unwrap_or(name);
-    let lower = base.to_ascii_lowercase();
+    let lower = name.to_ascii_lowercase();
     for ext in [".fits", ".fit", ".fts"] {
         if let Some(stem) = lower.strip_suffix(ext) {
-            return base[..stem.len()].to_string();
+            return name[..stem.len()].to_string();
         }
     }
-    base.to_string()
+    name.to_string()
 }
 
 fn tar_fits_bytes_to_json(tar: &[u8], wanted: &[String]) -> Option<JsonVal> {
@@ -8131,5 +8130,22 @@ mod tar_fits_tests {
         let tar = tar_of(&[("F444W.fits", fits_image())]);
         assert!(tar_fits_bytes_to_json(&tar, &["F444W".to_string()]).is_some());
         assert!(tar_fits_bytes_to_json(&tar, &["F090W".to_string()]).is_none());
+    }
+
+    #[test]
+    fn tar_fits_keys_members_of_distinct_directories_distinctly() {
+        let tar = tar_of(&[
+            ("JADES-GS-z13-0/data_f090w.fits", fits_image()),
+            ("JADES-GS-z13-0/data_f444w.fits", fits_image()),
+            ("JADES-GS-z10-0/data_f090w.fits", fits_image()),
+        ]);
+        let json = tar_fits_bytes_to_json(&tar, &[]).expect("the tar ingests");
+        let JsonVal::Obj(map) = &json else {
+            panic!("the tar yields an object keyed by member")
+        };
+        assert_eq!(map.len(), 3, "each member keeps its own directory");
+        assert!(map.contains_key("JADES-GS-z13-0/data_f090w"));
+        assert!(map.contains_key("JADES-GS-z13-0/data_f444w"));
+        assert!(map.contains_key("JADES-GS-z10-0/data_f090w"));
     }
 }

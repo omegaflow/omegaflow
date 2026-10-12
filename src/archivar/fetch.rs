@@ -177,7 +177,10 @@ pub fn fetch_raw_to_file_with(
         if attempt >= FILE_RESUME_ATTEMPTS {
             return None;
         }
-        if !std::fs::metadata(path).map(|m| m.len() > 0).unwrap_or(false) {
+        if !std::fs::metadata(path)
+            .map(|m| m.len() > 0)
+            .unwrap_or(false)
+        {
             return None;
         }
         std::thread::sleep(std::time::Duration::from_secs(RESUME_DELAY_S));
@@ -708,6 +711,7 @@ fn format_readable(fmt: &str) -> bool {
             | "fits"
             | "pradan_ch2"
             | "tar_gz_yaml"
+            | "tar_fits"
             | "asu-tsv"
             | "ndk"
     )

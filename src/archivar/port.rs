@@ -3086,6 +3086,7 @@ pub fn ci_mode(dir: &str, shard: Option<(usize, usize)>) -> i32 {
             || src.format == "kernel_text"
             || src.format == "opendap"
             || src.format == "tar_gz_yaml"
+            || src.format == "tar_fits"
             || src
                 .extracts
                 .iter()
