@@ -1585,6 +1585,12 @@ pub struct CouplingSpec {
     pub quasi_neutral: Option<String>,
 }
 
+#[derive(Clone, Debug)]
+pub struct QuasiNeutralConstraint {
+    pub name: String,
+    pub region: String,
+}
+
 pub struct CouplingRegistry {
     pairs: Vec<Coupling>,
     id: HashMap<(u64, u64, CouplingKind), usize>,
@@ -1904,6 +1910,28 @@ pub fn coupling_spec_from_line(line: &str) -> Result<CouplingSpec, String> {
         conserves,
         quasi_neutral,
     })
+}
+
+pub fn quasi_neutral_constraint_from_line(line: &str) -> Result<QuasiNeutralConstraint, String> {
+    let mut parts = line.split_whitespace();
+    if parts.next() != Some("constraint") {
+        return Err("constraint directive expected".to_string());
+    }
+    if parts.next() != Some("quasi-neutral") {
+        return Err("constraint kind unknown: quasi-neutral expected".to_string());
+    }
+    let name = parts.next().ok_or("constraint name absent")?.to_string();
+    if parts.next() != Some("region") {
+        return Err("constraint region clause expected".to_string());
+    }
+    let region = parts
+        .next()
+        .ok_or("constraint region name absent")?
+        .to_string();
+    if let Some(other) = parts.next() {
+        return Err(format!("constraint trailing token: {other}"));
+    }
+    Ok(QuasiNeutralConstraint { name, region })
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
