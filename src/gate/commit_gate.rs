@@ -1076,6 +1076,9 @@ impl Gate {
         if let Some(v) = check_addressed_origin(&path, &content) {
             return Some(v);
         }
+        if let Some(v) = check_transport_token_absent(&path, &content) {
+            return Some(v);
+        }
         if let Some(v) = check_prior_work_unread(&path, &content) {
             return Some(v);
         }
@@ -1570,6 +1573,68 @@ pub fn addressed_origin_violations(handover: &str) -> Vec<(usize, String, String
     out
 }
 
+fn transport_token_present(entry: &str) -> bool {
+    let mut rest = entry;
+    while let Some(pos) = rest.find("xfer:") {
+        let after = &rest[pos + "xfer:".len()..];
+        let token: String = after
+            .chars()
+            .take_while(|c| c.is_ascii_alphanumeric() || *c == '-' || *c == '_')
+            .collect();
+        if let Some(idx) = token.rfind('-') {
+            let (name, num) = token.split_at(idx);
+            let num = &num[1..];
+            if !name.is_empty() && !num.is_empty() && num.chars().all(|c| c.is_ascii_digit()) {
+                return true;
+            }
+        }
+        rest = after;
+    }
+    false
+}
+
+pub fn transport_token_absent_violations(handover: &str) -> Vec<(usize, String, String)> {
+    let mut out = Vec::new();
+    let lines: Vec<&str> = handover.lines().collect();
+    let mut i = 0;
+    while i < lines.len() {
+        if !addressed_heading_line(lines[i]) {
+            i += 1;
+            continue;
+        }
+        let start = i + 1;
+        let mut end = start;
+        while end < lines.len() && !is_h2_heading(lines[end]) {
+            end += 1;
+        }
+        let mut entry_start: Option<usize> = None;
+        let mut idx = start;
+        loop {
+            let at_end = idx == end;
+            let is_bullet = !at_end && lines[idx].starts_with("- ");
+            if at_end || is_bullet {
+                if let Some(es) = entry_start {
+                    let body = lines[es..idx].join("\n");
+                    if !transport_token_present(&body) {
+                        out.push((
+                            es + 1,
+                            "transport-token-absent".to_string(),
+                            feedback("transport-token-absent").to_string(),
+                        ));
+                    }
+                }
+                entry_start = if is_bullet { Some(idx) } else { None };
+                if at_end {
+                    break;
+                }
+            }
+            idx += 1;
+        }
+        i = end;
+    }
+    out
+}
+
 pub fn handover_dupe_violations(handover: &str) -> Vec<(usize, String, String)> {
     let mut out = Vec::new();
     let mut in_section = false;
@@ -1793,6 +1858,27 @@ fn check_addressed_origin(path: &str, content: &str) -> Option<Verdict> {
     }
     handover_line_owner(path)?;
     let (line, rule, feedback_text) = addressed_origin_violations(content).into_iter().next()?;
+    let quote = match content.lines().nth(line.saturating_sub(1)) {
+        Some(s) => clip(s, 90),
+        None => String::new(),
+    };
+    Some(Verdict {
+        severity: Severity::Hard,
+        rule,
+        line,
+        feedback: feedback_text,
+        quote,
+    })
+}
+
+fn check_transport_token_absent(path: &str, content: &str) -> Option<Verdict> {
+    if path.contains("/archiv/") {
+        return None;
+    }
+    handover_line_owner(path)?;
+    let (line, rule, feedback_text) = transport_token_absent_violations(content)
+        .into_iter()
+        .next()?;
     let quote = match content.lines().nth(line.saturating_sub(1)) {
         Some(s) => clip(s, 90),
         None => String::new(),
@@ -3720,6 +3806,37 @@ mod tests {
             &fx("addressed_origin_clean"),
         );
         assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn fp_tool_transport_token_absent_blocked() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-28-sensory-folge197.md",
+            &fx("transport_token_absent"),
+        );
+        let v = g.check_tool_call("write", &args).unwrap();
+        assert_eq!(v.rule, "transport-token-absent");
+        assert_eq!(v.severity, Severity::Hard);
+    }
+
+    #[test]
+    fn fn_tool_transport_token_clean_passes() {
+        let mut g = test_gate();
+        let args = tool_args(
+            "docs/handover/handover-2026-09-28-sensory-folge197.md",
+            &fx("transport_token_clean"),
+        );
+        assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn transport_token_present_shape() {
+        assert!(transport_token_present("point — xfer:future-242-3"));
+        assert!(transport_token_present("xfer:mountain-1"));
+        assert!(!transport_token_present("point without a token"));
+        assert!(!transport_token_present("xfer:future-"));
+        assert!(!transport_token_present("xfer:-3"));
     }
 
     #[test]

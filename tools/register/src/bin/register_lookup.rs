@@ -3438,7 +3438,7 @@ fn run_descoped_check(_args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count] [--changed-since <sha>]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line; --changed-since <sha> restricts the pairs to handovers changed in the range <sha>..HEAD and the witness log to that range — the diff-scoped CI gate)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count] [--changed-since <sha>]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line; --changed-since <sha> restricts the pairs to handovers changed in the range <sha>..HEAD and the witness log to that range — the diff-scoped CI gate)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --tokens [--fail]   (per entry of every `## An <line>` transport block: XFER `<tok>` echoed|unbeglichen against the owner line's `## Offen` token echo, or XFER-MISSING for an entry without an `xfer:<sender>-<n>` token; --fail exits 2 when any entry is unbeglichen or XFER-MISSING)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     eprintln!(
         "       register_lookup --compilers   (one line per phi/sources.φ block carrying a compiler: <binary> | <format> | <source-url> | at <anchor>, then a domain/count summary over the format prefix)\n       register_lookup --compilers --no-directive   (tree compilers tools/*/src/bin/*_compiler.rs without a compiler directive: classified by measured channel workflow|register:<file>|variant|pending|unregistered)"
@@ -3485,7 +3485,121 @@ fn addressed_blocks(text: &str, target: &str) -> Vec<String> {
     out
 }
 
-fn addressed_report(root: &Path, target: &str) -> Vec<String> {
+fn block_entries(block: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut current: Option<String> = None;
+    for line in block.lines() {
+        if let Some(rest) = line.strip_prefix("- ") {
+            if let Some(entry) = current.take() {
+                out.push(entry);
+            }
+            current = Some(format!("- {}", rest));
+        } else if line.trim().is_empty() {
+            if let Some(entry) = current.take() {
+                out.push(entry);
+            }
+        } else if let Some(entry) = current.as_mut() {
+            entry.push('\n');
+            entry.push_str(line);
+        }
+    }
+    if let Some(entry) = current.take() {
+        out.push(entry);
+    }
+    out
+}
+
+fn entry_token(entry: &str) -> Option<String> {
+    let bytes = entry.as_bytes();
+    let needle = b"xfer:";
+    let mut i = 0usize;
+    while i + needle.len() <= bytes.len() {
+        if &bytes[i..i + needle.len()] != needle {
+            i += 1;
+            continue;
+        }
+        let boundary = i == 0 || !bytes[i - 1].is_ascii_alphanumeric();
+        if !boundary {
+            i += 1;
+            continue;
+        }
+        let mut j = i + needle.len();
+        let line_start = j;
+        while j < bytes.len() && (bytes[j].is_ascii_lowercase() || bytes[j].is_ascii_digit()) {
+            j += 1;
+        }
+        if j == line_start {
+            i += 1;
+            continue;
+        }
+        let mut k = j;
+        let mut groups = 0usize;
+        while k < bytes.len() && bytes[k] == b'-' {
+            let mut d = k + 1;
+            let digit_start = d;
+            while d < bytes.len() && bytes[d].is_ascii_digit() {
+                d += 1;
+            }
+            if d == digit_start {
+                break;
+            }
+            groups += 1;
+            k = d;
+        }
+        let after_ok = k == bytes.len()
+            || !(bytes[k].is_ascii_alphanumeric() || bytes[k] == b'-' || bytes[k] == b'_');
+        if groups >= 1 && after_ok {
+            return Some(entry[i..k].to_string());
+        }
+        i += 1;
+    }
+    None
+}
+
+fn section_text(text: &str, prefix: &str) -> Option<String> {
+    let mut inside = false;
+    let mut found = false;
+    let mut out = String::new();
+    for line in text.lines() {
+        let trimmed = line.trim_start();
+        if let Some(heading) = trimmed.strip_prefix("## ") {
+            if inside {
+                break;
+            }
+            if heading.starts_with(prefix) {
+                inside = true;
+                found = true;
+                continue;
+            }
+        }
+        if inside {
+            out.push_str(line);
+            out.push('\n');
+        }
+    }
+    if found { Some(out) } else { None }
+}
+
+fn echo_sections(text: &str) -> String {
+    let mut out = String::new();
+    for prefix in ["Offen", "Operator-Queue"] {
+        if let Some(section) = section_text(text, prefix) {
+            out.push_str(&section);
+        }
+    }
+    out
+}
+
+fn owner_has_echo(root: &Path, owner_line: &str, token: &str) -> bool {
+    let owner = canonical_line(owner_line);
+    let handovers = collect_live_handovers_in(root);
+    let Some(list) = handovers.get(owner) else {
+        return false;
+    };
+    list.iter().any(|h| echo_sections(&h.text).contains(token))
+}
+
+fn addressed_report_inner(root: &Path, target: &str, tokens: bool) -> Vec<String> {
     let target = canonical_line(target);
     let handovers = collect_live_handovers_in(root);
     let mut out = Vec::new();
@@ -3502,8 +3616,37 @@ fn addressed_report(root: &Path, target: &str) -> Vec<String> {
                     "ADDRESSED\t{}\t<- {}-{} ({})",
                     target, sender, folge, h.path
                 ));
-                for line in block.lines() {
-                    out.push(line.to_string());
+                if tokens {
+                    for entry in block_entries(&block) {
+                        match entry_token(&entry) {
+                            Some(token) => {
+                                let state = if owner_has_echo(root, target, &token) {
+                                    "echoed"
+                                } else {
+                                    "unbeglichen"
+                                };
+                                out.push(format!(
+                                    "XFER\t{}\t{}\t<- {}-{}",
+                                    token, state, sender, folge
+                                ));
+                            }
+                            None => {
+                                let head = entry
+                                    .split_whitespace()
+                                    .take(6)
+                                    .collect::<Vec<_>>()
+                                    .join(" ");
+                                out.push(format!(
+                                    "XFER-MISSING\t{}\t<- {}-{}",
+                                    head, sender, folge
+                                ));
+                            }
+                        }
+                    }
+                } else {
+                    for line in block.lines() {
+                        out.push(line.to_string());
+                    }
                 }
                 out.push(String::new());
             }
@@ -3523,6 +3666,10 @@ fn addressed_report(root: &Path, target: &str) -> Vec<String> {
     out
 }
 
+fn addressed_report(root: &Path, target: &str) -> Vec<String> {
+    addressed_report_inner(root, target, false)
+}
+
 fn run_addressed(args: &[String]) {
     let target = match mode_line_filter(args, "--addressed") {
         Some(t) => t.to_string(),
@@ -3540,6 +3687,141 @@ fn run_addressed(args: &[String]) {
         println!("{}", line);
     }
     if fail && count > 0 {
+        std::process::exit(2);
+    }
+}
+
+struct LedgerSent {
+    token: String,
+    sender: String,
+    to: String,
+}
+
+fn ledger_sent_events(root: &Path) -> Vec<LedgerSent> {
+    let mut out = Vec::new();
+    let dir = root.join("state/zustand/ledger");
+    let Ok(lines) = fs::read_dir(&dir) else {
+        return out;
+    };
+    for line_dir in lines.flatten() {
+        if !line_dir.path().is_dir() {
+            continue;
+        }
+        let Ok(files) = fs::read_dir(line_dir.path()) else {
+            continue;
+        };
+        for file in files.flatten() {
+            let path = file.path();
+            if path.extension().and_then(|s| s.to_str()) != Some("log") {
+                continue;
+            }
+            let Ok(text) = fs::read_to_string(&path) else {
+                continue;
+            };
+            for raw in text.lines() {
+                let mut state: Option<&str> = None;
+                let mut token: Option<&str> = None;
+                let mut by: Option<&str> = None;
+                let mut to: Option<&str> = None;
+                for (i, field) in raw.split_whitespace().enumerate() {
+                    if i == 1 {
+                        state = Some(field);
+                    } else if i == 2 {
+                        token = Some(field);
+                    } else if let Some(v) = field.strip_prefix("by=") {
+                        by = Some(v);
+                    } else if let Some(v) = field.strip_prefix("to=") {
+                        to = Some(v);
+                    }
+                }
+                let (Some(state), Some(token), Some(by)) = (state, token, by) else {
+                    continue;
+                };
+                if state != "SENT" {
+                    continue;
+                }
+                let Some(sender) = by.split('.').next().filter(|s| !s.is_empty()) else {
+                    continue;
+                };
+                out.push(LedgerSent {
+                    token: token.to_string(),
+                    sender: sender.to_string(),
+                    to: to.unwrap_or("self").to_string(),
+                });
+            }
+        }
+    }
+    out
+}
+
+fn sender_carries(root: &Path, sender: &str, token: &str) -> bool {
+    let handovers = collect_live_handovers_in(root);
+    match handovers.get(canonical_line(sender)) {
+        Some(list) => list.iter().any(|h| h.text.contains(token)),
+        None => false,
+    }
+}
+
+fn noecho_report(root: &Path) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut seen: Vec<String> = Vec::new();
+    for event in ledger_sent_events(root) {
+        if event.to == "self" || event.to == event.sender {
+            continue;
+        }
+        if seen.iter().any(|t| t == &event.token) {
+            continue;
+        }
+        seen.push(event.token.clone());
+        if owner_has_echo(root, &event.to, &event.token) {
+            continue;
+        }
+        if sender_carries(root, &event.sender, &event.token) {
+            continue;
+        }
+        out.push(format!(
+            "XFER-NOECHO\t{}\t<- {} to {}",
+            event.token, event.sender, event.to
+        ));
+    }
+    out
+}
+
+fn run_tokens(args: &[String]) {
+    let fail = args.iter().any(|a| a == "--fail");
+    let mut blocks = 0usize;
+    let mut unbeglichen = 0usize;
+    let mut missing = 0usize;
+    let mut out: Vec<String> = Vec::new();
+    for target in ADDRESSED_LINES {
+        for line in addressed_report_inner(Path::new("."), target, true) {
+            if line.starts_with("ADDRESSED") {
+                blocks += 1;
+                out.push(line);
+            } else if line.starts_with("XFER-MISSING") {
+                missing += 1;
+                out.push(line);
+            } else if line.starts_with("XFER\t") {
+                if line.split('\t').nth(2) == Some("unbeglichen") {
+                    unbeglichen += 1;
+                }
+                out.push(line);
+            }
+        }
+    }
+    let noecho = noecho_report(Path::new("."));
+    out.extend(noecho.iter().cloned());
+    for line in &out {
+        println!("{}", line);
+    }
+    println!(
+        "register_lookup --tokens: {} block(s), {} unbeglichen, {} XFER-MISSING, {} XFER-NOECHO",
+        blocks,
+        unbeglichen,
+        missing,
+        noecho.len()
+    );
+    if fail && (unbeglichen > 0 || missing > 0 || !noecho.is_empty()) {
         std::process::exit(2);
     }
 }
@@ -3852,6 +4134,10 @@ fn main() {
     }
     if args.iter().any(|a| a == "--orphan-docs") {
         run_orphan_docs(Path::new("."));
+        return;
+    }
+    if args.iter().any(|a| a == "--tokens") {
+        run_tokens(&args);
         return;
     }
     if args.iter().any(|a| a == "--addressed") {
@@ -5182,6 +5468,128 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
             mountain
         );
         assert!(!mountain.iter().any(|l| l.contains("the HUD line")));
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn entry_token_reads_the_first_transfer_token() {
+        assert_eq!(
+            entry_token("- **x** carries xfer:future-242-3 here").as_deref(),
+            Some("xfer:future-242-3")
+        );
+        assert_eq!(
+            entry_token("- a xfer:river-1, trailing comma").as_deref(),
+            Some("xfer:river-1")
+        );
+        assert_eq!(
+            entry_token("- a sender with digits xfer:mountain327-4 here").as_deref(),
+            Some("xfer:mountain327-4")
+        );
+        assert_eq!(entry_token("- no token in this entry").as_deref(), None);
+        assert_eq!(entry_token("- axfer:river-1 glued").as_deref(), None);
+    }
+
+    #[test]
+    fn block_entries_splits_top_level_bullets_with_continuations() {
+        let block = "## An mountain\n\nOrigin: river-196.\n\n- first entry\n  continuation line\n- second entry\n\n- third entry\n";
+        let entries = block_entries(block);
+        assert_eq!(entries.len(), 3, "{:?}", entries);
+        assert!(entries[0].contains("continuation line"));
+        assert!(entries[1].starts_with("- second entry"));
+        assert!(entries[2].starts_with("- third entry"));
+    }
+
+    #[test]
+    fn tokens_mode_measures_the_offen_echo_only() {
+        let base = env::temp_dir().join(format!("rl-tokens-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-10-12-river-folge196.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An mountain\n\n- **echoed entry** carries xfer:river-196-1.\n- **un-echoed entry** carries xfer:river-196-2.\n- **missing entry** no token here.\n- **prose-only entry** carries xfer:river-196-3.\n- **foreign-block entry** carries xfer:river-196-4.\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-10-12-mountain-folge327.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## Offen\n\n- a folded point carrying xfer:river-196-1\n\n## Operator-Queue\n\n- an operator point carrying xfer:river-196-5\n\n## An river\n\n- xfer:river-196-4 quoted inside a transport block\n\n## Operator-Wort-Register\n\n- prose mention of xfer:river-196-3\n",
+        )
+        .unwrap();
+        assert!(owner_has_echo(&base, "mountain", "xfer:river-196-1"));
+        assert!(!owner_has_echo(&base, "mountain", "xfer:river-196-2"));
+        assert!(!owner_has_echo(&base, "mountain", "xfer:river-196-3"));
+        assert!(!owner_has_echo(&base, "mountain", "xfer:river-196-4"));
+        assert!(owner_has_echo(&base, "mountain", "xfer:river-196-5"));
+        let report = addressed_report_inner(&base, "mountain", true);
+        assert!(
+            report
+                .iter()
+                .any(|l| l.starts_with("XFER\txfer:river-196-1\techoed")),
+            "{:?}",
+            report
+        );
+        assert!(
+            report
+                .iter()
+                .any(|l| l.starts_with("XFER\txfer:river-196-2\tunbeglichen")),
+            "{:?}",
+            report
+        );
+        assert!(
+            report.iter().any(|l| l.starts_with("XFER-MISSING\t")),
+            "{:?}",
+            report
+        );
+        assert!(
+            report
+                .iter()
+                .any(|l| l.starts_with("XFER\txfer:river-196-3\tunbeglichen")),
+            "{:?}",
+            report
+        );
+        assert!(
+            report
+                .iter()
+                .any(|l| l.starts_with("XFER\txfer:river-196-4\tunbeglichen")),
+            "{:?}",
+            report
+        );
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn noecho_reports_a_ledger_sent_without_carry_or_echo() {
+        let base = env::temp_dir().join(format!("rl-noecho-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("state/zustand/ledger/future")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-10-12-future-folge242.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An mountain\n\n- **carried entry** carries xfer:future-242-3.\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-10-12-mountain-folge327.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## Offen\n\n- a folded point carrying xfer:future-242-1\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("state/zustand/ledger/future/ses_test.log"),
+            "2026-10-12T11:00:00Z SENT xfer:future-242-1 by=future.ses_test to=mountain\n\
+             2026-10-12T11:00:01Z SENT xfer:future-242-2 by=future.ses_test to=mountain\n\
+             2026-10-12T11:00:02Z SENT xfer:future-242-3 by=future.ses_test to=mountain\n\
+             2026-10-12T11:00:03Z SENT xfer:future.ses_test.4~abcd1234 by=future.ses_test to=self\n",
+        )
+        .unwrap();
+        let report = noecho_report(&base);
+        assert!(
+            report
+                .iter()
+                .any(|l| l.starts_with("XFER-NOECHO\txfer:future-242-2")),
+            "{:?}",
+            report
+        );
+        assert!(!report.iter().any(|l| l.contains("xfer:future-242-1")));
+        assert!(!report.iter().any(|l| l.contains("xfer:future-242-3")));
         let _ = fs::remove_dir_all(&base);
     }
 
