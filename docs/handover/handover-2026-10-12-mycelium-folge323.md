@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (CI-Werkzeug-Fixes: block_commit-Release + bz-Probe-Log-Sichtbarkeit; Stehender Pass am neuen HEAD)
   class: handover
   date: 2026-10-12
-  sha256: d0db917cd557f583ad80a368e87744342e9ab2954c740122e7bb43c549ee300c
+  sha256: b1d62ef61b3df6fbf39ff6f6822ebeaae39f3e2a00881e6a14e7b2c24a2730e8
   status: live
 -->
 # Handover — Mycelium-Folge 323 (2026-10-12)
@@ -14,7 +14,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge322.md` (→ `archiv/`) und faltete die
 adressierten Blöcke `future-folge241` und `mountain-folge324`.
 
-## Burn: open 0.01 · close 0.06 — Grund: Mycelium-323 in einem Atom (deepseek-flash, kein pro/max; `session_burn`-Posten „Mycelium-Linie in einem Pass starten", gemessen 2026-10-12).
+## Burn: open 0.01 · close 0.20 · cap 0.30 — Grund: Mycelium-323 in einem Atom plus operator-gebotene Taucher-Runde (deepseek-flash, kein pro/max; `session_burn` total $2.2300; 6 Dispatches: council + 5 grind-flash/general).
 
 In diesem Atom gemessen/gebaut: `tools-build`-`TOOLS`-Liste um `block_commit`
 erweitert (das Bin baute, wurde aber nicht publiziert — darum `pending`) ·
@@ -26,7 +26,12 @@ im Job-Log) · `intermagnet_dbdt`-Zelle aus `field-te-query` `38215224525`
 Mountain arbeitet an den Ephemeriden): `terms free-open` am
 UCalgary-THEMIS-ASI-Keogramm gesetzt, `terms` an allen M10↔MDIS-Artefakten
 (PSJ t1–t4 `CC-BY-4.0` via Crossref gemessen, USGS `PD`, LPSC/camera_angles
-`unknown`).
+`unknown`). **Taucher-Runde:** `tools-build` auf Auto-Discovery umgestellt (die
+Hand-Liste ließ **19** Bins aus, u. a. `block_commit` — genau der Defekt) ·
+`dropped_gate`-`alias:`-Fold gefixt (die zwei Folds gaben zwei Antworten) ·
+Fetch-Sidecar + `odf.rs`-clippy als **bereits gebaut** gemessen (zwei stale
+Handover-Zeilen korrigiert) · NIST-NCNR-NSE-Daten-Route vermessen · Rat-Verdikt
+für den CI-Messzeilen-Struktur-Fix.
 
 ## Operator-Wort-Register
 
@@ -69,12 +74,12 @@ UCalgary-THEMIS-ASI-Keogramm gesetzt, `terms` an allen M10↔MDIS-Artefakten
 - **Blockade:** keine.
 - **Braucht:** rohe Assets in die CDN-Manifestation aufnehmen (Mycelium); USGS-Mosaik **1,88 GB** (`1880562475`).
 
-### Fetch-Provenienz — Sidecar/`data/<netloc>/` fehlt (future-235)
+### Fetch-Provenienz — `archive_search`-Sidecar steht; der allgemeine Wrapper-Pfad fehlt
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** ein Fetch-Weg (Wrapper/`archive_search`) schreibt den Quell-Sidecar
-- **Lage:** (gemessen 2026-10-11) die Provenienz liegt in `opencode.db`; `state/research/README.md` §Provenienz belegt **76** Dateien nach `data/<netloc>/`; der Werkzeug-Fix (URL beim Fetch mitschreiben) fehlt. Der Spill-Ort ist geheilt (`OMEGAFLOW_SPILL_DIR`, `03bb95e2e`).
-- **Blockade:** keiner im Design.
-- **Braucht:** der Fetch-Weg schreibt `<datei>.src` (Quell-URL) oder legt gleich als `data/<netloc>/<datei>` ab — Werkzeug (Mycelium) + Quelle (Mountain).
+- **Trigger:** ein kurzer Fetch-Weg (`bin/`-curl/Playwright-Wrapper der Taucher) schreibt den Quell-Sidecar
+- **Lage:** (gemessen 2026-10-12) `write_fetched` (`tools/utils/src/bin/archive_search.rs:1158`) schreibt `<datei>.src` (Quell-URL, eine Zeile) und **nichts**, wenn die URL fehlt — gebaut (`d884a2e93` mycelium 311, `213d8937f` mycelium 316), verdrahtet an pdf-image/arxiv-src/alphaxiv-call. Die frühere Lage „Werkzeug-Fix fehlt" war **stale** (Baum gewinnt). Offen bleibt die allgemeine Wrapper-Route.
+- **Blockade:** keine.
+- **Braucht:** der curl/Playwright-Wrapper schreibt den Quell-Sidecar (Mycelium).
 
 ### ENTSO-E A78 — Lauf rot; Body-Diagnose gebaut
 - **Status:** wartend | **Bindung:** eigen
@@ -86,9 +91,9 @@ UCalgary-THEMIS-ASI-Keogramm gesetzt, `terms` an allen M10↔MDIS-Artefakten
 ### MLA-Register · SPT-3G-D1 · GloFAS-EWDS · NIST-NCNR-NSE
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** je Lauf/Digest bzw. eigener Register-Schritt
-- **Lage:** (gemessen 2026-10-11/12, Operator-Wort Session 325: Mountain-Anteile entfallen) MLA repointet (`phi:12100`; NAME-Riss); SPT-3G `38150991206` success (sha offen); GloFAS Daten-Arm grün (`phi:11297`; grib2→φ offen); NIST NCNR NSE `38170359508` success (`phi:11711`). Die offene NSE-Route (`future-241`): `https://ncnr.nist.gov/pub/ncnrdata/nse/` (US-PD, HTTP 200) — noch keine `url`-Route.
+- **Lage:** (gemessen 2026-10-11/12, Operator-Wort Session 325: Mountain-Anteile entfallen) MLA repointet (`phi:12100`; NAME-Riss); SPT-3G `38150991206` success (sha offen); GloFAS Daten-Arm grün (`phi:11297`; grib2→φ offen); NIST NCNR NSE: **Index-Route steht** (`phi:11721-11727`, `nist_ncnr_nse_compiler.rs` → `coverage_manifest`); die **Daten-Route fehlt** — `.nxs.nse` = HDF5 (4 039 108 B), `.dat.nse` = ASCII, 47 Monatssets unter `https://ncnr.nist.gov/pub/ncnrdata/nse/`, `terms PD` (`https://www.nist.gov/open/license`).
 - **Blockade:** keine (Mountain-Anteile entfallen).
-- **Braucht:** `ci_manage log <id>`; sha256; NIST-NCNR-NSE-`url`-Route + `format` (Mycelium, eigener Schritt).
+- **Braucht:** NIST-NCNR-NSE-Daten-`url`-Route + Compiler-Arm (Mycelium; generischer HDF5-Reader `src/archivar/hdf5.rs` steht).
 
 ### wy-max-t-Artefakt — Werte im Bestand
 - **Status:** wartend | **Bindung:** eigen
@@ -97,12 +102,12 @@ UCalgary-THEMIS-ASI-Keogramm gesetzt, `terms` an allen M10↔MDIS-Artefakten
 - **Blockade:** Siegel (Operator).
 - **Braucht:** die gemessenen Werte ins Register/Artefakt (Mycelium); Siegel (Operator).
 
-### MCP no-leak · de441-de442-sha · dropped-gate · SWPC/RTSW · CI-Optimierung · Domain→UCD
+### MCP no-leak · de441-de442-sha · SWPC/RTSW · Domain→UCD
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** MCP-Session-Restart · Merge-Lauf (`phi:4321-4369`) · Q2/Q3-Fold (`dropped_gate.rs`) · `matrix-vlies`-Lauf · `odf.rs`-clippy · messbare Domain-Quelle
-- **Lage:** (gemessen 2026-10-11/12) MCP: Allowlist konsistent, Live-Seat-Restart offen; de441/de442: sha256 erst nach Merge-Lauf; dropped-gate: Match-Fix offen; SWPC/RTSW: `matrix-vlies`-Wiederholung (River); CI-Optimierung: `odf.rs`-clippy; Domain→UCD: keine messbare Quelle.
+- **Trigger:** MCP-Session-Restart · Merge-Lauf (`phi:4321-4369`) · `matrix-vlies`-Lauf · messbare Domain-Quelle
+- **Lage:** (gemessen 2026-10-11/12) MCP: Allowlist konsistent, Live-Seat-Restart offen; de441/de442: sha256 erst nach Merge-Lauf; SWPC/RTSW: `matrix-vlies`-Wiederholung (River); Domain→UCD: keine messbare Quelle. (`dropped-gate` gefixt — Commit `96350c94c`; `odf.rs`-clippy war bereits geheilt (`a0d2c04e2`) — beide aus diesem Punkt gelöscht.)
 - **Blockade:** je der genannte Lauf/Quelle.
-- **Braucht:** je der genannte Schritt (`ci_manage log <id>`; Merge-Lauf; `cargo clippy`; messbare Domain-Quelle).
+- **Braucht:** je der genannte Schritt (`ci_manage log <id>`; Merge-Lauf; messbare Domain-Quelle).
 
 ### ui-seats-Träger (`docs/concepts/ui-seats.md`) — offene `pending`-Seats
 - **Status:** wartend | **Bindung:** eigen
@@ -117,6 +122,13 @@ UCalgary-THEMIS-ASI-Keogramm gesetzt, `terms` an allen M10↔MDIS-Artefakten
 - **Lage:** (gemessen 2026-10-11/12) `docs/concepts/free-voices.md` (1) · `docs/concepts/tools-map.md` (2) · `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` (1, grenznah Mountain/Mycelium) · `docs/surveys/survey-2026-09-03-orphan-verdicts.md` (1) · `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md` (2).
 - **Blockade:** keine.
 - **Braucht:** je Dokument eine Träger-Zeile in der passenden Übergabe (Mycelium für `free-voices`/`tools-map`; Rest ggf. Mountain) — `register_lookup --orphan-docs` als Nachweis.
+
+### Struktur-Fix — CI-Messzeilen durabel in den Baum (Rat, 2026-10-12)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der erste `fold`-Job eines messenden Workflows (`.github/workflows/field-te-query.yml`) läuft
+- **Lage:** (gemessen 2026-10-12, Operator-Wort Session 325) eine CI-Messzeile (`witness`/`riss`, z. B. der `intermagnet_dbdt`-Riss aus `field-te-query`) lebt heute nur im Job-Log/Artefakt; eine Session wartet ~1 h und liest ein ephemeres Log. Rat-Verdikt (5 Stimmen): ein **neues getracktes append-only Register `phi/ci_measurements.φ`**, **ein Writer** (terminaler `fold`-Job je Workflow, Commit über `block_commit` privat-Index + CAS); der Block trägt `run_id`/`head_sha`/`descriptor` + die **rohe** Beobachtung — **nie ein Verdikt-Wort** (das stempelt der Owner); das volle Serien-Ergebnis → CDN-Asset.
+- **Blockade:** neue getrackte Registerklasse → `REGISTER_CLASSES`-Eintrag (`src/gate/commit_gate.rs`) + Kanon-Wort (Architektur-Akt).
+- **Braucht:** `REGISTER_CLASSES`-Eintrag + `phi/ci_measurements.φ`-Skelett + `fold`-Job in `field-te-query.yml` (Pilot); das Verdikt liegt vor (Rat).
 
 ## descoped
 
