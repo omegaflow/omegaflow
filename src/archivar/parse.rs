@@ -2,8 +2,9 @@ use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
 use crate::mathematikerin::channel::{
     ChannelDescriptor, Conserved, CouplingSpec, FluxKind, Interaction, Medium, PdeRegime, PdeType,
-    QuantityRole, TransportOp, channel_ref_of_descriptor, conserved_for_quantity, conserved_name,
-    coupling_spec_from_line, descriptor_from_axes, interaction_of, unit_token,
+    QuantityRole, QuasiNeutralConstraint, TransportOp, channel_ref_of_descriptor,
+    conserved_for_quantity, conserved_name, coupling_spec_from_line, descriptor_from_axes,
+    interaction_of, quasi_neutral_constraint_from_line, unit_token,
 };
 
 fn split_directive(line: &str) -> Vec<&str> {
@@ -2434,6 +2435,22 @@ pub fn parse_couplings(content: &str) -> Vec<CouplingSpec> {
     out
 }
 
+pub fn parse_constraints(content: &str) -> Vec<QuasiNeutralConstraint> {
+    let mut out = Vec::new();
+    for line in content.lines() {
+        let trimmed = line.trim();
+        let mut parts = trimmed.split_whitespace();
+        if parts.next() != Some("constraint") {
+            continue;
+        }
+        match quasi_neutral_constraint_from_line(trimmed) {
+            Ok(constraint) => out.push(constraint),
+            Err(reason) => eprintln!("constraint refused: {reason}"),
+        }
+    }
+    out
+}
+
 #[cfg(feature = "browser_relay")]
 pub fn parse_path(s: &str) -> String {
     let Some(fl) = s.lines().next() else {
@@ -2740,6 +2757,26 @@ mod tests {
             specs.len(),
             0,
             "a number density without its species mass is refused"
+        );
+    }
+
+    #[test]
+    fn a_quasi_neutral_constraint_directive_parses_to_its_region() {
+        let content = "constraint quasi-neutral ionosphere_qn region ionosphere\n";
+        let constraints = parse_constraints(content);
+        assert_eq!(constraints.len(), 1);
+        assert_eq!(constraints[0].name, "ionosphere_qn");
+        assert_eq!(constraints[0].region, "ionosphere");
+    }
+
+    #[test]
+    fn a_constraint_without_a_region_clause_is_dropped() {
+        let content = "constraint quasi-neutral x\n";
+        let constraints = parse_constraints(content);
+        assert_eq!(
+            constraints.len(),
+            0,
+            "a quasi-neutral constraint without a region is refused"
         );
     }
 
