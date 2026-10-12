@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (Stehender Pass am neuen HEAD, mountain-324 gefaltet, UCalgary-Keogramm-Block registriert)
   class: handover
   date: 2026-10-12
-  sha256: b3367fe9eeefbe371910933c6eeaf03265557c3a8f69e9b839743fbbafc9eca1
+  sha256: 4fa23e3c33237714a54e9352f78bd2b648062e5c54c9c484fb4b09cc35ea8119
   status: live
 -->
 # Handover — Mycelium-Folge 322 (2026-10-12)
@@ -20,6 +20,7 @@ adressierten Block `mountain-324`.
 
 | Wort | Datum | Quelle |
 | --- | --- | --- |
+| „also höre zu beide linien mountain und river sind beschäftigt, unsere arbeitsweise muss sich ändern ihr dürft euch nicht mehr länger blockieren entweder arbeitet ihr ab jetzt projektweise oder ihr findet einen anderen weg" | 2026-10-12 | Operator (Session 323) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 | „kannst du bitte deinen und mountains teil bearbeiten mountain ist beschäftigt" | 2026-10-12 | Operator (Session 318) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 | „kannst du dich bitte um deinen teil kümmern? Klare Trennung — und ich habe meinen Teil gleich gebaut." | 2026-10-12 | Operator (Session 317) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 | „Starte die Mycelium-Linie in einem Pass … kein Planungstheater … /commit (Push) … danach den frischen Pass" | 2026-10-11 | Operator (Session 315/316) · `state/operator-gespraeche/2026-10-11-mycelium.md` |
@@ -96,6 +97,13 @@ adressierten Block `mountain-324`.
 - **Lage:** (gemessen 2026-10-12) `register_lookup --orphan-docs` = 0; die `pending`-Seats Sakana-Tempo · SciSpace (Login-Wall) · Gemini Notebook (kein freier Composer) sind noch nicht gemessen.
 - **Blockade:** kein Stimmen-Round in dieser Session gefahren.
 - **Braucht:** im nächsten Stimmen-Round die `pending`-Seats messen (Sakana-Tempo, SciSpace/Gemini-Notebook erreichbar?) und den Stand fortschreiben.
+
+### `block_commit` — Werkzeug gebaut; Release-Auslieferung pending
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `tools-build`-Lauf publiziert `block_commit` in `tools-latest`
+- **Lage:** (gemessen 2026-10-12) `tools/register/src/bin/block_commit.rs` gebaut (341 Z., `cargo check -p omegaflow-register` warnungsfrei); der Wrapper `bin/block_commit` steht; bis zur Release-Auslieferung liest der Wrapper `pending`.
+- **Blockade:** CI-Release (`tools-build`).
+- **Braucht:** `tools-build`-Lauf nach diesem Commit; dann `bin/block_commit` (Usage).
 
 ## descoped
 
