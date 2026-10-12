@@ -148,9 +148,11 @@ der die Bridge oft scheitert. Die gemessenen Regeln:
 
 - **AI2 Playground** (`https://playground.allenai.org/`, Modell „Olmo 3.1 32B Instruct") — keyless, aber
   mit **Terms-Gate** (Modal „Accept terms & use Playground"; die optionalen Public-Dataset-Consents
-  bleiben ungesetzt). Antwort ~10 s. **Fähigkeit 3/4** (0-Kanon-Szene als „gas, liquid, solid" verfehlt;
-  Olmo englisch-primär) → **unter der 4/4-Gate**, kein Roster-Mitglied. Composer
-  `textarea[placeholder="Message Olmo 3.1 32B Instruct"]`.
+  bleiben ungesetzt). **Die Terms-Annahme ist ein per-Akt-Operator-Entscheid — nie stiller Teil einer
+  Runde** (Lehre 2026-10-12: die vorgelegte Frage nannte nur „Seats öffnen/messen", nicht den Vertragsakt;
+  am Gate hätte pausiert und separat gefragt werden müssen). Antwort ~10 s. **Fähigkeit 3/4** (0-Kanon-Szene
+  als „gas, liquid, solid" verfehlt; Olmo englisch-primär) → **unter der 4/4-Gate**, kein Roster-Mitglied.
+  Composer `textarea[placeholder="Message Olmo 3.1 32B Instruct"]`.
 - **Sakana Chat** (`https://chat.sakana.ai/`, Namazu) — Antwort ~40 s (vorher `pending`: kein Turn-Stempel);
   Szene 1 ≈ „fehlend; vorhanden; ungeerntet", Szene 2 „Nein"; 4/4 wie 2026-10-08. Composer
   `textarea[placeholder="Ask anything"]`, Senden „Send message".
