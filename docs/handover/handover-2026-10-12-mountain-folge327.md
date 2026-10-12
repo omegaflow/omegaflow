@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: a1eb2fdeeffa197666bd10c80cf9d746f71f0e88ab1c9c9d5dee6cf0afbd87a6
+  sha256: 0f631e928718267ed617c0bfdeb34033cb082ad9953485034d0e7fa9dc6d2ac3
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -155,12 +155,10 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
 
 ### Quellen-Terms — not-admit/declined-Disposition (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Rat/Operator-Wort
-- **Lage:** (gemessen 2026-10-12 via `sread`) `phi/sources.φ:11887-11893` (`oe417`, kein `terms`);
-  BGS-GIC/NERC-GMD ohne Block; es gibt **keine** Register-Direktive für ein not-admit-Verdikt
-  (`src/archivar/parse.rs:265` = freier String).
-- **Blockade:** fehlende Register-Form.
-- **Braucht:** gemessene Register-Form **oder** `descoped`; OE-417 entscheiden.
+- **Trigger:** der nächste Register-Pass
+- **Lage:** (gemessen 2026-10-12/327) **Gebaut (Rat-Form):** `decline <reason-token> <source-url>` mit geschlossenem Set `{unphysical|model|registry|commercial|superseded}` — `src/archivar/parse.rs` (`DeclineReason`, `DeclinedSource`, `pub fn parse_declined`; ein unbekannter Token → `report_anomaly`; Tests `decline_lines_parse_into_the_closed_reason_set`, `a_decline_token_outside_the_set_is_refused`, `a_decline_line_never_becomes_a_source`); `cargo check` 0/0. Die `decline`-Zeile erzeugt **nie** einen `SourceConfig` (Catch-all bleibt leer). Anker: `oe417` (`phi:11983-11991`, freier String).
+- **Blockade:** die Gate-Fixture `phi-sources-decline-token` und der `register_lookup`-SOURCES-Scan/`collect_disposed_urls` liegen in Dateien, die eine parallele Session hält (`src/gate/commit_gate.rs`, `commit_gate_vocab.json`, `tools/register/src/bin/register_lookup.rs` — uncommittet).
+- **Braucht:** die Fixture + den `register_lookup`-Scan im selben Atom nachziehen (sobald die Dateien frei sind); danach die getilgten Verdikte als `decline <klasse> <url>`-Zeilen re-homen.
 
 ### Re-Admission der lizenz-blockierten Kandidaten (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -244,6 +242,15 @@ NIST) — nur die Sonke/Robinson-Tabellen bleiben dort offen.
   Gemessene Quelle: `docs/plans/ref-ephemeriden-quellen-index.md` (Mountain).
 - **Orphan-Doc `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md`** (2 offene Marker; see-also
   `docs/concepts/ui-seats.md`, `docs/SOURCE_PORT.md`) braucht einen Namenträger bei dir. `xfer:mountain327-2`
+- **Vier neue SPDF-DSC-/NASA-SP-Dokumente — je `url`/`origin`/`compiler`-Zeile (US-PD).** `xfer:mountain327-6`
+  Durable lokale Kopie liegt in `data/spdf.gsfc.nasa.gov/` bzw. `data/www.nasa.gov/` (gitignored):
+  - `mariner4_cosmic-ray-telescp_64-077a-04abcde_DSC_0045.pdf` — 3 487 691 B, sha `37745a46…`.
+  - `mariner4_helium-magnetometer_64-077a-02a_DSC_0176.pdf` — 4 517 956 B, sha `51d288e1…`.
+  - `mariner4_mag_64-077a-02b_DSC_0074.pdf` — 443 225 B, sha `30ba3e6b…`.
+  - `SP-59.pdf` „Mariner-Venus 1962: Final Project Report" (NASA SP-59, 1965) —
+    origin `https://www.nasa.gov/wp-content/uploads/static/history/SP-59.pdf` (HTTP 206), 6 093 576 B,
+    sha `a46e1712…`; NTRS trägt **keine** SP-59-Citation (HathiTrust `006260826`, PD).
+  Der SPDF-Origin-Präfix ist `https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/renamed_dataset_catalogs/`.
 
 ## An river
 
