@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Sun-Ketten-Riss der M10-Ephemeride geheilt: die B1950-Komposition wird jetzt einmal als Ganzes rotiert (nicht nur der Chebyshev-Term); |vec−S| mean 165 410 → 502 km, Roundtrip-Ketten-Übergang 37 623 → 26,5 km, gegen `camera_angles` (me+S) auf 205 km belegt; CDN-Regeneration an mycelium übergeben
   class: handover
   date: 2026-10-12
-  sha256: 4c07917afc6460a73e4793ffff48bde1d52cacd4429c676681138261e6bd8772
+  sha256: 772acd9d31db88412aa312b8d45f04e02cffcdb1acaeec3d4d19b74bc809836e
   status: live
 -->
 # Handover — Mountain-Folge 329 (2026-10-12)
@@ -15,7 +15,7 @@ Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese Session
 unten gefaltet; river-198 wiederholt river-196 → der `f107`-Punkt steht bereits). `open_points_check` =
 1 `ABSENT` (`…/mariner/RESULT.md`, Marker ohne Datei). **Jeder offene Punkt nennt seine Datei(en)/Pfade.**
 
-## Burn: open 0.00 · close 0.08 (Linie; `session_burn` „Sun-Ketten-Konsistenzfehler debuggen" $0.0798, läuft nach) · cap 0.50 · Grund: Ein-Pass-Atom (M10-Sun-Ketten-Komposition geheilt + gegen `camera_angles` verifiziert + CDN-Handoff), deepseek-flash, kein pro/max.
+## Burn: open 0.00 · close 0.16 (Linie; `session_burn` „Sun-Ketten-Konsistenzfehler debuggen" $0.1632) · cap 0.50 · Grund: Ein-Pass-Atom (M10-Sun-Ketten-Komposition geheilt + `camera_angles`-Verifikation + POS-6-SEDR-Range-Cross), deepseek-flash, kein pro/max.
 
 ## Offen (aufgeschlüsselt)
 
@@ -279,6 +279,13 @@ unten gefaltet; river-198 wiederholt river-196 → der `f107`-Punkt steht bereit
 - **Blockade:** der CDN-Asset wird erst mit dem `--ci-mode`-Lauf neu gebaut — CDN-Manifestation = Mycelium-Duty (nicht Mountain-Hand).
 - **Braucht:** Mycelium/CI: `--ci-mode`-Lauf mit dem geheilten Compiler → CDN-`ephemeris_mariner10.bin` regenerieren (458 Granulen, 205 384 B), dann die `sha256`-Zeile `phi:31924` aktualisieren.
 
+### PDS POS-6 (`M10-H-POS-6-M1-FLYBY-TRAJ-V1.0`) — SEDR-Position online, Range-Cross gegen die Ephemeride (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der nächste Ephemeriden-/Attitude-Pass
+- **Lage:** (gemessen 2026-10-12/329) `POS_M1_ENC_42SEC.DAT` (PDS PPI, HTTP 200, 475 152 B, 3126 × 152-B-Records; detached `.LBL` 38 400 B) trägt **42-s-SEDR-Positionsproben** (AAREADME: „from the Mariner 10 SEDR"): Time (f64 BE, s seit 1966-01-01) + 36 f32 BE; Spalten 8–10 = S/C-Position relativ zu Merkur (`|POSM|` = `DIST S/C TO MERCURY`, exakt). **Gebaut:** `tools/measure/src/bin/m10_pos6_check.rs` (Parser + Cross). **Ergebnis:** über 3126 Records ist `|POS6| − |sc−me|` **mean 1936 km, max 9139 km** (Distanzen 3,1e3–1,6e6 km) → die geheilte Ephemeride ist in der **Range** unabhängig bestätigt. **Riss:** die Vektorrichtung steht in einem **undeklarierten festen Frame** (Label `UNIT = NULL`; feste ~67,6°-Rotation um RA 222,0°/Dec 64,2° von J2000, Best-Fit-Residuum mean 4427 km) — nicht B1950 (0,78°), nicht die Merkur-IAU-Polachse (281,0°/61,4°). CA: POS-6-Minimum **3144,9 km @ JD 2442136,3655** vs. Ephemeride **3332 km @ .3660** (~200 km, ~43 s).
+- **Blockade:** die Frame-Definition des SEDR fehlt (das POS-6-Label deklariert keinen Frame; nur die SEDR-Dokumentation/der Offline-SEDR trägt sie).
+- **Braucht:** Mycelium `url`-Zeile für `M10-H-POS-6-M1-FLYBY-TRAJ-V1.0`; den SEDR-Frame aus der NSSDC-Antwort (`PSPA-00318`) klären, dann den Vektor-Cross schließen.
+
 ### `phi/sources.φ` — zwei Register-Nachträge (mycelium-327 adressiert, eigen)
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** die Freigabe von `phi/sources.φ` (eine Parallel-Session hält die Datei)
 - **Lage:** (adressiert 2026-10-12, gefaltet) `xfer:mycelium327-1` M10↔MDIS-USGS-Mosaik `phi:31582-31586` trägt **keine `sha256`-Zeile**; gemessen (Mountain-326) `324c0e49…` über 1 880 562 475 B. `xfer:mycelium327-2` die `de441-de442`-NAIF-Blöcke (`phi:32008`) brauchen `sha256` erst nach dem Merge-Lauf.
@@ -304,6 +311,8 @@ hat den vorigen Block gefaltet (registriert/geechoed: ASU-MVM `phi:31519`, SPDF-
 `phi:31526/31534`, DSC 0119 `phi:31590`, USGS-Mosaik `phi:31582`, JADES `phi:32391`, BK18, FMI-NUR,
 NIST) — nur die Sonke/Robinson-Tabellen bleiben dort offen. **Echo (mycelium-327 → mountain):**
 `xfer:mycelium327-1` und `xfer:mycelium327-2` sind im `## Offen` gefaltet; `phi/sources.φ` ist inzwischen **frei** (git-status leer) — die Nachträge (`sha256` `phi:31582-31586` = `324c0e49…`) können jetzt gesetzt werden.
+
+- **PDS POS-6 M10-Flyby-Trajektorie (PDS/NASA) — `url`/`origin`/`compiler`-Zeile.** `xfer:mountain329-2` `https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.DAT` (HTTP 200, 475 152 B) + `.LBL` (HTTP 200, 38 400 B); DOI `10.17189/1519736`. Zweite unabhängige M1-Ephemeriden-Quelle (SEDR-Position); die Cross-Messung steht in `tools/measure/src/bin/m10_pos6_check.rs`. `M10-H-POS-6-M3-FLYBY-TRAJ-42SEC-V1.0` ist die M3-Schwester.
 
 - **M10-Ephemeride — CDN-Regeneration nach dem Kompositions-Fix (Mycelium/CI).** `xfer:mountain329-1` Der Compiler `tools/harvest/src/bin/ephemeris_mariner10_compiler.rs` ist geheilt (B1950-Summe einmal rotiert statt nur der Chebyshev-Term; `cargo check` 0/0, im selben Atom committet). Ein `--ci-mode`-Lauf regeneriert `ephemeris_mariner10.bin` (458 Granulen, 205 384 B; lokale Erzeugung sha `67949cb6718be222c62c47286f16edbfbab5e35975fbcf0dfb9257645bbe0ae8`) und aktualisiert die `sha256`-Zeile `phi:31924`. **Erst danach ist das CDN-Asset wahr** — das alte ist im Sun-Fenster um bis zu 941 000 km falsch.
 
@@ -388,5 +397,6 @@ gelistet — sie tragen. Die 6 offenen:
 Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt automatisch", 2026-10-07)
 trägt Commit und Push. In diesem Atom committet (pfad-begrenzt): `tools/harvest/src/bin/ephemeris_mariner10_compiler.rs`
 (Sun-Ketten-Komposition: B1950-Summe einmal rotiert statt nur des Chebyshev-Terms; `--chain-diag`),
+`tools/measure/src/bin/m10_pos6_check.rs` (POS-6-SEDR-Positions-Cross),
 `docs/handover/handover-2026-10-12-mountain-folge329.md`,
 `docs/handover/archiv/handover-2026-10-12-mountain-folge328.md`.
