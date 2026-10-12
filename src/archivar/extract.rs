@@ -3636,6 +3636,34 @@ fn tar_fits_to_json(path: &str, wanted: &[String]) -> Option<JsonVal> {
     tar_fits_bytes_to_json(&tar, wanted)
 }
 
+fn camera_angles_to_json(path: &str) -> Option<JsonVal> {
+    let text = std::fs::read_to_string(path).ok()?;
+    camera_angles_frames_to_json(&text)
+}
+
+fn camera_angles_frames_to_json(text: &str) -> Option<JsonVal> {
+    let frames = crate::archivar::camera_angles::parse_camera_angles(text);
+    if frames.is_empty() {
+        return None;
+    }
+    let rows: Vec<JsonVal> = frames
+        .iter()
+        .map(|f| {
+            let mut o = HashMap::new();
+            o.insert("jd".to_string(), JsonVal::Num(f.jd));
+            o.insert("fds".to_string(), JsonVal::Str(f.fds.clone()));
+            o.insert("sx".to_string(), JsonVal::Num(f.sx));
+            o.insert("sy".to_string(), JsonVal::Num(f.sy));
+            o.insert("sz".to_string(), JsonVal::Num(f.sz));
+            o.insert("c1".to_string(), JsonVal::Num(f.c1));
+            o.insert("c2".to_string(), JsonVal::Num(f.c2));
+            o.insert("c3".to_string(), JsonVal::Num(f.c3));
+            JsonVal::Obj(o)
+        })
+        .collect();
+    Some(JsonVal::Arr(rows))
+}
+
 fn field_tau(src: &SourceConfig, key: &str, body: &str) -> Option<f64> {
     if let Some(secs) = derive_ttl(&src.url, body, &HashMap::new()) {
         return Some(secs as f64);
@@ -4736,6 +4764,8 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             .filter_map(|fc| fc.key.split('.').next().map(str::to_string))
             .collect();
         tar_fits_to_json(body, &wanted)
+    } else if src.format == "camera_angles" {
+        camera_angles_to_json(body)
     } else {
         None
     };
@@ -8160,5 +8190,26 @@ mod tar_fits_tests {
         assert!(map.contains_key("JADES-GS-z13-0/data_f090w"));
         assert!(map.contains_key("JADES-GS-z13-0/data_f444w"));
         assert!(map.contains_key("JADES-GS-z10-0/data_f090w"));
+    }
+
+    #[test]
+    fn camera_angles_frames_become_json_rows() {
+        let text = "\
+  0.2442136377841061D+07    00000050                            JULIAN_DATE&FDS
+  0.1074370232710200D+05 -0.2377632467018400D+04  0.1995419166206000D+04 SXSYSZ
+  0.1602669234243153D+03 -0.6646872148909559D+01  0.3298682679340727D+03 C1C2C3
+";
+        let json = camera_angles_frames_to_json(text).expect("the frames yield rows");
+        let JsonVal::Arr(rows) = &json else {
+            panic!("camera angles yield an array of frames")
+        };
+        assert_eq!(rows.len(), 1);
+        assert_eq!(jstr(&rows[0], "fds").as_deref(), Some("00000050"));
+        assert_eq!(jnum(&rows[0], "sx"), Some(10743.702327102));
+    }
+
+    #[test]
+    fn camera_angles_yield_no_rows_without_a_frame() {
+        assert!(camera_angles_frames_to_json("not a camera-angle file").is_none());
     }
 }

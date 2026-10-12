@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: 29e2141f233cef17a4674484f8936b08da6d28bb50b7cc5123f8d4617f8ed995
+  sha256: a1eb2fdeeffa197666bd10c80cf9d746f71f0e88ab1c9c9d5dee6cf0afbd87a6
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -75,9 +75,9 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
 - **Trigger:** die ASU-`url`-Zeile (Mycelium) — registriert `phi:31570`
 - **Lage:** (gemessen 2026-10-12/327) 2 433 Zeilen = 811 Records × 3 Zeilen:
   `<JD (D-float) + FDS>` / `<SX> <SY> <SZ>` / `<C1> <C2> <C3>`, je mit trailing Label; keine Einheit im File.
-  **Gebaut (Taucher):** Modul `src/archivar/camera_angles.rs` (`pub fn parse_camera_angles(text) -> Vec<CameraAngleFrame>` mit jd/fds/sx/sy/sz/c1/c2/c3; D-Exponent, Label-Prüfung, malformed → skip; Test `parses_two_synthetic_records` + `skips_mismatched_label`), `pub mod camera_angles;` in `src/archivar/mod.rs`; `cargo check` 0/0.
-- **Blockade:** der Dispatch im Archivar (`format camera_angles` in `src/archivar/extract.rs`).
-- **Braucht:** `format camera_angles`-Dispatch in `extract.rs` (Modul ist da) + `format` Zeile im Block (`phi:31570` braucht noch `format`/`terms`).
+  **Gebaut (Taucher):** Modul `src/archivar/camera_angles.rs` (`pub fn parse_camera_angles(text) -> Vec<CameraAngleFrame>` mit jd/fds/sx/sy/sz/c1/c2/c3; D-Exponent, Label-Prüfung, malformed → skip; Tests), `pub mod camera_angles;` in `src/archivar/mod.rs`; **Dispatch:** `format camera_angles` in `src/archivar/extract.rs` (`camera_angles_to_json`/`camera_angles_frames_to_json`, Tests `camera_angles_frames_become_json_rows`/`camera_angles_yield_no_rows_without_a_frame`), `format camera_angles` im Block `phi:31570`; `cargo check` 0/0.
+- **Blockade:** keine (Arm + Dispatch + `format` gesetzt).
+- **Braucht:** `terms` im Block klären (`phi:31570` `terms unknown`, Mycelium); die **FDS→Bild-Dateiname**-Zuordnung (der FDS ist die Bilddatei, nicht die Zeit — JD/FDS nicht ko-monoton) beim ersten Lauf prüfen.
 
 ### `mariner_rst` — SP-Begleitbänder, eigener Parser-Arm (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -105,13 +105,16 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
 - **Lage:** (gemessen 2026-10-12/327) `state/mountain/mariner4_dsc0119_format.md` (ODG/ODP-Record,
   6-bit-Byte-Walk, Zeit dekodiert); der DSC 0119 trägt `SECTION II` (ODG DATEN-File: Master-Label
   9 Wörter + Station-Summary 201 Wörter + Datentypen 1–15) + `APPENDIX I` (ODP Logical Record).
-  **Registriert:** `phi:31588-31590` (`url`/`origin`, sha `ec3c41eb…`). **Vision-Pass (Taucher, 2026-10-12):**
-  die 16-Seiten-Scan-Schicht ist lesbar; **kein** Abschnitt heißt wörtlich „Table 3" — gemeint ist
-  **S. 14 (II-B-1) „ODP File Logical Record Format"**: Wort 0 = n (Wortzahl), 1-2 = DP-Zeit s past 1950.0,
-  3 = Frequenz-Inkrement, 4 = Pass-Nr., 5 = Code-Wort, 6 = Observable Nr. 1, 7 = Weight-Code-Wort;
-  Code-Wort-Bits selektieren die Datentypen (1 Range · 2 Range-Rate · 3 EL · 4 AZ …); die multi-Datentyp-Recordlänge
-  ist **variabel** (Fig. 2, S. 17). Weitere Tabellen: Tracking-Station-Nummern (S. 10/20), ODG-Datentyp-Liste 1–15 (S. 12),
-  Bit/Datatype 5–11 + Weight-Code-Wort (S. 15), ODP-Summaries (S. 16).
+  **Registriert:** `phi:31588-31590` (`url`/`origin`, sha `ec3c41eb…`). **Vision-Pass (Taucher, 2026-10-12, korrigiert):**
+  das PDF hat **21 Seiten** (nicht 16 — der erste Read war unvollständig); die Appendix-Footer sind
+  **`II-1`/`II-2`/`II-3`** (S. 14/15/16), nicht „II-B-1". **Kein** Abschnitt heißt wörtlich „Table 3" —
+  Table 3 ist nur auf **S. 13** referenziert (die Seite ist sonst leer); das Layout selbst ist **S. 14 (II-1)
+  „ODP File Logical Record Format"**: Wort 0 = D (Wortzahl), 1-2 = DP-Zeit s past 1950.0, 3 = Frequenz-Inkrement,
+  4 = Pass-Nr., 5 = Code-Wort, 6 = Observable Nr. 1, 7 = Weight-Code-Wort; Code-Wort-Bits selektieren die Datentypen
+  (1 Range · 2 Range-Rate · 3 EL · 4 AZ · 5 DEC · 6 HA/RA · 7 C1 · 8 C2 · 9 C3 · 10 TR · 11 RU · 12 PRU · 13-15 unused);
+  die multi-Datentyp-Recordlänge ist **variabel** (Fig. 2, S. 17–18). Weitere Tabellen: Stationstabelle External/Internal
+  (S. 10), ODG-Datentyp-Liste 1–15 (S. 12), Bit/Datatype 5–11 + Weight-Code-Wort (S. 15/II-2), ODP-Summaries (S. 16/II-3).
+  Die Transkription steht in `state/mountain/mariner4_dsc0119_format.md` (nachgemessen).
 - **Blockade:** keine (Feldtabelle + Record-Layout gelesen).
 - **Braucht:** den variablen Multi-Datentyp-Record (Fig. 2) in den `mariner_rst`-Arm (SP-ODG) aufnehmen —
   dann sind auch die 848/649 SP-Records dekodierbar.
