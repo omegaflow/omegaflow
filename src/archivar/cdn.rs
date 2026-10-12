@@ -9,6 +9,8 @@ use crate::archivar::{date_str, hour_str, load_env, sha256};
 const R2_REGION: &str = "auto";
 const R2_MIRROR_MAX_BYTES: u64 = 16 * 1024 * 1024;
 
+pub const GITHUB_RELEASE_ASSET_MAX_BYTES: u64 = 2 * 1024 * 1024 * 1024;
+
 fn r2_mirror_cap() -> u64 {
     std::env::var("OMEGAFLOW_R2_MIRROR_MAX_BYTES")
         .ok()
@@ -95,6 +97,16 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
     }
     if std::env::var("GH_TOKEN").is_err() {
         eprintln!("upload {}: GH_TOKEN absent", path);
+        return false;
+    }
+    if let Ok(meta) = std::fs::metadata(path)
+        && meta.len() > GITHUB_RELEASE_ASSET_MAX_BYTES
+    {
+        eprintln!(
+            "upload {}: {} B over the GitHub release 2 GiB asset limit — the asset needs the split/R2 route, not a release upload",
+            path,
+            meta.len()
+        );
         return false;
     }
     if !ensure_release(tag) {
