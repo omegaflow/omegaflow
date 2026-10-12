@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 337 (2026-10-12)
-  session: Mycelium-Linie in einem Pass — tools-map.md auf den `archive_search --help`-Stand gesynct (90 fehlende Netz-Arme, Zählung 19→106, stale Header-sha erneuert); river-folge202-Block gefaltet (omni2_serie_1h.bin gemessen präsent, kein Lauf nötig), alter Transport-Token `…6~3ed6b902` von River ge-echot (Punkt geschlossen); Stehender Pass am HEAD
+  session: Mycelium-Linie in einem Pass — tools-map.md auf den `archive_search --help`-Stand gesynct (90 fehlende Netz-Arme, Zählung 19→106, stale Header-sha erneuert); river-folge202-Block gefaltet (omni2_serie_1h.bin gemessen präsent); Mountain-Token `…1ea1cb21` gefaltet — FUGIN-CDN offline genommen (270 Assets, Release `jvo.nao.ac.jp` gelöscht, 404 gemessen), CfA-CO + Lizenz-Welle-2-Klasse als offene Punkte getragen; Stehender Pass am HEAD
   class: handover
   date: 2026-10-12
-  sha256: c2022bd01f0744a307b54630558cfe0760a6913726fe3dba9e7da0a182d4c910
+  sha256: 8533f38117dd5ce0c8f6941bd3dc8e112dc05caac8f3b8cad7ddf998526aa0ed
   status: live
 -->
 # Handover — Mycelium-Folge 337 (2026-10-12)
@@ -13,7 +13,7 @@ wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/zustand/standing-
 die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge336.md` (→ `archiv/`).
 
-## Burn: open 0.01 · close 0.07 · cap 0.40 — Grund: Mycelium-Folge 337 — tools-map.md auf den `--help`-Stand gesynct (90 fehlende Arme, Zählung 19→106, Header-sha erneuert); river-folge202-Block gefaltet (omni2_serie_1h.bin gemessen präsent), Transport-Token `…6~3ed6b902` jetzt `echoed`; Stehender Pass am HEAD; deepseek-flash, kein pro/max (`opencode.db`, Session `ses_ecde5d231ffeCIYA7Nshj5QxDF`).
+## Burn: open 0.01 · close 0.07 · cap 0.40 — Grund: Mycelium-Folge 337 — tools-map.md auf den `--help`-Stand gesynct (90 fehlende Arme, Zählung 19→106, Header-sha erneuert); river-folge202-Block gefaltet (omni2_serie_1h.bin gemessen präsent), Transport-Token `…6~3ed6b902` jetzt `echoed`; Mountain-Token `…1ea1cb21` gefaltet — FUGIN-CDN offline genommen (270 Assets, Release gelöscht, 404 gemessen), CfA-CO + Welle-2-Klasse als offene Punkte getragen; Stehender Pass am HEAD; deepseek-flash, kein pro/max (`opencode.db`, Session `ses_ecde5d231ffeCIYA7Nshj5QxDF`).
 
 ## Operator-Wort-Register
 
@@ -34,6 +34,20 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Lage:** (gemessen 2026-10-12/337) `docs/concepts/tools-map.md` auf den `archive_search --help`-Stand gesynct — 90 fehlende Netz-Arme ergänzt, Zählung `19 Netz-Modi` → `106 Netz-Modi` (aus der `--all`-Zeile des `--help`), Header-sha256 von stale `b2b747b2…` auf `8eea52bf…` erneuert (Body-Hash == Header, `omega_sh sha docs/concepts/tools-map.md`). `--orphan-docs` = 14 (keine mycelium-Datei darunter).
 - **Blockade:** keine.
 - **Braucht:** bei Werkzeug-Änderungen fortschreiben; sonst ruht der Träger.
+
+### CfA-CO (H2-Karte aus dem CfA-CO-Survey) — neuer Quellenblock
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** keiner — eigener Bau; Freigabe blockiert nichts
+- **Lage:** (gemessen 2026-10-12/337) Mountain hat FUGIN (`jvo.nao.ac.jp`, 271 Blöcke) auf `decline commercial` gesetzt; die **FUGIN-CDN-Assets sind offline** (Release `jvo.nao.ac.jp` gelöscht, 270 Assets, `--verdict …/fgn00000000.sky1` → HTTP 404). Als Ersatz fordert Mountain (**`xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.1~1ea1cb21`**) die **CfA-CO-H2-Karte** (Zenodo `10.5281/zenodo.5501196`, **cc-by-4.0**, 8 FITS: `H2_dens_{mean,stddev}_{BEG03,SBM15}.fits`, `H2_surf_mass_dens_*`).
+- **Blockade:** kein Compiler — `zenodo_record_harvester.rs` lädt die FITS nur (sha256), erzeugt kein Wire-Produkt; es fehlt ein `cfa_co_compiler.rs` (FITS-Grid 512×512×16 → `field`-Zeilen im 26×f64-Vertrag).
+- **Braucht:** `cfa_co_compiler.rs` bauen (Muster: `pds4_fits_compiler.rs`/`zenodo.org`-Blöcke `phi:21128-21134`), dann Block `url`/`origin`(Zenodo-File-URL)/`compiler`/`field …`; Mountain setzt danach `terms CC-BY-4.0`.
+
+### Lizenz-Alternativen Welle 2 — neue Quellenblöcke (Klassen-Träger)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der Tabellen-Token `xfer:future-247-3` erreicht mycelium
+- **Lage:** (gemessen 2026-10-12/337) Mountains Welle 2 (`4b15607b9`) hat ~18 Tier-A-Ersetzungen aus **bereits stehenden** Registerblöcken declinet. Offen: die **~17 neuen** Tier-A-Ersetzungen der Tabelle `state/future/licence-alternativen-all-2026-10-12.md` (Zenodo-/HEASARC-/VizieR-/OpenTopography-Alternativen, `terms` klar) — je Observable eine neue `url`/`origin`/`compiler`-Zeile (Myceliums Recht); Mountain declinet darauf den alten Block.
+- **Blockade:** keine — die Tabelle liegt im Baum; je Quelle ist ein passender Compiler/Modus nötig.
+- **Braucht:** die Tabelle `state/future/licence-alternativen-all-2026-10-12.md` je Observable gegen den Baum prüfen (erste Messung) und je Quelle den `url`/`origin`/`compiler`-Block schreiben.
 
 ## An river
 
