@@ -57,8 +57,69 @@ fn code_bits(code: u64) -> Vec<u32> {
         .collect()
 }
 
+const SP_ODG_MASTER_LABEL_WORDS: usize = 10;
+const SP_ODG_STATION_SUMMARY_WORDS: usize = 201;
+const SP_ODG_SUMMARY_CONTINUATION_WORDS: usize = 97;
+const SP_ODG_DATA_RECORD_WORDS: usize = 201;
+const SP_ODG_LOGICAL_PAYLOAD_WORDS: usize = 200;
+const SP_ODG_LOGICAL_RECORD_WORDS: usize = 8;
+
+fn sp_odg_header_words() -> usize {
+    SP_ODG_MASTER_LABEL_WORDS + SP_ODG_STATION_SUMMARY_WORDS + SP_ODG_SUMMARY_CONTINUATION_WORDS
+}
+
+fn sp_odg_data_records(words: &[u64]) -> Vec<&[u64]> {
+    match words.get(sp_odg_header_words()..) {
+        Some(body) => body.chunks_exact(SP_ODG_DATA_RECORD_WORDS).collect(),
+        None => Vec::new(),
+    }
+}
+
+fn single_datatype(code: u64) -> Option<u32> {
+    let mut found = None;
+    for k in 1..=12u32 {
+        if (code >> (36 - k)) & 1 == 1 {
+            if found.is_some() {
+                return None;
+            }
+            found = Some(k);
+        }
+    }
+    found
+}
+
+fn sp_odg_record_observables(record: &[u64]) -> Vec<(f64, f64, u32)> {
+    let mut out = Vec::new();
+    for base in (0..SP_ODG_LOGICAL_PAYLOAD_WORDS).step_by(SP_ODG_LOGICAL_RECORD_WORDS) {
+        let (Some(code), Some(w1), Some(w2), Some(obs)) = (
+            record.get(base + 5).copied(),
+            record.get(base + 1).copied(),
+            record.get(base + 2).copied(),
+            record.get(base + 6).copied(),
+        ) else {
+            break;
+        };
+        let Some(dtype) = single_datatype(code) else {
+            continue;
+        };
+        let Some(t) = unix_from_words(w1, w2) else {
+            continue;
+        };
+        if !(-252_460_800.0..=189_345_600.0).contains(&t) {
+            continue;
+        }
+        let v = hex_single(obs);
+        if !v.is_finite() {
+            continue;
+        }
+        out.push((t, v, dtype));
+    }
+    out
+}
+
 fn run(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let sp = args.iter().any(|a| a == "--sp");
     let out = match arg_value(args, "--out-bin") {
         Some(v) => v,
         None => "mariner_rst.bin".to_string(),
@@ -93,6 +154,24 @@ fn run(args: &[String]) -> Result<(), String> {
     };
 
     for data in dats {
+        if sp {
+            let mut words = Vec::new();
+            let mut off = 0usize;
+            while off + 2 <= data.len() {
+                let len = u16::from_be_bytes([data[off], data[off + 1]]) as usize;
+                let payload = off + 2;
+                let end = payload + len;
+                if len == 0 || end > data.len() {
+                    break;
+                }
+                words.extend(words_of(&data[payload..end]));
+                off = end;
+            }
+            for record in sp_odg_data_records(&words) {
+                rows.extend(sp_odg_record_observables(record));
+            }
+            continue;
+        }
         let mut off = 0usize;
         let mut index = 0usize;
         while off + 2 <= data.len() {
@@ -146,11 +225,65 @@ fn run(args: &[String]) -> Result<(), String> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
-        eprintln!("usage: mariner_rst_compiler [--in <F1.DAT|tar>] [--out-bin <name>] [--ci-mode]");
+        eprintln!(
+            "usage: mariner_rst_compiler [--in <F1.DAT|tar>] [--out-bin <name>] [--sp] [--ci-mode]"
+        );
         std::process::exit(2);
     }
     if let Err(msg) = run(&args) {
         eprintln!("mariner_rst_compiler: {msg}");
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn pack_words(words: &[u64]) -> Vec<u8> {
+        let mut out = Vec::with_capacity(words.len() * 6);
+        for &w in words {
+            for shift in (0..36).step_by(6).rev() {
+                out.push(((w >> shift) & 0x3F) as u8);
+            }
+        }
+        out
+    }
+
+    fn dp_time_words(seconds: u64) -> (u64, u64) {
+        let frac: u128 = (seconds as u128) * 2;
+        let exp_field: u128 = 128 + 62;
+        let v: u128 = (exp_field << 63) | (frac & ((1u128 << 63) - 1));
+        ((v >> 36) as u64, (v & ((1u128 << 36) - 1)) as u64)
+    }
+
+    #[test]
+    fn sp_odg_reader_decodes_one_record_and_skips_malformed() {
+        let (t1, t2) = dp_time_words(605_059_200);
+        let mut words = vec![0u64; sp_odg_header_words()];
+        let mut record = vec![0u64; SP_ODG_DATA_RECORD_WORDS];
+        record[0] = SP_ODG_LOGICAL_RECORD_WORDS as u64;
+        record[1] = t1;
+        record[2] = t2;
+        record[5] = 1u64 << 35;
+        record[6] = (64u64 << 28) | (1u64 << 27);
+        words.extend_from_slice(&record);
+
+        let decoded = words_of(&pack_words(&words));
+        let records = sp_odg_data_records(&decoded);
+        assert_eq!(records.len(), 1);
+        let obs = sp_odg_record_observables(records[0]);
+        assert_eq!(obs.len(), 1);
+        assert_eq!(obs[0].2, 1);
+        assert!((obs[0].1 - 0.5).abs() < 1e-12);
+
+        let mut malformed = vec![0u64; SP_ODG_DATA_RECORD_WORDS];
+        malformed[5] = (1u64 << 35) | (1u64 << 34);
+        words.extend_from_slice(&malformed);
+        words.push(0x2A);
+        let decoded2 = words_of(&pack_words(&words));
+        let records2 = sp_odg_data_records(&decoded2);
+        assert_eq!(records2.len(), 2);
+        assert!(sp_odg_record_observables(records2[1]).is_empty());
     }
 }

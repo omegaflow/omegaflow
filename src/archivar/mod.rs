@@ -36,6 +36,7 @@ pub mod bpc;
 pub mod brainvision;
 pub mod bsp_reader;
 pub mod bzip2;
+pub mod camera_angles;
 pub mod carisma_mag;
 pub mod cassini_rsr;
 pub mod ccor;
