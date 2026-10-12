@@ -31608,7 +31608,7 @@ sha256 1e8f7dd43b2527a292159b90206d848a6c95a847f04b5aa476333ee39183d225
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ser.im-ldi.com/mariner_m10_camera_angles.txt
-terms unknown https://ser.im-ldi.com/
+terms PD https://ser.im-ldi.com/M10/
 format camera_angles
 origin https://ser.im-ldi.com/M10/M10_ISIS/camera_angles.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
