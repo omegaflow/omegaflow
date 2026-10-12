@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: 01c38945fc6d11a0c0625046c62d1052c93883485b728eeb410c383acb2042d2
+  sha256: aca0d047d1404ff39aa8b9a6fb8ff360b72d75101e8653b825be1608b13fbc68
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -246,16 +246,24 @@ Origin: mountain-folge335 (2026-10-12).
   nehmen**; (b) **CfA-CO** („Galactic maps of H2, reconstructed from the CfA CO survey",
   Zenodo `10.5281/zenodo.5501196`, **cc-by-4.0**) als neue `url`/`origin`/`compiler`-Zeile — Mountain
   setzt dann `terms CC-BY-4.0`. `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.1~1ea1cb21`
-- **`raw_mirror`/`m10-mdis-raw-cdn`: Assets >2 GiB über die R2-Route.** Gemessen (2026-10-12):
+- **`raw_mirror`/`m10-mdis-raw-cdn`: Assets >2 GiB strukturell.** Gemessen (2026-10-12):
   `38275761488` `failure` — `Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.tif`
   (**4 247 470 901 B = 3,96 GiB**) → `gh returned void: HTTP 422 Validation Failed` (das
-  **2-GiB-Limit** der GitHub-Release-Assets). Die `R2_*`-Env + `OMEGAFLOW_R2_MIRROR` sind im
-  Workflow gesetzt — der große Kanal muss über R2 (Cloudflare) laufen, nicht GitHub-Releases.
-  `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.2~b2908226`
+  **2-GiB-Limit** der GitHub-Release-Assets). **Gebaut (Mountain, Operator-Wort: „strukturell"):**
+  `GITHUB_RELEASE_ASSET_MAX_BYTES` + eine Guard in `upload_release` (`src/archivar/cdn.rs`) — ein
+  Überschreiten wird **am rechten Layer benannt** statt als opaker 422. **Offen (Mycelium):** der
+  eigentliche Kanal für >2 GiB — Split in <2-GiB-Teile (Range) **oder** R2-primary mit eigener
+  `url`-Konvention; dazu `raw_mirror`/`fetch_raw_bytes` streamen (heute hält der Pfad das ganze
+  Body im RAM, ~4 GiB). `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.2~b2908226`
 - **Stehender Pass: die workflow_dispatch-CDN-Läufe in die CI-Tafel.** Gemessen: der Pass
-  (20:33Z) trug „Keine roten Läufe", doch `38275761488` (`m10-mdis-raw-cdn`) = **failure** (18:26Z)
-  und `38277503423` (`m10-jpl-edr-cdn`) = **cancelled** (17:11Z, Asset 404) waren bereits rot —
-  die Tafel misst die dispatch-getriebenen CDN-Läufe nicht (Blicklücke). `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.3~00ba30f9`
+  (20:33Z) trug „Keine roten Läufe", doch `38275761488` (`m10-mdis-raw-cdn`) = **failure** (18:26Z),
+  `38277503423` (`m10-jpl-edr-cdn`) = **cancelled** (17:11Z, Asset 404) und `38271095011`
+  (`pvo-orse-odr-cdn`) = **failure** waren bereits rot — die Tafel maß die dispatch-getriebenen
+  CDN-Läufe nicht (Blicklücke). **Gebaut (Mountain, Operator-Wort: „strukturell"):**
+  `ci_manage reds [--pages N]` (`tools/utils/src/bin/ci_manage.rs`) — paginierter Zensus **jedes**
+  Nicht-success-Laufs über alle Workflows (gemessen: **180** über 3 Seiten); der Stehende Pass
+  zitiert `ci_manage reds` statt eines Fensters. Test `is_red_names_every_non_success_conclusion`;
+  `cargo check` 0/0. `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.3~00ba30f9`
 
 ## Operator-Wort-Register
 
@@ -273,12 +281,13 @@ Origin: mountain-folge335 (2026-10-12).
 - **„INTERMAGNET/GIRO DIDBase) was ist das problem wir sind doch NC"** | 2026-10-12 | Operator-Session (mountain 335) — das Haus ist NC (PolyForm NC / CC BY-NC-SA), CC BY-NC ist admissibel; keine Operator/Rat-Frage.
 - **Lizenz-Zensus: lizenzlose Blöcke durch freie Alternativen ersetzen (kein Klagerisiko)** | 2026-10-12 | Operator-Session (mountain 335, future-247 gefaltet) — block-scoped Ersetzung, Mountain Verdikt + Mycelium url/origin/compiler; 7 von ~20 in diesem Atom umgesetzt.
 - **FUGIN vom Netz nehmen + durch CfA-CO ersetzen** | 2026-10-12 | Operator-Session (mountain 335, future-247-5 gefaltet) — 271 `nobeyama/fugin`-Blöcke auf `decline`, CfA-CO (Zenodo `10.5281/zenodo.5501196`, cc-by-4.0) als Ersatz; Mycelium nimmt die CDN-Assets offline; PI-Anfrage raus (`wartend`).
+- **„das muss beides strukturell gefixt werden das geht sowas von gar nicht"** | 2026-10-13 | Operator-Session (mountain 335) — M10-CDN: (a) `ci_manage reds` gebaut (paginierter Nicht-success-Zensus, damit der Stehende Pass nichts übersieht); (b) `upload_release` benennt die 2-GiB-Grenze (Guard); der >2-GiB-Kanal bleibt Mycelium (Split/R2 + Streaming).
 
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt automatisch",
 2026-10-07) trägt Commit und Push. In diesem Atom (folge335) committet (pfad-begrenzt):
-`phi/sources.φ` (AFAD-Block 232-242 + CMA-Block 467-477 entfernt; zwei `decline`-Zeilen; ferner fünf lizenzlose Blöcke `ceic.ac.cn`/`weather.uwyo.edu`/`prop.kc2g.com`/`ia2-tap.oats.inaf.it`/`imbrium.mit.edu` entfernt + fünf `decline commercial`-Zeilen; zuletzt **716 `terms`-Zeilen** aus dem Lizenz-Zensus `unknown` → belegter Kandidat + **271 FUGIN-Blöcke** auf `decline commercial` + **~18 Tier-A-Ersatzblöcke** (Welle 2: streamflow/quake/buoy/air/decaps/mpcorb) auf `decline commercial`), `tools/register/src/bin/register_terms_apply.rs` + `tools/register/src/bin/register_block_decline.rs` (zwei neue Werkzeuge),
+`phi/sources.φ` (AFAD-Block 232-242 + CMA-Block 467-477 entfernt; zwei `decline`-Zeilen; ferner fünf lizenzlose Blöcke `ceic.ac.cn`/`weather.uwyo.edu`/`prop.kc2g.com`/`ia2-tap.oats.inaf.it`/`imbrium.mit.edu` entfernt + fünf `decline commercial`-Zeilen; zuletzt **716 `terms`-Zeilen** aus dem Lizenz-Zensus `unknown` → belegter Kandidat + **271 FUGIN-Blöcke** auf `decline commercial` + **~18 Tier-A-Ersatzblöcke** (Welle 2: streamflow/quake/buoy/air/decaps/mpcorb) auf `decline commercial`), `tools/register/src/bin/register_terms_apply.rs` + `tools/register/src/bin/register_block_decline.rs` (zwei neue Werkzeuge), `tools/utils/src/bin/ci_manage.rs` (`reds`-Nicht-success-Zensus) + `src/archivar/cdn.rs` (2-GiB-Guard),
 `docs/handover/handover-2026-10-12-mountain-folge335.md`,
 `docs/handover/archiv/handover-2026-10-12-mountain-folge334.md`. **Operator-Wort (2026-10-12):**
 AFAD war ein **Lizenzthema** (Disposition `decline commercial`); die Future-Begründung „geoblockt"

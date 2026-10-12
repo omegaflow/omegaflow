@@ -92,6 +92,47 @@ fn list(limit: usize) -> Option<()> {
     Some(())
 }
 
+fn is_red(conclusion: &str) -> bool {
+    matches!(
+        conclusion,
+        "failure" | "startup_failure" | "timed_out" | "action_required" | "cancelled" | "stale"
+    )
+}
+
+fn reds(pages: usize) -> Option<()> {
+    let mut printed = 0usize;
+    for page in 1..=pages {
+        let url = format!("{API}/repos/{REPO}/actions/runs?per_page=100&page={page}");
+        let body = read_call(&url)?;
+        let json = parse_json(&body)?;
+        let JsonVal::Arr(arr) = jpath_val(&json, "workflow_runs")? else {
+            return None;
+        };
+        if arr.is_empty() {
+            break;
+        }
+        for r in arr {
+            let conclusion = field(r, "conclusion");
+            if field(r, "status") == "completed" && is_red(&conclusion) {
+                println!(
+                    "{}\t{}\t{}\t{}\t{}",
+                    num_field(r, "id"),
+                    conclusion,
+                    field(r, "name"),
+                    field(r, "head_sha"),
+                    field(r, "updated_at")
+                );
+                printed += 1;
+            }
+        }
+        if arr.len() < 100 {
+            break;
+        }
+    }
+    eprintln!("ci_manage reds: {printed} non-success run(s) across {pages} page(s)");
+    Some(())
+}
+
 fn view(id: &str) -> Option<()> {
     let url = format!("{API}/repos/{REPO}/actions/runs/{id}");
     let body = read_call(&url)?;
@@ -272,6 +313,7 @@ fn usage() {
         "ci_manage — GitHub Actions runs (repo {REPO})\n\
          usage: ci_manage list [--limit N]   id/status/conclusion/attempt/workflow/started/updated\n\
          \x20      ci_manage status [--limit N] overview + current step of every running run\n\
+         \x20      ci_manage reds [--pages N]  every non-success run across all workflows (paginated)\n\
          \x20      ci_manage view <run-id>    status/conclusion/attempt/sha/branch/times/url\n\
          \x20      ci_manage jobs <run-id>... job status + current step (what is happening now)\n\
          \x20      ci_manage log <run-id> [--all]  job logs (default: the red jobs)\n\
@@ -311,6 +353,15 @@ fn main() {
                 }
             }
             status(limit).is_some()
+        }
+        "reds" => {
+            let mut pages = 5usize;
+            if let Some(pos) = args.iter().position(|a| a == "--pages") {
+                if let Some(v) = args.get(pos + 1).and_then(|s| s.parse::<usize>().ok()) {
+                    pages = v;
+                }
+            }
+            reds(pages).is_some()
         }
         "view" => match args.get(1) {
             Some(id) => view(id).is_some(),
@@ -392,6 +443,23 @@ mod tests {
         let json = parse_json(JOBS).unwrap();
         let jobs = jobs_of(&json);
         assert_eq!(red_jobs(&jobs, true).len(), 3);
+    }
+
+    #[test]
+    fn is_red_names_every_non_success_conclusion() {
+        for c in [
+            "failure",
+            "startup_failure",
+            "timed_out",
+            "action_required",
+            "cancelled",
+            "stale",
+        ] {
+            assert!(is_red(c), "{c} is a non-success conclusion");
+        }
+        for c in ["success", "skipped", "neutral"] {
+            assert!(!is_red(c), "{c} is not a red conclusion");
+        }
     }
 
     #[test]
