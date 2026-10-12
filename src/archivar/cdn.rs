@@ -11,6 +11,64 @@ const R2_MIRROR_MAX_BYTES: u64 = 16 * 1024 * 1024;
 
 pub const GITHUB_RELEASE_ASSET_MAX_BYTES: u64 = 2 * 1024 * 1024 * 1024;
 
+pub const CDN_PART_MAX_BYTES: u64 = GITHUB_RELEASE_ASSET_MAX_BYTES - 1024 * 1024;
+
+fn is_sha256_hex(value: &str) -> bool {
+    value.len() == 64 && value.bytes().all(|b| b.is_ascii_hexdigit())
+}
+
+pub struct PartsManifest {
+    pub total_sha256: String,
+    pub parts: Vec<(String, String, u64)>,
+}
+
+pub fn parts_manifest_name(asset: &str) -> String {
+    format!("{asset}.parts")
+}
+
+pub fn part_name(asset: &str, idx: usize) -> String {
+    format!("{asset}.p{idx:03}")
+}
+
+pub fn format_parts_manifest(total_sha256: &str, parts: &[(String, String, u64)]) -> String {
+    let mut s = String::new();
+    s.push_str(&format!("parts {}\n", parts.len()));
+    s.push_str(&format!("sha256 {}\n", total_sha256));
+    for (name, sha, len) in parts {
+        s.push_str(&format!("{} {} {}\n", name, sha, len));
+    }
+    s
+}
+
+pub fn parse_parts_manifest(text: &str) -> Option<PartsManifest> {
+    let mut lines = text.lines().filter(|l| !l.trim().is_empty());
+    let n: usize = lines.next()?.strip_prefix("parts ")?.trim().parse().ok()?;
+    let total = lines.next()?.strip_prefix("sha256 ")?.trim().to_string();
+    if !is_sha256_hex(&total) {
+        return None;
+    }
+    let mut parts = Vec::new();
+    for line in lines {
+        let f: Vec<&str> = line.split_whitespace().collect();
+        if f.len() != 3 {
+            return None;
+        }
+        let sha = f[1].to_string();
+        if !is_sha256_hex(&sha) {
+            return None;
+        }
+        let len: u64 = f[2].parse().ok()?;
+        parts.push((f[0].to_string(), sha, len));
+    }
+    if parts.len() != n {
+        return None;
+    }
+    Some(PartsManifest {
+        total_sha256: total,
+        parts,
+    })
+}
+
 fn r2_mirror_cap() -> u64 {
     std::env::var("OMEGAFLOW_R2_MIRROR_MAX_BYTES")
         .ok()
@@ -452,6 +510,31 @@ mod tests {
         assert!(r2_mirror_within_cap(R2_MIRROR_MAX_BYTES));
         assert!(!r2_mirror_within_cap(R2_MIRROR_MAX_BYTES + 1));
         assert!(!r2_mirror_within_cap(100 * 1024 * 1024));
+    }
+
+    #[test]
+    fn parts_manifest_round_trips() {
+        let parts = vec![
+            (part_name("big.tif", 0), "a".repeat(64), CDN_PART_MAX_BYTES),
+            (part_name("big.tif", 1), "b".repeat(64), 1234),
+        ];
+        let text = format_parts_manifest(&"c".repeat(64), &parts);
+        let parsed = parse_parts_manifest(&text).expect("round trip");
+        assert_eq!(parsed.total_sha256, "c".repeat(64));
+        assert_eq!(parsed.parts, parts);
+        assert_eq!(parts_manifest_name("big.tif"), "big.tif.parts");
+        assert_eq!(part_name("big.tif", 0), "big.tif.p000");
+        assert_eq!(part_name("big.tif", 11), "big.tif.p011");
+    }
+
+    #[test]
+    fn parts_manifest_rejects_a_count_mismatch() {
+        let text = "parts 2\nsha256 ".to_string()
+            + &"c".repeat(64)
+            + "\nbig.tif.p000 "
+            + &"a".repeat(64)
+            + " 10\n";
+        assert!(parse_parts_manifest(&text).is_none());
     }
 
     #[test]

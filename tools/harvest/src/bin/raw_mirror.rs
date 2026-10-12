@@ -43,7 +43,9 @@ fn run(args: &[String]) -> Result<(), String> {
     }
 
     let (tag, name) = cdn_release_path(&url).ok_or_else(|| {
-        format!("{url}: carries no /releases/download/<tag>/<asset> — the release path stays unread")
+        format!(
+            "{url}: carries no /releases/download/<tag>/<asset> — the release path stays unread"
+        )
     })?;
 
     let body = fetch_raw_bytes(&origin)
@@ -65,10 +67,54 @@ fn run(args: &[String]) -> Result<(), String> {
     std::fs::write(&out, &body).map_err(|e| format!("{}: write void ({e})", out.display()))?;
 
     if ci_mode {
-        let out_str = out
-            .to_str()
-            .ok_or_else(|| format!("{}: path is not utf-8 — the upload stays unraised", out.display()))?;
-        if !upload_release(&tag, out_str) {
+        let out_str = out.to_str().ok_or_else(|| {
+            format!(
+                "{}: path is not utf-8 — the upload stays unraised",
+                out.display()
+            )
+        })?;
+        if body.len() as u64 > omegaflow::cdn::GITHUB_RELEASE_ASSET_MAX_BYTES {
+            let part_max = omegaflow::cdn::CDN_PART_MAX_BYTES as usize;
+            let mut parts: Vec<(String, String, u64)> = Vec::new();
+            for (idx, chunk) in body.chunks(part_max).enumerate() {
+                let pname = omegaflow::cdn::part_name(&name, idx);
+                let ppath = std::path::Path::new("data").join(&tag).join(&pname);
+                std::fs::write(&ppath, chunk)
+                    .map_err(|e| format!("{}: write void ({e})", ppath.display()))?;
+                let pstr = ppath.to_str().ok_or_else(|| {
+                    format!(
+                        "{}: path is not utf-8 — the part upload stays unraised",
+                        ppath.display()
+                    )
+                })?;
+                if !upload_release(&tag, pstr) {
+                    return Err(format!("{tag}/{pname}: the CDN part upload returned void"));
+                }
+                parts.push((pname, sha256_hex(chunk), chunk.len() as u64));
+            }
+            let manifest = omegaflow::cdn::format_parts_manifest(&got, &parts);
+            let mpath = std::path::Path::new("data")
+                .join(&tag)
+                .join(omegaflow::cdn::parts_manifest_name(&name));
+            std::fs::write(&mpath, manifest)
+                .map_err(|e| format!("{}: write void ({e})", mpath.display()))?;
+            let mstr = mpath.to_str().ok_or_else(|| {
+                format!(
+                    "{}: path is not utf-8 — the manifest upload stays unraised",
+                    mpath.display()
+                )
+            })?;
+            if !upload_release(&tag, mstr) {
+                return Err(format!(
+                    "{tag}/{name}.parts: the CDN manifest upload returned void"
+                ));
+            }
+            eprintln!(
+                "{tag}/{name}: {} B over the GitHub asset limit — split into {} part(s) + manifest",
+                body.len(),
+                parts.len()
+            );
+        } else if !upload_release(&tag, out_str) {
             return Err(format!("{tag}/{name}: the CDN upload returned void"));
         }
     }
@@ -80,7 +126,9 @@ fn run(args: &[String]) -> Result<(), String> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
-        eprintln!("usage: raw_mirror --url <cdn release url> --origin <source url> --sha256 <hex> [--ci-mode]");
+        eprintln!(
+            "usage: raw_mirror --url <cdn release url> --origin <source url> --sha256 <hex> [--ci-mode]"
+        );
         std::process::exit(2);
     }
     if let Err(msg) = run(&args) {
@@ -99,21 +147,36 @@ mod tests {
             cdn_release_path(
                 "https://github.com/omegaflow/sources/releases/download/ser.im-ldi.com/mariner_m10_camera_angles.txt"
             ),
-            Some(("ser.im-ldi.com".to_string(), "mariner_m10_camera_angles.txt".to_string()))
+            Some((
+                "ser.im-ldi.com".to_string(),
+                "mariner_m10_camera_angles.txt".to_string()
+            ))
         );
         assert_eq!(
             cdn_release_path(
                 "https://github.com/omegaflow/sources/releases/download/zenodo.org/jades_early_galaxies.tar"
             ),
-            Some(("zenodo.org".to_string(), "jades_early_galaxies.tar".to_string()))
+            Some((
+                "zenodo.org".to_string(),
+                "jades_early_galaxies.tar".to_string()
+            ))
         );
     }
 
     #[test]
     fn a_non_release_url_carries_no_path() {
-        assert_eq!(cdn_release_path("https://ser.im-ldi.com/M10/camera_angles.txt"), None);
-        assert_eq!(cdn_release_path("https://github.com/omegaflow/sources/releases/download/tag"), None);
-        assert_eq!(cdn_release_path("https://github.com/omegaflow/sources/releases/download/tag/a/b"), None);
+        assert_eq!(
+            cdn_release_path("https://ser.im-ldi.com/M10/camera_angles.txt"),
+            None
+        );
+        assert_eq!(
+            cdn_release_path("https://github.com/omegaflow/sources/releases/download/tag"),
+            None
+        );
+        assert_eq!(
+            cdn_release_path("https://github.com/omegaflow/sources/releases/download/tag/a/b"),
+            None
+        );
     }
 
     #[test]

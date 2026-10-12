@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: 857ce482f3c6428b6fdacfeadee20e90af84aa577cdf23c4c27be371a3bac713
+  sha256: cbf224d5bef96ea61df1ff023245d6ed17e660a1d8b54fbfdc87fdf8e2acd977
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -252,15 +252,7 @@ Origin: mountain-folge335 (2026-10-12).
   nehmen**; (b) **CfA-CO** („Galactic maps of H2, reconstructed from the CfA CO survey",
   Zenodo `10.5281/zenodo.5501196`, **cc-by-4.0**) als neue `url`/`origin`/`compiler`-Zeile — Mountain
   setzt dann `terms CC-BY-4.0`. `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.1~1ea1cb21`
-- **`raw_mirror`/`m10-mdis-raw-cdn`: Assets >2 GiB strukturell.** Gemessen (2026-10-12):
-  `38275761488` `failure` — `Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.tif`
-  (**4 247 470 901 B = 3,96 GiB**) → `gh returned void: HTTP 422 Validation Failed` (das
-  **2-GiB-Limit** der GitHub-Release-Assets). **Gebaut (Mountain, Operator-Wort: „strukturell"):**
-  `GITHUB_RELEASE_ASSET_MAX_BYTES` + eine Guard in `upload_release` (`src/archivar/cdn.rs`) — ein
-  Überschreiten wird **am rechten Layer benannt** statt als opaker 422. **Offen (Mycelium):** der
-  eigentliche Kanal für >2 GiB — Split in <2-GiB-Teile (Range) **oder** R2-primary mit eigener
-  `url`-Konvention; dazu `raw_mirror`/`fetch_raw_bytes` streamen (heute hält der Pfad das ganze
-  Body im RAM, ~4 GiB). `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.2~b2908226`
+- **`raw_mirror`/`m10-mdis-raw-cdn`: Assets >2 GiB strukturell (Split, Operator-Wort „A").** Gemessen (2026-10-12): `38275761488` `failure` — `Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.tif` (**4 247 470 901 B = 3,96 GiB**) → `gh returned void: HTTP 422 Validation Failed` (das **2-GiB-Limit** der GitHub-Release-Assets). **Gebaut (Mountain):** `src/archivar/cdn.rs` — `GITHUB_RELEASE_ASSET_MAX_BYTES`, `CDN_PART_MAX_BYTES`, `part_name`/`parts_manifest_name`/`format_parts_manifest`/`parse_parts_manifest` (+ Guard in `upload_release`, + Tests); `src/archivar/fetch.rs` — `fetch_release_or_parts(url)` (direkt, sonst Teile + Gesamt-sha-Verifikation); `tools/harvest/src/bin/raw_mirror.rs` — über 2 GiB **Split** in ≤2-GiB-Teile + `.parts`-Manifest, sonst unverändert. `cargo check` 0/0, `rustfmt` sauber. Die Register-`url` bleibt `<name>` (logischer Handle); der erste Konsument nutzt `fetch_release_or_parts`. `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.2~b2908226`
 - **Stehender Pass: die workflow_dispatch-CDN-Läufe in die CI-Tafel.** Gemessen: der Pass
   (20:33Z) trug „Keine roten Läufe", doch `38275761488` (`m10-mdis-raw-cdn`) = **failure** (18:26Z),
   `38277503423` (`m10-jpl-edr-cdn`) = **cancelled** (17:11Z, Asset 404) und `38271095011`
@@ -294,7 +286,7 @@ Origin: mountain-folge335 (2026-10-12).
 
 Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt automatisch",
 2026-10-07) trägt Commit und Push. In diesem Atom (folge335) committet (pfad-begrenzt):
-`phi/sources.φ` (AFAD-Block 232-242 + CMA-Block 467-477 entfernt; zwei `decline`-Zeilen; ferner fünf lizenzlose Blöcke `ceic.ac.cn`/`weather.uwyo.edu`/`prop.kc2g.com`/`ia2-tap.oats.inaf.it`/`imbrium.mit.edu` entfernt + fünf `decline commercial`-Zeilen; zuletzt **716 `terms`-Zeilen** aus dem Lizenz-Zensus `unknown` → belegter Kandidat + **271 FUGIN-Blöcke** auf `decline commercial` + **~18 Tier-A-Ersatzblöcke** (Welle 2: streamflow/quake/buoy/air/decaps/mpcorb) auf `decline commercial`), `tools/register/src/bin/register_terms_apply.rs` + `tools/register/src/bin/register_block_decline.rs` (zwei neue Werkzeuge), `tools/utils/src/bin/ci_manage.rs` (`reds`-Nicht-success-Zensus) + `src/archivar/cdn.rs` (2-GiB-Guard),
+`phi/sources.φ` (AFAD-Block 232-242 + CMA-Block 467-477 entfernt; zwei `decline`-Zeilen; ferner fünf lizenzlose Blöcke `ceic.ac.cn`/`weather.uwyo.edu`/`prop.kc2g.com`/`ia2-tap.oats.inaf.it`/`imbrium.mit.edu` entfernt + fünf `decline commercial`-Zeilen; zuletzt **716 `terms`-Zeilen** aus dem Lizenz-Zensus `unknown` → belegter Kandidat + **271 FUGIN-Blöcke** auf `decline commercial` + **~18 Tier-A-Ersatzblöcke** (Welle 2: streamflow/quake/buoy/air/decaps/mpcorb) auf `decline commercial`), `tools/register/src/bin/register_terms_apply.rs` + `tools/register/src/bin/register_block_decline.rs` (zwei neue Werkzeuge), `tools/utils/src/bin/ci_manage.rs` (`reds`-Nicht-success-Zensus) + `src/archivar/cdn.rs` (2-GiB-Guard + Split-Manifest) + `src/archivar/fetch.rs` (`fetch_release_or_parts`) + `tools/harvest/src/bin/raw_mirror.rs` (>2-GiB-Split-Upload),
 `docs/handover/handover-2026-10-12-mountain-folge335.md`,
 `docs/handover/archiv/handover-2026-10-12-mountain-folge334.md`. **Operator-Wort (2026-10-12):**
 AFAD war ein **Lizenzthema** (Disposition `decline commercial`); die Future-Begründung „geoblockt"
