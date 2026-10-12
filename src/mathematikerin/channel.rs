@@ -69,6 +69,7 @@ pub enum Medium {
     Vacuum = 0,
     Fluid = 1,
     ElasticSolid = 2,
+    Plasma = 3,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -247,6 +248,7 @@ impl Medium {
             "vacuum" => Some(Medium::Vacuum),
             "fluid" => Some(Medium::Fluid),
             "elastic-solid" => Some(Medium::ElasticSolid),
+            "plasma" => Some(Medium::Plasma),
             _ => None,
         }
     }
@@ -411,7 +413,7 @@ impl ChannelDescriptor {
             extent: None,
             family: match medium {
                 Medium::ElasticSolid => ModeFamily::Spheroidal,
-                Medium::Vacuum | Medium::Fluid => ModeFamily::Scalar,
+                Medium::Vacuum | Medium::Fluid | Medium::Plasma => ModeFamily::Scalar,
             },
             body: None,
             unit,
@@ -567,6 +569,7 @@ impl ChannelDescriptor {
             Medium::Vacuum => "vacuum",
             Medium::Fluid => "fluid",
             Medium::ElasticSolid => "elastic-solid",
+            Medium::Plasma => "plasma",
         };
         let domain = match &self.domain {
             Domain::Unspecified => "unspecified".to_string(),
@@ -671,19 +674,18 @@ pub fn is_admissible(conserved: Conserved, op: TransportOp, medium: Medium) -> b
             conserved == Conserved::Energy && medium != Medium::Vacuum
         }
         TransportOp::Flux(FluxKind::Ohm) => {
-            conserved == Conserved::Charge && medium == Medium::Fluid
+            conserved == Conserved::Charge && matches!(medium, Medium::Fluid | Medium::Plasma)
         }
         TransportOp::Flux(FluxKind::NewtonViscous) => {
             conserved == Conserved::Momentum && medium == Medium::Fluid
         }
-        TransportOp::Advective => medium == Medium::Fluid,
+        TransportOp::Advective => matches!(medium, Medium::Fluid | Medium::Plasma),
         TransportOp::Wave => matches!(
             (conserved, medium),
-            (Conserved::Momentum | Conserved::Energy, Medium::Fluid)
-                | (
-                    Conserved::Momentum | Conserved::Energy,
-                    Medium::ElasticSolid
-                )
+            (
+                Conserved::Momentum | Conserved::Energy,
+                Medium::Fluid | Medium::ElasticSolid | Medium::Plasma
+            )
         ),
         TransportOp::Maxwell => conserved == Conserved::Energy || conserved == Conserved::Momentum,
         TransportOp::Poisson => matches!(conserved, Conserved::Mass | Conserved::Charge),
@@ -1321,6 +1323,7 @@ pub fn characteristic_speed(medium: Medium, params: Option<&MediumParams>) -> Op
             }
         }
         Medium::ElasticSolid => None,
+        Medium::Plasma => None,
     }
 }
 
@@ -1750,6 +1753,29 @@ mod tests {
             Conserved::Charge,
             TransportOp::Flux(FluxKind::Ohm),
             Medium::Fluid
+        ));
+    }
+
+    #[test]
+    fn plasma_is_a_fourth_medium_in_the_admissibility_relation() {
+        assert_eq!(Medium::parse("plasma"), Some(Medium::Plasma));
+        let d = ChannelDescriptor::parse_spec(
+            "charge:primary:flux-ohm:parabolic:plasma:line:dirichlet",
+            "A/m2",
+        )
+        .expect("the plasma channel is admissible");
+        let round_tripped = ChannelDescriptor::parse_spec(&d.spec_token(), "A/m2")
+            .expect("the plasma token round-trips");
+        assert_eq!(round_tripped.medium, Medium::Plasma);
+        assert!(is_admissible(
+            Conserved::Charge,
+            TransportOp::Flux(FluxKind::Ohm),
+            Medium::Plasma
+        ));
+        assert!(!is_admissible(
+            Conserved::Mass,
+            TransportOp::Flux(FluxKind::Fourier),
+            Medium::Plasma
         ));
     }
 

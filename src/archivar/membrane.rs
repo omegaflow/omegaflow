@@ -325,6 +325,7 @@ pub fn medium_reach(
             }
             Medium::Fluid => Some(medium?.sound_speed_m_s * age),
             Medium::Vacuum => None,
+            Medium::Plasma => None,
         },
         TransportOp::Flux(FluxKind::Fourier) => {
             Some((2.0 * medium?.thermal_diffusivity_m2_s * age).sqrt())
