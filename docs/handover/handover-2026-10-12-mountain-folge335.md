@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: c84c74cffbfdd91d109678ffb01d0a653318ce55a848dbb3dea4031d1c81a062
+  sha256: e543f423acdc6d787673bddc2dea95932bd7dd3bfb8c874f8a406a12d9cc085e
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -114,7 +114,7 @@ Punkt nennt seine Datei(en)/Pfade.**
 - **Politik (Operator-Wort 2026-10-13):** **declined** → komplett weg (CDN **und** CI-Job); **unklar** (`no-license-stated`) → Job bleibt (Aktualität), an die Zulassung gebunden.
 - **Erledigt:** die per-Source-Produzenten der declineten Quellen entfernt (`git rm`): `neptune-apdb-cdn` (geoazur), `fugin-cdn` + `fugin-cdn-dispatch` (FUGIN), `ia2-cdn` (ia2-tap), `lro-trk-cdn` (imbrium), `kc2g-cdn` (prop.kc2g).
 - **Braucht:** (a) die **generischen** Matrix-Produzenten prüfen (`harvest-long.yml` trägt z. B. `arm=lro_trk_compiler tag=imbrium.mit.edu`; `harvest-dispatch`), damit declinete Quellen dort ausgeschlossen sind; (b) für die **unklaren** Quellen den Guard `register_source_state <netloc>` in deren `*-cdn.yml` ziehen (Bin gebaut + getestet; `live|declined|absent`).
-- **Zentraler Riegel — Positiv-Regel (Mountain, Operator-Wort 2026-10-13: „ein CDN darf nur erstellt werden wenn es in sources steht"):** `upload_release` (`src/archivar/cdn.rs`) verweigert **jede** Quelle, die **nicht live in `phi/sources.φ`** steht. `registered_netlocs()` sammelt die Live-`url`-Tags (`cdn_tag_of`) bzw. `origin`-netlocs (Decline-Zeilen übersprungen, `www.` gestrippt); nur ein registrierter Tag darf hochladen. **Allowlist, kein neuer Register.** Test `netloc_matches_the_release_tag_after_www_strip` (netloc_of/cdn_tag_of/normalize_tag), `cargo check` 0/0. Greift für **alle** Produzenten (per-Source, Matrix, Cron, Dispatch) — ein declineter/nie-registrierter Tag kommt nicht auf die CDN.
+- **Zentraler Riegel — Positiv-Regel (Mountain, Operator-Wort 2026-10-13: „ein CDN darf nur erstellt werden wenn es in sources steht"):** `upload_release` (`src/archivar/cdn.rs`) verweigert **jede** Quelle, die **nicht live in `phi/sources.φ`** steht. `registered_netlocs()` sammelt die Live-`url`-Tags (`cdn_tag_of`) bzw. `origin`-netlocs (`www.` gestrippt); nur ein registrierter Tag darf hochladen. **Allowlist, kein neuer Register.** **`sources.φ` ist jetzt sources-only** (Operator-Wort 2026-10-13: „der müll nichts in sources zu suchen") — die **1821 `decline`-Zeilen entfernt**, git trägt sie; der Register trägt **2572 `url`-Blöcke**, keine Disposition. Test `netloc_matches_the_release_tag_after_www_strip`, `cargo check` 0/0. Greift für **alle** Produzenten.
 
 ### Rätsel-Datenlücken (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -294,6 +294,7 @@ Origin: mountain-folge335 (2026-10-12).
 - **Drei Einzel-Entscheidungen (Welle-3-Rest)** | 2026-10-12 | Operator-Session (future-247-7) — `rpw_efield`/AMDA `decline superseded` (RPW-LIRA trägt es), `casdc.china-vo.org` LHAASO `decline superseded`, `www.kari.re.kr`/KPLO `terms kari-public-release`.
 - **„ja bitte" (CDN-Produzenten zulassungsbewusst machen)** | 2026-10-13 | Operator-Session (mountain 335) — nicht abschalten (Aktualität!), sondern an `phi/sources.φ` binden: `register_source_state`-Guard + `geoazur.fr` declinet.
 - **„die regel ist doch ganz einfach ein cdn darf nur erstellt werden wenn es in sources steht"** | 2026-10-13 | Operator-Session (mountain 335) — Positiv-Riegel in `upload_release` (`registered_netlocs()`), **kein** neuer Register; kein Decline-Matching.
+- **„wie oft soll ich euch noch sagen dass der müll nichts in sources zu suchen hat"** | 2026-10-13 | Operator-Session (mountain 335) — **die 1821 `decline`-Zeilen aus `phi/sources.φ` entfernt**; der Register ist sources-only (2572 `url`-Blöcke), git trägt die Verdikte.
 
 ## Abschluss
 
