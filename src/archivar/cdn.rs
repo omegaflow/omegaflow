@@ -146,7 +146,7 @@ fn mark_release_verified(tag: &str) {
 }
 
 fn netloc_of(url: &str) -> Option<&str> {
-    let rest = url.split("://").nth(1).unwrap_or(url);
+    let rest = url.split_once("://")?.1;
     rest.split(['/', '?']).next().filter(|s| !s.is_empty())
 }
 
@@ -154,18 +154,29 @@ fn normalize_tag(tag: &str) -> &str {
     tag.strip_prefix("www.").unwrap_or(tag)
 }
 
-fn declined_netlocs() -> &'static HashSet<String> {
+fn cdn_tag_of(url: &str) -> Option<&str> {
+    let rest = url.strip_prefix(CDN_BASE)?.strip_prefix('/')?;
+    rest.split('/').next().filter(|s| !s.is_empty())
+}
+
+fn registered_netlocs() -> &'static HashSet<String> {
     static SET: OnceLock<HashSet<String>> = OnceLock::new();
     SET.get_or_init(|| {
         let mut set = HashSet::new();
         if let Ok(text) = std::fs::read_to_string("phi/sources.φ") {
             for line in text.lines() {
-                if let Some(rest) = line.strip_prefix("decline ") {
-                    if let Some(url) = rest.split_whitespace().nth(1) {
-                        if let Some(nl) = netloc_of(url) {
-                            set.insert(normalize_tag(nl).to_string());
-                        }
+                if line.starts_with("decline ") {
+                    continue;
+                }
+                if let Some(rest) = line.strip_prefix("url ") {
+                    let key = cdn_tag_of(rest).or_else(|| netloc_of(rest));
+                    if let Some(k) = key {
+                        set.insert(normalize_tag(k).to_string());
                     }
+                } else if let Some(rest) = line.strip_prefix("origin ")
+                    && let Some(nl) = netloc_of(rest)
+                {
+                    set.insert(normalize_tag(nl).to_string());
                 }
             }
         }
@@ -195,9 +206,9 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
         );
         return false;
     }
-    if declined_netlocs().contains(normalize_tag(tag)) {
+    if !registered_netlocs().contains(normalize_tag(tag)) {
         eprintln!(
-            "upload {}: source {} carries a decline in phi/sources.φ — the upload stays off",
+            "upload {}: tag {} is not a live source in phi/sources.φ — a CDN release is only created for a registered source",
             path, tag
         );
         return false;
@@ -559,6 +570,14 @@ mod tests {
         );
         assert_eq!(normalize_tag("www.geoazur.fr"), "geoazur.fr");
         assert_eq!(normalize_tag("jvo.nao.ac.jp"), "jvo.nao.ac.jp");
+        assert_eq!(
+            cdn_tag_of(
+                "https://github.com/omegaflow/sources/releases/download/ser.im-ldi.com/x.bin"
+            ),
+            Some("ser.im-ldi.com")
+        );
+        assert_eq!(cdn_tag_of("https://api.open-meteo.com/v1/forecast"), None);
+        assert_eq!(netloc_of("procedure: SPK/DAF harvest"), None);
     }
 
     #[test]
