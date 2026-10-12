@@ -186,6 +186,7 @@ pub mod planetary_radar;
 pub mod poes19_meped;
 pub mod pradan_ch2;
 pub mod projection;
+pub mod pvo_orse;
 pub mod quake_event;
 pub mod quakeml;
 pub mod quaoar_occlt;
