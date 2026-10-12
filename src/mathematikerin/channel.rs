@@ -389,6 +389,8 @@ pub struct ChannelDescriptor {
     pub body: Option<String>,
     pub plasma: PlasmaParameters,
     pub unit: &'static str,
+    pub alias: Option<String>,
+    pub charge: Option<f64>,
 }
 
 impl PartialEq for ChannelDescriptor {
@@ -436,6 +438,8 @@ impl ChannelDescriptor {
             body: None,
             plasma: PlasmaParameters::absent(),
             unit,
+            alias: None,
+            charge: None,
         }
     }
 
@@ -446,6 +450,16 @@ impl ChannelDescriptor {
 
     pub fn with_body(mut self, body: Option<String>) -> Self {
         self.body = body;
+        self
+    }
+
+    pub fn with_alias(mut self, alias: Option<String>) -> Self {
+        self.alias = alias;
+        self
+    }
+
+    pub fn with_charge(mut self, charge: Option<f64>) -> Self {
+        self.charge = charge;
         self
     }
 
@@ -1423,7 +1437,7 @@ pub struct ChannelRegistry {
     cap: usize,
     descs: Vec<ChannelDescriptor>,
     id: HashMap<u64, usize>,
-    aliases: HashMap<&'static str, u64>,
+    aliases: HashMap<String, u64>,
 }
 
 impl ChannelRegistry {
@@ -1463,8 +1477,19 @@ impl ChannelRegistry {
         i
     }
 
-    pub fn alias(&mut self, name: &'static str, target: &ChannelDescriptor) {
-        self.aliases.insert(name, target.hash());
+    pub fn alias(&mut self, name: &str, target: &ChannelDescriptor) {
+        let h = target.hash();
+        match self.aliases.get(name) {
+            Some(&existing) if existing != h => {
+                eprintln!(
+                    "alias refused: \"{}\" already names a different channel",
+                    name
+                );
+            }
+            _ => {
+                self.aliases.insert(name.to_string(), h);
+            }
+        }
     }
 
     pub fn resolve(&self, name: &str) -> Option<&ChannelDescriptor> {
@@ -1770,7 +1795,10 @@ pub fn channel_registry_from_sources(sources: &[crate::archivar::SourceConfig]) 
             if d.body.is_none() {
                 d.body = s.body.clone();
             }
-            reg.register(d);
+            reg.register(d.clone());
+            if let Some(a) = d.alias.as_deref() {
+                reg.alias(a, &d);
+            }
         }
     }
     if reg.is_empty() {

@@ -1070,8 +1070,51 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         continue;
                     }
                 };
+                let mut alias: Option<String> = None;
+                let mut charge: Option<f64> = None;
+                let mut refused = false;
+                let mut i = 3;
+                while i < parts.len() {
+                    match parts[i] {
+                        "alias" if i + 1 < parts.len() => {
+                            alias = Some(parts[i + 1].to_string());
+                            i += 2;
+                        }
+                        "charge" if i + 1 < parts.len() => match parts[i + 1].parse::<f64>() {
+                            Ok(z) if z.is_finite() => {
+                                charge = Some(z);
+                                i += 2;
+                            }
+                            _ => {
+                                report_anomaly(
+                                    "Invalid Syntax",
+                                    &cur_url,
+                                    &format!(
+                                        "invalid channel charge \"{}\": {}",
+                                        parts[i + 1],
+                                        line
+                                    ),
+                                );
+                                refused = true;
+                                break;
+                            }
+                        },
+                        other => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("unknown channel token \"{}\": {}", other, line),
+                            );
+                            refused = true;
+                            break;
+                        }
+                    }
+                }
+                if refused {
+                    continue;
+                }
                 match ChannelDescriptor::parse_spec(parts[1], unit) {
-                    Ok(d) => cur_channels.push(d),
+                    Ok(d) => cur_channels.push(d.with_alias(alias).with_charge(charge)),
                     Err(reason) => {
                         report_anomaly("Invalid Syntax", &cur_url, &format!("{}: {}", reason, line))
                     }
@@ -3339,6 +3382,18 @@ mod tests {
                 .map(|s| s.channels.is_empty())
                 .unwrap_or(true)
         );
+    }
+
+    #[test]
+    fn a_channel_directive_carries_alias_and_charge() {
+        let content = "url https://example.com/x\nttl 3600\n\
+                       channel mass:primary:poisson:elliptic:vacuum:unspecified:none m/s^2 alias gravity_channel charge 2\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].channels.len(), 1);
+        let d = &sources[0].channels[0];
+        assert_eq!(d.alias.as_deref(), Some("gravity_channel"));
+        assert_eq!(d.charge, Some(2.0));
     }
 
     #[test]
