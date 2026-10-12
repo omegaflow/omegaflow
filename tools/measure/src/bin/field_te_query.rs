@@ -2653,7 +2653,7 @@ fn print_arm(role: &str, arm: &Arm, load: &ArmLoad) {
             arm.name,
             arm.state.name(),
             source.format,
-            field.force,
+            field.channel_ref,
             field.unit,
             series.len(),
             source.url
@@ -6298,7 +6298,7 @@ mod tests {
             name: name.to_string(),
             band_id: None,
             kernel: 0,
-            force: 0,
+            channel_ref: 0,
             tau: 0.0,
             absorption: 0.0,
             advection: 0.0,

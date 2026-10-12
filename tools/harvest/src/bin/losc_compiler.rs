@@ -15,7 +15,7 @@ const ATTR_PATHS: [&str; 3] = ["strain/Strain", "strain", ""];
 const SLOT_VAL: usize = 3;
 const SLOT_EPOCH: usize = 4;
 const SLOT_TTL: usize = 5;
-const SLOT_FORCE_TYPE: usize = 9;
+const SLOT_CHANNEL_REF: usize = 9;
 const SLOT_PRESENCE: usize = 25;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -234,7 +234,7 @@ fn compile(input: &str, out: &str, force_type: u8, presence: f64, ttl_s: f64) {
         r[SLOT_EPOCH] = gps + i as f64 / rate;
         r[SLOT_VAL] = *value;
         r[SLOT_TTL] = ttl_s;
-        r[SLOT_FORCE_TYPE] = force_type as f64;
+        r[SLOT_CHANNEL_REF] = force_type as f64;
         r[SLOT_PRESENCE] = presence;
         records.push(r);
     }

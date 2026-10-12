@@ -337,7 +337,7 @@ pub fn emit_channels(
     tau: f64,
     cap: usize,
 ) -> Vec<(Channel, FieldConfig)> {
-    let (Some(force), Some(kernel)) = (
+    let (Some(channel_ref), Some(kernel)) = (
         crate::force::force_id_of("electric"),
         crate::archivar::kernel_id_of("gaussian-inverse-square"),
     ) else {
@@ -366,7 +366,7 @@ pub fn emit_channels(
             name,
             band_id: None,
             kernel,
-            force,
+            channel_ref,
             tau,
             absorption: 0.0,
             advection: 0.0,
@@ -532,7 +532,7 @@ mod tests {
                 &channel.position,
                 Position::Barycenter { body_name, .. } if body_name == "earth"
             ));
-            assert_eq!(fc.force, 8);
+            assert_eq!(fc.channel_ref, 8);
             assert_eq!(fc.kernel, 1);
             assert_eq!(fc.unit, "V");
             assert_eq!(fc.key, channel.name);

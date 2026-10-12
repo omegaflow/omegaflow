@@ -60,10 +60,10 @@ pub fn component_name(comp: u32) -> Option<&'static str> {
 }
 
 pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
-    let Some(force) = force_id_of("gravity") else {
+    let Some(channel_ref) = force_id_of("gravity") else {
         return Vec::new();
     };
-    let Some(kernel) = kernel_id_for_force(force) else {
+    let Some(kernel) = kernel_id_for_force(channel_ref) else {
         return Vec::new();
     };
     let mut out = Vec::with_capacity(COLUMNS.len());
@@ -76,7 +76,7 @@ pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
             name: name.to_string(),
             band_id: None,
             kernel,
-            force,
+            channel_ref,
             tau,
             absorption: 0.0,
             advection: 0.0,
@@ -144,7 +144,7 @@ mod tests {
         assert_eq!(fields.len(), COLUMNS.len());
         assert_eq!(fields[0].name, "agrav_gravity_ms2");
         assert_eq!(fields[0].unit, "m/s2");
-        assert_eq!(fields[0].force, force_id_of("gravity").unwrap());
+        assert_eq!(fields[0].channel_ref, force_id_of("gravity").unwrap());
         assert_eq!(component_name(COMP_GRAVITY), Some("agrav_gravity_ms2"));
         assert_eq!(component_name(9), None);
     }

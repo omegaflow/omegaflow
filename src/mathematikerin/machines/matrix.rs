@@ -170,7 +170,7 @@ pub enum MetaAnchor {
 
 pub struct NameMeta {
     pub anchor: MetaAnchor,
-    pub force: u8,
+    pub channel_ref: u8,
     pub kernel: u8,
     pub tau: f64,
     pub epoch: f64,
@@ -281,7 +281,7 @@ impl MatrixMachine {
         buf.extend_from_slice(&(self.metas.len() as u32).to_le_bytes());
         for (name, meta) in &self.metas {
             wr_name(&mut buf, name);
-            buf.push(meta.force);
+            buf.push(meta.channel_ref);
             buf.push(meta.kernel);
             buf.extend_from_slice(&meta.tau.to_le_bytes());
             buf.extend_from_slice(&meta.epoch.to_le_bytes());
@@ -377,7 +377,7 @@ impl MatrixMachine {
         let n = rd_u32(&bytes, &mut p)? as usize;
         for _ in 0..n {
             let name = rd_name(&bytes, &mut p)?;
-            let force = *bytes.get(p)?;
+            let channel_ref = *bytes.get(p)?;
             p += 1;
             let kernel = *bytes.get(p)?;
             p += 1;
@@ -422,7 +422,7 @@ impl MatrixMachine {
                 name,
                 NameMeta {
                     anchor,
-                    force,
+                    channel_ref,
                     kernel,
                     tau,
                     epoch,
@@ -679,7 +679,7 @@ impl MatrixMachine {
             };
             let meta = NameMeta {
                 anchor,
-                force: sensor.force,
+                channel_ref: sensor.channel_ref,
                 kernel: sensor.kernel,
                 tau: sensor.tau,
                 epoch: channel.epoch,
@@ -751,7 +751,7 @@ impl MatrixMachine {
                 + (p[2] - presence[2]).powi(2);
             let age = (t_presence - meta.epoch).abs();
             let Some(extent) =
-                crate::archivar::medium_reach(meta.force, age, body_medium, meta.advection)
+                crate::archivar::medium_reach(meta.channel_ref, age, body_medium, meta.advection)
             else {
                 continue;
             };

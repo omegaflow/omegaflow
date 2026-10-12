@@ -70,10 +70,10 @@ pub fn component_name(comp: u32) -> Option<&'static str> {
 }
 
 pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
-    let Some(force) = force_id_of("em") else {
+    let Some(channel_ref) = force_id_of("em") else {
         return Vec::new();
     };
-    let Some(kernel) = kernel_id_for_force(force) else {
+    let Some(kernel) = kernel_id_for_force(channel_ref) else {
         return Vec::new();
     };
     COLUMNS
@@ -83,7 +83,7 @@ pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
             name: name.to_string(),
             band_id: None,
             kernel,
-            force,
+            channel_ref,
             tau,
             absorption: 0.0,
             advection: 0.0,
@@ -165,7 +165,7 @@ mod tests {
         assert_eq!(fields.len(), 3);
         assert_eq!(fields[0].unit, "nT");
         assert_eq!(fields[2].name, "goes16_mag_bz_nt");
-        assert_eq!(fields[0].force, force_id_of("em").unwrap());
+        assert_eq!(fields[0].channel_ref, force_id_of("em").unwrap());
     }
 
     #[test]

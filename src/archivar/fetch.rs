@@ -583,8 +583,8 @@ pub fn record_in_enclosure(
     if age > effective_ttl * 64.0 {
         return false;
     }
-    let Some(front) = medium_reach(fc.force, age, medium, fc.advection)
-        .or_else(|| signal_reach(fc.force as f64, fc.advection, age, fc.freq, fc.bin_width))
+    let Some(front) = medium_reach(fc.channel_ref, age, medium, fc.advection)
+        .or_else(|| signal_reach(fc.channel_ref as f64, fc.advection, age, fc.freq, fc.bin_width))
     else {
         return true;
     };
@@ -616,7 +616,7 @@ pub fn catalog_sample_in_enclosure(
         name: sample.name.clone(),
         band_id: None,
         kernel: sample.kernel_id as u8,
-        force: sample.channel_ref as u8,
+        channel_ref: sample.channel_ref as u8,
         tau: sample.tau,
         absorption: sample.absorption,
         advection: sample.advection,
@@ -658,7 +658,7 @@ pub fn body_in_enclosure(
         name: String::new(),
         band_id: None,
         kernel: 0,
-        force: 1,
+        channel_ref: 1,
         tau: f64::INFINITY,
         absorption: 0.0,
         advection: 0.0,

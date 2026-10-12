@@ -1,7 +1,7 @@
 use crate::spectral::band_overlap;
 
 pub struct ShelfRow {
-    pub force: u8,
+    pub channel_ref: u8,
     pub freq: f64,
     pub bin_width: f64,
     pub v: f64,
@@ -14,7 +14,7 @@ pub fn parse_v_freq_shelf(raw: &str) -> Vec<ShelfRow> {
         .filter(|l| !l.starts_with('#'))
         .filter_map(|l| {
             let mut it = l.split_whitespace();
-            let force = it.next()?.parse::<u8>().ok()?;
+            let channel_ref = it.next()?.parse::<u8>().ok()?;
             let freq = it.next()?.parse::<f64>().ok()?;
             let bin_width = it.next()?.parse::<f64>().ok()?;
             let v = it.next()?.parse::<f64>().ok()?;
@@ -24,7 +24,7 @@ pub fn parse_v_freq_shelf(raw: &str) -> Vec<ShelfRow> {
                 return None;
             }
             Some(ShelfRow {
-                force,
+                channel_ref,
                 freq,
                 bin_width,
                 v,
@@ -35,10 +35,10 @@ pub fn parse_v_freq_shelf(raw: &str) -> Vec<ShelfRow> {
         .collect()
 }
 
-pub fn v_at_in(rows: &[ShelfRow], force: u8, freq: f64, bin_width: f64) -> Option<f64> {
+pub fn v_at_in(rows: &[ShelfRow], channel_ref: u8, freq: f64, bin_width: f64) -> Option<f64> {
     for row in rows {
         let half = (row.bin_width * 0.5).abs();
-        if row.force == force && band_overlap(freq, bin_width, row.freq - half, row.freq + half) {
+        if row.channel_ref == channel_ref && band_overlap(freq, bin_width, row.freq - half, row.freq + half) {
             return Some(row.v);
         }
     }
@@ -50,8 +50,8 @@ fn v_freq_shelf_rows() -> &'static Vec<ShelfRow> {
     ROWS.get_or_init(|| parse_v_freq_shelf(include_str!("kernels/v_freq_shelf.dat")))
 }
 
-pub fn v_at(force: u8, freq: f64, bin_width: f64) -> Option<f64> {
-    v_at_in(v_freq_shelf_rows(), force, freq, bin_width)
+pub fn v_at(channel_ref: u8, freq: f64, bin_width: f64) -> Option<f64> {
+    v_at_in(v_freq_shelf_rows(), channel_ref, freq, bin_width)
 }
 
 pub const SHELF_GPU_ROW_FLOATS: usize = 4;
@@ -59,7 +59,7 @@ pub const SHELF_GPU_ROW_FLOATS: usize = 4;
 pub fn shelf_rows_for_gpu() -> Vec<f32> {
     let mut out = Vec::with_capacity(v_freq_shelf_rows().len() * SHELF_GPU_ROW_FLOATS);
     for row in v_freq_shelf_rows() {
-        out.push(row.force as f32);
+        out.push(row.channel_ref as f32);
         out.push(row.freq as f32);
         out.push(row.bin_width as f32);
         out.push(row.v as f32);
@@ -67,12 +67,12 @@ pub fn shelf_rows_for_gpu() -> Vec<f32> {
     out
 }
 
-pub fn v_at_f32(force: u8, freq: f32, bin_width: f32) -> Option<f32> {
+pub fn v_at_f32(channel_ref: u8, freq: f32, bin_width: f32) -> Option<f32> {
     if !(freq.is_finite() && freq > 0.0) {
         return None;
     }
     for r in shelf_rows_for_gpu().as_chunks::<SHELF_GPU_ROW_FLOATS>().0 {
-        if r[0] != force as f32 {
+        if r[0] != channel_ref as f32 {
             continue;
         }
         let half = (bin_width * 0.5).abs();
@@ -105,7 +105,7 @@ mod tests {
             "# v_freq_shelf v1 sha256:abc\n# columns\n0 9.86e15 0.0 299792458.0 1.44e7 2.4e9\n";
         let rows = parse_v_freq_shelf(raw);
         assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].force, 0);
+        assert_eq!(rows[0].channel_ref, 0);
         assert_eq!(rows[0].v, 299792458.0);
         let hit = v_at_in(&rows, 0, 9.86e15, 0.0).unwrap();
         assert_eq!(hit, 299792458.0);
@@ -175,11 +175,11 @@ mod tests {
         assert_eq!(gpu.len(), rows.len() * SHELF_GPU_ROW_FLOATS);
         let first_rayleigh = rows
             .iter()
-            .find(|r| r.force == 4)
+            .find(|r| r.channel_ref == 4)
             .expect("Rayleigh rows exist");
         let mut found = None;
         for r in gpu.as_chunks::<SHELF_GPU_ROW_FLOATS>().0 {
-            if r[0] == first_rayleigh.force as f32
+            if r[0] == first_rayleigh.channel_ref as f32
                 && (r[1] as f64 - first_rayleigh.freq).abs() < 1e-6
             {
                 found = Some(r.to_vec());
@@ -197,14 +197,14 @@ mod tests {
         let rows = parse_v_freq_shelf(include_str!("kernels/v_freq_shelf.dat"));
         assert!(rows.len() >= 12, "the shelf carries em and Rayleigh rows");
         for row in &rows {
-            let gpu = v_at_f32(row.force, row.freq as f32, row.bin_width as f32)
+            let gpu = v_at_f32(row.channel_ref, row.freq as f32, row.bin_width as f32)
                 .expect("the f32 mirror answers its own row");
-            let cpu = v_at(row.force, row.freq, row.bin_width).expect("the f64 reference answers");
+            let cpu = v_at(row.channel_ref, row.freq, row.bin_width).expect("the f64 reference answers");
             let rel = ((gpu as f64 - cpu) / cpu).abs();
             assert!(
                 rel < 1e-4,
                 "f32/f64 parity: force {} at {} Hz — gpu {gpu} cpu {cpu} rel {rel}",
-                row.force,
+                row.channel_ref,
                 row.freq
             );
         }

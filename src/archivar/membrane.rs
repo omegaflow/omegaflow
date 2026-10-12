@@ -435,7 +435,7 @@ pub fn dispatch_reach(fields: &[FieldConfig], src_ttl: f64) -> Option<f64> {
     let mut reach: Option<f64> = None;
     for fc in fields {
         if let Some(rr) = signal_reach(
-            fc.force as f64,
+            fc.channel_ref as f64,
             fc.advection,
             src_ttl * 64.0,
             fc.freq,
@@ -579,7 +579,7 @@ pub fn sensor_config(name: &str) -> Option<BrowserSensor> {
     };
     Some(BrowserSensor {
         key: name.into(),
-        force,
+        channel_ref: force,
         kernel,
         ttl,
         tau,
@@ -601,10 +601,10 @@ mod tests {
 
     #[test]
     fn the_battery_family_carries_the_electric_force() {
-        assert_eq!(sensor_config("battery.level").expect("sensor").force, 8);
-        assert_eq!(sensor_config("battery.voltage").expect("sensor").force, 8);
-        assert_eq!(sensor_config("battery.current").expect("sensor").force, 8);
-        assert_eq!(sensor_config("battery.charging").expect("sensor").force, 8);
+        assert_eq!(sensor_config("battery.level").expect("sensor").channel_ref, 8);
+        assert_eq!(sensor_config("battery.voltage").expect("sensor").channel_ref, 8);
+        assert_eq!(sensor_config("battery.current").expect("sensor").channel_ref, 8);
+        assert_eq!(sensor_config("battery.charging").expect("sensor").channel_ref, 8);
     }
 
     #[test]
@@ -667,7 +667,7 @@ mod tests {
     fn the_spo2_sensor_carries_the_diffusion_force_and_percent_unit() {
         let spo2 = sensor_config("spo2").expect("sensor");
         assert_eq!(spo2.unit, "%");
-        assert_eq!(spo2.force, 6);
+        assert_eq!(spo2.channel_ref, 6);
         assert_eq!(spo2.kernel, 3);
         assert_eq!(spo2.tau, None);
     }
@@ -676,7 +676,7 @@ mod tests {
     fn the_gnss_speed_carries_the_advective_force_and_metre_per_second() {
         let speed = sensor_config("gnss.speed").expect("sensor");
         assert_eq!(speed.unit, "m/s");
-        assert_eq!(speed.force, 7);
+        assert_eq!(speed.channel_ref, 7);
         assert_eq!(speed.kernel, 1);
     }
 
@@ -684,7 +684,7 @@ mod tests {
     fn the_gnss_track_carries_the_em_force_and_degrees() {
         let track = sensor_config("gnss.track").expect("sensor");
         assert_eq!(track.unit, "deg");
-        assert_eq!(track.force, 0);
+        assert_eq!(track.channel_ref, 0);
         assert_eq!(track.kernel, 0);
     }
 
