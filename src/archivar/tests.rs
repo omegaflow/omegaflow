@@ -563,23 +563,23 @@ fn test_anomaly_reporter() {
 #[test]
 fn test_allowed_units_for_force() {
     assert!(allowed_units_for_force(0).contains(&"nt"));
-    assert!(allowed_units_for_force(5).contains(&"k"));
-    assert!(allowed_units_for_force(7).contains(&"m/s"));
+    assert!(allowed_units_for_force(7).contains(&"k"));
+    assert!(allowed_units_for_force(4).contains(&"m/s"));
     assert!(allowed_units_for_force(9).is_empty());
     assert!(allowed_units_for_force(0).contains(&"mag"));
     assert!(allowed_units_for_force(0).contains(&"jy_km/s"));
     assert!(allowed_units_for_force(0).contains(&"k.m/s"));
-    assert!(allowed_units_for_force(1).contains(&"logg"));
-    assert!(allowed_units_for_force(1).contains(&"m_sun"));
-    assert!(allowed_units_for_force(3).contains(&"mw"));
-    assert!(allowed_units_for_force(5).contains(&"mw"));
-    assert!(allowed_units_for_force(6).contains(&"du"));
-    assert!(allowed_units_for_force(6).contains(&"ug/m3"));
-    assert!(allowed_units_for_force(7).contains(&"cfs"));
-    assert!(allowed_units_for_force(8).contains(&"ua/m2"));
+    assert!(allowed_units_for_force(2).contains(&"logg"));
+    assert!(allowed_units_for_force(2).contains(&"m_sun"));
+    assert!(allowed_units_for_force(1).contains(&"mw"));
+    assert!(allowed_units_for_force(7).contains(&"mw"));
+    assert!(allowed_units_for_force(3).contains(&"du"));
+    assert!(allowed_units_for_force(3).contains(&"ug/m3"));
+    assert!(allowed_units_for_force(4).contains(&"cfs"));
+    assert!(allowed_units_for_force(6).contains(&"ua/m2"));
     assert!(!allowed_units_for_force(0).contains(&"k"));
-    assert!(!allowed_units_for_force(2).contains(&"c"));
-    assert!(!allowed_units_for_force(6).contains(&"kt"));
+    assert!(!allowed_units_for_force(8).contains(&"c"));
+    assert!(!allowed_units_for_force(3).contains(&"kt"));
     assert!(allowed_units_for_force(0).contains(&"count"));
     assert!(allowed_units_for_force(0).contains(&"rad"));
     assert!(allowed_units_for_force(0).contains(&"dbhz"));
@@ -596,17 +596,17 @@ fn test_allowed_units_for_force() {
     assert!(!allowed_units_for_force(0).contains(&"km/s"));
     assert!(allowed_units_for_force(0).contains(&"arcsec"));
     assert!(allowed_units_for_force(0).contains(&"%"));
-    assert!(allowed_units_for_force(1).contains(&"m/s"));
-    assert!(allowed_units_for_force(2).contains(&"npa"));
-    assert!(allowed_units_for_force(5).contains(&"km/s"));
-    assert!(allowed_units_for_force(6).contains(&"cm"));
-    assert!(allowed_units_for_force(6).contains(&"mm"));
-    assert!(allowed_units_for_force(7).contains(&"cm/s"));
-    assert!(allowed_units_for_force(7).contains(&"deg"));
+    assert!(allowed_units_for_force(2).contains(&"m/s"));
+    assert!(allowed_units_for_force(8).contains(&"npa"));
+    assert!(allowed_units_for_force(7).contains(&"km/s"));
+    assert!(allowed_units_for_force(3).contains(&"cm"));
+    assert!(allowed_units_for_force(3).contains(&"mm"));
+    assert!(allowed_units_for_force(4).contains(&"cm/s"));
+    assert!(allowed_units_for_force(4).contains(&"deg"));
     assert!(allowed_units_for_force(0).contains(&"nmi"));
-    assert!(allowed_units_for_force(1).contains(&"ft"));
-    assert!(allowed_units_for_force(5).contains(&"degree_c"));
-    assert!(allowed_units_for_force(5).contains(&"degc"));
+    assert!(allowed_units_for_force(2).contains(&"ft"));
+    assert!(allowed_units_for_force(7).contains(&"degree_c"));
+    assert!(allowed_units_for_force(7).contains(&"degc"));
     assert_eq!(convert_to_si(7.0, "count"), Some(7.0));
 }
 
@@ -4557,7 +4557,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
     );
     let thermal = FieldConfig {
         kernel: 3,
-        channel_ref: Some(5),
+        channel_ref: Some(7),
         ..fc.clone()
     };
     assert!(
@@ -6706,7 +6706,7 @@ fn test_fetch_dispatch_gate_thermal_without_body_medium_is_absent() {
         name: "temp".into(),
         band_id: None,
         kernel: 3,
-        channel_ref: Some(5),
+        channel_ref: Some(7),
         tau: 60.0,
         absorption: 0.0,
         advection: 0.0,
@@ -7468,7 +7468,7 @@ fn test_fetch_dispatch_gate_advective_uses_field_advection() {
         name: "wind".into(),
         band_id: None,
         kernel: 5,
-        channel_ref: Some(7),
+        channel_ref: Some(4),
         tau: 60.0,
         absorption: 0.0,
         advection: 400000.0,
@@ -8063,7 +8063,7 @@ fn test_query_admits_surface_sample_within_window() {
         name: "argo_dac_temp_c".into(),
         band_id: None,
         kernel: 3,
-        channel_ref: Some(5),
+        channel_ref: Some(7),
         tau: 604800.0,
         absorption: 0.0,
         advection: 0.0,
@@ -8452,7 +8452,8 @@ field 4 d20_thermocline_depth_m erfc gravity m 86400.0 0.0 0.0
             assert!(!v.is_empty(), "d20 series must not be empty");
             assert_eq!(v[0].0.name, "d20_thermocline_depth_m");
             assert_eq!(
-                v[0].1.channel_ref, Some(1),
+                v[0].1.channel_ref,
+                Some(1),
                 "d20 depth is a gravity-anchored length (force 1)"
             );
             let plausible = v.iter().all(|(c, _)| c.value > 0.0 && c.value < 500.0);
@@ -8742,7 +8743,7 @@ fn test_ci_body_verdict() {
         name: "gcmt_scalar_moment_nm".into(),
         band_id: None,
         kernel: 1,
-        channel_ref: Some(3),
+        channel_ref: Some(1),
         tau: 6.0,
         absorption: 0.0,
         advection: 0.0,
@@ -9318,7 +9319,7 @@ fn test_fold_directive_parse_and_extract() {
                     name: "fold_mean_nh_sh".into(),
                     band_id: None,
                     kernel: 0,
-                    channel_ref: Some(6),
+                    channel_ref: Some(3),
                     tau: 100.0,
                     absorption: 0.0,
                     advection: 0.0,
@@ -9333,7 +9334,7 @@ fn test_fold_directive_parse_and_extract() {
                     name: "fold_diff_nh_sh".into(),
                     band_id: None,
                     kernel: 0,
-                    channel_ref: Some(6),
+                    channel_ref: Some(3),
                     tau: 100.0,
                     absorption: 0.0,
                     advection: 0.0,
@@ -10142,7 +10143,7 @@ fn test_mag_type_gating() {
                 name: "quake_moment".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: Some(3),
+                channel_ref: Some(1),
                 tau: 6.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -10215,9 +10216,9 @@ fn test_mag_type_gating() {
 
 #[test]
 fn test_force_id_electric() {
-    assert_eq!(crate::force::force_id_of("electric"), Some(8));
+    assert_eq!(crate::force::force_id_of("electric"), Some(6));
     assert_eq!(crate::force::force_id_of("biotic"), None);
-    assert_eq!(crate::force::kernel_id_for_force(8), Some(0));
+    assert_eq!(crate::force::kernel_id_for_force(6), Some(0));
 }
 
 #[test]
@@ -11867,7 +11868,7 @@ fn tar_gz_yaml_format_extracts_member_last_row() {
         name: "gracefo_kbr_range_rate".into(),
         band_id: None,
         kernel: 0,
-        channel_ref: Some(4),
+        channel_ref: Some(5),
         tau: 86400.0,
         absorption: 0.0,
         advection: 0.0,
@@ -13476,13 +13477,13 @@ fn port_gap_residual_fields_resolve() {
 
 #[test]
 fn test_absorption_for_force_gravity_never_absorbs() {
-    assert_eq!(channels::absorption_for_force(1, 0.5), 0.0);
-    assert_eq!(channels::absorption_for_force(1, 0.0), 0.0);
+    assert_eq!(channels::absorption_for_force(2, 0.5), 0.0);
+    assert_eq!(channels::absorption_for_force(2, 0.0), 0.0);
 }
 
 #[test]
 fn test_absorption_for_force_declared_value_rides_the_channel() {
-    for force in [0u8, 2, 3, 4, 5, 6, 7, 8] {
+    for force in [0u8, 1, 3, 4, 5, 6, 7, 8] {
         assert_eq!(channels::absorption_for_force(force, 0.25), 0.25);
         assert_eq!(channels::absorption_for_force(force, 1.0), 1.0);
     }
@@ -13490,7 +13491,7 @@ fn test_absorption_for_force_declared_value_rides_the_channel() {
 
 #[test]
 fn test_absorption_for_force_absent_or_invalid_declaration_is_pad() {
-    for force in [0u8, 2, 3, 4, 5, 6, 7, 8] {
+    for force in [0u8, 1, 3, 4, 5, 6, 7, 8] {
         assert_eq!(channels::absorption_for_force(force, 0.0), 0.0);
         assert_eq!(channels::absorption_for_force(force, -0.1), 0.0);
         assert_eq!(channels::absorption_for_force(force, f64::NAN), 0.0);
@@ -13690,7 +13691,10 @@ fn body_anchor_carries_measured_props_and_own_granule_span() {
         (s.extent - 6378136.6).abs() < 1e-3,
         "extent is the measured radius"
     );
-    assert!((s.channel_ref.unwrap_or(0.0) - 1.0).abs() < 1e-9, "gravity anchor");
+    assert!(
+        (s.channel_ref.unwrap_or(0.0) - 1.0).abs() < 1e-9,
+        "gravity anchor"
+    );
     let want_ttl = 34.0 * 86400.0;
     assert!(
         (s.ttl - want_ttl).abs() < 1e-3,
@@ -13763,7 +13767,7 @@ fn test_body_anchor_reaches_ssb_presence_by_signal_cone() {
         extent: 6.96e8,
         tau: f64::INFINITY,
         kernel_id: 0.0,
-        channel_ref: Some(1.0),
+        channel_ref: Some(2.0),
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,

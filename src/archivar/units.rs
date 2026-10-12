@@ -450,23 +450,14 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "ohm",
         ],
         1 => &[
+            "m", "mm", "km", "m/s2", "n·m", "gal", "pa", "hz", "mw", "mm/yr", "count", "g",
+        ],
+        2 => &[
             "m/s2", "m/s", "gal", "mgal", "kg", "m_sun", "m_earth", "m_jup", "au", "pc", "kpc",
             "mpc", "t", "nt", "m", "km", "mm", "ft", "r_earth", "r_jup", "gt", "logg", "deg",
             "arcsec", "mas", "ms", "s", "au/d", "cm/yr", "1", "mm/s2", "nm/s2",
         ],
-        2 => &[
-            "pa", "hpa", "npa", "m", "mm", "hz", "m/s", "s", "deg", "rad", "db", "count", "dbar",
-            "inch", "mm/yr", "mm/h",
-        ],
         3 => &[
-            "m", "mm", "km", "m/s2", "n·m", "gal", "pa", "hz", "mw", "mm/yr", "count", "g",
-        ],
-        4 => &["m", "mm", "cm", "km", "pa", "m/s", "mw"],
-        5 => &[
-            "k", "c", "f", "degc", "degree_c", "w/m2", "w", "j", "j/m2", "mw", "%", "km/s", "e22j",
-            "uk^2",
-        ],
-        6 => &[
             "ppm",
             "ppb",
             "ppbc",
@@ -496,12 +487,21 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "ml/l",
             "grains/m3",
         ],
-        7 => &[
+        4 => &[
             "m/s", "km/h", "km/s", "cm/s", "knot", "kt", "m3/s", "cfs", "pa", "hpa", "mb", "m",
             "decibar", "npa", "deg", "mm", "m/s2",
         ],
-        8 => &[
+        5 => &["m", "mm", "cm", "km", "pa", "m/s", "mw"],
+        6 => &[
             "v/m", "v", "a", "ka", "kv", "s/m", "ua/m2", "mv/m", "mv/km", "us/cm", "m/s", "1", "%",
+        ],
+        7 => &[
+            "k", "c", "f", "degc", "degree_c", "w/m2", "w", "j", "j/m2", "mw", "%", "km/s", "e22j",
+            "uk^2",
+        ],
+        8 => &[
+            "pa", "hpa", "npa", "m", "mm", "hz", "m/s", "s", "deg", "rad", "db", "count", "dbar",
+            "inch", "mm/yr", "mm/h",
         ],
         _ => &[],
     }
@@ -706,8 +706,8 @@ mod tests {
             Some("kt_mass")
         );
         assert_eq!(unit_from_name_suffix("so2_emission_kt"), Some("kt"));
-        assert!(!allowed_units_for_force(6).contains(&normalize_unit("kt").as_str()));
-        assert!(allowed_units_for_force(6).contains(&normalize_unit("kt_mass").as_str()));
+        assert!(!allowed_units_for_force(3).contains(&normalize_unit("kt").as_str()));
+        assert!(allowed_units_for_force(3).contains(&normalize_unit("kt_mass").as_str()));
     }
 
     #[test]

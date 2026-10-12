@@ -1,5 +1,6 @@
 use super::*;
 use crate::archivar::fetch::PresenceSample;
+use crate::mathematikerin::channel::{TransportOp, descriptor_for_channel_ref};
 
 pub struct StationEntry {
     pub id: String,
@@ -1299,7 +1300,7 @@ pub fn absorption_for_force(force: u8, declared: f64) -> f64 {
     if declared == SLOT_ABSENT {
         return SLOT_ABSENT;
     }
-    if force == 1 {
+    if descriptor_for_channel_ref(force).is_some_and(|d| d.op == TransportOp::Poisson) {
         return 0.0;
     }
     if declared.is_finite() && declared >= 0.0 {
@@ -1413,12 +1414,7 @@ pub fn anchor(
     let body_eph = motion.anchor_body().and_then(|name| eph.get(name));
     let body_medium = body_eph.and_then(|e| e.medium.as_ref());
     let channel_ref = sensor.channel_ref?;
-    let extent = medium_reach(
-        channel_ref,
-        sensor.tau,
-        body_medium,
-        sensor.advection,
-    )?;
+    let extent = medium_reach(channel_ref, sensor.tau, body_medium, sensor.advection)?;
     if !extent.is_finite() {
         return None;
     }
@@ -1461,6 +1457,9 @@ pub fn anchor(
 
 pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Channel, FieldConfig)> {
     let mut out = Vec::new();
+    let Some(gravity) = force_id_of("gravity") else {
+        return out;
+    };
     if let Some(gm) = props.gm {
         out.push((
             Channel {
@@ -1478,9 +1477,9 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
                 name: format!("{}.mass", name),
                 band_id: None,
                 kernel: 0,
-                channel_ref: Some(1),
+                channel_ref: Some(gravity),
                 tau: f64::INFINITY,
-                absorption: absorption_for_force(1, 0.0),
+                absorption: absorption_for_force(gravity, 0.0),
                 advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
@@ -1512,9 +1511,9 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
                 name: format!("{}.omega_g", name),
                 band_id: None,
                 kernel: 0,
-                channel_ref: Some(1),
+                channel_ref: Some(gravity),
                 tau,
-                absorption: absorption_for_force(1, 0.0),
+                absorption: absorption_for_force(gravity, 0.0),
                 advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,

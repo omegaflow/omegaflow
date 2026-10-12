@@ -15,7 +15,7 @@ const ROUTE: &str = "https://service.earthscope.org/fdsnws/dataselect/1/query";
 const R_EARTH_KM: f64 = 6371.0;
 const V_SURFACE_LO: f64 = 1.5;
 const V_SURFACE_HI: f64 = 5.5;
-const SHELF_FORCE: u8 = 4;
+const SHELF_FORCE: u8 = 5;
 const PI: f64 = std::f64::consts::PI;
 
 const BANDS: [f64; 11] = [
