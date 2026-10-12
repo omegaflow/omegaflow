@@ -91,15 +91,85 @@ fn raster_of(bytes: &[u8]) -> Option<Vec<u8>> {
     Some(raster)
 }
 
+fn stats(raster: &[u8]) -> Option<(u8, u8, f64)> {
+    let mut hist = [0u64; 256];
+    let mut sum = 0u64;
+    for &b in raster {
+        hist[b as usize] += 1;
+        sum += b as u64;
+    }
+    let total = raster.len() as u64;
+    let lo = hist.iter().position(|&c| c > 0)? as u8;
+    let hi = hist.iter().rposition(|&c| c > 0)? as u8;
+    let mean = sum as f64 / total as f64;
+    Some((lo, hi, mean))
+}
+
+fn percentile(hist: &[u64; 256], total: u64, p: f64) -> u8 {
+    let target = (total as f64 * p) as u64;
+    let mut acc = 0u64;
+    for (v, &c) in hist.iter().enumerate() {
+        acc += c;
+        if acc >= target {
+            return v as u8;
+        }
+    }
+    255
+}
+
+fn stretch(raster: &[u8]) -> (Vec<u8>, u8, u8) {
+    let mut hist = [0u64; 256];
+    for &b in raster {
+        hist[b as usize] += 1;
+    }
+    let total = raster.len() as u64;
+    let lo = percentile(&hist, total, 0.02);
+    let hi = percentile(&hist, total, 0.98);
+    let out = raster
+        .iter()
+        .map(|&b| {
+            if hi <= lo {
+                b
+            } else {
+                let v = (b.saturating_sub(lo) as f64) * 255.0 / ((hi - lo) as f64);
+                v.round().clamp(0.0, 255.0) as u8
+            }
+        })
+        .collect();
+    (out, lo, hi)
+}
+
+fn emit(out: &str, idx: usize, raster: &[u8], stretch_on: bool, label: &str) -> Result<(), String> {
+    let (lo, hi, mean) = stats(raster).ok_or_else(|| "raster carries no pixel".to_string())?;
+    let (png_raster, slo, shi) = if stretch_on {
+        stretch(raster)
+    } else {
+        (raster.to_vec(), lo, hi)
+    };
+    let png = png_gray8(PIXELS, LINES, &png_raster);
+    let path = format!("{out}_{idx:04}.png");
+    std::fs::write(&path, &png).map_err(|e| format!("write {path} returned void: {e}"))?;
+    eprintln!(
+        "{path}: {PIXELS}x{LINES} gray8, min {lo} max {hi} mean {mean:.2}, stretch {} [{slo}..{shi}], {} B, sha256 {} ({label})",
+        if stretch_on { "on" } else { "off" },
+        png.len(),
+        sha256_hex(&png)
+    );
+    Ok(())
+}
+
 fn run(args: &[String]) -> Result<(), String> {
     let out = match arg_value(args, "--out") {
         Some(v) => v,
         None => "m10_edr".to_string(),
     };
     let count = match arg_value(args, "--n") {
-        Some(v) => v.parse::<usize>().map_err(|e| format!("--n {v} void: {e}"))?,
+        Some(v) => v
+            .parse::<usize>()
+            .map_err(|e| format!("--n {v} void: {e}"))?,
         None => 1,
     };
+    let stretch_on = args.iter().any(|a| a == "--stretch");
 
     let gz = match arg_value(args, "--in") {
         Some(path) => {
@@ -110,16 +180,7 @@ fn run(args: &[String]) -> Result<(), String> {
 
     if gz.len() == IMAGE_BYTES {
         let raster = raster_of(&gz).ok_or_else(|| "raw image does not decode".to_string())?;
-        let png = png_gray8(PIXELS, LINES, &raster);
-        let path = format!("{out}_0000.png");
-        std::fs::write(&path, &png).map_err(|e| format!("write {path} returned void: {e}"))?;
-        eprintln!(
-            "{path}: {}x{} gray8, {} B, sha256 {} (raw image)",
-            PIXELS,
-            LINES,
-            png.len(),
-            sha256_hex(&png)
-        );
+        emit(&out, 0, &raster, stretch_on, "raw image")?;
         return Ok(());
     }
 
@@ -141,17 +202,7 @@ fn run(args: &[String]) -> Result<(), String> {
         let Some(raster) = raster_of(data) else {
             continue;
         };
-        let png = png_gray8(PIXELS, LINES, &raster);
-        let path = format!("{out}_{written:04}.png");
-        std::fs::write(&path, &png).map_err(|e| format!("write {path} returned void: {e}"))?;
-        eprintln!(
-            "{path}: {}x{} gray8, {} B, sha256 {} (edr {})",
-            PIXELS,
-            LINES,
-            png.len(),
-            sha256_hex(&png),
-            m.name
-        );
+        emit(&out, written, &raster, stretch_on, &m.name)?;
         written += 1;
     }
     if written == 0 {
@@ -163,7 +214,7 @@ fn run(args: &[String]) -> Result<(), String> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
-        eprintln!("usage: m10_edr_image [--in <mvm.tgz>] [--out <stem>] [--n <count>]");
+        eprintln!("usage: m10_edr_image [--in <mvm.tgz>] [--out <stem>] [--n <count>] [--stretch]");
         std::process::exit(2);
     }
     if let Err(msg) = run(&args) {
