@@ -1,0 +1,82 @@
+# harvest: format=raw arm=raw_mirror pattern=^<asset>$ idempotent=true timeout=240 tag=<netloc>
+# Raw M10↔MDIS supporting assets (Mariner 10 / MDIS paper supplements + camera angles)
+# mirrored byte-for-byte to the omegaflow/sources CDN. Each matrix entry carries the
+# registered url/origin/sha256; raw_mirror refuses to upload unless the live body hashes
+# to the registered sha256.
+
+name: m10-mdis-raw-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/raw_mirror.rs'
+      - '.github/workflows/m10-mdis-raw-cdn.yml'
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+  R2_BUCKET: ${{ secrets.R2_BUCKET }}
+  OMEGAFLOW_R2_MIRROR: ${{ vars.OMEGAFLOW_R2_MIRROR }}
+  OMEGAFLOW_R2_WORKER: ${{ vars.OMEGAFLOW_R2_WORKER }}
+
+jobs:
+  m10-mdis-raw:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - asset: psjae32f5t1_ascii.txt
+            url: "https://github.com/omegaflow/sources/releases/download/iopscience.iop.org/psjae32f5t1_ascii.txt"
+            origin: "https://iopscience.iop.org/2632-3338/7/2/35/suppdata/psjae32f5t1_ascii.txt?doi=10.3847/PSJ/ae32f5"
+            sha256: 78fd71f65f8cafca76b67d8a57709797c4a0ef8f865717699b36661b4209a9b3
+          - asset: psjae32f5t2_ascii.txt
+            url: "https://github.com/omegaflow/sources/releases/download/iopscience.iop.org/psjae32f5t2_ascii.txt"
+            origin: "https://iopscience.iop.org/2632-3338/7/2/35/suppdata/psjae32f5t2_ascii.txt?doi=10.3847/PSJ/ae32f5"
+            sha256: f9b943756144e1f8ad55d529e2f24f01639f888096e35d79ce0652c4072d5606
+          - asset: psjae32f5t3_ascii.txt
+            url: "https://github.com/omegaflow/sources/releases/download/iopscience.iop.org/psjae32f5t3_ascii.txt"
+            origin: "https://iopscience.iop.org/2632-3338/7/2/35/suppdata/psjae32f5t3_ascii.txt?doi=10.3847/PSJ/ae32f5"
+            sha256: ad3c8471d11913ceef3da198551603294e9d8c61b3131f37f3bda6fffe91d4b5
+          - asset: psjae32f5t4_mrt.txt
+            url: "https://github.com/omegaflow/sources/releases/download/content.cld.iop.org/psjae32f5t4_mrt.txt"
+            origin: "https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt"
+            sha256: 1e8f7dd43b2527a292159b90206d848a6c95a847f04b5aa476333ee39183d225
+          - asset: mariner_m10_camera_angles.txt
+            url: "https://github.com/omegaflow/sources/releases/download/ser.im-ldi.com/mariner_m10_camera_angles.txt"
+            origin: "https://ser.im-ldi.com/M10/M10_ISIS/camera_angles.txt"
+            sha256: 0a65df59c8685e22004ce7f7afa21cf54f7aedc39c2ecb5965b8fcad3dae97bd
+          - asset: lpsc2024_2663.pdf
+            url: "https://github.com/omegaflow/sources/releases/download/www.hou.usra.edu/lpsc2024_2663.pdf"
+            origin: "https://www.hou.usra.edu/meetings/lpsc2024/pdf/2663.pdf"
+            sha256: 40085b523011849870f2d10ac9311d7c02d1f064c650a22a6e013fbba396f787
+        # EXCLUDED — phi/sources.φ:31486 (planetarymaps.usgs.gov/Mercury_M1_M2_M3_M10_mosaic_global_2010.tif):
+        #   its register block carries no sha256 line, and raw_mirror refuses an unverified body
+        #   ("an unverified body is never mirrored"). The USGS mosaic stays unmirrored until its
+        #   sha256 is registered in phi/sources.φ; then a matrix entry is added here.
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Mirror ${{ matrix.asset }} to the CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin raw_mirror -- \
+            --ci-mode \
+            --url "${{ matrix.url }}" \
+            --origin "${{ matrix.origin }}" \
+            --sha256 "${{ matrix.sha256 }}" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "m10-mdis-raw-cdn: ${{ matrix.asset }} returned void" \
+                 "raw_mirror returned void for ${{ matrix.asset }} (${{ matrix.origin }}). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

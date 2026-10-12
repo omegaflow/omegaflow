@@ -18,6 +18,8 @@ pub const CONNECT_BOUND_S: u64 = 1 << 5;
 
 pub const TRANSFER_BOUND_S: u64 = 1 << 11;
 
+pub const FILE_RESUME_ATTEMPTS: u64 = 1 << 2;
+
 #[derive(Clone, Copy)]
 pub enum RetryPolicy {
     Transient,
@@ -152,13 +154,18 @@ pub fn fetch_raw_to_file_with(
     transfer_bound_s: u64,
     path: &std::path::Path,
 ) -> Option<u64> {
-    let mut cmd = curl_base(retry, transfer_bound_s, 0);
-    cmd.arg("-o").arg(path);
-    cmd.arg(url);
-    let output = cmd.output().ok()?;
-    if output.status.success() {
-        std::fs::metadata(path).ok().map(|m| m.len())
-    } else {
+    let mut attempt = 0u64;
+    loop {
+        let mut cmd = curl_base(retry, transfer_bound_s, 0);
+        if attempt > 0 && path.exists() {
+            cmd.arg("-C").arg("-");
+        }
+        cmd.arg("-o").arg(path);
+        cmd.arg(url);
+        let output = cmd.output().ok()?;
+        if output.status.success() {
+            return std::fs::metadata(path).ok().map(|m| m.len());
+        }
         let stderr = String::from_utf8_lossy(&output.stderr);
         eprintln!(
             "\r\x1b[Kfetch_to_file returned ({}): {} {}",
@@ -166,7 +173,13 @@ pub fn fetch_raw_to_file_with(
             redact_secret(url),
             stderr.trim()
         );
-        None
+        attempt += 1;
+        if attempt >= FILE_RESUME_ATTEMPTS {
+            return None;
+        }
+        if !std::fs::metadata(path).map(|m| m.len() > 0).unwrap_or(false) {
+            return None;
+        }
     }
 }
 
