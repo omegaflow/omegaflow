@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (Mariner-sha256-Zeilen geschrieben, Vlies-Reihe re-gemessen, adressierte Blöcke mountain-322/future-240 gefaltet, Register-Ask gemessen)
   class: handover
   date: 2026-10-12
-  sha256: df13d8c459120edc07c0eb8237a87423c3841899dcdffa105aff62ca305e27bc
+  sha256: c1ed54aa29c2a8a7485755180972c151f760e9dd231fab688c041c4f8fce2ea7
   status: live
 -->
 # Handover — Mycelium-Folge 320 (2026-10-12)
@@ -137,6 +137,13 @@ dieses Atom:**
 ### matrix-rotor — descoped (gemessen)
 - **Status:** descoped | **Bindung:** eigen
 - **Befund:** (gemessen 2026-10-11/12) letzter rot = transienter Runner-Shutdown; kein eigener Schritt (`Braucht: —`).
+
+### Träger `docs/concepts/ui-seats.md` — offene `pending`-Seats
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** ein Stimmen-Round in `mycelium-ui` (`open-weight-ui`-Lock) läuft
+- **Lage:** (gemessen 2026-10-12) `register_lookup --orphan-docs` nennt `docs/concepts/ui-seats.md` (1 offener Marker): die `pending`-Seats Sakana-Tempo · SciSpace (Login-Wall) · Gemini Notebook (kein freier Composer).
+- **Blockade:** kein Stimmen-Round in dieser Session gefahren.
+- **Braucht:** im nächsten Stimmen-Round die `pending`-Seats messen (Sakana-Tempo, SciSpace/Gemini-Notebook erreichbar?) und den Stand fortschreiben.
 
 ## An mountain
 
