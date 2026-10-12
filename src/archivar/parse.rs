@@ -1,9 +1,9 @@
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
 use crate::mathematikerin::channel::{
-    ChannelDescriptor, Conserved, FluxKind, Interaction, Medium, PdeRegime, PdeType, QuantityRole,
-    TransportOp, channel_ref_of_descriptor, conserved_for_quantity, conserved_name,
-    descriptor_from_axes, interaction_of, unit_token,
+    ChannelDescriptor, Conserved, CouplingSpec, FluxKind, Interaction, Medium, PdeRegime, PdeType,
+    QuantityRole, TransportOp, channel_ref_of_descriptor, conserved_for_quantity, conserved_name,
+    coupling_spec_from_line, descriptor_from_axes, interaction_of, unit_token,
 };
 
 fn split_directive(line: &str) -> Vec<&str> {
@@ -2418,6 +2418,22 @@ pub fn parse_declined(content: &str) -> Vec<DeclinedSource> {
     out
 }
 
+pub fn parse_couplings(content: &str) -> Vec<CouplingSpec> {
+    let mut out = Vec::new();
+    for line in content.lines() {
+        let trimmed = line.trim();
+        let mut parts = trimmed.split_whitespace();
+        if parts.next() != Some("coupling") {
+            continue;
+        }
+        match coupling_spec_from_line(trimmed) {
+            Ok(spec) => out.push(spec),
+            Err(reason) => eprintln!("coupling refused: {reason}"),
+        }
+    }
+    out
+}
+
 #[cfg(feature = "browser_relay")]
 pub fn parse_path(s: &str) -> String {
     let Some(fl) = s.lines().next() else {
@@ -2644,6 +2660,7 @@ fn interaction_or_role<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::mathematikerin::channel::{CouplingKind, DensityKind};
 
     fn shard(url: &str, format: &str) -> SourceConfig {
         SourceConfig {
@@ -2698,6 +2715,33 @@ mod tests {
     const URL_A: &str = "https://cdn.example/x/odyssey_odf_t700000000_800000000.bin";
     const URL_B: &str = "https://cdn.example/x/odyssey_odf_t800000000_900000000.bin";
     const URL_C: &str = "https://cdn.example/x/odyssey_odf_t900000000_1000000000.bin";
+
+    #[test]
+    fn a_coupling_directive_parses_to_a_spec() {
+        let content = "coupling ion-neutral-friction from ion to neutral rate pending density_from number:ion:30.0 density_to mass:neutral region ionosphere\n";
+        let specs = parse_couplings(content);
+        assert_eq!(specs.len(), 1);
+        assert_eq!(specs[0].kind, CouplingKind::IonNeutralFriction);
+        assert_eq!(
+            specs[0].rate, None,
+            "pending is absent, never a fabricated value"
+        );
+        assert_eq!(specs[0].density_from.kind, DensityKind::Number);
+        assert_eq!(specs[0].density_from.species_mass, Some(30.0));
+        assert_eq!(specs[0].density_to.kind, DensityKind::Mass);
+        assert_eq!(specs[0].density_to.species_mass, None);
+    }
+
+    #[test]
+    fn a_coupling_directive_without_a_species_mass_is_dropped() {
+        let content = "coupling ion-neutral-friction from ion to neutral rate pending density_from number:ion density_to mass:neutral\n";
+        let specs = parse_couplings(content);
+        assert_eq!(
+            specs.len(),
+            0,
+            "a number density without its species mass is refused"
+        );
+    }
 
     #[test]
     fn a_descriptor_field_line_resolves_to_its_registered_channel() {

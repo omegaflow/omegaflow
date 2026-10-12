@@ -1565,6 +1565,26 @@ pub struct Coupling {
     pub quasi_neutral: Option<bool>,
 }
 
+#[derive(Clone, Debug)]
+pub struct DensityRefSpec {
+    pub alias: String,
+    pub kind: DensityKind,
+    pub species_mass: Option<f64>,
+}
+
+#[derive(Clone, Debug)]
+pub struct CouplingSpec {
+    pub kind: CouplingKind,
+    pub from: String,
+    pub to: String,
+    pub rate: Option<f64>,
+    pub density_from: DensityRefSpec,
+    pub density_to: DensityRefSpec,
+    pub region: Option<String>,
+    pub conserves: Option<String>,
+    pub quasi_neutral: Option<String>,
+}
+
 pub struct CouplingRegistry {
     pairs: Vec<Coupling>,
     id: HashMap<(u64, u64, CouplingKind), usize>,
@@ -1576,6 +1596,42 @@ impl CouplingRegistry {
             pairs: Vec::with_capacity(cap),
             id: HashMap::with_capacity(cap),
         }
+    }
+
+    pub fn from_specs(specs: &[CouplingSpec], channels: &ChannelRegistry) -> CouplingRegistry {
+        let mut reg = CouplingRegistry::with_capacity(specs.len());
+        for s in specs {
+            let (Some(from), Some(to)) = (channels.resolve(&s.from), channels.resolve(&s.to))
+            else {
+                eprintln!(
+                    "coupling refused: aliases {:?} -> {:?} name no channel",
+                    s.from, s.to
+                );
+                continue;
+            };
+            let (Some(density_from), Some(density_to)) = (
+                resolve_density_ref(&s.density_from, channels),
+                resolve_density_ref(&s.density_to, channels),
+            ) else {
+                eprintln!(
+                    "coupling refused: density aliases {:?} / {:?} name no channel",
+                    s.density_from.alias, s.density_to.alias
+                );
+                continue;
+            };
+            reg.register(Coupling {
+                kind: s.kind,
+                from: from.hash(),
+                to: to.hash(),
+                coefficient: s.rate,
+                unit: "",
+                region: s.region.clone(),
+                density_from: Some(density_from),
+                density_to: Some(density_to),
+                quasi_neutral: s.quasi_neutral.is_some().then_some(true),
+            });
+        }
+        reg
     }
 
     pub fn len(&self) -> usize {
@@ -1717,6 +1773,137 @@ impl CouplingRegistry {
         }
         h as u32
     }
+}
+
+fn resolve_density_ref(spec: &DensityRefSpec, channels: &ChannelRegistry) -> Option<DensityRef> {
+    let descriptor = channels.resolve(&spec.alias)?;
+    Some(DensityRef {
+        channel_ref: descriptor.hash(),
+        kind: spec.kind,
+        species_mass: spec.species_mass,
+    })
+}
+
+fn parse_density_ref_spec(token: &str) -> Result<DensityRefSpec, String> {
+    let segs: Vec<&str> = token.split(':').collect();
+    match segs.as_slice() {
+        ["number", alias, mass_token] => {
+            let species_mass: f64 = mass_token
+                .parse()
+                .map_err(|_| format!("coupling density species mass unreadable: {mass_token}"))?;
+            if !(species_mass.is_finite() && species_mass > 0.0) {
+                return Err(format!(
+                    "coupling density species mass out of range: {mass_token}"
+                ));
+            }
+            Ok(DensityRefSpec {
+                alias: alias.to_string(),
+                kind: DensityKind::Number,
+                species_mass: Some(species_mass),
+            })
+        }
+        ["mass", alias] => Ok(DensityRefSpec {
+            alias: alias.to_string(),
+            kind: DensityKind::Mass,
+            species_mass: None,
+        }),
+        _ => Err(format!("coupling density reference unreadable: {token}")),
+    }
+}
+
+pub fn coupling_spec_from_line(line: &str) -> Result<CouplingSpec, String> {
+    let mut parts = line.split_whitespace();
+    if parts.next() != Some("coupling") {
+        return Err("coupling directive expected".to_string());
+    }
+    let kind = match parts.next() {
+        Some("ion-neutral-friction") => CouplingKind::IonNeutralFriction,
+        Some("thermoelectric") => CouplingKind::Thermoelectric,
+        Some("hall") => CouplingKind::Hall,
+        Some("pedersen") => CouplingKind::Pedersen,
+        other => return Err(format!("coupling kind unknown: {other:?}")),
+    };
+    if parts.next() != Some("from") {
+        return Err("coupling from clause expected".to_string());
+    }
+    let from = parts
+        .next()
+        .ok_or("coupling from alias absent")?
+        .to_string();
+    if parts.next() != Some("to") {
+        return Err("coupling to clause expected".to_string());
+    }
+    let to = parts.next().ok_or("coupling to alias absent")?.to_string();
+    if parts.next() != Some("rate") {
+        return Err("coupling rate clause expected".to_string());
+    }
+    let rate = match parts.next() {
+        Some("pending") => None,
+        Some(token) => {
+            let v: f64 = token
+                .parse()
+                .map_err(|_| format!("coupling rate unreadable: {token}"))?;
+            if !(v.is_finite() && v > 0.0) {
+                return Err(format!("coupling rate out of range: {token}"));
+            }
+            Some(v)
+        }
+        None => return Err("coupling rate absent".to_string()),
+    };
+    if parts.next() != Some("density_from") {
+        return Err("coupling density_from clause expected".to_string());
+    }
+    let density_from = parse_density_ref_spec(parts.next().ok_or("coupling density_from absent")?)?;
+    if parts.next() != Some("density_to") {
+        return Err("coupling density_to clause expected".to_string());
+    }
+    let density_to = parse_density_ref_spec(parts.next().ok_or("coupling density_to absent")?)?;
+
+    let mut region = None;
+    let mut conserves = None;
+    let mut quasi_neutral = None;
+    loop {
+        match parts.next() {
+            None => break,
+            Some("region") => {
+                region = Some(
+                    parts
+                        .next()
+                        .ok_or("coupling region name absent")?
+                        .to_string(),
+                )
+            }
+            Some("conserves") => {
+                conserves = Some(
+                    parts
+                        .next()
+                        .ok_or("coupling conserves token absent")?
+                        .to_string(),
+                )
+            }
+            Some("quasi-neutral") => {
+                let token = parts.next().ok_or("coupling quasi-neutral token absent")?;
+                quasi_neutral = if token == "pending" {
+                    None
+                } else {
+                    Some(token.to_string())
+                };
+            }
+            Some(other) => return Err(format!("coupling clause unknown: {other}")),
+        }
+    }
+
+    Ok(CouplingSpec {
+        kind,
+        from,
+        to,
+        rate,
+        density_from,
+        density_to,
+        region,
+        conserves,
+        quasi_neutral,
+    })
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
@@ -3699,5 +3886,116 @@ mod tests {
             InterfaceCond::Dirichlet,
             "the first registered condition stands"
         );
+    }
+
+    #[test]
+    fn a_coupling_line_parses_pending_rate_and_number_density() {
+        let spec = coupling_spec_from_line(
+            "coupling ion-neutral-friction from ion to neutral rate pending density_from number:ion:30.0 density_to mass:neutral region ionosphere",
+        )
+        .expect("the coupling directive parses");
+        assert_eq!(spec.kind, CouplingKind::IonNeutralFriction);
+        assert_eq!(spec.from, "ion");
+        assert_eq!(spec.to, "neutral");
+        assert_eq!(
+            spec.rate, None,
+            "pending is absent, never a fabricated value"
+        );
+        assert_eq!(spec.density_from.kind, DensityKind::Number);
+        assert_eq!(spec.density_from.alias, "ion");
+        assert_eq!(spec.density_from.species_mass, Some(30.0));
+        assert_eq!(spec.density_to.kind, DensityKind::Mass);
+        assert_eq!(spec.density_to.alias, "neutral");
+        assert_eq!(spec.density_to.species_mass, None);
+        assert_eq!(spec.region.as_deref(), Some("ionosphere"));
+    }
+
+    #[test]
+    fn from_specs_resolves_alias_names_to_channel_hashes() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let ion = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        );
+        let neutral = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        );
+        channels.register(ion.clone());
+        channels.register(neutral.clone());
+        channels.alias("ion", &ion);
+        channels.alias("neutral", &neutral);
+        let specs = vec![CouplingSpec {
+            kind: CouplingKind::IonNeutralFriction,
+            from: "ion".to_string(),
+            to: "neutral".to_string(),
+            rate: None,
+            density_from: DensityRefSpec {
+                alias: "ion".to_string(),
+                kind: DensityKind::Number,
+                species_mass: Some(30.0),
+            },
+            density_to: DensityRefSpec {
+                alias: "neutral".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            region: Some("ionosphere".to_string()),
+            conserves: None,
+            quasi_neutral: None,
+        }];
+        let reg = CouplingRegistry::from_specs(&specs, &channels);
+        assert_eq!(reg.len(), 1);
+        let c = reg
+            .coupling_of(ion.hash(), neutral.hash(), CouplingKind::IonNeutralFriction)
+            .expect("the resolved coupling stands");
+        assert_eq!(c.coefficient, None);
+        assert_eq!(
+            c.density_from.as_ref().and_then(|r| r.species_mass),
+            Some(30.0)
+        );
+        assert_eq!(c.density_from.map(|r| r.channel_ref), Some(ion.hash()));
+    }
+
+    #[test]
+    fn from_specs_skips_an_unresolved_alias() {
+        let channels = ChannelRegistry::with_capacity(1);
+        let specs = vec![CouplingSpec {
+            kind: CouplingKind::IonNeutralFriction,
+            from: "ion".to_string(),
+            to: "neutral".to_string(),
+            rate: Some(0.5),
+            density_from: DensityRefSpec {
+                alias: "ion".to_string(),
+                kind: DensityKind::Number,
+                species_mass: Some(30.0),
+            },
+            density_to: DensityRefSpec {
+                alias: "neutral".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            region: None,
+            conserves: None,
+            quasi_neutral: None,
+        }];
+        let reg = CouplingRegistry::from_specs(&specs, &channels);
+        assert_eq!(reg.len(), 0, "an unresolved alias builds no coupling");
     }
 }
