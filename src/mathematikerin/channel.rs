@@ -1574,6 +1574,70 @@ impl CouplingRegistry {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
+#[repr(u8)]
+pub enum InterfaceCond {
+    Matched = 0,
+    Reflecting = 1,
+    Transmitting = 2,
+    Dirichlet = 3,
+    Neumann = 4,
+    Robin = 5,
+}
+
+#[derive(Clone, Debug)]
+pub struct Interface {
+    pub from: u64,
+    pub to: u64,
+    pub cond: InterfaceCond,
+    pub region: Option<String>,
+}
+
+pub struct InterfaceRegistry {
+    links: Vec<Interface>,
+    id: HashMap<(u64, u64), usize>,
+}
+
+impl InterfaceRegistry {
+    pub fn with_capacity(cap: usize) -> Self {
+        Self {
+            links: Vec::with_capacity(cap),
+            id: HashMap::with_capacity(cap),
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        self.links.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.links.is_empty()
+    }
+
+    pub fn links(&self) -> &[Interface] {
+        &self.links
+    }
+
+    pub fn register(&mut self, i: Interface) -> usize {
+        let key = (i.from, i.to);
+        if let Some(&idx) = self.id.get(&key) {
+            return idx;
+        }
+        let idx = self.links.len();
+        self.links.push(i);
+        self.id.insert(key, idx);
+        idx
+    }
+
+    pub fn is_interface(&self, from: u64, to: u64) -> bool {
+        self.id.contains_key(&(from, to))
+    }
+
+    pub fn interface_of(&self, from: u64, to: u64) -> Option<&Interface> {
+        self.id.get(&(from, to)).map(|&i| &self.links[i])
+    }
+}
+
 pub fn live_schema_hash() -> u32 {
     live_channel_registry().schema_hash()
 }
@@ -3059,6 +3123,52 @@ mod tests {
         assert_eq!(
             before, after,
             "a coupling registration is not a reduction term"
+        );
+    }
+
+    fn an_interface(cond: InterfaceCond, from: u64, to: u64) -> Interface {
+        Interface {
+            from,
+            to,
+            cond,
+            region: None,
+        }
+    }
+
+    #[test]
+    fn registering_an_interface_dedupes_on_from_to() {
+        let mut reg = InterfaceRegistry::with_capacity(4);
+        let a = reg.register(an_interface(InterfaceCond::Matched, 7, 9));
+        let b = reg.register(an_interface(InterfaceCond::Matched, 7, 9));
+        assert_eq!(a, b);
+        assert_eq!(reg.len(), 1);
+        assert!(!reg.is_empty());
+        assert_eq!(reg.links().len(), 1);
+        assert!(reg.is_interface(7, 9));
+    }
+
+    #[test]
+    fn an_unknown_pair_is_not_an_interface() {
+        let mut reg = InterfaceRegistry::with_capacity(4);
+        reg.register(an_interface(InterfaceCond::Reflecting, 1, 2));
+        assert!(!reg.is_interface(2, 1), "the direction is part of the key");
+        assert!(!reg.is_interface(1, 3));
+        assert!(reg.interface_of(2, 1).is_none());
+        assert!(reg.interface_of(9, 9).is_none());
+    }
+
+    #[test]
+    fn the_condition_is_not_part_of_the_pair_key() {
+        let mut reg = InterfaceRegistry::with_capacity(4);
+        let a = reg.register(an_interface(InterfaceCond::Dirichlet, 4, 5));
+        let b = reg.register(an_interface(InterfaceCond::Neumann, 4, 5));
+        assert_eq!(a, b, "the same (from,to) pair is one link");
+        assert_eq!(reg.len(), 1);
+        let link = reg.interface_of(4, 5).expect("the link resolves");
+        assert_eq!(
+            link.cond,
+            InterfaceCond::Dirichlet,
+            "the first registered condition stands"
         );
     }
 }
