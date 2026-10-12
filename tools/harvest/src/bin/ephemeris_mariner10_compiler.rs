@@ -220,14 +220,6 @@ fn rot_apply(m: &[f64; 9], v: [f64; 6]) -> [f64; 6] {
     [rp[0], rs[0], rp[1], rs[1], rp[2], rs[2]]
 }
 
-fn neg(v: [f64; 6]) -> [f64; 6] {
-    let mut out = [0.0f64; 6];
-    for k in 0..6 {
-        out[k] = -v[k];
-    }
-    out
-}
-
 fn add(a: [f64; 6], b: [f64; 6]) -> [f64; 6] {
     let mut out = [0.0f64; 6];
     for k in 0..6 {
@@ -394,9 +386,13 @@ fn run(args: &[String]) -> Result<(), String> {
             };
             let body_wrt_ssb_b1950 = state_over(&chebs, 0, *body_id, et, &daf)?;
             let body_ssb = rot_apply(&rot, body_wrt_ssb_b1950);
-            return Some(add(neg(body_wrt_m10), body_ssb));
+            return Some(add(body_wrt_m10, body_ssb));
         }
         None
+    };
+    let mercury_ssb = |et: f64| -> Option<[f64; 6]> {
+        let mercury_wrt_ssb_b1950 = state_over(&chebs, 0, 1, et, &daf)?;
+        Some(rot_apply(&rot, mercury_wrt_ssb_b1950))
     };
 
     if args.iter().any(|a| a == "--list") {
@@ -413,6 +409,10 @@ fn run(args: &[String]) -> Result<(), String> {
         let jd = days_from_civil(y, mo, d).ok_or("civil date reads void")? as f64 + 2440587.5;
         probe_times.push((label.to_string(), (jd - J2000_EPOCH) * 86400.0));
     }
+    probe_times.push((
+        "M1 encounter".to_string(),
+        (2442136.367 - J2000_EPOCH) * 86400.0,
+    ));
     for k in 0..5 {
         probe_times.push((
             format!("coverage {}/5", k + 1),
@@ -440,6 +440,19 @@ fn run(args: &[String]) -> Result<(), String> {
                     return Err(format!(
                         "{label}: r/v outside the trajectory band — the anchor stays unwritten"
                     ));
+                }
+                if let Some(me) = mercury_ssb(*et) {
+                    let na = (st[0] * st[0] + st[2] * st[2] + st[4] * st[4]).sqrt();
+                    let nb = (me[0] * me[0] + me[2] * me[2] + me[4] * me[4]).sqrt();
+                    if na > 0.0 && nb > 0.0 {
+                        let cos = (st[0] * me[0] + st[2] * me[2] + st[4] * me[4]) / (na * nb);
+                        eprintln!("  {label}: cos(M10-SSB, Mercury-SSB) = {cos:.4}");
+                        if cos < 0.9 {
+                            return Err(format!(
+                                "{label}: M10-SSB points away from Mercury-SSB (cos {cos:.3}) — the anchor stays unwritten"
+                            ));
+                        }
+                    }
                 }
             }
             None => {
