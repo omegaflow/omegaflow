@@ -1477,6 +1477,10 @@ impl ChannelRegistry {
         self.id.get(&hash).map(|&i| &self.descs[i])
     }
 
+    pub fn index_of(&self, hash: u64) -> Option<usize> {
+        self.id.get(&hash).copied()
+    }
+
     pub fn mode_frequencies_hz_for_body(
         &self,
         body_name: &str,
@@ -1561,6 +1565,23 @@ impl CouplingRegistry {
 
     pub fn coupling_of(&self, from: u64, to: u64, kind: CouplingKind) -> Option<&Coupling> {
         self.id.get(&(from, to, kind)).map(|&i| &self.pairs[i])
+    }
+
+    pub fn term(&self, phi: &[f32], channels: &ChannelRegistry) -> Option<f32> {
+        let mut acc = 0.0f32;
+        let mut contributed = false;
+        for c in &self.pairs {
+            let Some(coeff) = c.coefficient else { continue };
+            let (Some(i), Some(j)) = (channels.index_of(c.from), channels.index_of(c.to)) else {
+                continue;
+            };
+            if i >= phi.len() || j >= phi.len() {
+                continue;
+            }
+            acc += coeff as f32 * phi[i] * phi[j];
+            contributed = true;
+        }
+        if contributed { Some(acc) } else { None }
     }
 
     pub fn schema_hash(&self) -> u32 {
@@ -3123,6 +3144,114 @@ mod tests {
         assert_eq!(
             before, after,
             "a coupling registration is not a reduction term"
+        );
+    }
+
+    #[test]
+    fn coupling_term_sums_pairs_over_resolved_indices() {
+        let mut channels = ChannelRegistry::with_capacity(4);
+        let from = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg / (m2 s)",
+        );
+        let to = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Charge,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Ohm),
+            PdeType::Elliptic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "A / m2",
+        );
+        let i = channels.register(from.clone());
+        let j = channels.register(to.clone());
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::Thermoelectric,
+            from: from.hash(),
+            to: to.hash(),
+            coefficient: Some(0.25),
+            unit: "1",
+            region: None,
+        });
+        let phi = [1.0f32, 2.0, 3.0];
+        assert_eq!(pairs.term(&phi, &channels), Some(0.25f32 * phi[i] * phi[j]));
+    }
+
+    #[test]
+    fn an_absent_coupling_coefficient_contributes_nothing() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let a = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "kg / (m2 s)",
+        );
+        let b = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Charge,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Ohm),
+            PdeType::Elliptic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "A / m2",
+        );
+        channels.register(a.clone());
+        channels.register(b.clone());
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::Thermoelectric,
+            from: a.hash(),
+            to: b.hash(),
+            coefficient: None,
+            unit: "1",
+            region: None,
+        });
+        let phi = [1.0f32, 2.0, 3.0];
+        assert_eq!(
+            pairs.term(&phi, &channels),
+            None,
+            "an absent coefficient stays absent, never 0.0"
+        );
+    }
+
+    #[test]
+    fn an_unresolved_coupling_hash_is_skipped() {
+        let channels = ChannelRegistry::with_capacity(2);
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::Hall,
+            from: 0xAA,
+            to: 0xBB,
+            coefficient: Some(0.5),
+            unit: "1",
+            region: None,
+        });
+        let phi = [1.0f32, 2.0];
+        assert_eq!(
+            pairs.term(&phi, &channels),
+            None,
+            "a hash with no channel contributes nothing"
         );
     }
 
