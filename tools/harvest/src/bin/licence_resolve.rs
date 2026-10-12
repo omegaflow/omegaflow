@@ -129,17 +129,92 @@ fn zenodo_licence(url: &str) -> Option<String> {
     json_str(seg, "id")
 }
 
+fn curl_any(url: &str) -> Option<String> {
+    let out = Command::new("curl")
+        .arg("-sSL")
+        .arg("-m")
+        .arg("60")
+        .arg("-H")
+        .arg("User-Agent: omegaflow-licence-resolve")
+        .arg(url)
+        .output()
+        .ok()?;
+    Some(String::from_utf8_lossy(&out.stdout).into_owned())
+}
+
+fn spdx_from_text(t: &str) -> Option<String> {
+    let l = t.to_lowercase();
+    let has = |s: &str| l.contains(s);
+    if has("cc0 1.0") || has("cc0-1.0") {
+        return Some("CC0-1.0".to_string());
+    }
+    if has("attribution-noncommercial-sharealike") {
+        return Some("CC-BY-NC-SA-4.0".to_string());
+    }
+    if has("attribution-noncommercial") {
+        return Some("CC-BY-NC-4.0".to_string());
+    }
+    if has("attribution-sharealike") {
+        return Some("CC-BY-SA-4.0".to_string());
+    }
+    if has("attribution 4.0") {
+        return Some("CC-BY-4.0".to_string());
+    }
+    if has("apache license") && has("version 2.0") {
+        return Some("Apache-2.0".to_string());
+    }
+    if has("gnu lesser general public") {
+        return Some("LGPL-3.0".to_string());
+    }
+    if has("gnu general public license") && has("version 3") {
+        return Some("GPL-3.0".to_string());
+    }
+    if has("gnu general public license") {
+        return Some("GPL-2.0".to_string());
+    }
+    if has("mozilla public license") {
+        return Some("MPL-2.0".to_string());
+    }
+    if has("mit license") || has("permission is hereby granted, free of charge") {
+        return Some("MIT".to_string());
+    }
+    if has("bsd 3-clause") || (has("redistribution and use in source") && has("neither the name")) {
+        return Some("BSD-3-Clause".to_string());
+    }
+    if has("redistribution and use in source") {
+        return Some("BSD-2-Clause".to_string());
+    }
+    if has("isc license") {
+        return Some("ISC".to_string());
+    }
+    None
+}
+
 fn github_licence(url: &str) -> Option<String> {
     let after = url.split("://").nth(1)?;
     let mut segs = after.split('/');
-    segs.next()?;
+    let h = segs.next()?;
+    if h == "media.githubusercontent.com" {
+        segs.next();
+    }
     let owner = segs.next()?;
     let repo = segs.next()?;
     if owner.is_empty() || repo.is_empty() {
         return None;
     }
-    let body = curl(&format!("https://api.github.com/repos/{owner}/{repo}/license"))?;
-    json_str(&body, "spdx_id")
+    for name in ["LICENSE", "LICENSE.md", "LICENSE.txt", "LICENCE", "COPYING"] {
+        let u = format!("https://raw.githubusercontent.com/{owner}/{repo}/HEAD/{name}");
+        if let Some(body) = curl_any(&u) {
+            if body.trim().starts_with("404") || body.trim().is_empty() {
+                continue;
+            }
+            if let Some(id) = spdx_from_text(&body) {
+                return Some(id);
+            }
+            return Some(format!("see-license:{u}"));
+        }
+    }
+    Some("no-license-stated".to_string())
 }
 
 fn hapi_licence(url: &str) -> Option<String> {
@@ -161,6 +236,36 @@ fn hapi_licence(url: &str) -> Option<String> {
     None
 }
 
+fn arcgis_base(url: &str) -> Option<&str> {
+    for c in ["/FeatureServer", "/MapServer"] {
+        if let Some(p) = url.find(c) {
+            return Some(&url[..p + c.len()]);
+        }
+    }
+    None
+}
+
+fn arcgis_licence(base: &str) -> Option<String> {
+    let body = curl(&format!("{base}?f=json"))?;
+    if let Some(v) = json_str(&body, "licenseInfo") {
+        if !v.trim().is_empty() {
+            return Some(v);
+        }
+    }
+    if let Some(v) = json_str(&body, "copyrightText") {
+        let lv = v.to_lowercase();
+        if lv.contains("licen")
+            || lv.contains("public domain")
+            || lv.contains("creative commons")
+            || lv.contains("cc ")
+            || lv.contains("http")
+        {
+            return Some(v);
+        }
+    }
+    Some("no-license-stated".to_string())
+}
+
 fn memo<F: FnOnce() -> Option<String>>(
     cache: &mut BTreeMap<String, Option<String>>,
     key: &str,
@@ -174,11 +279,40 @@ fn memo<F: FnOnce() -> Option<String>>(
     v
 }
 
+fn load_rules(path: &str) -> Vec<(String, String, String)> {
+    let mut v: Vec<(String, String, String)> = Vec::new();
+    let text = match fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(_) => return v,
+    };
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let mut it = line.split_whitespace();
+        let host = it.next().unwrap_or("").trim();
+        let terms = it.next().unwrap_or("").trim();
+        let method = it.next().unwrap_or("researched").trim();
+        if !host.is_empty() && !terms.is_empty() {
+            v.push((host.to_string(), terms.to_string(), method.to_string()));
+        }
+    }
+    v
+}
+
 fn propose(
     block: &Block,
     host: &str,
+    url: &str,
+    rules: &[(String, String, String)],
     cache: &mut BTreeMap<String, Option<String>>,
 ) -> (String, String) {
+    for (rh, rt, rm) in rules {
+        if host == rh || host.ends_with(&format!(".{rh}")) {
+            return (rt.clone(), rm.clone());
+        }
+    }
     if ends_with_any(host, GOV_PD) {
         return ("PD-USGov".to_string(), "gov-blanket".to_string());
     }
@@ -194,32 +328,42 @@ fn propose(
             "vizier-rule".to_string(),
         );
     }
-    if block.url.contains("/erddap/") {
+    if url.contains("/erddap/") {
         if let Some(v) = memo(cache, &format!("erddap:{host}"), || {
-            erddap_licence(&block.url)
+            erddap_licence(&url)
         }) {
-            return (v, "erddap".to_string());
+            let t = if v.len() > 60 {
+                "noaa-open-disclaimer".to_string()
+            } else {
+                v
+            };
+            return (t, "erddap".to_string());
         }
     }
     if host == "zenodo.org" {
-        let id = block.url.split("/records/").nth(1).and_then(|s| s.split('/').next());
+        let id = url.split("/records/").nth(1).and_then(|s| s.split('/').next());
         if let Some(id) = id {
-            if let Some(v) = memo(cache, &format!("zenodo:{id}"), || zenodo_licence(&block.url)) {
+            if let Some(v) = memo(cache, &format!("zenodo:{id}"), || zenodo_licence(&url)) {
                 return (v, "zenodo".to_string());
             }
         }
     }
     if ends_with_any(host, GITHUB) {
-        if let Some(rest) = block.url.split("://").nth(1) {
-            if let Some(v) = memo(cache, &format!("github:{rest}"), || github_licence(&block.url)) {
+        if let Some(rest) = url.split("://").nth(1) {
+            if let Some(v) = memo(cache, &format!("github:{rest}"), || github_licence(&url)) {
                 return (v, "github".to_string());
             }
         }
     }
-    if block.url.contains("/hapi/") {
-        let key = block.url.split("/hapi/").next().unwrap_or("").to_string();
-        if let Some(v) = memo(cache, &format!("hapi:{key}"), || hapi_licence(&block.url)) {
+    if url.contains("/hapi/") {
+        let key = url.split("/hapi/").next().unwrap_or("").to_string();
+        if let Some(v) = memo(cache, &format!("hapi:{key}"), || hapi_licence(&url)) {
             return (v, "hapi".to_string());
+        }
+    }
+    if let Some(base) = arcgis_base(&url) {
+        if let Some(v) = memo(cache, &format!("arcgis:{base}"), || arcgis_licence(base)) {
+            return (v, "arcgis".to_string());
         }
     }
     if ends_with_any(host, IOOS) {
@@ -285,6 +429,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let mut register = "phi/sources.φ".to_string();
     let mut out: Option<String> = None;
+    let mut rules_path: Option<String> = None;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -292,6 +437,10 @@ fn main() {
                 if let Some(v) = args.get(i + 1) {
                     register = v.clone();
                 }
+                i += 1;
+            }
+            "--rules" => {
+                rules_path = args.get(i + 1).cloned();
                 i += 1;
             }
             "--out" => {
@@ -302,6 +451,11 @@ fn main() {
         }
         i += 1;
     }
+
+    let rules = match &rules_path {
+        Some(p) => load_rules(p),
+        None => Vec::new(),
+    };
 
     let text = match fs::read_to_string(&register) {
         Ok(t) => t,
@@ -319,18 +473,26 @@ fn main() {
 
     for b in &blocks {
         let cat = category(&b.terms);
-        if cat == "NAMED" {
+        if cat == "NAMED" || b.url.is_empty() {
             continue;
         }
-        let host = {
-            let oh = host_of(&b.origin);
-            if is_hostname(&oh) {
-                oh
-            } else {
-                host_of(&b.url)
-            }
+        let oh = host_of(&b.origin);
+        let oh_is = is_hostname(&oh);
+        let rh = host_of(&b.terms_ref);
+        let is_cdn = b.url.starts_with("https://github.com/omegaflow/sources/releases/download/");
+        let host = if oh_is {
+            oh.clone()
+        } else if is_cdn && is_hostname(&rh) {
+            rh
+        } else {
+            host_of(&b.url)
         };
-        let (proposed, method) = propose(b, &host, &mut cache);
+        let eff = if oh_is {
+            b.origin.clone()
+        } else {
+            b.url.clone()
+        };
+        let (proposed, method) = propose(b, &host, &eff, &rules, &mut cache);
         let tag = if method.starts_with("manual") {
             manual += 1;
             "MANUAL"
