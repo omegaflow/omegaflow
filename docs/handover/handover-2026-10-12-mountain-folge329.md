@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Sun-Ketten-Riss der M10-Ephemeride geheilt: die B1950-Komposition wird jetzt einmal als Ganzes rotiert (nicht nur der Chebyshev-Term); |vec−S| mean 165 410 → 502 km, Roundtrip-Ketten-Übergang 37 623 → 26,5 km, gegen `camera_angles` (me+S) auf 205 km belegt; CDN-Regeneration an mycelium übergeben
   class: handover
   date: 2026-10-12
-  sha256: b592cf1df75ed2a0ff000433c1b09146106bb48d4bafbede8f0f6e660ad073ef
+  sha256: 7bf0e2356b1505a1163f0e4e1e94db35d2ed5f78fef1766d6d7b33660912ca5a
   status: live
 -->
 # Handover — Mountain-Folge 329 (2026-10-12)
@@ -289,7 +289,7 @@ unten gefaltet; river-198 wiederholt river-196 → der `f107`-Punkt steht bereit
 ### PDS POS-6 (`M10-H-POS-6-M1-FLYBY-TRAJ-V1.0`) — SEDR-Position online, Range-Cross gegen die Ephemeride (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der nächste Ephemeriden-/Attitude-Pass
-- **Lage:** (gemessen 2026-10-12/329) `POS_M1_ENC_42SEC.DAT` (PDS PPI, HTTP 200, 475 152 B, 3126 × 152-B-Records; detached `.LBL` 38 400 B) trägt **42-s-SEDR-Positionsproben** (AAREADME: „from the Mariner 10 SEDR"): Time (f64 BE, s seit 1966-01-01) + 36 f32 BE; Spalten 8–10 = S/C-Position relativ zu Merkur (`|POSM|` = `DIST S/C TO MERCURY`, exakt). **Gebaut:** `tools/measure/src/bin/m10_pos6_check.rs` (Parser + Cross). **Ergebnis:** über 3126 Records ist `|POS6| − |sc−me|` **mean 1936 km, max 9139 km** (Distanzen 3,1e3–1,6e6 km) → die geheilte Ephemeride ist in der **Range** unabhängig bestätigt. **Riss:** die Vektorrichtung steht in einem **undeklarierten festen Frame** (Label `UNIT = NULL`; feste ~67,6°-Rotation um RA 222,0°/Dec 64,2° von J2000, Best-Fit-Residuum mean 4427 km) — nicht B1950 (0,78°), nicht die Merkur-IAU-Polachse (281,0°/61,4°). CA: POS-6-Minimum **3144,9 km @ JD 2442136,3655** vs. Ephemeride **3332 km @ .3660** (~200 km, ~43 s).
+- **Lage:** (gemessen 2026-10-12/329) `POS_M1_ENC_42SEC.DAT` (PDS PPI, HTTP 200, 475 152 B, 3126 × 152-B-Records; detached `.LBL` 38 400 B) trägt **42-s-SEDR-Positionsproben** (AAREADME: „from the Mariner 10 SEDR"): Time (f64 BE, s seit 1966-01-01) + 36 f32 BE; Spalten 8–10 = S/C-Position relativ zu Merkur (`|POSM|` = `DIST S/C TO MERCURY`, exakt). **Gebaut:** `tools/measure/src/bin/m10_pos6_check.rs` (Parser + Cross). **Ergebnis:** über 3126 Records ist `|POS6| − |sc−me|` **mean 1936 km, max 9139 km** (Distanzen 3,1e3–1,6e6 km) → die geheilte Ephemeride ist in der **Range** unabhängig bestätigt. **Riss:** die Vektorrichtung steht in einem **undeklarierten festen Frame** (Label `UNIT = NULL`; feste ~67,6°-Rotation um RA 222,0°/Dec 64,2° von J2000, Best-Fit-Residuum mean 4427 km). Kandidaten direkt getestet — **Ekliptik** (±23,44°), **Galaktisch** (beide Richtungen), **B1950**: Residuum 7,9e5–1,6e6 km, **kein Treffer**; ebenso nicht die Merkur-IAU-Polachse (281,0°/61,4°). Der Frame ist eine missionseigene, im Online-PDS-Volumen **nicht** dokumentierte Konvention (AAREADME: „not a PDS product … not peer reviewed"; CATALOG/INDEX/NSSDC/NTRS/ADS/Web tragen keine Definition). CA: POS-6-Minimum **3144,9 km @ JD 2442136,3655** vs. Ephemeride **3332 km @ .3660** (~200 km, ~43 s).
 - **Blockade:** die Frame-Definition des SEDR fehlt (das POS-6-Label deklariert keinen Frame; nur die SEDR-Dokumentation/der Offline-SEDR trägt sie).
 - **Braucht:** Mycelium `url`-Zeile für `M10-H-POS-6-M1-FLYBY-TRAJ-V1.0`; den SEDR-Frame aus der NSSDC-Antwort (`PSPA-00318`) klären, dann den Vektor-Cross schließen.
 
