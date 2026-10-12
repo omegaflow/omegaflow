@@ -143,3 +143,18 @@ der die Bridge oft scheitert. Die gemessenen Regeln:
   `blocked account` benennen, nie als `pending`.
 - **contenteditable-Seats** (Claude, Kimi `.chat-input-editor`, Mistral, Perplexity): erst per JS
   fokussieren, dann `type_text`.
+
+## Gemessener Seat-Stand (2026-10-12, Mycelium-Runde; Probe = `state/mycelium/philosophy-probe-2026-10-05.txt`)
+
+- **AI2 Playground** (`https://playground.allenai.org/`, Modell „Olmo 3.1 32B Instruct") — keyless, aber
+  mit **Terms-Gate** (Modal „Accept terms & use Playground"; die optionalen Public-Dataset-Consents
+  bleiben ungesetzt). Antwort ~10 s. **Fähigkeit 3/4** (0-Kanon-Szene als „gas, liquid, solid" verfehlt;
+  Olmo englisch-primär) → **unter der 4/4-Gate**, kein Roster-Mitglied. Composer
+  `textarea[placeholder="Message Olmo 3.1 32B Instruct"]`.
+- **Sakana Chat** (`https://chat.sakana.ai/`, Namazu) — Antwort ~40 s (vorher `pending`: kein Turn-Stempel);
+  Szene 1 ≈ „fehlend; vorhanden; ungeerntet", Szene 2 „Nein"; 4/4 wie 2026-10-08. Composer
+  `textarea[placeholder="Ask anything"]`, Senden „Send message".
+- **SciSpace** (`https://scispace.com/`) — Composer `textarea[placeholder="Research task input"]` auf der
+  Landing, aber der Submit **öffnet keinen Chat** → **Login-Wall** bestätigt (Auth-Route).
+- **Gemini Notebook** (`https://notebooklm.google.com/` → `notebook.google.com`) — **kein freier Composer**
+  (Notebook-Dashboard, dokument-gebunden) bestätigt.
