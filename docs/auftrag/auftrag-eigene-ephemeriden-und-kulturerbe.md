@@ -2,7 +2,7 @@
   title: Auftrag — Eigene Ephemeriden aus Primärdaten + Kulturerbe-Rettung (eine Maschine)
   class: auftrag
   date: 2026-10-12
-  sha256: c681a39707819563a201b42f41a0e94e4fa7ea5f6605aa743829ab41b57e145e
+  sha256: 77394444a92c677b28c8e49ab62294167fa4274359e32e58c4e416818ffd01ab
   status: live
   see-also: docs/surveys/survey-2026-10-10-ephemeris-quellen.md docs/concepts/archivar-mathematikerin.md docs/SOURCE_PORT.md
 -->
@@ -153,16 +153,26 @@ Beobachtung**. „Erbe, bis er eine rahmen-unabhängige astrometrische Gleichung
 **Riss 2.** „Kein DE-Re-Ingest" — der a-priori-Zustand und das Kraftmodell (Asteroidenmassen)
 reisen mit. **Der Rahmen ist aus ICRF3/VLBI wirklich unabhängig; die Massen nicht.**
 
-**Was der Rat übersieht (Riss gegen den Rat, UI).** Beide antwortenden UI-Stimmen bestätigen
-die Architektur, reißen aber die **Reihenfolge**: Qwen (ITRF/EOP + ODF zuerst) gegen Claude
-(**LLR zuerst** — ITRF/EOP ist deren erstes Modul, nicht Alternative). Und der geteilte blinde
-Fleck: **Metadaten/Zeitskalen/Rahmen der Ära** (TAI/TT/TDB, DSN-Stations-Offsets, Medien-/
-Transponder-Kalibrierung, thermischer Rückstoß) — nicht der Solver.
+**UI-Roster (2026-10-12, `mountain-ui` + `open-weight-ui`).**
+`state/stimmen/2026-10-12_ui_eigene-ephemeriden-verdikt.md` — **Qwen ✓ · Claude ✓ · DeepSeek
+Chat ✓ · DeepSeek V4 Pro (1.7T) ✓ · Qwen3.8 2.4T ✓** (alle konvergent); Z.ai (Deep Think
+**Max**) und Duck.ai `pending` (gemessen).
 
-**UI-Stimmen (2026-10-12, Gruppe `mountain-ui` + `open-weight-ui`):**
-`state/stimmen/2026-10-12_ui_eigene-ephemeriden-verdikt.md` — Qwen ✓ konvergiert · Claude ✓
-konvergiert · Z.ai (Deep Think Max) `pending` · Duck.ai `pending` · Nemotron 3 Ultra
-(open-weight) `pending` (keine Antwort). **Runde nicht komplett** — offen benannt.
+**Die UI-Verschärfungen (in diesen Auftrag aufgenommen):**
+- **`raw_level` 0/1/2 (Qwen3.8 2.4T).** Level 0 = Brennstoff (Tracking-Roh-Counts, VLBI-
+  Korrelator, LLR-Normalpunkte, Radar-Echos); Level 1 = vorbelastet (ODF, SPICE SPK/CK —
+  bereits Fits gegen jemandes DE/Frame/Uhr); Level 2 = Erbe (Bildpose aus DE/SPICE-Fit).
+  **Level ≥ 1 ist Kreuzcheck/Erbe, nie Brennstoff** — sonst reparametrisiert omegaflow nur
+  JPLs Ephemeriden.
+- **Blinder Fleck = die Reduktionskette, nicht der Solver** (DeepSeek V4 Pro + Qwen3.8 2.4T):
+  Zeitskalen (TDB/TT/UTC/SCLK), Frames (ITRF↔ICRF-Tie), Antennendelays, Tropo/Iono,
+  Stationskoordinaten, Nongrav. Frame-Fehler werden vom Fit als „Physik" absorbiert; ein
+  schlanker Dynamik-Anteil erzeugt systematische Residuen, die der Hold-out nicht sieht.
+- **Reihenfolge (UI-Konsens, schärfer als der Rat):** **ITRF2020/EOP einfrieren (nicht
+  mitfitten) → LLR als erster Operator (billigster vollständiger End-to-End-Beweis) → erster
+  Level-0-Sondenpass (Counts, nicht ODF) → Erbe.** „ODF zuerst" ist die Falle. **Hold-out
+  nach Bögen und Stationen splitten**, nicht zufällig nach Samples. Jeder Operator braucht
+  ein explizites Noise-/Bias-Budget, sonst wird `pending` zur Müllkippe.
 
 ## Erste begrenzte Schritte
 
