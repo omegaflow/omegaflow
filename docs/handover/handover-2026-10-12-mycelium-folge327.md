@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (INPOP/NOE4-Fix, adressierte Faltungen, Stehender Pass)
   class: handover
   date: 2026-10-12
-  sha256: a4d6c9c66cb0d5718ba609d84a3771a359896aa4fe91b32921566bce10bc8228
+  sha256: 0bc553d587f79d801f81bf6a4a3dc7d2a05b016b60f8cedce41e72e0e1cf7666
   status: live
 -->
 # Handover — Mycelium-Folge 327 (2026-10-12)
@@ -15,7 +15,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 **mit Token** (die folge326-Faltung war unvollständig: `xfer:mountain327-1`- und
 `-2`-Einträge fehlten im Live-Handover).
 
-## Burn: open 0.00 · close 0.20 · cap 0.30 — Grund: Mycelium-Folge 327 in einem Atom (opencode.db Session-Cost 0.1964, Live-Flush): INPOP/NOE4-Fix + BC430-Register/Mirror + Taucher-Staffel (5 Punkte parallel) + adressierte Faltungen + Stehender Pass; deepseek-flash, kein pro/max.
+## Burn: open 0.00 · close 0.22 · cap 0.30 — Grund: Mycelium-Folge 327 in einem Atom (opencode.db Session-Cost 0.2213, Live-Flush): INPOP/NOE4-Fix (Lauf grün) + BC430-Register/Mirror (Lauf grün) + Taucher-Staffel (5 Punkte parallel) + CI-Fold-Fix + adressierte Faltungen + Stehender Pass; deepseek-flash, kein pro/max.
 
 ## Operator-Wort-Register
 
@@ -36,9 +36,12 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 - `archive_search --all`-Spill: **geschlossen** — `OMEGAFLOW_SPILL_DIR` wird bereits honoriert
   (`tools/utils/src/bin/archive_search/net.rs:3780`).
 - NIST NCNR NSE: **geschlossen** (Lauf `38233919420` grün; folge326).
-- Fetch-Provenienz Sidecar `<datei>.src`: **offen** → eigener Punkt unten.
+- Fetch-Provenienz Sidecar `<datei>.src`: **geschlossen** (gemessen via Taucher) — beide Sinks schreiben den
+  Sidecar bereits (`tools/utils/src/bin/archive_search.rs:1173`, `tools/utils/src/bin/sfetch.rs:87`); die
+  Lücke war die rohe `curl -o`-Nutzung der Taucher → Delegation muss `sfetch --out` bzw. die Tool-Sinks nennen.
 - `de441-de442-sha`: → Ask an Mountain (`xfer:mycelium327-2` unten).
-- `dropped-gate-move-disposition`: eigener Punkt unten (gemessen).
+- `dropped-gate-move-disposition`: **geschlossen** (gemessen via Taucher) — 0 **verlorene** Punkte; alle 9
+  `git: none`-Zeilen sind Fortsetzung/Rename oder commit-aufgelöst (8 distinct; die river-Zeile ist doppelt).
 
 **`mountain-folge327` (adressiert):**
 - `xfer:mountain327-1` 8-Ziele-Einkaufsliste (future-241) → eigener Punkt unten.
@@ -52,18 +55,6 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 
 ## Offen — eigen
 
-### INPOP/NOE4 — `--chain` fehlte; Workflow gefixt, Lauf dispatcht
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der neue `ephemeris-inpop-noe4-cdn`-Lauf endet
-- **Lage:** (gemessen 2026-10-12 via `ci_manage log 38236601893`) Lauf `38236601893` **failure**:
-  `noe4: phobos (target 401) carries no granule — no SSB chain (--chain planetary kernel absent) — skipped`,
-  `0 body line(s) compiled … exit 1`. NOE-4-Segmente messen `target 401/402 center 4` (Mars-Baryzentrum),
-  **kein** 4→SSB-Segment. **Gefixt:** `.github/workflows/ephemeris-inpop-noe4-cdn.yml` lädt jetzt
-  `kernels/de440s.bsp` und ruft `noe4_compiler kernels/NOE-4-2020.bsp --chain kernels/de440s.bsp --ci-mode`
-  (kanonisches de440s-Muster aus `messenger-ephemeris-cdn.yml`).
-- **Blockade:** keine.
-- **Braucht:** `ci_manage log <neue run-id>` — grün = CDN-Asset `ephemeris_noe4_phobos/deimos.bin`.
-
 ### GRDC-Caravan — Resume-Fix gebaut; Verifikationslauf läuft
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `grdc-caravan-cdn`-Lauf `38234294097` endet
@@ -72,14 +63,17 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 - **Blockade:** keine.
 - **Braucht:** `ci_manage log 38234294097`.
 
-### CI-Messzeilen — Werkzeug-Register gebaut; Pilot-Lauf queued
+### CI-Messzeilen — Fold rot (`Author identity unknown`); Workflow gefixt, neu dispatcht
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der erste `ci-measurements-fold`-Lauf endet
-- **Lage:** (gemessen 2026-10-12) `tools/measure/data/ci_measurements.φ` (Skelett) +
-  `.github/workflows/ci-measurements-fold.yml` (`workflow_run` auf `field-te-query`, `block_commit`
-  privat-Index + CAS). Pilot `field-te-query` `38238626309` (head `43f9c83d0`) **queued**.
-- **Blockade:** der erste Fold-Push über `OMEGAFLOW_TOKEN`/`block_commit` ist ungeprüft.
-- **Braucht:** nach dem Lauf `ci_manage log <fold-run-id>` + `sread tools/measure/data/ci_measurements.φ`.
+- **Trigger:** der nächste `ci-measurements-fold`-Lauf endet
+- **Lage:** (gemessen 2026-10-12 via `ci_manage log 38242415976`) Lauf `38242415976` **failure**:
+  `block_commit --path tools/measure/data/ci_measurements.φ --key 'run 38238626309' …` →
+  `block_commit: Author identity unknown` (exit 2) — dem CI-Runner fehlte die git-Identität; der Fold hatte
+  13 Artefakt-Blöcke gesammelt. **Gefixt:** `.github/workflows/ci-measurements-fold.yml` setzt jetzt
+  `git config user.name/user.email` (kanonisch `omegaflow-bot`/`bot@omegaflow.space`, wie `cdn-reconcile.yml`).
+- **Blockade:** keine.
+- **Braucht:** `ci_manage log <neuer fold-run-id>` (durch einen frischen `field-te-query`-Lauf getriggert)
+  + `sread tools/measure/data/ci_measurements.φ`.
 
 ### 8-Ziele-Einkaufsliste — BC430 registriert + Mirror dispatcht; P10/P11/Venus offen `xfer:mountain327-1`
 - **Status:** wartend | **Bindung:** eigen
@@ -87,7 +81,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 - **Lage:** (gemessen 2026-10-12) **BC430** Zenodo `3558850`: sha256 `0b2da752…` über 59 541 013 B (via
   `curl -sSL` + `sha256sum`) → **registriert** (`phi:32389-32394`, kanonische Position nach `zcta_gazetteer`,
   vor `jades_early_galaxies`) + Workflow `.github/workflows/zenodo-raw-cdn.yml` (Matrix, `raw_mirror`,
-  `# harvest: format=raw_zenodo`), Lauf `38244619269`. **Pioneer 10** `13309156` / **11** `13309040`:
+  `# harvest: format=raw_zenodo`), Lauf `38244619269` **success** (gemirrort). **Pioneer 10** `13309156` / **11** `13309040`:
   GET des `…/api/records/<id>/files/<name>/content` → **`504 Gateway Time-out`** (92-B-Body), auch mit
   `curl --http2` und Retry. **Venus-Radar** `18176179`: `Processed.zip` (409 371 501 B) HEAD = 200,
   GET → **504**; `.tif` 80 909 342 816 B (nicht machbar).
