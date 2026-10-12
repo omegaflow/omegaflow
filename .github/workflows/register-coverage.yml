@@ -21,3 +21,5 @@ jobs:
     - run: cargo build --release -p omegaflow-register --bin register_lookup
     - name: Orphan-Gate — jede Linie trägt ihre offenen Register-Einträge
       run: target/release/register_lookup --orphans --fail
+    - name: Transport-Gate — kein Sender-Löschen ohne Echo
+      run: target/release/register_lookup --tokens --noecho-fail

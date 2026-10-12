@@ -291,6 +291,8 @@ die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --h
 | `register_lookup --orphan-docs` | — | lebende Prosadokumente (`docs/{surveys,specs,auftrag,blatt,concepts,paper}`) mit offenen Markern, die keine lebende Übergabe nennt: `ORPHAN_DOC <path> <marker>`; der Commit-Gate `commit_check` (doc-carrier) blockt neue trägerlose Dokumente |
 | `register_lookup --history` | 1,03 s | 3049 Zeilen |
 | `register_lookup --compilers [--no-directive]` | — | je φ/sources.φ-Block mit `compiler`-Direktive `<binary> | <format> | <source-url> | at <anchor>` + Domain-Zusammenfassung über das Format-Präfix; `--no-directive` = Baum-Compiler (`tools/*/src/bin/*_compiler.rs`) ohne Direktive, klassifiziert `workflow`/`register:<datei>`/`variant`/`pending`/`unregistered` |
+| `register_lookup --tokens [--fail] [--noecho-fail]` | — | je Eintrag jedes `## An <line>`-Blocks `XFER <tok> echoed|unbeglichen` (Echo = Owner-`## Offen`-Token **oder** durable `FOLDED`/`CLOSED` im Ledger), `XFER-MANIFEST ok|open` bei `[manifest n=<N> root=<h8>]`, `XFER-MISSING` (kein Token), `XFER-NOECHO` (Sender hat ohne Echo gelöscht); `--noecho-fail` exit 2 nur auf MISSING/NOECHO (CI-Gate) |
+| `xfer mark/list/fold/close/manifest/coverage` | — | Transport-Token-Ledger (`state/zustand/ledger/<line>/<sess>.log`, append-only, gitignored): `mark --line <L> [--to <line|self>] "…"` mintet `<line>.<sess>.<n>~<h8>`, `fold <tok> --line <L> --into <ziel>`, `close <tok> --line <L> --ref <commit\|pfad>`, `manifest --line <L> --to <ziel>` druckt `[manifest n=<N> root=<h8>]`, `coverage --line <L>` exit 2 solange ein Token offen; ein Legacy-Token (`xfer:<sender>-<n>`) wird faul in `<line>/legacy.log` gefaltet |
 | `ci_manage status [--limit N]` | — | Live-Übersicht + aktueller Schritt je laufendem Run (ein Listen-Call + je laufendem Run ein Jobs-Call) |
 | `ci_manage jobs <run-id>...` | — | Job-Status + aktueller Schritt je Run (GH-API `/runs/<id>/jobs`); der `updated_at` von `list` ist grob |
 | `open_points_check [<handover>] [--root <dir>]` | — | billiger Baum-Abgleich (std, kein Netz/LLM): jeder in den offenen Punkten genannte Pfad wird gegen den Arbeitsbaum geprüft; `ABSENT` = stale Punkt; Default = neueste `docs/handover/*.md` |
@@ -310,7 +312,8 @@ die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --h
 | `sgrep` | Zeilensuche über `git ls-files`; `--all` incl. gitignorierter Dateien | lokal | P1–P5 |
 | `sfetch` / `omega_sh` | fetch / reports-status-search-fetch-jwst-sha-check | Netz / lokal | P3 (fetch), P1 (alle) |
 | `smail` | Mail senden (Resend), `--dry-run` | Netz | P1 |
-| `register_lookup` | `--open`/`--dropped`/`--orphans`/`--orphan-docs`/`--history` — Register mit OPEN-Zeilen, zustand-/post-Scan, Drop-Diff, Träger-Checks | lokal | P4 |
+| `register_lookup` | `--open`/`--dropped`/`--orphans`/`--orphan-docs`/`--history`/`--tokens` — Register mit OPEN-Zeilen, zustand-/post-Scan, Drop-Diff, Träger-Checks, Transport-Token-Zustand | lokal | P4 |
+| `xfer` | Transport-Token-Ledger: `mark`/`list`/`fold`/`close`/`manifest`/`coverage` — mintet Marker am Punkt der Handlung, dauerhaftes Echo für `register_lookup --tokens` | lokal | P1/P4 |
 | `ci_manage` | `status`/`list`/`view`/`jobs`/`log`/`cancel`/`rerun` — CI-Läufe mit Schritt-Detail und Fehllogs; nie `gh run` | Netz | P1–P5 |
 | `open_points_check` | Pfad-Abgleich der offenen Punkte gegen den Arbeitsbaum (stale Punkt = genannter Pfad absent) | lokal | P4 |
 | `git_safety` | `--snapshot/--restore/--list/--watch/--close` | lokal | P1/P4 |

@@ -53,6 +53,7 @@ fn usage() {
          xfer list --line <L> [--open]                        one line per token and its derived state\n\
          xfer fold <tok> --line <L> --into <target>           append FOLDED (the folding session)\n\
          xfer close <tok> --line <L> --ref <commit|path>      append CLOSED with its reference\n\
+         xfer manifest --line <L> --to <target> [--file <p>]  print [manifest n=<N> root=<h8>] per An-<target> block\n\
          xfer coverage --line <L>                             emitted vs disposed; exit 2 while any token is open\n\
          \n\
          --line falls back to OMEGAFLOW_LINE; the session id to OMEGAFLOW_SESSION, then\n\
@@ -407,21 +408,35 @@ fn cmd_transition(args: &[String], state: &str) -> i32 {
         Some(t) => t,
         None => fail(&format!("{}: token absent", state.to_lowercase())),
     };
-    let parsed = match parse_token(&tok) {
-        Some(t) => t,
-        None => fail(&format!("{}: token malformed: {tok}", state.to_lowercase())),
-    };
-    let line = match resolve_line(line_opt) {
+    let line_opt_str = match resolve_line(line_opt) {
         Ok(l) => l,
         Err(e) => fail(&e),
     };
-    if line != parsed.line {
+    if !valid_component(&line_opt_str) {
         fail(&format!(
-            "{}: --line {line} differs from the token line {}",
-            state.to_lowercase(),
-            parsed.line
+            "{}: --line carries a forbidden character",
+            state.to_lowercase()
         ));
     }
+    let (line, sess_for_file) = match parse_token(&tok) {
+        Some(p) => {
+            if line_opt_str != p.line {
+                fail(&format!(
+                    "{}: --line {} differs from the token line {}",
+                    state.to_lowercase(),
+                    line_opt_str,
+                    p.line
+                ));
+            }
+            (p.line, p.sess)
+        }
+        None => {
+            if !tok.starts_with("xfer:") || tok.len() <= "xfer:".len() {
+                fail(&format!("{}: token malformed: {tok}", state.to_lowercase()));
+            }
+            (line_opt_str, "legacy".to_string())
+        }
+    };
     let extra = match extra {
         Some(e) => e,
         None => fail(&format!("{}: {extra_flag} absent", state.to_lowercase())),
@@ -433,7 +448,7 @@ fn cmd_transition(args: &[String], state: &str) -> i32 {
     let key = if state == "FOLDED" { "into" } else { "ref" };
     let file = ledger_dir()
         .join(&line)
-        .join(format!("{}.log", parsed.sess));
+        .join(format!("{sess_for_file}.log"));
     let rec = format!(
         "{} {} {} by={}.{} {}={}",
         utc_now(),
@@ -493,6 +508,138 @@ fn cmd_coverage(args: &[String]) -> i32 {
     coverage_exit(&states)
 }
 
+fn repo_root() -> PathBuf {
+    match env::var("OMEGAFLOW_REPO") {
+        Ok(r) if !r.trim().is_empty() => PathBuf::from(r),
+        _ => PathBuf::from("."),
+    }
+}
+
+fn addressed_blocks_in(text: &str, target: &str) -> Vec<String> {
+    let heading = format!("An {target}");
+    let mut out = Vec::new();
+    let mut cur: Option<String> = None;
+    for line in text.lines() {
+        if let Some(h) = line.trim_start().strip_prefix("## ") {
+            if let Some(b) = cur.take() {
+                out.push(b);
+            }
+            if h.trim() == heading {
+                cur = Some(String::new());
+            }
+            continue;
+        }
+        if let Some(b) = cur.as_mut() {
+            b.push_str(line);
+            b.push('\n');
+        }
+    }
+    if let Some(b) = cur.take() {
+        out.push(b);
+    }
+    out
+}
+
+fn block_tokens(block: &str) -> Vec<String> {
+    let bytes = block.as_bytes();
+    let mut out = Vec::new();
+    let mut i = 0;
+    while i + 5 <= bytes.len() {
+        if &bytes[i..i + 5] == b"xfer:" {
+            let start = i;
+            let mut j = i + 5;
+            while j < bytes.len() {
+                let c = bytes[j] as char;
+                if c.is_ascii_alphanumeric() || c == '-' || c == '_' || c == '.' || c == '~' {
+                    j += 1;
+                } else {
+                    break;
+                }
+            }
+            out.push(block[start..j].to_string());
+            i = j;
+        } else {
+            i += 1;
+        }
+    }
+    out
+}
+
+fn manifest_root(tokens: &[String]) -> String {
+    let mut ts: Vec<&str> = tokens.iter().map(|s| s.as_str()).collect();
+    ts.sort_unstable();
+    sha256_hex8(&ts.join("\n"))
+}
+
+fn discover_handovers(line: &str) -> Vec<PathBuf> {
+    let dir = repo_root().join("docs/handover");
+    let mut out = Vec::new();
+    if let Ok(entries) = fs::read_dir(&dir) {
+        for e in entries.flatten() {
+            let name = e.file_name().to_string_lossy().to_string();
+            if name.ends_with(".md") && name.contains(&format!("-{line}-folge")) {
+                out.push(e.path());
+            }
+        }
+    }
+    out.sort();
+    out
+}
+
+fn cmd_manifest(args: &[String]) -> i32 {
+    let mut line_opt: Option<String> = None;
+    let mut to_opt: Option<String> = None;
+    let mut file_opt: Option<String> = None;
+    let mut i = 0;
+    while i < args.len() {
+        if let Some(v) = parse_flag(args, &mut i, "--line") {
+            line_opt = Some(v.clone());
+        } else if let Some(v) = parse_flag(args, &mut i, "--to") {
+            to_opt = Some(v.clone());
+        } else if let Some(v) = parse_flag(args, &mut i, "--file") {
+            file_opt = Some(v.clone());
+        }
+        i += 1;
+    }
+    let to = match to_opt {
+        Some(t) => t,
+        None => fail("manifest: --to absent"),
+    };
+    if !valid_component(&to) {
+        fail("manifest: --to carries a forbidden character");
+    }
+    let line = match resolve_line(line_opt) {
+        Ok(l) => l,
+        Err(e) => fail(&e),
+    };
+    if !valid_component(&line) {
+        fail("manifest: --line carries a forbidden character");
+    }
+    let files = match file_opt {
+        Some(f) => vec![PathBuf::from(f)],
+        None => discover_handovers(&line),
+    };
+    let mut found = 0usize;
+    for path in files {
+        let Ok(text) = fs::read_to_string(&path) else {
+            continue;
+        };
+        for block in addressed_blocks_in(&text, &to) {
+            let tokens = block_tokens(&block);
+            if tokens.is_empty() {
+                continue;
+            }
+            let root = manifest_root(&tokens);
+            println!("[manifest n={} root={}]", tokens.len(), root);
+            found += 1;
+        }
+    }
+    if found == 0 {
+        eprintln!("xfer manifest: no `## An {to}` block found for line {line}");
+    }
+    0
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let cmd = match args.first() {
@@ -508,6 +655,7 @@ fn main() {
         "list" => cmd_list(rest),
         "fold" => cmd_transition(rest, "FOLDED"),
         "close" => cmd_transition(rest, "CLOSED"),
+        "manifest" => cmd_manifest(rest),
         "coverage" => cmd_coverage(rest),
         "-h" | "--help" => {
             usage();
@@ -707,5 +855,35 @@ mod tests {
     fn canonicalize_strips_trailing_space_and_normalizes_line_endings() {
         assert_eq!(canonicalize("a  \r\nb\t\r\n"), "a\nb");
         assert_eq!(sha256_hex8("abc").len(), 8);
+    }
+
+    #[test]
+    fn addressed_blocks_and_tokens_are_extracted() {
+        let text = "# H\n\n## An mountain\n\n- a xfer:river.folge197.1~aaaaaaaa\n- b xfer:river.folge197.2~bbbbbbbb\n\n## An river\n\n- c xfer:other.1~cccccccc\n";
+        let blocks = addressed_blocks_in(text, "mountain");
+        assert_eq!(blocks.len(), 1);
+        let toks = block_tokens(&blocks[0]);
+        assert_eq!(
+            toks,
+            vec![
+                "xfer:river.folge197.1~aaaaaaaa",
+                "xfer:river.folge197.2~bbbbbbbb"
+            ]
+        );
+        assert_eq!(manifest_root(&toks).len(), 8);
+        assert_eq!(addressed_blocks_in(text, "river").len(), 1);
+    }
+
+    #[test]
+    fn manifest_root_is_order_independent() {
+        let a = vec![
+            "xfer:b.1~bbbbbbbb".to_string(),
+            "xfer:a.1~aaaaaaaa".to_string(),
+        ];
+        let b = vec![
+            "xfer:a.1~aaaaaaaa".to_string(),
+            "xfer:b.1~bbbbbbbb".to_string(),
+        ];
+        assert_eq!(manifest_root(&a), manifest_root(&b));
     }
 }
