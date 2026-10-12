@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — tools-map.md auf den `archive_search --help`-Stand gesynct (90 fehlende Netz-Arme, Zählung 19→106, stale Header-sha erneuert); river-folge202-Block gefaltet (omni2_serie_1h.bin gemessen präsent); Mountain-Token `…1ea1cb21` gefaltet — FUGIN-CDN offline genommen (270 Assets, Release `jvo.nao.ac.jp` gelöscht, 404 gemessen), CfA-CO + Lizenz-Welle-2-Klasse als offene Punkte getragen; Ersatzquellen-Welle gebaut (8 Compiler: cfa_co, chime_frb, heasarc_w3browse, jpl_sbdb, osc, lamost, opentopography_raster, gesdisc_gnssro + GEOFON-Route im fdsn_waveform; 8 Risse an Mountain getragen); Stehender Pass am HEAD
   class: handover
   date: 2026-10-12
-  sha256: 3974c1b6d8c3192e0c510e488751b963712e61f00790265ac276560b8d7f45ce
+  sha256: 5243e5ca64dd7c51504614a9d5253fedb1753d49109cf2c61eac4f342985f013
   status: live
 -->
 # Handover — Mycelium-Folge 337 (2026-10-12)
@@ -25,6 +25,9 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 | „kannst du das bitte fixen" (der getragene Riss: PATH-Frische hängt am roten `tools-build`) | 2026-10-12 | Operator (Session 334) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes … /commit (Push) … danach den frischen Pass" | 2026-10-12 | Operator (Session 336) · session-weiter Delegations-Consent; `/commit` ist das Commit-Wort, davon getrennt |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes … /commit (Push) … danach den frischen Pass" | 2026-10-12 | Operator (Session 337) · session-weiter Delegations-Consent; `/commit` ist das Commit-Wort, davon getrennt |
+| „ja und den rest bauen schick einfach agenten" | 2026-10-12 | Operator (Session 337) · Ersatzquellen-Wellen freigegeben |
+| „ja schick los wie viele hast du noch?" | 2026-10-12 | Operator (Session 337) · Welle 3 freigegeben |
+| „committe und übergabe" | 2026-10-12 | Operator (Session 337) · Commit-Wort + Abschluss dieses Atoms |
 
 ## Offen — eigen
 
