@@ -31386,6 +31386,7 @@ url https://github.com/omegaflow/sources/releases/download/ser.im-ldi.com/marine
 format mariner_m10_edr
 origin https://ser.im-ldi.com/M10/MVM/mvm_0001.tgz
 compiler tools/harvest/src/bin/mariner_m10_edr_compiler.rs
+sha256 1773a9770d6c3e9fec223c5e97bbe4ec3e7ecf93e48b6d777d75714855c38a47
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_odg.bin
@@ -31393,6 +31394,7 @@ format mariner4_odg
 origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner4/celestial_mechanics/PSCM-00021_DD001528_05-DEC-64.tar ; https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner4/celestial_mechanics/PSCM-00021_DD001529_28-NOV-64.tar
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/mariner4_odg_compiler.rs
+sha256 77e1a1c6bea0e13d26b30b807d3607b5c9704a1159f35aa47d8f46575149031c
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_rst.bin
@@ -31400,6 +31402,7 @@ format mariner_rst
 origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner6/celestial_mechanics/2_way_doppler_radio_tracking/PSCM-00017_DD005408_05-MAR-69.tar ; https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner7/celestial_mechanics/2_way_doppler_radio_tracking/PSCM-00014_DD005409_12-APR-69.tar
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/mariner_rst_compiler.rs
+sha256 fdde35e23c4e4f615147bea7aff70df67fccc11ec6247b4af8d60ba24b2853b5
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
