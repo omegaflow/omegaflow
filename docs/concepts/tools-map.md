@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-09-29
-  sha256: 13bf136eb37f220bcf30ae8fd44c209c411b28a2b8094c90a66dbac65cabaadb
+  sha256: 6e5782e084d2da2810a389e7acffff2004ed463a8b3594328c2db4cff858c217
   status: live
   see-also: AGENTS.md
 -->
@@ -77,6 +77,12 @@ kein erfundenes Bild.
 direkt (FlateDecode-Content-Streams). Trägt das PDF keinen Textlayer (gescannt/
 bild-only) → eine `pending`-Zeile; dann führt der Weg über `--pdf-image` +
 `vision` (OCR). Kein erfundener Text.
+
+**Handoff — Legacy-Office (`.ppt`/`.doc`/`.xls`) → PDF → Text/Bild (gemessen 2026-10-12, river-196):**
+die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --headless --convert-to pdf <datei>`**
+(lokal vorhanden, LibreOffice 24.2) in ein PDF; danach `--pdf-text` (Textlayer) bzw. `pdftoppm -r 400 -png <pdf> <prefix>`
+→ `vision` (Zeichnungen) und `tesseract <bild> - --psm 11` als OCR-Fallback. Beleg: die THEMIS-GBO-CDR-Decks
+(`themis.ssl.berkeley.edu/themisftp/…/Reviews/`) trugen so eine **bemaßte** Zeichnung + Gehäusemaße. Kein Python.
 
 ## Gemessen — `archive_search` Netz-Modi (Einzelaufruf, kleiner Query)
 
