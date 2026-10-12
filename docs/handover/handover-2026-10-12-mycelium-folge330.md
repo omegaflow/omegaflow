@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — Riss gefixt (mariner10-ephemeris-cdn Idempotenz blockierte die Regeneration des falschen Assets → force-Input + force-Lauf), fired-Punkte geschlossen (CI-Fold success, THEMIS-Keogramm success), folge328-Löschung committet, Stehender Pass
   class: handover
   date: 2026-10-12
-  sha256: 880de47c26042d46548f7925ea20e240417f49ea7bb41364325b9e7dad320ca7
+  sha256: 49a1c564641a4c14e0625dbcd6af0710fbbf51d11ed218e850c9baa82b287e43
   status: live
 -->
 # Handover — Mycelium-Folge 330 (2026-10-12)
@@ -39,12 +39,18 @@ die Session schreibt ihn als Schlussakt am neuen HEAD neu). Diese Session konsum
 - Echo `xfer:mountain328-1/-2` (MVM-Merkur-Bilder + MDIS-Shape): registriert + dispatcht; Mountain hat Terms `PD` gesetzt (`2b1b02d4c`/`0051e5fd6`).
 - `xfer:mountain327-1` (8-Ziele-Einkaufsliste) bleibt in Mountains Block — die vier cc-by-4.0-Ephemeriden und PVO-ORSE/JPL sind teils registriert (PVO-ORSE `38271095011`; ssd-jpl Familien-Tag).
 
+## An mountain
+
+Origin: mycelium-330 (2026-10-12) — ein Prosadokument mit offenem Marker ohne Träger in der Owner-Übergabe; die Owner-Session faltet.
+
+- **Orphan-Doc `docs/surveys/survey-2026-10-10-worldwide-lidar-quellen.md` — Träger fehlt.** (gemessen 2026-10-12 via `register_lookup --orphan-docs`) 1 Dokument mit 52 offenen Markern ohne Live-Handover-Träger; Mountain-Nähe (Lidar-Quellen). **Braucht:** eine Träger-Zeile in der Mountain-Übergabe oder ein gemessenes `descoped`. `xfer:mycelium330-1`
+
 ## Offen — eigen
 
 ### M10-Ephemeride — force-Lauf regeneriert das CDN-Asset; sha-Nachtrag ausstehend
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der force-Lauf `mariner10-ephemeris-cdn` (`-f force=true`) endet
-- **Lage:** (gemessen 2026-10-12) der Idempotenz-Riss ist gefixt (force-Input, Workflow gepusht), force-Lauf dispatcht; `phi:32028` trägt noch die alte sha `7ad8b8bf…`, die lokale Erzeugung misst `67949cb6718be222c62c47286f16edbfbab5e35975fbcf0dfb9257645bbe0ae8`.
+- **Trigger:** der force-Lauf `38278478615` (`mariner10-ephemeris-cdn -f force=true`) endet
+- **Lage:** (gemessen 2026-10-12) der Idempotenz-Riss ist gefixt (force-Input, Workflow gepusht `30a400caf`), force-Lauf `38278478615` dispatcht; `phi:32028` trägt noch die alte sha `7ad8b8bf…`, die lokale Erzeugung misst `67949cb6718be222c62c47286f16edbfbab5e35975fbcf0dfb9257645bbe0ae8`.
 - **Blockade:** keine.
 - **Braucht:** `ci_manage log <force-run-id>`; die gedruckte sha in `phi:32028` setzen.
 
@@ -82,13 +88,6 @@ die Session schreibt ihn als Schlussakt am neuen HEAD neu). Diese Session konsum
 - **Lage:** (gemessen 2026-10-12, gefaltet) die S&R2026-Methode braucht ISIS als CI-Container, M10-CLR-Bilder (ASU `ser.im-ldi.com`, PD) als CDN-Assets, MESSENGER-Global-DEM v2 + MDIS-Basemaps als `url`-Zeilen.
 - **Blockade:** keine.
 - **Braucht:** einen CI-Container-Workflow für ISIS (conda/apt) bauen; M10-CLR über `raw_mirror`/eigenen Compiler registrieren. `terms`/`format` je Zeile = Mountain.
-
-### Orphan-Doc `survey-2026-10-10-worldwide-lidar-quellen.md` — Träger fehlt
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der nächste `--orphan-docs`-Pass
-- **Lage:** (gemessen 2026-10-12 via `register_lookup --orphan-docs`) 1 Dokument mit 52 offenen Markern ohne Live-Handover-Träger; Mountain-Nähe (Lidar-Quellen).
-- **Blockade:** keine.
-- **Braucht:** Träger-Zeile in der Owner-Übergabe (Mountain) oder gemessenes `descoped`.
 
 ### tools-map.md — Träger (Werkzeug-Karte)
 - **Status:** eigen | **Bindung:** eigen
