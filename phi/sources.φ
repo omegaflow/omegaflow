@@ -891,16 +891,6 @@ on earth 52.52 13.405 0
 ttl 3600
 field openmeteo_birch_pollen openmeteo_birch_pollen_grains gaussian-inverse-square diffusion grains/m3 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/amda.irap.omp.eu/rpw_efield.bin
-terms no-license-stated https://amda.irap.omp.eu/service/hapi
-format rpw_efield
-origin https://amda.irap.omp.eu/service/hapi
-compiler tools/harvest/src/bin/rpw_compiler.rs
-at solar_orbiter
-ttl 3600
-field rpw_e_y rpw_e_y inverse-square electric mV/m 3600 0.0 0.0
-field rpw_e_z rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/api.opensensemap.org/opensensemap_temperatur.bin
 format opensensemap_temperatur
 origin https://api.opensensemap.org/boxes?bbox=7.5,47.5,8.5,48.5&phenomenon=Temperatur
@@ -28448,12 +28438,6 @@ witness gestalt
 record gbco
 no-cadence
 
-url https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
-witness s2-direction
-record sky1
-force em
-no-cadence
-
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_SWE&time.min=1994-12-29T00:00:00Z&time.max=2001-05-31T23:59:57Z&parameters=Te,el_bulk_vel_magn,el_density&format=json
 terms PD https://cdaweb.gsfc.nasa.gov/
 no-cadence
@@ -29897,7 +29881,7 @@ sha256 fc27e2020f7c5dc659735f57221785ae882e96dcca384375e4f0efdd84f1a264
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/www.kari.re.kr/ephemeris_kplo.bin
-terms no-license-stated https://www.kari.re.kr/
+terms kari-public-release https://www.kari.re.kr/kpds/search/dirviewer/download/KPLO/KPLO/PublicRelease/kernels/spice_kernels/spk/
 format ephemeris_binary
 origin procedure: SPK/DAF harvest from https://www.kari.re.kr/kpds/search/dirviewer/download/KPLO/KPLO/PublicRelease/kernels/spice_kernels/spk/
 compiler tools/harvest/src/bin/kplo_spice_compiler.rs
@@ -31980,3 +31964,7 @@ decline commercial https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/ser
 decline commercial https://minorplanetcenter.net/Extended_Files/mpcorb_extended.json.gz
 
 decline commercial https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,mean_mag_g,mean_mag_r,mean_mag_i,mean_mag_z,epochmean+FROM+decaps_dr2.object+WHERE+mean_mag_g%3C90
+
+decline superseded https://amda.irap.omp.eu/service/hapi
+
+decline superseded https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv

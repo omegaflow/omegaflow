@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: cbf224d5bef96ea61df1ff023245d6ed17e660a1d8b54fbfdc87fdf8e2acd977
+  sha256: 90ed7c51bd092fc204865607acd8cc29977183806a097e8aca3f1c08d843b05b
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -105,7 +105,7 @@ Punkt nennt seine Datei(en)/Pfade.**
 ### Lizenz-Zensus Welle 3 (`xfer:future-247-6`, eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** die neuen `url`/`origin`/`compiler`-Zeilen (Mycelium)
-- **Lage:** (gemessen 2026-10-13 via `register_lookup --addressed mountain`, gefaltet) der von Mountain benannte JWST-Riss (`corral`/`mast` `jwst_spectra` ≠ `exoplanetarchive`) ist gelöst: echte JWST-Spektren auf Zenodo — **DAWN JWST Archive** (80 367 NIRSpec-Spektren, CC-BY-4.0) + **MIRAGE** (CC-BY-4.0); MAST/ESA `unclear`. Ferner: `mars_dust`→Zenodo · `bl_narrowband`→Zenodo · `api.antares`→Zenodo Fink · `iris`→NASA SPASE CC0-1.0 · `lasair`→ALeRCE · `ser.im-ldi`→NASA PDS PD · Schumann→Zenodo · gis.ccc-Sensoren→ArcGIS OpenData · Radiosonde→NOAA IGRA PD · IGETS→GFZ CC-BY-4.0 · Gaia-Alerts→ESA CC-BY-NC-3.0-IGO; ArcGIS-Reste → NOAA/EPA/USGS. **Kein Fund:** `rpw_efield` (AMDA) · `kari.re.kr` · `casdc.china-vo.org`. Tabelle: `state/future/licence-alternativen-all-2026-10-12.md` (Welle 3).
+- **Lage:** (gemessen 2026-10-13 via `register_lookup --addressed mountain`, gefaltet) der von Mountain benannte JWST-Riss (`corral`/`mast` `jwst_spectra` ≠ `exoplanetarchive`) ist gelöst: echte JWST-Spektren auf Zenodo — **DAWN JWST Archive** (80 367 NIRSpec-Spektren, CC-BY-4.0) + **MIRAGE** (CC-BY-4.0); MAST/ESA `unclear`. Ferner: `mars_dust`→Zenodo · `bl_narrowband`→Zenodo · `api.antares`→Zenodo Fink · `iris`→NASA SPASE CC0-1.0 · `lasair`→ALeRCE · `ser.im-ldi`→NASA PDS PD · Schumann→Zenodo · gis.ccc-Sensoren→ArcGIS OpenData · Radiosonde→NOAA IGRA PD · IGETS→GFZ CC-BY-4.0 · Gaia-Alerts→ESA CC-BY-NC-3.0-IGO; ArcGIS-Reste → NOAA/EPA/USGS. **Alle drei Einzel-Fälle entschieden** (`xfer:future-247-7`, s. Transport). Tabelle: `state/future/licence-alternativen-all-2026-10-12.md` (Welle 3).
 - **Braucht:** Mycelium baut die neuen `url`/`origin`/`compiler`; Mountain setzt den `decline` des alten Blocks block-scoped. (NC-`Gaia-Alerts` für das NC-Haus admissibel.)
 
 ### Rätsel-Datenlücken (eigen)
@@ -235,6 +235,7 @@ Aus dem adressierten Block future-244/247 — je Eintrag ein Token (Echo = im Li
 - **River P7.1** (aus `docs/handover/handover-2026-10-12-river-folge202.md:82-94`) — **kein Token:** River nennt Mountain als `Braucht`-Akteur, transportiert den Punkt aber **nicht** als `## An mountain`. Gefaltet in den Offen-Punkt „P7.1 Regime-`coupling`/`constraint`-Zeilen". **Transport-Riss (getragen):** ein cross-line-Punkt ohne Token reist nicht messbar; der Sender sollte ihn per `xfer mark --line river --to mountain` toketisieren.
 - `xfer:river.river-203.1~0e4958d2` (`omni_imf_bz_gsm_nt`-Doppelregistrierung) — **erledigt (Mountain-Teil):** der Live-HAPI-Block (`phi:681-688`) trägt jetzt `_live`-Namen; die Archiv-1h-Reihe (`phi:1843-1848`) hält kanonisch `omni_imf_bz_gsm_nt` → der Descriptor `newell_geospheric_omni.te:14` bindet die (ABK-überlappende) Archiv-Reihe statt des live-Fensters. Verifikation am CI-Lauf `field-te-query.yml` Job `matrix-newell-omni`. `[manifest n=1 root=eabac70a]`
 - `xfer:future-247-6` (Welle 3: JWST-Riss + Einzel-Observablen + ArcGIS-Reste) — **gefaltet** in den Offen-Punkt „Lizenz-Zensus Welle 3".
+- `xfer:future-247-7` (drei Einzel-Entscheidungen, Operator-Wort 2026-10-12) — **erledigt:** (1) `rpw_efield` (AMDA, `phi:894`) `decline superseded` (die lizenzierte RPW-LIRA-Kopie `phi:1078`, `terms rpw-public-ack`, trägt dieselbe Observable); (2) `casdc.china-vo.org` LHAASO (`phi:28451`, ein Witness ohne `field`) `decline superseded`; (3) `www.kari.re.kr`/KPLO (`phi:29883`) `terms kari-public-release <KARI-KPDS-PublicRelease-URL>`.
 
 ## An mycelium
 
@@ -283,6 +284,7 @@ Origin: mountain-folge335 (2026-10-12).
 - **FUGIN vom Netz nehmen + durch CfA-CO ersetzen** | 2026-10-12 | Operator-Session (mountain 335, future-247-5 gefaltet) — 271 `nobeyama/fugin`-Blöcke auf `decline`, CfA-CO (Zenodo `10.5281/zenodo.5501196`, cc-by-4.0) als Ersatz; Mycelium nimmt die CDN-Assets offline; PI-Anfrage raus (`wartend`).
 - **„das muss beides strukturell gefixt werden das geht sowas von gar nicht"** | 2026-10-13 | Operator-Session (mountain 335) — M10-CDN: (a) `ci_manage reds` gebaut (paginierter Nicht-success-Zensus, damit der Stehende Pass nichts übersieht); (b) `upload_release` benennt die 2-GiB-Grenze (Guard); der >2-GiB-Kanal bleibt Mycelium (Split/R2 + Streaming).
 - **„A"** | 2026-10-13 | Operator-Session (mountain 335) — für den >2-GiB-CDN-Kanal die **Split**-Route (HTTP-Range in <2-GiB-Teile + Manifest, GitHub-Release-`url`-Vertrag bleibt), nicht R2-primary.
+- **Drei Einzel-Entscheidungen (Welle-3-Rest)** | 2026-10-12 | Operator-Session (future-247-7) — `rpw_efield`/AMDA `decline superseded` (RPW-LIRA trägt es), `casdc.china-vo.org` LHAASO `decline superseded`, `www.kari.re.kr`/KPLO `terms kari-public-release`.
 
 ## Abschluss
 
