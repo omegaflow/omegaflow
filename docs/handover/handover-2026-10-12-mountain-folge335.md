@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: aca0d047d1404ff39aa8b9a6fb8ff360b72d75101e8653b825be1608b13fbc68
+  sha256: 857ce482f3c6428b6fdacfeadee20e90af84aa577cdf23c4c27be371a3bac713
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -101,6 +101,12 @@ Punkt nennt seine Datei(en)/Pfade.**
 - **Braucht:** je Rest-Observable der block-scoped `decline` (Mountain) + die neue `url`/`origin`/`compiler`-Zeile des freien Ersatzes (Mycelium); JVO = Operator/Future-Entscheidung (NAOJ-Erlaubnis oder entfernen).
 - **`terms`-Zensus (`xfer:future-247-4`) erledigt (2026-10-12):** `register_terms_apply` auflöste **716** `unknown`-Blöcke auf ihren belegten Kandidaten; 1537 bereits-klare bewusst unangetastet (kein benanntes PD/CC überschrieben). Damit trägt jeder Block eine `terms`-Zeile mit belegtem Wert.
 - **Tier-A-Rest (`xfer:future-247-3`, Nachtrag 2026-10-12):** das neue `archive_search` (`7bb6bee`) deckt die restlichen Observablen über gezielte Modi (KiDS DR4, Pan-STARRS1 HiPS/J-PLUS, LAMOST DR10, MAGIC PDR1, JADES DR5, HI4PI, CHIME Cat2, Fermi 4LAC-DR3, ALeRCE, Open Supernova Catalog, IceCube IceTracks, EIDA/GeoNet, PANGAEA PALAOA, NOAA EXIS, Zenodo EMM-EXI, NASA PDS, JPL SBDB) — die Ersatz-`url`-Zeilen reisen in `xfer:future-247-3`; Mountain setzt die `decline`-Verdikte block-scoped beim Eintreffen.
+
+### Lizenz-Zensus Welle 3 (`xfer:future-247-6`, eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** die neuen `url`/`origin`/`compiler`-Zeilen (Mycelium)
+- **Lage:** (gemessen 2026-10-13 via `register_lookup --addressed mountain`, gefaltet) der von Mountain benannte JWST-Riss (`corral`/`mast` `jwst_spectra` ≠ `exoplanetarchive`) ist gelöst: echte JWST-Spektren auf Zenodo — **DAWN JWST Archive** (80 367 NIRSpec-Spektren, CC-BY-4.0) + **MIRAGE** (CC-BY-4.0); MAST/ESA `unclear`. Ferner: `mars_dust`→Zenodo · `bl_narrowband`→Zenodo · `api.antares`→Zenodo Fink · `iris`→NASA SPASE CC0-1.0 · `lasair`→ALeRCE · `ser.im-ldi`→NASA PDS PD · Schumann→Zenodo · gis.ccc-Sensoren→ArcGIS OpenData · Radiosonde→NOAA IGRA PD · IGETS→GFZ CC-BY-4.0 · Gaia-Alerts→ESA CC-BY-NC-3.0-IGO; ArcGIS-Reste → NOAA/EPA/USGS. **Kein Fund:** `rpw_efield` (AMDA) · `kari.re.kr` · `casdc.china-vo.org`. Tabelle: `state/future/licence-alternativen-all-2026-10-12.md` (Welle 3).
+- **Braucht:** Mycelium baut die neuen `url`/`origin`/`compiler`; Mountain setzt den `decline` des alten Blocks block-scoped. (NC-`Gaia-Alerts` für das NC-Haus admissibel.)
 
 ### Rätsel-Datenlücken (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -227,6 +233,8 @@ Aus dem adressierten Block future-244/247 — je Eintrag ein Token (Echo = im Li
 - `xfer:future-247-4` (`terms`-Kandidaten für alle 2319 Blöcke) — **erledigt**: neues Werkzeug `tools/register/src/bin/register_terms_apply.rs` gebaut (`cargo build` 0/0, `rustfmt` sauber) und angewendet — **716** Blöcke von `terms unknown` auf den belegten Kandidaten (`state/future/licence-proposal-2026-10-12.tsv`) gesetzt; **1537** bereits-klare (PD/CC/OGL/…) bewusst **unangetastet** (der Applier überschreibt nie ein benanntes Recht). `terms unknown` = 0.
 - `xfer:future-247-5` (FUGIN offline + CfA-CO-Ersatz) — **erledigt (Mountain-Teil):** `register_block_decline` setzte die **271** `nobeyama/fugin`-Blöcke auf `decline commercial` (CDN-`jvo.nao.ac.jp`-urls = 0); der CfA-CO-Ersatz + die CDN-Offline-Nahme reisen als `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.1~1ea1cb21` an Mycelium; PI-Anfrage `wartend`.
 - **River P7.1** (aus `docs/handover/handover-2026-10-12-river-folge202.md:82-94`) — **kein Token:** River nennt Mountain als `Braucht`-Akteur, transportiert den Punkt aber **nicht** als `## An mountain`. Gefaltet in den Offen-Punkt „P7.1 Regime-`coupling`/`constraint`-Zeilen". **Transport-Riss (getragen):** ein cross-line-Punkt ohne Token reist nicht messbar; der Sender sollte ihn per `xfer mark --line river --to mountain` toketisieren.
+- `xfer:river.river-203.1~0e4958d2` (`omni_imf_bz_gsm_nt`-Doppelregistrierung) — **erledigt (Mountain-Teil):** der Live-HAPI-Block (`phi:681-688`) trägt jetzt `_live`-Namen; die Archiv-1h-Reihe (`phi:1843-1848`) hält kanonisch `omni_imf_bz_gsm_nt` → der Descriptor `newell_geospheric_omni.te:14` bindet die (ABK-überlappende) Archiv-Reihe statt des live-Fensters. Verifikation am CI-Lauf `field-te-query.yml` Job `matrix-newell-omni`. `[manifest n=1 root=eabac70a]`
+- `xfer:future-247-6` (Welle 3: JWST-Riss + Einzel-Observablen + ArcGIS-Reste) — **gefaltet** in den Offen-Punkt „Lizenz-Zensus Welle 3".
 
 ## An mycelium
 
@@ -282,6 +290,7 @@ Origin: mountain-folge335 (2026-10-12).
 - **Lizenz-Zensus: lizenzlose Blöcke durch freie Alternativen ersetzen (kein Klagerisiko)** | 2026-10-12 | Operator-Session (mountain 335, future-247 gefaltet) — block-scoped Ersetzung, Mountain Verdikt + Mycelium url/origin/compiler; 7 von ~20 in diesem Atom umgesetzt.
 - **FUGIN vom Netz nehmen + durch CfA-CO ersetzen** | 2026-10-12 | Operator-Session (mountain 335, future-247-5 gefaltet) — 271 `nobeyama/fugin`-Blöcke auf `decline`, CfA-CO (Zenodo `10.5281/zenodo.5501196`, cc-by-4.0) als Ersatz; Mycelium nimmt die CDN-Assets offline; PI-Anfrage raus (`wartend`).
 - **„das muss beides strukturell gefixt werden das geht sowas von gar nicht"** | 2026-10-13 | Operator-Session (mountain 335) — M10-CDN: (a) `ci_manage reds` gebaut (paginierter Nicht-success-Zensus, damit der Stehende Pass nichts übersieht); (b) `upload_release` benennt die 2-GiB-Grenze (Guard); der >2-GiB-Kanal bleibt Mycelium (Split/R2 + Streaming).
+- **„A"** | 2026-10-13 | Operator-Session (mountain 335) — für den >2-GiB-CDN-Kanal die **Split**-Route (HTTP-Range in <2-GiB-Teile + Manifest, GitHub-Release-`url`-Vertrag bleibt), nicht R2-primary.
 
 ## Abschluss
 
