@@ -229,7 +229,11 @@ fn main() {
         let mut mx = 0.0f64;
         for k in 0..matched {
             let rp = rot_apply(r, vec_all[k]);
-            let d = norm([rp[0] - pos_all[k][0], rp[1] - pos_all[k][1], rp[2] - pos_all[k][2]]);
+            let d = norm([
+                rp[0] - pos_all[k][0],
+                rp[1] - pos_all[k][1],
+                rp[2] - pos_all[k][2],
+            ]);
             sum += d;
             mx = mx.max(d);
         }
@@ -278,7 +282,11 @@ fn main() {
         let mut cm = 0.0f64;
         for k in 0..matched {
             let rp = rot_apply(m, vec_all[k]);
-            let d = norm([rp[0] - pos_all[k][0], rp[1] - pos_all[k][1], rp[2] - pos_all[k][2]]);
+            let d = norm([
+                rp[0] - pos_all[k][0],
+                rp[1] - pos_all[k][1],
+                rp[2] - pos_all[k][2],
+            ]);
             s += d;
             cm = cm.max(d);
         }
