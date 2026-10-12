@@ -847,7 +847,7 @@ fn resonance(mut stream: TcpStream, signal: &str, cfg: WsConfig) {
                 tau,
                 extent,
                 kernel_id,
-                channel_ref: Some(channel_ref),
+                channel_ref,
                 absorption,
                 advection,
                 vx,
