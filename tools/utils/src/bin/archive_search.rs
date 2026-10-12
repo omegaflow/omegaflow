@@ -46,6 +46,8 @@ mod ena;
 mod ensembl;
 #[path = "archive_search/entrez.rs"]
 mod entrez;
+#[path = "archive_search/erddap.rs"]
+mod erddap;
 #[path = "archive_search/europepmc.rs"]
 mod europepmc;
 #[path = "archive_search/frbcat.rs"]
@@ -136,6 +138,8 @@ mod server;
 mod sourcegraph;
 #[path = "archive_search/sparql.rs"]
 mod sparql;
+#[path = "archive_search/stac.rs"]
+mod stac;
 #[path = "archive_search/stackexchange.rs"]
 mod stackexchange;
 #[path = "archive_search/supermag.rs"]
@@ -461,6 +465,8 @@ fn main() {
             "--copernicus" => mode = Mode::Net("copernicus"),
             "--vires" => mode = Mode::Net("vires"),
             "--oai-pmh" => mode = Mode::Net("oai-pmh"),
+            "--stac" => mode = Mode::Net("stac"),
+            "--erddap" => mode = Mode::Net("erddap"),
             "--dryad" => mode = Mode::Net("dryad"),
             "--frbcat" => mode = Mode::Net("frbcat"),
             "--go" => mode = Mode::Net("go"),
@@ -803,7 +809,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc|--nssdc|--nssdca <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc|--nssdc|--nssdca <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -909,6 +915,12 @@ fn usage() {
     );
     eprintln!(
         "  --oai-pmh   Generic OAI-PMH ListRecords: `--oai-pmh \"endpoint=<oai-url> [set=<set>]\"`, keyless; id + title"
+    );
+    eprintln!(
+        "  --stac      Generic STAC search: `--stac \"endpoint=<url> [collection=<id>] [bbox=w,s,e,n] [datetime=a/b]\"`, keyless; url + collection/id/datetime (a STAC API /search)"
+    );
+    eprintln!(
+        "  --erddap    Generic ERDDAP dataset search: `--erddap \"server=<url> searchFor=<kw> [itemsPerPage=N]\"`, keyless; url (tabledap/griddap) + title/institution/id (search/advanced.json)"
     );
     eprintln!(
         "  --wiby      Wiby independent web search (wiby.me/json), keyless; url + title/description"
