@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: bb02f3227f2c18689791b96c3685fa0aa0106f90e3d93669bded958d9c56e844
+  sha256: 3fb8812f7ff31fee0baab85613cf7f1553ef2edf0f13e7e28d489550c58c6d1d
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -254,6 +254,15 @@ NIST) — nur die Sonke/Robinson-Tabellen bleiben dort offen.
     sha `a46e1712…`; NTRS trägt **keine** SP-59-Citation (HathiTrust `006260826`, PD).
   Der SPDF-Origin-Präfix ist `https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/renamed_dataset_catalogs/`.
   Die durable Heimat ist das registrierte CDN-Asset (raw_mirror); die drei Alt-PDFs in `data/` (`doe417_instr.pdf`, `pds-ppi…/124A.pdf`, `cjss…/210406045.pdf`) stehen in **keiner** phi-Zeile → Register-Schuld.
+- **NTRS `19740012502` „Data catalog of satellite experiments" (NASA-PD) — `url`/`origin`/`compiler`-Zeile.** `xfer:mountain327-7`
+  Ein **606-Seiten-Index** (NASA-TM-X-69990 · NSSDC-73-11 · NSSDC-71-20-SUPPLEMENT-1, 1973-10-01) über
+  alle NSSDC-Raumfahrzeuge/Experimente/Datenbeschreibungen — ein **Discovery-Index**, kein Einzeldatensatz.
+  Lokal: `state/research/ntrs-19740012502/19740012502.pdf` (19 850 338 B, sha `9b4902bf…`) + Volltext
+  `19740012502.txt` (1 711 714 B, 106 349 Zeilen, sha `64b44b02…`); `downloads` tragen auch `.txt`.
+  Origin `https://ntrs.nasa.gov/api/citations/19740012502/downloads/19740012502.pdf`.
+  Der zugehörige **Ordner** (SPDF `renamed_dataset_catalogs/`) liegt als Listing in
+  `state/research/spdf-catalogs/spdf_catalogs_dir.html` (179 312 B, sha `7e9c79e9…`) — er trägt u. a.
+  weitere Mariner-4-DSCs (`DSC_0045`/`DSC_0176`/`DSC_0074`) und die NSSDC-Query-/Dataset-Seiten.
 
 ## An river
 
@@ -278,6 +287,7 @@ einen Namenträger bei dir:
 - **„du kannst dich auch gleich mal darum kümmern deine arbeit richtig zu machen und nichts zu behaupten was der messung nicht standhält"** | 2026-10-12 | Operator-Session (mountain 327) — der teilgefaltete future-241-Block wird hier vollständig gefaltet.
 - **„setze eine taucher staffel auf alle punkte an … und river analysiert selbst schon die antennenhöhe"** | 2026-10-12 | Operator-Session (mountain 327) — neun-Taucher-Staffel (flash), THEMIS-Antennenhöhe ist River.
 - **„gehören pdfs in data?"** | 2026-10-12 | Operator-Session (mountain 327) — gemessen: nein; `data/<netloc>/` trägt Datensätze (`.bin`), Dokumente liegen im privaten Korpus `state/research/`.
+- **„das dokument ist auch noch spannend https://ntrs.nasa.gov/api/citations/19740012502/downloads/19740012502.pdf und eben der ordner"** | 2026-10-12 | Operator-Session (mountain 327) — NTRS 19740012502 (606-S.-NSSDC-Katalog) + der SPDF-`renamed_dataset_catalogs`-Ordner geladen.
 
 ## Abschluss
 
