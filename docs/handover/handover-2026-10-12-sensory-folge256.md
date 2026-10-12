@@ -3,7 +3,7 @@
   session: Sensory-Folge 256
   class: handover
   date: 2026-10-12
-  sha256: dc7fed232b45ed83be3212db6f17c4c7e50c7a102b6dbd7d896c985026201ddf
+  sha256: 1cb25aa74cec5d077874b6e72b52fae86de67efc6096c0942925a2346a2f0f39
   status: live
 -->
 # Handover — Sensory-Folge 256 (2026-10-12)
@@ -417,7 +417,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0000 · close 0.0000 · cap 0.15 · Grund: F256 — Line-Session (deepseek-flash), Ein-Pass; die adressierte `mycelium-334`-Auflage gefaltet (vier tokenlose `## An river`-Einträge → vier verankerte Tokens + `[manifest n=4 root=7e193e88]`, mit dem frisch gebauten `register_lookup --tokens` als 4 × `XFER unbeglichen` verifiziert, kein `XFER-MISSING`); kein sensory-eigener Trigger gefeuert (beide `eigen`-Punkte wartend/termin; `--fired`/`--stale` = 0); Register-Pass (`--orphan-docs` = 11 fremde Linien, `open_points_check` F255 = 2 Parser-Artefakte) + `git_safety --snapshot`; konsumierte F255 nach `archiv/`. Die close-Zahl setzt `session_burn` nach Session-Ende.
+## Burn: open 0.0000 · close 0.0581 · cap 0.15 · Grund: F256 — Line-Session (deepseek-flash), Ein-Pass; die adressierte `mycelium-334`-Auflage gefaltet (vier tokenlose `## An river`-Einträge → vier verankerte Tokens + `[manifest n=4 root=7e193e88]`, mit dem frisch gebauten `register_lookup --tokens` als 4 × `XFER unbeglichen` verifiziert, kein `XFER-MISSING`); kein sensory-eigener Trigger gefeuert (beide `eigen`-Punkte wartend/termin; `--fired`/`--stale` = 0); Register-Pass (`--orphan-docs` = 11 fremde Linien, `open_points_check` F255 = 2 Parser-Artefakte) + `git_safety --snapshot`; konsumierte F255 nach `archiv/`. Burn gemessen `session_burn` 2026-10-12 F256 — Line-Session „Sensory-Linie in einem Pass starten" $0.0581 (deepseek-flash, kein pro/max).
 
 ## Abschluss
 
