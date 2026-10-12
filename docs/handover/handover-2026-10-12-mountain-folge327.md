@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: 3fb8812f7ff31fee0baab85613cf7f1553ef2edf0f13e7e28d489550c58c6d1d
+  sha256: 06fad881bb733a6cbfed49b51697393354ee6395bdf46d62596c85d33fb7ef23
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -222,6 +222,13 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
 - **Lage:** (gemessen 2026-10-12/327, `council`) Konsens: eine `declined`-Disposition ist eine **Direktive** mit **geschlossenem** Grund-Token (nicht der 183-Token-Freitext des getilgten `declined_sources.φ`), trägt die gemessene URL als Schlüssel, erzeugt **nie** einen `SourceConfig`/ttl und bleibt in `phi/sources.φ`. Der Parser-Catch-all (`parse.rs:2307`) verschluckt eine `decline`-Zeile heute **still** → die Direktive muss ein benannter Arm werden; `register_lookup` kennt `declined` bereits als `Released`.
 - **Blockade:** der Token-Satz (welche Gründe geschlossen gelten).
 - **Braucht:** Operator-Wort zum Grund-Token-Satz + Parser-Arm + Gate-Fixture im selben Atom.
+
+### NSSDC-Katalog 19740012502 → Ephemeriden-Register (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** der nächste Register-/Verdikt-Pass
+- **Lage:** (gemessen 2026-10-12/327, `grind-flash`-Taucher aus dem 106 349-Zeilen-Volltext) **194 Einträge** (Mariner 2/4/5/6/7/9 · Pioneer 6/7/8/9/10); **2 registriert, 192 ohne Registerzeile**. Index: `state/research/ntrs-19740012502/mariner-venus-pioneer-index.txt`. **Ephemeriden-relevanter Kern (Experiment „Celestial Mechanics"):**
+  `64-077A-09` / `-09A` „Trajectory Parameters vs Time on Tape" (**registriert** via DSC 0119 + `PSCM-00021`) · `64-077A-09B` „Celestial Mechanics Listing (2-way Doppler vs Time) on 16-mm microfilm" · `67-060A-07`/`-07A` „Celestial Mechanics / Doppler Radio Tracking Data on Tape" (Mariner 5) · `69-014A-05`/`-05A` „Range and Range-Rate Listing on Magnetic Tape" (Mariner 6) · `69-030A-05`/`-05A` (Mariner 7) · `65-105A-07`/`-07A` „Doppler Radio Tracking Data on Tape" (Pioneer 6) · `72-012A-00D` „Preliminary Trajectory Chart on Hardcopy" (Pioneer 10). Mariner 9 trägt **keinen** Celestial-Mechanics-Eintrag; Mariner 10/Pioneer 11 sind 1973 noch nicht im Katalog (Pioneer Venus 1978, kein Venera).
+- **Blockade:** die Einträge sind NSSDC-Datenbeschreibungen (Tape/Microfilm/Hardcopy), kein Download — request-only.
+- **Braucht:** je ID die Online-Route messen (`nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=<ID>`, `--verdict`); die erreichbaren als `url` (Mycelium) führen; die Mariner-6/7-`-05A` gegen die schon registrierten SPDF-M6/M7-Rohbänder (`phi:31526/31534`) abgleichen.
 
 ## An mycelium
 
