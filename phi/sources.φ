@@ -21642,6 +21642,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/grdc_carav
 terms CC-BY-4.0 https://zenodo.org/records/15349031
 origin https://zenodo.org/api/records/15349031/files/GRDC_Caravan_extension_nc.zip/content
 compiler tools/harvest/src/bin/grdc_caravan_compiler.rs
+sha256 35ea30e2b5b1bd30df00c5ebbeb7147cd68873f40933bed9456143d086541582
 format grdc_caravan
 at earth
 ttl 604800
@@ -21650,6 +21651,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/grdc_carav
 terms CC-BY-4.0 https://zenodo.org/records/15349031
 origin https://zenodo.org/api/records/15349031/files/GRDC_Caravan_extension_nc.zip/content
 compiler tools/harvest/src/bin/grdc_caravan_compiler.rs
+sha256 3244f5a4514755dee3b475d9cb94d3255e530f6771911cd263105d71824f899f
 format grdc_caravan
 at earth
 ttl 604800
@@ -21658,6 +21660,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/grdc_carav
 terms CC-BY-4.0 https://zenodo.org/records/15349031
 origin https://zenodo.org/api/records/15349031/files/GRDC_Caravan_extension_nc.zip/content
 compiler tools/harvest/src/bin/grdc_caravan_compiler.rs
+sha256 d7ac90bd879ad955933129443dbb49a1e5dad2e9524005bb42014aaf8b64d8a2
 format grdc_caravan
 at earth
 ttl 604800
