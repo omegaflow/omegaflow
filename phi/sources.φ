@@ -20913,6 +20913,12 @@ compiler tools/harvest/src/bin/themis_asi_compiler.rs
 at earth
 ttl 604800
 
+url https://github.com/omegaflow/sources/releases/download/data.phys.ucalgary.ca/20261009__atha_themis02_full-keogram.pgm.jpg
+origin https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/stream2/2026/10/09/atha_themis02/20261009__atha_themis02_full-keogram.pgm.jpg
+compiler tools/harvest/src/bin/themis_asi_keogram_compiler.rs
+format themis_asi_keogram
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/tnmaccess.nationalmap.gov/coverage_tnm.manifest
 terms PD https://www.usgs.gov/
 format coverage_manifest
