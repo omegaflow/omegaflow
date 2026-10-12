@@ -14,6 +14,7 @@ const MARINER10_NAIF_ID: i32 = -76;
 const MARINER10_NAME: &str = "mariner10";
 const AU_KM: f64 = 149_597_870.7;
 const DISCRETE_STATE_SLOT: usize = 16;
+const FLYBY_GRANULE_DAYS: f64 = 0.03;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -501,31 +502,44 @@ fn run(args: &[String]) -> Result<(), String> {
         );
     }
 
-    let mid_et = (min_et + max_et) / 2.0;
-    let half_et = (max_et - min_et) / 2.0;
-    let mut samples: Vec<(f64, f64, f64)> = Vec::with_capacity(N_SAMPLES);
-    for tau in &chebyshev_nodes(N_SAMPLES) {
-        let et = mid_et + tau * half_et;
-        match body_state_ssb(et) {
-            Some(st) => samples.push((st[0] * 1000.0, st[2] * 1000.0, st[4] * 1000.0)),
-            None => {
-                return Err(format!(
-                    "granule node JD {:.4} reads void — the anchor stays unwritten",
-                    et / 86400.0 + J2000_EPOCH
-                ));
+    let granule_sec = FLYBY_GRANULE_DAYS * 86400.0;
+    let span = max_et - min_et;
+    let n_granules = (span / granule_sec).ceil() as usize;
+    let mut granules: Vec<(f64, f64, Vec<f64>, Vec<f64>, Vec<f64>)> =
+        Vec::with_capacity(n_granules);
+    for i in 0..n_granules {
+        let g_start = min_et + i as f64 * granule_sec;
+        let g_end = (g_start + granule_sec).min(max_et);
+        let mid_et = (g_start + g_end) / 2.0;
+        let half_et = (g_end - g_start) / 2.0;
+        let mut samples: Vec<(f64, f64, f64)> = Vec::with_capacity(N_SAMPLES);
+        for tau in &chebyshev_nodes(N_SAMPLES) {
+            let et = mid_et + tau * half_et;
+            match body_state_ssb(et) {
+                Some(st) => samples.push((st[0] * 1000.0, st[2] * 1000.0, st[4] * 1000.0)),
+                None => {
+                    return Err(format!(
+                        "granule node JD {:.4} reads void — the anchor stays unwritten",
+                        et / 86400.0 + J2000_EPOCH
+                    ));
+                }
             }
         }
+        let (cx, cy, cz) = chebyshev_fit(&samples, CHEBYSHEV_DEGREE)
+            .ok_or("the Chebyshev fit refused — the anchor stays unwritten")?;
+        granules.push((
+            mid_et / 86400.0 + J2000_EPOCH,
+            half_et / 86400.0,
+            cx,
+            cy,
+            cz,
+        ));
     }
-    let (cx, cy, cz) = chebyshev_fit(&samples, CHEBYSHEV_DEGREE)
-        .ok_or("the Chebyshev fit refused — the anchor stays unwritten")?;
-    let granules = vec![(
-        mid_et / 86400.0 + J2000_EPOCH,
-        half_et / 86400.0,
-        cx,
-        cy,
-        cz,
-    )];
-    eprintln!("granules: 1 ({} days wide)", 2.0 * half_et / 86400.0);
+    eprintln!(
+        "granules: {} ({:.3} days wide)",
+        granules.len(),
+        FLYBY_GRANULE_DAYS
+    );
     let _ = GRANULE_DAYS;
 
     let out = match arg_value(args, "--out") {
@@ -546,9 +560,10 @@ fn run(args: &[String]) -> Result<(), String> {
     let mut map = std::collections::HashMap::new();
     map.insert(MARINER10_NAME.to_string(), eph);
     let mut max_delta_m = 0.0f64;
+    let mut max_at_et = 0.0f64;
     let mut probe_n = 0usize;
-    for k in 0..12 {
-        let et = min_et + (max_et - min_et) * (k as f64 + 0.5) / 12.0;
+    for k in 0..400 {
+        let et = min_et + (max_et - min_et) * (k as f64 + 0.5) / 400.0;
         let Some(st) = body_state_ssb(et) else {
             continue;
         };
@@ -563,14 +578,16 @@ fn run(args: &[String]) -> Result<(), String> {
         .sqrt();
         if d > max_delta_m {
             max_delta_m = d;
+            max_at_et = et;
         }
         probe_n += 1;
     }
     eprintln!(
-        "{out}: {} B, sha256 {} — roundtrip verified on {probe_n} probes, max granule-vs-source delta {:.0} m",
+        "{out}: {} B, sha256 {} — roundtrip verified on {probe_n} probes, max granule-vs-source delta {:.0} m at JD {:.5}",
         bytes.len(),
         sha256_hex(&bytes),
-        max_delta_m
+        max_delta_m,
+        max_at_et / 86400.0 + J2000_EPOCH
     );
     eprintln!("CDN asset: {}", body_url(MARINER10_NAME));
     if ci_mode && !upload_release("ssd.jpl.nasa.gov-ephemeris", &out) {
