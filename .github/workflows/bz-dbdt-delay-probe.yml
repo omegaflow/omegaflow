@@ -20,9 +20,9 @@ jobs:
       matrix:
         include:
           - point: abk-2024
-            args: --station ABK --start 2024-01-01 --end 2024-12-31
+            args: --station ABK --start 2024-01-01 --end 2024-12-31 --max-lag-min 1440
           - point: sod-2024
-            args: --station SOD --start 2024-01-01 --end 2024-12-31
+            args: --station SOD --start 2024-01-01 --end 2024-12-31 --max-lag-min 1440
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
