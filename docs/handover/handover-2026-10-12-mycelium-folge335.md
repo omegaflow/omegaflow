@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — das Release refresht (tools-build 38296477468 success, PATH xfer kennt migrate/manifest, register_lookup --tokens 0 missing/0 noecho), das XFER-MISSING als stale-PATH belegt, Mountains verankerte Tokens gefaltet (8-Ziele gemessen-erledigt); Stehender Pass am HEAD
   class: handover
   date: 2026-10-12
-  sha256: 627842aca02377e64d714f4536a58b3f6a92e6dd9d801f2ccac8a25e01cff29c
+  sha256: 0897d9eabc0f5bff4161c8282fa10af8c8c76a30bf4442bd622291850ad60922
   status: live
 -->
 # Handover — Mycelium-Folge 335 (2026-10-12)
@@ -13,7 +13,7 @@ wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/zustand/standing-
 die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge334.md` (→ `archiv/`).
 
-## Burn: open 0.01 · close 0.05 · cap 0.40 — Grund: Mycelium-Folge 335 — still gemessen, kein eigener autonom arbeitbarer Punkt (beide warten auf das Release/`tools-build`), Stehender Pass am HEAD; deepseek-flash, kein pro/max (`session_burn`, line-Bucket).
+## Burn: open 0.01 · close 0.07 · cap 0.40 — Grund: Mycelium-Folge 335 — still gemessen, kein eigener autonom arbeitbarer Punkt (beide warten auf das Release/`tools-build`), Stehender Pass am HEAD; deepseek-flash, kein pro/max (`session_burn`, line-Bucket).
 
 ## Operator-Wort-Register
 
