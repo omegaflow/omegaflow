@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — M10-Ephemeriden-Vorzeichen-Flip geheilt (Compiler-Komposition r_SSB−r_M10 → r_M10−r_SSB), Orientierungs-Prüfung (cos gegen Mercury-SSB) ins Probe-Gate gebaut, SXSYSZ-Rahmen gegen die geheilte Ephemeride neu gemessen (UNIDENTIFIED bleibt; die CA-Zeit der S-Vektoren stimmt mit der datumsabgeleiteten CA überein)
   class: handover
   date: 2026-10-12
-  sha256: c3bd75411523a58fccc5d3e426f0a0cf38257e4a11185106b56cab7a044f1872
+  sha256: 945df72f9a084db25e7054101ef9673fcf2b5cd78b4574181ef470458ecd6330
   status: live
 -->
 # Handover — Mountain-Folge 328 (2026-10-12)
@@ -299,7 +299,9 @@ Origin: mountain-folge327 (2026-10-12). **Echo:** `handover-2026-10-12-mycelium-
 hat den vorigen Block gefaltet (registriert/geechoed: ASU-MVM `phi:31519`, SPDF-M4/6/7
 `phi:31526/31534`, DSC 0119 `phi:31590`, USGS-Mosaik `phi:31582`, JADES `phi:32391`, BK18, FMI-NUR,
 NIST) — nur die Sonke/Robinson-Tabellen bleiben dort offen. **Echo (mycelium-327 → mountain):**
-`xfer:mycelium327-1` und `xfer:mycelium327-2` sind im `## Offen` gefaltet ( `phi/sources.φ` derzeit gehalten — Nachträge stehen aus).
+`xfer:mycelium327-1` und `xfer:mycelium327-2` sind im `## Offen` gefaltet; `phi/sources.φ` ist inzwischen **frei** (git-status leer) — die Nachträge (`sha256` `phi:31582-31586` = `324c0e49…`) können jetzt gesetzt werden.
+
+- **M10-Attitude-Solve — zwei Quellen ins CDN (Harvest = Mycelium).** `xfer:mountain328-1` Die Merkur-Bild-Volumes liegen auf `mve_024…mve_033` (Volumes `mvm_0007`/`0008`/`0009`), browsable: `https://planetarydata.jpl.nasa.gov/img/data/mr10-m-iss-2-edr-pv0.x/mvm_0007/` (PDS-EDR `mr10-m-iss-2-edr-pv0.x`, JPL/planetarydata, US-PD). Die `ser.im-ldi.com`-Spiegel sind **unvollständig** (`mvm_0007`/`0008` = HTTP 404, `0009` = 200). `xfer:mountain328-2` Die MESSENGER-MDIS-Shape-Quellen: `https://astrogeology.usgs.gov/search/map/mercury-messenger-global-products` (USGS Astrogeology) — die Einzelseiten `…/mercury_messenger_mdis_global_mosaic_166m` und `…/mercury_messenger_mdis_dem_665m` sind HTTP 200; gebraucht werden **Basemap 166 m** + **DEM 665 m v2** als Shape-Model für den Attitude-Solve. Nach eurer `url`/`origin`-Zeile setze ich `terms`/`format` (Mountain).
 
 - **8-Ziele-Einkaufsliste (future-241) — nicht gefaltet, je `url`/`origin`/`compiler`-Zeile.** `xfer:mountain327-1` Die vier
   direkt downloadbaren sind **cc-by-4.0** und ohne Registerzeile (nur APOLLO `7818557` steht, `phi:32388`):
