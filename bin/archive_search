@@ -15,4 +15,5 @@ if [ ! -x "$bin" ]; then
     exit 2
 fi
 export OMEGAFLOW_REPO="$root"
+export OMEGAFLOW_SPILL_DIR="${OMEGAFLOW_SPILL_DIR:-$root/state/research/spill}"
 exec "$bin" "$@"
