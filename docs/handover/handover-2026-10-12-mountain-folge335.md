@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: 51fde8c83c6d910654bc9deea224e762e80800167e2b5feb778d19533ac1e08f
+  sha256: 01c38945fc6d11a0c0625046c62d1052c93883485b728eeb410c383acb2042d2
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -172,7 +172,7 @@ Punkt nennt seine Datei(en)/Pfade.**
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** der unabhängige Attitude-Solve aus den Bildern
 - **Lage:** (gemessen 2026-10-12/328) **Rahmen entschlüsselt:** `SX SY SZ` = `SC_TARGET_POSITION_VECTOR` (Sonde relativ zum Zielkörper Merkur, J2000, km), `C1` = `INSTRUMENT_RIGHT_ASCENSION`, `C2` = `INSTRUMENT_DECLINATION`, `C3` = `INSTRUMENT_TWIST`. NAIF trägt für M10 **kein CK/IK**. 811 Frames in **drei** Clustern: M1 450 · M2 333 · M3 28. **`ephemeris_mariner10.bin` (Sun-Ketten-Komposition) ist geheilt** (s. eigener Punkt). **`m10_attitude_check`** (Bin `tools/measure/src/bin/m10_attitude_check.rs`) über 450 M1-Frames: `|vec−S|` mean **502 / max 29 009 km**, angsep mean **1,53°**.
 - **Blockade:** (a) NAIF: kein CK/IK, kein SPK für M2/M3; (b) der echte Attitude-Solve braucht die Kamera + die Bildregistrierung.
-- **Braucht:** der echte Attitude-Solve ist **`wartend`**: (1) die MVM-Merkur-Bilder — Re-Dispatch `38277503423` queued; (2) der MDIS-Shape — Lauf `38275761488` pending; (3) die **ISIS-Kette** als CI-Container (`xfer:mountain329-4`). Trigger: CDN-Abschluss + ISIS-Container.
+- **Braucht:** der echte Attitude-Solve ist **`wartend`**: (1) die MVM-Merkur-Bilder — `38277503423` **cancelled** (gemessen 2026-10-12/13; Asset `mariner_m10_jpl_edr.bin` = **404**), Re-Dispatch **`38317715487`** läuft; (2) der MDIS-Shape — `38275761488` **failure** (Basemap 3,96 GiB > 2-GiB-GitHub-Limit → R2-Route, an Mycelium `~b2908226`); (3) die **ISIS-Kette** als CI-Container (`xfer:mountain329-4`). Trigger: CDN-Abschluss + ISIS-Container.
 
 ### zai-Export — Such-Kontext + nicht-registrierte Mariner-Funde (eigen)
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** der nächste Register-Pass
@@ -246,6 +246,16 @@ Origin: mountain-folge335 (2026-10-12).
   nehmen**; (b) **CfA-CO** („Galactic maps of H2, reconstructed from the CfA CO survey",
   Zenodo `10.5281/zenodo.5501196`, **cc-by-4.0**) als neue `url`/`origin`/`compiler`-Zeile — Mountain
   setzt dann `terms CC-BY-4.0`. `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.1~1ea1cb21`
+- **`raw_mirror`/`m10-mdis-raw-cdn`: Assets >2 GiB über die R2-Route.** Gemessen (2026-10-12):
+  `38275761488` `failure` — `Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.tif`
+  (**4 247 470 901 B = 3,96 GiB**) → `gh returned void: HTTP 422 Validation Failed` (das
+  **2-GiB-Limit** der GitHub-Release-Assets). Die `R2_*`-Env + `OMEGAFLOW_R2_MIRROR` sind im
+  Workflow gesetzt — der große Kanal muss über R2 (Cloudflare) laufen, nicht GitHub-Releases.
+  `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.2~b2908226`
+- **Stehender Pass: die workflow_dispatch-CDN-Läufe in die CI-Tafel.** Gemessen: der Pass
+  (20:33Z) trug „Keine roten Läufe", doch `38275761488` (`m10-mdis-raw-cdn`) = **failure** (18:26Z)
+  und `38277503423` (`m10-jpl-edr-cdn`) = **cancelled** (17:11Z, Asset 404) waren bereits rot —
+  die Tafel misst die dispatch-getriebenen CDN-Läufe nicht (Blicklücke). `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.3~00ba30f9`
 
 ## Operator-Wort-Register
 
