@@ -15,6 +15,9 @@ const NETLOC: &str = "service.earthscope.org";
 const INGV_ROUTE: &str = "https://webservices.ingv.it/fdsnws/dataselect/1/query";
 const INGV_STATION_ROUTE: &str = "https://webservices.ingv.it/fdsnws/station/1/query";
 const INGV_NETLOC: &str = "webservices.ingv.it";
+const GEOFON_ROUTE: &str = "https://geofon.gfz-potsdam.de/fdsnws/dataselect/1/query";
+const GEOFON_STATION_ROUTE: &str = "https://geofon.gfz-potsdam.de/fdsnws/station/1/query";
+const GEOFON_NETLOC: &str = "geofon.gfz-potsdam.de";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -643,6 +646,8 @@ fn main() {
     };
     let (route, station_route, netloc) = if route_arg == "ingv" {
         (INGV_ROUTE, INGV_STATION_ROUTE, INGV_NETLOC)
+    } else if route_arg == "geofon" {
+        (GEOFON_ROUTE, GEOFON_STATION_ROUTE, GEOFON_NETLOC)
     } else {
         (ROUTE, STATION_ROUTE, NETLOC)
     };
