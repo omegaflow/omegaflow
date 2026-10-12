@@ -1,9 +1,9 @@
 <!--
   title: Handover — River-Folge 196 (2026-10-12)
-  session: River-Linie in einem Pass — THEMIS-ASI kapu-PGM-Kopf gemessen (49.3922 / −82.3198 / 0.0 km) und die Skymap-URL-Form als kampagnen-basiert gemessen (kein offener Generator); CI-Läufe field-te-query 38215224525 (pending) und bz-dbdt-delay-probe 38215420000 (queued) weiter ausstehend
+  session: River-Linie in einem Pass — THEMIS-ASI kapu-PGM-Kopf gemessen (49.3922 / −82.3198 / 0.0 km), die Skymap-URL-Form als kampagnen-basiert gemessen, die Projektionskoeffizienten als konstant (1.5/0/0/0 über 4 Stationen/Epochen) und die Skymap-Bodenwahrheit extrahiert (neuer IDL-SAVE-v4-Parser, FULL_ELEVATION 256×256); CI-Läufe field-te-query 38215224525 (pending) und bz-dbdt-delay-probe 38215420000 (queued) weiter ausstehend
   class: handover
   date: 2026-10-12
-  sha256: 2457004231ee4a2cae707998e9a18be9345fbd3e318c9a70bbf323a8f96e50d3
+  sha256: 68636b7e5ea8c8bdb9d109fb975938bc5f1b9e86a5e6ef91ed67e0083dfe0e8d
   status: live
 -->
 # Handover — River-Folge 196 (2026-10-12)
@@ -16,7 +16,7 @@ eigenen Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit
 wird nie überschrieben; gepusht wird, sobald der eigene Commit steht und
 `origin/main` Vorfahr von HEAD ist (Fast-Forward).
 
-## Burn: open 0.0 · close 0.04 · cap 0.50 — Grund: River-Linien-Session 196 (deepseek-flash, kein pro/max); `session_burn`-DB wuchs parallel (nicht sauber isoliert). Gemessen: 1 `general`-Dispatch **$0.0402** (THEMIS-Projektionsform/Skymap). Dieses Atom: Fälligkeit gemessen (`register_lookup --fired river` = 1 — Vlies-Matrix-Alignment, Lauf noch `pending`; `--stale river --persist 3` = 0; `open_points_check` F195 = 0 absent / 0 stale-citations); `--addressed river` = 3 Blöcke bereits in F195 gefaltet. Gearbeitet: kapu-PGM-Kopf (lokal, `state/river/themis/`), Skymap-URL-Korrektur, CI-Läufe einmalig gelesen. Kein `smail --send`, kein Window-Edit.
+## Burn: open 0.0 · close 0.22 · cap 0.50 — Grund: River-196 (deepseek-flash, kein pro/max); 3 Dispatches gemessen (Projektionsform-Recherche $0.0402 · geschärfter Skymap-Pass $0.0637 · IDL-SAVE-Parser `grind-flash` $0.0400) + Linien-Session; `session_burn`-DB parallel (nicht sauber isoliert). Fälligkeit: `--fired river` = 1 (Vlies-Matrix-Alignment, Lauf noch `pending`), `--stale river --persist 3` = 0, `open_points_check` F195 = 0 absent / 0 stale-citations; `--addressed river` = 3 Blöcke in F195 gefaltet. Gearbeitet: kapu-PGM-Kopf + Koeffizienten-Variabilität (4 Stationen/Epochen, lokal), `.sav`-Extraktion (`tools/measure/src/bin/idl_sav_dump.rs`), CI-Läufe einmalig gelesen. Kein `smail --send`, kein Window-Edit.
 
 ## Operator-Wort-Register
 
@@ -74,12 +74,12 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 - **Blockade:** keine (Fix committet).
 - **Braucht:** `ci_manage log 38215224525` lesen; erwartet: `bt`/`speed` lösen, `alignment pending` fällt auf die absent-source-Reihen. Der distinct-URL-Throttle (SWE) bleibt tiefer in `src/archivar/fetch.rs` (Backoff auf 522-Stub), benannt.
 
-### Disjunkter optischer Onset-Zeuge (THEMIS-ASI) — Kamera-Modell gemessen; kapu-Kopf geschlossen
+### Disjunkter optischer Onset-Zeuge (THEMIS-ASI) — Kamera-Modell + Skymap-Projektion gemessen
 - **Status:** eigen (Messung/Bau) | **Bindung:** eigen
-- **Trigger:** der nächste Mess-/Bau-Schritt (Compiler-MIRACLE-Form).
-- **Lage:** (gemessen 2026-10-12, Artefakt `state/river/themis/calibration-2026-10-12.md`) Die Pixel→Sky-Abbildung ist **keine** Formel, sondern das per-Station-**UCalgary-Skymap** (`.sav`), gelesen von asilib/`pyUCalgarySRS`. Orientierung (am Code): roh row0=N, Spalte 0=Ost. **FOV-Riss: 160° (THEMIS-GBO-Team) vs 170° (NASA SPASE)** — getragen. **(river-196) kapu-PGM-Kopf gelesen** (`state/river/themis/20240510_0600_kapu_themis21_full.pgm`, 25 Frames 06:00:00–06:00:57 UTC): **kapu = 49.3922 / −82.3198 / 0.0 km**, Optical center `x0=392,y0=153`, aspect 0.5181, ccd 752×290. gill = 56.3539/−94.6557/0.0 (PGM-Kopf, autoritativ). (river-196) **Skymap-URL-Form korrigiert:** kampagnen- nicht tagesbasiert; kapu-Kampagnen `20230214/20230915/20240909/20250920`; exakte 200-URL `…/kapu/kapu_20240909/themis_skymap_kapu_20240909-+_v02.sav` (3 539 400 B, IDL-SAVE, sha `adc8208a…`). (river-192) kapu 2024-05-10: größter Framesprung **+16.3 @ 07:55:27.008Z**.
-- **Blockade:** (i) die a1..b4-Form unpubliziert; (iii) die echte meridionale Projektion braucht das Skymap.
-- **Braucht:** (a) `themis_asi_timed_keogram_compiler.rs:325` die MIRACLE-Form emittieren (`on earth <lat> <lon> <alt>` + `station <CODE>`, Datum aus dem PGM-Kopf) — Mycelium; (b) **erledigt** (kapu lat/lon/alt gemessen); (c) den FOV-Riss tragen oder über den Skymap auflösen; (d) den Skymap `.sav` als Projektionsquelle nutzen (kampagnen-basiert wählen).
+- **Trigger:** der nächste Mess-/Bau-Schritt (Compiler-MIRACLE-Form; meridionale Projektion über die extrahierte `FULL_ELEVATION`).
+- **Lage:** (gemessen 2026-10-12, Artefakt `state/river/themis/calibration-2026-10-12.md`) Die Pixel→Sky-Abbildung ist **keine** Formel, sondern das per-Station-**UCalgary-Skymap** (`.sav`). Orientierung (am Code): roh row0=N, Spalte 0=Ost. **FOV-Riss: 160° (THEMIS-GBO-Team) vs 170° (NASA SPASE)** — getragen. **(river-196) kapu-PGM-Kopf gelesen:** kapu = **49.3922 / −82.3198 / 0.0 km**, `x0=392,y0=153`, aspect 0.5181; atha/themis02 (2026-10-01) = 54.72 / 246.72 (0–360) / 676 m. **(river-196) Koeffizienten-Variabilität gemessen:** `a1/a3/b2/b4 = 1.5/0/0/0` **konstant** über 4 Stationen/Epochen (gill 2014+2024, kapu 2024, atha 2026); nur `Optical center` variiert (382/150, 392/153, 376/142). **(river-196) Skymap `.sav` extrahiert:** `state/river/themis/kapu_20240909_skymap.sav` (IDL-SAVE v4, sha `adc8208a…`) via neuem Parser `tools/measure/src/bin/idl_sav_dump.rs`; `FULL_ELEVATION`/`FULL_AZIMUTH` als 256×256 f32 gedumpt (`state/river/themis/kapu_20240909_full_{elevation,azimuth}.txt`), `SITE_MAP_*` verifiziert (49.392212 / 277.6803 / 0). Das Skymap trägt die Projektion selbst als Array: `OPTICAL_PROJECTION` (9×2 f64) `[0,165,0,-3.98,0,-0.002,0,0,0 | 1,0,…]`, `CCD_CENTER=[390.7,146.6]`, `OPTICAL_ORIENTATION=[10,-1,0]`, `IMG_FLIP=[1,0]`, `FULL_MAP_ALTITUDE=[90/110/150 km]`; Generator `CODE_USED = write_skymap_file.pro` (IDL, intern). Skymap-URL-Form kampagnen-basiert (kapu-Kampagne `20240909`). (river-192) kapu 2024-05-10: größter Framesprung **+16.3 @ 07:55:27.008Z**.
+- **Blockade:** keine (a1..b4 als konstant gemessen; die Skymap-Bodenwahrheit ist extrahiert).
+- **Braucht:** (a) `themis_asi_timed_keogram_compiler.rs:325` die MIRACLE-Form emittieren (`on earth <lat> <lon> <alt>` + `station <CODE>`, Datum aus dem PGM-Kopf) — Mycelium; (b) **erledigt** (kapu lat/lon/alt gemessen); (c) den FOV-Riss tragen oder über den Skymap auflösen; (d) **erledigt** (Skymap extrahiert) — die meridionale Projektion über `FULL_ELEVATION` in den Keogramm-Pfad einhängen (River).
 
 ### Netz-End-Validator — GIC↔Onset-Bin; MCON manifestiert, Register-Drift gelöst
 - **Status:** wartend | **Bindung:** eigen (Bau)
