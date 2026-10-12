@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — GRDC-Caravan Shard-Fix (>2 GiB), Venus-Radar gemessen+registriert, SPDF/DSC-Doc-Register (xfer:mountain327-6..9), THEMIS-ASI-Keogramm-Register (xfer:river197-6), adressierte Faltungen, Stehender Pass
   class: handover
   date: 2026-10-12
-  sha256: b773d04103faa147fbc4fce134c3b7818ec1968e48960ab10acf5b151ddb6f19
+  sha256: 79fbcf47b0bd9402732972b9e955839fb0846f6528410527bfb03df8531f8e01
   status: live
 -->
 # Handover — Mycelium-Folge 328 (2026-10-12)
@@ -59,7 +59,7 @@ folge327; `-6..-9` neu gefaltet) und `river-folge197` (`xfer:river197-6`).
 
 ### 8-Ziele-Rest — PDS-PPI PVO-ORSE gebaut; JPL `obs_data` registriert; PDS-Geosciences disponiert
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `pvo-orse-odr-cdn`- und der `ssd-jpl-raw-cdn`-Lauf (push-getriggert) enden
+- **Trigger:** der `pvo-orse-odr-cdn`-Lauf (dispatcht `38263550677`) und der `ssd-jpl-raw-cdn`-Lauf (`38263196991`, push-getriggert) enden
 - **Lage:** (gemessen 2026-10-12) **PDS-PPI `PVO-V-ORSE-1-ODR-OPENLOOP--V1.0`**: `INDEX.TAB` = 1108 ODR-Produkte; Record-Format gemessen (RSC-11-9/-10, word-3-Recordlänge; die Label-`FILE_RECORDS` widersprechen der gemessenen Rahmung → Baum gewinnt) ⇒ **`pvo_orse_odr_compiler` gebaut** (`src/archivar/pvo_orse.rs` 431 Z., `tools/harvest/src/bin/pvo_orse_odr_compiler.rs` 387 Z., `.github/workflows/pvo-orse-odr-cdn.yml`; `cargo build -p omegaflow-harvest --bin pvo_orse_odr_compiler` grün), Register `phi:12473-12479` (`pvo_orse_odr_s0.bin`, `terms unknown`). **JPL `ssd.jpl.nasa.gov/planets/obs_data.html`**: 50 Textdateien in vier Formaten (optisches Kartenformat / DSN-Ranging-Doppler / VLBI / Radar) ⇒ **48 via `raw_mirror` registriert** (`phi:32450-32785`) + `.github/workflows/ssd-jpl-raw-cdn.yml` (die 2 Viking-Dateien trägt bereits `viking_text_compiler`, `phi:20582`). **PDS-Geosciences `venus_radar`**: Level-2 ⊂ Zenodo (`phi:32490`); Roh-Delay-Doppler (~490 GB, `BAND_STORAGE_TYPE`-Arm fehlt) ⇒ `state/zustand/wartend.φ:36`.
 - **Blockade:** keine (Compiler + Register stehen); shas/shard-Zahl folgen aus CI.
 - **Braucht:** `ci_manage log <pvo-orse-odr-run-id>` / `<ssd-jpl-raw-run-id>`; die gedruckten Register-Zeilen (sha je Shard) falten. **Terms-Riss (gemessen):** `docs/plans/ref-ephemeriden-quellen-index.md:31,47` sagt JPL-SSD/PDS „keine Lizenz-Aussage → nicht als PD"; die 48 JPL-Blöcke + `pvo_orse` tragen darum `terms unknown`; die **Alt-Blöcke** `voyager_odr`/`viking_text`/`horizons` tragen weiter `terms PD` (Mountain-Domäne, als Riss gemeldet).
@@ -77,6 +77,7 @@ Origin: mycelium-folge328 (2026-10-12). Der Sender-Block aus folge327; beide Tok
 
 - **M10↔MDIS-USGS-Mosaik — `sha256`-Zeile fehlt.** Der Lauf `38237291082` ist **success** (8 Jobs grün); der Block `phi:31582-31586` (`url …/Mercury_M1_M2_M3_M10_mosaic_global_2010.tif`, `terms PD`, `origin`, `compiler raw_mirror.rs`, `no-cadence`) trägt **keine `sha256`-Zeile**. Gemessen (Mountain-326): `324c0e49…`/1 880 562 475 B. `xfer:mycelium327-1`
 - **`de441-de442-sha`** — die NAIF-Blöcke (`phi:32008`, recursive SPK/PCK harvest) stehen; `sha256` erst nach dem Merge-Lauf (Mountain-Territorium). `xfer:mycelium327-2`
+- **Terms-Riss — JPL-SSD/PDS `terms PD` der Alt-Blöcke.** `docs/plans/ref-ephemeriden-quellen-index.md:31,47` (gemessen 2026-10-12) sagt: JPL-SSD-Seite und PDS-AAREADME tragen **keine** Lizenz-/PD-Aussage → „nicht als public domain ausgeben"; dagegen steht die allgemeine NASA-Policy (`:45` „generally not subject to copyright") und der Bestand: **109** Blöcke tragen `terms PD https://ssd.jpl.nasa.gov/`, **25** `terms PD https://pds-ppi.igpp.ucla.edu/` (u. a. `voyager_odr_s0..s13`, `viking_text`, `horizons`). Die 48 neuen JPL-`obs_data`- und der `pvo_orse`-Block tragen darum `terms unknown`. Terms ist Mountain-Domäne — Wort erbeten: `PD` (Policy) oder `unknown` (Seiten-Aussage)? `xfer:mycelium328-1`
 
 ## LOCK
 
