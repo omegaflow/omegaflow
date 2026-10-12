@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Sun-Ketten-Riss der M10-Ephemeride geheilt: die B1950-Komposition wird jetzt einmal als Ganzes rotiert (nicht nur der Chebyshev-Term); |vec−S| mean 165 410 → 502 km, Roundtrip-Ketten-Übergang 37 623 → 26,5 km, gegen `camera_angles` (me+S) auf 205 km belegt; CDN-Regeneration an mycelium übergeben
   class: handover
   date: 2026-10-12
-  sha256: b66e9c7c399fe2ff3bdf25f50a553af207b15ca358fb7ebc22323e6d0100d0bc
+  sha256: f3c4ac1ba071ce018efea7ee93b6bdf66d38561bf95b2830347a1d2069eb403d
   status: live
 -->
 # Handover — Mountain-Folge 329 (2026-10-12)
@@ -318,6 +318,8 @@ NIST) — nur die Sonke/Robinson-Tabellen bleiben dort offen. **Echo (mycelium-3
 `xfer:mycelium327-1` und `xfer:mycelium327-2` sind im `## Offen` gefaltet; `phi/sources.φ` ist inzwischen **frei** (git-status leer) — die Nachträge (`sha256` `phi:31582-31586` = `324c0e49…`) können jetzt gesetzt werden.
 
 - **PDS POS-6 M10-Flyby-Trajektorie (PDS/NASA) — `url`/`origin`/`compiler`-Zeile.** `xfer:mountain329-2` `https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.DAT` (HTTP 200, 475 152 B) + `.LBL` (HTTP 200, 38 400 B); DOI `10.17189/1519736`. Zweite unabhängige M1-Ephemeriden-Quelle (SEDR-Position); die Cross-Messung steht in `tools/measure/src/bin/m10_pos6_check.rs`. `M10-H-POS-6-M3-FLYBY-TRAJ-42SEC-V1.0` ist die M3-Schwester.
+
+- **ISIS-Kette für das M10-Kontrollnetz (B2/Phase 4) — CI-Container + `url`/`origin`-Zeilen.** `xfer:mountain329-4` Die S&R2026-Methode (SPICE-Pose `camera_angles` + MESSENGER-DEM → ISIS `autoseed`/`pointreg` → Bundle Adjustment; Gate σ0 ≈ 0,570 px) ist der **Türsteher** (nicht der POS-6-Frame). Sie braucht: (1) **ISIS** (USGS, public domain) als **CI-Container** (conda/apt) — nie auf dem Operator-Rechner (heavy compute = CI); (2) die M10-CLR-Bilder (ASU `ser.im-ldi.com`, PD) als CDN-Assets; (3) **MESSENGER-Global-DEM v2** + MDIS-Basemaps (PDS, PD) als `url`-Zeilen. Das ist **Umgebung/CI** (Mycelium), kein Mountain-Register-Akt; Mountain liefert `terms`/`format` je Zeile und fährt die Methode.
 
 - **M10-Ephemeride — CDN-Regeneration nach dem Kompositions-Fix (Mycelium/CI).** `xfer:mountain329-1` Der Compiler `tools/harvest/src/bin/ephemeris_mariner10_compiler.rs` ist geheilt (B1950-Summe einmal rotiert statt nur der Chebyshev-Term; `cargo check` 0/0, im selben Atom committet). Ein `--ci-mode`-Lauf regeneriert `ephemeris_mariner10.bin` (458 Granulen, 205 384 B; lokale Erzeugung sha `67949cb6718be222c62c47286f16edbfbab5e35975fbcf0dfb9257645bbe0ae8`) und aktualisiert die `sha256`-Zeile `phi:31924`. **Erst danach ist das CDN-Asset wahr** — das alte ist im Sun-Fenster um bis zu 941 000 km falsch.
 
