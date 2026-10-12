@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — M10-Ephemeriden-Vorzeichen-Flip geheilt (Compiler-Komposition r_SSB−r_M10 → r_M10−r_SSB), Orientierungs-Prüfung (cos gegen Mercury-SSB) ins Probe-Gate gebaut, SXSYSZ-Rahmen gegen die geheilte Ephemeride neu gemessen (UNIDENTIFIED bleibt; die CA-Zeit der S-Vektoren stimmt mit der datumsabgeleiteten CA überein)
   class: handover
   date: 2026-10-12
-  sha256: 945df72f9a084db25e7054101ef9673fcf2b5cd78b4574181ef470458ecd6330
+  sha256: 695e56497a683fe85fcd5599578d1d8dbc98df071f5b67d374226cb283a5fd75
   status: live
 -->
 # Handover — Mountain-Folge 328 (2026-10-12)
@@ -258,8 +258,9 @@ unten gefaltet). `open_points_check` = 1 `ABSENT` (`…/mariner/RESULT.md`, Mark
 - **Lage:** (gemessen 2026-10-12/327; neuer Bin `tools/measure/src/bin/m10_camera_angles_geometry.rs`, gelaufen) 811 Frames in **drei** Clustern (JD-Lücke 175,9 d vs. Median 0,000486 d, Ratio 361 760×): **M1 450** Frames (JD 2442135.305–2442137.606, FDS 50–27475) · **M2 333** (JD 2442312.241–2442312.514) · **M3 28** (JD 2442488.370–2442488.915). `|S|` (SX SY SZ) = 11 183 … 1 123 524 km; `|S|`-Minimum: M1 11 183 km @ FDS 00000050 · M2 50 511 km @ FDS 00166745 · M3 12 139 km @ FDS 00528922.
   **Rahmen-Neumessung (2026-10-12/328, nach dem Vorzeichen-Fix, Bin `m10_camera_angles_frame --m10-eph <geheilt>`):** **`FRAME: UNIDENTIFIED`** — bester Kandidat `a sc-me` RMS **848 736,9 km** (830,8 % von mean |S|), kein Kandidat unter 50 km. **Aber:** das `|S|`-Minimum M1 = **11 183 km @ JD 2442136,3778** (FDS 00000050) **deckt sich mit der datumsabgeleiteten M1-CA (1974-03-29 20:47 UT = JD 2442136,366)**; die aufgaben-gestellte Referenz JD 2442137,370 trägt einen **1,004-d-Slip**. **Riss (nicht geglättet):** `m10_camera_angles_frame --m10-eph <fine>` gibt weiter `a sc-me` RMS **371 380 km** über die 450 M1-Frames — die Datei-`S` ist **zielkörper-relativ** (jetzt belegt), unsere `me` = DE440-Merkur; die eigene `sc` deckt nur M1 (JD 2442128–2442141). **Vermessung der geheilten M10 gegen DE440-Merkur:** min |sc−me| = **3 331,9 km @ JD 2442136,3660**.
   **Korrektur meiner früheren Behauptung:** das Verdikt „zielzentriert hält |S| konstant" war **falsch** — |S| = Range variiert über einen Encounter naturgemäß um ~100×.
-- **Blockade:** der `SX SY SZ`-Rahmen ist über die Ephemeriden-Route **nicht** bestimmbar (kein Kandidat unter 50 km); die Quelle-`url`-Zeile (Mycelium) fehlt.
-- **Braucht:** den `SX SY SZ`-Rahmen unabhängig klären (ISIS gegen MESSENGER-SPICE, future-244) — oder direkt gegen JPL Horizons (`-76`, Zentrum Merkur) kalibrieren; die `camera_angles`-`format`/`terms` (Mycelium).
+- **Validierung (gemessen 2026-10-12/328):** am **FDS 50** (JD 2442136,3778) gibt die geheilte Ephemeride `|sc−me| = 11 103,3 km` vs. Datei-`|S| = 11 183,1 km` (≈ 80 km) → `SX SY SZ` = `r_M10 − r_Merkur` hält auch in unserem eigenen Bin. **Aber:** die Boresight ist **nicht** planetenzentriert — `angsep(`M10→Merkur`, C1C2)` = **≈ 7,5°** @ FDS 50, **≈ 51°** @ FDS 62 → `C1C2C3` ist ein echtes Scan-Platform-Pointing, **kein** Einzeiler aus dem SPK.
+- **Blockade:** (a) der `cargo`-Build ist **fremd blockiert** — eine Parallel-Session hält uncommittete Kern-Edits (`src/archivar/types.rs` `FieldConfig` `force`→`channel_ref`; Konsumenten nicht migriert), `cargo build` bricht mit `unresolved field force`; der Solver-Bin `tools/measure/src/bin/m10_attitude_check.rs` (geschrieben, `|vec−S|` + RA/Dec-vs-C1C2 je Frame) ist daher **nicht gebaut**. (b) NAIF: kein CK/IK, kein SPK für M2/M3.
+- **Braucht:** (1) die fremde Kern-Migration committen lassen, dann `cargo build -p omegaflow-measure --bin m10_attitude_check` + laufen lassen; (2) den echten Attitude-Solve (ISIS/nativ) sobald Mycelium die MVM-Bilder + MDIS hat (`xfer:mountain328-1/-2`); (3) `camera_angles`-`format`/`terms` (Mycelium).
 
 ### zai-Export — Such-Kontext + nicht-registrierte Mariner-Funde (eigen)
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** der nächste Register-Pass
