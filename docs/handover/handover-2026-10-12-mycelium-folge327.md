@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (INPOP/NOE4-Fix, adressierte Faltungen, Stehender Pass)
   class: handover
   date: 2026-10-12
-  sha256: f441fd7b4d6e139c514e30ae6c6fba66ce16b76eea874625461a80e6065cf50f
+  sha256: a4d6c9c66cb0d5718ba609d84a3771a359896aa4fe91b32921566bce10bc8228
   status: live
 -->
 # Handover — Mycelium-Folge 327 (2026-10-12)
@@ -15,7 +15,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 **mit Token** (die folge326-Faltung war unvollständig: `xfer:mountain327-1`- und
 `-2`-Einträge fehlten im Live-Handover).
 
-## Burn: open 0.00 · close 0.13 — opencode.db Session-Cost 0.1267 (Live-Flush, läuft nach); Mycelium-Folge 327 in einem Atom (INPOP/NOE4-Fix + BC430-Register/Mirror + adressierte Faltungen + Stehender Pass), deepseek-flash, kein pro/max.
+## Burn: open 0.00 · close 0.20 · cap 0.30 — Grund: Mycelium-Folge 327 in einem Atom (opencode.db Session-Cost 0.1964, Live-Flush): INPOP/NOE4-Fix + BC430-Register/Mirror + Taucher-Staffel (5 Punkte parallel) + adressierte Faltungen + Stehender Pass; deepseek-flash, kein pro/max.
 
 ## Operator-Wort-Register
 
@@ -83,53 +83,36 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 
 ### 8-Ziele-Einkaufsliste — BC430 registriert + Mirror dispatcht; P10/P11/Venus offen `xfer:mountain327-1`
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `zenodo-raw-cdn`-Lauf (BC430) endet; die Zenodo-`content`-Endpunkte für Pioneer 10/11 antworten wieder
+- **Trigger:** die Zenodo-`content`-**GETs** für P10/P11/Venus liefern wieder Körper statt `504 Gateway Time-out`
 - **Lage:** (gemessen 2026-10-12) **BC430** Zenodo `3558850`: sha256 `0b2da752…` über 59 541 013 B (via
   `curl -sSL` + `sha256sum`) → **registriert** (`phi:32389-32394`, kanonische Position nach `zcta_gazetteer`,
   vor `jades_early_galaxies`) + Workflow `.github/workflows/zenodo-raw-cdn.yml` (Matrix, `raw_mirror`,
-  `# harvest: format=raw_zenodo`), Lauf durch den Push getriggert. **Pioneer 10** `13309156` / **11**
-  `13309040`: der `…/api/records/<id>/files/<name>/content`-Endpunkt antwortet **504 Gateway Time-out**
-  (gemessen via `curl`) → sha nicht messbar → nicht registrierbar. **Venus-Radar** `18176179`:
-  `Venus_RadarBasemap_2025_Global_75m_v1.tif` 80 909 342 816 B — schwerer Mirror, eigener Schritt.
-  Nicht-cc-by (PDS-Geosciences Venus-Radar, PDS-PPI `PVO-V-ORSE-1-ODR-OPENLOOP--V1.0`, JPL Spacecraft-VLBI):
-  `terms` unbestimmt → Mountain.
-- **Blockade:** P10/P11 an der Zenodo-Verfügbarkeit; Venus an der Dateigröße. Register-Ordnung: ein
-  `register_sort --write` würde 175 fremde (inpop-)Zeilen sweepen → der BC430-Block wurde manuell an
-  kanonischer `(ttl,url)`-Position gesetzt und per Sort-Dry-Run auf Relokationsfreiheit verifiziert.
-- **Braucht:** `ci_manage log <zenodo-raw-cdn-run-id>` (BC430-Mirror); für P10/P11
-  `curl -sSL --max-time 900 -o /tmp/opencode/<name> '<content-url>' && sha256sum /tmp/opencode/<name>`
-  sobald Zenodo antwortet, dann je Block + Matrix-Zeile; Venus-Mirror als eigener Schritt.
+  `# harvest: format=raw_zenodo`), Lauf `38244619269`. **Pioneer 10** `13309156` / **11** `13309040`:
+  GET des `…/api/records/<id>/files/<name>/content` → **`504 Gateway Time-out`** (92-B-Body), auch mit
+  `curl --http2` und Retry. **Venus-Radar** `18176179`: `Processed.zip` (409 371 501 B) HEAD = 200,
+  GET → **504**; `.tif` 80 909 342 816 B (nicht machbar).
+  **Riss/gemessen:** HTTP/1.1 → 504, `curl --http2` → 200 gilt für HEAD/kleine Körper, **nicht** für die
+  großen GETs — der 504 ist Gateway-Timeout, nicht HTTP-Version (BC430/59 MB ging durch); Rate-Limit sichtbar
+  (`x-ratelimit-limit: 133`, `retry-after: 25`).
+- **Blockade:** Zenodo-Gateway für GET-Körper ≳ 60 MB. Register-Ordnung: ein `register_sort --write` würde
+  175 fremde (inpop-)Zeilen sweepen → der BC430-Block wurde manuell an kanonischer `(ttl,url)`-Position gesetzt
+  und per Sort-Dry-Run auf Relokationsfreiheit verifiziert.
+- **Braucht:** `ci_manage log 38244619269` (BC430-Mirror); für P10/P11/Venus
+  `curl -sSL --http2 --retry 3 --retry-all-errors --max-time 900 -o /tmp/opencode/<name> '<content-url>' && sha256sum /tmp/opencode/<name>`
+  sobald der Gateway-Timeout weicht, dann je Block + Matrix-Zeile. Nicht-cc-by (PDS/JPL) `terms` → Mountain.
 
-### Orphan-Doc-Träger — `xfer:mountain327-2`
+### Orphan-Doc-Träger — fmhy-Survey; `--searxng`-Arm gebaut `xfer:mountain327-2`
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der nächste `--orphan-docs`-Pass
-- **Lage:** (gemessen 2026-10-12) `register_lookup --orphan-docs` = **0**; Träger dieser Zeile ist
+- **Lage:** (gemessen 2026-10-12) Träger dieser Zeile ist
   `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md` (2 offene Marker; see-also
-  `docs/concepts/ui-seats.md`, `docs/SOURCE_PORT.md`). Die Survey misst Seats/Suchwege; ihr Fazit ist
-  „kein neuer Science-Daten-Arm" (Chatbot-UIs + Agent-APIs; `archive_search` deckt breiter ab).
+  `docs/concepts/ui-seats.md`, `docs/SOURCE_PORT.md`). **Punkt 2 (SearXNG) gebaut:** der `--searxng`-Arm ist
+  vollständig und honoriert jetzt `$OMEGAFLOW_SEARXNG` (Commit `78a4a8057`, `cargo build -p omegaflow-utils
+  --bin archive_search` grün); Fallback bleiben die JSON-fähigen Instanzen (`searx.be` liefert HTML → nicht
+  als Fallback).
 - **Blockade:** keine.
-- **Braucht:** die zwei offenen Marker der Survey gegen den Baum messen (Seat-Kandidaten → `ui-seats.md`,
-  Architektur → `SOURCE_PORT.md`) und schließen oder als eigenen Schritt führen.
-
-### Fetch-Provenienz — Sidecar `<datei>.src` beim Fetch
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der nächste `archive_search`-Pass
-- **Lage:** (gemessen 2026-10-12/327) die Taucher schreiben die Quell-URL nicht beim Fetch mit; Ableitung
-  nur via `opencode.db` (`state/research/README.md` §Provenienz, 76 Dateien belegt).
-- **Blockade:** keine.
-- **Braucht:** `archive_search` (Sink-Pfad) schreibt je heruntergeladener Datei ein Sidecar `<datei>.src`
-  mit der Quell-URL; `cargo check` + ein Unit-Test.
-
-### dropped-gate-move-disposition — Punkt-ID/Hash-Baseline offen
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Baseline-Vergleich (`278ba2905`)
-- **Lage:** (gemessen 2026-10-12) lokal `register_lookup --dropped --count` = **8** (unter der
-  Baseline `docs/zustand/dropped-baseline.md` = 1300 → kein Gate-Trip); `--dropped-roster --count` = **52**;
-  `--dropped-keys --count` läuft lokal in den Timeout (historie-schwer; die Gate-Zahl ist CI-only).
-  Herkunft: `state/zustand/wartend-archiv-2026-10-11-r3.φ:25` (924 keys, `278ba2905`).
-- **Blockade:** die lokale und die CI-Menge messen Verschiedenes (historisch belegt).
-- **Braucht:** die 8 unaufgelösten `--dropped`-Punkte gegen den Baum prüfen (legitimer Archiv-Move →
-  Baseline-Bump im annehmenden Commit, sonst echter Punkt).
+- **Braucht:** die restlichen Marker (Punkt 3 AI2-Seat-Gretchenfrage, Punkt 1 Jina-`tools-latest`-Bestätigung)
+  gegen den Baum messen bzw. entscheiden; dann ist der Träger zu.
 
 ### ui-seats — offene `pending`-Seats
 - **Status:** wartend | **Bindung:** eigen
