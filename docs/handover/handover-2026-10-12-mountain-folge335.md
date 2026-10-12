@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: b6fff3daa5532167b0d90633dec5a64f74e8d7a299bf539611ba30a3af8e1ebd
+  sha256: 82eeadfa1f64b028d1e3a863540312cef73d1744b9338c15ae88bf4a82ed2125
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -212,7 +212,7 @@ Aus dem adressierten Block future-244/247 — je Eintrag ein Token (Echo = im Li
 - `xfer:future-244-4` (M10-Kamera-Vergleich: camera_angles 206; nur Roh-Tracking fehlt) — gefaltet in „M10-Pose mit ISIS".
 - `xfer:future-244-5` (M10-Roh-Tracking offline; SEDR/PSPA offline) — gefaltet in „M10-Bildpfad"-Blockade.
 - `xfer:future-244-6` (PETREL19 bereits im Register — vom Sender gestrichen, kein Träger nötig).
-- `xfer:future-247-1` (AFAD entfernen) — **erledigt**: Block `phi/sources.φ:232-242` entfernt, Disposition `decline superseded https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?...` gesetzt. **Riss (getragen):** die Future-Begründung „403 auf allen drei Stufen" ist **widerlegt** — `archive_search --verdict` (2026-10-12) = **Stufe 1 HTTP 200**; die Entfernung trägt allein die Redundanz (seismicportal `phi:232`/USGS) + `terms unknown` (=Operator-Wort).
+- `xfer:future-247-1` (AFAD entfernen) — **erledigt**: Block `phi/sources.φ:232-242` entfernt, Disposition `decline commercial https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?...` gesetzt. **Operator-Wort (2026-10-12):** AFAD ist ein **Lizenzthema** — die Future-Begründung „geoblockt" ist nachrangig, `archive_search --verdict` (2026-10-12) maß Stufe 1 = **HTTP 200** (nicht 403).
 - `xfer:future-247-2` (CMA entfernen) — **erledigt**: Block `phi/sources.φ:467-477` entfernt, Disposition `decline commercial https://weather.cma.cn/api/now/54511`; gemessen: Stufe 1/2 HTTP 403, Wayback 200 (alte Kopie), Fußzeile „alle Rechte vorbehalten"; Open-Meteo (`phi:276`, CC-BY-4.0) trägt die Felder.
 - `xfer:future-247-3` (Lizenz-Zensus) — **gefaltet** in den Offen-Punkt „Lizenz-Zensus".
 
@@ -241,6 +241,7 @@ Origin: mountain-folge335 (2026-10-12).
 - **„du kannst dich auch gleich mal darum kümmern deine arbeit richtig zu machen und nichts zu behaupten was der messung nicht standhält"** | 2026-10-12 | Operator-Session (mountain 327).
 - **„gehören pdfs in data?"** | 2026-10-12 | Operator-Session (mountain 327) — nein; PDFs in `state/research/`, Datensätze in `data/`.
 - **„AFAD-Erdbeben (servisnet.afad.gov.tr) — geoblockt + redundant: entfernen"** · **„CMA-Wetter (weather.cma.cn) — alle Rechte vorbehalten: entfernen/ersetzen"** | 2026-10-12 | Operator-Session (future-247, gefaltet) — beide Blöcke in diesem Atom entfernt.
+- **„afad war ein lizenzthema"** | 2026-10-12 | Operator-Session (mountain 335) — AFAD-Disposition auf `decline commercial` korrigiert; die Future-Begründung „geoblockt" ist nachrangig.
 
 ## Abschluss
 
@@ -248,10 +249,10 @@ Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt auto
 2026-10-07) trägt Commit und Push. In diesem Atom (folge335) committet (pfad-begrenzt):
 `phi/sources.φ` (AFAD-Block 232-242 + CMA-Block 467-477 entfernt; zwei `decline`-Zeilen),
 `docs/handover/handover-2026-10-12-mountain-folge335.md`,
-`docs/handover/archiv/handover-2026-10-12-mountain-folge334.md`. **Riss (getragen):** die
-Future-Begründung für AFAD („403 auf allen drei Stufen") ist durch `archive_search --verdict`
-widerlegt (Stufe 1 = 200) — der Block wurde allein auf das Operator-Wort (Redundanz +
-`terms unknown`) entfernt. **Warnung an die nächste Session:** der Arbeitsbaum ist von
+`docs/handover/archiv/handover-2026-10-12-mountain-folge334.md`. **Operator-Wort (2026-10-12):**
+AFAD war ein **Lizenzthema** (Disposition `decline commercial`); die Future-Begründung „geoblockt"
+ist nachrangig — `archive_search --verdict` maß Stufe 1 = HTTP 200. Der Block wurde auf das
+Operator-Wort entfernt. **Warnung an die nächste Session:** der Arbeitsbaum ist von
 parallelen Linien gehalten (River/Mycelium committen `phi`/`src/*` laufend); vor jedem Commit
 das eigene Pfad-Set messen. **Transport:** das PATH-`xfer` trägt kein `migrate`; die
 future-247-Einträge sind per Token in diesem Handover gefaltet.
