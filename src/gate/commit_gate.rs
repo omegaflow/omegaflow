@@ -4,6 +4,7 @@ use std::io::Write;
 use std::sync::OnceLock;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use crate::archivar::parse::DeclineReason;
 use crate::archivar::units::{allowed_units_for_force, normalize_unit};
 use crate::force::force_id_of;
 use crate::json::{JsonVal, jstr, parse_json};
@@ -2299,6 +2300,21 @@ pub fn prose_violation(line: &str) -> Option<&'static str> {
 pub fn prose_violation_for(path: &str, line: &str) -> Option<&'static str> {
     if path == "phi/sources.φ" && (line == "note" || line.starts_with("note ")) {
         return Some("phi-sources-note");
+    }
+    if path == "phi/sources.φ" {
+        let trimmed = line.trim();
+        if trimmed == "decline" || trimmed.starts_with("decline ") {
+            let mut parts = trimmed.split_whitespace();
+            parts.next();
+            let valid = matches!(
+                (parts.next(), parts.next()),
+                (Some(token), Some(url))
+                    if DeclineReason::parse(token).is_some() && !url.is_empty()
+            );
+            if !valid {
+                return Some("phi-sources-decline-token");
+            }
+        }
     }
     prose_violation(line)
 }
@@ -4848,6 +4864,22 @@ mod tests {
         assert_eq!(
             prose_violation_for("phi/sources.φ", &fx("phi_sources_note")),
             Some("phi-sources-note")
+        );
+    }
+
+    #[test]
+    fn fp_sources_decline_token_closed_set() {
+        assert_eq!(
+            prose_violation_for("phi/sources.φ", &fx("phi_sources_decline_valid")),
+            None
+        );
+        assert_eq!(
+            prose_violation_for("phi/sources.φ", &fx("phi_sources_decline_bad_token")),
+            Some("phi-sources-decline-token")
+        );
+        assert_eq!(
+            prose_violation_for("phi/sources.φ", "decline commercial"),
+            Some("phi-sources-decline-token")
         );
     }
 
