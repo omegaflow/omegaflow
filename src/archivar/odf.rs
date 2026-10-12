@@ -174,9 +174,11 @@ pub fn parse_podf_bin(data: &[u8]) -> Option<Vec<[f64; 9]>> {
 pub const PODF_BANDS_MAGIC: [u8; 4] = *b"BND1";
 pub const ODF_BAND_NONE: i64 = 0;
 
+pub type PodfBands = (Vec<[f64; 9]>, Vec<Option<i64>>);
+
 fn band_trailer_valid(data: &[u8], records_end: usize, count: usize) -> bool {
     data.len() == records_end + 8 + count * 8
-        && &data[records_end..records_end + 4] == &PODF_BANDS_MAGIC
+        && data[records_end..records_end + 4] == PODF_BANDS_MAGIC
         && u32::from_le_bytes(
             data[records_end + 4..records_end + 8]
                 .try_into()
@@ -210,7 +212,7 @@ pub fn write_podf_bin_bands(records: &[[f64; 9]], uplink_bands: &[Option<i64>]) 
     out
 }
 
-pub fn parse_podf_bin_bands(data: &[u8]) -> Option<(Vec<[f64; 9]>, Vec<Option<i64>>)> {
+pub fn parse_podf_bin_bands(data: &[u8]) -> Option<PodfBands> {
     let rows = parse_podf_bin(data)?;
     let n = rows.len();
     let mut bands = vec![None; n];
@@ -2216,10 +2218,7 @@ fn tnf_row_uplink_band(format_code: u8, band: f64) -> Option<i64> {
     }
 }
 
-pub fn tnf_rows_bands(
-    bytes: &[u8],
-    lsk: &crate::archivar::lsk::LeapSeconds,
-) -> Option<(Vec<[f64; 9]>, Vec<Option<i64>>)> {
+pub fn tnf_rows_bands(bytes: &[u8], lsk: &crate::archivar::lsk::LeapSeconds) -> Option<PodfBands> {
     let frames = scan_tnf_sfdus(bytes)?;
     let mut out = Vec::with_capacity(frames.len());
     let mut bands = Vec::with_capacity(frames.len());
