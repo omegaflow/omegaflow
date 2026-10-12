@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — die drei gefeuerten CDN-Läufe gemessen und gefixt (m10-jpl-edr URL-Join-Bug, pvo-orse INDEX-Parse an UNK-START_TIME, ssd-jpl 1000-Asset-Cap → Familien-Tag), adressierte mountain329-Entwürfe gefaltet, Stehender Pass
   class: handover
   date: 2026-10-12
-  sha256: 71ec7b26db583b1b3308177a411c1112399b6d4a91ca0f62a885ddcdf8e4dd0c
+  sha256: 03c0efb8b87d4d94bed611fbfb79be6edb0e6a7e4a70ed876ca64cc07ae7e2ec
   status: live
 -->
 # Handover — Mycelium-Folge 329 (2026-10-12)
@@ -35,6 +35,9 @@ die Session schreibt ihn als Schlussakt am neuen HEAD neu). Diese Session konsum
 - `xfer:mountain329-4` ISIS-Kette für das M10-Kontrollnetz (B2/Phase 4): die S&R2026-Methode (SPICE-Pose + MESSENGER-DEM → ISIS `autoseed`/`pointreg` → Bundle Adjustment, Gate σ0 ≈ 0,570 px) ist der Türsteher, nicht der POS-6-Frame. Braucht ISIS als CI-Container (conda/apt), M10-CLR-Bilder (ASU, PD) als CDN-Assets, MESSENGER-Global-DEM v2 + MDIS-Basemaps als `url`-Zeilen → offener Punkt unten.
 - Echo `xfer:mountain328-1/-2` (MVM-Merkur-Bilder + MDIS-Shape): bereits registriert + dispatcht (folge328); Mountain hat Terms `PD` gesetzt (`2b1b02d4c`).
 
+**`river-folge199` (`--addressed mycelium`):**
+- `xfer:river197-6` THEMIS-ASI-Keogramm-Assets (Register-Duty): Block gesetzt (`phi:21019-21026`) + Workflow dispatcht `38258632187` (folge328); die Onset-Datei `tkdg_20240510_kapu_onset.bin` + die Keogramm-PGM existieren laut River nur lokal → über `themis_asi-timed-keogram-cdn.yml` zu manifestieren; offener Punkt unten.
+
 ## Offen — eigen
 
 ### GRDC-Caravan — Shard-Fix gebaut (>2 GiB-Upload-Limit); Verifikationslauf ausstehend
@@ -57,6 +60,13 @@ die Session schreibt ihn als Schlussakt am neuen HEAD neu). Diese Session konsum
 - **Lage:** (gemessen 2026-10-12 via `ci_manage log`) beide Läufe **failure**: (1) `ssd-jpl-raw-cdn` `38263196991` — `release ssd.jpl.nasa.gov is capped (1000 assets)` → 15 Jobs `returned void`; (2) `pvo-orse-odr-cdn` `38263550677` — `INDEX.TAB: index parse void — the series stays unwritten (0 honored)`. **Beide gefixt (dieses Atom):** ssd-jpl auf Familien-Tag `ssd.jpl.nasa.gov-planets` (Workflow-Matrix + 48 phi-`url`-Zeilen; `viking_lander_tracking.bin` + 5 Alt-Assets bleiben am gecappten Tag), pvo-orse `index_rows` voidet nicht mehr an `START_TIME=UNK` (fällt auf `STOP_TIME` zurück, sonst Zeile übersprungen + gezählt). Neuläufe dispatcht.
 - **Blockade:** keine.
 - **Braucht:** `ci_manage log <pvo-orse-neu>` / `<ssd-jpl-neu>`; die gedruckten `sha256`-Zeilen je Shard/Asset falten.
+
+### THEMIS-ASI-Keogramm-Onset-Assets ins CDN (`xfer:river197-6`)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der `themis_asi-timed-keogram-cdn`-Lauf `38258632187` endet
+- **Lage:** (gemessen 2026-10-12) der Keogramm-Register-Block steht (`phi:21019-21026`), der Lauf ist dispatcht (folge328); River meldet (river-folge199), dass `tkdg_20240510_kapu_onset.bin` + die PGM nur lokal existieren.
+- **Blockade:** keine.
+- **Braucht:** `ci_manage log 38258632187`; prüfen, ob der Workflow die Onset-Datei deckt — sonst `themis_asi-timed-keogram-cdn.yml` um den Onset-Arm erweitern.
 
 ### tools-map.md — Träger (Werkzeug-Karte)
 - **Status:** eigen | **Bindung:** eigen
