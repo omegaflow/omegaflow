@@ -34,8 +34,12 @@ mod core_api;
 mod datacite;
 #[path = "archive_search/dataeuropa.rs"]
 mod dataeuropa;
+#[path = "archive_search/dataone.rs"]
+mod dataone;
 #[path = "archive_search/dataverse.rs"]
 mod dataverse;
+#[path = "archive_search/dblp.rs"]
+mod dblp;
 #[path = "archive_search/doaj.rs"]
 mod doaj;
 #[path = "archive_search/dryad.rs"]
@@ -52,10 +56,16 @@ mod erddap;
 mod europepmc;
 #[path = "archive_search/exoplanet_archive.rs"]
 mod exoplanet_archive;
+#[path = "archive_search/fdsn.rs"]
+mod fdsn;
 #[path = "archive_search/figshare.rs"]
 mod figshare;
 #[path = "archive_search/frbcat.rs"]
 mod frbcat;
+#[path = "archive_search/gaia.rs"]
+mod gaia;
+#[path = "archive_search/gbif.rs"]
+mod gbif;
 #[path = "archive_search/gemini.rs"]
 mod gemini;
 #[path = "archive_search/git.rs"]
@@ -66,8 +76,14 @@ mod go;
 mod googlecse;
 #[path = "archive_search/gosat.rs"]
 mod gosat;
+#[path = "archive_search/grepapp.rs"]
+mod grepapp;
 #[path = "archive_search/heasarc.rs"]
 mod heasarc;
+#[path = "archive_search/horizons.rs"]
+mod horizons;
+#[path = "archive_search/huggingface.rs"]
+mod huggingface;
 #[path = "archive_search/index.rs"]
 mod index;
 #[path = "archive_search/interpro.rs"]
@@ -84,10 +100,18 @@ mod lasair;
 mod lpf;
 #[path = "archive_search/magic.rs"]
 mod magic;
+#[path = "archive_search/mast.rs"]
+mod mast;
 #[path = "archive_search/materialsproject.rs"]
 mod materialsproject;
+#[path = "archive_search/mendeley.rs"]
+mod mendeley;
+#[path = "archive_search/ned.rs"]
+mod ned;
 #[path = "archive_search/net.rs"]
 mod net;
+#[path = "archive_search/nominatim.rs"]
+mod nominatim;
 #[path = "archive_search/nssdc.rs"]
 mod nssdc;
 #[path = "archive_search/ntfs.rs"]
@@ -96,18 +120,26 @@ mod ntfs;
 mod oai;
 #[path = "archive_search/oai_pmh.rs"]
 mod oai_pmh;
+#[path = "archive_search/open_meteo.rs"]
+mod open_meteo;
 #[path = "archive_search/openaire.rs"]
 mod openaire;
 #[path = "archive_search/openalex.rs"]
 mod openalex;
+#[path = "archive_search/opencitations.rs"]
+mod opencitations;
 #[path = "archive_search/openfda.rs"]
 mod openfda;
 #[path = "archive_search/openlibrary.rs"]
 mod openlibrary;
 #[path = "archive_search/opensn.rs"]
 mod opensn;
+#[path = "archive_search/orcid.rs"]
+mod orcid;
 #[path = "archive_search/osf.rs"]
 mod osf;
+#[path = "archive_search/overpass.rs"]
+mod overpass;
 #[path = "archive_search/paged.rs"]
 mod paged;
 #[path = "archive_search/pangaea.rs"]
@@ -132,6 +164,10 @@ mod re3data;
 mod reactome;
 #[path = "archive_search/refine.rs"]
 mod refine;
+#[path = "archive_search/ror.rs"]
+mod ror;
+#[path = "archive_search/scholexplorer.rs"]
+mod scholexplorer;
 #[path = "archive_search/seanoe.rs"]
 mod seanoe;
 #[path = "archive_search/secrets.rs"]
@@ -482,6 +518,24 @@ fn main() {
             "--simbad" => mode = Mode::Net("simbad"),
             "--vizier" => mode = Mode::Net("vizier"),
             "--exoplanet-archive" => mode = Mode::Net("exoplanet-archive"),
+            "--ned" => mode = Mode::Net("ned"),
+            "--mast" => mode = Mode::Net("mast"),
+            "--gaia" => mode = Mode::Net("gaia"),
+            "--horizons" => mode = Mode::Net("horizons"),
+            "--overpass" => mode = Mode::Net("overpass"),
+            "--nominatim" => mode = Mode::Net("nominatim"),
+            "--open-meteo" => mode = Mode::Net("open-meteo"),
+            "--gbif" => mode = Mode::Net("gbif"),
+            "--fdsn" => mode = Mode::Net("fdsn"),
+            "--dataone" => mode = Mode::Net("dataone"),
+            "--huggingface" => mode = Mode::Net("huggingface"),
+            "--dblp" => mode = Mode::Net("dblp"),
+            "--orcid" => mode = Mode::Net("orcid"),
+            "--ror" => mode = Mode::Net("ror"),
+            "--opencitations" => mode = Mode::Net("opencitations"),
+            "--grepapp" => mode = Mode::Net("grepapp"),
+            "--scholexplorer" => mode = Mode::Net("scholexplorer"),
+            "--mendeley" => mode = Mode::Net("mendeley"),
             "--dryad" => mode = Mode::Net("dryad"),
             "--frbcat" => mode = Mode::Net("frbcat"),
             "--go" => mode = Mode::Net("go"),
@@ -824,7 +878,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc|--nssdc|--nssdca <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc|--nssdc|--nssdca <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -951,6 +1005,60 @@ fn usage() {
     );
     eprintln!(
         "  --exoplanet-archive NASA Exoplanet Archive planet search (exoplanetarchive.ipac.caltech.edu/TAP, pscomppars), keyless; overview url + pl_name/hostname/year"
+    );
+    eprintln!(
+        "  --ned       NED object search (ned.ipac.caltech.edu/tap NEDTAP.objdir, prefname prefix), keyless; byname url + main_id/ra/dec"
+    );
+    eprintln!(
+        "  --mast      MAST name resolver (mast.stsci.edu/api/v0/invoke Mast.Name.Lookup), keyless; id/name/ra/dec/type"
+    );
+    eprintln!(
+        "  --gaia      Gaia archive TAP source_id lookup (gea.esac.esa.int), keyless; numeric source_id + ra/dec/g_mag (text names time out)"
+    );
+    eprintln!(
+        "  --horizons  JPL Small-Body Database lookup (ssd-api.jpl.nasa.gov/sbdb.api), keyless; sbdb url + des/a/e/i"
+    );
+    eprintln!(
+        "  --overpass  OSM Overpass name search (overpass-api.de, Overpass QL), keyless; openstreetmap url + name/type"
+    );
+    eprintln!(
+        "  --nominatim OSM Nominatim geocoding (nominatim.openstreetmap.org, User-Agent required), keyless; openstreetmap url + name/lat/lon"
+    );
+    eprintln!(
+        "  --open-meteo Open-Meteo geocoding search (geocoding-api.open-meteo.com/v1), keyless; name/country/lat/lon"
+    );
+    eprintln!(
+        "  --gbif      GBIF species search (api.gbif.org/v1/species/search), keyless; gbif species url + scientific_name/rank/status"
+    );
+    eprintln!(
+        "  --fdsn      FDSN station search (service.iris.edu/fdsnws/station/1, text table), keyless; network/station/lat/lon (no JSON on this service)"
+    );
+    eprintln!(
+        "  --dataone   DataONE Solr search (cn.dataone.org/cn/v2/query/solr), keyless; search.dataone.org url + title/format"
+    );
+    eprintln!(
+        "  --huggingface HuggingFace datasets API (huggingface.co/api/datasets), keyless; dataset url + author/downloads"
+    );
+    eprintln!(
+        "  --dblp      DBLP publication search (dblp.org/search/publ/api), keyless; url + title/venue/year (currently JS-gated: pending)"
+    );
+    eprintln!(
+        "  --orcid     ORCID researcher search (pub.orcid.org/v3.0/expanded-search, Accept: application/json), keyless; orcid url + name/institution"
+    );
+    eprintln!(
+        "  --ror       ROR organisation search (api.ror.org/organizations), keyless; ror.org url + name/country"
+    );
+    eprintln!(
+        "  --opencitations OpenCitations citation count (opencitations.net/index/api/v1, DOI only), keyless; doi + citations"
+    );
+    eprintln!(
+        "  --grepapp   grep.app code search (grep.app/api/search), keyless; repo/path (Vercel checkpoint may answer 429)"
+    );
+    eprintln!(
+        "  --scholexplorer OpenAIRE Scholexplorer links (api.scholexplorer.openaire.eu/v3/Links, DOI/PMID), keyless; target + relation type"
+    );
+    eprintln!(
+        "  --mendeley  Mendeley Data search (data.mendeley.com/api/datasets), keyless; dataset url + title/doi"
     );
     eprintln!(
         "  --wiby      Wiby independent web search (wiby.me/json), keyless; url + title/description"
