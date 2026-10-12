@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (MCON-Registerdrift gelöst, bpa_gic↔MCON als gemessene Null, Risse benannt)
   class: handover
   date: 2026-10-12
-  sha256: 80668c107eb9b8533d283a731fdd78ac23a80d107ce613020c0b2c18f9e31294
+  sha256: a743686547eb4c08cdc67bfb267ddced5f08deb33984f28bdbc7e368b40dcb0d
   status: live
 -->
 # Handover — Mycelium-Folge 318 (2026-10-12)
@@ -41,19 +41,19 @@ gelöst (`phi/sources.φ:21545-21551`); ein `general`-Diver maß die BPA-GIC-Fra
 - **Befund:** (gemessen 2026-10-12, `general`-Diver via `--verdict`/`--playwright`/`--all`) BPA publiziert **kein** historisches GIC-Archiv — nur ein rollierendes **4-Tage-5-Minuten-11-Station-Fenster** (`.../gic/gic.txt`, Header „last 4 days"; Landing `gic.aspx` verlinkt nur `gic.txt`; alle Archiv-Kandidaten 404; `--all` 1029 Zeilen ohne BPA-Archiv; Wayback 429/503). Die Überschneidung mit der MCON-Onset-Liste (endet 2024-05-29) ist **leer**. Die `bpa_gic`-Spanne ist **nicht ausdehnbar** (kein öffentlicher Weg; nur FOIA an BPA, Dritter-Akt). Divergenz zur Auftrags-Prämisse: das Fenster ist **5-min**, nicht 1-min (Register `ttl 300`/Feld-Skala 300.0 am Baum bestätigt).
 - **Konsequenz:** die zweite GIC-Zeugenreihe bleibt leer (0 honored); die Relation läuft über die primäre FMI-Reihe (`gic_onset_relation.rs --gic`). `terms` bleibt `unknown` (BPA nennt keine Datenlizenz).
 
-### `intermagnet_dbdt`-Riss — zwei Quellen je Quantität; Wahl offen (Mountain/Rat)
-- **Status:** blockiert | **Bindung:** eigen (Blockade: Register-Semantik)
-- **Trigger:** Mountain-Verdikt der Register-Semantik
-- **Lage:** (gemessen 2026-10-12) `phi/sources.φ:2434-2465` — `abk_dbdt_1h` und `abk_dbdt_1m` (und `sod_dbdt_1h`) tragen **alle** die Quantität `intermagnet_dbdt`; die ABK-Paare sind dieselbe Messung in zwei Kadencen (1 m native median_dt 60 s vs 1 h), overlap corr 0.9388. Die Query löst `targets intermagnet_dbdt` nicht eindeutig auf → `newell_geospheric_omni`-Zelle floor (p=1). Descriptor `bin 3600`.
-- **Blockade:** die Register-Semantik disambiguiert die Kadenz einer Quantität nicht (zwei Zeilen mit gleicher `field`-Quantität).
-- **Braucht:** Mountain-Entscheid: (i) Quantität um die Kadenz erweitern (`intermagnet_dbdt_1m`/`_1h`) **und** Descriptor-Target nachziehen (River-Datei), oder (ii) eine `preferred`/kanonisch-Regel. Empfehlung: die **native 1-min**-Reihe ist die Messung (1 h = Resample); die 1 h-Zeile ist eine Projektion, nicht eine zweite unabhängige Quelle — Kadenz gehört in die Quantitäts-Identität.
+### `intermagnet_dbdt`-Riss — Rat: **Nein** zum Rename; Resolver-Regel statt Identität (Mountain-Bau)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Rivers `field_te_query`-Atom schließt (dann ist die Datei frei für den Resolver-Bau)
+- **Lage:** (gemessen 2026-10-12, Rat-Verdikt `state/stimmen/2026-10-12_river-intermagnet-identitaet-rat.md`) **Nein** — `intermagnet_dbdt` bleibt die Identität; die Kadenz ist ein Auflösungs-Attribut, keine zweite Quantität. Ein Rename `_1m`/`_1h` wäre Fabrikation (wählt still eine Aggregation und lässt die andere aus dem geteilten Namen fallen); der Register-Text ist unangetastet. Grund am Baum: die `field`-Zeile trägt **keine** Kadenz — das Token nach `<unit>` ist `tau` (`src/archivar/parse.rs:2361`), beide ABK-Zeilen tragen `86400`; die Kadenz wird live als `median_dt` gemessen. **Die Regel existiert im Kern bereits:** `tools/measure/src/bin/field_te_query.rs:1249` `AGGREGATION_IDENTITY_CORR = 0.99`; `:1263-1341` `load_field_across_sources` wählt die feinste `median_dt` als Zeugen und **verweigert** (Riss), wenn eine gröbere Registrierung unter dem Gate liegt. **Der benannte Rest:** die Regel gruppiert **nicht nach Station** (`abk_1m` wird auch gegen `sod_1h` geprüft → falscher Riss) und der `Err`-Pfad lässt den Zeugen fallen statt ihn zu tragen.
+- **Blockade:** `tools/measure/src/bin/field_te_query.rs` wird von Rivers laufendem measure-Atom gehalten — ein zweiter Schreiber kollidiert.
+- **Braucht:** der minimale Bau (Mountain-Schreibakt, Register+Wire unangetastet): pro `station_code` gruppieren, je Station die feinste native Kadenz als Zeugen, die gröbere als Riss **daneben tragen** (nie mitteln, nie fallenlassen); Korr-Gate 0.99 trennt ABK `0.9388` (Riss tragen) von f107 `0.0232` (verweigern). **Wer:** Mycelium (Mountain-Vertretung) als nächstes Atom, sobald Rivers Atom schließt — oder River (seine Datei).
 
-### `solar_f107_flux_sfu`-Riss — zwei Quellen je Quantität
-- **Status:** blockiert | **Bindung:** eigen (Blockade: Register-Semantik)
-- **Trigger:** Mountain-Entscheid (dieselbe Klasse wie `intermagnet_dbdt`)
-- **Lage:** (gemessen 2026-10-12, River-194) `phi/sources.φ:520-524` (SWPC live `f107_cm_flux.json`, `ttl 600`, `first flux … 3600.0`) und `:29571-29579` (Penticton CDN `f107_penticton.bin`, `field f107_penticton solar_f107_flux_sfu … 86400`) tragen beide die Quantität `solar_f107_flux_sfu`; corr 0.0232 — die niedrige Korrelation deutet auf einen Join-/Zeitbasis-Fehler, nicht nur auf zwei Kadencen.
-- **Blockade:** Query löst nicht eindeutig auf; die niedrige Korrelation ist zudem ein eigener Mess-Verdacht.
-- **Braucht:** Mountain-Verdikt (Quellen-Identität) + eine Wiederholungsmessung des Joins (River/measure).
+### `solar_f107_flux_sfu` — erst messen (Join-/Zeitbasis-Verdacht, kein Quantitäts-Riss)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Rivers f107-Join-Messung (`field_te_query`-Lauf `38211174118`)
+- **Lage:** (gemessen 2026-10-12, Rat-Verdikt) `phi/sources.φ:520-524` (SWPC live `f107_cm_flux.json`, `ttl 600`, `first flux … 3600.0`) und `:29571-29579` (Penticton CDN `f107_penticton.bin`, `field f107_penticton solar_f107_flux_sfu … 86400`) tragen beide die Quantität `solar_f107_flux_sfu`; corr 0.0232. Der Rat: corr `0.0232` gegen `0.9388` ist ein **Join-/Zeitbasis-Verdacht**, kein Identitäts-Riss; das `0.99`-Gate verweigert hier bereits korrekt. Der Resolver hat keinen Binning-Floor außer `n ≥ 2`.
+- **Blockade:** das Identitäts-Urteil braucht erst die Join-Messung.
+- **Braucht:** Rivers measure-Schritt (Bin-Zahl + Roh-Zeitstempel der Überlappung); erst danach ein Identitäts-Urteil.
 
 ### 50 Vlies-`alignment pending`-Zellen — fehlende Quellenreihen
 - **Status:** wartend | **Bindung:** eigen
@@ -140,7 +140,8 @@ gelöst (`phi/sources.φ:21545-21551`); ein `general`-Diver maß die BPA-GIC-Fra
 Origin: mycelium-318 (2026-10-12).
 
 - **MCON-Registerdrift gelöst** (`phi:21545-21549`, `format mcon_event`, sha `441df5f8…`); offen bleiben die fünf `field`-Zeilen (P10) + `terms` (Zenodo 22711679).
-- **`intermagnet_dbdt`-Riss + `solar_f107_flux_sfu`-Riss** — beide: zwei Quellen je Quantität, Query wählt nicht; Empfehlung Kadenz in die Quantitäts-Identität. Der Block steht, die Semantik fehlt.
+- **`intermagnet_dbdt`** — Rat-Verdikt **Nein** zum Rename (`state/stimmen/2026-10-12_river-intermagnet-identitaet-rat.md`): Identität bleibt, Kadenz ist Auflösungs-Attribut; Register+Wire unangetastet. Offen ist nur die Resolver-Regel (per-Station-Gruppierung + Riss-daneben-tragen, `field_te_query.rs:1263-1341`) — Mountain-Schreibakt.
+- **MCON-Spanne** — Zenodo nominiert `1966–2025`, Rivers Fenster `2024-05-29`; nominal vs Inhalt. Eine Inhaltsmessung des manifestierten `mcpherron_onsets.bin` entscheidet es (nicht die BPA-Überschneidung berührend).
 - **`odf.rs` clippy (`:179`/`:213`/`:2222`)** blockt `ci-check`.
 - **bpa_gic**: kein historisches Archiv (gemessene Null); `terms unknown` bleibt.
 
