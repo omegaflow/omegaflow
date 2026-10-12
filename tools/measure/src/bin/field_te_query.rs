@@ -2432,6 +2432,46 @@ fn guard_url_template_resolved(url: &str) -> Result<(), String> {
     }
 }
 
+thread_local! {
+    static FIELD_FETCH_BODIES: std::cell::RefCell<std::collections::HashMap<String, Vec<u8>>> =
+        std::cell::RefCell::new(std::collections::HashMap::new());
+}
+
+fn source_is_hapi(src: &SourceConfig) -> bool {
+    src.extracts.iter().any(|e| matches!(e, Extract::Hapi(_)))
+}
+
+fn fetch_body_for_source(
+    url: &str,
+    headers: &[(String, String)],
+    expect_json: bool,
+) -> Result<Vec<u8>, String> {
+    if let Some(bytes) = FIELD_FETCH_BODIES.with(|c| c.borrow().get(url).cloned()) {
+        return Ok(bytes);
+    }
+    let attempts: u32 = if expect_json { 4 } else { 1 };
+    let mut result: Option<Vec<u8>> = None;
+    for attempt in 0..attempts {
+        let Some(bytes) = fetch_raw_bytes_headers(url, headers) else {
+            return Err(format!("{url} fetch void"));
+        };
+        let parseable = !expect_json
+            || omegaflow::archivar::parse_json(&String::from_utf8_lossy(&bytes)).is_some();
+        if parseable || attempt + 1 == attempts {
+            result = Some(bytes);
+            break;
+        }
+        std::thread::sleep(std::time::Duration::from_secs(5));
+    }
+    match result {
+        Some(bytes) => {
+            FIELD_FETCH_BODIES.with(|c| c.borrow_mut().insert(url.to_string(), bytes.clone()));
+            Ok(bytes)
+        }
+        None => Err(format!("{url} fetch void")),
+    }
+}
+
 fn load_field(
     src: &SourceConfig,
     fc: &FieldConfig,
@@ -2440,9 +2480,9 @@ fn load_field(
     let url = resolve_time_markers(&src.url);
     let url = resolve_query_slots(&url, anchor)?;
     guard_url_template_resolved(&url)?;
-    let Some(bytes) = fetch_raw_bytes_headers(&url, &src.headers) else {
-        return Err(format!("{url} fetch void"));
-    };
+    let expect_json =
+        source_is_hapi(src) && matches!(src.format.as_str(), "" | "json" | "universal");
+    let bytes = fetch_body_for_source(&url, &src.headers, expect_json)?;
     if let Some(rows) = series_rows(&src.format, &bytes) {
         let mut out = Vec::new();
         for r in &rows {
