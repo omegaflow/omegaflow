@@ -1,4 +1,4 @@
-use crate::net::{get, urlencode};
+use crate::net::{get, spill_dir, urlencode};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const LIVE_CSV: &str = "https://docs.google.com/spreadsheets/d/1W27KNa6yJzYA_b8HLSz4hxtWEZQtxUhGTXfQjlXgpzY/gviz/tq?tqx=out:csv&sheet=Catalogue";
@@ -179,7 +179,7 @@ fn write_full(query: &str, lines: &[String]) -> Option<String> {
         .map(|c| if c.is_ascii_alphanumeric() { c } else { '_' })
         .take(40)
         .collect();
-    let path = std::env::temp_dir().join(format!("omegaflow_frbcat_{stamp}_{slug}.txt"));
+    let path = spill_dir().join(format!("omegaflow_frbcat_{stamp}_{slug}.txt"));
     std::fs::write(&path, lines.join("\n")).ok()?;
     Some(path.to_string_lossy().into_owned())
 }

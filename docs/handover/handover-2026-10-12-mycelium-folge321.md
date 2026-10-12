@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (M10↔MDIS-URL-Zeilen registriert, adressierte Blöcke future-241/mountain-323 gefaltet, matrix-rotor-Rot + bz-dbdt-Delay-Sonde gemessen)
   class: handover
   date: 2026-10-12
-  sha256: be24a616a6b1da48e863891b156b5f893d38724629b5171b46522f8d0e8440c2
+  sha256: 21507ef778833018ef12c818bd95317b396e7c58908042a9c2192e8152ee511a
   status: live
 -->
 # Handover — Mycelium-Folge 321 (2026-10-12)
@@ -30,9 +30,16 @@ dieses Atom:**
   **absent** — „no measurement" (Artefakt `11733786875`).
 - **`bz-dbdt-delay-probe`-Workflow erweitert:** `--max-lag-min 1440` je Matrix-Zelle
   (die 180-min-Blocklänge fehlte); Lauf dispatcht.
-- **Adressierte Blöcke gefaltet:** future-241 + mountain-323.
+- **`archive_search`-Spill kanonisch** (future-241-Ask, gemessen 2026-10-12):
+  `write_full` (`net.rs`) / `frbcat` / `opensn` honorieren jetzt `$OMEGAFLOW_SPILL_DIR`
+  (sonst `temp_dir`); `net.rs` `spill_dir`/`spill_base` + Test, `cargo check -p
+  omegaflow-utils` warnungsfrei. Die Future-Linie hat **167** `/tmp/omegaflow_all_*.txt`
+  (**123 173 937 B**) nach `state/research/archive-search-all/` (+ `MANIFEST.sha256`)
+  gesichert; der Fix verhindert den neuen Fall — die Linien setzen
+  `OMEGAFLOW_SPILL_DIR`. Derselbe Faden wie die Fetch-Provenienz.
+- **Adressierte Blöcke gefaltet:** future-241 (inkl. Spill-Fix) + mountain-323.
 
-## Burn: open 0.01 · close 0.05 — Grund: ein Durchgang (flash-first, kein pro/max; `session_burn`-Posten „Mycelium-Linie in einem Pass starten" `$0.0533`).
+## Burn: open 0.01 · close 0.09 — Grund: ein Durchgang (flash-first, kein pro/max; `session_burn`-Posten „Mycelium-Linie in einem Pass starten" `$0.0897`).
 
 ## Operator-Wort-Register
 
@@ -108,6 +115,16 @@ dieses Atom:**
   `phi/sources.φ` (nach `mariner_rst`); USGS-Mosaik 1,88 GB ohne sha.
 - **Blockade:** Block-Identität (Mountain).
 - **Braucht:** Block-Identität (Mountain) → Compiler + CDN-Workflow (Mycelium).
+
+### Fetch-Provenienz — Sidecar/`data/<netloc>/` fehlt (future-235)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** ein Fetch-Weg (Wrapper/`archive_search`) schreibt den Quell-Sidecar
+- **Lage:** (gemessen 2026-10-11) die Provenienz liegt in `opencode.db`; die wiederholbare
+  Ableitung steht in `state/research/README.md` §Provenienz und hat **76** Dateien belegt
+  nach `data/<netloc>/` gehoben. Der Werkzeug-Fix (URL beim Fetch mitschreiben) fehlt.
+- **Blockade:** keiner im Design.
+- **Braucht:** der Fetch-Weg schreibt `<datei>.src` (Quell-URL) oder legt gleich als
+  `data/<netloc>/<datei>` ab — Werkzeug (Mycelium) + Quelle (Mountain).
 
 ### THEMIS-ASI getimetes Keogramm — MIRACLE-Form gebaut; `terms`/`field` offen
 - **Status:** wartend | **Bindung:** eigen
