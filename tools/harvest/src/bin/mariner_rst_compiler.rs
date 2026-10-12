@@ -60,6 +60,8 @@ fn code_bits(code: u64) -> Vec<u32> {
 const SP_ODG_MASTER_LABEL_WORDS: usize = 10;
 const SP_ODG_STATION_SUMMARY_WORDS: usize = 201;
 const SP_ODG_SUMMARY_CONTINUATION_WORDS: usize = 97;
+const SP_ODG_DATA_PAYLOAD_WORDS: usize = 200;
+const SP_ODG_DATA_RECORD_WORDS: usize = 201;
 const SP_ODG_MIN_LOGICAL_WORDS: usize = 6;
 const SP_ODG_MAX_LOGICAL_WORDS: usize = 36;
 
@@ -69,17 +71,24 @@ fn sp_odg_header_words() -> usize {
 
 fn sp_odg_logical_records(words: &[u64]) -> Vec<&[u64]> {
     let mut out = Vec::new();
-    let mut p = sp_odg_header_words();
-    while p < words.len() {
-        let d = words[p] as usize;
-        if d < SP_ODG_MIN_LOGICAL_WORDS || d > SP_ODG_MAX_LOGICAL_WORDS || d % 2 != 0 {
-            break;
-        }
-        let Some(record) = words.get(p..p + d) else {
+    let mut rec = sp_odg_header_words();
+    while rec + SP_ODG_DATA_RECORD_WORDS <= words.len() {
+        let Some(payload) = words.get(rec..rec + SP_ODG_DATA_PAYLOAD_WORDS) else {
             break;
         };
-        out.push(record);
-        p += d;
+        let mut p = 0usize;
+        while p < payload.len() {
+            let d = payload[p] as usize;
+            if d < SP_ODG_MIN_LOGICAL_WORDS || d > SP_ODG_MAX_LOGICAL_WORDS || d % 2 != 0 {
+                break;
+            }
+            let Some(record) = payload.get(p..p + d) else {
+                break;
+            };
+            out.push(record);
+            p += d;
+        }
+        rec += SP_ODG_DATA_RECORD_WORDS;
     }
     out
 }
@@ -280,12 +289,28 @@ mod tests {
         record
     }
 
-    fn stream(records: &[Vec<u64>]) -> Vec<u64> {
+    const DATA_PAYLOAD_WORDS: usize = 200;
+
+    fn data_record(payload: &[u64]) -> Vec<u64> {
+        assert!(payload.len() <= DATA_PAYLOAD_WORDS);
+        let mut record = payload.to_vec();
+        record.resize(DATA_PAYLOAD_WORDS, 0);
+        record.push(0);
+        record
+    }
+
+    fn stream_payload(payload: &[u64]) -> Vec<u64> {
         let mut words = vec![0u64; sp_odg_header_words()];
-        for record in records {
-            words.extend_from_slice(record);
-        }
+        words.extend_from_slice(&data_record(payload));
         words_of(&pack_words(&words))
+    }
+
+    fn stream(records: &[Vec<u64>]) -> Vec<u64> {
+        let mut payload = Vec::new();
+        for record in records {
+            payload.extend_from_slice(record);
+        }
+        stream_payload(&payload)
     }
 
     #[test]
@@ -318,6 +343,11 @@ mod tests {
         let record = logical_record(code, &[(64u64 << 28) | (1u64 << 27)], t1, t2);
         assert_eq!(record[0], 8);
         let decoded = stream(&[record]);
+        assert_eq!(
+            decoded.len(),
+            sp_odg_header_words() + SP_ODG_DATA_RECORD_WORDS,
+            "308-word header + one 201-word data record"
+        );
         let records = sp_odg_logical_records(&decoded);
         assert_eq!(records.len(), 1);
         assert_eq!(records[0][0], 8);
@@ -325,6 +355,61 @@ mod tests {
         assert_eq!(obs.len(), 1);
         assert_eq!(obs[0].2, 1);
         assert!((obs[0].1 - 0.5).abs() < 1e-12);
+    }
+
+    #[test]
+    fn sp_odg_two_logical_records_in_one_payload() {
+        let (t1, t2) = dp_time_words(605_059_200);
+        let r8 = logical_record(1u64 << 35, &[(64u64 << 28) | (1u64 << 27)], t1, t2);
+        let code = (1u64 << 35) | (1u64 << 27);
+        let r10 = logical_record(
+            code,
+            &[(64u64 << 28) | (1u64 << 27), (64u64 << 28) | (1u64 << 26)],
+            t1,
+            t2,
+        );
+        assert_eq!(r8[0], 8);
+        assert_eq!(r10[0], 10);
+        let decoded = stream(&[r8, r10]);
+        let records = sp_odg_logical_records(&decoded);
+        assert_eq!(
+            records.len(),
+            2,
+            "two logical records inside one data record"
+        );
+        let total: usize = records
+            .iter()
+            .map(|r| sp_odg_record_observables(r).len())
+            .sum();
+        assert_eq!(
+            total, 3,
+            "one observable (bit 1) + two observables (bits 1,9)"
+        );
+    }
+
+    #[test]
+    fn sp_odg_partial_payload_tail_dropped() {
+        let (t1, t2) = dp_time_words(605_059_200);
+        let full = logical_record(1u64 << 35, &[(64u64 << 28) | (1u64 << 27)], t1, t2);
+        assert_eq!(full.len(), 8);
+        let mut payload = Vec::new();
+        while payload.len() + full.len() <= DATA_PAYLOAD_WORDS - 8 {
+            payload.extend_from_slice(&full);
+        }
+        let complete = payload.len() / full.len();
+        payload.push(10);
+        let decoded = stream_payload(&payload);
+        let records = sp_odg_logical_records(&decoded);
+        assert_eq!(
+            records.len(),
+            complete,
+            "the partial tail record is dropped"
+        );
+        assert!(
+            records
+                .iter()
+                .all(|r| sp_odg_record_observables(r).len() == 1)
+        );
     }
 
     #[test]
