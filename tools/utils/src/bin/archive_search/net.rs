@@ -1801,6 +1801,13 @@ fn marginalia_results(v: &Json, max: usize) -> Vec<String> {
 
 const SEARXNG_INSTANCES: &[&str] = &["https://sx.xo.st", "https://search.mectov.my.id"];
 
+fn searxng_bases() -> Vec<String> {
+    match std::env::var("OMEGAFLOW_SEARXNG") {
+        Ok(v) if !v.trim().is_empty() => vec![v.trim().trim_end_matches('/').to_string()],
+        _ => SEARXNG_INSTANCES.iter().map(|s| s.to_string()).collect(),
+    }
+}
+
 pub fn searxng_lines(query: &str, max: usize) -> Vec<String> {
     let headers = [
         "-H",
@@ -1810,7 +1817,7 @@ pub fn searxng_lines(query: &str, max: usize) -> Vec<String> {
     ];
     let mut last = "pending — no SearXNG instance answered".to_string();
     let mut absent = false;
-    for base in SEARXNG_INSTANCES {
+    for base in searxng_bases() {
         let url = format!("{}/search?q={}&format=json", base, urlencode(query));
         match get(&url, &headers, "40") {
             Some(f) if f.status == Some(200) => match json::parse(&f.body) {

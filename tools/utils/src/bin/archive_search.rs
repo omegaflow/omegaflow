@@ -821,7 +821,7 @@ fn usage() {
         "  --base      BASE — Bielefeld Academic Search Engine (~400M open documents, api.base-search.net), keyless JSON; url + title/authors/year/doi"
     );
     eprintln!(
-        "  --searxng   SearXNG meta-search (public JSON instances, keyless; self-host fallback); url + title/content/engine"
+        "  --searxng   SearXNG meta-search (instance from $OMEGAFLOW_SEARXNG, else public JSON instances; keyless); url + title/content/engine"
     );
     eprintln!(
         "  --serper    Serper Google SERP (google.serper.dev/search, X-API-KEY); url + title/position/snippet"
