@@ -129,7 +129,25 @@ fn fold_events(log: &str, pin: &BTreeSet<String>) -> Outcome {
                 minted += 1;
             }
             Event::Carried => {
-                if !keys.contains(key) {
+                if let Some(origin) = witness.strip_prefix("alias:") {
+                    if origin.is_empty() {
+                        return refusal(format!(
+                            "line {lineno}: carried key `{key}` carries an empty alias origin"
+                        ));
+                    }
+                    if !keys.contains(origin) {
+                        return refusal(format!(
+                            "line {lineno}: carried alias origin `{origin}` not present"
+                        ));
+                    }
+                    if keys.contains(key) {
+                        return refusal(format!(
+                            "line {lineno}: carried alias target `{key}` already present"
+                        ));
+                    }
+                    keys.remove(origin);
+                    keys.insert(key.to_string());
+                } else if !keys.contains(key) {
                     return refusal(format!("line {lineno}: carried key `{key}` not present"));
                 }
                 carried += 1;
@@ -426,8 +444,8 @@ fn run_selftest() -> Result<(), String> {
     let pin: BTreeSet<String> = ["a", "b", "c"].iter().map(|s| s.to_string()).collect();
     let log = concat!(
         "# dropped-events v1 pin=deadbeef\n",
-        "minted\tnew\t\t2026-10-07\n",
-        "carried\ta\talias:old\t2026-10-07\n",
+        "minted\tfresh\t\t2026-10-07\n",
+        "carried\trenamed\talias:a\t2026-10-07\n",
         "resolved\tb\tcommit:abc123\t2026-10-07\n",
         "dropped\tc\treason text\t2026-10-07\n",
     );
@@ -435,11 +453,14 @@ fn run_selftest() -> Result<(), String> {
     if let Some(r) = &o.refusal {
         return Err(r.clone());
     }
-    if !o.keys.contains("new") {
-        return Err("minted did not add `new`".to_string());
+    if !o.keys.contains("fresh") {
+        return Err("minted did not add `fresh`".to_string());
     }
-    if !o.keys.contains("a") {
-        return Err("carried did not keep `a`".to_string());
+    if !o.keys.contains("renamed") {
+        return Err("alias carry did not add `renamed`".to_string());
+    }
+    if o.keys.contains("a") {
+        return Err("alias carry did not remove the origin `a`".to_string());
     }
     if o.keys.contains("b") {
         return Err("resolved did not remove `b`".to_string());
@@ -449,6 +470,10 @@ fn run_selftest() -> Result<(), String> {
     }
     if o.dropped_keys != vec!["c".to_string()] {
         return Err("dropped key not recorded".to_string());
+    }
+    let dangling_alias = "# dropped-events v1 pin=x\ncarried\tx\talias:missing\t2026-10-07\n";
+    if fold_events(dangling_alias, &pin).refusal.is_none() {
+        return Err("carried alias with an absent origin not refused".to_string());
     }
     let proof_less = "# dropped-events v1 pin=x\nresolved\tb\t\tnope\n";
     if fold_events(proof_less, &pin).refusal.is_none() {
@@ -784,15 +809,16 @@ mod tests {
         let pin = set(&["a", "b", "c"]);
         let log = concat!(
             "# dropped-events v1 pin=deadbeef\n",
-            "minted\tnew\t\t2026-10-07\n",
-            "carried\ta\talias:old\t2026-10-07\n",
+            "minted\tfresh\t\t2026-10-07\n",
+            "carried\trenamed\talias:a\t2026-10-07\n",
             "resolved\tb\tcommit:abc123\t2026-10-07\n",
             "dropped\tc\treason text\t2026-10-07\n",
         );
         let outcome = fold_events(log, &pin);
         assert!(outcome.refusal.is_none(), "{:?}", outcome.refusal);
-        assert!(outcome.keys.contains("new"));
-        assert!(outcome.keys.contains("a"));
+        assert!(outcome.keys.contains("fresh"));
+        assert!(outcome.keys.contains("renamed"));
+        assert!(!outcome.keys.contains("a"));
         assert!(!outcome.keys.contains("b"));
         assert!(!outcome.keys.contains("c"));
         assert_eq!(outcome.minted, 1);
@@ -806,6 +832,9 @@ mod tests {
 
         let absent_carried = "# dropped-events v1 pin=x\ncarried\tz\t\t2026-10-07\n";
         assert!(fold_events(absent_carried, &pin).refusal.is_some());
+
+        let dangling_alias = "# dropped-events v1 pin=x\ncarried\tz\talias:gone\t2026-10-07\n";
+        assert!(fold_events(dangling_alias, &pin).refusal.is_some());
     }
 
     #[test]
