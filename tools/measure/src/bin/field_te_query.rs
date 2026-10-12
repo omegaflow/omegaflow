@@ -1248,6 +1248,21 @@ fn field_sources(sources: &[SourceConfig], name: &str) -> Vec<(SourceConfig, Fie
 
 const AGGREGATION_IDENTITY_CORR: f64 = 0.99;
 
+#[derive(PartialEq, Eq, Debug)]
+enum AggregationPair {
+    DeclaredSame,
+    Candidate,
+    Distinct,
+}
+
+fn aggregation_pair_kind(a: &Option<String>, b: &Option<String>) -> AggregationPair {
+    match (a, b) {
+        (Some(x), Some(y)) if x == y => AggregationPair::DeclaredSame,
+        (None, None) => AggregationPair::Candidate,
+        _ => AggregationPair::Distinct,
+    }
+}
+
 fn aggregation_correlation(fine: &[(f64, f64)], coarse: &[(f64, f64)], period: f64) -> Option<f64> {
     let cm = period_means(coarse, period);
     let fm = period_means(fine, period);
@@ -1303,8 +1318,10 @@ fn load_field_across_sources(
         ));
     };
     for &k in &order[1..] {
-        if loaded[k].1 != loaded[fine_idx].1 {
-            continue; // a distinct receiver — never an aggregation pair of the same channel
+        let kind = aggregation_pair_kind(&loaded[fine_idx].1, &loaded[k].1);
+        let declared_same = kind == AggregationPair::DeclaredSame;
+        if kind == AggregationPair::Distinct {
+            continue;
         }
         let coarse_dt = match cadences[k] {
             Some(d) => d,
@@ -1320,12 +1337,15 @@ fn load_field_across_sources(
         }
         match aggregation_correlation(&loaded[fine_idx].2, &loaded[k].2, coarse_dt) {
             Some(r) if r >= AGGREGATION_IDENTITY_CORR => {}
-            Some(r) => println!(
-                "  riss '{name}' — {} median_dt {:.0}s vs {} median_dt {:.0}s (overlap corr {r:.4}); same channel, two aggregations — the finer witness is carried, the coarser stands beside it",
-                loaded[fine_idx].0, fine_dt, loaded[k].0, coarse_dt
-            ),
+            Some(r) => {
+                return Err(format!(
+                    "riss — '{name}' — {} median_dt {:.0}s vs {} median_dt {:.0}s (overlap corr {r:.4}); the aggregations disagree, the identity is unproven — no arm is selected, the two stand as two nodes",
+                    loaded[fine_idx].0, fine_dt, loaded[k].0, coarse_dt
+                ));
+            }
+            None if declared_same => {}
             None => println!(
-                "  riss '{name}' — {} median_dt {:.0}s vs {} median_dt {:.0}s (overlap corr pending); same channel, two aggregations — the finer witness is carried, the coarser stands beside it",
+                "  riss '{name}' — {} median_dt {:.0}s vs {} median_dt {:.0}s (overlap corr pending); identity undeclared and unmeasured — the finer witness is carried, the coarser stands beside it",
                 loaded[fine_idx].0, fine_dt, loaded[k].0, coarse_dt
             ),
         }
@@ -6332,6 +6352,30 @@ mod tests {
         assert!(
             other < AGGREGATION_IDENTITY_CORR,
             "an inverted daily series must not clear the identity bound (corr {other})"
+        );
+    }
+
+    #[test]
+    fn aggregation_pair_kind_never_reads_undeclared_as_the_same_receiver() {
+        assert_eq!(
+            aggregation_pair_kind(&Some("AAE".into()), &Some("AAE".into())),
+            AggregationPair::DeclaredSame,
+            "two equal declared receivers are a proven pair"
+        );
+        assert_eq!(
+            aggregation_pair_kind(&Some("AAE".into()), &Some("ABG".into())),
+            AggregationPair::Distinct,
+            "two different declared receivers are not a pair"
+        );
+        assert_eq!(
+            aggregation_pair_kind(&None, &None),
+            AggregationPair::Candidate,
+            "two undeclared receivers are a candidate, never the same receiver (None == None is not identity)"
+        );
+        assert_eq!(
+            aggregation_pair_kind(&Some("AAE".into()), &None),
+            AggregationPair::Distinct,
+            "one declared and one undeclared is not a pair"
         );
     }
 
