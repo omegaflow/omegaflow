@@ -1513,6 +1513,20 @@ pub enum CouplingKind {
     Pedersen = 3,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
+#[repr(u8)]
+pub enum DensityKind {
+    Number = 0,
+    Mass = 1,
+}
+
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub struct DensityRef {
+    pub channel_ref: u64,
+    pub kind: DensityKind,
+    pub species_mass: Option<f64>,
+}
+
 #[derive(Clone, Debug)]
 pub struct Coupling {
     pub kind: CouplingKind,
@@ -1521,6 +1535,9 @@ pub struct Coupling {
     pub coefficient: Option<f64>,
     pub unit: &'static str,
     pub region: Option<String>,
+    pub density_from: Option<DensityRef>,
+    pub density_to: Option<DensityRef>,
+    pub quasi_neutral: Option<bool>,
 }
 
 pub struct CouplingRegistry {
@@ -1610,6 +1627,60 @@ impl CouplingRegistry {
             }
         };
         Some((i, from_delta, j, to_delta))
+    }
+
+    pub fn density_at(
+        &self,
+        r: &DensityRef,
+        phi: &[f32],
+        channels: &ChannelRegistry,
+    ) -> Option<f32> {
+        let idx = channels.index_of(r.channel_ref)?;
+        let raw = *phi.get(idx)?;
+        let rho = match r.kind {
+            DensityKind::Number => r.species_mass? as f32 * raw,
+            DensityKind::Mass => raw,
+        };
+        if rho.is_finite() && rho >= 0.0 {
+            Some(rho)
+        } else {
+            None
+        }
+    }
+
+    pub fn exchange_resolved(
+        &self,
+        c: &Coupling,
+        phi: &[f32],
+        channels: &ChannelRegistry,
+    ) -> Option<(usize, f32, usize, f32)> {
+        let k = c.coefficient? as f32;
+        let rho_from = self.density_at(c.density_from.as_ref()?, phi, channels)?;
+        let rho_to = self.density_at(c.density_to.as_ref()?, phi, channels)?;
+        let m_from = c.density_from.as_ref()?.species_mass? as f32;
+        let m_to = c.density_to.as_ref()?.species_mass? as f32;
+        let m_sum = m_from + m_to;
+        if rho_to <= 0.0 || m_sum <= 0.0 {
+            return None;
+        }
+        let i = channels.index_of(c.from)?;
+        let j = channels.index_of(c.to)?;
+        if i >= phi.len() || j >= phi.len() {
+            return None;
+        }
+        match c.kind {
+            CouplingKind::IonNeutralFriction => {
+                let rate = k * rho_to / m_sum;
+                let d = phi[j] - phi[i];
+                let from_delta = rate * d;
+                let to_delta = -from_delta * (rho_from / rho_to);
+                Some((i, from_delta, j, to_delta))
+            }
+            CouplingKind::Thermoelectric | CouplingKind::Hall | CouplingKind::Pedersen => {
+                let product = k * phi[i] * phi[j];
+                Some((i, product, j, product))
+            }
+        }
     }
 
     pub fn schema_hash(&self) -> u32 {
@@ -3120,6 +3191,9 @@ mod tests {
             coefficient: None,
             unit: "1",
             region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
         }
     }
 
@@ -3167,6 +3241,9 @@ mod tests {
             coefficient: Some(0.25),
             unit: "kg/(m^3 s)",
             region: Some("ionosphere".to_string()),
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
         });
         let after = channel_reduce(&phi, &w, &all);
         assert_eq!(
@@ -3212,6 +3289,9 @@ mod tests {
             coefficient: Some(0.25),
             unit: "1",
             region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
         });
         let phi = [1.0f32, 2.0, 3.0];
         assert_eq!(pairs.term(&phi, &channels), Some(0.25f32 * phi[i] * phi[j]));
@@ -3254,6 +3334,9 @@ mod tests {
             coefficient: None,
             unit: "1",
             region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
         });
         let phi = [1.0f32, 2.0, 3.0];
         assert_eq!(
@@ -3274,6 +3357,9 @@ mod tests {
             coefficient: Some(0.5),
             unit: "1",
             region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
         });
         let phi = [1.0f32, 2.0];
         assert_eq!(
@@ -3321,6 +3407,9 @@ mod tests {
             coefficient: Some(rate),
             unit: "kg/(m^3 s)",
             region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
         });
         let c = pairs
             .coupling_of(from.hash(), to.hash(), CouplingKind::IonNeutralFriction)
@@ -3374,6 +3463,9 @@ mod tests {
             coefficient: None,
             unit: "kg/(m^3 s)",
             region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
         });
         let c = pairs
             .coupling_of(from.hash(), to.hash(), CouplingKind::IonNeutralFriction)
@@ -3398,6 +3490,9 @@ mod tests {
             coefficient: Some(0.5),
             unit: "kg/(m^3 s)",
             region: None,
+            density_from: None,
+            density_to: None,
+            quasi_neutral: None,
         });
         let c = pairs
             .coupling_of(0xAA, 0xBB, CouplingKind::IonNeutralFriction)
@@ -3409,6 +3504,127 @@ mod tests {
             None,
             "a hash with no channel exchanges nothing"
         );
+    }
+
+    fn a_mass_descriptor() -> ChannelDescriptor {
+        ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        )
+    }
+
+    #[test]
+    fn a_resolved_friction_exchange_is_antisymmetric_through_density() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let ion = a_mass_descriptor();
+        let neutral = a_mass_descriptor();
+        let ion_h = ion.hash();
+        let neutral_h = neutral.hash();
+        channels.register(ion);
+        channels.register(neutral);
+        let m_ion = 30.0f64;
+        let m_neutral = 16.0f64;
+        let k = 0.5f64;
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::IonNeutralFriction,
+            from: ion_h,
+            to: neutral_h,
+            coefficient: Some(k),
+            unit: "m3 / s",
+            region: None,
+            density_from: Some(DensityRef {
+                channel_ref: ion_h,
+                kind: DensityKind::Number,
+                species_mass: Some(m_ion),
+            }),
+            density_to: Some(DensityRef {
+                channel_ref: neutral_h,
+                kind: DensityKind::Number,
+                species_mass: Some(m_neutral),
+            }),
+            quasi_neutral: None,
+        });
+        let c = pairs
+            .coupling_of(ion_h, neutral_h, CouplingKind::IonNeutralFriction)
+            .expect("the registered friction pair resolves");
+        let phi = [2.0f32, 5.0];
+        let (_, from_delta, _, to_delta) = pairs
+            .exchange_resolved(c, &phi, &channels)
+            .expect("the resolved friction pair exchanges");
+        let rho_i = m_ion as f32 * phi[0];
+        let rho_n = m_neutral as f32 * phi[1];
+        let net = rho_i * from_delta + rho_n * to_delta;
+        assert!(net.abs() < 1e-3, "rho-weighted exchange sums to zero");
+        let rate = k as f32 * rho_n / (m_ion as f32 + m_neutral as f32);
+        assert!(
+            (from_delta - rate * (phi[1] - phi[0])).abs() < 1e-4,
+            "the ion-side per-mass rate is K·rho_n/(m_i+m_n)"
+        );
+    }
+
+    #[test]
+    fn a_number_density_ref_without_a_species_mass_yields_no_resolved_exchange() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let ion = a_mass_descriptor();
+        let neutral = a_mass_descriptor();
+        let ion_h = ion.hash();
+        let neutral_h = neutral.hash();
+        channels.register(ion);
+        channels.register(neutral);
+        let mut pairs = CouplingRegistry::with_capacity(1);
+        pairs.register(Coupling {
+            kind: CouplingKind::IonNeutralFriction,
+            from: ion_h,
+            to: neutral_h,
+            coefficient: Some(0.5),
+            unit: "m3 / s",
+            region: None,
+            density_from: Some(DensityRef {
+                channel_ref: ion_h,
+                kind: DensityKind::Number,
+                species_mass: None,
+            }),
+            density_to: Some(DensityRef {
+                channel_ref: neutral_h,
+                kind: DensityKind::Number,
+                species_mass: Some(16.0),
+            }),
+            quasi_neutral: None,
+        });
+        let c = pairs
+            .coupling_of(ion_h, neutral_h, CouplingKind::IonNeutralFriction)
+            .expect("the registered friction pair resolves");
+        let phi = [2.0f32, 5.0];
+        assert_eq!(
+            pairs.exchange_resolved(c, &phi, &channels),
+            None,
+            "a number density needs its species mass; absent stays absent"
+        );
+    }
+
+    #[test]
+    fn a_mass_kind_density_ref_carries_the_density_untouched() {
+        let mut channels = ChannelRegistry::with_capacity(1);
+        let d = a_mass_descriptor();
+        let h = d.hash();
+        channels.register(d);
+        let r = DensityRef {
+            channel_ref: h,
+            kind: DensityKind::Mass,
+            species_mass: None,
+        };
+        let pairs = CouplingRegistry::with_capacity(0);
+        let phi = [3.5f32];
+        assert_eq!(pairs.density_at(&r, &phi, &channels), Some(3.5));
     }
 
     fn an_interface(cond: InterfaceCond, from: u64, to: u64) -> Interface {
