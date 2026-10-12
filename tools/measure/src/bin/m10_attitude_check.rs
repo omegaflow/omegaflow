@@ -145,6 +145,7 @@ fn main() {
     let mut max_sep_jd = 0.0f64;
     let mut sum_sep_planet = 0.0f64;
     let mut max_sep_planet = 0.0f64;
+    let mut worst: Option<(String, f64, [f64; 3], [f64; 3], [f64; 3])> = None;
 
     for f in &m1 {
         let tdb = (f.jd - J2000_EPOCH) * 86400.0;
@@ -169,6 +170,7 @@ fn main() {
         if ds > max_s {
             max_s = ds;
             max_s_jd = f.jd;
+            worst = Some((f.fds.clone(), f.jd, vec, s, sc));
         }
         sum_sep += sep;
         if sep > max_sep {
@@ -219,4 +221,11 @@ fn main() {
         sum_sep_planet / n as f64,
         max_sep_planet
     );
+    if let Some((fds, jd, vec, s, sc)) = worst {
+        println!();
+        println!("worst |vec-S| frame FDS {fds} JD {jd:.5}");
+        println!("  sc (M10 SSB)   [{:.1}, {:.1}, {:.1}] km", sc[0], sc[1], sc[2]);
+        println!("  vec (sc-me)    [{:.1}, {:.1}, {:.1}] km |vec| {:.1}", vec[0], vec[1], vec[2], norm(vec));
+        println!("  SXSYSZ (file)  [{:.1}, {:.1}, {:.1}] km |S| {:.1}", s[0], s[1], s[2], norm(s));
+    }
 }
