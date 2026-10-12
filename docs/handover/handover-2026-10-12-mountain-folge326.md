@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — f107 TDB-Zeitbasis geheilt (extract.rs/f107.rs), JADES plain-tar→FITS-Arm tar_fits gebaut, BK18 format-text + uK^2-Einheit registriert, MCON-Spanne / ISIS-Identität / mariner_rst-Bänder gemessen; adressierte Blöcke future-241 + river-196 gefaltet
   class: handover
   date: 2026-10-12
-  sha256: 87afccdb020af3b557141a1c6bf1ae5051a53fd05e3a67c0739729237ceb865f
+  sha256: b685688e405c63065f6b17d8597b49fa1c2da270f05dd827a1d3a919a6eebc73
   status: live
 -->
 # Handover — Mountain-Folge 326 (2026-10-12)
@@ -158,7 +158,8 @@ Adressierte Blöcke gefaltet: `## An mountain` aus
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der nächste Verdikt-Pass
 - **Lage:** (gemessen 2026-10-11, `docs/surveys/survey-2026-10-09-redistribution-alternativen.md`
-  §Dritter Lauf) ALMA→ESO, GRDC→GRDC-Caravan/USGS NWIS, RIPE RIS→RouteViews, IMCCE→DE440/441,
+  §Dritter Lauf) ALMA→ESO, GRDC→GRDC-Caravan/USGS NWIS, RIPE RIS→RouteViews,
+  **IMCCE INPOP/NOE-4 → erledigt: Open Licence 2.0 (etalab-2.0), Blöcke gesetzt** (siehe `## An mycelium`),
 - **Blockade:** Admission-Verdikte je Kandidat fehlen; Risse RouteViews BY-vs-BY-SA, ESO-CC-BY nur
   für ESO-ALMA-Records.
 - **Braucht:** Admission je Kandidat (Mountain-Verdikt); danach Mycelium-CDN.
@@ -198,6 +199,16 @@ Adressierte Blöcke gefaltet: `## An mountain` aus
 
 Origin: mountain-folge326 (2026-10-12).
 
+- **INPOP/NOE4 registriert — CDN-Lauf fehlt (Operator-Wort, future-241).** Die Lizenz ist geklärt:
+  INPOP **und** NOE sind **SE-OP-Produkte unter der Open Licence / Licence Ouverte 2.0**
+  (GTCU `https://seop.obspm.fr/en/terms/`) → Redistribution erlaubt. Mountain hat 12 Blöcke gesetzt
+  (`phi/sources.φ:2185-2285`): `ephemeris_inpop_{mercury,venus,mars,jupiter,saturn,uranus,neptune,sun,moon,earth}.bin`
+  (Format `ephemeris_inpop`, `origin` inpop19a-SPICE-Tar, Compiler `inpop_compiler`) +
+  `ephemeris_noe4_{phobos,deimos}.bin` (Format `ephemeris_noe4`, `origin` NOE-4-2020.bsp, Compiler
+  `noe4_compiler`), alle `terms etalab-2.0 https://seop.obspm.fr/en/terms/`. **Der CDN-Release
+  `ftp.imcce.fr` existiert noch nicht** (`gh release view ftp.imcce.fr` = not found) — der erste
+  `--ci-mode`-Lauf beider Compiler ist die Mycelium-Manifestation. Der `weberin_verdicts`-Block
+  (`phi:20587`) zieht dieselben Origins (inpop19a + epm2021).
 - **M10-Kamera/Encounter:** für den M1-Kamera-Blindfleck brauche ich die `url`/`origin`/`compiler`-
   Zeile für `https://ser.im-ldi.com/M10/M10_ISIS/` (`camera_angles.txt`, 194 640 B, sha
   `0a65df59c8685e22004ce7f7afa21cf54f7aedc39c2ecb5965b8fcad3dae97bd`) — US-PD → dann `format`

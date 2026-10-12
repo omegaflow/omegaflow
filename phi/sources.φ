@@ -2182,6 +2182,102 @@ compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_mercury.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_inpop
+origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+compiler tools/harvest/src/bin/inpop_compiler.rs
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_venus.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_inpop
+origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+compiler tools/harvest/src/bin/inpop_compiler.rs
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_mars.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_inpop
+origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+compiler tools/harvest/src/bin/inpop_compiler.rs
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_jupiter.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_inpop
+origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+compiler tools/harvest/src/bin/inpop_compiler.rs
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_saturn.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_inpop
+origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+compiler tools/harvest/src/bin/inpop_compiler.rs
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_uranus.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_inpop
+origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+compiler tools/harvest/src/bin/inpop_compiler.rs
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_neptune.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_inpop
+origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+compiler tools/harvest/src/bin/inpop_compiler.rs
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_sun.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_inpop
+origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+compiler tools/harvest/src/bin/inpop_compiler.rs
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_moon.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_inpop
+origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+compiler tools/harvest/src/bin/inpop_compiler.rs
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_earth.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_inpop
+origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
+compiler tools/harvest/src/bin/inpop_compiler.rs
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_noe4_phobos.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_noe4
+origin https://ftp.imcce.fr/pub/ephem/satel/NOE/MARS/2020/NOE-4-2020.bsp
+compiler tools/harvest/src/bin/noe4_compiler.rs
+at sun
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_noe4_deimos.bin
+terms etalab-2.0 https://seop.obspm.fr/en/terms/
+format ephemeris_noe4
+origin https://ftp.imcce.fr/pub/ephem/satel/NOE/MARS/2020/NOE-4-2020.bsp
+compiler tools/harvest/src/bin/noe4_compiler.rs
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ftp.space.dtu.dk/pcn_2015.bin
 format pcn
 origin https://ftp.space.dtu.dk/WDC/indices/pcn/PCN_definitive/pcn2015d.dat
