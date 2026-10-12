@@ -33,6 +33,10 @@ jobs:
           ref: main
           fetch-depth: 0
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Set the git identity for block_commit
+        run: |
+          git config user.name "omegaflow-bot"
+          git config user.email "bot@omegaflow.space"
       - name: Download the completed run's measurement artifacts
         uses: actions/download-artifact@v4
         with:
