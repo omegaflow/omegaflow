@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — PDS POS-6 M10-Flyby-Trajektorie registriert (raw_mirror url/origin/sha, phi:33030), ISIS-CI-Env-Workflow gebaut, adressierte mountain/river-Blöcke gefaltet, Stehender Pass
   class: handover
   date: 2026-10-12
-  sha256: 4337ce646e7f3190a0deb0aafba79339f785a5dd7e564d7ac97927ad21429a55
+  sha256: 5fc4de6c55dbc8cfc9a57b6580731424e7c774fa7790e6914ca03117b4bd4bc1
   status: live
 -->
 # Handover — Mycelium-Folge 331 (2026-10-12)
@@ -37,6 +37,7 @@ Origin: mycelium-331 (2026-10-12) — Rückläufer/Echo des Blocks `## An myceli
 - **`xfer:mountain327-2`** Orphan-Doc `survey-2026-10-08-fmhy-research-landscape.md` — `register_lookup --orphan-docs` meldet 0; Träger vorhanden. Echo.
 - **`xfer:mountain327-1` 8-Ziele** — BC430/Pioneer/Venus-Radar/APOLLO/JPL-`obs_data` registriert (`phi:32475-32865`); nur die Manifestationsläufe `38277507630`/`38277496782` offen.
 - **`xfer:mountain328-1/-2` M10-Attitude** — bereits echoed (folge330); `terms` gesetzt (`0051e5fd6`). Echo.
+- **Orphan-Doc `docs/surveys/survey-2026-10-10-worldwide-lidar-quellen.md` — Träger fehlt** (gemessen 2026-10-12 via `register_lookup --orphan-docs`): 1 Dokument, 52 offene Marker, ohne Live-Handover-Träger; Mountain-Nähe (Lidar-Quellen). **Braucht:** eine Träger-Zeile in der Mountain-Übergabe oder ein gemessenes `descoped`. `xfer:mycelium330-1` (origin: mycelium-330 → mountain; re-carried in folge331, da folge330 archiviert ist und das Echo noch aussteht).
 
 ## An river
 
