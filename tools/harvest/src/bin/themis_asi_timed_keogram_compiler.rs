@@ -1,5 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::sha256::sha256_hex;
+use omegaflow::archivar::themis_asi;
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::gunzip;
 use omegaflow::lsk::days_from_civil;
@@ -317,12 +318,13 @@ fn write_tkdg(frames: &[Frame]) -> Vec<u8> {
     out
 }
 
-fn emit(name: &str, origin: &str, sha: &str) {
+fn emit(name: &str, origin: &str, sha: &str, station: &themis_asi::AsiStation, alt_m: f64) {
     println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}");
     println!("origin {origin}");
     println!("compiler {COMPILER}");
     println!("format {FORMAT}");
-    println!("at earth");
+    println!("station {}", station.code);
+    println!("on earth {} {} {alt_m}", station.lat_deg, station.lon_deg);
     println!("ttl {TTL}");
     println!("sha256 {sha}");
     println!();
@@ -366,6 +368,14 @@ fn run(args: &[String]) -> Result<(), String> {
             ymd(d)
         )
     })?;
+
+    let code = label.split("_themis").next().unwrap_or(label.as_str());
+    let st = themis_asi::station(code).ok_or_else(|| {
+        format!("{station}: not in the ASI station table — night skipped (0 honored)")
+    })?;
+    let alt_m = st
+        .alt_m
+        .ok_or_else(|| format!("{station}: alt pending — night skipped (0 honored)"))?;
 
     let base = station_url(&label, d);
     let station_html = fetch_raw_bytes(&base)
@@ -434,7 +444,7 @@ fn run(args: &[String]) -> Result<(), String> {
         Some(name) if !name.is_empty() => name,
         _ => out.as_str(),
     };
-    emit(asset, origin_template(), &sha);
+    emit(asset, origin_template(), &sha, st, alt_m);
     if ci_mode && !upload_release(NETLOC, &out) {
         return Err(format!("{out}: CDN upload returned void"));
     }

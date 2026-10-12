@@ -1,5 +1,6 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::sha256::sha256_hex;
+use omegaflow::archivar::themis_asi;
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
 use omegaflow::spectral::civil_from_days;
@@ -104,12 +105,13 @@ fn label_for(station: &str, d: Date) -> Option<String> {
     Some(label)
 }
 
-fn emit(name: &str, origin: &str, sha: &str) {
+fn emit(name: &str, origin: &str, sha: &str, station: &themis_asi::AsiStation, alt_m: f64) {
     println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}");
     println!("origin {origin}");
     println!("compiler {COMPILER}");
     println!("format {FORMAT}");
-    println!("at earth");
+    println!("station {}", station.code);
+    println!("on earth {} {} {alt_m}", station.lat_deg, station.lon_deg);
     println!("ttl {TTL}");
     println!("sha256 {sha}");
     println!();
@@ -181,6 +183,15 @@ fn run(args: &[String]) -> Result<(), String> {
                 );
                 continue;
             };
+            let code = label.split("_themis").next().unwrap_or(label.as_str());
+            let Some(st) = themis_asi::station(code) else {
+                eprintln!("{station}: not in the ASI station table — night skipped (0 honored)");
+                continue;
+            };
+            let Some(alt_m) = st.alt_m else {
+                eprintln!("{station}: alt pending — night skipped (0 honored)");
+                continue;
+            };
             let url = keogram_url(&label, *d);
             let Some(bytes) = fetch_raw_bytes(&url) else {
                 eprintln!("{url}: fetch void — night skipped (0 honored)");
@@ -196,7 +207,7 @@ fn run(args: &[String]) -> Result<(), String> {
                 .map_err(|e| format!("write {path} returned void: {e}"))?;
             let sha = sha256_hex(&bytes);
             eprintln!("{name}: {} B, sha256 {sha}", bytes.len());
-            emit(&name, &url, &sha);
+            emit(&name, &url, &sha, st, alt_m);
             if ci_mode && !upload_release(NETLOC, &path) {
                 return Err(format!("{path}: CDN upload returned void"));
             }

@@ -6,6 +6,164 @@ pub const PIXEL_BYTES: usize = 2;
 
 pub const UNIT: &str = "relative";
 
+pub struct AsiStation {
+    pub code: &'static str,
+    pub lat_deg: f64,
+    pub lon_deg: f64,
+    pub alt_m: Option<f64>,
+}
+
+pub const STATIONS: [AsiStation; 24] = [
+    AsiStation {
+        code: "ATHA",
+        lat_deg: 54.714,
+        lon_deg: -113.314,
+        alt_m: Some(511.82),
+    },
+    AsiStation {
+        code: "CHBG",
+        lat_deg: 49.814,
+        lon_deg: -74.419,
+        alt_m: Some(363.92),
+    },
+    AsiStation {
+        code: "EKAT",
+        lat_deg: 64.717,
+        lon_deg: -109.333,
+        alt_m: Some(398.83),
+    },
+    AsiStation {
+        code: "FSIM",
+        lat_deg: 61.762,
+        lon_deg: -121.221,
+        alt_m: Some(154.61),
+    },
+    AsiStation {
+        code: "FSMI",
+        lat_deg: 59.984,
+        lon_deg: -111.842,
+        alt_m: Some(175.62),
+    },
+    AsiStation {
+        code: "FYKN",
+        lat_deg: 66.560,
+        lon_deg: -145.214,
+        alt_m: Some(137.15),
+    },
+    AsiStation {
+        code: "GAKO",
+        lat_deg: 62.407,
+        lon_deg: -145.158,
+        alt_m: Some(589.72),
+    },
+    AsiStation {
+        code: "GBAY",
+        lat_deg: 53.316,
+        lon_deg: -60.460,
+        alt_m: None,
+    },
+    AsiStation {
+        code: "GILL",
+        lat_deg: 56.354,
+        lon_deg: -94.656,
+        alt_m: Some(103.12),
+    },
+    AsiStation {
+        code: "INUV",
+        lat_deg: 68.413,
+        lon_deg: -133.770,
+        alt_m: Some(11.47),
+    },
+    AsiStation {
+        code: "KAPU",
+        lat_deg: 49.392,
+        lon_deg: -82.320,
+        alt_m: Some(179.94),
+    },
+    AsiStation {
+        code: "KIAN",
+        lat_deg: 66.971,
+        lon_deg: -160.438,
+        alt_m: Some(33.15),
+    },
+    AsiStation {
+        code: "KUUJ",
+        lat_deg: 58.155,
+        lon_deg: -68.532,
+        alt_m: Some(85.39),
+    },
+    AsiStation {
+        code: "MCGR",
+        lat_deg: 62.953,
+        lon_deg: -155.596,
+        alt_m: Some(112.57),
+    },
+    AsiStation {
+        code: "NRSQ",
+        lat_deg: 61.162,
+        lon_deg: -45.442,
+        alt_m: Some(40.53),
+    },
+    AsiStation {
+        code: "PGEO",
+        lat_deg: 53.815,
+        lon_deg: -122.828,
+        alt_m: Some(561.26),
+    },
+    AsiStation {
+        code: "PINA",
+        lat_deg: 50.163,
+        lon_deg: -96.066,
+        alt_m: Some(247.63),
+    },
+    AsiStation {
+        code: "RANK",
+        lat_deg: 62.828,
+        lon_deg: -92.113,
+        alt_m: Some(-17.15),
+    },
+    AsiStation {
+        code: "SNAP",
+        lat_deg: 63.580,
+        lon_deg: -110.870,
+        alt_m: Some(406.20),
+    },
+    AsiStation {
+        code: "SNKQ",
+        lat_deg: 56.536,
+        lon_deg: -79.231,
+        alt_m: Some(-11.22),
+    },
+    AsiStation {
+        code: "TALO",
+        lat_deg: 69.541,
+        lon_deg: -93.554,
+        alt_m: Some(0.19),
+    },
+    AsiStation {
+        code: "TPAS",
+        lat_deg: 53.994,
+        lon_deg: -100.941,
+        alt_m: Some(240.59),
+    },
+    AsiStation {
+        code: "WHIT",
+        lat_deg: 61.010,
+        lon_deg: -135.223,
+        alt_m: None,
+    },
+    AsiStation {
+        code: "YKNF",
+        lat_deg: 62.520,
+        lon_deg: -114.313,
+        alt_m: Some(179.14),
+    },
+];
+
+pub fn station(code: &str) -> Option<&'static AsiStation> {
+    STATIONS.iter().find(|s| s.code.eq_ignore_ascii_case(code))
+}
+
 pub fn component_name(comp: u32) -> String {
     format!("themis_asi_px_{comp:04}")
 }
@@ -133,5 +291,17 @@ mod tests {
             crate::archivar::spectral::SPECTRAL_NO_BAND
         );
         assert_eq!(fields[0].aperture, crate::archivar::Aperture::None);
+    }
+
+    #[test]
+    fn station_table_carries_measured_ellipsoidal_height_and_refuses_pending() {
+        let gill = station("gill").expect("gill is measured");
+        assert_eq!(gill.code, "GILL");
+        assert_eq!(gill.alt_m, Some(103.12));
+        let rank = station("RANK").expect("rank is measured");
+        assert_eq!(rank.alt_m, Some(-17.15));
+        assert_eq!(station("whit").and_then(|s| s.alt_m), None);
+        assert_eq!(station("gbay").and_then(|s| s.alt_m), None);
+        assert!(station("zzzz").is_none());
     }
 }
