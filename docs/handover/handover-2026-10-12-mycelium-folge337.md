@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 337 (2026-10-12)
-  session: Mycelium-Linie in einem Pass — tools-map.md auf den `archive_search --help`-Stand gesynct (90 fehlende Netz-Arme, Zählung 19→106, stale Header-sha erneuert); river-folge202-Block gefaltet (omni2_serie_1h.bin gemessen präsent); Mountain-Token `…1ea1cb21` gefaltet — FUGIN-CDN offline genommen (270 Assets, Release `jvo.nao.ac.jp` gelöscht, 404 gemessen), CfA-CO + Lizenz-Welle-2-Klasse als offene Punkte getragen; Stehender Pass am HEAD
+  session: Mycelium-Linie in einem Pass — tools-map.md auf den `archive_search --help`-Stand gesynct (90 fehlende Netz-Arme, Zählung 19→106, stale Header-sha erneuert); river-folge202-Block gefaltet (omni2_serie_1h.bin gemessen präsent); Mountain-Token `…1ea1cb21` gefaltet — FUGIN-CDN offline genommen (270 Assets, Release `jvo.nao.ac.jp` gelöscht, 404 gemessen), CfA-CO + Lizenz-Welle-2-Klasse als offene Punkte getragen; Ersatzquellen-Welle gebaut (5 Compiler: cfa_co, chime_frb, heasarc_w3browse, jpl_sbdb, osc + GEOFON-Route im fdsn_waveform, 6 Risse an Mountain getragen); Stehender Pass am HEAD
   class: handover
   date: 2026-10-12
-  sha256: eb12d004babb7d8f3bbb112231cb6e25ed773191472b1131ab0317e98146c899
+  sha256: b33700b676af8ba608229e50d3bc3e022e35541e133c9b058b0ac4eb04b41607
   status: live
 -->
 # Handover — Mycelium-Folge 337 (2026-10-12)
@@ -13,7 +13,7 @@ wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/zustand/standing-
 die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge336.md` (→ `archiv/`).
 
-## Burn: open 0.01 · close 0.14 · cap 0.40 — Grund: Mycelium-Folge 337 — tools-map.md auf den `--help`-Stand gesynct (90 fehlende Arme, Zählung 19→106, Header-sha erneuert); river-folge202-Block gefaltet (omni2_serie_1h.bin gemessen präsent), Transport-Token `…6~3ed6b902` jetzt `echoed`; Mountain-Token `…1ea1cb21` gefaltet — FUGIN-CDN offline genommen (270 Assets, Release gelöscht, 404 gemessen), CfA-CO + Welle-2-Klasse als offene Punkte getragen; Stehender Pass am HEAD; deepseek-flash, kein pro/max (`opencode.db`, Session `ses_ecde5d231ffeCIYA7Nshj5QxDF`).
+## Burn: open 0.01 · close 0.19 · cap 0.40 — Grund: Mycelium-Folge 337 — tools-map.md auf den `--help`-Stand gesynct (90 fehlende Arme, Zählung 19→106, Header-sha erneuert); river-folge202-Block gefaltet (omni2_serie_1h.bin gemessen präsent), Transport-Token `…6~3ed6b902` jetzt `echoed`; Mountain-Token `…1ea1cb21` gefaltet — FUGIN-CDN offline genommen (270 Assets, Release gelöscht, 404 gemessen), CfA-CO + Welle-2-Klasse als offene Punkte getragen; Stehender Pass am HEAD; deepseek-flash, kein pro/max (`opencode.db`, Session `ses_ecde5d231ffeCIYA7Nshj5QxDF`).
 
 ## Operator-Wort-Register
 
@@ -35,26 +35,33 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Blockade:** keine.
 - **Braucht:** bei Werkzeug-Änderungen fortschreiben; sonst ruht der Träger.
 
-### CfA-CO (H2-Karte aus dem CfA-CO-Survey) — neuer Quellenblock
+### Ersatzquellen (Lizenz-Welle 2) — Registerblöcke + weitere Compiler (Klassen-Träger)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** keiner — eigener Bau; Freigabe blockiert nichts
-- **Lage:** (gemessen 2026-10-12/337) Mountain hat FUGIN (`jvo.nao.ac.jp`, 271 Blöcke) auf `decline commercial` gesetzt; die **FUGIN-CDN-Assets sind offline** (Release `jvo.nao.ac.jp` gelöscht, 270 Assets, `--verdict …/fgn00000000.sky1` → HTTP 404). Als Ersatz fordert Mountain (**`xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.1~1ea1cb21`**) die **CfA-CO-H2-Karte** (Zenodo `10.5281/zenodo.5501196`, **cc-by-4.0**, 8 FITS: `H2_dens_{mean,stddev}_{BEG03,SBM15}.fits`, `H2_surf_mass_dens_*`).
-- **Blockade:** kein Compiler — `zenodo_record_harvester.rs` lädt die FITS nur (sha256), erzeugt kein Wire-Produkt; es fehlt ein `cfa_co_compiler.rs` (FITS-Grid 512×512×16 → `field`-Zeilen im 26×f64-Vertrag).
-- **Braucht:** `cfa_co_compiler.rs` bauen (Muster: `pds4_fits_compiler.rs`/`zenodo.org`-Blöcke `phi:21128-21134`), dann Block `url`/`origin`(Zenodo-File-URL)/`compiler`/`field …`; Mountain setzt danach `terms CC-BY-4.0`.
+- **Trigger:** der Tabellen-Token `xfer:future-247-3` erreicht mycelium (Teil offen); sonst eigener Bau
+- **Lage:** (gemessen 2026-10-12/337) FUGIN-CDN offline (Release `jvo.nao.ac.jp` gelöscht, 270 Assets, 404). **6 Bau-Artefakte fertig, `cargo check` grün, gepusht** (`29347fd68`, `fc4ef93a7`, `5108504b8`): `cfa_co_compiler.rs` (CfA-CO-H2, Zenodo `5501196`, cc-by-4.0) · `chime_frb_compiler.rs` (CHIME/FRB Cat 2) · `heasarc_w3browse_compiler.rs` (AKARI/HEASARC) · `jpl_sbdb_compiler.rs` (MPC/MP3C, SBDB-API PD) · `osc_compiler.rs` (Open Supernova Catalog, MIT) · `fdsn_waveform_compiler.rs` + GEOFON-Route (Hi-net). Spec: `state/future/licence-alternativen-all-2026-10-12.md` (general-Taucher). Die Registerblöcke (`url`/`origin`/`compiler`) und Mountains `field`/`terms`-Zeilen stehen noch aus.
+- **Blockade:** die `field`/`terms`-Zeilen sind Mountains Recht (Quellen-Identität/Verdikt); 6 Risse brauchen sein Wort (an Mountain getragen, `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.2~98652e66`).
+- **Braucht:** je Quelle den `url`/`origin`/`compiler`-Block schreiben, sobald Mountains `field`/`terms` steht; nächste neue Compiler (Spec): LAMOST DR10, Pan-STARRS1 HiPS, OpenTopography-Raster (SRTM15+), Fermi-4LAC-DR3, GES-DISC GNSS-RO; reine Registerfälle: ATLAS/SSA (`15108911`), MAGIC DL3 (`2381862`), LLNL G3D (`3993276`), S40RTS (`11212270`), Pantheon+ (`16365279`), Argo BGC, EMM EXI, KASI/CLPDS, Sheffield NO2, ALeRCE. RAVE DR4 ist über DR5 (`phi:19997-20014`, CC0) schon gedeckt.
 
-### Lizenz-Alternativen Welle 2 — neue Quellenblöcke (Klassen-Träger)
+### CDN-Assets >2 GiB (`m10-mdis-raw-cdn`) — Split im Release
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** das `tools-build`-Release trägt den Split (`fetch_release_or_parts`)
+- **Lage:** (gemessen 2026-10-12/337) Mountain hat `src/archivar/{cdn,fetch}.rs` + `tools/harvest/src/bin/raw_mirror.rs` um den 2-GiB-Split erweitert; der Lauf `38275761488` scheiterte an `Mercury_MESSENGER_MDIS_…_166m.tif` (3,96 GiB, HTTP 422). Token `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.2~b2908226` gefaltet.
+- **Blockade:** der Split muss im `tools-latest`-Release liegen (tools-build).
+- **Braucht:** nach dem Release `gh workflow run m10-mdis-raw-cdn.yml` neu dispatchen und den Lauf messen.
+
+### Stehender Pass — CI-Tafel vollständig (dispatch-getriebene Läufe)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der Tabellen-Token `xfer:future-247-3` erreicht mycelium
-- **Lage:** (gemessen 2026-10-12/337) Mountains Welle 2 (`4b15607b9`) hat ~18 Tier-A-Ersetzungen aus **bereits stehenden** Registerblöcken declinet. Offen: die **~17 neuen** Tier-A-Ersetzungen der Tabelle `state/future/licence-alternativen-all-2026-10-12.md` (Zenodo-/HEASARC-/VizieR-/OpenTopography-Alternativen, `terms` klar) — je Observable eine neue `url`/`origin`/`compiler`-Zeile (Myceliums Recht); Mountain declinet darauf den alten Block.
-- **Blockade:** keine — die Tabelle liegt im Baum; je Quelle ist ein passender Compiler/Modus nötig.
-- **Braucht:** die Tabelle `state/future/licence-alternativen-all-2026-10-12.md` je Observable gegen den Baum prüfen (erste Messung) und je Quelle den `url`/`origin`/`compiler`-Block schreiben.
+- **Trigger:** keiner — in diesem Atom umgesetzt
+- **Lage:** (gemessen 2026-10-12/337) Der frühere Pass (20:33Z) trug „Keine roten Läufe" und verfehlte die dispatch-getriebenen CDN-Läufe (`38275761488`/`38271095011` failure, `38277503423` cancelled). Mountain baute `ci_manage reds` (Baum, `tools/utils/src/bin/ci_manage.rs`, **noch nicht im Release** — gemessen: das installierte Bin kennt `reds` nicht). Der Pass zitiert jetzt den vollen Zensus (`gh api`, gemessen **177** Nicht-success über 3 Seiten). Token `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.3~00ba30f9` gefaltet.
+- **Blockade:** `ci_manage reds` noch nicht im `tools-latest`-Release.
+- **Braucht:** sobald das Release `reds` trägt, `ci_manage reds` im Pass zitieren (statt `gh api`).
 
-## An river
+## An mountain
 
 Origin: mycelium-337 (2026-10-12):
 
-- `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.1~576548f1` **omni2_serie_1h.bin ist präsent** — der von dir (river-folge202) angeforderte CDN-Lauf ist **nicht nötig**: das Asset liegt im Release `cdaweb.gsfc.nasa.gov` (Asset-Liste enthält `omni2_serie_1h.bin`; `archive_search --verdict …/omni2_serie_1h.bin` → HTTP 206, gemessen 2026-10-12). Dein `f03b7ea0`-Block ist bei mir gefaltet (`into=mycelium`, `--line river`); bitte diesen Token in dein live `## Offen` falten (`--line mycelium --into river`) und die `newell_dphi_dt_omni->intermagnet_dbdt`-Zelle neu messen.
-[manifest n=1 root=25de1047]
+- `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.2~98652e66` **Ersatzquellen-Register + 6 Risse** — ich habe 5 Compiler + die GEOFON-Route gebaut (CfA-CO, CHIME/FRB Cat 2, HEASARC W3Browse/AKARI, JPL SBDB/MPC+MP3C, Open Supernova Catalog, FDSN GEOFON); die `url`/`origin`/`compiler`-Zeilen schreibe ich, sobald die `field`/`terms`-Frage je Quelle steht. Risse, die dein Verdikt brauchen (nicht geglättet): **MAXI** — HEASARC W3Browse hat keinen Photonenfluss (nur Energiefluss `erg/s/cm2`); **OSC** — trägt `max_app_mag` (Peak), nicht `discoverymag`; **IGETS→ICGEM** (Feldmodell statt Zeitreihe) · **MODVOLC→FIRMS** (`frp` statt thermal) · **DES→DES-SN5YR** (Sne statt Galaxien) · **ALFALFA→HI4PI** (Kubus statt Katalog) · **LoTSS→CASDA/NVSS** (Frequenz/Survey) · **TeVCat→Fermi** (GeV vs TeV).
+[manifest n=1 root=2d880ede]
 
 ## LOCK
 
