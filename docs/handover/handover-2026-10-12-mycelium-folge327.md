@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (INPOP/NOE4-Fix, adressierte Faltungen, Stehender Pass)
   class: handover
   date: 2026-10-12
-  sha256: 0bc553d587f79d801f81bf6a4a3dc7d2a05b016b60f8cedce41e72e0e1cf7666
+  sha256: daf5eb2ad1e3a3d580656e4965052a72185bde546d4b35f2c18677dea5082fe1
   status: live
 -->
 # Handover — Mycelium-Folge 327 (2026-10-12)
@@ -15,7 +15,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 **mit Token** (die folge326-Faltung war unvollständig: `xfer:mountain327-1`- und
 `-2`-Einträge fehlten im Live-Handover).
 
-## Burn: open 0.00 · close 0.22 · cap 0.30 — Grund: Mycelium-Folge 327 in einem Atom (opencode.db Session-Cost 0.2213, Live-Flush): INPOP/NOE4-Fix (Lauf grün) + BC430-Register/Mirror (Lauf grün) + Taucher-Staffel (5 Punkte parallel) + CI-Fold-Fix + adressierte Faltungen + Stehender Pass; deepseek-flash, kein pro/max.
+## Burn: open 0.00 · close 0.25 · cap 0.30 — Grund: Mycelium-Folge 327 in einem Atom (opencode.db Session-Cost 0.2493, Live-Flush): INPOP/NOE4-Fix (grün) · BC430+P10+P11 Register/Mirror · Taucher-Staffel (6 Punkte) · CI-Fold-Fix · adressierte Faltungen · Stehender Pass; deepseek-flash, kein pro/max.
 
 ## Operator-Wort-Register
 
@@ -77,36 +77,35 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 
 ### 8-Ziele-Einkaufsliste — BC430 registriert + Mirror dispatcht; P10/P11/Venus offen `xfer:mountain327-1`
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** die Zenodo-`content`-**GETs** für P10/P11/Venus liefern wieder Körper statt `504 Gateway Time-out`
-- **Lage:** (gemessen 2026-10-12) **BC430** Zenodo `3558850`: sha256 `0b2da752…` über 59 541 013 B (via
-  `curl -sSL` + `sha256sum`) → **registriert** (`phi:32389-32394`, kanonische Position nach `zcta_gazetteer`,
-  vor `jades_early_galaxies`) + Workflow `.github/workflows/zenodo-raw-cdn.yml` (Matrix, `raw_mirror`,
-  `# harvest: format=raw_zenodo`), Lauf `38244619269` **success** (gemirrort). **Pioneer 10** `13309156` / **11** `13309040`:
-  GET des `…/api/records/<id>/files/<name>/content` → **`504 Gateway Time-out`** (92-B-Body), auch mit
-  `curl --http2` und Retry. **Venus-Radar** `18176179`: `Processed.zip` (409 371 501 B) HEAD = 200,
-  GET → **504**; `.tif` 80 909 342 816 B (nicht machbar).
-  **Riss/gemessen:** HTTP/1.1 → 504, `curl --http2` → 200 gilt für HEAD/kleine Körper, **nicht** für die
-  großen GETs — der 504 ist Gateway-Timeout, nicht HTTP-Version (BC430/59 MB ging durch); Rate-Limit sichtbar
-  (`x-ratelimit-limit: 133`, `retry-after: 25`).
-- **Blockade:** Zenodo-Gateway für GET-Körper ≳ 60 MB. Register-Ordnung: ein `register_sort --write` würde
-  175 fremde (inpop-)Zeilen sweepen → der BC430-Block wurde manuell an kanonischer `(ttl,url)`-Position gesetzt
-  und per Sort-Dry-Run auf Relokationsfreiheit verifiziert.
-- **Braucht:** `ci_manage log 38244619269` (BC430-Mirror); für P10/P11/Venus
-  `curl -sSL --http2 --retry 3 --retry-all-errors --max-time 900 -o /tmp/opencode/<name> '<content-url>' && sha256sum /tmp/opencode/<name>`
-  sobald der Gateway-Timeout weicht, dann je Block + Matrix-Zeile. Nicht-cc-by (PDS/JPL) `terms` → Mountain.
+- **Trigger:** der Zenodo-GET für Venus-`Processed.zip` liefert wieder einen Körper statt `504 Gateway Time-out`
+- **Lage:** (gemessen 2026-10-12) **BC430** Zenodo `3558850`: sha `0b2da752…`/59 541 013 B → **registriert**
+  (`phi:32389-32394`) + `zenodo-raw-cdn.yml`, Lauf `38244619269` **success** (gemirrort). **P10** `13309156`
+  (`SC_23.asc`, sha `330126869…`/678 784 528 B) und **P11** `13309040` (`SC_24.asc`, sha `271888047…`/
+  721 591 221 B) **gemessen** (`curl --http2 --retry --retry-all-errors`) → **registriert** (`phi:32411-32422`,
+  nach `llr`/vor `rixs`, Sort-Dry-Run 724 = Baseline) + Matrix-Zeilen in `zenodo-raw-cdn.yml`. **Venus-Radar**
+  `18176179`: `Processed.zip` (409 371 501 B) weiter **`504 Gateway Time-out`** (92-B-Body, auch mit `--http2`/
+  Retry); `.tif` 80 909 342 816 B (nicht machbar). **Riss/gemessen:** HTTP/1.1 → 504; `--http2 --retry` löst die
+  großen GETs (BC430/P10/P11 kamen durch), **Venus nicht** (Gateway-Timeout auf jenem Record); Rate-Limit
+  `x-ratelimit-limit: 133`, `retry-after: 25`.
+- **Blockade:** Venus an Zenodo (Record-spezifischer Gateway-Timeout). Register-Ordnung: `register_sort --write`
+  würde 175 fremde (inpop-)Zeilen sweepen → Blöcke manuell an kanonischer `(ttl,url)`-Position gesetzt.
+- **Braucht:** `ci_manage log <zenodo-raw-cdn-run-id>` (P10/P11-Mirror, push-getriggert); Venus
+  `curl -sSL --http2 --retry 3 --retry-all-errors --max-time 900 -o /tmp/opencode/venus.zip '<Processed.zip-content-url>' && sha256sum …`
+  sobald der 504 weicht. Nicht-cc-by (PDS/JPL) `terms` → Mountain.
 
 ### Orphan-Doc-Träger — fmhy-Survey; `--searxng`-Arm gebaut `xfer:mountain327-2`
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der nächste `--orphan-docs`-Pass
 - **Lage:** (gemessen 2026-10-12) Träger dieser Zeile ist
   `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md` (2 offene Marker; see-also
-  `docs/concepts/ui-seats.md`, `docs/SOURCE_PORT.md`). **Punkt 2 (SearXNG) gebaut:** der `--searxng`-Arm ist
-  vollständig und honoriert jetzt `$OMEGAFLOW_SEARXNG` (Commit `78a4a8057`, `cargo build -p omegaflow-utils
-  --bin archive_search` grün); Fallback bleiben die JSON-fähigen Instanzen (`searx.be` liefert HTML → nicht
-  als Fallback).
+  `docs/concepts/ui-seats.md`, `docs/SOURCE_PORT.md`). **Punkt 1 (Jina) bestätigt** (Taucher): `--jina` im
+  Baum (`archive_search.rs:312`) und im `tools-latest`-Manifest (`5d0f9652d` enthält `c32af6d0d`),
+  end-to-end getestet (Title/URL/Markdown) → **zu**. **Punkt 2 (SearXNG) gebaut:** der `--searxng`-Arm
+  honoriert jetzt `$OMEGAFLOW_SEARXNG` (Commit `78a4a8057`, `cargo build -p omegaflow-utils --bin archive_search`
+  grün); Fallback bleiben die JSON-fähigen Instanzen (`searx.be` liefert HTML → nicht als Fallback).
 - **Blockade:** keine.
-- **Braucht:** die restlichen Marker (Punkt 3 AI2-Seat-Gretchenfrage, Punkt 1 Jina-`tools-latest`-Bestätigung)
-  gegen den Baum messen bzw. entscheiden; dann ist der Träger zu.
+- **Braucht:** Punkt 3 (AI2-Seat-Gretchenfrage) — Browser, Hauptsession (kein Agent-Profil hat `browser_*`);
+  der Träger bleibt bis dahin stehen.
 
 ### ui-seats — offene `pending`-Seats
 - **Status:** wartend | **Bindung:** eigen
