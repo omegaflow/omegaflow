@@ -1,4 +1,5 @@
 use std::env;
+use std::fs;
 use std::io::Write;
 use std::process::Command;
 
@@ -7,18 +8,30 @@ fn main() {
     let mut links = false;
     let mut title_only = false;
     let mut raw_mode = false;
+    let mut out: Option<String> = None;
     let mut url: Option<String> = None;
+    let mut want_out = false;
     for a in args.iter().skip(1) {
+        if want_out {
+            out = Some(a.clone());
+            want_out = false;
+            continue;
+        }
         match a.as_str() {
             "--links" => links = true,
             "--title" => title_only = true,
             "--raw" => raw_mode = true,
+            "--out" => want_out = true,
             _ if url.is_none() => url = Some(a.clone()),
             _ => {}
         }
     }
+    if want_out {
+        eprintln!("usage: sfetch [--links] [--title] [--raw] [--out <path>] <url>");
+        std::process::exit(2);
+    }
     let Some(url) = url else {
-        eprintln!("usage: sfetch [--links] [--title] [--raw] <url>");
+        eprintln!("usage: sfetch [--links] [--title] [--raw] [--out <path>] <url>");
         std::process::exit(2);
     };
     let raw = match Command::new("curl")
@@ -34,6 +47,10 @@ fn main() {
             std::process::exit(1);
         }
     };
+    if let Some(path) = out.as_deref() {
+        write_fetched(path, &raw, &url);
+        return;
+    }
     if raw_mode {
         let _ = std::io::stdout().write_all(&raw);
         return;
@@ -55,6 +72,20 @@ fn main() {
         print!("{}", strip_tags(&html));
     } else {
         let _ = std::io::stdout().write_all(&raw);
+    }
+}
+
+fn write_fetched(path: &str, bytes: &[u8], source_url: &str) {
+    if let Err(e) = fs::write(path, bytes) {
+        eprintln!("sfetch: {} writes not: {e}", path);
+        std::process::exit(2);
+    }
+    if source_url.is_empty() {
+        return;
+    }
+    let src = format!("{path}.src");
+    if let Err(e) = fs::write(&src, format!("{source_url}\n")) {
+        eprintln!("provenance {src}: sidecar void — {e}");
     }
 }
 
@@ -152,5 +183,24 @@ mod tests {
         let links = extract_links(html);
         assert!(links.contains(&"https://omegaflow.space".to_string()));
         assert!(!links.contains(&"#top".to_string()));
+    }
+
+    #[test]
+    fn out_writes_sidecar_and_url_absent_writes_none() {
+        let base = std::env::temp_dir().join(format!("sfetch-sidecar-{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&base);
+        let file = base.join("artifact.bin");
+        let file_s = file.to_string_lossy().to_string();
+        write_fetched(&file_s, b"body", "https://example.org/data/artifact.bin");
+        assert_eq!(std::fs::read(&file).unwrap(), b"body");
+        assert_eq!(
+            std::fs::read_to_string(format!("{file_s}.src")).unwrap(),
+            "https://example.org/data/artifact.bin\n"
+        );
+        let file2 = base.join("no-url.bin");
+        let file2_s = file2.to_string_lossy().to_string();
+        write_fetched(&file2_s, b"body", "");
+        assert!(!std::path::Path::new(&format!("{file2_s}.src")).exists());
+        let _ = std::fs::remove_dir_all(&base);
     }
 }
