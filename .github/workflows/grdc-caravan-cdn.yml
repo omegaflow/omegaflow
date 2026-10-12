@@ -28,12 +28,12 @@ jobs:
         id: idempotence
         run: |
           if gh release view zenodo.org --repo omegaflow/sources \
-             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "grdc_caravan.bin"; then
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^grdc_caravan_s"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
-            echo "asset grdc_caravan.bin already present — manifest skipped"
+            echo "grdc_caravan_s* shards already present — manifest skipped"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "asset grdc_caravan.bin missing — compiling and manifesting"
+            echo "grdc_caravan_s* shards missing — compiling and manifesting"
           fi
       - name: Ensure the zenodo.org release exists on the CDN
         if: steps.idempotence.outputs.present == 'false'

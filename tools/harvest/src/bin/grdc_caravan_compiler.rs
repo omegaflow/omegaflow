@@ -1,4 +1,5 @@
 use omegaflow::archivar::fetch::{RetryPolicy, fetch_raw_to_file_with};
+use omegaflow::archivar::odf::PODF_SHARD_BUDGET;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Hdf5Attribute, Hdf5File};
@@ -323,24 +324,27 @@ fn probe_path(path: &str) {
     }
 }
 
-fn emit(records: &mut Vec<[f64; FIELDS]>, out: &str) {
-    if records.is_empty() {
-        eprintln!("no records — the bin stays unwritten (0 honored)");
-        std::process::exit(1);
-    }
-    records.sort_by(|a, b| a[0].total_cmp(&b[0]));
+fn shard_path(out: &str, ord: usize) -> String {
+    let dir = Path::new(out)
+        .parent()
+        .and_then(|p| p.to_str())
+        .unwrap_or("data");
+    format!("{dir}/grdc_caravan_s{ord}.bin")
+}
+
+fn write_verified(records: &[[f64; FIELDS]], path: &str) -> Vec<u8> {
     let bytes_out = write_bin(records);
-    if let Some(parent) = Path::new(out).parent()
+    if let Some(parent) = Path::new(path).parent()
         && !parent.as_os_str().is_empty()
     {
         std::fs::create_dir_all(parent).ok();
     }
-    if std::fs::write(out, &bytes_out).is_err() {
-        eprintln!("write {out} returned void");
+    if std::fs::write(path, &bytes_out).is_err() {
+        eprintln!("write {path} returned void");
         std::process::exit(1);
     }
     match parse_bin(&bytes_out) {
-        Some(parsed) if parsed == *records => {
+        Some(parsed) if parsed == records => {
             eprintln!("  roundtrip: {} records parse, identical", parsed.len());
         }
         Some(parsed) => {
@@ -355,26 +359,52 @@ fn emit(records: &mut Vec<[f64; FIELDS]>, out: &str) {
             std::process::exit(1);
         }
     }
+    bytes_out
+}
+
+fn print_register(path: &str, records: &[[f64; FIELDS]], bytes_out: &[u8]) {
     let v_min = records.iter().map(|r| r[3]).fold(f64::INFINITY, f64::min);
     let v_max = records
         .iter()
         .map(|r| r[3])
         .fold(f64::NEG_INFINITY, f64::max);
     eprintln!(
-        "{out}: {} records, streamflow [{v_min}, {v_max}] mm/d",
+        "{path}: {} records, streamflow [{v_min}, {v_max}] mm/d",
         records.len()
     );
-    let out_name = Path::new(out)
+    let out_name = Path::new(path)
         .file_name()
         .and_then(|n| n.to_str())
         .unwrap_or(OUT_PATH);
     println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{out_name}");
     println!("origin {ORIGIN}");
     println!("compiler {COMPILER}");
-    println!("sha256 {}", sha256_hex(&bytes_out));
+    println!("sha256 {}", sha256_hex(bytes_out));
     println!("format grdc_caravan");
     println!("ttl {}", TTL as u64);
     println!("at earth");
+}
+
+fn emit(records: &mut Vec<[f64; FIELDS]>, out: &str) -> Vec<String> {
+    if records.is_empty() {
+        eprintln!("no records — the bin stays unwritten (0 honored)");
+        std::process::exit(1);
+    }
+    records.sort_by(|a, b| a[0].total_cmp(&b[0]));
+    let per = PODF_SHARD_BUDGET / (FIELDS * 8);
+    if records.len() <= per {
+        let bytes_out = write_verified(records, out);
+        print_register(out, records, &bytes_out);
+        return vec![out.to_string()];
+    }
+    let mut paths = Vec::new();
+    for (ord, chunk) in records.chunks(per).enumerate() {
+        let path = shard_path(out, ord);
+        let bytes_out = write_verified(chunk, &path);
+        print_register(&path, chunk, &bytes_out);
+        paths.push(path);
+    }
+    paths
 }
 
 fn main() {
@@ -508,9 +538,13 @@ fn main() {
         );
         std::process::exit(1);
     }
-    emit(&mut records, &out);
-    if ci_mode && !upload_release(NETLOC, &out) {
-        std::process::exit(1);
+    let paths = emit(&mut records, &out);
+    if ci_mode {
+        for path in &paths {
+            if !upload_release(NETLOC, path) {
+                std::process::exit(1);
+            }
+        }
     }
 }
 

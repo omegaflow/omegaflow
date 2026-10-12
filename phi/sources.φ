@@ -21016,6 +21016,15 @@ compiler tools/harvest/src/bin/themis_asi_keogram_compiler.rs
 format themis_asi_keogram
 ttl 604800
 
+url https://github.com/omegaflow/sources/releases/download/data.phys.ucalgary.ca/themis_asi_timed_keogram_20240510_kapu_themis21.bin
+terms free-open https://data.phys.ucalgary.ca/data/how_to_cite.html
+origin https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/stream0/<YYYY>/<MM>/<DD>/<label>/ut<HH>/<YYYYMMDD>_<HHMM>_<label>_full.pgm.gz
+compiler tools/harvest/src/bin/themis_asi_timed_keogram_compiler.rs
+format themis_asi_timed_keogram
+station KAPU
+on earth 49.392 -82.320 179.94
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/tnmaccess.nationalmap.gov/coverage_tnm.manifest
 terms PD https://www.usgs.gov/
 format coverage_manifest
@@ -21621,7 +21630,24 @@ sha256 d4b7397a17f65a46e107a36e57e0a92300cca74cfed1ed89739fe029b660d6fd
 at mars
 ttl 604800
 
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/grdc_caravan.bin
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/grdc_caravan_s0.bin
+terms CC-BY-4.0 https://zenodo.org/records/15349031
+origin https://zenodo.org/api/records/15349031/files/GRDC_Caravan_extension_nc.zip/content
+compiler tools/harvest/src/bin/grdc_caravan_compiler.rs
+format grdc_caravan
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/grdc_caravan_s1.bin
+terms CC-BY-4.0 https://zenodo.org/records/15349031
+origin https://zenodo.org/api/records/15349031/files/GRDC_Caravan_extension_nc.zip/content
+compiler tools/harvest/src/bin/grdc_caravan_compiler.rs
+format grdc_caravan
+at earth
+ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/grdc_caravan_s2.bin
+terms CC-BY-4.0 https://zenodo.org/records/15349031
 origin https://zenodo.org/api/records/15349031/files/GRDC_Caravan_extension_nc.zip/content
 compiler tools/harvest/src/bin/grdc_caravan_compiler.rs
 format grdc_caravan
@@ -31593,6 +31619,48 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 ec3c41ebbb082287437fe6ff9b9ba91a7fd9474311b274d8cbd975ddd5ce55b0
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_cosmic-ray-telescp_64-077a-04abcde_DSC_0045.pdf
+origin https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/renamed_dataset_catalogs/mariner4_cosmic-ray-telescp_64-077a-04abcde_DSC_0045.pdf
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 37745a467d5e152602bad14fa49877437472c69b608dfcd987d4effa3cd95562
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_helium-magnetometer_64-077a-02a_DSC_0176.pdf
+origin https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/renamed_dataset_catalogs/mariner4_helium-magnetometer_64-077a-02a_DSC_0176.pdf
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 51d288e175ea46d1966da5fa9eb395b99aa6e9b1ec27e36a870ce03a775c00ce
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_mag_64-077a-02b_DSC_0074.pdf
+origin https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/renamed_dataset_catalogs/mariner4_mag_64-077a-02b_DSC_0074.pdf
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 30ba3e6bdec3920e9e7c93d1cf5a8d37ebfff388e3b76d368075da30908c1abe
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/www.nasa.gov/SP-59.pdf
+origin https://www.nasa.gov/wp-content/uploads/static/history/SP-59.pdf
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 a46e1712d30b04c559d3a24625ca788201e95cd3f0d82919c331746ef02b0c60
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ntrs.nasa.gov/19740012502.pdf
+origin https://ntrs.nasa.gov/api/citations/19740012502/downloads/19740012502.pdf
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 9b4902bff834617b6b91590a1d5e0bf01f1e501566d72ed7f4b364271a0a7cb4
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/dsc_0119.pdf
+origin https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/old_data_doc/all_catalogs/dsc_0119.pdf
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 fee7b06ee5faf91e69f4fcda5d0464c406597970c4aa02eead27035dfd5b2a56
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/spreadsheet_dsc.xls
+origin https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/old_data_doc/spreadsheet_dsc.xls
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 b1f8523dd90eecfb307fbc35878b47dc5d18f99b37a94e92fc267f6bc5470ea3
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
 terms PD https://ssd.jpl.nasa.gov/
 format ephemeris_binary
@@ -32420,6 +32488,13 @@ terms CC-BY-4.0 https://zenodo.org/records/13309040
 origin https://zenodo.org/api/records/13309040/files/SC_24.asc/content
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 2718880473fb855384f9b6742ffcbde50986e3ac495096bf1cdcccae7fa06c81
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/venus_radar_Processed.zip
+terms CC-BY-4.0 https://zenodo.org/records/18176179
+origin https://zenodo.org/api/records/18176179/files/Processed.zip/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 8018463de4d911b659f2916830fe91594f6f11cbffa4b7d336f96d9638856a20
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_OD1_0p33_0.txt

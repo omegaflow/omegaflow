@@ -49,6 +49,10 @@ jobs:
             url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/pioneer11_SC_24.asc"
             origin: "https://zenodo.org/api/records/13309040/files/SC_24.asc/content"
             sha256: 2718880473fb855384f9b6742ffcbde50986e3ac495096bf1cdcccae7fa06c81
+          - asset: venus_radar_Processed.zip
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/venus_radar_Processed.zip"
+            origin: "https://zenodo.org/api/records/18176179/files/Processed.zip/content"
+            sha256: 8018463de4d911b659f2916830fe91594f6f11cbffa4b7d336f96d9638856a20
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
