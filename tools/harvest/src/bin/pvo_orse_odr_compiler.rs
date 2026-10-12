@@ -43,8 +43,9 @@ fn year_of_label(bytes: &[u8]) -> Option<u16> {
     None
 }
 
-fn index_rows(text: &str) -> Option<Vec<(String, String, u16)>> {
+fn index_rows(text: &str) -> (Vec<(String, String, u16)>, usize) {
     let mut rows = Vec::new();
+    let mut undated = 0usize;
     for line in text.lines() {
         let fields: Vec<String> = line
             .split(',')
@@ -53,10 +54,20 @@ fn index_rows(text: &str) -> Option<Vec<(String, String, u16)>> {
         if fields.len() < 7 || !fields[2].ends_with(".ODR") {
             continue;
         }
-        let year = fields[6].split('-').next()?.parse().ok()?;
-        rows.push((fields[1].clone(), fields[2].clone(), year));
+        let start = fields[6]
+            .split('-')
+            .next()
+            .and_then(|y| y.parse::<u16>().ok());
+        let stop = fields
+            .get(7)
+            .and_then(|s| s.split('-').next())
+            .and_then(|y| y.parse::<u16>().ok());
+        match start.or(stop) {
+            Some(year) => rows.push((fields[1].clone(), fields[2].clone(), year)),
+            None => undated += 1,
+        }
     }
-    Some(rows)
+    (rows, undated)
 }
 
 fn pack_and_verify(entries: &[(Vec<u8>, String, u16)], out: &str) -> Vec<u8> {
@@ -110,12 +121,14 @@ fn run_index(args: &[String]) {
             std::process::exit(1);
         }
     };
-    let Some(rows) = index_rows(&text) else {
-        eprintln!("{index_path}: index parse void — the series stays unwritten (0 honored)");
-        std::process::exit(1);
-    };
+    let (rows, undated) = index_rows(&text);
+    if undated > 0 {
+        eprintln!(
+            "{index_path}: {undated} row(s) carry no measurable START_TIME/STOP_TIME year — skipped (0 honored)"
+        );
+    }
     if rows.is_empty() {
-        eprintln!("{index_path}: no .ODR rows");
+        eprintln!("{index_path}: no dated .ODR rows");
         std::process::exit(1);
     }
     let base_trim = base.trim_end_matches('/');
@@ -363,14 +376,26 @@ mod tests {
 \"PVO-V-ORSE-1-ODR-OPENLOOP--V1.0\",\"/DATA/19840818_19841101/ODR8231.LBL       \",\"ODR8231.ODR    \",\"PVRSE_ODR\",1993-11-01           ,\"VENUS      \",1984-08-18T23:22:47.000Z,1984-08-18T23:58:22.000Z\n\
 \"PVO-V-ORSE-1-ODR-OPENLOOP--V1.0\",\"/DATA/19860720_19870118/PXC0001.LBL       \",\"PXC0001.ODR    \",\"PVRSE_ODR\",1993-09-01           ,\"VENUS      \",1986-07-20T23:26:00.000Z,1986-07-21T00:40:09.000Z\n\
 \"PVO-V-ORSE-1-ODR-OPENLOOP--V1.0\",\"/DATA/19870910_19871116/SEASON11_INDEX    \",\"SEASON11_INDEX \",\"PVRSE_ODR\",1993-09-01           ,\"VENUS      \",1987-09-10T00:00:00.000Z,1987-11-16T00:00:00.000Z\n";
-        let rows = index_rows(tab).unwrap();
+        let (rows, undated) = index_rows(tab);
+        assert_eq!(undated, 0);
         assert_eq!(rows.len(), 2);
         assert_eq!(rows[0].0, "/DATA/19840818_19841101/ODR8231.LBL");
         assert_eq!(rows[0].1, "ODR8231.ODR");
         assert_eq!(rows[0].2, 1984);
         assert_eq!(rows[1].1, "PXC0001.ODR");
         assert_eq!(rows[1].2, 1986);
-        assert!(index_rows("no rows here").unwrap().is_empty());
+        assert!(index_rows("no rows here").0.is_empty());
+    }
+
+    #[test]
+    fn index_rows_falls_back_to_stop_time_and_skips_undated() {
+        let tab = "\"S\",\"/D/ODR001.LBL\",\"ODR001.ODR\",\"V\",1994-07-01,\"VENUS\",UNK,1978-05-13T18:30:00.000Z\n\
+\"S\",\"/D/ODR002.LBL\",\"ODR002.ODR\",\"V\",1994-07-01,\"VENUS\",UNK,UNK\n";
+        let (rows, undated) = index_rows(tab);
+        assert_eq!(undated, 1);
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].1, "ODR001.ODR");
+        assert_eq!(rows[0].2, 1978);
     }
 
     #[test]
