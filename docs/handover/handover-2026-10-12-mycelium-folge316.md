@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 316
   class: handover
   date: 2026-10-12
-  sha256: df07e83bc77f205c6c15a4b751d5103152317e99b156af11c253430b0744eb32
+  sha256: 91c36837f5644ce1ea5f6bdb356629609f09d5bb9b965a2e1eb6438615f1664d
   status: live
 -->
 # Handover — Mycelium-Folge 316 (2026-10-12)
@@ -92,9 +92,9 @@ adressierten Blöcke (future-238, mountain-320, river-192) und schrieb die
 ### Architektur — `on earth alt` Bezug (Rat + Roster; Riss benannt)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Operator-Wort bzw. Rat-Fortgang
-- **Lage:** (gemessen 2026-10-12) **Rat (Konsens der fünf Stimmen):** der Slot `alt` **ist** die ellipsoidische Höhe h (`src/archivar/motion.rs:185` `(N+alt)`, geodätisch→ECEF); H (MSL) darf **nicht** als h geschrieben werden (Datums-Fabrikation), und `0` darf **kein** Pad für „absent" sein (0 ist ein echter h-Wert). Für die ASI (Quelle liefert nur MSL) lautet die kanonische Form `on earth <lat> <lon>` + `station <CODE>` — `alt` **absent**; dazu die Code-Pflicht: `src/archivar/parse.rs` verweigert heute alt-Losigkeit (`:375-382` „on without alt refused"), muss `Option<f64>` werden. **Recherche:** Community-Riss (IERS/ITRF ellipsoidal · INTERMAGNET orthometrisch · SPASE datumlos; Netz-Stationslisten ohne Höhe). **Roster (UI):** DeepSeek Chat = (c) absent (stimmt dem Rat zu); Z.ai/GLM = (a) h + Datum-Tag, ASI → h=0; Qwen = (a) h, Emitter rechnet h=H+N.
-- **Riss (benannt, nie gemittelt):** Rat + DeepSeek = **absent** (kein Geoid-Modell an die Stelle einer Messung); Z.ai + Qwen = **h** (Register intern ellipsoidal; Z.ai setzt ASI→0, Qwen rechnet H+N). Die Front trennt sich an „ehrliche Absenz" vs. „interne Konsistenz".
-- **Braucht:** Operator-Wort oder Rat-Fortgang: (i) Rat folgen (absent + `parse.rs`-Option-Pflicht) oder (ii) h mit Datum-Tag + Geoid-Adapter (h = H + N, EGM2008). Danach `emit()` + Form.
+- **Lage:** (gemessen 2026-10-12) **Rat (Konsens der fünf Stimmen):** der Slot `alt` **ist** die ellipsoidische Höhe h (`src/archivar/motion.rs:185` `(N+alt)`, geodätisch→ECEF); H (MSL) darf **nicht** als h geschrieben werden (Datums-Fabrikation), und `0` darf **kein** Pad für „absent" sein (0 ist ein echter h-Wert). Für die ASI (Quelle liefert nur MSL) lautet die kanonische Form `on earth <lat> <lon>` + `station <CODE>` — `alt` **absent**; dazu die Code-Pflicht: `src/archivar/parse.rs` verweigert heute alt-Losigkeit (`:375-382` „on without alt refused"), muss `Option<f64>` werden. **Recherche:** Community-Riss (IERS/ITRF ellipsoidal · INTERMAGNET orthometrisch · SPASE datumlos; Netz-Stationslisten ohne Höhe). **Roster (UI, JIT gefahren, Seats danach geschlossen):** DeepSeek Chat = (c) absent, stimmt dem Rat zu; Z.ai/GLM-5.3 = (a) h + Datum-Tag, ASI→h=0; Qwen (Plus) = (a) h, Emitter rechnet h=H+N; **Claude (Sonnet 5.5) = (a) als Feld-Semantik, `alt` optional ((c) zulässig), Ingest konvertiert MSL→h (EGM2008), Default 0 ellipsoidal**; **Qwen3.8 2.4T (tryingopen) = hybrid (a) Vertrag + (c) Default bei unbekannt, nie (b)**.
+- **Riss (benannt, nie gemittelt):** **Alle** (Rat + 5 UI-Seats) konvergieren auf **(a) als Feld-Semantik** und **(c) für die ASI** und schließen **(b)** aus. Die Front verengt sich aufs *Wie*: Rat = pure `Option::None` („auf dem Referenz-Ellipsoid", kein Default, kein `unwrap_or(0.0)`); die UI mehrheitlich = dokumentierter Default `0 m` ellipsoidal an der Konsumenten-Kante. Substanz gleich (der h=0-Fall), Ausdruck/Implementierung verschieden.
+- **Braucht:** Operator-Wort oder Rat-Fortgang: die Absenz-Auflösung festlegen — (i) pure `Option::None` (Rat) oder (ii) dokumentierter `0 m`-Default an der Konsumenten-Kante (UI). Gemeinsam getragen sind: Feld-Semantik (a) + ASI (c) + `parse.rs`-`Option`-Pflicht; danach `emit()` + Form.
 
 ### Rätsel-/NSE- + Mariner-Quellen — `url`/`origin` geschrieben; Produzenten/`terms` offen
 - **Status:** wartend | **Bindung:** eigen
