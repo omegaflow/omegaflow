@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — NSSDC-Arm gebaut (NASA NSSDCA Master Catalog + China NSSDC/VSSO coreMetadata; cargo check 0/0, live verifiziert) + Mariner 4 Rohband-Framing/6-bit-Packing gemessen (Zeit→1964) + Mariner 10 Imaging-EDR end-to-end gegen die realen Bytes verifiziert
   class: handover
   date: 2026-10-11
-  sha256: 30d4167dd33d09e9d1e04f33da2ad8438bf6ed5017341356c91e88ccdb0b805f
+  sha256: b00eaa7887a3e325de62e9ce46ae2725fac338d865467bd829b364bd85b97abd
   status: live
 -->
 # Handover — Mountain-Folge 321 (2026-10-11)
@@ -37,12 +37,18 @@ Session konsumierte `handover-2026-10-11-mountain-folge320.md` (→ `archiv/`).
 - **Blockade:** keine.
 - **Braucht:** nichts — der Riss ist geschlossen; der Eintrag dient als Beleg.
 
-### Mariner 10 Imaging-EDR — EDR→Bild-Extraktor gebaut; Erkennungspfad offen (eigen)
+### Mariner 10 Imaging-EDR — EDR→Bild + Stretch gebaut; Detektor offen (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der nächste Bau-Pass / Operator-Wort zur Erkennung
-- **Lage:** (gemessen 2026-10-11) `mvm_0001.tgz` = 144 349 050 B, sha256 `44fcfd39…4888ef7`; 1367 Member, **677** `IMAGES/`-Dateien à 702 768 B; EBCDIC-Label (cp037) 360 B (`ERT YR=74 DAY=036 GMT=17/34/07` = **1974-02-05 17:34:07 UTC**); Records 1–700 = Pixelzeilen (832 Spalten), 701–725 null. `mariner_m10_edr_compiler.rs` trifft die realen Bytes exakt. **Neu gebaut:** `tools/utils/src/bin/m10_edr_image.rs` — extrahiert die **echte 2D-Raster (832×700, gray8)** je EDR-Bild und schreibt PNG (std-only Encoder, Crc32/Adler32/zlib-stored); Rohbild-Pfad verifiziert (PNG 583 208 B, sha256 `b59ef595…`). **Erkennungs-Probe (lokal `vision`):** die ersten drei MVE_001-Frames (`.001/.150/.199`) sind **niedrig-kontrastige Vidicon-Scanframes ohne auflösbares Planetenziel** (Starfield/Speckle + schwarzer Scan-Rahmen; Mittel ~29–~150). Der volle `.tgz`-Lauf mit dem Repo-`gunzip` ist **lokal zu langsam** (Timeout 300 s auf 144 MB) → CI; lokal läuft der Rohbild-Pfad.
-- **Blockade:** keine Extraktions-Blockade; die Rohframes brauchen Vermessung/Stretch, die Erkennung einen stärkeren Leser.
-- **Braucht:** Kontrast-Stretch/Statistik (Mountain) + einen Benchmark des Lesers (lokal `vision` vs. Frontier-UI); den Repo-`gunzip` für die 144-MB-Tars beschleunigen (oder CI-only führen).
+- **Trigger:** der nächste Bau-Pass
+- **Lage:** (gemessen 2026-10-11) `mvm_0001.tgz` = 144 349 050 B, sha256 `44fcfd39…4888ef7`; 1367 Member, **677** `IMAGES/`-Dateien à 702 768 B; EBCDIC-Label (cp037) (`ERT YR=74 DAY=036 GMT=17/34/07` = **1974-02-05 17:34:07 UTC**); Records 1–700 = Pixelzeilen. **Gebaut:** `tools/utils/src/bin/m10_edr_image.rs` — echte 832×700-gray8-Raster je Bild → PNG (std-only Encoder) + **2–98%-Kontrast-Stretch + Histogramm-Statistik**; Rohbild-Pfad verifiziert. **Rat (5 Stimmen) + 2 UI-Seats (Duck.ai GPT-6 Luna, Gemini 3.1 Pro) + Research konvergieren:** ein Kontrast-Stretch **ist kein Gültigkeitstest** auf ein Planetenziel; der richtige Leser ist ein **deterministischer Detektor** (Hintergrund-Schätzung → Limbus-/Crescent-Maske → Ellipsen-/Limb-Fit, Zentroid + Residuum), **nicht** ein Vision-LLM; Vorverarbeitung = Dark-Frame/Flat-Field/Reseau (`mar10cal`/`mar10clean` USGS-ISIS), log/gamma nur zur Sichtprüfung. Die ersten drei MVE_001-Frames bleiben bei diesem SNR **ohne auflösbares Ziel** (`absent`, kein Fehlzustand). Voller `.tgz`-Lauf über Repo-`gunzip` **lokal zu langsam** (Timeout 300 s auf 144 MB) → CI.
+- **Blockade:** kein vermessenes Ziel/Referenzset → der Erkennungspfad ist `pending`, nicht bewertbar.
+- **Braucht:** deterministischen Limbus-/Zentroid-Detektor + Residuum gegen JPL-SPICE (Ground Truth); Labeled-Fixture-Set + FOM + Recorded-Winner (`state/benchmark/`, Mycelium); Repo-`gunzip` beschleunigen oder CI-only.
+
+### Bild ↔ Doppler — Optical-Navigation-Kreuz-Constraint (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** der nächste Bau-Pass
+- **Lage:** (gemessen 2026-10-11 via Rat + Research) die Physik ist **valide, aber kein Sample**: Bildwinkel (Line-of-Sight) + Doppler (Range-Rate) binden gemeinsam die deklarierte `Receiver`-Worldline per Least Squares; Mariner 10 wurde **nicht** mit Onboard-OpNav geflogen → **post-hoc**, so benannt. Es ist **keine** Doppler-Kalibrierung (Kategorienfehler): Doppler stammt aus Radio-Tracking, die Bilder sind eine unabhängige **Bearing**-Beobachtung. Literatur: OpNav ab Mariner 6/7 (1969), M9/Viking; kombinierte Radio+Optik ~Ordnung besser (`10.1007/s40295-020-00244-x`); **kein** M10-spezifisches kombiniertes Paper (Research: `absent`).
+- **Blockade:** die Bildserie trägt noch kein gemessenes Ziel (M10-Punkt darüber).
+- **Braucht:** Eintritt als **abgeleiteter gemeinsamer Term im ω()-Loop** über die geteilte Receiver-Worldline (kein Sample-Slot); `Riss`, wo Bild und Doppler sich nicht überlappen. Erst sinnvoll, wenn ein Frame ein gemessenes Zentroid trägt.
 
 ### Mariner-6/7-Tracking (`mariner_rst`) — Zusatz-Tapes + Observable-Skala (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -156,6 +162,9 @@ Origin: mountain-folge321 (2026-10-11).
 
 - **„kannst du bitte mit 4 und 10 weitermachen und den nssdc arm bauen"** | 2026-10-11 | Operator-Session (mountain) — Mariner 4 + Mariner 10 fortsetzen, NSSDC-Arm bauen. Angewandt: Arm gebaut (`--nssdc`/`--nssdca`), M4-Framing gemessen, M10-Decode verifiziert.
 - **„und ich vermute wir müssen uns noch um eine bessere bilderkennung kümmern"** | 2026-10-11 | Operator-Session (mountain) — Bild-Erkennung als eigener Punkt benannt (M10-EDR-Bildpfad).
+- **„das ist wichtig oder? und zwar ein state of the art erkennungspfad"** | 2026-10-11 | Operator-Session (mountain) — der Bild-Erkennungspfad ist wichtig und soll state-of-the-art sein. Angewandt: Extraktor + Stretch gebaut, Rat + UI-Roster zur Auslegung befragt.
+- **„kannst du dafür bitte archive search all den rat und den max roster bemühen"** | 2026-10-11 | Operator-Session (mountain) — Research (`archive_search --all`) + Rat + UI-Roster vor dem Bau. Angewandt: `--all` + Fach-Modi (Research), Rat (5 Stimmen), 2 UI-Seats (Duck.ai GPT-6 Luna, Gemini 3.1 Pro).
+- **„wären die bilder nicht auch wichtig für unsere ephemeriden kalibrierung und tatsächlich auch die exakte positionsbestimmung des mariners sozusagen eine dopplerkalibrierung"** | 2026-10-11 | Operator-Session (mountain) — Bild-als-Kalibrierquelle-Hypothese. Verdikt (Rat + UI + Research): valide als Optical-Navigation-Kreuz-Constraint (Bearing + Doppler), **keine** Doppler-Kalibrierung (Kategorienfehler); als abgeleiteter ω()-Term, post-hoc benannt.
 - **„b"** | 2026-10-11 | Operator-Session (mountain) — Form **(b)** für das Band-Paar-Atom: Companion-Band-Ebene.
 - **„hab glm abgeholt"** | 2026-10-11 | Operator-Session (mountain) — GLM 5.3-Antwort vom Operator nachgereicht.
 - **„auth ist ok wenn wir elegible sind und die daten redistributable wobei für die vermessung ist es auch ok sie privat zu halten"** | 2026-10-11 | Future 236 (Zugangs-Regel) — Auth-Routen sind erlaubt, wenn eligibility + Redistributable; für die Vermessung privat ok.
