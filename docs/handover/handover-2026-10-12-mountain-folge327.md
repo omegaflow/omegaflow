@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: 0f631e928718267ed617c0bfdeb34033cb082ad9953485034d0e7fa9dc6d2ac3
+  sha256: bb02f3227f2c18689791b96c3685fa0aa0106f90e3d93669bded958d9c56e844
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -245,14 +245,15 @@ NIST) — nur die Sonke/Robinson-Tabellen bleiben dort offen.
 - **Orphan-Doc `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md`** (2 offene Marker; see-also
   `docs/concepts/ui-seats.md`, `docs/SOURCE_PORT.md`) braucht einen Namenträger bei dir. `xfer:mountain327-2`
 - **Vier neue SPDF-DSC-/NASA-SP-Dokumente — je `url`/`origin`/`compiler`-Zeile (US-PD).** `xfer:mountain327-6`
-  Durable lokale Kopie liegt in `data/spdf.gsfc.nasa.gov/` bzw. `data/www.nasa.gov/` (gitignored):
-  - `mariner4_cosmic-ray-telescp_64-077a-04abcde_DSC_0045.pdf` — 3 487 691 B, sha `37745a46…`.
-  - `mariner4_helium-magnetometer_64-077a-02a_DSC_0176.pdf` — 4 517 956 B, sha `51d288e1…`.
-  - `mariner4_mag_64-077a-02b_DSC_0074.pdf` — 443 225 B, sha `30ba3e6b…`.
-  - `SP-59.pdf` „Mariner-Venus 1962: Final Project Report" (NASA SP-59, 1965) —
+  Durable lokale Kopie liegt im **privaten Recherche-Korpus** `state/research/` (nicht `data/` — dort liegen die Datensätze, z. B. `data/spdf.gsfc.nasa.gov/*.bin`; Operator-Wort 2026-10-12 „gehören pdfs in data?" → nein):
+  - `state/research/mariner-dsc/mariner4_cosmic-ray-telescp_64-077a-04abcde_DSC_0045.pdf` — 3 487 691 B, sha `37745a46…`.
+  - `state/research/mariner-dsc/mariner4_helium-magnetometer_64-077a-02a_DSC_0176.pdf` — 4 517 956 B, sha `51d288e1…`.
+  - `state/research/mariner-dsc/mariner4_mag_64-077a-02b_DSC_0074.pdf` — 443 225 B, sha `30ba3e6b…`.
+  - `state/research/mariner-venus-1962/SP-59.pdf` „Mariner-Venus 1962: Final Project Report" (NASA SP-59, 1965) —
     origin `https://www.nasa.gov/wp-content/uploads/static/history/SP-59.pdf` (HTTP 206), 6 093 576 B,
     sha `a46e1712…`; NTRS trägt **keine** SP-59-Citation (HathiTrust `006260826`, PD).
   Der SPDF-Origin-Präfix ist `https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/renamed_dataset_catalogs/`.
+  Die durable Heimat ist das registrierte CDN-Asset (raw_mirror); die drei Alt-PDFs in `data/` (`doe417_instr.pdf`, `pds-ppi…/124A.pdf`, `cjss…/210406045.pdf`) stehen in **keiner** phi-Zeile → Register-Schuld.
 
 ## An river
 
@@ -276,6 +277,7 @@ einen Namenträger bei dir:
 - **„Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes … /commit ist das Commit-Wort"** | 2026-10-12 | Operator-Session (mountain 327) — session-weiter Delegations-Consent, nicht das Commit-Wort; bereits in folge326 registriert, hier für dieses Atom bestätigt.
 - **„du kannst dich auch gleich mal darum kümmern deine arbeit richtig zu machen und nichts zu behaupten was der messung nicht standhält"** | 2026-10-12 | Operator-Session (mountain 327) — der teilgefaltete future-241-Block wird hier vollständig gefaltet.
 - **„setze eine taucher staffel auf alle punkte an … und river analysiert selbst schon die antennenhöhe"** | 2026-10-12 | Operator-Session (mountain 327) — neun-Taucher-Staffel (flash), THEMIS-Antennenhöhe ist River.
+- **„gehören pdfs in data?"** | 2026-10-12 | Operator-Session (mountain 327) — gemessen: nein; `data/<netloc>/` trägt Datensätze (`.bin`), Dokumente liegen im privaten Korpus `state/research/`.
 
 ## Abschluss
 
