@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — M10-Ephemeriden-Vorzeichen-Flip geheilt (Compiler-Komposition r_SSB−r_M10 → r_M10−r_SSB), Orientierungs-Prüfung (cos gegen Mercury-SSB) ins Probe-Gate gebaut, SXSYSZ-Rahmen gegen die geheilte Ephemeride neu gemessen (UNIDENTIFIED bleibt; die CA-Zeit der S-Vektoren stimmt mit der datumsabgeleiteten CA überein)
   class: handover
   date: 2026-10-12
-  sha256: 97c457104b51ddc7b33282195c9c7b91889dff369f90a904cf83214982d70bfb
+  sha256: 52e1a519acd213cd46553c315de2433714c9f34ce1ef4a2f5bdf59c61e24adb2
   status: live
 -->
 # Handover — Mountain-Folge 328 (2026-10-12)
@@ -39,8 +39,8 @@ unten gefaltet). `open_points_check` = 1 `ABSENT` (`…/mariner/RESULT.md`, Mark
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Fund einer M10-Radio-Tracking-Quelle (Zweiweg-Doppler/Range) oder das Operator-Wort
 - **Lage:** (gemessen 2026-10-12/328) `camera_angles.txt` (`phi:31602`) trägt **zwei Rollen**: die Sondenposition `SX SY SZ` (**DE/SPICE-abgeleitet** — deckt sich mit der geheilten `ephemeris_mariner10.bin`; `|S|`-Min = 11 183 km @ CA JD 2442136,378) UND die Kameraorientierung `C1C2C3`. Solange **beide** aus der Datei kommen, ist jedes M10-Bild ein Re-Ingest des Hauses → **Erbe**. **Gemessen fehlt die eigene M10-Bahn:** SPDF `mariner/mariner10/celestial_mechanics_and_radio_science/` trägt nur die Venus-Okkultation (`red_tele_signal_data_venus_occlt`; schon als `mariner_occlt` registriert, `phi:20413`); `mariner_rst` ist **M6/7** (`phi:31568`), `mariner4_odg` ist **M4** — **M10-Zweiweg-Doppler/Range = 0 im Register**. **Auflösung (Entwurf; gehört durch die fünf Stimmen):** (1) Position ← **eigene M10-Bahn** aus Radio-Tracking (nicht `SX SY SZ`); (2) Attitude ← aus den **Bildern selbst** (ISIS-cnet/Sternfeld, future-244), nicht `C1C2C3`; dann Bild → **Merkur-Richtung im ICRF** → O−C gegen DE/INPOP/EPM. Die Häuser fitten Tracking/LLR/Radar, **nicht M10-Optik** → ein held-out Bild-Satz ist **nicht-mitgefitteter Zeuge** = **Brennstoff**. Ohne (1)/(2) bleibt der Bildpfad **Erbe** — ehrlich benannt, nicht umbenannt.
-- **Blockade:** M10-Tracking nicht online (SPDF-Verzeichnis leer); NSSDC/PDS-PPI (`phi:21749`) request-only.
-- **Braucht:** (1) eine M10-Zweiweg-Doppler/Range-Quelle finden/registrieren (NSSDC-Kontakt = **Operator-Hand**; PDS-PPI `Mariner 10` prüfen); (2) die ISIS-Attitude (future-244, `xfer:future-244-1`); (3) das Hold-out-Fenster **vor** dem Fit fixieren.
+- **Blockade:** **kein M10-Roh-Tracking online** — SPDF `mariner/mariner10/celestial_mechanics_and_radio_science/` = nur Venus-Okkultation; die NSSDC-Anfrage `PSCM-00009` (X-/S-Band-Radio-Science/Tracking) ist seit 2026-09-16 offen (`state/mail/nssdc-mariner10-pscm-00009.md`).
+- **Braucht:** (1) **PDS-PPI `MARINER_10` (gemessen 2026-10-12, metadex)** trägt **8 Collections** — u. a. `M10-H-POS-6-M1-FLYBY-TRAJ-V1.0` (`POS_M1_ENC_42SEC.DAT`, 464 KB, 42 s; DOI `10.17189/1519736`) und `M10-H-POS-6-M3-FLYBY-TRAJ-42SEC-V1.0`, dazu MAG-/PLS-RDR — **kein** Roh-Doppler/ODF → das ist ein **abgeleitetes Bahnprodukt** (Pose-Zeuge, nicht Roh-Tracking): als `url` registrieren (Mycelium) und gegen die geheilte Ephemeride kreuzen; der **Roh-Track** bleibt die NSSDC-Anfrage (**Operator-Hand**); (2) die ISIS-Attitude (future-244, `xfer:future-244-1`); (3) das Hold-out-Fenster **vor** dem Fit fixieren.
 
 ### M10-EDR Winkeldurchmesser — Riss: EDR-Korpus ↔ M10-Ephemeride disjunkt (eigen)
 - **Status:** eigen | **Bindung:** eigen
