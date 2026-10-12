@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 334 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: a9b7dcb5749ed86ff04ea15532824e5086bfc8bd1488a94001c92f42d2c98c3a
+  sha256: b54a10f93dc7bb6076901147d99964f46c74f0a9bef3396812a702365177f572
   status: live
 -->
 # Handover — Mountain-Folge 334 (2026-10-12)
@@ -105,6 +105,13 @@ gefaltet). **Jeder offene Punkt nennt seine Datei(en)/Pfade.**
   Self-Serve-Key (institutionell/Abo, „Request Demo") → `blocked account`; **Scite** = nicht frei;
   **Google CSE** (Karte) verworfen. `--dblp`/`--grepapp` bleiben Bot-Gate-`pending`. Damit wachen
   mit den vorhandenen Keys `--gemini`/`--exa`/`--consensus`/`--scopus` ohne Codeänderung auf.
+- **`--geonames` gebaut + Key-Arme live geprüft (Operator: `GEONAMES_USER` gesetzt, Exa/Consensus
+  entdoppelt).** `--geonames` (GeoNames `api.geonames.org/searchJSON`, liest `GEONAMES_USER`)
+  gebaut und verdrahtet; `QUERY_MODES` = **114**, `--all` = **109**; `cargo build -p omegaflow-utils
+  --bin archive_search` 0/0. Live-Durchlauf am Debug-Bin: **`--geonames Berlin` ✅ · `--exa` ✅ ·
+  `--consensus` ✅ · `--scopus` ✅**; **`--gemini` → HTTP 429** — das vorhandene Google-Konto hat
+  kein Billing (nur „Kostenlose Stufe"), das Free-Kontingent des Keys ist erschöpft. Der Key ist
+  korrekt verdrahtet; die Wand ist Quota, kein Code-Defekt (Operator-Hand: Billing oder frischer Key).
 - **mariner10-Ephemeride geschlossen**: `phi:32031` trägt sha `67949cb6…` == die geheilte
   Sun-Ketten-Komposition (Mycelium-Lauf `38278478615` success).
 - **Stale WWLLN-Zeile korrigiert**: `survey-2026-09-07-weberin-thread-matrix.md:168`
