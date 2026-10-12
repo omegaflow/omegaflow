@@ -3776,6 +3776,8 @@ const QUERY_MODES: &[&str] = &[
 
 const PARAMETER_MODES: &[&str] = &["tap", "sparql", "oai-pmh", "stac", "erddap"];
 
+const BROWSE_MODES: &[&str] = &["re3data", "copernicus", "vires"];
+
 pub fn keyword_mode_count() -> usize {
     QUERY_MODES.len() - PARAMETER_MODES.len()
 }
@@ -3871,7 +3873,13 @@ pub fn run_lines_max(
 ) -> Vec<String> {
     crate::token::set_secrets(env.clone());
     if mode == "all" {
+        if query.trim().is_empty() {
+            return vec!["usage — archive_search --all <query>".to_string()];
+        }
         return all_lines(query, env, max);
+    }
+    if !BROWSE_MODES.contains(&mode) && query.trim().is_empty() {
+        return vec![format!("usage — archive_search --{mode} <query>")];
     }
     let lines = match mode {
         "arxiv" => arxiv_lines(query, max),

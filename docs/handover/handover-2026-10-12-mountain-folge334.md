@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 334 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: b54a10f93dc7bb6076901147d99964f46c74f0a9bef3396812a702365177f572
+  sha256: f61a942eda9883d4a9ec484a591775c05c6ded385aef6ee933b5a7f34f879856
   status: live
 -->
 # Handover — Mountain-Folge 334 (2026-10-12)
@@ -112,6 +112,15 @@ gefaltet). **Jeder offene Punkt nennt seine Datei(en)/Pfade.**
   `--consensus` ✅ · `--scopus` ✅**; **`--gemini` → HTTP 429** — das vorhandene Google-Konto hat
   kein Billing (nur „Kostenlose Stufe"), das Free-Kontingent des Keys ist erschöpft. Der Key ist
   korrekt verdrahtet; die Wand ist Quota, kein Code-Defekt (Operator-Hand: Billing oder frischer Key).
+- **§3-Needs 4–6 gebaut (Operator-Wort).** **(6)** `run_lines_max` gated leere Queries: jeder
+  Nicht-Browse-Modus ohne Query gibt `usage — archive_search --<mode> <query>` statt eines
+  Netzaufrufs (`--ensembl ""` → usage; `BROWSE_MODES = re3data/copernicus/vires` dürfen leer;
+  `--all ""` ebenso usage). **(4)** Net-Modi lesen bei leerer Query und gepipeter stdin jede Zeile
+  als eigene Query (Mehrfach-Query: `printf 'a\nb\n' | archive_search --crossref`); normale Query
+  unverändert. **(5)** `bin/.tools_ensure` serialisiert die Installation per `flock`
+  (`$rel/.tools_ensure.lock`) und lädt in eine eindeutige `mktemp`-Datei + atomares `mv` — das
+  „Text file busy"-Rennen ist weg. `cargo build -p omegaflow-utils --bin archive_search` 0/0,
+  `sh -n bin/.tools_ensure` ok; Smoke-Test: 3 parallele `tools_ensure` fehlerfrei.
 - **mariner10-Ephemeride geschlossen**: `phi:32031` trägt sha `67949cb6…` == die geheilte
   Sun-Ketten-Komposition (Mycelium-Lauf `38278478615` success).
 - **Stale WWLLN-Zeile korrigiert**: `survey-2026-09-07-weberin-thread-matrix.md:168`
