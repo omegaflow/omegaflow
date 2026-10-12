@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (ENTSØ-E-Fehlerkörper, USGS-Mosaik-sha + DSC-0119-Zeile, INPOP/NOE4-Workflow, Spill-Wurzel im Wrapper)
   class: handover
   date: 2026-10-12
-  sha256: 8edb5350059b5dbf78c3dab347b26eb9a10468f8e63628fa81f2245d5def8615
+  sha256: 1ac42f9c3930be6c5fc07c785b3f97e996c6d79fc2931b1a0a35e3e07643723a
   status: live
 -->
 # Handover — Mycelium-Folge 325 (2026-10-12)
@@ -72,12 +72,12 @@ MCP/MCON · GIC-Onset sind **River-eigen** (river-196) und hier entfernt;
 - **Blockade:** die Gate-Invariante „das eine lebende Register" — ein Architektur-Akt, nicht ein Bau.
 - **Braucht:** Operator-/Ratswort zur Invarianten-Änderung; danach `REGISTER_CLASSES`-Eintrag + Test-Anpassung + `phi/ci_measurements.φ`-Skelett + `fold`-Job (Pilot `field-te-query.yml`).
 
-### MCP-Allowlist · de441/de442-sha · SWPC/RTSW · Domain→UCD (getrennt, je ein Gegenüber)
+### de441/de442-sha · SWPC/RTSW · Domain→UCD (getrennt, je ein Gegenüber)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Session-Neustart (`opencode.json:444-465`) · Merge-Lauf (`phi/sources.φ:32008`) · River-`matrix-vlies` · messbare Domain-Quelle
-- **Lage:** (gemessen 2026-10-12) **MCP:** Allowlist konsistent (`opencode.json:444-465`); der offene Teil ist der Live-Seat-Restart (Session-Neustart, kein Maschinen-Akt in-session). **de441/de442:** sha256 erst nach dem Merge-Lauf; die NAIF-Blöcke stehen (`phi/sources.φ:32008`, recursive SPK/PCK harvest) — der Merge-Lauf ist Mountain-Territorium. **SWPC/RTSW:** `matrix-vlies`-Wiederholung (River). **Domain→UCD:** keine messbare Quelle (`pending`).
+- **Trigger:** Merge-Lauf (`phi/sources.φ:32008`) · River-`matrix-vlies` · messbare Domain-Quelle
+- **Lage:** (gemessen 2026-10-12) **de441/de442:** sha256 erst nach dem Merge-Lauf; die NAIF-Blöcke stehen (`phi/sources.φ:32008`, recursive SPK/PCK harvest) — der Merge-Lauf ist Mountain-Territorium. **SWPC/RTSW:** `matrix-vlies`-Wiederholung (River). **Domain→UCD:** keine messbare Quelle (`pending`).
 - **Blockade:** je der genannte Lauf/Quelle.
-- **Braucht:** je: Session-Neustart (MCP) · Merge-Lauf (de441) · River-`matrix-vlies` · messbare Domain-Quelle.
+- **Braucht:** Merge-Lauf (de441) · River-`matrix-vlies` · messbare Domain-Quelle.
 
 ### ui-seats-Träger (`docs/concepts/ui-seats.md`) — offene `pending`-Seats
 - **Status:** wartend | **Bindung:** eigen
