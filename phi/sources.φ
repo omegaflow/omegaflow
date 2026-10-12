@@ -32469,338 +32469,338 @@ record vlde
 force em
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astl_format.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/astl_format.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/astl_format.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/astl_format.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 7205a57ecd12582bfd7975937d1528788b678ad00e429b0844de1f990bed36ef
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astljupiter.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/astljupiter.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/astljupiter.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/astljupiter.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 9e619ce239283172efed3ae0acb831c98b5cad6970272b39eedc1ba37c94c048
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astlmars.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/astlmars.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/astlmars.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/astlmars.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 3a4d51757542f21cc7aef800bed36db72a70e036baffac4fe3c0b6490eea4360
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astl_refs.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/astl_refs.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/astl_refs.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/astl_refs.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 52ce15c74cce2a6e04ec3d1f5ecfa2631a399ea77471be8fc4c0adf003eaa468
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astlsaturn.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/astlsaturn.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/astlsaturn.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/astlsaturn.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 66befe0ae3264b719b19f91a7186df2fe91f2650d681d8eb6b1b42f14b0695d9
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astluranus.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/astluranus.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/astluranus.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/astluranus.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 1c5b715595e80f41f6d8056599ea3148a980405a6eddc1c2edbbb5c5ed7a4b3a
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/astrom_refs.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/astrom_refs.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/astrom_refs.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 2c6cf2105470f498bae098b84dd4abca07ce8ac749d504501ce16e40c081a453
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/cassini_range_avg.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/cassini_range_avg.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/cassini_range_avg.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/cassini_range_avg.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 af02124b540d51c97cbfc4b065c907e256210e5a487ea5f540a0fda7a4fdfed5
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ccd1_nofs.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/ccd1_nofs.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/ccd1_nofs.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/ccd1_nofs.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 895b404c53d51b45fcdc68f83ffca444e2ab9a27a92f06dfb131a114115d4711
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ccd_bord.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/ccd_bord.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/ccd_bord.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/ccd_bord.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 f4198fed1b0d967cc006b958c18a3c867248182f5db644543450475d84c2a35e
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ccd_mcd.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/ccd_mcd.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/ccd_mcd.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/ccd_mcd.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 49c7edb4ab11701d25a7eba9bf1b238ede9dca6d6fc26ed5c2a2bd9af9f95ccb
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ccd_mpc.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/ccd_mpc.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/ccd_mpc.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/ccd_mpc.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 aae2e6525e65b5f928ab9cd65258512a817dda37086cb97a6b74e98d0f0f0949
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ccd_refs.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/ccd_refs.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/ccd_refs.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/ccd_refs.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 bbc69c66a7052e1be0e34fafd1d27a066089173401d104704922b5769728653e
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ccd_tmo.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/ccd_tmo.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/ccd_tmo.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/ccd_tmo.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 8a082dc58424e89c2d9a10e8ca714d35aad356f617217c1922c2185effbea567
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goldstone_format.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/goldstone_format.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/goldstone_format.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/goldstone_format.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 b64b1b7e2c105976039583f42313f02a5b7021a3d2d989c015baf8f75f2317ec
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goldstone_refs.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/goldstone_refs.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/goldstone_refs.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/goldstone_refs.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 1702b21a270829ecffcd9bff95b81416e2739745480ed06ab5c4fa42519fe619
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/juno_range.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/juno_range.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/juno_range.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 1710ddf471f29d50fc03012be5427ecb3c6840b94374ca6233622fbc089fe719
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mariner9obs.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/mariner9obs.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/mariner9obs.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/mariner9obs.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 a7afe5da76e1ce8ad158464af7d1abc45c0b5a06927350455e27d342931cb746
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/messenger.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/messenger.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/messenger.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/messenger.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 d507c00d8f0dec247b9fbe8019674ebefd41671ebec895c48ce7f33d85a3cc12
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mgndoppler.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/mgndoppler.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/mgndoppler.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/mgndoppler.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 048fb3a40137c41a2c05ed2528f0669180a2e1c3350a25eff120f8abfd2cef48
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mgsrange1999-2006.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/mgsrange1999-2006.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/mgsrange1999-2006.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/mgsrange1999-2006.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 ce5b68c36bb60c9065f9ac9babc255e54c17b2dc0926ce2f651c4ed93861fdaa
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/miscastrom.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/miscastrom.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/miscastrom.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/miscastrom.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 5d21797a47b0e030388f3621236d404ec96d23d3b2ed2f1646d8f2ba367a347b
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mrorange2006-2013.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/mrorange2006-2013.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/mrorange2006-2013.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 180f9358b5a678c66837ebb0ee3fa0e7490dfaa1b805a1eaaec9d2eadd931d30
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/mscdop_format.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/mscdop_format.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/mscdop_format.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/mscdop_format.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 d95e5ff2bdb0209e97fd8fd27e572feaa5a849b5be25298945a953e96a927708
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/nikolaev.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/nikolaev.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/nikolaev.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/nikolaev.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 c89851e4b43c51488a68d5462bb3381f842e0b0fdf11d0d452ccbb5cf729131a
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/npts3d_format.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/npts3d_format.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/npts3d_format.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/npts3d_format.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 683a6d8f7c4844df88d8e304d50dfcf01b81a4f869d05cd21bfccc993ed7183e
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/npts3d.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/npts3d.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/npts3d.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/npts3d.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 4fe769fe97e1cd13f017a3a13369356cc1ecdb1cba52100b70a75125a67ee939
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/odyrange2002-2013.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/odyrange2002-2013.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/odyrange2002-2013.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/odyrange2002-2013.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 e7ba38c7fb3658d27d0b04a1947e006f1e00a56f36d8cf0b8cad67c00f8f0994
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/optical_format.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/optical_format.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/optical_format.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 5003e54c335896c55f43fba039c3cd1c4a6d444a99744390f0f58a34af9573e0
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/pathdoppler.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/pathdoppler.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/pathdoppler.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/pathdoppler.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 b6a03d1ac08db10e8c4b2129e5d5d3b66335c18b9f3cd732ad0bff021aedc340
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/pathrange.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/pathrange.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/pathrange.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/pathrange.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 58c98800754ba31f99f751716f68b8bee4f2c59fbaed51937ff8dfe7bf2dea0f
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/plutofk5.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/plutofk5.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/plutofk5.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/plutofk5.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 42846cb4fdb2fc407e318e3137fddfc284ba924f1844639936d05b49a89cce33
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/plutopost69.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/plutopost69.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/plutopost69.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/plutopost69.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 79a47ae8502aee85edc1778239f7520daf1c359d3ac11938e9580c2dfc6a1d4d
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/plutopre69.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/plutopre69.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/plutopre69.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/plutopre69.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 b59f0767f9104c06816e924f5dd3e19bdf3b8633242fd44a9d75cabe30f96d1a
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/pluto_refs.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/pluto_refs.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/pluto_refs.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/pluto_refs.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 1f7b284cc1159b3986ca611b34dd5dc0c6b3495384e0afb584900b1ae2333bb8
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/stations_19jul2013.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/stations_19jul2013.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/stations_19jul2013.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/stations_19jul2013.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 055d6c1e405b456367c8c5b550d562eb6f99ba76b9067b0395764aefdb9682e3
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/trnstsbordx.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/trnstsbordx.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/trnstsbordx.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnstsbordx.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 60866991e7aaa951e63ac554799eca6383d33ff894a44a0d14cd008679f67a40
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/trnstsherst.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/trnstsherst.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/trnstsherst.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnstsherst.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 d09d3bd7e60f5b4db0a3080bc2ceecbb7f9bce73005361eb7c654923fe0afc11
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/trnstslplma.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/trnstslplma.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/trnstslplma.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnstslplma.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 c9b8e94cfe2867b4bd6e7fc5e567cf790a1e93d2f2ab7d669a2c74c9a3eecfb9
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/trnststokyo.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/trnststokyo.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/trnststokyo.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnststokyo.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 ac8ba4432e8f157a5acf9569fbca72df8c233e851987cdd70d4e382e36b782cf
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/trnstswash6a.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/trnstswash6a.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/trnstswash6a.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnstswash6a.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 de1c82f30b067e1cf567c8aade32a63236060e386863d484edac4c5fb980614c
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/trnstswash6b.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/trnstswash6b.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/trnstswash6b.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnstswash6b.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 f120ada53c3b6a679a8dbaec243721d6c22358a442520b21ea7a70aaec6586b1
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/trnstswash6c.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/trnstswash6c.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/trnstswash6c.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnstswash6c.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 c4bc726de86c0a8e13c25f7ae12d3b356150314b0ac10965f8bfee6174fd223a
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/trnstswash9.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/trnstswash9.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/trnstswash9.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/trnstswash9.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 7f9a688bcb28ae2acd20b82409998b34912ee8321edffb6207cfe5dfad8d6ef5
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vikpath_refs.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/vikpath_refs.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/vikpath_refs.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/vikpath_refs.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 1f805176c8c306a066a9b1cc1930abbfae7b2c71bd15705b87fede65b8dabd51
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vlbaobs.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/vlbaobs.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/vlbaobs.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/vlbaobs.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 1dd130e59918d5db82aa83525869a3f1d66110e320524387fc0a41434a736d84
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vlbiobs_jun2013.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/vlbiobs_jun2013.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/vlbiobs_jun2013.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/vlbiobs_jun2013.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 b1ca2c73e9d8f64bf0dee0aef209d3020b31d5dcfb56ff4a30ec1c2dfc1bda66
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vlbi_vlba_refs.txt
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-planets/vlbi_vlba_refs.txt
 terms unknown https://ssd.jpl.nasa.gov/
-origin https://ssd.jpl.nasa.gov/dat/planets/vlbi_vlba_refs.txt
+origin https://ssd.jpl.nasa.gov/planets/obs_data.html ; https://ssd.jpl.nasa.gov/dat/planets/vlbi_vlba_refs.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 fc27e2020f7c5dc659735f57221785ae882e96dcca384375e4f0efdd84f1a264
 no-cadence

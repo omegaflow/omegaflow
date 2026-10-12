@@ -130,7 +130,7 @@ fn enumerate(base: &str) -> Result<Vec<String>, String> {
     let mut urls = Vec::new();
     for (volume, mves) in VOLUMES {
         for mve in mves {
-            let dir = format!("{base}{volume}/mve_{mve:03}/images/");
+            let dir = format!("{base}/{volume}/mve_{mve:03}/images/");
             let html = fetch_raw_bytes(&dir)
                 .and_then(|b| String::from_utf8(b).ok())
                 .ok_or_else(|| format!("{dir}: listing void"))?;
