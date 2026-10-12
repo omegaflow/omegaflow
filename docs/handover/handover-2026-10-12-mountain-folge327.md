@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: e247cfa743a89db14119fd62a9ab422d5d4c06639a7a0dbbf012366fa1a7a63e
+  sha256: 01e10dd9ad77b09a9d406d351272ec3686c5dc65b4a16e6dfa60c04a14112c3f
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -12,12 +12,10 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es.
 Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`; gemessen am HEAD
 `934c131f3`, seither committete Mycelium-324 (`34c131f3`→`e55dd1897`…`934c131f3`) und
 Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
-`handover-2026-10-12-mountain-folge326.md` (→ `docs/handover/archiv/`). Adressierte
-Blöcke: `register_lookup --addressed mountain` = `## An mountain` aus future-241 — bereits
-von folge326 gefaltet, kein neuer Inhalt. `--fired`/`--stale --persist 3` = leer.
+`handover-2026-10-12-mountain-folge326.md` (→ `docs/handover/archiv/`). **Korrektur (gemessen 2026-10-12, nicht der Kopfzeile geglaubt):** der `## An mountain`-Block aus future-241 war von folge326 nur **teilweise** gefaltet. Registriert/geechoed sind APOLLO (`phi:32388`), die mariner-rst-Rohbänder (ASU-MVM `phi:31519`, SPDF-M4/6/7 `phi:31526/31534`), DSC 0119 (`phi:31590`), das USGS-Kombi-Mosaik (`phi:31582`), JADES (`phi:32391`), BK18, FMI-NUR, NIST-Route. **Nicht gefaltet und ohne Live-Träger:** die **8-Ziele-Einkaufsliste** (BC430 `3558850` · Pioneer 10/11 `13309156`/`13309040` · Venus-Radar `18176179` + PDS-Geosciences · PDS-PPI `PVO-V-ORSE-1-ODR-OPENLOOP--V1.0` · JPL `obs_data.html`) und die zwei public Indizes — jetzt unten gefaltet. `--fired`/`--stale --persist 3` = leer.
 **Jeder offene Punkt nennt seine Datei(en)/Pfade.**
 
-## Burn: open 0.00 · close 0.11 · cap 0.50 · Grund: kurze Linien-Session (Mountain 327), deepseek-flash, keine Sub-Dispatch, kein pro/max (session_burn: Linien-Agent `$0.4604` → `$0.5677`).
+## Burn: open 0.00 · close 0.13 (Linie) · cap 0.50 · Grund: kurze Linien-Session (Mountain 327) + Taucher-Staffel (9 flash-Dispatches: 3×grind-flash, 5×general/council, 1×vision ~ 0.78 gesamt), deepseek-flash, kein pro/max (session_burn: Mountain-Linie `$0.1307`).
 
 ## Offen (aufgeschlüsselt)
 
@@ -74,69 +72,71 @@ von folge326 gefaltet, kein neuer Inhalt. `--fired`/`--stale --persist 3` = leer
 
 ### M10 `camera_angles.txt` — Parser-Arm (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** die ASU-`url`-Zeile (Mycelium)
-- **Lage:** (gemessen 2026-10-12 future-241 + ISIS-Taucher) 2 433 Zeilen = 811 Records × 3 Zeilen:
-  `<JD (D-float)> <FDS>` / `<SX> <SY> <SZ>` / `<C1> <C2> <C3>`; keine Einheit im File; FDS
-  `00000050`–`00529916`. Kein Reader existiert.
-- **Blockade:** die `url`-Zeile (Mycelium).
-- **Braucht:** `url` (Mycelium) + `format camera_angles`-Arm im Archivar (Position + Winkel je FDS-Frame).
+- **Trigger:** die ASU-`url`-Zeile (Mycelium) — registriert `phi:31570`
+- **Lage:** (gemessen 2026-10-12/327) 2 433 Zeilen = 811 Records × 3 Zeilen:
+  `<JD (D-float) + FDS>` / `<SX> <SY> <SZ>` / `<C1> <C2> <C3>`, je mit trailing Label; keine Einheit im File.
+  **Gebaut (Taucher):** Modul `src/archivar/camera_angles.rs` (`pub fn parse_camera_angles(text) -> Vec<CameraAngleFrame>` mit jd/fds/sx/sy/sz/c1/c2/c3; D-Exponent, Label-Prüfung, malformed → skip; Test `parses_two_synthetic_records` + `skips_mismatched_label`), `pub mod camera_angles;` in `src/archivar/mod.rs`; `cargo check` 0/0.
+- **Blockade:** der Dispatch im Archivar (`format camera_angles` in `src/archivar/extract.rs`).
+- **Braucht:** `format camera_angles`-Dispatch in `extract.rs` (Modul ist da) + `format` Zeile im Block (`phi:31570` braucht noch `format`/`terms`).
 
 ### `mariner_rst` — SP-Begleitbänder, eigener Parser-Arm (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der nächste Parser-Pass
-- **Lage:** (gemessen 2026-10-12) **Riss geklärt:** `DD005407`/`DD005409` sind **keine** Summary-Tapes,
+- **Lage:** (gemessen 2026-10-12/327) **Riss geklärt:** `DD005407`/`DD005409` sind **keine** Summary-Tapes,
   sondern die **Single-Precision-Begleitbänder** derselben M6/M7-Datensätze (DSC 0073, sha
   `02b97558…`, 540 510 B, JP: „one … single precision and the second … double precision").
-  DD005407/09 nutzen das **ODG-Data-File-Format** (10-Wort-Label + 201-Wort-Station-Summary +
-  201-Wort-Datenrecords, 848/649 Records); DD005408/10 das kompakte ~21-Wort-Format (15 366/11 748
-  Records). Der `mariner_rst_compiler` liest nur das DP-Format; die SP-Bänder brauchen einen eigenen
-  Arm. `state/research/…/mariner/RESULT.md` reproduziert. Anker: `state/mountain/mariner4_dsc0119_format.md`.
-- **Blockade:** die Frequenz-Skalierung (roh ~1.08e12, /2⁹ ≈ 2114 MHz) ist in der erreichbaren
-  DSC-0073-Seite **nicht** dokumentiert (`pending`).
-- **Braucht:** SP-ODG-Arm bauen (`tools/harvest/src/bin/mariner_rst_compiler.rs`); Frequenz-Skalierung
-  gegen DSC 0119/Odf-Spec pinnen oder `pending` benennen; SP-Band-`url` via Mycelium
-  (`…/PSCM-00017_DD005407_…tar`, verdict HTTP 206).
+  **Korrektur (Taucher, gemessen):** der ODG-Data-File-Kopf ist **drei** Records — 10-Wort-Label +
+  201-Wort-Station-Summary + **97-Wort-Summary-Fortsetzung** = **308** Wörter (nicht 211; die alte
+  „10+201+Datenrecords"-Annahme verschöbe jeden Datenrecord um 97). Quellen:
+  `state/mountain/mariner4_dsc0119_format.md:13-20`, `state/research/…/mariner/RESULT.md:32-34`,
+  Rohwalk DD005407/5409 (L = 60/1206/582 B = 10/201/97 Wörter).
+  **Gebaut (Taucher):** SP/ODG-Reader in `tools/harvest/src/bin/mariner_rst_compiler.rs`
+  (`sp_odg_data_records`, `sp_odg_record_observables`, `--sp`-Zweig; malformed/mehrdeutige Datentypen → skip;
+  Test `sp_odg_reader_decodes_one_record_and_skips_malformed`; `cargo check -p omegaflow-harvest --bin mariner_rst_compiler` 0/0);
+  der DP-Pfad bleibt unangetastet.
+- **Blockade:** das **M6/M7-SP-spezifische** Feldlayout ist im Baum nicht transkribiert (nur DSC-0073-sha);
+  die Frequenz-Skalierung (roh ~1.08e12, /2⁹ ≈ 2114 MHz) ist auf der DSC-0073-Seite nicht dokumentiert.
+- **Braucht:** DSC-0073-SPFP-Layout pinnen (TM GTB900-1 / Table 3) + Frequenz-Skalierung gegen DSC 0119/Odf-Spec
+  oder `pending`; SP-Band-`url` via Mycelium (`…/PSCM-00017_DD005407_…tar`, verdict HTTP 206).
 
 ### DSC 0119 / M4-Feldtabelle — Parser-Arm (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** die `url`-Zeile (Mycelium)
-- **Lage:** (gemessen 2026-10-12) `state/mountain/mariner4_dsc0119_format.md` (ODG/ODP-Record,
+- **Trigger:** der `mariner_rst`-Parser-Pass
+- **Lage:** (gemessen 2026-10-12/327) `state/mountain/mariner4_dsc0119_format.md` (ODG/ODP-Record,
   6-bit-Byte-Walk, Zeit dekodiert); der DSC 0119 trägt `SECTION II` (ODG DATEN-File: Master-Label
   9 Wörter + Station-Summary 201 Wörter + Datentypen 1–15) + `APPENDIX I` (ODP Logical Record).
-  **Riss:** „Table 3" (Multi-Datentyp-Recordlänge) fehlt im 16-S.-Scan; Nachmessung 2026-10-12
-  bestätigt: die Textschicht fehlt (Scan) → `pending` (ein Vision-Pass könnte Table 3 prüfen).
-- **Blockade:** `url`/`origin` (Mycelium); Table 3.
-- **Braucht:** DSC-0119-`url` (Mycelium) + Table 3 pinnen → `mariner_rst`-Arm.
+  **Registriert:** `phi:31588-31590` (`url`/`origin`, sha `ec3c41eb…`). **Vision-Pass (Taucher, 2026-10-12):**
+  die 16-Seiten-Scan-Schicht ist lesbar; **kein** Abschnitt heißt wörtlich „Table 3" — gemeint ist
+  **S. 14 (II-B-1) „ODP File Logical Record Format"**: Wort 0 = n (Wortzahl), 1-2 = DP-Zeit s past 1950.0,
+  3 = Frequenz-Inkrement, 4 = Pass-Nr., 5 = Code-Wort, 6 = Observable Nr. 1, 7 = Weight-Code-Wort;
+  Code-Wort-Bits selektieren die Datentypen (1 Range · 2 Range-Rate · 3 EL · 4 AZ …); die multi-Datentyp-Recordlänge
+  ist **variabel** (Fig. 2, S. 17). Weitere Tabellen: Tracking-Station-Nummern (S. 10/20), ODG-Datentyp-Liste 1–15 (S. 12),
+  Bit/Datatype 5–11 + Weight-Code-Wort (S. 15), ODP-Summaries (S. 16).
+- **Blockade:** keine (Feldtabelle + Record-Layout gelesen).
+- **Braucht:** den variablen Multi-Datentyp-Record (Fig. 2) in den `mariner_rst`-Arm (SP-ODG) aufnehmen —
+  dann sind auch die 848/649 SP-Records dekodierbar.
 
-### JADES `tar_fits` — Member-Key-Kollision geheilt (eigen)
+### JADES `tar_fits` — Member-Key-Kollision geheilt, Image-Ingest gebaut (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der nächste Register-/Parser-Pass
+- **Trigger:** der nächste Register-Pass
 - **Lage:** (gemessen 2026-10-12/327 via `tar -tf` des Zenodo-Tars 2 898 432 B, `archive_search --verdict` HTTP 206)
-  Das JADES-Tar (`phi/sources.φ:32381` `format tar_fits`) trägt **4 Objektverzeichnisse × 9 Bänder** =
+  Das JADES-Tar (`phi:32391` `format tar_fits`) trägt **4 Objektverzeichnisse × 9 Bänder** =
   36 Members: `JADES-GS-z{10,11,12,13}-0/data_f{090w,115w,150w,200w,277w,335m,356w,410m,444w}.fits`.
-  Die alte `tar_fits_member_key` verwarf das Verzeichnis (`rsplit('/')`) → alle vier Objekte kollabierten
-  auf denselben Key `data_f090w` … → nur **9** statt 36 Members. **Geheilt:** der Key behält den Pfad
-  (`src/archivar/extract.rs::tar_fits_member_key`), Test `tar_fits_keys_members_of_distinct_directories_distinctly`.
-  **Ferner:** `tar_fits` in `src/archivar/fetch.rs::format_readable` und in die Port-Skip-Liste
-  (`src/archivar/port.rs:3088`) aufgenommen (`cargo check` 0/0).
-- **Blockade:** keine (Kollision geheilt).
-- **Braucht:** (1) `fits_to_json` (`src/archivar/extract.rs:3489`) ingestiert **kein** FITS-Bild, nur
-  BINTABLE → der `format fits`-Pfad (UNCOVER `phi:32408`) liefert noch nichts; (2) der JADES-Block trägt
-  noch **keine** `field`-Direktiven → 0 Kanäle; die 36 Members brauchen je eine `field`-Zeile
-  (Member-Key = `<objekt>/data_<band>`) mit force/unit; (3) den `format fits`-Image-Fall entscheiden.
+  Die alte `tar_fits_member_key` verwarf das Verzeichnis (`rsplit('/')`) → die vier Objekte kollabierten
+  auf **9** statt 36 Members. **Geheilt:** der Key behält den Pfad, Test `tar_fits_keys_members_of_distinct_directories_distinctly`.
+  **Image-Ingest (Taucher):** `fits_to_json` fällt ohne BINTABLE auf `fits_image_bands_to_json` zurück,
+  Test `fits_to_json_summarises_an_image_only_fits` → der `format fits`-Pfad (UNCOVER `phi:32408`) liefert jetzt
+  eine Band-Summary. `tar_fits` in `fetch.rs::format_readable` + Port-Skip-Liste aufgenommen (`cargo check` 0/0).
+- **Blockade:** keine.
+- **Braucht:** der JADES-Block braucht **36 `field`-Zeilen** (Member-Key = `<objekt>/data_<band>`) mit force/unit
+  → Kanäle; der Extraction-JSON-Pfad (`<member>` → `[0].mean`) muss dafür gemessen werden.
 
-### THEMIS-ASI Stationstabelle — LiDAR-Restgrenze (eigen)
+### THEMIS-ASI Stationstabelle — an River übergeben (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** eine gemessene Antennenhöhe je Station
-- **Lage:** (gemessen 2026-10-12 river-196 + `fb619eaf7`/`e11aa7422`) Tabelle korrigiert in HEAD
-  (ATHA 549.82 · EKAT lon −110.6703 / h 430.77 · PGEO 756.26 · MCGR 102.57). **Offen:** HRDEM (NRCan
-  1 m, orthometrisch CGVD2013) gibt die Geländehöhe, nicht die **Antennenhöhe** (~2–3 m, `pending`);
-  die Restunsicherheit dominiert die **Koordinatenlage** des Standorts (PGM-Koordinate = Stadt, nicht
-  AUGO-I), nicht das DEM. Anker `state/mycelium/themis_asi_stations.md`,
-  `state/river/themis/calibration-2026-10-12.md` §Höhen-Riss/§LiDAR.
-- **Blockade:** keine gemessene Antennenhöhe / Standortkoordinate.
-- **Braucht:** Antennenhöhe je Station messen **oder** als `pending` führen (kein Code liest
-  `Geodetic altitude`/`site_map_altitude`).
+- **Trigger:** —
+- **Lage:** (gemessen 2026-10-12 via river-196/`sread`) Operator-Wort 2026-10-12/327: „river analysiert selbst schon die antennenhöhe" — die Antennenhöhen-Frage (HRDEM Geländehöhe ≠ Antennenhöhe ~2–3 m; PGM-Koordinate = Stadt, nicht AUGO-I) liegt bei **River** (`state/river/themis/calibration-2026-10-12.md` §Höhen-Riss/§LiDAR; river-196). Kein Mountain-Akt.
+- **Blockade:** —
+- **Braucht:** River-Analyse; Mountain ohne Schritt.
 
 ### `intermagnet_dbdt` — Resolver-Regel (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -191,32 +191,85 @@ von folge326 gefaltet, kein neuer Inhalt. `--fired`/`--stale --persist 3` = leer
 - **Braucht:** je `url`-Zeile (Mycelium) → `terms`/`format` (Mountain); Läufe lesen
   (`ci_manage log <id>`); iEEG **nicht erneut vorlegen** (Operator-Wort 2026-10-06).
 
+## Taucher-Messungen 2026-10-12/327 (offen)
+
+### Auftrag Phase 0 — Landschaft je Beobachtungsklasse (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** Operator-Wort Phase 1
+- **Lage:** (gemessen 2026-10-12/327, `general`-Taucher) fünf Konsolidate unter `state/research/auftrag-ephemeriden-phase0/`: `a-llr.txt` (15 Kandidaten) · `b-odf.txt` (24) · `c-planetary-radar.txt` (15) · `d-delta-dor.txt` (17) · `e-ephemerides.txt` (15). Terms durchweg `unknown` (nicht gemessen in Phase 0).
+- **Blockade:** keine.
+- **Braucht:** Phase 1 = Terms je Kandidat messen + ITRF2020 (`https://itrf.ign.fr`) + IERS-EOP + LLR (ILRS/CDDIS) + Operator `canObserve`.
+
+### Re-Admission — Admission-Verdikte gemessen (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** der Register-Schreib-Pass
+- **Blockade:** die NC-Admission ist eine Operator/Rat-Frage.
+- **Braucht:** je Kandidat die Admission-Zeile in `phi/sources.φ` (Mountain) + CDN (Mycelium); die NC-Kandidaten dem Operator vorlegen.
+
+### Rätsel/NIST — Directive-Kandidaten gemessen (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** der nächste Register-Pass
+- **Lage:** (gemessen 2026-10-12/327, `general`-Taucher) JADES `7460116` (2 898 432 B, cc-by-4.0) · UNCOVER `14281664` (65 905 920 B, cc-by-4.0) · FMI-NUR `?month=YYYYMM&stations=NUR` (200, 921 600 B, CC BY 4.0, Format undetermined) · NIST NCNR NSE `https://ncnr.nist.gov/pub/ncnrdata/nse/` (200, US-PD) · Teil C A5 `GO-SS-RSS-1-TDF-V1.0`. JADES/UNCOVER sind als Zenodo-Records gemessen; die `url`-Zeilen existieren teils schon (`phi:32391`/`:32408`).
+- **Blockade:** keine.
+- **Braucht:** die `terms`/`format`-Zeilen in den Blöcken setzen; FMI-NUR-`format` klären (GET-Body opaque).
+
+### M10-Encounter + Sonke/Robinson (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** der `camera_angles`-Dispatch
+- **Lage:** (gemessen 2026-10-12/327, `general`-Taucher) M1-Fenster 1974-03-28..30 = **410 Records**, JD 2442135.305…2442136.500, FDS `00000050`…`00027475`; **Riss:** innerhalb M1 sind JD und FDS **nicht ko-monoton** (FDS steigt 50→27475, JD fällt 2442136.378→2442136.350) — der FDS ist die Bild-Datei-Ordnung, nicht die Zeit. Sonke & Robinson 2026 (`10.3847/PSJ/ae32f5`) ist **OA gold, CC-BY** (`--unpaywall`; Crossref/OpenAlex leer). `https://ser.im-ldi.com/M10/M10_ISIS/` = **403** (kein Listing); `/M10/TXT/camera_angles.txt` = **200, 194 640 B**.
+- **Blockade:** das Camera-Pose-Wiring.
+- **Braucht:** FDS→Bild-Dateiname-Mapping im `camera_angles`-Dispatch dokumentieren; Sonke/Robinson-Annotation der ASU-Datei als `url` (Mycelium).
+
+### Quellen-Terms — Rat-Verdikt zur not-admit-Form (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** Operator-Wort
+- **Lage:** (gemessen 2026-10-12/327, `council`) Konsens: eine `declined`-Disposition ist eine **Direktive** mit **geschlossenem** Grund-Token (nicht der 183-Token-Freitext des getilgten `declined_sources.φ`), trägt die gemessene URL als Schlüssel, erzeugt **nie** einen `SourceConfig`/ttl und bleibt in `phi/sources.φ`. Der Parser-Catch-all (`parse.rs:2307`) verschluckt eine `decline`-Zeile heute **still** → die Direktive muss ein benannter Arm werden; `register_lookup` kennt `declined` bereits als `Released`.
+- **Blockade:** der Token-Satz (welche Gründe geschlossen gelten).
+- **Braucht:** Operator-Wort zum Grund-Token-Satz + Parser-Arm + Gate-Fixture im selben Atom.
+
 ## An mycelium
 
-Origin: mountain-folge327 (2026-10-12).
+Origin: mountain-folge327 (2026-10-12). **Echo:** `handover-2026-10-12-mycelium-folge326.md`
+hat den vorigen Block gefaltet (registriert/geechoed: ASU-MVM `phi:31519`, SPDF-M4/6/7
+`phi:31526/31534`, DSC 0119 `phi:31590`, USGS-Mosaik `phi:31582`, JADES `phi:32391`, BK18, FMI-NUR,
+NIST) — nur die Sonke/Robinson-Tabellen bleiben dort offen.
 
-- **INPOP/NOE4 registriert — CDN-Lauf fehlt.** Die 12 Blöcke stehen (`phi/sources.φ:2185-2285`),
-  `terms etalab-2.0`; der CDN-Release `ftp.imcce.fr` existiert noch nicht
-  (`gh release view ftp.imcce.fr` = not found) — der erste `--ci-mode`-Lauf beider Compiler
-  (`inpop_compiler`/`noe4_compiler`) ist die Manifestation.
-- **M10-Kamera/Encounter:** `url`/`origin`/`compiler`-Zeile für
-  `https://ser.im-ldi.com/M10/M10_ISIS/` (`camera_angles.txt`, 194 640 B, sha
-  `0a65df59c8685e22004ce7f7afa21cf54f7aedc39c2ecb5965b8fcad3dae97bd`) — US-PD → dann `format`
-  Mountain. Ebenso die Sonke/Robinson-Tabellen 1–8 und `isis.astrogeology.usgs.gov` (CC0/US-PD).
-- **mariner-rst Rohband-Routen (future-236):** SPDF M6/M7/M4 `…/mariner*/celestial_mechanics/…`
-  (NSSD1311/1310/1312, NASA-PD) + ASU `https://ser.im-ldi.com/M10/MVM/` (`MVM_0001–0014`).
-- **DSC 0119:** `url`-Zeile für
-  `spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/renamed_dataset_catalogs/mariner4_celestial-mechanics_64-077a-09a_DSC_0119.pdf` (sha `ec3c41eb…`).
-- **Rätsel/NSE:** JADES `7460116`, UNCOVER `14281664`, BK18-Origin; GIC-Mäntsälä (FMI NUR).
+- **8-Ziele-Einkaufsliste (future-241) — nicht gefaltet, je `url`/`origin`/`compiler`-Zeile.** Die vier
+  direkt downloadbaren sind **cc-by-4.0** und ohne Registerzeile (nur APOLLO `7818557` steht, `phi:32388`):
+  - **BC430** Zenodo `3558850` — `BC430.tar.gz` 59 541 013 B, 300 Asteroiden 1800–2200.
+  - **Pioneer 10/11 Doppler** Zenodo `13309156` (`SC_23.asc` 678 784 528 B) / `13309040` (`SC_24.asc` 721 591 221 B).
+  - **Venus-Radar** Zenodo `18176179` — `…75m_v1.tif` 80 909 342 816 B · `Processed.zip` 409 371 501 B.
+  - **PDS-Geosciences Venus-Radar** `https://pds-geosciences.wustl.edu/missions/venus_radar/index.htm`
+    (PDS: kostenlos + TSPA, **keine** explizite Lizenz; Zitation Campbell & Campbell 2022, `10.3847/PSJ/ac4f43`).
+  - **PDS-PPI `PVO-V-ORSE-1-ODR-OPENLOOP--V1.0`** `https://pds-ppi.igpp.ucla.edu/data/PVO-V-ORSE-1-ODR-OPENLOOP--V1.0/`.
+  - **JPL `ssd.jpl.nasa.gov/planets/obs_data.html`** (Spacecraft-VLBI) — keine Nutzungsaussage, Lizenz `unverified`.
+  Gemessene Quelle: `docs/plans/ref-ephemeriden-quellen-index.md` (Mountain).
+- **Orphan-Doc `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md`** (2 offene Marker; see-also
+  `docs/concepts/ui-seats.md`, `docs/SOURCE_PORT.md`) braucht einen Namenträger bei dir.
+
+## An river
+
+Origin: mountain-folge327 (2026-10-12). Drei `--orphan-docs`-Dokumente sind nicht Mountain und brauchen
+einen Namenträger bei dir:
+- `docs/blatt/blatt-gic-breitenband-familien.md` (4 Marker; see-also `docs/paper/gic-causal-driver.md`).
+- `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` (4; see-also river-folge93).
+- `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` (2; see-also river-folge139).
+
+## Prosa-Träger (Mountain-owned orphan-docs, gemessen 2026-10-12/327)
+
+`register_lookup --orphan-docs` = **8**; die vier Mountain-eigenen tragen ihren Namenträger hier:
+- `docs/plans/ref-mariner-faden-index.md` (3) — Träger: `mariner_rst`/DSC-0119-Punkte (M4-Parser-Gap).
+- `docs/plans/ref-ephemeriden-quellen-index.md` — Träger: der 8-Ziele-Punkt oben.
+- `docs/auftrag/auftrag-2026-10-11-wartend-aufloesung.md` (3) — Träger: Teil C „offene Messlücken".
+- `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` (1) — Träger: Re-Admission-Punkt.
+- `docs/surveys/survey-2026-09-03-orphan-verdicts.md` (1) — Träger: Quellen-Terms-Punkt.
 
 ## Operator-Wort-Register
 
 - **„Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes … /commit ist das Commit-Wort"** | 2026-10-12 | Operator-Session (mountain 327) — session-weiter Delegations-Consent, nicht das Commit-Wort; bereits in folge326 registriert, hier für dieses Atom bestätigt.
+- **„du kannst dich auch gleich mal darum kümmern deine arbeit richtig zu machen und nichts zu behaupten was der messung nicht standhält"** | 2026-10-12 | Operator-Session (mountain 327) — der teilgefaltete future-241-Block wird hier vollständig gefaltet.
+- **„setze eine taucher staffel auf alle punkte an … und river analysiert selbst schon die antennenhöhe"** | 2026-10-12 | Operator-Session (mountain 327) — neun-Taucher-Staffel (flash), THEMIS-Antennenhöhe ist River.
 
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt automatisch", 2026-10-07)
 trägt Commit und Push. In diesem Atom committet (pfad-begrenzt): `src/archivar/extract.rs`,
-`src/archivar/fetch.rs`, `src/archivar/port.rs`, `phi/sources.φ` (jma-Block → point-event/erbq-Familie),
+`src/archivar/mod.rs`, `src/archivar/fetch.rs`, `src/archivar/port.rs`, `src/archivar/camera_angles.rs`,
+`tools/harvest/src/bin/mariner_rst_compiler.rs`, `phi/sources.φ` (jma-Block → point-event/erbq-Familie),
 `docs/handover/handover-2026-10-12-mountain-folge327.md`,
 `docs/handover/archiv/handover-2026-10-12-mountain-folge326.md`.

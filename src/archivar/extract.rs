@@ -3521,7 +3521,7 @@ fn fits_to_json(buf: &[u8]) -> Option<JsonVal> {
         }
         off = aligned;
     }
-    None
+    fits_image_bands_to_json(buf, "")
 }
 
 fn fits_image_bands_to_json(buf: &[u8], member: &str) -> Option<JsonVal> {
@@ -8100,6 +8100,19 @@ mod tar_fits_tests {
         }
         tar.extend_from_slice(&[0u8; 1024]);
         tar
+    }
+
+    #[test]
+    fn fits_to_json_summarises_an_image_only_fits() {
+        let img = fits_image();
+        let json = fits_to_json(&img).expect("an image-only FITS yields band rows");
+        let JsonVal::Arr(rows) = &json else {
+            panic!("fits_to_json yields an array of band rows")
+        };
+        assert_eq!(rows.len(), 1);
+        assert_eq!(jnum(&rows[0], "mean"), Some(2.5));
+        assert_eq!(jnum(&rows[0], "npix"), Some(4.0));
+        assert_eq!(jstr(&rows[0], "band").as_deref(), Some("K"));
     }
 
     #[test]
