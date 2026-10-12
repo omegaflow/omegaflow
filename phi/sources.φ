@@ -24,7 +24,7 @@ map .
 lat Latitude
 lon Longitude
 field Depth eew_depth_km gaussian-inverse-square seismic-body km 300 0.0 0.0
-channel energy:primary:wave:hyperbolic:elastic-solid:sphere:free-surface:6371000 Pa
+channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:none Pa
 
 url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
 terms unknown https://vires.services/
@@ -161,7 +161,7 @@ on earth 40.137 -105.237 1682
 ttl 60
 field usgs_geomag_e_e_mv_km usgs_geomag_e_e_mv_km inverse-square electric mV/km 60 0.0 0.0
 field usgs_geomag_e_n_mv_km usgs_geomag_e_n_mv_km inverse-square electric mV/km 60 0.0 0.0
-channel energy:primary:maxwell:mixed:vacuum:unspecified:none V/m
+channel energy:primary:maxwell:elliptic:vacuum:unspecified:none V/m
 
 url https://github.com/omegaflow/sources/releases/download/service.earthscope.org/fdsn_waveform.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/

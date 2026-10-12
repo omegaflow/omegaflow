@@ -2670,7 +2670,8 @@ mod tests {
             })
             .expect("the descriptor field is admitted");
         assert_eq!(
-            field.channel_ref, Some(5),
+            field.channel_ref,
+            Some(5),
             "Fourier/energy/fluid resolves to thermal"
         );
         assert_eq!(field.unit, "K");
@@ -2705,7 +2706,8 @@ mod tests {
             .expect("the P10.2a target line is admitted");
         assert_eq!(field.kernel, 0, "inverse-square is kernel 0");
         assert_eq!(
-            field.channel_ref, Some(8),
+            field.channel_ref,
+            Some(8),
             "maxwell/elliptic/vacuum resolves to electric"
         );
         assert_eq!(field.unit, "V/m");
@@ -2745,7 +2747,8 @@ mod tests {
             })
             .expect("the optional interaction may be absent — the line is admitted, never silently dropped");
         assert_eq!(
-            field.channel_ref, Some(8),
+            field.channel_ref,
+            Some(8),
             "the interaction-absent form resolves to the same channel as the interaction-present form"
         );
         assert_eq!(field.unit, "V/m");
@@ -3019,6 +3022,49 @@ mod tests {
     }
 
     #[test]
+    fn the_register_declares_a_channel_for_every_live_force_tag() {
+        use crate::mathematikerin::channel::{
+            FIXED_CHANNELS, Medium, PdeType, TransportOp, mechanism_of, unit_token,
+        };
+        let content = std::fs::read_to_string("phi/sources.φ").expect("phi/sources.φ reads");
+        let mut declared: Vec<(
+            crate::mathematikerin::channel::Conserved,
+            TransportOp,
+            PdeType,
+            Medium,
+        )> = Vec::new();
+        for line in content.lines() {
+            let parts: Vec<&str> = line.split_whitespace().collect();
+            if parts.len() < 3 || parts[0] != "channel" {
+                continue;
+            }
+            let Some(unit) = unit_token(parts[2]) else {
+                continue;
+            };
+            if let Ok(d) = ChannelDescriptor::parse_spec(parts[1], unit) {
+                declared.push((d.conserved, d.op, d.pde_type, d.medium));
+            }
+        }
+        let mut missing: Vec<&str> = Vec::new();
+        for fc in FIXED_CHANNELS.iter() {
+            let Some(m) = mechanism_of(fc.tag) else {
+                missing.push(fc.tag);
+                continue;
+            };
+            let covered = declared.iter().any(|(c, op, pde, med)| {
+                *c == fc.conserved && *op == m.operator && *pde == m.pde_type && *med == fc.medium
+            });
+            if !covered {
+                missing.push(fc.tag);
+            }
+        }
+        assert!(
+            missing.is_empty(),
+            "the register declares no channel directive for these live force tags: {missing:?}"
+        );
+    }
+
+    #[test]
     fn field_without_absorption_advection_declares_absent_not_zero() {
         let short = split_directive("field x y inverse-square em nT 3600");
         let (_, _, tau, absorption, advection) = parse_field_config(&short).unwrap();
@@ -3188,10 +3234,7 @@ mod tests {
         let q = "url https://example.com/q.bin\nttl 604800\n\
                  quantity qkey qname inverse-square index nt 60 0.0 0.0\n";
         let fc = field_of(q).expect("a magnetic index quantity in nT flows as a quantity");
-        assert_eq!(
-            fc.channel_ref, None,
-            "a derived index stays outside Σω"
-        );
+        assert_eq!(fc.channel_ref, None, "a derived index stays outside Σω");
     }
 
     #[test]
