@@ -3438,7 +3438,7 @@ fn run_descoped_check(_args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count] [--changed-since <sha>]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line; --changed-since <sha> restricts the pairs to handovers changed in the range <sha>..HEAD and the witness log to that range — the diff-scoped CI gate)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --tokens [--fail]   (per entry of every `## An <line>` transport block: XFER `<tok>` echoed|unbeglichen against the owner line's `## Offen` token echo, or XFER-MISSING for an entry without an `xfer:<sender>-<n>` token; --fail exits 2 when any entry is unbeglichen or XFER-MISSING)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count] [--changed-since <sha>]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line; --changed-since <sha> restricts the pairs to handovers changed in the range <sha>..HEAD and the witness log to that range — the diff-scoped CI gate)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --tokens [--fail] [--noecho-fail]   (per entry of every `## An <line>` transport block: XFER `<tok>` echoed|unbeglichen against the owner line's `## Offen` token echo OR a durable FOLDED/CLOSED ledger event, XFER-MANIFEST ok|open for a block carrying `[manifest n=<N> root=<h8>]`, XFER-MISSING for an entry without a token, XFER-NOECHO for a sender that dropped its block without an echo; --fail exits 2 on any unbeglichen/MISSING/MANIFEST-open/NOECHO, --noecho-fail only on MISSING/NOECHO — the CI-runtime gate)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     eprintln!(
         "       register_lookup --compilers   (one line per phi/sources.φ block carrying a compiler: <binary> | <format> | <source-url> | at <anchor>, then a domain/count summary over the format prefix)\n       register_lookup --compilers --no-directive   (tree compilers tools/*/src/bin/*_compiler.rs without a compiler directive: classified by measured channel workflow|register:<file>|variant|pending|unregistered)"
@@ -3590,13 +3590,86 @@ fn echo_sections(text: &str) -> String {
     out
 }
 
+fn ledger_disposed(root: &Path, token: &str) -> bool {
+    const DISPOSED: [&str; 5] = ["FOLDED", "CLOSED", "REJECTED", "SUPERSEDED", "DROPPED"];
+    let dir = root.join("state/zustand/ledger");
+    let Ok(lines) = fs::read_dir(&dir) else {
+        return false;
+    };
+    for line_dir in lines.flatten() {
+        if !line_dir.path().is_dir() {
+            continue;
+        }
+        let Ok(files) = fs::read_dir(line_dir.path()) else {
+            continue;
+        };
+        for file in files.flatten() {
+            let path = file.path();
+            if path.extension().and_then(|s| s.to_str()) != Some("log") {
+                continue;
+            }
+            let Ok(text) = fs::read_to_string(&path) else {
+                continue;
+            };
+            for raw in text.lines() {
+                let mut fields = raw.split_whitespace();
+                let _utc = fields.next();
+                let Some(state) = fields.next() else { continue };
+                let Some(tok) = fields.next() else { continue };
+                if tok == token && DISPOSED.contains(&state) {
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}
+
 fn owner_has_echo(root: &Path, owner_line: &str, token: &str) -> bool {
+    if ledger_disposed(root, token) {
+        return true;
+    }
     let owner = canonical_line(owner_line);
     let handovers = collect_live_handovers_in(root);
     let Some(list) = handovers.get(owner) else {
         return false;
     };
     list.iter().any(|h| echo_sections(&h.text).contains(token))
+}
+
+fn block_manifest(block: &str) -> Option<(usize, String)> {
+    for line in block.lines() {
+        let t = line.trim();
+        let Some(rest) = t.strip_prefix("[manifest ") else {
+            continue;
+        };
+        let Some(rest) = rest.strip_suffix(']') else {
+            continue;
+        };
+        let mut n = None;
+        let mut root = None;
+        for part in rest.split_whitespace() {
+            if let Some(v) = part.strip_prefix("n=") {
+                n = v.parse::<usize>().ok();
+            } else if let Some(v) = part.strip_prefix("root=") {
+                root = Some(v.to_string());
+            }
+        }
+        if let (Some(n), Some(root)) = (n, root) {
+            return Some((n, root));
+        }
+    }
+    None
+}
+
+fn manifest_root(tokens: &[String]) -> String {
+    let mut ts: Vec<&str> = tokens.iter().map(|s| s.as_str()).collect();
+    ts.sort_unstable();
+    let body = ts.join("\n");
+    omegaflow::archivar::sha256::sha256_hex(body.as_bytes())
+        .chars()
+        .take(8)
+        .collect()
 }
 
 fn addressed_report_inner(root: &Path, target: &str, tokens: bool) -> Vec<String> {
@@ -3617,6 +3690,7 @@ fn addressed_report_inner(root: &Path, target: &str, tokens: bool) -> Vec<String
                     target, sender, folge, h.path
                 ));
                 if tokens {
+                    let mut block_tokens: Vec<String> = Vec::new();
                     for entry in block_entries(&block) {
                         match entry_token(&entry) {
                             Some(token) => {
@@ -3629,6 +3703,7 @@ fn addressed_report_inner(root: &Path, target: &str, tokens: bool) -> Vec<String
                                     "XFER\t{}\t{}\t<- {}-{}",
                                     token, state, sender, folge
                                 ));
+                                block_tokens.push(token);
                             }
                             None => {
                                 let head = entry
@@ -3642,6 +3717,21 @@ fn addressed_report_inner(root: &Path, target: &str, tokens: bool) -> Vec<String
                                 ));
                             }
                         }
+                    }
+                    if let Some((n, mroot)) = block_manifest(&block) {
+                        let echoed = block_tokens
+                            .iter()
+                            .filter(|t| owner_has_echo(root, target, t))
+                            .count();
+                        let recomputed = manifest_root(&block_tokens);
+                        let ok = n == block_tokens.len()
+                            && mroot == recomputed
+                            && echoed == block_tokens.len();
+                        out.push(format!(
+                            "XFER-MANIFEST\t{target}\t{}\tn={n} echoed={echoed}/{} root={mroot}",
+                            if ok { "ok" } else { "open" },
+                            block_tokens.len()
+                        ));
                     }
                 } else {
                     for line in block.lines() {
@@ -3789,9 +3879,11 @@ fn noecho_report(root: &Path) -> Vec<String> {
 
 fn run_tokens(args: &[String]) {
     let fail = args.iter().any(|a| a == "--fail");
+    let noecho_fail = args.iter().any(|a| a == "--noecho-fail");
     let mut blocks = 0usize;
     let mut unbeglichen = 0usize;
     let mut missing = 0usize;
+    let mut manifest_open = 0usize;
     let mut out: Vec<String> = Vec::new();
     for target in ADDRESSED_LINES {
         for line in addressed_report_inner(Path::new("."), target, true) {
@@ -3800,6 +3892,11 @@ fn run_tokens(args: &[String]) {
                 out.push(line);
             } else if line.starts_with("XFER-MISSING") {
                 missing += 1;
+                out.push(line);
+            } else if line.starts_with("XFER-MANIFEST\t") {
+                if line.contains("\topen\t") {
+                    manifest_open += 1;
+                }
                 out.push(line);
             } else if line.starts_with("XFER\t") {
                 if line.split('\t').nth(2) == Some("unbeglichen") {
@@ -3815,13 +3912,17 @@ fn run_tokens(args: &[String]) {
         println!("{}", line);
     }
     println!(
-        "register_lookup --tokens: {} block(s), {} unbeglichen, {} XFER-MISSING, {} XFER-NOECHO",
+        "register_lookup --tokens: {} block(s), {} unbeglichen, {} XFER-MISSING, {} XFER-MANIFEST-open, {} XFER-NOECHO",
         blocks,
         unbeglichen,
         missing,
+        manifest_open,
         noecho.len()
     );
-    if fail && (unbeglichen > 0 || missing > 0 || !noecho.is_empty()) {
+    if fail && (unbeglichen > 0 || missing > 0 || manifest_open > 0 || !noecho.is_empty()) {
+        std::process::exit(2);
+    }
+    if noecho_fail && (missing > 0 || !noecho.is_empty()) {
         std::process::exit(2);
     }
 }
@@ -5590,6 +5691,86 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         );
         assert!(!report.iter().any(|l| l.contains("xfer:future-242-1")));
         assert!(!report.iter().any(|l| l.contains("xfer:future-242-3")));
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn ledger_disposed_token_clears_the_echo_without_offen_residence() {
+        let base = env::temp_dir().join(format!("rl-ledger-echo-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("state/zustand/ledger/mountain")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-10-12-mountain-folge331.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An mycelium\n\n- **entry** carries xfer:mountain.ses_a.1~deadbeef.\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("state/zustand/ledger/mountain/ses_a.log"),
+            "2026-10-12T11:00:00Z SENT xfer:mountain.ses_a.1~deadbeef by=mountain.ses_a to=mycelium\n\
+             2026-10-12T12:00:00Z FOLDED xfer:mountain.ses_a.1~deadbeef by=mycelium.ses_b into=mycelium\n",
+        )
+        .unwrap();
+        assert!(owner_has_echo(
+            &base,
+            "mycelium",
+            "xfer:mountain.ses_a.1~deadbeef"
+        ));
+        let report = addressed_report_inner(&base, "mycelium", true);
+        assert!(
+            report
+                .iter()
+                .any(|l| l.starts_with("XFER\txfer:mountain.ses_a.1~deadbeef\techoed")),
+            "{:?}",
+            report
+        );
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn manifest_line_verifies_and_roots_over_the_tokens() {
+        let toks = vec![
+            "xfer:a.s.1~aaaaaaaa".to_string(),
+            "xfer:a.s.2~bbbbbbbb".to_string(),
+        ];
+        let root = manifest_root(&toks);
+        assert_eq!(root.len(), 8);
+        let block = format!(
+            "- one xfer:a.s.1~aaaaaaaa\n- two xfer:a.s.2~bbbbbbbb\n[manifest n=2 root={root}]\n"
+        );
+        assert_eq!(block_manifest(&block), Some((2, root.clone())));
+        assert_eq!(block_manifest("- no manifest here"), None);
+        assert_eq!(
+            manifest_root(&[
+                "xfer:a.s.2~bbbbbbbb".to_string(),
+                "xfer:a.s.1~aaaaaaaa".to_string()
+            ]),
+            root
+        );
+    }
+
+    #[test]
+    fn manifest_open_reports_while_a_token_is_unfolded() {
+        let base = env::temp_dir().join(format!("rl-manifest-open-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        let toks = vec!["xfer:mountain.s.1~aaaaaaaa".to_string()];
+        let root = manifest_root(&toks);
+        fs::write(
+            base.join("docs/handover/handover-2026-10-12-mountain-folge331.md"),
+            format!(
+                "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An mycelium\n\n- **entry** xfer:mountain.s.1~aaaaaaaa\n[manifest n=1 root={root}]\n"
+            ),
+        )
+        .unwrap();
+        let report = addressed_report_inner(&base, "mycelium", true);
+        assert!(
+            report
+                .iter()
+                .any(|l| l.starts_with("XFER-MANIFEST\tmycelium\topen\t")),
+            "{:?}",
+            report
+        );
         let _ = fs::remove_dir_all(&base);
     }
 

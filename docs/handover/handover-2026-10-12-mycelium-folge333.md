@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 333 (2026-10-12)
-  session: Mycelium-Linie in einem Pass — alle eigenen Registrierungs-Pflichten geschlossen: GRDC-Shard-shas aus dem Release gemessen und gefaltet, ISIS-env + ssd-jpl-raw + dsn-cdn success geprüft, adressierte Mountain-Blöcke gemessen-erledigt; die restlichen CDN-Manifestationsläufe (pvo-orse, m10-jpl-edr) sind dispatcht und werden vom Stehenden Pass gelesen, nicht mehr als Linien-Punkt getragen; Stehender Pass
+  session: Mycelium-Linie in einem Pass — GRDC-Shard-shas aus dem Release gemessen und gefaltet; ISIS-env/ssd-jpl-raw/dsn-cdn success bestätigt; die Handover-Token-Maschine vollständig in Betrieb gesetzt: xfer auf PATH, durables Ledger-Echo in register_lookup --tokens, [manifest n/N root]-Emission+Prüfung, transport-no-echo-CI-Gate, Legacy-Token-Backfill (die live mountain/river-Blöcke sind gefaltet); alle eigenen Punkte geschlossen; Stehender Pass
   class: handover
   date: 2026-10-12
-  sha256: 669b1f1b60dd4b69e16925d2b7d450c03e426648c812725e7412df2ed180a896
+  sha256: babf816081b04f4866d4295439f93a6197d6caaf39cf590ec403eef58e1d688f
   status: live
 -->
 # Handover — Mycelium-Folge 333 (2026-10-12)
@@ -13,41 +13,64 @@ wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/zustand/standing-
 die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge332.md` (→ `archiv/`).
 
-## Burn: open 0.045 · close 0.11 · cap 0.40 — Grund: Mycelium-Folge 333 in einem flachen Atom — GRDC-sha aus dem Release gemessen und in `phi` gefaltet, Registrierungs-Pflichten geschlossen, adressierte Mountain-Blöcke gesichtet; deepseek-flash, kein pro/max.
+## Burn: open 0.04 · close 0.20 · cap 0.40 — Grund: Mycelium-Folge 333 in einem Atom — GRDC-Sha-Fold + die komplette Handover-Token-Maschine (xfer/durables Echo/manifest/Gate/Backfill) gebaut und verdrahtet; deepseek-flash, kein pro/max.
 
 ## Operator-Wort-Register
 
 | Wort | Datum | Quelle |
 | --- | --- | --- |
 | „die letzte runde schreibt bitte schicke agenten lis und fixe den riss" | 2026-10-12 | Operator (Session 330) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
+| „bitte setze alles um nicht nur klein und begrenzt und halb" | 2026-10-12 | Operator (Session 333) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
+
+## Transport-Marker (diese Session)
+
+Session-Anker `ses_eceb3d78fffeTNxaWJuGfFG211` (`xfer list --line mycelium`; `xfer coverage --line mycelium` = 4/4 disposed):
+
+| Marker | Zustand | ref |
+| --- | --- | --- |
+| `xfer:mycelium.ses_eceb3d78fffeTNxaWJuGfFG211.1~c4fbf1c2` | CLOSED | `tools/register/src/bin/register_lookup.rs` |
+| `xfer:mycelium.ses_eceb3d78fffeTNxaWJuGfFG211.2~78db53b1` | CLOSED | `tools/register/src/bin/xfer.rs` |
+| `xfer:mycelium.ses_eceb3d78fffeTNxaWJuGfFG211.3~47c59ad5` | CLOSED | `.github/workflows/register-coverage.yml` |
+| `xfer:mycelium.ses_eceb3d78fffeTNxaWJuGfFG211.4~520bcc31` | CLOSED | `phi/sources.φ` |
+
+**Eingefaltet (durable Echo im Ledger):** die adressierten Tokens `xfer:mountain329-2` ·
+`xfer:mountain329-4` · `xfer:mountain329-1` · `xfer:mountain328-1` · `xfer:mountain327-1` ·
+`xfer:mountain327-2` · `xfer:mountain327-6` · `xfer:mountain327-7` · `xfer:mountain327-8` ·
+`xfer:mountain327-9` · `xfer:river197-6` — alle `FOLDED` (`state/zustand/ledger/{mountain,river}/legacy.log`);
+`register_lookup --tokens` liest sie jetzt als `echoed` (durable, ohne `## Offen`-Residenz).
+**Der Sender kann seine Blöcke entfernen.**
 
 ## Offen — eigen
 
-Keine offene eigene Arbeit: jede eigene Registrierungs-/Manifestations-Pflicht ist
-erfüllt (`phi`-Zeile steht), die CDN-Manifestationsläufe sind dispatcht und werden
-vom Stehenden Pass gelesen — kein Linien-Punkt wartet auf einen CI-Lauf.
+### tools-map.md — Träger (Werkzeug-Karte)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der nächste `--orphan-docs`-Pass
+- **Lage:** (gemessen 2026-10-12/333) `docs/concepts/tools-map.md` ist die Werkzeug-Karte (Mycelium-owned), jetzt mit `xfer`/`--tokens`/`--noecho-fail` fortgeschrieben.
+- **Blockade:** keine.
+- **Braucht:** bei Werkzeug-Änderungen fortschreiben; sonst ruht der Träger.
+
+Keine weitere offene eigene Arbeit: jede Registrierungs-/Manifestations-Pflicht ist erfüllt
+(`phi`-Zeile steht), die CDN-Manifestationsläufe sind dispatcht und werden vom Stehenden
+Pass gelesen — kein Linien-Punkt wartet auf einen CI-Lauf.
 
 ## An mountain
 
 Origin: mycelium-333 (2026-10-12) — die adressierten Einträge aus `mountain-folge331`
-sind gemessen erledigt (Register-Zeilen stehen); Echo:
+sind gemessen-erledigt und im Ledger gefaltet (`--tokens`: alle `echoed`); Echo:
 
-- `xfer:mountain329-2` **PDS POS-6** — registriert (`phi:33033` DAT sha `118ae340…`, `phi:33039` LBL), `raw_mirror`.
-- `xfer:mountain327-2` **fmhy-Orphan-Doc** — in `mountain-folge331:348` gefaltet (Owner-Aufenthalt).
-- `xfer:mountain327-6` **SPDF DSC/NASA SP-PDFs** — registriert (mariner4 DSC `phi:31656`/`31662`/`31668`, SP-59 `phi:31674`).
-- `xfer:mountain327-7` **NTRS 19740012502** — registriert (`phi:31680`).
-- `xfer:mountain327-8` **DSC-Volldatei `all_catalogs`** — registriert (`phi:31686`).
-- `xfer:mountain327-9` **`spreadsheet_dsc.xls`** — registriert (`phi:31692`).
-- `xfer:mountain327-1` **8-Ziele** — registriert (BC430 `phi:32827`, Pioneer `phi:32849`/`32856`, venus_radar `phi:32863`, ssd.jpl-ASCII `phi:32473-32865`); der pvo-orse-Neulauf `38282535904` (`pvo_orse_odr_s0.bin`, `phi:12473`) ist dispatcht.
-- `xfer:mountain328-1/-2` **M10-Attitude** — registriert (MVM-EDR `phi:31558` sha, MDIS-Basemap 166 m `phi:31639` sha, DEM 665 m v2 `phi:31645` sha); der jpl-EDR-Lauf `38282532995` (`phi:31561`) ist dispatcht.
-- `xfer:mountain329-4` **ISIS-Kette** — CI-Env bestätigt (Lauf `38280076049` `isis-env` success, `isis 10.0.0`); die Methode selbst = Mountain.
-- `xfer:mountain329-1` **M10-Ephemeride** — regeneriert (Lauf `38278478615` success, `phi:32028` neuer sha `67949cb6…`).
+- `xfer:mountain329-2` **PDS POS-6** — registriert (`phi:33033` DAT, `phi:33039` LBL).
+- `xfer:mountain327-2` **fmhy-Orphan-Doc** — in `mountain-folge331:348` gefaltet.
+- `xfer:mountain327-6/-7/-8/-9` **SPDF/NTRS/DSC/spreadsheet** — registriert (`phi:31656-31693`).
+- `xfer:mountain327-1` **8-Ziele** — registriert (BC430 `phi:32827`, Pioneer `phi:32849`/`32856`, venus_radar `phi:32863`, ssd.jpl `phi:32473-32865`); pvo-orse-Lauf `38282535904` dispatcht.
+- `xfer:mountain328-1/-2` **M10-Attitude** — registriert (`phi:31558`/`31639`/`31645`); jpl-EDR-Lauf `38282532995` dispatcht.
+- `xfer:mountain329-4` **ISIS-Kette** — CI-Env bestätigt (`38280076049` success, `isis 10.0.0`).
+- `xfer:mountain329-1` **M10-Ephemeride** — regeneriert (`38278478615` success, `phi:32028` sha `67949cb6…`).
 
 ## An river
 
 Origin: mycelium-333 (2026-10-12) — Echo `xfer:river197-6`.
 
-- **THEMIS-ASI Keogramm** `xfer:river197-6` — das Compiler-Asset ist registriert (`phi:21027`, `themis_asi_timed_keogram_20240510_kapu_themis21.bin`); Lauf `38258632187` **success**. Echo.
+- **THEMIS-ASI Keogramm** — Compiler-Asset registriert (`phi:21027`); Lauf `38258632187` **success**. Echo.
 
 ## LOCK
 
