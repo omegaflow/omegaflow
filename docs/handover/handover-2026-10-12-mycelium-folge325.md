@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (ENTSØ-E-Fehlerkörper, USGS-Mosaik-sha + DSC-0119-Zeile, INPOP/NOE4-Workflow, Spill-Wurzel im Wrapper)
   class: handover
   date: 2026-10-12
-  sha256: df2945660e12ec5f92b62a3c232ae9f9b399b9e3a43b0c03baff26516a64cc9e
+  sha256: 8edb5350059b5dbf78c3dab347b26eb9a10468f8e63628fa81f2245d5def8615
   status: live
 -->
 # Handover — Mycelium-Folge 325 (2026-10-12)
@@ -85,6 +85,13 @@ MCP/MCON · GIC-Onset sind **River-eigen** (river-196) und hier entfernt;
 - **Lage:** (gemessen 2026-10-12) `--orphan-docs` = 5, keines ist `ui-seats`; die `pending`-Seats Sakana-Tempo · SciSpace (Login-Wall) · Gemini Notebook (kein freier Composer) noch nicht gemessen.
 - **Blockade:** kein Stimmen-Round in dieser Session.
 - **Braucht:** im nächsten Stimmen-Round die `pending`-Seats messen und den Stand fortschreiben.
+
+### Prosa-Träger — `docs/concepts/tools-map.md` (Mycelium-eigen)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** nächster `register_lookup --orphan-docs`-Zensus
+- **Lage:** (gemessen 2026-10-12) `--orphan-docs` = **9**; Mycelium-eigen: `docs/concepts/tools-map.md` (1 offener Marker) — der Träger ist diese Zeile. Fremd (Mountain/River): `docs/auftrag/auftrag-2026-10-11-wartend-aufloesung.md` (3) · `docs/blatt/blatt-gic-breitenband-familien.md` (4) · `docs/plans/ref-mariner-faden-index.md` (3) · `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` (1) · `docs/surveys/survey-2026-09-03-orphan-verdicts.md` (1) · `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` (4) · `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md` (2) · `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` (2).
+- **Blockade:** keine.
+- **Braucht:** die 8 fremden Dokumente je von ihrer Owner-Linie getragen (nicht Mycelium); `tools-map.md` ist hier getragen — der nächste Lauf belegt es.
 
 ## LOCK
 
