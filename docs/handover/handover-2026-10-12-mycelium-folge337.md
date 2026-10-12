@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — tools-map.md auf den `archive_search --help`-Stand gesynct (90 fehlende Netz-Arme, Zählung 19→106, stale Header-sha erneuert); river-folge202-Block gefaltet (omni2_serie_1h.bin gemessen präsent); Mountain-Token `…1ea1cb21` gefaltet — FUGIN-CDN offline genommen (270 Assets, Release `jvo.nao.ac.jp` gelöscht, 404 gemessen), CfA-CO + Lizenz-Welle-2-Klasse als offene Punkte getragen; Stehender Pass am HEAD
   class: handover
   date: 2026-10-12
-  sha256: 8533f38117dd5ce0c8f6941bd3dc8e112dc05caac8f3b8cad7ddf998526aa0ed
+  sha256: eb12d004babb7d8f3bbb112231cb6e25ed773191472b1131ab0317e98146c899
   status: live
 -->
 # Handover — Mycelium-Folge 337 (2026-10-12)
@@ -13,7 +13,7 @@ wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/zustand/standing-
 die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge336.md` (→ `archiv/`).
 
-## Burn: open 0.01 · close 0.07 · cap 0.40 — Grund: Mycelium-Folge 337 — tools-map.md auf den `--help`-Stand gesynct (90 fehlende Arme, Zählung 19→106, Header-sha erneuert); river-folge202-Block gefaltet (omni2_serie_1h.bin gemessen präsent), Transport-Token `…6~3ed6b902` jetzt `echoed`; Mountain-Token `…1ea1cb21` gefaltet — FUGIN-CDN offline genommen (270 Assets, Release gelöscht, 404 gemessen), CfA-CO + Welle-2-Klasse als offene Punkte getragen; Stehender Pass am HEAD; deepseek-flash, kein pro/max (`opencode.db`, Session `ses_ecde5d231ffeCIYA7Nshj5QxDF`).
+## Burn: open 0.01 · close 0.14 · cap 0.40 — Grund: Mycelium-Folge 337 — tools-map.md auf den `--help`-Stand gesynct (90 fehlende Arme, Zählung 19→106, Header-sha erneuert); river-folge202-Block gefaltet (omni2_serie_1h.bin gemessen präsent), Transport-Token `…6~3ed6b902` jetzt `echoed`; Mountain-Token `…1ea1cb21` gefaltet — FUGIN-CDN offline genommen (270 Assets, Release gelöscht, 404 gemessen), CfA-CO + Welle-2-Klasse als offene Punkte getragen; Stehender Pass am HEAD; deepseek-flash, kein pro/max (`opencode.db`, Session `ses_ecde5d231ffeCIYA7Nshj5QxDF`).
 
 ## Operator-Wort-Register
 
