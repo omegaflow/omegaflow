@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (ENTSO-E-Arm dispatcht, M10-raw-CDN-Caller + GRDC-Resume gebaut, NIST-NSE-Daten-Caller)
   class: handover
   date: 2026-10-12
-  sha256: 602830bbed2d9b438bf7d2eecf164fcf9816d75cc290edca15f6f82432ec3e18
+  sha256: 605bb07351a6b528f888618bcaa212e4ab963bf2afdce0e7f6bb10098223c116
   status: live
 -->
 # Handover — Mycelium-Folge 324 (2026-10-12)
@@ -23,9 +23,11 @@ M_(1−0.05) = 2.8972 über 200 Surrogate · beobachtetes max |r| = 0.31053 · n
 die `tee`-Umstellung macht das Ergebnis künftig im Job-Log sichtbar. ·
 **GRDC-Caravan-Fehlgrund gemessen** (`38217882014`): `curl: (18) transfer closed
 with 6822877025 bytes remaining` — 7 GB Single-Connection-Abbruch; **Resume-Fix
-gebaut** (`src/archivar/fetch.rs`: `fetch_raw_to_file_with` läuft eine äußere
-Schleife mit `-C -` ab dem zweiten Versuch, `FILE_RESUME_ATTEMPTS = 4`;
-`cargo check` grün). · **M10↔MDIS-Raw-CDN-Caller gebaut**
+verbessert** (Operator-Frage „geht das nicht besser?"): `-C -` liegt jetzt auf
+**jedem** Versuch (curl's interner `--retry` resumiert damit statt von Null neu zu
+laden), `--retry-max-time` speist sich aus `transfer_bound_s` statt hart 2048 s
+(der abgeschnittene 6,16-GB-Versuch wird künftig fortgesetzt, nicht verworfen);
+äußere Schleife + 2 s Pause, `FILE_RESUME_ATTEMPTS = 4`; `cargo check` grün. · **M10↔MDIS-Raw-CDN-Caller gebaut**
 (`.github/workflows/m10-mdis-raw-cdn.yml`, 6 sha256-gated Assets; USGS-Mosaik
 ausgenommen — kein Register-sha256). · **NIST-NSE-Daten-Caller gebaut**
 (`.github/workflows/nist-ncnr-nse-data-cdn.yml`, walkt das JSON-LD-Katalog,
@@ -59,9 +61,9 @@ gemessen via `gh secret list`).
 ### GRDC-Caravan — Resume-Fix gebaut; Verifikationslauf offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** `grdc-caravan-cdn`-Lauf nach dem Push endet
-- **Lage:** (gemessen 2026-10-12 via `ci_manage log 38217882014`) `38217882014` **failure** — `curl: (18) transfer closed with 6822877025 bytes remaining` (7-GB-Zip, Single-Connection-Abbruch nach 86,6 min); `38220536486` war noch `in_progress`. Resume-Fix in `src/archivar/fetch.rs` gebaut (`-C -` äußere Schleife, `cargo check` grün).
+- **Lage:** (gemessen 2026-10-12 via `ci_manage log 38217882014`) `38217882014` **failure** — `curl: (18) transfer closed with 6822877025 bytes remaining` (7-GB-Zip, Single-Connection-Abbruch nach 86,6 min; der zweite, fast vollständige Versuch von 6,16 GB wurde verworfen, weil `--retry-max-time 2048` ablief). Resume-Fix in `src/archivar/fetch.rs` **verbessert** (Operator-Frage): `-C -` auf jedem Versuch (curl's interner Retry resumiert), `--retry-max-time` = `transfer_bound_s` (grdc: 10800 s) statt hart 2048 s, äußere Schleife + 2 s Pause; `cargo check` grün.
 - **Blockade:** keine im Code.
-- **Braucht:** nach Push `gh workflow run grdc-caravan-cdn.yml`; dann `ci_manage log <id>` (erwartet: finite streamflow-Samples → `grdc_caravan.bin`).
+- **Braucht:** nach Push `gh workflow run grdc-caravan-cdn.yml`; dann `ci_manage log <id>` (erwartet: der `(18)`-Abbruch wird fortgesetzt statt neu geladen → finite streamflow-Samples → `grdc_caravan.bin`).
 
 ### M10↔MDIS-Artefakte — Raw-CDN-Caller gebaut; Lauf + Mosaik-sha offen
 - **Status:** wartend | **Bindung:** eigen

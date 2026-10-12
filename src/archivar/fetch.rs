@@ -20,19 +20,21 @@ pub const TRANSFER_BOUND_S: u64 = 1 << 11;
 
 pub const FILE_RESUME_ATTEMPTS: u64 = 1 << 2;
 
+pub const RESUME_DELAY_S: u64 = 2;
+
 #[derive(Clone, Copy)]
 pub enum RetryPolicy {
     Transient,
     All,
 }
 
-fn append_retry(cmd: &mut Command, retry: RetryPolicy, attempts: u64) {
+fn append_retry(cmd: &mut Command, retry: RetryPolicy, attempts: u64, retry_max_time_s: u64) {
     cmd.arg("--retry")
         .arg(attempts.to_string())
         .arg("--retry-delay")
         .arg("2")
         .arg("--retry-max-time")
-        .arg(TRANSFER_BOUND_S.to_string());
+        .arg(retry_max_time_s.to_string());
     match retry {
         RetryPolicy::Transient => {
             cmd.arg("--retry-connrefused");
@@ -59,7 +61,7 @@ pub fn fetch_raw_with(
     let connect_t = CONNECT_BOUND_S;
     let mut cmd = Command::new("curl");
     cmd.arg("-s").arg("-S").arg("-f").arg("-L").arg("-g");
-    append_retry(&mut cmd, retry, 3);
+    append_retry(&mut cmd, retry, 3, transfer_bound_s);
     cmd.arg("-m")
         .arg(transfer_bound_s.to_string())
         .arg("--connect-timeout")
@@ -105,7 +107,7 @@ pub fn curl_base(retry: RetryPolicy, transfer_bound_s: u64, parallel_max: u8) ->
     let connect_t = CONNECT_BOUND_S;
     let mut cmd = Command::new("curl");
     cmd.arg("-s").arg("-S").arg("-f").arg("-L").arg("-g");
-    append_retry(&mut cmd, retry, 5);
+    append_retry(&mut cmd, retry, 5, transfer_bound_s);
     if parallel_max > 0 {
         cmd.arg("--parallel")
             .arg("--parallel-max")
@@ -157,9 +159,7 @@ pub fn fetch_raw_to_file_with(
     let mut attempt = 0u64;
     loop {
         let mut cmd = curl_base(retry, transfer_bound_s, 0);
-        if attempt > 0 && path.exists() {
-            cmd.arg("-C").arg("-");
-        }
+        cmd.arg("-C").arg("-");
         cmd.arg("-o").arg(path);
         cmd.arg(url);
         let output = cmd.output().ok()?;
@@ -180,6 +180,7 @@ pub fn fetch_raw_to_file_with(
         if !std::fs::metadata(path).map(|m| m.len() > 0).unwrap_or(false) {
             return None;
         }
+        std::thread::sleep(std::time::Duration::from_secs(RESUME_DELAY_S));
     }
 }
 
@@ -228,7 +229,7 @@ fn redirect_target(
 ) -> Option<String> {
     let mut cmd = Command::new("curl");
     cmd.arg("-s").arg("-S").arg("-f").arg("-g");
-    append_retry(&mut cmd, retry, 3);
+    append_retry(&mut cmd, retry, 3, transfer_bound_s);
     cmd.arg("-m")
         .arg(transfer_bound_s.to_string())
         .arg("--connect-timeout")
@@ -328,7 +329,7 @@ pub fn fetch_raw_bytes_post_with(
     let connect_t = CONNECT_BOUND_S;
     let mut cmd = Command::new("curl");
     cmd.arg("-s").arg("-S").arg("-f").arg("-L");
-    append_retry(&mut cmd, retry, 5);
+    append_retry(&mut cmd, retry, 5, transfer_bound_s);
     cmd.arg("-m")
         .arg(transfer_bound_s.to_string())
         .arg("--connect-timeout")
