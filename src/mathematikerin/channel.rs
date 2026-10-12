@@ -185,7 +185,7 @@ impl PdeType {
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 #[repr(u8)]
-pub enum Regime {
+pub enum PdeRegime {
     QuasiStatic = 0,
     Radiating = 1,
     Diffusive = 2,
@@ -193,36 +193,36 @@ pub enum Regime {
     Constraint = 4,
 }
 
-impl Regime {
+impl PdeRegime {
     pub fn parse(token: &str) -> Option<Self> {
         match token {
-            "quasi-static" => Some(Regime::QuasiStatic),
-            "radiating" => Some(Regime::Radiating),
-            "diffusive" => Some(Regime::Diffusive),
-            "advective" => Some(Regime::Advective),
-            "constraint" => Some(Regime::Constraint),
+            "quasi-static" => Some(PdeRegime::QuasiStatic),
+            "radiating" => Some(PdeRegime::Radiating),
+            "diffusive" => Some(PdeRegime::Diffusive),
+            "advective" => Some(PdeRegime::Advective),
+            "constraint" => Some(PdeRegime::Constraint),
             _ => None,
         }
     }
 
     pub fn name(self) -> &'static str {
         match self {
-            Regime::QuasiStatic => "quasi-static",
-            Regime::Radiating => "radiating",
-            Regime::Diffusive => "diffusive",
-            Regime::Advective => "advective",
-            Regime::Constraint => "constraint",
+            PdeRegime::QuasiStatic => "quasi-static",
+            PdeRegime::Radiating => "radiating",
+            PdeRegime::Diffusive => "diffusive",
+            PdeRegime::Advective => "advective",
+            PdeRegime::Constraint => "constraint",
         }
     }
 }
 
-fn regime_of(op: TransportOp, pde_type: PdeType) -> Regime {
+fn regime_of(op: TransportOp, pde_type: PdeType) -> PdeRegime {
     match op {
-        TransportOp::Maxwell if pde_type == PdeType::Elliptic => Regime::QuasiStatic,
-        TransportOp::Maxwell | TransportOp::Wave => Regime::Radiating,
-        TransportOp::Flux(_) => Regime::Diffusive,
-        TransportOp::Advective => Regime::Advective,
-        TransportOp::Poisson => Regime::Constraint,
+        TransportOp::Maxwell if pde_type == PdeType::Elliptic => PdeRegime::QuasiStatic,
+        TransportOp::Maxwell | TransportOp::Wave => PdeRegime::Radiating,
+        TransportOp::Flux(_) => PdeRegime::Diffusive,
+        TransportOp::Advective => PdeRegime::Advective,
+        TransportOp::Poisson => PdeRegime::Constraint,
     }
 }
 
@@ -357,6 +357,23 @@ impl Boundary {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
+pub struct PlasmaParameters {
+    pub n_e: Option<f64>,
+    pub b0: Option<f64>,
+    pub nu: Option<f64>,
+}
+
+impl PlasmaParameters {
+    pub fn absent() -> Self {
+        Self {
+            n_e: None,
+            b0: None,
+            nu: None,
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct ChannelDescriptor {
     pub conserved: Conserved,
@@ -366,10 +383,11 @@ pub struct ChannelDescriptor {
     pub medium: Medium,
     pub domain: Domain,
     pub boundary: Boundary,
-    pub regime: Regime,
+    pub regime: PdeRegime,
     pub extent: Option<f64>,
     pub family: ModeFamily,
     pub body: Option<String>,
+    pub plasma: PlasmaParameters,
     pub unit: &'static str,
 }
 
@@ -416,6 +434,7 @@ impl ChannelDescriptor {
                 Medium::Vacuum | Medium::Fluid | Medium::Plasma => ModeFamily::Scalar,
             },
             body: None,
+            plasma: PlasmaParameters::absent(),
             unit,
         }
     }
@@ -427,6 +446,11 @@ impl ChannelDescriptor {
 
     pub fn with_body(mut self, body: Option<String>) -> Self {
         self.body = body;
+        self
+    }
+
+    pub fn with_plasma(mut self, plasma: PlasmaParameters) -> Self {
+        self.plasma = plasma;
         self
     }
 
@@ -2537,6 +2561,30 @@ mod tests {
     }
 
     #[test]
+    fn plasma_parameters_stay_data_not_channel_identity() {
+        let absent = PlasmaParameters::absent();
+        assert!(absent.n_e.is_none());
+        assert!(absent.b0.is_none());
+        assert!(absent.nu.is_none());
+
+        let d = descriptor_for_force("em", Medium::Vacuum).expect("em");
+        let with_plasma = d.clone().with_plasma(PlasmaParameters {
+            n_e: Some(1.0e6),
+            b0: Some(1.0e-4),
+            nu: Some(1.0e3),
+        });
+        assert_eq!(
+            d, with_plasma,
+            "the plasma parameters are data, not identity"
+        );
+        assert_eq!(
+            d.hash(),
+            with_plasma.hash(),
+            "the plasma parameters never enter the hash"
+        );
+    }
+
+    #[test]
     fn a_channel_without_geometry_stays_silent() {
         let d = ChannelDescriptor::new(
             Quantity {
@@ -2851,13 +2899,13 @@ mod tests {
     fn em_and_electric_carry_distinct_regimes_on_the_axis() {
         let em = descriptor_for_force("em", Medium::Vacuum).expect("em");
         let electric = descriptor_for_force("electric", Medium::Vacuum).expect("electric");
-        assert_eq!(em.regime, Regime::Radiating);
-        assert_eq!(electric.regime, Regime::QuasiStatic);
+        assert_eq!(em.regime, PdeRegime::Radiating);
+        assert_eq!(electric.regime, PdeRegime::QuasiStatic);
         let derived = descriptor_from_axes(
             "primary", "energy", "maxwell", "elliptic", "vacuum", "none", "V/m",
         )
         .expect("electric axes");
-        assert_eq!(derived.regime, Regime::QuasiStatic);
+        assert_eq!(derived.regime, PdeRegime::QuasiStatic);
         assert_eq!(channel_ref_of_descriptor(&derived), Some(6));
     }
 
