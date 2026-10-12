@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (CI-Werkzeug-Fixes: block_commit-Release + bz-Probe-Log-Sichtbarkeit; Stehender Pass am neuen HEAD)
   class: handover
   date: 2026-10-12
-  sha256: b1d62ef61b3df6fbf39ff6f6822ebeaae39f3e2a00881e6a14e7b2c24a2730e8
+  sha256: 0760476b761f5ef93243130eae2bbfe6d793814517b4c98f1f8bad14479c6ca5
   status: live
 -->
 # Handover — Mycelium-Folge 323 (2026-10-12)
@@ -31,7 +31,12 @@ Hand-Liste ließ **19** Bins aus, u. a. `block_commit` — genau der Defekt) ·
 `dropped_gate`-`alias:`-Fold gefixt (die zwei Folds gaben zwei Antworten) ·
 Fetch-Sidecar + `odf.rs`-clippy als **bereits gebaut** gemessen (zwei stale
 Handover-Zeilen korrigiert) · NIST-NCNR-NSE-Daten-Route vermessen · Rat-Verdikt
-für den CI-Messzeilen-Struktur-Fix.
+für den CI-Messzeilen-Struktur-Fix. **Kritischer Riss geheilt:** der
+Register-Invariant (`src/archivar/parse.rs:2915`) verlangt je CDN-Quelle einen
+Producer; die 7 M10-Roh-Registrierungen trugen keinen (mein Defekt aus
+mycelium-321) → der neue `raw_mirror`-Producer
+(`tools/harvest/src/bin/raw_mirror.rs`, sha256-gated) gibt ihnen einen (block-scoped
+committet `5a915cb03`); bk18/jades tragen `format` (Mountain/im Bestand).
 
 ## Operator-Wort-Register
 
@@ -67,12 +72,12 @@ für den CI-Messzeilen-Struktur-Fix.
 - **Blockade:** CI-Release (`tools-build` nach Dispatch).
 - **Braucht:** Dispatch `tools-build`; dann `bin/block_commit` (Usage).
 
-### M10↔MDIS-Artefakte — `url`/`origin`/`sha256`/`terms` gesetzt; CDN-Manifestation offen
+### M10↔MDIS-Artefakte — registriert + Producer gesetzt; CDN-Manifestation offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der CDN-Manifestationslauf (`.github/workflows/kernel-flatten.yml` `--ci-mode`) zieht die rohen Assets
-- **Lage:** (gemessen 2026-10-12, Operator-Wort Session 325: nicht mehr an Mountain) PSJ t1–t4 (`phi:31417-31439`) `terms CC-BY-4.0` (Crossref DOI `10.3847/PSJ/ae32f5`, AAS, direkt gemessen); USGS-Mosaik `terms PD` (USGS copyrights-and-credits); LPSC-PDF + camera_angles `terms unknown`. Die Artefakte sind **rohe Assets** (ascii-table/geotiff/pdf/text-geometry) — kein Compiler-Arm nötig (am Baum gehalten: Geschwister tragen bare `url … no-cadence`).
+- **Trigger:** ein CDN-Manifestationslauf ruft `raw_mirror` je Asset
+- **Lage:** (gemessen 2026-10-12) PSJ t1–t4 `terms CC-BY-4.0` (Crossref `10.3847/PSJ/ae32f5`, direkt gemessen); USGS-Mosaik `terms PD`; LPSC-PDF + camera_angles `terms unknown`. Alle 7 tragen jetzt `compiler tools/harvest/src/bin/raw_mirror.rs` (sha256-gated) → der Register-Invariant `parse.rs:2915` hält.
 - **Blockade:** keine.
-- **Braucht:** rohe Assets in die CDN-Manifestation aufnehmen (Mycelium); USGS-Mosaik **1,88 GB** (`1880562475`).
+- **Braucht:** `raw_mirror` in die CDN-Manifestation aufnehmen (`cdn-manifest.yml`-Matrix-Eintrag); USGS-Mosaik **1,88 GB** (`1880562475`).
 
 ### Fetch-Provenienz — `archive_search`-Sidecar steht; der allgemeine Wrapper-Pfad fehlt
 - **Status:** wartend | **Bindung:** eigen
@@ -91,9 +96,9 @@ für den CI-Messzeilen-Struktur-Fix.
 ### MLA-Register · SPT-3G-D1 · GloFAS-EWDS · NIST-NCNR-NSE
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** je Lauf/Digest bzw. eigener Register-Schritt
-- **Lage:** (gemessen 2026-10-11/12, Operator-Wort Session 325: Mountain-Anteile entfallen) MLA repointet (`phi:12100`; NAME-Riss); SPT-3G `38150991206` success (sha offen); GloFAS Daten-Arm grün (`phi:11297`; grib2→φ offen); NIST NCNR NSE: **Index-Route steht** (`phi:11721-11727`, `nist_ncnr_nse_compiler.rs` → `coverage_manifest`); die **Daten-Route fehlt** — `.nxs.nse` = HDF5 (4 039 108 B), `.dat.nse` = ASCII, 47 Monatssets unter `https://ncnr.nist.gov/pub/ncnrdata/nse/`, `terms PD` (`https://www.nist.gov/open/license`).
-- **Blockade:** keine (Mountain-Anteile entfallen).
-- **Braucht:** NIST-NCNR-NSE-Daten-`url`-Route + Compiler-Arm (Mycelium; generischer HDF5-Reader `src/archivar/hdf5.rs` steht).
+- **Lage:** (gemessen 2026-10-12) MLA repointet (`phi:12100`; NAME-Riss); SPT-3G `38150991206` success (sha offen); GloFAS Daten-Arm grün (`phi:11297`; grib2→φ offen); NIST NCNR NSE: **Index-Route steht** (`phi:11721-11727`); **Daten-Arm gebaut** (`tools/harvest/src/bin/nist_ncnr_nse_nexus_compiler.rs`, HDF5-NeXus via `src/archivar/hdf5.rs`; `.nxs.nse` = HDF5, `.dat.nse` = ASCII, 47 Monatssets, `terms PD`).
+- **Blockade:** keine.
+- **Braucht:** NIST-NCNR-NSE-Daten-`url`-Block registrieren (Mycelium) + `cdn-manifest.yml`-Eintrag.
 
 ### wy-max-t-Artefakt — Werte im Bestand
 - **Status:** wartend | **Bindung:** eigen
@@ -139,6 +144,14 @@ für den CI-Messzeilen-Struktur-Fix.
 ### matrix-rotor — descoped (gemessen)
 - **Status:** descoped | **Bindung:** eigen
 - **Befund:** (gemessen 2026-10-12T08:05Z) rot `38212925885` = „The runner has received a shutdown signal … The operation was canceled" — transienter Runner-Shutdown; kein eigener Schritt (`Braucht: —`).
+
+### Fetch-Provenienz — vollständig gebaut (descoped)
+- **Status:** descoped | **Bindung:** eigen
+- **Befund:** (gemessen 2026-10-12) `archive_search`-`write_fetched` schrieb bereits den `.src`-Sidecar; die allgemeine Lücke (`sfetch` schrieb nur stdout, kein `<datei>`-Pfad) ist mit `sfetch --out <path>` + `<path>.src` geheilt (`tools/utils/src/bin/sfetch.rs`; `cargo check -p omegaflow-utils` grün). Kein offener Schritt.
+
+### Register-Invariant / raw_mirror — geheilt (descoped)
+- **Status:** descoped | **Bindung:** eigen
+- **Befund:** (gemessen 2026-10-12) die 7 M10-Roh-Registrierungen verletzten `src/archivar/parse.rs:2915` (CDN-Quelle ohne Producer) — Lib-Test rot; der `raw_mirror`-Producer (`tools/harvest/src/bin/raw_mirror.rs`) ist gebaut und den 7 Blöcken als `compiler` gesetzt (`5a915cb03`). bk18/jades tragen `format` (Mountain).
 
 ## Keine Delegation an Mountain
 
