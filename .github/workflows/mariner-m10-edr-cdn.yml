@@ -1,0 +1,44 @@
+name: mariner-m10-edr-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  mariner-m10-edr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view ser.im-ldi.com --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "mariner_m10_edr.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset mariner_m10_edr.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset mariner_m10_edr.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the ser.im-ldi.com release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view ser.im-ldi.com --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create ser.im-ldi.com --repo omegaflow/sources \
+              --title "ser.im-ldi.com" \
+              --notes "Mariner 10 EDR imaging (MVM mvm_0001.tgz) packaged to omegaflow binary assets (CDN tag = netloc)"
+          fi
+      - name: Compile the Mariner 10 EDR image column means and manifest the bin to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin mariner_m10_edr_compiler -- --ci-mode
