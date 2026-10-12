@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — M10-Ephemeriden-Vorzeichen-Flip geheilt (Compiler-Komposition r_SSB−r_M10 → r_M10−r_SSB), Orientierungs-Prüfung (cos gegen Mercury-SSB) ins Probe-Gate gebaut, SXSYSZ-Rahmen gegen die geheilte Ephemeride neu gemessen (UNIDENTIFIED bleibt; die CA-Zeit der S-Vektoren stimmt mit der datumsabgeleiteten CA überein)
   class: handover
   date: 2026-10-12
-  sha256: 46bade4ce4a610f426037b5d8b957bc6a0ffd75ce9469abf6006d92a2ba14d0a
+  sha256: e6255365215be1301f2ea406a22c6ab83c6e65543bf8d56a631be5f735235a9b
   status: live
 -->
 # Handover — Mountain-Folge 328 (2026-10-12)
@@ -15,7 +15,7 @@ Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese Session
 unten gefaltet). `open_points_check` = 1 `ABSENT` (`…/mariner/RESULT.md`, Marker ohne Datei).
 **Jeder offene Punkt nennt seine Datei(en)/Pfade.**
 
-## Burn: open 0.00 · close 0.01 (Linie) · cap 0.50 · Grund: Ein-Pass-Atom (M10-Vorzeichen-Fix im Compiler + Orientierungs-Gate + Rahmen-Neumessung), deepseek-flash, kein pro/max.
+## Burn: open 0.00 · close 0.10 (Linie; `session_burn` 0.0964, läuft nach) · cap 0.50 · Grund: Ein-Pass-Atom (M10-Vorzeichen-Fix im Compiler + Orientierungs-Gate + Rahmen-Neumessung), deepseek-flash, kein pro/max.
 
 ## Offen (aufgeschlüsselt)
 
