@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — THEMIS-ASI kapu-PGM-Kopf gemessen (49.3922 / −82.3198 / 0.0 km), die Projektionskoeffizienten als konstant (1.5/0/0/0 über 4 Stationen/Epochen), die Skymap-Bodenwahrheit extrahiert (Lib-Parser idl_save, IDL-SAVE v4; Einheit Grad) und die meridionale Projektion gebaut (skymap_fit; Meridian-Schnitt in themis_asi_timed_keogram --skymap); FOV-Riss geschlossen (Mende 2008: 170° Vollwinkel / 160° auf 110 km projiziert; Donovan 2006 trägt keine Zahl); der PGM-Höhen-Riss als ellipsoidische Höhe aufgelöst und die Stations-Tabelle selbst korrigiert (16/24 nominal 0.0; ATHA/EKAT/PGEO/MCGR gesetzt, Operator-Wort); die MIRACLE-Form ist bereits gebaut (Mountain a0d2c04e2, Lauf kapu gemessen); CI-Läufe field-te-query 38215224525 (pending) und bz-dbdt-delay-probe 38215420000 (queued) weiter ausstehend
   class: handover
   date: 2026-10-12
-  sha256: fa9f0a2ff40be11e5ee1b3576a56e4412b426e7408a6f9842b03cfd46e505eca
+  sha256: 9e9d6a5d274341e48e3bdfd2f860713a6767cb762cd7fcd5884582f181631a1d
   status: live
 -->
 # Handover — River-Folge 196 (2026-10-12)
@@ -154,7 +154,7 @@ Origin: river-195/196 (2026-10-12) — Messungen/Befunde, die Mountains Register
 Origin: river-195/196 (2026-10-12) — Operator-Akt, den diese Session nicht selbst führen darf (Sender-Register; die Owner-Session faltet).
 
 - **wy-max-t-Blatt-Siegel** — `docs/blatt/fruehwarnsystem-praeregistrierung.md` (`status: unsealed`): der Westfall–Young-max-T-Null ist gemessen (α=0.05, pooled B=9999; (1-α)-Quantil 2.4467/2.4433/2.4831; `Bz→dB/dt` family-clearing an allen drei Punkten; Artefakt `38166787414`). Die Vorbereitung ist River-eigen; **das Siegel setzt der Operator**.
-- **Street-Level-Keys (Zugang) — Operator-Frage.** Für Standort-Lokalisierung fehlen zwei **keyed** Street-Level-Quellen: (a) **Mapillary-Token** (kostenlos, Konto), (b) **Google-Cloud-Street-View-Static-API-Key**. Beide sind heute `key-needed` (`state/zustand/wartend.φ`-Klasse); die offenen Alternativen (KartaView, Panoramax) sind keyless, hatten am THEMIS-Standort aber **0 Bilder**. Frage: **Mapillary-Konto/Token anlegen?** — bei Ja: Token in `.secrets.local` (Name `MAPILLARY_TOKEN`), dann läuft die Street-Level-Stufe der Survey. Kein Send, kein Konto durch die Maschine.
+- **Street-Level-Keys (Zugang) — Operator-Frage.** Für Standort-Lokalisierung fehlen zwei **keyed** Street-Level-Quellen: (a) **Mapillary-Token** (kostenlos, Konto), (b) **Google-Cloud-Street-View-Static-API-Key**. Beide sind heute `key-needed` (`state/zustand/wartend.φ`-Klasse); die offenen Alternativen (KartaView, Panoramax) sind keyless, hatten am THEMIS-Standort aber **0 Bilder**. Frage: **Mapillary-Konto/Token anlegen?** — bei Ja: Token in `.secrets.local` (Name `MAPILLARY_TOKEN`), dann läuft die Street-Level-Stufe der Survey. Kein Send, kein Konto durch die Maschine. **Gemessen 2026-10-12:** Mapillary zeigt für das Individual-Konto **kein** App-Registrierungsformular (`/dashboard/developers` ohne Formular; „Zugriffsschlüssel anfordern" → dieselbe Seite) → **Organization nötig** (Konto-Akt). Google: Console eingeloggt (`nouseforaname0815@googlemail.com`), aber **kein Projekt** gewählt; die Street-View-Static-API ist **kostenpflichtig mit monatlichem Gratis-Kontingent**, ein **Billing-Konto (Kreditkarte)** ist Pflicht (exakte SKU-Preise `pending`, SPA). `.secrets.local` ist per Policy gesperrt (nur `bin/secrets_keys` liest Namen).
 
 ## Abschluss
 
