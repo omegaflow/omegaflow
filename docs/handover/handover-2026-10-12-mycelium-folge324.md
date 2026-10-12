@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (ENTSO-E-Arm dispatcht, M10-raw-CDN-Caller + GRDC-Resume gebaut, NIST-NSE-Daten-Caller)
   class: handover
   date: 2026-10-12
-  sha256: 68ee8e0eff2c53b1b3b35dba281597d0981eee489fd8e779995a06347859f99c
+  sha256: 602830bbed2d9b438bf7d2eecf164fcf9816d75cc290edca15f6f82432ec3e18
   status: live
 -->
 # Handover — Mycelium-Folge 324 (2026-10-12)
@@ -30,8 +30,9 @@ Schleife mit `-C -` ab dem zweiten Versuch, `FILE_RESUME_ATTEMPTS = 4`;
 ausgenommen — kein Register-sha256). · **NIST-NSE-Daten-Caller gebaut**
 (`.github/workflows/nist-ncnr-nse-data-cdn.yml`, walkt das JSON-LD-Katalog,
 kompiliert + lädt je `.nxs.nse`-Satz). · **ENTSO-E-Arm dispatcht**
-(`entsoe-cdn` `38233635426`); `entsoe-token` in `state/zustand/wartend.φ`
-geschlossen (Repo-Secret `ENTSOE_API_TOKEN` steht, gemessen via `gh secret list`).
+(`entsoe-cdn` `38233635426` — **rot**: HTTP 400 HTML vom API); `entsoe-token` in
+`state/zustand/wartend.φ` geschlossen (Repo-Secret `ENTSOE_API_TOKEN` steht,
+gemessen via `gh secret list`).
 · `archive_search --all`-Spill honoriert bereits `$OMEGAFLOW_SPILL_DIR` (gebaut
 `03bb95e2e`, im Baum) — die Linien setzen es noch nicht (offener Punkt unten).
 
@@ -48,12 +49,12 @@ geschlossen (Repo-Secret `ENTSOE_API_TOKEN` steht, gemessen via `gh secret list`
 
 ## Offen — eigen
 
-### ENTSO-E A78 — Token da; Lauf dispatcht
+### ENTSO-E A78 — Token da; Lauf rot (HTTP 400) → Request-Format prüfen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `entsoe-cdn` `38233635426` endet
-- **Lage:** (gemessen 2026-10-12 via `gh secret list` + dispatch) Repo-Secret `ENTSOE_API_TOKEN` steht (gesetzt 2026-10-11T19:36:15Z); Ticket `#9473923` gelöst (future-241); `entsoe-token` in `state/zustand/wartend.φ` geschlossen; Lauf `38233635426` dispatcht (Workflow materialisiert den Token aus dem Secret in `.secrets.local`).
-- **Blockade:** keine.
-- **Braucht:** `ci_manage log 38233635426`; bei grün den vom Compiler emittierten Register-Block (`url`/`origin`/`compiler`/`sha256`/`format entsoe_unavailability`/`ttl`) in `phi/sources.φ` eintragen.
+- **Trigger:** ein korrigierter `entsoe-cdn`-Lauf endet
+- **Lage:** (gemessen 2026-10-12 via `ci_manage log 38233635426`) Repo-Secret `ENTSOE_API_TOKEN` steht (gesetzt 2026-10-11T19:36:15Z, `gh secret list`); Token wird materialisiert (`ENTSOE_API_TOKEN: ***` im Job-Log); der Lauf `38233635426` **rot**: `10YFI-1--------U: fetch void — HTTP 400: <!DOCTYPE html> …` — das API antwortet mit einer HTML-Fehlerseite, kein XML-`Reason`. Die URL-Form ist `…/api?securityToken=…&documentType=A78&in_Domain=10YFI-1--------U&periodStart=202401010000&periodEnd=202402010000` (`build_url`, `compact_period` → 12-stellig).
+- **Blockade:** das 400-HTML (Gateway/WAF oder Parameter) — Ursache nicht aus dem gekürzten Body lesbar.
+- **Braucht:** `ci_manage log 38233635426 --all` den vollen 400-Body lesen bzw. die A78-Parameter gegen die ENTSO-E-API-Doku prüfen (User-Agent? `out_Domain`/`businessType`?); dann erneut dispatchen. Bei grün den vom Compiler emittierten Register-Block (`url`/`origin`/`compiler`/`sha256`/`format entsoe_unavailability`/`ttl`) in `phi/sources.φ` eintragen.
 
 ### GRDC-Caravan — Resume-Fix gebaut; Verifikationslauf offen
 - **Status:** wartend | **Bindung:** eigen
