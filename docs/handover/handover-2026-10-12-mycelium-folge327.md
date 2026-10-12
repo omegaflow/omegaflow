@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (INPOP/NOE4-Fix, adressierte Faltungen, Stehender Pass)
   class: handover
   date: 2026-10-12
-  sha256: daf5eb2ad1e3a3d580656e4965052a72185bde546d4b35f2c18677dea5082fe1
+  sha256: 3bc20455e08a5a7bb44e714c95b3f33fb3199aa1be4888e80bbe34d98f3abb6c
   status: live
 -->
 # Handover — Mycelium-Folge 327 (2026-10-12)
@@ -15,7 +15,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 **mit Token** (die folge326-Faltung war unvollständig: `xfer:mountain327-1`- und
 `-2`-Einträge fehlten im Live-Handover).
 
-## Burn: open 0.00 · close 0.25 · cap 0.30 — Grund: Mycelium-Folge 327 in einem Atom (opencode.db Session-Cost 0.2493, Live-Flush): INPOP/NOE4-Fix (grün) · BC430+P10+P11 Register/Mirror · Taucher-Staffel (6 Punkte) · CI-Fold-Fix · adressierte Faltungen · Stehender Pass; deepseek-flash, kein pro/max.
+## Burn: open 0.00 · close 0.34 · cap 0.40 — Grund: Mycelium-Folge 327 in einem Atom (opencode.db Session-Cost 0.3366, Live-Flush): INPOP/NOE4-Fix (grün) · BC430+P10+P11 Register/Mirror · Taucher-Staffel (6 Punkte) · CI-Fold-Fix · Browser-Stimmen-Runde (4 Seats, Operator-Ok) · adressierte Faltungen · Stehender Pass; deepseek-flash, kein pro/max.
 
 ## Operator-Wort-Register
 
@@ -93,28 +93,20 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
   `curl -sSL --http2 --retry 3 --retry-all-errors --max-time 900 -o /tmp/opencode/venus.zip '<Processed.zip-content-url>' && sha256sum …`
   sobald der 504 weicht. Nicht-cc-by (PDS/JPL) `terms` → Mountain.
 
-### Orphan-Doc-Träger — fmhy-Survey; `--searxng`-Arm gebaut `xfer:mountain327-2`
+### Orphan-Doc-Träger — fmhy-Survey; Schritte 1–3 gemessen `xfer:mountain327-2`
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der nächste `--orphan-docs`-Pass
 - **Lage:** (gemessen 2026-10-12) Träger dieser Zeile ist
-  `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md` (2 offene Marker; see-also
-  `docs/concepts/ui-seats.md`, `docs/SOURCE_PORT.md`). **Punkt 1 (Jina) bestätigt** (Taucher): `--jina` im
-  Baum (`archive_search.rs:312`) und im `tools-latest`-Manifest (`5d0f9652d` enthält `c32af6d0d`),
-  end-to-end getestet (Title/URL/Markdown) → **zu**. **Punkt 2 (SearXNG) gebaut:** der `--searxng`-Arm
-  honoriert jetzt `$OMEGAFLOW_SEARXNG` (Commit `78a4a8057`, `cargo build -p omegaflow-utils --bin archive_search`
-  grün); Fallback bleiben die JSON-fähigen Instanzen (`searx.be` liefert HTML → nicht als Fallback).
+  `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md` (2 offene Marker). **Schritt 1 (Jina)
+  bestätigt** (`--jina` im Baum `archive_search.rs:312` + Manifest `5d0f9652d` ⊃ `c32af6d0d`, e2e getestet).
+  **Schritt 2 (SearXNG) gebaut** (`$OMEGAFLOW_SEARXNG`, Commit `78a4a8057`). **Schritt 3 (AI2 Playground)
+  gemessen** (Browser-Runde, Operator-Ok): keyless, aber Terms-Gate; Olmo 3.1 32B = **3/4** (0-Kanon-Szene
+  verfehlt) → unter der 4/4-Gate, kein Roster; `docs/concepts/ui-seats.md` fortgeschrieben. **ui-seats**
+  damit ebenfalls gemessen (Sakana ~40 s/4/4 · SciSpace Login-Wall · Gemini Notebook kein freier Composer)
+  → Punkt zu.
 - **Blockade:** keine.
-- **Braucht:** Punkt 3 (AI2-Seat-Gretchenfrage) — Browser, Hauptsession (kein Agent-Profil hat `browser_*`);
-  der Träger bleibt bis dahin stehen.
-
-### ui-seats — offene `pending`-Seats
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** ein Stimmen-Round in `mycelium-ui`
-- **Lage:** (gemessen 2026-10-12) die `pending`-Seats Sakana-Tempo · SciSpace (Login-Wall) ·
-  Gemini Notebook (kein freier Composer) noch nicht gemessen.
-- **Blockade:** kein Stimmen-Round in dieser Session.
-- **Braucht:** im nächsten Stimmen-Round die `pending`-Seats messen und `docs/concepts/ui-seats.md`
-  fortschreiben.
+- **Braucht:** die restlichen Survey-Schritte 4–7 (Elicit/Consensus, Sci-Bot → Rat-Verdikt vor Berührung,
+  NVIDIA NIM) gegen den Baum messen/entscheiden; der Träger bleibt bis dahin.
 
 ### tools-map.md — Träger (Operator-Wort Debugger-Rechte)
 - **Status:** wartend | **Bindung:** eigen
