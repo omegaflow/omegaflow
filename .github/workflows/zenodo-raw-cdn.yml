@@ -1,0 +1,57 @@
+# harvest: format=raw_zenodo arm=raw_mirror pattern=^<asset>$ idempotent=true timeout=240 tag=zenodo.org
+# Zenodo raw mirrors (CC-BY-4.0) byte-for-byte to the omegaflow/sources CDN. Each matrix
+# entry carries the registered url/origin/sha256; raw_mirror refuses to upload unless the
+# live body hashes to the registered sha256.
+
+name: zenodo-raw-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/raw_mirror.rs'
+      - '.github/workflows/zenodo-raw-cdn.yml'
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+  R2_BUCKET: ${{ secrets.R2_BUCKET }}
+  OMEGAFLOW_R2_MIRROR: ${{ vars.OMEGAFLOW_R2_MIRROR }}
+  OMEGAFLOW_R2_WORKER: ${{ vars.OMEGAFLOW_R2_WORKER }}
+
+jobs:
+  zenodo-raw:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - asset: BC430.tar.gz
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/BC430.tar.gz"
+            origin: "https://zenodo.org/api/records/3558850/files/BC430.tar.gz/content"
+            sha256: 0b2da752990e2d92a46622cb49efd7bcea758ebcb5f47300d8413aad18949959
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Mirror ${{ matrix.asset }} to the CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin raw_mirror -- \
+            --ci-mode \
+            --url "${{ matrix.url }}" \
+            --origin "${{ matrix.origin }}" \
+            --sha256 "${{ matrix.sha256 }}" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "zenodo-raw-cdn: ${{ matrix.asset }} returned void" \
+                 "raw_mirror returned void for ${{ matrix.asset }} (${{ matrix.origin }}). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

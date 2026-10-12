@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (INPOP/NOE4-Fix, adressierte Faltungen, Stehender Pass)
   class: handover
   date: 2026-10-12
-  sha256: 69f32f7659be2c06eeb01d493d2938aa7db0309a47c01ba8227b612cc56dd618
+  sha256: f441fd7b4d6e139c514e30ae6c6fba66ce16b76eea874625461a80e6065cf50f
   status: live
 -->
 # Handover — Mycelium-Folge 327 (2026-10-12)
@@ -15,7 +15,7 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 **mit Token** (die folge326-Faltung war unvollständig: `xfer:mountain327-1`- und
 `-2`-Einträge fehlten im Live-Handover).
 
-## Burn: open 0.00 · close 0.06 — opencode.db Session-Cost 0.0567 beim Commit (Live-Flush, läuft nach); Mycelium-Folge 327 in einem Atom (INPOP/NOE4-Fix + adressierte Faltungen + Stehender Pass), deepseek-flash, kein pro/max.
+## Burn: open 0.00 · close 0.13 — opencode.db Session-Cost 0.1267 (Live-Flush, läuft nach); Mycelium-Folge 327 in einem Atom (INPOP/NOE4-Fix + BC430-Register/Mirror + adressierte Faltungen + Stehender Pass), deepseek-flash, kein pro/max.
 
 ## Operator-Wort-Register
 
@@ -81,21 +81,24 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 - **Blockade:** der erste Fold-Push über `OMEGAFLOW_TOKEN`/`block_commit` ist ungeprüft.
 - **Braucht:** nach dem Lauf `ci_manage log <fold-run-id>` + `sread tools/measure/data/ci_measurements.φ`.
 
-### 8-Ziele-Einkaufsliste — Quelle gemessen; Register-/Workflow-Zeilen offen `xfer:mountain327-1`
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der nächste Register-Pass
-- **Lage:** (gemessen 2026-10-12/327 + `archive_search --zenodo`) die vier direkt downloadbaren sind
-  **cc-by-4.0** und ohne Registerzeile: Zenodo `3558850` BC430 (`BC430.tar.gz`, 59 541 013 B) ·
-  `13309156` Pioneer 10 (`SC_23.asc`, 678 784 528 B) · `13309040` Pioneer 11 (`SC_24.asc`, 721 591 221 B) ·
-  `18176179` Venus-Radar (`Venus_RadarBasemap_2025_Global_75m_v1.tif` 80 909 342 816 B · `Processed.zip`
-  409 371 501 B). Origin-URL `https://zenodo.org/api/records/<id>/files/<name>/content`. Nicht-cc-by
-  (PDS-Geosciences Venus-Radar, PDS-PPI `PVO-V-ORSE-1-ODR-OPENLOOP--V1.0`, JPL Spacecraft-VLBI) —
+### 8-Ziele-Einkaufsliste — BC430 registriert + Mirror dispatcht; P10/P11/Venus offen `xfer:mountain327-1`
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** der `zenodo-raw-cdn`-Lauf (BC430) endet; die Zenodo-`content`-Endpunkte für Pioneer 10/11 antworten wieder
+- **Lage:** (gemessen 2026-10-12) **BC430** Zenodo `3558850`: sha256 `0b2da752…` über 59 541 013 B (via
+  `curl -sSL` + `sha256sum`) → **registriert** (`phi:32389-32394`, kanonische Position nach `zcta_gazetteer`,
+  vor `jades_early_galaxies`) + Workflow `.github/workflows/zenodo-raw-cdn.yml` (Matrix, `raw_mirror`,
+  `# harvest: format=raw_zenodo`), Lauf durch den Push getriggert. **Pioneer 10** `13309156` / **11**
+  `13309040`: der `…/api/records/<id>/files/<name>/content`-Endpunkt antwortet **504 Gateway Time-out**
+  (gemessen via `curl`) → sha nicht messbar → nicht registrierbar. **Venus-Radar** `18176179`:
+  `Venus_RadarBasemap_2025_Global_75m_v1.tif` 80 909 342 816 B — schwerer Mirror, eigener Schritt.
+  Nicht-cc-by (PDS-Geosciences Venus-Radar, PDS-PPI `PVO-V-ORSE-1-ODR-OPENLOOP--V1.0`, JPL Spacecraft-VLBI):
   `terms` unbestimmt → Mountain.
-- **Blockade:** je Source fehlt eine `format`-Zeile **und** ein Workflow mit `# harvest: format=…`-Header
-  (`harvest-dispatch.yml` dispatcht nur über diesen Header; es gibt keinen generischen Mirror-Workflow).
-- **Braucht:** je cc-by-Source einen Block (`url`/`origin`/`terms CC-BY-4.0 https://zenodo.org/records/<id>`/
-  `compiler tools/harvest/src/bin/raw_mirror.rs`/`format`) + einen passenden `*-cdn`-Workflow;
-  die drei nicht-cc-by-`terms`-Zeilen → Mountain.
+- **Blockade:** P10/P11 an der Zenodo-Verfügbarkeit; Venus an der Dateigröße. Register-Ordnung: ein
+  `register_sort --write` würde 175 fremde (inpop-)Zeilen sweepen → der BC430-Block wurde manuell an
+  kanonischer `(ttl,url)`-Position gesetzt und per Sort-Dry-Run auf Relokationsfreiheit verifiziert.
+- **Braucht:** `ci_manage log <zenodo-raw-cdn-run-id>` (BC430-Mirror); für P10/P11
+  `curl -sSL --max-time 900 -o /tmp/opencode/<name> '<content-url>' && sha256sum /tmp/opencode/<name>`
+  sobald Zenodo antwortet, dann je Block + Matrix-Zeile; Venus-Mirror als eigener Schritt.
 
 ### Orphan-Doc-Träger — `xfer:mountain327-2`
 - **Status:** eigen | **Bindung:** eigen
