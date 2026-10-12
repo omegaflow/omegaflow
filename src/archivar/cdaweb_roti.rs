@@ -61,14 +61,14 @@ pub fn impc_roti_component_name(comp: u32) -> Option<&'static str> {
 }
 
 fn named_column(name: &str, unit: &str, tau: f64) -> Option<FieldConfig> {
-    let force = force_id_of("em")?;
-    let kernel = kernel_id_for_force(force)?;
+    let channel_ref = force_id_of("em")?;
+    let kernel = kernel_id_for_force(channel_ref)?;
     Some(FieldConfig {
         key: name.to_string(),
         name: name.to_string(),
         band_id: None,
         kernel,
-        force,
+        channel_ref,
         tau,
         absorption: 0.0,
         advection: 0.0,
@@ -162,7 +162,7 @@ mod tests {
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].name, "cdaweb_roti_tecu_min");
         assert_eq!(fields[0].unit, "TECU/min");
-        assert_eq!(fields[0].force, force_id_of("em").unwrap());
+        assert_eq!(fields[0].channel_ref, force_id_of("em").unwrap());
     }
 
     #[test]

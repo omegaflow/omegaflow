@@ -220,10 +220,10 @@ pub fn component_name(comp: u32) -> Option<&'static str> {
 }
 
 pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
-    let Some(force) = force_id_of("electric") else {
+    let Some(channel_ref) = force_id_of("electric") else {
         return Vec::new();
     };
-    let Some(kernel) = kernel_id_for_force(force) else {
+    let Some(kernel) = kernel_id_for_force(channel_ref) else {
         return Vec::new();
     };
     COLUMNS
@@ -233,7 +233,7 @@ pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
             name: name.to_string(),
             band_id: None,
             kernel,
-            force,
+            channel_ref,
             tau,
             absorption: 0.0,
             advection: 0.0,
@@ -362,7 +362,7 @@ Date/Time       	Eugene, OR	Spokane, WA\n\
         assert_eq!(fields.len(), CHANNELS);
         assert_eq!(fields[0].name, "bpa_gic_eugene_or_a");
         assert_eq!(fields[0].unit, "A");
-        assert_eq!(fields[0].force, force_id_of("electric").unwrap());
+        assert_eq!(fields[0].channel_ref, force_id_of("electric").unwrap());
         assert_eq!(fields[10].name, "bpa_gic_moses_lake_wa_a");
         assert_eq!(
             component_name(COMP_MOSES_LAKE_WA),

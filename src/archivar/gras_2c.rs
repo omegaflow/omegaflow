@@ -11,15 +11,15 @@ pub fn gate_name(comp: u32) -> String {
 }
 
 pub fn gate_field(comp: u32, tau: f64) -> Option<FieldConfig> {
-    let force = crate::force::force_id_of("em")?;
-    let kernel = crate::force::kernel_id_for_force(force)?;
+    let channel_ref = crate::force::force_id_of("em")?;
+    let kernel = crate::force::kernel_id_for_force(channel_ref)?;
     let name = gate_name(comp);
     Some(FieldConfig {
         key: name.clone(),
         name,
         band_id: None,
         kernel,
-        force,
+        channel_ref,
         tau,
         absorption: 0.0,
         advection: 0.0,

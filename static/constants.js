@@ -99,7 +99,7 @@ export function parseRecords(bytes) {
     const tau = dv.getFloat64(b + 48, true);
     const extent = dv.getFloat64(b + 56, true);
     const kernelId = dv.getFloat64(b + 64, true);
-    const forceType = dv.getFloat64(b + 72, true);
+    const channelRef = dv.getFloat64(b + 72, true);
     const absorption = dv.getFloat64(b + 80, true);
     const advection = dv.getFloat64(b + 88, true);
     const vx = dv.getFloat64(b + 96, true);
@@ -124,7 +124,7 @@ export function parseRecords(bytes) {
     field[f + 3] = val;
     field[f + 4] = t;
     field[f + 5] = ttl;
-    field[f + 6] = forceType;
+    field[f + 6] = channelRef;
     field[f + 7] = absorption;
     field[f + 8] = advection;
     field[f + 9] = vx;
@@ -135,7 +135,7 @@ export function parseRecords(bytes) {
     meta[m] = extent;
     meta[m + 1] = tau;
     meta[m + 2] = kernelId;
-    meta[m + 3] = forceType === 0 ? poleX : 0;
+    meta[m + 3] = channelRef === 0 ? poleX : 0;
     meta[m + 4] = poleX;
     meta[m + 5] = poleY;
     meta[m + 6] = poleZ;

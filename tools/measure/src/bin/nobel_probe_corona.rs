@@ -328,7 +328,7 @@ fn force_of(sources: &[SourceConfig], name: &str) -> Option<u8> {
         for e in &s.extracts {
             if let Extract::Field(fc) = e {
                 if fc.name == name {
-                    return Some(fc.force);
+                    return Some(fc.channel_ref);
                 }
             }
         }
@@ -467,7 +467,7 @@ struct Arrow {
     threshold: f64,
     mean: f64,
     sd: f64,
-    naive_threshold: f64,
+    naive_threshold: Option<f64>,
 }
 
 fn main() {
@@ -930,7 +930,7 @@ fn main() {
                                 threshold: thr,
                                 mean,
                                 sd,
-                                naive_threshold: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
+                                naive_threshold: naive.map(|(_, _, t)| t),
                             });
                         }
                     }
@@ -953,7 +953,7 @@ fn main() {
                 threshold: thr,
                 mean,
                 sd,
-                naive_threshold: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
+                naive_threshold: naive.map(|(_, _, t)| t),
             });
         }
         let te = transfer_entropy_lag(&ys, &xs, 0);
@@ -968,7 +968,7 @@ fn main() {
                 threshold: thr,
                 mean,
                 sd,
-                naive_threshold: naive.map(|(_, _, t)| t).unwrap_or(f64::NAN),
+                naive_threshold: naive.map(|(_, _, t)| t),
             });
         }
     }
@@ -979,7 +979,7 @@ fn main() {
     );
     for p in &arrows {
         println!(
-            "{:>14} → {:<14} | n {:>5} | TE {:.4e} | threshold {:.4e} | surrogate (mean {:.3e}, σ {:.3e}) | threshold-naive {:.4e} | {}",
+            "{:>14} → {:<14} | n {:>5} | TE {:.4e} | threshold {:.4e} | surrogate (mean {:.3e}, σ {:.3e}) | threshold-naive {} | {}",
             p.from,
             p.to,
             p.n,
@@ -987,7 +987,7 @@ fn main() {
             p.threshold,
             p.mean,
             p.sd,
-            p.naive_threshold,
+            p.naive_threshold.map_or("absent".to_string(), |t| format!("{:.4e}", t)),
             if p.te > p.threshold {
                 "arrow"
             } else {
@@ -1054,7 +1054,7 @@ fn main() {
     );
     println!("=== Null control: naive vs. phase-randomized threshold ===");
     for p in arrows.iter().filter(|p| p.from.starts_with("Density-RTSW")) {
-        let naiv = if p.te > p.naive_threshold {
+        let naiv = if p.naive_threshold.is_some_and(|t| p.te > t) {
             "breaks"
         } else {
             "holds"
@@ -1065,8 +1065,8 @@ fn main() {
             "holds"
         };
         println!(
-            "{:>14} → {:<14} | n {:>5} | TE {:.4e} | threshold-naive {:.4e} ({}) | threshold-phase {:.4e} ({})",
-            p.from, p.to, p.n, p.te, p.naive_threshold, naiv, p.threshold, phase
+            "{:>14} → {:<14} | n {:>5} | TE {:.4e} | threshold-naive {} ({}) | threshold-phase {:.4e} ({})",
+            p.from, p.to, p.n, p.te, p.naive_threshold.map_or("absent".to_string(), |t| format!("{:.4e}", t)), naiv, p.threshold, phase
         );
     }
     if bz_304 && s304_284 {
@@ -1094,20 +1094,21 @@ fn main() {
     }
     if euv_xr_arrow && xr_euv_arrow {
         let (ux, uy) = (euv_xr_ue, xr_euv_ue);
-        let (sx, sy) = (
-            euv_xr_best.map(|p| p.sd).unwrap_or(f64::NAN),
-            xr_euv_best.map(|p| p.sd).unwrap_or(f64::NAN),
-        );
-        if ux > uy {
-            println!(
-                "X-Ray ↔ EUV bidirectional — EUV → X-Ray carries the larger excess ({:.2e} vs {:.2e}, surrogate σ {:.2e} vs {:.2e}) → wave heating (Alfvén) prevails, nanoflare share present in the opposite direction.",
-                ux, uy, sx, sy
-            );
-        } else {
-            println!(
-                "X-Ray ↔ EUV bidirectional — X-Ray → EUV carries the larger excess ({:.2e} vs {:.2e}, surrogate σ {:.2e} vs {:.2e}) → nanoflares prevail.",
-                uy, ux, sy, sx
-            );
+        if let (Some(sx), Some(sy)) = (
+            euv_xr_best.map(|p| p.sd),
+            xr_euv_best.map(|p| p.sd),
+        ) {
+            if ux > uy {
+                println!(
+                    "X-Ray ↔ EUV bidirectional — EUV → X-Ray carries the larger excess ({:.2e} vs {:.2e}, surrogate σ {:.2e} vs {:.2e}) → wave heating (Alfvén) prevails, nanoflare share present in the opposite direction.",
+                    ux, uy, sx, sy
+                );
+            } else {
+                println!(
+                    "X-Ray ↔ EUV bidirectional — X-Ray → EUV carries the larger excess ({:.2e} vs {:.2e}, surrogate σ {:.2e} vs {:.2e}) → nanoflares prevail.",
+                    uy, ux, sy, sx
+                );
+            }
         }
     } else if euv_xr_arrow {
         println!(

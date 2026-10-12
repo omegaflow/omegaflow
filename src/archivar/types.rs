@@ -315,29 +315,29 @@ impl ReceiverAperture {
         Self { slots: [None; 18] }
     }
 
-    fn index(force: u8, class: Aperture) -> Option<usize> {
-        if (force as usize) >= 9 {
+    fn index(channel_ref: u8, class: Aperture) -> Option<usize> {
+        if (channel_ref as usize) >= 9 {
             return None;
         }
         let c = match class {
             Aperture::None => 0usize,
             Aperture::Flux => 1usize,
         };
-        Some(force as usize * 2 + c)
+        Some(channel_ref as usize * 2 + c)
     }
 
-    pub fn get(&self, force: u8, class: Aperture) -> Option<f64> {
-        Self::index(force, class).and_then(|i| self.slots[i])
+    pub fn get(&self, channel_ref: u8, class: Aperture) -> Option<f64> {
+        Self::index(channel_ref, class).and_then(|i| self.slots[i])
     }
 
-    pub fn set(&mut self, force: u8, class: Aperture, length: f64) {
-        if let Some(i) = Self::index(force, class) {
+    pub fn set(&mut self, channel_ref: u8, class: Aperture, length: f64) {
+        if let Some(i) = Self::index(channel_ref, class) {
             self.slots[i] = Some(length);
         }
     }
 
-    pub fn resolve(&self, force: u8, class: Aperture) -> Option<f64> {
-        self.get(force, class)
+    pub fn resolve(&self, channel_ref: u8, class: Aperture) -> Option<f64> {
+        self.get(channel_ref, class)
     }
 
     pub fn parse_declaration(spec: &str) -> Self {
@@ -353,7 +353,7 @@ impl ReceiverAperture {
             let Some(length_spec) = parts.next() else {
                 continue;
             };
-            let Some(force) = force_id_of(force_name) else {
+            let Some(channel_ref) = force_id_of(force_name) else {
                 continue;
             };
             let Some(class) = Aperture::of_class(class_name) else {
@@ -363,7 +363,7 @@ impl ReceiverAperture {
                 continue;
             };
             if length.is_finite() && length > 0.0 {
-                aperture.set(force, class, length);
+                aperture.set(channel_ref, class, length);
             }
         }
         aperture
@@ -382,7 +382,7 @@ pub struct FieldConfig {
     pub name: String,
     pub band_id: Option<String>,
     pub kernel: u8,
-    pub force: u8,
+    pub channel_ref: u8,
     pub tau: f64,
     pub absorption: f64,
     pub advection: f64,
@@ -455,7 +455,7 @@ pub fn presence_flags(phase: Option<f64>, absorption: f64, advection: f64, z_flu
 
 pub struct BrowserSensor {
     pub key: String,
-    pub force: u8,
+    pub channel_ref: u8,
     pub kernel: u8,
     pub ttl: f64,
     pub tau: Option<f64>,

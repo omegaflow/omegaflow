@@ -436,7 +436,7 @@ pub fn build_netcdf_channels(
                                 config: fc,
                                 medium: body_medium,
                                 body_radius,
-                                receiver_aperture: receiver_aperture.get(fc.force, fc.aperture),
+                                receiver_aperture: receiver_aperture.get(fc.channel_ref, fc.aperture),
                             },
                             AnchorEnvelope {
                                 vmax: anchor_vmax,
@@ -593,7 +593,7 @@ pub fn build_netcdf4_channels(
                                 config: fc,
                                 medium: body_medium,
                                 body_radius,
-                                receiver_aperture: receiver_aperture.get(fc.force, fc.aperture),
+                                receiver_aperture: receiver_aperture.get(fc.channel_ref, fc.aperture),
                             },
                             AnchorEnvelope {
                                 vmax: anchor_vmax,
@@ -970,7 +970,7 @@ pub fn build_opendap_channels(
                                 config: fc,
                                 medium: body_medium,
                                 body_radius,
-                                receiver_aperture: receiver_aperture.get(fc.force, fc.aperture),
+                                receiver_aperture: receiver_aperture.get(fc.channel_ref, fc.aperture),
                             },
                             AnchorEnvelope {
                                 vmax: anchor_vmax,
@@ -1409,7 +1409,7 @@ pub fn anchor(
     }
     let body_eph = motion.anchor_body().and_then(|name| eph.get(name));
     let body_medium = body_eph.and_then(|e| e.medium.as_ref());
-    let extent = medium_reach(sensor.force, sensor.tau, body_medium, sensor.advection)?;
+    let extent = medium_reach(sensor.channel_ref, sensor.tau, body_medium, sensor.advection)?;
     if !extent.is_finite() {
         return None;
     }
@@ -1423,8 +1423,8 @@ pub fn anchor(
         extent,
         tau: sensor.tau,
         kernel_id: sensor.kernel as f64,
-        channel_ref: sensor.force as f64,
-        absorption: absorption_for_force(sensor.force, sensor.absorption),
+        channel_ref: sensor.channel_ref as f64,
+        absorption: absorption_for_force(sensor.channel_ref, sensor.absorption),
         advection: sensor.advection,
         anchor_vmax,
         anchor_amax,
@@ -1469,7 +1469,7 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
                 name: format!("{}.mass", name),
                 band_id: None,
                 kernel: 0,
-                force: 1,
+                channel_ref: 1,
                 tau: f64::INFINITY,
                 absorption: absorption_for_force(1, 0.0),
                 advection: 0.0,
@@ -1503,7 +1503,7 @@ pub fn body_channels(name: &str, props: &BodyProperties, now: f64) -> Vec<(Chann
                 name: format!("{}.omega_g", name),
                 band_id: None,
                 kernel: 0,
-                force: 1,
+                channel_ref: 1,
                 tau,
                 absorption: absorption_for_force(1, 0.0),
                 advection: 0.0,

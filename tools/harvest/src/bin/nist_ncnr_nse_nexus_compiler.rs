@@ -24,7 +24,7 @@ const SLOT_VAL: usize = 3;
 const SLOT_EPOCH: usize = 4;
 const SLOT_TTL: usize = 5;
 const SLOT_TAU: usize = 6;
-const SLOT_FORCE_TYPE: usize = 9;
+const SLOT_CHANNEL_REF: usize = 9;
 const SLOT_PHASE: usize = 24;
 const SLOT_PRESENCE: usize = 25;
 
@@ -342,7 +342,7 @@ fn compile(bytes: &[u8], ttl_s: f64) -> Result<Compiled, String> {
         r[SLOT_EPOCH] = epoch_tdb;
         r[SLOT_TTL] = ttl_s;
         r[SLOT_TAU] = tau_s;
-        r[SLOT_FORCE_TYPE] = CHANNEL_REF_QUANTITY as f64;
+        r[SLOT_CHANNEL_REF] = CHANNEL_REF_QUANTITY as f64;
         r[SLOT_PHASE] = ph;
         r[SLOT_PRESENCE] = PRESENCE_FLAG_QUANTITY;
         records.push(r);

@@ -264,7 +264,7 @@ node https://cdn.example/tile- 0 0 0 5 5 5
         name: String::new(),
         band_id: None,
         kernel: 0,
-        force: 0,
+        channel_ref: 0,
         tau: 0.0,
         absorption: 0.0,
         advection: 0.0,

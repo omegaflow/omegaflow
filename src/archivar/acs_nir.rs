@@ -17,10 +17,10 @@ pub fn component_name(comp: u32) -> String {
 }
 
 pub fn declared_fields() -> Vec<FieldConfig> {
-    let Some(force) = force_id_of("em") else {
+    let Some(channel_ref) = force_id_of("em") else {
         return Vec::new();
     };
-    let Some(kernel) = kernel_id_for_force(force) else {
+    let Some(kernel) = kernel_id_for_force(channel_ref) else {
         return Vec::new();
     };
     let mut out = Vec::with_capacity(ROW_DATA_COUNT);
@@ -31,7 +31,7 @@ pub fn declared_fields() -> Vec<FieldConfig> {
             name,
             band_id: None,
             kernel,
-            force,
+            channel_ref,
             tau: TAU_INTEGRATION_S,
             absorption: 0.0,
             advection: 0.0,
@@ -172,7 +172,7 @@ mod tests {
         assert_eq!(fields[0].key, "acs_nir_bin_0000");
         assert_eq!(fields[639].name, "acs_nir_bin_0639");
         assert_eq!(fields[1279].name, "acs_nir_bin_1279");
-        assert_eq!(fields[0].force, crate::force::force_id_of("em").unwrap());
+        assert_eq!(fields[0].channel_ref, crate::force::force_id_of("em").unwrap());
         assert_eq!(
             fields[0].kernel,
             crate::archivar::extract::kernel_id_of("inverse-square").unwrap()
