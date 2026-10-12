@@ -18,7 +18,7 @@ pub const STATIONS: [AsiStation; 24] = [
         code: "ATHA",
         lat_deg: 54.714,
         lon_deg: -113.314,
-        alt_m: Some(511.82),
+        alt_m: Some(549.82),
     },
     AsiStation {
         code: "CHBG",
@@ -29,8 +29,8 @@ pub const STATIONS: [AsiStation; 24] = [
     AsiStation {
         code: "EKAT",
         lat_deg: 64.717,
-        lon_deg: -109.333,
-        alt_m: Some(398.83),
+        lon_deg: -110.6703,
+        alt_m: Some(430.77),
     },
     AsiStation {
         code: "FSIM",
@@ -96,7 +96,7 @@ pub const STATIONS: [AsiStation; 24] = [
         code: "MCGR",
         lat_deg: 62.953,
         lon_deg: -155.596,
-        alt_m: Some(112.57),
+        alt_m: Some(102.57),
     },
     AsiStation {
         code: "NRSQ",
@@ -108,7 +108,7 @@ pub const STATIONS: [AsiStation; 24] = [
         code: "PGEO",
         lat_deg: 53.815,
         lon_deg: -122.828,
-        alt_m: Some(561.26),
+        alt_m: Some(756.26),
     },
     AsiStation {
         code: "PINA",
@@ -300,6 +300,13 @@ mod tests {
         assert_eq!(gill.alt_m, Some(103.12));
         let rank = station("RANK").expect("rank is measured");
         assert_eq!(rank.alt_m, Some(-17.15));
+        let ekat = station("EKAT").expect("ekat is measured");
+        assert_eq!(ekat.lon_deg, -110.6703);
+        assert_eq!(ekat.alt_m, Some(430.77));
+        assert_eq!(station("ATHA").and_then(|s| s.alt_m), Some(549.82));
+        assert_eq!(station("PGEO").and_then(|s| s.alt_m), Some(756.26));
+        assert_eq!(station("MCGR").and_then(|s| s.alt_m), Some(102.57));
+        assert_eq!(station("GAKO").and_then(|s| s.alt_m), Some(589.72));
         assert_eq!(station("whit").and_then(|s| s.alt_m), None);
         assert_eq!(station("gbay").and_then(|s| s.alt_m), None);
         assert!(station("zzzz").is_none());
