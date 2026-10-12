@@ -2,7 +2,7 @@
   title: Auftrag — Eigene Ephemeriden aus Primärdaten + Kulturerbe-Rettung (eine Maschine)
   class: auftrag
   date: 2026-10-12
-  sha256: 77394444a92c677b28c8e49ab62294167fa4274359e32e58c4e416818ffd01ab
+  sha256: 4a9dac1da4a9a9c95d39d6237af657792340076898592f1f16a02a3470d7f937
   status: live
   see-also: docs/surveys/survey-2026-10-10-ephemeris-quellen.md docs/concepts/archivar-mathematikerin.md docs/SOURCE_PORT.md
 -->
@@ -173,6 +173,22 @@ Chat ✓ · DeepSeek V4 Pro (1.7T) ✓ · Qwen3.8 2.4T ✓** (alle konvergent); 
   Level-0-Sondenpass (Counts, nicht ODF) → Erbe.** „ODF zuerst" ist die Falle. **Hold-out
   nach Bögen und Stationen splitten**, nicht zufällig nach Samples. Jeder Operator braucht
   ein explizites Noise-/Bias-Budget, sonst wird `pending` zur Müllkippe.
+- **GLM (Z.ai, Deep Think Max) — die schärfste Verschärfung:** „**Diagnostik darf alles sehen**
+  (auch DE/INPOP/EPM, post hoc); **Brennstoff darf nichts Fremdes sehen.**" `pending` muß **ins
+  Beobachtungsdatum** schreiben (Gewicht senken/quarantänisieren, nie als sauber mitteln);
+  **Bias-Parameter ≠ physikalische Parameter** (nur Physik ins Produkt); **Zero-Partials =
+  „unbestimmt" (Kovarianz → ∞), nie „0 ± 0"**. **Blinder Fleck: die Unabhängigkeit selbst** —
+  LLR braucht Störkörper (Sonne/Jupiter/Saturn) mit publizierten Anfangszuständen; historische
+  UT1 vor VLBI teils über LLR mit DE; „das System ist an den Rändern an DE verankert, und die
+  Residuen werden gut sein, gerade weil die Anker gut sind — gute Residuen bestätigen eine
+  Unabhängigkeit, die ihr nicht habt." Abhilfe: **Priors first-class (Quelle + Kovarianz)**,
+  **Produkt-Manifest („unabhängig bzgl. X, gegeben Priors auf Y")**, ein Strang zum Ersetzen der
+  Anker. **Reihenfolge wie UI-Konsens**, präzisiert: Rahmenschicht → **LLR zuerst** (Observable
+  **relativ** → Fehler der heliozentrischen Erdephemeride hebt sich in führender Ordnung auf →
+  geringste Zirkularität) · **ODF parallel als Prüfling** (ein Bogen, Externes fixiert, nur
+  Zustand + Arc-Biases) · dann Radar → ΔDOR/VLBI → Tiefraum-Tracking. **Genau dann wechselt der
+  Korpus die Klasse: Erbe → Brennstoff.** Projektrisiko: „LLR-Beschaffung ist Politik, nicht
+  Architektur."
 
 ## Erste begrenzte Schritte
 
