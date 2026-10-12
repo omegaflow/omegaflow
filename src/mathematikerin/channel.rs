@@ -1500,6 +1500,80 @@ impl ChannelRegistry {
     }
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
+#[repr(u8)]
+pub enum CouplingKind {
+    IonNeutralFriction = 0,
+    Thermoelectric = 1,
+    Hall = 2,
+    Pedersen = 3,
+}
+
+#[derive(Clone, Debug)]
+pub struct Coupling {
+    pub kind: CouplingKind,
+    pub from: u64,
+    pub to: u64,
+    pub coefficient: Option<f64>,
+    pub unit: &'static str,
+    pub region: Option<String>,
+}
+
+pub struct CouplingRegistry {
+    pairs: Vec<Coupling>,
+    id: HashMap<(u64, u64, CouplingKind), usize>,
+}
+
+impl CouplingRegistry {
+    pub fn with_capacity(cap: usize) -> Self {
+        Self {
+            pairs: Vec::with_capacity(cap),
+            id: HashMap::with_capacity(cap),
+        }
+    }
+
+    pub fn len(&self) -> usize {
+        self.pairs.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.pairs.is_empty()
+    }
+
+    pub fn pairs(&self) -> &[Coupling] {
+        &self.pairs
+    }
+
+    pub fn register(&mut self, c: Coupling) -> usize {
+        let key = (c.from, c.to, c.kind);
+        if let Some(&i) = self.id.get(&key) {
+            return i;
+        }
+        let i = self.pairs.len();
+        self.pairs.push(c);
+        self.id.insert(key, i);
+        i
+    }
+
+    pub fn is_coupled(&self, from: u64, to: u64, kind: CouplingKind) -> bool {
+        self.id.contains_key(&(from, to, kind))
+    }
+
+    pub fn coupling_of(&self, from: u64, to: u64, kind: CouplingKind) -> Option<&Coupling> {
+        self.id.get(&(from, to, kind)).map(|&i| &self.pairs[i])
+    }
+
+    pub fn schema_hash(&self) -> u32 {
+        let mut h: u64 = 0xcbf29ce484222325;
+        for c in &self.pairs {
+            h = fnv1a(&c.from.to_le_bytes(), h);
+            h = fnv1a(&c.to.to_le_bytes(), h);
+            h = fnv1a(&[c.kind as u8], h);
+        }
+        h as u32
+    }
+}
+
 pub fn live_schema_hash() -> u32 {
     live_channel_registry().schema_hash()
 }
@@ -2923,5 +2997,68 @@ mod tests {
         let mut one = ChannelRegistry::with_capacity(CHANNEL_CAP);
         one.register(descriptor_for_force("em", Medium::Vacuum).expect("em"));
         assert_ne!(full.schema_hash(), one.schema_hash());
+    }
+
+    fn a_coupling(kind: CouplingKind, from: u64, to: u64) -> Coupling {
+        Coupling {
+            kind,
+            from,
+            to,
+            coefficient: None,
+            unit: "1",
+            region: None,
+        }
+    }
+
+    #[test]
+    fn registering_a_coupling_dedupes_on_from_to_kind() {
+        let mut reg = CouplingRegistry::with_capacity(4);
+        let a = reg.register(a_coupling(CouplingKind::Hall, 11, 22));
+        let b = reg.register(a_coupling(CouplingKind::Hall, 11, 22));
+        assert_eq!(a, b);
+        assert_eq!(reg.len(), 1);
+        assert!(!reg.is_empty());
+        assert_eq!(reg.pairs().len(), 1);
+        assert!(reg.is_coupled(11, 22, CouplingKind::Hall));
+        assert!(
+            !reg.is_coupled(11, 22, CouplingKind::Pedersen),
+            "the kind is part of the pair key"
+        );
+        assert!(
+            !reg.is_coupled(22, 11, CouplingKind::Hall),
+            "the direction is part of the pair key"
+        );
+    }
+
+    #[test]
+    fn an_absent_coefficient_stays_absent() {
+        let mut reg = CouplingRegistry::with_capacity(1);
+        reg.register(a_coupling(CouplingKind::Thermoelectric, 1, 2));
+        let c = reg
+            .coupling_of(1, 2, CouplingKind::Thermoelectric)
+            .expect("the registered pair resolves");
+        assert_eq!(c.coefficient, None, "absent is never a fabricated 0.0");
+    }
+
+    #[test]
+    fn a_registered_coupling_leaves_the_reduction_untouched() {
+        let phi = [2.0, 4.0, 6.0];
+        let w = [1.0, 1.0, 1.0];
+        let all = [TriState::Present; 3];
+        let before = channel_reduce(&phi, &w, &all);
+        let mut reg = CouplingRegistry::with_capacity(2);
+        reg.register(Coupling {
+            kind: CouplingKind::IonNeutralFriction,
+            from: 0x1,
+            to: 0x2,
+            coefficient: Some(0.25),
+            unit: "kg/(m^3 s)",
+            region: Some("ionosphere".to_string()),
+        });
+        let after = channel_reduce(&phi, &w, &all);
+        assert_eq!(
+            before, after,
+            "a coupling registration is not a reduction term"
+        );
     }
 }
