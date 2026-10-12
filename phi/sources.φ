@@ -678,14 +678,14 @@ url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI2_H0_MRG1HR&time.min={week_ago
 terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
 at sun
-hapi V1800=omni_solarwind_flow_speed_kms N1800=omni_solarwind_density_percc T1800=omni_solarwind_temp_k BX_GSE1800=omni_imf_bx_gse_nt BY_GSM1800=omni_imf_by_gsm_nt BZ_GSM1800=omni_imf_bz_gsm_nt Pressure1800=omni_solarwind_pressure_npa
-field omni_solarwind_flow_speed_kms omni_solarwind_flow_speed_kms patch-levy advective km/s 3600 0.0 0.0
-field omni_solarwind_density_percc omni_solarwind_density_percc gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
-field omni_solarwind_temp_k omni_solarwind_temp_k exponential-decay thermal K 3600 0.0 0.0
-field omni_imf_bx_gse_nt omni_imf_bx_gse_nt inverse-square em nT 3600 0.0 0.0
-field omni_imf_by_gsm_nt omni_imf_by_gsm_nt inverse-square em nT 3600 0.0 0.0
-field omni_imf_bz_gsm_nt omni_imf_bz_gsm_nt inverse-square em nT 3600 0.0 0.0
-field omni_solarwind_pressure_npa omni_solarwind_pressure_npa patch-levy advective nPa 3600 0.0 0.0
+hapi V1800=omni_solarwind_flow_speed_kms_live N1800=omni_solarwind_density_percc_live T1800=omni_solarwind_temp_k_live BX_GSE1800=omni_imf_bx_gse_nt_live BY_GSM1800=omni_imf_by_gsm_nt_live BZ_GSM1800=omni_imf_bz_gsm_nt_live Pressure1800=omni_solarwind_pressure_npa_live
+field omni_solarwind_flow_speed_kms_live omni_solarwind_flow_speed_kms_live patch-levy advective km/s 3600 0.0 0.0
+field omni_solarwind_density_percc_live omni_solarwind_density_percc_live gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field omni_solarwind_temp_k_live omni_solarwind_temp_k_live exponential-decay thermal K 3600 0.0 0.0
+field omni_imf_bx_gse_nt_live omni_imf_bx_gse_nt_live inverse-square em nT 3600 0.0 0.0
+field omni_imf_by_gsm_nt_live omni_imf_by_gsm_nt_live inverse-square em nT 3600 0.0 0.0
+field omni_imf_bz_gsm_nt_live omni_imf_bz_gsm_nt_live inverse-square em nT 3600 0.0 0.0
+field omni_solarwind_pressure_npa_live omni_solarwind_pressure_npa_live patch-levy advective nPa 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BR,BT,BN,B,ProtonSpeed,protonDensity,protonTemp&format=json
 terms PD https://cdaweb.gsfc.nasa.gov/
