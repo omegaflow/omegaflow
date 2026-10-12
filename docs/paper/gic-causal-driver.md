@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: c1a85386994b0a6bc3dd739e2d481da44fd9004186f5bb7592027cec7a6c00bd
+  sha256: 9f9ae1b52cf48d5b8ec18227f0e55f5e7633caaa16534998459a556b354bf9a8
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -168,10 +168,13 @@ carried the KDE bias floor into the statistic as apparent signal); the 1−α le
 is the empirical α-quantile of the studentized maxima, B ≈ 10⁴ for α = 0.01 (a
 GPD tail fit above the top 10 % if the resample budget is capped), with the claim
 count K declared in advance.
-Point-estimate uncertainty is separate: a joint stationary bootstrap (BCa) on
-(X, Y), not the surrogate draws. The estimator's α stays unnamed until that
-construction stands; the current plug-in fam controls at order 10⁻¹, not 10⁻²
-(§6). The round-maximum's sampling variability at
+Point-estimate uncertainty is separate: a studentized moving-block bootstrap on
+(X, Y) — a delete-a-block jackknife (Künsch 1989) supplies the block-consistent
+SE, the moving-block percentile the honest first-order form, Politis–Romano
+subsampling the robust default; a "block BCa" carries no second-order theory and
+is not used (Rat + UI + open-weight, 2026-10-12). Not the surrogate draws. The
+nominal coverage stays with the seal; the current plug-in fam controls at order
+10⁻¹, not 10⁻² (§6). The round-maximum's sampling variability at
 n_surr = 10 is carried by the Wilson CI (§6). The PCMCI leg of the hardened probe runs α = 0.05
 (`bz_retro_probe.rs`); the fam leg names none. Verdicts: **arrow** (TE > fam), **family bound** (TE > own
 threshold, < fam — directed, not round-significant), **silent** (TE < own
