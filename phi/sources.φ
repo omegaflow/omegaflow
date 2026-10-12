@@ -1526,7 +1526,7 @@ field AOD_870nm aeronet_aod_870nm inverse-square em 1 86400.0 0.0 0.0
 field Precipitable_Water(cm) aeronet_precipitable_water_cm gaussian-inverse-square diffusion cm 86400.0 0.0 0.0
 
 url https://api.bas.ac.uk/superdarn/mirror/v3/
-terms OGL-3.0 https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
+terms OGL-UK-3.0 https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
 at earth
 ttl 86400
 
@@ -11142,7 +11142,7 @@ at earth
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/data.geo.admin.ch/swisstopo_coverage.manifest
-terms open-by-attribution https://www.swisstopo.admin.ch/en/terms-of-use-free-geodata-and-geoservices
+terms free-open https://www.swisstopo.admin.ch/en/terms-of-use-free-geodata-and-geoservices
 format swisstopo_coverage
 origin https://data.geo.admin.ch/api/stac/v0.9/collections/ch.swisstopo.swisssurface3d/items
 compiler tools/harvest/src/bin/swisstopo_coverage.rs

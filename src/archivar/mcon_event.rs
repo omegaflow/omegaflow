@@ -1,3 +1,5 @@
+use crate::archivar::{Aperture, FieldConfig, force_id_of, kernel_id_for_force};
+
 pub const MAGIC: [u8; 4] = *b"MCON";
 pub const VERSION: u8 = 1;
 pub const HEADER_LEN: usize = 13;
@@ -21,15 +23,43 @@ pub const COMP_BAY_DECREASE: u32 = 3;
 pub const COMP_BAY_DURATION: u32 = 4;
 pub const COMP_BAY_WIDTH: u32 = 5;
 
+const COLUMNS: &[(u32, &str, &str)] = &[
+    (COMP_SML, "mcon_sml_nt", "nT"),
+    (COMP_AMPLITUDE, "mcon_amplitude_nt", "nT"),
+    (COMP_BAY_DECREASE, "mcon_bay_decrease_nt", "nT"),
+    (COMP_BAY_DURATION, "mcon_bay_duration_min", "min"),
+    (COMP_BAY_WIDTH, "mcon_bay_width_min", "min"),
+];
+
 pub fn component_name(comp: u32) -> Option<&'static str> {
-    match comp {
-        COMP_SML => Some("mcon_sml_nt"),
-        COMP_AMPLITUDE => Some("mcon_amplitude_nt"),
-        COMP_BAY_DECREASE => Some("mcon_bay_decrease_nt"),
-        COMP_BAY_DURATION => Some("mcon_bay_duration_min"),
-        COMP_BAY_WIDTH => Some("mcon_bay_width_min"),
-        _ => None,
-    }
+    COLUMNS.iter().find(|c| c.0 == comp).map(|c| c.1)
+}
+
+pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
+    let Some(force) = force_id_of("em") else {
+        return Vec::new();
+    };
+    let Some(kernel) = kernel_id_for_force(force) else {
+        return Vec::new();
+    };
+    COLUMNS
+        .iter()
+        .map(|(_, name, unit)| FieldConfig {
+            key: name.to_string(),
+            name: name.to_string(),
+            band_id: None,
+            kernel,
+            force,
+            tau,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: (*unit).to_string(),
+            freq: crate::archivar::spectral::SPECTRAL_NO_BAND,
+            bin_width: crate::archivar::spectral::SPECTRAL_NO_BAND,
+            fold: None,
+            aperture: Aperture::None,
+        })
+        .collect()
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]
@@ -216,5 +246,18 @@ mod tests {
         let unix = 1_000_000_000.0;
         let jd = jd_from_unix(unix).unwrap();
         assert!((unix_from_jd(jd).unwrap() - unix).abs() < 1.0);
+    }
+
+    #[test]
+    fn declared_fields_carry_the_read_site_names_and_units() {
+        let fields = declared_fields(86400.0);
+        assert_eq!(fields.len(), COLUMNS.len());
+        assert_eq!(fields[0].name, "mcon_sml_nt");
+        assert_eq!(fields[0].unit, "nT");
+        assert_eq!(fields[3].name, "mcon_bay_duration_min");
+        assert_eq!(fields[3].unit, "min");
+        assert_eq!(fields[0].force, force_id_of("em").unwrap());
+        assert_eq!(component_name(COMP_BAY_WIDTH), Some("mcon_bay_width_min"));
+        assert_eq!(component_name(9), None);
     }
 }

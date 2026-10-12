@@ -93,6 +93,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "cpm" => Some(value * 1.0e-6 / (334.0 * 3600.0)),
         "usv/h" => Some(value * 1.0e-6 / 3600.0),
         "h" => Some(value * 3600.0),
+        "min" => Some(value * 60.0),
         "nm" => Some(value * 1e-9),
         "mm/s2" => Some(value * 1e-3),
         "nm/s2" => Some(value * 1e-9),
