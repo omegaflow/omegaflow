@@ -31556,6 +31556,7 @@ sha256 1773a9770d6c3e9fec223c5e97bbe4ec3e7ecf93e48b6d777d75714855c38a47
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/planetarydata.jpl.nasa.gov/mariner_m10_jpl_edr.bin
+terms PD https://planetarydata.jpl.nasa.gov/
 origin https://planetarydata.jpl.nasa.gov/img/data/mr10-m-iss-2-edr-pv0.x/
 compiler tools/harvest/src/bin/mariner_m10_jpl_edr_compiler.rs
 format mariner_m10_edr
@@ -31628,12 +31629,14 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/planetarymaps.usgs.gov/Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.tif
+terms PD https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 origin https://planetarymaps.usgs.gov/mosaic/Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.tif
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 d4c0880c39d062994a6f02c0462ec6c87f60fdcc504546915e076e2cd472b1da
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/planetarymaps.usgs.gov/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif
+terms PD https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 origin https://planetarymaps.usgs.gov/mosaic/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 defce776241dcaf44cb0f081ee508c17dbea28aa5a22880bf7a5e8c25f96cbea
