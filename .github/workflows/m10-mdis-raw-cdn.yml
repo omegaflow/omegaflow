@@ -69,6 +69,14 @@ jobs:
             url: "https://github.com/omegaflow/sources/releases/download/planetarymaps.usgs.gov/Mercury_M1_M2_M3_M10_mosaic_global_2010.tif"
             origin: "https://planetarymaps.usgs.gov/mosaic/Mercury_M1_M2_M3_M10_mosaic_global_2010.tif"
             sha256: 324c0e497570f908db6a85d4e4823a9b76da1f676d0ecdb1ba8f67559e14e52f
+          - asset: Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.tif
+            url: "https://github.com/omegaflow/sources/releases/download/planetarymaps.usgs.gov/Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.tif"
+            origin: "https://planetarymaps.usgs.gov/mosaic/Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.tif"
+            sha256: d4c0880c39d062994a6f02c0462ec6c87f60fdcc504546915e076e2cd472b1da
+          - asset: Mercury_Messenger_USGS_DEM_Global_665m_v2.tif
+            url: "https://github.com/omegaflow/sources/releases/download/planetarymaps.usgs.gov/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif"
+            origin: "https://planetarymaps.usgs.gov/mosaic/Mercury_Messenger_USGS_DEM_Global_665m_v2.tif"
+            sha256: defce776241dcaf44cb0f081ee508c17dbea28aa5a22880bf7a5e8c25f96cbea
           - asset: mariner4_celestial-mechanics_64-077a-09a_DSC_0119.pdf
             url: "https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_celestial-mechanics_64-077a-09a_DSC_0119.pdf"
             origin: "https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/renamed_dataset_catalogs/mariner4_celestial-mechanics_64-077a-09a_DSC_0119.pdf"
