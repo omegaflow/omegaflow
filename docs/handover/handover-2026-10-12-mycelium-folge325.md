@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (ENTSØ-E-Fehlerkörper, USGS-Mosaik-sha + DSC-0119-Zeile, INPOP/NOE4-Workflow, Spill-Wurzel im Wrapper)
   class: handover
   date: 2026-10-12
-  sha256: 64c22626688b17a332bf9718e49535a1b35c93ea6254767c03d536c77d838088
+  sha256: e658a547e5fb4c726c60b68865e6d5355655c7c3db46aaa4564548b57224bb37
   status: live
 -->
 # Handover — Mycelium-Folge 325 (2026-10-12)
@@ -65,12 +65,12 @@ MCP/MCON · GIC-Onset sind **River-eigen** (river-196) und hier entfernt;
 - **Blockade:** keine.
 - **Braucht:** `ci_manage log 38236601893`.
 
-### CI-Messzeilen durabel in den Baum — Ort korrigiert: **Tool-Register**, nicht `phi/`
+### CI-Messzeilen — Werkzeug-Register gebaut; Pilot-Lauf offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der erste `fold`-Job eines messenden Workflows (`.github/workflows/field-te-query.yml`) läuft
-- **Lage:** (gemessen 2026-10-12) **Operator-Wort (Session 326):** „ich möchte [den `phi/`-Müll] nicht wieder anfangen — gehört das nicht zu den jobs oder tools?" — **Der Baum bestätigt es:** sechs getrackte Werkzeug-Register existieren bereits: `tools/harvest/data/{asteroid_gm_inpop25c,asteroid_gm_sb441,dust-maske,nrs_stations}.φ` · `tools/measure/data/scan_coverage.φ` · `tools/register/data/bands.φ` · `tools/utils/data/library.φ`. Der Ort ist **`tools/measure/data/ci_measurements.φ`** — beim produzierenden Werkzeug, neben `scan_coverage.φ`. **Kein `REGISTER_CLASSES`-Eingriff** (jener Kanon-Riegel gilt nur für `phi/*.φ`); `phi/` bleibt die eine Datei. Die Tool-Register erlauben `note` (anders als `phi/sources.φ`). **Riss benannt:** der Rat sprach `phi/ci_measurements.φ` — seine Prämisse „`phi/` ist der einzige Register-Container" ist gemessen falsch; der Baum (und der Operator) trägt.
-- **Blockade:** keine.
-- **Braucht:** `tools/measure/data/ci_measurements.φ`-Skelett (Kopf + Blockform: `run`/`head`/`descriptor` + rohe Beobachtung; 0-Kanon) + `fold`-Job im Pilot-Workflow `field-te-query.yml` (Commit via `block_commit` privat-Index + CAS).
+- **Trigger:** der erste `ci-measurements-fold`-Lauf endet
+- **Lage:** (gemessen 2026-10-12) **Gebaut:** `tools/measure/data/ci_measurements.φ` (Skelett: Kopf + Blockform `run`/`head`/`artifact` + note-rohe Zeilen) und `.github/workflows/ci-measurements-fold.yml` — ein **separater** `fold`-Workflow (`workflow_run` auf `field-te-query`, Pilot), lädt die Artefakte des fertigen Laufs und hängt sie über `block_commit` (privat-Index + CAS) ins Register; **ein Writer**, rohe Zeilen, kein Verdikt-Wort; überspringt Läufe ohne Messartefakt (`0 honored`). **Ort:** Werkzeug-Register beim produzierenden Tool (Präzedenz: sechs `tools/<crate>/data/*.φ`); **`phi/` bleibt eine Datei**, kein `REGISTER_CLASSES`-Eingriff. **Riss:** Rat sprach `phi/`, der Baum (und der Operator) trägt den Werkzeug-Ort.
+- **Blockade:** erste Ausführung ungeprüft (der `fold`-Push über `OMEGAFLOW_TOKEN`/`block_commit` ist neu in einem Workflow).
+- **Braucht:** nach Push `gh workflow run field-te-query.yml` (oder den nächsten natürlichen Lauf); dann `ci_manage log <fold-run-id>` + `sread tools/measure/data/ci_measurements.φ` — beweist den Fold + CAS-Push.
 
 ### de441/de442-sha · SWPC/RTSW · Domain→UCD (getrennt, je ein Gegenüber)
 - **Status:** wartend | **Bindung:** eigen
