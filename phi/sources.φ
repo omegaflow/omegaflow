@@ -100,17 +100,6 @@ lon geometry.coordinates.0
 alt geometry.coordinates.2
 field properties.magnitude geonet_quake_magnitude gaussian-inverse-square seismic-body Mw 60.0 0.0 0.0
 
-url https://ceic.ac.cn/data/data.json
-terms unknown https://ceic.ac.cn/
-ttl 60
-at earth
-map .
-lat latitude
-lon longitude
-field depth ceic_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
-field magnitude ceic_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
-channel energy:primary:wave:hyperbolic:elastic-solid:sphere:free-surface:6371000 Pa
-
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 terms PD https://earthquake.usgs.gov/
 ttl 60
@@ -1113,18 +1102,6 @@ compiler tools/harvest/src/bin/gdp_drifter_compiler.rs
 on earth 0 0 0
 ttl 3600
 field sst gdp_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/prop.kc2g.com/kc2g_stations.csv
-format kc2g_stations
-origin https://prop.kc2g.com/api/stations.json
-terms unknown https://prop.kc2g.com/
-compiler tools/harvest/src/bin/kc2g_stations.rs
-on earth 0 0 0
-ttl 3600
-field mufd_mhz kc2g_mufd_mhz inverse-square em MHz 3600 0.0 0.0
-field fof2_mhz kc2g_fof2_mhz inverse-square em MHz 3600 0.0 0.0
-field tec_tecu kc2g_tec_tecu inverse-square em TECU 3600 0.0 0.0
-field cs kc2g_cs inverse-square em % 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/rpw-lira.obspm.fr/rpw_efield_lira.bin
 terms unknown https://rpw-lira.obspm.fr/roc/data/pub/solo/rpw/data/L3/
@@ -9057,21 +9034,6 @@ terms CC0-1.0 https://doi.org/10.48322/fzcf-f191
 at earth
 ttl 86400
 
-url https://weather.uwyo.edu/wsgi/sounding?datetime={yesterday}%2000:00:00&id=72293&src=UNKNOWN&type=TEXT:CSV
-terms unknown https://weather.uwyo.edu/
-ttl 86400
-format csv
-on earth 0 0 0
-rows
-lat latitude
-lon longitude
-epoch time
-field 5 radiosonde_temperature_c exponential-decay thermal C 8640.0 0.0 0.0
-field 3 radiosonde_pressure_hpa gaussian-inverse-square acoustic hPa 8640.0 0.0 0.0
-field 6 radiosonde_dewpoint_c exponential-decay thermal C 8640.0 0.0 0.0
-field 8 radiosonde_relative_humidity_pct gaussian-inverse-square diffusion % 8640.0 0.0 0.0
-field 12 radiosonde_wind_speed_m_s patch-levy advective m/s 8640.0 0.0 0.0
-
 url https://www.carisma.ca/data
 terms OGL-Canada-2.0 https://open.canada.ca/en/open-government-licence-canada
 at earth
@@ -11600,15 +11562,6 @@ field hinet_velocity_u_ms hinet_velocity_u_ms erfc seismic-surface m/s 60.0 0.0 
 field hinet_velocity_e_ms hinet_velocity_e_ms erfc seismic-surface m/s 60.0 0.0 0.0
 field hinet_velocity_n_ms hinet_velocity_n_ms erfc seismic-surface m/s 60.0 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ia2-tap.oats.inaf.it/ia2_wgesdss.bin
-terms unknown https://ia2-tap.oats.inaf.it/
-origin http://ia2-tap.oats.inaf.it:8080/wgetap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec_,psfMag_r,psfMag_g+FROM+wgesdss.laurino2011+WHERE+ra+IS+NOT+NULL
-compiler tools/harvest/src/bin/ia2_tap_compiler.rs
-format sky1
-at sun
-ttl 604800
-field ia2_wgesdss ia2_wgesdss inverse-square em mag 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/igetsftp.gfz.de/igets.bin
 terms unknown https://igetsftp.gfz.de/
 format igets
@@ -11618,16 +11571,6 @@ sha256 852ec68215eb7e8e385f3ce537c93e634e231b6ff7ff9c87bbacbe6eeccdc096
 at earth
 ttl 604800
 field igets_gravity_nm_s2 igets_gravity_nm_s2 inverse-square gravity nm/s2 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/imbrium.mit.edu/lro_trk.bin
-terms unknown https://imbrium.mit.edu/
-format lro_trk
-origin http://imbrium.mit.edu/LRORS/DATA/TRK/
-compiler tools/harvest/src/bin/lro_trk_compiler.rs
-sha256 c29af4b434237c409dbb0265447e279dc6fd1190f01c8a33a5457426c4256faa
-at earth
-ttl 604800
-field sky_frequency_hz lro_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/cmb_planck_smica_n64.json
 origin https://irsa.ipac.caltech.edu/data/Planck/release_3/all-sky-maps/maps/component-maps/cmb/COM_CMB_IQU-smica_2048_R3.00_full.fits
@@ -34583,3 +34526,8 @@ decline unphysical https://zenodo.org/records/8427755
 decline unphysical s3://noaa-nos-coastal-lidar-pds
 decline unphysical s3://noaa-ocs-hydrodata-pds
 decline unphysical s3://usgs-lidar-public.s3.amazonaws.com
+decline commercial https://ceic.ac.cn/
+decline commercial https://ia2-tap.oats.inaf.it/
+decline commercial https://imbrium.mit.edu/
+decline commercial https://prop.kc2g.com/
+decline commercial https://weather.uwyo.edu/

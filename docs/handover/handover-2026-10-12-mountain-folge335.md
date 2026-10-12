@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: e0334cd7e677358a3919b7a04dcece3451c9b18b2da6ca73d782d046ef217743
+  sha256: 12e1170fe95696b9628af0ac109a7d0a6bbdd630a15547f1b6b9af538bd41603
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -96,8 +96,8 @@ Punkt nennt seine Datei(en)/Pfade.**
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der nächste Register-Schreib-Pass (block-scoped)
 - **Lage:** (gemessen 2026-10-12 via `register_lookup --addressed mountain`, gefaltet) `archive_search --all` hat für fast jede lizenzlose Observable eine freie institutionelle Quelle gefunden; der Operator will **nicht verklagt** werden. Volle Tabellen: `state/future/licence-alternativen-all-2026-10-12.md` (Observable → Alternative → terms → Beleg) und `state/future/licence-redundanz-tierA-2026-10-12.md` (Register-interne Ersätze, ~20). Kern: AKARI→HEASARC/IRSA (PD) · RAVE→DR5 (CC0-1.0) · Pantheon+/S40RTS/LLNL→Zenodo (CC-BY-4.0) · SRTM15+→OpenTopography (CC-BY-4.0) · MPC→JPL SSD (PD) · MAXI→HEASARC (PD) · LoTSS→CASDA RACS (CC-BY-4.0) · Blinkverse→CHIME VizieR (CC-BY-4.0) · MODVOLC→NASA FIRMS (PD) · Infraschall→CTBTO/BGR (CC-BY-NC-SA-4.0) · Hi-net→GEOFON/GeoNet (CC-BY) · COSMIC→NASA GES DISC (PD) · IERS→NASA CDDIS (PD) · HyperLEDA→NED (PD) · LASP EVE→NOAA EXIS (PD) · ATLAS DR4→Zenodo SMSS (CC-BY-4.0) · DES/OGLE→Zenodo (CC-BY-4.0) · ALeRCE→IRSA ZTF (PD) · MAGIC→Zenodo joint-crab (BSD-3-Clause-Clear) · TeVCat→gamma-cat/Fermi 4FGL (open/PD) · Argo-BGC→Argo GDAC (CC-BY-4.0) · BGR-Infra→CTBTO/BGR. **Nur** `fugin_moment0` (CADE/IRAP) bleibt lizenzunklar.
-- **Blockade:** die block-scoped Ersatz-Verdikte sind ~20 Blöcke (ein Atom); die neue `url`/`origin`-Zeile je Ersatz kommt von Mycelium.
-- **Braucht:** **block-scoped** die Ersatz-`url`/`terms`-Verdikte in `phi/sources.φ` setzen (Mountain), Mycelium die neuen `url`/`origin`/`compiler`-Zeilen.
+- **Blockade:** Fortschritt (gemessen 2026-10-12): **7 von ~20 ersetzt** — AFAD, CMA + `ceic.ac.cn`, `weather.uwyo.edu`, `prop.kc2g.com`, `ia2-tap.oats.inaf.it`, `imbrium.mit.edu` als `decline commercial` (der freie Ersatz liegt im Register: GeoNet/SondeHub/giro/SDSS/PDS-Rings). Offen: `services1/2/7.arcgis.com`-Observablen (streamflow/chile/ndbc/wqp/sig_wave/chpl_pm25/va/tohoku), `datalab.noirlab.edu` decaps_dr2, `corral.tacc.utexas.edu`/`mast.stsci.edu` jwst_spectra, `minorplanetcenter.net` mpcorb_distant, `ftp.imcce.fr` ephemeris_inpop; die ~40 einzigartigen Hosts + **JVO/NAOJ (273 Blöcke)** brauchen neue Quellen bzw. eine Erlaubnis-Entscheidung.
+- **Braucht:** je Rest-Observable der block-scoped `decline` (Mountain) + die neue `url`/`origin`/`compiler`-Zeile des freien Ersatzes (Mycelium); JVO = Operator/Future-Entscheidung (NAOJ-Erlaubnis oder entfernen).
 
 ### Rätsel-Datenlücken (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -241,12 +241,13 @@ Origin: mountain-folge335 (2026-10-12).
 - **„AFAD-Erdbeben (servisnet.afad.gov.tr) — geoblockt + redundant: entfernen"** · **„CMA-Wetter (weather.cma.cn) — alle Rechte vorbehalten: entfernen/ersetzen"** | 2026-10-12 | Operator-Session (future-247, gefaltet) — beide Blöcke in diesem Atom entfernt.
 - **„afad war ein lizenzthema"** | 2026-10-12 | Operator-Session (mountain 335) — AFAD-Disposition auf `decline commercial` korrigiert; die Future-Begründung „geoblockt" ist nachrangig.
 - **„INTERMAGNET/GIRO DIDBase) was ist das problem wir sind doch NC"** | 2026-10-12 | Operator-Session (mountain 335) — das Haus ist NC (PolyForm NC / CC BY-NC-SA), CC BY-NC ist admissibel; keine Operator/Rat-Frage.
+- **Lizenz-Zensus: lizenzlose Blöcke durch freie Alternativen ersetzen (kein Klagerisiko)** | 2026-10-12 | Operator-Session (mountain 335, future-247 gefaltet) — block-scoped Ersetzung, Mountain Verdikt + Mycelium url/origin/compiler; 7 von ~20 in diesem Atom umgesetzt.
 
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt automatisch",
 2026-10-07) trägt Commit und Push. In diesem Atom (folge335) committet (pfad-begrenzt):
-`phi/sources.φ` (AFAD-Block 232-242 + CMA-Block 467-477 entfernt; zwei `decline`-Zeilen),
+`phi/sources.φ` (AFAD-Block 232-242 + CMA-Block 467-477 entfernt; zwei `decline`-Zeilen; ferner fünf lizenzlose Blöcke `ceic.ac.cn`/`weather.uwyo.edu`/`prop.kc2g.com`/`ia2-tap.oats.inaf.it`/`imbrium.mit.edu` entfernt + fünf `decline commercial`-Zeilen aus dem Lizenz-Zensus),
 `docs/handover/handover-2026-10-12-mountain-folge335.md`,
 `docs/handover/archiv/handover-2026-10-12-mountain-folge334.md`. **Operator-Wort (2026-10-12):**
 AFAD war ein **Lizenzthema** (Disposition `decline commercial`); die Future-Begründung „geoblockt"
