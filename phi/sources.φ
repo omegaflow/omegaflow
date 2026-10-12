@@ -68,7 +68,7 @@ field de2_ion_drift_north_ms de2_ion_drift_north_ms gaussian-inverse-square adve
 field de2_neutral_wind_east_ms de2_neutral_wind_east_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
 field de2_neutral_wind_up_ms de2_neutral_wind_up_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
 field de2_neutral_n2_density_m3 de2_neutral_n2_density_m3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
-channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s) alias de2_ion_drift charge 1
+channel mass:primary:advective:advective:plasma:unspecified:none kg/(m^2 s) alias de2_ion_drift charge 1
 channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s) alias de2_neutral_wind
 
 url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
