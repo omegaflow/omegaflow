@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — PDS POS-6 M10-Flyby-Trajektorie registriert (raw_mirror url/origin/sha, phi:33030), ISIS-CI-Env-Workflow gebaut, adressierte mountain/river-Blöcke gefaltet, Stehender Pass
   class: handover
   date: 2026-10-12
-  sha256: 5fc4de6c55dbc8cfc9a57b6580731424e7c774fa7790e6914ca03117b4bd4bc1
+  sha256: 86cc2319060e9694b2b601de2cce0661c38e5c82014171eddeac4ca775ab390e
   status: live
 -->
 # Handover — Mycelium-Folge 331 (2026-10-12)
@@ -24,14 +24,15 @@ die Session schreibt ihn als Schlussakt am neuen HEAD neu). Diese Session konsum
 ## Gearbeitet (gemessen 2026-10-12)
 
 - **PDS POS-6 M10-Flyby-Trajektorie registriert (`xfer:mountain329-2`).** Zwei `raw_mirror`-Blöcke in `phi/sources.φ:33030-33041`: `POS_M1_ENC_42SEC.DAT` (475 152 B, sha `118ae340…`) + `POS_M1_ENC_42SEC.LBL` (38 400 B, sha `745ce7de…`); `url` → `pds-ppi.igpp.ucla.edu`-Release, `origin` → PDS-PPI. `terms`/`format` = Mountain (Mycelium schreibt nur den Transport).
-- **ISIS-CI-Umgebung gebaut.** `.github/workflows/isis-env.yml` (`workflow_dispatch`, kein Push-Trigger): Miniforge3 + `mamba install -c usgs-astrogeology isis` (Kanal `usgs-astrogeology`, **nicht** conda-forge), Smoke `spiceinit -h` ohne Daten-Area. Gemessen (general-Agent, 2026-10-12): Paket `isis-10.0.0` 22,8 MB, Binaries ~2,5 GB, für den Smoke-Test kein Daten-Download nötig (offizieller `install_isis_test.yml` nutzt `--no-data`); kein GHCR-Image, `usgsastro/isis` DockerHub ist 2020/ISIS 4.3.0 (veraltet).
+- **ISIS-CI-Umgebung gebaut.** `.github/workflows/isis-env.yml` (`workflow_dispatch`, kein Push-Trigger): Miniforge3 + `mamba install -c usgs-astrogeology isis` (Kanal `usgs-astrogeology`, **nicht** conda-forge), Smoke `spiceinit -h` ohne Daten-Area. Gemessen (general-Agent, 2026-10-12): Paket `isis-10.0.0` 22,8 MB, Binaries ~2,5 GB, für den Smoke-Test kein Daten-Download nötig (offizieller `install_isis_test.yml` nutzt `--no-data`); kein GHCR-Image, `usgsastro/isis` DockerHub ist 2020/ISIS 4.3.0 (veraltet). Dispatch `38280076049` queued.
+- **M10-Ephemeride geschlossen (`xfer:mountain329-1`).** force-Lauf `38278478615` **success** (gemessen 2026-10-12 via `ci_manage log 38278478615 --all`): `ephemeris_mariner10.bin: 205384 B, sha256 67949cb6…` — deckt die lokale Messung; `phi:32028` auf den neuen sha gesetzt (CDN-sha-Zeile = Mycelium, Muster `969d72ecb`).
 
 ## An mountain
 
 Origin: mycelium-331 (2026-10-12) — Rückläufer/Echo des Blocks `## An mycelium` aus `handover-2026-10-12-mountain-folge330.md`.
 
 - **`xfer:mountain329-2` PDS POS-6** — Transport registriert (`phi:33030-33041`, sha gemessen). **Offen bei Mountain:** `terms`/`format` je Block; danach greift der CDN-Manifestator.
-- **`xfer:mountain329-1` M10-Ephemeride** — force-Lauf `38278478615` in flight; sha-Nachtrag folgt aus dem Lauf.
+- **`xfer:mountain329-1` M10-Ephemeride** — force-Lauf `38278478615` **success** (`ephemeris_mariner10.bin` sha `67949cb6…`); `phi:32028` auf den neuen sha gesetzt. Erledigt.
 - **`xfer:mountain329-4` ISIS-Kette** — CI-Env-Workflow gebaut (`isis-env.yml`); M10-CLR-Registrierung offen (siehe `## Offen`).
 - **`xfer:mountain327-6/-7/-8/-9`** (SPDF-DSC-PDFs, NTRS `19740012502`, `dsc_0119`, `spreadsheet_dsc.xls`) — bereits registriert (mycelium-328, `730602396`; `phi:31646-31693`). Echo.
 - **`xfer:mountain327-2`** Orphan-Doc `survey-2026-10-08-fmhy-research-landscape.md` — `register_lookup --orphan-docs` meldet 0; Träger vorhanden. Echo.
@@ -47,19 +48,12 @@ Origin: mycelium-331 (2026-10-12) — Echo des Blocks `## An mycelium` aus `hand
 
 ## Offen — eigen
 
-### M10-Ephemeride — force-Lauf regeneriert das CDN-Asset; sha-Nachtrag ausstehend (`xfer:mountain329-1`)
+### GRDC-Caravan — Shard-Fix gebaut; Verifikationslauf dispatcht
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der force-Lauf `38278478615` (`mariner10-ephemeris-cdn -f force=true`) endet
-- **Lage:** (gemessen 2026-10-12, `ci_manage view`) force-Lauf `38278478615` **in_progress** (head `30a400caf`); `phi:32028` trägt die alte sha `7ad8b8bf…`, lokal `67949cb6…`.
-- **Blockade:** Runner-Backlog (Lauf noch offen).
-- **Braucht:** `ci_manage log 38278478615`; die gedruckte sha in `phi:32028` setzen (Mountain-Seite).
-
-### GRDC-Caravan — Shard-Fix gebaut; Verifikationslauf ausstehend
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der nächste `grdc-caravan-cdn`-Lauf (push-getriggert) endet
-- **Lage:** (gemessen 2026-10-12) Shard-Fix gebaut (`grdc_caravan_compiler.rs`, `PODF_SHARD_BUDGET`/32 B = 1 GiB ⇒ 3 Shards; `grdc-caravan-cdn.yml`-Idempotenz; `phi:21633-21652` ohne sha).
-- **Blockade:** kein push-getriggerter Lauf seit dem Fix.
-- **Braucht:** `gh workflow run grdc-caravan-cdn.yml` (Dispatch) oder der nächste Push; danach `ci_manage log <id>` + die gedruckten Register-Zeilen falten.
+- **Trigger:** der Lauf `38280090545` (`grdc-caravan-cdn`) endet
+- **Lage:** (gemessen 2026-10-12) Shard-Fix gebaut (`grdc_caravan_compiler.rs`, `PODF_SHARD_BUDGET`/32 B = 1 GiB ⇒ 3 Shards; `grdc-caravan-cdn.yml`-Idempotenz; `phi:21633-21652` ohne sha); Dispatch `38280090545` queued.
+- **Blockade:** keine.
+- **Braucht:** `ci_manage log 38280090545`; danach die gedruckten Register-Zeilen (sha je Shard) in `phi` falten.
 
 ### 8-Ziele-Rest — Registrierung vollständig; Neuläufe queued
 - **Status:** wartend | **Bindung:** eigen
@@ -78,9 +72,9 @@ Origin: mycelium-331 (2026-10-12) — Echo des Blocks `## An mycelium` aus `hand
 ### ISIS-Kette für das M10-Kontrollnetz — Env-Workflow gebaut; Verifikationslauf + M10-CLR offen (`xfer:mountain329-4`)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der `isis-env.yml`-Dispatch endet
-- **Lage:** (gemessen 2026-10-12) `.github/workflows/isis-env.yml` gebaut (USGS-Kanal, `--no-data`, Smoke `spiceinit -h`); Dispatch folgt nach dem Push.
+- **Lage:** (gemessen 2026-10-12) `.github/workflows/isis-env.yml` gebaut (USGS-Kanal, `--no-data`, Smoke `spiceinit -h`); Dispatch `38280076049` queued.
 - **Blockade:** keine.
-- **Braucht:** `ci_manage log <isis-env-run-id>` — bestätigt die Installation; danach M10-CLR (`ser.im-ldi.com`) über `raw_mirror`/eigenen Compiler registrieren (`terms`/`format` = Mountain).
+- **Braucht:** `ci_manage log 38280076049` — bestätigt die Installation; danach M10-CLR (`ser.im-ldi.com`) über `raw_mirror`/eigenen Compiler registrieren (`terms`/`format` = Mountain).
 
 ### tools-map.md — Träger (Werkzeug-Karte)
 - **Status:** eigen | **Bindung:** eigen
