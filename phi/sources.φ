@@ -229,18 +229,6 @@ lat properties.lat
 lon properties.lon
 field properties.intensity lightning_peak_current_ka inverse-square electric kA 6.0 0.0 0.0
 
-url https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?start={week_ago}&end={today}&minmag=2.5
-terms unknown https://servisnet.afad.gov.tr/
-ttl 60
-at earth
-map .
-lat latitude
-lon longitude
-epoch date
-mag_type_key type
-field magnitude geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
-field depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
-
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 terms CC-BY-4.0 https://www.seismicportal.eu/terms.html
 ttl 60
@@ -463,18 +451,6 @@ map value.timeSeries
 lat sourceInfo.geoLocation.geogLocation.latitude
 lon sourceInfo.geoLocation.geogLocation.longitude
 field values.0.value.0.value hydrosphere_river_flow_cfs erfc advective cfs 30.0 0.0 0.0
-
-url https://weather.cma.cn/api/now/54511
-terms unknown https://weather.cma.cn/
-ttl 300
-header User-Agent Mozilla/5.0
-on earth 39.904 116.407 0
-map data.now
-field temperature atmosphere_cma_air_temp_c exponential-decay thermal C 30.0 0.0 0.0
-field pressure atmosphere_cma_pressure_hpa gaussian-inverse-square diffusion hPa 30.0 0.0 0.0
-field humidity atmosphere_cma_humidity_pct gaussian-inverse-square diffusion % 30.0 0.0 0.0
-field windSpeed atmosphere_cma_wind_speed_ms patch-levy advective m/s 30.0 0.0 0.0
-field precipitation atmosphere_cma_precipitation_mm patch-levy advective mm 30.0 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/realtime2/51003.txt
 ttl 300
@@ -33628,6 +33604,7 @@ decline registry https://services9.arcgis.com/CzWZ8m5FuciqBibe/arcgis/rest/servi
 decline unphysical https://services9.arcgis.com/IGnf2HrvTcleIY19/arcgis/rest/services/WaterLevelMonitoring_Boreholes/FeatureServer/2
 decline model https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query
 decline model https://services9.arcgis.com/RHVPKKiFTONKtxq3/ArcGIS/rest/services/Active_Hurricanes_Sampler/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
+decline superseded https://servisnet.afad.gov.tr/apigateway/deprem/apiv2/event/filter?start={week_ago}&end={today}&minmag=2.5
 decline unphysical https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27EB*%27+AND+plx_value+IS+NOT+NULL
 decline unphysical https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27Pulsar%27+AND+plx_value+IS+NOT+NULL
 decline unphysical https://simbad.u-strasbg.fr/simbad/sim-tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+128+ra,dec,plx_value,pmra,pmdec,rvz_radvel,rvz_redshift+FROM+basic+WHERE+otype=%27QSO%27+AND+rvz_redshift+IS+NOT+NULL
@@ -33709,6 +33686,7 @@ decline unphysical https://volcanoes.usgs.gov/vhp/feeds/vaalatom.xml
 decline unphysical https://waterdata.usgs.gov/blog/index.json
 decline superseded https://waterservices.usgs.gov/nwis/dv?format=json&sites=01646500,09380000,09506000,06892350&startDT=
 decline unphysical https://weather.cma.cn/api/map/alarm
+decline commercial https://weather.cma.cn/api/now/54511
 decline registry https://web-api.tp.entsoe.eu/api?documentType=A44&in_Domain=DE_LU&period.start={today}0000&period.end={today}2300&securityToken={entsoe_key}
 decline unphysical https://whale.fm/api/v1/sounds/recent
 decline registry https://wikidata.org/
