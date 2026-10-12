@@ -386,8 +386,8 @@ fn run(args: &[String]) -> Result<(), String> {
                 None => continue,
             };
             let body_wrt_ssb_b1950 = state_over(&chebs, 0, *body_id, et, &daf)?;
-            let body_ssb = rot_apply(&rot, body_wrt_ssb_b1950);
-            return Some(add(body_wrt_m10, body_ssb));
+            let body_state_b1950 = add(body_wrt_m10, body_wrt_ssb_b1950);
+            return Some(rot_apply(&rot, body_state_b1950));
         }
         None
     };
@@ -395,6 +395,50 @@ fn run(args: &[String]) -> Result<(), String> {
         let mercury_wrt_ssb_b1950 = state_over(&chebs, 0, 1, et, &daf)?;
         Some(rot_apply(&rot, mercury_wrt_ssb_b1950))
     };
+
+    if args.iter().any(|a| a == "--chain-diag") {
+        let mut jds: Vec<f64> = vec![2442136.238, 2442136.245, 2442136.370];
+        jds.push(2442136.498);
+        jds.push(2442136.499);
+        jds.push(2442136.504);
+        jds.push(2442136.600);
+        jds.insert(0, 2442136.50131);
+        let rot2 = fk4_b1950_to_fk5_j2000();
+        let m3 = |v: [f64; 3]| format!("[{:>13.1},{:>13.1},{:>13.1}]", v[0], v[1], v[2]);
+        for jd in &jds {
+            let et = (jd - J2000_EPOCH) * 86400.0;
+            eprintln!("JD {jd:.5}");
+            for (target, _center, _frame, states) in body_m10.iter() {
+                let Some(d) = interp(states, et) else {
+                    eprintln!("  body {target}: no discrete state");
+                    continue;
+                };
+                let d3 = [d[0], d[2], d[4]];
+                match state_over(&chebs, 0, *target, et, &daf) {
+                    Some(c) => {
+                        let c3 = [c[0], c[2], c[4]];
+                        let cr = rot_apply(&rot2, c);
+                        let cr3 = [cr[0], cr[2], cr[4]];
+                        let dr = rot_apply(&rot2, d);
+                        let dr3 = [dr[0], dr[2], dr[4]];
+                        let x1 = [d3[0] + cr3[0], d3[1] + cr3[1], d3[2] + cr3[2]];
+                        let x2 = [dr3[0] + cr3[0], dr3[1] + cr3[1], dr3[2] + cr3[2]];
+                        let x3 = [d3[0] + c3[0], d3[1] + c3[1], d3[2] + c3[2]];
+                        eprintln!(
+                            "  body {target}: d={} |c={} | X1=d+rot(c)={} | X2=rot(d)+rot(c)={} | X3=d+c={}",
+                            m3(d3),
+                            m3(c3),
+                            m3(x1),
+                            m3(x2),
+                            m3(x3)
+                        );
+                    }
+                    None => eprintln!("  body {target}: d={} no cheb ssb", m3(d3)),
+                }
+            }
+        }
+        return Ok(());
+    }
 
     if args.iter().any(|a| a == "--list") {
         return Ok(());
