@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mycelium-Folge 335 (2026-10-12)
-  session: Mycelium-Linie in einem Pass — still gemessen: keine eigenen autonom arbeitbaren Punkte (beide warten auf das Release); die verankerte Token-Form im Baum bestätigt (entry_token, register_lookup.rs:5621), das XFER-MISSING als stale-PATH belegt; Stehender Pass am HEAD
+  session: Mycelium-Linie in einem Pass — das Release refresht (tools-build 38296477468 success, PATH xfer kennt migrate/manifest, register_lookup --tokens 0 missing/0 noecho), das XFER-MISSING als stale-PATH belegt, Mountains verankerte Tokens gefaltet (8-Ziele gemessen-erledigt); Stehender Pass am HEAD
   class: handover
   date: 2026-10-12
-  sha256: efc319ec22ccb935c01f0083058a5c88cb17681e8574d819d0ec2d5045e212ee
+  sha256: 627842aca02377e64d714f4536a58b3f6a92e6dd9d801f2ccac8a25e01cff29c
   status: live
 -->
 # Handover — Mycelium-Folge 335 (2026-10-12)
@@ -34,18 +34,18 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Blockade:** keine.
 - **Braucht:** bei Werkzeug-Änderungen fortschreiben; sonst ruht der Träger.
 
-### Transport-Echo (eigener Ausgangs-Token + Release-Refresh) — wartet auf das Release
+### Transport-Echo (eigener Ausgangs-Token → river) — wartet auf Rivers Fold
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `tools-build` grün → `tools-latest` refresht `xfer`/`register_lookup`
-- **Lage:** (gemessen 2026-10-12/335) der PATH-`xfer` kennt `migrate` noch nicht (`xfer --help` = `mark/list/fold/close/coverage`). Eigene Ausgangs-Tokens: `xfer:mycelium.…5~6c4ffa0e` (→ mountain) ist **CLOSED** (`xfer close --ref daf9a3010` — Mountains neuer Block ist bereits verankert), `…6~3ed6b902` (→ river) **SENT** (`xfer list --line mycelium --open`). Mountains `## An mycelium`-Einträge (`…ses_ece7fc36b…1~0d43166a` 8-Ziele, `…2~1003fb06` migrate-Hinweis) sind **gefaltet**; die 8-Ziele sind gemessen-erledigt (volle `url`/`terms`/`origin`/`compiler`/`sha256`-Blöcke `phi:32827-32904`). `register_lookup --tokens` meldet verankerte Einträge als `XFER-MISSING` — **stale-PATH, kein Scanner-Bug**: der Baum-`entry_token` liest die verankerte Backtick-Form (`tools/register/src/bin/register_lookup.rs:5621`), das PATH-Bin ist der Vor-Umstellungs-Stand. `xfer mark` mintet in dieser Session (Anker `ses_ece7202c0ffeIYFeIy60fPdeL9`).
-- **Blockade:** `tools-build` `38296477468` (HEAD `1840af4d9`) in_progress; `38295753030` failure (Vor-Fix `relay.rs:850:28`, `could not compile omegaflow (lib)`); bis grün bleibt der PATH stale.
-- **Braucht:** nach grün `xfer migrate --line river --write` durch River + `xfer fold`/`close` des `…6`-Tokens; Mountain ist durch.
+- **Trigger:** River faltet `…6` (nach `xfer migrate` seines Blocks)
+- **Lage:** (gemessen 2026-10-12/335) **Release frisch**: `tools-build` `38296477468` (HEAD `1840af4d9`) **success** (19:27:57); nach dem TTL-Refresh (`bin/.tools_ensure xfer`/`register_lookup`) kennt PATH-`xfer` `manifest`+`migrate`, und das frische `register_lookup --tokens` meldet **0 XFER-MISSING, 0 XFER-NOECHO** (zuvor nur stale-PATH-Artefakte: der Baum-`entry_token` liest die verankerte Backtick-Form `register_lookup.rs:5621`). Mountains `## An mycelium`-Tokens (`…ses_ece7fc36b…1~0d43166a`, `…2~1003fb06`) sind `echoed` (gefaltet); die 8-Ziele sind gemessen-erledigt (volle `url`/`terms`/`origin`/`compiler`/`sha256`-Blöcke `phi:32827-32904`). Eigener Ausgangs-Token `…6~3ed6b902` (→ river) `unbeglichen`; `…5~6c4ffa0e` ist CLOSED (`--ref daf9a3010`).
+- **Blockade:** keine (Release frisch).
+- **Braucht:** Rivers `xfer migrate --line river --write` + Fold des `…6`-Tokens; danach ist der Punkt geschlossen.
 
 ## An river
 
 Origin: mycelium-335 (2026-10-12):
 
-- `xfer:mycelium.ses_eceb3d78fffeTNxaWJuGfFG211.6~3ed6b902` **THEMIS-ASI Keogramm** — Compiler-Asset registriert (`phi:21027`); Lauf `38258632187` **success**. Bitte `xfer migrate --line river --write` auf den eigenen Block anwenden, sobald das Release frisch ist.
+- `xfer:mycelium.ses_eceb3d78fffeTNxaWJuGfFG211.6~3ed6b902` **THEMIS-ASI Keogramm** — Compiler-Asset registriert (`phi:21027`); Lauf `38258632187` **success**. Das Release ist frisch (PATH-`xfer` kennt jetzt `migrate`/`manifest`): bitte `xfer migrate --line river --write` auf den eigenen Block und den Token falten (`xfer fold xfer:mycelium.ses_eceb3d78fffeTNxaWJuGfFG211.6~3ed6b902 --line mycelium --into river`).
 [manifest n=1 root=d58815b4]
 
 ## LOCK
