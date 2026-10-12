@@ -32836,6 +32836,42 @@ terms CC-BY-4.0 https://zenodo.org/records/7460116
 format tar_fits
 origin https://zenodo.org/api/records/7460116/files/jades-early-galaxies.tar/content
 no-cadence
+field JADES-GS-z10-0/data_f090w.0.mean JADES-GS-z10-0/data_f090w.0.mean inverse-square em njy 33554432.0 0.0 0.0 3.323078e+14
+field JADES-GS-z10-0/data_f115w.0.mean JADES-GS-z10-0/data_f115w.0.mean inverse-square em njy 33554432.0 0.0 0.0 2.597268e+14
+field JADES-GS-z10-0/data_f150w.0.mean JADES-GS-z10-0/data_f150w.0.mean inverse-square em njy 33554432.0 0.0 0.0 1.997626e+14
+field JADES-GS-z10-0/data_f200w.0.mean JADES-GS-z10-0/data_f200w.0.mean inverse-square em njy 33554432.0 0.0 0.0 1.507519e+14
+field JADES-GS-z10-0/data_f277w.0.mean JADES-GS-z10-0/data_f277w.0.mean inverse-square em njy 33554432.0 0.0 0.0 1.085520e+14
+field JADES-GS-z10-0/data_f335m.0.mean JADES-GS-z10-0/data_f335m.0.mean inverse-square em njy 33554432.0 0.0 0.0 8.916908e+13
+field JADES-GS-z10-0/data_f356w.0.mean JADES-GS-z10-0/data_f356w.0.mean inverse-square em njy 33554432.0 0.0 0.0 8.401403e+13
+field JADES-GS-z10-0/data_f410m.0.mean JADES-GS-z10-0/data_f410m.0.mean inverse-square em njy 33554432.0 0.0 0.0 7.343826e+13
+field JADES-GS-z10-0/data_f444w.0.mean JADES-GS-z10-0/data_f444w.0.mean inverse-square em njy 33554432.0 0.0 0.0 6.806790e+13
+field JADES-GS-z11-0/data_f090w.0.mean JADES-GS-z11-0/data_f090w.0.mean inverse-square em njy 33554432.0 0.0 0.0 3.323078e+14
+field JADES-GS-z11-0/data_f115w.0.mean JADES-GS-z11-0/data_f115w.0.mean inverse-square em njy 33554432.0 0.0 0.0 2.597268e+14
+field JADES-GS-z11-0/data_f150w.0.mean JADES-GS-z11-0/data_f150w.0.mean inverse-square em njy 33554432.0 0.0 0.0 1.997626e+14
+field JADES-GS-z11-0/data_f200w.0.mean JADES-GS-z11-0/data_f200w.0.mean inverse-square em njy 33554432.0 0.0 0.0 1.507519e+14
+field JADES-GS-z11-0/data_f277w.0.mean JADES-GS-z11-0/data_f277w.0.mean inverse-square em njy 33554432.0 0.0 0.0 1.085520e+14
+field JADES-GS-z11-0/data_f335m.0.mean JADES-GS-z11-0/data_f335m.0.mean inverse-square em njy 33554432.0 0.0 0.0 8.916908e+13
+field JADES-GS-z11-0/data_f356w.0.mean JADES-GS-z11-0/data_f356w.0.mean inverse-square em njy 33554432.0 0.0 0.0 8.401403e+13
+field JADES-GS-z11-0/data_f410m.0.mean JADES-GS-z11-0/data_f410m.0.mean inverse-square em njy 33554432.0 0.0 0.0 7.343826e+13
+field JADES-GS-z11-0/data_f444w.0.mean JADES-GS-z11-0/data_f444w.0.mean inverse-square em njy 33554432.0 0.0 0.0 6.806790e+13
+field JADES-GS-z12-0/data_f090w.0.mean JADES-GS-z12-0/data_f090w.0.mean inverse-square em njy 33554432.0 0.0 0.0 3.323078e+14
+field JADES-GS-z12-0/data_f115w.0.mean JADES-GS-z12-0/data_f115w.0.mean inverse-square em njy 33554432.0 0.0 0.0 2.597268e+14
+field JADES-GS-z12-0/data_f150w.0.mean JADES-GS-z12-0/data_f150w.0.mean inverse-square em njy 33554432.0 0.0 0.0 1.997626e+14
+field JADES-GS-z12-0/data_f200w.0.mean JADES-GS-z12-0/data_f200w.0.mean inverse-square em njy 33554432.0 0.0 0.0 1.507519e+14
+field JADES-GS-z12-0/data_f277w.0.mean JADES-GS-z12-0/data_f277w.0.mean inverse-square em njy 33554432.0 0.0 0.0 1.085520e+14
+field JADES-GS-z12-0/data_f335m.0.mean JADES-GS-z12-0/data_f335m.0.mean inverse-square em njy 33554432.0 0.0 0.0 8.916908e+13
+field JADES-GS-z12-0/data_f356w.0.mean JADES-GS-z12-0/data_f356w.0.mean inverse-square em njy 33554432.0 0.0 0.0 8.401403e+13
+field JADES-GS-z12-0/data_f410m.0.mean JADES-GS-z12-0/data_f410m.0.mean inverse-square em njy 33554432.0 0.0 0.0 7.343826e+13
+field JADES-GS-z12-0/data_f444w.0.mean JADES-GS-z12-0/data_f444w.0.mean inverse-square em njy 33554432.0 0.0 0.0 6.806790e+13
+field JADES-GS-z13-0/data_f090w.0.mean JADES-GS-z13-0/data_f090w.0.mean inverse-square em njy 33554432.0 0.0 0.0 3.323078e+14
+field JADES-GS-z13-0/data_f115w.0.mean JADES-GS-z13-0/data_f115w.0.mean inverse-square em njy 33554432.0 0.0 0.0 2.597268e+14
+field JADES-GS-z13-0/data_f150w.0.mean JADES-GS-z13-0/data_f150w.0.mean inverse-square em njy 33554432.0 0.0 0.0 1.997626e+14
+field JADES-GS-z13-0/data_f200w.0.mean JADES-GS-z13-0/data_f200w.0.mean inverse-square em njy 33554432.0 0.0 0.0 1.507519e+14
+field JADES-GS-z13-0/data_f277w.0.mean JADES-GS-z13-0/data_f277w.0.mean inverse-square em njy 33554432.0 0.0 0.0 1.085520e+14
+field JADES-GS-z13-0/data_f335m.0.mean JADES-GS-z13-0/data_f335m.0.mean inverse-square em njy 33554432.0 0.0 0.0 8.916908e+13
+field JADES-GS-z13-0/data_f356w.0.mean JADES-GS-z13-0/data_f356w.0.mean inverse-square em njy 33554432.0 0.0 0.0 8.401403e+13
+field JADES-GS-z13-0/data_f410m.0.mean JADES-GS-z13-0/data_f410m.0.mean inverse-square em njy 33554432.0 0.0 0.0 7.343826e+13
+field JADES-GS-z13-0/data_f444w.0.mean JADES-GS-z13-0/data_f444w.0.mean inverse-square em njy 33554432.0 0.0 0.0 6.806790e+13
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/llr.bin
 terms CC-BY-4.0 https://zenodo.org/records/7818557
@@ -33031,13 +33067,17 @@ ttl 315360000
 field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/POS_M1_ENC_42SEC.DAT
+terms unknown https://pds-ppi.igpp.ucla.edu/
 origin https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.DAT
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 118ae340514445280b215f79a80afdd3cf600012c25b7dec409fd90e4b6f320c
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/POS_M1_ENC_42SEC.LBL
+terms unknown https://pds-ppi.igpp.ucla.edu/
 origin https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 745ce7de82cc4e9156bb2bfade1844a5e2d7a30d86dcd7139e6d7df577ea2fb8
 no-cadence
+
+decline commercial https://wwlln.net/climate/th_yr/data/WWLLN_th_2025.nc.zip
