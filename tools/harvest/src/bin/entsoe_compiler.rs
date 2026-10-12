@@ -126,9 +126,9 @@ fn fetch(url: &str) -> Result<Vec<u8>, String> {
         .to_string();
     let body = &raw[..split];
     if !code.starts_with('2') {
-        let head = String::from_utf8_lossy(&body[..body.len().min(200)]);
+        let head = String::from_utf8_lossy(&body[..body.len().min(1500)]);
         let head = head.replace('\n', " ").replace('\r', " ");
-        return Err(format!("HTTP {code}: {head}"));
+        return Err(format!("HTTP {code} ({} B): {head}", body.len()));
     }
     if body.is_empty() {
         return Err("response carries no bytes".to_string());
