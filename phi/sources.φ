@@ -31290,6 +31290,7 @@ force em
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/bicepkeck.org/bk18_bandpowers_20210607.txt
+terms CC-BY-4.0 http://bicepkeck.org/bk18_2021_release.html
 origin http://bicepkeck.org/BK18_datarelease/BK18_bandpowers_20210607.txt
 no-cadence
 
@@ -31383,6 +31384,7 @@ at earth
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ser.im-ldi.com/mariner_m10_edr.bin
+terms PD https://ser.im-ldi.com/M10/
 format mariner_m10_edr
 origin https://ser.im-ldi.com/M10/MVM/mvm_0001.tgz
 compiler tools/harvest/src/bin/mariner_m10_edr_compiler.rs
@@ -32233,6 +32235,7 @@ format zcta_gazetteer
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/jades_early_galaxies.tar
+terms CC-BY-4.0 https://zenodo.org/records/7460116
 origin https://zenodo.org/api/records/7460116/files/jades-early-galaxies.tar/content
 no-cadence
 
@@ -32258,6 +32261,8 @@ force em
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/uncover_dr4_sps_catalog.fits
+terms CC-BY-4.0 https://zenodo.org/records/14281664
+format fits
 origin https://zenodo.org/api/records/14281664/files/UNCOVER_DR4_SPS_catalog.fits/content
 no-cadence
 
