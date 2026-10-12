@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 334 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: 911461888543067753f9727ac75cb9783105e1c57827604723a114cd2380e020
+  sha256: 19c4af6861ee448f77041173a7c5d92af1287ebb40ae73787cced94c3ad97783
   status: live
 -->
 # Handover — Mountain-Folge 334 (2026-10-12)
@@ -47,8 +47,17 @@ gefaltet). **Jeder offene Punkt nennt seine Datei(en)/Pfade.**
   **Kontext:** die nicht-Modus-Kataloge (266 Hosts) sind in `state/mountain/kataloge-266.tsv`
   nach Familie + Zugriffsroute gruppiert (Astronomie/TAP 49 · Literatur/OAI-PMH u. a. 47 ·
   Erdbeob/STAC 32 · Bio/REST 22 · Geophysik/FDSN 15 · Ozean/ERDDAP 14 · Gesundheit 12 ·
-  Verkehr/GTFS 9 · Energie 6 · LinkedData-Infra 60); `--stac` wäre die Verallgemeinerung von
-  `--copernicus`, `--erddap` erst bei Bedarf.
+  Verkehr/GTFS 9 · Energie 6 · LinkedData-Infra 60); daraus sind `--stac` (Verallgemeinerung
+  von `--copernicus`) und `--erddap` als neue Modi gebaut (s. nächster Punkt).
+- **`--stac` + `--erddap` als neue Modi gebaut (Operator-Wort).** `tools/utils/src/bin/archive_search/stac.rs`
+  und `erddap.rs`: `--stac "endpoint=<url> [collection=<id>] [bbox=w,s,e,n] [datetime=a/b]"`
+  liest die STAC-API `/search` und gibt `url + collection/id/datetime`; `--erddap "server=<url>
+  searchFor=<kw> [itemsPerPage=N]"` liest ERDDAP `search/advanced.json` und gibt `url (tabledap/
+  griddap) + title/institution/id`. Verdrahtet (2 `mod`-Deklarationen, 2 CLI-Flags, `QUERY_MODES`
+  + Mode-Count-Test, Help-Liste + Beschreibungen), je 3 Unit-Tests. `cargo build -p omegaflow-utils
+  --bin archive_search` 0/0, `rustfmt` sauber; verifiziert am Debug-Bin gegen
+  `earth-search.aws.element84.com` (STAC: Sentinel-2-Items) und `erddap.emodnet-physics.eu`
+  (ERDDAP: Salinity-Datasets mit Endpunkt+Einheit).
 - **mariner10-Ephemeride geschlossen**: `phi:32031` trägt sha `67949cb6…` == die geheilte
   Sun-Ketten-Komposition (Mycelium-Lauf `38278478615` success).
 - **Stale WWLLN-Zeile korrigiert**: `survey-2026-09-07-weberin-thread-matrix.md:168`

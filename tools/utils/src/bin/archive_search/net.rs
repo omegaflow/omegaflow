@@ -3744,6 +3744,8 @@ const QUERY_MODES: &[&str] = &[
     "copernicus",
     "vires",
     "oai-pmh",
+    "stac",
+    "erddap",
 ];
 
 pub fn query_mode_count() -> usize {
@@ -4218,6 +4220,8 @@ pub fn run_lines_max(
         "copernicus" => crate::copernicus::copernicus_lines(query, max),
         "vires" => crate::vires::vires_lines(query, max),
         "oai-pmh" => crate::oai_pmh::oai_pmh_lines(query, max),
+        "stac" => crate::stac::stac_lines(query, max),
+        "erddap" => crate::erddap::erddap_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         "wayback-available" => wayback_available_lines(query),
@@ -4468,6 +4472,8 @@ mod tests {
             "copernicus",
             "vires",
             "oai-pmh",
+            "stac",
+            "erddap",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
