@@ -3524,6 +3524,119 @@ fn fits_to_json(buf: &[u8]) -> Option<JsonVal> {
     None
 }
 
+fn fits_image_bands_to_json(buf: &[u8], member: &str) -> Option<JsonVal> {
+    let mut off = 0usize;
+    let mut rows: Vec<JsonVal> = Vec::new();
+    for _ in 0..32 {
+        let Some((header, _)) = crate::archivar::fits::FitsHeader::parse(buf, off) else {
+            break;
+        };
+        if header.value("XTENSION") == Some("'BINTABLE'") {
+            let Some((_, next)) = crate::archivar::fits::FitsTable::parse(buf, off) else {
+                break;
+            };
+            if next <= off || next >= buf.len() {
+                break;
+            }
+            off = next;
+            continue;
+        }
+        let Some((img, next)) = crate::archivar::fits::FitsImage::parse(buf, off) else {
+            break;
+        };
+        let unit = header
+            .str_unescaped("BUNIT")
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty());
+        for b in 0..img.dims[2] {
+            let mut sum = 0.0f64;
+            let mut min = f64::INFINITY;
+            let mut max = f64::NEG_INFINITY;
+            let mut count = 0usize;
+            for y in 0..img.dims[1] {
+                for x in 0..img.dims[0] {
+                    if let Some(v) = img.value_f64(buf, [x, y, b]).filter(|v| v.is_finite()) {
+                        sum += v;
+                        if v < min {
+                            min = v;
+                        }
+                        if v > max {
+                            max = v;
+                        }
+                        count += 1;
+                    }
+                }
+            }
+            if count == 0 {
+                continue;
+            }
+            let band = match (&unit, img.dims[2]) {
+                (Some(u), 1) => u.clone(),
+                _ => format!("plane_{b}"),
+            };
+            let mut obj = HashMap::new();
+            obj.insert("file".to_string(), JsonVal::Str(member.to_string()));
+            obj.insert("band".to_string(), JsonVal::Str(band));
+            obj.insert("mean".to_string(), JsonVal::Num(sum / count as f64));
+            obj.insert("min".to_string(), JsonVal::Num(min));
+            obj.insert("max".to_string(), JsonVal::Num(max));
+            obj.insert("npix".to_string(), JsonVal::Num(count as f64));
+            rows.push(JsonVal::Obj(obj));
+        }
+        if next <= off || next >= buf.len() {
+            break;
+        }
+        off = next;
+    }
+    if rows.is_empty() {
+        None
+    } else {
+        Some(JsonVal::Arr(rows))
+    }
+}
+
+fn tar_fits_member_key(name: &str) -> String {
+    let base = name.rsplit('/').next().unwrap_or(name);
+    let lower = base.to_ascii_lowercase();
+    for ext in [".fits", ".fit", ".fts"] {
+        if let Some(stem) = lower.strip_suffix(ext) {
+            return base[..stem.len()].to_string();
+        }
+    }
+    base.to_string()
+}
+
+fn tar_fits_bytes_to_json(tar: &[u8], wanted: &[String]) -> Option<JsonVal> {
+    let members = crate::archivar::inflate::tar_members(tar)?;
+    let mut out: HashMap<String, JsonVal> = HashMap::new();
+    for m in members {
+        let key = tar_fits_member_key(&m.name);
+        if !wanted.is_empty() && !wanted.iter().any(|w| w == &key) {
+            continue;
+        }
+        if out.contains_key(&key) {
+            continue;
+        }
+        let Some(data) = tar.get(m.start..m.end) else {
+            continue;
+        };
+        let json = fits_to_json(data).or_else(|| fits_image_bands_to_json(data, &m.name));
+        if let Some(j) = json {
+            out.insert(key, j);
+        }
+    }
+    if out.is_empty() {
+        None
+    } else {
+        Some(JsonVal::Obj(out))
+    }
+}
+
+fn tar_fits_to_json(path: &str, wanted: &[String]) -> Option<JsonVal> {
+    let tar = std::fs::read(path).ok()?;
+    tar_fits_bytes_to_json(&tar, wanted)
+}
+
 fn field_tau(src: &SourceConfig, key: &str, body: &str) -> Option<f64> {
     if let Some(secs) = derive_ttl(&src.url, body, &HashMap::new()) {
         return Some(secs as f64);
@@ -4616,6 +4729,14 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             .filter_map(|fc| fc.key.split('.').next().map(str::to_string))
             .collect();
         tar_gz_yaml_to_json(body, &wanted)
+    } else if src.format == "tar_fits" {
+        let wanted: Vec<String> = src
+            .extracts
+            .iter()
+            .flat_map(extract_fields)
+            .filter_map(|fc| fc.key.split('.').next().map(str::to_string))
+            .collect();
+        tar_fits_to_json(body, &wanted)
     } else {
         None
     };
@@ -6505,36 +6626,39 @@ pub fn extract(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
     result
 }
 
+const INSTANT_TIME_KEYS: [&str; 6] = ["time_tag", "time", "timestamp", "epoch", "t", "date"];
+
+fn instant_of(v: &JsonVal, lsk: &LeapSeconds) -> Option<f64> {
+    match v {
+        JsonVal::Str(s) => parse_iso_tdb(s, lsk),
+        JsonVal::Num(n) => lsk.unix_to_tdb(*n),
+        _ => None,
+    }
+}
+
 pub fn series_epoch_of(el: &JsonVal, lsk: &LeapSeconds) -> Option<f64> {
     match el {
         JsonVal::Obj(map) => {
+            for k in INSTANT_TIME_KEYS {
+                if let Some(v) = map.get(k)
+                    && let Some(t) = instant_of(v, lsk)
+                {
+                    return Some(t);
+                }
+            }
             for (k, v) in map {
-                if !is_time_key(k) {
+                if k.to_lowercase().contains("avg") || !is_time_key(k) {
                     continue;
                 }
-                match v {
-                    JsonVal::Str(s) => {
-                        if let Some(t) = parse_iso_tdb(s, lsk) {
-                            return Some(t);
-                        }
-                    }
-                    JsonVal::Num(n) => {
-                        if let Some(t) = lsk.unix_to_tdb(*n) {
-                            return Some(t);
-                        }
-                    }
-                    _ => {}
+                if let Some(t) = instant_of(v, lsk) {
+                    return Some(t);
                 }
             }
             None
         }
         JsonVal::Arr(row) => {
             let first = row.first()?;
-            match first {
-                JsonVal::Str(s) => parse_iso_tdb(s, lsk),
-                JsonVal::Num(n) => lsk.unix_to_tdb(*n),
-                _ => None,
-            }
+            instant_of(first, lsk)
         }
         _ => None,
     }
@@ -7911,5 +8035,101 @@ mod blinkverse_frb_tests {
         assert_eq!(channels.len(), 2);
         assert!(matches!(channels[1].0.position, Position::Source));
         assert!(channels.iter().all(|(c, _)| c.value.is_finite()));
+    }
+}
+
+#[cfg(test)]
+mod tar_fits_tests {
+    use super::*;
+
+    fn card(kw: &str, value: &str) -> [u8; 80] {
+        let mut card = [b' '; 80];
+        let k = kw.as_bytes();
+        card[..k.len().min(8)].copy_from_slice(&k[..k.len().min(8)]);
+        card[8] = b'=';
+        let v = value.as_bytes();
+        let n = v.len().min(60);
+        card[10..10 + n].copy_from_slice(&v[..n]);
+        card
+    }
+
+    fn fits_image() -> Vec<u8> {
+        let mut buf: Vec<u8> = Vec::new();
+        let mut header: Vec<u8> = Vec::new();
+        header.extend_from_slice(&card("SIMPLE", "T"));
+        header.extend_from_slice(&card("BITPIX", "-32"));
+        header.extend_from_slice(&card("NAXIS", "2"));
+        header.extend_from_slice(&card("NAXIS1", "2"));
+        header.extend_from_slice(&card("NAXIS2", "2"));
+        header.extend_from_slice(&card("BUNIT", "'K'"));
+        header.extend_from_slice(&card("END", ""));
+        while !header.len().is_multiple_of(2880) {
+            header.extend_from_slice(&[b' '; 80]);
+        }
+        buf.extend_from_slice(&header);
+        for v in [1.0f32, 2.0, 3.0, 4.0] {
+            buf.extend_from_slice(&v.to_be_bytes());
+        }
+        while !buf.len().is_multiple_of(2880) {
+            buf.push(0);
+        }
+        buf
+    }
+
+    fn tar_header(name: &str, size: usize) -> [u8; 512] {
+        let mut h = [0u8; 512];
+        h[..name.len()].copy_from_slice(name.as_bytes());
+        let octal = format!("{size:011o}");
+        h[124..135].copy_from_slice(octal.as_bytes());
+        h[156] = b'0';
+        h[257..262].copy_from_slice(b"ustar");
+        h[148..156].fill(b' ');
+        let sum: u32 = h.iter().map(|&b| b as u32).sum();
+        let checksum = format!("{sum:06o}");
+        h[148..154].copy_from_slice(checksum.as_bytes());
+        h[154] = 0;
+        h[155] = b' ';
+        h
+    }
+
+    fn tar_of(members: &[(&str, Vec<u8>)]) -> Vec<u8> {
+        let mut tar = Vec::new();
+        for (name, data) in members {
+            tar.extend_from_slice(&tar_header(name, data.len()));
+            tar.extend_from_slice(data);
+            tar.resize(tar.len().div_ceil(512) * 512, 0);
+        }
+        tar.extend_from_slice(&[0u8; 1024]);
+        tar
+    }
+
+    #[test]
+    fn tar_fits_ingests_a_plain_tar_image_member() {
+        let tar = tar_of(&[("JADES-GS-z13-0-F444W.fits", fits_image())]);
+        let json = tar_fits_bytes_to_json(&tar, &[]).expect("the tar ingests");
+        let JsonVal::Obj(map) = &json else {
+            panic!("the tar yields an object keyed by member")
+        };
+        let member = map.get("JADES-GS-z13-0-F444W").expect("the member key");
+        let JsonVal::Arr(rows) = member else {
+            panic!("the member yields band rows")
+        };
+        assert_eq!(rows.len(), 1);
+        assert_eq!(jnum(&rows[0], "mean"), Some(2.5));
+        assert_eq!(jnum(&rows[0], "npix"), Some(4.0));
+        assert_eq!(jstr(&rows[0], "band").as_deref(), Some("K"));
+    }
+
+    #[test]
+    fn tar_fits_skips_a_member_that_carries_no_fits() {
+        let tar = tar_of(&[("readme.txt", b"abc".to_vec())]);
+        assert!(tar_fits_bytes_to_json(&tar, &[]).is_none());
+    }
+
+    #[test]
+    fn tar_fits_honors_the_wanted_member_filter() {
+        let tar = tar_of(&[("F444W.fits", fits_image())]);
+        assert!(tar_fits_bytes_to_json(&tar, &["F444W".to_string()]).is_some());
+        assert!(tar_fits_bytes_to_json(&tar, &["F090W".to_string()]).is_none());
     }
 }

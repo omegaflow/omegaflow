@@ -14,18 +14,16 @@ pub fn component_name(comp: u32) -> Option<&'static str> {
 }
 
 pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
-    parse_bin(bytes).map(|records| {
-        records
-            .into_iter()
-            .map(|(day, flux_wm2_hz)| {
-                (
-                    day as f64 * SECONDS_PER_DAY,
-                    flux_wm2_hz * SFU_PER_WM2_HZ,
-                    COMP_FLUX,
-                )
-            })
-            .collect()
-    })
+    let records = parse_bin(bytes)?;
+    let lsk = crate::archivar::embedded_lsk()?;
+    let mut out = Vec::with_capacity(records.len());
+    for (day, flux_wm2_hz) in records {
+        let Some(t) = lsk.unix_to_tdb(day as f64 * SECONDS_PER_DAY) else {
+            continue;
+        };
+        out.push((t, flux_wm2_hz * SFU_PER_WM2_HZ, COMP_FLUX));
+    }
+    Some(out)
 }
 
 pub fn write_bin(records: &[(i64, f64)]) -> Vec<u8> {
