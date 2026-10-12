@@ -32386,6 +32386,13 @@ compiler tools/harvest/src/bin/zcta_gazetteer_compiler.rs
 format zcta_gazetteer
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/BC430.tar.gz
+terms CC-BY-4.0 https://zenodo.org/records/3558850
+origin https://zenodo.org/api/records/3558850/files/BC430.tar.gz/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 0b2da752990e2d92a46622cb49efd7bcea758ebcb5f47300d8413aad18949959
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/jades_early_galaxies.tar
 terms CC-BY-4.0 https://zenodo.org/records/7460116
 format tar_fits
