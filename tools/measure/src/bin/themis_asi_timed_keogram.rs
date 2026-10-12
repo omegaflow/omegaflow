@@ -1,5 +1,6 @@
 use omegaflow::lsk::days_from_civil;
-use std::path::PathBuf;
+use omegaflow_measure::idl_save;
+use std::path::{Path, PathBuf};
 
 const FRAME_W: usize = 256;
 const FRAME_H: usize = 256;
@@ -109,7 +110,60 @@ fn profile_of(block: &[u8]) -> Vec<u16> {
     profile
 }
 
+fn meridian_distance(azimuth_deg: f64) -> f64 {
+    let period = 180.0;
+    let folded = azimuth_deg.rem_euclid(period);
+    folded.min(period - folded)
+}
+
+fn meridian_column(azimuth_row: &[f32]) -> Option<usize> {
+    let mut best_col = 0usize;
+    let mut best_distance = f64::INFINITY;
+    for (col, &az) in azimuth_row.iter().enumerate() {
+        let distance = meridian_distance(az as f64);
+        if distance.is_finite() && distance < best_distance {
+            best_distance = distance;
+            best_col = col;
+        }
+    }
+    if best_distance.is_finite() {
+        Some(best_col)
+    } else {
+        None
+    }
+}
+
+fn meridian_columns(azimuth: &[f32], w: usize, h: usize) -> Vec<Option<usize>> {
+    let mut cols = Vec::with_capacity(h);
+    for row in 0..h {
+        cols.push(meridian_column(&azimuth[row * w..row * w + w]));
+    }
+    cols
+}
+
+fn profile_of_meridian(block: &[u8], cols: &[Option<usize>]) -> Vec<u16> {
+    let mut profile = Vec::with_capacity(FRAME_H);
+    for (row, &col) in cols.iter().enumerate() {
+        match col {
+            Some(c) => {
+                let i = (row * FRAME_W + c) * 2;
+                profile.push(((block[i] as u16) << 8) | block[i + 1] as u16);
+            }
+            None => profile.push(0),
+        }
+    }
+    profile
+}
+
 fn parse_frames(data: &[u8], name: &str) -> Result<Vec<Frame>, String> {
+    parse_frames_with(data, name, None)
+}
+
+fn parse_frames_with(
+    data: &[u8],
+    name: &str,
+    meridian_cols: Option<&[Option<usize>]>,
+) -> Result<Vec<Frame>, String> {
     let mut frames = Vec::new();
     let mut pos = 0usize;
     let mut index = 0usize;
@@ -172,7 +226,10 @@ fn parse_frames(data: &[u8], name: &str) -> Result<Vec<Frame>, String> {
                 data.len() - pos
             ));
         }
-        let profile = profile_of(&data[pos..pos + FRAME_BYTES]);
+        let profile = match meridian_cols {
+            Some(cols) => profile_of_meridian(&data[pos..pos + FRAME_BYTES], cols),
+            None => profile_of(&data[pos..pos + FRAME_BYTES]),
+        };
         pos += FRAME_BYTES;
         frames.push(Frame { epoch, profile });
     }
@@ -259,6 +316,61 @@ fn main() {
         }
     };
 
+    let elevation_out = arg_value(&args, "--elevation-out");
+    let skymap_path = arg_value(&args, "--skymap");
+    if elevation_out.is_some() && skymap_path.is_none() {
+        eprintln!("themis_asi_timed_keogram: --elevation-out needs --skymap <path.sav>");
+        std::process::exit(2);
+    }
+    let meridian_cols = match &skymap_path {
+        Some(p) => {
+            let skymap = match idl_save::load_skymap(Path::new(p)) {
+                Ok(s) => s,
+                Err(e) => {
+                    eprintln!("themis_asi_timed_keogram: skymap {p} unreadable: {e}");
+                    std::process::exit(2);
+                }
+            };
+            if skymap.full_w != FRAME_W || skymap.full_h != FRAME_H {
+                eprintln!(
+                    "themis_asi_timed_keogram: skymap {p} geometry {}x{} differs from {FRAME_W}x{FRAME_H}",
+                    skymap.full_w, skymap.full_h
+                );
+                std::process::exit(2);
+            }
+            let cols = meridian_columns(&skymap.full_azimuth, skymap.full_w, skymap.full_h);
+            let off_map: Vec<usize> = cols
+                .iter()
+                .enumerate()
+                .filter(|(_, col)| col.is_none())
+                .map(|(row, _)| row)
+                .collect();
+            if let Some(out) = &elevation_out {
+                let mut text = String::new();
+                for (row, col) in cols.iter().enumerate() {
+                    let elevation_deg = match col {
+                        Some(c) => skymap.full_elevation[row * skymap.full_w + c] as f64,
+                        None => f64::NAN,
+                    };
+                    text.push_str(&format!("{elevation_deg:.6}\n"));
+                }
+                if let Err(e) = std::fs::write(out, text) {
+                    eprintln!("themis_asi_timed_keogram: {out} write void: {e}");
+                    std::process::exit(1);
+                }
+                println!("wrote {FRAME_H} meridian elevation row(s) -> {out}");
+            }
+            let rows_list: Vec<String> = off_map.iter().map(|r| r.to_string()).collect();
+            println!(
+                "off-map rows (no meridian pixel): {} [{}]",
+                off_map.len(),
+                rows_list.join(" ")
+            );
+            Some(cols)
+        }
+        None => None,
+    };
+
     let mut frames: Vec<Frame> = Vec::new();
     for path in &inputs {
         let data = match std::fs::read(path) {
@@ -271,7 +383,12 @@ fn main() {
                 std::process::exit(1);
             }
         };
-        match parse_frames(&data, &path.display().to_string()) {
+        let name = path.display().to_string();
+        let parsed = match meridian_cols.as_deref() {
+            Some(cols) => parse_frames_with(&data, &name, Some(cols)),
+            None => parse_frames(&data, &name),
+        };
+        match parsed {
             Ok(mut f) => frames.append(&mut f),
             Err(msg) => {
                 eprintln!("themis_asi_timed_keogram: {msg}");
@@ -372,5 +489,57 @@ mod tests {
             1
         );
         assert_eq!(bytes.len(), 8 + 8 + FRAME_H * 2);
+    }
+
+    #[test]
+    fn the_meridian_distance_folds_the_0_360_seam() {
+        assert_eq!(meridian_distance(0.0), 0.0);
+        assert_eq!(meridian_distance(180.0), 0.0);
+        assert_eq!(meridian_distance(360.0), 0.0);
+        assert_eq!(meridian_distance(350.0), 10.0);
+        assert_eq!(meridian_distance(190.0), 10.0);
+        assert_eq!(meridian_distance(90.0), 90.0);
+        assert_eq!(meridian_distance(270.0), 90.0);
+    }
+
+    #[test]
+    fn meridian_columns_take_the_smallest_angular_distance() {
+        let mut az = vec![90.0f32; FRAME_W * FRAME_H];
+        for row in 0..FRAME_H {
+            let target = (row * 7) % FRAME_W;
+            az[row * FRAME_W + target] = 0.0;
+        }
+        let nan_row = 5usize;
+        for col in 0..FRAME_W {
+            az[nan_row * FRAME_W + col] = f32::NAN;
+        }
+        let cols = meridian_columns(&az, FRAME_W, FRAME_H);
+        assert_eq!(cols.len(), FRAME_H);
+        for row in 0..FRAME_H {
+            let target = (row * 7) % FRAME_W;
+            if row == nan_row {
+                assert_eq!(cols[row], None);
+                continue;
+            }
+            assert_eq!(cols[row], Some(target));
+            let chosen = meridian_distance(az[row * FRAME_W + cols[row].unwrap()] as f64);
+            let least = (0..FRAME_W)
+                .map(|c| meridian_distance(az[row * FRAME_W + c] as f64))
+                .fold(f64::INFINITY, f64::min);
+            assert_eq!(chosen, least);
+        }
+    }
+
+    #[test]
+    fn meridian_columns_break_ties_to_the_smaller_column() {
+        let mut az = vec![90.0f32; FRAME_W * FRAME_H];
+        for row in 0..FRAME_H {
+            az[row * FRAME_W + 100] = 0.0;
+            az[row * FRAME_W + 200] = 0.0;
+        }
+        let cols = meridian_columns(&az, FRAME_W, FRAME_H);
+        for &col in &cols {
+            assert_eq!(col, Some(100));
+        }
     }
 }

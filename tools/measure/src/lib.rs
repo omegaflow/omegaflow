@@ -5,6 +5,7 @@ pub mod eikonal;
 pub mod fiducial;
 pub mod h0;
 pub mod iasp91;
+pub mod idl_save;
 pub mod miniseed;
 pub mod mww;
 pub mod noaa_coops;
