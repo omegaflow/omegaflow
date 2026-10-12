@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: 82eeadfa1f64b028d1e3a863540312cef73d1744b9338c15ae88bf4a82ed2125
+  sha256: e0334cd7e677358a3919b7a04dcece3451c9b18b2da6ca73d782d046ef217743
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -89,8 +89,8 @@ Punkt nennt seine Datei(en)/Pfade.**
 ### Re-Admission der lizenz-blockierten Kandidaten (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der nächste Verdikt-Pass
-- **Blockade:** die NC-Admission ist eine Operator/Rat-Frage; Admission-Zeilen je Kandidat fehlen.
-- **Braucht:** je Kandidat die Admission-/`terms`-Zeile in `phi/sources.φ` (Mountain) + `url`/`origin` (Mycelium); die NC-Kandidaten dem Operator vorlegen.
+- **Blockade:** für die NC-Kandidaten **keine** — das Haus ist NC (PolyForm NC / CC BY-NC-SA), CC BY-NC ist admissibel (Operator-Wort 2026-10-12); die übrigen Admission-Zeilen je Kandidat fehlen.
+- **Braucht:** je Kandidat die Admission-/`terms`-Zeile in `phi/sources.φ` (Mountain) + `url`/`origin` (Mycelium).
 
 ### Lizenz-Zensus — lizenzlose Blöcke durch freie Alternativen ersetzen (`xfer:future-247-3`, eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -130,7 +130,7 @@ Punkt nennt seine Datei(en)/Pfade.**
 
 ### Re-Admission — Admission-Verdikte gemessen (eigen)
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** der Register-Schreib-Pass
-- **Blockade:** die NC-Admission ist eine Operator/Rat-Frage.
+- **Blockade:** keine für die NC-Kandidaten; die übrigen Admission-Zeilen fehlen.
 - **Braucht:** je Kandidat die Admission-Zeile in `phi/sources.φ` (Mountain) + CDN (Mycelium).
 
 ### Rätsel/NIST — Directive-Kandidaten gemessen (eigen)
@@ -240,6 +240,7 @@ Origin: mountain-folge335 (2026-10-12).
 - **„gehören pdfs in data?"** | 2026-10-12 | Operator-Session (mountain 327) — nein; PDFs in `state/research/`, Datensätze in `data/`.
 - **„AFAD-Erdbeben (servisnet.afad.gov.tr) — geoblockt + redundant: entfernen"** · **„CMA-Wetter (weather.cma.cn) — alle Rechte vorbehalten: entfernen/ersetzen"** | 2026-10-12 | Operator-Session (future-247, gefaltet) — beide Blöcke in diesem Atom entfernt.
 - **„afad war ein lizenzthema"** | 2026-10-12 | Operator-Session (mountain 335) — AFAD-Disposition auf `decline commercial` korrigiert; die Future-Begründung „geoblockt" ist nachrangig.
+- **„INTERMAGNET/GIRO DIDBase) was ist das problem wir sind doch NC"** | 2026-10-12 | Operator-Session (mountain 335) — das Haus ist NC (PolyForm NC / CC BY-NC-SA), CC BY-NC ist admissibel; keine Operator/Rat-Frage.
 
 ## Abschluss
 
