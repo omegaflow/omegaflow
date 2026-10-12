@@ -1562,7 +1562,7 @@ pub struct Coupling {
     pub region: Option<String>,
     pub density_from: Option<DensityRef>,
     pub density_to: Option<DensityRef>,
-    pub quasi_neutral: Option<bool>,
+    pub quasi_neutral: Option<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -1591,6 +1591,32 @@ pub struct QuasiNeutralConstraint {
     pub region: String,
 }
 
+pub struct ConstraintRegistry {
+    by_name: HashMap<String, QuasiNeutralConstraint>,
+}
+
+impl ConstraintRegistry {
+    pub fn from_constraints(constraints: &[QuasiNeutralConstraint]) -> Self {
+        let mut by_name = HashMap::with_capacity(constraints.len());
+        for c in constraints {
+            if by_name.contains_key(&c.name) {
+                eprintln!("constraint refused: name {:?} already declared", c.name);
+                continue;
+            }
+            by_name.insert(c.name.clone(), c.clone());
+        }
+        Self { by_name }
+    }
+
+    pub fn get(&self, name: &str) -> Option<&QuasiNeutralConstraint> {
+        self.by_name.get(name)
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.by_name.is_empty()
+    }
+}
+
 pub struct CouplingRegistry {
     pairs: Vec<Coupling>,
     id: HashMap<(u64, u64, CouplingKind), usize>,
@@ -1604,7 +1630,11 @@ impl CouplingRegistry {
         }
     }
 
-    pub fn from_specs(specs: &[CouplingSpec], channels: &ChannelRegistry) -> CouplingRegistry {
+    pub fn from_specs(
+        specs: &[CouplingSpec],
+        channels: &ChannelRegistry,
+        constraints: &ConstraintRegistry,
+    ) -> CouplingRegistry {
         let mut reg = CouplingRegistry::with_capacity(specs.len());
         for s in specs {
             let (Some(from), Some(to)) = (channels.resolve(&s.from), channels.resolve(&s.to))
@@ -1625,6 +1655,18 @@ impl CouplingRegistry {
                 );
                 continue;
             };
+            if let Some(name) = s.quasi_neutral.as_deref() {
+                let Some(c) = constraints.get(name) else {
+                    eprintln!(
+                        "coupling refused: quasi-neutral {name:?} names no declared constraint"
+                    );
+                    continue;
+                };
+                if s.region.as_deref() != Some(c.region.as_str()) {
+                    eprintln!("coupling refused: quasi-neutral {name:?} region mismatch");
+                    continue;
+                }
+            }
             reg.register(Coupling {
                 kind: s.kind,
                 from: from.hash(),
@@ -1634,7 +1676,7 @@ impl CouplingRegistry {
                 region: s.region.clone(),
                 density_from: Some(density_from),
                 density_to: Some(density_to),
-                quasi_neutral: s.quasi_neutral.is_some().then_some(true),
+                quasi_neutral: s.quasi_neutral.clone(),
             });
         }
         reg
@@ -1733,6 +1775,31 @@ impl CouplingRegistry {
         } else {
             None
         }
+    }
+
+    pub fn charge_imbalance(
+        &self,
+        constraint: &QuasiNeutralConstraint,
+        phi: &[f32],
+        channels: &ChannelRegistry,
+    ) -> Option<f64> {
+        let mut acc = 0.0f64;
+        let mut members = 0usize;
+        for c in &self.pairs {
+            if c.quasi_neutral.as_deref() != Some(constraint.name.as_str()) {
+                continue;
+            }
+            for r in [c.density_from.as_ref(), c.density_to.as_ref()]
+                .into_iter()
+                .flatten()
+            {
+                let z = channels.descriptor(r.channel_ref)?.charge?;
+                let rho = self.density_at(r, phi, channels)? as f64;
+                acc += z * rho;
+                members += 1;
+            }
+        }
+        if members == 0 { None } else { Some(acc) }
     }
 
     pub fn exchange_resolved(
@@ -3988,7 +4055,11 @@ mod tests {
             conserves: None,
             quasi_neutral: None,
         }];
-        let reg = CouplingRegistry::from_specs(&specs, &channels);
+        let reg = CouplingRegistry::from_specs(
+            &specs,
+            &channels,
+            &ConstraintRegistry::from_constraints(&[]),
+        );
         assert_eq!(reg.len(), 1);
         let c = reg
             .coupling_of(ion.hash(), neutral.hash(), CouplingKind::IonNeutralFriction)
@@ -4023,7 +4094,197 @@ mod tests {
             conserves: None,
             quasi_neutral: None,
         }];
-        let reg = CouplingRegistry::from_specs(&specs, &channels);
+        let reg = CouplingRegistry::from_specs(
+            &specs,
+            &channels,
+            &ConstraintRegistry::from_constraints(&[]),
+        );
         assert_eq!(reg.len(), 0, "an unresolved alias builds no coupling");
+    }
+
+    #[test]
+    fn constraint_registry_refuses_a_duplicate_name() {
+        let constraints = vec![
+            QuasiNeutralConstraint {
+                name: "qn".to_string(),
+                region: "ionosphere".to_string(),
+            },
+            QuasiNeutralConstraint {
+                name: "qn".to_string(),
+                region: "magnetosphere".to_string(),
+            },
+        ];
+        let reg = ConstraintRegistry::from_constraints(&constraints);
+        assert_eq!(
+            reg.get("qn").map(|c| c.region.as_str()),
+            Some("ionosphere"),
+            "the first declaration keeps its region"
+        );
+    }
+
+    #[test]
+    fn from_specs_refuses_an_undeclared_quasi_neutral() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let ion = a_mass_descriptor();
+        let neutral = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        );
+        channels.register(ion.clone());
+        channels.register(neutral.clone());
+        channels.alias("ion", &ion);
+        channels.alias("neutral", &neutral);
+        let specs = vec![CouplingSpec {
+            kind: CouplingKind::IonNeutralFriction,
+            from: "ion".to_string(),
+            to: "neutral".to_string(),
+            rate: None,
+            density_from: DensityRefSpec {
+                alias: "ion".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            density_to: DensityRefSpec {
+                alias: "neutral".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            region: Some("ionosphere".to_string()),
+            conserves: None,
+            quasi_neutral: Some("missing".to_string()),
+        }];
+        let constraints = ConstraintRegistry::from_constraints(&[]);
+        let reg = CouplingRegistry::from_specs(&specs, &channels, &constraints);
+        assert_eq!(reg.len(), 0, "an undeclared constraint builds no coupling");
+    }
+
+    #[test]
+    fn from_specs_refuses_a_quasi_neutral_region_mismatch() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let ion = a_mass_descriptor();
+        let neutral = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        );
+        channels.register(ion.clone());
+        channels.register(neutral.clone());
+        channels.alias("ion", &ion);
+        channels.alias("neutral", &neutral);
+        let constraints = ConstraintRegistry::from_constraints(&[QuasiNeutralConstraint {
+            name: "qn".to_string(),
+            region: "ionosphere".to_string(),
+        }]);
+        let mut spec = CouplingSpec {
+            kind: CouplingKind::IonNeutralFriction,
+            from: "ion".to_string(),
+            to: "neutral".to_string(),
+            rate: None,
+            density_from: DensityRefSpec {
+                alias: "ion".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            density_to: DensityRefSpec {
+                alias: "neutral".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            region: Some("magnetosphere".to_string()),
+            conserves: None,
+            quasi_neutral: Some("qn".to_string()),
+        };
+        let reg = CouplingRegistry::from_specs(&[spec.clone()], &channels, &constraints);
+        assert_eq!(reg.len(), 0, "a mismatched region builds no coupling");
+        spec.region = Some("ionosphere".to_string());
+        let reg = CouplingRegistry::from_specs(&[spec], &channels, &constraints);
+        assert_eq!(reg.len(), 1, "a matching region builds the coupling");
+    }
+
+    #[test]
+    fn charge_imbalance_sums_charge_times_density() {
+        let mut channels = ChannelRegistry::with_capacity(2);
+        let ion = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        )
+        .with_charge(Some(1.0))
+        .with_alias(Some("ion".to_string()));
+        let neutral = ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Momentum,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            Medium::Fluid,
+            Domain::Unspecified,
+            Boundary::None,
+            "1 / m3",
+        )
+        .with_charge(Some(-1.0))
+        .with_alias(Some("neutral".to_string()));
+        let ion_h = ion.hash();
+        let neutral_h = neutral.hash();
+        channels.register(ion.clone());
+        channels.register(neutral.clone());
+        channels.alias("ion", &ion);
+        channels.alias("neutral", &neutral);
+        let specs = vec![CouplingSpec {
+            kind: CouplingKind::IonNeutralFriction,
+            from: "ion".to_string(),
+            to: "neutral".to_string(),
+            rate: None,
+            density_from: DensityRefSpec {
+                alias: "ion".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            density_to: DensityRefSpec {
+                alias: "neutral".to_string(),
+                kind: DensityKind::Mass,
+                species_mass: None,
+            },
+            region: Some("ionosphere".to_string()),
+            conserves: None,
+            quasi_neutral: Some("qn".to_string()),
+        }];
+        let constraints = ConstraintRegistry::from_constraints(&[QuasiNeutralConstraint {
+            name: "qn".to_string(),
+            region: "ionosphere".to_string(),
+        }]);
+        let reg = CouplingRegistry::from_specs(&specs, &channels, &constraints);
+        let mut phi = vec![0.0f32; channels.len()];
+        phi[channels.index_of(ion_h).expect("ion resolves")] = 3.0;
+        phi[channels.index_of(neutral_h).expect("neutral resolves")] = 3.0;
+        let constraint = constraints.get("qn").expect("qn is declared");
+        assert_eq!(
+            reg.charge_imbalance(constraint, &phi, &channels),
+            Some(0.0),
+            "1.0·3.0 + (-1.0)·3.0 sums to zero"
+        );
     }
 }
