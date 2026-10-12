@@ -31626,6 +31626,7 @@ url https://github.com/omegaflow/sources/releases/download/planetarymaps.usgs.go
 terms PD https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 origin https://planetarymaps.usgs.gov/mosaic/Mercury_M1_M2_M3_M10_mosaic_global_2010.tif
 compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 324c0e497570f908db6a85d4e4823a9b76da1f676d0ecdb1ba8f67559e14e52f
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/planetarymaps.usgs.gov/Mercury_MESSENGER_MDIS_Basemap_BDR_Mosaic_Global_166m.tif
