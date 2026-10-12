@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (ENTSØ-E-WAF-Messung, NIST-Abschluss, adressierte Faltungen, Stehender Pass)
   class: handover
   date: 2026-10-12
-  sha256: 2aa6956da76e5756a9b1000faae06d0230fcc7759e6613b2ad309da158f0f969
+  sha256: 6d96e7e8bcc617f3d5333183da2d6bf8ace51e75e22caa9f924c1aa2d710a02f
   status: live
 -->
 # Handover — Mycelium-Folge 326 (2026-10-12)
@@ -74,6 +74,7 @@ Prosa-Träger `tools-map.md` (`--orphan-docs` = 0).
 
 ### Sonke/Robinson-Tabellen 1–8 — nicht registriert (gefaltet mountain-327)
 - **Status:** blockiert | **Bindung:** eigen
+- **Trigger:** — (kein externes Ereignis; hängt an der ungemessenen Quelle)
 - **Lage:** (gemessen 2026-10-12 via `sgrep -i sonke/sonncke/robinson phi/sources.φ`) keine Zeile; `ser.im-ldi.com/M10/` (`phi:31517`) und `M10_ISIS/camera_angles.txt` (`phi:31570`) sind registriert.
 - **Blockade:** die 8 Tabellen-URLs sind ungemessen (ohne Register-Eintrag, Quelle unbekannt).
 - **Braucht:** die URLs über `archive_search` messen (`archive_search --verdict <url>`) und je als `url`/`origin`/`compiler` registrieren.
