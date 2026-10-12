@@ -21,6 +21,7 @@ const TERMS: &[&str] = &[
     "ODbL-1.0",
     "OGL-Canada-2.0",
     "OGL-UK-3.0",
+    "etalab-2.0",
     "PD",
     "PDDL-1.0",
     "free-open",
