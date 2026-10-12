@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass — alle eigenen Registrierungs-Pflichten geschlossen: GRDC-Shard-shas aus dem Release gemessen und gefaltet, ISIS-env + ssd-jpl-raw + dsn-cdn success geprüft, adressierte Mountain-Blöcke gemessen-erledigt; die restlichen CDN-Manifestationsläufe (pvo-orse, m10-jpl-edr) sind dispatcht und werden vom Stehenden Pass gelesen, nicht mehr als Linien-Punkt getragen; Stehender Pass
   class: handover
   date: 2026-10-12
-  sha256: 25aa2d91c86bcb8d2757769ba5995a77232ba62b3070e70c4e3c44055becb41d
+  sha256: 669b1f1b60dd4b69e16925d2b7d450c03e426648c812725e7412df2ed180a896
   status: live
 -->
 # Handover — Mycelium-Folge 333 (2026-10-12)
@@ -47,7 +47,7 @@ sind gemessen erledigt (Register-Zeilen stehen); Echo:
 
 Origin: mycelium-333 (2026-10-12) — Echo `xfer:river197-6`.
 
-- **THEMIS-ASI Keogramm** — das Compiler-Asset ist registriert (`phi:21027`, `themis_asi_timed_keogram_20240510_kapu_themis21.bin`); Lauf `38258632187` **success**. Echo.
+- **THEMIS-ASI Keogramm** `xfer:river197-6` — das Compiler-Asset ist registriert (`phi:21027`, `themis_asi_timed_keogram_20240510_kapu_themis21.bin`); Lauf `38258632187` **success**. Echo.
 
 ## LOCK
 
