@@ -3746,16 +3746,33 @@ const QUERY_MODES: &[&str] = &[
     "oai-pmh",
     "stac",
     "erddap",
+    "openaire",
+    "figshare",
+    "simbad",
+    "vizier",
+    "exoplanet-archive",
 ];
 
-pub fn query_mode_count() -> usize {
-    QUERY_MODES.len()
+const PARAMETER_MODES: &[&str] = &["tap", "sparql", "oai-pmh", "stac", "erddap"];
+
+pub fn keyword_mode_count() -> usize {
+    QUERY_MODES.len() - PARAMETER_MODES.len()
 }
 
 fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<String> {
     let mut out = Vec::new();
     let mut full = Vec::new();
+    out.push(format!(
+        "=== coverage: {} of {} keyword modes run; {} parameter-arm(s) held (need endpoint=/server=): {} ===",
+        keyword_mode_count(),
+        QUERY_MODES.len(),
+        PARAMETER_MODES.len(),
+        PARAMETER_MODES.join(" ")
+    ));
     for mode in QUERY_MODES {
+        if PARAMETER_MODES.contains(mode) {
+            continue;
+        }
         let lines = run_lines_max(mode, query, env, None, max);
         let n = lines.len();
         full.push(format!("=== {} ({}) ===", mode, n));
@@ -4222,6 +4239,11 @@ pub fn run_lines_max(
         "oai-pmh" => crate::oai_pmh::oai_pmh_lines(query, max),
         "stac" => crate::stac::stac_lines(query, max),
         "erddap" => crate::erddap::erddap_lines(query, max),
+        "openaire" => crate::openaire::openaire_lines(query, max),
+        "figshare" => crate::figshare::figshare_lines(query, max),
+        "simbad" => crate::simbad::simbad_lines(query, max),
+        "vizier" => crate::vizier::vizier_lines(query, max),
+        "exoplanet-archive" => crate::exoplanet_archive::exoplanet_archive_lines(query, max),
         "sniff" => sniff_lines(query),
         "verdict" => verdict_lines(query),
         "wayback-available" => wayback_available_lines(query),
@@ -4474,11 +4496,30 @@ mod tests {
             "oai-pmh",
             "stac",
             "erddap",
+            "openaire",
+            "figshare",
+            "simbad",
+            "vizier",
+            "exoplanet-archive",
         ];
         expected.sort_unstable();
         let mut actual = QUERY_MODES.to_vec();
         actual.sort_unstable();
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn parameter_modes_are_a_subset_of_query_modes() {
+        for mode in PARAMETER_MODES {
+            assert!(
+                QUERY_MODES.contains(mode),
+                "parameter mode {mode} is not a query mode"
+            );
+        }
+        assert_eq!(
+            keyword_mode_count(),
+            QUERY_MODES.len() - PARAMETER_MODES.len()
+        );
     }
 
     #[test]

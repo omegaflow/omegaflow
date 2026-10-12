@@ -2,6 +2,7 @@ use crate::json;
 use crate::net::{get, urlencode};
 
 pub fn zenodo_lines(query: &str, max: usize) -> Vec<String> {
+    let mut total: Option<usize> = None;
     let (mut lines, stop) = crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |page| {
         let url = format!(
             "https://zenodo.org/api/records?q={}&size={}&page={}",
@@ -13,13 +14,16 @@ pub fn zenodo_lines(query: &str, max: usize) -> Vec<String> {
             Some(f) if f.status == Some(200) => match json::parse(&f.body) {
                 Some(v) => {
                     let out = parse_zenodo(&f.body);
-                    let has_more = match v
+                    let total_n = v
                         .get("hits")
                         .and_then(|h| h.get("total"))
                         .and_then(|t| t.as_scalar_string())
-                        .and_then(|t| t.parse::<usize>().ok())
-                    {
-                        Some(total) => (page + 1) * max < total,
+                        .and_then(|t| t.parse::<usize>().ok());
+                    if total_n.is_some() {
+                        total = total_n;
+                    }
+                    let has_more = match total_n {
+                        Some(n) => (page + 1) * max < n,
                         None => false,
                     };
                     (out, has_more)
@@ -40,6 +44,9 @@ pub fn zenodo_lines(query: &str, max: usize) -> Vec<String> {
         vec![format!("absent — zenodo carries no entry: {}", query)]
     } else {
         lines.push(format!("end: {}", stop.label()));
+        if let Some(n) = total {
+            lines.push(format!("total: {}", n));
+        }
         lines
     }
 }

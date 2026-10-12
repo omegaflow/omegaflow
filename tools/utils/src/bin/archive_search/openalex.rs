@@ -6,6 +6,7 @@ pub fn openalex_lines(query: &str, max: usize) -> Vec<String> {
     let mailto = crate::token::secret("OPENALEX_MAILTO");
     let api_key = crate::token::secret("OPENALEX_API_KEY");
     let mut cursor: Option<String> = Some("*".to_string());
+    let mut total: Option<usize> = None;
     let (mut lines, stop) = crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |_| {
         let mut url = format!("https://api.openalex.org/works?per-page={}", max);
         if !text.is_empty() {
@@ -42,6 +43,14 @@ pub fn openalex_lines(query: &str, max: usize) -> Vec<String> {
                         .map(str::to_string);
                     let has_more = next.is_some();
                     cursor = next;
+                    let total_n = v
+                        .get("meta")
+                        .and_then(|m| m.get("count"))
+                        .and_then(|c| c.as_scalar_string())
+                        .and_then(|c| c.parse::<usize>().ok());
+                    if total_n.is_some() {
+                        total = total_n;
+                    }
                     (out, has_more)
                 }
                 None => (
@@ -64,6 +73,9 @@ pub fn openalex_lines(query: &str, max: usize) -> Vec<String> {
         vec![format!("absent — openalex carries no entry: {}", query)]
     } else {
         lines.push(format!("end: {}", stop.label()));
+        if let Some(n) = total {
+            lines.push(format!("total: {}", n));
+        }
         lines
     }
 }

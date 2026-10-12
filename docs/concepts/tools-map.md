@@ -97,7 +97,7 @@ die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --h
 | `--crossref` | 3,48 s | | `--zenodo` | 11,6 s (101 Zeilen) |
 | `--openalex` | 10,8 s (101 Zeilen) | | `--supermag` | 3,4 s Daten / 0,54 s Inventory |
 | `--pubmed` | — (neu) | | `--europepmc` | — (neu) |
-| `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der 38 Modi — letzte Stufe, nie der erste Zug |
+| `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der Keyword-Modi (88; `--help` = Kanon) — letzte Stufe, nie der erste Zug |
 | `--awmf` | — (neu, API-Key) | | `--cochrane` | — (neu, via Europe PMC) |
 | `--mwmbl` | 0,78 s (neu, keyless JSON, kein Gate) | | | |
 | `--clinicaltrials` | — (neu) | | `--openfda` | — (neu) |
