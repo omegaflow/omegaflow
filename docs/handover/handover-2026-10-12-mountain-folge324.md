@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Mariner-10-EDR Angular-Durchmesser gebaut (Riss: EDR-Korpus Venus vs M10-Ephemeride Merkur-1, disjunkt), Vinyl-terms/format-Kanten gesetzt (mariner_m10_edr PD, UNCOVER fits, JADES/BK18), Gate-Regel prior-work-unread gebaut
   class: handover
   date: 2026-10-12
-  sha256: c4f14be83a9b2f57c908bd95e21bf6be29ba95ee8b32ff0d86f9788badfe521e
+  sha256: 0c8fea6701a88a1e5cdc8eddd398018f86d2207a931ba4fed55e7fd35ae919b0
   status: live
 -->
 # Handover — Mountain-Folge 324 (2026-10-12)
@@ -267,6 +267,13 @@ Session konsumierte `handover-2026-10-12-mountain-folge323.md` (→ `archiv/`).
 - **Lage:** (gemessen 2026-10-11 via 319-Register; unverändert)
 - **Blockade:** s. je Punkt.
 - **Braucht:** s. je Punkt; sonst der benannte Riss/Descope-Befund.
+
+### Auftrag — Eigene Ephemeriden + Kulturerbe-Rettung (eigen) · Träger von `docs/auftrag/auftrag-eigene-ephemeriden-und-kulturerbe.md`
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** das Operator-Wort zum Start der Phase 0/1
+- **Lage:** (gemessen 2026-10-12) der Auftrag liegt in `docs/auftrag/auftrag-eigene-ephemeriden-und-kulturerbe.md` (sha `c681a397…`); vom **Rat (fünf Stimmen)** gehalten — EIN Archivar, ZWEI Register (`obs`/`heritage`/`observable`/`asset`); `house_gate` → Konsistenz-Hülle (Hold-out-Gate); minimaler Operator mit `pending`; Riss 1: M10-**Bild** = Erbe, nicht Brennstoff; Riss 2: a-priori/Zustand + Asteroidenmassen reisen mit. Vom UI-Roster gehalten: `state/stimmen/2026-10-12_ui_eigene-ephemeriden-verdikt.md` (Qwen ✓, Claude ✓, Z.ai `pending`, Duck `pending`, Nemotron `pending`).
+- **Blockade:** CDDIS/Earthdata-Konto (`blocked account`, Operator/Future); ISIS-Quelle unverifiziert (USGS/PD, nicht Zenodo).
+- **Braucht:** Phase 0 (Forschungslage je Beobachtungsklasse + **voller** UI-Roster) → Phase 1 (ITRF2020/EOP + ein registrierter ODF), wie im Auftrag; Operator-Akte als Future-Queue.
 
 ## An mycelium
 
