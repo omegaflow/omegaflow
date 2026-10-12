@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: 90ed7c51bd092fc204865607acd8cc29977183806a097e8aca3f1c08d843b05b
+  sha256: a713d5464ec0f4a589c151823470949dda8a911b34de116efa9a292d3a163a5f
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -106,6 +106,14 @@ Punkt nennt seine Datei(en)/Pfade.**
 - **Trigger:** die neuen `url`/`origin`/`compiler`-Zeilen (Mycelium)
 - **Lage:** (gemessen 2026-10-13 via `register_lookup --addressed mountain`, gefaltet) der von Mountain benannte JWST-Riss (`corral`/`mast` `jwst_spectra` ≠ `exoplanetarchive`) ist gelöst: echte JWST-Spektren auf Zenodo — **DAWN JWST Archive** (80 367 NIRSpec-Spektren, CC-BY-4.0) + **MIRAGE** (CC-BY-4.0); MAST/ESA `unclear`. Ferner: `mars_dust`→Zenodo · `bl_narrowband`→Zenodo · `api.antares`→Zenodo Fink · `iris`→NASA SPASE CC0-1.0 · `lasair`→ALeRCE · `ser.im-ldi`→NASA PDS PD · Schumann→Zenodo · gis.ccc-Sensoren→ArcGIS OpenData · Radiosonde→NOAA IGRA PD · IGETS→GFZ CC-BY-4.0 · Gaia-Alerts→ESA CC-BY-NC-3.0-IGO; ArcGIS-Reste → NOAA/EPA/USGS. **Alle drei Einzel-Fälle entschieden** (`xfer:future-247-7`, s. Transport). Tabelle: `state/future/licence-alternativen-all-2026-10-12.md` (Welle 3).
 - **Braucht:** Mycelium baut die neuen `url`/`origin`/`compiler`; Mountain setzt den `decline` des alten Blocks block-scoped. (NC-`Gaia-Alerts` für das NC-Haus admissibel.)
+
+### CDN-Produzenten an das Register binden — Zulassungs-Guard (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der nächste `*-cdn.yml`-Sweep
+- **Lage:** (gemessen 2026-10-13) ~45 Workflows haben einen `schedule:`; viele sind CDN-Produzenten, die ihr Asset bei jedem Lauf neu bauen (`neptune-apdb-cdn` wöchentlich, `ps1-cdn`/`ned-cdn`/`quake-feeds-cdn`/`swpc-*-cdn` stündlich, `sources-refresh` 6-stündlich u. a.). Sie sind **register-blind** — `neptune-apdb-cdn` legt `geoazur.fr` per `gh release create` neu an, auch wenn die Quelle declinet ist (Future löschte `geoazur.fr`; der Mittwochs-Lauf hätte es wiederhergestellt). **Gebaut (Mountain):** `tools/register/src/bin/register_source_state.rs` (`live|declined|absent`; Tests; `cargo check` 0/0) + der Guard-Schritt in `.github/workflows/neptune-apdb-cdn.yml` (die zwei Upload-Steps sind `if: steps.guard.outputs.state == 'live'`); `geoazur.fr`-Blöcke zuvor declinet (23, `decline commercial`). **Prinzip:** Takedown = Register-`decline` + Guard, **nicht** Producer-Abschaltung (die Aktualität erlaubter Quellen bleibt).
+- **Politik (Operator-Wort 2026-10-13):** **declined** → komplett weg (CDN **und** CI-Job); **unklar** (`no-license-stated`) → Job bleibt (Aktualität), an die Zulassung gebunden.
+- **Erledigt:** die per-Source-Produzenten der declineten Quellen entfernt (`git rm`): `neptune-apdb-cdn` (geoazur), `fugin-cdn` + `fugin-cdn-dispatch` (FUGIN), `ia2-cdn` (ia2-tap), `lro-trk-cdn` (imbrium), `kc2g-cdn` (prop.kc2g).
+- **Braucht:** (a) die **generischen** Matrix-Produzenten prüfen (`harvest-long.yml` trägt z. B. `arm=lro_trk_compiler tag=imbrium.mit.edu`; `harvest-dispatch`), damit declinete Quellen dort ausgeschlossen sind; (b) für die **unklaren** Quellen den Guard `register_source_state <netloc>` in deren `*-cdn.yml` ziehen (Bin gebaut + getestet; `live|declined|absent`).
 
 ### Rätsel-Datenlücken (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -283,6 +291,7 @@ Origin: mountain-folge335 (2026-10-12).
 - **„das muss beides strukturell gefixt werden das geht sowas von gar nicht"** | 2026-10-13 | Operator-Session (mountain 335) — M10-CDN: (a) `ci_manage reds` gebaut (paginierter Nicht-success-Zensus, damit der Stehende Pass nichts übersieht); (b) `upload_release` benennt die 2-GiB-Grenze (Guard); der >2-GiB-Kanal bleibt Mycelium (Split/R2 + Streaming).
 - **„A"** | 2026-10-13 | Operator-Session (mountain 335) — für den >2-GiB-CDN-Kanal die **Split**-Route (HTTP-Range in <2-GiB-Teile + Manifest, GitHub-Release-`url`-Vertrag bleibt), nicht R2-primary.
 - **Drei Einzel-Entscheidungen (Welle-3-Rest)** | 2026-10-12 | Operator-Session (future-247-7) — `rpw_efield`/AMDA `decline superseded` (RPW-LIRA trägt es), `casdc.china-vo.org` LHAASO `decline superseded`, `www.kari.re.kr`/KPLO `terms kari-public-release`.
+- **„ja bitte" (CDN-Produzenten zulassungsbewusst machen)** | 2026-10-13 | Operator-Session (mountain 335) — nicht abschalten (Aktualität!), sondern an `phi/sources.φ` binden: `register_source_state`-Guard + `geoazur.fr` declinet.
 
 ## Abschluss
 

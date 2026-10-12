@@ -2183,190 +2183,6 @@ compiler tools/harvest/src/bin/gaia_sso_compiler.rs
 at sun
 ttl 86400
 
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_format.txt
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_hilton_type.instr
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_ccd_flgs
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_jpl_nptsobs
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_photo_nik
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_besa
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_camb
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_cape
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_golo
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_gren
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_gtok
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_nice
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_nik
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_pari
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_radc
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_stra
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_tky
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_toul
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_uccl
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_usno
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_neptune_transit_usno_urss
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_obslist.opt
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/geoazur.fr/apdb_ref_opt.txt
-terms all-rights-reserved https://www.geoazur.fr/
-format apdb
-origin https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
-compiler tools/harvest/src/bin/neptune_apdb_manifestor.rs
-at sun
-ttl 86400
-
 url https://github.com/omegaflow/sources/releases/download/github.com/ephemeris_petrel19_earth.bin
 terms CC-BY-4.0 https://github.com/TIAN-we/petrel19
 format ephemeris_petrel19
@@ -31968,3 +31784,27 @@ decline commercial https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQ
 decline superseded https://amda.irap.omp.eu/service/hapi
 
 decline superseded https://casdc.china-vo.org/archive/LHAASO-Gamma-Ray-sources/table.csv
+
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
+decline commercial https://www.geoazur.fr/astrogeo/observations/base/podb/DATABASE/
