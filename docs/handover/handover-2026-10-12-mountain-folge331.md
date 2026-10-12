@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — f107-Identitäts-Riss durch den Rat + die Forschungsschicht (`archive_search --all`) + 7 UI-Seats untermauert und im Resolver implementiert (gemessene Diskrepanz → benannter Riss statt stiller Auswahl; `None == None`-Fabrikation gefixt); camera_angles-`terms` auf PD gesetzt; adressierte Blöcke (mycelium-330, river-200) gefaltet
   class: handover
   date: 2026-10-12
-  sha256: ded14164ab5c59195e85b791f523a728268e50780396f79097128bccf10a503d
+  sha256: e42e2d4487eff20d733e9985ca1423fcf089c0a5b00ccafb81582591246fc896
   status: live
 -->
 # Handover — Mountain-Folge 331 (2026-10-12)
@@ -426,6 +426,8 @@ Diskrepanz → benannter Riss statt stiller Auswahl), `docs/handover/handover-20
 `docs/handover/archiv/handover-2026-10-12-mountain-folge330.md`. Im gitignorierten `state/`:
 `state/stimmen/2026-10-12_mountain_f107-identitaet-ui.md`, `state/operator-gespraeche/2026-10-12-mountain.md`,
 `state/research/spill/omegaflow_all_1791824847_solar_f10_7_radio_flux_SWPC_vs_Penticton.txt`; `state/zustand/ui-open-weight.lock` gesetzt und
-wieder gelöscht. **Warnung an die nächste Session:** der Arbeitsbaum ist von **parallelen Linien**
+wieder gelöscht. **CI:** `field-te-query.yml` Lauf `38283460159` dispatcht (2026-10-12/331) — misst
+den Resolver-Fix am Baum (Jobs `matrix-newell-omni` / `witness-jma`); das Ergebnis nimmt der
+Stehende Pass / die nächste Session. **Warnung an die nächste Session:** der Arbeitsbaum ist von **parallelen Linien**
 gehalten (River/Mycelium committen `phi`/`src/*` laufend); vor jedem `block_commit` das
 Release-Binary-Verhalten gegen die Arbeitsbaum-Änderungen prüfen.
