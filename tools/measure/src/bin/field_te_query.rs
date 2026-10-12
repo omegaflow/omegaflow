@@ -1270,10 +1270,14 @@ fn load_field_across_sources(
         return load_dbdt_across_sources(sources, name, anchor);
     }
     let mut reason = String::new();
-    let mut loaded: Vec<(String, Vec<(f64, f64)>)> = Vec::new();
+    let mut loaded: Vec<(String, Option<String>, Vec<(f64, f64)>)> = Vec::new();
     for (source, field) in candidates {
         match load_field(&source, &field, anchor) {
-            Ok(series) => loaded.push((resolve_time_markers(&source.url), series)),
+            Ok(series) => loaded.push((
+                resolve_time_markers(&source.url),
+                source.station_code.clone(),
+                series,
+            )),
             Err(first) if reason.is_empty() => reason = first,
             Err(_) => {}
         }
@@ -1282,9 +1286,9 @@ fn load_field_across_sources(
         return Err(reason);
     }
     if loaded.len() == 1 {
-        return Ok(Some(loaded.remove(0).1));
+        return Ok(Some(loaded.remove(0).2));
     }
-    let cadences: Vec<Option<f64>> = loaded.iter().map(|(_, s)| median_dt(s)).collect();
+    let cadences: Vec<Option<f64>> = loaded.iter().map(|(_, _, s)| median_dt(s)).collect();
     let cadence_of = |i: usize| match cadences[i] {
         Some(d) => d,
         None => f64::INFINITY,
@@ -1299,6 +1303,9 @@ fn load_field_across_sources(
         ));
     };
     for &k in &order[1..] {
+        if loaded[k].1 != loaded[fine_idx].1 {
+            continue; // a distinct receiver — never an aggregation pair of the same channel
+        }
         let coarse_dt = match cadences[k] {
             Some(d) => d,
             None => {
@@ -1311,24 +1318,20 @@ fn load_field_across_sources(
         if coarse_dt <= fine_dt {
             continue;
         }
-        match aggregation_correlation(&loaded[fine_idx].1, &loaded[k].1, coarse_dt) {
+        match aggregation_correlation(&loaded[fine_idx].2, &loaded[k].2, coarse_dt) {
             Some(r) if r >= AGGREGATION_IDENTITY_CORR => {}
-            Some(r) => {
-                return Err(format!(
-                    "riss — '{name}' resolves across differing aggregations: {} median_dt {:.0}s vs {} median_dt {:.0}s (overlap corr {:.4}); register order selects nothing",
-                    loaded[fine_idx].0, fine_dt, loaded[k].0, coarse_dt, r
-                ));
-            }
-            None => {
-                return Err(format!(
-                    "riss — '{name}' resolves across differing aggregations: {} median_dt {:.0}s vs {} median_dt {:.0}s (overlap corr pending); register order selects nothing",
-                    loaded[fine_idx].0, fine_dt, loaded[k].0, coarse_dt
-                ));
-            }
+            Some(r) => println!(
+                "  riss '{name}' — {} median_dt {:.0}s vs {} median_dt {:.0}s (overlap corr {r:.4}); same channel, two aggregations — the finer witness is carried, the coarser stands beside it",
+                loaded[fine_idx].0, fine_dt, loaded[k].0, coarse_dt
+            ),
+            None => println!(
+                "  riss '{name}' — {} median_dt {:.0}s vs {} median_dt {:.0}s (overlap corr pending); same channel, two aggregations — the finer witness is carried, the coarser stands beside it",
+                loaded[fine_idx].0, fine_dt, loaded[k].0, coarse_dt
+            ),
         }
     }
     let witness = loaded[fine_idx].0.clone();
-    let series = loaded.swap_remove(fine_idx).1;
+    let series = loaded.swap_remove(fine_idx).2;
     let dt = match median_dt(&series) {
         Some(d) => format!("{d:.0}"),
         None => "pending".to_string(),

@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (MCON-Registerdrift gelöst, bpa_gic↔MCON als gemessene Null, Risse benannt)
   class: handover
   date: 2026-10-12
-  sha256: a743686547eb4c08cdc67bfb267ddced5f08deb33984f28bdbc7e368b40dcb0d
+  sha256: 13fc1e3dca7f0c2ed4e64f528940a6d217d8793ac5481f7ff517b583516ccca2
   status: live
 -->
 # Handover — Mycelium-Folge 318 (2026-10-12)
@@ -41,12 +41,12 @@ gelöst (`phi/sources.φ:21545-21551`); ein `general`-Diver maß die BPA-GIC-Fra
 - **Befund:** (gemessen 2026-10-12, `general`-Diver via `--verdict`/`--playwright`/`--all`) BPA publiziert **kein** historisches GIC-Archiv — nur ein rollierendes **4-Tage-5-Minuten-11-Station-Fenster** (`.../gic/gic.txt`, Header „last 4 days"; Landing `gic.aspx` verlinkt nur `gic.txt`; alle Archiv-Kandidaten 404; `--all` 1029 Zeilen ohne BPA-Archiv; Wayback 429/503). Die Überschneidung mit der MCON-Onset-Liste (endet 2024-05-29) ist **leer**. Die `bpa_gic`-Spanne ist **nicht ausdehnbar** (kein öffentlicher Weg; nur FOIA an BPA, Dritter-Akt). Divergenz zur Auftrags-Prämisse: das Fenster ist **5-min**, nicht 1-min (Register `ttl 300`/Feld-Skala 300.0 am Baum bestätigt).
 - **Konsequenz:** die zweite GIC-Zeugenreihe bleibt leer (0 honored); die Relation läuft über die primäre FMI-Reihe (`gic_onset_relation.rs --gic`). `terms` bleibt `unknown` (BPA nennt keine Datenlizenz).
 
-### `intermagnet_dbdt`-Riss — Rat: **Nein** zum Rename; Resolver-Regel statt Identität (Mountain-Bau)
+### `intermagnet_dbdt`-Resolver — gebaut (Mountain-Vertretung); Zelle beim nächsten Lauf
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Rivers `field_te_query`-Atom schließt (dann ist die Datei frei für den Resolver-Bau)
-- **Lage:** (gemessen 2026-10-12, Rat-Verdikt `state/stimmen/2026-10-12_river-intermagnet-identitaet-rat.md`) **Nein** — `intermagnet_dbdt` bleibt die Identität; die Kadenz ist ein Auflösungs-Attribut, keine zweite Quantität. Ein Rename `_1m`/`_1h` wäre Fabrikation (wählt still eine Aggregation und lässt die andere aus dem geteilten Namen fallen); der Register-Text ist unangetastet. Grund am Baum: die `field`-Zeile trägt **keine** Kadenz — das Token nach `<unit>` ist `tau` (`src/archivar/parse.rs:2361`), beide ABK-Zeilen tragen `86400`; die Kadenz wird live als `median_dt` gemessen. **Die Regel existiert im Kern bereits:** `tools/measure/src/bin/field_te_query.rs:1249` `AGGREGATION_IDENTITY_CORR = 0.99`; `:1263-1341` `load_field_across_sources` wählt die feinste `median_dt` als Zeugen und **verweigert** (Riss), wenn eine gröbere Registrierung unter dem Gate liegt. **Der benannte Rest:** die Regel gruppiert **nicht nach Station** (`abk_1m` wird auch gegen `sod_1h` geprüft → falscher Riss) und der `Err`-Pfad lässt den Zeugen fallen statt ihn zu tragen.
-- **Blockade:** `tools/measure/src/bin/field_te_query.rs` wird von Rivers laufendem measure-Atom gehalten — ein zweiter Schreiber kollidiert.
-- **Braucht:** der minimale Bau (Mountain-Schreibakt, Register+Wire unangetastet): pro `station_code` gruppieren, je Station die feinste native Kadenz als Zeugen, die gröbere als Riss **daneben tragen** (nie mitteln, nie fallenlassen); Korr-Gate 0.99 trennt ABK `0.9388` (Riss tragen) von f107 `0.0232` (verweigern). **Wer:** Mycelium (Mountain-Vertretung) als nächstes Atom, sobald Rivers Atom schließt — oder River (seine Datei).
+- **Trigger:** nächster `field-te-query`-Lauf endet (`matrix-newell-omni`)
+- **Lage:** (gemessen 2026-10-12) Rat-Verdikt **Nein** zum Rename (`state/stimmen/2026-10-12_river-intermagnet-identitaet-rat.md`): `intermagnet_dbdt` bleibt die Identität, die Kadenz ist Auflösungs-Attribut; Register+Wire unangetastet. **Gebaut dieses Atom** in `tools/measure/src/bin/field_te_query.rs` `load_field_across_sources`: (1) je Registrierung wird `station_code` mitgeführt; (2) die Aggregations-Prüfung greift **nur innerhalb derselben Station** (verschiedene Stationen = verschiedene Empfänger, kein Aggregations-Paar); (3) bei corr unter dem Gate `AGGREGATION_IDENTITY_CORR = 0.99` wird der Riss **gedruckt und getragen**, der feinste native Zeuge **zurückgegeben** (statt `Err`, das den Zeugen fallen ließ). `cargo build -p omegaflow-measure --bin field_te_query` **0 Fehler/0 Warnungen**.
+- **Blockade:** keine im Code.
+- **Braucht:** `gh workflow run field-te-query.yml` → `ci_manage log <id>`; erwartet: ABK `abk_1m` (median_dt 60 s) als Zeuge, `abk_1h` als getragener Riss; die `newell_geospheric_omni`-Zelle neu gelesen.
 
 ### `solar_f107_flux_sfu` — erst messen (Join-/Zeitbasis-Verdacht, kein Quantitäts-Riss)
 - **Status:** wartend | **Bindung:** eigen
@@ -140,7 +140,8 @@ gelöst (`phi/sources.φ:21545-21551`); ein `general`-Diver maß die BPA-GIC-Fra
 Origin: mycelium-318 (2026-10-12).
 
 - **MCON-Registerdrift gelöst** (`phi:21545-21549`, `format mcon_event`, sha `441df5f8…`); offen bleiben die fünf `field`-Zeilen (P10) + `terms` (Zenodo 22711679).
-- **`intermagnet_dbdt`** — Rat-Verdikt **Nein** zum Rename (`state/stimmen/2026-10-12_river-intermagnet-identitaet-rat.md`): Identität bleibt, Kadenz ist Auflösungs-Attribut; Register+Wire unangetastet. Offen ist nur die Resolver-Regel (per-Station-Gruppierung + Riss-daneben-tragen, `field_te_query.rs:1263-1341`) — Mountain-Schreibakt.
+- **`intermagnet_dbdt`** — Rat-Verdikt **Nein** zum Rename (`state/stimmen/2026-10-12_river-intermagnet-identitaet-rat.md`): Identität bleibt, Kadenz ist Auflösungs-Attribut; Register+Wire unangetastet. **Mycelium hat den Resolver-Bau übernommen** (Mountain-Vertretung): `field_te_query.rs` `load_field_across_sources` — per-Station-Scoping + Riss-daneben-tragen statt `Err`; `cargo build` 0/0. Re-Read der Zelle beim nächsten `field-te-query`-Lauf.
+- **f107-Epoch-Fix (Archivar, 30-s TDB/Unix, zwei Defekte)** — Rivers `## An mountain`-Messung; Archivar-Kern = Mountain.
 - **MCON-Spanne** — Zenodo nominiert `1966–2025`, Rivers Fenster `2024-05-29`; nominal vs Inhalt. Eine Inhaltsmessung des manifestierten `mcpherron_onsets.bin` entscheidet es (nicht die BPA-Überschneidung berührend).
 - **`odf.rs` clippy (`:179`/`:213`/`:2222`)** blockt `ci-check`.
 - **bpa_gic**: kein historisches Archiv (gemessene Null); `terms unknown` bleibt.
