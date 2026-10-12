@@ -3,7 +3,7 @@
   session: River-Linie (river-203/204) — QN-Alias-Enforcement + δn-Diagnose gebaut (ConstraintRegistry, from_specs-Alias-/Region-Enforcement, charge_imbalance; cargo check 0/0); mycelium-337 omni2-Block gefaltet; Newell-Doppelregistrierung als tokenisierter `## An mountain`-Block gesetzt — von Mountain gefaltet/geheilt (`1dd4e3549`); **river-204:** gemessen, dass die gemessenen CHAMP-Dichte-Kanäle schon registriert sind (Neutral `champ_thermosphere_density_kgm3`, geladen `champ_plpt_electron_density_cm3`, Wind `champ_thermosphere_crosswind_ms`) — der Rat-Dichte-Weg (IRI/NRLMSISE/IGRF) ist Modell und überholt; die Produktions-Naht `ChannelCouplingLayer::from_sources` gebaut (channels + couplings + constraints aus Sources + Register), `cargo check` 0/0; folge202 konsumiert/archiviert
   class: handover
   date: 2026-10-13
-  sha256: 87fe6b9bf740965bd86761da0a77325fb87d7b4983443b3fe34a8c38a77b5246
+  sha256: 060af7e127c4029094495a8c25477de1ad637c0adcc9c7bbf3e90504b08380a3
   status: live
 -->
 # Handover — River-Folge 203 (2026-10-13)
@@ -91,10 +91,12 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 - **Blockade:** (1) die **Ionengeschwindigkeits**-Kanal fehlt (CHAMP-IDM Ionen-Drift ist nicht registriert); die `coupling`-Zeile braucht ihn als `from` (der Wind-Kanal steht als `to`). (2) `K` ist noch nicht gemessen (Rate bleibt `pending`). (3) die **Feld-Eval-Injektion** (WGSL Slot (i) `shaders.rs:450–451`) + der Produktions-Aufrufer der Naht sind noch nicht gebaut; `parse_sources`-Konsumenten liegen in fremd-dirty Dateien (`src/archivar/fetch.rs`/`main_flow.rs`), darum nur die Naht in `parse.rs`.
 - **Braucht:** (1) den **CHAMP-IDM-Ionen-Drift** als Kanal registrieren (Comp. + Format-Arm + `channel … alias … charge 1`) — Quelle messen (ISDC GFZ `CH-ME-2-IDM` / VirES); (2) den Produktions-Aufrufer der Naht + die WGSL-Injektion + CPU/GPU-Parität (`ΣρΔu ≡ 0`); (3) `K` aus dem gemessenen Overlap bestimmen.
 
-### Kopplung — Messwert-Kette (Plan, river-204)
-- **Lage:** die echten Dichten sind da (CHAMP, gemessen); es fehlt (a) der Ionengeschwindigkeits-Kanal, (b) der Produktions-Aufrufer der Naht + die Feld-Eval-Injektion, (c) `K`.
-- **Reihenfolge (je Atom, `cargo check` 0/0):** CHAMP-IDM-Kanal registrieren → `constraint quasi-neutral` + `coupling ion-neutral-friction from <ion> to champ_wind rate pending density_from number:<ion>:<m> density_to mass:champ_neutral region <r> quasi-neutral <qn>` → Naht-Aufrufer + WGSL-Injektion Slot (i) → `K` aus dem Overlap → Paritäts-Gate.
-- **Register-Schreibakte:** auf Operator-Wort trägt **River** die Mountain-Register-Zeilen + die Mycelium-Manifestation für diese Kette (Operator-Wort 2026-10-13).
+### Kopplung Ion-Neutral — Riss getragen: co-lokale Route DE-2 (Rat-Verdikt 2026-10-13)
+- **Status:** riss (getragen) | **Bindung:** eigen
+- **Lage:** (gemessen 2026-10-13 via 3 Taucher + Rat) CHAMPs co-lokale Ionengeschwindigkeit (DIDM) ist **nicht offen archiviert** (`isdc-data.gfz.de/champ/ME/Level2/IDM/…` HTTP 404 → `blocked account`, kein Quellen-Verdikt). DMSP-SSIES-Ionendrift ist offen (NCEI HTTP 206), aber ~840 km vs CHAMP ~400 km → **kein per-Punkt-Paar** (Riss). Rat-Konsens: die lokale Kopplung bleibt `riss`/`pending`; die Auflösung ist eine **co-lokale Route**, nicht eine Cross-Mission-Paarung (Cross-Mission nur als deklarierte Klimatologie `conjunction:<alt>/<mlt>`, nie Kopplungszeile). Die **co-lokale Route ist gemessen:** **DE-2 `de2_ua16s_all`** (HAPI `DE2_UA16S_ALL`, CDF, 16 s, 1981-08→1983-02, HTTP 206, HAPI-JSON live) trägt auf **einer** Plattform Ionendrift (`RPA_IVE/N/UionDrift`) + Neutralwind (`WATS_NVE/NVUneutralWind`, `FPI_FVNneutralwind`) + Neutraldichte (`NACS_N2/O/HE/AR/N`); fällt in den vorhandenen CDAWeb-HAPI-Pfad (`hapi_csv`, Vorlage `phi:631`) — kein neuer Parser nötig. C/NOFS CINDI = Ionendrift only (kein offener Neutralwind) → Ergänzung, nicht das Paar. Rat-Blatt: `state/stimmen/2026-10-13-river-p71-ion-drift-riss-rat.md`.
+- **Blockade:** DE-2 ist noch **nicht registriert** (0 `de2`/`cnofs`-Einträge); der Register-Schreibakt (Mountain-Domäne) + die Manifestation (Mycelium) stehen auf Operator-Wort (gegeben).
+- **Braucht:** (1) DE-2 als HAPI-Quelle registrieren (`url`/`terms`/`ttl`/`at earth`/`hapi`-Mapping/`field`/`channel … alias … charge`) — Ionendrift- und Neutralwind-Kanal; (2) `constraint quasi-neutral` + `coupling ion-neutral-friction from <de2_ion_drift> to <de2_neutral_wind> rate pending density_from … density_to … region … quasi-neutral …`; (3) Produktions-Injektion über **`exchange_resolved`**, nicht `term` (Rat-Riss River: `term` trägt die Produktform, falsche Gestalt) + CPU/GPU-Parität; (4) `K` aus der geordneten Reihe.
+- **Register-Schreibakte:** auf Operator-Wort trägt **River** die Mountain-Register-Zeilen + die Mycelium-Manifestation (Operator-Wort 2026-10-13).
 
 ### P10 flache Tokens → Kanal-Deskriptor (`force_id_of`/`FIXED_CHANNELS`/Modul `force` weg) — gated
 - **Status:** wartend | **Bindung:** eigen
