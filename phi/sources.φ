@@ -21542,11 +21542,12 @@ origin https://zenodo.org/records/8098323/files/data.zip
 at earth
 field surface_pressure_hpa kyoto_pressure_surface_pressure_hpa gaussian-inverse-square acoustic hPa 300 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/mcpherron.bin
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/mcpherron_onsets.bin
 origin https://zenodo.org/api/records/22711679/files/CorrOnsFiles.zip/content
 compiler tools/harvest/src/bin/mcpherron_compiler.rs
-format substorm
-sha256 0c99e7d8552ef3ba7abfbc93aaf7fc846520a295fd64de2721a3554ba7500523
+format mcon_event
+terms CC-BY-4.0 https://zenodo.org/records/22711679
+sha256 441df5f8c59ad57962d81cc82814a0d36c7770f827b4d1893b31425f035cc3f1
 at earth
 ttl 604800
 
