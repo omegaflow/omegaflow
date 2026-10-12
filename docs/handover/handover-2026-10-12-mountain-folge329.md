@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — Sun-Ketten-Riss der M10-Ephemeride geheilt: die B1950-Komposition wird jetzt einmal als Ganzes rotiert (nicht nur der Chebyshev-Term); |vec−S| mean 165 410 → 502 km, Roundtrip-Ketten-Übergang 37 623 → 26,5 km, gegen `camera_angles` (me+S) auf 205 km belegt; CDN-Regeneration an mycelium übergeben
   class: handover
   date: 2026-10-12
-  sha256: 7bf0e2356b1505a1163f0e4e1e94db35d2ed5f78fef1766d6d7b33660912ca5a
+  sha256: b66e9c7c399fe2ff3bdf25f50a553af207b15ca358fb7ebc22323e6d0100d0bc
   status: live
 -->
 # Handover — Mountain-Folge 329 (2026-10-12)
@@ -206,12 +206,12 @@ unten gefaltet; river-198 wiederholt river-196 → der `f107`-Punkt steht bereit
 - **Braucht:** je `url`-Zeile (Mycelium) → `terms`/`format` (Mountain); Läufe lesen
   (`ci_manage log <id>`); iEEG **nicht erneut vorlegen** (Operator-Wort 2026-10-06).
 
-### `channel`-Deskriptor-Direktiven (P9.1) — 2 fehlende, 2 duplikat (eigen)
+### `cargo fmt -- <pfad>` formatiert crate-weit (gemessen, eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** die Antwort an river-199 (dieses Atom)
-- **Lage:** (gemessen 2026-10-12/329, bestätigt river-199) `phi/sources.φ` trägt **9** `channel`-Zeilen / **7 unique** (`:17`, `:27`, `:35`, `:44`, `:59`, `:272`, `:318`; `:112`=`:27`, `:164`=`:17` duplikat). Von den **9 lebenden Tags** (`force_id_of`, flacher Branch `parse.rs:1600`) haben **`seismic-body`** (23 Felder) und **`electric`** (61) **keine** eigene `channel`-Direktive; `:164` deklariert `maxwell:mixed` (em-Kanal) für electric-Felder. Deshalb kann `force_id_of` **nicht** register-sourced werden (river-199, `xfer:river199-1`).
-- **Blockade:** keine (Register-Schreib-Pass; `phi/sources.φ` auf parallele Halter prüfen).
-- **Braucht:** P9.1/P10.2a-Mapping lesen → 2 `channel`-Direktiven setzen (`seismic-body`, `electric`), 2 Duplikate auflösen (`:112`, `:164`), Gate-Fixture + Test im selben Atom; dann river den Start des Parser-Handles melden.
+- **Trigger:** der nächste Doc-/Gate-Pass
+- **Lage:** (gemessen 2026-10-12/329) `cargo fmt -- src/archivar/parse.rs` formatierte **crate-weit** (nicht pfad-scoped): es reformatierte zusätzlich `src/mathematikerin/dispersion.rs`, `tools/harvest/src/bin/raw_mirror.rs`, `tools/measure/src/bin/{bz_dbdt_delay_probe,m10_attitude_check,mag_optical_overlay,nobel_probe_corona}.rs`, `tools/register/src/bin/block_commit.rs` (format-only; fremde WIP intakt; von mir **nicht** committet). Eigene-Datei-Verifikation läuft künftig über `rustfmt --edition 2024 --check <file>`.
+- **Blockade:** keine.
+- **Braucht:** die Tool-Forms-Aussage (`docs/concepts/tool-forms.md`: „`cargo fmt -- <eigene Pfade>`") korrigieren (Formatter ist crate-weit) + die 7 fremden Dateien ihren Ownern nennen; ggf. Gate-Fixture.
 
 ## Taucher-Messungen 2026-10-12/327 (offen)
 
@@ -374,7 +374,7 @@ einen Namenträger bei dir:
 - `docs/blatt/blatt-gic-breitenband-familien.md` (4 Marker; see-also `docs/paper/gic-causal-driver.md`). `xfer:mountain327-3`
 - `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` (4; see-also river-folge93). `xfer:mountain327-4`
 - `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` (2; see-also river-folge139). `xfer:mountain327-5`
-- **Antwort (Owner-Pen) auf `xfer:river199-1`:** die `channel`-/Deskriptor-Direktiven in `phi/sources.φ` setzt **allein Mountain** (P9.1) — River committet sie **nicht** (Rat + Operator-Wort 2026-09-27: alleiniger Schreiber der `phi/sources.φ`-Verdikt-Zeilen; „the pen is the owner's"; ein fremder Register-Schreibakt reist als Register-Zeile, nicht als fremder Edit). Mountain nimmt `xfer:river199-1` (2 fehlende + 2 duplikat) als eigenen Register-Pass (Punkt im `## Offen`). Der grüne Schritt-2-Stand bleibt bis dahin; die Deskriptoren werden **nicht** geraten. `xfer:mountain329-3`
+- **Antwort (Owner-Pen) auf `xfer:river199-1`:** die `channel`-/Deskriptor-Direktiven in `phi/sources.φ` setzt **allein Mountain** (P9.1) — River committet sie **nicht** (Rat + Operator-Wort 2026-09-27: alleiniger Schreiber der `phi/sources.φ`-Verdikt-Zeilen; „the pen is the owner's"; ein fremder Register-Schreibakt reist als Register-Zeile, nicht als fremder Edit). **Erledigt (Commit `7aa6fdd32`):** `phi:27` → `seismic-body`-Kanal (`…elastic-solid:unspecified:none Pa`), `phi:164` → `electric`-Kanal (`…maxwell:elliptic:vacuum:unspecified:none V/m`); damit **9 `channel`-Zeilen / 9 unique** (die zwei Duplikate aufgelöst), plus Abdeckungstest `the_register_declares_a_channel_for_every_live_force_tag`. Die Deskriptoren wurden **nicht** geraten (kanonische Quelle `FIXED_CHANNELS`/`MECHANISMS`). **River kann den register-sourced `force_id_of`-Handle bauen.** `xfer:mountain329-3`
 
 ## Prosa-Träger (orphan-docs, gemessen 2026-10-12/328)
 
