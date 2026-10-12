@@ -1,9 +1,9 @@
 <!--
   title: Handover — River-Folge 203 (2026-10-13)
-  session: River-Linie in einem Pass (river-203) — QN-Alias-Enforcement + δn-Diagnose gebaut (ConstraintRegistry, from_specs-Alias- und Region-Enforcement, charge_imbalance; cargo check 0/0); mycelium-337 omni2-Block gefaltet (Asset HTTP 206, kein CDN-Lauf nötig); Newell-OMNI-Blocker als Register-Drift gemessen und als tokenisierter `## An mountain`-Block gesetzt; folge202 konsumiert/archiviert
+  session: River-Linie (river-203/204) — QN-Alias-Enforcement + δn-Diagnose gebaut (ConstraintRegistry, from_specs-Alias-/Region-Enforcement, charge_imbalance; cargo check 0/0); mycelium-337 omni2-Block gefaltet; Newell-Doppelregistrierung als tokenisierter `## An mountain`-Block gesetzt — von Mountain gefaltet/geheilt (`1dd4e3549`); **river-204:** gemessen, dass die gemessenen CHAMP-Dichte-Kanäle schon registriert sind (Neutral `champ_thermosphere_density_kgm3`, geladen `champ_plpt_electron_density_cm3`, Wind `champ_thermosphere_crosswind_ms`) — der Rat-Dichte-Weg (IRI/NRLMSISE/IGRF) ist Modell und überholt; die Produktions-Naht `ChannelCouplingLayer::from_sources` gebaut (channels + couplings + constraints aus Sources + Register), `cargo check` 0/0; folge202 konsumiert/archiviert
   class: handover
   date: 2026-10-13
-  sha256: bd9b74835df7182781f25bc9dda4a17050c4d131ad3704e071598c0d245f4c67
+  sha256: 87fe6b9bf740965bd86761da0a77325fb87d7b4983443b3fe34a8c38a77b5246
   status: live
 -->
 # Handover — River-Folge 203 (2026-10-13)
@@ -25,7 +25,7 @@ nie nacheinander, nie „nächster Dispatch", nie „nächste Session". Verschle
 sind der benannte Fehler; ein Punkt, den die Session selbst arbeiten kann, wird im selben Atom
 gearbeitet (Sofort-Prinzip).
 
-## Burn: open 0.00 · close 0.29 · cap 0.50 — Grund: session river-203 (deepseek-flash, kein pro/max); 1 `grind-flash` (QN-Enforcement-Bau) + 1 `general` (Newell-OMNI-Lauf/Asset-Messung); die close-Zahl ist das gemessene Haus-Delta ($2.7047 → $2.9935, line-Bucket $1.3159). Fälligkeit: `--fired river` = 0, `--stale river --persist 3` = 0, `open_points_check` folge202 = 0 absent / 0 stale-citations / 0 format-gaps / 0 owner-drift (9 word-carried = Register-Zitate, keine Drift). 1 adressierter Token gefaltet (mycelium-337 omni2). Kein `smail --send`, kein Window-Edit. `git_safety --snapshot` `refs/safety/1791844786`.
+## Burn: open 0.00 · close 0.29 · cap 0.50 — Grund: session river-203/204 (deepseek-flash, kein pro/max); 1 `grind-flash` (QN-Enforcement-Bau) + 1 `general` (Newell-OMNI) + die CHAMP-Messwert-Recherche + `ChannelCouplingLayer`-Naht selbst gebaut; die close-Zahl ist das gemessene Haus-Delta ($2.7047 → $2.9935). Fälligkeit: `--fired river` = 0, `--stale river --persist 3` = 0, `open_points_check` folge202 = 0 absent / 0 stale-citations / 0 format-gaps / 0 owner-drift. 1 adressierter Token gefaltet (mycelium-337 omni2). Kein `smail --send`, kein Window-Edit. `git_safety --snapshot` `refs/safety/1791844786`.
 
 ## Operator-Wort-Register
 
@@ -54,7 +54,12 @@ Wort | Datum | Quelle
 „bitte setze eine taucher staffel an ich möchte dass du jetz fertig wirst Commit und Push stehen" | 2026-10-12 | Operator (Session, River 199) — Taucher-Staffel ansetzen, P9.2 zu Ende bringen; Commit + Push.
 „ich habe es mountai geschickt" | 2026-10-12 | Operator (Session, River 199) — die Register-Reconciliation (`channel`-Direktiven, P9.1) liegt bei **Mountain**; River wartet auf die Faltung von `xfer:river199-1`.
 
-Verbatim: `state/operator-gespraeche/2026-10-12-river.md`, `2026-10-11-river.md`,
+„wir wollen doch keine modelle, oder?" | 2026-10-13 | Operator (Session, River) — **Modelle sind aus** (A=A): IRI-2020/NRLMSISE-00/IGRF (und jeder Modell-Nachbau) sind keine Register-Quellen; die gemessenen CHAMP-Kanäle sind der Weg.
+„nein lass recherchieren und ja messwerte und du baust" | 2026-10-13 | Operator (Session, River) — die Quellen-Recherche läuft autonom; **Messwerte** sind die Quellen; **River baut**.
+„mountain ist ziemlich beschäftigt kannst du das nicht slebst übernehmen" | 2026-10-13 | Operator (Session, River) — River übernimmt die Mountain-Punkte (Regime-Zeilen, Newell, WGSL); die Mountain-Register-Schreibakte + Mycelium-Manifestation trägt River auf Operator-Wort.
+„los" | 2026-10-13 | Operator (Session, River) — Startwort für den Messwert-Ketten-Bau.
+
+Verbatim: `state/operator-gespraeche/2026-10-13-river.md` (neu), `2026-10-12-river.md`, `2026-10-11-river.md`,
 `2026-10-10-river.md` und `2026-10-09-river.md`.
 
 ## Träger (Prosa, eigene)
@@ -79,12 +84,17 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 
 ## Offen (aufgeschlüsselt)
 
-### P7.1 Kopplung/Interface — Grammatik + QN-Enforcement gebaut; Regime-Zeilen (Mountain) wartend, WGSL gated
+### P7.1 Kopplung/Interface — Messwert-Kette gemessen: CHAMP-Dichten schon registriert; Produktions-Naht gebaut
 - **Status:** eigen (teilgebaut) | **Bindung:** eigen
-- **Trigger:** Mycelium liefert die Plasma-Dichte-Kanäle + `K` live — dann setzt Mountain die Regime-Zeilen; danach die WGSL-Parität.
-- **Lage:** (gemessen 2026-10-13 via `cargo check` 0/0 + `git log`) der **CPU-Referenz-Resolver** ist gebaut (`src/mathematikerin/channel.rs`: `DensityKind`/`DensityRef`/`Coupling.density_from|density_to|quasi_neutral`, `coefficient` = K, `density_at` + `exchange_resolved`). Die **Grammatik** ist gebaut (Schritt 1–4). **Neu gebaut (river-203, Schritt 5):** die **QN-Alias-Enforcement + δn-Diagnose** — `ConstraintRegistry::from_constraints` (Duplikat-Name verweigert, erster gewinnt) · `Coupling.quasi_neutral: Option<String>` behält den Constraint-Namen (vorher bool) · `CouplingRegistry::from_specs(specs, channels, constraints)` verweigert einen Kopplungseintrag, dessen `quasi-neutral <name>` keinen deklarierten Constraint nennt oder dessen `region` nicht der Constraint-Region entspricht · `charge_imbalance` = `Σ Z_c·ρ_c` über die `density_refs` aller zitierenden Kopplungen, `None` (absent) bei fehlender Ladung/Dichte (kein Teil-Summen-Fabrikat). 4 Tests im `#[cfg(test)]` (`constraint_registry_refuses_a_duplicate_name` · `from_specs_refuses_an_undeclared_quasi_neutral` · `from_specs_refuses_a_quasi_neutral_region_mismatch` · `charge_imbalance_sums_charge_times_density`) — laufen im CI (`cargo check` kompiliert `#[cfg(test)]` nicht lokal).
-- **Blockade:** (1) `K` + die Plasma-Dichte-Kanäle (IRI-2020/NRLMSISE-00/IGRF-Alias) sind `pending` (Mycelium) — **kein `coupling`-Datenwert wird geschrieben, solange sie nicht live auflösen** (die Register-Zeile bleibt `pending`); (2) die WGSL-Parität wartet auf eine Dichte-Quelle.
-- **Braucht:** (1) Mountains Regime-`coupling`/`constraint`-Zeilen, sobald die Plasma-Kanäle + `K` live auflösen; (2) WGSL-Parität + die Region-/Injektions-Ort-Messung (Slot (i) `shaders.rs:450`).
+- **Trigger:** kein — die Quelle ist gemessen; der nächste Schritt (Ionengeschwindigkeits-Kanal + Feld-Eval-Injektion) ist benannt.
+- **Lage:** (gemessen 2026-10-13 river-204) der **CPU-Referenz-Resolver** + die **Grammatik** (Schritt 1–5: channel-Alias/charge, coupling-Block, constraint-Block, Gate-Fixtures, QN-Enforcement/δn) sind gebaut. **Korrektur des Quellen-Wegs:** die vom Rat genannten `IRI-2020/NRLMSISE-00/IGRF` sind **Modelle** (A=A → nicht das Register) — die **gemessenen CHAMP-Kanäle liegen schon im Register**: Neutral-Dichte `champ_thermosphere_density_kgm3` (VirES-HAPI, `phi:42`, `channel` `:44`; `--verdict` HTTP 200) · geladene Dichte `champ_plpt_electron_density_cm3` (GFZ-ISDC, Compiler + `extract.rs`-Arm vorhanden, `phi:11541`) · Wind `champ_thermosphere_crosswind_ms` (`phi:57`/`:59`). Alle von **CHAMP** → co-temporal/co-lokal. **Neu gebaut (river-204):** die Produktions-Naht **`ChannelCouplingLayer::from_sources(&[SourceConfig], content)`** (`src/archivar/parse.rs`) — aggregiert `source.channels` in eine `ChannelRegistry` (inkl. Aliase), baut `ConstraintRegistry` + `CouplingRegistry` aus `parse_constraints`/`parse_couplings`; Test `a_channel_coupling_layer_resolves_the_register_aliases`, `cargo check` 0/0, rustfmt clean.
+- **Blockade:** (1) die **Ionengeschwindigkeits**-Kanal fehlt (CHAMP-IDM Ionen-Drift ist nicht registriert); die `coupling`-Zeile braucht ihn als `from` (der Wind-Kanal steht als `to`). (2) `K` ist noch nicht gemessen (Rate bleibt `pending`). (3) die **Feld-Eval-Injektion** (WGSL Slot (i) `shaders.rs:450–451`) + der Produktions-Aufrufer der Naht sind noch nicht gebaut; `parse_sources`-Konsumenten liegen in fremd-dirty Dateien (`src/archivar/fetch.rs`/`main_flow.rs`), darum nur die Naht in `parse.rs`.
+- **Braucht:** (1) den **CHAMP-IDM-Ionen-Drift** als Kanal registrieren (Comp. + Format-Arm + `channel … alias … charge 1`) — Quelle messen (ISDC GFZ `CH-ME-2-IDM` / VirES); (2) den Produktions-Aufrufer der Naht + die WGSL-Injektion + CPU/GPU-Parität (`ΣρΔu ≡ 0`); (3) `K` aus dem gemessenen Overlap bestimmen.
+
+### Kopplung — Messwert-Kette (Plan, river-204)
+- **Lage:** die echten Dichten sind da (CHAMP, gemessen); es fehlt (a) der Ionengeschwindigkeits-Kanal, (b) der Produktions-Aufrufer der Naht + die Feld-Eval-Injektion, (c) `K`.
+- **Reihenfolge (je Atom, `cargo check` 0/0):** CHAMP-IDM-Kanal registrieren → `constraint quasi-neutral` + `coupling ion-neutral-friction from <ion> to champ_wind rate pending density_from number:<ion>:<m> density_to mass:champ_neutral region <r> quasi-neutral <qn>` → Naht-Aufrufer + WGSL-Injektion Slot (i) → `K` aus dem Overlap → Paritäts-Gate.
+- **Register-Schreibakte:** auf Operator-Wort trägt **River** die Mountain-Register-Zeilen + die Mycelium-Manifestation für diese Kette (Operator-Wort 2026-10-13).
 
 ### P10 flache Tokens → Kanal-Deskriptor (`force_id_of`/`FIXED_CHANNELS`/Modul `force` weg) — gated
 - **Status:** wartend | **Bindung:** eigen
@@ -152,13 +162,12 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 - **Blockade:** die zwei Nägel (Mountain-Register); der Grammatik-Patch ist aus dem Verdikt noch nicht gebaut.
 - **Braucht:** Mountain setzt die zwei Nägel; danach den Patch bauen und `matrix gic_auroral|gic_subauroral|gic_midlat full` fahren.
 
-### Newell-OMNI-Alignment — Asset präsent, Blocker = Register-Drift (Doppelregistrierung)
-- **Status:** eigen (offen) | **Bindung:** eigen
-- **Trigger:** kein — die Lage ist gemessen; die Doppelregistrierung ist als tokenisierter `## An mountain`-Block transportiert.
-- **Lage:** (gemessen 2026-10-13 via `archive_search --verdict` + `general` gegen den Baum) der Resolver ist gebaut (`field_te_query.rs` `load_field_across_sources`). Das CDN-Asset `omni2_serie_1h.bin` ist **HTTP 206** (`phi/sources.φ:1836`) — die 404-Blockade ist gefallen. Die Zelle `newell_dphi_dt_omni->intermagnet_dbdt` bleibt `absent`: **`omni_imf_bz_gsm_nt` ist als dasselbe Feld zweifach registriert** — live (`phi:687`, rollierendes `{week_ago}…{now}`, `OMNI2_H0_MRG1HR` 3600 s) und archiviert-1h (`phi:1848`, statisches Fenster; daily unter eigenem Namen `omni_imf_bz_gsm_nt_daily` `phi:1833`). `load_field_across_sources` sortiert bei gleicher `median_dt` nach Register-Vorrang und nimmt das live-Fenster (`field_te_query.rs:1311-1313`), das disjunkt vom ABK-Archiv ist (`abk_dbdt_1m` 60 s, `phi:2416-2436`) → `align_many` `Err("bin window carries no overlap between the arms")` (`field_te_query.rs:4679-4681`). Der Lauf ist **CI-only** (`field-te-query.yml` Job `matrix-newell-omni`, `workflow_dispatch`, nie lokal); Re-Messung = `gh workflow run field-te-query.yml` + Artifact `field-te-matrix-newell-omni` lesen.
-- **Blockade:** die `omni_imf_bz_gsm_nt`-Doppelregistrierung + die Fenster-Disjunktheit (Mountain-Register).
-- **Braucht:** (a) Mountain löst die Doppelregistrierung (tokenisierter Block `## An mountain`); (b) danach der CI-Lauf + Artifact-Auswertung.
-- **Faltung (mycelium-337, 2026-10-13):** `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.1~576548f1` — `omni2_serie_1h.bin` ist präsent, der CDN-Lauf ist **nicht nötig**.
+### Newell-OMNI-Alignment — Doppelregistrierung von Mountain geheilt; Zelle neu messen
+- **Status:** eigen (Messung offen) | **Bindung:** eigen
+- **Trigger:** der nächste `field-te-query.yml`-Lauf (`matrix-newell-omni`).
+- **Lage:** (gemessen 2026-10-13) das CDN-Asset `omni2_serie_1h.bin` ist **HTTP 206** (`phi:1836`); die `omni_imf_bz_gsm_nt`-Doppelregistrierung ist **von Mountain geheilt** (`1dd4e3549` — der Live-Block ist auf `..._live` umbenannt, das Archiv trägt den kanonischen Namen, den der Newell-Descriptor bindet; mein `xfer:river.river-203.1`-Block ist gefaltet). Die Zelle `newell_dphi_dt_omni->intermagnet_dbdt` ist seither nicht neu gemessen.
+- **Blockade:** die Zelle ist CI-only (`field-te-query.yml` Job `matrix-newell-omni`, `workflow_dispatch`, nie lokal).
+- **Braucht:** `gh workflow run field-te-query.yml` → Artifact `field-te-matrix-newell-omni` lesen; bei weiterer Fenster-Disjunktheit den Descriptor auf ein gemeinsames Fenster ziehen.
 
 ### Flyby-Kette — recon bleibt (`ephemeris-juice-recon` + `flyby-path2-recon`)
 - **Status:** termin | **Bindung:** termin:2026-11-01
@@ -174,14 +183,18 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 - **Blockade:** der Signifikanz-Null braucht eine Blocklänge (Autokorrelations-Nulldurchgang fehlt); SOD-Asset fehlt.
 - **Braucht:** (a) Blocklängen-Regel für dieses Korn benennen (Rat) oder den Deskriptiv-Wert tragen; (b) SOD-`dB/dt`-Asset (Mycelium); (c) α/Bz-Schwelle + Siegel = Operator-Wort (nach Future geroutet).
 
-## An mountain
-
-Origin: river-203 (2026-10-13):
-
-- `xfer:river.river-203.1~0e4958d2` **`omni_imf_bz_gsm_nt`-Doppelregistrierung** — `omni_imf_bz_gsm_nt` ist als dasselbe Feld zweifach registriert: live (`phi:687`, rollierendes `{week_ago}…{now}`, 3600 s) und archiviert-1h (`phi:1848`, statisches Fenster; daily unter eigenem Namen `omni_imf_bz_gsm_nt_daily` `phi:1833`). `load_field_across_sources` bindet bei gleicher `median_dt` den Register-Vorrang → das live-Fenster, disjunkt vom ABK-Archiv (`abk_dbdt_1m`, `phi:2416-2436`) → Zelle `newell_dphi_dt_omni->intermagnet_dbdt` `absent` (`align_many` `Err`, `field_te_query.rs:4679-4681`). **Braucht:** die Doppelregistrierung auflösen (ein Fenster, das ABK überlappt) oder den Drift als Messung tragen. Das Asset `omni2_serie_1h.bin` ist jetzt HTTP 206 (`phi:1836`; gemessen 2026-10-13), die frühere 404-Blockade ist gefallen.
-[manifest n=1 root=eabac70a]
-
 ## Abschluss
+
+river-204 (Messwert-Kette): gearbeitet ohne Pro-Solo, ohne Fenster-Edit, ohne Send.
+**Gemessen und korrigiert:** der Rat-Dichte-Weg (`IRI-2020/NRLMSISE-00/IGRF`) sind **Modelle** →
+überholt (Operator-Wort); die **gemessenen CHAMP-Kanäle** (Neutral-Dichte `champ_thermosphere_density_kgm3`,
+geladene Dichte `champ_plpt_electron_density_cm3`, Wind `champ_thermosphere_crosswind_ms`) sind
+schon registriert, co-temporal. **Produktions-Naht gebaut:** `ChannelCouplingLayer::from_sources`
+(`src/archivar/parse.rs`, channels+couplings+constraints), Test
+`a_channel_coupling_layer_resolves_the_register_aliases`, `cargo check` 0/0, rustfmt clean.
+**Newell:** Doppelregistrierung von Mountain geheilt (`1dd4e3549`), mein `## An mountain`-Block
+nach Echo entfernt; die Zelle ist CI-neu-zu-messen. **Nächster Schritt:** CHAMP-IDM-Ionen-Drift-Kanal
+registrieren → Kopplungs-Zeilen → Naht-Aufrufer + WGSL-Injektion → `K`.
 
 river-203: gearbeitet ohne Pro-Solo, ohne Fenster-Edit, ohne Send. **QN-Alias-Enforcement
 + δn-Diagnose gebaut** (River-Session + 1 `grind-flash`): `ConstraintRegistry` (Duplikat-Verweigerung),

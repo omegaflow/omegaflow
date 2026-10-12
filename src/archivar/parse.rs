@@ -1,10 +1,11 @@
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
 use crate::mathematikerin::channel::{
-    ChannelDescriptor, Conserved, CouplingSpec, FluxKind, Interaction, Medium, PdeRegime, PdeType,
-    QuantityRole, QuasiNeutralConstraint, TransportOp, channel_ref_of_descriptor,
-    conserved_for_quantity, conserved_name, coupling_spec_from_line, descriptor_from_axes,
-    interaction_of, quasi_neutral_constraint_from_line, unit_token,
+    ChannelDescriptor, ChannelRegistry, Conserved, ConstraintRegistry, CouplingRegistry,
+    CouplingSpec, FluxKind, Interaction, Medium, PdeRegime, PdeType, QuantityRole,
+    QuasiNeutralConstraint, TransportOp, channel_ref_of_descriptor, conserved_for_quantity,
+    conserved_name, coupling_spec_from_line, descriptor_from_axes, interaction_of,
+    quasi_neutral_constraint_from_line, unit_token,
 };
 
 fn split_directive(line: &str) -> Vec<&str> {
@@ -2451,6 +2452,34 @@ pub fn parse_constraints(content: &str) -> Vec<QuasiNeutralConstraint> {
     out
 }
 
+pub struct ChannelCouplingLayer {
+    pub channels: ChannelRegistry,
+    pub constraints: ConstraintRegistry,
+    pub couplings: CouplingRegistry,
+}
+
+impl ChannelCouplingLayer {
+    pub fn from_sources(sources: &[SourceConfig], content: &str) -> Self {
+        let mut channels = ChannelRegistry::with_capacity(16);
+        for source in sources {
+            for descriptor in &source.channels {
+                channels.register(descriptor.clone());
+                if let Some(name) = &descriptor.alias {
+                    channels.alias(name, descriptor);
+                }
+            }
+        }
+        let constraints = ConstraintRegistry::from_constraints(&parse_constraints(content));
+        let couplings =
+            CouplingRegistry::from_specs(&parse_couplings(content), &channels, &constraints);
+        Self {
+            channels,
+            constraints,
+            couplings,
+        }
+    }
+}
+
 #[cfg(feature = "browser_relay")]
 pub fn parse_path(s: &str) -> String {
     let Some(fl) = s.lines().next() else {
@@ -2777,6 +2806,30 @@ mod tests {
             constraints.len(),
             0,
             "a quasi-neutral constraint without a region is refused"
+        );
+    }
+
+    #[test]
+    fn a_channel_coupling_layer_resolves_the_register_aliases() {
+        let content = "url https://example.com/champ\nttl 600\nat earth\n\
+channel charge:primary:flux-ohm:parabolic:plasma:line:dirichlet kg/m^3 alias champ_ion charge -1\n\
+channel mass:primary:flux-fick:parabolic:fluid:unspecified:none kg/m^3 alias champ_neutral\n\
+constraint quasi-neutral ionosphere_qn region ionosphere\n\
+coupling ion-neutral-friction from champ_ion to champ_neutral rate pending density_from number:champ_ion:5.49e-4 density_to mass:champ_neutral region ionosphere quasi-neutral ionosphere_qn\n";
+        let sources = parse_sources(content);
+        let layer = ChannelCouplingLayer::from_sources(&sources, content);
+        assert_eq!(layer.channels.len(), 2, "both density channels register");
+        assert_eq!(
+            layer
+                .constraints
+                .get("ionosphere_qn")
+                .map(|c| c.region.as_str()),
+            Some("ionosphere")
+        );
+        assert_eq!(
+            layer.couplings.len(),
+            1,
+            "the coupling resolves both aliases and the quasi-neutral constraint"
         );
     }
 
