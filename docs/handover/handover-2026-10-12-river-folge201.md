@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass (river-201) — P7.1-Kopplungsauflösung gebaut (ChannelRegistry::index_of + CouplingRegistry::term) + form-bewusster CouplingRegistry::exchange (friction Differenz-förmig, equal-and-opposite über Dichten; Produkt-kinds unberührt); cargo check 0/0; die zwei Blockaden in der Kette research > roster > rat gehalten (Rat: Slot (b) signed PDE-Quelle, früherer Produkt-Term nur für Reaktion, Reibung Differenz-förmig → eigener kind; exakter Injektions-Ort pending seiner Messung; Grammatik-Minimum entschieden); adressierte Blöcke gefaltet; xfer-Riss gemessen (Quelle trägt migrate, ausgeliefertes Bin nicht → Mycelium); folge200 konsumiert/archiviert
   class: handover
   date: 2026-10-12
-  sha256: 780e459d992dde20363604b51850b41b83852ddc940e4e5fd7ffd1be0684fcc5
+  sha256: 95c6a1df6c499e40049950dcf5b5dd0df5d258ad3b1f616dc8e08061a15cfcb2
   status: live
 -->
 # Handover — River-Folge 201 (2026-10-12)
@@ -25,7 +25,7 @@ nie nacheinander, nie „nächster Dispatch", nie „nächste Session". Verschle
 sind der benannte Fehler; ein Punkt, den die Session selbst arbeiten kann, wird im selben Atom
 gearbeitet (Sofort-Prinzip).
 
-## Burn: open 0.00 · close 0.02 · cap 0.50 — Grund: river-201 (deepseek-flash, kein pro/max); 1 `grind-flash` (P7.1-Kopplungsauflösung). `session_burn` bei Schluss: Linien-Delta ≈ $0.0118 (gemessen, flash). Fälligkeit: `--fired river` = 0, `--stale river --persist 3` = 0, `open_points_check` folge201 = 0 absent / 0 stale-citations / 0 format-gaps. Kein `smail --send`, kein Window-Edit.
+## Burn: open 0.00 · close 0.22 · cap 0.50 — Grund: river-201 (deepseek-flash, kein pro/max); 2 `grind-flash` (Kopplungsauflösung + form-bewusster `exchange`-Resolver), 1 `general` (research digest), 1 `council` (Rat), 1 `archive_search --all`, 1 Roster-Runde (Qwen · Claude · GLM antwortend, Duck `pending`). `session_burn` Schluss: Linien-Session ≈ $0.13 (die wachsende `River P7.1…`-Zeile) + council $0.011 + general/grind-flash-Anteile; Haus-Total $1.6759. Fälligkeit: `--fired river` = 0, `--stale river --persist 3` = 0, `open_points_check` folge201 = 0 absent / 0 stale-citations / 0 format-gaps / 0 owner-drift. Kein `smail --send`, kein Window-Edit.
 
 ## Operator-Wort-Register
 
