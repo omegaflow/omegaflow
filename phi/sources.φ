@@ -33026,3 +33026,15 @@ sha256 25b428d1af966dea31e130c0710e8482ba616753e194981d7e22a28b754f947b
 at earth
 ttl 315360000
 field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/POS_M1_ENC_42SEC.DAT
+origin https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.DAT
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 118ae340514445280b215f79a80afdd3cf600012c25b7dec409fd90e4b6f320c
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/POS_M1_ENC_42SEC.LBL
+origin https://pds-ppi.igpp.ucla.edu/data/M10-H-POS-6-M1-FLYBY-TRAJ-V1.0/DATA/POS_M1_ENC_42SEC.LBL
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 745ce7de82cc4e9156bb2bfade1844a5e2d7a30d86dcd7139e6d7df577ea2fb8
+no-cadence
