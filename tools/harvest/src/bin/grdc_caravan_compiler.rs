@@ -18,7 +18,7 @@ const TTL: f64 = 86400.0;
 const GRDC_TRANSFER_BOUND_S: u64 = 3 * 3600;
 
 const STREAMFLOW_VAR: &str = "streamflow";
-const TIME_VAR: &str = "time";
+const TIME_VAR: &str = "date";
 const NC_DIR: &str = "GRDC_Caravan_extension_nc/timeseries/netcdf/grdc";
 const ATTRS_MEMBER: &str =
     "GRDC_Caravan_extension_nc/attributes/grdc/attributes_additional_grdc.csv";
