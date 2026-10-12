@@ -16,6 +16,10 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - uses: actions-rust-lang/setup-rust-toolchain@v1
+    - uses: Swatinem/rust-cache@v2
+      with:
+        shared-key: tools-build
+        cache-targets: true
     # The session/analysis/tool crates are published whole: a session never
     # builds locally, so every bin it may invoke must be on PATH. The 243
     # measure/227 harvest probe/compiler bins stay CI-run bodies (not session
