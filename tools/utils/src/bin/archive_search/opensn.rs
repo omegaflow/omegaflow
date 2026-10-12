@@ -1,5 +1,5 @@
 use crate::json::{self, Json};
-use crate::net::urlencode;
+use crate::net::{spill_dir, urlencode};
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -296,7 +296,7 @@ fn write_full_file(query: &str, lines: &[String]) -> Option<String> {
         .map(|c| if c.is_ascii_alphanumeric() { c } else { '_' })
         .take(40)
         .collect();
-    let path = std::env::temp_dir().join(format!("omegaflow_opensn_{stamp}_{slug}.txt"));
+    let path = spill_dir().join(format!("omegaflow_opensn_{stamp}_{slug}.txt"));
     std::fs::write(&path, lines.join("\n")).ok()?;
     Some(path.to_string_lossy().into_owned())
 }

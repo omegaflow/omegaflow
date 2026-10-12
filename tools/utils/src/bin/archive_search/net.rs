@@ -3769,6 +3769,22 @@ fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<Stri
     out
 }
 
+fn spill_base(env_dir: Option<std::ffi::OsString>) -> std::path::PathBuf {
+    match env_dir {
+        Some(dir) => std::path::PathBuf::from(dir),
+        None => std::env::temp_dir(),
+    }
+}
+
+pub(crate) fn spill_dir() -> std::path::PathBuf {
+    let env_dir = std::env::var_os("OMEGAFLOW_SPILL_DIR");
+    let dir = spill_base(env_dir.clone());
+    if env_dir.is_some() {
+        let _ = std::fs::create_dir_all(&dir);
+    }
+    dir
+}
+
 fn write_full(query: &str, lines: &[String]) -> Option<String> {
     let stamp = SystemTime::now().duration_since(UNIX_EPOCH).ok()?.as_secs();
     let slug: String = query
@@ -3776,7 +3792,7 @@ fn write_full(query: &str, lines: &[String]) -> Option<String> {
         .map(|c| if c.is_ascii_alphanumeric() { c } else { '_' })
         .take(40)
         .collect();
-    let path = std::env::temp_dir().join(format!("omegaflow_all_{stamp}_{slug}.txt"));
+    let path = spill_dir().join(format!("omegaflow_all_{stamp}_{slug}.txt"));
     std::fs::write(&path, lines.join("\n")).ok()?;
     Some(path.to_string_lossy().into_owned())
 }
@@ -4228,6 +4244,15 @@ mod tests {
     fn urlencode_escapes_reserved_bytes() {
         assert_eq!(urlencode("a b/c?d=e"), "a%20b%2Fc%3Fd%3De");
         assert_eq!(urlencode("safe-._~"), "safe-._~");
+    }
+
+    #[test]
+    fn spill_base_honors_the_override_else_temp_dir() {
+        assert_eq!(
+            spill_base(Some(std::ffi::OsString::from("/canonical/spill"))),
+            std::path::PathBuf::from("/canonical/spill")
+        );
+        assert_eq!(spill_base(None), std::env::temp_dir());
     }
 
     #[test]
