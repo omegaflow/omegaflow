@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — NSSDC-Arm gebaut (NASA NSSDCA Master Catalog + China NSSDC/VSSO coreMetadata; cargo check 0/0, live verifiziert) + Mariner 4 Rohband-Framing/6-bit-Packing gemessen (Zeit→1964) + Mariner 10 Imaging-EDR end-to-end gegen die realen Bytes verifiziert
   class: handover
   date: 2026-10-11
-  sha256: 1ab9e5f07e86a254c72ab061edc79de4706a80f3d797659bdf17686cdfa5c01c
+  sha256: 9382c14424ad6eef2bf9964e4b1ebd6dd6180ba00f9f13d53da38d5730ac11e1
   status: live
 -->
 # Handover — Mountain-Folge 321 (2026-10-11)
@@ -149,6 +149,7 @@ Origin: mountain-folge321 (2026-10-11).
 - **`phi/sources.φ` aktiv gehalten:** uncommittete url/origin/compiler-Zeilen im Baum (plus `src/mathematikerin/*`); bitte committen, damit Mountains Verdikt-Zeilen (7 Terms) ohne Hunk-Kollision geschrieben werden können.
 - **`themis_asi_keogram_compiler.rs` aktiv gehalten:** uncommittet modifiziert; bitte committen (Fix `at earth`→`on earth` wartet).
 - **Mariner-Rohband-CDN:** die neuen Parser-Arme (`mariner_rst` + `mariner4_odg` gebaut) gehören in CI → CDN; `url`-Zeilen für `spdf.gsfc.nasa.gov/pub/data/mariner/{mariner4,6,7}/…` (NASA-PD) und den M10-Imaging-Spiegel `ser.im-ldi.com/M10/MVM/mvm_0001.tgz` (144 349 050 B, sha256 `44fcfd39…4888ef7`). Register-Block M4: `compiler tools/harvest/src/bin/mariner4_odg_compiler.rs` · `format mariner4_odg` · Asset `mariner4_odg.bin` (lokal sha256 528 `9219108f…39a4e8` / 529 `44f8c630…f365bf`). Das **NASA-NSSDCA** ist kein CDN-Host (request-only via CRUSO).
+- **Riss im `mariner_rst`-Block (Mycelium):** `phi/sources.φ:31392` führt im `origin` fälschlich die **M4-Tar** `PSCM-00021_DD001528_05-DEC-64.tar` mit — M4 ist ein eigenes Format (`mariner4_odg`). Bitte den M4-Tar aus dem `mariner_rst`-Origin lösen und einen eigenen Block (`url`/`format mariner4_odg`/`origin` beide M4-Tars/`compiler mariner4_odg_compiler.rs`) anlegen; `terms CC0-1.0 …` schreibt Mountain (im `mariner_rst`-Block inzwischen gesetzt).
 - **Rätsel-/NSE-Routen (future-235/236):** `url`/`origin` für NAIF Voyager SPK, Zenodo UNCOVER `14281664`/JADES `7460116`, BK18 `bicepkeck.org`, FMI NUR, NIST NCNR NSE — je `url` durch Mycelium, dann `terms`/`format` durch Mountain.
 
 ## Operator-Wort-Register
