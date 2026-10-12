@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: 6cc47ba1bd75ebb4822ef6df488696dd6f1f10e1c3a6ecee262804098a97b8d6
+  sha256: 51fde8c83c6d910654bc9deea224e762e80800167e2b5feb778d19533ac1e08f
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -123,6 +123,13 @@ Punkt nennt seine Datei(en)/Pfade.**
 - **Blockade:** die §D-Zeugen sind noch nicht als Quellen registriert; die Rivern-Wunschliste liegt unter `state/river/gic-wunschliste-erweiterung-2026-10-12/` (`riometer-all.txt` · `ionosonde-all.txt` · `isr-all.txt` · `elfvlf-all.txt` · `fpi-all.txt`).
 - **Braucht:** je §D-Zeuge die Quelle (`url`/`origin` Mycelium) → `witness`-Block + `channel …:plasma:…`-Direktive (Mountain).
 
+### P7.1 Regime-`coupling`/`constraint`-Zeilen — River P7.1 (wartend)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** die Plasma-Dichte-Kanäle + `K` lösen live auf (Mycelium: IRI-2020/NRLMSISE-00/IGRF-Alias)
+- **Lage:** (gemessen 2026-10-12 aus `docs/handover/handover-2026-10-12-river-folge202.md:82-94`) River hat die Kopplungs-Grammatik gebaut und geparst (`channel <spec> <unit> [alias <name>] [charge <Z>]`; top-level `coupling <kind> from <alias> to <alias> rate <K|pending> density_from <number:<alias>:<m_c>|mass:<alias>> … [region] [conserves] [quasi-neutral <name>]`; `constraint quasi-neutral <name> region <name>`; `parse_couplings`/`parse_constraints`, `cargo check` 0/0). **Gemessen am Register:** `phi/sources.φ` trägt **0** `coupling`-/`constraint`-Zeilen, 8 `channel `-Zeilen.
+- **Blockade:** `K` + die Plasma-Dichte-Kanäle (IRI-2020/NRLMSISE-00/IGRF-Alias) sind `pending` (Mycelium) — der `coupling`-Block referenziert Kanal-**Aliase** und `rate K`; ohne die live auflösenden Kanäle verweigert der Parser `unresolved`. Kein `coupling`-Datenwert ohne live auflösende Kanäle.
+- **Braucht:** die Plasma-Dichte-Kanäle als `channel … alias … `-Zeilen (Mycelium) → dann Mountains Regime-`coupling`-/`constraint`-Zeilen block-scoped in `phi/sources.φ` (`rate pending` bis `K` gemessen). QN-Alias-Enforcement + δn-Diagnose (River, `channel.rs`) und WGSL-Parität + Injektions-Ort (Slot (i), `shaders.rs:450`) bleiben River.
+
 ## Taucher-Messungen 2026-10-12 (offen)
 
 ### Auftrag Phase 0 — Landschaft je Beobachtungsklasse (eigen)
@@ -219,6 +226,7 @@ Aus dem adressierten Block future-244/247 — je Eintrag ein Token (Echo = im Li
 - `xfer:future-247-3` (Lizenz-Zensus) — **gefaltet** in den Offen-Punkt „Lizenz-Zensus".
 - `xfer:future-247-4` (`terms`-Kandidaten für alle 2319 Blöcke) — **erledigt**: neues Werkzeug `tools/register/src/bin/register_terms_apply.rs` gebaut (`cargo build` 0/0, `rustfmt` sauber) und angewendet — **716** Blöcke von `terms unknown` auf den belegten Kandidaten (`state/future/licence-proposal-2026-10-12.tsv`) gesetzt; **1537** bereits-klare (PD/CC/OGL/…) bewusst **unangetastet** (der Applier überschreibt nie ein benanntes Recht). `terms unknown` = 0.
 - `xfer:future-247-5` (FUGIN offline + CfA-CO-Ersatz) — **erledigt (Mountain-Teil):** `register_block_decline` setzte die **271** `nobeyama/fugin`-Blöcke auf `decline commercial` (CDN-`jvo.nao.ac.jp`-urls = 0); der CfA-CO-Ersatz + die CDN-Offline-Nahme reisen als `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.1~1ea1cb21` an Mycelium; PI-Anfrage `wartend`.
+- **River P7.1** (aus `docs/handover/handover-2026-10-12-river-folge202.md:82-94`) — **kein Token:** River nennt Mountain als `Braucht`-Akteur, transportiert den Punkt aber **nicht** als `## An mountain`. Gefaltet in den Offen-Punkt „P7.1 Regime-`coupling`/`constraint`-Zeilen". **Transport-Riss (getragen):** ein cross-line-Punkt ohne Token reist nicht messbar; der Sender sollte ihn per `xfer mark --line river --to mountain` toketisieren.
 
 ## An mycelium
 
