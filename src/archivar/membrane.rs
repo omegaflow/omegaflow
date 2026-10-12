@@ -371,7 +371,7 @@ pub fn body_anchor_samples(
             extent: radius,
             tau,
             kernel_id: 0.0,
-            channel_ref: 1.0,
+            channel_ref: Some(1.0),
             absorption: absorption_for_force(1, 0.0),
             advection: 0.0,
             anchor_vmax,
@@ -434,13 +434,15 @@ pub fn enclosure_rho(vmax: f64, amax: f64, dt: f64, pad: f64) -> f64 {
 pub fn dispatch_reach(fields: &[FieldConfig], src_ttl: f64) -> Option<f64> {
     let mut reach: Option<f64> = None;
     for fc in fields {
-        if let Some(rr) = signal_reach(
-            fc.channel_ref as f64,
-            fc.advection,
-            src_ttl * 64.0,
-            fc.freq,
-            fc.bin_width,
-        ) {
+        if let Some(rr) = fc.channel_ref.and_then(|channel_ref| {
+            signal_reach(
+                channel_ref as f64,
+                fc.advection,
+                src_ttl * 64.0,
+                fc.freq,
+                fc.bin_width,
+            )
+        }) {
             reach = Some(reach.map_or(rr, |prev| prev.max(rr)));
         }
     }
@@ -601,10 +603,28 @@ mod tests {
 
     #[test]
     fn the_battery_family_carries_the_electric_force() {
-        assert_eq!(sensor_config("battery.level").expect("sensor").channel_ref, 8);
-        assert_eq!(sensor_config("battery.voltage").expect("sensor").channel_ref, 8);
-        assert_eq!(sensor_config("battery.current").expect("sensor").channel_ref, 8);
-        assert_eq!(sensor_config("battery.charging").expect("sensor").channel_ref, 8);
+        assert_eq!(
+            sensor_config("battery.level").expect("sensor").channel_ref,
+            8
+        );
+        assert_eq!(
+            sensor_config("battery.voltage")
+                .expect("sensor")
+                .channel_ref,
+            8
+        );
+        assert_eq!(
+            sensor_config("battery.current")
+                .expect("sensor")
+                .channel_ref,
+            8
+        );
+        assert_eq!(
+            sensor_config("battery.charging")
+                .expect("sensor")
+                .channel_ref,
+            8
+        );
     }
 
     #[test]

@@ -76,7 +76,7 @@ pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
             name: name.to_string(),
             band_id: None,
             kernel,
-            channel_ref,
+            channel_ref: Some(channel_ref),
             tau,
             absorption: 0.0,
             advection: 0.0,
@@ -144,7 +144,7 @@ mod tests {
         assert_eq!(fields.len(), COLUMNS.len());
         assert_eq!(fields[0].name, "agrav_gravity_ms2");
         assert_eq!(fields[0].unit, "m/s2");
-        assert_eq!(fields[0].channel_ref, force_id_of("gravity").unwrap());
+        assert_eq!(fields[0].channel_ref, Some(force_id_of("gravity").unwrap()));
         assert_eq!(component_name(COMP_GRAVITY), Some("agrav_gravity_ms2"));
         assert_eq!(component_name(9), None);
     }

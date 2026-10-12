@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: 7c048e59deb2d0cd8963bdf41fcb21a6a8926d6f921c30b5c8cf1a757ea6a697
+  sha256: a5782b2ff5ef1b2d2accfd0bc8166ce545c9efc727586a892e7de757a8b0b7b8
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -102,9 +102,9 @@ Befund ist auch bei vollständiger Stille vollständig; ein Teiltreffer (eine Fa
 trägt, andere nicht) wird als solcher benannt, nie zu einem Treffer geglättet.
 Nach der Messung ist keine Grenze, keine α-Ebene und kein Band mehr verhandelbar.
 
-## Was vor dem Lauf fehlt (gemessen 2026-10-06)
+## Was vor dem Lauf fehlte (2026-10-06 gemessen — 2026-10-12 nachgezogen)
 
-Der Lauf ist **nicht** startbereit; die Lücke ist gemessen, nicht vermutet:
+Der Weg ist gebaut; die 2026-10-06 benannten Schritte sind erledigt (was vor dem Lauf noch `pending` bleibt — Kalibrierung, Stufe-2-Pool — steht in §Offene Slots):
 
 1. **Die 154 tragen je ihren station-qualifizierten Kanal — der Identitäts-Riss ist
    geheilt (gemessen 2026-10-06, Mountain `2117476be`).** Die 154 BGS-GIN-HAPI-
@@ -121,18 +121,14 @@ Der Lauf ist **nicht** startbereit; die Lücke ist gemessen, nicht vermutet:
    ist heute nur als **je ein Descriptor pro Band** ausdrückbar, nicht als ein
    Lauf über drei Familien.
 
-**Nächster Schritt (kein neues Tool):** (a) — erledigt (Mountain `2117476be`:
-`station`-Direktive auf den 154 Blöcken, Arm station-aware). **(0) vor den Deskriptoren:
-die Partition messen, nicht setzen** — die 154 Blöcke tragen nur die geografische
-`on earth <lat> <lon>`-Koordinate, die korrigierte geomagnetische Breite (CGM) fehlt
-(`phi/sources.φ:6621,6632,6643`); feste Bandgrenzen vor dem Lauf deklarieren, drei
-Kanal-Listen emittieren, Deckungstest (paarweise disjunkt, Union = 154) als Begleiter zu
-`field_sources_resolves_station_qualified_channel_to_its_block` (`field_te_query.rs:4762`)
-— `expect cells` prüft nur je Deskriptor, **nicht** die familien-übergreifende
-Vollständigkeit. (b) drei Familien-Deskriptoren (`matrix gic_auroral full` /
-`_subauroral` / `_midlat`) über `field_te_query --descriptor` (`:4657`), je eigenes
-`channels`/`fdr`/`expect cells`; (c) **ein** CI-Job `field-te-query.yml` mit drei
-Deskriptor-Schritten (nie lokal).
+**Der Weg (2026-10-06 fixiert, 2026-10-12 gebaut):** (a) erledigt (Mountain `2117476be`:
+`station`-Direktive auf den 154 Blöcken, Arm station-aware). **(0) erledigt 2026-10-07:**
+die Partition ist gemessen — drei Kanal-Listen aus `cgm_lat`
+(`state/river/gic-family-{auroral,sub-auroral,mid-latitude}.txt`, 31+25+98 = 154,
+paarweise disjunkt; `cgm_lat_partition.rs --from-tsv … --emit-dir …`), Deckungstest grün.
+**(b) gebaut:** drei Familien-Deskriptoren `src/mathematikerin/descriptors/gic_{auroral,subauroral,midlat}.te`
+über `field_te_query --descriptor`. **(c) gebaut:** **ein** CI-Job `field-te-query.yml`
+mit den drei Deskriptor-Schritten `matrix-gic-{auroral,subauroral,midlat}` (nie lokal).
 
 **Drei Kanäle (2026-10-06) — drei Linien, ungeglättet.** Rohmaterial
 `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`.
@@ -159,9 +155,12 @@ FDR-Korrekturgruppe; die Grammatik trägt **genau einen** neuen Scope `fdr … o
 (`auroral`/…) ist eine **deklarierte Ableitung** aus `cgm_lat` + Operator-Grenzen zur Abfragezeit, **keine**
 Registerzeile. Drei `matrix gic_auroral full`-Pools sind **drei Messungen** (andere BH-Schwellen, andere
 Surrogat-Maxima, anderes `FAMILY_K`), die Vereinigung ist keine Zerlegung des globalen Ergebnisses → zwei
-Namen. Offen bleiben nur **Design-Entscheidungen des Operators** (Bandgrenzen + Abschließung; voller Pool vs.
-drei Pools; Modell/Epoche/Höhe) und der **Messschritt**: `cgm_lat` je Station **lokal** messen (Services
-`declined`), Modell/Epoch/Höhe als Pflicht-Provenienz, dann Drift-Check.
+Namen. Entschieden 2026-10-07: die Bandgrenzen sind deklariert (auroral ≥60°,
+sub-auroral 50–60°, mid <50° |CGM|, §Offene Slots); der Träger ist Route C
+(Stufe-2-Member-Pool, die per-Band-`full`-Pools nur als Vergleichsmessung);
+Modell/Epoche/Höhe sind gepinnt (cgm/aacgm, Epoche 2025.0, Höhe 0 km). Gemessen:
+`cgm_lat` je Station (152/154, `state/river/gic-cgm-lat.tsv`; per-Station-Zeile in
+`phi/sources.φ`), Drift OmniWeb↔SuperMAG 1.13° über 130 gemeinsame Stationen.
 
 **Risse (Rat 2026-10-06, ungeglättet):** (1) Stufe 1 globales FDR vs. je-Familie-`fdr`
 — der Blatt-Text konvergiert nicht, beide Linien stehen; (2) globale Kalibrierung (ein
@@ -190,10 +189,11 @@ Die per-Station CGM-Breite wird **nicht** gesetzt, sondern gemessen. Route (gew�
   Primär ↔ Fallback.
 - **Nicht CGM:** der BGS-GIFS-Rechner liefert *quasi-dipol* (QD ≠ CGM); die ArcGIS-
   `Geomagnetic_Latitudes`-Services bleiben `declined` (`phi/declined_sources.φ:3327-3341`).
-- **Lokaler Weg (offen):** IGRF-14-Koeffizienten
-  (`https://www.ngdc.noaa.gov/IAGA/vmod/coeffs/igrf14coeffs.txt`, sha256 `8f8d8840…`) +
-  AACGM-v2-Koeffizienten (`https://superdarn.thayer.dartmouth.edu/aacgm/aacgm_coeffs-14.tar`)
-  als Rust-Bin; ohne Feldlinien-Trace nur Dipol-Näherung, als solche zu benennen.
+- **Lokaler Weg — offen (gemessen 2026-10-12):** ein IGRF-14/AACGM-v2-Rust-Bin ist
+  nicht gebaut (`register_lookup aacgm` = 7 Treffer, alle in diesem Blatt); CPL und TTB
+  tragen darum `bgs-quasi-dipole` (QD ≠ CGM). Braucht: die Koeffizienten
+  (`igrf14coeffs.txt`, sha256 `8f8d8840…`; `aacgm_coeffs-14.tar`) als Rust-Bin laden
+  (ohne Feldlinien-Trace nur Dipol-Näherung, als solche benannt).
 - **Grenze der Primär-Route (gemessen 2026-10-07, River 122):** der OMNIWeb-VITMO-CGM-
   Endpunkt weist `latitude` mit |lat| < 20° ab (`Latitude must be greater than 20. or
   less than -20`, HTTP 200); die zwei low-lat GIN-Stationen **CPL** (geodätisch 17.29°)
@@ -284,7 +284,7 @@ kein `over family`, `cgm_lat` nie gelesen):
 | Partitionsgrenzen (geomagn. Breite je Band) | **deklariert 2026-10-07:** auroral ≥60°, sub-auroral 50–60°, mid <50° (\|CGM\|) |
 | α-Ebene Stufe 2 (WY-max-t) | `pending` — aus der kalibrierten Null |
 | Resample-Blocklänge / Binnung | `pending` — Teil der Kalibrierung |
-| Familien-Deskriptoren | `pending` — Route C (Rat 2026-10-07): als Stufe-2-Member-Pool des `compute_max_t`, nicht als per-Band-`full`-Deskriptoren; wartet auf den per-Station-dB/dt-Bestand (Mountain) |
+| Familien-Deskriptoren | **gebaut 2026-10-12 (gemessen)** — `src/mathematikerin/descriptors/gic_{auroral,subauroral,midlat}.te` (31/25/98 Kanäle) + die drei `field-te-query.yml`-Jobs `matrix-gic-{auroral,subauroral,midlat}` (Stufe-1-Vergleichsscreens; als Träger verworfen, als benannte Vergleichsmessung erlaubt). Offen (Route C): die Stufe-2-Member-Pool-Integration des `compute_max_t` — wartet auf den per-Station-`dB/dt`-Bestand (2 Stationen: ABK/SOD). |
 | Familien-Kanal-Listen | **gebaut 2026-10-07** — `state/river/gic-family-{auroral,sub-auroral,mid-latitude}.txt` (154 = 31+25+98, disjunkt) aus `cgm_lat_partition.rs --from-tsv` |
 | Verdikt | `unsealed` |
 

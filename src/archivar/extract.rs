@@ -1741,7 +1741,7 @@ pub fn edf_emit_channels_with_electrodes(
             name: name.clone(),
             band_id: None,
             kernel,
-            channel_ref,
+            channel_ref: Some(channel_ref),
             tau,
             absorption: 0.0,
             advection: 0.0,
@@ -1831,7 +1831,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     name: outputs[0].clone(),
                     band_id: None,
                     kernel: 0,
-                    channel_ref: 3,
+                    channel_ref: Some(3),
                     tau: *tau,
                     absorption: *absorption,
                     advection: *advection,
@@ -1846,7 +1846,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     name: outputs[1].clone(),
                     band_id: None,
                     kernel: 0,
-                    channel_ref: 3,
+                    channel_ref: Some(3),
                     tau: *tau,
                     absorption: *absorption,
                     advection: *advection,
@@ -1873,7 +1873,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     name: outputs[0].clone(),
                     band_id: None,
                     kernel: 1,
-                    channel_ref: 3,
+                    channel_ref: Some(3),
                     tau: *tau,
                     absorption: *absorption,
                     advection: *advection,
@@ -1888,7 +1888,7 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     name: outputs[1].clone(),
                     band_id: None,
                     kernel: 3,
-                    channel_ref: 4,
+                    channel_ref: Some(4),
                     tau: *tau,
                     absorption: *absorption,
                     advection: *advection,
@@ -2156,7 +2156,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 name: "val".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 0.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -2173,7 +2173,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 name: "extent".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 0.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -2190,7 +2190,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 name: "tau".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 0.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -2231,7 +2231,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 name: "val".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 0.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -2248,7 +2248,7 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 name: "extent".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 0.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -4238,7 +4238,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             name: "uv_index".to_string(),
             band_id: None,
             kernel: 0,
-            channel_ref: 0,
+            channel_ref: Some(0),
             tau,
             absorption: 0.0,
             advection: 0.0,
@@ -4290,7 +4290,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 name: name.to_string(),
                 band_id: None,
                 kernel,
-                channel_ref,
+                channel_ref: Some(channel_ref),
                 tau,
                 absorption: 0.0,
                 advection: 0.0,
@@ -4361,7 +4361,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             name: "fugin_moment0".to_string(),
             band_id: None,
             kernel: 0,
-            channel_ref: 0,
+            channel_ref: Some(0),
             tau,
             absorption: 0.0,
             advection: 0.0,
@@ -6366,7 +6366,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         name: outputs[0].clone(),
                                         band_id: None,
                                         kernel: 0,
-                                        channel_ref: 3,
+                                        channel_ref: Some(3),
                                         tau: *tau,
                                         absorption: *absorption,
                                         advection: *advection,
@@ -6398,7 +6398,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         name: outputs[1].clone(),
                                         band_id: None,
                                         kernel: 0,
-                                        channel_ref: 3,
+                                        channel_ref: Some(3),
                                         tau: *tau,
                                         absorption: *absorption,
                                         advection: *advection,
@@ -6448,7 +6448,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     name: outputs[0].clone(),
                                     band_id: None,
                                     kernel: 1,
-                                    channel_ref: 3,
+                                    channel_ref: Some(3),
                                     tau: *tau,
                                     absorption: *absorption,
                                     advection: *advection,
@@ -6481,7 +6481,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     name: outputs[1].clone(),
                                     band_id: None,
                                     kernel: 3,
-                                    channel_ref: 4,
+                                    channel_ref: Some(4),
                                     tau: *tau,
                                     absorption: *absorption,
                                     advection: *advection,
@@ -7737,7 +7737,10 @@ mod fixed_width_series_tests {
         assert_eq!(fields.len(), 4);
         assert_eq!(fields[0].name, "gras_2c_gate_0000");
         assert_eq!(fields[3].name, "gras_2c_gate_0003");
-        assert_eq!(fields[0].channel_ref, crate::force::force_id_of("em").unwrap());
+        assert_eq!(
+            fields[0].channel_ref,
+            Some(crate::force::force_id_of("em").unwrap())
+        );
         assert_eq!(
             fields[0].kernel,
             crate::archivar::kernel_id_of("inverse-square").unwrap()
@@ -7925,7 +7928,10 @@ mod edf_arm_tests {
         let channels = edf_emit_channels(&bytes, &position, 100.0, 60.0, EDF_CHANNEL_CAP);
         assert_eq!(channels.len(), 3);
         let (ch, fc) = &channels[2];
-        assert_eq!(fc.channel_ref, crate::force::force_id_of("electric").unwrap());
+        assert_eq!(
+            fc.channel_ref,
+            Some(crate::force::force_id_of("electric").unwrap())
+        );
         assert_eq!(fc.unit, "V");
         assert_eq!(ch.station_code.as_deref(), Some("EEG Fpz-Cz"));
         assert_eq!(ch.z, 0.0);
@@ -8015,7 +8021,7 @@ mod blinkverse_frb_tests {
             name: name.to_string(),
             band_id: None,
             kernel: 0,
-            channel_ref: 0,
+            channel_ref: Some(0),
             tau: 604800.0,
             absorption: 0.0,
             advection: 0.0,

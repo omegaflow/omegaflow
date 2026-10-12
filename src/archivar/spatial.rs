@@ -461,7 +461,7 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
             extent: body_radius_m,
             tau: f64::INFINITY,
             kernel_id: 0.0,
-            channel_ref: 1.0,
+            channel_ref: Some(1.0),
             absorption: 0.0,
             advection: 0.0,
             anchor_vmax,
@@ -484,7 +484,7 @@ pub fn build_asteroid_samples(bytes: &[u8], ttl: u64) -> Vec<Sample> {
                 extent: body_radius_m,
                 tau: f64::INFINITY,
                 kernel_id: 1.0,
-                channel_ref: 1.0,
+                channel_ref: Some(1.0),
                 absorption: 0.0,
                 advection: 0.0,
                 anchor_vmax,
@@ -673,7 +673,7 @@ pub fn build_star_samples(bytes: &[u8], catalog_epoch_yr: Option<f64>) -> Vec<Sa
             extent: f64::INFINITY,
             tau: rec.tau,
             kernel_id: 0.0,
-            channel_ref: 0.0,
+            channel_ref: Some(0.0),
             absorption: 0.0,
             advection: 0.0,
             anchor_vmax,
@@ -732,8 +732,11 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             if age > sample.ttl * 64.0 {
                 continue;
             }
+            let Some(channel_ref) = sample.channel_ref else {
+                continue;
+            };
             if signal_reach(
-                sample.channel_ref,
+                channel_ref,
                 sample.advection,
                 age,
                 sample.freq,
@@ -744,7 +747,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 continue;
             }
             let v_prop = match propagation_speed(
-                sample.channel_ref,
+                channel_ref,
                 sample.advection,
                 sample.freq,
                 sample.bin_width,
@@ -752,12 +755,12 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 Some(v) => v,
                 None => continue,
             };
-            let ft = sample.channel_ref as u8;
+            let ft = channel_ref as u8;
             let floor_ft = if ft < 9 { floor[ft as usize] } else { f64::NAN };
             if !(floor_ft.is_finite() && floor_ft > 0.0) {
                 continue;
             }
-            let z_aperture = if sample.channel_ref == 0.0 && slot_measured(sample.z_flux) {
+            let z_aperture = if sample.channel_ref == Some(0.0) && slot_measured(sample.z_flux) {
                 let z1 = 1.0 + sample.z_flux;
                 1.0 / (z1 * z1)
             } else {
@@ -822,7 +825,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 v[0],
                 v[1],
                 v[2],
-                if sample.channel_ref == 0.0 && slot_measured(sample.z_flux) {
+                if sample.channel_ref == Some(0.0) && slot_measured(sample.z_flux) {
                     sample.z_flux
                 } else {
                     0.0
@@ -841,7 +844,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                     sample.absorption,
                     sample.advection,
                     sample.z_flux,
-                ) + if sample.channel_ref == CHANNEL_REF_QUANTITY as f64 {
+                ) + if sample.channel_ref.is_none() {
                     PRESENCE_FLAG_QUANTITY
                 } else {
                     0.0
@@ -918,15 +921,16 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             if age > sample.ttl * 64.0 {
                 continue;
             }
-            let reach_signal = match signal_reach(
-                sample.channel_ref,
-                sample.advection,
-                age,
-                sample.freq,
-                sample.bin_width,
-            ) {
-                Some(r) => r,
-                None => continue,
+            let Some(reach_signal) = sample.channel_ref.and_then(|channel_ref| {
+                signal_reach(
+                    channel_ref,
+                    sample.advection,
+                    age,
+                    sample.freq,
+                    sample.bin_width,
+                )
+            }) else {
+                continue;
             };
             let future_age = age + delta_t_cache;
             let reach = reach_signal
@@ -980,7 +984,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                 v[0],
                 v[1],
                 v[2],
-                if sample.channel_ref == 0.0 && slot_measured(sample.z_flux) {
+                if sample.channel_ref == Some(0.0) && slot_measured(sample.z_flux) {
                     sample.z_flux
                 } else {
                     0.0
@@ -999,7 +1003,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
                     sample.absorption,
                     sample.advection,
                     sample.z_flux,
-                ) + if sample.channel_ref == CHANNEL_REF_QUANTITY as f64 {
+                ) + if sample.channel_ref.is_none() {
                     PRESENCE_FLAG_QUANTITY
                 } else {
                     0.0

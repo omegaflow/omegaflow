@@ -1469,7 +1469,7 @@ pub fn main_flow() {
                     name: bs.key.clone(),
                     band_id: None,
                     kernel: bs.kernel,
-                    channel_ref: bs.channel_ref,
+                    channel_ref: Some(bs.channel_ref),
                     tau: effective_tau,
                     absorption: 0.0,
                     advection: 0.0,
@@ -2375,7 +2375,7 @@ pub fn main_flow() {
                         ttl: src_ttl as f64,
                         tau: field.tau,
                         kernel_id: field.kernel as f64,
-                        channel_ref: field.channel_ref as f64,
+                        channel_ref: wire_channel_ref(field.channel_ref.map(|c| c as f64)),
                         absorption: field.absorption,
                         advection: field.advection,
                         redshift: 0.0,
@@ -2512,7 +2512,7 @@ pub fn main_flow() {
                             ttl: src_ttl as f64,
                             tau: field.tau,
                             kernel_id: field.kernel as f64,
-                            channel_ref: field.channel_ref as f64,
+                            channel_ref: wire_channel_ref(field.channel_ref.map(|c| c as f64)),
                             absorption: field.absorption,
                             advection: field.advection,
                             redshift: 0.0,
@@ -2695,7 +2695,7 @@ pub fn main_flow() {
                             ttl: src_ttl as f64,
                             tau: field.tau,
                             kernel_id: field.kernel as f64,
-                            channel_ref: field.channel_ref as f64,
+                            channel_ref: wire_channel_ref(field.channel_ref.map(|c| c as f64)),
                             absorption: field.absorption,
                             advection: field.advection,
                             redshift: 0.0,
@@ -2858,7 +2858,7 @@ pub fn main_flow() {
                             ttl: src_ttl as f64,
                             tau: field.tau,
                             kernel_id: field.kernel as f64,
-                            channel_ref: field.channel_ref as f64,
+                            channel_ref: wire_channel_ref(field.channel_ref.map(|c| c as f64)),
                             absorption: field.absorption,
                             advection: field.advection,
                             redshift: spec.redshift,
@@ -4525,7 +4525,7 @@ pub fn main_flow() {
                                     medium: body_medium,
                                     body_radius,
                                     receiver_aperture: receiver_aperture
-                                        .resolve(fc.channel_ref, fc.aperture),
+                                        .for_channel(fc.channel_ref, fc.aperture),
                                 },
                                 AnchorEnvelope {
                                     vmax: anchor_vmax,
@@ -4687,7 +4687,7 @@ pub fn main_flow() {
                                     medium: body_medium,
                                     body_radius,
                                     receiver_aperture: receiver_aperture
-                                        .resolve(fc.channel_ref, fc.aperture),
+                                        .for_channel(fc.channel_ref, fc.aperture),
                                 },
                                 AnchorEnvelope {
                                     vmax: anchor_vmax,
@@ -5186,7 +5186,7 @@ pub fn main_flow() {
                         config: fc,
                         medium: body_medium,
                         body_radius,
-                        receiver_aperture: receiver_aperture.resolve(fc.channel_ref, fc.aperture),
+                        receiver_aperture: receiver_aperture.for_channel(fc.channel_ref, fc.aperture),
                     };
                     let env = AnchorEnvelope {
                         vmax: 0.0,

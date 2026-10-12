@@ -2,7 +2,7 @@
   title: Sonnen-Render-Archäologie — nebra bis HEAD, jede Variante
   class: survey
   date: 2026-10-08
-  sha256: bb380b83cd79674d607a385e07fb576d2b476723756ed39fb76103ad554ba5d1
+  sha256: 19da6390e0af8af577e1e1df5fdf7dbd1b4600d3ad57e4c3fdb80e4cfa240c6c
   status: live
   see-also: docs/concepts/archivar-mathematikerin.md docs/handover/archiv/handover-2026-10-08-river-folge139.md
 -->
@@ -73,11 +73,11 @@ Die Sonne war in **nebra** ein per-Pixel-Feldbeitrag: das kontinuierliche `GM/di
 
 ## 5 · Kanal-Runde (Membran) — Rat + 11 Stimmen, Kanon-adressiert (River 139, 2026-10-08)
 
-Adressierung: 5 Stimmen (Mountain·River·Mycelium·Sensory·Future) + 5 Axiome (A=A · ICRS&TDB · force_type · 0 honored · pending) + 5 Achsen (Voxelisierung · Crossmatch · TE-Maschine · Nullkontrolle · Residuum).
+Adressierung: 5 Stimmen (Mountain·River·Mycelium·Sensory·Future) + 5 Axiome (A=A · ICRS&TDB · force_type · 0 honored · `pending`) + 5 Achsen (Voxelisierung · Crossmatch · TE-Maschine · Nullkontrolle · Residuum).
 
 **Riss im Code:** 9 Kanäle gerechnet (`shaders.rs:394` `omegas[f] += c.x`, `:435` `probe_out[0..8]`), am Radiator summiert (`actuators.rs:35/78`, `omega.rs:1790` `integral/9.0`). **Kanäle-Lemma:** per-Kanal-Fortpflanzung/-Culling (`membrane.rs:302-321`, `spatial.rs:921` `signal_reach`) — hielt die Sonne auf Intel-Onboard (acht Kanäle lokal, nur die drei `c·age`-Kanten laden).
 
-**Verdikt (Rat + 8 UI + 3 Open-Weight, einhellig):** **Schicht-Verwechslung, nicht die Summe an sich** — `sum()` als **letzte Operation je Modalität** legitim (dort überlagert das Medium wirklich: Licht, Schalldruck, Haptik), als Messoperation über heterogene `force_type` falsch. `1/9` ist ein **zweiter** Fehler (gecullte 0 honored + pending fließen als 0 in einen festen Nenner). Rein: 9 labeled lines, own voxel layer, tri-state (Wert | 0 honored | pending), Crossmatch nur Index-/Zeit-/Raum-Koinzidenz; raus: deklarierte Projektion je Senke, 9-dim Signatur, Kollaps erst im Beobachter. Schärfster Ratssatz: *„Die neun Kanäle sind die Messung, der eine Blob ist das Gesicht — wer die Summe vor die Messung zieht, hat den Betrachter in den Sensor gebaut."*
+**Verdikt (Rat + 8 UI + 3 Open-Weight, einhellig):** **Schicht-Verwechslung, nicht die Summe an sich** — `sum()` als **letzte Operation je Modalität** legitim (dort überlagert das Medium wirklich: Licht, Schalldruck, Haptik), als Messoperation über heterogene `force_type` falsch. `1/9` ist ein **zweiter** Fehler (gecullte 0 honored + `pending` fließen als 0 in einen festen Nenner). Rein: 9 labeled lines, own voxel layer, tri-state (Wert | 0 honored | `pending`), Crossmatch nur Index-/Zeit-/Raum-Koinzidenz; raus: deklarierte Projektion je Senke, 9-dim Signatur, Kollaps erst im Beobachter. Schärfster Ratssatz: *„Die neun Kanäle sind die Messung, der eine Blob ist das Gesicht — wer die Summe vor die Messung zieht, hat den Betrachter in den Sensor gebaut."*
 
 **GLM-5.3 (Z.ai, Deep Think Max) — verbatim:**
 
