@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — NSSDC-Arm gebaut (NASA NSSDCA Master Catalog + China NSSDC/VSSO coreMetadata; cargo check 0/0, live verifiziert) + Mariner 4 Rohband-Framing/6-bit-Packing gemessen (Zeit→1964) + Mariner 10 Imaging-EDR end-to-end gegen die realen Bytes verifiziert
   class: handover
   date: 2026-10-11
-  sha256: 9382c14424ad6eef2bf9964e4b1ebd6dd6180ba00f9f13d53da38d5730ac11e1
+  sha256: 30d4167dd33d09e9d1e04f33da2ad8438bf6ed5017341356c91e88ccdb0b805f
   status: live
 -->
 # Handover — Mountain-Folge 321 (2026-10-11)
@@ -37,12 +37,12 @@ Session konsumierte `handover-2026-10-11-mountain-folge320.md` (→ `archiv/`).
 - **Blockade:** keine.
 - **Braucht:** nichts — der Riss ist geschlossen; der Eintrag dient als Beleg.
 
-### Mariner 10 Imaging-EDR — verifiziert; Bild-Erkennungspfad offen (eigen)
+### Mariner 10 Imaging-EDR — EDR→Bild-Extraktor gebaut; Erkennungspfad offen (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der nächste Bau-Pass / Operator-Wort zur Bilderkennung
-- **Lage:** (gemessen 2026-10-11 via grind-flash) `mvm_0001.tgz` = 144 349 050 B, sha256 `44fcfd39…4888ef7`; 1367 Member, **677** `IMAGES/`-Dateien à 702 768 B; erste Datei `./MVE_001/IMAGES/MVE_001.001` (702 768 B, sha256 `f37efbe5…18ba2e`); EBCDIC-Label (cp037) 360 B mit `ERT YR=74 DAY=036 GMT=17/34/07` = **1974-02-05 17:34:07 UTC**; Records 1–700 = Pixelzeilen (832 Spalten, min 0 max 233), 701–725 null. **`mariner_m10_edr_compiler.rs` trifft die realen Bytes exakt** (kein Offset-Divergenz). Zwei Korrekturen am Vorwissen: Verzeichnis ist `MVE_001` (3-stellig, nicht 4); der „608-B-Filler" von Record 0 ist **nicht** null (360..831 bildartig, 832..967 Engineering-Signatur `3b 01 01 00`) — der Compiler liest nur `data[0..360]`, unberührt.
-- **Blockade:** der Compiler emittiert **832 Spaltenmittel**, kein Bild.
-- **Braucht:** Operator-Wort, ob ein Bild-Render/Erkennungs-Pfad (Operator-Bedenken „bessere Bilderkennung") gebaut wird; sonst `descoped` mit Befund.
+- **Trigger:** der nächste Bau-Pass / Operator-Wort zur Erkennung
+- **Lage:** (gemessen 2026-10-11) `mvm_0001.tgz` = 144 349 050 B, sha256 `44fcfd39…4888ef7`; 1367 Member, **677** `IMAGES/`-Dateien à 702 768 B; EBCDIC-Label (cp037) 360 B (`ERT YR=74 DAY=036 GMT=17/34/07` = **1974-02-05 17:34:07 UTC**); Records 1–700 = Pixelzeilen (832 Spalten), 701–725 null. `mariner_m10_edr_compiler.rs` trifft die realen Bytes exakt. **Neu gebaut:** `tools/utils/src/bin/m10_edr_image.rs` — extrahiert die **echte 2D-Raster (832×700, gray8)** je EDR-Bild und schreibt PNG (std-only Encoder, Crc32/Adler32/zlib-stored); Rohbild-Pfad verifiziert (PNG 583 208 B, sha256 `b59ef595…`). **Erkennungs-Probe (lokal `vision`):** die ersten drei MVE_001-Frames (`.001/.150/.199`) sind **niedrig-kontrastige Vidicon-Scanframes ohne auflösbares Planetenziel** (Starfield/Speckle + schwarzer Scan-Rahmen; Mittel ~29–~150). Der volle `.tgz`-Lauf mit dem Repo-`gunzip` ist **lokal zu langsam** (Timeout 300 s auf 144 MB) → CI; lokal läuft der Rohbild-Pfad.
+- **Blockade:** keine Extraktions-Blockade; die Rohframes brauchen Vermessung/Stretch, die Erkennung einen stärkeren Leser.
+- **Braucht:** Kontrast-Stretch/Statistik (Mountain) + einen Benchmark des Lesers (lokal `vision` vs. Frontier-UI); den Repo-`gunzip` für die 144-MB-Tars beschleunigen (oder CI-only führen).
 
 ### Mariner-6/7-Tracking (`mariner_rst`) — Zusatz-Tapes + Observable-Skala (eigen)
 - **Status:** eigen | **Bindung:** eigen
