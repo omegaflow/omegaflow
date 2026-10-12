@@ -26,7 +26,7 @@ jobs:
     - run: cargo build --release -p omegaflow --bin omegaflow --features browser_relay
     - name: Tool list
       run: |
-        echo "TOOLS=cdn_reconcile claim_reader commit_words concurrency_contract doc_audit home_scan number_audit open_points_check path_reference_scan pending_extract pii_exposure reference_verify register_lookup register_verify relations_consistency_probe repo_surveillance session_burn source_url_candidates git_safety bench sfetch probe_sweep hdf5_reader parquet_reader register_sort sread spk_split giveup_scan tdat_reader ci_manage las_reader bucket_litmus sgrep archive_search bloat_scan omega_sh zip_range_extract source_scanner grib2_reader opendap_reader netcdf_reader area_reconcile volume_builder commit_check livefeed_gate text_review omegaflow smail smail_recv mail_watchdog mail_digest cds_watchdog job_dashboard job_monitor notes_notify" >> "$GITHUB_ENV"
+        echo "TOOLS=cdn_reconcile claim_reader commit_words block_commit concurrency_contract doc_audit home_scan number_audit open_points_check path_reference_scan pending_extract pii_exposure reference_verify register_lookup register_verify relations_consistency_probe repo_surveillance session_burn source_url_candidates git_safety bench sfetch probe_sweep hdf5_reader parquet_reader register_sort sread spk_split giveup_scan tdat_reader ci_manage las_reader bucket_litmus sgrep archive_search bloat_scan omega_sh zip_range_extract source_scanner grib2_reader opendap_reader netcdf_reader area_reconcile volume_builder commit_check livefeed_gate text_review omegaflow smail smail_recv mail_watchdog mail_digest cds_watchdog job_dashboard job_monitor notes_notify" >> "$GITHUB_ENV"
     - name: Write tools.manifest
       env:
         TOOLS_SHA: ${{ github.sha }}
