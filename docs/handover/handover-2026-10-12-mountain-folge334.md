@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 334 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: a625d2f5e7544496e7878a6c160dd518c9fa76d40f3e874719a34b911f48b468
+  sha256: c70f765ef6e6689697b8b8e087c3152cdacace2b19d83f1b6befecd09aa62c74
   status: live
 -->
 # Handover — Mountain-Folge 334 (2026-10-12)
@@ -73,6 +73,26 @@ gefaltet). **Jeder offene Punkt nennt seine Datei(en)/Pfade.**
   --bin archive_search` 0/0, rustfmt sauber. **Bewusst nicht gebaut (Rest §5b):** Gaia/NED/MAST,
   Overpass/OSM, Open-Meteo, GeoNames, GBIF, FDSN, PANGAEA, DataONE, HF-datasets, DBLP,
   OpenCitations, ORCID/ROR — die §5b-Erweiterung ist größer als die §6-Liste und eigene Atome.
+- **§5b-Bündel gebaut (Welle 2, 18 Arme; Operator-Wort „mehr Agenten").** Je ein begrenzter
+  `grind-flash`-Schritt, live gegen die APIs gemessen. **Astro:** `--ned` (NED TAP `NEDTAP.objdir`
+  prefname-Prefix) · `--mast` (Mast.Name.Lookup) · `--gaia` (Gaia TAP `source_id`; Textnamen laufen
+  in den 60-s-Serverabbruch → ehrlich `pending 408`) · `--horizons` (JPL SBDB). **Geo:** `--overpass`
+  (Overpass QL; die HTTPS-Route gibt 406, HTTP trägt — **Riss, gemessen**) · `--nominatim`
+  (User-Agent Pflicht, `-H`) · `--open-meteo` (Geocoding) · `--gbif` (`species/search`,
+  `taxonomicStatus`). **Daten:** `--dataone` (CN Solr) · `--huggingface` · `--mendeley`
+  (`data.mendeley.com/api`, keyless) · `--scholexplorer` (v3 Links, DOI/PMID). **Lit:** `--dblp`
+  (Anubis-JS-Gate → Runtime `pending`) · `--orcid` (`expanded-search`, `Accept`-Header) · `--ror`
+  (`api.ror.org`) · `--opencitations` (`citation-count`, DOI) · `--fdsn` (FDSN station, `format=text`
+  — **kein JSON** auf diesem Dienst, Import bewusst weggelassen) · `--grepapp` (Vercel-Checkpoint
+  → 429). Verdrahtet (18 `mod` + Flags + `QUERY_MODES` + Count-Test + Help), je 2-4 Unit-Tests;
+  **`QUERY_MODES` = 111, `--all` = 106**; `cargo build -p omegaflow-utils --bin archive_search` 0/0,
+  rustfmt sauber; die erreichbaren Arme live verifiziert (nominatim/ror/fdsn nach Header-`-H`-Fix:
+  ein Taucher hatte `&[UA]` statt `&["-H", UA]` gesetzt). **Blockiert, gemessen (kein Arm):**
+  `--geonames` (demo-Kontingent erschöpft, kein `GEONAMES_USER` in `.secrets.local` → **blocked
+  account**) · `--fatcat`/IA-Scholar (Host global down, keine such-Route, Scholar JS-gated).
+  **Nebenwirkung geheilt:** zwei Taucher nutzten `cargo fmt -- <pfad>` (crate-weit) → 10
+  `src/archivar/*`-Dateien format-only geändert; aus Snapshot `refs/safety/1791835876` sauber
+  restauriert (kein fremder Hunk im Commit).
 - **mariner10-Ephemeride geschlossen**: `phi:32031` trägt sha `67949cb6…` == die geheilte
   Sun-Ketten-Komposition (Mycelium-Lauf `38278478615` success).
 - **Stale WWLLN-Zeile korrigiert**: `survey-2026-09-07-weberin-thread-matrix.md:168`
