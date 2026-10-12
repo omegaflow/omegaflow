@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (MCON-Registerdrift gelöst, bpa_gic↔MCON als gemessene Null, Risse benannt)
   class: handover
   date: 2026-10-12
-  sha256: 13fc1e3dca7f0c2ed4e64f528940a6d217d8793ac5481f7ff517b583516ccca2
+  sha256: b04d4f617f37626f346b07f4d57d160a011855d29431de2f3688ca8a8077616a
   status: live
 -->
 # Handover — Mycelium-Folge 318 (2026-10-12)
@@ -54,6 +54,13 @@ gelöst (`phi/sources.φ:21545-21551`); ein `general`-Diver maß die BPA-GIC-Fra
 - **Lage:** (gemessen 2026-10-12, Rat-Verdikt) `phi/sources.φ:520-524` (SWPC live `f107_cm_flux.json`, `ttl 600`, `first flux … 3600.0`) und `:29571-29579` (Penticton CDN `f107_penticton.bin`, `field f107_penticton solar_f107_flux_sfu … 86400`) tragen beide die Quantität `solar_f107_flux_sfu`; corr 0.0232. Der Rat: corr `0.0232` gegen `0.9388` ist ein **Join-/Zeitbasis-Verdacht**, kein Identitäts-Riss; das `0.99`-Gate verweigert hier bereits korrekt. Der Resolver hat keinen Binning-Floor außer `n ≥ 2`.
 - **Blockade:** das Identitäts-Urteil braucht erst die Join-Messung.
 - **Braucht:** Rivers measure-Schritt (Bin-Zahl + Roh-Zeitstempel der Überlappung); erst danach ein Identitäts-Urteil.
+
+### Z-Minuten-Null (`bz_dbdt_delay_probe`) — Workflow gebaut; Läufe offen
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** `bz-dbdt-delay-probe`-Läufe (ABK/SOD 2024, `--n-surr 200`) enden
+- **Lage:** (gemessen 2026-10-12) `tools/measure/src/bin/bz_dbdt_delay_probe.rs` (Rivers Bau, commit `7eb5e3dc5`) hatte **keinen** Workflow (die `bz-*`-Workflows fahren `bz_retro_probe`). **Gebaut dieses Atom:** `.github/workflows/bz-dbdt-delay-probe.yml` (Spiegel `bz-retro-probe.yml`; 2 Matrix-Punkte ABK/SOD 2024, `--n-surr 200`, Artefakt je Punkt).
+- **Blockade:** keine im Workflow.
+- **Braucht:** nach dem Push `gh workflow run bz-dbdt-delay-probe.yml`; `ci_manage log/view <id>`; die Zahl (studentisiertes Lag-Maximum + kalibrierter Kritik-Wert) aus dem Artefakt lesen.
 
 ### 50 Vlies-`alignment pending`-Zellen — fehlende Quellenreihen
 - **Status:** wartend | **Bindung:** eigen

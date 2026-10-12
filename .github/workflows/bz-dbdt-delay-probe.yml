@@ -1,0 +1,40 @@
+name: bz-dbdt-delay-probe
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  z-null:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - point: abk-2024
+            args: --station ABK --start 2024-01-01 --end 2024-12-31
+          - point: sod-2024
+            args: --station SOD --start 2024-01-01 --end 2024-12-31
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run the Bz-to-dBdt minute delay probe with the hour-aligned shift null
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "POINT ${{ matrix.point }}"
+            cargo run --release -p omegaflow-measure --bin bz_dbdt_delay_probe -- ${{ matrix.args }} --n-surr 200
+          } > "bz-dbdt-delay-${{ matrix.point }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bz-dbdt-delay-${{ matrix.point }}
+          path: bz-dbdt-delay-${{ matrix.point }}.txt
