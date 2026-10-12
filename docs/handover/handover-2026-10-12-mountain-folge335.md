@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: 82eeadfa1f64b028d1e3a863540312cef73d1744b9338c15ae88bf4a82ed2125
+  sha256: e0334cd7e677358a3919b7a04dcece3451c9b18b2da6ca73d782d046ef217743
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -89,9 +89,9 @@ Punkt nennt seine Datei(en)/Pfade.**
 ### Re-Admission der lizenz-blockierten Kandidaten (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der nächste Verdikt-Pass
-- **Lage:** (gemessen 2026-10-11/12) ALMA→ESO CC BY 4.0, GRDC→GRDC-Caravan CC BY 4.0 / USGS NWIS CC0 1.0 / Copernicus GloFAS CEMS-free, RIPE RIS→RouteViews CC BY 4.0, **IMCCE INPOP/NOE-4 → erledigt: Open Licence 2.0**; TRISP→NIST NCNR NSE US-PD; NC-admissibel: INTERMAGNET (CC BY-NC 4.0), GIRO DIDBase (CC BY-NC-SA 4.0).
-- **Blockade:** die NC-Admission ist eine Operator/Rat-Frage; Admission-Zeilen je Kandidat fehlen.
-- **Braucht:** je Kandidat die Admission-/`terms`-Zeile in `phi/sources.φ` (Mountain) + `url`/`origin` (Mycelium); die NC-Kandidaten dem Operator vorlegen.
+- **Lage:** (gemessen 2026-10-11/12) ALMA→ESO CC BY 4.0, GRDC→GRDC-Caravan CC BY 4.0 / USGS NWIS CC0 1.0 / Copernicus GloFAS CEMS-free, RIPE RIS→RouteViews CC BY 4.0, **IMCCE INPOP/NOE-4 → erledigt: Open Licence 2.0**; TRISP→NIST NCNR NSE US-PD; NC-admissibel: INTERMAGNET (CC BY-NC 4.0), GIRO DIDBase (CC BY-NC-SA 4.0). **Gemessen 2026-10-12:** die beiden NC-Kandidaten tragen ihre `terms` bereits live — INTERMAGNET `CC-BY-NC-4.0` (`phi:8577…8668`, 8 Blöcke), GIRO DIDBase `CC-BY-NC-SA-4.0` (`phi:1044`).
+- **Blockade:** für die NC-Kandidaten **keine** — das Haus ist NC (PolyForm NC / CC BY-NC-SA), CC BY-NC ist admissibel (Operator-Wort 2026-10-12); die übrigen Admission-Zeilen je Kandidat fehlen.
+- **Braucht:** je Kandidat die Admission-/`terms`-Zeile in `phi/sources.φ` (Mountain) + `url`/`origin` (Mycelium).
 
 ### Lizenz-Zensus — lizenzlose Blöcke durch freie Alternativen ersetzen (`xfer:future-247-3`, eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -131,8 +131,8 @@ Punkt nennt seine Datei(en)/Pfade.**
 
 ### Re-Admission — Admission-Verdikte gemessen (eigen)
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** der Register-Schreib-Pass
-- **Lage:** (gemessen 2026-10-12/327) ALMA→**ESO** CC BY 4.0 · GRDC→**GRDC-Caravan** CC BY 4.0 / **USGS NWIS** CC0 1.0 / **Copernicus GloFAS** CEMS-free · RIPE RIS→**RouteViews** CC BY 4.0 · YBCO-NSE→**NIST NCNR NSE** US-PD (Zenodo `18306252` restricted → decline) · INTERMAGNET + GIRO DIDBase = **NC-Frage**.
-- **Blockade:** die NC-Admission ist eine Operator/Rat-Frage.
+- **Lage:** (gemessen 2026-10-12/327) ALMA→**ESO** CC BY 4.0 · GRDC→**GRDC-Caravan** CC BY 4.0 / **USGS NWIS** CC0 1.0 / **Copernicus GloFAS** CEMS-free · RIPE RIS→**RouteViews** CC BY 4.0 · YBCO-NSE→**NIST NCNR NSE** US-PD (Zenodo `18306252` restricted → decline) · INTERMAGNET + GIRO DIDBase = **NC-admissibel** (Haus NC; beide `terms` live: `phi:8577…8668` / `phi:1044`).
+- **Blockade:** keine für die NC-Kandidaten; die übrigen Admission-Zeilen fehlen.
 - **Braucht:** je Kandidat die Admission-Zeile in `phi/sources.φ` (Mountain) + CDN (Mycelium).
 
 ### Rätsel/NIST — Directive-Kandidaten gemessen (eigen)
@@ -242,6 +242,7 @@ Origin: mountain-folge335 (2026-10-12).
 - **„gehören pdfs in data?"** | 2026-10-12 | Operator-Session (mountain 327) — nein; PDFs in `state/research/`, Datensätze in `data/`.
 - **„AFAD-Erdbeben (servisnet.afad.gov.tr) — geoblockt + redundant: entfernen"** · **„CMA-Wetter (weather.cma.cn) — alle Rechte vorbehalten: entfernen/ersetzen"** | 2026-10-12 | Operator-Session (future-247, gefaltet) — beide Blöcke in diesem Atom entfernt.
 - **„afad war ein lizenzthema"** | 2026-10-12 | Operator-Session (mountain 335) — AFAD-Disposition auf `decline commercial` korrigiert; die Future-Begründung „geoblockt" ist nachrangig.
+- **„INTERMAGNET/GIRO DIDBase) was ist das problem wir sind doch NC"** | 2026-10-12 | Operator-Session (mountain 335) — das Haus ist NC (PolyForm NC / CC BY-NC-SA), CC BY-NC ist admissibel; keine Operator/Rat-Frage.
 
 ## Abschluss
 
