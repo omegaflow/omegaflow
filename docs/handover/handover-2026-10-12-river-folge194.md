@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass — Vlies-Matrix gefeuert: 50 Restarme gemessen, CDAWeb-HAPI-Fetch-Fix in field_te_query gebaut; wy-max-t α als Family-Bound gemessen; MCON manifestiert (Register-Drift gemessen)
   class: handover
   date: 2026-10-12
-  sha256: 1929b9366326144774d119d18f5fd85bbfd868ba201497ae51614435d82b5675
+  sha256: 6150d90e4280a1ed48eba854f620230b17f604f6d68da2071ecacc1b9d294699
   status: live
 -->
 # Handover — River-Folge 194 (2026-10-12)
@@ -139,12 +139,21 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 - **Blockade:** ESA/ESOC-recon-SPK + die 1-σ-Kovarianz absent.
 - **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
 
+### Blatt-Kalibrierung — BCa-Konstruktion (Riss) + Z-Minuten-Null (gebaut)
+- **Status:** wartend | **Bindung:** eigen (Bau)
+- **Trigger:** (a) die Konstruktionswahl für das Konfidenzintervall ist benannt; (b) der `measure`-CI-Lauf für `bz_dbdt_delay_probe`.
+- **Lage:** (gemessen 2026-10-12 via Rat + UI + `cargo check`/`build`) **α steht bereits im Blatt** (`docs/blatt/fruehwarnsystem-praeregistrierung.md:78-85`, α=0.05: 2.4831/2.4467/2.4433); mein Lauf `38166787414` hat dieselben Werte deterministisch reproduziert. **BCa-Riss:** klassisches BCa ist unter block-stationärem Bootstrap nicht wohlgestellt (Resampling-Einheit = Block, nicht Punkt); Rat + Claude + DeepSeek V4 Pro + Nemotron + GPT-OSS konvergieren: **delete-a-block-Jackknife** als Beschleunigungs-Ersatz (bzw. „Block-BCa" trägt keine 2.-Ordnungs-Theorie), sonst bootstrap-t / Subsampling / Moving-Block-Perzentil — **die Konstruktion ist zu benennen, nicht zu glätten** (`state/stimmen/2026-10-12_river-bca-z-rat.md`). **Z-Minuten-Null gebaut** in `tools/measure/src/bin/bz_dbdt_delay_probe.rs`: 60-min-ausgerichteter Shift + delete-one-Block-Jackknife-SE (Blocklänge aus der Treiber-ACF gemessen) + studentisiertes Lag-Maximum (`max|T|`, adj. p, (1-α)-Quantil); `cargo check`/`build` 0/0; die Zahl noch nicht gelaufen (Fetches/Compute = CI).
+- **Blockade:** (a) die BCa-Konstruktionswahl (Rat/Session); (b) die Z-Null-Zahl braucht einen CI-Lauf.
+- **Braucht:** (a) die Intervall-Konstruktion benennen (nie „BCa" über ein Perzentil schreiben); (b) `gh workflow run <bz_…>` + `ci_manage log` lesen; (c) α/Bz-Schwelle + Siegel = Operator-Wort (nach Future geroutet).
+
 ## An mountain
 
-Origin: river-194 (2026-10-12) — Messungen, die Mountains Register betreffen (Sender-Register; die Owner-Session faltet).
+Origin: river-194 (2026-10-12) — Messungen/Befunde, die Mountains Register/Archivar betreffen (Sender-Register; die Owner-Session faltet).
 
-- **MCON-Registerzeile:** `phi/sources.φ:21545-21551` trägt `mcpherron.bin`/`format substorm`/sha `0c99e7d8…`; das CDN-Asset ist `mcpherron_onsets.bin`/`format mcon_event`/sha `441df5f8c59ad57962d81cc82814a0d36c7770f827b4d1893b31425f035cc3f1` (gemessen via `ci_manage log 38176003927`). Register-vs-Manifestation-Drift.
-- **`intermagnet_dbdt`-Riss:** `abk_dbdt_1m.bin` (median_dt 60 s) vs `abk_dbdt_1h.bin` (3600 s), overlap corr 0.9388 — Wahl offen (blockiert die `newell_geospheric_omni`-Zelle, gemessen `ci_manage log 38172797345`).
+- **MCON-Registerzeile — erledigt (mycelium-318).** `phi/sources.φ` trägt jetzt `mcpherron_onsets.bin`/`format mcon_event`/sha `441df5f8…`/`terms CC-BY-4.0`. Kein Rest.
+- **`intermagnet_dbdt`-Identitäts-Riss — Rat-Verdikt: NEIN zum Rename; Regel statt Rename.** (gemessen 2026-10-12 via Rat + `tools/measure/src/bin/field_te_query.rs:1249,1263-1341`) Die Regel existiert im Kern bereits (`AGGREGATION_IDENTITY_CORR = 0.99`; feinste `median_dt` als Zeuge, Verweigerung = Riss). Der Register-Text trägt **keine** Kadenz (das Token nach `<unit>` ist `tau`, `src/archivar/parse.rs:2361`) — ein Rename wäre Name-ohne-Regel = Fabrikation. **Minimaler Bau (Mountain/River, nächstes Atom):** nach `station_code` gruppieren (heute wird `abk_1m` auch gegen `sod_1h` geprüft → falscher Riss) und den gröberen Zeugen als Riss **daneben tragen** statt fallenlassen. Register/Wire unangetastet. Verdikt: `state/stimmen/2026-10-12_river-intermagnet-identitaet-rat.md`.
+- **`solar_f107_flux_sfu` — kein Identitäts-Riss, ein Zeitbasis-Defekt (gemessen).** (2026-10-12, `general`-Taucher) Der SWPC-Textarm liefert **TDB/J2000** (`lsk.unix_to_tdb`, `extract.rs:6506`, `parse.rs:2349`), das Penticton-`f107`-Asset **rohe Unix-Sekunden** (`src/archivar/f107.rs:22`, `day*86400`); feste Verschiebung `946728000 − 69.184 ≈ 9.4673e8 s ≈ 30,0 a` → SWPC-2026 paart mit Penticton-1996 → r≈0.02 (gleiche Einheit `sfu`; Pearson skaleninvariant, `field_te_query.rs:2183`). **Zwei Archivar-Defekte:** (i) `f107::parse_series` wendet `unix_to_tdb` **nicht** an; (ii) `series_epoch_of` (`extract.rs:6506-6539`) wählt den ersten Key mit `"date"` — `avg_begin_date` kann `time_tag` verdrängen. **Braucht:** beide Arme auf dieselbe Epoch-Basis (TDB) bringen; dann den `f107`-Join erneut messen.
+- **MCON-Spanne 1966–2025 vs Parser-Ende 2024-05-29** — nominale Beschreibung vs Parser-Fenster; eine Inhaltsmessung (erster/letzter Onset des Assets) entscheidet; für die BPA (2026) irrelevant. (mycelium-318 bietet die Messung an.)
 
 ## An future
 

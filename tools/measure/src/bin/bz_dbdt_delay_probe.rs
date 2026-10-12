@@ -18,6 +18,8 @@ const START_WORD: &str = "2024-01-01";
 const END_WORD: &str = "2024-12-31";
 const DEFAULT_MAX_LAG_MIN: usize = 180;
 const MIN_PAIRS: usize = 8;
+const SHIFT_STEP_MIN: usize = 60;
+const ALPHA: f64 = 0.05;
 
 fn iso_to_unix(s: &str) -> Option<f64> {
     let s = s.trim();
@@ -221,17 +223,160 @@ fn corr_at_lag(a: &[Option<f32>], b: &[Option<f32>], lag: usize) -> Option<(f64,
     Some((r, n as usize))
 }
 
-fn max_abs_r(a: &[Option<f32>], b: &[Option<f32>], lmax: usize) -> Option<f64> {
-    let mut best: Option<f64> = None;
+struct Moments {
+    n: u64,
+    sx: f64,
+    sy: f64,
+    sxx: f64,
+    syy: f64,
+    sxy: f64,
+}
+
+impl Moments {
+    fn zero() -> Self {
+        Moments {
+            n: 0,
+            sx: 0.0,
+            sy: 0.0,
+            sxx: 0.0,
+            syy: 0.0,
+            sxy: 0.0,
+        }
+    }
+
+    fn push(&mut self, x: f64, y: f64) {
+        self.n += 1;
+        self.sx += x;
+        self.sy += y;
+        self.sxx += x * x;
+        self.syy += y * y;
+        self.sxy += x * y;
+    }
+
+    fn minus(&self, o: &Moments) -> Moments {
+        Moments {
+            n: self.n - o.n,
+            sx: self.sx - o.sx,
+            sy: self.sy - o.sy,
+            sxx: self.sxx - o.sxx,
+            syy: self.syy - o.syy,
+            sxy: self.sxy - o.sxy,
+        }
+    }
+
+    fn corr(&self) -> Option<f64> {
+        if self.n < MIN_PAIRS as u64 {
+            return None;
+        }
+        let n = self.n as f64;
+        let cxy = self.sxy - self.sx * self.sy / n;
+        let mxx = self.sxx - self.sx * self.sx / n;
+        let myy = self.syy - self.sy * self.sy / n;
+        let denom = (mxx * myy).sqrt();
+        if !(denom > 0.0) || !denom.is_finite() {
+            return None;
+        }
+        let r = cxy / denom;
+        if r.is_finite() { Some(r) } else { None }
+    }
+}
+
+fn corr_block_se(
+    a: &[Option<f32>],
+    b: &[Option<f32>],
+    lag: usize,
+    block: usize,
+) -> Option<(f64, f64, usize)> {
+    if lag >= a.len() || block == 0 {
+        return None;
+    }
+    let mut total = Moments::zero();
+    let mut blocks: Vec<Moments> = Vec::new();
+    let mut m = 0usize;
+    for i in 0..a.len() - lag {
+        let (Some(x), Some(y)) = (a[i], b[i + lag]) else {
+            continue;
+        };
+        let (x, y) = (x as f64, y as f64);
+        let bi = m / block;
+        if bi >= blocks.len() {
+            blocks.push(Moments::zero());
+        }
+        blocks[bi].push(x, y);
+        total.push(x, y);
+        m += 1;
+    }
+    if m < MIN_PAIRS || blocks.len() < 2 {
+        return None;
+    }
+    let r = total.corr()?;
+    let mut mean = 0.0f64;
+    let mut kept = 0usize;
+    let mut deltas: Vec<f64> = Vec::with_capacity(blocks.len());
+    for blk in &blocks {
+        if let Some(rj) = total.minus(blk).corr() {
+            deltas.push(rj);
+            mean += rj;
+            kept += 1;
+        }
+    }
+    if kept < 2 {
+        return None;
+    }
+    mean /= kept as f64;
+    let mut sum_dev = 0.0f64;
+    for rj in &deltas {
+        let d = rj - mean;
+        sum_dev += d * d;
+    }
+    let se = (((kept - 1) as f64 / kept as f64) * sum_dev).sqrt();
+    if se.is_finite() { Some((r, se, m)) } else { None }
+}
+
+fn driver_block_length(driver: &[Option<f32>], cap: usize) -> Option<usize> {
+    let mut lag = 1usize;
+    while lag <= cap {
+        match corr_at_lag(driver, driver, lag) {
+            Some((r, _)) if r <= 0.0 => return Some(lag),
+            Some(_) => lag += 1,
+            None => return None,
+        }
+    }
+    None
+}
+
+fn studentized_max(
+    a: &[Option<f32>],
+    b: &[Option<f32>],
+    lmax: usize,
+    block: usize,
+) -> Option<(f64, Option<f64>)> {
+    let mut max_r: Option<f64> = None;
+    let mut max_t: Option<f64> = None;
     for lag in 0..=lmax {
-        if let Some((r, _)) = corr_at_lag(a, b, lag) {
-            let ar = r.abs();
-            if best.map_or(true, |v| ar > v) {
-                best = Some(ar);
+        let Some((r, se, _)) = corr_block_se(a, b, lag, block) else {
+            continue;
+        };
+        let ar = r.abs();
+        if max_r.map_or(true, |v| ar > v) {
+            max_r = Some(ar);
+        }
+        if se > 0.0 && se.is_finite() {
+            let t = (r / se).abs();
+            if t.is_finite() && max_t.map_or(true, |v| t > v) {
+                max_t = Some(t);
             }
         }
     }
-    best
+    max_r.map(|r| (r, max_t))
+}
+
+fn quantile(sorted: &[f64], alpha: f64) -> Option<f64> {
+    if sorted.is_empty() {
+        return None;
+    }
+    let rank = ((1.0 - alpha) * sorted.len() as f64) as usize;
+    Some(sorted[rank.min(sorted.len() - 1)])
 }
 
 fn main() {
@@ -334,38 +479,94 @@ fn main() {
 
     if n_surr == 0 {
         println!(
-            "significance: pending — no calibrated null at the minute grain is built into this probe; the peak stands descriptive. Pass --n-surr N for a circular-shift max-|r| null. The hourly WY-max-T family bound stays the pending calibration (docs/paper/gic-causal-driver.md; docs/blatt/fruehwarnsystem-praeregistrierung.md)."
+            "significance: pending — the calibrated minute-null (hour-aligned circular shift, block-jackknife studentized max over lags) is built but not run; pass --n-surr N to calibrate."
         );
     } else {
-        let obs = r.abs();
+        let cap = lmax.max(SHIFT_STEP_MIN);
+        let Some(block) = driver_block_length(&bz_min, cap) else {
+            println!(
+                "significance: the driver's autocorrelation turns non-positive nowhere within {cap} min — the block length is absent; the studentized null stays pending"
+            );
+            return;
+        };
+        println!(
+            "null block length measured from the Bz step-driver autocorrelation = {block} min (first non-positive lag; search cap {cap} min)"
+        );
+        let Some((obs_r, obs_t)) = studentized_max(&bz_min, &dbdt_min, lmax, block) else {
+            println!(
+                "significance: the observed statistic is absent — no lag carries enough complete pairs for a block SE"
+            );
+            return;
+        };
+        let Some(obs_z) = obs_t else {
+            println!(
+                "significance: observed max |T| absent — the block jackknife carries no finite SE; the studentized null stays pending"
+            );
+            return;
+        };
+        let max_hours = n / SHIFT_STEP_MIN;
+        let lo_hours = (lmax / SHIFT_STEP_MIN) + 1;
+        if max_hours <= lo_hours {
+            println!(
+                "significance: the shared window spans fewer than {lo_hours} whole hours — an hour-aligned circular shift is absent; the studentized null stays pending"
+            );
+            return;
+        }
+        let span_hours = max_hours - lo_hours;
         let mut state = 0x9E37_79B9_7F4A_7C15u64;
-        let mut ge = 0usize;
+        let mut ge_t = 0usize;
+        let mut ge_r = 0usize;
         let mut finite = 0usize;
-        let lo_shift = lmax + 1;
+        let mut m_vals: Vec<f64> = Vec::with_capacity(n_surr);
         for _ in 0..n_surr {
             state = state
                 .wrapping_mul(6364136223846793005)
                 .wrapping_add(1442695040888963407);
-            let span = n.saturating_sub(lo_shift);
-            if span == 0 {
-                break;
-            }
-            let offset = lo_shift + (state >> 33) as usize % span;
+            let hours = lo_hours + (state >> 33) as usize % span_hours;
+            let offset = hours * SHIFT_STEP_MIN;
             let shifted: Vec<Option<f32>> = (0..n).map(|i| bz_min[(i + offset) % n]).collect();
-            if let Some(m) = max_abs_r(&shifted, &dbdt_min, lmax) {
+            if let Some((mr, mt)) = studentized_max(&shifted, &dbdt_min, lmax, block) {
                 finite += 1;
-                if m >= obs {
-                    ge += 1;
+                if mr >= obs_r {
+                    ge_r += 1;
+                }
+                if let Some(mt) = mt {
+                    if mt >= obs_z {
+                        ge_t += 1;
+                    }
+                    m_vals.push(mt);
                 }
             }
         }
-        let p = (ge as f64 + 1.0) / (finite as f64 + 1.0);
+        if finite == 0 || m_vals.is_empty() {
+            println!(
+                "significance: no surrogate carried a finite statistic — the calibrated null stays pending"
+            );
+            return;
+        }
+        let p_r = (ge_r as f64 + 1.0) / (finite as f64 + 1.0);
+        let p_adj = (ge_t as f64 + 1.0) / (m_vals.len() as f64 + 1.0);
+        m_vals.sort_by(|a, b| a.total_cmp(b));
+        let Some(crit) = quantile(&m_vals, ALPHA) else {
+            println!("significance: the studentized null carries no quantile — pending");
+            return;
+        };
         println!(
-            "significance: circular-shift max-|r| null over {} surrogates | observed max |r| = {obs:.5} | p_family = {p:.4}",
-            finite
+            "significance: hour-aligned circular-shift null over {finite} finite surrogates (shift step {} min) | observed max |r| = {obs_r:.5} | p_family(raw) = {p_r:.4}",
+            SHIFT_STEP_MIN
         );
         println!(
-            "significance note: the shift null preserves the marginal minute series but not the hourly-step structure; the calibrated WY-max-T family bound stays pending."
+            "studentized null: Z = max |T| = {obs_z:.4} (block-jackknife SE, block = {block} min) | p_adj = {p_adj:.4}"
+        );
+        println!(
+            "calibrated critical value: M_(1-{ALPHA}) = {crit:.4} over {} studentized surrogates | the observed Z {} the {:.0}% bound",
+            m_vals.len(),
+            if obs_z >= crit { "exceeds" } else { "stays within" },
+            (1.0 - ALPHA) * 100.0
+        );
+        println!(
+            "significance note: the shift preserves the hourly-step boundaries (multiples of {} min) and the SEs come from the driver's measured block length; the prior arbitrary-minute circular-shift max-|r| null is replaced.",
+            SHIFT_STEP_MIN
         );
     }
 }
