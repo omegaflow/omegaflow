@@ -375,34 +375,6 @@ lon properties.lon
 field properties.air_temp air_temperature_c gaussian-inverse-square thermal C 6.0 0.0 0.0
 field properties.press mslp_hpa gaussian-inverse-square acoustic hPa 6.0 0.0 0.0
 
-url https://services1.arcgis.com/Z6SBWLWGRRejblAA/arcgis/rest/services/usgs_streamflow/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services1.arcgis.com/
-ttl 300
-at earth
-map features
-lat geometry.coordinates.1
-lon geometry.coordinates.0
-field properties.FLOW streamflow_cfs gaussian-inverse-square advective cfs 6.0 0.0 0.0
-quantity properties.STAGE gage_height_ft gaussian-inverse-square geometry ft 6.0 0.0 0.0
-
-url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/NJ_Streamflow_Updated/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services1.arcgis.com/
-ttl 300
-at earth
-map features
-lat properties.latitude
-lon properties.longitude
-field properties.discharge1 streamflow_cfs gaussian-inverse-square advective cfs 6.0 0.0 0.0
-
-url https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/StormStats_Marine_buoy_UTM/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services2.arcgis.com/
-ttl 300
-at earth
-map features
-lat properties.Buoy_lat
-lon properties.Buoy_lon
-quantity properties.Sig_wave_height_m sig_wave_height_m gaussian-inverse-square geometry m 6.0 0.0 0.0
-
 url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 terms no-license-stated https://services5.arcgis.com/
 ttl 300
@@ -1242,16 +1214,6 @@ lat geometry.coordinates.1
 lon geometry.coordinates.0
 field properties.Avg_Temp_C dmf_avg_temp_c erfc thermal C 3600 0.0 0.0
 
-url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services1.arcgis.com/
-ttl 3600
-at earth
-map features
-lat properties.latitude
-lon properties.longitude
-field properties.mag chile_quake_magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
-field properties.depth chile_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
-
 url https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/DC_Water_Quality_Site_6500/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 terms no-license-stated https://services1.arcgis.com/
 ttl 3600
@@ -1261,15 +1223,6 @@ lat properties.dec_lat_va
 lon properties.dec_long_va
 field properties.Temperature dc_wq_temperature_c erfc thermal C 3600 0.0 0.0
 field properties.Turbidity dc_wq_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
-
-url https://services2.arcgis.com/7KRXAKALbBGlCW77/arcgis/rest/services/Local_Air_Quality_CHPL_211297/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services2.arcgis.com/
-ttl 3600
-at earth
-map features
-lat properties.Latitude
-lon properties.Longitude
-field properties.Particulate_Matter___PM2_5_atm_ chpl_pm25_ugm3 gaussian-inverse-square diffusion ug/m3 3600 0.0 0.0
 
 url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 terms no-license-stated https://services2.arcgis.com/
@@ -1289,16 +1242,6 @@ lat properties.Latitude__degrees_
 lon properties.Longitude__degrees_
 field properties.Sal_psu crest_buoy2_salinity_psu erfc diffusion psu 3600 0.0 0.0
 field properties.Turbidity_NTU crest_buoy2_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
-
-url https://services2.arcgis.com/V2PQwgZMTFfgM0Xu/arcgis/rest/services/CVPDC_HMP_VA_earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services2.arcgis.com/
-ttl 3600
-at earth
-map features
-lat properties.Latitude
-lon properties.Longitude
-field properties.Magnitude va_quake_magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
-field properties.Depth_km va_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
 
 url https://services3.arcgis.com/fp1tibNcN9mbExhG/arcgis/rest/services/Soil_Moisture_Sensor_Map_WFL1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 terms no-license-stated https://services3.arcgis.com/
@@ -1328,16 +1271,6 @@ map features
 lat properties.Lat
 lon properties.Long
 field properties.SO2_Kilotons so2_emission_mass_kt erfc diffusion kt_mass 86400 0.0 0.0
-
-url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services7.arcgis.com/
-ttl 3600
-at earth
-map features
-lat properties.latitude
-lon properties.longitude
-field properties.mag tohoku_quake_magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
-field properties.depth tohoku_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=200&sort=-date
 terms PD-USGov https://ssd.jpl.nasa.gov/
@@ -3168,14 +3101,6 @@ at earth
 ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcorb.bin
-terms no-license-stated https://www.minorplanetcenter.net/data
-format catalog_mpcorb
-origin https://minorplanetcenter.net/Extended_Files/mpcorb_extended.json.gz
-compiler tools/harvest/src/bin/mpcorb_compiler.rs
-at sun
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcorb_distant.bin
 terms no-license-stated https://www.minorplanetcenter.net/data
 format catalog_mpcorb
 origin https://minorplanetcenter.net/Extended_Files/mpcorb_extended.json.gz
@@ -8822,16 +8747,6 @@ lon attributes.Longitude
 field attributes.WindSpeed_kmh environment_canada_wind_speed_kmh gaussian-inverse-square advective km/h 3600.0 0.0 0.0
 field attributes.Temperature_C environment_canada_temperature_c gaussian-inverse-square thermal C 3600.0 0.0 0.0
 
-url https://services1.arcgis.com/O7h3OCRVxKceyg19/arcgis/rest/services/Buoy_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services1.arcgis.com/
-ttl 86400
-at earth
-map features
-lat properties.Latitude
-lon properties.Longitude
-field properties.ATMP ndbc_archive_air_temp_c erfc thermal C 86400 0.0 0.0
-field properties.WTMP ndbc_archive_water_temp_c erfc thermal C 86400 0.0 0.0
-
 url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Salinity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 terms no-license-stated https://services1.arcgis.com/
 ttl 86400
@@ -8840,15 +8755,6 @@ map features
 lat properties.latitude
 lon properties.longitude
 field properties.measurevalue_psu wqp_salinity_psu erfc diffusion psu 86400 0.0 0.0
-
-url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services1.arcgis.com/
-ttl 86400
-at earth
-map features
-lat properties.latitude
-lon properties.longitude
-field properties.measurevalue_degc wqp_water_temp_c erfc thermal C 86400 0.0 0.0
 
 url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
 terms no-license-stated https://services1.arcgis.com/
@@ -20079,30 +19985,12 @@ on earth 0.4994604 180.5 0
 ttl 604800
 field godas_pottmp godas_pottmp_k exponential-decay thermal K 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/quake-ptevent/quake_ptevent_chile.bin
-terms no-license-stated https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-format quake_ptevent
-origin https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-compiler tools/harvest/src/bin/quake_ptevent_compiler.rs
-sha256 ff7e2f6771b1c97eccfe144e2395634b9451b758d6c8b4ce3dbc98417e35263d
-at earth
-ttl 604800
-
 url https://github.com/omegaflow/sources/releases/download/quake-ptevent/quake_ptevent_jma.bin
 terms jp-public-data-license-1.0 https://www.jma.go.jp/bosai/quake/data/list.json
 format quake_ptevent
 origin https://www.jma.go.jp/bosai/quake/data/list.json
 compiler tools/harvest/src/bin/quake_ptevent_compiler.rs
 sha256 28e08148f6022f346f2009977fbeebf3e6c271d08543ee9cb41fe5519ffd7ddc
-at earth
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/quake-ptevent/quake_ptevent_tohoku.bin
-terms no-license-stated https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-format quake_ptevent
-origin https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-compiler tools/harvest/src/bin/quake_ptevent_compiler.rs
-sha256 cde2a662f732997fcbb37ea5981e32128284d87fdfe6168d5792319d829d9b58
 at earth
 ttl 604800
 
@@ -22149,20 +22037,6 @@ cmap .
 ra ra
 dec dec
 quantity flux_g noirlab_ls_dr10_g_flux inverse-square scale nmgy 31536000 0.0 0.0 band DECam_g pivot 4808.49angstrom edges 3900-5600angstrom
-
-url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,mean_mag_g,mean_mag_r,mean_mag_i,mean_mag_z,epochmean+FROM+decaps_dr2.object+WHERE+mean_mag_g%3C90
-terms no-license-stated https://datalab.noirlab.edu/
-format tap
-ttl 31536000
-at sun
-cmap .
-ra ra
-dec dec
-epoch epochmean mjd
-field mean_mag_g decaps_dr2_g_mag inverse-square em mag 31536000 0.0 0.0
-field mean_mag_r decaps_dr2_r_mag inverse-square em mag 31536000 0.0 0.0
-field mean_mag_i decaps_dr2_i_mag inverse-square em mag 31536000 0.0 0.0
-field mean_mag_z decaps_dr2_z_mag inverse-square em mag 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/archive.eso.org/tap_cat-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_RA2000_AS_ra_DEC2000_AS_dec_KSPETROMAG_AS_ksmag_FROM_VHS_CAT_V3_WHERE_KSPETROMAG_IS_NOT_NULL.json
 terms CC-BY-4.0 https://archive.eso.org/cms/eso-data-access-policy.html
@@ -30191,24 +30065,6 @@ lat 0
 lon 1
 quantity 2 venera15_16_surface_radius_km inverse-square geometry km 33554432.0 0.0 0.0
 
-url https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-witness point-event
-record erbq
-force seismic-body
-no-cadence
-
-url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/5/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-witness point-event
-record erbq
-force seismic-body
-no-cadence
-
-url https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/5/query?where=OBJECTID%20IN%20(1,2,3,4,5,6,7,9,12,13,14,16,17,18,21,22,23,24,25,26,30,31,32,33,34,35,36,37,38,40,42,43,44,45,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,70,72,73,75,76,77,81,82,83,85,87,89,90,91,92,94,95,96,98,101,102,103,105,107,108,109,110,111,112,113,115,117,118,120,121,122,123,124,125,126,127,128,130,134,135,137,138,139,140,142,143,144,145,146,147,148,149,150,151,155,156,157,158,160,161,162,163,164,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,183,184,187,188,189,190,191,192,193,194,195,196,197,198)&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-witness point-event
-record erbq_mainshock
-force seismic-body
-no-cadence
-
 url https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
 witness substance
 record srd6
@@ -32097,3 +31953,30 @@ decline commercial http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin
 decline commercial http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000804
 decline commercial http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000807
 decline commercial http://jvo.nao.ac.jp/skynode/do/download/nobeyama/fugin/fugin_meta/FGN00000000
+
+decline commercial https://services1.arcgis.com/Z6SBWLWGRRejblAA/arcgis/rest/services/usgs_streamflow/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+
+decline commercial https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/NJ_Streamflow_Updated/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+
+decline commercial https://services2.arcgis.com/MvofhWK1i5zOJjuj/arcgis/rest/services/StormStats_Marine_buoy_UTM/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+
+decline commercial https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+decline commercial https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+decline commercial https://services1.arcgis.com/ZGrptGlLV2IILABw/arcgis/rest/services/Semptember_Chile_Earthquake/FeatureServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+
+decline commercial https://services2.arcgis.com/7KRXAKALbBGlCW77/arcgis/rest/services/Local_Air_Quality_CHPL_211297/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+
+decline commercial https://services2.arcgis.com/V2PQwgZMTFfgM0Xu/arcgis/rest/services/CVPDC_HMP_VA_earthquake/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+
+decline commercial https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+decline commercial https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+decline commercial https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/5/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+decline commercial https://services7.arcgis.com/XnmMAZERCcHaTPxC/arcgis/rest/services/tohoku_seismicity/FeatureServer/5/query?where=OBJECTID%20IN%20(1,2,3,4,5,6,7,9,12,13,14,16,17,18,21,22,23,24,25,26,30,31,32,33,34,35,36,37,38,40,42,43,44,45,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,70,72,73,75,76,77,81,82,83,85,87,89,90,91,92,94,95,96,98,101,102,103,105,107,108,109,110,111,112,113,115,117,118,120,121,122,123,124,125,126,127,128,130,134,135,137,138,139,140,142,143,144,145,146,147,148,149,150,151,155,156,157,158,160,161,162,163,164,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,183,184,187,188,189,190,191,192,193,194,195,196,197,198)&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+
+decline commercial https://services1.arcgis.com/O7h3OCRVxKceyg19/arcgis/rest/services/Buoy_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+
+decline commercial https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Water_Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
+
+decline commercial https://minorplanetcenter.net/Extended_Files/mpcorb_extended.json.gz
+
+decline commercial https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,mean_mag_g,mean_mag_r,mean_mag_i,mean_mag_z,epochmean+FROM+decaps_dr2.object+WHERE+mean_mag_g%3C90
