@@ -128,6 +128,8 @@ fn main() {
     }
     flush(&mut block, &mut out, &mut declined, &mut n_blocks);
 
+    let mut seen = std::collections::HashSet::new();
+    declined.retain(|d| seen.insert(d.clone()));
     for d in &declined {
         out.push_str(d);
         out.push('\n');
