@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: 0fddfb3c25530b15ae397c2cbd4d527cc57896c21e4bee099edf223f6e5c52e1
+  sha256: 33fcdda9176946b36c78286ab07367eb71841cc4a68275add45a8616f78ca3a4
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -250,14 +250,21 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
 - **Lage:** (gemessen 2026-10-12/327; neuer Bin `tools/measure/src/bin/m10_camera_angles_geometry.rs`, gelaufen) 811 Frames in **drei** Clustern (JD-Lücke 175,9 d vs. Median 0,000486 d, Ratio 361 760×): **M1 450** Frames (JD 2442135.305–2442137.606, FDS 50–27475) · **M2 333** (JD 2442312.241–2442312.514) · **M3 28** (JD 2442488.370–2442488.915). `|S|` (SX SY SZ) = 11 183 … 1 123 524 km; `|S|`-Minimum: M1 11 183 km @ FDS 00000050 · M2 50 511 km @ FDS 00166745 · M3 12 139 km @ FDS 00528922.
   **Rahmen-Messung (Bin `m10_camera_angles_frame`, gelaufen):** getestet gegen die Ephemeriden (`ephemeris_mariner10` + `ephemeris_mercury`/`venus`/`earth`) — **`FRAME: UNIDENTIFIED`**, kein Kandidat unter 50 km (bester `-sc-me` RMS 431 558 km = 422 % von |S|). **Riss in der Messung selbst:** `|sc-me| ≈ |sc| + |me|` (139,7 Mio km bei |sc| 70,1 · |me| 69,6 Mio km) — die zwei Ephemeriden-Auslesungen teilen **weder Ursprung noch Zeit**; damit ist der Kreuzvergleich verfälscht, und der Rahmen bleibt offen.
   **Korrektur meiner früheren Behauptung:** das Verdikt „zielzentriert hält |S| konstant" war **falsch** — |S| = Range variiert über einen Encounter naturgemäß um ~100×.
-- **Blockade:** der `SXSYSZ`-Ursprung ist ungemessen; zusätzlich ist der Kreuz-Ephemeriden-Vergleich durch unterschiedliche Zentren/Epochen verfälscht.
-- **Braucht:** die Ephemeriden-Auslesung auf **einen** gemeinsamen Ursprung (SSB/ICRS) + **eine** Zeitbasis (TDB) bringen, dann den Rahmen neu bestimmen — oder direkt gegen JPL Horizons (`-76`, Zentrum Merkur) kalibrieren.
+- **Blockade:** **der `ephemeris_mariner10.bin`-Asset ist fehlerhaft gebaut** (s. eigenen Punkt unten) — der `SXSYSZ`-Rahmen ist damit **nicht** über diese Route bestimmbar.
+- **Braucht:** erst den M10-Ephemeriden-Defekt heilen, dann den Rahmen neu bestimmen — oder direkt gegen JPL Horizons (`-76`, Zentrum Merkur) kalibrieren.
 
 ### zai-Export — Such-Kontext + nicht-registrierte Mariner-Funde (eigen)
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** der nächste Register-Pass
 - **Lage:** (gemessen 2026-10-12/327, `general`-Taucher) `state/research/recherche-2026-10-12/zai-mariner-kontext.md`. **Operator-Ziel (verbatim):** „wenn wir mariner dechiffriert haben haben wir alle die verfügbar sind" + „alleine wenn wir all die daten wieder lesbar machen ist das schon verdiensvoll" — Träger ist **eine** Chat-Datei (`zai-ab59aba8-…md`, ~:23090–24721), die anderen fünf sind Kontext (nicht „5–6 Chats tragen die Recherche"). **Nicht in `phi`/`docs`** (sgrep 0 Treffer): **Mariner 5** `PSCM-00001` Doppler 14.06.–20.11.1967 request-only · **Mariner 9** `71-051A-00E` (8 Rollen, UNIVAC 1108, 800 bpi, 7-track odd, 30.05.1971–25.10.1972) request-only · **Mariner 2** Techdoc `19670019851` + Sjogren/Trask · **Mariner 5** Analyse-Paper 1974 · Inventar NASA Techdoc `19900020832` (1987).
 - **Blockade:** request-only/offline (NSSDC-Kontakt = Operator-Hand).
 - **Braucht:** je Fund die `url`-Zeile (Mycelium) + Admission (Mountain); die Suchdateien liegen durable in `state/research/recherche-2026-10-12/opencode/` (3 497 Dateien, aus `/tmp` gesichert).
+
+### `ephemeris_mariner10.bin` — fehlerhaft gebaut (Vorzeichen-Flip) (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** ein `tools-build`/Compiler-Lauf nach dem Fix
+- **Lage:** (gemessen 2026-10-12/327, Bin `tools/measure/src/bin/m10_frame_diag.rs`) der registrierte `ephemeris_mariner10.bin` (`phi:31924`, sha `7ad8b8bf…`) trägt den **global vorzeichenverkehrten** SSB-Vektor: `sc ≈ −me` (cos 179,55–179,79°, `|sc−me| ≈ |sc|+|me|` = 139,7 Mio km statt ~10⁴ km). **Ort:** `tools/harvest/src/bin/ephemeris_mariner10_compiler.rs:397` `add(neg(body_wrt_m10), body_ssb)` = `r_SSB − r_M10` statt `r_M10 − r_SSB`; das magnitude-only Probe-Gate (`:439` 0,2–0,8 AU / 30–60 km/s) fängt einen globalen Vorzeichen-Flip nicht (|r|,|v| bleiben). Recompile reproduziert die CDN-Positionen exakt → **live, nicht stale**.
+- **Blockade:** der Fix braucht einen Compiler-Lauf (`--ci-mode`) → CDN-Asset-Regeneration (CI/Mycelium).
+- **Braucht:** (1) die Vorzeichen-Komposition in `ephemeris_mariner10_compiler.rs` korrigieren (Chebyshev-Samples als `r_M10 − r_SSB`; den SSB-wrt-body-Term im Summanden negieren) + eine **Orientierungs-Prüfung** ins Probe-Gate (cos gegen eine unabhängige M10−SSB-Referenz, nicht nur Magnitude); (2) **Rest-Riss:** auch nach der Vorzeichenkorrektur liegt das sign-fixe Minimum bei **421 435 km @ JD 2442136.466** vs. historische M1-CA (~3×10³ km @ JD 2442137.366) — ein zweiter, unerklärter ~0,4–1,1×10⁶-km- und ~0,9-d-Versatz zwischen dem `discrete_states`-Heuristik-Scanner und dem DE440-Merkur-Bin bleibt; **nicht geglättet**.
+- **Merke:** bis der Fix läuft, ist der `SXSYSZ`-Rahmen **nicht** über die M10-Ephemeride bestimmbar.
 
 ## An mycelium
 
