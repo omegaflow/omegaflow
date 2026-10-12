@@ -19,7 +19,7 @@ pub fn gate_field(comp: u32, tau: f64) -> Option<FieldConfig> {
         name,
         band_id: None,
         kernel,
-        channel_ref,
+        channel_ref: Some(channel_ref),
         tau,
         absorption: 0.0,
         advection: 0.0,

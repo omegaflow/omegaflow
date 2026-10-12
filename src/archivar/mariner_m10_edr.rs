@@ -27,7 +27,7 @@ pub fn declared_fields(names: &[String], tau: f64) -> Vec<FieldConfig> {
                 name,
                 band_id: None,
                 kernel,
-                channel_ref,
+                channel_ref: Some(channel_ref),
                 tau,
                 absorption: 0.0,
                 advection: 0.0,

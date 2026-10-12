@@ -677,9 +677,12 @@ impl MatrixMachine {
                     None => continue,
                 },
             };
+            let Some(channel_ref) = sensor.channel_ref else {
+                continue;
+            };
             let meta = NameMeta {
                 anchor,
-                channel_ref: sensor.channel_ref,
+                channel_ref,
                 kernel: sensor.kernel,
                 tau: sensor.tau,
                 epoch: channel.epoch,

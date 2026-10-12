@@ -49,7 +49,7 @@ pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
             name: name.to_string(),
             band_id: None,
             kernel,
-            channel_ref,
+            channel_ref: Some(channel_ref),
             tau,
             absorption: 0.0,
             advection: 0.0,
@@ -256,7 +256,7 @@ mod tests {
         assert_eq!(fields[0].unit, "nT");
         assert_eq!(fields[3].name, "mcon_bay_duration_min");
         assert_eq!(fields[3].unit, "min");
-        assert_eq!(fields[0].channel_ref, force_id_of("em").unwrap());
+        assert_eq!(fields[0].channel_ref, Some(force_id_of("em").unwrap()));
         assert_eq!(component_name(COMP_BAY_WIDTH), Some("mcon_bay_width_min"));
         assert_eq!(component_name(9), None);
     }

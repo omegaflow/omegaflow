@@ -31,7 +31,7 @@ pub fn declared_fields() -> Vec<FieldConfig> {
             name,
             band_id: None,
             kernel,
-            channel_ref,
+            channel_ref: Some(channel_ref),
             tau: TAU_INTEGRATION_S,
             absorption: 0.0,
             advection: 0.0,
@@ -172,7 +172,10 @@ mod tests {
         assert_eq!(fields[0].key, "acs_nir_bin_0000");
         assert_eq!(fields[639].name, "acs_nir_bin_0639");
         assert_eq!(fields[1279].name, "acs_nir_bin_1279");
-        assert_eq!(fields[0].channel_ref, crate::force::force_id_of("em").unwrap());
+        assert_eq!(
+            fields[0].channel_ref,
+            Some(crate::force::force_id_of("em").unwrap())
+        );
         assert_eq!(
             fields[0].kernel,
             crate::archivar::extract::kernel_id_of("inverse-square").unwrap()

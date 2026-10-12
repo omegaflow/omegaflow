@@ -2,7 +2,7 @@
   title: Survey — Störungs-Experiment: fehlende Fäden (2026-10-05)
   class: survey
   date: 2026-10-05
-  sha256: 962b315e1c85fc60cfbe1b646928dc72aac4e7c4261c5181c2462fd2148f0054
+  sha256: 9d7a3432c7116e117a57e7e5cfa2c22eea969d3a990d96b23cf3b0a62d8a71b3
   status: live
   see-also: docs/concepts/tools-map.md phi/sources.φ docs/handover/archiv/handover-2026-10-05-river-folge93.md
 -->
@@ -41,9 +41,9 @@ Taucher-gemessen am 2026-10-05 (`archive_search --verdict/--sniff`, Register via
 
 | Netz | Register | Endpunkt | Zugang | Format | Verdikt |
 |---|---|---|---|---|---|
-| Infraschall CTBTO IMS/vDEC | `declined_sources.φ:4480` (blocked) | `vdec.ctbto.org` 404; Antrag via `ctbto.org/.../vdec` | Antrag, Wochen | IMS/miniSEED, `maw` 30 min | offene Produkte: BGR PMCC (`gdk.gdi-de.org`, CC BY 4.0) + IRIS IM-Metadaten (`service.iris.edu`) |
+| Infraschall CTBTO IMS/vDEC | `declined_sources.φ:4480` (blocked) — 2026-10-12: `phi/sources.φ` trägt keine ctbto-Zeile | `vdec.ctbto.org` 404; Antrag via `ctbto.org/.../vdec` | Antrag, Wochen (Dritter) | IMS/miniSEED, `maw` 30 min | der Vertrags-Antrag steht aus; Ersatz: BGR PMCC (`gdk.gdi-de.org`, CC BY 4.0) + IRIS IM-Metadaten (`service.iris.edu`) |
 | Infraschall BGR-Produkte | `sources.φ:9315` (`bgr_infrasound.bin`) | `download.bgr.de/...product.zip` (403 direkte) | frei (Proxy-Route) | netCDF, 30 min | gebaut; Origin-Route messen |
-| CEEIN C9 (IAP Prag) | `blocked_sources.φ:171` (pending) | `ceein.infp.ro/fdsnws/` 200 | frei | FDSN miniSEED (bis ~2023-10-30) | Mycelium-Arm |
+| CEEIN C9 (IAP Prag) | `phi/sources.φ:11124` (`ceein_infrasound`) | `ceein.infp.ro/fdsnws/` 200 | frei | FDSN miniSEED (bis ~2023-10-30) | **gebaut** (2026-10-12 gemessen: Compiler `ceein_infrasound_compiler` + CDN-`url`) |
 | GNSS-TEC global (Madrigal) | nein (nur `re3data`) | `cedar.openmadrigal.org` 206 | frei (Name/E-Mail/Affil.) | HDF5/ASCII, 5 min, 1°×1° | Kandidat, Quellenblock fehlt |
 | GNSS-TEC (IGN/BKG, ohne Earthdata) | nein | `igs.bkg.bund.de/root_ftp/`; `igs.ign.fr` | frei (BKG HTTPS) | IONEX | Kandidat |
 | IGS IONEX (CDDIS) | `sources.φ:1295` | `cddis.nasa.gov/archive/gnss/products/ionex/` 200 | Key `{EARTHDATA_EDL_TOKEN}` | IONEX `tec` | gebaut (Token-Präsenz pending) |
@@ -59,7 +59,7 @@ Taucher-gemessen am 2026-10-05 (`archive_search --verdict/--sniff`, Register via
 | Seismik CEIC China (CB) | nein | EarthScope `fdsnws/station?network=CB` 200 | über EarthScope offen | StationXML | dataselect CB prüfen |
 | Seismik NIED (BO/Hi-net) | `dead_sources.φ:884` (BO tot) | `fnet.bosai.go.jp` — FDSN 404; `mowlas.bosai.go.jp` | Registrierung | SAC/WIN | kein FDSN; NIED-Weg messen |
 | Seismik GSRAS Russland | nein | `gsras.ru` (direkt kein Response; EarthScope-GSN-Stationen OBN/ARU/YAK) | GSN frei | miniSEED | GSN-Arm deckt ab |
-| Gravimetrie EGGN | nein | EQUIP-G `epos-eu.org/equip-g` | pending | pending | Nachfolger messen |
+| Gravimetrie EGGN | nein | EQUIP-G `epos-eu.org/equip-g` | pending | pending | Nachfolger messen (2026-10-12 gemessen: `register_lookup equip-g` = 0 Registerzeilen) |
 | Gravimetrie China CGrav | nein | `data.earthquake.cn` | restricted (Antrag) | nationales Netz | Antrag = Dritter |
 | Gravimetrie IGETS/BGI | `sources.φ:9528` / `blocked:166` | `isdc.gfz.de` / `api.sedoo.fr/get-agrav-rest/` | sftp-Account / frei | ASCII/JSON | IGETS gebaut; BGI Mycelium-Arm |
 | Wetter ERA5 / GFS | descoped (`declined:1279`, `noaa_nodd_disposition:254`) | `cds.climate.copernicus.eu` / `nomads.ncep.noaa.gov` | Key / frei | GRIB/NetCDF | **Modellprodukt** — kein Messfaden (§3) |
@@ -123,7 +123,7 @@ Kopplung** und sind als Stör-Treiber, nie als unabhängiger Zeuge zu behandeln.
   live verifiziert (2026-10-05, `archive_search --verdict`): INTERMAGNET-GitHub lebt
   (neben `imag-data.bgs.ac.uk`), GFZ `isdc` + `dataservices` beide 200, CDDIS-IONEX 200,
   EUMETSAT LI-L2 = `EO:EUM:DAT:0687`. **Widerlegt:** `registry.opendata.aws/era5/` = HTTP 404
-  (kein key-freier ERA5-Datensatz dort); CODE/AIUB `ftp`+`https` kein Response (pending/tot).
+(kein key-freier ERA5-Datensatz dort); CODE/AIUB `ftp`+`https` kein Response — **tot** (2026-10-12 gemessen: `register_lookup aiub` = 0 Registerzeilen; `docs/paper/laic-arrow-direction.md:153` AIUB/WHU/ASI unreachable, 000).
 - GLM dritte Runde (mit Zugriff auf Live-Tools, korrigierte Fassung) — ihre Korrekturen
   wurden stichprobenweise verifiziert (2026-10-05, `archive_search --verdict`):
   **bestätigt:** EarthScope-FDSN = `service.earthscope.org` (`.edu` kein Response) ·

@@ -30,7 +30,7 @@ pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
         name: "jaxa_gpm_ku_echo_power_w".to_string(),
         band_id: None,
         kernel,
-        channel_ref,
+        channel_ref: Some(channel_ref),
         tau,
         absorption: 0.0,
         advection: 0.0,

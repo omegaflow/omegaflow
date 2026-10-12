@@ -76,7 +76,7 @@ pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
             name: name.to_string(),
             band_id: None,
             kernel,
-            channel_ref,
+            channel_ref: Some(channel_ref),
             tau,
             absorption: 0.0,
             advection: 0.0,
@@ -162,7 +162,7 @@ mod tests {
         assert_eq!(fields.len(), 2);
         assert_eq!(fields[0].unit, "GW");
         assert_eq!(fields[1].name, "ssusi_hemisphere_power_south");
-        assert_eq!(fields[0].channel_ref, force_id_of("em").unwrap());
+        assert_eq!(fields[0].channel_ref, Some(force_id_of("em").unwrap()));
     }
 
     #[test]

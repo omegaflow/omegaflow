@@ -46,7 +46,7 @@ pub struct Sample {
     pub extent: f64,
     pub tau: f64,
     pub kernel_id: f64,
-    pub channel_ref: f64,
+    pub channel_ref: Option<f64>,
     pub absorption: f64,
     pub advection: f64,
     pub anchor_vmax: f64,
@@ -340,6 +340,10 @@ impl ReceiverAperture {
         self.get(channel_ref, class)
     }
 
+    pub fn for_channel(&self, channel_ref: Option<u8>, class: Aperture) -> Option<f64> {
+        channel_ref.and_then(|channel_ref| self.get(channel_ref, class))
+    }
+
     pub fn parse_declaration(spec: &str) -> Self {
         let mut aperture = Self::new();
         for entry in spec.split(',') {
@@ -382,7 +386,7 @@ pub struct FieldConfig {
     pub name: String,
     pub band_id: Option<String>,
     pub kernel: u8,
-    pub channel_ref: u8,
+    pub channel_ref: Option<u8>,
     pub tau: f64,
     pub absorption: f64,
     pub advection: f64,
@@ -400,13 +404,11 @@ pub const PRESENCE_FLAG_ABSORPTION: f64 = 2.0;
 pub const PRESENCE_FLAG_ADVECTION: f64 = 4.0;
 pub const PRESENCE_FLAG_FLUX: f64 = 8.0;
 pub const PRESENCE_FLAG_QUANTITY: f64 = 16.0;
-pub const CHANNEL_REF_QUANTITY: u8 = 255;
 
-pub fn wire_channel_ref(channel_ref: f64) -> f64 {
-    if channel_ref == CHANNEL_REF_QUANTITY as f64 {
-        0.0
-    } else {
-        channel_ref
+pub fn wire_channel_ref(channel_ref: Option<f64>) -> f64 {
+    match channel_ref {
+        Some(channel_ref) => channel_ref,
+        None => 0.0,
     }
 }
 

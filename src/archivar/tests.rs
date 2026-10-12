@@ -69,7 +69,7 @@ fn field_fixture(name: &str, tau: f64) -> FieldConfig {
         name: name.into(),
         band_id: None,
         kernel: 0,
-        channel_ref: 0,
+        channel_ref: Some(0),
         tau,
         absorption: 0.0,
         advection: 0.0,
@@ -117,7 +117,7 @@ fn pds3_label_column_joins_the_field_line_by_source_key() {
         name: "pds3_mischa_bx_pso".into(),
         band_id: None,
         kernel: 0,
-        channel_ref: 0,
+        channel_ref: Some(0),
         tau: 604800.0,
         absorption: 0.0,
         advection: 0.0,
@@ -1391,7 +1391,7 @@ fn test_celestial_map_redshift_distance() {
                 name: "tns_transient_flux".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 3600.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -1504,7 +1504,7 @@ fn test_extract_csv_zip_end_to_end() {
                 name: "tns_transient_flux".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 3600.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -1714,7 +1714,7 @@ field flux_detection_total euclid_detection_flux inverse-square em uJy 604800 0.
             assert_eq!(fields[0].key, "flux_detection_total");
             assert_eq!(fields[0].name, "euclid_detection_flux");
             assert_eq!(fields[0].unit, "uJy");
-            assert_eq!(fields[0].channel_ref, 0);
+            assert_eq!(fields[0].channel_ref, Some(0));
             assert_eq!(fields[0].kernel, 0);
         }
         _ => panic!("expected CelestialMap extract"),
@@ -1833,7 +1833,7 @@ fn test_extract_cmap_dist_scale_kpc() {
                 name: "comet_h_mag".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 604800.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -1939,7 +1939,7 @@ fn test_extract_cmap_epoch_mjd_converts_to_tdb() {
                 name: "comet_h_mag".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 604800.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -2040,7 +2040,7 @@ fn test_extract_cmap_dist_without_scale_is_absent() {
                 name: "comet_h_mag".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 604800.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -2138,7 +2138,7 @@ fn test_extract_cmap_rv_without_scale_is_absent() {
                 name: "comet_h_mag".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 604800.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -2244,7 +2244,7 @@ fn test_extract_cmap_pm_radvel_plx() {
                 name: "comet_h_mag".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 604800.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -2382,7 +2382,7 @@ fn test_extract_cmap_no_distance_skipped() {
                 name: "comet_h_mag".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 604800.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -2477,7 +2477,7 @@ fn test_extract_cmap_null_dist_skipped() {
                 name: "comet_h_mag".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 604800.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -2777,7 +2777,7 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
                 name: "alfalfa_hi_flux".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 604800.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -2862,7 +2862,7 @@ fn test_star_samples_build_tau() {
     assert_eq!(samples.len(), 1);
     assert!(samples[0].tau > 0.0);
     assert_eq!(samples[0].val, 1.0);
-    assert_eq!(samples[0].channel_ref, 0.0);
+    assert_eq!(samples[0].channel_ref, Some(0.0));
     assert_eq!(samples[0].kernel_id, 0.0);
     assert_eq!(samples[0].ttl, samples[0].tau);
     assert_eq!(
@@ -3821,8 +3821,8 @@ fn test_build_asteroid_samples_gm_radius_and_query() {
     assert_eq!(far_gm.val, 2.5e8);
     assert_eq!(gm.kernel_id, 0.0);
     assert_eq!(radius.kernel_id, 1.0);
-    assert_eq!(gm.channel_ref, 1.0);
-    assert_eq!(radius.channel_ref, 1.0);
+    assert_eq!(gm.channel_ref, Some(1.0));
+    assert_eq!(radius.channel_ref, Some(1.0));
     assert!(gm.extent == 3000.0 && gm.tau.is_infinite());
     assert!(radius.extent == 3000.0 && radius.tau.is_infinite());
     let Motion::Kepler { rec: rec_gm } = &gm.motion else {
@@ -4379,7 +4379,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
         name: "em".into(),
         band_id: None,
         kernel: 0,
-        channel_ref: 0,
+        channel_ref: Some(0),
         tau: 60.0,
         absorption: 0.0,
         advection: 0.0,
@@ -4455,7 +4455,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
         "a record beyond the receiver aperture is refused even inside the source reach"
     );
     let no_law = FieldConfig {
-        channel_ref: 9,
+        channel_ref: Some(9),
         ..fc.clone()
     };
     assert!(
@@ -4557,7 +4557,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
     );
     let thermal = FieldConfig {
         kernel: 3,
-        channel_ref: 5,
+        channel_ref: Some(5),
         ..fc.clone()
     };
     assert!(
@@ -4681,7 +4681,7 @@ fn test_wind_waves_loader_respects_load_gate() {
         name: "wind_waves_rad1".into(),
         band_id: None,
         kernel: 0,
-        channel_ref: 0,
+        channel_ref: Some(0),
         tau: 60.0,
         absorption: 0.0,
         advection: 0.0,
@@ -5132,7 +5132,7 @@ fn test_erddap_argo_map_extract() {
                 name: "argo_temp_c".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 0.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -5861,7 +5861,7 @@ fn test_anchor_body_agnostic() {
             name: "v".into(),
             band_id: None,
             kernel: 1,
-            channel_ref: 0,
+            channel_ref: Some(0),
             tau: 0.0,
             absorption: 0.0,
             advection: 0.0,
@@ -5926,7 +5926,7 @@ fn test_anchor_body_agnostic() {
         name: "v".into(),
         band_id: None,
         kernel: 1,
-        channel_ref: 0,
+        channel_ref: Some(0),
         tau: 60.0,
         absorption: 0.0,
         advection: 0.0,
@@ -6082,7 +6082,7 @@ fn test_anchor_applies_declared_unit() {
         name: "imf".into(),
         band_id: None,
         kernel: 1,
-        channel_ref: 0,
+        channel_ref: Some(0),
         tau: 60.0,
         absorption: 0.0,
         advection: 0.0,
@@ -6206,7 +6206,7 @@ fn test_temporal_ring_never_trims_static_under_overflow() {
         extent: if static_sample { f64::INFINITY } else { 0.0 },
         tau: 1e10,
         kernel_id: 0.0,
-        channel_ref: 0.0,
+        channel_ref: Some(0.0),
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,
@@ -6260,7 +6260,7 @@ fn test_temporal_ring_under_cap_keeps_everything() {
         extent: if static_sample { f64::INFINITY } else { 0.0 },
         tau: 1e10,
         kernel_id: 0.0,
-        channel_ref: 0.0,
+        channel_ref: Some(0.0),
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,
@@ -6298,7 +6298,7 @@ fn test_temporal_ring_shared_matches_owned_ring() {
         extent: 0.0,
         tau: 1e10,
         kernel_id: 0.0,
-        channel_ref: 0.0,
+        channel_ref: Some(0.0),
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,
@@ -6362,7 +6362,7 @@ fn test_rebuild_retains_shared_sample_identity() {
         extent: 0.0,
         tau: 1e10,
         kernel_id: 0.0,
-        channel_ref: 0.0,
+        channel_ref: Some(0.0),
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,
@@ -6407,7 +6407,7 @@ fn test_sense_membrane_delivers_sun_sample_with_zero_floor() {
         extent: 0.0,
         tau: 6.0,
         kernel_id: 0.0,
-        channel_ref: 0.0,
+        channel_ref: Some(0.0),
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,
@@ -6665,7 +6665,7 @@ fn test_fetch_dispatch_gate_admits_em_source() {
         name: "flux".into(),
         band_id: None,
         kernel: 0,
-        channel_ref: 0,
+        channel_ref: Some(0),
         tau: 60.0,
         absorption: 0.0,
         advection: 0.0,
@@ -6706,7 +6706,7 @@ fn test_fetch_dispatch_gate_thermal_without_body_medium_is_absent() {
         name: "temp".into(),
         band_id: None,
         kernel: 3,
-        channel_ref: 5,
+        channel_ref: Some(5),
         tau: 60.0,
         absorption: 0.0,
         advection: 0.0,
@@ -6966,7 +6966,7 @@ fn test_fetch_dispatch_gate_forceless_field_refused() {
         name: "x".into(),
         band_id: None,
         kernel: 0,
-        channel_ref: 9,
+        channel_ref: Some(9),
         tau: 60.0,
         absorption: 0.0,
         advection: 0.0,
@@ -6985,7 +6985,7 @@ fn test_fetch_dispatch_gate_forceless_field_refused() {
 #[test]
 fn test_extract_fields_reads_profile_map() {
     let mut fc = field_fixture("temp", 60.0);
-    fc.channel_ref = 5;
+    fc.channel_ref = Some(5);
     let ext = Extract::ProfileMap {
         arr_path: ".".into(),
         lat_key: "lat".into(),
@@ -7018,7 +7018,7 @@ fn test_extract_fields_reads_geojson_events() {
     let fields = super::extract_fields(&ext);
     assert_eq!(fields.len(), 2);
     assert_eq!(fields[0].name, "seismic_magnitude_mw");
-    assert_eq!(fields[0].channel_ref, 3);
+    assert_eq!(fields[0].channel_ref, Some(3));
     assert_eq!(fields[1].name, "seismic_depth_km");
     assert!(
         super::dispatch_reach(&fields, 60.0).is_none(),
@@ -7051,11 +7051,11 @@ fn test_extract_fields_reads_quakeml_events() {
     assert_eq!(fields.len(), 2);
     assert_eq!(fields[0].name, "usgs_mt_m0_nm");
     assert_eq!(fields[0].kernel, 1);
-    assert_eq!(fields[0].channel_ref, 3);
+    assert_eq!(fields[0].channel_ref, Some(3));
     assert_eq!(fields[0].unit, "N m");
     assert_eq!(fields[1].name, "usgs_mt_mww");
     assert_eq!(fields[1].kernel, 3);
-    assert_eq!(fields[1].channel_ref, 4);
+    assert_eq!(fields[1].channel_ref, Some(4));
     assert_eq!(fields[1].unit, "Mw");
     assert!(
         super::dispatch_reach(&fields, 60.0).is_none(),
@@ -7116,7 +7116,7 @@ fn test_quakeml_events_emit_m0_and_mww_at_epicenter_epoch() {
             assert_eq!(m0.value, 5.39e20);
             assert_eq!(fc0.unit, "N m");
             assert_eq!(fc0.kernel, 1);
-            assert_eq!(fc0.channel_ref, 3);
+            assert_eq!(fc0.channel_ref, Some(3));
             assert!((m0.z - 10.0).abs() < 1e-9);
             let expected = lsk.unix_to_tdb(1675646254.342).unwrap();
             assert!((m0.epoch - expected).abs() < 1e-6);
@@ -7139,7 +7139,7 @@ fn test_quakeml_events_emit_m0_and_mww_at_epicenter_epoch() {
             assert!((mww.value - 7.8).abs() < 1e-9);
             assert_eq!(fc1.unit, "Mw");
             assert_eq!(fc1.kernel, 3);
-            assert_eq!(fc1.channel_ref, 4);
+            assert_eq!(fc1.channel_ref, Some(4));
             assert!((mww.epoch - expected).abs() < 1e-6);
         }
         _ => panic!("extract variant unexpected"),
@@ -7210,7 +7210,7 @@ fn test_arpansa_uv_xml_emits_station_channels() {
             assert_eq!(v[0].0.value, 1.3);
             assert_eq!(v[1].0.name, "Alice Springs");
             assert_eq!(v[1].0.value, 7.8);
-            assert_eq!(v[0].1.channel_ref, 0);
+            assert_eq!(v[0].1.channel_ref, Some(0));
             assert_eq!(v[0].1.kernel, 0);
             assert_eq!(v[0].1.unit, "UVI");
             assert!(matches!(
@@ -7313,7 +7313,7 @@ fn test_extract_igra_zip_emits_level_measurements() {
                 .find(|(c, _)| c.name == "igra_air_pressure_hpa")
                 .expect("pressure channel");
             assert_eq!(press.0.value, 1035.74);
-            assert_eq!(press.1.channel_ref, 7);
+            assert_eq!(press.1.channel_ref, Some(7));
             assert_eq!(press.1.kernel, 5);
             assert_eq!(press.1.unit, "hPa");
             let temp = v
@@ -7321,7 +7321,7 @@ fn test_extract_igra_zip_emits_level_measurements() {
                 .find(|(c, _)| c.name == "igra_air_temp_c")
                 .expect("temperature channel");
             assert_eq!(temp.0.value, -25.4);
-            assert_eq!(temp.1.channel_ref, 5);
+            assert_eq!(temp.1.channel_ref, Some(5));
             assert_eq!(temp.1.kernel, 4);
             assert_eq!(temp.1.unit, "C");
             if let super::Position::Surface { lat, lon, alt, .. } = &press.0.position {
@@ -7436,7 +7436,7 @@ fn test_extract_fugin_cube_emits_state_vector_channels() {
                 .iter()
                 .find(|(c, _)| (c.value - 3900.0).abs() < 1e-9)
                 .expect("center channel");
-            assert_eq!(center.1.channel_ref, 0);
+            assert_eq!(center.1.channel_ref, Some(0));
             assert_eq!(center.1.kernel, 0);
             assert_eq!(center.1.unit, "K m/s");
             assert_eq!(center.0.name, "fugin_moment0");
@@ -7468,7 +7468,7 @@ fn test_fetch_dispatch_gate_advective_uses_field_advection() {
         name: "wind".into(),
         band_id: None,
         kernel: 5,
-        channel_ref: 7,
+        channel_ref: Some(7),
         tau: 60.0,
         absorption: 0.0,
         advection: 400000.0,
@@ -8063,7 +8063,7 @@ fn test_query_admits_surface_sample_within_window() {
         name: "argo_dac_temp_c".into(),
         band_id: None,
         kernel: 3,
-        channel_ref: 5,
+        channel_ref: Some(5),
         tau: 604800.0,
         absorption: 0.0,
         advection: 0.0,
@@ -8304,7 +8304,7 @@ field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
             assert_eq!(v[0].0.name, "magnetosphere_dst_nt");
             let has_real = v.iter().any(|(c, _)| c.value.abs() < 1000.0);
             assert!(has_real, "dst must carry at least one real nT value");
-            assert_eq!(v[0].1.channel_ref, 0, "dst is em (force 0)");
+            assert_eq!(v[0].1.channel_ref, Some(0), "dst is em (force 0)");
         }
         other => {
             let _ = other;
@@ -8319,7 +8319,7 @@ field 4 co2_ppm_weekly gaussian-inverse-square diffusion ppm 3600.0 0.0 0.0
                 "co2 series must not be empty (extract produced 0 channels)"
             );
             assert_eq!(v[0].0.name, "co2_ppm_weekly");
-            assert_eq!(v[0].1.channel_ref, 6, "co2 is diffusion (force 6)");
+            assert_eq!(v[0].1.channel_ref, Some(6), "co2 is diffusion (force 6)");
             let mauna = v.iter().any(|(c, _)| (300.0..600.0).contains(&c.value));
             assert!(mauna, "co2 must carry at least one in-gate ppm value");
             let epochs: Vec<f64> = v.iter().map(|(c, _)| c.epoch).collect();
@@ -8366,7 +8366,7 @@ field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
         super::ExtractResult::Measurements(v) => {
             assert!(!v.is_empty(), "qbo series must not be empty");
             assert_eq!(v[0].0.name, "qbo_30hpa_ms");
-            assert_eq!(v[0].1.channel_ref, 7, "qbo is advective (force 7)");
+            assert_eq!(v[0].1.channel_ref, Some(7), "qbo is advective (force 7)");
             let in_gate = v.iter().any(|(c, _)| (-300.0..300.0).contains(&c.value));
             assert!(in_gate, "qbo must carry in-gate m/s values");
             let first = v.first().unwrap().0.epoch;
@@ -8411,7 +8411,7 @@ field 1 oulu_neutron_corr_for_eff inverse-square em cpm 3600.0 0.0 0.0
         super::ExtractResult::Measurements(v) => {
             assert!(!v.is_empty(), "oulu series must not be empty");
             assert_eq!(v[0].0.name, "oulu_neutron_corr_for_eff");
-            assert_eq!(v[0].1.channel_ref, 0, "oulu is em (force 0)");
+            assert_eq!(v[0].1.channel_ref, Some(0), "oulu is em (force 0)");
             let plausible = v.iter().all(|(c, _)| c.value > 1.0 && c.value < 500.0);
             assert!(plausible, "oulu neutron values must be plausible %");
         }
@@ -8452,7 +8452,7 @@ field 4 d20_thermocline_depth_m erfc gravity m 86400.0 0.0 0.0
             assert!(!v.is_empty(), "d20 series must not be empty");
             assert_eq!(v[0].0.name, "d20_thermocline_depth_m");
             assert_eq!(
-                v[0].1.channel_ref, 1,
+                v[0].1.channel_ref, Some(1),
                 "d20 depth is a gravity-anchored length (force 1)"
             );
             let plausible = v.iter().all(|(c, _)| c.value > 0.0 && c.value < 500.0);
@@ -8580,7 +8580,7 @@ fn test_diagnose_no_samples() {
                 name: "mag".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 0.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -8742,7 +8742,7 @@ fn test_ci_body_verdict() {
         name: "gcmt_scalar_moment_nm".into(),
         band_id: None,
         kernel: 1,
-        channel_ref: 3,
+        channel_ref: Some(3),
         tau: 6.0,
         absorption: 0.0,
         advection: 0.0,
@@ -8928,7 +8928,7 @@ fn test_map_single_object_alt_scale_epoch_default() {
                 name: "velocity".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 1.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -9040,7 +9040,7 @@ fn test_map_vel_unit_and_tau_key_override() {
                 name: "flow_value".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 7.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -9161,7 +9161,7 @@ fn test_parse_spectral_block() {
             assert_eq!(fc.name, "spectral_irradiance_W_m2_Hz");
             assert_eq!(fc.unit, "W/m2/Hz");
             assert!((fc.tau - 2628000.0).abs() < 1e-9);
-            assert_eq!(fc.channel_ref as u32, 0);
+            assert_eq!(fc.channel_ref, Some(0));
             assert_eq!(fc.kernel as u32, 0);
         }
         other => {
@@ -9193,7 +9193,7 @@ fn test_parse_sky1_cdn_asset_block() {
             super::Extract::Field(fc) => {
                 assert_eq!(fc.name, name);
                 assert_eq!(fc.unit, unit);
-                assert_eq!(fc.channel_ref as u32, 0);
+                assert_eq!(fc.channel_ref, Some(0));
                 assert_eq!(fc.kernel as u32, 0);
                 assert!((fc.tau - 31536000.0).abs() < 1e-9);
             }
@@ -9318,7 +9318,7 @@ fn test_fold_directive_parse_and_extract() {
                     name: "fold_mean_nh_sh".into(),
                     band_id: None,
                     kernel: 0,
-                    channel_ref: 6,
+                    channel_ref: Some(6),
                     tau: 100.0,
                     absorption: 0.0,
                     advection: 0.0,
@@ -9333,7 +9333,7 @@ fn test_fold_directive_parse_and_extract() {
                     name: "fold_diff_nh_sh".into(),
                     band_id: None,
                     kernel: 0,
-                    channel_ref: 6,
+                    channel_ref: Some(6),
                     tau: 100.0,
                     absorption: 0.0,
                     advection: 0.0,
@@ -9469,7 +9469,7 @@ fn test_keplermap_elements_to_icrs() {
                 name: "abs_mag".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 100.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -9808,7 +9808,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
                 name: "v".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 10.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -9918,7 +9918,7 @@ fn test_flux_from_mag_manifests() {
                 name: "cat_vmag".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 100.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -10017,7 +10017,7 @@ fn test_map_lat_sign_lon_sign() {
                 name: "fireball_energy_e10j".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 0,
+                channel_ref: Some(0),
                 tau: 3600.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -10142,7 +10142,7 @@ fn test_mag_type_gating() {
                 name: "quake_moment".into(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: 3,
+                channel_ref: Some(3),
                 tau: 6.0,
                 absorption: 0.0,
                 advection: 0.0,
@@ -10926,7 +10926,7 @@ fn iss_lis_register_field_matches_component_name() {
         panic!("the iss_lis block carries a field line");
     };
     assert_eq!(fc.name, "iss_lis_flash_radiance_uj_sr_m2_um");
-    assert_eq!(fc.channel_ref, 0);
+    assert_eq!(fc.channel_ref, Some(0));
 }
 
 #[test]
@@ -11011,7 +11011,7 @@ fn gosat_tanso3_register_field_matches_component_name() {
     let Some(Extract::Field(fc)) = src.extracts.first() else {
         panic!("the gosat_tanso3 block carries a field line");
     };
-    assert_eq!(fc.channel_ref, 0);
+    assert_eq!(fc.channel_ref, Some(0));
 }
 
 #[test]
@@ -11176,7 +11176,7 @@ fn trmm_lis_register_field_matches_component_name() {
         panic!("the trmm_lis block carries a field line");
     };
     assert_eq!(fc.name, "trmm_lis_flash_radiance_uj_sr_m2_um");
-    assert_eq!(fc.channel_ref, 0);
+    assert_eq!(fc.channel_ref, Some(0));
 }
 
 #[test]
@@ -11249,7 +11249,7 @@ fn glm_l2_register_field_matches_component_name() {
         panic!("the glm_l2 block carries a field line");
     };
     assert_eq!(fc.name, "glm_l2_flash_radiant_energy_j");
-    assert_eq!(fc.channel_ref, 0);
+    assert_eq!(fc.channel_ref, Some(0));
 }
 
 #[test]
@@ -11263,7 +11263,7 @@ fn glm_l1b_register_field_matches_component_name() {
         panic!("the glm_l1b block carries a field line");
     };
     assert_eq!(fc.name, "glm_l1b_flash_radiant_energy_j");
-    assert_eq!(fc.channel_ref, 0);
+    assert_eq!(fc.channel_ref, Some(0));
 }
 
 #[test]
@@ -11348,7 +11348,7 @@ fn supermag_register_field_matches_component_name() {
     let Some(Extract::Field(fc)) = src.extracts.first() else {
         panic!("the supermag_1m block carries a field line");
     };
-    assert_eq!(fc.channel_ref, 0);
+    assert_eq!(fc.channel_ref, Some(0));
 }
 
 #[test]
@@ -11613,7 +11613,7 @@ fn galileo_odr_register_field_matches_component_name() {
     let Some(Extract::Field(fc)) = src.extracts.first() else {
         panic!("the galileo_odr block carries a field line");
     };
-    assert_eq!(fc.channel_ref, 0);
+    assert_eq!(fc.channel_ref, Some(0));
     assert_eq!(fc.kernel, 0);
     assert_eq!(fc.unit, "count");
 }
@@ -11744,7 +11744,7 @@ fn fits_format_extracts_last_row() {
         name: "flux".into(),
         band_id: None,
         kernel: 0,
-        channel_ref: 0,
+        channel_ref: Some(0),
         tau: 604800.0,
         absorption: 0.0,
         advection: 0.0,
@@ -11867,7 +11867,7 @@ fn tar_gz_yaml_format_extracts_member_last_row() {
         name: "gracefo_kbr_range_rate".into(),
         band_id: None,
         kernel: 0,
-        channel_ref: 4,
+        channel_ref: Some(4),
         tau: 86400.0,
         absorption: 0.0,
         advection: 0.0,
@@ -12993,7 +12993,7 @@ field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.
         ExtractResult::Measurements(channels) => {
             assert_eq!(channels.len(), 2);
             for (c, fc) in &channels {
-                assert_eq!(fc.channel_ref, 6);
+                assert_eq!(fc.channel_ref, Some(6));
                 assert_eq!(fc.tau, 86400.0);
                 match &c.position {
                     super::Position::Surface { lat, lon, alt, .. } => {
@@ -13115,7 +13115,7 @@ fn test_epa_aqs_source_registered() {
             assert_eq!(epoch_cols, &vec!["11".to_string()]);
             assert_eq!(fields.len(), 1);
             assert_eq!(fields[0].key, "16");
-            assert_eq!(fields[0].channel_ref, 6);
+            assert_eq!(fields[0].channel_ref, Some(6));
             assert_eq!(fields[0].tau, 86400.0);
         }
         _ => panic!("expected Rows extract"),
@@ -13140,7 +13140,7 @@ field \"Arithmetic Mean\" pm25_daily_ug_m3 gaussian-inverse-square diffusion µg
         Extract::Rows { fields, .. } => {
             assert_eq!(fields.len(), 1);
             assert_eq!(fields[0].key, "Arithmetic Mean");
-            assert_eq!(fields[0].channel_ref, 6);
+            assert_eq!(fields[0].channel_ref, Some(6));
             assert_eq!(fields[0].tau, 86400.0);
         }
         _ => panic!("expected Rows extract"),
@@ -13690,7 +13690,7 @@ fn body_anchor_carries_measured_props_and_own_granule_span() {
         (s.extent - 6378136.6).abs() < 1e-3,
         "extent is the measured radius"
     );
-    assert!((s.channel_ref - 1.0).abs() < 1e-9, "gravity anchor");
+    assert!((s.channel_ref.unwrap_or(0.0) - 1.0).abs() < 1e-9, "gravity anchor");
     let want_ttl = 34.0 * 86400.0;
     assert!(
         (s.ttl - want_ttl).abs() < 1e-3,
@@ -13763,7 +13763,7 @@ fn test_body_anchor_reaches_ssb_presence_by_signal_cone() {
         extent: 6.96e8,
         tau: f64::INFINITY,
         kernel_id: 0.0,
-        channel_ref: 1.0,
+        channel_ref: Some(1.0),
         absorption: 0.0,
         advection: 0.0,
         anchor_vmax: 0.0,

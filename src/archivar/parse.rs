@@ -620,7 +620,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     },
                     band_id: None,
                     kernel: 0,
-                    channel_ref: 0,
+                    channel_ref: Some(0),
                     tau: 0.0,
                     absorption: 0.0,
                     advection: 0.0,
@@ -957,7 +957,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     name: parts[1].to_string(),
                     band_id: None,
                     kernel: k,
-                    channel_ref: f,
+                    channel_ref: Some(f),
                     tau,
                     absorption: 0.0,
                     advection: 0.0,
@@ -1020,7 +1020,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         Some(k) => k,
                         None => continue,
                     },
-                    channel_ref: f,
+                    channel_ref: Some(f),
                     tau,
                     absorption: 0.0,
                     advection: 0.0,
@@ -1232,7 +1232,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         None
                     },
                     kernel: k,
-                    channel_ref: CHANNEL_REF_QUANTITY,
+                    channel_ref: None,
                     tau,
                     absorption,
                     advection,
@@ -1393,7 +1393,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     name: parts[2].to_string(),
                     band_id: None,
                     kernel: k,
-                    channel_ref: f,
+                    channel_ref: Some(f),
                     tau,
                     absorption,
                     advection,
@@ -1573,7 +1573,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     name: parts[2].to_string(),
                     band_id: None,
                     kernel: k,
-                    channel_ref: f,
+                    channel_ref: Some(f),
                     tau,
                     absorption,
                     advection,
@@ -1684,7 +1684,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     name: parts[2].to_string(),
                     band_id: None,
                     kernel: k,
-                    channel_ref: f,
+                    channel_ref: Some(f),
 
                     tau,
                     absorption,
@@ -2024,7 +2024,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     name: format!("fold_{}_{}_{}", parts[1], parts[2], parts[3]),
                     band_id: None,
                     kernel: k,
-                    channel_ref: f,
+                    channel_ref: Some(f),
                     tau,
                     absorption: 0.0,
                     advection: 0.0,
@@ -2413,12 +2413,12 @@ pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
     lsk.unix_to_tdb(unix as f64)
 }
 
-pub fn parse_field_config(parts: &[&str]) -> Option<(u8, u8, f64, f64, f64)> {
+pub fn parse_field_config(parts: &[&str]) -> Option<(u8, Option<u8>, f64, f64, f64)> {
     let kernel = kernel_id_of(parts[3])?;
     let channel_ref = match force_id_of(parts[4]) {
-        Some(f) => f,
+        Some(f) => Some(f),
         None => match quantity_kind_of(parts[4]) {
-            Some(QuantityKind::Geometry | QuantityKind::SourceParameter) => CHANNEL_REF_QUANTITY,
+            Some(QuantityKind::Geometry | QuantityKind::SourceParameter) => None,
             _ => return None,
         },
     };
@@ -2669,7 +2669,10 @@ mod tests {
                 _ => None,
             })
             .expect("the descriptor field is admitted");
-        assert_eq!(field.channel_ref, 5, "Fourier/energy/fluid resolves to thermal");
+        assert_eq!(
+            field.channel_ref, Some(5),
+            "Fourier/energy/fluid resolves to thermal"
+        );
         assert_eq!(field.unit, "K");
     }
 
@@ -2702,7 +2705,7 @@ mod tests {
             .expect("the P10.2a target line is admitted");
         assert_eq!(field.kernel, 0, "inverse-square is kernel 0");
         assert_eq!(
-            field.channel_ref, 8,
+            field.channel_ref, Some(8),
             "maxwell/elliptic/vacuum resolves to electric"
         );
         assert_eq!(field.unit, "V/m");
@@ -2742,7 +2745,7 @@ mod tests {
             })
             .expect("the optional interaction may be absent — the line is admitted, never silently dropped");
         assert_eq!(
-            field.channel_ref, 8,
+            field.channel_ref, Some(8),
             "the interaction-absent form resolves to the same channel as the interaction-present form"
         );
         assert_eq!(field.unit, "V/m");
@@ -3066,7 +3069,7 @@ mod tests {
         let field_of = |content: &str| -> Option<u8> {
             parse_sources(content).first().and_then(|s| {
                 s.extracts.iter().find_map(|e| match e {
-                    Extract::Field(fc) => Some(fc.channel_ref),
+                    Extract::Field(fc) => fc.channel_ref,
                     _ => None,
                 })
             })
@@ -3074,7 +3077,7 @@ mod tests {
 
         let valid = "url https://example.com/q.bin\nttl 604800\n\
                      quantity qkey qname inverse-square mass kg 3600 0.0 0.0\n";
-        assert_eq!(field_of(valid), Some(CHANNEL_REF_QUANTITY));
+        assert_eq!(field_of(valid), None);
 
         let force_as_kind = "url https://example.com/q.bin\nttl 604800\n\
                              quantity qkey qname inverse-square em kg 3600 0.0 0.0\n";
@@ -3107,7 +3110,7 @@ mod tests {
                         last items.value river_stage inverse-square geometry m 900.0 0.0 0.0\n";
         let fc = last_of(geometry).expect("a last selector with a geometry kind flows");
         assert_eq!(
-            fc.channel_ref, CHANNEL_REF_QUANTITY,
+            fc.channel_ref, None,
             "a geometry value leaves Σω through the last arm, like the quantity arm"
         );
         assert_eq!(fc.unit, "m", "the geometry unit stays free");
@@ -3115,15 +3118,15 @@ mod tests {
         let source_parameter = "url https://example.com/g.bin\nttl 604800\n\
                                 last mass planet_mass inverse-square source-parameter M_earth 60 0.0 0.0\n";
         assert_eq!(
-            last_of(source_parameter).map(|f| f.channel_ref),
-            Some(CHANNEL_REF_QUANTITY),
+            last_of(source_parameter).and_then(|f| f.channel_ref),
+            None,
             "a source parameter leaves Σω through the last arm"
         );
 
         let still_a_force = "url https://example.com/g.bin\nttl 604800\n\
                              last data.v tide_height inverse-square gravity m 3600 0.0 0.0\n";
         assert_eq!(
-            last_of(still_a_force).map(|f| f.channel_ref),
+            last_of(still_a_force).and_then(|f| f.channel_ref),
             Some(1),
             "a force token in the same slot keeps its channel"
         );
@@ -3134,7 +3137,7 @@ mod tests {
         let force_of = |content: &str| -> Option<u8> {
             parse_sources(content).first().and_then(|s| {
                 s.extracts.iter().find_map(|e| match e {
-                    Extract::Field(fc) => Some(fc.channel_ref),
+                    Extract::Field(fc) => fc.channel_ref,
                     _ => None,
                 })
             })
@@ -3186,7 +3189,7 @@ mod tests {
                  quantity qkey qname inverse-square index nt 60 0.0 0.0\n";
         let fc = field_of(q).expect("a magnetic index quantity in nT flows as a quantity");
         assert_eq!(
-            fc.channel_ref, CHANNEL_REF_QUANTITY,
+            fc.channel_ref, None,
             "a derived index stays outside Σω"
         );
     }
@@ -3204,7 +3207,7 @@ mod tests {
         let geometry = "url https://example.com/q.bin\nttl 604800\n\
                         quantity tide_ft tide_ft inverse-square geometry ft 3600 0.0 0.0\n";
         let fc = field_of(geometry).expect("a geometry quantity flows");
-        assert_eq!(fc.channel_ref, CHANNEL_REF_QUANTITY);
+        assert_eq!(fc.channel_ref, None);
         assert_eq!(
             fc.unit, "ft",
             "the geometry unit is free (length, angle, mass …)"
@@ -3213,8 +3216,8 @@ mod tests {
         let source_parameter = "url https://example.com/q.bin\nttl 604800\n\
                                 quantity planet_mass planet_mass inverse-square source-parameter M_earth 60 0.0 0.0\n";
         assert_eq!(
-            field_of(source_parameter).map(|f| f.channel_ref),
-            Some(CHANNEL_REF_QUANTITY),
+            field_of(source_parameter).and_then(|f| f.channel_ref),
+            None,
             "a source parameter flows as a quantity, never a field"
         );
     }
