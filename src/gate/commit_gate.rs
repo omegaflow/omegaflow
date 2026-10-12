@@ -1076,6 +1076,9 @@ impl Gate {
         if let Some(v) = check_addressed_origin(&path, &content) {
             return Some(v);
         }
+        if let Some(v) = check_prior_work_unread(&path, &content) {
+            return Some(v);
+        }
         let lower_content = content.to_lowercase();
         for word in &vocab().single_path {
             if let Some(idx) = lower_content.find(word.as_str()) {
@@ -1801,6 +1804,83 @@ fn check_addressed_origin(path: &str, content: &str) -> Option<Verdict> {
         feedback: feedback_text,
         quote,
     })
+}
+
+fn check_prior_work_unread(path: &str, content: &str) -> Option<Verdict> {
+    if path.contains("/archiv/") {
+        return None;
+    }
+    handover_line_owner(path)?;
+    let (line, rule) = prior_work_unread_violations(content).into_iter().next()?;
+    let quote = match content.lines().nth(line.saturating_sub(1)) {
+        Some(s) => clip(s, 90),
+        None => String::new(),
+    };
+    Some(Verdict {
+        severity: Severity::Hard,
+        rule,
+        line,
+        feedback: feedback("prior-work-unread").to_string(),
+        quote,
+    })
+}
+
+fn prior_work_unread_violations(handover: &str) -> Vec<(usize, String)> {
+    let mut out = Vec::new();
+    for (idx, line) in handover.lines().enumerate() {
+        if !line.contains("state/") {
+            continue;
+        }
+        if !has_byte_size(line) {
+            continue;
+        }
+        let low = line.to_lowercase();
+        if low.contains("measured") || low.contains("gemessen") {
+            continue;
+        }
+        out.push((idx + 1, "prior-work-unread".to_string()));
+    }
+    out
+}
+
+fn has_byte_size(line: &str) -> bool {
+    let bytes = line.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        if !bytes[i].is_ascii_digit() {
+            i += 1;
+            continue;
+        }
+        let mut j = i;
+        let mut last_digit = i;
+        while j < bytes.len() {
+            let c = bytes[j];
+            if c.is_ascii_digit() {
+                last_digit = j;
+                j += 1;
+            } else if (c == b' ' || c == b'_')
+                && j + 1 < bytes.len()
+                && bytes[j + 1].is_ascii_digit()
+            {
+                j += 1;
+            } else {
+                break;
+            }
+        }
+        let mut m = last_digit + 1;
+        while m < bytes.len() && (bytes[m] == b' ' || bytes[m] == b'\t') {
+            m += 1;
+        }
+        if m < bytes.len()
+            && bytes[m] == b'B'
+            && m > last_digit
+            && (m + 1 >= bytes.len() || !bytes[m + 1].is_ascii_alphanumeric())
+        {
+            return true;
+        }
+        i = j.max(last_digit + 1);
+    }
+    false
 }
 
 fn is_open_heading(line: &str) -> bool {
@@ -3640,6 +3720,15 @@ mod tests {
             &fx("addressed_origin_clean"),
         );
         assert!(g.check_tool_call("write", &args).is_none());
+    }
+
+    #[test]
+    fn prior_work_unread_fires_without_a_stamp() {
+        let unread = "**Lokal:** state/research/x/MANIFEST.md — a.txt (66 414 088 B)";
+        let violations = prior_work_unread_violations(unread);
+        assert_eq!(violations, vec![(1, "prior-work-unread".to_string())]);
+        let read = "**Lokal:** state/research/x/ (1 880 562 475 B, measured 2026-10-12 via archive_search --verdict)";
+        assert!(prior_work_unread_violations(read).is_empty());
     }
 
     #[test]
