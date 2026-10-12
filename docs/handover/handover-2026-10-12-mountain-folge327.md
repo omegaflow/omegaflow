@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: f2d6944bd0568ccfa700b4d48636e9c86ed78aff3f9ebcd937bbd7981eebd47f
+  sha256: 0fddfb3c25530b15ae397c2cbd4d527cc57896c21e4bee099edf223f6e5c52e1
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -245,9 +245,11 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
 
 ### M10 camera_angles — Flyby-Geometrie gemessen (eigen)
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** der `camera_angles`-Dispatch-Lauf
-- **Lage:** (gemessen 2026-10-12/327; neuer Bin `tools/measure/src/bin/m10_camera_angles_geometry.rs`, gelaufen) 811 Frames in **drei** Clustern (JD-Lücke 175,9 d vs. Median 0,000486 d, Ratio 361 760×): **M1 450** Frames (JD 2442135.305–2442137.606, FDS 50–27475) · **M2 333** (JD 2442312.241–2442312.514) · **M3 28** (JD 2442488.370–2442488.915). **`|S|` (SX SY SZ) = 11 183 … 1 123 524 km (Ratio 100,5×) → `S-FRAME VERDICT: UNVERIFIED`**: das `SXSYSZ`-Zentrum ist **nicht** zielzentriert (ein zielzentrierter Rahmen hielte |S| nahezu konstant); die Zahlen sind gemessen, der Rahmen ungeprüft. `|S|`-Minimum: M1 11 183 km @ FDS 00000050 · M2 50 511 km @ FDS 00166745 · M3 12 139 km @ FDS 00528922.
-- **Blockade:** der `SXSYSZ`-Ursprung ist ungemessen (Ziel? Erde? Sonne?); die Mercury-Zentrum-Distanz braucht ihn.
-- **Braucht:** den `SXSYSZ`-Rahmen pinnen (Format-Doku `ser.im-ldi.com/M10/TXT/angles.html` + Robinson 1999) oder gegen eine Mercury-Ephemeride (JPL Horizons `-76`) kalibrieren — dann ist die CA/Distanz je Bild rechenbar.
+- **Lage:** (gemessen 2026-10-12/327; neuer Bin `tools/measure/src/bin/m10_camera_angles_geometry.rs`, gelaufen) 811 Frames in **drei** Clustern (JD-Lücke 175,9 d vs. Median 0,000486 d, Ratio 361 760×): **M1 450** Frames (JD 2442135.305–2442137.606, FDS 50–27475) · **M2 333** (JD 2442312.241–2442312.514) · **M3 28** (JD 2442488.370–2442488.915). `|S|` (SX SY SZ) = 11 183 … 1 123 524 km; `|S|`-Minimum: M1 11 183 km @ FDS 00000050 · M2 50 511 km @ FDS 00166745 · M3 12 139 km @ FDS 00528922.
+  **Rahmen-Messung (Bin `m10_camera_angles_frame`, gelaufen):** getestet gegen die Ephemeriden (`ephemeris_mariner10` + `ephemeris_mercury`/`venus`/`earth`) — **`FRAME: UNIDENTIFIED`**, kein Kandidat unter 50 km (bester `-sc-me` RMS 431 558 km = 422 % von |S|). **Riss in der Messung selbst:** `|sc-me| ≈ |sc| + |me|` (139,7 Mio km bei |sc| 70,1 · |me| 69,6 Mio km) — die zwei Ephemeriden-Auslesungen teilen **weder Ursprung noch Zeit**; damit ist der Kreuzvergleich verfälscht, und der Rahmen bleibt offen.
+  **Korrektur meiner früheren Behauptung:** das Verdikt „zielzentriert hält |S| konstant" war **falsch** — |S| = Range variiert über einen Encounter naturgemäß um ~100×.
+- **Blockade:** der `SXSYSZ`-Ursprung ist ungemessen; zusätzlich ist der Kreuz-Ephemeriden-Vergleich durch unterschiedliche Zentren/Epochen verfälscht.
+- **Braucht:** die Ephemeriden-Auslesung auf **einen** gemeinsamen Ursprung (SSB/ICRS) + **eine** Zeitbasis (TDB) bringen, dann den Rahmen neu bestimmen — oder direkt gegen JPL Horizons (`-76`, Zentrum Merkur) kalibrieren.
 
 ### zai-Export — Such-Kontext + nicht-registrierte Mariner-Funde (eigen)
 - **Status:** eigen | **Bindung:** eigen | **Trigger:** der nächste Register-Pass
@@ -337,6 +339,8 @@ einen Namenträger bei dir:
 Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt automatisch", 2026-10-07)
 trägt Commit und Push. In diesem Atom committet (pfad-begrenzt): `src/archivar/extract.rs`,
 `src/archivar/mod.rs`, `src/archivar/fetch.rs`, `src/archivar/port.rs`, `src/archivar/camera_angles.rs`,
-`tools/harvest/src/bin/mariner_rst_compiler.rs`, `phi/sources.φ` (jma-Block → point-event/erbq-Familie),
+`src/archivar/parse.rs`, `tools/harvest/src/bin/mariner_rst_compiler.rs`,
+`tools/measure/src/bin/m10_camera_angles_geometry.rs`, `tools/measure/src/bin/m10_camera_angles_frame.rs`,
+`phi/sources.φ` (jma-Block → point-event/erbq-Familie),
 `docs/handover/handover-2026-10-12-mountain-folge327.md`,
 `docs/handover/archiv/handover-2026-10-12-mountain-folge326.md`.
