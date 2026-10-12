@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: 0fb61e4b4a0c373173bebe48c6e86bc0f038c12ccb53b3aebec5039d678b4b15
+  sha256: f2d6944bd0568ccfa700b4d48636e9c86ed78aff3f9ebcd937bbd7981eebd47f
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -245,6 +245,18 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
 - **Blockade:** das XLS-Format (BIFF) ist mit den erlaubten Werkzeugen nicht in Zeilen zerlegbar.
 - **Braucht:** die Map aus den Filenamen ist da (114); für den vollen 614er-Satz die XLS mit einem Rust-Reader (BIFF) öffnen — oder die `renamed_dataset_catalogs`-Dateinamen als Quelle belassen (832 DSC-PDFs dort).
 
+### M10 camera_angles — Flyby-Geometrie gemessen (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** der `camera_angles`-Dispatch-Lauf
+- **Lage:** (gemessen 2026-10-12/327; neuer Bin `tools/measure/src/bin/m10_camera_angles_geometry.rs`, gelaufen) 811 Frames in **drei** Clustern (JD-Lücke 175,9 d vs. Median 0,000486 d, Ratio 361 760×): **M1 450** Frames (JD 2442135.305–2442137.606, FDS 50–27475) · **M2 333** (JD 2442312.241–2442312.514) · **M3 28** (JD 2442488.370–2442488.915). **`|S|` (SX SY SZ) = 11 183 … 1 123 524 km (Ratio 100,5×) → `S-FRAME VERDICT: UNVERIFIED`**: das `SXSYSZ`-Zentrum ist **nicht** zielzentriert (ein zielzentrierter Rahmen hielte |S| nahezu konstant); die Zahlen sind gemessen, der Rahmen ungeprüft. `|S|`-Minimum: M1 11 183 km @ FDS 00000050 · M2 50 511 km @ FDS 00166745 · M3 12 139 km @ FDS 00528922.
+- **Blockade:** der `SXSYSZ`-Ursprung ist ungemessen (Ziel? Erde? Sonne?); die Mercury-Zentrum-Distanz braucht ihn.
+- **Braucht:** den `SXSYSZ`-Rahmen pinnen (Format-Doku `ser.im-ldi.com/M10/TXT/angles.html` + Robinson 1999) oder gegen eine Mercury-Ephemeride (JPL Horizons `-76`) kalibrieren — dann ist die CA/Distanz je Bild rechenbar.
+
+### zai-Export — Such-Kontext + nicht-registrierte Mariner-Funde (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** der nächste Register-Pass
+- **Lage:** (gemessen 2026-10-12/327, `general`-Taucher) `state/research/recherche-2026-10-12/zai-mariner-kontext.md`. **Operator-Ziel (verbatim):** „wenn wir mariner dechiffriert haben haben wir alle die verfügbar sind" + „alleine wenn wir all die daten wieder lesbar machen ist das schon verdiensvoll" — Träger ist **eine** Chat-Datei (`zai-ab59aba8-…md`, ~:23090–24721), die anderen fünf sind Kontext (nicht „5–6 Chats tragen die Recherche"). **Nicht in `phi`/`docs`** (sgrep 0 Treffer): **Mariner 5** `PSCM-00001` Doppler 14.06.–20.11.1967 request-only · **Mariner 9** `71-051A-00E` (8 Rollen, UNIVAC 1108, 800 bpi, 7-track odd, 30.05.1971–25.10.1972) request-only · **Mariner 2** Techdoc `19670019851` + Sjogren/Trask · **Mariner 5** Analyse-Paper 1974 · Inventar NASA Techdoc `19900020832` (1987).
+- **Blockade:** request-only/offline (NSSDC-Kontakt = Operator-Hand).
+- **Braucht:** je Fund die `url`-Zeile (Mycelium) + Admission (Mountain); die Suchdateien liegen durable in `state/research/recherche-2026-10-12/opencode/` (3 497 Dateien, aus `/tmp` gesichert).
+
 ## An mycelium
 
 Origin: mountain-folge327 (2026-10-12). **Echo:** `handover-2026-10-12-mycelium-folge326.md`
@@ -320,6 +332,7 @@ einen Namenträger bei dir:
 - **„das dokument ist auch noch spannend https://ntrs.nasa.gov/api/citations/19740012502/downloads/19740012502.pdf und eben der ordner"** | 2026-10-12 | Operator-Session (mountain 327) — NTRS 19740012502 (606-S.-NSSDC-Katalog) + der SPDF-`renamed_dataset_catalogs`-Ordner geladen.
 - **„ich habe ein geniales dokument gefunden https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/old_data_doc/all_catalogs/dsc_0119.pdf"** | 2026-10-12 | Operator-Session (mountain 327) — die 65-S.-Volldatei (TM GTD 900-1 mit Table 3) + der `all_catalogs`-Serienordner.
 - **GLM-Analyse (DSC-Serie = Inventar des historischen NASA-Datensatz-Korpus; Plan-Zuordnung Phase 0 = DSC-Inventar · Phase 2 = DSC je Mission → Format → Parser → Band)** | 2026-10-12 | Operator-relayed (mountain 327) — Orientierung, nicht gemessenes Verdikt.
+- **„kannst du es nicht auf eine konvertierungsseite hochladen und xls ist doch nichts anderes als ein zip oder? … kannst du bitte diese dateien alle sichern? [m*-Liste] … und ja bitte [camera_angles-Measure-Lauf] … den gesprächsinhalt aus tate/zai-export/zai-ab59aba8-…"** | 2026-10-12 | Operator-Session (mountain 327) — `/tmp`-Recherche durable gesichert; XLS bleibt lokal (kein Dritt-Upload); Geometrie-Lauf gebaut; zai-Kontext extrahiert.
 
 ## Abschluss
 
