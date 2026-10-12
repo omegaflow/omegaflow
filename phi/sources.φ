@@ -32408,6 +32408,20 @@ sha256 f2b3afdc0a20f55eb07afbc52c97f189b39712ba1bb656c46c47d5cce47b74de
 at moon
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/pioneer10_SC_23.asc
+terms CC-BY-4.0 https://zenodo.org/records/13309156
+origin https://zenodo.org/api/records/13309156/files/SC_23.asc/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 3301268692211bb3f77feb663050b331b873cb702205731c7c59728183a3fe0e
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/pioneer11_SC_24.asc
+terms CC-BY-4.0 https://zenodo.org/records/13309040
+origin https://zenodo.org/api/records/13309040/files/SC_24.asc/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 2718880473fb855384f9b6742ffcbde50986e3ac495096bf1cdcccae7fa06c81
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_OD1_0p33_0.txt
 witness substance
 record rixs

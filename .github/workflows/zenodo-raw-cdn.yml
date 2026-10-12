@@ -41,6 +41,14 @@ jobs:
             url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/BC430.tar.gz"
             origin: "https://zenodo.org/api/records/3558850/files/BC430.tar.gz/content"
             sha256: 0b2da752990e2d92a46622cb49efd7bcea758ebcb5f47300d8413aad18949959
+          - asset: pioneer10_SC_23.asc
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/pioneer10_SC_23.asc"
+            origin: "https://zenodo.org/api/records/13309156/files/SC_23.asc/content"
+            sha256: 3301268692211bb3f77feb663050b331b873cb702205731c7c59728183a3fe0e
+          - asset: pioneer11_SC_24.asc
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/pioneer11_SC_24.asc"
+            origin: "https://zenodo.org/api/records/13309040/files/SC_24.asc/content"
+            sha256: 2718880473fb855384f9b6742ffcbde50986e3ac495096bf1cdcccae7fa06c81
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
