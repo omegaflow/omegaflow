@@ -2,7 +2,7 @@
   title: FRÜHWARNSYSTEM — Präregistrierung der Vorhersage-Zelle
   class: sheet
   date: 2026-10-01
-  sha256: 0a197d6ac81877fdb90728b3622ca6b7ef0d5b1e21a65dab49f169804c686da7
+  sha256: 4451b25566af3ee22a25e8a641b327b07f49ce7587e020a3181756cfc169d1ea
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/specs/broken-null-control.md
 -->
@@ -95,8 +95,20 @@ kalibrierten Null lesbar. Die zwei Ebenen sind
 distinkt und werden nicht gemittelt; welche Ebene das Siegel trägt, benennt das
 Operator-Wort. **Gegen eine unkontrollierte
 Familien-Schranke (Ordnung 10⁻¹) zu siegeln bleibt verboten.** Die
-BCa-Intervallkonstruktion ist benannt `pending` (der joint-stationary Jackknife
-ist nicht billig), nie fallengelassen.
+Intervall-Konstruktion des Punktschätzers ist benannt (Rat + UI + Open-Weight,
+2026-10-12, `state/stimmen/2026-10-12_river-bca-z-rat.md`): **kein „BCa"** —
+der Beschleunigungsterm setzt i.i.d.-austauschbare Einheiten voraus und ist unter
+block-stationärer Abhängigkeit nicht wohlgestellt (ein „Block-BCa" trägt keine
+Theorie 2. Ordnung). Getragen wird ein **studentisiertes Moving-Block-Bootstrap
+(bootstrap-t)**: die **delete-a-block-Jackknife** (Künsch 1989) schätzt die
+blockkonsistente Varianz (SE) je Replikat, das studentisierte Lag-/Familien-
+Maximum wird über die Moving-Block-Resample gezogen; das **Moving-Block-
+Perzentil** ist die ehrliche 1.-Ordnungs-Form, **Subsampling (m-out-of-n,
+Politis–Romano)** der robusteste Default — nie ein Perzentil als „BCa"
+ausgewiesen. Das Resampling bleibt vom Surrogat getrennt (`P(θ|H0) ≠`
+Sampling-Verteilung von `θ̂`). Der Riss ist benannt, nicht geglättet: das Papier
+nennt BCa (`docs/paper/gic-causal-driver.md:171`), die ehrliche Form ist ein
+studentisiertes Block-Verfahren.
 
 Offene Slots bis zur Versiegelung:
 
