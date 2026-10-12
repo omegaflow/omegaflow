@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 334 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: f61a942eda9883d4a9ec484a591775c05c6ded385aef6ee933b5a7f34f879856
+  sha256: 8853423d55546db1986594a3d386a3a53c61195ef62c9a707b39bd76337f6a48
   status: live
 -->
 # Handover — Mountain-Folge 334 (2026-10-12)
@@ -120,7 +120,10 @@ gefaltet). **Jeder offene Punkt nennt seine Datei(en)/Pfade.**
   unverändert. **(5)** `bin/.tools_ensure` serialisiert die Installation per `flock`
   (`$rel/.tools_ensure.lock`) und lädt in eine eindeutige `mktemp`-Datei + atomares `mv` — das
   „Text file busy"-Rennen ist weg. `cargo build -p omegaflow-utils --bin archive_search` 0/0,
-  `sh -n bin/.tools_ensure` ok; Smoke-Test: 3 parallele `tools_ensure` fehlerfrei.
+  `sh -n bin/.tools_ensure` ok; Smoke-Test: 3 parallele `tools_ensure` fehlerfrei. **Nachtrag:** die
+  Help war unvollständig — `--dataeuropa` (echter Netzmodus, in `QUERY_MODES`) fehlte im
+  `network:`-Header (nur die Beschreibung stand da); ergänzt. Danach deckt der Header alle
+  `QUERY_MODES`-Modi (Differenz leer), `--all` = 109.
 - **mariner10-Ephemeride geschlossen**: `phi:32031` trägt sha `67949cb6…` == die geheilte
   Sun-Ketten-Komposition (Mycelium-Lauf `38278478615` success).
 - **Stale WWLLN-Zeile korrigiert**: `survey-2026-09-07-weberin-thread-matrix.md:168`
