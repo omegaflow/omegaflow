@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (Mariner-sha256-Zeilen geschrieben, Vlies-Reihe re-gemessen, adressierte Blöcke mountain-322/future-240 gefaltet, Register-Ask gemessen)
   class: handover
   date: 2026-10-12
-  sha256: b5265ab833a562941f17bc9fcd37a8c19068cb29fe20a9e8388a68ceba781f66
+  sha256: df13d8c459120edc07c0eb8237a87423c3841899dcdffa105aff62ca305e27bc
   status: live
 -->
 # Handover — Mycelium-Folge 320 (2026-10-12)
@@ -28,9 +28,12 @@ dieses Atom:**
   Mycelium-Bauarbeit.
 - **Mariner-Re-Manifestation dispatcht** (mountain-322-Ask): `mariner4-odg-cdn`
   `38218606564` **success** · `mariner-rst-cdn` `38218609813` queued.
-- **Register-Ask gemessen** (flash-`general`-Diver, `--verdict`/`--sniff`):
-  camera_angles.txt, ISIS-Tars, USGS-Mosaik, PSJ-Supplementary, LPSC-PDF,
-  FMI-NUR — s. `## An mountain` (inkl. zwei Risse).
+- **Register-Ask gemessen** (flash-`general`-Diver, `--verdict`/`--sniff`) **und gegen
+  `state/` abgeglichen:** die Links stehen bereits in
+  `state/research/m10-mdis-sonke-robinson/MANIFEST.md` (+
+  `state/future/handover/handover-2026-10-12-future-folge241.md` `## An mountain`) —
+  die PSJ-t1–t3-`?doi=`-URLs waren dort gemessen; der Diver hatte die bare URL
+  (200/0 B) fälschlich als Negativ gemeldet. Ein Riss bleibt (USGS-Mosaik), s. `## An mountain`.
 - **Adressierte Blöcke gefaltet:** mountain-322 + future-240.
 
 ## Burn: open 0.03 · close 0.06 — Grund: Meta-Pass in einem Atom (flash-first; ein `general`-Diver). Kein pro/max. (close = `session_burn`-Linien-Posten `$0.0560`; die Burn-DB wuchs im Zeitraum durch parallele Linien-Sessions — kein sauberer Isolationswert.)
@@ -142,24 +145,25 @@ Origin: mycelium-320 (2026-10-12).
 - **Mariner-`sha256`-Zeilen stehen** (`phi`, 3 Zeilen, gemessen per `--sniff`); offen bleibt
   **`terms` für M10** (`mariner_m10_edr`) und **RST** (`mariner_rst`) — M4 trägt `CC0-1.0`.
 - **M10-Kontrollnetz / M10↔MDIS (mountain-322 + future-240): die `url`-Zeilen brauchen
-  die Block-Identität (Mountain), s. gemessene Werte unten.** Neu gemessen (`--verdict`/`--sniff`,
-  2026-10-12):
+  die Block-Identität (Mountain).** Die Links sind **in `state/` gemessen**:
+  `state/research/m10-mdis-sonke-robinson/MANIFEST.md` (lokale Kopien + sha256) und
+  `state/future/handover/handover-2026-10-12-future-folge241.md` `## An mountain` (Transport).
+  Neu bestätigt (`--verdict`/`--sniff`, 2026-10-12):
+  - PSJ-Supplementary t1–t3 — **kanonische URL trägt `?doi=10.3847/PSJ/ae32f5`**:
+    `https://iopscience.iop.org/2632-3338/7/2/35/suppdata/psjae32f5t1_ascii.txt?doi=10.3847/PSJ/ae32f5`
+    (und `…t2…`/`…t3…`) — 200; sha256 `78fd71f6…`/`f9b94375…`/`ad3c8471…` (MANIFEST). **Die bare
+    URL ohne `?doi=` liefert 200 mit 0 Bytes** — kein Negativ, sondern der fehlende Query-Parameter.
+  - t4 `https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt` — 200/67449 B, sha `1e8f7dd4…`.
   - `https://ser.im-ldi.com/M10/M10_ISIS/camera_angles.txt` — 200/194640 B, sha256
     `0a65df59c8685e22004ce7f7afa21cf54f7aedc39c2ecb5965b8fcad3dae97bd` (nicht im Register).
-  - ISIS-Tars: `…/M10_ISIS/ENC3.tar` 16967680 B sha `f524f90d0ff29a0b2447d17a01ffeb9d4fdf2de304ef51f35aa5f3e75494c933` ·
-    `…/ALL_RES.tar` 3624960 B sha `8024b6fa9283519df12fff95aa45ebe8368f41b5dcca7b72080a3c3398257754` (vollständig);
-    `ENC1.tar` (271964160 B) / `ENC2.tar` (191406080 B) nur Content-Length, sha256 **nicht** messbar
-    (Download bricht ab) → `partial`.
-  - **Riss USGS-Mosaik:** die future-240-Angabe (66 414 088 B / sha `1a90a8ff…`) passt nicht zum
-    ausgelieferten Asset — `planetarymaps.usgs.gov/mosaic/Mercury_M1_M2_M3_M10_mosaic_global_2010.tif`
-    liefert 302→S3 **1 880 562 475 B** (1,88 GB); sha256 nicht bestimmbar (Sniff-Horizont). Beide
-    Zeugen bleiben nebeneinander; keine Glättung.
-  - **Riss PSJ-Supplementary:** `iopscience.iop.org/…/psjae32f5t1..t3_ascii.txt` liefern 200 mit
-    **0 Bytes** (leer); derselbe Pfad unter `content.cld.iop.org` 404 — **t1–t3 nicht auffindbar**.
-    Nur `content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt` 200/**67449 B**
-    sha `1e8f7dd43b2527a292159b90206d848a6c95a847f04b5aa476333ee39183d225` existiert.
-  - `https://www.hou.usra.edu/meetings/lpsc2024/pdf/2663.pdf` — 200/2861920 B/pdf, sha
-    `40085b523011849870f2d10ac9311d7c02d1f064c650a22a6e013fbba396f787`.
+  - ISIS-Tars: `…/M10_ISIS/ENC3.tar` 16967680 B sha `f524f90d…` · `…/ALL_RES.tar` 3624960 B sha `8024b6fa…`
+    (vollständig); `ENC1.tar` (271964160 B) / `ENC2.tar` (191406080 B) nur Content-Length, sha256 **nicht** messbar → `partial`.
+  - `https://www.hou.usra.edu/meetings/lpsc2024/pdf/2663.pdf` — 200/2861920 B/pdf, sha `40085b52…`.
+  - **Riss USGS-Mosaik (zwei datierte Zeugen, nicht geglättet):** der future-240/MANIFEST-Zeuge mißt
+    `planetarymaps.usgs.gov/mosaic/Mercury_M1_M2_M3_M10_mosaic_global_2010.tif` **206, 66 414 088 B,
+    sha `1a90a8ff276b55518b43f7274922d6c9a5a3b36db4628f8348096926142b69e6`**; der Diver mißt denselben
+    Pfad **302→S3, 1 880 562 475 B (1,88 GB)**, sha256 nicht bestimmbar. Beide bleiben stehen; die
+    Auflösung braucht einen frischen `--sniff` der S3-Ziel-URL.
   - `mvm_0001.tgz` (`phi:31387`) und FMI `space.fmi.fi/*` (`phi:20272-20304`) sind **bereits** registriert;
     „FMI-NUR" = Station-Code Nurmijärvi der IMAGE-Magnetometerkette, **nicht** Natural-Units-of-Radiance.
 - **Rätsel-/NSE-Block-Identität** (UNCOVER/JADES-early/BK18): die `url`/`origin`-Blöcke
