@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 334 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: 1a9ebb2a1769f91e62843cc1fa12029cda7a3fcbab520b661a6ea61f60b0d8c8
+  sha256: 911461888543067753f9727ac75cb9783105e1c57827604723a114cd2380e020
   status: live
 -->
 # Handover — Mountain-Folge 334 (2026-10-12)
@@ -36,6 +36,19 @@ gefaltet). **Jeder offene Punkt nennt seine Datei(en)/Pfade.**
   orphan-Report lesen jetzt allein `phi/sources.φ`. `cargo check` 0/0, `rustfmt --edition 2024
   --check` sauber, `cargo build -p omegaflow-register --bin register_lookup` 0/0,
   `register_lookup --orphans --fail` exit 0.
+- **`--re3data` filtert jetzt (gemessener Defekt geheilt).** Der Modus baute `?query=<kw>`,
+  doch die re3data-API v1 (`/api/v1/repositories`) kennt **keine** Suche: jeder Aufruf lieferte
+  den identischen 1 027 227-B-Registerdump (3536 Repositorien) — mit `?query=`/`?q=`/`?search=`/`?name=`
+  und ohne Parameter byte-identisch. `tools/utils/src/bin/archive_search/re3data.rs` liest den
+  Listen-Endpunkt jetzt ohne Query und **filtert die geladene Liste client-seitig** (alle
+  Whitespace-Terme als Namens-Substring, case-insensitiv; leerer Query = Browsen). `rustfmt`
+  sauber, `cargo build -p omegaflow-utils --bin archive_search` 0/0; verifiziert mit
+  `target/debug/archive_search --re3data Ocean|Centre|Odum` (gefiltert) gegen `zzzznope` (absent).
+  **Kontext:** die nicht-Modus-Kataloge (266 Hosts) sind in `state/mountain/kataloge-266.tsv`
+  nach Familie + Zugriffsroute gruppiert (Astronomie/TAP 49 · Literatur/OAI-PMH u. a. 47 ·
+  Erdbeob/STAC 32 · Bio/REST 22 · Geophysik/FDSN 15 · Ozean/ERDDAP 14 · Gesundheit 12 ·
+  Verkehr/GTFS 9 · Energie 6 · LinkedData-Infra 60); `--stac` wäre die Verallgemeinerung von
+  `--copernicus`, `--erddap` erst bei Bedarf.
 - **mariner10-Ephemeride geschlossen**: `phi:32031` trägt sha `67949cb6…` == die geheilte
   Sun-Ketten-Komposition (Mycelium-Lauf `38278478615` success).
 - **Stale WWLLN-Zeile korrigiert**: `survey-2026-09-07-weberin-thread-matrix.md:168`
