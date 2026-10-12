@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass (river-200) — Ganznacht-Optik-Overlay gemessen (Lauf `38259065347` success → CDN-TKDG 7358 Frames 02:21–08:29Z; 14-min-Lücke im Ganznacht bestätigt, YKC 52.37 @ 07:20); Weberin-Zeugen-Fäden konsolidiert (`state/river/weberin-faden-inventar-2026-10-12.md`, vier Träger, kein GIC-Silo) + WWLLN-Register-Drift gemessen; folge199 konsumiert/archiviert; P10 bleibt gated auf Mountains field-Zeilen-Migration
   class: handover
   date: 2026-10-12
-  sha256: 6f3dfad56b8ed5cfd1fa4e336afc210d9926cc226b4d19d75edf32a1945c257a
+  sha256: 44d7116f259ef7d5867c4b76d04ccc67ae92c3d3d9855ad80507055ed2a26362
   status: live
 -->
 # Handover — River-Folge 200 (2026-10-12)
@@ -25,7 +25,7 @@ nie nacheinander, nie „nächster Dispatch", nie „nächste Session". Verschle
 sind der benannte Fehler; ein Punkt, den die Session selbst arbeiten kann, wird im selben Atom
 gearbeitet (Sofort-Prinzip).
 
-## Burn: open 0.00 · close 0.25 · cap 0.50 — Grund: river-200 (deepseek-flash, kein pro/max); 1 `grind-flash` (Ganznacht-Optik-Overlay), 1 `council` (Medium-Kinds), 1 `archive_search --all` + Roster-Runde (5 UI-Seats: Z.ai/Qwen/Duck/Claude + tryingopen DeepSeek V4 Pro). `session_burn` bei Schluss: Linien-Session $0.1795 + council $0.0440 + grind-flash $0.0226 (59 Sessions total $1.2127). Fälligkeit: `--fired river` = 0, `--stale river --persist 3` = 0, `open_points_check` folge200 = 0 absent / 0 stale-citations / 0 format-gaps. Kein `smail --send`, kein Window-Edit.
+## Burn: open 0.00 · close 0.25 · cap 0.50 — Grund: river-200 (deepseek-flash, kein pro/max); 1 `grind-flash` (Ganznacht-Optik-Overlay), 2 `council` (Medium-Kinds + Regime/Granularität), 2 `archive_search --all` + 2 Roster-Runden (UI-Seats). `session_burn` bei Schluss: Linien-Session $0.2219 + council + grind-flash (61 Sessions total $1.2770). Fälligkeit: `--fired river` = 0, `--stale river --persist 3` = 0, `open_points_check` folge200 = 0 absent / 0 stale-citations / 0 format-gaps. Kein `smail --send`, kein Window-Edit.
 
 ## Operator-Wort-Register
 
@@ -109,6 +109,7 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 - **Blockade:** keine.
 - **Braucht:** je Faden die Quellen-Zeile/`channel`-Direktive (Mountain) + Arm/Manifestation (Mycelium), in der allgemeinen Channel-Etikettierung (Quantity | Mechanism | Medium, P10); GIC fährt sie als `field_te_query`-Störung, nicht als eigenes Netz.
 - **Deskriptor-Form (Operator-Wort 2026-10-12):** die Wunschlisten sind auf die Deskriptor-Form umgeschrieben (`state/river/weberin-faden-inventar-2026-10-12.md`). **Rat + Roster (2026-10-12 river-200, `state/stimmen/2026-10-12-river-medium-kinds-rat-roster.md`):** `Plasma` ist eine **eigene Medium-Klasse** → `{Vacuum, Fluid, ElasticSolid, Plasma}`; **Ionosphäre/Thermosphäre sind Region-Datums-Werte**, nie Klasse; `domain` bleibt Geometrie. Vorarbeit `archive_search --all` (`state/river/medium-kind-all-2026-10-12.txt`). Roster konvergent (Qwen · Claude Sonnet 5.5 Extra · DeepSeek V4 Pro/tryingopen); Z.ai GLM-5.3 Deep Think Max `pending` („at capacity, peak hours"), Duck ohne verwertbare Antwort. **Getragener Riss (3 Stimmen):** die Ionosphäre ist ein teilweise ionisiertes Gemisch — `Plasma`+`Fluid` koexistieren, gekoppelt über Ionen-Neutral-Reibung; ein skalares `medium` pro Kanal reicht nicht. Zwei offene Entscheidungen: (a) Regime als Parameterfeld vs. Unterklassen; (b) `medium` pro Kanal vs. pro Pfadsegment. **Nächste Messung:** Region-Parameter-Tabelle (IRI-2020 · NRLMSISE-00 · IGRF) → dann Parser-Arm `Medium::parse("plasma")` (bounded, Wire-berührend → Operator-Wort).
+- **Rat + Roster, Runde 2 (2026-10-12, `state/stimmen/2026-10-12-river-plasma-regime-granularity-rat-roster.md`):** **(a) Plasma-Regime = Parameterfeld innerhalb der `Plasma`-Klasse**, keine Unterklassen (Tensor stetig in `nₑ,B₀,ν`; Regime pro Mode; Präzedenz `body`-als-Datum); **(b) `medium` = pro Pfadsegment**, als Kette von Kanal-Deskriptoren (Kanal = `n` Kanäle + `offsets`, kein `hash`-/Wire-Zuwachs). Der Vorrunden-Riss löst sich: Ionosphäre = `Plasma`-Kanal ⊕ `Fluid`-Kanal, gekoppelt über die P7.1-Paar-Matrix (nicht ein dritter `medium`-Wert). Roster konvergent (Qwen · Claude Sonnet 5.5 · DeepSeek V4 Pro); Z.ai `pending` (capacity). Getragene Risse: `ν` als Plasma-Neutral-Referenz (Claude); Grenzflächen-Paar-Relation (P7.1); Segmentierungsachse (λ vs. Gradientenlänge); Namenskollision `Regime` (PDE vs. Plasma); kinetische Schließung (Landau). **Nächste Messung:** Regime-Parameter-Tabelle (IRI-2020 · NRLMSISE-00 · IGRF) + gearbeitete Segmentkette eines §D-Fadens.
 
 ### Netz-End-Validator — GIC↔Onset-Bin; MCON manifestiert, Register-Drift gelöst
 - **Status:** wartend | **Bindung:** eigen (Bau)
