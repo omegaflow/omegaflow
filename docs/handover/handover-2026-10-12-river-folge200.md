@@ -3,7 +3,7 @@
   session: River-Linie in einem Pass (river-200) — Ganznacht-Optik-Overlay gemessen (Lauf `38259065347` success → CDN-TKDG 7358 Frames 02:21–08:29Z; 14-min-Lücke im Ganznacht bestätigt, YKC 52.37 @ 07:20); Weberin-Zeugen-Fäden konsolidiert (`state/river/weberin-faden-inventar-2026-10-12.md`, vier Träger, kein GIC-Silo) + WWLLN-Register-Drift gemessen; folge199 konsumiert/archiviert; P10 bleibt gated auf Mountains field-Zeilen-Migration
   class: handover
   date: 2026-10-12
-  sha256: 85fcf1c689ae891208bdf57fc3744c944e9d39ea2e66488f44187ad793050a9f
+  sha256: 40c64a3371b2178f58a5de0e314d178f73302d4e501ecb6aea5bbc2fb0b17a92
   status: live
 -->
 # Handover — River-Folge 200 (2026-10-12)
@@ -108,6 +108,7 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 - **Lage:** (gemessen 2026-10-12 river-200; konsolidiert in `state/river/weberin-faden-inventar-2026-10-12.md`) die Zeugen-Fäden liegen über **vier** Träger: `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md` (zweite unabhängige Linie je Messgröße) · `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` §2 (fehlende Fäden, Route verifiziert) · `state/future/gic-riss-154-wunschliste-2026-10-06.md` §A–G (33 Fäden, API-gemessen `state/mycelium/gic-api-reachability-2026-10-06.md`) · die Erweiterung `state/river/gic-wunschliste-erweiterung-2026-10-12/` (Riometer · Ionosonde/ISR · thermisch/neutral · BARREL/ELF-VLF). **Register-Stand 2026-10-12** (`sgrep -c <term> phi/sources.φ`): admitted GOES 44 · superdarn 22 · champ 14 · image 14 · carisma 8 · dmsp 7 · themis_gmag 4 · madrigal 5 · hfrnet 5 · ampere 5 · poes 5 · awesome 4 · vlf 5; **noch 0** (die offenen Zeugen): barrel · emfisis · riometer · ionosonde · eiscat · pfisr · kaira · norstar · cgsm · airglow · saber · pithia · jicamarca · fabry · interferometer. GIC ist **kein** Silo: dieselben Fäden tragen die allgemeine Thread-Matrix/Vlies (`docs/concepts/die-weberin.md:64` — keine Domänen); kein GIC-eigenes Register, kein gic-eigenes Werkzeug. Die alten Wunschlisten sind noch in Kraft-id-Form (`em 0 … electric 8`); der Channel-Umbau (P10) ist nicht komplett (`phi/sources.φ`: 9 `channel`-Direktiven, 7943 flache `field`-Zeilen).
 - **Blockade:** keine.
 - **Braucht:** je Faden die Quellen-Zeile/`channel`-Direktive (Mountain) + Arm/Manifestation (Mycelium), in der allgemeinen Channel-Etikettierung (Quantity | Mechanism | Medium, P10); GIC fährt sie als `field_te_query`-Störung, nicht als eigenes Netz.
+- **Deskriptor-Form (Operator-Wort 2026-10-12: „natürlich"):** die Wunschlisten sind auf die Deskriptor-Form umgeschrieben (`state/river/weberin-faden-inventar-2026-10-12.md`): jeder Faden trägt `channel <conserved>:<role>:<op>:<pde_type>:<medium>:<domain>:<boundary> <unit>`. Magnetfeld-/Driver-/seismische Fäden sind sauber (em / advective / seismic-body). **Gemessener Riss:** `Medium {vacuum, fluid, elastic-solid}` trägt **kein** Plasma/Ionosphäre/Thermosphäre — die §D-Antwortkanal-Zeugen (Riometer · Ionosonde/ISR · GNSS-TEC · ELF/VLF · Airglow/FPI · BARREL) bleiben `medium`=`pending`, bis die Kind-Vokabel `{atmosphere, ocean, solid-earth, ionosphere}` entschieden ist (river-167 getragener Riss, `kanal-ontologie-komplettbau.md:211`).
 
 ### Netz-End-Validator — GIC↔Onset-Bin; MCON manifestiert, Register-Drift gelöst
 - **Status:** wartend | **Bindung:** eigen (Bau)
