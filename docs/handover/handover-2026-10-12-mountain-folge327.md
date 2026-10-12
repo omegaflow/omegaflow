@@ -3,7 +3,7 @@
   session: Mountain-Linie in einem Pass — JADES tar_fits Member-Key-Kollision geheilt (Verzeichnis bleibt erhalten), tar_fits in format_readable + Port-Skip-Liste registriert, api.sensor.community als parametrischer map-Quelle gemessen (kein Arm nötig), jma-Hunk als point-event/erbq-Familie committet
   class: handover
   date: 2026-10-12
-  sha256: 6084b6b5af98876be891311c08306adfaa18dde4c4814b3d241251852387dbab
+  sha256: ab14bda2144e2edcf564b16e15439c6ff520073d1879f947184796eb05c809c3
   status: live
 -->
 # Handover — Mountain-Folge 327 (2026-10-12)
@@ -113,8 +113,13 @@ Mountain-326 (`d55d6c1b8` `6ba1b67e6`)). Diese Session konsumierte
   (N = gesetzte Datentyp-Bits 1–15 im Code-Word; Wörter 8/9, 10/11 … = je ein Observable/Weight-Paar,
   „continued … as many pairs as there are bits"). **Riss gelöst:** der alte Stride 8 = N=1; ein Code-Word mit
   zwei Bits (N=2) → D=10. Der `mariner_rst`-SP-Arm muss den Record **variabel über D aus Wort 0** lesen.
+  **Ferner vollständig transkribiert (Vision, 2026-10-12/327):** Table 1 (Master-File-Label/Summary/Station-Summary),
+  Table 2 (TDP-Master-Logical-Record, Wörter 0–11), Fig. 1/2, Appendix A (DC1–DC7). **Fig. 2:** die Band-Records
+  sind 10 / 201 / 97 / je 201 Wörter; die variablen `D`-Logikrecords liegen **innerhalb** des 200-Wort-Payloads,
+  je Daten-Record mit eigenem Check-Sum-Wort. **Riss im gerade gebauten Arm:** `sp_odg_logical_records` walkt den
+  Stream flach mit variablem D und **ignoriert die 201-Wort-Record-Grenze + Check-Sum** → Umbau auf die Record-Grenzen (Sprung 201).
   **Registriert:** die *Auszug*-Datei `phi:31588-31590`; die **Volldatei** ist noch nicht registriert (s. `## An mycelium`).
-- **Blockade:** keine (Feldtabelle + Record-Layout vollständig gelesen).
+- **Blockade:** keine (Feldtabellen vollständig gelesen).
 - **Braucht:** den SP-ODG-Arm auf **variablen D-Record** umstellen (`mariner_rst_compiler.rs`); die Volldatei als `url` (Mycelium).
 
 ### JADES `tar_fits` — Member-Key-Kollision geheilt, Image-Ingest gebaut (eigen)
@@ -301,6 +306,7 @@ einen Namenträger bei dir:
 - **„gehören pdfs in data?"** | 2026-10-12 | Operator-Session (mountain 327) — gemessen: nein; `data/<netloc>/` trägt Datensätze (`.bin`), Dokumente liegen im privaten Korpus `state/research/`.
 - **„das dokument ist auch noch spannend https://ntrs.nasa.gov/api/citations/19740012502/downloads/19740012502.pdf und eben der ordner"** | 2026-10-12 | Operator-Session (mountain 327) — NTRS 19740012502 (606-S.-NSSDC-Katalog) + der SPDF-`renamed_dataset_catalogs`-Ordner geladen.
 - **„ich habe ein geniales dokument gefunden https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/old_data_doc/all_catalogs/dsc_0119.pdf"** | 2026-10-12 | Operator-Session (mountain 327) — die 65-S.-Volldatei (TM GTD 900-1 mit Table 3) + der `all_catalogs`-Serienordner.
+- **GLM-Analyse (DSC-Serie = Inventar des historischen NASA-Datensatz-Korpus; Plan-Zuordnung Phase 0 = DSC-Inventar · Phase 2 = DSC je Mission → Format → Parser → Band)** | 2026-10-12 | Operator-relayed (mountain 327) — Orientierung, nicht gemessenes Verdikt.
 
 ## Abschluss
 
