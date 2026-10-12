@@ -58,13 +58,7 @@ const PROBE_PATHS: &[&str] = &[
     "phi/pipeline/probe_batch_skymap.\u{3c6}",
 ];
 const CATALOG_DIR: &str = "phi/pipeline/catalog";
-const DISPOSITION_REGISTER_PATHS: &[&str] = &[
-    "phi/sources.\u{3c6}",
-    "phi/pipeline/ledger.\u{3c6}",
-    "phi/pipeline/index.\u{3c6}",
-    "phi/witnesses.\u{3c6}",
-    "phi/nrs_stations.\u{3c6}",
-];
+const DISPOSITION_REGISTER_PATHS: &[&str] = &["phi/sources.\u{3c6}"];
 
 fn snippet(line: &str, max: usize) -> String {
     let trimmed = line.trim();
