@@ -126,14 +126,56 @@ fn fetch(url: &str) -> Result<Vec<u8>, String> {
         .to_string();
     let body = &raw[..split];
     if !code.starts_with('2') {
-        let head = String::from_utf8_lossy(&body[..body.len().min(1500)]);
-        let head = head.replace('\n', " ").replace('\r', " ");
-        return Err(format!("HTTP {code} ({} B): {head}", body.len()));
+        return Err(format!(
+            "HTTP {code} ({} B): {}",
+            body.len(),
+            error_head(body, 1500)
+        ));
     }
     if body.is_empty() {
         return Err("response carries no bytes".to_string());
     }
     Ok(body.to_vec())
+}
+
+fn error_head(body: &[u8], cap: usize) -> String {
+    let mut rest = String::from_utf8_lossy(body).into_owned();
+    for (open, close) in [("<style", "</style>"), ("<script", "</script>")] {
+        while let Some(start) = rest.find(open) {
+            match rest[start..].find(close) {
+                Some(rel) => {
+                    let end = start + rel + close.len();
+                    rest.replace_range(start..end, " ");
+                }
+                None => {
+                    rest.truncate(start);
+                    break;
+                }
+            }
+        }
+    }
+    let mut visible = String::new();
+    let mut in_tag = false;
+    for ch in rest.chars() {
+        match ch {
+            '<' => in_tag = true,
+            '>' => {
+                in_tag = false;
+                visible.push(' ');
+            }
+            _ if !in_tag => visible.push(ch),
+            _ => {}
+        }
+    }
+    let collapsed = visible.split_whitespace().collect::<Vec<_>>().join(" ");
+    let mut capped = String::new();
+    for ch in collapsed.chars() {
+        if capped.len() + ch.len_utf8() > cap {
+            break;
+        }
+        capped.push(ch);
+    }
+    capped.trim().to_string()
 }
 
 fn tag_text(xml: &str, tag: &str) -> Option<String> {
@@ -451,6 +493,16 @@ mod tests {
     #[test]
     fn a_foreign_magic_yields_none() {
         assert!(parse_bin(b"XXXX\x00\x00\x00\x00").is_none());
+    }
+
+    #[test]
+    fn error_head_hides_the_stylesheet() {
+        let html = "<!DOCTYPE html><html><head><title>Blocked</title>\
+<style>.x{color:red}</style></head><body><h1>Access denied</h1><p>contact</p></body></html>";
+        let head = error_head(html.as_bytes(), 1500);
+        assert!(head.contains("Blocked"));
+        assert!(head.contains("Access denied"));
+        assert!(!head.contains("color:red"));
     }
 
     #[test]
