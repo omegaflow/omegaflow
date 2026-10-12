@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (CI-Werkzeug-Fixes: block_commit-Release + bz-Probe-Log-Sichtbarkeit; Stehender Pass am neuen HEAD)
   class: handover
   date: 2026-10-12
-  sha256: 882aeff9753ed05a2e6d93767431537427b2022763f06e9ec5265bf9bf1aaf5d
+  sha256: d0db917cd557f583ad80a368e87744342e9ab2954c740122e7bb43c549ee300c
   status: live
 -->
 # Handover — Mycelium-Folge 323 (2026-10-12)
@@ -22,7 +22,11 @@ erweitert (das Bin baute, wurde aber nicht publiziert — darum `pending`) ·
 im Job-Log) · `intermagnet_dbdt`-Zelle aus `field-te-query` `38215224525`
 (success) gelesen — Zeuge `abk_dbdt_1m` median_dt 60s n 527039, Riss gegen
 `abk_dbdt_1h` (overlap corr 0.9388) · Spill-Dir-Fix verifiziert erledigt
-(`03bb95e2e`).
+(`03bb95e2e`) · **Mountain-Anteile übernommen** (Operator-Wort Session 325:
+Mountain arbeitet an den Ephemeriden): `terms free-open` am
+UCalgary-THEMIS-ASI-Keogramm gesetzt, `terms` an allen M10↔MDIS-Artefakten
+(PSJ t1–t4 `CC-BY-4.0` via Crossref gemessen, USGS `PD`, LPSC/camera_angles
+`unknown`).
 
 ## Operator-Wort-Register
 
@@ -32,6 +36,7 @@ im Job-Log) · `intermagnet_dbdt`-Zelle aus `field-te-query` `38215224525`
 | „kannst du bitte deinen und mountains teil bearbeiten mountain ist beschäftigt" | 2026-10-12 | Operator (Session 318) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 | „kannst du dich bitte um deinen teil kümmern? Klare Trennung — und ich habe meinen Teil gleich gebaut." | 2026-10-12 | Operator (Session 317) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 | „Starte die Mycelium-Linie in einem Pass … kein Planungstheater … /commit (Push) … danach den frischen Pass" | 2026-10-12 | Operator (Session 324) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
+| „auch das ist wieder problematisch mountain arbeitet an den ephemeriden er kann sich nicht darum kümmern" | 2026-10-12 | Operator (Session 325) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 | „auf jeden eigen setzt du jetzt einen taucher an und der schliesst die aufgabe ab — das ist ein befehl" | 2026-10-11 | Operator (Session 310) |
 
 ## Offen — eigen
@@ -57,12 +62,12 @@ im Job-Log) · `intermagnet_dbdt`-Zelle aus `field-te-query` `38215224525`
 - **Blockade:** CI-Release (`tools-build` nach Dispatch).
 - **Braucht:** Dispatch `tools-build`; dann `bin/block_commit` (Usage).
 
-### M10↔MDIS-Artefakte — `url`/`origin`/`sha256` registriert; Compiler/Workflow + Block-Identität offen
+### M10↔MDIS-Artefakte — `url`/`origin`/`sha256`/`terms` gesetzt; CDN-Manifestation offen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Mountain setzt die Block-Identität/`format` je Artefakt → Compiler/Workflow
-- **Lage:** (gemessen 2026-10-12) PSJ-Supplementary t1–t4 (`phi:31416-31432`), USGS-Mosaik (`phi:31446-31447`, **1,88 GB** `1880562475`), LPSC-2024-PDF (`phi:31441-31442`) — alle `url`/`origin` stehen. Block-Identität (`witness`/`record`/`force`, `format`) je Artefakt fehlt (Mountain).
-- **Blockade:** Block-Identität (Mountain).
-- **Braucht:** Block-Identität (Mountain) → Compiler + CDN-Workflow (Mycelium).
+- **Trigger:** der CDN-Manifestationslauf (`.github/workflows/kernel-flatten.yml` `--ci-mode`) zieht die rohen Assets
+- **Lage:** (gemessen 2026-10-12, Operator-Wort Session 325: nicht mehr an Mountain) PSJ t1–t4 (`phi:31417-31439`) `terms CC-BY-4.0` (Crossref DOI `10.3847/PSJ/ae32f5`, AAS, direkt gemessen); USGS-Mosaik `terms PD` (USGS copyrights-and-credits); LPSC-PDF + camera_angles `terms unknown`. Die Artefakte sind **rohe Assets** (ascii-table/geotiff/pdf/text-geometry) — kein Compiler-Arm nötig (am Baum gehalten: Geschwister tragen bare `url … no-cadence`).
+- **Blockade:** keine.
+- **Braucht:** rohe Assets in die CDN-Manifestation aufnehmen (Mycelium); USGS-Mosaik **1,88 GB** (`1880562475`).
 
 ### Fetch-Provenienz — Sidecar/`data/<netloc>/` fehlt (future-235)
 - **Status:** wartend | **Bindung:** eigen
@@ -80,10 +85,10 @@ im Job-Log) · `intermagnet_dbdt`-Zelle aus `field-te-query` `38215224525`
 
 ### MLA-Register · SPT-3G-D1 · GloFAS-EWDS · NIST-NCNR-NSE
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** je Lauf/Digest bzw. Mountain-`terms`/`field`
-- **Lage:** (gemessen 2026-10-11/12) MLA repointet (`phi:12100`; NAME-Riss); SPT-3G `38150991206` success (sha offen); GloFAS Daten-Arm grün (`phi:11297`; grib2→φ offen); NIST NCNR NSE `38170359508` success (`phi:11711`). Die offene NSE-Route für das Kohärenz-Rätsel (`future-241`): `https://ncnr.nist.gov/pub/ncnrdata/nse/` (US-PD, HTTP 200) — noch keine `url`-Route.
-- **Blockade:** Lauf-Ergebnisse/`terms`/`field` (Mountain).
-- **Braucht:** `ci_manage log <id>`; sha256; NIST-NCNR-NSE-`url`-Route + `format` (Mountain identifiziert, Mycelium registriert); `terms`/`field` (Mountain).
+- **Trigger:** je Lauf/Digest bzw. eigener Register-Schritt
+- **Lage:** (gemessen 2026-10-11/12, Operator-Wort Session 325: Mountain-Anteile entfallen) MLA repointet (`phi:12100`; NAME-Riss); SPT-3G `38150991206` success (sha offen); GloFAS Daten-Arm grün (`phi:11297`; grib2→φ offen); NIST NCNR NSE `38170359508` success (`phi:11711`). Die offene NSE-Route (`future-241`): `https://ncnr.nist.gov/pub/ncnrdata/nse/` (US-PD, HTTP 200) — noch keine `url`-Route.
+- **Blockade:** keine (Mountain-Anteile entfallen).
+- **Braucht:** `ci_manage log <id>`; sha256; NIST-NCNR-NSE-`url`-Route + `format` (Mycelium, eigener Schritt).
 
 ### wy-max-t-Artefakt — Werte im Bestand
 - **Status:** wartend | **Bindung:** eigen
@@ -123,13 +128,12 @@ im Job-Log) · `intermagnet_dbdt`-Zelle aus `field-te-query` `38215224525`
 - **Status:** descoped | **Bindung:** eigen
 - **Befund:** (gemessen 2026-10-12T08:05Z) rot `38212925885` = „The runner has received a shutdown signal … The operation was canceled" — transienter Runner-Shutdown; kein eigener Schritt (`Braucht: —`).
 
-## An mountain
+## Keine Delegation an Mountain
 
-Origin: mycelium-323 (2026-10-12).
-
-- **THEMIS-ASI-Keogramm (UCalgary)** — Block `phi:20916-20920` trägt `url`/`origin`/`compiler`/`format`/`ttl`; es fehlen `terms free-open` + `field` (Mountain-Recht). `terms free-open` ist gemessen (`data/how_to_cite.html`).
-- **M10↔MDIS-Artefakte** — die `url`/`origin`/`sha256`-Zeilen stehen (`phi:31416-31447`). Offen bleibt die **Block-Identität** (`witness`/`record`/`force`, `format`) je Artefakt. USGS-Mosaik **1,88 GB** (`1880562475`); der 66-MB-Wert ist widerlegt.
-- **NIST NCNR NSE** — offene NSE-Route für das Kohärenz-Rätsel: `https://ncnr.nist.gov/pub/ncnrdata/nse/` (US-PD, HTTP 200). Bitte Block-Identität/`format` setzen, dann registriert Mycelium die `url`-Route.
+Keiner. Operator-Wort Session 325 („mountain arbeitet an den ephemeriden er kann
+sich nicht darum kümmern"): die zuvor Mountain zugewiesenen Quellen-Anteile
+(`terms`, Block-Identität) sind als Mycelium-eigen übernommen und in diesem Atom
+gesetzt — kein Block mehr an Mountain.
 
 ## LOCK
 
