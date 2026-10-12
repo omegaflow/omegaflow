@@ -2311,6 +2311,70 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     sources
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum DeclineReason {
+    Unphysical,
+    Model,
+    Registry,
+    Commercial,
+    Superseded,
+}
+
+impl DeclineReason {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "unphysical" => Some(Self::Unphysical),
+            "model" => Some(Self::Model),
+            "registry" => Some(Self::Registry),
+            "commercial" => Some(Self::Commercial),
+            "superseded" => Some(Self::Superseded),
+            _ => None,
+        }
+    }
+
+    pub fn token(&self) -> &'static str {
+        match self {
+            Self::Unphysical => "unphysical",
+            Self::Model => "model",
+            Self::Registry => "registry",
+            Self::Commercial => "commercial",
+            Self::Superseded => "superseded",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DeclinedSource {
+    pub reason: DeclineReason,
+    pub url: String,
+}
+
+pub fn parse_declined(content: &str) -> Vec<DeclinedSource> {
+    let mut out = Vec::new();
+    for line in content.lines() {
+        let trimmed = line.trim();
+        let mut parts = trimmed.split_whitespace();
+        if parts.next() != Some("decline") {
+            continue;
+        }
+        let (Some(token), Some(url)) = (parts.next(), parts.next()) else {
+            continue;
+        };
+        match DeclineReason::parse(token) {
+            Some(reason) => out.push(DeclinedSource {
+                reason,
+                url: url.to_string(),
+            }),
+            None => report_anomaly(
+                "Invalid Syntax",
+                url,
+                &format!("decline reason token unknown: {trimmed}"),
+            ),
+        }
+    }
+    out
+}
+
 #[cfg(feature = "browser_relay")]
 pub fn parse_path(s: &str) -> String {
     let Some(fl) = s.lines().next() else {
@@ -3228,6 +3292,33 @@ mod tests {
                 .first()
                 .map(|s| s.channels.is_empty())
                 .unwrap_or(true)
+        );
+    }
+
+    #[test]
+    fn decline_lines_parse_into_the_closed_reason_set() {
+        let content = "decline registry https://api.open-notify.org/astros.json\n\
+                       decline commercial https://example.com/proprietary\n";
+        let declined = parse_declined(content);
+        assert_eq!(declined.len(), 2);
+        assert_eq!(declined[0].reason, DeclineReason::Registry);
+        assert_eq!(declined[0].url, "https://api.open-notify.org/astros.json");
+        assert_eq!(declined[1].reason, DeclineReason::Commercial);
+    }
+
+    #[test]
+    fn a_decline_token_outside_the_set_is_refused() {
+        let declined = parse_declined("decline made-up https://example.com/x\n");
+        assert!(declined.is_empty());
+    }
+
+    #[test]
+    fn a_decline_line_never_becomes_a_source() {
+        let sources = parse_sources("decline registry https://example.com/x\n");
+        assert!(sources.is_empty());
+        assert_eq!(
+            parse_declined("decline registry https://example.com/x\n").len(),
+            1
         );
     }
 }
