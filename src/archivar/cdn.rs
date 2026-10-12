@@ -145,6 +145,34 @@ fn mark_release_verified(tag: &str) {
     }
 }
 
+fn netloc_of(url: &str) -> Option<&str> {
+    let rest = url.split("://").nth(1).unwrap_or(url);
+    rest.split(['/', '?']).next().filter(|s| !s.is_empty())
+}
+
+fn normalize_tag(tag: &str) -> &str {
+    tag.strip_prefix("www.").unwrap_or(tag)
+}
+
+fn declined_netlocs() -> &'static HashSet<String> {
+    static SET: OnceLock<HashSet<String>> = OnceLock::new();
+    SET.get_or_init(|| {
+        let mut set = HashSet::new();
+        if let Ok(text) = std::fs::read_to_string("phi/sources.φ") {
+            for line in text.lines() {
+                if let Some(rest) = line.strip_prefix("decline ") {
+                    if let Some(url) = rest.split_whitespace().nth(1) {
+                        if let Some(nl) = netloc_of(url) {
+                            set.insert(normalize_tag(nl).to_string());
+                        }
+                    }
+                }
+            }
+        }
+        set
+    })
+}
+
 pub fn upload_release(tag: &str, path: &str) -> bool {
     if tag == CAPPED_RELEASE {
         eprintln!(
@@ -164,6 +192,13 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
             "upload {}: {} B over the GitHub release 2 GiB asset limit — the asset needs the split/R2 route, not a release upload",
             path,
             meta.len()
+        );
+        return false;
+    }
+    if declined_netlocs().contains(normalize_tag(tag)) {
+        eprintln!(
+            "upload {}: source {} carries a decline in phi/sources.φ — the upload stays off",
+            path, tag
         );
         return false;
     }
@@ -510,6 +545,20 @@ mod tests {
         assert!(r2_mirror_within_cap(R2_MIRROR_MAX_BYTES));
         assert!(!r2_mirror_within_cap(R2_MIRROR_MAX_BYTES + 1));
         assert!(!r2_mirror_within_cap(100 * 1024 * 1024));
+    }
+
+    #[test]
+    fn netloc_matches_the_release_tag_after_www_strip() {
+        assert_eq!(
+            netloc_of("https://www.geoazur.fr/astrogeo/x"),
+            Some("www.geoazur.fr")
+        );
+        assert_eq!(
+            netloc_of("http://jvo.nao.ac.jp/skynode/do/x"),
+            Some("jvo.nao.ac.jp")
+        );
+        assert_eq!(normalize_tag("www.geoazur.fr"), "geoazur.fr");
+        assert_eq!(normalize_tag("jvo.nao.ac.jp"), "jvo.nao.ac.jp");
     }
 
     #[test]

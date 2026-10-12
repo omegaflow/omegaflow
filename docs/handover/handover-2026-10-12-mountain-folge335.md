@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: a713d5464ec0f4a589c151823470949dda8a911b34de116efa9a292d3a163a5f
+  sha256: 984bed1a52b0a83071093f762d26a372acfe6ec52a0d64afc0813bf7169b45f9
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -114,6 +114,7 @@ Punkt nennt seine Datei(en)/Pfade.**
 - **Politik (Operator-Wort 2026-10-13):** **declined** → komplett weg (CDN **und** CI-Job); **unklar** (`no-license-stated`) → Job bleibt (Aktualität), an die Zulassung gebunden.
 - **Erledigt:** die per-Source-Produzenten der declineten Quellen entfernt (`git rm`): `neptune-apdb-cdn` (geoazur), `fugin-cdn` + `fugin-cdn-dispatch` (FUGIN), `ia2-cdn` (ia2-tap), `lro-trk-cdn` (imbrium), `kc2g-cdn` (prop.kc2g).
 - **Braucht:** (a) die **generischen** Matrix-Produzenten prüfen (`harvest-long.yml` trägt z. B. `arm=lro_trk_compiler tag=imbrium.mit.edu`; `harvest-dispatch`), damit declinete Quellen dort ausgeschlossen sind; (b) für die **unklaren** Quellen den Guard `register_source_state <netloc>` in deren `*-cdn.yml` ziehen (Bin gebaut + getestet; `live|declined|absent`).
+- **Zentraler Riegel (Mountain, 2026-10-13):** `upload_release` (`src/archivar/cdn.rs`) verweigert jetzt **jede** declinete Quelle — `declined_netlocs()` parst die `decline`-Zeilen aus `phi/sources.φ` und lehnt einen Upload ab, dessen Tag (nach `www.`-Strip) declinet ist (`netloc_matches_the_release_tag_after_www_strip`-Test, `cargo check` 0/0). Das greift für **alle** Produzenten (per-Source, Matrix, Cron, Dispatch) — der Matrix-Produzent `harvest-long.yml` trug den imbrium-Kopf, der jetzt entfernt ist (der gelöschte `lro-trk-cdn.yml` war nicht der einzige).
 
 ### Rätsel-Datenlücken (eigen)
 - **Status:** eigen | **Bindung:** eigen
