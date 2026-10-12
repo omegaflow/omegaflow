@@ -26,6 +26,14 @@ base="https://github.com/omegaflow/omegaflow/releases/download/tools-latest"
 
 mkdir -p "$rel"
 
+# One install at a time: concurrent invocations share the temp path and the
+# manifest — a lock serializes them, so the follower finds the fresh artifact.
+lock="$rel/.tools_ensure.lock"
+if command -v flock >/dev/null 2>&1; then
+    exec 9>"$lock"
+    flock -w 120 9 2>/dev/null || true
+fi
+
 # TTL gate: within the watchdog cadence (2^6 min = 3840 s) the network is
 # skipped — but only when the installed binary matches the cached manifest
 # (content-addressed, never mtime): a stale artifact refreshes.
@@ -91,8 +99,7 @@ if [ "$local_sha" = "$remote_sha" ]; then
     exit 0
 fi
 
-tmp="$rel/.$tool.download"
-rm -f "$tmp"
+tmp="$(mktemp "$rel/.$tool.download.XXXXXX")"
 
 curl -fsSL --max-time 120 "$base/$tool" -o "$tmp" 2>/dev/null
 

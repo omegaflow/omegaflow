@@ -845,13 +845,37 @@ fn main() {
             print_lines(&lines);
         }
         Mode::Net(name) => {
-            let query = keywords.join(" ");
             let env_map = match find_repo_root() {
                 Some(repo) => secrets::load_env(&repo),
                 None => env::vars().collect(),
             };
-            let lines = net::run_lines_max(name, &query, &env_map, pdf_out.as_deref(), max_results);
-            print_lines(&lines);
+            if keywords.is_empty() && !std::io::stdin().is_terminal() {
+                let stdin = std::io::stdin();
+                let mut reader = stdin.lock();
+                let mut line = String::new();
+                loop {
+                    line.clear();
+                    let n = match reader.read_line(&mut line) {
+                        Ok(n) => n,
+                        Err(_) => break,
+                    };
+                    if n == 0 {
+                        break;
+                    }
+                    let query = line.trim();
+                    if query.is_empty() {
+                        continue;
+                    }
+                    let lines =
+                        net::run_lines_max(name, query, &env_map, pdf_out.as_deref(), max_results);
+                    print_lines(&lines);
+                }
+            } else {
+                let query = keywords.join(" ");
+                let lines =
+                    net::run_lines_max(name, &query, &env_map, pdf_out.as_deref(), max_results);
+                print_lines(&lines);
+            }
         }
     }
 }
