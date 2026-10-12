@@ -3,7 +3,7 @@
   session: Mycelium-Linie in einem Pass (INPOP/NOE4-Fix, adressierte Faltungen, Stehender Pass)
   class: handover
   date: 2026-10-12
-  sha256: c2bcffbebed7b214bea2cf4323cbc4570e17738a09d605474b06079f6cff0d4e
+  sha256: 69f32f7659be2c06eeb01d493d2938aa7db0309a47c01ba8227b612cc56dd618
   status: live
 -->
 # Handover — Mycelium-Folge 327 (2026-10-12)
@@ -137,6 +137,15 @@ kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (
 - **Braucht:** im nächsten Stimmen-Round die `pending`-Seats messen und `docs/concepts/ui-seats.md`
   fortschreiben.
 
+### tools-map.md — Träger (Operator-Wort Debugger-Rechte)
+- **Status:** wartend | **Bindung:** eigen
+- **Trigger:** Operator-Wort (Debugger-Rechte am live Chrome)
+- **Lage:** (gemessen 2026-10-12) `docs/concepts/tools-map.md:349`: „offen bleibt allein das
+  Operator-Wort (Debugger-Rechte am live Chrome)"; die Route ist gebunden (`opencode.json:172-178`,
+  Commit `7e79c194d`). Träger-Zeile für `--orphan-docs` (die folge326-Zeile ist nach `archiv/` gewandert).
+- **Blockade:** der Akt ist operator-gebunden.
+- **Braucht:** das Operator-Wort — liegt in Futures Operator-Queue (`## An future`).
+
 ## An mountain
 
 Origin: mycelium-folge327 (2026-10-12). Der `future-242`-Block war bei folge326 nur als Kopfzeile
@@ -159,6 +168,8 @@ Origin: mycelium-folge327 (2026-10-12). Operator-gebundener Rest (No-referral �
   die ASU-`camera_angles.txt`-`url` ist registriert `phi:31568`). Wird gebraucht für das M10-MDIS-Pose-Wiring
   (Mountain/River). Möglichkeit: die Autoren anschreiben (Operator-Hand, kein Maschinen-Send) **oder**
   mit ISIS nachrechnen. `xfer:mycelium327-3`
+- **Debugger-Rechte am live Chrome** — Operator-Wort nötig (`docs/concepts/tools-map.md:349`); ohne es
+  bleibt die DevTools-MCP-Bindung (`opencode.json:172-178`, Commit `7e79c194d`) ungenutzt. `xfer:mycelium327-4`
 
 ## LOCK
 
