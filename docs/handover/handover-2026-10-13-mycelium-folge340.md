@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 340 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 75422532b85afde0c11b8981904ab162489689a995f769e136cd05d53ceb8ced
+  sha256: 253138f840afcf641348edb89fc08ba33a45c87fd9b15a0cb1acb7a1232f2a58
   status: live
 -->
 # Handover — Mycelium-Folge 340 (2026-10-13)
@@ -47,12 +47,12 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Blockade:** `phi/sources.φ` ist Mountains Register; eine `--write`-Kanonisierung ist ein Ganz-Datei-Eingriff (Kollision mit laufenden Schreibern).
 - **Braucht:** Mountain fährt `register_sort --write` in einem ruhigen Atom.
 
-### OCNS2019 (geoazur/APDB-Ersatz) — Riss (keine lizenzklare Quelle)
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** ein Wort zur Lizenz (oder NAOJ/Géoazur-Erlaubnis)
-- **Lage:** (gemessen 2026-10-13/338) `geoazur` (APDB) ist entfernt. Ersatz **OCNS2019** („Observational Catalog of Neptunian Satellites 2019"; 24 996 Positionen, 1847–2019, ICRS/TT; DOI `10.12149/101048`) trägt **keine offene Lizenz** (NADC: copyright belongs to the original data authors; kein CC-BY); Download-Host `paperdata.china-vo.org` antwortet pending (nur Wayback `7b7ad66b…`); kein Compiler. Future-248 brachte denselben Punkt als „publicly available" (Feld-Mapping) — der Riss steht: die Lizenz-Premisse hält nicht. Gefaltet: `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.10~7d5c9163`.
-- **Blockade:** die Lizenz-Premisse („lizenzklar") hält nicht; Host pending.
-- **Braucht:** Entscheidung (Mountain/Future) — Géoazur/NAOJ um Erlaubnis, as-is führen, oder fallenlassen.
+### OCNS2019 — geoazur/APDB-Ersatz (Alternative gefunden; Lizenz-Term offen)
+- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
+- **Trigger:** Mountains `terms` (China-VO PaperData) + die Host-Route (Wayback)
+- **Lage:** (gemessen 2026-10-13/340) **Die Alternative ist gefunden** — Future-247/248: OCNS2019 ersetzt das entfernte `geoazur` (APDB, all-rights-reserved, gelöscht). OCNS2019 („Observational Catalog of Neptunian Satellites 2019"; 24 996 Positionen, 11 Neptun-Monde, 1847–2019, ICRS/TT; DOI `10.12149/101048`; NADC `nadc.china-vo.org/res/r101048/`) ist der moderne Superset, gefunden erst mit `archive_search --all` (109/114 Modi). Open ist **nicht die Alternative, sondern**: (a) der **Lizenz-Term** — DataCite trägt kein `rightsList` (kein CC-BY), Authority China-VO/NADC → **Mountain** setzt `terms` (China-VO-PaperData-Token bzw. Lizenzklärung); (b) der **Host** `paperdata.china-vo.org` antwortet pending — erreichbar nur über den Wayback-Snapshot `web.archive.org/web/20220609074246/…` (sha `7b7ad66b…`); (c) der **Block + das Feld-Mapping** (Mycelium) + ein Compiler (`neptune_apdb_manifestor.rs` ist auf die alten APDB-Files hardcodiert). **Kein `rightsList` ≠ keine Alternative** — meine folge339-Formulierung „keine lizenzklare Quelle" war zu scharf. Gefaltet: `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.10~7d5c9163`.
+- **Blockade:** der Lizenz-Term (Mountain) und der Host (nur Wayback).
+- **Braucht:** Mycelium baut den OCNS2019-Block + Feld-Mapping (bounded step); Mountain setzt `terms`.
 
 ### Lizenzklare Alternativen — Register-/Compiler-Swap (future-248, vier Wellen)
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
