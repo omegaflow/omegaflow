@@ -14439,6 +14439,13 @@ record sky1
 force em
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/alasky.cds.unistra.fr/wallaby_pilot_dr2_hips3d.bin
+terms ODbL-1.0 https://alasky.cds.unistra.fr/HIPS3D/ASKAP/CDS_C_ASKAP_WALLABY-Pilot-DR2/properties
+format hips3d
+origin https://alasky.cds.unistra.fr/HIPS3D/ASKAP/CDS_C_ASKAP_WALLABY-Pilot-DR2/
+at sun
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/bicepkeck.org/bk18_bandpowers_20210607.txt
 terms CC-BY-4.0 http://bicepkeck.org/bk18_2021_release.html
 origin http://bicepkeck.org/BK18_datarelease/BK18_bandpowers_20210607.txt
@@ -18859,6 +18866,14 @@ url https://github.com/omegaflow/sources/releases/download/oderest.rsl.wustl.edu
 origin https://oderest.rsl.wustl.edu/
 compiler register-only
 format live2
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/opendata.auger.org/auger_sd1500.pao1
+terms CC-BY-SA-4.0 https://opendata.auger.org/
+format auger
+origin https://opendata.auger.org/catalog/data.zip
+compiler tools/harvest/src/bin/auger_compiler.rs
 at earth
 no-cadence
 
@@ -28586,6 +28601,13 @@ format json
 at sun
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/conicus3d_wl_lightcone.tar.zst
+terms CC-BY-4.0 https://zenodo.org/records/18776222
+format tar_zst
+origin https://zenodo.org/api/records/18776222/files/lp_dataset_patched_c000_phase_metadata.tar.zst/content
+at sun
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/dawn_linefluxes.fits
 terms CC-BY-4.0 https://zenodo.org/records/22734795
 origin https://zenodo.org/api/records/22734795/files/djapipes_default_v4.6.0.linefluxes.fits/content
@@ -29082,7 +29104,7 @@ no-cadence
 cmap .
 ra ra
 dec dec
-field t_b hi4pi_brightness_temperature inverse-square em K 604800 0.0 0.0
+field t_b hi4pi_brightness_temperature inverse-square thermal K 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/iaga_text.bin
 terms CC-BY-4.0 https://zenodo.org/records/10594301
