@@ -14436,6 +14436,15 @@ compiler tools/harvest/src/bin/ossos_compiler.rs
 at sun
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ceein.infp.ro/ceein_infrasound.bin
+terms eida-data-policy https://www.orfeus-eu.org/data/eida/acknowledgements/
+origin http://ceein.infp.ro/fdsnws/dataselect/1/query
+format ceein_infrasound
+compiler tools/harvest/src/bin/ceein_infrasound_compiler.rs
+on earth 0 0 0
+no-cadence
+field ceein_infrasound_pressure_pa ceein_infrasound_pressure_pa inverse-square acoustic pa 300 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/content.cld.iop.org/psjae32f5t4_mrt.txt
 terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
 origin https://content.cld.iop.org/journals/2632-3338/7/2/35/revision1/psjae32f5t4_mrt.txt
