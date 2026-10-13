@@ -2,7 +2,7 @@
 title: Handover — River-Folge 208
 class: handover
 date: 2026-10-13
-sha256: df904aa09b2eebfaf2db07f2072ee974a515be1b44201d9abb8e53003ab419b2
+sha256: 81ee39c13ab60edcbf7ca37b6371d4f2f3452273cf9bb761145a0dc09ee54818
 status: live
 -->
 # Handover — River-Folge 208 (2026-10-13)
@@ -107,9 +107,9 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 ### GIC-Onset — AL-Einhüllende über die 154-Station-Familie
 - **Status:** wartend | **Bindung:** eigen (Bau)
 - **Trigger:** Abschluss der Harvest-Läufe `intermagnet-xyz-cdn` → die Assets `<code>_xyz_1m.bin` liegen im CDN.
-- **Lage:** (gemessen 2026-10-13 river-209 via Workflow-Runs-API + `gh api repos/omegaflow/sources/releases/tags/imag-data.bgs.ac.uk`) **alle fünf** `intermagnet-xyz-cdn`-Läufe sind `cancelled` (kein `success`); der Asset-Stand: **144 von 154** `<code>_xyz_1m.bin` im Release, **10 fehlen**: `lnp, lov, mbc, mid, mlt, mzl, qsb, reu, tik, wmq` (sub-auroral 24/25, nur `lov` fehlt — LOV HTTP 400; die 101er-Kohorte ist mit der Abbruch-Welle unvollständig). **Neustart dispatcht:** `gh workflow run intermagnet-xyz-cdn.yml` → Lauf `38467353633` (river-209). Die Kette `intermagnet_xyz_compiler` → `al_network_proxy` → `gic_onset_detector` ist gebaut; die 154-Station-Partition liegt in `state/river/gic-family-*.txt`; Null-Baseline gemessen (`--null 200`: 1.62×/1.47×/1.35×).
+- **Lage:** (gemessen 2026-10-13 river-209 via Workflow-Runs-API + `gh api repos/omegaflow/sources/releases/tags/imag-data.bgs.ac.uk`) **alle fünf** `intermagnet-xyz-cdn`-Läufe sind `cancelled` (kein `success`); der Asset-Stand: **144 von 154** `<code>_xyz_1m.bin` im Release, **10 fehlen**: `lnp, lov, mbc, mid, mlt, mzl, qsb, reu, tik, wmq` (sub-auroral 24/25, nur `lov` fehlt — LOV HTTP 400; die 101er-Kohorte ist mit der Abbruch-Welle unvollständig). **Neustart (korrigiert):** der erste `gh workflow run intermagnet-xyz-cdn.yml` → `38467353633` lief **nur mit den Default-Stationen** `["abk","sod"]` (beide vorhanden, idempotenter Skip) → `success`, aber kein neues Asset (Zähler blieb 144); der Workflow verlangt das Stations-JSON als Eingabe (`.github/workflows/intermagnet-xyz-cdn.yml:10-15`). **Korrekt dispatcht:** `gh workflow run intermagnet-xyz-cdn.yml -f 'stations=["lnp","lov","mbc","mid","mlt","mzl","qsb","reu","tik","wmq"]' -f start=2000 -f end=2024` → Lauf `38485365619` (river-209; `lov` erwartet rot, HTTP 400). Die Kette `intermagnet_xyz_compiler` → `al_network_proxy` → `gic_onset_detector` ist gebaut; die 154-Station-Partition liegt in `state/river/gic-family-*.txt`; Null-Baseline gemessen (`--null 200`: 1.62×/1.47×/1.35×).
 - **Blockade:** der Harvest-Lauf bricht vor Abschluss ab (kein `success` seit dem Start); 10 Stations-Assets fehlen.
-- **Braucht:** den Lauf `38467353633` **zu Ende** lesen (`ci_manage view`/`log --all` nach Abschluss, nie pollend) und die 10 fehlenden Assets nachziehen; dann je Familie `al_network_proxy --family <fam.txt> --dir <pfad> --decl auto --baseline-block 60 --min-stations 2` und `gic_onset_detector --null 200`.
+- **Braucht:** den Lauf `38485365619` lesen (`ci_manage view`/`log --all` nach Abschluss, nie pollend); dann je Familie `al_network_proxy --family <fam.txt> --dir <pfad> --decl auto --baseline-block 60 --min-stations 2` und `gic_onset_detector --null 200`.
 
 ### GIC-Familien-Partition — zwei Register-Nägel, dann die Matrix-Läufe
 - **Status:** blockiert | **Bindung:** eigen (Blockade: Mountain-Nägel)
@@ -230,8 +230,8 @@ Fick in Fluid/Plasma; Tests `the_number_token_parses`, `number_and_mass_density_
 `matrix-newell-omni` Zelle `newell_dphi_dt_omni->abk_dbdt_pt1h` **n = 22137**, TE 7.7953e-5,
 p 1.0000, verdict **silent**, FDR 0/1 (`gh run download … -n field-te-matrix-newell-omni`).
 **GIC-Onset:** **alle fünf** `intermagnet-xyz-cdn`-Läufe `cancelled` (kein `success`); Asset-Stand
-**144/154** `<code>_xyz_1m.bin`, **10 fehlen** (`lnp lov mbc mid mlt mzl qsb reu tik wmq`); Neustart
-dispatcht (`gh workflow run intermagnet-xyz-cdn.yml` → `38467353633`, river-209).
+**144/154** `<code>_xyz_1m.bin`, **10 fehlen** (`lnp lov mbc mid mlt mzl qsb reu tik wmq`); der erste Neustart `38467353633` lief nur
+die Default-Stationen (kein Effekt), **korrekt dispatcht** mit dem 10er-JSON → `38485365619` (river-209).
 **DE-2-Manifestation geroutet** (`## An mycelium`, Token `xfer:river.ses_ec901ad7dffehLKKusa1DO806h.1~aac84d7f`).
 **Fäden gesponnen** (river-209): ein `grind-flash`-Taucher hat EPTA DR2 (25 Pulsare, nur TOAs), KiDS DR4.1
 (WL-Spalten `RAJ2000/DECJ2000,e1/e2,Z_B,weight`), Conicus3D (eine 34,4-GB-Datei), WALLABY (Produkt offen)
