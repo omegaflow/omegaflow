@@ -98,8 +98,8 @@ impl AacgmV2 {
 
         let mut cint = [[0.0f64; NCOORD]; AACGM_KMAX];
         for (k, row) in cint.iter_mut().enumerate() {
-            for a in 0..NCOORD {
-                row[a] = self.coef(0, 0, a, k)
+            for (a, cell) in row.iter_mut().enumerate() {
+                *cell = self.coef(0, 0, a, k)
                     + self.coef(0, 1, a, k) * alt_var
                     + self.coef(0, 2, a, k) * alt_var_sq
                     + self.coef(0, 3, a, k) * alt_var_cu

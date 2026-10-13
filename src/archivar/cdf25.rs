@@ -297,6 +297,84 @@ impl Cdf25File {
     }
 }
 
+fn cdf_epoch_var(file: &Cdf25File) -> Option<&Cdf25Var> {
+    file.var("Epoch").or_else(|| {
+        file.vars
+            .iter()
+            .find(|v| crate::cdf::is_epoch_type(v.data_type))
+    })
+}
+
+pub fn extract_witness_channels(
+    src: &crate::archivar::SourceConfig,
+    body: &str,
+    lsk: &crate::archivar::LeapSeconds,
+) -> crate::archivar::ExtractResult {
+    use crate::archivar::{Channel, Extract, ExtractResult, FieldConfig, Position};
+
+    let Some(bytes) = std::fs::read(body).ok() else {
+        return ExtractResult::Measurements(vec![]);
+    };
+    let Ok(file) = Cdf25File::parse(&bytes) else {
+        return ExtractResult::Measurements(vec![]);
+    };
+    let Some(epoch_var) = cdf_epoch_var(&file) else {
+        return ExtractResult::Measurements(vec![]);
+    };
+    let Ok(epoch_records) = file.var_records(&bytes, epoch_var) else {
+        return ExtractResult::Measurements(vec![]);
+    };
+    let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+    for ext in &src.extracts {
+        let Extract::Field(fc) = ext else {
+            continue;
+        };
+        let Some(var) = file.var(&fc.key) else {
+            continue;
+        };
+        if file.num_values(var) != 1 {
+            continue;
+        }
+        let Ok(records) = file.var_records(&bytes, var) else {
+            continue;
+        };
+        if records.len() != epoch_records.len() {
+            continue;
+        }
+        for (i, record) in records.iter().enumerate() {
+            let Some(value) = record.first().copied() else {
+                continue;
+            };
+            if !crate::cdf::value_present(value) {
+                continue;
+            }
+            let Some(t_unix) = epoch_records[i].first().copied() else {
+                continue;
+            };
+            if !crate::cdf::value_present(t_unix) {
+                continue;
+            }
+            let Some(epoch) = lsk.unix_to_tdb(t_unix) else {
+                continue;
+            };
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch,
+                    station_code: None,
+                    position: Position::Source,
+                    name: fc.name.clone(),
+                    value,
+                },
+                fc.clone(),
+            ));
+        }
+    }
+    ExtractResult::Measurements(channels)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -453,82 +531,4 @@ mod tests {
             Err(Cdf25Note::Encoding(6))
         ));
     }
-}
-
-fn cdf_epoch_var(file: &Cdf25File) -> Option<&Cdf25Var> {
-    file.var("Epoch").or_else(|| {
-        file.vars
-            .iter()
-            .find(|v| crate::cdf::is_epoch_type(v.data_type))
-    })
-}
-
-pub fn extract_witness_channels(
-    src: &crate::archivar::SourceConfig,
-    body: &str,
-    lsk: &crate::archivar::LeapSeconds,
-) -> crate::archivar::ExtractResult {
-    use crate::archivar::{Channel, Extract, ExtractResult, FieldConfig, Position};
-
-    let Some(bytes) = std::fs::read(body).ok() else {
-        return ExtractResult::Measurements(vec![]);
-    };
-    let Ok(file) = Cdf25File::parse(&bytes) else {
-        return ExtractResult::Measurements(vec![]);
-    };
-    let Some(epoch_var) = cdf_epoch_var(&file) else {
-        return ExtractResult::Measurements(vec![]);
-    };
-    let Ok(epoch_records) = file.var_records(&bytes, epoch_var) else {
-        return ExtractResult::Measurements(vec![]);
-    };
-    let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
-    for ext in &src.extracts {
-        let Extract::Field(fc) = ext else {
-            continue;
-        };
-        let Some(var) = file.var(&fc.key) else {
-            continue;
-        };
-        if file.num_values(var) != 1 {
-            continue;
-        }
-        let Ok(records) = file.var_records(&bytes, var) else {
-            continue;
-        };
-        if records.len() != epoch_records.len() {
-            continue;
-        }
-        for (i, record) in records.iter().enumerate() {
-            let Some(value) = record.first().copied() else {
-                continue;
-            };
-            if !crate::cdf::value_present(value) {
-                continue;
-            }
-            let Some(t_unix) = epoch_records[i].first().copied() else {
-                continue;
-            };
-            if !crate::cdf::value_present(t_unix) {
-                continue;
-            }
-            let Some(epoch) = lsk.unix_to_tdb(t_unix) else {
-                continue;
-            };
-            channels.push((
-                Channel {
-                    z: 0.0,
-                    freq: 0.0,
-                    bin_width: 0.0,
-                    epoch,
-                    station_code: None,
-                    position: Position::Source,
-                    name: fc.name.clone(),
-                    value,
-                },
-                fc.clone(),
-            ));
-        }
-    }
-    ExtractResult::Measurements(channels)
 }

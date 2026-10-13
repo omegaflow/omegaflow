@@ -94,3 +94,10 @@ band-paar-atom ci-nachlauf
 demeter lizenz-riss etalab-2 0 widerlegt
 eigene ephemeride pep tudat kette band-paar
 lidar-inventar extraterrestrisch mla-compiler auf rdr gebaut
+# Erweitert 2026-10-13 (River-Linie, folge204→205): die 3 Handover-Churn-Namen des
+# dropped-set-gate (HEAD 413e87b5f, `new 3`) — je Rename/Move, keiner ein echter stiller
+# Drop: die Newell- und Weberin-Zeilen sind umbenannt (b891afa32, 12edda4d7), der ENTSO-E-
+# Punkt per Mycelium-Fix (6ce059e01) geschlossen und in `## An mycelium` geführt.
+entso-e http 400 gemessen parameter- endpunkt-defekt
+newell-omni-alignment doppelregistrierung geheilt zelle neu messen
+weberin-zeugen-fäden fakten gemessen register-zeilen-bau gates cdf-arm
