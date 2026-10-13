@@ -159,27 +159,58 @@ fn cdn_tag_of(url: &str) -> Option<&str> {
     rest.split('/').next().filter(|s| !s.is_empty())
 }
 
+fn admitted_terms(token: &str) -> bool {
+    !token.is_empty()
+        && !matches!(
+            token,
+            "no-license-stated"
+                | "all-rights-reserved"
+                | "auth-required"
+                | "registration-required"
+                | "no-license"
+                | "unclear"
+                | "unknown"
+        )
+        && !token.ends_with("-permission-required")
+}
+
 fn registered_netlocs() -> &'static HashSet<String> {
     static SET: OnceLock<HashSet<String>> = OnceLock::new();
     SET.get_or_init(|| {
         let mut set = HashSet::new();
-        if let Ok(text) = std::fs::read_to_string("phi/sources.φ") {
-            for line in text.lines() {
-                if line.starts_with("decline ") {
-                    continue;
+        let Ok(text) = std::fs::read_to_string("phi/sources.φ") else {
+            return set;
+        };
+        let mut netlocs: Vec<String> = Vec::new();
+        let mut admitted = false;
+        let flush = |netlocs: &mut Vec<String>, admitted: bool, set: &mut HashSet<String>| {
+            if admitted {
+                for n in netlocs.drain(..) {
+                    set.insert(n);
                 }
-                if let Some(rest) = line.strip_prefix("url ") {
-                    let key = cdn_tag_of(rest).or_else(|| netloc_of(rest));
-                    if let Some(k) = key {
-                        set.insert(normalize_tag(k).to_string());
-                    }
-                } else if let Some(rest) = line.strip_prefix("origin ")
-                    && let Some(nl) = netloc_of(rest)
-                {
-                    set.insert(normalize_tag(nl).to_string());
+            } else {
+                netlocs.clear();
+            }
+        };
+        for line in text.lines() {
+            if line.trim().is_empty() {
+                flush(&mut netlocs, admitted, &mut set);
+                admitted = false;
+                continue;
+            }
+            if let Some(rest) = line.strip_prefix("url ") {
+                if let Some(k) = cdn_tag_of(rest).or_else(|| netloc_of(rest)) {
+                    netlocs.push(normalize_tag(k).to_string());
                 }
+            } else if let Some(rest) = line.strip_prefix("origin ") {
+                if let Some(nl) = netloc_of(rest) {
+                    netlocs.push(normalize_tag(nl).to_string());
+                }
+            } else if let Some(rest) = line.strip_prefix("terms ") {
+                admitted = admitted_terms(rest.split_whitespace().next().unwrap_or(""));
             }
         }
+        flush(&mut netlocs, admitted, &mut set);
         set
     })
 }
@@ -208,7 +239,7 @@ pub fn upload_release(tag: &str, path: &str) -> bool {
     }
     if !registered_netlocs().contains(normalize_tag(tag)) {
         eprintln!(
-            "upload {}: tag {} is not a live source in phi/sources.φ — a CDN release is only created for a registered source",
+            "upload {}: tag {} is not a licensed source in phi/sources.φ — a CDN release is only created for a registered source with an admitted licence (no-license-stated / all-rights-reserved / auth-required / registration-required / *-permission-required stay off the CDN)",
             path, tag
         );
         return false;
@@ -629,6 +660,19 @@ mod tests {
             modis_lst_cmg_tag_of("modis_lst_cmg_monthly_2026.manifest").as_deref(),
             Some("data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-monthly-2026")
         );
+    }
+
+    #[test]
+    fn admitted_terms_refuses_the_unclear_class() {
+        assert!(admitted_terms("CC-BY-4.0"));
+        assert!(admitted_terms("PD"));
+        assert!(admitted_terms("CC0-1.0"));
+        assert!(!admitted_terms("no-license-stated"));
+        assert!(!admitted_terms("all-rights-reserved"));
+        assert!(!admitted_terms("auth-required"));
+        assert!(!admitted_terms("registration-required"));
+        assert!(!admitted_terms("lasp-permission-required"));
+        assert!(!admitted_terms(""));
     }
 
     #[test]
