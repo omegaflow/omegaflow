@@ -3,7 +3,7 @@
   session: Mountain-Linie — Transport-Faltung (future-249 · mycelium-340) + Ersatz-Bau-Nachmessung
   class: handover
   date: 2026-10-13
-  sha256: 4d19a56baaa845365b18b88a8967425f84f70916eea72aa61aa0e60844e0f5e5
+  sha256: f0323f125efe0a69adcfdc792bce30ce907876f3550a5fb81a39d25c06bd31ce
   status: live
 -->
 # Handover — Mountain-Folge 337 (2026-10-13)
@@ -38,7 +38,7 @@ Session konsumierte `handover-2026-10-13-mountain-folge336.md` (→
 ### Eigene Ephemeride + Mariner-Rohdaten (future-249 .3–.6) (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Bau der jeweiligen Quellenklasse
-- **Lage:** (gemessen 2026-10-13, gefaltet aus `## An mountain` future-folge249) Bauplan der eigenen Ephemeride aus Primärbeobachtungen (native Kette UTC→TT→TDB, ITRF2020+EOP, VMF3/IONEX, Zwei-Wege-Lichtzeit+Shapiro); Referenzen `state/future/{analyse-kybernautin-ephemeriden,abdeckungs-matrix-ephemeriden,leads-ephemeriden-quellen,leads-ephemeriden-luecken}-2026-10-12.md`. Registriert: APOLLO-LLR (`llr.bin`, `phi:28991`) · BC430 (`3558850`) · `mariner_rst` (M6/7 Doppler, `phi:31566`) · `mariner4_odg` (`phi:31558`) · `mariner_m10_edr` (Bilder, `phi:31550`) · `mariner_occlt` (`phi:20413`) · `mariner_m10_camera_angles.txt` (`phi:31602`). **Korrektur (future-249 .4):** Mountain's „kein Mariner-Roh-Track" gilt **nur für Mariner 10**. Offen bleiben: die drei fehlenden Quellenklassen (LLR/Radar/VLBI/Astrometrie · Mariner-2/5/9 · Kreuz-Zeugen); M10-Roh-Tracking (762 7-Spur-Tapes `MVM_1001–1007`, NSSDC `PSCM-00009`) = `request-only`/offline (Anfrage 2026-09-16 ohne Antwort); SEDR-Kamera-Zeuge `PSPA-00273`/`-00055`/`-00318` offline. `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.3~98d34b2c` `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.4~aab2512e` `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.5~ef59826c` `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.6~bb113337`
+- **Lage:** (gemessen 2026-10-13, gefaltet aus `## An mountain` future-folge249) Bauplan der eigenen Ephemeride aus Primärbeobachtungen (native Kette UTC→TT→TDB, ITRF2020+EOP, VMF3/IONEX, Zwei-Wege-Lichtzeit+Shapiro); Referenzen `state/future/analyse-kybernautin-ephemeriden-2026-10-12.md`, `state/future/abdeckungs-matrix-ephemeriden-2026-10-12.md`, `state/future/leads-ephemeriden-quellen-2026-10-12.md`, `state/future/leads-ephemeriden-luecken-2026-10-12.md`. Registriert: APOLLO-LLR (`llr.bin`, `phi:28991`) · BC430 (`3558850`) · `mariner_rst` (M6/7 Doppler, `phi:31566`) · `mariner4_odg` (`phi:31558`) · `mariner_m10_edr` (Bilder, `phi:31550`) · `mariner_occlt` (`phi:20413`) · `mariner_m10_camera_angles.txt` (`phi:31602`). **Korrektur (future-249 .4):** Mountain's „kein Mariner-Roh-Track" gilt **nur für Mariner 10**. Offen bleiben: die drei fehlenden Quellenklassen (LLR/Radar/VLBI/Astrometrie · Mariner-2/5/9 · Kreuz-Zeugen); M10-Roh-Tracking (762 7-Spur-Tapes `MVM_1001–1007`, NSSDC `PSCM-00009`) = `request-only`/offline (Anfrage 2026-09-16 ohne Antwort); SEDR-Kamera-Zeuge `PSPA-00273`/`-00055`/`-00318` offline. `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.3~98d34b2c` `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.4~aab2512e` `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.5~ef59826c` `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.6~bb113337`
 - **Blockade:** DSN-Delta-DOR autorisiert-server-gebunden; M10-Tapes + SEDR offline.
 - **Braucht:** Leads Quelle für Quelle in Blöcke/Compiler (`docs/SOURCE_PORT.md`); CDDIS ist kein Key-Gap (`EARTHDATA_EDL_TOKEN` → HTTP 200); M10-Anfrage bei NSSDC/JPL = Operator-Hand, wartend (`state/zustand/wartend.φ` → `m10-rohtracking`).
 
