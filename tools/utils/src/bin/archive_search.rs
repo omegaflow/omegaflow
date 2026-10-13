@@ -303,6 +303,7 @@ enum Mode {
     Perplexity,
     Lpf,
     Gosat,
+    Stats,
     Net(&'static str),
 }
 
@@ -414,6 +415,7 @@ fn main() {
             }
             "--headed" => headed = true,
             "--all" => mode = Mode::Net("all"),
+            "--stats" => mode = Mode::Stats,
             "--arxiv" => mode = Mode::Net("arxiv"),
             "--arxiv-oai" => {
                 mode = Mode::Oai;
@@ -844,6 +846,9 @@ fn main() {
             let lines = gosat::gosat_lines(&query);
             print_lines(&lines);
         }
+        Mode::Stats => {
+            print_lines(&run_stats());
+        }
         Mode::Net(name) => {
             let env_map = match find_repo_root() {
                 Some(repo) => secrets::load_env(&repo),
@@ -880,6 +885,75 @@ fn main() {
     }
 }
 
+fn run_stats() -> Vec<String> {
+    let repo = match find_repo_root() {
+        Some(r) => r,
+        None => {
+            return vec!["--stats — no repo root measured; the query log stays unread".to_string()];
+        }
+    };
+    let path = repo.join("state/research/queries.φ");
+    let body = match std::fs::read_to_string(&path) {
+        Ok(b) => b,
+        Err(_) => {
+            return vec![format!(
+                "--stats — {} absent; no query measured yet (the log grows with each network run)",
+                path.display()
+            )];
+        }
+    };
+    let mut runs: std::collections::HashMap<String, (u64, u64, u64, u64)> =
+        std::collections::HashMap::new();
+    let mut total = 0u64;
+    for line in body.lines() {
+        let f: Vec<&str> = line.splitn(6, " | ").collect();
+        if f.len() < 5 {
+            continue;
+        }
+        let mode = f[2].trim().to_string();
+        let n: u64 = match f[3].trim().parse() {
+            Ok(v) => v,
+            Err(_) => continue,
+        };
+        let h: u64 = match f[4].trim().parse() {
+            Ok(v) => v,
+            Err(_) => continue,
+        };
+        let e = runs.entry(mode).or_insert((0, 0, 0, 0));
+        e.0 += 1;
+        e.1 += h;
+        e.2 += n;
+        if h == 0 {
+            e.3 += 1;
+        }
+        total += 1;
+    }
+    if total == 0 {
+        return vec!["--stats — the query log carries no line yet".to_string()];
+    }
+    let mut rows: Vec<(String, u64, u64, u64, u64)> = runs
+        .into_iter()
+        .map(|(m, (r, h, n, e))| (m, r, h, n, e))
+        .collect();
+    rows.sort_by(|a, b| {
+        let ya = a.2 as f64 / a.1 as f64;
+        let yb = b.2 as f64 / b.1 as f64;
+        yb.partial_cmp(&ya).unwrap_or(std::cmp::Ordering::Equal)
+    });
+    let mut out = vec![format!(
+        "=== archive_search --stats — arm yield over {total} logged queries ({}) ===",
+        path.display()
+    )];
+    out.push("mode\truns\thits\thits/run\tempty\tsum_lines".to_string());
+    for (m, r, h, n, e) in rows {
+        out.push(format!(
+            "{m}\t{r}\t{h}\t{:.1}\t{e}\t{n}",
+            h as f64 / r as f64
+        ));
+    }
+    out
+}
+
 fn usage() {
     eprintln!("archive_search — the divers' research tool (content, paths, NTFS, network modes)");
     eprintln!();
@@ -903,6 +977,7 @@ fn usage() {
         "paths:    archive_search --index [<query>...] [--path] [--kind any|file|dir] [--sort name|size|mtime]   (matches paths, not content; --path matches the full path)"
     );
     eprintln!("history:  archive_search --git <query>");
+    eprintln!("stats:    archive_search --stats   (per-arm yield from state/research/queries.φ)");
     eprintln!(
         "leads:    archive_search --leads <keyword>...   (un-curated candidate homes minus the registered hosts)"
     );
