@@ -3220,6 +3220,7 @@ pub fn main_flow() {
                     | "fdsn_event"
                     | "pds4_acs_nir"
                     | "vlf_awesome"
+                    | "ucar_fpi"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();

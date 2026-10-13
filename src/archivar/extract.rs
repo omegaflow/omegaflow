@@ -522,6 +522,11 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             crate::rpw::COMP_EZ => Some("rpw_e_z"),
             _ => None,
         },
+        "ucar_fpi" => match comp {
+            fpi_ucar::COMP_MERID => Some("fpi_mer_wind_ms"),
+            fpi_ucar::COMP_ZONAL => Some("fpi_zon_wind_ms"),
+            _ => None,
+        },
         "goes_xrs" => match comp {
             goes::COMP_XRSA => Some("goes_xrs_xrsa"),
             goes::COMP_XRSB => Some("goes_xrs_xrsb"),
