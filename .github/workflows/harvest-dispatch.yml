@@ -55,6 +55,10 @@ jobs:
             formats="$formats $found"
           done
           formats="$formats $(git diff --unified=0 "$before" '${{ github.sha }}' -- phi/sources.φ | sed -n 's/^+format //p' || true)"
+          # an explicit manifestation line names its actor ("harvest raw_zenodo"); it is
+          # read like a format token, so header_of resolves the workflow that declares
+          # "# harvest: format=<actor>". A bare "format <name>" stays the parser arm alone.
+          formats="$formats $(git diff --unified=0 "$before" '${{ github.sha }}' -- phi/sources.φ | sed -n 's/^+harvest \([a-z0-9_]*\).*/\1/p' || true)"
           formats="$formats $(git diff --unified=0 "$before" '${{ github.sha }}' -- '.github/workflows/*.yml' | sed -n 's/^+# harvest: .*format=\([a-z0-9_]*\).*/\1/p' || true)"
           formats=$(printf '%s\n' $formats | sort -u)
 
