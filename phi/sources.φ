@@ -58,18 +58,23 @@ hapi crosswind=champ_thermosphere_crosswind_ms
 field champ_thermosphere_crosswind_ms champ_thermosphere_crosswind_ms gaussian-inverse-square advective m/s 10 0.0 0.0
 channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s)
 
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DE2_UA16S_ALL&time.min=1981-08-06T00:00:00Z&time.max=1983-02-19T00:00:00Z&parameters=NACS_N2density,WATS_NVEneutralWind,WATS_NVUneutralWind,RPA_IVEionDrift,RPA_IVNionDrift&format=json
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DE2_UA16S_ALL&time.min=1981-08-06T00:00:00Z&time.max=1983-02-19T00:00:00Z&parameters=NACS_N2density,WATS_NVEneutralWind,WATS_NVUneutralWind,RPA_NIionDensity,RPA_IVEionDrift,RPA_IVNionDrift&format=json
 terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
 at earth
-hapi RPA_IVEionDrift=de2_ion_drift_east_ms RPA_IVNionDrift=de2_ion_drift_north_ms WATS_NVEneutralWind=de2_neutral_wind_east_ms WATS_NVUneutralWind=de2_neutral_wind_up_ms NACS_N2density=de2_neutral_n2_density_m3
+hapi RPA_IVEionDrift=de2_ion_drift_east_ms RPA_IVNionDrift=de2_ion_drift_north_ms WATS_NVEneutralWind=de2_neutral_wind_east_ms WATS_NVUneutralWind=de2_neutral_wind_up_ms NACS_N2density=de2_neutral_n2_density_m3 RPA_NIionDensity=de2_ion_density_cm3
 field de2_ion_drift_east_ms de2_ion_drift_east_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
 field de2_ion_drift_north_ms de2_ion_drift_north_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
 field de2_neutral_wind_east_ms de2_neutral_wind_east_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
 field de2_neutral_wind_up_ms de2_neutral_wind_up_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
 field de2_neutral_n2_density_m3 de2_neutral_n2_density_m3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field de2_ion_density_cm3 de2_ion_density_cm3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
 channel mass:primary:advective:advective:plasma:unspecified:none kg/(m^2 s) alias de2_ion_drift charge 1
 channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s) alias de2_neutral_wind
+channel mass:primary:flux-fick:parabolic:plasma:unspecified:none kg/m^3 alias de2_ion_density charge 1
+channel mass:primary:flux-fick:parabolic:fluid:unspecified:none kg/m^3 alias de2_neutral_density
+constraint quasi-neutral de2_qn region thermosphere
+coupling ion-neutral-friction from de2_ion_drift to de2_neutral_wind rate pending density_from number:de2_ion_density:2.66e-26 density_to mass:de2_neutral_density region thermosphere quasi-neutral de2_qn
 
 url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
 terms vires-esa-data-terms https://vires.services/
@@ -10790,6 +10795,11 @@ dec dec
 field dm frb_chime_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
 field freq_hz frb_chime_freq_hz inverse-square em Hz 604800 0.0 0.0
 field bin_width_hz frb_chime_bin_width_hz inverse-square em Hz 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/lhaaso_sky1.sky1
+format sky1
+origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,N0&-out.max=100000
+compiler tools/harvest/src/bin/lhaaso_compiler.rs
 
 url https://github.com/omegaflow/sources/releases/download/www.canfar.net/chime_frb_cat2.bin
 terms CC-BY-4.0 https://www.canfar.net/storage/vault/file/AstroDataCitationDOI/CISTI.CANFAR/25.0066/
