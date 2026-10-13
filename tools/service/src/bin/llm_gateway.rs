@@ -9,23 +9,55 @@ struct Route {
     provider: &'static str,
     base_url: &'static str,
     key_env: &'static str,
+    auth_id: &'static str,
 }
 
 const ROUTES: &[Route] = &[
-    Route { prefix: "groq", provider: "Groq", base_url: "https://api.groq.com/openai/v1", key_env: "GROQ_API_KEY" },
-    Route { prefix: "ollama", provider: "Ollama Cloud", base_url: "https://ollama.com/v1", key_env: "OLLAMA_API_KEY" },
-    Route { prefix: "llm7", provider: "LLM7", base_url: "https://api.llm7.io/v1", key_env: "LLM7_API_KEY" },
-    Route { prefix: "deepinfra", provider: "DeepInfra", base_url: "https://api.deepinfra.com/v1/openai", key_env: "DEEPINFRA_API_KEY" },
-    Route { prefix: "hf", provider: "HuggingFace", base_url: "https://router.huggingface.co/v1", key_env: "HF_TOKEN" },
-    Route { prefix: "zai", provider: "Z.ai", base_url: "https://api.z.ai/api/paas/v4", key_env: "ZAI_API_KEY" },
-    Route { prefix: "sambanova", provider: "SambaNova", base_url: "https://api.sambanova.ai/v1", key_env: "SAMBANOVA_API_KEY" },
-    Route { prefix: "mistral", provider: "Mistral", base_url: "https://api.mistral.ai/v1", key_env: "MISTRAL_API_KEY" },
-    Route { prefix: "cf", provider: "Cloudflare Workers AI", base_url: "https://api.cloudflare.com/client/v4/accounts", key_env: "CLOUDFLARE_WORKERS_TOKEN" },
-    Route { prefix: "nim", provider: "NVIDIA NIM", base_url: "https://integrate.api.nvidia.com/v1", key_env: "NVIDIA_API_KEY" },
-    Route { prefix: "openrouter", provider: "OpenRouter", base_url: "https://openrouter.ai/api/v1", key_env: "OPENROUTER_API_KEY" },
-    Route { prefix: "google", provider: "Google AI Studio", base_url: "https://generativelanguage.googleapis.com/v1beta/openai", key_env: "GEMINI_API_KEY" },
-    Route { prefix: "pollinations", provider: "Pollinations", base_url: "https://text.pollinations.ai/openai", key_env: "POLLINATIONS_API_KEY" },
+    Route { prefix: "groq", provider: "Groq", base_url: "https://api.groq.com/openai/v1", key_env: "GROQ_API_KEY", auth_id: "" },
+    Route { prefix: "ollama", provider: "Ollama Cloud", base_url: "https://ollama.com/v1", key_env: "OLLAMA_API_KEY", auth_id: "" },
+    Route { prefix: "llm7", provider: "LLM7", base_url: "https://api.llm7.io/v1", key_env: "LLM7_API_KEY", auth_id: "" },
+    Route { prefix: "deepinfra", provider: "DeepInfra", base_url: "https://api.deepinfra.com/v1/openai", key_env: "DEEPINFRA_API_KEY", auth_id: "" },
+    Route { prefix: "hf", provider: "HuggingFace", base_url: "https://router.huggingface.co/v1", key_env: "HF_TOKEN", auth_id: "" },
+    Route { prefix: "zai", provider: "Z.ai", base_url: "https://api.z.ai/api/paas/v4", key_env: "ZAI_API_KEY", auth_id: "" },
+    Route { prefix: "sambanova", provider: "SambaNova", base_url: "https://api.sambanova.ai/v1", key_env: "SAMBANOVA_API_KEY", auth_id: "sambanova" },
+    Route { prefix: "mistral", provider: "Mistral", base_url: "https://api.mistral.ai/v1", key_env: "MISTRAL_API_KEY", auth_id: "mistral" },
+    Route { prefix: "cf", provider: "Cloudflare Workers AI", base_url: "https://api.cloudflare.com/client/v4/accounts", key_env: "CLOUDFLARE_WORKERS_TOKEN", auth_id: "cloudflare-workers-ai" },
+    Route { prefix: "nim", provider: "NVIDIA NIM", base_url: "https://integrate.api.nvidia.com/v1", key_env: "NVIDIA_API_KEY", auth_id: "nvidia" },
+    Route { prefix: "openrouter", provider: "OpenRouter", base_url: "https://openrouter.ai/api/v1", key_env: "OPENROUTER_API_KEY", auth_id: "openrouter" },
+    Route { prefix: "google", provider: "Google AI Studio", base_url: "https://generativelanguage.googleapis.com/v1beta/openai", key_env: "GEMINI_API_KEY", auth_id: "google" },
+    Route { prefix: "pollinations", provider: "Pollinations", base_url: "https://text.pollinations.ai/openai", key_env: "POLLINATIONS_API_KEY", auth_id: "" },
 ];
+
+fn load_auth_text() -> String {
+    let path = match std::env::var("OMEGAFLOW_AUTH") {
+        Ok(p) => p,
+        Err(_) => match std::env::var("HOME") {
+            Ok(h) => format!("{h}/.local/share/opencode/auth.json"),
+            Err(_) => return String::new(),
+        },
+    };
+    match fs::read_to_string(&path) {
+        Ok(t) => t,
+        Err(_) => String::new(),
+    }
+}
+
+fn auth_key(auth: &str, id: &str) -> Option<String> {
+    if id.is_empty() {
+        return None;
+    }
+    let needle = format!("\"{id}\"");
+    let i = auth.find(&needle)?;
+    let rest = &auth[i + needle.len()..];
+    let k = rest.find("\"key\"")?;
+    let rest = &rest[k + 5..];
+    let colon = rest.find(':')?;
+    let rest = &rest[colon + 1..];
+    let q1 = rest.find('"')?;
+    let rest = &rest[q1 + 1..];
+    let q2 = rest.find('"')?;
+    Some(rest[..q2].to_string())
+}
 
 fn load_secrets() -> HashMap<String, String> {
     let path = match std::env::var("OMEGAFLOW_SECRETS") {
@@ -49,16 +81,17 @@ fn load_secrets() -> HashMap<String, String> {
     m
 }
 
-fn key_for(route: &Route, secrets: &HashMap<String, String>) -> Option<String> {
+fn key_for(route: &Route, secrets: &HashMap<String, String>, auth: &str) -> Option<String> {
     if let Ok(v) = std::env::var(route.key_env) {
         if !v.is_empty() {
             return Some(v);
         }
     }
     match secrets.get(route.key_env) {
-        Some(v) if !v.is_empty() => Some(v.clone()),
-        _ => None,
+        Some(v) if !v.is_empty() => return Some(v.clone()),
+        _ => {}
     }
+    auth_key(auth, route.auth_id)
 }
 
 fn route_for(model: &str) -> Option<&'static Route> {
@@ -163,7 +196,7 @@ fn reply(stream: &mut TcpStream, status: &str, body: &str) {
     let _ = stream.flush();
 }
 
-fn chat_completions(body: &str, secrets: &HashMap<String, String>) -> (String, String) {
+fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -> (String, String) {
     let model = match json_string_field(body, "model") {
         Some(m) => m,
         None => return ("400 Bad Request".to_string(), "{\"error\":{\"message\":\"missing model\"}}".to_string()),
@@ -173,7 +206,7 @@ fn chat_completions(body: &str, secrets: &HashMap<String, String>) -> (String, S
         None => return ("404 Not Found".to_string(), format!("{{\"error\":{{\"message\":\"no route for {model}\"}}}}")),
     };
     let provider_model = &model[route.prefix.len() + 1..];
-    let key = match key_for(route, secrets) {
+    let key = match key_for(route, secrets, auth) {
         Some(k) => k,
         None => return ("502 Bad Gateway".to_string(), format!("{{\"error\":{{\"message\":\"key {} absent\"}}}}", route.key_env)),
     };
@@ -221,20 +254,21 @@ fn main() {
         }
     };
     let secrets = load_secrets();
+    let auth = load_auth_text();
     eprintln!("llm_gateway: listening on http://{addr} ({} routes)", ROUTES.len());
     for r in ROUTES {
-        let key = if key_for(r, &secrets).is_some() { "present" } else { "absent" };
+        let key = if key_for(r, &secrets, &auth).is_some() { "present" } else { "absent" };
         eprintln!("  /{} -> {} ({}) key {} [{}]", r.prefix, r.provider, r.base_url, r.key_env, key);
     }
     for stream in listener.incoming() {
         match stream {
-            Ok(mut s) => handle(&mut s, &secrets),
+            Ok(mut s) => handle(&mut s, &secrets, &auth),
             Err(e) => eprintln!("llm_gateway: accept: {e}"),
         }
     }
 }
 
-fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>) {
+fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>, auth: &str) {
     let (method, path, body) = match read_request(stream) {
         Some(t) => t,
         None => return,
@@ -242,7 +276,7 @@ fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>) {
     let (status, out) = match (method.as_str(), path.as_str()) {
         ("GET", "/v1/models") => ("200 OK".to_string(), models_json()),
         ("GET", "/health") => ("200 OK".to_string(), "{\"status\":\"ok\"}".to_string()),
-        ("POST", "/v1/chat/completions") => chat_completions(&body, secrets),
+        ("POST", "/v1/chat/completions") => chat_completions(&body, secrets, auth),
         _ => ("404 Not Found".to_string(), "{\"error\":{\"message\":\"not found\"}}".to_string()),
     };
     reply(stream, &status, &out);
