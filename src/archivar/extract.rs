@@ -3860,6 +3860,114 @@ fn osc_channels(
     channels
 }
 
+fn entsoe_tag_text(xml: &str, tag: &str) -> Option<String> {
+    let open = format!("<{tag}");
+    let mut search = 0usize;
+    while let Some(rel) = xml[search..].find(&open) {
+        let at = search + rel;
+        let after = &xml[at + open.len()..];
+        match after.chars().next() {
+            Some('>') | Some(' ') | Some('\t') | Some('\n') | Some('\r') => {}
+            _ => {
+                search = at + 1;
+                continue;
+            }
+        }
+        let gt = xml[at..].find('>')?;
+        let text_start = at + gt + 1;
+        let lt = xml[text_start..].find('<')?;
+        let text = xml[text_start..text_start + lt].trim();
+        if text.is_empty() {
+            return None;
+        }
+        return Some(text.to_string());
+    }
+    None
+}
+
+fn entsoe_time_series_blocks(xml: &str) -> Vec<&str> {
+    let mut out = Vec::new();
+    let mut search = 0usize;
+    while let Some(rel) = xml[search..].find("<TimeSeries") {
+        let start = search + rel;
+        let after = &xml[start + "<TimeSeries".len()..];
+        match after.chars().next() {
+            Some('>') | Some(' ') | Some('\t') | Some('\n') | Some('\r') | Some('/') => {}
+            _ => {
+                search = start + 1;
+                continue;
+            }
+        }
+        let Some(rel_end) = xml[start..].find("</TimeSeries>") else {
+            break;
+        };
+        let end = start + rel_end + "</TimeSeries>".len();
+        out.push(&xml[start..end]);
+        search = end;
+    }
+    out
+}
+
+fn entsoe_parse_datetime(date: &str, time: &str) -> Option<f64> {
+    let mut parts = date.trim().split('-');
+    let year = parts.next()?.parse::<i64>().ok()?;
+    let month = parts.next()?.parse::<i64>().ok()?;
+    let day = parts.next()?.parse::<i64>().ok()?;
+    if parts.next().is_some() || !(1..=12).contains(&month) || !(1..=31).contains(&day) {
+        return None;
+    }
+    let t = time.trim().trim_end_matches('Z');
+    let mut tp = t.split(':');
+    let hour = tp.next()?.parse::<i64>().ok()?;
+    let minute = tp.next().unwrap_or("0").parse::<i64>().ok()?;
+    let second = tp.next().unwrap_or("0").parse::<i64>().ok()?;
+    if !(0..=23).contains(&hour) || !(0..=59).contains(&minute) || !(0..=59).contains(&second) {
+        return None;
+    }
+    let days = crate::lsk::days_from_civil(year, month, day)?;
+    Some(days as f64 * 86400.0 + hour as f64 * 3600.0 + minute as f64 * 60.0 + second as f64)
+}
+
+fn entsoe_business_code(block: &str) -> u8 {
+    match entsoe_tag_text(block, "businessType").as_deref() {
+        Some("A53") => 1,
+        Some("A54") => 2,
+        _ => 3,
+    }
+}
+
+fn entsoe_records(xml: &str) -> Vec<(f64, f64, u8, Option<f64>, String)> {
+    let mut out = Vec::new();
+    for block in entsoe_time_series_blocks(xml) {
+        let Some(area) = entsoe_tag_text(block, "biddingZone_Domain.mRID") else {
+            continue;
+        };
+        let (Some(start_date), Some(start_time)) = (
+            entsoe_tag_text(block, "start_DateAndOrTime.date"),
+            entsoe_tag_text(block, "start_DateAndOrTime.time"),
+        ) else {
+            continue;
+        };
+        let (Some(end_date), Some(end_time)) = (
+            entsoe_tag_text(block, "end_DateAndOrTime.date"),
+            entsoe_tag_text(block, "end_DateAndOrTime.time"),
+        ) else {
+            continue;
+        };
+        let (Some(start), Some(end)) = (
+            entsoe_parse_datetime(&start_date, &start_time),
+            entsoe_parse_datetime(&end_date, &end_time),
+        ) else {
+            continue;
+        };
+        let quantity = entsoe_tag_text(block, "quantity")
+            .and_then(|t| t.parse::<f64>().ok())
+            .filter(|v| v.is_finite());
+        out.push((start, end, entsoe_business_code(block), quantity, area));
+    }
+    out
+}
+
 fn heasarc_w3browse_channels(
     table: &heasarc_w3browse::Table,
     fields: &[FieldConfig],
@@ -4190,6 +4298,40 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         };
         let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
         return ExtractResult::Measurements(heasarc_w3browse_channels(&table, &fields, epoch));
+    }
+    if src.format == "entsoe_unavailability" {
+        let Some(Extract::Field(fc)) = src.extracts.first() else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for (start, end, business_code, quantity, area) in entsoe_records(body) {
+            let Some(value) = quantity else {
+                continue;
+            };
+            let tau = end - start;
+            if !tau.is_finite() || tau <= 0.0 {
+                continue;
+            }
+            let Some(epoch) = lsk.unix_to_tdb(start) else {
+                continue;
+            };
+            let mut record_fc = fc.clone();
+            record_fc.tau = tau;
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch,
+                    station_code: Some(format!("{area}:{business_code}")),
+                    position: Position::Source,
+                    name: fc.name.clone(),
+                    value,
+                },
+                record_fc,
+            ));
+        }
+        return ExtractResult::Measurements(channels);
     }
     if src.format == "twomass_psc" {
         let epoch = match src.catalog_epoch {
