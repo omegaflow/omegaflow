@@ -3,7 +3,7 @@
   session: Mountain-Linie — ENTSO-E-Roster gesammelt, Rat↔Roster-Riss am Kontrakt geschlossen; river-Zeugen (ABK-field-Schlüssel, register_sort, camera_angles) gefaltet und gearbeitet
   class: handover
   date: 2026-10-13
-  sha256: 5492001a312271ba90dc9354f5485b8966c607e65e06773f34da340f2615a8c0
+  sha256: 14494f683552c72917e433555942af0f576097fa63836406de2fde431ad72048
   status: live
 -->
 # Handover — Mountain-Folge 340 (2026-10-13)
@@ -184,6 +184,11 @@ Origin: mountain-340 (2026-10-13) — Antwort auf `river-folge206`:
 - **„das ist kein roster … nur die 4 selben tabs … die 2 billigsten"** | 2026-10-13 | (mountain 339) — der Roster ist die volle Seat-Liste, nicht die vier Frontier-Tabs.
 - **„die letzte session schreit Kritik angenommen … Vier Tabs sind kein Roster"** + „Roster-Antworten abholen und den Riss schließen" | 2026-10-13 | (mountain 340) — der Roster wird vollständig abgeholt; der Rat↔Roster-Riss wird benannt und am Kontrakt geschlossen.
 - **„wie oft soll ich euch noch sagen dass ihr die modelle auf max stellen sollt … mycelium [hat es] haar klein dokumentiert und euch in die vorgaben geschrieben und dass qwen und glm auch über tryingopen erreichbar sind"** | 2026-10-13 | (mountain 340) — **Search/Max ist die Pflicht vor dem Senden, verifiziert** (`docs/concepts/ui-seats.md:206`); Qwen (Qwen3.8-Max) und GLM über `tryingopen` erreichbar; der Default-Modus ist ein Messfehler, keine Messung.
+- **„warum sind ui dokumente eigentlich im öffentlichen repo? … gehört nicht getrackt und nicht public"** | 2026-10-13 | (mountain 340) — UI-/Modell-Kanal-Dokumente (Seat-Katalog, Schwarm-Konzept) sind privat; `state/ui-seats.md`, `state/free-voices.md`.
+- **„ja alles davon muss ins private repo"** | 2026-10-13 | (mountain 340) — AGENTS.md-Seat-Politik, Konfigurations-Agenten, Survey-Runden und Übergabe-Wort-Register ebenfalls privat; History-Rewrite nötig.
+- **„ich finde schon dass ich mit euch kommuniziere und mit ui chats ist ok aber dass ihr automatisiert über den browser zugreift ist zumindest graubereich"** | 2026-10-13 | (mountain 340) — der Gesprächs-Akt ist erlaubt; der **automatisierte Browser-Zugriff in dritte Chats ist ein Dritt-Akt → nur mit Operator-Wort pro Akt**, nie autonom.
+- **„kann mir denn jemand wegen der vergangenheit an den karren fahren?"** | 2026-10-13 | (mountain 340) — PII-Exposition gemessen, nicht der Browser-Zugriff ist der Fund.
+- **„ja bitte"** (PII-Redaktion) | 2026-10-13 | (mountain 340) — Schicht 1 (HEAD redigiert) ausgeführt; Schicht 2 = History-Rewrite im stillen Fenster.
 
 ## Abschluss
 
