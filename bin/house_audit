@@ -34,7 +34,16 @@ EXCL2=":(exclude)src/gate/commit_gate_vocab.json"
 EXCL3=":(exclude)bin/house_audit"
 EXCL4=":(exclude)docs/concepts/tool-forms.md"
 
-PII='Corneliweg|0162 8665608|johannes\.tyroller@proton\.me|nouseforaname0815|79875 Dachsberg'
+# Die PII-Muster sind privat und nie getrackt: state/pii-patterns.txt ist die
+# Primaerquelle (eine Zeile, alternierte Muster). Fehlt sie, wird die pii-Klasse
+# benannt uebersprungen — kein stilles Null.
+PII_FILE="$(git rev-parse --show-toplevel 2>/dev/null)/state/pii-patterns.txt"
+PII=""
+if [ -f "$PII_FILE" ]; then
+    IFS= read -r PII < "$PII_FILE" || PII=""
+else
+    echo "house_audit: pii class skipped — state/pii-patterns.txt absent (the pattern list is private, never tracked)" >&2
+fi
 IDENT='Archiver|Mathematician'
 SPEC='vermutlich|probably|likely|scheinbar|anscheinend|ich denke|ich nehme an'
 
@@ -58,7 +67,7 @@ emit() {
     done
 }
 
-p="$(emit pii "$PII")"
+if [ -n "$PII" ]; then p="$(emit pii "$PII")"; else p=""; fi
 i="$(emit ident "$IDENT")"
 
 [ -n "$p" ] && { echo "== pii (nie getrackt) =="; printf '%s\n' "$p"; hits=1; }
