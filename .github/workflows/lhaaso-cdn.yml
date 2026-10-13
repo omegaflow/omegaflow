@@ -28,7 +28,7 @@ jobs:
           mkdir -p kernels
           curl -sSfL --retry 3 --max-time 600 \
             -o kernels/lhaaso_sky1.csv \
-            "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,N0&-out.max=100000" \
+            "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,Comp,N0&-out.max=100000" \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "lhaaso-cdn: the ASU-TSV returned void" \
                  "curl on vizier.cds.unistra.fr did not reach J/ApJS/271/25. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
