@@ -2,7 +2,7 @@
   title: Rätsel-Master-Matrix — Impact · Aufwand · Erfüllung · Machbarkeit
   class: survey
   date: 2026-10-13
-  sha256: effd784ec06d1c21b90c3f05a97901753a5fa1890c493fb10e547323d165a76d
+  sha256: 0f80cee71f04c283b91f88327e763ea744b9f6faa2a2176ad5fbb22a27b6d045
   status: live
   see-also: docs/surveys/survey-2026-10-13-grosse-raetsel-und-maschine.md docs/surveys/survey-raetsel-bestand.md docs/concepts/die-weberin.md docs/concepts/kybernetische-astrophysik.md
 -->
@@ -15,6 +15,8 @@ sich überschneiden**. Denn ein einziger geflochtener Faden speist viele Nadeln.
 **Ehrlichkeits-Vermerk.** *Erfüllung* ist aus dem Rätsel-Bestand und den gebauten Proben
 gemessen (Werkzeug? Kanäle? Verdikt?). *Impact* und *Aufwand* sind **Einschätzung** (Urteil),
 keine Messung — sie sind als solche markiert. Ein Symbol, keine Note.
+**Nachtrag (gemessen):** die Fehlt-Spalten in A/B sind durch **Abschnitt C′** (Register-Messung
+2026-10-13) **korrigiert** — sie waren zu pessimistisch; fast alle Fäden sind schon im Haus.
 
 ## Legende
 
@@ -102,6 +104,58 @@ sie sind wenige Familien, die je viele Nadeln tragen:
 
 **Der Befund:** Ein **Dutzend Familien** deckt alle Nadeln. Wer **einen** Kanal baut, schließt
 oft **drei bis fünf** Nadeln zugleich. Die Arbeit ist nicht „30 Rätsel", sondern **~12 Fäden**.
+
+---
+
+## C′ · Gemessen am Register (2026-10-13, `phi/sources.φ`) — was WIRKLICH da ist
+
+Die Fehlt-Spalten in A/B sind **korrigiert durch diese Messung** (sie waren zu pessimistisch).
+Gemessen über `sgrep` im Register:
+
+| Familie | gemessene Schlüssel (Beispiel) | Stand |
+|---|---|---|
+| **Magnetometer Boden** | `intermagnet_xyz_{x,y,z}_nt` (462 Felder, 154 Stationen) | 🟢 da |
+| **Swarm** | `swarm_fac_uam2`, `swarm_ion_density_cm3`, `swarm_electron_temp_k` … | 🟢 da |
+| **CHAMP** | `champ_thermosphere_density_kgm3`, `champ_absolute_vertical_tec_tecu` … | 🟢 da |
+| **THEMIS Bodenmagnetometer** | `themis_gmag_{h,e,z}_nt` | 🟢 da |
+| **MMS in-situ** | `mms1_edp_e{x,y,z}_gse_mvm` … | 🟢 da |
+| **Indizes** | `magnetosphere_kp_3h` (Kp) · `wdc_dst_nt` · `wdc_sym_h_nt` · `wdc_ae_al_nt` · `solar_f107_flux_sfu` | 🟢 da |
+| **Sonnen-EUV** | `aia_*` (280 Felder, SDO AIA) | 🟢 da |
+| **Helioseismologie** | `gong_modes.bin` (GONG) | 🟢 da |
+| **Flares** | `solar_flare_xray_intensity` · `goes_xrs_xrsa/b` | 🟢 da |
+| **Sonnenwind** | `omni_*` (29) | 🟢 da |
+| **Strahlung (SEP + Gürtel)** | `radiation_proton_flux_differential` · `radiation_electron_flux_2mev` | 🟢 da |
+| **Neutronenmonitor** | `cosmic_neutron_flux_oulu` · `oulu_neutron_corr_for_eff` | 🟢 da |
+| **Multimessenger GW** | `gracedb.ligo.org/api/superevents` | 🟢 da |
+| **CMB** | `cmb_planck_smica_n64.json` (Planck) | 🟢 da |
+| **HI** | `ebhis_hpx190.bin` + `ebhis_compiler` | 🟢 da |
+| **Exoplaneten-Wirte** | `exo_stellarhost_teff_k` (stellarhosts TAP) | 🟢 da |
+| **Photosphären-Magnetogramm** | `hmi`/`magnetogram` = **0** | 🔴 **fehlt** |
+| **Sonnenfleckenzahl** | `sunspot`/`ssn` = **0** | 🔴 **fehlt** |
+| **Stellar-Aktivität (XUV, log R'HK)** | `xuv`/`rhk`/`ca_hk` = **0** | 🔴 **fehlt** |
+| **Schwache Linsen / Shear-Karten** | `lensing`/`shear` = **0** | 🔴 **fehlt** |
+| **IceCube / Neutrino / Auger (Kanäle)** | `neutrino`/`icecube`/`auger`/`skymap` = **0 Felder** (Code-Routen gebaut) | 🔴 **fehlt** |
+| **21 cm / EDGES** | `21cm` = **0** | 🔴 **fehlt** |
+| **Pulsar-Timing (PTA)** | = **0** | 🔴 **fehlt** |
+| **TGF-Kanal (Blitz/VLF)** | = **0** | 🔴 **fehlt** |
+| **Wolkenbedeckung (Svensmark)** | = **0** | 🔴 **fehlt** |
+| **VLF/ULF-Wellen (Van-Allen)** | = **0** | 🔴 **fehlt** |
+
+**Der gemessene Befund — die Überraschung:** Von den 12 Familien sind **fast alle schon im Haus**.
+Die *wirklich* fehlenden Fäden sind eine **kurze Liste von acht**:
+
+1. **Photosphären-Magnetogramm** (HMI) + 2. **Sonnenfleckenzahl** → schließen **Koronale
+   Heizung** und **Sonnen-Dynamo** (EUV/Helioseismologie/f107 sind schon da).
+3. **Stellar-Aktivität (XUV, log R'HK)** → schließt **Biosignatur** und **Radius-Tal**.
+4. **Schwache Linsen / Shear + Distanzleiter** → schließt **Hubble** und **S8** (Planck-CMB
+   ist schon da; es fehlt die zweite Linie).
+5. **IceCube / Auger / Neutrino-Kanäle** → schließt **Multimessenger** (LIGO-GW ist da).
+6. **21 cm / EDGES** · **PTA/Pulsar-Timing** → die beiden Einzel-Spektren (dünn).
+7. **TGF-Kanal** (Blitz/VLF) · **Wolkenbedeckung** (Svensmark) · **VLF/ULF-Wellen** (Gürtel).
+
+Alles andere — Magnetometer, Indizes, EUV, Flares, Sonnenwind, Strahlung, Neutronenmonitor,
+GW, CMB, HI, Exoplaneten-Wirte — **ist registriert**. Die Arbeit ist damit **noch kleiner** als
+die Matrix vorher zeigte: es sind **~8 Fäden**, und jeder speist mehrere Nadeln.
 
 ---
 
