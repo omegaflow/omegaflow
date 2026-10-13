@@ -964,7 +964,7 @@ format impc_roti
 origin https://data.impc.dlr.de/roti/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL/latest/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL_latest_D.json
 compiler tools/harvest/src/bin/impc_roti_compiler.rs
 at earth
-ttl 3600
+ttl 60
 quantity impc_roti_tecu_min impc_roti_tecu_min inverse-square scale TECU/min 60 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/d20_thermocline.csv
@@ -2010,7 +2010,7 @@ format ephemeris_epm
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
-ttl 86400
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_jupiter.bin
 terms free-open https://iaaras.ru/en/usage/
@@ -2018,7 +2018,7 @@ format ephemeris_epm
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
-ttl 86400
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_mars.bin
 terms free-open https://iaaras.ru/en/usage/
@@ -2026,7 +2026,7 @@ format ephemeris_epm
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
-ttl 86400
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_mercury.bin
 terms free-open https://iaaras.ru/en/usage/
@@ -2034,7 +2034,7 @@ format ephemeris_epm
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
-ttl 86400
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_moon.bin
 terms free-open https://iaaras.ru/en/usage/
@@ -2042,7 +2042,7 @@ format ephemeris_epm
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
-ttl 86400
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_neptune.bin
 terms free-open https://iaaras.ru/en/usage/
@@ -2050,7 +2050,7 @@ format ephemeris_epm
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
-ttl 86400
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_saturn.bin
 terms free-open https://iaaras.ru/en/usage/
@@ -2058,7 +2058,7 @@ format ephemeris_epm
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
-ttl 86400
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_sun.bin
 terms free-open https://iaaras.ru/en/usage/
@@ -2066,7 +2066,7 @@ format ephemeris_epm
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
-ttl 86400
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_uranus.bin
 terms free-open https://iaaras.ru/en/usage/
@@ -2074,7 +2074,7 @@ format ephemeris_epm
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
-ttl 86400
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_venus.bin
 terms free-open https://iaaras.ru/en/usage/
@@ -2082,7 +2082,7 @@ format ephemeris_epm
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
-ttl 86400
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ftp.imcce.fr/ephemeris_inpop_mercury.bin
 terms etalab-2.0 https://seop.obspm.fr/en/terms/
@@ -29952,10 +29952,10 @@ record gmr1
 no-cadence
 
 url https://www.jma.go.jp/bosai/quake/data/list.json
-witness point-event
-record erbq
-force seismic-body
-no-cadence
+terms CC-BY-4.0 https://www.jma.go.jp/jma/en/copyright.html
+ttl 600
+on earth 35.68 139.69 0
+last mag geosphere_earthquakes_jma_recent_mag erfc seismic-surface Mw 60.0 0.0 0.0
 
 url https://zenodo.org/api/records/15179114/files/data.zip/content
 witness substance
@@ -30015,20 +30015,3 @@ compiler tools/harvest/src/bin/ckan_coverage.rs
 format coverage_manifest
 at earth
 ttl 604800
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
