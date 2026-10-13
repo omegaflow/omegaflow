@@ -2669,7 +2669,7 @@ fn print_arm(role: &str, arm: &Arm, load: &ArmLoad) {
             field,
             series,
         } => println!(
-            "ARM {role:<6} {} {} | format {} | force {} unit {} | n = {} | {}",
+            "ARM {role:<6} {} {} | format {} | force {:?} unit {} | n = {} | {}",
             arm.name,
             arm.state.name(),
             source.format,
