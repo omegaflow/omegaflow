@@ -3,7 +3,7 @@
   session: River-Linie (river-203/204) — QN-Alias-Enforcement + δn-Diagnose gebaut (ConstraintRegistry, from_specs-Alias-/Region-Enforcement, charge_imbalance; cargo check 0/0); mycelium-337 omni2-Block gefaltet; Newell-Doppelregistrierung als tokenisierter `## An mountain`-Block gesetzt — von Mountain gefaltet/geheilt (`1dd4e3549`); **river-204:** gemessen, dass die gemessenen CHAMP-Dichte-Kanäle schon registriert sind (Neutral `champ_thermosphere_density_kgm3`, geladen `champ_plpt_electron_density_cm3`, Wind `champ_thermosphere_crosswind_ms`) — der Rat-Dichte-Weg (IRI/NRLMSISE/IGRF) ist Modell und überholt; die Produktions-Naht `ChannelCouplingLayer::from_sources` gebaut (channels + couplings + constraints aus Sources + Register), `cargo check` 0/0; folge202 konsumiert/archiviert; **river-205:** Spezies-Achse gebaut (`species: Option<String>` Descriptor-Achse in `hash`/`PartialEq` + `m^-3` in `unit_token` + `species <token>` in der `channel`-Direktive; DE-2-N2-Kanal entkollidiert vom CHAMP-Gesamtdichte-Kanal, `cargo check` 0/0), CINDI-NWM-Zugangsweg gemessen (UTD Hanson Center, kein offenes NWM-Archiv) + Anfrage-Entwurf an die Kante (`state/mail/2026-10-13-cindi-nwm-anfrage-entwurf.md`, nicht gesendet)
   class: handover
   date: 2026-10-13
-  sha256: 6106c7b6193fa4693f667a5293949e7fc74da6e82222013e9d775f70ba9c4d42
+  sha256: b53728a444f770ac50de52241a6aa2b776c9e501e6e600fb20634bb4de2fc16e
   status: live
 -->
 # Handover — River-Folge 203 (2026-10-13)
