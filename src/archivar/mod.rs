@@ -80,6 +80,7 @@ pub mod euvs;
 pub mod eve;
 pub mod exclude;
 pub mod f107;
+pub mod fdsn_event;
 pub mod fermi_4lac;
 pub mod fink;
 pub mod fink_cutout;

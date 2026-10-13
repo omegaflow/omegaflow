@@ -3217,6 +3217,7 @@ pub fn main_flow() {
                     | "eve"
                     | "agrav"
                     | "fermi_4lac"
+                    | "fdsn_event"
                     | "pds4_acs_nir"
                     | "vlf_awesome"
             ) {

@@ -10166,14 +10166,6 @@ field argo_dac_bgc_chla_mg_m3 argo_dac_bgc_chla_mg_m3 erfc diffusion mg/m3 60480
 field argo_dac_bgc_bbp700_m1 argo_dac_bgc_bbp700_m1 erfc diffusion m-1 604800 0.0 0.0
 field argo_dac_bgc_ph_total argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/data-argo.ifremer.fr/argo_bgc.bin
-terms CC-BY-4.0 https://www.seanoe.org/data/00311/42182/
-origin https://www.seanoe.org/data/00311/42182/
-format argo_bgc
-compiler tools/harvest/src/bin/argo_bgc_profile_compiler.rs
-at earth
-ttl 604800
-
 url https://github.com/omegaflow/sources/releases/download/data.cnra.ca.gov/ckan_coverage.manifest
 terms CC-BY-4.0 https://data.cnra.ca.gov/
 origin https://data.cnra.ca.gov/api/3/action/package_search
@@ -10453,6 +10445,18 @@ compiler tools/harvest/src/bin/gaia_xp_compiler.rs
 at sun
 ttl 604800
 field flux gaia_xp_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/geofon.gfz-potsdam.de/fdsn_event.bin
+terms CC-BY-4.0 https://geofon.gfz.de/eqinfo/faq/
+origin https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=xml&limit=20000
+format fdsn_event
+compiler tools/harvest/src/bin/fdsn_event_compiler.rs
+at earth
+ttl 604800
+field latitude fdsn_event_latitude_deg inverse-square em deg 604800 0.0 0.0
+field longitude fdsn_event_longitude_deg inverse-square em deg 604800 0.0 0.0
+field depth_m fdsn_event_depth_m inverse-square em m 604800 0.0 0.0
+field magnitude fdsn_event_magnitude inverse-square em 1 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/glm_l1b.bin
 terms PD https://www.earthdata.nasa.gov/
