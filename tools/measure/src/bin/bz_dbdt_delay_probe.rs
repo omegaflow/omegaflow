@@ -330,7 +330,11 @@ fn corr_block_se(
         sum_dev += d * d;
     }
     let se = (((kept - 1) as f64 / kept as f64) * sum_dev).sqrt();
-    if se.is_finite() { Some((r, se, m)) } else { None }
+    if se.is_finite() {
+        Some((r, se, m))
+    } else {
+        None
+    }
 }
 
 fn driver_block_length(driver: &[Option<f32>], cap: usize) -> Option<usize> {
@@ -561,7 +565,11 @@ fn main() {
         println!(
             "calibrated critical value: M_(1-{ALPHA}) = {crit:.4} over {} studentized surrogates | the observed Z {} the {:.0}% bound",
             m_vals.len(),
-            if obs_z >= crit { "exceeds" } else { "stays within" },
+            if obs_z >= crit {
+                "exceeds"
+            } else {
+                "stays within"
+            },
             (1.0 - ALPHA) * 100.0
         );
         println!(

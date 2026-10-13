@@ -167,7 +167,9 @@ fn main() {
     let stations_spec = match arg_value(&args, "--stations") {
         Some(v) => v,
         None => {
-            eprintln!("mag_optical_overlay needs --stations <code,...> — the station set is named, never defaulted");
+            eprintln!(
+                "mag_optical_overlay needs --stations <code,...> — the station set is named, never defaulted"
+            );
             std::process::exit(2);
         }
     };

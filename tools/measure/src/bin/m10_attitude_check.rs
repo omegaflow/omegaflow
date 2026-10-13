@@ -99,7 +99,10 @@ fn main() {
     match load(&m10_path) {
         Some(e) => {
             if let Some((lo, hi)) = coverage_jd(&e) {
-                eprintln!("mariner10: {} granules, JD {lo:.3}..{hi:.3}", e.granules.len());
+                eprintln!(
+                    "mariner10: {} granules, JD {lo:.3}..{hi:.3}",
+                    e.granules.len()
+                );
             }
             eph.insert("mariner10".into(), e);
         }
@@ -131,7 +134,11 @@ fn main() {
         .iter()
         .filter(|f| f.jd >= m10_lo && f.jd <= m10_hi)
         .collect();
-    println!("M1 frames inside the M10 coverage: {} (of {} total)", m1.len(), frames.len());
+    println!(
+        "M1 frames inside the M10 coverage: {} (of {} total)",
+        m1.len(),
+        frames.len()
+    );
     if m1.is_empty() {
         std::process::exit(1);
     }
@@ -160,7 +167,9 @@ fn main() {
         let vec = sub(sc, me);
         let s = [f.sx, f.sy, f.sz];
         let ds = norm(sub(vec, s));
-        let Some(dir) = unit(sub(me, sc)) else { continue };
+        let Some(dir) = unit(sub(me, sc)) else {
+            continue;
+        };
         let ra = ra_deg(dir);
         let dec = dec_deg(dir);
         let sep = angsep_deg(ra, dec, f.c1, f.c2);
@@ -224,8 +233,23 @@ fn main() {
     if let Some((fds, jd, vec, s, sc)) = worst {
         println!();
         println!("worst |vec-S| frame FDS {fds} JD {jd:.5}");
-        println!("  sc (M10 SSB)   [{:.1}, {:.1}, {:.1}] km", sc[0], sc[1], sc[2]);
-        println!("  vec (sc-me)    [{:.1}, {:.1}, {:.1}] km |vec| {:.1}", vec[0], vec[1], vec[2], norm(vec));
-        println!("  SXSYSZ (file)  [{:.1}, {:.1}, {:.1}] km |S| {:.1}", s[0], s[1], s[2], norm(s));
+        println!(
+            "  sc (M10 SSB)   [{:.1}, {:.1}, {:.1}] km",
+            sc[0], sc[1], sc[2]
+        );
+        println!(
+            "  vec (sc-me)    [{:.1}, {:.1}, {:.1}] km |vec| {:.1}",
+            vec[0],
+            vec[1],
+            vec[2],
+            norm(vec)
+        );
+        println!(
+            "  SXSYSZ (file)  [{:.1}, {:.1}, {:.1}] km |S| {:.1}",
+            s[0],
+            s[1],
+            s[2],
+            norm(s)
+        );
     }
 }

@@ -89,7 +89,7 @@ impl ZenithalRegrid {
                 }
                 (1.0 - r2).powf(-0.5)
             }
-            WcsProjection::Linear => return None,
+            WcsProjection::Linear | WcsProjection::Hpx => return None,
         };
         Some(self.tangent_pixel_sr * cell_area * projection)
     }
@@ -187,7 +187,7 @@ mod tests {
                     Some((1.0 - r2).powf(-0.5))
                 }
             }
-            WcsProjection::Linear => None,
+            WcsProjection::Linear | WcsProjection::Hpx => None,
         }
     }
 

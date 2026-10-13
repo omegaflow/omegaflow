@@ -1,7 +1,7 @@
 use std::env;
 use std::fs;
 use std::path::PathBuf;
-use std::process::{exit, Command};
+use std::process::{Command, exit};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 fn usage() -> ! {
@@ -86,10 +86,7 @@ fn build_target(
             target.push(block.clone());
             continue;
         }
-        if let Some(base_block) = base_blocks
-            .iter()
-            .find(|b| b.first() == block.first())
-        {
+        if let Some(base_block) = base_blocks.iter().find(|b| b.first() == block.first()) {
             target.push(base_block.clone());
         }
     }

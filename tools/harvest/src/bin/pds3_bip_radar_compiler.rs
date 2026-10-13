@@ -58,9 +58,7 @@ fn reshuffle_interleaved(bytes: &[u8], meta: &ImgMeta) -> Result<Vec<u8>, String
     let samples = meta
         .line_samples
         .ok_or("LINE_SAMPLES absent — the raster stays unread")?;
-    let bands = meta
-        .bands
-        .ok_or("BANDS absent — the raster stays unread")?;
+    let bands = meta.bands.ok_or("BANDS absent — the raster stays unread")?;
     let bits = meta
         .sample_bits
         .ok_or("SAMPLE_BITS absent — the raster stays unread")?;
@@ -132,7 +130,13 @@ fn reshuffle_interleaved(bytes: &[u8], meta: &ImgMeta) -> Result<Vec<u8>, String
     Ok(out)
 }
 
-fn print_register_lines(asset: &str, label_spec: &str, img_spec: &str, sha: &str, raster: &ImgRaster) {
+fn print_register_lines(
+    asset: &str,
+    label_spec: &str,
+    img_spec: &str,
+    sha: &str,
+    raster: &ImgRaster,
+) {
     println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{asset}");
     println!("terms PD https://pds-geosciences.wustl.edu/");
     println!("format {FORMAT}");
@@ -157,8 +161,9 @@ fn compile(
         fetch_or_read(label_spec).ok_or_else(|| format!("label fetch void ({label_spec})"))?;
     let label_text =
         std::str::from_utf8(&label_bytes).map_err(|_| format!("label not utf8 ({label_spec})"))?;
-    let storage = storage_type(label_text)
-        .ok_or_else(|| format!("{label_spec}: BAND_STORAGE_TYPE absent — the raster stays unread"))?;
+    let storage = storage_type(label_text).ok_or_else(|| {
+        format!("{label_spec}: BAND_STORAGE_TYPE absent — the raster stays unread")
+    })?;
     if storage != STORAGE {
         return Err(format!(
             "{label_spec}: BAND_STORAGE_TYPE {storage} is not {STORAGE} — this arm reads only sample-interleaved radar products"
@@ -169,7 +174,8 @@ fn compile(
     let img_bytes =
         fetch_or_read(img_spec).ok_or_else(|| format!("image fetch void ({img_spec})"))?;
     let shuffled = reshuffle_interleaved(&img_bytes, &meta)?;
-    let raster = decode_raster(&shuffled, &meta).map_err(|e| format!("{img_spec}: {}", e.reason()))?;
+    let raster =
+        decode_raster(&shuffled, &meta).map_err(|e| format!("{img_spec}: {}", e.reason()))?;
     if raster.values.iter().all(|v| v.is_none()) {
         return Err(format!(
             "{img_spec}: no sample survived — the image stays unwritten (0 honored)"
@@ -202,7 +208,10 @@ fn compile(
     }
     std::fs::write(&out_path, &bin).map_err(|e| format!("write {out_path} void: {e}"))?;
     let sha = sha256_hex(&bin);
-    eprintln!("{out_path}: {} byte(s), sha256 {sha}, roundtrip holds", bin.len());
+    eprintln!(
+        "{out_path}: {} byte(s), sha256 {sha}, roundtrip holds",
+        bin.len()
+    );
     print_register_lines(&asset, label_spec, img_spec, &sha, &raster);
     if ci_mode && !upload_release(NETLOC, &out_path) {
         return Err(format!("{out_path}: the CDN upload returned void"));
@@ -308,6 +317,9 @@ mod tests {
     #[test]
     fn storage_type_reads_the_label_directive() {
         assert_eq!(storage_type(BIP_SAMPLE_LABEL).as_deref(), Some(STORAGE));
-        assert_eq!(storage_type("BAND_STORAGE_TYPE = BAND_SEQUENTIAL\n"), Some("BAND_SEQUENTIAL".to_string()));
+        assert_eq!(
+            storage_type("BAND_STORAGE_TYPE = BAND_SEQUENTIAL\n"),
+            Some("BAND_SEQUENTIAL".to_string())
+        );
     }
 }
