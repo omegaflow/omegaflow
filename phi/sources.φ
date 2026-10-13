@@ -14406,6 +14406,20 @@ field 21 bk18_p217xp217_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
 field 22 bk18_p353xp353_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
 field 23 bk18_p353xp353_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/casda.csiro.au/lotss_dr2.votable
+terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
+origin https://casda.csiro.au/casda_vo_tools/tap/sync
+format tap
+at sun
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/cddis.nasa.gov/iers_eop.bin
+terms PD https://cddis.nasa.gov/
+origin https://cddis.nasa.gov/archive/products/iers/
+format ascii
+at earth
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format catalog_des_y6
@@ -14541,6 +14555,20 @@ field bgr_infrasound_back_azimuth_deg bgr_infrasound_back_azimuth_deg inverse-sq
 field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms inverse-square acoustic m/s 300 0.0 0.0
 field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa inverse-square acoustic pa 300 0.0 0.0
 field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz inverse-square acoustic hz 300 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/fermi.gsfc.nasa.gov/table_4LAC.fits
+terms PD https://fermi.gsfc.nasa.gov/
+origin https://fermi.gsfc.nasa.gov/ssc/data/access/lat/4LACDR3/table_4LAC.fits
+format fits
+at sun
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/firms.modaps.eosdis.nasa.gov/MODIS_C6_1_Global_7d.csv
+terms PD https://firms.modaps.eosdis.nasa.gov/
+origin https://firms.modaps.eosdis.nasa.gov/data/active_fire/modis-c6.1/csv/MODIS_C6_1_Global_7d.csv
+format csv
+at earth
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_earth.bin
 terms free-open https://iaaras.ru/en/usage/
@@ -18740,6 +18768,13 @@ format reference
 terms PD https://naif.jpl.nasa.gov/naif/rules.html
 origin https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/satellites/ura184_part-3.bsp
 sha256 273cd4ccc470d1098562cd4e94fa48fc2b4c6b1c2896308e473c949b87937c53
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/WMM2025COF.zip
+terms PD https://www.ncei.noaa.gov/
+origin https://www.ncei.noaa.gov/sites/default/files/2024-12/WMM2025COF.zip
+format ascii
+at earth
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/woa23_ocean_temp_salinity.nc
@@ -28493,6 +28528,13 @@ compiler tools/harvest/src/bin/bepicolombo_plasma_compiler.rs
 at sun
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/bl_narrowband_snr.json
+terms CC-BY-4.0 https://zenodo.org/records/7600403
+origin https://zenodo.org/api/records/7600403
+format json
+at sun
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/dawn_linefluxes.fits
 terms CC-BY-4.0 https://zenodo.org/records/22734795
 origin https://zenodo.org/api/records/22734795/files/djapipes_default_v4.6.0.linefluxes.fits/content
@@ -29036,6 +29078,13 @@ field JADES-GS-z13-0/data_f356w.0.mean JADES-GS-z13-0/data_f356w.0.mean inverse-
 field JADES-GS-z13-0/data_f410m.0.mean JADES-GS-z13-0/data_f410m.0.mean inverse-square em njy 33554432.0 0.0 0.0 7.343826e+13
 field JADES-GS-z13-0/data_f444w.0.mean JADES-GS-z13-0/data_f444w.0.mean inverse-square em njy 33554432.0 0.0 0.0 6.806790e+13
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/joint-crab-v0.1.zip
+terms BSD-3-Clause-Clear https://zenodo.org/records/2381863
+origin https://zenodo.org/api/records/2381863/files/open-gamma-ray-astro/joint-crab-v0.1.zip/content
+format magic_dl3
+at sun
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/jwstcomet-v1.1.zip
 terms MIT https://zenodo.org/records/20610727
 origin https://zenodo.org/api/records/20610727/files/apertureSynthesis/jwstComet-v1.1.zip/content
@@ -29071,6 +29120,13 @@ origin https://zenodo.org/api/records/7818557/files/APOLLO_2006_2020.crd/content
 compiler tools/harvest/src/bin/llr_compiler.rs
 sha256 f2b3afdc0a20f55eb07afbc52c97f189b39712ba1bb656c46c47d5cce47b74de
 at moon
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/mars_dust_cdod.json
+terms CC-BY-4.0 https://zenodo.org/records/5517308
+origin https://zenodo.org/api/records/5517308
+format json
+at mars
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/mcpherron_onsets.bin
