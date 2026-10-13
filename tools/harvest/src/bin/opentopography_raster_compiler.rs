@@ -9,9 +9,8 @@ use std::fs;
 use std::path::Path;
 
 const NETLOC: &str = "topex.ucsd.edu";
-const URL: &str = "https://topex.ucsd.edu/pub/srtm15_plus/SRTM15_V2.5.5.nc";
+const URL: &str = "https://topex.ucsd.edu/pub/srtm15_plus/SRTM15_V2.6.nc";
 const COMPILER: &str = "tools/harvest/src/bin/opentopography_raster_compiler.rs";
-const FORMAT: &str = "srtm";
 const MAGIC: [u8; 4] = *b"SRTM";
 const VAR: &str = "z";
 const REC_BYTES: usize = 24;
@@ -24,7 +23,7 @@ const ELEV_MAX_M: f64 = 9000.0;
 fn usage() -> &'static str {
     "usage: opentopography_raster_compiler --bbox <south,north,west,east> --out <path> \
      [--url <srtm15.nc>] [--stride <n>] [--limit <n>] [--ci-mode]  — the OpenTopography \
-     SRTM15+ V2.5.5 netCDF-4 grid, read over HTTP range; the elevation grid within the \
+     SRTM15+ V2.6 netCDF-4 grid, read over HTTP range; the elevation grid within the \
      bbox is written as a gestalt witness (magic SRTM: lat, lon, elev)"
 }
 
@@ -307,10 +306,13 @@ fn run(args: &[String]) -> Result<(), String> {
     );
 
     println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}");
-    println!("format {FORMAT}");
+    println!("witness gestalt");
+    println!("record srtm");
     println!("origin {url}");
     println!("compiler {COMPILER}");
     println!("sha256 {}", sha256_hex(&bin));
+    println!("at earth");
+    println!("no-cadence");
 
     if ci_mode && !upload_release(NETLOC, &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));

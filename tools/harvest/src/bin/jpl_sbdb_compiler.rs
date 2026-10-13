@@ -1,3 +1,4 @@
+use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 use omegaflow::json::{JsonVal, parse_json};
 use omegaflow::mpcorb::{
@@ -306,6 +307,23 @@ fn main() {
         "jpl_sbdb: {parsed} of {records} records parse back, {} B -> {out_path}",
         buf.len()
     );
+    let name = match std::path::Path::new(&out_path)
+        .file_name()
+        .and_then(|n| n.to_str())
+    {
+        Some(n) => n,
+        None => {
+            eprintln!("{out_path}: carries no file name");
+            std::process::exit(1);
+        }
+    };
+    println!("url https://github.com/omegaflow/sources/releases/download/{CDN_TAG}/{name}");
+    println!("format catalog_mpcorb");
+    println!("origin {BASE_URL}");
+    println!("compiler tools/harvest/src/bin/jpl_sbdb_compiler.rs");
+    println!("sha256 {}", sha256_hex(&buf));
+    println!("at sun");
+    println!("ttl 86400");
     if ci_mode && !upload_release(CDN_TAG, &out_path) {
         eprintln!("jpl_sbdb: upload {out_path} did not reach the CDN");
         std::process::exit(1);

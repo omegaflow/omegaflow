@@ -490,6 +490,22 @@ fn run_out_bin(args: &[String]) -> Result<(), String> {
         ),
         None => return Err(format!("{out_path}: roundtrip parse returned void")),
     }
+    let name = match std::path::Path::new(&out_path)
+        .file_name()
+        .and_then(|n| n.to_str())
+    {
+        Some(n) => n,
+        None => return Err(format!("{out_path}: carries no file name")),
+    };
+    println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}");
+    println!("format cosmic_ro");
+    println!(
+        "origin https://data.gesdisc.earthdata.nasa.gov/data/GNSSRO/{PRODUCT}.2.0/<YYYY>/<MM>/<DD>/<granule>.nc4"
+    );
+    println!("compiler tools/harvest/src/bin/gesdisc_gnssro_compiler.rs");
+    println!("sha256 {digest}");
+    println!("at earth");
+    println!("ttl 604800");
     if ci_mode && !upload_release(NETLOC, &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }
