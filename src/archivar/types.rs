@@ -406,10 +406,10 @@ pub const PRESENCE_FLAG_FLUX: f64 = 8.0;
 pub const PRESENCE_FLAG_QUANTITY: f64 = 16.0;
 
 pub fn wire_channel_ref(channel_ref: Option<f64>) -> f64 {
-    match channel_ref {
-        Some(channel_ref) => channel_ref,
-        None => 0.0,
-    }
+    let Some(channel_ref) = channel_ref else {
+        return 0.0;
+    };
+    channel_ref
 }
 
 impl FieldConfig {
