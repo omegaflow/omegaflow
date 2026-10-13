@@ -196,6 +196,7 @@ pub struct OmegaLoop {
     pub probe_omega: [f32; 9],
     pub prev_probe_omega: [f32; 9],
     pub channels: Option<super::channel::ChannelRegistry>,
+    pub couplings: Option<crate::archivar::parse::ChannelCouplingLayer>,
     pub probe_flow: [f32; 3],
     pub probe_r: [f32; CHANNEL_CAP],
     pub probe_u: [f32; CHANNEL_CAP],
@@ -319,6 +320,7 @@ impl OmegaLoop {
             probe_omega: [0.0; 9],
             prev_probe_omega: [0.0; 9],
             channels: None,
+            couplings: None,
             probe_flow: [0.0; 3],
             probe_r: [0.0; CHANNEL_CAP],
             probe_u: [0.0; CHANNEL_CAP],
@@ -398,6 +400,20 @@ impl OmegaLoop {
                 if shifted.is_finite() && shifted > 0.0 {
                     partials_hz[k] = shifted as f32;
                 }
+            }
+        }
+        if let Some(layer) = &self.couplings {
+            let mut deltas = [0.0f32; CHANNEL_CAP];
+            for c in layer.couplings.pairs() {
+                if let Some((i, from_delta, j, to_delta)) =
+                    layer.couplings.exchange_resolved(c, &omega, registry)
+                {
+                    deltas[i] += from_delta;
+                    deltas[j] += to_delta;
+                }
+            }
+            for (k, d) in deltas.iter().enumerate() {
+                omega[k] += *d;
             }
         }
         PresenceFrame {
@@ -2046,6 +2062,7 @@ pub fn run_loop(
 ) {
     let mut loop_ = OmegaLoop::new(rx, req_tx, res_rx, shutdown.clone(), ctx);
     loop_.channels = Some(channels);
+    loop_.couplings = Some(crate::archivar::parse::load_channel_coupling_layer());
     loop_.init_gpu();
     while !shutdown.load(Ordering::SeqCst) {
         let t0 = std::time::Instant::now();

@@ -2489,6 +2489,18 @@ impl ChannelCouplingLayer {
     }
 }
 
+pub fn load_channel_coupling_layer() -> ChannelCouplingLayer {
+    match std::fs::read_to_string("phi/sources.φ") {
+        Ok(content) => ChannelCouplingLayer::from_sources(&parse_sources(&content), &content),
+        Err(reason) => {
+            eprintln!(
+                "channel couplings absent: phi/sources.φ not read ({reason}) — the layer is empty, no coupling applied"
+            );
+            ChannelCouplingLayer::from_sources(&[], "")
+        }
+    }
+}
+
 #[cfg(feature = "browser_relay")]
 pub fn parse_path(s: &str) -> String {
     let Some(fl) = s.lines().next() else {
