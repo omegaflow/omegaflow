@@ -14531,7 +14531,7 @@ at earth
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound.bin
-terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
+terms CC-BY-NC-SA-4.0 https://doi.org/10.25928/bgrseis_bbhf-ifsd
 format bgr_infrasound
 origin https://download.bgr.de/bgr/geophysik/Infrasound_hf_product/netCDF/BGR_infrasound_hf_product.zip
 compiler tools/harvest/src/bin/bgr_infrasound_compiler.rs
@@ -28015,17 +28015,6 @@ plx plx
 radvel rv
 rv_scale 1000.0
 field rv harps_rv_km_s gaussian-inverse-square advective km/s 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/irsf_ii288.json
-terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=II/288/out
-format json
-at sun
-no-cadence
-cmap .
-ra ra
-dec dec
-field Jmag irsf_j_mag inverse-square em mag 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/lmxbdata.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
