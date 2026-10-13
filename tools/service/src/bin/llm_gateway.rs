@@ -119,6 +119,27 @@ const ROUTES: &[Route] = &[
         key_env: "OPENCODE_API_KEY",
         auth_id: "opencode",
     },
+    Route {
+        prefix: "inception",
+        provider: "Inception",
+        base_url: "https://api.inceptionlabs.ai/v1",
+        key_env: "INCEPTION_API_KEY",
+        auth_id: "inception",
+    },
+    Route {
+        prefix: "kenari",
+        provider: "Kenari",
+        base_url: "https://kenari.id/v1",
+        key_env: "KENARI_API_KEY",
+        auth_id: "kenari",
+    },
+    Route {
+        prefix: "unorouter",
+        provider: "UnoRouter",
+        base_url: "https://api.unorouter.com/v1",
+        key_env: "UNOROUTER_API_KEY",
+        auth_id: "unorouter",
+    },
 ];
 
 fn load_secrets() -> HashMap<String, String> {
