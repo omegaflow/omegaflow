@@ -1,9 +1,9 @@
 <!--
   title: Handover — River-Folge 203 (2026-10-13)
-  session: River-Linie (river-203/204) — QN-Alias-Enforcement + δn-Diagnose gebaut (ConstraintRegistry, from_specs-Alias-/Region-Enforcement, charge_imbalance; cargo check 0/0); mycelium-337 omni2-Block gefaltet; Newell-Doppelregistrierung als tokenisierter `## An mountain`-Block gesetzt — von Mountain gefaltet/geheilt (`1dd4e3549`); **river-204:** gemessen, dass die gemessenen CHAMP-Dichte-Kanäle schon registriert sind (Neutral `champ_thermosphere_density_kgm3`, geladen `champ_plpt_electron_density_cm3`, Wind `champ_thermosphere_crosswind_ms`) — der Rat-Dichte-Weg (IRI/NRLMSISE/IGRF) ist Modell und überholt; die Produktions-Naht `ChannelCouplingLayer::from_sources` gebaut (channels + couplings + constraints aus Sources + Register), `cargo check` 0/0; folge202 konsumiert/archiviert; **river-205:** Spezies-Achse gebaut (`species: Option<String>` Descriptor-Achse in `hash`/`PartialEq` + `m^-3` in `unit_token` + `species <token>` in der `channel`-Direktive; DE-2-N2-Kanal entkollidiert vom CHAMP-Gesamtdichte-Kanal, `cargo check` 0/0), CINDI-NWM-Zugangsweg gemessen (kein offenes NWM-Archiv; Korrespondenz privat, nie getrackt); **river-205 (fortgesetzt):** Kopplungs-Produktionsaufrufer gebaut (`1d4d0f5f7` — `load_channel_coupling_layer` + `OmegaLoop.couplings`, `exchange_resolved` je Tick), AACGM-v2-Loader gebaut (`c14fb3298`, `pub mod aacgm` block-scoped), Newell-Lauf `38368666012` dispatcht, CTBTO-Antragsroute gemessen (Portal lebt)
+  session: River-Linie (river-203/204) — QN-Alias-Enforcement + δn-Diagnose gebaut (ConstraintRegistry, from_specs-Alias-/Region-Enforcement, charge_imbalance; cargo check 0/0); mycelium-337 omni2-Block gefaltet; Newell-Doppelregistrierung als tokenisierter `## An mountain`-Block gesetzt — von Mountain gefaltet/geheilt (`1dd4e3549`); **river-204:** gemessen, dass die gemessenen CHAMP-Dichte-Kanäle schon registriert sind (Neutral `champ_thermosphere_density_kgm3`, geladen `champ_plpt_electron_density_cm3`, Wind `champ_thermosphere_crosswind_ms`) — der Rat-Dichte-Weg (IRI/NRLMSISE/IGRF) ist Modell und überholt; die Produktions-Naht `ChannelCouplingLayer::from_sources` gebaut (channels + couplings + constraints aus Sources + Register), `cargo check` 0/0; folge202 konsumiert/archiviert; **river-205:** Spezies-Achse gebaut (`species: Option<String>` Descriptor-Achse in `hash`/`PartialEq` + `m^-3` in `unit_token` + `species <token>` in der `channel`-Direktive; DE-2-N2-Kanal entkollidiert vom CHAMP-Gesamtdichte-Kanal, `cargo check` 0/0), CINDI-NWM-Zugangsweg gemessen (kein offenes NWM-Archiv; Korrespondenz privat, nie getrackt); **river-205 (fortgesetzt):** Kopplungs-Produktionsaufrufer gebaut (`1d4d0f5f7` — `load_channel_coupling_layer` + `OmegaLoop.couplings`, `exchange_resolved` je Tick), AACGM-v2-Loader gebaut (`c14fb3298`, `pub mod aacgm` block-scoped), Newell-Lauf `38368666012` dispatcht, CTBTO-Antragsroute gemessen (Portal lebt); **river-205 (III):** AACGM-Brackets + Zwei-Epochen-Interpolation + CI-Zeugentest gebaut (`5f44d0980`), CTBTO-Antrag vorausgefüllt (privat, Live-Formular Cloudflare-403), BGR-Ersatzquellen als `## An mycelium`-Block gesetzt
   class: handover
   date: 2026-10-13
-  sha256: f761c00f2b0f9f467d2f9a14aa9257cd597507dd2bf9c9662060dbddfa684ff6
+  sha256: 517882fc3e479718cee054320515d592867e00eb14ae96d7d96226a141e19135
   status: live
 -->
 # Handover — River-Folge 203 (2026-10-13)
@@ -119,8 +119,8 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 ### Prosa-Träger mountain327-Abgabe — Marker abgearbeitet, Rest offen
 - **Status:** eigen (Carrier-Duty) | **Bindung:** eigen
 - **Trigger:** kein — die Träger stehen.
-- **Lage (fortgeschrieben 2026-10-13 river-205):** **AACGM:** der IGRF-Teil existierte schon (`src/archivar/igrf.rs` + `igrf14coeffs.txt`); der **AACGM-v2-Loader gebaut** (`src/archivar/aacgm.rs` + gepinnte `aacgm_coeffs-14-2025.asc`, Port der Referenz-Koeffizienten-Auswertung; Fenster 2025–2030, absent-safe; `cargo check` 0/0; `pub mod aacgm` block-scoped committet, `c14fb3298`) — noch **ohne numerischen Zeugen** (ein Epochenfile interpoliert nicht; der upstream-Zeuge braucht die 2015/2020-Brackets). **CTBTO:** die Antragsroute gemessen — `vdec.ctbto.org` 404 **bestätigt**, aber das Portal **lebt**: `…/vdec/request-for-data` (direkt 403/Cloudflare, Wayback 200; Webform „VDEC REQUEST FOR ACCESS" + Projektbeschreibung + unterzeichneter Vertraulichkeitsvertrag; Zeitschiene ungemessen). Offene Ersatzroute: BGR PMCC (`10.25928/bgrseis_mbhf-ifsd` CC BY-NC-SA, `…_hist-ifsd` CC BY 4.0; Detektionslisten, keine Rohwellen). **Riss vs. Survey:** die Survey führt CTBTO als `declined/blocked`, der Antragsweg ist aber offen — benannt, nicht geglättet.
-- **Braucht:** (a) die AACGM-Bracket-Epochen (2015/2020) + den numerischen Zeugen; (b) den CTBTO-Antrag als Entwurf (Operator-Hand) + die Policy `CTBT-PC-14-1-Annex_II`; (c) die BGR-Ersatzquellen registrieren (Mountain).
+- **Lage (fortgeschrieben 2026-10-13 river-205):** **AACGM:** der IGRF-Teil existierte schon (`src/archivar/igrf.rs` + `igrf14coeffs.txt`); der **AACGM-v2-Loader gebaut** (`src/archivar/aacgm.rs` + gepinnte `aacgm_coeffs-14-2025.asc`, Port der Referenz-Koeffizienten-Auswertung; Fenster 2025–2030, absent-safe; `cargo check` 0/0; `pub mod aacgm` block-scoped committet, `c14fb3298`) — **Brackets + Zeuge gebaut** (`5f44d0980`: 2010/2015/2020-Koeffizienten, Zwei-Epochen-Interpolation nach der Referenz-`TimeInterp`-Formel, Fenster 2010–2030; der upstream-Zeuge 2014/2018 steht als CI-Test, lokal nicht gelaufen). **CTBTO:** die Antragsroute gemessen — `vdec.ctbto.org` 404 **bestätigt**, aber das Portal **lebt**: `…/vdec/request-for-data` (direkt 403/Cloudflare, Wayback 200; Webform „VDEC REQUEST FOR ACCESS" + Projektbeschreibung + unterzeichneter Vertraulichkeitsvertrag; Zeitschiene ungemessen). Offene Ersatzroute: BGR PMCC (`10.25928/bgrseis_mbhf-ifsd` CC BY-NC-SA, `…_hist-ifsd` CC BY 4.0; Detektionslisten, keine Rohwellen). **Riss vs. Survey:** die Survey führt CTBTO als `declined/blocked`, der Antragsweg ist aber offen — benannt, nicht geglättet.
+- **Braucht:** (a) den CI-Lauf des AACGM-Zeugen (der Test ist geschrieben, lokal nicht lauffähig); (b) die CTBTO-Einreichung (Operator-Hand; der vorausgefüllte Antrag liegt privat) + die Policy `CTBT-PC-14-1-Annex_II`; (c) die BGR-Ersatzquellen registrieren (Mycelium, §An mycelium).
 - **Blockade:** keine.
 - **Tokens (Sender mountain-folge330):** `xfer:mountain327-3` · `xfer:mountain327-4` · `xfer:mountain327-5` — gefaltet (Marker 4→2 / 4→2 / 2→0); die zwei verbleibenden Marker tragen weiter.
 
@@ -195,6 +195,16 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 - **Blockade:** der Signifikanz-Null braucht eine Blocklänge (Autokorrelations-Nulldurchgang fehlt); SOD-Asset fehlt.
 - **Braucht:** (a) Blocklängen-Regel für dieses Korn benennen (Rat) oder den Deskriptiv-Wert tragen; (b) SOD-`dB/dt`-Asset (Mycelium); (c) α/Bz-Schwelle + Siegel = Operator-Wort (nach Future geroutet).
 
+## An mycelium
+
+Origin: river-205
+
+**BGR-Infraschall-Ersatzquellen registrieren (Operator-Wort 2026-10-13 „alle").** Die offene Alternative ohne CTBTO-Antrag:
+- `bgrseis_mbhf-ifsd` — DOI `10.25928/bgrseis_mbhf-ifsd` (CC BY-NC-SA 4.0); Detektionslisten/Referenz-Histogramme, **keine** Rohwellenformen. xfer:river205-1
+- `bgrseis_hist-ifsd` — DOI `10.25928/bgrseis_hist-ifsd` (CC BY 4.0). xfer:river205-2
+
+Gemessen: `gdk.gdi-de.org` HTTP 200 (`gdk.gdi-de.org/geonetwork/…` 200); `download.bgr.de` direkt 403. **Der Akt:** die `url`/`origin`/`compiler`-Zeile + die Manifestation sind Mycelium; `terms`/`ttl`/Format-Arm sind Mountain. Step: das Asset (Format/Compiler) messen und die `url`-Zeile setzen. Kein `format`/`compiler` gemessen — `pending`, nie geraten.
+
 ## Abschluss
 
 river-205 (Spezies-Achse + CINDI-Kante): gearbeitet ohne Pro-Solo, ohne Fenster-Edit, ohne Send.
@@ -207,8 +217,7 @@ Wire-Schema-Sprung (`schema_hash` ändert sich) — kein externer Konsument asse
 kein `.js` liest `schema_hash`). **CINDI-NWM:** Zugangsweg gemessen (kein offenes NWM-Archiv); die
 Korrespondenz läuft privat und ist nie getrackt. **Kopplungs-Aufrufer gebaut** (`1d4d0f5f7`):
 `load_channel_coupling_layer` + `OmegaLoop.couplings`, `exchange_resolved` je Tick (absent-safe; trägt
-heute 0 bis `K`). **AACGM-v2-Loader gebaut** (`c14fb3298`; `pub mod aacgm` block-scoped, ein Epochenfile,
-noch ohne numerischen Zeugen). **Newell** `38368666012` dispatcht. **CTBTO**-Antragsroute gemessen (Portal
+heute 0 bis `K`). **AACGM-v2-Loader gebaut** (`c14fb3298`, `5f44d0980`; Brackets + Zwei-Epochen-Interpolation + CI-Zeugentest). **Newell** `38368666012` dispatcht. **CTBTO**-Antragsroute gemessen (Portal
 lebt; Riss vs. Survey benannt). **Nächster Schritt:** die WGSL-Injektion + die CPU/GPU-Parität; dann `K`.
 
 river-204 (Messwert-Kette): gearbeitet ohne Pro-Solo, ohne Fenster-Edit, ohne Send.
