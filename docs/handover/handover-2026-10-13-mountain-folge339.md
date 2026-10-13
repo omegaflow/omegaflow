@@ -3,7 +3,7 @@
   session: Mountain-Linie — JADES-Registerzeile wiederhergestellt, IERS-EOP-Doppellinie als Riss gemessen, adressierte Blöcke mycelium-342/future-249 gefaltet
   class: handover
   date: 2026-10-13
-  sha256: 9f1db9d1e51edbfe53df923d13260ff99c2fc15eab3740b8af8420db27ca5475
+  sha256: 8c1b6bd7bd1cd313f91a37a8f3c78974205c5d36ce41b90ab92aefdac66ea99c
   status: live
 -->
 # Handover — Mountain-Folge 339 (2026-10-13)
@@ -15,7 +15,7 @@ und faltete die adressierten Blöcke `future-249` und `mycelium-342` (Tokens unt
 Die Wiedervorlage des IERS-Punkts lief nicht durch einen gültigen
 Operator-Wort-Satz — keine Kopie eines Worts.
 
-## Burn: open 0.02 · close 0.0451 — gemessen (`session_burn`: die eigene Line-Session $0.0451; Session-Dispatches `grind-flash` JADES $0.0469 + $0.0329 [abgebrochen + neu dispatcht]). Ein Register-Block wiederhergestellt (JADES), IERS-EOP-Doppellinie als Riss gemessen, mycelium-342/future-249 gefaltet; flash-first, kein pro/max.
+## Burn: open 0.02 · close 0.1473 — gemessen (`session_burn`: die eigene Line-Session $0.1473). Register-Block JADES wiederhergestellt, IERS-EOP-Doppellinie aufgelöst, NASA-Datapolitik live gemessen, MODVOLC-Lizenz korrigiert, mycelium-342/future-249 gefaltet, ENTSO-E-Form durch Recherche+Rat+Voll-Roster (Rat↔Roster-Riss); flash-first, kein pro/max.
 
 ## In diesem Atom erledigt (Echo an den Sender)
 
@@ -73,6 +73,28 @@ Operator-Wort-Satz — keine Kopie eines Worts.
 - **Blockade:** die Datenlizenz ist nicht offen belegt.
 - **Braucht:** als `local-only` führen (Arbeitskopie `data/` für Kalibrierung, **keine**
   Manifestation); Wiedereinführung nur bei gemessener offener Lizenz.
+
+### ENTSO-E — Form-Entscheid Rat, Riss zum Roster (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der nächste begrenzte Schritt (Lese-Arm nach dem Mengen-Ausbau)
+- **Lage:** (gemessen 2026-10-13) **Recherche vor Rat** (Operator-Wort): `archive_search --all`
+  → `state/research/spill/omegaflow_all_1791900153_represent_a_time_interval_with_duration_.txt`
+  (1069 Zeilen; Signallinie: interval-censored time-to-event mit Dauer, Event-Sourcing,
+  kategoriale Ereignisdaten). **Rat** (fünf Stimmen): das Intervall wird als
+  **`epoch`=Start + `tau`=Dauer** getragen — kein neuer Record, nicht der generische
+  `(t,val,comp)`-Serien-Pfad; `val` = die geerntete Menge, Gebiet + Code als datengetriebener
+  Kanal-Qualifier; `val` ist mandatory → fehlt die Menge, wird der Record **übersprungen**
+  (nie 0/1, nie ein Pseudo-Wert). **Erster Bau-Schritt erledigt:** `entsoe_compiler.rs` erntet
+  jetzt `quantity: Option<f64>` (Präsenz-Flag, 0 honored; `cargo check` 0/0).
+  **Riss Rat↔Roster (nicht geglättet):** die UI-Seats **Qwen und Duck** sagen
+  **(c) neuer Record-Typ** (bzw. Schema-Erweiterung mit optionalen Feldern) — der Rat sagt
+  **kein neuer Record**. **Z.ai (GLM-5.3 Deep Think Max), Claude und die geteilten
+  Open-Weight-Seats** sind gestellt, die Antworten aber noch **nicht abgeholt** (Reasoning/
+  eingeklappter Container; Session-Kapazität). Rohmaterial `state/stimmen/2026-10-13_*_entsoe.*`.
+- **Blockade:** der Riss ist zu tragen; die volle Roster-Runde ist offen.
+- **Braucht:** die Roster-Antworten abholen (Tabs in `mountain-ui` offen), den Riss
+  Rat↔Roster benennen, **dann** den dedizierten Intervall-Lese-Arm (`extract.rs`) + den Block
+  (`format entsoe_unavailability`, `terms CC-BY-4.0`). `docs/SOURCE_PORT.md`.
 
 ### mycelium-342 gefaltet — Registerlücken ohne Lese-Arm (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -197,6 +219,7 @@ Origin: mountain-339 (2026-10-13):
 - **„deine aussage ist quatsch"** + Inkling-Antwort verbatim | 2026-10-13 | Operator-Session (mountain 338) — mein früheres „nicht erreichbar" war eine ungemessene Behauptung.
 - **„und hast du auch die modelle nach stärke gewichtet oder einfach nur gezählt"** | 2026-10-13 | Operator-Session (mountain 338) — gewichten, nicht zählen; `state/stimmen/2026-10-13_roster2_gewichtet.md`.
 - **Unterbrechung/Resume** | 2026-10-13 | Operator-Session (mountain 339) — drei Taucher abgebrochen und neu dispatcht; kein neues Sach-Wort.
+- **„bitte bei ratsfragen immer noch recherche und vollen max roster (siehe anweisungen) laufen lassen"** | 2026-10-13 | Operator-Session (mountain 339) — **jede Ratsfrage zuerst `archive_search --all` (Text gespeichert), dann der volle UI-Roster (Frontier-Seats + geteilte Open-Weight-Seats), nie Rat in Pro-Solo**; der Rat hält die Struktur, der Roster die Gegenrede, ein Riss wird benannt.
 
 ## Abschluss
 
