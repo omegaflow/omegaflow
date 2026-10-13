@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 341 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 881ad3e1070f180d814cfe4d99b12b51609b41803e3d971c222c3251bcb894bf
+  sha256: 1fb46377b2077a3f1408f241da1b2ec1aa1897643632314464c9d5fa83b4801e
   status: live
 -->
 # Handover — Mycelium-Folge 341 (2026-10-13)
@@ -85,7 +85,7 @@ Origin: mycelium-341 (2026-10-13):
 - `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.2~98652e66` **Ersatzquellen-Register + Risse** (MAXI/OSC/IGETS/MODVOLC/DES/ALFALFA/LoTSS/TeVCat) — Verdikt offen.
 - `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.3~7d22b061` **Welle 3: 2 Schranken** — HiPS-HEALPix-WCS-Arm in `src/archivar/fits.rs` nötig, 4LAC als eigene Quelle oder gestrichen?
 - **CDN-Orphan-Takedown erledigt (folge341)** — 36 Releases offline; die zwei Register-tragenden (`raw.githubusercontent.com`, `services.arcgis.com`) gehalten. `xfer:mountain-336-1`.
-- **Risse aus dem Taucher-Lauf:** CHIME/FRB-Cat2 canfar-URL tot (500) · KASI-API 500 · IRIS LMSAL 403 · IERS-EOP-Doppellinie · MPC-Horizon block-vs-compiler. `register_sort` gemessen **kanonisch** (2552 Blöcke).
+- **Risse aus dem Taucher-Lauf:** CHIME/FRB-Cat2 canfar-URL tot (500) · KASI-API 500 · IRIS LMSAL 403 · IERS-EOP-Doppellinie · MPC-Horizon block-vs-compiler. `register_sort` gemessen **kanonisch** (2554 Blöcke). `xfer:mycelium-341-1`
 
 ## LOCK
 
