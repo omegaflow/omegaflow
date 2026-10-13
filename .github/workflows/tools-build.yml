@@ -82,7 +82,6 @@ jobs:
         if [ "$carry_ok" = "0" ]; then
           echo "carry incomplete (expected=$expected got=$got) — building the full published set"
           cargo build --release --bins -p omegaflow-register -p omegaflow-utils -p omegaflow-gate
-          cargo build --release -p omegaflow-measure --bin text_review
           cargo build --release -p omegaflow-service
           cargo build --release -p omegaflow --bin omegaflow --features browser_relay
           exit 0
@@ -92,14 +91,13 @@ jobs:
         if [ "${{ steps.changed.outputs.gat }}" = "1" ]; then cargo build --release --bins -p omegaflow-gate; fi
         if [ "${{ steps.changed.outputs.svc }}" = "1" ]; then cargo build --release -p omegaflow-service; fi
         if [ "${{ steps.changed.outputs.cor }}" = "1" ]; then
-          cargo build --release -p omegaflow-measure --bin text_review
           cargo build --release -p omegaflow --bin omegaflow --features browser_relay
         fi
     - name: Tool list
       run: |
         # The published set is derived from the built binaries, never a hand
         # list: target/release holds the bins of the published crates
-        # (register, utils, gate, service), text_review (measure) and the core
+        # (register, utils, gate, service) and the core
         # omegaflow bin. A new bin in a published crate is published
         # automatically and can no longer be silently omitted. *.so is not a tool.
         TOOLS=$(find target/release -maxdepth 1 -type f -executable ! -name '*.so' -printf '%f\n' | sort | tr '\n' ' ')
