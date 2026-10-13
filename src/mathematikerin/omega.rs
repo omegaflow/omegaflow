@@ -82,6 +82,37 @@ pub fn storage_entry(
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
+pub fn coupling_descriptor_rows(
+    layer: Option<&crate::archivar::parse::ChannelCouplingLayer>,
+) -> Vec<f32> {
+    use crate::mathematikerin::channel::DensityKind;
+    let Some(layer) = layer else {
+        return Vec::new();
+    };
+    let channels = &layer.channels;
+    let mut rows = Vec::new();
+    for c in layer.couplings.pairs() {
+        let (Some(i), Some(j)) = (channels.index_of(c.from), channels.index_of(c.to)) else {
+            continue;
+        };
+        let Some(coeff) = c.coefficient else {
+            continue;
+        };
+        let (Some(rf), Some(rt)) = (c.density_from.as_ref(), c.density_to.as_ref()) else {
+            continue;
+        };
+        let (Some(mf), Some(mt)) = (rf.species_mass, rt.species_mass) else {
+            continue;
+        };
+        let from_number = (rf.kind == DensityKind::Number) as i32 as f32;
+        let to_number = (rt.kind == DensityKind::Number) as i32 as f32;
+        rows.extend_from_slice(&[i as f32, j as f32, c.kind as u8 as f32, coeff as f32]);
+        rows.extend_from_slice(&[from_number, mf as f32, to_number, mt as f32]);
+    }
+    rows
+}
+
 #[derive(Clone, Copy)]
 pub struct DiodeState {
     pub force_ref: [f32; 9],
@@ -144,6 +175,7 @@ pub struct OmegaLoop {
     pub vol_cell_buf: Option<wgpu::Buffer>,
     pub vol_u_buf: Option<wgpu::Buffer>,
     pub shelf_buf: Option<wgpu::Buffer>,
+    pub coupling_buf: Option<wgpu::Buffer>,
     pub vol_fingerprint: Option<(usize, usize, usize, usize)>,
     pub prep_param_buf: Option<wgpu::Buffer>,
     pub te_pipe: Option<wgpu::ComputePipeline>,
@@ -270,6 +302,7 @@ impl OmegaLoop {
             vol_cell_buf: None,
             vol_u_buf: None,
             shelf_buf: None,
+            coupling_buf: None,
             vol_fingerprint: None,
             prep_param_buf: None,
             te_pipe: None,
@@ -734,6 +767,9 @@ impl OmegaLoop {
         let Some(shelf_buf) = self.shelf_buf.clone() else {
             return;
         };
+        let Some(coupling_buf) = self.coupling_buf.clone() else {
+            return;
+        };
         for sel in 0..2 {
             let Some(field_buf) = self.field_bufs[sel].clone() else {
                 continue;
@@ -784,6 +820,10 @@ impl OmegaLoop {
                     wgpu::BindGroupEntry {
                         binding: 9,
                         resource: shelf_buf.as_entire_binding(),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 10,
+                        resource: coupling_buf.as_entire_binding(),
                     },
                 ],
             }));
@@ -1476,6 +1516,11 @@ impl OmegaLoop {
                     e.binding = 9;
                     e
                 },
+                {
+                    let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                    e.binding = 10;
+                    e
+                },
             ],
         });
         let probe_pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -1541,6 +1586,14 @@ impl OmegaLoop {
             mapped_at_creation: false,
         });
         queue.write_buffer(&shelf_buf, 0, &le_bytes_f32(&shelf_rows));
+        let coupling_rows = coupling_descriptor_rows(self.couplings.as_ref());
+        let coupling_buf = device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: (coupling_rows.len() * 4).max(4) as u64,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        queue.write_buffer(&coupling_buf, 0, &le_bytes_f32(&coupling_rows));
         let te_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
             source: wgpu::ShaderSource::Wgsl(TE_WGSL.into()),
@@ -1743,6 +1796,7 @@ impl OmegaLoop {
         self.vol_cell_buf = Some(vol_cell_buf);
         self.vol_u_buf = Some(vol_u_buf);
         self.shelf_buf = Some(shelf_buf);
+        self.coupling_buf = Some(coupling_buf);
         self.te_pipe = Some(te_pipe.clone());
         self.te_bind = Some(te_bind);
         self.te_series_buf = Some(te_series_buf);
