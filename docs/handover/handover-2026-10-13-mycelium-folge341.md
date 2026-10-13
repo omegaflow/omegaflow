@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 341 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 5d1be1ba5069e7f788f5829f9d660f1a68940d00442bac6fc6727a791e226189
+  sha256: 33d826f4ee98a36f86fe97ba5ce4d05f888fe94d561af7d924b227c668dfc903
   status: live
 -->
 # Handover — Mycelium-Folge 341 (2026-10-13)
@@ -61,6 +61,13 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Lage:** (gemessen 2026-10-13/341) der registrierte Block `phi:28383-28387` (`chime_frb_cat2`, `format chime_frb_cat2`, `compiler chime_frb_compiler.rs`) trägt `origin https://www.canfar.net/storage/vault/file/AstroDataCitationDOI/CISTI.CANFAR/25.0066/data/table/chimefrbcat2.csv` — `--verdict` direct+Proton **HTTP 500**, kein Wayback-Snapshot. Ein gemessener erreichbarer Ersatz ist **nicht** vorhanden: VizieR führt `J/ApJ/947/83` nicht (TAP listet unter `J/ApJ/947/` kein `/83`); `J/A+A/698/A18/table1` ist ein Auswahl-Sample, nicht der Cat-2-Katalog. Der zwischenzeitlich gesetzte falsche VizieR-Endpunkt wurde auf die kanonische canfar-Kennung zurückgenommen (`a0561388a`) — kein erfundener Endpunkt im Register. Zwei Risse: (1) der Endpunkt fehlt; (2) `compiler tools/harvest/src/bin/chime_frb_compiler.rs` liest das canfar-CSV-Format (`dm_fitb`/`dm_exc_ne2001`/`dm_exc_ymw16`), nicht ein Ersatzformat. Die `terms`-URL (`…/25.0066/`) liegt auf demselben toten canfar-Wirt.
 - **Blockade:** der `origin`-Wechsel ist Mycelium; `terms` ist Mountain.
 - **Braucht:** ein gemessener erreichbarer Cat-2-Endpunkt (CADC/CHIME) **oder** eine gemessene lizenzklare VizieR-Kennung; danach das Compiler-Format anpassen und `origin`/`terms` setzen.
+
+### Lese-Verdrahtung Fermi-4LAC/FINK + LHAASO-Zahlenwert (umgesetzt 2026-10-13/341)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** ein Format-Leser für 4LAC; das Register-Wort für das KM2A-Feld
+- **Lage:** (gemessen/umgesetzt 2026-10-13/341) **FINK erledigt** — Block gefaltet (`e29991c`: `url .../api.lsst.fink-portal.org/fink_cutout.bin`, `terms CC-BY-4.0` [Zenodo `4036589`], `format fink_cutout`, `origin https://api.lsst.fink-portal.org/api/v1/cutouts`, compiler `fink_cutout_compiler.rs`; Leser-Arm `extract.rs:130` vorhanden). **LHAASO-Fix umgesetzt** (`79a89bb`): der Compiler skaliert N0 je Komponente nach SI (WCDA `1e-13`, E0 3 TeV; KM2A `1e-16`, E0 50 TeV), `--component WCDA|KM2A` (Default WCDA), Leerzeilen-Header-Bug gefixt; Register-`origin` um `Comp` erweitert (`878d0bf`), Workflow-URL angeglichen; `cargo build -p omegaflow-harvest --bin lhaaso_compiler` grün. **Fermi-4LAC offen:** `fermi_4lac_dr3_compiler.rs` existiert, emittiert aber **keinen Block** und hat **keinen Format-Leser** in `src/archivar` → kein Block (nicht geraten); `origin https://fermi.gsfc.nasa.gov/ssc/data/access/lat/4LACDR3/table_4LAC.fits` gemessen, terms NASA-FSSC PD. **Riss (LHAASO):** `lhaaso_sky1` trägt nur WCDA → die 21 KM2A-dominanten Quellen fehlen; das Feld trägt kein E0 (Einheiten-Riss). **CDDIS/NSSDC/SSDC:** CDDIS **schon implementiert** (`ionex_compiler.rs:45` sendet `Authorization: Bearer EARTHDATA_EDL_TOKEN`, verweigert ohne); NSSDC/SSDC-Schlüssel sind gesetzt, haben aber **keinen Konsumenten** im Code — der frühere „nur über Operator"-Vermerk ist widerlegt (Zugang mit den Schlüsseln messbar).
+- **Blockade:** 4LAC braucht den Format-Leser; das KM2A-Feld ist Register-Recht.
+- **Braucht:** ein 4LAC-Format-Leser (`src/archivar`) + Block; Mountains Wort für das KM2A-Feld/Asset.
 
 ### Lizenz-Verifikation der gefalteten Blöcke (gemessen 2026-10-13/341)
 - **Status:** eigen | **Bindung:** eigen
