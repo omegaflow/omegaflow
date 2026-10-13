@@ -16,6 +16,13 @@ hapi F=cryosat_magnetic_field_intensity_nt
 field cryosat_magnetic_field_intensity_nt cryosat_magnetic_field_intensity_nt inverse-square em nT 4 0.0 0.0
 channel energy:primary:maxwell:mixed:vacuum:unspecified:none V/m
 
+url https://api.phys.ucalgary.ca/hapi/data?id=NORSTAR_RIOMETER_K2@CHUR&start={week_ago}&stop={now}&format=csv
+terms 10.11575/AFYX-M516 https://data.phys.ucalgary.ca/data/how_to_cite.html
+ttl 5
+on earth 58.76 -94.09 0.021
+hapi absorption=ucalgary_riometer_absorption_db
+field ucalgary_riometer_absorption_db ucalgary_riometer_absorption_db inverse-square em dB 5 0.0 0.0
+
 url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
 terms vires-esa-data-terms https://vires.services/
 ttl 5
@@ -1981,7 +1988,7 @@ on earth 68.358 18.823 380
 station ABK
 cgm_lat 65.83
 ttl 86400
-field intermagnet_dbdt intermagnet_dbdt inverse-square em nT 86400 0.0 0.0
+field abk_dbdt_pt1h intermagnet_dbdt inverse-square em nT 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/abk_dbdt_1m.bin
 terms CC-BY-NC-4.0 https://intermagnet.org/data_conditions.html
@@ -1992,7 +1999,7 @@ on earth 68.358 18.823 380
 station ABK
 cgm_lat 65.83
 ttl 86400
-field intermagnet_dbdt intermagnet_dbdt inverse-square em nT 86400 0.0 0.0
+field abk_dbdt_pt1m intermagnet_dbdt inverse-square em nT 60 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/sod_dbdt_1h.bin
 terms CC-BY-NC-4.0 https://intermagnet.org/data_conditions.html
@@ -2003,7 +2010,7 @@ on earth 67.37 26.63 178
 station SOD
 cgm_lat 64.60
 ttl 86400
-field intermagnet_dbdt intermagnet_dbdt inverse-square em nT 86400 0.0 0.0
+field sod_dbdt_pt1h intermagnet_dbdt inverse-square em nT 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/isdc-data.gfz.de/swarm_fac.bin
 format swarm_fac
@@ -14328,6 +14335,16 @@ hapi Te=wind_swe_te_k el_bulk_vel_magn=wind_swe_el_bulk_vel_magn_kms el_density=
 field wind_swe_te_k wind_swe_te_k exponential-decay thermal K 3600 0.0 0.0
 field wind_swe_el_bulk_vel_magn_kms wind_swe_el_bulk_vel_magn_kms patch-levy advective km/s 3600 0.0 0.0
 field wind_swe_el_density_cm3 wind_swe_el_density_cm3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+
+url https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments4/2024/pfa/24jan24a/pfa20240124.001_lp_fit_10min.001.h5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
+terms cedar-rules-of-the-road https://cedar.openmadrigal.org/
+format openmadrigal
+origin https://cedar.openmadrigal.org
+on earth 65.13 -147.47 0.211
+no-cadence
+field pfisr_isr_ne_m3 pfisr_isr_ne_m3 inverse-square em 1/m3 33554432.0 0.0 0.0
+field pfisr_isr_ti_k pfisr_isr_ti_k exponential-decay thermal K 33554432.0 0.0 0.0
+field pfisr_isr_te_k pfisr_isr_te_k exponential-decay thermal K 33554432.0 0.0 0.0
 
 url https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments5/2024/mlh/04jan24/mlh240104g.001.hdf5&parms=UT1_UNIX&parms=NE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
 terms cedar-rules-of-the-road https://cedar.openmadrigal.org/
@@ -29283,6 +29300,16 @@ record skydirection
 force em
 no-cadence
 
+url https://madrigal.eiscat.se/madrigal/isprintService.py?file=/opt/madrigal/experiments/2024/tro/03jan24/MAD6400_2024-01-03_bella_60@uhf.hdf5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
+terms eiscat-rules-of-the-road https://madrigal.eiscat.se/
+format openmadrigal
+origin https://madrigal.eiscat.se
+on earth 69.586 19.227 0.077
+no-cadence
+field eiscat_isr_ne_m3 eiscat_isr_ne_m3 inverse-square em 1/m3 33554432.0 0.0 0.0
+field eiscat_isr_ti_k eiscat_isr_ti_k exponential-decay thermal K 33554432.0 0.0 0.0
+field eiscat_isr_te_k eiscat_isr_te_k exponential-decay thermal K 33554432.0 0.0 0.0
+
 url https://naif.jpl.nasa.gov/pub/naif/JUICE/kernels/spk/juice_crema_5_2_v01.bsp
 format reference
 terms PD https://naif.jpl.nasa.gov/naif/rules.html
@@ -29727,30 +29754,3 @@ sha256 25b428d1af966dea31e130c0710e8482ba616753e194981d7e22a28b754f947b
 at earth
 ttl 315360000
 field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 0.0 0.0
-
-url https://api.phys.ucalgary.ca/hapi/data?id=NORSTAR_RIOMETER_K2@CHUR&start={week_ago}&stop={now}&format=csv
-terms 10.11575/AFYX-M516 https://data.phys.ucalgary.ca/data/how_to_cite.html
-ttl 5
-on earth 58.76 -94.09 0.021
-hapi absorption=ucalgary_riometer_absorption_db
-field ucalgary_riometer_absorption_db ucalgary_riometer_absorption_db inverse-square em dB 5 0.0 0.0
-
-url https://madrigal.eiscat.se/madrigal/isprintService.py?file=/opt/madrigal/experiments/2024/tro/03jan24/MAD6400_2024-01-03_bella_60@uhf.hdf5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
-terms eiscat-rules-of-the-road https://madrigal.eiscat.se/
-format openmadrigal
-origin https://madrigal.eiscat.se
-on earth 69.586 19.227 0.077
-no-cadence
-field eiscat_isr_ne_m3 eiscat_isr_ne_m3 inverse-square em 1/m3 33554432.0 0.0 0.0
-field eiscat_isr_ti_k eiscat_isr_ti_k exponential-decay thermal K 33554432.0 0.0 0.0
-field eiscat_isr_te_k eiscat_isr_te_k exponential-decay thermal K 33554432.0 0.0 0.0
-
-url https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments4/2024/pfa/24jan24a/pfa20240124.001_lp_fit_10min.001.h5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
-terms cedar-rules-of-the-road https://cedar.openmadrigal.org/
-format openmadrigal
-origin https://cedar.openmadrigal.org
-on earth 65.13 -147.47 0.211
-no-cadence
-field pfisr_isr_ne_m3 pfisr_isr_ne_m3 inverse-square em 1/m3 33554432.0 0.0 0.0
-field pfisr_isr_ti_k pfisr_isr_ti_k exponential-decay thermal K 33554432.0 0.0 0.0
-field pfisr_isr_te_k pfisr_isr_te_k exponential-decay thermal K 33554432.0 0.0 0.0
