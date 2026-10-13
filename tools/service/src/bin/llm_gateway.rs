@@ -554,9 +554,9 @@ fn main() {
     let port: u16 = match std::env::var("OMEGAFLOW_GATEWAY_PORT") {
         Ok(v) => match v.parse() {
             Ok(p) => p,
-            Err(_) => 8181,
+            Err(_) => 1621,
         },
-        Err(_) => 8181,
+        Err(_) => 1621,
     };
     let addr = format!("127.0.0.1:{port}");
     let listener = match TcpListener::bind(&addr) {
