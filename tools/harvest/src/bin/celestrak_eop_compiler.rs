@@ -1,4 +1,6 @@
-use omegaflow::archivar::celestrak_eop::{COMP_PMX, COMP_PMY, COMP_UT1_UTC, parse_bin, write_bin};
+use omegaflow::archivar::celestrak_eop::{
+    COMP_LOD, COMP_PMX, COMP_PMY, COMP_UT1_UTC, parse_bin, write_bin,
+};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::parse as parse_lsk;
 use std::process::Command;
@@ -36,7 +38,16 @@ fn fetch(url: &str) -> Option<String> {
     }
 }
 
-fn parse_row(columns: &[&str]) -> Option<(f64, Option<f64>, Option<f64>, Option<f64>, bool)> {
+type Row = (
+    f64,
+    Option<f64>,
+    Option<f64>,
+    Option<f64>,
+    Option<f64>,
+    bool,
+);
+
+fn parse_row(columns: &[&str]) -> Option<Row> {
     if columns.len() < 12 {
         return None;
     }
@@ -52,7 +63,7 @@ fn parse_row(columns: &[&str]) -> Option<(f64, Option<f64>, Option<f64>, Option<
         t.parse::<f64>().ok().filter(|v| v.is_finite())
     };
     let observed = columns[11].trim() == "O";
-    Some((mjd, num(2), num(3), num(4), observed))
+    Some((mjd, num(2), num(3), num(4), num(5), observed))
 }
 
 fn main() {
@@ -110,7 +121,7 @@ fn main() {
     let mut absent_components = 0usize;
     for line in text.lines() {
         let columns: Vec<&str> = line.split(',').collect();
-        let Some((mjd, x, y, ut1, observed)) = parse_row(&columns) else {
+        let Some((mjd, x, y, ut1, lod, observed)) = parse_row(&columns) else {
             continue;
         };
         if !observed {
@@ -133,6 +144,10 @@ fn main() {
         }
         match y {
             Some(v) => records.push((t, v, COMP_PMY)),
+            None => absent_components += 1,
+        }
+        match lod {
+            Some(v) => records.push((t, v, COMP_LOD)),
             None => absent_components += 1,
         }
     }
@@ -184,13 +199,14 @@ mod tests {
             }
         }
         assert_eq!(rows.len(), 3);
-        let (mjd, x, y, ut1, observed) = rows[0];
+        let (mjd, x, y, ut1, lod, observed) = rows[0];
         assert_eq!(mjd, 37665.0);
         assert_eq!(x, Some(-0.012700));
         assert_eq!(y, Some(0.213000));
         assert_eq!(ut1, Some(0.0326338));
+        assert_eq!(lod, Some(0.0017230));
         assert!(observed);
-        assert!(!rows[2].4);
+        assert!(!rows[2].5);
         assert_eq!(rows[2].0, 61478.0);
         assert_eq!(rows[2].3, Some(-0.1665246));
     }
@@ -210,6 +226,7 @@ mod tests {
         assert_eq!(rows[0].1, None);
         assert_eq!(rows[0].2, Some(0.213000));
         assert_eq!(rows[0].3, Some(0.0326338));
+        assert_eq!(rows[0].4, Some(0.0017230));
     }
 
     #[test]

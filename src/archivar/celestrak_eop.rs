@@ -3,7 +3,8 @@ pub const MAGIC: [u8; 4] = *b"EOP1";
 pub const COMP_UT1_UTC: u32 = 1;
 pub const COMP_PMX: u32 = 2;
 pub const COMP_PMY: u32 = 3;
-pub const COMP_MAX: u32 = 3;
+pub const COMP_LOD: u32 = 4;
+pub const COMP_MAX: u32 = 4;
 
 pub fn write_bin(records: &[(f64, f64, u32)]) -> Vec<u8> {
     let mut buf = Vec::with_capacity(8 + records.len() * 20);
@@ -55,6 +56,7 @@ mod tests {
             (10.0, 0.0326338, COMP_UT1_UTC),
             (10.0, -0.012700, COMP_PMX),
             (10.0, 0.213000, COMP_PMY),
+            (10.0, 0.0017230, COMP_LOD),
         ];
         let bytes = write_bin(&records);
         let parsed = parse_bin(&bytes).unwrap();
