@@ -2927,3 +2927,286 @@ fn fold_crosscheck(@builtin(global_invocation_id) gid: vec3<u32>) {
         rows, skipped, violations
     );
 }
+
+#[cfg(not(target_arch = "wasm32"))]
+fn coupling_wgsl_from_field_shader() -> String {
+    let src = FIELD_WGSL;
+    let start = src
+        .find("fn apply_couplings(")
+        .expect("the coupling injection stands in FIELD_WGSL");
+    let rest = &src[start..];
+    let end = rest
+        .find("\n}\n")
+        .expect("the coupling injection closes with a brace")
+        + 3;
+    let func = &rest[..end];
+    format!(
+        "const CHANNEL_CAP: u32 = 16u;\n\
+         @group(0) @binding(0) var<storage, read> coupling_at: array<vec4f>;\n\
+         @group(0) @binding(1) var<storage, read_write> omegas_out: array<f32>;\n\
+         {func}\n\
+         @compute @workgroup_size(1)\n\
+         fn coupling_crosscheck() {{\n\
+             var omegas = array<f32, CHANNEL_CAP>();\n\
+             for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) {{ omegas[i] = omegas_out[i]; }}\n\
+             apply_couplings(&omegas);\n\
+             for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) {{ omegas_out[i] = omegas[i]; }}\n\
+         }}\n"
+    )
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+#[test]
+fn coupling_injection_wgsl_matches_the_cpu_exchange() {
+    use super::channel::{
+        Boundary, ChannelDescriptor, ChannelRegistry, Conserved, ConstraintRegistry, Coupling,
+        CouplingKind, CouplingRegistry, DensityKind, DensityRef, Domain, FluxKind, Medium, PdeType,
+        Quantity, QuantityRole, TransportOp,
+    };
+    use crate::archivar::parse::ChannelCouplingLayer;
+
+    let mk = |medium: Medium, unit: &'static str| {
+        ChannelDescriptor::new(
+            Quantity {
+                conserved: Conserved::Mass,
+                role: QuantityRole::Primary,
+            },
+            TransportOp::Flux(FluxKind::Fick),
+            PdeType::Parabolic,
+            medium,
+            Domain::Unspecified,
+            Boundary::None,
+            unit,
+        )
+    };
+    let d_ion = mk(Medium::Plasma, "1 / m3");
+    let d_n = mk(Medium::Fluid, "1 / m3");
+    let d_a = mk(Medium::Vacuum, "1 / m3");
+    let d_b = mk(Medium::ElasticSolid, "1 / m3");
+    let (h_ion, h_n, h_a, h_b) = (d_ion.hash(), d_n.hash(), d_a.hash(), d_b.hash());
+    let mut channels = ChannelRegistry::with_capacity(4);
+    channels.register(d_ion);
+    channels.register(d_n);
+    channels.register(d_a);
+    channels.register(d_b);
+
+    let (m_ion, m_n) = (30.0f64, 16.0f64);
+    let mut pairs = CouplingRegistry::with_capacity(2);
+    pairs.register(Coupling {
+        kind: CouplingKind::IonNeutralFriction,
+        from: h_ion,
+        to: h_n,
+        coefficient: Some(0.5),
+        unit: "m3 / s",
+        region: None,
+        density_from: Some(DensityRef {
+            channel_ref: h_ion,
+            kind: DensityKind::Number,
+            species_mass: Some(m_ion),
+        }),
+        density_to: Some(DensityRef {
+            channel_ref: h_n,
+            kind: DensityKind::Number,
+            species_mass: Some(m_n),
+        }),
+        quasi_neutral: None,
+    });
+    pairs.register(Coupling {
+        kind: CouplingKind::Thermoelectric,
+        from: h_a,
+        to: h_b,
+        coefficient: Some(0.25),
+        unit: "m3 / s",
+        region: None,
+        density_from: Some(DensityRef {
+            channel_ref: h_a,
+            kind: DensityKind::Mass,
+            species_mass: Some(1.0),
+        }),
+        density_to: Some(DensityRef {
+            channel_ref: h_b,
+            kind: DensityKind::Mass,
+            species_mass: Some(1.0),
+        }),
+        quasi_neutral: None,
+    });
+
+    let layer = ChannelCouplingLayer {
+        channels,
+        constraints: ConstraintRegistry::from_constraints(&[]),
+        couplings: pairs,
+    };
+
+    let mut phi = [0.0f32; 16];
+    phi[0] = 2.0;
+    phi[1] = 5.0;
+    phi[2] = 3.0;
+    phi[3] = 7.0;
+
+    let mut deltas = [0.0f32; 16];
+    for c in layer.couplings.pairs() {
+        if let Some((i, fd, j, td)) = layer.couplings.exchange_resolved(c, &phi, &layer.channels) {
+            deltas[i] += fd;
+            deltas[j] += td;
+        }
+    }
+    let mut cpu = phi;
+    for k in 0..16 {
+        cpu[k] += deltas[k];
+    }
+
+    let rho_ion = m_ion as f32 * phi[0];
+    let rho_n = m_n as f32 * phi[1];
+    let net = rho_ion * deltas[0] + rho_n * deltas[1];
+    assert!(
+        net.abs() < 1e-3,
+        "rho-weighted exchange sums to zero, got {net}"
+    );
+
+    let rows = coupling_descriptor_rows(Some(&layer));
+    assert_eq!(rows.len(), 16, "two pairs encode as sixteen floats");
+
+    let wgsl = coupling_wgsl_from_field_shader();
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor::default());
+    let adapter = match pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
+        power_preference: wgpu::PowerPreference::None,
+        compatible_surface: None,
+        force_fallback_adapter: false,
+    })) {
+        Some(a) => a,
+        None => {
+            eprintln!("adapter request returned void — coupling wgsl/cpu parity skipped");
+            return;
+        }
+    };
+    let (device, queue) = match pollster::block_on(
+        adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
+    ) {
+        Ok(dq) => dq,
+        Err(e) => {
+            eprintln!("device request returned: {} — coupling parity skipped", e);
+            return;
+        }
+    };
+    let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: None,
+        source: wgpu::ShaderSource::Wgsl(wgsl.into()),
+    });
+    let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: None,
+        entries: &[
+            {
+                let mut e = storage_entry(true, wgpu::ShaderStages::COMPUTE);
+                e.binding = 0;
+                e
+            },
+            {
+                let mut e = storage_entry(false, wgpu::ShaderStages::COMPUTE);
+                e.binding = 1;
+                e
+            },
+        ],
+    });
+    let pipe_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: None,
+        bind_group_layouts: &[&layout],
+        push_constant_ranges: &[],
+    });
+    let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+        label: None,
+        layout: Some(&pipe_layout),
+        module: &module,
+        entry_point: Some("coupling_crosscheck"),
+        compilation_options: Default::default(),
+        cache: None,
+    });
+    let couple_bytes = (rows.len() * 4) as u64;
+    let omega_bytes = (16 * 4) as u64;
+    let couple_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: couple_bytes,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let omega_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: omega_bytes,
+        usage: wgpu::BufferUsages::STORAGE
+            | wgpu::BufferUsages::COPY_DST
+            | wgpu::BufferUsages::COPY_SRC,
+        mapped_at_creation: false,
+    });
+    let read_buf = device.create_buffer(&wgpu::BufferDescriptor {
+        label: None,
+        size: omega_bytes,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: None,
+        layout: &layout,
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: couple_buf.as_entire_binding(),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: omega_buf.as_entire_binding(),
+            },
+        ],
+    });
+    queue.write_buffer(&couple_buf, 0, &le_bytes_f32(&rows));
+    queue.write_buffer(&omega_buf, 0, &le_bytes_f32(&phi));
+
+    let mut enc = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+    {
+        let mut pass = enc.begin_compute_pass(&wgpu::ComputePassDescriptor::default());
+        pass.set_pipeline(&pipe);
+        pass.set_bind_group(0, &bind, &[]);
+        pass.dispatch_workgroups(1, 1, 1);
+    }
+    enc.copy_buffer_to_buffer(&omega_buf, 0, &read_buf, 0, omega_bytes);
+    queue.submit(std::iter::once(enc.finish()));
+
+    let mapped = Arc::new(AtomicBool::new(false));
+    let m2 = mapped.clone();
+    let slice = read_buf.slice(..);
+    slice.map_async(wgpu::MapMode::Read, move |r| {
+        m2.store(r.is_ok(), Ordering::SeqCst);
+    });
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while !mapped.load(Ordering::SeqCst) && std::time::Instant::now() < deadline {
+        device.poll(wgpu::Maintain::Poll);
+    }
+    assert!(
+        mapped.load(Ordering::SeqCst),
+        "coupling parity readback returned void"
+    );
+    let mapped_data = slice.get_mapped_range();
+    let mut got = [0f32; 16];
+    for k in 0..16 {
+        let mut b = [0u8; 4];
+        b.copy_from_slice(&mapped_data[k * 4..k * 4 + 4]);
+        got[k] = f32::from_le_bytes(b);
+    }
+    drop(mapped_data);
+    read_buf.unmap();
+
+    let mut violations = 0usize;
+    for k in 0..16 {
+        let tol = 1e-5 + 1e-3 * cpu[k].abs();
+        if (got[k] - cpu[k]).abs() > tol {
+            violations += 1;
+            if violations <= 8 {
+                eprintln!("coupling channel {k}: gpu {} cpu {}", got[k], cpu[k]);
+            }
+        }
+    }
+    assert_eq!(
+        violations, 0,
+        "coupling wgsl/cpu parity: {} of 16 channels diverge",
+        violations
+    );
+    eprintln!("coupling injection parity: 16 channels agree, rho-weighted friction net {net}");
+}

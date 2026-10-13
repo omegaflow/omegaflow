@@ -26,6 +26,7 @@ const CHANNEL_CAP: u32 = 16u;
 @group(0) @binding(7) var<storage, read> vol_cell: array<f32>;
 @group(0) @binding(8) var<uniform> vol_u: VolUniform;
 @group(0) @binding(9) var<storage, read> shelf: array<vec4f>;
+@group(0) @binding(10) var<storage, read> coupling_at: array<vec4f>;
 
 struct VolUniform { geo: vec4f, count: vec4f };
 
@@ -367,6 +368,39 @@ fn beat_pair(
     return val_a * val_b * cos(TWO_PI * df * t + (phase_a - phase_b));
 }
 
+fn apply_couplings(omegas: ptr<function, array<f32, CHANNEL_CAP>>) {
+    let npairs = arrayLength(&coupling_at) / 2u;
+    var deltas = array<f32, CHANNEL_CAP>();
+    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { deltas[i] = 0.0; }
+    for (var p = 0u; p < npairs; p = p + 1u) {
+        let a = coupling_at[p * 2u];
+        let b = coupling_at[p * 2u + 1u];
+        let i = u32(a.x);
+        let j = u32(a.y);
+        if (i >= CHANNEL_CAP || j >= CHANNEL_CAP) { continue; }
+        let k = a.w;
+        let raw_i = (*omegas)[i];
+        let raw_j = (*omegas)[j];
+        let rho_from = select(raw_i, b.y * raw_i, b.x > 0.5);
+        let rho_to = select(raw_j, b.w * raw_j, b.z > 0.5);
+        let m_sum = b.y + b.w;
+        if (!(rho_from >= 0.0) || !(rho_to > 0.0) || !(m_sum > 0.0)) { continue; }
+        if (u32(a.z) == 0u) {
+            let rate = k * rho_to / m_sum;
+            let d = raw_j - raw_i;
+            let from_delta = rate * d;
+            let to_delta = -from_delta * (rho_from / rho_to);
+            deltas[i] = deltas[i] + from_delta;
+            deltas[j] = deltas[j] + to_delta;
+        } else {
+            let product = k * raw_i * raw_j;
+            deltas[i] = deltas[i] + product;
+            deltas[j] = deltas[j] + product;
+        }
+    }
+    for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { (*omegas)[i] = (*omegas)[i] + deltas[i]; }
+}
+
 @compute @workgroup_size(1)
 fn presence_probe() {
     let count = u32(vp.surface.z);
@@ -448,6 +482,7 @@ fn presence_probe() {
             }
         }
     }
+    apply_couplings(&omegas);
     for (var i = 0u; i < CHANNEL_CAP; i = i + 1u) { probe_out[i] = omegas[i]; }
     probe_out[CHANNEL_CAP] = flow.x;
     probe_out[CHANNEL_CAP + 1u] = flow.y;
