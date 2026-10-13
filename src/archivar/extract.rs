@@ -156,6 +156,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "agrav" => agrav::parse_series(bytes),
         "emm_exi_l2a" => emm_exi::parse_series(bytes),
         "vlf_awesome" => vlf_awesome::parse_series(bytes),
+        "ucar_fpi" => fpi_ucar::parse_series(bytes),
         _ => None,
     }
 }
