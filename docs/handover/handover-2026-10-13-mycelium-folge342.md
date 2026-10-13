@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 342 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 754be4847f5f1c1e62769d0600c1a16ca1b3a69e60a9817834b9c596626ce90d
+  sha256: 31be206fb29d7dc12397e80e7463257e4580af57066186ccc1fbd5b9260c946d
   status: live
 -->
 # Handover — Mycelium-Folge 342 (2026-10-13)
@@ -81,12 +81,16 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Blockade:** Zulassung/`terms`/`field` = Mountains Recht.
 - **Braucht:** Mountain-Zulassung; danach `url`/`origin`/`compiler` (Mycelium) + Re-Run `jades-cdn`. An Mountain: `xfer:mycelium-342-7`.
 
-### Das Haus kennen — welche Quellen ohne offene Lizenz lokal halten?
-- **Status:** eigen (Auswahl operator-gebunden) | **Bindung:** eigen
-- **Trigger:** Operator-Wort (welche Gruppe lokal)
-- **Lage:** (gemessen 2026-10-13/342, Taucher; `state/future/licence-host-rules.tsv` + `licence-redundanz-tierA-2026-10-12.md`) kalibrierungsrelevante Quellen **ohne offene Lizenz**, heute **nicht** im Register: `www.geoazur.fr` **PODB** (Astrometrie natürlicher Satelliten, `all-rights-reserved`; OCNS2019-Pendant) · `data.kasi.re.kr` **KVN/KMTNet/MIRIS** (`no-license-stated`; Compiler `kasi_compiler.rs` + Workflow gebaut) · `datacenter.iers.org` **EOP_20_C04** (`no-license-stated`, Kreuzprobe zur PD-Serie MAIA/USNO) · **ICGEM**-Modelle mit header-`licence`. **Publizierbar (keine Aktion):** die NC-Familie (`CC-BY-NC-4.0` 162 · `CC-BY-NC-3.0-IGO` 24 · …) — Omegaflow ist selbst NC. **Bespoke-Term-Blöcke, Weitergabe ungemessen (heute veröffentlicht):** `celestrak-usage-policy` (`phi:10137`) · `kari-public-release` (`phi:28461`) · `license-per-project` AGRav (`phi:9967`) · `vires-esa-data-terms` (24 Blöcke) · `columbia-research-noncommercial` GCMT (`phi:8256`) · Kyoto-AE (`phi:3980`, Register `free-open` ≠ Host-Regel).
-- **Blockade:** die Auswahl ist ein Werturteil (Operator).
-- **Braucht:** Operator-Wort, welche Gruppe lokal geholt wird; danach je Quelle eine Arbeitskopie nach `data/` (kein `phi`-Eintrag). Riss daneben: die Datei phi/declined_sources.φ fehlt (drei Surveys zitieren sie) — die Decline-Verdikte leben nur in Prosa; und die bespoke `terms`-Token sind je Quelle auf Redistribution ungemessen.
+### Lokal-only + CDN-Bereinigung (Operator-Wort 2026-10-13) — gemessen/umgesetzt
+- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
+- **Trigger:** Mountains Register-Edits (CelesTrak-Block, WDC-Token)
+- **Lage:** (gemessen 2026-10-13/342, drei Taucher)
+  **(a) Lokale Arbeitskopien geladen** (`data/`, gitignored, kein `phi`-Eintrag): `data/datacenter.iers.org/EOP_20_C04_one_file_1962-now.txt` (5 067 517 B, sha256 `c17ba033…`) · `data/www.geoazur.fr/apdb_mars_transit_usno.txt` (194 616 B, sha256 `aa1b6cf7…`) · `data/data.kasi.re.kr/miris.json` (6 276 B, sha256 `8162f752…`; KASI-API jetzt 200, der 500 ist weg) · `data/icgem.gfz.de/XGM2019e.gfc` (540 638 936 B, sha256 `bd436324…`; Header = **CC BY 4.0**) · `data/www.ldeo.columbia.edu/gcmt_catalog.ndk` (28 367 820 B, sha256 `aae7913b…`) · `data/www.kari.re.kr/kdsa01.bsp` (8 192 B, sha256 `0eff0b07…`) · `data/vires.services/CS_OPER_MAG_2026-07-31.csv` (3 832 261 B, sha256 `ae1c43f2…`; HAPI-GET ohne Auth) · `data/celestrak.org/EOP-All.csv` (2 227 320 B, sha256 `fdcea807…`, Wayback 2022).
+  **(b) Weitergabe-Prüfung der 6 — Korrektur:** **nur 3 davon sind CDN-Releases** (celestrak · wdc.kugi.kyoto · api.sedoo); KARI/VIRES/GCMT tragen **direkte Origin-`url`s** (kein CDN-Release, also keine Weiterverbreitung durch uns). Verdikte: **KARI KPLO NO** (Urheberrecht: Verbreitung untersagt) · **ESA VIRES NO** (ESA-Terms: Weitergabe nur nach ESA-Bestätigung) · **Columbia GCMT NO** („personal, noncommercial use only … may not transmit") · **CelesTrak UNCLEAR** (Policy nur Zugang, kein Verbreitungsrecht) · **AGRav YES** (nicht-kommerziell + Attribution) · **WDC Kyoto YES** (wissenschaftlich/nicht-kommerziell + Attribution; Register-Token `free-open` falsch).
+  **(c) Offene Alternativen — für alle 10 gefunden** (`archive_search --all`, Volltext gelesen): geoazur→**IMCCE NSDC**/JPL SSD · KASI→**NOIRLab KS4**/NRAO VLBA · IERS-EOP→IERS/CDDIS/NAIF · ICGEM→**ESA GOCE**/GFZ-DOI · KARI→JPL/GFZ Mondkernels · CelesTrak→**USNO MAIA**/IERS/NOAA · VIRES→**GFZ Swarm**/INTERMAGNET (HAPI auth-frei) · GCMT→**USGS ComCat**/EarthScope · Kyoto→**NOAA NCEI**/ISGI/OMNIWeb · AGRav→**NOAA NCEI**/IGETS.
+  **(d) CDN-Bereinigung:** die **CelesTrak**-Release (`celestrak.org`, Asset `celestrak_eop.bin`) ist **offline** (`gh release delete`, verifiziert „not found") — UNCLEAR-Recht, Inhalt PD über USNO/MAIA gedeckt; lokale Kopie gehalten. WDC Kyoto + AGRav bleiben (Weitergabe erlaubt).
+- **Blockade:** die Register-Edits (CelesTrak-Block entfernen/überführen; WDC-Token `free-open` → `wdc-kyoto-scientific-noncommercial`) = Mountains Recht; `phi/sources.φ` fremd-dirty.
+- **Braucht:** Mountain zieht den CelesTrak-Block ab und korrigiert den WDC-Token; danach sind CDN und Register deckungsgleich. An Mountain: `xfer:mycelium-342-9` · `xfer:mycelium-342-10`.
 
 ### CHIME/FRB Catalog 2 — registrierte Origin tot
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
@@ -121,6 +125,8 @@ Origin: mycelium-342 (2026-10-13):
 - `xfer:mycelium-342-6` **ENTSO-E braucht eine lebende Register-Zeile** — Compiler repariert (`out_Domain`); `terms`/`field` offen.
 - `xfer:mycelium-342-7` **JADES DR4 braucht eine Register-Zeile** — Compiler grün (5190 records), Upload verweigert: Tag `jades.herts.ac.uk` ist keine lebende Quelle in `phi/sources.φ`.
 - `xfer:mycelium-342-8` **OCNS2019 lokal (Disposition `local-only`)** — Arbeitskopie `data/paperdata.china-vo.org/ocns2019.zip` (sha256 `7b7ad66b…`) für die Neptun-Satelliten-Ephemeriden-Kalibrierung; **kein** `phi`-Eintrag, **kein** CDN-Release (Operator-Wort 2026-10-13).
+- `xfer:mycelium-342-9` **CelesTrak-Block abziehen** — die CDN-Release `celestrak.org` (`celestrak_eop.bin`) ist offline genommen (UNCLEAR-Recht); der Register-Block `phi/sources.φ` (Quantities `eop_iers_ut1_utc_s`/`…polar_motion_x/y_arcsec`) verwaist. Die PD-Alternative USNO/MAIA trägt EOP bereits.
+- `xfer:mycelium-342-10` **WDC-Kyoto-Feld-Token korrigieren** — `phi/sources.φ` trägt `terms free-open` (`wdc_ae.bin`), gemessen ist `wdc-kyoto-scientific-noncommercial` (wissenschaftlich, nicht-kommerziell, Attribution) — die Host-Regel `state/future/licence-host-rules.tsv:56` ist richtig.
 - **Carried from folge341:** `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.1~73d3d0af` (4 Restcompiler-Formate) · `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.2~98652e66` (Ersatzquellen-Register + Risse) · `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.3~7d22b061` (Welle 3: 2 Schranken) · `xfer:mycelium-341-1` (Risse: CHIME/KASI/IRIS/IERS-EOP/MPC).
 
 ## LOCK
