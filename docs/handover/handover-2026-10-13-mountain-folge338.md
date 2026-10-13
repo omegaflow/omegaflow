@@ -3,7 +3,7 @@
   session: Mountain-Linie — zwei Register-Risse geschlossen + vier Quellen-Fragen durch Recherche/Rat/Roster geklärt
   class: handover
   date: 2026-10-13
-  sha256: e6709cce1617c42fa0bd224a1adfc03bb88b92533c257b740a88683140fa511e
+  sha256: 97561d88f2440dc942e02d0c3caf3839988b69c653cc3263711adfd4cfc4b8e6
   status: live
 -->
 # Handover — Mountain-Folge 338 (2026-10-13)
@@ -11,7 +11,13 @@
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
 Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-13-mountain-folge337.md` (→
-`docs/handover/archiv/`).
+`docs/handover/archiv/`). Die vier Punkte sind durch Recherche + Rat + UI-Roster
+geklärt; die Runde lief mit gesetzten Such-/Max-Schaltern über Perplexity,
+DeepSeek, Mistral, Gemini/AI Studio, Lumo, Sakana und die geteilten
+Open-Weight-Seats (DeepSeek V4 Pro, GLM 5.3) — Rohmaterial
+`state/stimmen/2026-10-13_roster2_synthese.md`. **Offen:** Z.ai (Pflicht) läuft
+noch (Deep Think Max, Frage bestätigt angekommen); Inkling öffnete im
+`tryingopen`-Dialog nicht; MiniMax-Eingabe gekappt — je benannt, kein stiller Ausfall.
 
 ## Burn: open 0.02 · close 0.10 — Grund: zwei Register-Risse geschlossen + vier-Quellen-Klärung durch Recherche (4 Taucher), Rat (5 Stimmen) und UI-Roster (4 Seats, GLM pending); deepseek-flash, kein pro/max.
 
