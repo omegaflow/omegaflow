@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 343 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 5d01b0bc03fe7b98c8060da9e737e66a4d42dff5d16c7142ff6e9dc894b7fa47
+  sha256: da3110a6a57a8ff93be7ae76c7b748169fdfb763e3a9c100f2b98cc078d5b9ed
   status: live
 -->
 # Handover — Mycelium-Folge 343 (2026-10-13)
@@ -32,6 +32,7 @@ Gefaltet: `## An mycelium` aus `future-folge251` (Origin future-247), `mountain-
 | „beides bitte … und auch prüfen ob es dafür offene alternativen gibt mit archive search all" | 2026-10-13 | dito |
 | „ja bitte ich möchte sauber sein" (Stilllegung der drei Direktabrufe) | 2026-10-13 | dito |
 | „ab jetzt Reports immer in einfacher Sprache; Maschinensprache untereinander ok" | 2026-10-13 | dito; `AGENTS.md` (Language doctrine) |
+| „nein du hast recht das ist wirklich nicht meine aufgabe" (CHIME/FRB + Lizenzstichprobe sind **keine** Operator-Aufgaben) | 2026-10-13 | dito |
 
 ## Offen — eigen
 
@@ -77,12 +78,12 @@ Gefaltet: `## An mycelium` aus `future-folge251` (Origin future-247), `mountain-
 - **Blockade:** Mountains Wort; `extract.rs` fremd-dirty.
 - **Braucht:** Mountains Wort; danach `compiler`-Zeile + `field`-Mapping. An Mountain: `xfer:mycelium-342-5` (bereits gefaltet).
 
-### CHIME/FRB Catalog 2 — registrierte Origin tot
-- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
-- **Trigger:** eine registrierte, erreichbare Ersatz-Origin
-- **Lage:** (gemessen 2026-10-13/342) canfar-URL direct+Proton **500**, kein Wayback-Snapshot; `chime-frb.ca/catalog` bestätigt canfar als einzigen Cat-2-Endpunkt.
-- **Blockade:** kein erreichbarer Endpunkt.
-- **Braucht:** CADC/CHIME-Ersatzendpunkt messen (Trigger) oder `descoped` mit Befund.
+### CHIME/FRB Catalog 2 — CANFAR host-weit nicht erreichbar (kein Ersatz)
+- **Status:** wartend | **Bindung:** wartend
+- **Trigger:** CANFAR-Host antwortet wieder (heute host-weit HTTP 500)
+- **Lage:** (gemessen 2026-10-13/343, Taucher) **kein erreichbarer Ersatz-Endpunkt** — CANFAR (`canfar.net`) antwortet **host-weit 500** (auch an Fremd-Datensätzen `21.0007`/`23.0004`; direct + Proton), kein Wayback-Snapshot der Datei; DataCite `contentUrl: null`, kein Mirror; `chime-frb.ca/catalog2` wörtlich „temporarily unavailable while we rebuild it … remain available through their permanent archives" und nennt selbst nur CANFAR (DOI `10.11570/25.0066`); VizieR/Zenodo/HuggingFace/Open-Data nur Catalog 1. Die Quelle ist legitim, der Endpunkt temporär ausgefallen.
+- **Blockade:** externer Host-Ausfall (kein Maschinen-Akt).
+- **Braucht:** bei CANFAR-Rückkehr neu messen; dann `origin` setzen (Mycelium) + `terms` (Mountain).
 
 ### Weberin-Zeugen — Manifestation der drei Zeugen (gefaltet aus river-207)
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
@@ -119,12 +120,12 @@ Gefaltet: `## An mycelium` aus `future-folge251` (Origin future-247), `mountain-
 - **Blockade:** Format/Block-Emission = Mountains Register-Recht.
 - **Braucht:** Mountain committet die Block-Emission + registriert. An Mountain: `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.1~73d3d0af`.
 
-### Lizenz-Verifikation der gefalteten Blöcke — 17 PD offen
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** ein erneut erreichbarer Host / neue Lizenzangabe
-- **Lage:** (gemessen 2026-10-13/341) 57 gefaltete Blöcke an der Quelle geprüft: 30 bestätigt; `eccc_gdps_15km`, `srtm15_plus_globaldem` korrigiert. **pending:** `edgar_v81_so2`, `argo_bgc`, `srtm15_plus_v2.5.5.nc`, `cams_so2`, plus **17 PD-Blöcke** (Domain 200, Lizenztext nicht content-verifiziert). Riss: `phi:8170` trägt dieselbe tote ECCC-URL.
-- **Blockade:** keine.
-- **Braucht:** die `pending`-Lizenzen erneut messen, sobald der Host antwortet (Trigger).
+### Lizenz-Verifikation — nachgemessen (17 PD + 4 Pendings)
+- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
+- **Trigger:** Mountains `terms`-Korrekturen
+- **Lage:** (gemessen 2026-10-13/343, Taucher) **17-PD-Liste rekonstruiert** aus `state/mycelium/block-drafts/*.φ` (17 Zeilen `terms PD`; ein expliziter Taucherbericht existiert nicht). **16/17 bestätigt** an den Behörden-Policies (USGS `copyrights-and-credits`, NOAA `sos.noaa.gov/copyright`, NASA-Brand-Center; IRSA via Wayback; alle 200/206, Zitate vorhanden) — **1 pending:** `hyperleda.json` (NED-Wurzel 200, aber kein Lizenz-/PD-Text, nur Caltech-Copyright + Zitationsbitte). Die 4 Pendings: `edgar_v81_so2` **CC-BY-4.0 bestätigt** (`copyright.txt`-Zitat) · `argo_bgc` **frei ohne Einschränkung** (Attribution erbeten; **kein** CC-BY-4.0-Identifikator) · `srtm15_plus_v2.5.5.nc` **CC-BY-4.0 unbelegt** (Quelle ohne Lizenzsatz; gilt PD/OpenTopography) · `cams_so2` **Copernicus data licence** (frei/attribution), **nicht** CC-BY-4.0. **ECCC-Riss aufgelöst:** `phi:8177` `…/licence/readme_en/` ist lebendig (200); tot war nur die Variante ohne `readme_en` — der Block trägt aber einen Token, der die ECCC-End-use-Licence benennt (nicht `OGL-Canada-2.0`).
+- **Blockade:** `terms` = Mountains Recht.
+- **Braucht:** Mountain korrigiert vier `terms`-Zeilen (`argo_bgc`, `srtm15_plus_v2.5.5.nc`, `cams_so2`, `phi:8177`). An Mountain: `xfer:mycelium-343-2`.
 
 ### NVIDIA-NSSDC/SSDC-Schlüssel ohne Konsument
 - **Status:** eigen | **Bindung:** eigen
@@ -138,6 +139,7 @@ Gefaltet: `## An mycelium` aus `future-folge251` (Origin future-247), `mountain-
 Origin: mycelium-343 (2026-10-13):
 
 - `xfer:mycelium-343-1` **MODVOLC-Route umgestellt auf den NASA-LANCE-Spiegel** — `NETLOC nrt3.modaps.eosdis.nasa.gov`; Basis `https://nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC/Recent` (bzw. `…/$year/$doy`); Release-Tag `nrt3.modaps.eosdis.nasa.gov`; anonym HTTP 200, `.dat`-Format identisch; NASA-Datapolitik offen/frei. **Riss:** LANCE nur NRT; Archiv 2000–2019 bei LAADS hinter Login. Bitte `terms`/`field`/`ttl` für den Netloc eintragen; danach `gh workflow run modvolc-cdn.yml`.
+- `xfer:mycelium-343-2` **vier `terms`-Korrekturen aus der Lizenz-Nachmessung** — `argo_bgc` (frei/Attribution, kein `CC-BY-4.0`), `srtm15_plus_v2.5.5.nc` (`CC-BY-4.0` unbelegt → PD/OpenTopography), `cams_so2` (**Copernicus data licence**, nicht CC-BY-4.0), `phi:8177` (ECCC-End-use-Licence statt `OGL-Canada-2.0`); 16/17 PD bestätigt, 1 pending (`hyperleda.json`).
 - `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.1~73d3d0af` **Formate der 4 Restcompiler** (`heasarc_w3browse`/`catalog_mpcorb`/`cosmic_ro`/opentopography witness+record) — die Compiler emittieren den Block im Arbeitsbaum, nur uncommitted.
 - `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.2~accd94dd` **`ttl`/`no-cadence` für `osc`/`chime_frb_cat2`/`lhaaso`** — ich hatte `ttl` gewürfelt (Operator-Wort „hast du die ttls gewürfelt?"), zurückgenommen; `register_sort` bricht ohne `ttl` ab (exit 2); die `ttl 31536000` auf `lamost_dr10`/`cfa_co` sind ebenso ungemessen.
 - `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.3~8eff6a4e` **`register_sort`-Kanonisierung** — `register_sort --write phi/sources.φ` (4 ttl-order + 22 url-order Verletzungen auf der ttl-ergänzten Fassung).
