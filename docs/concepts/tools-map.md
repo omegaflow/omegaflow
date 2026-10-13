@@ -325,7 +325,7 @@ die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --h
 - `archive_search --isc "start=.. end=.. [minmag=.. minlat=.. maxlat=.. minlon=.. maxlon=..]"` — ISC-Erdbebenkatalog, key=value.
 
 **Life-Sciences/Daten/Literatur:**
-- `archive_search --base <query>` — BASE — Bielefeld Academic Search Engine (~400M offene Dokumente, `api.base-search.net`), keyless; `url` + Titel/Autoren/Jahr/doi.
+- `archive_search --base <query>` — BASE — Bielefeld Academic Search Engine (~400M offene Dokumente, `api.base-search.net`), **`BASE_API_KEY`** (net.rs:4181; ohne Schlüssel `pending`); `url` + Titel/Autoren/Jahr/doi; Teil von `--all` (`QUERY_MODES`).
 - `archive_search --osf <query>` — OSF-Preprints-Titelsuche (`api.osf.io/v2/preprints`), keyless; `url` + Titel/Autoren/doi/Datum/Abstract.
 - `archive_search --openaire <query>` — OpenAIRE Graph research-product (`api.openaire.eu/graph/v1`), keyless; `url` (DOI) + Titel/Datum/Publisher.
 - `archive_search --figshare <query>` — Figshare research-data (`api.figshare.com/v2/articles/search`, POST), keyless; `url` + Titel/doi.
