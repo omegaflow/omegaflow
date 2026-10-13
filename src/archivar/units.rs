@@ -120,6 +120,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "kt_mass" => Some(value * 1e6),
         "gt" => Some(value * 1e12),
         "kg/m3" | "kg/m³" => Some(value),
+        "kg/m2/s" => Some(value),
         "1/m3" => Some(value),
         "bq/l" => Some(value * 1e3),
         "bq/m3" | "bq/m³" => Some(value),
@@ -374,6 +375,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "w/m2",
             "kw",
             "gw",
+            "mw",
             "mw/m2/sr",
             "t",
             "nt",
@@ -492,7 +494,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
         ],
         4 => &[
             "m/s", "km/h", "km/s", "cm/s", "knot", "kt", "m3/s", "cfs", "pa", "hpa", "mb", "m",
-            "decibar", "npa", "deg", "mm", "m/s2",
+            "decibar", "npa", "deg", "mm", "m/s2", "kg/m2/s",
         ],
         5 => &["m", "mm", "cm", "km", "pa", "m/s", "mw"],
         6 => &[

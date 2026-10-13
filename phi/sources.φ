@@ -1422,7 +1422,7 @@ format cams_so2
 header PRIVATE-TOKEN {CDS_API_KEY}
 ttl 86400
 at earth
-field so2_emission cams_so2_emission_kg_m2_s gaussian-inverse-square diffusion kg/m2/s 8640 0.0 0.0
+field so2_emission cams_so2_emission_kg_m2_s gaussian-inverse-square advective kg/m2/s 8640 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/anderson-residuals/anderson_residuals.tsv
 format reference
@@ -10166,6 +10166,14 @@ field argo_dac_bgc_chla_mg_m3 argo_dac_bgc_chla_mg_m3 erfc diffusion mg/m3 60480
 field argo_dac_bgc_bbp700_m1 argo_dac_bgc_bbp700_m1 erfc diffusion m-1 604800 0.0 0.0
 field argo_dac_bgc_ph_total argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/data-argo.ifremer.fr/argo_bgc.bin
+terms CC-BY-4.0 https://www.seanoe.org/data/00311/42182/
+origin https://www.seanoe.org/data/00311/42182/
+format argo_bgc
+compiler tools/harvest/src/bin/argo_bgc_profile_compiler.rs
+at earth
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/data.cnra.ca.gov/ckan_coverage.manifest
 terms CC-BY-4.0 https://data.cnra.ca.gov/
 origin https://data.cnra.ca.gov/api/3/action/package_search
@@ -10311,7 +10319,7 @@ ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/dataservices.gfz-potsdam.de/igets_l1.bin
 terms CC-BY-4.0 https://dataservices.gfz-potsdam.de/igets/
-origin https://dataservices.gfz-potsdam.de/igets/
+origin https://igets.gfz-potsdam.de/
 format igets
 ttl 604800
 at earth
@@ -11826,6 +11834,15 @@ sha256 8fd5522427c65c3818300e6061ad86ab6ed973c9875b6c393099ece8fc0242df
 at earth
 ttl 604800
 field toar_surface_o3_ppb toar_surface_o3_ppb gaussian-inverse-square diffusion ppb 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/transparency.entsoe.eu/entsoe_a78.bin
+terms CC-BY-4.0 https://transparency.entsoe.eu/
+origin https://web-api.tp.entsoe.eu/api
+format entsoe_unavailability
+compiler tools/harvest/src/bin/entsoe_compiler.rs
+at earth
+ttl 604800
+field transmission_unavailability entsoe_transmission_unavailability_mw inverse-square em MW 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/usgs-lidar-public.s3.amazonaws.com/las_brooks_camp_2012.bin
 terms PD https://www.usgs.gov/
@@ -14801,7 +14818,7 @@ origin https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/EDGAR/datasets/v81_FT202
 format netcdf
 no-cadence
 at earth
-field so2_emission edgar_v81_so2_emission_kg_m2_s gaussian-inverse-square diffusion kg/m2/s 31536000 0.0 0.0
+field so2_emission edgar_v81_so2_emission_kg_m2_s gaussian-inverse-square advective kg/m2/s 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck89361a_rtr.bc
 format reference
