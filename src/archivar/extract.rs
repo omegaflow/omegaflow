@@ -4656,6 +4656,9 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
         return ExtractResult::Measurements(channels);
     }
+    if src.format == "cdf" {
+        return crate::cdf25::extract_witness_channels(src, body, lsk);
+    }
     if src.format == "openmadrigal" {
         let Some(print) = crate::archivar::openmadrigal::parse_isprint(body.as_bytes()) else {
             return ExtractResult::Measurements(vec![]);
