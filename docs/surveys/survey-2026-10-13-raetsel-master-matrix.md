@@ -2,7 +2,7 @@
   title: Rätsel-Master-Matrix — Impact · Aufwand · Erfüllung · Machbarkeit
   class: survey
   date: 2026-10-13
-  sha256: bc42ffe97724c753ad1ab14228225c7ee5cae85c3d2c338400cfb192e6a48ea7
+  sha256: 1f6fc0bb40f0933badf82bb51a3e5895efbd99589c2872396fcf2cde9e2e955b
   status: live
   see-also: docs/surveys/survey-2026-10-13-grosse-raetsel-und-maschine.md docs/surveys/survey-raetsel-bestand.md docs/concepts/die-weberin.md docs/concepts/kybernetische-astrophysik.md
 -->
@@ -147,8 +147,9 @@ Die *wirklich* fehlenden Fäden sind eine **kurze Liste von acht**:
 1. **Photosphären-Magnetogramm** (HMI) + 2. **Sonnenfleckenzahl** → schließen **Koronale
    Heizung** und **Sonnen-Dynamo** (EUV/Helioseismologie/f107 sind schon da).
 3. **Stellar-Aktivität (XUV, log R'HK)** → schließt **Biosignatur** und **Radius-Tal**.
-4. **Schwache Linsen / Shear + Distanzleiter** → schließt **Hubble** und **S8** (Planck-CMB
-   ist schon da; es fehlt die zweite Linie).
+4. **Schwache Linsen / Shear-Karten** → für **S8**. (Korrektur: die **Distanzleiter** ist *nicht*
+   mehr fehlend — Pantheon+ SH0ES (`MU_SH0ES`) und Planck-CMB sind registriert; für **Hubble**
+   fehlt damit nichts mehr, für **S8** nur die Shear-Linie.)
 5. **IceCube / Auger / Neutrino-Kanäle** → schließt **Multimessenger** (LIGO-GW ist da).
 6. **21 cm / EDGES** · **PTA/Pulsar-Timing** → die beiden Einzel-Spektren (dünn).
 7. **TGF-Kanal** (Blitz/VLF) · **Wolkenbedeckung** (Svensmark) · **VLF/ULF-Wellen** (Gürtel).
@@ -192,7 +193,14 @@ müssen „nur" registriert + manifestiert werden (Weberin füttern).
 | **Conicus3D WL-Lightcone** (Zenodo `18776222`) | Zenodo | **CC-BY-4.0** | ✅ |
 | **Ca II IRT STELLA/RAVE** (Zenodo `57464`) | Zenodo | **CC-BY-4.0** | ✅ (Stellar-Aktivität) |
 | **WALLABY Pilot DR2** (CDS HiPS3D) | HTTP **206** | CDS-Strasbourg, Namensnennung | ✅ (Terms prüfen) |
-| **Pantheon+ SN-Distanzen** (GitHub Raw) | HTTP **206** | **keine deklarierte Lizenz** (Repo ohne `LICENSE`) | ⚠️ `terms unknown` → **lokal-only, nie manifestieren** |
+| **Pantheon+ SH0ES** | **registriert** — `phi/sources.φ:29177-29185` (Feld `MU_SH0ES`) | **CC-BY-4.0** (Zenodo `16365279`) | ✅ **schon im Haus** — nur das GitHub-Raw ist lizenzlos |
+
+**Korrektur (2026-10-13, nach dem freien Agenten):** Mein erster Eintrag „Pantheon+ ohne
+Lizenz → lokal-only" war **falsch** — ich habe am GitHub-Raw gemessen und den **registrierten
+Zenodo-Block** übersehen. Der offizielle Pantheon+-Datensatz (Scolnic/Brout/Carr/Riess, 1701
+SNe Ia, Zenodo `16365279`, **CC-BY-4.0**) liegt im Haus (`MU_SH0ES`). Damit ist die
+**Distanzleiter-Linie gefüttert** — nicht fehlend. Es fehlt die **zweite** Linie nur noch für
+**S8** (schwache Linsen/Shear), nicht für Hubble (Planck-CMB + Pantheon+ sind beide da).
 | **LHAASO-Katalog** (Neutrino) | HTTP **200** (VizieR `J/ApJS/271/25/catalog`) | VizieR/CDS frei + ApJS | ✅ registrierbar |
 | **Stellar-Aktivität** (Ca II / log R'HK) | HTTP **200** (VizieR RAVE `III/283/ravedr6`, GALAH `J/MNRAS/506/150`) | VizieR/CDS frei | ✅ registrierbar (Index-Spalte bestätigen) |
 | **EPTA DR2** (Pulsar-Timing; ersetzt den IPTA-Paper-Lead) | HTTP **206** (Zenodo `8300645`) | **CC-BY-4.0** | ✅ registrierbar |
