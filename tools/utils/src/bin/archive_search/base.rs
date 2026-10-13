@@ -78,6 +78,7 @@ fn base_gate() {
         {
             Ok(mut held) => {
                 space_requests();
+                write_stamp();
                 if let Some(now) = unix_now() {
                     let _ = held.write_all(format!("{now}\n").as_bytes());
                 }
