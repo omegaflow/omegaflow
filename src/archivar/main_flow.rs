@@ -5186,7 +5186,8 @@ pub fn main_flow() {
                         config: fc,
                         medium: body_medium,
                         body_radius,
-                        receiver_aperture: receiver_aperture.for_channel(fc.channel_ref, fc.aperture),
+                        receiver_aperture: receiver_aperture
+                            .for_channel(fc.channel_ref, fc.aperture),
                     };
                     let env = AnchorEnvelope {
                         vmax: 0.0,
@@ -5951,6 +5952,79 @@ pub fn main_flow() {
                         fetch_ok: true,
                         sample_ttl_override: None,
                     });
+                });
+                continue;
+            }
+            if matches!(
+                archive.sources[i].format.as_str(),
+                "lamost_dr10"
+                    | "osc_transients"
+                    | "heasarc_w3browse"
+                    | "blinkverse"
+                    | "blinkverse_frb"
+                    | "exofop_toi"
+            ) {
+                begin_fetch(&mut archive.origins, i as u32, now);
+                let ftx = fetch_tx.clone();
+                let src_clone = archive.sources[i].clone();
+                let src_idx = i;
+                let lsk_c = lsk.clone();
+                thread::spawn(move || {
+                    let empty = |fetch_ok: bool| FetchResult {
+                        source_idx: src_idx,
+                        channels: Vec::new(),
+                        eph_update: None,
+                        asteroid_samples: Vec::new(),
+                        star_samples: Vec::new(),
+                        curves: None,
+                        spectral: None,
+                        fetch_ok,
+                        sample_ttl_override: None,
+                    };
+                    let tmp_path =
+                        content_cache(&format!("omegaflow_{}_{src_idx}.bin", src_clone.format));
+                    if !cache_fresh(&tmp_path, src_clone.ttl) {
+                        let bytes = match fetch_raw_bytes(&src_clone.url) {
+                            Some(b) => b,
+                            None => {
+                                eprintln!(
+                                    "{} {}: fetch void — retry in ttl/Φ·2ⁿ",
+                                    src_clone.format, src_idx
+                                );
+                                let _ = ftx.send(empty(false));
+                                return;
+                            }
+                        };
+                        if std::fs::write(&tmp_path, &bytes).is_err() {
+                            eprintln!(
+                                "{} {}: write void — retry in ttl/Φ",
+                                src_clone.format, src_idx
+                            );
+                            let _ = ftx.send(empty(true));
+                            return;
+                        }
+                    }
+                    if let ExtractResult::Measurements(channels) =
+                        extract(&src_clone, &tmp_path, now, &lsk_c)
+                    {
+                        let _ = ftx.send(FetchResult {
+                            source_idx: src_idx,
+                            channels,
+                            eph_update: None,
+                            asteroid_samples: Vec::new(),
+                            star_samples: Vec::new(),
+                            curves: None,
+                            spectral: None,
+                            fetch_ok: true,
+                            sample_ttl_override: None,
+                        });
+                    } else {
+                        eprintln!(
+                            "{} {}: extract void — retry in ttl/Φ",
+                            src_clone.format, src_idx
+                        );
+                        let _ = ftx.send(empty(true));
+                    }
                 });
                 continue;
             }
