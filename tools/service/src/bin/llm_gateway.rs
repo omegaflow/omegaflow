@@ -29,6 +29,28 @@ const ROUTES: &[Route] = &[
     Route { prefix: "pollinations", provider: "Pollinations", base_url: "https://text.pollinations.ai/openai", key_env: "POLLINATIONS_API_KEY", auth_id: "" },
 ];
 
+fn load_secrets() -> HashMap<String, String> {
+    let path = match std::env::var("OMEGAFLOW_SECRETS") {
+        Ok(p) => p,
+        Err(_) => return HashMap::new(),
+    };
+    let mut m = HashMap::new();
+    let text = match fs::read_to_string(&path) {
+        Ok(t) => t,
+        Err(_) => return m,
+    };
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        if let Some((k, v)) = line.split_once('=') {
+            m.insert(k.trim().to_string(), v.trim().to_string());
+        }
+    }
+    m
+}
+
 fn load_auth_text() -> String {
     let path = match std::env::var("OMEGAFLOW_AUTH") {
         Ok(p) => p,
@@ -60,28 +82,6 @@ fn auth_key(auth: &str, id: &str) -> Option<String> {
     Some(rest[..q2].to_string())
 }
 
-fn load_secrets() -> HashMap<String, String> {
-    let path = match std::env::var("OMEGAFLOW_SECRETS") {
-        Ok(p) => p,
-        Err(_) => return HashMap::new(),
-    };
-    let mut m = HashMap::new();
-    let text = match fs::read_to_string(&path) {
-        Ok(t) => t,
-        Err(_) => return m,
-    };
-    for line in text.lines() {
-        let line = line.trim();
-        if line.is_empty() || line.starts_with('#') {
-            continue;
-        }
-        if let Some((k, v)) = line.split_once('=') {
-            m.insert(k.trim().to_string(), v.trim().to_string());
-        }
-    }
-    m
-}
-
 fn key_for(route: &Route, secrets: &HashMap<String, String>, auth: &str) -> Option<String> {
     if let Ok(v) = std::env::var(route.key_env) {
         if !v.is_empty() {
@@ -98,10 +98,7 @@ fn key_for(route: &Route, secrets: &HashMap<String, String>, auth: &str) -> Opti
 fn route_for(model: &str) -> Option<&'static Route> {
     for r in ROUTES {
         let plen = r.prefix.len();
-        if model.len() > plen
-            && model.as_bytes().get(plen) == Some(&b'/')
-            && &model[..plen] == r.prefix
-        {
+        if model.len() > plen && model.as_bytes().get(plen) == Some(&b'/') && &model[..plen] == r.prefix {
             return Some(r);
         }
     }
@@ -188,46 +185,136 @@ fn read_request(stream: &mut TcpStream) -> Option<(String, String, String)> {
     Some((method, path, body))
 }
 
-fn reply(stream: &mut TcpStream, status: &str, body: &str) {
+fn status_text(code: u16) -> &'static str {
+    match code {
+        200 => "OK",
+        400 => "Bad Request",
+        404 => "Not Found",
+        429 => "Too Many Requests",
+        500 => "Internal Server Error",
+        502 => "Bad Gateway",
+        503 => "Service Unavailable",
+        504 => "Gateway Timeout",
+        _ => "Status",
+    }
+}
+
+fn reply(stream: &mut TcpStream, code: u16, body: &str) {
     let resp = format!(
-        "HTTP/1.1 {status}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+        "HTTP/1.1 {code} {}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+        status_text(code),
         body.len()
     );
     let _ = stream.write_all(resp.as_bytes());
     let _ = stream.flush();
 }
 
-fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -> (String, String) {
-    let model = match json_string_field(body, "model") {
-        Some(m) => m,
-        None => return ("400 Bad Request".to_string(), "{\"error\":{\"message\":\"missing model\"}}".to_string()),
-    };
-    let route = match route_for(&model) {
-        Some(r) => r,
-        None => return ("404 Not Found".to_string(), format!("{{\"error\":{{\"message\":\"no route for {model}\"}}}}")),
-    };
-    let provider_model = &model[route.prefix.len() + 1..];
-    let key = match key_for(route, secrets, auth) {
-        Some(k) => k,
-        None => return ("502 Bad Gateway".to_string(), format!("{{\"error\":{{\"message\":\"key {} absent\"}}}}", route.key_env)),
-    };
-    let url = format!("{}/chat/completions", route.base_url);
-    let forward = body.replacen(&format!("\"{model}\""), &format!("\"{provider_model}\""), 1);
+fn curl_post(url: &str, key: &str, body: &str) -> (u16, String, String) {
     let out = Command::new("curl")
-        .args(["-s", "-S", "--max-time", "180", "-X", "POST"])
-        .arg(&url)
+        .args(["-s", "-S", "--max-time", "180", "-X", "POST", "-w", "\n%{http_code}\n%{header_json}"])
+        .arg(url)
         .arg("-H")
         .arg(format!("Authorization: Bearer {key}"))
         .arg("-H")
         .arg("Content-Type: application/json")
         .arg("--data-binary")
-        .arg(&forward)
+        .arg(body)
         .output();
     match out {
-        Ok(o) if o.status.success() => ("200 OK".to_string(), String::from_utf8_lossy(&o.stdout).to_string()),
-        Ok(o) => ("502 Bad Gateway".to_string(), format!("{{\"error\":{{\"message\":\"upstream\",\"detail\":\"{}\"}}}}", String::from_utf8_lossy(&o.stderr).replace('"', "'"))),
-        Err(e) => ("502 Bad Gateway".to_string(), format!("{{\"error\":{{\"message\":\"curl: {e}\"}}}}")),
+        Ok(o) => {
+            let text = String::from_utf8_lossy(&o.stdout).to_string();
+            split_curl(&text)
+        }
+        Err(e) => (0, String::new(), format!("{{\"error\":{{\"message\":\"curl: {e}\"}}}}")),
     }
+}
+
+fn split_curl(text: &str) -> (u16, String, String) {
+    let last = match text.rfind('\n') {
+        Some(i) => i,
+        None => return (0, String::new(), text.to_string()),
+    };
+    let headers = text[last + 1..].to_string();
+    let rest = &text[..last];
+    let prev = match rest.rfind('\n') {
+        Some(i) => i,
+        None => return (0, headers, rest.to_string()),
+    };
+    let code_text = rest[prev + 1..].trim();
+    let code: u16 = match code_text.parse() {
+        Ok(c) => c,
+        Err(_) => 0,
+    };
+    let body = rest[..prev].to_string();
+    (code, headers, body)
+}
+
+fn retry_after_secs(headers: &str) -> Option<u64> {
+    let lower = headers.to_ascii_lowercase();
+    let i = lower.find("retry-after")?;
+    let rest = &lower[i + 11..];
+    let digits: String = rest
+        .chars()
+        .skip_while(|c| !c.is_ascii_digit())
+        .take_while(|c| c.is_ascii_digit())
+        .collect();
+    match digits.parse() {
+        Ok(n) => Some(n),
+        Err(_) => None,
+    }
+}
+
+fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -> (u16, String) {
+    let model = match json_string_field(body, "model") {
+        Some(m) => m,
+        None => return (400, "{\"error\":{\"message\":\"missing model\"}}".to_string()),
+    };
+    let mut last_code = 502u16;
+    let mut last_body = format!("{{\"error\":{{\"message\":\"no route for {model}\"}}}}");
+    for cand in model.split('|') {
+        let cand = cand.trim();
+        if cand.is_empty() {
+            continue;
+        }
+        let route = match route_for(cand) {
+            Some(r) => r,
+            None => continue,
+        };
+        let provider_model = &cand[route.prefix.len() + 1..];
+        let key = match key_for(route, secrets, auth) {
+            Some(k) => k,
+            None => {
+                last_code = 502;
+                last_body = format!("{{\"error\":{{\"message\":\"key {} absent\"}}}}", route.key_env);
+                continue;
+            }
+        };
+        let url = format!("{}/chat/completions", route.base_url);
+        let forward = body.replacen(&format!("\"{model}\""), &format!("\"{provider_model}\""), 1);
+        let mut attempt = 0;
+        loop {
+            let (code, headers, resp) = curl_post(&url, &key, &forward);
+            if (200..300).contains(&code) {
+                return (200, resp);
+            }
+            if code == 429 || (500..600).contains(&code) {
+                last_code = code;
+                last_body = resp;
+                if attempt < 2 {
+                    let wait = match retry_after_secs(&headers) {
+                        Some(s) => s.min(30),
+                        None => 1u64 << attempt,
+                    };
+                    std::thread::sleep(std::time::Duration::from_secs(wait));
+                    attempt += 1;
+                    continue;
+                }
+                break;
+            }
+            return (code, resp);
+        }
+    }
+    (last_code, last_body)
 }
 
 fn models_json() -> String {
@@ -274,11 +361,11 @@ fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>, auth: &str)
         Some(t) => t,
         None => return,
     };
-    let (status, out) = match (method.as_str(), path.as_str()) {
-        ("GET", "/v1/models") => ("200 OK".to_string(), models_json()),
-        ("GET", "/health") => ("200 OK".to_string(), "{\"status\":\"ok\"}".to_string()),
+    let (code, out) = match (method.as_str(), path.as_str()) {
+        ("GET", "/v1/models") => (200, models_json()),
+        ("GET", "/health") => (200, "{\"status\":\"ok\"}".to_string()),
         ("POST", "/v1/chat/completions") => chat_completions(&body, secrets, auth),
-        _ => ("404 Not Found".to_string(), "{\"error\":{\"message\":\"not found\"}}".to_string()),
+        _ => (404, "{\"error\":{\"message\":\"not found\"}}".to_string()),
     };
-    reply(stream, &status, &out);
+    reply(stream, code, &out);
 }
