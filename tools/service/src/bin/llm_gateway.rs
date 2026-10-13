@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
+use std::process::Command;
 
 struct Route {
     prefix: &'static str,
@@ -32,18 +33,175 @@ fn load_secrets() -> HashMap<String, String> {
         Err(_) => return HashMap::new(),
     };
     let mut m = HashMap::new();
-    if let Ok(text) = fs::read_to_string(&path) {
-        for line in text.lines() {
-            let line = line.trim();
-            if line.is_empty() || line.starts_with('#') {
-                continue;
-            }
-            if let Some((k, v)) = line.split_once('=') {
-                m.insert(k.trim().to_string(), v.trim().to_string());
-            }
+    let text = match fs::read_to_string(&path) {
+        Ok(t) => t,
+        Err(_) => return m,
+    };
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        if let Some((k, v)) = line.split_once('=') {
+            m.insert(k.trim().to_string(), v.trim().to_string());
         }
     }
     m
+}
+
+fn key_for(route: &Route, secrets: &HashMap<String, String>) -> Option<String> {
+    if let Ok(v) = std::env::var(route.key_env) {
+        if !v.is_empty() {
+            return Some(v);
+        }
+    }
+    match secrets.get(route.key_env) {
+        Some(v) if !v.is_empty() => Some(v.clone()),
+        _ => None,
+    }
+}
+
+fn route_for(model: &str) -> Option<&'static Route> {
+    for r in ROUTES {
+        let plen = r.prefix.len();
+        if model.len() > plen
+            && model.as_bytes().get(plen) == Some(&b'/')
+            && &model[..plen] == r.prefix
+        {
+            return Some(r);
+        }
+    }
+    None
+}
+
+fn json_string_field(body: &str, key: &str) -> Option<String> {
+    let needle = format!("\"{key}\"");
+    let i = body.find(&needle)?;
+    let rest = &body[i + needle.len()..];
+    let colon = rest.find(':')?;
+    let rest = &rest[colon + 1..];
+    let q1 = rest.find('"')?;
+    let rest = &rest[q1 + 1..];
+    let q2 = rest.find('"')?;
+    Some(rest[..q2].to_string())
+}
+
+fn find(hay: &[u8], needle: &[u8]) -> Option<usize> {
+    if needle.is_empty() || hay.len() < needle.len() {
+        return None;
+    }
+    for i in 0..=(hay.len() - needle.len()) {
+        if &hay[i..i + needle.len()] == needle {
+            return Some(i);
+        }
+    }
+    None
+}
+
+fn content_length(headers: &str) -> usize {
+    for line in headers.lines() {
+        let lower = line.to_ascii_lowercase();
+        if let Some(rest) = lower.strip_prefix("content-length:") {
+            let digits: String = rest.trim().chars().take_while(|c| c.is_ascii_digit()).collect();
+            if let Ok(n) = digits.parse() {
+                return n;
+            }
+        }
+    }
+    0
+}
+
+fn read_request(stream: &mut TcpStream) -> Option<(String, String, String)> {
+    let mut data: Vec<u8> = Vec::new();
+    let mut chunk = [0u8; 8192];
+    let mut header_end: Option<usize> = None;
+    loop {
+        let n = match stream.read(&mut chunk) {
+            Ok(0) => break,
+            Ok(n) => n,
+            Err(_) => break,
+        };
+        data.extend_from_slice(&chunk[..n]);
+        if header_end.is_none() {
+            if let Some(p) = find(&data, b"\r\n\r\n") {
+                header_end = Some(p + 4);
+            }
+        }
+        if let Some(he) = header_end {
+            let headers = String::from_utf8_lossy(&data[..he]).to_string();
+            let cl = content_length(&headers);
+            if data.len() >= he + cl {
+                break;
+            }
+        }
+        if data.len() > 10_000_000 {
+            break;
+        }
+    }
+    let he = header_end?;
+    let headers = String::from_utf8_lossy(&data[..he]).to_string();
+    let first = headers.lines().next()?;
+    let mut parts = first.split_whitespace();
+    let method = match parts.next() {
+        Some(s) => s.to_string(),
+        None => return None,
+    };
+    let path = match parts.next() {
+        Some(s) => s.to_string(),
+        None => return None,
+    };
+    let body = String::from_utf8_lossy(&data[he..]).to_string();
+    Some((method, path, body))
+}
+
+fn reply(stream: &mut TcpStream, status: &str, body: &str) {
+    let resp = format!(
+        "HTTP/1.1 {status}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+        body.len()
+    );
+    let _ = stream.write_all(resp.as_bytes());
+    let _ = stream.flush();
+}
+
+fn chat_completions(body: &str, secrets: &HashMap<String, String>) -> (String, String) {
+    let model = match json_string_field(body, "model") {
+        Some(m) => m,
+        None => return ("400 Bad Request".to_string(), "{\"error\":{\"message\":\"missing model\"}}".to_string()),
+    };
+    let route = match route_for(&model) {
+        Some(r) => r,
+        None => return ("404 Not Found".to_string(), format!("{{\"error\":{{\"message\":\"no route for {model}\"}}}}")),
+    };
+    let provider_model = &model[route.prefix.len() + 1..];
+    let key = match key_for(route, secrets) {
+        Some(k) => k,
+        None => return ("502 Bad Gateway".to_string(), format!("{{\"error\":{{\"message\":\"key {} absent\"}}}}", route.key_env)),
+    };
+    let url = format!("{}/chat/completions", route.base_url);
+    let forward = body.replacen(&format!("\"{model}\""), &format!("\"{provider_model}\""), 1);
+    let out = Command::new("curl")
+        .args(["-s", "-S", "--max-time", "180", "-X", "POST"])
+        .arg(&url)
+        .arg("-H")
+        .arg(format!("Authorization: Bearer {key}"))
+        .arg("-H")
+        .arg("Content-Type: application/json")
+        .arg("--data-binary")
+        .arg(&forward)
+        .output();
+    match out {
+        Ok(o) if o.status.success() => ("200 OK".to_string(), String::from_utf8_lossy(&o.stdout).to_string()),
+        Ok(o) => ("502 Bad Gateway".to_string(), format!("{{\"error\":{{\"message\":\"upstream\",\"detail\":\"{}\"}}}}", String::from_utf8_lossy(&o.stderr).replace('"', "'"))),
+        Err(e) => ("502 Bad Gateway".to_string(), format!("{{\"error\":{{\"message\":\"curl: {e}\"}}}}")),
+    }
+}
+
+fn models_json() -> String {
+    let items: Vec<String> = ROUTES
+        .iter()
+        .map(|r| format!("{{\"id\":\"{}/…\",\"object\":\"model\",\"owned_by\":\"{}\"}}", r.prefix, r.provider))
+        .collect();
+    format!("{{\"object\":\"list\",\"data\":[{}]}}", items.join(","))
 }
 
 fn main() {
@@ -65,63 +223,27 @@ fn main() {
     let secrets = load_secrets();
     eprintln!("llm_gateway: listening on http://{addr} ({} routes)", ROUTES.len());
     for r in ROUTES {
-        let key = if std::env::var(r.key_env).is_ok() || secrets.contains_key(r.key_env) {
-            "present"
-        } else {
-            "absent"
-        };
+        let key = if key_for(r, &secrets).is_some() { "present" } else { "absent" };
         eprintln!("  /{} -> {} ({}) key {} [{}]", r.prefix, r.provider, r.base_url, r.key_env, key);
     }
     for stream in listener.incoming() {
         match stream {
-            Ok(mut s) => handle(&mut s),
+            Ok(mut s) => handle(&mut s, &secrets),
             Err(e) => eprintln!("llm_gateway: accept: {e}"),
         }
     }
 }
 
-fn handle(stream: &mut TcpStream) {
-    let mut buf = [0u8; 4096];
-    let n = match stream.read(&mut buf) {
-        Ok(n) => n,
-        Err(_) => return,
+fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>) {
+    let (method, path, body) = match read_request(stream) {
+        Some(t) => t,
+        None => return,
     };
-    let req = String::from_utf8_lossy(&buf[..n]).to_string();
-    let first = match req.lines().next() {
-        Some(l) => l,
-        None => "",
+    let (status, out) = match (method.as_str(), path.as_str()) {
+        ("GET", "/v1/models") => ("200 OK".to_string(), models_json()),
+        ("GET", "/health") => ("200 OK".to_string(), "{\"status\":\"ok\"}".to_string()),
+        ("POST", "/v1/chat/completions") => chat_completions(&body, secrets),
+        _ => ("404 Not Found".to_string(), "{\"error\":{\"message\":\"not found\"}}".to_string()),
     };
-    let mut parts = first.split_whitespace();
-    let method = match parts.next() {
-        Some(s) => s,
-        None => "",
-    };
-    let path = match parts.next() {
-        Some(s) => s,
-        None => "",
-    };
-    let (status, body) = match (method, path) {
-        ("GET", "/v1/models") => ("200 OK", models_json()),
-        ("GET", "/health") => ("200 OK", "{\"status\":\"ok\"}".to_string()),
-        _ => ("404 Not Found", "{\"error\":{\"message\":\"not found\"}}".to_string()),
-    };
-    let resp = format!(
-        "HTTP/1.1 {status}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
-        body.len()
-    );
-    let _ = stream.write_all(resp.as_bytes());
-    let _ = stream.flush();
-}
-
-fn models_json() -> String {
-    let items: Vec<String> = ROUTES
-        .iter()
-        .map(|r| {
-            format!(
-                "{{\"id\":\"{}/…\",\"object\":\"model\",\"owned_by\":\"{}\"}}",
-                r.prefix, r.provider
-            )
-        })
-        .collect();
-    format!("{{\"object\":\"list\",\"data\":[{}]}}", items.join(","))
+    reply(stream, &status, &out);
 }
