@@ -3,7 +3,7 @@
   session: River-Linie (river-203/204) — QN-Alias-Enforcement + δn-Diagnose gebaut (ConstraintRegistry, from_specs-Alias-/Region-Enforcement, charge_imbalance; cargo check 0/0); mycelium-337 omni2-Block gefaltet; Newell-Doppelregistrierung als tokenisierter `## An mountain`-Block gesetzt — von Mountain gefaltet/geheilt (`1dd4e3549`); **river-204:** gemessen, dass die gemessenen CHAMP-Dichte-Kanäle schon registriert sind (Neutral `champ_thermosphere_density_kgm3`, geladen `champ_plpt_electron_density_cm3`, Wind `champ_thermosphere_crosswind_ms`) — der Rat-Dichte-Weg (IRI/NRLMSISE/IGRF) ist Modell und überholt; die Produktions-Naht `ChannelCouplingLayer::from_sources` gebaut (channels + couplings + constraints aus Sources + Register), `cargo check` 0/0; folge202 konsumiert/archiviert; **river-205:** Spezies-Achse gebaut (`species: Option<String>` Descriptor-Achse in `hash`/`PartialEq` + `m^-3` in `unit_token` + `species <token>` in der `channel`-Direktive; DE-2-N2-Kanal entkollidiert vom CHAMP-Gesamtdichte-Kanal, `cargo check` 0/0), CINDI-NWM-Zugangsweg gemessen (kein offenes NWM-Archiv; Korrespondenz privat, nie getrackt); **river-205 (fortgesetzt):** Kopplungs-Produktionsaufrufer gebaut (`1d4d0f5f7` — `load_channel_coupling_layer` + `OmegaLoop.couplings`, `exchange_resolved` je Tick), AACGM-v2-Loader gebaut (`c14fb3298`, `pub mod aacgm` block-scoped), Newell-Lauf `38368666012` dispatcht, CTBTO-Antragsroute gemessen (Portal lebt); **river-205 (III):** AACGM-Brackets + Zwei-Epochen-Interpolation + CI-Zeugentest gebaut (`5f44d0980`), CTBTO-Antrag vorausgefüllt (privat, Live-Formular Cloudflare-403), BGR-Ersatzquellen als `## An mycelium`-Block gesetzt
   class: handover
   date: 2026-10-13
-  sha256: cade7c2190da3cb0f1c06f3bac2db162054f60a5c7b21104b302913ba900b0f8
+  sha256: 6355ddadf8a5ef9eb689799e3d7efa054bdbbb0c15bfc637e246bac79ab07555
   status: live
 -->
 # Handover — River-Folge 203 (2026-10-13)
@@ -177,8 +177,8 @@ Operator-Wort 2026-10-11: auf die Zulassung warten (ENTSO-E/NERC `pending`); die
 
 ### Newell-OMNI-Alignment — Doppelregistrierung von Mountain geheilt; Zelle neu messen
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der dispatchte `field-te-query.yml`-Lauf `38368666012` (Auftrag `matrix-newell-omni`) — Artifact lesen.
-- **Lage:** (gemessen 2026-10-13 river-205) `gh workflow run field-te-query.yml` ist **dispatcht** (`38368666012`, HEAD `c14fb3298`); das Ergebnis ist noch nicht gelesen (kein Polling — der Stehende Pass/die nächste Session liest).
+- **Trigger:** der dispatchte `field-te-query.yml`-Lauf `38378918382` (Auftrag `matrix-newell-omni`) — Artifact lesen.
+- **Lage:** (gemessen 2026-10-13 river-205) `gh workflow run field-te-query.yml` ist **neu dispatcht** (`38378918382`, HEAD `96caac36f`); der erste Lauf `38368666012` **rot** (gemessene Ursache: `field_te_query.rs:2676` formatierte `channel_ref` (`Option<u8>`) mit `{}` — P10-Leftover, gefixt `80b63d360`); das Ergebnis ist noch nicht gelesen (kein Polling).
 - **Blockade:** die Zelle ist CI-only (`field-te-query.yml` Job `matrix-newell-omni`, `workflow_dispatch`, nie lokal).
 - **Braucht:** das Artifact `field-te-matrix-newell-omni` aus `38368666012` lesen (`ci_manage view 38368666012`); bei weiterer Fenster-Disjunktheit den Descriptor auf ein gemeinsames Fenster ziehen.
 
@@ -207,6 +207,16 @@ Origin: river-205
 Gemessen: `gdk.gdi-de.org` HTTP 200 (`gdk.gdi-de.org/geonetwork/…` 200); `download.bgr.de` direkt 403. **Der Akt:** die `url`/`origin`/`compiler`-Zeile + die Manifestation sind Mycelium; `terms`/`ttl`/Format-Arm sind Mountain. Step: das Asset (Format/Compiler) messen und die `url`-Zeile setzen. Kein `format`/`compiler` gemessen — `pending`, nie geraten.
 
 ## Abschluss
+
+river-205 (III, CI-Heilung): die P10-Umbenennung (`channel_ref: Option`) ließ vier Werkzeug-Bins
+nicht kompilieren (`cargo check` prüft nur den Kern, die Werkzeug-Crates erst CI) — **geheilt**:
+`field_te_query` + `nobel_probe_corona` (`80b63d360`, letzteres block-scoped wegen fremder Hunks),
+`losc_compiler` + `nist_ncnr_nse_nexus_compiler` (`96caac36f`, das gelöschte `CHANNEL_REF_QUANTITY`
+→ Presence-Bit). **Newell** `38378918382` neu dispatcht. **ENTSO-E** `38377359876` rot — gemessene
+Ursache **HTTP 400 „invalidRequest"** der ENTSO-E-API (Token/Parameter, kein Code-Bruch). **BASE** als
+Kaskaden-Arm mit globaler 1-req/s-Sperre gebaut (`eb46483ca`). **INPOP-Lizenz geschlossen** (Open
+Licence 2.0). **CTBTO** vom Operator eingereicht. Offen bleiben die zwei großen Bauten: die
+Kopplungs-GPU-Seite + Parität, und die Zeugen-Registerzeilen.
 
 river-205 (Spezies-Achse + CINDI-Kante): gearbeitet ohne Pro-Solo, ohne Fenster-Edit, ohne Send.
 **Spezies-Achse gebaut** (Operator-Wort „Mountain ist beschäftigt, mach du das selbst"): `species: Option<String>`
