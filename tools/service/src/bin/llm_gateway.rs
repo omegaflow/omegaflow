@@ -32,7 +32,10 @@ const ROUTES: &[Route] = &[
 fn load_secrets() -> HashMap<String, String> {
     let path = match std::env::var("OMEGAFLOW_SECRETS") {
         Ok(p) => p,
-        Err(_) => return HashMap::new(),
+        Err(_) => match std::env::current_dir() {
+            Ok(d) => format!("{}/.secrets.local", d.display()),
+            Err(_) => return HashMap::new(),
+        },
     };
     let mut m = HashMap::new();
     let text = match fs::read_to_string(&path) {
@@ -210,8 +213,11 @@ fn reply(stream: &mut TcpStream, code: u16, body: &str) {
 }
 
 fn curl_post(url: &str, key: &str, body: &str) -> (u16, String, String) {
+    let dir = std::env::temp_dir();
+    let body_path = dir.join("omegaflow_gw_body.txt");
+    let head_path = dir.join("omegaflow_gw_headers.txt");
     let out = Command::new("curl")
-        .args(["-s", "-S", "--max-time", "180", "-X", "POST", "-w", "\n%{http_code}\n%{header_json}"])
+        .args(["-s", "-S", "--max-time", "180", "-X", "POST"])
         .arg(url)
         .arg("-H")
         .arg(format!("Authorization: Bearer {key}"))
@@ -219,34 +225,36 @@ fn curl_post(url: &str, key: &str, body: &str) -> (u16, String, String) {
         .arg("Content-Type: application/json")
         .arg("--data-binary")
         .arg(body)
+        .arg("-o")
+        .arg(&body_path)
+        .arg("-D")
+        .arg(&head_path)
+        .arg("-w")
+        .arg("%{http_code}")
         .output();
-    match out {
+    let code: u16 = match out {
         Ok(o) => {
-            let text = String::from_utf8_lossy(&o.stdout).to_string();
-            split_curl(&text)
+            let t = String::from_utf8_lossy(&o.stdout).trim().to_string();
+            match t.parse() {
+                Ok(c) => c,
+                Err(_) => 0,
+            }
         }
-        Err(e) => (0, String::new(), format!("{{\"error\":{{\"message\":\"curl: {e}\"}}}}")),
-    }
-}
-
-fn split_curl(text: &str) -> (u16, String, String) {
-    let last = match text.rfind('\n') {
-        Some(i) => i,
-        None => return (0, String::new(), text.to_string()),
+        Err(e) => {
+            return (0, String::new(), format!("{{\"error\":{{\"message\":\"curl: {e}\"}}}}"));
+        }
     };
-    let headers = text[last + 1..].to_string();
-    let rest = &text[..last];
-    let prev = match rest.rfind('\n') {
-        Some(i) => i,
-        None => return (0, headers, rest.to_string()),
+    let resp = match fs::read_to_string(&body_path) {
+        Ok(s) => s,
+        Err(_) => String::new(),
     };
-    let code_text = rest[prev + 1..].trim();
-    let code: u16 = match code_text.parse() {
-        Ok(c) => c,
-        Err(_) => 0,
+    let headers = match fs::read_to_string(&head_path) {
+        Ok(s) => s,
+        Err(_) => String::new(),
     };
-    let body = rest[..prev].to_string();
-    (code, headers, body)
+    let _ = fs::remove_file(&body_path);
+    let _ = fs::remove_file(&head_path);
+    (code, headers, resp)
 }
 
 fn retry_after_secs(headers: &str) -> Option<u64> {
