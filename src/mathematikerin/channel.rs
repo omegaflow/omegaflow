@@ -10,6 +10,7 @@ pub enum Conserved {
     Momentum = 1,
     Energy = 2,
     Charge = 3,
+    Number = 4,
 }
 
 pub fn conserved_name(c: Conserved) -> &'static str {
@@ -18,6 +19,7 @@ pub fn conserved_name(c: Conserved) -> &'static str {
         Conserved::Momentum => "momentum",
         Conserved::Energy => "energy",
         Conserved::Charge => "charge",
+        Conserved::Number => "number",
     }
 }
 
@@ -153,6 +155,7 @@ impl Conserved {
             "momentum" => Some(Conserved::Momentum),
             "energy" => Some(Conserved::Energy),
             "charge" => Some(Conserved::Charge),
+            "number" => Some(Conserved::Number),
             _ => None,
         }
     }
@@ -729,7 +732,9 @@ fn fnv1a(bytes: &[u8], mut h: u64) -> u64 {
 pub fn is_admissible(conserved: Conserved, op: TransportOp, medium: Medium) -> bool {
     match op {
         TransportOp::Flux(FluxKind::Fick) => {
-            conserved == Conserved::Mass && medium != Medium::Vacuum
+            (conserved == Conserved::Mass && medium != Medium::Vacuum)
+                || (conserved == Conserved::Number
+                    && matches!(medium, Medium::Fluid | Medium::Plasma))
         }
         TransportOp::Flux(FluxKind::Fourier) => {
             conserved == Conserved::Energy && medium != Medium::Vacuum
@@ -2437,6 +2442,46 @@ mod tests {
             Conserved::Mass,
             TransportOp::Flux(FluxKind::Fourier),
             Medium::Plasma
+        ));
+    }
+
+    #[test]
+    fn the_number_token_parses() {
+        assert_eq!(Conserved::parse("number"), Some(Conserved::Number));
+        assert_eq!(conserved_name(Conserved::Number), "number");
+    }
+
+    #[test]
+    fn number_and_mass_density_of_one_species_hash_apart() {
+        let number = ChannelDescriptor::parse_spec(
+            "number:primary:flux-fick:parabolic:fluid:unspecified:none~species=N2",
+            "m^-3",
+        )
+        .expect("the number-density channel is admissible");
+        let mass = ChannelDescriptor::parse_spec(
+            "mass:primary:flux-fick:parabolic:fluid:unspecified:none~species=N2",
+            "kg/m^3",
+        )
+        .expect("the mass-density channel is admissible");
+        assert_ne!(number.hash(), mass.hash());
+    }
+
+    #[test]
+    fn number_fick_is_admissible_in_fluid_and_plasma() {
+        assert!(is_admissible(
+            Conserved::Number,
+            TransportOp::Flux(FluxKind::Fick),
+            Medium::Fluid
+        ));
+        assert!(is_admissible(
+            Conserved::Number,
+            TransportOp::Flux(FluxKind::Fick),
+            Medium::Plasma
+        ));
+        assert!(!is_admissible(
+            Conserved::Number,
+            TransportOp::Flux(FluxKind::Fick),
+            Medium::Vacuum
         ));
     }
 
