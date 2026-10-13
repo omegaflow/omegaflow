@@ -29952,10 +29952,10 @@ record gmr1
 no-cadence
 
 url https://www.jma.go.jp/bosai/quake/data/list.json
-terms CC-BY-4.0 https://www.jma.go.jp/jma/en/copyright.html
-ttl 600
-on earth 35.68 139.69 0
-last mag geosphere_earthquakes_jma_recent_mag erfc seismic-surface Mw 60.0 0.0 0.0
+witness point-event
+record erbq
+force seismic-body
+no-cadence
 
 url https://zenodo.org/api/records/15179114/files/data.zip/content
 witness substance
