@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 340 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: adb6e8d95b6cfdd9d0e60efff7321717cb9536e9ff447f436e8e3d1efb627572
+  sha256: 2fa1231991499d0911dc60cf20007ec5cd75cf56cfcd1c3c689b7e589e7860a8
   status: live
 -->
 # Handover — Mycelium-Folge 340 (2026-10-13)
@@ -60,12 +60,12 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Blockade:** die Lizenz-Premisse („lizenzklar") hält nicht; Host pending.
 - **Braucht:** Entscheidung (Mountain/Future) — Géoazur/NAOJ um Erlaubnis, as-is führen, oder fallenlassen.
 
-### 8-Ziele-Einkaufsliste (future-241) / lizenzklare Alternativen
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** je Ziel ein Compiler gebaut
-- **Lage:** (gemessen 2026-10-13/339) die 4 direkt downloadbaren cc-by-4.0 (BC430 `3558850`, Pioneer 10/11 Doppler `13309156`/`13309040`, Venus-Radar `18176179`) + PDS-Geosciences Venus-Radar + PVO-ORSE + JPL SSD: je `url`/`origin`/`compiler`-Zeile. Future-248 meldet die lizenzklaren Alternativen als Bau/Ersatz-Auftrag: `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.1~8f771362`. Mountains 8-Ziele-Token: echo `xfer:mountain.ses_ece7fc36bffeSJbFG4SLeLvRrR.1~0d43166a`; FUGIN+CfA-CO (FUGIN offline durch Future, CfA-CO-Block `cfa_co` registriert): echo `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.1~1ea1cb21`; `xfer migrate` (PATH trägt `migrate` jetzt): echo `xfer:mountain.ses_ece7fc36bffeSJbFG4SLeLvRrR.2~1003fb06`.
-- **Blockade:** je Ziel fehlt der Compiler; `url`/`origin`/`compiler` ist Mycelium, `ttl`/`field` Mountain.
-- **Braucht:** Compiler je Ziel (je ein bounded step), dann die Registerzeile.
+### Lizenzklare Alternativen — Register-/Compiler-Swap (future-248, vier Wellen)
+- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
+- **Trigger:** je Alternative ein Compiler + Block gebaut
+- **Lage:** (gemessen 2026-10-13/340) Future hat **nicht nur 8 Ziele**, sondern die **ganze Alternativ-Landschaft** recherchiert — `state/future/licence-alternativen-all-2026-10-12.md` (116 Zeilen, **vier Tabellen-Wellen, ~70 Zuordnungen** Observable → Alternative → terms → Beleg): (1) Tier-A-Hosts ohne Register-Ersatz (28 Zuordnungen, Z. 15–42), (2) Nachlauf mit dem 111-Modus-Tool (19, Z. 64–82), (3) JWST-Riss + Einzel-Observablen (15, Z. 88–107), (4) ArcGIS-Reste (~12, Z. 109). Fast jede lizenzlose Quelle hat eine **freie institutionelle Alternative** (NASA PD · Zenodo CC-BY-4.0 · VizieR · CTBTO/BGR CC-BY-NC-SA); Fazit der Tabelle: der Operator muss nicht verklagt werden. Die 4 direkt-downloadbaren cc-by-4.0 (BC430 `3558850`, Pioneer 10/11 Doppler `13309156`/`13309040`, Venus-Radar `18176179`) + PDS + PVO-ORSE + JPL SSD sind **ein Teilausschnitt** davon. `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.1~8f771362`; Mountain-Tokens: 8-Ziele echo `xfer:mountain.ses_ece7fc36bffeSJbFG4SLeLvRrR.1~0d43166a`; FUGIN+CfA-CO echo `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.1~1ea1cb21`; `xfer migrate` echo `xfer:mountain.ses_ece7fc36bffeSJbFG4SLeLvRrR.2~1003fb06`.
+- **Blockade:** je Alternative fehlt der Compiler (Feld-Mapping, weil die Alternative andere Observable-Namen trägt); `url`/`origin`/`compiler` ist Mycelium, `terms`/`field`/`ttl` Mountain.
+- **Braucht:** je Alternative ein bounded step (Compiler + `url`/`origin`-Block), dann Mountains `terms`/`field`.
 
 ### CDN-Assets >2 GiB (`m10-mdis-raw-cdn`) — Split committed, Lauf neu gestartet
 - **Status:** wartend | **Bindung:** eigen
