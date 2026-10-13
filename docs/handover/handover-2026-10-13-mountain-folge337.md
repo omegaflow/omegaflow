@@ -3,7 +3,7 @@
   session: Mountain-Linie — Transport-Faltung (future-249 · mycelium-340) + Ersatz-Bau-Schwarm
   class: handover
   date: 2026-10-13
-  sha256: 33cda668df0685e0045d7570206653cc2c71b8adf3899e1ab07bb143a04dd29a
+  sha256: e1df5836289a46638051487848f286a3315c970e8913971c8fec916559beb156
   status: live
 -->
 # Handover — Mountain-Folge 337 (2026-10-13)
@@ -13,20 +13,21 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Dies
 Session konsumierte `handover-2026-10-13-mountain-folge336.md` (→
 `docs/handover/archiv/`).
 
-## Burn: open 0.02 · close 0.11 — Grund: Transport-Faltung (12 Einträge) + Ersatz-Bau-Schwarm (8 Taucher); deepseek-flash, kein pro/max.
+## Burn: open 0.02 · close 0.16 · cap 0.20 — Grund: Transport-Faltung (12 Einträge) + zwei Schwärme (13 Taucher) + die BGR-Block-Faltung (tiefes Atom); deepseek-flash, kein pro/max.
 
 ## Offen (aufgeschlüsselt)
 
-### Ersatz-Bau — Schwarm-Befunde, Blockzeilen bereit (eigen)
+### Ersatz-Bau — Fortschritt (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** das Falten der jeweiligen Blockzeile
-- **Lage:** (gemessen 2026-10-13, Schwarm) die Ersatzquellen sind großenteils registriert; für die vier Reste liegt die Messung:
-  - **BGR/CEEIN Infraschall** — die Compiler + Formate **existieren schon** (`tools/harvest/src/bin/bgr_infrasound_compiler.rs` und `tools/harvest/src/bin/ceein_infrasound_compiler.rs`; verdrahtet `src/archivar/geo.rs:309/315`, `extract.rs:950-954/977-978`, `port.rs:4088/4146`). Lizenz **gemessen CC-BY-4.0** (die Auflösungstabelle nennt NC-SA — Riss, die Datei spricht). Route `https://download.bgr.de/bgr/geophysik/Infrasound_hf_product/netCDF/BGR_infrasound_hf_product.zip` (HTTP 206, 1,53 GB, 994 `.nc`). Nur **Block + CDN-Manifestation** fehlen. `field … acoustic deg|m/s|pa|hz 300 0.0 0.0`, `no-cadence`.
-  - **IRSF J (VizieR II/288)** — `tap_compiler.rs` genügt (kein neues File); die Tabelle heißt **`II/288/out`** (nicht `/irsf`), 18 015 012 Zeilen, Spalten `RAJ2000/DEJ2000/Jmag`; `terms vizier-scientific-free`.
-  - **SSDC bzcat5 → Fermi 4LAC-DR3** — Route `https://fermi.gsfc.nasa.gov/ssc/data/access/lat/4LACDR3/table_4LAC.fits` (HTTP 206, PD, 2863 AGN); Compiler `tools/harvest/src/bin/fermi_4lac_dr3_compiler.rs` (committet `ab54b86dc`, baut 0/0), aber Format `fermi_4lac_dr3` (magic `F4LC`) ist im Reader **nicht verdrahtet**.
-  - **FINK (Zenodo 4036589)** — `year=2019.zip` (5,6 GB, CC-BY-4.0, ZIP+Snappy-Parquet); Compiler `tools/harvest/src/bin/zip_parquet_compiler.rs` (committet `ab54b86dc`, baut 0/0); Feld/cmap ausstehen.
-- **Blockade:** BGR/CEEIN + IRSF J sind falt-reif; 4LAC/FINK brauchen die Reader-Verdrahtung in `src/archivar/extract.rs` (fremd-gehalten, dirty).
-- **Braucht:** BGR + IRSF J als Blockzeilen falten (block-scoped: `block_commit --path phi/sources.φ --key <url>`) + CDN-Workflow; 4LAC/FINK: Format-Arm in `extract.rs`/`geo.rs` + Block + Workflow. `docs/SOURCE_PORT.md`.
+- **Lage:** (gemessen 2026-10-13, Schwarm) die Ersatzquellen sind großenteils registriert:
+  - **BGR Infraschall** — **Block registriert** (`384b1e14a`: `format bgr_infrasound`, `terms CC-BY-4.0`, `on earth 0 0 0`, `no-cadence`, vier `field … acoustic deg|m/s|pa|hz 300`). Compiler/Format waren schon verdrahtet (`src/archivar/geo.rs:309`, `extract.rs:950-954`, `main_flow.rs:4368`). **CDN-Workflow fehlt**.
+  - **CEEIN Infraschall** — Compiler/Format da (`ceein_infrasound`); Lizenz/τ noch nicht gemessen.
+  - **IRSF J (VizieR II/288)** — `tap_compiler.rs` genügt; Tabelle **`II/288/out`** (nicht `/irsf`), 18 015 012 Zeilen, Spalten `RAJ2000/DEJ2000/Jmag`; `terms vizier-scientific-free`. Block + Workflow offen.
+  - **SSDC bzcat5 → Fermi 4LAC-DR3** — Route `https://fermi.gsfc.nasa.gov/ssc/data/access/lat/4LACDR3/table_4LAC.fits` (PD, 2863 AGN); Compiler `fermi_4lac_dr3_compiler.rs` (`ab54b86dc`). **Reader fehlt** (neues Modul `fermi_4lac` + fünf Arme): `src/archivar/mod.rs` + `extract.rs::verify_records` (nach `:224`) + `extract.rs::extract_raw` (nach `:4198`, Vorlage der `heasarc_w3browse`-Arm) + `main_flow.rs:5958-5966`.
+  - **FINK (Zenodo 4036589)** — `year=2019.zip` (CC-BY-4.0); Compiler `zip_parquet_compiler.rs` (`ab54b86dc`) schreibt byte-gleich das Table-Format. Schema gemessen (Fink Avro 1.4): `candidate.ra/dec/magpsf/sigmapsf/magap/sigmagap`, kein `finkclass`; `record` ist parse-inert → es ist ein `cmap`/`field`-Block. Reader analog dem Table-Katalog (`src/archivar/extract.rs`).
+- **Blockade:** die Table-Katalog-Verdrahtung ist **in-flight** (fremde untracked `src/archivar/osc.rs`, `lamost.rs`, `heasarc_w3browse.rs` + dirty `extract.rs`/`mod.rs`) — die 4LAC/FINK-Arme würden kollidieren.
+- **Braucht:** IRSF-J- + CEEIN-Block (block-scoped `block_commit`) + je CDN-Workflow; 4LAC/FINK-Reader, sobald `extract.rs`/`mod.rs` frei sind. `docs/SOURCE_PORT.md`.
 
 ### mycelium-340 — Schwarm-Befunde (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -44,7 +45,8 @@ Session konsumierte `handover-2026-10-13-mountain-folge336.md` (→
 - **Trigger:** der Bau der jeweiligen Quellenklasse
 - **Lage:** (gemessen 2026-10-13, Schwarm) Bauplan (native Kette UTC→TT→TDB, ITRF2020+EOP, VMF3/IONEX, Zwei-Wege-Lichtzeit+Shapiro); Referenzen `state/future/analyse-kybernautin-ephemeriden-2026-10-12.md`, `state/future/abdeckungs-matrix-ephemeriden-2026-10-12.md`, `state/future/leads-ephemeriden-quellen-2026-10-12.md`, `state/future/leads-ephemeriden-luecken-2026-10-12.md`. Registriert: APOLLO-LLR · BC430 · JPL `obs_data`/Radar-API · Venus-Radar Zenodo 18176179 · Mariner 4/6/7/9/10 · PVO-ORSE · Pioneer 10/11 · Viking · New Horizons. **Unregistriert & block-reif:** ILRS/GSFC Normalpunkte · NTRS LLR 1973/75 · PDS Geosciences Venus/Lunar-Radar + PDS SBN Asteroiden-Radar · JDPL `echo.jpl` GSSR/NEA · ICRF3 (`icrf3sx/k.txt`) · IVS-Session-vgosDB · BVID (Zenodo 13870759/10997229) · ASSIST `sb441-n16.bsp` · USNO PEP. **Auth-gated zuerst:** CDDIS (LLR + VLBI vgosDB, `blocked account`) und die drei NSSDC-`request-only`-Sätze (Mariner 2/5/9, `PSPG-00813`). `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.3~98d34b2c` `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.4~aab2512e` `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.5~ef59826c` `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.6~bb113337`
 - **Blockade:** CDDIS/NSSDC brauchen Zugang (Operator/Future); M10-Roh-Tracking `request-only` (`wartend.φ` → `m10-rohtracking`).
-- **Braucht:** je Klasse einen Block + Compiler (Text-`/pds`/`odf`/API-Reader); `docs/SOURCE_PORT.md`.
+- **Schwarm gebaut (committet `010ccb657`):** `tools/harvest/src/bin/ilrs_npt_compiler.rs` (ILRS SLR-Normalpunkte, CRD; Format `ilrs_npt`, Arm in `extract.rs` offen) · `tools/harvest/src/bin/icrf3_compiler.rs` (IERS ICRF3; `witness s2-direction`/`record skydirection`) · `tools/harvest/src/bin/pds3_bip_radar_compiler.rs` (PDS3-`SAMPLE_INTERLEAVED` de-interleavt → verdrahtetes `pds3_img`-Format). Alle 0/0.
+- **Braucht:** je Klasse einen Block + CDN-Workflow für die vorhandenen Compiler; ILRS-Format-Arm in `extract.rs`; `docs/SOURCE_PORT.md`.
 
 ## An mycelium
 
@@ -59,9 +61,9 @@ Origin: mountain-336 (2026-10-13).
   `xfer:mountain-336-1`
 - **Ersatz-Bau der offenen Alternativen.** Die entfernten unlizenzierten Quellen
   tragen je eine gemessene offene Alternative; Mountain baut die Blöcke, Mycelium
-  manifestiert sie (nach dem Riegel). Rest: BGR/CEEIN (Compiler da, CC-BY-4.0),
-  IRSF J (VizieR II/288), SSDC bzcat5 → Fermi 4LAC-DR3, FINK (`4036589`).
-  `xfer:mountain-336-2`
+  manifestiert sie (nach dem Riegel). BGR ist registriert (`384b1e14a`); Rest:
+  CEEIN (Compiler da, Lizenz offen), IRSF J (VizieR II/288), SSDC bzcat5 → Fermi
+  4LAC-DR3, FINK (`4036589`). `xfer:mountain-336-2`
 
 ## Operator-Wort-Register
 
@@ -73,13 +75,16 @@ Origin: mountain-336 (2026-10-13).
 - **„das muss eindeutig recherchiert und an mycelium gegeben werden"** | 2026-10-13 | Operator-Session (mountain 336).
 - **„Starte die Mountain-Linie in einem Pass — kein Planungstheater … kein Consent-Stopp für Bekanntes."** | 2026-10-13 | Operator-Session (mountain 337) — Linien-Start = session-weiter Consent (Delegation), getrennt vom Commit-Wort.
 - **„du hast nur gemessen und registriert … bitte delegiere an einen taucher schwarm"** | 2026-10-13 | Operator-Session (mountain 337) — der Ersatz-Bau wird per Schwarm gearbeitet, nicht nur registriert.
+- **„was davon kannst du umsetzen und an taucher deligieren?"** | 2026-10-13 | Operator-Session (mountain 337) — das autonom Umsetzbare selbst bauen, den Rest delegieren.
 
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt
 automatisch", 2026-10-07) trägt Commit und Push. In diesem Atom (folge337)
-committet (pfad-begrenzt): die neue Übergabe + die konsumierte folge336 →
-`archiv/`; die zwei Schwarm-Compiler-Entwürfe (`fermi_4lac_dr3_compiler.rs`,
-`zip_parquet_compiler.rs`, `ab54b86dc`). `phi/sources.φ` bleibt unangetastet — der
-Arbeitsbaum trägt dort einen fremden uncommitteten Hunk; die Block-Faltung wartet
-auf `block_commit`, die 4LAC/FINK-Verdrahtung auf `extract.rs`/`geo.rs`.
+committet: die neue Übergabe + die konsumierte folge336 → `archiv/`; zwei
+Schwarm-Compiler (`fermi_4lac_dr3_compiler.rs`, `zip_parquet_compiler.rs`,
+`ab54b86dc`); drei weitere (`ilrs_npt_compiler.rs`, `icrf3_compiler.rs`,
+`pds3_bip_radar_compiler.rs`, `010ccb657`); die **BGR-Blockzeile** block-scoped
+(`384b1e14a`, `phi/sources.φ`, +12 Zeilen, Register danach kanonisch).
+`phi/sources.φ` ist nach dem block-scoped Commit sauber; die 4LAC/FINK-Verdrahtung
+wartet auf freies `extract.rs`/`mod.rs`.
