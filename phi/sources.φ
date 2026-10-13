@@ -4094,7 +4094,7 @@ ttl 86400
 field nasa_power_t2m nasa_power_t2m_k exponential-decay thermal K 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ps1images.stsci.edu/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
-terms no-license-stated https://ps1images.stsci.edu/rings.v3.skycell/0637/042/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
+terms PD https://www.stsci.edu/copyright0637/042/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
 format reference
 origin https://ps1images.stsci.edu/rings.v3.skycell/0637/042/rings.v3.skycell.0637.042.stk.g.unconv.num.fits
 sha256 66892fad7075c91ac2ea8bc4e129119b0cd55f796835c990fec88e840f554ae5
@@ -10302,7 +10302,7 @@ plx plx
 field mag_v hipparcos_v_mag inverse-square em mag 604800 0.0 0.0
 
 url http://gavo.aip.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+RAdeg,DEdeg,HRV,Teff_K+FROM+ravedr4.rave_dr4+WHERE+HRV+IS+NOT+NULL
-terms no-license-stated https://gavo.aip.de/
+terms CC0-1.0 https://www.g-vo.org/
 format tap
 ttl 604800
 at sun
@@ -10872,7 +10872,7 @@ field argo_dac_bgc_bbp700_m1 argo_dac_bgc_bbp700_m1 erfc diffusion m-1 604800 0.
 field argo_dac_bgc_ph_total argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.cosmic.ucar.edu/cosmic_ro_temp.bin
-terms no-license-stated https://data.cosmic.ucar.edu/
+terms CC-BY-4.0 https://www.ucar.edu/terms-of-use/data
 format cosmic_ro
 origin procedure: dynamic date-path listing under https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt
 compiler tools/harvest/src/bin/cosmic_ro_compiler.rs
@@ -20240,7 +20240,7 @@ field fint first14_full_int_flux_mjy inverse-square em mJy 604800 0.0 0.0 apertu
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/jwst_spectra.bin
 format jwst_spectra
-terms no-license-stated https://ssd.jpl.nasa.gov/
+terms PD https://archive.stsci.edu/publishing/data-use
 origin https://mast.stsci.edu/api/v0.1/Download/file
 compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
 sha256 fb18192418cec56b5ff736f215e7c78572f2124e4f9460bada7e107f0bcc5535
@@ -20259,7 +20259,7 @@ ttl 604800
 field flux nvss_1_4ghz_flux_wm2hz gaussian-inverse-square em W/m2/Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/storage.googleapis.com/nrs_audio_series.bin
-terms no-license-stated https://storage.googleapis.com/noaa-passive-bioacoustic/nrs/audio/
+terms CC0-1.0 https://catalog.data.gov/dataset/nrs-hybrid-millidecade-spectra
 format flac
 origin https://storage.googleapis.com/noaa-passive-bioacoustic/nrs/audio/
 compiler tools/harvest/src/bin/flac_compiler.rs
@@ -21395,7 +21395,7 @@ lon properties.long
 field properties.no2_2024 sheffield_no2_annual_mean_ugm3 erfc diffusion ug/m3 604800 0.0 0.0
 
 url https://skvo.science.upjs.sk/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+o.raj2000,o.dej2000,l.object_id,l.passband,l.obs_time,l.magnitude+FROM+ogle.lightcurves+AS+l+JOIN+ogle.objects_all+AS+o+ON+l.object_id=o.object_id
-terms no-license-stated https://skvo.science.upjs.sk/
+terms CC-BY-NC-4.0 https://ogle.astrouw.edu.pl/atlas/terms.html
 format tap
 ttl 604800
 at sun
@@ -21859,7 +21859,7 @@ dec dec
 field jmag irsf_j_mag inverse-square em mag 31536000 0.0 0.0
 
 url https://datalab.noirlab.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,flux_g+FROM+ls_dr10.tractor+WHERE+flux_g+IS+NOT+NULL
-terms no-license-stated https://datalab.noirlab.edu/
+terms CC-BY-4.0 https://datalab.noirlab.edu/about/disclaimers
 format tap
 ttl 31536000
 at sun
@@ -22359,7 +22359,7 @@ origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=A
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/gavo.aip.de/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_RAdeg_DEdeg_HRV_Teff_K_FROM_ravedr4.rave_dr4_WHERE_HRV_IS_NOT_NULL.json
-terms no-license-stated https://gavo.aip.de
+terms CC0-1.0 https://www.g-vo.org/
 format reference
 origin https://gavo.aip.de
 ttl 31536000
@@ -26618,7 +26618,7 @@ at earth
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/skvo.science.upjs.sk/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_o.raj2000_o.dej2000_l.object_id_l.passband_l.obs_time_l.magnitude_FROM_ogle.lightcurves_AS_l_JOIN_ogle.objects_all_AS_o_ON_l.object_id-o.object_id.json
-terms no-license-stated https://skvo.science.upjs.sk
+terms CC-BY-NC-4.0 https://ogle.astrouw.edu.pl/atlas/terms.html
 format reference
 origin https://skvo.science.upjs.sk
 ttl 31536000
@@ -28412,7 +28412,7 @@ field vco_rs_sigma_signal_level_xband "SIGMA SIGNAL LEVEL X-BAND" inverse-square
 
 url https://github.com/omegaflow/sources/releases/download/datalab.noirlab.edu/des_dr2_coverage.fp01
 origin https://datalab.noirlab.edu/tap/sync (table des_dr2.coverage)
-terms no-license-stated https://datalab.noirlab.edu/
+terms CC-BY-4.0 https://datalab.noirlab.edu/about/disclaimers
 format fp01
 compiler tools/harvest/src/bin/des_coverage_compiler.rs
 band g i r y z
@@ -28446,7 +28446,7 @@ no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ps1images.stsci.edu/ps1_dr2_binary.fp01
 origin https://ps1images.stsci.edu/rings.v3.skycell/
-terms no-license-stated https://ps1images.stsci.edu/rings.v3.skycell/
+terms PD https://www.stsci.edu/copyright
 format fp01
 compiler tools/harvest/src/bin/ps1_binary_compiler.rs
 band g r i z y
