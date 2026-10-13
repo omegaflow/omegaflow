@@ -919,16 +919,6 @@ on earth 0 0 0
 ttl 3600
 field temp opensensemap_temperature_c exponential-decay thermal C 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/babamul.caltech.edu/babamul_alerts.bin
-terms no-license-stated https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
-origin https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
-compiler tools/harvest/src/bin/babamul_compiler.rs
-sha256 934858db4d70e78b19cd5c2f25b848ac3e716b902442bf3f58cb7b35553403d7
-format sky1
-at sun
-ttl 3600
-field babamul_alerts babamul_alerts inverse-square em mag 3600 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni_hro_1min.bin
 format omni_hro
 origin https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&format=csv
@@ -1399,22 +1389,6 @@ compiler tools/harvest/src/bin/vmf3_compiler.rs
 sha256 f388b49705a006d4538ae61252de5f5064cdd1a391ca0b0585a59a2f9738bb6a
 at earth
 ttl 21600
-
-url http://maxi.riken.jp/star_data/J0006+202/J0006+202_g_lc_1day_all.dat
-terms no-license-stated https://www.riken.jp/en/terms/
-ttl 86400
-format text
-at earth
-rows
-field 1 maxi_J0006+202_2_20kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
-field 3 maxi_J0006+202_2_4kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
-field 5 maxi_J0006+202_4_10kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
-field 7 maxi_J0006+202_10_20kev_flux inverse-square em ph/s/cm2 86400 0.0 0.0
-
-url http://modis.higp.hawaii.edu/data/
-terms no-license-stated http://modis.higp.hawaii.edu/
-at earth
-ttl 86400
 
 url https://aeronet.gsfc.nasa.gov/cgi-bin/print_web_data_v3?site=GSFC&year={year}&month={month}&day=1&hour=0&year2={year}&month2={month}&day2={day}&hour2=23&AOD15=1&AVG=20&if_no_html=1
 terms PD https://aeronet.gsfc.nasa.gov/
@@ -2915,30 +2889,6 @@ on earth 0 0 0
 ttl 86400
 field ascat_wind_speed_m_s ascat_wind_speed_m_s patch-levy advective m/s 86400 0.0 0.0
 field ascat_wind_direction_deg ascat_wind_direction_deg patch-levy advective deg 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcobs-unnobs-1228354383-1261580867.bin
-terms no-license-stated https://www.minorplanetcenter.net/data
-format mpcobs
-origin https://minorplanetcenter.net/iau/ECS/MPCAT-OBS/CmtObs.txt.gz + https://minorplanetcenter.net/iau/ECS/MPCAT-OBS/SatObs.txt.gz
-compiler tools/harvest/src/bin/mpcobs_compiler.rs
-at earth
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcobs-unnobs-1261580867-1412649780.bin
-terms no-license-stated https://www.minorplanetcenter.net/data
-format mpcobs
-origin https://minorplanetcenter.net/iau/ECS/MPCAT-OBS/CmtObs.txt.gz + https://minorplanetcenter.net/iau/ECS/MPCAT-OBS/SatObs.txt.gz
-compiler tools/harvest/src/bin/mpcobs_compiler.rs
-at earth
-ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/mpcorb.bin
-terms no-license-stated https://www.minorplanetcenter.net/data
-format catalog_mpcorb
-origin https://minorplanetcenter.net/Extended_Files/mpcorb_extended.json.gz
-compiler tools/harvest/src/bin/mpcorb_compiler.rs
-at sun
-ttl 86400
 
 url https://github.com/omegaflow/sources/releases/download/ncdc.noaa.gov/noaa_cdo_ghcnd_tmax.bin
 terms PD https://www.ncei.noaa.gov/
@@ -8444,18 +8394,6 @@ field soles.0.pressure cosmos_mars_pressure_pa gaussian-inverse-square acoustic 
 field soles.0.max_gts_temp cosmos_mars_ground_max_temp_c exponential-decay thermal C 86400 0.0 0.0
 field soles.0.min_gts_temp cosmos_mars_ground_min_temp_c exponential-decay thermal C 86400 0.0 0.0
 
-url https://media.githubusercontent.com/media/tom-new/tomography-models/main/LLNL_G3D_JPS.nc
-terms no-license-stated https://docs.github.com/articles/licensing-a-repository
-format reference
-sha256 2f48f84fbd674054281bb6e294174f65e42219dd14713a052948257eabe482f2
-ttl 86400
-
-url https://media.githubusercontent.com/media/tom-new/tomography-models/main/S40RTS.nc
-terms no-license-stated https://docs.github.com/articles/licensing-a-repository
-format reference
-sha256 50eb365114ab1fe977701790b7df2951e96388096d92e3a16aea88821a110a65
-ttl 86400
-
 url https://mesonet.agron.iastate.edu/json/raob.py?station=OAX&ts={yesterday_nodashes}0000
 terms PD https://mesonet.agron.iastate.edu/disclaimer.php
 ttl 86400
@@ -10312,19 +10250,6 @@ dec DEdeg
 field HRV rave_dr4_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
 field Teff_K rave_dr4_effective_temp_k erfc thermal K 604800 0.0 0.0
 
-url http://padc-tap-rcsed.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+r.ra,r.dec,r.z,f.objid,f.corrfibmag_u,f.corrfibmag_g,f.corrfibmag_r+FROM+specphot.rcsed+AS+r+JOIN+specphot.rcsed_fibermags+AS+f+ON+r.objid=f.objid+WHERE+f.corrfibmag_g+IS+NOT+NULL
-terms no-license-stated https://padc-tap-rcsed.obspm.fr/
-format tap
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-z z
-field corrfibmag_u rcsed_u_fiber_mag inverse-square em mag 604800 0.0 0.0 aperture:none
-field corrfibmag_g rcsed_g_fiber_mag inverse-square em mag 604800 0.0 0.0 aperture:none
-field corrfibmag_r rcsed_r_fiber_mag inverse-square em mag 604800 0.0 0.0 aperture:none
-
 url http://tap.roe.ac.uk/osa/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+5000+ra,dec,uAperMag3,gAperMag3,rAperMag3,iAperMag3+FROM+ATLASDR4.atlasSource
 terms no-license-stated https://tap.roe.ac.uk/
 format tap
@@ -10352,17 +10277,6 @@ field classMagB ssa_class_mag_b gaussian-inverse-square em mag 604800 0.0 0.0
 field classMagR1 ssa_class_mag_r1 gaussian-inverse-square em mag 604800 0.0 0.0
 field classMagR2 ssa_class_mag_r2 gaussian-inverse-square em mag 604800 0.0 0.0
 field classMagI ssa_class_mag_i gaussian-inverse-square em mag 604800 0.0 0.0
-
-url http://voparis-tap-astro-m.obspm.fr/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,mag,vr+FROM+hyperleda.galaxies+WHERE+vr+IS+NOT+NULL
-terms no-license-stated https://voparis-tap-astro-m.obspm.fr/
-format tap
-ttl 604800
-at sun
-cmap .
-ra ra
-dec dec
-field vr hyperleda_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
-field mag hyperleda_mag inverse-square em mag 604800 0.0 0.0
 
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide
 terms CC-BY-4.0 https://open-meteo.com/en/licence
@@ -10721,27 +10635,6 @@ at sun
 ttl 604800
 field bison_pmode_velocity_m_s bison_pmode_velocity_m_s inverse-square acoustic m/s 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/blinkverse.zero2x.org/blinkverse_frb.bin
-terms no-license-stated https://blinkverse.zero2x.org/
-origin https://blinkverse.zero2x.org/api/app/adcp-blinkverse/type/FRB_SOURCE/download
-compiler tools/harvest/src/bin/blinkverse_compiler.rs
-format blinkverse_frb
-sha256 f7d998c9154054b46da2c77d99a94da2b570695372962e9ea08f8f4075538a48
-ttl 604800
-at sun
-field DM frb_blinkverse_dm_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
-field DM_ne2001 frb_blinkverse_dm_ne2001_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
-field DM_ymw16 frb_blinkverse_dm_ymw16_pccm3 inverse-square em pc/cm3 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/blpd0.ssl.berkeley.edu/bl_narrowband_lband2017.bin
-terms no-license-stated https://blpd0.ssl.berkeley.edu/
-format bl_narrowband
-origin procedure: CSV measurement table via --input/--url (netloc blpd0.ssl.berkeley.edu)
-compiler tools/harvest/src/bin/bl_narrowband_compiler.rs
-on earth 38.4331409 -79.8397246 0
-ttl 604800
-field snr bl_lband2017_narrowband_snr inverse-square em 1 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/cds.climate.copernicus.eu/copernicus_cuon_2020-01-01.bin
 terms CC-BY-4.0 https://cds.climate.copernicus.eu/
 ttl 604800
@@ -10811,15 +10704,6 @@ compiler tools/harvest/src/bin/chime_frb_compiler.rs
 at sun
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/ceein.infp.ro/ceein_infrasound.bin
-terms no-license-stated https://ceein.infp.ro/
-format ceein_infrasound
-origin http://ceein.infp.ro/fdsnws/dataselect/1/query
-compiler tools/harvest/src/bin/ceein_infrasound_compiler.rs
-at earth
-field ceein_infrasound_pressure_pa ceein_infrasound_pressure_pa gaussian-inverse-square acoustic pa 300 0.0 0.0
-ttl 604800
-
 url https://github.com/omegaflow/sources/releases/download/celestrak.org/celestrak_eop.bin
 terms celestrak-usage-policy https://celestrak.org/SpaceData/EOP-All.csv
 format celestrak_eop
@@ -10830,32 +10714,6 @@ ttl 604800
 quantity eop_iers_ut1_utc_s eop_iers_ut1_utc_s inverse-square geometry s 86400 0.0 0.0
 quantity eop_iers_polar_motion_x_arcsec eop_iers_polar_motion_x_arcsec inverse-square geometry arcsec 86400 0.0 0.0
 quantity eop_iers_polar_motion_y_arcsec eop_iers_polar_motion_y_arcsec inverse-square geometry arcsec 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/clpds.bao.ac.cn/clpds_annex.jsonl
-terms no-license-stated https://clpds.bao.ac.cn/
-format clpds
-origin https://clpds.bao.ac.cn/moon-admin/client/science/dataInfoList
-compiler tools/harvest/src/bin/clpds_compiler.rs
-at moon
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/clpds.bao.ac.cn/clpds_catalogue.json
-terms no-license-stated https://clpds.bao.ac.cn/
-format clpds
-origin https://clpds.bao.ac.cn/moon-admin/client/science/catalogue
-compiler tools/harvest/src/bin/clpds_compiler.rs
-sha256 6b58494194749bc90f7188c80d717a36a2143e7d65a084d6502341098733805f
-at moon
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/clpds.bao.ac.cn/clpds_files.jsonl
-terms no-license-stated https://clpds.bao.ac.cn/
-format clpds
-origin https://clpds.bao.ac.cn/moon-admin/client/science/dataInfoList
-compiler tools/harvest/src/bin/clpds_compiler.rs
-sha256 21154461f5b7069af045ac1a450811166c54d66888d43e84b6481462bcc3b1d8
-at moon
-ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/data-argo.ifremer.fr/argo_bgc.bin
 terms free-open https://argo.ucsd.edu/data/
@@ -10979,15 +10837,6 @@ compiler tools/harvest/src/bin/onc_hydrophone_compiler.rs
 at earth
 ttl 604800
 field onc_hydrophone_psd_db onc_hydrophone_psd_db gaussian-inverse-square acoustic dB 300 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/datacenter.iers.org/iers_eop_c04_lod.bin
-terms no-license-stated https://datacenter.iers.org/data/latestVersion/EOP_20_C04_one_file_1962-now.txt
-format iers_eop_c04_lod
-origin https://datacenter.iers.org/data/latestVersion/EOP_20_C04_one_file_1962-now.txt
-compiler tools/harvest/src/bin/iers_eop_c04_compiler.rs
-at earth
-ttl 604800
-quantity iers_eop_lod_s iers_eop_lod_s inverse-square geometry s 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/doi.pangaea.de/pangaea_758961.json
 terms CC-BY-3.0 https://creativecommons.org/licenses/by/3.0/
@@ -11276,17 +11125,6 @@ field gx lpf_drs_dg_x_ms2 inverse-square gravity m/s2 604800 0.0 0.0
 field gy lpf_drs_dg_y_ms2 inverse-square gravity m/s2 604800 0.0 0.0
 field gz lpf_drs_dg_z_ms2 inverse-square gravity m/s2 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/hinetwww11.bosai.go.jp/hinet.bin
-terms no-license-stated https://hinetwww11.bosai.go.jp
-format hinet
-origin https://hinetwww11.bosai.go.jp
-compiler tools/harvest/src/bin/hinet_win32_compiler.rs
-on earth 0 0 0
-ttl 604800
-field hinet_velocity_u_ms hinet_velocity_u_ms erfc seismic-surface m/s 60.0 0.0 0.0
-field hinet_velocity_e_ms hinet_velocity_e_ms erfc seismic-surface m/s 60.0 0.0 0.0
-field hinet_velocity_n_ms hinet_velocity_n_ms erfc seismic-surface m/s 60.0 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/igetsftp.gfz.de/igets.bin
 terms no-license-stated https://igetsftp.gfz.de/
 format igets
@@ -11431,32 +11269,6 @@ ra ra
 dec dec
 z z
 field T cmb_spt_d1_T gaussian-inverse-square thermal K 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/maxi.riken.jp/maxi_J0006+202.max1
-terms no-license-stated https://maxi.riken.jp/
-format maxi
-origin http://maxi.riken.jp/star_data/J0006+202/J0006+202_g_lc_1day_all.dat
-compiler tools/harvest/src/bin/maxi_compiler.rs
-at sun
-ttl 604800
-field maxi_2_20kev_flux_ph_s_cm2 maxi_2_20kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
-field maxi_2_4kev_flux_ph_s_cm2 maxi_2_4kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
-field maxi_4_10kev_flux_ph_s_cm2 maxi_4_10kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
-field maxi_10_20kev_flux_ph_s_cm2 maxi_10_20kev_flux_ph_s_cm2 inverse-square em ph/s/cm2 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/minorplanetcenter.net/cometels_flat.json
-terms no-license-stated https://www.minorplanetcenter.net/data
-origin https://www.minorplanetcenter.net/Extended_Files/cometels.json.gz
-compiler tools/harvest/src/bin/cometels_compiler.rs
-ttl 604800
-at sun
-cmap .
-flux_from_mag H
-ra ra
-dec dec
-dist dist_au
-dist_scale 1.495978707e11
-field H comet_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ncnr.nist.gov/nist_ncnr_nse_coverage.manifest
 origin https://ncnr.nist.gov/pub/ncnrdata/nse/
@@ -20142,20 +19954,6 @@ sha256 a3e6b4be8687661fc81dcbe81dc5ee1de54ec1c8c85a7b2225328d4742356dd2
 at sun
 ttl 604800
 
-url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/kbo_elements.json
-origin https://ssd-api.jpl.nasa.gov/sbdb_query.api ; https://www.minorplanetcenter.net/iau/MPCORB/Distant.txt
-compiler tools/harvest/src/bin/kbo_compiler.rs
-ttl 604800
-format json
-terms PD https://ssd-api.jpl.nasa.gov/
-at sun
-keplermap data a e i
-om om
-w w
-ma ma
-epoch epoch
-field H kbo_h_mag gaussian-inverse-square em mag 604800 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/sb_radar.bin
 terms free-open https://ssd-api.jpl.nasa.gov/
 format sb_radar
@@ -20787,16 +20585,6 @@ dist_scale 3.085677581e16
 field mag1 wds_primary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field mag2 wds_secondary_mag gaussian-inverse-square em mag 604800 0.0 0.0
 field sep wds_separation_arcsec gaussian-inverse-square em arcsec 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/vo.lmd.jussieu.fr/mars_dust_MY25_1FpSol.bin
-terms no-license-stated https://vo.lmd.jussieu.fr/
-origin http://vo.lmd.jussieu.fr/tap/sync (mars_dust.epn_core, access_url http://vo.lmd.jussieu.fr:8080/mars_dust/griddedcdod/griddedcdod_MY25_1FpSol.fits)
-compiler tools/harvest/src/bin/mars_dust_compiler.rs
-format mars_dust
-at mars
-ttl 604800
-field CDOD mars_dust_cdod inverse-square em 1 86400 0.0 0.0
-sha256 95cb85094cf4e120452b148977aa7666791ea391ccc6214b1b1f3a222e2d5402
 
 url https://github.com/omegaflow/sources/releases/download/waterqualitydata.us/wqp_result.csv.zip
 terms PD https://www.waterqualitydata.us/
@@ -21727,15 +21515,6 @@ on earth 0 0 0
 ttl 2592000
 field hadisst_sst hadisst_sst exponential-decay thermal C 2592000 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/modis.higp.hawaii.edu/modvolc_thermal.bin
-terms no-license-stated http://modis.higp.hawaii.edu/
-format modvolc_thermal
-origin http://modis.higp.hawaii.edu/data/
-compiler tools/harvest/src/bin/modvolc_compiler.rs
-at earth
-ttl 2592000
-field modvolc_thermal modvolc_thermal inverse-square em w/m2/sr/um 86400 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/opendata.dwd.de/dwd_cdc_00044_dwd_air_temperature_max.bin
 terms CC-BY-4.0 https://opendata.dwd.de/climate_environment/CDC/Terms_of_use.pdf
 format dwd_cdc
@@ -22514,24 +22293,6 @@ compiler tools/harvest/src/bin/ghsl_compiler.rs
 on earth 0 0 0
 ttl 31536000
 quantity ghsl_built_surface_m2 ghsl_built_surface_m2 point area m2 31536000 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/LLNL_G3D_JPS.volume.bin
-terms no-license-stated https://media.githubusercontent.com/
-format volume
-origin procedure: fetch https://media.githubusercontent.com/media/tom-new/tomography-models/main/LLNL_G3D_JPS.nc then volume_builder
-compiler tools/utils/src/bin/volume_builder.rs
-at earth
-sha256 59dedd86e22721f9c5e2845560acbc16e6ccbc77f9d3159be836ef5591990092
-ttl 31536000
-
-url https://github.com/omegaflow/sources/releases/download/media.githubusercontent.com/S40RTS.volume.bin
-terms no-license-stated https://media.githubusercontent.com/
-format volume
-origin procedure: fetch https://media.githubusercontent.com/media/tom-new/tomography-models/main/S40RTS.nc then volume_builder
-compiler tools/utils/src/bin/volume_builder.rs
-at earth
-sha256 a99367c6ccd136b2781b8908ebfc02bbaccbb0d29d084855d9568d45cefaac44
-ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ck89361a_rtr.bc
 format reference
@@ -26603,12 +26364,6 @@ at sun
 ttl 31536000
 field magic_dl3 magic_dl3 inverse-square em tev 31536000 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/padc-tap-rcsed.obspm.fr/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_r.ra_r.dec_r.z_f.objid_f.corrfibmag_u_f.corrfibmag_g_f.corrfibmag_r_FROM_specphot.rcsed_AS_r_JOIN_specphot.rcsed_fibermags_AS_f_ON_r.objid-f.objid_WHERE_f.corrfibmag_g_IS_NOT_NULL.json
-terms no-license-stated https://padc-tap-rcsed.obspm.fr
-format reference
-origin https://padc-tap-rcsed.obspm.fr
-ttl 31536000
-
 url https://github.com/omegaflow/sources/releases/download/sciencebase.gov/slab2_depth.bin
 terms PD https://www.sciencebase.gov/
 format slab2_depth
@@ -26786,12 +26541,6 @@ format sky1
 at sun
 ttl 31536000
 field antares_events_2007_2017 antares_events_2007_2017 inverse-square em 1 31536000 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/voparis-tap-astro-m.obspm.fr/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_5000_ra_dec_mag_vr_FROM_hyperleda.galaxies_WHERE_vr_IS_NOT_NULL.json
-terms no-license-stated https://voparis-tap-astro-m.obspm.fr
-format reference
-origin https://voparis-tap-astro-m.obspm.fr
-ttl 31536000
 
 url https://gs.llnl.gov/sites/gs/files/2021-09/LLNL-Earth3D.5.4.3.jar
 terms USGov-disclaimer https://gs.llnl.gov/
@@ -28527,13 +28276,6 @@ format camera_angles
 origin https://ser.im-ldi.com/M10/M10_ISIS/camera_angles.txt
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 0a65df59c8685e22004ce7f7afa21cf54f7aedc39c2ecb5965b8fcad3dae97bd
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/www.hou.usra.edu/lpsc2024_2663.pdf
-terms no-license-stated https://www.hou.usra.edu/meetings/lpsc2024/
-origin https://www.hou.usra.edu/meetings/lpsc2024/pdf/2663.pdf
-compiler tools/harvest/src/bin/raw_mirror.rs
-sha256 40085b523011849870f2d10ac9311d7c02d1f064c650a22a6e013fbba396f787
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/planetarymaps.usgs.gov/Mercury_M1_M2_M3_M10_mosaic_global_2010.tif
