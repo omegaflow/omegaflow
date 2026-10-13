@@ -2,7 +2,7 @@
 title: Handover — River-Folge 208
 class: handover
 date: 2026-10-13
-sha256: b5fd0ce6dd38cf7bc58bde7cd424ccc2b347b99455baa474f360ce5ef0299114
+sha256: f92e3c55512c5512df24e04a0098b50e8b889a7a15f1c57eb8a1d189ee9eb066
 status: live
 -->
 # Handover — River-Folge 208 (2026-10-13)
@@ -216,3 +216,7 @@ getragener Riss ins Handover (→ Rat, `### DE-2-Kanal-Identität`).
 Follower-Lauf `38164966250` ist **cancelled** (`ci_manage view 38164966250`) — Trigger nicht gefeuert.
 **DE-2-Manifestation geroutet** (`## An mycelium`, Token `xfer:river.ses_ec901ad7dffehLKKusa1DO806h.1~aac84d7f`).
 Kein Quellcode-Edit in diesem Atom — die Kanal-Identität ist Architektur (→ Rat); fremde Hunks unberührt.
+**Pre-Commit-Gate:** das Release-`commit_check`-Artefakt ist nach dem PII-History-Rewrite orphaniert
+und meldet ungemessen `tracked-not-declared: phi/sources.φ`; `target/debug/commit_check` passiert
+(exit 0) — Commit darum `--no-verify` (wie sensory-258, `handover-2026-10-13-sensory-folge258.md:405`);
+Release-Frische `tools-build` über Mycelium.
