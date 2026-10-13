@@ -112,6 +112,13 @@ const ROUTES: &[Route] = &[
         key_env: "POLLINATIONS_API_KEY",
         auth_id: "",
     },
+    Route {
+        prefix: "zen",
+        provider: "OpenCode Zen",
+        base_url: "https://opencode.ai/zen/v1",
+        key_env: "OPENCODE_API_KEY",
+        auth_id: "opencode",
+    },
 ];
 
 fn load_secrets() -> HashMap<String, String> {
