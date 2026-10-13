@@ -2,7 +2,7 @@
 title: Handover — River-Folge 206
 class: handover
 date: 2026-10-13
-sha256: 7b877f9c17d5e61177942a32107c22b119fc85320751f149b5d7c0b07bab2df3
+sha256: 873b37f0ec5e1214e5143bce467752d74eb65cd00442cfbc5f3ddbfa1dd95b89
 status: live
 -->
 # Handover — River-Folge 206 (2026-10-13)
@@ -148,7 +148,7 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 
 Origin: river-204
 
-**ENTSO-E — die zwei gemessenen Defekte.** (1) Der `entsoe_compiler` sendet `documentType=A78` mit `in_Domain` ohne `out_Domain` → HTTP 400 `uu-appg01/server/invalidRequest` (der Token ist akzeptiert; ein ungültiger Token gäbe 401). (2) Es gibt keine lebende `phi/sources.φ`-Zeile für ENTSO-E (`sgrep -i entsoe` = 0; Compiler + Workflow unregistriert). xfer:river204-entsoe1.
+**ENTSO-E — die zwei gemessenen Defekte.** (1) Der `entsoe_compiler` sendet `documentType=A78` mit `in_Domain` ohne `out_Domain` → HTTP 400 `uu-appg01/server/invalidRequest` (der Token ist akzeptiert; ein ungültiger Token gäbe 401). (2) Es gibt keine lebende Registerzeile für ENTSO-E (`sgrep -i entsoe` = 0; Compiler + Workflow unregistriert). xfer:river204-entsoe1.
 
 **CTBTO — Formular vorbereitet (Operator-Akt = Absenden).** Mycelium meldet das Formular vorbereitet; das Absenden ist Operators Hand.
 
@@ -182,6 +182,6 @@ die zwei CDF-Funktionen vor das Testmodul gezogen. `cargo check` 0/0, `rustfmt -
 drei Dateien. Der **`dropped-gate`** rotete auf **3 Handover-Churn-Namen** (folge204→205) — in
 `docs/zustand/dropped-legacy-baseline.txt` disponiert (Belege `b891afa32`/`12edda4d7`/`6ce059e01`);
 `comm` gegen die Pin = 0 neu. **Fremdrot, gemessen (nicht eigen):** `format` (unformatierte Fremd-Dateien
-in `tools/{harvest,measure,register}` — Arbeitsbaum-WIP), `register` (die zwei Ordnungs-Violationen →
+in tools/harvest, tools/measure, tools/register — Arbeitsbaum-WIP), `register` (die zwei Ordnungs-Violationen →
 `## An mountain`), `clippy` in `camera_angles.rs` (Mountain-327 → `## An mountain`). Vorarbeit der
 Vorsession (river-206) bleibt getragen: Newell-Riss→Mountain, UCAR-FPI-Arm, Sensory-Träger.
