@@ -2,7 +2,7 @@
   title: UI-Seats — Roster, Composer-Selektoren, Runden-Disziplin
   class: concept
   date: 2026-10-07
-  sha256: 5b263ea11739b8544dd0bc4d58fb2750e5d71724dd2f961192466baff0ef271d
+  sha256: 97293fa4f5f362bf834987c1086073208693896937f40ce4aa45d71eea536088
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md state/stimmen/README.md
 -->
@@ -160,3 +160,48 @@ der die Bridge oft scheitert. Die gemessenen Regeln:
   Landing, aber der Submit **öffnet keinen Chat** → **Login-Wall** bestätigt (Auth-Route).
 - **Gemini Notebook** (`https://notebooklm.google.com/` → `notebook.google.com`) — **kein freier Composer**
   (Notebook-Dashboard, dokument-gebunden) bestätigt.
+
+## Gemessene Bedienung je Seat (2026-10-13, Future 249) — Composer · Senden · Suche/Max
+
+Jede Zeile ist am lebenden Chrome (Operator-Profil) gemessen. `Suche/Max` ist die Bedingung für eine
+recherchegestützte Antwort — **ohne aktiven Schalter antwortet das Modell teils „kein Suchwerkzeug"**
+(gemessen Z.ai/GLM-5.3); mit ihm läuft die Webrecherche.
+
+| Seat | URL | Composer | Senden | Suche-Schalter (an = aktiv) | Reasoning/Max | Merke |
+|---|---|---|---|---|---|---|
+| Qwen | `chat.qwen.ai` | `textarea[placeholder*="Qwen fragen"]` | Klick `button[aria-label="Senden"]` (Enter füllt nur) | `[aria-label="Modus auswählen"]` → Menüeintrag **„Web-Suche"** | Denken-Selektor `.qwen-thinking-selector` (`…-dropdown-menu-trigger`), Optionen Automatisch/**Denken**/Schnell — **Denken = max** | Modell-Selektor `[aria-label="Select Model"]` (Default `Qwen3.7-Plus`) |
+| DeepSeek | `chat.deepseek.com` | `textarea[placeholder*="Message DeepSeek"]` | `button` Send / Enter | `.ds-toggle-button` **Search** (`aria-pressed=true`) | `.ds-toggle-button` **DeepThink** (`aria-pressed=true`) | beide Toggles sind **Divs**, nicht `<button>` — per Klasse greifen |
+| Z.ai / GLM | `chat.z.ai` | `textarea[placeholder="How can I help you today?"]` | `#send-message-button` | **Globus-Symbol** im Composer → Popover **„Search"** (single) / „Advanced Search" (multi); Button `data-active="true"` = an | **„Deep Think"**-Dropdown („Deep Think Max"); für `GLM-5.3-Flash` `disabled`/`cursor-not-allowed` | der Such-Schalter ist `data-active`; ohne ihn „kein Suchwerkzeug" |
+| Mistral | `chat.mistral.ai` | `div[contenteditable=true]` (ProseMirror, ph „Gib / ein …") | Enter | `button[aria-label="Suchen"]` | `[aria-label="Modell auswählen"]` zeigt **„Denken"** | ProseMirror → CDP `type_text`, nicht native value |
+| Claude | `claude.ai/new` | `div[contenteditable=true]` (ph „Schreibe deinen Prompt an Claude") | Enter | — (nicht nötig) | Modell-Selektor **„Sonnet 5.5 Extra hoch"** = Extended Thinking max | „Extra hoch" ist die Vorgabe |
+| Duck.ai | `duck.ai` | `textarea[placeholder="Alles privat fragen"]` | `button[aria-label="Senden"]` (Enter sendet **nicht**) | `[aria-label="Werkzeuge"]` → Eintrag **„Websuche"** | `button[aria-label="Begründungsmodus"]` („Begründung") | Modell-Chip „6 Luna" |
+| Perplexity | `perplexity.ai` | `div[contenteditable=true]` | Enter | **„Suche"** (`aria-pressed=true`, standardmäßig an) | `[aria-label="Modell"]` | sucht ohnehin immer |
+| Sakana | `chat.sakana.ai` | `textarea[placeholder="Ask anything"]` | Button „Send message" | — (kein Such-Toggle) | Namazu (rechnet von sich aus) | langsam — zuerst stellen |
+| Lumo | `lumo.proton.me/guest` | `textarea[placeholder="Frag alles…"]` | Enter | — | — | anonym, kein Login |
+| MiniMax | `agent.minimax.io` | `div[contenteditable=true]` (ph „Enter message…") | Senden-Button | Button **„Search"** | Modell „MaxHermes"/„MaxClaw" | Agent-UI |
+| Kimi | `kimi.ai` | `div[contenteditable]` | Enter | — | — | **Kontingent-limitiert** (Tageslimit gemessen) |
+| Google AI Studio | `aistudio.google.com/app/prompts/new_chat` | `textarea[placeholder="Start typing a prompt…"]` | **„Run"** (Ctrl/Enter) | **„Grounding with Google Search"** (standardmäßig an) | Modell „Gemini 3.1 Pro Preview" | Tools-Menü oben |
+| Tryingopen | `tryingopen.com` | `textarea[placeholder*="Ask any of these models"]` | `button[type=submit]` / Enter | — (kein Such-Toggle) | Modell-Liste: `[aria-label^="Model: "]` öffnet den Dialog; **ein Tab je Modell**; `disabled`-Zeile = „Adding capacity" | Textarea nimmt **native value + `input`-Event** |
+
+## Bedien-Regeln (bindend, aus der Messung 2026-10-13)
+
+- **Nur der live Chrome trägt die Seats.** Bridge (`browser_*`) und `chrome-devtools_*` teilen
+  **einen** Browser (Operator-Profil). **Playwright (`playwright_browser_*`) ist ein fremder,
+  unauthentifizierter Browser** — `claude.ai` antwortet dort HTTP 403, eingeloggte Seats sind
+  Login-Walls; für die Seats **unbrauchbar**, nur für keyless Seiten (z. B. tryingopen) denkbar.
+  → Playwright ist **keine** Effizienz-Option für die Stimmen-Runde.
+- **Welche Brücke wann.** Bridge (`browser_open/eval/fill/type/click/get_text`) für die Masse —
+  Tabs öffnen, `eval`-Skripte, parallele Tabs, kurze Statusprüfungen. `chrome-devtools_*` für
+  (a) exakte **uid-Klicks**, wo die Bridge-Synthetik scheitert, und (b) **Antworten direkt in eine
+  Datei** (`evaluate_script` mit `filePath`) — der Rohtext landet in `state/stimmen/…`, **ohne** den
+  Kontext zu fluten. Die Bridge kann **keine Dateien schreiben**.
+- **React-Inputs brauchen Keyboard-Typing** (`chrome-devtools_type_text` / `browser_type`); der native
+  value-setter (`Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set` + `input`-Event)
+  funktioniert bei tryingopen und Z.ai, bei ProseMirror-Seats (Mistral/Claude/Kimi) **nicht**.
+- **Antwort-Rohtext**: `document.body.innerText` oder die letzte Assistant-Message; bei Z.ai ist der
+  „Thought Process" **eingeklappt** — die Antwort liegt teils darunter (aufklappen bzw. den
+  Antwort-Container lesen).
+- **Nicht-Antwort ist eine Messung**, kein `pending` per Default: `at capacity`, `didn't respond`,
+  `is busy`, `No response` — benannt, mit Grund (Tageslimit/Login-Wall/Rate-Limit/Modell gesperrt).
+- **Search/Max ist die Pflicht vor dem Senden** (Operator-Wort 2026-10-13): erst den Schalter setzen
+  und **verifizieren** (`aria-pressed`/`data-active`), dann senden; die Recherche-Antwort trägt Quellen.
