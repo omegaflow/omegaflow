@@ -1,5 +1,5 @@
 use omegaflow::archivar::sha256::sha256_hex;
-use omegaflow::archivar::types::{CHANNEL_REF_QUANTITY, PRESENCE_FLAG_QUANTITY};
+use omegaflow::archivar::types::PRESENCE_FLAG_QUANTITY;
 use omegaflow::cdn::upload_release;
 use omegaflow::force::{force_id_of, quantity_kind_of};
 use omegaflow::hdf5::{Hdf5File, Hdf5Layout};
@@ -269,7 +269,7 @@ fn main() {
         Some(name) => match force_id_of(&name) {
             Some(id) => (id, 1.0),
             None => match quantity_kind_of(&name) {
-                Some(_) => (CHANNEL_REF_QUANTITY, PRESENCE_FLAG_QUANTITY),
+                Some(_) => (0, PRESENCE_FLAG_QUANTITY),
                 None => {
                     eprintln!(
                         "losc: `{name}` is neither a force nor a quantity kind — the record stays unwritten"

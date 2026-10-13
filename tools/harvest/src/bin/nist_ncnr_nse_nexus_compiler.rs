@@ -2,7 +2,7 @@ use omegaflow::archivar::embedded_lsk;
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::json::{JsonVal, parse_json};
 use omegaflow::archivar::sha256::sha256_hex;
-use omegaflow::archivar::types::{CHANNEL_REF_QUANTITY, PRESENCE_FLAG_QUANTITY};
+use omegaflow::archivar::types::PRESENCE_FLAG_QUANTITY;
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Hdf5File, Hdf5Layout, Hdf5Note};
 use omegaflow::lsk::days_from_civil;
@@ -24,7 +24,6 @@ const SLOT_VAL: usize = 3;
 const SLOT_EPOCH: usize = 4;
 const SLOT_TTL: usize = 5;
 const SLOT_TAU: usize = 6;
-const SLOT_CHANNEL_REF: usize = 9;
 const SLOT_PHASE: usize = 24;
 const SLOT_PRESENCE: usize = 25;
 
@@ -342,7 +341,6 @@ fn compile(bytes: &[u8], ttl_s: f64) -> Result<Compiled, String> {
         r[SLOT_EPOCH] = epoch_tdb;
         r[SLOT_TTL] = ttl_s;
         r[SLOT_TAU] = tau_s;
-        r[SLOT_CHANNEL_REF] = CHANNEL_REF_QUANTITY as f64;
         r[SLOT_PHASE] = ph;
         r[SLOT_PRESENCE] = PRESENCE_FLAG_QUANTITY;
         records.push(r);
