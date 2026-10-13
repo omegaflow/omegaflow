@@ -6318,7 +6318,7 @@ mod tests {
             name: name.to_string(),
             band_id: None,
             kernel: 0,
-            channel_ref: 0,
+            channel_ref: None,
             tau: 0.0,
             absorption: 0.0,
             advection: 0.0,
