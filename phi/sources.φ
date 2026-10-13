@@ -3811,6 +3811,14 @@ field wind_waves_rad1 wind_waves_rad1 gaussian-inverse-square electric V 86400 0
 field wind_waves_rad2 wind_waves_rad2 gaussian-inverse-square electric V 86400 0.0 0.0
 field wind_waves_tnr wind_waves_tnr gaussian-inverse-square electric V 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/jpl_sbdb.bin
+terms PD https://ssd.jpl.nasa.gov/
+format catalog_mpcorb
+origin https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,G&sb-kind=a&full-prec=true
+compiler tools/harvest/src/bin/jpl_sbdb_compiler.rs
+at sun
+ttl 86400
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-dastcom/dastcom_asteroids.bin
 format catalog_dastcom
 terms PD-USGov https://ssd.jpl.nasa.gov/
