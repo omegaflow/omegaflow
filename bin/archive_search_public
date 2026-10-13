@@ -53,7 +53,7 @@ case "${1:-}" in
   --pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|\
   --materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|\
   --uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--go|--unpaywall|\
-  --reactome|--interpro|--alphafold|--supermag|--heasarc|--verdict|--sniff) : ;;
+  --reactome|--interpro|--alphafold|--supermag|--heasarc|--base|--verdict|--sniff) : ;;
   *)
     printf 'archive_search_public: first argument must be a public network mode (see --help); got: %s\n' "${1:-<none>}" >&2
     exit 2
