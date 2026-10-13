@@ -1,6 +1,7 @@
 ---
 description: Future-Linie — die Menschenwelt als Anrede: Korrespondenz, Anträge, Consent, Operator-Queue, Übergabe. Ein Pass — Stand lesen, Bekanntes bis zur Kante arbeiten, nur Ungeklärtes vorlegen.
 agent: line
+model: groq/openai/gpt-oss-120b
 ---
 
 Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch),
