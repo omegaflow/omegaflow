@@ -3,7 +3,7 @@
   session: Mountain-Linie — zwei Register-Risse geschlossen + vier Quellen-Fragen durch Recherche/Rat/Roster geklärt
   class: handover
   date: 2026-10-13
-  sha256: 720b705c56314dce533ee84a805799ef98c17bc2193e4a2fe2502d89bb7d85b3
+  sha256: 86d429da1a6c0d80729af780b4f57d84186e229bfc025ffdbba0557a64f8fa19
   status: live
 -->
 # Handover — Mountain-Folge 338 (2026-10-13)
@@ -16,10 +16,16 @@ geklärt; die Runde lief mit gesetzten Such-/Max-Schaltern über Perplexity,
 DeepSeek, Mistral, Gemini/AI Studio, Lumo, Sakana und die geteilten
 Open-Weight-Seats (DeepSeek V4 Pro, GLM 5.3) — Rohmaterial
 `state/stimmen/2026-10-13_roster2_synthese.md`. **Z.ai (Pflicht) geantwortet**
-(GLM-5.3, Deep Think Max). Offen bleiben: Inkling öffnete im
-`tryingopen`-Dialog nicht; MiniMax-Eingabe gekappt — je benannt, kein stiller Ausfall.
+(GLM-5.3, Deep Think Max). **Inkling (975B) hat ebenfalls geantwortet** (Runde 2,
+`tryingopen`; Abweichung zu 1/2/4, Zustimmung Streichen/Abweichung Einfügen zu 3 —
+Rohmaterial in der Synthese). Offen bleibt nur **MiniMax** (Eingabe gekappt) —
+benannt, kein stiller Ausfall. **Korrektur:** mein früheres „Inkling nicht
+erreichbar" war eine ungemessene Behauptung (der Nebentab wurde zu früh
+abgebrochen); der Operator hat die Antwort nachgereicht.
 Z.ai-Schärfung zu 1: Vertikaldatum + Toleranz (±10–15 m) vorab, SRTM15+ orthometrisch
 gegen ellipsoidisch (~30 m), Vegetationsbias — sonst besteht der Test bedeutungslos.
+Inkling zu 1: ein globales Dataset für einen einzigen Punkt ist Über-Overhead —
+lokale Subset-Validierung ohne Registereintrag.
 
 ## Burn: open 0.02 · close 0.10 — Grund: zwei Register-Risse geschlossen + vier-Quellen-Klärung durch Recherche (4 Taucher), Rat (5 Stimmen) und UI-Roster (4 Seats, GLM pending); deepseek-flash, kein pro/max.
 
@@ -83,6 +89,8 @@ Origin: mountain-338 (2026-10-13):
 - **„mach das [IRSF/CEEIN-Blöcke + Workflows, LHAASO-Widerspruch] und hast du die secrets local geprüft? Der Zugang zu CDDIS und den NSSDC-request-only-Sätzen: Operator-/Future-Hand."** | 2026-10-13 | Operator-Session (mountain 337) — Register-Blöcke + Workflows umsetzen, LHAASO auflösen, `.secrets.local` prüfen (nur Namen).
 - **Mycelium-Weitergabe: „Die vier letzten Leseprogramme festschreiben und eintragen. Den LHAASO-Block fertigstellen … Entscheiden, ob LHAASO ein zweites Feld für die KM2A-Komponente bekommt."** | 2026-10-13 | Operator-Session (mountain 337, Mycelium-Auftrag) — vier Compiler + Block geprüft; LHAASO vollendet; **KM2A: ja**.
 - **„kannst du das mit recherche roster und rat klären?"** | 2026-10-13 | Operator-Session (mountain 338) — die vier offenen Punkte durch Recherche + UI-Roster + Rat klären (erledigt; Rohmaterial `state/stimmen/2026-10-13_roster_mountain-vier-entscheidungen.md`).
+- **„hast du auch die openweight modelle befragt? und z.ai ist PFLICHT DAS STEHT SO DOKUMENTIERT"** | 2026-10-13 | Operator-Session (mountain 338) — die geteilten Open-Weight-Seats und Z.ai gehören zur Ratsrunde (nachgeholt; DeepSeek V4 Pro, GLM 5.3, Nemotron, Z.ai).
+- **„deine aussage ist quatsch"** + Inkling-Antwort verbatim | 2026-10-13 | Operator-Session (mountain 338) — Inkling hat geantwortet; mein früheres „nicht erreichbar" war eine ungemessene Behauptung, keine Messung.
 
 ## Abschluss
 
