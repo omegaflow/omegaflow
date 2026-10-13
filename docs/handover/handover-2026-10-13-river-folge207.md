@@ -2,7 +2,7 @@
 title: Handover — River-Folge 207
 class: handover
 date: 2026-10-13
-sha256: f9f25734dd8b4f762102b19517350d382bc11fe9f57a5162f011884d4f75b47b
+sha256: ae69fa2fa6afba0a33c1e75f8cf7780d9302e1be88b965bea83d326f04812889
 status: live
 -->
 # Handover — River-Folge 207 (2026-10-13)
@@ -21,6 +21,7 @@ Wort | Datum | Quelle
 „ja du bist die frische sitzung" | 2026-10-13 | Operator (Session, River-204) — die zwei großen Bauten (Kopplungs-GPU-Seite + Parität, Zeugen-Registerzeilen) in dieser frischen Session arbeiten, nicht als Taucher-Auftrag an die Vorsession.
 „nein ich sage der lock wird erst aufgehoben wenn das frühwarnsystem fertig und kalibriert ist" | 2026-10-13 | Operator (Session, River-204) — LOCK bleibt; die zwei Siegel-Punkte (wy-max-t, Blatt-Kalibrierung) werden **nicht** als erledigt gestrichen; der LOCK fällt erst, wenn das Frühwarnsystem fertig und kalibriert ist.
 „das kannst du direkt prüfen" | 2026-10-13 | Operator (Session, River-204) — den ENTSO-E-HTTP-400 direkt prüfen (Token oder Parameter).
+„ja bitte aber warum sind es nur 384 aufrufe wir haben doch 2500 blöcke" | 2026-10-13 | Operator (Session, River-208) — **Bau-Wort für den Register→Manifest-Automatismus** (das Kabel bauen; zuerst die Zählung der generischen Teilmenge als erste Messung). Die Frage nach 384 vs. 2565 ist mit der Messung unten beantwortet.
 
 Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 
@@ -126,13 +127,6 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 - **Blockade:** ESA/ESOC-recon-SPK + die 1-σ-Kovarianz absent.
 - **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
 
-### Register→Manifest in einem Schritt (Eintrag = Manifest) — Rat + UI-Roster konvergiert; Bau auf Operator-Wort
-- **Status:** operator-gebunden | **Bindung:** eigen
-- **Trigger:** Wort: der Operator entscheidet über den Bau (Minimal-Form liegt vor).
-- **Lage:** (gemessen 2026-10-13 river-208) 493 Workflow-Dateien, davon 384 `*-cdn.yml`-Aufrufer (je Quelle einer); `auto-dispatch.yml` weckt nur bei Compiler-Änderung, nie bei Register-Änderung; der generische Zenodo-Spiegel `zenodo-raw-cdn.yml` (`raw_mirror`, Matrix aus `{asset,url,origin,sha256}`) existiert. **Rat (fünf Stimmen) + UI-Roster (Claude Sonnet 5.5 · Qwen3.7-Plus · Duck.ai GPT-6 Luna · DeepSeek V4 Pro; Z.ai `pending`=Kapazität/Peak)** konvergieren: der Eintrag muss den **vollen Vertrag** tragen (Format+Version, Runner-Kennung aus geschlossener Menge, Herkunft+Ziel, Prüfsumme **mit Algorithmus**, Auth nur als Referenz, Schema-Version); der Diskriminator ist **explizit** (`manifest auto|manual`, nie „kein `compiler` ⇒ generisch"); Migration per Paritätslauf je Quelle. Material: `state/stimmen/2026-10-13-river-register-manifest-ui.md`. **Riss (nicht geglättet):** die generisch-manifestierbare Teilmenge ist **ungemessen** — erste Messung, keine Annahme.
-- **Blockade:** keine (Struktur vom Rat gehalten; der Bau ist ein Architektur-Akt).
-- **Braucht:** Operator-Wort auf den Bau; dann (1) das Scanner-Bin `register_manifest` (Rust-std, Archivar-Struktur) + Gate im selben Atom; (2) die Registerzeile `manifest auto` (Mountain-Zeilenklasse, gemessenes Verdikt); (3) die Zählung der generischen Teilmenge als erste Messung.
-
 ## LOCK
 
 **Operator-Wort 2026-10-13:** der LOCK fällt erst, wenn das **Frühwarnsystem fertig und kalibriert** ist; die zwei Siegel-Punkte werden **nicht** als erledigt gestrichen.
@@ -162,6 +156,8 @@ Origin: river-204
 **Weberin-Zeugen — Manifestation der drei neuen Zeugen.** Die `url`/`origin`/`compiler`-Direktiven der drei Weberin-Zeugen (SABER `TIMED_L2A_SABER`, UCAR-FPI, Athabasca ERG-SC) gehören Mycelium; sie sind gated: SABER keyless via HAPI, UCAR-FPI E-Mail-gated (Operator), Athabasca ERG-SC keyless. Sobald die `channel`/`field`-Zeile steht (`## An mountain`), die Manifestation ziehen. xfer:river208-weberinmanifest1.
 
 **Schumann-Resonanz (Zenodo) — Eintrag ohne Abzug.** Gemessen (river-208, `archive_search --verdict`/`--sniff`): der Block `phi/sources.φ:1034-1043` trägt `url …/zenodo.org/resonance_schumann.csv` + `origin https://zenodo.org/api/records/15225820/files/NiNo_SR_params_2024.csv/content` (CC-BY-4.0), aber (a) **kein `sha256`**, und (b) der Abzug im CDN ist **404** — nicht unter den 95 Assets des `zenodo.org`-Release, und kein `*-cdn`-Aufruf nennt die Quelle. Die Origin-Datei ist erreichbar (HTTP 200, 454 417 B), sha256 `3183a14fafba0762f91522dfdddf356fa2609b86797d6512aefc2104bf7b0272`. **Braucht:** (1) die Zeile `sha256 3183a14fafba0762f91522dfdddf356fa2609b86797d6512aefc2104bf7b0272` in den Block; (2) eine Matrix-Zeile in `.github/workflows/zenodo-raw-cdn.yml` (`asset: resonance_schumann.csv`, `url`/`origin` wie oben, derselbe sha256); (3) `gh workflow run zenodo-raw-cdn.yml`. xfer:river208-schumann1.
+
+**Register→Manifest in einem Schritt — Operator-Bau-Wort liegt vor.** Operator-Wort „ja bitte" (2026-10-13): das Kabel bauen. Rat + UI-Roster konvergiert (Material `state/stimmen/2026-10-13-river-register-manifest-ui.md`). **Erste Messung (die Zählung, river-208):** `phi/sources.φ` = 2565 Blöcke; davon 636 `format reference` (reine Verweis-Einträge, kein Roh-Asset), 1239 mit eigenem `compiler`; generisches Format (csv/json/cdf/hapi) = 23, davon **19 ohne `compiler`** (die heute automatisch-manifestierbare Teilmenge). Aktoren: 384 `*-cdn.yml`-Aufrufer, 308 distinkte `compiler`-Bins, 619 `--bin`-Aufrufe — 2565 Blöcke sind also **nicht** 2565 Hol-Jobs; Familien teilen einen Aufrufer. **Braucht (Minimal-Form des Rats):** (1) Scanner-Bin `register_manifest` (Rust-std, Archivar-Struktur; liest `phi/sources.φ` blockweise, wählt `origin`+`url`+`sha256`+generisches Format **und** `manifest auto`, emittiert das `harvests`-JSON, ruft `cdn-manifest.yml`) + Gate im selben Atom; (2) die Registerzeile `manifest auto|manual` (Mountain-Zeilenklasse, gemessenes Verdikt); (3) Auslöser im Eintrag, nie globaler Push; (4) Idempotenz: Blöcke mit `compiler` ⇒ null Zeile; (5) je migrierter Quelle ein Paritätslauf vor dem Löschen des Aufrufers. xfer:river208-registermanifest1.
 
 ## An mountain
 
