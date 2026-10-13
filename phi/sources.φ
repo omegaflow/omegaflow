@@ -836,15 +836,6 @@ on earth 52.52 13.405 0
 ttl 3600
 field openmeteo_birch_pollen openmeteo_birch_pollen_grains gaussian-inverse-square diffusion grains/m3 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/amda.irap.omp.eu/amda_rpw_efield.bin
-terms unclear https://amda.irap.omp.eu/
-origin https://amda.irap.omp.eu/
-format json
-ttl 3600
-at solar_orbiter
-field amda_rpw_e_y amda_rpw_e_y inverse-square electric mV/m 3600 0.0 0.0
-field amda_rpw_e_z amda_rpw_e_z inverse-square electric mV/m 3600 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/api.opensensemap.org/opensensemap_temperatur.bin
 format opensensemap_temperatur
 origin https://api.opensensemap.org/boxes?bbox=7.5,47.5,8.5,48.5&phenomenon=Temperatur
@@ -1195,20 +1186,6 @@ on earth 65.05 25.47 0
 rows .
 epoch 0
 field 1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600.0 0.0 0.0
-
-url https://www.wis-tns.org/system/files/tns_public_objects/tns_public_objects.csv.zip
-terms registration-required https://www.wis-tns.org/
-format csv_zip
-header user-agent {TNS_UA}
-post_body api_key={TNS_API_KEY}
-ttl 3600
-at sun
-abs_mag_from tns_transient_flux
-cmap .
-ra ra
-dec declination
-z redshift
-field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/dd.weather.gc.ca/eccc_gdps_15km.grib2
 terms OGL-Canada-2.0 https://eccc-msc.github.io/open-data/licence/
@@ -2805,25 +2782,6 @@ field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
 field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
 field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/lasp.colorado.edu-eve/eve_lines_2011.bin
-terms lasp-permission-required https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2
-format eve
-origin https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2
-compiler tools/harvest/src/bin/eve_compiler.rs
-at sun
-ttl 86400
-field eve_94_line_irradiance eve_94_line_irradiance inverse-square em w/m2 86400 0.0 0.0
-field eve_131_line_irradiance eve_131_line_irradiance inverse-square em w/m2 86400 0.0 0.0
-field eve_171_line_irradiance eve_171_line_irradiance inverse-square em w/m2 86400 0.0 0.0
-field eve_195_line_irradiance eve_195_line_irradiance inverse-square em w/m2 86400 0.0 0.0
-field eve_211_line_irradiance eve_211_line_irradiance inverse-square em w/m2 86400 0.0 0.0
-field eve_284_line_irradiance eve_284_line_irradiance inverse-square em w/m2 86400 0.0 0.0
-field eve_304_line_irradiance eve_304_line_irradiance inverse-square em w/m2 86400 0.0 0.0
-field eve_335_line_irradiance eve_335_line_irradiance inverse-square em w/m2 86400 0.0 0.0
-field eve_584_line_irradiance eve_584_line_irradiance inverse-square em w/m2 86400 0.0 0.0
-field eve_977_line_irradiance eve_977_line_irradiance inverse-square em w/m2 86400 0.0 0.0
-field eve_1032_line_irradiance eve_1032_line_irradiance inverse-square em w/m2 86400 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/manati.star.nesdis.noaa.gov-ascat/ascat_uhr_ascat_b.bin
 terms PD-USGov https://manati.star.nesdis.noaa.gov/UHR_ASCAT/UHR_ASCATB/
 format ascat_wind
@@ -4249,16 +4207,6 @@ ra ra
 dec dec
 field hyperleda_radial_velocity_kms hyperleda_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
 field hyperleda_mag hyperleda_mag inverse-square em mag 604800 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/paperdata.china-vo.org/ocns2019.zip
-terms unclear https://nadc.china-vo.org/
-origin https://web.archive.org/web/20220609074246/http://paperdata.china-vo.org/yuanye/ocns2019.zip
-format csv
-no-cadence
-at sun
-cmap .
-ra obsCoordIcrsB.0
-dec obsCoordIcrsB.1
 
 url https://github.com/omegaflow/sources/releases/download/portal.opentopography.org/srtm15_plus_globaldem.tif
 terms CC-BY-4.0 https://opentopography.org/
@@ -19770,15 +19718,6 @@ at earth
 ttl 604800
 field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms inverse-square advective m/s 600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/sdc.emiratesmarsmission.ae/emm_exi_l2a.tar
-terms auth-required https://api.emiratedatacenter.com/v1/science/files
-format emm_exi_l2a
-origin https://api.emiratedatacenter.com/v1/science/files
-compiler tools/harvest/src/bin/emm_sdc_compiler.rs
-at mars
-ttl 604800
-field emm_exi_count emm_exi_count inverse-square em count 604800 0.0 0.0 aperture:none
-
 url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic.bin
 terms CC-BY-4.0 https://en.ilmatieteenlaitos.fi/open-data-licence
 format fmi_gic
@@ -19984,7 +19923,7 @@ field viking_lander_range_rate_km_s viking_lander_range_rate_km_s inverse-square
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-weberin/weberin_verdicts.bin
 format weberin_verdicts
-terms imcce-permission-required https://ssd.jpl.nasa.gov/
+terms Open-Licence-2.0 https://www.imcce.fr/
 origin https://ftp.imcce.fr/pub/ephem/planets/inpop19a/inpop19a_TDB_m100_p100_spice.tar.gz
 origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
@@ -26460,16 +26399,6 @@ field fnu_12 iras_psc_fnu_12_jy inverse-square em Jy 31536000 0.0 0.0
 field fnu_25 iras_psc_fnu_25_jy inverse-square em Jy 31536000 0.0 0.0
 field fnu_60 iras_psc_fnu_60_jy inverse-square em Jy 31536000 0.0 0.0
 field fnu_100 iras_psc_fnu_100_jy inverse-square em Jy 31536000 0.0 0.0
-
-url https://userquery.linea.org.br/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+ra,dec,mag_auto_g+FROM+des_dr2.main+WHERE+mag_auto_g+IS+NOT+NULL
-terms all-rights-reserved https://userquery.linea.org.br/
-format tap
-ttl 31536000
-at sun
-cmap .
-ra ra
-dec dec
-field mag_auto_g des_dr2_auto_mag_g inverse-square em mag 31536000 0.0 0.0
 
 url https://vdatum.noaa.gov/download/data/
 terms PD https://vdatum.noaa.gov/
