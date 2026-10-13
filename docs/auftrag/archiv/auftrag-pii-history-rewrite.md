@@ -2,11 +2,19 @@
   title: Auftrag — PII-History-Rewrite (private Operator-Adresse)
   class: auftrag
   date: 2026-09-28
-  sha256: c86f251f20a6ce94ac25cefa328a737f69552238c528a1dbdaa91e15f4985990
-  status: live
+  sha256: cd3222dd861d46aee3abe05e6cfa5db70e61bbd5fd658a95bd000b0459a65ffe
+  status: archived
   see-also: docs/zustand/external-state.md .gitignore
 -->
 # Auftrag: PII-History-Rewrite — die private Operator-Adresse aus der Historie
+
+**Erledigt (2026-10-13):** der Rewrite ist gefahren und gepusht — `main` = `81c8b7803`;
+Autor/Committer durchweg `code@omegaflow.space`; die private Postfach-Adresse, die Heim-IP-Varianten,
+der Schlüsselname und die Geräte-MAC **0 Treffer** in der ganzen `main`-Historie; alle anderen Dateien
+byte-identisch. Gefahren im Bare-Klon (`git-filter-repo`, vier Läufe: Autor + redigierte Zeilen →
+breite MAC-Ersetzung verworfen → MAC eng → PII-Werte als Teilzeichenketten); der Operator pushte
+(`--force`, Bypass griff). Alle Klone/Linien ziehen neu. Der lokale Alt-Objekt-Müll ist je Klon mit
+`git reflog expire --expire=now --all && git gc --prune=now` zu tilgen (Operator-Hand).
 
 ## Befund (gemessen 2026-09-20)
 
