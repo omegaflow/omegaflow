@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 343 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 99b1ff8a7b7874528bf139f01ba47bbb14f0c3b0eab9624547c98ed685229826
+  sha256: 9ff7f8a543ce3d8a5433c907fb0e91e8c4614fd313c35fbea0b50a1c471996a6
   status: live
 -->
 # Handover — Mycelium-Folge 343 (2026-10-13)
@@ -126,6 +126,13 @@ Gefaltet: `## An mycelium` aus `future-folge251` (Origin future-247), `mountain-
 - **Lage:** (gemessen 2026-10-13/343, Taucher) **17-PD-Liste rekonstruiert** aus `state/mycelium/block-drafts/*.φ` (17 Zeilen `terms PD`; ein expliziter Taucherbericht existiert nicht). **16/17 bestätigt** an den Behörden-Policies (USGS `copyrights-and-credits`, NOAA `sos.noaa.gov/copyright`, NASA-Brand-Center; IRSA via Wayback; alle 200/206, Zitate vorhanden) — **1 pending:** `hyperleda.json` — die Quelle ist NED (`origin …/ned.ipac.caltech.edu/tap/sync…NEDTAP.objdir`); **browser-verifiziert 343** (Startseite · About NED · Acknowledging NED · „Guidelines for Automated Queries"): keine Lizenz-/Terms-Seite, nur Danksagung + `Copyright © 2026, California Institute of Technology` + Nutzungsrichtlinien für automatische Abfragen; re3data führt als Terms nur IPACs `image-use-policy` (`other`). Der Token `PD` ist an NED **nicht belegt**. Die 4 Pendings: `edgar_v81_so2` **CC-BY-4.0 bestätigt** (`copyright.txt`-Zitat) · `argo_bgc` **frei ohne Einschränkung** (Attribution erbeten; **kein** CC-BY-4.0-Identifikator) · `srtm15_plus_v2.5.5.nc` **CC-BY-4.0 unbelegt** (Quelle ohne Lizenzsatz; gilt PD/OpenTopography) · `cams_so2` **Copernicus data licence** (frei/attribution), **nicht** CC-BY-4.0. **ECCC-Riss aufgelöst:** `phi:8177` `…/licence/readme_en/` ist lebendig (200); tot war nur die Variante ohne `readme_en` — der Block trägt aber einen Token, der die ECCC-End-use-Licence benennt (nicht `OGL-Canada-2.0`).
 - **Blockade:** `terms` = Mountains Recht.
 - **Braucht:** Mountain korrigiert vier `terms`-Zeilen (`argo_bgc`, `srtm15_plus_v2.5.5.nc`, `cams_so2`, `phi:8177`). An Mountain: `xfer:mycelium-343-2`.
+
+### tools-map.md — Träger (Werkzeug-Karte)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der nächste `--orphan-docs`-Pass oder eine `archive_search`-Arm-Änderung
+- **Lage:** (gemessen 2026-10-13/343) auf den `archive_search --help`-Stand; der `--base`-Eintrag (`tools-map.md:328`) von „keyless" auf **`BASE_API_KEY`** korrigiert (net.rs:4181; Teil von `--all`). `--base` angefragt und laufend: „fast radio bursts" → 16 Treffer (Lyutikov/Popov 2020, drei FRB-Community-Newsletter 2026, SciDB-Datensätze).
+- **Blockade:** keine.
+- **Braucht:** bei Werkzeug-Änderungen fortschreiben.
 
 ### NVIDIA-NSSDC/SSDC-Schlüssel ohne Konsument
 - **Status:** eigen | **Bindung:** eigen
