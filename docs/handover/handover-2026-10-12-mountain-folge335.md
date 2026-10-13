@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: d5c810df01b12ef5fdceb5f038787e73cf5d045068cfc521a766f24fe43eec1c
+  sha256: 152a9337fbdadc67b08b48b924dd32eaff53b7468a058ed0af82d9bc56238889
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -246,6 +246,7 @@ Aus dem adressierten Block future-244/247 — je Eintrag ein Token (Echo = im Li
 - `xfer:river.river-203.1~0e4958d2` (`omni_imf_bz_gsm_nt`-Doppelregistrierung) — **erledigt (Mountain-Teil):** der Live-HAPI-Block (`phi:681-688`) trägt jetzt `_live`-Namen; die Archiv-1h-Reihe (`phi:1843-1848`) hält kanonisch `omni_imf_bz_gsm_nt` → der Descriptor `newell_geospheric_omni.te:14` bindet die (ABK-überlappende) Archiv-Reihe statt des live-Fensters. Verifikation am CI-Lauf `field-te-query.yml` Job `matrix-newell-omni`. `[manifest n=1 root=eabac70a]`
 - `xfer:future-247-6` (Welle 3: JWST-Riss + Einzel-Observablen + ArcGIS-Reste) — **gefaltet** in den Offen-Punkt „Lizenz-Zensus Welle 3".
 - `xfer:future-247-7` (drei Einzel-Entscheidungen, Operator-Wort 2026-10-12) — **erledigt:** (1) `rpw_efield` (AMDA, `phi:894`) `decline superseded` (die lizenzierte RPW-LIRA-Kopie `phi:1078`, `terms rpw-public-ack`, trägt dieselbe Observable); (2) `casdc.china-vo.org` LHAASO (`phi:28451`, ein Witness ohne `field`) `decline superseded`; (3) `www.kari.re.kr`/KPLO (`phi:29883`) `terms kari-public-release <KARI-KPDS-PublicRelease-URL>`.
+- `xfer:mycelium.ses_ecd958500ffeeGumcGExqQNmPS.1~9ff1374e` (`terms`/`at`/`field` für 4 Ersatzquellen) — **teilweise:** `terms`/`at` gesetzt (`osc` MIT · `chime_frb_cat2`/`lamost_dr10`/`cfa_co` CC-BY-4.0; alle `at sun`); **`lamost_dr10` komplett** (3 Felder aus `FIELD_SPECS`: `fibermag_u/g/r` → `lamost_{u,g,r}_fiber_mag`). **Offen:** `osc`/`chime_frb_cat2`/`cfa_co` `field`-Physik (Mechanismus/Medium/Einheit = Quellen-Identität; Namen gemessen: osc `redshift`/`max_app_mag`, chime `DM`/`DM_ne2001`/`DM_ymw16`, cfa_co `format volume`); die **4 Restcompiler** (`heasarc_w3browse`, `jpl_sbdb`, `gesdisc_gnssro`, `opentopography_raster`) brauchen Format-Design (`opentopography_raster` kollidiert mit `SRTM15_V2.6`); die **~15 Registerfälle**, die **8-Ziele-Liste**, der **HEALPix-Kern** und die **8 Risse** liegen weiter.
 
 ## An mycelium
 
