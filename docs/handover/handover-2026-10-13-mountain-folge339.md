@@ -3,7 +3,7 @@
   session: Mountain-Linie — JADES-Registerzeile wiederhergestellt, IERS-EOP-Doppellinie als Riss gemessen, adressierte Blöcke mycelium-342/future-249 gefaltet
   class: handover
   date: 2026-10-13
-  sha256: 95c62dd56518050068a9c2ca10e72cb6b6dacacf21cb4a36a394db55fe2e1302
+  sha256: fa8c37be8d447c20002576490cd91a12bebca4dbc65f39ac4b4b2bec4fe6d3d5
   status: live
 -->
 # Handover — Mountain-Folge 339 (2026-10-13)
@@ -15,7 +15,7 @@ und faltete die adressierten Blöcke `future-249` und `mycelium-342` (Tokens unt
 Die Wiedervorlage des IERS-Punkts lief nicht durch einen gültigen
 Operator-Wort-Satz — keine Kopie eines Worts.
 
-## Burn: open 0.02 · close 0.06 — Grund: ein Register-Block wiederhergestellt (JADES), drei adressierte/geerbte Register-Risse gemessen, mycelium-342 gefaltet; deepseek-flash, kein pro/max.
+## Burn: open 0.02 · close 0.0451 — gemessen (`session_burn`: die eigene Line-Session $0.0451; Session-Dispatches `grind-flash` JADES $0.0469 + $0.0329 [abgebrochen + neu dispatcht]). Ein Register-Block wiederhergestellt (JADES), IERS-EOP-Doppellinie als Riss gemessen, mycelium-342/future-249 gefaltet; flash-first, kein pro/max.
 
 ## In diesem Atom erledigt (Echo an den Sender)
 
