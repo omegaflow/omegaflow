@@ -2,7 +2,7 @@
   title: Rätsel-Master-Matrix — Impact · Aufwand · Erfüllung · Machbarkeit
   class: survey
   date: 2026-10-13
-  sha256: 0f80cee71f04c283b91f88327e763ea744b9f6faa2a2176ad5fbb22a27b6d045
+  sha256: fffb2936cc2776fa3b8c4930e0078f35194cc3210d1dce5d1eb56a917d60187f
   status: live
   see-also: docs/surveys/survey-2026-10-13-grosse-raetsel-und-maschine.md docs/surveys/survey-raetsel-bestand.md docs/concepts/die-weberin.md docs/concepts/kybernetische-astrophysik.md
 -->
@@ -156,6 +156,29 @@ Die *wirklich* fehlenden Fäden sind eine **kurze Liste von acht**:
 Alles andere — Magnetometer, Indizes, EUV, Flares, Sonnenwind, Strahlung, Neutronenmonitor,
 GW, CMB, HI, Exoplaneten-Wirte — **ist registriert**. Die Arbeit ist damit **noch kleiner** als
 die Matrix vorher zeigte: es sind **~8 Fäden**, und jeder speist mehrere Nadeln.
+
+---
+
+## C″ · Leads in den vorhandenen Such-Dokumenten (gemessen 2026-10-13)
+
+Suche in `state/research/spill/*.txt` (294 Dateien) und `/tmp/opencode/*.txt` (287) per
+`archive_search --root`. **Für fast jeden fehlenden Faden liegt schon ein Lead vor:**
+
+| Fehlender Faden | Lead (gemessen) | Fundort |
+|---|---|---|
+| **Schwache Linsen / Shear** | KiDS DR4.1 Weak-Lensing-Katalog (Zenodo `16366035`) · Conicus3D WL-Lightcone (`18776222`) · DES DR2 | `/tmp/opencode/kids.txt`; spill `1791839133` |
+| **Distanzleiter (Hubble 2. Linie)** | Pantheon+ SN-Distanzen · inverse Distanzleiter (10.1140/epjc/s10052-024-13259-7) · Standard-Sirenen (10.1103/physrevlett.122.061105) | spill `1791837616` |
+| **IceCube / Neutrino** | LHAASO-Gammakatalog + Neutrino-Constraints (2026ApJ..1004…45O, 2025ApJ…984…199S) · SN1987A-Neutrinofluss (10.1088/1475-7516/2025/05/027) | spill `1791849575`, `1791837616` |
+| **Auger / UHECR** | Pierre-Auger-Observatory (10.1016/j.nima.2015.06.058) | spill `1791748566` |
+| **21 cm / HI-Durchmusterung** | WALLABY Pilot Survey DR2 HI 21 cm · CGPS HI-Line · CEERS/JADES (Reionisation) | `/tmp/opencode/hips_list.html`; spill `1791737212` |
+| **PTA / Pulsar-Timing** | IPTA Second Data Release — Search for an isotropic GW background (10.1093/mnras/stab3418) | spill `1791675739` |
+| **Stellar-Aktivität (chromosphärisch)** | „The solar-stellar connection: Magnetic activity of seismic solar analogs" (arXiv 1610.00990) · Ca II IRT STELLA/RAVE (Zenodo `57464`) · LASP EVE Solar-EUV | spill `1791723774~`, `1791838717` |
+| **Sonnenzyklus / F10.7 (Proxy für Sonnenfleckenzahl)** | Hathaway „The Solar Cycle" (arXiv 1502.07020) · F10.7 gegen Penticton | spill `1791824847` |
+
+**Der einzige Faden ohne klaren Lead: das photosphärische Vektormagnetfeld (HMI).** Die HMI-Suche
+lieferte nur Bodenmagnetometer- und Aktivitätsindex-Leads, kein HMI/SDO-Magnetogramm.
+Alle übrigen fehlenden Fäden haben **schon eine Spur** in den eigenen Such-Dokumenten — sie
+müssen „nur" registriert + manifestiert werden (Weberin füttern).
 
 ---
 
