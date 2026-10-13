@@ -87,7 +87,12 @@ thermal uk^2
 # `diffusion kg/m2/s` (so2_emission flux) · `diffusion μmol/kg` (registry carries
 # `micromole/kg`) · `seismic-body km/s` (shear velocity) · `em K` (hi4pi brightness
 # temperature) · `em nmgy` (NOIRLab flux).
-diffusion kg/m2/s
+# Mountain 341 (2026-10-13): `diffusion kg/m2/s` healed — the two so2_emission flux
+# lines are now `advective kg/m2/s` (FIXED advective = kg/(m^2 s)); `kg/m2/s` admitted
+# to advective and `mw` to em in units.rs (the ENTSO-E A78 power field). Frozen here
+# until tools-latest republishes the gate, then deleted.
+advective kg/m2/s
+em mw
 diffusion umol/kg
 seismic-body km/s
 em k
