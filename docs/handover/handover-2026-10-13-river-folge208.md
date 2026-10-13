@@ -2,7 +2,7 @@
 title: Handover — River-Folge 208
 class: handover
 date: 2026-10-13
-sha256: 70386e7bf0215eda4ba463e7f673268fe30eacfa85336159d8c723740a3c6a7d
+sha256: 2e2933ec8e83f4f5f3f7d91eef3a9ac813adaa71cc918502fa8791f001c49cac
 status: live
 -->
 # Handover — River-Folge 208 (2026-10-13)
@@ -54,7 +54,7 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 ### Kanal-Identität — Verdikt B′ (Rat + Roster + Forschung): `unit` raus, Größenart in die Achsen
 - **Status:** eigen (Verdikt; Bau offen) | **Bindung:** eigen
 - **Trigger:** keiner — das Verdikt steht; der Bau ist der nächste Schritt.
-- **Lage:** (gemessen 2026-10-13 river-209: `explore`-Taucher + Forschungs-Schicht + Rat + UI-Roster) Code-Riss: `ChannelDescriptor::hash()` (`src/mathematikerin/channel.rs:566-592`) trägt die Achsen/genus/extent/**species**, aber **nicht `unit`**, während `PartialEq` (`:397-412`) `unit` (`:409`) **doch** vergleicht; `ChannelRegistry::register` (`:1493-1502`) dedupliziert allein auf `hash()` → eine unit-only-Differenz wird still verworfen. Register-Fall `phi/sources.φ:41` (CHAMP Massendichte `kg/m^3`, species None) vs `:600` (DE-2 N2-Zahldichte `m^-3`, species N2) überlebt nur über `species`. **Forschung:** QUDT (eine QuantityKind, viele Units) · CF-1.11 (`standard_name` = Identität, `units` = Repräsentation) · HAPI (`name` = Identität) · UCUM (nur Units) — alle: Unit ist **nicht** Identität, die Größenart ist es. **Rat:** Consensus **B′** — `unit` aus **beidem** (`PartialEq` **und** `hash`) entfernen (die Hash/Eq-Divergenz selbst ist der Defekt), die Größenart als Achsen-Token tragen (`number`/`amount`-conserved, damit Massendichte ≠ Zahldichte), `species` = Qualifier; die Einheit bei der Registrierung dimensional validieren (kind↔unit) mit **lautem Fehler** statt stillem Drop. **UI-Roster:** Claude (Sonnet 5.5) B+ein Stück C · Duck.ai (GPT-6 Luna) C · Qwen + Z.ai `pending` (Send-Pfad nicht durchgelaufen). Material: `state/stimmen/2026-10-13-river-kanal-identitaet-rat.md`.
+- **Lage:** (gemessen 2026-10-13 river-209: `explore`-Taucher + Forschungs-Schicht + Rat + UI-Roster) Code-Riss: `ChannelDescriptor::hash()` (`src/mathematikerin/channel.rs:566-592`) trägt die Achsen/genus/extent/**species**, aber **nicht `unit`**, während `PartialEq` (`:397-412`) `unit` (`:409`) **doch** vergleicht; `ChannelRegistry::register` (`:1493-1502`) dedupliziert allein auf `hash()` → eine unit-only-Differenz wird still verworfen. Register-Fall `phi/sources.φ:41` (CHAMP Massendichte `kg/m^3`, species None) vs `:600` (DE-2 N2-Zahldichte `m^-3`, species N2) überlebt nur über `species`. **Forschung:** QUDT (eine QuantityKind, viele Units) · CF-1.11 (`standard_name` = Identität, `units` = Repräsentation) · HAPI (`name` = Identität) · UCUM (nur Units) — alle: Unit ist **nicht** Identität, die Größenart ist es. **Rat:** Consensus **B′** — `unit` aus **beidem** (`PartialEq` **und** `hash`) entfernen (die Hash/Eq-Divergenz selbst ist der Defekt), die Größenart als Achsen-Token tragen (`number`/`amount`-conserved, damit Massendichte ≠ Zahldichte), `species` = Qualifier; die Einheit bei der Registrierung dimensional validieren (kind↔unit) mit **lautem Fehler** statt stillem Drop. **UI-Roster (4 Frontier + eine offene Frontier):** Claude (Sonnet 5.5, Extended Thinking max) B+ein Stück C · Duck.ai (GPT-6 Luna) C · Qwen (Qwen3.7-Plus, Denken) B · Z.ai (GLM-5.3, Deep Think Max) B · tryingopen DeepSeek V4 Pro (1.7T) B. Material: `state/stimmen/2026-10-13-river-kanal-identitaet-rat.md`.
 - **Blockade:** B′ ist Wire-/GPU-Vertrag: `unit` aus `PartialEq` entfernen + das neue Achsen-Token verschieben Registry-Indizes (der P10-Parser-Index-Riss `f2623bb72`) — Bau in eigenem Atom.
 - **Braucht:** den B′-Bau — Hash = PartialEq ohne `unit`; Achsen-Kind-Token; Registrierungs-Validierung kind↔unit mit lautem Fehler; charakterisierender Test (unit-only-Paar → verschieden ODER lauter Fehler, nie stiller Drop).
 - **Blockade:** keine (Route gemessen; der Bau hängt am selben WGSL-/Paritäts-Schritt wie P7.1).
@@ -212,7 +212,7 @@ offen" ist am Register erledigt; offen bleiben `K` (`rate pending`) und die Mani
 `ChannelDescriptor::hash()` (`src/mathematikerin/channel.rs:566-592`) nimmt `species`, aber **nicht `unit`**,
 während `PartialEq` `unit` vergleicht; `register` dedupliziert allein auf `hash()` → unit-only-Paar kollidiert
 still. Verdikt **B′**: `unit` raus aus `PartialEq` **und** `hash`, Größenart als Achsen-Token, `species` Qualifier,
-lauter Fehler bei gleicher Identität + anderer Einheit. Rat + Roster (Claude B/C, Duck C, Qwen/Z.ai `pending`)
+lauter Fehler bei gleicher Identität + anderer Einheit. Rat + UI-Roster (Claude B/C, Duck C, Qwen B, Z.ai B, tryingopen DeepSeek V4 Pro B)
 + Forschung (QUDT/CF/HAPI/UCUM) konvergieren: Unit ist nicht Identität, die Größenart ist es. Material:
 `state/stimmen/2026-10-13-river-kanal-identitaet-rat.md`.
 **Newell/Parität dispatcht + gemessen:** `gh workflow run field-te-query.yml` → Lauf `38464793874`
