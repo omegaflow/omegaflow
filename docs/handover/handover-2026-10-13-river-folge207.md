@@ -2,7 +2,7 @@
 title: Handover — River-Folge 207
 class: handover
 date: 2026-10-13
-sha256: c249452be324fef4c443eaeb7429894e58959b59b45cdcdb2cf3f0b1d9083d57
+sha256: 26817a80bf27f4c6a99d87042f77122203a1f4dedf61d6e8c92f59ce6b52125b
 status: live
 -->
 # Handover — River-Folge 207 (2026-10-13)
@@ -134,6 +134,13 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 - **Lage:** (gemessen 2026-10-13 river-208) als **Nadel ⅩⅣ** in den Rätsel-Register `docs/concepts/kybernetische-astrophysik.md` („Die Nadeln im Block", `:368`) eingetragen (Operator-Wort „echtes Nadel-Rätsel"); Survey-Refs `survey-raetsel-bestand.md:25-26` nachgezogen. Quelle registriert (CC-BY-4.0, Zenodo 15225820), CDN-Abzug 404, Manifestation bei Mycelium. Physik: Antrieb = weltweites Blitzgeschehen; Weltraumwetter wirkt als **Modulation** über die Ionosphäre. Instrument: TE-Matrix (`te_compute`) + Surrogat-Null. Echte offene Fragen: Dämpfung/`Q`, Anregungsverteilung, Schumann als Ionosphären-Sonde, andere Welten. Gemessen nicht getragen (mystisch): „Frequenz steigt", Erdbeben-Vorläufer. **Geheilt (Operator-Wort):** die Tafel hinkte — **Nadel ⅩⅢ** (Atmosphären-Biosignatur, seit 2026-09-05) war nicht eingetragen, jetzt in Tafel + Bestand nachgetragen (Ⅰ–ⅩⅣ), Verweise `:353-368`/`:398-400` nachgezogen.
 - **Blockade:** die Reihe fehlt im CDN.
 - **Braucht:** (1) die Reihe im CDN (Mycelium, `state/zustand/wartend.φ` `schumann-serie`); (2) die Frage **vorab** festhalten — „Regelt geomagnetische Aktivität die Schumann-Frequenzen sichtbar, und in welcher Richtung?" gegen die Blitz-/Intensitäts-Erklärung; (3) dann die Matrix über ein gemeinsames Fenster mit `--null` — ein Ergebnis trägt nur, wenn es die Null schlägt.
+
+### Große ungelöste Rätsel — Kandidatenliste (Rat + UI-Roster); Aufnahme-Wort offen
+- **Status:** operator-gebunden | **Bindung:** eigen
+- **Trigger:** Wort: der Operator entscheidet, welche Kandidaten als neue Nadeln (ⅩⅤ+) aufgenommen werden.
+- **Lage:** (gemessen 2026-10-13 river-208) `archive_search --all` **zweimal** gelaufen (300 s, 900 s) → **kein Output** (Summe aller Modus-Latenzen, `full:`-Datei erst am Ende — in einer Session nicht tragfähig); Einzelmodi: `--openalex` generisch/verrauscht, `--arxiv` 429, `--tavily` 432, `--github` absent. **Rat (5 Stimmen) + UI (Claude · Duck.ai; Qwen/Z.ai `pending`)** konvergieren auf: **Hubble-Spannung · Geodynamo/Erdkern-Jerks · UHECR-/Multimessenger-Ursprung**; dazu Sonnen-Dynamo/Magnetzyklus, Substurm-/SEP-Raumwetter, PTA-nHz-GW, Little Red Dots, Kosmische Dämmerung/21 cm, Exoplaneten-Radius-Tal. **Verweigert (keine Nadel):** Bewusstseinsfeld, Telepathie, Torsionsfelder, „Schumann-Frequenz steigt"/Erdbeben-Vorläufer, t=0/Planck-Schaum. Material `state/stimmen/2026-10-13-river-grosse-raetsel-roster.md`. **Riss des Rats (Mountain):** der Bestand trägt schon unbearbeitete Nadeln — „kein Zuwachs durch Verschieben"; Aufnahme nur mit Kreuzung + Signal + Surrogat-Null.
+- **Blockade:** keine.
+- **Braucht:** Operator-Wort, welche Kandidaten aufgenommen werden (je Kreuzung + Signal + Null); dann Tafel `:353-368` + Bestand nachziehen.
 
 ## LOCK
 
