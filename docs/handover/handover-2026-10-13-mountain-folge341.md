@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mountain-Folge 341 (2026-10-13)
-  session: Mountain-Linie — Taucher-Schwarm: EOP-Riss über USNO finals geschlossen, fünf Terms-Korrekturen + MODVOLC-Block, Reader-Werk committet, river-Entwürfe geschrieben
+  session: Mountain-Linie — Taucherstaffel: Verdrahtung + ENTSO-E-Arm committet, EOP-Riss geschlossen, sechs Registerquellen + drei Compiler gebaut, Reader-Werk committet
   class: handover
   date: 2026-10-13
-  sha256: 196fce34d4e489a150b5f6a968b6a375832b3511ab6bcf655a54fe73ffa4eca2
+  sha256: 508c4d2649bc94ce166d58e29c767cceb62cea659a338cfe9710e7afe02b6d8f
   status: live
 -->
 # Handover — Mountain-Folge 341 (2026-10-13)
@@ -14,124 +14,115 @@ Session konsumierte `handover-2026-10-13-mountain-folge340.md` (→
 `docs/handover/archiv/`) und faltete die adressierten Blöcke (mycelium-343,
 river-208, future-252).
 
-## Burn: open 0.1473 (Vorsession) · close 0.0528 eigene Line-Session + Taucher — gemessen (`session_burn`). Dieses Atom: Taucher-Schwarm (4 Agenten: Recherche, Register, units, finals) + `archive_search --all` CelesTrak; drei Commits (`745f85c95`, `a727df6ff`, diese Übergabe), `cargo check` 0/0.
+## Burn: open 0.1473 · close 0.1990 · cap 0.25 Grund: Taucherstaffel (acht Agenten in zwei Wellen) auf Operator-Wort — die Delegation war der Auftrag. Gemessen via `session_burn`, eigene Line-Session. Commits `745f85c95 … b71a6637e`, HEAD == origin/main, `cargo check` 0/0.
 
 ## Gefaltet (xfer-Echos)
 
-- `xfer:mycelium-343-1` (MODVOLC) · `-2` + `xfer:mycelium-342-10` (Terms) — gearbeitet.
-- `xfer:river208-faeden1` · `-saber1` · `-ucarfpi1` · `-athabasca1` — gefaltet, teils gearbeitet.
-- `xfer:future251-ucarfpi1` — erledigt.
-- `xfer:mycelium-343-3` · `…Ph.1` · `…Ph.2` · `…Ph.3` · `…NmPS.2` · `…shj5QxDF.2` · `…shj5QxDF.3` · `xfer:mycelium-342-3` · `-4` · `-9` · `xfer:mycelium-341-1` — gefaltet, offen (s. Punkte).
+- `xfer:mycelium-343-1` · `-2` · `xfer:mycelium-342-9` · `-10` · `xfer:river208-faeden1` · `-saber1` · `-ucarfpi1` · `-athabasca1` · `xfer:future251-ucarfpi1` · `xfer:mycelium-341-1` — gefaltet; die meisten gearbeitet, Reste unten.
 
 ## Offen (aufgeschlüsselt)
 
-### Uncommittetes folge336-Werk — Verdrahtung (eigen) — blockiert ENTSO-E + HiPS
+### ICGEM gfc — Compiler steht, Block blockiert (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der `block_commit`-Atom
-- **Lage:** (gemessen 2026-10-13 via `git diff`) die **Reader committet** (`a727df6ff`: `osc.rs`/`lamost.rs`/`heasarc_w3browse.rs` + `mod.rs`). **Uncommittet** bleiben: `src/archivar/extract.rs` (+228 — `verify_records` dispatch `:9-11` + `lamost_channels`/`heasarc_channels`/`osc_channels`), `src/archivar/main_flow.rs` (+76 — `:2138` finals-Dispatch, `:5955` lamost/osc/heasarc/blinkverse/exofop-Fetch), `src/archivar/fits.rs` (+292 — `WcsProjection::Hpx`, `ordering`/`nside`/`coordsys`, `healpix`-Import = der Welle-3-Arm). `cargo check` 0/0 (Baum kompiliert).
-- **Blockade:** `main_flow.rs` ist Rivers Membran-Domäne; `extract.rs`/`fits.rs` Mountain. **Riss:** der Stehende Pass nannte den ganzen dirty-Baum „fremd" — gemessen ist er Mountains eigenes folge336-Werk.
-- **Braucht:** `block_commit` je Hunk-Satz (privater Index, fremde Blöcke bleiben draußen), dann `cargo check`. Erst danach sind der ENTSO-E-Arm und die HiPS-Verdrahtung committbar.
+- **Trigger:** der `--epoch`-Override oder ein No-Epoch-Pfad
+- **Lage:** (gemessen 2026-10-13 via Taucher) `gfc_compiler.rs` + `src/archivar/gfc.rs` + `format gfc`-Arm committet (`a8850558a`), `cargo check` 0/0. **Riss 1:** XGM2019e-Header trägt **kein** `epoch`/`ref_epoch` → der Compiler verweigert (`epoch_of` → None → Err; die 0-Fabrikation ist verboten). **Riss 2:** volles Modell d/o 5540 = ~12,8 GB > 2-GiB-Release-Deckel (`cdn.rs:230`); zulässiger Cap **D=3211** (2 146 592 467 B).
+- **Blockade:** fehlende Epoche + Release-Deckel.
+- **Braucht:** einen gemessenen `--epoch <ISO>`-Override (die Modell-Epoche ist datengetrieben, nicht erfunden) im Compiler; dann Block `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`, `format gfc`, `at earth`, 4 Felder `icgem_gfc_c/s` + `icgf_gfct_c/s` (Einheit `1`).
 
-### ENTSO-E — Lese-Arm (eigen)
+### Fermi-4LAC — `mev`-Einheit + fehlender Arm (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der committete `extract.rs`
-- **Lage:** (gemessen 2026-10-13 via Taucher) `entsoe_compiler.rs`: `:7 API=https://web-api.tp.entsoe.eu/api`, `:8 TAG=transparency.entsoe.eu`, `:481 upload_release(TAG,…)`; **kein** `NETLOC`/`FORMAT`; `sgrep -i entsoe src/archivar/extract.rs` = 0. CI `entsoe-cdn.yml:43` ruft den Compiler; Header-Tag `:1 web-api.tp.entsoe.eu` ≠ Release-Tag `transparency.entsoe.eu`. Kein Block in `phi/` (`entsoe` = 0).
-- **Blockade:** `extract.rs` trägt Mountains uncommittete folge336-Hunks.
-- **Braucht:** Arm `format entsoe_unavailability` (`epoch`=start_unix, `tau`=end−start, `val`=quantity mit presence, Gebiet+Code als Kanal-Qualifier), dann Block `terms CC-BY-4.0`. `docs/SOURCE_PORT.md`.
+- **Trigger:** die `mev`-Admission in `units.rs`
+- **Lage:** (gemessen 2026-10-13) Block `phi/sources.φ:14634-14658` (`format fits`→`fermi_4lac`, `compiler` + 18 Felder); `pivot_energy` **übersprungen** — FITS `TUNIT14=MeV`, aber `units.rs` trägt kein `mev` und der `force-unit-ratchet` verweigert `(em, mev)`. Kein `extract`-Arm für `fermi_4lac` (nur `gfc` bekam einen) → der Block ist deklariert, aber ungelesen.
+- **Blockade:** `mev` fehlt; Arm fehlt.
+- **Braucht:** `mev` in `units.rs` admissieren (dimensionsgleich mit `ev/gev/tev`), dann die `pivot_energy`-Feldzeile; einen `fermi_4lac`-Arm in `extract.rs`.
+
+### `em mw` / `kg/m2/s` — fresh admissions (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** `tools-latest`-Republish
+- **Lage:** (gemessen 2026-10-13) `units.rs` admiert `advective kg/m2/s` (FIXED) und `em mw` (Leistung); `docs/specs/force-unit-baseline.txt` aktualisiert; cams `:1425` + edgar `:14821` `diffusion`→`advective kg/m2/s`; hi4pi `:29107` → `thermal K`. `commit_check` 0.
+- **Blockade:** keine.
+- **Braucht:** die zwei neuen Paare nach dem nächsten `tools-latest`-Republish aus der Freeze nehmen; kein neuer Schritt.
+
+### ENTSO-E — Arm + Block stehen, CI-Wiring offen (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der `entsoe-cdn.yml`-Lauf / Tag-Angleich
+- **Lage:** (gemessen 2026-10-13) `format entsoe_unavailability`-Arm `extract.rs:4302` (`epoch`=start, `tau`=end−start, `val`=quantity, `station_code`=area:code) committet (`78dc53fb5`); Block `phi/sources.φ:11838-11845`. **Riss:** Workflow-Header-Tag `web-api.tp.entsoe.eu` ≠ Release-Tag `transparency.entsoe.eu` (Compiler `:8`/`:481`).
+- **Blockade:** keine.
+- **Braucht:** den Workflow-Header-Tag auf `transparency.entsoe.eu` ziehen (Mycelium), dann `gh workflow run entsoe-cdn.yml`.
+
+### SEANOE — Block steht, `url` ist Inferenz (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der erste Compiler-Lauf
+- **Lage:** (gemessen 2026-10-13) Block `phi/sources.φ:10169-10175` (Lizenz CC-BY-4.0 gemessen); `url` = der `argo_bgc.bin`-CDN-Pfad (der wiederverwendete Compiler emittiert auf `data-argo.ifremer.fr`) → **distinkte Doppel-URL** zu `:10146`.
+- **Blockade:** keine.
+- **Braucht:** den SEANOE-Snapshot als eigene Quelle (`--url`-Eingang) oder den Riss vor dem ersten Lauf benennen.
 
 ### MODVOLC — Manifestation läuft (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** CI-Lauf `38468212106`
-- **Lage:** (gemessen 2026-10-13) Block `phi/sources.φ:12006-12014`; `gh workflow run modvolc-cdn.yml` → Lauf `38468212106` dispatcht. **Riss:** LANCE nur NRT; Archiv 2000–2019 hinter LAADS-Login.
+- **Lage:** (gemessen 2026-10-13) Block `:12006-12014`; Lauf dispatcht.
 - **Blockade:** keine.
-- **Braucht:** Ergebnis aus dem Watchdog / `ci_manage view 38468212106`.
+- **Braucht:** Ergebnis aus Watchdog / `ci_manage view 38468212106`.
 
-### CelesTrak-EOP + `finals` — Riss geschlossen, Rest-Entscheid (eigen)
+### CelesTrak-EOP + `finals` — geschlossen, Rest-Entscheid (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der Entscheid CelesTrak behalten/retiren
-- **Lage:** (gemessen 2026-10-13 via Taucher + Code) USNO-`finals`-Block **geschrieben** `phi/sources.φ:8117-8125` (`url https://maia.usno.navy.mil/ser7/finals2000A.all`, `terms PD`, `format finals`, Fields `ut1_utc`/`pmx`/`pmy`) — der Leser `build_finals_channels` (`channels.rs:1016`, Aufrufer `main_flow.rs:2138`, Spalten `:1038-1039`) ist **live**. CelesTrak-`terms`-URL auf `https://celestrak.org/usage-policy.php` korrigiert; CelesTrak = „frei, aber nutzungsbegrenzt", keine offene Lizenz, kein Redistributionsrecht; Asset 404. **Riss mit folge340:** der `finals`-Pfad war nie konsumlos.
+- **Trigger:** der CelesTrak-Entscheid (nach Bewährung der USNO-Quelle)
+- **Lage:** (gemessen 2026-10-13) USNO-`finals`-Block `:8117-8125` (`format finals`, PD) — der Leser `build_finals_channels` (`channels.rs:1016`, Aufrufer `main_flow.rs:2138`) ist live; CelesTrak-`terms`-URL auf `usage-policy.php` korrigiert; CelesTrak = frei-aber-nutzungsbegrenzt, keine offene Lizenz, Asset 404.
 - **Blockade:** keine.
-- **Braucht:** Entscheid, ob CelesTrak (compiler-gebunden) bleibt oder retiriert; die USNO-`finals`-Quelle trägt die `eop_iers_*`-Felder offen.
+- **Braucht:** Entscheid keep/retire (Operator, mit neuer Messung).
 
-### river-Registerentwürfe — geschrieben, Reste offen (eigen)
+### Registerquellen geschrieben, Reste (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der nächste Registeratom
-- **Lage:** (gemessen 2026-10-13 via Taucher) **geschrieben**: EPTA DR2 `:28606` (`terms CC-BY-4.0`), RAVE DR6 `:11481`, GALAH DR3 `:11781`, 1LHAASO `:11788`, KiDS DR4.1 WL `:29149` (alle `terms` live gemessen). **Übersprungen** (unmessbar): Conicus3D (nur Metadaten-`tar.zst`, Daten-Datei fehlt), Auger Open Data (Live-Lizenztext nicht findbar), WALLABY/CGPS HiPS3D (keine URL). **Riss:** RAVE/GALAH/1LHAASO tragen jetzt **zwei** Arme (alt VizieR/asu-tsv + neu `tap_compiler`); `register_sort` behält beide. SABER (`xfer:river208-saber1`, Form (C)), UCAR-FPI (`-ucarfpi1`, `fpi_mer_wind_ms`/`fpi_zon_wind_ms`), Athabasca ERG-SC (`-athabasca1`, `format cdf`) offen.
-- **Blockade:** fehlende Messungen (Daten-Datei, Lizenztext, URL).
-- **Braucht:** Doppel-Arm-Entscheid; die fehlenden `field`-Zuordnungen + `terms`/`ttl`; SABER Form (C).
-
-### Register-Force-Unit — 3 admiert, 2 refused (eigen)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der nächste Registeratom
-- **Lage:** (gemessen 2026-10-13 via Taucher) `src/archivar/units.rs` admiert: `µmol/kg` `:482` (diffusion), `seismic-body km/s` `:455`, `em nmgy` `:44`/`:447`. **Refused** (falsche Dimension): `diffusion kg/m2/s` (FIXED diffusion = `kg/m^3`; `kg/(m²s)` ist advectiv) und `em K` (FIXED em = `W/m2`; K ist thermal).
+- **Lage:** (gemessen 2026-10-13) geschrieben: EPTA `:28606`, RAVE `:11481`, GALAH `:11781`, 1LHAASO `:11788`, KiDS `:29149`, Conicus3D `:28604` (Riss gelöst: die eine Datei *ist* der Lightcone, 34,4 GB), Auger `:18872` (CC-BY-SA-4.0), WALLABY `:14442` (ODbL-1.0), gamma-cat `:14747`, Fermi-4LAC `:14634`. **Doppel-Arme** RAVE/GALAH/1LHAASO (VizieR-tsv + tap) — Riss zu entscheiden. **CGPS** hat kein HiPS3D (absent).
 - **Blockade:** keine.
-- **Braucht:** die 2 refusierten Register-Zeilen (`:1417`/`:14740` und `:29022`) korrigieren, dann die Freeze-Zeilen in `docs/specs/force-unit-baseline.txt` löschen.
+- **Braucht:** Doppel-Arm-Entscheid; SABER Form (C), UCAR-FPI-Felder, Athabasca-CDF-Zeile (river-Entwürfe).
 
-### Registerlücken ohne Compiler/Arm (eigen)
+### Registerlücken — nächste Compiler (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** je der Bau des Compilers/Arms
-- **Lage:** (gemessen 2026-10-13) `xfer:mycelium-342-1` ICGEM (kein Compiler/Arm), `-2` gamma-cat, `-4` GEOFON (Draft `welle2-compiler.φ:1-8`, CDN 404), `-3` SEANOE (DOI `10.17882/42182`, Lizenz `pending`), `-5` Fermi-4LAC (Block `phi:14553-14558`, keine F4LC-Feldbindung); `xfer:mycelium-343-3a` Venus Radar (PD-USGov, ~13,4 GiB > 2-GiB-Limit `cdn.rs:230`), `-3b` ALFALFA UCHVC (Riss AAS-CC-BY-NC), `-3c` IGETS (`origin phi:10305` alt, sftp+Registrierung `blocked account`).
+- **Trigger:** je der Bau
+- **Lage:** (gemessen 2026-10-13 via Recherche) GEOFON FDSN → `quakeml`-Arm + `fdsn_event_compiler.rs` (CC-BY-4.0); gamma-cat erledigt; ICGEM s.o.; SEANOE erledigt; Fermi-4LAC s.o.; Venus Radar (PD, ~13,4 GiB, PDS4-IMG-Arm + Split-Route); ALFALFA UCHVC (nur-lokal); IGETS `origin` korrigiert `:10322`, Zugang `blocked account`.
 - **Blockade:** keine.
-- **Braucht:** je Quelle Compiler + extract-Arm, dann Block. `docs/SOURCE_PORT.md`.
+- **Braucht:** die genannten Compiler/Arme bauen. `docs/SOURCE_PORT.md`.
 
-### Restcompiler-Formate + `ttl` (eigen)
+### ~25 uncommittete Dateien — Besitz offen (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der Registeratom
-- **Lage:** (gemessen 2026-10-13 via mycelium) `…Ph.1` — `heasarc_w3browse`/`catalog_mpcorb`/`cosmic_ro`/opentopography emittieren den Block uncommitted; `…Ph.2` — `ttl` für `osc`/`chime_frb_cat2`/`lhaaso` zurückgenommen, `ttl 31536000` auf `lamost_dr10`/`cfa_co` ungemessen.
+- **Trigger:** der Besitz-Messatom
+- **Lage:** (gemessen 2026-10-13) nach den Reader-Commits bleiben schmutzig: `src/archivar/{ampere_fac,bpa_gic,mtg_li,pcn,regrid,superdarn_cpcp,swarm_fac,swpc_efield,usgs_geomag}.rs` · `tools/harvest/src/bin/{icrf3,ilrs_npt,licence_resolve,pds3_bip_radar}_*.rs` · `tools/measure/src/bin/*` · `tools/register/src/bin/{block_commit,register_ttl_apply}.rs` · `.opencode/command/future.md` (fremd, future) · `?? epta_sample/` (leer). **Riss:** der Stehende Pass nannte den ganzen Baum „fremd"; die Reader waren gemessen Mountain (committet), die übrigen sind je Datei ungemessen.
+- **Blockade:** unbekannter Besitz.
+- **Braucht:** je Datei `git diff` messen und den Besitzer benennen; eigene Hunks block-scoped committen, fremde liegen lassen.
+
+### ALFALFA · Ersatz-Bau · eigene Ephemeride (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** je der Bau/Fund
+- **Lage:** (gemessen 2026-10-13 via Recherche/`git diff`) ALFALFA `local-only` (Lizenz nicht offen, DOI `10.26093/cds/vizier.18610049`). Ersatz-Bau: `opentopography_raster` KAPU-bbox-Riss (Höhenbezug/Toleranz vor Prüfung); `load_gestalt_surface_threads` (`main_flow.rs:580`) hat keinen Produktionsaufrufer. Eigene Ephemeride: `ilrs_npt_compiler` (Arm offen), `icrf3` (Rat-Riss: SKD1 erst nach Vertrags-Versionierung + Round-Trip + Golden-File).
 - **Blockade:** keine.
-- **Braucht:** je Format den gemessenen Block; je Kanal das gemessene `ttl` (oder `no-cadence`).
-
-### Risse CHIME/KASI/IRIS/MPC (eigen)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** je Registeratom
-- **Lage:** (gemessen 2026-10-13 via Taucher) **CHIME** `phi:28500-28506` origin canfar HTTP 500, kein Ersatz → `blockiert`. **KASI** kein Block (`sgrep -i kasi` = 0), `kasi_compiler` API 500, Workflow da; Note `alternativen:164` nennt fälschlich MRO-Zeilen `phi:10956/…` (stale). **IRIS** `phi:3968-3974` origin 403, `terms free-open` vs Note-`CC0` ungemessen. **MPC** Note `alternativen:45` „block (Bau)" ist durch den gebauten `horizons_compiler`/`catalog_mpcorb` widerlegt.
-- **Blockade:** CHIME: kein erreichbarer Endpunkt.
-- **Braucht:** CHIME als `blockiert` führen; KASI-Block (falls `kari-public-release`) oder Note streichen; IRIS-Terms messen; MPC-Note streichen.
-
-### ALFALFA — Lizenz `pending` → `local-only` (eigen)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Lizenz-Fund oder Wiedervorlage HI-Kalibrierung
-- **Lage:** (gemessen 2026-10-13) DOI `10.26093/cds/vizier.18610049`, `rights = Refer to CDS usage`, keine offene Content-Lizenz.
-- **Blockade:** Lizenz nicht offen.
-- **Braucht:** als `local-only` führen (Arbeitskopie `data/`).
-
-### Ersatz-Bau — offene Reste (eigen)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der Build-Schritt
-- **Lage:** (gemessen 2026-10-13) registriert BGR/CEEIN/IRSF J/LHAASO WCDA+KM2A/jpl_sbdb. **`opentopography_raster` bbox = KAPU — RISS** (Höhenbezug/Toleranz vor Prüfung festlegen). `load_gestalt_surface_threads` (`main_flow.rs:580`) an Produktions-Aufrufer binden. → teils vom Uncommittet-Punkt berührt.
-- **Blockade:** keine.
-- **Braucht:** `opentopography_raster_compiler --bbox …` nach CI-Build; Verdrahtung committen.
-
-### Eigene Ephemeride — unregistrierte Quellen (eigen)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der Bau der Quellenklasse
-- **Lage:** (gemessen 2026-10-13) Compiler `010ccb657`: `ilrs_npt_compiler` (Arm offen), `icrf3_compiler`, `pds3_bip_radar_compiler`; Blocks/CDN fehlen. **Riss (Rat):** icrf3→SKD1 erst nach Vertrags-Versionierung + Round-Trip + Golden-File.
-- **Blockade:** keine.
-- **Braucht:** je Klasse Block + Workflow; ILRS-Arm; icrf3 Round-Trip.
+- **Braucht:** je der genannte Schritt. `docs/SOURCE_PORT.md`.
 
 ## An mycelium
 
 Origin: mountain-341 (2026-10-13):
 
-- **MODVOLC-Block steht** (`phi/sources.φ:12006-12014`); `modvolc-cdn.yml` Lauf `38468212106` dispatcht.
-- **Terms gearbeitet**: `argo_bgc`→`free-open`, `srtm15_plus_v2.5.5.nc`→`PD`, `cams_so2`→`free-open`, `phi:8177`→`eccc-end-use-licence`, WDC-Kyoto→`wdc-kyoto-scientific-noncommercial`.
-- **EOP-Riss geschlossen**: USNO `finals2000A.all` (`terms PD`) als `format finals` registriert (`:8117`); CelesTrak-`terms` auf `usage-policy.php` korrigiert. Bitte entscheiden, ob das CelesTrak-Asset (404, nutzungsbegrenzt) re-manifestiert oder retiriert wird.
-- `xfer:mycelium-341-1`: CHIME blockiert (canfar 500), KASI-Note stale, MPC-Note widerlegt.
+- **ENTSO-E-Release-Tag:** Workflow-Header `web-api.tp.entsoe.eu` auf `transparency.entsoe.eu` ziehen, dann `gh workflow run entsoe-cdn.yml`.
+- **MODVOLC** Lauf `38468212106` dispatcht; Ergebnis in den Stehenden Pass.
+- **CelesTrak:** Asset 404, `terms` korrigiert; USNO `finals2000A.all` (PD) trägt Erdrotation `format finals`. Bitte CelesTrak keep/retire nach Messung.
+- **Terms gearbeitet:** argo_bgc, srtm15+, cams_so2, ECCC, WDC-Kyoto; `em mw` + `advective kg/m2/s` admissiert.
 
 ## An river
 
 Origin: mountain-341 (2026-10-13) — Antwort auf river-208/209:
 
-- `xfer:river208-*` gefaltet; EPTA/RAVE/GALAH/1LHAASO/KiDS geschrieben, Conicus3D/Auger/WALLABY mangels Messung offen.
-- **`extract.rs`-Riss:** der ENTSO-E-Arm und die `lamost`/`heasarc`/`osc`-Extract-Arme liegen in deiner geteilten `main_flow.rs`/`extract.rs`-Arbeitsfläche; `block_commit` trennt sie. Bitte die `main_flow.rs`-Hunks bestätigen oder committen, damit Mountain seinen Arm daneben setzen kann.
-- **DE-2-Register-Umdeklaration (river 209) umgesetzt** (gemessen 2026-10-13): `phi/sources.φ:599`/`:600` `mass:`→`number:` (die Kopplung `:602` nutzte bereits `number:de2_ion_density`/`number:de2_neutral_density`); der Deskriptor ist `conserved:role:op:pde_type:medium:domain:boundary` (`channel.rs:662-670`), `Conserved::Number` ist für Fick in fluid/plasma zulässig (`:736-737`). **Divergenz gemessen:** `conserved_for_quantity` (`channel.rs:761`) führt `number_density`/`electron_density`/`column_density` auf `Conserved::Number` gezogen (`Mass`→`Number`); die Map wird nur für Advective/Wave/Maxwell/Poisson benutzt (Fick hardcodiert `mass`, `parse.rs:1473`), kein Registerpfad ruft sie mit diesen Quantities — latent, keine Datenregression. `cargo check` 0/0.
+- **DE-2 umgesetzt:** `phi :599/:600` `mass:`→`number:`; `conserved_for_quantity` `channel.rs:761` `number_density`/`electron_density`/`column_density` → `Conserved::Number` (`9031ed6f9`).
+- **Verdrahtung committet:** die Reader (`59a692944`) + der ENTSO-E-Arm (`78dc53fb5`) sind jetzt HEAD; die `main_flow.rs`-Hunks sind Mountains folge336-Wiring, gate-sauber. `merge-base`-Konflikt mit laufender river-Arbeit: keine.
+- `xfer:river208-*` gefaltet; die `field`-Zuordnungen SABER/UCAR-FPI/Athabasca folgen.
 
 ## Operator-Wort-Register
 
-- **„Starte die Mountain-Linie in einem Pass …"** | 2026-10-13 | (mountain 337–341) — session-weiter Consent, getrennt vom Commit-Wort.
-- **„du hast mal wieder fast nur registriert und verschleppt — delegiere an agenten … recherchiere … search all"** | 2026-10-13 | (mountain 341) — Delegation + `--all`-Recherche Pflicht.
+- **„Starte die Mountain-Linie in einem Pass …"** | 2026-10-13 | (mountain 337–341).
+- **„du hast mal wieder fast nur registriert und verschleppt — delegiere an agenten"** | 2026-10-13 | (mountain 341) — Taucherstaffel Pflicht.
+- **„also dann delegiere bitte an die taucherstaffel"** | 2026-10-13 | (mountain 341).
 - **„so wie mit allem lokal für Experimente sind nicht offene Lizenzen ok, aber nicht veröffentlichen"** | 2026-10-13 | (local-only).
 
 ## Abschluss
 
-Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt automatisch") trägt Commit und Push. In diesem Atom (folge341) committet: `745f85c95` (Terms+MODVOLC) · `a727df6ff` (Reader + units + deleigierte Registerarbeit) · diese Übergabe + konsumierte folge340 → `archiv/`.
+Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt automatisch") trägt Commit und Push. In diesem Atom (folge341) committet (HEAD == origin/main): `745f85c95` · `a727df6ff` · `5e1fe9aff` · `9031ed6f9` · `59a692944` · `78dc53fb5` · `b10170c23` · `a3dbdcea0` · `a8850558a` · `b71a6637e` · diese Übergabe.
