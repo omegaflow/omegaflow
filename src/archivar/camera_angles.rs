@@ -86,10 +86,10 @@ mod tests {
         assert_eq!(frames.len(), 2);
         assert!((frames[0].jd - 2442136.377841061).abs() < 0.001);
         assert_eq!(frames[0].fds, "00000050");
-        assert!((frames[0].sx - 10743.70232710200).abs() < 1e-6);
+        assert!((frames[0].sx - 10743.702327102).abs() < 1e-6);
         assert!((frames[0].c1 - 160.2669234243153).abs() < 1e-9);
         assert_eq!(frames[1].fds, "00000052");
-        assert!((frames[1].sy - (-2343.260054703900)).abs() < 1e-6);
+        assert!((frames[1].sy - (-2343.2600547039)).abs() < 1e-6);
     }
 
     #[test]
