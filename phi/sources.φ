@@ -9947,6 +9947,14 @@ format solar_system_bodies
 at earth
 ttl 604800
 
+url https://github.com/omegaflow/sources/releases/download/api.lsst.fink-portal.org/fink_cutout.bin
+terms CC-BY-4.0 https://zenodo.org/records/4036589
+format fink_cutout
+origin https://api.lsst.fink-portal.org/api/v1/cutouts
+compiler tools/harvest/src/bin/fink_cutout_compiler.rs
+ttl 604800
+field fink_cutout_flux_njy fink_cutout_flux_njy inverse-square em nJy 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/api.sedoo.fr/agrav.bin
 terms license-per-project https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=
 format agrav
