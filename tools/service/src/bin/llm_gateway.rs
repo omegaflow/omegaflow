@@ -2,7 +2,7 @@ use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
-use std::process::Command;
+use std::process::{Command, Stdio};
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 struct Route {
@@ -251,6 +251,19 @@ fn json_number_field(body: &str, key: &str) -> Option<u64> {
     let rest = rest[colon + 1..].trim_start();
     let digits: String = rest.chars().take_while(|c| c.is_ascii_digit()).collect();
     digits.parse().ok()
+}
+
+fn json_bool_field(body: &str, key: &str) -> bool {
+    let needle = format!("\"{key}\"");
+    let Some(i) = body.find(&needle) else {
+        return false;
+    };
+    let rest = &body[i + needle.len()..];
+    let rest = match rest.find(':') {
+        Some(c) => &rest[c + 1..],
+        None => return false,
+    };
+    rest.trim_start().starts_with("true")
 }
 
 fn json_escape(s: &str) -> String {
@@ -607,6 +620,108 @@ fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -
         &result.1,
     );
     result
+}
+
+fn stream_chat(stream: &mut TcpStream, body: &str, secrets: &HashMap<String, String>, auth: &str) {
+    let start = Instant::now();
+    let model = match json_string_field(body, "model") {
+        Some(m) => m,
+        None => {
+            reply(stream, 400, "{\"error\":{\"message\":\"missing model\"}}");
+            return;
+        }
+    };
+    let disabled = disabled_set();
+    for cand in model.split('|') {
+        let cand = cand.trim();
+        if cand.is_empty() {
+            continue;
+        }
+        let route = match route_for(cand) {
+            Some(r) => r,
+            None => continue,
+        };
+        let provider_model = &cand[route.prefix.len() + 1..];
+        if disabled.contains(&format!("{}/{}", route.prefix, provider_model)) {
+            continue;
+        }
+        if route.prefix == "horde" {
+            let key = match key_for(route, secrets, auth) {
+                Some(k) => k,
+                None => "0000000000".to_string(),
+            };
+            let (code, resp) = horde_chat(body, provider_model, &key);
+            reply(stream, code, &resp);
+            return;
+        }
+        let key = match key_for(route, secrets, auth) {
+            Some(k) => k,
+            None => continue,
+        };
+        let base = match effective_base(route, secrets) {
+            Some(b) => b,
+            None => continue,
+        };
+        let url = format!("{}/chat/completions", base);
+        let forward = body.replacen(&format!("\"{model}\""), &format!("\"{provider_model}\""), 1);
+        let head = "HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\nCache-Control: no-cache\r\nConnection: close\r\n\r\n";
+        if stream.write_all(head.as_bytes()).is_err() {
+            return;
+        }
+        let _ = stream.flush();
+        match Command::new("curl")
+            .args(["-s", "-S", "-N", "--max-time", "300", "-X", "POST"])
+            .arg(&url)
+            .arg("-H")
+            .arg(format!("Authorization: Bearer {key}"))
+            .arg("-H")
+            .arg("Content-Type: application/json")
+            .arg("--data-binary")
+            .arg(&forward)
+            .stdout(Stdio::piped())
+            .stderr(Stdio::null())
+            .spawn()
+        {
+            Ok(mut c) => {
+                if let Some(mut out) = c.stdout.take() {
+                    let mut buf = [0u8; 8192];
+                    loop {
+                        match out.read(&mut buf) {
+                            Ok(0) => break,
+                            Ok(n) => {
+                                if stream.write_all(&buf[..n]).is_err() {
+                                    break;
+                                }
+                                let _ = stream.flush();
+                            }
+                            Err(_) => break,
+                        }
+                    }
+                }
+                let _ = c.wait();
+            }
+            Err(e) => {
+                let err = format!("data: {{\"error\":{{\"message\":\"curl spawn: {e}\"}}}}\n\n");
+                let _ = stream.write_all(err.as_bytes());
+                let _ = stream.flush();
+            }
+        }
+        emit_provenance(
+            &model,
+            &[format!("{}/{}", route.provider, provider_model)],
+            start,
+            200,
+            Some(route.provider),
+            Some(provider_model),
+            "",
+        );
+        return;
+    }
+    reply(
+        stream,
+        502,
+        &format!("{{\"error\":{{\"message\":\"no route for {model}\"}}}}"),
+    );
 }
 
 fn curl_get(url: &str, key: &str) -> Option<(u16, String)> {
@@ -1042,6 +1157,10 @@ fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>, auth: &str)
         Some(t) => t,
         None => return,
     };
+    if method == "POST" && path == "/v1/chat/completions" && json_bool_field(&body, "stream") {
+        stream_chat(stream, &body, secrets, auth);
+        return;
+    }
     let (code, out) = match (method.as_str(), path.as_str()) {
         ("GET", "/v1/models") => (200, list_models(secrets, auth)),
         ("GET", "/health") => (200, "{\"status\":\"ok\"}".to_string()),
