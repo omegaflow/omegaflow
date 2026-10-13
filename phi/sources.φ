@@ -10652,6 +10652,15 @@ at earth
 ttl 604800
 field champ_plpt_electron_density_cm3 champ_plpt_electron_density_cm3 gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/jades.herts.ac.uk/jades_spectra.bin
+terms CC-BY-4.0 https://archive.stsci.edu/hlsp/jades
+format jwst_spectra
+origin https://jades.herts.ac.uk/DR4/Combined_DR4_external_v1.2.1.fits
+compiler tools/harvest/src/bin/jades_spectra_compiler.rs
+at sun
+ttl 604800
+field flux jades_line_flux_W_m2 inverse-square em W/m2 604800 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/kcdc.iap.kit.edu/kcdc_kascade.bin
 terms kcdc-eula https://kcdc.iap.kit.edu
 format kcdc_kascade
