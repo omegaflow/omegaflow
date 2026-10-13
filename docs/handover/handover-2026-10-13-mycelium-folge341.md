@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 341 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: ebada619ed6e9aba15dcb9247e33fb659110d539bf7ca617d778b9e197d4538b
+  sha256: 58a4d85c10db48967cdae74756529737c3b8aa0e27484dd50704a4f0ea33accf
   status: live
 -->
 # Handover — Mycelium-Folge 341 (2026-10-13)
@@ -44,9 +44,9 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 ### OCNS2019 — Ersatzblock für `geoazur`/APDB (Mycelium-Teil gemessen; terms/field offen)
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
 - **Trigger:** Mountains `terms` + `field`
-- **Lage:** (gemessen 2026-10-13/341, Taucher) Endpunkt + Format geklärt: **einziger erreichbarer Weg ist der Wayback-Snapshot** `web.archive.org/web/20220609074246/http://paperdata.china-vo.org/yuanye/ocns2019.zip` (HTTP 200, 8 620 636 B, magic `zip`, sha256 `7b7ad66b…)`; Paper-DOI `10.1051/0004-6361/202038776` (A&A 645 A48). Zip-Inhalt = ASCII-PSV: `ocns2019/OCNS2019_full.csv` + `debias_hires_OCNS2019.csv` + `ReadMe.txt`; Paper-Spalten `obsTt`/`obsTrg`/`rsdIcrsA`/`rsdIcrsB` (ICRS/TT, Δα·cosδ, Δδ). **Feld-Vorschlag** (2 Zeilen, Kernel `inverse-square`, Force `em`, Einheit `deg`): `ocns2019_neptune_satellite_ra_deg` / `..._dec_deg`. Entwurf `state/mycelium/block-drafts/welle3-rest-nuts.φ`. **Offen (2 Token):** der rohe PSV-Spaltenname (aus `ReadMe.txt`) und `tau`. `terms` (China-VO PaperData) = Mountain. Gefaltet: `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.10~7d5c9163`.
-- **Blockade:** `terms`/`field` = Mountains Recht; Host nur über Wayback (429 transient).
-- **Braucht:** Mountain setzt `terms` + die 2 `field`-Zeilen (Spaltenname aus `ReadMe.txt`); dann Fold + CI-Manifestation.
+- **Lage:** (gemessen 2026-10-13/341, Taucher) Endpunkt + Format geklärt: **einziger erreichbarer Weg ist der Wayback-Snapshot** `web.archive.org/web/20220609074246/http://paperdata.china-vo.org/yuanye/ocns2019.zip` (HTTP 200, 8 620 636 B, magic `zip`, sha256 `7b7ad66b…)`; Paper-DOI `10.1051/0004-6361/202038776` (A&A 645 A48). Zip-Inhalt = ASCII-PSV: `ocns2019/OCNS2019_full.csv` + `debias_hires_OCNS2019.csv` + `ReadMe.txt`; Paper-Spalten `obsTt`/`obsTrg`/`rsdIcrsA`/`rsdIcrsB` (ICRS/TT, Δα·cosδ, Δδ). **Feld-Vorschlag** (2 Zeilen, Kernel `inverse-square`, Force `em`, Einheit `deg`): `ocns2019_neptune_satellite_ra_deg` / `..._dec_deg`. Entwurf `state/mycelium/block-drafts/welle3-rest-nuts.φ`. **Offen (2 Token):** der rohe PSV-Spaltenname (aus `ReadMe.txt`) und `tau`. **Lizenz (gemessen 2026-10-13/341):** DataCite führt kein `rightsList`, und die NADC/China-VO „Terms and Conditions" gewähren **keine offene Lizenz** („copyright … belongs to the original data authors … refer to the … data publisher's statement") — OCNS2019 ist **nicht lizenzklar**, der Riegel verweigert die Manifestation. Gefaltet: `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.10~7d5c9163`.
+- **Blockade:** keine offene Lizenz an der Quelle; Host nur über Wayback (429 transient).
+- **Braucht:** eine Lizenzklärung (China-VO) **oder** eine lizenzklare Ersatzroute für die Neptun-Astrometrie; danach die 2 `field`-Zeilen (Spaltenname aus `ReadMe.txt`) + Fold.
 
 ### Lizenzklare Alternativen — Register-/Compiler-Swap (future-248/249)
 - **Status:** eigen | **Bindung:** eigen
@@ -58,9 +58,16 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 ### CHIME/FRB Catalog 2 — registrierte Origin tot (canfar HTTP 500)
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
 - **Trigger:** eine registrierte, erreichbare Ersatz-Origin + Mountains `terms`
-- **Lage:** (gemessen 2026-10-13/341) der registrierte Block `phi:28383-28387` (`chime_frb_cat2`, `format chime_frb_cat2`, `compiler chime_frb_compiler.rs`) trägt `origin https://www.canfar.net/storage/vault/file/AstroDataCitationDOI/CISTI.CANFAR/25.0066/data/table/chimefrbcat2.csv` — `--verdict` direct+Proton **HTTP 500**, kein Wayback-Snapshot. Gemessene Alternativen: VizieR `J/A+A/698/A18/table1` (HTTP 200) und `J/MNRAS/511/1961/table`.
+- **Lage:** (gemessen 2026-10-13/341) der registrierte Block `phi:28383-28387` (`chime_frb_cat2`, `format chime_frb_cat2`, `compiler chime_frb_compiler.rs`) trägt `origin https://www.canfar.net/storage/vault/file/AstroDataCitationDOI/CISTI.CANFAR/25.0066/data/table/chimefrbcat2.csv` — `--verdict` direct+Proton **HTTP 500**, kein Wayback-Snapshot. Ein gemessener erreichbarer Ersatz ist **nicht** vorhanden: VizieR führt `J/ApJ/947/83` nicht (TAP listet unter `J/ApJ/947/` kein `/83`); `J/A+A/698/A18/table1` ist ein Auswahl-Sample, nicht der Cat-2-Katalog. Der zwischenzeitlich gesetzte falsche VizieR-Endpunkt wurde auf die kanonische canfar-Kennung zurückgenommen (`a0561388a`) — kein erfundener Endpunkt im Register. Zwei Risse: (1) der Endpunkt fehlt; (2) `compiler tools/harvest/src/bin/chime_frb_compiler.rs` liest das canfar-CSV-Format (`dm_fitb`/`dm_exc_ne2001`/`dm_exc_ymw16`), nicht ein Ersatzformat. Die `terms`-URL (`…/25.0066/`) liegt auf demselben toten canfar-Wirt.
 - **Blockade:** der `origin`-Wechsel ist Mycelium; `terms` ist Mountain.
-- **Braucht:** Mycelium setzt die neue `origin` (VizieR-TAP); Mountain prüft `terms` + `format`-Arm (der Compiler liest aktuell das canfar-CSV).
+- **Braucht:** ein gemessener erreichbarer Cat-2-Endpunkt (CADC/CHIME) **oder** eine gemessene lizenzklare VizieR-Kennung; danach das Compiler-Format anpassen und `origin`/`terms` setzen.
+
+### Lizenz-Verifikation der gefalteten Blöcke (gemessen 2026-10-13/341)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** ein erneut erreichbarer Host / neue Lizenzangabe
+- **Lage:** (gemessen 2026-10-13/341) **57 gefaltete Blöcke an der Quelle geprüft**: 30 am Original bestätigt (20 DataCite/DOI, 7 kanonische CC-URLs, 3 inhaltlich: open_meteo CC-BY-4.0 ✓, igets_l1 CC-BY-4.0 ✓, irsf_ii288 vizier-scientific-free ✓); `openaq_pm25` war bereits korrekt (`docs.openaq.org/resources/licenses` = CC BY 4.0). **Korrigiert (block_commit `546f1000`):** `eccc_gdps_15km` terms-URL tot (404) → `https://open.canada.ca/en/open-government-licence-canada` (200); `srtm15_plus_globaldem` terms → **PD** (OpenTopography „free of all copyright restrictions"; Datensatz-Landing „Use License: Not Provided"). **pending:** `edgar_v81_so2` (kein Lizenz-Identifikator an der Quelle, nur Zitationsbedingungen), `argo_bgc` + `srtm15_plus_v2.5.5.nc` (Host `ERR_CONNECTION_CLOSED`), `cams_so2` (API-Wurzel), 17 PD-Blöcke (Domain 200, Lizenztext nicht content-verifiziert). **Zusatz-Riss:** `phi:8170` (Environment-Canada-ArcGIS-Block) trägt dieselbe tote ECCC-Lizenz-URL-Variante.
+- **Blockade:** keine.
+- **Braucht:** die `pending`-Lizenzen erneut messen, sobald der Host antwortet (Trigger); dann ggf. nachziehen.
 
 ### tools-map.md — Träger (Werkzeug-Karte)
 - **Status:** eigen | **Bindung:** eigen
