@@ -391,6 +391,7 @@ pub struct ChannelDescriptor {
     pub unit: &'static str,
     pub alias: Option<String>,
     pub charge: Option<f64>,
+    pub species: Option<String>,
 }
 
 impl PartialEq for ChannelDescriptor {
@@ -406,6 +407,7 @@ impl PartialEq for ChannelDescriptor {
             && self.extent.map(f64::to_bits) == other.extent.map(f64::to_bits)
             && self.family == other.family
             && self.unit == other.unit
+            && self.species == other.species
     }
 }
 
@@ -440,6 +442,7 @@ impl ChannelDescriptor {
             unit,
             alias: None,
             charge: None,
+            species: None,
         }
     }
 
@@ -460,6 +463,11 @@ impl ChannelDescriptor {
 
     pub fn with_charge(mut self, charge: Option<f64>) -> Self {
         self.charge = charge;
+        self
+    }
+
+    pub fn with_species(mut self, species: Option<String>) -> Self {
+        self.species = species;
         self
     }
 
@@ -572,10 +580,15 @@ impl ChannelDescriptor {
         h = self.domain.hash_into(h);
         h = fnv1a(&[self.boundary as u8], h);
         h = fnv1a(&[self.regime as u8], h);
-        match self.extent {
+        h = match self.extent {
             None => fnv1a(&[0u8], h),
             Some(e) => fnv1a(&e.to_bits().to_le_bytes(), fnv1a(&[1u8], h)),
-        }
+        };
+        h = match self.species.as_deref() {
+            None => fnv1a(&[0u8], h),
+            Some(s) => fnv1a(s.as_bytes(), fnv1a(&[1u8], h)),
+        };
+        h
     }
 
     pub fn spec_token(&self) -> String {
@@ -630,11 +643,21 @@ impl ChannelDescriptor {
         if let Some(e) = self.extent {
             out.push_str(&format!(":{e}"));
         }
+        if let Some(s) = &self.species {
+            out.push_str(&format!("~species={s}"));
+        }
         out
     }
 
     pub fn parse_spec(spec: &str, unit: &'static str) -> Result<Self, String> {
-        let t: Vec<&str> = spec.split(':').collect();
+        let (axes, species) = match spec.split_once('~') {
+            Some((a, s)) => match s.strip_prefix("species=") {
+                Some(v) if !v.is_empty() => (a, Some(v.to_string())),
+                _ => return Err(format!("unknown channel suffix \"~{s}\"")),
+            },
+            None => (spec, None),
+        };
+        let t: Vec<&str> = axes.split(':').collect();
         if t.len() != 7 && t.len() != 8 {
             return Err(format!(
                 "channel spec needs 7 axes conserved:role:op:pde_type:medium:domain:boundary (or 8 with :extent), got {}",
@@ -671,7 +694,8 @@ impl ChannelDescriptor {
             boundary,
             unit,
         )
-        .with_extent(extent))
+        .with_extent(extent)
+        .with_species(species))
     }
 }
 
@@ -2097,6 +2121,7 @@ pub fn unit_token(token: &str) -> Option<&'static str> {
         "K" => Some("K"),
         "kg/m^3" => Some("kg/m^3"),
         "kg/(m^2 s)" => Some("kg/(m^2 s)"),
+        "m^-3" => Some("m^-3"),
         _ => None,
     }
 }
@@ -3396,6 +3421,23 @@ mod tests {
         let sized = bare.clone().with_extent(Some(1.0));
         assert_ne!(bare.hash(), sized.hash());
         assert_ne!(bare, sized);
+    }
+
+    #[test]
+    fn the_species_enters_the_channel_identity_and_round_trips() {
+        let total = ChannelDescriptor::parse_spec(
+            "mass:primary:flux-fick:parabolic:fluid:unspecified:none",
+            "m^-3",
+        )
+        .expect("total density parses");
+        let n2 = total.clone().with_species(Some("N2".to_string()));
+        assert_ne!(total.hash(), n2.hash());
+        assert_ne!(total, n2);
+        let token = n2.spec_token();
+        let back = ChannelDescriptor::parse_spec(&token, "m^-3").expect("round-trips");
+        assert_eq!(token, back.spec_token(), "the token is a fixed point");
+        assert_eq!(n2, back, "the descriptor survives its own token");
+        assert_eq!(n2.species.as_deref(), Some("N2"));
     }
 
     #[test]
