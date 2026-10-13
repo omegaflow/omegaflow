@@ -596,8 +596,8 @@ field de2_neutral_n2_density_m3 de2_neutral_n2_density_m3 gaussian-inverse-squar
 field de2_ion_density_cm3 de2_ion_density_cm3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
 channel mass:primary:advective:advective:plasma:unspecified:none kg/(m^2 s) alias de2_ion_drift charge 1
 channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s) alias de2_neutral_wind
-channel mass:primary:flux-fick:parabolic:plasma:unspecified:none m^-3 alias de2_ion_density charge 1
-channel mass:primary:flux-fick:parabolic:fluid:unspecified:none m^-3 alias de2_neutral_density species N2
+channel number:primary:flux-fick:parabolic:plasma:unspecified:none m^-3 alias de2_ion_density charge 1
+channel number:primary:flux-fick:parabolic:fluid:unspecified:none m^-3 alias de2_neutral_density species N2
 constraint quasi-neutral de2_qn region thermosphere
 coupling ion-neutral-friction from de2_ion_drift to de2_neutral_wind rate pending density_from number:de2_ion_density:2.66e-26 density_to number:de2_neutral_density:4.65e-26 region thermosphere quasi-neutral de2_qn
 

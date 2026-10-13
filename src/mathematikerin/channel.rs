@@ -760,8 +760,10 @@ pub fn is_admissible(conserved: Conserved, op: TransportOp, medium: Medium) -> b
 
 pub fn conserved_for_quantity(quantity: &str) -> Option<Conserved> {
     match quantity {
-        "density" | "mass_density" | "electron_density" | "column_density" | "number_density"
-        | "humidity" | "water_vapor" | "concentration" => Some(Conserved::Mass),
+        "number_density" | "electron_density" | "column_density" => Some(Conserved::Number),
+        "density" | "mass_density" | "humidity" | "water_vapor" | "concentration" => {
+            Some(Conserved::Mass)
+        }
         "temperature"
         | "brightness_temperature"
         | "energy"

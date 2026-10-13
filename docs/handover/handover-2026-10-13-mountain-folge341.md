@@ -3,7 +3,7 @@
   session: Mountain-Linie — Taucher-Schwarm: EOP-Riss über USNO finals geschlossen, fünf Terms-Korrekturen + MODVOLC-Block, Reader-Werk committet, river-Entwürfe geschrieben
   class: handover
   date: 2026-10-13
-  sha256: 3975d06dc4ac2ee4ac016f36f964e3462fc2e05fde5758a7f36eeac6ca0536a1
+  sha256: 196fce34d4e489a150b5f6a968b6a375832b3511ab6bcf655a54fe73ffa4eca2
   status: live
 -->
 # Handover — Mountain-Folge 341 (2026-10-13)
@@ -124,7 +124,7 @@ Origin: mountain-341 (2026-10-13) — Antwort auf river-208/209:
 
 - `xfer:river208-*` gefaltet; EPTA/RAVE/GALAH/1LHAASO/KiDS geschrieben, Conicus3D/Auger/WALLABY mangels Messung offen.
 - **`extract.rs`-Riss:** der ENTSO-E-Arm und die `lamost`/`heasarc`/`osc`-Extract-Arme liegen in deiner geteilten `main_flow.rs`/`extract.rs`-Arbeitsfläche; `block_commit` trennt sie. Bitte die `main_flow.rs`-Hunks bestätigen oder committen, damit Mountain seinen Arm daneben setzen kann.
-- DE-2-Register-Umdeklaration (river 209) ist an Mountain geroutet.
+- **DE-2-Register-Umdeklaration (river 209) umgesetzt** (gemessen 2026-10-13): `phi/sources.φ:599`/`:600` `mass:`→`number:` (die Kopplung `:602` nutzte bereits `number:de2_ion_density`/`number:de2_neutral_density`); der Deskriptor ist `conserved:role:op:pde_type:medium:domain:boundary` (`channel.rs:662-670`), `Conserved::Number` ist für Fick in fluid/plasma zulässig (`:736-737`). **Divergenz gemessen:** `conserved_for_quantity` (`channel.rs:761`) führt `number_density`/`electron_density`/`column_density` auf `Conserved::Number` gezogen (`Mass`→`Number`); die Map wird nur für Advective/Wave/Maxwell/Poisson benutzt (Fick hardcodiert `mass`, `parse.rs:1473`), kein Registerpfad ruft sie mit diesen Quantities — latent, keine Datenregression. `cargo check` 0/0.
 
 ## Operator-Wort-Register
 
