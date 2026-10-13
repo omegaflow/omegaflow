@@ -249,15 +249,6 @@ at sun
 last flux noaa_goes_xray_flux_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.05-0.4nm
 last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.1-0.8nm
 
-url https://services6.arcgis.com/LT1iWT50Endhh6TU/arcgis/rest/services/Lightning__Global_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services6.arcgis.com/
-ttl 60
-at earth
-map features
-lat properties.lat
-lon properties.lon
-field properties.intensity lightning_peak_current_ka inverse-square electric kA 6.0 0.0 0.0
-
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 terms CC-BY-4.0 https://www.seismicportal.eu/terms.html
 ttl 60
@@ -368,54 +359,6 @@ map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
 field properties.mag geosphere_ga_mag_3day erfc seismic-surface Mw 30.0 0.0 0.0
-
-url https://services-ap1.arcgis.com/YQyt7djuXN7rQyg4/arcgis/rest/services/Mary_Cairncross_Scenic_Reserve_R718b140_Temperature_Sensor/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services-ap1.arcgis.com/
-ttl 300
-at earth
-map features
-lat geometry.coordinates.1
-lon geometry.coordinates.0
-field properties.temperature sensor_temperature_c gaussian-inverse-square thermal C 6.0 0.0 0.0
-
-url https://services1.arcgis.com/F0O6A52a4X4EXJVh/arcgis/rest/services/Live_Weather_Stations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services1.arcgis.com/
-ttl 300
-at earth
-map features
-lat properties.lat
-lon properties.lon
-field properties.air_temp air_temperature_c gaussian-inverse-square thermal C 6.0 0.0 0.0
-field properties.press mslp_hpa gaussian-inverse-square acoustic hPa 6.0 0.0 0.0
-
-url https://services5.arcgis.com/7weheFjxuNkGGiZi/arcgis/rest/services/National_Data_Buoy_Center_Station_Observations/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services5.arcgis.com/
-ttl 300
-at earth
-map features
-lat geometry.coordinates.1
-lon geometry.coordinates.0
-field properties.WDIR hydrosphere_ndbc_buoy_wind_dir gaussian-inverse-square advective deg 30.0 0.0 0.0
-field properties.WSPD hydrosphere_ndbc_buoy_wind_speed gaussian-inverse-square advective m/s 30.0 0.0 0.0
-field properties.GST hydrosphere_ndbc_buoy_gust gaussian-inverse-square advective m/s 30.0 0.0 0.0
-field properties.WVHT hydrosphere_ndbc_buoy_wave_height gaussian-inverse-square acoustic m 30.0 0.0 0.0
-field properties.DPD hydrosphere_ndbc_buoy_dominant_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
-field properties.APD hydrosphere_ndbc_buoy_avg_period gaussian-inverse-square acoustic s 30.0 0.0 0.0
-field properties.MWD hydrosphere_ndbc_buoy_mean_wave_dir gaussian-inverse-square acoustic deg 30.0 0.0 0.0
-field properties.PRES hydrosphere_ndbc_buoy_pressure gaussian-inverse-square advective hPa 30.0 0.0 0.0
-field properties.PTDY hydrosphere_ndbc_buoy_pressure_tendency gaussian-inverse-square advective hPa 30.0 0.0 0.0
-field properties.ATMP hydrosphere_ndbc_buoy_air_temp erfc thermal C 30.0 0.0 0.0
-field properties.WTMP hydrosphere_ndbc_buoy_water_temp erfc thermal C 30.0 0.0 0.0
-quantity properties.TIDE hydrosphere_ndbc_buoy_tide inverse-square geometry m 30.0 0.0 0.0
-
-url https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/Air_Quality_PM25_Latest_Results/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services9.arcgis.com/
-ttl 300
-at earth
-map features
-lat geometry.coordinates.1
-lon geometry.coordinates.0
-field properties.value pm25_ug_m3 erfc diffusion µg/m3 3600 0.0 0.0
 
 url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
 terms PD https://waterservices.usgs.gov/
@@ -1148,17 +1091,8 @@ field sensordatavalues.value_type=temperature.value sensorcommunity_temperature_
 field sensordatavalues.value_type=humidity.value sensorcommunity_humidity_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
 field sensordatavalues.value_type=pressure.value sensorcommunity_pressure_pa gaussian-inverse-square acoustic Pa 3600 0.0 0.0
 
-url https://services.arcgis.com/uUvqNMGPm7axC2dD/arcgis/rest/services/USGS_Stream_Temperatures_/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services.arcgis.com/
-ttl 3600
-at earth
-map features
-lat properties.latitude
-lon properties.longitude
-field properties.value usgs_stream_temp_c erfc thermal C 3600 0.0 0.0
-
 url https://services.arcgis.com/xYjDUN35YwdCEcMm/arcgis/rest/services/GOES_GLM_Bolides/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services.arcgis.com/
+terms PD https://neo-bolide.ndc.nasa.gov/
 ttl 3600
 at earth
 map features
@@ -1195,73 +1129,6 @@ lat latitude
 lon carrington_longitude
 quantity area swpc_solar_region_area_millionths inverse-square area millionths 86400 0.0 0.0
 field extent swpc_solar_region_extent_deg inverse-square em deg 86400 0.0 0.0
-
-url https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/DMF_Avg_DO_PublicView/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services1.arcgis.com/
-ttl 3600
-at earth
-map features
-lat geometry.coordinates.1
-lon geometry.coordinates.0
-field properties.Avg_Temp_C dmf_avg_temp_c erfc thermal C 3600 0.0 0.0
-
-url https://services1.arcgis.com/qTQ6qYkHpxlu0G82/arcgis/rest/services/DC_Water_Quality_Site_6500/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services1.arcgis.com/
-ttl 3600
-at earth
-map features
-lat properties.dec_lat_va
-lon properties.dec_long_va
-field properties.Temperature dc_wq_temperature_c erfc thermal C 3600 0.0 0.0
-field properties.Turbidity dc_wq_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
-
-url https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/crowdmag_observations_aggregated/FeatureServer/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services2.arcgis.com/
-ttl 3600
-at earth
-map features
-lat properties.lat
-lon properties.lon
-field properties.mean_intensity geomagnetic_total_field_nt inverse-square em nT 6.0 0.0 0.0
-
-url https://services2.arcgis.com/FtJyXM7nBotS8g5t/arcgis/rest/services/CREST_Buoy_2_Miami_River_030620___082420/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services2.arcgis.com/
-ttl 3600
-at earth
-map features
-lat properties.Latitude__degrees_
-lon properties.Longitude__degrees_
-field properties.Sal_psu crest_buoy2_salinity_psu erfc diffusion psu 3600 0.0 0.0
-field properties.Turbidity_NTU crest_buoy2_turbidity_ntu erfc diffusion ntu 3600 0.0 0.0
-
-url https://services3.arcgis.com/fp1tibNcN9mbExhG/arcgis/rest/services/Soil_Moisture_Sensor_Map_WFL1/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services3.arcgis.com/
-ttl 3600
-at earth
-map features
-lat properties.Lat
-lon properties.Long
-field properties.PAW plant_available_water_mm erfc diffusion mm 6.0 0.0 0.0
-field properties.Soil_temp soil_temperature_c gaussian-inverse-square thermal C 6.0 0.0 0.0
-
-url https://services5.arcgis.com/RbjlVNAtGGPx1hPV/arcgis/rest/services/Recent_seismicity_of_Haiti/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services5.arcgis.com/
-ttl 3600
-at earth
-map features
-lat properties.latitude
-lon properties.longitude
-field properties.mag haiti_quake_magnitude gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
-field properties.depth haiti_quake_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
-
-url https://services7.arcgis.com/WSiUmUhlFx4CtMBB/arcgis/rest/services/SO2datanew/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services7.arcgis.com/
-ttl 3600
-at earth
-map features
-lat properties.Lat
-lon properties.Long
-field properties.SO2_Kilotons so2_emission_mass_kt erfc diffusion kt_mass 86400 0.0 0.0
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=200&sort=-date
 terms PD-USGov https://ssd.jpl.nasa.gov/
@@ -1961,14 +1828,6 @@ format magic_dl3
 at sun
 ttl 31536000
 field magic_dl3 magic_dl3 inverse-square em tev 31536000 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/cade.irap.omp.eu/fugin_co.json
-terms no-license-stated https://cade.irap.omp.eu/
-origin https://cade.irap.omp.eu/tap/sync
-format tap
-no-cadence
-at sun
-field moment0 fugin_co_moment0 inverse-square em K 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -8789,7 +8648,7 @@ lon 3
 field 4 fdsn_station_elevation_m erfc seismic-surface m 86400.0 0.0 0.0
 
 url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
-terms no-license-stated https://services.arcgis.com/
+terms OGL-Canada-2.0 https://eccc-msc.github.io/open-data/licence/readme_en/
 ttl 86400
 on earth 0 0 0
 map features
@@ -8797,75 +8656,6 @@ lat attributes.Latitude
 lon attributes.Longitude
 field attributes.WindSpeed_kmh environment_canada_wind_speed_kmh gaussian-inverse-square advective km/h 3600.0 0.0 0.0
 field attributes.Temperature_C environment_canada_temperature_c gaussian-inverse-square thermal C 3600.0 0.0 0.0
-
-url https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/Salinity/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services1.arcgis.com/
-ttl 86400
-at earth
-map features
-lat properties.latitude
-lon properties.longitude
-field properties.measurevalue_psu wqp_salinity_psu erfc diffusion psu 86400 0.0 0.0
-
-url https://services1.arcgis.com/ze0XBzU1FXj94DJq/arcgis/rest/services/Temperature/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services1.arcgis.com/
-ttl 86400
-on earth 0 0 0
-map features
-lat properties.latitude
-lon properties.longitude
-alt properties.depth
-field properties.avg_tempt ocean_average_temperature_c gaussian-inverse-square thermal C 3600.0 0.0 0.0
-field properties.salinity ocean_salinity_psu gaussian-inverse-square diffusion PSU 86400.0 0.0 0.0
-
-url https://services2.arcgis.com/VNo0ht0YPXJoI4oE/arcgis/rest/services/Weather_Station/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services2.arcgis.com/
-ttl 86400
-at earth
-map features
-lat properties.LATITUDE
-lon properties.LONGITUDE
-field properties.TAVG monthly_tavg_c gaussian-inverse-square thermal C 6.0 0.0 0.0
-
-url https://services4.arcgis.com/NyRoDRTC1MqEzjL3/arcgis/rest/services/Worldwide_Earthquake_Data/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
-terms no-license-stated https://services4.arcgis.com/
-ttl 86400
-on earth 0 0 0
-map features
-lat attributes.latitude
-lon attributes.longitude
-field attributes.depth worldwide_quake_depth_km gaussian-inverse-square seismic-body km 3600.0 0.0 0.0
-
-url https://services8.arcgis.com/JDjQrQppZR2u4Y1i/arcgis/rest/services/Seismicity_(Catalogue_compilation_1901_-_June_2020)_view/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services8.arcgis.com/
-ttl 86400
-at earth
-map features
-lat properties.LAT
-lon properties.LON
-field properties.Mw_hom sheec_magnitude_mw gaussian-inverse-square seismic-body Mw 6.0 0.0 0.0
-field properties.DEP sheec_depth_km gaussian-inverse-square seismic-body km 6.0 0.0 0.0
-
-url https://services8.arcgis.com/SXiEEy1skwB5SrYh/arcgis/rest/services/ROMPLUS_Earthquake_Catalogue_v2/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
-terms no-license-stated https://services8.arcgis.com/
-ttl 86400
-on earth 0 0 0
-map features
-lat attributes.Latitude
-lon attributes.Longitude
-field attributes.Depth romplus_quake_depth_km gaussian-inverse-square seismic-body km 3600.0 0.0 0.0
-field attributes.Mw romplus_quake_mw gaussian-inverse-square seismic-surface Mw 3600.0 0.0 0.0
-
-url https://services9.arcgis.com/NpUZ2jEsnfm9HSQT/arcgis/rest/services/Buoy_46092/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=geojson&resultRecordCount=2000
-terms no-license-stated https://services9.arcgis.com/
-ttl 86400
-at earth
-map features
-lat properties.Lat
-lon properties.Long
-field properties.ATMP buoy_46092_air_temp_c erfc thermal C 86400 0.0 0.0
-field properties.WTMP buoy_46092_water_temp_c erfc thermal C 86400 0.0 0.0
-field properties.PRES buoy_46092_pressure_hpa gaussian-inverse-square advective hPa 86400 0.0 0.0
 
 url https://spiftp.esac.esa.int/data/SPICE/JUICE/kernels/spk/juice_cog_000114_230416_261003_v01.bsp
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
@@ -20774,7 +20564,7 @@ at earth
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/web.corral.tacc.utexas.edu/ceers_spectra.bin
-terms no-license-stated https://help.zenodo.org/docs/deposit/describe-records/licenses/
+terms CC-BY-4.0 https://zenodo.org/records/15472354
 format jwst_spectra
 origin https://web.corral.tacc.utexas.edu/ceersdata/DR07/NIRSpec/
 origin https://zenodo.org/records/15472354
