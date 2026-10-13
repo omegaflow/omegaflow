@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: a5782b2ff5ef1b2d2accfd0bc8166ce545c9efc727586a892e7de757a8b0b7b8
+  sha256: b8eafe2e8d00674d9e4b77cddb4965cbb567c872d37815743a72442eb129e22a
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -189,11 +189,13 @@ Die per-Station CGM-Breite wird **nicht** gesetzt, sondern gemessen. Route (gew�
   Primär ↔ Fallback.
 - **Nicht CGM:** der BGS-GIFS-Rechner liefert *quasi-dipol* (QD ≠ CGM); die ArcGIS-
   `Geomagnetic_Latitudes`-Services bleiben `declined` (`phi/declined_sources.φ:3327-3341`).
-- **Lokaler Weg — offen (gemessen 2026-10-12):** ein IGRF-14/AACGM-v2-Rust-Bin ist
-  nicht gebaut (`register_lookup aacgm` = 7 Treffer, alle in diesem Blatt); CPL und TTB
-  tragen darum `bgs-quasi-dipole` (QD ≠ CGM). Braucht: die Koeffizienten
-  (`igrf14coeffs.txt`, sha256 `8f8d8840…`; `aacgm_coeffs-14.tar`) als Rust-Bin laden
-  (ohne Feldlinien-Trace nur Dipol-Näherung, als solche benannt).
+- **Lokaler Weg — IGRF da, AACGM-Loader gebaut (river-205, 2026-10-13):** der IGRF-14-Teil
+  existiert bereits (`src/archivar/igrf.rs` + `igrf14coeffs.txt`, sha256 `8f8d8840…`); der
+  **AACGM-v2-Loader** ist gebaut (`src/archivar/aacgm.rs` + gepinnte `aacgm_coeffs-14-2025.asc`;
+  Lade-Fenster 2025–2030, absent-safe; `cargo check` 0/0) — ein Port der Referenz-Koeffizienten-
+  Auswertung (ohne Feldlinien-Trace, als solche benannt). **Offen:** ein Epochenfile interpoliert
+  nicht — die Bracket-Epochen (2015/2020) + der numerische Zeuge (upstream `test_c_aacgmv2.py`).
+  CPL und TTB tragen bis dahin `bgs-quasi-dipole` (QD ≠ CGM).
 - **Grenze der Primär-Route (gemessen 2026-10-07, River 122):** der OMNIWeb-VITMO-CGM-
   Endpunkt weist `latitude` mit |lat| < 20° ab (`Latitude must be greater than 20. or
   less than -20`, HTTP 200); die zwei low-lat GIN-Stationen **CPL** (geodätisch 17.29°)
