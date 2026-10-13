@@ -3,7 +3,7 @@
   session: Sensory-Folge 258
   class: handover
   date: 2026-10-13
-  sha256: 6d639942421d8ffba26579aa60fc86b0cfabd80e4367acbbb70382aff6ea28c7
+  sha256: 313f50853e22dc51cd0dc8bc5f305936e8563df90f7d68c78c27c6af308c240e
   status: live
 -->
 # Handover — Sensory-Folge 258 (2026-10-13)
@@ -402,7 +402,7 @@ verschiebt einen Send auf die Maschine. Die NTRS Document-Inquiry ist Operator-H
 Das Lesen des DEMETER-Metalinks, des Order-Status und der Carrier-Route ist autonom
 (sensorische Netz-Lesearbeit) — nur der Auftrag/Send ist Operator-Hand.
 
-## Burn: open 0.0000 · close 0.0423 · cap 0.15 · Grund: F258 — Line-Session (deepseek-flash), Ein-Pass; der Register-Pass (`--fired sensory` = 1 → 0 nach Neuschrift der Burn-Zeile, `--stale` = 0, `--addressed` = 0, `--orphans` = 0, `--descoped-check` = 0 widerlegt, `--orphan-docs` = 30 fremd) + `git_safety --snapshot`; kein eigener Punkt gearbeitet — beide eigenen `eigen`-Punkte unverändert (Zustellung / Flyby 2026-12-03), ihre Trigger nicht gefeuert; F257 konsumiert und nach `archiv/` verschoben. Burn gemessen `session_burn` 2026-10-13 F258 — Line-Session (deepseek-flash) $0.0423 (kein pro/max). Der Pre-Commit-`commit_check` (Release-Artefakt, Manifest `git_sha=5023b5781`) ist nach dem PII-History-Rewrite orphaniert und meldet ungemessen `tracked-not-declared: phi/sources.φ`; der frisch gebaute `target/debug/commit_check` passiert (exit 0) — Commit darum `--no-verify`, `tools-build` dispatcht (Mycelium-Trigger, Release-Frische).
+## Burn: open 0.0000 · close 0.0902 · cap 0.15 · Grund: F258 — Line-Session (deepseek-flash), Ein-Pass; der Register-Pass (`--fired sensory` = 1 → 0 nach Neuschrift der Burn-Zeile, `--stale` = 0, `--addressed` = 0, `--orphans` = 0, `--descoped-check` = 0 widerlegt, `--orphan-docs` = 30 fremd) + `git_safety --snapshot`; kein eigener Punkt gearbeitet — beide eigenen `eigen`-Punkte unverändert (Zustellung / Flyby 2026-12-03), ihre Trigger nicht gefeuert; F257 konsumiert und nach `archiv/` verschoben. Burn gemessen `session_burn` 2026-10-13 F258 — Line-Session (deepseek-flash), Top-Session „Sensory-Linie Übergabe abarbeiten" $0.0902 (kein pro/max). Der Pre-Commit-`commit_check` (Release-Artefakt, Manifest `git_sha=5023b5781`) ist nach dem PII-History-Rewrite orphaniert und meldet ungemessen `tracked-not-declared: phi/sources.φ`; der frisch gebaute `target/debug/commit_check` passiert (exit 0) — Commit darum `--no-verify`, `tools-build` dispatcht (`38465772678`, Mycelium-Trigger, Release-Frische).
 
 ## Abschluss
 
