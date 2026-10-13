@@ -570,9 +570,9 @@ fn curl_get(url: &str, key: &str) -> Option<(u16, String)> {
 const CF_ACCOUNT_ID_DEFAULT: &str = "b2891b7064691de2ef3891cfaf17190b";
 
 fn cf_account(secrets: &HashMap<String, String>) -> String {
-    match std::env::var("CF_ACCOUNT_ID") {
+    match std::env::var("CLOUDFLARE_ACCOUNT_ID") {
         Ok(v) if !v.is_empty() => v,
-        _ => match secrets.get("CF_ACCOUNT_ID") {
+        _ => match secrets.get("CLOUDFLARE_ACCOUNT_ID") {
             Some(v) if !v.is_empty() => v.clone(),
             _ => CF_ACCOUNT_ID_DEFAULT.to_string(),
         },
