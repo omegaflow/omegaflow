@@ -1,3 +1,4 @@
+use crate::mathematikerin::healpix;
 use std::str::from_utf8;
 
 const FITS_ZERO_ABSENT: f64 = 0.0;
@@ -357,6 +358,9 @@ pub struct FitsWcs {
     crpix1: f64,
     crpix2: f64,
     cd: [[f64; 2]; 2],
+    ordering: Option<bool>,
+    nside: Option<i64>,
+    coordsys: Option<char>,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -364,6 +368,7 @@ pub enum WcsProjection {
     Linear,
     Tan,
     Sin,
+    Hpx,
 }
 
 impl FitsWcs {
@@ -406,6 +411,29 @@ impl FitsWcs {
                 }
             }
         };
+        let ordering = match h.str_unescaped("ORDERING").as_deref().map(str::trim) {
+            Some("NESTED") => Some(true),
+            Some("RING") => Some(false),
+            _ => None,
+        };
+        let nside = match h.int("NSIDE") {
+            Some(n) if n > 0 && (n & (n - 1)) == 0 => Some(n),
+            _ => h.int("ORDER").and_then(|o| {
+                if (0..=29).contains(&o) {
+                    Some(1i64 << o)
+                } else {
+                    None
+                }
+            }),
+        };
+        let nside = match (nside, healpix::nside_from_npix(naxis1 as i64)) {
+            (Some(n), Some(derived)) if n != derived => None,
+            (n, _) => n,
+        };
+        let coordsys = h
+            .str_unescaped("COORDSYS")
+            .and_then(|s| s.trim().chars().next())
+            .map(|c| c.to_ascii_uppercase());
         Some(Self {
             ctype1,
             ctype2,
@@ -414,6 +442,9 @@ impl FitsWcs {
             crpix1,
             crpix2,
             cd,
+            ordering,
+            nside,
+            coordsys,
         })
     }
 
@@ -426,6 +457,9 @@ impl FitsWcs {
             crpix1,
             crpix2,
             cd,
+            ordering: None,
+            nside: None,
+            coordsys: None,
         }
     }
 
@@ -438,6 +472,9 @@ impl FitsWcs {
             crpix1,
             crpix2,
             cd,
+            ordering: None,
+            nside: None,
+            coordsys: None,
         }
     }
 
@@ -445,6 +482,7 @@ impl FitsWcs {
         match (self.ctype1.as_deref(), self.ctype2.as_deref()) {
             (Some(a), Some(b)) if a.contains("TAN") && b.contains("TAN") => WcsProjection::Tan,
             (Some(a), Some(b)) if a.contains("SIN") && b.contains("SIN") => WcsProjection::Sin,
+            (Some(a), Some(b)) if a.contains("HPX") && b.contains("HPX") => WcsProjection::Hpx,
             _ => WcsProjection::Linear,
         }
     }
@@ -455,6 +493,10 @@ impl FitsWcs {
 
     pub fn is_sin(&self) -> bool {
         self.projection() == WcsProjection::Sin
+    }
+
+    pub fn is_hpx(&self) -> bool {
+        self.projection() == WcsProjection::Hpx
     }
 
     pub fn xi_eta_deg(&self, x: f64, y: f64) -> Option<(f64, f64)> {
@@ -482,6 +524,31 @@ impl FitsWcs {
         let eta = self.cd[1][0] * dx + self.cd[1][1] * dy;
         match self.projection() {
             WcsProjection::Linear => Some((self.crval1 + xi, self.crval2 + eta)),
+            WcsProjection::Hpx => {
+                let ordering = self.ordering?;
+                let nside = self.nside?;
+                let scale1 = self.cd[0][0];
+                if !scale1.is_finite() || scale1 == 0.0 {
+                    return None;
+                }
+                let index_f = xi / scale1 + self.crpix1 - 1.0;
+                if !index_f.is_finite() {
+                    return None;
+                }
+                let index = index_f.round() as i64;
+                let (theta, phi) = if ordering {
+                    healpix::pix2ang_nest(nside, index)?
+                } else {
+                    healpix::pix2ang_ring(nside, index)?
+                };
+                Some(match self.coordsys {
+                    Some('G') => healpix::galactic_to_icrs(theta, phi),
+                    _ => (
+                        phi.to_degrees().rem_euclid(360.0),
+                        90.0 - theta.to_degrees(),
+                    ),
+                })
+            }
             WcsProjection::Tan | WcsProjection::Sin => {
                 let xi = xi.to_radians();
                 let eta = eta.to_radians();
@@ -500,7 +567,7 @@ impl FitsWcs {
                         }
                         rho.asin()
                     }
-                    WcsProjection::Linear => return None,
+                    WcsProjection::Linear | WcsProjection::Hpx => return None,
                 };
                 let dec = (c.cos() * dec0.sin() + eta * c.sin() * dec0.cos() / rho).asin();
                 let ra = ra0
@@ -1049,6 +1116,7 @@ fn drs_rows_from_table(buf: &[u8], table: &FitsTable) -> Option<Vec<(f64, [f64; 
 #[cfg(test)]
 mod tests {
     use super::{FitsHeader, FitsImage, FitsTable, FitsValue, FitsWcs, WcsProjection, drs_series};
+    use crate::mathematikerin::healpix;
 
     fn pad_card(kw: &str, value: &str) -> [u8; 80] {
         let mut card = [b' '; 80];
@@ -1472,6 +1540,212 @@ mod tests {
         assert!(sin.is_sin());
         assert!(!sin.is_tan());
         assert_eq!(sin.projection(), WcsProjection::Sin);
+    }
+
+    #[test]
+    fn wcs_hpx_nested_nside1_pixel0() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "12"),
+                ("CTYPE1", "'RA---HPX'"),
+                ("CTYPE2", "'DEC--HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'NESTED'"),
+                ("NSIDE", "1"),
+                ("COORDSYS", "'C'"),
+            ],
+            &[0u8; 12],
+        );
+        let (h, _) = FitsHeader::parse(&buf, 0).unwrap();
+        let wcs = FitsWcs::from_header(&h, 12, 1).unwrap();
+        assert!(wcs.is_hpx());
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, dec) = img.world(1.0, 0.0).unwrap();
+        assert!((ra - 45.0).abs() < 1e-9, "ra {ra}");
+        let expected_dec = 90.0 - (2.0f64 / 3.0).acos().to_degrees();
+        assert!((dec - expected_dec).abs() < 1e-9, "dec {dec}");
+    }
+
+    #[test]
+    fn wcs_hpx_ring_nside2_pixel0() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "48"),
+                ("CTYPE1", "'RA---HPX'"),
+                ("CTYPE2", "'DEC--HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'RING'"),
+                ("NSIDE", "2"),
+                ("COORDSYS", "'C'"),
+            ],
+            &[0u8; 48],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (theta, phi) = healpix::pix2ang_ring(2, 0).unwrap();
+        let (ra, dec) = img.world(1.0, 0.0).unwrap();
+        assert!((ra - phi.to_degrees()).abs() < 1e-9, "ra {ra}");
+        assert!(
+            (dec - (90.0 - theta.to_degrees())).abs() < 1e-9,
+            "dec {dec}"
+        );
+    }
+
+    #[test]
+    fn wcs_hpx_nested_nside2_roundtrip() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "48"),
+                ("CTYPE1", "'RA---HPX'"),
+                ("CTYPE2", "'DEC--HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'NESTED'"),
+                ("NSIDE", "2"),
+                ("COORDSYS", "'C'"),
+            ],
+            &[0u8; 48],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        for p in [0i64, 5, 23, 47] {
+            let (ra, dec) = img.world((p + 1) as f64, 0.0).unwrap();
+            let theta = (90.0 - dec).to_radians();
+            let phi = ra.rem_euclid(360.0).to_radians();
+            assert_eq!(
+                healpix::ang2pix_nest(2, theta, phi),
+                Some(p),
+                "pixel {p} does not round-trip"
+            );
+        }
+    }
+
+    #[test]
+    fn wcs_hpx_order_key_resolves_nside() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "48"),
+                ("CTYPE1", "'RA---HPX'"),
+                ("CTYPE2", "'DEC--HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'NESTED'"),
+                ("ORDER", "1"),
+                ("COORDSYS", "'C'"),
+            ],
+            &[0u8; 48],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, _) = img.world(1.0, 0.0).unwrap();
+        assert!(
+            (ra - 45.0).abs() < 1e-9,
+            "ORDER = 1 means NSIDE = 2, ra {ra}"
+        );
+    }
+
+    #[test]
+    fn wcs_hpx_absent_nside_returns_none() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "12"),
+                ("CTYPE1", "'RA---HPX'"),
+                ("CTYPE2", "'DEC--HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'NESTED'"),
+                ("COORDSYS", "'C'"),
+            ],
+            &[0u8; 12],
+        );
+        let (h, _) = FitsHeader::parse(&buf, 0).unwrap();
+        let wcs = FitsWcs::from_header(&h, 12, 1).unwrap();
+        assert!(wcs.is_hpx());
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert!(img.world(1.0, 0.0).is_none());
+    }
+
+    #[test]
+    fn wcs_hpx_nside_naxis_mismatch_refuses() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "12"),
+                ("CTYPE1", "'RA---HPX'"),
+                ("CTYPE2", "'DEC--HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'NESTED'"),
+                ("NSIDE", "2"),
+                ("COORDSYS", "'C'"),
+            ],
+            &[0u8; 12],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        assert!(img.world(1.0, 0.0).is_none());
+    }
+
+    #[test]
+    fn wcs_hpx_galactic_coordsys_transforms() {
+        let buf = img_with(
+            &[
+                ("BITPIX", "8"),
+                ("NAXIS", "1"),
+                ("NAXIS1", "12"),
+                ("CTYPE1", "'GLON-HPX'"),
+                ("CTYPE2", "'GLAT-HPX'"),
+                ("CRVAL1", "0.0"),
+                ("CRVAL2", "0.0"),
+                ("CRPIX1", "0.5"),
+                ("CRPIX2", "0.5"),
+                ("CDELT1", "1.0"),
+                ("CDELT2", "1.0"),
+                ("ORDERING", "'NESTED'"),
+                ("NSIDE", "1"),
+                ("COORDSYS", "'G'"),
+            ],
+            &[0u8; 12],
+        );
+        let (img, _) = FitsImage::parse(&buf, 0).unwrap();
+        let (ra, dec) = img.world(1.0, 0.0).unwrap();
+        let (theta, phi) = healpix::pix2ang_nest(1, 0).unwrap();
+        let (expected_ra, expected_dec) = healpix::galactic_to_icrs(theta, phi);
+        assert!((ra - expected_ra).abs() < 1e-9, "ra {ra}");
+        assert!((dec - expected_dec).abs() < 1e-9, "dec {dec}");
     }
 
     #[test]

@@ -220,6 +220,9 @@ pub fn verify_records(format: &str, bytes: &[u8]) -> Option<usize> {
         }
         "catalog_gaia_sso" => crate::gaia_sso::parse_bin(bytes).map(|bodies| bodies.len()),
         "blinkverse" | "blinkverse_frb" => blinkverse::parse_bin(bytes).map(|t| t.rows.len()),
+        "lamost_dr10" => lamost::parse_bin(bytes).map(|t| t.rows.len()),
+        "heasarc_w3browse" => heasarc_w3browse::parse_bin(bytes).map(|t| t.rows.len()),
+        "osc_transients" => osc::parse_bin(bytes).map(|t| t.rows.len()),
         "zcta_gazetteer" => crate::archivar::zcta::parse_bin(bytes).map(|rows| rows.len()),
         "openmadrigal" => openmadrigal::parse_isprint(bytes).map(|print| print.rows.len()),
         "mpcobs" => {
@@ -3741,6 +3744,177 @@ fn blinkverse_frb_channels(
     channels
 }
 
+fn lamost_channels(
+    table: &lamost::Table,
+    fields: &[FieldConfig],
+    epoch: f64,
+) -> Vec<(Channel, FieldConfig)> {
+    if fields.is_empty() {
+        return Vec::new();
+    }
+    let ra_col = lamost::column_index(&table.names, lamost::RA_NAMES);
+    let dec_col = lamost::column_index(&table.names, lamost::DEC_NAMES);
+    let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+    for row in &table.rows {
+        let position = match (ra_col, dec_col) {
+            (Some(ri), Some(di)) => match (
+                row.get(ri).copied().flatten(),
+                row.get(di).copied().flatten(),
+            ) {
+                (Some(ra), Some(dec)) => {
+                    let (sa, ca) = ra.to_radians().sin_cos();
+                    let (sd, cd) = dec.to_radians().sin_cos();
+                    Position::StateVector {
+                        p: [cd * ca, cd * sa, sd],
+                        v: [0.0, 0.0, 0.0],
+                        track: false,
+                    }
+                }
+                _ => Position::Source,
+            },
+            _ => Position::Source,
+        };
+        for (j, name) in table.names.iter().enumerate() {
+            if Some(j) == ra_col || Some(j) == dec_col {
+                continue;
+            }
+            let Some(fc) = fields.iter().find(|fc| fc.name == *name || fc.key == *name) else {
+                continue;
+            };
+            let Some(value) = row.get(j).copied().flatten() else {
+                continue;
+            };
+            channels.push((
+                Channel {
+                    name: fc.name.clone(),
+                    value,
+                    position: position.clone(),
+                    epoch,
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    station_code: None,
+                },
+                fc.clone(),
+            ));
+        }
+    }
+    channels
+}
+
+fn osc_channels(
+    table: &osc::Table,
+    fields: &[FieldConfig],
+    epoch: f64,
+) -> Vec<(Channel, FieldConfig)> {
+    if fields.is_empty() {
+        return Vec::new();
+    }
+    let ra_col = osc::column_index(&table.names, osc::RA_NAMES);
+    let dec_col = osc::column_index(&table.names, osc::DEC_NAMES);
+    let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+    for row in &table.rows {
+        let position = match (ra_col, dec_col) {
+            (Some(ri), Some(di)) => match (
+                row.get(ri).copied().flatten(),
+                row.get(di).copied().flatten(),
+            ) {
+                (Some(ra), Some(dec)) => {
+                    let (sa, ca) = ra.to_radians().sin_cos();
+                    let (sd, cd) = dec.to_radians().sin_cos();
+                    Position::StateVector {
+                        p: [cd * ca, cd * sa, sd],
+                        v: [0.0, 0.0, 0.0],
+                        track: false,
+                    }
+                }
+                _ => Position::Source,
+            },
+            _ => Position::Source,
+        };
+        for (j, name) in table.names.iter().enumerate() {
+            if Some(j) == ra_col || Some(j) == dec_col {
+                continue;
+            }
+            let Some(fc) = fields.iter().find(|fc| fc.name == *name || fc.key == *name) else {
+                continue;
+            };
+            let Some(value) = row.get(j).copied().flatten() else {
+                continue;
+            };
+            channels.push((
+                Channel {
+                    name: fc.name.clone(),
+                    value,
+                    position: position.clone(),
+                    epoch,
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    station_code: None,
+                },
+                fc.clone(),
+            ));
+        }
+    }
+    channels
+}
+
+fn heasarc_w3browse_channels(
+    table: &heasarc_w3browse::Table,
+    fields: &[FieldConfig],
+    epoch: f64,
+) -> Vec<(Channel, FieldConfig)> {
+    if fields.is_empty() {
+        return Vec::new();
+    }
+    let ra_col = heasarc_w3browse::column_index(&table.names, heasarc_w3browse::RA_NAMES);
+    let dec_col = heasarc_w3browse::column_index(&table.names, heasarc_w3browse::DEC_NAMES);
+    let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+    for row in &table.rows {
+        let position = match (ra_col, dec_col) {
+            (Some(ri), Some(di)) => match (row.get(ri).copied(), row.get(di).copied()) {
+                (Some(ra), Some(dec)) => {
+                    let (sa, ca) = ra.to_radians().sin_cos();
+                    let (sd, cd) = dec.to_radians().sin_cos();
+                    Position::StateVector {
+                        p: [cd * ca, cd * sa, sd],
+                        v: [0.0, 0.0, 0.0],
+                        track: false,
+                    }
+                }
+                _ => Position::Source,
+            },
+            _ => Position::Source,
+        };
+        for (j, name) in table.names.iter().enumerate() {
+            if Some(j) == ra_col || Some(j) == dec_col {
+                continue;
+            }
+            let Some(fc) = fields.iter().find(|fc| fc.name == *name || fc.key == *name) else {
+                continue;
+            };
+            let Some(value) = row.get(j).copied() else {
+                continue;
+            };
+            channels.push((
+                Channel {
+                    name: fc.name.clone(),
+                    value,
+                    position: position.clone(),
+                    epoch,
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    station_code: None,
+                },
+                fc.clone(),
+            ));
+        }
+    }
+    channels
+}
+
 fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
     if src.format == "ephemeris_binary"
         || matches!(
@@ -3968,6 +4142,54 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         };
         let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
         return ExtractResult::Measurements(blinkverse_frb_channels(&table, &fields, epoch));
+    }
+    if src.format == "lamost_dr10" {
+        let epoch = match src.catalog_epoch {
+            Some(e) if e.is_finite() => e,
+            _ => now,
+        };
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        let Some(table) = lamost::parse_bin(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
+        return ExtractResult::Measurements(lamost_channels(&table, &fields, epoch));
+    }
+    if src.format == "osc_transients" {
+        let epoch = match src.catalog_epoch {
+            Some(e) if e.is_finite() => e,
+            _ => now,
+        };
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        let Some(table) = osc::parse_bin(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
+        return ExtractResult::Measurements(osc_channels(&table, &fields, epoch));
+    }
+    if src.format == "heasarc_w3browse" {
+        let epoch = match src.catalog_epoch {
+            Some(e) if e.is_finite() => e,
+            _ => now,
+        };
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        let Some(table) = heasarc_w3browse::parse_bin(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
+        return ExtractResult::Measurements(heasarc_w3browse_channels(&table, &fields, epoch));
     }
     if src.format == "twomass_psc" {
         let epoch = match src.catalog_epoch {
