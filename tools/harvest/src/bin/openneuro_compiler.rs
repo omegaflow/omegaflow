@@ -7,6 +7,9 @@ use std::process::Command;
 
 const NETLOC: &str = "openneuro.org";
 const GRAPHQL: &str = "https://openneuro.org/crn/graphql";
+const COMPILER: &str = "tools/harvest/src/bin/openneuro_compiler.rs";
+const FORMAT: &str = "openneuro_eeg";
+const TTL: u64 = 86400;
 
 struct EegExtract {
     nbchan: u32,
@@ -435,6 +438,56 @@ fn build_bin(
     Some(write_bin(&eeg))
 }
 
+fn register_block(
+    basename: &str,
+    format: &str,
+    dataset: &str,
+    snapshot_tag: &str,
+    hexsha: &str,
+    sha256: &str,
+    compiler: &str,
+    ttl: u64,
+) -> String {
+    format!(
+        "url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{basename}\n\
+         format {format}\n\
+         origin {GRAPHQL} (snapshot {dataset} tag {snapshot_tag} {hexsha})\n\
+         compiler {compiler}\n\
+         sha256 {sha256}\n\
+         at earth\n\
+         ttl {ttl}"
+    )
+}
+
+fn print_register_block(
+    path: &str,
+    format: &str,
+    dataset: &str,
+    snapshot_tag: &str,
+    hexsha: &str,
+) -> Result<(), String> {
+    let basename = std::path::Path::new(path)
+        .file_name()
+        .and_then(|n| n.to_str())
+        .ok_or_else(|| format!("{path}: the staged path carries no file name"))?;
+    let bytes = std::fs::read(path).map_err(|e| format!("read {path} returned void: {e}"))?;
+    let sha = omegaflow::archivar::sha256::sha256_hex(&bytes);
+    println!(
+        "{}",
+        register_block(
+            basename,
+            format,
+            dataset,
+            snapshot_tag,
+            hexsha,
+            &sha,
+            COMPILER,
+            TTL
+        )
+    );
+    Ok(())
+}
+
 fn rate_label(srate: Option<f64>) -> String {
     match srate {
         Some(v) => format!("{v}"),
@@ -596,11 +649,16 @@ fn run(args: &[String]) -> Result<(), String> {
         );
         return Ok(());
     }
+    let format_name = match arg_value(args, "--format") {
+        Some(f) => f,
+        None => FORMAT.to_string(),
+    };
     for path in &staged {
         eprintln!("upload {path} -> cdn tag {NETLOC}");
         if !upload_release(NETLOC, path) {
             return Err(format!("upload {path} returned void"));
         }
+        print_register_block(path, &format_name, &dataset, &snapshot_tag, &hexsha)?;
     }
     Ok(())
 }
@@ -1072,5 +1130,33 @@ mod tests {
             }
             _ => panic!("event kind mismatch"),
         }
+    }
+
+    #[test]
+    fn register_block_carries_snapshot_origin_and_sha256() {
+        let block = register_block(
+            "sub-01_task-rest_eeg.bin",
+            FORMAT,
+            "ds005034",
+            "1.0.1",
+            "470458bcff173ca37018a9cb7a55c3804ccc1759",
+            &omegaflow::archivar::sha256::sha256_hex(b"asset"),
+            COMPILER,
+            TTL,
+        );
+        let origin = block
+            .lines()
+            .find(|l| l.starts_with("origin "))
+            .expect("the block carries an origin line");
+        assert!(origin.contains("(snapshot "));
+        let sha = block
+            .lines()
+            .find(|l| l.starts_with("sha256 "))
+            .expect("the block carries a sha256 line");
+        let hex = sha
+            .strip_prefix("sha256 ")
+            .expect("the sha256 line names a hex");
+        assert_eq!(hex.len(), 64);
+        assert!(hex.chars().all(|c| c.is_ascii_hexdigit()));
     }
 }
