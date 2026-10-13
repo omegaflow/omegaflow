@@ -1,24 +1,33 @@
 #!/usr/bin/env bash
 # voice_read_full — let a public-only voice read an archive_search --all spill.
 #
-# The spill is public search output the tool itself wrote into the temp dir;
-# no private tree is reachable through this door. The path is canonicalised
-# (realpath) so no `..` traversal and no symlink can leave the temp dir, and
-# the basename must be an `omegaflow_all_*.txt` spill.
+# The spill is public search output the tool itself wrote (into the temp dir or
+# the repo spill dir); no private tree is reachable through this door. The path
+# is canonicalised (realpath) so no `..` traversal and no symlink can leave those
+# dirs, and the basename must be an `omegaflow_all_*.txt` spill. Optional
+# [offset] [limit] print a line window so the caller can page a large spill.
 set -u
 p="${1:-}"
 if [ -z "$p" ]; then
-  printf 'voice_read_full: usage: voice_read_full <omegaflow_all_*.txt>\n' >&2
+  printf 'voice_read_full: usage: voice_read_full <omegaflow_all_*.txt> [offset] [limit]\n' >&2
   exit 2
 fi
+off="${2:-1}"
+lim="${3:-40}"
+[ "$off" -ge 1 ] 2>/dev/null || { printf 'voice_read_full: offset must be a positive integer\n' >&2; exit 2; }
+[ "$lim" -ge 1 ] 2>/dev/null || { printf 'voice_read_full: limit must be a positive integer\n' >&2; exit 2; }
+[ "$lim" -le 400 ] 2>/dev/null || { printf 'voice_read_full: limit too large (max 400)\n' >&2; exit 2; }
 real="$(realpath -m -- "$p" 2>/dev/null)" || { printf 'voice_read_full: bad path\n' >&2; exit 2; }
 tmp="$(realpath -m -- "${TMPDIR:-/tmp}")"
+root="$(cd "$(dirname "$0")/.." && pwd)"
+repo_spill="$(realpath -m -- "$root/state/research/spill")"
 case "$real" in
-  "$tmp"/omegaflow_all_*.txt) : ;;
+  "$tmp"/omegaflow_all_*.txt|"$repo_spill"/omegaflow_all_*.txt) : ;;
   *)
-    printf 'voice_read_full: only an archive_search --all spill under %s is readable\n' "$tmp" >&2
+    printf 'voice_read_full: only an archive_search --all spill under %s or %s is readable\n' "$tmp" "$repo_spill" >&2
     exit 2
     ;;
 esac
 [ -f "$real" ] || { printf 'voice_read_full: spill absent\n' >&2; exit 2; }
-exec cat -- "$real"
+end=$((off + lim - 1))
+exec sed -n "${off},${end}p" -- "$real"
