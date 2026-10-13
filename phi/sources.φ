@@ -10953,33 +10953,6 @@ ttl 604800
 at earth
 field tmax samet_tmax inverse-square thermal C 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/data.kasi.re.kr/kasi_kmtnet.json
-terms no-license-stated https://data.kasi.re.kr/
-format kasi
-origin https://data.kasi.re.kr/api/KMTNet/search?ra=270.694&dec=-30.066&rad=60&unit=arcmin&limit=100000
-compiler tools/harvest/src/bin/kasi_compiler.rs
-sha256 da1f16549f20ce348d2145e23764a35086ebca3006f8dbec8e7459916fcf62ce
-at sun
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/data.kasi.re.kr/kasi_kvn.json
-terms no-license-stated https://data.kasi.re.kr/
-format kasi
-origin https://data.kasi.re.kr/api/KVN/search?ra=267.075&dec=-28.127&rad=1.5&unit=degree
-compiler tools/harvest/src/bin/kasi_compiler.rs
-sha256 de2540bd0082d332779bccbc9548b6ffb5e5472b027a4f40682cea0f1893e13a
-at sun
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/data.kasi.re.kr/kasi_miris.json
-terms no-license-stated https://data.kasi.re.kr/
-format kasi
-origin https://data.kasi.re.kr/api/MIRIS/search?ra=84.0&dec=-70.0
-compiler tools/harvest/src/bin/kasi_compiler.rs
-sha256 3ce1dee202297c644c637c2e45d0a0d025e5201a2e7d3ab17e9f00ddb99f7026
-at sun
-ttl 604800
-
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov/gedi_l2a.bin
 terms PD https://www.earthdata.nasa.gov/
 format gedi_l2a
