@@ -2,7 +2,7 @@
 title: Handover — River-Folge 208
 class: handover
 date: 2026-10-13
-sha256: 2e2933ec8e83f4f5f3f7d91eef3a9ac813adaa71cc918502fa8791f001c49cac
+sha256: 50361ed78bda82fcbb2ee3d0598329544d07f6a17b8a0c33f8e834b70991f9eb
 status: live
 -->
 # Handover — River-Folge 208 (2026-10-13)
@@ -52,11 +52,12 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 - **Braucht:** (1) die DE-2-Manifestation (Mycelium, `## An mycelium`, Token `xfer:river.ses_ec901ad7dffehLKKusa1DO806h.1~aac84d7f`); (2) `K` aus dem co-lokalen DE-2-Overlap; (3) den nächsten `ci-gate`-Lauf lesen (`ci_manage log <id>`) — WGSL-Parse + `coupling_injection_wgsl_matches_the_cpu_exchange`.
 
 ### Kanal-Identität — Verdikt B′ (Rat + Roster + Forschung): `unit` raus, Größenart in die Achsen
-- **Status:** eigen (Verdikt; Bau offen) | **Bindung:** eigen
-- **Trigger:** keiner — das Verdikt steht; der Bau ist der nächste Schritt.
+- **Status:** eigen (Bau Schritt 1+2 gebaut; Schritt 3 offen) | **Bindung:** eigen
+- **Trigger:** keiner — das Verdikt steht; Schritt 3 (Größenart-Achse) ist der nächste.
 - **Lage:** (gemessen 2026-10-13 river-209: `explore`-Taucher + Forschungs-Schicht + Rat + UI-Roster) Code-Riss: `ChannelDescriptor::hash()` (`src/mathematikerin/channel.rs:566-592`) trägt die Achsen/genus/extent/**species**, aber **nicht `unit`**, während `PartialEq` (`:397-412`) `unit` (`:409`) **doch** vergleicht; `ChannelRegistry::register` (`:1493-1502`) dedupliziert allein auf `hash()` → eine unit-only-Differenz wird still verworfen. Register-Fall `phi/sources.φ:41` (CHAMP Massendichte `kg/m^3`, species None) vs `:600` (DE-2 N2-Zahldichte `m^-3`, species N2) überlebt nur über `species`. **Forschung:** QUDT (eine QuantityKind, viele Units) · CF-1.11 (`standard_name` = Identität, `units` = Repräsentation) · HAPI (`name` = Identität) · UCUM (nur Units) — alle: Unit ist **nicht** Identität, die Größenart ist es. **Rat:** Consensus **B′** — `unit` aus **beidem** (`PartialEq` **und** `hash`) entfernen (die Hash/Eq-Divergenz selbst ist der Defekt), die Größenart als Achsen-Token tragen (`number`/`amount`-conserved, damit Massendichte ≠ Zahldichte), `species` = Qualifier; die Einheit bei der Registrierung dimensional validieren (kind↔unit) mit **lautem Fehler** statt stillem Drop. **UI-Roster (4 Frontier + eine offene Frontier):** Claude (Sonnet 5.5, Extended Thinking max) B+ein Stück C · Duck.ai (GPT-6 Luna) C · Qwen (Qwen3.7-Plus, Denken) B · Z.ai (GLM-5.3, Deep Think Max) B · tryingopen DeepSeek V4 Pro (1.7T) B. Material: `state/stimmen/2026-10-13-river-kanal-identitaet-rat.md`.
 - **Blockade:** B′ ist Wire-/GPU-Vertrag: `unit` aus `PartialEq` entfernen + das neue Achsen-Token verschieben Registry-Indizes (der P10-Parser-Index-Riss `f2623bb72`) — Bau in eigenem Atom.
-- **Braucht:** den B′-Bau — Hash = PartialEq ohne `unit`; Achsen-Kind-Token; Registrierungs-Validierung kind↔unit mit lautem Fehler; charakterisierender Test (unit-only-Paar → verschieden ODER lauter Fehler, nie stiller Drop).
+- **Lage (Bau, river-209):** **Schritt 1** — `unit` aus `ChannelDescriptor::PartialEq` entfernt (Hash = Gleichheit, das genaue Feld-Set), Test `the_unit_is_representation_not_identity`. **Schritt 2** — `register_checked` + `ChannelUnitConflict` (Display in der Haussprache); `register` bleibt `usize` und delegiert, druckt `channel unit refused: …`; die **zwei** Produktions-Ingestion-Sites (`channel.rs` `channel_registry_from_sources`, `archivar/parse.rs` `ChannelCouplingLayer::from_sources`) migriert; Test `a_foreign_unit_is_refused_and_never_silently_dropped`. `cargo check` 0/0, `rustfmt --check` clean. Der Konflikt-Branch ändert nie, was eingefügt wird — er macht den stillen Drop laut; „konvertierbar" = **gleicher Unit-Token** (konservativ; ein dimensionales Prädikat braucht eine Tabelle → später).
+- **Braucht:** **Schritt 3** — die Größenart als Achsen-Token (`number`/`amount`-conserved-Klasse, damit Massendichte ≠ Zahldichte), ggf. + dimensionale Unit↔Kind-Prädikat-Tabelle; das `ci-gate`-`subset` (die zwei neuen Tests) ist das Netz.
 - **Blockade:** keine (Route gemessen; der Bau hängt am selben WGSL-/Paritäts-Schritt wie P7.1).
 - **Braucht:** die DE-2-Kanäle φ tragen lassen + `K`; dann die Kopplungszeile vollständig.
 
@@ -214,7 +215,10 @@ während `PartialEq` `unit` vergleicht; `register` dedupliziert allein auf `hash
 still. Verdikt **B′**: `unit` raus aus `PartialEq` **und** `hash`, Größenart als Achsen-Token, `species` Qualifier,
 lauter Fehler bei gleicher Identität + anderer Einheit. Rat + UI-Roster (Claude B/C, Duck C, Qwen B, Z.ai B, tryingopen DeepSeek V4 Pro B)
 + Forschung (QUDT/CF/HAPI/UCUM) konvergieren: Unit ist nicht Identität, die Größenart ist es. Material:
-`state/stimmen/2026-10-13-river-kanal-identitaet-rat.md`.
+`state/stimmen/2026-10-13-river-kanal-identitaet-rat.md`. **B′-Bau (river-209, zwei `grind-flash`-Schritte):**
+Schritt 1 (`unit` aus `PartialEq`; Test `the_unit_is_representation_not_identity`) + Schritt 2 (`register_checked`
++ `ChannelUnitConflict`; die zwei Produktions-Ingestion-Sites migriert; Test `a_foreign_unit_is_refused_and_never_silently_dropped`)
+in `src/mathematikerin/channel.rs` + `src/archivar/parse.rs`; `cargo check` 0/0, `rustfmt --check` clean. Schritt 3 (Größenart-Achse) offen.
 **Newell/Parität dispatcht + gemessen:** `gh workflow run field-te-query.yml` → Lauf `38464793874`
 **success** (`ci_manage view`); alle Jobs success (unit, parity, witness, witness-count, matrix-*);
 `matrix-newell-omni` Zelle `newell_dphi_dt_omni->abk_dbdt_pt1h` **n = 22137**, TE 7.7953e-5,

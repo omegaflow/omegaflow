@@ -2472,7 +2472,9 @@ impl ChannelCouplingLayer {
         let mut channels = ChannelRegistry::with_capacity(16);
         for source in sources {
             for descriptor in &source.channels {
-                channels.register(descriptor.clone());
+                if let Err(conflict) = channels.register_checked(descriptor.clone()) {
+                    eprintln!("channel unit refused: {conflict}");
+                }
                 if let Some(name) = &descriptor.alias {
                     channels.alias(name, descriptor);
                 }
