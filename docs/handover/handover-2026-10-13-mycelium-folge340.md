@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 340 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 6aa65def5b2f9267f008c748efa2dabeb838ce065a93d01a0fbb080cd161e72f
+  sha256: 75422532b85afde0c11b8981904ab162489689a995f769e136cd05d53ceb8ced
   status: live
 -->
 # Handover — Mycelium-Folge 340 (2026-10-13)
@@ -22,6 +22,7 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 | „mache weiter" (weitergetragener folge337-Bericht) | 2026-10-13 | Operator (Session 338) · `state/operator-gespraeche/2026-10-13-mycelium.md` |
 | „ja und den rest bauen schick einfach agenten" | 2026-10-12 | Operator (Session 337) · `state/operator-gespraeche/2026-10-12-mycelium.md` |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater … /commit (Push), danach den frischen Pass" | 2026-10-12/13 | Operator · session-weiter Delegations-Consent |
+| „ab jetzt Reports immer in einfacher Sprache; Maschinensprache untereinander ok — für mich ist Fachjargon Vertuschung und unnütz" | 2026-10-13 | Operator (Session 340) · `state/operator-gespraeche/2026-10-13-mycelium.md`; gefaltet ins `AGENTS.md` (Language doctrine) |
 
 ## Offen — eigen
 
