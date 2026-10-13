@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+use std::fs;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 
@@ -24,11 +26,34 @@ const ROUTES: &[Route] = &[
     Route { prefix: "pollinations", provider: "Pollinations", base_url: "https://text.pollinations.ai/openai", key_env: "POLLINATIONS_API_KEY" },
 ];
 
+fn load_secrets() -> HashMap<String, String> {
+    let path = match std::env::var("OMEGAFLOW_SECRETS") {
+        Ok(p) => p,
+        Err(_) => return HashMap::new(),
+    };
+    let mut m = HashMap::new();
+    if let Ok(text) = fs::read_to_string(&path) {
+        for line in text.lines() {
+            let line = line.trim();
+            if line.is_empty() || line.starts_with('#') {
+                continue;
+            }
+            if let Some((k, v)) = line.split_once('=') {
+                m.insert(k.trim().to_string(), v.trim().to_string());
+            }
+        }
+    }
+    m
+}
+
 fn main() {
-    let port: u16 = std::env::var("OMEGAFLOW_GATEWAY_PORT")
-        .ok()
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(8181);
+    let port: u16 = match std::env::var("OMEGAFLOW_GATEWAY_PORT") {
+        Ok(v) => match v.parse() {
+            Ok(p) => p,
+            Err(_) => 8181,
+        },
+        Err(_) => 8181,
+    };
     let addr = format!("127.0.0.1:{port}");
     let listener = match TcpListener::bind(&addr) {
         Ok(l) => l,
@@ -37,9 +62,14 @@ fn main() {
             std::process::exit(2);
         }
     };
+    let secrets = load_secrets();
     eprintln!("llm_gateway: listening on http://{addr} ({} routes)", ROUTES.len());
     for r in ROUTES {
-        let key = if std::env::var(r.key_env).is_ok() { "present" } else { "absent" };
+        let key = if std::env::var(r.key_env).is_ok() || secrets.contains_key(r.key_env) {
+            "present"
+        } else {
+            "absent"
+        };
         eprintln!("  /{} -> {} ({}) key {} [{}]", r.prefix, r.provider, r.base_url, r.key_env, key);
     }
     for stream in listener.incoming() {
@@ -57,10 +87,19 @@ fn handle(stream: &mut TcpStream) {
         Err(_) => return,
     };
     let req = String::from_utf8_lossy(&buf[..n]).to_string();
-    let first = req.lines().next().unwrap_or("");
+    let first = match req.lines().next() {
+        Some(l) => l,
+        None => "",
+    };
     let mut parts = first.split_whitespace();
-    let method = parts.next().unwrap_or("");
-    let path = parts.next().unwrap_or("");
+    let method = match parts.next() {
+        Some(s) => s,
+        None => "",
+    };
+    let path = match parts.next() {
+        Some(s) => s,
+        None => "",
+    };
     let (status, body) = match (method, path) {
         ("GET", "/v1/models") => ("200 OK", models_json()),
         ("GET", "/health") => ("200 OK", "{\"status\":\"ok\"}".to_string()),
