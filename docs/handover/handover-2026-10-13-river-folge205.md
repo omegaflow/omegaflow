@@ -2,7 +2,7 @@
 title: Handover — River-Folge 205
 class: handover
 date: 2026-10-13
-sha256: cefcf141a79c80f202c77a461ad517b97c108506490bbc408ce1f7d5749fc4d7
+sha256: 2c288c886c7099eea0d793364e8f38fdf28177f2f9a9fda2c9adbfa5e64a5f1d
 status: live
 -->
 # Handover — River-Folge 205 (2026-10-13)
@@ -11,7 +11,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „d
 markiert, nicht erklärt; git trägt, was gemacht wurde. Nur eigene Arbeit: bei
 geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen.
 
-## Burn: open 0.00 · close 0.1117 · cap 0.50 — Grund: river-206, 1 `general` (Forschungsschicht SABER) + 1 `council` (Rat) + 4 Linien-UI-Seats + 1 geteilter Open-Weight-Seat (DeepSeek V4 Pro, Lock river gesetzt/gelöscht) + 1 `field_te_query`-Ein-Zeilen-Fix; der CDF-Arm (`92346fb85`) und die drei Zeugen-Registerzeilen (`d1e2e28cb`) standen aus der Vorsession. Die close-Zahl ist der gemessene `session_burn`-Wert der River-Zeile (`opencode.db`, Session `ses_ecaa731bbffeiqkR6WrciZboTY`, beim Handover-Schreiben). Fälligkeit: `--fired river` = 0 (der Newell-Lauf `38378918382` ist gelaufen und gelesen), `--stale river --persist 3` = 0.
+## Burn: open 0.00 · close 0.1865 · cap 0.50 — Grund: river-206, 1 `general` (Forschungsschicht SABER) + 1 `council` (Rat) + 4 Linien-UI-Seats + 1 geteilter Open-Weight-Seat (DeepSeek V4 Pro, Lock river gesetzt/gelöscht) + 1 `field_te_query`-Ein-Zeilen-Fix; der CDF-Arm (`92346fb85`) und die drei Zeugen-Registerzeilen (`d1e2e28cb`) standen aus der Vorsession. Die close-Zahl ist der gemessene `session_burn`-Wert der River-Zeile (`opencode.db`, Session `ses_ecaa731bbffeiqkR6WrciZboTY`, beim Handover-Schreiben). Fälligkeit: `--fired river` = 0 (der Newell-Lauf `38378918382` ist gelaufen und gelesen), `--stale river --persist 3` = 0.
 
 ## Operator-Wort-Register
 
@@ -80,9 +80,9 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 ### Weberin-Zeugen-Fäden — SABER-Form entschieden (Rat + Roster); UCAR-FPI ist E-Mail-gated; Athabasca-Pfad+CDF-Arm stehen
 - **Status:** eigen (Bau) | **Bindung:** eigen
 - **Trigger:** je Faden die `channel`-Quellen-Zeile (Mountain) + Arm/Manifestation (Mycelium).
-- **Lage:** (gemessen 2026-10-13 river-204 + river-206) Fakten in `state/river/weberin-faden-facts-2026-10-13.md`, Register-Entwürfe in `state/river/weberin-register-entwuerfe-2026-10-13.md`. **CDF-Leser** gebaut+committet (`92346fb85`, `cdf25.rs`). Drei Zeugen-Zeilen stehen (`d1e2e28cb`). **SABER-Form (volle Runde: Forschung + Rat + UI-Roster; `state/stimmen/2026-10-13-river-saber-hoehenform-roster.md`):** Verdikt **(C)** mit Claudes Schärfung — der **Level-Index (0…399) ist die geschlossene diskrete Achse**, die **Höhe ist eine zweite, gleich indizierte Größe** (CF/xarray-Hilfskoordinate `altitude(time, level)`), kein Record „trägt seine eigene Höhe" (der Wire hat dafür keinen Platz; das Level muss Teil des Schlüssels sein, sonst kollidieren die 400 Records mit identischem Zeitstempel); jede Aggregation entlang des Level-Index ist still falsch, bis auf ein gemeinsames Höhenraster umgerechnet. Qwen (A) = Abweichung (dimensionaler Verlust). Z.ai (GLM-5.3) + DeepSeek V4 Pro zur Abnahmezeit noch in der Reasoning-Kette — `pending`, benannt. **UCAR-FPI (gemessen `archive_search --verdict` + `curl`):** die Datei-URL `registration.hao.ucar.edu/hao-reg_email.php?file=…20246300athabasca.dat` liefert **die E-Mail-Registrierungsseite** (HTTP 200 `text/html`, 18 481 B; HTML mit `document.emailform`), **nicht** die Daten — die `.dat` kommt erst nach Absenden der E-Mail (Akt am Dritten). Der frühere „Download offen (18 481 B)" war die Seitengröße, kein Datendownload (Riss, gemessen). **Athabasca ERG-SC (gemessen `curl` + `--verdict`):** das Verzeichnis lebt — `https://ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/vlf/ath/{YYYY}/{MM}/isee_vlf_ath_YYYYMMDDHH_v01.cdf` (stündlich, ~56–61 MB, `listing` HTTP 200; 2012–2024); der `format cdf`-Arm liest das. **Madrigal** (EISCAT/CEDAR) über den bestehenden `openmadrigal`-Arm fahrbar.
-- **Blockade:** (1) UCAR-FPI-Daten erst nach E-Mail-Registrierung (Akt Dritter); (2) der Whitespace-ASCII-`format`-Arm hat **kein Mustersample** (UCAR-FPI gated) — Bau ohne Sample wäre Fabrikation; (3) je eingefügtem Block die Mycelium-Manifestation; (4) WALDO wartet (`state/zustand/wartend.φ` Key `waldo-massdaten`).
-- **Braucht:** (1) UCAR-FPI-Registrierung (Operator-Hand, s. `## An future`) → dann Sample ziehen + `format`-Arm für leerzeichengetrennte 10-Spalten bauen; (2) SABER-Zeile nach Form (C) schreiben (`hapi ktemp` + `tpgpaltitude` als Höhenkoordinate; Level als geschlossene Achse) — **Berg/Mountain** für die `channel`/`field`-Zeile, **Mycelium** für die Manifestation; (3) Athabasca-CDF-Zeile (ERG-SC-Pfad) + `format cdf`; (4) SGO/FMI (`rioData.php`, kein Static-Arm) — Browser-POST; (5) WALDO-Antwort (Trigger).
+- **Lage:** (gemessen 2026-10-13 river-204 + river-206) Fakten in `state/river/weberin-faden-facts-2026-10-13.md`, Register-Entwürfe in `state/river/weberin-register-entwuerfe-2026-10-13.md`. **CDF-Leser** gebaut+committet (`92346fb85`, `cdf25.rs`). Drei Zeugen-Zeilen stehen (`d1e2e28cb`). **SABER-Form (volle Runde: Forschung + Rat + UI-Roster; `state/stimmen/2026-10-13-river-saber-hoehenform-roster.md`):** Verdikt **(C)** mit Claudes Schärfung — der **Level-Index (0…399) ist die geschlossene diskrete Achse**, die **Höhe ist eine zweite, gleich indizierte Größe** (CF/xarray-Hilfskoordinate `altitude(time, level)`), kein Record „trägt seine eigene Höhe" (der Wire hat dafür keinen Platz; das Level muss Teil des Schlüssels sein, sonst kollidieren die 400 Records mit identischem Zeitstempel); jede Aggregation entlang des Level-Index ist still falsch, bis auf ein gemeinsames Höhenraster umgerechnet. Qwen (A) = Abweichung (dimensionaler Verlust). Z.ai (GLM-5.3) + DeepSeek V4 Pro zur Abnahmezeit noch in der Reasoning-Kette — `pending`, benannt. **UCAR-FPI (gemessen 2026-10-13 river-206: `curl` + Operator-Browser):** `curl` allein bekommt die **E-Mail-Registrierungsseite** (`hao-reg_email.php`, HTTP 200 `text/html`, 18 481 B); der **echte Lieferer** ist `hao-reg_file-deliver.php` → 302 → `hao-reg_datalink.php`. Im **Operator-Browser** (Registrierung erledigt) liefert der Pfad die Datei: `~/Downloads/20246300athabasca.dat` (7353 Zeilen, 10 leerzeichengetrennte Spalten, Kopfzeile `yyday ut(hr) merid(m/s) merid err dir ut(hr) zonal(m/s) zonal err dir skytemp`; **zwei Zeiten je Zeile**). **Der `format`-Arm ist gebaut** (`400de8ce2`: `src/archivar/fpi_ucar.rs` + `format ucar_fpi`-Verdrahtung; `cargo check` 0/0, rustfmt clean; nur die zwei eigenen Zeilen in den geteilten `extract.rs`/`mod.rs` über einen privaten Index, fremde Hunks unberührt). **Athabasca ERG-SC (gemessen `curl` + `--verdict`):** das Verzeichnis lebt — `https://ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/vlf/ath/{YYYY}/{MM}/isee_vlf_ath_YYYYMMDDHH_v01.cdf` (stündlich, ~56–61 MB, `listing` HTTP 200; 2012–2024); der `format cdf`-Arm liest das. **Madrigal** (EISCAT/CEDAR) über den bestehenden `openmadrigal`-Arm fahrbar.
+- **Blockade:** (1) die `field`-Komponenten-Zuordnung (`series_component_name` → `fpi_mer_wind_ms`/`fpi_zon_wind_ms`) + die Register-Zeile fehlen noch (Mountain); (2) je eingefügtem Block die Mycelium-Manifestation; (3) WALDO wartet (`state/zustand/wartend.φ` Key `waldo-massdaten`).
+- **Braucht:** (1) UCAR-FPI: Sample liegt, Arm gebaut (`400de8ce2`) — noch die `field`-Komponenten-Abbildung + die Register-Zeile (Mountain) und die Manifestation (Mycelium); (2) SABER-Zeile nach Form (C) schreiben (`hapi ktemp` + `tpgpaltitude` als Höhenkoordinate; Level als geschlossene Achse) — **Mountain** für die `channel`/`field`-Zeile, **Mycelium** für die Manifestation; (3) Athabasca-CDF-Zeile (ERG-SC-Pfad) + `format cdf`; (4) SGO/FMI (`rioData.php`, kein Static-Arm) — Browser-POST; (5) WALDO-Antwort (Trigger).
 
 ### Netz-End-Validator — GIC↔Onset-Bin; MCON manifestiert, Register-Drift gelöst
 - **Status:** wartend | **Bindung:** eigen (Bau)
@@ -115,9 +115,9 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 ### Newell-OMNI-Alignment — Lauf gelesen: Zelle leer (n=0), Ziel-Arm-Riss
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Auflösung des Ziel-Arm-Risses (`intermagnet_dbdt`) + ein gemeinsames Fenster.
-- **Lage:** (gemessen 2026-10-13 river-206 via `ci_manage jobs`/`log 38378918382` + `gh run download` Artifact `field-te-matrix-newell-omni`) der Lauf `38378918382` ist `completed/failure`, aber der Job **`matrix-newell-omni` ist success**; das Artifact gelesen: Zelle `newell_dphi_dt_omni->intermagnet_dbdt` = **n = 0** (Driver/ Target-Fenster disjunkt), FDR 0/1; der Ziel-Arm `intermagnet_dbdt` ist ein **Riss** — zwei Aggregationen `abk_dbdt_1m.bin` (median_dt 60s) vs `abk_dbdt_1h.bin` (median_dt 3600s), Overlap corr 0.9388, „the aggregations disagree, the identity is unproven — no arm is selected". Der `unit`-Job war rot (field_te_query, s. o.), daher kein Testlauf.
-- **Blockade:** der Arm-Riss ist ungelöst (welche Aggregation ist die Identität?) + Fenster-Disjunktheit.
-- **Braucht:** (a) den Arm-Riss am Baum entscheiden (Mountain-Register-Verdikt: welche Aggregation `intermagnet_dbdt` ist) oder zwei getrennte Knoten tragen; (b) danach den Descriptor auf ein gemeinsames Fenster ziehen und `matrix-newell-omni` neu fahren.
+- **Lage:** (gemessen 2026-10-13 river-206 via `ci_manage jobs`/`log 38378918382` + `gh run download` Artifact `field-te-matrix-newell-omni`) der Lauf `38378918382` ist `completed/failure`, aber der Job **`matrix-newell-omni` ist success**; das Artifact gelesen: Zelle `newell_dphi_dt_omni->intermagnet_dbdt` = **n = 0** (Driver/ Target-Fenster disjunkt), FDR 0/1; der Ziel-Arm `intermagnet_dbdt` ist ein **Riss** — zwei Aggregationen `abk_dbdt_1m.bin` (median_dt 60s) vs `abk_dbdt_1h.bin` (median_dt 3600s), Overlap corr 0.9388, „the aggregations disagree, the identity is unproven — no arm is selected". Der `unit`-Job war rot (field_te_query, s. o.), daher kein Testlauf. **Direkt gemessen (river-206, `curl` + `od`):** `abk_dbdt_1m.bin` = **2024-01-01T00:01 → 2025-01-01T00:59, Schritt 60 s** (527 039 Sätze, Werte 0.2–21); `abk_dbdt_1h.bin` = **1994-01-01 → 2026-09-03, Schritt 3600 s** (286 288 Sätze, Werte 0.6–75; ~170 Lückenstunden). Dieselbe Größe (ABK dB/dt), aber **verschiedenes Differenz-Intervall und verschiedener Zeitraum** → **zwei verschiedene Produkte**, nicht zwei Versionen eines. Damit ist „identity unproven" aufgelöst: die Register-Zeilen tragen denselben `field`-Schlüssel `intermagnet_dbdt` (drei Blöcke: ABK-1h `:1975`, ABK-1m `:1986`, SOD-1h `:1997`, alle `field intermagnet_dbdt … nT 86400`) — das ist der Defekt, nicht die Daten.
+- **Blockade:** der Register-Schlüssel-Riss ist ungelöst (ein `field`-Schlüssel für drei Blöcke, zwei davon ABK mit verschiedener Kadenz) + Fenster-Disjunktheit.
+- **Braucht:** (a) Mountain: die zwei ABK-Assets auf **getrennte `field`-Schlüssel** ziehen (`abk_dbdt_pt1h` / `abk_dbdt_pt1m`; s. `## An mountain`), `ttl`/`dt` auf die Kadenz; (b) danach `targets` im Descriptor `newell_geospheric_omni.te` auf den 1h-Schlüssel ziehen (der `bin 3600` entspricht) und die Fenster-Disjunktheit prüfen; (c) `matrix-newell-omni` neu fahren.
 
 ### Flyby-Kette — recon bleibt (`ephemeris-juice-recon` + `flyby-path2-recon`)
 - **Status:** termin | **Bindung:** termin:2026-11-01
@@ -154,6 +154,12 @@ Origin: river-204
 
 **BGR-Infraschall-Ersatzquellen — erledigt (Mycelium-Meldung 2026-10-13: eingetragen).** Kein Punkt mehr.
 
+## An mountain
+
+Origin: river-206
+
+**ABK dB/dt — ein `field`-Schlüssel für drei Quellen, zwei ABK-Produkte.** Gemessen (river-206, `curl` + `od`): `abk_dbdt_1h.bin` = 1994-01-01 → 2026-09-03, Schritt 3600 s (286 288 Sätze); `abk_dbdt_1m.bin` = 2024-01-01 → 2025-01-01, Schritt 60 s (527 039 Sätze). Der Register-Block `phi/sources.φ:1975-2006` trägt für ABK-1h, ABK-1m und SOD-1h **denselben** `field intermagnet_dbdt … nT 86400` — die Newell-Query (`newell_geospheric_omni.te`, `targets intermagnet_dbdt`) verweigert deshalb die Arm-Wahl („the aggregations disagree, the identity is unproven") und die Zelle bleibt leer (n = 0). **Bitte die zwei ABK-Assets auf getrennte `field`-Schlüssel ziehen** (z. B. `abk_dbdt_pt1h` / `abk_dbdt_pt1m`) mit kadenz-treuem `dt` (3600 / 60); SOD-1h ebenso (`sod_dbdt_pt1h`). Danach zieht River den Descriptor-`targets` auf den 1h-Schlüssel. xfer:river206-abkdbdt1.
+
 ## An future
 
 Origin: river-206
@@ -169,6 +175,9 @@ river-206 (volle Roster-Runde + Ein-Zeilen-CI-Fix): gearbeitet ohne Fenster-Edit
 den AACGM-Zeugen. **SABER-Form** durch die **volle Kette** entschieden (Forschung + Rat + 4 Linien-Seats
 + DeepSeek V4 Pro): **(C)** mit Level als geschlossener diskrete Achse + Höhe als mitgeführte Koordinate
 (Claudes Schärfung: Level muss Teil des Schlüssels sein); Z.ai + DeepSeek `pending`. **UCAR-FPI** gemessen:
-E-Mail-gated (kein offener Download) → `## An future`. **Athabasca ERG-SC** gemessen: CDF-Pfad +
+der Download läuft (Operator-Browser registriert), Sample `~/Downloads/20246300athabasca.dat`
+(10 whitespace-Spalten), **`format ucar_fpi`-Arm gebaut** (`400de8ce2`, privater Index). **Newell-Riss
+gemessen** (`curl`+`od`): 1m = nur 2024 (60 s), 1h = 1994–2026 (3600 s) → **zwei Produkte**,
+Register-Schlüssel-Split nach Mountain (`## An mountain`). **Athabasca ERG-SC** gemessen: CDF-Pfad +
 `format cdf`-Arm stehen. **Sensory-Träger-Abgabe** (JUICE/Flyby-Path-2, 4 Tokens) gefaltet. Der LOCK
 bleibt (Operator-Wort). Kein `smail --send`, kein Window-Edit.
