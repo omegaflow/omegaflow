@@ -1,7 +1,7 @@
 <!--
   title: Kybernetische Astrophysik — die fünf Schnittmengen für das Unlösbare
   class: concept
-  sha256: 5c84f5009135ced481e4e840170793c427fa8f75fa2ff31d545fd05a427a17dc
+  sha256: 97a15896ed52726decbc776758556d921490f5fbc4510b47c6b5bfe53aaa15b7
 -->
 # Kybernetische Astrophysik — die fünf Schnittmengen für das Unlösbare
 
@@ -364,6 +364,7 @@ Ursprung aller Pfeile.
 | Ⅹ | Kugelblitz | em × electric × thermal × acoustic am selben Punkt | der Pfeil des Energie-Kanals |
 | Ⅺ | Placebo | Gabe-Ereignis × EEG × HRV × Blutmarker | der Pfeil des Ereignisses in die Biologie |
 | Ⅻ | Urknall | CMB × Haufen-Kinematik × PTA-GW × B-Moden | die kausale DAG der Schöpfung, t = 0 verweigert |
+| ⅩⅣ | Schumann-Resonanz | Schumann f1/f2/f3 × Magnetfeld-dB/dt × Sonnenwind/Kp × Ionosphäre | Weltraumwetter-Modulation der Frequenz gegen den Blitz-Antrieb, gemessen gegen die Surrogat-Null |
 
 ## Der Vermerk des Rats
 
