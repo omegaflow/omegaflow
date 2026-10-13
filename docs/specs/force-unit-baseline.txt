@@ -79,3 +79,16 @@ advective m/yr
 # admitted to src/archivar/units.rs (normalize_unit maps uK^2 -> uk^2). Frozen
 # until tools-latest republishes the gate, then deleted.
 thermal uk^2
+# Mountain 338 (2026-10-13): pre-existing register pairs (introduced by the
+# register_sort rewrite 75bd350829; present in HEAD) that the released gate flags as
+# outside the registry. Measured with target/{release,debug}/commit_check on the HEAD
+# tree — not introduced by this atom. Frozen to unblock the register commit; each is
+# to be healed in its own atom (units.rs admission or the register unit corrected):
+# `diffusion kg/m2/s` (so2_emission flux) · `diffusion μmol/kg` (registry carries
+# `micromole/kg`) · `seismic-body km/s` (shear velocity) · `em K` (hi4pi brightness
+# temperature) · `em nmgy` (NOIRLab flux).
+diffusion kg/m2/s
+diffusion umol/kg
+seismic-body km/s
+em k
+em nmgy

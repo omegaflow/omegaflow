@@ -10241,7 +10241,7 @@ ttl 604800
 url https://github.com/omegaflow/sources/releases/download/data.gesdisc.earthdata.nasa.gov/cosmic2_gnssro_l2b.bin
 terms PD https://www.earthdata.nasa.gov/
 origin https://data.gesdisc.earthdata.nasa.gov/data/GNSSRO/gnssro_cosmic2_ucar_l2b.2.0/
-format cosmic2_gnssro
+format cosmic_ro
 at earth
 ttl 604800
 quantity cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-square scale n-units 604800 0.0 0.0
@@ -28291,7 +28291,7 @@ origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=
 compiler tools/harvest/src/bin/lhaaso_compiler.rs
 no-cadence
 at sun
-field lhaaso_km2a lhaaso_km2a inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
+field lhaaso_km2a lhaaso_km2a_e0_50tev inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/lhaaso_sky1.sky1
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -28300,7 +28300,7 @@ origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=
 compiler tools/harvest/src/bin/lhaaso_compiler.rs
 no-cadence
 at sun
-field lhaaso_sky1 lhaaso_sky1 inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
+field lhaaso_sky1 lhaaso_sky1_e0_3tev inverse-square em m-2.s-1.tev-1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/mktypes.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
