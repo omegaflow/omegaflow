@@ -74,7 +74,7 @@ channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s) alias
 channel mass:primary:flux-fick:parabolic:plasma:unspecified:none kg/m^3 alias de2_ion_density charge 1
 channel mass:primary:flux-fick:parabolic:fluid:unspecified:none kg/m^3 alias de2_neutral_density
 constraint quasi-neutral de2_qn region thermosphere
-coupling ion-neutral-friction from de2_ion_drift to de2_neutral_wind rate pending density_from number:de2_ion_density:2.66e-26 density_to mass:de2_neutral_density region thermosphere quasi-neutral de2_qn
+coupling ion-neutral-friction from de2_ion_drift to de2_neutral_wind rate pending density_from number:de2_ion_density:2.66e-26 density_to number:de2_neutral_density:4.65e-26 region thermosphere quasi-neutral de2_qn
 
 url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
 terms vires-esa-data-terms https://vires.services/
