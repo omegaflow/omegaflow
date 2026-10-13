@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 342 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 432c30de0e172845b124bae337f5761e7620b5a21ed49a126283f65f0adda966
+  sha256: 71f792ae3818e70de6092d29b5c0cb337f78fb597455a2fa364d1c377f426a54
   status: live
 -->
 # Handover — Mycelium-Folge 342 (2026-10-13)
@@ -80,6 +80,13 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Lage:** (gemessen 2026-10-13/342, `ci_manage log 38385822162`) `jades_spectra_compiler` läuft durch (`5190 records, 1 276 070 B — roundtrip parses`), aber der Upload verweigert: `tag jades.herts.ac.uk is not a live source in phi/sources.φ — a CDN release is only created for a registered source`. Der JADES-Block fehlt im Register.
 - **Blockade:** Zulassung/`terms`/`field` = Mountains Recht.
 - **Braucht:** Mountain-Zulassung; danach `url`/`origin`/`compiler` (Mycelium) + Re-Run `jades-cdn`. An Mountain: `xfer:mycelium-342-7`.
+
+### Das Haus kennen — welche Quellen ohne offene Lizenz lokal halten?
+- **Status:** eigen (Auswahl operator-gebunden) | **Bindung:** eigen
+- **Trigger:** Operator-Wort (welche Gruppe lokal)
+- **Lage:** (gemessen 2026-10-13/342, Taucher; `state/future/licence-host-rules.tsv` + `licence-redundanz-tierA-2026-10-12.md`) kalibrierungsrelevante Quellen **ohne offene Lizenz**, heute **nicht** im Register: `www.geoazur.fr` **PODB** (Astrometrie natürlicher Satelliten, `all-rights-reserved`; OCNS2019-Pendant) · `data.kasi.re.kr` **KVN/KMTNet/MIRIS** (`no-license-stated`; Compiler `kasi_compiler.rs` + Workflow gebaut) · `datacenter.iers.org` **EOP_20_C04** (`no-license-stated`, Kreuzprobe zur PD-Serie MAIA/USNO) · **ICGEM**-Modelle mit header-`licence`. **Publizierbar (keine Aktion):** die NC-Familie (`CC-BY-NC-4.0` 162 · `CC-BY-NC-3.0-IGO` 24 · …) — Omegaflow ist selbst NC. **Bespoke-Term-Blöcke, Weitergabe ungemessen (heute veröffentlicht):** `celestrak-usage-policy` (`phi:10137`) · `kari-public-release` (`phi:28461`) · `license-per-project` AGRav (`phi:9967`) · `vires-esa-data-terms` (24 Blöcke) · `columbia-research-noncommercial` GCMT (`phi:8256`) · Kyoto-AE (`phi:3980`, Register `free-open` ≠ Host-Regel).
+- **Blockade:** die Auswahl ist ein Werturteil (Operator).
+- **Braucht:** Operator-Wort, welche Gruppe lokal geholt wird; danach je Quelle eine Arbeitskopie nach `data/` (kein `phi`-Eintrag). Riss daneben: `phi/declined_sources.φ` fehlt (drei Surveys zitieren sie) — die Decline-Verdikte leben nur in Prosa; und die bespoke `terms`-Token sind je Quelle auf Redistribution ungemessen.
 
 ### CHIME/FRB Catalog 2 — registrierte Origin tot
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
