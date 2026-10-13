@@ -1074,12 +1074,17 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 };
                 let mut alias: Option<String> = None;
                 let mut charge: Option<f64> = None;
+                let mut species: Option<String> = None;
                 let mut refused = false;
                 let mut i = 3;
                 while i < parts.len() {
                     match parts[i] {
                         "alias" if i + 1 < parts.len() => {
                             alias = Some(parts[i + 1].to_string());
+                            i += 2;
+                        }
+                        "species" if i + 1 < parts.len() => {
+                            species = Some(parts[i + 1].to_string());
                             i += 2;
                         }
                         "charge" if i + 1 < parts.len() => match parts[i + 1].parse::<f64>() {
@@ -1116,7 +1121,11 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     continue;
                 }
                 match ChannelDescriptor::parse_spec(parts[1], unit) {
-                    Ok(d) => cur_channels.push(d.with_alias(alias).with_charge(charge)),
+                    Ok(d) => cur_channels.push(
+                        d.with_alias(alias)
+                            .with_charge(charge)
+                            .with_species(species),
+                    ),
                     Err(reason) => {
                         report_anomaly("Invalid Syntax", &cur_url, &format!("{}: {}", reason, line))
                     }
