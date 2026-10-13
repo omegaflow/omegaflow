@@ -19,7 +19,7 @@ const ROUTES: &[Route] = &[
     Route { prefix: "zai", provider: "Z.ai", base_url: "https://api.z.ai/api/paas/v4", key_env: "ZAI_API_KEY" },
     Route { prefix: "sambanova", provider: "SambaNova", base_url: "https://api.sambanova.ai/v1", key_env: "SAMBANOVA_API_KEY" },
     Route { prefix: "mistral", provider: "Mistral", base_url: "https://api.mistral.ai/v1", key_env: "MISTRAL_API_KEY" },
-    Route { prefix: "cf", provider: "Cloudflare Workers AI", base_url: "https://api.cloudflare.com/client/v4/accounts", key_env: "CF_API_TOKEN" },
+    Route { prefix: "cf", provider: "Cloudflare Workers AI", base_url: "https://api.cloudflare.com/client/v4/accounts", key_env: "CLOUDFLARE_WORKERS_TOKEN" },
     Route { prefix: "nim", provider: "NVIDIA NIM", base_url: "https://integrate.api.nvidia.com/v1", key_env: "NVIDIA_API_KEY" },
     Route { prefix: "openrouter", provider: "OpenRouter", base_url: "https://openrouter.ai/api/v1", key_env: "OPENROUTER_API_KEY" },
     Route { prefix: "google", provider: "Google AI Studio", base_url: "https://generativelanguage.googleapis.com/v1beta/openai", key_env: "GEMINI_API_KEY" },
