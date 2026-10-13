@@ -2,7 +2,7 @@
   title: Rätsel-Bestand — was wir haben, was fehlt (ein Taucher je Rätsel)
   class: survey
   date: 2026-10-03
-  sha256: 0149d2b30e5302d8770b479b65aaaecd88a7e141ce9b1fc9e97c6746a7b6f42b
+  sha256: 7e309f6ed789da8d1e7bc4b6acf8190dec5bc17ce98e13104b8987cdf09a6f96
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/paper/probe-front-dark-matter.md
 -->
@@ -22,9 +22,9 @@ keine Zeilennummern; stabile `file:line` bleiben nur an Code-Pfaden. Native Pros
 Mountain (Träger seit folge227). Die echten Risse sind unten geheilt und als solche
 vermerkt — nichts geglättet.
 
-Register der Rätsel: die Nadeln (`kybernetische-astrophysik.md:353-367`; Ⅰ–Ⅻ + ⅩⅣ
-Schumann-Resonanz, ⅩⅢ Biosignatur separat), drei Blätter (`ein-blatt-papier.md:29-35`),
-der Kuprat (`kybernetische-astrophysik.md:397-399`).
+Register der Rätsel: die Nadeln (`kybernetische-astrophysik.md:353-368`; Ⅰ–ⅩⅣ), drei
+Blätter (`ein-blatt-papier.md:29-35`),
+der Kuprat (`kybernetische-astrophysik.md:398-400`).
 **Kopf-Befund:** das Verdikt der 10 Rätsel lebt in seinem **Blatt/Sheet** (gemessene
 Zahlen) und als Zeile dieser Survey (Index, Zeiger `paper:line`/`sheet:line`) — das
 ist seine Register-Zeile. Ein `phi/*.φ`-Register trägt es nicht: jeder sources-/
@@ -32,7 +32,7 @@ Dispositions-Block verlangt `url`/`ttl` (`register_sort.rs:149-183/:211`), ein
 Verdikt hat keine Adresse (Rats-Konsens 2026-09-29). Die Kanäle sind registriert;
 `sgrep -ci dark_matter|dark_flow|corona_conditional|signal_cone|frb_blatt|kuprat|rixs|srd62|kugelblitz phi/` → je 0 ist der korrekte Zustand.
 
-## Die zwölf Nadeln
+## Die Nadeln
 
 | # | Artefakt (existiert?) | Kanäle vorhanden (Key) | Kanäle fehlend | Daten-Holding | Register-Verdikt | Nächster Schritt |
 |---|---|---|---|---|---|---|
@@ -48,6 +48,8 @@ Verdikt hat keine Adresse (Rats-Konsens 2026-09-29). Die Kanäle sind registrier
 | Ⅹ Kugelblitz | keiner (glob 0) | keine | alle vier co-lokalisierten (em×electric×thermal×acoustic) | keins | **descoped (gemessen: → `kybernetische-astrophysik.md:294-300`; kein Probe-Artefakt, glob 0)** | — (Befund steht) |
 | Ⅺ Placebo | `placebo_pair_eeg_probe.rs` · **`openneuro_compiler.rs`** (+ Reader-Modul `openneuro_eeg.rs`) | `harvest.φ` 2 Assets; `sources.φ` sham/verum | Gabe×HRV×Blutmarker | CDN `openneuro.org` Assets | **keins** — Verdikt nur Archiv-Handover `folge10:24-25`; kein lebendes Blatt | `gh workflow run placebo-ave-cdn.yml`; Verdikt ins Register/Blatt |
 | Ⅻ Urknall | `bigbang_echo_probe.rs`; CI `bigbang-echo.yml` | CMB · CF4 · z-Code | PTA `declined`; **B-Moden (0 — nicht nachgemessen, open)** | keins | **keins** — Sheet `big-bang-echo-sheet-12.md:14/:35/:59-60` | `gh workflow run bigbang-echo.yml`; B-Moden messen |
+| ⅩⅢ Atmosphären-Biosignatur | Paper `jwst-disequilibrium-survey.md` (live) | JWST-Transmissionsspektren (48 Ziele) · `[Fe/H]` · log R'HK | XUV-Kanal der 30 Wirte (extern, Operator-bereitgestellt) | Paper (kein `data/`) | **keins** — Paper `jwst-disequilibrium-survey.md:23-30` (katalogisch P = 0,94; einzeln getragen) | XUV/C-O-Zeugen einlesen; Verdikt registrieren |
+| ⅩⅣ Schumann-Resonanz | keiner (glob 0) | `resonance_schumann_f1/f2/f3_hz` (registriert, CDN-Abzug pending) · `intermagnet_dbdt`-Familie · OMNI · Kp | die Schumann-Reihe im CDN; Blitz-Intensitäts-Kanal | keins | **keins** — Block `phi/sources.φ:1034-1043` (CC-BY-4.0), CDN-Abzug 404 | `## An mycelium` (Manifestation), dann Frage vorab + TE-Matrix `--null` |
 
 ## Die Blätter und der Kuprat
 
