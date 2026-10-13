@@ -2,7 +2,7 @@
   title: Rätsel-Master-Matrix — Impact · Aufwand · Erfüllung · Machbarkeit
   class: survey
   date: 2026-10-13
-  sha256: fffb2936cc2776fa3b8c4930e0078f35194cc3210d1dce5d1eb56a917d60187f
+  sha256: e8aafa535018b224e5a5b930e5c1056c16cee97a51f9be19de315372a3b1682e
   status: live
   see-also: docs/surveys/survey-2026-10-13-grosse-raetsel-und-maschine.md docs/surveys/survey-raetsel-bestand.md docs/concepts/die-weberin.md docs/concepts/kybernetische-astrophysik.md
 -->
@@ -179,6 +179,29 @@ Suche in `state/research/spill/*.txt` (294 Dateien) und `/tmp/opencode/*.txt` (2
 lieferte nur Bodenmagnetometer- und Aktivitätsindex-Leads, kein HMI/SDO-Magnetogramm.
 Alle übrigen fehlenden Fäden haben **schon eine Spur** in den eigenen Such-Dokumenten — sie
 müssen „nur" registriert + manifestiert werden (Weberin füttern).
+
+---
+
+## C‴ · Verdict + Lizenz der Leads (gemessen 2026-10-13)
+
+`archive_search --verdict` (Reichweiten-Leiter) + Lizenz aus dem Datensatz-Record:
+
+| Lead | Verdict | Lizenz | Disposition |
+|---|---|---|---|
+| **KiDS DR4.1 WL-Katalog** (Zenodo `16366035`) | HTTP **206** | **CC-BY-4.0** | ✅ registrierbar + manifestierbar |
+| **Conicus3D WL-Lightcone** (Zenodo `18776222`) | Zenodo | **CC-BY-4.0** | ✅ |
+| **Ca II IRT STELLA/RAVE** (Zenodo `57464`) | Zenodo | **CC-BY-4.0** | ✅ (Stellar-Aktivität) |
+| **WALLABY Pilot DR2** (CDS HiPS3D) | HTTP **206** | CDS-Strasbourg, Namensnennung | ✅ (Terms prüfen) |
+| **Pantheon+ SN-Distanzen** (GitHub Raw) | HTTP **206** | **keine deklarierte Lizenz** (Repo ohne `LICENSE`) | ⚠️ `terms unknown` → **lokal-only, nie manifestieren** |
+| **LHAASO-Katalog** (Neutrino-Constraint) | Lead (Paper) | `pending` | Daten-URL + Lizenz noch messen |
+| **IPTA DR2** (PTA) | Lead (Paper) | `pending` | Daten-URL + Lizenz noch messen |
+| **Auger / UHECR** | Lead (Paper) | `pending` (Auger Open-Data-Portal?) | Daten-URL + Lizenz noch messen |
+
+**Befund:** Drei Leads sind **sauber CC-BY-4.0 und erreichbar** (KiDS/Conicus3D WL, Ca II IRT) —
+sofort registrierbar. WALLABY (CDS) ist erreichbar, Terms stehen aus. **Pantheon+ ist ein
+Lizenz-Riss**: erreichbar, aber ohne deklarierte Lizenz → nach dem Operator-Wort (2026-10-13)
+nur **lokal für Experimente**, nie in den CDN. LHAASO/IPTA/Auger brauchen je noch einen
+Daten-URL- und Lizenz-Messschritt.
 
 ---
 
