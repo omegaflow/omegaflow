@@ -791,6 +791,19 @@ fn list_models(secrets: &HashMap<String, String>, auth: &str) -> String {
     format!("{{\"object\":\"list\",\"data\":[{}]}}", items.join(","))
 }
 
+fn raw_catalog(secrets: &HashMap<String, String>, auth: &str, prefix: &str) -> Option<String> {
+    for r in ROUTES {
+        if r.prefix != prefix {
+            continue;
+        }
+        let key = key_for(r, secrets, auth)?;
+        let (url, _) = models_url(r, secrets)?;
+        let (_code, body) = curl_get(&url, &key)?;
+        return Some(body);
+    }
+    None
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     if args.iter().any(|a| a == "--probe") {
@@ -799,6 +812,36 @@ fn main() {
         let provider = arg_value(&args, "--provider");
         let model = arg_value(&args, "--model");
         probe(&secrets, &auth, &provider, &model);
+        return;
+    }
+    if args.iter().any(|a| a == "--catalog") {
+        let secrets = load_secrets();
+        let auth = load_auth_text();
+        let dir = match arg_value(&args, "--out") {
+            Some(d) => d,
+            None => "state/zustand/llm-gateway-catalog".to_string(),
+        };
+        let _ = fs::create_dir_all(&dir);
+        let provider = arg_value(&args, "--provider");
+        for r in ROUTES {
+            if let Some(pf) = &provider {
+                if !pf.split(',').any(|p| p.trim() == r.prefix) {
+                    continue;
+                }
+            }
+            match raw_catalog(&secrets, &auth, r.prefix) {
+                Some(body) => {
+                    let _ = fs::write(format!("{dir}/{}.json", r.prefix), &body);
+                    eprintln!(
+                        "catalog {}: {} B -> {dir}/{}.json",
+                        r.prefix,
+                        body.len(),
+                        r.prefix
+                    );
+                }
+                None => eprintln!("catalog {}: unread", r.prefix),
+            }
+        }
         return;
     }
     let port: u16 = match std::env::var("OMEGAFLOW_GATEWAY_PORT") {
