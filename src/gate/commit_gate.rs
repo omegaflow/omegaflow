@@ -818,6 +818,15 @@ impl Gate {
                 quote: clip(&text[start..end], 90),
             });
         }
+        if let Some((start, end)) = person_mailbox_hit(text) {
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "pii".to_string(),
+                line: line_of(text, start),
+                feedback: feedback("pii").to_string(),
+                quote: clip(&text[start..end], 90),
+            });
+        }
         None
     }
 
@@ -2711,6 +2720,56 @@ fn mac_at(bytes: &[u8], start: usize) -> Option<usize> {
 fn is_placeholder_mac(token: &str) -> bool {
     token.eq_ignore_ascii_case("AA:BB:CC:DD:EE:FF")
         || token.eq_ignore_ascii_case("AA_BB_CC_DD_EE_FF")
+}
+
+fn person_mailbox_hit(text: &str) -> Option<(usize, usize)> {
+    let bytes = text.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] != b'@' {
+            i += 1;
+            continue;
+        }
+        let mut start = i;
+        while start > 0 && is_mail_local_byte(bytes[start - 1]) {
+            start -= 1;
+        }
+        let mut end = i + 1;
+        while end < bytes.len() && is_mail_domain_byte(bytes[end]) {
+            end += 1;
+        }
+        if end > i + 1 {
+            let local = &text[start..i];
+            let domain = &text[i + 1..end];
+            if is_person_local(local) && domain.contains('.') && !domain.ends_with('.') {
+                return Some((start, end));
+            }
+        }
+        i += 1;
+    }
+    None
+}
+
+fn is_mail_local_byte(b: u8) -> bool {
+    b.is_ascii_alphanumeric() || matches!(b, b'.' | b'_' | b'-' | b'+')
+}
+
+fn is_mail_domain_byte(b: u8) -> bool {
+    b.is_ascii_alphanumeric() || matches!(b, b'.' | b'-')
+}
+
+fn is_person_local(local: &str) -> bool {
+    let mut parts = local.split('.');
+    let (Some(first), Some(second), None) = (parts.next(), parts.next(), parts.next()) else {
+        return false;
+    };
+    let name = |s: &str| {
+        !s.is_empty()
+            && s.len() >= 2
+            && s.chars()
+                .all(|c| c.is_ascii_alphabetic() || c == '-' || c == '\'')
+    };
+    name(first) && name(second)
 }
 
 fn find_unit(window: &str, unit: &str) -> Option<usize> {
@@ -4709,6 +4768,14 @@ mod tests {
     fn fn_pii_role_address_passes() {
         let mut g = test_gate();
         assert!(g.check_text(&fx("pii_role_address")).is_none());
+    }
+
+    #[test]
+    fn fp_pii_person_mailbox_blocked() {
+        let mut g = test_gate();
+        let v = g.check_text(&fx("pii_person_mailbox")).unwrap();
+        assert_eq!(v.rule, "pii");
+        assert_eq!(v.severity, Severity::Hard);
     }
 
     #[test]
