@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 340 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 2fa1231991499d0911dc60cf20007ec5cd75cf56cfcd1c3c689b7e589e7860a8
+  sha256: 53062779e6fd61268ab925c31edeefa5edd95726aab67a7d40227601a6143bfe
   status: live
 -->
 # Handover — Mycelium-Folge 340 (2026-10-13)
@@ -39,17 +39,10 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Blockade:** `at`/`field` = Mountains Recht; **kein CI-Workflow** ruft `lhaaso_compiler` (Query→`--input`-Brücke fehlt).
 - **Braucht:** Mountain `at sun`/`field`; danach das Fetch-Wiring.
 
-### `ttl`/Cadence — Rücknahme einer Schätzung (Riss)
-- **Status:** eigen (Mountain-gebunden) | **Bindung:** eigen
-- **Trigger:** Mountains `ttl`/`no-cadence`-Verdikt je Block
-- **Lage:** (gemessen 2026-10-13/339) ich hatte `ttl 3600` (osc) / `ttl 604800` (lhaaso, chime_frb_cat2) gesetzt — **aus den Nachbarblöcken übernommen, nicht gemessen** (Operator-Wort „hast du die ttls gewürfelt?"); zurückgenommen, `phi/sources.φ` hinterlässt keinen eigenen Hunk. Die `ttl 31536000` auf `lamost_dr10`/`cfa_co` (folge338) sind ebenso ungemessen (Riss). `register_sort` bricht ohne ttl ab (exit 2, `block has no ttl line (opening osc_transients.bin)`). An Mountain: `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.2~accd94dd`.
-- **Blockade:** `ttl` ist Mountains Register-Recht.
-- **Braucht:** Mountain setzt `ttl`/`no-cadence` für `osc` (live API), `chime_frb_cat2`/`lhaaso` (statische Kataloge) und prüft `lamost_dr10`/`cfa_co`.
-
 ### `register_sort` — Kanonisierung fehlt (`--write`)
 - **Status:** eigen (Mountain-gebunden) | **Bindung:** eigen
 - **Trigger:** Mountains Lauf `register_sort --write phi/sources.φ`
-- **Lage:** (gemessen 2026-10-13/339, lokal `./target/release/register_sort phi/sources.φ`) ohne die fehlende ttl: exit 2 (Parse-Abbruch). Auf der ttl-ergänzten Fassung: exit 1 — **4 ttl-order + 22 url-order Verletzungen** über 2591 Blöcke (u. a. `ceein` nach `chime_frb_cat2`, `jvo`-akari nach `lamost_dr10`, mehrere no-cadence-Blöcke). Die Ordnung ist durch viele Linien gewachsen, nicht durch eine.
+- **Lage:** (gemessen 2026-10-13/340) die fehlende ttl ist von Mountain gesetzt — `544b136f3` („measured ttl for the 5 cadence blocks": osc live API 86400; chime_frb_cat2/lhaaso no-cadence; lamost_dr10/cfa_co no-cadence statt des willkürlichen 31536000) — der **ttl/Cadence-Riss ist geschlossen**. Es bleibt allein die Ordnung: auf der ttl-ergänzten Fassung exit 1 — **4 ttl-order + 22 url-order Verletzungen** über 2591 Blöcke (u. a. `ceein` nach `chime_frb_cat2`, `jvo`-akari nach `lamost_dr10`, mehrere no-cadence-Blöcke). Die Ordnung ist durch viele Linien gewachsen, nicht durch eine.
 - **Blockade:** `phi/sources.φ` ist Mountains Register; eine `--write`-Kanonisierung ist ein Ganz-Datei-Eingriff (Kollision mit laufenden Schreibern).
 - **Braucht:** Mountain fährt `register_sort --write` in einem ruhigen Atom.
 
@@ -86,7 +79,6 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 Origin: mycelium-340 (2026-10-13):
 
 - `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.1~73d3d0af` **Format-Name für die 4 Restcompiler** `heasarc_w3browse`/`jpl_sbdb`/`gesdisc_gnssro`/`opentopography_raster` (printen keinen vollständigen Block; letzterer kollidiert mit `SRTM15_V2.6`, `phi:29896`).
-- `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.2~accd94dd` **`ttl`/`no-cadence` für `osc`/`chime_frb_cat2`/`lhaaso`** (ich hatte gewürfelt — zurückgenommen); `register_sort` exit 2; die `31536000` auf `lamost_dr10`/`cfa_co` sind ebenso ungemessen.
 - `xfer:mycelium.ses_ecd958500ffeeGumcGExqQNmPS.2~c28e0b91` **`at`/`field` für den LHAASO/VizieR-Block + CI-Fetch-Wiring** (`phi/sources.φ:10799-10802`); kein CI-Workflow ruft `lhaaso_compiler`.
 - `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.2~98652e66` **Ersatzquellen-Register + Risse** (MAXI/OSC/IGETS/MODVOLC/DES/ALFALFA/LoTSS/TeVCat) — Verdikt offen.
 - `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.3~7d22b061` **Welle 3: 2 Schranken** — HiPS-HEALPix-WCS-Arm in `src/archivar/fits.rs` nötig, 4LAC als eigene Quelle oder gestrichen?
