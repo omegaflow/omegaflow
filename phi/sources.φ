@@ -28269,7 +28269,7 @@ field jmag irsf_j_mag gaussian-inverse-square em mag 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/lhaaso_sky1.sky1
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format sky1
-origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,N0&-out.max=100000
+origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,Comp,N0&-out.max=100000
 compiler tools/harvest/src/bin/lhaaso_compiler.rs
 no-cadence
 at sun
