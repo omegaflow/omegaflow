@@ -406,7 +406,6 @@ impl PartialEq for ChannelDescriptor {
             && self.regime == other.regime
             && self.extent.map(f64::to_bits) == other.extent.map(f64::to_bits)
             && self.family == other.family
-            && self.unit == other.unit
             && self.species == other.species
     }
 }
@@ -1457,6 +1456,30 @@ impl ChannelLatch {
     }
 }
 
+#[derive(Debug)]
+pub struct ChannelUnitConflict {
+    pub registered_unit: &'static str,
+    pub incoming_unit: &'static str,
+    pub alias: Option<String>,
+}
+
+impl std::fmt::Display for ChannelUnitConflict {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.alias.as_deref() {
+            Some(name) => write!(
+                f,
+                "channel \"{}\" is registered in \"{}\" but \"{}\" arrives",
+                name, self.registered_unit, self.incoming_unit
+            ),
+            None => write!(
+                f,
+                "channel is registered in \"{}\" but \"{}\" arrives",
+                self.registered_unit, self.incoming_unit
+            ),
+        }
+    }
+}
+
 pub struct ChannelRegistry {
     cap: usize,
     descs: Vec<ChannelDescriptor>,
@@ -1492,13 +1515,32 @@ impl ChannelRegistry {
 
     pub fn register(&mut self, d: ChannelDescriptor) -> usize {
         let h = d.hash();
+        match self.register_checked(d) {
+            Ok(i) => i,
+            Err(conflict) => {
+                eprintln!("channel unit refused: {conflict}");
+                self.id[&h]
+            }
+        }
+    }
+
+    pub fn register_checked(&mut self, d: ChannelDescriptor) -> Result<usize, ChannelUnitConflict> {
+        let h = d.hash();
         if let Some(&i) = self.id.get(&h) {
-            return i;
+            let existing = &self.descs[i];
+            if existing.unit != d.unit {
+                return Err(ChannelUnitConflict {
+                    registered_unit: existing.unit,
+                    incoming_unit: d.unit,
+                    alias: d.alias.clone().or_else(|| existing.alias.clone()),
+                });
+            }
+            return Ok(i);
         }
         let i = self.descs.len();
         self.descs.push(d);
         self.id.insert(h, i);
-        i
+        Ok(i)
     }
 
     pub fn alias(&mut self, name: &str, target: &ChannelDescriptor) {
@@ -2101,7 +2143,9 @@ pub fn channel_registry_from_sources(sources: &[crate::archivar::SourceConfig]) 
             if d.body.is_none() {
                 d.body = s.body.clone();
             }
-            reg.register(d.clone());
+            if let Err(conflict) = reg.register_checked(d.clone()) {
+                eprintln!("channel unit refused: {conflict}");
+            }
             if let Some(a) = d.alias.as_deref() {
                 reg.alias(a, &d);
             }
@@ -3438,6 +3482,44 @@ mod tests {
         assert_eq!(token, back.spec_token(), "the token is a fixed point");
         assert_eq!(n2, back, "the descriptor survives its own token");
         assert_eq!(n2.species.as_deref(), Some("N2"));
+    }
+
+    #[test]
+    fn the_unit_is_representation_not_identity() {
+        let si = ChannelDescriptor::parse_spec(
+            "mass:primary:flux-fick:parabolic:fluid:unspecified:none",
+            "kg/m^3",
+        )
+        .expect("si density parses");
+        let mut cgs = si.clone();
+        cgs.unit = "m^-3";
+        assert_eq!(si, cgs, "the unit is representation, not identity");
+        assert_eq!(si.hash(), cgs.hash(), "the hash agrees with equality");
+    }
+
+    #[test]
+    fn a_foreign_unit_is_refused_and_never_silently_dropped() {
+        let mut reg = ChannelRegistry::with_capacity(4);
+        let si = ChannelDescriptor::parse_spec(
+            "mass:primary:flux-fick:parabolic:fluid:unspecified:none",
+            "kg/m^3",
+        )
+        .expect("si density parses");
+        let idx = reg
+            .register_checked(si.clone())
+            .expect("first registration");
+        let same = reg
+            .register_checked(si.clone())
+            .expect("a convertible-same unit returns the registered index");
+        assert_eq!(idx, same, "the same representation keeps its index");
+        let mut foreign = si.clone();
+        foreign.unit = "V/m";
+        let conflict = reg
+            .register_checked(foreign)
+            .expect_err("a foreign unit is a loud refusal");
+        assert_eq!(conflict.registered_unit, "kg/m^3");
+        assert_eq!(conflict.incoming_unit, "V/m");
+        assert_eq!(reg.len(), 1, "the refused descriptor is not inserted");
     }
 
     #[test]
