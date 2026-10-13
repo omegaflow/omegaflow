@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: Fermi-4LAC-Arm + mev, GEOFON-FDSN-Quelle, SEANOE-Dublette entfernt, Besitz-Zensus, ICGEM --epoch-Override
   class: handover
   date: 2026-10-14
-  sha256: a4f1ae4bf96e45c73dfe1e6f5a41ea566ac61f9294dc3ec19084d9bbf9cd6ddf
+  sha256: 516bd2a3b9884fc3458a484c38832d0b26409d9325465a88110461ae98b0f942
   status: live
 -->
 # Handover — Mountain-Folge 342 (2026-10-14)
@@ -100,6 +100,13 @@ river-209, future).
 - **Lage:** (gemessen 2026-10-13 via Recherche/`git diff`) ALFALFA `local-only` (Lizenz nicht offen, DOI `10.26093/cds/vizier.18610049`). Ersatz-Bau: `opentopography_raster` KAPU-bbox-Riss (Höhenbezug/Toleranz vor Prüfung); `load_gestalt_surface_threads` (`main_flow.rs:580`) hat keinen Produktionsaufrufer. Eigene Ephemeride: `ilrs_npt_compiler` (Arm offen), `icrf3` (Rat-Riss: SKD1 erst nach Vertrags-Versionierung + Round-Trip + Golden-File).
 - **Blockade:** keine.
 - **Braucht:** je der genannte Schritt. `docs/SOURCE_PORT.md`.
+
+### finals-Leser — welche Zeile (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** das Verdikt
+- **Lage:** (gemessen 2026-10-14) Die Spalten sind korrigiert — der Leser liest jetzt Bulletin B (final), Fallback Bulletin A (rapid), committet `d6a078ae5`; vorher las er auf der echten `finals2000A.all` **nichts** (UT1-Spalte um 2 verschoben). **Riss:** der Leser nimmt die **letzte besetzte Zeile** = die fernste Vorhersage (Datei vom 2026-10-14: MJD 61682 = 2027-10-04 `P`), nicht den aktuellsten beobachteten (`I`) Wert.
+- **Blockade:** keine.
+- **Braucht:** das Verdikt — letzte **beobachtete** Zeile (aktuellster finaler EOP) vs. fernste Vorhersage. Nachbar-Prüfung: `test_finals_channels_reads_the_bull_b_columns`.
 
 ## An mycelium
 
