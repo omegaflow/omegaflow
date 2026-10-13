@@ -1059,6 +1059,9 @@ impl Gate {
         if let Some(v) = check_post_md(&path) {
             return Some(v);
         }
+        if let Some(v) = check_phi_terms_admitted(&path, &content) {
+            return Some(v);
+        }
         if let Some(v) = check_line_routing(&path, &content) {
             return Some(v);
         }
@@ -1305,6 +1308,44 @@ fn check_routing_act_home(path: &str, content: &str) -> Option<Verdict> {
                     quote: clip(line, 90),
                 });
             }
+        }
+    }
+    None
+}
+
+fn admitted_terms(token: &str) -> bool {
+    !token.is_empty()
+        && !matches!(
+            token,
+            "no-license-stated"
+                | "all-rights-reserved"
+                | "auth-required"
+                | "registration-required"
+                | "no-license"
+                | "unclear"
+                | "unknown"
+        )
+        && !token.ends_with("-permission-required")
+}
+
+fn check_phi_terms_admitted(path: &str, content: &str) -> Option<Verdict> {
+    let trimmed = path.trim_start_matches("./");
+    if !trimmed.ends_with("phi/sources.φ") {
+        return None;
+    }
+    for (idx, line) in content.lines().enumerate() {
+        let Some(rest) = line.strip_prefix("terms ") else {
+            continue;
+        };
+        let token = rest.split_whitespace().next().unwrap_or("");
+        if !admitted_terms(token) {
+            return Some(Verdict {
+                severity: Severity::Hard,
+                rule: "phi-terms-unadmitted".to_string(),
+                line: idx + 1,
+                feedback: "an unadmitted licence token in phi/sources.φ — every source block carries an admitted licence; no-license-stated / all-rights-reserved / auth-required / registration-required / *-permission-required / no-license / unclear are refused (measure the licence or remove the source)".to_string(),
+                quote: clip(line, 90),
+            });
         }
     }
     None
