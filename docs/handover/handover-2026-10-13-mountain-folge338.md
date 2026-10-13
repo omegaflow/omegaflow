@@ -3,7 +3,7 @@
   session: Mountain-Linie — zwei Register-Risse geschlossen + vier Quellen-Fragen durch Recherche/Rat/Roster geklärt
   class: handover
   date: 2026-10-13
-  sha256: 97561d88f2440dc942e02d0c3caf3839988b69c653cc3263711adfd4cfc4b8e6
+  sha256: 720b705c56314dce533ee84a805799ef98c17bc2193e4a2fe2502d89bb7d85b3
   status: live
 -->
 # Handover — Mountain-Folge 338 (2026-10-13)
@@ -15,9 +15,11 @@ Session konsumierte `handover-2026-10-13-mountain-folge337.md` (→
 geklärt; die Runde lief mit gesetzten Such-/Max-Schaltern über Perplexity,
 DeepSeek, Mistral, Gemini/AI Studio, Lumo, Sakana und die geteilten
 Open-Weight-Seats (DeepSeek V4 Pro, GLM 5.3) — Rohmaterial
-`state/stimmen/2026-10-13_roster2_synthese.md`. **Offen:** Z.ai (Pflicht) läuft
-noch (Deep Think Max, Frage bestätigt angekommen); Inkling öffnete im
+`state/stimmen/2026-10-13_roster2_synthese.md`. **Z.ai (Pflicht) geantwortet**
+(GLM-5.3, Deep Think Max). Offen bleiben: Inkling öffnete im
 `tryingopen`-Dialog nicht; MiniMax-Eingabe gekappt — je benannt, kein stiller Ausfall.
+Z.ai-Schärfung zu 1: Vertikaldatum + Toleranz (±10–15 m) vorab, SRTM15+ orthometrisch
+gegen ellipsoidisch (~30 m), Vegetationsbias — sonst besteht der Test bedeutungslos.
 
 ## Burn: open 0.02 · close 0.10 — Grund: zwei Register-Risse geschlossen + vier-Quellen-Klärung durch Recherche (4 Taucher), Rat (5 Stimmen) und UI-Roster (4 Seats, GLM pending); deepseek-flash, kein pro/max.
 
