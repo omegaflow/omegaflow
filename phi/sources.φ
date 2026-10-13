@@ -28408,7 +28408,7 @@ field Peak_flux_source vlass_peak_flux_mjy inverse-square em mJy 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/www.canfar.net/chime_frb_cat2.bin
 terms CC-BY-4.0 https://www.canfar.net/storage/vault/file/AstroDataCitationDOI/CISTI.CANFAR/25.0066/
 format chime_frb_cat2
-origin https://vizier.cds.unistra.fr/viz-bin/VizieR?-source=J/ApJ/947/83/table1
+origin https://www.canfar.net/storage/vault/file/AstroDataCitationDOI/CISTI.CANFAR/25.0066/data/table/chimefrbcat2.csv
 compiler tools/harvest/src/bin/chime_frb_compiler.rs
 at sun
 no-cadence
