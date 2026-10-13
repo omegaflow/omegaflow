@@ -14631,12 +14631,31 @@ field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms in
 field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa inverse-square acoustic pa 300 0.0 0.0
 field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz inverse-square acoustic hz 300 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/fermi.gsfc.nasa.gov/table_4LAC.fits
-terms PD https://fermi.gsfc.nasa.gov/
+url https://github.com/omegaflow/sources/releases/download/fermi.gsfc.nasa.gov/fermi_4lac.bin
 origin https://fermi.gsfc.nasa.gov/ssc/data/access/lat/4LACDR3/table_4LAC.fits
-format fits
+terms PD https://fermi.gsfc.nasa.gov/
+format fermi_4lac
+compiler tools/harvest/src/bin/fermi_4lac_compiler.rs
 at sun
 no-cadence
+field ra ra inverse-square em deg 33554432.0 0.0 0.0
+field dec dec inverse-square em deg 33554432.0 0.0 0.0
+field glon glon inverse-square em deg 33554432.0 0.0 0.0
+field glat glat inverse-square em deg 33554432.0 0.0 0.0
+field signif_avg signif_avg inverse-square em 1 33554432.0 0.0 0.0
+field flux1000 flux1000 inverse-square em ph/s/cm2 33554432.0 0.0 0.0
+field unc_flux1000 unc_flux1000 inverse-square em ph/s/cm2 33554432.0 0.0 0.0
+field energy_flux100 energy_flux100 inverse-square em erg/cm2/s 33554432.0 0.0 0.0
+field unc_energy_flux100 unc_energy_flux100 inverse-square em erg/cm2/s 33554432.0 0.0 0.0
+field pl_index pl_index inverse-square em 1 33554432.0 0.0 0.0
+field unc_pl_index unc_pl_index inverse-square em 1 33554432.0 0.0 0.0
+field lp_index lp_index inverse-square em 1 33554432.0 0.0 0.0
+field lp_beta lp_beta inverse-square em 1 33554432.0 0.0 0.0
+field variability_index variability_index inverse-square em 1 33554432.0 0.0 0.0
+field redshift redshift inverse-square em 1 33554432.0 0.0 0.0
+field nu_syn nu_syn inverse-square em Hz 33554432.0 0.0 0.0
+field nufnu_syn nufnu_syn inverse-square em erg/cm2/s 33554432.0 0.0 0.0
+field highest_energy highest_energy inverse-square em GeV 33554432.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/firms.modaps.eosdis.nasa.gov/MODIS_C6_1_Global_7d.csv
 terms PD https://firms.modaps.eosdis.nasa.gov/
@@ -14724,6 +14743,27 @@ origin https://ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp
 compiler tools/harvest/src/bin/epm_compiler.rs
 at sun
 no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/github.com/gamma_cat.bin
+terms free-open https://gamma-cat.readthedocs.io/use/terms.html
+format gamma_cat
+origin https://github.com/gammapy/gamma-cat/raw/master/output/gammacat.fits.gz
+compiler tools/harvest/src/bin/gamma_cat_compiler.rs
+at sun
+no-cadence
+field ra ra inverse-square em deg 33554432.0 0.0 0.0
+field dec dec inverse-square em deg 33554432.0 0.0 0.0
+field glon glon inverse-square em deg 33554432.0 0.0 0.0
+field glat glat inverse-square em deg 33554432.0 0.0 0.0
+field significance significance inverse-square em 1 33554432.0 0.0 0.0
+field livetime livetime inverse-square em h 33554432.0 0.0 0.0
+field spec_pl_norm spec_pl_norm inverse-square em m-2.s-1.tev-1 33554432.0 0.0 0.0
+field spec_pl_index spec_pl_index inverse-square em 1 33554432.0 0.0 0.0
+field spec_pl_e_ref spec_pl_e_ref inverse-square em TeV 33554432.0 0.0 0.0
+field spec_dnde_1tev spec_dnde_1tev inverse-square em m-2.s-1.tev-1 33554432.0 0.0 0.0
+field spec_flux_1tev spec_flux_1tev inverse-square em ph/s/cm2 33554432.0 0.0 0.0
+field spec_eflux_1tev_10tev spec_eflux_1tev_10tev inverse-square em erg/cm2/s 33554432.0 0.0 0.0
+field morph_sigma morph_sigma inverse-square em deg 33554432.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/akari_psc.json
 terms PD https://heasarc.gsfc.nasa.gov/
