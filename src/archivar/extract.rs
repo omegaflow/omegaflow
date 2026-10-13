@@ -651,6 +651,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             celestrak_eop::COMP_UT1_UTC => Some("eop_iers_ut1_utc_s"),
             celestrak_eop::COMP_PMX => Some("eop_iers_polar_motion_x_arcsec"),
             celestrak_eop::COMP_PMY => Some("eop_iers_polar_motion_y_arcsec"),
+            celestrak_eop::COMP_LOD => Some("eop_iers_lod_s"),
             _ => None,
         },
         "gk2a_ami" => gk2a_ami::component_name(comp),
