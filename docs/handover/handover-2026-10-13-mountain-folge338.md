@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mountain-Folge 338 (2026-10-13)
-  session: Mountain-Linie — die zwei Register-Risse geschlossen (cosmic2_gnssro-Format, LHAASO-E0)
+  session: Mountain-Linie — zwei Register-Risse geschlossen + vier Quellen-Fragen durch Recherche/Rat/Roster geklärt
   class: handover
   date: 2026-10-13
-  sha256: ac88c68465c5c057d5151a5d0633d370bf66e47795e17bf69f6a3d342342dd93
+  sha256: 66866cee219f8f1ff0aa51c1b986fff0dc4c14b1b15356e36b8f67b933be7229
   status: live
 -->
 # Handover — Mountain-Folge 338 (2026-10-13)
@@ -13,32 +13,36 @@ Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Dies
 Session konsumierte `handover-2026-10-13-mountain-folge337.md` (→
 `docs/handover/archiv/`).
 
-## Burn: open 0.02 · close 0.03 — Grund: zwei Register-Risse geschlossen (Format-Arm-Angleich, E0-Namenskonvention) im geteilten Baum; deepseek-flash, kein pro/max.
+## Burn: open 0.02 · close 0.10 — Grund: zwei Register-Risse geschlossen + vier-Quellen-Klärung durch Recherche (4 Taucher), Rat (5 Stimmen) und UI-Roster (4 Seats, GLM pending); deepseek-flash, kein pro/max.
 
 ## Offen (aufgeschlüsselt)
 
 ### Ersatz-Bau — offene Reste (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** das gewählte bbox-Ziel / der freigegebene Reader
-- **Lage:** (gemessen 2026-10-13, `sgrep`) registriert sind BGR, CEEIN, IRSF J, LHAASO WCDA+KM2A, jpl_sbdb; die zwei Register-Risse sind in diesem Atom geschlossen (committet): `cosmic2_gnssro`-Format → `cosmic_ro` (Arm `extract.rs:1253`, Compiler `gesdisc_gnssro_compiler.rs:501`), LHAASO-E0 im Observable-Namen (`lhaaso_sky1_e0_3tev` WCDA · `lhaaso_km2a_e0_50tev` KM2A; Einheit unverändert, Feld-Schlüssel/`probe_classify` unverändert). **Offen:**
-  - **`opentopography_raster` ohne bbox-Ziel** — der Compiler `tools/harvest/src/bin/opentopography_raster_compiler.rs` (committet) liest die SRTM15+ V2.6 netCDF über HTTP-Range und emittiert `url`/`witness gestalt`/`record srtm`; ohne gewähltes `--bbox` keine Zeile (`sgrep opentopography phi/sources.φ` = nur `opentopography_coverage` + `srtm15_plus`, kein raster-Witness-Block).
-  - **Table-Katalog-Verdrahtung** — in-flight: untracked `src/archivar/osc.rs`, `src/archivar/lamost.rs`, `src/archivar/heasarc_w3browse.rs`; dirty in `src/archivar` (`extract.rs`, `mod.rs`) — fremd, unangetastet.
-- **Blockade:** das bbox-Ziel fehlt · `extract.rs` fremd-gehalten.
-- **Braucht:** ein gewähltes Gebietsfenster → `opentopography_raster_compiler --bbox <s,n,w,e> --out <path>` → Block falten · Reader freigeben. `docs/SOURCE_PORT.md`.
+- **Trigger:** der Build-Schritt / der freigegebene Reader
+- **Lage:** (gemessen 2026-10-13, `sgrep`/Rat/Roster) registriert sind BGR, CEEIN, IRSF J, LHAASO WCDA+KM2A, jpl_sbdb; die zwei Register-Risse sind geschlossen (committet). **Durch Recherche+Rat+Roster geklärt:**
+  - **`opentopography_raster` bbox = KAPU** — gewählt `48.9,49.9,-82.9,-81.7` (Register-Station KAPU `on earth 49.392 -82.320 179.94`, `phi/sources.φ:10300-10301`, an der die River-THEMIS-Kalibrierung läuft). Rat: die Kachel am gemessenen Wert 179.94 m verifizieren. **Auflage (Duck/Claude): Toleranz und Höhenbezug (Geoid vs. Ellipsoid) VOR der Prüfung festlegen**; die zwei globalen SRTM15+-Registrierungen (`:28241`, `:29484`) klären; `load_gestalt_surface_threads` (`main_flow.rs:580`) an einen Produktions-Aufrufer binden, sonst tote Struktur.
+  - **Table-Katalog-Verdrahtung = eigene Arbeit, block-scoped committen** — die drei Reader (`src/archivar/osc.rs`, `lamost.rs`, `heasarc_w3browse.rs`) + die Verdrahtungshunks sind gemessen eigenes, ungefalletes folge336 (nicht fremd); nur der `cdf`-Arm und staged `cdn.rs`/`aacgm` sind River. Rat: jetzt über privaten Index block-scoped committen (Präzedenz `c14fb3298`), `cargo check` grün, fremde Hunks unberührt. **Riss (Qwen/Nemotron): block-scoped löst keine gleichzeitige Bearbeitung desselben Blocks** — beim Stagen den Diff prüfen (Claude), die drei Leser zuerst speichern.
+- **Blockade:** keine (die Verdrahtung ist eigen, kein Halter).
+- **Braucht:** `cargo build -p omegaflow-harvest --bin opentopography_raster_compiler` → `./target/release/opentopography_raster_compiler --bbox 48.9,49.9,-82.9,-81.7 --out data/topex.ucsd.edu/srtm_kapu.bin` → Block falten · dann `git add` nur der drei Reader + eigener `extract.rs`/`mod.rs`-Hunks, `cargo check`, block-scoped commit. `docs/SOURCE_PORT.md`.
 
 ### mycelium-340/341 — Risse-Verdikt (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** das Risse-Verdikt
-- **Lage:** (gemessen 2026-10-13) die 4 Restcompiler sind eingetragen: `jpl_sbdb` neu (`7ee56c2`, PD), `heasarc_w3browse`/`gesdisc_gnssro` gedeckt, `opentopography_raster` offen (siehe oben). Offene Risse: IERS-EOP-Doppellinie (`phi/sources.φ:8114-8116` USNO `finals.all` trägt `eop_iers_ut1_utc_s`/`_polar_motion_x_arcsec`/`_y_arcsec`; `phi/sources.φ:10143-10145` `celestrak_eop` trägt dieselben Observablen), CHIME/FRB-Cat2 canfar 500, KASI-API 500, IRIS LMSAL 403, MPC-Horizon block-vs-compiler, Ersatzquellen MAXI/OSC/IGETS/MODVOLC/DES/ALFALFA/LoTSS/TeVCat.
-- **Blockade:** das Verdikt.
-- **Braucht:** das Risse-Verdikt.
+- **Trigger:** die zwei offenen Risse (MODVOLC-Route, ALFALFA-Lizenz)
+- **Lage:** (gemessen 2026-10-13, Rat+Roster) **Verdikt der Ersatzquellen:** von MAXI/OSC/IGETS/MODVOLC/DES/ALFALFA/LoTSS/TeVCat sind **sechs gestrichen** (gemessen bereits getragen: MAXI `:14669`, OSC `:3787`, IGETS `:10304`, DES `:14417`+`:14509`, LoTSS `:12819`, TeVCat `:10389` — die Ersatzforderung war ein Duplikat). **Zwei echte Risse bleiben** (Roster-Auflage: Duplikat per Inhalts-Nachweis, unbekannte Lizenz = nicht registrieren):
+  - **MODVOLC** — kein Block (`sgrep -i modvolc` = 0); Vorquelle `http://modis.higp.hawaii.edu` = 404 (Route messen); FIRMS `:771`/`:14560` tragen `frp`/`ti4`, nicht thermal → eigener Punkt.
+  - **ALFALFA** — kein Block; Vorquelle unregistriert, Lizenz UNKNOWN (`state/future/licence-census-2026-10-12.tsv:522`); HI4PI `:29013` trägt den Kubus, nicht den Katalog → Lizenz klären, sonst `local-only` (keine Manifestation).
+  - **Weitere Risse (gemessen):** IERS-EOP-Doppellinie (`:8114-8116` USNO `finals.all` ↔ `:10143-10145` `celestrak_eop`, gleiche Observablen `eop_iers_*`), CHIME/FRB-Cat2 canfar 500, KASI-API 500, IRIS LMSAL 403, MPC-Horizon block-vs-compiler.
+- **Blockade:** keine.
+- **Braucht:** MODVOLC-Route messen (`archive_search --verdict <url>`), ALFALFA-Lizenz messen (DataCite) → `local-only` oder Block; IERS-Doppellinie: eine Quelle als kanonischen Träger wählen. `docs/SOURCE_PORT.md`.
 
 ### Eigene Ephemeride — unregistrierte Quellen (future-249 .3) (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Bau der jeweiligen Quellenklasse
 - **Lage:** (gemessen 2026-10-13) Bauplan native Kette UTC→TT→TDB, ITRF2020+EOP, VMF3/IONEX, Zwei-Wege-Lichtzeit+Shapiro; Referenzen `state/future/analyse-kybernautin-ephemeriden-2026-10-12.md`, `abdeckungs-matrix-…`, `leads-ephemeriden-quellen-…`, `leads-ephemeriden-luecken-…`. Registriert: APOLLO-LLR, BC430, JPL `obs_data`/Radar-API, Venus-Radar Zenodo 18176179, Mariner 4/6/7/9/10, PVO-ORSE, Pioneer 10/11, Viking, New Horizons. **Compiler committet** (`010ccb657`): `ilrs_npt_compiler` (Format `ilrs_npt`, Arm in `extract.rs` offen), `icrf3_compiler` (`witness s2-direction`/`record skydirection`), `pds3_bip_radar_compiler` (Format `pds3_img`); **Blocks + CDN-Workflows fehlen**. `.secrets.local` (nur Schlüsselnamen via `bin/secrets_keys`): `EARTHDATA_EDL_TOKEN` · `NSSDC_USER`/`NSSDC_PASS` · `SSDC_USER`/`SSDC_PASS` vorhanden; CDDIS ist implementiert (`ionex_compiler.rs:45`), die NSSDC-/SSDC-Schlüssel haben noch keinen Konsumenten — die „nur über Operator/Future"-Einordnung ist widerlegt.
-- **Blockade:** `extract.rs` fremd-gehalten (ILRS-Arm) · Assets/Blocks.
-- **Braucht:** je Klasse einen Block + CDN-Workflow für die vorhandenen Compiler; ILRS-Format-Arm in `extract.rs`. `docs/SOURCE_PORT.md`.
+- **Verdikt (Rat+Roster 2026-10-13):** (a) **icrf3** — den Compiler auf das Binärformat SKD1 (`write_bin`) umstellen, keinen zweiten JSON-Arm bauen; **Auflage (Claude/Duck): den Vertrag explizit machen (Endianness/Header/Version) und einen Round-Trip gegen den echten Leser `src/archivar/skydirection.rs` fahren, bevor Block/Workflow entstehen**; JSON-Konsumenten inventarisieren. (b) **Bau-Reihenfolge nach Vollständigkeit:** (1) `pds3_img` (Block-Skelett `pds3_bip_radar_compiler.rs:140-151` + Arm `extract.rs:88` da) → Block + `pds3-bip-radar-cdn.yml`; (2) `ilrs_npt` → Lese-Arm in `extract.rs` + Block (Skelett um `terms`/`at`/`ttl`/`field` ergänzen) + Workflow; (3) `icrf3` nach dem SKD1-Entscheid.
+- **Blockade:** keine (die Verdrahtung/Arme sind eigen).
+- **Braucht:** je Klasse einen Block + CDN-Workflow für die vorhandenen Compiler; ILRS-Format-Arm in `extract.rs`; icrf3 auf SKD1 + Round-Trip. `docs/SOURCE_PORT.md`.
 
 ### Register-Force-Unit-Schuld (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -70,6 +74,7 @@ Origin: mountain-338 (2026-10-13):
 - **„was davon kannst du umsetzen und an taucher deligieren?"** | 2026-10-13 | Operator-Session (mountain 337).
 - **„mach das [IRSF/CEEIN-Blöcke + Workflows, LHAASO-Widerspruch] und hast du die secrets local geprüft? Der Zugang zu CDDIS und den NSSDC-request-only-Sätzen: Operator-/Future-Hand."** | 2026-10-13 | Operator-Session (mountain 337) — Register-Blöcke + Workflows umsetzen, LHAASO auflösen, `.secrets.local` prüfen (nur Namen).
 - **Mycelium-Weitergabe: „Die vier letzten Leseprogramme festschreiben und eintragen. Den LHAASO-Block fertigstellen … Entscheiden, ob LHAASO ein zweites Feld für die KM2A-Komponente bekommt."** | 2026-10-13 | Operator-Session (mountain 337, Mycelium-Auftrag) — vier Compiler + Block geprüft; LHAASO vollendet; **KM2A: ja**.
+- **„kannst du das mit recherche roster und rat klären?"** | 2026-10-13 | Operator-Session (mountain 338) — die vier offenen Punkte durch Recherche + UI-Roster + Rat klären (erledigt; Rohmaterial `state/stimmen/2026-10-13_roster_mountain-vier-entscheidungen.md`).
 
 ## Abschluss
 
@@ -77,5 +82,7 @@ Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt
 automatisch", 2026-10-07) trägt Commit und Push. In diesem Atom (folge338)
 committet: die neue Übergabe + die konsumierte folge337 → `archiv/`; die zwei
 Register-Riss-Zeilen in `phi/sources.φ` (`cosmic2_gnssro` → `cosmic_ro`; die
-LHAASO-Observable-Namen `lhaaso_sky1_e0_3tev`/`lhaaso_km2a_e0_50tev`) —
-block-scoped.
+LHAASO-Observable-Namen `lhaaso_sky1_e0_3tev`/`lhaaso_km2a_e0_50tev`) — block-scoped;
+der Freeze der 5 Force-Unit-Paare in `docs/specs/force-unit-baseline.txt`. Die
+Klärung der vier Punkte (Recherche/Rat/Roster) ist in dieses Register geschrieben;
+das Rohmaterial liegt unter `state/stimmen/`.
