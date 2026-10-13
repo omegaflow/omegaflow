@@ -147,6 +147,27 @@ const ROUTES: &[Route] = &[
         key_env: "AIHORDE_API_KEY",
         auth_id: "",
     },
+    Route {
+        prefix: "ovh",
+        provider: "OVHcloud AI Endpoints",
+        base_url: "https://oai.endpoints.kepler.ai.cloud.ovh.net/v1",
+        key_env: "",
+        auth_id: "",
+    },
+    Route {
+        prefix: "kilo",
+        provider: "Kilo",
+        base_url: "https://api.kilo.ai/api/gateway",
+        key_env: "KILO_API_KEY",
+        auth_id: "kilo",
+    },
+    Route {
+        prefix: "orcarouter",
+        provider: "OrcaRouter",
+        base_url: "https://api.orcarouter.ai/v1",
+        key_env: "ORCAROUTER_API_KEY",
+        auth_id: "orcarouter",
+    },
 ];
 
 fn load_secrets() -> HashMap<String, String> {
@@ -206,6 +227,9 @@ fn auth_key(auth: &str, id: &str) -> Option<String> {
 }
 
 fn key_for(route: &Route, secrets: &HashMap<String, String>, auth: &str) -> Option<String> {
+    if route.key_env.is_empty() {
+        return Some(String::new());
+    }
     if let Ok(v) = std::env::var(route.key_env) {
         if !v.is_empty() {
             return Some(v);
