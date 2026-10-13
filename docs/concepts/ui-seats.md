@@ -2,7 +2,7 @@
   title: UI-Seats — Roster, Composer-Selektoren, Runden-Disziplin
   class: concept
   date: 2026-10-07
-  sha256: 97293fa4f5f362bf834987c1086073208693896937f40ce4aa45d71eea536088
+  sha256: 94e9ae28f9bdf2f768ef22c47d810080ae0790fb2ef9d09396e298ef7cece647
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md state/stimmen/README.md
 -->
@@ -169,7 +169,7 @@ recherchegestützte Antwort — **ohne aktiven Schalter antwortet das Modell tei
 
 | Seat | URL | Composer | Senden | Suche-Schalter (an = aktiv) | Reasoning/Max | Merke |
 |---|---|---|---|---|---|---|
-| Qwen | `chat.qwen.ai` | `textarea[placeholder*="Qwen fragen"]` | Klick `button[aria-label="Senden"]` (Enter füllt nur) | `[aria-label="Modus auswählen"]` → Menüeintrag **„Web-Suche"** | Denken-Selektor `.qwen-thinking-selector` (`…-dropdown-menu-trigger`), Optionen Automatisch/**Denken**/Schnell — **Denken = max** | Modell-Selektor `[aria-label="Select Model"]` (Default `Qwen3.7-Plus`) |
+| Qwen | `chat.qwen.ai` | `textarea[placeholder*="Qwen fragen"]` | Klick `button[aria-label="Senden"]` (Enter füllt nur) | `[aria-label="Modus auswählen"]` → Menüeintrag **„Web-Suche"** | Denken-Selektor `.qwen-thinking-selector` (`…-dropdown-menu-trigger`), Optionen Automatisch/**Denken**/Schnell — **Denken = max** | Modell-Selektor `.wms-trigger` (`aria-label="Select Model"`), Optionen `Qwen3.7-Plus`/`Qwen3.8-Max`/`Qwen3.8-Omni-Flash` — **Max = `Qwen3.8-Max`** |
 | DeepSeek | `chat.deepseek.com` | `textarea[placeholder*="Message DeepSeek"]` | `button` Send / Enter | `.ds-toggle-button` **Search** (`aria-pressed=true`) | `.ds-toggle-button` **DeepThink** (`aria-pressed=true`) | beide Toggles sind **Divs**, nicht `<button>` — per Klasse greifen |
 | Z.ai / GLM | `chat.z.ai` | `textarea[placeholder="How can I help you today?"]` | `#send-message-button` | **Globus-Symbol** im Composer → Popover **„Search"** (single) / „Advanced Search" (multi); Button `data-active="true"` = an | **„Deep Think"**-Dropdown („Deep Think Max"); für `GLM-5.3-Flash` `disabled`/`cursor-not-allowed` | der Such-Schalter ist `data-active`; ohne ihn „kein Suchwerkzeug" |
 | Mistral | `chat.mistral.ai` | `div[contenteditable=true]` (ProseMirror, ph „Gib / ein …") | Enter | `button[aria-label="Suchen"]` | `[aria-label="Modell auswählen"]` zeigt **„Denken"** | ProseMirror → CDP `type_text`, nicht native value |
