@@ -88,6 +88,7 @@ pub mod fk;
 pub mod flac;
 pub mod flyby_encounters;
 pub mod footprint;
+pub mod fpi_ucar;
 pub mod fresnel;
 pub mod fugin;
 pub mod gaia_rrl;
