@@ -4178,7 +4178,19 @@ pub fn run_lines_max(
         "datacite" => crate::datacite::datacite_lines(query, max),
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
         "isc" => crate::isc::isc_lines(query, max),
-        "base" => crate::base::base_lines(query, max),
+        "base" => {
+            let token = resolve_key(
+                env.get("BASE_API_KEY").map(String::as_str).unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => crate::base::base_lines(query, max, &t),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("BASE_API_KEY", marker)
+                )],
+            }
+        }
         "openalex" => crate::openalex::openalex_lines(query, max),
         "pubmed" => crate::pubmed::pubmed_lines(query, max),
         "europepmc" => crate::europepmc::europepmc_lines(query, max),
