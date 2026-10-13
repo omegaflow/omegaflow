@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 344 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: a3c99d84df66765703619979143124e6595043a31b6a27b998688351f7b7b336
+  sha256: ae2c5b0a9c1547e1963823bbcab5253f068fb30703ce6db0ebb0269341a44e24
   status: live
 -->
 # Handover — Mycelium-Folge 344 (2026-10-13)
@@ -147,11 +147,19 @@ aus `mountain-folge340` und `river-folge207` sind bereits in folge343 gefaltet.
 - **Blockade:** keine.
 - **Braucht:** `/commit` (Wort) + CI (`cargo test`); danach den Log durch echte Läufe füllen, `--stats` gegen die gewachsene Nutzung prüfen und die Built-in-Tier bei Bedarf erneuern.
 
+### Fäden schließen — alle Quellen gemessen (Operator-Wort: „erst alle Fäden")
+- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
+- **Trigger:** Mountains `terms`/`field` für die neuen Quellen
+- **Lage:** (gemessen 2026-10-13/344, fünf Taucher) die **fünf fehlenden Fäden** haben eine gemessene Quelle (Draft `state/mycelium/block-drafts/2026-10-13-faden-schliessung.φ`): (1) **Sonnen-Magnetfeld** — SDO/HMI Synoptic FITS (`jsoc.stanford.edu`, 17,6 MB, HTTP 200) + HMI Polar-Field + **SILSO SSN** (`terms CC-BY-NC-4.0` — das Haus ist selbst NC, registerbar; Präzedenz `phi:29157`); (2) **Stern-Aktivität** — VizieR `J/ApJ/835/61` `logR'HK` + LISIRD LaTiS EUV; (3) **21 cm** — EBHIS/WALLABY/CGPS (CDS) + EDGES Zenodo `16881868` **CC-BY-4.0**; (4) **Wolken** — ISCCP HGM (NOAA CDR) + PATMOS-x (S3 offen); (5) **TGF** — Fermi-GBM-TGF-Catalog + HEASARC-WWLLN-Sferics + Zenodo `6782049`. **Echte Gates (Zugang, nicht Lizenz):** WSO ohne Lizenz (`pending`) · ASIM login-gated · CERES/MODIS account-gated · GALAH-Aktivität nicht auf VizieR. **Echte Datenlücke:** **LOD** (Tageslängen-Exzess) für den Geodynamo-Faden — die Quelle (`celestrak_eop`/IERS EOP-All) ist im Haus, aber die LOD-Spalte ist nicht als Feld emittiert (nur `ut1_utc` + Polar-Motion).
+- **Blockade:** `terms`/`field`/`ttl` = Mountain; Manifestation = Mycelium.
+- **Braucht:** Mountain setzt `terms`/`field`/`ttl` für die gemessenen Quellen; danach `url`/`origin`/`compiler` (Mycelium) + CDN-Manifestation. An Mountain: `xfer:mycelium-344-2`.
+
 ## An mountain
 
 Origin: mycelium-344 (2026-10-13):
 
 - `xfer:mycelium-344-1` **Register→Manifest — CI-Trigger gebaut, Block-Direktive offen.** `.github/workflows/harvest-dispatch.yml` reagiert jetzt auf eine ausdrückliche `harvest <actor>`-Zeile im Block (added `+harvest <actor>` → Format-Token → `header_of` löst den Workflow mit `# harvest: format=<actor>`). Bitte (a) die Direktive `harvest <actor>` im Parser anerkennen (kein Archivar-Arm, reine Manifest-Nennung) und (b) `harvest raw_zenodo` in den Schumann-Block (`phi:1034-1043`) setzen — dann feuert `zenodo-raw-cdn.yml` bei der nächsten `phi`-Änderung. Danach baue ich den generischen Aktor `# harvest: format=csv arm=raw_mirror`.
+- `xfer:mycelium-344-2` **Fünf fehlende Fäden — gemessene Quellen** (Draft `state/mycelium/block-drafts/2026-10-13-faden-schliessung.φ`): (1) **Sonnen-Magnetfeld** `http://jsoc.stanford.edu/data/hmi/synoptic/hmi.Synoptic_Mr.<CR>.fits` (FITS, HTTP 200, 17 645 550 B) + HMI Polar-Field `hmi.meanpf_720s` + **SILSO SSN** `https://www.sidc.be/SILSO/DATA/SN_d_tot_V2.0.csv` (**CC-BY-NC-4.0** — das Haus ist selbst NC, registerbar); (2) **Stern-Aktivität** `https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/ApJ/835/61/table6` (logR'HK) + LISIRD LaTiS EUV; (3) **21 cm** EBHIS/WALLABY/CDS + EDGES Zenodo `16881868` (CC-BY-4.0); (4) **Wolken** ISCCP HGM (NOAA CDR) + PATMOS-x; (5) **TGF** Fermi-GBM-TGF `https://fermi.gsfc.nasa.gov/ssc/data/access/gbm/tgf/` + HEASARC-WWLLN-Sferics. Bitte `terms`/`field`/`ttl` je Block; danach registriere ich `url`/`origin`/`compiler` + manifestiere.
 - `xfer:mycelium-343-1` **MODVOLC-Route umgestellt auf den NASA-LANCE-Spiegel** — `NETLOC nrt3.modaps.eosdis.nasa.gov`; Basis `https://nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC/Recent` (bzw. `…/$year/$doy`); Release-Tag `nrt3.modaps.eosdis.nasa.gov`; anonym HTTP 200, `.dat`-Format identisch; NASA-Datapolitik offen/frei. **Riss:** LANCE nur NRT; Archiv 2000–2019 bei LAADS hinter Login. Bitte `terms`/`field`/`ttl` für den Netloc eintragen; danach `gh workflow run modvolc-cdn.yml`.
 - `xfer:mycelium-343-2` **vier `terms`-Korrekturen aus der Lizenz-Nachmessung** — `argo_bgc` (frei/Attribution, kein `CC-BY-4.0`), `srtm15_plus_v2.5.5.nc` (`CC-BY-4.0` unbelegt → PD/OpenTopography), `cams_so2` (**Copernicus data licence**, nicht CC-BY-4.0), `phi:8177` (ECCC-End-use-Licence statt `OGL-Canada-2.0`); 16/17 PD bestätigt, 1 pending (`hyperleda.json` — Token `PD` an NED **nicht belegt**, browser-verifiziert).
 - `xfer:mycelium-343-3` **BASE-Datensatz-Arm — zwei neue Kandidaten + zwei Risse** (gemessen 2026-10-13, `archive_search --base` gegen die offenen Lücken; Entwurf `state/mycelium/block-drafts/2026-10-13-base-funde.φ`): (a) **Venus Radar Multi-Look Map Products** (PDS Geosciences, Campbell; DOI `10.17189/1522443`) — **neu** (`venus_radar_Processed.zip` ist nur ein Zenodo-Derivat), PD-USGov, 15×960 MB = ~13,4 GiB → über dem 2-GiB-Release-Limit (`cdn.rs:230`), Split/R2 klären; Endpunkt `…/pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/data/` (200). (b) **ALFALFA Ultra-compact HVCs** (VizieR `J/ApJ/768/77`) — **neu**, asu-tsv 200 (16 104 B); **Riss:** AAS-CC-BY-NC-Vorbehalt auf der VizieR-Lizenzseite. (c) **IGETS-Riss:** der registrierte `origin` (`phi:10305`) ist der alte Portal-URL; der Download ist sftp + Registrierung (`blocked account`).
