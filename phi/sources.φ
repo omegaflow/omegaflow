@@ -1024,6 +1024,17 @@ ttl 3600
 field goes_xrs_xrsa goes_xrs_xrsa inverse-square em wm2_1au 3600 0.0 0.0
 field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/resonance_schumann.csv
+terms CC-BY-4.0 https://zenodo.org/records/15225820
+origin https://zenodo.org/api/records/15225820/files/NiNo_SR_params_2024.csv/content
+format csv
+ttl 3600
+at earth
+epoch 0
+field freq1 resonance_schumann_f1_hz inverse-square em Hz 3600 0.0 0.0
+field freq2 resonance_schumann_f2_hz inverse-square em Hz 3600 0.0 0.0
+field freq3 resonance_schumann_f3_hz inverse-square em Hz 3600 0.0 0.0
+
 url https://gliders.ioos.us/erddap/tabledap/bass-20260907T0000.json?time,latitude,longitude,depth,temperature,salinity,conductivity&time%3E=max(time)-7days
 terms free-open https://gliders.ioos.us/erddap/legal.html
 ttl 3600
@@ -14486,6 +14497,20 @@ format json
 witness s2-direction
 record skydirection
 force em
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/download.bgr.de/BGR_infrasound_mb_hf_product.zip
+terms CC-BY-NC-SA-4.0 https://doi.org/10.25928/bgrseis_mbhf-ifsd
+origin https://download.bgr.de/bgr/geophysik/Infrasound_mb_hf_product/netCDF/BGR_infrasound_mb_hf_product.zip
+format zip
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/download.bgr.de/Reference_Data.zip
+terms CC-BY-4.0 https://doi.org/10.25928/bgrseis_hist-ifsd
+origin https://download.bgr.de/bgr/geophysik/Infrasound_PMCC_reference/netCDF/Reference_Data.zip
+format zip
+at earth
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ftp.iaaras.ru/ephemeris_epm_earth.bin
@@ -27961,6 +27986,17 @@ plx plx
 radvel rv
 rv_scale 1000.0
 field rv harps_rv_km_s gaussian-inverse-square advective km/s 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/irsf_ii288.json
+terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=II/288/out
+format json
+at sun
+no-cadence
+cmap .
+ra ra
+dec dec
+field Jmag irsf_j_mag inverse-square em mag 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/lmxbdata.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
