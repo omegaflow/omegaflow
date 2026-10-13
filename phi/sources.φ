@@ -29984,6 +29984,14 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 745ce7de82cc4e9156bb2bfade1844a5e2d7a30d86dcd7139e6d7df577ea2fb8
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/data.cnra.ca.gov/ckan_coverage.manifest
+terms CC-BY-4.0 https://data.cnra.ca.gov/
+origin https://data.cnra.ca.gov/api/3/action/package_search
+compiler tools/harvest/src/bin/ckan_coverage.rs
+format coverage_manifest
+at earth
+ttl 604800
+
 
 
 

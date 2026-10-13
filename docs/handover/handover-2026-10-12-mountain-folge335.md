@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 335 (2026-10-12)
   class: handover
   date: 2026-10-12
-  sha256: fc25203196f0ccfd0b8cb4e23768404ffa220bcea0280f0cb96a7ed09a2820aa
+  sha256: d5c810df01b12ef5fdceb5f038787e73cf5d045068cfc521a766f24fe43eec1c
   status: live
 -->
 # Handover — Mountain-Folge 335 (2026-10-12)
@@ -116,6 +116,7 @@ Punkt nennt seine Datei(en)/Pfade.**
 - **Erledigt:** die per-Source-Produzenten der declineten Quellen entfernt (`git rm`): `neptune-apdb-cdn` (geoazur), `fugin-cdn` + `fugin-cdn-dispatch` (FUGIN), `ia2-cdn` (ia2-tap), `lro-trk-cdn` (imbrium), `kc2g-cdn` (prop.kc2g).
 - **Braucht:** (a) die **generischen** Matrix-Produzenten prüfen (`harvest-long.yml` trägt z. B. `arm=lro_trk_compiler tag=imbrium.mit.edu`; `harvest-dispatch`), damit declinete Quellen dort ausgeschlossen sind; (b) für die **unklaren** Quellen den Guard `register_source_state <netloc>` in deren `*-cdn.yml` ziehen (Bin gebaut + getestet; `live|declined|absent`).
 - **Zentraler Riegel — Positiv-Regel (Mountain, Operator-Wort 2026-10-13: „ein CDN darf nur erstellt werden wenn es in sources steht"):** `upload_release` (`src/archivar/cdn.rs`) verweigert **jede** Quelle, die **nicht live in `phi/sources.φ`** steht. `registered_netlocs()` sammelt die Live-`url`-Tags (`cdn_tag_of`) bzw. `origin`-netlocs (`www.` gestrippt); nur ein registrierter Tag darf hochladen. **Allowlist, kein neuer Register.** **`sources.φ` ist jetzt sources-only** (Operator-Wort 2026-10-13: „der müll nichts in sources zu suchen") — die **1821 `decline`-Zeilen entfernt**, git trägt sie; der Register trägt **2572 `url`-Blöcke**, keine Disposition. Test `netloc_matches_the_release_tag_after_www_strip`, `cargo check` 0/0. Greift für **alle** Produzenten.
+- **19-Orphan-Sweep (2026-10-13):** die `cdn_reconcile`-Orphan-Liste war größtenteils ein **Artefakt** (13 der 19 netlocs stehen im Register). Wirklich unregistriert + declinet: **6 Releases gelöscht** (`amda.irap.omp.eu`, `ceic.ac.cn`, `ia2-tap.oats.inaf.it`, `imbrium.mit.edu`, `prop.kc2g.com`, `weather.cma.cn`). **M10 + PSJ bleiben** (Operator-Wort: „unsere Archivarbeit" — `ser.im-ldi.com`/`planetarymaps.usgs.gov`/`iopscience.iop.org`/`content.cld.iop.org`/`www.hou.usra.edu` stehen im Register). `data.cnra.ca.gov` (CNRA-CA-LiDAR-Coverage, CC-BY) **registriert** (Block `phi:29987`, `format coverage_manifest`).
 
 ### Rätsel-Datenlücken (eigen)
 - **Status:** eigen | **Bindung:** eigen
