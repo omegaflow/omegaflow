@@ -2,7 +2,7 @@
   title: Rätsel-Bestand — was wir haben, was fehlt (ein Taucher je Rätsel)
   class: survey
   date: 2026-10-03
-  sha256: a52a8857144b3742564d4ad9fc6960e3f49856a7e0823fdc6b7edc707baedc28
+  sha256: 0149d2b30e5302d8770b479b65aaaecd88a7e141ce9b1fc9e97c6746a7b6f42b
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/paper/probe-front-dark-matter.md
 -->
@@ -22,8 +22,9 @@ keine Zeilennummern; stabile `file:line` bleiben nur an Code-Pfaden. Native Pros
 Mountain (Träger seit folge227). Die echten Risse sind unten geheilt und als solche
 vermerkt — nichts geglättet.
 
-Register der Rätsel: zwölf Nadeln (`kybernetische-astrophysik.md:353-366`), drei
-Blätter (`ein-blatt-papier.md:29-35`), der Kuprat (`kybernetische-astrophysik.md:396-398`).
+Register der Rätsel: die Nadeln (`kybernetische-astrophysik.md:353-367`; Ⅰ–Ⅻ + ⅩⅣ
+Schumann-Resonanz, ⅩⅢ Biosignatur separat), drei Blätter (`ein-blatt-papier.md:29-35`),
+der Kuprat (`kybernetische-astrophysik.md:397-399`).
 **Kopf-Befund:** das Verdikt der 10 Rätsel lebt in seinem **Blatt/Sheet** (gemessene
 Zahlen) und als Zeile dieser Survey (Index, Zeiger `paper:line`/`sheet:line`) — das
 ist seine Register-Zeile. Ein `phi/*.φ`-Register trägt es nicht: jeder sources-/

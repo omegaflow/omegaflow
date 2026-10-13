@@ -2,7 +2,7 @@
 title: Handover — River-Folge 207
 class: handover
 date: 2026-10-13
-sha256: b62a766091106d34afdc87f6917378d5cb4e4a0224411ec07922d3e5e7389536
+sha256: 33ad895e49df175a00971d90001e5bd57889b86dc4862e4f4caf453760c84897
 status: live
 -->
 # Handover — River-Folge 207 (2026-10-13)
@@ -128,10 +128,10 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 - **Blockade:** ESA/ESOC-recon-SPK + die 1-σ-Kovarianz absent.
 - **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
 
-### Schumann-Resonanz — Antriebsfrage (Nadel, vorab festgehalten)
+### Schumann-Resonanz — Antriebsfrage (Nadel ⅩⅣ, vorab festgehalten)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** die Reihe `resonance_schumann.csv` (f1/f2/f3) liegt im CDN → `state/zustand/wartend.φ` `schumann-serie`.
-- **Lage:** (gemessen 2026-10-13 river-208) Quelle registriert (CC-BY-4.0, Zenodo 15225820), CDN-Abzug 404, Manifestation bei Mycelium. Physik: der Antrieb ist das weltweite Blitzgeschehen (Erde–Ionosphäre-Hohlraum); Weltraumwetter wirkt als **Modulation** über die Ionosphäre. Instrument vorhanden: TE-Matrix (`te_compute`) + Surrogat-Null. Echte offene Fragen: Dämpfung/`Q`, Anregungsverteilung, Schumann als Ionosphären-Sonde, andere Welten. Gemessen nicht getragen (mystisch): „Frequenz steigt", Erdbeben-Vorläufer.
+- **Lage:** (gemessen 2026-10-13 river-208) als **Nadel ⅩⅣ** in den Rätsel-Register `docs/concepts/kybernetische-astrophysik.md` („Die Nadeln im Block", `:367`) eingetragen (Operator-Wort „echtes Nadel-Rätsel"); Survey-Refs `survey-raetsel-bestand.md:25-26` nachgezogen. Quelle registriert (CC-BY-4.0, Zenodo 15225820), CDN-Abzug 404, Manifestation bei Mycelium. Physik: Antrieb = weltweites Blitzgeschehen; Weltraumwetter wirkt als **Modulation** über die Ionosphäre. Instrument: TE-Matrix (`te_compute`) + Surrogat-Null. Echte offene Fragen: Dämpfung/`Q`, Anregungsverteilung, Schumann als Ionosphären-Sonde, andere Welten. Gemessen nicht getragen (mystisch): „Frequenz steigt", Erdbeben-Vorläufer. **Riss:** die kanonische 12er-Tafel führt **ⅩⅢ** (Atmosphären-Biosignatur) nicht — der Rätsel-Bestand ist älter als die Nadel ⅩⅢ; als solcher benannt, nicht geglättet.
 - **Blockade:** die Reihe fehlt im CDN.
 - **Braucht:** (1) die Reihe im CDN (Mycelium, `state/zustand/wartend.φ` `schumann-serie`); (2) die Frage **vorab** festhalten — „Regelt geomagnetische Aktivität die Schumann-Frequenzen sichtbar, und in welcher Richtung?" gegen die Blitz-/Intensitäts-Erklärung; (3) dann die Matrix über ein gemeinsames Fenster mit `--null` — ein Ergebnis trägt nur, wenn es die Null schlägt.
 
