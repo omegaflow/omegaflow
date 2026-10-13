@@ -414,12 +414,6 @@ at sun
 last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 304
 last value solar_euv_flux_284_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 284
 
-url https://www.jma.go.jp/bosai/quake/data/list.json
-terms CC-BY-4.0 https://www.jma.go.jp/jma/en/copyright.html
-ttl 600
-on earth 35.68 139.69 0
-last mag geosphere_earthquakes_jma_recent_mag erfc seismic-surface Mw 60.0 0.0 0.0
-
 url https://environment.data.gov.uk/flood-monitoring/id/stations/{station}/readings.json?_limit=1
 terms OGL-UK-3.0 http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
 ttl 900
@@ -29455,10 +29449,10 @@ record gmr1
 no-cadence
 
 url https://www.jma.go.jp/bosai/quake/data/list.json
-terms CC-BY-4.0 https://www.jma.go.jp/jma/en/copyright.html
-ttl 600
-on earth 35.68 139.69 0
-last mag geosphere_earthquakes_jma_recent_mag erfc seismic-surface Mw 60.0 0.0 0.0
+witness point-event
+record erbq
+force seismic-body
+no-cadence
 
 url https://zenodo.org/api/records/15179114/files/data.zip/content
 witness substance
