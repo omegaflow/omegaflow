@@ -1189,6 +1189,8 @@ last Kp magnetosphere_kp_3h gaussian-inverse-square em 1 86400 0.0 0.0
 
 url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
 terms CC-BY-4.0 https://docs.openaq.org/resources/licenses
+format openaq
+compiler tools/harvest/src/bin/openaq_compiler.rs
 header X-API-Key {OPENAQ_API_KEY}
 ttl 21600
 on earth 0 0 0
@@ -1579,6 +1581,7 @@ url https://github.com/omegaflow/sources/releases/download/archive-api.open-mete
 terms CC-BY-4.0 https://open-meteo.com/en/licence
 origin https://archive-api.open-meteo.com/v1/archive?latitude=52.52&longitude=13.405&hourly=temperature_2m,pressure_msl&start_date=2025-01-01&end_date=2025-01-02
 format open_meteo_archive
+compiler tools/harvest/src/bin/open_meteo_archive_compiler.rs
 ttl 86400
 at earth
 field temperature_2m open_meteo_archive_air_temp_c gaussian-inverse-square thermal C 3600 0.0 0.0
@@ -11960,6 +11963,7 @@ url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/ghcnm_t
 terms PD https://www.ncei.noaa.gov/
 origin https://www.ncei.noaa.gov/pub/data/ghcn/v4/ghcnm.tavg.latest.qcf.tar.gz
 format ghcnm_tavg
+compiler tools/harvest/src/bin/ghcnm_tavg_compiler.rs
 ttl 2592000
 at earth
 field ghcnm_tavg_c ghcnm_tavg_c exponential-decay thermal C 2592000 0.0 0.0
@@ -28390,6 +28394,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/alerce_fea
 terms CC-BY-4.0 https://zenodo.org/records/11123894
 origin https://zenodo.org/api/records/11123894/files/features.parquet/content
 format parquet
+compiler tools/harvest/src/bin/parquet_table_compiler.rs
 no-cadence
 at sun
 field SF_ML_amplitude alerce_ztf_sf_ml_amplitude inverse-square em mag 31536000 0.0 0.0
@@ -28423,6 +28428,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/des-sn5yr-
 terms CC-BY-4.0 https://zenodo.org/records/16755566
 origin https://zenodo.org/api/records/16755566/files/DES-SN5YR-UDT-Ready.zip/content
 format zip
+compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-cadence
 at sun
 field MU_SH0ES des_dr2_distance_modulus inverse-square em mag 31536000 0.0 0.0
@@ -28431,6 +28437,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/detox_mode
 terms CC-BY-4.0 https://zenodo.org/records/3993276
 origin https://zenodo.org/api/records/3993276/files/DETOX_MODELS.zip/content
 format zip
+compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-cadence
 at earth
 field vs llnl_g3d_shear_velocity gaussian-inverse-square seismic-body km/s 31536000 0.0 0.0
@@ -28956,6 +28963,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/jwstcomet-
 terms MIT https://zenodo.org/records/20610727
 origin https://zenodo.org/api/records/20610727/files/apertureSynthesis/jwstComet-v1.1.zip/content
 format zip
+compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-cadence
 at sun
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
@@ -29001,6 +29009,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/mirage_v2.
 terms MIT https://zenodo.org/records/21990891
 origin https://zenodo.org/api/records/21990891/files/Ganglet/Mirage-v2.0.0.zip/content
 format zip
+compiler tools/harvest/src/bin/zip_member_compiler.rs
 at sun
 no-cadence
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
@@ -29009,6 +29018,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/miri_wfss-
 terms MIT https://zenodo.org/records/22803722
 origin https://zenodo.org/api/records/22803722/files/fengwusun/miri_wfss-v1.2.zip/content
 format zip
+compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-cadence
 at sun
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
@@ -29017,6 +29027,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/ogle_table
 terms CC-BY-4.0 https://zenodo.org/records/3886372
 origin https://zenodo.org/api/records/3886372/files/Table2.txt.zip/content
 format zip
+compiler tools/harvest/src/bin/zip_member_compiler.rs
 at sun
 no-cadence
 cmap .
@@ -29029,6 +29040,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/pantheon_s
 terms CC-BY-4.0 https://zenodo.org/records/16365279
 origin https://zenodo.org/api/records/16365279/files/Pantheon_SH0ES.dat/content
 format ascii
+compiler tools/harvest/src/bin/ascii_table_compiler.rs
 at sun
 no-cadence
 rows .
@@ -29073,6 +29085,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/s40rts.sph
 terms CC-BY-4.0 https://zenodo.org/records/11212270
 origin https://zenodo.org/api/records/11212270/files/S40RTS.sph/content
 format ascii
+compiler tools/harvest/src/bin/ascii_table_compiler.rs
 at earth
 no-cadence
 field vs s40rts_shear_velocity gaussian-inverse-square seismic-body km/s 31536000 0.0 0.0
@@ -29081,6 +29094,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/smss-dr4-p
 terms CC-BY-4.0 https://zenodo.org/records/15108911
 origin https://zenodo.org/api/records/15108911/files/SMSS-DR4-PARAM-public-5.fits.zip/content
 format zip
+compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-cadence
 at sun
 field mag atlas_dr4_magnitude inverse-square em mag 31536000 0.0 0.0
@@ -29089,6 +29103,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/specsr-v1.
 terms MIT https://zenodo.org/records/23192226
 origin https://zenodo.org/api/records/23192226/files/aryana-haghjoo/specsr-v1.2.0.zip/content
 format zip
+compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-cadence
 at sun
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
