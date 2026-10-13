@@ -323,6 +323,20 @@ upload behind an explicit `--ci-mode` — a local run alone never feeds the
 shared memory. The session closes the harvest only when the asset is
 registered for manifestation (or the operator names the pending explicitly).
 
+**Lokal-only — nicht offene Lizenz, nur für Experimente (Operator-Wort, 2026-10-13).**
+A source whose data carry **no open licence** may be kept and used **locally** —
+a working copy under `data/` (gitignored) for calibration, experiments and
+validation — but it is **never manifested**: no `phi/sources.φ` line, no CDN
+release, no public `origin`/`url`/`compiler` surface. The disposition is
+`local-only`, a state beside `descoped`/`declined` (the source is used, not
+released). The operator's word is the gate: *"so wie mit allem lokal für
+Experimente sind nicht offene Lizenzen ok, aber nicht veröffentlichen"*
+(OCNS2019, Neptun-Astrometrie-Kalibrierung). A local-only dataset is named in the
+owning line's handover (path · purpose · licence state), never registered as a
+CDN asset; a compiler must refuse it (`--ci-mode` upload only for a registered
+source). The decisive line is **use vs. release**, not licence openness: non-open
+data may inform locally, it may never leave the machine.
+
 ## Stack
 
 Rust `std` + `curl` + `serialport`. Vanilla JS ES modules. WebGPU WGSL. Binary φ(x,y,z,t) protocol (0xCF 0x86 v2, little-endian). φ suffix for config files. The complete intelligence lives under omegaflow's name — an internal tool is self-contained (own fetch, own parse, own logic) and never depends on omegaflow's own external release; an external tool is a separate project that carries none of it out.

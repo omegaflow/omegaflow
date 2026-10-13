@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 342 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: be5dee5a06e6f2d5e07ca1eb8771abf11939808545e6aff341ebff88000f69ff
+  sha256: 432c30de0e172845b124bae337f5761e7620b5a21ed49a126283f65f0adda966
   status: live
 -->
 # Handover — Mycelium-Folge 342 (2026-10-13)
@@ -23,6 +23,7 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 | „ja und den rest bauen schick einfach agenten" | 2026-10-12 | `state/operator-gespraeche/2026-10-12-mycelium.md` |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes." | 2026-10-13 | `state/operator-gespraeche/2026-10-13-mycelium.md` |
 | „kümmer dich bitte darum" (vier Endpunkt-Reste: ICGEM · gamma-cat · SEANOE · FDSN; dazu Fermi-4LAC · LHAASO-KM2A · OCNS2019) | 2026-10-13 | `state/operator-gespraeche/2026-10-13-mycelium.md` |
+| „nein nur lokal OCNS2019 für die kalibrierung unserer ephemeriden so wie mit allem lokal für experimente sind nicht offene lizenzen ok aber nicht veröffentlichen" | 2026-10-13 | `state/operator-gespraeche/2026-10-13-mycelium.md`; `AGENTS.md` (CDN-Manifestation, `local-only`) |
 | „ab jetzt Reports immer in einfacher Sprache; Maschinensprache untereinander ok" | 2026-10-13 | `state/operator-gespraeche/2026-10-13-mycelium.md`; `AGENTS.md` (Language doctrine) |
 
 ## Offen — eigen
@@ -59,12 +60,12 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Blockade:** keine Quelle mit Bedarf.
 - **Braucht:** beim nächsten NSSDC/SSDC-Kandidaten prüfen; ein Konsument ist der Schritt.
 
-### OCNS2019 (Ersatz für geoazur/APDB) — Lizenz keine offene
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Trigger:** Operator-Wort (klären oder lassen)
-- **Lage:** (gemessen 2026-10-13/342) nur der Wayback-Weg ist erreichbar: `web.archive.org/web/20220609074246/http://paperdata.china-vo.org/yuanye/ocns2019.zip` (`--verdict` 206; `--sniff` 8 620 636 B, magic zip, sha256 `7b7ad66b2cf1f53b48a8bd51a010437db21983620469231456c46d86366342ef`). Paper-DOI `10.1051/0004-6361/202038776` führt **kein** DataCite-Recht (404/absent) → keine offene Lizenz; der Manifest-Riegel verweigert.
-- **Blockade:** keine offene Lizenz.
-- **Braucht:** Operator-Entscheidung (China-VO-Klärung oder lassen). Wird in Futures Queue geführt.
+### OCNS2019 — lokal für die Ephemeriden-Kalibrierung (Disposition `local-only`)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der nächste Kalibrierungs-Lauf
+- **Lage:** (gemessen 2026-10-13/342 via `curl`: sha256 der lokalen Kopie == die Wayback-Messung; Operator-Wort 2026-10-13 „nur lokal … nicht veröffentlichen"). Arbeitskopie geladen: `data/paperdata.china-vo.org/ocns2019.zip` (8 620 636 B, sha256 `7b7ad66b2cf1f53b48a8bd51a010437db21983620469231456c46d86366342ef`). **Kein** Eintrag in `phi/sources.φ`, **kein** CDN-Release; die Block-Entwürfe (`state/mycelium/block-drafts/welle3-rest-nuts.φ`, `welle2-planet.φ`) tragen `# LOCAL-ONLY — NICHT manifestieren`. Die Disposition `local-only` ist in `AGENTS.md` (CDN-Manifestation) verankert.
+- **Blockade:** keine.
+- **Braucht:** die Kalibrierung nutzt die lokale Kopie; kein Manifestationsschritt.
 
 ### Ersatzquellen-Registerblöcke — 4 Restcompiler (Klassen-Träger)
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
@@ -112,6 +113,7 @@ Origin: mycelium-342 (2026-10-13):
 - `xfer:mycelium-342-5` **Fermi-4LAC-Riss** — Block `phi:14553-14558` `format fits` ohne `compiler`/`field`; Compiler lädt Asset `fermi_4lac_dr3.bin`, Block erwartet `table_4LAC.fits`; kein `F4LC`-Arm in `extract.rs`.
 - `xfer:mycelium-342-6` **ENTSO-E braucht eine lebende Register-Zeile** — Compiler repariert (`out_Domain`); `terms`/`field` offen.
 - `xfer:mycelium-342-7` **JADES DR4 braucht eine Register-Zeile** — Compiler grün (5190 records), Upload verweigert: Tag `jades.herts.ac.uk` ist keine lebende Quelle in `phi/sources.φ`.
+- `xfer:mycelium-342-8` **OCNS2019 lokal (Disposition `local-only`)** — Arbeitskopie `data/paperdata.china-vo.org/ocns2019.zip` (sha256 `7b7ad66b…`) für die Neptun-Satelliten-Ephemeriden-Kalibrierung; **kein** `phi`-Eintrag, **kein** CDN-Release (Operator-Wort 2026-10-13).
 - **Carried from folge341:** `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.1~73d3d0af` (4 Restcompiler-Formate) · `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.2~98652e66` (Ersatzquellen-Register + Risse) · `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.3~7d22b061` (Welle 3: 2 Schranken) · `xfer:mycelium-341-1` (Risse: CHIME/KASI/IRIS/IERS-EOP/MPC).
 
 ## LOCK
