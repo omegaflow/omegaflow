@@ -1366,6 +1366,7 @@ format osc_transients
 origin https://sne.space/api/transients?format=json&limit=250&page=
 compiler tools/harvest/src/bin/osc_compiler.rs
 at sun
+ttl 86400
 
 url https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
 terms CC-BY-4.0 https://kp.gfz.de/
@@ -10800,6 +10801,7 @@ url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr
 format sky1
 origin https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,N0&-out.max=100000
 compiler tools/harvest/src/bin/lhaaso_compiler.rs
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/www.canfar.net/chime_frb_cat2.bin
 terms CC-BY-4.0 https://www.canfar.net/storage/vault/file/AstroDataCitationDOI/CISTI.CANFAR/25.0066/
@@ -10807,6 +10809,7 @@ format chime_frb_cat2
 origin https://www.canfar.net/storage/vault/file/AstroDataCitationDOI/CISTI.CANFAR/25.0066/data/table/chimefrbcat2.csv
 compiler tools/harvest/src/bin/chime_frb_compiler.rs
 at sun
+no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ceein.infp.ro/ceein_infrasound.bin
 terms no-license-stated https://ceein.infp.ro/
@@ -21857,7 +21860,7 @@ format lamost_dr10
 origin https://www.lamost.org/dr10/v2.0/voservice/tap/sync
 compiler tools/harvest/src/bin/lamost_compiler.rs
 at sun
-ttl 31536000
+no-cadence
 field fibermag_u lamost_u_fiber_mag inverse-square em mag 31536000 0.0 0.0
 field fibermag_g lamost_g_fiber_mag inverse-square em mag 31536000 0.0 0.0
 field fibermag_r lamost_r_fiber_mag inverse-square em mag 31536000 0.0 0.0
@@ -29862,7 +29865,7 @@ format volume
 origin https://zenodo.org/api/records/5501196/files/H2_dens_mean_BEG03.fits/content
 compiler tools/harvest/src/bin/cfa_co_compiler.rs
 at sun
-ttl 31536000
+no-cadence
 
 url https://gracedb.ligo.org/api/superevents/S250207bg/files/
 witness s2-direction
@@ -29949,10 +29952,10 @@ record gmr1
 no-cadence
 
 url https://www.jma.go.jp/bosai/quake/data/list.json
-witness point-event
-record erbq
-force seismic-body
-no-cadence
+terms CC-BY-4.0 https://www.jma.go.jp/jma/en/copyright.html
+ttl 600
+on earth 35.68 139.69 0
+last mag geosphere_earthquakes_jma_recent_mag erfc seismic-surface Mw 60.0 0.0 0.0
 
 url https://zenodo.org/api/records/15179114/files/data.zip/content
 witness substance
@@ -30012,20 +30015,3 @@ compiler tools/harvest/src/bin/ckan_coverage.rs
 format coverage_manifest
 at earth
 ttl 604800
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
