@@ -88,8 +88,15 @@ fn header_of(bytes: &[u8]) -> Option<(Header, usize)> {
     Some((header, end_line?))
 }
 
-fn epoch_of(header_epoch: &Option<String>, lsk: &omegaflow::archivar::LeapSeconds) -> Option<f64> {
-    header_epoch.as_deref().and_then(|v| parse_iso_tdb(v, lsk))
+fn epoch_of(
+    header_epoch: &Option<String>,
+    override_epoch: &Option<String>,
+    lsk: &omegaflow::archivar::LeapSeconds,
+) -> Option<f64> {
+    header_epoch
+        .as_deref()
+        .or(override_epoch.as_deref())
+        .and_then(|v| parse_iso_tdb(v, lsk))
 }
 
 fn push_coefficient(
@@ -127,6 +134,7 @@ fn compile(
     bytes: &[u8],
     ttl: f64,
     max_degree: Option<u32>,
+    epoch_override: Option<String>,
     out: &str,
     origin: &str,
     ci_mode: bool,
@@ -136,8 +144,10 @@ fn compile(
             .to_string()
     })?;
     let lsk = embedded_lsk().ok_or("the embedded naif0012 table stays unread")?;
-    let epoch = epoch_of(&header.epoch, &lsk)
-        .ok_or_else(|| "the ICGEM header carries no epoch — the asset stays unwritten".to_string())?;
+    let epoch = epoch_of(&header.epoch, &epoch_override, &lsk).ok_or_else(|| {
+        "neither the ICGEM header nor --epoch <ISO-8601> supplies a parseable epoch — the asset stays unwritten"
+            .to_string()
+    })?;
     let cap = max_degree.unwrap_or(header.max_degree);
     let channel_ref =
         force_id_of("gravity").ok_or("gravity carries no force id — the asset stays unwritten")?;
@@ -253,7 +263,7 @@ fn compile(
 fn run(args: &[String]) -> Result<(), String> {
     if args.iter().any(|a| a == "--help" || a == "-h") {
         println!(
-            "usage: gfc_compiler [--input <x.gfc>|--url <url>] [--out <file.bin>] --ttl <secs> [--max-degree <n>] [--ci-mode]"
+            "usage: gfc_compiler [--input <x.gfc>|--url <url>] [--out <file.bin>] --ttl <secs> [--max-degree <n>] [--epoch <ISO-8601>] [--ci-mode]"
         );
         return Ok(());
     }
@@ -274,6 +284,7 @@ fn run(args: &[String]) -> Result<(), String> {
         ),
         None => None,
     };
+    let epoch_override = arg_value(args, "--epoch");
     let out = match arg_value(args, "--out") {
         Some(v) => v,
         None => OUT_PATH.to_string(),
@@ -293,7 +304,15 @@ fn run(args: &[String]) -> Result<(), String> {
             (bytes, url)
         }
     };
-    compile(&bytes, ttl, max_degree, &out, &origin, ci_mode)
+    compile(
+        &bytes,
+        ttl,
+        max_degree,
+        epoch_override,
+        &out,
+        &origin,
+        ci_mode,
+    )
 }
 
 fn main() {

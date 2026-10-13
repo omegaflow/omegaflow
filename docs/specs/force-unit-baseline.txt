@@ -93,7 +93,11 @@ thermal uk^2
 # until tools-latest republishes the gate, then deleted.
 advective kg/m2/s
 em mw
+em mev
 diffusion umol/kg
 seismic-body km/s
 em k
 em nmgy
+# Mountain 342 (2026-10-14): `mev` admitted to em in units.rs — the Fermi-4LAC
+# Pivot_Energy field (FITS TUNIT=MeV), dimension-equal with ev/gev/tev. Frozen
+# here until tools-latest republishes the gate, then deleted.
