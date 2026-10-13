@@ -2,7 +2,7 @@
 title: Handover — River-Folge 207
 class: handover
 date: 2026-10-13
-sha256: 937913d9b680f291f067809a7fb9fb7cc6a3c720a8a9fcfb2b061a2c80bbda01
+sha256: f26d89675b06798fc8243dc4049c7786b3c2d70385d479e58b2ba61673a3b3e4
 status: live
 -->
 # Handover — River-Folge 207 (2026-10-13)
@@ -178,7 +178,7 @@ Origin: river-204
 
 Origin: river-208
 
-**Fehlende Fäden — Registerzeilen-Entwürfe.** Gemessen (river-208): KiDS DR4.1 WL-Katalog (`--verdict` 206, CC-BY-4.0) · Conicus3D (CC-BY-4.0; Daten-Datei noch zu bestimmen) · Auger Open Data (206, **CC-BY-SA-4.0** — Share-Alike: Lizenz-Vokabular-Gate prüfen) · WALLABY/CGPS HiPS3D (206, CDS-Terms lesen). **Zweite Suche (2026-10-13):** **Pulsar-Timing → EPTA DR2** (`zenodo.org/records/8300645`, 206, **CC-BY-4.0**) — Entwurf steht; **HMI → Quelle JSOC** (`jsoc.stanford.edu`, 200; Lizenz/`terms` noch bestimmen); **LHAASO → 1LHAASO-Katalog** (VizieR `J/ApJS/271/25/catalog`, 200); **Stellar-Aktivität → RAVE DR6** (`III/283/ravedr6`) / **GALAH DR3** (`J/MNRAS/506/150`, beide VizieR, 200; Index-Spalte bestätigen). Damit hat **jeder** der acht fehlenden Fäden einen gemessenen Weg. **Pantheon+ = lokal-only** (Repo ohne Lizenz → nie CDN). Entwürfe: `state/river/missing-threads-register-entwuerfe-2026-10-13.md`. Braucht: die `field`-Spalten-Zuordnung (WL-Shear, Auger-Ereignisse, EPTA-Residuen) und `terms`/`ttl`. xfer:river208-faeden1.
+**Fehlende Fäden — Registerzeilen-Entwürfe.** Gemessen (river-208): KiDS DR4.1 WL-Katalog (`--verdict` 206, CC-BY-4.0) · Conicus3D (CC-BY-4.0; Daten-Datei noch zu bestimmen) · Auger Open Data (206, **CC-BY-SA-4.0** — Share-Alike: Lizenz-Vokabular-Gate prüfen) · WALLABY/CGPS HiPS3D (206, CDS-Terms lesen). **Zweite Suche (2026-10-13):** **Pulsar-Timing → EPTA DR2** (`zenodo.org/records/8300645`, 206, **CC-BY-4.0**) — Entwurf steht; **HMI → Quelle JSOC** (`jsoc.stanford.edu`, 200; Lizenz/`terms` noch bestimmen); **LHAASO → 1LHAASO-Katalog** (VizieR `J/ApJS/271/25/catalog`, 200); **Stellar-Aktivität → RAVE DR6** (`III/283/ravedr6`) / **GALAH DR3** (`J/MNRAS/506/150`, beide VizieR, 200; Index-Spalte bestätigen). Damit hat **jeder** der acht fehlenden Fäden einen gemessenen Weg. **Pantheon+ = lokal-only** (Repo ohne Lizenz → nie CDN). Entwürfe: `state/river/missing-threads-register-entwuerfe-2026-10-13.md`. **VizieR-Entwürfe (Block F, über den bestehenden `tap_compiler`-Arm):** RAVE DR6 (`table=III/283/ravedr6`) · GALAH DR3 (`J/MNRAS/506/150/spect`) · 1LHAASO (`J/ApJS/271/25/catalog`) — `terms vizier-scientific-free`. Braucht: die `field`-Spalten-Zuordnung (WL-Shear, Auger-Ereignisse, EPTA-Residuen, Aktivitätsindex) und `terms`/`ttl`. xfer:river208-faeden1.
 
 **SABER-Zeugen-Zeile nach Form (C) — Höhe als Koordinate auf geschlossener Level-Achse.** Gemessen (river-208, `curl` CDAWeb HAPI `info?id=TIMED_L2A_SABER`): `ktemp` trägt `size:[400]`, `tpgpaltitude` trägt `size:[400]` (die zeitabhängige Höhenkoordinate); die HAPI-Info führt **kein** `cadence`-Feld (dt aus einem Datensample messen). Verdikt (C) (Rat + volle Roster-Runde, `state/stimmen/2026-10-13-river-saber-hoehenform-roster.md`): der Level-Index (0…399) ist die **geschlossene diskrete Achse**, die Höhe eine zweite, gleich indizierte Koordinate (`altitude(time, level)`); das Level muss Teil des Schlüssels sein, sonst kollidieren 400 Records mit identischem Zeitstempel — kein freies `field` je Höhenstufe. Entwurf: `state/river/weberin-register-entwuerfe-2026-10-13.md` Block 5. **Braucht:** die `channel`/`field`-Zeile nach Form (C). xfer:river208-saber1.
 
