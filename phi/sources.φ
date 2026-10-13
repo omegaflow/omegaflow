@@ -1416,7 +1416,7 @@ field 4 hfradar_icatmar_total_eastward_m_s inverse-square advective m/s 21600 0.
 field 5 hfradar_icatmar_total_northward_m_s inverse-square advective m/s 21600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ads.atmosphere.copernicus.eu/cams_so2_emission.nc
-terms CC-BY-4.0 https://ads.atmosphere.copernicus.eu/
+terms free-open https://www.copernicus.eu/en/access-data/copyright-and-licences
 origin https://ads.atmosphere.copernicus.eu/api/
 format cams_so2
 header PRIVATE-TOKEN {CDS_API_KEY}
@@ -1733,7 +1733,7 @@ ttl 86400
 field vlf_awesome_narrowband_amp vlf_awesome_narrowband_amp inverse-square em db 300 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data-argo.ifremer.fr/argo_bgc_synthetic_profile_index.txt
-terms CC-BY-4.0 https://argo.ucsd.edu/
+terms free-open https://argo.ucsd.edu/data/
 origin https://data-argo.ifremer.fr/argo_synthetic-profile_index.txt
 format argo_index
 ttl 86400
@@ -3985,7 +3985,7 @@ lon sourceInfo.geoLocation.geogLocation.longitude
 field values.0.value.0.value hydrosphere_river_flow_cfs erfc advective cfs 8640.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin
-terms free-open https://wdc.kugi.kyoto-u.ac.jp/wdc/Sec3.html
+terms wdc-kyoto-scientific-noncommercial https://wdc.kugi.kyoto-u.ac.jp/wdc/Sec3.html
 format wdc_ae
 origin https://wdc.kugi.kyoto-u.ac.jp/hapi
 compiler tools/harvest/src/bin/wdc_ae_compiler.rs
@@ -8174,7 +8174,7 @@ lon 3
 field 4 fdsn_station_elevation_m erfc seismic-surface m 86400.0 0.0 0.0
 
 url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
-terms OGL-Canada-2.0 https://eccc-msc.github.io/open-data/licence/readme_en/
+terms eccc-end-use-licence https://eccc-msc.github.io/open-data/licence/readme_en/
 ttl 86400
 on earth 0 0 0
 map features
@@ -12002,6 +12002,15 @@ compiler tools/harvest/src/bin/ghcnm_tavg_compiler.rs
 ttl 2592000
 at earth
 field ghcnm_tavg_c ghcnm_tavg_c exponential-decay thermal C 2592000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/nrt3.modaps.eosdis.nasa.gov/modvolc_thermal.bin
+terms PD https://www.earthdata.nasa.gov/
+format modvolc_thermal
+origin https://nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC/Recent
+compiler tools/harvest/src/bin/modvolc_compiler.rs
+at earth
+ttl 2592000
+field modvolc_thermal modvolc_thermal inverse-square em w/m2/sr/um 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/opendata.dwd.de/dwd_cdc_00044_dwd_air_temperature_max.bin
 terms CC-BY-4.0 https://opendata.dwd.de/climate_environment/CDC/Terms_of_use.pdf
@@ -28251,7 +28260,7 @@ field mag wd_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 field teff wd_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/topex.ucsd.edu/srtm15_plus_v2.5.5.nc
-terms CC-BY-4.0 https://topex.ucsd.edu/
+terms PD https://opentopography.org/usageterms
 origin https://topex.ucsd.edu/pub/srtm15_plus/SRTM15_V2.5.5.nc
 format netcdf
 no-cadence
