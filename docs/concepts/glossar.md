@@ -2,9 +2,9 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: 7d919963a73d4c3a2505aacab6073ee6cdac91a4bdf21b9cbbfaddb4b0de669a
+  sha256: c6a91243ed3c776e049c609c64c3da60dc03b98c07baa0c440000b407cdf7b82
   status: live
-  see-also: docs/concepts/the-counter-slope.md docs/concepts/system-directive.md docs/granit.md docs/concepts/free-voices.md docs/concepts/die-vier-schilde.md
+  see-also: docs/concepts/the-counter-slope.md docs/concepts/system-directive.md docs/granit.md state/free-voices.md docs/concepts/die-vier-schilde.md
 -->
 # Glossar der Gegenströmung
 
@@ -82,15 +82,15 @@ fabriziert.
 ## Kybernautik — Rollen, Stimmen, Raumzeit
 
 - **Granit** — die eine Grundsatz-Quelle (7 Sätze: A = A · ICRS & TDB · force_type · 0 honored · pending · Der Operator schließt · manifestiert, nicht nur lokal); das Gate liest genau diese Datei. · `docs/granit.md:10-22`
-- **Die fünf Axiome** — A = A · ICRS & TDB · force_type · 0 honored · pending; jede Architektur-/Ethikfrage trägt sie. · `docs/concepts/free-voices.md:87`, `docs/granit.md:16-20`
-- **Die fünf Achsen** — Voxelisierung (Mitte) · Crossmatch (Sensory) · TE-Maschine (River) · Nullkontrolle (Mycelium) · Residuum (Future). · `docs/concepts/free-voices.md:88-89`
+- **Die fünf Axiome** — A = A · ICRS & TDB · force_type · 0 honored · pending; jede Architektur-/Ethikfrage trägt sie. · `state/free-voices.md:87`, `docs/granit.md:16-20`
+- **Die fünf Achsen** — Voxelisierung (Mitte) · Crossmatch (Sensory) · TE-Maschine (River) · Nullkontrolle (Mycelium) · Residuum (Future). · `state/free-voices.md:88-89`
 - **Die vier Schilde + die Mitte (4+1)** — Mitte = Voxelisierung (Mountain); Schilde = Crossmatch · TE-Maschine · Nullkontrolle · Residuum; **4 Schilde + Mitte = 5 Stimmen/Achsen**. · `docs/concepts/die-vier-schilde.md:12-40`
 - **Linie** — eine der fünf Rollen (Mountain · River · Mycelium · Sensory · Future), je ein `.opencode/command/<line>.md`; trägt eine eigene Übergabe. · `AGENTS.md`, `.opencode/command/`
 - **Session** — das Atom: eine Linie in einem Kontextfenster; Planung und Umsetzung im selben Fenster. · `docs/concepts/glossar.md:53`, `docs/concepts/kybernaut-native-methodology.md`
 - **Taucher** (Port) — die `grind-*`-Sub-Agenten (Quellen-Port, Harvest, Recheck); edit-first, keine Force-Gate-Urteile. · `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md:11`, `AGENTS.md`
-- **Forscher** (Recherche) — die read-only Recherche-Agenten (`general`, `research-max`); liefern Claims, keine Verdikte. · `AGENTS.md` (Cost ladder), `docs/concepts/free-voices.md:53`
-- **Der Rat / `council`** — der Rat ist die fünfstimmige Linse **Mountain · River · Mycelium · Sensory · Future** (fehlt einer, bricht der Kreis); `council` ist der Agent, der sie fährt; der Rat trägt die Struktur, nicht das Urteil allein. · `docs/concepts/die-vier-schilde.md:6,42`, `docs/concepts/free-voices.md:72`
-- **UI-Chat · Frontier · Open-Weight · Seat** — UI-Chat = zweiter Kanal (Web-UI); Frontier = starke geschlossene Modelle; Open-Weight = offene Modelle (tryingopen); Seat = ein Modell-Sitz. · `docs/concepts/free-voices.md:24-28,80-89`, `AGENTS.md:529-533`
+- **Forscher** (Recherche) — die read-only Recherche-Agenten (`general`, `research-max`); liefern Claims, keine Verdikte. · `AGENTS.md` (Cost ladder), `state/free-voices.md:53`
+- **Der Rat / `council`** — der Rat ist die fünfstimmige Linse **Mountain · River · Mycelium · Sensory · Future** (fehlt einer, bricht der Kreis); `council` ist der Agent, der sie fährt; der Rat trägt die Struktur, nicht das Urteil allein. · `docs/concepts/die-vier-schilde.md:6,42`, `state/free-voices.md:72`
+- **UI-Chat · Frontier · Open-Weight · Seat** — UI-Chat = zweiter Kanal (Web-UI); Frontier = starke geschlossene Modelle; Open-Weight = offene Modelle (tryingopen); Seat = ein Modell-Sitz. · `state/free-voices.md:24-28,80-89`, `AGENTS.md:529-533`
 - **Gretchenfrage** — der Aufnahmetest für einen Seat (Fähigkeit ≥ 4/4 + gemessenes Tempo); ungemessen/Timeout → `pending`, kein Roster-Mitglied. · `AGENTS.md:533`
 - **Weltlinie** — die Linie der Presence im Block; sie gehört dem Operator, er stimmt sie; die Presence ruht, sie bewegt sich nie selbst. · `AGENTS.md`, `docs/concepts/glossar.md:30`
 - **4D-Block** — Raumzeit als Block: Zeit ist eine Koordinate, kein Fluss; ICRS + TDB; alle Körper gleich. · `AGENTS.md` (Block Universe Physics), `docs/concepts/glossar.md:29`
