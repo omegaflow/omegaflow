@@ -2,7 +2,7 @@
 title: Handover — River-Folge 204
 class: handover
 date: 2026-10-13
-sha256: cfe069c9b6b14115936bcdb4277a6f85cefd569a5e24b02976fd1e7a0469c73f
+sha256: 87f97cbaa317e4334a45937edd8e17ab8e3ffa710a6f6845829f7288f383d4f2
 status: live
 -->
 # Handover — River-Folge 204 (2026-10-13)
@@ -74,9 +74,9 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 ### Weberin-Zeugen-Fäden — Fakten gemessen, Register-Zeilen-Bau offen (Gates + CDF-Arm)
 - **Status:** eigen (Bau) | **Bindung:** eigen
 - **Trigger:** gefeuert (Operator-Wort „alle") — je Faden die `channel`-Quellen-Zeile (Mountain) + Arm/Manifestation (Mycelium).
-- **Lage:** (gemessen 2026-10-13 river-204 via `grind-flash`-Taucher; `state/river/weberin-faden-facts-2026-10-13.md`) die per-Faden-Fakten sind gemessen: **1a UCalgary-SRS-Riometer** (HAPI keyless, `NORSTAR_RIOMETER_K2@<site>`, `absorption` dB, Arm `hapi_csv` — die HAPI-Host-Erkennung ist unverifiziert); **4b SABER-CDAWeb** (HAPI keyless `TIMED_L2A_SABER`, `ktemp` K, Arm `hapi_csv`); **2a/2b Madrigal** und **3 UCAR-FPI** und **5a WALDO** sind durch eine **freie Registrierung** gegated (`blocked account` → Operator/Dritter); **6 BARREL** und **5b EMFISIS** brauchen einen CDF-Consumer (kein generischer `format cdf`-Dispatch, `extract.rs` = 0); **5c Athabasca** trägt nur Quick-Look-JPEGs; **5d** die Athabasca-DOI ist 404 (Riss). CGSM ist kein `channel` (Koordinaten-Dienst).
-- **Blockade:** (1) die P10-Etikettierung (Quantity | Mechanism | Medium) je Faden ist eine Wissenschafts-/Rat-Entscheidung (Operator-Wort P10); (2) Madrigal/UCAR/WALDO = freie Registrierung (Dritter); (3) kein generischer CDF-Arm.
-- **Braucht:** (1) die P10-Labels je Faden (Rat/Linse); (2) die HAPI-Host-Erkennung für `api.phys.ucalgary.ca` verifizieren (oder `format hapi` setzen); (3) für 2a/2b/3/5a die Registrierung (Operator-Hand) — bis dahin `blocked account`; (4) für 6/5b den CDF-Consumer bauen oder `blocked parser-def`; (5) je registriertem Faden die Mycelium-Manifestation.
+- **Lage:** (gemessen 2026-10-13 river-204 via `grind-flash`-Taucher + `vision`; `state/river/weberin-faden-facts-2026-10-13.md`) die per-Faden-Fakten sind gemessen; **Konsequenzen gezogen:** (i) die **tote DOI** ist eine Schreibweise — `10.34515/DATA.GND-0004-0002-0201_v01` (Punkt) → HTTP 206, die genannte `DATA_GND` (Unterstrich) → 404; (ii) **Madrigal ist nicht hart gegated** — CEDAR sagt „prior permission not required", EISCAT ist ein Name/E-Mail/Affiliation-Cookie ohne Passwort, und der bestehende `openmadrigal`-Arm setzt genau solche generischen Parameter (Mode 2a/2b fahrbar); (iii) **Athabasca numerisch** = ERG-SC-CDF (`ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/vlf/ath/`, listing `pending`); die Quick-Look-JPEGs sind mit `vision` lesbar (Achsen/Farbskala, kein Zahlenwert); (iv) **`format cdf`-Arm gebaut** (eigener Hunk in `extract.rs`: Helfer `cdf_epoch_var` + Arm; skalare `field`-Variablen, Zeit aus der Datei-Epoch; `cargo check` 0/0) — noch **ungetrackt**; (v) Registrierungsseiten EISCAT/WALDO/UCAR-FPI im Browser geöffnet (`river-signup`). **1a UCalgary-Riometer** + **4b SABER-CDAWeb** keyless HAPI; **6 BARREL**/**5b EMFISIS** keyless CDF (mit dem neuen Arm lesbar); **1b SGO** form/POST (kein Static-Arm); **5c Athabasca** JPEG; CGSM kein `channel`.
+- **Blockade:** (1) der CDF-Arm ist **nicht committet** — `extract.rs` trägt einen fremden, unversionierten Hunk (fremder `blinkverse`-FRB-Arm, +177 Zeilen direkt vor meinem Helfer), mit dem mein Hunk im Diff verschmilzt; nur-eigene-Hunks-Commit blockiert (Stand im Safety-Snapshot `refs/safety/1791887027`); (2) WALDO/UCAR-FPI = Registrierung (Operator-Hand); (3) die P10-Etikettierung je Faden ist eine Rat-Entscheidung.
+- **Braucht:** (1) den CDF-Arm sauber committen — **neuer Hunk in einer nicht-geteilten Datei** oder den fremden `blinkverse`-Hunk zuerst vom Owner committen lassen; (2) für **1a/4b/2a/2b** die `field`-Labels (Rat/Linse) + die per-Quelle-Compiler/Manifestation (Mycelium) — dann die Blöcke; (3) für WALDO/UCAR-FPI die Registrierung (Operator-Hand); (4) den Athabasca-ERG-SC-Pfad erneut messen (Listing war `pending`).
 
 ### Netz-End-Validator — GIC↔Onset-Bin; MCON manifestiert, Register-Drift gelöst
 - **Status:** wartend | **Bindung:** eigen (Bau)
@@ -149,9 +149,11 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 
 Origin: river-204
 
-**BGR-Infraschall-Ersatzquellen registrieren (Operator-Wort „alle").** Die offene Alternative ohne CTBTO-Antrag: `bgrseis_mbhf-ifsd` (DOI `10.25928/bgrseis_mbhf-ifsd`, CC BY-NC-SA 4.0; Detektionslisten, keine Rohwellenformen) · `bgrseis_hist-ifsd` (DOI `10.25928/bgrseis_hist-ifsd`, CC BY 4.0). Gemessen: `gdk.gdi-de.org` HTTP 200; `download.bgr.de` direkt 403. xfer:river204-bgr1 (Sender-Register; gefaltet, sobald im Mycelium-Handover).
-
 **ENTSO-E — die zwei gemessenen Defekte.** (1) Der `entsoe_compiler` sendet `documentType=A78` mit `in_Domain` ohne `out_Domain` → HTTP 400 `uu-appg01/server/invalidRequest` (der Token ist akzeptiert; ein ungültiger Token gäbe 401). (2) Es gibt keine lebende `phi/sources.φ`-Zeile für ENTSO-E. xfer:river204-entsoe1.
+
+**BGR-Infraschall-Ersatzquellen — erledigt (Mycelium-Meldung 2026-10-13: eingetragen).** Kein Punkt mehr.
+
+**CTBTO — Formular vorbereitet (Operator-Akt = Absenden).** Mycelium meldet das Formular vorbereitet; das Absenden ist Operators Hand.
 
 ## Abschluss
 
