@@ -10,7 +10,9 @@
 matrix newell_geospheric_omni rect
 register sources
 drivers newell_dphi_dt_omni
-targets intermagnet_dbdt
+# target key abk_dbdt_pt1h (Mountain-340 split the ABK field keys; the block's name stays
+# intermagnet_dbdt, the descriptor selects the 1 h key matching `bin 3600`)
+targets abk_dbdt_pt1h
 from newell_dphi_dt_omni omni_imf_by_gsm_nt,omni_imf_bz_gsm_nt,omni_solarwind_flow_speed_kms
 cond rest
 fdr bh 0.05 over matrix
