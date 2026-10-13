@@ -2,7 +2,7 @@
 title: Handover — River-Folge 207
 class: handover
 date: 2026-10-13
-sha256: 7e0804b32ab3bd165d282735e8e8514a8a14267c0a2a1c01a3ebccd7ab0fdd0f
+sha256: 24af5e05a9b18f10fdc0fb90d83f2be59d9589c6a505331d42f8675a62692021
 status: live
 -->
 # Handover — River-Folge 207 (2026-10-13)
@@ -178,7 +178,7 @@ Origin: river-204
 
 Origin: river-208
 
-**Fehlende Fäden — Registerzeilen-Entwürfe.** Gemessen (river-208): KiDS DR4.1 WL-Katalog (`--verdict` 206, CC-BY-4.0) · Conicus3D (CC-BY-4.0; Daten-Datei noch zu bestimmen) · Auger Open Data (206, **CC-BY-SA-4.0** — Share-Alike: Lizenz-Vokabular-Gate prüfen) · WALLABY/CGPS HiPS3D (206, CDS-Terms lesen). **Pantheon+ = lokal-only** (Repo ohne Lizenz → nie CDN). IPTA DR2 · LHAASO · Ca II IRT (Zenodo 57464 = Paper, nicht Daten) · HMI = noch zu suchen. Entwürfe: `state/river/missing-threads-register-entwuerfe-2026-10-13.md`. Braucht: die `field`-Spalten-Zuordnung (WL-Shear, Auger-Ereignisse) und `terms`/`ttl`. xfer:river208-faeden1.
+**Fehlende Fäden — Registerzeilen-Entwürfe.** Gemessen (river-208): KiDS DR4.1 WL-Katalog (`--verdict` 206, CC-BY-4.0) · Conicus3D (CC-BY-4.0; Daten-Datei noch zu bestimmen) · Auger Open Data (206, **CC-BY-SA-4.0** — Share-Alike: Lizenz-Vokabular-Gate prüfen) · WALLABY/CGPS HiPS3D (206, CDS-Terms lesen). **Zweite Suche (2026-10-13):** **Pulsar-Timing → EPTA DR2** (`zenodo.org/records/8300645`, 206, **CC-BY-4.0**) — Entwurf steht; **HMI → Quelle JSOC** (`jsoc.stanford.edu`, 200; Lizenz/`terms` noch bestimmen) — der „kein-Lead"-Befund ist geheilt. **Weiter offen:** LHAASO (nur Paper; VizieR-Route) · Stellar-Aktivität (RAVE DR6/GALAH via VizieR). **Pantheon+ = lokal-only** (Repo ohne Lizenz → nie CDN). Entwürfe: `state/river/missing-threads-register-entwuerfe-2026-10-13.md`. Braucht: die `field`-Spalten-Zuordnung (WL-Shear, Auger-Ereignisse, EPTA-Residuen) und `terms`/`ttl`. xfer:river208-faeden1.
 
 **SABER-Zeugen-Zeile nach Form (C) — Höhe als Koordinate auf geschlossener Level-Achse.** Gemessen (river-208, `curl` CDAWeb HAPI `info?id=TIMED_L2A_SABER`): `ktemp` trägt `size:[400]`, `tpgpaltitude` trägt `size:[400]` (die zeitabhängige Höhenkoordinate); die HAPI-Info führt **kein** `cadence`-Feld (dt aus einem Datensample messen). Verdikt (C) (Rat + volle Roster-Runde, `state/stimmen/2026-10-13-river-saber-hoehenform-roster.md`): der Level-Index (0…399) ist die **geschlossene diskrete Achse**, die Höhe eine zweite, gleich indizierte Koordinate (`altitude(time, level)`); das Level muss Teil des Schlüssels sein, sonst kollidieren 400 Records mit identischem Zeitstempel — kein freies `field` je Höhenstufe. Entwurf: `state/river/weberin-register-entwuerfe-2026-10-13.md` Block 5. **Braucht:** die `channel`/`field`-Zeile nach Form (C). xfer:river208-saber1.
 

@@ -2,7 +2,7 @@
   title: Rätsel-Master-Matrix — Impact · Aufwand · Erfüllung · Machbarkeit
   class: survey
   date: 2026-10-13
-  sha256: e8aafa535018b224e5a5b930e5c1056c16cee97a51f9be19de315372a3b1682e
+  sha256: 8720034cb0ddd14770f7fc482e4d639192f6c95292517422cb83b88732ed9a3d
   status: live
   see-also: docs/surveys/survey-2026-10-13-grosse-raetsel-und-maschine.md docs/surveys/survey-raetsel-bestand.md docs/concepts/die-weberin.md docs/concepts/kybernetische-astrophysik.md
 -->
@@ -193,9 +193,15 @@ müssen „nur" registriert + manifestiert werden (Weberin füttern).
 | **Ca II IRT STELLA/RAVE** (Zenodo `57464`) | Zenodo | **CC-BY-4.0** | ✅ (Stellar-Aktivität) |
 | **WALLABY Pilot DR2** (CDS HiPS3D) | HTTP **206** | CDS-Strasbourg, Namensnennung | ✅ (Terms prüfen) |
 | **Pantheon+ SN-Distanzen** (GitHub Raw) | HTTP **206** | **keine deklarierte Lizenz** (Repo ohne `LICENSE`) | ⚠️ `terms unknown` → **lokal-only, nie manifestieren** |
-| **LHAASO-Katalog** (Neutrino-Constraint) | Lead (Paper) | `pending` | Daten-URL + Lizenz noch messen |
-| **IPTA DR2** (PTA) | Lead (Paper) | `pending` | Daten-URL + Lizenz noch messen |
-| **Auger / UHECR** | Lead (Paper) | `pending` (Auger Open-Data-Portal?) | Daten-URL + Lizenz noch messen |
+| **LHAASO-Katalog** (Neutrino) | nur **Paper** auf Zenodo | `pending` | VizieR-Route noch messen |
+| **Stellar-Aktivität** (Ca II / log R'HK) | nur **Paper** | `pending` | RAVE DR6/GALAH via VizieR |
+| **EPTA DR2** (Pulsar-Timing; ersetzt den IPTA-Paper-Lead) | HTTP **206** (Zenodo `8300645`) | **CC-BY-4.0** | ✅ registrierbar |
+| **JSOC / HMI** (Photosphären-Magnetfeld) | HTTP **200** (`jsoc.stanford.edu`) | NASA/`terms` zu bestimmen | ✅ **Quelle gefunden** (der „kein-Lead"-Befund geheilt) |
+| **Auger / UHECR** | HTTP **206** (`opendata.auger.org`) | **CC BY-SA 4.0** | ✅ (Share-Alike-Gate prüfen) |
+
+**Nachtrag zur zweiten Suche (2026-10-13):** Der PTA-Faden ist gefunden (**EPTA DR2**, 206,
+CC-BY-4.0), der HMI-Faden hat eine Quelle (**JSOC**, 200). **LHAASO** und **Stellar-Aktivität**
+bleiben offen — beide über die **VizieR**-Route (noch zu messen).
 
 **Befund:** Drei Leads sind **sauber CC-BY-4.0 und erreichbar** (KiDS/Conicus3D WL, Ca II IRT) —
 sofort registrierbar. WALLABY (CDS) ist erreichbar, Terms stehen aus. **Pantheon+ ist ein
