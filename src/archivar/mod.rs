@@ -96,6 +96,7 @@ pub mod gaia_sso;
 pub mod galileo_odr;
 pub mod gdp_drifter;
 pub mod geo;
+pub mod gfc;
 pub mod gic;
 pub mod giro_fastchar;
 pub mod gk2a_ami;
