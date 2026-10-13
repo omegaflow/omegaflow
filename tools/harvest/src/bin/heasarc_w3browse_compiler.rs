@@ -1,4 +1,5 @@
 use omegaflow::archivar::fetch_raw_bytes;
+use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::gunzip;
 use omegaflow::tdat::parse_tdat;
@@ -224,6 +225,20 @@ fn run(args: &[String]) -> Result<(), String> {
         read_columns,
         skipped
     );
+    let name = match std::path::Path::new(&out_path)
+        .file_name()
+        .and_then(|n| n.to_str())
+    {
+        Some(n) => n,
+        None => return Err(format!("{out_path}: carries no file name")),
+    };
+    println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{name}");
+    println!("format heasarc_w3browse");
+    println!("origin {url}");
+    println!("compiler tools/harvest/src/bin/heasarc_w3browse_compiler.rs");
+    println!("sha256 {}", sha256_hex(&bytes));
+    println!("at earth");
+    println!("ttl 604800");
     if ci_mode && !upload_release(NETLOC, &out_path) {
         return Err(format!("{out_path}: CDN upload returned void"));
     }
