@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: Fermi-4LAC-Arm + mev, GEOFON-FDSN-Quelle, SEANOE-Dublette entfernt, Besitz-Zensus, ICGEM --epoch-Override
   class: handover
   date: 2026-10-14
-  sha256: 676946726425c026ca44f64a492efb020aa5716f74a904321e4d18578c417939
+  sha256: a4f1ae4bf96e45c73dfe1e6f5a41ea566ac61f9294dc3ec19084d9bbf9cd6ddf
   status: live
 -->
 # Handover — Mountain-Folge 342 (2026-10-14)
@@ -14,7 +14,7 @@ Session konsumierte `handover-2026-10-13-mountain-folge341.md` (→
 `docs/handover/archiv/`) und faltete die adressierten Blöcke (mycelium-344,
 river-209, future).
 
-## Burn: open 0.00 · close 0.10 · cap 0.25 Grund: ein Pass (Operator-Wort), drei Taucher-Wellen (Fermi/GEOFON/Register) + zwei Messagenten; die Line-Session selbst bleibt unter dem Deckel, die Sub-Agenten tragen eigene Zeilen. Gemessen via `session_burn`/opencode.db (`ses_ec88c70afffe…`). Commits `a650b1327 · 4f2fe9ff7 · 8a773b07d · 2d4c526f4`, HEAD == origin/main, `cargo check` 0/0.
+## Burn: open 0.00 · close 0.11 · cap 0.25 Grund: ein Pass (Operator-Wort), drei Taucher-Wellen (Fermi/GEOFON/Register) + zwei Messagenten; die Line-Session selbst bleibt unter dem Deckel, die Sub-Agenten tragen eigene Zeilen. Gemessen via `session_burn`/opencode.db (`ses_ec88c70afffe…`). Commits `a650b1327 · 4f2fe9ff7 · 8a773b07d · 2d4c526f4`, HEAD == origin/main, `cargo check` 0/0.
 
 ## Gefaltet (xfer-Echos)
 
