@@ -29734,3 +29734,23 @@ ttl 5
 on earth 58.76 -94.09 0.021
 hapi absorption=ucalgary_riometer_absorption_db
 field ucalgary_riometer_absorption_db ucalgary_riometer_absorption_db inverse-square em dB 5 0.0 0.0
+
+url https://madrigal.eiscat.se/madrigal/isprintService.py?file=/opt/madrigal/experiments/2024/tro/03jan24/MAD6400_2024-01-03_bella_60@uhf.hdf5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
+terms eiscat-rules-of-the-road https://madrigal.eiscat.se/
+format openmadrigal
+origin https://madrigal.eiscat.se
+on earth 69.586 19.227 0.077
+no-cadence
+field eiscat_isr_ne_m3 eiscat_isr_ne_m3 inverse-square em 1/m3 33554432.0 0.0 0.0
+field eiscat_isr_ti_k eiscat_isr_ti_k exponential-decay thermal K 33554432.0 0.0 0.0
+field eiscat_isr_te_k eiscat_isr_te_k exponential-decay thermal K 33554432.0 0.0 0.0
+
+url https://cedar.openmadrigal.org/isprintService.py?file=/opt/openmadrigal/madroot/experiments4/2024/pfa/24jan24a/pfa20240124.001_lp_fit_10min.001.h5&parms=UT1_UNIX&parms=NE&parms=TI&parms=TE&header=t&user_fullname=researcher&user_email=researcher@example.org&user_affiliation=research
+terms cedar-rules-of-the-road https://cedar.openmadrigal.org/
+format openmadrigal
+origin https://cedar.openmadrigal.org
+on earth 65.13 -147.47 0.211
+no-cadence
+field pfisr_isr_ne_m3 pfisr_isr_ne_m3 inverse-square em 1/m3 33554432.0 0.0 0.0
+field pfisr_isr_ti_k pfisr_isr_ti_k exponential-decay thermal K 33554432.0 0.0 0.0
+field pfisr_isr_te_k pfisr_isr_te_k exponential-decay thermal K 33554432.0 0.0 0.0
