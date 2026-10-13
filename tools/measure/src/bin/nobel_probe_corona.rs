@@ -328,7 +328,9 @@ fn force_of(sources: &[SourceConfig], name: &str) -> Option<u8> {
         for e in &s.extracts {
             if let Extract::Field(fc) = e {
                 if fc.name == name {
-                    return Some(fc.channel_ref);
+                    if let Some(channel_ref) = fc.channel_ref {
+                        return Some(channel_ref);
+                    }
                 }
             }
         }
