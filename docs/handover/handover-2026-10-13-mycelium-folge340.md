@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 340 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: de025d312f3882de6b099dcdc67dea0f38651cf06914f0d75c922302d566435a
+  sha256: ee85e29c580e84e30f7187f3c732d518551733516b52f2943ab6fb471209fffb
   status: live
 -->
 # Handover — Mycelium-Folge 340 (2026-10-13)
@@ -59,7 +59,7 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Trigger:** je Alternative ein Compiler + Block gebaut
 - **Lage:** (gemessen 2026-10-13/340) Future hat **nicht nur 8 Ziele**, sondern die **ganze Alternativ-Landschaft** recherchiert — `state/future/licence-alternativen-all-2026-10-12.md` (116 Zeilen, **vier Tabellen-Wellen, ~70 Zuordnungen** Observable → Alternative → terms → Beleg): (1) Tier-A-Hosts ohne Register-Ersatz (28 Zuordnungen, Z. 15–42), (2) Nachlauf mit dem 111-Modus-Tool (19, Z. 64–82), (3) JWST-Riss + Einzel-Observablen (15, Z. 88–107), (4) ArcGIS-Reste (~12, Z. 109). Fast jede lizenzlose Quelle hat eine **freie institutionelle Alternative** (NASA PD · Zenodo CC-BY-4.0 · VizieR · CTBTO/BGR CC-BY-NC-SA); Fazit der Tabelle: der Operator muss nicht verklagt werden. Die 4 direkt-downloadbaren cc-by-4.0 (BC430 `3558850`, Pioneer 10/11 Doppler `13309156`/`13309040`, Venus-Radar `18176179`) + PDS + PVO-ORSE + JPL SSD sind **ein Teilausschnitt** davon. `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.1~8f771362`; Mountain-Tokens: 8-Ziele echo `xfer:mountain.ses_ece7fc36bffeSJbFG4SLeLvRrR.1~0d43166a`; FUGIN+CfA-CO echo `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.1~1ea1cb21`; `xfer migrate` echo `xfer:mountain.ses_ece7fc36bffeSJbFG4SLeLvRrR.2~1003fb06`.
 - **Blockade:** `url`/`origin`/`compiler` ist Mycelium, `terms`/`field`/`ttl` Mountain; je Block ein Feld-Mapping.
-- **Braucht:** **konkrete Bau-Liste gemessen (2026-10-13/340): `state/mycelium/alternativen-endpunkte-2026-10-13.md`** — je Zeile der maschinenlesbare Endpunkt + Format: **~20 `block`** (direkt baubar: HEASARC-TAP, VizieR-TAP, Zenodo-File-API, USGS/NOAA/EPA-REST, JPL-SBDB/Horizons, CDAWeb-HAPI) · **~30 `compiler`** (Endpunkt steht, neuer Leser nötig) · **~20 `unmeasured`** (Datensatz-ID/Dateipfad fehlt — je ein kurzer Mess-Schritt). Je Alternative ein bounded step (Block bauen, dann Mountains `terms`/`field`).
+- **Braucht:** **konkrete Bau-Liste gemessen (2026-10-13/340): `state/mycelium/alternativen-endpunkte-2026-10-13.md`** — je Zeile der maschinenlesbare Endpunkt + Format: **~20 `block`** (direkt baubar: HEASARC-TAP, VizieR-TAP, Zenodo-File-API, USGS/NOAA/EPA-REST, JPL-SBDB/Horizons, CDAWeb-HAPI) · **~30 `compiler`** (Endpunkt steht, neuer Leser nötig) · **die fehlenden Adressen ausgelesen (2026-10-13/340, drei Taucher): fast alle aufgelöst** (KiDS 17086764, MAGIC PDR1 13898269, HI4PI 5500447, CfA-CO 5501196, DAWN 22734795, MIRAGE 21990891, specsr/miri_wfss/jwstComet 23192226/22803722/20610727, COSMIC-RO/IGETS/BGR/FIRMS/WorldClim/WMM/EDGAR/ECCC/Argo/gamma-cat/EMM/CLPDS/PALAOA/iris je Endpunkt); **nur noch ohne Adresse** (gemessen): LAMOST DR10 (kein Zenodo-Bulk), JADES DR5 line flux (MAST), CHIME/FRB Cat 2 (`chime-frb.ca`), Sheffield NO2, KASI/CLPDS-PDS. Je Alternative ein bounded step (Block bauen, dann Mountains `terms`/`field`).
 
 ### tools-map.md — Träger (Werkzeug-Karte)
 - **Status:** eigen | **Bindung:** eigen
