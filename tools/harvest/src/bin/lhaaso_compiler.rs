@@ -11,18 +11,22 @@ fn parse_f64(cell: &str) -> Option<f64> {
 }
 
 fn col_index(header: &str, name: &str) -> Option<usize> {
-    header.split(',').map(|c| c.trim()).position(|c| c == name)
+    header
+        .split(|c: char| c == ',' || c.is_whitespace())
+        .map(str::trim)
+        .filter(|c| !c.is_empty())
+        .position(|c| c == name)
 }
 
 fn gather(input: &str) -> Result<Vec<SkymapRecord>, String> {
     let text = std::fs::read_to_string(input).map_err(|e| format!("read {input}: {e}"))?;
-    let mut lines = text.lines();
+    let mut lines = text.lines().filter(|l| !l.trim_start().starts_with('#'));
     let header = lines
         .next()
         .ok_or_else(|| format!("{input}: header stays unread"))?;
     let (Some(ra_i), Some(dec_i), Some(n0_i)) = (
-        col_index(header, "Ra"),
-        col_index(header, "Dec"),
+        col_index(header, "Ra").or_else(|| col_index(header, "RAJ2000")),
+        col_index(header, "Dec").or_else(|| col_index(header, "DEJ2000")),
         col_index(header, "N0"),
     ) else {
         return Err(format!("{input}: Ra/Dec/N0 column absent from the header"));
@@ -33,7 +37,10 @@ fn gather(input: &str) -> Result<Vec<SkymapRecord>, String> {
         if line.trim().is_empty() {
             continue;
         }
-        let cells: Vec<&str> = line.split(',').collect();
+        let cells: Vec<&str> = line
+            .split(|c: char| c == ',' || c.is_whitespace())
+            .filter(|s| !s.trim().is_empty())
+            .collect();
         let (Some(ra), Some(dec), Some(n0)) = (
             cells.get(ra_i).and_then(|c| parse_f64(c)),
             cells.get(dec_i).and_then(|c| parse_f64(c)),
@@ -175,7 +182,7 @@ fn main() {
         bytes,
         out_path
     );
-    if ci_mode && !upload_release("casdc.china-vo.org", &out_path) {
+    if ci_mode && !upload_release("vizier.cds.unistra.fr", &out_path) {
         eprintln!("upload: {} did not reach the CDN", out_path);
         std::process::exit(1);
     }
@@ -196,9 +203,17 @@ mod tests {
     #[test]
     fn col_index_finds_trimmed_header() {
         let header = "Source name, components, Ra, Dec, N0, index";
-        assert_eq!(col_index(header, "Ra"), Some(2));
-        assert_eq!(col_index(header, "Dec"), Some(3));
-        assert_eq!(col_index(header, "N0"), Some(4));
+        assert_eq!(col_index(header, "Ra"), Some(3));
+        assert_eq!(col_index(header, "Dec"), Some(4));
+        assert_eq!(col_index(header, "N0"), Some(5));
         assert_eq!(col_index(header, "absent"), None);
+    }
+
+    #[test]
+    fn col_index_reads_the_vizier_asu_tsv_header() {
+        let header = "RAJ2000\tDEJ2000\tN0";
+        assert_eq!(col_index(header, "RAJ2000"), Some(0));
+        assert_eq!(col_index(header, "DEJ2000"), Some(1));
+        assert_eq!(col_index(header, "N0"), Some(2));
     }
 }
