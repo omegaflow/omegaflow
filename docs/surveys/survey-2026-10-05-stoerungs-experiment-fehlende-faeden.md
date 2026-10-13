@@ -2,7 +2,7 @@
   title: Survey — Störungs-Experiment: fehlende Fäden (2026-10-05)
   class: survey
   date: 2026-10-05
-  sha256: 9d7a3432c7116e117a57e7e5cfa2c22eea969d3a990d96b23cf3b0a62d8a71b3
+  sha256: 268d57ad0dbabb0ab3d67859eae1545c4c05272568a73b6213a5c010d70a883a
   status: live
   see-also: docs/concepts/tools-map.md phi/sources.φ docs/handover/archiv/handover-2026-10-05-river-folge93.md
 -->
@@ -41,7 +41,7 @@ Taucher-gemessen am 2026-10-05 (`archive_search --verdict/--sniff`, Register via
 
 | Netz | Register | Endpunkt | Zugang | Format | Verdikt |
 |---|---|---|---|---|---|
-| Infraschall CTBTO IMS/vDEC | `declined_sources.φ:4480` (blocked) — 2026-10-12: `phi/sources.φ` trägt keine ctbto-Zeile | `vdec.ctbto.org` 404; Antrag via `ctbto.org/.../vdec` | Antrag, Wochen (Dritter) | IMS/miniSEED, `maw` 30 min | der Vertrags-Antrag steht aus; Ersatz: BGR PMCC (`gdk.gdi-de.org`, CC BY 4.0) + IRIS IM-Metadaten (`service.iris.edu`) |
+| Infraschall CTBTO IMS/vDEC | `declined_sources.φ:4480` (blocked) — 2026-10-12: `phi/sources.φ` trägt keine ctbto-Zeile | `vdec.ctbto.org` 404; Portal lebt: `ctbto.org/resources/for-researchers-experts/vdec/request-for-data` | Webform + Vertraulichkeitsvertrag (Dritter) | IMS/miniSEED, `maw` 30 min | **Riss (2026-10-13 river-205 gemessen):** `vdec.ctbto.org` 404 bestätigt, aber das Portal lebt — `…/vdec/request-for-data` (direkt 403/Cloudflare, Wayback 200): Webform „VDEC REQUEST FOR ACCESS" + Projektbeschreibung + unterzeichneter Vertrag; Zeitschiene `pending`; Entwurf = Operator-Hand. Ersatz: BGR PMCC + IRIS IM-Metadaten |
 | Infraschall BGR-Produkte | `sources.φ:9315` (`bgr_infrasound.bin`) | `download.bgr.de/...product.zip` (403 direkte) | frei (Proxy-Route) | netCDF, 30 min | gebaut; Origin-Route messen |
 | CEEIN C9 (IAP Prag) | `phi/sources.φ:11124` (`ceein_infrasound`) | `ceein.infp.ro/fdsnws/` 200 | frei | FDSN miniSEED (bis ~2023-10-30) | **gebaut** (2026-10-12 gemessen: Compiler `ceein_infrasound_compiler` + CDN-`url`) |
 | GNSS-TEC global (Madrigal) | nein (nur `re3data`) | `cedar.openmadrigal.org` 206 | frei (Name/E-Mail/Affil.) | HDF5/ASCII, 5 min, 1°×1° | Kandidat, Quellenblock fehlt |
