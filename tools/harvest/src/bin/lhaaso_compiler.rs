@@ -5,9 +5,27 @@ use omegaflow::skymap::{
 };
 use std::io::{BufWriter, Write};
 
+const COMPONENT_WCDA: &str = "WCDA";
+const COMPONENT_KM2A: &str = "KM2A";
+
 fn parse_f64(cell: &str) -> Option<f64> {
     let v: f64 = cell.trim().parse().ok()?;
     if v.is_finite() { Some(v) } else { None }
+}
+
+fn n0_to_si(component: &str, n0: f64) -> Option<f64> {
+    let cm2_per_m2 = 1.0e4_f64;
+    let scale = match component {
+        COMPONENT_WCDA => 1.0e-13,
+        COMPONENT_KM2A => 1.0e-16,
+        _ => return None,
+    };
+    let v = n0 * scale * cm2_per_m2;
+    if v.is_finite() && v > 0.0 {
+        Some(v)
+    } else {
+        None
+    }
 }
 
 fn col_index(header: &str, name: &str) -> Option<usize> {
@@ -18,21 +36,27 @@ fn col_index(header: &str, name: &str) -> Option<usize> {
         .position(|c| c == name)
 }
 
-fn gather(input: &str) -> Result<Vec<SkymapRecord>, String> {
+fn gather(input: &str, component: &str) -> Result<Vec<SkymapRecord>, String> {
     let text = std::fs::read_to_string(input).map_err(|e| format!("read {input}: {e}"))?;
-    let mut lines = text.lines().filter(|l| !l.trim_start().starts_with('#'));
+    let mut lines = text
+        .lines()
+        .filter(|l| !l.trim().is_empty() && !l.trim_start().starts_with('#'));
     let header = lines
         .next()
         .ok_or_else(|| format!("{input}: header stays unread"))?;
-    let (Some(ra_i), Some(dec_i), Some(n0_i)) = (
+    let (Some(ra_i), Some(dec_i), Some(comp_i), Some(n0_i)) = (
         col_index(header, "Ra").or_else(|| col_index(header, "RAJ2000")),
         col_index(header, "Dec").or_else(|| col_index(header, "DEJ2000")),
+        col_index(header, "Comp"),
         col_index(header, "N0"),
     ) else {
-        return Err(format!("{input}: Ra/Dec/N0 column absent from the header"));
+        return Err(format!(
+            "{input}: Ra/Dec/Comp/N0 column absent from the header"
+        ));
     };
     let mut records = Vec::new();
     let mut skipped = 0usize;
+    let mut foreign = 0usize;
     for line in lines {
         if line.trim().is_empty() {
             continue;
@@ -41,6 +65,10 @@ fn gather(input: &str) -> Result<Vec<SkymapRecord>, String> {
             .split(|c: char| c == ',' || c.is_whitespace())
             .filter(|s| !s.trim().is_empty())
             .collect();
+        if cells.get(comp_i).copied() != Some(component) {
+            foreign += 1;
+            continue;
+        }
         let (Some(ra), Some(dec), Some(n0)) = (
             cells.get(ra_i).and_then(|c| parse_f64(c)),
             cells.get(dec_i).and_then(|c| parse_f64(c)),
@@ -49,10 +77,14 @@ fn gather(input: &str) -> Result<Vec<SkymapRecord>, String> {
             skipped += 1;
             continue;
         };
-        if !(0.0..=360.0).contains(&ra) || !(-90.0..=90.0).contains(&dec) || !(n0 > 0.0) {
+        if !(0.0..=360.0).contains(&ra) || !(-90.0..=90.0).contains(&dec) {
             skipped += 1;
             continue;
         }
+        let Some(value) = n0_to_si(component, n0) else {
+            skipped += 1;
+            continue;
+        };
         let (order, ipix) = match SkymapRecord::pixel_of(ra, dec) {
             Some(x) => x,
             None => {
@@ -66,18 +98,19 @@ fn gather(input: &str) -> Result<Vec<SkymapRecord>, String> {
             ipix,
             ra_deg: ra as f32,
             dec_deg: dec as f32,
-            value: n0 as f32,
+            value: value as f32,
         });
     }
     if records.is_empty() {
         return Err(format!(
-            "{input}: no valid source — the asset stays unwritten (0 honored)"
+            "{input}: no {component} source — the asset stays unwritten (0 honored)"
         ));
     }
     eprintln!(
-        "lhaaso: {} sources, {} rows skipped",
+        "lhaaso {component}: {} sources, {} rows skipped, {} other-component rows",
         records.len(),
-        skipped
+        skipped,
+        foreign
     );
     Ok(records)
 }
@@ -118,7 +151,7 @@ fn verify_asset(out_path: &str, records: &[SkymapRecord]) -> Result<(), String> 
     let last = decode_rec(&bytes[last_off..last_off + REC_BYTES])
         .ok_or_else(|| format!("{out_path}: last record stays unread"))?;
     eprintln!(
-        "last source: ra {:.4} dec {:.4} value {:.4} kind {}",
+        "last source: ra {:.4} dec {:.4} value {:.4e} kind {}",
         last.ra_deg, last.dec_deg, last.value, last.kind
     );
     Ok(())
@@ -128,6 +161,7 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let mut input: Option<String> = None;
     let mut out_path: Option<String> = None;
+    let mut component = COMPONENT_WCDA.to_string();
     let mut ci_mode = false;
     let mut i = 0;
     while i < args.len() {
@@ -140,12 +174,24 @@ fn main() {
                 out_path = args.get(i + 1).cloned();
                 i += 1;
             }
+            "--component" => {
+                if let Some(v) = args.get(i + 1) {
+                    component = v.clone();
+                }
+                i += 1;
+            }
             "--ci-mode" => ci_mode = true,
             _ => {}
         }
         i += 1;
     }
-    let usage = "usage: lhaaso_compiler --input <table.csv> --out <lhaaso_sky1.sky1> [--ci-mode]";
+    if component != COMPONENT_WCDA && component != COMPONENT_KM2A {
+        eprintln!(
+            "lhaaso_compiler: component {component} is neither {COMPONENT_WCDA} nor {COMPONENT_KM2A}"
+        );
+        std::process::exit(2);
+    }
+    let usage = "usage: lhaaso_compiler --input <table.tsv> --out <lhaaso_sky1.sky1> [--component WCDA|KM2A] [--ci-mode]";
     let input = match input {
         Some(v) => v,
         None => {
@@ -160,7 +206,7 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let records = match gather(&input) {
+    let records = match gather(&input, &component) {
         Ok(r) => r,
         Err(e) => {
             eprintln!("lhaaso_compiler: {e}");
@@ -211,9 +257,49 @@ mod tests {
 
     #[test]
     fn col_index_reads_the_vizier_asu_tsv_header() {
-        let header = "RAJ2000\tDEJ2000\tN0";
+        let header = "RAJ2000\tDEJ2000\tComp\tN0";
         assert_eq!(col_index(header, "RAJ2000"), Some(0));
         assert_eq!(col_index(header, "DEJ2000"), Some(1));
-        assert_eq!(col_index(header, "N0"), Some(2));
+        assert_eq!(col_index(header, "Comp"), Some(2));
+        assert_eq!(col_index(header, "N0"), Some(3));
+    }
+
+    #[test]
+    fn n0_to_si_scales_each_component_and_refuses_zero() {
+        let w = n0_to_si("WCDA", 21.10).unwrap();
+        assert!((w - 2.11e-8).abs() / 2.11e-8 < 1e-12);
+        let k = n0_to_si("KM2A", 6.23).unwrap();
+        assert!((k - 6.23e-12).abs() / 6.23e-12 < 1e-12);
+        assert_eq!(n0_to_si("WCDA", 0.0), None);
+        assert_eq!(n0_to_si("X", 1.0), None);
+    }
+
+    #[test]
+    fn gather_keeps_only_the_named_component_scaled() {
+        let text = "RAJ2000\tDEJ2000\tComp\tN0\n\
+                    001.86\t+57.00\tKM2A\t0.33\n\
+                    001.86\t+57.00\tWCDA\t1.00\n";
+        let path = std::env::temp_dir().join("lhaaso_component_test.tsv");
+        std::fs::write(&path, text).unwrap();
+        let p = path.to_str().unwrap();
+        let wcda = gather(p, COMPONENT_WCDA).unwrap();
+        assert_eq!(wcda.len(), 1);
+        let w = wcda[0].value as f64;
+        assert!((w - 1.0e-9).abs() / 1.0e-9 < 1e-5);
+        let km2a = gather(p, COMPONENT_KM2A).unwrap();
+        assert_eq!(km2a.len(), 1);
+        let k = km2a[0].value as f64;
+        assert!((k - 3.3e-13).abs() / 3.3e-13 < 1e-5);
+        let _ = std::fs::remove_file(p);
+    }
+
+    #[test]
+    fn gather_refuses_a_header_without_comp() {
+        let text = "RAJ2000\tDEJ2000\tN0\n001.86\t+57.00\t1.00\n";
+        let path = std::env::temp_dir().join("lhaaso_no_comp_test.tsv");
+        std::fs::write(&path, text).unwrap();
+        let p = path.to_str().unwrap();
+        assert!(gather(p, COMPONENT_WCDA).is_err());
+        let _ = std::fs::remove_file(p);
     }
 }
