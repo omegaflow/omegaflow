@@ -14656,6 +14656,7 @@ field redshift redshift inverse-square em 1 33554432.0 0.0 0.0
 field nu_syn nu_syn inverse-square em Hz 33554432.0 0.0 0.0
 field nufnu_syn nufnu_syn inverse-square em erg/cm2/s 33554432.0 0.0 0.0
 field highest_energy highest_energy inverse-square em GeV 33554432.0 0.0 0.0
+field pivot_energy pivot_energy inverse-square em MeV 33554432.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/firms.modaps.eosdis.nasa.gov/MODIS_C6_1_Global_7d.csv
 terms PD https://firms.modaps.eosdis.nasa.gov/

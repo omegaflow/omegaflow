@@ -3216,6 +3216,7 @@ pub fn main_flow() {
                     | "aia"
                     | "eve"
                     | "agrav"
+                    | "fermi_4lac"
                     | "pds4_acs_nir"
                     | "vlf_awesome"
             ) {
