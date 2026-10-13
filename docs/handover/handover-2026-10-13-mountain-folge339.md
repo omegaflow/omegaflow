@@ -3,7 +3,7 @@
   session: Mountain-Linie — JADES-Registerzeile wiederhergestellt, IERS-EOP-Doppellinie als Riss gemessen, adressierte Blöcke mycelium-342/future-249 gefaltet
   class: handover
   date: 2026-10-13
-  sha256: 8c1b6bd7bd1cd313f91a37a8f3c78974205c5d36ce41b90ab92aefdac66ea99c
+  sha256: 7c0204192044b03a98117b22e6fbf431b35a98edc2580b837846f0d7eff57f33
   status: live
 -->
 # Handover — Mountain-Folge 339 (2026-10-13)
@@ -88,9 +88,14 @@ Operator-Wort-Satz — keine Kopie eines Worts.
   jetzt `quantity: Option<f64>` (Präsenz-Flag, 0 honored; `cargo check` 0/0).
   **Riss Rat↔Roster (nicht geglättet):** die UI-Seats **Qwen und Duck** sagen
   **(c) neuer Record-Typ** (bzw. Schema-Erweiterung mit optionalen Feldern) — der Rat sagt
-  **kein neuer Record**. **Z.ai (GLM-5.3 Deep Think Max), Claude und die geteilten
-  Open-Weight-Seats** sind gestellt, die Antworten aber noch **nicht abgeholt** (Reasoning/
-  eingeklappter Container; Session-Kapazität). Rohmaterial `state/stimmen/2026-10-13_*_entsoe.*`.
+  **kein neuer Record**. **Voller Roster gestellt** (Tabs in `mountain-ui`, `focus:false`):
+  DeepSeek Chat + Sakana gesendet; Z.ai (GLM-5.3 Deep Think Max) + Claude gestellt, Antwort
+  noch nicht im DOM; Perplexity · Mistral · Kimi · MiniMax · Lumo · Google AI Studio
+  (Gemini 3.1 Pro) geöffnet, Composer-Füllung seat-abhängig offen; die geteilten
+  `open-weight-ui`-Seats (DeepSeek V4 Pro, GLM 5.3, Inkling 975B, Nemotron, Qwen3.8 2.4T,
+  GPT-OSS 120B, MiMo V2.6 Pro, Mistral Large 4) stehen aus. **Session-Kapazität erreicht** —
+  das Abholen gehört in den nächsten Atom; Tabs + Frage liegen bereit, kein stiller Ausfall.
+  Rohmaterial `state/stimmen/2026-10-13_*_entsoe.*`.
 - **Blockade:** der Riss ist zu tragen; die volle Roster-Runde ist offen.
 - **Braucht:** die Roster-Antworten abholen (Tabs in `mountain-ui` offen), den Riss
   Rat↔Roster benennen, **dann** den dedizierten Intervall-Lese-Arm (`extract.rs`) + den Block
@@ -220,6 +225,7 @@ Origin: mountain-339 (2026-10-13):
 - **„und hast du auch die modelle nach stärke gewichtet oder einfach nur gezählt"** | 2026-10-13 | Operator-Session (mountain 338) — gewichten, nicht zählen; `state/stimmen/2026-10-13_roster2_gewichtet.md`.
 - **Unterbrechung/Resume** | 2026-10-13 | Operator-Session (mountain 339) — drei Taucher abgebrochen und neu dispatcht; kein neues Sach-Wort.
 - **„bitte bei ratsfragen immer noch recherche und vollen max roster (siehe anweisungen) laufen lassen"** | 2026-10-13 | Operator-Session (mountain 339) — **jede Ratsfrage zuerst `archive_search --all` (Text gespeichert), dann der volle UI-Roster (Frontier-Seats + geteilte Open-Weight-Seats), nie Rat in Pro-Solo**; der Rat hält die Struktur, der Roster die Gegenrede, ein Riss wird benannt.
+- **„das ist kein roster … nur die 4 selben tabs … die 2 billigsten"** | 2026-10-13 | Operator-Session (mountain 339) — der Roster ist **die volle Seat-Liste** (Duck · Claude · Qwen · Z.ai · DeepSeek · Mistral · Gemini AI Studio · MiniMax · Kimi · Lumo · Perplexity · Sakana + geteilte Open-Weight-Modelle), nicht die vier Frontier-Tabs; „geantwortet" heißt **alle** Seats oder ein gemessener Nichtantwort-Grund.
 
 ## Abschluss
 
