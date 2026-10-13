@@ -3,7 +3,7 @@
   session: Mountain-Linie — Lizenz-Riegel, ttl-Kadenz, CDN-Zulassung
   class: handover
   date: 2026-10-13
-  sha256: 345ec97b8741ccaa038bcb51c62643935b7a70d1d9ca31b466f086a1f75c908a
+  sha256: 6ca2e9e00239a1a9e0758a3d6b22ca1613d1129642102c15219a07242993cefc
   status: live
 -->
 # Handover — Mountain-Folge 336 (2026-10-13)
