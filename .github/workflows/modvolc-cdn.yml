@@ -1,4 +1,4 @@
-# harvest: format=modvolc_thermal asset=present arm=modvolc_compiler pattern=^modvolc_thermal\.bin$ idempotent=true timeout=180 tag=modis.higp.hawaii.edu
+# harvest: format=modvolc_thermal asset=present arm=modvolc_compiler pattern=^modvolc_thermal\.bin$ idempotent=true timeout=180 tag=nrt3.modaps.eosdis.nasa.gov
 
 name: modvolc-cdn
 
@@ -10,13 +10,13 @@ on:
   workflow_dispatch:
     inputs:
       year:
-        description: 'MODVOLC archive year (2000-2019)'
+        description: 'LANCE MODVOLC archive year (empty = rolling Recent window)'
         type: string
-        default: '2019'
+        default: ''
       doy:
-        description: 'MODVOLC day-of-year directory (001-365)'
+        description: 'day-of-year directory (001-365); read only when year is set'
         type: string
-        default: '001'
+        default: ''
 permissions:
   contents: write
 env:
@@ -32,7 +32,7 @@ jobs:
       - name: Idempotence — skip if the asset already exists on the CDN
         id: idempotence
         run: |
-          if gh release view modis.higp.hawaii.edu --repo omegaflow/sources \
+          if gh release view nrt3.modaps.eosdis.nasa.gov --repo omegaflow/sources \
              --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "modvolc_thermal.bin"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "asset modvolc_thermal.bin already present — manifest skipped"
@@ -44,14 +44,17 @@ jobs:
         if: steps.idempotence.outputs.present == 'false'
         run: |
           set -euo pipefail
-          year="${{ inputs.year }}"; [ -n "$year" ] || year="2019"
-          doy="${{ inputs.doy }}"; [ -n "$doy" ] || doy="001"
-          base="http://modis.higp.hawaii.edu/data/$year/$doy"
+          year="${{ inputs.year }}"; doy="${{ inputs.doy }}"
+          if [ -z "$year" ]; then
+            base="https://nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC/Recent"
+          else
+            base="https://nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC/$year/$doy"
+          fi
           mkdir -p gran
           curl -sSfL --retry 3 --max-time 180 -o listing.html "$base/" \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "modvolc-cdn: day directory $base/ returned void" \
-                 "curl on modis.higp.hawaii.edu did not reach $base/. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 "curl on nrt3.modaps.eosdis.nasa.gov did not reach $base/. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
           grep -oE 'MODVOLC[^"<> ]*\.NRT\.dat' listing.html | sort -u > names.txt
           test -s names.txt || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
@@ -62,13 +65,13 @@ jobs:
             curl -sSfL --retry 3 --max-time 180 -o "gran/$name" "$base/$name"
           done < names.txt
           echo "harvest measured: $(ls gran | wc -l) MODVOLC granules from $base/"
-      - name: Ensure the modis.higp.hawaii.edu release exists on the CDN
+      - name: Ensure the nrt3.modaps.eosdis.nasa.gov release exists on the CDN
         if: steps.idempotence.outputs.present == 'false'
         run: |
-          if ! gh release view modis.higp.hawaii.edu --repo omegaflow/sources >/dev/null 2>&1; then
-            gh release create modis.higp.hawaii.edu --repo omegaflow/sources \
-              --title "modis.higp.hawaii.edu" \
-              --notes "MODVOLC (HIGP) thermal anomalies from MODIS 3.959um/2.1um radiance compiled to the omegaflow modvolc_thermal binary (CDN tag = netloc)"
+          if ! gh release view nrt3.modaps.eosdis.nasa.gov --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create nrt3.modaps.eosdis.nasa.gov --repo omegaflow/sources \
+              --title "nrt3.modaps.eosdis.nasa.gov" \
+              --notes "MODVOLC thermal anomalies (NASA LANCE NRT mirror of the HIGP product) from MODIS 3.959um/2.1um radiance compiled to the omegaflow modvolc_thermal binary (CDN tag = netloc)"
           fi
       - name: Compile and manifest the MODVOLC thermal alerts to the CDN
         if: steps.idempotence.outputs.present == 'false'

@@ -10,7 +10,7 @@ use omegaflow::cdn::upload_release;
 use omegaflow::force::{force_id_of, kernel_id_for_force};
 use std::collections::HashMap;
 
-const NETLOC: &str = "modis.higp.hawaii.edu";
+const NETLOC: &str = "nrt3.modaps.eosdis.nasa.gov";
 const FORMAT: &str = "modvolc_thermal";
 const COMPILER: &str = "tools/harvest/src/bin/modvolc_compiler.rs";
 const FORCE_NAME: &str = "em";
