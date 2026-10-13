@@ -18,6 +18,7 @@ struct EsRecord {
     start_unix: f64,
     end_unix: f64,
     business_type_code: u8,
+    quantity: Option<f64>,
     domain: String,
 }
 
@@ -275,10 +276,14 @@ fn parse_series(block: &str) -> Option<EsRecord> {
     let end_time = tag_text(block, "end_DateAndOrTime.time")?;
     let start_unix = parse_datetime(&start_date, &start_time)?;
     let end_unix = parse_datetime(&end_date, &end_time)?;
+    let quantity = tag_text(block, "quantity")
+        .and_then(|t| t.parse::<f64>().ok())
+        .filter(|v| v.is_finite());
     Some(EsRecord {
         start_unix,
         end_unix,
         business_type_code,
+        quantity,
         domain,
     })
 }
@@ -306,6 +311,13 @@ fn write_bin(records: &[EsRecord]) -> Vec<u8> {
         out.extend_from_slice(&record.start_unix.to_le_bytes());
         out.extend_from_slice(&record.end_unix.to_le_bytes());
         out.push(record.business_type_code);
+        match record.quantity {
+            Some(q) => {
+                out.push(1);
+                out.extend_from_slice(&q.to_le_bytes());
+            }
+            None => out.push(0),
+        }
         let bytes = record.domain.as_bytes();
         let len = bytes.len().min(u16::MAX as usize) as u16;
         out.extend_from_slice(&len.to_le_bytes());
@@ -322,7 +334,7 @@ fn parse_bin(bytes: &[u8]) -> Option<Vec<EsRecord>> {
     let mut off = 8usize;
     let mut out = Vec::with_capacity(count);
     for _ in 0..count {
-        if off + 17 > bytes.len() {
+        if off + 20 > bytes.len() {
             return None;
         }
         let start_unix = f64::from_le_bytes(bytes[off..off + 8].try_into().ok()?);
@@ -331,6 +343,18 @@ fn parse_bin(bytes: &[u8]) -> Option<Vec<EsRecord>> {
         off += 8;
         let business_type_code = bytes[off];
         off += 1;
+        let quantity_flag = bytes[off];
+        off += 1;
+        let quantity = if quantity_flag == 0 {
+            None
+        } else {
+            if off + 8 > bytes.len() {
+                return None;
+            }
+            let q = f64::from_le_bytes(bytes[off..off + 8].try_into().ok()?);
+            off += 8;
+            Some(q)
+        };
         let domain_len = u16::from_le_bytes(bytes[off..off + 2].try_into().ok()?) as usize;
         off += 2;
         if off + domain_len > bytes.len() {
@@ -342,6 +366,7 @@ fn parse_bin(bytes: &[u8]) -> Option<Vec<EsRecord>> {
             start_unix,
             end_unix,
             business_type_code,
+            quantity,
             domain,
         });
     }
@@ -419,7 +444,10 @@ fn main() {
             Ok(bytes) => {
                 let text = String::from_utf8_lossy(&bytes);
                 let series = parse_document(&text);
-                eprintln!("{domain} -> {out_domain}: {} TimeSeries parsed", series.len());
+                eprintln!(
+                    "{domain} -> {out_domain}: {} TimeSeries parsed",
+                    series.len()
+                );
                 records.extend(series);
             }
             Err(msg) => {
@@ -467,7 +495,8 @@ mod tests {
 <start_DateAndOrTime.time>08:30:00Z</start_DateAndOrTime.time>\
 <end_DateAndOrTime.date>2024-01-05</end_DateAndOrTime.date>\
 <end_DateAndOrTime.time>12:00:00Z</end_DateAndOrTime.time>\
-<quantity_Measure_Unit.name>MAW</quantity_Measure_Unit.name></TimeSeries>\
+<quantity_Measure_Unit.name>MAW</quantity_Measure_Unit.name>\
+<quantity>250.0</quantity></TimeSeries>\
 <TimeSeries><businessType>A53</businessType>\
 <biddingZone_Domain.mRID codingScheme=\"A01\">10YFI-1--------U</biddingZone_Domain.mRID>\
 <start_DateAndOrTime.date>2024-01-10</start_DateAndOrTime.date>\
@@ -483,6 +512,8 @@ mod tests {
         assert_eq!(records[0].business_type_code, 2);
         assert_eq!(records[1].business_type_code, 1);
         assert_eq!(records[0].domain, "10YFI-1--------U");
+        assert_eq!(records[0].quantity, Some(250.0));
+        assert_eq!(records[1].quantity, None);
         let expected =
             days_from_civil(2024, 1, 5).unwrap() as f64 * 86400.0 + 8.0 * 3600.0 + 30.0 * 60.0;
         assert!((records[0].start_unix - expected).abs() < 1e-9);
