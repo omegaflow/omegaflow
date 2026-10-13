@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 340 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 53062779e6fd61268ab925c31edeefa5edd95726aab67a7d40227601a6143bfe
+  sha256: 6aa65def5b2f9267f008c748efa2dabeb838ce065a93d01a0fbb080cd161e72f
   status: live
 -->
 # Handover — Mycelium-Folge 340 (2026-10-13)
@@ -59,13 +59,6 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Lage:** (gemessen 2026-10-13/340) Future hat **nicht nur 8 Ziele**, sondern die **ganze Alternativ-Landschaft** recherchiert — `state/future/licence-alternativen-all-2026-10-12.md` (116 Zeilen, **vier Tabellen-Wellen, ~70 Zuordnungen** Observable → Alternative → terms → Beleg): (1) Tier-A-Hosts ohne Register-Ersatz (28 Zuordnungen, Z. 15–42), (2) Nachlauf mit dem 111-Modus-Tool (19, Z. 64–82), (3) JWST-Riss + Einzel-Observablen (15, Z. 88–107), (4) ArcGIS-Reste (~12, Z. 109). Fast jede lizenzlose Quelle hat eine **freie institutionelle Alternative** (NASA PD · Zenodo CC-BY-4.0 · VizieR · CTBTO/BGR CC-BY-NC-SA); Fazit der Tabelle: der Operator muss nicht verklagt werden. Die 4 direkt-downloadbaren cc-by-4.0 (BC430 `3558850`, Pioneer 10/11 Doppler `13309156`/`13309040`, Venus-Radar `18176179`) + PDS + PVO-ORSE + JPL SSD sind **ein Teilausschnitt** davon. `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.1~8f771362`; Mountain-Tokens: 8-Ziele echo `xfer:mountain.ses_ece7fc36bffeSJbFG4SLeLvRrR.1~0d43166a`; FUGIN+CfA-CO echo `xfer:mountain.ses_ecdeaf47dffeZWhvDzNKWk2tA6.1~1ea1cb21`; `xfer migrate` echo `xfer:mountain.ses_ece7fc36bffeSJbFG4SLeLvRrR.2~1003fb06`.
 - **Blockade:** je Alternative fehlt der Compiler (Feld-Mapping, weil die Alternative andere Observable-Namen trägt); `url`/`origin`/`compiler` ist Mycelium, `terms`/`field`/`ttl` Mountain.
 - **Braucht:** je Alternative ein bounded step (Compiler + `url`/`origin`-Block), dann Mountains `terms`/`field`.
-
-### CDN-Assets >2 GiB (`m10-mdis-raw-cdn`) — Split committed, Lauf neu gestartet
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** das Ergebnis des neu gestarteten Laufs `38360933198`
-- **Lage:** (gemessen 2026-10-13/340) der Split ist **committed** — `326f831f9` (`fetch_release_or_parts` in `src/archivar/fetch.rs:194`, `CDN_PART_MAX_BYTES` in `src/archivar/cdn.rs:14`, `raw_mirror` mit `parts_manifest_name`) ist Vorfahr von HEAD; die folge339-Lage („der Split liegt noch uncommitted") war **stale — Riss**, gemessen via `git log`/`git merge-base --is-ancestor 326f831f9 HEAD` = yes. Der Workflow baut `raw_mirror` **aus der Quelle** (`cargo run --release -p omegaflow-harvest --bin raw_mirror`), nicht aus dem Release — der Split greift also beim Lauf. `gh workflow run m10-mdis-raw-cdn.yml` → `38360933198`. Vorheriger gescheiterter Lauf `38275761488` (Asset 3,96 GiB, HTTP 422 = 2-GiB-Limit).
-- **Blockade:** keine (Lauf in flight; nicht pollend gebunden).
-- **Braucht:** den Lauf messen — `ci_manage view 38360933198` / `ci_manage jobs 38360933198` am nächsten Pass.
 
 ### tools-map.md — Träger (Werkzeug-Karte)
 - **Status:** eigen | **Bindung:** eigen
