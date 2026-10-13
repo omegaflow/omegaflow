@@ -2,7 +2,7 @@
 title: Handover — River-Folge 207
 class: handover
 date: 2026-10-13
-sha256: 26817a80bf27f4c6a99d87042f77122203a1f4dedf61d6e8c92f59ce6b52125b
+sha256: 0253ba7d513c239041c1dca58aac4d57a764c1f85f537dea79fbb2cd53984de6
 status: live
 -->
 # Handover — River-Folge 207 (2026-10-13)
@@ -138,7 +138,7 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 ### Große ungelöste Rätsel — Kandidatenliste (Rat + UI-Roster); Aufnahme-Wort offen
 - **Status:** operator-gebunden | **Bindung:** eigen
 - **Trigger:** Wort: der Operator entscheidet, welche Kandidaten als neue Nadeln (ⅩⅤ+) aufgenommen werden.
-- **Lage:** (gemessen 2026-10-13 river-208) `archive_search --all` **zweimal** gelaufen (300 s, 900 s) → **kein Output** (Summe aller Modus-Latenzen, `full:`-Datei erst am Ende — in einer Session nicht tragfähig); Einzelmodi: `--openalex` generisch/verrauscht, `--arxiv` 429, `--tavily` 432, `--github` absent. **Rat (5 Stimmen) + UI (Claude · Duck.ai; Qwen/Z.ai `pending`)** konvergieren auf: **Hubble-Spannung · Geodynamo/Erdkern-Jerks · UHECR-/Multimessenger-Ursprung**; dazu Sonnen-Dynamo/Magnetzyklus, Substurm-/SEP-Raumwetter, PTA-nHz-GW, Little Red Dots, Kosmische Dämmerung/21 cm, Exoplaneten-Radius-Tal. **Verweigert (keine Nadel):** Bewusstseinsfeld, Telepathie, Torsionsfelder, „Schumann-Frequenz steigt"/Erdbeben-Vorläufer, t=0/Planck-Schaum. Material `state/stimmen/2026-10-13-river-grosse-raetsel-roster.md`. **Riss des Rats (Mountain):** der Bestand trägt schon unbearbeitete Nadeln — „kein Zuwachs durch Verschieben"; Aufnahme nur mit Kreuzung + Signal + Surrogat-Null.
+- **Lage:** (gemessen 2026-10-13 river-208) `archive_search --all` **zweimal** gelaufen (300 s, 900 s) → **kein Output** (Summe aller Modus-Latenzen; in einer Session nicht tragfähig); Einzelmodi: `--openalex` generisch/verrauscht, `--arxiv` 429, `--tavily` 432, `--github` absent. **Volle Roster-Runde** (Rat/5 Stimmen + Linien-Seats): **Claude · Duck.ai · Gemini 3.1 Pro · Sakana · Mistral · MiniMax M3 · Perplexity** geantwortet; **Qwen · Z.ai · DeepSeek · Kimi · Lumo `pending`** (Reasoning läuft bzw. kein Composer im gelandeten Zustand). Konvergenz: **Hubble-Spannung · UHECR-/Multimessenger-Ursprung · Geodynamo/Erdkern-Jerks** (in fast allen); dazu Sonnen-Dynamo/Magnetzyklus, Substurm-/CME-/SEP-Raumwetter, Strahlungsgürtel/Van-Allen, TGF, PTA-nHz-GW, Kosmische Dämmerung/21 cm, WHIM/fehlende Baryonen, S8, Exoplaneten-Radius-Tal, Little Red Dots. **Verweigert:** Bewusstseinsfeld, Telepathie, Torsionsfelder, „Schumann-Frequenz steigt", t=0/Planck-Schaum; MiniMax spart zusätzlich Wurmloch/Placebo/DM-Labor/Dunkler-Fluss aus (kein Detektor-Falsifikat). Material `state/stimmen/2026-10-13-river-grosse-raetsel-roster.md`. **Riss des Rats (Mountain):** der Bestand trägt schon unbearbeitete Nadeln — „kein Zuwachs durch Verschieben"; Aufnahme nur mit Kreuzung + Signal + Surrogat-Null.
 - **Blockade:** keine.
 - **Braucht:** Operator-Wort, welche Kandidaten aufgenommen werden (je Kreuzung + Signal + Null); dann Tafel `:353-368` + Bestand nachziehen.
 
