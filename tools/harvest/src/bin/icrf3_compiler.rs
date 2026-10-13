@@ -4,7 +4,8 @@ use std::process::Command;
 
 const SX_URL: &str =
     "https://datacenter.iers.org/products/reference-systems/celestial/icrf3/icrf3sx.txt";
-const K_URL: &str = "https://datacenter.iers.org/products/reference-systems/celestial/icrf3/icrf3k.txt";
+const K_URL: &str =
+    "https://datacenter.iers.org/products/reference-systems/celestial/icrf3/icrf3k.txt";
 
 fn curl(url: &str) -> Option<String> {
     let out = Command::new("curl")
@@ -134,7 +135,9 @@ fn build_row(line: &str, band: &str, stats: &mut RowStats) -> Option<String> {
         stats.skipped += 1;
         return None;
     }
-    if !(0.0..90.0).contains(&dec_d) || !(0.0..60.0).contains(&dec_m) || !(0.0..60.0).contains(&dec_s)
+    if !(0.0..90.0).contains(&dec_d)
+        || !(0.0..60.0).contains(&dec_m)
+        || !(0.0..60.0).contains(&dec_s)
     {
         stats.skipped += 1;
         return None;
@@ -151,7 +154,10 @@ fn build_row(line: &str, band: &str, stats: &mut RowStats) -> Option<String> {
         ("name".into(), json_str(&name)),
         ("ivs".into(), json_str(&ivs)),
         ("band".into(), json_str(band)),
-        ("defining".into(), if defining { "1".into() } else { "0".into() }),
+        (
+            "defining".into(),
+            if defining { "1".into() } else { "0".into() },
+        ),
         ("ra_deg".into(), format!("{ra_deg}")),
         ("dec_deg".into(), format!("{dec_deg}")),
         ("e_ra_s".into(), format!("{e_ra_s}")),

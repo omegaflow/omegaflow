@@ -37,7 +37,9 @@ fn is_hostname(h: &str) -> bool {
 }
 
 fn ends_with_any(h: &str, suffixes: &[&str]) -> bool {
-    suffixes.iter().any(|s| h == *s || h.ends_with(&format!(".{s}")))
+    suffixes
+        .iter()
+        .any(|s| h == *s || h.ends_with(&format!(".{s}")))
 }
 
 struct Block {
@@ -88,7 +90,11 @@ const PDS: &[&str] = &[
 ];
 const VIZIER: &[&str] = &["cds.unistra.fr", "unistra.fr", "cfa.harvard.edu"];
 const IOOS: &[&str] = &["ioos.us"];
-const GITHUB: &[&str] = &["github.com", "raw.githubusercontent.com", "media.githubusercontent.com"];
+const GITHUB: &[&str] = &[
+    "github.com",
+    "raw.githubusercontent.com",
+    "media.githubusercontent.com",
+];
 
 fn json_str(hay: &str, key: &str) -> Option<String> {
     let needle = format!("\"{key}\":");
@@ -329,9 +335,7 @@ fn propose(
         );
     }
     if url.contains("/erddap/") {
-        if let Some(v) = memo(cache, &format!("erddap:{host}"), || {
-            erddap_licence(&url)
-        }) {
+        if let Some(v) = memo(cache, &format!("erddap:{host}"), || erddap_licence(&url)) {
             let t = if v.len() > 60 {
                 "noaa-open-disclaimer".to_string()
             } else {
@@ -341,7 +345,10 @@ fn propose(
         }
     }
     if host == "zenodo.org" {
-        let id = url.split("/records/").nth(1).and_then(|s| s.split('/').next());
+        let id = url
+            .split("/records/")
+            .nth(1)
+            .and_then(|s| s.split('/').next());
         if let Some(id) = id {
             if let Some(v) = memo(cache, &format!("zenodo:{id}"), || zenodo_licence(&url)) {
                 return (v, "zenodo".to_string());
@@ -479,7 +486,9 @@ fn main() {
         let oh = host_of(&b.origin);
         let oh_is = is_hostname(&oh);
         let rh = host_of(&b.terms_ref);
-        let is_cdn = b.url.starts_with("https://github.com/omegaflow/sources/releases/download/");
+        let is_cdn = b
+            .url
+            .starts_with("https://github.com/omegaflow/sources/releases/download/");
         let host = if oh_is {
             oh.clone()
         } else if is_cdn && is_hostname(&rh) {

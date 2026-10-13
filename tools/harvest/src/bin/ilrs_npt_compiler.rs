@@ -219,13 +219,8 @@ fn parse_crd(bytes: &[u8]) -> Option<Vec<Npt>> {
 
                 let epoch_utc = match (session, session_end, start_sod, sec_of_day) {
                     (Some(s), end, Some(sod0), Some(sod)) => {
-                        let day = if sod < sod0 {
-                            end.unwrap_or(s)
-                        } else {
-                            s
-                        };
-                        days_from_civil(day.0, day.1, day.2)
-                            .map(|days| days as f64 * 86400.0 + sod)
+                        let day = if sod < sod0 { end.unwrap_or(s) } else { s };
+                        days_from_civil(day.0, day.1, day.2).map(|days| days as f64 * 86400.0 + sod)
                     }
                     _ => None,
                 };
@@ -596,9 +591,7 @@ fn selftest() {
         eprintln!("selftest: a truncated bin reads back");
         std::process::exit(1);
     }
-    eprintln!(
-        "ilrs_npt_compiler: selftest passes (CRD normal points -> epoch/round-trip series)"
-    );
+    eprintln!("ilrs_npt_compiler: selftest passes (CRD normal points -> epoch/round-trip series)");
 }
 
 fn main() {

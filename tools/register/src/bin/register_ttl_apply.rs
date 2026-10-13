@@ -9,7 +9,9 @@ fn usage() {
     eprintln!("  TSV columns: MATCH<TAB>VALUE");
     eprintln!("  MATCH = substring of the block's `url`; VALUE = `no-cadence` or seconds");
     eprintln!("  first matching rule wins; rewrites the block's ttl/no-cadence line (or adds one)");
-    eprintln!("  without --write the register is only reported (source-first cadence verdict stays the owner's)");
+    eprintln!(
+        "  without --write the register is only reported (source-first cadence verdict stays the owner's)"
+    );
 }
 
 fn apply_block(block: &[String], rules: &[(String, String)]) -> (Vec<String>, bool, bool) {
