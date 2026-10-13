@@ -14414,20 +14414,6 @@ field 21 bk18_p217xp217_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
 field 22 bk18_p353xp353_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
 field 23 bk18_p353xp353_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/casda.csiro.au/lotss_dr2.votable
-terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
-origin https://casda.csiro.au/casda_vo_tools/tap/sync
-format tap
-at sun
-no-cadence
-
-url https://github.com/omegaflow/sources/releases/download/cddis.nasa.gov/iers_eop.bin
-terms PD https://cddis.nasa.gov/
-origin https://cddis.nasa.gov/archive/products/iers/
-format ascii
-at earth
-no-cadence
-
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format catalog_des_y6
@@ -29085,13 +29071,6 @@ field JADES-GS-z13-0/data_f335m.0.mean JADES-GS-z13-0/data_f335m.0.mean inverse-
 field JADES-GS-z13-0/data_f356w.0.mean JADES-GS-z13-0/data_f356w.0.mean inverse-square em njy 33554432.0 0.0 0.0 8.401403e+13
 field JADES-GS-z13-0/data_f410m.0.mean JADES-GS-z13-0/data_f410m.0.mean inverse-square em njy 33554432.0 0.0 0.0 7.343826e+13
 field JADES-GS-z13-0/data_f444w.0.mean JADES-GS-z13-0/data_f444w.0.mean inverse-square em njy 33554432.0 0.0 0.0 6.806790e+13
-
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/joint-crab-v0.1.zip
-terms BSD-3-Clause-Clear https://zenodo.org/records/2381863
-origin https://zenodo.org/api/records/2381863/files/open-gamma-ray-astro/joint-crab-v0.1.zip/content
-format magic_dl3
-at sun
-no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/jwstcomet-v1.1.zip
 terms MIT https://zenodo.org/records/20610727
