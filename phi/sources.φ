@@ -29731,6 +29731,6 @@ field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 0.0 0.0
 url https://api.phys.ucalgary.ca/hapi/data?id=NORSTAR_RIOMETER_K2@CHUR&start={week_ago}&stop={now}&format=csv
 terms 10.11575/AFYX-M516 https://data.phys.ucalgary.ca/data/how_to_cite.html
 ttl 5
-on earth 58.76 -94.09 0
+on earth 58.76 -94.09
 hapi absorption=ucalgary_riometer_absorption_db
 field ucalgary_riometer_absorption_db ucalgary_riometer_absorption_db inverse-square em dB 5 0.0 0.0
