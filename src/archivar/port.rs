@@ -4166,7 +4166,7 @@ mod probe_classify_tests {
 
     #[test]
     fn sky_maps_and_surveys_classify() {
-        assert_eq!(probe_classify("fugin_moment0"), ("em", "K.m/s", 31536000.0));
+        assert_eq!(probe_classify("fugin_moment0"), ("em", "k.m/s", 31536000.0));
         assert_eq!(
             probe_classify("lhaaso_sky1"),
             ("em", "m-2.s-1.tev-1", 31536000.0)
