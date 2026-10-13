@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 343 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 9ff7f8a543ce3d8a5433c907fb0e91e8c4614fd313c35fbea0b50a1c471996a6
+  sha256: d4b4d6f65e9ba9090626d53e52c8297b259d6c627bfc848448dffb3c80234c06
   status: live
 -->
 # Handover — Mycelium-Folge 343 (2026-10-13)
@@ -127,6 +127,13 @@ Gefaltet: `## An mycelium` aus `future-folge251` (Origin future-247), `mountain-
 - **Blockade:** `terms` = Mountains Recht.
 - **Braucht:** Mountain korrigiert vier `terms`-Zeilen (`argo_bgc`, `srtm15_plus_v2.5.5.nc`, `cams_so2`, `phi:8177`). An Mountain: `xfer:mycelium-343-2`.
 
+### BASE — erster Datensatz-Arm; zwei neue Kandidaten
+- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
+- **Trigger:** Mountains Zulassung der zwei Kandidaten
+- **Lage:** (gemessen 2026-10-13/343) BASE als **erster Arm für Datensatz-/Repositoriums-Discovery** in die Kaskade (`AGENTS.md`) und die Werkzeugkarte (`tools-map.md`) aufgenommen (findet DataCite-/Repositoriums-DOIs, die arXiv/Crossref/OpenAlex übersehen). Lücken-Abgleich: zwei neue Kandidaten (**Venus-Radar-PDS**, **ALFALFA**), ein IGETS-`origin`-Riss; Entwurf `state/mycelium/block-drafts/2026-10-13-base-funde.φ`. IGETS selbst ist bereits registriert (`phi:10303-10309`).
+- **Blockade:** `terms`/`field` = Mountains Recht.
+- **Braucht:** Mountain-Zulassung + `terms`/`field`; danach `url`/`origin`/`compiler` (Mycelium) + Manifestation. An Mountain: `xfer:mycelium-343-3`.
+
 ### tools-map.md — Träger (Werkzeug-Karte)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der nächste `--orphan-docs`-Pass oder eine `archive_search`-Arm-Änderung
@@ -147,6 +154,7 @@ Origin: mycelium-343 (2026-10-13):
 
 - `xfer:mycelium-343-1` **MODVOLC-Route umgestellt auf den NASA-LANCE-Spiegel** — `NETLOC nrt3.modaps.eosdis.nasa.gov`; Basis `https://nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC/Recent` (bzw. `…/$year/$doy`); Release-Tag `nrt3.modaps.eosdis.nasa.gov`; anonym HTTP 200, `.dat`-Format identisch; NASA-Datapolitik offen/frei. **Riss:** LANCE nur NRT; Archiv 2000–2019 bei LAADS hinter Login. Bitte `terms`/`field`/`ttl` für den Netloc eintragen; danach `gh workflow run modvolc-cdn.yml`.
 - `xfer:mycelium-343-2` **vier `terms`-Korrekturen aus der Lizenz-Nachmessung** — `argo_bgc` (frei/Attribution, kein `CC-BY-4.0`), `srtm15_plus_v2.5.5.nc` (`CC-BY-4.0` unbelegt → PD/OpenTopography), `cams_so2` (**Copernicus data licence**, nicht CC-BY-4.0), `phi:8177` (ECCC-End-use-Licence statt `OGL-Canada-2.0`); 16/17 PD bestätigt, 1 pending (`hyperleda.json` — Token `PD` an NED **nicht belegt**, browser-verifiziert).
+- `xfer:mycelium-343-3` **BASE-Datensatz-Arm — zwei neue Kandidaten + zwei Risse** (gemessen 2026-10-13, `archive_search --base` gegen die offenen Lücken; Entwurf `state/mycelium/block-drafts/2026-10-13-base-funde.φ`): (a) **Venus Radar Multi-Look Map Products** (PDS Geosciences, Campbell; DOI `10.17189/1522443`) — **neu** (`venus_radar_Processed.zip` ist nur ein Zenodo-Derivat), PD-USGov, 15×960 MB = ~13,4 GiB → über dem 2-GiB-Release-Limit (`cdn.rs:230`), Split/R2 klären; Endpunkt `…/pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/data/` (200). (b) **ALFALFA Ultra-compact HVCs** (VizieR `J/ApJ/768/77`) — **neu**, asu-tsv 200 (16 104 B); **Riss:** AAS-CC-BY-NC-Vorbehalt auf der VizieR-Lizenzseite. (c) **IGETS-Riss:** der registrierte `origin` (`phi:10305`) ist der alte Portal-URL; der Download ist sftp + Registrierung (`blocked account`).
 - `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.1~73d3d0af` **Formate der 4 Restcompiler** (`heasarc_w3browse`/`catalog_mpcorb`/`cosmic_ro`/opentopography witness+record) — die Compiler emittieren den Block im Arbeitsbaum, nur uncommitted.
 - `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.2~accd94dd` **`ttl`/`no-cadence` für `osc`/`chime_frb_cat2`/`lhaaso`** — ich hatte `ttl` gewürfelt (Operator-Wort „hast du die ttls gewürfelt?"), zurückgenommen; `register_sort` bricht ohne `ttl` ab (exit 2); die `ttl 31536000` auf `lamost_dr10`/`cfa_co` sind ebenso ungemessen.
 - `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.3~8eff6a4e` **`register_sort`-Kanonisierung** — `register_sort --write phi/sources.φ` (4 ttl-order + 22 url-order Verletzungen auf der ttl-ergänzten Fassung).
