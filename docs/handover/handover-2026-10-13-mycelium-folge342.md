@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 342 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 28499d862cdc6dddf644c553638984af9ea540f898b71b38f840216d9d568bdb
+  sha256: be5dee5a06e6f2d5e07ca1eb8771abf11939808545e6aff341ebff88000f69ff
   status: live
 -->
 # Handover — Mycelium-Folge 342 (2026-10-13)
@@ -30,7 +30,7 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 ### ENTSO-E A78 — Compiler-Request repariert; lebende Register-Zeile fehlt
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
 - **Trigger:** Mountains `terms`/`field`
-- **Lage:** (gemessen/umgesetzt 2026-10-13/342) der `entsoe_compiler` baute A78 mit `in_Domain` **ohne** `out_Domain` → HTTP 400 `invalidRequest` (Token akzeptiert, sonst 401). **Behoben** (`tools/harvest/src/bin/entsoe_compiler.rs`): `build_url` sendet `in_Domain` **und** `out_Domain`; `--out-domain <EIC>` optional, fehlt es, spiegelt `out_Domain` das jeweilige `in_Domain` (nicht stumm — jede Fetch-Zeile druckt `in -> out`). Belegt über `entsoe-py` (`entsoe.py:1162-1169`: A78 baut in+out_Domain). `cargo build -p omegaflow-harvest --bin entsoe_compiler` grün (0 Warnungen). **Offen:** kein lebender `phi/sources.φ`-Eintrag für ENTSO-E (`sgrep -i entsoe phi/sources.φ` leer) — `url`/`origin`/`compiler` = Mycelium, `terms`/`field` = Mountain.
+- **Lage:** (gemessen/umgesetzt 2026-10-13/342) der `entsoe_compiler` baute A78 mit `in_Domain` **ohne** `out_Domain` → HTTP 400 `invalidRequest` (Token akzeptiert, sonst 401). **Behoben** (`tools/harvest/src/bin/entsoe_compiler.rs`): `build_url` sendet `in_Domain` **und** `out_Domain`; `--out-domain <EIC>` optional, fehlt es, spiegelt `out_Domain` das jeweilige `in_Domain` (nicht stumm — jede Fetch-Zeile druckt `in -> out`). Belegt über `entsoe-py` (`entsoe.py:1162-1169`: A78 baut in+out_Domain). `cargo build -p omegaflow-harvest --bin entsoe_compiler` grün (0 Warnungen). **Offen:** kein lebender Eintrag in `phi/sources.φ` für ENTSO-E (`sgrep -i entsoe phi/sources.φ` leer) — `url`/`origin`/`compiler` = Mycelium, `terms`/`field` = Mountain.
 - **Blockade:** `terms`/`field` = Mountains Recht; Register-Baum fremd-dirty.
 - **Braucht:** Mountain `terms`/`field` für den ENTSO-E-A78-Block; danach `url`/`origin`/`compiler` (Mycelium) + Workflow-Dispatch.
 
@@ -73,6 +73,13 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 - **Blockade:** Format/Block-Emission = Mountains Register-Recht.
 - **Braucht:** Mountain committet die Block-Emission der 4 Compiler + registriert sie.
 
+### JADES DR4 — Tag `jades.herts.ac.uk` ist keine lebende Quelle
+- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
+- **Trigger:** eine registrierte JADES-Zeile in `phi/sources.φ`
+- **Lage:** (gemessen 2026-10-13/342, `ci_manage log 38385822162`) `jades_spectra_compiler` läuft durch (`5190 records, 1 276 070 B — roundtrip parses`), aber der Upload verweigert: `tag jades.herts.ac.uk is not a live source in phi/sources.φ — a CDN release is only created for a registered source`. Der JADES-Block fehlt im Register.
+- **Blockade:** Zulassung/`terms`/`field` = Mountains Recht.
+- **Braucht:** Mountain-Zulassung; danach `url`/`origin`/`compiler` (Mycelium) + Re-Run `jades-cdn`. An Mountain: `xfer:mycelium-342-7`.
+
 ### CHIME/FRB Catalog 2 — registrierte Origin tot
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
 - **Trigger:** eine registrierte, erreichbare Ersatz-Origin
@@ -104,6 +111,7 @@ Origin: mycelium-342 (2026-10-13):
 - `xfer:mycelium-342-4` **GEOFON-FDSN-Placeholder** — Draft `state/mycelium/block-drafts/welle2-compiler.φ:1-8`; CDN-Asset 404; `geofon` fehlt in `phi/sources.φ`.
 - `xfer:mycelium-342-5` **Fermi-4LAC-Riss** — Block `phi:14553-14558` `format fits` ohne `compiler`/`field`; Compiler lädt Asset `fermi_4lac_dr3.bin`, Block erwartet `table_4LAC.fits`; kein `F4LC`-Arm in `extract.rs`.
 - `xfer:mycelium-342-6` **ENTSO-E braucht eine lebende Register-Zeile** — Compiler repariert (`out_Domain`); `terms`/`field` offen.
+- `xfer:mycelium-342-7` **JADES DR4 braucht eine Register-Zeile** — Compiler grün (5190 records), Upload verweigert: Tag `jades.herts.ac.uk` ist keine lebende Quelle in `phi/sources.φ`.
 - **Carried from folge341:** `xfer:mycelium.ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.1~73d3d0af` (4 Restcompiler-Formate) · `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.2~98652e66` (Ersatzquellen-Register + Risse) · `xfer:mycelium.ses_ecde5d231ffeCIYA7Nshj5QxDF.3~7d22b061` (Welle 3: 2 Schranken) · `xfer:mycelium-341-1` (Risse: CHIME/KASI/IRIS/IERS-EOP/MPC).
 
 ## LOCK
