@@ -1,11 +1,117 @@
 use crate::json;
 use crate::net::{get, urlencode};
+use std::fs::{self, OpenOptions};
+use std::io::Write;
+use std::thread;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-pub fn base_lines(query: &str, max: usize) -> Vec<String> {
+const BASE_GATE_DIR: &str = "/tmp/opencode";
+const BASE_GATE_LOCK: &str = "/tmp/opencode/archive_search_base.lock";
+const BASE_GATE_STAMP: &str = "/tmp/opencode/archive_search_base.ts";
+const BASE_GATE_SPACING_SECS: f64 = 1.1;
+const BASE_GATE_WAIT_SECS: f64 = 5.0;
+const BASE_GATE_STALE_SECS: f64 = 10.0;
+const BASE_GATE_POLL: Duration = Duration::from_millis(50);
+
+fn unix_now() -> Option<f64> {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .ok()
+        .map(|d| d.as_secs_f64())
+}
+
+fn read_stamp() -> Option<f64> {
+    fs::read_to_string(BASE_GATE_STAMP)
+        .ok()?
+        .trim()
+        .parse::<f64>()
+        .ok()
+}
+
+fn write_stamp() {
+    if let Some(now) = unix_now() {
+        if let Ok(mut f) = OpenOptions::new()
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(BASE_GATE_STAMP)
+        {
+            let _ = f.write_all(format!("{now}\n").as_bytes());
+        }
+    }
+}
+
+fn space_requests() {
+    if let Some(prior) = read_stamp() {
+        if let Some(now) = unix_now() {
+            let wait = BASE_GATE_SPACING_SECS - (now - prior);
+            if wait > 0.0 {
+                thread::sleep(Duration::from_secs_f64(wait));
+            }
+        }
+    }
+}
+
+fn release_if_stale() {
+    let stale = match read_stamp() {
+        Some(ts) => match unix_now() {
+            Some(now) => now - ts > BASE_GATE_STALE_SECS,
+            None => false,
+        },
+        None => true,
+    };
+    if stale {
+        let _ = fs::remove_file(BASE_GATE_LOCK);
+    }
+}
+
+fn base_gate() {
+    if fs::create_dir_all(BASE_GATE_DIR).is_err() {
+        return;
+    }
+    let entered = unix_now();
+    loop {
+        match OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(BASE_GATE_LOCK)
+        {
+            Ok(mut held) => {
+                space_requests();
+                if let Some(now) = unix_now() {
+                    let _ = held.write_all(format!("{now}\n").as_bytes());
+                }
+                drop(held);
+                let _ = fs::remove_file(BASE_GATE_LOCK);
+                return;
+            }
+            Err(_) => {
+                let waited = match (entered, unix_now()) {
+                    (Some(a), Some(b)) => b - a,
+                    _ => BASE_GATE_WAIT_SECS,
+                };
+                if waited >= BASE_GATE_WAIT_SECS {
+                    release_if_stale();
+                    space_requests();
+                    write_stamp();
+                    eprintln!(
+                        "base gate: lock held {waited:.1}s — spacing enforced without the lock"
+                    );
+                    return;
+                }
+                thread::sleep(BASE_GATE_POLL);
+            }
+        }
+    }
+}
+
+pub fn base_lines(query: &str, max: usize, key: &str) -> Vec<String> {
+    base_gate();
     let url = format!(
-        "https://api.base-search.net/cgi-bin/BaseHttpSearchInterface.fcgi?func=PerformSearch&query={}&format=json&hits={}",
+        "https://api.base-search.net/cgi-bin/BaseHttpSearchInterface.fcgi?func=PerformSearch&query={}&format=json&hits={}&apikey={}",
         urlencode(query),
-        max
+        max,
+        urlencode(key)
     );
     match get(&url, &["-H", "User-Agent: omegaflow-archive-search"], "40") {
         Some(f) if f.status == Some(200) => match json::parse(&f.body) {

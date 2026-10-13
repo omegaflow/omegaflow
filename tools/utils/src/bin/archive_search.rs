@@ -926,7 +926,7 @@ fn usage() {
         "  --marginalia Marginalia public search (api.marginalia-search.com), keyless JSON; url + title/description/quality (CC-BY-NC-SA)"
     );
     eprintln!(
-        "  --base      BASE — Bielefeld Academic Search Engine (~400M open documents, api.base-search.net), keyless JSON; url + title/authors/year/doi"
+        "  --base      BASE — Bielefeld Academic Search Engine (~400M open documents, api.base-search.net), JSON with BASE_API_KEY; url + title/authors/year/doi"
     );
     eprintln!(
         "  --searxng   SearXNG meta-search (instance from $OMEGAFLOW_SEARXNG, else public JSON instances; keyless); url + title/content/engine"
