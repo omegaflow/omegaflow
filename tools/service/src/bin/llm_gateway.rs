@@ -604,28 +604,31 @@ fn json_string_values(body: &str, key: &str) -> Vec<String> {
     out
 }
 
-fn list_models(secrets: &HashMap<String, String>, auth: &str) -> String {
-    let mut items: Vec<String> = Vec::new();
+fn models_url(r: &Route, secrets: &HashMap<String, String>) -> Option<(String, &'static str)> {
+    if r.prefix == "cf" {
+        return Some((
+            format!(
+                "{}/{}/ai/models/search?per_page=200",
+                r.base_url,
+                cf_account(secrets)
+            ),
+            "name",
+        ));
+    }
+    let base = effective_base(r, secrets)?;
+    Some((format!("{}/models", base), "id"))
+}
+
+fn catalog(secrets: &HashMap<String, String>, auth: &str) -> Vec<(&'static Route, String)> {
+    let mut out: Vec<(&'static Route, String)> = Vec::new();
     for r in ROUTES {
         let key = match key_for(r, secrets, auth) {
             Some(k) => k,
             None => continue,
         };
-        let base = match effective_base(r, secrets) {
-            Some(b) => b,
+        let (url, id_key) = match models_url(r, secrets) {
+            Some(t) => t,
             None => continue,
-        };
-        let (url, id_key) = if r.prefix == "cf" {
-            (
-                format!(
-                    "{}/{}/ai/models/search?per_page=200",
-                    r.base_url,
-                    cf_account(secrets)
-                ),
-                "name",
-            )
-        } else {
-            (format!("{}/models", base), "id")
         };
         let (code, body) = match curl_get(&url, &key) {
             Some(t) => t,
@@ -644,16 +647,84 @@ fn list_models(secrets: &HashMap<String, String>, auth: &str) -> String {
             ids.len()
         );
         for id in ids {
-            items.push(format!(
-                "{{\"id\":\"{}/{}\",\"object\":\"model\",\"owned_by\":\"{}\"}}",
-                r.prefix, id, r.provider
-            ));
+            out.push((r, id));
         }
     }
+    out
+}
+
+fn arg_value(args: &[String], flag: &str) -> Option<String> {
+    let i = args.iter().position(|a| a == flag)?;
+    args.get(i + 1).cloned()
+}
+
+fn probe(
+    secrets: &HashMap<String, String>,
+    auth: &str,
+    provider_filter: &Option<String>,
+    model_filter: &Option<String>,
+) {
+    println!("provider\tmodel\thttp\tms");
+    let mut reachable = 0u32;
+    let mut probed = 0u32;
+    for (r, id) in catalog(secrets, auth) {
+        if let Some(pf) = provider_filter {
+            if !pf.split(',').any(|p| p.trim() == r.prefix) {
+                continue;
+            }
+        }
+        if let Some(mf) = model_filter {
+            if !id.contains(mf.as_str()) {
+                continue;
+            }
+        }
+        let key = match key_for(r, secrets, auth) {
+            Some(k) => k,
+            None => continue,
+        };
+        let base = match effective_base(r, secrets) {
+            Some(b) => b,
+            None => continue,
+        };
+        let url = format!("{}/chat/completions", base);
+        let body = format!(
+            "{{\"model\":\"{id}\",\"messages\":[{{\"role\":\"user\",\"content\":\"ping\"}}],\"max_tokens\":4}}"
+        );
+        let t0 = Instant::now();
+        let (code, _headers, _resp) = curl_post(&url, &key, &body);
+        let ms = t0.elapsed().as_millis();
+        if (200..300).contains(&code) {
+            reachable += 1;
+        }
+        probed += 1;
+        println!("{}\t{}\t{}\t{}", r.prefix, id, code, ms);
+    }
+    eprintln!("llm_gateway --probe: {reachable}/{probed} reachable");
+}
+
+fn list_models(secrets: &HashMap<String, String>, auth: &str) -> String {
+    let items: Vec<String> = catalog(secrets, auth)
+        .into_iter()
+        .map(|(r, id)| {
+            format!(
+                "{{\"id\":\"{}/{}\",\"object\":\"model\",\"owned_by\":\"{}\"}}",
+                r.prefix, id, r.provider
+            )
+        })
+        .collect();
     format!("{{\"object\":\"list\",\"data\":[{}]}}", items.join(","))
 }
 
 fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    if args.iter().any(|a| a == "--probe") {
+        let secrets = load_secrets();
+        let auth = load_auth_text();
+        let provider = arg_value(&args, "--provider");
+        let model = arg_value(&args, "--model");
+        probe(&secrets, &auth, &provider, &model);
+        return;
+    }
     let port: u16 = match std::env::var("OMEGAFLOW_GATEWAY_PORT") {
         Ok(v) => match v.parse() {
             Ok(p) => p,
