@@ -2,7 +2,7 @@
   title: Auftrag — PII-History-Rewrite (private Operator-Adresse)
   class: auftrag
   date: 2026-09-28
-  sha256: c86f251f20a6ce94ac25cefa328a737f69552238c528a1dbdaa91e15f4985990
+  sha256: aee7dc94c08c67b0adae8d0cdcaf8e9aa2dce12842c7530b4290159ae7c042ee
   status: live
   see-also: docs/zustand/external-state.md .gitignore
 -->
@@ -81,3 +81,32 @@ MAC-Muster (`xx:xx:xx:xx:xx:xx`, Trenner `:` oder `_`) als `pii`; der Platzhalte
 `pii_device_mac`/`pii_device_mac_path` (blockiert) und
 `pii_device_mac_placeholder`/`pii_device_mac_underscore_placeholder` (passieren),
 Tests im selben Atom; `cargo check --tests` lokal 0/0, Lauf über CI.
+
+## Nachtrag (2026-10-13, River-Folge 205) — institutionelle Personen-Mailbox
+
+Neues PII gefunden: die Kontaktadresse einer Person (`Vorname.Nachname@Institution`)
+stand kurz im getrackten Handover `docs/handover/handover-2026-10-13-river-folge203.md`
+— hinzugefügt `c0fe34e97` (auch die Commit-Nachricht trägt sie), weitergetragen
+`6b3d631a8`; in HEAD redigiert `c7e5c25ad`, die Rollen-/Institutsnennung und der
+Verweis auf die private Ablage restlos entfernt `3102c87e5`. Der laufende Baum ist
+frei; **die Historie ab `c0fe34e97` (Blob + Commit-Nachricht) trägt sie weiter** —
+sie fällt in denselben Rewrite. Der Wert steht nur in `state/mail/` (privat, nie
+getrackt).
+
+Gate: neue PII-Klasse `person_mailbox_hit` (`src/gate/commit_gate.rs`, `a8a3d16da`)
+— eine Person-Mailbox (lokales Teil = zwei punkt-getrennte Namenstoken) wird als
+`pii` geblockt, reine Rollen-Adressen (punktlos) passieren; Fixture
+`pii_person_mailbox` + Test im selben Atom.
+
+Erweiterung des `--tree-filter` (den Wert aus `state/mail/` exportieren, nie ins
+Skript schreiben):
+
+```bash
+export KONTAKT_ADDR='<aus state/mail/...>'
+git grep -lI "$KONTAKT_ADDR" | xargs -r sed -i "s/$KONTAKT_ADDR/<kontakt-adresse>/g"
+```
+
+Proportionalität (benannt, nicht verdeckt): dies ist eine **öffentliche
+Rollen-Adresse** einer Universität (kein privater Kanal, kein Geheimnis) — die
+Dringlichkeit ist niedriger als bei der privaten Operator-Adresse; das Operator-Wort
+2026-10-13 („ja raus") nimmt sie in den Lauf auf.
