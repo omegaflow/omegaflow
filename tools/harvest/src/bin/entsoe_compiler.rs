@@ -348,14 +348,20 @@ fn parse_bin(bytes: &[u8]) -> Option<Vec<EsRecord>> {
     Some(out)
 }
 
-fn build_url(token: &str, domain: &str, period_start: &str, period_end: &str) -> String {
+fn build_url(
+    token: &str,
+    in_domain: &str,
+    out_domain: &str,
+    period_start: &str,
+    period_end: &str,
+) -> String {
     format!(
-        "{API}?securityToken={token}&documentType={DOCUMENT_TYPE}&in_Domain={domain}&periodStart={period_start}&periodEnd={period_end}"
+        "{API}?securityToken={token}&documentType={DOCUMENT_TYPE}&in_Domain={in_domain}&out_Domain={out_domain}&periodStart={period_start}&periodEnd={period_end}"
     )
 }
 
 fn usage() -> String {
-    "entsoe_compiler --domain <EIC> [--domain <EIC>...] --start YYYY-MM-DD --stop YYYY-MM-DD [--out-bin name] [--ci-mode]".to_string()
+    "entsoe_compiler --domain <EIC> [--domain <EIC>...] [--out-domain <EIC>...] --start YYYY-MM-DD --stop YYYY-MM-DD [--out-bin name] [--ci-mode]".to_string()
 }
 
 fn main() {
@@ -367,6 +373,13 @@ fn main() {
         eprintln!("entsoe_compiler: --domain <EIC> required (in_Domain is never fabricated)");
         eprintln!("usage: {}", usage());
         std::process::exit(2);
+    }
+    let out_domains = arg_values(&args, "--out-domain");
+    if out_domains.is_empty() {
+        eprintln!(
+            "entsoe_compiler: --out-domain absent — A78 carries out_Domain mirrored from in_Domain \
+             (a single-zone transmission unavailability has in_Domain == out_Domain)"
+        );
     }
 
     let Some(start_arg) = arg_value(&args, "--start") else {
@@ -399,13 +412,14 @@ fn main() {
     };
 
     let mut records: Vec<EsRecord> = Vec::new();
-    for domain in &domains {
-        let url = build_url(&token, domain, &period_start, &period_end);
+    for (i, domain) in domains.iter().enumerate() {
+        let out_domain = out_domains.get(i).map(String::as_str).unwrap_or(domain);
+        let url = build_url(&token, domain, out_domain, &period_start, &period_end);
         match fetch(&url) {
             Ok(bytes) => {
                 let text = String::from_utf8_lossy(&bytes);
                 let series = parse_document(&text);
-                eprintln!("{domain}: {} TimeSeries parsed", series.len());
+                eprintln!("{domain} -> {out_domain}: {} TimeSeries parsed", series.len());
                 records.extend(series);
             }
             Err(msg) => {
