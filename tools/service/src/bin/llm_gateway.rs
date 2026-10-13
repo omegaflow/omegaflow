@@ -495,7 +495,18 @@ fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -
                     continue;
                 }
             };
-            let url = format!("{}/chat/completions", route.base_url);
+            let base = match effective_base(route, secrets) {
+                Some(b) => b,
+                None => {
+                    last_code = 502;
+                    last_body = format!(
+                        "{{\"error\":{{\"message\":\"base {} absent\"}}}}",
+                        route.prefix
+                    );
+                    continue;
+                }
+            };
+            let url = format!("{}/chat/completions", base);
             let forward =
                 body.replacen(&format!("\"{model}\""), &format!("\"{provider_model}\""), 1);
             let mut attempt = 0;
@@ -537,16 +548,108 @@ fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -
     result
 }
 
-fn models_json() -> String {
-    let items: Vec<String> = ROUTES
-        .iter()
-        .map(|r| {
-            format!(
-                "{{\"id\":\"{}/…\",\"object\":\"model\",\"owned_by\":\"{}\"}}",
-                r.prefix, r.provider
+fn curl_get(url: &str, key: &str) -> Option<(u16, String)> {
+    let out = Command::new("curl")
+        .args(["-s", "-S", "--max-time", "30", "-w", "\n%{http_code}"])
+        .arg(url)
+        .arg("-H")
+        .arg(format!("Authorization: Bearer {key}"))
+        .output()
+        .ok()?;
+    let raw = String::from_utf8_lossy(&out.stdout).to_string();
+    let (body, code) = match raw.rfind('\n') {
+        Some(i) => {
+            let code = raw[i + 1..].trim().parse::<u16>().ok()?;
+            (raw[..i].to_string(), code)
+        }
+        None => (raw, 0),
+    };
+    Some((code, body))
+}
+
+const CF_ACCOUNT_ID_DEFAULT: &str = "b2891b7064691de2ef3891cfaf17190b";
+
+fn cf_account(secrets: &HashMap<String, String>) -> String {
+    match std::env::var("CF_ACCOUNT_ID") {
+        Ok(v) if !v.is_empty() => v,
+        _ => match secrets.get("CF_ACCOUNT_ID") {
+            Some(v) if !v.is_empty() => v.clone(),
+            _ => CF_ACCOUNT_ID_DEFAULT.to_string(),
+        },
+    }
+}
+
+fn effective_base(r: &Route, secrets: &HashMap<String, String>) -> Option<String> {
+    if r.prefix != "cf" {
+        return Some(r.base_url.to_string());
+    }
+    Some(format!("{}/{}/ai/v1", r.base_url, cf_account(secrets)))
+}
+
+fn json_string_values(body: &str, key: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut rest = body;
+    let needle = format!("\"{key}\"");
+    loop {
+        let Some(i) = rest.find(&needle) else { break };
+        let after = &rest[i + needle.len()..];
+        let Some(colon) = after.find(':') else { break };
+        let after2 = &after[colon + 1..];
+        let Some(q1) = after2.find('"') else { break };
+        let after3 = &after2[q1 + 1..];
+        let Some(q2) = after3.find('"') else { break };
+        out.push(after3[..q2].to_string());
+        rest = &after3[q2 + 1..];
+    }
+    out
+}
+
+fn list_models(secrets: &HashMap<String, String>, auth: &str) -> String {
+    let mut items: Vec<String> = Vec::new();
+    for r in ROUTES {
+        let key = match key_for(r, secrets, auth) {
+            Some(k) => k,
+            None => continue,
+        };
+        let base = match effective_base(r, secrets) {
+            Some(b) => b,
+            None => continue,
+        };
+        let (url, id_key) = if r.prefix == "cf" {
+            (
+                format!(
+                    "{}/{}/ai/models/search?per_page=200",
+                    r.base_url,
+                    cf_account(secrets)
+                ),
+                "name",
             )
-        })
-        .collect();
+        } else {
+            (format!("{}/models", base), "id")
+        };
+        let (code, body) = match curl_get(&url, &key) {
+            Some(t) => t,
+            None => {
+                eprintln!("llm_gateway: models {} — transport unread", r.prefix);
+                continue;
+            }
+        };
+        let ids: Vec<String> = json_string_values(&body, id_key)
+            .into_iter()
+            .filter(|s| r.prefix != "cf" || s.starts_with("@cf/"))
+            .collect();
+        eprintln!(
+            "llm_gateway: models {} — http {code} ({} ids)",
+            r.prefix,
+            ids.len()
+        );
+        for id in ids {
+            items.push(format!(
+                "{{\"id\":\"{}/{}\",\"object\":\"model\",\"owned_by\":\"{}\"}}",
+                r.prefix, id, r.provider
+            ));
+        }
+    }
     format!("{{\"object\":\"list\",\"data\":[{}]}}", items.join(","))
 }
 
@@ -597,7 +700,7 @@ fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>, auth: &str)
         None => return,
     };
     let (code, out) = match (method.as_str(), path.as_str()) {
-        ("GET", "/v1/models") => (200, models_json()),
+        ("GET", "/v1/models") => (200, list_models(secrets, auth)),
         ("GET", "/health") => (200, "{\"status\":\"ok\"}".to_string()),
         ("POST", "/v1/chat/completions") => chat_completions(&body, secrets, auth),
         _ => (404, "{\"error\":{\"message\":\"not found\"}}".to_string()),
