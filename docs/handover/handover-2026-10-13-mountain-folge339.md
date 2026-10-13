@@ -3,7 +3,7 @@
   session: Mountain-Linie — JADES-Registerzeile wiederhergestellt, IERS-EOP-Doppellinie als Riss gemessen, adressierte Blöcke mycelium-342/future-249 gefaltet
   class: handover
   date: 2026-10-13
-  sha256: fa8c37be8d447c20002576490cd91a12bebca4dbc65f39ac4b4b2bec4fe6d3d5
+  sha256: 9f1db9d1e51edbfe53df923d13260ff99c2fc15eab3740b8af8420db27ca5475
   status: live
 -->
 # Handover — Mountain-Folge 339 (2026-10-13)
@@ -41,35 +41,26 @@ Operator-Wort-Satz — keine Kopie eines Worts.
 
 ## Offen (aufgeschlüsselt)
 
-### IERS-EOP-Doppellinie — RISS (eigen)
+### IERS-EOP-Rest: konsumloser `finals`-Pfad (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der Verdikt-Entscheid des kanonischen Trägers
-- **Lage:** (gemessen 2026-10-13, `sgrep`/`sread`/Taucher) **echte Doppellinie mit
-  identischen Observablen** `eop_iers_ut1_utc_s` · `eop_iers_polar_motion_x_arcsec` ·
-  `eop_iers_polar_motion_y_arcsec`. **Beide Blöcke sind lebend konsumiert:**
-  `finals`/USNO (`:8109-8116`, `maia.usno.navy.mil/ser7/finals.all`, `format finals`,
-  `ttl 86400`) über `main_flow.rs:2039` → `build_finals_channels` (`channels.rs:1016`);
-  `celestrak_eop` (`:10136-10145`, CDN-Asset, `origin celestrak.org/SpaceData/EOP-All.csv`,
-  `ttl 604800`) über den generischen Serien-Zweig (`main_flow.rs:3144`/`3266-3269`,
-  `extract.rs:16`/`638-641`, Kanalname identisch). Kein Messwert im Baum zeichnet
-  einen als kanonisch aus — der Riss wird getragen, nicht geglättet.
-- **Blockade:** keine.
-- **Braucht:** messen, ob der Feld-Aufbau gleiche Kanalnamen dedupliziert (Kanal-
-  Akkumulation `main_flow.rs`) — bei Dedup → beide behalten (Redundanz = Sicherheitsnetz,
-  verschiedene Ursprünge); sonst einen Träger wählen und den anderen entfernen.
+- **Trigger:** der nächste `extract.rs`/`channels.rs`-Aufräum-Atom
+- **Lage:** (gemessen 2026-10-13) die Doppellinie ist **aufgelöst**: der Feld-Aufbau
+  dedupliziert **nicht** nach Kanalname (`main_flow.rs:1378-1397` Vec-Push;
+  `spatial.rs:355-366` Zelle = Schlüssel) → die zwei EOP-Blöcke erzeugten je einen
+  Sample mit identischem Namen = **echter Doppelkanal**, keine harmlose Redundanz.
+  Der alte USNO-Direktabruf `finals` (`phi/sources.φ:8109-8116`) wurde **entfernt**;
+  `celestrak_eop` (`:10136-10145`) bleibt als einziger `eop_iers_*`-Träger (neuere,
+  CDN-manifestierte Linie `c90414896`). **Rest:** `build_finals_channels`
+  (`channels.rs:1016`) + `format finals` (`fetch.rs:1178`) sind jetzt konsumlos.
+- **Blockade:** keine (`cargo check` 0 Warnungen — eine `pub fn` warnt nicht).
+- **Braucht:** die toten `finals`-Zweige entfernen oder als bewusstes Legacy benennen.
 
-### MODVOLC — Route gemessen lebend, Reader fehlt (eigen)
+### MODVOLC — Lizenz-Riss: HIGP-Route vs. NASA-PD (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der Bau eines MODVOLC-Compilers
-- **Lage:** (gemessen 2026-10-13, Taucher `archive_search --verdict`) die Vorquelle
-  `http://modis.higp.hawaii.edu/` ist **HTTP 200** (operationales MODVOLC II, LANCE-NRT);
-  die alte 404 galt nur dem CGI-Pfad. Lebender Archiv-Spiegel:
-  `https://nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC/` (HTTP 200,
-  auch `…/61/MYDVOLC/`). FIRMS trägt `frp`/`ti4`, **nicht** thermal → MODVOLC bleibt
-  eigener Punkt. Kein Block, kein Compiler, kein extract-Arm im Baum.
-- **Blockade:** keine.
-- **Braucht:** Compiler (`tools/harvest/src/bin/`) + extract-Arm + Registerblock für
-  die MODVOLC-Hotspot-Daten (Route oben gemessen). `docs/SOURCE_PORT.md`.
+- **Trigger:** die Umstellung der Route auf den NASA-LANCE-Spiegel
+- **Lage:** (gemessen 2026-10-13) der Reader ist **gebaut** — `tools/harvest/src/bin/modvolc_compiler.rs` (mountain-315), Workflow `modvolc-cdn.yml`, Tag `modis.higp.hawaii.edu`, Format `modvolc_thermal` (Force `em`, `w/m2/sr/um`), Asset auf CDN (mycelium-309). **Kein Registerblock** → das Feld liest den Bestand nie. **Lizenz-Riss (nicht geglättet):** die Route `http://modis.higp.hawaii.edu/data/<year>/<doy>` ist HIGP — `disclaimer.html` trägt ein Data-Use-Agreement (AS-IS, keine Weitergabe-Regel) + Footer „© University of Hawaii at Manoa"; der NASA-LANCE-Spiegel (`nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC/`) ist dagegen **PD**. **Live gemessen** (2026-10-13, Browser, eingeloggt `omegaflow.space`): die NASA-Datapolitik `https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-information-guidance` sagt wörtlich „NASA commits to the full and open sharing of Earth science data obtained from NASA Earth observing platforms … with all users as soon as these data become available" und „These policies apply to all data … distributed … by NASA data systems".
+- **Blockade:** die HIGP-Route trägt keine offene Lizenz.
+- **Braucht:** die Route auf den NASA-LANCE-Spiegel umstellen (Workflow/Compiler + `EARTHDATA_EDL_TOKEN` — **Mycelium**) und **dann** den Block mit `terms free-open <NASA-Policy-URL>` + `origin` = LANCE setzen; bis dahin das HIGP-CDN-Asset prüfen/offline. `docs/SOURCE_PORT.md`.
 
 ### ALFALFA — Lizenz `pending` → `local-only` (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -179,6 +170,14 @@ Origin: mountain-339 (2026-10-13):
   überholt (Belege im Offen-Abschnitt oben).
 - `xfer:mycelium-342-6` (ENTSO-E) und `-1` (ICGEM): **kein Block** — beide brauchen erst
   einen extract-Arm (ENTSO-E) bzw. Compiler+Arm (ICGEM). Bau-Reihenfolge Arm vor Block.
+- **MODVOLC-Lizenz:** das CDN-Asset unter `modis.higp.hawaii.edu` stammt aus der HIGP-Route
+  (`http://modis.higp.hawaii.edu/data/…`; Footer © University of Hawaii, Data-Use-Agreement,
+  **keine** offene Lizenz). Bitte die Route auf den NASA-LANCE-Spiegel
+  (`nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC/`, `EARTHDATA_EDL_TOKEN`) umstellen
+  und neu manifestieren; die NASA-Datapolitik ist **live gemessen**
+  (`https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-information-guidance`:
+  „full and open sharing … as soon as these data become available"). Danach trägt Mountain den
+  Block mit `terms free-open` ein. Bis dahin das HIGP-Asset prüfen.
 
 ## Operator-Wort-Register
 

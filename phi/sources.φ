@@ -8106,15 +8106,6 @@ terms PD https://irsa.ipac.caltech.edu/
 sha256 52cf6793f14e250ffc1436ce7f6fe6d92f6a066c433ec9efc66e4178f3d45a1f
 ttl 86400
 
-url https://maia.usno.navy.mil/ser7/finals.all
-terms PD https://maia.usno.navy.mil/
-format finals
-ttl 86400
-at earth
-quantity ut1_utc eop_iers_ut1_utc_s inverse-square geometry s 86400 0.0 0.0
-quantity pmx eop_iers_polar_motion_x_arcsec inverse-square geometry arcsec 86400 0.0 0.0
-quantity pmy eop_iers_polar_motion_y_arcsec inverse-square geometry arcsec 86400 0.0 0.0
-
 url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
 terms PD https://mars.nasa.gov/
 ttl 86400
