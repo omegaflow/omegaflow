@@ -53,6 +53,10 @@ jobs:
             url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/venus_radar_Processed.zip"
             origin: "https://zenodo.org/api/records/18176179/files/Processed.zip/content"
             sha256: 8018463de4d911b659f2916830fe91594f6f11cbffa4b7d336f96d9638856a20
+          - asset: resonance_schumann.csv
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/resonance_schumann.csv"
+            origin: "https://zenodo.org/api/records/15225820/files/NiNo_SR_params_2024.csv/content"
+            sha256: 3183a14fafba0762f91522dfdddf356fa2609b86797d6512aefc2104bf7b0272
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1

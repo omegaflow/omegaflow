@@ -1035,6 +1035,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/resonance_
 terms CC-BY-4.0 https://zenodo.org/records/15225820
 origin https://zenodo.org/api/records/15225820/files/NiNo_SR_params_2024.csv/content
 format csv
+sha256 3183a14fafba0762f91522dfdddf356fa2609b86797d6512aefc2104bf7b0272
 ttl 3600
 at earth
 epoch 0
