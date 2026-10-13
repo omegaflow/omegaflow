@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
@@ -393,11 +393,18 @@ fn reply(stream: &mut TcpStream, code: u16, body: &str) {
 }
 
 fn curl_post(url: &str, key: &str, body: &str) -> (u16, String, String) {
+    curl_post_timeout(url, key, body, 180)
+}
+
+fn curl_post_timeout(url: &str, key: &str, body: &str, secs: u64) -> (u16, String, String) {
     let dir = std::env::temp_dir();
     let body_path = dir.join("omegaflow_gw_body.txt");
     let head_path = dir.join("omegaflow_gw_headers.txt");
+    let max_time = secs.to_string();
     let out = Command::new("curl")
-        .args(["-s", "-S", "--max-time", "180", "-X", "POST"])
+        .args(["-s", "-S", "--max-time"])
+        .arg(&max_time)
+        .args(["-X", "POST"])
         .arg(url)
         .arg("-H")
         .arg(format!("Authorization: Bearer {key}"))
@@ -467,6 +474,7 @@ fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -
             );
         }
     };
+    let disabled = disabled_set();
     let mut attempted: Vec<String> = Vec::new();
     let mut answered_provider: Option<String> = None;
     let mut answered_model: Option<String> = None;
@@ -483,6 +491,14 @@ fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -
                 None => continue,
             };
             let provider_model = &cand[route.prefix.len() + 1..];
+            if disabled.contains(&format!("{}/{}", route.prefix, provider_model)) {
+                last_code = 503;
+                last_body = format!(
+                    "{{\"error\":{{\"message\":\"{} {} disabled for this session\"}}}}",
+                    route.prefix, provider_model
+                );
+                continue;
+            }
             attempted.push(format!("{}/{}", route.provider, provider_model));
             let key = match key_for(route, secrets, auth) {
                 Some(k) => k,
@@ -658,15 +674,46 @@ fn arg_value(args: &[String], flag: &str) -> Option<String> {
     args.get(i + 1).cloned()
 }
 
+const PROBE_TIMEOUT_SECS: u64 = 12;
+const SLOW_MS: u128 = 8000;
+const DISABLED_SESSION: &str = "state/zustand/llm-gateway-disabled.session";
+const DISABLED_PERSIST: &str = "state/zustand/llm-gateway-disabled.persist";
+
+fn append_disabled(path: &str, entry: &str) {
+    if let Some(parent) = std::path::Path::new(path).parent() {
+        let _ = fs::create_dir_all(parent);
+    }
+    if let Ok(mut f) = fs::OpenOptions::new().create(true).append(true).open(path) {
+        let _ = writeln!(f, "{entry}");
+    }
+}
+
+fn disabled_set() -> HashSet<String> {
+    let mut set = HashSet::new();
+    for p in [DISABLED_SESSION, DISABLED_PERSIST] {
+        if let Ok(t) = fs::read_to_string(p) {
+            for line in t.lines() {
+                let l = line.trim();
+                if !l.is_empty() && !l.starts_with('#') {
+                    set.insert(l.to_string());
+                }
+            }
+        }
+    }
+    set
+}
+
 fn probe(
     secrets: &HashMap<String, String>,
     auth: &str,
     provider_filter: &Option<String>,
     model_filter: &Option<String>,
 ) {
-    println!("provider\tmodel\thttp\tms");
+    println!("provider\tmodel\thttp\tms\tverdict");
     let mut reachable = 0u32;
     let mut probed = 0u32;
+    let mut session: Vec<String> = Vec::new();
+    let mut persist: Vec<String> = Vec::new();
     for (r, id) in catalog(secrets, auth) {
         if let Some(pf) = provider_filter {
             if !pf.split(',').any(|p| p.trim() == r.prefix) {
@@ -686,20 +733,49 @@ fn probe(
             Some(b) => b,
             None => continue,
         };
+        let entry = format!("{}/{}", r.prefix, id);
         let url = format!("{}/chat/completions", base);
         let body = format!(
             "{{\"model\":\"{id}\",\"messages\":[{{\"role\":\"user\",\"content\":\"ping\"}}],\"max_tokens\":4}}"
         );
         let t0 = Instant::now();
-        let (code, _headers, _resp) = curl_post(&url, &key, &body);
+        let (code, _headers, resp) = curl_post_timeout(&url, &key, &body, PROBE_TIMEOUT_SECS);
         let ms = t0.elapsed().as_millis();
-        if (200..300).contains(&code) {
+        let verdict = if code == 0 {
+            session.push(entry.clone());
+            "timeout"
+        } else if code == 402 || resp.to_lowercase().contains("insufficient") {
+            persist.push(entry.clone());
+            "quota"
+        } else if code == 429 {
+            session.push(entry.clone());
+            "ratelimit"
+        } else if (200..300).contains(&code) && ms >= SLOW_MS {
+            session.push(entry.clone());
+            "slow"
+        } else if [400u16, 403, 404, 405, 410].contains(&code) {
+            session.push(entry.clone());
+            "unsupported"
+        } else if (200..300).contains(&code) {
             reachable += 1;
-        }
+            "ok"
+        } else {
+            "error"
+        };
         probed += 1;
-        println!("{}\t{}\t{}\t{}", r.prefix, id, code, ms);
+        println!("{}\t{}\t{}\t{}\t{}", r.prefix, id, code, ms, verdict);
     }
-    eprintln!("llm_gateway --probe: {reachable}/{probed} reachable");
+    for e in &session {
+        append_disabled(DISABLED_SESSION, e);
+    }
+    for e in &persist {
+        append_disabled(DISABLED_PERSIST, e);
+    }
+    eprintln!(
+        "llm_gateway --probe: {reachable}/{probed} reachable · {} session-disabled · {} quota-disabled (persist)",
+        session.len(),
+        persist.len()
+    );
 }
 
 fn list_models(secrets: &HashMap<String, String>, auth: &str) -> String {
