@@ -9,7 +9,7 @@
   "provider": {
     "zai": { "options": { "headerTimeout": 60000, "chunkTimeout": 60000 } }
   },
-  "disabled_providers": ["kenari", "kilo", "zai", "opencode"],
+  "disabled_providers": ["kenari", "kilo", "zai"],
   "agent": {
     "build": {
       "mode": "primary",
