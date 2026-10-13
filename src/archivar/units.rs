@@ -41,6 +41,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "mjy" => Some(value * 1e-29),
         "ujy" => Some(value * 1e-32),
         "njy" => Some(value * 1e-35),
+        "nmgy" => Some(value * 3.631e-32),
         "sfu" => Some(value * 1e-22),
         "g_mass" => Some(value * 1e-3),
         "erg" => Some(value * 1e-7),
@@ -443,6 +444,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "w/m2/hz",
             "nw/cm2/sr",
             "njy",
+            "nmgy",
             "erg/cm2/s",
             "ev/cm2/ster/s",
             "mcrab",
@@ -450,7 +452,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "ohm",
         ],
         1 => &[
-            "m", "mm", "km", "m/s2", "n·m", "gal", "pa", "hz", "mw", "mm/yr", "count", "g",
+            "m", "mm", "km", "km/s", "m/s2", "n·m", "gal", "pa", "hz", "mw", "mm/yr", "count", "g",
         ],
         2 => &[
             "m/s2", "m/s", "gal", "mgal", "kg", "m_sun", "m_earth", "m_jup", "au", "pc", "kpc",
@@ -477,6 +479,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "kg/m3",
             "kg",
             "micromole/kg",
+            "umol/kg",
             "m-1",
             "cm",
             "mm",
