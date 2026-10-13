@@ -1,0 +1,20 @@
+#!/bin/sh
+# The Form B aggregator gateway (/v1 OpenAI surface): execs the release binary
+# refreshed by bin/.tools_ensure; never builds.
+set -u
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+"$root/bin/.tools_ensure" llm_gateway
+bin="$root/target/release/llm_gateway"
+if [ ! -x "$bin" ]; then
+    echo "llm_gateway: pending — no release installed; the build belongs to CI (tools-build)" >&2
+    exit 2
+fi
+export OMEGAFLOW_REPO="$root"
+export OMEGAFLOW_SECRETS="${OMEGAFLOW_SECRETS:-$root/.secrets.local}"
+exec "$bin" "$@"
