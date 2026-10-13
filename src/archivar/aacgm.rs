@@ -1,5 +1,9 @@
+use std::borrow::Cow;
 use std::sync::OnceLock;
 
+pub const AACGM14_2010_TEXT: &str = include_str!("aacgm_coeffs-14-2010.asc");
+pub const AACGM14_2015_TEXT: &str = include_str!("aacgm_coeffs-14-2015.asc");
+pub const AACGM14_2020_TEXT: &str = include_str!("aacgm_coeffs-14-2020.asc");
 pub const AACGM14_2025_TEXT: &str = include_str!("aacgm_coeffs-14-2025.asc");
 
 const RE_KM: f64 = 6371.2;
@@ -32,6 +36,26 @@ impl AacgmV2 {
 
     pub fn epoch(&self) -> u16 {
         self.epoch
+    }
+
+    pub fn interpolate(lower: &AacgmV2, upper: &AacgmV2, fyear: f64) -> Option<AacgmV2> {
+        if lower.values.len() != upper.values.len() || !fyear.is_finite() {
+            return None;
+        }
+        let fraction = (fyear - f64::from(lower.epoch)) / 5.0;
+        if !(0.0..=1.0).contains(&fraction) {
+            return None;
+        }
+        let values = lower
+            .values
+            .iter()
+            .zip(upper.values.iter())
+            .map(|(&lo, &hi)| lo + fraction * (hi - lo))
+            .collect();
+        Some(AacgmV2 {
+            epoch: lower.epoch,
+            values,
+        })
     }
 
     fn coef(&self, f: usize, l: usize, a: usize, t: usize) -> f64 {
@@ -224,12 +248,32 @@ fn real_spherical_harmonics(colat: f64, lon: f64, order: usize, ylmval: &mut [f6
     }
 }
 
+static AACGM14_2010: OnceLock<Option<AacgmV2>> = OnceLock::new();
+static AACGM14_2015: OnceLock<Option<AacgmV2>> = OnceLock::new();
+static AACGM14_2020: OnceLock<Option<AacgmV2>> = OnceLock::new();
 static AACGM14_2025: OnceLock<Option<AacgmV2>> = OnceLock::new();
 
-fn aacgm14_2025() -> Option<&'static AacgmV2> {
-    AACGM14_2025
-        .get_or_init(|| AacgmV2::parse(AACGM14_2025_TEXT, 2025))
-        .as_ref()
+fn epoch_model(epoch: u16) -> Option<&'static AacgmV2> {
+    let (cell, text): (&OnceLock<Option<AacgmV2>>, &str) = match epoch {
+        2010 => (&AACGM14_2010, AACGM14_2010_TEXT),
+        2015 => (&AACGM14_2015, AACGM14_2015_TEXT),
+        2020 => (&AACGM14_2020, AACGM14_2020_TEXT),
+        2025 => (&AACGM14_2025, AACGM14_2025_TEXT),
+        _ => return None,
+    };
+    cell.get_or_init(|| AacgmV2::parse(text, epoch)).as_ref()
+}
+
+fn model_for_year(date_year: f64) -> Option<Cow<'static, AacgmV2>> {
+    if !(2010.0..2030.0).contains(&date_year) {
+        return None;
+    }
+    let lower_epoch = (date_year / 5.0).floor() as u16 * 5;
+    let lower = epoch_model(lower_epoch)?;
+    match epoch_model(lower_epoch + 5) {
+        Some(upper) => AacgmV2::interpolate(lower, upper, date_year).map(Cow::Owned),
+        None => Some(Cow::Borrowed(lower)),
+    }
 }
 
 pub fn aacgm_v2_latitude(
@@ -238,10 +282,7 @@ pub fn aacgm_v2_latitude(
     lon_deg: f64,
     altitude_km: f64,
 ) -> Option<f64> {
-    if !date_year.is_finite() || !(2025.0..2030.0).contains(&date_year) {
-        return None;
-    }
-    let model = aacgm14_2025()?;
+    let model = model_for_year(date_year)?;
     let (lat, _lon) = model.geodetic_to_aacgm(geodetic_lat_deg, lon_deg, altitude_km)?;
     Some(lat)
 }
@@ -251,15 +292,22 @@ mod tests {
     use super::*;
 
     #[test]
-    fn the_committed_epoch_2025_file_loads_with_the_full_coefficient_count() {
-        let model = AacgmV2::parse(AACGM14_2025_TEXT, 2025).expect("the committed file parses");
-        assert_eq!(model.epoch(), 2025);
-        assert_eq!(model.values.len(), NFLAG * POLYORD * NCOORD * AACGM_KMAX);
+    fn every_committed_epoch_file_loads_with_the_full_coefficient_count() {
+        for (epoch, text) in [
+            (2010u16, AACGM14_2010_TEXT),
+            (2015, AACGM14_2015_TEXT),
+            (2020, AACGM14_2020_TEXT),
+            (2025, AACGM14_2025_TEXT),
+        ] {
+            let model = AacgmV2::parse(text, epoch).expect("the committed file parses");
+            assert_eq!(model.epoch(), epoch);
+            assert_eq!(model.values.len(), NFLAG * POLYORD * NCOORD * AACGM_KMAX);
+        }
     }
 
     #[test]
-    fn a_date_outside_the_pinned_epoch_returns_none() {
-        assert!(aacgm_v2_latitude(2024.9, 45.5, -23.5, 0.0).is_none());
+    fn a_date_outside_the_published_epochs_returns_none() {
+        assert!(aacgm_v2_latitude(2009.9, 45.5, -23.5, 0.0).is_none());
         assert!(aacgm_v2_latitude(2030.0, 45.5, -23.5, 0.0).is_none());
         assert!(aacgm_v2_latitude(f64::NAN, 45.5, -23.5, 0.0).is_none());
     }
@@ -267,5 +315,44 @@ mod tests {
     #[test]
     fn a_geodetic_latitude_outside_its_range_returns_none() {
         assert!(aacgm_v2_latitude(2025.0, 95.0, 0.0, 0.0).is_none());
+    }
+
+    #[test]
+    fn the_bracketing_pair_blends_linearly_between_its_epochs() {
+        let lower = epoch_model(2015).expect("2015 parses");
+        let upper = epoch_model(2020).expect("2020 parses");
+        let midpoint = model_for_year(2017.5).expect("2017.5 is inside the window");
+        for (idx, (&lo, &hi)) in lower.values.iter().zip(upper.values.iter()).enumerate() {
+            let expected = lo + 0.5 * (hi - lo);
+            assert!(
+                (midpoint.values[idx] - expected).abs() < 1e-12,
+                "coefficient {idx} is not the epoch midpoint"
+            );
+        }
+        let anchored = model_for_year(2015.0).expect("2015 is inside the window");
+        assert_eq!(anchored.values, lower.values);
+    }
+
+    #[test]
+    fn upstream_c_test_witnesses_reproduce_through_two_epoch_interpolation() {
+        let fyear_2014 = 2014.0 + (80.0 + (3.0 + 11.0 / 60.0) / 24.0) / 365.0;
+        let cases = [
+            (fyear_2014, 45.5, -23.5, 1135.0, 48.1902, 57.7505),
+            (2018.0, 60.0, 0.0, 300.0, 58.2199, 80.7290),
+        ];
+        for (fyear, lat_in, lon_in, alt_in, lat_expected, lon_expected) in cases {
+            let model = model_for_year(fyear).expect("the bracketing epochs load");
+            let (lat, lon) = model
+                .geodetic_to_aacgm(lat_in, lon_in, alt_in)
+                .expect("the witness coordinate converts");
+            assert!(
+                (lat - lat_expected).abs() < 1e-4,
+                "latitude {lat} differs from {lat_expected} at fyear {fyear}"
+            );
+            assert!(
+                (lon - lon_expected).abs() < 1e-4,
+                "longitude {lon} differs from {lon_expected} at fyear {fyear}"
+            );
+        }
     }
 }
