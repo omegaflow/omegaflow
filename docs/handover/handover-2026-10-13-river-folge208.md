@@ -2,7 +2,7 @@
 title: Handover — River-Folge 208
 class: handover
 date: 2026-10-13
-sha256: a7393368384be72a369acc0aa5ec4013f13dc37662edb7f9353b0832b0eec9c2
+sha256: 70386e7bf0215eda4ba463e7f673268fe30eacfa85336159d8c723740a3c6a7d
 status: live
 -->
 # Handover — River-Folge 208 (2026-10-13)
@@ -51,12 +51,12 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 - **Blockade:** (1) die DE-2-Reihe ist **nicht manifestiert** (kein `format`/`origin`/`compiler` im Block → kein Aktor, keine CDN-Reihe), also kein Overlap messbar; (2) `K` = `rate pending`; (3) die WGSL-Validierung + das Paritäts-Gate laufen erst im CI; (4) der Kanal-Identitäts-Riss (s. `### DE-2-Kanal-Identität`).
 - **Braucht:** (1) die DE-2-Manifestation (Mycelium, `## An mycelium`, Token `xfer:river.ses_ec901ad7dffehLKKusa1DO806h.1~aac84d7f`); (2) `K` aus dem co-lokalen DE-2-Overlap; (3) den nächsten `ci-gate`-Lauf lesen (`ci_manage log <id>`) — WGSL-Parse + `coupling_injection_wgsl_matches_the_cpu_exchange`.
 
-### DE-2-Kanal-Identität — `unit` nicht im Hash; `species` trägt die Trennung
-- **Status:** riss (getragen) | **Bindung:** eigen (Architektur → Rat)
-- **Trigger:** die DE-2-Kopplung wird ganzzahlig gebaut; dann muss die Kanal-Identität einheiten-treu sein.
-- **Lage:** (gemessen 2026-10-13 river-209, `explore`-Taucher + Baum) `ChannelDescriptor::hash()` (`src/mathematikerin/channel.rs:566-592`) nimmt conserved/role/op/pde_type/medium/family/domain/boundary/regime/extent/**species**, aber **nicht `unit`**; `ChannelRegistry::register` dedupliziert allein auf `d.hash()` (`:1493-1502`), `alias` ist nur das Namens-Map. Register-Fall: `phi/sources.φ:41` (CHAMP Massendichte `kg/m^3`, species = None) vs `:600` (DE-2 N2-Zahldichte `m^-3`, species = N2) sind **verschiedene Handles**, aber die Trennung ruht allein auf `species`: zwei Deskriptoren, die sich **nur in der Einheit** unterscheiden und beide ohne species sind, teilen den Hash — der zweite wird still verworfen (`register` `:1495-1497`); `PartialEq` vergleicht `unit` (`:409`), `hash()` nicht — dieser Widerspruch ist der Riss. Die `coupling`-Zeile `:602` bindet über den Alias korrekt an `:600`. `pending:` kein Test prüft die unit-only-Distinktheit. Route-Entscheid: `state/stimmen/2026-10-13-river-p71-ion-drift-riss-rat.md`.
-- **Blockade:** die Kanal-Identität ist der Wire-/GPU-Force-Vertrag; `unit` in `hash()` zu ziehen verschiebt die Registry-Indizes (der P10-Parser-Index-Riss `f2623bb72`) — Architektur, kein Pro-Solo.
-- **Braucht:** die Frage „gehört `unit` in die Kanal-Identität?" durch die **Linse der fünf Stimmen** (Rat); danach der Bau (Hash + charakterisierender Test) oder die deklarierte Invariante „Identität = Achsen + species, Einheit separat" mit einem Gate.
+### Kanal-Identität — Verdikt B′ (Rat + Roster + Forschung): `unit` raus, Größenart in die Achsen
+- **Status:** eigen (Verdikt; Bau offen) | **Bindung:** eigen
+- **Trigger:** keiner — das Verdikt steht; der Bau ist der nächste Schritt.
+- **Lage:** (gemessen 2026-10-13 river-209: `explore`-Taucher + Forschungs-Schicht + Rat + UI-Roster) Code-Riss: `ChannelDescriptor::hash()` (`src/mathematikerin/channel.rs:566-592`) trägt die Achsen/genus/extent/**species**, aber **nicht `unit`**, während `PartialEq` (`:397-412`) `unit` (`:409`) **doch** vergleicht; `ChannelRegistry::register` (`:1493-1502`) dedupliziert allein auf `hash()` → eine unit-only-Differenz wird still verworfen. Register-Fall `phi/sources.φ:41` (CHAMP Massendichte `kg/m^3`, species None) vs `:600` (DE-2 N2-Zahldichte `m^-3`, species N2) überlebt nur über `species`. **Forschung:** QUDT (eine QuantityKind, viele Units) · CF-1.11 (`standard_name` = Identität, `units` = Repräsentation) · HAPI (`name` = Identität) · UCUM (nur Units) — alle: Unit ist **nicht** Identität, die Größenart ist es. **Rat:** Consensus **B′** — `unit` aus **beidem** (`PartialEq` **und** `hash`) entfernen (die Hash/Eq-Divergenz selbst ist der Defekt), die Größenart als Achsen-Token tragen (`number`/`amount`-conserved, damit Massendichte ≠ Zahldichte), `species` = Qualifier; die Einheit bei der Registrierung dimensional validieren (kind↔unit) mit **lautem Fehler** statt stillem Drop. **UI-Roster:** Claude (Sonnet 5.5) B+ein Stück C · Duck.ai (GPT-6 Luna) C · Qwen + Z.ai `pending` (Send-Pfad nicht durchgelaufen). Material: `state/stimmen/2026-10-13-river-kanal-identitaet-rat.md`.
+- **Blockade:** B′ ist Wire-/GPU-Vertrag: `unit` aus `PartialEq` entfernen + das neue Achsen-Token verschieben Registry-Indizes (der P10-Parser-Index-Riss `f2623bb72`) — Bau in eigenem Atom.
+- **Braucht:** den B′-Bau — Hash = PartialEq ohne `unit`; Achsen-Kind-Token; Registrierungs-Validierung kind↔unit mit lautem Fehler; charakterisierender Test (unit-only-Paar → verschieden ODER lauter Fehler, nie stiller Drop).
 - **Blockade:** keine (Route gemessen; der Bau hängt am selben WGSL-/Paritäts-Schritt wie P7.1).
 - **Braucht:** die DE-2-Kanäle φ tragen lassen + `K`; dann die Kopplungszeile vollständig.
 
@@ -105,9 +105,9 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 ### GIC-Onset — AL-Einhüllende über die 154-Station-Familie
 - **Status:** wartend | **Bindung:** eigen (Bau)
 - **Trigger:** Abschluss der Harvest-Läufe `intermagnet-xyz-cdn` → die Assets `<code>_xyz_1m.bin` liegen im CDN.
-- **Lage:** (gemessen 2026-10-12 via `ci_manage jobs`/`log 38164890620`) der Lauf trug 25 Stationen (`start 2000`, `end 2024`): 24 success, `lov` cancelled (LOV-Fetch HTTP 400 für 2023+); `38164966250` **cancelled** (gemessen river-209 `ci_manage view 38164966250`: conclusion `cancelled`, updated 2026-10-13T03:13Z — kein Ergebnis). Die Kette `intermagnet_xyz_compiler` → `al_network_proxy` → `gic_onset_detector` ist gebaut; die 154-Station-Partition liegt in `state/river/gic-family-*.txt`; Null-Baseline gemessen (`--null 200`: 1.62×/1.47×/1.35×).
-- **Blockade:** die per-Station-`<code>_xyz_1m.bin`-Assets der noch fehlenden Stationen (24 fertig; `lov` 400).
-- **Braucht:** den `intermagnet-xyz-cdn`-Lauf neu dispatcht und **diesmal zu Ende** (`ci_manage log <id> --all`) — der Vorgänger `38164966250` wurde abgebrochen; dann je Familie `al_network_proxy --family <fam.txt> --dir <pfad> --decl auto --baseline-block 60 --min-stations 2` und `gic_onset_detector --null 200`.
+- **Lage:** (gemessen 2026-10-13 river-209 via Workflow-Runs-API + `gh api repos/omegaflow/sources/releases/tags/imag-data.bgs.ac.uk`) **alle fünf** `intermagnet-xyz-cdn`-Läufe sind `cancelled` (kein `success`); der Asset-Stand: **144 von 154** `<code>_xyz_1m.bin` im Release, **10 fehlen**: `lnp, lov, mbc, mid, mlt, mzl, qsb, reu, tik, wmq` (sub-auroral 24/25, nur `lov` fehlt — LOV HTTP 400; die 101er-Kohorte ist mit der Abbruch-Welle unvollständig). **Neustart dispatcht:** `gh workflow run intermagnet-xyz-cdn.yml` → Lauf `38467353633` (river-209). Die Kette `intermagnet_xyz_compiler` → `al_network_proxy` → `gic_onset_detector` ist gebaut; die 154-Station-Partition liegt in `state/river/gic-family-*.txt`; Null-Baseline gemessen (`--null 200`: 1.62×/1.47×/1.35×).
+- **Blockade:** der Harvest-Lauf bricht vor Abschluss ab (kein `success` seit dem Start); 10 Stations-Assets fehlen.
+- **Braucht:** den Lauf `38467353633` **zu Ende** lesen (`ci_manage view`/`log --all` nach Abschluss, nie pollend) und die 10 fehlenden Assets nachziehen; dann je Familie `al_network_proxy --family <fam.txt> --dir <pfad> --decl auto --baseline-block 60 --min-stations 2` und `gic_onset_detector --null 200`.
 
 ### GIC-Familien-Partition — zwei Register-Nägel, dann die Matrix-Läufe
 - **Status:** blockiert | **Bindung:** eigen (Blockade: Mountain-Nägel)
@@ -184,6 +184,8 @@ Origin: river-208
 
 **Fehlende Fäden — Registerzeilen-Entwürfe.** Gemessen (river-208): KiDS DR4.1 WL-Katalog (`--verdict` 206, CC-BY-4.0) · Conicus3D (CC-BY-4.0; Daten-Datei noch zu bestimmen) · Auger Open Data (206, **CC-BY-SA-4.0** — Share-Alike: Lizenz-Vokabular-Gate prüfen) · WALLABY/CGPS HiPS3D (206, CDS-Terms lesen). **Zweite Suche (2026-10-13):** **Pulsar-Timing → EPTA DR2** (`zenodo.org/records/8300645`, 206, **CC-BY-4.0**) — Entwurf steht; **HMI → Quelle JSOC** (`jsoc.stanford.edu`, 200; Lizenz/`terms` noch bestimmen); **LHAASO → 1LHAASO-Katalog** (VizieR `J/ApJS/271/25/catalog`, 200); **Stellar-Aktivität → RAVE DR6** (`III/283/ravedr6`) / **GALAH DR3** (`J/MNRAS/506/150`, beide VizieR, 200; Index-Spalte bestätigen). Damit hat **jeder** der acht fehlenden Fäden einen gemessenen Weg. **Korrektur (nach dem freien Agenten, 2026-10-13): Pantheon+ SH0ES ist NICHT lokal-only** — der offizielle Zenodo-Record `16365279` ist **CC-BY-4.0** und im Haus registriert (`MU_SH0ES`, `phi/sources.φ:29177-29185`); nur das GitHub-Raw ist lizenzlos. Die **Distanzleiter-Linie ist damit gefüttert** (Hubble-Riss: Planck-CMB + Pantheon+ beide da). Entwürfe: `state/river/missing-threads-register-entwuerfe-2026-10-13.md`. **VizieR-Entwürfe (Block F, über den bestehenden `tap_compiler`-Arm):** RAVE DR6 (`table=III/283/ravedr6`) · GALAH DR3 (`J/MNRAS/506/150/spect`) · 1LHAASO (`J/ApJS/271/25/catalog`) — `terms vizier-scientific-free`. Braucht: die `field`-Spalten-Zuordnung (WL-Shear, Auger-Ereignisse, EPTA-Residuen, Aktivitätsindex) und `terms`/`ttl`. xfer:river208-faeden1.
 
+**Fäden-Nachmessung (river-209, 2026-10-13) — Korrekturen am Entwurf:** `EPTA-DR2.zip` geladen: `.par` (101) + `.tim` (1537), **25 Pulsare**, J1012+5307 MJD 50647→59295 (23,7 a), **nur TOAs, keine Residuen** — ein Residuen-Feld braucht erst ein Residuen-Produkt (Vorlage `field … inverse-square gravity s <τ>`, `phi/sources.φ:12633`). **KiDS DR4.1 WL:** `kids_subset_safe.fits` (8,4 MB) gelesen, Extension `OBJECTS`, 193 Spalten — WL-Spalten `RAJ2000/DECJ2000, e1/e2, Z_B, weight`; Haupt-FITS 16,5 GiB. **Conicus3D:** Record `18776222` trägt **genau eine** Datei `lp_dataset_patched_c000_phase_metadata.tar.zst` (34,4 GB, CC-BY-4.0) → `pending: 34-GB-Sample`. **WALLABY/CGPS:** **kein** exaktes HiPS3D-Produkt (`alasky.cds.unistra.fr` 206) → `pending: Produktname`. **HMI/JSOC:** `terms CC0-1.0` steht **schon** im Baum (`phi/sources.φ:2026`, AIA) — der Entwurf ist stale; offen nur die HMI-Serie. **1LHAASO ist schon gebaut** (`phi/sources.φ:28305-28321`, `lhaaso_compiler`) — Block F3 im Entwurf ist ein Duplikat. **Auger:** die echten Dateien sind Zenodo `10488964` (`summary.zip` CSV 8 MB, `data.zip` JSON 826 MB) und liegen **schon** als Zeuge (`phi/sources.φ:29374-29378`). xfer:river.ses_ec90200eeffeoKqvQwo4yZSRQo.1~fb7d0ebb.
+
 **SABER-Zeugen-Zeile nach Form (C) — Höhe als Koordinate auf geschlossener Level-Achse.** Gemessen (river-208, `curl` CDAWeb HAPI `info?id=TIMED_L2A_SABER`): `ktemp` trägt `size:[400]`, `tpgpaltitude` trägt `size:[400]` (die zeitabhängige Höhenkoordinate); die HAPI-Info führt **kein** `cadence`-Feld (dt aus einem Datensample messen). Verdikt (C) (Rat + volle Roster-Runde, `state/stimmen/2026-10-13-river-saber-hoehenform-roster.md`): der Level-Index (0…399) ist die **geschlossene diskrete Achse**, die Höhe eine zweite, gleich indizierte Koordinate (`altitude(time, level)`); das Level muss Teil des Schlüssels sein, sonst kollidieren 400 Records mit identischem Zeitstempel — kein freies `field` je Höhenstufe. Entwurf: `state/river/weberin-register-entwuerfe-2026-10-13.md` Block 5. **Braucht:** die `channel`/`field`-Zeile nach Form (C). xfer:river208-saber1.
 
 **UCAR-FPI — `field`-Komponenten-Zuordnung.** Der `format ucar_fpi`-Arm steht (`400de8ce2`, `src/archivar/fpi_ucar.rs` + Dispatch `extract.rs:159`); das gemessene Sample (10 leerzeichengetrennte Spalten, Kopf `yyday ut(hr) merid(m/s) merid err dir ut(hr) zonal(m/s) zonal err dir skytemp`) wird geparst. **Braucht:** die zwei `field`-Zeilen `fpi_mer_wind_ms` (merid-Spalte) und `fpi_zon_wind_ms` (zonal-Spalte) samt `series_component_name`-Zuordnung. xfer:river208-ucarfpi1.
@@ -206,18 +208,24 @@ operator-gebunden — nicht erneut vorgelegt), `--stale river --persist 3` = 0, 
 `terms PD`, hapi-Mapping, vier `channel`-Zeilen, `constraint de2_qn`, die `coupling
 ion-neutral-friction … rate pending`-Zeile — der co-lokale Kanal steht. P7.1s „Ionengeschwindigkeits-Kanal
 offen" ist am Register erledigt; offen bleiben `K` (`rate pending`) und die Manifestation.
-**Kanal-Identitäts-Riss gemessen** (`explore`-Taucher): `ChannelDescriptor::hash()`
-(`src/mathematikerin/channel.rs:566-592`) nimmt `species`, aber **nicht `unit`**; `phi/sources.φ:41`
-(CHAMP Massendichte `kg/m^3`, species None) vs `:600` (DE-2 N2-Zahldichte `m^-3`, species N2) sind
-getrennt, aber allein über species; eine unit-only-Differenz kollidiert still im `register`. Als
-getragener Riss ins Handover (→ Rat, `### DE-2-Kanal-Identität`).
+**Kanal-Identität — volle Kette gefahren** (`explore`-Taucher + Forschungs-Schicht + Rat + UI-Roster):
+`ChannelDescriptor::hash()` (`src/mathematikerin/channel.rs:566-592`) nimmt `species`, aber **nicht `unit`**,
+während `PartialEq` `unit` vergleicht; `register` dedupliziert allein auf `hash()` → unit-only-Paar kollidiert
+still. Verdikt **B′**: `unit` raus aus `PartialEq` **und** `hash`, Größenart als Achsen-Token, `species` Qualifier,
+lauter Fehler bei gleicher Identität + anderer Einheit. Rat + Roster (Claude B/C, Duck C, Qwen/Z.ai `pending`)
++ Forschung (QUDT/CF/HAPI/UCUM) konvergieren: Unit ist nicht Identität, die Größenart ist es. Material:
+`state/stimmen/2026-10-13-river-kanal-identitaet-rat.md`.
 **Newell/Parität dispatcht + gemessen:** `gh workflow run field-te-query.yml` → Lauf `38464793874`
 **success** (`ci_manage view`); alle Jobs success (unit, parity, witness, witness-count, matrix-*);
 `matrix-newell-omni` Zelle `newell_dphi_dt_omni->abk_dbdt_pt1h` **n = 22137**, TE 7.7953e-5,
 p 1.0000, verdict **silent**, FDR 0/1 (`gh run download … -n field-te-matrix-newell-omni`).
-**GIC-Onset:** der
-Follower-Lauf `38164966250` ist **cancelled** (`ci_manage view 38164966250`) — Trigger nicht gefeuert.
+**GIC-Onset:** **alle fünf** `intermagnet-xyz-cdn`-Läufe `cancelled` (kein `success`); Asset-Stand
+**144/154** `<code>_xyz_1m.bin`, **10 fehlen** (`lnp lov mbc mid mlt mzl qsb reu tik wmq`); Neustart
+dispatcht (`gh workflow run intermagnet-xyz-cdn.yml` → `38467353633`, river-209).
 **DE-2-Manifestation geroutet** (`## An mycelium`, Token `xfer:river.ses_ec901ad7dffehLKKusa1DO806h.1~aac84d7f`).
+**Fäden gesponnen** (river-209): ein `grind-flash`-Taucher hat EPTA DR2 (25 Pulsare, nur TOAs), KiDS DR4.1
+(WL-Spalten `RAJ2000/DECJ2000,e1/e2,Z_B,weight`), Conicus3D (eine 34,4-GB-Datei), WALLABY (Produkt offen)
+verifiziert; Korrekturen an `## An mountain` (LHAASO + Auger + HMI-CC0 sind **schon** im Baum → Entwurf stale).
 Kein Quellcode-Edit in diesem Atom — die Kanal-Identität ist Architektur (→ Rat); fremde Hunks unberührt.
 **Pre-Commit-Gate:** das Release-`commit_check`-Artefakt ist nach dem PII-History-Rewrite orphaniert
 und meldet ungemessen `tracked-not-declared: phi/sources.φ`; `target/debug/commit_check` passiert
