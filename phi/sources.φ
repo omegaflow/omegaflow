@@ -1356,9 +1356,11 @@ z redshift
 field discoverymag tns_transient_flux inverse-square em mag 3600 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/sne.space/osc_transients.bin
+terms MIT https://github.com/astrocatalogs/OACAPI
 format osc_transients
 origin https://sne.space/api/transients?format=json&limit=250&page=
 compiler tools/harvest/src/bin/osc_compiler.rs
+at sun
 
 url https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
 terms CC-BY-4.0 https://kp.gfz.de/
@@ -10790,9 +10792,11 @@ field freq_hz frb_chime_freq_hz inverse-square em Hz 604800 0.0 0.0
 field bin_width_hz frb_chime_bin_width_hz inverse-square em Hz 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/www.canfar.net/chime_frb_cat2.bin
+terms CC-BY-4.0 https://www.canfar.net/storage/vault/file/AstroDataCitationDOI/CISTI.CANFAR/25.0066/
 format chime_frb_cat2
 origin https://www.canfar.net/storage/vault/file/AstroDataCitationDOI/CISTI.CANFAR/25.0066/data/table/chimefrbcat2.csv
 compiler tools/harvest/src/bin/chime_frb_compiler.rs
+at sun
 
 url https://github.com/omegaflow/sources/releases/download/ceein.infp.ro/ceein_infrasound.bin
 terms no-license-stated https://ceein.infp.ro/
@@ -21838,10 +21842,15 @@ field magb dfbs_spectra_magb inverse-square em mag 31536000 0.0 0.0
 field magr dfbs_spectra_magr inverse-square em mag 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/www.lamost.org/lamost_dr10.bin
+terms CC-BY-4.0 https://www.lamost.org/dr10/
 format lamost_dr10
 origin https://www.lamost.org/dr10/v2.0/voservice/tap/sync
 compiler tools/harvest/src/bin/lamost_compiler.rs
+at sun
 ttl 31536000
+field fibermag_u lamost_u_fiber_mag inverse-square em mag 31536000 0.0 0.0
+field fibermag_g lamost_g_fiber_mag inverse-square em mag 31536000 0.0 0.0
+field fibermag_r lamost_r_fiber_mag inverse-square em mag 31536000 0.0 0.0
 
 url http://jvo.nao.ac.jp/skynode/do/tap/akari/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=votable&QUERY=SELECT+TOP+5000+object_ra+AS+ra,object_dec+AS+dec,flux_density_09+AS+flux+FROM+catalog.slitless_mir_psc+WHERE+flux_density_09+IS+NOT+NULL
 terms no-license-stated https://jvo.nao.ac.jp/
@@ -29838,9 +29847,11 @@ origin https://zenodo.org/api/records/14281664/files/UNCOVER_DR4_SPS_catalog.fit
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/h2_dens_mean_beg03.volume.bin
+terms CC-BY-4.0 https://zenodo.org/records/5501196
 format volume
 origin https://zenodo.org/api/records/5501196/files/H2_dens_mean_BEG03.fits/content
 compiler tools/harvest/src/bin/cfa_co_compiler.rs
+at sun
 ttl 31536000
 
 url https://gracedb.ligo.org/api/superevents/S250207bg/files/
