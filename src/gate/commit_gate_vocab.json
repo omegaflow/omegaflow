@@ -535,6 +535,7 @@
     "pii_home_path": "the tree lives at /home/someuser/projects/omegaflow",
     "pii_ci_home": "the CI checkout is /home/runner/work/omegaflow/omegaflow",
     "pii_role_address": "smail --dry-run --to role@example.org",
+    "pii_person_mailbox": "the correspondence partner is jane.doe@example.org",
     "pii_device_mac": "the watch address is 12:34:56:78:9A:BC",
     "pii_device_mac_path": "the device path is /org/bluez/hci0/dev_12_34_56_78_9A_BC/service0010/char0015",
     "pii_device_mac_placeholder": "the fixture MAC is AA:BB:CC:DD:EE:FF",
