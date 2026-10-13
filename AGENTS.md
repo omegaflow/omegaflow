@@ -349,7 +349,7 @@ webfetch/websearch). The wrapper `bin/archive_search` never builds — freshness
 release `tools-latest` via `bin/.tools_ensure`; a stale/absent artifact reads
 `pending`, named, never a silent zero. One mode per source:
 `--arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|
---brave|--datacite|--zenodo|--isc|--openalex|--supermag|--heasarc <query>`;
+--brave|--datacite|--zenodo|--isc|--openalex|--base|--supermag|--heasarc <query>`;
 `--all <query>` runs every source; `--playwright <url|query>` renders a page;
 `--leads <keyword>` scans un-registered candidate homes; `--verdict <url>` /
 `--sniff <url>`. A session that dispatches a diver (research-max / grind-max /
@@ -379,6 +379,11 @@ for source *discovery* the breadth is the answer, not a cost:
    carries no content (JS-rendered).
 3. **Known source** → the one mode the question needs: `--ads`, `--arxiv`,
    `--crossref`, `--ntrs`, `--openalex`, `--github`, `--heasarc`, …
+   **Dataset/repository discovery → `--base` first** (BASE, Bielefeld Academic
+   Search Engine, ~400M open documents, `BASE_API_KEY`): it indexes repository and
+   dataset DOIs (NASA PDS, GFZ Data Services, VizieR, institutional repositories)
+   that arXiv/Crossref/OpenAlex miss — measured 2026-10-13, it surfaced the open
+   Venus-radar PDS bundle and the ALFALFA catalogue DOI where the other arms did not.
 4. **Unknown source** → run the web-search engines directly: `--tavily`, `--exa`,
    `--linkup` (keyed — read from `.secrets.local`; the wrapper exports
    `OMEGAFLOW_REPO` and the binary resolves the repo from its own path, so they
