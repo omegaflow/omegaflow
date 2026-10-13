@@ -1035,9 +1035,13 @@ pub fn build_finals_channels(
         let col = |a: usize, b: usize| -> Option<f64> {
             line.get(a..b).unwrap_or("").trim().parse::<f64>().ok()
         };
-        let (Some(mjd), Some(pmx), Some(pmy), Some(ut1)) =
-            (col(7, 15), col(18, 27), col(38, 47), col(60, 70))
-        else {
+        let Some(mjd) = col(7, 15) else {
+            continue;
+        };
+        let pmx = col(134, 144).or_else(|| col(18, 27));
+        let pmy = col(144, 154).or_else(|| col(37, 46));
+        let ut1 = col(154, 165).or_else(|| col(58, 68));
+        let (Some(pmx), Some(pmy), Some(ut1)) = (pmx, pmy, ut1) else {
             continue;
         };
         let unix = (mjd - 40587.0) * 86400.0;

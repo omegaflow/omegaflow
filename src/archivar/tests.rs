@@ -10439,12 +10439,9 @@ fn test_alerce_object_and_detection_parse() {
 }
 
 #[test]
-fn test_finals_channels_last_occupied_line() {
-    let line = format!(
-        "{:>2}{:>2}{:>2} {:8.2} {:1} {:9.6}{:10.6} {:9.6}{:10.6} {:1} {:10.7}",
-        25, 8, 21, 61638.00, "P", 0.269050, 0.000012, 0.372959, 0.000014, "P", -0.0683654
-    );
-    let text = format!("{}\n{:>2}{:>2}{:>2} {:8.2}\n", line, 25, 8, 22, 61639.00);
+fn test_finals_channels_reads_the_bull_b_columns() {
+    let line = "26 3 1 61100.00 I  0.105055 0.000013  0.389089 0.000012  I 0.0672051 0.0000117  0.1503 0.0101  I     0.415    0.387    -0.092    0.170  0.105015  0.389153  0.0672285     0.403    -0.120  ";
+    let text = format!("{}\n{:>2}{:>2}{:>2} {:8.2}\n", line, 26, 3, 2, 61101.00);
     let src = source_fixture(
         "finals",
         vec![
@@ -10456,13 +10453,37 @@ fn test_finals_channels_last_occupied_line() {
     let lsk = fixture_lsk();
     let channels = build_finals_channels(&src, &text, &lsk);
     assert_eq!(channels.len(), 3);
-    let expect_epoch = lsk.unix_to_tdb((61638.0 - 40587.0) * 86400.0).unwrap();
+    let expect_epoch = lsk.unix_to_tdb((61100.0 - 40587.0) * 86400.0).unwrap();
     for (c, fc) in &channels {
         assert_eq!(c.epoch, expect_epoch);
         match fc.name.as_str() {
-            "ut1_utc" => assert_eq!(c.value, -0.0683654),
-            "pmx" => assert_eq!(c.value, 0.269050),
-            "pmy" => assert_eq!(c.value, 0.372959),
+            "ut1_utc" => assert_eq!(c.value, 0.0672285),
+            "pmx" => assert_eq!(c.value, 0.105015),
+            "pmy" => assert_eq!(c.value, 0.389153),
+            other => panic!("unexpected field {}", other),
+        }
+    }
+}
+
+#[test]
+fn test_finals_channels_falls_back_to_bull_a_when_bull_b_is_absent() {
+    let line = "26 3 1 61100.00 I  0.105055 0.000013  0.389089 0.000012  I 0.0672051 0.0000117  0.1503 0.0101  I     0.415    0.387    -0.092    0.170";
+    let src = source_fixture(
+        "finals",
+        vec![
+            Extract::Field(field_fixture("ut1_utc", 86400.0)),
+            Extract::Field(field_fixture("pmx", 86400.0)),
+            Extract::Field(field_fixture("pmy", 86400.0)),
+        ],
+    );
+    let lsk = fixture_lsk();
+    let channels = build_finals_channels(&src, &format!("{line}\n"), &lsk);
+    assert_eq!(channels.len(), 3);
+    for (c, fc) in &channels {
+        match fc.name.as_str() {
+            "ut1_utc" => assert_eq!(c.value, 0.0672051),
+            "pmx" => assert_eq!(c.value, 0.105055),
+            "pmy" => assert_eq!(c.value, 0.389089),
             other => panic!("unexpected field {}", other),
         }
     }
