@@ -1,0 +1,53 @@
+name: irsf-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  irsf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the vizier.cds.unistra.fr release exists on the CDN
+        run: |
+          gh release view vizier.cds.unistra.fr --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create vizier.cds.unistra.fr --repo omegaflow/sources \
+                 --title "vizier.cds.unistra.fr" --notes "CDN family release"
+      - name: Chunk-compile IRSF/MCPS (II/288/out, 0.1-mag J slices) and upload to CDN
+        run: |
+          export LC_ALL=C
+          mkdir -p kernels
+          for lo in $(awk 'BEGIN{for(x=8.0;x<21.4;x+=0.1) printf "%.1f\n", x}'); do
+            hi=$(awk "BEGIN{printf \"%.1f\", $lo+0.1}")
+            out="kernels/irsf_c${lo}.json"
+            [ -s "$out" ] && continue
+            for attempt in 1 2 3; do
+              cargo run -p omegaflow-harvest --release --bin tap_compiler -- \
+                --root https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync \
+                --table "II/288/out" \
+                --columns 'ra:RAJ2000;dec:DEJ2000;jmag:Jmag' \
+                --skip-null jmag \
+                --async 3600 \
+                --limit 1100000 \
+                --where "\"Jmag\" >= ${lo} AND \"Jmag\" < ${hi}" \
+                --out "$out" && break
+              sleep 60
+            done
+            [ -s "$out" ] || { echo "slice ${lo} returned void"; exit 1; }
+          done
+          jq -s 'add' kernels/irsf_c*.json > kernels/irsf_mcps.json
+          gh release upload vizier.cds.unistra.fr kernels/irsf_mcps.json --clobber --repo omegaflow/sources \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "flatten: irsf_mcps returned void" \
+                 "irsf chunk compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

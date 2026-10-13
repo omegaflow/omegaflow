@@ -1,0 +1,43 @@
+name: lhaaso-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  lhaaso:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Ensure the vizier.cds.unistra.fr release exists on the CDN
+        run: |
+          gh release view vizier.cds.unistra.fr --repo omegaflow/sources >/dev/null 2>&1 \
+            || gh release create vizier.cds.unistra.fr --repo omegaflow/sources \
+                 --title "vizier.cds.unistra.fr" --notes "CDN family release"
+      - name: Fetch the LHAASO 1LHAASO catalog (VizieR J/ApJS/271/25 ASU-TSV)
+        run: |
+          mkdir -p kernels
+          curl -sSfL --retry 3 --max-time 600 \
+            -o kernels/lhaaso_sky1.csv \
+            "https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/ApJS/271/25&-out=RAJ2000,DEJ2000,N0&-out.max=100000" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "lhaaso-cdn: the ASU-TSV returned void" \
+                 "curl on vizier.cds.unistra.fr did not reach J/ApJS/271/25. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+      - name: Compile the LHAASO sky1 map and upload to CDN
+        run: |
+          cargo run -p omegaflow-harvest --release --bin lhaaso_compiler -- \
+            --input kernels/lhaaso_sky1.csv --out lhaaso_sky1.sky1 --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "lhaaso-cdn: lhaaso_sky1.sky1 returned void" \
+                 "lhaaso compile returned void. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
