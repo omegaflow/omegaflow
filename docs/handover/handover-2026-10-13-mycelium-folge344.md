@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 344 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: f74d4b6494a37ec1dad895a29312cc3df9c7ade28f8ea772e157d9e04447040d
+  sha256: a3c99d84df66765703619979143124e6595043a31b6a27b998688351f7b7b336
   status: live
 -->
 # Handover — Mycelium-Folge 344 (2026-10-13)
@@ -138,6 +138,14 @@ aus `mountain-folge340` und `river-folge207` sind bereits in folge343 gefaltet.
 - **Lage:** (gemessen 2026-10-13/341) NSSDC/SSDC-Schlüssel gesetzt, aber **kein Konsument** im Code; CDDIS verdrahtet (`ionex_compiler.rs:45`).
 - **Blockade:** keine Quelle mit Bedarf.
 - **Braucht:** beim nächsten NSSDC/SSDC-Kandidaten prüfen; ein Konsument ist der Schritt.
+
+### archive_search — Arm-Ausbeute gemessen + Eskalations-Leiter gebaut
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** kein — gebaut (Commit-Wort + CI-Test)
+- **Lage:** (gemessen 2026-10-13/344) über `state/research/spills/` (2 514 Dateien, 715 MB): 3 438 Arm-Marker; Ausbeute = `[arm] url`-Zeilen je Lauf. **Tier A (≥10/Lauf):** zenodo 169,3 · openalex 64,4 · linkup 44,1 · exa 36,1 · psychporta 23,8 · semanticscholar 20,5 · crossref 17,7 · firecrawl 13,1 · core 12,9. **Tier B (3–10):** reactome 8,5 · serper 8,1 · datacite 7,6 · re3data 7,5 · go 7,5 · arxiv 7,2 · pangaea 6,8 · chembl 6,7 · dataeuropa 6,6 · dataverse 5,9 · seanoe 5,3 · ads 4,9. **Blockiert (nur `pending`):** base (IP-Access-denied) · tavily (HTTP 432) · serpapi/searchapi (HTTP 429) · tap · sparql · shodan · rss-bridge · opencellid · oapen · oai-pmh · googlecse · gfw · gemini · consensus · cc. **0 Treffer im Korpus:** ~47 Arme (themenabhängig „absent", nicht tot).
+- **Gebaut (2026-10-13/344):** (a) **Query-Log** `state/research/queries.φ` (`ts | session | mode | lines | hits | query`) schreibt jeder Netz-Lauf (`net.rs log_query`); (b) **`archive_search --stats`** aggregiert per Arm; (c) **Eskalations-Leiter** in `--all`: Arme nach gemessener Ausbeute sortiert (Log-yield, sonst Built-in-Tier), Abbruch bei ≥ `OMEGAFLOW_ALL_STOP` Trefferzeilen (Default 20) nach ≥6 Armen. `rustfmt --check` grün; `cargo build -p omegaflow-utils --bin archive_search` grün (0 Warnungen). Probe `--all "omegaflow kybernetik"` → 6 Arme, dann `=== stop: 595 result line(s)`.
+- **Blockade:** keine.
+- **Braucht:** `/commit` (Wort) + CI (`cargo test`); danach den Log durch echte Läufe füllen, `--stats` gegen die gewachsene Nutzung prüfen und die Built-in-Tier bei Bedarf erneuern.
 
 ## An mountain
 

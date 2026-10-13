@@ -3782,22 +3782,132 @@ pub fn keyword_mode_count() -> usize {
     QUERY_MODES.len() - PARAMETER_MODES.len()
 }
 
+const DEFAULT_ALL_STOP: usize = 20;
+
+const UNRANKED_ARM: f64 = 0.05;
+
+fn load_logged_yields() -> HashMap<String, f64> {
+    let mut map = HashMap::new();
+    let repo = match std::env::var_os("OMEGAFLOW_REPO") {
+        Some(r) => r,
+        None => return map,
+    };
+    let body = match std::fs::read_to_string(
+        std::path::PathBuf::from(repo).join("state/research/queries.φ"),
+    ) {
+        Ok(b) => b,
+        Err(_) => return map,
+    };
+    let mut runs: HashMap<String, (u64, u64)> = HashMap::new();
+    for line in body.lines() {
+        let f: Vec<&str> = line.splitn(6, " | ").collect();
+        if f.len() < 5 {
+            continue;
+        }
+        let h: u64 = match f[4].trim().parse() {
+            Ok(v) => v,
+            Err(_) => continue,
+        };
+        let e = runs.entry(f[2].trim().to_string()).or_insert((0, 0));
+        e.0 += 1;
+        e.1 += h;
+    }
+    for (m, (r, h)) in runs {
+        map.insert(m, h as f64 / r as f64);
+    }
+    map
+}
+
+fn builtin_yield(mode: &str) -> f64 {
+    match mode {
+        "zenodo" => 169.0,
+        "openalex" => 64.0,
+        "linkup" => 44.0,
+        "exa" => 36.0,
+        "psychporta" => 24.0,
+        "semanticscholar" => 20.0,
+        "crossref" => 18.0,
+        "firecrawl" => 13.0,
+        "core" => 13.0,
+        "reactome" => 8.5,
+        "serper" => 8.1,
+        "datacite" => 7.6,
+        "re3data" => 7.5,
+        "go" => 7.5,
+        "arxiv" => 7.2,
+        "pangaea" => 6.8,
+        "chembl" => 6.7,
+        "dataeuropa" => 6.6,
+        "dataverse" => 5.9,
+        "seanoe" => 5.3,
+        "ads" => 4.9,
+        "marginalia" => 3.0,
+        "sourcegraph" => 2.3,
+        "ckan" => 2.2,
+        "apis" => 1.8,
+        "europepmc" => 1.7,
+        "osf" => 1.5,
+        "mwmbl" => 1.5,
+        "searxng" => 1.4,
+        "wiki" => 1.0,
+        "stackexchange" => 1.0,
+        "awmf" => 1.0,
+        "github" => 0.7,
+        "scrape" => 0.4,
+        "ia-search" => 0.4,
+        "doaj" => 0.4,
+        "pubmed" => 0.1,
+        _ => UNRANKED_ARM,
+    }
+}
+
 fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<String> {
     let mut out = Vec::new();
     let mut full = Vec::new();
+    let stop_threshold: usize = match std::env::var("OMEGAFLOW_ALL_STOP")
+        .ok()
+        .and_then(|s| s.parse().ok())
+    {
+        Some(v) => v,
+        None => DEFAULT_ALL_STOP,
+    };
+    let min_arms = 6usize;
+
+    let logged = load_logged_yields();
+    let rank = |m: &str| match logged.get(m) {
+        Some(y) => *y,
+        None => builtin_yield(m),
+    };
+    let mut modes: Vec<&str> = QUERY_MODES
+        .iter()
+        .copied()
+        .filter(|m| !PARAMETER_MODES.contains(m))
+        .collect();
+    modes.sort_by(|a, b| {
+        rank(b)
+            .partial_cmp(&rank(a))
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
+
     out.push(format!(
-        "=== coverage: {} of {} keyword modes run; {} parameter-arm(s) held (need endpoint=/server=): {} ===",
-        keyword_mode_count(),
-        QUERY_MODES.len(),
+        "=== coverage: {} keyword modes ranked by measured yield; {} parameter-arm(s) held (need endpoint=/server=): {} — stop at {stop_threshold} result lines (OMEGAFLOW_ALL_STOP) ===",
+        modes.len(),
         PARAMETER_MODES.len(),
         PARAMETER_MODES.join(" ")
     ));
-    for mode in QUERY_MODES {
-        if PARAMETER_MODES.contains(mode) {
-            continue;
+
+    let mut accumulated = 0usize;
+    let mut ran = 0usize;
+    let mut stopped = false;
+    for mode in modes {
+        if ran >= min_arms && accumulated >= stop_threshold {
+            stopped = true;
+            break;
         }
         let lines = run_lines_max(mode, query, env, None, max);
         let n = lines.len();
+        accumulated += lines.iter().filter(|l| l.contains("] url ")).count();
+        ran += 1;
         full.push(format!("=== {} ({}) ===", mode, n));
         full.extend(lines.iter().cloned());
         out.push(format!(
@@ -3807,6 +3917,11 @@ fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<Stri
             n.min(5)
         ));
         out.extend(lines.into_iter().take(5));
+    }
+    if stopped {
+        out.push(format!(
+            "=== stop: {accumulated} result line(s) ≥ {stop_threshold} after {ran} arm(s) — the remaining arms are held (raise OMEGAFLOW_ALL_STOP to widen) ==="
+        ));
     }
     if let Some(path) = write_full(query, &full) {
         out.push(format!(
@@ -3865,6 +3980,65 @@ pub fn run_lines(
 }
 
 pub fn run_lines_max(
+    mode: &str,
+    query: &str,
+    env: &HashMap<String, String>,
+    out: Option<&str>,
+    max: usize,
+) -> Vec<String> {
+    let lines = run_lines_dispatch(mode, query, env, out, max);
+    if mode != "all" {
+        log_query(mode, query, &lines);
+    }
+    lines
+}
+
+fn log_query(mode: &str, query: &str, lines: &[String]) {
+    let repo = match std::env::var_os("OMEGAFLOW_REPO") {
+        Some(r) => std::path::PathBuf::from(r),
+        None => return,
+    };
+    let dir = repo.join("state/research");
+    if std::fs::create_dir_all(&dir).is_err() {
+        return;
+    }
+    let stamp = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs(),
+        Err(_) => return,
+    };
+    let session = match std::env::var("OMEGAFLOW_SESSION") {
+        Ok(v) => v,
+        Err(_) => "-".to_string(),
+    };
+    let hits = lines
+        .iter()
+        .filter(|l| l.starts_with(&format!("[{mode}] url ")))
+        .count();
+    let clean: String = query
+        .chars()
+        .map(|c| {
+            if c == '|' || c == '\n' || c == '\r' || c == '\t' {
+                ' '
+            } else {
+                c
+            }
+        })
+        .collect();
+    let line = format!(
+        "{stamp} | {session} | {mode} | {} | {hits} | {clean}\n",
+        lines.len()
+    );
+    if let Ok(mut f) = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(dir.join("queries.φ"))
+    {
+        use std::io::Write;
+        let _ = f.write_all(line.as_bytes());
+    }
+}
+
+fn run_lines_dispatch(
     mode: &str,
     query: &str,
     env: &HashMap<String, String>,
