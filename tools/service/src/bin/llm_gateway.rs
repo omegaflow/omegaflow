@@ -140,6 +140,13 @@ const ROUTES: &[Route] = &[
         key_env: "UNOROUTER_API_KEY",
         auth_id: "unorouter",
     },
+    Route {
+        prefix: "horde",
+        provider: "AI Horde",
+        base_url: "https://aihorde.net/api/v2",
+        key_env: "AIHORDE_API_KEY",
+        auth_id: "",
+    },
 ];
 
 fn load_secrets() -> HashMap<String, String> {
@@ -528,6 +535,16 @@ fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -
                 continue;
             }
             attempted.push(format!("{}/{}", route.provider, provider_model));
+            if route.prefix == "horde" {
+                let key = match key_for(route, secrets, auth) {
+                    Some(k) => k,
+                    None => "0000000000".to_string(),
+                };
+                answered_provider = Some(route.provider.to_string());
+                answered_model = Some(provider_model.to_string());
+                let (code, resp) = horde_chat(body, provider_model, &key);
+                break 'chain (code, resp);
+            }
             let key = match key_for(route, secrets, auth) {
                 Some(k) => k,
                 None => {
@@ -628,6 +645,114 @@ fn effective_base(r: &Route, secrets: &HashMap<String, String>) -> Option<String
         return Some(r.base_url.to_string());
     }
     Some(format!("{}/{}/ai/v1", r.base_url, cf_account(secrets)))
+}
+
+fn curl_capture(args: &[String]) -> (u16, String) {
+    let out = Command::new("curl").args(args).output();
+    match out {
+        Ok(o) => {
+            let raw = String::from_utf8_lossy(&o.stdout).to_string();
+            match raw.rfind('\n') {
+                Some(i) => {
+                    let code = match raw[i + 1..].trim().parse::<u16>() {
+                        Ok(c) => c,
+                        Err(_) => 0,
+                    };
+                    (code, raw[..i].to_string())
+                }
+                None => (0, raw),
+            }
+        }
+        Err(_) => (0, String::new()),
+    }
+}
+
+fn horde_chat(body: &str, provider_model: &str, key: &str) -> (u16, String) {
+    let base = "https://aihorde.net/api/v2";
+    let prompt = match json_string_field(body, "content") {
+        Some(p) => p,
+        None => {
+            return (
+                400,
+                "{\"error\":{\"message\":\"horde: no prompt\"}}".to_string(),
+            );
+        }
+    };
+    let submit_body = format!(
+        "{{\"prompt\":{},\"params\":{{\"max_length\":512,\"max_context_length\":4096}},\"models\":[{}]}}",
+        json_escape(&prompt),
+        json_escape(provider_model)
+    );
+    let submit_args = vec![
+        "-s".to_string(),
+        "-S".to_string(),
+        "--max-time".to_string(),
+        "60".to_string(),
+        "-X".to_string(),
+        "POST".to_string(),
+        format!("{base}/generate/text/async"),
+        "-H".to_string(),
+        format!("apikey: {key}"),
+        "-H".to_string(),
+        "Client-Agent: omegaflow:1.0:https://omegaflow.space".to_string(),
+        "-H".to_string(),
+        "Content-Type: application/json".to_string(),
+        "--data-binary".to_string(),
+        submit_body,
+        "-w".to_string(),
+        "\n%{http_code}".to_string(),
+    ];
+    let (code, resp) = curl_capture(&submit_args);
+    if !(200..300).contains(&code) {
+        return (
+            502,
+            format!("{{\"error\":{{\"message\":\"horde submit http {code}\"}}}}"),
+        );
+    }
+    let id = match json_string_field(&resp, "id") {
+        Some(i) => i,
+        None => {
+            return (
+                502,
+                "{\"error\":{\"message\":\"horde: no job id\"}}".to_string(),
+            );
+        }
+    };
+    for _ in 0..40 {
+        std::thread::sleep(std::time::Duration::from_secs(3));
+        let status_args = vec![
+            "-s".to_string(),
+            "-S".to_string(),
+            "--max-time".to_string(),
+            "30".to_string(),
+            format!("{base}/generate/text/status/{id}"),
+            "-H".to_string(),
+            format!("apikey: {key}"),
+            "-H".to_string(),
+            "Client-Agent: omegaflow:1.0:https://omegaflow.space".to_string(),
+            "-w".to_string(),
+            "\n%{http_code}".to_string(),
+        ];
+        let (scode, sresp) = curl_capture(&status_args);
+        if !(200..300).contains(&scode) {
+            continue;
+        }
+        if sresp.contains("\"done\":true") || sresp.contains("\"done\": true") {
+            let text = match json_string_field(&sresp, "text") {
+                Some(t) => t,
+                None => String::new(),
+            };
+            let out = format!(
+                "{{\"id\":\"horde-{id}\",\"object\":\"chat.completion\",\"choices\":[{{\"index\":0,\"message\":{{\"role\":\"assistant\",\"content\":{}}},\"finish_reason\":\"stop\"}}]}}",
+                json_escape(&text)
+            );
+            return (200, out);
+        }
+    }
+    (
+        504,
+        "{\"error\":{\"message\":\"horde: job not finished in time\"}}".to_string(),
+    )
 }
 
 fn json_string_values(body: &str, key: &str) -> Vec<String> {
