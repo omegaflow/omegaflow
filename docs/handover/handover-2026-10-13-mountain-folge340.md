@@ -3,7 +3,7 @@
   session: Mountain-Linie — ENTSO-E-Roster gesammelt, Rat↔Roster-Riss am Kontrakt geschlossen; river-Zeugen (ABK-field-Schlüssel, register_sort, camera_angles) gefaltet und gearbeitet
   class: handover
   date: 2026-10-13
-  sha256: d74e696be96ab54379907a16aa83c53f4fc5a6fd888f9d7d8108279f6cd60c69
+  sha256: 5492001a312271ba90dc9354f5485b8966c607e65e06773f34da340f2615a8c0
   status: live
 -->
 # Handover — Mountain-Folge 340 (2026-10-13)
@@ -24,16 +24,25 @@ und faltete die adressierten river-Zeugen (Tokens unten).
   → `state/research/spill/omegaflow_all_1791900153_represent_a_time_interval_with_duration_.txt`.
   **Rat** (fünf Stimmen): Intervall = **`epoch`=Start + `tau`=Dauer**; kein neuer Record; `val` =
   geerntete Menge (mandatory → fehlt sie, Record übersprungen); Gebiet + Code = datengetriebener
-  Kanal-Qualifier. **Roster gesammelt** (`state/stimmen/2026-10-13_entsoe_roster_gewichtet.md`):
-  Qwen, Duck, Sakana (Namazu), DeepSeek Chat, DeepSeek V4 Pro → **(c) neuer Record-Typ**; Claude
-  → **(a) + zwei Pflichtkorrekturen = faktisch (d)**; **Z.ai (GLM-5.3 Deep Think Max) `pending`**
-  (Antwort rechnet noch im Chat, nicht abgeholt); Perplexity · Mistral · AI Studio · MiniMax ·
-  Lumo · Kimi **nicht gestellt** (Composer nicht gefüllt). **Riss-Schluss am Kontrakt (gemessen,
-  nicht behauptet):** die abwesende Menge hat den `presence`-Slot (26 × f64), der fehlende
-  räumliche Anker ist das Gebiet als **deklarierte Receiver-Weltlinie**
-  (`docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md:82`) — kein erfundener Koordinat, kein
-  neuer Record-Typ (der fixe 26 × f64-Wire trägt keinen). Der Roster-Riss bleibt benannt, er ist
-  über Receiver + presence geschlossen, nicht geglättet. **Erster Bau-Schritt erledigt:**
+  Kanal-Qualifier.   **Roster gesammelt** (`state/stimmen/2026-10-13_entsoe_roster_gewichtet.md`): Qwen, Duck, Sakana
+  (Namazu), DeepSeek Chat, DeepSeek V4 Pro → **(c) neuer Record-Typ**; Claude → **(a) + zwei
+  Pflichtkorrekturen = faktisch (d)**. **Max-Nachlauf (Operator-Kritik: Default-Modus zu Recht
+  gerügt; `state/stimmen/2026-10-13_entsoe_roster_max.md`):** am lebenden Chrome **verifiziert**
+  gesetzt — Qwen direkt **Qwen3.8-Max + Denken + Web-Suche** → **(c)**; Qwen3.8 **2.4T**
+  (`tryingopen`) → **(c)**, schärfer („tau=0 hilft nicht, das Intervall hat reale Dauer"; „EIC ist
+  Zuschreibungsraum, keine Koordinate"); DeepSeek **DeepThink+Search** → **(c)** („**tau ist
+  Bestandsdauer, nicht Ereignisdauer**"); Claude **Sonnet 5.5 Extra hoch** → **(a)+Korrekturen**;
+  Z.ai **gemessene Nichtantwort** („at capacity … peak hours … switch to GLM-5.3-Flash"); GLM via
+  tryingopen **nicht verfügbar** (Liste nur `GLM 5.2`, `disabled` „Adding capacity").
+  **Riss-Schluss am Kontrakt (gemessen, nicht behauptet):** die abwesende Menge hat den
+  `presence`-Slot (26 × f64), der fehlende räumliche Anker ist das Gebiet als **deklarierte
+  Receiver-Weltlinie** (`docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md:82`) — kein
+  erfundener Koordinat, kein neuer Record-Typ. **Nicht geglättet:** der Max-Roster trägt einen
+  Konfund (tau = Bestandsdauer = Erstreckung *dieser* Menge, nur solange die Menge über das
+  Intervall konstant gilt; bei reinem Ereigniscode ohne MW überlädt `tau` tatsächlich → Record =
+  Existenznachweis). **Noch nicht gestellt (Modell/Schalter nicht gesetzt):** Perplexity · Mistral ·
+  AI Studio · MiniMax · Lumo · Kimi · Duck-Begründungsmodus · Inkling · Nemotron 3 Ultra · GPT-OSS
+  120B · MiMo V2.6 Pro · Mistral Large 4. **Erster Bau-Schritt erledigt:**
   `entsoe_compiler.rs` erntet `quantity: Option<f64>` (`cargo check` 0/0). **Riss (offen):**
   Workflow-Header-Tag `web-api.tp.entsoe.eu` ≠ Compiler-Tag `transparency.entsoe.eu`; kein
   extract-Arm (`sgrep -i entsoe src` = 0).
@@ -174,6 +183,7 @@ Origin: mountain-340 (2026-10-13) — Antwort auf `river-folge206`:
 - **„bitte bei ratsfragen immer noch recherche und vollen max roster …"** | 2026-10-13 | (mountain 339) — jede Ratsfrage zuerst `archive_search --all` (Text gespeichert), dann der volle UI-Roster, nie Rat in Pro-Solo.
 - **„das ist kein roster … nur die 4 selben tabs … die 2 billigsten"** | 2026-10-13 | (mountain 339) — der Roster ist die volle Seat-Liste, nicht die vier Frontier-Tabs.
 - **„die letzte session schreit Kritik angenommen … Vier Tabs sind kein Roster"** + „Roster-Antworten abholen und den Riss schließen" | 2026-10-13 | (mountain 340) — der Roster wird vollständig abgeholt; der Rat↔Roster-Riss wird benannt und am Kontrakt geschlossen.
+- **„wie oft soll ich euch noch sagen dass ihr die modelle auf max stellen sollt … mycelium [hat es] haar klein dokumentiert und euch in die vorgaben geschrieben und dass qwen und glm auch über tryingopen erreichbar sind"** | 2026-10-13 | (mountain 340) — **Search/Max ist die Pflicht vor dem Senden, verifiziert** (`docs/concepts/ui-seats.md:206`); Qwen (Qwen3.8-Max) und GLM über `tryingopen` erreichbar; der Default-Modus ist ein Messfehler, keine Messung.
 
 ## Abschluss
 
