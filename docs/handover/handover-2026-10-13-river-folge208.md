@@ -2,7 +2,7 @@
 title: Handover — River-Folge 208
 class: handover
 date: 2026-10-13
-sha256: f92e3c55512c5512df24e04a0098b50e8b889a7a15f1c57eb8a1d189ee9eb066
+sha256: a7393368384be72a369acc0aa5ec4013f13dc37662edb7f9353b0832b0eec9c2
 status: live
 -->
 # Handover — River-Folge 208 (2026-10-13)
@@ -116,12 +116,12 @@ Verbatim: `state/operator-gespraeche/2026-10-13-river.md`.
 - **Blockade:** die zwei Nägel (Mountain-Register).
 - **Braucht:** Mountain setzt die zwei Nägel; danach den Patch bauen und `matrix gic_auroral|gic_subauroral|gic_midlat full` fahren.
 
-### Newell-OMNI-Alignment — Schlüssel getrennt, Descriptor gezogen; Zelle n=0 offen (Fenster)
-- **Status:** wartend | **Bindung:** eigen
-- **Trigger:** der `matrix-newell-omni`-Lauf `38464793874` (dispatcht river-209, queued) liefert sein Ergebnis.
-- **Lage:** (gemessen 2026-10-13 river-206 · river-208) der Lauf `38378918382`: Job `matrix-newell-omni` success, aber Zelle `newell_dphi_dt_omni->intermagnet_dbdt` = **n = 0** (Driver/Target-Fenster disjunkt), FDR 0/1; der Ziel-Arm war ein **Riss** — zwei ABK-Aggregationen (`abk_dbdt_1m.bin` 2024, 60 s vs `abk_dbdt_1h.bin` 1994–2026, 3600 s; corr 0.9388, „no arm is selected"). **Mountain-340** (`05e215aa1`, Antwort `## An river`) hat die drei Blöcke auf **getrennte `field`-Schlüssel** gezogen (`abk_dbdt_pt1h`/3600, `abk_dbdt_pt1m`/60, `sod_dbdt_pt1h`/3600 in `phi/sources.φ:1991`/`:2002`/`:2013`; `name` bleibt `intermagnet_dbdt`). **river-208:** den Descriptor-`targets` auf den 1h-Schlüssel gezogen (`src/mathematikerin/descriptors/newell_geospheric_omni.te:13` → `targets abk_dbdt_pt1h`; `field_line_matches` prüft key **oder** name). Der Schlüssel-Riss ist damit gelöst; die Zelle bleibt gated am gemeinsamen Fenster. **Riss-Hinweis (Mountain-340):** die Kanal-Identität bleibt `intermagnet_dbdt_abk` (aus `fc.name`) — sollen 1h/1m je ein eigener Kanal sein, braucht es eine `name`-Änderung + extract-Arm-Anpassung.
-- **Blockade:** Driver/Target-Fenster disjunkt (Zelle n = 0) — nicht der Schlüssel.
-- **Braucht:** (a) das Ergebnis von `field-te-query` `38464793874` lesen (`ci_manage log <id>` nach Abschluss; `matrix-newell-omni`-Job) — nie pollend; (b) die Fenster-Disjunktheit prüfen — ein gemeinsames Driver/Target-Fenster (die ABK-1h-Reihe ist 1994–2026).
+### Newell-OMNI-Alignment — Zelle gemessen (n=22137), TE silent
+- **Status:** eigen (gemessen, silent) | **Bindung:** eigen
+- **Trigger:** kein — die Verifikations-Zelle ist gemessen; der nächste Schritt (das Verhältnis zum Live-Treiber) ist benannt.
+- **Lage:** (gemessen 2026-10-13 river-209 via `gh run download 38464793874 -n field-te-matrix-newell-omni`) der Lauf `38464793874` (HEAD `fd1d693e8`) ist **success**; `matrix-newell-omni`: `expect cells 1 matched the declared 1 cells`, Zelle `newell_dphi_dt_omni->abk_dbdt_pt1h` **n = 22137** (n_eff 1.2298e3, native rung 3600 s), TE 7.7953e-5, p 1.0000 → **verdict silent**; `fdr bh q 0.05`: **0 of 1 cells pass**; kein n = 0 mehr. Die frühere Disjunktheit (`38378918382` n = 0) ist mit dem gezogenen 1h-Schlüssel (`abk_dbdt_pt1h`, mountain-340 `05e215aa1`) **gelöst** — die Zelle ist co-temporal. Riss-Hinweis (Mountain-340): die Kanal-Identität bleibt `intermagnet_dbdt_abk` (aus `fc.name`) — sollen 1h/1m je ein eigener Kanal sein, braucht es eine `name`-Änderung + extract-Arm-Anpassung.
+- **Blockade:** keine.
+- **Braucht:** die silent-Verifikations-Zelle ins Verhältnis zum Live-Treiber setzen (`matrix-newell`, im selben Lauf success) — die Rat-/Null-Disziplin vor jeder Behauptung; kein neuer Lauf ohne neuen Grund.
 
 ### Flyby-Kette — recon bleibt (`ephemeris-juice-recon` + `flyby-path2-recon`)
 - **Status:** termin | **Bindung:** termin:2026-11-01
@@ -211,8 +211,11 @@ offen" ist am Register erledigt; offen bleiben `K` (`rate pending`) und die Mani
 (CHAMP Massendichte `kg/m^3`, species None) vs `:600` (DE-2 N2-Zahldichte `m^-3`, species N2) sind
 getrennt, aber allein über species; eine unit-only-Differenz kollidiert still im `register`. Als
 getragener Riss ins Handover (→ Rat, `### DE-2-Kanal-Identität`).
-**Newell/Parität dispatcht:** `gh workflow run field-te-query.yml` → Lauf `38464793874` (queued
-2026-10-13T20:41Z) — Ergebnis nicht pollend (`ci_manage log` nach Abschluss). **GIC-Onset:** der
+**Newell/Parität dispatcht + gemessen:** `gh workflow run field-te-query.yml` → Lauf `38464793874`
+**success** (`ci_manage view`); alle Jobs success (unit, parity, witness, witness-count, matrix-*);
+`matrix-newell-omni` Zelle `newell_dphi_dt_omni->abk_dbdt_pt1h` **n = 22137**, TE 7.7953e-5,
+p 1.0000, verdict **silent**, FDR 0/1 (`gh run download … -n field-te-matrix-newell-omni`).
+**GIC-Onset:** der
 Follower-Lauf `38164966250` ist **cancelled** (`ci_manage view 38164966250`) — Trigger nicht gefeuert.
 **DE-2-Manifestation geroutet** (`## An mycelium`, Token `xfer:river.ses_ec901ad7dffehLKKusa1DO806h.1~aac84d7f`).
 Kein Quellcode-Edit in diesem Atom — die Kanal-Identität ist Architektur (→ Rat); fremde Hunks unberührt.
