@@ -33,7 +33,7 @@ Punktes, keine Rangfolge, keine Liste. Werkzeuge statt Rohbefehle (`docs/concept
 
 **3 · Nur Ungeklärtes vorlegen.** Braucht ein Punkt ein **neues** Operator-Wort, wird er einzeln in
 einfacher Sprache vorgelegt (Lage · Frage · was bei Ja und bei Nein geschieht) — nie als Liste.
-**LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit `~/projects/omegaflow-personal/zustand/wartend.φ`). Jede Entscheidung
+**LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit im privaten Haus; die öffentliche Seite liest sie nicht — der Briefkasten trägt nur Öffentliches). Jede Entscheidung
 geht sofort als Zeile ins Handover (Sofort-Prinzip).
 
 **4 · Grenze bleibt.** Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame
@@ -50,14 +50,14 @@ Braucht**; **LOCK nur im `LOCK`-Abschnitt**; Header-sha256 via `omega_sh sha <da
 kein Ton, keine Hardware ohne Wort.
 
 **Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
-**privat** (nur diese Linie) und liegt in `~/projects/omegaflow-personal/sensory/archive-search-preset.txt` — hier
+**privat** (nur diese Linie) und liegt in `~/projects/omegaflow-work/ui/sensory-preset.txt` — hier
 eingelesen:
 
-!`cat ~/projects/omegaflow-personal/sensory/archive-search-preset.txt`
+!`cat ~/projects/omegaflow-work/ui/sensory-preset.txt`
 
-**Linien-UI-Gruppe (Operator-Wort 2026-10-07; Speicher-Regel).** Die 4 Frontier-Chats (Duck · Claude · Qwen · Z.ai) dieser Linie liegen in der **eigenen** Gruppe — genau eine je Linie, kein Fremd-Composer. **Tabs sind just-in-time:** öffnen nur für einen Stimmen-Round (`browser_open … focus:false`), danach schließen (`browser_close`). Die **Tryingopen-Seats sind geteilt** in der zustandslosen Gruppe `open-weight-ui` (ein Tab je Modell, kein Modellwechsel im Chat); Zugang nur über das Lock `~/projects/omegaflow-personal/zustand/ui-open-weight.lock` (Halter-Linie + Zeit setzen/löschen) — zwei Linien fahren die Seats nie gleichzeitig. Peak = 4 Frontier + Seats nur während der Runde. Gruppenname: `~/projects/omegaflow-personal/sensory/ui-group.txt`:
+**Linien-UI-Gruppe (Operator-Wort 2026-10-07; Speicher-Regel).** Die 4 Frontier-Chats (Duck · Claude · Qwen · Z.ai) dieser Linie liegen in der **eigenen** Gruppe — genau eine je Linie, kein Fremd-Composer. **Tabs sind just-in-time:** öffnen nur für einen Stimmen-Round (`browser_open … focus:false`), danach schließen (`browser_close`). Die **Tryingopen-Seats sind geteilt** in der zustandslosen Gruppe `open-weight-ui` (ein Tab je Modell, kein Modellwechsel im Chat); Zugang nur über das Lock `~/projects/omegaflow-work/ui/open-weight.lock` (Halter-Linie + Zeit setzen/löschen) — zwei Linien fahren die Seats nie gleichzeitig. Peak = 4 Frontier + Seats nur während der Runde. Gruppenname: `~/projects/omegaflow-work/ui/sensory-group.txt`:
 
-!`cat ~/projects/omegaflow-personal/sensory/ui-group.txt`
+!`cat ~/projects/omegaflow-work/ui/sensory-group.txt`
 
 Architektur-/Ethik-Entscheidungen gehen durch die **Linse der fünf Stimmen** (Rat), nie in Pro-Solo.
 
