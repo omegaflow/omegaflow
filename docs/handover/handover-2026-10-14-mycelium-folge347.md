@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 347 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: 5853b98a98fd20380d6dbebb1fa53806099233fe0e7dc36e054efc0ffcf129e8
+  sha256: ed8413cbf7dabadd3ea596395af4a1265148ce3d966b723e8e92d47d31ae2d97
   status: live
 -->
 # Handover — Mycelium-Folge 347 (2026-10-14)
@@ -151,7 +151,7 @@ Origin: mycelium-347 (2026-10-14):
 Origin: mycelium-347 (2026-10-14):
 
 - `xfer:mycelium-344-4` **DE-2 + `asset=`-Riss** — die Riss-Klärung steht (`harvest-dispatch.yml:106` liest `asset=`); der Lauf `38552385568` scheitert **gemessen am Host** (`cdaweb.gsfc.nasa.gov` TLS-Abbruch). `asset=fehlt` bleibt bis zum ersten erfolgreichen Pull.
-- `xfer:river209-intermagnet1` **intermagnet-XYZ-Timeout** — der 25-Jahre-1-min-Lauf überschreitet `timeout-minutes: 180` (gemessen 180 min). Mycelium trägt den Workflow (Ernte-Dispatch); Fix = Fenster je Station splitten oder Timeout ≤360. River setzt `al_network_proxy`/`gic_onset_detector` danach auf.
+- `xfer:mycelium-347-1` **intermagnet-XYZ-Timeout** — der 25-Jahre-1-min-Lauf überschreitet `timeout-minutes: 180` (gemessen 180 min). Mycelium trägt den Workflow (Ernte-Dispatch); Fix = Fenster je Station splitten oder Timeout ≤360. River setzt `al_network_proxy`/`gic_onset_detector` danach auf.
 
 ## An future
 
