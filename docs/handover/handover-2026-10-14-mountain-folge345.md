@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: finals-Leser (Interpolation auf jetzt + Stale-Refusal + LOD), harvest-Direktive (Parser + Schumann-Block), Doppel-Arme bereinigt
   class: handover
   date: 2026-10-14
-  sha256: e37e2ccd31e04c8b7175177a68b0437409ad21240582d35d1531d2246a80bda4
+  sha256: c23d8a641b7426526deef2df8b90e7e7ce3f5d1913f5276f43d1413a84950aaa
   status: live
 -->
 # Handover — Mountain-Folge 345 (2026-10-14)
@@ -16,7 +16,7 @@ eingegangen (CelesTrak und LOD-`finals` gemessen erledigt, `harvest`-Direktive
 gebaut; SABER/Venus/UCAR-fäden bleiben). Der Stehende Pass wird zitiert
 (`state/zustand/standing-pass.md`), nie kopiert.
 
-## Burn: open 0.00 · close 0.0566 · cap 0.40 Grund: ein Pass — finals-Leser (Code + Block + 6 Tests), harvest-Direktive (Parser-Arm + Schumann-Zeile), Doppel-Arme (3 bare `tap`-Zwillinge entfernt + `register_sort`).
+## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass — finals-Leser (Code + Block + 6 Tests), harvest-Direktive (Parser-Arm + Schumann-Zeile), Doppel-Arme (3 bare `tap`-Zwillinge entfernt + `register_sort`); der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
 
 ## Offen (aufgeschlüsselt)
 
