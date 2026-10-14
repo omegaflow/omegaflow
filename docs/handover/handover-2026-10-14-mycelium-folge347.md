@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 347 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: 33a7856fa3ea1b0455a6084484df63b29aea924bc6b8998048a3e82c77d2d539
+  sha256: e8c74a469d60ae9d029fb8d31f202b9233adabe7ed7ec5dcfa7b622d0ae0a5b3
   status: live
 -->
 # Handover — Mycelium-Folge 347 (2026-10-14)
@@ -39,12 +39,12 @@ CTBTO, Weberin, Schumann — unten als Punkte geführt).
 - **Blockade:** keine.
 - **Braucht:** Vollzug lesen (`state/mycelium/higp_harvest.log`); je Jahr `modvolc_thermal_<jahr>.bin`; dann die 20 Jahre als local-only-Bestand führen. `--body earth` ist Pflicht (ohne → Exit 1).
 
-### MODVOLC-Archiv 2000–2019 (LAADS) — Anfrage gesendet, Antwort ausstehend
-- **Status:** wartend | **Bindung:** wartend
-- **Trigger:** Antwort von `laads-support@nasa.gov` (Mail gesendet 2026-10-14)
-- **Lage:** (gemessen 2026-10-14/345) C6-Archiv (`…/archive/allData/6/MODVOLC/`, C61-Pfad 404) hinter Earthdata Login (anonymer GET → 303) + „not yet approved for public release"; Auth-Route (LAADS-Hosts im EDL-Token-Set + 303 als Gate, `token.rs`) steht. Mit Token: LAADS C6 bleibt **401**.
-- **Blockade:** LAADS-Freigabe („not yet approved for public release").
-- **Braucht:** die Antwort autonom lesen; bei Freigabe Archiv-Modus im `modvolc_compiler.rs` (C6-Pfad + `Authorization: Bearer`), dann das 2000–2019-Fenster ziehen.
+### MODVOLC-Archiv 2000–2019 (LAADS) — abgesagt; HIGP ist die Alternative
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** kein — Alternative läuft (HIGP-Vollzug)
+- **Lage:** (gemessen 2026-10-14/347) LAADS-Antwort: **„this product is not approved for public distribution, so users cannot access this product"** → die LAADS-Route ist **geschlossen**. **Alternative (eigen, läuft):** der **HIGP-Bulk-Tree** (`modis.higp.hawaii.edu`, kein Login, `local-only`) liefert das Archiv 2000–2019; der Vollzug läuft (Fix trägt). Für den modernen Rand deckt LANCE `nrt3` (`Recent/`) ab.
+- **Blockade:** keine.
+- **Braucht:** nur den HIGP-Vollzug lesen; kein LAADS-Weg.
 
 ### DE-2-Manifestation — Host `cdaweb.gsfc.nasa.gov` unerreichbar
 - **Status:** wartend | **Bindung:** wartend
@@ -122,6 +122,15 @@ CTBTO, Weberin, Schumann — unten als Punkte geführt).
 - **Lage:** (gemessen 2026-10-14/347) Der China-NSSDC-Katalog-Record trägt `license CC BY 4.0` (Feld `license`; der `--nssdc`-Arm druckt `license`/`scope` jetzt). **Riss:** das ausliefernde Portal **CLPDS** (`moon.bao.ac.cn/mall/moonDATA`) schreibt im **„Copyright Notice" „all rights reserved — ohne schriftliche Erlaubnis keine Vervielfältigung/Verbreitung/Speicherung"**, und `archive.nssdc.ac.cn` ebenso („版权所有"); die CC-BY-4.0-Angabe des Katalogs ist am Portal **nicht** bestätigt. Zugang: `完全共享` (kein Antrag; Portal-Registrierung, `CLPDS_USER`/`CLPDS_PASS` vorhanden) vs. `有条件共享` (Echtnamen-Registrierung + Antrag + Autorisierung). SSDC: **keine Lizenz deklariert** (`www.ssdc.asi.it` ohne Terms; `tools.ssdc.asi.it` anonym HTTP 429) → kein Faden. `--nssdc-auth`/`--ssdc-auth` live grün (`ticket present`).
 - **Blockade:** Lizenz-Riss ungeklärt (welche Zeile gilt) + Antrag/Autorisierung für die bedingten Datensätze.
 - **Braucht:** Operator-Entscheidung — (a) nur `完全共享` über die CLPDS-Registrierung holen (Copyright-Riss benannt, nicht geglättet), oder (b) den CN-NSSDC-Datenantrag absenden. Danach Registrierung/Abruf.
+
+## Schlüssel → offene Fäden (gemessen 2026-10-14/347 via `bin/secrets_keys`)
+
+Nur Namen, nie Werte. **A = Schlüssel vorhanden → der Faden ist ein Abruf.**
+**B = Schlüssel reicht nicht (Gate bleibt).**
+
+**A:** China-Planetologie (CLPDS `完全共享`) — `CLPDS_USER/PASS` (+ `NSSDC_USER/PASS`, `SSDC_USER/PASS`) · Sonnenmagnetfeld (JSOC HMI) — `JSOC_EMAIL` · 21 cm/Spektren (CDS) — `CDS_API_KEY` · Wolken (ISCCP/PATMOS-x) — `EARTHDATA_EDL_TOKEN`/`NOAA_CDO_TOKEN` · Schumann/Zenodo — `ZENODO_TOKEN` · **CTBTO/WALDO** — `WALDO_USER/PASS` · **Geomagnetik** — `SUPERMAG_USER/PASS` · `KCDC_USER/PASS` · `LEOS_USER/PASS` · `NIED_USER/PASS` · `KASI_DALO_USER/PASS` · ENTSO-E — `ENTSOE_API_TOKEN` · BASE — `BASE_API_KEY` · IGETS — `IGETS_USER/PASS` · Copernicus — `CMEMS_USER/PASS`/`CDS_API_KEY`/`CDSE_USER/PASS` · ESA/JAXA — `ESA_USER/PASS`/`JAXA_GPORTAL_USER/PASS` · CelesTrak — `SPACETRACK_USER/PASS` · KNMI — `KNMI_API_KEY` · Literatur — `NASA_ADS_TOKEN`/`OPENALEX_API_KEY`/`S2_API_KEY`/`UNPAYWALL_EMAIL`/`ORCID_*`.
+
+**B:** LAADS C6 — Token da, aber **nicht freigegeben** (Antwort 2026-10-14) → geschlossen, Alternative HIGP · China-NSSDC `有条件共享` — **Antrag + Autorisierung** + Lizenz-Riss · SSDC — **keine Lizenz deklariert** · Vier Endpunkte (SEANOE/GEOFON/ICGEM/gamma-cat) — keyless, gated an Mountains `terms` · UCAR-FPI (Weberin-Zeuge) — Download **offen** (HTTP 200), `format`-Arm/Parser fehlt; UCAR-COSMIC schon registriert · DE-2 — Host down, **Ersatzgrößen** CHAMP (GFZ CC-BY-4.0), ICON/GRACE (Zenodo CC-BY-4.0) · SuperDARN — Mirror-Route `api.bas.ac.uk/superdarn/mirror/v3/` (`phi:1273`) + `superdarn_rawacf.bin`/`superdarn_fitacf.bin` registriert; **LOCK** nur auf den **Record/Globus-Korpus** (Operator-Wort 2026-09-29).
 
 ## An mountain
 
