@@ -37,7 +37,7 @@ EXCL4=":(exclude)docs/concepts/tool-forms.md"
 # Die PII-Muster sind privat und nie getrackt: state/pii-patterns.txt ist die
 # Primaerquelle (eine Zeile, alternierte Muster). Fehlt sie, wird die pii-Klasse
 # benannt uebersprungen — kein stilles Null.
-PII_FILE="$(git rev-parse --show-toplevel 2>/dev/null)/state/pii-patterns.txt"
+PII_FILE="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}/pii-patterns.txt"
 PII=""
 if [ -f "$PII_FILE" ]; then
     IFS= read -r PII < "$PII_FILE" || PII=""

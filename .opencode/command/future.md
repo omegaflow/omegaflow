@@ -12,10 +12,10 @@ für Bekanntes. Ist ein Name genannt, nimm diesen; sonst die neueste offene Futu
 
 Name (leer = neueste): $ARGUMENTS
 
-Neueste offene Future-Übergabe (privat): state/future/handover/ — neueste handover-*-future-*.md
+Neueste offene Future-Übergabe (privat): ~/projects/omegaflow-personal/future/handover/ — neueste handover-*-future-*.md
 
 **Die Übergabe IST der Stand.** Lies sie und den Stehenden Pass
-(`sread state/zustand/standing-pass.md` — zitieren, nie kopieren; eine kopierte Pass-Zahl ist ein
+(`sread ~/projects/omegaflow-personal/zustand/standing-pass.md` — zitieren, nie kopieren; eine kopierte Pass-Zahl ist ein
 Gate-Fixture `pass-copy`). Ein bereits geworteter/geklärter Punkt wird **nie** erneut vorgelegt.
 
 **1 · Still messen, nur Fälliges.** Nur was der eigene Trigger für fällig erklärt:
@@ -33,7 +33,7 @@ Punktes, keine Rangfolge, keine Liste. Werkzeuge statt Rohbefehle (`docs/concept
 **3 · Nur Ungeklärtes vorlegen.** Braucht ein Punkt ein **neues** Operator-Wort, wird er einzeln in
 einfacher Sprache vorgelegt (Lage · Frage · was bei Ja und bei Nein geschieht) — nie als Liste.
 **LOCK nie vorlegen** (nur auf Operator-Wort entlockt). **Wartend nie vorlegen** (Wahrheit
-`state/zustand/wartend.φ`). Jede Entscheidung geht sofort als Zeile ins Handover, nicht am Sessionende
+`~/projects/omegaflow-personal/zustand/wartend.φ`). Jede Entscheidung geht sofort als Zeile ins Handover, nicht am Sessionende
 gesammelt (Sofort-Prinzip). Future ist die Operator-Adresse — jede Frage dieser Linie wird hier
 gesammelt, nicht in eine fremde Übergabe geschrieben.
 
@@ -47,18 +47,18 @@ Braucht**; **LOCK nur im `LOCK`-Abschnitt** (nie in Offen/Queue); Header-sha256 
 `omega_sh sha <datei>`; die konsumierte Übergabe nach `archiv/`. Der Commit trägt die fortgeschriebene Übergabe.
 
 **Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
-**privat** (nur diese Linie) und liegt in `state/future/archive-search-preset.txt` — hier
+**privat** (nur diese Linie) und liegt in `~/projects/omegaflow-personal/future/archive-search-preset.txt` — hier
 eingelesen:
 
-!`cat state/future/archive-search-preset.txt`
+!`cat ~/projects/omegaflow-personal/future/archive-search-preset.txt`
 
-**Linien-UI-Gruppe (Operator-Wort 2026-10-07; Speicher-Regel).** Die 4 Frontier-Chats (Duck · Claude · Qwen · Z.ai) dieser Linie liegen in der **eigenen** Gruppe — genau eine je Linie, kein Fremd-Composer. **Tabs sind just-in-time:** öffnen nur für einen Stimmen-Round (`browser_open … focus:false`), danach schließen (`browser_close`). Die **Tryingopen-Seats sind geteilt** in der zustandslosen Gruppe `open-weight-ui` (ein Tab je Modell, kein Modellwechsel im Chat); Zugang nur über das Lock `state/zustand/ui-open-weight.lock` (Halter-Linie + Zeit setzen/löschen) — zwei Linien fahren die Seats nie gleichzeitig. Peak = 4 Frontier + Seats nur während der Runde. Gruppenname: `state/future/ui-group.txt`:
+**Linien-UI-Gruppe (Operator-Wort 2026-10-07; Speicher-Regel).** Die 4 Frontier-Chats (Duck · Claude · Qwen · Z.ai) dieser Linie liegen in der **eigenen** Gruppe — genau eine je Linie, kein Fremd-Composer. **Tabs sind just-in-time:** öffnen nur für einen Stimmen-Round (`browser_open … focus:false`), danach schließen (`browser_close`). Die **Tryingopen-Seats sind geteilt** in der zustandslosen Gruppe `open-weight-ui` (ein Tab je Modell, kein Modellwechsel im Chat); Zugang nur über das Lock `~/projects/omegaflow-personal/zustand/ui-open-weight.lock` (Halter-Linie + Zeit setzen/löschen) — zwei Linien fahren die Seats nie gleichzeitig. Peak = 4 Frontier + Seats nur während der Runde. Gruppenname: `~/projects/omegaflow-personal/future/ui-group.txt`:
 
-!`cat state/future/ui-group.txt`
+!`cat ~/projects/omegaflow-personal/future/ui-group.txt`
 
 Architektur-/Ethik-Entscheidungen gehen durch die **Linse der fünf Stimmen** (Rat), nie in Pro-Solo.
 
-**Seat-Katalog + Bedienung (alle Linien; der Katalog ist privat/nicht getrackt): `sread state/ui-seats.md`** — welcher Seat welche URL/Composer-Form/Sende-Weg hat, wie **Suche + Reasoning/Max** je Seat gesetzt und **verifiziert** werden (Setzen vor dem Senden), die geteilten `open-weight-ui`-Modelle + Lock, und die Runden-Disziplin (JIT, `focus:false`, Nicht-Antwort = gemessen). **Nur der live Chrome trägt die Seats** (Bridge + `chrome-devtools_*`); Playwright ist ein fremder, unauthentifizierter Browser und für die Seats untauglich. Gilt für jede Linie gleich.
+**Seat-Katalog + Bedienung (alle Linien; der Katalog ist privat/nicht getrackt): `sread ~/projects/omegaflow-personal/ui-seats.md`** — welcher Seat welche URL/Composer-Form/Sende-Weg hat, wie **Suche + Reasoning/Max** je Seat gesetzt und **verifiziert** werden (Setzen vor dem Senden), die geteilten `open-weight-ui`-Modelle + Lock, und die Runden-Disziplin (JIT, `focus:false`, Nicht-Antwort = gemessen). **Nur der live Chrome trägt die Seats** (Bridge + `chrome-devtools_*`); Playwright ist ein fremder, unauthentifizierter Browser und für die Seats untauglich. Gilt für jede Linie gleich.
 
 Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
 (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
