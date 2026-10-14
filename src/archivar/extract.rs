@@ -161,6 +161,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "emm_exi_l2a" => emm_exi::parse_series(bytes),
         "vlf_awesome" => vlf_awesome::parse_series(bytes),
         "ucar_fpi" => fpi_ucar::parse_series(bytes),
+        "vnrd" => vnrd::parse_bin(bytes),
         _ => None,
     }
 }
@@ -944,6 +945,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "fdsn_event" => fdsn_event::component_name(comp),
         "gfc" => gfc::component_name(comp),
         "vlf_awesome" => vlf_awesome::component_name(comp),
+        "vnrd" => vnrd::component_name(comp),
         _ => None,
     }
 }
