@@ -1,0 +1,31 @@
+#!/bin/sh
+# privat_audit — Tor A: the map's completeness gate.
+#
+# It redacts every text file in the private house (through bin/private_read) and
+# reports ONLY the LOCATIONS (file:line) where a person-like token still survives:
+# a capitalized word pair, or a titel (Herr/Frau/Dr./Prof.) plus a capitalized word.
+# It prints NO values. A location is a lead for the map, not a leak.
+#
+# It must run OUTSIDE the cage (like private_read): the cage hides the private house.
+# Usage: privat_audit [dir]     (default: the private house)
+set -eu
+priv="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}"
+root="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+self="$root/private_read"
+dir="${1:-$priv}"
+
+files="$(fd -H -t f -e md -e txt -e phi -e φ -e json -e toml . "$dir" 2>/dev/null || true)"
+[ -n "$files" ] || { echo "privat_audit: no text files under $dir"; exit 0; }
+
+printf '%s\n' "$files" | while IFS= read -r f; do
+  "$self" "$f" 2>/dev/null | awk -v F="$f" '
+    /<[^>]*>/ && !/[A-ZÄÖÜ][a-zäöüß]+[[:space:]]+[A-ZÄÖÜ][a-zäöüß]+/ { next }
+    {
+      line = $0
+      gsub(/<[^>]*>/, "", line)
+      pair = line ~ /[A-ZÄÖÜ][a-zäöüß]+[[:space:]]+[A-ZÄÖÜ][a-zäöüß]+/
+      titel = line ~ /(Herr|Frau|Dr\.|Prof\.)[[:space:]]+[A-ZÄÖÜ][a-zäöüß]+/
+      common = line ~ /(Der|Die|Das|Ein|Eine|Sehr|Geehrte|Geehrter|Mit|Beste|Freundliche|Herzliche|Guten|Liebe|Lieber|Vielen)[[:space:]]+[A-ZÄÖÜ][a-zäöüß]+/
+      if ((pair || titel) && !common) print F ":" NR
+    }'
+done | sort -u
