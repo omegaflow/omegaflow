@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass + Taucher + Rat + Bridge-Roster: finals-Leser, harvest-Direktive, Doppel-Arme, Venus-Reader-Arm; SABER/Venus/ICGEM durch recherche·roster·rat (Riss auf SABER/Venus)
   class: handover
   date: 2026-10-14
-  sha256: ae7584bf8040d7e79e7a66481615cbe93916e06d98cd627753ce6a1068b37aa2
+  sha256: 71014baa98ec92baaf827b3ffd8597dbb259bb77c5042a3af52dd07d706d8d24
   status: live
 -->
 # Handover — Mountain-Folge 345 (2026-10-14)
@@ -21,7 +21,7 @@ zitiert, nie kopiert.
 ## Offen (aufgeschlüsselt)
 
 ### SABER — Höhenform (C): Arm + Höhen-Ablage brauchen ein Wort (eigen)
-- **Status:** eigen (Rat-Verdikt B2) | **Bindung:** eigen
+- **Status:** eigen (Operator-Wort 2026-10-14: die Sonde an xyz,t) | **Bindung:** eigen
 - **Trigger:** der Arm-Bau
 - **Lage:** (gemessen 2026-10-14, Taucher) Rat-Verdikt (C-1): `field ktemp.<i> …` (dotted
   Level im Schlüssel), `alt tpgpaltitude km`. **HAPI-`info` ist aus dem Cache gelesen**
@@ -37,9 +37,15 @@ zitiert, nie kopiert.
   zu je einem Skalar-Kanal (`saber_ktemp_0 …`, füllwert `-999.0` = absent), `Position::Source`;
   Blockform `hapi ktemp.<i>=saber_ktemp tpgpaltitude.<i>=saber_tpgpaltitude` + zwei `field`-Zeilen.
 - **Blockade:** `cdaweb.gsfc.nasa.gov` ist unerreichbar (Stehender Pass) — das Block-Sample fehlt.
-- **Braucht:** nur noch den Block
+- **Operator-Wort (2026-10-14):** SABER autonom als **eigene Sonde** führen — ein Punkt an
+  **xyz zur Zeit t**, wie ISS/Voyager (jede Messung trägt ihren eigenen Ort; die Bahn ist die
+  Folge der Orte, `Position::StateVector { p, v }` + `Motion::Linear`). Das überschreibt B2:
+  die Kanäle sitzen an der **eigenen Weltlinie des Satelliten**, nicht an `Position::Source`;
+  die Höhe ist dort ein Wert.
+- **Braucht:** (1) Block mit der Satelliten-Weltlinie (Position je Sample) statt `Position::Source`;
+  (2) den Block
   `url https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER&…parameters=ktemp,tpgpaltitude&format=json`,
-  `terms saber-rules-of-the-road …`, `at earth` — wartet auf die Host-Rückkehr (kein frisches Sample).
+  `terms saber-rules-of-the-road …` — wartet auf die Host-Rückkehr (kein frisches Sample).
 
 ### Venus Radar — Compiler-Achse braucht ein Wort; Reader-Arm steht (eigen)
 - **Status:** eigen (Rat-Verdikt D) | **Bindung:** eigen
@@ -65,8 +71,8 @@ zitiert, nie kopiert.
   (2) Split-Route; (3) der native Compiler-Lauf braucht 15×960 MB (CI, nicht operatormaschine).
 
 ### ICGEM gfc — „Epoche absent" ist eine neue Konvention und braucht ein Wort (eigen)
-- **Status:** eigen (Rat-Verdikt Witness) | **Bindung:** eigen
-- **Trigger:** der Witness-Bau
+- **Status:** eigen (Operator-Wort 2026-10-14: das Modell wie die anderen behandeln) | **Bindung:** eigen
+- **Trigger:** der Feld-Bau
 - **Lage:** (gemessen 2026-10-14, Taucher) D2 (Rat + Roster): statisch ohne Epoche,
   kein erfundener MJD. `gfc.rs`-Arm + `declared_fields` stehen (4 Felder `icgem_gfc_c/s`,
   `icgem_gfct_c/s`); der Compiler (`epoch_of` Z.147-150) **verlangt** eine Epoche und
@@ -76,12 +82,20 @@ zitiert, nie kopiert.
   **überspringt** den Kanal, `gfc.rs:153` behält 0.0 dagegen. **Kein Präzedenzfall** für
   eine geschriebene Serie mit fehlender Epoche (jede trägt eine echte oder eine deklarierte
   Konstante, z. B. `viking_grav` 1976-01-01). Riss 2: volles Modell ≈ 12,8 GB; Cap D=3211.
-- **Blockade:** keine (Rat-Verdikt Witness entschieden).
-- **Braucht:** (1) XGM2019e als **nicht-strahlende Gestalt** führen (`witness gestalt`,
-  wie `srtm15_plus`), nicht als `format gfc`-Serie; (2) Block
-  `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`,
-  `no-cadence`, ohne Epoch-Zelle; Cap D=3211 für den Split. Die vier `gfc`-Felder bleiben
-  gebaut, strahlen aber nicht (beschlossen).
+- **Operator-Wort (2026-10-14):** das Gravitationsmodell **wie das Erdmagnetfeld- und das
+  Atmosphären-Modell** behandeln — **an einem Ort auswerten** und dort einen **echten
+  Feldwert** liefern. Präzedenz im Baum: **VMF3** ist als Quelle registriert (`phi:1253`,
+  `:3974`), und `vmf3.rs` wertet das Kugelflächen-Modell (`vmf3_sh`) am Ort aus → ein
+  Feldwert; **IGRF** liefert `synthesize(date, radius, colat, lon) -> (Br,Bθ,Bφ)` (gebaut,
+  noch nicht angeschlossen). Das überschreibt das „Witness"-Verdikt: ein **Modell ist ein
+  Feld**, keine Gestalt — Gestalt ist für Karten (SRTM).
+- **Blockade:** der Koeffizienten-Arm (`gfc.rs`) führt die **Modell-Interna** als Kanäle
+  (ein Koeffizient = ein Kanal); das ist nicht der Feldwert. Der Auswerter (Koeffizienten
+  an einem Ort → Gravitationswert) fehlt.
+- **Braucht:** (1) Auswerter wie `vmf3_sh`/`igrf` — die gfc-Koeffizienten an einer Position
+  zur Feldgröße rechnen; die Kanäle tragen dann den **Feldwert**, nicht den Koeffizienten;
+  (2) Block `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`,
+  Feld am Ort; Cap D=3211 für den Split.
 - **Rest:** `format gfc` war im Reader registriert, aber **nicht** im `main_flow`-Dispatch —
   **behoben** (mountain-345: `"gfc"` in die Dispatch-Liste).
 
@@ -191,6 +205,8 @@ Origin: mountain-345 (2026-10-14):
 - **„Nächster offener Schritt: die Athabasca-Spektralform in den Arm ziehen (per-Bin, Frequenz in Hz) und die Registerzeile schreiben; dann SABER-Arm und Venus-Compiler."** | 2026-10-14 | (mountain 344).
 - **„recherche roster rat"** (Athabasca-Einheit) | 2026-10-14 | (mountain 344) — Kette gefahren; Verdikt (Rat + Roster): **nT²/Hz primär (Kalibrierung im Arm, linear), V²/Hz als Rohkanal**; umgesetzt.
 - **Die Einheiten-Entscheidung übernommen** (nT²/Hz primär + V²/Hz roh, Kalibrierung versioniert im Arm) | 2026-10-14 | (mountain 344 — Operator legte das Verdikt der Stimmen-Kette vor).
+- **„was wenn du den satellit autonom betrachtest — dann ist es doch auch nur eine sonde an einem xyz,t; die ISS ist doch zu einer Zeit immer an einem bestimmten Ort"** | 2026-10-14 | (mountain 345 — SABER: eigene Weltlinie, supersediert B2).
+- **„warum können wir das gravitationsmodell nicht wie die anderen behandeln? das Erdmagnetfeld-Modell und das Atmosphären-Modell werden an einem Ort ausgewertet und geben dort einen echten Feldwert — sie sind ein Feld"** | 2026-10-14 | (mountain 345 — ICGEM: Feld, supersediert Witness).
 
 ## Abschluss
 
@@ -237,6 +253,17 @@ ist genau der Riss, den der Rat selbst benannte. Der D-Compiler ist gebaut; gewi
 strahlende Serie `descoped`, der Compiler geparkt.
 
 **Konvergenz — ICGEM.** Rat **Witness** + Roster **W=9 Seats** (nur MiniMax 0.0): einig.
+
+**Operator-Korrektur (2026-10-14, supersediert Rat und Roster auf 1 und 3):**
+- **SABER:** die Sonde **autonom** führen — ein Punkt an **xyz,t** (wie ISS/Voyager); die
+  Kanäle sitzen an der **eigenen Weltlinie** des Satelliten, nicht an `Position::Source`.
+  Das ist Roster-Option (b), verschärft: nicht „Breite/Länge mitanfordern", sondern die
+  **Sonde selbst** als Weltlinie.
+- **ICGEM:** ein **Modell ist ein Feld**, keine Gestalt — das Gravitationsmodell **an einem
+  Ort auswerten** wie VMF3 (registriert, `vmf3_sh` am Ort) und IGRF
+  (`synthesize(date, radius, colat, lon)`); die Kanäle tragen den **Feldwert**.
+- **Venus:** „nicht zerlegen" bestätigt → **W** (das Bild bleibt Bild). Der D-Compiler wird
+  `descoped`/geparkt.
 
 **Tiefster Befund (F3, eigener Punkt):** zwei Epochen-Linien widersprechen sich —
 `matrix.rs:644`/`drs_fits.rs:38` lesen `epoch ≤ 0.0` als absent, `agrav.rs:113`/`hips.rs:793`/
