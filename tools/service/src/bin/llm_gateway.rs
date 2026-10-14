@@ -1227,6 +1227,47 @@ fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>, auth: &str)
         stream_chat(stream, &body, secrets, auth);
         return;
     }
+    if method == "GET" && path.starts_with("/private/read") {
+        let rel = path
+            .split_once('?')
+            .map(|(_, q)| q)
+            .unwrap_or("")
+            .split('&')
+            .find_map(|kv| kv.strip_prefix("path="))
+            .unwrap_or("");
+        if rel.is_empty() {
+            reply(stream, 400, "path= missing");
+            return;
+        }
+        let repo = match std::env::var("OMEGAFLOW_REPO") {
+            Ok(r) => r,
+            Err(_) => match std::env::var("HOME") {
+                Ok(h) => format!("{h}/projects/omegaflow"),
+                Err(_) => {
+                    reply(stream, 500, "HOME and OMEGAFLOW_REPO absent - cannot locate the redactor");
+                    return;
+                }
+            },
+        };
+        let out = std::process::Command::new(format!("{repo}/bin/private_read"))
+            .arg(rel)
+            .output();
+        match out {
+            Ok(o) if o.status.success() => {
+                let text = String::from_utf8_lossy(&o.stdout).into_owned();
+                reply(stream, 200, &text);
+            }
+            Ok(o) => {
+                let text = String::from_utf8_lossy(&o.stderr).trim().to_string();
+                reply(stream, 422, &text);
+            }
+            Err(e) => {
+                let text = e.to_string();
+                reply(stream, 500, &text);
+            }
+        }
+        return;
+    }
     let (code, out) = match (method.as_str(), path.as_str()) {
         ("GET", "/v1/models") => (200, list_models(secrets, auth)),
         ("GET", "/health") => (200, "{\"status\":\"ok\"}".to_string()),
