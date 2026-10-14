@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mountain-Folge 345 (2026-10-14)
-  session: Mountain-Linie — ein Pass: finals-Leser (Interpolation auf jetzt + Stale-Refusal + LOD), harvest-Direktive (Parser + Schumann-Block), Doppel-Arme bereinigt
+  session: Mountain-Linie — ein Pass + Taucher-Runde: finals-Leser (Interpolation auf jetzt + Stale-Refusal + LOD), harvest-Direktive, Doppel-Arme bereinigt, Venus-Reader-Arm gebaut; SABER/Venus/ICGEM als Risse gemessen
   class: handover
   date: 2026-10-14
-  sha256: c23d8a641b7426526deef2df8b90e7e7ce3f5d1913f5276f43d1413a84950aaa
+  sha256: 23fbbe65230635b99b202d6b1e54462fb300a29be67a64c8694a3184d10a2606
   status: live
 -->
 # Handover — Mountain-Folge 345 (2026-10-14)
@@ -13,69 +13,81 @@ Session konsumierte `handover-2026-10-14-mountain-folge344.md` (→ `archiv/`).
 Gefaltet (`register_lookup --addressed mountain`): `mycelium-folge346` und
 `river-folge208` — die mountain-gerichteten Einträge sind in die Punkte unten
 eingegangen (CelesTrak und LOD-`finals` gemessen erledigt, `harvest`-Direktive
-gebaut; SABER/Venus/UCAR-fäden bleiben). Der Stehende Pass wird zitiert
-(`state/zustand/standing-pass.md`), nie kopiert.
+gebaut; SABER/Venus/UCAR-fäden bleiben). Der Stehende Pass (Mycelium-Register) wird
+zitiert, nie kopiert.
 
-## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass — finals-Leser (Code + Block + 6 Tests), harvest-Direktive (Parser-Arm + Schumann-Zeile), Doppel-Arme (3 bare `tap`-Zwillinge entfernt + `register_sort`); der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
+## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass + Taucher-Runde — finals-Leser (Code + Block + 6 Tests), harvest-Direktive (Parser-Arm + Schumann-Zeile), Doppel-Arme (3 Zwillinge + `register_sort`), Venus-Reader-Arm (`vnrd.rs` + Dispatch), 5 parallele Taucher (SABER/Venus/ICGEM/5-Fäden/UCAR-ALFALFA); der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
 
 ## Offen (aufgeschlüsselt)
 
-### SABER — Höhenform (C) offen (eigen)
-- **Status:** blockiert | **Bindung:** eigen
-- **Trigger:** die Rückkehr von `cdaweb.gsfc.nasa.gov`
-- **Lage:** (gemessen 2026-10-14) Rat-Verdikt (C-1): `field ktemp.<i> …` (dotted
-  Level im Schlüssel), neue Direktive `alt tpgpaltitude km` (Höhe als `Position.alt`).
-  Der HAPI-Arm adressiert dotted-Indices **schon** (`extract.rs` `Extract::Hapi`,
-  `param.N` → Array-Zelle); es fehlt der `alt`-Slot für `Extract::Hapi` (die
-  `alt`-Direktive füllt nur `Extract::Map`/`ProfileMap`, `parse.rs:1833`) und die
-  `size:[400]`-Expansion. Lizenz `saber-rules-of-the-road`, HAPI `TIMED_L2A_SABER`,
-  DOI `10.48322/2src-g677`.
-- **Blockade:** der Stehende Pass misst `cdaweb.gsfc.nasa.gov` host-weit unerreichbar
-  (CI-Tafel `de2-cdn`) → das HAPI-`info`/Datensample ist nicht frisch messbar; ohne
-  Sample bleibt die `size:[400]`-Form + die exakte JSON-Zellenform ungemessen.
-- **Braucht:** (1) `alt <key> <unit>`-Ablage für `Extract::Hapi` + Threading in die
-  Kanal-/`Position`-Bildung; (2) `size`-Expand zu dotted-Indices; (3) Block
+### SABER — Höhenform (C): Arm + Höhen-Ablage brauchen ein Wort (eigen)
+- **Status:** blockiert | **Bindung:** operator-gebunden (Höhen-Ablage) · eigen (Rest)
+- **Trigger:** Operator-Wort zur Höhen-Ablage + die Rückkehr von `cdaweb.gsfc.nasa.gov`
+- **Lage:** (gemessen 2026-10-14, Taucher) Rat-Verdikt (C-1): `field ktemp.<i> …` (dotted
+  Level im Schlüssel), `alt tpgpaltitude km`. **HAPI-`info` ist aus dem Cache gelesen**
+  (`/tmp/opencode/saber_info.json`, 7489 B): `ktemp` `size:[400]` K, `tpgpaltitude`
+  `size:[400]` km, `fill -999.0`; ein `data`-Row ist `[isotime, <array>, <array>]`,
+  dotted via `row[col[param]][i]`. Code-Sites: `Extract::Hapi(Vec<(String,String)>)`
+  (`types.rs:287`, **kein** `alt`-Slot), Hapi-Parse (`parse.rs:908-916`), `alt`-Direktive
+  (`parse.rs:1841-1868`, füllt nur `Map`/`ProfileMap`), Hapi→`extracted`
+  (`extract.rs:6893-6966`), Hapi→`Channel` mit `Position::Source` (`extract.rs:7013-7025`;
+  `Position::Source` ist unit — **kein** `alt`-Feld). Der cdaweb-Host ist erneut
+  gemessen **unerreichbar** (SSL/000; `spdf.gsfc.nasa.gov` ebenso), kein frisches Daten-Row.
+- **Blockade:** C-1 sagt „Höhe als `Position.alt`", aber weder `Position::Source` noch
+  der `Extract::Hapi`-Slot trägt eine Höhe; SABER ist ein Satellit ohne lat/lon in der
+  2-Parameter-Anfrage. Die Ablage (neuer `Position`-Weg / `Channel.z` / zusätzliche
+  lat/lon-Parameter) ist eine Architektur-Entscheidung → vorlegen.
+- **Braucht:** (1) Operator-Wort zur Höhen-Ablage; (2) dann `alt`-Slot für `Extract::Hapi`
+  + `<i>`-Expansion; (3) Block
   `url https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER&…parameters=ktemp,tpgpaltitude&format=json`,
   `terms saber-rules-of-the-road …`, `at earth`, `field ktemp.<i> …`.
 
-### Venus Radar PDS4-IMG — Block + Reader offen (eigen)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der Register-/Reader-Bau
-- **Lage:** (gemessen 2026-10-14) Bundle `urn:nasa:pds:venus_radar_level2` v1.0, DOI
-  `10.17189/1522443`, **CC0-1.0** (DataCite `rightsList`), Wurzel
-  `https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/`; 15 Produkte
-  (5 Epochen × `inc`/`ocp`/`scp`), je 960 000 000 B headerloses `Array_2D_Map`
-  (IEEE754LSBSingle, 12000×20000, Sinusoidal 1000 m/pixel, R=6051 km). Compiler
-  `tools/harvest/src/bin/venus_radar_compiler.rs` (Zeilenmittel → `VNRD`, Roundtrip grün).
-  mycelium-346-6: die Labels tragen `BAND_STORAGE_TYPE=SAMPLE_INTERLEAVED` (=BIP),
-  `SAMPLE_TYPE=PC_REAL`, `BITS=32`, `BANDS=2`; der Label-Parser mappt
-  `BAND_STORAGE_TYPE` nicht (`pds3_img.rs:130-165`), `decode_raster` ist nur BSQ.
-- **Blockade:** (1) dem reduzierten `VNRD`-Asset fehlt ein Reader/Arm (`extract.rs`
-  `series_parse_bin` + `series_field_name` für `format vnrd`); (2) `pds3_img`-Interleave
-  (BIP/BIL) für die rohe Kachel; (3) Blockform.
-- **Braucht:** (1) `format vnrd`-Serien-Reader (MAGIC `VNRD`, 8-B-Header + `(t,v,comp)`-
-  Records) + Feld-Namen; (2) `BAND_STORAGE_TYPE`→`Interleave`-Mapping + BIP/BIL-Indizierung
-  in `decode_raster` (Vorlage `decode_envi`); (3) Block `url …VNRD-CDN-Asset`,
-  `origin` = rohe PDS-Kachel, `compiler venus_radar_compiler`, `terms CC0-1.0 …`,
-  Einheit am Feld (`inc`=deg, `ocp`/`scp`=1); (4) Split-Route (`cdn.rs`-2-GiB-Deckel).
+### Venus Radar — Compiler-Achse braucht ein Wort; Reader-Arm steht (eigen)
+- **Status:** blockiert | **Bindung:** operator-gebunden (Achse) · eigen (Rest)
+- **Trigger:** Operator-Wort zur Compiler-Achse (D vs. B)
+- **Lage:** (gemessen 2026-10-14, Taucher) Bundle `urn:nasa:pds:venus_radar_level2` v1.0,
+  DOI `10.17189/1522443`, **CC0-1.0**, 15 Produkte (5 Epochen × `inc`/`ocp`/`scp`), je
+  960 000 000 B. **Korrigiert:** die Level-2-Labels sind PDS4 `Array_2D_Map`,
+  single-band, `Last Index Fastest` — **kein** `BANDS`/`BAND_STORAGE_TYPE`
+  (selbst gemessen: `…/data/venus_1988_north_inc.xml`; `Time_Coordinates`
+  1988-06-17). Der `BAND_STORAGE_TYPE=SAMPLE_INTERLEAVED`/`BANDS=2`-Befund
+  (mycelium-346-6) gehört zum **rohen** `arcb_nrao-v-rtls_gbt-3-delaydoppler-v1`
+  Complex-Backscatter-Bundle (PDS3, `vrm_90xx`), nicht zum reduzierten Asset — **Riss**,
+  `pds4_img` braucht **keinen** Interleave-Umbau. `venus_radar_compiler.rs` reduziert
+  heute auf `comp = Zeilenindex` (12000 Kanäle) — eine Achse, die das Produkt nicht hat.
+- **Blockade:** die Register-Achse (`inc`/`ocp`/`scp` als 3 Felder) und die Compiler-Reduktion
+  passen nicht zusammen. Der Reader allein würde eine alte `comp=Zeile` als Menge
+  fehldeuten. Die Achse ist eine Architektur-Entscheidung → vorlegen.
+- **Gebaut (mountain-345):** `src/archivar/vnrd.rs` (MAGIC `VNRD`, `parse_bin`, strikt
+  `comp ≤ 2` — eine Zeilenindex-Datei wird **verworfen**, nie fehlgedeutet;
+  `COMP_INC/OCP/SCP` → `venus_radar_inc_deg`/`_ocp`/`_scp`), registriert in
+  `series_parse_bin`/`series_component_name` + Dispatch (`main_flow`).
+- **Braucht:** (1) Operator-Wort zur Achse — **D** (all 15 Produkte → ein `VNRD`, ein Record
+  je Produkt: `t` = Label-Epoche, `v` = Kartenmittel, `comp` = Menge) oder **B** (je Epoche ein
+  `VNRD`, `comp` = Menge, `t` = Zeile); (2) danach `venus_radar_compiler.rs` auf die Achse;
+  (3) Block `url …VNRD-CDN-Asset`, `origin` = rohe PDS-Kachel, `compiler venus_radar_compiler`,
+  `terms CC0-1.0 …`, Einheit am Feld (`inc`=deg, `ocp`/`scp`=1); (4) Split-Route.
 
-### ICGEM gfc — Block ohne Epoch; Compiler verweigert die epochenlose Form (eigen)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** der Registeratom
-- **Lage:** (gemessen 2026-10-14) D2 (Rat + Roster einstimmig): statisch ohne Epoche —
-  XGM2019e hat kein Zeitmodell, kein erfundener MJD. `gfc.rs`-Arm + `declared_fields`
-  stehen (4 Felder `icgem_gfc_c/s`, `icgem_gfct_c/s`). **Neu gemessen:** `gfc_compiler.rs`
-  (`epoch_of`, Z.147-150) **verlangt** eine parsebare Epoche (Header oder `--epoch`);
-  ohne sie schreibt er nichts. XGM2019e-Header trägt keine → die epochenlose Form braucht
-  erst die Wire-Ablage „Epoche absent, τ=0". Riss 2: volles Modell ≈ 12,8 GB > CDN-Deckel;
-  zulässiger Cap D=3211.
-- **Blockade:** die epochenlose Wire-Form ist nicht entschieden (die fest-stride 26×f64
-  hat keinen „absent"-Slot für `epoch`; 0.0 wäre ein echter Wert → 0-Kanon). Der Block
-  kann erst stehen, wenn die Ablage feststeht.
-- **Braucht:** (1) Entscheidung/Ablage für „Epoche absent" (z. B. τ=0 als Träger); (2)
-  `gfc_compiler.rs` so, dass die epochenlose Form mit τ=0 schreibt; (3) Block `url …/icgem.gfz.de/gfc.bin`,
-  `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`, `format gfc`, `at earth`, 4 Felder,
-  **ohne** Epoch-Zelle; Cap D=3211 für den Split.
+### ICGEM gfc — „Epoche absent" ist eine neue Konvention und braucht ein Wort (eigen)
+- **Status:** blockiert | **Bindung:** operator-gebunden (Absenz-Konvention)
+- **Trigger:** Operator-Wort zur epochenlosen Wire-Form
+- **Lage:** (gemessen 2026-10-14, Taucher) D2 (Rat + Roster): statisch ohne Epoche,
+  kein erfundener MJD. `gfc.rs`-Arm + `declared_fields` stehen (4 Felder `icgem_gfc_c/s`,
+  `icgem_gfct_c/s`); der Compiler (`epoch_of` Z.147-150) **verlangt** eine Epoche und
+  schreibt sonst nichts. **Neu gemessen:** die Haus-Wirklichkeit — `epoch 0` ist
+  **„die Epoche ist Spalte/Key 0"** (`parse.rs:1870`), **kein** Fehlen; die fest-stride
+  26×f64 hat keinen absent-Slot; `matrix.rs:644` liest `epoch <= 0.0` als absent und
+  **überspringt** den Kanal, `gfc.rs:153` behält 0.0 dagegen. **Kein Präzedenzfall** für
+  eine geschriebene Serie mit fehlender Epoche (jede trägt eine echte oder eine deklarierte
+  Konstante, z. B. `viking_grav` 1976-01-01). Riss 2: volles Modell ≈ 12,8 GB; Cap D=3211.
+- **Blockade:** „Epoche absent" wäre eine **neue** Konvention (0.0-Sentinel, den das
+  Lesesite-Skip schon als absent liest) → Architektur-Entscheidung, vorlegen. Zusatz:
+  `format gfc` war im Reader registriert, aber **nicht** im `main_flow`-Dispatch
+  (Taucher-Befund) — **behoben** (mountain-345: `"gfc"` in die Dispatch-Liste).
+- **Braucht:** (1) Operator-Wort: 0.0 als dokumentierter Sentinel (die Lesesite `≤ 0.0`
+  = absent) — oder eine andere Ablage; (2) dann `gfc_compiler.rs` → `unwrap_or(0.0)`; (3) Block
+  `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`,
+  `format gfc`, `at earth`, 4 Felder, **ohne** Epoch-Zelle, `no-cadence`; Cap D=3211.
 
 ### UCAR-FPI — Arm verdrahtet, Sample liegt, Block fehlt (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -86,18 +98,28 @@ gebaut; SABER/Venus/UCAR-fäden bleiben). Der Stehende Pass wird zitiert
   zonal(m/s) zonal err dir skytemp`. Lizenz gemessen: keine benannte (UCAR/DASH-Nutzungssatz),
   terms-URL `https://data.ucar.edu/dataset/fpi-resolute`. **Riss:** kein Athabasca-FPI-DOI.
 - **Blockade:** nicht-offene Lizenz → `local-only` (kein CDN); FPI-eigene Instrumentenkoordinate
-  ungemessen.
-- **Braucht:** die **FPI-eigene** Athabasca-Instrumentenkoordinate messen; die zwei `field`-Zeilen
-  `fpi_mer_wind_ms`/`fpi_zon_wind_ms` stehen bereit; danach die Arbeitskopie-Route (`local-only`).
+  **ungemessen** (2026-10-14, Taucher): die HAO-FPI-Dateiseite, das DASH-Dataset `fpi-resolute`
+  (Bounding Box `N/A`) und die HAO-Instrumentenliste tragen nur Palmer/Resolute/Boulder, **kein**
+  Athabasca; der einzige Zahlenwert (`54.728 N, 113.328 W, ~500 m`) löst auf die Co-Location
+  AUGO auf — genau die Zeile, die **nicht** die Instrumentenkoordinate ist. Riss, ungeglättet.
+- **Gebaut/Messung:** die zwei `field`-Zeilen sind code-gemessen — `fpi_mer_wind_ms` (merid,
+  `fpi_ucar.rs:10`, `extract.rs:534`), `fpi_zon_wind_ms` (zonal, `fpi_ucar.rs:12`,
+  `extract.rs:535`); Dispatch `extract.rs:163`, Guard `main_flow.rs:3224`.
+- **Braucht:** die **FPI-eigene** Athabasca-Instrumentenkoordinate an der Primärquelle
+  (`qwu@ucar.edu` / DASH-Resource-Support) messen; dann die zwei `field`-Zeilen + die
+  Arbeitskopie-Route (`local-only`).
 
 ### Fünf fehlende Fäden — terms/field/ttl (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Registeratom
-- **Lage:** (gemessen 2026-10-14) mycelium-344-2, Entwurf
-  `state/mycelium/block-drafts/2026-10-13-faden-schliessung.φ`: Sonnen-Magnetfeld,
-  Stern-Aktivität, 21 cm, Wolken, TGF. Quellen gemessen (HTTP/DOI).
+- **Lage:** (gemessen 2026-10-14, Taucher) Mountain-Teil fertig als Entwurf
+  `state/mountain/faden-term-field-ttl-draft.φ` (176 Zeilen): je Faden die gemessene
+  `terms`/`field`/`ttl`-Zeile (Sonnen-Magnetfeld, Stern-Aktivität, 21 cm, Wolken, TGF),
+  Haus-Token-Korrekturen belegt (`sdo`→`CC0-1.0`, `vizier-open`→`vizier-scientific-free`,
+  `heasarc-free`→`PD`, `NOAA-CDR-open`→`PD`, Zenodo→`CC-BY-4.0`). Zwei Risse offen
+  (WSO-Polarfeld ohne Terms; LISIRD ohne Terms), 21 cm EBHIS bereits registriert.
 - **Blockade:** keine.
-- **Braucht:** `terms`/`field`/`ttl` je Block; danach registriert Mycelium `url`/`origin`/`compiler`.
+- **Braucht:** Mycelium setzt `url`/`origin`/`compiler` je Faden auf den Entwurf; dann `register_sort`.
 
 ### `em mw` / `advective kg/m2/s` — Freeze (eigen)
 - **Status:** wartend | **Bindung:** eigen
@@ -110,13 +132,21 @@ gebaut; SABER/Venus/UCAR-fäden bleiben). Der Stehende Pass wird zitiert
 ### ALFALFA · Ersatz-Bau · eigene Ephemeride (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** je der Bau/Fund
-- **Lage:** (gemessen 2026-10-13) ALFALFA `local-only` (Lizenz nicht offen, DOI
-  `10.26093/cds/vizier.18610049`). Ersatz-Bau: `opentopography_raster` KAPU-bbox-Riss;
-  `load_gestalt_surface_threads` (`main_flow.rs:580`) hat keinen Produktionsaufrufer. Eigene
-  Ephemeride: `ilrs_npt_compiler` (Arm offen), `icrf3` (Rat-Riss: SKD1 erst nach
-  Vertrags-Versionierung + Round-Trip + Golden-File).
+- **Lage:** (gemessen 2026-10-14, Taucher) ALFALFA `local-only` bestätigt — kein Block in
+  `phi`, DOI `10.26093/cds/vizier.18610049` HTTP 200, ReadMe ohne Lizenzstring.
+  Ersatz-Bau: `opentopography_raster_compiler.rs` liest SRTM15+ V2.6 und schreibt ein
+  Gestalt-Witness (`SRTM`), **ohne** Geoid-/Datum-/Toleranz-Anker; kein `opentopography_raster`-Block
+  in `phi` (nur `opentopography_coverage` `:11436-11439`, `srtm15_plus_*`); KAPU-Bbox nirgends
+  registriert. `load_gestalt_surface_threads` (`main_flow.rs:580`) — einziger Aufrufer
+  `tests.rs:10921`, **kein** Produktionsaufrufer. Eigene Ephemeride: `ilrs_npt_compiler.rs`
+  steht (`FORMAT "ilrs_npt"`), aber **kein** Lese-Arm in `src/`; `icrf3_compiler.rs` schreibt
+  JSON (Zielpfad unter `phi/`, Datei absent), **kein** SKD1/Golden-File/Round-Trip.
 - **Blockade:** keine.
-- **Braucht:** je der genannte Schritt. `docs/SOURCE_PORT.md`.
+- **Braucht:** (1) Höhenbezug + Toleranz vor der `opentopography_raster`-Registrierung
+  festlegen (KAPU-Kontrollpunkte 179,94 m vs. Ortslage 217,90 m), dann Block; (2)
+  `load_gestalt_surface_threads` an einen Produktions-Aufrufer binden **oder** `descoped`;
+  (3) `ilrs_npt`-Lese-Arm in `extract.rs` + Block; (4) `icrf3` erst Vertrag versionieren
+  + Round-Trip (`skydirection.rs`) + Golden-File, dann SKD1. `docs/SOURCE_PORT.md`.
 
 ## An mycelium
 
@@ -128,6 +158,11 @@ Origin: mountain-345 (2026-10-14):
 - **ICGEM-Manifestation wartet:** der `gfc`-Block braucht `url`/`origin`/`compiler`
   (`icgem.gfz.de/gfc.bin`, `https://icgem.gfz.de/getmodel/gfc/…/XGM2019e.gfc`,
   `gfc_compiler.rs`) — erst nach der epochenlosen Wire-Ablage (Punkt ICGEM).
+- **Fünf Fäden:** der Mountain-Teil liegt fertig als Entwurf
+  `state/mountain/faden-term-field-ttl-draft.φ` (terms/field/ttl je Faden, Haus-Token-Korrekturen
+  belegt). Bitte `url`/`origin`/`compiler` je Faden daraufsetzen; danach `register_sort`.
+- **Venus:** der Reader-Arm steht (`src/archivar/vnrd.rs`); `url`/`origin`/`compiler` erst nach
+  dem Achsen-Wort (Punkt Venus).
 
 ## An river
 
@@ -149,5 +184,18 @@ Origin: mountain-345 (2026-10-14):
 
 Der Commit ist die letzte Handlung; das Operator-Wort trägt Commit und Push. In diesem
 Atom (mountain-345) committet: `src/archivar/channels.rs` · `src/archivar/main_flow.rs` ·
-`src/archivar/parse.rs` · `src/archivar/tests.rs` · `phi/sources.φ` · diese Übergabe ·
+`src/archivar/parse.rs` · `src/archivar/tests.rs` · `src/archivar/vnrd.rs` ·
+`src/archivar/mod.rs` · `src/archivar/extract.rs` · `phi/sources.φ` · diese Übergabe ·
 der `archiv/`-Move der folge344.
+
+## Vorlage an den Operator (nur Ungeklärtes, je mit Ja/Nein)
+
+1. **SABER-Höhe.** C-1 will `alt tpgpaltitude km` als `Position.alt`, aber SABER ist ein
+   Satellit ohne lat/lon in der Anfrage, und `Position::Source` trägt keine Höhe.
+   *Frage:* Höhe als eigener `Position`-Weg (neue Variante „Bahnpunkt/Höhe"), oder die
+   lat/lon-Parameter (`tplatitude,tplongitude`) mit anfordern und `Position::Surface` nutzen?
+2. **Venus-Achse.** *Frage:* **D** (15 Produkte → ein `VNRD`, ein Wert je Produkt/Epoche,
+   `comp`=Menge) oder **B** (je Epoche ein `VNRD`, `comp`=Menge, `t`=Zeile, Karte bleibt)?
+3. **ICGEM-Absenz.** Die 26×f64 hat keinen absent-Slot für `epoch`. *Frage:* `0.0` als
+   dokumentierter Sentinel (die Lesesite `≤ 0.0` = absent, wie `matrix.rs:644`) — oder einen
+   anderen Träger?
