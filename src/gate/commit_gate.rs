@@ -1823,6 +1823,14 @@ pub fn check_handover_burn(path: &str, content: &str) -> Option<Verdict> {
             }
         }
         let (Some(_open), Some(close_value)) = (open, close) else {
+            let low = body.to_lowercase();
+            if open.is_some()
+                && (low.contains("pending")
+                    || low.contains("unmeasured")
+                    || low.contains("nicht gemessen"))
+            {
+                return None;
+            }
             return Some(Verdict {
                 severity: Severity::Hard,
                 rule: "burn-line-absent".to_string(),
