@@ -7,7 +7,7 @@ import { join } from "node:path"
 // kein Cloud-Dienst liest sie — nur lokale Datei-I/O. Nie werfen: ein Fehler des
 // Recorders darf keinen Tool-Call und keine Nachricht blocken.
 //
-// Journal: state/zustand/ereignisse.φ (append-only, privat/getrackt im state-Repo).
+// Journal: <OMEGAFLOW_PRIVATE>/zustand/ereignisse.φ (append-only, privat im privaten Repo).
 // Eine Zeile je Vorgang: ISO-UTC | sessionID | quelle | klasse | gegenstand.
 // Gegenstand statt Inhalt: host/pfad/agent — Passwoerter und Feldwerte nie.
 //
@@ -60,9 +60,13 @@ function text(parts: unknown): string {
 }
 
 export default async ({ worktree }: { worktree: string }) => {
-  const dir = join(worktree, "state", "zustand")
+  // Die zwei Häuser (Operator-Wort 2026-10-14): Journal + aktive Session liegen im
+  // privaten Repo AUSSERHALB des öffentlichen Baums — nie in `state/` im öffentlichen
+  // Baum (das hebt die Trennung auf). Wurzel: OMEGAFLOW_PRIVATE.
+  const priv = process.env.OMEGAFLOW_PRIVATE ?? join(worktree, "..", "omegaflow-personal")
+  const dir = join(priv, "zustand")
   const journal = join(dir, "ereignisse.φ")
-  const reportsDir = join(worktree, "state", "reports")
+  const reportsDir = join(priv, "reports")
   const activeSession = join(reportsDir, "active_session.φ")
 
   const append = (line: string) => {

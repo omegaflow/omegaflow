@@ -30,8 +30,9 @@ run() {
 # plugin-written state/reports/active_session.φ (act_recorder, Konvention
 # notes_notify.rs; measured: opencode sets no ses_ env). Without a session name
 # commit_check skips by name, never silent.
-if [ -z "${OMEGAFLOW_SESSION:-}" ] && [ -f "$root/state/reports/active_session.φ" ]; then
-    IFS= read -r OMEGAFLOW_SESSION < "$root/state/reports/active_session.φ" || OMEGAFLOW_SESSION=""
+priv="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}"
+if [ -z "${OMEGAFLOW_SESSION:-}" ] && [ -f "$priv/reports/active_session.φ" ]; then
+    IFS= read -r OMEGAFLOW_SESSION < "$priv/reports/active_session.φ" || OMEGAFLOW_SESSION=""
 fi
 export OMEGAFLOW_SESSION="${OMEGAFLOW_SESSION:-}"
 ensure commit_check
