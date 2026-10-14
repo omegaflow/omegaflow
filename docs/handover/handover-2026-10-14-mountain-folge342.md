@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: Fermi-4LAC-Arm + mev, GEOFON-FDSN-Quelle, SEANOE-Dublette entfernt, Besitz-Zensus, ICGEM --epoch-Override
   class: handover
   date: 2026-10-14
-  sha256: 5ad361d2acc9a6eed4230e5dbdfe480ca5adb326535186b6f5ee61500f01eed0
+  sha256: 45274eb240baf5ed146ae559372db9acb0a296483094f4ffcaf279cbb8b796ba
   status: live
 -->
 # Handover — Mountain-Folge 342 (2026-10-14)
@@ -104,7 +104,7 @@ river-209, future).
 ### finals-Leser — gebaut, Roster in flight (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** die Roster-Antworten (Konvergenz)
-- **Lage:** (gemessen 2026-10-14) Spalten korrigiert (`d6a078ae5`); der Leser nimmt jetzt die **letzte gemessene Bulletin-A-`I`-Zeile** (`d26f42dc8`, `test_finals_channels_skips_predicted_lines`) — vorher las er auf der echten Datei nichts und danach die fernste Vorhersage (2027-10-04). Recherche + Rat (fünf Stimmen) konvergieren: Jetzt-Epoche = letzte gemessene A-Zeile, Bulletin B für vergangene Epochen, Vorhersage nie als Jetzt. **CelesTrak als eigene Quelle streichen** (gemessen inhaltsgleich mit USNO). Roster geöffnet: Claude · Mistral · Qwen halten die Frage und rechnen (in-flight, Antwort persistiert); Duck · z.ai · tryingopen nahmen den Auto-Send nicht an (gemessen, Composer leer/Landeseite); Lock `state/zustand/ui-open-weight.lock` gesetzt.
+- **Lage:** (gemessen 2026-10-14) Spalten korrigiert (`d6a078ae5`); der Leser nimmt jetzt die **letzte gemessene Bulletin-A-`I`-Zeile** (`d26f42dc8`, `test_finals_channels_skips_predicted_lines`) — vorher las er auf der echten Datei nichts und danach die fernste Vorhersage (2027-10-04). Recherche + Rat (fünf Stimmen) konvergieren: Jetzt-Epoche = letzte gemessene A-Zeile, Bulletin B für vergangene Epochen, Vorhersage nie als Jetzt. **CelesTrak als eigene Quelle streichen** (gemessen inhaltsgleich mit USNO). Roster geöffnet: **Claude · Mistral halten die Frage und rechnen** (in-flight, Antwort persistiert); Qwen · Duck · z.ai · tryingopen nahmen den Auto-Send nicht an (gemessen, Composer leer/Landeseite); Lock `state/zustand/ui-open-weight.lock` gesetzt.
 - **Blockade:** keine.
 - **Braucht:** die Roster-Antworten einsammeln (nächster Pass; Persistenz in den Chats), dann den CelesTrak-Block (`phi:10144-10148`, Myceliums `url`-Hand) entfernen und den Lock löschen.
 
