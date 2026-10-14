@@ -2,7 +2,7 @@
 title: Handover — River-Folge 212
 class: handover
 date: 2026-10-14
-sha256: 12fab3e95bd5eb72efb3c9a28b8784ebef37002576d81c072175d001070cd20d
+sha256: 30e7c6e8ecdfd5345d2607b6ca38c213f371fb8043f86e179221fe25eb99cfff
 status: live
 -->
 # Handover — River-Folge 212 (2026-10-14)
@@ -119,9 +119,9 @@ Verbatim: `state/operator-gespraeche/2026-10-14-river.md` (diese Session) · `st
 ### GIC-Onset — AL-Einhüllende über die 154-Station-Familie; Harvest-Ursache korrigiert (Void-Retry, nicht das Fenster)
 - **Status:** eigen (Bau) — der Pull ist grün | **Bindung:** eigen
 - **Trigger:** kein — der Pull ist durch (river-213); die Kette läuft auf den Daten.
-- **Lage:** (gemessen 2026-10-14 river-210 via `ci_manage view/jobs/log 38485365619` + `gh api` releases; **korrigiert** river-211 via mycelium-347) der frühere Lauf `38485365619` war **`cancelled`** — die river-210-Deutung „180-min-Job-Timeout am 25-Jahre-Fenster" ist **widerlegt**: die Jobs liefen 180 min, aber weil der Compiler blind `2000..2024` fragte (out-of-range Monate → HAPI 1405 → Void-Retry ~8–11 min/Jahr). Mycelium-347 hat `intermagnet_xyz_compiler` auf die `info`-Spanne umgestellt. **Neu (river-213, gemessen via `gh api releases`):** der `intermagnet-xyz-cdn`-Lauf `38618793419` ist **`success`** (head `c7a6c7ca2`); die CDN-Ablage `imag-data.bgs.ac.uk` trägt jetzt **160 Assets**, darunter die volle `<code>_xyz_1m.bin`-Reihe + `abk_dbdt_{1d,1h,1m}.bin`/`sod_dbdt_1h.bin`. Der `gic-onset`-Workflow (`.github/workflows/gic-onset.yml`) lädt eine dB/dt-IMDT-Reihe und setzt `gic_onset_detector` darauf; **Lauf `38642215979` `success`** (Reihe `abk_dbdt_1h.bin`, gegen die McPherron-Onset-Liste): Fenster `1994-01-01..2026-09-04`, McPherron 162814 Onsets, Detektor 24582; Präzision/Rückruf = **0.156/0.024** (Toleranz 5 min), **0.364/0.066** (15 min), **0.533/0.125** (30 min) — der **einstationäre** Detektor findet nur einen kleinen Bruchteil der Onsets. **Riss:** die Kette läuft in diesem Workflow **einstationär** (`abk`), ohne `al_network_proxy`-Einhüllende und ohne `--null 200`; die AL-Netz-Kette ist gebaut (`al_network_proxy` + `gic_onset_detector`, `tools/measure`), aber **nicht in CI verdrahtet**. Die 154-Station-Partition (`state/river/gic-family-*.txt`) liegt im **privaten Haus** (`omegaflow-personal`), das die öffentliche Linie nicht liest (Operator-Regel) — der per-Familie-Lauf braucht sie als deklariertes Artefakt im Baum (s. GIC-Familien-Partition).
-- **Blockade:** die zwei fehlenden Teile — (1) die AL-Netz-Kette in CI (Workflow, der `--family ... --dir <CDN>` fährt) und (2) die per-Familie-Partition als öffentliches Artefakt.
-- **Braucht:** (a) je Familie `al_network_proxy --family <fam.txt> --dir <pfad> --decl auto --baseline-block 60 --min-stations 2` in CI (die `.bin`-Reihen sind groß — Rechnung gehört in CI, nicht auf die Maschine); (b) `gic_onset_detector --null 200` (Null-Baseline gemessen: 1.62×/1.47×/1.35×).
+- **Lage:** (gemessen 2026-10-14 river-210 via `ci_manage view/jobs/log 38485365619` + `gh api` releases; **korrigiert** river-211 via mycelium-347) der frühere Lauf `38485365619` war **`cancelled`** — die river-210-Deutung „180-min-Job-Timeout am 25-Jahre-Fenster" ist **widerlegt**: die Jobs liefen 180 min, aber weil der Compiler blind `2000..2024` fragte (out-of-range Monate → HAPI 1405 → Void-Retry ~8–11 min/Jahr). Mycelium-347 hat `intermagnet_xyz_compiler` auf die `info`-Spanne umgestellt. **Neu (river-213, gemessen via `gh api releases`):** der `intermagnet-xyz-cdn`-Lauf `38618793419` ist **`success`** (head `c7a6c7ca2`); die CDN-Ablage `imag-data.bgs.ac.uk` trägt jetzt **160 Assets**, darunter die volle `<code>_xyz_1m.bin`-Reihe + `abk_dbdt_{1d,1h,1m}.bin`/`sod_dbdt_1h.bin`. Der `gic-onset`-Workflow (`.github/workflows/gic-onset.yml`) lädt eine dB/dt-IMDT-Reihe und setzt `gic_onset_detector` darauf; **Lauf `38642215979` `success`** (Reihe `abk_dbdt_1h.bin`, gegen die McPherron-Onset-Liste): Fenster `1994-01-01..2026-09-04`, McPherron 162814 Onsets, Detektor 24582; Präzision/Rückruf = **0.156/0.024** (Toleranz 5 min), **0.364/0.066** (15 min), **0.533/0.125** (30 min) — der **einstationäre** Detektor findet nur einen kleinen Bruchteil der Onsets. **Riss:** der `gic-onset`-Workflow läuft **einstationär** (`abk`), ohne `al_network_proxy`-Einhüllende und ohne `--null 200`. **Gebaut (river-213):** die fehlende CI-Naht steht jetzt — `.github/workflows/gic-al-network.yml` (neu) lädt die Stations-xyz-Bins aus dem CDN, fährt `al_network_proxy --family … --decl auto --baseline-block 60 --min-stations 2 --out envelope.bin`, dann `gic_onset_detector --series envelope.bin --null 200` gegen die McPherron-Liste; **Lauf `38642948810` angestoßen**. Die 154-Station-Partition (`state/river/gic-family-*.txt`) liegt im **privaten Haus** (`omegaflow-personal`), das die öffentliche Linie nicht liest (Operator-Regel) — der per-Familie-Lauf braucht sie als deklariertes Artefakt im Baum (s. GIC-Familien-Partition); der erste Lauf nutzt eine sechs-Station-Familie (`abk sod esk ler stj ups`) als Netz.
+- **Blockade:** (1) **erledigt** (river-213: `.github/workflows/gic-al-network.yml` verdrahtet die Kette; Lauf `38642948810`); (2) die per-Familie-Partition als öffentliches Artefakt ist offen.
+- **Braucht:** (a) den Lauf `38642948810` auswerten (Einhüllende + Null); (b) die per-Familie-Partition als deklariertes `station→Familie`-Artefakt im Baum (s. GIC-Familien-Partition), dann je Familie fahren (die `.bin`-Reihen sind groß — Rechnung gehört in CI).
 
 ### GIC-Familien-Partition — zwei Register-Nägel, dann die Matrix-Läufe
 - **Status:** blockiert | **Bindung:** eigen (Blockade: Mountain-Nägel)
@@ -241,10 +241,12 @@ stale-citations (20 Pfad-Refs absent — der private Baum liegt außerhalb des �
 Routen-Entscheidung; UCAR-FPI: die zwei `field`-Zeilen stehen code-gemessen, offen allein die
 Instrumentenkoordinate) · mycelium-349 (intermagnet-XYZ **erfolgreich** — der Pull steht; DE-2
 unverändert am Host).
-**GIC-Onset:** der Pull ist durch (`intermagnet-xyz-cdn` `38618793419` `success`); die CDN-Ablage
-trägt 160 Assets (die volle `<code>_xyz_1m.bin`-Reihe). Der `gic-onset`-Lauf `38642215979` ist auf
-`abk_dbdt_1h.bin` angestoßen. **Riss:** die AL-Netz-Kette (`al_network_proxy` → `gic_onset_detector`)
-ist gebaut, aber **nicht in CI verdrahtet**; die per-Familie-Partition liegt im privaten Haus.
+**GIC-Onset:** der Pull ist durch (`intermagnet-xyz-cdn` `38618793419` `success`; 160 Assets, die
+volle `<code>_xyz_1m.bin`-Reihe). Der einstationäre `gic-onset`-Lauf `38642215979` ist **grün**:
+Präzision/Rückruf 0.156/0.024 (5 min) … 0.533/0.125 (30 min) — der einstationäre Detektor findet
+nur einen kleinen Bruchteil. **Gebaut (river-213):** die fehlende CI-Naht
+`.github/workflows/gic-al-network.yml` (AL-Einhüllende → Detektor mit `--null 200`); Lauf
+`38642948810` angestoßen. Offen: die per-Familie-Partition als öffentliches Artefakt (privates Haus).
 **ci-gate/register-coverage am HEAD:** `format` reißt an der **fremden** Datei
 `tools/service/src/bin/llm_gateway.rs` (Ganz-Crate-`fmt`, kein Linien-Eigentum); `register` = 5
 ungebundene CDN-Netlocs (Mountain); `register-coverage` = **3** XFER-MISSING, alle in
