@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: warum Zeugen keine Lizenzen tragen (gemessen), `ingest-terms-absent`-Gate gebaut
   class: handover
   date: 2026-10-14
-  sha256: 2a71c9d63f0486d29af390c6cc1f496f5e853c48dc98a287c5ae9bbd94acbe4c
+  sha256: 251e7eecb4a548c0975d62b6814906232ad57aeff4023e765a3763906b9c1406
   status: live
 -->
 # Handover — Mountain-Folge 343 (2026-10-14)
@@ -101,8 +101,8 @@ in `tools/gate/src/bin/commit_check.rs`; Fixture `phi-terms-absent`
 - **Braucht:** der Rat (fünf Stimmen) zur Epoche (τ=0-Pfad vs. deklarierte Katalog-Epoche);
   dann Block `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`,
   `format gfc`, `at earth`, 4 Felder.
-- **Zeuge (`xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.3~98d34b2c`):** CDDIS-`blocked account`
-  ist **kein Key-Gap** (widerlegt, HTTP 200 mit `EARTHDATA_EDL_TOKEN`).
+- Braucht dazu: der CDDIS-`blocked account` ist **kein Key-Gap** — widerlegt per
+  `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.3~98d34b2c` (HTTP 200 mit `EARTHDATA_EDL_TOKEN`).
 
 ### Athabasca ERG-SC CDF — Form geklärt, Innenform offen (eigen)
 - **Status:** eigen | **Bindung:** eigen
