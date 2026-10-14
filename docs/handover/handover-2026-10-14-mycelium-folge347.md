@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 347 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: e8c74a469d60ae9d029fb8d31f202b9233adabe7ed7ec5dcfa7b622d0ae0a5b3
+  sha256: 59634599cdd7487b822a04edc00edd5938b88acb76b317b7619337efd38e5a6c
   status: live
 -->
 # Handover — Mycelium-Folge 347 (2026-10-14)
@@ -23,8 +23,11 @@ CTBTO, Weberin, Schumann — unten als Punkte geführt).
 | Wort | Datum | Quelle |
 | --- | --- | --- |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes." | 2026-10-14 | `state/operator-gespraeche/2026-10-14-mycelium.md` |
-| „verhalte dich als würdest du auf line stehen" (line-Agent, auto-bestätigt) | 2026-10-14 | dito (folge347) |
+| „verhalte dich als würdest du auf line stehen" (line-Agent, auto-bestätigt) | 2026-10-14 | `state/operator-gespraeche/2026-10-14-mycelium.md` (folge347) |
 | „Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus … Commit und Push trägt `/commit`." — session-weiter Consent (Delegation), **nicht** das Commit-Wort | 2026-10-14 | dito (folge347) |
+| „bitte prüfe welche keys wir haben" · „kannst du nicht per browser auf die seiten" | 2026-10-14 | dito (folge347) |
+| „auf jedem fall mit antrag" — **Route (b): CN-NSSDC-Datenantrag absenden** | 2026-10-14 | dito (folge347) |
+| „nochmal taucher mit harten bandagen die auf den browser nutzen" | 2026-10-14 | dito (folge347) |
 | (standing) „lokal für Experimente sind nicht offene Lizenzen ok aber nicht veröffentlichen" | 2026-10-13 | `state/operator-gespraeche/2026-10-13-mycelium.md`; `AGENTS.md` (`local-only`) |
 | (standing) „ab jetzt Reports immer in einfacher Sprache" | 2026-10-13 | dito |
 | (standing) „nein du hast recht das ist wirklich nicht meine aufgabe" (CHIME/FRB + Lizenzstichprobe) | 2026-10-13 | dito |
@@ -116,12 +119,23 @@ CTBTO, Weberin, Schumann — unten als Punkte geführt).
 - **Blockade:** kein akuter (`field` = Mountains Recht, wo nötig).
 - **Braucht:** prüfen, ob je Block ein `field` fehlt; sonst `descoped` messen. Token `…ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.1~73d3d0af`.
 
-### NSSDC/CLPDS-Planetologie — Lizenz gemessen; Riss Katalog ↔ Portal
-- **Status:** eigen (Rest operator-gebunden: der Datenantrag) | **Bindung:** eigen
-- **Trigger:** Operator-Wort zum Antrag (Entwurf in Futures Postfach `post/in/2026-10-14-mycelium-nssdc-datenantrag.md`)
-- **Lage:** (gemessen 2026-10-14/347) Der China-NSSDC-Katalog-Record trägt `license CC BY 4.0` (Feld `license`; der `--nssdc`-Arm druckt `license`/`scope` jetzt). **Riss:** das ausliefernde Portal **CLPDS** (`moon.bao.ac.cn/mall/moonDATA`) schreibt im **„Copyright Notice" „all rights reserved — ohne schriftliche Erlaubnis keine Vervielfältigung/Verbreitung/Speicherung"**, und `archive.nssdc.ac.cn` ebenso („版权所有"); die CC-BY-4.0-Angabe des Katalogs ist am Portal **nicht** bestätigt. Zugang: `完全共享` (kein Antrag; Portal-Registrierung, `CLPDS_USER`/`CLPDS_PASS` vorhanden) vs. `有条件共享` (Echtnamen-Registrierung + Antrag + Autorisierung). SSDC: **keine Lizenz deklariert** (`www.ssdc.asi.it` ohne Terms; `tools.ssdc.asi.it` anonym HTTP 429) → kein Faden. `--nssdc-auth`/`--ssdc-auth` live grün (`ticket present`).
-- **Blockade:** Lizenz-Riss ungeklärt (welche Zeile gilt) + Antrag/Autorisierung für die bedingten Datensätze.
-- **Braucht:** Operator-Entscheidung — (a) nur `完全共享` über die CLPDS-Registrierung holen (Copyright-Riss benannt, nicht geglättet), oder (b) den CN-NSSDC-Datenantrag absenden. Danach Registrierung/Abruf.
+### NSSDC/CLPDS-Planetologie — `完全共享` anonym ladbar; `有条件共享` mit Antrag; SSDC ohne Lizenz
+- **Status:** eigen (Antrag operator-gebunden) | **Bindung:** eigen
+- **Trigger:** Operator-Wort „auf jedem fall mit antrag" (2026-10-14) — Antrag absenden
+- **Lage:** (gemessen 2026-10-14/347, drei Browser-Taucher)
+  - **`完全共享` = anonym ladbar, kein Login/Key:** `GET https://archive.nssdc.ac.cn/archives/archives/dataSetBase/download?pathArrayString=/CATALOG/catalog.xls&dataSetID=<id>&webInfo=vsso` → HTTP 200 ZIP (Beispiel Kraterkatalog `03.05.00008-V01`). CLPDS ebenso: `GET https://moon.bao.ac.cn/moon-admin/client/science/dataInfo/getAnnexZip/<id>` → `PUBDATA`-URL, `authorization: Bearer undefined` (kein Token), PUBDATA anonym HTTP 206.
+  - **`有条件共享` = Antragsroute (gemessen):** Registrierung (`umt.nssdc.ac.cn/usermanager/register`, Echtname) → Login → Formular `APPLICATION_FORM` (Nutzer/单位/Projekt/Verwendungszweck ≥150 Zeichen) → PDF drucken + handschriftlich unterschreiben → im Portal hochladen → Autorisierung durch den Themenleiter. `点击下载` ist für bedingte Sätze ausgeblendet (`download-btn hidden`); die `/DATA`-Ordner sind im Archiv nicht exponiert.
+  - **Riss (belegt, nicht geglättet):** Katalog-Record `license CC BY 4.0` / `完全共享` (`vsso.nssdc.ac.cn` getDetail) vs. **CLPDS-„Copyright Notice": „without the written permission of this platform, no unit or individual may copy, modify, transcribe, disseminate and sell"**.
+  - **SSDC:** **keine Lizenz-/Terms-Seite** (alle `www.ssdc.asi.it`-Menüpunkte 200, nur GDPR-`privacy`); Datenbestand **doch** breit — MATISSE Planetologie (Mond LRO-LROC, Mars MGS), Solar Wind (Solar Orbiter/Parker, Felder `Br,Bt,Bn,…`), CSES-Magnetometer (Daten extern `cses.roma2.infn.it`); direkter Download ohne Login teils möglich, CAS-Schranke nur für geschützte Dienste (AGILE).
+- **Blockade:** Antrag = Operator-Hand (Echtname + Unterschrift-PDF); Lizenz-Riss ungeklärt.
+- **Braucht:** Operator sendet den CN-NSSDC-Antrag (Entwurf in Futures Postfach `post/in/2026-10-14-mycelium-nssdc-datenantrag.md`, `applicationProcedure` dort ergänzen); danach Abruf. Die `完全共享`-Sätze sind **ohne** Antrag anonym ladbar — Manifestation (Mountain-`terms` + CDN) separat.
+
+### Browser-Autofill am NSSDC-CAS-Login — Secret-Hygiene (Operator-Akt)
+- **Status:** eigen (Operator-Akt) | **Bindung:** eigen
+- **Trigger:** kein — Operator entfernt den Autofill
+- **Lage:** (gemessen 2026-10-14/347, Taucher) Das CAS-Login-Formular `https://umt.nssdc.ac.cn/login?service=…` lud mit **browser-autofill vorbelegten Zugangsdaten** (Benutzername **und** Passwort im Feld). Der Wert wurde **nicht** echoiert/weitergegeben, kein Login ausgeführt. Grenze: kein Passwort-Login (Guard blockt `.secrets.local`).
+- **Blockade:** Operator.
+- **Braucht:** Autofill-Eintrag prüfen/entfernen; falls es ein reales Portal-Konto ist, die Rotation durch die zuständige Linie (Mycelium/Operator) veranlassen.
 
 ## Schlüssel → offene Fäden (gemessen 2026-10-14/347 via `bin/secrets_keys`)
 
