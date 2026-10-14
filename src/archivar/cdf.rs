@@ -641,9 +641,12 @@ pub fn extract_witness_channels(
         let Extract::Field(fc) = ext else {
             continue;
         };
-        let (value_key, axis_key) = match fc.key.split_once('@') {
-            Some((value, axis)) => (value, Some(axis)),
-            None => (fc.key.as_str(), None),
+        let tags: Vec<&str> = fc.key.split('@').collect();
+        let (value_key, axis_key, cal_key) = match tags.as_slice() {
+            [value] => (*value, None, None),
+            [value, axis] => (*value, Some(*axis), None),
+            [value, axis, cal] => (*value, Some(*axis), Some(*cal)),
+            _ => continue,
         };
         let Some(var) = file.var(value_key) else {
             continue;
@@ -655,15 +658,60 @@ pub fn extract_witness_channels(
             .and_then(|key| file.var(key))
             .and_then(|av| file.var_records(file_bytes, av).ok())
             .map(|rows| rows.into_iter().collect());
-        push_cdf_field(fc, &records, axis.as_ref(), &epoch_map, lsk, &mut channels);
+        let cal: Option<Vec<(f64, f64)>> = cal_key
+            .and_then(|key| file.var(key))
+            .and_then(|cv| file.var_records(file_bytes, cv).ok())
+            .and_then(|rows| rows.into_iter().next())
+            .map(|(_, vals)| pair_curve(&vals));
+        push_cdf_field(
+            fc,
+            &records,
+            axis.as_ref(),
+            cal.as_deref(),
+            &epoch_map,
+            lsk,
+            &mut channels,
+        );
     }
     Some(ExtractResult::Measurements(channels))
+}
+
+pub const NT_PER_T: f64 = 1.0e9;
+
+fn pair_curve(vals: &[f64]) -> Vec<(f64, f64)> {
+    vals.chunks_exact(2)
+        .filter_map(|pair| {
+            (pair[0].is_finite() && pair[1].is_finite() && pair[1] > 0.0)
+                .then_some((pair[0], pair[1]))
+        })
+        .collect()
+}
+
+fn interp_curve(curve: &[(f64, f64)], x: f64) -> Option<f64> {
+    let first = curve.first()?;
+    let last = curve.last()?;
+    if !x.is_finite() || x < first.0 || x > last.0 {
+        return None;
+    }
+    for window in curve.windows(2) {
+        let (x0, y0) = window[0];
+        let (x1, y1) = window[1];
+        if x <= x1 {
+            if !(x1 > x0) {
+                return None;
+            }
+            let y = y0 + (x - x0) / (x1 - x0) * (y1 - y0);
+            return (y.is_finite() && y > 0.0).then_some(y);
+        }
+    }
+    (last.1 > 0.0).then_some(last.1)
 }
 
 fn push_cdf_field(
     fc: &crate::archivar::FieldConfig,
     records: &[(u32, Vec<f64>)],
     axis: Option<&HashMap<u32, Vec<f64>>>,
+    cal: Option<&[(f64, f64)]>,
     epoch_map: &HashMap<u32, f64>,
     lsk: &crate::archivar::LeapSeconds,
     out: &mut Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
@@ -681,8 +729,8 @@ fn push_cdf_field(
             continue;
         };
         let axis_vals = axis.and_then(|map| map.get(rec_num));
-        for (bin, value) in vals.iter().enumerate() {
-            if !value_present(*value) {
+        for (bin, raw) in vals.iter().enumerate() {
+            if !value_present(*raw) {
                 continue;
             }
             let (freq, bin_width) = match axis_vals {
@@ -697,6 +745,24 @@ fn push_cdf_field(
                     (0.0, 0.0)
                 }
             };
+            let value = match cal {
+                Some(curve) => {
+                    let Some(factor) = interp_curve(curve, freq) else {
+                        continue;
+                    };
+                    let cal_nt = factor * NT_PER_T;
+                    let denom = cal_nt * cal_nt;
+                    if !(denom.is_finite() && denom > 0.0) {
+                        continue;
+                    }
+                    let field = raw / denom;
+                    if !value_present(field) {
+                        continue;
+                    }
+                    field
+                }
+                None => *raw,
+            };
             out.push((
                 Channel {
                     z: 0.0,
@@ -706,7 +772,7 @@ fn push_cdf_field(
                     station_code: None,
                     position: Position::Source,
                     name: fc.name.clone(),
-                    value: *value,
+                    value,
                 },
                 fc.clone(),
             ));
@@ -890,6 +956,7 @@ mod tests {
             &field("ch1@freq_vlf"),
             &records,
             Some(&axis),
+            None,
             &epoch_map,
             &lsk,
             &mut out,
@@ -903,10 +970,79 @@ mod tests {
         assert_eq!(out[2].0.value, 3.0);
 
         let mut scalar: Vec<(Channel, FieldConfig)> = Vec::new();
-        push_cdf_field(&field("x"), &records, None, &epoch_map, &lsk, &mut scalar);
+        push_cdf_field(
+            &field("x"),
+            &records,
+            None,
+            None,
+            &epoch_map,
+            &lsk,
+            &mut scalar,
+        );
         assert_eq!(scalar.len(), 1);
         assert_eq!(scalar[0].0.freq, 0.0);
         assert_eq!(scalar[0].0.bin_width, 0.0);
+    }
+
+    #[test]
+    fn calibrated_spectrum_divides_by_the_interpolated_curve() {
+        use crate::archivar::{Aperture, Channel, FieldConfig, LeapSeconds};
+
+        let fc = FieldConfig {
+            key: "ch1@freq_vlf@cal".into(),
+            name: "b_nt2_hz".into(),
+            band_id: None,
+            kernel: 0,
+            channel_ref: Some(0),
+            tau: 0.0,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: "nT^2/Hz".into(),
+            freq: 0.0,
+            bin_width: 0.0,
+            fold: None,
+            aperture: Aperture::None,
+        };
+        let lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let mut epoch_map = HashMap::new();
+        epoch_map.insert(0u32, 1_000_000_000.0);
+        let records = vec![(0u32, vec![1.0, 4.0])];
+        let mut axis = HashMap::new();
+        axis.insert(0u32, vec![10.0, 20.0]);
+        let curve = vec![(10.0, 1.0), (20.0, 2.0)];
+        let mut out: Vec<(Channel, FieldConfig)> = Vec::new();
+        push_cdf_field(
+            &fc,
+            &records,
+            Some(&axis),
+            Some(&curve),
+            &epoch_map,
+            &lsk,
+            &mut out,
+        );
+        assert_eq!(out.len(), 2);
+        assert_eq!(out[0].0.freq, 10.0);
+        let cal0 = 1.0_f64 * NT_PER_T;
+        assert!((out[0].0.value - 1.0 / (cal0 * cal0)).abs() < 1e-30);
+        let cal1 = 2.0_f64 * NT_PER_T;
+        assert!((out[1].0.value - 4.0 / (cal1 * cal1)).abs() < 1e-30);
+
+        let mut off = HashMap::new();
+        off.insert(0u32, vec![5.0]); // below the curve support → flagged, not extrapolated
+        let mut none: Vec<(Channel, FieldConfig)> = Vec::new();
+        push_cdf_field(
+            &fc,
+            &records,
+            Some(&off),
+            Some(&curve),
+            &epoch_map,
+            &lsk,
+            &mut none,
+        );
+        assert_eq!(none.len(), 0);
     }
 
     #[test]
@@ -966,6 +1102,7 @@ mod tests {
             &fc,
             &ch1_records[..1],
             Some(&axis),
+            None,
             &epoch_map,
             &lsk,
             &mut out,

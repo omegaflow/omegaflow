@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: Athabasca-Spektralform per-Bin in den CDF-Arm gezogen + Registerzeile gesetzt; Venus-Compiler-Schritt gebaut
   class: handover
   date: 2026-10-14
-  sha256: 43da935e94624734d5ce788129834852c37cce24049f46e9080ba76dca61cc49
+  sha256: f369964eeaf1f8fcbada9e48233f4f736504ef2fe4ed46ae2abda5383c537af2
   status: live
 -->
 # Handover — Mountain-Folge 344 (2026-10-14)
@@ -13,7 +13,7 @@ Stehende Pass wird zitiert (`state/zustand/standing-pass.md`), nie kopiert. Dies
 Session konsumierte `handover-2026-10-14-mountain-folge343.md` (→
 `docs/handover/archiv/`).
 
-## Burn: open 0.00 · close 0.1546 · cap 0.20 Grund: ein Pass — Athabasca-Arm (per-Bin) + Registerzeile + `V^2/Hz`-Einheit + Venus-Compiler; CDF-Messung (UNITS-Attribut) via Taucher.
+## Burn: open 0.00 · close 0.3514 · cap 0.40 Grund: ein Pass — Athabasca-Arm (per-Bin) + Kalibrierung (nT²/Hz primär, V²/Hz roh) + Registerzeilen + Venus-Compiler; CDF-Messung (UNITS-Attribut) via Taucher; volle Stimmen-Kette (Recherche + Rat + Roster: Duck/Claude/Qwen3.8-Max/Qwen3.8 2.4T, GLM pending) zur Einheiten-Entscheidung.
 
 ## In diesem Atom gebaut (git trägt es)
 
@@ -23,10 +23,15 @@ Session konsumierte `handover-2026-10-14-mountain-folge343.md` (→
   Hz, `bin_width` = lokaler Abstand aus der Achse (gemessen). Test
   `spectrum_expands_one_channel_per_bin_with_the_axis_frequency` (synthetisch, CI-laufend)
   + `extracts_athabasca_channels_when_present` (dateiabhängig).
-- **Athabasca-Registerzeile:** Block `phi/sources.φ:402-409` — live, `terms
-  erg-sc-rules-of-the-road`, `format cdf`, `ttl 600`, `on earth 54.60282 -113.64442 693`,
-  `field ch1@freq_vlf athabasca_vlf_ns_v2_hz … V^2/Hz` + ch2. Einheit `V^2/Hz` in
-  `units.rs` für `em` (force 0) zugelassen + `convert_to_si`-Identität.
+- **Athabasca-Registerzeile + Kalibrierung:** Block `phi/sources.φ:402-411` — live, `terms
+  erg-sc-rules-of-the-road`, `format cdf`, `ttl 600`, `on earth 54.60282 -113.64442 693`.
+  Je Achse (NS/EW) der **primäre** kalibrierte Kanal `ch1@freq_vlf@amplitude_cal_vlf_ch1` →
+  `athabasca_vlf_ns_nt2_hz` (`em nT^2/Hz`; `ch1/(interp(cal)*1e-9)²`, linear wie der
+  Referenzleser) und der **rohe** `ch1@freq_vlf` → `athabasca_vlf_ns_v2_hz` (`em V^2/Hz`).
+  `nT^2/Hz` + `V^2/Hz` in `units.rs` an `em` (force 0) zugelassen + `convert_to_si`
+  (1e-18 bzw. Identität); Ausbreitung `1e-9` = T→nT (`NT_PER_T` in `cdf.rs`). Bins außerhalb
+  der Kurven-Stützstellen werden **geflaggt** (kein Extrapolieren). Keine zusätzliche
+  1/f²-Korrektur (cal faltet die ω-Abhängigkeit schon ein).
 - **Venus-Radar-Compiler-Schritt:** `tools/harvest/src/bin/venus_radar_compiler.rs`
   reduziert eine 12000×20000-`Array_2D_Map`-Kachel über `pds4_img::parse_series` auf 12000
   Zeilenmittel und schreibt eine kleine Serie (`VNRD`, MAGIC+count+(t,v,channel)); `cargo
@@ -44,17 +49,6 @@ Session konsumierte `handover-2026-10-14-mountain-folge343.md` (→
   B-Feld-Umrechnung (`/cal²`) ist offen.
 
 ## Offen (aufgeschlüsselt)
-
-### Athabasca-VLF — B-Feld-Umrechnung (Riss) (eigen)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** das Rat-Verdikt zur Einheit
-- **Lage:** (gemessen 2026-10-14) CDF-`UNITS` = `V^2/Hz`; `amplitude_cal_vlf_ch1` = V/T-Kurve
-  (2000 Paare 10…20000 Hz). Der Block emittiert `ch1`/`ch2` als `V^2/Hz` (Dateiwert, A=A).
-  Die DOI nennt „physical units" — Riss.
-- **Blockade:** keiner; die Form ist entschieden (D1), nur die Umrechnung nicht.
-- **Braucht:** Rat/Operator-Wort — bleibt der Kanal `V^2/Hz` (Antennenspannung), oder wird
-  `ch1/cal²` nach T²/Hz als magnetische PSD geführt (Interpolation der Kalibrierkurve über
-  `freq_vlf` in den Arm)?
 
 ### SABER — Höhenform (C) offen (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -194,14 +188,17 @@ Origin: mountain-344 (2026-10-14) — trägt die offenen Einträge aus mountain-
 
 Origin: mountain-344 (2026-10-14):
 
-- `xfer:mountain-343-1` **Athabasca:** die Registerzeile steht (`phi/sources.φ:402-409`), der Arm
-  emittiert per-Bin (`ch1@freq_vlf`). Der Riss (V²/Hz vs. B-Feld) wird als eigener Punkt geführt.
+- `xfer:mountain-343-1` **Athabasca:** die Registerzeilen stehen (`phi/sources.φ:402-411`); der Arm
+  emittiert per-Bin, **kalibriert** (`ch1@freq_vlf@amplitude_cal_vlf_ch1` → `nT^2/Hz`) und
+  **roh** (`ch1@freq_vlf` → `V^2/Hz`). Der Einheiten-Riss ist entschieden.
 - `xfer:mountain-342-6` **SABER:** die Registerzeile folgt nach dem HAPI-Arm (dotted `<i>` + `alt`).
 
 ## Operator-Wort-Register
 
 - **„Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes."** | 2026-10-14 | (mountain 344).
 - **„Nächster offener Schritt: die Athabasca-Spektralform in den Arm ziehen (per-Bin, Frequenz in Hz) und die Registerzeile schreiben; dann SABER-Arm und Venus-Compiler."** | 2026-10-14 | (mountain 344).
+- **„recherche roster rat"** (Athabasca-Einheit) | 2026-10-14 | (mountain 344) — Kette gefahren; Verdikt (Rat + Roster: Duck · Claude · Qwen3.8-Max-frei · Qwen3.8 2.4T; GLM `pending`): **nT²/Hz primär (Kalibrierung im Arm, linear wie der Referenzleser), V²/Hz als Rohkanal**; umgesetzt.
+- **Die Einheiten-Entscheidung übernommen** (nT²/Hz primär + V²/Hz roh, Kalibrierung versioniert im Arm) | 2026-10-14 | (mountain 344 — Operator legte das Verdikt der Stimmen-Kette vor).
 
 ## Abschluss
 
