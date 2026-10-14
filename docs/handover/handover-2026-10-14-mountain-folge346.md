@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: 432b5578a45e08c1d5ea2513182099a11a274540d340e47812925a5b4e41bff3
+  sha256: ee685ef3b15dd84df115b80b0d39aa90355aadf223f3660d43855aaa99794ec4
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -59,11 +59,17 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
   `TIMED` · `1 26998U 01055B 26052.51864582 .00001123 …` ·
   `2 26998 74.0671 107.8683 0002724 294.3335 65.7565 14.94968599313531`
   (i 74.07°, ~14.95 Umläufe/Tag) — die eigene Bahn ist damit belegt.
-  **Quelle gefunden (`--all`, voller Lauf):** `celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=2LE`
-  (auch `…?FORMAT=tle&INTDES=2001-055`, `GROUP=active`); live auch
-  `n2yo.com/satellite/?s=26998` (aktuelle TLE, Epoche 26287.22 = heute, AFSPC).
-  Eine **durchgehende Historie 2002–2026** ist in diesen Armen **nicht** aufgetaucht —
-  Space-Track (Login) bleibt der Kandidat.
+  **Live-TLE:** CelesTrak aus dieser Umgebung **nicht erreichbar** (Browser + curl, 60 s
+  Timeout); die Live-TLE lieferte `n2yo.com/satellite/?s=26998` (Epoche 26287.22 = heute,
+  AFSPC). CelesTrak-Endpunkt (`gp.php?CATNR=26998&FORMAT=2LE`, `INTDES=2001-055`) im Index
+  belegt, hier nicht abrufbar.
+  **Historische Reihe 2002–2026 (gefunden, `--all` + `--exa`):** HuggingFace
+  **`juliensimon/space-track-tle-history`** — **CC-BY-4.0**, „complete archive … every tracked
+  object in Earth orbit, 1959 to 2026, sourced from Space-Track.org bulk exports", parquet je
+  Jahr (`data/tle_2002.parquet … tle_2026.parquet`), Spalten `norad_id, epoch, inclination,
+  raan, eccentricity, arg_perigee, mean_anomaly, mean_motion, bstar, intl_designator,
+  altitude_km`; TLE = `norad_id 26998`. Daneben CelesTrak `NORAD/archives/` (hier unerreichbar)
+  und Space-Track selbst (Login).
 - **Exaktheit (Operator-Kriterium):** A ist exakt am **vermessenen Ort** (Limb-Sounder: der
   Tangentialpunkt `tpl…`/`tpgpaltitude` ist die Messstelle, nicht der Satellit) — aber
   scan-gemittelt, ohne Datum, ohne Sub-Scan-Zeit. **B (TLE/SGP4)** gäbe eine kontinuierliche
