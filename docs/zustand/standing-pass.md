@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-14
-  sha256: dc8aca83de4c53302589262f71f11ea384dde994d464cdb51cffe4282e12d3e4
+  sha256: 53f2562b163a8962efa082fbc3306ac955523997e7d0ab2113b659f6f92d6572
   status: live
   see-also: AGENTS.md
 -->
@@ -16,8 +16,8 @@ leck-fähige Faden (das Register-Lesen) geschnitten, nicht nur verschoben.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `6192d3206` | 2026-10-14 |
-| rote CI-Läufe | `ci-gate` (format: rustfmt-Diff in `tools/service/src/bin/llm_gateway.rs:1244`; register: `cdn_reconcile --fail`, 5 ungebundene CDN-Netlocs → Mountain) · `register-coverage` (`register_lookup --tokens`: 21 unbeglichen, 7 XFER-MISSING) — je Lauf `ci_manage list` am HEAD; die HEAD-Läufe (`38626650325` ci-gate, `38626650196` register-coverage) laufen neu | 2026-10-14 |
+| HEAD | `d4fdb76ee` | 2026-10-14 |
+| rote CI-Läufe | `ci-gate` `38641123673` (am HEAD neu gestartet; gemessen lokal: `cargo fmt --check` bricht an `tools/service/src/bin/llm_gateway.rs:1265` — der Ganz-Crate-Format-Riss, kein Linien-Eigentum; register: `cdn_reconcile --fail` am HEAD-Baseline = 5 ungebundene CDN-Netlocs → Mountain) · `register-coverage` `38641123689` (am HEAD neu gestartet; `register_lookup --tokens --noecho-fail` = 7 XFER-MISSING in fremden Blöcken, `mountain-folge346`/`347` und `river-folge211`; `--orphans --fail` = 0) | 2026-10-14 |
 
 Die Meta-Linie (Mycelium) trägt beide Zeilen in demselben Rund, in dem sie den privaten
 Pass schreibt — öffentlich ins öffentliche Haus, privat ins private.
