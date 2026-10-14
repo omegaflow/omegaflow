@@ -2,7 +2,7 @@
   title: House Rules — Register, Handover, Commit, System Directive, Session Hygiene
   class: concept
   date: 2026-10-14
-  sha256: 2cb47a371977b72e598cdd7999d2206c8f965a14e3c32adeda81fc8f3af39920
+  sha256: da43c42809a3e8640c75938fa28f6ba3b7685de5d12f6fe7910095790036a34e
   status: live
   see-also: AGENTS.md
 -->
@@ -23,6 +23,8 @@ Pass ist die Projektion `docs/zustand/standing-pass.md` (nur HEAD + rote Läufe)
 - **die Recherche** — die **gemessenen** Befunde aus `archive_search` (URL, Zahl, Quelle), nicht Meinung;
 - **der Roster** — die **volle** Seat-Liste (`~/projects/omegaflow-work/ui-seats.md`), **nicht** vier Tabs.
 Ein Rat, der ohne Recherche **oder** ohne den vollen Roster berät, ist **nicht** der Rat — sein Verdikt trägt nicht. Wer den Rat ruft, reicht Recherche **und** Roster mit; fehlt eines, wird es **zuerst** geholt.
+
+**Burn-Zeile — gemessen oder `pending` (Operator-Wort, 2026-10-14).** Die `Burn:`-Zeile eines Handovers trägt den gemessenen Session-Verbrauch. Kann die Linie ihn **nicht** messen — weil die Kosten im privaten Session-Store liegen, den eine öffentliche Linie nicht liest —, dann sagt die Zeile **`close pending`** (oder `unmeasured`/`nicht gemessen`), **nie** eine erfundene `0.0`; der Kosten-Cap ist dann **benannt-ungeprüft**. Die stille Null ist verboten, die benannte Lücke erlaubt.
 
 **Der Bote betritt kein Haus (Operator-Wort 2026-10-14).** Eine öffentliche Linie geht
 **nie** ins private Haus — sie wirft ein und holt ab. Das **Postfach** liegt im
