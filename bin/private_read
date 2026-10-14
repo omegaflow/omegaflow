@@ -1,8 +1,12 @@
 #!/bin/sh
 # private_read — the redactor. Reads a file from the private house and prints ONLY its
-# redacted text. The WALL is deterministic: $OMEGAFLOW_PRIVATE/redact.map, one
-# `real=PLACEHOLDER` per line, every occurrence replaced (longest first). The map stays
-# in the private house; the output never carries a real name/address/email.
+# redacted text. Two layers, deterministic first:
+#   Layer 1 (patterns, built in): private-key blocks, API keys, tokens, bearer values,
+#            password/secret/token assignments, and every e-mail address.
+#   Layer 2 (the map, private): $OMEGAFLOW_PRIVATE/redact.map, one `real=PLACEHOLDER`
+#            per line — names, addresses, and the names of third parties who write.
+# The map stays in the private house; the output never carries a real name, address,
+# e-mail, key or secret.
 #
 # It must run OUTSIDE the cage: the cage rightly hides the private house from the public
 # agent's shell. So it is launched by the operator (their terminal) or by the gateway —
@@ -24,14 +28,35 @@ esac
 map="$priv/redact.map"
 [ -f "$map" ] || { printf 'private_read: no redact.map in the private house\n' >&2; exit 2; }
 
-script="$(mktemp)"
-trap 'rm -f "$script"' EXIT
+filter="$(mktemp)"
+mapscript="$(mktemp)"
+trap 'rm -f "$filter" "$mapscript"' EXIT
+
+cat > "$filter" <<'SED'
+s/sk-[A-Za-z0-9_-]\{16,\}/<KEY>/g
+s/github_pat_[A-Za-z0-9_]\{20,\}/<KEY>/g
+s/gh[pousr]_[A-Za-z0-9]\{20,\}/<KEY>/g
+s/AKIA[0-9A-Z]\{16\}/<KEY>/g
+s/AIza[0-9A-Za-z_-]\{30,\}/<KEY>/g
+s/xox[baprs]-[A-Za-z0-9-]\{10,\}/<KEY>/g
+s/hf_[A-Za-z0-9]\{20,\}/<KEY>/g
+s/Bearer[[:space:]]\{1,\}[A-Za-z0-9._-]\{16,\}/Bearer <KEY>/g
+s/\([Pp]assword\|[Pp]asswd\|[Ss]ecret\|[Tt]oken\|[Aa]pi[-_]\?[Kk]ey\)[[:space:]]*[:=][[:space:]]*[^[:space:]]\{1,\}/\1=<SECRET>/g
+s/[A-Za-z0-9._%+-]\{1,\}@[A-Za-z0-9.-]\{1,\}\.[A-Za-z]\{2,\}/<EMAIL>/g
+SED
+
 awk -F'=' '
   /^[[:space:]]*#/ { next }
   /^[[:space:]]*$/ { next }
   { real=$1; ph=substr($0, index($0,"=")+1); if (real=="") next; print length(real)"\t"real"\t"ph }
 ' "$map" | sort -rn | while IFS="$(printf '\t')" read -r _ real ph; do
   esc="$(printf '%s' "$real" | sed 's/[][\\.*^$/&]/\\&/g')"
-  printf 's/%s/%s/g\n' "$esc" "$ph" >> "$script"
+  printf 's/%s/%s/g\n' "$esc" "$ph" >> "$mapscript"
 done
-sed -f "$script" "$f"
+
+awk '
+  /-----BEGIN [A-Z ]*PRIVATE KEY-----/ { inkey=1; print "<PRIVATE KEY>"; next }
+  /-----END [A-Z ]*PRIVATE KEY-----/ { inkey=0; print "</PRIVATE KEY>"; next }
+  inkey { next }
+  { print }
+' "$f" | sed -f "$filter" | sed -f "$mapscript"
