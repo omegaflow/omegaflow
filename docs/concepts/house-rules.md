@@ -2,7 +2,7 @@
   title: House Rules — Register, Handover, Commit, System Directive, Session Hygiene
   class: concept
   date: 2026-10-14
-  sha256: 193a70fb9f56ebd4bf3aee6924e15bd77baa3b26b452d37b789268fd32114953
+  sha256: 917523dcb78d80cd38e68d31edcb93d47c72a75db8b06e6ba10fdcf480fb1d05
   status: live
   see-also: AGENTS.md
 -->
@@ -32,6 +32,8 @@ Ein Rat, der ohne Recherche **oder** ohne den vollen Roster berät, ist **nicht*
 - **Mistral** entschwärzt (dieselbe Tabelle rückwärts) → der **adressierte** Brief.
 - **Der Operator sendet** — der Send bleibt immer seine Hand.
 So denkt der starke Kopf, ohne je eine PII zu sehen; der Kanzleischreiber deckt ab und wieder auf.
+
+**Der Schwärzer (Operator-Wort, 2026-10-14).** Der Anonym-Kasten trägt Briefe — der **Schwärzer** trägt **alles**. Jede Lektüre des privaten Hauses durch die öffentliche Rechenschicht kreuzt `bin/private_read`: es liest die Datei, ersetzt **jedes** Vorkommen der Zuordnung (`$OMEGAFLOW_PRIVATE/redact.map`, `real=PLATZHALTER`, längste zuerst) und gibt nur den geschwärzten Text heraus. Die Zuordnung bleibt im privaten Haus. Der Schwärzer läuft **außerhalb des Käfigs** (Operator-Terminal oder Gateway) — der Käfig verbirgt das private Haus zu Recht vor der Agenten-Shell — und die öffentliche Schicht ruft ihn über den Gateway. Zwei Schichten: die **feste Tabelle** ist die Wand (trifft jedes Bekannte, fehlt nie); Mistral (billigste Stufe) ist das **zweite Netz** für das Unbekannte.
 
 **Der Bote betritt kein Haus (Operator-Wort 2026-10-14).** Eine öffentliche Linie geht
 **nie** ins private Haus — sie wirft ein und holt ab. Das **Postfach** liegt im
