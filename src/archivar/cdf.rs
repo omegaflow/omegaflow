@@ -585,6 +585,105 @@ impl CdfFile {
     }
 }
 
+pub fn decompress_whole_file(bytes: &[u8]) -> Option<Vec<u8>> {
+    let block = be_u64(bytes, 8)? as usize;
+    let data_start = 8usize + 32;
+    let data_size = block.checked_sub(32)?;
+    let cpr = be_u64(bytes, 20)? as usize;
+    let cpr_block = be_u64(bytes, cpr)? as usize;
+    let cpr_rec = bytes.get(cpr..cpr + cpr_block)?;
+    let ctype = be_u32(cpr_rec, 12)?;
+    if ctype != CTYPE_GZIP {
+        return None;
+    }
+    let stream = bytes.get(data_start..data_start + data_size)?;
+    let inner = crate::inflate::gunzip(stream)?;
+    let mut out = Vec::with_capacity(8 + inner.len());
+    out.extend_from_slice(&MAGIC);
+    out.extend_from_slice(&0x0000_ffffu32.to_be_bytes());
+    out.extend_from_slice(&inner);
+    Some(out)
+}
+
+fn cdf_epoch_var(file: &CdfFile) -> Option<&CdfVar> {
+    file.var("Epoch")
+        .or_else(|| file.vars.iter().find(|v| is_epoch_type(v.data_type)))
+}
+
+pub fn extract_witness_channels(
+    src: &crate::archivar::SourceConfig,
+    body: &str,
+    lsk: &crate::archivar::LeapSeconds,
+) -> Option<crate::archivar::ExtractResult> {
+    use crate::archivar::{Channel, Extract, ExtractResult, FieldConfig, Position};
+
+    let bytes = std::fs::read(body).ok()?;
+    if bytes.len() < 4 || bytes[..4] != MAGIC {
+        return None;
+    }
+    let marker = be_u32(&bytes, 4)?;
+    let owned;
+    let file_bytes: &[u8] = if marker == 0x0000_ffff {
+        &bytes
+    } else {
+        owned = decompress_whole_file(&bytes)?;
+        &owned
+    };
+    let file = CdfFile::parse(file_bytes).ok()?;
+    let Some(epoch_var) = cdf_epoch_var(&file) else {
+        return Some(ExtractResult::Measurements(vec![]));
+    };
+    let Ok(epoch_map) = file.epoch_map(file_bytes, epoch_var) else {
+        return Some(ExtractResult::Measurements(vec![]));
+    };
+    let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+    for ext in &src.extracts {
+        let Extract::Field(fc) = ext else {
+            continue;
+        };
+        let Some(var) = file.var(&fc.key) else {
+            continue;
+        };
+        if var.num_elements != 1 {
+            continue;
+        }
+        let Ok(records) = file.var_records(file_bytes, var) else {
+            continue;
+        };
+        for (rec_num, vals) in &records {
+            let Some(value) = vals.first().copied() else {
+                continue;
+            };
+            if !value_present(value) {
+                continue;
+            }
+            let Some(&t_unix) = epoch_map.get(rec_num) else {
+                continue;
+            };
+            if !value_present(t_unix) {
+                continue;
+            }
+            let Some(epoch) = lsk.unix_to_tdb(t_unix) else {
+                continue;
+            };
+            channels.push((
+                Channel {
+                    z: 0.0,
+                    freq: 0.0,
+                    bin_width: 0.0,
+                    epoch,
+                    station_code: None,
+                    position: Position::Source,
+                    name: fc.name.clone(),
+                    value,
+                },
+                fc.clone(),
+            ));
+        }
+    }
+    Some(ExtractResult::Measurements(channels))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -707,5 +806,107 @@ mod tests {
         for (_, vals) in &records {
             assert_eq!(vals.len(), 256);
         }
+    }
+
+    #[test]
+    fn extracts_athabasca_channels_when_present() {
+        use crate::archivar::{
+            Aperture, Extract, ExtractResult, FieldConfig, Frame, LeapSeconds, SourceConfig,
+        };
+
+        let path = "/tmp/opencode/ath.cdf";
+        if std::fs::read(path).is_err() {
+            return;
+        }
+        let field = |key: &str, name: &str| {
+            Extract::Field(FieldConfig {
+                key: key.into(),
+                name: name.into(),
+                band_id: None,
+                kernel: 0,
+                channel_ref: Some(0),
+                tau: 0.0,
+                absorption: 0.0,
+                advection: 0.0,
+                unit: String::new(),
+                freq: 0.0,
+                bin_width: 0.0,
+                fold: None,
+                aperture: Aperture::None,
+            })
+        };
+        let src = SourceConfig {
+            ttl: 3600,
+            url: "https://ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/vlf/ath/x.cdf".into(),
+            origin: None,
+            terms: None,
+            band: None,
+            footprint: None,
+            witness: None,
+            rights_identifier: None,
+            rights_scheme: None,
+            rights_uri: None,
+            frame: Frame::Surface {
+                body_name: "earth".into(),
+                lat: 54.6,
+                lon: 246.36,
+                alt: 693.0,
+            },
+            format: "cdf".into(),
+            extracts: vec![
+                field("ch1", "vlf_ch1"),
+                field("ch2", "vlf_ch2"),
+                field("freq_vlf", "vlf_freq"),
+                field("amplitude_cal_vlf_ch1", "vlf_amp1"),
+                field("amplitude_cal_vlf_ch2", "vlf_amp2"),
+            ],
+            channels: Vec::new(),
+            headers: vec![],
+            post_body: None,
+            target: None,
+            catalog: None,
+            range: None,
+            max_freq: None,
+            min_freq: None,
+            body: None,
+            stations_url: None,
+            stations_path: String::new(),
+            stations_lat: String::new(),
+            stations_lon: String::new(),
+            stations_id: String::new(),
+            hapi_fill: HashMap::new(),
+            flux_from_mag: None,
+            abs_mag_from: None,
+            catalog_epoch: None,
+            repeat_ra_bins: 0,
+            fanout_cap: 0,
+            fanout_center: None,
+            stations_flatten: String::new(),
+            stations_filter: None,
+            fanout_delay: 0,
+            sha256: None,
+            window: None,
+            live_only: false,
+            station_code: None,
+            cgm_lat: None,
+            cgm_source: None,
+            geomag_lat: None,
+            weberin_role: None,
+        };
+        let lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
+        };
+        let result = extract_witness_channels(&src, path, &lsk).expect("cdf3 arm");
+        let ExtractResult::Measurements(channels) = result else {
+            panic!("the cdf arm carries measurements");
+        };
+        let mut names: Vec<&str> = channels.iter().map(|(c, _)| c.name.as_str()).collect();
+        names.sort_unstable();
+        names.dedup();
+        for want in ["vlf_ch1", "vlf_ch2", "vlf_freq", "vlf_amp1", "vlf_amp2"] {
+            assert!(names.contains(&want), "missing {want}");
+        }
+        assert!(channels.iter().all(|(c, _)| c.epoch > 0.0));
     }
 }

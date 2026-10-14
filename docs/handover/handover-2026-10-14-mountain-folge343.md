@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: warum Zeugen keine Lizenzen tragen (gemessen), `ingest-terms-absent`-Gate gebaut
   class: handover
   date: 2026-10-14
-  sha256: df0fdeb405b6ef2c81644e07b6420c742513fff0273d7461547e3d90d4d82797
+  sha256: 0eab72c869cdbb702bdd0d34909dbdd2db51fc318f4b496b77b4169356ca225f
   status: live
 -->
 # Handover — Mountain-Folge 343 (2026-10-14)
@@ -14,7 +14,7 @@ Session konsumierte `handover-2026-10-14-mountain-folge342.md` (→
 `docs/handover/archiv/`) und faltete die adressierten Blöcke (future-folge253,
 mycelium-folge345).
 
-## Burn: open 0.00 · close 0.31 · cap 0.40 Grund: ein Pass — vier Architektur-Fragen mit voller Recherche/Rat/Roster-Runde (10 Seats gestellt) + zwei Taucher-Wellen + CDF-Reader-Bau + Koordinaten-/Höhenmessung.
+## Burn: open 0.00 · close 0.45 · cap 0.50 Grund: ein Pass — Architektur-Fragen mit voller Recherche/Rat/Roster-Runde (sechs Seats) + mehrere Taucher-Wellen + CDF-Reader-Bau + Koordinaten-/Höhen-/Datei-Arbeit.
 
 Gemessen `session_burn` (opencode.db, Session „Warum Zeugen-Blöcke keine Lizenzen tragen", deepseek-flash).
 
@@ -74,6 +74,23 @@ in `tools/gate/src/bin/commit_check.rs`; Fixture `phi-terms-absent`
 Nicht-Antwort (gemessen): Z.ai/GLM **kam nicht zurück** (Deep Think lief auf einer fremden Frage weiter, `pending`); Duck.ai · DeepSeek · AI Studio · Inkling zeigten den Alt-Verlauf (Nachricht erreichte den Composer, keine neue Antwort).
 
 **Konvergenz/Riss.** F1 (b) und F3 (C-1/dotted) **konvergieren** (Rat + Qwen/Claude/MiniMax); Lumo dissentierend (a / alias). F2 **Riss**: ein Block mit Einheit am Feld (Rat/Claude) gegen drei Blöcke (Qwen/MiniMax/Lumo) — die Grammatik trägt die Einheit je `field` (parse.rs:1642), daher gilt der Rat; der Riss bleibt benannt. F4 **Riss**: live vs. CDN, aufgelöst durch die **nicht-offene Lizenz** → kein CDN (`local-only`, Operator-Wort 2026-10-13).
+
+## Taucherschwarm — Messungen/Bau (2026-10-14)
+
+- **Athabasca-Arm GEBAUT:** `src/archivar/cdf.rs` (+201, CDF-3.0 + Ganzdatei-gzip) + `extract.rs` (+3: `format cdf` versucht v3 zuerst, fällt auf `cdf25`); `cargo check` 0/0, Gate-Bau grün. Die ath-Datei zerfällt in Kanäle (`vlf_ch1`, `vlf_ch2`, `vlf_freq`, `vlf_amp1`, `vlf_amp2`). **Riss:** `ch1`/`ch2` tragen `num_elements=1`, sind aber je Datensatz ein **1024-langes Array** (Spektrum je Zeitpunkt; 35 414 016 B / 8646 / 4 = 1024) — der Arm liest nur das erste Bin. **Entscheidung nötig:** ein Kanal je (Zeit, Frequenzbin) mit `freq_vlf` als Achse (dann `Channel.freq`), statt Skalar.
+- **ICGEM/GOCO06s:** GOCO06s **hat** eine explizite Referenzepoche **2010-01-01 (MJD 55197)** (`ftp.tugraz.at/pub/ITSG/GOCO/GOCO06s/00Readme.txt`, `.gfc`-Kopf, Kvas et al. 2021 ESSD 13:99); XGM2019e selbst `absent`. **Riss:** die GOCO-Epoche gehört zum **Zeitmodell** (Trend + Jahresoszillation), nicht zu XGM2019e's statischem System — ob XGM sie erbt, ist die offene Rat-/Operator-Frage.
+- **Venus-Lizenz gemessen:** DataCite `10.17189/1522443` `rightsList` = **CC0-1.0** + US-Government-Work (`usagov/government-works`); Bundle-Label und DOI-Landung tragen **kein** Lizenzfeld. Einheiten bestätigt: `inc` = Grad, `ocp`/`scp` = dimensionslos (Label-`comment`).
+- **Doppel-Arme:** je trägt der messende Arm (RAVE `asu-tsv`, GALAH Data-Central-TAP, 1LHAASO `sky1`+`lhaaso_compiler`); der bare `tap`-Arm ist überzählig (kein `field`). **Riss:** GALAH hat **keinen** vizier-tsv-Arm (beide `tap`); die kanonische CDN+Compiler-Form spräche für den tap-Arm — dann müsste die `field`-Zuordnung vorher umziehen.
+- **Fünf Fäden:** terms/field/ttl je Quelle gemessen; **Junktim:** Draft-Token ≠ Haus-Token (JSOC = `CC0-1.0` wie AIA `phi:2030`; VizieR = `vizier-scientific-free` `phi:14496`); Field-Zeilen + `ttl` teils `pending`.
+- **ALFALFA · Ersatz-Bau · eigene Ephemeride:** ALFALFA `local-only` bestätigt (ReadMe ohne Lizenzstring); `opentopography_raster_compiler.rs` hat **keinen** Geoid-/Toleranz-Anker (KAPU-Riss offen, `φ:10302`); `load_gestalt_surface_threads` (`main_flow.rs:580`) nur im Test — kein Produktionsaufrufer; `ilrs_npt` Lese-Arm fehlt (`extract.rs` 0 Treffer); `icrf3` Compiler schreibt JSON, **kein** SKD1/Golden-File.
+
+## Drei Entscheidungen — Rat + voller Roster (2026-10-14)
+
+- **D1 Athabasca-Spektrum.** **Rat: ein Record je (Zeit, Frequenzbin)** — `freq = freq_vlf[bin]` (ν>0), `bin_width = df` (gemessen), `val = amplitude_cal`; das Band-Gate `(ν>0, bin_width>0)` ist die ehrliche Form. **Roster:** Duck/Qwen/MiniMax präferieren ein Record je Zeitpunkt **mit Array** (1024-Bins + Frequenzachse), Claude legt die Frequenz in den `freq`-Slot und die Bin-Breite einmal an den Block. **Auflösung:** der Wire-Record ist **fest-stride (26 × f64, kein Array-Slot)** — die Array-Form ist nicht darstellbar; es gilt der Rat (ein Record je Bin). **Riss benannt:** die 1024×-Zeilenvermehrung ist der Preis der fest-stride Wirklichkeit.
+- **D2 ICGEM/XGM2019e-Epoche.** **Einstimmig (Rat + Duck/Qwen/Claude/MiniMax): statisch ohne Epoche** — 2010-01-01 gehört zu GOCOs Zeitmodell (Trend + Jahresoszillation), XGM2019e hat kein Zeitmodell. Die Wire-Pflicht wird **nicht** mit einem geerbten/erfundenen MJD gefüllt: **τ=0, Epoche absent** (Registrierungspflicht „Modell dokumentiert keine Epoche"). → Der `format gfc`-Block bleibt ohne Epoch-Zelle; der `--epoch`-Override bleibt für den Fall einer echten Referenzepoche.
+- **D3 Doppel-Arme.** **Einstimmig (Rat + Roster): der messende Arm trägt** (mit `field`); der CDN+Compiler-Zwilling ist eine abgeleitete Projektion ohne eigenes Feld und verweist nur. Pflicht: das `field` bleibt auf dem messenden Arm, bevor der Zwilling geht. Der **GALAH-Riss** bleibt (beide Arme sind `tap`).
+
+Roster-Antworten: **Duck (GPT-6 Luna)** · **Qwen (chat.qwen.ai)** · **Claude (Sonnet 5.5)** · **MiniMax M3** · **Z.ai (GLM-5.3, Deep Think Max)** · **Qwen3.8 2.4T (tryingopen)**. Alle sechs tragen **D2** (statisch ohne Epoche) und **D3** (der messende Arm trägt). **D1:** GLM und Qwen3.8 stimmen dem Rat zu (ein Record je (Zeit, Frequenzbin), Frequenz in **Hz** im `freq`-Slot, nicht als Bin-Index); Duck/Qwen wollten ein Array — im fest-stride Wire nicht darstellbar. Konvergenz: Rat + sechs Seats.
 
 ## Gefaltet (xfer-Echos)
 
@@ -137,7 +154,7 @@ Nicht-Antwort (gemessen): Z.ai/GLM **kam nicht zurück** (Deep Think lief auf ei
   terms-URL `https://ergsc.isee.nagoya-u.ac.jp/data_info/erg.shtml.en`. **`terms` ist im Block
   zulässig** (`parse.rs:267`) — kein Form-Hindernis.
 - **Blockade:** der `format cdf`-Arm (`extract.rs:5047`) nutzt nur `cdf25` (CDF 2.5/2.6); die ath-Datei ist CDF **3.8.0, whole-file gzip-komprimiert** — dieser Pfad ist im Arm noch nicht eingezogen.
-- **Braucht:** Reader **gebaut** (`tools/measure/src/bin/cdf_vars.rs`, `cargo build -p omegaflow-measure --bin cdf_vars` 0/0, `rustfmt` sauber): die Datei trägt Magic `0xcdf30001`, Bytes 4–7 `0xcccc0001` (→ whole-file-Kompression), gzip-Strom ab Offset 40, `cType 5`; der Baum hat bereits den vollen CDF-3.0-Leser `src/archivar/cdf.rs` (`CdfFile::parse`), der nur an `WholeFileCompressed` scheitert. **Variablen gemessen:** `epoch_vlf` (TT2000), `ch1`, `ch2`, `freq_vlf` (REAL4 skalar), `label_freq_vlf` (CHAR 5), `amplitude_cal_vlf_ch1`, `amplitude_cal_vlf_ch2`. **Nächster Schritt:** den v3+Ganzdatei-Dekompression-Pfad in den `format cdf`-Arm ziehen (statt `cdf25`), dann Block: `url …/isee_vlf_ath_<YYYYMMDDHH>_v01.cdf`, `terms erg-sc-rules-of-the-road https://ergsc.isee.nagoya-u.ac.jp/data_info/erg.shtml.en`, `format cdf`, `witness …`, `field` je Kanal, `force em`, `on earth 54.60 246.36 693`.
+- **Braucht:** Reader **gebaut** (`tools/measure/src/bin/cdf_vars.rs`, `cargo build -p omegaflow-measure --bin cdf_vars` 0/0, `rustfmt` sauber): die Datei trägt Magic `0xcdf30001`, Bytes 4–7 `0xcccc0001` (→ whole-file-Kompression), gzip-Strom ab Offset 40, `cType 5`; der Baum hat bereits den vollen CDF-3.0-Leser `src/archivar/cdf.rs` (`CdfFile::parse`), der nur an `WholeFileCompressed` scheitert. **Variablen gemessen:** `epoch_vlf` (TT2000), `ch1`, `ch2`, `freq_vlf` (REAL4 skalar), `label_freq_vlf` (CHAR 5), `amplitude_cal_vlf_ch1`, `amplitude_cal_vlf_ch2`. **Arm verdrahtet** (`608`/Taucherschwarm: `extract.rs` versucht v3 zuerst, `cdf.rs` +201). **Offen:** die Spektral-Form-Entscheidung (`ch1`/`ch2` = 1024-Bin-Spektren, nicht Skalare) — ein Kanal je (Zeit, Frequenzbin) mit `freq_vlf` als Achse; danach der Block: `url …/isee_vlf_ath_<YYYYMMDDHH>_v01.cdf`, `terms erg-sc-rules-of-the-road https://ergsc.isee.nagoya-u.ac.jp/data_info/erg.shtml.en`, `format cdf`, `witness …`, `field` je Kanal, `force em`, `on earth 54.60 246.36 693`.
 - **Koordinate/Höhe (gemessen 2026-10-14):** die ISEE-Kopftabelle **und** Shiokawa et al. 2017 Table 1 nennen **54.60 / 246.36 = AUGO II**, Offizialstandort **54.60282 / −113.64442, 693 m** (Wayback `augo.athabascau.ca/location`); die ISEE-Beschreibung nennt dagegen **54.7 / 246.7 = AUGO I** (Campus, Site-Log 54.71340/−113.31308, ellipsoidal 551,93 m). Die exakte Loop-Position ist in keiner Quelle genauer als 0,1° publiziert. **Höhe:** AUGO II offiziell **693 m** (deckt sich mit GEBCO 693 m); die drei 30/90-m-DEMs geben ~700 m; **NRCan HRDEM 1 m (~0,3 m) trägt an AUGO II keine Deckung** (nur am Campus AUGO I: DSM 571 m). Antenne über Grund **5,3 m** (Shiokawa 2017, HR-130C). → Stationshöhe **693 m** (dokumentiert), Instrument ≈ **698 m**. **Riss:** welches AUGO die Loop trägt (Tabelle/Paper = II, Beschreibung = I) — die Koordinate entscheidet die Höhe (~693 m vs. ~571 m).
 
 ### UCAR-FPI — Arm verdrahtet, Sample liegt, Block fehlt (eigen)
@@ -152,6 +169,7 @@ Nicht-Antwort (gemessen): Z.ai/GLM **kam nicht zurück** (Deep Think lief auf ei
   **Riss:** kein Athabasca-FPI-DOI (die Netz-DOIs Resolute usw. stehen nicht dafür ein).
 - **Blockade:** Block-Innenform (`url` CDN vs. raw + Compiler) offen.
 - **Braucht:** Rat ergangen: **Compiler + fetch-einmal**, aber **CDN durch die nicht-offene Lizenz blockiert → `local-only`** (Arbeitskopie unter `data/`), kein `phi`-`url`/`compiler`; die Registrierung ist per-act consent (Operator-Hand, pending). Offen: die **FPI-eigene** Athabasca-Instrumentenkoordinate messen (die Co-Location ≈ 54.7 N/246.7 O ist nicht die Instrumentenkoordinate); die zwei `field`-Zeilen `fpi_mer_wind_ms`/`fpi_zon_wind_ms` stehen bereit.
+- **Dateien liegen** (Operator-Download, 2026-10-14): `data/registration.hao.ucar.edu/20236300athabasca.dat` (8357 Zeilen) und `20246300athabasca.dat` (7353 Zeilen) — die Seite führt für Athabasca genau diese zwei; alle anderen Stationen (Boulder/Resolute/Palmer) sind eigene Quellen mit eigenem DOI.
 
 ### SABER — Höhenform (C) offen (eigen)
 - **Status:** eigen | **Bindung:** eigen
