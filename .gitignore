@@ -34,9 +34,7 @@ scripts/__pycache__/
 .continue/
 server.log
 /target
-/tmp/
 /out/
-/data/
 /cache/
 archeology/
 # Archivar-Test-Fixtures (ncei/twomass/goes/cosmic/wod/celestrak) — lokal gehalten; die Tests skippen bei Abwesenheit. 36 MB bleiben aus dem Repo.
@@ -72,11 +70,10 @@ cloudflare/.wrangler/
 # Lokale Tunnel-Config (absoluter Credential-Pfad — Deployment, kein Repo-Gegenstand)
 cloudflare/cloudflared-config.yml
 
-# Runtime-Ledger (Gate/Watchdog-Zustand) — kein Source, kein Commit
-/state/
-
-# Geteilter Zustand-Ledger → privater Baum `state/zustand/external-state.md` (PII-Zeile);
-# im öffentlichen Baum steht nur der getrackte Zeiger `docs/zustand/external-state.md`.
+# `state/` lebt nicht mehr im öffentlichen Baum: das private Register liegt im privaten
+# Haus (`~/projects/omegaflow-personal`), der Laufzeit-Zustand unter
+# `~/.local/state/omegaflow`. Im öffentlichen Baum steht nur der getrackte Zeiger
+# `docs/zustand/external-state.md`; der öffentliche Hof ist `~/projects/omegaflow-work`.
 
 # Login-/Konto-Prüflisten (persönlich — nie ins Repo)
 markiert.csv
