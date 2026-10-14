@@ -32,21 +32,25 @@ mapscript="$(mktemp)"
 src="$(mktemp)"
 trap 'rm -f "$filter" "$mapscript" "$src"' EXIT
 
-# ---- Layer 1: the model net (Mistral via the local gateway) ----
+# ---- Layer 1: the model net — OFF by default ----
+# The model pass runs ONLY when OMEGAFLOW_REDACT_MODEL is set explicitly. It is never
+# a silent default: a local model load is heavy (it once froze the operator's machine)
+# and its prompt may be logged. The deterministic layers below are the default wall.
 gateway="${OMEGAFLOW_GATEWAY:-http://127.0.0.1:1621/v1/chat/completions}"
-model="${OMEGAFLOW_REDACT_MODEL:-ollama/gpt-oss:20b}"
-prompt='Du bist ein Schwärzer. Ersetze JEDE Person (Vorname, Nachname, beides), jede Postadresse, jede Telefonnummer, jede E-Mail-Adresse, jede Geräte- und Netz-Kennung (MAC, UUID, Seriennummer) und jeden Kontaktnamen durch einen Platzhalter: <NAME> <ADDR> <TEL> <EMAIL> <DEVICE> <CONTACT>. Behalte den übrigen Text WÖRTLICH und vollständig. Gib NUR den umgewandelten Text zurück — keine Erklärung, keine Einleitung, keine Anführungszeichen.'
-body="$(jaq -Rs --arg m "$model" --arg s "$prompt" \
-  '{model:$m,temperature:0,messages:[{role:"system",content:$s},{role:"user",content:.}]}' < "$f" 2>/dev/null || true)"
+model="${OMEGAFLOW_REDACT_MODEL:-}"
 red=""
-if [ -n "$body" ]; then
-  resp="$(curl -s -m 180 "$gateway" -H 'Content-Type: application/json' -d "$body" 2>/dev/null || true)"
-  red="$(printf '%s' "$resp" | jaq -r '.choices[0].message.content // empty' 2>/dev/null || true)"
+if [ -n "$model" ]; then
+  prompt='Du bist ein Schwärzer. Ersetze JEDE Person (Vorname, Nachname, beides), jede Postadresse, jede Telefonnummer, jede E-Mail-Adresse, jede Geräte- und Netz-Kennung (MAC, UUID, Seriennummer) und jeden Kontaktnamen durch einen Platzhalter: <NAME> <ADDR> <TEL> <EMAIL> <DEVICE> <CONTACT>. Behalte den übrigen Text WÖRTLICH und vollständig. Gib NUR den umgewandelten Text zurück — keine Erklärung, keine Einleitung, keine Anführungszeichen.'
+  body="$(jaq -Rs --arg m "$model" --arg s "$prompt" \
+    '{model:$m,temperature:0,messages:[{role:"system",content:$s},{role:"user",content:.}]}' < "$f" 2>/dev/null || true)"
+  if [ -n "$body" ]; then
+    resp="$(curl -s -m 90 "$gateway" -H 'Content-Type: application/json' -d "$body" 2>/dev/null || true)"
+    red="$(printf '%s' "$resp" | jaq -r '.choices[0].message.content // empty' 2>/dev/null || true)"
+  fi
 fi
 if [ -n "$red" ]; then
   printf '%s\n' "$red" > "$src"
 else
-  printf 'private_read: model net unavailable — patterns + map only\n' >&2
   cat "$f" > "$src"
 fi
 
