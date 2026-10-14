@@ -5,7 +5,7 @@
   ],
   "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
   "small_model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
-  "default_agent": "plan",
+  "default_agent": "line",
   "provider": {
     "zai": {
       "options": {
@@ -16,9 +16,10 @@
     "deepinfra": {
       "whitelist": [
         "deepseek-ai/DeepSeek-V4-Flash",
-        "deepseek-ai/DeepSeek-V4-Flash-Vision-Exp",
         "zai-org/GLM-5.3",
-        "moonshotai/Kimi-K3"
+        "moonshotai/Kimi-K3",
+        "Qwen/Qwen3-VL-235B-A22B-Instruct",
+        "Qwen/Qwen3-Coder-480B-A35B-Instruct-Turbo"
       ]
     }
   },
@@ -46,62 +47,29 @@
     "zai"
   ],
   "agent": {
-    "build": {
-      "mode": "primary",
-      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
-      "variant": "low",
-      "permission": {
-        "edit": "allow",
-        "task": {
-          "*": "deny",
-          "general": "allow",
-          "grind-flash": "allow",
-          "vision": "allow",
-          "explore": "allow",
-          "plan": "allow",
-          "council": "allow",
-          "opencode-recherche": "allow",
-          "grind-pro": "ask",
-          "grind-max": "ask",
-          "research-max": "ask"
-        }
-      }
-    },
-    "plan": {
-      "mode": "primary",
-      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
-      "variant": "low",
-      "description": "Planungsmodus (read-only) — Übergabe lesen, Planungs-Pass, Auswahl vorschlagen, anhalten. Die Linien-Befehle starten hier; Ausführung via Tab auf `line` + `/consent`.",
+    "seherin": {
+      "mode": "subagent",
+      "model": "deepinfra/Qwen/Qwen3-VL-235B-A22B-Instruct",
+      "variant": "high",
+      "description": "Vision-Leser (DeepSeek V4 Flash Vision) — Figuren, Plots, gescannte Seiten/Dokumente, Screenshots lesen und als Text melden (figure-only-Daten, OCR). Read-only: kein edit, kein bash.",
       "permission": {
         "edit": "deny",
         "task": "deny",
-        "browser_targets": "deny",
+        "bash": "deny"
+      }
+    },
+    "gremium": {
+      "mode": "subagent",
+      "model": "deepinfra/moonshotai/Kimi-K3",
+      "variant": "low",
+      "prompt": "Read docs/council.yaml completely before deliberating and hold the five voices (Mountain, River, Mycelium, Sensory, Future) as it prescribes — the way of council: speak from the heart, listen from the heart, be spontaneous, be lean of expression. The light form holds each text once; the full circle sits only for architecture.",
+      "permission": {
+        "edit": "deny",
+        "task": "deny",
         "bash": {
           "*": "deny",
           "echo *": "allow",
           "printf *": "allow",
-          "ci_manage status*": "allow",
-          "ci_manage list*": "allow",
-          "ci_manage view*": "allow",
-          "ci_manage jobs*": "allow",
-          "ci_manage log*": "allow",
-          "ci_manage --help*": "allow",
-          "bin/ci_manage status*": "allow",
-          "bin/ci_manage list*": "allow",
-          "bin/ci_manage view*": "allow",
-          "bin/ci_manage jobs*": "allow",
-          "bin/ci_manage log*": "allow",
-          "./bin/ci_manage status*": "allow",
-          "./bin/ci_manage list*": "allow",
-          "./bin/ci_manage view*": "allow",
-          "./bin/ci_manage jobs*": "allow",
-          "./bin/ci_manage log*": "allow",
-          "./target/release/ci_manage status*": "allow",
-          "./target/release/ci_manage list*": "allow",
-          "./target/release/ci_manage view*": "allow",
-          "./target/release/ci_manage jobs*": "allow",
-          "./target/release/ci_manage log*": "allow",
-          "git ls-files*": "allow",
           "wc *": "allow",
           "sort *": "allow",
           "uniq *": "allow",
@@ -112,18 +80,6 @@
           "time sgrep *": "allow",
           "sread *": "allow",
           "time sread *": "allow",
-          "time register_lookup *": "allow",
-          "time git_safety *": "allow",
-          "register_lookup *": "allow",
-          "./target/release/register_lookup *": "allow",
-          "open_points_check *": "allow",
-          "./target/release/open_points_check *": "allow",
-          "git_safety *": "allow",
-          "./target/release/git_safety *": "allow",
-          "git merge-base*": "allow",
-          "du *": "allow",
-          "find *": "allow",
-          "awk *": "allow",
           "git status*": "allow",
           "git log*": "allow",
           "git diff*": "allow",
@@ -131,17 +87,17 @@
           "git reflog*": "allow",
           "git rev-parse*": "allow",
           "sgrep *": "allow",
-          "mail_digest *": "allow",
-          "bin/.tools_ensure *": "allow",
-          "session_burn *": "allow",
+          "register_lookup *": "allow",
+          "time register_lookup *": "allow",
           "*.secrets.local*": "deny",
           ".secrets.local": "deny",
           "*secrets_keys.txt*": "deny",
           "*opencode/auth.json*": "deny"
         }
-      }
+      },
+      "description": "Das Gremium — grundlegende, komplexe Entscheidungen (selten). Bekommt eine Taucher-Recherche vorgelegt; haelt die fuenf Stimmen tiefer als der Rat."
     },
-    "general": {
+    "taucher": {
       "mode": "subagent",
       "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
       "variant": "low",
@@ -206,62 +162,9 @@
         }
       }
     },
-    "explore": {
+    "rat": {
       "mode": "subagent",
-      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
-      "variant": "low",
-      "prompt": "Code-Suche: `archive_search <kw> --root <dir>` oder `sgrep [-i] <pattern> [dir]`; Pfade: `archive_search --index`; Lesen: `sread <file> [--offset --limit]` oder read-Tool; Discovery: `glob`; kein bash-grep/ls/cat (das Grep-Tool ist erlaubt). CI: `ci_manage list/view/log`. Login-gatterte Quelle: Auth-Kante messen (Credential lokal? `.secrets.local`-Schlüsselnamen, nie Werte; anonym; mit Credential; exakte URL); 401/403 MIT Token = blocked key-needed, ohne Konto = blocked account; 404 = pending. Karte `docs/concepts/tools-map.md`. Zustands-Behauptungen (`registered`/`pending`/`built`/`absent`) sind erst nach Baum-Gegenprobe Messungen: Register (`sgrep`/`register_lookup` in `phi/`), Asset (`archive_search --verdict <url>`), Code (`git log`/`sread`); eine Doku-Zeile (Paper/Handover/Survey) ist eine Behauptung, kein Zustand — der Baum gewinnt, Divergenz = Riss, nie glätten. Vollständigkeit: die Inline-Kurzfassung ist ein Wegweiser, kein Ergebnis — den `full:`-Spill vollständig lesen; die Recherche nie auf ein Minimum kastrieren.",
-      "permission": {
-        "edit": "deny",
-        "task": "deny",
-        "bash": {
-          "*": "deny",
-          "echo *": "allow",
-          "printf *": "allow",
-          "wc *": "allow",
-          "sort *": "allow",
-          "uniq *": "allow",
-          "cut *": "allow",
-          "tr *": "allow",
-          "archive_search *": "allow",
-          "time archive_search *": "allow",
-          "time sgrep *": "allow",
-          "sread *": "allow",
-          "time sread *": "allow",
-          "git status*": "allow",
-          "git log*": "allow",
-          "git diff*": "allow",
-          "git show*": "allow",
-          "git reflog*": "allow",
-          "git rev-parse*": "allow",
-          "git merge-base*": "allow",
-          "du *": "allow",
-          "find *": "allow",
-          "awk *": "allow",
-          "ci_manage status*": "allow",
-          "ci_manage list*": "allow",
-          "ci_manage view*": "allow",
-          "ci_manage jobs*": "allow",
-          "ci_manage log*": "allow",
-          "ci_manage --help*": "allow",
-          "bin/ci_manage status*": "allow",
-          "bin/ci_manage list*": "allow",
-          "bin/ci_manage view*": "allow",
-          "bin/ci_manage jobs*": "allow",
-          "bin/ci_manage log*": "allow",
-          "sgrep *": "allow",
-          "register_lookup *": "allow",
-          "time register_lookup *": "allow",
-          "*.secrets.local*": "deny",
-          ".secrets.local": "deny",
-          "*secrets_keys.txt*": "deny",
-          "*opencode/auth.json*": "deny"
-        }
-      }
-    },
-    "council": {
-      "mode": "subagent",
-      "model": "deepinfra/moonshotai/Kimi-K3",
+      "model": "deepinfra/zai-org/GLM-5.3",
       "variant": "low",
       "prompt": "Read docs/council.yaml completely before deliberating and hold the five voices (Mountain, River, Mycelium, Sensory, Future) as it prescribes — the way of council: speak from the heart, listen from the heart, be spontaneous, be lean of expression. The light form holds each text once; the full circle sits only for architecture.",
       "permission": {
@@ -297,17 +200,6 @@
         }
       }
     },
-    "grind-flash": {
-      "mode": "subagent",
-      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
-      "variant": "low",
-      "description": "Routine source-port work that needs bash+edit but no judgment: API reachability verification (curl), catalog harvesting, mechanical recheck batches, --probe review of obvious cases. No Force-Gate decisions.",
-      "prompt": "Routine-Quellenarbeit: Tools statt Rohwege — `archive_search` (Kaskade URL→`--verdict`→`--sniff`; Quelle→der eine Modus; lokal `--root`/`--index`), `sgrep`, `sread`, `sfetch`. Kein bash-grep/ls/cat, kein webfetch/websearch. Login-gatterte Quelle bis zur Auth-Kante messen: Credential lokal? (`.secrets.local`-Schlüsselnamen, nie Werte); 401/403 MIT Token = blocked key-needed, ohne Konto = blocked account (→ future/Operator); 404 = pending. Karte `docs/concepts/tools-map.md`; `archive_search --help` ist der Kanon. Zustands-Behauptungen (`registered`/`pending`/`built`/`absent`) sind erst nach Baum-Gegenprobe Messungen: Register (`sgrep`/`register_lookup` in `phi/`), Asset (`archive_search --verdict <url>`), Code (`git log`/`sread`); eine Doku-Zeile (Paper/Handover/Survey) ist eine Behauptung, kein Zustand — der Baum gewinnt, Divergenz = Riss, nie glätten. Vollständigkeit: die Inline-Kurzfassung ist ein Wegweiser, kein Ergebnis — den `full:`-Spill vollständig lesen; die Recherche nie auf ein Minimum kastrieren.",
-      "permission": {
-        "edit": "allow",
-        "task": "deny"
-      }
-    },
     "line": {
       "mode": "primary",
       "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
@@ -320,32 +212,10 @@
         "websearch": "deny",
         "task": {
           "*": "deny",
-          "general": "allow",
-          "grind-flash": "allow",
-          "vision": "allow",
-          "explore": "allow",
-          "plan": "allow",
-          "council": "allow",
-          "voice-ling": "allow",
-          "voice-gemini": "allow",
-          "voice-gemini-3-flash": "allow",
-          "voice-gemini-3-1-flash-lite": "allow",
-          "voice-gemini-3-1-pro": "allow",
-          "voice-gemini-3-5-flash": "allow",
-          "voice-gemini-3-6-flash": "allow",
-          "voice-gemini-3-7-flash": "allow",
-          "voice-gemini-3-8-flash": "allow",
-          "voice-dots": "allow",
-          "voice-inkling": "allow",
-          "voice-nemotron": "allow",
-          "voice-agnes": "allow",
-          "voice-kenari": "allow",
-          "voice-deepseek": "allow",
-          "opencode-recherche": "allow",
-          "grind-pro": "ask",
-          "voice-deepseek-pro": "ask",
-          "grind-max": "ask",
-          "research-max": "ask"
+          "taucher": "allow",
+          "rat": "allow",
+          "seherin": "allow",
+          "gremium": "ask"
         },
         "bash": {
           "*": "allow",
@@ -443,17 +313,6 @@
           "env *": "deny",
           "env": "deny"
         }
-      }
-    },
-    "vision": {
-      "mode": "subagent",
-      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp",
-      "variant": "high",
-      "description": "Vision-Leser (DeepSeek V4 Flash Vision) — Figuren, Plots, gescannte Seiten/Dokumente, Screenshots lesen und als Text melden (figure-only-Daten, OCR). Read-only: kein edit, kein bash.",
-      "permission": {
-        "edit": "deny",
-        "task": "deny",
-        "bash": "deny"
       }
     }
   },
