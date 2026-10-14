@@ -33,11 +33,12 @@
         "edit": "deny",
         "write": "deny",
         "bash": {
+          "*": "deny",
           "archive_search *": "allow",
           "sgrep *": "allow",
           "sread *": "allow",
           "sfetch *": "allow",
-          "*": "deny"
+          "*omegaflow-personal*": "deny"
         }
       }
     },
