@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: Fermi-4LAC-Arm + mev, GEOFON-FDSN-Quelle, SEANOE-Dublette entfernt, Besitz-Zensus, ICGEM --epoch-Override
   class: handover
   date: 2026-10-14
-  sha256: b62fa123747f2dd2524315e2b9769341ab10fec154e212d8a2daf7994aa25311
+  sha256: 112be9fec4ea85148bd07ae74b27052b5609b5163f43984bfea12486d001cba3
   status: live
 -->
 # Handover — Mountain-Folge 342 (2026-10-14)
@@ -104,9 +104,16 @@ river-209, future).
 ### CelesTrak — als eigene Quelle streichen (eigen + Mycelium)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Registeratom
-- **Lage:** (gemessen 2026-10-14) Rat (fünf Stimmen) + Roster (Duck · Inkling · DeepSeek · Lumo · Qwen, alle gemessen) konvergieren: `celestrak.org/SpaceData/EOP-All.csv` ist eine **inhaltsgleiche Abschrift** der USNO-finals — keine zweite Quelle. Block `phi:10144-10148` (`url`/`terms`/`origin`/`format celestrak_eop`/`compiler`); CelesTrak-Asset 404. Der finals-Leser liest jetzt die letzte **gemessene** `I`-Zeile (`d26f42dc8`), Roster in `state/stimmen/2026-10-14-eop-roster.md`.
+- **Lage:** (gemessen 2026-10-14) Rat (fünf Stimmen) + Roster (sieben Seats: Duck · Inkling · DeepSeek · Lumo · Qwen · GLM · Claude, alle gemessen) konvergieren: `celestrak.org/SpaceData/EOP-All.csv` ist eine **inhaltsgleiche Abschrift** der USNO-finals — keine zweite Quelle. Block `phi:10144-10148` (`url`/`terms`/`origin`/`format celestrak_eop`/`compiler`); CelesTrak-Asset 404. Der finals-Leser liest jetzt die letzte **gemessene** `I`-Zeile (`d26f42dc8`), Roster in `state/stimmen/2026-10-14-eop-roster.md`.
 - **Blockade:** keine.
 - **Braucht:** `url`/`origin`/`compiler` des Blocks entfernen (Myceliums Manifestations-Hand, `## An mycelium`) + Mountain-Verdikt `descoped: inhaltsgleich mit USNO finals`; dann `register_sort`.
+
+### finals-Leser — Interpolation + Stale-Flag (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der Registeratom
+- **Lage:** (gemessen 2026-10-14) Rat + Roster: der Jetzt-Wert ist auf „jetzt" zu **interpolieren** (UT1−UTC driftet bis ~1 ms/Tag, LOD derselben Zeile); die ersten 1–2 `P`-Tage sind als Brücke zulässig; nach ~2–3 Tagen ohne `I`-Zeile ein **Stale-Flag** statt stillem Weiterrechnen. Gebaut ist bisher nur die Auswahl der letzten `I`-Zeile (`d26f42dc8`).
+- **Blockade:** keine.
+- **Braucht:** Interpolation + Stale-Flag in `build_finals_channels`.
 
 ## An mycelium
 
