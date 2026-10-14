@@ -62,13 +62,22 @@ jobs:
       group: ci-gate-subset-${{ github.sha }}
       cancel-in-progress: true
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 30
+    # 60 min: the un-ignored heavy TE calibration tests push the suite past the
+    # old 30-min cap (measured 2026-10-14: the job was cancelled at 30:18 with
+    # the failure summary still unprinted). Longer cap + `--nocapture` let the
+    # suite finish and the reasons stand. The heavy tests belong in te-gate.yml
+    # (the `#[ignore]` convention is incomplete) — that move is the follow-up.
+    timeout-minutes: 60
     env:
       RUSTFLAGS: -D warnings
     steps:
     - uses: actions/checkout@v7
     - uses: actions-rust-lang/setup-rust-toolchain@v1
-    - run: cargo test --lib
+    # `--nocapture`: the failure reason prints at the moment a test panics (the
+    # default harness buffers it to the final summary, which a timeout never
+    # reaches). This makes the red names *and* their reasons visible in the log
+    # even while the heavy TE calibration tests still run.
+    - run: cargo test --lib -- --nocapture
     - if: failure()
       run: |
         bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \

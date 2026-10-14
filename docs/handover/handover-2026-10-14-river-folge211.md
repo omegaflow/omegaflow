@@ -2,7 +2,7 @@
 title: Handover — River-Folge 211
 class: handover
 date: 2026-10-14
-sha256: 5f7b279216d59ba2366641214c91b18f6f715f14e090b0f52e6e8f20e9876d71
+sha256: d8e61cb8bb6353f8890f8e5125949396a80a29acb7e74126a65916050adfe26b
 status: live
 -->
 # Handover — River-Folge 211 (2026-10-14)
@@ -206,6 +206,7 @@ Gemessen `ci_manage view/jobs/log 38595147942` (HEAD `e2a28dcd3`): `clippy` **su
 - **`format` (12 Dateien):** die CI-Diffs sind **exakt** die im Arbeitbaum schmutzigen Rust-Dateien; `rustfmt --edition 2024 --check` über alle 12 → **exit 0** (der Arbeitbaum trägt die Format-Lösung). Ursache: Rivers `force`→`channel_ref`-Rename (river-198 `59b31dc1c`) und spätere Umformungen drückten die `force_id_of("electric")`-Assertions über 100 Spalten. **Geheilt (river-212):** die mechanische rustfmt-Ausgabe committet (`src/archivar/{ampere_fac,bpa_gic,fdsn_event,mtg_li,pcn,superdarn_cpcp,swarm_fac,swpc_efield,usgs_geomag}.rs`, `tools/harvest/.../fdsn_event_compiler.rs`, `tools/measure/.../{cdf_vars,nobel_probe_corona}.rs`) — `git diff` rein Format, keine Semantik.
 - **`dropped-gate`:** `current 1 | pinned 86 | new 1` — der Neue-Drop `prosa-träger mountain327-abgabe aacgm-koeffizient geheilt zeuge läuft` ist die von river-211 erledigte + gelöschte Mountain327-Prosa-Träger-Zeile (AACGM-Zeuge im `subset` grün, `f54787bb1`); gemessen `register_lookup --dropped-keys --changed-since a8f871476`. **Geheilt (river-212):** in `docs/zustand/dropped-legacy-baseline.txt` mit Beleg-Kommentar eingetragen — kein stiller Drop. Zwei weitere Neue-Drops am head `f49586c62` (Lauf `38602958578`, `new 2`) — `saber höhenform c arm höhen-ablage brauchen` und `epochen-absenz zwei linien unvereinheitlicht eigen` — sind Handover-Churn der Mountain-Linie folge345→346 (in folge346 unter Route B bzw. Rats-Verdikt b weitergeführt); ebenfalls mit Beleg gepinnt, kein stiller Drop.
 - **`register` (bleibt rot):** `cdn_reconcile --fail` — 5 CDN-Workflows schreiben Netlocs, die nicht in `phi/sources.φ` gebunden sind: `babamul-cdn.yml:37` (`babamul.caltech.edu`), `celestrak-eop-cdn.yml:41` (`celestrak.org`), `eve-cdn.yml:57` (`lasp.colorado.edu-eve`), `mars-dust-cdn.yml:37` (`vo.lmd.jussieu.fr`), `maxi-cdn.yml:24` (`maxi.riken.jp`). Register-Zeilen = Mountain.
+- **`subset` (rot — Wurzel gemessen):** der Job lief `17:07:47→17:38:05` = **30:18** und wurde am Timeout gekappt, **bevor** die `failures:`-Zusammenfassung druckte. Ursache: **schwere TE-Kalibrierungstests laufen un-`ignored`** im `cargo test --lib` — gemessen (`has been running for over 60 seconds`): `calibration_self_null_discriminator_white_driver_stays_at_the_floor` (~9 min), `gate_fpr_autocorrelation_block_null_binned_n_surr_200` (~12 min), `calibration_fp_independent_ar1_stays_near_chance`, `gate_conditional_embedded_fn_true_coupling_is_found`, `gate_conditional_embedded_fp_common_driver_stays_near_chance`, `gate_fpr_autocorrelation_{arx,block_ksg,coherent_phase,restricted}_null_binned_n_surr_200`. Die `#[ignore]`-Konvention („runs in te-gate.yml") ist lückenhaft. Der Log trägt die roten **Namen** (28: u. a. `archivar::projection::tests::*`, `archivar::port::probe_classify_tests::*`, `archivar::parse::tests::{the_register_declares_a_channel_for_every_live_force_tag}`, viele `archivar::tests::*`, `mathematikerin::{actuators,machines,mci}::*`), aber nie die Gründe. **Geändert (river-212, `ci-gate`-Revier, Operator-Wort 2026-10-14):** `ci-gate.yml`-`subset` — Timeout `30`→`60`, `cargo test --lib -- --nocapture` (die Panik-Meldung druckt im Moment des Fehlschlags, nicht erst in der gekappten Zusammenfassung). **Folge-Schritt:** die schweren Tests nach `te-gate.yml` ziehen (die `#[ignore]`-Lücke schließen), damit der `subset` schnell und grün sein kann.
 
 Origin: river-210
 
@@ -241,8 +242,11 @@ mycelium-347 (DE-2-`asset=`-Riss und intermagnet-Compiler-Spanne unverändert zu
 Semantik-Inhalt; `rustfmt --edition 2024 --check` über alle 12 → exit 0) bzw. der Drop
 `prosa-träger mountain327-abgabe aacgm-koeffizient geheilt zeuge läuft` in die
 `dropped-legacy-baseline` eingetragen; `register` bleibt rot (`cdn_reconcile --fail`: 5 ungebundene
-CDN-Netlocs → Mountain); `subset` in_progress.
+CDN-Netlocs → Mountain); `subset` rot am **Timeout** (`30:18`, Gründe nie gedruckt) — Ursache und
+Workflow-Heilung in `## An mountain`. **Newell/OMNI:** die Relation gesetzt (Live-Treiber
+unmessbar: Newell-Arm am Host, `dB/dt`-Arm am 1m/1h-Identitäts-Riss; OMNI-Verifikation still) —
+beide ohne Pfeil.
 **Commit:** die 12 rustfmt-Dateien (neun Archivar-Module, ein Harvest-Bin, zwei Measure-Bins) · die
-`dropped-legacy-baseline` · diese Übergabe (`folge211` neu, `folge210` → `archiv/`). Die
-JSON-Reconciliation-Spec und der `data/`/`state/`-Arbeitsbaum bleiben unangetastet (nicht
-Session-eigen).
+`dropped-legacy-baseline` (drei Drops) · `ci-gate.yml` (Subset-Timeout + `--nocapture`, Operator-Wort)
+· diese Übergabe (`folge211` neu, `folge210` → `archiv/`). Die JSON-Reconciliation-Spec und der
+`data/`/`state/`-Arbeitsbaum bleiben unangetastet (nicht Session-eigen).
