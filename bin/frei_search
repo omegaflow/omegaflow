@@ -2,17 +2,25 @@
 # frei_search — the free research agent's ONLY tool.
 #
 # It forwards to archive_search but refuses every LOCAL-DISK mode
-# (--root / --index / --mft / --git). The free agent is a free external model;
-# it reads the NET only, never sniffs this disk. Writes go to the tool's own
-# spill under the public work yard.
+# (--root / --index / --mft / --git) AND forces a network mode: the free agent
+# is a free external model; it reads the NET only, never sniffs this disk.
+# With no network flag given it injects the keyless pair --mwmbl --searxng.
+# Writes go to the tool's own spill under the public work yard.
 set -eu
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+have_net=0
 for a in "$@"; do
   case "$a" in
     --root|--root=*|--index|--index=*|--mft|--mft=*|--git|--git=*)
       echo "frei_search: '$a' is a local-disk mode — refused; the free agent reads the net only" >&2
       exit 2
       ;;
+    --mwmbl|--searxng|--brave|--tavily|--exa|--duckduckgo-instant|--wiby|--marginalia|--wiki|--wikipedia|--jina|--consensus|--perplexity|--gemini|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--stackexchange|--sourcegraph|--github|--crates|--arxiv|--arxiv-oai|--crossref|--openalex|--semanticscholar|--pubmed|--doaj|--zenodo|--datacite|--core|--base|--hal|--osf|--huggingface|--dblp|--orcid|--ror|--shodan|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--slack|--wikidata|--openlibrary)
+      have_net=1
+      ;;
   esac
 done
+if [ "$have_net" -eq 0 ]; then
+  set -- "$@" --mwmbl --searxng
+fi
 exec "$root/bin/archive_search" "$@"
