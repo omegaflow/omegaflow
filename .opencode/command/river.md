@@ -1,6 +1,7 @@
 ---
 description: River-Linie — die lebendige Membran (ω()-Loop, WebGPU-Feld, Präsenz, Echo, Browser-Brücke). Ein Pass — Stand lesen, Bekanntes bis zur Kante arbeiten, nur Ungeklärtes vorlegen.
 agent: line
+model: deepinfra/zai-org/GLM-5.3
 ---
 
 Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch),
