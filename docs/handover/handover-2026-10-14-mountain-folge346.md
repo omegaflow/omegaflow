@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: 2912f8b79b1a9e360de5fbb80bdb62b957b83a44f685e24fe3264f67fb0796fb
+  sha256: 796a1fa13a639e90025449adabadeb0058bd3888f3d0961a8f038ae6510c445e
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -55,8 +55,10 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
   **HTTP 404**; NAIF-Wurzel (200) → kein `TIMED/`; Horizons `COMMAND='TIMED'` → `No matches`.
   Das prüfte nur die **SPK-Güte** (NAIF/Horizons) und übersah die TLE-Stufe — der erste
   „blockiert"-Schluss war eine **unvollständige Messung, nicht die Wahrheit** (A=A).
-  Der CelesTrak-GP-Endpunkt antwortete in dieser Session nicht (Timeout; `--verdict` pending)
-  — die konkrete TLE-Datei bleibt erneut zu messen.
+  **TLE verifiziert (Browser, Wayback 2026-02-22, Status 200; CelesTrak live Timeout):**
+  `TIMED` · `1 26998U 01055B 26052.51864582 .00001123 …` ·
+  `2 26998 74.0671 107.8683 0002724 294.3335 65.7565 14.94968599313531`
+  (i 74.07°, ~14.95 Umläufe/Tag) — die eigene Bahn ist damit belegt.
 - **Exaktheit (Operator-Kriterium):** A ist exakt am **vermessenen Ort** (Limb-Sounder: der
   Tangentialpunkt `tpl…`/`tpgpaltitude` ist die Messstelle, nicht der Satellit) — aber
   scan-gemittelt, ohne Datum, ohne Sub-Scan-Zeit. **B (TLE/SGP4)** gäbe eine kontinuierliche
