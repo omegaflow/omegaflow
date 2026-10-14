@@ -97,7 +97,11 @@ mod tests {
     fn the_stamp_converts_through_the_leap_second_table() {
         let series = parse_series(b"unix,amplitude_db\n1420070700,1.5\n").expect("csv parses");
         assert_eq!(series.len(), 1);
-        assert!(series[0].0 > 1_420_070_700.0);
+        assert!(
+            (series[0].0 - 473_342_767.184).abs() < 0.01,
+            "the unix stamp converts to TDB seconds since J2000, got {}",
+            series[0].0
+        );
     }
 
     #[test]

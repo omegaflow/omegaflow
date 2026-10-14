@@ -679,7 +679,9 @@ pub fn extract_witness_channels(
 pub const NT_PER_T: f64 = 1.0e9;
 
 fn pair_curve(vals: &[f64]) -> Vec<(f64, f64)> {
-    vals.chunks_exact(2)
+    vals.as_chunks::<2>()
+        .0
+        .iter()
         .filter_map(|pair| {
             (pair[0].is_finite() && pair[1].is_finite() && pair[1] > 0.0)
                 .then_some((pair[0], pair[1]))
@@ -697,7 +699,7 @@ fn interp_curve(curve: &[(f64, f64)], x: f64) -> Option<f64> {
         let (x0, y0) = window[0];
         let (x1, y1) = window[1];
         if x <= x1 {
-            if !(x1 > x0) {
+            if x1.partial_cmp(&x0) != Some(std::cmp::Ordering::Greater) {
                 return None;
             }
             let y = y0 + (x - x0) / (x1 - x0) * (y1 - y0);

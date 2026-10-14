@@ -4842,7 +4842,7 @@ fn test_port_convert_celestial_and_post() {
     let celestial = "source oac\nttl 86400\nforce em\nurl https://api.example.org/{target}/\nverify false\ntarget SN2014J\nmap .\nlat_key ra\nlon_key dec\nfield name name\n";
     let conv = super::port_block(celestial);
     assert!(conv.contains("ttl 86400\n"));
-    assert!(conv.contains("at sun\n"));
+    assert!(conv.contains("cmap .\n"), "got: {conv}");
     assert!(conv.contains("url https://api.example.org/{target}/\n"));
     assert!(
         conv.contains("# declined field name — not an oscillator (no physical force)"),
@@ -4912,7 +4912,7 @@ fn test_port_convert_celestial_and_post() {
 fn test_port_convert_ra_dec_key() {
     let celestial = "source vizier\nttl 86400\nforce em\nurl https://tap.example.org/sync\nformat text\nrows\nra_key RAJ2000\ndec_key DEJ2000\nplx_key Plx\nz_key z\ndist_key dist\nfield Name star_name\n";
     let conv = super::port_block(celestial);
-    assert!(conv.contains("at sun\n"));
+    assert!(conv.contains("cmap .\n"), "got: {conv}");
     assert!(conv.contains("ra RAJ2000\n"));
     assert!(conv.contains("dec DEJ2000\n"));
     assert!(conv.contains("plx Plx\n"));
@@ -9674,22 +9674,22 @@ fn test_port_block_without_force_declines_non_physical() {
 }
 
 #[test]
-fn test_port_block_without_force_undetermined_stays_pending() {
+fn test_port_block_without_force_undetermined_is_declined() {
     let block = "source geosphere\nttl 86400\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 sommerfeld_ratio\n";
     let conv = super::port_block(block);
     assert!(
-        conv.contains("# pending field sommerfeld_ratio — force undetermined, review"),
-        "an unclassified name stays pending, got: {conv}"
+        conv.contains("# declined field sommerfeld_ratio — force undetermined (no block force, no name signal)"),
+        "an unclassified name is declined since the force gate closed (no block force, no name signal), got: {conv}"
     );
 }
 
 #[test]
-fn test_port_block_with_force_and_no_unit_stays_pending() {
+fn test_port_block_with_force_and_no_unit_synthesizes_through_the_register() {
     let block = "source geosphere\nttl 86400\nforce seismic-body\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 quake_depth\n";
     let conv = super::port_block(block);
     assert!(
-        conv.contains("# pending field quake_depth — unit or cadence absent, review"),
-        "a force directive without a measured unit stays pending, never the literal 1, got: {conv}"
+        conv.contains("field geometry.coordinates.2 quake_depth gaussian-inverse-square seismic-body km 10 0.0 0.0\n"),
+        "a force directive resolves through the register (quake_depth carries km/tau), got: {conv}"
     );
     assert!(
         !conv.contains("seismic-body 1 "),
@@ -9703,15 +9703,15 @@ fn test_port_block_with_force_and_name_unit_synthesizes() {
     let conv = super::port_block(block);
     assert!(
         conv.contains(
-            "field geometry.coordinates.2 omni_bx_gsm_nt inverse-square em nT 86400 0.0 0.0\n"
+            "field geometry.coordinates.2 omni_bx_gsm_nt inverse-square em nT 60 0.0 0.0\n"
         ),
-        "a force directive with a name-suffix unit synthesizes the line, got: {conv}"
+        "a force directive with a name-suffix unit synthesizes the line at the register cadence, got: {conv}"
     );
     let still_pending = "source geosphere\nttl 86400\nforce em\nurl https://example.org/g\nmap data\nlat_key lat\nlon_key lon\nfield_in geometry.coordinates.2 omni_bx_gsm\n";
     let conv2 = super::port_block(still_pending);
     assert!(
-        conv2.contains("# pending field omni_bx_gsm — unit or cadence absent, review"),
-        "a name without a unit suffix stays pending, never the literal 1, got: {conv2}"
+        conv2.contains("# declined field omni_bx_gsm — unit or cadence absent in the block (no SI unit resolvable)"),
+        "a name without a unit suffix is declined, never the literal 1, got: {conv2}"
     );
 }
 
@@ -9741,7 +9741,7 @@ fn test_flush_port_block_carries_pending_review_marker() {
     let mut pending = 0usize;
     let mut declined = 0usize;
     let measure = super::PortMeasure {
-        hapi: false,
+        hapi: true,
         unit: None,
         tau: None,
     };
@@ -13188,7 +13188,7 @@ field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.
         ExtractResult::Measurements(channels) => {
             assert_eq!(channels.len(), 2);
             for (c, fc) in &channels {
-                assert_eq!(fc.channel_ref, Some(6));
+                assert_eq!(fc.channel_ref, Some(3));
                 assert_eq!(fc.tau, 86400.0);
                 match &c.position {
                     super::Position::Surface { lat, lon, alt, .. } => {
@@ -13310,7 +13310,7 @@ fn test_epa_aqs_source_registered() {
             assert_eq!(epoch_cols, &vec!["11".to_string()]);
             assert_eq!(fields.len(), 1);
             assert_eq!(fields[0].key, "16");
-            assert_eq!(fields[0].channel_ref, Some(6));
+            assert_eq!(fields[0].channel_ref, Some(3));
             assert_eq!(fields[0].tau, 86400.0);
         }
         _ => panic!("expected Rows extract"),
@@ -13335,7 +13335,7 @@ field \"Arithmetic Mean\" pm25_daily_ug_m3 gaussian-inverse-square diffusion µg
         Extract::Rows { fields, .. } => {
             assert_eq!(fields.len(), 1);
             assert_eq!(fields[0].key, "Arithmetic Mean");
-            assert_eq!(fields[0].channel_ref, Some(6));
+            assert_eq!(fields[0].channel_ref, Some(3));
             assert_eq!(fields[0].tau, 86400.0);
         }
         _ => panic!("expected Rows extract"),
