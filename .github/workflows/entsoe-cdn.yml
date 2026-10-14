@@ -1,4 +1,4 @@
-# harvest: format=entsoe_unavailability asset=present arm=entsoe_compiler pattern=^entsoe_a78\.bin$ idempotent=true timeout=120 tag=web-api.tp.entsoe.eu
+# harvest: format=entsoe_unavailability asset=present arm=entsoe_compiler pattern=^entsoe_a78\.bin$ idempotent=true timeout=120 tag=transparency.entsoe.eu
 
 name: entsoe-cdn
 
