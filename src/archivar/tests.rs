@@ -748,6 +748,93 @@ fn test_hapi_fill_skipped_and_component_index() {
 }
 
 #[test]
+fn test_hapi_family_levels_expand_to_scalar_source_channels() {
+    let json = r#"{
+        "parameters": [
+            {"name": "Time"},
+            {"name": "ktemp", "size": [3], "fill": -999.0},
+            {"name": "tpgpaltitude", "size": [3], "fill": -999.0}
+        ],
+        "data": [
+            ["2026-08-18T00:00:00Z", [200.0, 210.0, 220.0], [10.0, 20.0, 30.0]],
+            ["2026-08-18T01:00:00Z", [201.0, 211.0, 221.0], [11.0, 21.0, 31.0]]
+        ]
+    }"#;
+    let src = source_fixture(
+        "json",
+        vec![
+            Extract::Field(field_fixture("saber_ktemp", 3600.0)),
+            Extract::Field(field_fixture("saber_tpgpaltitude", 3600.0)),
+            Extract::Hapi(vec![
+                ("ktemp.<i>".into(), "saber_ktemp".into()),
+                ("tpgpaltitude.<i>".into(), "saber_tpgpaltitude".into()),
+            ]),
+        ],
+    );
+    match extract(&src, json, 8.0e8, &fixture_lsk()) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 6, "3 ktemp + 3 tpgpaltitude levels");
+            let vals: Vec<(&str, f64)> = channels
+                .iter()
+                .map(|(c, fc)| (fc.name.as_str(), c.value))
+                .collect();
+            assert!(vals.contains(&("saber_ktemp_0", 201.0)), "{vals:?}");
+            assert!(vals.contains(&("saber_ktemp_2", 221.0)));
+            assert!(vals.contains(&("saber_tpgpaltitude_0", 11.0)));
+            assert!(vals.contains(&("saber_tpgpaltitude_2", 31.0)));
+            for (c, _) in &channels {
+                assert!(matches!(c.position, Position::Source));
+            }
+        }
+        _ => panic!("extract is not Measurements"),
+    }
+    let fill_json = r#"{
+        "parameters": [
+            {"name": "Time"},
+            {"name": "ktemp", "size": [3], "fill": -999.0}
+        ],
+        "data": [["2026-08-18T01:00:00Z", [201.0, -999.0, 221.0]]]
+    }"#;
+    let fill_src = source_fixture(
+        "json",
+        vec![
+            Extract::Field(field_fixture("saber_ktemp", 3600.0)),
+            Extract::Hapi(vec![("ktemp.<i>".into(), "saber_ktemp".into())]),
+        ],
+    );
+    match extract(&fill_src, fill_json, 8.0e8, &fixture_lsk()) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 2, "the -999.0 level is absent, not a value");
+            assert!(!channels.iter().any(|(_, fc)| fc.name == "saber_ktemp_1"));
+        }
+        _ => panic!("extract is not Measurements"),
+    }
+}
+
+#[test]
+fn test_hapi_family_block_line_keeps_the_i_placeholder() {
+    let content = "url https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER\nterms erg-sc-rules-of-the-road https://example.org/licence\nttl 300\nat earth\nhapi ktemp.<i>=saber_ktemp tpgpaltitude.<i>=saber_tpgpaltitude\nfield saber_ktemp saber_ktemp inverse-square thermal K 3600 0.0 0.0\nfield saber_tpgpaltitude saber_tpgpaltitude inverse-square thermal km 3600 0.0 0.0\n";
+    let sources = parse_sources(content);
+    let src = sources.first().expect("the SABER block parses");
+    let pairs = src
+        .extracts
+        .iter()
+        .find_map(|ext| match ext {
+            Extract::Hapi(pairs) => Some(pairs),
+            _ => None,
+        })
+        .expect("a Hapi extract reads from the block");
+    assert!(
+        pairs.contains(&("ktemp.<i>".to_string(), "saber_ktemp".to_string())),
+        "{pairs:?}"
+    );
+    assert!(pairs.contains(&(
+        "tpgpaltitude.<i>".to_string(),
+        "saber_tpgpaltitude".to_string()
+    )));
+}
+
+#[test]
 fn test_hapi_without_parameters_array_vector_and_declared_fill() {
     let json = r#"{
         "status": {"code": 1200},

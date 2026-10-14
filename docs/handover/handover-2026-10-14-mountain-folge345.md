@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass + Taucher-Runde + Rat: finals-Leser, harvest-Direktive, Doppel-Arme, Venus-Reader-Arm; SABER/Venus/ICGEM durch recherche + Rat entschieden (B2/D/Witness)
   class: handover
   date: 2026-10-14
-  sha256: c1232ce38d83ff905e6071157f842093c009dd987511ec390038b7ab3b170e15
+  sha256: e438eeb63503ba96d23675387c05df4be79ec44e9bda463c4309d8982bbaeb9e
   status: live
 -->
 # Handover — Mountain-Folge 345 (2026-10-14)
@@ -33,12 +33,13 @@ zitiert, nie kopiert.
   (`extract.rs:6893-6966`), Hapi→`Channel` mit `Position::Source` (`extract.rs:7013-7025`;
   `Position::Source` ist unit — **kein** `alt`-Feld). Der cdaweb-Host ist erneut
   gemessen **unerreichbar** (SSL/000; `spdf.gsfc.nasa.gov` ebenso), kein frisches Daten-Row.
-- **Blockade:** keine (Rat-Verdikt B2 entschieden).
-- **Braucht:** (1) im HAPI-Arm beide `field ktemp.<i>` / `field tpgpaltitude.<i>` als
-  **Skalar-Kanäle** an `Position::Source` führen (`<i>`-Expansion aus dem Block-Schlüssel);
-  (2) Block
+- **Gebaut (mountain-345):** der HAPI-Arm expandiert `param.<i>`-Familien über `parameters[].size`
+  zu je einem Skalar-Kanal (`saber_ktemp_0 …`, füllwert `-999.0` = absent), `Position::Source`;
+  Blockform `hapi ktemp.<i>=saber_ktemp tpgpaltitude.<i>=saber_tpgpaltitude` + zwei `field`-Zeilen.
+- **Blockade:** `cdaweb.gsfc.nasa.gov` ist unerreichbar (Stehender Pass) — das Block-Sample fehlt.
+- **Braucht:** nur noch den Block
   `url https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER&…parameters=ktemp,tpgpaltitude&format=json`,
-  `terms saber-rules-of-the-road …`, `at earth`, `field ktemp.<i> …`, `field tpgpaltitude.<i> km …`.
+  `terms saber-rules-of-the-road …`, `at earth` — wartet auf die Host-Rückkehr (kein frisches Sample).
 
 ### Venus Radar — Compiler-Achse braucht ein Wort; Reader-Arm steht (eigen)
 - **Status:** eigen (Rat-Verdikt D) | **Bindung:** eigen
@@ -54,14 +55,14 @@ zitiert, nie kopiert.
   `pds4_img` braucht **keinen** Interleave-Umbau. `venus_radar_compiler.rs` reduziert
   heute auf `comp = Zeilenindex` (12000 Kanäle) — eine Achse, die das Produkt nicht hat.
 - **Blockade:** keine (Rat-Verdikt D entschieden).
-- **Gebaut (mountain-345):** `src/archivar/vnrd.rs` (MAGIC `VNRD`, `parse_bin`, strikt
-  `comp ≤ 2` — eine Zeilenindex-Datei wird **verworfen**, nie fehlgedeutet;
-  `COMP_INC/OCP/SCP` → `venus_radar_inc_deg`/`_ocp`/`_scp`), registriert in
-  `series_parse_bin`/`series_component_name` + Dispatch (`main_flow`).
-- **Braucht:** (1) `venus_radar_compiler.rs` auf Verdikt **D** umbauen (alle 15 Produkte →
-  ein `VNRD`: `t` = Label-Epoche, `v` = Kartenmittel, `comp` = Menge); (2) Block
-  `url …VNRD-CDN-Asset`, `origin` = rohe PDS-Kachel, `compiler venus_radar_compiler`,
-  `terms CC0-1.0 …`, Einheit am Feld (`inc`=deg, `ocp`/`scp`=1); (3) Split-Route.
+- **Gebaut (mountain-345):** Reader-Arm `src/archivar/vnrd.rs` (MAGIC `VNRD`, `parse_bin`,
+  strikt `comp ≤ 2` — eine Zeilenindex-Datei wird **verworfen**; `COMP_INC/OCP/SCP` →
+  `venus_radar_inc_deg`/`_ocp`/`_scp`), registriert + Dispatch; **Compiler auf Verdikt D
+  umgebaut** (`venus_radar_compiler.rs`: `--input`/`--dir` → ein `VNRD`, `t` = Label-Epoche
+  (PDS4 `Time_Coordinates`), `v` = Kartenmittel, `comp` = Menge; Roundtrip über den Reader).
+- **Braucht:** (1) Block `url …VNRD-CDN-Asset`, `origin` = rohe PDS-Kachel,
+  `compiler venus_radar_compiler`, `terms CC0-1.0 …`, Einheit am Feld (`inc`=deg, `ocp`/`scp`=1);
+  (2) Split-Route; (3) der native Compiler-Lauf braucht 15×960 MB (CI, nicht operatormaschine).
 
 ### ICGEM gfc — „Epoche absent" ist eine neue Konvention und braucht ein Wort (eigen)
 - **Status:** eigen (Rat-Verdikt Witness) | **Bindung:** eigen
@@ -196,7 +197,8 @@ Origin: mountain-345 (2026-10-14):
 Der Commit ist die letzte Handlung; das Operator-Wort trägt Commit und Push. In diesem
 Atom (mountain-345) committet: `src/archivar/channels.rs` · `src/archivar/main_flow.rs` ·
 `src/archivar/parse.rs` · `src/archivar/tests.rs` · `src/archivar/vnrd.rs` ·
-`src/archivar/mod.rs` · `src/archivar/extract.rs` · `phi/sources.φ` · diese Übergabe ·
+`src/archivar/mod.rs` · `src/archivar/extract.rs` ·
+`tools/harvest/src/bin/venus_radar_compiler.rs` · `phi/sources.φ` · diese Übergabe ·
 der `archiv/`-Move der folge344.
 
 ## Rat-Verdikt (recherche + rat, 2026-10-14) — entschieden, noch nicht gebaut

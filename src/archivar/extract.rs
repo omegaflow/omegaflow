@@ -4048,6 +4048,25 @@ fn heasarc_w3browse_channels(
     channels
 }
 
+fn hapi_size_elements(size: &JsonVal) -> Option<usize> {
+    let JsonVal::Arr(a) = size else {
+        return None;
+    };
+    let first = scalar_of(a.first()?)?;
+    if first.is_finite() && first >= 0.0 {
+        Some(first as usize)
+    } else {
+        None
+    }
+}
+
+fn hapi_family_field<'a>(extracts: &'a [Extract], name: &str) -> Option<&'a FieldConfig> {
+    extracts.iter().find_map(|ext| match ext {
+        Extract::Field(fc) if fc.name == name && fc.tau > 0.0 => Some(fc),
+        _ => None,
+    })
+}
+
 fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
     if src.format == "ephemeris_binary"
         || matches!(
@@ -6899,6 +6918,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 {
                     let mut col: HashMap<String, usize> = HashMap::new();
                     let mut fill_of: HashMap<String, f64> = HashMap::new();
+                    let mut size_of: HashMap<String, usize> = HashMap::new();
                     let mut has_params = false;
                     if let Some(JsonVal::Arr(params)) = root.get("parameters") {
                         for (i, p) in params.iter().enumerate() {
@@ -6909,6 +6929,9 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                 has_params = true;
                                 if let Some(fv) = po.get("fill").and_then(scalar_of) {
                                     fill_of.insert(nn.clone(), fv);
+                                }
+                                if let Some(sz) = po.get("size").and_then(hapi_size_elements) {
+                                    size_of.insert(nn.clone(), sz);
                                 }
                             }
                         }
@@ -6939,6 +6962,51 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         && let JsonVal::Arr(row) = last_row
                     {
                         for (param, name) in pairs {
+                            if let Some(base) = param.strip_suffix(".<i>") {
+                                let Some(&idx) = col.get(base) else {
+                                    continue;
+                                };
+                                let Some(&size) = size_of.get(base) else {
+                                    continue;
+                                };
+                                let Some(fc) = hapi_family_field(effective_extracts, name) else {
+                                    continue;
+                                };
+                                let fill = fill_of.get(base).copied();
+                                for i in 0..size {
+                                    let Some(JsonVal::Arr(a)) = row.get(idx) else {
+                                        break;
+                                    };
+                                    let Some(val) = a.get(i).and_then(scalar_of) else {
+                                        continue;
+                                    };
+                                    if fill.is_some_and(|f| val == f) {
+                                        continue;
+                                    }
+                                    let name_i = if name.contains("<i>") {
+                                        name.replace("<i>", &i.to_string())
+                                    } else {
+                                        format!("{name}_{i}")
+                                    };
+                                    let mut eff_fc = fc.clone();
+                                    eff_fc.key = name_i.clone();
+                                    eff_fc.name = name_i.clone();
+                                    channels.push((
+                                        Channel {
+                                            z: 0.0,
+                                            freq: 0.0,
+                                            bin_width: 0.0,
+                                            epoch: now,
+                                            station_code: None,
+                                            position: Position::Source,
+                                            name: name_i,
+                                            value: val,
+                                        },
+                                        eff_fc,
+                                    ));
+                                }
+                                continue;
+                            }
                             let (base, comp) = match param.rfind('.') {
                                 Some(dot)
                                     if param[dot + 1..].chars().all(|c| c.is_ascii_digit()) =>
