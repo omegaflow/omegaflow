@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: 35358328adfb6e93eb876a47e0ed6128cf0e507c8b2539ed91b0e2c9d1f9b2d8
+  sha256: 10fa9661270785fa88d0173f8b2ac4fd2a091213e81f18a1bbc9d5f913851989
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -244,10 +244,11 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
     `igetsftp.gfz.de` (sftp, registriert); BGI-Host `www.bgi.omp.obs-mip.fr` tot →
     `bgi.obs-mip.fr`.
   - Kein Host IP-blockiert; `--jina` löste den `206`-Sonden-Quirk.
-- **Braucht:** (0) IGETS-/BGI-`origin` korrigieren; (1) den GEOFON-Wellenform-Block setzen;
-  (2) die Kernel-Lücke schließen — Gravimetrie-Kandidaten mit eigenem Meßgesetz
-  (`point`/`exp.-decay`) führen **oder** die `inverse-square`-Bindung als Verdikt tragen;
-  (3) EGGN/China/GOCE/NIED/GSRAS/ARDA als `pending`/`riss` benennen.
+- **Braucht:** (0) IGETS-/BGI-`origin` korrigieren — **Myceliums Zeilenklasse**, an Mycelium
+  geroutet (s. „An mycelium"); (1) den GEOFON-Wellenform-Block — `url`/`compiler` Mycelium,
+  `terms`/`at`/Kernel liegen bereit; (2) die Kernel-Lücke schließen — Gravimetrie-Kandidaten
+  mit eigenem Meßgesetz (`point`/`exp.-decay`) führen **oder** die `inverse-square`-Bindung
+  als Verdikt tragen; (3) EGGN/China/GOCE/NIED/GSRAS/ARDA als `pending`/`riss` benennen.
 
 ### Adressierte Register-Fäden — Lizenzen gemessen, Verdikte offen (eigen)
 - **Status:** eigen (Register-Writes; Messungen jetzt am Baum gegengeprüft) | **Bindung:** eigen
@@ -327,6 +328,18 @@ Origin: mountain-346 (2026-10-14):
   daraufsetzen; danach `register_sort`.
 - `xfer:mycelium-346-3`/`-4`/`-5`/`-7` — Terms gemessen (s. Punkt „Adressierte
   Register-Fäden"); Mountain setzt die Verdikte nach eigener Messung.
+- **Gewebe-Fäden — `origin`/`url`-Korrekturen + GEOFON-Wellenform (Myceliums Zeilenklasse;
+  Mountain schreibt nur `terms`/`field`/`ttl`):**
+  - IGETS `origin` (`phi:10319`) zeigt auf die Projektseite `igets.gfz-potsdam.de/`; echter
+    Datenendpunkt **`igetsftp.gfz.de`** (sftp, registriert); ISDC-Pfad `/igets-data-base`
+    (200), altes `/igets/` = **404**.
+  - Der tote BGI-Host `www.bgi.omp.obs-mip.fr` → **`bgi.obs-mip.fr`** (200), wo er als
+    `origin` steht.
+  - **GEOFON-Wellenform** ist offen (kein Key), aber ohne `phi`-Block:
+    `origin https://geofon.gfz.de/fdsnws/dataselect/1/query` (200, miniSEED/StationXML).
+    Mountain liefert den Verdikt-Teil — **`terms CC-BY-4.0`** (Beleg `https://geofon.gfz.de/eqinfo/faq/`),
+    `at earth`, Kernel **`point`/`inverse-square`** (Seismik). Bitte `url` (CDN-Asset) +
+    `compiler` setzen, dann `register_sort`.
 
 ## An river
 
