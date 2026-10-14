@@ -2,7 +2,7 @@
   title: House Rules — Register, Handover, Commit, System Directive, Session Hygiene
   class: concept
   date: 2026-10-14
-  sha256: c9d9bd18c55893615fffd885e3d87efd9585b8262c91daf56d1001f1496a7c1d
+  sha256: e85c3c78f53817e7d80af79c27fa689a5c21affdecdd9fa6b5cf01504a6a8c49
   status: live
   see-also: AGENTS.md
 -->
@@ -38,6 +38,8 @@ So denkt der starke Kopf, ohne je eine PII zu sehen; der Kanzleischreiber deckt 
 **Der Schwärzungs-Bereich (Operator-Wort, 2026-10-14).** Die Zuordnung speist sich aus dem **privaten Haus** — nicht von der Platte. Browser-Passwort-Speicher, Schlüsselbünde, die ganze Platte: keine Quelle. Was in keiner gelesenen Textzeile vorkommen kann, gehört nicht in die Tabelle. Quelle sind allein die Dateien, die die öffentliche Schicht je liest: das private Haus (Mails, Zustand, Handover). So bleibt die Tabelle klein und scharf.
 
 **Kein geteilter Passwort-Speicher (Operator-Wort, 2026-10-14).** Ein Browser-Profil ist kein Tresor für mehrere: getrennte Profile (oder getrennte System-Nutzer) und ein eigener Passwort-Manager. Liegen Passwörter dennoch im geteilten Profil, gilt der Export-Import-Lösch-Lauf: exportieren, importieren, die Klartext-Datei **augenblicklich** löschen — der Export ist unverschlüsselt.
+
+**Ein echter Wert wird nie Fixture (Operator-Wort, 2026-10-14).** Tests und Beispiele laufen ausschließlich auf **synthetischen** Werten. Ein echter Wert, der durch die Wand kam, wird **nicht erneut geschrieben** — nicht als Beispiel, nicht als Beleg, nicht zur Diagnose. Der Schwärzer-Test benutzt erfundene Adressen; ein echter Name, der einmal passierte, wird **stumm** korrigiert, nie zitiert. Der Leck-Pfad ist nicht nur der Schwärzer — auch die Ausgabe der öffentlichen Schicht ist einer.
 
 **Der Bote betritt kein Haus (Operator-Wort 2026-10-14).** Eine öffentliche Linie geht
 **nie** ins private Haus — sie wirft ein und holt ab. Das **Postfach** liegt im
