@@ -1210,9 +1210,15 @@ fn main() {
             r.prefix, r.provider, r.base_url, r.key_env, key
         );
     }
+    let secrets = std::sync::Arc::new(secrets);
+    let auth = std::sync::Arc::new(auth);
     for stream in listener.incoming() {
         match stream {
-            Ok(mut s) => handle(&mut s, &secrets, &auth),
+            Ok(mut s) => {
+                let secrets = secrets.clone();
+                let auth = auth.clone();
+                std::thread::spawn(move || handle(&mut s, &secrets, auth.as_str()));
+            }
             Err(e) => eprintln!("llm_gateway: accept: {e}"),
         }
     }
