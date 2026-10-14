@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "shell": "/home/johannes/projects/omegaflow/bin/agent_sandbox",
   "instructions": [
     "AGENTS.md"
   ],
