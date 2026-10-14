@@ -56,7 +56,8 @@
         "edit": "deny",
         "task": "deny",
         "bash": "deny"
-      }
+      },
+      "temperature": 0.2
     },
     "gremium": {
       "mode": "subagent",
@@ -95,7 +96,8 @@
           "*opencode/auth.json*": "deny"
         }
       },
-      "description": "Das Gremium — grundlegende, komplexe Entscheidungen (selten). Bekommt eine Taucher-Recherche vorgelegt; haelt die fuenf Stimmen tiefer als der Rat."
+      "description": "Das Gremium — grundlegende, komplexe Entscheidungen (selten). Bekommt eine Taucher-Recherche vorgelegt; haelt die fuenf Stimmen tiefer als der Rat.",
+      "temperature": 1.0
     },
     "taucher": {
       "mode": "subagent",
@@ -203,7 +205,8 @@
           "env *": "deny",
           "env": "deny"
         }
-      }
+      },
+      "temperature": 0.2
     },
     "rat": {
       "mode": "subagent",
@@ -241,7 +244,8 @@
           "*secrets_keys.txt*": "deny",
           "*opencode/auth.json*": "deny"
         }
-      }
+      },
+      "temperature": 0.9
     },
     "line": {
       "mode": "primary",
@@ -357,7 +361,8 @@
           "env *": "deny",
           "env": "deny"
         }
-      }
+      },
+      "temperature": 0.4
     },
     "elitetaucher": {
       "mode": "subagent",
@@ -466,7 +471,8 @@
           "env": "deny"
         }
       },
-      "variant": "high"
+      "variant": "high",
+      "temperature": 0.0
     }
   },
   "mcp": {
