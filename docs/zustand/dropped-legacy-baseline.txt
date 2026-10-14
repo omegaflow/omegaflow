@@ -101,3 +101,10 @@ lidar-inventar extraterrestrisch mla-compiler auf rdr gebaut
 entso-e http 400 gemessen parameter- endpunkt-defekt
 newell-omni-alignment doppelregistrierung geheilt zelle neu messen
 weberin-zeugen-fäden fakten gemessen register-zeilen-bau gates cdf-arm
+# Erweitert 2026-10-14 (River-Linie, folge209→210): der eine Neue-Drop des ci-gate-Laufs
+# 38595147942 (`dropped-set-gate: current 1 | pinned 86 | new 1`), gemessen via
+# `register_lookup --dropped-keys --changed-since a8f871476` — die erledigte
+# Mountain327-Prosa-Träger-Zeile (`### Prosa-Träger mountain327-Abgabe — AACGM-Koeffizient
+# geheilt; Zeuge läuft im nächsten subset`, in folge209), von river-211 geschlossen (der
+# AACGM-Zeuge läuft im subset grün, Commit f54787bb1) und deshalb gelöscht — kein stiller Drop.
+prosa-träger mountain327-abgabe aacgm-koeffizient geheilt zeuge läuft

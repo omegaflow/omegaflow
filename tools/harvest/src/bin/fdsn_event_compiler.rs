@@ -20,7 +20,11 @@ fn gather(body: &str) -> Option<Table> {
     let names: Vec<String> = COLUMNS.iter().map(|n| (*n).to_string()).collect();
     let mut rows = Vec::with_capacity(events.len());
     for e in &events {
-        let time = if e.time.is_finite() { Some(e.time) } else { None };
+        let time = if e.time.is_finite() {
+            Some(e.time)
+        } else {
+            None
+        };
         let lat = if e.lat.is_finite() { Some(e.lat) } else { None };
         let lon = if e.lon.is_finite() { Some(e.lon) } else { None };
         let depth_m = if e.depth_km.is_finite() {

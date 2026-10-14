@@ -227,7 +227,10 @@ mod tests {
         assert_eq!(fields[0].name, "swpc_efield_ex");
         assert_eq!(fields[0].unit, "v/m");
         assert_eq!(fields[1].name, "swpc_efield_ey");
-        assert_eq!(fields[0].channel_ref, Some(force_id_of("electric").unwrap()));
+        assert_eq!(
+            fields[0].channel_ref,
+            Some(force_id_of("electric").unwrap())
+        );
         assert_eq!(component_name(COMP_EY), Some("swpc_efield_ey"));
         assert_eq!(component_name(9), None);
     }

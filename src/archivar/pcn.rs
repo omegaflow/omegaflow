@@ -156,7 +156,10 @@ mod tests {
         assert_eq!(fields.len(), 1);
         assert_eq!(fields[0].name, "pcn_mvm");
         assert_eq!(fields[0].unit, "mV/m");
-        assert_eq!(fields[0].channel_ref, Some(force_id_of("electric").unwrap()));
+        assert_eq!(
+            fields[0].channel_ref,
+            Some(force_id_of("electric").unwrap())
+        );
     }
 
     #[test]

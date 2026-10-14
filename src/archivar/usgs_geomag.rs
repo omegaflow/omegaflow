@@ -126,7 +126,10 @@ mod tests {
         assert_eq!(fields[0].name, "usgs_geomag_e_e_mv_km");
         assert_eq!(fields[0].unit, "mV/km");
         assert_eq!(fields[1].name, "usgs_geomag_e_n_mv_km");
-        assert_eq!(fields[0].channel_ref, Some(force_id_of("electric").unwrap()));
+        assert_eq!(
+            fields[0].channel_ref,
+            Some(force_id_of("electric").unwrap())
+        );
         assert_eq!(component_name(COMP_E_N), Some("usgs_geomag_e_n_mv_km"));
         assert_eq!(component_name(9), None);
     }
