@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 344 (2026-10-13)
   class: handover
   date: 2026-10-13
-  sha256: 5252062d2ec2b84c4218726245a4174c628d5bb9c4ad06dd4cde2c8cf1d3a1b8
+  sha256: 916bfead80c8d16b90cb21b5fae83be13d49fa116f24a6f38ca9b6be685bc79b
   status: live
 -->
 # Handover — Mycelium-Folge 344 (2026-10-13)
@@ -153,6 +153,13 @@ aus `mountain-folge340` und `river-folge207` sind bereits in folge343 gefaltet.
 - **Lage:** (gemessen 2026-10-13/344, fünf Taucher) die **fünf fehlenden Fäden** haben eine gemessene Quelle (Draft `state/mycelium/block-drafts/2026-10-13-faden-schliessung.φ`): (1) **Sonnen-Magnetfeld** — SDO/HMI Synoptic FITS (`jsoc.stanford.edu`, 17,6 MB, HTTP 200) + HMI Polar-Field + **SILSO SSN** (`terms CC-BY-NC-4.0` — das Haus ist selbst NC, registerbar; Präzedenz `phi:29157`); (2) **Stern-Aktivität** — VizieR `J/ApJ/835/61` `logR'HK` + LISIRD LaTiS EUV; (3) **21 cm** — EBHIS/WALLABY/CGPS (CDS) + EDGES Zenodo `16881868` **CC-BY-4.0**; (4) **Wolken** — ISCCP HGM (NOAA CDR) + PATMOS-x (S3 offen); (5) **TGF** — Fermi-GBM-TGF-Catalog + HEASARC-WWLLN-Sferics + Zenodo `6782049`. **Echte Gates (Zugang, nicht Lizenz):** WSO ohne Lizenz (`pending`) · ASIM login-gated · CERES/MODIS account-gated · GALAH-Aktivität nicht auf VizieR. **LOD gebaut (Code, 2026-10-13/344):** `src/archivar/celestrak_eop.rs` trägt jetzt `COMP_LOD=4` (`COMP_MAX=4`), `src/archivar/extract.rs` mappt `eop_iers_lod_s`, der Compiler liest CSV-Spalte 5 (LOD); `rustfmt --check` + `cargo build -p omegaflow-harvest --bin celestrak_eop_compiler` grün (0 Warnungen) + Rauchtest (8 Records = 2 Zeilen × 4 Komponenten, roundtrip parst). Register-Zeile `quantity eop_iers_lod_s` = Mountains Recht (`xfer:mycelium-344-3`).
 - **Blockade:** `terms`/`field`/`ttl` = Mountain; Manifestation = Mycelium.
 - **Braucht:** Mountain setzt `terms`/`field`/`ttl` für die gemessenen Quellen; danach `url`/`origin`/`compiler` (Mycelium) + CDN-Manifestation. An Mountain: `xfer:mycelium-344-2`.
+
+### DE-2-Manifestation — gebaut (gefaltet aus river, P7.1)
+- **Status:** eigen (Rest: erster CDN-Pull via CI) | **Bindung:** eigen
+- **Trigger:** `harvest-dispatch` auf dem Push auf `phi/sources.φ` (bzw. `gh workflow run de2-cdn.yml`)
+- **Lage:** (gemessen 2026-10-13/344 via Taucher + `commit_check`; umgesetzt) Block `phi:586` — `url` → CDN-Release-Pfad, `origin` = die HAPI-Query, `+harvest de2`; neuer Workflow `.github/workflows/de2-cdn.yml` (`# harvest: format=de2 arm=cdn_mirror`) spiegelt die HAPI-Query 1:1 über `cdn_mirror_compiler`. Asset-Name (aus `source_name_from_url`): `hapi-data-id-DE2_UA16S_ALL-time.min-1981-08-06T00_00_00Z-…-RPA_IVNionDrift-format-json.json`; Größe geschätzt **~434 MB** für das volle Fenster (16 s × 6 Parameter; CDAWeb vom Sandkasten nicht erreichbar — Egress-Sperre, von CI aus erreichbar, belegt durch die CDAWeb-CDN-Workflows). `commit_check` + `concurrency_contract` grün; kein `.rs` geändert (Aktor wiederverwendet). Erster echter Nutzer der `harvest <actor>`-Direktive.
+- **Blockade:** keiner.
+- **Braucht:** `/commit` + Push; danach dispatcht `harvest-dispatch` den `de2-cdn.yml`-Lauf → der CI-Runner zieht die Reihe und legt das CDN-Asset. River-Token gefaltet: `xfer:river.ses_ec901ad7dffehLKKusa1DO806h.1~aac84d7f`.
 
 ## An mountain
 
