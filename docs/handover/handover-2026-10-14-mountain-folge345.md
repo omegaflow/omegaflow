@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mountain-Folge 345 (2026-10-14)
-  session: Mountain-Linie — ein Pass + Taucher-Runde: finals-Leser (Interpolation auf jetzt + Stale-Refusal + LOD), harvest-Direktive, Doppel-Arme bereinigt, Venus-Reader-Arm gebaut; SABER/Venus/ICGEM als Risse gemessen
+  session: Mountain-Linie — ein Pass + Taucher-Runde + Rat: finals-Leser, harvest-Direktive, Doppel-Arme, Venus-Reader-Arm; SABER/Venus/ICGEM durch recherche + Rat entschieden (B2/D/Witness)
   class: handover
   date: 2026-10-14
-  sha256: 23fbbe65230635b99b202d6b1e54462fb300a29be67a64c8694a3184d10a2606
+  sha256: c1232ce38d83ff905e6071157f842093c009dd987511ec390038b7ab3b170e15
   status: live
 -->
 # Handover — Mountain-Folge 345 (2026-10-14)
@@ -16,13 +16,13 @@ eingegangen (CelesTrak und LOD-`finals` gemessen erledigt, `harvest`-Direktive
 gebaut; SABER/Venus/UCAR-fäden bleiben). Der Stehende Pass (Mycelium-Register) wird
 zitiert, nie kopiert.
 
-## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass + Taucher-Runde — finals-Leser (Code + Block + 6 Tests), harvest-Direktive (Parser-Arm + Schumann-Zeile), Doppel-Arme (3 Zwillinge + `register_sort`), Venus-Reader-Arm (`vnrd.rs` + Dispatch), 5 parallele Taucher (SABER/Venus/ICGEM/5-Fäden/UCAR-ALFALFA); der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
+## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass + Taucher-Runde + Rat — finals-Leser (Code + Block + 6 Tests), harvest-Direktive, Doppel-Arme, Venus-Reader-Arm (`vnrd.rs` + Dispatch), 6 Taucher (5 parallel + 1 Recherche), Rat für SABER/Venus/ICGEM (B2/D/Witness); der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
 
 ## Offen (aufgeschlüsselt)
 
 ### SABER — Höhenform (C): Arm + Höhen-Ablage brauchen ein Wort (eigen)
-- **Status:** blockiert | **Bindung:** operator-gebunden (Höhen-Ablage) · eigen (Rest)
-- **Trigger:** Operator-Wort zur Höhen-Ablage + die Rückkehr von `cdaweb.gsfc.nasa.gov`
+- **Status:** eigen (Rat-Verdikt B2) | **Bindung:** eigen
+- **Trigger:** der Arm-Bau
 - **Lage:** (gemessen 2026-10-14, Taucher) Rat-Verdikt (C-1): `field ktemp.<i> …` (dotted
   Level im Schlüssel), `alt tpgpaltitude km`. **HAPI-`info` ist aus dem Cache gelesen**
   (`/tmp/opencode/saber_info.json`, 7489 B): `ktemp` `size:[400]` K, `tpgpaltitude`
@@ -33,18 +33,16 @@ zitiert, nie kopiert.
   (`extract.rs:6893-6966`), Hapi→`Channel` mit `Position::Source` (`extract.rs:7013-7025`;
   `Position::Source` ist unit — **kein** `alt`-Feld). Der cdaweb-Host ist erneut
   gemessen **unerreichbar** (SSL/000; `spdf.gsfc.nasa.gov` ebenso), kein frisches Daten-Row.
-- **Blockade:** C-1 sagt „Höhe als `Position.alt`", aber weder `Position::Source` noch
-  der `Extract::Hapi`-Slot trägt eine Höhe; SABER ist ein Satellit ohne lat/lon in der
-  2-Parameter-Anfrage. Die Ablage (neuer `Position`-Weg / `Channel.z` / zusätzliche
-  lat/lon-Parameter) ist eine Architektur-Entscheidung → vorlegen.
-- **Braucht:** (1) Operator-Wort zur Höhen-Ablage; (2) dann `alt`-Slot für `Extract::Hapi`
-  + `<i>`-Expansion; (3) Block
+- **Blockade:** keine (Rat-Verdikt B2 entschieden).
+- **Braucht:** (1) im HAPI-Arm beide `field ktemp.<i>` / `field tpgpaltitude.<i>` als
+  **Skalar-Kanäle** an `Position::Source` führen (`<i>`-Expansion aus dem Block-Schlüssel);
+  (2) Block
   `url https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER&…parameters=ktemp,tpgpaltitude&format=json`,
-  `terms saber-rules-of-the-road …`, `at earth`, `field ktemp.<i> …`.
+  `terms saber-rules-of-the-road …`, `at earth`, `field ktemp.<i> …`, `field tpgpaltitude.<i> km …`.
 
 ### Venus Radar — Compiler-Achse braucht ein Wort; Reader-Arm steht (eigen)
-- **Status:** blockiert | **Bindung:** operator-gebunden (Achse) · eigen (Rest)
-- **Trigger:** Operator-Wort zur Compiler-Achse (D vs. B)
+- **Status:** eigen (Rat-Verdikt D) | **Bindung:** eigen
+- **Trigger:** der Compiler-Bau
 - **Lage:** (gemessen 2026-10-14, Taucher) Bundle `urn:nasa:pds:venus_radar_level2` v1.0,
   DOI `10.17189/1522443`, **CC0-1.0**, 15 Produkte (5 Epochen × `inc`/`ocp`/`scp`), je
   960 000 000 B. **Korrigiert:** die Level-2-Labels sind PDS4 `Array_2D_Map`,
@@ -55,22 +53,19 @@ zitiert, nie kopiert.
   Complex-Backscatter-Bundle (PDS3, `vrm_90xx`), nicht zum reduzierten Asset — **Riss**,
   `pds4_img` braucht **keinen** Interleave-Umbau. `venus_radar_compiler.rs` reduziert
   heute auf `comp = Zeilenindex` (12000 Kanäle) — eine Achse, die das Produkt nicht hat.
-- **Blockade:** die Register-Achse (`inc`/`ocp`/`scp` als 3 Felder) und die Compiler-Reduktion
-  passen nicht zusammen. Der Reader allein würde eine alte `comp=Zeile` als Menge
-  fehldeuten. Die Achse ist eine Architektur-Entscheidung → vorlegen.
+- **Blockade:** keine (Rat-Verdikt D entschieden).
 - **Gebaut (mountain-345):** `src/archivar/vnrd.rs` (MAGIC `VNRD`, `parse_bin`, strikt
   `comp ≤ 2` — eine Zeilenindex-Datei wird **verworfen**, nie fehlgedeutet;
   `COMP_INC/OCP/SCP` → `venus_radar_inc_deg`/`_ocp`/`_scp`), registriert in
   `series_parse_bin`/`series_component_name` + Dispatch (`main_flow`).
-- **Braucht:** (1) Operator-Wort zur Achse — **D** (all 15 Produkte → ein `VNRD`, ein Record
-  je Produkt: `t` = Label-Epoche, `v` = Kartenmittel, `comp` = Menge) oder **B** (je Epoche ein
-  `VNRD`, `comp` = Menge, `t` = Zeile); (2) danach `venus_radar_compiler.rs` auf die Achse;
-  (3) Block `url …VNRD-CDN-Asset`, `origin` = rohe PDS-Kachel, `compiler venus_radar_compiler`,
-  `terms CC0-1.0 …`, Einheit am Feld (`inc`=deg, `ocp`/`scp`=1); (4) Split-Route.
+- **Braucht:** (1) `venus_radar_compiler.rs` auf Verdikt **D** umbauen (alle 15 Produkte →
+  ein `VNRD`: `t` = Label-Epoche, `v` = Kartenmittel, `comp` = Menge); (2) Block
+  `url …VNRD-CDN-Asset`, `origin` = rohe PDS-Kachel, `compiler venus_radar_compiler`,
+  `terms CC0-1.0 …`, Einheit am Feld (`inc`=deg, `ocp`/`scp`=1); (3) Split-Route.
 
 ### ICGEM gfc — „Epoche absent" ist eine neue Konvention und braucht ein Wort (eigen)
-- **Status:** blockiert | **Bindung:** operator-gebunden (Absenz-Konvention)
-- **Trigger:** Operator-Wort zur epochenlosen Wire-Form
+- **Status:** eigen (Rat-Verdikt Witness) | **Bindung:** eigen
+- **Trigger:** der Witness-Bau
 - **Lage:** (gemessen 2026-10-14, Taucher) D2 (Rat + Roster): statisch ohne Epoche,
   kein erfundener MJD. `gfc.rs`-Arm + `declared_fields` stehen (4 Felder `icgem_gfc_c/s`,
   `icgem_gfct_c/s`); der Compiler (`epoch_of` Z.147-150) **verlangt** eine Epoche und
@@ -80,14 +75,30 @@ zitiert, nie kopiert.
   **überspringt** den Kanal, `gfc.rs:153` behält 0.0 dagegen. **Kein Präzedenzfall** für
   eine geschriebene Serie mit fehlender Epoche (jede trägt eine echte oder eine deklarierte
   Konstante, z. B. `viking_grav` 1976-01-01). Riss 2: volles Modell ≈ 12,8 GB; Cap D=3211.
-- **Blockade:** „Epoche absent" wäre eine **neue** Konvention (0.0-Sentinel, den das
-  Lesesite-Skip schon als absent liest) → Architektur-Entscheidung, vorlegen. Zusatz:
-  `format gfc` war im Reader registriert, aber **nicht** im `main_flow`-Dispatch
-  (Taucher-Befund) — **behoben** (mountain-345: `"gfc"` in die Dispatch-Liste).
-- **Braucht:** (1) Operator-Wort: 0.0 als dokumentierter Sentinel (die Lesesite `≤ 0.0`
-  = absent) — oder eine andere Ablage; (2) dann `gfc_compiler.rs` → `unwrap_or(0.0)`; (3) Block
+- **Blockade:** keine (Rat-Verdikt Witness entschieden).
+- **Braucht:** (1) XGM2019e als **nicht-strahlende Gestalt** führen (`witness gestalt`,
+  wie `srtm15_plus`), nicht als `format gfc`-Serie; (2) Block
   `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`,
-  `format gfc`, `at earth`, 4 Felder, **ohne** Epoch-Zelle, `no-cadence`; Cap D=3211.
+  `no-cadence`, ohne Epoch-Zelle; Cap D=3211 für den Split. Die vier `gfc`-Felder bleiben
+  gebaut, strahlen aber nicht (beschlossen).
+- **Rest:** `format gfc` war im Reader registriert, aber **nicht** im `main_flow`-Dispatch —
+  **behoben** (mountain-345: `"gfc"` in die Dispatch-Liste).
+
+### Epochen-Absenz — zwei Linien, unvereinheitlicht (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der Registeratom / die nächste epochenlose Quelle
+- **Lage:** (gemessen 2026-10-14, Taucher) Linie A liest `epoch <= 0.0` als **absent**
+  und überspringt/verwirft (`src/mathematikerin/machines/matrix.rs:644`;
+  `src/archivar/drs_fits.rs:38`); Linie B behält `0.0` als **echten Wert**
+  (`src/archivar/agrav.rs:49/113`; `src/archivar/hips.rs:793` — Bandindex 0;
+  `src/archivar/gfc.rs:153`). **Es gibt keine einheitliche Epochen-Absenz-Konvention.**
+  Der Rat (F3) benannte das als tiefsten Befund: vor jeder `gfc`-Manifestation, nicht mit
+  einem Sentinel überschreiben.
+- **Blockade:** die Frage ist eine Wire-Semantik (fehlt dem 26×f64 ein „absent"-Slot?),
+  noch nicht entschieden.
+- **Braucht:** die zwei Linien zusammenführen — entweder die Lesesite (`gfc`/`agrav`/`hips`)
+  auf die `≤ 0.0`-Absenz ziehen **oder** die Absenz ausdrücklich tragen; dann erst die
+  `gfc`-Manifestation.
 
 ### UCAR-FPI — Arm verdrahtet, Sample liegt, Block fehlt (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -188,14 +199,26 @@ Atom (mountain-345) committet: `src/archivar/channels.rs` · `src/archivar/main_
 `src/archivar/mod.rs` · `src/archivar/extract.rs` · `phi/sources.φ` · diese Übergabe ·
 der `archiv/`-Move der folge344.
 
-## Vorlage an den Operator (nur Ungeklärtes, je mit Ja/Nein)
+## Rat-Verdikt (recherche + rat, 2026-10-14) — entschieden, noch nicht gebaut
 
-1. **SABER-Höhe.** C-1 will `alt tpgpaltitude km` als `Position.alt`, aber SABER ist ein
-   Satellit ohne lat/lon in der Anfrage, und `Position::Source` trägt keine Höhe.
-   *Frage:* Höhe als eigener `Position`-Weg (neue Variante „Bahnpunkt/Höhe"), oder die
-   lat/lon-Parameter (`tplatitude,tplongitude`) mit anfordern und `Position::Surface` nutzen?
-2. **Venus-Achse.** *Frage:* **D** (15 Produkte → ein `VNRD`, ein Wert je Produkt/Epoche,
-   `comp`=Menge) oder **B** (je Epoche ein `VNRD`, `comp`=Menge, `t`=Zeile, Karte bleibt)?
-3. **ICGEM-Absenz.** Die 26×f64 hat keinen absent-Slot für `epoch`. *Frage:* `0.0` als
-   dokumentierter Sentinel (die Lesesite `≤ 0.0` = absent, wie `matrix.rs:644`) — oder einen
-   anderen Träger?
+- **SABER-Höhe → B2.** `field tpgpaltitude.<i> km` als **eigener Skalar-Kanal** an
+  `Position::Source`, neben `field ktemp.<i> …` — kein neuer `Position`-Weg, kein
+  `alt`-Direktiv. Präzedenz `viking_grav` (ALTITUDE als Kanalwert). **Riss:** C-1 wollte
+  `Position.alt`; der räumliche Blick ist damit nicht bedient (eigener Witness, wenn das
+  Bild selbst gebraucht wird).
+- **Venus-Radar → (D).** Alle 15 Produkte → ein `VNRD`, ein Record je Produkt: `t` = echte
+  Label-Epoche, `v` = Kartenmittel, `comp` = Menge (inc=0/ocp=1/scp=2). **Risse:** die Karte
+  wird auf einen Mittelwert reduziert (strahlend); das Bild selbst gehört als eigener
+  **Witness** geführt; der Compiler muss auf die Achse umgebaut werden.
+- **ICGEM gfc → Witness.** XGM2019e als **nicht-strahlende Gestalt** führen — kein
+  0.0-Sentinel, keine deklarierte Ersatz-Epoche. **Riss:** die vier `gfc`-Felder strahlen
+  dann nicht; descoped wird die strahlende Form, nicht das Modell.
+
+**Tiefster Befund (F3, eigener Punkt):** die zwei Epochen-Linien widersprechen sich —
+`matrix.rs:644`/`drs_fits.rs:38` lesen `epoch ≤ 0.0` als absent, `agrav.rs:113`/`hips.rs:793`/
+`gfc.rs:153` behalten 0.0 als echten Wert. Eine einheitliche Absenz-Semantik schuldet der
+Baum noch; keine Sentinel-Überschreibung.
+
+**Roster:** die externen Frontier-Seats (Duck · Claude · Qwen · Z.ai) sind **nicht** gefahren
+— ihr Katalog liegt seit dem Häuser-Schnitt im privaten Haus, das diese öffentliche Linie
+nicht betritt. Das Verdikt ruht auf recherche + Rat; die Roster-Runde bleibt der Operator-Hand.
