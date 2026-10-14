@@ -41,4 +41,4 @@ jobs:
         if: steps.idempotence.outputs.present == 'false'
         run: |
           cargo run -p omegaflow-harvest --release --bin entsoe_compiler -- \
-            --domain 10YFI-1--------U --start 2024-01-01 --stop 2024-02-01 --out-bin entsoe_a78.bin --ci-mode
+            --domain 10YCZ-CEPS-----N --out-domain 10YSK-SEPS-----K --start 2024-01-01 --stop 2025-01-01 --out-bin entsoe_a78.bin --ci-mode
