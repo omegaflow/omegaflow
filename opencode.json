@@ -61,7 +61,7 @@
     "gremium": {
       "mode": "subagent",
       "model": "deepinfra/moonshotai/Kimi-K3",
-      "variant": "low",
+      "variant": "max",
       "prompt": "Read docs/council.yaml completely before deliberating and hold the five voices (Mountain, River, Mycelium, Sensory, Future) as it prescribes — the way of council: speak from the heart, listen from the heart, be spontaneous, be lean of expression. The light form holds each text once; the full circle sits only for architecture.",
       "permission": {
         "edit": "deny",
@@ -208,7 +208,7 @@
     "rat": {
       "mode": "subagent",
       "model": "deepinfra/zai-org/GLM-5.3",
-      "variant": "low",
+      "variant": "high",
       "prompt": "Read docs/council.yaml completely before deliberating and hold the five voices (Mountain, River, Mycelium, Sensory, Future) as it prescribes — the way of council: speak from the heart, listen from the heart, be spontaneous, be lean of expression. The light form holds each text once; the full circle sits only for architecture.",
       "permission": {
         "edit": "deny",
@@ -465,7 +465,8 @@
           "env *": "deny",
           "env": "deny"
         }
-      }
+      },
+      "variant": "high"
     }
   },
   "mcp": {
