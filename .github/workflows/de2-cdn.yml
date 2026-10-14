@@ -1,4 +1,4 @@
-# harvest: format=de2 asset=fehlt arm=cdn_mirror
+# harvest: format=de2 asset=fehlt arm=de2_compiler
 
 name: de2-cdn
 
@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'tools/harvest/src/bin/cdn_mirror_compiler.rs'
+      - 'tools/harvest/src/bin/de2_compiler.rs'
       - '.github/workflows/de2-cdn.yml'
 
 concurrency:
@@ -28,8 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Mirror the DE-2 UA16S_ALL HAPI window 1:1 onto the CDN void path
+      - name: Harvest the DE-2 UA16S_ALL HAPI window by month onto the CDN
         run: |
-          cargo build -p omegaflow-harvest --release --bin cdn_mirror_compiler
-          ./target/release/cdn_mirror_compiler --ci-mode \
-            --url 'https://cdaweb.gsfc.nasa.gov/hapi/data?id=DE2_UA16S_ALL&time.min=1981-08-06T00:00:00Z&time.max=1983-02-19T00:00:00Z&parameters=NACS_N2density,WATS_NVEneutralWind,WATS_NVUneutralWind,RPA_NIionDensity,RPA_IVEionDrift,RPA_IVNionDrift&format=json'
+          cargo build -p omegaflow-harvest --release --bin de2_compiler
+          ./target/release/de2_compiler --ci-mode
