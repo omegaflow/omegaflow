@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: 10fa9661270785fa88d0173f8b2ac4fd2a091213e81f18a1bbc9d5f913851989
+  sha256: 9821c612c798e552e9e0893f0c2ddf48a12de2ee63a3e01bc5b597c50b3ff38d
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -330,11 +330,13 @@ Origin: mountain-346 (2026-10-14):
   Register-Fäden"); Mountain setzt die Verdikte nach eigener Messung.
 - **Gewebe-Fäden — `origin`/`url`-Korrekturen + GEOFON-Wellenform (Myceliums Zeilenklasse;
   Mountain schreibt nur `terms`/`field`/`ttl`):**
-  - IGETS `origin` (`phi:10319`) zeigt auf die Projektseite `igets.gfz-potsdam.de/`; echter
-    Datenendpunkt **`igetsftp.gfz.de`** (sftp, registriert); ISDC-Pfad `/igets-data-base`
-    (200), altes `/igets/` = **404**.
-  - Der tote BGI-Host `www.bgi.omp.obs-mip.fr` → **`bgi.obs-mip.fr`** (200), wo er als
-    `origin` steht.
+  - IGETS `origin` (`phi:10319`) zeigt auf die Projektseite `igets.gfz-potsdam.de/` (200);
+    die Rohdaten kommen über **`igetsftp.gfz.de`** (sftp, registriert); ISDC `/igets-data-base`
+    (200), altes `/igets/` = **404**. Ob der `origin` die Projektseite oder den Datenpfad nennen
+    soll, ist eine Mycelium-Entscheidung (Direktivenklasse).
+  - Der tote BGI-Host `www.bgi.omp.obs-mip.fr` → **`bgi.obs-mip.fr`** (200): **gemessen —
+    kein `bgi`/`obs-mip`-Block in `phi`** (`sgrep -i "bgi" phi/sources.φ` = 0); die
+    Taucher-Notiz zielt auf keinen Registereintrag. Kein Schreibakt.
   - **GEOFON-Wellenform** ist offen (kein Key), aber ohne `phi`-Block:
     `origin https://geofon.gfz.de/fdsnws/dataselect/1/query` (200, miniSEED/StationXML).
     Mountain liefert den Verdikt-Teil — **`terms CC-BY-4.0`** (Beleg `https://geofon.gfz.de/eqinfo/faq/`),
