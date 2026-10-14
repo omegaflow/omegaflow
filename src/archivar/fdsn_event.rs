@@ -13,7 +13,12 @@ pub const COMP_MAGNITUDE: u32 = 3;
 
 const COLUMNS: &[(u32, &str, &str, &str)] = &[
     (COMP_LATITUDE, "latitude", "fdsn_event_latitude_deg", "deg"),
-    (COMP_LONGITUDE, "longitude", "fdsn_event_longitude_deg", "deg"),
+    (
+        COMP_LONGITUDE,
+        "longitude",
+        "fdsn_event_longitude_deg",
+        "deg",
+    ),
     (COMP_DEPTH, "depth_m", "fdsn_event_depth_m", "m"),
     (COMP_MAGNITUDE, "magnitude", "fdsn_event_magnitude", "1"),
 ];
@@ -199,7 +204,13 @@ mod tests {
                     Some(10742.6),
                     Some(7.5),
                 ],
-                vec![Some(1704100211.0), Some(-20.0), Some(120.5), Some(5000.0), None],
+                vec![
+                    Some(1704100211.0),
+                    Some(-20.0),
+                    Some(120.5),
+                    Some(5000.0),
+                    None,
+                ],
             ],
         }
     }

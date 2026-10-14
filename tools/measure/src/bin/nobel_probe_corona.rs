@@ -328,7 +328,9 @@ fn force_of(sources: &[SourceConfig], name: &str) -> Option<u8> {
         for e in &s.extracts {
             if let Extract::Field(fc) = e {
                 if fc.name == name {
-                    return Some(fc.channel_ref);
+                    if let Some(channel_ref) = fc.channel_ref {
+                        return Some(channel_ref);
+                    }
                 }
             }
         }
@@ -987,7 +989,8 @@ fn main() {
             p.threshold,
             p.mean,
             p.sd,
-            p.naive_threshold.map_or("absent".to_string(), |t| format!("{:.4e}", t)),
+            p.naive_threshold
+                .map_or("absent".to_string(), |t| format!("{:.4e}", t)),
             if p.te > p.threshold {
                 "arrow"
             } else {
@@ -1066,7 +1069,15 @@ fn main() {
         };
         println!(
             "{:>14} → {:<14} | n {:>5} | TE {:.4e} | threshold-naive {} ({}) | threshold-phase {:.4e} ({})",
-            p.from, p.to, p.n, p.te, p.naive_threshold.map_or("absent".to_string(), |t| format!("{:.4e}", t)), naiv, p.threshold, phase
+            p.from,
+            p.to,
+            p.n,
+            p.te,
+            p.naive_threshold
+                .map_or("absent".to_string(), |t| format!("{:.4e}", t)),
+            naiv,
+            p.threshold,
+            phase
         );
     }
     if bz_304 && s304_284 {
@@ -1094,10 +1105,7 @@ fn main() {
     }
     if euv_xr_arrow && xr_euv_arrow {
         let (ux, uy) = (euv_xr_ue, xr_euv_ue);
-        if let (Some(sx), Some(sy)) = (
-            euv_xr_best.map(|p| p.sd),
-            xr_euv_best.map(|p| p.sd),
-        ) {
+        if let (Some(sx), Some(sy)) = (euv_xr_best.map(|p| p.sd), xr_euv_best.map(|p| p.sd)) {
             if ux > uy {
                 println!(
                     "X-Ray ↔ EUV bidirectional — EUV → X-Ray carries the larger excess ({:.2e} vs {:.2e}, surrogate σ {:.2e} vs {:.2e}) → wave heating (Alfvén) prevails, nanoflare share present in the opposite direction.",

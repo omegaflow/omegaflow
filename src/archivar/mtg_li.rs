@@ -388,7 +388,8 @@ pub fn build_channels(
                         config: fc,
                         medium: body_medium,
                         body_radius,
-                        receiver_aperture: receiver_aperture.for_channel(fc.channel_ref, fc.aperture),
+                        receiver_aperture: receiver_aperture
+                            .for_channel(fc.channel_ref, fc.aperture),
                     },
                     AnchorEnvelope {
                         vmax: anchor_vmax,

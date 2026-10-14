@@ -94,8 +94,8 @@ fn report(bytes: &[u8], dump: Option<&str>) {
                     let Ok(data) = file.block_data(cdf, first) else {
                         continue;
                     };
-                    let per = omegaflow::cdf::type_size(v.data_type).unwrap_or(1)
-                        * file.num_values(v);
+                    let per =
+                        omegaflow::cdf::type_size(v.data_type).unwrap_or(1) * file.num_values(v);
                     if per > 0 && data.len() >= per {
                         let Some(vals) = omegaflow::cdf::decode_record(
                             &data[..per],
@@ -112,8 +112,12 @@ fn report(bytes: &[u8], dump: Option<&str>) {
                         }
                         let head: Vec<String> =
                             vals.iter().take(4).map(|x| format!("{x:.6}")).collect();
-                        let tail: Vec<String> =
-                            vals.iter().rev().take(2).map(|x| format!("{x:.6}")).collect();
+                        let tail: Vec<String> = vals
+                            .iter()
+                            .rev()
+                            .take(2)
+                            .map(|x| format!("{x:.6}"))
+                            .collect();
                         println!(
                             "    block0 start={} len={} head={:?} tail={:?}",
                             first.start,
