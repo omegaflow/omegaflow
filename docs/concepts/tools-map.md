@@ -1,8 +1,8 @@
 <!--
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
-  date: 2026-09-29
-  sha256: 8eea52bf9a277f27d5025246130525ae5d7e97aaa7a6ea9d8b9d48f39e223228
+  date: 2026-10-14
+  sha256: 63d4ae4632d4c478f06381c588e039346509b1233983f3763948b5bd1531acfb
   status: live
   see-also: AGENTS.md
 -->
@@ -568,3 +568,119 @@ Der komplette Lauf ist diese Datei selbst: jede Zeile der Tabellen ist ein
 Befehl — `time <befehl>` je Modus, Einzellauf, `src/`-Query `purpleair` bzw.
 die genannten kleinen Queries. Das Skript braucht kein `grep` — nur `time` und
 `wc -l`.
+
+## archive_search — the divers' research tool
+
+`archive_search` is on PATH (symlink to `bin/archive_search`) — the
+self-contained research tool (Rust std + curl + own parse — never
+webfetch/websearch). The wrapper `bin/archive_search` never builds — freshness comes from the rolling
+release `tools-latest` via `bin/.tools_ensure`; a stale/absent artifact reads
+`pending`, named, never a silent zero. One mode per source:
+`--arxiv|--ads|--ntrs|--wayback|--crossref|--wiki|--github|--crates|--librs|
+--brave|--datacite|--zenodo|--isc|--openalex|--base|--supermag|--heasarc <query>`;
+`--all <query>` runs every source; `--playwright <url|query>` renders a page;
+`--leads <keyword>` scans un-registered candidate homes; `--verdict <url>` /
+`--sniff <url>`. A session that dispatches a diver (`taucher`)
+names this tool in the delegation — the standard web tools are the
+slow, expensive fallback, not the first move.
+
+### Local search — three modes (do not confuse them)
+
+- **Content in the live tree** (find a string): `archive_search <keyword> --root
+  <dir>` — caps, match-ranking, binary handling, `--count`, `--case` — or the
+  lean `sgrep` (`-i` for case-insensitive). This is the grep the agents use;
+  the canonical map is `docs/concepts/tools-map.md`.
+- **Path / filename** (not content): `archive_search --index [<query>] [--path]`.
+- **Raw NTFS device / deleted files** (forensics): `archive_search --mft
+  <device>` — needs a device path, not the live repo (which is not NTFS).
+
+### The cost ladder — the research cascade
+
+The tool speaks to **more than 50** network modes, not three (`archive_search --help` is the canon). The cascade, in order — and
+for source *discovery* the breadth is the answer, not a cost:
+
+1. **Content in the live tree** → `archive_search <kw> --root <dir>` or `sgrep`.
+2. **Known URL** → `archive_search --verdict <url>` — the reachability ladder
+   itself: stage 1 direct → stage 2 Proton exit → stage 3 Wayback. No manual
+   `proton-wg.sh` rotation; the tool rotates on 403/429. Then `--sniff <url>`
+   (magic bytes + sha256), then `--playwright <url>` when the plain fetch
+   carries no content (JS-rendered).
+3. **Known source** → the one mode the question needs: `--ads`, `--arxiv`,
+   `--crossref`, `--ntrs`, `--openalex`, `--github`, `--heasarc`, …
+   **Dataset/repository discovery → `--base` first** (BASE, Bielefeld Academic
+   Search Engine, ~400M open documents, `BASE_API_KEY`): it indexes repository and
+   dataset DOIs (NASA PDS, GFZ Data Services, VizieR, institutional repositories)
+   that arXiv/Crossref/OpenAlex miss — measured 2026-10-13, it surfaced the open
+   Venus-radar PDS bundle and the ALFALFA catalogue DOI where the other arms did not.
+4. **Unknown source** → run the web-search engines directly: `--tavily`, `--exa`,
+   `--linkup` (keyed — read from `.secrets.local`; the wrapper exports
+   `OMEGAFLOW_REPO` and the binary resolves the repo from its own path, so they
+   hold from any cwd), plus `--marginalia`/`--mwmbl` (keyless). `--brave` runs
+   explicitly (HTTP 402 while its free quota is spent). `--all <query>` runs
+   every keyword mode **sequentially** (`net.rs:3559`, `all_lines`) — the wall-clock
+   is the sum of every mode's latency (curl + retries + the direct→Proton→Wayback
+   ladder), and the output is written only after the whole loop; the count is the
+   tool's own (`--help`, filled by `query_mode_count()`; measured 2026-10-10: the
+   installed binary reported 62 while `QUERY_MODES` carried 64 in the tree) — the
+   number drifts, the canon is the tool's own `--help`, and its full output lies in
+   the temp file. Slow, breadth, not the first move. The key=value modes (`--isc`/`--cod`/`--biomodels`/`--entrez`/
+   `--ena`/`--supermag`/`--heasarc`) run individually. It prints the
+   top 5 per source inline **and writes the full result to a temp file** (the
+   paged sources openalex/zenodo run ~100 deep) — read that file; the inline
+   summary is not the whole answer. A diver that draws only `--ads`/`--arxiv`
+   has left 36 modes unasked.
+5. **JS-rendered page** → `--playwright <url|query>` (real browser render).
+
+The three measures are distinct: `--verdict` measures reachability, `--sniff`
+measures the file type, `--playwright` measures the rendered content. A stage-3
+`503`/absent on `--verdict` is not a dead end — `--brave` finds the mirror,
+`--playwright` renders the JS page.
+
+**Recherche wird nie auf ein Minimum gekastet (Operator-Wort 2026-10-10).** A measurement is
+read to its measured end. The inline summary is a signpost, never the result:
+`archive_search --all` prints at most five lines per source inline and writes the full result
+to the `full: <pfad>` temp file — **that file is read to its end**, not the preview (the paged
+sources run far deeper than the five shown; a single `--all` run is a breadth measurement, and
+its breadth lives in the file). A document is read to the end the claim needs, never the first
+window and stop. A selection is a measurement only when the selection itself *is* the
+measurement (an explicit criterion stated with the finding); a silent cap — "top 5", "die
+wichtigsten", "excerpt", the first page, the first hits — presented as a finding is an
+unmeasured claim = fabrication. A diver that returns the preview has not measured. This is not
+a licence to inflate context: the *relevant* full extent is read (the source list, the response
+file, the register), while grep-hit windows stay deliberate.
+
+**Geo-suspect and Cloudflare.** A blocked direct route or a Cloudflare
+interstitial is a measured state, not a reason to bypass silently. The tool
+prints `geo-suspect: .<tld> -> proton-wg.sh <cc>` (a suggestion — `bin/proton-wg.sh
+suggest <host>` names a country exit if a free config exists) or `bridge: …`
+when the interstitial did not clear. The session turns that line into a
+**question to the operator** before rotating the exit: a geoblock bypass
+touches the source's terms and, for protected works, anti-circumvention law
+(§ 95a UrhG / DMCA §1201); the access route's state is registered
+(`geo`/`key-needed`/`blocked`), never silently bypassed. The `bin/proton-wg.sh *`
+rotation is an `ask` in the permission map — the operator sees the dialog.
+Cloudflare hosts run through the browser bridge (the operator's profile, which
+passes the managed challenge) or the per-host API/mirror; `--playwright
+--headed` (a persistent profile under `~/.cache/omegaflow/playwright-profile`)
+is the browser path for a display.
+
+## Local tools — the self-contained path
+
+The project's own tools live on `PATH` (via `~/.local/bin`, built from
+`tools/utils`): `sgrep` (grep), `sfetch` (fetch), `omega_sh`
+(`reports|status|search|fetch|jwst`), `smail` (mail), `ci_manage` (GitHub Actions
+runs: `status`/`list`/`view`/`jobs`/`log`/`cancel`/`rerun` — the CI reading, never `gh run
+list`/`gh run view`; `status` shows the current step of every running run,
+`jobs <run-id>...` the per-job step detail, `log <run-id> [--all]` the failed job logs),
+`sread` (file with offset/limit), `register_lookup`, `open_points_check`,
+`git_safety`, `session_burn`. The full map is `docs/concepts/tools-map.md`; at a conflict the
+tool's own `--help` holds. They are Rust std + curl,
+allowed to every agent — prefer them over the standard `webfetch`/`websearch`
+(now denied) and over spawning a fresh process where one of them fits.
+Reachability and file type run through `archive_search --verdict <url>` (direct →
+Proton → Wayback) and `--sniff <url>` (magic bytes + sha256) — not `curl -sI`;
+`curl` stays for binary/Zip content no reader mode carries. Write the step that
+way in handovers, so the next session inherits the convention.
+
+**Werkzeug-Nutzung — die Form (Rat + Operator-Wort, 2026-09-27; `--help` ist der Kanon).** The mode catalog lives in the tool itself: read `--help` before a new mode, never trust a prompt list. The forms: `archive_search` — the cascade known URL → `--verdict` → `--sniff` → `--playwright`; known source → the one mode; unknown → the search engines (`--tavily`/`--exa`/`--linkup` keyed, `--mwmbl`/`--marginalia` keyless); local `--root`/`--index`/`--git`/`--leads`; PDF `--pdf-text`, else `--pdf-image` → vision; `--all` is breadth (the tool's own `--help` count; sequential, the sum of every mode's latency), never the first move, and its full output lies in the temp file (`full: <pfad>`) — read it. `sgrep` — `-i` case-insensitive, `-l` paths only, `-c` count, `--all` for gitignored (direct file paths always read). `sread` — always `--offset`/`--limit`. `sfetch` — `--title`/`--links`. `register_lookup` — `<term>` (is X already measured?), `--open`, `--fired`, `--stale`, `--orphans`, `--orphan-docs`, `--addressed <line>` (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a whole foreign-handover read), `--descoped-check`. `git_safety` — `--snapshot` at start/end, `--close [own paths]` before the commit. `ci_manage` — `status`/`list`/`view`/`jobs`/`log`, never `gh run` (the run-level `updated_at` of `list` is coarse — the current step comes from `status`/`jobs`). `omega_sh` — `sha <datei>`, `reports|status|search|fetch|jwst`. `smail` — `--dry-run` only; the send is the operator's hand. `session_burn` — after the atom. The canonical tools run through the `bin/` wrappers (never `./target/release/*` directly): the wrapper enforces freshness via `bin/.tools_ensure` (content-addressed sha256, TTL 2⁶ min; a stale or absent artifact is named `pending`, never a silent zero); the meta pass runs one `.tools_ensure` sweep per round. CI runs are analyzed **in detail, not only success/fail**: the failure reason is read from the job log — `ci_manage log <id>`, the GH-API directly (`https://api.github.com/repos/omegaflow/omegaflow/actions/runs/<id>/jobs`), or the browser (`browser_snapshot`/`browser_get_text` = content, never pixels) — never conjectured; a red run without a measured reason is `unread`, named, never filled. All agents run in the repo root (delegations name absolute paths); the wrappers export `OMEGAFLOW_REPO`, so the keyed `archive_search` arms resolve `.secrets.local` from any cwd.
+
