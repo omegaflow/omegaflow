@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: Fermi-4LAC-Arm + mev, GEOFON-FDSN-Quelle, SEANOE-Dublette entfernt, Besitz-Zensus, ICGEM --epoch-Override
   class: handover
   date: 2026-10-14
-  sha256: 516bd2a3b9884fc3458a484c38832d0b26409d9325465a88110461ae98b0f942
+  sha256: 5ad361d2acc9a6eed4230e5dbdfe480ca5adb326535186b6f5ee61500f01eed0
   status: live
 -->
 # Handover — Mountain-Folge 342 (2026-10-14)
@@ -101,12 +101,12 @@ river-209, future).
 - **Blockade:** keine.
 - **Braucht:** je der genannte Schritt. `docs/SOURCE_PORT.md`.
 
-### finals-Leser — welche Zeile (eigen)
+### finals-Leser — gebaut, Roster in flight (eigen)
 - **Status:** eigen | **Bindung:** eigen
-- **Trigger:** das Verdikt
-- **Lage:** (gemessen 2026-10-14) Die Spalten sind korrigiert — der Leser liest jetzt Bulletin B (final), Fallback Bulletin A (rapid), committet `d6a078ae5`; vorher las er auf der echten `finals2000A.all` **nichts** (UT1-Spalte um 2 verschoben). **Riss:** der Leser nimmt die **letzte besetzte Zeile** = die fernste Vorhersage (Datei vom 2026-10-14: MJD 61682 = 2027-10-04 `P`), nicht den aktuellsten beobachteten (`I`) Wert.
+- **Trigger:** die Roster-Antworten (Konvergenz)
+- **Lage:** (gemessen 2026-10-14) Spalten korrigiert (`d6a078ae5`); der Leser nimmt jetzt die **letzte gemessene Bulletin-A-`I`-Zeile** (`d26f42dc8`, `test_finals_channels_skips_predicted_lines`) — vorher las er auf der echten Datei nichts und danach die fernste Vorhersage (2027-10-04). Recherche + Rat (fünf Stimmen) konvergieren: Jetzt-Epoche = letzte gemessene A-Zeile, Bulletin B für vergangene Epochen, Vorhersage nie als Jetzt. **CelesTrak als eigene Quelle streichen** (gemessen inhaltsgleich mit USNO). Roster geöffnet: Claude · Mistral · Qwen halten die Frage und rechnen (in-flight, Antwort persistiert); Duck · z.ai · tryingopen nahmen den Auto-Send nicht an (gemessen, Composer leer/Landeseite); Lock `state/zustand/ui-open-weight.lock` gesetzt.
 - **Blockade:** keine.
-- **Braucht:** das Verdikt — letzte **beobachtete** Zeile (aktuellster finaler EOP) vs. fernste Vorhersage. Nachbar-Prüfung: `test_finals_channels_reads_the_bull_b_columns`.
+- **Braucht:** die Roster-Antworten einsammeln (nächster Pass; Persistenz in den Chats), dann den CelesTrak-Block (`phi:10144-10148`, Myceliums `url`-Hand) entfernen und den Lock löschen.
 
 ## An mycelium
 
