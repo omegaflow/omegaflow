@@ -615,7 +615,7 @@ pub fn extract_witness_channels(
     body: &str,
     lsk: &crate::archivar::LeapSeconds,
 ) -> Option<crate::archivar::ExtractResult> {
-    use crate::archivar::{Channel, Extract, ExtractResult, FieldConfig, Position};
+    use crate::archivar::{Channel, Extract, ExtractResult, FieldConfig};
 
     let bytes = std::fs::read(body).ok()?;
     if bytes.len() < 4 || bytes[..4] != MAGIC {
@@ -641,47 +641,93 @@ pub fn extract_witness_channels(
         let Extract::Field(fc) = ext else {
             continue;
         };
-        let Some(var) = file.var(&fc.key) else {
+        let (value_key, axis_key) = match fc.key.split_once('@') {
+            Some((value, axis)) => (value, Some(axis)),
+            None => (fc.key.as_str(), None),
+        };
+        let Some(var) = file.var(value_key) else {
             continue;
         };
-        if var.num_elements != 1 {
-            continue;
-        }
         let Ok(records) = file.var_records(file_bytes, var) else {
             continue;
         };
-        for (rec_num, vals) in &records {
-            let Some(value) = vals.first().copied() else {
-                continue;
-            };
-            if !value_present(value) {
+        let axis: Option<HashMap<u32, Vec<f64>>> = axis_key
+            .and_then(|key| file.var(key))
+            .and_then(|av| file.var_records(file_bytes, av).ok())
+            .map(|rows| rows.into_iter().collect());
+        push_cdf_field(fc, &records, axis.as_ref(), &epoch_map, lsk, &mut channels);
+    }
+    Some(ExtractResult::Measurements(channels))
+}
+
+fn push_cdf_field(
+    fc: &crate::archivar::FieldConfig,
+    records: &[(u32, Vec<f64>)],
+    axis: Option<&HashMap<u32, Vec<f64>>>,
+    epoch_map: &HashMap<u32, f64>,
+    lsk: &crate::archivar::LeapSeconds,
+    out: &mut Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
+) {
+    use crate::archivar::{Channel, Position};
+
+    for (rec_num, vals) in records {
+        let Some(&t_unix) = epoch_map.get(rec_num) else {
+            continue;
+        };
+        if !value_present(t_unix) {
+            continue;
+        }
+        let Some(epoch) = lsk.unix_to_tdb(t_unix) else {
+            continue;
+        };
+        let axis_vals = axis.and_then(|map| map.get(rec_num));
+        for (bin, value) in vals.iter().enumerate() {
+            if !value_present(*value) {
                 continue;
             }
-            let Some(&t_unix) = epoch_map.get(rec_num) else {
-                continue;
+            let (freq, bin_width) = match axis_vals {
+                Some(a) => match axis_at(a, bin) {
+                    Some(pair) => pair,
+                    None => continue,
+                },
+                None => {
+                    if bin > 0 {
+                        continue;
+                    }
+                    (0.0, 0.0)
+                }
             };
-            if !value_present(t_unix) {
-                continue;
-            }
-            let Some(epoch) = lsk.unix_to_tdb(t_unix) else {
-                continue;
-            };
-            channels.push((
+            out.push((
                 Channel {
                     z: 0.0,
-                    freq: 0.0,
-                    bin_width: 0.0,
+                    freq,
+                    bin_width,
                     epoch,
                     station_code: None,
                     position: Position::Source,
                     name: fc.name.clone(),
-                    value,
+                    value: *value,
                 },
                 fc.clone(),
             ));
         }
     }
-    Some(ExtractResult::Measurements(channels))
+}
+
+fn axis_at(axis: &[f64], bin: usize) -> Option<(f64, f64)> {
+    let freq = *axis.get(bin)?;
+    if !(freq.is_finite() && freq > 0.0) {
+        return None;
+    }
+    let lo = bin.checked_sub(1).and_then(|i| axis.get(i).copied());
+    let hi = axis.get(bin + 1).copied();
+    let width = match (lo, hi) {
+        (Some(a), Some(b)) => (b - a).abs() * 0.5,
+        (Some(a), None) => (freq - a).abs(),
+        (None, Some(b)) => (b - freq).abs(),
+        (None, None) => 0.0,
+    };
+    Some((freq, width))
 }
 
 #[cfg(test)]
@@ -809,104 +855,125 @@ mod tests {
     }
 
     #[test]
-    fn extracts_athabasca_channels_when_present() {
-        use crate::archivar::{
-            Aperture, Extract, ExtractResult, FieldConfig, Frame, LeapSeconds, SourceConfig,
-        };
+    fn spectrum_expands_one_channel_per_bin_with_the_axis_frequency() {
+        use crate::archivar::{Aperture, Channel, FieldConfig, LeapSeconds};
 
-        let path = "/tmp/opencode/ath.cdf";
-        if std::fs::read(path).is_err() {
-            return;
-        }
-        let field = |key: &str, name: &str| {
-            Extract::Field(FieldConfig {
+        fn field(key: &str) -> FieldConfig {
+            FieldConfig {
                 key: key.into(),
-                name: name.into(),
+                name: "spectrum".into(),
                 band_id: None,
                 kernel: 0,
                 channel_ref: Some(0),
                 tau: 0.0,
                 absorption: 0.0,
                 advection: 0.0,
-                unit: String::new(),
+                unit: "1".into(),
                 freq: 0.0,
                 bin_width: 0.0,
                 fold: None,
                 aperture: Aperture::None,
-            })
+            }
+        }
+        let lsk = LeapSeconds {
+            delta_t_a: 32.184,
+            deltas: vec![(37.0, 1483228800.0)],
         };
-        let src = SourceConfig {
-            ttl: 3600,
-            url: "https://ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/vlf/ath/x.cdf".into(),
-            origin: None,
-            terms: None,
-            band: None,
-            footprint: None,
-            witness: None,
-            rights_identifier: None,
-            rights_scheme: None,
-            rights_uri: None,
-            frame: Frame::Surface {
-                body_name: "earth".into(),
-                lat: 54.6,
-                lon: 246.36,
-                alt: 693.0,
-            },
-            format: "cdf".into(),
-            extracts: vec![
-                field("ch1", "vlf_ch1"),
-                field("ch2", "vlf_ch2"),
-                field("freq_vlf", "vlf_freq"),
-                field("amplitude_cal_vlf_ch1", "vlf_amp1"),
-                field("amplitude_cal_vlf_ch2", "vlf_amp2"),
-            ],
-            channels: Vec::new(),
-            headers: vec![],
-            post_body: None,
-            target: None,
-            catalog: None,
-            range: None,
-            max_freq: None,
-            min_freq: None,
-            body: None,
-            stations_url: None,
-            stations_path: String::new(),
-            stations_lat: String::new(),
-            stations_lon: String::new(),
-            stations_id: String::new(),
-            hapi_fill: HashMap::new(),
-            flux_from_mag: None,
-            abs_mag_from: None,
-            catalog_epoch: None,
-            repeat_ra_bins: 0,
-            fanout_cap: 0,
-            fanout_center: None,
-            stations_flatten: String::new(),
-            stations_filter: None,
-            fanout_delay: 0,
-            sha256: None,
-            window: None,
-            live_only: false,
-            station_code: None,
-            cgm_lat: None,
-            cgm_source: None,
-            geomag_lat: None,
-            weberin_role: None,
+        let mut epoch_map = HashMap::new();
+        epoch_map.insert(0u32, 1_000_000_000.0);
+        let records = vec![(0u32, vec![1.0, 2.0, 3.0])];
+
+        let mut axis = HashMap::new();
+        axis.insert(0u32, vec![10.0, 30.0, 50.0]);
+        let mut out: Vec<(Channel, FieldConfig)> = Vec::new();
+        push_cdf_field(
+            &field("ch1@freq_vlf"),
+            &records,
+            Some(&axis),
+            &epoch_map,
+            &lsk,
+            &mut out,
+        );
+        assert_eq!(out.len(), 3);
+        assert_eq!(out[0].0.freq, 10.0);
+        assert_eq!(out[1].0.freq, 30.0);
+        assert_eq!(out[2].0.freq, 50.0);
+        assert_eq!(out[1].0.bin_width, 20.0);
+        assert_eq!(out[0].0.value, 1.0);
+        assert_eq!(out[2].0.value, 3.0);
+
+        let mut scalar: Vec<(Channel, FieldConfig)> = Vec::new();
+        push_cdf_field(&field("x"), &records, None, &epoch_map, &lsk, &mut scalar);
+        assert_eq!(scalar.len(), 1);
+        assert_eq!(scalar[0].0.freq, 0.0);
+        assert_eq!(scalar[0].0.bin_width, 0.0);
+    }
+
+    #[test]
+    fn extracts_athabasca_channels_when_present() {
+        use crate::archivar::{Aperture, Channel, FieldConfig, LeapSeconds};
+
+        let path = "/tmp/opencode/ath.cdf";
+        let Ok(bytes) = std::fs::read(path) else {
+            return;
+        };
+        if bytes.len() < 4 || bytes[..4] != MAGIC {
+            return;
+        }
+        let marker = be_u32(&bytes, 4).expect("marker");
+        let owned;
+        let file_bytes: &[u8] = if marker == 0x0000_ffff {
+            &bytes
+        } else {
+            owned = decompress_whole_file(&bytes).expect("gunzip");
+            &owned
+        };
+        let file = CdfFile::parse(file_bytes).expect("cdf3");
+        let epoch_var = cdf_epoch_var(&file).expect("epoch");
+        let epoch_map = file.epoch_map(file_bytes, epoch_var).expect("epochs");
+
+        let ch1 = file.var("ch1").expect("ch1");
+        let freq = file.var("freq_vlf").expect("freq_vlf");
+        assert_eq!(file.num_values(freq), 1024);
+        let ch1_records = file.var_records(file_bytes, ch1).expect("ch1 records");
+        let axis: HashMap<u32, Vec<f64>> = file
+            .var_records(file_bytes, freq)
+            .expect("freq records")
+            .into_iter()
+            .collect();
+
+        let fc = FieldConfig {
+            key: "ch1@freq_vlf".into(),
+            name: "athabasca_vlf_ns_v2_hz".into(),
+            band_id: None,
+            kernel: 0,
+            channel_ref: Some(0),
+            tau: 0.0,
+            absorption: 0.0,
+            advection: 0.0,
+            unit: "V^2/Hz".into(),
+            freq: 0.0,
+            bin_width: 0.0,
+            fold: None,
+            aperture: Aperture::None,
         };
         let lsk = LeapSeconds {
             delta_t_a: 32.184,
             deltas: vec![(37.0, 1483228800.0)],
         };
-        let result = extract_witness_channels(&src, path, &lsk).expect("cdf3 arm");
-        let ExtractResult::Measurements(channels) = result else {
-            panic!("the cdf arm carries measurements");
-        };
-        let mut names: Vec<&str> = channels.iter().map(|(c, _)| c.name.as_str()).collect();
-        names.sort_unstable();
-        names.dedup();
-        for want in ["vlf_ch1", "vlf_ch2", "vlf_freq", "vlf_amp1", "vlf_amp2"] {
-            assert!(names.contains(&want), "missing {want}");
-        }
-        assert!(channels.iter().all(|(c, _)| c.epoch > 0.0));
+        let mut out: Vec<(Channel, FieldConfig)> = Vec::new();
+        push_cdf_field(
+            &fc,
+            &ch1_records[..1],
+            Some(&axis),
+            &epoch_map,
+            &lsk,
+            &mut out,
+        );
+        assert_eq!(out.len(), 1024);
+        assert!(out.iter().all(|(c, _)| c.name == "athabasca_vlf_ns_v2_hz"));
+        assert!((out[0].0.freq - 10.0).abs() < 1e-6, "first bin is 10 Hz");
+        assert!(out.iter().all(|(c, _)| c.freq > 0.0 && c.bin_width > 0.0));
+        assert!(out.iter().all(|(c, _)| c.epoch > 0.0));
     }
 }
