@@ -1,16 +1,15 @@
 #!/bin/sh
-# private_read — the redactor. Reads a file from the private house and prints ONLY its
-# redacted text. Two layers, deterministic first:
-#   Layer 1 (patterns, built in): private-key blocks, API keys, tokens, bearer values,
-#            password/secret/token assignments, and every e-mail address.
-#   Layer 2 (the map, private): $OMEGAFLOW_PRIVATE/redact.map, one `real=PLACEHOLDER`
-#            per line — names, addresses, and the names of third parties who write.
-# The map stays in the private house; the output never carries a real name, address,
-# e-mail, key or secret.
+# private_read — the redactor. Three layers, model first:
+#   Layer 1 (model, Mistral via the local gateway): recognises persons, addresses,
+#            contacts, device IDs IN CONTEXT and replaces them — catches the unknown.
+#   Layer 2 (patterns, built in): private-key blocks, API keys, tokens, MAC, UUID,
+#            IBAN, phone, street, ZIP+city, e-mail — guarantees the shapes.
+#   Layer 3 (the map, private): $OMEGAFLOW_PRIVATE/redact.map — a hint, not a duty.
+# If the gateway is unreachable, Layer 1 is skipped with a warning (patterns+map only).
 #
-# It must run OUTSIDE the cage: the cage rightly hides the private house from the public
-# agent's shell. So it is launched by the operator (their terminal) or by the gateway —
-# never by the caged agent itself.
+# It must run OUTSIDE the cage: the cage rightly hides the private house from the
+# public agent's shell. So it is launched by the operator (their terminal) or by the
+# gateway — never by the caged agent itself.
 #
 # Usage: private_read <path-under-private | absolute-path-under-private>
 set -eu
@@ -30,8 +29,28 @@ map="$priv/redact.map"
 
 filter="$(mktemp)"
 mapscript="$(mktemp)"
-trap 'rm -f "$filter" "$mapscript"' EXIT
+src="$(mktemp)"
+trap 'rm -f "$filter" "$mapscript" "$src"' EXIT
 
+# ---- Layer 1: the model net (Mistral via the local gateway) ----
+gateway="${OMEGAFLOW_GATEWAY:-http://127.0.0.1:1621/v1/chat/completions}"
+model="${OMEGAFLOW_REDACT_MODEL:-ollama/gpt-oss:20b}"
+prompt='Du bist ein Schwärzer. Ersetze JEDE Person (Vorname, Nachname, beides), jede Postadresse, jede Telefonnummer, jede E-Mail-Adresse, jede Geräte- und Netz-Kennung (MAC, UUID, Seriennummer) und jeden Kontaktnamen durch einen Platzhalter: <NAME> <ADDR> <TEL> <EMAIL> <DEVICE> <CONTACT>. Behalte den übrigen Text WÖRTLICH und vollständig. Gib NUR den umgewandelten Text zurück — keine Erklärung, keine Einleitung, keine Anführungszeichen.'
+body="$(jaq -Rs --arg m "$model" --arg s "$prompt" \
+  '{model:$m,temperature:0,messages:[{role:"system",content:$s},{role:"user",content:.}]}' < "$f" 2>/dev/null || true)"
+red=""
+if [ -n "$body" ]; then
+  resp="$(curl -s -m 180 "$gateway" -H 'Content-Type: application/json' -d "$body" 2>/dev/null || true)"
+  red="$(printf '%s' "$resp" | jaq -r '.choices[0].message.content // empty' 2>/dev/null || true)"
+fi
+if [ -n "$red" ]; then
+  printf '%s\n' "$red" > "$src"
+else
+  printf 'private_read: model net unavailable — patterns + map only\n' >&2
+  cat "$f" > "$src"
+fi
+
+# ---- Layer 2: the patterns ----
 cat > "$filter" <<'SED'
 s/sk-[A-Za-z0-9_-]\{16,\}/<KEY>/g
 s/github_pat_[A-Za-z0-9_]\{20,\}/<KEY>/g
@@ -40,17 +59,18 @@ s/AKIA[0-9A-Z]\{16\}/<KEY>/g
 s/AIza[0-9A-Za-z_-]\{30,\}/<KEY>/g
 s/[0-9A-Fa-f]\{2\}\(:[0-9A-Fa-f]\{2\}\)\{5\}/<MAC>/g
 s/[0-9a-fA-F]\{8\}-[0-9a-fA-F]\{4\}-[0-9a-fA-F]\{4\}-[0-9a-fA-F]\{4\}-[0-9a-fA-F]\{12\}/<UUID>/g
-s/[A-Z]\{2\}[0-9]\{2\}[A-Z0-9]\{10,\}/<IBAN>/g
-s/[A-ZÄÖÜ][a-zäöüß-]\{2,\}\(straße\|str\.\|weg\|gasse\|platz\|allee\|ring\|damm\|ufer\)[[:space:]]\{0,2\}[0-9]\{1,4\}[a-z]\{0,1\}\b/<ADDR>/g
-s/[0-9]\{5\}[[:space:]]\{1,2\}[A-ZÄÖÜ][a-zäöüß-]\{2,\}/<ORT>/g
-s/\b\(Tel\|Telefon\|Mobil\|Handy\|Fax\)[[:space:]]*[:.]*[[:space:]]*[+0-9][0-9 ()/.-]\{5,\}[0-9]\b/<TEL>/g
 s/xox[baprs]-[A-Za-z0-9-]\{10,\}/<KEY>/g
 s/hf_[A-Za-z0-9]\{20,\}/<KEY>/g
 s/Bearer[[:space:]]\{1,\}[A-Za-z0-9._-]\{16,\}/Bearer <KEY>/g
 s/\([Pp]assword\|[Pp]asswd\|[Ss]ecret\|[Tt]oken\|[Aa]pi[-_]\?[Kk]ey\|[Kk]ey\)[[:space:]]*[:=][[:space:]]*[^[:space:]]\{1,\}/\1=<SECRET>/g
 s/[A-Za-z0-9._%+-]\{1,\}@[A-Za-z0-9.-]\{1,\}\.[A-Za-z]\{2,\}/<EMAIL>/g
+s/[A-Z]\{2\}[0-9]\{2\}[A-Z0-9]\{10,\}/<IBAN>/g
+s/[A-ZÄÖÜ][a-zäöüß-]\{2,\}\(straße\|str\.\|weg\|gasse\|platz\|allee\|ring\|damm\|ufer\)[[:space:]]\{0,2\}[0-9]\{1,4\}[a-z]\{0,1\}\b/<ADDR>/g
+s/[0-9]\{5\}[[:space:]]\{1,2\}[A-ZÄÖÜ][a-zäöüß-]\{2,\}/<ORT>/g
+s/\b\(Tel\|Telefon\|Mobil\|Handy\|Fax\)[[:space:]]*[:.]*[[:space:]]*[+0-9][0-9 ()/.-]\{5,\}[0-9]\b/<TEL>/g
 SED
 
+# ---- Layer 3: the map ----
 awk -F'=' '
   /^[[:space:]]*#/ { next }
   /^[[:space:]]*$/ { next }
@@ -74,4 +94,4 @@ awk '
   /-----END [A-Z ]*PRIVATE KEY-----/ { inkey=0; print "</PRIVATE KEY>"; next }
   inkey { next }
   { print }
-' "$f" | sed -f "$filter" | sed -f "$mapscript"
+' "$src" | sed -f "$filter" | sed -f "$mapscript"
