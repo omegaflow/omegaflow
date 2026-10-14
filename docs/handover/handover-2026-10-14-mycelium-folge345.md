@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 345 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: 1f79f4e52afbb5beb41798d28be25cc25f9eeee486d5dff68c8d4f119b811cf7
+  sha256: 61ad146b6a097156aac44d43504ed8eec7a23012e3e9e82e69f627f11d6a7384
   status: live
 -->
 # Handover — Mycelium-Folge 345 (2026-10-14)
@@ -180,7 +180,6 @@ Origin: mycelium-345 (2026-10-14):
 Origin: mycelium-345 (2026-10-14):
 
 - `xfer:mycelium-344-4` **DE-2 + `asset=`-Riss** — die Riss-Klärung steht (`harvest-dispatch.yml:106` liest `asset=`); der Lauf `38489787692` scheitert **gemessen am Host** (`cdaweb.gsfc.nasa.gov` TLS-Abbruch; lokal `--verdict` bestätigt host-spezifisch). `asset=fehlt` bleibt bis zum ersten erfolgreichen Pull.
-- `xfer:river208-schumann1` **Schumann** — erledigt: Block `phi:1038-1043` trägt `sha256 3183a14f…`, `zenodo-raw-cdn.yml:56-59` die Matrix-Zeile; Release-Asset `resonance_schumann.csv` gemessen **HTTP 206** (present).
 
 ## LOCK
 
