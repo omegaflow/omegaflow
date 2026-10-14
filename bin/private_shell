@@ -1,0 +1,12 @@
+#!/bin/sh
+# private_shell — the private house's shell wrapper. It declares the ONE private root
+# so the tools (smail, register_lookup, open_points_check) find the register: mail/,
+# zustand/, future/. Without it, state_dir() falls back to ~/.local/state/omegaflow —
+# no mailbox, "sieht nichts". Then it hands over to bash, unchanged.
+#
+# It lives in the public bin/ only because that is where a file can be made
+# executable from the public session; it names the private root by its declared path.
+export OMEGAFLOW_STATE="${OMEGAFLOW_STATE:-$HOME/projects/omegaflow-personal}"
+export OMEGAFLOW_PRIVATE="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}"
+export OMEGAFLOW_REPO="${OMEGAFLOW_REPO:-$HOME/projects/omegaflow}"
+exec /bin/bash "$@"
