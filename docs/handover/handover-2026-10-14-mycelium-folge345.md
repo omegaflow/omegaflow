@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 345 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: 13eeb79fdcf13117df497adab773ecdf29f087a040e8bc2143c4554aa719061b
+  sha256: 6a4e854754e443efc63cf3d3bb81e0b620bd85d9f9695f090c1e535f2744904a
   status: live
 -->
 # Handover — Mycelium-Folge 345 (2026-10-14)
@@ -53,9 +53,9 @@ den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 ### MODVOLC-Archiv 2000–2019 — LAADS-Route gemessen (Auth, keine Blockade)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** kein — Bau (Compiler-Archiv-Modus)
-- **Lage:** (gemessen 2026-10-14/345) Die Archiv-Route liegt unter **Collection 6** — `https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/6/MODVOLC/` (der C61-Pfad ist 404). Der anonyme `GET` antwortet **303** → `/profiles/licenses/…` → `/oauth/login` → `urs.earthdata.nasa.gov/oauth/authorize` (OAuth2-Code, `client_id=A6th7HB-3EBoO7iOCiCLlA`); die Datei ist hinter **Earthdata Login**. **Auth = `Authorization: Bearer <EDL-Token>`** (der EDL-Token *ist* das LAADS-Credential, ~60 Tage). `EARTHDATA_EDL_TOKEN` liegt in `.secrets.local`. **Auth-Route gebaut:** `archive_search` trägt jetzt LAADS-Hosts (`ladsweb`/`nrt3.modaps.eosdis.nasa.gov`) im Earthdata-Token-Set **und** behandelt **303** als Auth-Gate (`token.rs`) — damit zieht der Verdict-Pfad den Bearer automatisch. **Gemessen im Browser:** der Operator ist bei Earthdata eingeloggt; das Profil verlangt vor der LAADS-App-Autorisierung **User Type + Organization** (offen). Lokaler Token-Zug lief in einen Login-Redirect — Token-Gültigkeit/Profil zu prüfen.
-- **Blockade:** keine.
-- **Braucht:** (1) EDL-Token-Gültigkeit + Profil (User Type/Organization) prüfen; (2) im `modvolc_compiler.rs` einen Archiv-Modus (`--archive-year`, C6-Pfad, Bearer-Header) ergänzen; dann das 2000–2019-Fenster ziehen.
+- **Lage:** (gemessen 2026-10-14/345) Die Archiv-Route liegt unter **Collection 6** — `https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/6/MODVOLC/` (der C61-Pfad ist 404). Der anonyme `GET` antwortet **303** → `/profiles/licenses/…` → `/oauth/login` → `urs.earthdata.nasa.gov/oauth/authorize`; die Datei ist hinter **Earthdata Login**. **Auth = `Authorization: Bearer <EDL-Token>`** (der EDL-Token *ist* das LAADS-Credential, ~60 Tage); `EARTHDATA_EDL_TOKEN` liegt in `.secrets.local`. **Auth-Route gebaut:** `archive_search` trägt LAADS-Hosts im Earthdata-Token-Set **und** behandelt **303** als Auth-Gate (`token.rs`). **Browser-Gegenprobe (2026-10-14, Operator-Wort):** der Operator ist eingeloggt (`omegaflow.space`); der Pfad landet auf der **LAADS-Profile/Licences-Seite** mit dem Hinweis **„These resources … are not yet approved for public release. If you require special access … contact our User Support service"** — das C6-MODVOLC-Archiv ist **nicht frei**, sondern braucht eine **Zugangsanfrage** (LAADS User Support). Zusätzlich verlangt Earthdata vor der App-Autorisierung **User Type + Organization** (offen).
+- **Blockade:** das Archiv ist „not yet approved for public release" → Zugang nur über LAADS User Support.
+- **Braucht:** (1) eine **Zugangsanfrage an LAADS User Support** (Operator-Hand / Future-Queue); (2) Earthdata-Profil (User Type/Organization) vervollständigen; (3) erst danach den Archiv-Modus im `modvolc_compiler.rs` bauen.
 
 ### ENTSŌ-E A78 — Header-Tag korrigiert; Query-Defekt gemessen
 - **Status:** eigen | **Bindung:** eigen
