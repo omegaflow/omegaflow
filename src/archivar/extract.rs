@@ -4067,6 +4067,145 @@ fn hapi_family_field<'a>(extracts: &'a [Extract], name: &str) -> Option<&'a Fiel
     })
 }
 
+fn hapi_feed_level(row: &[JsonVal], idx: Option<usize>, level: usize) -> Option<f64> {
+    let cell = row.get(idx?)?;
+    match cell {
+        JsonVal::Arr(a) => a.get(level).and_then(scalar_of),
+        other => scalar_of(other),
+    }
+}
+
+fn hapi_surface_position(
+    row: &[JsonVal],
+    lat_idx: Option<usize>,
+    lon_idx: Option<usize>,
+    alt_idx: Option<usize>,
+    level: usize,
+    body_name: &str,
+) -> Position {
+    let lat = hapi_feed_level(row, lat_idx, level);
+    let lon = hapi_feed_level(row, lon_idx, level);
+    let alt = hapi_feed_level(row, alt_idx, level).map(|a| a * 1000.0);
+    match (lat, lon, alt) {
+        (Some(lat), Some(lon), Some(alt)) => Position::Surface {
+            body_name: body_name.to_string(),
+            lat,
+            lon,
+            alt,
+        },
+        _ => Position::Source,
+    }
+}
+
+fn hapi_emit_row(
+    row: &[JsonVal],
+    pairs: &[(String, String)],
+    extracts: &[Extract],
+    col: &HashMap<String, usize>,
+    fill_of: &HashMap<String, f64>,
+    size_of: &HashMap<String, usize>,
+    epoch: f64,
+    lat_idx: Option<usize>,
+    lon_idx: Option<usize>,
+    alt_idx: Option<usize>,
+    body_name: &str,
+    channels: &mut Vec<(Channel, FieldConfig)>,
+) {
+    for (param, name) in pairs {
+        if name.starts_with("@") {
+            continue;
+        }
+        if let Some(base) = param.strip_suffix(".<i>") {
+            let Some(&idx) = col.get(base) else {
+                continue;
+            };
+            let Some(&size) = size_of.get(base) else {
+                continue;
+            };
+            let Some(fc) = hapi_family_field(extracts, name) else {
+                continue;
+            };
+            let fill = fill_of.get(base).copied();
+            for i in 0..size {
+                let Some(JsonVal::Arr(a)) = row.get(idx) else {
+                    break;
+                };
+                let Some(val) = a.get(i).and_then(scalar_of) else {
+                    continue;
+                };
+                if fill.is_some_and(|f| val == f) {
+                    continue;
+                }
+                let name_i = if name.contains("<i>") {
+                    name.replace("<i>", &i.to_string())
+                } else {
+                    format!("{name}_{i}")
+                };
+                let mut eff_fc = fc.clone();
+                eff_fc.key = name_i.clone();
+                eff_fc.name = name_i.clone();
+                channels.push((
+                    Channel {
+                        z: 0.0,
+                        freq: 0.0,
+                        bin_width: 0.0,
+                        epoch,
+                        station_code: None,
+                        position: hapi_surface_position(
+                            row, lat_idx, lon_idx, alt_idx, i, body_name,
+                        ),
+                        name: name_i,
+                        value: val,
+                    },
+                    eff_fc,
+                ));
+            }
+            continue;
+        }
+        let (base, comp) = match param.rfind(".") {
+            Some(dot) if param[dot + 1..].chars().all(|c| c.is_ascii_digit()) => {
+                (&param[..dot], param[dot + 1..].parse::<usize>().ok())
+            }
+            _ => (param.as_str(), None),
+        };
+        let Some(&idx) = col.get(base) else {
+            continue;
+        };
+        let v = match comp {
+            Some(i) => row.get(idx).and_then(|cell| {
+                if let JsonVal::Arr(a) = cell {
+                    a.get(i).and_then(scalar_of)
+                } else {
+                    None
+                }
+            }),
+            None => row.get(idx).and_then(scalar_of),
+        };
+        let Some(val) = v else {
+            continue;
+        };
+        if fill_of.get(base).is_some_and(|&f| val == f) {
+            continue;
+        }
+        let Some(fc) = hapi_family_field(extracts, name) else {
+            continue;
+        };
+        channels.push((
+            Channel {
+                z: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
+                epoch,
+                station_code: None,
+                position: hapi_surface_position(row, lat_idx, lon_idx, alt_idx, 0, body_name),
+                name: name.clone(),
+                value: val,
+            },
+            fc.clone(),
+        ));
+    }
+}
+
 fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> ExtractResult {
     if src.format == "ephemeris_binary"
         || matches!(
@@ -6940,7 +7079,10 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         fill_of.entry(k.clone()).or_insert(*v);
                     }
                     if !has_params {
-                        if pairs.len() == 1 && !pairs[0].0.contains('.') {
+                        if pairs.len() == 1
+                            && !pairs[0].0.contains(".")
+                            && !pairs[0].1.starts_with("@")
+                        {
                             if let Some(JsonVal::Arr(row)) = data.last()
                                 && let Some(val) = row.last().and_then(scalar_of)
                                 && fill_of.get(pairs[0].0.as_str()).is_none_or(|&f| val != f)
@@ -6958,7 +7100,44 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             }
                         }
                     }
-                    if let Some(last_row) = data.last()
+                    let pos_feed = pairs
+                        .iter()
+                        .any(|(_, name)| matches!(name.as_str(), "@lat" | "@lon" | "@alt"));
+                    if pos_feed {
+                        let body_name = frame_body_name(&src.frame);
+                        let lat_idx = pairs
+                            .iter()
+                            .find(|entry| entry.1 == "@lat")
+                            .and_then(|(param, _)| col.get(param.as_str()).copied());
+                        let lon_idx = pairs
+                            .iter()
+                            .find(|entry| entry.1 == "@lon")
+                            .and_then(|(param, _)| col.get(param.as_str()).copied());
+                        let alt_idx = pairs
+                            .iter()
+                            .find(|entry| entry.1 == "@alt")
+                            .and_then(|(param, _)| col.get(param.as_str()).copied());
+                        for row_val in data {
+                            let JsonVal::Arr(row) = row_val else {
+                                continue;
+                            };
+                            let epoch = series_epoch_of(row_val, lsk).unwrap_or(now);
+                            hapi_emit_row(
+                                row,
+                                pairs,
+                                effective_extracts,
+                                &col,
+                                &fill_of,
+                                &size_of,
+                                epoch,
+                                lat_idx,
+                                lon_idx,
+                                alt_idx,
+                                &body_name,
+                                &mut channels,
+                            );
+                        }
+                    } else if let Some(last_row) = data.last()
                         && let JsonVal::Arr(row) = last_row
                     {
                         for (param, name) in pairs {

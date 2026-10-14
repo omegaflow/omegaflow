@@ -748,19 +748,21 @@ fn test_hapi_fill_skipped_and_component_index() {
 }
 
 #[test]
-fn test_hapi_family_levels_expand_to_scalar_source_channels() {
+fn test_hapi_family_levels_expand_per_row_to_surface_channels() {
     let json = r#"{
         "parameters": [
             {"name": "Time"},
             {"name": "ktemp", "size": [3], "fill": -999.0},
-            {"name": "tpgpaltitude", "size": [3], "fill": -999.0}
+            {"name": "tpgpaltitude", "size": [3], "fill": -999.0},
+            {"name": "tplatitudeAVG"},
+            {"name": "tplongitudeAVG"}
         ],
         "data": [
-            ["2026-08-18T00:00:00Z", [200.0, 210.0, 220.0], [10.0, 20.0, 30.0]],
-            ["2026-08-18T01:00:00Z", [201.0, 211.0, 221.0], [11.0, 21.0, 31.0]]
+            ["2026-08-18T00:00:00Z", [200.0, 210.0, 220.0], [10.0, 20.0, 30.0], 40.0, 50.0],
+            ["2026-08-18T01:00:00Z", [201.0, 211.0, 221.0], [11.0, 21.0, 31.0], 43.0, 53.0]
         ]
     }"#;
-    let src = source_fixture(
+    let mut src = source_fixture(
         "json",
         vec![
             Extract::Field(field_fixture("saber_ktemp", 3600.0)),
@@ -768,12 +770,23 @@ fn test_hapi_family_levels_expand_to_scalar_source_channels() {
             Extract::Hapi(vec![
                 ("ktemp.<i>".into(), "saber_ktemp".into()),
                 ("tpgpaltitude.<i>".into(), "saber_tpgpaltitude".into()),
+                ("tplatitudeAVG".into(), "@lat".into()),
+                ("tplongitudeAVG".into(), "@lon".into()),
+                ("tpgpaltitude".into(), "@alt".into()),
             ]),
         ],
     );
+    src.frame = Frame::Barycenter {
+        body_name: "earth".into(),
+        scale: 1.0,
+    };
     match extract(&src, json, 8.0e8, &fixture_lsk()) {
         ExtractResult::Measurements(channels) => {
-            assert_eq!(channels.len(), 6, "3 ktemp + 3 tpgpaltitude levels");
+            assert_eq!(
+                channels.len(),
+                12,
+                "2 rows x 3 ktemp + 3 tpgpaltitude levels"
+            );
             let vals: Vec<(&str, f64)> = channels
                 .iter()
                 .map(|(c, fc)| (fc.name.as_str(), c.value))
@@ -782,9 +795,40 @@ fn test_hapi_family_levels_expand_to_scalar_source_channels() {
             assert!(vals.contains(&("saber_ktemp_2", 221.0)));
             assert!(vals.contains(&("saber_tpgpaltitude_0", 11.0)));
             assert!(vals.contains(&("saber_tpgpaltitude_2", 31.0)));
+            assert!(vals.contains(&("saber_ktemp_0", 200.0)));
+            assert!(vals.contains(&("saber_ktemp_2", 220.0)));
+            let e0 = super::parse_iso_tdb("2026-08-18T00:00:00Z", &fixture_lsk()).unwrap();
+            let e1 = super::parse_iso_tdb("2026-08-18T01:00:00Z", &fixture_lsk()).unwrap();
+            let mut row0 = 0;
+            let mut row1 = 0;
             for (c, _) in &channels {
-                assert!(matches!(c.position, Position::Source));
+                match &c.position {
+                    Position::Surface {
+                        body_name,
+                        lat,
+                        lon,
+                        alt,
+                    } => {
+                        assert_eq!(body_name.as_str(), "earth");
+                        if (c.epoch - e0).abs() < 1e-6 {
+                            assert_eq!(*lat, 40.0);
+                            assert_eq!(*lon, 50.0);
+                            assert!([10000.0, 20000.0, 30000.0].contains(alt));
+                            row0 += 1;
+                        } else if (c.epoch - e1).abs() < 1e-6 {
+                            assert_eq!(*lat, 43.0);
+                            assert_eq!(*lon, 53.0);
+                            assert!([11000.0, 21000.0, 31000.0].contains(alt));
+                            row1 += 1;
+                        } else {
+                            panic!("epoch not from Time: {}", c.epoch);
+                        }
+                    }
+                    other => panic!("position is not the tangential Surface: {other:?}"),
+                }
             }
+            assert_eq!(row0, 6);
+            assert_eq!(row1, 6);
         }
         _ => panic!("extract is not Measurements"),
     }
@@ -806,6 +850,66 @@ fn test_hapi_family_levels_expand_to_scalar_source_channels() {
         ExtractResult::Measurements(channels) => {
             assert_eq!(channels.len(), 2, "the -999.0 level is absent, not a value");
             assert!(!channels.iter().any(|(_, fc)| fc.name == "saber_ktemp_1"));
+        }
+        _ => panic!("extract is not Measurements"),
+    }
+}
+
+#[test]
+fn test_hapi_row_epoch_from_time_and_tangential_surface() {
+    let json = r#"{
+        "parameters": [
+            {"name": "Time"},
+            {"name": "ktemp", "size": [1], "fill": -999.0},
+            {"name": "tplatitudeAVG"},
+            {"name": "tplongitudeAVG"},
+            {"name": "tpgpaltitude", "size": [1], "fill": -999.0}
+        ],
+        "data": [
+            ["2026-08-18T00:00:00Z", [200.0], 40.0, 50.0, [10.0]]
+        ]
+    }"#;
+    let mut src = source_fixture(
+        "json",
+        vec![
+            Extract::Field(field_fixture("saber_ktemp", 3600.0)),
+            Extract::Hapi(vec![
+                ("ktemp.<i>".into(), "saber_ktemp".into()),
+                ("tplatitudeAVG".into(), "@lat".into()),
+                ("tplongitudeAVG".into(), "@lon".into()),
+                ("tpgpaltitude".into(), "@alt".into()),
+            ]),
+        ],
+    );
+    src.frame = Frame::Barycenter {
+        body_name: "earth".into(),
+        scale: 1.0,
+    };
+    let expected =
+        super::parse_iso_tdb("2026-08-18T00:00:00Z", &fixture_lsk()).expect("the row time parses");
+    match extract(&src, json, 8.0e8, &fixture_lsk()) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 1, "one ktemp level");
+            let (channel, _) = &channels[0];
+            assert!(
+                (channel.epoch - expected).abs() < 1e-6,
+                "the epoch comes from Time, not now: {} vs {expected}",
+                channel.epoch
+            );
+            match &channel.position {
+                Position::Surface {
+                    body_name,
+                    lat,
+                    lon,
+                    alt,
+                } => {
+                    assert_eq!(body_name.as_str(), "earth");
+                    assert_eq!(*lat, 40.0);
+                    assert_eq!(*lon, 50.0);
+                    assert_eq!(*alt, 10000.0, "tpgpaltitude km becomes meters");
+                }
+                other => panic!("expected the tangential Surface, got {other:?}"),
+            }
         }
         _ => panic!("extract is not Measurements"),
     }
