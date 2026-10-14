@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 349 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: 155f73e44ad03dd90f82b769af41b34ad23770eac912f05ca4d6ff091e2d6170
+  sha256: 326540855dd23ff03d890e7bc500f90da41ca972ad893a725a623bbc0bf9daab
   status: live
 -->
 # Handover — Mycelium-Folge 349 (2026-10-14)
@@ -13,7 +13,8 @@ wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/zustand/standing-
 `handover-2026-10-14-mycelium-folge348.md` (→ `archiv/`).
 
 Gefaltet (`register_lookup --addressed mycelium`): `mountain-folge346` (Venus-Parser erledigt ·
-Gewebe-Fäden IGETS/BGI/GEOFON an Mycelium) · `river-folge211` (intermagnet aufgeklärt ·
+Gewebe-Fäden IGETS/BGI/GEOFON an Mycelium) · `mountain-folge347` (cdn_reconcile-Rot geheilt ·
+vier CDN-Blöcke an Mycelium · celestrak-Workflow stilllegen) · `river-folge211` (intermagnet aufgeklärt ·
 ENTSO-E-Defekt · CTBTO · Weberin-Zeugen · Schumann · Register→Manifest).
 
 ## Burn: open 0.0 · close pending — der Session-Store (`opencode.db`) fehlt auf dieser Maschine, `session_burn` ist nicht gemessen (Vorbehalt wie river-212) · cap 0.40 · Grund: die Register-Messung (`cdn_reconcile`, `--tokens`, `--orphans`, `--orphan-docs`), die HIGP-Bestands-Messung, die Handover-Fortschreibung.
@@ -52,6 +53,17 @@ ENTSO-E-Defekt · CTBTO · Weberin-Zeugen · Schumann · Register→Manifest).
 - **Lage:** (gemessen 2026-10-14/347) LAADS-Antwort: **„this product is not approved for public distribution, so users cannot access this product"** → die LAADS-Route ist **geschlossen**. Alternative: HIGP-Bulk-Tree (`modis.higp.hawaii.edu`, kein Login, `local-only`); für den modernen Rand deckt LANCE `nrt3` (`Recent/`, Workflow `modvolc-cdn.yml`) ab.
 - **Blockade:** keine.
 - **Braucht:** nichts — der Befund steht; der HIGP-Vollzug (oben) trägt den Bestand.
+
+### Vier CDN-Quellen — Blöcke offen (Transport = Mycelium; terms = Mountain)
+- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
+- **Trigger:** Mountains `terms`/`field` je Block
+- **Lage:** (gemessen 2026-10-14/349, mountain-347) `cdn_reconcile --fail` war rot durch fünf CDN-Hosts ohne Block; Mountain band sie in `docs/specs/cdn-tag-baseline.txt` (Hunk, `cdn_reconcile: cap+tag contract clean (325 registry hosts)`). Vier **echte** Quellen brauchen den Block; `url`/`origin`/`compiler`/`format` = Mycelium, `terms`/`field`/`ttl` = Mountain:
+  - `babamul.caltech.edu` — `babamul_compiler.rs:7`, `origin https://babamul.caltech.edu/api/babamul`, Asset `babamul_alerts.bin` (ZTF-Alert-Stream, `sky1`).
+  - `lasp.colorado.edu-eve` — `eve_compiler.rs:8` CDN_TAG, SDO EVE Level-2 Linien-Irradianz (`https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2`), Asset `eve_lines_2011.bin`; Terms-Riss (LISIRD ohne Terms-Seite).
+  - `vo.lmd.jussieu.fr` — `mars_dust_compiler.rs:14` CDN_TAG, TAP `http://vo.lmd.jussieu.fr/tap/sync`, Format `mars_dust` (MDST), TTL 604800, TAU 86400, em `inverse-square`, Körper `mars`, Asset `mars_dust_MY25_1FpSol.bin`.
+  - `maxi.riken.jp` — `maxi_compiler.rs:9` NETLOC, Origin `http://maxi.riken.jp/star_data/…`, Format `maxi` (MAX1, 4 Bänder keV), Asset `maxi_J0006+202.max1`.
+- **Der stille `celestrak.org`-Ablauf ist gefallen** — `.github/workflows/celestrak-eop-cdn.yml` entfernt (per EOP-Verdikt `b138796d4`; USNO `finals` trägt EOP). Kein Block.
+- **Braucht:** Mountains `terms`/`field` je Quelle; dann den Block setzen + `register_sort`; danach fallen die vier Baseline-Zeilen. An Mountain: `xfer:mycelium-349-7`.
 
 ### DE-2-Manifestation — Host `cdaweb.gsfc.nasa.gov` unerreichbar
 - **Status:** wartend | **Bindung:** wartend
