@@ -71,7 +71,7 @@ eingelesen:
 
 !`cat ~/projects/omegaflow-work/ui/mycelium-preset.txt`
 
-**Linien-UI-Gruppe (Operator-Wort 2026-10-07; Speicher-Regel).** Die 4 Frontier-Chats (Duck · Claude · Qwen · Z.ai) dieser Linie liegen in der **eigenen** Gruppe — genau eine je Linie, kein Fremd-Composer. **Tabs sind just-in-time:** öffnen nur für einen Stimmen-Round (`browser_open … focus:false`), danach schließen (`browser_close`). Die **Tryingopen-Seats sind geteilt** in der zustandslosen Gruppe `open-weight-ui` (ein Tab je Modell, kein Modellwechsel im Chat); Zugang nur über das Lock `~/projects/omegaflow-work/ui/open-weight.lock` (Halter-Linie + Zeit setzen/löschen) — zwei Linien fahren die Seats nie gleichzeitig. Peak = 4 Frontier + Seats nur während der Runde. Gruppenname: `~/projects/omegaflow-work/ui/mycelium-group.txt`:
+**Linien-UI-Gruppe (Operator-Wort 2026-10-07; Speicher-Regel).** Der **Roster ist variabel** — die volle Seat-Liste steht im UI-Dokument (`~/projects/omegaflow-work/ui-seats.md`), nicht in diesem Befehl. Deine Linie fährt ihre Sitze in der **eigenen** Gruppe. **Tabs sind just-in-time:** öffnen nur für einen Stimmen-Round (`browser_open … focus:false`), danach schließen (`browser_close`). Die **Tryingopen-Seats sind geteilt** in der zustandslosen Gruppe `open-weight-ui` (ein Tab je Modell, kein Modellwechsel im Chat); Zugang nur über das Lock `~/projects/omegaflow-work/ui/open-weight.lock` (Halter-Linie + Zeit setzen/löschen) — zwei Linien fahren die Seats nie gleichzeitig. Peak = die gefahrene Runde (Roster + geteilte Seats), nur für den Round offen. Gruppenname: `~/projects/omegaflow-work/ui/mycelium-group.txt`:
 
 !`cat ~/projects/omegaflow-work/ui/mycelium-group.txt`
 
