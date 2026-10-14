@@ -23,21 +23,4 @@ obis.osha.gov
 # (Mountain field/ttl nach Kern-Slot 2, pending). Gemessen via `ci_manage log 37621486821`
 # (cdn_reconcile --fail). Zeile fällt, sobald der eionet_cdr-Block in phi/sources.φ steht.
 cdr.eionet.europa.eu
-#
-# 2026-10-14 (Mountain 347): fuenf CDN-Workflows schreiben Releases, deren Host weder
-# in phi/sources.φ noch in §1 COMPILER_NETLOCS gebunden ist. Gemessen am HEAD
-# `./target/release/cdn_reconcile --fail` (5 Drifts); die fuenf Quellen an ihren
-# Compiler-Konstanten gemessen (Taucher 347). Vier Netlocs wurden 2026-10-13 fuer
-# fehlende offene Lizenz aus phi entfernt — `1b519375b` (babamul.caltech.edu,
-# maxi.riken.jp, vo.lmd.jussieu.fr) und `9c60ddf89` (lasp.colorado.edu,
-# `permission-required`); ihre Bloecke stehen ohne `terms` im Arbeitsbaum
-# (`git diff phi/sources.φ`), das Terms-Verdikt (Mountain) fehlt. celestrak.org fiel
-# per EOP-Verdikt (`b138796d4`, USNO finals traegt EOP); der Workflow ist stale.
-# Zeilen fallen, sobald die Bloecke mit zugelassenem `terms` landen bzw. der
-# celestrak-Workflow faellt.
-babamul.caltech.edu
-celestrak.org
-lasp.colorado.edu-eve
-vo.lmd.jussieu.fr
-maxi.riken.jp
 
