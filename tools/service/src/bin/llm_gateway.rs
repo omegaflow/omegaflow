@@ -72,8 +72,8 @@ const ROUTES: &[Route] = &[
     },
     Route {
         prefix: "mistral",
-        provider: "Mistral",
-        base_url: "https://api.mistral.ai/v1",
+        provider: "Mistral (EU)",
+        base_url: "https://api.eu.mistral.ai/v1",
         key_env: "MISTRAL_API_KEY",
         auth_id: "mistral",
     },
@@ -535,6 +535,40 @@ fn retry_after_secs(headers: &str) -> Option<u64> {
     }
 }
 
+fn is_paid(prefix: &str) -> bool {
+    matches!(
+        prefix,
+        "deepinfra"
+            | "deepseek"
+            | "mistral"
+            | "sambanova"
+            | "hf"
+            | "google"
+            | "zen"
+            | "inception"
+            | "unorouter"
+            | "orcarouter"
+            | "nim"
+            | "openrouter"
+    )
+}
+
+fn paid_allowed() -> bool {
+    if let Ok(v) = std::env::var("OMEGAFLOW_PAID") {
+        if !v.is_empty() && v != "0" {
+            return true;
+        }
+    }
+    let work = match std::env::var("OMEGAFLOW_WORK") {
+        Ok(w) => w,
+        Err(_) => match std::env::var("HOME") {
+            Ok(h) => format!("{h}/projects/omegaflow-work"),
+            Err(_) => return false,
+        },
+    };
+    std::path::Path::new(&format!("{work}/post/paid-open")).exists()
+}
+
 fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -> (u16, String) {
     let start = Instant::now();
     let model = match json_string_field(body, "model") {
@@ -562,6 +596,14 @@ fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -
                 Some(r) => r,
                 None => continue,
             };
+            if is_paid(route.prefix) && !paid_allowed() {
+                last_code = 402;
+                last_body = format!(
+                    "{{\"error\":{{\"message\":\"{} is a billed route — the operator's word is required (set OMEGAFLOW_PAID=1 or create $OMEGAFLOW_WORK/post/paid-open)\"}}}}",
+                    route.prefix
+                );
+                continue;
+            }
             let provider_model = &cand[route.prefix.len() + 1..];
             if disabled.contains(&format!("{}/{}", route.prefix, provider_model)) {
                 last_code = 503;

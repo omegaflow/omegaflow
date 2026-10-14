@@ -16,5 +16,6 @@ if [ ! -x "$bin" ]; then
     exit 2
 fi
 export OMEGAFLOW_REPO="$root"
+. "$root/bin/_roots.sh"
 export OMEGAFLOW_SECRETS="${OMEGAFLOW_SECRETS:-$root/.secrets.local}"
 exec "$bin" "$@"
