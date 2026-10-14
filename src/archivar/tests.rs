@@ -10490,6 +10490,34 @@ fn test_finals_channels_falls_back_to_bull_a_when_bull_b_is_absent() {
 }
 
 #[test]
+fn test_finals_channels_skips_predicted_lines() {
+    let measured = "26 3 1 61100.00 I  0.105055 0.000013  0.389089 0.000012  I 0.0672051 0.0000117  0.1503 0.0101  I     0.415    0.387    -0.092    0.170  0.105015  0.389153  0.0672285     0.403    -0.120  ";
+    let predicted =
+        "27 7 2 61588.00 P  0.243453 0.015597  0.431818 0.026224  P-0.2132602 0.0196969";
+    let src = source_fixture(
+        "finals",
+        vec![
+            Extract::Field(field_fixture("ut1_utc", 86400.0)),
+            Extract::Field(field_fixture("pmx", 86400.0)),
+            Extract::Field(field_fixture("pmy", 86400.0)),
+        ],
+    );
+    let lsk = fixture_lsk();
+    let channels = build_finals_channels(&src, &format!("{measured}\n{predicted}\n"), &lsk);
+    assert_eq!(channels.len(), 3);
+    let expect_epoch = lsk.unix_to_tdb((61100.0 - 40587.0) * 86400.0).unwrap();
+    for (c, fc) in &channels {
+        assert_eq!(c.epoch, expect_epoch);
+        match fc.name.as_str() {
+            "ut1_utc" => assert_eq!(c.value, 0.0672285),
+            "pmx" => assert_eq!(c.value, 0.105015),
+            "pmy" => assert_eq!(c.value, 0.389153),
+            other => panic!("unexpected field {}", other),
+        }
+    }
+}
+
+#[test]
 fn test_ionex_channels_two_lat_five_lon() {
     let mut text = String::new();
     text.push_str("     1            CODEX                       IONEX VERSION / TYPE\n");
