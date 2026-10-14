@@ -4,7 +4,8 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 const NSSDC_ORIGIN: &str = "https://umt.nssdc.ac.cn";
-const NSSDC_LOGIN: &str = "https://umt.nssdc.ac.cn/login?service=https://www.nssdc.ac.cn:443/logindo";
+const NSSDC_LOGIN: &str =
+    "https://umt.nssdc.ac.cn/login?service=https://www.nssdc.ac.cn:443/logindo";
 const SSDC_ORIGIN: &str = "https://tools.ssdc.asi.it";
 
 const B64: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -76,7 +77,9 @@ fn ticket_present(headers: &str) -> bool {
 }
 
 fn page_marker(body: &str) -> &'static str {
-    if body.contains("name=\"execution\"") || body.contains("name=\"lt\"") {
+    if body.contains("ticket=ST-") || body.contains("CURRENTCASUSER") {
+        "authenticated (js redirect)"
+    } else if body.contains("name=\"execution\"") || body.contains("name=\"lt\"") {
         "login form still present"
     } else if body.to_ascii_lowercase().contains("logout") || body.contains("退出") {
         "authenticated (logout marker)"
@@ -162,11 +165,36 @@ fn redact_credentials(url: &str) -> String {
     out
 }
 
+fn escape_js(input: &str) -> String {
+    let mut out = String::new();
+    for unit in input.encode_utf16() {
+        let u = unit as u32;
+        let bare = (0x30..=0x39).contains(&u)
+            || (0x41..=0x5A).contains(&u)
+            || (0x61..=0x7A).contains(&u)
+            || matches!(u, 0x40 | 0x2A | 0x5F | 0x2B | 0x2D | 0x2E | 0x2F);
+        if bare {
+            if let Some(c) = char::from_u32(u) {
+                out.push(c);
+            }
+        } else if u < 256 {
+            out.push_str(&format!("%{u:02X}"));
+        } else {
+            out.push_str(&format!("%u{u:04X}"));
+        }
+    }
+    out
+}
+
+fn nssdc_password(pass: &str) -> String {
+    base64(escape_js(pass).as_bytes())
+}
+
 fn nssdc_form(user: &str, pass: &str, lt: &str, execution: &str) -> String {
     format!(
         "username={}&password={}&lt={}&execution={}&_eventId=submit&loginFlag=cas&phoneFlag=&lang=zh",
         urlencode(user),
-        urlencode(&base64(pass.as_bytes())),
+        urlencode(&nssdc_password(pass)),
         urlencode(lt),
         urlencode(execution)
     )
@@ -235,18 +263,15 @@ fn push_login_report(
         None => post_url,
     };
     lines.push(format!("final url {}", redact_credentials(final_url)));
+    let ticket = ticket_present(&header_text) || ticket_present(&f.body);
     lines.push(format!(
         "ticket {}",
-        if ticket_present(&header_text) {
-            "present"
-        } else {
-            "absent"
-        }
+        if ticket { "present" } else { "absent" }
     ));
     lines.push(format!("page {}", page_marker(&f.body)));
     lines.push(format!("page markers {}", marker_report(&f.body)));
     if let Some(title) = page_title(&f.body) {
-        lines.push(format!("page title {}", title));
+        lines.push(format!("page title {title}"));
     }
 }
 
@@ -390,6 +415,16 @@ mod tests {
     }
 
     #[test]
+    fn nssdc_password_escapes_before_base64() {
+        assert_eq!(escape_js("a b"), "a%20b");
+        assert_eq!(escape_js("a@b_c-1.2/3"), "a@b_c-1.2/3");
+        assert_eq!(escape_js("p@ss!"), "p@ss%21");
+        assert_eq!(escape_js("ä"), "%E4");
+        assert_eq!(nssdc_password("a b"), base64(b"a%20b"));
+        assert_ne!(nssdc_password("a b"), base64(b"a b"));
+    }
+
+    #[test]
     fn ssdc_form_carries_the_cas_fields() {
         let form = ssdc_form("bob", "pw", "LT-9");
         assert_eq!(form, "username=bob&password=pw&lt=LT-9&warn=true");
@@ -400,6 +435,13 @@ mod tests {
         let headers = "HTTP/1.1 302 Found\r\nLocation: https://tools.ssdc.asi.it/app?ticket=ST-1234-xyz\r\n\r\n";
         assert!(ticket_present(headers));
         assert!(!ticket_present("HTTP/1.1 200 OK\r\n\r\n"));
+    }
+
+    #[test]
+    fn the_js_redirect_body_carries_the_ticket() {
+        let body = "href = 'https://www.nssdc.ac.cn:443/logindo?CURRENTCASUSER=x&ticket=ST-4329-abc-cas01.example.org';\nwindow.location = href;";
+        assert!(ticket_present(body));
+        assert_eq!(page_marker(body), "authenticated (js redirect)");
     }
 
     #[test]
