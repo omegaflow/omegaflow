@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: 7600f3610439f8bb7ff5d489c9551a0be94eb471c7f2d5c2df34f67e48e47f7d
+  sha256: e22f7a51a40d73b07b7a977d93e1ca5c3089bfac9d6f9831cf135cfb517c003f
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -43,12 +43,19 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
   ISS hat nur die Ephemeriden-Seite, keine Kanäle. `Position::StateVector { p,v }` +
   `Motion::Linear` ist verdrahtet (`channels.rs:1408-1409`, `motion.rs:436-439`), hat aber
   **keinen** Produktionsproduzenten und nie `track: true`.
-- **Route B ist quellen-blockiert (gemessen 2026-10-14, Taucher + Browser):** kein TIMED-SPK
-  bei NAIF (`…/pub/naif/TIMED/kernels/spk/` HTTP 404; kein `TIMED` in der generischen
-  SPK-Auswahl), kein TIMED in Horizons (`COMMAND='TIMED'` → keine Treffer), kein TIMED in
-  der NAIF-ID-Registry; CDAWeb führt kein TIMED-Bahnprodukt. **Route A ist damit die einzige
-  heute baubare**; ein aus A abgeleitetes „TIMED-Bahn"-`orbit` wäre eine **Schein-Ephemeride**
-  (kein Datum, kein `v`) und würde den Ephemeriden-Bestand verfälschen (Claude, Mistral).
+- **Route B ist quellen-blockiert (primär gemessen 2026-10-14, in-session — nicht nur
+  delegiert):**
+  - `archive_search --verdict https://naif.jpl.nasa.gov/pub/naif/TIMED/kernels/spk/` →
+    **HTTP 404** (Stufe 1; wayback 503).
+  - `sfetch https://naif.jpl.nasa.gov/pub/naif/` (HTTP 200, 22210 B): Missionsordner
+    `TDRSS/ · THEMIS/ · ULYSSES/ · VEGA/` — **kein `TIMED/`** (Nachbarschaft T→U).
+  - `sfetch "…/api/horizons.api?format=text&COMMAND='TIMED'&…"` → wörtlich
+    `Matching small-bodies: … No matches found.`
+  - Breite (keyless): `--mwmbl` „TIMED spacecraft SPK ephemeris kernel" → nur die
+    SPICE-Wikipedia-Seite, **kein** TIMED-SPK; `--marginalia` → `pending` (HTTP 0).
+  - → **Route A ist die einzige heute baubare**; ein aus A abgeleitetes „TIMED-Bahn"-`orbit`
+    wäre eine **Schein-Ephemeride** (kein Datum, kein `v`) und würde den Ephemeriden-Bestand
+    verfälschen (Roster: Claude, Mistral).
 - **Exaktheit (Operator-Kriterium):** A ist exakt am **vermessenen Ort** (Limb-Sounder: der
   Tangentialpunkt `tpl…`/`tpgpaltitude` ist die Messstelle, nicht der Satellit) — aber
   scan-gemittelt, ohne Datum, ohne Sub-Scan-Zeit. B wäre in **Zeit/Dynamik** exakter
