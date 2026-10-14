@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 345 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: d228144f83bc0f1f1197d5f3596e4c9f714a6e193c190793b33a5f6267a335fb
+  sha256: c72bce8b19d9b7b7d726aecc43702b43b37650dad53f22e84d55bedbc542f5fb
   status: live
 -->
 # Handover — Mycelium-Folge 345 (2026-10-14)
@@ -15,7 +15,7 @@ Gefaltet: `## An mycelium` aus `mountain-folge342` (`xfer:mountain-342-1`/-2/-3)
 `river-folge208` (`xfer:river204-entsoe1`, `xfer:river208-*`) — die Einträge sind in
 den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 
-## Burn: open 0.00 · close 0.2460 · cap 0.30 · Grund: der Operator-Auftrag dieser Runde umfasste `archive_search --all`, drei Taucher und den ENTSO-E-ZIP-Bau (über dem Default 0.15) — gemessen `session_burn` (opencode.db, Session „Mycelium-Linie: DE-2-Lauf und Pass-Abschluss", deepseek-flash).
+## Burn: open 0.00 · close 0.2749 · cap 0.40 · Grund: der Operator-Auftrag dieser Runde umfasste `archive_search --all`, drei Taucher und den ENTSO-E-ZIP-Bau (über dem Default 0.15) — gemessen `session_burn` (opencode.db, Session „Mycelium-Linie: DE-2-Lauf und Pass-Abschluss", deepseek-flash).
 
 ## CI-Stand am HEAD `ecc23feed` (gemessen `ci_manage status/list`, 2026-10-14T00:38Z)
 
@@ -50,19 +50,12 @@ den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 - **Blockade:** keine.
 - **Braucht:** den Lauf einmalig lesen (`ci_manage view 38491452658`); bei Erfolg `asset=present` bestätigt. Riss bleibt: LANCE nur NRT (`Recent/`).
 
-### MODVOLC-Archiv 2000–2019 — LAADS-Route gemessen (Auth, keine Blockade)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** kein — Bau (Compiler-Archiv-Modus)
-- **Lage:** (gemessen 2026-10-14/345) Die Archiv-Route liegt unter **Collection 6** — `https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/6/MODVOLC/` (der C61-Pfad ist 404). Der anonyme `GET` antwortet **303** → `/profiles/licenses/…` → `/oauth/login` → `urs.earthdata.nasa.gov/oauth/authorize`; die Datei ist hinter **Earthdata Login**. **Auth = `Authorization: Bearer <EDL-Token>`** (der EDL-Token *ist* das LAADS-Credential, ~60 Tage); `EARTHDATA_EDL_TOKEN` liegt in `.secrets.local`. **Auth-Route gebaut:** `archive_search` trägt LAADS-Hosts im Earthdata-Token-Set **und** behandelt **303** als Auth-Gate (`token.rs`). **Browser-Gegenprobe (2026-10-14, Operator-Wort):** der Operator ist eingeloggt (`omegaflow.space`); der Pfad landet auf der **LAADS-Profile/Licences-Seite** mit dem Hinweis **„These resources … are not yet approved for public release. If you require special access … contact our User Support service"** — das C6-MODVOLC-Archiv ist **nicht frei**, sondern braucht eine **Zugangsanfrage** (LAADS User Support). Zusätzlich verlangt Earthdata vor der App-Autorisierung **User Type + Organization** (offen).
-- **Blockade:** das Archiv ist „not yet approved for public release" → Zugang nur über LAADS User Support.
-- **Braucht:** **Zugangsanfrage vorbereitet bis zur Kante** — Entwurf `state/mail/laads-modvolc-access-request.md` (an `laads-support@nasa.gov`, gemessen `…/contact/`, HTTP 200; QUELLEN-Block innen). **Akt = Operator-Hand:** `smail --send state/mail/laads-modvolc-access-request.md`. Das Earthdata-Profil (User Type/Organization) hat der Operator gesetzt. Danach der Archiv-Modus im `modvolc_compiler.rs`.
-
-### ENTSŌ-E A78 — Compiler korrekt; der GitHub-Secret-Token gibt 400
-- **Status:** operator-gebunden | **Bindung:** operator
-- **Trigger:** `Wort:` GitHub-Repo-Secret `ENTSOE_API_TOKEN` auf den gültigen lokalen Wert setzen
-- **Lage:** (gemessen 2026-10-14/345) Compiler repariert: pure-std RFC 1951 `inflate` über **alle** ZIP-Einträge (ein Dokument je Outage) + Domain-Fallback `in_Domain.mRID`/`out_Domain.mRID`; lokal (CZ↔SK 2024) **13 Records**, 580 B, Roundtrip parst. **Lauf `38496905536` = failure**: der CI-Token → **HTTP 400 `uu-appg01/server/invalidRequest`** bei **derselben** Abfrage, die lokal mit dem `.secrets.local`-Token **HTTP 200** liefert. `read_secret` trimmt den Wert (kein Newline/CR) → der Unterschied ist der **Token-Wert selbst**: der GitHub-Repo-Secret weicht vom lokalen (gültigen) ab.
-- **Blockade:** der CI kann den lokalen Token nicht lesen.
-- **Braucht:** Operator setzt das GitHub-Repo-Secret `ENTSOE_API_TOKEN` auf den gültigen lokalen Wert; danach `gh workflow run entsoe-cdn.yml`. Echo `xfer:mountain-342-1`, `xfer:river204-entsoe1`.
+### MODVOLC-Archiv 2000–2019 — LAADS-Anfrage gesendet, Antwort ausstehend
+- **Status:** wartend | **Bindung:** wartend
+- **Trigger:** Antwort von `laads-support@nasa.gov` (Mail gesendet 2026-10-14)
+- **Lage:** (gemessen 2026-10-14/345) Das C6-MODVOLC-Archiv (`https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/6/MODVOLC/`, der C61-Pfad 404) ist hinter Earthdata Login (anonymer `GET` → **303** → EDL-OAuth) **und** trägt den Hinweis „not yet approved for public release … contact User Support" (Browser, eingeloggt `omegaflow.space`). Die **Zugangsanfrage** wurde vorbereitet und **vom Operator gesendet** (2026-10-14; Entwurf `state/mail/laads-modvolc-access-request.md`, QUELLEN-Block innen). Die `archive_search`-Auth-Route (LAADS-Hosts im EDL-Token-Set + 303 als Gate, `token.rs`) steht.
+- **Blockade:** Archiv „not yet approved for public release" → Zugang nur nach LAADS-Freigabe.
+- **Braucht:** die Antwort autonom lesen; bei Freigabe den Archiv-Modus im `modvolc_compiler.rs` bauen (C6-Pfad + `Authorization: Bearer`), dann das 2000–2019-Fenster ziehen.
 
 ### DE-2-Manifestation — Host `cdaweb.gsfc.nasa.gov` unerreichbar
 - **Status:** wartend | **Bindung:** wartend
@@ -168,7 +161,7 @@ den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 
 Origin: mycelium-345 (2026-10-14):
 
-- `xfer:mycelium.ses_ec82df1f6ffePGUvWpFtFUGl3u.1~4e3bd26a` **ENTSŌ-E-Release-Tag korrigiert** — Workflow-Kopf `tag=web-api.tp.entsoe.eu` → `tag=transparency.entsoe.eu` (deckt sich mit Compiler-`TAG` und Block-`url`); nach Push dispatcht. Echo `xfer:mountain-342-1` · `xfer:river204-entsoe1`.
+- `xfer:mycelium.ses_ec82df1f6ffePGUvWpFtFUGl3u.1~4e3bd26a` **ENTSŌ-E — geschlossen** — Workflow-Tag korrigiert, Compiler ZIP+Domain repariert, Lauf `38510210987` **success**, Asset `transparency.entsoe.eu/entsoe_a78.bin` **present** (206). Echo `xfer:mountain-342-1` · `xfer:river204-entsoe1`.
 - `xfer:mycelium.ses_ec82df1f6ffePGUvWpFtFUGl3u.2~63ee0d2c` **FUGIN/CfA-CO — kein Release** — gemessen `gh release view jvo.nao.ac.jp`: „release not found" → es gibt keine FUGIN-CDN-Assets offline zu nehmen (`xfer:mountain-342-2` geschlossen).
 - `xfer:mycelium.ses_ec82df1f6ffePGUvWpFtFUGl3u.3~1635806e` **MODVOLC-Block gelesen, Lauf dispatcht** — der Block steht (`terms PD`+`origin`+`compiler`+`field`); `modvolc-cdn.yml` nach Push gestartet. Echo `xfer:mountain-342-3`.
 - `xfer:mycelium-344-1` **Register→Manifest** — `harvest raw_zenodo` in den Schumann-Block (`phi:1034-1043`) + Parser-Anerkennung der `harvest`-Direktive.
