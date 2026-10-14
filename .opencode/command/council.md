@@ -1,6 +1,6 @@
 ---
 description: Consults the 5-voice omegaflow Council for a design or architecture decision.
-agent: rat
+agent: council
 ---
 
 The human seeks Council guidance on a design decision for omegaflow.
