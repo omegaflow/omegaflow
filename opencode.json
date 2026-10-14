@@ -3,8 +3,8 @@
   "instructions": [
     "AGENTS.md"
   ],
-  "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
-  "small_model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
+  "model": "deepseek/deepseek-flash",
+  "small_model": "deepseek/deepseek-flash",
   "default_agent": "line",
   "provider": {
     "zai": {
@@ -14,42 +14,40 @@
       }
     },
     "deepinfra": {
+      "whitelist": []
+    },
+    "groq": {
       "whitelist": [
-        "deepseek-ai/DeepSeek-V4-Flash",
-        "zai-org/GLM-5.3",
-        "moonshotai/Kimi-K3",
-        "Qwen/Qwen3-VL-235B-A22B-Instruct",
-        "Qwen/Qwen3-Coder-480B-A35B-Instruct-Turbo"
+        "openai/gpt-oss-120b"
       ]
     }
   },
   "disabled_providers": [
-    "alibaba",
-    "cloudflare-workers-ai",
-    "deepseek",
     "google",
-    "groq",
-    "huggingface",
-    "inception",
+    "zai",
+    "unorouter",
     "kenari",
     "kilo",
-    "llm7",
-    "mistral",
-    "nvidia",
-    "ollama",
-    "opencode",
-    "openrouter",
-    "orcarouter",
-    "ovhcloud",
-    "pollinations",
+    "inception",
     "sambanova",
-    "unorouter",
-    "zai"
+    "mistral",
+    "alibaba",
+    "ovhcloud",
+    "orcarouter",
+    "nvidia",
+    "pollinations",
+    "llm7",
+    "openrouter",
+    "ollama",
+    "huggingface",
+    "cloudflare-workers-ai",
+    "opencode",
+    "deepinfra"
   ],
   "agent": {
     "seherin": {
       "mode": "subagent",
-      "model": "deepinfra/Qwen/Qwen3-VL-235B-A22B-Instruct",
+      "model": "deepseek/deepseek-flash",
       "variant": "high",
       "description": "Vision-Leser (DeepSeek V4 Flash Vision) — Figuren, Plots, gescannte Seiten/Dokumente, Screenshots lesen und als Text melden (figure-only-Daten, OCR). Read-only: kein edit, kein bash.",
       "permission": {
@@ -97,11 +95,12 @@
         }
       },
       "description": "Das Gremium — grundlegende, komplexe Entscheidungen (selten). Bekommt eine Taucher-Recherche vorgelegt; haelt die fuenf Stimmen tiefer als der Rat.",
-      "temperature": 1.0
+      "temperature": 1.0,
+      "disable": true
     },
     "taucher": {
       "mode": "subagent",
-      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
+      "model": "deepseek/deepseek-flash",
       "variant": "low",
       "description": "Der Taucher — recherchiert (Web + Code) UND baut die Routine: mechanische Code-Arbeit, Parser-Aermel, parallele Baustellen. Kein Urteil ueber Zulassung/Kraft.",
       "prompt": "Routine-Recherche/Verify: `archive_search` zuerst (Kaskade URL→`--verdict`→`--sniff`→`--playwright`; Quelle→der eine Modus; unbekannt→Suchmaschinen `--tavily`/`--exa`/`--linkup` keyed, `--mwmbl`/`--marginalia` keyless; `--all` ist Breite — 39 Aufrufe, der volle Output liegt in der Temp-Datei `full: <pfad>`, lies sie). Lokal: `sgrep`/`sread`/`sfetch`/`omega_sh`; CI: `ci_manage list/view/log` (nie `gh run`); kein bash-grep/ls/cat, kein webfetch/websearch. Login-gatterte Quelle bis zur Auth-Kante messen: Credential lokal? (`.secrets.local`-Schlüsselnamen, nie Werte), anonym, mit Credential, exakte Download-URL; 401/403 MIT Token = blocked key-needed, ohne Konto = blocked account (→ future/Operator), 404 = pending. Karte `docs/concepts/tools-map.md`; `archive_search --help` ist der Kanon. Zustands-Behauptungen (`registered`/`pending`/`built`/`absent`) sind erst nach Baum-Gegenprobe Messungen: Register (`sgrep`/`register_lookup` in `phi/`), Asset (`archive_search --verdict <url>`), Code (`git log`/`sread`); eine Doku-Zeile (Paper/Handover/Survey) ist eine Behauptung, kein Zustand — der Baum gewinnt, Divergenz = Riss, nie glätten. Vollständigkeit: die Inline-Kurzfassung ist ein Wegweiser, kein Ergebnis — den `full:`-Spill vollständig lesen; die Recherche nie auf ein Minimum kastrieren.",
@@ -210,7 +209,7 @@
     },
     "rat": {
       "mode": "subagent",
-      "model": "deepinfra/zai-org/GLM-5.3",
+      "model": "deepseek/deepseek-flash",
       "variant": "high",
       "prompt": "Read docs/council.yaml completely before deliberating and hold the five voices (Mountain, River, Mycelium, Sensory, Future) as it prescribes — the way of council: speak from the heart, listen from the heart, be spontaneous, be lean of expression. The light form holds each text once; the full circle sits only for architecture.",
       "permission": {
@@ -249,7 +248,7 @@
     },
     "line": {
       "mode": "primary",
-      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
+      "model": "deepseek/deepseek-flash",
       "variant": "low",
       "description": "Linien-Session mit auto-bestätigten Rechten — die Struktur-Grenzen (grep/ls/cat/rg/head/tail/cd/python) und destruktive git-Kommandos bleiben verweigert, webfetch/websearch bleiben verweigert; `smail` sendet nie durch die Maschine — nur `--dry-run` ist erlaubt, den Send führt der Operator (Wort + Akt).",
       "prompt": "Erste Handlung jeder Session: `sread docs/concepts/tool-forms.md` — die Form-Karte (verbotene Leading-Form → kanonischer Ersatz). Werkzeuge statt Rohwege (`docs/concepts/tools-map.md`). Inhalt im Baum: `archive_search <kw> --root <dir>` oder `sgrep [-i]`; Pfade: `archive_search --index`; Discovery: `glob`; Lesen: `sread <f> [--offset --limit]`. Strukturell verboten: ls/grep/cat/rg/head/tail/cd/python*/sed -i (head/tail kastrieren ein Ergebnis — Fenster via --offset/--limit, gekappten Output aus der Spill-Datei lesen). `cd` → bash-`workdir`; `cargo *` → exakt `cargo check` · `cargo fmt -- <pfad>` · `cargo build -p <crate> --bin <name>` · `cargo run -p <crate> --bin <name>` (kein Zusatzflag); `gh run list/view` → `ci_manage list/view/log`; destruktives git nie. Header-sha via `omega_sh sha <datei>`; Abschluss `git_safety --close [<eigene Pfade>]`. Kein webfetch/websearch; `smail` sendet nie durch die Maschine.",
@@ -472,7 +471,8 @@
         }
       },
       "variant": "high",
-      "temperature": 0.0
+      "temperature": 0.0,
+      "disable": true
     }
   },
   "mcp": {
