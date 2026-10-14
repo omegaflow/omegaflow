@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 345 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: 61ad146b6a097156aac44d43504ed8eec7a23012e3e9e82e69f627f11d6a7384
+  sha256: 13eeb79fdcf13117df497adab773ecdf29f087a040e8bc2143c4554aa719061b
   status: live
 -->
 # Handover — Mycelium-Folge 345 (2026-10-14)
@@ -60,9 +60,9 @@ den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 ### ENTSŌ-E A78 — Header-Tag korrigiert; Query-Defekt gemessen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** kein — Bau (Query-Iteration)
-- **Lage:** (gemessen 2026-10-14/345) Workflow-Kopf `entsoe-cdn.yml:1` `tag=` → `transparency.entsoe.eu` gezogen; Lauf `38491449026` dispatcht. **Gemessene Ursache des roten Laufs** (`ci_manage log`): der Compiler baut grün, sendet `documentType=A78`+`in_Domain`+`out_Domain`+`periodStart=202401010000`+`periodEnd=202402010000`, der Token wird akzeptiert — die API antwortet **HTTP 400 `uu-appg01/server/invalidRequest`** (nicht 401; nicht leer). Taucher-Messung (2026-10-14): die Parameter sind die dokumentierten (in/out_Domain für A78, `yyyyMMddHHmm` UTC, ≤1 Jahr); **Riss:** das Ein-Zonen-Form `in_Domain == out_Domain` ist aus der Doku abgeleitet, **nicht** gemessen — die gemessenen A78-Beispiele nutzen zwei verschiedene Zonen. Die offizielle API-Guide-Seite ist tot (HTTP 400), die Postman-Outages-Sektion JS-geladen.
-- **Blockade:** keine (Token vorhanden).
-- **Braucht:** die A78-Abfrage mit dem Token iterieren — Kandidaten: zwei verschiedene Zonen (statt `in==out`), `businessType`, oder ein anderes Zeitfenster; dazu einen `--ci-mode`-Probelauf mit veränderten Parametern dispatchten. Echo `xfer:mountain-342-1`, `xfer:river204-entsoe1`.
+- **Lage:** (gemessen 2026-10-14/345) Workflow-Kopf `entsoe-cdn.yml:1` `tag=` → `transparency.entsoe.eu` gezogen; Lauf `38491449026` dispatcht. **CI** (`ci_manage log`): Compiler grün, Token akzeptiert, API **HTTP 400 `uu-appg01/server/invalidRequest`**. **Lokaler Probelauf mit dem gültigen Token** (`cargo run -p omegaflow-harvest --bin entsoe_compiler`, 2026-10-14): die API antwortet **HTTP 200**, der Body ist ein **ZIP-Archiv** — gemessen für FI/FR/DE/GB, Ein- **und** Zwei-Zonen, 2016 und 2024 — jeweils ein **leeres Archiv** (`PK\x05\x06`, 0 Einträge). Der Compiler liest den Body als Text/XML → `0 TimeSeries parsed`; **er entpackt das ZIP nicht** (A78 liefert ZIP/XML-Dokumente). Der CI-400 kommt von einem **anderen Token** (GitHub-Secret) als der lokale 200 — zwei getrennte Linien. Taucher-Messung: Parameternamen/Format sind die dokumentierten (in/out_Domain für A78, `yyyyMMddHHmm` UTC, ≤1 Jahr).
+- **Blockade:** keine (lokaler Token gültig).
+- **Braucht:** (1) den **ZIP-Body entpacken** statt als Text zu parsen; (2) einen Parameter/Zone-Fall finden, der ein **nicht-leeres** Archiv liefert (leer für alle getesteten) — gegen eine gemessene Referenz-Abfrage; (3) den **GitHub-Secret-Token** gegen den lokalen prüfen (400 vs 200). Echo `xfer:mountain-342-1`, `xfer:river204-entsoe1`.
 
 ### DE-2-Manifestation — Host `cdaweb.gsfc.nasa.gov` unerreichbar
 - **Status:** wartend | **Bindung:** wartend
@@ -70,6 +70,7 @@ den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 - **Lage:** (gemessen 2026-10-14/345) compiler + Workflow + Block stehen (`phi:586`), `harvest de2`-Direktive greift (`harvest-dispatch` startete `de2-cdn`). Der CI-Lauf `38489787692` scheitert **gemessen** am Host: jeder `cdaweb.gsfc.nasa.gov`-Fetch bricht auf TLS-Ebene ab (`(35)`/`(52)`/`(56)`). **Gegenmessung lokal** (`archive_search --verdict`, 2026-10-14): `cdaweb.gsfc.nasa.gov/hapi` und `/pub/data/` **direct + Proton pending**, nur ein 2019-Wayback-Snapshot; `heasarc.gsfc.nasa.gov` und `fermi.gsfc.nasa.gov` antworten **HTTP 200** — der Ausfall ist host-spezifisch, nicht NASA-GSFC-weit, nicht runner-spezifisch. `asset=fehlt` bleibt (kein `present` behaupten).
 - **Blockade:** externer Host-Ausfall (kein Maschinen-Akt).
 - **Braucht:** bei Host-Rückkehr `gh workflow run de2-cdn.yml`; dann Asset → `asset=present` + K messbar.
+- **`--all`-Messung (2026-10-14, Operator-Wort):** `archive_search --all 'DE-2 … NACS WATS … UA16S CDAWeb HAPI mirror'` → 546 Trefferzeilen, 6 Arme, Eskalations-Stop (voll: `state/research/spill/omegaflow_all_1791940633_DE_2_Dynamics_Explorer_2_neutral_wind_NA.txt`). Ergebnis: **kein neuer erreichbarer Daten-Spiegel** — alle Datenpfade liegen auf `gsfc.nasa.gov` (CDAWeb HAPI · CDAS-WS `…/WS/cdasr/1/…/DE2_WIND2S_WATS/` · `omniweb…/ftpbrowser/ae_de2.html` · SPASE-NumericalData `DE2/{PT16S,WATS,RPA,NACS,FPI}`); die Treffer sind Metadaten und Paper (crossref WATS/NACS-Studien, helio.data.nasa.gov, Zenodo `10.5281/zenodo.20079294` = ein GEOTAIL-Datensatz via CDAWeb). Der UCLA-VMO-Spiegel (Taucher) wird von `--all` **nicht** gefunden.
 - **Browser-Gegenprobe (2026-10-14):** `https://cdaweb.gsfc.nasa.gov/` lädt im Chrome eine **Fehlerseite** — der Host ist auch über die Browsersitzung nicht erreichbar (nicht nur curl/CI). **Teilersatz gemessen:** der **UCLA VMO**-Spiegel `https://vmo.igpp.ucla.edu/data1/DE2/RPA/Ni_16ms_ascii/…` liefert **RPA**-Ionendichte/-drift (1981–1983, `.asc.gz`; sha256 `1610bba6…`) **ohne** **NACS**/**WATS** (Neutraldichte/-wind) — das kombinierte `UA16S`-Produkt fehlt auf **jedem** erreichbaren Spiegel; kein Tausch, der die Messung ändern würde.
 
 ### Fünf fehlende Fäden — Quellen gemessen
