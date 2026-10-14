@@ -18,7 +18,7 @@ Neueste offene Übergabe:
 **Linie erkennen.** Aus der Übergabe und ihrem Owner ergibt sich die Linie
 (mountain/river/sensory/future/mycelium); ihre Rechte und Ausschließlichkeiten gelten
 (AGENTS.md, „Die fünf Stimmen"). Ihre Wahrheit liegt in der Stehenden-Pass-Zeile
-(`sread state/zustand/standing-pass.md` — zitieren, nie kopieren; `pass-copy` ist ein Gate-Fixture).
+(`sread docs/zustand/standing-pass.md` — zitieren, nie kopieren; `pass-copy` ist ein Gate-Fixture).
 
 **Die Übergabe IST der Stand.** Ein bereits geworteter/geklärter Punkt wird **nie** erneut vorgelegt.
 
