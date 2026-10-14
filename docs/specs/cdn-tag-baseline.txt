@@ -23,4 +23,19 @@ obis.osha.gov
 # (Mountain field/ttl nach Kern-Slot 2, pending). Gemessen via `ci_manage log 37621486821`
 # (cdn_reconcile --fail). Zeile fällt, sobald der eionet_cdr-Block in phi/sources.φ steht.
 cdr.eionet.europa.eu
+#
+# 2026-10-14 (Mountain 347): fuenf CDN-Workflows schreiben Releases, deren Host weder
+# in phi/sources.φ noch in §1 COMPILER_NETLOCS gebunden ist. Gemessen am HEAD
+# `./target/release/cdn_reconcile --fail` (5 Drifts). Die Workflow-Tags sind
+# register-gefuehrt, waehrend die Bloecke ausstehen (url/origin/compiler = Mycelium):
+#   babamul-cdn.yml:37    babamul.caltech.edu     compiler babamul_compiler.rs, kein phi-Block
+#   celestrak-eop-cdn.yml:41 celestrak.org       Block per EOP-Verdikt gefallen (b138796d4, USNO finals traegt EOP); der Workflow ist stale
+#   eve-cdn.yml:57        lasp.colorado.edu-eve   compiler eve_compiler.rs, kein phi-Block (LISIRD terms pending, RISS 2)
+#   mars-dust-cdn.yml:37  vo.lmd.jussieu.fr       compiler mars_dust_compiler.rs, kein phi-Block
+#   maxi-cdn.yml:24       maxi.riken.jp           compiler maxi_compiler.rs, kein phi-Block
+babamul.caltech.edu
+celestrak.org
+lasp.colorado.edu-eve
+vo.lmd.jussieu.fr
+maxi.riken.jp
 
