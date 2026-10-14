@@ -399,6 +399,14 @@ field temp atmosphere_pirep_temp_c gaussian-inverse-square thermal C 600.0 0.0 0
 field wspd atmosphere_pirep_wind_speed_kt gaussian-inverse-square advective kt 600.0 0.0 0.0
 field wdir atmosphere_pirep_wind_direction_deg gaussian-inverse-square advective deg 600.0 0.0 0.0
 
+url https://ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/vlf/ath/2024/04/isee_vlf_ath_2024040405_v01.cdf
+terms erg-sc-rules-of-the-road https://ergsc.isee.nagoya-u.ac.jp/data_info/erg.shtml.en
+format cdf
+ttl 600
+on earth 54.60282 -113.64442 693
+field ch1@freq_vlf athabasca_vlf_ns_v2_hz inverse-square em V^2/Hz 600 0.0 0.0
+field ch2@freq_vlf athabasca_vlf_ew_v2_hz inverse-square em V^2/Hz 600 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/api.eumetsat.int/W_XX-EUMETSAT-Darmstadt,IMG+SAT,MTI1+LI-2-LFL--FD--CHK-BODY--ARC-NC4E_C_EUMT_20261006080024_L2PF_OPE_20261006075009_20261006080009_N__O_0048_0001.nc
 format mtg_li
 origin https://api.eumetsat.int/data/browse/1.0.0/collections/EO%3AEUM%3ADAT%3A0691

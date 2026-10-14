@@ -37,7 +37,7 @@ fn decompress_whole_file(bytes: &[u8]) -> Option<Vec<u8>> {
     Some(out)
 }
 
-fn report(bytes: &[u8]) {
+fn report(bytes: &[u8], dump: Option<&str>) {
     let magic: Vec<u8> = bytes.iter().take(4).copied().collect();
     let Some(marker) = be_u32(bytes, 4) else {
         println!("magic: {} (file shorter than 8 bytes)", hex4(&magic));
@@ -76,9 +76,52 @@ fn report(bytes: &[u8]) {
                 );
                 for v in &file.vars {
                     println!(
-                        "{:<24} num_elements={:<4} data_type={:<3} compressed={}",
-                        v.name, v.num_elements, v.data_type, v.compressed
+                        "{:<24} num_elements={:<4} data_type={:<3} compressed={} dim_sizes={:?} dim_vary={:?} num_values={}",
+                        v.name,
+                        v.num_elements,
+                        v.data_type,
+                        v.compressed,
+                        v.dim_sizes,
+                        v.dim_vary,
+                        file.num_values(v)
                     );
+                    let Ok(blocks) = file.blocks(cdf, v) else {
+                        continue;
+                    };
+                    let Some(first) = blocks.first() else {
+                        continue;
+                    };
+                    let Ok(data) = file.block_data(cdf, first) else {
+                        continue;
+                    };
+                    let per = omegaflow::cdf::type_size(v.data_type).unwrap_or(1)
+                        * file.num_values(v);
+                    if per > 0 && data.len() >= per {
+                        let Some(vals) = omegaflow::cdf::decode_record(
+                            &data[..per],
+                            v.data_type,
+                            file.num_values(v),
+                            file.little_endian,
+                        ) else {
+                            continue;
+                        };
+                        if dump.as_deref() == Some(v.name.as_str()) {
+                            for (i, x) in vals.iter().enumerate() {
+                                println!("    [{i}] {x}");
+                            }
+                        }
+                        let head: Vec<String> =
+                            vals.iter().take(4).map(|x| format!("{x:.6}")).collect();
+                        let tail: Vec<String> =
+                            vals.iter().rev().take(2).map(|x| format!("{x:.6}")).collect();
+                        println!(
+                            "    block0 start={} len={} head={:?} tail={:?}",
+                            first.start,
+                            vals.len(),
+                            head,
+                            tail
+                        );
+                    }
                 }
             }
             Err(note) => println!("cdf3 parse: {note:?}"),
@@ -124,5 +167,6 @@ fn main() {
     };
     println!("path: {path}");
     println!("bytes: {}", bytes.len());
-    report(&bytes);
+    let dump = std::env::args().nth(2);
+    report(&bytes, dump.as_deref());
 }
