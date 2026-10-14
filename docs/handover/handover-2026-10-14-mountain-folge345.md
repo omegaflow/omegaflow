@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass + Taucher + Rat + Bridge-Roster: finals-Leser, harvest-Direktive, Doppel-Arme, Venus-Reader-Arm; SABER/Venus/ICGEM durch recherche·roster·rat (Riss auf SABER/Venus)
   class: handover
   date: 2026-10-14
-  sha256: e927fbd63adb0d05492e21c78826e165c059daa1fa0195d6ea41b45c9f9d2c25
+  sha256: a7cca570e1a65a56b6b844b025d5fb8fe79186af7815ea2c67bb9c0366447fe2
   status: live
 -->
 # Handover — Mountain-Folge 345 (2026-10-14)
@@ -16,7 +16,7 @@ eingegangen (CelesTrak und LOD-`finals` gemessen erledigt, `harvest`-Direktive
 gebaut; SABER/Venus/UCAR-fäden bleiben). Der Stehende Pass (Mycelium-Register) wird
 zitiert, nie kopiert.
 
-## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass + Taucher-Runde + Rat — finals-Leser (Code + Block + 6 Tests), harvest-Direktive, Doppel-Arme, Venus-Reader-Arm (`vnrd.rs` + Dispatch), 6 Taucher (5 parallel + 1 Recherche), Rat + volle Bridge-Roster-Tafel (11 Seats) für SABER/Venus/ICGEM; der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
+## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass + Taucher-Runde + Rat — finals-Leser (Code + Block + 6 Tests), harvest-Direktive, Doppel-Arme, Venus-Reader-Arm (`vnrd.rs` + Dispatch), 6 Taucher (5 parallel + 1 Recherche), Rat + volle Bridge-Roster-Tafel (12 Stimmen) für SABER/Venus/ICGEM; die Seats sind **roh** gezählt, nicht nach Fähigkeit gewichtet; der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
 
 ## Offen (aufgeschlüsselt)
 
@@ -223,18 +223,20 @@ der `archiv/`-Move der folge344.
 | Mistral (Vibe) | a | W | W |
 | Perplexity | b | W | W |
 | Sakana (Namazu) | a | W | W |
-| Kimi | — Kontingent überschritten (gemessen) | | |
+| Kimi-K3 (DeepInfra) | a | W | W |
+| Kimi (kimi.ai) | — Kontingent überschritten (gemessen) | | |
 | Gemini | — kein Chat (Landing Page) | | |
 
-**Q1 SABER:** a=5 (Duck · MiniMax · Lumo · Mistral · Sakana) · b=4 (Qwen · Z.ai · DeepSeek ·
-Perplexity) · c=1 (Claude) — **kein Zug**; der Rat (a) liegt knapp vorn, das Roster ist gespalten.
+**Q1 SABER:** a=6 (Duck · MiniMax · Lumo · Mistral · Sakana · Kimi-K3) · b=4 (Qwen · Z.ai ·
+DeepSeek · Perplexity) · c=1 (Claude) — **kein Zug**; der Rat (a) liegt vorne, das Roster bleibt
+gespalten.
 
-**Riss 2 — Venus (scharf).** **W=10** gegen D=2 (Rat + MiniMax): das Roster will die Karte als
-Karte; Mittelwert (D) und Zeilenprofil (B) gelten ihm als Strukturverlust. Das ist genau der
-Riss, den der Rat selbst benannte. Der D-Compiler ist gebaut; gewinnt W, wird die strahlende
-Serie `descoped`, der Compiler geparkt.
+**Riss 2 — Venus (scharf).** **W=10 Seats** gegen D=1 Seat (MiniMax; dazu der Rat): das Roster
+will die Karte als Karte; Mittelwert (D) und Zeilenprofil (B) gelten ihm als Strukturverlust. Das
+ist genau der Riss, den der Rat selbst benannte. Der D-Compiler ist gebaut; gewinnt W, wird die
+strahlende Serie `descoped`, der Compiler geparkt.
 
-**Konvergenz — ICGEM.** Rat **Witness** + Roster **W=8** (nur MiniMax 0.0): einig.
+**Konvergenz — ICGEM.** Rat **Witness** + Roster **W=9 Seats** (nur MiniMax 0.0): einig.
 
 **Tiefster Befund (F3, eigener Punkt):** zwei Epochen-Linien widersprechen sich —
 `matrix.rs:644`/`drs_fits.rs:38` lesen `epoch ≤ 0.0` als absent, `agrav.rs:113`/`hips.rs:793`/
