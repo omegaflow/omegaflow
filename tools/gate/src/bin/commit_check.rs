@@ -1,8 +1,9 @@
 use omegaflow::commit_gate::{
     Gate, addressed_origin_violations, canon_diff, check_handover_burn, declared_canon,
-    doc_open_marker_line, ereignis_folge_violations, handover_dupe_violations, is_test_file_path,
-    json_write, prose_violation_for, register_field_unit_issues, status_proof_violations,
-    unbacked_mirror_violations, word_register_origin_violations,
+    doc_open_marker_line, ereignis_folge_violations, handover_dupe_violations,
+    ingest_terms_absent_violations, is_test_file_path, json_write, prose_violation_for,
+    register_field_unit_issues, status_proof_violations, unbacked_mirror_violations,
+    word_register_origin_violations,
 };
 use omegaflow::json::JsonVal;
 use omegaflow::mcp::mcp_leak_violations;
@@ -266,6 +267,10 @@ fn main() {
         if path == "phi/sources.φ" {
             for (line, message) in unbacked_mirror_violations(&added) {
                 eprintln!("commit_check: phi/sources.φ:{line}: unbacked_mirror - {message}");
+                fail = true;
+            }
+            for (line, message) in ingest_terms_absent_violations(&added) {
+                eprintln!("commit_check: phi/sources.φ:{line}: ingest-terms-absent - {message}");
                 fail = true;
             }
         }

@@ -2407,6 +2407,43 @@ pub fn unbacked_mirror_violations(added: &[&str]) -> Vec<(usize, String)> {
     out
 }
 
+pub fn ingest_terms_absent_violations(added: &[&str]) -> Vec<(usize, String)> {
+    let mut out = Vec::new();
+    let mut i = 0;
+    while i < added.len() {
+        if !added[i].starts_with("url ") {
+            i += 1;
+            continue;
+        }
+        let mut ingest = false;
+        let mut has_terms = false;
+        let mut j = i + 1;
+        while j < added.len() {
+            let line = added[j];
+            if line.starts_with("url ") {
+                break;
+            }
+            if line.starts_with("terms ") {
+                has_terms = true;
+            }
+            if line.starts_with("format ")
+                || line.starts_with("field ")
+                || line.starts_with("map ")
+                || line.starts_with("fold ")
+                || line.starts_with("hapi ")
+            {
+                ingest = true;
+            }
+            j += 1;
+        }
+        if ingest && !has_terms {
+            out.push((i + 1, feedback("ingest-terms-absent").to_string()));
+        }
+        i += 1;
+    }
+    out
+}
+
 pub const DOC_OPEN_MARKERS: [&str; 11] = [
     "offen",
     "pending",
@@ -5016,6 +5053,36 @@ mod tests {
             "terms CC0 https://openneuro.org/datasets/ds005034",
         ];
         assert!(unbacked_mirror_violations(&body_ok).is_empty());
+    }
+
+    #[test]
+    fn fp_ingest_terms_absent_requires_a_licence() {
+        let ingest_bare = [
+            "url https://example.org/x.cdf",
+            "format cdf",
+            "witness presence",
+        ];
+        assert_eq!(ingest_terms_absent_violations(&ingest_bare).len(), 1);
+        let ingest_terms = [
+            "url https://example.org/x.cdf",
+            "terms erg-sc-rules-of-the-road https://example.org/licence",
+            "format cdf",
+        ];
+        assert!(ingest_terms_absent_violations(&ingest_terms).is_empty());
+        let field_bare = [
+            "url https://example.org/y",
+            "hapi ktemp=ktemp",
+            "field ktemp ktemp inverse-square thermal k 3600 0.0 0.0",
+        ];
+        assert_eq!(ingest_terms_absent_violations(&field_bare).len(), 1);
+        let reference = [
+            "url https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml",
+            "witness s2-direction",
+            "record sky1",
+            "force em",
+            "no-cadence",
+        ];
+        assert!(ingest_terms_absent_violations(&reference).is_empty());
     }
 
     #[test]
