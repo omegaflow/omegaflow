@@ -160,6 +160,14 @@ field dsn_ka_down_power dsn_ka_down_power inverse-square em dBm 60.0 0.0 0.0
 field dsn_s_up_power dsn_s_up_power inverse-square em kW 60.0 0.0 0.0
 field dsn_x_up_power dsn_x_up_power inverse-square em kW 60.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/geofon.gfz-potsdam.de/fdsn_waveform.bin
+terms CC-BY-4.0 https://geofon.gfz.de/eqinfo/faq/
+format fdsn_waveform
+origin https://geofon.gfz-potsdam.de/fdsnws/dataselect/1/query
+compiler tools/harvest/src/bin/fdsn_waveform_compiler.rs
+at earth
+ttl 60
+
 url https://github.com/omegaflow/sources/releases/download/geomag.usgs.gov/usgs_geomag_efield_BOU.bin
 terms PD https://geomag.usgs.gov/
 format usgs_geomag_efield
@@ -10316,7 +10324,7 @@ ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/dataservices.gfz-potsdam.de/igets_l1.bin
 terms CC-BY-4.0 https://dataservices.gfz-potsdam.de/igets/
-origin https://igets.gfz-potsdam.de/
+origin sftp://igetsftp.gfz.de
 format igets
 ttl 604800
 at earth
