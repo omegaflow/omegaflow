@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: warum Zeugen keine Lizenzen tragen (gemessen), `ingest-terms-absent`-Gate gebaut
   class: handover
   date: 2026-10-14
-  sha256: 251e7eecb4a548c0975d62b6814906232ad57aeff4023e765a3763906b9c1406
+  sha256: df0fdeb405b6ef2c81644e07b6420c742513fff0273d7461547e3d90d4d82797
   status: live
 -->
 # Handover — Mountain-Folge 343 (2026-10-14)
@@ -14,10 +14,9 @@ Session konsumierte `handover-2026-10-14-mountain-folge342.md` (→
 `docs/handover/archiv/`) und faltete die adressierten Blöcke (future-folge253,
 mycelium-folge345).
 
-## Burn: open 0.00 · close 0.10
+## Burn: open 0.00 · close 0.31 · cap 0.40 Grund: ein Pass — vier Architektur-Fragen mit voller Recherche/Rat/Roster-Runde (10 Seats gestellt) + zwei Taucher-Wellen + CDF-Reader-Bau + Koordinaten-/Höhenmessung.
 
-Die Messzahl aus `session_burn` (opencode.db, Session „Warum Zeugen-Blöcke keine
-Lizenzen tragen", deepseek-flash) wächst bis Session-Schluss; Default-Cap 0.15.
+Gemessen `session_burn` (opencode.db, Session „Warum Zeugen-Blöcke keine Lizenzen tragen", deepseek-flash).
 
 ## Befund — warum die Zeugen keine Lizenzen tragen (gemessen 2026-10-14)
 
@@ -53,6 +52,29 @@ in `tools/gate/src/bin/commit_check.rs`; Fixture `phi-terms-absent`
 (`commit_gate.rs:5073`). `cargo build -p omegaflow-gate --bin commit_check` grün,
 `rustfmt --edition 2024 --check` 0/0.
 
+## Architektur — Recherche · Rat · Roster (2026-10-14)
+
+**Recherche (gemessen, drei Taucher).**
+- *ICGEM/XGM2019e:* `.gfc`-Header trägt kein `epoch`/`ref_epoch`; DataCite `10.5880/ICGEM.2019.007`, GFZ-Landing, Zingerle et al. 2020 nennen kein Referenzjahr — nur Publikationsjahr 2019/2020. Statisches Kombinationsfeld (GOCO06s + 15′-Bodengitter). Wire-`response_epoch` = max Record-`SLOT_EPOCH` (`gfc.rs:101`); der Compiler verlangt Header- oder `--epoch`, sonst Verweigerung. Präzedenz: statische Kataloge deklarieren eine Konstante im Format-Modul (`viking_grav` 1976, `fermi_4lac` 2008-08-04); `catalog_epoch` nur für Sternfelder.
+- *Venus:* 15 Kacheln `venus_{1988|2012|2015|2017|2020}_north_{inc|ocp|scp}.img`, je 960 000 000 B, `Array_2D_Map` 12000×20000 IEEE754LSBSingle, Sinusoidal 1000 m/pixel, R=6051 km, DOI `10.17189/1522443`. Einheit nur im Label-`<comment>`: `inc` = Grad, `ocp`/`scp` = dimensionslos. Kein `format`-Compiler; Arm `pds4_img.rs` reduziert auf 12000 Zeilenmittel. CC0-1.0 **nicht** im Label (nur DOI).
+- *Athabasca:* die 64 082 658-B-CDF ist **CDF-komprimiert** — die Variablennamen sind nicht als ASCII messbar; kein CDF-Reader-Bin. Variablennamen nur als Behauptung aus `pyspedas` (`ch1`,`ch2`,`freq_vlf`). Station ATH gemessen **54.60 N, 246.36 E**, Höhe absent.
+- *UCAR-FPI:* Live-URL antwortet 200, aber der Body ist das **E-Mail-Registrierungsformular** (Login/Cookie nötig); Verzeichnis 404; nur 2023+2024 je eine Athabasca-Datei; **kein** `ucar_fpi`-Compiler. Athabasca-Standort co-located ≈ 54.7 N, 246.7 O, ~500 m (FPI-eigene Koordinate ungemessen).
+
+**Rat (fünf Stimmen).** F1 = **(b)** (statt/absent bis eine physikalische Referenzepoche gemessen ist; nie 2019). F2 = **eine Quelle, ein Block, Einheit am Feld** (`inc:deg`, `ocp`/`scp:1`), Vorlage über die Jahres-Liste; Riss: bände die Grammatik die Einheit nur am Block, müssten es drei Blöcke sein. F3 = **C-1** (`field ktemp.<i>` Level im Schlüssel, `alt tpgpaltitude km` Höhe als `Position.alt`; HAPI-Arm muss `size` expandieren und `param.N` spaltenweise adressieren); C-2 und `freq`/`bin_width` verworfen. F4 = **(b) Compiler+fetch-einmal, aber CDN durch nicht-offene Lizenz blockiert → `local-only`/`blocked account`**; Live verweigert; Registrierung = per-act consent (Operator-Hand).
+
+**Roster (10 Seats gestellt).** Geantwortet mit den vier Fragen:
+| Seat | F1 | F2 | F3 | F4 |
+|---|---|---|---|---|
+| Rat | (b) | 1 Block, Einheit am Feld | C-1 dotted | compiler, aber local-only |
+| Qwen | (b) | 3 Blöcke + 15 explizit | dotted | compiler+CDN |
+| Claude Sonnet 5.5 | (b) (c als Notausgang) | 1 Block, Einheit am Feld, Vorlage | dotted | live-fetch, kein CDN |
+| MiniMax M3 | (b) | 3 Blöcke + Vorlage | dotted | live/credentialed, kein CDN |
+| Lumo 2.0 Max | (a) | 3 Blöcke + Vorlage | alias | CDN-Asset |
+
+Nicht-Antwort (gemessen): Z.ai/GLM **kam nicht zurück** (Deep Think lief auf einer fremden Frage weiter, `pending`); Duck.ai · DeepSeek · AI Studio · Inkling zeigten den Alt-Verlauf (Nachricht erreichte den Composer, keine neue Antwort).
+
+**Konvergenz/Riss.** F1 (b) und F3 (C-1/dotted) **konvergieren** (Rat + Qwen/Claude/MiniMax); Lumo dissentierend (a / alias). F2 **Riss**: ein Block mit Einheit am Feld (Rat/Claude) gegen drei Blöcke (Qwen/MiniMax/Lumo) — die Grammatik trägt die Einheit je `field` (parse.rs:1642), daher gilt der Rat; der Riss bleibt benannt. F4 **Riss**: live vs. CDN, aufgelöst durch die **nicht-offene Lizenz** → kein CDN (`local-only`, Operator-Wort 2026-10-13).
+
 ## Gefaltet (xfer-Echos)
 
 - `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.3~98d34b2c` · `.4~aab2512e` · `.5~ef59826c`
@@ -87,7 +109,8 @@ in `tools/gate/src/bin/commit_check.rs`; Fixture `phi-terms-absent`
   13,41 GiB → Split-Route. Lesearm `src/archivar/pds4_img.rs` (`82a393fb9`, `cargo check` 0/0).
 - **Blockade:** Blockform offen — die 15 Produkte tragen je eigene Einheit (`inc` = deg;
   `ocp`/`scp` = dimensionslos); der Arm deklariert keine Felder.
-- **Braucht:** Block + Split-Route + Compiler; per-Produkt-Einheit/`tau` entscheiden.
+- **Braucht:** Rat ergangen: **eine Quelle, ein Block, Einheit am Feld** (`inc`=Grad, `ocp`/`scp`=1), **Vorlage** über die Jahres-Liste; Compiler per Kachel; CDN nur für das reduzierte Asset (~2,5 MB × 15), Roh 13,41 GiB bleiben am PDS-Ursprung; Lizenz am DOI messen. **Riss:** drei Blöcke dissentieren (Qwen/MiniMax/Lumo) — grammatisch trägt die Einheit je `field`.
+- **Riss:** CC0-1.0 steht **nicht** im Label (nur die DOI); die Lizenz ist am DOI-Landing zu messen, ehe der Block die `terms`-Zeile erhält.
 
 ### ICGEM gfc — Override gebaut, Modell-Epoche ungemessen (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -98,9 +121,7 @@ in `tools/gate/src/bin/commit_check.rs`; Fixture `phi-terms-absent`
   Zingerle et al. 2020 tragen keins). **Riss 2:** volles Modell ≈ 12,8 GB > 2-GiB-Release-Deckel
   (`cdn.rs:230`); zulässiger Cap D=3211.
 - **Blockade:** der Wire-Epoch ist Pflicht; ein statisches Feld hat physikalisch vielleicht keinen.
-- **Braucht:** der Rat (fünf Stimmen) zur Epoche (τ=0-Pfad vs. deklarierte Katalog-Epoche);
-  dann Block `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`,
-  `format gfc`, `at earth`, 4 Felder.
+- **Braucht:** Rat ist ergangen (**b**: keine erfundene Epoche). Nächster Schritt: die Referenzepoche des Langwellen-Elterns **GOCO06s** aus dessen eigener Quelle messen; fehlt sie, bleibt der Block ungeschrieben (kein `format gfc` ohne Epoch). Danach Block `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`, `format gfc`, `at earth`, 4 Felder.
 - Braucht dazu: der CDDIS-`blocked account` ist **kein Key-Gap** — widerlegt per
   `xfer:future.ses_ecd6c8c94ffe3H3e2GL15xpxc5.3~98d34b2c` (HTTP 200 mit `EARTHDATA_EDL_TOKEN`).
 
@@ -115,10 +136,9 @@ in `tools/gate/src/bin/commit_check.rs`; Fixture `phi-terms-absent`
   **`erg-sc-rules-of-the-road`** (+ ISEE/PWING-VLF-Acknowledgement; Weiterverteilung verboten),
   terms-URL `https://ergsc.isee.nagoya-u.ac.jp/data_info/erg.shtml.en`. **`terms` ist im Block
   zulässig** (`parse.rs:267`) — kein Form-Hindernis.
-- **Blockade:** der `format cdf`-Arm liest nur skalare Variablen (`num_values == 1`); die
-  konkreten Kanal-Variablennamen der CDF sind ungemessen (Download ~55 MB → CI-lastig).
-- **Braucht:** ein CDF herunterladen, die skalaren Variablen messen → `field`-Zeilen +
-  `witness` + `terms erg-sc-rules-of-the-road <url>` + `force em` + `on earth <lat> <lon> <alt>`.
+- **Blockade:** der `format cdf`-Arm (`extract.rs:5047`) nutzt nur `cdf25` (CDF 2.5/2.6); die ath-Datei ist CDF **3.8.0, whole-file gzip-komprimiert** — dieser Pfad ist im Arm noch nicht eingezogen.
+- **Braucht:** Reader **gebaut** (`tools/measure/src/bin/cdf_vars.rs`, `cargo build -p omegaflow-measure --bin cdf_vars` 0/0, `rustfmt` sauber): die Datei trägt Magic `0xcdf30001`, Bytes 4–7 `0xcccc0001` (→ whole-file-Kompression), gzip-Strom ab Offset 40, `cType 5`; der Baum hat bereits den vollen CDF-3.0-Leser `src/archivar/cdf.rs` (`CdfFile::parse`), der nur an `WholeFileCompressed` scheitert. **Variablen gemessen:** `epoch_vlf` (TT2000), `ch1`, `ch2`, `freq_vlf` (REAL4 skalar), `label_freq_vlf` (CHAR 5), `amplitude_cal_vlf_ch1`, `amplitude_cal_vlf_ch2`. **Nächster Schritt:** den v3+Ganzdatei-Dekompression-Pfad in den `format cdf`-Arm ziehen (statt `cdf25`), dann Block: `url …/isee_vlf_ath_<YYYYMMDDHH>_v01.cdf`, `terms erg-sc-rules-of-the-road https://ergsc.isee.nagoya-u.ac.jp/data_info/erg.shtml.en`, `format cdf`, `witness …`, `field` je Kanal, `force em`, `on earth 54.60 246.36 693`.
+- **Koordinate/Höhe (gemessen 2026-10-14):** die ISEE-Kopftabelle **und** Shiokawa et al. 2017 Table 1 nennen **54.60 / 246.36 = AUGO II**, Offizialstandort **54.60282 / −113.64442, 693 m** (Wayback `augo.athabascau.ca/location`); die ISEE-Beschreibung nennt dagegen **54.7 / 246.7 = AUGO I** (Campus, Site-Log 54.71340/−113.31308, ellipsoidal 551,93 m). Die exakte Loop-Position ist in keiner Quelle genauer als 0,1° publiziert. **Höhe:** AUGO II offiziell **693 m** (deckt sich mit GEBCO 693 m); die drei 30/90-m-DEMs geben ~700 m; **NRCan HRDEM 1 m (~0,3 m) trägt an AUGO II keine Deckung** (nur am Campus AUGO I: DSM 571 m). Antenne über Grund **5,3 m** (Shiokawa 2017, HR-130C). → Stationshöhe **693 m** (dokumentiert), Instrument ≈ **698 m**. **Riss:** welches AUGO die Loop trägt (Tabelle/Paper = II, Beschreibung = I) — die Koordinate entscheidet die Höhe (~693 m vs. ~571 m).
 
 ### UCAR-FPI — Arm verdrahtet, Sample liegt, Block fehlt (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -131,8 +151,7 @@ in `tools/gate/src/bin/commit_check.rs`; Fixture `phi-terms-absent`
   (PI vor Publikation kontaktieren, DOI zitieren), terms-URL `https://data.ucar.edu/dataset/fpi-resolute`.
   **Riss:** kein Athabasca-FPI-DOI (die Netz-DOIs Resolute usw. stehen nicht dafür ein).
 - **Blockade:** Block-Innenform (`url` CDN vs. raw + Compiler) offen.
-- **Braucht:** Block mit `terms ucar-hao-data-use https://data.ucar.edu/dataset/fpi-resolute`,
-  dem gemessenen Athabasca-`url` und den zwei `field`-Zeilen `fpi_mer_wind_ms`/`fpi_zon_wind_ms`.
+- **Braucht:** Rat ergangen: **Compiler + fetch-einmal**, aber **CDN durch die nicht-offene Lizenz blockiert → `local-only`** (Arbeitskopie unter `data/`), kein `phi`-`url`/`compiler`; die Registrierung ist per-act consent (Operator-Hand, pending). Offen: die **FPI-eigene** Athabasca-Instrumentenkoordinate messen (die Co-Location ≈ 54.7 N/246.7 O ist nicht die Instrumentenkoordinate); die zwei `field`-Zeilen `fpi_mer_wind_ms`/`fpi_zon_wind_ms` stehen bereit.
 
 ### SABER — Höhenform (C) offen (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -146,7 +165,7 @@ in `tools/gate/src/bin/commit_check.rs`; Fixture `phi-terms-absent`
   `https://spdf.gsfc.nasa.gov/pub/data/timed/saber/`, HAPI `TIMED_L2A_SABER`, DOI
   `10.48322/2src-g677`. **`terms` ist im Block zulässig.**
 - **Blockade:** die `channel`/`field`-Form ist nicht als Registerzeile geschrieben; ggf. fehlt ein Arm.
-- **Braucht:** die `channel`/`field`-Zeile nach Form (C); Block `terms saber-rules-of-the-road <url>`.
+- **Braucht:** Rat ergangen: **C-1** — `field ktemp.<i> …` (dotted Level im Schlüssel), neue Direktive `alt tpgpaltitude km` (Höhe als `Position.alt`); der HAPI-Arm muss `size` in dotted-Indices expandieren und `param.N` spaltenweise adressieren (heute fehlt der Arm). Block `terms saber-rules-of-the-road <url>`.
 
 ### harvest-Direktive — Parser + Schumann-Block (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -241,6 +260,7 @@ Origin: mountain-343 (2026-10-14) — trägt die offenen Einträge aus mountain-
 
 - **„Starte die Mountain-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes."** | 2026-10-14 | (mountain 343).
 - **„bitte schau dir direkt an warum die zeugen keine lizenzen tragen"** | 2026-10-14 | (mountain 343 — Befund + `ingest-terms-absent`-Gate).
+- **„Athabasca kannst du nicht mit unsrenen geodäsie daten und den bauplänen exakt die höhe feststellen? kein CDF-Reader-Bin vorhanden müssen wir den bauen? Login = Operator-Hand. dann öffne die seite"** | 2026-10-14 | (mountain 343 — Höhe ≈700 m gemessen; CDF-v3-Reader nötig; UCAR-Registrierungsseite geöffnet).
 
 ## Abschluss
 
