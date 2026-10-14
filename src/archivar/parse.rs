@@ -311,6 +311,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "no-cadence" => {
                 cur_ttl = NO_CADENCE;
             }
+            "harvest" if parts.len() >= 2 => {}
+            "harvest" => {
+                report_anomaly(
+                    "Invalid Syntax",
+                    &cur_url,
+                    &format!("harvest needs <actor>: {}", line),
+                );
+            }
             "live" => {
                 cur_live_only = true;
             }

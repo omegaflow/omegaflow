@@ -10451,11 +10451,11 @@ fn test_finals_channels_reads_the_bull_b_columns() {
         ],
     );
     let lsk = fixture_lsk();
-    let channels = build_finals_channels(&src, &text, &lsk);
+    let now = lsk.unix_to_tdb((61100.0 - 40587.0) * 86400.0).unwrap();
+    let channels = build_finals_channels(&src, &text, now, &lsk);
     assert_eq!(channels.len(), 3);
-    let expect_epoch = lsk.unix_to_tdb((61100.0 - 40587.0) * 86400.0).unwrap();
     for (c, fc) in &channels {
-        assert_eq!(c.epoch, expect_epoch);
+        assert_eq!(c.epoch, now);
         match fc.name.as_str() {
             "ut1_utc" => assert_eq!(c.value, 0.0672285),
             "pmx" => assert_eq!(c.value, 0.105015),
@@ -10477,7 +10477,8 @@ fn test_finals_channels_falls_back_to_bull_a_when_bull_b_is_absent() {
         ],
     );
     let lsk = fixture_lsk();
-    let channels = build_finals_channels(&src, &format!("{line}\n"), &lsk);
+    let now = lsk.unix_to_tdb((61100.0 - 40587.0) * 86400.0).unwrap();
+    let channels = build_finals_channels(&src, &format!("{line}\n"), now, &lsk);
     assert_eq!(channels.len(), 3);
     for (c, fc) in &channels {
         match fc.name.as_str() {
@@ -10503,11 +10504,11 @@ fn test_finals_channels_skips_predicted_lines() {
         ],
     );
     let lsk = fixture_lsk();
-    let channels = build_finals_channels(&src, &format!("{measured}\n{predicted}\n"), &lsk);
+    let now = lsk.unix_to_tdb((61100.0 - 40587.0) * 86400.0).unwrap();
+    let channels = build_finals_channels(&src, &format!("{measured}\n{predicted}\n"), now, &lsk);
     assert_eq!(channels.len(), 3);
-    let expect_epoch = lsk.unix_to_tdb((61100.0 - 40587.0) * 86400.0).unwrap();
     for (c, fc) in &channels {
-        assert_eq!(c.epoch, expect_epoch);
+        assert_eq!(c.epoch, now);
         match fc.name.as_str() {
             "ut1_utc" => assert_eq!(c.value, 0.0672285),
             "pmx" => assert_eq!(c.value, 0.105015),
@@ -10515,6 +10516,63 @@ fn test_finals_channels_skips_predicted_lines() {
             other => panic!("unexpected field {}", other),
         }
     }
+}
+
+#[test]
+fn test_finals_channels_interpolates_the_now_value_between_two_days() {
+    let a = "26 3 1 61100.00 I  0.105055 0.000013  0.389089 0.000012  I 0.0672051 0.0000117  0.1503 0.0101  I     0.415    0.387    -0.092    0.170  0.400000 -0.200000  0.1000000     0.403    -0.120  ";
+    let b = "26 3 3 61102.00 I  0.105055 0.000013  0.389089 0.000012  I 0.0672051 0.0000117  0.1503 0.0101  I     0.415    0.387    -0.092    0.170  0.600000 -0.400000  0.1020000     0.403    -0.120  ";
+    let src = source_fixture(
+        "finals",
+        vec![
+            Extract::Field(field_fixture("ut1_utc", 86400.0)),
+            Extract::Field(field_fixture("pmx", 86400.0)),
+            Extract::Field(field_fixture("pmy", 86400.0)),
+        ],
+    );
+    let lsk = fixture_lsk();
+    let now = lsk.unix_to_tdb((61101.0 - 40587.0) * 86400.0).unwrap();
+    let channels = build_finals_channels(&src, &format!("{a}\n{b}\n"), now, &lsk);
+    assert_eq!(channels.len(), 3);
+    for (c, fc) in &channels {
+        assert_eq!(c.epoch, now);
+        match fc.name.as_str() {
+            "ut1_utc" => assert!((c.value - 0.101).abs() < 1e-12),
+            "pmx" => assert!((c.value - 0.5).abs() < 1e-12),
+            "pmy" => assert!((c.value + 0.3).abs() < 1e-12),
+            other => panic!("unexpected field {}", other),
+        }
+    }
+}
+
+#[test]
+fn test_finals_channels_carries_lod_in_seconds() {
+    let line = "26 3 1 61100.00 I  0.105055 0.000013  0.389089 0.000012  I 0.0672051 0.0000117  0.1503 0.0101  I     0.415    0.387    -0.092    0.170  0.105015  0.389153  0.0672285     0.403    -0.120  ";
+    let src = source_fixture(
+        "finals",
+        vec![Extract::Field(field_fixture("lod", 86400.0))],
+    );
+    let lsk = fixture_lsk();
+    let now = lsk.unix_to_tdb((61100.0 - 40587.0) * 86400.0).unwrap();
+    let channels = build_finals_channels(&src, &format!("{line}\n"), now, &lsk);
+    assert_eq!(channels.len(), 1);
+    assert_eq!(channels[0].0.value, 0.1503e-3);
+}
+
+#[test]
+fn test_finals_channels_refuses_a_now_far_beyond_the_newest_measured_line() {
+    let line = "26 3 1 61100.00 I  0.105055 0.000013  0.389089 0.000012  I 0.0672051 0.0000117  0.1503 0.0101  I     0.415    0.387    -0.092    0.170  0.105015  0.389153  0.0672285     0.403    -0.120  ";
+    let src = source_fixture(
+        "finals",
+        vec![Extract::Field(field_fixture("ut1_utc", 86400.0))],
+    );
+    let lsk = fixture_lsk();
+    let now = lsk.unix_to_tdb((61110.0 - 40587.0) * 86400.0).unwrap();
+    let channels = build_finals_channels(&src, &format!("{line}\n"), now, &lsk);
+    assert!(
+        channels.is_empty(),
+        "a stale now-value is refused, never extrapolated"
+    );
 }
 
 #[test]
