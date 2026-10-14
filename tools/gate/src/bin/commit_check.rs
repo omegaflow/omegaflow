@@ -117,6 +117,24 @@ fn handover_line_of(path: &str) -> Option<String> {
     Some(line.to_lowercase())
 }
 
+fn agents_growth_violations(now: usize, head: Option<usize>) -> Vec<String> {
+    const AGENTS_CAP: usize = 48 * 1024;
+    let mut violations = Vec::new();
+    if now > AGENTS_CAP {
+        violations.push(format!(
+            "agents-size - {now} bytes (cap {AGENTS_CAP}); a new rule lives in docs/concepts/ with one line in the Rule Index, never in AGENTS.md"
+        ));
+    }
+    if let Some(head) = head {
+        if now > head {
+            violations.push(format!(
+                "agents-ratchet - {now} bytes grew from {head}; the constitution never grows — move a rule to docs/concepts/ to make room"
+            ));
+        }
+    }
+    violations
+}
+
 fn main() {
     let no_canon = std::env::args().skip(1).any(|a| a == "--no-canon");
     let out = Command::new("git")
@@ -178,6 +196,20 @@ fn main() {
                 eprintln!(
                     "commit_check: opencode.json: mcp-no-leak gate did not read the staged config"
                 );
+                fail = true;
+            }
+        }
+    }
+    if staged.contains(&"AGENTS.md") {
+        if let Ok(content) = std::fs::read("AGENTS.md") {
+            let head = Command::new("git")
+                .args(["show", "HEAD:AGENTS.md"])
+                .output()
+                .ok()
+                .filter(|o| o.status.success())
+                .map(|o| o.stdout.len());
+            for message in agents_growth_violations(content.len(), head) {
+                eprintln!("commit_check: AGENTS.md: {message}");
                 fail = true;
             }
         }
@@ -465,5 +497,23 @@ mod tests {
             own_handover_missing(std::slice::from_ref(&doc), "siehe survey-2026-10-10-foo.md")
                 .is_empty()
         );
+    }
+
+    #[test]
+    fn agents_growth_is_refused_at_the_cap_and_at_the_ratchet() {
+        assert!(agents_growth_violations(40 * 1024, Some(50 * 1024)).is_empty());
+        assert_eq!(
+            agents_growth_violations(50 * 1024, Some(50 * 1024)),
+            vec![format!(
+                "agents-size - {} bytes (cap {}); a new rule lives in docs/concepts/ with one line in the Rule Index, never in AGENTS.md",
+                50 * 1024,
+                48 * 1024
+            )]
+        );
+        assert_eq!(
+            agents_growth_violations(30 * 1024, Some(20 * 1024)).len(),
+            1
+        );
+        assert!(agents_growth_violations(30 * 1024, None).is_empty());
     }
 }
