@@ -76,7 +76,31 @@ fn year_of(unix: f64) -> i64 {
     let era = if z >= 0 { z } else { z - 146096 } / 146097;
     let doe = z - era * 146097;
     let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
-    yoe + era * 400
+    let y = yoe + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 };
+    if m <= 2 { y + 1 } else { y }
+}
+
+const STATION_INFO: &str =
+    "https://imag-data.bgs.ac.uk/GIN_V1/hapi/info?id={station}/best-avail/PT1M/xyzf";
+
+fn dataset_year_range(station: &str) -> Option<(i64, i64)> {
+    let url = STATION_INFO.replace("{station}", &station.to_lowercase());
+    let root = fetch_raw(&url, None, &[]).and_then(|b| parse_json(&b))?;
+    let JsonVal::Obj(obj) = root else {
+        return None;
+    };
+    let start = match obj.get("startDate") {
+        Some(JsonVal::Str(s)) => iso_to_unix(s),
+        _ => None,
+    }?;
+    let stop = match obj.get("stopDate") {
+        Some(JsonVal::Str(s)) => iso_to_unix(s),
+        _ => None,
+    }?;
+    Some((year_of(start), year_of(stop)))
 }
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
@@ -179,8 +203,27 @@ fn main() {
         Some(v) => v,
         None => format!("{}_xyz_1m.bin", station.to_lowercase()),
     };
+    let (lo, hi) = match dataset_year_range(&station) {
+        Some(range) => range,
+        None => (sy, ey),
+    };
+    let (start_year, end_year) = if sy.max(lo) > ey.min(hi) {
+        eprintln!(
+            "{station}: window {sy}..{ey} lies outside the dataset range {lo}..{hi} — harvesting {lo}..{hi}"
+        );
+        (lo, hi)
+    } else {
+        let s = sy.max(lo);
+        let e = ey.min(hi);
+        if (s, e) != (sy, ey) {
+            eprintln!(
+                "{station}: window {sy}..{ey} clamped to the dataset range {lo}..{hi} -> {s}..{e}"
+            );
+        }
+        (s, e)
+    };
     let mut all: Vec<(f64, f64, f64, f64)> = Vec::new();
-    for year in sy..=ey {
+    for year in start_year..=end_year {
         let rows = harvest_year(&station, year);
         eprintln!("{station} {year}: {} xyz samples", rows.len());
         all.extend(rows);
@@ -224,6 +267,18 @@ mod tests {
     fn the_year_of_an_epoch_is_the_civil_year() {
         assert_eq!(year_of(0.0), 1970);
         assert_eq!(year_of(1_700_000_000.0), 2023);
+    }
+
+    #[test]
+    fn the_year_of_a_january_epoch_is_the_civil_year() {
+        assert_eq!(
+            year_of(iso_to_unix("1991-01-01T00:00:00Z").expect("parse")),
+            1991
+        );
+        assert_eq!(
+            year_of(iso_to_unix("2026-10-14T00:00:00Z").expect("parse")),
+            2026
+        );
     }
 
     #[test]
