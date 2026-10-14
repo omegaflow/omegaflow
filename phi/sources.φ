@@ -583,7 +583,9 @@ field solar_wind_speed_km_s solar_wind_speed_km_s patch-levy advective km/s 3600
 field solar_wind_density_cm3 solar_wind_density_cm3 gaussian-inverse-square diffusion 1/cm3 3600 0.0 0.0
 field solar_wind_temp_k solar_wind_temp_k exponential-decay thermal K 3600 0.0 0.0
 
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DE2_UA16S_ALL&time.min=1981-08-06T00:00:00Z&time.max=1983-02-19T00:00:00Z&parameters=NACS_N2density,WATS_NVEneutralWind,WATS_NVUneutralWind,RPA_NIionDensity,RPA_IVEionDrift,RPA_IVNionDrift&format=json
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/hapi-data-id-DE2_UA16S_ALL-time.min-1981-08-06T00_00_00Z-time.max-1983-02-19T00_00_00Z-parameters-NACS_N2density_WATS_NVEneutralWind_WATS_NVUneutralWind_RPA_NIionDensity_RPA_IVEionDrift_RPA_IVNionDrift-format-json.json
+origin https://cdaweb.gsfc.nasa.gov/hapi/data?id=DE2_UA16S_ALL&time.min=1981-08-06T00:00:00Z&time.max=1983-02-19T00:00:00Z&parameters=NACS_N2density,WATS_NVEneutralWind,WATS_NVUneutralWind,RPA_NIionDensity,RPA_IVEionDrift,RPA_IVNionDrift&format=json
+harvest de2
 terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
 at earth
