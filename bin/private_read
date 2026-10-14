@@ -1,11 +1,12 @@
 #!/bin/sh
-# private_read — the redactor. Three layers, model first:
-#   Layer 1 (model, Mistral via the local gateway): recognises persons, addresses,
-#            contacts, device IDs IN CONTEXT and replaces them — catches the unknown.
-#   Layer 2 (patterns, built in): private-key blocks, API keys, tokens, MAC, UUID,
-#            IBAN, phone, street, ZIP+city, e-mail — guarantees the shapes.
-#   Layer 3 (the map, private): $OMEGAFLOW_PRIVATE/redact.map — a hint, not a duty.
-# If the gateway is unreachable, Layer 1 is skipped with a warning (patterns+map only).
+# private_read — the redactor, in the operator's order:
+#   Stage 1 — deterministic (patterns + map): the wall. Runs always, on the machine.
+#   Stage 2 — the Mistral check (via the local gateway): it sees the ALREADY-redacted
+#             text and replaces only what stage 1 missed (a name without a shape, a
+#             contact, a device id). It sits BETWEEN the redactor and the reader, so
+#             even its logging carries placeholders, not the original.
+# Stage 2 runs only when OMEGAFLOW_REDACT_MODEL is set (default: a small Mistral).
+# If the gateway is closed (paid gate) or unreachable, stage 1's output is returned as is.
 #
 # It must run OUTSIDE the cage: the cage rightly hides the private house from the
 # public agent's shell. So it is launched by the operator (their terminal) or by the
@@ -29,32 +30,14 @@ map="$priv/redact.map"
 
 filter="$(mktemp)"
 mapscript="$(mktemp)"
-src="$(mktemp)"
-trap 'rm -f "$filter" "$mapscript" "$src"' EXIT
+trap 'rm -f "$filter" "$mapscript"' EXIT
 
-# ---- Layer 1: the model net — OFF by default ----
-# The model pass runs ONLY when OMEGAFLOW_REDACT_MODEL is set explicitly. It is never
-# a silent default: a local model load is heavy (it once froze the operator's machine)
-# and its prompt may be logged. The deterministic layers below are the default wall.
+# ---- Stage 2 config (the Mistral check) ----
 gateway="${OMEGAFLOW_GATEWAY:-http://127.0.0.1:1621/v1/chat/completions}"
-model="${OMEGAFLOW_REDACT_MODEL:-}"
-red=""
-if [ -n "$model" ]; then
-  prompt='Du bist ein Schwärzer. Ersetze JEDE Person (Vorname, Nachname, beides), jede Postadresse, jede Telefonnummer, jede E-Mail-Adresse, jede Geräte- und Netz-Kennung (MAC, UUID, Seriennummer) und jeden Kontaktnamen durch einen Platzhalter: <NAME> <ADDR> <TEL> <EMAIL> <DEVICE> <CONTACT>. Behalte den übrigen Text WÖRTLICH und vollständig. Gib NUR den umgewandelten Text zurück — keine Erklärung, keine Einleitung, keine Anführungszeichen.'
-  body="$(jaq -Rs --arg m "$model" --arg s "$prompt" \
-    '{model:$m,temperature:0,messages:[{role:"system",content:$s},{role:"user",content:.}]}' < "$f" 2>/dev/null || true)"
-  if [ -n "$body" ]; then
-    resp="$(curl -s -m 90 "$gateway" -H 'Content-Type: application/json' -d "$body" 2>/dev/null || true)"
-    red="$(printf '%s' "$resp" | jaq -r '.choices[0].message.content // empty' 2>/dev/null || true)"
-  fi
-fi
-if [ -n "$red" ]; then
-  printf '%s\n' "$red" > "$src"
-else
-  cat "$f" > "$src"
-fi
+model="${OMEGAFLOW_REDACT_MODEL-mistral/mistral-small-latest}"
+prompt='Dieser Text ist BEREITS geschwärzt: Personen, Adressen, Kontakte und Kennungen stehen als Platzhalter wie <NAME>, <ADDR>, <TEL>, <EMAIL>, <DEVICE>, <CONTACT>. Finde NUR NOCH die Reste, die übersehen wurden — Personennamen (auch einzelne Vor- oder Nachnamen), Adressen, Telefonnummern, Mailadressen, Konten-, Geräte- und Netz-Kennungen — und ersetze sie durch dieselben Platzhalter. Lass die vorhandenen Platzhalter und den übrigen Text WÖRTLICH unverändert. Gib NUR den Text zurück — keine Erklärung, keine Anführungszeichen.'
 
-# ---- Layer 2: the patterns ----
+# ---- Stage 1: the patterns ----
 cat > "$filter" <<'SED'
 s/sk-[A-Za-z0-9_-]\{16,\}/<KEY>/g
 s/github_pat_[A-Za-z0-9_]\{20,\}/<KEY>/g
@@ -74,7 +57,7 @@ s/[0-9]\{5\}[[:space:]]\{1,2\}[A-ZÄÖÜ][a-zäöüß-]\{2,\}/<ORT>/g
 s/\b\(Tel\|Telefon\|Mobil\|Handy\|Fax\)[[:space:]]*[:.]*[[:space:]]*[+0-9][0-9 ()/.-]\{5,\}[0-9]\b/<TEL>/g
 SED
 
-# ---- Layer 3: the map ----
+# ---- Stage 1: the map ----
 awk -F'=' '
   /^[[:space:]]*#/ { next }
   /^[[:space:]]*$/ { next }
@@ -93,9 +76,22 @@ awk -F'=' '
   printf 's/%s/%s/g\n' "$esc" "$escph" >> "$mapscript"
 done
 
-awk '
+stage1="$(awk '
   /-----BEGIN [A-Z ]*PRIVATE KEY-----/ { inkey=1; print "<PRIVATE KEY>"; next }
   /-----END [A-Z ]*PRIVATE KEY-----/ { inkey=0; print "</PRIVATE KEY>"; next }
   inkey { next }
   { print }
-' "$src" | sed -f "$filter" | sed -f "$mapscript"
+' "$f" | sed -f "$filter" | sed -f "$mapscript")"
+
+# ---- Stage 2: the Mistral check on the already-redacted text ----
+out="$stage1"
+if [ -n "$model" ]; then
+  body="$(printf '%s\n' "$stage1" | jaq -Rs --arg m "$model" --arg s "$prompt" \
+    '{model:$m,temperature:0,messages:[{role:"system",content:$s},{role:"user",content:.}]}' 2>/dev/null || true)"
+  if [ -n "$body" ]; then
+    resp="$(curl -s -m 120 "$gateway" -H 'Content-Type: application/json' -d "$body" 2>/dev/null || true)"
+    red="$(printf '%s' "$resp" | jaq -r '.choices[0].message.content // empty' 2>/dev/null || true)"
+    [ -n "$red" ] && out="$red"
+  fi
+fi
+printf '%s\n' "$out"
