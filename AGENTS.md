@@ -475,14 +475,14 @@ Every agent maps to one profile; in a bash map the catch-all
 pattern, **last matching rule wins**; a `"deny"` string on a tool key removes the
 tool):
 
-- **P1 primary** (`line`) — edit + full bash (global). Läuft auf original DeepSeek V4 Flash.
-- **P2 research** (`taucher`) — edit + full bash (global). Läuft auf original DeepSeek V4 Flash.
+- **P1 primary** (`line`) — edit + full bash (global). Läuft auf `deepseek/deepseek-flash`.
+- **P2 research** (`taucher`) — edit + full bash (global). Läuft auf `deepseek/deepseek-flash`.
 - **P3 council** (`rat`) — no edit; bash = `register_lookup` + `git_safety`
   + `open_points_check` + git-read + `merge-base` + `sgrep` +
   `ci_manage status`/`list`/`view`/`jobs`/`log` + `du`/`find`/`awk`.
-  Läuft auf original DeepSeek V4 Flash. Der Rat (0,9) — die fünf Stimmen — hält
+  Läuft auf `deepseek/deepseek-flash`. Der Rat (0,9) — die fünf Stimmen — hält
   Architektur-/Ethik-Fragen.
-- **P4 future/PII** (`future`) — edit + full bash (global). Läuft auf DeepInfra DeepSeek V4 Flash.
+- **P4 future/PII** (`future`) — edit + full bash (global). Läuft auf `groq/openai/gpt-oss-120b`.
   Nur für Future-Linie und PII-geschützte Arbeit (Mail, Secrets, Operator-Queue, Förderung).
   Keine öffentliche Arbeit — kein Bau, kein Port, kein öffentlicher Code.
 
@@ -522,9 +522,9 @@ only, never for routine work:
 
 | Job | Agent | Provider |
 |---|---|---|
-| öffentliche Arbeit (Bau, Port, Code) | `line` · `taucher` | original DeepSeek V4 Flash |
-| Architektur / Ethik (Rat, fünf Stimmen) | `rat` | original DeepSeek V4 Flash |
-| Future-Linie + PII (Mail, Secrets, Förderung) | `future` | DeepInfra DeepSeek V4 Flash |
+| öffentliche Arbeit (Bau, Port, Code) | `line` · `taucher` | `deepseek/deepseek-flash` |
+| Architektur / Ethik (Rat, fünf Stimmen) | `rat` | `deepseek/deepseek-flash` |
+| Future-Linie + PII (Mail, Secrets, Förderung) | `future` | `groq/openai/gpt-oss-120b` |
 
 Measured (2026-09-15, `session_burn`/opencode.db): flash dispatches cost
 ~$0.001–0.011, pro/max ~$0.007–0.126 — 5–40× more. Head-to-head on a real repo
@@ -552,9 +552,8 @@ $0.0041–0.0090 — 2.4–11x for an identical result; the winner is `taucher`
 pro/max stays for the named hard atoms only.
 
 **Modell-Politik (Operator-Wort 2026-10-14).** Zwei Anbieter, getrennt nach Arbeitstyp:
-- **Original DeepSeek V4 Flash** — öffentliche Arbeit: Bau, Port, Code, Recherche (`line` · `taucher`).
-- **Original DeepSeek V4 Flash** — Architektur / Ethik (`rat`, die fünf Stimmen).
-- **DeepInfra DeepSeek V4 Flash** — Future-Linie + PII: Mail, Secrets, Operator-Queue, Förderung (`future`).
+- **DeepSeek (original) `deepseek/deepseek-flash`** — öffentliche Arbeit: Bau, Port, Code, Recherche, Architektur/Ethik (`line` · `taucher` · `rat`). Günstiger Direkt-API-Pfad, kein Reseller.
+- **Groq `groq/openai/gpt-oss-120b`** — NUR Future-Linie + PII: Mail, Secrets, Operator-Queue, Förderung (`/future`). US (nicht China), kein Training, **gratis** und **schnell** (233 tok/s). DeepInfra wurde als Desaster verworfen (unglaublich langsam; Cache teuer — GLM-5.3 ca. 2,6 ct/Nachricht gegen DeepSeek 0,16 ct).
 
 Kein pro/max, kein Gremium, kein Elitetaucher. Thinking aus (flash/low). Der Burn wird gemessen (`session_burn`), nie geschätzt.
 
