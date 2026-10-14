@@ -2,7 +2,7 @@
   title: Docs — Benennung & Versionierung
   class: concept
   date: 2026-09-10
-  sha256: ff371a816fff7a5a49f627b4cde649c907d9b34fc9a085974a7497c957b61c24
+  sha256: 975666b0f83d9ee9319995706fac6d4d1e118317e46bfb73879ebcac3a33daf3
   status: live
   see-also: AGENTS.md
 -->
@@ -28,6 +28,16 @@ Classes (folder = purpose, prefix = kind, kebab-case, ASCII, no spaces/umlauts):
   liegt im privaten Repo `omegaflow/personal` unter `handover/` — gleiche
   Benennung, gleicher Header, gleicher `archiv/`-Move; `docs/handover/` trägt
   keine Future-Übergabe mehr, auch nicht im `archiv/`.
+- **Das Postfach — privat ↔ öffentlich** (Operator-Wort 2026-10-14):
+  `docs/handover/handover-<date>-postfach-folge<N>.md` ist die öffentliche Brücke
+  aus dem privaten Register. Die private Linie (Future) trägt hier **nur die Namen
+  ihrer öffentlichen Artefakte** ein — keine Register-, Operator- oder
+  PII-Inhalte. Der `commit_check`-Gate `own-handover` liest diese Folge als
+  öffentlichen Träger: ein neu hinzugefügtes `docs/*`-Dok ist gültig angekündigt,
+  wenn es hier (oder in einer öffentlichen Linien-Übergabe) genannt ist. So bleibt
+  Futures Register vollständig privat und der öffentliche Baum erfährt trotzdem,
+  welches Dok die nächste Linie findet (der `commit_check`-Riß, gemessen
+  2026-10-14 am AGENTS-Schnitt: `own-handover` kennt nur öffentliche Träger).
 - `docs/surveys/survey-YYYY-MM-DD-<slug>.md` — a dated finding/snapshot;
   `survey-<slug>.md` — a standing survey (evolving, no date in the name).
 - `docs/plans/ref-<slug>.md` — a standing reference list.
