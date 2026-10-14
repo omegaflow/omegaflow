@@ -108,3 +108,11 @@ weberin-zeugen-fäden fakten gemessen register-zeilen-bau gates cdf-arm
 # geheilt; Zeuge läuft im nächsten subset`, in folge209), von river-211 geschlossen (der
 # AACGM-Zeuge läuft im subset grün, Commit f54787bb1) und deshalb gelöscht — kein stiller Drop.
 prosa-träger mountain327-abgabe aacgm-koeffizient geheilt zeuge läuft
+# Erweitert 2026-10-14 (River-Linie, ci-gate-Remediation; Herkunft Mountain folge345→346): die
+# zwei Neue-Drops des ci-gate-Laufs 38602958578 (head f49586c62, `current 2 | pinned 87 | new 2`)
+# sind Handover-Churn der Mountain-Linie: `### SABER — Höhenform (C): Arm + Höhen-Ablage` und
+# `### Epochen-Absenz — zwei Linien, unvereinheitlicht` in `archiv/handover-2026-10-14-mountain-
+# folge345.md` sind in folge346 unter neuer Route/Rats-Verdikt weitergeführt (Route B bzw. b) —
+# kein stiller Drop.
+saber höhenform c arm höhen-ablage brauchen
+epochen-absenz zwei linien unvereinheitlicht eigen

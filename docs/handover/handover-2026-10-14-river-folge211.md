@@ -2,7 +2,7 @@
 title: Handover — River-Folge 211
 class: handover
 date: 2026-10-14
-sha256: 42f0181a9e1cbc7fc875dab0410563db6b9c19dcb1b765a13b3fa4e4e736a36d
+sha256: 7f752c385135796fca5f621ae00b0bd5b18c94231cdfd33f0e15b60456515ea5
 status: live
 -->
 # Handover — River-Folge 211 (2026-10-14)
@@ -203,7 +203,7 @@ Origin: river-212 (2026-10-14)
 **`ci-gate` am HEAD `e2a28dcd3` — `clippy` grün; `format` + `dropped-gate` in diesem Atom geheilt; `register` bleibt bei Mountain.**
 Gemessen `ci_manage view/jobs/log 38595147942` (HEAD `e2a28dcd3`): `clippy` **success** (river-211s `cdf.rs`-Lints), `build` success; `format`/`register`/`dropped-gate` failure; `subset` in_progress.
 - **`format` (12 Dateien):** die CI-Diffs sind **exakt** die im Arbeitbaum schmutzigen Rust-Dateien; `rustfmt --edition 2024 --check` über alle 12 → **exit 0** (der Arbeitbaum trägt die Format-Lösung). Ursache: Rivers `force`→`channel_ref`-Rename (river-198 `59b31dc1c`) und spätere Umformungen drückten die `force_id_of("electric")`-Assertions über 100 Spalten. **Geheilt (river-212):** die mechanische rustfmt-Ausgabe committet (`src/archivar/{ampere_fac,bpa_gic,fdsn_event,mtg_li,pcn,superdarn_cpcp,swarm_fac,swpc_efield,usgs_geomag}.rs`, `tools/harvest/.../fdsn_event_compiler.rs`, `tools/measure/.../{cdf_vars,nobel_probe_corona}.rs`) — `git diff` rein Format, keine Semantik.
-- **`dropped-gate`:** `current 1 | pinned 86 | new 1` — der Neue-Drop `prosa-träger mountain327-abgabe aacgm-koeffizient geheilt zeuge läuft` ist die von river-211 erledigte + gelöschte Mountain327-Prosa-Träger-Zeile (AACGM-Zeuge im `subset` grün, `f54787bb1`); gemessen `register_lookup --dropped-keys --changed-since a8f871476`. **Geheilt (river-212):** in `docs/zustand/dropped-legacy-baseline.txt` mit Beleg-Kommentar eingetragen — kein stiller Drop.
+- **`dropped-gate`:** `current 1 | pinned 86 | new 1` — der Neue-Drop `prosa-träger mountain327-abgabe aacgm-koeffizient geheilt zeuge läuft` ist die von river-211 erledigte + gelöschte Mountain327-Prosa-Träger-Zeile (AACGM-Zeuge im `subset` grün, `f54787bb1`); gemessen `register_lookup --dropped-keys --changed-since a8f871476`. **Geheilt (river-212):** in `docs/zustand/dropped-legacy-baseline.txt` mit Beleg-Kommentar eingetragen — kein stiller Drop. Zwei weitere Neue-Drops am head `f49586c62` (Lauf `38602958578`, `new 2`) — `saber höhenform c arm höhen-ablage brauchen` und `epochen-absenz zwei linien unvereinheitlicht eigen` — sind Handover-Churn der Mountain-Linie folge345→346 (in folge346 unter Route B bzw. Rats-Verdikt b weitergeführt); ebenfalls mit Beleg gepinnt, kein stiller Drop.
 - **`register` (bleibt rot):** `cdn_reconcile --fail` — 5 CDN-Workflows schreiben Netlocs, die nicht in `phi/sources.φ` gebunden sind: `babamul-cdn.yml:37` (`babamul.caltech.edu`), `celestrak-eop-cdn.yml:41` (`celestrak.org`), `eve-cdn.yml:57` (`lasp.colorado.edu-eve`), `mars-dust-cdn.yml:37` (`vo.lmd.jussieu.fr`), `maxi-cdn.yml:24` (`maxi.riken.jp`). Register-Zeilen = Mountain.
 
 Origin: river-210
