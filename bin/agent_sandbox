@@ -1,0 +1,35 @@
+#!/bin/sh
+# agent_sandbox — a bubblewrap cage for the public agents.
+#
+# POSITIVE LIST: inside this namespace ONLY these are visible —
+#   (1) the public repo   /home/johannes/projects/omegaflow
+#   (2) the work yard     /home/johannes/projects/omegaflow-work
+#   (3) the net           (shared, not unshared)
+# plus the system (/usr /lib /bin /etc) and the bare toolchain minima needed to
+# build and to reach opencode's own state. Everything else under /home — private
+# documents, other projects, ~/.ssh, ~/.gpg — is NOT MOUNTED: it does not exist
+# in here. A path outside the cage cannot be sniffed, not even by mistake.
+set -eu
+root=/home/johannes/projects/omegaflow
+work=/home/johannes/projects/omegaflow-work
+exec bwrap \
+  --ro-bind /usr /usr \
+  --ro-bind-try /lib /lib \
+  --ro-bind-try /lib64 /lib64 \
+  --ro-bind-try /bin /bin \
+  --ro-bind-try /sbin /sbin \
+  --ro-bind /etc /etc \
+  --ro-bind-try /run /run \
+  --proc /proc --dev /dev \
+  --tmpfs /tmp \
+  --bind-try /tmp/opencode /tmp/opencode \
+  --bind "$root" "$root" \
+  --bind "$work" "$work" \
+  --ro-bind-try /home/johannes/.cargo /home/johannes/.cargo \
+  --ro-bind-try /home/johannes/.rustup /home/johannes/.rustup \
+  --ro-bind-try /home/johannes/.local/bin /home/johannes/.local/bin \
+  --ro-bind-try /home/johannes/.local/share/opencode /home/johannes/.local/share/opencode \
+  --ro-bind-try /home/johannes/.gitconfig /home/johannes/.gitconfig \
+  --share-net \
+  --chdir "$root" \
+  /bin/bash "$@"
