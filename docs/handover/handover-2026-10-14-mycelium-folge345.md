@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 345 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: 6a4e854754e443efc63cf3d3bb81e0b620bd85d9f9695f090c1e535f2744904a
+  sha256: 836af7a31dddb419d2e7083bf505a1e04cb922634bf05b166111d64541ab6fea
   status: live
 -->
 # Handover — Mycelium-Folge 345 (2026-10-14)
@@ -15,7 +15,7 @@ Gefaltet: `## An mycelium` aus `mountain-folge342` (`xfer:mountain-342-1`/-2/-3)
 `river-folge208` (`xfer:river204-entsoe1`, `xfer:river208-*`) — die Einträge sind in
 den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 
-## Burn: open 0.00 · close 0.1111 — gemessen `session_burn` (opencode.db, Session „Mycelium-Linie: DE-2-Lauf und Pass-Abschluss", deepseek-flash; wächst bis Session-Schluss).
+## Burn: open 0.00 · close 0.2151 · cap 0.30 · Grund: der Operator-Auftrag dieser Runde umfasste `archive_search --all`, drei Taucher und den ENTSO-E-ZIP-Bau (über dem Default 0.15) — gemessen `session_burn` (opencode.db, Session „Mycelium-Linie: DE-2-Lauf und Pass-Abschluss", deepseek-flash).
 
 ## CI-Stand am HEAD `ecc23feed` (gemessen `ci_manage status/list`, 2026-10-14T00:38Z)
 
@@ -55,14 +55,14 @@ den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 - **Trigger:** kein — Bau (Compiler-Archiv-Modus)
 - **Lage:** (gemessen 2026-10-14/345) Die Archiv-Route liegt unter **Collection 6** — `https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/6/MODVOLC/` (der C61-Pfad ist 404). Der anonyme `GET` antwortet **303** → `/profiles/licenses/…` → `/oauth/login` → `urs.earthdata.nasa.gov/oauth/authorize`; die Datei ist hinter **Earthdata Login**. **Auth = `Authorization: Bearer <EDL-Token>`** (der EDL-Token *ist* das LAADS-Credential, ~60 Tage); `EARTHDATA_EDL_TOKEN` liegt in `.secrets.local`. **Auth-Route gebaut:** `archive_search` trägt LAADS-Hosts im Earthdata-Token-Set **und** behandelt **303** als Auth-Gate (`token.rs`). **Browser-Gegenprobe (2026-10-14, Operator-Wort):** der Operator ist eingeloggt (`omegaflow.space`); der Pfad landet auf der **LAADS-Profile/Licences-Seite** mit dem Hinweis **„These resources … are not yet approved for public release. If you require special access … contact our User Support service"** — das C6-MODVOLC-Archiv ist **nicht frei**, sondern braucht eine **Zugangsanfrage** (LAADS User Support). Zusätzlich verlangt Earthdata vor der App-Autorisierung **User Type + Organization** (offen).
 - **Blockade:** das Archiv ist „not yet approved for public release" → Zugang nur über LAADS User Support.
-- **Braucht:** (1) eine **Zugangsanfrage an LAADS User Support** (Operator-Hand / Future-Queue); (2) Earthdata-Profil (User Type/Organization) vervollständigen; (3) erst danach den Archiv-Modus im `modvolc_compiler.rs` bauen.
+- **Braucht:** **Zugangsanfrage vorbereitet bis zur Kante** — Entwurf `state/mail/laads-modvolc-access-request.md` (an `laads-support@nasa.gov`, gemessen `…/contact/`, HTTP 200; QUELLEN-Block innen). **Akt = Operator-Hand:** `smail --send state/mail/laads-modvolc-access-request.md`. Das Earthdata-Profil (User Type/Organization) hat der Operator gesetzt. Danach der Archiv-Modus im `modvolc_compiler.rs`.
 
-### ENTSŌ-E A78 — Header-Tag korrigiert; Query-Defekt gemessen
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** kein — Bau (Query-Iteration)
-- **Lage:** (gemessen 2026-10-14/345) Workflow-Kopf `entsoe-cdn.yml:1` `tag=` → `transparency.entsoe.eu` gezogen; Lauf `38491449026` dispatcht. **CI** (`ci_manage log`): Compiler grün, Token akzeptiert, API **HTTP 400 `uu-appg01/server/invalidRequest`**. **Lokaler Probelauf mit dem gültigen Token** (`cargo run -p omegaflow-harvest --bin entsoe_compiler`, 2026-10-14): die API antwortet **HTTP 200**, der Body ist ein **ZIP-Archiv** — gemessen für FI/FR/DE/GB, Ein- **und** Zwei-Zonen, 2016 und 2024 — jeweils ein **leeres Archiv** (`PK\x05\x06`, 0 Einträge). Der Compiler liest den Body als Text/XML → `0 TimeSeries parsed`; **er entpackt das ZIP nicht** (A78 liefert ZIP/XML-Dokumente). Der CI-400 kommt von einem **anderen Token** (GitHub-Secret) als der lokale 200 — zwei getrennte Linien. Taucher-Messung: Parameternamen/Format sind die dokumentierten (in/out_Domain für A78, `yyyyMMddHHmm` UTC, ≤1 Jahr).
+### ENTSŌ-E A78 — Compiler repariert (ZIP + Domain), Lauf dispatcht
+- **Status:** wartend (eigen, Lauf läuft) | **Bindung:** eigen
+- **Trigger:** Ergebnis des `entsoe-cdn`-Laufs
+- **Lage:** (gemessen/umgesetzt 2026-10-14/345) Ursachekette gemessen: A78 liefert eine **DEFLATE-ZIP** (`PK\x03\x04`, method 8), die der Compiler als Text las; der TimeSeries-Parser suchte `biddingZone_Domain.mRID`, A78 trägt aber `in_Domain.mRID`/`out_Domain.mRID`. **Umgesetzt:** pure-std RFC 1951 `inflate` + ZIP-Reader über **alle** Einträge (ein Eintrag je Outage-Dokument) + Domain-Fallback. Lokal (CZ↔SK 2024 volles Jahr): **13 TimeSeries**, 580 B, Roundtrip parst. Workflow auf CZ↔SK/Fenster umgestellt; Lauf `38496905536` dispatcht. Der CI-Vorlauf `38491449026` war `400 invalidRequest` (GitHub-Secret-Token) — der lokale Token liefert 200.
 - **Blockade:** keine (lokaler Token gültig).
-- **Braucht:** (1) den **ZIP-Body entpacken** statt als Text zu parsen; (2) einen Parameter/Zone-Fall finden, der ein **nicht-leeres** Archiv liefert (leer für alle getesteten) — gegen eine gemessene Referenz-Abfrage; (3) den **GitHub-Secret-Token** gegen den lokalen prüfen (400 vs 200). Echo `xfer:mountain-342-1`, `xfer:river204-entsoe1`.
+- **Braucht:** den Lauf einmalig lesen (`ci_manage view 38496905536`); bei erneutem 400 den GitHub-Secret `ENTSOE_API_TOKEN` gegen den lokalen prüfen. Echo `xfer:mountain-342-1`, `xfer:river204-entsoe1`.
 
 ### DE-2-Manifestation — Host `cdaweb.gsfc.nasa.gov` unerreichbar
 - **Status:** wartend | **Bindung:** wartend
