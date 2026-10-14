@@ -12,6 +12,10 @@
 set -eu
 root=/home/johannes/projects/omegaflow
 work=/home/johannes/projects/omegaflow-work
+# The public token only: GH_TOKEN from .secrets.local (name read, value passed to
+# the cage's env — never printed). It is scoped to omegaflow/omegaflow; the full
+# account login (~/.config/gh) stays OUT of the cage, in the private house.
+ghtok="$(sed -n 's/^GH_TOKEN=//p' "$root/.secrets.local" 2>/dev/null | sed -n '1p')"
 exec bwrap \
   --ro-bind /usr /usr \
   --ro-bind-try /lib /lib \
@@ -30,7 +34,7 @@ exec bwrap \
   --ro-bind-try /home/johannes/.local/bin /home/johannes/.local/bin \
   --ro-bind-try /home/johannes/.local/share/opencode /home/johannes/.local/share/opencode \
   --ro-bind-try /home/johannes/.gitconfig /home/johannes/.gitconfig \
-  --ro-bind-try /home/johannes/.config/gh /home/johannes/.config/gh \
+  --setenv GH_TOKEN "$ghtok" \
   --share-net \
   --chdir "$root" \
   /bin/bash "$@"
