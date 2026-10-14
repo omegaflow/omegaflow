@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: 9eebf309d8fbd7c9ce3c20fd9ffc4680d1d6848a21a29dd08af9b9614c2a4885
+  sha256: e91296a3c77fb92a894a4443009e069bd0bb81985ec5f9eb7a24b56f3a21b65c
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -21,8 +21,8 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
 
 ## Offen (aufgeschlüsselt)
 
-### SABER — eigene Sonde; die Route ist der offene Punkt (eigen)
-- **Status:** eigen (Operator-Wort 2026-10-14: die Sonde an xyz,t) | **Bindung:** eigen
+### SABER — verdiktet: B + A (eigene Weltlinie + Messvolumen) (eigen)
+- **Status:** eigen · **verdiktet** (Rat 2026-10-14: B + A) | **Bindung:** eigen
 - **Trigger:** der Arm-Bau
 - **Lage:** (gemessen 2026-10-14, Taucher) Das HAPI-`info` (live HTTP 200, 7489 B —
   die Host-Erreichbarkeit ist **intermittierend**, der Cache `/tmp/opencode/saber_info.json`
@@ -80,21 +80,33 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
   **Zeit/Dynamik** exakter als A.
   **Ephemeriden-Nutzen:** B legt einen Peer-Körper in `body_ephemerides` (heute 92) an;
   A legt keinen an.
-- **Roster-Runde (mountain-ui, 2026-10-14) — zweiter Anlauf, korrigierte Prämisse:**
-  Frage A/B mit der verifizierten TLE neu gestellt. Geantwortet **B** (Claude, Mistral, Qwen,
-  Perplexity, Z.ai/GLM-Deep-Think-Max). Claude: „die Sonde braucht die Satellitenposition,
-  die liefert nur die SGP4-Bahn; der Produktpunkt ist der Tangentenpunkt und bleibt als
-  Messort-Attribut je Zeile" — **Vorbehalt:** für 2002–2026 braucht es die **historische
-  TLE-Reihe** (eine Einzel-TLE trägt Tage–Wochen). **A** sagte nur Lumo (die Messpunkte seien
-  exakter als die ~km-SGP4-Rekonstruktion). Ohne Antwort: DeepSeek, Duck (Frage erneut nicht
-  gepostet). Der **erste Anlauf** (falsche Prämisse „keine Bahn") war **A** — 4×.
-- **Rat-Futter:** Recherche (primär: TLE verifiziert; NAIF/Horizons kein TIMED) + dieser
-  Roster liegen vor. Mit den **acht** mountain-ui-Sitzen gespeist; es fehlen weiter Gemini,
-  MiniMax, Kimi, Sakana + open-weight — **nicht die volle Liste**.
-- **Braucht:** (0) ggf. die restlichen Sitze + den Rat; (1) die **historische TLE-Reihe** für
-  2002–2026 (CelesTrak/Space-Track) prüfen; (2) den Arm **je Zeile** lesen lassen (heute nur
-  die letzte) und `Time` je Zeile nach TDB (`parse_iso_tdb`); (3) Block-Query über einen
-  Zeitraum; (4) Terms `saber-rules-of-the-road`.
+- **Roster (mountain-ui, 12 Frontier-Sitze gestellt, 2026-10-14):** Frage A/B mit der
+  vollständigen Recherche. Geantwortet **B**: Claude, Mistral, Qwen, Perplexity,
+  Z.ai/GLM-Deep-Think-Max, MiniMax (6); **A**: Lumo, Sakana (2); ohne Antwort: DeepSeek,
+  Duck (Frage nicht gepostet), Kimi (Freikontingent erschöpft), Gemini. Der **erste** Anlauf
+  (falsche Prämisse „keine Bahn") war 4× A — die Prämisse war der Ausschlag.
+- **Rats-Verdikt (2026-10-14): B + A.** Nicht zwei Antworten auf eine Frage, sondern **zwei
+  Objekte**: **B** trägt die Plattform (TIMED, NORAD 26998) als **eigene Weltlinie** und
+  **93. Peer-Körper**; **A** trägt das **vermessene Volumen je Zeile**. **Riss (entscheidend):**
+  ein Limb-Sounder misst am **Tangentialvolumen**, nicht am Satelliten — beide dürfen nicht
+  füreinander stehen. **Datum-Riss:** das Produkt-Frame ist **undeclared** → `pending`.
+- **Braucht (aus dem Verdikt):**
+  - **SABER-Block:** `at earth` behalten; **je Zeile und je Level** extrahieren — `ktemp` u. a.,
+    `epoch` aus `isotime` (UTC→TDB), die **Tangentialgeometrie** `tplatitudeAVG`/
+    `tplongitudeAVG`/`tpgpaltitude` über den geteilten Level-Index `<i>`;
+    Position = **`Surface { earth, tplat, tplon, tpgpalt (m) }`** (nicht `Position::Source`);
+    **Datum `pending`** als Registerzeile; die `sc*`-Spalten sind **nur Querzeuge**, nie Position.
+  - **TIMED-Weltlinie (eigener Körper):** body `timed`, NORAD 26998 (2001-055B); zwei Quellen:
+    CelesTrak-Live-TLE (kurzes `ttl`) + Space-Track-Historie-Spiegel (CC-BY-4.0). Arm: **SGP4**
+    → `StateVector { p, v }` ICRS/J2000, Meter, TDB — **erster Produzent** des verdrahteten,
+    bislang unproduzierten `Motion::Linear`; unabhängige Hülle → 93. Peer.
+  - **Extrakt-Arm:** `Extract::Hapi` darf für ein Zeilenprodukt **nicht** auf `data.last()`
+    kollabieren; SABER nimmt den `parameters`/info-Pfad, jede Zeile liefert Kanäle mit
+    **eigenem Zeilen-Epoch** und **eigener Tangentialposition**; Last-Row/`epoch=now` bleibt nur
+    für Einzelskalar-Endpunkte. `src/archivar/tests.rs:786` (`Position::Source`-Assertion) auf
+    Tangential-`Surface` + Zeilen-Epoch ziehen.
+  - **Riss-Gate:** divergieren `sc*`-Punkt und SGP4-Weltlinie zur selben Epoche über das Gate,
+    als `VerdictWord::Riss` mit beiden Zeugen tragen — nie glätten.
 
 ### Venus Radar — Projektion gemessen; Bild-Manifestation offen (eigen)
 - **Status:** eigen (Operator-Wort 2026-10-14: W — das Bild bleibt Bild) | **Bindung:** eigen
