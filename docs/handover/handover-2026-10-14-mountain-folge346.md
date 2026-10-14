@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: 66ebaf359fcae086ce8ffc9d7cd3ded83fd5bba4a9950fcc9a872c830831a737
+  sha256: 3dcc2156b08406a437432c5c0714e462d397e9c2f52f67ee9c05aa5f0e6cfc2b
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -107,7 +107,8 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
   `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`.
 
 ### Epochen-Absenz — Rats-Verdikt (b); Umsetzung offen (eigen)
-- **Status:** eigen · **verdiktet** (Rat 2026-10-14, Verdikt b) | **Bindung:** eigen
+- **Status:** eigen · **verdiktet** (Rat 2026-10-14, Verdikt b) · **nach der Rat-Regel erneut
+  zu befragen** (Recherche + voller Roster fehlten) | **Bindung:** eigen
 - **Trigger:** der Registeratom / die nächste epochenlose Quelle
 - **Lage:** (gemessen 2026-10-14, Taucher + Rat) Zwei Leselinien widersprechen sich an
   **demselben Wert 0.0**: Linie A liest `epoch <= 0.0` als **absent** und überspringt
@@ -120,6 +121,9 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
   Presence-Bit-Mask — neuer `PRESENCE_FLAG_EPOCH` (32.0), **kein** Wire-Umbau (26×f64,
   208 B bleiben). Static `gfc` → Bit aus (Pad 0.0 als *absent* gelesen, Manifestation zur
   Query-Zeit); `gfct` → Bit an (0.0 = J2000 legitim).
+- **Offen (Operator-Regel, Commit `94c6eaa10`):** dieses Verdikt fiel **vor** der Regel
+  „Rat MUSS gefüttert werden" — nur der Übergabe-Stand, **keine** `archive_search`-Recherche,
+  **kein** Roster (`work/ui-seats.md`). Nach der Regel erneut befragen, bevor es bindet.
 - **Blockade:** die Umsetzung berührt viele Sites (Write- und Read-Seite) — kein
   Teilumbau möglich ohne die Gegen-Fabrikation (ein Reader-only-Schnitt würde absent als
   J2000 lesen).
@@ -164,29 +168,40 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
 ### Adressierte Register-Fäden — Lizenzen gemessen, Verdikte offen (eigen)
 - **Status:** eigen (Register-Writes; Messungen jetzt am Baum gegengeprüft) | **Bindung:** eigen
 - **Trigger:** der Registeratom
-- **Lage:** (gemessen 2026-10-14 via `register_lookup --addressed mountain`, Taucher)
+- **Lage:** (gemessen 2026-10-14 via `register_lookup --addressed mountain`, Taucher,
+  und **direkt im Browser** auf den Seiten — JS-gerenderte Felder, die `archive_search`
+  nicht las)
   - **MODVOLC HIGP** (`http://modis.higp.hawaii.edu/data/`): **keine** Lizenzzeile
     (genuine Absenz); nur `© University of Hawaii at Manoa, 2016` + NASA-MODIS-
     Förderhinweis. Kein HIGP-Block in `phi` (der NRT3-MODVOLC-Block `phi:12041` ist eine
     andere Quelle, `terms PD`). → `local-only`.
-  - **DE-2 NACS/WATS — gesetzt (mountain-346).** SPASE-DOIs `10.48322/z50y-hd65` (WATS),
-    `10.48322/j8kp-5y58` (NACS), `22v6-0p09` (FPI): alle drei **CC0-1.0** (SPDX,
-    Note „… applicable to all publicly available NASA Heliophysics data products"). Der
+  - **DE-2 NACS/WATS — gesetzt (mountain-346).** SPASE-`RightsList` (Browser, `spase-metadata.org`
+    …/DE2/WATS/PT2S): `RightsIdentifierScheme SPDX`, `RightsIdentifier CC0-1.0`,
+    Note „… applicable to all publicly available NASA Heliophysics data products". Der
     `de2`-Block trägt jetzt `terms CC0-1.0` (`phi:854`, vormals `PD`).
-  - **AWESOME-VLF/LF** — `doi.org/10.48322/fwte-dv13` + `fzcf-f191`: beide Landingpages
-    tragen im JSON-LD `"license": "https://cdla.io/permissive-1-0/"` — **nicht** CC0.
-    **Riss:** `phi:8266` trägt `terms CC0-1.0 https://doi.org/10.48322/fzcf-f191`.
-    Zwei unabhängige Linien konvergieren nicht → **Riss tragen**, nicht glätten.
-  - **OCNS2019-Ersatz** (JPL SSD/Horizons): **keine** Lizenzzeile gemessen (nur
-    `URS Clearance: CL#21-4165`); der einzige gemessene CC0-Satz ist die SPDF/Heliophysik-
-    Notiz, **nicht** eine JPL-SSD-Aussage. Public-Domain ist NASA-Default, nicht gemessen.
-    → Unsicherheit, kein Token.
+  - **AWESOME-VLF/LF — gesetzt (mountain-346).** Browser auf
+    `spase-metadata.org/ISWI/NumericalData/AWESOME/VLF/PT0.00001S.html`: JSON-LD
+    `"license": "https://cdla.io/permissive-1-0/"`, DATA USAGE POLICY „WALDO data are
+    released without restriction, and can be freely analyzed or published" (Danksagung
+    erbeten). Exaktes Token **CDLA-Permissive-1.0** (nicht CC0). `phi:8266` (waldo) trägt
+    jetzt `terms CDLA-Permissive-1.0 https://doi.org/10.48322/fzcf-f191` (vormals `CC0-1.0`).
+  - **OCNS2019-Ersatz (JPL SSD / Horizons / NAIF) — gemessen (Browser).** Die JPL-SSD-Seite
+    trägt **keine** Datum-Lizenzzeile (Footer: `URS Clearance: CL#21-4165`, Privacy, Image
+    Policy); die Caltech/JPL-Notiz deckt **Dokumente/Bilder** („JPL-authored documents …
+    may be protected … Permission to reproduce may be required"), **nicht** die Daten. Die
+    **Daten** fallen unter die NASA-SMD-Politik **SPD-41a**
+    (`science.nasa.gov/researchers/science-information-policy/`): „Mission data are released
+    as soon as possible", offen, kein Embargo. **NAIF** (`naif.jpl.nasa.gov/naif/credit.html`,
+    „Rules/Giving Credit") bittet um Nennung, ohne Lizenz-Beschränkung.
+    → **offen, Danksagung erbeten** (kein CC0-Zeichen auf der Seite).
 - **Blockade:** MODVOLC braucht einen **neuen** Block (kein HIGP-Block in `phi`) — Mycelium
-  setzt `url`/`origin`/`compiler`, Mountain das Terms-Verdikt; AWESOME ist ein **Riss**
-  (Register `CC0-1.0` vs. Landing `CDLA-Permissive-1.0`) und braucht ein Token-Wort; JPL
-  SSD bleibt eine benannte Unsicherheit.
-- **Braucht:** MODVOLC-Block + `terms local-only`; das AWESOME-Token entscheiden (Riss
-  tragen, nicht glätten); die JPL-Unsicherheit benennen.
+  setzt `url`/`origin`/`compiler`, Mountain das Terms-Verdikt.
+- **Braucht:** MODVOLC-Block + `terms local-only`. DE-2 und WALDO sind gesetzt.
+- **Für die eigenen Ephemeriden (Operator-Frage):** unsere Bahnen ruhen auf **JPL/NAIF** —
+  die DE-Kerne (DE440/441/442 registriert), `horizons_compiler` (Horizons-API) und
+  `spacecraft_ephemeris_compiler` (NAIF-SPK). Diese Daten sind **offen** (NASA SMD, SPD-41a),
+  die Nennung erbeten — also für Bau und Weitergabe der eigenen Ephemeriden frei; die drei
+  Punktquellen (MODVOLC/WALDO/DE-2) tragen dazu nichts bei.
 
 ### `em mw` / `advective kg/m2/s` — Freeze (eigen)
 - **Status:** wartend | **Bindung:** eigen
