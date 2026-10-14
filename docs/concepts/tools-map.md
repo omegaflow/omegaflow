@@ -292,6 +292,8 @@ die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --h
 - `archive_search --lpf <start> <end> [hdu]` — LISA-Pathfinder-DRS-Verfügbarkeit aus dem HEASARC-Selektor (start/end als MJD oder ISO; Default hdu=SCI_SCIENCE_1Hz; der Binärbody wird gemessen, nie gedruckt).
 - `archive_search --nssdca <query>` — NASA NSSDCA Master Catalog (public; Datenkollektions-Name, key=value spacecraft/experiment/pi, oder bare NSSDCA-ID wie PSCM-00009 für das Dataset-Detail).
 - `archive_search --nssdc <query>` — China NSSDC/VSSO coreMetadata-Suche (`vsso.nssdc.ac.cn`, public; der Download ist CAS/Captcha- und application-gated).
+- `archive_search --nssdc-auth` — China-NSSDC-CAS-Login (`NSSDC_USER`/`NSSDC_PASS`); misst `ticket present` / `page authenticated`. **Gemessen 2026-10-14:** der CAS antwortet auf einen erfolgreichen Login mit HTTP 200 und einer JS-Weiterleitung im **Antwortkörper** (`…logindo?CURRENTCASUSER=…&ticket=ST-…`, kein `Location`-Header) — der Arm liest Header **und** Body; das Passwort geht als `base64(escape(pass))` (die Seite `encode64`, `/js/commonNew.js:30`).
+- `archive_search --ssdc-auth <service-url>` — ASI-SSDC-CAS-Login (`tools.ssdc.asi.it`, `SSDC_USER`/`SSDC_PASS`); misst `ticket present`.
 
 **Geo/Erdwissenschaften:**
 - `archive_search --cc <url>` — Common Crawl Index JSON-lines (`index.commoncrawl.org/<index>-index?url=…&output=json`), keyless; Default-Index CC-MAIN-2024-51, Override index=<id>.
