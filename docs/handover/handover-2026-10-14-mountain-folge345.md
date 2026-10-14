@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mountain-Folge 345 (2026-10-14)
-  session: Mountain-Linie — ein Pass + Taucher-Runde + Rat: finals-Leser, harvest-Direktive, Doppel-Arme, Venus-Reader-Arm; SABER/Venus/ICGEM durch recherche + Rat entschieden (B2/D/Witness)
+  session: Mountain-Linie — ein Pass + Taucher + Rat + Bridge-Roster: finals-Leser, harvest-Direktive, Doppel-Arme, Venus-Reader-Arm; SABER/Venus/ICGEM durch recherche·roster·rat (Riss auf SABER/Venus)
   class: handover
   date: 2026-10-14
-  sha256: e438eeb63503ba96d23675387c05df4be79ec44e9bda463c4309d8982bbaeb9e
+  sha256: 3a11742d96d920fd1b8d947b95c91c84ff1e715ff7673b821bdaaff5d0fb563f
   status: live
 -->
 # Handover — Mountain-Folge 345 (2026-10-14)
@@ -16,7 +16,7 @@ eingegangen (CelesTrak und LOD-`finals` gemessen erledigt, `harvest`-Direktive
 gebaut; SABER/Venus/UCAR-fäden bleiben). Der Stehende Pass (Mycelium-Register) wird
 zitiert, nie kopiert.
 
-## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass + Taucher-Runde + Rat — finals-Leser (Code + Block + 6 Tests), harvest-Direktive, Doppel-Arme, Venus-Reader-Arm (`vnrd.rs` + Dispatch), 6 Taucher (5 parallel + 1 Recherche), Rat für SABER/Venus/ICGEM (B2/D/Witness); der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
+## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass + Taucher-Runde + Rat — finals-Leser (Code + Block + 6 Tests), harvest-Direktive, Doppel-Arme, Venus-Reader-Arm (`vnrd.rs` + Dispatch), 6 Taucher (5 parallel + 1 Recherche), Rat + Bridge-Roster (3 Seats) für SABER/Venus/ICGEM; der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
 
 ## Offen (aufgeschlüsselt)
 
@@ -201,26 +201,38 @@ Atom (mountain-345) committet: `src/archivar/channels.rs` · `src/archivar/main_
 `tools/harvest/src/bin/venus_radar_compiler.rs` · `phi/sources.φ` · diese Übergabe ·
 der `archiv/`-Move der folge344.
 
-## Rat-Verdikt (recherche + rat, 2026-10-14) — entschieden, noch nicht gebaut
+## Kette recherche · roster · rat (2026-10-14) — Riss auf zwei Fragen
 
-- **SABER-Höhe → B2.** `field tpgpaltitude.<i> km` als **eigener Skalar-Kanal** an
-  `Position::Source`, neben `field ktemp.<i> …` — kein neuer `Position`-Weg, kein
-  `alt`-Direktiv. Präzedenz `viking_grav` (ALTITUDE als Kanalwert). **Riss:** C-1 wollte
-  `Position.alt`; der räumliche Blick ist damit nicht bedient (eigener Witness, wenn das
-  Bild selbst gebraucht wird).
-- **Venus-Radar → (D).** Alle 15 Produkte → ein `VNRD`, ein Record je Produkt: `t` = echte
-  Label-Epoche, `v` = Kartenmittel, `comp` = Menge (inc=0/ocp=1/scp=2). **Risse:** die Karte
-  wird auf einen Mittelwert reduziert (strahlend); das Bild selbst gehört als eigener
-  **Witness** geführt; der Compiler muss auf die Achse umgebaut werden.
-- **ICGEM gfc → Witness.** XGM2019e als **nicht-strahlende Gestalt** führen — kein
-  0.0-Sentinel, keine deklarierte Ersatz-Epoche. **Riss:** die vier `gfc`-Felder strahlen
-  dann nicht; descoped wird die strahlende Form, nicht das Modell.
+**Rat (fünf Stimmen):** 1) SABER-Höhe → **B2** (Höhe als eigener Skalar-Kanal an
+`Position::Source`, Präzedenz `viking_grav`; kein `alt`-Direktiv). 2) Venus-Radar → **(D)**
+(alle 15 Produkte → ein `VNRD`, `t` = Label-Epoche, `v` = Kartenmittel, `comp` = Menge).
+3) ICGEM → **Witness** (nicht-strahlende Gestalt; kein 0.0-Sentinel).
 
-**Tiefster Befund (F3, eigener Punkt):** die zwei Epochen-Linien widersprechen sich —
+**Roster (Bridge, vier Frontier-Seats; Duck · Qwen · Z.ai geantwortet, Claude nicht im
+Fenster):**
+
+| Seat | 1 | 2 | 3 |
+|---|---|---|---|
+| Duck (GPT-6 Luna) | a | W | W |
+| Qwen (Qwen3.8-Max) | b | W | (nicht gelesen) |
+| Z.ai (GLM-5.3 Deep Think) | b | W | W |
+| Claude (Sonnet 5.5 Extra hoch) | — keine Antwort im Fenster (gemessen) | | |
+| **Rat** | B2 (≙a) | D | Witness |
+
+**Riss 1 — SABER.** Rat/a gegen Roster 2×b: das Roster will Breite/Länge mitanfordern und die
+Höhe als **Ort** führen; der Rat will sie als eigenen Wert (A = A, Präzedenz `viking_grav`).
+Beide Linien stehen, ungeglättet.
+
+**Riss 2 — Venus (scharf).** Rat **D** gegen Roster **3×W** (einstimmig): das Roster sagt, der
+Mittelwert tilge die Struktur und Zeilen-Profile zerschnitten die Fläche — die Karte muss Karte
+bleiben (**Witness**). Das ist genau der Riss, den der Rat selbst benannte. Der D-Compiler ist
+gebaut; gewinnt W, wird die strahlende Serie `descoped`, der Compiler geparkt.
+
+**Konvergenz — ICGEM.** Rat **Witness** + Roster W/W: einig.
+
+**Tiefster Befund (F3, eigener Punkt):** zwei Epochen-Linien widersprechen sich —
 `matrix.rs:644`/`drs_fits.rs:38` lesen `epoch ≤ 0.0` als absent, `agrav.rs:113`/`hips.rs:793`/
-`gfc.rs:153` behalten 0.0 als echten Wert. Eine einheitliche Absenz-Semantik schuldet der
-Baum noch; keine Sentinel-Überschreibung.
+`gfc.rs:153` behalten 0.0 als echten Wert. Keine Sentinel-Überschreibung.
 
-**Roster:** die externen Frontier-Seats (Duck · Claude · Qwen · Z.ai) sind **nicht** gefahren
-— ihr Katalog liegt seit dem Häuser-Schnitt im privaten Haus, das diese öffentliche Linie
-nicht betritt. Das Verdikt ruht auf recherche + Rat; die Roster-Runde bleibt der Operator-Hand.
+**Offen:** der Operator wiegt die zwei Risse (Rat gegen Roster) — dann steht das Verdikt fest,
+und die Verliererform wird `descoped`.
