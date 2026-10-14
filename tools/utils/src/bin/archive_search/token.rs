@@ -19,13 +19,15 @@ pub(crate) fn secret(name: &str) -> Option<String> {
 }
 
 pub fn is_unauthorized(status: Option<i32>) -> bool {
-    matches!(status, Some(401) | Some(403) | Some(307))
+    matches!(status, Some(401) | Some(403) | Some(303) | Some(307))
 }
 
 pub fn is_earthdata_host(host: &str) -> bool {
     host == "urs.earthdata.nasa.gov"
         || host.ends_with(".earthdata.nasa.gov")
         || host == "cddis.nasa.gov"
+        || host == "ladsweb.modaps.eosdis.nasa.gov"
+        || host == "nrt3.modaps.eosdis.nasa.gov"
 }
 
 pub fn earthdata_token() -> Option<String> {
@@ -41,6 +43,7 @@ mod tests {
         assert!(!is_unauthorized(None));
         assert!(is_unauthorized(Some(401)));
         assert!(is_unauthorized(Some(403)));
+        assert!(is_unauthorized(Some(303)));
         assert!(is_unauthorized(Some(307)));
         assert!(!is_unauthorized(Some(200)));
     }
@@ -50,6 +53,8 @@ mod tests {
         assert!(is_earthdata_host("urs.earthdata.nasa.gov"));
         assert!(is_earthdata_host("data.gesdisc.earthdata.nasa.gov"));
         assert!(is_earthdata_host("cddis.nasa.gov"));
+        assert!(is_earthdata_host("ladsweb.modaps.eosdis.nasa.gov"));
+        assert!(is_earthdata_host("nrt3.modaps.eosdis.nasa.gov"));
         assert!(!is_earthdata_host("example.com"));
         assert!(!is_earthdata_host("notearthdata.nasa.gov"));
     }
