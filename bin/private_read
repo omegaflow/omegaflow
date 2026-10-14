@@ -1,0 +1,37 @@
+#!/bin/sh
+# private_read — the redactor. Reads a file from the private house and prints ONLY its
+# redacted text. The WALL is deterministic: $OMEGAFLOW_PRIVATE/redact.map, one
+# `real=PLACEHOLDER` per line, every occurrence replaced (longest first). The map stays
+# in the private house; the output never carries a real name/address/email.
+#
+# It must run OUTSIDE the cage: the cage rightly hides the private house from the public
+# agent's shell. So it is launched by the operator (their terminal) or by the gateway —
+# never by the caged agent itself.
+#
+# Usage: private_read <path-under-private | absolute-path-under-private>
+set -eu
+priv="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}"
+target="${1:?usage: private_read <file-under-private|absolute>}"
+case "$target" in
+  /*) f="$target" ;;
+  *) f="$priv/$target" ;;
+esac
+case "$f" in
+  "$priv"/*) : ;;
+  *) printf 'private_read: %s is outside the private house\n' "$f" >&2; exit 2 ;;
+esac
+[ -f "$f" ] || { printf 'private_read: no such file: %s\n' "$f" >&2; exit 2; }
+map="$priv/redact.map"
+[ -f "$map" ] || { printf 'private_read: no redact.map in the private house\n' >&2; exit 2; }
+
+script="$(mktemp)"
+trap 'rm -f "$script"' EXIT
+awk -F'=' '
+  /^[[:space:]]*#/ { next }
+  /^[[:space:]]*$/ { next }
+  { real=$1; ph=substr($0, index($0,"=")+1); if (real=="") next; print length(real)"\t"real"\t"ph }
+' "$map" | sort -rn | while IFS="$(printf '\t')" read -r _ real ph; do
+  esc="$(printf '%s' "$real" | sed 's/[][\\.*^$/&]/\\&/g')"
+  printf 's/%s/%s/g\n' "$esc" "$ph" >> "$script"
+done
+sed -f "$script" "$f"
