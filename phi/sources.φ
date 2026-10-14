@@ -593,28 +593,6 @@ field solar_wind_speed_km_s solar_wind_speed_km_s patch-levy advective km/s 3600
 field solar_wind_density_cm3 solar_wind_density_cm3 gaussian-inverse-square diffusion 1/cm3 3600 0.0 0.0
 field solar_wind_temp_k solar_wind_temp_k exponential-decay thermal K 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv
-origin https://cdaweb.gsfc.nasa.gov/hapi
-harvest de2
-terms PD https://cdaweb.gsfc.nasa.gov/
-ttl 3600
-format csv
-compiler tools/harvest/src/bin/de2_compiler.rs
-at earth
-hapi RPA_IVEionDrift=de2_ion_drift_east_ms RPA_IVNionDrift=de2_ion_drift_north_ms WATS_NVEneutralWind=de2_neutral_wind_east_ms WATS_NVUneutralWind=de2_neutral_wind_up_ms NACS_N2density=de2_neutral_n2_density_m3 RPA_NIionDensity=de2_ion_density_cm3
-field de2_ion_drift_east_ms de2_ion_drift_east_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
-field de2_ion_drift_north_ms de2_ion_drift_north_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
-field de2_neutral_wind_east_ms de2_neutral_wind_east_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
-field de2_neutral_wind_up_ms de2_neutral_wind_up_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
-field de2_neutral_n2_density_m3 de2_neutral_n2_density_m3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
-field de2_ion_density_cm3 de2_ion_density_cm3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
-channel mass:primary:advective:advective:plasma:unspecified:none kg/(m^2 s) alias de2_ion_drift charge 1
-channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s) alias de2_neutral_wind
-channel number:primary:flux-fick:parabolic:plasma:unspecified:none m^-3 alias de2_ion_density charge 1
-channel number:primary:flux-fick:parabolic:fluid:unspecified:none m^-3 alias de2_neutral_density species N2
-constraint quasi-neutral de2_qn region thermosphere
-coupling ion-neutral-friction from de2_ion_drift to de2_neutral_wind rate pending density_from number:de2_ion_density:2.66e-26 density_to number:de2_neutral_density:4.65e-26 region thermosphere quasi-neutral de2_qn
-
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_EDP_FAST_L2_DCE&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_edp_dce_gse_fast_l2&format=json
 terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
@@ -870,6 +848,28 @@ on earth 0 0 0
 ttl 3600
 field temp opensensemap_temperature_c exponential-decay thermal C 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv
+origin https://cdaweb.gsfc.nasa.gov/hapi
+harvest de2
+terms PD https://cdaweb.gsfc.nasa.gov/
+ttl 3600
+format csv
+compiler tools/harvest/src/bin/de2_compiler.rs
+at earth
+hapi RPA_IVEionDrift=de2_ion_drift_east_ms RPA_IVNionDrift=de2_ion_drift_north_ms WATS_NVEneutralWind=de2_neutral_wind_east_ms WATS_NVUneutralWind=de2_neutral_wind_up_ms NACS_N2density=de2_neutral_n2_density_m3 RPA_NIionDensity=de2_ion_density_cm3
+field de2_ion_drift_east_ms de2_ion_drift_east_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
+field de2_ion_drift_north_ms de2_ion_drift_north_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
+field de2_neutral_wind_east_ms de2_neutral_wind_east_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
+field de2_neutral_wind_up_ms de2_neutral_wind_up_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
+field de2_neutral_n2_density_m3 de2_neutral_n2_density_m3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+field de2_ion_density_cm3 de2_ion_density_cm3 gaussian-inverse-square diffusion cm-3 3600 0.0 0.0
+channel mass:primary:advective:advective:plasma:unspecified:none kg/(m^2 s) alias de2_ion_drift charge 1
+channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s) alias de2_neutral_wind
+channel number:primary:flux-fick:parabolic:plasma:unspecified:none m^-3 alias de2_ion_density charge 1
+channel number:primary:flux-fick:parabolic:fluid:unspecified:none m^-3 alias de2_neutral_density species N2
+constraint quasi-neutral de2_qn region thermosphere
+coupling ion-neutral-friction from de2_ion_drift to de2_neutral_wind rate pending density_from number:de2_ion_density:2.66e-26 density_to number:de2_neutral_density:4.65e-26 region thermosphere quasi-neutral de2_qn
+
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni_hro_1min.bin
 format omni_hro
 origin https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&format=csv
@@ -1048,6 +1048,7 @@ field goes_xrs_xrsb goes_xrs_xrsb inverse-square em wm2_1au 3600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/resonance_schumann.csv
 terms CC-BY-4.0 https://zenodo.org/records/15225820
 origin https://zenodo.org/api/records/15225820/files/NiNo_SR_params_2024.csv/content
+harvest raw_zenodo
 format csv
 sha256 3183a14fafba0762f91522dfdddf356fa2609b86797d6512aefc2104bf7b0272
 ttl 3600
@@ -8136,6 +8137,7 @@ ttl 86400
 field ut1_utc ut1_utc inverse-square geometry s 86400 0.0 0.0
 field pmx pmx inverse-square geometry arcsec 86400 0.0 0.0
 field pmy pmy inverse-square geometry arcsec 86400 0.0 0.0
+field lod eop_iers_lod_s inverse-square geometry s 86400 0.0 0.0
 
 url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
 terms PD https://mars.nasa.gov/
@@ -11502,13 +11504,6 @@ dist_scale 3.085677581e16
 field teff rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
 field gmag rave_gmag gaussian-inverse-square em mag 604800 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/rave-survey.org/rave_dr6.json
-terms vizier-scientific-free https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=III/283/ravedr6
-compiler tools/harvest/src/bin/tap_compiler.rs
-at sun
-ttl 604800
-
 url https://github.com/omegaflow/sources/releases/download/sdc-serv.usask.ca/superdarn_fitacf.bin
 terms free-open https://sdc-serv.usask.ca/
 format superdarn_fitacf
@@ -11800,20 +11795,6 @@ origin https://superdarn.ca/
 compiler tools/harvest/src/bin/superdarn_compiler.rs
 format superdarn_fitacf
 at earth
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/galah_dr3.json
-terms vizier-scientific-free https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/MNRAS/506/150/spect
-compiler tools/harvest/src/bin/tap_compiler.rs
-at sun
-ttl 604800
-
-url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/lhaaso_1cat.json
-terms vizier-scientific-free https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/ApJS/271/25/catalog
-compiler tools/harvest/src/bin/tap_compiler.rs
-at sun
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/themis.ssl.berkeley.edu/themis_asi.bin

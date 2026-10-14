@@ -1013,12 +1013,24 @@ pub fn build_opendap_channels(
     channels
 }
 
+const FINALS_BRIDGE_DAYS: f64 = 2.0;
+const FINALS_STALE_DAYS: f64 = 3.0;
+
+struct FinalsEntry {
+    mjd: f64,
+    ut1_utc: f64,
+    pmx: f64,
+    pmy: f64,
+    lod_s: Option<f64>,
+    measured: bool,
+}
+
 pub fn build_finals_channels(
     src: &SourceConfig,
     text: &str,
+    now: f64,
     lsk: &LeapSeconds,
 ) -> Vec<(Channel, FieldConfig)> {
-    let mut channels = Vec::new();
     let mut fields: Vec<&FieldConfig> = Vec::new();
     for ext in &src.extracts {
         if let Extract::Field(fc) = ext {
@@ -1026,10 +1038,15 @@ pub fn build_finals_channels(
         }
     }
     if fields.is_empty() {
-        return channels;
+        return Vec::new();
     }
-    for line in text.lines().rev() {
+    let mut entries: Vec<FinalsEntry> = Vec::new();
+    for line in text.lines() {
         if line.len() < 58 {
+            continue;
+        }
+        let flag = line.as_bytes().get(57).copied();
+        if flag != Some(b'I') && flag != Some(b'P') {
             continue;
         }
         let col = |a: usize, b: usize| -> Option<f64> {
@@ -1038,42 +1055,102 @@ pub fn build_finals_channels(
         let Some(mjd) = col(7, 15) else {
             continue;
         };
-        if line.as_bytes().get(57) != Some(&b'I') {
-            continue;
-        }
         let pmx = col(134, 144).or_else(|| col(18, 27));
         let pmy = col(144, 154).or_else(|| col(37, 46));
         let ut1 = col(154, 165).or_else(|| col(58, 68));
         let (Some(pmx), Some(pmy), Some(ut1)) = (pmx, pmy, ut1) else {
             continue;
         };
-        let unix = (mjd - 40587.0) * 86400.0;
-        let Some(epoch) = lsk.unix_to_tdb(unix) else {
+        entries.push(FinalsEntry {
+            mjd,
+            ut1_utc: ut1,
+            pmx,
+            pmy,
+            lod_s: col(79, 86).map(|ms| ms * 1e-3),
+            measured: flag == Some(b'I'),
+        });
+    }
+    if entries.is_empty() {
+        return Vec::new();
+    }
+    entries.sort_by(|a, b| a.mjd.total_cmp(&b.mjd));
+    let Some(now_unix) = lsk.tdb_to_unix(now) else {
+        return Vec::new();
+    };
+    let now_mjd = now_unix / 86400.0 + 40587.0;
+    let last_measured = entries
+        .iter()
+        .filter(|e| e.measured)
+        .map(|e| e.mjd)
+        .fold(f64::NEG_INFINITY, f64::max);
+    if now_mjd - last_measured > FINALS_STALE_DAYS {
+        eprintln!(
+            "finals: newest measured I-line is {:.2} d behind now — the now-value rests on prediction, refused (stale)",
+            now_mjd - last_measured
+        );
+        return Vec::new();
+    }
+    let lo = entries
+        .iter()
+        .filter(|e| e.mjd <= now_mjd)
+        .max_by(|a, b| a.mjd.total_cmp(&b.mjd));
+    let hi = entries
+        .iter()
+        .filter(|e| e.mjd >= now_mjd)
+        .min_by(|a, b| a.mjd.total_cmp(&b.mjd));
+    let (ut1_utc, pmx, pmy, lod_s) = match (lo, hi) {
+        (Some(lo), Some(hi)) if hi.mjd > lo.mjd => {
+            let f = (now_mjd - lo.mjd) / (hi.mjd - lo.mjd);
+            let lin = |a: f64, b: f64| a + f * (b - a);
+            (
+                lin(lo.ut1_utc, hi.ut1_utc),
+                lin(lo.pmx, hi.pmx),
+                lin(lo.pmy, hi.pmy),
+                lo.lod_s.or(hi.lod_s),
+            )
+        }
+        (Some(lo), _) => {
+            let dt = now_mjd - lo.mjd;
+            if dt > FINALS_BRIDGE_DAYS {
+                eprintln!(
+                    "finals: no bracketing day within the bridge ({dt:.2} d beyond the last row) — the now-value is refused"
+                );
+                return Vec::new();
+            }
+            let ut1_utc = lo
+                .lod_s
+                .map(|lod| lo.ut1_utc - lod * dt)
+                .unwrap_or(lo.ut1_utc);
+            (ut1_utc, lo.pmx, lo.pmy, lo.lod_s)
+        }
+        (None, Some(hi)) => (hi.ut1_utc, hi.pmx, hi.pmy, hi.lod_s),
+        (None, None) => return Vec::new(),
+    };
+    let mut channels = Vec::new();
+    for fc in &fields {
+        let value = match fc.key.as_str() {
+            "ut1_utc" => Some(ut1_utc),
+            "pmx" => Some(pmx),
+            "pmy" => Some(pmy),
+            "lod" => lod_s,
+            _ => continue,
+        };
+        let Some(value) = value else {
             continue;
         };
-        let position = Position::Source;
-        for fc in &fields {
-            let value = match fc.key.as_str() {
-                "ut1_utc" => ut1,
-                "pmx" => pmx,
-                "pmy" => pmy,
-                _ => continue,
-            };
-            channels.push((
-                Channel {
-                    z: 0.0,
-                    freq: 0.0,
-                    bin_width: 0.0,
-                    epoch,
-                    station_code: None,
-                    position: position.clone(),
-                    name: fc.name.clone(),
-                    value,
-                },
-                (*fc).clone(),
-            ));
-        }
-        break;
+        channels.push((
+            Channel {
+                z: 0.0,
+                freq: 0.0,
+                bin_width: 0.0,
+                epoch: now,
+                station_code: None,
+                position: Position::Source,
+                name: fc.name.clone(),
+                value,
+            },
+            (*fc).clone(),
+        ));
     }
     channels
 }

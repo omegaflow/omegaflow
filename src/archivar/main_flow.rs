@@ -2135,7 +2135,7 @@ pub fn main_flow() {
                     let channels = match fmt.as_str() {
                         "ionex" => ionex::build_channels(&src_clone, &text, now_c, &lsk_c),
                         "rinex" => build_rinex_channels(&src_clone, &text, now_c, &lsk_c, &eph_c),
-                        _ => build_finals_channels(&src_clone, &text, &lsk_c),
+                        _ => build_finals_channels(&src_clone, &text, now_c, &lsk_c),
                     };
                     let _ = ftx.send(FetchResult {
                         source_idx: src_idx,
