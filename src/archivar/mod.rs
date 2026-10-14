@@ -188,6 +188,7 @@ pub mod pds3_table;
 pub mod pds4;
 pub mod pds4_binary;
 pub mod pds4_fits;
+pub mod pds4_img;
 pub mod phonocardiogram;
 pub mod pioneer_telemetry;
 pub mod planetary_radar;

@@ -91,6 +91,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "pds4_binary" => pds4_binary::parse_table(bytes)
             .and_then(|t| fixed_width_rows_to_series(t.rows.iter().map(|r| r.values.as_slice()))),
         "pds4_fits" => pds4_fits::parse_series(bytes),
+        "pds4_img" => pds4_img::parse_series(bytes),
         "pradan_ch2" => pradan_ch2::parse_series(bytes),
         "hips_png" => hips::parse_asset(bytes),
         "gras_2c" => gras_2c::parse_series(bytes),
@@ -383,6 +384,13 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
         }
         "pds4_fits" => {
             let (names, rows) = pds4_fits::parse_named_series(bytes)?;
+            (names, rows)
+        }
+        "pds4_img" => {
+            let rows = pds4_img::parse_series(bytes)?;
+            let names: Vec<String> = (0..pds4_img::LINE_COUNT as u32)
+                .map(pds4_img::component_name)
+                .collect();
             (names, rows)
         }
         "fink_cutout" => {
