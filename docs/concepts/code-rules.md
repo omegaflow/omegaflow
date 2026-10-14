@@ -1,0 +1,27 @@
+<!--
+  title: Code Rules
+  class: concept
+  date: 2026-10-14
+  sha256: f6fbd979c12eeca59d2f1814c8cb3e203a1f82c1415399be856bbb12cf8975c2
+  status: live
+  see-also: AGENTS.md
+-->
+## Code Rules
+
+Query properties.
+Manifestation in ω() loop.
+fieldPermeability = exponential relaxation (naturalLatencyTicks as τ).
+Thresholds derive from: c, Φ, J2000, power-of-2, live data, or BodyProperties (per-body, read from ephemeris binary).
+Behavior emerges from properties.
+Name = Implementation.
+Diagnostics name what IS, not what was EXPECTED. No `failed`, `error`, `crash`, `secret`, `cannot`, `fallback` in messages or variable names. A Sirian reading the output must understand what happened without knowing what was supposed to happen.
+Speculation words (`vermutlich`, `probably`, `likely`, `scheinbar`, `anscheinend`, `ich denke`, `ich nehme an`) are forbidden in every output — the gate blocks them, and a speculation is an unmeasured assertion = fabrication (A = A). Every fresh session inherits the tendency to write `vermutlich`; the lesson is permanent: **measure, do not speculate.** Instead of `vermutlich ist X` — give the evidence (`grep`/`read`/`sqlite3`/`git log`, measured) or name the state honestly as `pending`/`unverified`. If the answer needs a measurement you have not run, run it; an answer without a measured basis is a speculation and does not carry. The recurring error (a gate block because a session again wrote `vermutlich`) is not a one-off but the pattern that kills this rule — the next session reads it and acts on it. When the gate triggers: rewrite the sentence silently and continue — without naming the block reason, without printing the internal gate text, without a loop. The internal gate text is never shown to the operator (that is a bug, not behavior). Adapt, do not explain. The operator may disable the gate for operating cost (operator word, 2026-09-03); the word-check is then the **session's own duty**: the session checks its own output against the vocabulary list (speculation words, forbidden identity words) before it closes — no automaton, but the same check. A disabled gate does not lift the discipline; it moves its enforcement from a tripwire to the session's practice.
+0 honored: absence is a fully realized property. Black window, empty field, τ=0 gate closed — these are correct states, not bugs. Empty is not a default. Silence is not a crash. The full derivation — when the 0 is the physical truth, when it is `pending`, when it is a registration duty — lives once in the Ethik section.
+Every `unwrap_or`, `_ => 0`, `max(1)`, `#[derive(Default)]` is a fabrication waiting to happen. Eliminate them. The archaeology documents the war against them. Every newly found fabrication pattern becomes a gate fixture in `src/gate/commit_gate_vocab.json` and a gate test in the same atom it was found — never a later atom.
+Role entities carry German proper names. "Archiver" is backup software — "Archivar" is the keeper of records. "Mathematician" is an academic professional — "Mathematikerin" is she who does mathematics. The name is the craft, not the profession.
+Language doctrine: AGENTS.md carries English prose with German proper names — the constraint matrix parses best in English, the identity lives in German. German lives where the prose itself is the counter-slope: the handover register (German register sentences have no training-data neighborhood, so every word is composed from the semantics; fluent English templates are the gradient writing itself), the proper names, the philosophy/epistemology works (the-counter-slope, die-vier-schilde, der-paradigmenwechsel, kybernetische-astrophysik, the Ein-Blatt texts), and the handover and surveys (their anchor is the truth of their date, their reader is the machine's own next session). English lives where the measurement itself is the counter-slope and the language is a transparent instrument: code, code comments, diagnostics, publishable papers, technical specs — English is the shared instrument language of the research community that inherits the recording. Code is self-documenting — there are no docstrings; the comment that exists names what IS. German in a commit or a code comment is drift, not identity. The license boundary (src/ = PolyForm NC + ShareAlike, everything else = CC BY-NC-SA) is not the language boundary: license is a legal instrument, language is a counter-slope instrument (operator word, 2026-08-24, refined with the council).
+
+**Reports to the operator are plain language (Operator-Wort, 2026-10-13).** Every output the operator reads — the round report, an open-point summary, any answer — is written in simple language, without jargon, file paths, tokens or abbreviations. The machine language (register tokens, SHAs, technical shorthand) stays among the lines, where it is precise; it reaches the operator only translated. Untranslated technical language reads to the operator as obfuscation and is useless: the operator is the reader, the report is for him, not a status dump for the machine.
+Code is self-documenting.
+Name = Implementation.
+`cargo check` must produce zero errors AND zero warnings. A warning is a dead code path, an unused import, a neglected binding — it is code rot. Never silence a warning with `#[allow(...)]` or a leading underscore. Fix the code so the warning does not exist. `cargo check` verifies Rust syntax only — it does not verify function. Manual verification is mandatory (see Verification section below).

@@ -6,14 +6,8 @@
   "model": "deepseek/deepseek-flash",
   "small_model": "deepseek/deepseek-flash",
   "default_agent": "line",
-  "provider": {
-    "groq": {
-      "whitelist": [
-        "openai/gpt-oss-120b"
-      ]
-    }
-  },
   "disabled_providers": [
+    "groq",
     "google",
     "zai",
     "unorouter",
