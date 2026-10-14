@@ -2,7 +2,7 @@
   title: Source Curation — Der eine Pfad
   class: concept
   date: 2026-10-14
-  sha256: 1d10e04bc4894616ca7871db5e68529a086d788ac78269b3f8eab33307335242
+  sha256: ed8844de40137d0d17927803e705a178f65023640d967cad91f5c8c94f278080
   status: live
   see-also: AGENTS.md docs/SOURCE_PORT.md
 -->
@@ -24,8 +24,9 @@ Work surface: the flat `phi/` registers. The source-port backlog (`queue/`/`stag
 registers are the queue: `register_lookup --open` surfaces the state registers
 owner-tagged (`phi/sources.φ` + `nrs_stations.φ`;
 offene Marker → mycelium, `asset fehlt` → mountain); every state maps to an owner (gate-tested).
-Harvested data that stays belongs on the local machine in `data/` (final
-datasets as gitignored working copies `data/<netloc>/<datei>`) or the archivar
+Harvested data that stays belongs on the local machine in the public
+workspace `$OMEGAFLOW_WORK/data/` (outside the repo since 2026-10-14; working
+copies `data/<netloc>/<datei>`) or the archivar
 `cache/`; its durable home is the CDN asset registered as a `url`-line in
 `phi/sources.φ` (the CDN-Manifestation duty below) — a kept dataset is never an
 unmanifested local file. The external archive root `archive-root` (physisch
@@ -88,7 +89,7 @@ registered for manifestation (or the operator names the pending explicitly).
 
 **Lokal-only — nicht offene Lizenz, nur für Experimente (Operator-Wort, 2026-10-13).**
 A source whose data carry **no open licence** may be kept and used **locally** —
-a working copy under `data/` (gitignored) for calibration, experiments and
+a working copy under `$OMEGAFLOW_WORK/data/` (outside the repo) for calibration, experiments and
 validation — but it is **never manifested**: no `phi/sources.φ` line, no CDN
 release, no public `origin`/`url`/`compiler` surface. The disposition is
 `local-only`, a state beside `descoped`/`declined` (the source is used, not
