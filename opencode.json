@@ -6,30 +6,34 @@
   "model": "deepseek/deepseek-flash",
   "small_model": "deepseek/deepseek-flash",
   "default_agent": "line",
+  "provider": {
+    "gw": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Freie Rotation (Gateway)",
+      "options": {
+        "baseURL": "http://127.0.0.1:1621/v1",
+        "apiKey": "gateway"
+      },
+      "models": {
+        "zai/glm-4.7-flash|kenari/glm-4-7-flash:free|kenari/agnes-3-0-flash:free": {
+          "name": "freie Rotation"
+        }
+      }
+    }
+  },
   "disabled_providers": [
-    "groq",
-    "google",
-    "zai",
-    "unorouter",
-    "kenari",
-    "kilo",
-    "inception",
-    "sambanova",
-    "mistral",
-    "alibaba",
-    "ovhcloud",
-    "orcarouter",
-    "nvidia",
-    "pollinations",
-    "llm7",
-    "openrouter",
-    "ollama",
-    "huggingface",
-    "cloudflare-workers-ai",
-    "opencode",
-    "deepinfra"
   ],
   "agent": {
+    "recherche-frei": {
+      "mode": "subagent",
+      "model": "gw/zai/glm-4.7-flash|kenari/glm-4-7-flash:free|kenari/agnes-3-0-flash:free",
+      "description": "Freie rotierende Recherche — öffentlich, mit archive_search. Sucht statt zu erinnern; jede Linie darf sie rufen.",
+      "prompt": "Du bist die freie Recherche. Öffentlich — kein Personenbezug, kein privates Register. Auftrag: EINE abgegrenzte Frage. Du SUCHST — du erinnerst nicht; aus dem Gedächtnis zu antworten ist Fabrikation. Im Baum: `archive_search <kw> --root <dir>` oder `sgrep`; lesen mit `sread`. Im Netz: `archive_search --verdict <url>` → `--sniff <url>` → `--playwright <url>`; eine bekannte Quelle → der eine Modus; unbekannt → die Suchmaschinen. `--all` ist Breite, nie der erste Griff — und seine volle Ausgabe liegt in `full: <pfad>`, lies sie zu Ende. Recherche nie auf ein Minimum kastrieren. Antworte knapp, mit Quellen-URLs je Aussage. Was du nicht gemessen hast, ist `pending`.",
+      "permission": {
+        "edit": "deny",
+        "write": "deny"
+      }
+    },
     "line": {
       "mode": "primary",
       "model": "deepseek/deepseek-flash",
