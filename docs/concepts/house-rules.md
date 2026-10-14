@@ -2,7 +2,7 @@
   title: House Rules — Register, Handover, Commit, System Directive, Session Hygiene
   class: concept
   date: 2026-10-14
-  sha256: da43c42809a3e8640c75938fa28f6ba3b7685de5d12f6fe7910095790036a34e
+  sha256: 193a70fb9f56ebd4bf3aee6924e15bd77baa3b26b452d37b789268fd32114953
   status: live
   see-also: AGENTS.md
 -->
@@ -25,6 +25,13 @@ Pass ist die Projektion `docs/zustand/standing-pass.md` (nur HEAD + rote Läufe)
 Ein Rat, der ohne Recherche **oder** ohne den vollen Roster berät, ist **nicht** der Rat — sein Verdikt trägt nicht. Wer den Rat ruft, reicht Recherche **und** Roster mit; fehlt eines, wird es **zuerst** geholt.
 
 **Burn-Zeile — gemessen oder `pending` (Operator-Wort, 2026-10-14).** Die `Burn:`-Zeile eines Handovers trägt den gemessenen Session-Verbrauch. Kann die Linie ihn **nicht** messen — weil die Kosten im privaten Session-Store liegen, den eine öffentliche Linie nicht liest —, dann sagt die Zeile **`close pending`** (oder `unmeasured`/`nicht gemessen`), **nie** eine erfundene `0.0`; der Kosten-Cap ist dann **benannt-ungeprüft**. Die stille Null ist verboten, die benannte Lücke erlaubt.
+
+**Der Anonym-Kasten (Operator-Wort, 2026-10-14).** Rohbriefe mit Personenbezug verlassen das private Haus **nie**. Für Arbeit am Inhalt kreuzt nur **Geschwärztes**:
+- **Mistral** schwärzt (PII → Platzhalter; die Zuordnung *Platzhalter ↔ Name* bleibt **privat**) und legt die geschwärzte Fassung in `~/projects/omegaflow-work/post/anonym/`.
+- Die **öffentliche Rechenschicht** (DeepSeek) liest **nur das Geschwärzte**, arbeitet Strategie/Entwurf und legt ihren **geschwärzten** Entwurf in `~/projects/omegaflow-work/post/entwurf/`.
+- **Mistral** entschwärzt (dieselbe Tabelle rückwärts) → der **adressierte** Brief.
+- **Der Operator sendet** — der Send bleibt immer seine Hand.
+So denkt der starke Kopf, ohne je eine PII zu sehen; der Kanzleischreiber deckt ab und wieder auf.
 
 **Der Bote betritt kein Haus (Operator-Wort 2026-10-14).** Eine öffentliche Linie geht
 **nie** ins private Haus — sie wirft ein und holt ab. Das **Postfach** liegt im
