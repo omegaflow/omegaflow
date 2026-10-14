@@ -4005,8 +4005,8 @@ mod tests {
     #[test]
     fn a_resolved_friction_exchange_is_antisymmetric_through_density() {
         let mut channels = ChannelRegistry::with_capacity(2);
-        let ion = a_mass_descriptor();
-        let neutral = a_mass_descriptor();
+        let ion = a_mass_descriptor().with_species(Some("ion".to_string()));
+        let neutral = a_mass_descriptor().with_species(Some("neutral".to_string()));
         let ion_h = ion.hash();
         let neutral_h = neutral.hash();
         channels.register(ion);

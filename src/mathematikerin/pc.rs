@@ -41,7 +41,6 @@ pub fn pc_stable_skeleton_screened(
     let mut screened: Vec<(usize, usize, f64)> = Vec::new();
     for order in 0..=max_cond {
         let snapshot = adj.clone();
-        let mut removed_any = false;
         for i in 0..d {
             for j in (i + 1)..d {
                 if !adj[i].contains(&j) {
@@ -64,14 +63,10 @@ pub fn pc_stable_skeleton_screened(
                         adj[i].remove(&j);
                         adj[j].remove(&i);
                         screened.push((i, j, p));
-                        removed_any = true;
                         break;
                     }
                 }
             }
-        }
-        if !removed_any {
-            break;
         }
     }
 
