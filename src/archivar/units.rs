@@ -25,6 +25,7 @@ pub fn convert_to_si(value: f64, unit: &str) -> Option<f64> {
         "decibar" | "dbar" => Some(value * 1e4),
         "npa" => Some(value * 1e-9),
         "nt" => Some(value * 1e-9),
+        "nt2/hz" | "nt^2/hz" => Some(value * 1e-18),
         "gal" => Some(value * 1e-2),
         "mgal" => Some(value * 1e-5),
         "g" => Some(value * 9.80665),
@@ -455,6 +456,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "uj/sr/m2/um",
             "ohm",
             "v^2/hz",
+            "nt^2/hz",
         ],
         1 => &[
             "m", "mm", "km", "km/s", "m/s2", "n·m", "gal", "pa", "hz", "mw", "mm/yr", "count", "g",

@@ -404,6 +404,8 @@ terms erg-sc-rules-of-the-road https://ergsc.isee.nagoya-u.ac.jp/data_info/erg.s
 format cdf
 ttl 600
 on earth 54.60282 -113.64442 693
+field ch1@freq_vlf@amplitude_cal_vlf_ch1 athabasca_vlf_ns_nt2_hz inverse-square em nT^2/Hz 600 0.0 0.0
+field ch2@freq_vlf@amplitude_cal_vlf_ch2 athabasca_vlf_ew_nt2_hz inverse-square em nT^2/Hz 600 0.0 0.0
 field ch1@freq_vlf athabasca_vlf_ns_v2_hz inverse-square em V^2/Hz 600 0.0 0.0
 field ch2@freq_vlf athabasca_vlf_ew_v2_hz inverse-square em V^2/Hz 600 0.0 0.0
 

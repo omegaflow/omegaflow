@@ -101,7 +101,9 @@ em nmgy
 # Mountain 342 (2026-10-14): `mev` admitted to em in units.rs — the Fermi-4LAC
 # Pivot_Energy field (FITS TUNIT=MeV), dimension-equal with ev/gev/tev. Frozen
 # here until tools-latest republishes the gate, then deleted.
-# Mountain 344 (2026-10-14): `v^2/hz` admitted to em in units.rs — the Athabasca
-# VLF/ELF spectra (CDF UNITS `V^2/Hz`). Frozen here until tools-latest republishes
-# the gate, then deleted.
+# Mountain 344 (2026-10-14): `v^2/hz` and `nt^2/hz` admitted to em in units.rs — the
+# Athabasca VLF/ELF spectra, raw voltage (CDF UNITS `V^2/Hz`) and the calibrated magnetic
+# PSD (nT^2/Hz, ch1/(cal*1e-9)^2 per the pyspedas isee_vlf reference reader). Frozen here
+# until tools-latest republishes the gate, then deleted.
 em v^2/hz
+em nt^2/hz
