@@ -4,6 +4,8 @@ name: gic-al-network
 # al_network_proxy (the AL lower envelope over a station network) ->
 # gic_onset_detector (bay onsets against the McPherron list, with the
 # surrogate null). River builds the missing CI seam here (2026-10-14).
+# The station network is the declared family partition
+# (docs/zustand/gic-station-families.tsv), not a hand-typed list.
 
 concurrency:
   group: ${{ github.workflow }}
@@ -12,10 +14,15 @@ concurrency:
 on:
   workflow_dispatch:
     inputs:
-      stations:
-        description: comma-separated INTERMAGNET codes for the AL network
-        required: true
-        default: "abk sod esk ler stj ups"
+      family:
+        description: which declared family forms the AL network
+        type: choice
+        options:
+          - auroral
+          - subauroral
+          - midlat
+          - all
+        default: auroral
       surrogates:
         description: surrogate count for the onset null (0 = no null)
         required: false
@@ -36,19 +43,26 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Build the family station list from the partition artifact
+        run: |
+          set -euo pipefail
+          fam="${{ inputs.family }}"
+          grep -v '^#' docs/zustand/gic-station-families.tsv > /tmp/partition.tsv
+          if [ "$fam" = "all" ]; then
+            cut -f1 /tmp/partition.tsv > family.txt
+          else
+            awk -F'\t' -v f="$fam" '$2==f { print $1 }' /tmp/partition.tsv > family.txt
+          fi
+          echo "family $fam → $(wc -l < family.txt) stations"
       - name: Fetch the station xyz bins from the CDN
         run: |
           set -euo pipefail
           mkdir -p /tmp/xyz
-          : > family.txt
           base=https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk
-          for c in $(echo "${{ inputs.stations }}" | tr ',' ' '); do
-            c="$(echo "$c" | tr -d '[:space:]')"
+          while read -r c; do
             [ -z "$c" ] && continue
-            echo "$c" >> family.txt
             curl -fsSL -o "/tmp/xyz/${c}_xyz_1m.bin" "$base/${c}_xyz_1m.bin"
-          done
-          echo "family stations: $(wc -l < family.txt)"
+          done < family.txt
           ls -l /tmp/xyz
       - name: AL-network lower envelope
         run: |
