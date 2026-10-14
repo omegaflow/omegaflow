@@ -56,14 +56,15 @@ jobs:
                  "modvolc-cdn: day directory $base/ returned void" \
                  "curl on nrt3.modaps.eosdis.nasa.gov did not reach $base/. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
-          grep -oE 'MODVOLC[^"<> ]*\.NRT\.dat' listing.html | sort -u > names.txt
-          test -s names.txt || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+          grep -oE 'href="[^"]*/MODVOLC[^"]*\.NRT\.dat"' listing.html | sed 's/^href="//; s/"$//' | sort -u > urls.txt
+          test -s urls.txt || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "modvolc-cdn: $base/ carries no MODVOLC granule" \
                  "the autoindex at $base/ listed no MODVOLC*.NRT.dat granule. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
-          while read -r name; do
-            curl -sSfL --retry 3 --max-time 180 -o "gran/$name" "$base/$name"
-          done < names.txt
+          while read -r url; do
+            name="${url##*/}"
+            curl -sSfL --retry 3 --max-time 180 -o "gran/$name" "$url"
+          done < urls.txt
           echo "harvest measured: $(ls gran | wc -l) MODVOLC granules from $base/"
       - name: Ensure the nrt3.modaps.eosdis.nasa.gov release exists on the CDN
         if: steps.idempotence.outputs.present == 'false'
