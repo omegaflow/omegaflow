@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 347 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: dee0df01531c971c8e23ca87ff432b2ef568875871bf158252d1ae91d24461b6
+  sha256: 33a7856fa3ea1b0455a6084484df63b29aea924bc6b8998048a3e82c77d2d539
   status: live
 -->
 # Handover — Mycelium-Folge 347 (2026-10-14)
@@ -116,12 +116,12 @@ CTBTO, Weberin, Schumann — unten als Punkte geführt).
 - **Blockade:** kein akuter (`field` = Mountains Recht, wo nötig).
 - **Braucht:** prüfen, ob je Block ein `field` fehlt; sonst `descoped` messen. Token `…ses_ecbf4ffd8ffeqW9aY1kZ3n59Ph.1~73d3d0af`.
 
-### NVIDIA-NSSDC/SSDC-Schlüssel ohne Konsument
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** eine Quelle, die den Schlüssel braucht
-- **Lage:** (gemessen 2026-10-14/347) die Arme `--nssdc-auth`/`--ssdc-auth` sind gebaut, **live grün** (`--nssdc-auth` → `ticket present`, JS-Redirect-Body; `--ssdc-auth` → `ticket present`); CDDIS verdrahtet (`ionex_compiler.rs:45`). Kein **Datenabruf**-Konsument hängt an den NSSDC/SSDC-Sessions.
-- **Blockade:** keine Quelle mit Bedarf an der CAS-Session.
-- **Braucht:** beim nächsten NSSDC/SSDC-Datenkandidaten prüfen.
+### NSSDC/CLPDS-Planetologie — Lizenz gemessen; Riss Katalog ↔ Portal
+- **Status:** eigen (Rest operator-gebunden: der Datenantrag) | **Bindung:** eigen
+- **Trigger:** Operator-Wort zum Antrag (Entwurf in Futures Postfach `post/in/2026-10-14-mycelium-nssdc-datenantrag.md`)
+- **Lage:** (gemessen 2026-10-14/347) Der China-NSSDC-Katalog-Record trägt `license CC BY 4.0` (Feld `license`; der `--nssdc`-Arm druckt `license`/`scope` jetzt). **Riss:** das ausliefernde Portal **CLPDS** (`moon.bao.ac.cn/mall/moonDATA`) schreibt im **„Copyright Notice" „all rights reserved — ohne schriftliche Erlaubnis keine Vervielfältigung/Verbreitung/Speicherung"**, und `archive.nssdc.ac.cn` ebenso („版权所有"); die CC-BY-4.0-Angabe des Katalogs ist am Portal **nicht** bestätigt. Zugang: `完全共享` (kein Antrag; Portal-Registrierung, `CLPDS_USER`/`CLPDS_PASS` vorhanden) vs. `有条件共享` (Echtnamen-Registrierung + Antrag + Autorisierung). SSDC: **keine Lizenz deklariert** (`www.ssdc.asi.it` ohne Terms; `tools.ssdc.asi.it` anonym HTTP 429) → kein Faden. `--nssdc-auth`/`--ssdc-auth` live grün (`ticket present`).
+- **Blockade:** Lizenz-Riss ungeklärt (welche Zeile gilt) + Antrag/Autorisierung für die bedingten Datensätze.
+- **Braucht:** Operator-Entscheidung — (a) nur `完全共享` über die CLPDS-Registrierung holen (Copyright-Riss benannt, nicht geglättet), oder (b) den CN-NSSDC-Datenantrag absenden. Danach Registrierung/Abruf.
 
 ## An mountain
 
@@ -150,6 +150,7 @@ Origin: mycelium-347 (2026-10-14):
 
 Origin: mycelium-347 (2026-10-14):
 
+- `xfer:mycelium-347-2` **CN-NSSDC-Planetologie — Datenantrag.** Entwurf liegt in Futures Postfach (`post/in/2026-10-14-mycelium-nssdc-datenantrag.md`). Die Lizenz ist **gemessen**: Katalog-Record `CC BY 4.0`, aber das ausliefernde Portal (CLPDS/`moon.bao.ac.cn`) schreibt **„all rights reserved"** — ein Riss. **Frage an den Operator:** (a) nur die `完全共享`-Datensätze über die CLPDS-Registrierung holen (Riss benannt) oder (b) den Datenantrag absenden? Der Send bleibt die Operator-Hand.
 - `xfer:mycelium-346-8` **CTBTO + WALDO — das Warten blockiert nichts** — gemessen: Infrasound offen via NSF SAGE/EarthScope DMC + IMS-Produkte (CC BY 4.0); VLF/LF-Rohsferics offen via Zenodo-CC-BY-4.0-Wellenform-Archive und **AWESOME CC0** (`10.48322/fwte-dv13`).
 - `xfer:mycelium-346-9` **NSSDC Mariner-10 (`PSCM-00009`)** — die Detailseite ist **public**; `download.action` = 206/1 B. Der CRUSO-Antrag bleibt **Operator-Hand** (Entwurf `state/mail/nssdc-mariner10-pscm-00009.md`).
 - `xfer:mycelium-346-10` **Secret-Hygiene-Incident (346) — `NASA_API_KEY` exponiert, behoben** — neuer Key angefordert (2026-10-14); alter Wert als exponiert behandelt. Der Deny blockt nur den literalen Pfad `.secrets.local`, nicht ein `--root`, das ihn einschließt.

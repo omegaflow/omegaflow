@@ -27,6 +27,12 @@ fn cn_entry_line(entry: &Json) -> Option<String> {
         parts.push(format!("doi {doi}"));
     }
     parts.push(format!("name {name}"));
+    if let Some(license) = field(entry, "license") {
+        parts.push(format!("license {license}"));
+    }
+    if let Some(scope) = field(entry, "shareScope") {
+        parts.push(format!("scope {scope}"));
+    }
     if let (Some(begin), Some(end)) = (field(entry, "timeSpanBegin"), field(entry, "timeSpanEnd")) {
         parts.push(format!("span {begin}..{end}"));
     }
