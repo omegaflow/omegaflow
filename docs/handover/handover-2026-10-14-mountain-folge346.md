@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: 796a1fa13a639e90025449adabadeb0058bd3888f3d0961a8f038ae6510c445e
+  sha256: 59db97e8d9ea3be832551588c013d391f3f3695a014402c874b71902d7a203b4
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -66,16 +66,21 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
   **Zeit/Dynamik** exakter als A.
   **Ephemeriden-Nutzen:** B legt einen Peer-Körper in `body_ephemerides` (heute 92) an;
   A legt keinen an.
-- **Roster-Runde (mountain-ui, 2026-10-14):** Frage A/B gestellt; geantwortet **A**
-  (Claude, Mistral, Qwen, Perplexity); `pending`/ohne Antwort gemessen: Z.ai (Deep Think
-  rechnet), DeepSeek, Lumo, Duck (Frage nicht gepostet). Der **Rat ist damit noch nicht voll
-  gefüttert** (Regel `94c6eaa10`: Recherche + voller Roster) — **Verdikt offen**; es fehlen
-  Gemini, MiniMax, Kimi, Sakana und die open-weight-Sitze.
-- **Braucht:** (0) den **TLE-Endpunkt** erneut messen (CelesTrak GP für `26998`) und die
-  TLE/SGP4-Bahn-Route prüfen; (1) den Roster vollenden, dann den Rat fällen; (2) den Arm
-  **je Zeile** lesen lassen (heute nur die letzte) und `Time` je Zeile nach TDB
-  (`parse_iso_tdb`); (3) Block-Query über einen Zeitraum; (4) Terms
-  `saber-rules-of-the-road`.
+- **Roster-Runde (mountain-ui, 2026-10-14) — zweiter Anlauf, korrigierte Prämisse:**
+  Frage A/B mit der verifizierten TLE neu gestellt. Geantwortet **B** (Claude, Mistral, Qwen,
+  Perplexity, Z.ai/GLM-Deep-Think-Max). Claude: „die Sonde braucht die Satellitenposition,
+  die liefert nur die SGP4-Bahn; der Produktpunkt ist der Tangentenpunkt und bleibt als
+  Messort-Attribut je Zeile" — **Vorbehalt:** für 2002–2026 braucht es die **historische
+  TLE-Reihe** (eine Einzel-TLE trägt Tage–Wochen). **A** sagte nur Lumo (die Messpunkte seien
+  exakter als die ~km-SGP4-Rekonstruktion). Ohne Antwort: DeepSeek, Duck (Frage erneut nicht
+  gepostet). Der **erste Anlauf** (falsche Prämisse „keine Bahn") war **A** — 4×.
+- **Rat-Futter:** Recherche (primär: TLE verifiziert; NAIF/Horizons kein TIMED) + dieser
+  Roster liegen vor. Mit den **acht** mountain-ui-Sitzen gespeist; es fehlen weiter Gemini,
+  MiniMax, Kimi, Sakana + open-weight — **nicht die volle Liste**.
+- **Braucht:** (0) ggf. die restlichen Sitze + den Rat; (1) die **historische TLE-Reihe** für
+  2002–2026 (CelesTrak/Space-Track) prüfen; (2) den Arm **je Zeile** lesen lassen (heute nur
+  die letzte) und `Time` je Zeile nach TDB (`parse_iso_tdb`); (3) Block-Query über einen
+  Zeitraum; (4) Terms `saber-rules-of-the-road`.
 
 ### Venus Radar — Projektion gemessen; Bild-Manifestation offen (eigen)
 - **Status:** eigen (Operator-Wort 2026-10-14: W — das Bild bleibt Bild) | **Bindung:** eigen
