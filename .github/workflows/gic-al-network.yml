@@ -1,0 +1,81 @@
+name: gic-al-network
+
+# The two compute modules on the harvested INTERMAGNET xyz series:
+# al_network_proxy (the AL lower envelope over a station network) ->
+# gic_onset_detector (bay onsets against the McPherron list, with the
+# surrogate null). River builds the missing CI seam here (2026-10-14).
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      stations:
+        description: comma-separated INTERMAGNET codes for the AL network
+        required: true
+        default: "abk sod esk ler stj ups"
+      null:
+        description: surrogate count for the onset null (0 = no null)
+        required: false
+        default: "200"
+      baseline_block:
+        description: block-median baseline length (samples at 1 min)
+        required: false
+        default: "60"
+
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  network:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the station xyz bins from the CDN
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/xyz
+          : > family.txt
+          base=https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk
+          for c in $(echo "${{ inputs.stations }}" | tr ',' ' '); do
+            c="$(echo "$c" | tr -d '[:space:]')"
+            [ -z "$c" ] && continue
+            echo "$c" >> family.txt
+            curl -fsSL -o "/tmp/xyz/${c}_xyz_1m.bin" "$base/${c}_xyz_1m.bin"
+          done
+          echo "family stations: $(wc -l < family.txt)"
+          ls -l /tmp/xyz
+      - name: AL-network lower envelope
+        run: |
+          set -euo pipefail
+          cargo run --release -p omegaflow-measure --bin al_network_proxy -- \
+            --family family.txt --dir /tmp/xyz --decl auto \
+            --baseline-block ${{ inputs.baseline_block }} --min-stations 2 \
+            --out /tmp/al_envelope.bin 2>&1 | tee /tmp/al_network.txt
+      - name: Fetch the McPherron onset list (Zenodo, CC BY 4.0)
+        run: |
+          set -euo pipefail
+          curl -sSL -o /tmp/CorrOnsFiles.zip https://zenodo.org/api/records/22711679/files/CorrOnsFiles.zip/content
+          unzip -q /tmp/CorrOnsFiles.zip -d /tmp/mcpherron
+      - name: Bay-onset detector on the AL network, with the surrogate null
+        run: |
+          set -euo pipefail
+          cargo run --release -p omegaflow-measure --bin gic_onset_detector -- \
+            --series /tmp/al_envelope.bin \
+            --station al-network \
+            --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
+            --null ${{ inputs.null }} 2>&1 | tee /tmp/detect.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gic-al-network
+          path: |
+            /tmp/al_network.txt
+            /tmp/detect.txt
+            /tmp/al_envelope.bin
+            family.txt
