@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: e22f7a51a40d73b07b7a977d93e1ca5c3089bfac9d6f9831cf135cfb517c003f
+  sha256: 2912f8b79b1a9e360de5fbb80bdb62b957b83a44f685e24fe3264f67fb0796fb
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -43,33 +43,37 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
   ISS hat nur die Ephemeriden-Seite, keine Kanäle. `Position::StateVector { p,v }` +
   `Motion::Linear` ist verdrahtet (`channels.rs:1408-1409`, `motion.rs:436-439`), hat aber
   **keinen** Produktionsproduzenten und nie `track: true`.
-- **Route B ist quellen-blockiert (primär gemessen 2026-10-14, in-session — nicht nur
-  delegiert):**
-  - `archive_search --verdict https://naif.jpl.nasa.gov/pub/naif/TIMED/kernels/spk/` →
-    **HTTP 404** (Stufe 1; wayback 503).
-  - `sfetch https://naif.jpl.nasa.gov/pub/naif/` (HTTP 200, 22210 B): Missionsordner
-    `TDRSS/ · THEMIS/ · ULYSSES/ · VEGA/` — **kein `TIMED/`** (Nachbarschaft T→U).
-  - `sfetch "…/api/horizons.api?format=text&COMMAND='TIMED'&…"` → wörtlich
-    `Matching small-bodies: … No matches found.`
-  - Breite (keyless): `--mwmbl` „TIMED spacecraft SPK ephemeris kernel" → nur die
-    SPICE-Wikipedia-Seite, **kein** TIMED-SPK; `--marginalia` → `pending` (HTTP 0).
-  - → **Route A ist die einzige heute baubare**; ein aus A abgeleitetes „TIMED-Bahn"-`orbit`
-    wäre eine **Schein-Ephemeride** (kein Datum, kein `v`) und würde den Ephemeriden-Bestand
-    verfälschen (Roster: Claude, Mistral).
+- **Route B ist NICHT quellen-blockiert — korrigiert (2026-10-14, `archive_search --all`):**
+  TIMED ist **NORAD 26998** (2001-055B; Bahn ~615 km, i 74.1°), und **TLEs existieren**
+  (CelesTrak/Space-Track; Tracker `in-the-sky.org/spacecraft.php?id=26998`,
+  `orbitalradar.com/satellite/26998`, `n2yo.com/satellite/?s=26998`,
+  `satellitemap.space/sat/26998`). Eine **TLE/SGP4-eigene Bahn** ist damit baubar
+  (Kilometer-Klasse) und legt TIMED als **Peer-Körper** an. Zusätzlich gefunden:
+  NTRS `20040082147` „Orbit Determination of the TIMED Mission Using TDRSS Differenced
+  One-way Doppler Tracking Data"; `timedsds.jhuapl.edu`; `helio.data.nasa.gov/mission/TIMED`.
+  **Was zuerst gemessen wurde (unvollständig):** `--verdict …/naif/TIMED/kernels/spk/` →
+  **HTTP 404**; NAIF-Wurzel (200) → kein `TIMED/`; Horizons `COMMAND='TIMED'` → `No matches`.
+  Das prüfte nur die **SPK-Güte** (NAIF/Horizons) und übersah die TLE-Stufe — der erste
+  „blockiert"-Schluss war eine **unvollständige Messung, nicht die Wahrheit** (A=A).
+  Der CelesTrak-GP-Endpunkt antwortete in dieser Session nicht (Timeout; `--verdict` pending)
+  — die konkrete TLE-Datei bleibt erneut zu messen.
 - **Exaktheit (Operator-Kriterium):** A ist exakt am **vermessenen Ort** (Limb-Sounder: der
   Tangentialpunkt `tpl…`/`tpgpaltitude` ist die Messstelle, nicht der Satellit) — aber
-  scan-gemittelt, ohne Datum, ohne Sub-Scan-Zeit. B wäre in **Zeit/Dynamik** exakter
-  (kontinuierliche Chebyshev-Bahn mit `v`), ist aber nicht beschaffbar.
-  **Ephemeriden-Nutzen:** B würde einen Peer-Körper in `body_ephemerides` (heute 92) legen;
+  scan-gemittelt, ohne Datum, ohne Sub-Scan-Zeit. **B (TLE/SGP4)** gäbe eine kontinuierliche
+  Bahn mit `v` über die ganze Mission — **Kilometer-Klasse**, datum-/ICRS-frei — und wäre in
+  **Zeit/Dynamik** exakter als A.
+  **Ephemeriden-Nutzen:** B legt einen Peer-Körper in `body_ephemerides` (heute 92) an;
   A legt keinen an.
 - **Roster-Runde (mountain-ui, 2026-10-14):** Frage A/B gestellt; geantwortet **A**
   (Claude, Mistral, Qwen, Perplexity); `pending`/ohne Antwort gemessen: Z.ai (Deep Think
   rechnet), DeepSeek, Lumo, Duck (Frage nicht gepostet). Der **Rat ist damit noch nicht voll
   gefüttert** (Regel `94c6eaa10`: Recherche + voller Roster) — **Verdikt offen**; es fehlen
   Gemini, MiniMax, Kimi, Sakana und die open-weight-Sitze.
-- **Braucht:** (0) den Roster vollenden, dann den Rat fällen; (1) danach den Arm **je Zeile**
-  lesen lassen (heute nur die letzte) und `Time` je Zeile nach TDB (`parse_iso_tdb`);
-  (2) Block-Query über einen Zeitraum; (3) Terms `saber-rules-of-the-road`.
+- **Braucht:** (0) den **TLE-Endpunkt** erneut messen (CelesTrak GP für `26998`) und die
+  TLE/SGP4-Bahn-Route prüfen; (1) den Roster vollenden, dann den Rat fällen; (2) den Arm
+  **je Zeile** lesen lassen (heute nur die letzte) und `Time` je Zeile nach TDB
+  (`parse_iso_tdb`); (3) Block-Query über einen Zeitraum; (4) Terms
+  `saber-rules-of-the-road`.
 
 ### Venus Radar — Projektion gemessen; Bild-Manifestation offen (eigen)
 - **Status:** eigen (Operator-Wort 2026-10-14: W — das Bild bleibt Bild) | **Bindung:** eigen
