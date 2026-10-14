@@ -2,7 +2,7 @@
   title: House Rules — Register, Handover, Commit, System Directive, Session Hygiene
   class: concept
   date: 2026-10-14
-  sha256: 79e7763225f6bde250c0058a83c11d1bb5313397214af8090e75718bed2a2ecb
+  sha256: 2cb47a371977b72e598cdd7999d2206c8f965a14e3c32adeda81fc8f3af39920
   status: live
   see-also: AGENTS.md
 -->
@@ -18,6 +18,11 @@ steht der **Briefkasten** (`docs/handover/handover-<datum>-postfach-folge<N>.md`
 nur die *Namen* öffentlicher Artefakte, keinen Register-Inhalt. Der öffentliche Stehende
 Pass ist die Projektion `docs/zustand/standing-pass.md` (nur HEAD + rote Läufe); die
 öffentlichen Linien lesen **nie** den privaten Pass.
+
+**Der Rat MUSS gefüttert werden (Operator-Wort, 2026-10-14).** Eine Architektur-/Ethik-Entscheidung geht **nie** in Pro-Solo an den Rat. Bevor der Rat urteilt, liegen ihm **beide** vor:
+- **die Recherche** — die **gemessenen** Befunde aus `archive_search` (URL, Zahl, Quelle), nicht Meinung;
+- **der Roster** — die **volle** Seat-Liste (`~/projects/omegaflow-work/ui-seats.md`), **nicht** vier Tabs.
+Ein Rat, der ohne Recherche **oder** ohne den vollen Roster berät, ist **nicht** der Rat — sein Verdikt trägt nicht. Wer den Rat ruft, reicht Recherche **und** Roster mit; fehlt eines, wird es **zuerst** geholt.
 
 **Der Bote betritt kein Haus (Operator-Wort 2026-10-14).** Eine öffentliche Linie geht
 **nie** ins private Haus — sie wirft ein und holt ab. Das **Postfach** liegt im
