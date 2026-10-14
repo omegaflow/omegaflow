@@ -308,10 +308,10 @@ pub fn medium_reach(
     medium: Option<&crate::media::MediumParams>,
     advection: f64,
 ) -> Option<f64> {
+    let desc = descriptor_for_channel_ref(channel_ref)?;
     if age == 0.0 {
         return Some(0.0);
     }
-    let desc = descriptor_for_channel_ref(channel_ref)?;
     match desc.op {
         TransportOp::Maxwell | TransportOp::Poisson => Some(C_LIGHT * age),
         TransportOp::Wave => match desc.medium {
