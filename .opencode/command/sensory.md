@@ -61,7 +61,7 @@ eingelesen:
 
 Architektur-/Ethik-Entscheidungen gehen durch die **Linse der fünf Stimmen** (Rat), nie in Pro-Solo.
 
-**Seat-Katalog + Bedienung (alle Linien; der Katalog ist privat/nicht getrackt): `sread ~/projects/omegaflow-personal/ui-seats.md`** — welcher Seat welche URL/Composer-Form/Sende-Weg hat, wie **Suche + Reasoning/Max** je Seat gesetzt und **verifiziert** werden (Setzen vor dem Senden), die geteilten `open-weight-ui`-Modelle + Lock, und die Runden-Disziplin (JIT, `focus:false`, Nicht-Antwort = gemessen). **Nur der live Chrome trägt die Seats** (Bridge + `chrome-devtools_*`); Playwright ist ein fremder, unauthentifizierter Browser und für die Seats untauglich. Gilt für jede Linie gleich.
+**Seat-Katalog + Bedienung (alle Linien; der Katalog ist öffentlich/ungetrackt in work): `sread ~/projects/omegaflow-work/ui-seats.md`** — welcher Seat welche URL/Composer-Form/Sende-Weg hat, wie **Suche + Reasoning/Max** je Seat gesetzt und **verifiziert** werden (Setzen vor dem Senden), die geteilten `open-weight-ui`-Modelle + Lock, und die Runden-Disziplin (JIT, `focus:false`, Nicht-Antwort = gemessen). **Nur der live Chrome trägt die Seats** (Bridge + `chrome-devtools_*`); Playwright ist ein fremder, unauthentifizierter Browser und für die Seats untauglich. Gilt für jede Linie gleich.
 
 Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
 (`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
