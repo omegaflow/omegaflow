@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: 3dcc2156b08406a437432c5c0714e462d397e9c2f52f67ee9c05aa5f0e6cfc2b
+  sha256: 7600f3610439f8bb7ff5d489c9551a0be94eb471c7f2d5c2df34f67e48e47f7d
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -43,16 +43,26 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
   ISS hat nur die Ephemeriden-Seite, keine Kanäle. `Position::StateVector { p,v }` +
   `Motion::Linear` ist verdrahtet (`channels.rs:1408-1409`, `motion.rs:436-439`), hat aber
   **keinen** Produktionsproduzenten und nie `track: true`.
-- **Blockade:** keine technische — eine **Routen-Entscheidung** fehlt.
-- **Braucht:** (0) die **Route** wählen — (R1) produkt-nativ: `Position::Surface { earth,
-  lat, lon, alt }` aus `sclatitudeAVG`/`sclongitudeAVG`/`scaltitudeAVG` (km→m), die
-  natürliche Haus-Form, kein `v` nötig; (R2) operator-wörtlich: `Position::StateVector
-  { p, v, track:true }`, `v` aus Nachbarzeilen abgeleitet (Methode + Unsicherheit
-  **ungemessen**); (R3) Voyager-Route: eine **TIMED-SPK** ernten, `at timed` registrieren,
-  den Datenblock `at timed` setzen — der geübte Pfad, kein neuer Positionscode; (1) in
-  jedem Fall: den Arm **je Zeile** lesen lassen (heute nur die letzte) und `Time` je Zeile
-  nach TDB (`parse_iso_tdb`); (2) Block-Query über einen Zeitraum; (3) Terms
-  `saber-rules-of-the-road`.
+- **Route B ist quellen-blockiert (gemessen 2026-10-14, Taucher + Browser):** kein TIMED-SPK
+  bei NAIF (`…/pub/naif/TIMED/kernels/spk/` HTTP 404; kein `TIMED` in der generischen
+  SPK-Auswahl), kein TIMED in Horizons (`COMMAND='TIMED'` → keine Treffer), kein TIMED in
+  der NAIF-ID-Registry; CDAWeb führt kein TIMED-Bahnprodukt. **Route A ist damit die einzige
+  heute baubare**; ein aus A abgeleitetes „TIMED-Bahn"-`orbit` wäre eine **Schein-Ephemeride**
+  (kein Datum, kein `v`) und würde den Ephemeriden-Bestand verfälschen (Claude, Mistral).
+- **Exaktheit (Operator-Kriterium):** A ist exakt am **vermessenen Ort** (Limb-Sounder: der
+  Tangentialpunkt `tpl…`/`tpgpaltitude` ist die Messstelle, nicht der Satellit) — aber
+  scan-gemittelt, ohne Datum, ohne Sub-Scan-Zeit. B wäre in **Zeit/Dynamik** exakter
+  (kontinuierliche Chebyshev-Bahn mit `v`), ist aber nicht beschaffbar.
+  **Ephemeriden-Nutzen:** B würde einen Peer-Körper in `body_ephemerides` (heute 92) legen;
+  A legt keinen an.
+- **Roster-Runde (mountain-ui, 2026-10-14):** Frage A/B gestellt; geantwortet **A**
+  (Claude, Mistral, Qwen, Perplexity); `pending`/ohne Antwort gemessen: Z.ai (Deep Think
+  rechnet), DeepSeek, Lumo, Duck (Frage nicht gepostet). Der **Rat ist damit noch nicht voll
+  gefüttert** (Regel `94c6eaa10`: Recherche + voller Roster) — **Verdikt offen**; es fehlen
+  Gemini, MiniMax, Kimi, Sakana und die open-weight-Sitze.
+- **Braucht:** (0) den Roster vollenden, dann den Rat fällen; (1) danach den Arm **je Zeile**
+  lesen lassen (heute nur die letzte) und `Time` je Zeile nach TDB (`parse_iso_tdb`);
+  (2) Block-Query über einen Zeitraum; (3) Terms `saber-rules-of-the-road`.
 
 ### Venus Radar — Projektion gemessen; Bild-Manifestation offen (eigen)
 - **Status:** eigen (Operator-Wort 2026-10-14: W — das Bild bleibt Bild) | **Bindung:** eigen
