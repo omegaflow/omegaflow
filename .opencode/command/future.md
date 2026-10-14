@@ -1,66 +1,13 @@
 ---
-description: Future-Linie — die Menschenwelt als Anrede: Korrespondenz, Anträge, Consent, Operator-Queue, Übergabe. Ein Pass — Stand lesen, Bekanntes bis zur Kante arbeiten, nur Ungeklärtes vorlegen.
+description: Future-Linie — die Menschenwelt als Anrede. Der Befehl lebt im PRIVATEN Haus.
 agent: line
 model: deepseek/deepseek-flash
 ---
 
-Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch),
-damit die erlaubte Form am Punkt der Handlung steht.
+Der **Future-Befehl** liegt vollständig im **privaten Haus**:
+`~/projects/omegaflow-personal/.opencode/command/future.md`.
 
-Starte die Future-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp
-für Bekanntes. Ist ein Name genannt, nimm diesen; sonst die neueste offene Future-Übergabe.
-
-Name (leer = neueste): $ARGUMENTS
-
-Neueste offene Future-Übergabe (privat): ~/projects/omegaflow-personal/future/handover/ — neueste handover-*-future-*.md
-
-**Die Übergabe IST der Stand.** Lies sie und den Stehenden Pass
-(`sread ~/projects/omegaflow-personal/zustand/standing-pass.md` — zitieren, nie kopieren; eine kopierte Pass-Zahl ist ein
-Gate-Fixture `pass-copy`). Ein bereits geworteter/geklärter Punkt wird **nie** erneut vorgelegt.
-
-**1 · Still messen, nur Fälliges.** Nur was der eigene Trigger für fällig erklärt:
-`register_lookup --fired <line>` / `--stale <line> --persist 3`, `open_points_check <übergabe>`
-(`STALE-CITATION` = gefeuerter Trigger), die adressierten Blöcke (`register_lookup --addressed
-<line>`, zuerst falten). Was unverändert in der Übergabe steht, wird **nicht** neu gemessen und
-**nicht** neu ausgelegt. `session_burn` einmal (flash-first; pro/max nur mit gemessener flash-Fehllage).
-
-**2 · Bekanntes direkt bis zur Kante arbeiten.** Jeder eigene, autonom abarbeitbare Punkt wird
-**in diesem Atom** gearbeitet — dispatcht (flash-first: `grind-flash`/`general`/`vision`), gebaut,
-gemessen. Kein „nächster Dispatch", kein „nächste Session", kein Vorlegen eines bereits geworteten
-Punktes, keine Rangfolge, keine Liste. Werkzeuge statt Rohbefehle (`docs/concepts/tools-map.md`);
-`archive_search`/`sgrep`/`sfetch`/`sread`. Kein Polling, kein Fenster (still).
-
-**3 · Nur Ungeklärtes vorlegen.** Braucht ein Punkt ein **neues** Operator-Wort, wird er einzeln in
-einfacher Sprache vorgelegt (Lage · Frage · was bei Ja und bei Nein geschieht) — nie als Liste.
-**LOCK nie vorlegen** (nur auf Operator-Wort entlockt). **Wartend nie vorlegen** (Wahrheit
-`~/projects/omegaflow-personal/zustand/wartend.φ`). Jede Entscheidung geht sofort als Zeile ins Handover, nicht am Sessionende
-gesammelt (Sofort-Prinzip). Future ist die Operator-Adresse — jede Frage dieser Linie wird hier
-gesammelt, nicht in eine fremde Übergabe geschrieben.
-
-**4 · Grenze bleibt.** Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame
-Akt (Konto, Key, Anfrage, Einreichung) ist per-Akt-Operator-Wort. `/consent` ist der session-weite
-Consent (Delegation), `/commit` ist das Commit-Wort — beide getrennt.
-
-**5 · Übergabe zuletzt.** Erst nach der Arbeit: die Übergabe fortschreiben — Erledigtes **löschen**
-(nie als „erledigt" markieren), Messungen/Ergebnisse eintragen, nur Offenes mit **Lage · Blockade ·
-Braucht**; **LOCK nur im `LOCK`-Abschnitt** (nie in Offen/Queue); Header-sha256 via
-`omega_sh sha <datei>`; die konsumierte Übergabe nach `archiv/`. Der Commit trägt die fortgeschriebene Übergabe.
-
-**Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
-**privat** (nur diese Linie) und liegt in `~/projects/omegaflow-personal/future/archive-search-preset.txt` — hier
-eingelesen:
-
-!`cat ~/projects/omegaflow-personal/future/archive-search-preset.txt`
-
-**Linien-UI-Gruppe (Operator-Wort 2026-10-07; Speicher-Regel).** Die 4 Frontier-Chats (Duck · Claude · Qwen · Z.ai) dieser Linie liegen in der **eigenen** Gruppe — genau eine je Linie, kein Fremd-Composer. **Tabs sind just-in-time:** öffnen nur für einen Stimmen-Round (`browser_open … focus:false`), danach schließen (`browser_close`). Die **Tryingopen-Seats sind geteilt** in der zustandslosen Gruppe `open-weight-ui` (ein Tab je Modell, kein Modellwechsel im Chat); Zugang nur über das Lock `~/projects/omegaflow-personal/zustand/ui-open-weight.lock` (Halter-Linie + Zeit setzen/löschen) — zwei Linien fahren die Seats nie gleichzeitig. Peak = 4 Frontier + Seats nur während der Runde. Gruppenname: `~/projects/omegaflow-personal/future/ui-group.txt`:
-
-!`cat ~/projects/omegaflow-personal/future/ui-group.txt`
-
-Architektur-/Ethik-Entscheidungen gehen durch die **Linse der fünf Stimmen** (Rat), nie in Pro-Solo.
-
-**Seat-Katalog + Bedienung (alle Linien; der Katalog ist öffentlich/ungetrackt in work): `sread ~/projects/omegaflow-work/ui-seats.md`** — welcher Seat welche URL/Composer-Form/Sende-Weg hat, wie **Suche + Reasoning/Max** je Seat gesetzt und **verifiziert** werden (Setzen vor dem Senden), die geteilten `open-weight-ui`-Modelle + Lock, und die Runden-Disziplin (JIT, `focus:false`, Nicht-Antwort = gemessen). **Nur der live Chrome trägt die Seats** (Bridge + `chrome-devtools_*`); Playwright ist ein fremder, unauthentifizierter Browser und für die Seats untauglich. Gilt für jede Linie gleich.
-
-Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
-(`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
-Arbeit nie überschreiben; `git_safety --close [<eigene Pfade>]` vor dem Commit; gepusht wird,
-sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist.
+Die zwei Häuser sind in opencode **separat** geöffnet — das öffentliche Repo hier und das
+private Register drüben (`~/projects/omegaflow-personal`). Starte die Future-Linie **dort**,
+nicht hier. Zwischen den Häusern steht der **Briefkasten** (`~/projects/omegaflow-work/post/`):
+Brief einwerfen (`in/`), Post abholen (`out/`). Diese öffentliche Datei trägt nur den Zeiger.
