@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass + Taucher + Rat + Bridge-Roster: finals-Leser, harvest-Direktive, Doppel-Arme, Venus-Reader-Arm; SABER/Venus/ICGEM durch recherche·roster·rat (Riss auf SABER/Venus)
   class: handover
   date: 2026-10-14
-  sha256: 71014baa98ec92baaf827b3ffd8597dbb259bb77c5042a3af52dd07d706d8d24
+  sha256: b5d9e9bd661abf9dc47b97134dccf0f328ac25dd75b718f2cb39fb75c2b5d47d
   status: live
 -->
 # Handover — Mountain-Folge 345 (2026-10-14)
@@ -264,6 +264,23 @@ strahlende Serie `descoped`, der Compiler geparkt.
   (`synthesize(date, radius, colat, lon)`); die Kanäle tragen den **Feldwert**.
 - **Venus:** „nicht zerlegen" bestätigt → **W** (das Bild bleibt Bild). Der D-Compiler wird
   `descoped`/geparkt.
+
+**Gegenprobe der Chats (2. Runde, 8 Antworten — GLM · Duck · Claude · Qwen · DeepSeek ·
+Mistral · Lumo · Perplexity):**
+- **1 SABER: 8× Zustimmung.** Wiederkehrender Vorbehalt: **Bezugssystem + Zeitbasis fest
+  definieren** (ECI/ECEF, Zeitskala) — sonst ist „xyz zur Zeit t" mehrdeutig
+  (GLM · Claude · DeepSeek).
+- **2 Venus: 6× Zustimmung, 2 Einwände, 1 bedingt.** Qwen: Ganzbild verhindert Level-of-Detail,
+  Kugelprojektion verzerrt an den Polen. DeepSeek: ein Ganzbild ohne definierte Projektion/
+  Georeferenz ist nur ein Bild, kein auswertbares Ortsfeld. Lumo: bedingt (Korrelationen bleiben,
+  lokale Details leiden). → Nicht-Zerschneiden bleibt, **Projektion/Georeferenz** ist zu benennen.
+- **3 Gravitation: 5× Zustimmung, 3 Einwände.** GLM (stärkster): Gravitation ist das einzige
+  der drei Felder, das **die Bahn selbst erzeugt** — die Bahn aus (1) muss aus diesem Modell
+  integriert/abgeglichen sein, sonst sind Feld und Flugbahn inkonsistent. Claude: die „Höhe"
+  braucht eine **Referenzfläche** (Ellipsoid/Geoid) — und die ist selbst eine Gestalt, also
+  nicht ganz aus dem Modell zu streichen. Qwen: die **reale Planetenform** geht in die Bahn
+  ein. DeepSeek: der Feldwert muss **vektoriell/tensoriell** (Richtung/Gradient) sein, nicht
+  nur ein Betrag.
 
 **Tiefster Befund (F3, eigener Punkt):** zwei Epochen-Linien widersprechen sich —
 `matrix.rs:644`/`drs_fits.rs:38` lesen `epoch ≤ 0.0` als absent, `agrav.rs:113`/`hips.rs:793`/
