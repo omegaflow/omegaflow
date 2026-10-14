@@ -46,14 +46,7 @@ fn storage_type(label: &str) -> Option<String> {
         .map(|(_, v)| v.to_ascii_uppercase())
 }
 
-fn asset_name(img_spec: &str) -> String {
-    let base = img_spec.rsplit('/').next().unwrap_or(img_spec);
-    let last = base.split_once('?').map(|(h, _)| h).unwrap_or(base);
-    let stem = last.split('.').next().unwrap_or(last);
-    format!("pds3_bip_{}.bin", stem.to_ascii_lowercase())
-}
-
-fn reshuffle_interleaved(bytes: &[u8], meta: &ImgMeta) -> Result<Vec<u8>, String> {
+fn sample_interleaved_extent(meta: &ImgMeta) -> Result<usize, String> {
     let lines = meta.lines.ok_or("LINES absent — the raster stays unread")?;
     let samples = meta
         .line_samples
@@ -73,61 +66,24 @@ fn reshuffle_interleaved(bytes: &[u8], meta: &ImgMeta) -> Result<Vec<u8>, String
     let width = (bits / 8) as usize;
     let prefix = meta.line_prefix_bytes.unwrap_or(0usize);
     let offset = meta.offset.unwrap_or(0usize);
-    let src_row = prefix
-        .checked_add(
-            samples
-                .checked_mul(bands)
-                .and_then(|v| v.checked_mul(width))
-                .ok_or("SAMPLE_INTERLEAVED row exceeds addressable memory")?,
-        )
+    let row = samples
+        .checked_mul(bands)
+        .and_then(|v| v.checked_mul(width))
+        .and_then(|v| v.checked_add(prefix))
         .ok_or("SAMPLE_INTERLEAVED row exceeds addressable memory")?;
-    let dst_row = prefix
-        .checked_add(
-            samples
-                .checked_mul(width)
-                .ok_or("band-sequential row exceeds addressable memory")?,
-        )
-        .ok_or("band-sequential row exceeds addressable memory")?;
-    if let Some(rb) = meta.record_bytes {
-        if rb < dst_row {
-            return Err(format!(
-                "RECORD_BYTES {rb} < a line ({dst_row}) — the raster stays unread"
-            ));
-        }
-    }
-    let src_need = offset
-        .checked_add(
-            lines
-                .checked_mul(src_row)
-                .ok_or("SAMPLE_INTERLEAVED extent exceeds addressable memory")?,
-        )
+    let extent = lines
+        .checked_mul(row)
         .ok_or("SAMPLE_INTERLEAVED extent exceeds addressable memory")?;
-    if bytes.len() < src_need {
-        return Err(format!(
-            "label demands {src_need} bytes, the file carries {} — the raster stays unread",
-            bytes.len()
-        ));
-    }
-    let dst_len = offset
-        .checked_add(
-            bands
-                .checked_mul(lines)
-                .and_then(|v| v.checked_mul(dst_row))
-                .ok_or("band-sequential extent exceeds addressable memory")?,
-        )
-        .ok_or("band-sequential extent exceeds addressable memory")?;
-    let mut out = vec![0u8; dst_len];
-    for line in 0..lines {
-        let src_line = offset + line * src_row;
-        for s in 0..samples {
-            for band in 0..bands {
-                let src_at = src_line + prefix + (s * bands + band) * width;
-                let dst_at = offset + (band * lines + line) * dst_row + prefix + s * width;
-                out[dst_at..dst_at + width].copy_from_slice(&bytes[src_at..src_at + width]);
-            }
-        }
-    }
-    Ok(out)
+    offset
+        .checked_add(extent)
+        .ok_or_else(|| "SAMPLE_INTERLEAVED extent exceeds addressable memory".to_string())
+}
+
+fn asset_name(img_spec: &str) -> String {
+    let base = img_spec.rsplit('/').next().unwrap_or(img_spec);
+    let last = base.split_once('?').map(|(h, _)| h).unwrap_or(base);
+    let stem = last.split('.').next().unwrap_or(last);
+    format!("pds3_bip_{}.bin", stem.to_ascii_lowercase())
 }
 
 fn print_register_lines(
@@ -173,9 +129,15 @@ fn compile(
         .ok_or_else(|| format!("{label_spec}: label parse void — the raster stays unread"))?;
     let img_bytes =
         fetch_or_read(img_spec).ok_or_else(|| format!("image fetch void ({img_spec})"))?;
-    let shuffled = reshuffle_interleaved(&img_bytes, &meta)?;
+    let extent = sample_interleaved_extent(&meta)?;
+    if img_bytes.len() < extent {
+        return Err(format!(
+            "{img_spec}: label demands {extent} bytes, the file carries {} — the raster stays unread",
+            img_bytes.len()
+        ));
+    }
     let raster =
-        decode_raster(&shuffled, &meta).map_err(|e| format!("{img_spec}: {}", e.reason()))?;
+        decode_raster(&img_bytes, &meta).map_err(|e| format!("{img_spec}: {}", e.reason()))?;
     if raster.values.iter().all(|v| v.is_none()) {
         return Err(format!(
             "{img_spec}: no sample survived — the image stays unwritten (0 honored)"
@@ -235,14 +197,7 @@ fn selftest() {
     for v in [1.0f32, 2.0, 3.0, 4.0] {
         raw.extend_from_slice(&v.to_le_bytes());
     }
-    let shuffled = match reshuffle_interleaved(&raw, &meta) {
-        Ok(s) => s,
-        Err(msg) => {
-            eprintln!("selftest: reshuffle void ({msg})");
-            std::process::exit(1);
-        }
-    };
-    let raster = match decode_raster(&shuffled, &meta) {
+    let raster = match decode_raster(&raw, &meta) {
         Ok(r) => r,
         Err(reject) => {
             eprintln!("selftest: decode void ({})", reject.reason());
@@ -294,14 +249,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn reshuffle_maps_sample_interleaved_to_band_major() {
+    fn decode_reads_sample_interleaved_to_band_major() {
         let meta = parse_label(BIP_SAMPLE_LABEL).expect("label parses");
         let mut raw = Vec::new();
         for v in [1.0f32, 2.0, 3.0, 4.0] {
             raw.extend_from_slice(&v.to_le_bytes());
         }
-        let shuffled = reshuffle_interleaved(&raw, &meta).expect("reshuffles");
-        let raster = decode_raster(&shuffled, &meta).expect("decodes");
+        let raster = decode_raster(&raw, &meta).expect("decodes");
         assert_eq!(
             raster.values,
             vec![Some(1.0), Some(3.0), Some(2.0), Some(4.0)]
@@ -309,9 +263,9 @@ mod tests {
     }
 
     #[test]
-    fn reshuffle_refuses_a_short_file() {
+    fn sample_interleaved_extent_holds_the_full_sample_interleaved_row() {
         let meta = parse_label(BIP_SAMPLE_LABEL).expect("label parses");
-        assert!(reshuffle_interleaved(&[0u8; 8], &meta).is_err());
+        assert_eq!(sample_interleaved_extent(&meta), Ok(16));
     }
 
     #[test]

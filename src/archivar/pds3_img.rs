@@ -160,6 +160,7 @@ pub fn parse_label(text: &str) -> Option<ImgMeta> {
             "LINE_PREFIX_BYTES" => meta.line_prefix_bytes = value.parse().ok(),
             "MISSING_CONSTANT" => meta.missing_constant = parse_number(&value),
             "PRODUCT_ID" => meta.product_id = Some(value),
+            "BAND_STORAGE_TYPE" => meta.interleave = Some(band_storage_token(&value)),
             _ => {}
         }
     }
@@ -353,11 +354,22 @@ pub fn decode_raster(bytes: &[u8], meta: &ImgMeta) -> Result<ImgRaster, ImgRejec
     let width = sample_width(sample_type, sample_bits)?;
     let prefix = meta.line_prefix_bytes.unwrap_or(0usize);
     let offset = meta.offset.unwrap_or(0usize);
-    let data_bytes_per_line = match samples.checked_mul(width) {
+    let interleave = match meta.interleave.as_deref() {
+        Some(s) => interleave_of(s)?,
+        None => Interleave::Bsq,
+    };
+    let values_per_record = match interleave {
+        Interleave::Bip => match bands.checked_mul(samples) {
+            Some(v) => v,
+            None => return Err(ImgReject::SampleBitsNotByteAligned(sample_bits)),
+        },
+        Interleave::Bsq | Interleave::Bil => samples,
+    };
+    let data_bytes_per_record = match values_per_record.checked_mul(width) {
         Some(v) => v,
         None => return Err(ImgReject::SampleBitsNotByteAligned(sample_bits)),
     };
-    let line_stride = match data_bytes_per_line.checked_add(prefix) {
+    let line_stride = match data_bytes_per_record.checked_add(prefix) {
         Some(v) => v,
         None => return Err(ImgReject::SampleBitsNotByteAligned(sample_bits)),
     };
@@ -375,9 +387,13 @@ pub fn decode_raster(bytes: &[u8], meta: &ImgMeta) -> Result<ImgRaster, ImgRejec
     let mut values = Vec::with_capacity(total);
     for band in 0..bands {
         for line in 0..lines {
-            let record_at = offset + (band * lines + line) * line_stride + prefix;
             for s in 0..samples {
-                let at = record_at + s * width;
+                let (record, in_record) = match interleave {
+                    Interleave::Bsq => (band * lines + line, s),
+                    Interleave::Bil => (line * bands + band, s),
+                    Interleave::Bip => (line, s * bands + band),
+                };
+                let at = offset + record * line_stride + prefix + in_record * width;
                 let v = match bytes.get(at..at + width) {
                     Some(raw) => {
                         decode_sample(sample_type, sample_bits, raw, meta.missing_constant)?
@@ -496,6 +512,15 @@ fn interleave_of(s: &str) -> Result<Interleave, ImgReject> {
         "bil" => Ok(Interleave::Bil),
         "bip" => Ok(Interleave::Bip),
         other => Err(ImgReject::UnknownInterleave(other.to_string())),
+    }
+}
+
+fn band_storage_token(v: &str) -> String {
+    match v.trim().to_ascii_uppercase().as_str() {
+        "BAND_SEQUENTIAL" | "BSQ" => "bsq".to_string(),
+        "LINE_INTERLEAVED" | "BIL" => "bil".to_string(),
+        "SAMPLE_INTERLEAVED" | "BIP" => "bip".to_string(),
+        other => other.to_ascii_lowercase(),
     }
 }
 
@@ -804,6 +829,97 @@ END
         meta.missing_constant = Some(3.0);
         let raster = decode_raster(&minirf_raster(), &meta).expect("raster decodes");
         assert_eq!(raster.values, vec![Some(1.0), Some(2.0), None, Some(4.0)]);
+    }
+
+    #[test]
+    fn parse_label_reads_band_storage_type() {
+        let bip = MINIRF_LABEL.replace("END\n", "BAND_STORAGE_TYPE = SAMPLE_INTERLEAVED\nEND\n");
+        assert_eq!(
+            parse_label(&bip)
+                .expect("label parses")
+                .interleave
+                .as_deref(),
+            Some("bip")
+        );
+        let bil = MINIRF_LABEL.replace("END\n", "BAND_STORAGE_TYPE = LINE_INTERLEAVED\nEND\n");
+        assert_eq!(
+            parse_label(&bil)
+                .expect("label parses")
+                .interleave
+                .as_deref(),
+            Some("bil")
+        );
+        let bsq = MINIRF_LABEL.replace("END\n", "BAND_STORAGE_TYPE = BAND_SEQUENTIAL\nEND\n");
+        assert_eq!(
+            parse_label(&bsq)
+                .expect("label parses")
+                .interleave
+                .as_deref(),
+            Some("bsq")
+        );
+    }
+
+    const BIP_LABEL: &str = "PDS_VERSION_ID = PDS3
+RECORD_TYPE = FIXED_LENGTH
+RECORD_BYTES = 16
+LINES = 1
+LINE_SAMPLES = 2
+BANDS = 2
+SAMPLE_TYPE = PC_REAL
+SAMPLE_BITS = 32
+BAND_STORAGE_TYPE = SAMPLE_INTERLEAVED
+END
+";
+
+    #[test]
+    fn decode_raster_honors_sample_interleaved() {
+        let meta = parse_label(BIP_LABEL).expect("label parses");
+        let mut raw = Vec::new();
+        for v in [1.0f32, 10.0, 2.0, 20.0] {
+            raw.extend_from_slice(&v.to_le_bytes());
+        }
+        let raster = decode_raster(&raw, &meta).expect("raster decodes");
+        assert_eq!(
+            raster.values,
+            vec![Some(1.0), Some(2.0), Some(10.0), Some(20.0)]
+        );
+    }
+
+    const BIL_LABEL: &str = "PDS_VERSION_ID = PDS3
+RECORD_TYPE = FIXED_LENGTH
+RECORD_BYTES = 4
+LINES = 2
+LINE_SAMPLES = 1
+BANDS = 2
+SAMPLE_TYPE = PC_REAL
+SAMPLE_BITS = 32
+BAND_STORAGE_TYPE = LINE_INTERLEAVED
+END
+";
+
+    #[test]
+    fn decode_raster_honors_line_interleaved() {
+        let meta = parse_label(BIL_LABEL).expect("label parses");
+        let mut raw = Vec::new();
+        for v in [1.0f32, 10.0, 2.0, 20.0] {
+            raw.extend_from_slice(&v.to_le_bytes());
+        }
+        let raster = decode_raster(&raw, &meta).expect("raster decodes");
+        assert_eq!(
+            raster.values,
+            vec![Some(1.0), Some(2.0), Some(10.0), Some(20.0)]
+        );
+    }
+
+    #[test]
+    fn decode_raster_rejects_an_unknown_band_storage_type() {
+        let text = MINIRF_LABEL.replace("END\n", "BAND_STORAGE_TYPE = WEIRD_INTERLEAVE\nEND\n");
+        let meta = parse_label(&text).expect("label parses");
+        let err = decode_raster(&minirf_raster(), &meta).expect_err("rejected");
+        assert_eq!(
+            err,
+            ImgReject::UnknownInterleave("weird_interleave".to_string())
+        );
     }
 
     #[test]
