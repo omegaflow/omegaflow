@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: ee685ef3b15dd84df115b80b0d39aa90355aadf223f3660d43855aaa99794ec4
+  sha256: bcf89c3cfc6672e5bdebce468f62e4bd06806ac86aa6d168a0767e7d305b6368
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -203,6 +203,19 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
 - **Blockade:** keine.
 - **Braucht:** Mycelium setzt `url`/`origin`/`compiler` je Faden auf den Entwurf; dann
   `register_sort`.
+
+### Quellen-Gewebe — Kraft × Kernel gemessen; die dünnen Fäden (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** der Registeratom
+- **Lage:** (gemessen 2026-10-14, HEAD `fc9f3dba2`; Kreuzprüfung `source_physics_lint`)
+  die zwei Messungen am Register — Herkunft × Kraft und Kraft × Kernel — liegen in
+  `docs/surveys/survey-2026-10-14-gewebe-faeden.md`: 2575 `url`-Zeilen, 124 rohe Hosts,
+  306 wirksame Herkünfte, 7687 Feld-Zeilen; `inverse-square` trägt 6812 (89 %);
+  Gravitation (13 Felder) und Seismik (20) hängen an je **2** Wirkgesetzen.
+- **Blockade:** keine.
+- **Braucht:** die Gravimetrie-/Seismik-Kandidaten aus
+  `survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` §2 als `phi/sources.φ`-Zeilen
+  (Kernel `point`/`exp.-decay` für Gravitation; `point`/`inverse-square` für Seismik).
 
 ### Adressierte Register-Fäden — Lizenzen gemessen, Verdikte offen (eigen)
 - **Status:** eigen (Register-Writes; Messungen jetzt am Baum gegengeprüft) | **Bindung:** eigen
