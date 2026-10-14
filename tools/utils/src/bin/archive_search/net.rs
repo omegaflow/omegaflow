@@ -3776,7 +3776,11 @@ const QUERY_MODES: &[&str] = &[
 
 const PARAMETER_MODES: &[&str] = &["tap", "sparql", "oai-pmh", "stac", "erddap"];
 
-const BROWSE_MODES: &[&str] = &["re3data", "copernicus", "vires"];
+const BROWSE_MODES: &[&str] = &["re3data", "copernicus", "vires", "nssdc-auth", "ssdc-auth"];
+
+pub fn is_auth_mode(mode: &str) -> bool {
+    matches!(mode, "nssdc-auth" | "ssdc-auth")
+}
 
 pub fn keyword_mode_count() -> usize {
     QUERY_MODES.len() - PARAMETER_MODES.len()
@@ -4408,6 +4412,8 @@ fn run_lines_dispatch(
         "heasarc" => crate::heasarc::heasarc_lines(query, max),
         "nssdc" => crate::nssdc::nssdc_lines(query, max),
         "nssdca" => crate::nssdc::nssdca_lines(query, max),
+        "nssdc-auth" => crate::cas_auth::nssdc_auth_lines(env),
+        "ssdc-auth" => crate::cas_auth::ssdc_auth_lines(query, env),
         "consensus" => {
             let token = resolve_key(
                 env.get("CONSENSUS_API_KEY")

@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 346 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: 1fcd4d70b877e96fb87273f33873b93888224a9a9d1792765ff3e150d30f767b
+  sha256: 0f1204b04e1cff638aa5e9fb50973debeed0159459d40b6ac5a951b281d79dba
   status: live
 -->
 # Handover — Mycelium-Folge 346 (2026-10-14)
@@ -136,6 +136,33 @@ OCNS2019 `local-only`). Sender können ihre Blöcke streichen.
 - **Blockade:** keine Quelle mit Bedarf.
 - **Braucht:** beim nächsten NSSDC/SSDC-Kandidaten prüfen.
 
+### HIGP-MODVOLC-Archiv 2000–2019 — `local-only`-Pfad (vorbereitet)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** kein — Bau
+- **Lage:** (gemessen 2026-10-14/346) `http://modis.higp.hawaii.edu/data/<jahr>/<DOY>/MODVOLC.<A|T>YYYYDDD.HHMM.061.NRT.dat` (Apache-Index, HTTP 206, kein Login); volle Jahre 2000–2019; **keine Lizenzzeile** (© UH Mānoa) → `local-only` (kein CDN, keine `phi`-Zeile). Dateiformat identisch zu den LANCE-Re­cent-Granulen, die `modvolc_compiler` bereits parst.
+- **Blockade:** keine.
+- **Braucht:** Mirror nach `data/modis.higp.hawaii.edu/<jahr>/<DOY>/`, dann **pro Jahr** `cargo run -p omegaflow-harvest --bin modvolc_compiler -- --in <flat-jahr> --out data/modvolc_thermal_<jahr>.bin --body earth` (ohne `--ci-mode`). **Probe grün (2026-10-14):** 2019/286 → 288 Dateien, 2274 Alerts, 473 011 B, Exit 0. `--body earth` ist Pflicht (ohne → Exit 1). **Vollzug läuft:** `state/mycelium/higp_harvest.sh` als abgesetzter Hintergrund-Job (start 2026-10-14T05:51:46Z, Log `state/mycelium/higp_harvest.log`; fetch+flatten+compile je Jahr, kein `--ci-mode`).
+
+### NSSDC/SSDC-Auth-Arm — gebaut + live gemessen (uncommittet)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** kein — Commit
+- **Lage:** (gemessen/gebaut 2026-10-14/346) Arme `--nssdc-auth` / `--ssdc-auth <service-url>` in `cas_auth.rs` (+ `net.rs`/`archive_search.rs`), Templates via `secrets.rs`; `cargo check` grün, 0 Warnungen. **Live:** `--ssdc-auth` → `ticket present` · `page authenticated` (**SSDC-Creds funktionieren**). `--nssdc-auth` (nach Operator-Registrierung auf `umt.nssdc.ac.cn`) → `GET 200` · `POST 200` · `post status 200` · `post location absent` · `final url = …/login;jsessionid` · `ticket absent` · Titel `用户统一认证系统` → **der CN-CAS lehnt die Creds weiterhin ab** (Erfolg wäre `302 …?ticket=ST-…`). Riss-Ausgang: ein stiller Null-No-op wurde behoben; der Arm druckt jetzt entscheidende Merker.
+- **Blockade:** keiner.
+- **Braucht:** Commit; dann CAS-Flow prüfen (Passwort-Kodierung laut `casLoginView.js`? Pflichtfelder? Konto-Aktivierung?) oder die genauen `NSSDC_USER`/`NSSDC_PASS`-Werte bestätigen (Operator). NASA-NSSDC bleibt keyless.
+
+## Diver-Funde 2026-10-14 — Quellen-Alternativen (6 `grind-flash`-Taucher)
+
+Auftrag (Operator-Wort 2026-10-14): `archive_search --all` auf die Quellensuche (Anfragen / fehlende / lizenzoffline). Volle Tabellen + Spill-Pfade: `state/research/2026-10-14-quellen-alternativen-divers.md` (lokal). Die Funde sind **Behauptungen bis der Baum sie trägt** (Messung 2026-10-14, `--verdict`/`--all`).
+
+- **Riss (Venus-Radar):** die PDS-Rohdaten (`pds-geosciences.wustl.edu/…/arcb_nrao-v-rtls_gbt-3-delaydoppler-v1/`) sind **direkt erreichbar** (files 206, dir 200) — kein Zugangsantrag nötig; der Blocker ist der Parser (`pds3_img` liest `BAND_STORAGE_TYPE` nicht). = der `wartend.φ:38`-Eintrag ist ein **Parser**-Warten, kein Zugangs-Warten.
+- **MODVOLC-Archiv:** voller Spiegel **ohne** LAADS-Freigabe erreichbar — `http://modis.higp.hawaii.edu/data/` (200, Bulk-Tree 2000–2019, `.061`=C6.1), **ohne Lizenzzeile** (© UH Mānoa) → `local-only`. FIRMS = anderes Produkt; Zenodo nur Regionen.
+- **DE-2/CINDI:** DE-2 NACS/WATS hat **CC0**-Metadaten-DOIs (`10.48322/z50y-hd65`/`j8kp-5y58`, FPI `22v6-0p09`, SPASE), aber keinen Datenhost außerhalb `gsfc.nasa.gov` (SPDF down). CINDI-NWM: keine offene Alternative; dieselbe Größe offen via CHAMP (GFZ, CC-BY-4.0) und ICON/GRACE (Zenodo, CC-BY-4.0).
+- **CTBTO/WALDO:** die Größen sind bereits offen gedeckt — Infrasound via EarthScope DMC + IMS-Produkte (CC BY 4.0); VLF/LF-Rohsferics via Zenodo-CC-BY-4.0-Wellenform-Archive. WWLLN = paid; WALDO = open-with-account. Das Warten blockiert nichts.
+- **Mariner-10/JUICE/LROC:** Mariner-10-Imaging + JUICE-SPK-SKD offen erreichbar (PDS Imaging/NAIF/ESA SPICE), LROC-CDR US-Gov-PD — aber die drei Posten bleiben **pending** (Tapes request-only; keine öffentliche JUICE-recon+Kovarianz; keine `camera_angles`-Spaltendoku gefunden).
+- **Lizenzoffline:** gemessen-offen zertifiziert — Open-Meteo CC-BY-4.0, OSM ODbL, INTERMAGNET CC BY-NC 4.0, ESO CC BY 4.0, NASA CC0 (JPL SSD), NWS/NOAA PD, Zenodo `18306252` CC BY 4.0, GRDC-Caravan CC BY 4.0. **OCNS2019:** no-licence bestätigt (HTTP 200, kein DataCite/`rightsList`); offene Ersatzroute = **JPL SSD/Horizons, NASA CC0**.
+
+**Auth-Runde (Runde 2, 2026-10-14, mit Schlüsselnamen — nie Werte):** Earthdata-Token **gültig** (PO.DAAC 206, GES-DISC 200), aber **LAADS C6 bleibt mit Token 401** → das Warten steht. `NSSDC_USER/PASS` + `SSDC_USER/PASS` haben **keinen Konsumenten** (kein Arm) — Bau-Auftrag. SuperMAG liefert mit Creds echte Daten (200). **Riss (CHAMP/GRACE):** die Baum-Route `vires.services` trägt `vires-esa-data-terms`, nicht „GFZ CC-BY-4.0" (beide Linien stehen). **Neu offen: AWESOME-VLF/LF (`10.48322/fwte-dv13`) CC0** — deckt die WALDO-Größe. LROC-`camera_angles` + JUICE-Kovarianz bleiben **pending**. Volle Tabellen: `state/research/2026-10-14-quellen-alternativen-divers.md` §Runde 2.
+
 ## An mountain
 
 Origin: mycelium-346 (2026-10-14):
@@ -145,12 +172,26 @@ Origin: mycelium-346 (2026-10-14):
 - `xfer:mycelium-344-2` **Fünf Fäden** — `terms`/`field`/`ttl` je gemessener Quelle.
 - `xfer:mycelium-344-5` **LOD in den `finals`-Arm** ergänzen.
 - `xfer:mycelium-342-3`/`-4`/`-5` · `xfer:mycelium-343-2`/`-3` · `xfer:mycelium-342-10` — wie oben geführt.
+- `xfer:mycelium-346-2` **Venus-Radar** — die PDS-Rohdaten sind erreichbar (`--verdict` 206); der Blocker ist `pds3_img` (`BAND_STORAGE_TYPE`/`SAMPLE_INTERLEAVED` lesen). Parser-Erweiterung statt Zugangs-Warten.
+- `xfer:mycelium-346-3` **MODVOLC-Archiv 2000–2019** — HIGP-Bulk-Tree `http://modis.higp.hawaii.edu/data/` (200, kein Login, `.061`) erreichbar, **ohne Lizenzzeile** → `local-only`-`terms`-Verdikt (kein CDN).
+- `xfer:mycelium-346-4` **DE-2 NACS/WATS** — SPASE-**CC0**-DOIs `10.48322/z50y-hd65`/`j8kp-5y58` (FPI `22v6-0p09`) registrieren (`terms CC0`); die CDFs bleiben am down-`gsfc.nasa.gov`.
+- `xfer:mycelium-346-5` **OCNS2019-Ersatz** — JPL SSD/Horizons (NASA CC0) als offene Alternative zu `local-only`.
+- `xfer:mycelium-346-7` **AWESOME-VLF/LF** — `doi.org/10.48322/fwte-dv13` (+ `fzcf-f191`), **CC0** gemessen; als offene Quelle registrieren (`terms CC0`), deckt die WALDO-Größe.
+- `xfer:mycelium-346-6` **Venus-Parser (`pds3_img`)** — `ImgMeta` hat kein `band_storage_type`; der Label-Parser (`src/archivar/pds3_img.rs:130-165`) mappt `BAND_STORAGE_TYPE` nicht; `decode_raster` (Z.337) ist **nur BSQ** (`record_at = offset + (band*lines+line)*line_stride`). Die Venus-Labels tragen `BAND_STORAGE_TYPE=SAMPLE_INTERLEAVED` (=BIP), `SAMPLE_TYPE=PC_REAL`, `SAMPLE_BITS=32`, `BANDS=2`, `RECORD_BYTES`. Nötig: `BAND_STORAGE_TYPE`→`Interleave` (Bsq/Bil/Bip) mappen und `decode_raster` die BIP/BIL-Indizierung geben — die `decode_envi`-Indexformel (Z.536-544) ist die Vorlage. Rohdaten erreichbar (dir 200, `.img` 206), kein Zugangswarten.
 
 ## An river
 
 Origin: mycelium-346 (2026-10-14):
 
 - `xfer:mycelium-344-4` **DE-2 + `asset=`-Riss** — die Riss-Klärung steht (`harvest-dispatch.yml:106` liest `asset=`); der Lauf `38489787692` scheitert **gemessen am Host** (`cdaweb.gsfc.nasa.gov` TLS-Abbruch; lokal `--verdict` bestätigt host-spezifisch). `asset=fehlt` bleibt bis zum ersten erfolgreichen Pull.
+
+## An future
+
+Origin: mycelium-346 (2026-10-14):
+
+- `xfer:mycelium-346-8` **CTBTO + WALDO — das Warten blockiert nichts** — gemessen: Infrasound offen via NSF SAGE/EarthScope DMC + IMS-Produkte (CC BY 4.0); VLF/LF-Rohsferics offen via Zenodo-CC-BY-4.0-Wellenform-Archive und **AWESOME CC0** (`10.48322/fwte-dv13`). Die Antworten können gelesen werden, aber keine offene Erweiterung hängt mehr an ihnen.
+- `xfer:mycelium-346-9` **NSSDC Mariner-10 (`PSCM-00009`)** — die Detailseite ist **public** (Playwright rendert die volle Beschreibung: 762 7-Spur-Tapes, `MVM_1001–1007`, Bestellweg `gsfc-dl-nssdca-request@mail.nasa.gov`); `download.action` = 206/1 B (kein File-Listing online). Der CRUSO-Antrag bleibt **Operator-Hand** (Entwurf `state/mail/nssdc-mariner10-pscm-00009.md`).
+- `xfer:mycelium-346-10` **Secret-Hygiene-Incident (diese Session) — `NASA_API_KEY` exponiert, behoben** — `archive_search 'NASA_API_KEY' --root .` zog `.secrets.local` mit und druckte den **Wert** in den Transcript. **Operator hat am 2026-10-14 einen neuen api.nasa.gov-Key angefordert** → der geleakte Wert ist ersetzt; die alte Kennung gilt als exponiert (NASA-seitig alt/neu prüfen). Gemessen: der Deny blockt nur den literalen Pfad `.secrets.local`, nicht ein `--root`, das ihn einschließt. Vorgänger-Klasse: 2026-09-30 (`sgrep -i TOKEN .secrets.local`; 22/24 Keys am selben Tag rotiert, `future-folge158:170`).
 
 ## LOCK
 

@@ -12,6 +12,8 @@ mod awmf;
 mod base;
 #[path = "archive_search/biomodels.rs"]
 mod biomodels;
+#[path = "archive_search/cas_auth.rs"]
+mod cas_auth;
 #[path = "archive_search/chembl.rs"]
 mod chembl;
 #[path = "archive_search/ckan.rs"]
@@ -562,6 +564,8 @@ fn main() {
             "--heasarc" => mode = Mode::Net("heasarc"),
             "--nssdc" => mode = Mode::Net("nssdc"),
             "--nssdca" => mode = Mode::Net("nssdca"),
+            "--nssdc-auth" => mode = Mode::Net("nssdc-auth"),
+            "--ssdc-auth" => mode = Mode::Net("ssdc-auth"),
             "--gosat" => mode = Mode::Gosat,
             "--kind" => {
                 i += 1;
@@ -854,7 +858,7 @@ fn main() {
                 Some(repo) => secrets::load_env(&repo),
                 None => env::vars().collect(),
             };
-            if keywords.is_empty() && !std::io::stdin().is_terminal() {
+            if keywords.is_empty() && !net::is_auth_mode(name) && !std::io::stdin().is_terminal() {
                 let stdin = std::io::stdin();
                 let mut reader = stdin.lock();
                 let mut line = String::new();
@@ -986,7 +990,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc|--nssdc|--nssdca <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -1290,6 +1294,12 @@ fn usage() {
     );
     eprintln!(
         "  --nssdc     <query>   (China NSSDC/VSSO coreMetadata search, vsso.nssdc.ac.cn — public metadata; the download is CAS/captcha + application-gated)"
+    );
+    eprintln!(
+        "  --nssdc-auth          (China NSSDC CAS login via NSSDC_USER/NSSDC_PASS; reports the HTTP, ticket and resulting page — never the secret)"
+    );
+    eprintln!(
+        "  --ssdc-auth <service>  (SSDC Apereo CAS login via SSDC_USER/SSDC_PASS, service=<service-url>; reports the HTTP, ticket and resulting page — never the secret)"
     );
     eprintln!(
         "  --all       the query through every keyword search mode, parameter arms held ({} calls — the last move, never the first; --brave is excluded while its quota is spent)",
