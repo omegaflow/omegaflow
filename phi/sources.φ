@@ -851,7 +851,7 @@ field temp opensensemap_temperature_c exponential-decay thermal C 3600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv
 origin https://cdaweb.gsfc.nasa.gov/hapi
 harvest de2
-terms PD https://cdaweb.gsfc.nasa.gov/
+terms CC0-1.0 https://doi.org/10.48322/z50y-hd65
 ttl 3600
 format csv
 compiler tools/harvest/src/bin/de2_compiler.rs

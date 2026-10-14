@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mountain-Folge 346 (2026-10-14)
-  session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + adressierte Blöcke (mycelium-347, river-209) gefaltet
+  session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: 18a627113c72581851bfa68114f80165181742655ecfcbb4383291711e95253e
+  sha256: 66ebaf359fcae086ce8ffc9d7cd3ded83fd5bba4a9950fcc9a872c830831a737
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -17,93 +17,120 @@ Gefaltet (`register_lookup --addressed mountain`): `mycelium-folge347` und
 0 absent/stale/word-carried). Der Stehende Pass wird als **öffentliche** Fassung
 zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
 
-## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass — der `pds3_img`-Interleave-Arm (`BAND_STORAGE_TYPE` → `Bsq`/`Bil`/`Bip` in `parse_label` + `decode_raster`, 4 neue Unit-Tests) und die Ablösung des Byte-Reshuffles im `pds3_bip_radar_compiler` (der Strict-Extent-Wächter bleibt); `cargo check` 0/0, Bin gebaut, Selftest grün; die zwei adressierten Blöcke gelesen und in die Punkte unten gefaltet; kein Rat/Roster, kein Seat.
+## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass — der `pds3_img`-Interleave-Arm (`BAND_STORAGE_TYPE` → `Bsq`/`Bil`/`Bip` in `parse_label` + `decode_raster`, 4 neue Unit-Tests) und die Ablösung des Byte-Reshuffles im `pds3_bip_radar_compiler` (der Strict-Extent-Wächter bleibt), `cargo check` 0/0, Selftest grün; danach vier Taucher (Lizenzen, Venus-Projektion, ICGEM-gfc, SABER-Weltlinie) plus ein Rat (Epochen-Absenz); kein Seat.
 
 ## Offen (aufgeschlüsselt)
 
-### SABER — eigene Sonde an xyz,t; Arm-Umbau + Block warten (eigen)
+### SABER — eigene Sonde; die Route ist der offene Punkt (eigen)
 - **Status:** eigen (Operator-Wort 2026-10-14: die Sonde an xyz,t) | **Bindung:** eigen
 - **Trigger:** der Arm-Bau
-- **Lage:** (gemessen 2026-10-14, Taucher) HAPI-`info` aus dem Cache
-  (`/tmp/opencode/saber_info.json`): `ktemp` `size:[400]` K, `tpgpaltitude` `size:[400]`
-  km, `fill -999.0`; ein `data`-Row ist `[isotime, <array>, <array>]`. Der Arm
-  (mountain-345) expandiert `param.<i>` über `parameters[].size` zu Skalar-Kanälen
-  (`saber_ktemp_0 …`), heute mit `Position::Source` und `Motion::Linear`-Kanal-Orten.
-  Das Operator-Wort verlangt die **eigene Weltlinie** des Satelliten:
-  `Position::StateVector { p, v }` + `Motion::Linear`, die Höhe als Wert.
-  `Position::Source` ist unit — **kein** `alt`-Feld (`extract.rs:7013-7025`).
-  `cdaweb.gsfc.nasa.gov` ist host-weit unerreichbar (Stehender Pass), kein frisches Row.
-- **Blockade:** cdaweb-Host unerreichbar — das Sample/der Block fehlt.
-- **Braucht:** (0) **Bezugssystem + Zeitbasis** festlegen (ICRS der Haus-Konvention vs.
-  ECI/ECEF; Zeitskala) — Gegenprobe GLM/Claude/DeepSeek; (1) den Arm auf
-  `Position::StateVector { p, v }` + `Motion::Linear` ziehen (Kanäle an der
-  Satelliten-Weltlinie); (2) den Block
-  `url https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER&…parameters=ktemp,tpgpaltitude&format=json`,
-  `terms saber-rules-of-the-road …` — wartet auf die Host-Rückkehr.
+- **Lage:** (gemessen 2026-10-14, Taucher) Das HAPI-`info` (live HTTP 200, 7489 B —
+  die Host-Erreichbarkeit ist **intermittierend**, der Cache `/tmp/opencode/saber_info.json`
+  ist aktuell absent) nennt neben `ktemp`/`tpgpaltitude` **eine Scan-Mittel-Position**:
+  `sclatitudeAVG`/`sclongitudeAVG` (deg) und `scaltitudeAVG` (**km**), dazu
+  `tpl…`-Tangentialpunkt-Geometrie. Das Produkt trägt **kein** kartesisches xyz und
+  **keine** Geschwindigkeit; Zeit ist `Time` (isotime, UTC). Der Arm heute
+  (`extract.rs:6994-7006` family, `:7083-7095` scalar) liest **nur die letzte Zeile**
+  (`data.last()`) und stempelt `epoch: now` — die `Time`-Spalte wird verworfen,
+  `Position::Source` (unit-Variante, `types.rs:67`) gesetzt. Kein SABER-Block in `phi`.
+  Korrigiert: die folge345-Zitation `extract.rs:7013-7025` für `Position::Source` ist
+  **stale** (dort steht heute der `param`-Komponentenparse).
+- **Präzedenz (gemessen):** eine eigene Weltlinie läuft im Haus **nicht** über
+  `Position::StateVector { p, v }`, sondern über eine **Ephemeride**: `at <body>` →
+  `Frame::Barycenter` → `Motion::Barycenter` → `body_barycenter_position` (Chebyshev,
+  ICRF/J2000, **Meter**, TDB-Sekunden seit J2000), geübt von **Voyager**
+  (`phi:27461-27466` Ephemeride + `phi:11603-11613` Datenblock, beide `at voyager1`).
+  ISS hat nur die Ephemeriden-Seite, keine Kanäle. `Position::StateVector { p,v }` +
+  `Motion::Linear` ist verdrahtet (`channels.rs:1408-1409`, `motion.rs:436-439`), hat aber
+  **keinen** Produktionsproduzenten und nie `track: true`.
+- **Blockade:** keine technische — eine **Routen-Entscheidung** fehlt.
+- **Braucht:** (0) die **Route** wählen — (R1) produkt-nativ: `Position::Surface { earth,
+  lat, lon, alt }` aus `sclatitudeAVG`/`sclongitudeAVG`/`scaltitudeAVG` (km→m), die
+  natürliche Haus-Form, kein `v` nötig; (R2) operator-wörtlich: `Position::StateVector
+  { p, v, track:true }`, `v` aus Nachbarzeilen abgeleitet (Methode + Unsicherheit
+  **ungemessen**); (R3) Voyager-Route: eine **TIMED-SPK** ernten, `at timed` registrieren,
+  den Datenblock `at timed` setzen — der geübte Pfad, kein neuer Positionscode; (1) in
+  jedem Fall: den Arm **je Zeile** lesen lassen (heute nur die letzte) und `Time` je Zeile
+  nach TDB (`parse_iso_tdb`); (2) Block-Query über einen Zeitraum; (3) Terms
+  `saber-rules-of-the-road`.
 
-### Venus Radar — Reader/Compiler geparkt (Operator-Wort W); pds3_img-Interleave gebaut (eigen)
+### Venus Radar — Projektion gemessen; Bild-Manifestation offen (eigen)
 - **Status:** eigen (Operator-Wort 2026-10-14: W — das Bild bleibt Bild) | **Bindung:** eigen
-- **Trigger:** der Achsen-/Projektions-Bau
-- **Lage:** (gemessen 2026-10-14, Taucher) Bundle `urn:nasa:pds:venus_radar_level2`
-  v1.0, DOI `10.17189/1522443`, **CC0-1.0**, 15 Produkte. Die Level-2-Labels sind
-  PDS4 `Array_2D_Map`, single-band, `Last Index Fastest` — kein
-  `BANDS`/`BAND_STORAGE_TYPE`; `pds4_img` braucht keinen Interleave-Umbau. Der
-  `SAMPLE_INTERLEAVED`/`BANDS=2`-Befund (mycelium-346-6) gehört zum **rohen** PDS3
-  Complex-Backscatter-Bundle (`vrm_90xx`). Das Operator-Wort hält das reduzierte Bild
-  als Bild (W): der D-Compiler (`venus_radar_compiler.rs`) und der VNRD-Reader
-  (`vnrd.rs`) werden **geparkt**, die strahlende Serie entfällt.
-- **Gebaut (mountain-346):** `src/archivar/pds3_img.rs` liest `BAND_STORAGE_TYPE` →
-  `Bsq`/`Bil`/`Bip` (`BAND_SEQUENTIAL`/`LINE_INTERLEAVED`/`SAMPLE_INTERLEAVED`) in
-  `parse_label`; `decode_raster` indiziert nach Interleave (BIP: `values_per_record =
-  bands·samples`); ein unbekannter Token wird verworfen (`UnknownInterleave`), **kein**
-  stiller BSQ-Fallback. Vier neue Unit-Tests (BIP/BIL-Token, BIP/BIL-Dekodierung,
-  unbekannter Token). `pds3_bip_radar_compiler.rs` delegiert an den Kern-Decoder — das
-  Byte-Reshuffle entfällt, der Strict-Extent-Wächter (`sample_interleaved_extent`) bleibt,
-  Selftest grün.
-- **Blockade:** keine für den Parser.
-- **Braucht:** (0) **Projektion + Ortsbezug des Bildes** aus dem PDS4-Label benennen
-  (Gegenprobe Qwen/DeepSeek: ohne sie ist ein Ganzbild kein Ortsfeld); (1) den
-  Bild-Block (`url`/`origin`/`compiler`/`terms CC0-1.0`, Einheit am Feld);
-  (2) Split-Route erst nachgelagert; (3) der native Lauf braucht 15×960 MB (CI).
+- **Trigger:** der Projektions-/Manifestations-Bau
+- **Lage:** (gemessen 2026-10-14, Taucher) Bundle `urn:nasa:pds:venus_radar_level2` v1.0,
+  DOI `10.17189/1522443`, **CC0-1.0**, 15 Produkte (5 Epochen × `inc`/`ocp`/`scp`).
+  Die Level-2-Labels sind PDS4 `Array_2D_Map`, single-band; `pds4_img` braucht keinen
+  Interleave-Umbau. Der `SAMPLE_INTERLEAVED`/`BANDS=2`-Befund (mycelium-346-6) gehört zum
+  **rohen** PDS3 Complex-Backscatter-Bundle (`vrm_90xx`).
+  **Projektion gemessen** (byte-identisch über alle Epochen, aus
+  `.../data/venus_1988_north_inc.xml`): `map_projection_name` = **Sinusoidal**,
+  `longitude_of_central_meridian` = **335.0 deg**; `pixel_resolution_x/y` = 1000 m/px;
+  `upperleft_corner_x/y` = `-10000000.0` / `9359753.174046` m; Bounding-Box
+  W 254.256 / E 37.213 / N 80.845 / S -25.0 deg; `Geodetic_Model`: `Planetocentric`,
+  a=b=c=`6051.0` km, `Positive East`. **Kein** expliziter Frame-Identifier (absent) —
+  der Frame ist nur über Körper-fix + `longitude_direction` konveyiert.
+- **Gebaut (mountain-346):** `pds3_img` liest `BAND_STORAGE_TYPE` (BSQ/BIL/BIP);
+  `decode_raster` indiziert danach; unbekannter Token → `UnknownInterleave` (kein
+  stiller BSQ-Fallback); `pds3_bip_radar_compiler` delegiert an den Kern (Reshuffle weg).
+- **Blockade:** keine.
+- **Braucht:** (1) die **Bild-Manifestation (W)** wählen — wie das georeferenzierte
+  `Array_2D_Map` als Gestalt/`pds4_img` in den Baum kommt; (2) den Block
+  (`url`/`origin`/`compiler`/`terms CC0-1.0`, Einheit am Feld); (3) Split-Route erst
+  nachgelagert; (4) der native Lauf braucht 15×960 MB (CI). Der D-Compiler
+  (`venus_radar_compiler.rs`) und der VNRD-Reader (`vnrd.rs`) bleiben **geparkt**.
 
-### ICGEM gfc — Modell als Feld; Auswerter fehlt (eigen)
+### ICGEM gfc — Rezept + Site gemessen; Auswerter wartet auf die Epochen-Ablage (eigen)
 - **Status:** eigen (Operator-Wort 2026-10-14: das Modell wie die anderen behandeln) | **Bindung:** eigen
 - **Trigger:** der Feld-Bau
-- **Lage:** (gemessen 2026-10-14, Taucher) D2 (Rat + Roster): statisch ohne Epoche,
-  kein erfundener MJD. `gfc.rs`-Arm + `declared_fields` stehen (4 Felder
-  `icgem_gfc_c/s`, `icgem_gfct_c/s`); der Compiler (`epoch_of` Z.147-150) **verlangt**
-  eine Epoche und schreibt sonst nichts. Haus-Wirklichkeit: `epoch 0` ist „Spalte/Key 0"
-  (`parse.rs:1870`), **kein** Fehlen; die fest-stride 26×f64 hat keinen absent-Slot;
-  `matrix.rs:644` liest `epoch <= 0.0` als absent und **überspringt**, `gfc.rs:153`
-  behält 0.0. Kein Präzedenzfall für eine geschriebene Serie ohne Epoche.
-- **Operator-Wort (2026-10-14):** das Gravitationsmodell wie das Erdmagnetfeld- und das
-  Atmosphären-Modell **an einem Ort auswerten** und dort einen **echten Feldwert**
-  liefern. Präzedenz: **VMF3** (`vmf3_sh` am Ort), **IGRF**
-  (`synthesize(date, radius, colat, lon) -> (Br,Bθ,Bφ)`). Ein Modell ist ein **Feld**,
-  keine Gestalt. `format gfc` ist im `main_flow`-Dispatch (mountain-345).
-- **Blockade:** der Koeffizienten-Arm (`gfc.rs`) führt die Modell-Interna als Kanäle;
-  der Auswerter (Koeffizienten an einem Ort → Feldwert) fehlt.
-- **Braucht:** (0) die drei Gegenprobe-Randbedingungen tragen — **(0a) Bahn↔Feld-Kopplung**
-  (Gravitation erzeugt die Bahn selbst; GLM), **(0b) Höhen-Bezugsfläche**
-  (Ellipsoid/Geoid, selbst eine Gestalt; Claude), **(0c) Feldwert vektoriell/tensoriell**
-  (Richtung/Gradient, nicht nur Betrag; DeepSeek); (1) Auswerter wie `vmf3_sh`/`igrf`;
-  (2) Block `url …/icgem.gfz.de/gfc.bin`,
-  `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`, Feld am Ort; Cap D=3211.
+- **Lage:** (gemessen 2026-10-14, Taucher) Das `gfc`-Format (ICGEM-Format-2023,
+  `https://icgem.gfz.de/home` → Spec-PDF) trägt Header `product_type`, `modelname`,
+  `earth_gravity_constant` (GM, m³/s²), `radius` (m), `max_degree`, `errors`,
+  optional `norm` (fully normalized) / `tide_system`; Datensätze `gfc` (statische
+  C_lm/S_lm) und `gfct` (zeitvariabel). Die **Synthese** ist die Standard-Kugelflächen-
+  Entwicklung `V(r,θ,λ) = (GM/r)·Σ_l (a/r)^l ·Σ_m P̄_lm(cosθ)(C_lm cos mλ + S_lm sin mλ)`;
+  das Feld = `∇V` (m/s²), Potenzial m²/s². **Präzedenz:** `IgrfCoeffs::synthesize`
+  (`igrf.rs:131`), `vmf3_sh::b_c` (`vmf3_sh.rs:17`) + `vmf3.rs`-Produkte — beide aber
+  **ohne** Runtime-Dispatch (nur Test bzw. `tools/measure`-Zeuge). `gfc.rs` ist heute
+  Parser+Channels ohne Auswerter; die Header-Konstanten (GM/radius) liest der Compiler
+  und **verwirft** sie (nicht im Frame). Empfohlene Site: eine `pub fn` in `src/archivar/gfc.rs`
+  (Geschwister von `synthesize`/`b_c`), Eingang Koeffizienten (C/S,n,m) + GM/radius/norm/
+  tide_system, plus Dispatch-Erweiterung in `extract.rs`/`main_flow.rs:3111-3226`.
+- **Riss:** der Frame trägt GM/radius **nicht** — der Auswerter kann ohne sie nicht
+  rechnen (Frame-Header oder Begleitgröße nötig); `norm` „fully normalized" (4π) ≠
+  IGRF-Schmidt; `product_type` muss verzweigen (Gravitation vs. Ozeangezeiten); der
+  Feldwert ist vektoriell (0c), die Höhenbezugsfläche (0b) und die Bahn↔Feld-Kopplung
+  (0a) bleiben Bedingungen.
+- **Blockade:** die **Epochen-Absenz** (eigener Punkt) — ein statisches `gfc` hat keine
+  Zeit; ohne die Ablage würde der Pad `0.0` als J2000 gelesen.
+- **Braucht:** (0) die Epochen-Ablage umsetzen; (1) GM/radius/norm/tide in den Frame
+  oder an den Auswerter reichen; (2) die Kugelflächen-Synthese in `gfc.rs`; (3) Block
+  `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`.
 
-### Epochen-Absenz — zwei Linien, unvereinheitlicht (eigen)
-- **Status:** eigen | **Bindung:** eigen
+### Epochen-Absenz — Rats-Verdikt (b); Umsetzung offen (eigen)
+- **Status:** eigen · **verdiktet** (Rat 2026-10-14, Verdikt b) | **Bindung:** eigen
 - **Trigger:** der Registeratom / die nächste epochenlose Quelle
-- **Lage:** (gemessen 2026-10-14, Taucher) Linie A liest `epoch <= 0.0` als **absent**
-  und überspringt/verwirft (`src/mathematikerin/machines/matrix.rs:644`;
-  `src/archivar/drs_fits.rs:38`); Linie B behält `0.0` als **echten Wert**
-  (`src/archivar/agrav.rs:49/113`; `src/archivar/hips.rs:793`; `src/archivar/gfc.rs:153`).
-  **Es gibt keine einheitliche Epochen-Absenz-Konvention.** Der Rat (F3) benannte das als
-  tiefsten Befund: vor jeder `gfc`-Manifestation, nicht mit einem Sentinel überschreiben.
-- **Blockade:** die Frage ist eine Wire-Semantik (fehlt dem 26×f64 ein „absent"-Slot?),
-  noch nicht entschieden.
-- **Braucht:** die zwei Linien zusammenführen — entweder die Lesesite
-  (`gfc`/`agrav`/`hips`) auf die `≤ 0.0`-Absenz ziehen **oder** die Absenz ausdrücklich
-  tragen; dann erst die `gfc`-Manifestation.
+- **Lage:** (gemessen 2026-10-14, Taucher + Rat) Zwei Leselinien widersprechen sich an
+  **demselben Wert 0.0**: Linie A liest `epoch <= 0.0` als **absent** und überspringt
+  (`src/mathematikerin/machines/matrix.rs:644`; `src/archivar/drs_fits.rs:38`); Linie B
+  behält `0.0` als Wert (`agrav.rs:49`; `hips.rs:793` Bandindex 0; `gfc.rs:153`).
+  Entscheidend: `epoch` ist TDB-Sekunden seit J2000 — **`0.0` ist J2000.0**, ein echter
+  Wert; `< 0.0` ist Prä-J2000 (bereits als Wert behandelt, `tests.rs:1115`). Linie A
+  ist damit eine **Fabrikation** (sie löscht den Ursprung und die Vorgeschichte).
+- **Rats-Verdikt (b):** Absenz **ausdrücklich tragen**, über das schon vorhandene
+  Presence-Bit-Mask — neuer `PRESENCE_FLAG_EPOCH` (32.0), **kein** Wire-Umbau (26×f64,
+  208 B bleiben). Static `gfc` → Bit aus (Pad 0.0 als *absent* gelesen, Manifestation zur
+  Query-Zeit); `gfct` → Bit an (0.0 = J2000 legitim).
+- **Blockade:** die Umsetzung berührt viele Sites (Write- und Read-Seite) — kein
+  Teilumbau möglich ohne die Gegen-Fabrikation (ein Reader-only-Schnitt würde absent als
+  J2000 lesen).
+- **Braucht:** die Sites des Verdikts: `types.rs` `PRESENCE_FLAG_EPOCH` + `presence_flags`
+  (um den Epoch-Parameter erweitern; die 4 Write-Aufrufer `spatial.rs:845/1004`,
+  `membrane.rs:130`, Test in `parse.rs:3296`), Read-Seite `matrix.rs:644` (Bit statt
+  `<= 0.0`), `drs_fits.rs:38` (nur `!is_finite`), `agrav.rs`-Write (Bit setzen, 0.0
+  legal), `gfc.rs:153` (Bit lesen) **und** `gfc.rs:101-107` Frame-Fold (der statische Pad
+  darf nicht als Frame-Epoch erscheinen), `hips.rs:793` (Bandindex → Bit an),
+  `static/constants.js` (Bit 32 sichtbar machen), `docs/concepts/archivar-mathematikerin.md`
+  (Presence-Klausel). **Erst dann** die `gfc`-Manifestation.
 
 ### UCAR-FPI — Arm + Zeilen stehen, Primärkoordinate offen (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -125,7 +152,7 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Registeratom
 - **Lage:** (gemessen 2026-10-14, Taucher) Mountain-Teil fertig als Entwurf
-  `state/mountain/faden-term-field-ttl-draft.φ` (176 Zeilen): je Faden die gemessene
+  `state/mountain/faden-term-field-ttl-draft.φ`: je Faden die gemessene
   `terms`/`field`/`ttl`-Zeile (Sonnen-Magnetfeld, Stern-Aktivität, 21 cm, Wolken, TGF),
   Haus-Token-Korrekturen belegt (`sdo`→`CC0-1.0`, `vizier-open`→`vizier-scientific-free`,
   `heasarc-free`→`PD`, `NOAA-CDR-open`→`PD`, Zenodo→`CC-BY-4.0`). Zwei Risse offen
@@ -134,25 +161,32 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
 - **Braucht:** Mycelium setzt `url`/`origin`/`compiler` je Faden auf den Entwurf; dann
   `register_sort`.
 
-### Adressierte Register-Fäden aus mycelium-347 (eigen)
-- **Status:** eigen (Register-Writes; die Messungen sind Mycelium-Claims, am Baum
-  gegenzumessen) | **Bindung:** eigen
+### Adressierte Register-Fäden — Lizenzen gemessen, Verdikte offen (eigen)
+- **Status:** eigen (Register-Writes; Messungen jetzt am Baum gegengeprüft) | **Bindung:** eigen
 - **Trigger:** der Registeratom
-- **Lage:** (gemessen 2026-10-14 via `register_lookup --addressed mountain`, `mycelium-folge347`)
-  - `xfer:mycelium-346-3` **MODVOLC** — HIGP-Bulk-Tree `http://modis.higp.hawaii.edu/data/`
-    (200, kein Login, `.061`) erreichbar, **ohne Lizenzzeile** → `terms local-only` (kein CDN).
-  - `xfer:mycelium-346-4` **DE-2 NACS/WATS** — SPASE-**CC0**-DOIs
-    `10.48322/z50y-hd65`/`j8kp-5y58`; der `de2`-Block (`phi:851-871`) trägt heute
-    `terms PD https://cdaweb.gsfc.nasa.gov/`. Terms-Korrektur auf `CC0` nach Messung.
-  - `xfer:mycelium-346-7` **AWESOME-VLF/LF** — `doi.org/10.48322/fwte-dv13` (+ `fzcf-f191`),
-    **CC0** gemessen; als offene Quelle registrieren. `fzcf-f191` sitzt bereits an
-    `waldo` (`phi:8266`); das `vlf_awesome`-Feld trägt heute `terms PD`
-    (`phi:1744`) — Abgleich fällig.
-  - `xfer:mycelium-346-5` **OCNS2019-Ersatz** — JPL SSD/Horizons (NASA CC0) als offene
-    Alternative zu `local-only`.
-- **Blockade:** jede Zeile ist ein Verdikt → erst die DOI/den Lizenztext **messen**
-  (`archive_search --verdict`), dann setzen (kein Verdikt ohne Messung).
-- **Braucht:** die vier Terms-Verdikte am Register setzen und `register_sort`.
+- **Lage:** (gemessen 2026-10-14 via `register_lookup --addressed mountain`, Taucher)
+  - **MODVOLC HIGP** (`http://modis.higp.hawaii.edu/data/`): **keine** Lizenzzeile
+    (genuine Absenz); nur `© University of Hawaii at Manoa, 2016` + NASA-MODIS-
+    Förderhinweis. Kein HIGP-Block in `phi` (der NRT3-MODVOLC-Block `phi:12041` ist eine
+    andere Quelle, `terms PD`). → `local-only`.
+  - **DE-2 NACS/WATS — gesetzt (mountain-346).** SPASE-DOIs `10.48322/z50y-hd65` (WATS),
+    `10.48322/j8kp-5y58` (NACS), `22v6-0p09` (FPI): alle drei **CC0-1.0** (SPDX,
+    Note „… applicable to all publicly available NASA Heliophysics data products"). Der
+    `de2`-Block trägt jetzt `terms CC0-1.0` (`phi:854`, vormals `PD`).
+  - **AWESOME-VLF/LF** — `doi.org/10.48322/fwte-dv13` + `fzcf-f191`: beide Landingpages
+    tragen im JSON-LD `"license": "https://cdla.io/permissive-1-0/"` — **nicht** CC0.
+    **Riss:** `phi:8266` trägt `terms CC0-1.0 https://doi.org/10.48322/fzcf-f191`.
+    Zwei unabhängige Linien konvergieren nicht → **Riss tragen**, nicht glätten.
+  - **OCNS2019-Ersatz** (JPL SSD/Horizons): **keine** Lizenzzeile gemessen (nur
+    `URS Clearance: CL#21-4165`); der einzige gemessene CC0-Satz ist die SPDF/Heliophysik-
+    Notiz, **nicht** eine JPL-SSD-Aussage. Public-Domain ist NASA-Default, nicht gemessen.
+    → Unsicherheit, kein Token.
+- **Blockade:** MODVOLC braucht einen **neuen** Block (kein HIGP-Block in `phi`) — Mycelium
+  setzt `url`/`origin`/`compiler`, Mountain das Terms-Verdikt; AWESOME ist ein **Riss**
+  (Register `CC0-1.0` vs. Landing `CDLA-Permissive-1.0`) und braucht ein Token-Wort; JPL
+  SSD bleibt eine benannte Unsicherheit.
+- **Braucht:** MODVOLC-Block + `terms local-only`; das AWESOME-Token entscheiden (Riss
+  tragen, nicht glätten); die JPL-Unsicherheit benennen.
 
 ### `em mw` / `advective kg/m2/s` — Freeze (eigen)
 - **Status:** wartend | **Bindung:** eigen
@@ -186,24 +220,22 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
 Origin: mountain-346 (2026-10-14):
 
 - `xfer:mycelium-346-6` **Venus-Parser — erledigt.** `pds3_img` liest `BAND_STORAGE_TYPE`
-  (BSQ/BIL/BIP), `decode_raster` indiziert danach; `pds3_bip_radar_compiler` delegiert an
-  den Kern-Decoder. Echo.
-- `xfer:mycelium-346-2` **Venus-Radar** — der Parser-Blocker ist gelöst. Die reduzierte
-  Bild-Manifestation (W) braucht Projektion/Georeferenz; `url`/`origin`/`compiler` erst
-  nach dem Projektions-Wort.
-- **Fünf Fäden:** der Mountain-Teil liegt fertig als Entwurf
+  (BSQ/BIL/BIP); der BIP-Arm delegiert an den Kern-Decoder. Echo.
+- `xfer:mycelium-346-2` **Venus-Radar** — Parser-Blocker gelöst; die Projektion ist
+  gemessen (Sinusoidal, CM 335°E). Die Bild-Manifestation (W) und der Block folgen.
+- **Fünf Fäden:** der Mountain-Teil liegt als Entwurf
   `state/mountain/faden-term-field-ttl-draft.φ`. Bitte `url`/`origin`/`compiler` je Faden
   daraufsetzen; danach `register_sort`.
-- `xfer:mycelium-346-3`/`-4`/`-5`/`-7` — als Register-Fäden oben geführt; Mountain misst
-  die Terms und setzt die Verdikte.
+- `xfer:mycelium-346-3`/`-4`/`-5`/`-7` — Terms gemessen (s. Punkt „Adressierte
+  Register-Fäden"); Mountain setzt die Verdikte nach eigener Messung.
 
 ## An river
 
 Origin: mountain-346 (2026-10-14):
 
-- `xfer:mountain-342-6` **SABER:** die Registerzeile folgt nach dem HAPI-Weltlinien-Arm;
-  `cdaweb.gsfc.nasa.gov` ist host-weit unerreichbar — das Sample bleibt bis zur
-  Host-Rückkehr ungemessen.
+- `xfer:mountain-342-6` **SABER:** die Registerzeile folgt nach der Routen-Entscheidung;
+  der Host ist intermittierend erreichbar (heute HTTP 200), das Sample bleibt bis zur
+  Route ungemessen.
 - **UCAR-FPI:** die zwei `field`-Zeilen stehen code-gemessen; offen bleibt allein die
   FPI-eigene Athabasca-Instrumentenkoordinate.
 
@@ -215,10 +247,12 @@ Origin: mountain-346 (2026-10-14):
 - **Die Einheiten-Entscheidung übernommen** (nT²/Hz primär + V²/Hz roh, Kalibrierung versioniert im Arm) | 2026-10-14 | (mountain 344 — Operator legte das Verdikt der Stimmen-Kette vor).
 - **„was wenn du den satellit autonom betrachtest — dann ist es doch auch nur eine sonde an einem xyz,t; die ISS ist doch zu einer Zeit immer an einem bestimmten Ort"** | 2026-10-14 | (mountain 345 — SABER: eigene Weltlinie, supersediert B2).
 - **„warum können wir das gravitationsmodell nicht wie die anderen behandeln? das Erdmagnetfeld-Modell und das Atmosphären-Modell werden an einem Ort ausgewertet und geben dort einen echten Feldwert — sie sind ein Feld"** | 2026-10-14 | (mountain 345 — ICGEM: Feld, supersediert Witness).
+- **„fängst du bitte an und delegierst an taucher?"** (die offenen Punkte aufnehmen, Taucher dispatchen) | 2026-10-14 | (mountain 346).
 
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Operator-Wort trägt Commit und Push. In diesem
 Atom (mountain-346) committet: `src/archivar/pds3_img.rs` ·
-`tools/harvest/src/bin/pds3_bip_radar_compiler.rs` · diese Übergabe ·
-der `archiv/`-Move der folge345.
+`tools/harvest/src/bin/pds3_bip_radar_compiler.rs` · diese Übergabe · der
+`archiv/`-Move der folge345 (erste Handlung); diese Fortschreibung der Übergabe
+(zweite Handlung).
