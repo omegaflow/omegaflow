@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: e91296a3c77fb92a894a4443009e069bd0bb81985ec5f9eb7a24b56f3a21b65c
+  sha256: 35358328adfb6e93eb876a47e0ed6128cf0e507c8b2539ed91b0e2c9d1f9b2d8
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -227,10 +227,27 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
   `docs/surveys/survey-2026-10-14-gewebe-faeden.md`: 2575 `url`-Zeilen, 124 rohe Hosts,
   306 wirksame Herkünfte, 7687 Feld-Zeilen; `inverse-square` trägt 6812 (89 %);
   Gravitation (13 Felder) und Seismik (20) hängen an je **2** Wirkgesetzen.
-- **Blockade:** keine.
-- **Braucht:** die Gravimetrie-/Seismik-Kandidaten aus
-  `survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` §2 als `phi/sources.φ`-Zeilen
-  (Kernel `point`/`exp.-decay` für Gravitation; `point`/`inverse-square` für Seismik).
+- **Gemessen (2026-10-14, Taucher) — die Quellen sind meist schon da, die Kernel fehlen:**
+  - **Gravimetrie ist im Register durchweg `inverse-square`** (IGETS `phi:10317`,
+    AGrav `phi:9990`, GRACE-FO `phi:11972`, LLR) — die gesuchten **`point`/`exp.-decay`**
+    sind über **jede** gemessene Gravimetrie-Zeile **abwesend**. Die Lücke ist **bestätigt,
+    nicht gefüllt**.
+  - **Schon registriert:** IGETS, AGrav, GRACE-FO, ISC (`phi:10662`/`12609`),
+    EarthScope-FDSN (`phi:174`/`8191`), GEOFON-Event (`phi:10454`), EIDA-Terms (`phi:14525`).
+  - **Offen/gesperrt:** EGGN/EPOS-Equip-G (kein Token, `pending`), CGrav/CEIC China
+    (Konto-gated, Token ungemessen; re3data „open" ohne Lizenzwert = **Riss**), GOCE
+    (ESA offen mit Attribution; exakter SPDX ungemessen, kein `phi`), NIED (Konto-gated,
+    Weiterverbreitung untersagt), GSRAS (teils frei/teils bezahlt), ARDA (nicht zuzuordnen).
+  - **Bereit, aber unregistriert:** GEOFON-Wellenform (`…/fdsnws/dataselect/1/query` →
+    200, kein Key) — keine `phi`-Zeile (nur das Event-Catalogue).
+  - **Stale Origins (Register-Korrektur):** IGETS `origin` = Projektseite, echter Endpunkt
+    `igetsftp.gfz.de` (sftp, registriert); BGI-Host `www.bgi.omp.obs-mip.fr` tot →
+    `bgi.obs-mip.fr`.
+  - Kein Host IP-blockiert; `--jina` löste den `206`-Sonden-Quirk.
+- **Braucht:** (0) IGETS-/BGI-`origin` korrigieren; (1) den GEOFON-Wellenform-Block setzen;
+  (2) die Kernel-Lücke schließen — Gravimetrie-Kandidaten mit eigenem Meßgesetz
+  (`point`/`exp.-decay`) führen **oder** die `inverse-square`-Bindung als Verdikt tragen;
+  (3) EGGN/China/GOCE/NIED/GSRAS/ARDA als `pending`/`riss` benennen.
 
 ### Adressierte Register-Fäden — Lizenzen gemessen, Verdikte offen (eigen)
 - **Status:** eigen (Register-Writes; Messungen jetzt am Baum gegengeprüft) | **Bindung:** eigen
