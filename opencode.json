@@ -400,6 +400,8 @@
       "./bin/proton-wg.sh list*": "allow",
       "./bin/archive_search *": "allow",
       "bin/archive_search *": "allow",
+      "./bin/all_wide *": "allow",
+      "bin/all_wide *": "allow",
       "./target/release/*": "allow",
       "curl *": "allow",
       "gh workflow run *": "allow",

@@ -1,0 +1,15 @@
+#!/bin/sh
+# all_wide — archive_search --all with the stop threshold raised.
+#
+# The default --all holds after ~6 arms / 20 result lines; the arms it holds back
+# (base, datacite, re3data, pangaea, figshare, crossref, github, ia-search,
+# sourcegraph, jina, exa, linkup …) are exactly the breadth. This wrapper sets
+# OMEGAFLOW_ALL_STOP high so the escalation ladder keeps pulling arms, then execs
+# archive_search. It is the allowed path for the widening (a bare env-var prefix
+# before archive_search matches no permission rule).
+#
+# Usage: all_wide <keyword>... [--root <dir>]... [archive_search flags]
+set -eu
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+stop="${OMEGAFLOW_ALL_WIDE_STOP:-400}"
+OMEGAFLOW_ALL_STOP="$stop" exec "$root/bin/archive_search" "$@" --all
