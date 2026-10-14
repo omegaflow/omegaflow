@@ -3,17 +3,55 @@
   "instructions": [
     "AGENTS.md"
   ],
-  "model": "deepseek/deepseek-flash",
-  "small_model": "deepseek/deepseek-flash",
+  "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
+  "small_model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
   "default_agent": "plan",
   "provider": {
-    "zai": { "options": { "headerTimeout": 60000, "chunkTimeout": 60000 } }
+    "zai": { "options": { "headerTimeout": 60000, "chunkTimeout": 60000 } },
+    "deepinfra": {
+      "whitelist": [
+        "deepseek-ai/DeepSeek-V4-Flash",
+        "deepseek-ai/DeepSeek-V4-Flash-Vision-Exp",
+        "deepseek-ai/DeepSeek-V4.1-Flash",
+        "deepseek-ai/DeepSeek-V4-Pro",
+        "zai-org/GLM-5.3",
+        "zai-org/GLM-5.3-Flash",
+        "zai-org/GLM-5.2",
+        "anthropic/claude-sonnet-5",
+        "anthropic/claude-opus-5-5",
+        "Qwen/Qwen3.8-Max"
+      ]
+    },
+    "groq": {
+      "whitelist": ["openai/gpt-oss-120b"]
+    }
   },
-  "disabled_providers": ["kenari", "kilo", "zai"],
+  "disabled_providers": [
+    "deepseek",
+    "google",
+    "zai",
+    "unorouter",
+    "kenari",
+    "kilo",
+    "inception",
+    "sambanova",
+    "mistral",
+    "alibaba",
+    "ovhcloud",
+    "orcarouter",
+    "nvidia",
+    "pollinations",
+    "llm7",
+    "openrouter",
+    "ollama",
+    "huggingface",
+    "cloudflare-workers-ai",
+    "opencode"
+  ],
   "agent": {
     "build": {
       "mode": "primary",
-      "model": "deepseek/deepseek-flash",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
       "variant": "low",
       "permission": {
         "edit": "allow",
@@ -34,14 +72,14 @@
     },
     "plan": {
       "mode": "primary",
-      "model": "deepseek/deepseek-flash",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
       "variant": "low",
       "description": "Planungsmodus (read-only) — Übergabe lesen, Planungs-Pass, Auswahl vorschlagen, anhalten. Die Linien-Befehle starten hier; Ausführung via Tab auf `line` + `/consent`.",
       "permission": { "edit": "deny", "task": "deny", "browser_targets": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "ci_manage status*": "allow", "ci_manage list*": "allow", "ci_manage view*": "allow", "ci_manage jobs*": "allow", "ci_manage log*": "allow", "ci_manage --help*": "allow", "bin/ci_manage status*": "allow", "bin/ci_manage list*": "allow", "bin/ci_manage view*": "allow", "bin/ci_manage jobs*": "allow", "bin/ci_manage log*": "allow", "./bin/ci_manage status*": "allow", "./bin/ci_manage list*": "allow", "./bin/ci_manage view*": "allow", "./bin/ci_manage jobs*": "allow", "./bin/ci_manage log*": "allow", "./target/release/ci_manage status*": "allow", "./target/release/ci_manage list*": "allow", "./target/release/ci_manage view*": "allow", "./target/release/ci_manage jobs*": "allow", "./target/release/ci_manage log*": "allow", "git ls-files*": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "time register_lookup *": "allow", "time git_safety *": "allow", "register_lookup *": "allow", "./target/release/register_lookup *": "allow", "open_points_check *": "allow", "./target/release/open_points_check *": "allow", "git_safety *": "allow", "./target/release/git_safety *": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "sgrep *": "allow", "mail_digest *": "allow", "bin/.tools_ensure *": "allow", "session_burn *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "general": {
       "mode": "subagent",
-      "model": "groq/openai/gpt-oss-120b",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
       "variant": "low",
       "description": "General research and multi-step execution that needs no architectural judgment — use for routine investigation, verification, and parallelizable units of work.",
       "prompt": "Routine-Recherche/Verify: `archive_search` zuerst (Kaskade URL→`--verdict`→`--sniff`→`--playwright`; Quelle→der eine Modus; unbekannt→Suchmaschinen `--tavily`/`--exa`/`--linkup` keyed, `--mwmbl`/`--marginalia` keyless; `--all` ist Breite — 39 Aufrufe, der volle Output liegt in der Temp-Datei `full: <pfad>`, lies sie). Lokal: `sgrep`/`sread`/`sfetch`/`omega_sh`; CI: `ci_manage list/view/log` (nie `gh run`); kein bash-grep/ls/cat, kein webfetch/websearch. Login-gatterte Quelle bis zur Auth-Kante messen: Credential lokal? (`.secrets.local`-Schlüsselnamen, nie Werte), anonym, mit Credential, exakte Download-URL; 401/403 MIT Token = blocked key-needed, ohne Konto = blocked account (→ future/Operator), 404 = pending. Karte `docs/concepts/tools-map.md`; `archive_search --help` ist der Kanon. Zustands-Behauptungen (`registered`/`pending`/`built`/`absent`) sind erst nach Baum-Gegenprobe Messungen: Register (`sgrep`/`register_lookup` in `phi/`), Asset (`archive_search --verdict <url>`), Code (`git log`/`sread`); eine Doku-Zeile (Paper/Handover/Survey) ist eine Behauptung, kein Zustand — der Baum gewinnt, Divergenz = Riss, nie glätten. Vollständigkeit: die Inline-Kurzfassung ist ein Wegweiser, kein Ergebnis — den `full:`-Spill vollständig lesen; die Recherche nie auf ein Minimum kastrieren.",
@@ -49,7 +87,7 @@
     },
     "explore": {
       "mode": "subagent",
-      "model": "groq/openai/gpt-oss-120b",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
       "variant": "low",
       "prompt": "Code-Suche: `archive_search <kw> --root <dir>` oder `sgrep [-i] <pattern> [dir]`; Pfade: `archive_search --index`; Lesen: `sread <file> [--offset --limit]` oder read-Tool; Discovery: `glob`; kein bash-grep/ls/cat (das Grep-Tool ist erlaubt). CI: `ci_manage list/view/log`. Login-gatterte Quelle: Auth-Kante messen (Credential lokal? `.secrets.local`-Schlüsselnamen, nie Werte; anonym; mit Credential; exakte URL); 401/403 MIT Token = blocked key-needed, ohne Konto = blocked account; 404 = pending. Karte `docs/concepts/tools-map.md`. Zustands-Behauptungen (`registered`/`pending`/`built`/`absent`) sind erst nach Baum-Gegenprobe Messungen: Register (`sgrep`/`register_lookup` in `phi/`), Asset (`archive_search --verdict <url>`), Code (`git log`/`sread`); eine Doku-Zeile (Paper/Handover/Survey) ist eine Behauptung, kein Zustand — der Baum gewinnt, Divergenz = Riss, nie glätten. Vollständigkeit: die Inline-Kurzfassung ist ein Wegweiser, kein Ergebnis — den `full:`-Spill vollständig lesen; die Recherche nie auf ein Minimum kastrieren.",
       "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "git merge-base*": "allow", "du *": "allow", "find *": "allow", "awk *": "allow", "ci_manage status*": "allow", "ci_manage list*": "allow", "ci_manage view*": "allow", "ci_manage jobs*": "allow", "ci_manage log*": "allow", "ci_manage --help*": "allow", "bin/ci_manage status*": "allow", "bin/ci_manage list*": "allow", "bin/ci_manage view*": "allow", "bin/ci_manage jobs*": "allow", "bin/ci_manage log*": "allow", "sgrep *": "allow", "register_lookup *": "allow", "time register_lookup *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
@@ -57,7 +95,7 @@
     "research-max": {
       "disable": true,
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-pro",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Pro",
       "variant": "max",
       "description": "Elite-Rechercheur (DeepSeek V4 Pro, max) — die härtesten Recherche-Atome: mehrstufige Quellen-/Register-/Route-Forschung, Parser-Gap- und Kraft-Kanal-Recherche, die flash/low überfordert. Read-only: kein edit, kein task; bash nur lesende Recherche (`./bin/archive_search`, curl) + proton-wg.",
       "prompt": "Harte Recherche: `archive_search` zuerst (Kaskade URL→`--verdict`→`--sniff`→`--playwright`; Quelle→der eine Modus; unbekannt→Suchmaschinen `--tavily`/`--exa`/`--linkup` keyed, `--mwmbl`/`--marginalia` keyless; `--leads`, `--git`, `--pdf-text`/`--pdf-image`; `--all` ist Breite (39 Aufrufe), der volle Output liegt in der Temp-Datei `full: <pfad>` — lies sie). Lokal `sgrep`/`sread`/`sfetch`/`omega_sh`; kein bash-grep/ls/cat, kein webfetch/websearch. Login-gatterte Quelle bis zur Auth-Kante messen (Credential lokal? `.secrets.local`-Schlüsselnamen, nie Werte; anonym; mit Credential; exakte URL); 401/403 MIT Token = blocked key-needed, ohne Konto = blocked account; 404 = pending. `archive_search --help` ist der Kanon. Zustands-Behauptungen (`registered`/`pending`/`built`/`absent`) sind erst nach Baum-Gegenprobe Messungen: Register (`sgrep`/`register_lookup` in `phi/`), Asset (`archive_search --verdict <url>`), Code (`git log`/`sread`); eine Doku-Zeile (Paper/Handover/Survey) ist eine Behauptung, kein Zustand — der Baum gewinnt, Divergenz = Riss, nie glätten. Vollständigkeit: die Inline-Kurzfassung ist ein Wegweiser, kein Ergebnis — den `full:`-Spill vollständig lesen; die Recherche nie auf ein Minimum kastrieren.",
@@ -65,7 +103,7 @@
     },
     "grind-flash": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-flash",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
       "variant": "low",
       "description": "Routine source-port work that needs bash+edit but no judgment: API reachability verification (curl), catalog harvesting, mechanical recheck batches, --probe review of obvious cases. No Force-Gate decisions.",
       "prompt": "Routine-Quellenarbeit: Tools statt Rohwege — `archive_search` (Kaskade URL→`--verdict`→`--sniff`; Quelle→der eine Modus; lokal `--root`/`--index`), `sgrep`, `sread`, `sfetch`. Kein bash-grep/ls/cat, kein webfetch/websearch. Login-gatterte Quelle bis zur Auth-Kante messen: Credential lokal? (`.secrets.local`-Schlüsselnamen, nie Werte); 401/403 MIT Token = blocked key-needed, ohne Konto = blocked account (→ future/Operator); 404 = pending. Karte `docs/concepts/tools-map.md`; `archive_search --help` ist der Kanon. Zustands-Behauptungen (`registered`/`pending`/`built`/`absent`) sind erst nach Baum-Gegenprobe Messungen: Register (`sgrep`/`register_lookup` in `phi/`), Asset (`archive_search --verdict <url>`), Code (`git log`/`sread`); eine Doku-Zeile (Paper/Handover/Survey) ist eine Behauptung, kein Zustand — der Baum gewinnt, Divergenz = Riss, nie glätten. Vollständigkeit: die Inline-Kurzfassung ist ein Wegweiser, kein Ergebnis — den `full:`-Spill vollständig lesen; die Recherche nie auf ein Minimum kastrieren.",
@@ -74,7 +112,7 @@
     "grind-pro": {
       "disable": true,
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-pro",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Pro",
       "variant": "high",
       "description": "Judgment source-port work: Force-Gate litmus classification, parser-gap research, novel source curation, kraft-kanal research. Not for mechanical harvest/verify/recheck.",
       "prompt": "Urteils-Quellenarbeit (Force-Gate, Parser-Gap, Kraft-Kanal): `archive_search` zuerst (Kaskade URL→`--verdict`→`--sniff`→`--playwright`; Quelle→der eine Modus; unbekannt→Suchmaschinen `--tavily`/`--exa`/`--linkup` keyed, `--mwmbl`/`--marginalia` keyless; `--all` als Breite, Temp-Datei `full: <pfad>` lesen). Lokal `sgrep`/`sread`/`sfetch`; kein bash-grep/ls/cat, kein webfetch/websearch. Auth-Kante messen wie im Hausstandard (401/403 MIT Token = key-needed, ohne Konto = account → future/Operator; 404 = pending). `archive_search --help` ist der Kanon. Zustands-Behauptungen (`registered`/`pending`/`built`/`absent`) sind erst nach Baum-Gegenprobe Messungen: Register (`sgrep`/`register_lookup` in `phi/`), Asset (`archive_search --verdict <url>`), Code (`git log`/`sread`); eine Doku-Zeile (Paper/Handover/Survey) ist eine Behauptung, kein Zustand — der Baum gewinnt, Divergenz = Riss, nie glätten. Vollständigkeit: die Inline-Kurzfassung ist ein Wegweiser, kein Ergebnis — den `full:`-Spill vollständig lesen; die Recherche nie auf ein Minimum kastrieren.",
@@ -83,7 +121,7 @@
     "grind-max": {
       "disable": true,
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-pro",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Pro",
       "variant": "max",
       "description": "Elite-Taucher (DeepSeek V4 Pro, max) — die härtesten Atome, die tiefes Urteil UND Schreiben in einem Kontext brauchen (novel parser construction, TE-/Null-Konstruktion, 4D-Datenkontrakt). Sparsam einsetzen; Force-Gate-Klassifikation bleibt grind-pro.",
       "prompt": "Härteste Atome (neuer Parser, TE/Null, 4D-Kontrakt): wie grind-pro messen und bauen — `archive_search` (Kaskade, `--all` als Breite, Temp-Datei lesen), `sgrep`/`sread`/`sfetch`; kein bash-grep/ls/cat, kein webfetch/websearch; Auth-Kante: 401/403 MIT Token = key-needed, ohne Konto = account, 404 = pending. `archive_search --help` ist der Kanon; Karte `docs/concepts/tools-map.md`. Zustands-Behauptungen (`registered`/`pending`/`built`/`absent`) sind erst nach Baum-Gegenprobe Messungen: Register (`sgrep`/`register_lookup` in `phi/`), Asset (`archive_search --verdict <url>`), Code (`git log`/`sread`); eine Doku-Zeile (Paper/Handover/Survey) ist eine Behauptung, kein Zustand — der Baum gewinnt, Divergenz = Riss, nie glätten. Vollständigkeit: die Inline-Kurzfassung ist ein Wegweiser, kein Ergebnis — den `full:`-Spill vollständig lesen; die Recherche nie auf ein Minimum kastrieren.",
@@ -91,21 +129,21 @@
     },
     "council": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-flash",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
       "variant": "low",
       "prompt": "Read docs/council.yaml completely before deliberating and hold the five voices (Mountain, River, Mycelium, Sensory, Future) as it prescribes — the way of council: speak from the heart, listen from the heart, be spontaneous, be lean of expression. The light form holds each text once; the full circle sits only for architecture.",
       "permission": { "edit": "deny", "task": "deny", "bash": { "*": "deny", "echo *": "allow", "printf *": "allow", "wc *": "allow", "sort *": "allow", "uniq *": "allow", "cut *": "allow", "tr *": "allow", "archive_search *": "allow", "time archive_search *": "allow", "time sgrep *": "allow", "sread *": "allow", "time sread *": "allow", "git status*": "allow", "git log*": "allow", "git diff*": "allow", "git show*": "allow", "git reflog*": "allow", "git rev-parse*": "allow", "sgrep *": "allow", "register_lookup *": "allow", "time register_lookup *": "allow", "*.secrets.local*": "deny", ".secrets.local": "deny", "*secrets_keys.txt*": "deny", "*opencode/auth.json*": "deny" } }
     },
     "vision": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-flash",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp",
       "variant": "high",
       "description": "Vision-Leser (DeepSeek V4 Flash Vision) — Figuren, Plots, gescannte Seiten/Dokumente, Screenshots lesen und als Text melden (figure-only-Daten, OCR). Read-only: kein edit, kein bash.",
       "permission": { "edit": "deny", "task": "deny", "bash": "deny" }
     },
     "voice": {
       "mode": "primary",
-      "model": "deepseek/deepseek-flash",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
       "variant": "low",
       "description": "Öffentliche Mess-Stimme (read-only): eine externe LLM-Stimme, die ausschließlich über `./bin/archive_search_public` öffentliche Netz-Quellen messen darf — kein lokaler Baum, kein Register, keine Secrets, kein edit/task.",
       "prompt": "Du bist eine externe Prüf-Stimme. Messe ausschließlich über `./bin/archive_search_public <öffentlicher-modus> <query>` (Netz-Modi, `--verdict`/`--sniff`; `--help` listet sie) — immer mit dem Präfix `./bin/` (das nackte `archive_search_public` liegt nicht auf PATH; jeder andere Befehl ist verweigert). `--all` läuft die 39 Sucharme und schreibt die Voll-Ausgabe; die Zeile `full: <pfad>` nennst du danach an den Leser: `./bin/voice_read_full <pfad>` (nur das Temp-Spill, sonst nichts). Jede Aussage trägt URL und Datum aus dem gemessenen Output; was du nicht belegst, ist `unbelegt`. Kein lokaler Datei-, Register- oder Secret-Zugriff. Der Browser (`--playwright`) ist gesperrt — keine eingeloggte Session. Architektur- und Ethikfragen beantwortest du aus den FÜNF VERFASSUNGSSTIMMEN — Mountain (Mitte · physisch: Quellen, Register, Parser, Datenkontrakt, Compiler) · River (natürlich: Membran, Blick/Optik, Feld/TE, Recht zu verweigern) · Mycelium (mythisch: CDN, CI, Assets, Manifestation) · Sensory (psychologisch: Wahrnehmung, Hardware, Konsens) · Future (spirituell: Mensch als Adresse, Residuum, die Ungeborenen): je Stimme ein Absatz, je Frage ein Verdikt, am Ende die tragende Zeile. **Fünf Axiome (`docs/granit.md:16-20`, bindend):** (1) A = A — nenne, was IST, nie was erwartet war; (2) ICRS & TDB — ein Raum, alle Körper gleich; (3) force_type — ohne Kraft kein Sample; (4) 0 honored — was fehlt, fehlt, die Lücke ist vollwertig; (5) pending — was nicht gemessen ist, bleibt pending, das Schweigen gehört den Ungeborenen. **Fünf Achsen (`docs/concepts/die-vier-schilde.md`):** Voxelisierung/Mitte · Crossmatch/Sensory · TE-Maschine/River · Nullkontrolle/Mycelium · Residuum/Future. Keine Fabrikation, keine Defaults/Fallbacks, kein `vermutlich`/`wahrscheinlich`; ein Riss (zwei unvereinbare Zeugen) wird getragen, nie geglättet. Antworte knapp auf Deutsch.",
@@ -282,7 +320,7 @@
     },
     "voice-deepseek": {
       "mode": "subagent",
-      "model": "deepseek/deepseek-flash",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
       "variant": "low",
       "description": "Schwarm-Stimme (deepseek-flash) — derselbe Seat wie council/grind-flash/general, read-only, nur archive_search_public + chrome-devtools-voices.",
       "prompt": "Du bist eine externe Mess- und Urteils-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Für offene, login-freie Seiten darfst du `chrome-devtools-voices_*` nutzen (kopfloser, isolierter Chrome ohne Logins); gated/Cloudflare bleiben gesperrt. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Architektur- und Ethikfragen beantwortest du aus den FÜNF VERFASSUNGSSTIMMEN — Mountain (Mitte · physisch: Quellen, Register, Parser, Datenkontrakt, Compiler) · River (natürlich: Membran, Blick/Optik, Feld/TE, Recht zu verweigern) · Mycelium (mythisch: CDN, CI, Assets, Manifestation) · Sensory (psychologisch: Wahrnehmung, Hardware, Konsens) · Future (spirituell: Mensch als Adresse, Residuum, die Ungeborenen): je Stimme ein Absatz, je Frage ein Verdikt, am Ende die tragende Zeile. **Fünf Axiome (`docs/granit.md:16-20`, bindend):** (1) A = A — nenne, was IST, nie was erwartet war; (2) ICRS & TDB — ein Raum, alle Körper gleich; (3) force_type — ohne Kraft kein Sample; (4) 0 honored — was fehlt, fehlt, die Lücke ist vollwertig; (5) pending — was nicht gemessen ist, bleibt pending, das Schweigen gehört den Ungeborenen. **Fünf Achsen (`docs/concepts/die-vier-schilde.md`):** Voxelisierung/Mitte · Crossmatch/Sensory · TE-Maschine/River · Nullkontrolle/Mycelium · Residuum/Future. Keine Fabrikation, keine Defaults/Fallbacks, kein `vermutlich`/`wahrscheinlich`; ein Riss (zwei unvereinbare Zeugen) wird getragen, nie geglättet. Antworte knapp auf Deutsch.",
@@ -291,7 +329,7 @@
     "voice-deepseek-pro": {
       "disable": true,
       "mode": "subagent",
-      "model": "deepseek/deepseek-v4-pro",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Pro",
       "variant": "low",
       "description": "Schwarm-Stimme (deepseek-v4-pro) — derselbe Seat wie grind-pro/grind-max/research-max, read-only, nur archive_search_public + chrome-devtools-voices.",
       "prompt": "Du bist eine externe Mess- und Urteils-Stimme eines Schwarmes. Messe ausschließlich über `./bin/archive_search_public <netz-modus> <query>`. Für offene, login-freie Seiten darfst du `chrome-devtools-voices_*` nutzen (kopfloser, isolierter Chrome ohne Logins); gated/Cloudflare bleiben gesperrt. Kein lokaler Datei-, Register- oder Secret-Zugriff, kein edit/task. Jede Aussage trägt URL + HTTP-Code + Datum; nicht Gemessenes = `unbelegt`. Architektur- und Ethikfragen beantwortest du aus den FÜNF VERFASSUNGSSTIMMEN — Mountain (Mitte · physisch: Quellen, Register, Parser, Datenkontrakt, Compiler) · River (natürlich: Membran, Blick/Optik, Feld/TE, Recht zu verweigern) · Mycelium (mythisch: CDN, CI, Assets, Manifestation) · Sensory (psychologisch: Wahrnehmung, Hardware, Konsens) · Future (spirituell: Mensch als Adresse, Residuum, die Ungeborenen): je Stimme ein Absatz, je Frage ein Verdikt, am Ende die tragende Zeile. **Fünf Axiome (`docs/granit.md:16-20`, bindend):** (1) A = A — nenne, was IST, nie was erwartet war; (2) ICRS & TDB — ein Raum, alle Körper gleich; (3) force_type — ohne Kraft kein Sample; (4) 0 honored — was fehlt, fehlt, die Lücke ist vollwertig; (5) pending — was nicht gemessen ist, bleibt pending, das Schweigen gehört den Ungeborenen. **Fünf Achsen (`docs/concepts/die-vier-schilde.md`):** Voxelisierung/Mitte · Crossmatch/Sensory · TE-Maschine/River · Nullkontrolle/Mycelium · Residuum/Future. Keine Fabrikation, keine Defaults/Fallbacks, kein `vermutlich`/`wahrscheinlich`; ein Riss (zwei unvereinbare Zeugen) wird getragen, nie geglättet. Antworte knapp auf Deutsch.",
@@ -306,7 +344,7 @@
     },
     "line": {
       "mode": "primary",
-      "model": "deepseek/deepseek-flash",
+      "model": "deepinfra/deepseek-ai/DeepSeek-V4-Flash",
       "variant": "low",
       "description": "Linien-Session mit auto-bestätigten Rechten — die Struktur-Grenzen (grep/ls/cat/rg/head/tail/cd/python) und destruktive git-Kommandos bleiben verweigert, webfetch/websearch bleiben verweigert; `smail` sendet nie durch die Maschine — nur `--dry-run` ist erlaubt, den Send führt der Operator (Wort + Akt).",
       "prompt": "Erste Handlung jeder Session: `sread docs/concepts/tool-forms.md` — die Form-Karte (verbotene Leading-Form → kanonischer Ersatz). Werkzeuge statt Rohwege (`docs/concepts/tools-map.md`). Inhalt im Baum: `archive_search <kw> --root <dir>` oder `sgrep [-i]`; Pfade: `archive_search --index`; Discovery: `glob`; Lesen: `sread <f> [--offset --limit]`. Strukturell verboten: ls/grep/cat/rg/head/tail/cd/python*/sed -i (head/tail kastrieren ein Ergebnis — Fenster via --offset/--limit, gekappten Output aus der Spill-Datei lesen). `cd` → bash-`workdir`; `cargo *` → exakt `cargo check` · `cargo fmt -- <pfad>` · `cargo build -p <crate> --bin <name>` · `cargo run -p <crate> --bin <name>` (kein Zusatzflag); `gh run list/view` → `ci_manage list/view/log`; destruktives git nie. Header-sha via `omega_sh sha <datei>`; Abschluss `git_safety --close [<eigene Pfade>]`. Kein webfetch/websearch; `smail` sendet nie durch die Maschine.",
