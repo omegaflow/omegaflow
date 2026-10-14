@@ -9,6 +9,27 @@
 // lehrt nur beim Stopp. Wirkt nur, wenn `tool.execute.before` vor der
 // Permission-Auflösung läuft; sonst greift weiterhin der strukturelle Deny.
 import type { Plugin } from "@opencode-ai/plugin"
+import { readFileSync } from "node:fs"
+
+// Fenster-Gate (Rat + Roster 2026-10-14): eine ganze Datei am Stück ist der
+// größte Kontext-Multiplikator — dieselben Bytes werden jede Runde erneut
+// tokenisiert (gemessen: die größten Nachrichten-Teile sind ganze `read`s bis
+// 130 KB; Kontexte bis 600k Token/Turn). Über dieser Zeilenzahl (2^8) wird
+// ganz gelesen abgelehnt; der volle Inhalt bleibt über die Spill-Datei
+// (`full: <pfad>`) erreichbar — Fenster benennen, nie still deckeln.
+const WHOLE_READ_MAX_LINES = 256
+
+function lineCount(path: string): number | null {
+  try {
+    const s = readFileSync(path, "utf8")
+    let n = 1
+    for (let i = 0; i < s.length; i++) if (s.charCodeAt(i) === 10) n++
+    return n
+  } catch {
+    return null
+  }
+}
+
 
 const TOKEN_TEACH: { tokens: string[]; msg: string }[] = [
   { tokens: ["ls"], msg: "`ls` ist strukturell verboten → nutze `glob <pattern>` (Discovery) oder `archive_search --index`." },
@@ -103,13 +124,39 @@ function teaching(seg: string): string | null {
 
 export default async () => {
   return {
-    "tool.execute.before": async (input: { tool: string }, output: { args: { command?: unknown } }) => {
+    "tool.execute.before": async (input: { tool: string }, output: { args: Record<string, unknown> }) => {
+      // Fenster-Gate: `read` einer ganzen Datei über der Schwelle wird abgelehnt.
+      if (input.tool === "read") {
+        const fp = output.args?.filePath
+        if (typeof fp === "string" && output.args?.offset == null && output.args?.limit == null) {
+          const n = lineCount(fp)
+          if (n != null && n > WHOLE_READ_MAX_LINES) {
+            throw new Error(
+              `ganze Datei (${n} Zeilen) → fenstern: \`read\` mit offset/limit (z. B. offset 1, limit ${WHOLE_READ_MAX_LINES}); eine große Datei am Stück wird jede Runde erneut tokenisiert (Kontext-Multiplikator). Der volle Inhalt bleibt über die Spill-Datei (\`full: <pfad>\`) erreichbar.`,
+            )
+          }
+        }
+        return
+      }
       if (input.tool !== "bash") return
       const cmd = output.args?.command
       if (typeof cmd !== "string") return
       for (const seg of segments(cmd)) {
         const msg = teaching(seg)
         if (msg) throw new Error(msg)
+        // `sread` ohne Fenster auf einer großen Datei → fenstern.
+        const b = bareToken(seg)
+        if ((b === "sread" || b.startsWith("sread ")) && !/--offset\b/.test(b) && !/--limit\b/.test(b)) {
+          const file = b.match(/^sread\s+(\S+)/)?.[1]
+          if (file) {
+            const n = lineCount(file)
+            if (n != null && n > WHOLE_READ_MAX_LINES) {
+              throw new Error(
+                `\`sread\` ohne Fenster auf ${n} Zeilen → \`sread <datei> --offset N --limit M\` (Fenster ≤ ${WHOLE_READ_MAX_LINES}); große Dateien nie am Stück.`,
+              )
+            }
+          }
+        }
       }
       // `\|` ist in sgrep KEINE Alternation — sgrep matcht literal. Ein solches
       // Muster findet nur das Zeichen selbst und erzeugt Falsch-Negative.
