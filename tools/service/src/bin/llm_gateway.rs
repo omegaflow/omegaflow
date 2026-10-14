@@ -553,9 +553,15 @@ fn is_paid(prefix: &str) -> bool {
     )
 }
 
-fn paid_allowed() -> bool {
+fn paid_allowed(prefix: &str) -> bool {
     if let Ok(v) = std::env::var("OMEGAFLOW_PAID") {
-        if !v.is_empty() && v != "0" {
+        let v = v.trim();
+        if v == "1" || v.eq_ignore_ascii_case("all") {
+            return true;
+        }
+        if v.split(|c: char| c == ',' || c.is_whitespace())
+            .any(|p| p == prefix)
+        {
             return true;
         }
     }
@@ -566,7 +572,16 @@ fn paid_allowed() -> bool {
             Err(_) => return false,
         },
     };
-    std::path::Path::new(&format!("{work}/post/paid-open")).exists()
+    if let Ok(s) = std::fs::read_to_string(format!("{work}/post/paid-open")) {
+        let s = s.trim();
+        if s == "1" || s.eq_ignore_ascii_case("all") {
+            return true;
+        }
+        return s
+            .split(|c: char| c == ',' || c.is_whitespace())
+            .any(|p| p == prefix);
+    }
+    false
 }
 
 fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -> (u16, String) {
@@ -596,10 +611,10 @@ fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -
                 Some(r) => r,
                 None => continue,
             };
-            if is_paid(route.prefix) && !paid_allowed() {
+            if is_paid(route.prefix) && !paid_allowed(route.prefix) {
                 last_code = 402;
                 last_body = format!(
-                    "{{\"error\":{{\"message\":\"{} is a billed route — the operator's word is required (set OMEGAFLOW_PAID=1 or create $OMEGAFLOW_WORK/post/paid-open)\"}}}}",
+                    "{{\"error\":{{\"message\":\"{} is a billed route — the operator's word is required (name the route in $OMEGAFLOW_WORK/post/paid-open, e.g. `mistral`, or set OMEGAFLOW_PAID=mistral)\"}}}}",
                     route.prefix
                 );
                 continue;
