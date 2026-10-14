@@ -16,7 +16,7 @@ Neueste offene Mountain-Übergabe:
 !`for f in $(git ls-tree --name-only HEAD docs/handover/); do case "$f" in *mountain*) printf '%s %s\n' "$(git log --diff-filter=A --format=%ct -1 -- "$f")" "$f";; esac; done | sort -rn | head -1 | cut -d' ' -f2`
 
 **Die Übergabe IST der Stand.** Lies sie und den Stehenden Pass
-(`sread state/zustand/standing-pass.md` — zitieren, nie kopieren; eine kopierte Pass-Zahl ist ein
+(`sread docs/zustand/standing-pass.md` — zitieren, nie kopieren; eine kopierte Pass-Zahl ist ein
 Gate-Fixture `pass-copy`). Ein bereits geworteter/geklärter Punkt wird **nie** erneut vorgelegt.
 
 **1 · Still messen, nur Fälliges.** Nur was der eigene Trigger für fällig erklärt:

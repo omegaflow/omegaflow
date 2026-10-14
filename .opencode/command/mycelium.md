@@ -16,7 +16,7 @@ Neueste offene Mycelium-Übergabe:
 !`for f in $(git ls-tree --name-only HEAD docs/handover/); do case "$f" in *mycelium*) printf '%s %s\n' "$(git log --diff-filter=A --format=%ct -1 -- "$f")" "$f";; esac; done | sort -rn | head -1 | cut -d' ' -f2`
 
 **Die Übergabe IST der Stand.** Lies sie und den **vorigen** Stehenden Pass
-(`sread state/zustand/standing-pass.md` — zitieren, nie kopieren; eine kopierte Pass-Zahl ist ein
+(`sread docs/zustand/standing-pass.md` — zitieren, nie kopieren; eine kopierte Pass-Zahl ist ein
 Gate-Fixture `pass-copy`). Ein bereits geworteter/geklärter Punkt wird **nie** erneut vorgelegt.
 
 **1 · Still messen, nur Fälliges.** Nur was der eigene Trigger für fällig erklärt:
@@ -51,10 +51,14 @@ schreiben (CI-Tafel: rote Läufe `run-id | workflow | gemessener Grund aus Log/A
 `unread` benennen | Träger-Linie | Braucht`; Postfach-Stand; Ereignis-Stand; Orphan-Zensus;
 Mehrfach-Träger; `git_safety --snapshot`; `.tools_ensure`-Sweep; `session_burn`). Die Pass-Schreibung
 ist der **Schlussakt, nicht der erste** — sonst zitiert jede Linie beim Öffnen einen stale Pass.
+Der Pass wird **zweimal** geschrieben (Operator-Wort A, 2026-10-14): vollständig ins private
+Haus (Mail, Operator-Akte) und als **öffentliche Projektion** `docs/zustand/standing-pass.md`
+(nur HEAD + rote Läufe, kein Personenbezug) ins öffentliche — die öffentlichen Linien lesen
+nur die Projektion, nie den privaten Pass.
 Danach die Runde-Meldung:
 
 > **Runde offen — Stehender Pass steht.** HEAD `<sha>` (== `origin/main`); Pass
-> `state/zustand/standing-pass.md` (gemessen `<zeit>`); rote Läufe: `<n>` (Träger: …).
+> `docs/zustand/standing-pass.md` (gemessen `<zeit>`); rote Läufe: `<n>` (Träger: …).
 > Startet die Linien: `/mountain` `/river` `/sensory` `/future`.
 
 Erst nach dieser Meldung öffnen die anderen Linien. Mycelium trägt Quellen: Arbeit über
