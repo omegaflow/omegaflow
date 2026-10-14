@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass + Taucher + Rat + Bridge-Roster: finals-Leser, harvest-Direktive, Doppel-Arme, Venus-Reader-Arm; SABER/Venus/ICGEM durch recherche·roster·rat (Riss auf SABER/Venus)
   class: handover
   date: 2026-10-14
-  sha256: a7cca570e1a65a56b6b844b025d5fb8fe79186af7815ea2c67bb9c0366447fe2
+  sha256: ae7584bf8040d7e79e7a66481615cbe93916e06d98cd627753ce6a1068b37aa2
   status: live
 -->
 # Handover — Mountain-Folge 345 (2026-10-14)
@@ -16,7 +16,7 @@ eingegangen (CelesTrak und LOD-`finals` gemessen erledigt, `harvest`-Direktive
 gebaut; SABER/Venus/UCAR-fäden bleiben). Der Stehende Pass (Mycelium-Register) wird
 zitiert, nie kopiert.
 
-## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass + Taucher-Runde + Rat — finals-Leser (Code + Block + 6 Tests), harvest-Direktive, Doppel-Arme, Venus-Reader-Arm (`vnrd.rs` + Dispatch), 6 Taucher (5 parallel + 1 Recherche), Rat + volle Bridge-Roster-Tafel (12 Stimmen) für SABER/Venus/ICGEM; die Seats sind **roh** gezählt, nicht nach Fähigkeit gewichtet; der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
+## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass + Taucher-Runde + Rat — finals-Leser (Code + Block + 6 Tests), harvest-Direktive, Doppel-Arme, Venus-Reader-Arm (`vnrd.rs` + Dispatch), 6 Taucher (5 parallel + 1 Recherche), Rat + volle Bridge-Roster-Tafel (12 Stimmen) für SABER/Venus/ICGEM; die Seats roh gezählt, die Trainingsgrad-Gewichtung (Sprachurteil, A×2/B×1/C×0,5) ist im UI-Katalog festgehalten; der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
 
 ## Offen (aufgeschlüsselt)
 
