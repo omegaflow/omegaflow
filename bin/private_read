@@ -48,10 +48,19 @@ SED
 awk -F'=' '
   /^[[:space:]]*#/ { next }
   /^[[:space:]]*$/ { next }
-  { real=$1; ph=substr($0, index($0,"=")+1); if (real=="") next; print length(real)"\t"real"\t"ph }
+  {
+    a=$1; b=substr($0, index($0,"=")+1)
+    if (a=="") next
+    if (substr(a,1,1)=="<" && substr(b,1,1)!="<") {
+      t=a; a=b; b=t
+      print "private_read: swapped a reversed map line (real and placeholder were inverted)" > "/dev/stderr"
+    }
+    print length(a)"\t"a"\t"b
+  }
 ' "$map" | sort -rn | while IFS="$(printf '\t')" read -r _ real ph; do
   esc="$(printf '%s' "$real" | sed 's/[][\\.*^$/&]/\\&/g')"
-  printf 's/%s/%s/g\n' "$esc" "$ph" >> "$mapscript"
+  escph="$(printf '%s' "$ph" | sed 's/[\\/&]/\\&/g')"
+  printf 's/%s/%s/g\n' "$esc" "$escph" >> "$mapscript"
 done
 
 awk '
