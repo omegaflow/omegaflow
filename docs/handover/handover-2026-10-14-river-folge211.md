@@ -2,7 +2,7 @@
 title: Handover — River-Folge 211
 class: handover
 date: 2026-10-14
-sha256: 7f752c385135796fca5f621ae00b0bd5b18c94231cdfd33f0e15b60456515ea5
+sha256: 5f7b279216d59ba2366641214c91b18f6f715f14e090b0f52e6e8f20e9876d71
 status: live
 -->
 # Handover — River-Folge 211 (2026-10-14)
@@ -126,10 +126,11 @@ Verbatim: `state/operator-gespraeche/2026-10-14-river.md` (diese Session) · `st
 
 ### Newell-OMNI-Alignment — Zelle gemessen (n=22137), TE silent
 - **Status:** eigen (gemessen, silent) | **Bindung:** eigen
-- **Trigger:** kein — die Verifikations-Zelle ist gemessen; der nächste Schritt (das Verhältnis zum Live-Treiber) ist benannt.
+- **Trigger:** kein — die Relation ist gesetzt (river-212).
 - **Lage:** (gemessen 2026-10-13 river-209 via `gh run download 38464793874 -n field-te-matrix-newell-omni`) der Lauf `38464793874` (HEAD `fd1d693e8`) ist **success**; `matrix-newell-omni`: `expect cells 1 matched the declared 1 cells`, Zelle `newell_dphi_dt_omni->abk_dbdt_pt1h` **n = 22137** (n_eff 1.2298e3, native rung 3600 s), TE 7.7953e-5, p 1.0000 → **verdict silent**; `fdr bh q 0.05`: **0 of 1 cells pass**; kein n = 0 mehr. Die frühere Disjunktheit (`38378918382` n = 0) ist mit dem gezogenen 1h-Schlüssel (`abk_dbdt_pt1h`, mountain-340 `05e215aa1`) **gelöst** — die Zelle ist co-temporal. Riss-Hinweis (Mountain-340): die Kanal-Identität bleibt `intermagnet_dbdt_abk` (aus `fc.name`) — sollen 1h/1m je ein eigener Kanal sein, braucht es eine `name`-Änderung + extract-Arm-Anpassung.
-- **Blockade:** keine.
-- **Braucht:** die silent-Verifikations-Zelle ins Verhältnis zum Live-Treiber setzen (`matrix-newell`, im selben Lauf success) — die Rat-/Null-Disziplin vor jeder Behauptung; kein neuer Lauf ohne neuen Grund.
+- **Relation zum Live-Treiber — gesetzt (river-212, gemessen via `gh run download 38464793874` gegen den zweiten Artefakt `field-te-matrix-newell`, selber Lauf, success):** der **Live-Treiber** `newell_dphi_dt->intermagnet_dbdt` ist **nicht messbar** — `arms measured 0 of 2`: der `newell_dphi_dt`-Arm hängt am Host (`cdaweb.gsfc.nasa.gov` AC_H2_MFI fetch void), und der `intermagnet_dbdt`-Arm trägt den **Identitäts-Riss** (1m-`abk_dbdt_1m.bin` median_dt 60 s vs 1h-`abk_dbdt_1h.bin` median_dt 3600 s, Überlappungs-Korrelation 0.9388; kein Arm gewählt, beide als zwei Knoten) → Zelle n = 0, `floor (p = 1)`. Die **Verifikation** (OMNI-Proxy) ist gemessen und still. **Beide sagen dasselbe: kein gemessener Pfeil** — die Verifikation rettet den Live-Treiber nicht, und der Live-Treiber ist ohnehin blockiert (Host + Riss). Der eigentliche offene Punkt ist der **1m/1h-Identitäts-Riss** des `dB/dt`-Kanals.
+- **Blockade:** der Riss (1m vs 1h) und der Host; kein neuer Lauf ohne neuen Grund.
+- **Braucht:** nichts Neues von River; der Riss des `dB/dt`-Kanals gehört als eigener Punkt getragen (Mountain/extract: `name`-Trennung 1m/1h) — s. Riss-Hinweis oben.
 
 ### Flyby-Kette — recon bleibt (`ephemeris-juice-recon` + `flyby-path2-recon`)
 - **Status:** termin | **Bindung:** termin:2026-11-01
