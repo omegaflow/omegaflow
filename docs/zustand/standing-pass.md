@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-14
-  sha256: 53f2562b163a8962efa082fbc3306ac955523997e7d0ab2113b659f6f92d6572
+  sha256: 724067219e62c3c3a2ea42d52dafc76313f41c75d2717a3264a74408c33f9a43
   status: live
   see-also: AGENTS.md
 -->
@@ -16,8 +16,8 @@ leck-fähige Faden (das Register-Lesen) geschnitten, nicht nur verschoben.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `d4fdb76ee` | 2026-10-14 |
-| rote CI-Läufe | `ci-gate` `38641123673` (am HEAD neu gestartet; gemessen lokal: `cargo fmt --check` bricht an `tools/service/src/bin/llm_gateway.rs:1265` — der Ganz-Crate-Format-Riss, kein Linien-Eigentum; register: `cdn_reconcile --fail` am HEAD-Baseline = 5 ungebundene CDN-Netlocs → Mountain) · `register-coverage` `38641123689` (am HEAD neu gestartet; `register_lookup --tokens --noecho-fail` = 7 XFER-MISSING in fremden Blöcken, `mountain-folge346`/`347` und `river-folge211`; `--orphans --fail` = 0) | 2026-10-14 |
+| HEAD | `523c03063` | 2026-10-14 |
+| rote CI-Läufe | `ci-gate` `38642537410` (am HEAD neu gestartet; gemessen lokal: der Format-Job bricht an `tools/service/src/bin/llm_gateway.rs:1265` — der Ganz-Crate-Format-Riss, kein Linien-Eigentum; der register-Job ist jetzt **clean**: `cdn_reconcile --fail` → `cap+tag contract clean (325 registry hosts)`, exit 0) · `register-coverage` `38642537331` (am HEAD neu gestartet; `register_lookup --tokens --noecho-fail` = 3 XFER-MISSING im `## An mycelium`-Block von `mountain-folge347`; `--orphans --fail` = 0) | 2026-10-14 |
 
 Die Meta-Linie (Mycelium) trägt beide Zeilen in demselben Rund, in dem sie den privaten
 Pass schreibt — öffentlich ins öffentliche Haus, privat ins private.
