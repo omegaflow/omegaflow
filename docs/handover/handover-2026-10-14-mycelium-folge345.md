@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 345 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: 02bd08c8116095fe98d730951af10104969e06341df105b390540034d336e618
+  sha256: 5fc04cca3b9c53255d3ef710896814678452b2f38d89e0c239189931aef87345
   status: live
 -->
 # Handover — Mycelium-Folge 345 (2026-10-14)
@@ -15,7 +15,7 @@ Gefaltet: `## An mycelium` aus `mountain-folge342` (`xfer:mountain-342-1`/-2/-3)
 `river-folge208` (`xfer:river204-entsoe1`, `xfer:river208-*`) — die Einträge sind in
 den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 
-## Burn: open 0.00 · close 0.0457 — gemessen `session_burn` (opencode.db, Session „Mycelium-Linie: DE-2-Lauf und Pass-Abschluss", deepseek-flash; wächst bis Session-Schluss).
+## Burn: open 0.00 · close 0.0955 — gemessen `session_burn` (opencode.db, Session „Mycelium-Linie: DE-2-Lauf und Pass-Abschluss", deepseek-flash; wächst bis Session-Schluss).
 
 ## CI-Stand am HEAD `ecc23feed` (gemessen `ci_manage status/list`, 2026-10-14T00:38Z)
 
@@ -48,7 +48,14 @@ den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 - **Trigger:** Ergebnis des `modvolc-cdn`-Laufs
 - **Lage:** (gemessen/umgesetzt 2026-10-14/345) Mountains Block steht: `phi:12050-12057` `url …/nrt3.modaps.eosdis.nasa.gov/modvolc_thermal.bin` · `terms PD` · `origin …/MODVOLC/Recent` · `compiler modvolc_compiler.rs` · `field modvolc_thermal`. Workflow-Kopf `tag=nrt3.modaps.eosdis.nasa.gov` deckt sich. `gh workflow run modvolc-cdn.yml` nach Push dispatcht → Lauf `38491452658`. Echo `xfer:mountain-342-3`.
 - **Blockade:** keine.
-- **Braucht:** den Lauf einmalig lesen (`ci_manage view 38491452658`); bei Erfolg `asset=present` bestätigt. Riss bleibt: LANCE nur NRT (`Recent/`), Archiv 2000–2019 bei LAADS hinter Login (`pending`).
+- **Braucht:** den Lauf einmalig lesen (`ci_manage view 38491452658`); bei Erfolg `asset=present` bestätigt. Riss bleibt: LANCE nur NRT (`Recent/`).
+
+### MODVOLC-Archiv 2000–2019 — LAADS-Route gemessen (Auth, keine Blockade)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** kein — Bau (Compiler-Archiv-Modus)
+- **Lage:** (gemessen 2026-10-14/345) Die Archiv-Route liegt unter **Collection 6** — `https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/6/MODVOLC/` (der C61-Pfad ist 404). Der anonyme `GET` antwortet **303** → `/profiles/licenses/…` → `/oauth/login` → `urs.earthdata.nasa.gov/oauth/authorize` (OAuth2-Code, `client_id=A6th7HB-3EBoO7iOCiCLlA`); die Datei ist hinter **Earthdata Login**. **Auth = `Authorization: Bearer <EDL-Token>`** (der EDL-Token *ist* das LAADS-Credential, ~60 Tage). `EARTHDATA_EDL_TOKEN` liegt in `.secrets.local`. **Auth-Route gebaut:** `archive_search` trägt jetzt LAADS-Hosts (`ladsweb`/`nrt3.modaps.eosdis.nasa.gov`) im Earthdata-Token-Set **und** behandelt **303** als Auth-Gate (`token.rs`) — damit zieht der Verdict-Pfad den Bearer automatisch. **Gemessen im Browser:** der Operator ist bei Earthdata eingeloggt; das Profil verlangt vor der LAADS-App-Autorisierung **User Type + Organization** (offen). Lokaler Token-Zug lief in einen Login-Redirect — Token-Gültigkeit/Profil zu prüfen.
+- **Blockade:** keine.
+- **Braucht:** (1) EDL-Token-Gültigkeit + Profil (User Type/Organization) prüfen; (2) im `modvolc_compiler.rs` einen Archiv-Modus (`--archive-year`, C6-Pfad, Bearer-Header) ergänzen; dann das 2000–2019-Fenster ziehen.
 
 ### ENTSŌ-E A78 — Header-Tag korrigiert, Lauf dispatcht
 - **Status:** wartend (eigen, Lauf läuft) | **Bindung:** eigen
@@ -63,6 +70,7 @@ den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 - **Lage:** (gemessen 2026-10-14/345) compiler + Workflow + Block stehen (`phi:586`), `harvest de2`-Direktive greift (`harvest-dispatch` startete `de2-cdn`). Der CI-Lauf `38489787692` scheitert **gemessen** am Host: jeder `cdaweb.gsfc.nasa.gov`-Fetch bricht auf TLS-Ebene ab (`(35)`/`(52)`/`(56)`). **Gegenmessung lokal** (`archive_search --verdict`, 2026-10-14): `cdaweb.gsfc.nasa.gov/hapi` und `/pub/data/` **direct + Proton pending**, nur ein 2019-Wayback-Snapshot; `heasarc.gsfc.nasa.gov` und `fermi.gsfc.nasa.gov` antworten **HTTP 200** — der Ausfall ist host-spezifisch, nicht NASA-GSFC-weit, nicht runner-spezifisch. `asset=fehlt` bleibt (kein `present` behaupten).
 - **Blockade:** externer Host-Ausfall (kein Maschinen-Akt).
 - **Braucht:** bei Host-Rückkehr `gh workflow run de2-cdn.yml`; dann Asset → `asset=present` + K messbar.
+- **Browser-Gegenprobe (2026-10-14):** `https://cdaweb.gsfc.nasa.gov/` lädt im Chrome eine **Fehlerseite** — der Host ist auch über die Browsersitzung nicht erreichbar (nicht nur curl/CI). **Teilersatz gemessen:** der **UCLA VMO**-Spiegel `https://vmo.igpp.ucla.edu/data1/DE2/RPA/Ni_16ms_ascii/…` liefert **RPA**-Ionendichte/-drift (1981–1983, `.asc.gz`; sha256 `1610bba6…`) **ohne** **NACS**/**WATS** (Neutraldichte/-wind) — das kombinierte `UA16S`-Produkt fehlt auf **jedem** erreichbaren Spiegel; kein Tausch, der die Messung ändern würde.
 
 ### Fünf fehlende Fäden — Quellen gemessen
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
@@ -85,12 +93,12 @@ den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 - **Blockade:** Mountains Wort; `extract.rs` fremd-dirty.
 - **Braucht:** Mountains Wort; danach `compiler`-Zeile + `field`. An Mountain: `xfer:mycelium-342-5`.
 
-### CHIME/FRB Catalog 2 — CANFAR host-weit nicht erreichbar
-- **Status:** wartend | **Bindung:** wartend
-- **Trigger:** CANFAR-Host antwortet wieder
-- **Lage:** (gemessen 2026-10-13/343) kein erreichbarer Ersatz-Endpunkt — `canfar.net` host-weit HTTP 500 (direct + Proton), kein Wayback-Snapshot der Datei, kein Mirror; `chime-frb.ca/catalog2` verweist selbst nur auf CANFAR (DOI `10.11570/25.0066`); VizieR/Zenodo/HuggingFace nur Catalog 1.
-- **Blockade:** externer Host-Ausfall.
-- **Braucht:** bei CANFAR-Rückkehr neu messen; dann `origin` (Mycelium) + `terms` (Mountain).
+### CHIME/FRB Catalog 2 — Host zurück, Workflow gebaut, Lauf dispatcht
+- **Status:** wartend (eigen, Lauf läuft) | **Bindung:** eigen
+- **Trigger:** Ergebnis des `chime-frb-cdn`-Laufs
+- **Lage:** (gemessen/umgesetzt 2026-10-14/345) **Trigger gefeuert** — der CANFAR-Host antwortet wieder (`--verdict`: `www.canfar.net` + Storage-Listing + die Origin-CSV `…/table/chimefrbcat2.csv` je **HTTP 206**); im Browser gelesen (Public-Ordner `additional_figures`/`dynamic_spectra`/`exposure`/`localizations`/`table`). Der Block `phi:28579-28585` trägt schon `url`/`terms CC-BY-4.0`/`format`/`origin`/`compiler` (`chime_frb_compiler.rs`); **es fehlte nur der CI-Workflow** → `.github/workflows/chime-frb-cdn.yml` gebaut, committet, dispatcht → Lauf `38492612407`. Mirror benannt: HuggingFace `juliensimon/chime-frb-catalog` (unregistriert), IOPscience `…/ae3828/data`, `chime-frb-open-data.github.io`.
+- **Blockade:** keine.
+- **Braucht:** den Lauf einmalig lesen (`ci_manage view 38492612407`); bei Erfolg Asset `www.canfar.net/chime_frb_cat2.bin` + K messbar.
 
 ### Weberin-Zeugen — Manifestation der drei Zeugen
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
