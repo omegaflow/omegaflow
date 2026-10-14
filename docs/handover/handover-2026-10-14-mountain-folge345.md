@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass + Taucher + Rat + Bridge-Roster: finals-Leser, harvest-Direktive, Doppel-Arme, Venus-Reader-Arm; SABER/Venus/ICGEM durch recherche·roster·rat (Riss auf SABER/Venus)
   class: handover
   date: 2026-10-14
-  sha256: b5d9e9bd661abf9dc47b97134dccf0f328ac25dd75b718f2cb39fb75c2b5d47d
+  sha256: 8d0dda5fede05663f912823f12dc72b33f601dfe9e546c931abe2b3bc2a05fc7
   status: live
 -->
 # Handover — Mountain-Folge 345 (2026-10-14)
@@ -42,7 +42,9 @@ zitiert, nie kopiert.
   Folge der Orte, `Position::StateVector { p, v }` + `Motion::Linear`). Das überschreibt B2:
   die Kanäle sitzen an der **eigenen Weltlinie des Satelliten**, nicht an `Position::Source`;
   die Höhe ist dort ein Wert.
-- **Braucht:** (1) Block mit der Satelliten-Weltlinie (Position je Sample) statt `Position::Source`;
+- **Braucht:** (0) **Bezugssystem + Zeitbasis festlegen** (raumfest/erdgebunden, Zeitskala) —
+  sonst ist „xyz/t" mehrdeutig (Gegenprobe GLM/Claude/DeepSeek); (1) Block mit der
+  Satelliten-Weltlinie (Position je Sample) statt `Position::Source`;
   (2) den Block
   `url https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER&…parameters=ktemp,tpgpaltitude&format=json`,
   `terms saber-rules-of-the-road …` — wartet auf die Host-Rückkehr (kein frisches Sample).
@@ -66,9 +68,11 @@ zitiert, nie kopiert.
   `venus_radar_inc_deg`/`_ocp`/`_scp`), registriert + Dispatch; **Compiler auf Verdikt D
   umgebaut** (`venus_radar_compiler.rs`: `--input`/`--dir` → ein `VNRD`, `t` = Label-Epoche
   (PDS4 `Time_Coordinates`), `v` = Kartenmittel, `comp` = Menge; Roundtrip über den Reader).
-- **Braucht:** (1) Block `url …VNRD-CDN-Asset`, `origin` = rohe PDS-Kachel,
-  `compiler venus_radar_compiler`, `terms CC0-1.0 …`, Einheit am Feld (`inc`=deg, `ocp`/`scp`=1);
-  (2) Split-Route; (3) der native Compiler-Lauf braucht 15×960 MB (CI, nicht operatormaschine).
+- **Braucht:** (0) **Projektion + Ortsbezug des Bildes benennen** (Gegenprobe Qwen/DeepSeek:
+  ohne sie ist ein Ganzbild „nur ein Bild", kein Ortsfeld); (1) Block `url …VNRD-CDN-Asset`,
+  `origin` = rohe PDS-Kachel, `compiler venus_radar_compiler`, `terms CC0-1.0 …`, Einheit am
+  Feld (`inc`=deg, `ocp`/`scp`=1); (2) Split-Route (Kacheln/Level-of-Detail erst nachgelagert);
+  (3) der native Compiler-Lauf braucht 15×960 MB (CI, nicht operatormaschine).
 
 ### ICGEM gfc — „Epoche absent" ist eine neue Konvention und braucht ein Wort (eigen)
 - **Status:** eigen (Operator-Wort 2026-10-14: das Modell wie die anderen behandeln) | **Bindung:** eigen
@@ -92,9 +96,13 @@ zitiert, nie kopiert.
 - **Blockade:** der Koeffizienten-Arm (`gfc.rs`) führt die **Modell-Interna** als Kanäle
   (ein Koeffizient = ein Kanal); das ist nicht der Feldwert. Der Auswerter (Koeffizienten
   an einem Ort → Gravitationswert) fehlt.
-- **Braucht:** (1) Auswerter wie `vmf3_sh`/`igrf` — die gfc-Koeffizienten an einer Position
-  zur Feldgröße rechnen; die Kanäle tragen dann den **Feldwert**, nicht den Koeffizienten;
-  (2) Block `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`,
+- **Braucht:** (0) die drei Gegenprobe-Randbedingungen tragen — **(0a) Bahn↔Feld-Kopplung:**
+  Gravitation erzeugt die Bahn selbst (Gegenprobe GLM, SABER-Verknüpfung); **(0b)
+  Höhen-Bezugsfläche** (Ellipsoid/Geoid) ist selbst eine Gestalt (Claude); **(0c) Feldwert
+  vektoriell/tensoriell** (Richtung/Gradient), nicht nur Betrag (DeepSeek); (1) Auswerter wie
+  `vmf3_sh`/`igrf` — die gfc-Koeffizienten an einer Position zur Feldgröße rechnen; die Kanäle
+  tragen dann den **Feldwert**, nicht den Koeffizienten; (2) Block
+  `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`,
   Feld am Ort; Cap D=3211 für den Split.
 - **Rest:** `format gfc` war im Reader registriert, aber **nicht** im `main_flow`-Dispatch —
   **behoben** (mountain-345: `"gfc"` in die Dispatch-Liste).
