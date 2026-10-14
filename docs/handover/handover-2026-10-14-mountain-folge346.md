@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: bcf89c3cfc6672e5bdebce468f62e4bd06806ac86aa6d168a0767e7d305b6368
+  sha256: 9eebf309d8fbd7c9ce3c20fd9ffc4680d1d6848a21a29dd08af9b9614c2a4885
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -59,10 +59,13 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
   `TIMED` · `1 26998U 01055B 26052.51864582 .00001123 …` ·
   `2 26998 74.0671 107.8683 0002724 294.3335 65.7565 14.94968599313531`
   (i 74.07°, ~14.95 Umläufe/Tag) — die eigene Bahn ist damit belegt.
-  **Live-TLE:** CelesTrak aus dieser Umgebung **nicht erreichbar** (Browser + curl, 60 s
-  Timeout); die Live-TLE lieferte `n2yo.com/satellite/?s=26998` (Epoche 26287.22 = heute,
-  AFSPC). CelesTrak-Endpunkt (`gp.php?CATNR=26998&FORMAT=2LE`, `INTDES=2001-055`) im Index
-  belegt, hier nicht abrufbar.
+  **Live-TLE:** CelesTrak direkt **nicht erreichbar** (Browser + curl 60 s Timeout; auch durch
+  den Proton-Ausgang TLS-Reset `SSL_ERROR_SYSCALL`, während JPL 200 liefert). **Durch Jina
+  geht es:** `archive_search --jina "https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=tle"`
+  → die Live-TLE, Epoche `26287.22414614` (= 2026-10-14), identisch mit
+  `n2yo.com/satellite/?s=26998` (AFSPC). Der Endpunkt trägt:
+  `1 26998U 01055B 26287.22414614 .00001152 …` ·
+  `2 26998 74.0694 355.2967 0000920 228.8676 131.2429 14.95511591348618`.
   **Historische Reihe 2002–2026 (gefunden, `--all` + `--exa`):** HuggingFace
   **`juliensimon/space-track-tle-history`** — **CC-BY-4.0**, „complete archive … every tracked
   object in Earth orbit, 1959 to 2026, sourced from Space-Track.org bulk exports", parquet je
