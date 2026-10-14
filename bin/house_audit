@@ -34,7 +34,7 @@ EXCL2=":(exclude)src/gate/commit_gate_vocab.json"
 EXCL3=":(exclude)bin/house_audit"
 EXCL4=":(exclude)docs/concepts/tool-forms.md"
 
-# Die PII-Muster sind privat und nie getrackt: state/pii-patterns.txt ist die
+# Die PII-Muster sind privat und nie getrackt: die private Wurzel (OMEGAFLOW_PRIVATE)/pii-patterns.txt ist die
 # Primaerquelle (eine Zeile, alternierte Muster). Fehlt sie, wird die pii-Klasse
 # benannt uebersprungen — kein stilles Null.
 PII_FILE="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}/pii-patterns.txt"
@@ -42,7 +42,7 @@ PII=""
 if [ -f "$PII_FILE" ]; then
     IFS= read -r PII < "$PII_FILE" || PII=""
 else
-    echo "house_audit: pii class skipped — state/pii-patterns.txt absent (the pattern list is private, never tracked)" >&2
+    echo "house_audit: pii class skipped — the private pii-patterns list is absent (never tracked)" >&2
 fi
 IDENT='Archiver|Mathematician'
 SPEC='vermutlich|probably|likely|scheinbar|anscheinend|ich denke|ich nehme an'
