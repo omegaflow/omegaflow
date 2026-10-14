@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 347 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: 59634599cdd7487b822a04edc00edd5938b88acb76b317b7619337efd38e5a6c
+  sha256: fc894cd52acc2b4749c9ff4cacf353f3d3a1444886a5779212669bb957016e04
   status: live
 -->
 # Handover — Mycelium-Folge 347 (2026-10-14)
@@ -127,15 +127,19 @@ CTBTO, Weberin, Schumann — unten als Punkte geführt).
   - **`有条件共享` = Antragsroute (gemessen):** Registrierung (`umt.nssdc.ac.cn/usermanager/register`, Echtname) → Login → Formular `APPLICATION_FORM` (Nutzer/单位/Projekt/Verwendungszweck ≥150 Zeichen) → PDF drucken + handschriftlich unterschreiben → im Portal hochladen → Autorisierung durch den Themenleiter. `点击下载` ist für bedingte Sätze ausgeblendet (`download-btn hidden`); die `/DATA`-Ordner sind im Archiv nicht exponiert.
   - **Riss (belegt, nicht geglättet):** Katalog-Record `license CC BY 4.0` / `完全共享` (`vsso.nssdc.ac.cn` getDetail) vs. **CLPDS-„Copyright Notice": „without the written permission of this platform, no unit or individual may copy, modify, transcribe, disseminate and sell"**.
   - **SSDC:** **keine Lizenz-/Terms-Seite** (alle `www.ssdc.asi.it`-Menüpunkte 200, nur GDPR-`privacy`); Datenbestand **doch** breit — MATISSE Planetologie (Mond LRO-LROC, Mars MGS), Solar Wind (Solar Orbiter/Parker, Felder `Br,Bt,Bn,…`), CSES-Magnetometer (Daten extern `cses.roma2.infn.it`); direkter Download ohne Login teils möglich, CAS-Schranke nur für geschützte Dienste (AGILE).
+  - **Offene Mirrors (gemessen 2026-10-14, 2 Taucher + `--all`):** die CLPDS-Route ist für viele Produkte **entbehrlich**:
+    - Chang'e: **CE-1/2 MRM** → NASA PDS (`Lunar/urn-nasa-pds-chang_e_microwave_processed`, `terms PD`, `phi:11137-11155`, **CDN-Asset 206**) · **CE-4 LPR** → Zenodo `14590856`/`15117915`/`10154147`/`6476677`/`4964896`/`7407588`/`4724190` + Figshare `23723976`/`23723922` (**CC-BY-4.0**) · **CE-3 LPR** (abgeleitet) → Zenodo `3884522` · **CE-4 VNIS** (abgeleitete Spektren) → Zenodo `3361004` · **CE-3 Kameras** (TCAM/PCAM) → `casdc.china-vo.org/archive/change3/` + `planetary.s3.amazonaws.com/data/change3/…` (**keine Lizenzzeile** — frei, aber nicht offen-lizenziert).
+    - Tianwen-1/Mars: **RoPeR** → Zenodo `15812343`/`8035493`/`15812357` (CC-BY-4.0, `phi:28689+`) · **MoRIC-DOM** → CDS HiPS `alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/` (**ODbL-1.0**) · **MOMAG** → USTC `space.ustc.edu.cn/dreams/tw1_momag/` (keine Lizenzzeile) · **Mars-Staub** → Zenodo `7480334` + CDS MGS-TES-Dust (ODbL) · **Mars-Magnetfeld** → MAVEN MAG (NASA PDS) · **Mars-Topografie** → Zenodo `6475460`/`3870922`/`10820719` + ICGEM + PDS MOLA (CC-BY-4.0/offen).
+    - **CLPDS-only bleibt:** **CE-4 LFRS** (kein Dataset irgendwo) · CE-5-LPR-Roh · CE-3/4-VNIS-Roh · CE-1/2-CCD-Stereo-Roh · DOM + CE-4/5-Kamera-Roh · Tianwen-1 **HiRIC**, MMS, MINPA · „Mars SHCs topography" (NSSDC-Produkt selbst) · Qaidam/Mars-like terrain.
 - **Blockade:** Antrag = Operator-Hand (Echtname + Unterschrift-PDF); Lizenz-Riss ungeklärt.
 - **Braucht:** Operator sendet den CN-NSSDC-Antrag (Entwurf in Futures Postfach `post/in/2026-10-14-mycelium-nssdc-datenantrag.md`, `applicationProcedure` dort ergänzen); danach Abruf. Die `完全共享`-Sätze sind **ohne** Antrag anonym ladbar — Manifestation (Mountain-`terms` + CDN) separat.
 
-### Browser-Autofill am NSSDC-CAS-Login — Secret-Hygiene (Operator-Akt)
+### Browser-Autofill am NSSDC-CAS-Login — Wert rotiert
 - **Status:** eigen (Operator-Akt) | **Bindung:** eigen
-- **Trigger:** kein — Operator entfernt den Autofill
-- **Lage:** (gemessen 2026-10-14/347, Taucher) Das CAS-Login-Formular `https://umt.nssdc.ac.cn/login?service=…` lud mit **browser-autofill vorbelegten Zugangsdaten** (Benutzername **und** Passwort im Feld). Der Wert wurde **nicht** echoiert/weitergegeben, kein Login ausgeführt. Grenze: kein Passwort-Login (Guard blockt `.secrets.local`).
+- **Trigger:** kein — Autofill-Eintrag entfernen
+- **Lage:** (gemessen 2026-10-14/347) Das CAS-Login lud mit **autofill-vorbelegten** Zugangsdaten (nicht echoiert, kein Login ausgeführt). **Der Login ist rotiert** (Operator-Wort 2026-10-14) → der exponierte Wert ist entwertet.
 - **Blockade:** Operator.
-- **Braucht:** Autofill-Eintrag prüfen/entfernen; falls es ein reales Portal-Konto ist, die Rotation durch die zuständige Linie (Mycelium/Operator) veranlassen.
+- **Braucht:** nur noch den Autofill-Eintrag im Browser entfernen.
 
 ## Schlüssel → offene Fäden (gemessen 2026-10-14/347 via `bin/secrets_keys`)
 
