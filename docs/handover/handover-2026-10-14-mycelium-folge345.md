@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 345 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: 836af7a31dddb419d2e7083bf505a1e04cb922634bf05b166111d64541ab6fea
+  sha256: d228144f83bc0f1f1197d5f3596e4c9f714a6e193c190793b33a5f6267a335fb
   status: live
 -->
 # Handover — Mycelium-Folge 345 (2026-10-14)
@@ -15,7 +15,7 @@ Gefaltet: `## An mycelium` aus `mountain-folge342` (`xfer:mountain-342-1`/-2/-3)
 `river-folge208` (`xfer:river204-entsoe1`, `xfer:river208-*`) — die Einträge sind in
 den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 
-## Burn: open 0.00 · close 0.2151 · cap 0.30 · Grund: der Operator-Auftrag dieser Runde umfasste `archive_search --all`, drei Taucher und den ENTSO-E-ZIP-Bau (über dem Default 0.15) — gemessen `session_burn` (opencode.db, Session „Mycelium-Linie: DE-2-Lauf und Pass-Abschluss", deepseek-flash).
+## Burn: open 0.00 · close 0.2460 · cap 0.30 · Grund: der Operator-Auftrag dieser Runde umfasste `archive_search --all`, drei Taucher und den ENTSO-E-ZIP-Bau (über dem Default 0.15) — gemessen `session_burn` (opencode.db, Session „Mycelium-Linie: DE-2-Lauf und Pass-Abschluss", deepseek-flash).
 
 ## CI-Stand am HEAD `ecc23feed` (gemessen `ci_manage status/list`, 2026-10-14T00:38Z)
 
@@ -57,12 +57,12 @@ den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 - **Blockade:** das Archiv ist „not yet approved for public release" → Zugang nur über LAADS User Support.
 - **Braucht:** **Zugangsanfrage vorbereitet bis zur Kante** — Entwurf `state/mail/laads-modvolc-access-request.md` (an `laads-support@nasa.gov`, gemessen `…/contact/`, HTTP 200; QUELLEN-Block innen). **Akt = Operator-Hand:** `smail --send state/mail/laads-modvolc-access-request.md`. Das Earthdata-Profil (User Type/Organization) hat der Operator gesetzt. Danach der Archiv-Modus im `modvolc_compiler.rs`.
 
-### ENTSŌ-E A78 — Compiler repariert (ZIP + Domain), Lauf dispatcht
-- **Status:** wartend (eigen, Lauf läuft) | **Bindung:** eigen
-- **Trigger:** Ergebnis des `entsoe-cdn`-Laufs
-- **Lage:** (gemessen/umgesetzt 2026-10-14/345) Ursachekette gemessen: A78 liefert eine **DEFLATE-ZIP** (`PK\x03\x04`, method 8), die der Compiler als Text las; der TimeSeries-Parser suchte `biddingZone_Domain.mRID`, A78 trägt aber `in_Domain.mRID`/`out_Domain.mRID`. **Umgesetzt:** pure-std RFC 1951 `inflate` + ZIP-Reader über **alle** Einträge (ein Eintrag je Outage-Dokument) + Domain-Fallback. Lokal (CZ↔SK 2024 volles Jahr): **13 TimeSeries**, 580 B, Roundtrip parst. Workflow auf CZ↔SK/Fenster umgestellt; Lauf `38496905536` dispatcht. Der CI-Vorlauf `38491449026` war `400 invalidRequest` (GitHub-Secret-Token) — der lokale Token liefert 200.
-- **Blockade:** keine (lokaler Token gültig).
-- **Braucht:** den Lauf einmalig lesen (`ci_manage view 38496905536`); bei erneutem 400 den GitHub-Secret `ENTSOE_API_TOKEN` gegen den lokalen prüfen. Echo `xfer:mountain-342-1`, `xfer:river204-entsoe1`.
+### ENTSŌ-E A78 — Compiler korrekt; der GitHub-Secret-Token gibt 400
+- **Status:** operator-gebunden | **Bindung:** operator
+- **Trigger:** `Wort:` GitHub-Repo-Secret `ENTSOE_API_TOKEN` auf den gültigen lokalen Wert setzen
+- **Lage:** (gemessen 2026-10-14/345) Compiler repariert: pure-std RFC 1951 `inflate` über **alle** ZIP-Einträge (ein Dokument je Outage) + Domain-Fallback `in_Domain.mRID`/`out_Domain.mRID`; lokal (CZ↔SK 2024) **13 Records**, 580 B, Roundtrip parst. **Lauf `38496905536` = failure**: der CI-Token → **HTTP 400 `uu-appg01/server/invalidRequest`** bei **derselben** Abfrage, die lokal mit dem `.secrets.local`-Token **HTTP 200** liefert. `read_secret` trimmt den Wert (kein Newline/CR) → der Unterschied ist der **Token-Wert selbst**: der GitHub-Repo-Secret weicht vom lokalen (gültigen) ab.
+- **Blockade:** der CI kann den lokalen Token nicht lesen.
+- **Braucht:** Operator setzt das GitHub-Repo-Secret `ENTSOE_API_TOKEN` auf den gültigen lokalen Wert; danach `gh workflow run entsoe-cdn.yml`. Echo `xfer:mountain-342-1`, `xfer:river204-entsoe1`.
 
 ### DE-2-Manifestation — Host `cdaweb.gsfc.nasa.gov` unerreichbar
 - **Status:** wartend | **Bindung:** wartend
