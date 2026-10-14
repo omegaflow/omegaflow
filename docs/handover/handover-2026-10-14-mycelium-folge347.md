@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 347 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: fc894cd52acc2b4749c9ff4cacf353f3d3a1444886a5779212669bb957016e04
+  sha256: ddc557f76a4b508f03b4bcebfd48f585dd69e9d9d301d48357fef27b9aeca3e4
   status: live
 -->
 # Handover — Mycelium-Folge 347 (2026-10-14)
@@ -132,7 +132,7 @@ CTBTO, Weberin, Schumann — unten als Punkte geführt).
     - Tianwen-1/Mars: **RoPeR** → Zenodo `15812343`/`8035493`/`15812357` (CC-BY-4.0, `phi:28689+`) · **MoRIC-DOM** → CDS HiPS `alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/` (**ODbL-1.0**) · **MOMAG** → USTC `space.ustc.edu.cn/dreams/tw1_momag/` (keine Lizenzzeile) · **Mars-Staub** → Zenodo `7480334` + CDS MGS-TES-Dust (ODbL) · **Mars-Magnetfeld** → MAVEN MAG (NASA PDS) · **Mars-Topografie** → Zenodo `6475460`/`3870922`/`10820719` + ICGEM + PDS MOLA (CC-BY-4.0/offen).
     - **CLPDS-only bleibt:** **CE-4 LFRS** (kein Dataset irgendwo) · CE-5-LPR-Roh · CE-3/4-VNIS-Roh · CE-1/2-CCD-Stereo-Roh · DOM + CE-4/5-Kamera-Roh · Tianwen-1 **HiRIC**, MMS, MINPA · „Mars SHCs topography" (NSSDC-Produkt selbst) · Qaidam/Mars-like terrain.
 - **Blockade:** Antrag = Operator-Hand (Echtname + Unterschrift-PDF); Lizenz-Riss ungeklärt.
-- **Braucht:** Operator sendet den CN-NSSDC-Antrag (Entwurf in Futures Postfach `post/in/2026-10-14-mycelium-nssdc-datenantrag.md`, `applicationProcedure` dort ergänzen); danach Abruf. Die `完全共享`-Sätze sind **ohne** Antrag anonym ladbar — Manifestation (Mountain-`terms` + CDN) separat.
+- **Braucht:** Operator sendet den CN-NSSDC-Antrag (Entwurf in Futures Postfach `post/in/2026-10-14-mycelium-nssdc-datenantrag.md`, `applicationProcedure` dort ergänzen); danach Abruf. Die `完全共享`-Sätze sind **ohne** Antrag anonym ladbar — Manifestation (Mountain-`terms` + CDN) separat. **Nächste Session:** Registerblöcke für die neuen offenen Mirrors (Mycelium `url`/`origin`/`compiler`, Mountain `terms`) — zuerst Zenodo-LPR + MAVEN MAG (CC-BY-4.0/PD).
 
 ### Browser-Autofill am NSSDC-CAS-Login — Wert rotiert
 - **Status:** eigen (Operator-Akt) | **Bindung:** eigen
