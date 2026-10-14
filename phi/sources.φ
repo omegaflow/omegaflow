@@ -11442,6 +11442,7 @@ field hapi_csv_y_nt hapi_csv_y_nt inverse-square em nT 604800 0.0 0.0
 field hapi_csv_z_nt hapi_csv_z_nt inverse-square em nT 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/portal.opentopography.org/opentopography_coverage.manifest
+terms PD https://opentopography.org/usageterms
 origin https://portal.opentopography.org/API/otCatalog?outputFormat=json
 compiler tools/harvest/src/bin/opentopography_coverage.rs
 format opentopography_coverage

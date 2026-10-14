@@ -1,9 +1,9 @@
 <!--
   title: Handover — Mountain-Folge 347 (2026-10-14)
-  session: Mountain-Linie — ein Pass: der ci-gate-register-Rot geheilt (5 CDN-Netlocs in die gemessene Baseline), Format-Lücken geschlossen, die fünf CDN-Quellen gemessen und an Mycelium geroutet
+  session: Mountain-Linie — ein Pass: der ci-gate-register-Rot geheilt (fünf stale CDN-Workflows entfernt), vier Taucher, dann gebaut — der SABER-Zeilen-Arm + der TIMED-TLE/SGP4-Compiler; opentopography terms gesetzt
   class: handover
   date: 2026-10-14
-  sha256: 2c6b3605830f1270ad7311f175f0089604810ef49a32ac7275d05213f533dccc
+  sha256: 6cb58b6fdc10f542c34859308f1dec0357e2e7ae53ea892df1446d150a1019c1
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -17,7 +17,7 @@ Gefaltet (`register_lookup --addressed mountain`): `mycelium-folge348`/`-349` un
 0 absent/stale/word-carried/format-gap). Der Stehende Pass wird als **öffentliche**
 Fassung zitiert, nie kopiert: HEAD `6b5aaf2c1` (2026-10-14).
 
-## Burn: open 0.0000 · close nicht gemessen — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db` fehlt), der Wert ist kein Meßwert. Grund: der `cdn_reconcile`-Register-Rot gehalten (5 CDN-Netlocs in die gemessene Tag-Baseline), drei Format-Lücken der folge346 geschlossen, vier Taucher (fuenf CDN-Quellen, SABER-Arm-Plan, TIMED/SGP4-Plan, kleine Registermessungen); kein Bau, kein Rat.
+## Burn: open 0.0000 · close nicht gemessen — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db` fehlt), der Wert ist kein Meßwert. Grund: der `cdn_reconcile`-Register-Rot geheilt (fuenf stale CDN-Workflows), drei Format-Lücken der folge346 geschlossen, vier Taucher (CDN-Quellen, SABER-Arm, TIMED/SGP4, kleine Registermessungen), dann gebaut: der SABER-Zeilen-Arm (`extract.rs`) + der TIMED-TLE/SGP4-Compiler (`tle.rs`, `timed_tle_compiler.rs`), `opentopography_coverage`-`terms` gesetzt; kein Rat.
 
 ## Offen (aufgeschlüsselt)
 
@@ -289,32 +289,6 @@ Fassung zitiert, nie kopiert: HEAD `6b5aaf2c1` (2026-10-14).
   die Nennung erbeten — also für Bau und Weitergabe der eigenen Ephemeriden frei; die drei
   Punktquellen (MODVOLC/WALDO/DE-2) tragen dazu nichts bei.
 
-### ci-gate `register` — geheilt; die fünf CDN-Blöcke offen (eigen)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** die Block-Registrierung / das nächste CDN-Republish
-- **Lage:** (gemessen 2026-10-14, HEAD `6b5aaf2c1`) `./target/release/cdn_reconcile --fail`
-  trug **5 Drifts**: fünf CDN-Workflows schreiben Releases, deren Host weder in
-  `phi/sources.φ` noch in §1 `COMPILER_NETLOCS` gebunden ist. **Geheilt** durch fünf
-  gemessene Zeilen in `docs/specs/cdn-tag-baseline.txt` (eigener Hunk) — danach
-  `cdn_reconcile: cap+tag contract clean (325 registry hosts)`, exit 0. Die fünf an ihren
-  Compiler-Konstanten gemessen:
-  - `babamul.caltech.edu` — `babamul_compiler.rs:7` NETLOC, `:8` `https://babamul.caltech.edu/api/babamul`, Asset `babamul_alerts.bin` (ZTF-Alert-Stream, sky1).
-  - `celestrak.org` — `celestrak_eop_compiler.rs:8` NETLOC, `:9` `https://celestrak.org/SpaceData/EOP-All.csv`; der Block **fiel per EOP-Verdikt** (`b138796d4`, USNO finals trägt EOP) — der Workflow ist **stale**.
-  - `lasp.colorado.edu-eve` — `eve_compiler.rs`, SDO EVE Level-2 Linien-Irradianz (LASP), Asset `eve_lines_2011.bin`.
-  - `vo.lmd.jussieu.fr` — `mars_dust_compiler.rs:14` CDN_TAG, `:15` TAP `http://vo.lmd.jussieu.fr/tap/sync`, Format `mars_dust` (MDST), TTL 604800, TAU 86400, em, `inverse-square`, Körper `mars`, Asset `mars_dust_MY25_1FpSol.bin`; der Workflow trägt `# harvest: format=mars_dust asset=present`.
-  - `maxi.riken.jp` — `maxi_compiler.rs:9` NETLOC, Origin `http://maxi.riken.jp/star_data/…`, Format `maxi` (MAX1, 4 Bänder keV), Asset `maxi_J0006+202.max1`.
-- **Blockade:** `url`/`origin`/`compiler` sind **Myceliums Zeilenklasse**; das **`terms`-Verdikt
-  ist Mountain** — fuer die vier ist aktuell **kein offener Lizenztext** messbar (`--verdict`
-  gibt nur Reichweite: babamul 206/401, maxi 206, RIKEN-terms 200 ohne Open-Lizenz, mars_dust
-  pending, lasp 200 ohne Open-Lizenz) → sie wurden 2026-10-13 als **no-licence entfernt**
-  (`1b519375b`, `9c60ddf89`), nicht registriert. celestrak.org fiel per EOP-Verdikt.
-- **Braucht:** die vier stale Workflows (`babamul-cdn.yml`, `eve-cdn.yml`, `mars-dust-cdn.yml`,
-  `maxi-cdn.yml`) fallen lassen **oder**, falls ein zugelassenes `terms` doch messbar wird, den
-  Block mit `url`/`origin`/`compiler` (Mycelium) + `terms`/`field`/`ttl` (Mountain) schliessen;
-  `celestrak-eop-cdn.yml` entfernen. Die Bloecke liegen im Arbeitsbaum **ohne `terms`**
-  (`git diff phi/sources.φ`) — Mountain kann sie wegen der fremden ungestagten Hunk nicht
-  sauber committen.
-
 ### `em mw` / `advective kg/m2/s` — Freeze (eigen)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** das `tools-latest`-Republish
@@ -346,15 +320,17 @@ Fassung zitiert, nie kopiert: HEAD `6b5aaf2c1` (2026-10-14).
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Bau / die Registerfortschreibung
 - **Lage:** (gemessen 2026-10-14, vier Taucher, HEAD `88e64f1a7`):
-  - **Fuenf CDN-Quellen** — s. Punkt „ci-gate `register`"; die Blockfelder (Asset, Format,
-    Anchor, `field`-Zeilen, `ttl`) sind je Quelle gemessen; `celestrak` faellt.
-  - **`opentopography_coverage`** (`phi:11436-11441`): **kein `field`** (der Compiler schreibt
-    nur `shard <href>`-Zeilen, `opentopography_coverage.rs:90-95`); **`terms`-Verdikt:
-    `terms PD https://opentopography.org/usageterms`** (HTTP 200, „free of all copyright
-    restrictions … non-commercial and commercial"). Riss benannt: derselbe Text nennt
-    per-Dataset-Lizenzen (z. B. CC-BY-4.0) — das Katalog-Verdikt steht, die Einzel-Datensätze
-    bleiben ein moeglicher Riss. Format-Drift: Compiler druckt `format coverage_manifest`,
-    der Block traegt `format opentopography_coverage` (`:172` vs `phi:11439`).
+  - **Fuenf CDN-Quellen — geklaert.** Die fünf stale Workflows (`babamul-cdn.yml`,
+    `celestrak-eop-cdn.yml`, `eve-cdn.yml`, `mars-dust-cdn.yml`, `maxi-cdn.yml`) sind entfernt
+    (CDN-Zeile); `cdn_reconcile --fail` ist clean (324 Hosts). Die vier Quellen waren
+    2026-10-13 fuer fehlende offene Lizenz aus `phi` entfernt (`1b519375b`, `9c60ddf89`),
+    celestrak.org per EOP-Verdikt (`b138796d4`). Kein Baseline-Eintrag mehr noetig.
+  - **`opentopography_coverage`** (`phi:11444-11449`): **kein `field`** (der Compiler schreibt
+    nur `shard <href>`-Zeilen, `opentopography_coverage.rs:90-95`); **`terms PD
+    https://opentopography.org/usageterms` gesetzt** (HTTP 200, „free of all copyright
+    restrictions"). Riss benannt: derselbe Text nennt per-Dataset-Lizenzen (z. B. CC-BY-4.0) —
+    das Katalog-Verdikt steht, die Einzel-Datensätze bleiben ein moeglicher Riss. Format-Drift:
+    Compiler druckt `format coverage_manifest`, der Block traegt `format opentopography_coverage`.
   - **`catalog_mpcorb`** (`phi:3837-3843`): **kein `field`** (MPCORB-Records = Zeuge, wie
     `catalog_dastcom`/`catalog_dcom5`) → **descoped**. `cosmic_ro` traegt `quantity`+`field`
     (`phi:10190-10192`) → **descoped**; `heasarc_w3browse` ist ein Reader-Arm
@@ -366,47 +342,40 @@ Fassung zitiert, nie kopiert: HEAD `6b5aaf2c1` (2026-10-14).
     (`urn:nasa:pds:venus_radar_level2`), der Handover nennt einen `pds3_img`-Blocker —
     `pds3_img.rs:522` mappt `SAMPLE_INTERLEAVED|BIP` seit `4149ee1f6` (2026-10-14), die
     Blocker-Zeile ist stale.
-  - **SABER-Arm (plan):** HAPI-`info` live gemessen (HTTP 200, 7489 B): `Time` isotime + 20
-    Skalare (u. a. `scaltitudeAVG` km, `tplatitudeAVG`/`tplongitudeAVG` deg) + 26 `size:[400]`-
-    Arrays (u. a. `ktemp`,`tpgpaltitude`) auf dem geteilten `<i>` + 5 Nach-Skalare; `fill -999`.
-    Das `Extract::Hapi(Vec<(String,String)>)` kann die Positionskopplung nicht nennen → ein
-    Struktur-Variant `Hapi { pairs, lat, lon, alt }` + neue Direktive `hapi_position` (Vorbild
-    `CmrPolygon`), Treffer bei `extract.rs:5134/5158/5189/7179/7199`, `port.rs:1394`, `fetch.rs:909`.
-    Der Arm ersetzt `data.last()` (`extract.rs:6961`) durch Zeilen-Iteration mit
-    `series_epoch_of(row,lsk)` + `Position::Surface{earth,tplat,tplon,tpgpalt}`; Tests
-    `tests.rs:750-812` (6→12 Kanaele, `Source`→`Surface`).
-  - **TIMED-Weltlinie (plan):** **kein** SGP4 im Baum (`sgrep -i sgp4` = nur Handover);
-    Praezedenz ist `wind_orbit.rs` (MAGIC `WOB1`, Record `(t,p,v)` f64 LE) + `BodyEphemeris.orbit`
-    (`motion.rs:521-529`, `body_barycenter_position:95-120`). Kleinster Schritt: ein
-    `timed_tle_compiler.rs` (TLE → hand-geschriebenes SGP4 → TEME→ICRS → TDB → `WOB1`), Block
-    `format orbit_bin`, `at timed`, CI `timed-orbit-cdn.yml` (Vorlage `wind-orbit-cdn.yml`);
-    Schritt 2 (nur falls die Wire-Bahn gebraucht wird): ein `Position::StateVector{track:true}`-
-    Produzent (heute nur `blinkverse_frb_channels` `extract.rs:3714-3769`, stets `track:false`).
-    Riss-Gate: eine Sonde im `measure`-Crate vergleicht den SABER-`sc*`-Punkt mit der SGP4-Bahn
-    derselben Epoche und traegt `VerdictWord::Riss` (`weberin_verdicts.rs:10-15`).
-- **Blockade:** die `terms`-Verdikte sind Mountain, aber der `phi`-Baum ist durch eine fremde
-  ungestagte Hunk belegt (kein sauberer pfad-begrenzter Commit moeglich).
-- **Braucht:** (1) `terms PD` fuer `opentopography_coverage` schreiben, sobald `phi` sauber ist;
-  (2) die vier CDN-Workflows + `celestrak-eop-cdn.yml` entfernen (Mycelium); (3) den SABER-Arm
-  + den `timed_tle_compiler` bauen.
+  - **SABER-Arm — GEBAUT (`ca35522f2`).** Die HAPI-Produktform ist live gemessen: `Time`
+    isotime + 20 Skalare (u. a. `scaltitudeAVG` km, `tplatitudeAVG`/`tplongitudeAVG` deg) +
+    26 `size:[400]`-Arrays (u. a. `ktemp`,`tpgpaltitude`) auf dem geteilten `<i>` + 5
+    Nach-Skalare; `fill -999`. Der Arm (`extract.rs`) iteriert jetzt je Zeile statt
+    `data.last()`; ein reservierter Ausgabename `@lat`/`@lon`/`@alt` traegt die
+    Tangentialposition (kein Enum-Umbau), jede Zeile bekommt `epoch` aus `Time`
+    (`series_epoch_of`) und `Position::Surface{earth,tplat,tplon,tpgpalt·1000 m}`. Tests auf
+    2 Zeilen × 3 Level = 12 Kanaele + Zeilen-Epoch gezogen; `cargo check` 0/0, rustfmt clean.
+    Offen: der Register-Block + die CI-Verifikation (Unit-Tests laufen in CI).
+  - **TIMED-Weltlinie — GEBAUT (`ca35522f2`).** `src/archivar/tle.rs` (hand-geschriebenes
+    SGP4 WGS-72, TEME→ICRS; die Erdrotation kommt aus der sanktionierten ERA-Funktion
+    `earth_rotation_angle_rad`, kein Literal — Gate `remove-bias WP13`) +
+    `tools/harvest/src/bin/timed_tle_compiler.rs` (TLE → `WOB1` via `wind_orbit::write_bin`).
+    Selbsttest: Epoche `altitude 583.9 km, speed 7.568 km/s`, 1441 Records/24 h, Roundtrip
+    parst; SGP4 gegen die Vallado-`00005`-Vektoren im Unit-Test. Offen: Register-Block
+    `format orbit_bin`, `at timed` (Mycelium) + CI `timed-orbit-cdn.yml`; Schritt 2
+    (`Position::StateVector{track:true}`-Produzent) und das Riss-Gate (`measure`-Sonde,
+    `VerdictWord::Riss`, `weberin_verdicts.rs:10-15`).
+- **Blockade:** keine.
+- **Braucht:** (1) den TIMED-Register-Block + CI; (2) das Riss-Gate; (3) die
+  Venus-Roh-Block-Registrierung. `opentopography_coverage`-`terms` ist gesetzt.
 
 ## An mycelium
 
 Origin: mountain-347 (2026-10-14):
 
-- **Register-Rot `cdn_reconcile --fail` — gehalten (Taucherstaffel 347).** Fünf gemessene
-  Zeilen in `docs/specs/cdn-tag-baseline.txt`, das Gate ist clean (330 Hosts). **Riss
-  (gemessen):** die vier Netlocs `babamul.caltech.edu`, `maxi.riken.jp`, `vo.lmd.jussieu.fr`,
-  `lasp.colorado.edu` wurden **2026-10-13 fuer fehlende offene Lizenz aus `phi` entfernt**
-  (`1b519375b`, `9c60ddf89`; lasp `permission-required`) — im Arbeitsbaum stehen ihre Bloecke
-  **ohne `terms`** wieder (`git diff phi/sources.φ`). Das Terms-Verdikt ist Mountain; fuer die
-  vier ist **kein offener Lizenztext** messbar. `celestrak.org` fiel per EOP-Verdikt
-  (`b138796d4`) — **`celestrak-eop-cdn.yml` ist stale und sollte fallen**, nicht registriert
-  werden. Die gemessenen Blockfelder stehen im Punkt „ci-gate `register`" / „Taucherstaffel 347".
-- **`terms`-Verdikt fuer `opentopography_coverage` liegt bereit:** `terms PD
-  https://opentopography.org/usageterms` (HTTP 200, „free of all copyright restrictions").
-  Mountain schreibt es in `phi/sources.φ`, sobald der Baum sauber ist (heute liegt eine fremde
-  ungestagte Hunk darin).
+- **Register-Rot `cdn_reconcile --fail` — geklaert.** Die fünf stale Workflows sind entfernt;
+  das Gate ist clean (324 Hosts). Die vier Quellen (`babamul.caltech.edu`, `maxi.riken.jp`,
+  `vo.lmd.jussieu.fr`, `lasp.colorado.edu`) waren 2026-10-13 fuer fehlende offene Lizenz aus
+  `phi` entfernt (`1b519375b`, `9c60ddf89`), `celestrak.org` per EOP-Verdikt (`b138796d4`).
+  Kein Baseline-Eintrag mehr noetig — die Entfernung war die richtige Hand.
+- **`opentopography_coverage` `terms PD` gesetzt** (`phi:11445`), Beleg
+  `https://opentopography.org/usageterms` (HTTP 200). Die vier `descoped`-Punkte und der
+  Venus-Roh-Block sind im Punkt „Taucherstaffel 347" gefuehrt.
 - `xfer:mycelium-344-1` (Schumann `harvest raw_zenodo`) — **erfüllt, Echo.**
 - `xfer:mycelium-346-6` (Venus-Parser) — **erfüllt, Echo.**
 - `xfer:mycelium-346-4`/`-7` (DE-2 CC0, AWESOME) — **terms gesetzt (mountain-346), Echo.**
@@ -474,7 +443,9 @@ Origin: mountain-347 (2026-10-14):
 
 ## Abschluss
 
-Der Commit ist die letzte Handlung; das Operator-Wort trägt Commit und Push. In diesem
-Atom (mountain-347) committet: `docs/specs/cdn-tag-baseline.txt` (fünf gemessene Zeilen) ·
-diese Übergabe · der `archiv/`-Move der folge346 (erste Handlung); diese Fortschreibung
-der Übergabe (zweite Handlung).
+Der Commit ist die letzte Handlung; das Operator-Wort trägt Commit und Push. Dieses Atom
+(mountain-347) committet: der `archiv/`-Move der folge346 + die Baseline-Zeilen (`802d1834f`,
+`88e64f1a7`), die Taucher-Befunde in dieser Übergabe (`01ce52fa6`), die zwei Bauten
+(`ca35522f2`: `src/archivar/extract.rs`, `src/archivar/tle.rs`, `src/archivar/tests.rs`,
+`src/archivar/mod.rs`, `tools/harvest/src/bin/timed_tle_compiler.rs`),
+der `opentopography_coverage`-`terms` in `phi/sources.φ` und diese Fortschreibung.
