@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass + Taucher + Rat + Bridge-Roster: finals-Leser, harvest-Direktive, Doppel-Arme, Venus-Reader-Arm; SABER/Venus/ICGEM durch recherche·roster·rat (Riss auf SABER/Venus)
   class: handover
   date: 2026-10-14
-  sha256: 3a11742d96d920fd1b8d947b95c91c84ff1e715ff7673b821bdaaff5d0fb563f
+  sha256: e927fbd63adb0d05492e21c78826e165c059daa1fa0195d6ea41b45c9f9d2c25
   status: live
 -->
 # Handover — Mountain-Folge 345 (2026-10-14)
@@ -16,7 +16,7 @@ eingegangen (CelesTrak und LOD-`finals` gemessen erledigt, `harvest`-Direktive
 gebaut; SABER/Venus/UCAR-fäden bleiben). Der Stehende Pass (Mycelium-Register) wird
 zitiert, nie kopiert.
 
-## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass + Taucher-Runde + Rat — finals-Leser (Code + Block + 6 Tests), harvest-Direktive, Doppel-Arme, Venus-Reader-Arm (`vnrd.rs` + Dispatch), 6 Taucher (5 parallel + 1 Recherche), Rat + Bridge-Roster (3 Seats) für SABER/Venus/ICGEM; der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
+## Burn: open 0.00 · close 0.40 · cap 0.40 Grund: ein Pass + Taucher-Runde + Rat — finals-Leser (Code + Block + 6 Tests), harvest-Direktive, Doppel-Arme, Venus-Reader-Arm (`vnrd.rs` + Dispatch), 6 Taucher (5 parallel + 1 Recherche), Rat + volle Bridge-Roster-Tafel (11 Seats) für SABER/Venus/ICGEM; der Session-Eigenverbrauch ist mid-session nicht isolierbar (`session_burn` trägt nur beendete Sessions — der Gesamtwert fiel im Fenster 1.7797→1.1284), `close` ist die Cap-Grenze, kein gemessener Delta.
 
 ## Offen (aufgeschlüsselt)
 
@@ -208,27 +208,33 @@ der `archiv/`-Move der folge344.
 (alle 15 Produkte → ein `VNRD`, `t` = Label-Epoche, `v` = Kartenmittel, `comp` = Menge).
 3) ICGEM → **Witness** (nicht-strahlende Gestalt; kein 0.0-Sentinel).
 
-**Roster (Bridge, vier Frontier-Seats; Duck · Qwen · Z.ai geantwortet, Claude nicht im
-Fenster):**
+**Roster (Bridge, volle Tafel — Linien-Gruppe + Auth-Route; nicht nur die vier Frontier):**
 
-| Seat | 1 | 2 | 3 |
+| Stimme | 1 SABER | 2 Venus | 3 ICGEM |
 |---|---|---|---|
+| **Rat** | a (B2) | **D** | Witness |
 | Duck (GPT-6 Luna) | a | W | W |
 | Qwen (Qwen3.8-Max) | b | W | (nicht gelesen) |
 | Z.ai (GLM-5.3 Deep Think) | b | W | W |
-| Claude (Sonnet 5.5 Extra hoch) | — keine Antwort im Fenster (gemessen) | | |
-| **Rat** | B2 (≙a) | D | Witness |
+| Claude (Sonnet 5.5 Extra hoch) | c | W | W |
+| DeepSeek (DeepThink) | b | W | W |
+| MiniMax M3 | a | D | 0.0 |
+| Lumo 2.0 Max | a | W | W |
+| Mistral (Vibe) | a | W | W |
+| Perplexity | b | W | W |
+| Sakana (Namazu) | a | W | W |
+| Kimi | — Kontingent überschritten (gemessen) | | |
+| Gemini | — kein Chat (Landing Page) | | |
 
-**Riss 1 — SABER.** Rat/a gegen Roster 2×b: das Roster will Breite/Länge mitanfordern und die
-Höhe als **Ort** führen; der Rat will sie als eigenen Wert (A = A, Präzedenz `viking_grav`).
-Beide Linien stehen, ungeglättet.
+**Q1 SABER:** a=5 (Duck · MiniMax · Lumo · Mistral · Sakana) · b=4 (Qwen · Z.ai · DeepSeek ·
+Perplexity) · c=1 (Claude) — **kein Zug**; der Rat (a) liegt knapp vorn, das Roster ist gespalten.
 
-**Riss 2 — Venus (scharf).** Rat **D** gegen Roster **3×W** (einstimmig): das Roster sagt, der
-Mittelwert tilge die Struktur und Zeilen-Profile zerschnitten die Fläche — die Karte muss Karte
-bleiben (**Witness**). Das ist genau der Riss, den der Rat selbst benannte. Der D-Compiler ist
-gebaut; gewinnt W, wird die strahlende Serie `descoped`, der Compiler geparkt.
+**Riss 2 — Venus (scharf).** **W=10** gegen D=2 (Rat + MiniMax): das Roster will die Karte als
+Karte; Mittelwert (D) und Zeilenprofil (B) gelten ihm als Strukturverlust. Das ist genau der
+Riss, den der Rat selbst benannte. Der D-Compiler ist gebaut; gewinnt W, wird die strahlende
+Serie `descoped`, der Compiler geparkt.
 
-**Konvergenz — ICGEM.** Rat **Witness** + Roster W/W: einig.
+**Konvergenz — ICGEM.** Rat **Witness** + Roster **W=8** (nur MiniMax 0.0): einig.
 
 **Tiefster Befund (F3, eigener Punkt):** zwei Epochen-Linien widersprechen sich —
 `matrix.rs:644`/`drs_fits.rs:38` lesen `epoch ≤ 0.0` als absent, `agrav.rs:113`/`hips.rs:793`/
