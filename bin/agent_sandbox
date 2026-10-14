@@ -30,6 +30,7 @@ exec bwrap \
   --ro-bind-try /home/johannes/.local/bin /home/johannes/.local/bin \
   --ro-bind-try /home/johannes/.local/share/opencode /home/johannes/.local/share/opencode \
   --ro-bind-try /home/johannes/.gitconfig /home/johannes/.gitconfig \
+  --ro-bind-try /home/johannes/.config/gh /home/johannes/.config/gh \
   --share-net \
   --chdir "$root" \
   /bin/bash "$@"
