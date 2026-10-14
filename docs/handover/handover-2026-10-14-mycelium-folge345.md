@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 345 (2026-10-14)
   class: handover
   date: 2026-10-14
-  sha256: 3c502cad52c6b2c3d9062fbb4b2df02f5966001f38a0646c3176b0ea5daaae50
+  sha256: 02bd08c8116095fe98d730951af10104969e06341df105b390540034d336e618
   status: live
 -->
 # Handover — Mycelium-Folge 345 (2026-10-14)
@@ -46,16 +46,16 @@ den Punkten unten aufgenommen; River/Mountain können ihre Blöcke streichen.
 ### MODVOLC — Block gesetzt, Lauf dispatcht
 - **Status:** wartend (eigen, Lauf läuft) | **Bindung:** eigen
 - **Trigger:** Ergebnis des `modvolc-cdn`-Laufs
-- **Lage:** (gemessen/umgesetzt 2026-10-14/345) Mountains Block steht: `phi:12050-12057` `url …/nrt3.modaps.eosdis.nasa.gov/modvolc_thermal.bin` · `terms PD` · `origin …/MODVOLC/Recent` · `compiler modvolc_compiler.rs` · `field modvolc_thermal`. Workflow-Kopf `tag=nrt3.modaps.eosdis.nasa.gov` deckt sich. `gh workflow run modvolc-cdn.yml` nach Push dispatcht. Echo `xfer:mountain-342-3`.
+- **Lage:** (gemessen/umgesetzt 2026-10-14/345) Mountains Block steht: `phi:12050-12057` `url …/nrt3.modaps.eosdis.nasa.gov/modvolc_thermal.bin` · `terms PD` · `origin …/MODVOLC/Recent` · `compiler modvolc_compiler.rs` · `field modvolc_thermal`. Workflow-Kopf `tag=nrt3.modaps.eosdis.nasa.gov` deckt sich. `gh workflow run modvolc-cdn.yml` nach Push dispatcht → Lauf `38491452658`. Echo `xfer:mountain-342-3`.
 - **Blockade:** keine.
-- **Braucht:** den Lauf einmalig lesen (`ci_manage view <id>`); bei Erfolg `asset=present` bestätigt. Riss bleibt: LANCE nur NRT (`Recent/`), Archiv 2000–2019 bei LAADS hinter Login (`pending`).
+- **Braucht:** den Lauf einmalig lesen (`ci_manage view 38491452658`); bei Erfolg `asset=present` bestätigt. Riss bleibt: LANCE nur NRT (`Recent/`), Archiv 2000–2019 bei LAADS hinter Login (`pending`).
 
 ### ENTSŌ-E A78 — Header-Tag korrigiert, Lauf dispatcht
 - **Status:** wartend (eigen, Lauf läuft) | **Bindung:** eigen
 - **Trigger:** Ergebnis des `entsoe-cdn`-Laufs
-- **Lage:** (gemessen/umgesetzt 2026-10-14/345) Workflow-Kopf `entsoe-cdn.yml:1` `tag=web-api.tp.entsoe.eu` → `tag=transparency.entsoe.eu` gezogen (deckt sich mit `entsoe_compiler.rs:8` `TAG` und Block-`url` `phi:11835`); Idempotenz-Step prüfte bereits `transparency.entsoe.eu`. Block `phi:11835-11842` trägt `terms CC-BY-4.0` + `origin https://web-api.tp.entsoe.eu/api` + `compiler` + `field`. `gh workflow run entsoe-cdn.yml` nach Push dispatcht. Echo `xfer:mountain-342-1`, `xfer:river204-entsoe1`.
+- **Lage:** (gemessen/umgesetzt 2026-10-14/345) Workflow-Kopf `entsoe-cdn.yml:1` `tag=web-api.tp.entsoe.eu` → `tag=transparency.entsoe.eu` gezogen (deckt sich mit `entsoe_compiler.rs:8` `TAG` und Block-`url` `phi:11835`); Idempotenz-Step prüfte bereits `transparency.entsoe.eu`. Block `phi:11835-11842` trägt `terms CC-BY-4.0` + `origin https://web-api.tp.entsoe.eu/api` + `compiler` + `field`. `gh workflow run entsoe-cdn.yml` nach Push dispatcht → Lauf `38491449026`. Echo `xfer:mountain-342-1`, `xfer:river204-entsoe1`.
 - **Blockade:** keine.
-- **Braucht:** den Lauf einmalig lesen; der Compiler sendet `in_Domain`+`out_Domain` (river-Fix).
+- **Braucht:** den Lauf einmalig lesen (`ci_manage view 38491449026`); der Compiler sendet `in_Domain`+`out_Domain` (river-Fix).
 
 ### DE-2-Manifestation — Host `cdaweb.gsfc.nasa.gov` unerreichbar
 - **Status:** wartend | **Bindung:** wartend
