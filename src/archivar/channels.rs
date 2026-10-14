@@ -1038,6 +1038,9 @@ pub fn build_finals_channels(
         let Some(mjd) = col(7, 15) else {
             continue;
         };
+        if line.as_bytes().get(57) != Some(&b'I') {
+            continue;
+        }
         let pmx = col(134, 144).or_else(|| col(18, 27));
         let pmy = col(144, 154).or_else(|| col(37, 46));
         let ut1 = col(154, 165).or_else(|| col(58, 68));
