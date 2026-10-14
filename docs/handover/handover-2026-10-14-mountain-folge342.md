@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: Fermi-4LAC-Arm + mev, GEOFON-FDSN-Quelle, SEANOE-Dublette entfernt, Besitz-Zensus, ICGEM --epoch-Override
   class: handover
   date: 2026-10-14
-  sha256: 112be9fec4ea85148bd07ae74b27052b5609b5163f43984bfea12486d001cba3
+  sha256: f18519319f5a89f146a1bfca51f41d86419138d451f5e791693dd6bffb72c4a6
   status: live
 -->
 # Handover — Mountain-Folge 342 (2026-10-14)
@@ -14,7 +14,7 @@ Session konsumierte `handover-2026-10-13-mountain-folge341.md` (→
 `docs/handover/archiv/`) und faltete die adressierten Blöcke (mycelium-344,
 river-209, future).
 
-## Burn: open 0.00 · close 0.11 · cap 0.25 Grund: ein Pass (Operator-Wort), drei Taucher-Wellen (Fermi/GEOFON/Register) + zwei Messagenten; die Line-Session selbst bleibt unter dem Deckel, die Sub-Agenten tragen eigene Zeilen. Gemessen via `session_burn`/opencode.db (`ses_ec88c70afffe…`). Commits `a650b1327 · 4f2fe9ff7 · 8a773b07d · 2d4c526f4`, HEAD == origin/main, `cargo check` 0/0.
+## Burn: open 0.00 · close 0.36 · cap 0.40 Grund: ein Pass (Operator-Wort, kein Planungstheater): zwei Taucher-Wellen + Recherche/Rat/Roster zum EOP-Verdikt (sieben UI-Seats) + Venus-Arm. Gemessen via `session_burn`/opencode.db (`ses_ec88c70afffe…`). Commits `a650b1327 … 82a393fb9`, HEAD == origin/main, `cargo check` 0/0.
 
 ## Gefaltet (xfer-Echos)
 
@@ -34,30 +34,30 @@ river-209, future).
 ### Venus Radar PDS4-IMG — gemessen, Arm + Block offen (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Bau
-- **Lage:** (gemessen 2026-10-14) Bundle `urn:nasa:pds:venus_radar_level2` v1.0, DOI `10.17189/1522443`, **CC0-1.0**; Wurzel `https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/`; 15 Produkte (5 Epochen 1988/2012/2015/2017/2020 × `inc`/`ocp`/`scp`), je 960 000 000 B headerloses `Array_2D_Map` (IEEE754LSBSingle, 12000×20000, Sinusoidal 1000 m/pixel, R=6051 km); Bundle total 13,41 GiB → Split-Route.
-- **Blockade:** keine.
-- **Braucht:** einen PDS4-IMG-Arm + den Block mit Split-Route (`docs/SOURCE_PORT.md`).
+- **Lage:** (gemessen 2026-10-14) Bundle `urn:nasa:pds:venus_radar_level2` v1.0, DOI `10.17189/1522443`, **CC0-1.0**; Wurzel `https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/`; 15 Produkte (5 Epochen × `inc`/`ocp`/`scp`), je 960 000 000 B headerloses `Array_2D_Map` (IEEE754LSBSingle, 12000×20000, Sinusoidal 1000 m/pixel, R=6051 km); Bundle total 13,41 GiB → Split-Route. **Lesearm gebaut** (`82a393fb9`, `src/archivar/pds4_img.rs`, `cargo check` 0/0).
+- **Blockade:** Blockform offen — die 15 Produkte tragen **je eigene Einheit** (`inc` = deg; `ocp`/`scp` = dimensionslos); der Arm deklariert keine Felder (wie `pds3_img`/`pds4_fits`).
+- **Braucht:** Block + Split-Route + Compiler; per-Produkt-Einheit/`tau` entscheiden.
 
 ### UCAR-FPI — Arm verdrahtet, Block fehlt (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** die gemessene Lizenz des Samples
-- **Lage:** (gemessen 2026-10-14) `series_parse_bin`-Arm (`extract.rs:162`, `400de8ce2`), `series_component_name`-Zuordnung (`fpi_mer_wind_ms`/`fpi_zon_wind_ms`) und der `main_flow`-Guard für `ucar_fpi` committet (`2d4c526f4`). Es existiert **kein** Registerblock; der von einem Taucher versuchte Block trug eine ungemessene `terms`-Zeile und einen Nicht-CDN-`url` → bewusst nicht committet.
-- **Blockade:** `terms`/`url`/`compiler` ungemessen.
-- **Braucht:** die gemessene Lizenz des UCAR/HAO-FPI-Samples (`fpi.hao.ucar.edu`) + die Blockform (roher `url` wie `seismicportal.eu` oder CDN).
+- **Lage:** (gemessen 2026-10-14) Arm + Zuordnung + Guard committet (`2d4c526f4`). Lizenz gemessen: **keine benannte Lizenz** — UCAR/DASH-Records ohne `license_id`, Daten-Nutzungssatz (PI vor Publikation kontaktieren, DOI zitieren, UCAR Terms of Use), terms-URL `https://data.ucar.edu/dataset/fpi-resolute`; Zugang e-mail-registriert (`registration.hao.ucar.edu`). **Riss:** kein Athabasca-FPI-DOI (DASH `q=Athabasca` = 0); die Netz-DOIs (Resolute `10.5065/D6833QDN` …) dürfen **nicht** für Athabasca einstehen.
+- **Blockade:** Blockform (`url` CDN vs. raw) + Compiler offen.
+- **Braucht:** Block mit `terms ucar-hao-data-use https://data.ucar.edu/dataset/fpi-resolute` und dem gemessenen Athabasca-`url`; Compiler/`url`-Form entscheiden.
 
 ### Athabasca ERG-SC CDF — Block fehlt (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der gemessene ERG/ISEE-`terms`-Token
-- **Lage:** (gemessen 2026-10-14) generischer `format cdf`-Arm (`extract.rs` → `cdf25::extract_witness_channels`); Pfad `https://ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/vlf/ath/`, DOI `10.34515/DATA.GND-0004-0002-0201_v01` (`--verdict` HTTP 206). Der versuchte Block (`terms isee-pwing-vlf-acknowledgement`) trug einen erfundenen Lizenz-Token → nicht committet.
-- **Blockade:** `terms`-Token + Felder ungemessen.
-- **Braucht:** den gemessenen ERG/ISEE-Lizenz-Token + `format cdf`-Block mit den VLf-Zeugen-Feldern.
+- **Lage:** (gemessen 2026-10-14) generischer `format cdf`-Arm (`extract.rs` → `cdf25::extract_witness_channels`); Pfad `https://ergsc.isee.nagoya-u.ac.jp/data/ergsc/ground/vlf/ath/`, DOI `10.34515/DATA.GND-0004-0002-0201_v01` (`--verdict` HTTP 206), Dateien CDF. Lizenz gemessen: **`erg-sc-rules-of-the-road`** (ERG-SC „Rules of the Road" + ISEE/PWING-VLF-Acknowledgement), terms-URL `https://ergsc.isee.nagoya-u.ac.jp/data_info/erg.shtml.en`; Weiterverteilung verboten. Der frühere Token `isee-pwing-vlf-acknowledgement` war ungemessen → verworfen.
+- **Blockade:** Blockform offen — es gibt **kein** `format cdf` im Register; Witness-Blöcke tragen `witness`/`record`/`force`/`no-cadence` (kein `terms`), und es gibt keinen Compiler/CDN-Asset.
+- **Braucht:** Blockform entscheiden (Witness-Block vs `format`-Block) + `terms erg-sc-rules-of-the-road <url>`.
 
 ### SABER — Höhenform (C) offen (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** die Form-Zeile
-- **Lage:** (gemessen 2026-10-14) Rat-Verdikt (C) steht: Höhe als zweite, gleich indizierte Koordinate auf geschlossener Level-Achse (`altitude(time, level)`, 400 Stufen); der Level-Index muss Teil des Schlüssels sein. Entwurf `state/river/weberin-register-entwuerfe-2026-10-13.md` Block 5.
+- **Lage:** (gemessen 2026-10-14) Rat-Verdikt (C) steht: Höhe als zweite, gleich indizierte Koordinate auf geschlossener Level-Achse (`altitude(time, level)`, 400 Stufen); der Level-Index muss Teil des Schlüssels sein. Entwurf `state/river/weberin-register-entwuerfe-2026-10-13.md` Block 5. Lizenz gemessen: **`saber-rules-of-the-road`**, terms-URL `https://spdf.gsfc.nasa.gov/pub/data/timed/saber/SABER_rules_of_the_road.txt`; Datenwurzel `https://spdf.gsfc.nasa.gov/pub/data/timed/saber/`, HAPI `TIMED_L2A_SABER`, DOI `10.48322/2src-g677`.
 - **Blockade:** die `channel`/`field`-Form ist nicht als Registerzeile geschrieben; ggf. fehlt ein Arm.
-- **Braucht:** die `channel`/`field`-Zeile nach Form (C).
+- **Braucht:** die `channel`/`field`-Zeile nach Form (C); Block `terms saber-rules-of-the-road <url>`.
 
 ### harvest-Direktive — Parser + Schumann-Block (eigen)
 - **Status:** eigen | **Bindung:** eigen
