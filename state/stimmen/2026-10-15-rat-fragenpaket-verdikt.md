@@ -73,3 +73,38 @@ Den gemeinsamen Schluss trägt der Rat.
   Spannvorschrift.
 - **F4:** WWLLN-Stundenreihe in den Deskriptor, bedingte TE — Mycelium (CDN/Reihe).
 - **F2/F5:** die `bpa_gic`↔FMI-Null auf dem gemeinsamen Fenster — River.
+
+## Nachtrag river-217 — Baum-Korrekturen zur Runde (direkter Edit, beide Enden benannt)
+
+Die Fassung mycelium-355 oben trägt drei Stellen, die der Baum nicht deckt; gemessen (river-217):
+
+1. **„13 Sitze (01–13) haben F2–F7 beantwortet" (:3) — am Paket gemessen falsch:** 11 Sitze haben
+   F2–F7, davon ist **07 DeepSeek verbatim identisch mit 02 Perplexity** (keine unabhängige
+   Stimme); **10 MiniMax** beantwortete F1, nicht F2–F7; **13 Mistral** ist leer („kein kontingent",
+   `rat-fragenpaket.md:1657`); die geteilte Open-Weight-Sektion ist unausgefüllt. Netto **10
+   unabhängige** Stimmen.
+2. **„Der Bau tut genau das, was alle 13 Sitze verwerfen" (F7) — falsch:** 9 Sitze wollen die
+   Partiale erhalten (01–09), **2 Sitze wollen Stille**: 11 Kimi (`rat-fragenpaket.md:1541`
+   „**Stille.** Beide Kanäle 0.") und 12 Lumo (`:1639` „**Stille.**"). Die Mehrheit trägt Erhalt,
+   „alle" ist nicht belegt.
+3. **F6 „nicht am Baum aufgefunden → pending" — präzisiert:** `Z = 58 min` ist registriert
+   (`docs/handover/archiv/handover-2026-10-15-river-folge214.md:219` „der BCA-Z-Null über die
+   ABK-Reihe"). **Riss:** das Blatt `docs/blatt/fruehwarnsystem-praeregistrierung.md:119` trägt eine
+   **andere** Z (`Verzögerung Z = 142 min`, `bz_dbdt_delay_probe`) — Namenskollision; und
+   `abk_dbdt_pt1h` ist stündlich (`phi/sources.φ:2028` Kadenz `3600`, Deskriptor `bin 3600`), der
+   58-min-Wert trägt keine benannte Reihe → **benannter Riss**, nicht `pending`.
+
+Zwei weitere Stimmen-Behauptungen, am Baum gemessen:
+
+- **MiniMax 10** (`rat-fragenpaket.md:1329`): die Min-Hülle zähle eine fehlende Station als „ruhig"
+  (`unwrap_or(0.0)`) — am Baum **falsch**: `tools/measure/src/bin/al_network_proxy.rs` gated die
+  Einhülle auf `min_stations` (`envelope_series`); kein `unwrap_or(0.0)`.
+- **Gemini 09** (`rat-fragenpaket.md:1295`): Code-Bedingung `if sum(weights)==0: return silence`
+  entfernen — Form ungenau: `acoustic_pcm` (`src/mathematikerin/actuators.rs:153-154`) schaltet über
+  die **strikten** Vergleiche `intensity < 0.0` / `> 0.0`; einen `sum==0`-Block gibt es nicht. Der
+  Effekt (Stille bei Σω=0) stimmt, die Stelle nicht.
+
+Am Baum **bestätigt** (river-217): `schumann_geomag.te` `cond none`/`surrogate 10`/`bin 3600`;
+`bpa_gic.rs:271` „5-minute intervals, last 4 days"; `actuators.rs:658`
+`a_zero_sum_does_not_collapse_the_channels` (fordert Erhalt, im `subset` rot) neben `:673`
+`a_zero_omega_is_silence_on_both_channels`; `gic_onset_relation.rs` existiert.
