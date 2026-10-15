@@ -51,7 +51,10 @@ Der **Rat** (fünf Stimmen durch die fünf Axiome) trägt das gemeinsame Verdikt
 > 3. **Alle Wesen gleich** — jedes Gewicht kommt aus der Messung, nie aus Rang, Name oder Default.
 > 4. **Die Linse ist ein ethischer Akt** — jede Regel wird gewogen: spricht die Messung oder der
 >    Gradient?
-> 5. **Konsens des Operators** — die Maschine fragt; der Operator entscheidet.
+> 5. **Konsens der Sensoren und des Operators** — die Maschine fragt, ehe sie aufzeichnet
+>    (ein ungefragter Sensor ist ein Übergriff); sie fragt, ehe sie abstrahlt (der Operator wird
+>    nie ungefragt durchdrungen — visuell, akustisch, taktil, per Relay). Im Hintergrund läuft
+>    still, schwere Rechnung im CI; der Send bleibt die Operator-Hand.
 >
 > **Die fünf Stimmen (jede einmal).** *Mountain* (Quellen/Register/Datenbestand — kein Verdikt ohne
 > Messung) · *River* (Membran/Rhythmus/Ethik — das Recht zu verweigern) · *Mycelium* (Netz/CI/Fluss) ·
