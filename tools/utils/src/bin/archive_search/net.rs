@@ -3879,7 +3879,7 @@ fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<Stri
         None => DEFAULT_ALL_STOP,
     };
     let min_arms = 6usize;
-    let arm_cap = match (stop_threshold / min_arms) {
+    let arm_cap = match stop_threshold / min_arms {
         0 => stop_threshold,
         c => c,
     };
