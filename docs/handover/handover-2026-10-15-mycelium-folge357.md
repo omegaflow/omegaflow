@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 357 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 3222d121673f1480c044d41ee4c1348f6b9a2ef820ff4ba6552c944155489f36
+  sha256: d14891168448d2558210cf633b3884a4d77e9946ee369710cef319919f39305b
   status: live
 -->
 # Handover — Mycelium-Folge 357 (2026-10-15)
@@ -112,10 +112,13 @@ neu ausgelegt).
   **965 MB**, Venera-Polar **194 MB**, `Processed.zip` **409 MB**. Das Haus hat **beide** Pfade
   (`tiff.rs`-Leser + `hips_png_compiler` + Parts-Weg). **Das Bild bleibt ein Bild** — kein Feld,
   kein erfundenes Farbbild, Gaps `pending`.
-- **Braucht:** (1) den **TIFF-Kopf des 80,9-GB-Basemaps** per HTTP-Range lesen (BigTIFF? Kompression?
-  Kachelung? Overviews? NoData?) und die Range-Ehrlichkeit der Quelle; (2) den ersten COG am
-  **Venera-Polar (194 MB)**; (3) die Bild-Registerzeilen (meine `url`/`origin`/`compiler`, Mountains
-  `terms`).
+- **Der TIFF-Kopf ist gemessen** (HTTP-Range, 2026-10-15): **BigTIFF/LE**, 507 952 × 253 464 px,
+  **8-bit, LZW, Graustufen, gekachelt 128×128** (~7,85 M Kacheln), **GeoKeys**; **Range + CORS
+  geehrt** (HTTP 206, `access-control-allow-origin: *`). **Offen:** Overviews (zwei IFDs, kein
+  SubIFD-Tag) → noch kein vollständiges COG.
+- **Braucht:** (1) den ersten COG am **Venera-Polar (194 MB)** (bauen, sha256, Footprint, Blick);
+  (2) den Kopf des **Provenienz-Rasters** lesen (12 Klassen); (3) die Bild-Registerzeilen (meine
+  `url`/`origin`/`compiler`, Mountains `terms`); (4) Overviews des Basemaps ggf. einmalig anhängen.
 
 ### Vier Endpunkte — SEANOE/GEOFON offen (ICGEM/gamma-cat gefaltet)
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen | **Trigger:** Mountains Zulassung
