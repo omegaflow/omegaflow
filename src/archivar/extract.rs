@@ -4098,18 +4098,22 @@ fn hapi_surface_position(
     }
 }
 
+struct HapiRowCtx<'a> {
+    col: &'a HashMap<String, usize>,
+    fill_of: &'a HashMap<String, f64>,
+    size_of: &'a HashMap<String, usize>,
+    lat_idx: Option<usize>,
+    lon_idx: Option<usize>,
+    alt_idx: Option<usize>,
+    body_name: &'a str,
+}
+
 fn hapi_emit_row(
     row: &[JsonVal],
     pairs: &[(String, String)],
     extracts: &[Extract],
-    col: &HashMap<String, usize>,
-    fill_of: &HashMap<String, f64>,
-    size_of: &HashMap<String, usize>,
+    ctx: &HapiRowCtx,
     epoch: f64,
-    lat_idx: Option<usize>,
-    lon_idx: Option<usize>,
-    alt_idx: Option<usize>,
-    body_name: &str,
     channels: &mut Vec<(Channel, FieldConfig)>,
 ) {
     for (param, name) in pairs {
@@ -4117,16 +4121,16 @@ fn hapi_emit_row(
             continue;
         }
         if let Some(base) = param.strip_suffix(".<i>") {
-            let Some(&idx) = col.get(base) else {
+            let Some(&idx) = ctx.col.get(base) else {
                 continue;
             };
-            let Some(&size) = size_of.get(base) else {
+            let Some(&size) = ctx.size_of.get(base) else {
                 continue;
             };
             let Some(fc) = hapi_family_field(extracts, name) else {
                 continue;
             };
-            let fill = fill_of.get(base).copied();
+            let fill = ctx.fill_of.get(base).copied();
             for i in 0..size {
                 let Some(JsonVal::Arr(a)) = row.get(idx) else {
                     break;
@@ -4153,7 +4157,12 @@ fn hapi_emit_row(
                         epoch,
                         station_code: None,
                         position: hapi_surface_position(
-                            row, lat_idx, lon_idx, alt_idx, i, body_name,
+                            row,
+                            ctx.lat_idx,
+                            ctx.lon_idx,
+                            ctx.alt_idx,
+                            i,
+                            ctx.body_name,
                         ),
                         name: name_i,
                         value: val,
@@ -4169,7 +4178,7 @@ fn hapi_emit_row(
             }
             _ => (param.as_str(), None),
         };
-        let Some(&idx) = col.get(base) else {
+        let Some(&idx) = ctx.col.get(base) else {
             continue;
         };
         let v = match comp {
@@ -4185,7 +4194,7 @@ fn hapi_emit_row(
         let Some(val) = v else {
             continue;
         };
-        if fill_of.get(base).is_some_and(|&f| val == f) {
+        if ctx.fill_of.get(base).is_some_and(|&f| val == f) {
             continue;
         }
         let Some(fc) = hapi_family_field(extracts, name) else {
@@ -4198,7 +4207,14 @@ fn hapi_emit_row(
                 bin_width: 0.0,
                 epoch,
                 station_code: None,
-                position: hapi_surface_position(row, lat_idx, lon_idx, alt_idx, 0, body_name),
+                position: hapi_surface_position(
+                    row,
+                    ctx.lat_idx,
+                    ctx.lon_idx,
+                    ctx.alt_idx,
+                    0,
+                    ctx.body_name,
+                ),
                 name: name.clone(),
                 value: val,
             },
@@ -7118,6 +7134,15 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             .iter()
                             .find(|entry| entry.1 == "@alt")
                             .and_then(|(param, _)| col.get(param.as_str()).copied());
+                        let row_ctx = HapiRowCtx {
+                            col: &col,
+                            fill_of: &fill_of,
+                            size_of: &size_of,
+                            lat_idx,
+                            lon_idx,
+                            alt_idx,
+                            body_name: &body_name,
+                        };
                         for row_val in data {
                             let JsonVal::Arr(row) = row_val else {
                                 continue;
@@ -7127,14 +7152,8 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                 row,
                                 pairs,
                                 effective_extracts,
-                                &col,
-                                &fill_of,
-                                &size_of,
+                                &row_ctx,
                                 epoch,
-                                lat_idx,
-                                lon_idx,
-                                alt_idx,
-                                &body_name,
                                 &mut channels,
                             );
                         }
