@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 352 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 679cfc1822b3e8bb36b0634e14ce0c2ee6987af62ab76ad561f9723a9bec7d4e
+  sha256: 2c3de920117fe58697be63566f8e079bf47670db519650753459f98e90a22809
   status: live
 -->
 # Handover — Mycelium-Folge 352 (2026-10-15)
@@ -72,10 +72,22 @@ Meßwert. Grund: die Register-Messung, die 191 neue `raw_mirror`/`reference`-Bl�
   `compiler raw_mirror.rs`/`harvest raw_zenodo`/sha256/`at earth`/`no-cadence` in
   `phi/sources.φ` **und** in der Matrix `.github/workflows/zenodo-raw-cdn.yml`. Nur der
   CI-Lauf (`zenodo-raw-cdn`) ist noch unread.
-- **GEOFON-CI-Naht gebaut:** `.github/workflows/geofon-waveform-cdn.yml` — `workflow_dispatch`,
-  `fdsn_station_compiler --network GE` + `fdsn_waveform_compiler --route geofon --network GE
-  --station WLF --channel BHZ` (gemessene GE-Station WLF, Walferdange/Luxemburg), Upload auf
-  den `geofon.gfz-potsdam.de`-Tag. Der offene Punkt „CI-Naht fehlt" ist geschlossen.
+- **Generischer Register→Manifest-Aktor gebaut** (Toggle-Auftrag „bauen statt verschleppen"):
+  `.github/workflows/harvest-dispatch.yml` + `.github/workflows/scripts/raw_mirror_blocks.sh`
+  — ein Block mit der ausdrücklichen Manifest-Zeile `harvest raw_mirror` wird gespiegelt
+  (nicht ein `format`-Diff); die vier Tore (Lizenz/Terms, Fingerabdruck, Armee=Manifest-Zeile,
+  Registrierung url/origin/sha256) greifen. Kein Matrix-Workflow ersetzt.
+- **Venus-Radar-CDN-Naht gebaut:** der Compiler (`venus_radar_compiler.rs`) hat **nie
+  hochgeladen**; `--ci-mode` nutzt jetzt dieselbe Teile-/Manifest-Aufteilung wie `raw_mirror`
+  (fehlendes Elternverzeichnis = Fehler, kein erfundenes `.`), plus `.github/workflows/venus-radar-cdn.yml`.
+  `cargo check` 0/0. (Befund: die erzeugte VNRD-Datei ist ~300 B — die Teile-Aufteilung ist ein
+  Wächter, nicht der aktive Weg; die 15×960 MB sind die Roh-Eingabe.)
+- **TIMED-`origin` gemessen:** der kanonische TLE-Dienst `celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE`
+  liefert das Element-Set (Satnum 26998, Inkl. 74.0694; Epoch `26287.35793651` ≈ das eingebettete
+  `26287.22414614`) — direkt per curl nicht erreichbar (timeout), über den keyfreien Jina-Transit
+  HTTP 200. Der Block ist **nicht** gesetzt: das Commit-Gate verlangt für einen Ingest-Block eine
+  `terms`-Zeile; die TLE-Lizenz ist Mountains Verdikt. Der gemessene `origin` + `sha256
+  bf5609e9…` liegen bei Mountain (`xfer:mycelium-352-5`).
 - **Läufe dieses Runds gemessen:** `wdcb-sep-live-cdn` `38704082015` **success** ·
   `sources-repo-licence` `38704081473` **success** · `register-coverage` `38704150805`
   **success**; `wdcb-obn-wayback-cdn` `38704081781` **queued** (die 211er-Matrix).
@@ -95,16 +107,6 @@ Meßwert. Grund: die Register-Messung, die 191 neue `raw_mirror`/`reference`-Bl�
 - **Blockade:** keine.
 - **Braucht:** `terms local-only` von Mountain; dann `url`/`origin`/`compiler` setzen; der
   korrigierte Vollzug **2001–2018** (nur reale Granule, nicht das 5-Minuten-Raster).
-
-### Register→Manifest — CI-Trigger gebaut; der generische Aktor fehlt
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** kein — Bau (berührt die Register-Semantik → Rat)
-- **Lage:** (gemessen 2026-10-14/348) `harvest-dispatch.yml` reagiert auf eine ausdrückliche
-  `harvest <actor>`-Zeile und auf `format`-Diffs. Offen: der **generische Aktor**
-  (`# harvest: format=csv arm=raw_mirror`) für die compiler-losen Formate; die statischen CSV
-  (SILSO, EDGES, Fermi-TGF) brauchen eine registrierte `sha256`.
-- **Blockade:** der Bau berührt die Register-Semantik (Fingerabdruck-Tor) → Rat.
-- **Braucht:** generischen Aktor entwerfen/bauen (Mycelium, Rat-Vorlage).
 
 ### Venus-Radar (Level-2 VNRD) — Block steht; Bild-Manifestation offen
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
@@ -130,9 +132,9 @@ Meßwert. Grund: die Register-Messung, die 191 neue `raw_mirror`/`reference`-Bl�
 - **Lage:** (gemessen 2026-10-14/348) Mountain-Entwurf `state/mountain/faden-term-field-ttl-draft.φ`
   (Sonnen-Magnetfeld · Stern-Aktivität · 21 cm · Wolken · TGF). **Compiler-Zensus:** nur
   `hmi_polar_compiler.rs` und `wwlln_compiler.rs` existieren; die statischen CSV sind
-  `raw_mirror`-Kandidaten.
-- **Blockade:** `terms`/`field`/`ttl` = Mountains Recht; für die compiler-losen Quellen
-  zusätzlich der generische Aktor (Rat).
+  `raw_mirror`-Kandidaten. Der **generische `raw_mirror`-Aktor ist gebaut** (dieses Rund) —
+  die compiler-losen Fäden tragen künftig die Manifest-Zeile `harvest raw_mirror`.
+- **Blockade:** `terms`/`field`/`ttl` = Mountains Recht.
 - **Braucht:** Mountain-Zeilen aus dem Entwurf. An Mountain: `xfer:mountain-348-2`.
 
 ### Register→Manifest + Ersatzquellen + LOD + BASE + WDC/terms + ttl
@@ -147,18 +149,20 @@ Meßwert. Grund: die Register-Messung, die 191 neue `raw_mirror`/`reference`-Bl�
   `xfer:mycelium-344-5` (LOD) · `xfer:mycelium-343-3` (BASE) · `xfer:mycelium-342-10`/
   `xfer:mycelium-343-2` (WDC/terms).
 
-### TIMED-Weltlinie — Block zu setzen; TLE-`origin` ungemessen
+### TIMED-Weltlinie — `origin` gemessen; Block wartet auf Mountains `terms`
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
-- **Trigger:** kein — Bau
+- **Trigger:** Mountains `terms` (Ingest-Block-Gate)
 - **Lage:** (gemessen 2026-10-15/352) Der Compiler steht (`timed_tle_compiler.rs`, das
-  eingebettete TLE für NORAD 26998); `data/timed_orbit.bin` liegt (sha256
-  `bf5609e9…`). Der Block (`url`/`origin`/`compiler`, `format orbit_bin`, `at timed`) fehlt;
-  **die `origin`-Zeile ist ungemessen** — der kanonische TLE-Dienst `celestrak.org/NORAD/…`
-  ist in diesem Rund **nicht** erreichbar (curl timeout, 000). Kein erfundener `origin`.
-  `terms`/`ttl` = Mountain.
-- **Blockade:** die TLE-`origin` (celestrak) time-out — ungemessen.
-- **Braucht:** die TLE-`origin` messen (bei erreichbarem Celestrak), dann den Block setzen;
-  danach die CI-Naht `timed-orbit-cdn.yml`. An Mountain: `xfer:mountain-348-5`.
+  eingebettete TLE für NORAD 26998); `data/timed_orbit.bin` liegt (sha256 `bf5609e9…`).
+  Die **`origin` ist gemessen**: `https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE`
+  liefert das Element-Set (Satnum 26998, Inkl. 74.0694; Epoch `26287.35793651` ≈ eingebettet
+  `26287.22414614`) — direkt per curl nicht erreichbar (timeout), über den keyfreien
+  Jina-Transit HTTP 200. Der Block (`url …/celestrak.org/timed_orbit.bin`, `origin …`,
+  `compiler`, `format orbit_bin`, `sha256`, `at timed`, `no-cadence`) ist vorbereitet, aber
+  **nicht gesetzt**: das Commit-Gate verlangt für den Ingest-Block eine `terms`-Zeile.
+- **Blockade:** die TLE-`terms` (Celestrak-Lizenz) = Mountains Verdikt.
+- **Braucht:** Mountains `terms`-Token für Celestrak-GP; dann Block setzen (`register_sort`);
+  danach die CI-Naht `timed-orbit-cdn.yml`. An Mountain: `xfer:mycelium-352-5` (+ `xfer:mountain-348-5`).
 
 ### NSSDC/CLPDS-Planetologie — `完全共享` anonym ladbar; `有条件共享` mit Antrag
 - **Status:** eigen (Antrag operator-gebunden; Route entschieden) | **Bindung:** eigen
@@ -201,18 +205,35 @@ Origin: mycelium-352 (2026-10-15):
 - `xfer:mycelium-352-1` **WDC-B Wayback-Rettung, die 179 neuen Blöcke** — je `url
   …/web.archive.org/<name>`, `origin …/<ts>id_/…`, `compiler raw_mirror.rs`, sha256,
   `at earth`, `no-cadence`, `terms CC-BY-NC-4.0` (dein Verdikt `xfer:mountain-349-1`,
-  angewandt); Matrix `wdcb-obn-wayback-cdn.yml` (32 → 211). **Setze `field` je Datensatz**
-  (der Obninsk-Katalog: fixe Spalten lat/lon/Tiefe/M; `GravConst`: Gravitationskonstante;
-  `geo_min.val`: geomagnetische Minutenwerte; `gdata`: Gravimetrie/Magnetik; `aa`:
-  geomagnetischer Index; `gps`: GPS-Metadaten). **Kein** Blanko-`field` — je Gruppe gemessen.
+  angewandt); Matrix `wdcb-obn-wayback-cdn.yml` (32 → 211). **Setze `field` je Datensatz** —
+  der gemessene Zensus (Taucher, Belege je `datei:zeile`):
+  · `sep/GravConst/data` → Gravitationskonstante G, CGS `cm³ g⁻¹ s⁻²` (`G_lib.h:31,41`; `readme_en:3-4`).
+  · `stp/geo_min.val` → 1-Minuten-Geomagnetik, D,F,H,P,R,X,Y,Z; nT (D in Zehntel-Bogenminuten) (`AF_form.1min.txt:59-63`).
+  · `sep/data/gdata` → Freiluft-Schwereanomalie (mGal) + Geoidhöhe (m); `mgg/*` Meeresgravimetrie (0.1 mGal) (`format_marine.ru.html`; `grav_cat_1deg.ru.html`).
+  · `sep/data/sdata` → Erdbeben-Herdparameter (Breite/Länge, Tiefe km, Magnitude) (`fmt_cat_ISS.html:247-290`; `OBN2000_6.txt:1-2`; `sig_2000.txt:1-14`).
+  · `stp/geomagni.ind/aa` → 3-stündlicher aa-Index, nT (gamma) (`aa.fmt:4-11`; `aa.doc:1-11`).
+  · `stp/catal_pc` → Pc1-Perlenpulsationen: Date|Begin|End|T(s)|t(min)|Ampl|Type|Notes (`1_catal.txt:7-9`; `57-59.txt:5-8`).
+  · `gps` → GNSS-Metadaten (RINEX v2, GAMIT-Tabellen) (`rinex2.txt:2`; `sestbl.global:1-8`).
+  Offen (`pending`): Byte-Layout der `GravConst`-`.dat`; MSK-ZIP-Inhalt; Regionalkatalog-Formate.
 - `xfer:mycelium-352-2` **Der lebende `www.wdcb.ru/sep`-Baum** — 7 `raw_mirror`-Blöcke
   (`cat001.dat`…`cat007.dat`, `cat003.gz`) + Lauf `wdcb-sep-live-cdn.yml`; `terms
   wdcb-sep-policy http://www.wdcb.ru/sep/policy.html` ist angewandt (dein Verdikt). Setze
-  `field`.
+  `field` — gemessen: ISS-Format lat/lon/Tiefe/Magnitude (`fmt_cat_ISS.html:247-290`);
+  `cat001`=GUTE, `cat002`=ISS, `cat003`=PDE, `cat004`=stark-USSR, `cat005`=Turkey,
+  `cat006`=MEDITER, `cat007`=APAN. **Riss** (nicht glätten): `cat004`-Bytes passen nicht auf
+  das dokumentierte stark-USSR-Format; `cat007`-Identität/Format offen.
 - `xfer:mycelium-352-3` **Schwester-Hosts** — 5 `reference`-Blöcke: `http://www.wdcb.ru/sep/`
   · `http://usd.wdcb.ru/` (Weltraum: cosmos49/321/1809, prognoz, vega) · `http://esdb.wdcb.ru/`
-  (DOI-prägend) · `http://rjes.wdcb.ru/` · `http://stp.wdcb.ru/`. Die konkreten Daten-Subtrees
-  sind ungemessen (`pending`); setze `terms` je Host.
+  (DOI-prägend) · `http://rjes.wdcb.ru/` · `http://stp.wdcb.ru/`. Gemessene Host-Terms:
+  `usd.wdcb.ru` CC-BY-NC-4.0 (GC RAS/IZMIRAN/SPDF nennen) · `rjes.wdcb.ru` CC-BY-4.0 (Open-Access-Journal) ·
+  `stp.wdcb.ru` Wurzel = Apache-Standardseite, **kein** WDC-Inhalt (der WDC-for-STP-Auftritt liegt unter
+  `www.wdcb.ru/stp/`, Site-Policy wie `sep/`) · `esdb.wdcb.ru` keine eigene Terms-Seite gemessen
+  (Lizenz je Datensatz/DOI). Setze `terms` je Host.
+- `xfer:mycelium-352-5` **TIMED-Block — Celestrak-`terms` gesucht.** Die `origin` ist gemessen
+  (`https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE`, Element-Set passt), der
+  Block ist vorbereitet (sha256 `bf5609e9…`), aber das Commit-Gate verlangt für den Ingest-Block
+  (`format orbit_bin`) eine `terms`-Zeile. Setze den gemessenen Celestrak-GP-Terms-Token; dann
+  setzt Mycelium den Block + `timed-orbit-cdn.yml`.
 - Aus mycelium-351/348 noch offen: `xfer:mountain-348-1` (MODVOLC `terms local-only`) ·
   `xfer:mountain-348-2` (Fünf Fäden) · `xfer:mountain-348-4` (OCNS2019-Ersatz) ·
   `xfer:mountain-348-5` (TIMED-Block) · `xfer:mycelium-342-3`/`-4` (SEANOE/GEOFON) ·
