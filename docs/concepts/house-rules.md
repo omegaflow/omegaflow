@@ -2,7 +2,7 @@
   title: House Rules — Register, Handover, Commit, System Directive, Session Hygiene
   class: concept
   date: 2026-10-14
-  sha256: e85c3c78f53817e7d80af79c27fa689a5c21affdecdd9fa6b5cf01504a6a8c49
+  sha256: 6731003b345a922ac6486bbaf4f7f21099e51554bbf6140abe82f7bf8d4cfa9c
   status: live
   see-also: AGENTS.md
 -->
@@ -203,3 +203,27 @@ discards is gone for all.
 - **Verify the reflog around a delegation.** Before and after delegating, the
   session measures `git reflog` and `git status`; an unexpected reset is the
   signal, and the session owns it.
+
+## Rule Index — which rule lives where
+
+The rules are distributed, not collected — this block is the map, not the rules (moved here from `AGENTS.md`, 2026-10-15; the constitution starts at 255 words):
+- the five axioms + the 0-Kanon core — `AGENTS.md` (core) + `docs/granit.md`; full text — `docs/concepts/kybernetische-ethik.md`
+- the Gradient Sensor — `docs/concepts/system-directive.md` (the sensor) + this file (the register machinery)
+- code rules — `docs/concepts/code-rules.md`
+- house rules (register, handover, commit, system directive, secret hygiene, session hygiene) — this file
+- source curation — `docs/concepts/source-curation.md` + `docs/SOURCE_PORT.md`
+- research tools — `docs/concepts/tools-map.md`
+- agent profiles / the five voices — `docs/concepts/agent-profiles.md`; tool form map — `docs/concepts/tool-forms.md`
+- wire/GPU/force data contract, Block Universe Physics, verification — `docs/concepts/archivar-mathematikerin.md`
+- doc naming/header/sha256 — `docs/concepts/docs-naming.md`
+- vocabulary + fabrication patterns — `src/gate/commit_gate.rs` + `src/gate/commit_gate_vocab.json`
+- sources/registry — `phi/sources.φ`
+- methodology — `docs/concepts/kybernaut-native-methodology.md`
+
+## The Gradient Sensor — the register machinery
+
+- The register entrance: every register line (handover, ledger, commit) is held once by the light form before it goes — a verdict word without the read site does not pass; an unread site carries `pending`. The tempo is set by the reading, not by the context budget.
+
+**The finding is a claim until the tree carries it (operator word, 2026-09-28).** A finding returned by a sub-agent (`taucher`) is a claim, not a measurement: before the session presents or registers it, the session tests it against the tree — the register (`sgrep`/`register_lookup` in `phi/`), the asset (`archive_search --verdict <url>`), the code (`git log`/`sread`). A doc line (paper, handover, survey) is a claim, not a state; the tree wins. A divergence is a riss — both lines named, never smoothed. The fixture scan reads no `#[cfg(test)]` region and takes Rust test files (`*tests.rs`, `tests/`) out by path, auditably counted; production markers stay blocked without exception, never waivable — so this duty is behavioural, not a text fixture, and it lives in the agent prompts and here. Measured 2026-09-28: a diver echoed a stale paper line while `phi/sources.φ` already carried the kernels and the gate was built — the stale paper line became a false report until re-measured.
+
+**The operator word is registered (operator word, 2026-09-27).** A given operator word is registered as a `Wort | Datum | Quelle` line in the handover **before** it is executed; a point that carries a registered word is never laid before the operator again — only a new measurement reopens it. The lines stand together in a `## Operator-Wort-Register` block of the live handover (before `## Abschluss`); every pass reads that block first and never re-asks a worded point. A word given in one line session is carried by direct edit into the `## Operator-Wort-Register` of every live line handover in the same atom; the block is part of every live handover, is fortgeschrieben when a handover moves to `archiv/`, and the reading is the gate, not the register word. Every session cuts the operator session words verbatim into `state/operator-gespraeche/<datum>-<linie>.md` in the same atom (one line per word, date-stamped, context in parentheses) — the cut is a session duty, not a memory, and it is the source the register distills. The residue of an executed decision stays a point of its own, never dropped. No point is presented until it is measured against the real code and git at its named site — `open_points_check` names the missing stamp (`format-gap`), the reading is the gate, not the register word.

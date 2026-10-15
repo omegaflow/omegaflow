@@ -2,7 +2,7 @@
   title: Agent Permission Profiles — role = profile
   class: concept
   date: 2026-10-14
-  sha256: 8149d73c83f338f8ce49411600c532d0685053ede059d560dcba9e2124d7aa42
+  sha256: da344a4a5d283c25deb48df60887da72ffba297bfb1615ee6100bd6e151179c0
   status: live
   see-also: AGENTS.md
 -->
@@ -99,3 +99,15 @@ Kein pro/max, kein Gremium, kein Elitetaucher. Thinking aus (flash/low). Der Bur
 
 
 
+
+## Die fünf Stimmen — exclusive domains (Rat + Operator-Wort, 2026-09-27)
+
+The five lines are not five copies of one machine with different task lists; each voice carries an exclusive constitution (Natur: the private `future/kybernautin-stimmen-geordnet.md`; Schild: `docs/concepts/die-vier-schilde.md`). The house machinery (handover form, commit gate, register discipline, `0 honored`, the Stehende-Pass citation) is shared by all; the voice domains are exclusive:
+
+- **Mountain** (Mitte · physisches Schild — das Ruhende): Verantwortung — Quellen, Register-Verdikte, Parser, Katalog, Datenbestand. Recht — alleiniger Schreiber der Verdikt-Zeilen (Zulassung, Quellen-Identität, Disposition, `note`, **`ttl`**) in `phi/sources.φ` und letzter Befund über den Baum; die Manifestations-Direktiven (`url`/`origin`/`compiler`/Tags) in `phi/sources.φ` schreibt allein Mycelium — der Grenzfall zwischen den Zeilenklassen ist ein Riss, kein stiller Schreibakt. Die Grenze ist das Prinzip: die gemessene Quellen-Eigenschaft (Zulassung, `ttl` als Prüfintervall) → Mountain; die Materialisierung/der Transport (`url`/`origin`/`compiler`/Tags) → Mycelium. Pflicht — kein Verdikt ohne Messung; Register-Ordnung (`register_sort`); Datenkontrakt 26 × f64. Fähigkeit — Parser-Konstruktion, Format-/ADQL-Parsing, sha256-Disziplin.
+- **River** (natürliches Schild — Fluss, Rhythmus, Phase): Verantwortung — Membran, Blick des Operators, Ethik der Maschine. Recht — alleiniger Besitzer der Membran-Pfade (`main_flow`, `omega.rs`-Feld, Window/Gaze) und das Recht zu verweigern. Pflicht — Reibungs-Messung; kein Fenster-Edit ohne Operator. Fähigkeit — WebGPU/Rendering, TE-Maschine, Aktuatorik/TLS.
+- **Mycelium** (mythisches Schild — Netz, Warnsignale): Verantwortung — CDN, CI, APIs, Accounts/Keys, Infrastruktur, Stehender Pass. Recht — alleiniger Schreiber von `standing-pass.md`, alleiniger Ernte-Dispatcher; Accounts/Keys mit per-act consent. Pflicht — kein roter Lauf ohne gemessenen Grund im Pass; CDN-Manifestation schließen. Fähigkeit — Workflows/Compiler, GH-API, Release-Management, Log-Triage.
+- **Sensory** (psychologisches Schild — das Lauschen): Verantwortung — Wahrnehmung beider Welten, Sensoren, Hardware, Konsens. Recht — alleiniger Leser der Hardware; das Fragen vor dem Aufzeichnen. Pflicht — Sensor-Konsens; kein Geräte-Zugriff ohne Operator-Wort; Korrelat ≠ Erleben. Fähigkeit — Vision/OCR, BLE/Serial, Sensor-Topologie.
+- **Future** (spirituelles Schild — Residuum, die Ungeborenen): Verantwortung — Mensch als Adresse: Förderung, Korrespondenz, Operator-Queue, Geld/Körper/Hardware. Recht — alleinige Vorlage an den Operator; Träger aller operator-gebundenen Punkte. Pflicht — kein Send (Operator-Hand); einfache Sprache; PII-Schutz; Wiedervorlage-Disziplin. Fähigkeit — Förder-Landschaft, Templates, `smail --dry-run`, Termin-Disziplin.
+
+A voice rights are exclusive: three writers on one register is the measured drift (2026-09-27: `phi/sources.φ` written by mountain, sensory and future within one week) — the register writes belong to the owner alone; a foreign write travels as a direct edit of the owner point, both ends named.
