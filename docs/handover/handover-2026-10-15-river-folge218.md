@@ -2,7 +2,7 @@
   title: Handover — River-Folge 218
   class: handover
   date: 2026-10-15
-  sha256: 9e29f58772f7372d692285690b6cb05a0c13c1e3d8992ce65bf8426dc337825b
+  sha256: 38d6bafc3f39f35ed9b91c09845d81b56fe400cd7152608d1a5e22bcd8910604
   status: live
 -->
 # Handover — River-Folge 218 (2026-10-15)
@@ -76,7 +76,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…219) · `
 - **Trigger:** die Naht ist **gebaut** (river-219): `mag_optical_overlay --window --k` liest den optischen Keogramm-Onset und den Magnetometer-Onset je Station (robustes Maß `median + k·1.4826·MAD`) und druckt die Lags; Workflow `mag-optical-lag` (`b81c126be`). **Gestoßen:** Lauf `38750488818` (2024-05-10, Stationen `ykc,fcc,ott`, Keogramm `themis_asi_timed_keogram_20240510_kapu.bin` = CDN HTTP 206, Fenster 06:50–08:15). Die frühere Hülle „GIC-Onset-Relationsschritt" war kein Pfad — `gic_onset_relation.rs` ist eine **andere** Naht (GIC↔MCON, lief river-192/193, Ratio 1,217; `bpa_gic` `pending`, 4 Tage).
 - **Lage:** (gemessen 2026-10-12 river-197 + river-200) 2D: kein kohärenter off-meridian optischer Eintritt bei 07:41; der optische Onset ist ein einzelnes azimutal wanderndes Band 07:54:45→07:55:45. Ganznacht-Overlay (CDN-TKDG `themis_asi_timed_keogram_20240510_kapu.bin`): Stundenmittel 03–06 ≈ 3310–3343, 07 = 3370.6, Ränder 02 = 3895 / 08 = 3911; der Hauptsturm 17:00–23:00 UT (Tageslicht). **Riss:** der river-196-Pick „07:41" ist nicht eindeutig (Stunde 07 trägt eine Kette 07:13–07:48, größte YKC-Spitze 07:20); die „+14 min 27 s" ist pick-abhängig.
 - **Blockade:** keine.
-- **Braucht:** den Lauf `38750488818` auswerten — optischer Onset + Lag je Station, und die Pick-Abhängigkeit (die Kette 07:13–07:48) benennen; den `pick`-Riss tragen.
+- **Braucht:** den Lauf `38750488818` ist **ausgewertet**: die naive robuste Schwelle greift den **Dämmerungsanstieg** (optischer Onset **08:13Z**, Fensterende 08:15) statt des Aurora-Onsets; Magnetometer `ykc` 07:20Z / `fcc` 07:19Z (Lag optisch−mag ≈ −53 min), `ott` `pending`. Die Naht ist gebaut, aber die 1D-Helligkeitsregel ist **zu naiv** — der optische Onset braucht die **2D-Band-Erkennung** (`themis_asi_frame_onset`, das wandernde Band 07:54:45→07:55:45); der `pick`-Riss bleibt.
 
 ### Weberin-Zeugen-Fäden — SABER-Form (C); Athabasca manifestiert; UCAR-FPI Arm steht
 - **Status:** eigen (Bau) | **Bindung:** eigen
