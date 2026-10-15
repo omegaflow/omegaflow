@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 354 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: db536cdfc66011a91b2127aee8ac1ab6645030732b6074ef0cccd540294ac6ce
+  sha256: 93d7315f5423876a4b1cc7285c3f1e0f60727f236f3e33c84b116a7454670373
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -161,7 +161,7 @@ Antwort unten) · `xfer:mycelium-356-1` (SABER/UCAR-FPI — die Arm-Antwort steh
 - **Trigger:** der Feld-Bau.
 - **Lage:** (gemessen/gebaut/verdiktet 2026-10-15, dieses Rund) Der Kopf ist gemessen und der Kern
   steht (s. „Gearbeitet"): `gfc.rs` trägt `GfcHead`/`GfcModel`/`synthesize` (fully-normalized 4π),
-  `gfc_compiler.rs` liest den vollen Kopf. **Der M4-Rat ist gelaufen** (9 Stimmen; Verdikt
+  `gfc_compiler.rs` liest den vollen Kopf. **Der M4-Rat ist gelaufen** (10 Stimmen, Kimi nachgetragen; Verdikt
   `state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md`): die SH-Synthese tritt
   **nicht** als achte Kernel-Form in die `field`-Zeile, sondern als **eigene Klasse**
   (`model_output`/`derived`); der Draht trägt die **Koeffizienten**, Gitter sind `derived`;
@@ -172,8 +172,9 @@ Antwort unten) · `xfer:mycelium-356-1` (SABER/UCAR-FPI — die Arm-Antwort steh
   konvergiert nicht → **Axiom-5-Entscheid des Operators**); Norm-Mehrdeutigkeit (`fully_normalized`
   ambig → die Formel muss in den Kopf); Force-Gate (SH hat keine Newton-Kraft); Höhenstabilität nur
   bis Grad 14 geprüft → `pending`; die 2190-Naht ist **nicht** gemessen → `pending`; Verallgemeinerung
-  (alle Normen/Körper). Sitz-Stand: Mistral/Duck/Tryingopen `pending` (benannt); **Kimi trug die
-  falsche Antwort** (N24-Platzierung, keine M4-Stimme) — Riss, benannt.
+  (alle Normen/Körper). Der **Kopfweg steht 5 : 5** (a: Perplexity/Claude/Qwen/DeepSeek/Kimi ·
+  b: GLM/Gemini/MiniMax/Lumo + Sakana) → Operator. Sitz-Stand: Mistral/Duck/Tryingopen `pending`
+  (benannt); **Kimi nachgetragen** (die frühere N24-Antwort ist ersetzt).
 - **Blockade:** der **Kopfweg** (Operator, Axiom 5); dann die Konformanzmessung gegen eine fremde
   Referenz (ICGEM-Calculation-Service/pyshtools) bei niedrigem Grad; der CDN-Block ist Myceliums.
 - **Braucht:** (1) den Operator-Entscheid **Kopfweg (a) Draht vs. (b) `phi`-Zeile** (einzeln
@@ -350,6 +351,7 @@ Origin: mountain-354 (2026-10-15):
 - **„ja ich meine die sprachmodelle … ich will nur copy und paste machen …"** | 2026-10-15 | (mountain 354) — „die Modelle" = die Sprach-Modelle/UI-Sitze, nicht die Feld-Modelle.
 - **„nein du sollst einfach nur die liste der seats in das dokument eintragen …"** | 2026-10-15 | (mountain 354) — die Sitz-Liste in `2026-10-15-mountain-rat-fragen-sh-kernel.md`, `## Die Sitze`.
 - **„so alles stimmen sind da."** | 2026-10-15 | (mountain 354) — 9 M4-Stimmen eingetragen; das Verdikt steht, der **Kopfweg** bleibt Operator-Entscheid.
+- **„hab kimi nachgetragen."** | 2026-10-15 | (mountain 354) — Kimis M4-Antwort im Slot (Kopfweg (a)); 10 Stimmen, Kopfweg **5 : 5**.
 
 ## Abschluss
 
@@ -361,7 +363,7 @@ radius 6378136.3 m, max_degree 5540, norm fully_normalized, tide_system zero_tid
 Definition bis Grad 14 geprüft; 12/12 `archivar::gfc`-Tests grün), `gfc_compiler.rs` liest den
 vollen Kopf über `gfc::parse_head`. `cargo check` 0/0, `rustfmt --edition 2024 --check` exit 0,
 Register canonical (2807), `--orphans` 0. Das Roster-Paket **M4** ist gestellt (Sitz-Liste im
-Dokument), **9 Stimmen** eingetragen und das **Verdikt** geschrieben
+Dokument), **10 Stimmen** eingetragen (Kimi nachgetragen) und das **Verdikt** geschrieben
 (`state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md`, am Baum verifiziert).
 Offen: der **Kopfweg** (Operator, Axiom 5), die Konformanzmessung und der CDN-Block.
 Diese Fortschreibung (folge353 → `archiv/`).
