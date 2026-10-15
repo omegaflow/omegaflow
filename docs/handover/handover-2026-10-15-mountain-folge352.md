@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 352 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 475c186f854c85600338dbc7a1656f4bb41b62718f25e990fcaf301c755d10cf
+  sha256: 66a90905039dae2afad9efaa2d43f10652d4ade17950627a23e1614327a19756
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -45,6 +45,11 @@ Prosa, kein Pfad-Block) · 0 stale. Gefaltet (`register_lookup --addressed mount
   kein WDC-Inhalt) bleiben ohne `terms`-Zeile — benannte Absenz, kein erfundenes Token.
   Verifiziert: `register_sort phi/sources.φ` **canonical** (2 805 Blöcke) ·
   `cdn_reconcile --fail` clean (334 Hosts) · `register_lookup --orphans --fail` 0.
+- **Roster-/Rat-Fragebogen erstellt** (`state/stimmen/2026-10-15-mountain-rat-fragen.md`,
+  Operator-Wort 2026-10-15): die drei offenen Kraft-/Kernel-Fragen (M1 WDC-B-Messgrößen,
+  M2 Aurora-Grenzbreite, M3 OVATION-AACGM) mit den **fünf Axiomen + fünf Stimmen**, der gefahrenen
+  **weiten Leiter** (`bin/all_wide`, 7 Spills) und der Sitzliste. Der Operator reicht das Paket je
+  Sitz ein; das Verdikt trägt der Rat.
 - **Aurora-Grenzen vermessen (Taucher).** Vollständige Format-Spec für **BAS IMAGE SI12
   Boundaries** (`ramadda.nerc-bas.ac.uk`, OGL v3.0; 30 Monats-`.txt`, 50 Spalten:
   Zeit, Instrument, 24 equatorwärtige + 24 polwärtige AACGM-Breiten je 1-h-MLT-Bin, `NaN` =
