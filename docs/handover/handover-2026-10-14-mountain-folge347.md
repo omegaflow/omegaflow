@@ -3,7 +3,7 @@
   session: Mountain-Linie — ein Pass: der ci-gate-register-Rot geheilt (fünf stale CDN-Workflows entfernt), vier Taucher, dann gebaut — der SABER-Zeilen-Arm + der TIMED-TLE/SGP4-Compiler; opentopography terms gesetzt
   class: handover
   date: 2026-10-14
-  sha256: 6cb58b6fdc10f542c34859308f1dec0357e2e7ae53ea892df1446d150a1019c1
+  sha256: d56ce4c1fca6790f54b00eddffd8fa1be16a78b1cf3fcc84edfe57cd3e2de91c
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -17,7 +17,7 @@ Gefaltet (`register_lookup --addressed mountain`): `mycelium-folge348`/`-349` un
 0 absent/stale/word-carried/format-gap). Der Stehende Pass wird als **öffentliche**
 Fassung zitiert, nie kopiert: HEAD `6b5aaf2c1` (2026-10-14).
 
-## Burn: open 0.0000 · close nicht gemessen — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db` fehlt), der Wert ist kein Meßwert. Grund: der `cdn_reconcile`-Register-Rot geheilt (fuenf stale CDN-Workflows), drei Format-Lücken der folge346 geschlossen, vier Taucher (CDN-Quellen, SABER-Arm, TIMED/SGP4, kleine Registermessungen), dann gebaut: der SABER-Zeilen-Arm (`extract.rs`) + der TIMED-TLE/SGP4-Compiler (`tle.rs`, `timed_tle_compiler.rs`), `opentopography_coverage`-`terms` gesetzt; kein Rat.
+## Burn: open 0.0000 · close nicht gemessen — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db` fehlt), der Wert ist kein Meßwert. Grund: der `cdn_reconcile`-Register-Rot geheilt (fuenf stale CDN-Workflows), drei Format-Lücken der folge346 geschlossen, vier Taucher (CDN-Quellen, SABER-Arm, TIMED/SGP4, kleine Registermessungen), dann gebaut: der SABER-Zeilen-Arm (`extract.rs`) + der TIMED-TLE/SGP4-Compiler (`tle.rs`, `timed_tle_compiler.rs`), `opentopography_coverage`-`terms` gesetzt, das GEOFON-Wellenform-`field` und der Venus-Radar-VNRD-Block geschrieben (`xfer:mycelium-350-1`/`-2`); kein Rat.
 
 ## Offen (aufgeschlüsselt)
 
@@ -128,11 +128,15 @@ Fassung zitiert, nie kopiert: HEAD `6b5aaf2c1` (2026-10-14).
   `decode_raster` indiziert danach; unbekannter Token → `UnknownInterleave` (kein
   stiller BSQ-Fallback); `pds3_bip_radar_compiler` delegiert an den Kern (Reshuffle weg).
 - **Blockade:** keine.
-- **Braucht:** (1) die **Bild-Manifestation (W)** wählen — wie das georeferenzierte
-  `Array_2D_Map` als Gestalt/`pds4_img` in den Baum kommt; (2) den Block
-  (`url`/`origin`/`compiler`/`terms CC0-1.0`, Einheit am Feld); (3) Split-Route erst
-  nachgelagert; (4) der native Lauf braucht 15×960 MB (CI). Der D-Compiler
-  (`venus_radar_compiler.rs`) und der VNRD-Reader (`vnrd.rs`) bleiben **geparkt**.
+- **Gebaut (mountain-347):** der Level-2-**VNRD-Block** steht in `phi/sources.φ`:
+  `url …/pds-geosciences.wustl.edu/venus_radar_level2.bin`, `terms CC0-1.0` (Beleg
+  Bundle-Site), `origin` = Bundle-Site, `compiler venus_radar_compiler.rs`, `format vnrd`,
+  `at venus`, `no-cadence`, drei `field`-Zeilen (`venus_radar_inc_deg` geometry deg,
+  `venus_radar_ocp`/`_scp` em 1). Der VNRD-Reader ist verdrahtet (`extract.rs:164,948`).
+- **Braucht:** (1) die **Bild-Manifestation (W)** — wie das georeferenzierte `Array_2D_Map`
+  als Gestalt/`pds4_img` in den Baum kommt; (2) die CI-Naht (15×960 MB). Der rohe
+  PDS3-Complex-Backscatter (`vrm_90xx`, `SAMPLE_INTERLEAVED`) bleibt ein **separater**
+  Gegenstand.
 
 ### ICGEM gfc — Rezept + Site gemessen; Auswerter wartet auf die Epochen-Ablage (eigen)
 - **Status:** eigen (Operator-Wort 2026-10-14: das Modell wie die anderen behandeln) | **Bindung:** eigen
@@ -234,13 +238,12 @@ Fassung zitiert, nie kopiert: HEAD `6b5aaf2c1` (2026-10-14).
     sind über **jede** gemessene Gravimetrie-Zeile **abwesend**. Die Lücke ist **bestätigt,
     nicht gefüllt**.
   - **Schon registriert:** IGETS, AGrav, GRACE-FO, ISC (`phi:10662`/`12609`),
-    EarthScope-FDSN (`phi:174`/`8191`), GEOFON-Event (`phi:10454`), EIDA-Terms (`phi:14525`).
+    EarthScope-FDSN (`phi:174`/`8191`), GEOFON-Event (`phi:10454`), GEOFON-Wellenform
+    (`format fdsn_waveform`, Feld `fdsn_waveform_bhz_ms`), EIDA-Terms (`phi:14525`).
   - **Offen/gesperrt:** EGGN/EPOS-Equip-G (kein Token, `pending`), CGrav/CEIC China
     (Konto-gated, Token ungemessen; re3data „open" ohne Lizenzwert = **Riss**), GOCE
     (ESA offen mit Attribution; exakter SPDX ungemessen, kein `phi`), NIED (Konto-gated,
     Weiterverbreitung untersagt), GSRAS (teils frei/teils bezahlt), ARDA (nicht zuzuordnen).
-  - **Bereit, aber unregistriert:** GEOFON-Wellenform (`…/fdsnws/dataselect/1/query` →
-    200, kein Key) — keine `phi`-Zeile (nur das Event-Catalogue).
   - **Stale Origins (Register-Korrektur):** IGETS `origin` = Projektseite, echter Endpunkt
     `igetsftp.gfz.de` (sftp, registriert); BGI-Host `www.bgi.omp.obs-mip.fr` tot →
     `bgi.obs-mip.fr`.
@@ -248,10 +251,9 @@ Fassung zitiert, nie kopiert: HEAD `6b5aaf2c1` (2026-10-14).
 - **Blockade:** die Kernel-Zuordnung ist keine Pro-Solo-Entscheidung — das Meßgesetz einer
   Quelle berührt den Force-/Kernel-Kontrakt (Rat).
 - **Braucht:** (0) IGETS-/BGI-`origin` korrigieren — **Myceliums Zeilenklasse**, an Mycelium
-  geroutet (s. „An mycelium"); (1) den GEOFON-Wellenform-Block — `url`/`compiler` Mycelium,
-  `terms`/`at`/Kernel liegen bereit; (2) die Kernel-Lücke schließen — Gravimetrie-Kandidaten
+  geroutet (s. „An mycelium"); (1) die Kernel-Lücke schließen — Gravimetrie-Kandidaten
   mit eigenem Meßgesetz (`point`/`exp.-decay`) führen **oder** die `inverse-square`-Bindung
-  als Verdikt tragen; (3) EGGN/China/GOCE/NIED/GSRAS/ARDA als `pending`/`riss` benennen.
+  als Verdikt tragen; (2) EGGN/China/GOCE/NIED/GSRAS/ARDA als `pending`/`riss` benennen.
 
 ### Adressierte Register-Fäden — Lizenzen gemessen, Verdikte offen (eigen)
 - **Status:** eigen (Register-Writes; Messungen jetzt am Baum gegengeprüft) | **Bindung:** eigen
@@ -394,11 +396,24 @@ Origin: mountain-347 (2026-10-14):
   - Der tote BGI-Host `www.bgi.omp.obs-mip.fr` → **`bgi.obs-mip.fr`** (200): **gemessen —
     kein `bgi`/`obs-mip`-Block in `phi`**; die Taucher-Notiz zielt auf keinen Registereintrag.
     Kein Schreibakt.
-  - **GEOFON-Wellenform** ist offen (kein Key), aber ohne `phi`-Block:
-    `origin https://geofon.gfz.de/fdsnws/dataselect/1/query` (200, miniSEED/StationXML).
-    Mountain liefert den Verdikt-Teil — **`terms CC-BY-4.0`** (Beleg `https://geofon.gfz.de/eqinfo/faq/`),
-    `at earth`, Kernel **`point`/`inverse-square`** (Seismik). Bitte `url` (CDN-Asset) +
-    `compiler` setzen, dann `register_sort`.
+  - **GEOFON-Wellenform — gesetzt.** `terms CC-BY-4.0` (Beleg `https://geofon.gfz.de/eqinfo/faq/`),
+    `at earth`, `ttl 60`; das `field` schrieb mountain-347 (`xfer:mycelium-350-1`):
+    `fdsn_waveform_bhz_ms … erfc seismic-surface m/s 60.0`. **Riss zu mycelium-350-1**
+    (dort `point`/`inverse-square`): das Baum-Gesetz fuer Oberflaechen-Seismik ist
+    **`erfc seismic-surface`** (11 Bloecke, u. a. der EarthScope-Geschwisterblock), `point`
+    traegt seismisch kein Block; der Baum gewann.
+
+Origin: mycelium-350 (2026-10-15):
+
+- `xfer:mycelium-350-1` **GEOFON-Wellenform `field` — gesetzt.** `field fdsn_waveform_bhz_ms
+  fdsn_waveform_bhz_ms erfc seismic-surface m/s 60.0 0.0 0.0` (EarthScope-Geschwister-Praezedenz,
+  `phi:190`); `ttl 60` bestaetigt. **Riss:** die geroutete Vorgabe `point`/`inverse-square`
+  traegt kein Seismik-Block; das Baum-Gesetz fuer Oberflaechen-Seismik ist `erfc seismic-surface`.
+- `xfer:mycelium-350-2` **Venus-Radar Level-2 VNRD — Block gesetzt** (`phi/sources.φ`):
+  `url …/pds-geosciences.wustl.edu/venus_radar_level2.bin`, `terms CC0-1.0` (Beleg Bundle-Site),
+  `origin` = Bundle-Site, `compiler venus_radar_compiler.rs`, `format vnrd`, `at venus`,
+  `no-cadence`, `field venus_radar_inc_deg` (geometry deg), `venus_radar_ocp`/`_scp` (em 1).
+  Offen bleiben die Bild-Manifestation (W) und die CI-Naht.
 
 Origin: mycelium-349 (2026-10-14):
 
@@ -414,11 +429,11 @@ Origin: mycelium-349 (2026-10-14):
   trägt `quantity` (`phi:10190`) + `field` (`phi:10191`) → **descoped**; `heasarc_w3browse`
   ist ein Reader-Arm (`src/archivar/heasarc_w3browse.rs`), kein eigener Register-Block →
   **descoped**.
-- `xfer:mycelium-349-4` **Venus-PDS-Roh-Block** — gemessen: **kein** `venus`/`backscatter`-Block
-  in `phi` (`archive_search` = 0). Mycelium legt `url`/`origin`/`compiler` an; danach Mountain
-  den `terms`-Verdikt-Teil (nach Messung, kein PD ohne Beleg).
-- `xfer:mycelium-349-5` **GEOFON-Wellenform** — s. oben (Gewebe-Fäden): `terms CC-BY-4.0`,
-  Kernel `point`/`inverse-square`.
+- `xfer:mycelium-349-4` **Venus-PDS-Roh-Block** — der **Level-2-VNRD-Block** ist gesetzt
+  (s. `xfer:mycelium-350-2` / Punkt „Venus Radar"); der **rohe PDS3-Complex-Backscatter**
+  (`vrm_90xx`) bleibt ein **separater** Gegenstand (kein Block in `phi`).
+- `xfer:mycelium-349-5` **GEOFON-Wellenform** — s. oben (Gewebe-Fäden): gesetzt; das `field`
+  traegt `erfc seismic-surface` (Baum-Gesetz), nicht `point`.
 - `xfer:mycelium-349-6` **IGETS `origin`** — Mycelium-Entscheidung (Projektseite vs. Datenpfad).
 
 ## An river
