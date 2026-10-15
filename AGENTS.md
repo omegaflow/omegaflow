@@ -113,7 +113,7 @@ before touching the wire, GPU, or force layers. Core constants that bind every c
   Atom 8).
 - Lookup: Enclosure Lemma — dilate by `rmax + anchor_vmax·Δt + ½·anchor_amax·Δt² +
   extent`; signal-cone gate; motion laws `Surface`/`Barycenter`/`Linear`; ICRS +
-  J2000 (`UNIX_J2000_OFFSET`); embedded leap-second table `naif0012.tls`.
+  J2000 (`J2000_UNIX_OFFSET`); embedded leap-second table `naif0012.tls`.
 - Presence-only loading (contract; the star grid is built — `StarCellKey((i64,i64,i64))`
   newtype, rigid `cell_size_star` from the committed catalog span/count, hysteresis
   rehash only at >2× span change): the Archivar loads only the presence hull

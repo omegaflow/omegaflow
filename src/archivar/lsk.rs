@@ -1,6 +1,7 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 
-const J2000_UNIX_OFFSET: f64 = 946728000.0;
+use super::types::J2000_UNIX_OFFSET;
+
 const SECONDS_PER_JULIAN_YEAR: f64 = 86400.0 * 365.25;
 
 fn delta_t_at_unix(unix: f64) -> f64 {
