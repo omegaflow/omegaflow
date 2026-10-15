@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-15
-  sha256: 372b58b3c6220f8704ed445225c26d491e9f3f13d2c86c35b8b965ba162d1440
+  sha256: 01ba2cbc07a602e67982ae16f96f2811decce60e614cf2345172c91968617a88
   status: live
   see-also: AGENTS.md
 -->
@@ -15,15 +15,17 @@ Die öffentlichen Linien zitieren **diese** Fassung, nie die private.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `8a7b48e0e` | 2026-10-15 |
+| HEAD | `6290535e5` | 2026-10-15 |
 | rote CI-Läufe | **56** non-success — Träger: `register-coverage` (Fehler-Job `orphans`) · `ci-gate` (`dropped-gate`/`register`/`clippy`/`format`/`subset`) · `tools-build` · `matrix-rotor` · `quake-feeds-cdn` | 2026-10-15 |
 
-**Gemessener Kern-Befund (nicht geraten):** Der WWLLN-Stundenstoßdatensatz — der von der
-Frontier-Runde gewählte Blitz-Kanal für die Schumann-TE — ist **zugangsgebunden** (Archiv-Verkauf
-ab 2004-08-15, Host-Abo, Forschungszugang via University of Washington, kommerzieller Reseller).
-Öffentlich sind nur die WWLLN-**Klimatologien** (Monat×Stunde, keine Stundenreihe). Bis zu einem
-Zugang bleibt die bedingte TE blockiert. LIS/OTD (NASA GHRC) war von dieser Maschine nicht
-erreichbar (`status 0`) → `pending`.
+**Gemessener Kern-Befund (nicht geraten):** Der Blitz-Kanal für die Schumann-TE ist **offen**.
+Die weite Leiter (`bin/all_wide`) und die Direktmessung (alle HTTP 200) zeigen: **WGLC** (WWLLN
+Global Lightning Climatology + time series, CC-BY, global-monatlich, Zenodo/Pangaea) ·
+WWLLN-Klimatologie-Datenverzeichnisse · ein **stündliches CONUS**-Set (UNC Dataverse
+`10.15139/s3/nk3ncm`) · WWLLN eigener offener KML-Feed (1 h, 6 h Verzögerung) · offene
+Satelliten-Blitze **MTG-LI** (Europa/Afrika) und **GLM** (Amerikas). Nur der globale stündliche
+WWLLN-Rohdatensatz bleibt zugangsgebunden. Die erste enge Messung („nur Monatsmittel") war
+unvollständig.
 
 **Noch unread:** die Push-Läufe an `8a7b48e0e` (`ci-gate`, `register-coverage`) — queued.
 
