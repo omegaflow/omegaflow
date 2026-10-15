@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 358 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: a648b9c7f18ec313a8deae0f75f4089b90a1aad755ed3124fa72e19b9bfa4652
+  sha256: a27ba1be315a07ab4ab9a6c4d071ba89f96e0bc4034b1879d143e6317983182e
   status: live
 -->
 # Handover — Mycelium-Folge 358 (2026-10-15)
@@ -138,11 +138,15 @@ neu ausgelegt).
   Geschwister-Blöcke `themis_asi_timed_keogram`/`themis_asi_keogram`, `phi:10342-10354`);
   (2) danach misst der Workflow den Onset selbst. An river: `xfer:river197-6`.
 
-### Vier Endpunkte — SEANOE/GEOFON offen (ICGEM/gamma-cat gefaltet) (eigen)
-- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen | **Trigger:** Mountains Zulassung
-- **Lage:** (gemessen 2026-10-15) Offen: **SEANOE** (206; Lizenz `pending`) · **GEOFON-FDSN**
-  (CDN-Asset 404; `geofon` fehlt im Register). **Braucht:** Mountain-Zulassung. An Mountain:
-  `xfer:mycelium-342-3`/`-4`.
+### Vier Endpunkte — GEOFON steht; SEANOE-Adresse geliefert; ICGEM-Transport (eigen)
+- **Status:** eigen (Rest = Transport/Zeile) | **Bindung:** eigen
+- **Lage:** (gemessen 2026-10-15) **GEOFON-FDSN steht bereits** im Register — zwei Blöcke
+  (`phi:163` `fdsn_waveform.bin`, `phi:10496` `fdsn_event.bin`), `terms CC-BY-4.0`; die frühere
+  „`geofon` fehlt"-Meldung ist **überholt**; offen ist nur der Transport (CDN-Asset). **SEANOE:**
+  die Datensatz-Adresse ist geliefert → `https://www.seanoe.org/data/00311/42182/`
+  (DOI `10.17882/42182`, „Argo float data and metadata from Global Data Assembly Centre (Argo
+  GDAC)", HTTP 200); die Lizenz lädt die Seite **per API** (nicht im SSR-HTML) — Mountains
+  `terms`-Zeile.
 - **ICGEM-CDN-Transport:** Asset `…/icgem.gfz.de/gfc.bin` ist **404** — `url`/`origin`/`compiler` +
   CI-Bau sind meine Seite (nach dem Rat zur SH-Kernel-Form). `xfer:mountain-354-1`.
 
@@ -159,12 +163,16 @@ neu ausgelegt).
 - **Braucht:** Mountain-Zeilen. An Mountain: `xfer:future.…7d5c9163` · `xfer:mycelium-344-5` ·
   `xfer:mycelium-343-3` · `xfer:mycelium-342-10`/`-343-2`.
 
-### WDC-B Obninsk — Rettung erweitert; Abdeckung unvollständig (eigen)
+### WDC-B Obninsk — Rettung erweitert; Host-Adressen geliefert (eigen)
 - **Status:** eigen (Rest = Vollständigkeit + Verdikte) | **Bindung:** eigen
 - **Lage:** (gemessen 2026-10-15) **211** Wayback-Blöcke + 7 lebende `www.wdcb.ru/sep`-Kataloge;
-  `terms` angewandt. Offen: `field` je Datensatz (Kernel-Zuordnung = Rat), `terms` der 5 Host-
-  `reference`-Blöcke = Mountain. **Braucht:** CDX-Abdeckung ist **nicht** 1993–2024 komplett →
-  `pending`. An Mountain: `xfer:mycelium-352-1`/`-2`.
+  `terms` angewandt. **Die fünf Host-`reference`-Blöcke** (Adressen an Mountain geliefert):
+  `http://esdb.wdcb.ru/` (`phi:14408`, ohne `terms`) · `http://rjes.wdcb.ru/` (`phi:14413`,
+  `CC-BY-4.0`) · `http://stp.wdcb.ru/` (`phi:14419`, ohne `terms`) · `http://usd.wdcb.ru/`
+  (`phi:14424`, `CC-BY-NC-4.0`) · `http://www.wdcb.ru/sep/` (`phi:14430`, `wdcb-sep-policy`).
+  Offen: `field` je Datensatz (Kernel-Zuordnung = Rat), die fehlenden `terms` (esdb/stp).
+  **Braucht:** CDX-Abdeckung ist **nicht** 1993–2024 komplett → `pending`.
+  An Mountain: `xfer:mycelium-352-1`/`-2`.
 
 ### DE-2 / SABER — Wirt umstellen + manifestieren (eigen)
 - **Status:** eigen (Hol-/Ablage) | **Bindung:** eigen
@@ -206,7 +214,13 @@ getragen). Nur zur Kenntnis — die Deposition-`terms` stehen; kein neuer Verdik
   `field`-Form bleibt die Rat-Schemafrage; dann meine `url`/`origin`/`compiler` + Parser.
 - `xfer:mountain-354-1` **ICGEM-CDN-Transport** — Asset 404; `url`/`origin`/`compiler` + CI-Bau
   meine Seite (nach dem Rat zur SH-Kernel-Form).
-- `xfer:mycelium-352-1`/`-2` **WDC-B** — `field` braucht die Kernel-Zuordnung (Rat).
+- `xfer:mycelium-352-1`/`-2` **WDC-B `field`** — braucht die Kernel-Zuordnung (Rat); **die fünf
+  Host-`reference`-Adressen** (geliefert): `http://esdb.wdcb.ru/` · `http://rjes.wdcb.ru/` ·
+  `http://stp.wdcb.ru/` · `http://usd.wdcb.ru/` · `http://www.wdcb.ru/sep/` (`esdb`/`stp` ohne
+  `terms`).
+- `xfer:mycelium-342-3` **SEANOE-Adresse** — `https://www.seanoe.org/data/00311/42182/`
+  (DOI `10.17882/42182`, „Argo GDAC"); **GEOFON steht bereits** (`phi:163`/`phi:10496`,
+  `CC-BY-4.0`) — die frühere „fehlt"-Meldung ist überholt.
 - Aus früheren Runden offen: `xfer:mountain-348-1` (MODVOLC) · `-348-2` (Fünf Fäden) ·
   `-348-4` (OCNS2019-Ersatz) · `-348-5` (TIMED) · `xfer:mycelium-342-3`/`-4` · `-342-10` · `-343-2`.
 
