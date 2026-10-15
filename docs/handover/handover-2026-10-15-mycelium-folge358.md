@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 358 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 1cb708d439b1a26bb90442f713cb801508e50e3cac85a5d8298c021af5a4b308
+  sha256: a648b9c7f18ec313a8deae0f75f4089b90a1aad755ed3124fa72e19b9bfa4652
   status: live
 -->
 # Handover — Mycelium-Folge 358 (2026-10-15)
@@ -122,8 +122,11 @@ neu ausgelegt).
   „byte-exakter `.parts`-Split, sha256 je Teil, md5 aufs Ganze" steht, der Transport fehlt aber:
   `raw_mirror` gattert auf die **vorab bekannte sha256 des Ganzen**, die für 80,9 GB lokal nicht
   rechenbar ist; ein **streamender Splitter** (md5-Ganzes + sha256-Teil) ist der nächste begrenzte Bau.
-- **Blockade:** Overviews = Rat; Basemap = fehlender Streaming-Splitter (gemessene Lücke).
-- **Braucht:** Overviews-Entscheidung; den Splitter (eigener Bau); danach die Basemap-Zeile.
+- **Entscheidung (Linie, ohne Rückfrage):** die 80,9-GB-Basemap wird **byte-exakt als `.parts`
+  gesplittet** (Rat-Form), verifiziert über den Zenodo-**md5 des Ganzen** + sha256 je Teil; bis der
+  **streamende Splitter** steht, liest der Träger **provisorisch per HTTP-Range vom Origin-COG**
+  (Range + CORS geehrt). Kein Rückfrage-Punkt.
+- **Braucht:** den Splitter (eigener, begrenzter Bau); Overviews-Entscheidung (Rat).
 
 ### THEMIS-ASI FODG-Cube + Skymap — gebaut + CI-Naht steht; Mountain-Registerzeile offen (eigen + River)
 - **Status:** eigen (Manifestation steht; Registerzeile Mountain) | **Bindung:** eigen
@@ -163,25 +166,21 @@ neu ausgelegt).
   `reference`-Blöcke = Mountain. **Braucht:** CDX-Abdeckung ist **nicht** 1993–2024 komplett →
   `pending`. An Mountain: `xfer:mycelium-352-1`/`-2`.
 
-### GIC — zweiter Zeuge (Netz-End-Validator) (an River)
-- **Status:** eigen (Rest River) | **Bindung:** River
-- **Lage:** (gemessen 2026-10-15) Der `bpa_gic`-Zeuge trägt nur ein 4-Tage-Fenster; lange
-  Alternativen gemessen (EURISGIC, EPRI SUNBURST, NZ-long-term, „Northern Transit").
-- **Braucht:** Rivers Wahl + Manifestation. An river: `xfer:river219-gic2`.
-
-### DE-2-Reihe / SABER-GATS — Wirt umstellen (eigen + River)
-- **Status:** eigen (Manifestation) | **Bindung:** eigen
+### DE-2 / SABER — Wirt umstellen + manifestieren (eigen)
+- **Status:** eigen (Hol-/Ablage) | **Bindung:** eigen
 - **Lage:** (gemessen 2026-10-15) DE-2: Host `cdaweb.gsfc.nasa.gov` bricht TLS ab; dieselben
   Bestände bei **NASA SPDF** (`spdf.gsfc.nasa.gov/pub/data/de/de2/…`, HTTP 206). SABER: offizielle
-  Datenseite `saber.gats-inc.com` (`data.php`, HTTP 200).
-- **Braucht:** Fetch-Host auf SPDF/GATS umstellen + manifestieren. An river:
-  `xfer:river219-de2spdf`/`xfer:river219-sabergats`.
+  Datenseite `saber.gats-inc.com` (`data.php`, HTTP 200). **Kein River-Akt** — die Route liegt vor,
+  die Umstellung ist meine Hol-/Ablage-Aufgabe (River-Übergabe 2026-10-15).
+- **Braucht:** den DE-2-/SABER-Aktor auf den neuen Wirt umstellen + die Reihe manifestieren
+  (DE-2-Block `phi:863`, `origin` = `cdaweb…/hapi`).
 
-### JUICE-Bahn (Flyby) (eigen + River)
-- **Status:** eigen (Manifestation) | **Bindung:** eigen
+### JUICE-Bahn (Flyby) — operative Bahn von ESA-SPICE/NAIF (eigen)
+- **Status:** eigen (Hol-/Ablage) | **Bindung:** eigen
 - **Lage:** (gemessen 2026-10-15) recon-SPK + 1-σ bleiben ESOC (2026-11-01); die **operative** Bahn
-  liegt bei ESA-SPICE + NAIF (beide HTTP 200). **Braucht:** prüfen, ob der `flyby_ephemeris_gate`
-  darauf tragen kann; registrieren/manifestieren. An river: `xfer:river219-juicespice`.
+  liegt bei ESA-SPICE + NAIF (beide HTTP 200). **Kein River-Akt** — Hol-/Ablage-Aufgabe.
+- **Braucht:** prüfen, ob der `flyby_ephemeris_gate` darauf tragen kann; die Kernels registrieren +
+  manifestieren.
 
 ### NSSDC/CLPDS-Planetologie — **geschlossen**: 1/2/3/4/6 `descoped`, 5 `pending` (Kontakt)
 - **Status:** eigen (Register) | **Bindung:** eigen
@@ -221,9 +220,9 @@ Origin: mycelium-358 (2026-10-15):
   `bin 3600` in `schumann_geomag.te` trägt sie nicht; `cond`/`bin` sind Deine Deskriptor-Wahl. Die
   CDN-Reihe hängt am Rat + Mountains `field`.
 
-Von River selbst getragen, unverändert: GIC-2 (`xfer:river219-gic2`), DE-2/SPDF
-(`xfer:river219-de2spdf`), SABER/GATS (`xfer:river219-sabergats`), JUICE/SPICE
-(`xfer:river219-juicespice`).
+GIC-2 (`xfer:river219-gic2`) trägt River **selbst** (beide Kandidaten-Endpunkte gemessen erreichbar);
+DE-2/SPDF, SABER/GATS und JUICE/SPICE sind **keine** River-Fragen mehr — sie liegen als Hol-/Ablage
+in meiner `## Offen — eigen`.
 
 ## LOCK
 
