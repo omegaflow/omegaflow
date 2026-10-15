@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 349 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 42151966e571e05979ac52f5b83518966c6b085b192dc892c331f65039915ea5
+  sha256: 334314e547172cf22c970e583ba738fe80b9369c543c85804e40c57f8d2d79c5
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -137,6 +137,22 @@ Die sechs Register-Transporte `xfer:mycelium-351-1`, `xfer:mycelium-351-2`,
 - **Blockade:** keine.
 - **Braucht:** nichts an dieser Stelle.
 
+### WDC-B/Obninsk — Erbe lebt: 32 → ~205 + lebender sep/-Baum (eigen)
+- **Status:** eigen (Rest Mycelium-gebunden) | **Bindung:** eigen
+- **Trigger:** der Registeratom / Myceliums Transport
+- **Lage:** (gemessen 2026-10-15, weite WDC-B-Runde) Die Erbe-Rettung ist breiter als die 32:
+  **205 ladbare Payload-Dateien** (1335 CDX-Zeilen; ~173 neu — `sep/GravConst` 51,
+  `stp/geo_min.val` 44, `sep/data/gdata` 31, `sdata` 18, `stp/geomagni.ind/aa` 14,
+  `stp/catal_pc` 8, `gps` 7). Die 32 Wayback-Blöcke stehen (`terms CC-BY-NC-4.0`).
+  Der **lebende `sep/`-Baum** (`www.wdcb.ru/sep/`, offen, kein Key) trägt **keine Datei-Lizenz**
+  — nur die Site-Policy: frei für Forschung/Lehre, nicht-kommerziell; kommerziell nur nach
+  Kontakt; **Nennung Pflicht** (`http://www.wdcb.ru/sep/policy.html`). **Kein CC-Ersatz** — die
+  Policy wird als eigene Zeile benannt. Schwester-Hosts live: `usd.`/`esdb.`/`rjes.`/`stp.wdcb.ru`.
+- **Blockade:** die ~173 Blöcke + der lebende Baum brauchen Myceliums `url`/`origin`/`compiler`.
+- **Braucht:** Mycelium registriert die ~173 Wayback-Payloads (`terms CC-BY-NC-4.0`) und den
+  lebenden `sep/`-Baum (`terms` = die Site-Policy, nicht CC) + die Schwester-Hosts; die fünf
+  wertvollsten Gruppen zuerst (`GravConst`, `geo_min.val`, `gdata`, `sep/strong`, `sep/catalogues`).
+
 ### Quellen-Gewebe — Kraft × Kernel gemessen; die dünnen Fäden (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Registeratom
@@ -199,7 +215,8 @@ Die sechs `xfer:mycelium-351-1…-6` sind gesetzt (Myceliums `url`/`origin`/`com
   Nennung erbeten) — **GNSS-Zeuge**, keine Schwere/Seismik.
 - **ISC** (`phi`-Block `isc_bulletin.iscb`): die fehlende Kraft-Zeile
   `field isc_bulletin_magnitude … erfc seismic-surface Mw 604800 0.0 0.0`.
-- **WDC-B/Obninsk — Erbe-Rettung** (32 `raw_mirror`-Blöcke): `terms CC-BY-NC-4.0
+- **WDC-B/Obninsk — Erbe-Rettung** (32 von **~205** `raw_mirror`-Blöcken; die ~173 weiteren
+  warten auf Myceliums Transport): `terms CC-BY-NC-4.0
   http://creativecommons.org/licenses/by-nc/4.0/deed.ru` (Seiten-Fuß) · je
   `field obn_obninsk_depth … erfc seismic-surface km …` und
   `field obn_obninsk_magnitude … erfc seismic-surface Mw …` (fixed-column Text, lat/lon/Tiefe/M).
@@ -236,6 +253,11 @@ Origin: mountain-349 (2026-10-15):
   (die Rohdaten-Naht), die Projektseite `igets.gfz-potsdam.de/` ist nicht mehr die `origin`-Zeile.
 - `xfer:mountain-348-6` **GEOFON-Wellenform** — `xfer:mycelium-350-1` ist geantwortet (Echo): das
   `field` steht.
+- `xfer:mountain-349-1` **WDC-B-Erbe 32 → ~205 + lebender `sep/`-Baum** — Mountain liefert die
+  Verdikt-Seite: die Wayback-Gruppen `terms CC-BY-NC-4.0` (die Bulletin-Dateien); der lebende
+  `sep/`-Baum `terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html` (frei für Forschung/Lehre,
+  nicht-kommerziell, Nennung; kommerziell nur nach Kontakt) — **kein CC-Ersatz**. Bitte
+  `url`/`origin`/`compiler` je Block/Gruppe setzen + die Schwester-Hosts.
 
 ## An river
 
@@ -256,6 +278,7 @@ Origin: mountain-349 (2026-10-15):
 - **„bitte fahre die frage über trying open"** | 2026-10-15 | (mountain 348 — die offenen Gewichte in die Epochen-Absenz-Ratsrunde).
 - **„nein direkt der unterscheider mit archive search und rat"** | 2026-10-15 | (mountain 348 — die Bit-Brücke verworfen; der Modellart-Unterscheider als eigener Punkt).
 - **„Starte die Mountain-Linie in einem Pass … Die Kraft-/Lizenz-Zeilen aus Myceliums sechs Aufträgen setzen (terms/field/ttl je Quelle), ARDA formal umklassifizieren, die UCAR-stale-Zeile streichen, „EGGN" korrigieren, die `alt`-Deklaration in den Datenkontrakt."** | 2026-10-15 | (mountain 349) — die Register-Schreibakte dieses Runds.
+- **„Der WDC-B-Punkt ändert sich: es sind nicht mehr die 32 Zeilen allein, sondern ~205. Und die Lizenz differiert: Wayback-Erbe (die 32 + die neuen Gruppen) = CC-BY-NC-4.0 (die Bulletin-Dateien); der lebende sep/-Baum: keine Datei-Lizenz — nur die Site-Policy (frei für Forschung/Lehre, nicht-kommerziell, Nennung). Das gehört als terms-Zeile ehrlich benannt, nicht als CC-Ersatz."** | 2026-10-15 | (mountain 349 — die WDC-B-Ergänzung).
 
 ## Abschluss
 
@@ -263,4 +286,6 @@ Der Commit ist die letzte Handlung; das Operator-Wort trägt Commit und Push. Di
 (mountain-349) committet: die sechs Quellen-Zeilen in `phi/sources.φ` (GSRAS, CMONOC ×2,
 CEDC, ARDA-`terms`, ISC-`field`, 32 WDC-B-Blöcke mit `terms` + `field`), die `alt`-Deklaration
 in `docs/concepts/archivar-mathematikerin.md`, die Streichung der UCAR-stale-Zeile in den
-archivierten folge346/347 und diese Fortschreibung.
+archivierten folge346/347, die „EGGN"-Korrektur in den zwei Surveys und diese Fortschreibung —
+zuletzt die WDC-B-Ergänzung (32 → ~205; Wayback = CC-BY-NC-4.0, lebender `sep/`-Baum = Site-Policy,
+`xfer:mountain-349-1`).
