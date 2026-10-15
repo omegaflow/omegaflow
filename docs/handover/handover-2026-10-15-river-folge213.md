@@ -2,7 +2,7 @@
 title: Handover — River-Folge 213
 class: handover
 date: 2026-10-15
-sha256: 78a4b3595f860ef8efbc8b3e40e596ab22e07aa8760c4736b5692e90404844e9
+sha256: e725cf1b153f5aedc96eb448106b739090e0646f8e616a357962da7654983e27
 status: live
 -->
 # Handover — River-Folge 213 (2026-10-15)
@@ -26,6 +26,8 @@ Wort | Datum | Quelle
 „ja bitte" (auf die Rückfrage „warum möchtest du da hin?") | 2026-10-14 | Operator (Session, River-212) — die `Burn:`-Zeile trägt nur den öffentlichen `session_burn`-Aggregatstand mit Vorbehalt; die private `opencode.db` (isolierte Session-Zeile) wird **nicht** gelesen. Der parallele `agent_sandbox`-Commit `504641409` bindet `~/.local/share/opencode` zusätzlich ab — die Session-DB trägt das private Haus.
 „Starte die River-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes." | 2026-10-15 | Operator (Session, River-214) — der Pass läuft in einem Atom: still messen, Bekanntes bis zur Kante arbeiten, nur Ungeklärtes vorlegen.
 „bitte auch gegen den zufall prüfen und es erscheint mir fast so als gäbe es eine kurve und einen sweetspot ist das richtig?" | 2026-10-15 | Operator (Session, River-214) — die Einzelstation gegen die Kreisschub-Null prüfen und die Detektor-Kurve (Stationszahl/Schwelle) als Sweet-Spot messen.
+„genau das ziel muss sein bei welcher toleranz mit welcher anzahl ist die machine am schärfsten … für jedes ereignis ein messprotokoll … wie es auf der toleranz und pro anzahl aussieht" | 2026-10-15 | Operator (Session, River-214) — Zielsetzung: die **Schärfe-Fläche** (Toleranz × Stationszahl) und daraus ein **Ereignis-Messprotokoll**.
+„können wir rausfinden ob es ein muster gibt wie stationen zueinander stehen müssen damit der trefferanteil nicht sinkt … praktisch eine te mustererkennung für die positionierung der stationen" | 2026-10-15 | Operator (Session, River-214) — eine **Stations-Platzierungsregel** (TE-Muster) finden, die den Trefferanteil hält oder steigert.
 
 Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `state/operator-gespraeche/2026-10-14-river.md` (Vorsession).
 
@@ -145,6 +147,13 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `st
 - **Lage:** (gemessen `state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md:20-80`) die Stimmen-Runde einig: kein neuer Grammatik-Arm, sondern (i) ein Satz über Querfamilien-Zellen und (ii) die Familienregel als deklariertes `station→Familie`-Artefakt. **Gebaut (river-213):** das Artefakt steht — `docs/zustand/gic-station-families.tsv`, konsolidiert aus den drei Deskriptoren `src/mathematikerin/descriptors/gic_{auroral,subauroral,midlat}.te`; Partition **154 = 31 auroral + 25 subauroral + 98 midlat** (gemessen `cut -f2 | uniq -c`). `gic-al-network.yml` liest es (Familien-Netz). Die drei Matrizen `gic_auroral|gic_subauroral|gic_midlat` existieren als `.te`-Deskriptoren (`matrix gic_* full`, `expect cells 930/600/9506`).
 - **Blockade:** die zwei Register-Nägel (Mountain) — der Grammatik-Patch (`family … stations …` / `expect families 3`) ist nicht mehr nötig, die Familien sind über die `.te`-Kanal-Listen deklariert.
 - **Braucht:** Mountain setzt die zwei Nägel; danach `matrix gic_auroral|gic_subauroral|gic_midlat full` über `field-te-query.yml` fahren.
+
+### GIC-Schärfe-Fläche + Stations-Platzierungsmuster (Operator-Wort 2026-10-15)
+- **Status:** eigen (neu, Bau) | **Bindung:** eigen
+- **Trigger:** Operator-Wort 2026-10-15: „bei welcher toleranz mit welcher anzahl ist die machine am schärfsten" + „ein muster … wie stationen zueinander stehen müssen … eine te mustererkennung für die positionierung".
+- **Lage:** (gemessen 2026-10-15 via `ci_manage` + lokaler `gic_onset_detector`) die Einzel-Schwellenkurve ist gemessen (s. GIC-Onset); die Stationszahl-Kurve fehlt. **Gebaut:** `.github/workflows/gic-station-sweep.yml` — ordnet eine Familie nach `|cgm_lat|` (aus `phi/sources.φ`), lädt die xyz-Bins **einmal** (je 420 MB), baut die kumulativen Einhüllenden für `counts=1,2,3,4,6,8,12,16,24,31` und fährt je Zählung den Detektor mit `--null 200` (die `compare`-Zeilen tragen 5/15/30 min). Der Lauf folgt dem Commit; die Bins sind ~13 GB pro Lauf → CI.
+- **Blockade:** keine (CI-Lauf).
+- **Braucht:** (a) die Schärfe-Fläche aus dem Sweep; (b) **zuerst den Schärfe-Begriff definieren** — die Toleranz ist eine Matching-Definition (eine lockere Toleranz hebt Präzision *und* Rückruf mechanisch), kein Detektor-Regler; die harten Regler sind Stationszahl und Schwelle. Der Metric (z. B. F1 bei fester Toleranz oder Präzision bei fester Ausbeute) ist eine **Methodik-/Architekturentscheidung → Rat** (fünf Stimmen + Recherche-Roster, s. Operator-Wort „council bedeutet recherche roster (full) und rat"); (c) das **Stations-Platzierungsmuster**: Teilmengen-Suche über die 154 Stationen, geführt durch paarweise TE/Kopplung (welche Stationen komplementäre Information tragen) — ebenfalls Rat-Design vor dem Bau.
 
 ### Newell-OMNI-Alignment — Zelle gemessen (n=22137), TE silent
 - **Status:** eigen (gemessen, silent) | **Bindung:** eigen
