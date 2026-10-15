@@ -5174,6 +5174,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "heavy TE calibration — runs in te-gate.yml"]
     fn calibration_fp_independent_ar1_stays_near_chance() {
         let mut rng = 0x9E37_79B9_7F4A_7C15u64;
         let mut fp = 0usize;
@@ -5572,6 +5573,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "heavy TE calibration — runs in te-gate.yml"]
     fn calibration_self_null_discriminator_white_driver_stays_at_the_floor() {
         let measure = || -> (Vec<f64>, usize) {
             let trials = 20usize;
@@ -6435,6 +6437,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "heavy TE gate — runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_block_null_binned_n_surr_200() {
         gate_fpr_autocorr(TeNull::Block, TeEstimator::Binned);
     }
@@ -6458,36 +6461,43 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "heavy TE gate — runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_block_null_ksg_n_surr_200() {
         gate_fpr_autocorr(TeNull::Block, TeEstimator::Ksg);
     }
 
     #[test]
+    #[ignore = "heavy TE gate — runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_shift_null_binned_n_surr_200() {
         gate_fpr_autocorr(TeNull::Shift, TeEstimator::Binned);
     }
 
     #[test]
+    #[ignore = "heavy TE gate — runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_shift_null_ksg_n_surr_200() {
         gate_fpr_autocorr(TeNull::Shift, TeEstimator::Ksg);
     }
 
     #[test]
+    #[ignore = "heavy TE gate — runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_restricted_null_binned_n_surr_200() {
         gate_fpr_autocorr(TeNull::RestrictedPermutation, TeEstimator::Binned);
     }
 
     #[test]
+    #[ignore = "heavy TE gate — runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_xshift_null_binned_n_surr_200() {
         gate_fpr_autocorr(TeNull::XShift, TeEstimator::Binned);
     }
 
     #[test]
+    #[ignore = "heavy TE gate — runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_arx_null_binned_n_surr_200() {
         gate_fpr_autocorr(TeNull::Arx, TeEstimator::Binned);
     }
 
     #[test]
+    #[ignore = "heavy TE gate — runs in te-gate.yml"]
     fn gate_fpr_autocorrelation_coherent_phase_null_binned_n_surr_200() {
         let cells = gate_fpr_cells_from(
             150,
@@ -9414,6 +9424,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "heavy TE gate — runs in te-gate.yml"]
     fn gate_conditional_embedded_fp_common_driver_stays_near_chance() {
         let mut rng = 0xC2B2_AE3D_85EB_CA6Bu64;
         let mut fp = 0usize;
@@ -9447,6 +9458,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "heavy TE gate — runs in te-gate.yml"]
     fn gate_conditional_embedded_fn_true_coupling_is_found() {
         let mut rng = 0x517C_C1B7_2722_0A95u64;
         let mut found = 0usize;
