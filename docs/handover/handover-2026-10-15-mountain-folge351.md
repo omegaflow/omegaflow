@@ -2,9 +2,9 @@
   title: Handover — Mountain-Folge 351 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 71d84423b7069657114b5204773d053a744515841793456a28e8ddc557dcc1f4
+  sha256: 8e9b32bab084dd4c818c9bcfe59b9a9f47450a61dd4b0a0fa89ba5c1687afd4f
   status: live
-  see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md
+  see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
 # Handover — Mountain-Folge 351 (2026-10-15)
 
@@ -57,7 +57,7 @@ Baum getragen (git: `36b50dfca`). Was folgt, ist offen.
 - **Risse (unglättet):** „frei abrufbar" (river) vs. `restricted` (MOSWOC) · „je Station" (river) vs. **eine Station** (OVATION) · „ein Satelliten-Magnetometer" (river) vs. **Subsatelliten-Serie + separates Instrument** (MAGION) · „Nutzung auf Anfrage" (river) vs. **Dauerlauf** (WINDMI) · river-214:293 „Zugangswege im Ketten-Punkt" vs. Baum (kein solcher Block).
 - **Form-Defekt (gemessen):** der Taucher-Sandbox verweigert `bin/all_wide` (dreimal); Mountain führt den Wrapper ohne Beanstandung aus. Die Profil-Allowlist deckt den Wrapper nicht → die kanonische weite Leiter war den Tauchern verschlossen (Breite lief über `--all` + Einzelmodi).
 - **Blockade:** keine.
-- **Braucht:** (1) die **Register-/Feld-/Kernel-/Format-Entscheidung** für OVATION-AACGM (Rat — Pro-Solo-Grenze: Feld-/Kernel-Kontrakt); (2) den **MOSWOC-Kp-Zugang** als per-Akt-Operator-Wort (Zenodo-Access-Request), kein Register-Verdikt; (3) SWIFF/WINDMI/MAGION bleiben als **kein Datensatz** benannt (Modell/gated), keine Zeile.
+- **Braucht:** (1) die **Register-/Feld-/Kernel-/Format-Entscheidung** für OVATION-AACGM (Rat — Pro-Solo-Grenze: Feld-/Kernel-Kontrakt); (2) **erledigt als Bedarf** — der **MOSWOC-Kp-Zugang entfällt**: der offene Primär-Ursprung **GFZ-Kp** (CC-BY-4.0, 1932–) deckt den Bedarf (s. `survey-2026-10-15-riss-alternativen.md`); ein Zenodo-Access-Request ist **nicht** nötig; (3) SWIFF/WINDMI/MAGION bleiben als **kein Datensatz** benannt (Modell/gated), keine Zeile — die gemessenen Zielwerte (Kp/Dst/AL) liegen schon im Register.
 
 ### Epochen-Absenz — Ratsrunde vollständig; Operator-Wort: direkt der Unterscheider (eigen)
 - **Status:** eigen · **verdiktet** (Rat 2026-10-14, Verdikt b) · voller Roster 2026-10-15
@@ -234,6 +234,13 @@ Baum getragen (git: `36b50dfca`). Was folgt, ist offen.
 - **Blockade:** keine.
 - **Braucht:** (1) Höhenbezug (EGM96/EPSG:5773) in die `opentopography_raster`-Zeile, **Toleranz am Ursprung absent** → benennen, dann Block (oder Compiler umbenennen — Namens-Riss); (2) `load_gestalt_surface_threads` an einen Produktions-Aufrufer binden **oder** `descoped`; (3) `ilrs_npt`-Lese-Arm in `extract.rs` + Block (`format ilrs_npt`, Host `edc.dgfi.tum.de`); (4) `icrf3` erst Vertrag versionieren + Round-Trip + Golden-File, dann SKD1. `docs/SOURCE_PORT.md`.
 
+### Riss-Alternativen — fünf Taucher, jeder Daten-Riss hat eine offene Route (eigen)
+- **Status:** eigen · **gemessen 2026-10-15** (fünf Taucher) | **Bindung:** eigen
+- **Trigger:** Operator-Frage 2026-10-15 („und für all die risse gibt es keine alternativen?") — abgearbeitet.
+- **Lage:** (gemessen 2026-10-15 via fünf Taucher) Messblatt `docs/surveys/survey-2026-10-15-riss-alternativen.md` (sha `5a742c74…`). Jeder Daten-Riss trägt eine offene Alternative: **OCNS2019 → NSDB** (`nsdb.imcce.fr`, frei für Forschung + Nennung) · **GOCE-Schwere → ICGEM** `10.5880/ICGEM.2019.004` (CC-BY-4.0) · **CGrav/CEIC → schon gedeckt** (AGrav+IGETS tragen die chinesischen Stationen) · **MOSWOC-Kp → GFZ-Kp** (CC-BY-4.0, 1932–; der `phi:1230-1234`-Block deckt nur heute→morgen) · **WINDMI-Zielwerte → schon im Register** (`wdc_dst_nt`/`wdc_ae_al_nt`) · **OVATION (eine Station) → BAS-IMAGE-Boundaries** (OGL v3, global, 2000-2002) + **DMSP-SSJ** Zenodo `10.5281/zenodo.3373812` (CC-BY-4.0). Die drei Baum-Risse gelöst: MODVOLC→LANCE/NRT-Block (`phi:12065`), OpenTopography→OT-API-Block (`phi:26638`), MAGION→Hauptsatellit IMAP-3. `dead_sources.φ` bleibt ohne Alternative (Streichung).
+- **Blockade:** keine.
+- **Braucht:** die vier **neu zu registrierenden** offenen Routen (ICGEM-GOCE-Schwere · NSDB · BAS-IMAGE · DMSP-SSJ) als Blockform (Mycelium `url`/`origin`/`compiler`) + Mountain-`terms`; die Kp-Block-Ergänzung (Archiv statt Heute→Morgen).
+
 ## An mycelium
 
 Origin: mountain-349 (2026-10-15):
@@ -272,6 +279,7 @@ Origin: mountain-349 (2026-10-15):
 - **„kannst du bitte taucher mit harten bandagen und archive search all!!! auf — SWIFF · WINDMI · MAGION · MOSWOC-Kp · OVATION-AACGM — loslassen"** | 2026-10-15 | (mountain 351 — der harte Ketten-Quellen-Lauf; Messblatt `docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md`).
 - **„kannst du die bitte vermessen [Flare-Verifikation · REFM · Kp-Zeitreihe · OVATION-Prime-Papiere]"** | 2026-10-15 | (mountain 351 — die vier MOSWOC-Nachbarn an der Quelle gemessen).
 - **„ok bitte arbeite nun bitte die offenen punkte mit tauchern ab."** | 2026-10-15 | (mountain 351 — fünf Taucher auf die offenen Register-Punkte: Quellen-Gewebe · Adressierte Register-Fäden · ALFALFA · SABER/TIMED · ICGEM gfc).
+- **„und für all die risse gibt es keine alternativen?"** | 2026-10-15 | (mountain 351 — fünf Taucher auf die Riss-Familien; Messblatt `docs/surveys/survey-2026-10-15-riss-alternativen.md`; jeder Daten-Riss trägt eine offene Route).
 
 ## Abschluss
 
