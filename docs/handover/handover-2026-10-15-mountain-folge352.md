@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 352 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 66a90905039dae2afad9efaa2d43f10652d4ade17950627a23e1614327a19756
+  sha256: 1429c0e600636a6a61440e57cd9d690a02566ff6ae6da6dcc76f8f3361cb135c
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -50,6 +50,10 @@ Prosa, kein Pfad-Block) · 0 stale. Gefaltet (`register_lookup --addressed mount
   M2 Aurora-Grenzbreite, M3 OVATION-AACGM) mit den **fünf Axiomen + fünf Stimmen**, der gefahrenen
   **weiten Leiter** (`bin/all_wide`, 7 Spills) und der Sitzliste. Der Operator reicht das Paket je
   Sitz ein; das Verdikt trägt der Rat.
+  **Axiom-Kopf korrigiert (Operator-Frage 2026-10-15):** das fünfte Axiom heißt **Konsens der
+  Sensoren und des Operators** — die Katalog-Kurzform (und fremde Fragebögen) ließen „der Sensoren"
+  aus; hier wieder vollständig. Der Katalog `2026-10-15-rat-fragen-katalog.md` trägt dieselbe
+  Kürzung — als fremde Datei nicht still geändert, benannt.
 - **Aurora-Grenzen vermessen (Taucher).** Vollständige Format-Spec für **BAS IMAGE SI12
   Boundaries** (`ramadda.nerc-bas.ac.uk`, OGL v3.0; 30 Monats-`.txt`, 50 Spalten:
   Zeit, Instrument, 24 equatorwärtige + 24 polwärtige AACGM-Breiten je 1-h-MLT-Bin, `NaN` =
