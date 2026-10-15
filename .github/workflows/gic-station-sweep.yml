@@ -37,6 +37,10 @@ on:
         description: block-median baseline length (samples at 1 min)
         required: false
         default: "60"
+      thresholds:
+        description: comma list of FIXED detector thresholds (nT/min), held constant across every station count — the N-sweep isolation (Rat 2026-10-15; the station count currently enters twice, via the fusion and via the recomputed adaptive threshold); empty = the detector's adaptive robust threshold
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -81,6 +85,10 @@ jobs:
         run: |
           set -euo pipefail
           : > /tmp/sweep.txt
+          thr_args=""
+          if [ -n "${{ inputs.thresholds }}" ]; then
+            thr_args="$(echo "${{ inputs.thresholds }}" | tr ',' ' ')"
+          fi
           for n in $(echo "${{ inputs.counts }}" | tr ',' ' '); do
             if [ "$n" -lt 2 ]; then
               echo "=== stations $n skipped (a 1-station envelope is none) ===" >> /tmp/sweep.txt
@@ -92,10 +100,20 @@ jobs:
               --family /tmp/prefix.txt --dir /tmp/xyz --decl auto \
               --baseline-block ${{ inputs.baseline_block }} --min-stations 2 \
               --out /tmp/env.bin >> /tmp/sweep.txt 2>&1
-            cargo run --release -p omegaflow-measure --bin gic_onset_detector -- \
-              --series /tmp/env.bin --station "n$n" \
-              --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
-              --null ${{ inputs.surrogates }} >> /tmp/sweep.txt 2>&1
+            if [ -z "$thr_args" ]; then
+              cargo run --release -p omegaflow-measure --bin gic_onset_detector -- \
+                --series /tmp/env.bin --station "n$n" \
+                --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
+                --null ${{ inputs.surrogates }} >> /tmp/sweep.txt 2>&1
+            else
+              for thr in $thr_args; do
+                echo "=== stations $n fixed_threshold $thr ===" >> /tmp/sweep.txt
+                cargo run --release -p omegaflow-measure --bin gic_onset_detector -- \
+                  --series /tmp/env.bin --station "n${n}_thr${thr}" \
+                  --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
+                  --null ${{ inputs.surrogates }} --threshold "$thr" >> /tmp/sweep.txt 2>&1
+              done
+            fi
           done
       - uses: actions/upload-artifact@v4
         if: always()
