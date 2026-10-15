@@ -1670,6 +1670,26 @@ ttl 86400
 field dmsp16_ssj_ele_total_energy_flux dmsp16_ssj_ele_total_energy_flux inverse-square em ev/cm2/ster/s 86400 0.0 0.0
 field dmsp16_ssj_ion_total_energy_flux dmsp16_ssj_ion_total_energy_flux inverse-square em ev/cm2/ster/s 86400 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/dmsp17_ssj.bin
+format dmsp17_ssj
+origin https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf17/ssj/precipitating-electrons-ions/
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
+compiler tools/harvest/src/bin/dmsp16_ssj_compiler.rs
+at earth
+ttl 86400
+field dmsp17_ssj_ele_total_energy_flux dmsp17_ssj_ele_total_energy_flux inverse-square em ev/cm2/ster/s 86400 0.0 0.0
+field dmsp17_ssj_ion_total_energy_flux dmsp17_ssj_ion_total_energy_flux inverse-square em ev/cm2/ster/s 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/dmsp18_ssj.bin
+format dmsp18_ssj
+origin https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf18/ssj/precipitating-electrons-ions/
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
+compiler tools/harvest/src/bin/dmsp16_ssj_compiler.rs
+at earth
+ttl 86400
+field dmsp18_ssj_ele_total_energy_flux dmsp18_ssj_ele_total_energy_flux inverse-square em ev/cm2/ster/s 86400 0.0 0.0
+field dmsp18_ssj_ion_total_energy_flux dmsp18_ssj_ion_total_energy_flux inverse-square em ev/cm2/ster/s 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/goes16_mag.bin
 format goes16_mag
 origin https://cdaweb.gsfc.nasa.gov/pub/data/goes/goes16/mag_l2_netcdf/

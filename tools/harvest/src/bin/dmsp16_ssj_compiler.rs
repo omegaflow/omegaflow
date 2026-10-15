@@ -4,12 +4,21 @@ use omegaflow::cdf::{CdfFile, value_present};
 use omegaflow::cdn::upload_release;
 use std::collections::HashMap;
 
-const MAGIC: &[u8; 4] = b"DS16";
 const FIELDS: usize = 6;
 const NETLOC: &str = "cdaweb.gsfc.nasa.gov";
-const OUT_PATH: &str = "dmsp16_ssj.bin";
 const COMPILER: &str = "tools/harvest/src/bin/dmsp16_ssj_compiler.rs";
 const TTL: f64 = 86400.0;
+const SATS: [&str; 3] = ["dmsp16_ssj", "dmsp17_ssj", "dmsp18_ssj"];
+const MAGICS: [&[u8; 4]; 3] = [b"DS16", b"DS17", b"DS18"];
+
+fn sat_index(sat: &str) -> Option<usize> {
+    match sat {
+        "f16" | "dmsp16_ssj" => Some(0),
+        "f17" | "dmsp17_ssj" => Some(1),
+        "f18" | "dmsp18_ssj" => Some(2),
+        _ => None,
+    }
+}
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -113,9 +122,9 @@ fn scalar_map(file: &CdfFile, bytes: &[u8], name: &str) -> Option<HashMap<u32, f
     Some(map)
 }
 
-fn write_bin(records: &[[f64; FIELDS]]) -> Vec<u8> {
+fn write_bin(records: &[[f64; FIELDS]], magic: &[u8; 4]) -> Vec<u8> {
     let mut out = Vec::with_capacity(8 + records.len() * FIELDS * 8);
-    out.extend_from_slice(MAGIC);
+    out.extend_from_slice(magic);
     out.extend_from_slice(&(records.len() as u32).to_le_bytes());
     for r in records {
         for v in r {
@@ -125,8 +134,8 @@ fn write_bin(records: &[[f64; FIELDS]]) -> Vec<u8> {
     out
 }
 
-fn parse_bin(bytes: &[u8]) -> Option<Vec<[f64; FIELDS]>> {
-    if bytes.get(0..4)? != MAGIC {
+fn parse_bin(bytes: &[u8], magic: &[u8; 4]) -> Option<Vec<[f64; FIELDS]>> {
+    if bytes.get(0..4)? != magic {
         return None;
     }
     let n = u32::from_le_bytes(bytes.get(4..8)?.try_into().ok()?) as usize;
@@ -145,7 +154,15 @@ fn parse_bin(bytes: &[u8]) -> Option<Vec<[f64; FIELDS]>> {
     Some(out)
 }
 
-fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
+fn emit(
+    bytes: &[u8],
+    out: &str,
+    source: Option<&str>,
+    magic: &[u8; 4],
+    format: &str,
+    ele: &str,
+    ion: &str,
+) {
     let label = match source {
         Some(s) => s,
         None => out,
@@ -230,7 +247,7 @@ fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
         eprintln!("no records — the bin stays unwritten (0 honored)");
         std::process::exit(1);
     }
-    let bytes_out = write_bin(&records);
+    let bytes_out = write_bin(&records, magic);
     if std::fs::write(out, &bytes_out).is_err() {
         eprintln!("write {out} returned void");
         std::process::exit(1);
@@ -256,7 +273,7 @@ fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
         bytes_out.len(),
         sha256_hex(&bytes_out)
     );
-    match parse_bin(&bytes_out) {
+    match parse_bin(&bytes_out, magic) {
         Some(parsed) if parsed == records => {
             eprintln!("  roundtrip: {} records parse, identical", parsed.len());
         }
@@ -283,36 +300,36 @@ fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
     }
     println!("compiler {COMPILER}");
     println!("sha256 {}", sha256_hex(&bytes_out));
-    println!("format dmsp16_ssj");
+    println!("format {format}");
     println!("ttl {}", TTL as u64);
     println!("at earth");
     println!("cmap .");
     println!("lat SC_GEOCENTRIC_LAT");
     println!("lon SC_GEOCENTRIC_LON");
     println!(
-        "field dmsp16_ssj_ele_total_energy_flux dmsp16_ssj_ele_total_energy_flux inverse-square em eV/cm2/ster/s {} 0.0 0.0",
+        "field {ele} {ele} inverse-square em eV/cm2/ster/s {} 0.0 0.0",
         TTL as u64
     );
     println!(
-        "field dmsp16_ssj_ion_total_energy_flux dmsp16_ssj_ion_total_energy_flux inverse-square em eV/cm2/ster/s {} 0.0 0.0",
+        "field {ion} {ion} inverse-square em eV/cm2/ster/s {} 0.0 0.0",
         TTL as u64
     );
 }
 
-fn compile_file(path: &str, out: &str) {
+fn compile_file(path: &str, out: &str, magic: &[u8; 4], format: &str, ele: &str, ion: &str) {
     let Ok(bytes) = std::fs::read(path) else {
         eprintln!("{path}: the file stays unread");
         std::process::exit(1);
     };
-    emit(&bytes, out, None);
+    emit(&bytes, out, None, magic, format, ele, ion);
 }
 
-fn compile_url(url: &str, out: &str) {
+fn compile_url(url: &str, out: &str, magic: &[u8; 4], format: &str, ele: &str, ion: &str) {
     let Some(bytes) = fetch_raw_bytes(url) else {
         eprintln!("{url}: fetch void — the bin stays unwritten (0 honored)");
         std::process::exit(1);
     };
-    emit(&bytes, out, Some(url));
+    emit(&bytes, out, Some(url), magic, format, ele, ion);
 }
 
 fn main() {
@@ -322,17 +339,29 @@ fn main() {
         return;
     }
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let sat = match arg_value(&args, "--sat") {
+        Some(s) => s,
+        None => "f16".to_string(),
+    };
+    let Some(idx) = sat_index(&sat) else {
+        eprintln!("{sat}: unknown satellite — the bin stays unwritten (0 honored)");
+        std::process::exit(2);
+    };
+    let magic = MAGICS[idx];
+    let format = SATS[idx];
+    let ele = format!("{format}_ele_total_energy_flux");
+    let ion = format!("{format}_ion_total_energy_flux");
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => OUT_PATH.to_string(),
+        None => format!("{format}.bin"),
     };
     if let Some(url) = arg_value(&args, "--url") {
-        compile_url(&url, &out);
+        compile_url(&url, &out, magic, format, &ele, &ion);
     } else if let Some(path) = arg_value(&args, "--file").or_else(|| arg_value(&args, "--input")) {
-        compile_file(&path, &out);
+        compile_file(&path, &out, magic, format, &ele, &ion);
     } else {
         eprintln!(
-            "usage: dmsp16_ssj_compiler --probe <cdf> | --file <cdf> | --url <cdf> [--out <bin>] [--ci-mode]"
+            "usage: dmsp16_ssj_compiler [--sat f16|f17|f18] --probe <cdf> | --file <cdf> | --url <cdf> [--out <bin>] [--ci-mode]"
         );
         std::process::exit(2);
     }
@@ -351,18 +380,23 @@ mod tests {
             [65.4, 263.2, 7223.9, 1_285_286_400.0, 1.0e10, 2.0e9],
             [-70.1, 10.0, 7100.0, 1_285_286_460.0, 0.0, 0.0],
         ];
-        let bytes = write_bin(&records);
+        let bytes = write_bin(&records, b"DS16");
         assert_eq!(bytes.len(), 8 + records.len() * FIELDS * 8);
-        assert_eq!(parse_bin(&bytes).as_deref(), Some(records.as_slice()));
+        assert_eq!(
+            parse_bin(&bytes, b"DS16").as_deref(),
+            Some(records.as_slice())
+        );
     }
 
     #[test]
     fn parse_bin_rejects_foreign_magic_and_short_body() {
-        assert!(parse_bin(b"DS16").is_none());
-        assert!(parse_bin(b"XXXX").is_none());
-        let good = write_bin(&[[0.0; FIELDS]]);
+        assert!(parse_bin(b"DS16", b"DS16").is_none());
+        assert!(parse_bin(b"XXXX", b"DS16").is_none());
+        let good = write_bin(&[[0.0; FIELDS]], b"DS17");
+        assert_eq!(good[0..4], *b"DS17");
+        assert!(parse_bin(&good, b"DS16").is_none());
         let short = good[..good.len() - 1].to_vec();
-        assert!(parse_bin(&short).is_none());
+        assert!(parse_bin(&short, b"DS17").is_none());
     }
 
     #[test]

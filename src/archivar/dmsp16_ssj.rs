@@ -8,18 +8,27 @@ pub const RECORD_BYTES: usize = FIELDS * 8;
 pub const COMP_ELE: u32 = 0;
 pub const COMP_ION: u32 = 1;
 
-const COLUMNS: &[(u32, &str, &str)] = &[
-    (
-        COMP_ELE,
+const SATS: [&str; 3] = ["dmsp16_ssj", "dmsp17_ssj", "dmsp18_ssj"];
+const MAGICS: [[u8; 4]; 3] = [*b"DS16", *b"DS17", *b"DS18"];
+const NAMES: [[&str; 2]; 3] = [
+    [
         "dmsp16_ssj_ele_total_energy_flux",
-        "eV/cm2/ster/s",
-    ),
-    (
-        COMP_ION,
         "dmsp16_ssj_ion_total_energy_flux",
-        "eV/cm2/ster/s",
-    ),
+    ],
+    [
+        "dmsp17_ssj_ele_total_energy_flux",
+        "dmsp17_ssj_ion_total_energy_flux",
+    ],
+    [
+        "dmsp18_ssj_ele_total_energy_flux",
+        "dmsp18_ssj_ion_total_energy_flux",
+    ],
 ];
+const UNIT: &str = "eV/cm2/ster/s";
+
+fn sat_index(format: &str) -> Option<usize> {
+    SATS.iter().position(|s| *s == format)
+}
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Dmsp16SsjRecord {
@@ -38,7 +47,7 @@ impl Dmsp16SsjRecord {
 }
 
 pub fn parse_bin(bytes: &[u8]) -> Option<Vec<Dmsp16SsjRecord>> {
-    if bytes.len() < HEADER_BYTES || bytes[0..4] != MAGIC {
+    if bytes.len() < HEADER_BYTES || !MAGICS.iter().any(|m| m == &bytes[0..4]) {
         return None;
     }
     let n = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
@@ -81,20 +90,28 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<Dmsp16SsjRecord>> {
     Some(out)
 }
 
-pub fn component_name(comp: u32) -> Option<&'static str> {
-    COLUMNS.iter().find(|c| c.0 == comp).map(|c| c.1)
+pub fn component_name_for(format: &str, comp: u32) -> Option<&'static str> {
+    let i = sat_index(format)?;
+    NAMES[i].get(comp as usize).copied()
 }
 
-pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
+pub fn component_name(comp: u32) -> Option<&'static str> {
+    component_name_for("dmsp16_ssj", comp)
+}
+
+pub fn declared_fields_for(format: &str, tau: f64) -> Vec<FieldConfig> {
+    let Some(i) = sat_index(format) else {
+        return Vec::new();
+    };
     let Some(channel_ref) = force_id_of("em") else {
         return Vec::new();
     };
     let Some(kernel) = kernel_id_for_force(channel_ref) else {
         return Vec::new();
     };
-    COLUMNS
+    NAMES[i]
         .iter()
-        .map(|(_, name, unit)| FieldConfig {
+        .map(|name| FieldConfig {
             key: name.to_string(),
             name: name.to_string(),
             band_id: None,
@@ -103,13 +120,17 @@ pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
             tau,
             absorption: 0.0,
             advection: 0.0,
-            unit: (*unit).to_string(),
+            unit: UNIT.to_string(),
             freq: crate::archivar::spectral::SPECTRAL_NO_BAND,
             bin_width: crate::archivar::spectral::SPECTRAL_NO_BAND,
             fold: None,
             aperture: Aperture::None,
         })
         .collect()
+}
+
+pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
+    declared_fields_for("dmsp16_ssj", tau)
 }
 
 pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
