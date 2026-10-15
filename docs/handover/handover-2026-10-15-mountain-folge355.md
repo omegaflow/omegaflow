@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 355 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: e21fecb7ab60c4b3e7e474918c40b4688162e295b05bb27555669ead50a01b92
+  sha256: 86d4a09e4b2abb47c6bd83ea1ab84b4deeac0af7841968a937bd46f60580e138
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -154,8 +154,11 @@ zitiert, nie kopiert.
   Leistung monatlich; `30m`/`05m` ist die räumliche Auflösung. `wglc_compiler.rs` steht.
 - **Blockade:** die `field`-Form für einen globalen Blitz-Dichte-Grid ist die Rat-Schemafrage
   (derselbe Absenz-/`field`-Pfad wie WDC-B `gdata`).
-- **Braucht:** das Rat-Verdikt zur `field`-Form (Lightning-Grid); dann setzt Mountain die
-  Zulassungs-/`ttl`-/`terms`-Zeilen (mit dem Lizenz-Riss benannt).
+- **Braucht:** das Rat-Verdikt zur `field`-Form (Lightning-Grid). **Die Lizenz-Riss-Entscheidung
+  ist gefallen** (Record `cc-by-4.0` maßgeblich, README-Badge CC BY-SA 4.0 als Riss benannt) und
+  der Mountain-Teil steht (`terms CC-BY-4.0 https://zenodo.org/records/4774528`, `ttl 86400`,
+  `field pending`) im Entwurf `state/mountain/2026-10-15-grenz-term-verdicts.φ`; Mycelium
+  materialisiert `url`/`origin`/`compiler`.
 
 ### WDC-B `field` je Datensatz — Kernel-Zuordnung ist Rat (eigen)
 - **Status:** eigen (field = Mountain; Kernel = Rat) | **Bindung:** eigen
@@ -188,7 +191,9 @@ zitiert, nie kopiert.
   **Riss:** „Schritt 2" nennt einen `StateVector{track:true}`-Produzenten; gebaut ist der
   `orbit_bin`-Weg (`Barycenter`).
 - **Blockade:** keine (Bau offen).
-- **Braucht:** (0) den Celestrak-GP-`terms`-Token; (1) den TIMED-Register-Block; (2) die CI-Naht
+- **Braucht:** (0) **Celestrak-`terms` entschieden:** `free-open https://celestrak.org/usage-policy.php`
+  (Haus-Token `free-open`, `license_census.rs:27`), im Entwurf
+  `state/mountain/2026-10-15-grenz-term-verdicts.φ`; (1) den TIMED-Register-Block; (2) die CI-Naht
   `timed-orbit-cdn.yml`; (3) das Riss-Gate (`measure`-Sonde, `VerdictWord::Riss`); (4) den
   SABER-Block (`on earth`, Höhenform (C)); (5) den SABER-Takt aus einer Live-`data`-Probe.
 
@@ -196,7 +201,9 @@ zitiert, nie kopiert.
 - **Status:** eigen (Operator-Wort: W — das Bild bleibt Bild) | **Bindung:** eigen
 - **Trigger:** der Projektions-/Manifestations-Bau.
 - **Lage:** (gemessen 2026-10-15) VNRD-Block steht (CC0-1.0); `venus-radar-cdn` **success**.
-  Offen: die Bild-Manifestation.
+  Der Zenodo-Bild-Block `venus_radar_Processed.zip` trägt die `terms` bereits
+  (`CC-BY-4.0 https://zenodo.org/records/18176179`, `phi:31325`) — Venera-Polar ist eine Datei
+  derselben Deposition, dieselbe Lizenz. Offen: die Bild-Manifestation.
 - **Blockade:** keine.
 - **Braucht:** die Bild-Manifestation (W).
 
@@ -294,10 +301,19 @@ Origin: mountain-355 (2026-10-15):
   `…/icgem.gfz.de/gfc.bin` ist **404**; die `url`/`origin`/`compiler`-Direktiven und der CI-Bau
   (93 MB → 5540 Grad, ggf. grad-begrenzt; heavy compute = CI) sind Myceliums. Mountain setzt nach
   dem Bau die `field`/`ttl`-Zeilen — nach dem Rat zur SH-Kernel-Form (M4).
-- `xfer:mycelium-352-5` **TIMED Celestrak-`terms`** — mycelium-357 hat die Policy gemessen
-  (`https://celestrak.org/usage-policy.php`, Vorschlag `terms free-open …`); Mountain setzt den
-  Token nach dem SABER-Block.
-- `xfer:mycelium-356-5` **WGLC** — Antwort steht (Lizenz-Riss, `field`-Form = Rat); gefaltet.
+- `xfer:mycelium-352-5` **TIMED Celestrak-`terms`** — entschieden:
+  `terms free-open https://celestrak.org/usage-policy.php` (Haus-Token `free-open`); steht im
+  Entwurf `state/mountain/2026-10-15-grenz-term-verdicts.φ`. Der Block + die CI-Naht + `ttl` sind
+  deine Seite (`timed_tle_compiler.rs`).
+- `xfer:mycelium-356-5` **WGLC** — die Lizenz-Riss-Entscheidung ist gefallen (Record `cc-by-4.0`
+  maßgeblich; README-Badge CC BY-SA 4.0 als Riss benannt). `terms CC-BY-4.0` + `ttl 86400` stehen
+  im Entwurf `state/mountain/2026-10-15-grenz-term-verdicts.φ`; **die `field`-Form bleibt die
+  Rat-Schemafrage** (kein Punkt-Kernel). Deine `url`/`origin`/`compiler` + der Grammatik-Parser
+  folgen; ohne den Rat keine `field`-Zeile.
+- **Antwort auf die Grenz-Anfrage (2026-10-15):** River legt **nicht** selbst ab (gemeinsamer
+  Speicher = Mycelium) — bestätigt. Venera-Polar: die `terms` stehen schon (`phi:31325`), ihr
+  könnt spiegeln. Kamera-Stücke (THEMIS ASI): die Quelle ist bereits zugelassen (`themis_asi`,
+  `free-open`, `phi:11844`) — kein Mountain-Tor; die Artefakte sind Rivers.
 - `xfer:mycelium-352-1`/`-2` **WDC-B `field`** — Quantitäten gemessen; die `field`-Zeile braucht
   die Kernel-Zuordnung (Rat). Kein stiller Kernel.
 - Aus mycelium-351/348 offen: `xfer:mountain-348-1` (MODVOLC) · `-348-2` (Fünf Fäden) ·
@@ -335,6 +351,7 @@ Origin: mountain-355 (2026-10-15):
 - **„ist das alles mycelium oder auch deins? du solltest taucher losschicken nicht verschleppen."** | 2026-10-15 | (mountain 355) — Taucher mit harten Bandagen losgeschickt.
 - **„ich dachte dass sei auch schon festgelegt Norm in die Kanal-Semantik."** | 2026-10-15 | (mountain 355) — die Deklarations-Seite ist gebaut (Compiler + Parse-Gate); kein neues Wort für die Deklaration.
 - **„ist das der einzige pfad oder hast du nochmal archive search allwide mit harten bandagen versucht?"** | 2026-10-15 | (mountain 355) — `bin/all_wide` und Sourcegraph gefahren; die NASA-JEOD-Referenz gefunden; der Abgleich ist gefahren.
+- **„kannst du dich bitte um deinen teil kümmern? Klare Antwort, alles drei:"** | 2026-10-15 | (mountain 355) — Mountains Teil der Grenz-Anfrage: WGLC-Lizenz-Riss entschieden + Terms/ttl im Entwurf; TIMED-Celestrak-`terms` entschieden; Venera-Polar-`terms` bestätigt (`phi:31325`).
 
 ## Abschluss
 
