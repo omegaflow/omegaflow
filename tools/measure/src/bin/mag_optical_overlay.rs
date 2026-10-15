@@ -57,7 +57,7 @@ fn iso_utc(unix: f64) -> String {
     format!("{y:04}-{m:02}-{d:02}T{hh:02}:{mm:02}:{ss:02}Z")
 }
 
-fn read_tkdg(path: &str) -> Result<Vec<(f64, f64)>, String> {
+fn read_tkdg_profiles(path: &str) -> Result<Vec<(f64, Vec<f64>)>, String> {
     let data = std::fs::read(Path::new(path)).map_err(|e| format!("{path}: {e}"))?;
     if data.len() < 8 || &data[0..4] != b"TKDG" {
         return Err(format!("{path}: not a TKDG file"));
@@ -74,14 +74,24 @@ fn read_tkdg(path: &str) -> Result<Vec<(f64, f64)>, String> {
     for i in 0..count {
         let base = 8 + i * frame_bytes;
         let epoch = f64::from_le_bytes(data[base..base + 8].try_into().unwrap());
-        let mut sum = 0u64;
+        let mut rows = Vec::with_capacity(256);
         for r in 0..256 {
             let o = base + 8 + r * 2;
-            sum += u16::from_le_bytes([data[o], data[o + 1]]) as u64;
+            rows.push(u16::from_le_bytes([data[o], data[o + 1]]) as f64);
         }
-        out.push((epoch, sum as f64 / 256.0));
+        out.push((epoch, rows));
     }
     Ok(out)
+}
+
+fn read_tkdg(path: &str) -> Result<Vec<(f64, f64)>, String> {
+    Ok(read_tkdg_profiles(path)?
+        .into_iter()
+        .map(|(epoch, rows)| {
+            let mean = rows.iter().sum::<f64>() / rows.len() as f64;
+            (epoch, mean)
+        })
+        .collect())
 }
 
 fn fetch_day(station: &str, date: &str) -> Result<Vec<(f64, f64, f64, f64)>, String> {
@@ -173,6 +183,89 @@ fn onset_slot(slots: &[Option<f64>], lo: usize, hi: usize, k: f64) -> Option<usi
     (lo..hi).find(|&i| slots[i].is_some_and(|v| v >= thr))
 }
 
+fn band_strength(profile: &[f64], run: usize) -> Option<f64> {
+    let n = profile.len();
+    if run == 0 || run > n {
+        return None;
+    }
+    let win = (n / 4).max(run);
+    let half = win / 2;
+    let mut pref = vec![0.0f64; n + 1];
+    for i in 0..n {
+        pref[i + 1] = pref[i] + profile[i];
+    }
+    let mut resid = vec![0.0f64; n];
+    for i in 0..n {
+        let lo = i.saturating_sub(half);
+        let hi = (i + half + 1).min(n);
+        let base = (pref[hi] - pref[lo]) / (hi - lo) as f64;
+        resid[i] = profile[i] - base;
+    }
+    let mut acc: f64 = resid[..run].iter().sum();
+    let mut best = acc / run as f64;
+    for j in run..n {
+        acc += resid[j] - resid[j - run];
+        best = best.max(acc / run as f64);
+    }
+    let level = profile.iter().sum::<f64>() / n as f64;
+    if !(level.is_finite() && level > 0.0) {
+        return None;
+    }
+    (best / level).is_finite().then_some(best / level)
+}
+
+fn band_onset_slot(
+    profiles: &[Option<Vec<f64>>],
+    lo: usize,
+    hi: usize,
+    k: f64,
+    run: usize,
+) -> Option<usize> {
+    let mut strength: Vec<Option<f64>> = vec![None; profiles.len()];
+    for i in lo..hi {
+        if let Some(p) = &profiles[i] {
+            strength[i] = band_strength(p, run);
+        }
+    }
+    let vals: Vec<f64> = (lo..hi).filter_map(|i| strength[i]).collect();
+    let (med, mad) = median_mad(&vals);
+    if !(mad > 0.0) {
+        return None;
+    }
+    let thr = med + k * ROBUST_SIGMA * mad;
+    (lo..hi).find(|&i| strength[i].is_some_and(|v| v >= thr))
+}
+
+fn mean_profiles(frames: &[(f64, Vec<f64>)], day_start: f64) -> Vec<Option<Vec<f64>>> {
+    let mut acc: Vec<Option<Vec<f64>>> = vec![None; MINUTE_SLOTS];
+    let mut counts = vec![0u32; MINUTE_SLOTS];
+    for (epoch, rows) in frames {
+        if let Some(i) = minute_slot(*epoch, day_start) {
+            match &mut acc[i] {
+                Some(a) if a.len() == rows.len() => {
+                    for (x, r) in a.iter_mut().zip(rows.iter()) {
+                        *x += *r;
+                    }
+                    counts[i] += 1;
+                }
+                _ => {
+                    acc[i] = Some(rows.clone());
+                    counts[i] = 1;
+                }
+            }
+        }
+    }
+    for i in 0..MINUTE_SLOTS {
+        if let Some(a) = &mut acc[i] {
+            let c = counts[i] as f64;
+            for x in a.iter_mut() {
+                *x /= c;
+            }
+        }
+    }
+    acc
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let date = match arg_value(&args, "--date") {
@@ -205,6 +298,23 @@ fn main() {
         .collect();
     let optical_path = arg_value(&args, "--optical");
     let out_path = arg_value(&args, "--out");
+    let onset_mode = match arg_value(&args, "--onset") {
+        Some(mode) => mode,
+        None => String::from("mean"),
+    };
+    if onset_mode != "mean" && onset_mode != "band" {
+        eprintln!(
+            "mag_optical_overlay: --onset {onset_mode} is neither mean (the per-minute column mean) nor band (the trend-removed, brightness-normalized latitudinal band)"
+        );
+        std::process::exit(2);
+    }
+    let band_run = match arg_value(&args, "--band-run")
+        .and_then(|s| s.parse::<usize>().ok())
+        .filter(|v| *v > 0)
+    {
+        Some(run) => run,
+        None => 16,
+    };
 
     let mut mag: Vec<(String, Vec<Option<f64>>)> = Vec::new();
     for st in &stations {
@@ -235,45 +345,57 @@ fn main() {
         }
     }
 
-    let optical: Option<Vec<Option<f64>>> = match &optical_path {
-        Some(p) => match read_tkdg(p) {
-            Ok(frames) => {
-                let mut slots: Vec<Option<f64>> = vec![None; MINUTE_SLOTS];
-                let mut counts = vec![0u32; MINUTE_SLOTS];
-                for (epoch, bright) in &frames {
-                    if let Some(i) = minute_slot(*epoch, day_start) {
-                        let s = match slots[i] {
-                            Some(v) => v + *bright,
-                            None => *bright,
-                        };
-                        slots[i] = Some(s);
-                        counts[i] += 1;
+    let (optical, optical_profiles): (Option<Vec<Option<f64>>>, Option<Vec<Option<Vec<f64>>>>) =
+        match &optical_path {
+            Some(p) => match read_tkdg(p) {
+                Ok(frames) => {
+                    let mut slots: Vec<Option<f64>> = vec![None; MINUTE_SLOTS];
+                    let mut counts = vec![0u32; MINUTE_SLOTS];
+                    for (epoch, bright) in &frames {
+                        if let Some(i) = minute_slot(*epoch, day_start) {
+                            let s = match slots[i] {
+                                Some(v) => v + *bright,
+                                None => *bright,
+                            };
+                            slots[i] = Some(s);
+                            counts[i] += 1;
+                        }
                     }
-                }
-                for i in 0..MINUTE_SLOTS {
-                    if let Some(s) = slots[i] {
-                        slots[i] = Some(s / counts[i] as f64);
+                    for i in 0..MINUTE_SLOTS {
+                        if let Some(s) = slots[i] {
+                            slots[i] = Some(s / counts[i] as f64);
+                        }
                     }
+                    let peak = frames
+                        .iter()
+                        .max_by(|a, b| a.1.total_cmp(&b.1))
+                        .map(|(t, v)| (iso_utc(*t), *v));
+                    if let Some((pt, pv)) = peak {
+                        println!(
+                            "# optical: {} frames, peak brightness {pv:.1} at {pt}",
+                            frames.len()
+                        );
+                    }
+                    let profiles = if onset_mode == "band" {
+                        match read_tkdg_profiles(p) {
+                            Ok(rows) => Some(mean_profiles(&rows, day_start)),
+                            Err(e) => {
+                                eprintln!("mag_optical_overlay: {e}");
+                                std::process::exit(1);
+                            }
+                        }
+                    } else {
+                        None
+                    };
+                    (Some(slots), profiles)
                 }
-                let peak = frames
-                    .iter()
-                    .max_by(|a, b| a.1.total_cmp(&b.1))
-                    .map(|(t, v)| (iso_utc(*t), *v));
-                if let Some((pt, pv)) = peak {
-                    println!(
-                        "# optical: {} frames, peak brightness {pv:.1} at {pt}",
-                        frames.len()
-                    );
+                Err(e) => {
+                    eprintln!("mag_optical_overlay: {e}");
+                    std::process::exit(1);
                 }
-                Some(slots)
-            }
-            Err(e) => {
-                eprintln!("mag_optical_overlay: {e}");
-                std::process::exit(1);
-            }
-        },
-        None => None,
-    };
+            },
+            None => (None, None),
+        };
 
     println!("# orientation: {ORIENTATION}");
     let mut header = String::from("hour");
@@ -339,7 +461,19 @@ fn main() {
             iso_utc(day_start + lo as f64 * 60.0),
             iso_utc(day_start + hi as f64 * 60.0)
         );
-        let optical_onset = optical.as_ref().and_then(|s| onset_slot(s, lo, hi, k));
+        println!(
+            "# onset optical mode {onset_mode}{}",
+            if onset_mode == "band" {
+                format!(" run {band_run}")
+            } else {
+                String::new()
+            }
+        );
+        let optical_onset = match (&optical, &optical_profiles, onset_mode.as_str()) {
+            (_, Some(profs), "band") => band_onset_slot(profs, lo, hi, k, band_run),
+            (Some(s), _, _) => onset_slot(s, lo, hi, k),
+            _ => None,
+        };
         match optical_onset {
             Some(i) => println!("onset optical {}", iso_utc(day_start + i as f64 * 60.0)),
             None => println!("onset optical pending (no crossing above the robust threshold)"),
@@ -572,5 +706,68 @@ mod tests {
         let frames = read_tkdg(path.to_str().unwrap()).expect("read");
         assert_eq!(frames.len(), 1);
         assert!((frames[0].1 - 1400.0).abs() < 1e-6);
+    }
+
+    fn flat_profile(level: f64) -> Vec<f64> {
+        vec![level; 256]
+    }
+
+    #[test]
+    fn band_strength_is_zero_for_a_uniform_profile_and_positive_for_a_band() {
+        assert_eq!(band_strength(&flat_profile(1000.0), 16), Some(0.0));
+        let mut banded = flat_profile(1000.0);
+        for r in 100..116 {
+            banded[r] += 800.0;
+        }
+        assert!(band_strength(&banded, 16).unwrap() > 0.4);
+    }
+
+    #[test]
+    fn band_onset_ignores_a_pure_common_mode_rise() {
+        let mut profiles: Vec<Option<Vec<f64>>> = vec![None; 12];
+        for (i, p) in profiles.iter_mut().enumerate() {
+            *p = Some(flat_profile(1000.0 + i as f64 * 50.0));
+        }
+        assert_eq!(band_onset_slot(&profiles, 0, 12, 6.0, 16), None);
+    }
+
+    #[test]
+    fn band_onset_fires_on_a_localized_latitudinal_band() {
+        let mut profiles: Vec<Option<Vec<f64>>> = vec![None; 12];
+        for (i, p) in profiles.iter_mut().enumerate() {
+            let mut rows = flat_profile(1000.0 + i as f64 * 50.0);
+            if i < 7 {
+                if i % 2 == 0 {
+                    for r in 100..116 {
+                        rows[r] += 1.0;
+                    }
+                }
+            } else {
+                for r in 100..116 {
+                    rows[r] += 800.0;
+                }
+            }
+            *p = Some(rows);
+        }
+        assert_eq!(band_onset_slot(&profiles, 0, 12, 6.0, 16), Some(7));
+    }
+
+    #[test]
+    fn the_tkdg_profile_reader_carries_the_256_rows() {
+        let dir = std::env::temp_dir().join("mag_optical_overlay_profile_test");
+        let _ = std::fs::create_dir_all(&dir);
+        let path = dir.join("probe.bin");
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(b"TKDG");
+        bytes.extend_from_slice(&1u32.to_le_bytes());
+        bytes.extend_from_slice(&1715320800.0f64.to_le_bytes());
+        for r in 0..256u16 {
+            bytes.extend_from_slice(&(1000 + r).to_le_bytes());
+        }
+        std::fs::write(&path, &bytes).unwrap();
+        let frames = read_tkdg_profiles(path.to_str().unwrap()).expect("read");
+        assert_eq!(frames.len(), 1);
+        assert_eq!(frames[0].1.len(), 256);
+        assert!((frames[0].1[255] - 1255.0).abs() < 1e-9);
     }
 }
