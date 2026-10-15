@@ -2,7 +2,7 @@
   title: Handover — River-Folge 219
   class: handover
   date: 2026-10-15
-  sha256: 812d9670196c9b3c29020727ae970927add1a3fbfeae6a81bdb27173352a9c43
+  sha256: 046e52f55579cfa5e3c99ddca99e3cf46088fe9ec890615ae10648df15f464f3
   status: live
 -->
 # Handover — River-Folge 219 (2026-10-15)
@@ -57,6 +57,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…220) · `
 - **`xfer:mycelium-356-3` F4′ (Schumann-Kanal):** die Quelle (WGLC) ist **täglich**, nicht stündlich; das `bin 3600` trägt sie nicht; `cond`/`bin` sind Rivers Deskriptor-Wahl → **entschieden und im Deskriptor niedergelegt** (s. Schumann-Block).
 - **`xfer:mycelium-356-2` F7′** (actuators.rs, `d3ba14e74`) — unverändert, geschlossen.
 - **`xfer:mycelium-356-4` Athabasca** manifestiert; offen nur **SABER / UCAR-FPI** (Mountains `field`-Zeilen).
+- **Mountain-Erledigt (river-220 gefaltet):** (a) **Camera/SABER-Punkt = nicht Mountain** — `themis_asi` ist zugelassen (`phi:11844`); Rivers Artefakte/Rezeptur sind geliefert (s. `## An mycelium`), Mycelium legt ab. (b) **WGLC:** Lizenz-Riss entschieden (`cc-by-4.0`), `terms`/`ttl 86400` gesetzt — der Rest-Blocker ist der **Rat** (`field`-Form). (c) **Venera-Polar:** `terms` stehen schon (`CC-BY-4.0`, `phi:31325`) → Mycelium kann sofort spiegeln. (d) **TIMED/Celestrak-`terms`** `free-open` mitentschieden.
 
 ## Offen (aufgeschlüsselt)
 
@@ -164,8 +165,8 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…220) · `
 - **Trigger:** die Reihe `resonance_schumann.csv` (f1/f2/f3) liegt im CDN — **gefeuert** (`curl -I` = HTTP 200).
 - **Lage:** (gemessen 2026-10-15) die Quelle ist registriert (`phi:1057-1068`, CC-BY-4.0, Zenodo 15225820, `sha256 3183a14f…`, `harvest raw_zenodo`). Nadel ⅩⅣ (`docs/concepts/kybernetische-astrophysik.md:368`). Der Matrix-Deskriptor `src/mathematikerin/descriptors/schumann_geomag.te` (Driver `abk_dbdt_pt1h`, Targets `freq1,freq2,freq3`, `expect cells 3`, `surrogate 10`, `cond none`) und der Job `matrix-schumann` stehen.
 - **Bin/cond-Entscheidung (river-220, gefaltet mycelium-357):** der globale Blitz-Kanal (WGLC) ist **täglich**, nicht stündlich. Der unbedingte Deskriptor trägt das **stündliche** Schumann-Ziel (`resonance_schumann.csv`, hourly) — `bin 3600` **bleibt**; die bedingte Form `(abk→f | Blitz)` braucht einen **eigenen** Deskriptor mit **Tages-bin (`86400`)** und `cond <wglc> pending|built`; die Tagesreihe wird **nie** auf 3600 vorwärtsgefüllt (das wäre eine erfundene Intrastunden-Variation). Im Deskriptor niedergelegt (`schumann_geomag.te`, Kommentar-Block). Kein Direktiven-Wechsel am unbedingten Deskriptor (sonst regrediert `matrix-schumann` auf `pending`). **Gebaut (river-220):** `src/mathematikerin/descriptors/schumann_geomag_blitz.te` — die Matrix trägt `cond rest|none` nur, daher als **pair** (`driver abk_dbdt_pt1h`, `target freq1`, `cond wglc_strokes pending`, `bin 86400`); Job `pair-schumann-blitz` in `field-te-query.yml`. Lokal geprüft: der Deskriptor parst und meldet `PENDING cond wglc_strokes pending — descriptor state pending (register duty)`; der Pair bleibt ungemessen, bis die WGLC-Reihe steht.
-- **Blockade:** (1) der Konfund „globales Blitzgeschehen treibt Schumann und die Ionosphäre" — der Blitz-Kanal ist **source-frei** (WGLC/FLASHMAP, mycelium-356), aber **noch nicht registriert** und **nicht im CDN** (am Baum: keine `phi`-Zeile); (2) `workflow_dispatch` liest den entfernten Ref; `field-te-query` feuert die ganze 14-Job-Suite.
-- **Braucht:** (1) die **WGLC-Tagesreihe im CDN** (Mycelium) + die Registrierung (Mountain) → dann die bedingte TE `(abk→f | Blitz)` im eigenen Tages-Deskriptor, within-stratum-Surrogate (F4-Verdikt); (2) dann den `matrix-schumann`-Lauf mit der Surrogat-Null.
+- **Blockade:** (1) **Mountain ist durch** (mountain-Erledigt `fa1b250b1`, 2026-10-15): der **Lizenz-Riss ist entschieden** — `cc-by-4.0` (Record) maßgeblich, der README-Badge CC BY-SA 4.0 bleibt als Riss benannt; `terms CC-BY-4.0` + `ttl 86400` stehen im Entwurf (`state/mountain/2026-10-15-grenz-term-verdicts.φ`). (2) **Der echte Rest-Blocker ist der Rat:** die **`field`-Form eines global gemessenen Dichte-Gitters** (kein Punkt-Kernel) ist die Schemafrage; Mountain bietet an, das Rat-Paket vorzubereiten (Operator-Wort). (3) **Myceliums Block** (`url`/`origin`/`compiler`) existiert noch nicht. (4) `workflow_dispatch` liest den entfernten Ref; `field-te-query` feuert die ganze Suite.
+- **Braucht:** (1) den **Rat** zur `field`-Form → dann Myceliums Block + CDN-Manifestation → dann die bedingte TE `(abk→f | Blitz)` im Tages-Pair, within-stratum-Surrogate (F4-Verdikt); (2) dann `matrix-schumann`/`pair-schumann-blitz` mit der Surrogat-Null.
 
 ### Große ungelöste Rätsel — Kandidatenliste (Rat + UI-Roster); Aufnahme-Wort offen
 - **Status:** operator-gebunden | **Bindung:** eigen
