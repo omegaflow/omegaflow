@@ -19,6 +19,7 @@ draußen (spezifische Anwendung, kein Such-Werkzeug).
 - Inhalt im lebenden Baum: `archive_search <kws> --root <dir>` (auf PATH) oder
   `sgrep [-i] <pattern> [dir]` — `sgrep` ist case-sensitiv ohne `-i`.
 - Pfade/Dateinamen: `archive_search --index [<query>] [--path] [--kind] [--sort]`.
+- **Code** durchsuchen (Rust, JS/TS, WGSL, Python): `archive_search --sourcegraph "<pattern>"` — **keyless**, echte Code-Zeilen (`repo/path/line/match`). **`--github` findet nur Repositories, *keinen* Code** (gemessen 2026-10-15); `--grepapp` = 429 + nur Metadaten.
 - `grep`, `ls`, `cat` **in bash** sind Verstöße (der Zähler gehört ins Handover).
   Das `Grep`-Tool von OpenCode ist erlaubt; bash-`grep` ist es nicht. Die
   Leitbefehle (`grep`/`ls`/`cat` am Kommandoanfang) sind in `opencode.json`

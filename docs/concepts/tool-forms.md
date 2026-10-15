@@ -44,6 +44,16 @@ selbst und erzeugt Falsch-Negative. Mehrere Muster: ein Aufruf je Muster
 je Begriff. `form-guard` bricht ein `sgrep`-Muster mit `\|` ab und lehrt die Form
 (Lehre 2026-09-28: eine `\|`-Suche lieferte Falsch-Negative).
 
+## Code-Suche — unsere Sprachen
+
+| Zweck | kanonisch |
+|---|---|
+| **Code** durchsuchen (Rust, JS/TS, WGSL, Python) | **`archive_search --sourcegraph "<pattern>"`** — **keyless**, liefert echte Code-Zeilen (`repo/path/line/match`) |
+| Repositories finden (**kein** Code) | `archive_search --github "<q>"` — nur Repo-Metadaten, **keine** Code-Suche |
+| Crate-Registry / Datasets / Papers | `--crates` / `--huggingface` / `--core` — **kein** Code |
+
+**Gemessen (2026-10-15):** `--sourcegraph "fn main"` → echte **Rust**-Zeilen; `"def transfer_entropy"` → **Python**-Zeilen (`pyinform`, `infomeasure`); `"wgsl fn"` → WGSL-nahe. `--github "raw_mirror"` → **nur Repo-URLs**. `--grepapp` = **429** + nur Metadaten. **`--sourcegraph` ist die Code-Suche.**
+
 ## Bauen · CI
 
 | verboten | kanonisch (exakt, kein Zusatzflag) |
