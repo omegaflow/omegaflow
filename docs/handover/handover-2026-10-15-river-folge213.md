@@ -2,7 +2,7 @@
 title: Handover — River-Folge 213
 class: handover
 date: 2026-10-15
-sha256: 4109d8f32f188f881213204f9d2042af659a3fc647a0625d6d665b53ed944373
+sha256: ce726e10e20282f6bbfb175eb146d446d039a9e22f46bfa71b5275950ff97e07
 status: live
 -->
 # Handover — River-Folge 213 (2026-10-15)
@@ -30,6 +30,7 @@ Wort | Datum | Quelle
 „können wir rausfinden ob es ein muster gibt wie stationen zueinander stehen müssen damit der trefferanteil nicht sinkt … praktisch eine te mustererkennung für die positionierung der stationen" | 2026-10-15 | Operator (Session, River-214) — eine **Stations-Platzierungsregel** (TE-Muster) finden, die den Trefferanteil hält oder steigert.
 „ginge nicht sogar eine polarlichtabhängige ‚live'-aktivierung oder ist das für eine vorhersage unbrauchbar da der sturm ja schon angekommen ist, oder trägt der gedanke, aurora als stationstrigger" | 2026-10-15 | Operator (Session, River-214) — die Aurora als **dynamischer Stationsschalter** (welche Stationen unter dem Polarlichtstrom liegen) und die Vorlauf-Frage.
 „wir finden doch gerade heraus was der sonnensturm alles treibt oder beeinflusst die komplette kette von der sonne bis zur erde wir könnten also sozusagen eine frühwarnkette einrichten die logischerweise je näher an zur erde desto kurzfristger" | 2026-10-15 | Operator (Session, River-214) — die **Frühwarnkette** als Vorlauf-Leiter (Sonne → … → Erde), deren Vorlauf nach unten kürzer wird.
+„doch die information gewinnt an sicherheit" | 2026-10-15 | Operator (Session, River-214) — Korrektur: die weitergewanderte Information ist nicht wertlos; jede Stufe **näher an der Erde gewinnt an Sicherheit** (die Unsicherheit verengt sich). Die Kette ist eine **Vorlauf↔Sicherheit-Leiter**.
 
 Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `state/operator-gespraeche/2026-10-14-river.md` (Vorsession).
 
@@ -161,8 +162,8 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `st
 - **Status:** eigen (neu, Entwurf → Rat) | **Bindung:** eigen
 - **Trigger:** Operator-Wort 2026-10-15: „eine frühwarnkette einrichten die logischerweise je näher an zur erde desto kurzfristger".
 - **Lage:** (gemessen 2026-10-15 via Register-/Kanal-Zensus am Baum) die Kette ist eine **Vorlauf-Leiter**: aktive Region (Tage) → Flare/EUV (8 min, Lichtgeschwindigkeit) → CME/Sonnenwind bei L1 (~25–60 min) → Magnetosphären-Kopplung → Substurm/Elektrojet (Aurora, ~min) → Boden-`dB/dt` → GIC (~s). Jede Stufe ist Ziel *und* Prädiktor der nächsten; die nutzbare Vorlaufzeit eines Ziels ist durch die früheste tragende Beobachtung begrenzt. Der Haus-Apparat trägt die Bausteine: die TE-Maschine (`te_compute`/`field_te_query`) misst je Kante, ob der Pfeil trägt (Surrogat-Null); viele Kanäle (GOES XRS, OMNI/Sonnenwind, Newell, INTERMAGNET `dB/dt`) stehen.
-- **Blockade:** kein Draht — der **Entwurf** (welche Stufen, welche Fenster, welcher Vorlauf je Stufe, wie verkettet) ist Architektur → **Rat** (fünf Stimmen + Recherche-Roster). Riss benannt: nicht jede Stufe trägt eigenständig (manche sind dieselbe Information, weitergewandert) — eine Kette aus nicht-tragenden Gliedern ist keine Kette.
-- **Braucht:** den Rat-Entwurf (Stufen, Metrik, Null je Kante); danach die Kanten als TE-Messungen fahren und die Frühest-Warnung je Zielstufe herausziehen.
+- **Blockade:** kein Draht — der **Entwurf** (welche Stufen, welche Fenster, welcher Vorlauf je Stufe, wie verkettet) ist Architektur → **Rat** (fünf Stimmen + Recherche-Roster). **Zwei Rollen je Stufe (Operator-Wort 2026-10-15 „doch die information gewinnt an sicherheit"):** (i) *Vorlauf* — die äußeren Stufen geben Zeit; (ii) *Sicherheit* — die inneren Stufen verengen die Unsicherheit; dieselbe Information, weitergewandert, ist **nicht** wertlos. Vorlauf und Sicherheit tauschen sich gegenläufig. Zweiseitige Metrik je Stufe: **Vorlauf** und **Sicherheits-Zuwachs** (inkrementelle TE relativ zur Vorstufe — trägt die Stufe Information *über* die Vorstufe hinaus?). Riss bleibt: ein nicht-tragendes Glied ist keine Kette — die inkrementelle TE (mit Null) entscheidet je Kante.
+- **Braucht:** den Rat-Entwurf (Stufen, Metrik, Null je Kante); danach die Kanten als **inkrementelle** TE-Messungen fahren und je Zielstufe die **Vorlauf↔Sicherheit-Kurve** herausziehen.
 
 ### Newell-OMNI-Alignment — Zelle gemessen (n=22137), TE silent
 - **Status:** eigen (gemessen, silent) | **Bindung:** eigen
