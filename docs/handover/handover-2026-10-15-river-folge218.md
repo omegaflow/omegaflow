@@ -2,7 +2,7 @@
   title: Handover — River-Folge 218
   class: handover
   date: 2026-10-15
-  sha256: 56edc794dcf6bd7c00e59aef1207808b759b4e92aa2c63ee2b0cc656a17aed4d
+  sha256: f86a3b766f10b3025b8866cb6061bedb565d525398f645e2df294ffd40e48eff
   status: live
 -->
 # Handover — River-Folge 218 (2026-10-15)
@@ -73,10 +73,10 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…219) · `
 
 ### 14-min-Lücke Magnetometer→Optik — im 2D + Ganznacht gemessen, Pick-Riss getragen
 - **Status:** eigen (getragener Riss) | **Bindung:** eigen
-- **Trigger:** der GIC-Onset-Relationsschritt auf der Meridian-Spur.
+- **Trigger:** **keiner gebaut** — der frühere Trigger-Name „der GIC-Onset-Relationsschritt auf der Meridian-Spur" war eine Hülle ohne Pfad (kein Werkzeug, kein Workflow). Am Baum: `gic_onset_relation.rs` ist eine **andere** Naht (GIC↔MCON, lief river-192/193 lokal, Ratio 1,217; `bpa_gic`-Arm `pending`, 4-Tage-Spanne). Die Keogramm-Kette (`themis_asi_timed_keogram.rs`) und die GIC-Onset-Kette stehen, die **Naht dazwischen (optischer Onset ↔ Magnetometer/GIC-Onset auf der Spur) fehlt**.
 - **Lage:** (gemessen 2026-10-12 river-197 + river-200) 2D: kein kohärenter off-meridian optischer Eintritt bei 07:41; der optische Onset ist ein einzelnes azimutal wanderndes Band 07:54:45→07:55:45. Ganznacht-Overlay (CDN-TKDG `themis_asi_timed_keogram_20240510_kapu.bin`): Stundenmittel 03–06 ≈ 3310–3343, 07 = 3370.6, Ränder 02 = 3895 / 08 = 3911; der Hauptsturm 17:00–23:00 UT (Tageslicht). **Riss:** der river-196-Pick „07:41" ist nicht eindeutig (Stunde 07 trägt eine Kette 07:13–07:48, größte YKC-Spitze 07:20); die „+14 min 27 s" ist pick-abhängig.
 - **Blockade:** keine.
-- **Braucht:** den Riss tragen (Phasendifferenz + Pick-Abhängigkeit).
+- **Braucht:** (a) die fehlende Naht bauen — den optischen Keogramm-Onset je Minute gegen den Magnetometer-/GIC-Onset der Meridian-Stationen legen (Phasendifferenz + Pick-Abhängigkeit), sonst bleibt die „+14 min 27 s" ungemessen; (b) den `pick`-Riss tragen.
 
 ### Weberin-Zeugen-Fäden — SABER-Form (C); Athabasca manifestiert; UCAR-FPI Arm steht
 - **Status:** eigen (Bau) | **Bindung:** eigen
