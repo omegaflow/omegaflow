@@ -29,6 +29,15 @@ ersetzt die Erinnerung durch die kopierbare Form.
 | `cd *` | bash-`workdir`-Parameter |
 | `python *` / `python3 *` / `*/python*` | Rust (kein Python im oder für das Repo) |
 
+## Erschöpfende Recherche — die weite Leiter
+
+| Form | kanonisch |
+|---|---|
+| `archive_search <kw> --all` (schmal) | **`bin/all_wide <kw>`** — dieselbe `--all`-Leiter mit **erhöhtem Stopp** (`OMEGAFLOW_ALL_STOP=400` statt 20) |
+| `OMEGAFLOW_ALL_STOP=… archive_search …` | **verboten** (Env-Präfix matcht keine Regel) → **`bin/all_wide`** ist der erlaubte Weg |
+
+`bin/all_wide` liest **nur das Netz** — die lokalen Plattenmodi (`--root`/`--index`/`--mft`/`--git`) sind im Wrapper **verweigert**. **Gemessene Grenze:** auch die weite Leiter hält nach **6 Armen** (nicht nach Zeilen); die **Breite** tragen die **Einzelmodi** (`--base`, `--datacite`, `--zenodo`, `--re3data`, `--exa`, `--linkup`, `--jina`, `--github`, `--ia-search` …). Ein `--all`-Lauf ist ein **Tiefen**maß. **Der Spill-Pfad (`full: <pfad>`) wird zitiert**, wenn Vollständigkeit Pflicht ist.
+
 `sgrep` matcht **literal** — es kennt keine Alternation: `\|` findet nur das Zeichen
 selbst und erzeugt Falsch-Negative. Mehrere Muster: ein Aufruf je Muster
 (`sgrep -i 'a' <pfad> && sgrep -i 'b' <pfad>`) oder `archive_search <kw> --root <dir>`
