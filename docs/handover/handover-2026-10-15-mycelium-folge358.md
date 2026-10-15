@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 358 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 156352090503ef590485603607b6dd9256a59795d911704d358f391fa36c95d4
+  sha256: 1cb708d439b1a26bb90442f713cb801508e50e3cac85a5d8298c021af5a4b308
   status: live
 -->
 # Handover — Mycelium-Folge 358 (2026-10-15)
@@ -62,6 +62,17 @@ neu ausgelegt).
 - **Der Deploy-Ablauf ist als lokales Binary verifiziert** — `register_sort` idempotent
   (byte-canonical; `--write` berührt die Datei nicht), der neue Block wurde in die sortierte
   Position gerückt (Diff = genau die 7 neuen Zeilen).
+- **Zwei weitere Venus-Träger gespiegelt + registriert.** **Provenienz-Raster** (89 312 099 B,
+  sha256 `6aa27235…`, md5 `d2da5d19…` == Zenodo) und **Arecibo 1988** (965 390 866 B, sha256
+  `fe5ed9f8…`, md5 `66940c15…` == Zenodo) — je eine `zenodo-raw`-Matrix-Zeile + ein
+  `phi/sources.φ`-Block (`url`/`origin`/`compiler`/`sha256` = meine Zeilen, `terms` = Mountains
+  `phi:31325`). **Provenienz-Kopf gemessen** (HTTP-Range): klassisches TIFF, 18 775 × 9 388, 4-bit,
+  unkomprimiert, gekachelt 128×128 (10 878 Kacheln), GeoTIFF-GeoKeys; die **12 Klassen (0–11)** gibt
+  das Sidecar-XML (`Venus_RadarBasemap_2025_Provenance_2025m_v1.tif.xml`). **Arecibo 1988:**
+  30 032 × 31 973, 8-bit, unkomprimiert, gekachelt 128×128. `register_sort` canonical (2810 Blöcke);
+  `cdn_reconcile --fail` clean. **Basemap (80,9 GB):** nur die Rat-Entscheidung (byte-exakter
+  `.parts`-Split), die Ausführung braucht einen **streamenden Splitter** (gemessene Lücke:
+  `raw_mirror` gattert auf die vorab-bekannte Ganz-Sha256).
 
 ## Offen — eigen
 
@@ -99,15 +110,20 @@ neu ausgelegt).
   (© UH Mānoa).
 - **Braucht:** `terms local-only` von Mountain; dann Block setzen; Vollzug 2001–2018 (reale Granule).
 
-### Venus-Radar / Venera-Polar — Träger gespiegelt; Overviews + Provenienz offen (eigen)
+### Venus-Radar / Bild-Träger — Venera-Polar, Provenienz, Arecibo gespiegelt; Basemap offen (eigen)
 - **Status:** eigen | **Bindung:** eigen | **Verdikt:** der Rat — COG als Träger, HiPS als abgeleitete Ansicht
-- **Lage:** (gemessen 2026-10-15) **Venera-Polar ist gespiegelt + registriert** (s. Gearbeitet).
-  Der VNRD-*Feld*-Block steht (CC0-1.0). Offen: (1) die **Overviews-Frage** (ohne Overviews lesen
-  oder einen COG-Schritt im CI benennen — Rat-Frage); (2) der Kopf des **Provenienz-Rasters**
-  (12 Klassen) ist noch nicht gelesen; (3) weitere **Bild-Registerzeilen** (Basemap 80,9 GB —
-  > Shard-Grenze?; Arecibo 965 MB) — `url`/`origin`/`compiler` = ich, `terms` = Mountain.
-- **Blockade:** Overviews = Rat-Frage; die weiteren Träger sind noch nicht gespiegelt.
-- **Braucht:** Overviews-Entscheidung; Provenienz-Kopf-Messung; die weiteren Träger, sobald gewählt.
+- **Lage:** (gemessen 2026-10-15) Drei Träger sind gespiegelt + registriert (`phi/sources.φ`,
+  `zenodo-raw-cdn.yml`): **Venera-Polar** (194 MB), **Provenienz-Raster** (89,3 MB), **Arecibo 1988**
+  (965 MB). Der **Provenienz-Kopf ist gemessen** (s. Gearbeitet): 18 775 × 9 388, **4-bit**,
+  unkomprimiert, gekachelt 128×128, GeoKeys; die **12 Klassen (0–11)** stehen im Sidecar-XML
+  (0 NoData · 1 Pioneer · 2/3 Arecibo 2001/1988 · 4 Venera 15/16 · 5/6 Arecibo 2015/2017 ·
+  7–11 Magellan). Arecibo 1988: 30 032 × 31 973, 8-bit, unkomprimiert, gekachelt 128×128.
+  Offen: (1) die **Overviews-Frage** (Rat); (2) die **80,9-GB-Basemap** — das Rat-Verdikt
+  „byte-exakter `.parts`-Split, sha256 je Teil, md5 aufs Ganze" steht, der Transport fehlt aber:
+  `raw_mirror` gattert auf die **vorab bekannte sha256 des Ganzen**, die für 80,9 GB lokal nicht
+  rechenbar ist; ein **streamender Splitter** (md5-Ganzes + sha256-Teil) ist der nächste begrenzte Bau.
+- **Blockade:** Overviews = Rat; Basemap = fehlender Streaming-Splitter (gemessene Lücke).
+- **Braucht:** Overviews-Entscheidung; den Splitter (eigener Bau); danach die Basemap-Zeile.
 
 ### THEMIS-ASI FODG-Cube + Skymap — gebaut + CI-Naht steht; Mountain-Registerzeile offen (eigen + River)
 - **Status:** eigen (Manifestation steht; Registerzeile Mountain) | **Bindung:** eigen
