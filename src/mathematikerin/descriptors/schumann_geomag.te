@@ -1,0 +1,22 @@
+# schumann_geomag.te — Schumann-Resonanz gegen geomagnetische Aktivität (Nadel XIV).
+# Die Antriebsfrage vorab (river-208, docs/concepts/kybernetische-astrophysik.md:368):
+#   "Regelt geomagnetische Aktivität die Schumann-Frequenzen sichtbar, und in welcher
+#   Richtung?" — gegen die Blitz-/Intensitäts-Erklärung (der weltweite Blitzantrieb).
+#   Der Driver ist die gemessene geomagnetische Aktivität (ABK dB/dt, 1 h); die Targets
+#   sind die drei Schumann-Moden f1/f2/f3 (Zenodo 15225820, CC-BY-4.0, hourly).
+#   Die rect-Matrix gibt die gerichtete TE je Driver->Target-Zelle; ein Ergebnis trägt
+#   nur, wenn es die Surrogat-Null schlägt (fdr bh über die Matrix).
+#   Kein Kp/Dst/AE im Register (gemessen 2026-10-15) — abk_dbdt_pt1h ist der verfügbare
+#   Aktivitätskanal. Lauf: .github/workflows/field-te-query.yml Job `matrix-schumann` (CI).
+matrix schumann_geomag rect
+register sources
+drivers abk_dbdt_pt1h
+targets freq1,freq2,freq3
+cond none
+fdr bh 0.05 over matrix
+expect cells 3
+lags 0,1
+surrogate 10
+cadence live
+bin 3600
+seasonal none
