@@ -199,8 +199,12 @@ fn compile(
     println!("ttl {}", ttl as u64);
     for c in channels() {
         println!(
-            "field {} {} inverse-square gravity {} {} 0.0 0.0",
-            c.name, c.name, c.unit, ttl as u64
+            "field {} {} inverse-square gravity {} {} 0.0 0.0 norm:{}",
+            c.name,
+            c.name,
+            c.unit,
+            ttl as u64,
+            head.norm.name()
         );
     }
 
