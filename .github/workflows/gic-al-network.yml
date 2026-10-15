@@ -84,6 +84,22 @@ jobs:
             --station al-network \
             --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
             --null ${{ inputs.surrogates }} 2>&1 | tee /tmp/detect.txt
+      - name: Fetch the ABK single-station series (the 1-station arm)
+        run: |
+          set -euo pipefail
+          base=https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk
+          curl -fsSL -o /tmp/abk_dbdt_1h.bin "$base/abk_dbdt_1h.bin"
+      - name: Threshold sweep with the surrogate null — 1 station and the family envelope
+        run: |
+          set -euo pipefail
+          cargo run --release -p omegaflow-measure --bin gic_onset_detector -- \
+            --series /tmp/abk_dbdt_1h.bin --station abk \
+            --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
+            --null ${{ inputs.surrogates }} --sweep-k 1,1.5,2,3,4,6,8,12 2>&1 | tee /tmp/sweep_abk.txt
+          cargo run --release -p omegaflow-measure --bin gic_onset_detector -- \
+            --series /tmp/al_envelope.bin --station al-network \
+            --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
+            --null ${{ inputs.surrogates }} --sweep-k 1,1.5,2,3,4,6,8,12 2>&1 | tee /tmp/sweep_network.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -92,4 +108,6 @@ jobs:
             /tmp/al_network.txt
             /tmp/detect.txt
             /tmp/al_envelope.bin
+            /tmp/sweep_abk.txt
+            /tmp/sweep_network.txt
             family.txt

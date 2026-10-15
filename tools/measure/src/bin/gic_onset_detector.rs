@@ -325,6 +325,17 @@ fn run_sweep(series: &[(f64, f64)], station: &str, csv: &str, args: &[String]) {
         }
         None => 15.0 * MINUTE,
     };
+    let n_surr: usize = match arg_value(args, "--null") {
+        Some(s) => match s.parse::<usize>() {
+            Ok(v) => v,
+            Err(_) => {
+                eprintln!("--null must be a non-negative surrogate count");
+                std::process::exit(2);
+            }
+        },
+        None => 0,
+    };
+    let span = hi - lo;
     println!(
         "sweep{station} samples={} median={med:.4} mad={mad:.4} min_separation={min_separation_s:.0}s",
         series.len()
@@ -332,14 +343,16 @@ fn run_sweep(series: &[(f64, f64)], station: &str, csv: &str, args: &[String]) {
     for k in ks {
         let threshold = med + k * sigma;
         let onsets = detect_onsets(series, threshold, min_separation_s);
+        let cand: Vec<f64> = onsets.iter().map(|o| o.t_unix).collect();
         if mcp.is_empty() {
             println!(
                 "sweep k={k} threshold={threshold:.4} onsets={}",
                 onsets.len()
             );
-        } else {
-            let cand: Vec<f64> = onsets.iter().map(|o| o.t_unix).collect();
-            let (hit_mcp, hit_cand, med_dt) = match_onsets(&mcp, &cand, tol);
+            continue;
+        }
+        let (hit_mcp, hit_cand, med_dt) = match_onsets(&mcp, &cand, tol);
+        if n_surr == 0 {
             println!(
                 "sweep k={k} threshold={threshold:.4} onsets={} prec_onset={} rec_mcp={} median_dt_s={}",
                 onsets.len(),
@@ -350,7 +363,43 @@ fn run_sweep(series: &[(f64, f64)], station: &str, csv: &str, args: &[String]) {
                     None => "n/a".to_string(),
                 }
             );
+            continue;
         }
+        let real_prec = if cand.is_empty() {
+            0.0
+        } else {
+            hit_cand as f64 / cand.len() as f64
+        };
+        let real_rec = if mcp.is_empty() {
+            0.0
+        } else {
+            hit_mcp as f64 / mcp.len() as f64
+        };
+        let mut precs: Vec<f64> = Vec::with_capacity(n_surr);
+        let mut recs: Vec<f64> = Vec::with_capacity(n_surr);
+        for i in 0..n_surr {
+            let offset = ((i as f64 + 0.5) / n_surr as f64) * span;
+            let shifted = shifted_within(&cand, offset, lo, span);
+            let (sh_mcp, sh_cand, _) = match_onsets(&mcp, &shifted, tol);
+            precs.push(if cand.is_empty() {
+                0.0
+            } else {
+                sh_cand as f64 / cand.len() as f64
+            });
+            recs.push(if mcp.is_empty() {
+                0.0
+            } else {
+                sh_mcp as f64 / mcp.len() as f64
+            });
+        }
+        let prec_ge = precs.iter().filter(|p| **p >= real_prec).count();
+        let rec_ge = recs.iter().filter(|r| **r >= real_rec).count();
+        println!(
+            "sweep k={k} threshold={threshold:.4} onsets={} prec_onset={} rec_mcp={} prec_ge={prec_ge} rec_ge={rec_ge}",
+            onsets.len(),
+            ratio(hit_cand, cand.len()),
+            ratio(hit_mcp, mcp.len())
+        );
     }
 }
 
