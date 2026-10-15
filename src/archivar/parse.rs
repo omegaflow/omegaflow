@@ -78,6 +78,11 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_url = String::new();
     let mut cur_format = String::new();
     let mut cur_model_kind: Option<ModelKind> = None;
+    let mut cur_gm: Option<f64> = None;
+    let mut cur_radius: Option<f64> = None;
+    let mut cur_norm: Option<crate::archivar::gfc::Norm> = None;
+    let mut cur_tide: Option<String> = None;
+    let mut cur_max_degree: Option<u32> = None;
     let mut cur_extracts: Vec<Extract> = Vec::new();
     let mut cur_channels: Vec<ChannelDescriptor> = Vec::new();
     let mut cur_headers: Vec<(String, String)> = Vec::new();
@@ -191,6 +196,26 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             cgm_source: cur_cgm_source.clone(),
                             geomag_lat: cur_geomag_lat,
                             weberin_role: cur_weberin_role,
+                            head: match (cur_gm, cur_radius, cur_norm, cur_max_degree) {
+                                (Some(gm), Some(radius), Some(norm), Some(max_degree)) => {
+                                    Some(ModelHead {
+                                        gm_m3_s2: gm,
+                                        radius_m: radius,
+                                        norm,
+                                        tide_system: cur_tide.clone(),
+                                        max_degree,
+                                    })
+                                }
+                                (None, None, None, None) => None,
+                                _ => {
+                                    report_anomaly(
+                                        "Invalid Syntax",
+                                        &cur_url,
+                                        "partial model head: gm/radius/norm/max_degree must stand together",
+                                    );
+                                    None
+                                }
+                            },
                         });
                     }
                 }
@@ -214,6 +239,11 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_url = parts[1].to_string();
                 cur_format.clear();
                 cur_model_kind = None;
+                cur_gm = None;
+                cur_radius = None;
+                cur_norm = None;
+                cur_tide = None;
+                cur_max_degree = None;
                 cur_extracts.clear();
                 cur_channels.clear();
                 cur_headers.clear();
@@ -2211,6 +2241,38 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     );
                 }
             }
+            "gm" if parts.len() >= 2 => {
+                cur_gm = parts[1].parse::<f64>().ok();
+                if !cur_gm.map(|v| v.is_finite() && v > 0.0).unwrap_or(false) {
+                    report_anomaly("Invalid Syntax", &cur_url, &format!("gm void: {line}"));
+                }
+            }
+            "radius" if parts.len() >= 2 => {
+                cur_radius = parts[1].parse::<f64>().ok();
+                if !cur_radius
+                    .map(|v| v.is_finite() && v > 0.0)
+                    .unwrap_or(false)
+                {
+                    report_anomaly("Invalid Syntax", &cur_url, &format!("radius void: {line}"));
+                }
+            }
+            "norm" if parts.len() >= 2 => {
+                cur_norm = crate::archivar::gfc::Norm::parse(parts[1]);
+                if cur_norm.is_none() {
+                    report_anomaly("Invalid Syntax", &cur_url, &format!("norm void: {line}"));
+                }
+            }
+            "tide" if parts.len() >= 2 => cur_tide = Some(parts[1].to_string()),
+            "max_degree" if parts.len() >= 2 => {
+                cur_max_degree = parts[1].parse::<u32>().ok();
+                if cur_max_degree.is_none() {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("max_degree void: {line}"),
+                    );
+                }
+            }
             "sha256" if parts.len() >= 2 => cur_sha256 = Some(parts[1].to_string()),
             "body" if parts.len() >= 2 => {
                 cur_body = Some(parts[1].to_string());
@@ -2766,6 +2828,7 @@ mod tests {
             rights_uri: None,
             frame: Frame::Manifest,
             model_kind: source_model_kind(format),
+            head: None,
             format: format.into(),
             channels: Vec::new(),
             extracts: Vec::new(),
@@ -3617,5 +3680,40 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             parse_sources("url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n");
         assert_eq!(sources.len(), 1);
         assert_eq!(sources[0].model_kind, Some(ModelKind::Static));
+    }
+
+    #[test]
+    fn the_model_head_directives_assemble_the_head() {
+        let sources = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+             gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\ntide zero_tide\nmax_degree 2190\n",
+        );
+        assert_eq!(sources.len(), 1);
+        let head = sources[0].head.as_ref().expect("the head stands");
+        assert_eq!(head.gm_m3_s2, 3.986004415E14);
+        assert!((head.radius_m - 6378136.3).abs() < 1e-6);
+        assert_eq!(head.norm, crate::archivar::gfc::Norm::FullyNormalized);
+        assert_eq!(head.tide_system.as_deref(), Some("zero_tide"));
+        assert_eq!(head.max_degree, 2190);
+    }
+
+    #[test]
+    fn an_unmeasured_norm_leaves_the_head_absent() {
+        let sources = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+             gm 3.9E14\nradius 6371000\nnorm schmidt\nmax_degree 2190\n",
+        );
+        assert_eq!(sources.len(), 1);
+        assert!(sources[0].head.is_none());
+    }
+
+    #[test]
+    fn a_partial_model_head_stays_absent() {
+        let sources = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+             gm 3.9E14\nnorm fully_normalized\n",
+        );
+        assert_eq!(sources.len(), 1);
+        assert!(sources[0].head.is_none());
     }
 }

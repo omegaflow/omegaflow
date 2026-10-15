@@ -513,6 +513,15 @@ pub fn parse_model_kind(tok: &str) -> Option<ModelKind> {
     }
 }
 
+#[derive(Clone, Debug, PartialEq)]
+pub struct ModelHead {
+    pub gm_m3_s2: f64,
+    pub radius_m: f64,
+    pub norm: crate::archivar::gfc::Norm,
+    pub tide_system: Option<String>,
+    pub max_degree: u32,
+}
+
 #[derive(Clone)]
 pub struct SourceConfig {
     pub ttl: u64,
@@ -528,6 +537,7 @@ pub struct SourceConfig {
     pub frame: Frame,
     pub format: String,
     pub model_kind: Option<ModelKind>,
+    pub head: Option<ModelHead>,
     pub extracts: Vec<Extract>,
     pub channels: Vec<ChannelDescriptor>,
     pub headers: Vec<(String, String)>,
