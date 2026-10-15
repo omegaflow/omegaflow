@@ -2,7 +2,7 @@
   title: Handover — Sitzung 2026-10-15 (Schwärzer, Quellen, --all-Fix, Ökonomie)
   class: handover
   date: 2026-10-15
-  sha256: 8f7010b6cd05bcd324be78cafbabe7bb80c874c7e7ef404e92640d595a1e44ca
+  sha256: 6096d05a72af18fe9031c832b5c6fcf2a365c850ddc56e27833b4de945e852b8
   status: live
   see-also: docs/handover/handover-2026-10-15-quellen-neu-und-riss-ucar.md, docs/handover/briefs-2026-10-15-mountain-mycelium.md, docs/concepts/sitzungs-oekonomie.md
 -->
@@ -23,7 +23,8 @@ Dieses Register trägt nur Offenes. Erledigtes steht in git.
 - **`docs/concepts/sitzungs-oekonomie.md`** — **neu diese Sitzung:** die Kosten sind quadratisch in den Turns; Prosa ist keine Wand; der strukturelle Ort (Turn-/Kosten-Zähler-Plugin, Session-Länge als Maß, Modell-Routing).
 
 ## Offen
-- **Der Gateway-Filter** (der Operator-Wunsch): den ausgehenden Prompt im Gateway schwärzen und die Antwort entschwärzen (`OMEGAFLOW_FILTER=1`) — der starke Kopf im privaten Haus, ohne dass PII die Maschine verlässt. **Nicht gebaut.**
+- **Das Offen-Blatt** (`docs/zustand/offen-alle-linien.md`, neu diese Sitzung): die konsolidierten offenen Punkte aller vier lebenden Linien — 3 946 B statt 96 197 B Handover (die Messung zur Kontext-Ökonomie).
+- **Der Gateway-Filter** (der Operator-Wunsch): gebaut + live bewiesen (`OMEGAFLOW_FILTER=1`; `hallo`/`<EMAIL>`/`Schmidt`→`<NAME>`).
 - **Der Future-Spiegel** (Weg A) — hmm, durch den Filter **unnötig**; bis der Filter steht, bleibt der Spiegel der robuste Weg.
 - **Die Ökonomie-Wand:** das Turn-/Kosten-Plugin + die Session-Länge als Maß — **nicht gebaut** (die Prosa steht in `sitzungs-oekonomie.md`).
 - **Die Fünf — Archäologie** (`docs/surveys/survey-2026-10-15-die-fuenf-archaeologie.md`, **neu diese Sitzung**): sie trägt das **Operator-Wort** (die fünf Achsen **Wissenschaft · Kunst · Ethik · Commons · Erbe** — im Baum `absent`, `sgrep` leer) und die **vier Namens-Korrekturen** (der AGENTS-Kopf `AGENTS.md:30`, `force_type`→`channel_ref` im Glossar, die **7** Granit-Sätze, die 4-vs-5-Schilde). **Nicht ausgeführt** — benannt für die Linien.
