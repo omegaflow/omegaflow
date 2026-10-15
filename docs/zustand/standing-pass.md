@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-15
-  sha256: 43a5819e20840b380943e7b88803ec8ebd6a2c1d1746cb773930ec3c3e5fd72d
+  sha256: 372b58b3c6220f8704ed445225c26d491e9f3f13d2c86c35b8b965ba162d1440
   status: live
   see-also: AGENTS.md
 -->
@@ -15,19 +15,16 @@ Die öffentlichen Linien zitieren **diese** Fassung, nie die private.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `e21129d5c` | 2026-10-15 |
-| rote CI-Läufe | `ci-gate` `38712802275` (**failure** @ `fadbd489b`) · `ci-gate` `38712777023` (**failure** @ `bdb627ab`) · `tools-build` `38712667864` (**failure** @ `03178cb3f`) · `m10-mdis-raw-cdn` `38712655060`/`38712632761` (**failure** @ `03178cb3f` — Arm `lpsc2024_2663.pdf`, `raw_mirror: the CDN upload returned void`) · `gic-al-network` `38709132540` (**failure** @ `a6d6fca0`) · `register-coverage` `38718203450` (**failure** @ `b0bc4d80`) | 2026-10-15 |
+| HEAD | `8a7b48e0e` | 2026-10-15 |
+| rote CI-Läufe | **56** non-success — Träger: `register-coverage` (Fehler-Job `orphans`) · `ci-gate` (`dropped-gate`/`register`/`clippy`/`format`/`subset`) · `tools-build` · `matrix-rotor` · `quake-feeds-cdn` | 2026-10-15 |
 
-**Gemessener Kern-Befund (nicht geraten):** Die Frontier-Runde „Netz-Fusion und
-Stationsplatzierung" ist am Baum verifiziert. Die Fusion ist die **Min-Einhüllende** je
-Zeitstempel → ein Schwellenübertritt ist eine **Konjunktion**; der monotone Rückruf-Fall ist
-strukturell erzwungen. Bei **fester** Schwelle bleibt der Kollaps (gemessen) — die Doktrin ist
-geschlagen. **Riss, den die Stimmen nicht sahen:** der Netz-Arm faltet die **dH**-Hülle
-(Minutenraster), der Einzelstations-Arm ist der **stündliche |dB/dt|-Peak** — der zentrale
-Vergleich ist nicht A = A. Der nächste Messschritt (Min gegen Union bei fester Größe/Schwelle/
-Fenster) ist an die GIC-Linie (River) übergeben.
+**Gemessener Kern-Befund (nicht geraten):** Der WWLLN-Stundenstoßdatensatz — der von der
+Frontier-Runde gewählte Blitz-Kanal für die Schumann-TE — ist **zugangsgebunden** (Archiv-Verkauf
+ab 2004-08-15, Host-Abo, Forschungszugang via University of Washington, kommerzieller Reseller).
+Öffentlich sind nur die WWLLN-**Klimatologien** (Monat×Stunde, keine Stundenreihe). Bis zu einem
+Zugang bleibt die bedingte TE blockiert. LIS/OTD (NASA GHRC) war von dieser Maschine nicht
+erreichbar (`status 0`) → `pending`.
 
-**Noch unread:** die Push-Läufe an `e21129d5c` (`ci-gate`, `harvest-dispatch`,
-`register-coverage`, `sources-repo-licence`, `tools-build`) — queued.
+**Noch unread:** die Push-Läufe an `8a7b48e0e` (`ci-gate`, `register-coverage`) — queued.
 
 Die Tafel ist ein Flutstand aus den parallel laufenden Linien; die Logs liest `ci_manage log <id>`.

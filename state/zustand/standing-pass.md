@@ -1,85 +1,83 @@
 <!--
-  title: Stehender Pass (privat) — Mycelium
+  title: Standpass — Mycelium (privat)
   class: zustand
   date: 2026-10-15
-  sha256: 3b9a7dbd41364edbdcdf8327fa427e59b1e7b274707c362760fa925827a11faf
+  sha256: fdf12fdfdf55f24c959d1b678a8286ea48d95e7a53bc9fae27b9103f61af0f8b
   status: live
   see-also: docs/zustand/standing-pass.md
 -->
-# Stehender Pass — Mycelium (privat, folge355)
+# Stehender Pass — Mycelium (privat, folge356)
 
 Vollständige Fassung. Öffentlich gilt allein die Projektion
 `docs/zustand/standing-pass.md` (nur HEAD + rote Läufe, kein Personenbezug).
 
-HEAD `e21129d5c` (== `origin/main`) · geschrieben 2026-10-15 · **Mycelium-355**.
+HEAD `8a7b48e0e` (== `origin/main`) · geschrieben 2026-10-15 · **Mycelium-356**.
 
 ## Rote Läufe (gemessen, nicht geraten)
 
-Bei Pass-Schreibung (`ci_manage reds`, einmal — kein Polling). Die Tafel ist ein **Flutstand**
-aus den parallel laufenden Linien (River/Mountain committen im selben Baum). Meine eigenen
-Push-Läufe an `e21129d5c` sind **queued/unread** (`ci-gate`, `harvest-dispatch`,
-`register-coverage`, `sources-repo-licence`, `tools-build`).
+`ci_manage reds` (einmal, kein Polling): **56** non-success Läufe — die Tafel ist ein
+**Flutstand** aus den parallel laufenden Linien (River/Mountain committen im selben Baum).
+Träger und gemessene Fehler-Jobs (`ci_manage jobs`):
 
-Gemessene Rote (jüngste, gemessen 2026-10-15):
-
-| run-id | workflow | Zustand | Träger |
+| Träger | Workflow | gemessener Fehler-Job | Beispiel-run-id |
 |---|---|---|---|
-| `38712802275` | ci-gate | **failure** @ `fadbd489b` | River/Mountain |
-| `38712777023` | ci-gate | **failure** @ `bdb627ab` | River/Mountain |
-| `38712667864` | tools-build | **failure** @ `03178cb3f` | fremd (`archive_search`) |
-| `38712655060` | m10-mdis-raw-cdn | **failure** @ `03178cb3f` | Mycelium (CDN-Upload, Arm `lpsc2024_2663.pdf`) |
-| `38712632761` | m10-mdis-raw-cdn | **failure** @ `03178cb3f` | Mycelium (dito) |
-| `38709132540` | gic-al-network | **failure** @ `a6d6fca0` | River |
-| `38718203450` | register-coverage | **failure** @ `b0bc4d80` | Mycelium/fremd |
+| fremd (Register-Gate) | `register-coverage` | `orphans` | `38733981918` @ `fd9621fa4` |
+| fremd (Gate) | `ci-gate` | `dropped-gate` · `register` · `clippy` · `format` · `subset` | `38730439902` @ `e19e5cd20` |
+| fremd | `tools-build` | `build` | `38718639886` @ `244be15ff` |
+| fremd | `matrix-rotor` | — | `38732211774` @ `99812000c` |
+| fremd | `quake-feeds-cdn` | — | `38729743881` @ `fcc4646aa` |
 
-Kein Grund geraten — die Tafel nennt Lauf und Zustand; die Logs liest `ci_manage log <id>`.
+Der Log-Grund je Lauf tiefer ist **unread** (kein Polling); er wird via `ci_manage log <id>`
+gelesen. Meine eigenen Push-Läufe am neuen HEAD `8a7b48e0e` sind **queued/unread**
+(`ci-gate` `38734329244`/`38734315042` · `register-coverage` `38734329217`).
 
-## Lokal gemessen am HEAD `e21129d5c`
+## Lokal gemessen am HEAD `8a7b48e0e`
 
-- Die Frontier-Runde am Baum verifiziert (nicht gestartet, nicht gepollt):
-  Fusion = Min-Einhüllende (`al_network_proxy.rs:101-118`) → Konjunktion; adaptive Schwelle
-  `med+6·1.4826·MAD` (`gic_onset_detector.rs:7-9/:80-86`); Toleranz = `match_onsets` (`:178-198`).
-- **Baum-Riss:** Netz-Arm = dH-Hülle (Minutenraster) gegen Einzelstations-Arm = stündlicher
-  |dB/dt|-Peak (`abk_dbdt_1h.bin`, `intermagnet_dbdt_compiler.rs:179-190`) — nicht A = A.
-- Fester-Schwelle-N-Sweep (river-216, `38709029080`): Kollaps bleibt bei fixer Schwelle.
-- (Nicht dieses Rund gemessen: `register_sort`/`cdn_reconcile`/`cargo check` — kein eigener
-  Baum-Bau in folge355.)
+- **F4′-Quellenmessung:** die WWLLN-Stundenreihe ist **zugangsgebunden** (Archiv **Verkauf** ab
+  2004-08-15; Hosts = kostenloses Monatsabo; Forschungszugang 10-Min-Kadenz via University of
+  Washington; Echtzeit = kommerzieller Reseller). Öffentlich nur die **Klimatologien**
+  (Stoßdichte/Donnerstunden, Monat×Stunde, nicht-kommerziell) — keine Stundenreihe. LIS/OTD
+  (NASA GHRC) von dieser Maschine nicht erreichbar (`status 0`) → `pending`.
+- `register_lookup --orphans` = 0; `--orphan-docs` = **28** Dokumente (offene Marker, kein
+  Live-Handover-Träger); `--tokens` = 12 unbeglichen, 0 XFER-MISSING.
+- `open_points_check` folge356 = 0 stale-citations.
 
 ## Postfach
 
-- `post/in` (privates Haus): `2026-10-14-mycelium-nssdc-datenantrag.md` (Operator-Hand, Route (b)).
-  `register_lookup --fired mycelium` = 1 (dieser Punkt; bereits gewortet — **nicht** erneut vorgelegt).
+- `post/in` (privates Haus, `~/projects/omegaflow-work/post/in`):
+  `2026-10-14-mycelium-nssdc-datenantrag.md` (Operator-Hand, Route (b)).
+  `register_lookup --fired mycelium` = 1 (dieser Punkt; bereits gewortet — **nicht** vorgelegt).
 
 ## Ereignis-Stand
 
-- Letztes Ereignis in `state/zustand/ereignisse.φ` — nicht neu gemessen dieses Rund (unverändert
-  gegenüber folge354).
+- Letztes Ereignis in `state/zustand/ereignisse.φ` ist 2026-10-14 (unverändert gegenüber folge355).
 
 ## Orphan-Zensus
 
-- Nicht neu gemessen dieses Rund (folge354: `register_lookup --orphans` = 0).
+- `register_lookup --orphans` = 0 (fremd-unabhängig). `--orphan-docs` = 28 (Träger fehlt; gemessen).
 
 ## Mehrfach-Träger
 
-- Offen (in `mycelium-folge355`): `xfer:mycelium-352-1`/`-2`/`-3`/`-5` (an Mountain) ·
-  `xfer:mountain-348-1`/`-2`/`-4`/`-5` · `xfer:mycelium-342-3`/`-4` · `-342-10` · `-343-2`.
-- Gefaltet/geschlossen: mountain-folge351, river-folge215 (Echo/angewandt); die
-  Athabasca-Manifestation (river-215 beglichen).
+- Offen (in `mycelium-folge356`): `xfer:mycelium-356-1` (an Mountain) · `xfer:mycelium-356-2`/`-3`/`-4`
+  (an River) · `xfer:mycelium-352-1`/`-2`/`-3`/`-5` (an Mountain).
+- Empfangen-unbeglichen aus `mountain-folge353`: `xfer:mycelium-352-1`/`-3`, `xfer:mountain-348-1`,
+  `-351-1`, `-352-1`/`-2`/`-3`/`-4`.
+- Gefaltet/geschlossen: mountain-folge351, river-folge215.
 
 ## Gearbeitet (dieses Rund)
 
-- **Frontier-Runde „Netz-Fusion und Stationsplatzierung":** Formular vorbereitet, die 13 Stimmen
-  des Operators am Baum verifiziert, den dH-vs-|dB/dt|-Riss benannt, das Verdikt getragen
-  (`state/stimmen/2026-10-15-netzfusion-verdikt.md`). Commit `e21129d5c`.
-- **Nächster Messschritt an River übergeben** (Operator-Wort): Min gegen Union bei fester Größe/
-  Schwelle/Fenster.
-- folge355 geschrieben; folge354 → `archiv/`.
+- **F4′-Quellenmessung** (s. oben): der WWLLN-Kanal ist zugangsgebunden — der Blitz-Kanal der
+  Runde ist bis zu einem Zugang blockiert; das an River benannt (`xfer:mycelium-356-3`).
+- folge356 geschrieben; folge355 → `archiv/`; die An-River/An-Mountain-`xfer`-Tokens gesetzt.
 - Operator-Worte dieses Runds in `state/operator-gespraeche/2026-10-15-mycelium.md` geschnitten.
 
 ## Snapshot / Tools
 
-- `git_safety --snapshot` nicht neu gesetzt dieses Rund (kein destruktiver Akt). Push steht
-  (HEAD == `origin/main` == `e21129d5c`).
+- `git_safety --snapshot` gesetzt: `refs/safety/1792067061` (dieses Rund).
+- `.tools_ensure`: Release-Route `tools-latest` HTTP 302 (erreichbar, gemessen via
+  `session_burn`/`ci_manage`); `tools-build` ist rot (Träger fremd) — die Artefakt-Builds
+  gehören CI.
+- Push steht (HEAD == `origin/main` == `8a7b48e0e`).
 
 ## session_burn
 
