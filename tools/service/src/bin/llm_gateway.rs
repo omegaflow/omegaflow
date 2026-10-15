@@ -386,44 +386,6 @@ impl Redactor {
         out
     }
 
-    fn key_at(&self, ch: &[char], i: usize) -> Option<(usize, usize)> {
-        for (idx, (ph, _)) in self.reverse.iter().enumerate() {
-            let l = ph.chars().count();
-            if l > 0 && i + l <= ch.len() && ch[i..i + l].iter().copied().eq(ph.chars()) {
-                return Some((l, idx));
-            }
-        }
-        None
-    }
-
-    fn key_prefix(&self, ch: &[char], i: usize) -> bool {
-        let r = ch.len() - i;
-        self.reverse.iter().any(|(ph, _)| {
-            let l = ph.chars().count();
-            l > r && ch[i..].iter().copied().eq(ph.chars().take(r))
-        })
-    }
-
-    fn restore_stream(&self, pending: &mut String) -> String {
-        let ch: Vec<char> = pending.chars().collect();
-        let mut out = String::with_capacity(pending.len());
-        let mut i = 0;
-        while i < ch.len() {
-            match self.key_at(&ch, i) {
-                Some((l, idx)) if !self.key_prefix(&ch, i) => {
-                    out.push_str(&self.reverse[idx].1);
-                    i += l;
-                }
-                None if !self.key_prefix(&ch, i) => {
-                    out.push(ch[i]);
-                    i += 1;
-                }
-                _ => break,
-            }
-        }
-        *pending = ch[i..].iter().collect();
-        out
-    }
 }
 
 fn starts(ch: &[char], i: usize, s: &str) -> bool {
@@ -884,6 +846,161 @@ fn apply_patterns(s: &str) -> String {
     subst(&s, "<TEL>", p_tel)
 }
 
+fn json_ws(b: u8) -> bool {
+    matches!(b, b' ' | b'\t' | b'\n' | b'\r')
+}
+
+fn json_string_end(s: &[u8], i: usize) -> Option<usize> {
+    if s.get(i) != Some(&b'"') {
+        return None;
+    }
+    let mut j = i + 1;
+    while j < s.len() {
+        match s[j] {
+            b'\\' => j += 2,
+            b'"' => return Some(j + 1),
+            _ => j += 1,
+        }
+    }
+    None
+}
+
+fn scan_json(
+    s: &[u8],
+    i: &mut usize,
+    path: &mut Vec<String>,
+    spans: &mut Vec<(Vec<String>, usize, usize)>,
+) {
+    while *i < s.len() && json_ws(s[*i]) {
+        *i += 1;
+    }
+    match s.get(*i) {
+        Some(b'{') => {
+            *i += 1;
+            loop {
+                while *i < s.len() && json_ws(s[*i]) {
+                    *i += 1;
+                }
+                if s.get(*i) == Some(&b'}') {
+                    *i += 1;
+                    return;
+                }
+                let ke = match json_string_end(s, *i) {
+                    Some(e) => e,
+                    None => return,
+                };
+                let key = String::from_utf8_lossy(&s[*i + 1..ke - 1]).into_owned();
+                *i = ke;
+                while *i < s.len() && json_ws(s[*i]) {
+                    *i += 1;
+                }
+                if s.get(*i) != Some(&b':') {
+                    return;
+                }
+                *i += 1;
+                path.push(key);
+                scan_json(s, i, path, spans);
+                path.pop();
+                while *i < s.len() && json_ws(s[*i]) {
+                    *i += 1;
+                }
+                match s.get(*i) {
+                    Some(b',') => {
+                        *i += 1;
+                    }
+                    Some(b'}') => {
+                        *i += 1;
+                        return;
+                    }
+                    _ => return,
+                }
+            }
+        }
+        Some(b'[') => {
+            *i += 1;
+            loop {
+                while *i < s.len() && json_ws(s[*i]) {
+                    *i += 1;
+                }
+                if s.get(*i) == Some(&b']') {
+                    *i += 1;
+                    return;
+                }
+                scan_json(s, i, path, spans);
+                while *i < s.len() && json_ws(s[*i]) {
+                    *i += 1;
+                }
+                match s.get(*i) {
+                    Some(b',') => {
+                        *i += 1;
+                    }
+                    Some(b']') => {
+                        *i += 1;
+                        return;
+                    }
+                    _ => return,
+                }
+            }
+        }
+        Some(b'"') => {
+            let e = match json_string_end(s, *i) {
+                Some(e) => e,
+                None => return,
+            };
+            spans.push((path.clone(), *i, e));
+            *i = e;
+        }
+        Some(_) => {
+            while *i < s.len() && !json_ws(s[*i]) && !matches!(s[*i], b',' | b'}' | b']') {
+                *i += 1;
+            }
+        }
+        None => {}
+    }
+}
+
+fn transform_content(body: &str, container: &str, f: &dyn Fn(&str) -> String) -> String {
+    let mut i = 0usize;
+    let mut path: Vec<String> = Vec::new();
+    let mut spans: Vec<(Vec<String>, usize, usize)> = Vec::new();
+    scan_json(body.as_bytes(), &mut i, &mut path, &mut spans);
+    let mut out = String::with_capacity(body.len());
+    let mut last = 0usize;
+    for (p, s, e) in spans {
+        if p.last().map(String::as_str) != Some("content") {
+            continue;
+        }
+        if !p.iter().any(|k| k.as_str() == container) {
+            continue;
+        }
+        out.push_str(&body[last..s]);
+        out.push('"');
+        out.push_str(&f(&body[s + 1..e - 1]));
+        out.push('"');
+        last = e;
+    }
+    out.push_str(&body[last..]);
+    out
+}
+
+fn restore_sse_event(event: &str, r: &Redactor) -> String {
+    let mut out = String::with_capacity(event.len());
+    for line in event.split_inclusive('\n') {
+        let (text, nl) = match line.strip_suffix('\n') {
+            Some(c) => (c, "\n"),
+            None => (line, ""),
+        };
+        match text.strip_prefix("data:") {
+            Some(rest) if rest.trim() != "[DONE]" && rest.trim_start().starts_with('{') => {
+                out.push_str("data:");
+                out.push_str(&transform_content(rest, "choices", &|s| r.restore(s)));
+                out.push_str(nl);
+            }
+            _ => out.push_str(line),
+        }
+    }
+    out
+}
 fn provenance_sink() -> String {
     match std::env::var("OMEGAFLOW_GATEWAY_LOG") {
         Ok(p) if !p.is_empty() => p,
@@ -1279,7 +1396,7 @@ fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str, r
     );
     let (code, raw) = result;
     match red {
-        Some(r) => (code, r.restore(&raw)),
+        Some(r) => (code, transform_content(&raw, "choices", &|s| r.restore(s))),
         None => (code, raw),
     }
 }
@@ -1314,7 +1431,7 @@ fn stream_chat(stream: &mut TcpStream, body: &str, secrets: &HashMap<String, Str
             };
             let (code, resp) = horde_chat(body, provider_model, &key);
             let out = match red {
-                Some(r) => r.restore(&resp),
+                Some(r) => transform_content(&resp, "choices", &|s| r.restore(s)),
                 None => resp,
             };
             reply(stream, code, &out);
@@ -1353,9 +1470,9 @@ fn stream_chat(stream: &mut TcpStream, body: &str, secrets: &HashMap<String, Str
                     let mut buf = [0u8; 8192];
                     match red {
                         Some(r) => {
-                            let mut pending = String::new();
                             let mut carry: Vec<u8> = Vec::new();
-                            loop {
+                            let mut events = String::new();
+                            'stream: loop {
                                 match out.read(&mut buf) {
                                     Ok(0) => break,
                                     Ok(n) => {
@@ -1365,12 +1482,13 @@ fn stream_chat(stream: &mut TcpStream, body: &str, secrets: &HashMap<String, Str
                                             Ok(s) => s.len(),
                                             Err(e) => e.valid_up_to(),
                                         };
-                                        pending.push_str(&String::from_utf8_lossy(&joined[..valid]));
+                                        events.push_str(&String::from_utf8_lossy(&joined[..valid]));
                                         carry = joined[valid..].to_vec();
-                                        let emit = r.restore_stream(&mut pending);
-                                        if !emit.is_empty() {
+                                        while let Some(pos) = events.find("\n\n") {
+                                            let event: String = events.drain(..pos + 2).collect();
+                                            let emit = restore_sse_event(&event, r);
                                             if stream.write_all(emit.as_bytes()).is_err() {
-                                                break;
+                                                break 'stream;
                                             }
                                             let _ = stream.flush();
                                         }
@@ -1379,11 +1497,11 @@ fn stream_chat(stream: &mut TcpStream, body: &str, secrets: &HashMap<String, Str
                                 }
                             }
                             if !carry.is_empty() {
-                                pending.push_str(&String::from_utf8_lossy(&carry));
+                                events.push_str(&String::from_utf8_lossy(&carry));
                             }
-                            let tail = r.restore(&pending);
-                            if !tail.is_empty() {
-                                let _ = stream.write_all(tail.as_bytes());
+                            if !events.is_empty() {
+                                let emit = restore_sse_event(&events, r);
+                                let _ = stream.write_all(emit.as_bytes());
                                 let _ = stream.flush();
                             }
                         }
@@ -1871,7 +1989,7 @@ fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>, auth: &str)
     };
     let red = if filter_enabled() { active_redactor() } else { None };
     let outgoing = match red {
-        Some(r) => r.redact(&body),
+        Some(r) => transform_content(&body, "messages", &|s| r.redact(s)),
         None => body.clone(),
     };
     if method == "POST" && path == "/v1/chat/completions" && json_bool_field(&body, "stream") {
