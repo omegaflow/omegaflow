@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-15
-  sha256: 9c5ca70b7e1eec30bfaffe1095aa85ddf06ae4d7ddbff16884e86a56200ed010
+  sha256: 568c6fc1b85091f5b581fbe6d23066549491629a3cb8e9168860b29cd5c123be
   status: live
   see-also: AGENTS.md
 -->
@@ -16,13 +16,13 @@ leck-fähige Faden (das Register-Lesen) geschnitten, nicht nur verschoben.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `378fc958c` | 2026-10-15 |
-| rote CI-Läufe | `ci-gate` `38693094480` (HEAD `88e051c65`, queued — **unread**) · `register-coverage` `38693094427` (HEAD `88e051c65`, queued — **unread**) · `ci-gate` `38693040722` (HEAD `b8fd39b49`, in Arbeit `subset → cargo test --lib` — **unread**) · `sources-repo-licence` `38693040838` (HEAD `b8fd39b49`, in Arbeit — **unread**) · `zenodo-raw-cdn` `38693040881` (HEAD `b8fd39b49`, queued — der neue Matrix-Lauf über die drei neuen Assets) | 2026-10-15 |
+| HEAD | `fc2221143` | 2026-10-15 |
+| rote CI-Läufe | `ci-gate` `38694956019` (HEAD `fc2221143`, queued — **unread**) · `register-coverage` `38694955977` (queued — **unread**) · `sources-repo-licence` `38694955997` (queued — **unread**) · `harvest-dispatch` `38694955990` (queued — **unread**) · `wdcb-obn-wayback-cdn` `38694956011` (queued — der neue 32er-Matrix-Rettungslauf) · `zenodo-raw-cdn` `38693040881` (HEAD `b8fd39b49`, in Arbeit — der Matrix-Lauf über gps_cmonoc/gps_campaign/cedc_catalog) | 2026-10-15 |
 
-Am HEAD `b8fd39b49` (Ware-Commit) ist `register-coverage` `38693040719` **success** und
-`harvest-dispatch` `38693040865` **success**. Lokal am HEAD gemessen: `register_sort`
-canonical, `cdn_reconcile --fail` clean (327 Hosts), `register_lookup --tokens --noecho-fail`
-exit 0.
+**Grün am jüngsten Stand:** `register-coverage` `38693094427`/`38694122270` **success** ·
+`sources-repo-licence` `38693040838` **success** · `harvest-dispatch` `38693040865` **success**.
+Lokal am HEAD gemessen: `register_sort` canonical (2 614 Blöcke), `cdn_reconcile --fail` clean
+(328 Hosts), `register_lookup --tokens --noecho-fail` exit 0, `cargo check` 0/0.
 
 Die Meta-Linie (Mycelium) trägt beide Zeilen in demselben Rund, in dem sie den privaten
 Pass schreibt — öffentlich ins öffentliche Haus, privat ins private.
