@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 348 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 39dc7cef7c70e133054a0c891ffb99f69bbfb30ae9b1ba0e9a9d0aaf3dc385a7
+  sha256: 2141c292644ec355ca8f1cc050c7643b154d490d9a00da7e742ba743a3a67aa3
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -38,8 +38,9 @@ mit gemessenem Teil-Roster.
   (`types.rs:441`) trägt heute keinen Epoch-Parameter. Die kollidierenden Leselinien sind
   bestätigt: Linie A `channel.epoch <= 0.0 → continue` (`matrix.rs:644`) und
   `drs_fits.rs:38` (`epoch <= 0.0 → None`); Linie B behält `0.0` als Wert.
-- **Ratsrunde (2026-10-15, Teil-Roster; Antworten roh in `state/stimmen/2026-10-15_*.json`):**
-  4 Stimmen — **Z.ai (GLM-5.3-Flash)** · **Sakana (Namazu High)** · **Duck (GPT-6 Luna)** · **Lumo**.
+- **Ratsrunde A — Frontier-Sitze (2026-10-15, Teil-Roster; Antworten roh in
+  `state/stimmen/2026-10-15_*.json`):** 4 Stimmen — **Z.ai (GLM-5.3-Flash)** ·
+  **Sakana (Namazu High)** · **Duck (GPT-6 Luna)** · **Lumo**.
   - **Z.ai: ja, ehrlich — mit einer Definitionskorrektur.** Bit 32 heißt „das Epoch-Feld ist
     belegt" (über das **Feld** definiert), nicht „statisch" über die Quellart; „statisch ⇒ aus"
     ist eine **Produzentenregel**, nicht die Bedeutung. Dritter Fall sonst unhaltbar (gfc mit
@@ -53,18 +54,44 @@ mit gemessenem Teil-Roster.
     Leser bleiben.
   - **Lumo: nein.** Die Semantik-Kollision `pad=0.0` ↔ `epoch=0.0` verwässert das Absenz-Signal;
     Alternativen: NaN-Sentinel, separates Optional-Feld, Zwei-Bit-Flag, Modell-Typ im Header.
-  - **Verdichtung:** 3× „ja, wenn die Maske vor dem Feld ausgewertet wird und das Bit über das
-    Feld definiert ist", 1× „nein" (Lumo). Der gemeinsame stärkste Riss aller vier: ein
-    bit-ignorierender Leser bleibt — die Ehrlichkeit gilt nur im masken-honorierenden Vertrag.
-- **Nicht bindend — warum:** die Operator-Regel verlangt den **vollen** Roster. Gemessen
-  (2026-10-15, Zugangs-Gates, kein Stilles-Null):
-  `Claude` = Login (`claude.ai/login?from=logout`) · `DeepSeek` = `chat.deepseek.com/sign_in` ·
-  `Google AI Studio` = Google-Login · `MiniMax` = `unified-login` · `Perplexity` =
-  „Melde dich an und wiederhole deine Anfrage" · `Qwen` = Alters-Gate („Bestätigen Sie Ihr
-  Alter") · `Mistral` = Frage gesetzt, keine Antwort (Zusammenhang kollabiert, pending) ·
-  die geteilten `open-weight-ui`-Sitze nicht gefahren · `Z.ai` lief **Flash**, nicht Deep Think Max.
-- **Blockade:** die **Zugangs-Gates** (Operator-Hand: das Operator-Profil in die sechs Sitze
-  einloggen) — ohne sie ist der volle Roster nicht stellbar, und ohne vollen Roster bindet
+- **Ratsrunde B — offene Gewichte (tryingopen, 2026-10-15, Operator-Wort „fahre die frage über
+  trying open"; Rohantworten `state/stimmen/2026-10-15_open_*.json`):** 3 Stimmen.
+  - **DeepSeek V4 Pro: ja — unter der Bedingung, dass das Bit die alleinige Wahrheitsquelle ist**
+    (Bit=0 ⇒ der `0.0`-Pad nie als J2000 lesen). Stärkster Riss: das Bit konfundiert „Epoche
+    vorhanden" und „Quelle ist `gfct`" → Doppelkodierung `Bit=0 ∧ Pad=0.0`. Alternativen:
+    NaN/−∞-Sentinel (bricht Interop/Validatoren), Epoch als echtes Optional (Wire-Umbau),
+    expliziter Discriminant `static|gfct`.
+  - **GLM 5.3 (Z.ai): trägt die Wert-Absenz, nicht die Anwendbarkeits-Absenz** — ehrlich nur mit
+    Typ-Diskriminator als Wahrheitsquelle; Bit 32 nur als validierte Ableitung. Stärkster Konfund:
+    „N/A vs. Missing" (`Bit=0` = legitim-statisch ∪ `gfct`-Record kaputt); zweiter Riss: ist das
+    Mask heute ≤32 Bit breit, ist die Verbreiterung selbst ein Umbau („kein Umbau" gilt nur bei
+    reservierten Bits); dritter: das Bit ist **wire-kompatibel, nicht semantisch kompatibel** —
+    alte Reader lesen das Pad weiter als J2000.
+  - **MiMo V2.6 Pro (Xiaomi): stärkster Riss — doppelte Wahrheitsquelle.** Das Bit ist
+    out-of-band-Annotation eines in-band-Werts; das Pad liegt in der Wertdomäne, die Kohärenz ist
+    nur per Konvention erzwungen; `Bit=0 ∧ word=0.0` ist vom korrekten statischen Fall nur durch
+    Konvention unterscheidbar (kein Umbau nötig, aber jedermanns Audit).
+  - **Nicht geantwortet (gemessen):** `Qwen3.8 2.4T` · `Nemotron 3 Ultra` · `Mistral Large 4` ·
+    `Inkling` — die Plattform meldet „This site has run out of API credit for the moment"
+    (Site-Guthaben erschöpft, kein Modell-Gate); `MiniMax M3` = „Adding capacity" (nicht wählbar).
+  - **Verdichtung:** 6× „ja/conditional — nur wenn das Bit die alleinige Wahrheitsquelle ist und
+    die Maske vor dem Feld gelesen wird (und besser ein Typ-Diskriminator die Semantik trägt)",
+    1× „nein" (Lumo). Tiefer als die Frontier-Runde: **zwei unabhängige Zeugen (GLM 5.3, MiMo)
+    benennen den Konfund schärfer** — das Bit trennt nicht „N/A" von „Missing", und der Pad liegt
+    **in** der Wertdomäne (Doppelkodierung). Der gemeinsame stärkste Riss bleibt: ein
+    bit-ignorierender Leser liest das Pad weiter als J2000 (wire-kompatibel ≠ semantisch kompatibel).
+- **Nicht bindend — warum:** die Operator-Regel verlangt den **vollen** Roster; die zwei Runden
+  zusammen tragen 7 Stimmen, nicht den vollen Satz. Gemessen (2026-10-15, kein Stilles-Null):
+  - **Frontier (Runde A):** `Claude` = Login (`claude.ai/login?from=logout`) · `DeepSeek` =
+    `chat.deepseek.com/sign_in` · `Google AI Studio` = Google-Login · `MiniMax` = `unified-login` ·
+    `Perplexity` = „Melde dich an und wiederhole deine Anfrage" · `Qwen` = Alters-Gate · `Mistral`
+    = Frage gesetzt, keine Antwort (pending) · `Z.ai` lief **Flash**, nicht Deep Think Max.
+  - **Offene Gewichte (Runde B, `open-weight-ui`, Lock `mountain` gesetzt und gelöst):** die 7
+    gestellten Sitze s. o.; `Qwen3.8 2.4T`/`Nemotron 3 Ultra`/`Mistral Large 4`/`Inkling` = Site-
+    Guthaben erschöpft, `MiniMax M3` = „Adding capacity" (nicht wählbar).
+- **Blockade:** (a) die **Zugangs-Gates** der sechs Frontier-Sitze (Operator-Hand: das
+  Operator-Profil einloggen); (b) das **tryingopen-Site-Guthaben** (fremd, nicht Mountain-Hand) —
+  vier offene Gewichte antworten erst wieder bei aufgefülltem Guthaben. Ohne vollen Roster bindet
   das Verdikt nicht (Operator-Regel).
 - **Braucht:** (1) die sechs Sitze eingeloggt (`Claude`, `DeepSeek`, `AI Studio`, `MiniMax`,
   `Perplexity`, `Qwen`); (2) die Runde dann vollständig fahren (inkl. `Z.ai` Deep Think Max +
@@ -233,11 +260,13 @@ Origin: mountain-348 (2026-10-15):
 - **„was wenn du den satellit autonom betrachtest — dann ist es doch auch nur eine sonde an einem xyz,t; die ISS ist doch zu einer Zeit immer an einem bestimmten Ort"** | 2026-10-14 | (mountain 345 — SABER: eigene Weltlinie).
 - **„warum können wir das gravitationsmodell nicht wie die anderen behandeln? … sie sind ein Feld"** | 2026-10-14 | (mountain 345 — ICGEM: Feld).
 - **„fängst du bitte an und delegierst an taucher?"** | 2026-10-14 | (mountain 346).
+- **„bitte fahre die frage über trying open"** | 2026-10-15 | (mountain 348 — die offenen Gewichte in die Epochen-Absenz-Ratsrunde).
 
 ## Abschluss
 
 Der Commit ist die letzte Handlung; das Operator-Wort trägt Commit und Push. Dieses Atom
 (mountain-348) committet: den `archiv/`-Move der folge347, die Prosa-Heilung der drei
 XFER-MISSING im folge347-Block (Register-Hygiene, `--tokens --noecho-fail` exit 0), die
-Ratsrunde „Epochen-Absenz" (gemessenes Teil-Roster, Rohantworten `state/stimmen/`) und diese
-Fortschreibung.
+Ratsrunde „Epochen-Absenz" — Frontier-Sitze (Runde A) **und** offene Gewichte über tryingopen
+(Runde B, Operator-Wort), Rohantworten `state/stimmen/` (Lock `open-weight-ui` gesetzt und
+gelöst) — und diese Fortschreibung.
