@@ -39,15 +39,21 @@ Feldwerte, die die gerenderte Seite leer lässt. Gemessen:
   Messungen liegen offen** (MAVEN/MGS auf NASA PDS, MARSIS auf ESA).
 - **Datensatz 6** (linkId `14790`, „Enhanced visualization map dataset of lunar polar region"):
   **LOLA-abgeleitet**, 19,4 MB, CC BY 4.0, **Schutzfrist 2024-03-05…2026-03-05 → abgelaufen**.
-- **Datensatz 2** (DOI `10.12176/03.70.00011-V01`, HTTP 404) und **Datensatz 5** sind über die
-  gated IDs **nicht identifiziert** (die frühere id 15057 = eine andere Quelle, geomagnetische
-  Station Xilinhaote) → `pending`.
+- **Datensatz 2** (linkId `13521`, „Lunar SHCs topography"; der tote DOI `…00011-V01` per
+  **Handle-API** aufgelöst): **LOLA/LRO**, lunare SH-Koeffizienten, 1,07 MB, Zeit 2009-07…2013-07,
+  CC BY 4.0 — dieselbe LOLA-Familie wie 1. Das offene LOLA-Modell deckt sie.
+- **Datensatz 5** (linkId `14306`, „Multi-element high-resolution topography database of Mars-like
+  landforms"): **Instrument `UAV; Camera; RTK`, Verarbeitung `Metashape`** — eine
+  **Drohnen-Photogrammetrie** terrestrischer Mars-Analoga (Täler, Yardangs, Dünen), Feldkampagne
+  2022-07…09, 27,5 GB, CC BY 4.0, Schutz 2 Jahre. **Keine NASA-Ableitung — eine eigene
+  Feldmessung.** Offen gibt es nur Verwandtes (Qaidam-Analog HKU, **CC BY-NC**).
 
-**Ergebnis:** Die bedingten China-Produkte sind **Ableitungen aus offen verfügbaren NASA-Basis-
-messungen** (LOLA · MOLA · MAVEN · MGS · MARSIS) — keine unabhängigen Messungen. Der Zweck von
-1/3/4/6 ist damit offen gedeckt (das offene Modell ist für 1 sogar feiner); die China-Fassung
-trägt **keinen eigenen Messzweck**. Nur der Grad der SH-Entwicklung (3: 21600 vs. 5759) und die
-Sortierung unterscheiden sie — ableitbar aus dem offenen DEM.
+**Ergebnis — geschärft:** Für **1, 2, 3, 4, 6** sind die bedingten China-Produkte **Ableitungen aus
+offen verfügbaren NASA-Basismessungen** (LOLA · MOLA · MAVEN · MGS · MARSIS) — keine unabhängigen
+Messungen; der Zweck ist offen gedeckt (für 1/2 sogar vom feineren offenen LOLA-Modell). **Datensatz
+5 ist die Ausnahme:** eine **eigene Drohnen-Feldmessung** terrestrischer Mars-Analoga, die sich
+nicht aus offenen Daten nachrechnen lässt. Ein eigener Zweck für 5 bleibt damit **möglich** — er
+hängt daran, ob das Haus eine terrestrische Mars-Analog-Morphometrie braucht (Zweckfrage offen).
 
 ## Das Verdikt (überwiegend einstimmig)
 
@@ -88,8 +94,10 @@ Sortierung unterscheiden sie — ableitbar aus dem offenen DEM.
 - **4:** die offenen **MAVEN/MGS/MARSIS**-Produkte (NASA PDS / ESA) als primäre Quellen prüfen und
   registrieren — die Messung liegt offen.
 - **6:** die **abgelaufene** Schutzfrist (2026-03-05) datiert prüfen; die LOLA-Polarprodukte offen.
-- **2 und 5:** über die VSSO-Suche (Endpunkt noch nicht gefunden) oder den Produzenten
-  identifizieren; bis dahin `pending`.
+- **2:** LOLA/lunare SH — über das offene LOLA-Modell gedeckt (kein eigener Schritt).
+- **5:** die **einzige** Zeile mit möglichem eigenem Zweck (Drohnen-Feldmessung terrestrischer
+  Mars-Analoga). Einmal messen, ob das Haus eine solche Analog-Morphometrie braucht; **nur dann**
+  und **nur für 5** wäre ein gezielter Antrag überhaupt zu erwägen. Sonst `pending`.
 - **Kein Send.**
 
 **Kern in einem Satz:** Fünf Zeilen sind gedeckt oder verwandt, eine nicht adressierbar, **keine
