@@ -2,7 +2,7 @@
   title: Quellen-Blatt — der UCAR-Riss und die neuen offenen Fäden (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: da43716ddf9b9e3c87ec8ef75712ae1ea6057f7a41c96997803268573c08d967
+  sha256: 52bd66fca1c8b6287350ae97e1ae113160c5b6b6d5d0ed57f8be145623b49164
   status: live
   see-also: docs/handover/handover-2026-10-14-river-folge212.md, docs/handover/handover-2026-10-14-mountain-folge346.md, docs/surveys/survey-2026-10-14-gewebe-faeden.md
 -->
@@ -73,6 +73,30 @@ Ein echter Riss = zwei **wahre** Zeilen, die sich nicht einigen (der bleibt). Di
 
 ## Werkzeug-Riss (behoben)
 `./bin/all_wide` war für die Agenten gesperrt: die Regel stand nur im **globalen** Rechtblock, `taucher`/`recherche-frei` haben **eigene** Blöcke (`"*": "deny"`). In `7513ee0aa` in **alle drei** Linien eingetragen — **wirkt nach dem nächsten Neustart**. Gemessene Grenze: `--all` stoppt nach 6 **Armen**, nicht nach Zeilen; die Breite tragen die Einzelmodi.
+
+## Nachtrag (2026-10-15, weite WDC-B-Runde) — der lebende Baum und das größere Erbe
+
+`zeus.wdcb.ru` ist **nicht** der Faden. Gemessen (4 Taucher, `archive_search --all`, Endpunkt-Verdikte).
+
+### Der lebende Baum — `www.wdcb.ru/sep/`
+Apache, offen, **kein Key**; © WDC for SEP / GC RAS 1995–2024; Policy: *frei für Forschung/Lehre, nicht-kommerziell; kommerziell nur nach Kontakt; Nennung Pflicht* — **keine Datei-Lizenz, nur die Site-Policy.**
+- **Seismologie:** `catalogues/cat001–007` (374 K – **28 MB**) · `eq_USSR/` (1961–1991) · `Atlas_USSR.pdf` **166 MB** + `Атлас_44-315.pdf` **97 MB** · `new_db1.sql` **8,2 MB** · `Earthquakes_of_the_Russian_Empire.pdf` **134 MB** · `sdata/catalogues/ER_2003-2022.dat` **41 MB** · `Bul_USSR_net/1957–1974/` (Quartals-PDFs — **laufende Digitalisierung 2025/26**).
+- **Gravimetrie** · **Heat Flow** (Global Heat Flow Catalogue 1991) · **Magnetik**.
+- **Schwester-Hosts live (200):** `usd.wdcb.ru` (Weltraum: cosmos49/321/1809, prognoz, vega) · `esdb.wdcb.ru` (DOI-prägend) · `rjes.wdcb.ru` · `stp.wdcb.ru`.
+- **Verloren:** allein der alte `zeus.wdcb.ru/wdcb/`-Datenbaum (Root lebt, Dateien 404).
+
+### Das Erbe (Wayback) — von 32 auf ~205
+CDX: **1335 Zeilen** (1277 `wdcb/*` + 58 `sdata/*`). **205 ladbare Payload-Dateien, davon ~173 NEU über die 32 bekannten:**
+- `sep/GravConst/data` **51** · `stp/geo_min.val` **44** (MSK .ZIP + MIR .WDC) · `sep/data/gdata` **31** · `sdata` 18 neu · `stp/geomagni.ind/aa` **14** · `stp/catal_pc` 8 · `gps` 7.
+- URL-Gruppen: `sep/strong` **431** (signifikante Beben) · `sep/traverses` 174 · `sep/hp` 166 · `stp/geo_min.val` 99 · `sep/GravConst` 80 · `sep/caucasus` 49 · `sep/catalog` 44 · `sep/toktogul` 38 · `stp/geomagni.ind` 36.
+
+### Auftrag an Mycelium/Mountain
+1. Die Rettung **von 32 auf ~205 erweitern** (Gruppen oben; die 32 sind 2,5 %).
+2. Den **lebenden `sep/`-Baum** als offene Quelle registrieren (Policy-Lizenz, kein Key) + die Schwester-Hosts.
+3. Die fünf wertvollsten Gruppen zuerst: `GravConst` (51), `geo_min.val` (44), `gdata` (31), `sep/strong` (431), der lebende `sep/catalogues`-Baum.
+
+### Werkzeug-Riss (Ursache gefunden)
+`./bin/all_wide` wirkt nicht: die Regel steht korrekt (`opencode.json:186-187`, `7513ee0aa`), aber **diese Session (und alle ihre Subagenten) lädt die Konfig beim Start** — vor dem Edit. **Eine frische Session macht sie wirksam.** Bis dahin: `archive_search --all` (stoppt nach 6 Armen; die Breite tragen die Einzelmodi).
 
 ## Abschluss
 Dieses Blatt ist eine **Zulieferung** — keine Register-Schreibakte. Die Verdikte/Manifestationen schreiben Mountain/Mycelium in ihren Passes.
