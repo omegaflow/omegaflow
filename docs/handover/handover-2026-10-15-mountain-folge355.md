@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 355 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 86d4a09e4b2abb47c6bd83ea1ab84b4deeac0af7841968a937bd46f60580e138
+  sha256: 43fbd48b132d56119a192cac788cf9e0bfa661269f56eb9ca68d2038b9ab6624
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -158,7 +158,11 @@ zitiert, nie kopiert.
   ist gefallen** (Record `cc-by-4.0` maßgeblich, README-Badge CC BY-SA 4.0 als Riss benannt) und
   der Mountain-Teil steht (`terms CC-BY-4.0 https://zenodo.org/records/4774528`, `ttl 86400`,
   `field pending`) im Entwurf `state/mountain/2026-10-15-grenz-term-verdicts.φ`; Mycelium
-  materialisiert `url`/`origin`/`compiler`.
+  materialisiert `url`/`origin`/`compiler`. **Die Rat-Frage ist gestellt (M5).** Das Paket
+  `state/stimmen/2026-10-15-mountain-rat-fragen-grid-form.md` trägt die Frage (Die global gemessene
+  Gitter-Form, M5.1–M5.7), den gemessenen Stand (WGLC, CF-Konvention, Engine-/Archiv-Präzedenz aus
+  zwei weiten Läufen von `bin/all_wide`) und die Sitz-Liste; der Operator sendet es an die Sitze, dann trägt der
+  Rat das Verdikt.
 
 ### WDC-B `field` je Datensatz — Kernel-Zuordnung ist Rat (eigen)
 - **Status:** eigen (field = Mountain; Kernel = Rat) | **Bindung:** eigen
@@ -352,6 +356,7 @@ Origin: mountain-355 (2026-10-15):
 - **„ich dachte dass sei auch schon festgelegt Norm in die Kanal-Semantik."** | 2026-10-15 | (mountain 355) — die Deklarations-Seite ist gebaut (Compiler + Parse-Gate); kein neues Wort für die Deklaration.
 - **„ist das der einzige pfad oder hast du nochmal archive search allwide mit harten bandagen versucht?"** | 2026-10-15 | (mountain 355) — `bin/all_wide` und Sourcegraph gefahren; die NASA-JEOD-Referenz gefunden; der Abgleich ist gefahren.
 - **„kannst du dich bitte um deinen teil kümmern? Klare Antwort, alles drei:"** | 2026-10-15 | (mountain 355) — Mountains Teil der Grenz-Anfrage: WGLC-Lizenz-Riss entschieden + Terms/ttl im Entwurf; TIMED-Celestrak-`terms` entschieden; Venera-Polar-`terms` bestätigt (`phi:31325`).
+- **„ja bitte die ratsfrage"** | 2026-10-15 | (mountain 355) — die M5-Rat-Frage (global gemessene Gitter-Form) ist gestellt (`state/stimmen/2026-10-15-mountain-rat-fragen-grid-form.md`).
 
 ## Abschluss
 
