@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 352 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 1429c0e600636a6a61440e57cd9d690a02566ff6ae6da6dcc76f8f3361cb135c
+  sha256: 31d047281d20ee6ec8383bf7c12cf1b73b4411c730e8d8e0bc77578cbf93245f
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -50,10 +50,11 @@ Prosa, kein Pfad-Block) · 0 stale. Gefaltet (`register_lookup --addressed mount
   M2 Aurora-Grenzbreite, M3 OVATION-AACGM) mit den **fünf Axiomen + fünf Stimmen**, der gefahrenen
   **weiten Leiter** (`bin/all_wide`, 7 Spills) und der Sitzliste. Der Operator reicht das Paket je
   Sitz ein; das Verdikt trägt der Rat.
-  **Axiom-Kopf korrigiert (Operator-Frage 2026-10-15):** das fünfte Axiom heißt **Konsens der
-  Sensoren und des Operators** — die Katalog-Kurzform (und fremde Fragebögen) ließen „der Sensoren"
-  aus; hier wieder vollständig. Der Katalog `2026-10-15-rat-fragen-katalog.md` trägt dieselbe
-  Kürzung — als fremde Datei nicht still geändert, benannt.
+  **Axiom-Kopf korrigiert (Operator-Frage 2026-10-15):** die kanonischen fünf Axiome sind der
+  **Granit** (`docs/granit.md:16-20`; Beleg `docs/concepts/glossar.md:85`): A = A · ICRS & TDB ·
+  channel_ref · 0 geehrt · pending. Der Bogen trug zuvor die **ethischen** Grundsätze aus
+  `AGENTS.md` als „die fünf Axiome" — eine Verwechslung (der Granit trägt 7 Sätze); im Bogen
+  korrigiert, für die fremden Dokumente benannt (s. eigener Punkt).
 - **Aurora-Grenzen vermessen (Taucher).** Vollständige Format-Spec für **BAS IMAGE SI12
   Boundaries** (`ramadda.nerc-bas.ac.uk`, OGL v3.0; 30 Monats-`.txt`, 50 Spalten:
   Zeit, Instrument, 24 equatorwärtige + 24 polwärtige AACGM-Breiten je 1-h-MLT-Bin, `NaN` =
@@ -213,6 +214,13 @@ Gefaltet (Echo in diesem Block): `xfer:mycelium-352-1` · `xfer:mycelium-352-2` 
 - **Braucht:** (1) das Rat-Verdikt zur Feld-/Kernel-Zuordnung einer Grenzbreite; (2) die vier
   Mycelium-Registrierungen; (3) die NSDB-Witness-Route in den S²-Pfad (main_flow = River) —
   `nsdb::to_astro_series` liefert die AST1-Richtungszeugen.
+
+### Axiom-Verwechslung + ICRS/TDB/pending-Fabrikations-Audit (eigen)
+- **Status:** eigen | **Bindung:** eigen
+- **Trigger:** Operator-Frage 2026-10-15 („das sind nicht die 5 axiome … suche nach icrs tdb und pending wo wird das noch überall fabriziert?").
+- **Lage:** (gemessen 2026-10-15) Die fünf Axiome sind der **Granit** (`docs/granit.md:16-20`; Beleg `docs/concepts/glossar.md:85`): **A = A · ICRS & TDB · channel_ref · 0 geehrt · pending** — das Gate lädt genau diese Datei (`src/gate/axioms.rs::load`, dessen Test `A = A`/`0 honored`/`channel_ref`/`ICRS & TDB`/`pending` prüft). Die **ethischen** Grundsätze aus `AGENTS.md` tragen denselben Namen „die fünf Axiome" — eine Verwechslung, verbreitet in fremden Dokumenten: `state/stimmen/2026-10-15-netzfusion-formular.md` / `…-manifest.md`, `…-rat-fragen-katalog.md` / `…-rat-fragenpaket.md`, `state/stimmen/2026-10-15-nachfrage-f7-f4-wissenschaft.md` (benannt, als fremde Dateien nicht still geändert). Der Granit trägt **7** Sätze (dazu „Der Operator schließt", „Manifestiert, nicht nur lokal"). **Fabrikations-Audit (ICRS/TDB/pending):** der Produktions-Code ist frei von Körper-Namens-Literalen — die Treffer `"earth"` (89) / `"mars"` (57) / `"sun"` (20) liegen in `#[cfg(test)]`-Modulen / `tests.rs`; **Drift:** die J2000-Anker-Konstante `946728000.0` steht dreifach (`lsk.rs:3`, `mcon_event.rs:9`, `quake_event.rs:10`); **Lücke:** `VerdictWord` (`weberin_verdicts.rs:9-15`) kennt kein `Pending` — das Verdikt-Register kann „noch nicht gemessen" nicht tragen (`from_code` → `None`, der Parser bricht ab).
+- **Blockade:** keine.
+- **Braucht:** (1) die fremden Fragebögen/Dokumente auf den Granit ziehen (deren Linien); (2) die dreifache J2000-Konstante auf die eine TDB-Achse ziehen; (3) prüfen, ob ein `VerdictWord::Pending` das Register-Vokabular erweitern muss (Rat).
 
 ## An mycelium
 
