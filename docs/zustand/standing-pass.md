@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-15
-  sha256: 01ba2cbc07a602e67982ae16f96f2811decce60e614cf2345172c91968617a88
+  sha256: 2943165c06d4e3973749fa7762f08004a793a299e55d520f0601fe9daf6803a7
   status: live
   see-also: AGENTS.md
 -->
@@ -15,17 +15,16 @@ Die öffentlichen Linien zitieren **diese** Fassung, nie die private.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `6290535e5` | 2026-10-15 |
+| HEAD | `db83de03b` | 2026-10-15 |
 | rote CI-Läufe | **56** non-success — Träger: `register-coverage` (Fehler-Job `orphans`) · `ci-gate` (`dropped-gate`/`register`/`clippy`/`format`/`subset`) · `tools-build` · `matrix-rotor` · `quake-feeds-cdn` | 2026-10-15 |
 
-**Gemessener Kern-Befund (nicht geraten):** Der Blitz-Kanal für die Schumann-TE ist **offen**.
-Die weite Leiter (`bin/all_wide`) und die Direktmessung (alle HTTP 200) zeigen: **WGLC** (WWLLN
-Global Lightning Climatology + time series, CC-BY, global-monatlich, Zenodo/Pangaea) ·
-WWLLN-Klimatologie-Datenverzeichnisse · ein **stündliches CONUS**-Set (UNC Dataverse
-`10.15139/s3/nk3ncm`) · WWLLN eigener offener KML-Feed (1 h, 6 h Verzögerung) · offene
-Satelliten-Blitze **MTG-LI** (Europa/Afrika) und **GLM** (Amerikas). Nur der globale stündliche
-WWLLN-Rohdatensatz bleibt zugangsgebunden. Die erste enge Messung („nur Monatsmittel") war
-unvollständig.
+**Gemessener Kern-Befund (nicht geraten):** Der **globale** Blitz-Kanal für die Schumann-TE ist
+**frei** erreichbar. Die weite Quellen-Leiter über die Zenodo/OpenAlex-Register fand **WGLC** (WWLLN
+Global Lightning Climatology and time series, Kaplan & Lau, **CC-BY-4.0**, Zenodo
+`10.5281/zenodo.4774528`): global, **stündlich** (0.5°/5′) plus **30-Minuten**-Stoßleistung,
+**2010–2025**, detection-efficiency-korrigiert. Zweiter freier globaler Kanal: **FLASHMAP**
+(`10.5281/zenodo.17376946`, CC-BY, aus Vaisala GLD360 CG+IC). Die zwei früheren Messungen
+(„Monatsmittel" bzw. „regional") waren zu eng.
 
 **Noch unread:** die Push-Läufe an `8a7b48e0e` (`ci-gate`, `register-coverage`) — queued.
 
