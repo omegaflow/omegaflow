@@ -64,3 +64,55 @@
 #   Riss (benannt): dieselbe Zeile fl. 19 verlangt „die Register-Zeile schreiben" — das steht gegen
 #   die gemessene Lizenz (fl. 20) und gegen den Kanon. Die Messung fl. 20 hat Vorrang; die
 #   „Register-Zeile"-Forderung fl. 19 ist damit überholt und wird nicht ausgeführt.
+
+# ============================================================
+# 5 — DIE FÜNF ANGEFRAGTEN MOUNTAIN-LINIEN (Operator-Auftrag 2026-10-15)
+# ============================================================
+
+# 5a — TIMED/Celestrak GP: Takt + ttl (machbar: erledigt)
+#   Weltlinien-Compiler `tools/harvest/src/bin/timed_tle_compiler.rs`: die Bahn wird mit
+#   DEFAULT_CADENCE_S = 60.0 gesampelt (--cadence), Format `orbit_bin` (wind_orbit::write_bin).
+#   Haus-Präzedenz einer Orbit-Reihe: `wind_orbit` (phi:3859-3865) trägt `ttl 86400`, terms CC0-1.0.
+#   Der TIMED-TLE ist ein Celestrak-Snapshot, der CI baut bei neuem Element-Satz.
+#   Mountain-Verdikt: `terms free-open https://celestrak.org/usage-policy.php`; `ttl 86400`;
+#   `format orbit_bin`; Weltlinien-Takt 60 s (im Compiler). url/origin/compiler = Mycelium.
+#   Ein frischer Host-Zugriff (celestrak.org gp.php) blieb am 2026-10-15 ohne Antwort ->
+#   der ttl-Wert ist die Haus-Konvention des Geschwister-Blocks, nicht eine Live-Host-Messung.
+
+# 5b — SABER Feld-Zeile (Höhenform (C)) (teil-machbar)
+#   Rat-Verdikt (C): das Level steht IM Schlüssel (dotted `ktemp.<i>`), nicht im Wert
+#   (`state/stimmen/2026-10-15-mountain-rat-fragen-verdikt.md:36`). Der HAPI-Arm expandiert
+#   `param.<i>` über parameters[].size zu je einem Skalar-Kanal. Die zwei Feld-Zeilen:
+#     field saber_ktemp saber_ktemp inverse-square thermal K 3600 0.0 0.0
+#     field saber_tpgpaltitude saber_tpgpaltitude inverse-square thermal km 3600 0.0 0.0
+#   Blockform `hapi ktemp.<i>=saber_ktemp tpgpaltitude.<i>=saber_tpgpaltitude`, `on earth`.
+#   Der Host `cdaweb.gsfc.nasa.gov` war am 2026-10-15 unerreichbar (SSL/000) -> kein frisches
+#   Sample; der Block steht mit der Host-Rückkehr. Terms: NASA/SPDF — der eigene SABER-Token
+#   ist nicht gemessen (SPDF erscheint als CC0-1.0 bei wind_orbit, phi:3862) -> pending.
+
+# 5c — THEMIS-ASI FODG-Kubus: Registerzeile (machbar: terms/ttl stehen)
+#   Quelle `themis_asi` ist zugelassen: `terms free-open https://data.phys.ucalgary.ca/data/how_to_cite.html`
+#   (Geschwister-Blöcke phi:10343/10350). Der Kubus (MAGIC FODG, az/el-Gitter, Zellen-Float) ist
+#   Rivers Artefakt (`tools/measure/src/bin/themis_asi_frame_onset.rs`, river-220).
+#   Mountain-Verdikt: dieselben `terms free-open`; `ttl 604800` (Geschwister-Keogramme phi:10347/10356).
+#   format/field/url/origin/compiler = Mycelium nach Rivers Format.
+
+# 5d — SEANOE-Zulassung (nicht machbar ohne Datensatz-URL)
+#   Gemessen (2026-10-15): seanoe.org HTTP 206 erreichbar. Kein Haus-Block, keine Lizenzmessung im
+#   Baum. SEANOE-Deposits tragen JE EIGENE Lizenzen, nicht eine Haus-Lizenz -> die Zulassung ist
+#   an die konkrete Datensatz-URL gebunden und bleibt pending, bis Mycelium sie nennt.
+#   `xfer:mycelium-342-3`.
+
+# 5e — GEOFON-FDSN-Zulassung (schon im Register, keine Arbeit)
+#   Gemessen (2026-10-15): phi:163-166 (`fdsn_waveform.bin`) und phi:10496-10498 (`fdsn_event.bin`)
+#   tragen `terms CC-BY-4.0 https://geofon.gfz.de/eqinfo/faq/`. Die Zulassung steht; das gemeldete
+#   CDN-Asset-404 ist Myceliums Transport, kein Mountain-Tor. `xfer:mycelium-342-4`.
+
+# 5f — WDC-B SEP Host-`terms` (Token steht; Vokabel offen)
+#   Gemessen (2026-10-15): die sieben lebenden Katalog-Blöcke cat001..cat007 (phi:30448-30502)
+#   tragen `terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html`. Der Token ist NICHT in der
+#   census-Liste (`tools/register/src/bin/license_census.rs:9-33`) -> terms-vocab-Ausweis.
+#   Das Haus-Verdikt steht also; offen ist nur die Vokabel-Aufnahme (Register-Haushalt) oder eine
+#   Umbenennung auf einen Listentoken — eine Register-/Rat-Entscheidung, kein stiller Schreibakt.
+#   Die „5 Host-`reference`-Blöcke" sind ohne Myceliums Liste nicht adressierbar -> bitte die fünf
+#   konkreten URLs nennen.
