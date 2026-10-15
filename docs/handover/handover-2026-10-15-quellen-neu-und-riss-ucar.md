@@ -2,7 +2,7 @@
   title: Quellen-Blatt — der UCAR-Riss und die neuen offenen Fäden (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 2d5c5d927a21827fb3be7b3774681d566cd5489428edb80bdb6d0926c0e4f6d2
+  sha256: da43716ddf9b9e3c87ec8ef75712ae1ea6057f7a41c96997803268573c08d967
   status: live
   see-also: docs/handover/handover-2026-10-14-river-folge212.md, docs/handover/handover-2026-10-14-mountain-folge346.md, docs/surveys/survey-2026-10-14-gewebe-faeden.md
 -->
@@ -40,6 +40,32 @@ Jede Zeile gemessen (`archive_search`, Endpunkt-Verdikt, Lizenz) — Routen für
 - **`ARDA`** = **GNSS-Stationscode** (Ardahan, Türkei) — **kein** Gravimetrie-/Seismik-Knoten; die Register-Zeile ist eine Kategorienverwechslung.
 - **„EGGN"** = Fehlname (die realen Akronyme: ECGN/UEGN/EGGP); die Schwere-Daten liegen bei IGETS/BGI. EQUIP-G bleibt `pending` (Daten erst nach 2029, Zugang per E-Mail-Registrierung).
 - **re3data CEIC** `r3d100011154` führt „dataAccess=open", die Baum-Messung zeigt Login/订单 — **Riss**.
+
+## Korrektur (die drei Zeilen — Fehlbeschriftung, nicht Riss)
+Ein echter Riss = zwei **wahre** Zeilen, die sich nicht einigen (der bleibt). Diese drei sind **falsch beschriftet** — die Korrektur nennt beide Enden.
+
+1. **ARDA** (Mountain): die Gravimetrie-/Seismik-Zeile ist eine **Kategorienverwechslung** — `ARDA` ist der **GNSS-Stationscode** der NGL/MAGNET-Station (Ardahan, Türkei; `https://geodesy.unr.edu/NGLStationPages/stations/ARDA.sta`, offen, kein Key). Umklassifizieren: **GNSS-Zeuge**, nicht Schwere/Seismik.
+2. **„EGGN"** (Mountain): **Fehlname**. Die Zeile zeigt auf **EQUIP-G** (`pending`; Daten erst nach 2029; Zugang per E-Mail-Registrierung `https://equip-g.eu`) + die realen Schwestern **IGETS/GFZ** (`http://isdc.gfz-potsdam.de/igets-data-base/`, **CC-BY-4.0**) und **BGI** (frei ohne Einschränkung).
+3. **re3data `r3d100011154`** (Mountain schreibt die gemessene Sperre; Operator-Mail an re3data): unsere Zeile trägt **Login + 离线获取/订单**; re3data behauptet `dataAccess=open`.
+
+## `alt` — keine neue Größe, aber eine Deklaration
+`on earth <alt>` trägt **eine** Haus-Skala: **orthometrisch (MSL/EGM96)**. Das ist der offene Mycelium-316-Punkt — **schließen**, nicht umbauen.
+
+- **Kein neuer Eintrag, keine neue Spalte.** Die Deklaration steht **einmal** (Vertrag / `docs/concepts/archivar-mathematikerin.md`).
+- **Regel gegen stillen Mix:** liefert eine Quelle nur **ellipsoidische** Höhe (oder ein anderes Datum), wird das **benannt** — ein Wert **ohne Datum** ist `pending`. AUGO ist entschieden: **693 orthometrisch** (SRTM30m am Punkt = 696.0 m stützt die orthometrische Skala; die ellipsoidische Hypothese verlangte ≈710 m) — benannt, nicht geglättet.
+- **Echter Riss bleibt:** wo zwei Skalen **beide gemessen** vorliegen und nicht konvergieren, stehen **beide** (nie gemittelt).
+
+## Mail an re3data (Operator-Hand)
+> **To:** `info@re3data.org` — **Subject:** Correction — r3d100011154 (China Earthquake Data Center): `dataAccess` measured gated
+>
+> Hello,
+>
+> Your record `r3d100011154` (China Earthquake Data Center) lists Database and Data access as *open*. Measured 2026-10-14: the gravity and GNSS datasets at `data.earthquake.cn` require login (用户登录) and an order / offline request (数据共享方式: 离线获取 / 下订单); only the station metadata is free without an account. The record's own description already notes "It is only open in the Seismological Bureau."
+>
+> Suggest correcting the access fields, or noting the measured condition. Our measurements: `https://data.earthquake.cn/datashare/report.shtml?PAGEID=normalordercheck&dtid=…` (login wall), `https://data.earthquake.cn/D18000/index.html` (重力测量数据).
+>
+> Thanks for maintaining the index.
+
 
 ## Zwei Mails (Operator-Hand)
 1. **CEIC-Schwere** — Antrag/Anfrage an `datashare@seis.ac.cn` (国家地震科学数据中心).
