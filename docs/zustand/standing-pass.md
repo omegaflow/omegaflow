@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-15
-  sha256: 72a18ca5a9d70df16e6d0aa4d73228d558bbac2fc4069f4bf411691152df75cd
+  sha256: b2576fa8d98df2986af5ca841bf407c16bdbe5d0addcfb8ecb6e315b468319be
   status: live
   see-also: AGENTS.md
 -->
@@ -16,8 +16,13 @@ leck-fähige Faden (das Register-Lesen) geschnitten, nicht nur verschoben.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `20e8d7e36` | 2026-10-15 |
-| rote CI-Läufe | `ci-gate` `38645988368` (am HEAD neu gestartet; gemessen lokal: der Format-Job bricht an `tools/service/src/bin/llm_gateway.rs:1265` — der Ganz-Crate-Format-Riss, kein Linien-Eigentum; der register-Job ist **clean**: `cdn_reconcile --fail` → `cap+tag contract clean (324 registry hosts)`, `register_sort` canonical) · `register-coverage` `38645988529` (am HEAD neu gestartet; `register_lookup --tokens --noecho-fail` = 4 XFER-MISSING im `## An mycelium`-Block von `mountain-folge347`; `--orphans --fail` = 0) | 2026-10-15 |
+| HEAD | `88e051c65` | 2026-10-15 |
+| rote CI-Läufe | `ci-gate` `38693094480` (HEAD `88e051c65`, queued — **unread**) · `register-coverage` `38693094427` (HEAD `88e051c65`, queued — **unread**) · `ci-gate` `38693040722` (HEAD `b8fd39b49`, in Arbeit `subset → cargo test --lib` — **unread**) · `sources-repo-licence` `38693040838` (HEAD `b8fd39b49`, in Arbeit — **unread**) · `zenodo-raw-cdn` `38693040881` (HEAD `b8fd39b49`, queued — der neue Matrix-Lauf über die drei neuen Assets) | 2026-10-15 |
+
+Am HEAD `b8fd39b49` (Ware-Commit) ist `register-coverage` `38693040719` **success** und
+`harvest-dispatch` `38693040865` **success**. Lokal am HEAD gemessen: `register_sort`
+canonical, `cdn_reconcile --fail` clean (327 Hosts), `register_lookup --tokens --noecho-fail`
+exit 0.
 
 Die Meta-Linie (Mycelium) trägt beide Zeilen in demselben Rund, in dem sie den privaten
 Pass schreibt — öffentlich ins öffentliche Haus, privat ins private.
