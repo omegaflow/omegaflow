@@ -135,6 +135,40 @@ fn agents_growth_violations(now: usize, head: Option<usize>) -> Vec<String> {
     violations
 }
 
+const HANDOVER_CAP: usize = 1024;
+
+fn header_status_live(content: &str) -> bool {
+    let (Some(open), Some(close)) = (content.find("<!--"), content.find("-->")) else {
+        return false;
+    };
+    if close <= open {
+        return false;
+    }
+    for line in content[open..close].lines() {
+        if let Some(v) = line.trim().strip_prefix("status:") {
+            return v.trim() == "live";
+        }
+    }
+    false
+}
+
+fn handover_cap_violation(path: &str, content: &str) -> Option<String> {
+    if !path.starts_with("docs/handover/") || path.starts_with("docs/handover/archiv/") {
+        return None;
+    }
+    let name = std::path::Path::new(path).file_name()?.to_string_lossy();
+    if !name.starts_with("handover-") || !name.ends_with(".md") {
+        return None;
+    }
+    if !header_status_live(content) || content.len() <= HANDOVER_CAP {
+        return None;
+    }
+    Some(format!(
+        "handover-cap: {path} is {} B (cap {HANDOVER_CAP}) — the open grows, the history does not: delete the history, keep the pointer. The history is git. (operator word 2026-10-15)",
+        content.len()
+    ))
+}
+
 fn main() {
     let no_canon = std::env::args().skip(1).any(|a| a == "--no-canon");
     let out = Command::new("git")
@@ -408,6 +442,10 @@ fn main() {
             Ok(c) => c,
             Err(_) => continue,
         };
+        if let Some(message) = handover_cap_violation(path, &content) {
+            eprintln!("commit_check: {message}");
+            fail = true;
+        }
         for (line, rule, feedback) in status_proof_violations(&content) {
             eprintln!("commit_check: {path}:{line}: {rule} - {feedback}");
             fail = true;
@@ -515,5 +553,32 @@ mod tests {
             1
         );
         assert!(agents_growth_violations(30 * 1024, None).is_empty());
+    }
+
+    #[test]
+    fn a_live_handover_over_the_cap_is_refused_and_the_archive_is_exempt() {
+        let header = "<!--\n  title: Handover\n  status: live\n-->\n";
+        let body = "x".repeat(HANDOVER_CAP);
+        let big = format!("{header}{body}");
+        let live_path = "docs/handover/handover-2026-10-15-river-folge221.md";
+        assert_eq!(
+            handover_cap_violation(live_path, &big),
+            Some(format!(
+                "handover-cap: {live_path} ist {} B (cap {HANDOVER_CAP}) — das Offene wächst, die Geschichte nicht: lösch die Historie, behalt den Zeiger. Die Geschichte ist git. (Operator-Wort 2026-10-15)",
+                big.len()
+            ))
+        );
+        let exact = format!("{header}{}", "x".repeat(HANDOVER_CAP - header.len()));
+        assert_eq!(exact.len(), HANDOVER_CAP);
+        assert_eq!(handover_cap_violation(live_path, &exact), None);
+        assert_eq!(
+            handover_cap_violation(
+                "docs/handover/archiv/handover-2026-09-28-mountain-folge197.md",
+                &big
+            ),
+            None
+        );
+        let consumed = big.replace("status: live", "status: consumed");
+        assert_eq!(handover_cap_violation(live_path, &consumed), None);
     }
 }
