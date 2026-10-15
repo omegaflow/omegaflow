@@ -2,7 +2,7 @@
   title: Handover — River-Folge 214
   class: handover
   date: 2026-10-15
-  sha256: 3094d4c642fa00472d8e2f4ab16f5f885589a87bf32124e64f925184337d45b6
+  sha256: e9c76c858473acd258c44d50f064c26e803003b0fb123738d7d62267f17ef33e
   status: live
 -->
 # Handover — River-Folge 214 (2026-10-15)
@@ -84,7 +84,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `st
 ## Adressierte Blöcke — gefaltet 2026-10-15 (river-215)
 
 - `xfer:mountain-348-7` **SABER** (mountain-349, `handover-2026-10-15-mountain-folge350.md`) — die SABER-Registerzeile folgt nach der Routen-Entscheidung (Rats-Verdikt B + A); der Host `cdaweb.gsfc.nasa.gov` ist intermittierend erreichbar. Kein neuer River-Akt (Bau bei Mountain; Manifestation bei Mycelium).
-- `xfer:mycelium-352-4` **`ci-gate` rot am HEAD `10b521783`** (mycelium-352, `handover-2026-10-15-mycelium-folge352.md`) — gemessen (`ci_manage view/jobs 38707276786`, HEAD `329cff65d`, `failure`): der genannte `frame_earth`-Fehler (`src/mathematikerin/machines/tests.rs:461/489/498`) ist am Baum **nicht mehr vorhanden** — `frame_earth` steht in demselben `mod matrix_machine_tests` (`:187`), `cargo check` 0/0; der Kern-Befund des Mycelium-Blocks ist damit **gegen den jetzigen HEAD überholt**. Es bleibt der **gemessene** `ci-gate`-Rotstand: `clippy` (`too_many_arguments` `src/archivar/extract.rs:4100`; `manual_range_contains` `src/archivar/tle.rs:90`; `neg_cmp_op_on_partial_ord` `:147/:341`; `type_complexity` `src/mathematikerin/machines/matrix.rs:219/:1158`, `src/mathematikerin/omega.rs:2099`), `format`, `subset`, `register`. Träger bleibt River für die Kern-Lints; kein stiller Fix ohne Messung.
+- `xfer:mycelium-352-4` **`ci-gate` rot am HEAD `10b521783`** (mycelium-352, `handover-2026-10-15-mycelium-folge352.md`) — gemessen (`ci_manage view/jobs 38707276786`, HEAD `329cff65d`, `failure`): der genannte `frame_earth`-Fehler (`src/mathematikerin/machines/tests.rs:461/489/498`) ist am Baum **nicht mehr vorhanden** — `frame_earth` steht in demselben `mod matrix_machine_tests` (`:187`), `cargo check` 0/0; der Kern-Befund des Mycelium-Blocks ist damit **gegen den jetzigen HEAD überholt**. Es bleibt der **gemessene** `ci-gate`-Rotstand: `clippy`, `format`, `subset`, `register`. **Geheilt (river-215):** die drei Kern-`type_complexity`-Lints (`types.rs:219/:1158`, `omega.rs:2099`) — ein `pub type FrameBundle`/`FrameRx`-Alias in `src/mathematikerin/machines/matrix.rs`, benutzt in `matrix.rs`, `src/mathematikerin/omega.rs` und `src/archivar/main_flow.rs`; `cargo check` 0/0, `rustfmt --edition 2024 --check` 0 auf allen drei. **Offen (Mountain, Parser-Bau, kein Kern):** `too_many_arguments` `src/archivar/extract.rs:4100`; `manual_range_contains` `src/archivar/tle.rs:90`; `neg_cmp_op_on_partial_ord` `src/archivar/tle.rs:147/:341` — River hat sie gemessen, nicht still fremd-gefixt.
 
 ## Offen (aufgeschlüsselt)
 
@@ -291,9 +291,11 @@ bewiesen.
 SWIFF · WINDMI · MAGION · MOSWOC-Kp · OVATION-AACGM; `--zenodo` verifiziert `5211482` (MOSWOC Kp
 Verification, Bingham 2021) und `19651247` (OVATION-AACGM, Zhao 2026, CC-BY-4.0). Keine der fünf
 ist registriert (nur in dieser Übergabe); die Zugangswege stehen oben im Ketten-Punkt.
-**ci-gate (river-215 gemessen):** HEAD `329cff65d` (`38707276786`, `failure`) — `clippy` (die vier
-Kern-Lints), `format`, `subset`, `register`; `build`/`dropped-gate` success. `register-coverage`
-success. Der `frame_earth`-Fehler aus mycelium-352 ist am Baum nicht mehr vorhanden.
+**ci-gate (river-215 gemessen):** HEAD `7302ad6f8` (`38709167601`, `failure`) — `clippy`, `format`,
+`subset`, `register`; `build`/`dropped-gate` success. `register-coverage` success. Der
+`frame_earth`-Fehler aus mycelium-352 ist am Baum nicht mehr vorhanden. **Geheilt:** die drei
+Kern-`type_complexity`-Lints über den `FrameBundle`/`FrameRx`-Alias (s. Adressierte Blöcke).
+**Offen:** die vier Archivar-Lints (Mountain, Parser-Bau) und `format`/`subset`/`register`.
 **Commit:** diese Übergabe (`folge214` neu, `folge213` → `archiv/`) und der feste-Schwelle-Input
 im `gic-station-sweep`-Workflow. Fremdes ungespeichertes (`state/`, `data/`, fremde
 Workflow-/`phi`-Änderungen) bleibt unangetastet.

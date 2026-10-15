@@ -2096,11 +2096,7 @@ pub struct LoopCtx {
     pub seismic_tx: mpsc::Sender<PresenceFrame>,
     pub relay_tx: Option<mpsc::Sender<PresenceFrame>>,
     pub solar_rx: mpsc::Receiver<SolarCell>,
-    pub machine_rx: mpsc::Receiver<(
-        crate::archivar::Frame,
-        Option<crate::archivar::ModelKind>,
-        Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
-    )>,
+    pub machine_rx: crate::machines::FrameRx,
     pub presence: Arc<RwLock<PresenceState>>,
     pub diode: Arc<RwLock<DiodeState>>,
     pub verdicts: Arc<RwLock<Vec<crate::archivar::VerdictLine>>>,

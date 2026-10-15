@@ -946,11 +946,7 @@ pub fn main_flow() {
     };
     let time: Arc<Mutex<Option<LeapSeconds>>> = Arc::new(Mutex::new(embedded_lsk()));
     let (solar_tx, solar_rx) = mpsc::channel::<crate::machines::SolarCell>();
-    let (machine_tx, machine_rx) = mpsc::channel::<(
-        crate::archivar::Frame,
-        Option<crate::archivar::ModelKind>,
-        Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
-    )>();
+    let (machine_tx, machine_rx) = mpsc::channel::<crate::machines::FrameBundle>();
     let solar_sources = loaded.clone();
     let solar_time = time.clone();
     thread::spawn(move || crate::machines::solar_harvest(solar_tx, solar_sources, solar_time));
