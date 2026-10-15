@@ -162,8 +162,15 @@
 # ============================================================
 # DIE ZWEI BEKANNTEN RISSE (un-geglaettet, beide Zeilen stehen)
 # ============================================================
-# RISS 1 — WSO Polar Field, kein Lizenzmass: reach 200, terms NICHT gemessen -> pending.
-# RISS 2 — LISIRD terms NICHT gemessen: reach 206, home/about ohne Terms -> pending.
+# RISS 1 — WSO Polar Field: GEMESSEN (Taucher 2026-10-15) — die Nutzung liegt auf
+#   http://wso.stanford.edu/DataPolicy.html (HTTP 200, ~2300 B): notify + acknowledge + Beleg-Exemplar;
+#   kein formaler Lizenztext. terms free-open http://wso.stanford.edu/DataPolicy.html
+#   (Riss-Rest: „frei" ohne Lizenztext, nur die Acknowledgment-Pflicht).
+# RISS 2 — LISIRD/LASP: GEMESSEN (Taucher 2026-10-15) — keine LISIRD-eigene Terms-Seite;
+#   die About (SPA) traegt eine Citation (DOI 10.25980/L27Z-XD34), keine Lizenz.
+#   LASP-Guideline (lasp-developer-guide.readthedocs.io/en/latest/licensing.html): „Public data
+#   from NASA missions default to the CC0 1.0 license, unless otherwise marked." -> terms CC0-1.0
+#   (Riss-Rest: „unless otherwise marked" — je Datensatz nicht einzeln deklariert).
 
 # ============================================================
 # ZUSATZBEFUND (gemessen, nicht Teil der fuenf Faden-Zeilen)

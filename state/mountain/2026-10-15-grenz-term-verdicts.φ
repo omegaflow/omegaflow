@@ -87,8 +87,10 @@
 #     field saber_tpgpaltitude saber_tpgpaltitude inverse-square thermal km 3600 0.0 0.0
 #   Blockform `hapi ktemp.<i>=saber_ktemp tpgpaltitude.<i>=saber_tpgpaltitude`, `on earth`.
 #   Der Host `cdaweb.gsfc.nasa.gov` war am 2026-10-15 unerreichbar (SSL/000) -> kein frisches
-#   Sample; der Block steht mit der Host-Rückkehr. Terms: NASA/SPDF — der eigene SABER-Token
-#   ist nicht gemessen (SPDF erscheint als CC0-1.0 bei wind_orbit, phi:3862) -> pending.
+#   Sample; der Block steht mit der Host-Rückkehr. Terms (Taucher 2026-10-15): die SPDF-Policy
+#   `https://spdf.gsfc.nasa.gov/data_use_policy.html` existiert; das Haus führt SPDF bereits als
+#   CC0-1.0 (wind_orbit, phi:3862) -> `terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html`.
+#   Rest-Riss: eine eigene TIMED/SABER-Policy-Seite wurde nicht separat gemessen (SPDF-Default).
 
 # 5c — THEMIS-ASI FODG-Kubus: Registerzeile (machbar: terms/ttl stehen)
 #   Quelle `themis_asi` ist zugelassen: `terms free-open https://data.phys.ucalgary.ca/data/how_to_cite.html`
