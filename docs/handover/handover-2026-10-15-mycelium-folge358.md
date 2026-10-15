@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 358 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: a27ba1be315a07ab4ab9a6c4d071ba89f96e0bc4034b1879d143e6317983182e
+  sha256: a8e4b7dbd9700f8b60de51448da2d23e3e981d33c3617de2ead67cea4d74c72e
   status: live
 -->
 # Handover — Mycelium-Folge 358 (2026-10-15)
@@ -198,6 +198,40 @@ neu ausgelegt).
 - **Braucht:** nur die **Zweckfrage für 5**, wenn das Haus je terrestrische Mars-Analog-Morphometrie
   braucht; Entwurf `docs/handover/mail-2026-10-15-cugb-mars-analog.md` (nicht gesendet). **Kein Send
   durch die Maschine.** An future: `xfer:mycelium-347-2` geschlossen.
+
+## Tauchauftrag — die acht Fäden (je ein Taucher, harte Bandagen)
+
+Operator-Wort 2026-10-15: die **nächste Session** lässt **je einen `taucher`** auf jeden der acht
+Fäden los — **harte Bandagen** (`bin/all_wide`, `archive_search --sourcegraph`/`--verdict`/`--zenodo`/
+`--vizier`, kein Minimal-Kasten). **Ein Dispatch = ein Faden + ein begrenzter Schritt.** Die
+Korrektur steht in `docs/surveys/survey-2026-10-15-raetsel-matrix-korrektur.md`: für 6 der 8 Fäden
+ist der **Quellen-Block schon da** — der Taucher liefert den **fehlenden Kanal**; für WGLC/SILSO/
+EDGES/TGF/Wolken die **fehlende Quelle**. Grenze: `terms`/`ttl` = Mountain; der Taucher liefert
+Messung + `url`/`origin`/`compiler`/`sha256` + CDN-Naht.
+
+1. **HMI (Photosphären-Magnetogramm)** — Kanal-Lücke über JSOC. Route: `jsoc_fetch`
+   `http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch` (Vorbild `phi:2081` AIA, `terms CC0-1.0`
+   steht); Serie `hmi.M_720s` / `hmi.sharp_720s`. Liefert: `hmi`-Format + Compiler (aus
+   `aia_compiler.rs`), `field hmi_*`-Zeile, CDN-Naht.
+2. **SILSO (Sonnenfleckenzahl)** — echte Quellen-Lücke. Route: `https://www.sidc.be/SILSO/datafiles`
+   (Tages-SSN `SN_d_tot_V2.0.csv`); `terms` + Aktualität messen. Liefert: Block + SSN-`field` + CDN.
+3. **Stellar-Aktivität (XUV, log R'HK)** — Kanal-Lücke über RAVE/GALAH. Route: Ca II IRT STELLA/RAVE
+   (Zenodo `57464`), VizieR RAVE `III/283/ravedr6`, GALAH `J/MNRAS/506/150`, XUV (LASP/EVE).
+   Liefert: `field …_logrhk` + XUV-Kanal + Quelle.
+4. **Schwache Linsen / Shear** — Kanal-Lücke über KiDS WL (`phi:31178`). Route: `kids_dr4_wl_cat` +
+   Conicus3D WL-Lightcone (Zenodo `18776222`, `phi:30583`). Liefert: Shear-`field` + Deskriptor.
+5. **Neutrino / IceCube / Auger** — Kanal-Lücke über `phi:28488`/`phi:18990`/`phi:14659`.
+   Liefert: Neutrino-`field`(s).
+6. **21 cm / EDGES** — echte Quellen-Lücke. Route: EDGES/REACH (public), WALLABY (`phi:14519`);
+   `bin/all_wide` + `--verdict`. Liefert: 21cm-Spektrum-Block + `field`.
+7. **PTA / Pulsar-Timing** — Kanal-Lücke über EPTA DR2 (`phi:30615`). Liefert: PTA-Residuum-`field`
+   + Deskriptor.
+8. **TGF / Wolken / WGLC** — **WGLC-Block fehlt** (`wglc_compiler.rs` steht; die `field`-Form ist
+   **Rat-Sache** → der Session vorlegen, nicht tauchen). TGF: Fermi-GBM-TGF-Katalog; Wolken:
+   MODIS/ERA5-Wolkenbedeckung. Liefert: WGLC-Block (nach Rat) + TGF-/Wolken-Block.
+
+**Abnahme je Faden:** die fehlende Kanal-/Feld-Zeile in `phi/sources.φ` + die CDN-Manifestation;
+`register_sort` canonical.
 
 ## An mountain
 
