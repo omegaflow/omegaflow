@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 351 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: dc5cad2fe519fbce720c3c6f53dbef4f1321cc34f35d13203c44291ca08257ce
+  sha256: dd414397821c9fe9fd2b2e68f747fed054622d9708597e8da4b88f33a170f0d7
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -238,8 +238,9 @@ Baum getragen (git: `36b50dfca`). Was folgt, ist offen.
 - **Status:** eigen · **gemessen 2026-10-15** (fünf Taucher) | **Bindung:** eigen
 - **Trigger:** Operator-Frage 2026-10-15 („und für all die risse gibt es keine alternativen?") — abgearbeitet.
 - **Lage:** (gemessen 2026-10-15 via fünf Taucher) Messblatt `docs/surveys/survey-2026-10-15-riss-alternativen.md` (sha `5a742c74…`). Jeder Daten-Riss trägt eine offene Alternative: **OCNS2019 → NSDB** (`nsdb.imcce.fr`, frei für Forschung + Nennung) · **GOCE-Schwere → ICGEM** `10.5880/ICGEM.2019.004` (CC-BY-4.0) · **CGrav/CEIC → schon gedeckt** (AGrav+IGETS tragen die chinesischen Stationen) · **MOSWOC-Kp → GFZ-Kp** (CC-BY-4.0, 1932–; der `phi:1230-1234`-Block deckt nur heute→morgen) · **WINDMI-Zielwerte → schon im Register** (`wdc_dst_nt`/`wdc_ae_al_nt`) · **OVATION (eine Station) → BAS-IMAGE-Boundaries** (OGL v3, global, 2000-2002) + **DMSP-SSJ** Zenodo `10.5281/zenodo.3373812` (CC-BY-4.0). Die drei Baum-Risse gelöst: MODVOLC→LANCE/NRT-Block (`phi:12065`), OpenTopography→OT-API-Block (`phi:26638`), MAGION→Hauptsatellit IMAP-3. `dead_sources.φ` bleibt ohne Alternative (Streichung).
+- **Gebaut (Mountain, begrenzter Schritt):** `tools/harvest/src/bin/nsdb_compiler.rs` — der **NSDB-Ernte-Compiler** (NSDB-Tabelle → `NSDB`-Bin, `epoch_unix`/`ra_deg`/`dec_deg`/`mag`/`band`/`obscode`, 40-B-Record, Roundtrip-Selbsttest, `cargo check` 0/0, `--selftest` grün). Vorbild `ilrs_npt_compiler.rs` (Producer zuerst). Der `format nsdb`-**Lese-Arm** in `extract.rs` fehlt noch (nächster begrenzter Schritt).
 - **Blockade:** keine.
-- **Braucht:** die vier **neu zu registrierenden** offenen Routen (ICGEM-GOCE-Schwere · NSDB · BAS-IMAGE · DMSP-SSJ) als Blockform (Mycelium `url`/`origin`/`compiler`) + Mountain-`terms`; die Kp-Block-Ergänzung (Archiv statt Heute→Morgen).
+- **Braucht:** die vier **neu zu registrierenden** offenen Routen (ICGEM-GOCE-Schwere · NSDB · BAS-IMAGE · DMSP-SSJ) als Blockform (Mycelium `url`/`origin`/`compiler`) + Mountain-`terms`; die Kp-Block-Ergänzung (Archiv statt Heute→Morgen); den NSDB-Lese-Arm + je einen Parser für BAS-IMAGE/DMSP-SSJ (Mountain).
 
 ## An mycelium
 
@@ -289,6 +290,7 @@ Origin: mountain-349 (2026-10-15):
 - **„ok bitte arbeite nun bitte die offenen punkte mit tauchern ab."** | 2026-10-15 | (mountain 351 — fünf Taucher auf die offenen Register-Punkte: Quellen-Gewebe · Adressierte Register-Fäden · ALFALFA · SABER/TIMED · ICGEM gfc).
 - **„und für all die risse gibt es keine alternativen?"** | 2026-10-15 | (mountain 351 — fünf Taucher auf die Riss-Familien; Messblatt `docs/surveys/survey-2026-10-15-riss-alternativen.md`; jeder Daten-Riss trägt eine offene Route).
 - **„also schickst du bitte taucher los um alle offenen registrierungen zu machen?"** | 2026-10-15 | (mountain 351 — die Register-Zeile ist zweihändig: Taucher schreibt sie nicht; die offenen Registrierungen als `xfer:mountain-351-1…-5` an Mycelium gestellt).
+- **„aber du kannst die parser bauen oder macht das auch mycelium?"** | 2026-10-15 | (mountain 351 — Parser/Compiler baut Mountain; Mycelium baut CI/CDN/Matrix. Erster Producer `nsdb_compiler.rs` gebaut).
 
 ## Abschluss
 
