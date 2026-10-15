@@ -2,7 +2,7 @@
 title: Handover — River-Folge 213
 class: handover
 date: 2026-10-15
-sha256: c39235638317c585c3d69a6831269a3f7edc8e5c71beb507b2d050a10b2652e5
+sha256: 956cd1966809613b530f933ead95d931141cb5cdd615c6ecd722f923eb508ebe
 status: live
 -->
 # Handover — River-Folge 213 (2026-10-15)
@@ -126,17 +126,17 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `st
 - **Blockade:** das Paritäts-Gate (`field_spatial_fold_wgsl_cpu_parity`, `src/mathematikerin/tests.rs:2620`) läuft erst im CI — der Lauf `38583663935` (head `08d572723`) wurde vor dem `mathematikerin::tests`-Block canceled, das Gate druckte nicht; der Baum ist ohnehin rot (s. `## An mountain`).
 - **Braucht:** (a) einen `ci-gate`-`subset`, der das Paritäts-Gate erreicht; (b) **Schritt 3:** die deklarierte `ReceiverAperture` (`receiver.rs`) an die Query-Naht (`vp.surface.w = global_scale`) binden; (c) die Operator-Browser-Messung (Fenster-Edit = Operator-Wort).
 
-### GIC-Onset — AL-Einhüllende + `--null` ausgewertet: präzise, sehr rückrufschwach; der 6-Station-Lauf schlägt den Null
+### GIC-Onset — ausgewertet: die Einzelstation schlägt den Null an allen Toleranzen; die Netzhüllen sind rückrufschwach
 - **Status:** eigen (Bau + Messung) | **Bindung:** eigen
 - **Trigger:** kein — die Kette ist verdrahtet und ausgewertet (river-214); die zwei fehlenden Familien laufen.
 - **Lage:** (gemessen 2026-10-15 river-214 via `ci_manage` + Job-Logs) die von river-213 angestoßenen Läufe `38642948810` (alte 6-Station-Liste `abk,sod,esk,ler,stj,ups`) und `38643271579` (Familie **auroral**, 31 Stationen) sind **`success`**; `gic_onset_detector` gegen die McPherron-Liste mit `--null 200` (Kreisschub-Surrogate; `prec_ge`/`rec_ge` = Zahl der Surrogate mit Präzision/Rückruf ≥ real, **klein = signifikant**):
-  - **1 Station `abk`** (Lauf `38642215979`): 286 288 Samples, Schwelle 50.37 nT/min, 24 582 Onsets (1994–2026); prec/rec 0.156/0.0236 (5 min) · 0.364/0.0658 (15) · 0.533/0.1246 (30) — **kein Null gefahren**.
+  - **1 Station `abk`** (Lauf `38642215979` ohne Null + `38691967292` mit `--null 200`, Operator-Wort 2026-10-15): 286 288 Samples, Schwelle 50.37 nT/min, 24 582 Onsets (1994–2026); prec/rec 0.156/0.0236 (5 min) · 0.364/0.0658 (15) · 0.533/0.1246 (30); **Null:** real_prec 0.156/0.364/0.533 gegen null_p95 0.106/0.260/0.413, real_rec 0.0236/0.0658/0.1246 gegen null_p95 0.0161/0.0455/0.0894 — `prec_ge=0`, `rec_ge=0` **bei allen drei Toleranzen**: die Einzelstation schlägt **alle 200** Surrogate und hat den weitaus höchsten Rückruf.
   - **6 Stationen** (Lauf `38642948810`): 13 150 080 Samples, Schwelle 17.11 nT/min, **579** Onsets (2000–2024); prec/rec 0.123/0.00055 · 0.394/0.00208 · 0.549/0.00371; Null `prec_ge=10/0/0`, `rec_ge=10/0/0` → bei 15 und 30 min schlägt der reale Detektor **alle 200** Surrogate, bei 5 min ist er an der Grenze (10/200).
   - **31 Stationen auroral** (Lauf `38643271579`): 13 626 502 Samples, Schwelle **128.99** nT/min, **50** Onsets (1991–2024); prec/rec 0.220/0.000061 · 0.340/0.000117 · 0.560/0.000240; Null `prec_ge=1/26/7`, `rec_ge=1/19/6` → bei 5 und 30 min signifikant, bei 15 min nicht (p95 0.38 > real 0.34).
   - **25 Stationen subauroral** (Lauf `38690576424`, river-214): 13 150 080 Samples, Schwelle 16.61 nT/min, **4** Onsets (2000–2024); prec/rec 0.250/0.000008 · 0.750/0.000023 · 1.000/0.000046; Null `prec_ge=61/12/2`, `rec_ge=61/27/10` → bei 15 min **nicht** über der Null, bei 5/30 min an der Grenze — die subaurorale Hülle ist nahezu stumm (4 Onsets in 25 Jahren).
-  - **Riss benannt (ungeglättet):** die Netzhülle detektiert viel weniger Onsets als die Einzelstation (rec 0.002–0.004 vs 0.066–0.125) — mehr Stationen heben die Detektorschwelle (6 Stationen 17.1 → 31 auroral 129.0 → subauroral nahezu stumm). Die wenigen Netzfunde liegen teils über dem Kreisschub-Null (6 Stationen: alle 200), teils nicht (subauroral); der Einzelstations-Lauf ist **nicht** gegen den Null getestet — der Vergleich ist noch nicht äpfel-gleich.
-- **Blockade:** keine — der midlat-Lauf (`38690576605`, 98 Stationen) läuft noch im CI.
-- **Braucht:** (a) den laufenden midlat-Lauf auswerten; (b) **Operator-Wort 2026-10-15:** die Einzelstation gegen die Null prüfen und die Kurve-/Sweet-Spot-Frage messen — dazu ist `gic_onset_detector --sweep-k` um `--null` erweitert (jeder Schwellepunkt trägt seine Surrogat-Zahl) und in `gic-al-network.yml` ein Sweep über `k=1,1.5,2,3,4,6,8,12` für die Einzelstation (`abk`) und die Familien-Einhüllende verdrahtet; `gic-onset.yml` fährt die Einzelstation jetzt mit `--null 200`. Der Lauf folgt dem Commit.
+  - **Riss benannt (ungeglättet):** die Netzhülle detektiert viel weniger Onsets als die Einzelstation (rec 0.002–0.004 vs 0.066–0.125) — mehr Stationen heben die Detektorschwelle (6 Stationen 17.1 → 31 auroral 129.0 → subauroral nahezu stumm). Die wenigen Netzfunde liegen teils über dem Kreisschub-Null (6 Stationen: alle 200), teils nicht (subauroral). **Die Einzelstation schlägt den Null an allen Toleranzen und hat den höchsten Rückruf** — mehr Stationen sind hier kein Gewinn; ein inneres Optimum (Sweet Spot) über die Stationszahl zeigt die Messung **nicht** (Rückruf fällt monoton).
+- **Blockade:** keine — der midlat-Lauf (`38690576605`, 98 Stationen) ist am `runner shutdown` (`exit 143`, Infrastruktur) **gescheitert**; neu anstoßen.
+- **Braucht:** (a) den midlat-Lauf neu anstoßen und auswerten; (b) **Operator-Wort 2026-10-15 (erledigt):** die Einzelstation gegen die Null geprüft (Lauf `38691967292`, `prec_ge=0`/`rec_ge=0` bei 5/15/30 min); (c) den Schwellen-Sweep (`38691966981`, `k=1…12`, mit `--null`) auswerten — die Kurve/Sweet-Spot-Frage.
 
 ### GIC-Familien-Partition — deklariertes Artefakt gebaut; die zwei Register-Nägel offen
 - **Status:** eigen (Artefakt gebaut) | **Bindung:** eigen (Rest: Mountain-Nägel)
