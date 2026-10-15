@@ -8,6 +8,12 @@
 #   nur, wenn es die Surrogat-Null schlägt (fdr bh über die Matrix).
 #   Kein Kp/Dst/AE im Register (gemessen 2026-10-15) — abk_dbdt_pt1h ist der verfügbare
 #   Aktivitätskanal. Lauf: .github/workflows/field-te-query.yml Job `matrix-schumann` (CI).
+#   Bin/cond decision (river-220, folding mycelium-357): the global lightning channel
+#   (WGLC) is DAILY, not hourly. This unconditional matrix carries the hourly Schumann
+#   target, so `bin 3600` stands. The F4-conditioned form (abk->f | Blitz) needs its own
+#   descriptor with a daily bin (86400) and a `cond <wglc> pending|built`; the daily
+#   series is never forward-filled onto 3600 (that would fabricate intra-hour variation).
+#   Gated on the WGLC CDN row + the engine format (Mountain).
 matrix schumann_geomag rect
 register sources
 drivers abk_dbdt_pt1h

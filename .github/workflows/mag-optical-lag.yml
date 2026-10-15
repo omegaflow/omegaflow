@@ -28,6 +28,14 @@ on:
         description: robust threshold multiple (median + k*1.4826*MAD)
         required: false
         default: "6"
+      onset:
+        description: optical onset rule — mean (per-minute column mean) or band (trend-removed, brightness-normalized latitudinal band)
+        required: false
+        default: "mean"
+      band_run:
+        description: band run length in rows (used only when onset=band)
+        required: false
+        default: "16"
 
 permissions:
   contents: read
@@ -50,7 +58,8 @@ jobs:
           cargo run --release -p omegaflow-measure --bin mag_optical_overlay -- \
             --date "${{ inputs.date }}" --stations "${{ inputs.stations }}" \
             --optical /tmp/keogram.bin \
-            --window "${{ inputs.window }}" --k "${{ inputs.k }}" | tee /tmp/lag.txt
+            --window "${{ inputs.window }}" --k "${{ inputs.k }}" \
+            --onset "${{ inputs.onset }}" --band-run "${{ inputs.band_run }}" | tee /tmp/lag.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
