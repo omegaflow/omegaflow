@@ -1,0 +1,184 @@
+# harvest: format=raw_wayback arm=raw_mirror pattern=^.*\.dat$ idempotent=true timeout=240 tag=web.archive.org
+# WDC-B Moscow / Obninsk seismological catalogue — the live host zeus.wdcb.ru serves only an
+# Apache maintenance page and every advertised path is 404; the raw files survive only as
+# Internet Archive snapshots of the historical Obninsk/ tree (34 captures, 2003-2019). This is
+# the heritage rescue: the raw bytes are held on the CDN so a later session inherits them.
+# Each matrix entry carries the registered url/origin/sha256; raw_mirror refuses to upload
+# unless the live body hashes to the registered sha256. License: CC-BY-NC-4.0 (page footer).
+
+name: wdcb-obn-wayback-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/raw_mirror.rs'
+      - '.github/workflows/wdcb-obn-wayback-cdn.yml'
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+  R2_BUCKET: ${{ secrets.R2_BUCKET }}
+  OMEGAFLOW_R2_MIRROR: ${{ vars.OMEGAFLOW_R2_MIRROR }}
+  OMEGAFLOW_R2_WORKER: ${{ vars.OMEGAFLOW_R2_WORKER }}
+
+jobs:
+  wdcb-obn:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - asset: bul199806.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul199806.dat"
+            origin: "https://web.archive.org/web/20080115071747id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/1998/bul199806.dat"
+            sha256: 2a473911eb81894a9a88929dbe7e52fb9974c49f582e55d4dbb8c350d5c4c4eb
+          - asset: bul200001_2.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200001_2.dat"
+            origin: "https://web.archive.org/web/20030513014037id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_2.dat"
+            sha256: 5c6e0a42d4787cccb6e656e380b0ad0b75d0409e13212f785714509b8662bfed
+          - asset: bul200001_3.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200001_3.dat"
+            origin: "https://web.archive.org/web/20030513014119id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_3.dat"
+            sha256: b2ab4dd2a96a31a7b104585caba8b06cc7a3532c00f186b599f32c6a57b09db8
+          - asset: bul200002_1.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_1.dat"
+            origin: "https://web.archive.org/web/20030513181110id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_1.dat"
+            sha256: f30f3cd22527fdc613fd1beee3fa4b37bc7bd10d7edfd29ad7eec48eb232bdcb
+          - asset: bul200002_2.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_2.dat"
+            origin: "https://web.archive.org/web/20030930094743id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_2.dat"
+            sha256: 9df523b8d483fd89af7613b41602bf972d63e06af98afee7061e964e918f94e1
+          - asset: bul200002_3.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_3.dat"
+            origin: "https://web.archive.org/web/20030513013706id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_3.dat"
+            sha256: c306d8a091a4e5e2ca49bd8de01042b2a6838d989dfcd43f1874053cc1a77f75
+          - asset: bul200003_1.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200003_1.dat"
+            origin: "https://web.archive.org/web/20030513013759id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_1.dat"
+            sha256: 76c4b3ccb08c00561988f49489ec292d7fc701487b0ff4fa96e4fa50f21c90d9
+          - asset: bul200003_2.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200003_2.dat"
+            origin: "https://web.archive.org/web/20030513014417id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_2.dat"
+            sha256: f31beb854edf53294d562fcfbcdb0fc7eedcbc2293c2a589ac8bd4f62822de23
+          - asset: bul200003_3.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200003_3.dat"
+            origin: "https://web.archive.org/web/20030513013922id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_3.dat"
+            sha256: 7b3cf9beb6ac89e577a9414606e27928b937483a629ca265dd1df787e9482842
+          - asset: bul200004_1.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200004_1.dat"
+            origin: "https://web.archive.org/web/20030513013843id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_1.dat"
+            sha256: aaac78a69e89856912a739cf0136117daa71a5bec925224d226a1c3895187b2c
+          - asset: bul200004_2.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200004_2.dat"
+            origin: "https://web.archive.org/web/20030514060940id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_2.dat"
+            sha256: 269468eef13b9abea69f6bb43df4ee830fa03786e8feecffacdd13d8c6b18a02
+          - asset: bul200004_3.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200004_3.dat"
+            origin: "https://web.archive.org/web/20030514061246id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_3.dat"
+            sha256: fa2792d62b8bda299ca8867d7f7ff79ef1b478bb0e83c0c22ef5181066758c78
+          - asset: bul200005_1.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200005_1.dat"
+            origin: "https://web.archive.org/web/20030514061343id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_1.dat"
+            sha256: a6450188b9e12370d856b66e3d24d888c0e861a0d927fc24fce2e10ad9017f86
+          - asset: bul200005_2.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200005_2.dat"
+            origin: "https://web.archive.org/web/20030514061346id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_2.dat"
+            sha256: 09d6ff5d82e7ba1eb060fbca2c246a71101246dd5fe98382884966e1c63467a7
+          - asset: bul200005_3.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200005_3.dat"
+            origin: "https://web.archive.org/web/20030514061256id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_3.dat"
+            sha256: d5c1ce7714b61566cbd13b4502c5fee438cfd8b79fcb22c34f9f2e5b3949cb56
+          - asset: bul200006_1.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_1.dat"
+            origin: "https://web.archive.org/web/20030514061444id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_1.dat"
+            sha256: 448002f5e875eea45e5f6fd91fbf130a6af97d9bf3d1b96286932be1ab76ed06
+          - asset: bul200006_2.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_2.dat"
+            origin: "https://web.archive.org/web/20030514061510id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_2.dat"
+            sha256: 20ccb6a922a7ee342d41886da72e27616e875404bd160850ec6183e8c53e19c2
+          - asset: bul200006_3.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_3.dat"
+            origin: "https://web.archive.org/web/20030514061523id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_3.dat"
+            sha256: 26eec2866b44148810ebe0aeeaaf8db5b9e4828704ad603e4a9a6a240ebfa80e
+          - asset: bul200007_1.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200007_1.dat"
+            origin: "https://web.archive.org/web/20030514061626id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_1.dat"
+            sha256: 9f147341c0e1a95de0bd8c07eb0ce4ba41d715464c8f32fcfb4c548fab92ebd9
+          - asset: bul200007_2.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200007_2.dat"
+            origin: "https://web.archive.org/web/20030514061730id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_2.dat"
+            sha256: d8701f23e623f8bd6c269d99fc2a827cce0ec29721a89694288361162f07004a
+          - asset: bul200008_1.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200008_1.dat"
+            origin: "https://web.archive.org/web/20030514061251id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_1.dat"
+            sha256: e752644ecc1c34411e32d0dd897d9d865e546253af853e664e36d9059f2f77ad
+          - asset: bul200008_2.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200008_2.dat"
+            origin: "https://web.archive.org/web/20030514061335id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_2.dat"
+            sha256: 89de9c28ab97f96ba765a970705402735a91bb98a51c99c5df3aa133a189f93b
+          - asset: cat199301.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/cat199301.dat"
+            origin: "https://web.archive.org/web/20180212024625id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/1993/cat199301.dat"
+            sha256: 8b44665facdfd61ff6b897e74b2955a234bbc65730a6bc330bc317a0f2d11ec9
+          - asset: cat200001.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200001.dat"
+            origin: "https://web.archive.org/web/20030514061309id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200001.dat"
+            sha256: 116f0c7c26b2a24f815b795b76ad1e784d9cd79d26c37c7b8754cb6f96fb6ebe
+          - asset: cat200002.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200002.dat"
+            origin: "https://web.archive.org/web/20030514061423id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200002.dat"
+            sha256: d9273bd6592993d300da484723bc64689ec0c148cdbed7f00e5666b0303afba7
+          - asset: cat200005.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200005.dat"
+            origin: "https://web.archive.org/web/20030514061640id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200005.dat"
+            sha256: fd56c77b67a77b795da2c4fe99c706e0227421273342c29a527d029593e53354
+          - asset: cat200006.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200006.dat"
+            origin: "https://web.archive.org/web/20030515081038id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200006.dat"
+            sha256: 00ecda8051a04ca0576195ebd43dcd11e23d5dc0a9b54f1be7ca9adb1c6b27d9
+          - asset: cat200007.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200007.dat"
+            origin: "https://web.archive.org/web/20030515081122id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200007.dat"
+            sha256: 02555dc7b880a3456f8b196bb9f42ac2b72dc50830ac22e5e82a445a292099ce
+          - asset: cat200101.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200101.dat"
+            origin: "https://web.archive.org/web/20180212024918id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2001/cat200101.dat"
+            sha256: 50fd686642af89f6a1ee8094c59809203fa1fa1edb20484c469dc493d128e21b
+          - asset: cat200901.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200901.dat"
+            origin: "https://web.archive.org/web/20180212021813id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2009/cat200901.dat"
+            sha256: f9390259b6ba408f51e882e8c4cb532e43b5abe6e1ea89d16b9cb7cee8d70301
+          - asset: cat201406.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/cat201406.dat"
+            origin: "https://web.archive.org/web/20181102023325id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201406.dat"
+            sha256: e2160ebd5d3e7796056b0ad93a6c06ee0d6e73116497b0cd4a31ee7858d6629b
+          - asset: cat201407.dat
+            url: "https://github.com/omegaflow/sources/releases/download/web.archive.org/cat201407.dat"
+            origin: "https://web.archive.org/web/20181102023200id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201407.dat"
+            sha256: 4c0d988fc4be0428b8ae6489fe8ede45cc29a8cb5fddd5c875257962b3a8aac8
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Mirror ${{ matrix.asset }} to the CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin raw_mirror -- \
+            --ci-mode \
+            --url "${{ matrix.url }}" \
+            --origin "${{ matrix.origin }}" \
+            --sha256 "${{ matrix.sha256 }}" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "wdcb-obn-wayback-cdn: ${{ matrix.asset }} returned void" \
+                 "raw_mirror returned void for ${{ matrix.asset }} (${{ matrix.origin }}). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

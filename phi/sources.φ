@@ -28571,6 +28571,230 @@ sha256 2d1a8d9942bae59cb177ff6e0194757339cdc7aad69edfe1733117abd1ccec4f
 at sun
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul199806.dat
+origin https://web.archive.org/web/20080115071747id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/1998/bul199806.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 2a473911eb81894a9a88929dbe7e52fb9974c49f582e55d4dbb8c350d5c4c4eb
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200001_2.dat
+origin https://web.archive.org/web/20030513014037id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_2.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 5c6e0a42d4787cccb6e656e380b0ad0b75d0409e13212f785714509b8662bfed
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200001_3.dat
+origin https://web.archive.org/web/20030513014119id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_3.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 b2ab4dd2a96a31a7b104585caba8b06cc7a3532c00f186b599f32c6a57b09db8
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_1.dat
+origin https://web.archive.org/web/20030513181110id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_1.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 f30f3cd22527fdc613fd1beee3fa4b37bc7bd10d7edfd29ad7eec48eb232bdcb
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_2.dat
+origin https://web.archive.org/web/20030930094743id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_2.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 9df523b8d483fd89af7613b41602bf972d63e06af98afee7061e964e918f94e1
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_3.dat
+origin https://web.archive.org/web/20030513013706id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_3.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 c306d8a091a4e5e2ca49bd8de01042b2a6838d989dfcd43f1874053cc1a77f75
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200003_1.dat
+origin https://web.archive.org/web/20030513013759id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_1.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 76c4b3ccb08c00561988f49489ec292d7fc701487b0ff4fa96e4fa50f21c90d9
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200003_2.dat
+origin https://web.archive.org/web/20030513014417id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_2.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 f31beb854edf53294d562fcfbcdb0fc7eedcbc2293c2a589ac8bd4f62822de23
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200003_3.dat
+origin https://web.archive.org/web/20030513013922id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_3.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7b3cf9beb6ac89e577a9414606e27928b937483a629ca265dd1df787e9482842
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200004_1.dat
+origin https://web.archive.org/web/20030513013843id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_1.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 aaac78a69e89856912a739cf0136117daa71a5bec925224d226a1c3895187b2c
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200004_2.dat
+origin https://web.archive.org/web/20030514060940id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_2.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 269468eef13b9abea69f6bb43df4ee830fa03786e8feecffacdd13d8c6b18a02
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200004_3.dat
+origin https://web.archive.org/web/20030514061246id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_3.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 fa2792d62b8bda299ca8867d7f7ff79ef1b478bb0e83c0c22ef5181066758c78
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200005_1.dat
+origin https://web.archive.org/web/20030514061343id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_1.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 a6450188b9e12370d856b66e3d24d888c0e861a0d927fc24fce2e10ad9017f86
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200005_2.dat
+origin https://web.archive.org/web/20030514061346id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_2.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 09d6ff5d82e7ba1eb060fbca2c246a71101246dd5fe98382884966e1c63467a7
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200005_3.dat
+origin https://web.archive.org/web/20030514061256id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_3.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 d5c1ce7714b61566cbd13b4502c5fee438cfd8b79fcb22c34f9f2e5b3949cb56
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_1.dat
+origin https://web.archive.org/web/20030514061444id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_1.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 448002f5e875eea45e5f6fd91fbf130a6af97d9bf3d1b96286932be1ab76ed06
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_2.dat
+origin https://web.archive.org/web/20030514061510id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_2.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 20ccb6a922a7ee342d41886da72e27616e875404bd160850ec6183e8c53e19c2
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_3.dat
+origin https://web.archive.org/web/20030514061523id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_3.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 26eec2866b44148810ebe0aeeaaf8db5b9e4828704ad603e4a9a6a240ebfa80e
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200007_1.dat
+origin https://web.archive.org/web/20030514061626id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_1.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 9f147341c0e1a95de0bd8c07eb0ce4ba41d715464c8f32fcfb4c548fab92ebd9
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200007_2.dat
+origin https://web.archive.org/web/20030514061730id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_2.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 d8701f23e623f8bd6c269d99fc2a827cce0ec29721a89694288361162f07004a
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200008_1.dat
+origin https://web.archive.org/web/20030514061251id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_1.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 e752644ecc1c34411e32d0dd897d9d865e546253af853e664e36d9059f2f77ad
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200008_2.dat
+origin https://web.archive.org/web/20030514061335id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_2.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 89de9c28ab97f96ba765a970705402735a91bb98a51c99c5df3aa133a189f93b
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat199301.dat
+origin https://web.archive.org/web/20180212024625id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/1993/cat199301.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 8b44665facdfd61ff6b897e74b2955a234bbc65730a6bc330bc317a0f2d11ec9
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200001.dat
+origin https://web.archive.org/web/20030514061309id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200001.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 116f0c7c26b2a24f815b795b76ad1e784d9cd79d26c37c7b8754cb6f96fb6ebe
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200002.dat
+origin https://web.archive.org/web/20030514061423id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200002.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 d9273bd6592993d300da484723bc64689ec0c148cdbed7f00e5666b0303afba7
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200005.dat
+origin https://web.archive.org/web/20030514061640id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200005.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 fd56c77b67a77b795da2c4fe99c706e0227421273342c29a527d029593e53354
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200006.dat
+origin https://web.archive.org/web/20030515081038id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200006.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 00ecda8051a04ca0576195ebd43dcd11e23d5dc0a9b54f1be7ca9adb1c6b27d9
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200007.dat
+origin https://web.archive.org/web/20030515081122id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200007.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 02555dc7b880a3456f8b196bb9f42ac2b72dc50830ac22e5e82a445a292099ce
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200101.dat
+origin https://web.archive.org/web/20180212024918id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2001/cat200101.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 50fd686642af89f6a1ee8094c59809203fa1fa1edb20484c469dc493d128e21b
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200901.dat
+origin https://web.archive.org/web/20180212021813id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2009/cat200901.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 f9390259b6ba408f51e882e8c4cb532e43b5abe6e1ea89d16b9cb7cee8d70301
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat201406.dat
+origin https://web.archive.org/web/20181102023325id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201406.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 e2160ebd5d3e7796056b0ad93a6c06ee0d6e73116497b0cd4a31ee7858d6629b
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat201407.dat
+origin https://web.archive.org/web/20181102023200id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201407.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 4c0d988fc4be0428b8ae6489fe8ede45cc29a8cb5fddd5c875257962b3a8aac8
+at earth
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlass_tap_component.bin
 terms cadc-open https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/
 format catalog_vlass_tap_component
