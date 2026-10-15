@@ -28,13 +28,26 @@ die Stimme; das Verdikt trägt der Rat. Die breite Recherche (`bin/all_wide`,
 > (`10.12176/01.05.00135-V01`), ein Multi-Element-Hochauflösungs-Topographie-Datensatz Mars-ähnlicher
 > Formen, eine „Enhanced visualization map" der lunaren Polarregion.
 >
-> **Gemessen (breite Recherche 2026-10-15): dieselben oder nah verwandte Daten liegen offen
-> woanders.** Lunar-Topographie gibt es offen als **NASA SLDEM2015** (LOLA+Kaguya Terrain Camera,
-> PGDA, FLOAT/JPEG2000-Kacheln), **LOLA** und **Clementine**-LIDAR (PDS); Mars-Topographie/Gravitation
-> als **PDS/MOLA** und SHC-Lösungen (z. B. GMM-3 auf Zenodo, CC-BY); Chang'e-1/2-`MRM` und anderes
-> über **NASA PDS Geosciences**; Chang'e-4-LPR / Tianwen-1-RoPeR als **Zenodo-CC-BY**-Spiegel;
-> MoRIC-DOM als **CDS-HiPS** (ODbL). Der **bedingte** Zugang ist die Zugriffskontrolle des
-> Deponenten — **nicht der einzige Weg** zu denselben Größen.
+> **Gemessen (Taucher-Lauf 2026-10-15, die tragenden URLs am Baum verifiziert): je Datensatz ein
+> offener Spiegel oder `pending`.**
+>
+> - **1 Lunar topography 1500 o/d** — offen (gleicher Zweck): `zenodo.org/records/10820774`
+>   („shape of the Moon [LOLA]", Grad 1439/2879/5759), CC-BY-4.0.
+> - **2 Lunar SHCs topography** — offen (der China-DOI `10.12176/03.70.00011-V01` löst **HTTP 404**):
+>   `zenodo.org/records/10796953` (Principal-Axis-Familie), CC-BY-4.0.
+> - **3 Mars SHCs topography** — offen (gleicher Zweck): `zenodo.org/records/10794059`
+>   („shape of Mars [MOLA]"), CC-BY-4.0.
+> - **4 Erd-/Mars-EM-Feld & Teilchen** — nur verwandt: `doi.org/10.57760/sciencedb.17116`
+>   (Mars-Simulation), CC-BY-4.0.
+> - **5 Multi-Element-Topographie Mars-ähnlicher Formen** — nur verwandt:
+>   `doi.org/10.25442/hku.32873621` (Qaidam-Analog), CC BY-NC 4.0.
+> - **6 Enhanced visualization lunar polar** — nur verwandt: `zenodo.org/records/22088254`
+>   (IBD1500-Polarkarten), CC-BY-4.0.
+>
+> Der **exakte** China-Datensatz hat in **keinem** der sechs Fälle einen offenen Spiegel; **der
+> Zweck** (lunare/Mars-Topographie, SH-Modelle) ist über die offenen **LOLA/MOLA**-Modelle gedeckt.
+> Verwandtes darüber hinaus: NASA **SLDEM2015** (PGDA), **Clementine/LOLA** (PDS), Chang'e-1/2-`MRM`
+> (NASA PDS Geosciences), Chang'e-4-LPR / Tianwen-1-RoPeR (Zenodo CC-BY), MoRIC-DOM (CDS HiPS).
 >
 > **Offene Frage (nicht geglättet):** Ist die `有条件共享`-Fassung ein *anderes* Produkt als die
 > offenen Spiegel (andere Auflösung/Kalibrierung/Zeit) — dann trägt sie einen eigenen Zweck; oder
