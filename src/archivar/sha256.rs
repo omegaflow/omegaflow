@@ -122,10 +122,7 @@ impl Sha256 {
             120 - self.buf_len
         };
         let tail_len = pad + 8;
-        for i in 0..8 {
-            let shift = (7 - i) * 8;
-            tail[tail_len - 8 + i] = ((bit_len >> shift) & 0xff) as u8;
-        }
+        tail[tail_len - 8..tail_len].copy_from_slice(&bit_len.to_be_bytes());
         let saved = self.total_bits;
         self.update(&tail[..tail_len]);
         self.total_bits = saved;
