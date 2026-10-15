@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 352 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 3bf36cbab4462131a0a7269f62adb50ceded6fe990339fc7160409da27726853
+  sha256: 238438565db90477202f36123d778fa95214ffe4b285568034b0670679b337d9
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -112,7 +112,14 @@ Gefaltet (Echo in diesem Block): `xfer:mycelium-352-1` · `xfer:mycelium-352-2` 
   die **rohdaten**." Träger ist die **Messung**, nicht der Modell-Output; das Modell ist abgeleitet.
   Für OVATION ist die DMSP-SSJ-Partikelmessung `dmsp16_ssj` (`phi:1670-1671`, `em ev/cm²/ster/s`)
   **schon registriert**; der Mohe-Modell-Extrakt wird **nicht als Feld** eingetragen (er wäre
-  `model_output`/F3-nah, `pending`).
+  `model_output`/F3-nah, `pending`). **Ins `sources.φ` gehört die Messung** (das rohe
+  Punkt-/Gitterfeld, DMSP-SSJ); das **Modell** ist abgeleitet — Präzedenz der abgeleiteten
+  Netz-Indizes (AE/TEC, Rat 2026-10-08, `docs/concepts/archivar-mathematikerin.md:19`): eigenes
+  `kind` (`index`/`derived`), **ohne Kraft** (ein `force` würde behaupten, ein Organismus nehme
+  das Modell wahr — A ≠ A), die rohe per-Punkt-Messung bleibt eine **eigene** Quelle. Ob ein
+  `derived`/`model_output`-Kind zugelassen wird, ist die Rat-Schemafrage — das Modell muss **nicht**
+  als Feld in die `sources`. Die register-eigene Lücke: nur **F16** ist als SSJ gelistet
+  (`dmsp16_ssj`); OVATION wurde über mehr DMSP-Jahre/Satelliten gebaut.
 - **Blockade:** keine — das Operator-Wort liegt.
 - **Braucht:** nichts an der Aufnahme (die Messung steht); optional den Zip-Kopf (Span/Takt), falls
   der Extrakt als `model_output` geführt werden soll.
