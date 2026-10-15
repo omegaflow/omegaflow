@@ -2,7 +2,7 @@
   title: Standpass — Mycelium (privat)
   class: zustand
   date: 2026-10-15
-  sha256: c0b8e997dcb944a4ff8add75ed097a58e8497404522629c92047282b3834d5a8
+  sha256: d5b6b071e50b54a02adf9de7b9ad3d69cef2cdc05d52e95db2e0081b5307ecd4
   status: live
   see-also: docs/zustand/standing-pass.md
 -->
@@ -11,7 +11,7 @@
 Vollständige Fassung. Öffentlich gilt allein die Projektion
 `docs/zustand/standing-pass.md` (nur HEAD + rote Läufe, kein Personenbezug).
 
-HEAD `6290535e5` (== `origin/main`) · geschrieben 2026-10-15 · **Mycelium-356**.
+HEAD `db83de03b` (== `origin/main`) · geschrieben 2026-10-15 · **Mycelium-356**.
 
 ## Rote Läufe (gemessen, nicht geraten)
 
@@ -33,11 +33,11 @@ gelesen. Meine eigenen Push-Läufe am neuen HEAD `8a7b48e0e` sind **queued/unrea
 
 ## Lokal gemessen am HEAD `8a7b48e0e`
 
-- **F4′-Quellenmessung (weite Leiter `bin/all_wide` + Direktmessung, alle HTTP 200):** der
-  Blitz-Kanal ist **offen** — die erste enge Messung war unvollständig. Offen: **WGLC** (CC-BY,
-  global-monatlich, Zenodo/Pangaea) · WWLLN-Klimatologie-Datenverzeichnisse · **stündlich CONUS**
-  (UNC Dataverse `10.15139/s3/nk3ncm`) · WWLLN-KML-Feed · **MTG-LI**/GLM. Nur der globale
-  stündliche WWLLN-Rohdatensatz bleibt zugangsgebunden.
+- **F4′-Quellenmessung (weite Quellen-Leiter über Zenodo/OpenAlex):** der **globale (sub-)stündliche**
+  Kanal ist **frei** — **WGLC** (`10.5281/zenodo.4774528`, CC-BY-4.0, stündlich (0.5°/5′) +
+  30-Min-Stoßleistung, 2010–2025, detection-efficiency-korrigiert) und **FLASHMAP**
+  (`10.5281/zenodo.17376946`, CC-BY, GLD360 global). Zwei frühere Messungen („Monatsmittel bzw.
+  regional") waren zu eng.
 - `register_lookup --orphans` = 0; `--orphan-docs` = **28** Dokumente (offene Marker, kein
   Live-Handover-Träger); `--tokens` = 12 unbeglichen, 0 XFER-MISSING.
 - `open_points_check` folge356 = 0 stale-citations.
@@ -66,9 +66,9 @@ gelesen. Meine eigenen Push-Läufe am neuen HEAD `8a7b48e0e` sind **queued/unrea
 
 ## Gearbeitet (dieses Rund)
 
-- **F4′-Quellenmessung** (korrigiert, s. oben): die weite Leiter (`bin/all_wide`) zeigt offene
-  Wege — der Blitz-Kanal ist **nicht** blockiert; die Kanal-/Auflösungswahl liegt beim Operator.
-  Das an River benannt (`xfer:mycelium-356-3`).
+- **F4′-Quellenmessung** (korrigiert, s. oben): der **globale** Kanal ist frei (**WGLC**, CC-BY) —
+  der Blitz-Kanal ist **nicht** blockiert; Mycelium registriert WGLC, das an River benannt
+  (`xfer:mycelium-356-3`).
 - folge356 geschrieben; folge355 → `archiv/`; die An-River/An-Mountain-`xfer`-Tokens gesetzt.
 - Operator-Worte dieses Runds in `state/operator-gespraeche/2026-10-15-mycelium.md` geschnitten.
 
