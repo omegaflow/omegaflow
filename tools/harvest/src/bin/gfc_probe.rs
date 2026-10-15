@@ -1,4 +1,4 @@
-use omegaflow::archivar::gfc::GfcModel;
+use omegaflow::archivar::gfc::{FUNCTIONALS, Functional, GfcModel};
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -32,14 +32,18 @@ fn run(args: &[String]) -> Option<()> {
     let r = (x * x + y * y + z * z).sqrt();
     let colat = (z / r).clamp(-1.0, 1.0).acos().to_degrees();
     let lon = mean_anomaly_degrees(y.atan2(x).to_degrees());
-    let value = model.synthesize(colat, lon, r)?;
+    model.evaluate(r, colat, lon, Functional::Potential)?;
     println!("input {path}");
     println!("degree {}", model.nmax);
     println!("r {r:.6} m");
     println!("colat {colat:.10} deg");
     println!("lon {lon:.10} deg");
-    println!("potential {:.12E} m^2/s^2", value.potential);
-    println!("anomaly {:.12E} (n-1)-weighted", value.anomaly);
+    for functional in FUNCTIONALS {
+        match model.evaluate(r, colat, lon, *functional) {
+            Some(v) => println!("{} {:.12E} {}", functional.name(), v, functional.unit()),
+            None => println!("{} pending {}", functional.name(), functional.unit()),
+        }
+    }
     Some(())
 }
 

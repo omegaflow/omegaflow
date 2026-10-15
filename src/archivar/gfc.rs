@@ -384,15 +384,59 @@ impl GfcModel {
         Some(GfcSums { sigma, weighted })
     }
 
-    pub fn synthesize(&self, colat_deg: f64, lon_deg: f64, radius_m: f64) -> Option<GfcValue> {
+    pub fn evaluate(
+        &self,
+        radius_m: f64,
+        colat_deg: f64,
+        lon_deg: f64,
+        functional: Functional,
+    ) -> Option<f64> {
         let sums = self.harmonic_sums(colat_deg, lon_deg, radius_m)?;
         let gm = self.head.gm_m3_s2;
-        Some(GfcValue {
-            potential: gm / radius_m * sums.sigma,
-            anomaly: gm / (radius_m * radius_m) * sums.weighted,
-        })
+        match functional {
+            Functional::Potential => Some(gm / radius_m * sums.sigma),
+            Functional::GravityAnomaly => Some(gm / (radius_m * radius_m) * sums.weighted),
+            Functional::GeoidHeight => None,
+        }
     }
 }
+
+pub const GFC_DERIVED_CLASS: &str = "the spherical-harmonic derived class evaluates one named functional at a point: evaluate(r, colat, lon, funktional), the measured Rat signature (M4.1, 2026-10-15). Potential V = GM/r * sigma [m^2/s^2] and GravityAnomaly dg = GM/r^2 * weighted [m/s^2] (the (n-1)-weighted radial form; the normal-field reduction is the caller's, per GFC_SYNTHESIS_CONVENTION) stand on the coefficients; GeoidHeight N = T/gamma0 [m] is gated on the GRS80 normal field (a, f, GM, omega) and gamma0 and returns None (pending) until they are registered, never a fabricated value. The named functionals are never merged into one value (M4.4), and the class stays separate from the seven point kernels: the synthesis is a sum over global basis functions and has no source point (M4.1).";
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Functional {
+    Potential,
+    GravityAnomaly,
+    GeoidHeight,
+}
+
+impl Functional {
+    pub fn name(self) -> &'static str {
+        match self {
+            Functional::Potential => "potential",
+            Functional::GravityAnomaly => "gravity_anomaly",
+            Functional::GeoidHeight => "geoid_height",
+        }
+    }
+
+    pub fn unit(self) -> &'static str {
+        match self {
+            Functional::Potential => "m^2/s^2",
+            Functional::GravityAnomaly => "m/s^2",
+            Functional::GeoidHeight => "m",
+        }
+    }
+
+    pub fn is_measurable(self) -> bool {
+        !matches!(self, Functional::GeoidHeight)
+    }
+}
+
+pub const FUNCTIONALS: &[Functional] = &[
+    Functional::Potential,
+    Functional::GravityAnomaly,
+    Functional::GeoidHeight,
+];
 
 pub fn coeffs_from_records(records: &[[f64; 26]]) -> Vec<GfcCoeff> {
     let mut pending: std::collections::HashMap<(u32, u32), GfcCoeff> =
@@ -463,12 +507,6 @@ pub fn gate_delivery(
 pub struct GfcSums {
     pub sigma: f64,
     pub weighted: f64,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct GfcValue {
-    pub potential: f64,
-    pub anomaly: f64,
 }
 
 pub fn fully_normalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
@@ -904,14 +942,48 @@ gfc      2     2    2.439370331756250E-06   -1.400307649958125E-06    8.11752994
         let colat = (z / r).clamp(-1.0, 1.0).acos().to_degrees();
         let lon = y.atan2(x).to_degrees();
         let value = model
-            .synthesize(colat, lon, r)
+            .evaluate(r, colat, lon, Functional::Potential)
             .expect("the potential stands");
         let expected = -4.843731614932750E+03;
         assert!(
-            (value.potential - expected).abs() <= 1e-9 * expected.abs(),
-            "JEOD case 13: computed {} vs reference {}",
-            value.potential,
-            expected
+            (value - expected).abs() <= 1e-9 * expected.abs(),
+            "JEOD case 13: computed {value} vs reference {expected}"
+        );
+    }
+
+    #[test]
+    fn the_functionals_carry_their_own_units_and_the_geoid_stays_pending() {
+        assert_eq!(Functional::Potential.unit(), "m^2/s^2");
+        assert_eq!(Functional::GravityAnomaly.unit(), "m/s^2");
+        assert_eq!(Functional::GeoidHeight.unit(), "m");
+        assert!(Functional::Potential.is_measurable());
+        assert!(Functional::GravityAnomaly.is_measurable());
+        assert!(!Functional::GeoidHeight.is_measurable());
+        assert_eq!(FUNCTIONALS.len(), 3);
+
+        let model =
+            GfcModel::from_bytes(JEOD_GGM02C_DEGREE10.as_bytes()).expect("the GGM02C head parses");
+        let (x, y, z) = (
+            -6404550.640081473_f64,
+            -1493096.048926443_f64,
+            6158937.856787768_f64,
+        );
+        let r = (x * x + y * y + z * z).sqrt();
+        let colat = (z / r).clamp(-1.0, 1.0).acos().to_degrees();
+        let lon = y.atan2(x).to_degrees();
+        let potential = model
+            .evaluate(r, colat, lon, Functional::Potential)
+            .expect("the potential stands");
+        let anomaly = model
+            .evaluate(r, colat, lon, Functional::GravityAnomaly)
+            .expect("the anomaly stands");
+        assert!(potential.is_finite() && potential < 0.0);
+        assert!(anomaly.is_finite() && anomaly.abs() > 0.0);
+        assert!(
+            model
+                .evaluate(r, colat, lon, Functional::GeoidHeight)
+                .is_none(),
+            "N without the GRS80 normal field is pending, never a value"
         );
     }
 }
