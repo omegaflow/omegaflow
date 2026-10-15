@@ -86,6 +86,9 @@ jobs:
               name="${DATE}_${hh}${mm}_${STATION}_full.pgm"
               url="https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/stream0/$Y/$M/$D/$STATION/ut$hh/${name}.gz"
               curl -fsS -L --max-time 60 -o "$DIR/${name}.gz" "$url" 2>/dev/null || { echo "absent: $url"; continue; }
+              if ! gzip -t "$DIR/${name}.gz" 2>/dev/null; then
+                echo "not-gzip: $url"; rm -f "$DIR/${name}.gz"; continue
+              fi
               gunzip -f "$DIR/${name}.gz"
             done
           done
