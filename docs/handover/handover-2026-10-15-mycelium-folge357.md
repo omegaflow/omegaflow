@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 357 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: ef4455eb3f23cbf0f62f4194f635358960521631f22cfb8f2e0726dc5885d634
+  sha256: 032bd52411a3d65f937345e9ba131abd4e9349e8193394a2e07eef09312b86ae
   status: live
 -->
 # Handover — Mycelium-Folge 357 (2026-10-15)
@@ -125,10 +125,10 @@ neu ausgelegt).
 - **Braucht:** Mountain-Zeilen. An Mountain: `xfer:future.…7d5c9163` · `xfer:mycelium-344-5` ·
   `xfer:mycelium-343-3` · `xfer:mycelium-342-10`/`-343-2`.
 
-### NSSDC/CLPDS-Planetologie — Rat-Verdikt: kein Antrag; 1–3 offen gedeckt, 4–6 `pending`
+### NSSDC/CLPDS-Planetologie — **geschlossen**: 1/2/3/4/6 `descoped`, 5 `pending` (Kontakt)
 - **Status:** eigen (Register) | **Bindung:** eigen | **Verdikt:** der Rat (12/13 Sitze) — **kein
-  bedingter Antrag**
-- **Trigger:** die Register-Zeilen der offenen Spiegel
+  bedingter Antrag**; Operator-Wort 2026-10-15: **1/2/3/4/6 `descoped`**, **5 `pending`**
+- **Trigger:** keiner — geschlossen (5 = der einzige Faden, kein Send)
 - **Lage:** (gemessen 2026-10-15; Verdikt `state/stimmen/2026-10-15-china-planetendaten-rat-verdikt.md`)
   Die VSSO-Detail-API (`coreMetadata/getDetail?linkId=…`) + die Suche (`POST …/coreMetadataList`)
   + die Handle-API liefern die gated Feldwerte — **alle sechs identifiziert**: **1** `14255` LOLA →
@@ -139,12 +139,11 @@ neu ausgelegt).
   (`UAV;Camera;RTK`, Metashape) terrestrischer Mars-Analoga — eine **eigene Feldmessung** (offen nur
   das Qaidam-Analog CC BY-NC) → möglicher eigener Zweck, `pending`. Der bedingte Weg verlangt
   Arbeitsstelle + Handynummer + handschriftliches Versprechen; Freigabe = Ermessen. **Kein Send.**
-- **Braucht:** (1) die **Register-Zeilen** der offenen Spiegel 1–3 (`url`/`origin`/`compiler` = ich,
-  `terms`/`field` = Mountain) + die offenen MAVEN/MGS/MARSIS-Produkte (4); (2) die abgelaufene
-  Schutzfrist von 6 datiert prüfen; (3) für **5** die Zweckfrage (braucht das Haus terrestrische
-  Mars-Analog-Morphometrie?) — dann **direkte Anfrage an die Produzenten** `zzkang@cugb.edu.cn`,
-  `huteng@cugb.edu.cn` (Kang/ Hu, CUGB) statt des Portals. **Kein Send durch die Maschine.**
-  An future: `xfer:mycelium-347-2` bleibt offen (kein Send).
+- **Braucht:** nur noch die **Zweckfrage für 5**, wenn das Haus je terrestrische Mars-Analog-
+  Morphometrie braucht — dann direkte Anfrage `zzkang@cugb.edu.cn`, `huteng@cugb.edu.cn` (Kang/Hu,
+  CUGB); Entwurf liegt in `docs/handover/mail-2026-10-15-cugb-mars-analog.md` (Zweck-Satz offen,
+  **nicht gesendet**). **Kein Send durch die Maschine.** An future: `xfer:mycelium-347-2`
+  geschlossen (kein Send).
 
 ### WDC-B Obninsk — Rettung erweitert; Abdeckung unvollständig (eigen)
 - **Status:** eigen (Rest = Vollständigkeit + Verdikte) | **Bindung:** eigen

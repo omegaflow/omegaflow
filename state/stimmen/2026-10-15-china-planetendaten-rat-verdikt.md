@@ -87,6 +87,13 @@ hängt daran, ob das Haus eine terrestrische Mars-Analog-Morphometrie braucht (Z
 - **Die Nutzungsbedingungen der bedingten Fassung** (Weitergabe-/Produktverbot) wurden von mehreren
   Sitzen benannt — am Baum **nicht** re-gemessen; die Behauptung bleibt ein Sitz-Zitat.
 
+## Entscheid (Operator-Wort 2026-10-15)
+
+Der Operator schließt die Runde auf die Empfehlung: **Datensätze 1/2/3/4/6 → `descoped`** — offen
+gedeckt, kein eigener Zweck; der Befund ist die Eintragung, kein Antrag, keine Mail. **Datensatz 5
+→ `pending`** — der einzige Faden mit möglichem eigenem Zweck; die Produzenten-Adresse ist notiert,
+**keine Mail gesendet** (kein wahrer Zweck — ein Fund ist kein Bedarf). **Kein Send.**
+
 ## Nächster begrenzter Messschritt
 
 - **1–3:** die offenen Zenodo-Spiegel (`10820774`, `10796953`, `10794059`) als primäre Quellen
