@@ -948,6 +948,7 @@ pub fn main_flow() {
     let (solar_tx, solar_rx) = mpsc::channel::<crate::machines::SolarCell>();
     let (machine_tx, machine_rx) = mpsc::channel::<(
         crate::archivar::Frame,
+        Option<crate::archivar::ModelKind>,
         Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
     )>();
     let solar_sources = loaded.clone();
@@ -1374,7 +1375,7 @@ pub fn main_flow() {
                 archive.spectral.push(hash);
             }
             let src = &archive.sources[res.source_idx];
-            let _ = machine_tx.send((src.frame.clone(), res.channels.clone()));
+            let _ = machine_tx.send((src.frame.clone(), src.model_kind, res.channels.clone()));
             for (channel, sensor) in &res.channels {
                 let track_origin = matches!(channel.position, Position::Source)
                     || matches!(channel.position, Position::StateVector { track: true, .. });
