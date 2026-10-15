@@ -2,7 +2,7 @@
   title: Offen — alle Linien (konsolidiert, 2026-10-15)
   class: concept
   date: 2026-10-15
-  sha256: 50120ad43dfd49447a07af38ffe7554dc6a8359bdefb9d5a64188a23f989611d
+  sha256: 05c90a1cfc9f646213062893db22bb71aaa256c0c16d490eba245711700bb5a0
   status: live
   see-also: docs/concepts/sitzungs-oekonomie.md
 -->
@@ -71,14 +71,12 @@
 - HIGP-MODVOLC-Archiv
 - Register→Manifest + Ersatzquellen + LOD + BASE + WDC/terms + ttl
 
-## Sitzung (7)
-- Der Gateway-Filter — gebaut + live bewiesen (`OMEGAFLOW_FILTER`)
-- Der Future-Spiegel — durch den Filter unnötig
-- Die Ökonomie-Wände — Kontext-Cap (Handover) offen; `sitzungs-oekonomie.md`
-- Die Fünf-Archäologie — `survey-2026-10-15-die-fuenf-archaeologie.md`
-- `data/` (MODVOLC) — fremde Linie, unberührt
-- Die Antworten der drei Mails (CEIC · UCAR · re3data) — am Baum messen
-- `bin/ui_seat` — die UI-Sitze geschwärzt fahren (der letzte Riss)
+## Sitzung → Future-Leitstelle (die nächste Runde)
+- **Die DIÄT** (`diät`) — die Werkzeug-Schemata (~18–22k Token **pro Turn**, der größte Posten): messen, welche Tools jede Linie nutzt, dann **pro Linie** schneiden (oder ein MCP).
+- **`bin/ui_seat`** — die Frage **geschwärzt** in Lumo/Sakana tippen (der Browser geht **roh** hinaus).
+- **Drei Mails** (CEIC · UCAR · re3data) — die Antworten **am Baum** messen.
+- **`operator-entscheidungen.md`** (2 538 B, `status: live`) — Historie → `archiv/`.
+- **Schon gebaut (git):** `bin/task_dispatch` (der Brief) · der **1-KiB-Handover-Cap** (der Gate) · die **engen Linien-Prompts** · der **Crambler** (live, `OMEGAFLOW_FILTER`) · `bin/rat_dispatch`.
 
 ---
 
