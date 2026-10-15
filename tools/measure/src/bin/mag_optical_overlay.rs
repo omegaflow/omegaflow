@@ -94,6 +94,138 @@ fn read_tkdg(path: &str) -> Result<Vec<(f64, f64)>, String> {
         .collect())
 }
 
+fn read_fodg(path: &str) -> Result<Vec<(f64, Vec<f32>)>, String> {
+    let data = std::fs::read(Path::new(path)).map_err(|e| format!("{path}: {e}"))?;
+    if data.len() < 16 || &data[0..4] != b"FODG" {
+        return Err(format!("{path}: not a FODG full-frame cube"));
+    }
+    let az_bins = u32::from_le_bytes([data[4], data[5], data[6], data[7]]) as usize;
+    let el_bins = u32::from_le_bytes([data[8], data[9], data[10], data[11]]) as usize;
+    let count = u32::from_le_bytes([data[12], data[13], data[14], data[15]]) as usize;
+    let cells = az_bins * el_bins;
+    let frame_bytes = 8 + cells * 4;
+    if cells == 0 || data.len() < 16 + count * frame_bytes {
+        return Err(format!(
+            "{path}: truncated — {} bytes for {count}×{cells}-cell frames",
+            data.len()
+        ));
+    }
+    let mut out = Vec::with_capacity(count);
+    for i in 0..count {
+        let base = 16 + i * frame_bytes;
+        let epoch = f64::from_le_bytes(data[base..base + 8].try_into().unwrap());
+        let mut rows = Vec::with_capacity(cells);
+        for c in 0..cells {
+            let o = base + 8 + c * 4;
+            rows.push(f32::from_le_bytes([
+                data[o],
+                data[o + 1],
+                data[o + 2],
+                data[o + 3],
+            ]));
+        }
+        out.push((epoch, rows));
+    }
+    Ok(out)
+}
+
+fn median(values: &mut [f64]) -> f64 {
+    values.sort_by(|a, b| a.total_cmp(b));
+    let n = values.len();
+    if n == 0 {
+        return f64::NAN;
+    }
+    if n % 2 == 1 {
+        values[n / 2]
+    } else {
+        (values[n / 2 - 1] + values[n / 2]) / 2.0
+    }
+}
+
+fn cube_cell_onset(
+    series: &[(f64, f64)],
+    window: usize,
+    k: f64,
+    persist: usize,
+    search_from: f64,
+) -> Option<f64> {
+    if series.len() <= window {
+        return None;
+    }
+    let mut run = 0usize;
+    for i in window..series.len() {
+        let (epoch, value) = series[i];
+        if epoch < search_from || !value.is_finite() {
+            run = 0;
+            continue;
+        }
+        let mut base: Vec<f64> = series[i - window..i]
+            .iter()
+            .map(|(_, v)| *v)
+            .filter(|v| v.is_finite())
+            .collect();
+        if base.len() < 5 {
+            run = 0;
+            continue;
+        }
+        let med = median(&mut base);
+        let mut dev: Vec<f64> = base.iter().map(|v| (v - med).abs()).collect();
+        let mad = median(&mut dev);
+        let threshold = med + k * ROBUST_SIGMA * mad;
+        if value > threshold {
+            run += 1;
+            if run >= persist {
+                return Some(series[i + 1 - run].0);
+            }
+        } else {
+            run = 0;
+        }
+    }
+    None
+}
+
+fn cube_onset(
+    frames: &[(f64, Vec<f32>)],
+    window: usize,
+    k: f64,
+    persist: usize,
+    search_from: f64,
+) -> Option<f64> {
+    let cells = match frames.first() {
+        Some(f) => f.1.len(),
+        None => return None,
+    };
+    if cells == 0 {
+        return None;
+    }
+    let bg: Vec<f64> = frames
+        .iter()
+        .map(|(_, c)| {
+            let mut v: Vec<f64> = c
+                .iter()
+                .map(|x| *x as f64)
+                .filter(|x| x.is_finite())
+                .collect();
+            median(&mut v)
+        })
+        .collect();
+    let mut earliest: Option<f64> = None;
+    for cell in 0..cells {
+        let series: Vec<(f64, f64)> = frames
+            .iter()
+            .enumerate()
+            .map(|(i, f)| (f.0, f.1[cell] as f64 - bg[i]))
+            .collect();
+        if let Some(epoch) = cube_cell_onset(&series, window, k, persist, search_from) {
+            earliest = Some(match earliest {
+                Some(e) => e.min(epoch),
+                None => epoch,
+            });
+        }
+    }
+    earliest
+}
+
 fn fetch_day(station: &str, date: &str) -> Result<Vec<(f64, f64, f64, f64)>, String> {
     let day_start = iso_to_unix(&format!("{date}T00:00:00Z"))
         .ok_or_else(|| format!("{date} is not an ISO day"))?;
@@ -325,6 +457,19 @@ fn main() {
         },
         None => None,
     };
+    let optical_cube_path = arg_value(&args, "--optical-cube");
+    let cube_window = arg_value(&args, "--cube-window")
+        .and_then(|s| s.parse::<usize>().ok())
+        .filter(|v| *v >= 5)
+        .unwrap_or(120);
+    let cube_k = arg_value(&args, "--cube-k")
+        .and_then(|s| s.parse::<f64>().ok())
+        .filter(|v| *v > 0.0)
+        .unwrap_or(8.0);
+    let cube_persist = arg_value(&args, "--cube-persist")
+        .and_then(|s| s.parse::<usize>().ok())
+        .filter(|v| *v > 0)
+        .unwrap_or(3);
 
     let mut mag: Vec<(String, Vec<Option<f64>>)> = Vec::new();
     for st in &stations {
@@ -479,19 +624,32 @@ fn main() {
                 String::new()
             }
         );
-        let (optical_onset, optical_onset_note) = match optical_onset_arg {
-            Some(t) => (
+        let (optical_onset, optical_onset_note) = if let Some(t) = optical_onset_arg {
+            (
                 Some(slot_of(t)),
                 " (--optical-onset, the 2D full-frame detector)",
-            ),
-            None => (
+            )
+        } else if let Some(cube) = &optical_cube_path {
+            let onset = match read_fodg(cube) {
+                Ok(frames) => cube_onset(&frames, cube_window, cube_k, cube_persist, ws),
+                Err(e) => {
+                    eprintln!("mag_optical_overlay: {e}");
+                    std::process::exit(1);
+                }
+            };
+            (
+                onset.map(slot_of),
+                " (--optical-cube, the FODG full-frame cube)",
+            )
+        } else {
+            (
                 match (&optical, &optical_profiles, onset_mode.as_str()) {
                     (_, Some(profs), "band") => band_onset_slot(profs, lo, hi, k, band_run),
                     (Some(s), _, _) => onset_slot(s, lo, hi, k),
                     _ => None,
                 },
                 "",
-            ),
+            )
         };
         match optical_onset {
             Some(i) => {
@@ -793,5 +951,33 @@ mod tests {
         assert_eq!(frames.len(), 1);
         assert_eq!(frames[0].1.len(), 256);
         assert!((frames[0].1[255] - 1255.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn the_fodg_cube_reader_derives_the_earliest_onset() {
+        let mut frames: Vec<(f64, Vec<f32>)> = Vec::new();
+        for i in 0..10usize {
+            let v = if i >= 6 { 500.0f32 } else { 10.0 };
+            frames.push((1000.0 + i as f64 * 60.0, vec![10.0, v]));
+        }
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(b"FODG");
+        bytes.extend_from_slice(&2u32.to_le_bytes());
+        bytes.extend_from_slice(&1u32.to_le_bytes());
+        bytes.extend_from_slice(&(frames.len() as u32).to_le_bytes());
+        for (e, cells) in &frames {
+            bytes.extend_from_slice(&e.to_le_bytes());
+            for c in cells {
+                bytes.extend_from_slice(&c.to_le_bytes());
+            }
+        }
+        let dir = std::env::temp_dir().join("mag_optical_overlay_fodg_test");
+        let _ = std::fs::create_dir_all(&dir);
+        let path = dir.join("probe.bin");
+        std::fs::write(&path, &bytes).unwrap();
+        let read = read_fodg(path.to_str().unwrap()).expect("read");
+        assert_eq!(read.len(), 10);
+        let onset = cube_onset(&read, 5, 8.0, 3, f64::NEG_INFINITY).expect("onset");
+        assert!((onset - (1000.0 + 6.0 * 60.0)).abs() < 1e-6);
     }
 }

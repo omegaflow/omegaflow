@@ -16,8 +16,8 @@ on:
         required: true
         default: "ykc,fcc,ott"
       keogram:
-        description: TKDG meridian-brightness keogram bin URL
-        required: true
+        description: TKDG meridian-brightness keogram bin URL (optional when a 2D onset source is given)
+        required: false
         type: string
         default: "https://github.com/omegaflow/sources/releases/download/data.phys.ucalgary.ca/themis_asi_timed_keogram_20240510_kapu.bin"
       window:
@@ -37,9 +37,25 @@ on:
         required: false
         default: "16"
       optical_onset:
-        description: measured 2D full-frame onset (ISO UTC); when set, feeds --optical-onset and overrides the keogram rule
+        description: measured 2D full-frame onset (ISO UTC); when set, feeds --optical-onset and overrides the keogram/cube rule
         required: false
         default: ""
+      optical_cube:
+        description: FODG full-frame cube URL (the themis_asi_frame_onset product); when set, the 2D onset is derived from the cube
+        required: false
+        default: ""
+      cube_window:
+        description: causal window in frames for the cube onset
+        required: false
+        default: "120"
+      cube_k:
+        description: robust threshold multiple for the cube onset
+        required: false
+        default: "8"
+      cube_persist:
+        description: persist frames for the cube onset
+        required: false
+        default: "3"
 
 permissions:
   contents: read
@@ -52,23 +68,39 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
-      - name: Fetch the meridian keogram
+      - name: Fetch the FODG full-frame cube (2D onset)
+        if: ${{ inputs.optical_cube != '' }}
         run: |
           set -euo pipefail
-          curl -fsSL -o /tmp/keogram.bin "${{ inputs.keogram }}"
-      - name: Onset/lag readout — optical keogram vs magnetometer
+          curl -fsSL -o /tmp/fodg.bin "${{ inputs.optical_cube }}"
+      - name: Fetch the meridian keogram
+        if: ${{ inputs.optical_cube == '' }}
+        run: |
+          set -euo pipefail
+          if [ -n "${{ inputs.keogram }}" ]; then
+            curl -fsSL -o /tmp/keogram.bin "${{ inputs.keogram }}"
+          fi
+      - name: Onset/lag readout — optical vs magnetometer
         run: |
           set -euo pipefail
           optical_onset_flag=""
           if [ -n "${{ inputs.optical_onset }}" ]; then
             optical_onset_flag="--optical-onset ${{ inputs.optical_onset }}"
           fi
+          cube_flag=""
+          if [ -n "${{ inputs.optical_cube }}" ]; then
+            cube_flag="--optical-cube /tmp/fodg.bin --cube-window ${{ inputs.cube_window }} --cube-k ${{ inputs.cube_k }} --cube-persist ${{ inputs.cube_persist }}"
+          fi
+          optical_flag=""
+          if [ -f /tmp/keogram.bin ]; then
+            optical_flag="--optical /tmp/keogram.bin"
+          fi
           cargo run --release -p omegaflow-measure --bin mag_optical_overlay -- \
             --date "${{ inputs.date }}" --stations "${{ inputs.stations }}" \
-            --optical /tmp/keogram.bin \
+            $optical_flag \
             --window "${{ inputs.window }}" --k "${{ inputs.k }}" \
             --onset "${{ inputs.onset }}" --band-run "${{ inputs.band_run }}" \
-            $optical_onset_flag | tee /tmp/lag.txt
+            $optical_onset_flag $cube_flag | tee /tmp/lag.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
