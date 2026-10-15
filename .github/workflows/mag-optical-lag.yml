@@ -36,6 +36,10 @@ on:
         description: band run length in rows (used only when onset=band)
         required: false
         default: "16"
+      optical_onset:
+        description: measured 2D full-frame onset (ISO UTC); when set, feeds --optical-onset and overrides the keogram rule
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -55,11 +59,16 @@ jobs:
       - name: Onset/lag readout — optical keogram vs magnetometer
         run: |
           set -euo pipefail
+          optical_onset_flag=""
+          if [ -n "${{ inputs.optical_onset }}" ]; then
+            optical_onset_flag="--optical-onset ${{ inputs.optical_onset }}"
+          fi
           cargo run --release -p omegaflow-measure --bin mag_optical_overlay -- \
             --date "${{ inputs.date }}" --stations "${{ inputs.stations }}" \
             --optical /tmp/keogram.bin \
             --window "${{ inputs.window }}" --k "${{ inputs.k }}" \
-            --onset "${{ inputs.onset }}" --band-run "${{ inputs.band_run }}" | tee /tmp/lag.txt
+            --onset "${{ inputs.onset }}" --band-run "${{ inputs.band_run }}" \
+            $optical_onset_flag | tee /tmp/lag.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -315,6 +315,16 @@ fn main() {
         Some(run) => run,
         None => 16,
     };
+    let optical_onset_arg = match arg_value(&args, "--optical-onset") {
+        Some(s) => match iso_to_unix(&s) {
+            Some(t) => Some(t),
+            None => {
+                eprintln!("mag_optical_overlay: --optical-onset {s} is not an ISO UTC stamp");
+                std::process::exit(2);
+            }
+        },
+        None => None,
+    };
 
     let mut mag: Vec<(String, Vec<Option<f64>>)> = Vec::new();
     for st in &stations {
@@ -469,13 +479,27 @@ fn main() {
                 String::new()
             }
         );
-        let optical_onset = match (&optical, &optical_profiles, onset_mode.as_str()) {
-            (_, Some(profs), "band") => band_onset_slot(profs, lo, hi, k, band_run),
-            (Some(s), _, _) => onset_slot(s, lo, hi, k),
-            _ => None,
+        let (optical_onset, optical_onset_note) = match optical_onset_arg {
+            Some(t) => (
+                Some(slot_of(t)),
+                " (--optical-onset, the 2D full-frame detector)",
+            ),
+            None => (
+                match (&optical, &optical_profiles, onset_mode.as_str()) {
+                    (_, Some(profs), "band") => band_onset_slot(profs, lo, hi, k, band_run),
+                    (Some(s), _, _) => onset_slot(s, lo, hi, k),
+                    _ => None,
+                },
+                "",
+            ),
         };
         match optical_onset {
-            Some(i) => println!("onset optical {}", iso_utc(day_start + i as f64 * 60.0)),
+            Some(i) => {
+                println!(
+                    "onset optical {}{optical_onset_note}",
+                    iso_utc(day_start + i as f64 * 60.0)
+                )
+            }
             None => println!("onset optical pending (no crossing above the robust threshold)"),
         }
         for (st, slots) in &mag {
