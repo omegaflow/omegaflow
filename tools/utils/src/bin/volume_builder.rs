@@ -345,6 +345,7 @@ fn main() {
     if let Some([value_key, lat_key, lon_key, depth_key]) = verify_live {
         let src = SourceConfig {
             ttl: 0,
+            head: None,
             url: path.clone(),
             origin: None,
             terms: None,
