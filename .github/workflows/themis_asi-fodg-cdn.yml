@@ -1,0 +1,110 @@
+# harvest: format=themis_asi_fodg asset=present arm=themis_asi_frame_onset pattern=^themis_asi_fodg_[0-9]{8}_.+_onset\.bin$ idempotent=true timeout=180 tag=data.phys.ucalgary.ca
+
+# auto-dispatch: manual — the station label, the night, the UT window and the skymap URL are per-act inputs, and the arm is a measure tool (tools/measure), not a harvest compiler; auto-dispatch cannot supply them
+name: themis_asi-fodg-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      station:
+        description: 'THEMIS ASI station label (e.g. kapu_themis21)'
+        required: true
+        type: string
+      date:
+        description: 'night YYYYMMDD'
+        required: true
+        type: string
+      start:
+        description: 'window start UT hour HH'
+        required: true
+        type: string
+        default: '06'
+      stop:
+        description: 'window stop UT hour HH'
+        required: true
+        type: string
+        default: '08'
+      onset_from:
+        description: 'onset search-from (ISO UTC)'
+        required: true
+        type: string
+        default: '2024-05-10T07:50:00Z'
+      skymap_url:
+        description: 'IDL skymap (.sav) URL on data.phys.ucalgary.ca'
+        required: true
+        type: string
+        default: 'https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/skymaps/kapu/kapu_20240909/themis_skymap_kapu_20240909-%2B_v02.sav'
+      force:
+        description: Re-manifest even when the asset is already present
+        required: false
+        type: boolean
+        default: false
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  themis-asi-fodg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the FODG cube is already manifested
+        id: idempotence
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
+          asset="themis_asi_fodg_${{ inputs.date }}_${{ inputs.station }}_onset.bin"
+          if gh release view data.phys.ucalgary.ca --repo omegaflow/sources \
+              --json assets --jq '.assets[]?.name' 2>/dev/null \
+              | grep -qx "$asset"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "$asset already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "$asset missing — compiling and manifesting"
+          fi
+      - name: Fetch the per-minute PGM frames and the skymap
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          STATION="${{ inputs.station }}"
+          DATE="${{ inputs.date }}"
+          Y="${DATE:0:4}"; M="${DATE:4:2}"; D="${DATE:6:2}"
+          DIR="frames"; mkdir -p "$DIR"
+          for hh in $(seq -w "${{ inputs.start }}" "${{ inputs.stop }}"); do
+            for mm in $(seq -w 0 59); do
+              name="${DATE}_${hh}${mm}_${STATION}_full.pgm"
+              url="https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/stream0/$Y/$M/$D/$STATION/ut$hh/${name}.gz"
+              curl -fsS -L --max-time 60 -o "$DIR/${name}.gz" "$url" 2>/dev/null || { echo "absent: $url"; continue; }
+              gunzip -f "$DIR/${name}.gz"
+            done
+          done
+          echo "frames: $(find "$DIR" -name '*.pgm' | wc -l)"
+          curl -fsS -L --max-time 120 -o skymap.sav "${{ inputs.skymap_url }}"
+          echo "skymap: $(wc -c < skymap.sav) B"
+      - name: Compile the THEMIS-ASI full-frame cube and upload to CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          OUT="data/data.phys.ucalgary.ca/themis_asi_fodg_${{ inputs.date }}_${{ inputs.station }}_onset.bin"
+          mkdir -p data/data.phys.ucalgary.ca
+          cargo run --release -p omegaflow-measure --bin themis_asi_frame_onset -- \
+            --skymap skymap.sav --dir frames --out "$OUT" \
+            --onset-report --search-from "${{ inputs.onset_from }}" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "themis_asi-fodg-cdn: FODG cube compile returned void" \
+                 "themis_asi_frame_onset returned void for ${{ inputs.station }} ${{ inputs.date }} ${{ inputs.start }}..${{ inputs.stop }}. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          SKY="data/data.phys.ucalgary.ca/themis_asi_skymap_${{ inputs.station }}_$(basename "${{ inputs.skymap_url }}")"
+          cp skymap.sav "$SKY"
+          gh release upload data.phys.ucalgary.ca "$OUT" "$SKY" --clobber --repo omegaflow/sources
