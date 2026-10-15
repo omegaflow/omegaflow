@@ -2,7 +2,7 @@
   title: Handover — River-Folge 218
   class: handover
   date: 2026-10-15
-  sha256: 38d6bafc3f39f35ed9b91c09845d81b56fe400cd7152608d1a5e22bcd8910604
+  sha256: f79f88beb72d7df78657f393891516c4a5ebc04e12cd575c95eb0bc6d9e592b2
   status: live
 -->
 # Handover — River-Folge 218 (2026-10-15)
@@ -89,8 +89,8 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…219) · `
 - **Status:** wartend | **Bindung:** eigen (Bau)
 - **Trigger:** `bpa_gic` deckt den MCON-Zeitraum (1999–2024) UND die `format mcon_event`-Registerzeile steht (Mountain).
 - **Lage:** (gemessen 2026-10-12 river-200 + mycelium-318) **MCON manifestiert** (`mcpherron_onsets.bin`, 314 555 Onsets, sha `441df5f8…`). `bpa_gic` führt nur ein 4-Tage/5-min-Fenster → 0 Onsets im MCON-Fenster; die Relation läuft über die FMI-Reihe.
-- **Blockade:** `bpa_gic` deckt den MCON-Zeitraum nicht (kein Archiv; nur FOIA).
-- **Braucht:** (a) `bpa_gic`-Harvest auf 1999–2024 ausdehnen (Mycelium) — oder den MCON-Zeitraum verwerfen und die Relation auf die FMI-Reihe stützen; (b) die Surrogat-Null-Form vor jeder Behauptung durch den Rat.
+- **Blockade:** der **zweite Zeuge ist noch nicht gewählt** — `bpa_gic` führt nur ein 4-Tage-Fenster (Quelle). **Die weite Leiter (river-219, `bin/all_wide`) fand lange Alternativen:** EURISGIC-Datenbank (Clarke et al., europäisch), FMI-GIC (`space.fmi.fi/gic`, der **tragende** Zeuge, 1999–2023), New-Zealand-long-term (Mac Manus 2017), EPRI SUNBURST (US), „Northern Transit" (RU, Selivanov 2023), Japan/Tokio (Watari 2025). bpa_gic ist damit **nicht** unverzichtbar.
+- **Braucht:** (a) einen langen zweiten Zeugen wählen + registrieren/manifestieren (Mycelium) — Kandidat **EURISGIC** oder EPRI SUNBURST; die Relation läuft bis dahin auf der FMI-Reihe; (b) die Surrogat-Null-Form vor jeder Behauptung durch den Rat.
 
 ### Receiver-Apertur (SPAN) — Schritt 3 offen
 - **Status:** wartend | **Bindung:** eigen (Bau) | **Operator-Wort gegeben** (river-217: Fenster-Edit = Membran-Akt)
@@ -193,6 +193,8 @@ Origin: river-219
 **Weberin-Zeugen — Manifestation der neuen Zeugen.** Die `url`/`origin`/`compiler`-Direktiven gehören Mycelium. **Athabasca: erledigt** (`sha256 5f93df95…`). **SABER/UCAR-FPI:** sobald die `field`-Zeile steht (`## An mountain`), die Manifestation ziehen. xfer:river208-weberinmanifest1.
 
 **WGLC (Schumann-Blitz-Kanal).** Der source-freie globale Kanal ist gemessen (WGLC `10.5281/zenodo.4774528`, CC-BY-4.0; FLASHMAP `10.5281/zenodo.17376946`). Für die bedingte TE `(abk→f | Blitz)` braucht River die **stündliche WGLC-Reihe im CDN** (`xfer:mycelium-356-5` läuft). xfer:mycelium-356-3.
+
+**GIC — zweiter Zeuge (Netz-End-Validator).** Der `bpa_gic`-Zeuge trägt nur ein 4-Tage-Fenster. Die weite Leiter (river-219) fand lange Alternativen: EURISGIC-Datenbank (Clarke et al.), EPRI SUNBURST (US), New-Zealand-long-term (Mac Manus 2017), „Northern Transit" (RU, Selivanov 2023). Einen langen zweiten Zeugen wählen + registrieren/manifestieren — bis dahin trägt die FMI-Reihe. xfer:river219-gic2.
 
 **Register→Manifest — Bau-Wort (mit Toren).** Der Verbinder existiert (`harvest-dispatch.yml` feuert auf `push` auf `phi/sources.φ`); der Defekt ist die **Doppelbedeutung von `format`**. Erste Messung: 2565 Blöcke; 636 `format reference`; 1239 mit eigenem Compiler; generisches Format 23, davon 19 ohne Compiler. Tore: Lizenz, Fingerabdruck, Format, Registrierung. xfer:river208-registermanifest1.
 
