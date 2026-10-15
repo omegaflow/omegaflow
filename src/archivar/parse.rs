@@ -77,6 +77,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_ttl: u64 = 0;
     let mut cur_url = String::new();
     let mut cur_format = String::new();
+    let mut cur_model_kind: Option<ModelKind> = None;
     let mut cur_extracts: Vec<Extract> = Vec::new();
     let mut cur_channels: Vec<ChannelDescriptor> = Vec::new();
     let mut cur_headers: Vec<(String, String)> = Vec::new();
@@ -147,7 +148,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                                 Some(f) => f.clone(),
                                 None => Frame::Manifest,
                             },
-                            model_kind: source_model_kind(&cur_format),
+                            model_kind: cur_model_kind.or_else(|| source_model_kind(&cur_format)),
                             format: std::mem::take(&mut cur_format),
                             extracts: std::mem::take(&mut cur_extracts),
                             channels: std::mem::take(&mut cur_channels),
@@ -212,6 +213,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 flush!();
                 cur_url = parts[1].to_string();
                 cur_format.clear();
+                cur_model_kind = None;
                 cur_extracts.clear();
                 cur_channels.clear();
                 cur_headers.clear();
@@ -2199,6 +2201,16 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "trp" if parts.len() >= 2 => {}
             "trs" if parts.len() >= 2 => {}
             "format" if parts.len() >= 2 => cur_format = parts[1..].join(" "),
+            "model_kind" if parts.len() >= 2 => {
+                cur_model_kind = parse_model_kind(parts[1]);
+                if cur_model_kind.is_none() {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("model_kind void: {}", line),
+                    );
+                }
+            }
             "sha256" if parts.len() >= 2 => cur_sha256 = Some(parts[1].to_string()),
             "body" if parts.len() >= 2 => {
                 cur_body = Some(parts[1].to_string());
@@ -3588,5 +3600,22 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             parse_declined("decline registry https://example.com/x\n").len(),
             1
         );
+    }
+
+    #[test]
+    fn an_explicit_model_kind_directive_overrides_the_format_derivation() {
+        let sources = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\nmodel_kind time_variable\n",
+        );
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].model_kind, Some(ModelKind::TimeVariable));
+    }
+
+    #[test]
+    fn a_model_kind_falls_back_to_the_format_when_undeclared() {
+        let sources =
+            parse_sources("url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n");
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].model_kind, Some(ModelKind::Static));
     }
 }

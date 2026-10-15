@@ -505,6 +505,14 @@ pub fn source_model_kind(format: &str) -> Option<ModelKind> {
     }
 }
 
+pub fn parse_model_kind(tok: &str) -> Option<ModelKind> {
+    match tok {
+        "static" => Some(ModelKind::Static),
+        "time_variable" => Some(ModelKind::TimeVariable),
+        _ => None,
+    }
+}
+
 #[derive(Clone)]
 pub struct SourceConfig {
     pub ttl: u64,
