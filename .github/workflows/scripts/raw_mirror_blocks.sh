@@ -8,7 +8,9 @@
 #
 # The four gates it runs through:
 #   Lizenz-Tor         - a block without a terms line stays unmirrored
-#   Fingerabdruck-Tor  - raw_mirror refuses a body that does not hash to sha256
+#   Fingerabdruck-Tor  - raw_mirror refuses a body that does not hash to the
+#                        registered sha256 (house fingerprint) or md5 (the
+#                        source gate Zenodo publishes) for dataset-scale assets
 #   Format-Tor         - the arm equals the manifestation line (raw_mirror)
 #   Registrierungs-Tor - the block stands in the register with url/origin/sha256
 set -euo pipefail
@@ -42,6 +44,7 @@ gate_bad=0
 block_url=""
 block_origin=""
 block_sha=""
+block_md5=""
 block_terms=""
 block_has=0
 block_hit=0
@@ -50,6 +53,7 @@ reset_block() {
   block_url=""
   block_origin=""
   block_sha=""
+  block_md5=""
   block_terms=""
   block_has=0
   block_hit=0
@@ -57,14 +61,19 @@ reset_block() {
 
 emit_block() {
   if [ "$block_has" = "1" ] && [ "$block_hit" = "1" ]; then
-    if [ -z "$block_url" ] || [ -z "$block_origin" ] || [ -z "$block_sha" ]; then
-      echo "raw_mirror: harvest raw_mirror without url/origin/sha256 - Registrierungs-Tor: stays unmirrored" >&2
+    if [ -z "$block_url" ] || [ -z "$block_origin" ]; then
+      echo "raw_mirror: harvest raw_mirror without url/origin - Registrierungs-Tor: stays unmirrored" >&2
+      gate_bad=1
+    elif [ -z "$block_sha" ] && [ -z "$block_md5" ]; then
+      echo "raw_mirror: $block_url: harvest raw_mirror without sha256/md5 - Fingerabdruck-Tor: stays unmirrored" >&2
       gate_bad=1
     elif [ -z "$block_terms" ]; then
       echo "raw_mirror: $block_url: harvest raw_mirror without terms - Lizenz-Tor: stays unmirrored" >&2
       gate_bad=1
+    elif [ -n "$block_sha" ]; then
+      printf "%s|%s|sha256|%s\n" "$block_url" "$block_origin" "$block_sha"
     else
-      printf "%s|%s|%s\n" "$block_url" "$block_origin" "$block_sha"
+      printf "%s|%s|md5|%s\n" "$block_url" "$block_origin" "$block_md5"
     fi
   fi
   reset_block
@@ -92,6 +101,7 @@ for line in "${register_lines[@]}"; do
     url) block_url="$rest" ;;
     origin) block_origin="$rest" ;;
     sha256) block_sha="$rest" ;;
+    md5) block_md5="$rest" ;;
     terms) block_terms="$rest" ;;
   esac
 done > "$records_file"
@@ -113,12 +123,12 @@ mirror_bin="target/release/raw_mirror"
 bad=0
 mapfile -t records < "$records_file"
 for record in "${records[@]}"; do
-  IFS="|" read -r url origin shaval <<< "$record"
+  IFS="|" read -r url origin flag val <<< "$record"
   if [ -z "$url" ]; then
     continue
   fi
   echo "raw_mirror: $url"
-  "$mirror_bin" --ci-mode --url "$url" --origin "$origin" --sha256 "$shaval" \
+  "$mirror_bin" --ci-mode --url "$url" --origin "$origin" --"$flag" "$val" \
     || { echo "raw_mirror: $url returned void" >&2; bad=1; }
 done
 exit "$bad"

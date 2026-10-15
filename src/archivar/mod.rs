@@ -158,6 +158,7 @@ pub mod mat5;
 pub mod matfile;
 pub mod maxi;
 pub mod mcon_event;
+pub mod md5;
 pub mod mitdb;
 pub mod movement_monitoring;
 pub mod mpcorb;
