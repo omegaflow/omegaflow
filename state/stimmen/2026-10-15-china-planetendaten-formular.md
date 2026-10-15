@@ -14,9 +14,10 @@ die Stimme; das Verdikt trägt der Rat. Die breite Recherche (`bin/all_wide`,
 > ### Die Frage
 >
 > **Was machen wir mit den China-NSSDC-Planetendaten?** — welchen Zweck tragen die lunar-/Mars-
-> Datensätze des China NSSDC im Haus, der die offenen Wege rechtfertigt (oder nicht)? Und,
-> daraus folgend: **brauchen wir den bedingten Weg (Antrag, Echtname, Genehmigung) überhaupt —
-> oder deckt ein offener Spiegel denselben Zweck?**
+> Datensätze des China NSSDC im Haus, der die offenen Wege rechtfertigt (oder nicht)? **Brauchen
+> wir den bedingten Weg (Antrag, Echtname, Genehmigung) überhaupt — oder deckt ein offener Spiegel
+> denselben Zweck?** Und: **wie schätzt ihr die Aussicht ein, dass der Antrag durchgeht** — lohnt
+> er für die Restfälle (4–6), oder reicht das offen Verwandte?
 >
 > ### Der gemessene Befund (der Boden der Frage — nicht geraten)
 >
@@ -27,6 +28,14 @@ die Stimme; das Verdikt trägt der Rat. Die breite Recherche (`bin/all_wide`,
 > (`10.12176/03.70.00011-V01`), Mars SHCs topography, Erd-/Mars-EM-Feld- und -Teilchen-Beobachtung
 > (`10.12176/01.05.00135-V01`), ein Multi-Element-Hochauflösungs-Topographie-Datensatz Mars-ähnlicher
 > Formen, eine „Enhanced visualization map" der lunaren Polarregion.
+>
+> **Der bedingte Weg selbst (Formular gemessen 2026-10-15):** Pflicht sind Benutzername, Passwort,
+> **echter Name**, **Land**, E-Mail, **Arbeitsstelle/Einrichtung**, **Handynummer** (chinesisches
+> Format `010-…`), Captcha; optional ORCID · Abteilung · Titel · Abschluss. Die Freigabe ist
+> **Ermessen** eines chinesischen Fachleiters (`授权`, „Protected Period"), das Verfahren verlangt
+> ein ausgedrucktes, handschriftlich unterschriebenes Versprechen; das Portal ist im Umbau. Die
+> Datensätze sind als **CC-BY-4.0** ausgewiesen (Teilen gewollt). Der exakte Datensatz hat keinen
+> offenen Spiegel, aber der Zweck von 1–3 ist über **LOLA/MOLA** gedeckt.
 >
 > **Gemessen (Taucher-Lauf 2026-10-15, die tragenden URLs am Baum verifiziert): je Datensatz ein
 > offener Spiegel oder `pending`.**
@@ -94,9 +103,12 @@ die Stimme; das Verdikt trägt der Rat. Die breite Recherche (`bin/all_wide`,
 > 1. **Der Zweck (vorn):** wofür die China-Planetendaten im Haus da sind — der eine Zweck, den nur
 >    sie leisten und die offenen Spiegel nicht. Wenn es keinen gibt, sag das.
 > 2. **Der Weg:** offener Spiegel (welcher) kontra bedingter Antrag — und warum.
-> 3. **Der Send:** falls Antrag — was genau beantragt wird (welche Datensätze) und was der Operator
+> 3. **Die Aussicht:** wie schätzt ihr die Genehmigung ein (Ermessen eines chinesischen Fachleiters;
+>    Pflicht sind Arbeitsstelle + Handynummer + unterschriebenes Versprechen) — und lohnt der Antrag
+>    für die Restfälle 4–6, oder reicht das offen Verwandte? Nennt das entscheidende Hindernis.
+> 4. **Der Send:** falls Antrag — was genau beantragt wird (welche Datensätze) und was der Operator
 >    dafür tun muss. Falls nein — was stattdessen.
-> 4. **Der nächste begrenzte Messschritt** (je Datensatz: offenen Spiegel nachweisen oder `pending`
+> 5. **Der nächste begrenzte Messschritt** (je Datensatz: offenen Spiegel nachweisen oder `pending`
 >    benennen).
 >
 > ### Form
