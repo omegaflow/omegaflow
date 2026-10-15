@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 352 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 365b5abbe179f025645b27d4b54685739c8b4e40c2c63a463291b117330adeb2
+  sha256: 7c80566115e8ccaec488c91b4f366a6fde4d84bec7d1ee20785696c47c08587e
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -55,6 +55,14 @@ Prosa, kein Pfad-Block) · 0 stale. Gefaltet (`register_lookup --addressed mount
   channel_ref · 0 geehrt · pending. Der Bogen trug zuvor die **ethischen** Grundsätze aus
   `AGENTS.md` als „die fünf Axiome" — eine Verwechslung (der Granit trägt 7 Sätze); im Bogen
   korrigiert, für die fremden Dokumente benannt (s. eigener Punkt).
+- **Roster-Antworten eingeholt, am Baum verifiziert, Verdikt geschrieben.** 13 Sitze
+  (`state/stimmen/2026-10-15-mountain-rat-fragen.md`); die Session hat ihre Behauptungen am Baum
+  gemessen (`IgrfCoeffs::synthesize` `igrf.rs:131`, `vmf3_sh::b_c`, `gfc`, `Position::Surface`
+  `types.rs:68`, die `field`-Form mit sechs Kerneln + Force-Gate). **Verdikt**
+  `state/stimmen/2026-10-15-mountain-rat-fragen-verdikt.md`: M1 — drei tragen ein Feld, vier nicht
+  (G/`sdata`/`aa`/`gps`); M2 — die Grenze ist ein **Ort** (BAS = geschlossene 24-Bin-MLT-Achse,
+  DMSP = Pass-Punkt), kein Kraftfeld; M3 — OVATION ist ein **Modell-Zeuge**, kein Feld/Schalter.
+  Drei Doktrinen geschlagen („alles ist ein Feld" · „Kraft oder Skalar" · „Feld oder Schalter").
 - **Aurora-Grenzen vermessen (Taucher).** Vollständige Format-Spec für **BAS IMAGE SI12
   Boundaries** (`ramadda.nerc-bas.ac.uk`, OGL v3.0; 30 Monats-`.txt`, 50 Spalten:
   Zeit, Instrument, 24 equatorwärtige + 24 polwärtige AACGM-Breiten je 1-h-MLT-Bin, `NaN` =
@@ -77,21 +85,30 @@ Gefaltet (Echo in diesem Block): `xfer:mycelium-352-1` · `xfer:mycelium-352-2` 
 - **Trigger:** `xfer:mycelium-352-1`/`-2` (die 179 Wayback- und 7 lebenden `sep`-Blöcke).
 - **Lage:** (gemessen 2026-10-15) Die Quantitäten/Einheiten der Groups sind gemessen
   (G CGS · 1-min-Geomagnetik nT · Freiluft-Schwere mGal+Geoid m · Herdparameter · aa-Index nT ·
-  Pc1-Pulsationen · GNSS-RINEX). Eine `field`-Zeile braucht aber **Kernel/Force/Unit** — die
-  Kernel-Zuordnung einer Quelle ist laut Haus **keine Pro-Solo-Entscheidung** (Force-/
-  Kernel-Kontrakt → Rat).
-- **Blockade:** Rat (Kernel-Zuordnung).
-- **Braucht:** das Rat-Verdikt je Group (Kernel/Force); dann die `field`-Zeilen.
+  Pc1-Pulsationen · GNSS-RINEX). **Das Roster-Verdikt steht** (`state/stimmen/2026-10-15-mountain-rat-fragen-verdikt.md`,
+  13 Sitze, am Baum verifiziert): **drei tragen ein Feld** — `geo_min` als Stationszeuge an
+  `Position::Surface` plus getrennt das IGRF-SH (`IgrfCoeffs::synthesize`, `igrf.rs:131`),
+  `gdata`/`mgg` als Schwere-SH (`gfc`/`vmf3_sh`, Anomalie ↔ Geoid zwei Zeilen), `catal_pc` als
+  Wellen-Ereignis (Kernel `pending`); **vier tragen keins** — G (Konstante), `sdata`
+  (Punkt-Prozess), `aa` (Index), `gps` (Metadaten). Die `field`-Form (`<kernel> <force> <unit> …`,
+  nur 6 Kernel-Formen, Force-Gate) kann **Nicht-Felder nicht tragen** → der Absenz-Pfad
+  (`scalar_constant`/`point_process`/`planetary_index`/`wave_event`/`metadata`) ist eine
+  **Schema-Erweiterung** (Rat). D ist ein **Winkel** (rad), kein nT-Wert.
+- **Blockade:** Rat (Schema-Erweiterung um Nicht-Feld-Typen).
+- **Braucht:** (1) das Rat-Verdikt zur Absenz-Pfad-Form; (2) dann die Feld-/Absenz-Zeilen je Datei.
 
 ### Ketten-Quellen (SWIFF · WINDMI · MAGION · MOSWOC-Kp · OVATION-AACGM) (eigen)
 - **Status:** eigen · **gemessen 2026-10-15** | **Bindung:** eigen
 - **Trigger:** der harte Ketten-Quellen-Lauf (Operator-Wort 2026-10-15) — abgearbeitet.
 - **Lage:** (gemessen 2026-10-15) volles Messblatt `docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md`.
   SWIFF/WINDMI/MAGION bleiben als **kein Datensatz** benannt. MOSWOC-Kp-Zugang entfällt
-  (GFZ-Kp deckt den Bedarf). OVATION-AACGM (Zenodo `19651247`, CC-BY-4.0, eine Station Mohe)
-  wartet auf die **Register-/Feld-/Kernel-/Format-Entscheidung (Rat)**.
-- **Blockade:** Rat (OVATION).
-- **Braucht:** das Rat-Verdikt zu OVATION-AACGM (Feld/Kernel/Format).
+  (GFZ-Kp deckt den Bedarf). **OVATION-AACGM (Zenodo `19651247`, CC-BY-4.0, eine Station Mohe):
+  Verdikt steht** (Roster) — es ist ein **Modell-Zeuge** (Punkt-Auswertung eines globalen
+  Energiefluss-Modells an Mohe), **kein Feld, kein Schalter**; Typ `model_output`, Antriebsvektor +
+  Modellversion Pflicht. **Span/Takt/Version/Treiber ungelesen** → `pending`. **Operator-Entscheid
+  offen:** jetzt als `model_output` (F3-nah) aufnehmen oder auf ein globales Gitter warten?
+- **Blockade:** Operator-Wort (Aufnahme des Modell-Zeugen).
+- **Braucht:** den Operator-Entscheid (Axiom 5) + den Zip-Kopf (Span/Takt/Version/Treiber).
 
 ### Epochen-Absenz — Umsetzung trägt der Modellart-Unterscheider (eigen)
 - **Status:** eigen · **verdiktet** (Operator-Wort: direkt der Unterscheider) | **Bindung:** eigen
@@ -208,11 +225,14 @@ Gefaltet (Echo in diesem Block): `xfer:mycelium-352-1` · `xfer:mycelium-352-2` 
   trägt eine offene Route. **NSDB:** der Producer (`nsdb_compiler.rs`) und der Lese-Arm
   (`nsdb.rs`) stehen; der **Contract-Riss ist geschlossen** (AST1 trägt jetzt die fehlerlose
   Richtungs-Serie, `nsdb::to_astro_series`). **BAS-IMAGE/DMSP-SSJ:** die Format-Spec ist
-  vermessen (s. „Gearbeitet"); der Bau wartet auf die **Feld-/Kernel-Zuordnung (Rat)**.
-- **Blockade:** Rat (Aurora-Grenzbreite als Feld/Kernel); die vier Registrierungen sind
-  Mycelium (`xfer:mountain-351-1…-5`).
-- **Braucht:** (1) das Rat-Verdikt zur Feld-/Kernel-Zuordnung einer Grenzbreite; (2) die vier
-  Mycelium-Registrierungen; (3) die NSDB-Witness-Route in den S²-Pfad (main_flow = River) —
+  vermessen (s. „Gearbeitet") und das **Roster-Verdikt steht** (`…-rat-fragen-verdikt.md`): die
+  Grenzbreite ist ein **Ort**, kein Kraftfeld — BAS als Skalar auf der geschlossenen 24-Bin-MLT-Achse
+  (Bin im Schlüssel), DMSP als Pass-Punkt-Locus; `NaN → None`; Leitfähigkeit/FAC ist Begleiter
+  `pending`. **48 > 26:** je Bin ein Record, kein Packen. **16-vs-24 offen** (Zip nicht entpackbar).
+- **Blockade:** (1) Rat (Schema: closed-discrete MLT-Achse + Absenz-Pfad); (2) DMSP-Zip entpacken.
+- **Braucht:** (1) das Rat-Verdikt zur MLT-Achsen-/Absenz-Form; (2) ein Entpack-Werkzeug für die
+  DMSP-CSV (Sandkasten ohne unzip); (3) die vier Mycelium-Registrierungen
+  (`xfer:mountain-351-1…-5`); (4) die NSDB-Witness-Route in den S²-Pfad (main_flow = River) —
   `nsdb::to_astro_series` liefert die AST1-Richtungszeugen.
 
 ### Axiom-Verwechslung + ICRS/TDB/pending-Fabrikations-Audit (eigen)
