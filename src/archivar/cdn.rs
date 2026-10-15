@@ -506,6 +506,36 @@ pub fn body_url(name: &str) -> String {
     format!("{}/{}/ephemeris_{}.bin", CDN_BASE, EPHEMERIS_TAG, name)
 }
 
+pub fn delete_release_asset(tag: &str, name: &str) -> bool {
+    if std::env::var("GH_TOKEN").is_err() {
+        eprintln!("delete {tag}/{name}: GH_TOKEN absent");
+        return false;
+    }
+    let out = Command::new("gh")
+        .arg("release")
+        .arg("delete-asset")
+        .arg(tag)
+        .arg(name)
+        .arg("--yes")
+        .arg("--repo")
+        .arg(CDN_REPO)
+        .output();
+    match out {
+        Ok(o) if o.status.success() => true,
+        Ok(o) => {
+            eprintln!(
+                "delete {tag}/{name}: gh returned void: {}",
+                String::from_utf8_lossy(&o.stderr).trim()
+            );
+            false
+        }
+        Err(e) => {
+            eprintln!("delete {tag}/{name}: gh absent: {e}");
+            false
+        }
+    }
+}
+
 pub fn ensure_release(tag: &str) -> bool {
     if std::env::var("GH_TOKEN").is_err() {
         return false;
