@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 348 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: bb636b4b8bc9a3f34318b01bc6e73695c2d0be2ab3d61356e2bb3a581d17798a
+  sha256: 712201860cff9013ff19a2f14d99857f19d8d3ceebb344edfdc1dca312e5e277
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -123,9 +123,14 @@ mit gemessenem Teil-Roster.
   (`gfc_compiler`, `field_te_query`, `volume_builder`); rustfmt clean. Die Kontrakt-Klausel steht
   canon-konform in `docs/concepts/archivar-mathematikerin.md`.
 - **Blockade:** keine.
-- **Braucht:** (1) den **Faden des `model_kind` in den Lesepfad** — die zwei Leselinien gegen das
-  Quell-Kind gaten, nicht gegen den Wert (sonst liest ein statischer 0.0-Pad als J2000); (2) die
-  `phi`-Direktive `model_kind` (Mountain-Zeilenklasse) für `gfc`/`gfct`.
+- **Gebaut (Agent, 2026-10-15) — der Faden steht:** die Maschinen-Naht trägt `Option<ModelKind>`
+  mit (`main_flow.rs:949` Kanaltyp + `:1377` Send `src.model_kind` → `LoopCtx.machine_rx`
+  (`omega.rs:2099`) → `MatrixMachine::new`/`record` (FrameBundle-Typ)); `record` weist einen
+  `Static`-Batch **vor** dem Wert ab (`model_kind == Some(Static) || !channel.epoch.is_finite()`),
+  also wird der 0.0-Pad einer statischen `gfc`-Quelle nie als J2000 geankert. Test
+  `a_static_epoch_stays_absent_and_a_time_variable_zero_epoch_is_j2000`; `cargo check` 0/0, rustfmt clean.
+- **Braucht:** die `phi`-Direktive `model_kind` explizit (Mountain-Zeilenklasse), falls je ein
+  Format den Kind nicht schon trägt — heute leitet `source_model_kind(format)` ihn aus `gfc`/`gfct` ab.
 
 ### SABER — verdiktet: B + A (eigene Weltlinie + Messvolumen) (eigen)
 - **Status:** eigen · **verdiktet** (Rat 2026-10-14: B + A) | **Bindung:** eigen

@@ -2098,6 +2098,7 @@ pub struct LoopCtx {
     pub solar_rx: mpsc::Receiver<SolarCell>,
     pub machine_rx: mpsc::Receiver<(
         crate::archivar::Frame,
+        Option<crate::archivar::ModelKind>,
         Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
     )>,
     pub presence: Arc<RwLock<PresenceState>>,

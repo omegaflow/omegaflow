@@ -180,6 +180,7 @@ pub struct NameMeta {
 
 type FrameBundle = (
     crate::archivar::Frame,
+    Option<crate::archivar::ModelKind>,
     Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
 );
 type FrameRx = mpsc::Receiver<FrameBundle>;
@@ -217,6 +218,7 @@ impl MatrixMachine {
     pub fn new(
         rx: mpsc::Receiver<(
             crate::archivar::Frame,
+            Option<crate::archivar::ModelKind>,
             Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
         )>,
     ) -> MatrixMachine {
@@ -618,6 +620,7 @@ impl MatrixMachine {
     pub fn record(
         &mut self,
         frame: &crate::archivar::Frame,
+        model_kind: Option<crate::archivar::ModelKind>,
         channels: Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
     ) {
         let frame_anchor = match frame {
@@ -641,7 +644,8 @@ impl MatrixMachine {
             crate::archivar::Frame::Manifest => None,
         };
         for (channel, sensor) in channels {
-            if !channel.epoch.is_finite() {
+            if model_kind == Some(crate::archivar::ModelKind::Static) || !channel.epoch.is_finite()
+            {
                 continue;
             }
             let anchor = match &channel.position {
@@ -1153,6 +1157,7 @@ impl MatrixMachine {
         self.rng = ring_gen;
         let batches: Vec<(
             crate::archivar::Frame,
+            Option<crate::archivar::ModelKind>,
             Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
         )> = match &self.rx {
             Some(rx) => {
@@ -1164,8 +1169,8 @@ impl MatrixMachine {
             }
             None => Vec::new(),
         };
-        for (frame, batch) in batches {
-            self.record(&frame, batch);
+        for (frame, model_kind, batch) in batches {
+            self.record(&frame, model_kind, batch);
         }
         if self
             .last_state_save

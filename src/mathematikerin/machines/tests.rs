@@ -200,6 +200,7 @@ mod matrix_record_tests {
         m.state_path = "/tmp/omegaflow_matrix_test_state.bin".to_string();
         m.record(
             &frame_earth(),
+            None,
             vec![
                 mk_channel("ndbc_a_wspd", 21600.0, 3.0),
                 mk_channel("ndbc_a_wspd", 43200.0, 5.0),
@@ -219,8 +220,12 @@ mod matrix_record_tests {
         let (tx, rx) = mpsc::channel();
         let mut m = MatrixMachine::new(rx);
         m.state_path = "/tmp/omegaflow_matrix_test_state.bin".to_string();
-        tx.send((frame_earth(), vec![mk_channel("ndbc_a_wspd", 21600.0, 3.0)]))
-            .expect("send");
+        tx.send((
+            frame_earth(),
+            None,
+            vec![mk_channel("ndbc_a_wspd", 21600.0, 3.0)],
+        ))
+        .expect("send");
         m.tick(None, [0.0, 0.0, 0.0], 0.0, 1);
         assert_eq!(m.rings.len(), 1);
     }
@@ -236,6 +241,7 @@ mod matrix_record_tests {
         m.state_path = path.clone();
         m.record(
             &frame_earth(),
+            None,
             vec![
                 mk_channel("ndbc_a_wspd", 21600.0, 3.0),
                 mk_channel("ndbc_a_wspd", 43200.0, 5.0),
@@ -284,6 +290,7 @@ mod matrix_record_tests {
         m.state_path = path.clone();
         m.record(
             &frame_earth(),
+            None,
             vec![mk_channel("ndbc_a_wspd", 21600.0, 3.0)],
         );
 
@@ -423,7 +430,7 @@ mod matrix_rebuild_tests {
                 20.0 + i as f64,
             ));
         }
-        m.record(&frame, channels);
+        m.record(&frame, None, channels);
         let presence = body_fixed_to_icrs("earth", 0.0, 0.0, 0.0, t0, &buf.eph).unwrap();
         m.last_field = Some(Arc::new(buf));
         m.rebuild(presence, t0);
@@ -452,6 +459,7 @@ mod matrix_rebuild_tests {
         m.state_path = "/tmp/omegaflow_matrix_epoch_test_state.bin".to_string();
         m.record(
             &frame_earth(),
+            None,
             vec![
                 mk_channel("j2000", 0.0, 1.0),
                 mk_channel("pre_j2000", -86400.0, 2.0),
@@ -469,6 +477,31 @@ mod matrix_rebuild_tests {
         assert!(
             !m.metas.contains_key("absent"),
             "a NaN epoch is absent and stays silent"
+        );
+    }
+
+    #[test]
+    fn a_static_epoch_stays_absent_and_a_time_variable_zero_epoch_is_j2000() {
+        let (_tx, rx) = mpsc::channel();
+        let mut m = MatrixMachine::new(rx);
+        m.state_path = "/tmp/omegaflow_matrix_static_epoch_state.bin".to_string();
+        m.record(
+            &frame_earth(),
+            Some(crate::archivar::ModelKind::Static),
+            vec![mk_channel("gfc_c", 0.0, 1.0)],
+        );
+        assert!(
+            !m.metas.contains_key("gfc_c"),
+            "a static source has no applicable epoch; its 0.0 pad never anchors as J2000"
+        );
+        m.record(
+            &frame_earth(),
+            Some(crate::archivar::ModelKind::TimeVariable),
+            vec![mk_channel("gfct_c", 0.0, 2.0)],
+        );
+        assert!(
+            m.metas.contains_key("gfct_c"),
+            "0.0 stays a measured J2000 for a time-variable source"
         );
     }
 }
