@@ -2,7 +2,7 @@
 title: Handover — River-Folge 213
 class: handover
 date: 2026-10-15
-sha256: bd3df10b55d9dae37f8e12f008de09e58481c3c8f4bc82d1157e4140fa0e1bae
+sha256: c39235638317c585c3d69a6831269a3f7edc8e5c71beb507b2d050a10b2652e5
 status: live
 -->
 # Handover — River-Folge 213 (2026-10-15)
@@ -25,6 +25,7 @@ Wort | Datum | Quelle
 „ja bau es allerdings auch mit den sonstigen gates etc also lizenzprüfung z.b." | 2026-10-13 | Operator (Session, River-208) — der generische Aktor läuft **durch die vorhandenen Tore**: Lizenz-Tor, Fingerabdruck-Tor, Format-Tor, Registrierungs-Tor; kein Tor wird umgangen.
 „ja bitte" (auf die Rückfrage „warum möchtest du da hin?") | 2026-10-14 | Operator (Session, River-212) — die `Burn:`-Zeile trägt nur den öffentlichen `session_burn`-Aggregatstand mit Vorbehalt; die private `opencode.db` (isolierte Session-Zeile) wird **nicht** gelesen. Der parallele `agent_sandbox`-Commit `504641409` bindet `~/.local/share/opencode` zusätzlich ab — die Session-DB trägt das private Haus.
 „Starte die River-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes." | 2026-10-15 | Operator (Session, River-214) — der Pass läuft in einem Atom: still messen, Bekanntes bis zur Kante arbeiten, nur Ungeklärtes vorlegen.
+„bitte auch gegen den zufall prüfen und es erscheint mir fast so als gäbe es eine kurve und einen sweetspot ist das richtig?" | 2026-10-15 | Operator (Session, River-214) — die Einzelstation gegen die Kreisschub-Null prüfen und die Detektor-Kurve (Stationszahl/Schwelle) als Sweet-Spot messen.
 
 Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `state/operator-gespraeche/2026-10-14-river.md` (Vorsession).
 
@@ -135,7 +136,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `st
   - **25 Stationen subauroral** (Lauf `38690576424`, river-214): 13 150 080 Samples, Schwelle 16.61 nT/min, **4** Onsets (2000–2024); prec/rec 0.250/0.000008 · 0.750/0.000023 · 1.000/0.000046; Null `prec_ge=61/12/2`, `rec_ge=61/27/10` → bei 15 min **nicht** über der Null, bei 5/30 min an der Grenze — die subaurorale Hülle ist nahezu stumm (4 Onsets in 25 Jahren).
   - **Riss benannt (ungeglättet):** die Netzhülle detektiert viel weniger Onsets als die Einzelstation (rec 0.002–0.004 vs 0.066–0.125) — mehr Stationen heben die Detektorschwelle (6 Stationen 17.1 → 31 auroral 129.0 → subauroral nahezu stumm). Die wenigen Netzfunde liegen teils über dem Kreisschub-Null (6 Stationen: alle 200), teils nicht (subauroral); der Einzelstations-Lauf ist **nicht** gegen den Null getestet — der Vergleich ist noch nicht äpfel-gleich.
 - **Blockade:** keine — der midlat-Lauf (`38690576605`, 98 Stationen) läuft noch im CI.
-- **Braucht:** (a) den laufenden midlat-Lauf auswerten — dann trägt der Familien-Sweep; (b) den Einzelstations-Lauf mit `--null 200` nachziehen, damit der Vergleich trägt.
+- **Braucht:** (a) den laufenden midlat-Lauf auswerten; (b) **Operator-Wort 2026-10-15:** die Einzelstation gegen die Null prüfen und die Kurve-/Sweet-Spot-Frage messen — dazu ist `gic_onset_detector --sweep-k` um `--null` erweitert (jeder Schwellepunkt trägt seine Surrogat-Zahl) und in `gic-al-network.yml` ein Sweep über `k=1,1.5,2,3,4,6,8,12` für die Einzelstation (`abk`) und die Familien-Einhüllende verdrahtet; `gic-onset.yml` fährt die Einzelstation jetzt mit `--null 200`. Der Lauf folgt dem Commit.
 
 ### GIC-Familien-Partition — deklariertes Artefakt gebaut; die zwei Register-Nägel offen
 - **Status:** eigen (Artefakt gebaut) | **Bindung:** eigen (Rest: Mountain-Nägel)

@@ -33,10 +33,11 @@ jobs:
         run: |
           set -euo pipefail
           curl -sSL -o /tmp/dbdt.bin "${{ inputs.series }}"
-      - name: Bay-onset detector — self-derived onsets against McPherron
+      - name: Bay-onset detector — self-derived onsets against McPherron, with the surrogate null
         run: |
           set -euo pipefail
           cargo run -p omegaflow-measure --release --bin gic_onset_detector -- \
             --series /tmp/dbdt.bin \
             --station abk \
-            --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt
+            --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
+            --null 200
