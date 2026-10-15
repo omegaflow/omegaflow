@@ -53,6 +53,10 @@ jobs:
             url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/venus_radar_Processed.zip"
             origin: "https://zenodo.org/api/records/18176179/files/Processed.zip/content"
             sha256: 8018463de4d911b659f2916830fe91594f6f11cbffa4b7d336f96d9638856a20
+          - asset: Venus_Venera_Backscatter_Global_Polar_840m_v1.tif
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif"
+            origin: "https://zenodo.org/api/records/18176179/files/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif/content"
+            sha256: 98d80740c6d0c2b0b4e8df388123443d4f6314efc45bf7ed788806a255f59c50
           - asset: resonance_schumann.csv
             url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/resonance_schumann.csv"
             origin: "https://zenodo.org/api/records/15225820/files/NiNo_SR_params_2024.csv/content"

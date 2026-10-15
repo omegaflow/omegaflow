@@ -30515,6 +30515,13 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 0b2da752990e2d92a46622cb49efd7bcea758ebcb5f47300d8413aad18949959
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif
+terms CC-BY-4.0 https://zenodo.org/records/18176179
+origin https://zenodo.org/api/records/18176179/files/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 98d80740c6d0c2b0b4e8df388123443d4f6314efc45bf7ed788806a255f59c50
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/alerce_features.parquet
 terms CC-BY-4.0 https://zenodo.org/records/11123894
 origin https://zenodo.org/api/records/11123894/files/features.parquet/content
