@@ -2,7 +2,7 @@
   title: Mail — Datenanfrage an die Produzenten des Mars-Analog-Datensatzes (CUGB)
   class: handover
   date: 2026-10-15
-  sha256: c186d0e564926b39930feecb4f504fc42aa0cbf5a196e1ab6bd0aeccfcc8d00b
+  sha256: ec0d7d43b1f8ec9cae7ebdbb08364175f13c4829e5e38a9e9dfa8fb3f85184f4
   status: live
   see-also: state/stimmen/2026-10-15-china-planetendaten-rat-verdikt.md
 -->
@@ -22,7 +22,7 @@ direkte, billige Weg.
 **To:** `zzkang@cugb.edu.cn`, `huteng@cugb.edu.cn`
 **Subject:** Data request — multi-element high-resolution topography database of Mars-like landforms (03.70.00024-V01)
 
-Hello,
+Dear Prof. Kang, dear Prof. Hu,
 
 I found your dataset **“Multi-element high-resolution topography database of Mars-like
 landforms”** (NSSDC `03.70.00024-V01`) through the China NSSDC portal. It is exactly the kind of
@@ -57,6 +57,9 @@ With kind regards,
 ---
 
 ## Bitte an den Operator
+- **Anrede-Titel prüfen:** „Prof. Kang, Prof. Hu" — gemessen belegt ist nur „Kang Zhizhong and Hu
+  Teng's group, CUGB" (Crossref: beide Mitautoren auf Zhurong-/Mars-Arbeiten). Ist einer „Dr."
+  oder anderes, anpassen.
 - **Zweck-Satz** `[MORPHOMETRIC COMPARISON: …]` vor dem Senden anpassen — er muss wahr sein.
 - **Nie senden lassen durch die Maschine.** Ein Klick, eine Entscheidung — deine.
 - Eine Antwort ist eine **Zulieferung**: am Baum messen, Verdikt durch Mountain; nie roh glauben.
