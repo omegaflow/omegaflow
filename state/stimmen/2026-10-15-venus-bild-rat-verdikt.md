@@ -103,10 +103,22 @@ Probeabruf der ersten 64 KiB von `Venus_RadarBasemap_2025_Global_75m_v1.tif` per
 am Dateiende), aber **kein SubIFD-Tag** (0x014A); damit ist es **noch kein vollständiges COG**,
 sondern ein gekacheltes BigTIFF. Die Overviews wären ggf. anzuhängen (einmalige Umschreibung).
 
+## Der Venera-Polar-Kopf und die Haus-Grenze (2026-10-15)
+
+- **`Venus_Venera_Backscatter_Global_Polar_840m_v1.tif`** (193,7 MB): klassisches TIFF,
+  **18 596 × 18 354 px**, **8-bit, LZW, Graustufen, gekachelt 128×128** (21 024 Kacheln),
+  **GeoKeys**; **Range + CORS geehrt** (HTTP 206).
+- **Das Basemap** ist ebenso **gekachelt** (BigTIFF, 128×128, LZW, Graustufen, GeoKeys).
+- **Grenze gemessen:** das Haus hat **keinen COG-/Overviews-Bauer** — kein `gdal`, kein
+  Overview-Werkzeug im Baum (`sgrep` leer). **„Einen COG bauen" ist heute keine Haus-Fähigkeit.**
+  Die **Overviews sind im Kopf nicht bestätigt** (der IFD-Kettenzeiger des Vordersatzes endet bei 0)
+  → `pending`.
+- **Der Weg, der trägt:** die **gekachelten GeoTIFFs spiegeln** (`raw_mirror`) und **client-seitig
+  per HTTP-Range** lesen — der Zoom holt die Kacheln. **Overviews** (für schnellen Zoom) bräuchten
+  einen **externen/CI-Schritt** → **benannter Riss / Rat-Frage** (kein stiller Haus-Bau).
+
 ## Nächster begrenzter Messschritt
 
-Der Kopf-Abruf hat entschieden: die Quelle ist **gekachelt, komprimiert, georeferenziert** und
-**Range-fähig** — der COG-Weg steht. Nächste Schritte: (1) den ersten kleinen Durchlauf am
-**Venera-Polar (194 MB)** — COG bauen, sha256, Footprint, Blick-Test; (2) den Kopf des
-**Provenienz-Rasters** lesen und die 12 Klassen bestätigen; (3) erst dann das 80,9-GB-Basemap
-(registrieren + splitten, Overviews falls nötig einmalig anhängen).
+(1) den Kopf des **Provenienz-Rasters** lesen und die 12 Klassen bestätigen; (2) die
+**Overviews-Frage** entscheiden (annehmen ohne Overviews, oder einen COG-Schritt im CI benennen);
+(3) das **80,9-GB-Basemap** registrieren + splitten (`raw_mirror`), client-seitig per Range lesen.
