@@ -2,7 +2,7 @@
   title: Standpass — Mycelium (privat)
   class: zustand
   date: 2026-10-15
-  sha256: 99da7ee9ee484b4fbe558782be8a6a16895b7c26cadff730bc3b5e3728ecf12d
+  sha256: 3b75445e163928a0a5182e9e355ef1d180497cbb44287e8ea67caa3c9b7b6bbd
   status: live
   see-also: docs/zustand/standing-pass.md
 -->
@@ -11,7 +11,7 @@
 Vollständige Fassung. Öffentlich gilt allein die Projektion
 `docs/zustand/standing-pass.md` (nur HEAD + rote Läufe, kein Personenbezug).
 
-HEAD `b17570464` (== `origin/main`) · geschrieben 2026-10-15 16:50Z · **Mycelium-358**.
+HEAD `b07e37f82` (== `origin/main`) · geschrieben 2026-10-15 17:00Z · **Mycelium-358**.
 
 ## Rote Läufe (gemessen via `ci_manage`, kein Polling)
 
@@ -69,14 +69,20 @@ Push-Läufe sind **queued/in_progress/unread** — `zenodo-raw-cdn` spiegelt die
 - Offen (in `mycelium-folge358`): `xfer:mycelium-352-5` (Mountain) · `xfer:mycelium-356-5` (echoed) ·
   `xfer:mountain-354-1` (echoed) · `xfer:mycelium-352-1`/`-2` (echoed) · `xfer:mountain-348-1`
   (Mountain) · `xfer:mycelium-356-3` (River) · `xfer:river197-6` (echoed).
+- `river219-de2spdf` / `-sabergats` / `-juicespice` → eigene Hol-/Ablage (kein Token);
+  `river219-gic2` → River selbst.
 - Gefaltet/geschlossen: mountain-folge355, river-folge219.
 
 ## Gearbeitet (dieses Rund)
 
 - Venera-Polar, Provenienz und Arecibo 1988 gespiegelt + registriert; Provenienz-Kopf + Klassen
   gemessen; `themis_asi-fodg-cdn`-Naht repariert.
-- folge357 → `archiv/`; folge358 geschrieben; Commits `cf6c8b4d9` / `3188d3a88` / `b20976b78` /
-  `51bcd7fe1` / `61d824527` / `b17570464` gepusht.
+- **Basemap-Formatentscheidung in der Linie gefällt** (kein Rückfrage-Punkt): byte-exakter
+  `.parts`-Split (Rat-Form), md5-Ganzes + sha256/Teil; bis der streamende Splitter steht,
+  provisorische HTTP-Range-Lesung vom Origin-COG.
+- **River-Übergabe gefaltet:** DE-2/SPDF, SABER/GATS, JUICE/SPICE sind eigene Hol-/Ablage-Aufgaben
+  (kein Token); GIC-2 trägt River selbst.
+- folge357 → `archiv/`; folge358 geschrieben; Commits `cf6c8b4d9` … `b17570464` / `b07e37f82` gepusht.
 
 ## Snapshot / Tools
 
