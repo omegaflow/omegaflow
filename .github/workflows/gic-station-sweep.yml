@@ -41,6 +41,14 @@ on:
         description: comma list of FIXED detector thresholds (nT/min), held constant across every station count — the N-sweep isolation (Rat 2026-10-15; the station count currently enters twice, via the fusion and via the recomputed adaptive threshold); empty = the detector's adaptive robust threshold
         required: false
         default: ""
+      window:
+        description: fixed comparison window as start,end (ISO YYYY-MM-DD); held constant across every station count so the window no longer drifts with N (Rat verdict 2026-10-15); empty = the series span
+        required: false
+        default: ""
+      target_yield:
+        description: onsets per day; when set, the detector calibrates each station count's threshold to this equal yield (overrides thresholds) — the operating point is held equal, not the threshold
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -89,6 +97,13 @@ jobs:
           if [ -n "${{ inputs.thresholds }}" ]; then
             thr_args="$(echo "${{ inputs.thresholds }}" | tr ',' ' ')"
           fi
+          win_args=""
+          if [ -n "${{ inputs.window }}" ]; then
+            wstart="$(echo "${{ inputs.window }}" | cut -d, -f1)"
+            wend="$(echo "${{ inputs.window }}" | cut -d, -f2)"
+            win_args="--window-start $wstart --window-end $wend"
+          fi
+          ty="${{ inputs.target_yield }}"
           for n in $(echo "${{ inputs.counts }}" | tr ',' ' '); do
             if [ "$n" -lt 2 ]; then
               echo "=== stations $n skipped (a 1-station envelope is none) ===" >> /tmp/sweep.txt
@@ -100,19 +115,25 @@ jobs:
               --family /tmp/prefix.txt --dir /tmp/xyz --decl auto \
               --baseline-block ${{ inputs.baseline_block }} --min-stations 2 \
               --out /tmp/env.bin >> /tmp/sweep.txt 2>&1
-            if [ -z "$thr_args" ]; then
+            if [ -n "$ty" ]; then
+              echo "=== stations $n target_yield $ty ===" >> /tmp/sweep.txt
               cargo run --release -p omegaflow-measure --bin gic_onset_detector -- \
-                --series /tmp/env.bin --station "n$n" \
+                --series /tmp/env.bin --station "n${n}_yield${ty}" \
                 --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
-                --null ${{ inputs.surrogates }} >> /tmp/sweep.txt 2>&1
-            else
+                --null ${{ inputs.surrogates }} --target-yield "$ty" $win_args >> /tmp/sweep.txt 2>&1
+            elif [ -n "$thr_args" ]; then
               for thr in $thr_args; do
                 echo "=== stations $n fixed_threshold $thr ===" >> /tmp/sweep.txt
                 cargo run --release -p omegaflow-measure --bin gic_onset_detector -- \
                   --series /tmp/env.bin --station "n${n}_thr${thr}" \
                   --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
-                  --null ${{ inputs.surrogates }} --threshold "$thr" >> /tmp/sweep.txt 2>&1
+                  --null ${{ inputs.surrogates }} --threshold "$thr" $win_args >> /tmp/sweep.txt 2>&1
               done
+            else
+              cargo run --release -p omegaflow-measure --bin gic_onset_detector -- \
+                --series /tmp/env.bin --station "n$n" \
+                --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
+                --null ${{ inputs.surrogates }} $win_args >> /tmp/sweep.txt 2>&1
             fi
           done
       - uses: actions/upload-artifact@v4

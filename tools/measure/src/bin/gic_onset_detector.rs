@@ -218,6 +218,110 @@ fn min_separation_of(args: &[String]) -> f64 {
     }
 }
 
+fn parse_day(s: &str) -> Option<f64> {
+    let date = s.split('T').next()?;
+    let mut it = date.split('-');
+    let y: i64 = it.next()?.parse().ok()?;
+    let m: i64 = it.next()?.parse().ok()?;
+    let d: i64 = it.next()?.parse().ok()?;
+    if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
+        return None;
+    }
+    Some(days_from_civil(y, m, d) * DAY)
+}
+
+fn window_of(args: &[String]) -> Option<(f64, f64)> {
+    let lo = parse_day(&arg_value(args, "--window-start")?)?;
+    let hi = parse_day(&arg_value(args, "--window-end")?)? + DAY - 1.0;
+    if hi > lo { Some((lo, hi)) } else { None }
+}
+
+fn onsets_within(
+    series: &[(f64, f64)],
+    threshold: f64,
+    min_sep: f64,
+    lo: f64,
+    hi: f64,
+) -> Vec<Onset> {
+    detect_onsets(series, threshold, min_sep)
+        .into_iter()
+        .filter(|o| o.t_unix >= lo && o.t_unix <= hi)
+        .collect()
+}
+
+fn count_onsets(series: &[(f64, f64)], threshold: f64, min_sep: f64, lo: f64, hi: f64) -> usize {
+    let mut count = 0usize;
+    let mut i = 0usize;
+    while i < series.len() {
+        if !(series[i].1.is_finite() && series[i].1 >= threshold) {
+            i += 1;
+            continue;
+        }
+        let mut peak_idx = i;
+        let mut peak_t = series[i].0;
+        let mut last_above = i;
+        let mut j = i + 1;
+        while j < series.len() {
+            if series[j].0 - series[last_above].0 >= min_sep {
+                break;
+            }
+            if series[j].1.is_finite() && series[j].1 >= threshold {
+                if series[j].1 > series[peak_idx].1 {
+                    peak_idx = j;
+                    peak_t = series[j].0;
+                }
+                last_above = j;
+            }
+            j += 1;
+        }
+        if peak_t >= lo && peak_t <= hi {
+            count += 1;
+        }
+        i = j;
+    }
+    count
+}
+
+fn calibrate_threshold(
+    series: &[(f64, f64)],
+    lo: f64,
+    hi: f64,
+    min_sep: f64,
+    target_per_day: f64,
+) -> Option<f64> {
+    let span_days = (hi - lo) / DAY;
+    if !(span_days > 0.0) || !(target_per_day > 0.0) {
+        return None;
+    }
+    let target = target_per_day * span_days;
+    let mut vals: Vec<f64> = series
+        .iter()
+        .filter(|(t, v)| v.is_finite() && *t >= lo && *t <= hi)
+        .map(|(_, v)| *v)
+        .collect();
+    if vals.is_empty() {
+        return None;
+    }
+    vals.sort_by(|a, b| a.total_cmp(b));
+    let step = vals.len() / 64;
+    let mut best_t = vals[0];
+    let mut best_d = f64::INFINITY;
+    let last = vals.len() - 1;
+    for (k, &t) in vals.iter().enumerate() {
+        let sampled = step == 0 || k % step == 0;
+        if !sampled && k != last {
+            continue;
+        }
+        let n = count_onsets(series, t, min_sep, lo, hi) as f64;
+        let d = (n - target).abs();
+        if d < best_d {
+            best_d = d;
+            best_t = t;
+        }
+    }
+    Some(best_t)
+}
+
 fn mean(values: &[f64]) -> f64 {
     values.iter().sum::<f64>() / values.len() as f64
 }
@@ -433,39 +537,60 @@ fn main() {
         run_sweep(&series, &station, &csv, &args);
         return;
     }
-    let threshold = match arg_value(&args, "--threshold") {
-        Some(t) => match t.parse::<f64>() {
+    let min_separation_s = min_separation_of(&args);
+    let (lo, hi) = match window_of(&args) {
+        Some(w) => w,
+        None => (series[0].0, series[series.len() - 1].0),
+    };
+    let threshold = if let Some(s) = arg_value(&args, "--target-yield") {
+        let per_day = match s.parse::<f64>() {
             Ok(v) if v.is_finite() && v > 0.0 => v,
             _ => {
-                eprintln!("--threshold must be a positive number (nT/min)");
+                eprintln!("--target-yield must be a positive onsets-per-day count");
                 std::process::exit(2);
             }
-        },
-        None => match robust_threshold(&series) {
-            Some(v) => v,
-            None => {
+        };
+        match calibrate_threshold(&series, lo, hi, min_separation_s, per_day) {
+            Some(v) => {
                 println!(
-                    "gic_onset_detector{station} samples={} threshold=none — the series carries no variation (0 honored: no onset)",
-                    series.len()
+                    "gic_onset_detector{station} target_yield={per_day:.4}/day window={}..{} -> threshold={v:.4}",
+                    iso_utc(lo),
+                    iso_utc(hi)
                 );
-                return;
+                v
             }
-        },
-    };
-    let min_separation_s = match arg_value(&args, "--min-separation") {
-        Some(s) => match s.parse::<f64>() {
-            Ok(v) if v.is_finite() && v > 0.0 => v,
-            _ => {
-                eprintln!("--min-separation must be positive seconds");
+            None => {
+                eprintln!("--target-yield needs a positive window span and a varying series");
                 std::process::exit(2);
             }
-        },
-        None => MIN_SEPARATION_S,
+        }
+    } else {
+        match arg_value(&args, "--threshold") {
+            Some(t) => match t.parse::<f64>() {
+                Ok(v) if v.is_finite() && v > 0.0 => v,
+                _ => {
+                    eprintln!("--threshold must be a positive number (nT/min)");
+                    std::process::exit(2);
+                }
+            },
+            None => match robust_threshold(&series) {
+                Some(v) => v,
+                None => {
+                    println!(
+                        "gic_onset_detector{station} samples={} threshold=none — the series carries no variation (0 honored: no onset)",
+                        series.len()
+                    );
+                    return;
+                }
+            },
+        }
     };
-    let onsets = detect_onsets(&series, threshold, min_separation_s);
+    let onsets = onsets_within(&series, threshold, min_separation_s, lo, hi);
     println!(
-        "gic_onset_detector{station} samples={} threshold={threshold:.4} nT/min min_separation={min_separation_s:.0}s onsets={}",
+        "gic_onset_detector{station} samples={} threshold={threshold:.4} nT/min min_separation={min_separation_s:.0}s window={}..{} onsets={}",
         series.len(),
+        iso_utc(lo),
+        iso_utc(hi),
         onsets.len()
     );
     for o in &onsets {
@@ -491,8 +616,6 @@ fn main() {
         }
     }
     if let Some(mcp_path) = arg_value(&args, "--mcpherron") {
-        let lo = series[0].0;
-        let hi = series[series.len() - 1].0;
         let mcp: Vec<f64> = read_mcpherron(&mcp_path)
             .into_iter()
             .filter(|&t| t >= lo && t <= hi)
@@ -641,5 +764,64 @@ mod tests {
         assert_eq!(percentile(&mut v, 0.95), 4.0);
         let mut w = [10.0, 0.0, 5.0];
         assert_eq!(percentile(&mut w, 0.0), 0.0);
+    }
+
+    #[test]
+    fn a_day_parses_to_the_civil_epoch() {
+        assert_eq!(parse_day("1970-01-01"), Some(0.0));
+        assert_eq!(parse_day("1970-01-02"), Some(DAY));
+        assert_eq!(
+            parse_day("2024-12-31T23:59:00Z"),
+            Some(days_from_civil(2024, 12, 31) * DAY)
+        );
+        assert_eq!(parse_day("not-a-date"), None);
+        assert_eq!(parse_day("2024-13-01"), None);
+    }
+
+    #[test]
+    fn the_window_takes_the_start_day_and_covers_the_end_day() {
+        let args = vec![
+            "--window-start".to_string(),
+            "2000-01-01".to_string(),
+            "--window-end".to_string(),
+            "2000-01-02".to_string(),
+        ];
+        let (lo, hi) = window_of(&args).expect("a well-formed window");
+        assert_eq!(lo, days_from_civil(2000, 1, 1) * DAY);
+        assert_eq!(hi, lo + 2.0 * DAY - 1.0);
+        assert_eq!(window_of(&[]), None);
+    }
+
+    #[test]
+    fn onsets_within_keeps_only_the_window() {
+        let s = series(&[
+            (0.0, 5.0),
+            (2000.0, 0.0),
+            (4000.0, 5.0),
+            (6000.0, 0.0),
+            (8000.0, 5.0),
+        ]);
+        let all = detect_onsets(&s, 1.0, 1800.0);
+        assert_eq!(all.len(), 3);
+        let windowed = onsets_within(&s, 1.0, 1800.0, 3000.0, 7000.0);
+        assert_eq!(windowed.len(), 1);
+        assert_eq!(windowed[0].t_unix, 4000.0);
+        assert_eq!(count_onsets(&s, 1.0, 1800.0, 3000.0, 7000.0), 1);
+    }
+
+    #[test]
+    fn the_calibrated_threshold_meets_the_yield() {
+        let s = series(&[
+            (0.0, 0.0),
+            (3600.0, 10.0),
+            (7200.0, 0.0),
+            (86400.0, 0.0),
+            (90000.0, 10.0),
+            (93600.0, 0.0),
+        ]);
+        let (lo, hi) = (0.0, 2.0 * DAY);
+        let thr = calibrate_threshold(&s, lo, hi, 1800.0, 1.0).expect("a calibratable series");
+        let n = count_onsets(&s, thr, 1800.0, lo, hi);
+        assert_eq!(n, 2);
     }
 }
