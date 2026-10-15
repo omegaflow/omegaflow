@@ -86,11 +86,27 @@ beide Lager: die **Quelle** (COG) und die **Geste** (HiPS als Derivat).
   Overviews, NoData: `pending`.
 - **Der 80,9-GB-Transport ist im Haus noch nie gefahren** — ob der Spiegel/CI das trägt, ungemessen.
 
+## Der TIFF-Kopf ist gemessen (2026-10-15)
+
+Probeabruf der ersten 64 KiB von `Venus_RadarBasemap_2025_Global_75m_v1.tif` per HTTP Range:
+
+- **HTTP 206**, `content-range: bytes 0-65535/80909342816`, `accept-ranges: bytes`,
+  **`access-control-allow-origin: *`** → die Quelle **ehrt Range und CORS**.
+- **BigTIFF, Little-Endian** (Version 43).
+- **507 952 × 253 464 px** (≈ 74,9 m/px am Äquator — die „75 m"); ~**0,63 B/px**.
+- **8-bit unsigned, LZW, Graustufen** (`Photometric 1 = BlackIsZero`, SamplesPerPixel 1).
+- **gekachelt 128×128** — ~**7 846 741 Kacheln** (TileWidth/TileLength 128).
+- **GeoTIFF-GeoKeys** vorhanden: `ModelPixelScale`, `ModelTiepoint`, `GeoKeyDirectory`,
+  `GeoDoubleParams`, `GeoAsciiParams`.
+
+**Offen (`pending`):** ob das Bild **Overviews** trägt — der Kopf zeigt **zwei IFDs** (Offset 16 und
+am Dateiende), aber **kein SubIFD-Tag** (0x014A); damit ist es **noch kein vollständiges COG**,
+sondern ein gekacheltes BigTIFF. Die Overviews wären ggf. anzuhängen (einmalige Umschreibung).
+
 ## Nächster begrenzter Messschritt
 
-**Ein Probeabruf:** die ersten ~64 KiB von `Venus_RadarBasemap_2025_Global_75m_v1.tif` per HTTP
-Range, TIFF-Kopf dekodieren (BigTIFF? Kompression? Bittiefe/SampleFormat? Strip/Tile? SubIFDs/
-Overviews? GDAL_NODATA? ModelPixelScale/Tiepoint?) — **und ob die Quelle Range (HTTP 206) ehrt**.
-Fällt das positiv aus (schon gekachelt/komprimiert), ist der Weg: registrieren + splitten. Danach
-der erste kleine Durchlauf am **Venera-Polar (194 MB)**: COG bauen, sha256, Footprint, Blick-Test.
-Zweiter Schritt: den Kopf des **Provenienz-Rasters** lesen und die 12 Klassen bestätigen.
+Der Kopf-Abruf hat entschieden: die Quelle ist **gekachelt, komprimiert, georeferenziert** und
+**Range-fähig** — der COG-Weg steht. Nächste Schritte: (1) den ersten kleinen Durchlauf am
+**Venera-Polar (194 MB)** — COG bauen, sha256, Footprint, Blick-Test; (2) den Kopf des
+**Provenienz-Rasters** lesen und die 12 Klassen bestätigen; (3) erst dann das 80,9-GB-Basemap
+(registrieren + splitten, Overviews falls nötig einmalig anhängen).
