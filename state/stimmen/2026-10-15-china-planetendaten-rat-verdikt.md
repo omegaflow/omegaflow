@@ -96,9 +96,13 @@ hängt daran, ob das Haus eine terrestrische Mars-Analog-Morphometrie braucht (Z
 - **6:** die **abgelaufene** Schutzfrist (2026-03-05) datiert prüfen; die LOLA-Polarprodukte offen.
 - **2:** LOLA/lunare SH — über das offene LOLA-Modell gedeckt (kein eigener Schritt).
 - **5:** die **einzige** Zeile mit möglichem eigenem Zweck (Drohnen-Feldmessung terrestrischer
-  Mars-Analoga). Einmal messen, ob das Haus eine solche Analog-Morphometrie braucht; **nur dann**
-  und **nur für 5** wäre ein gezielter Antrag überhaupt zu erwägen. Sonst `pending`.
-- **Kein Send.**
+  Mars-Analoga, linkId `14306`, datasetId `03.70.00024-V01`). **Der Record nennt die Produzenten
+  namentlich:** `zzkang@cugb.edu.cn`, `huteng@cugb.edu.cn` (Kang Zhizhong / Hu Teng, China
+  University of Geosciences Beijing). **Neben dem Portal-Antrag steht damit die direkte
+  Produzenten-Anfrage** — eine kurze Datenanfrage an die Wissenschaftler, Operator-Hand, umgeht das
+  Formular. Der Weg ist **nicht** „auf keinen Fall": er ist eine Mail. Erst messen, ob das Haus die
+  Analog-Morphometrie braucht; **nur dann** anfragen. Sonst `pending`.
+- **Kein Send** (der Send bleibt die Hand des Operators).
 
 **Kern in einem Satz:** Fünf Zeilen sind gedeckt oder verwandt, eine nicht adressierbar, **keine
 beantragt** — der offene Weg ist der wahre Weg; der bedingte Weg ist offen, nicht begründet.
