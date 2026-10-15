@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 357 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: d14891168448d2558210cf633b3884a4d77e9946ee369710cef319919f39305b
+  sha256: 1aef16ea4b9bf1853ea5ae007d78a0e170daeeda9776611588a583a5c88606c6
   status: live
 -->
 # Handover — Mycelium-Folge 357 (2026-10-15)
@@ -116,9 +116,13 @@ neu ausgelegt).
   **8-bit, LZW, Graustufen, gekachelt 128×128** (~7,85 M Kacheln), **GeoKeys**; **Range + CORS
   geehrt** (HTTP 206, `access-control-allow-origin: *`). **Offen:** Overviews (zwei IFDs, kein
   SubIFD-Tag) → noch kein vollständiges COG.
-- **Braucht:** (1) den ersten COG am **Venera-Polar (194 MB)** (bauen, sha256, Footprint, Blick);
-  (2) den Kopf des **Provenienz-Rasters** lesen (12 Klassen); (3) die Bild-Registerzeilen (meine
-  `url`/`origin`/`compiler`, Mountains `terms`); (4) Overviews des Basemaps ggf. einmalig anhängen.
+- **Der Venera-Polar-Kopf ist gemessen** (2026-10-15): klassisches TIFF, 18 596 × 18 354 px,
+  **8-bit, LZW, Graustufen, gekachelt 128×128** (21 024 Kacheln), GeoKeys; Range + CORS. **Haus-Grenze
+  gemessen: kein COG-/Overviews-Bauer im Baum** (kein `gdal`), Overviews `pending`.
+- **Braucht:** (1) die **Overviews-Frage** entscheiden (ohne lesen, oder einen COG-Schritt im CI
+  benennen — Rat-Frage); (2) den Kopf des **Provenienz-Rasters** lesen (12 Klassen); (3) die
+  **Bild-Registerzeilen** der gespiegelten GeoTIFFs (`url`/`origin`/`compiler` = ich, `terms` =
+  Mountain) — der Träger wird **gespiegelt + client-seitig per Range** gelesen, nicht „gebaut".
 
 ### Vier Endpunkte — SEANOE/GEOFON offen (ICGEM/gamma-cat gefaltet)
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen | **Trigger:** Mountains Zulassung
