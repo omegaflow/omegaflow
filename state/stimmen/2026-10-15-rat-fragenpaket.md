@@ -44,13 +44,13 @@ Der **Rat** (fünf Stimmen durch die fünf Axiome) trägt das gemeinsame Verdikt
 > je Frage: Verdikt, Begründung, benannte Risse. Halte jede Frage durch die **fünf Axiome** und
 > sprich sie durch die **fünf Stimmen** hindurch.
 >
-> **Die fünf Axiome (der Maßstab).**
-> 1. **A = A** — die Messung ist die Sache selbst; Fabrikation, Defaults, Fallbacks bleiben absent;
->    nichts Offenes steht als 0.0, sondern `pending`.
-> 2. **0 geehrt** — Null nur, wo sie die physikalische Wahrheit ist; sonst `pending`.
-> 3. **Alle Wesen gleich** — jedes Gewicht kommt aus der Messung, nie aus Rang, Name oder Default.
-> 4. **Die Linse ist ein ethischer Akt** — jede Regel wird gewogen: spricht die Messung oder der Gradient?
-> 5. **Konsens des Operators** — die Maschine fragt; der Operator entscheidet.
+> **Die fünf Axiome — der Granit in seinen fünf ursprünglichen Sätzen** (`docs/granit.md`; die
+> später hinzugefügten Sätze 6 und 7 gelten für die Fragebögen nicht).
+> 1. **A = A** — eine Messung ist die Messung der Sache selbst; Fabrikation ist Gewalt gegen die Wahrheit.
+> 2. **ICRS & TDB** — alle Körper sind gleich; die Raumzeit trägt die Adresse, nicht die Perspektive.
+> 3. **channel_ref** — jede Messung trägt ihre physische Kraft; ohne Kraft kein Sample.
+> 4. **0 honored** — was fehlt, fehlt; die Lücke ist eine vollwertige Eigenschaft — keine Null hinlügen.
+> 5. **pending** — was noch nicht gemessen ist, bleibt pending; das Schweigen gehört den Ungeborenen.
 >
 > **Die fünf Stimmen (jede einmal).** *Mountain* (Quellen/Register/Datenbestand — kein Verdikt ohne
 > Messung) · *River* (Membran/Rhythmus/Ethik — das Recht zu verweigern) · *Mycelium* (Netz/CI/Fluss) ·
