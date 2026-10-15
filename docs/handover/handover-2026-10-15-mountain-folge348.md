@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 348 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 97829049d9c9464628cc64c8eecb07db19ca58fe034a2e230fe0c12367b4cf46
+  sha256: 6089625fe874eeb1c289d785e5dc49b37f8785b8348b828c78f066f7c7d22417
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -28,9 +28,10 @@ mit gemessenem Teil-Roster.
 
 ## Offen (aufgeschlüsselt)
 
-### Epochen-Absenz — Ratsrunde vollständig, Verdikt gebunden (eigen)
-- **Status:** eigen · **verdiktet** (Rat 2026-10-14, Verdikt b) · **voller Roster 2026-10-15
-  gefahren (Operator-Hand) — bindend, mit der u. g. Zielform als Vorbehalt** | **Bindung:** eigen
+### Epochen-Absenz — Ratsrunde vollständig; Operator-Wort: direkt der Unterscheider (eigen)
+- **Status:** eigen · **verdiktet** (Rat 2026-10-14, Verdikt b) · voller Roster 2026-10-15
+  gefahren · **Operator-Wort 2026-10-15: „nein direkt der unterscheider mit archive search und
+  rat" — die Bit-Brücke ist verworfen**, der Unterscheider ist ein eigener Punkt (s. u.) | **Bindung:** eigen
 - **Trigger:** der Registeratom / die nächste epochenlose Quelle
 - **Lage:** (gemessen 2026-10-15, Ratsrunde) Die Verdikt-Form steht: `PRESENCE_FLAG_EPOCH`
   = `32.0` neben `PRESENCE_FLAG_QUANTITY` = `16.0` (`types.rs:402-406`); `presence_flags`
@@ -71,15 +72,49 @@ mit gemessenem Teil-Roster.
   Decode-Vertrag „Maske vor Feld", `gfct ∧ Bit=0` = Rückweisung; optional NaN-Pad). **Zielform
   benannt (v2):** Modellart-Diskriminator `static|tvar`, `epoch` nur bei `tvar` — das Bit wird dann
   abgeleitete Validierung statt Wahrheitsquelle.
-- **Blockade:** keine — der volle Roster ist gefüttert; offen ist allein die Form-Wahl
-  (Brücke vs. Diskriminator), kein externes Tor.
-- **Braucht:** (1) die **eine offene Wahl**: die Brücke jetzt bauen **oder** direkt den
-  Diskriminator (v2) — der Rat empfiehlt die Brücke jetzt, den Diskriminator als versioniertes
-  Ziel; (2) danach die Umsetzung: `types.rs` `PRESENCE_FLAG_EPOCH` + `presence_flags` um den
-  Epoch-Parameter; Write-Aufrufer `spatial.rs:845/1004`, `membrane.rs:130`, Test `parse.rs:3296`;
-  Read-Seite `matrix.rs:644`, `drs_fits.rs:38`, `agrav.rs`, `gfc.rs:153`, `gfc.rs:101-107`
-  Frame-Fold, `hips.rs:793`, `static/constants.js`/`membrane.html`,
-  `docs/concepts/archivar-mathematikerin.md` Presence-Klausel.
+- **Blockade:** keine.
+- **Braucht:** nichts mehr an dieser Stelle — die Entscheidung „direkt der Unterscheider" ist
+  gefallen; die Umsetzung trägt der eigene Punkt „Modellart-Unterscheider". Der Riss der Leselinien
+  (`matrix.rs:644`, `drs_fits.rs:38` vs. `agrav.rs`/`gfc.rs`/`hips.rs`) bleibt als **Zeuge** stehen,
+  bis der Unterscheider ihn an der Wurzel löst.
+
+### Modellart-Unterscheider — Recherche + Rat-Runde, Riss in der Platzierung (eigen)
+- **Status:** eigen · **Operator-Wort 2026-10-15: direkt der Unterscheider** (statt der Bit-Brücke)
+  · **Rat-Runde gefahren — kein Konsens, ein Riss** | **Bindung:** eigen
+- **Trigger:** der Bau
+- **Lage:** (gemessen 2026-10-15) Der Wire bleibt fix 26 × f64. **Recherche-Haus-Präzedenz:** der
+  Baum trägt den Unterscheider am Rand **schon als `Option`**, nicht als Bit — `SourceConfig.catalog_epoch:
+  Option<f64>` (`types.rs:526`) und `itrf_sinex.rs:40` `ref_epoch: Option<RefEpoch>`; ICGEM taggt
+  selbst `gfc`/`gfct` pro Datensatz; der `Frame` (`types.rs:468`) trägt Körper/Modus, aber keine
+  Zeitabhängigkeit. Web-Präzedenz: getaggte/diskriminierte Union (Wikipedia „Tagged union").
+- **Rat-Runde (2026-10-15, 6 Stimmen; Rohantworten `state/stimmen/2026-10-15_disc_*.json`):**
+  - **(b) source-/frame-level:** **GLM 5.3** · **Sakana** · **Lumo**. GLM: die Modellart ist eine
+    **Datensatz-Eigenschaft**, konstant über alle Records → sie gehört zur Quelle, mit dem Enum
+    `model_kind ∈ {static, time_variable}` (gfc|gfct), **nicht** „Epoch anwendbar|nicht" (das ist
+    eine Folge). Frame-level reicht nicht: ein Frame kann statisch **und** zeitvariabel für denselben
+    Körper tragen (statisches Mittelfeld + GRACE-Zeitreihe). Sakana/Lumo: der Unterscheider gehört
+    nicht in jeden Record; (a) würde einen Slot opfern (1/26) und einen Sentinel in die Wertdomäne
+    zwingen.
+  - **(a) pro Record (26×f64-Slot):** **DeepSeek V4 Pro** · **Duck (GPT-6 Luna)**. DeepSeek: eine
+    **rohe Wire-Leserin ohne Quellwissen** bleibt nur ehrlich, wenn der Record den Unterscheider
+    selbst trägt; Quelle/Frame ist **Provenienz**, nicht Wahrheit. Duck: exakter Integer-Code in
+    einem f64-Slot; statisch ⇒ der Epoch-Slot behauptet keine Epoche (Wert ignoriert), zeitvariabel
+    ⇒ echte Epoche inkl. `0.0 = J2000`; fehlt/nicht-ganzzahlig der Code ⇒ „unbekannt/ungültig",
+    nie raten.
+  - **Z.ai** lief noch („Thinking…") — kein Votum abgeholt.
+  - **Gemeinsamer stärkster Riss beider Lager:** (a) = denormalisierte Konstante → **doppelte
+    Wahrheitsquelle** und Enum-im-f64-Slot; (b) = **losgelöste Records werden mehrdeutig ohne
+    Erkennung** (Naked-Wire-Problem). (c) „beides" erzeugt per Konstruktion den Dual-Truth-Konflikt,
+    den beide verwerfen (DeepSeek: nur als abgeleiteter, validierter Cache, nie als zweiter Autor).
+- **Riss (ungeglättet):** die Stimmen sind **2× (a) / 3× (b)** gespalten; der Riss ist echt (wer
+  muss ehrlich sein — die rohe Wire-Leserin oder der Record-in-seiner-Hülle?). **Kein Verdikt**,
+  solange dieser Riss nicht tie-break't ist.
+- **Blockade:** die Platzierungs-Spaltung — kein Konsens der Runde.
+- **Braucht:** (1) den **Tie-Break** (weitere Stimmen der Frontier-Sitze auf dieselbe Frage, oder
+  Operator-/Rat-Wort); (2) dann den Bau: bei **(b)** `model_kind` als source-level `Option`-Enum am
+  `SourceConfig`/`phi`-Block + `gfc.rs`-Anbindung; bei **(a)** ein reservierter f64-Slot mit exaktem
+  Integer-Code + Decode-Vertrag (ungültig ⇒ Rückweisung); (3) die Leselinien `matrix.rs:644` /
+  `drs_fits.rs:38` an die Wurzel ziehen (Absenz aus dem Typ ableiten, nicht aus `epoch <= 0.0`).
 
 ### SABER — verdiktet: B + A (eigene Weltlinie + Messvolumen) (eigen)
 - **Status:** eigen · **verdiktet** (Rat 2026-10-14: B + A) | **Bindung:** eigen
@@ -240,6 +275,7 @@ Origin: mountain-348 (2026-10-15):
 - **„warum können wir das gravitationsmodell nicht wie die anderen behandeln? … sie sind ein Feld"** | 2026-10-14 | (mountain 345 — ICGEM: Feld).
 - **„fängst du bitte an und delegierst an taucher?"** | 2026-10-14 | (mountain 346).
 - **„bitte fahre die frage über trying open"** | 2026-10-15 | (mountain 348 — die offenen Gewichte in die Epochen-Absenz-Ratsrunde).
+- **„nein direkt der unterscheider mit archive search und rat"** | 2026-10-15 | (mountain 348 — die Bit-Brücke verworfen; der Modellart-Unterscheider als eigener Punkt, Recherche + Rat gefahren).
 
 ## Abschluss
 
@@ -249,6 +285,7 @@ XFER-MISSING im folge347-Block (Register-Hygiene, `--tokens --noecho-fail` exit 
 Ratsrunde „Epochen-Absenz" — meine Frontier-Runde und die tryingopen-Runde (Operator-Wort,
 Lock `open-weight-ui` gesetzt und gelöst), **dann der volle Roster aus der Operator-Hand**
 (die sechs Frontier-Sitze + die offenen Gewichte), mit der **Baum-Verifikation** (der
-„u32/u64"-Einwand der Stimmen ist ein Namens-Artefakt — die Maske ist ein f64-Bitfeld) und dem
-**gebundenen Verdikt** + der einen offenen Wahl (Brücke vs. Diskriminator) — und diese
-Fortschreibung.
+„u32/u64"-Einwand der Stimmen ist ein Namens-Artefakt — die Maske ist ein f64-Bitfeld); dann das
+**Operator-Wort „direkt der Unterscheider"**, die **Recherche** (source-level `Option`-Präzedenz
+`catalog_epoch`/`ref_epoch`) und die **zweite Rat-Runde** zum Modellart-Unterscheider (2× per-Record
+/ 3× source-level — der Riss bleibt ungeglättet) — und diese Fortschreibung.
