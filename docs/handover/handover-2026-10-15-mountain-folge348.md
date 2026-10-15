@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 348 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 2141c292644ec355ca8f1cc050c7643b154d490d9a00da7e742ba743a3a67aa3
+  sha256: 97829049d9c9464628cc64c8eecb07db19ca58fe034a2e230fe0c12367b4cf46
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -28,79 +28,58 @@ mit gemessenem Teil-Roster.
 
 ## Offen (aufgeschlüsselt)
 
-### Epochen-Absenz — Ratsfrage gefahren, Teil-Roster gemessen; bindet noch nicht (eigen)
-- **Status:** eigen · **verdiktet** (Rat 2026-10-14, Verdikt b) — **noch nicht bindend**
-  (Operator-Regel, Commit `94c6eaa10`: kein Architektur-Entscheid ohne gemessene
-  `archive_search`-Recherche **und** den vollen Roster) | **Bindung:** eigen
+### Epochen-Absenz — Ratsrunde vollständig, Verdikt gebunden (eigen)
+- **Status:** eigen · **verdiktet** (Rat 2026-10-14, Verdikt b) · **voller Roster 2026-10-15
+  gefahren (Operator-Hand) — bindend, mit der u. g. Zielform als Vorbehalt** | **Bindung:** eigen
 - **Trigger:** der Registeratom / die nächste epochenlose Quelle
 - **Lage:** (gemessen 2026-10-15, Ratsrunde) Die Verdikt-Form steht: `PRESENCE_FLAG_EPOCH`
   = `32.0` neben `PRESENCE_FLAG_QUANTITY` = `16.0` (`types.rs:402-406`); `presence_flags`
   (`types.rs:441`) trägt heute keinen Epoch-Parameter. Die kollidierenden Leselinien sind
   bestätigt: Linie A `channel.epoch <= 0.0 → continue` (`matrix.rs:644`) und
   `drs_fits.rs:38` (`epoch <= 0.0 → None`); Linie B behält `0.0` als Wert.
-- **Ratsrunde A — Frontier-Sitze (2026-10-15, Teil-Roster; Antworten roh in
-  `state/stimmen/2026-10-15_*.json`):** 4 Stimmen — **Z.ai (GLM-5.3-Flash)** ·
-  **Sakana (Namazu High)** · **Duck (GPT-6 Luna)** · **Lumo**.
-  - **Z.ai: ja, ehrlich — mit einer Definitionskorrektur.** Bit 32 heißt „das Epoch-Feld ist
-    belegt" (über das **Feld** definiert), nicht „statisch" über die Quellart; „statisch ⇒ aus"
-    ist eine **Produzentenregel**, nicht die Bedeutung. Dritter Fall sonst unhaltbar (gfc mit
-    nominalem Referenz-Epoch; gfct als eingefrorener Snapshot). Zusatzpflicht: Pad kanonisieren
-    (Bit aus ⇒ exakt `0.0`).
-  - **Sakana: ja, ausreichend und ehrlich.** Stärkster Konfund: stilles Semantik-Überladen des
-    `0.0` — ein Leser ohne Bit-Check liest statisch als J2000 und rechnet still falsche
-    Bahnmechanik statt zu brechen. Alternativen: NaN-Sentinel (f64-Verhalten), Union-Tag (Wire-Bruch).
-  - **Duck (GPT-6 Luna): ja — vorgängig: das Bit normativ an genau dieses Feld binden.**
-    Stärkster Riss: das Bit macht einen impliziten Unterschied zu Protokoll; alte/bit-ignorierende
-    Leser bleiben.
-  - **Lumo: nein.** Die Semantik-Kollision `pad=0.0` ↔ `epoch=0.0` verwässert das Absenz-Signal;
-    Alternativen: NaN-Sentinel, separates Optional-Feld, Zwei-Bit-Flag, Modell-Typ im Header.
-- **Ratsrunde B — offene Gewichte (tryingopen, 2026-10-15, Operator-Wort „fahre die frage über
-  trying open"; Rohantworten `state/stimmen/2026-10-15_open_*.json`):** 3 Stimmen.
-  - **DeepSeek V4 Pro: ja — unter der Bedingung, dass das Bit die alleinige Wahrheitsquelle ist**
-    (Bit=0 ⇒ der `0.0`-Pad nie als J2000 lesen). Stärkster Riss: das Bit konfundiert „Epoche
-    vorhanden" und „Quelle ist `gfct`" → Doppelkodierung `Bit=0 ∧ Pad=0.0`. Alternativen:
-    NaN/−∞-Sentinel (bricht Interop/Validatoren), Epoch als echtes Optional (Wire-Umbau),
-    expliziter Discriminant `static|gfct`.
-  - **GLM 5.3 (Z.ai): trägt die Wert-Absenz, nicht die Anwendbarkeits-Absenz** — ehrlich nur mit
-    Typ-Diskriminator als Wahrheitsquelle; Bit 32 nur als validierte Ableitung. Stärkster Konfund:
-    „N/A vs. Missing" (`Bit=0` = legitim-statisch ∪ `gfct`-Record kaputt); zweiter Riss: ist das
-    Mask heute ≤32 Bit breit, ist die Verbreiterung selbst ein Umbau („kein Umbau" gilt nur bei
-    reservierten Bits); dritter: das Bit ist **wire-kompatibel, nicht semantisch kompatibel** —
-    alte Reader lesen das Pad weiter als J2000.
-  - **MiMo V2.6 Pro (Xiaomi): stärkster Riss — doppelte Wahrheitsquelle.** Das Bit ist
-    out-of-band-Annotation eines in-band-Werts; das Pad liegt in der Wertdomäne, die Kohärenz ist
-    nur per Konvention erzwungen; `Bit=0 ∧ word=0.0` ist vom korrekten statischen Fall nur durch
-    Konvention unterscheidbar (kein Umbau nötig, aber jedermanns Audit).
-  - **Nicht geantwortet (gemessen):** `Qwen3.8 2.4T` · `Nemotron 3 Ultra` · `Mistral Large 4` ·
-    `Inkling` — die Plattform meldet „This site has run out of API credit for the moment"
-    (Site-Guthaben erschöpft, kein Modell-Gate); `MiniMax M3` = „Adding capacity" (nicht wählbar).
-  - **Verdichtung:** 6× „ja/conditional — nur wenn das Bit die alleinige Wahrheitsquelle ist und
-    die Maske vor dem Feld gelesen wird (und besser ein Typ-Diskriminator die Semantik trägt)",
-    1× „nein" (Lumo). Tiefer als die Frontier-Runde: **zwei unabhängige Zeugen (GLM 5.3, MiMo)
-    benennen den Konfund schärfer** — das Bit trennt nicht „N/A" von „Missing", und der Pad liegt
-    **in** der Wertdomäne (Doppelkodierung). Der gemeinsame stärkste Riss bleibt: ein
-    bit-ignorierender Leser liest das Pad weiter als J2000 (wire-kompatibel ≠ semantisch kompatibel).
-- **Nicht bindend — warum:** die Operator-Regel verlangt den **vollen** Roster; die zwei Runden
-  zusammen tragen 7 Stimmen, nicht den vollen Satz. Gemessen (2026-10-15, kein Stilles-Null):
-  - **Frontier (Runde A):** `Claude` = Login (`claude.ai/login?from=logout`) · `DeepSeek` =
-    `chat.deepseek.com/sign_in` · `Google AI Studio` = Google-Login · `MiniMax` = `unified-login` ·
-    `Perplexity` = „Melde dich an und wiederhole deine Anfrage" · `Qwen` = Alters-Gate · `Mistral`
-    = Frage gesetzt, keine Antwort (pending) · `Z.ai` lief **Flash**, nicht Deep Think Max.
-  - **Offene Gewichte (Runde B, `open-weight-ui`, Lock `mountain` gesetzt und gelöst):** die 7
-    gestellten Sitze s. o.; `Qwen3.8 2.4T`/`Nemotron 3 Ultra`/`Mistral Large 4`/`Inkling` = Site-
-    Guthaben erschöpft, `MiniMax M3` = „Adding capacity" (nicht wählbar).
-- **Blockade:** (a) die **Zugangs-Gates** der sechs Frontier-Sitze (Operator-Hand: das
-  Operator-Profil einloggen); (b) das **tryingopen-Site-Guthaben** (fremd, nicht Mountain-Hand) —
-  vier offene Gewichte antworten erst wieder bei aufgefülltem Guthaben. Ohne vollen Roster bindet
-  das Verdikt nicht (Operator-Regel).
-- **Braucht:** (1) die sechs Sitze eingeloggt (`Claude`, `DeepSeek`, `AI Studio`, `MiniMax`,
-  `Perplexity`, `Qwen`); (2) die Runde dann vollständig fahren (inkl. `Z.ai` Deep Think Max +
-  die geteilten Sitze) und das Verdikt daraus binden; (3) **erst dann** die Umsetzung: die
-  Sites des Verdikts (`types.rs` `PRESENCE_FLAG_EPOCH` + `presence_flags` um den Epoch-Parameter;
-  die Write-Aufrufer `spatial.rs:845/1004`, `membrane.rs:130`, Test `parse.rs:3296`; Read-Seite
-  `matrix.rs:644`, `drs_fits.rs:38`, `agrav.rs`-Write, `gfc.rs:153`, `gfc.rs:101-107` Frame-Fold,
-  `hips.rs:793`, `static/constants.js` Bit 32, `docs/concepts/archivar-mathematikerin.md`
-  Presence-Klausel).
+- **Ratsrunde (voller Roster, 2026-10-15).** Meine eigene Teil-Runde traf 7 Stimmen
+  (`state/stimmen/2026-10-15_*.json`, `..._open_*.json`); die **Operator-Hand** führte danach die
+  sechs Frontier-Sitze und die offenen Gewichte und legte ihre Antworten vor — sie sind hier
+  gefaltet. **Riss in meinem eigenen Mitschnitt (ungeglättet):** meine Sakana-Aufzeichnung trug
+  „Ja, ausreichend und ehrlich", die Operator-Runde trug „**Nein**" — zwei Läufe, zwei Verdikte;
+  die Stimme ist stochastisch, keine einzelne Antwort ist eine Messung.
+  - **Zustimmend / bedingt (die Brücke trägt):** Claude · Perplexity · DeepSeek · Qwen · MiniMax
+    · Gemini · Mistral · GLM 5.3 · Duck · Z.ai · MiMo V2.6 Pro.
+  - **Ablehnend / kritisch:** **Sakana** („das Bit macht die Absenz verwaltbar, aber nicht ehrlich")
+    · **Lumo** (kritisiert die Prämisse, hält das Bit aber für den besten nicht-brechenden Schritt).
+  - **Universeller stärkster Riss (alle):** das Bit trennt **„nicht anwendbar" (statisch `gfc`)**
+    nicht von **„verloren/unbekannt" (`gfct` ohne Epoche, Parserfehler, Truncation)**; und der Pad
+    `0.0` liegt **in** der Wertdomäne — Marker und Zahl bleiben zwei Quellen für eine Tatsache,
+    kohärent nur per Vertragsdisziplin. Ein bit-ignorierender Leser liest statisch als J2000
+    (Gemini/MiniMax: kein Fail-Fast; Claude: das Bit ist ein versteckter Modelltyp-Diskriminator).
+  - **Zielform (mehrere Stimmen):** ein **Modellart-Diskriminator** (`gfc`/`gfct`) bzw. eine
+    getaggte Union, bei der die Absenz aus dem Typ folgt und `epoch` nur bei `gfct` lebt (Claude,
+    Perplexity, GLM, MiniMax, DeepSeek). Das Bit wird dann zur **Brücke** dorthin.
+  - **Konvergente Härtung:** Semantik „Epoch-Feld ist vorhanden/anwendbar" (über das Feld, **nicht**
+    über die Quellart); kanonischer Pad (`Bit=0 ⇒ exakt 0.0`); Decode-Vertrag „Maske vor Feld",
+    `gfct ∧ Bit=0` = Rückweisung; optional NaN-Pad als Fail-Loud (Gemini/Claude/Z.ai).
+- **Baum-Verifikation (widerlegt einen häufigen Stimmen-Claim):** Claude, DeepSeek, Qwen, GLM und
+  MiniMax warnen, „Bit 32" brauche eine ≥33-Bit-/u64-Maske (`1u32 << 32` kollabiert). Gemessen am
+  Baum ist das ein **Namens-Artefakt**: die Maske ist ein **f64-Bitfeld** aus Potenz-Werten
+  (`PRESENCE_FLAG_PHASE = 1.0 … QUANTITY = 16.0`, `types.rs:402-406`; geschrieben über
+  `presence_flags(...) -> f64`, `types.rs:441`); ein neuer Flag ist der **Wert** `32.0` (2⁵), nicht
+  die Bitposition 32 — kein Verbreitern, kein u32/u64-Problem. Gelesen als f64
+  (`static/constants.js:118`), Flag-Test `(presence & 16.0)` (`static/membrane.html:262`) trägt 32
+  im 32-Bit-AND. **Der „kein Umbau"-Kern der Verdikt-Form hält**; der Einwand trifft nicht.
+- **Verdikt (gebunden, voller Roster 2026-10-15):** `PRESENCE_FLAG_EPOCH = 32.0` als
+  **nicht-brechende Brücke** bauen, mit den drei Härtungen (Feld-Semantik, kanonischer Pad,
+  Decode-Vertrag „Maske vor Feld", `gfct ∧ Bit=0` = Rückweisung; optional NaN-Pad). **Zielform
+  benannt (v2):** Modellart-Diskriminator `static|tvar`, `epoch` nur bei `tvar` — das Bit wird dann
+  abgeleitete Validierung statt Wahrheitsquelle.
+- **Blockade:** keine — der volle Roster ist gefüttert; offen ist allein die Form-Wahl
+  (Brücke vs. Diskriminator), kein externes Tor.
+- **Braucht:** (1) die **eine offene Wahl**: die Brücke jetzt bauen **oder** direkt den
+  Diskriminator (v2) — der Rat empfiehlt die Brücke jetzt, den Diskriminator als versioniertes
+  Ziel; (2) danach die Umsetzung: `types.rs` `PRESENCE_FLAG_EPOCH` + `presence_flags` um den
+  Epoch-Parameter; Write-Aufrufer `spatial.rs:845/1004`, `membrane.rs:130`, Test `parse.rs:3296`;
+  Read-Seite `matrix.rs:644`, `drs_fits.rs:38`, `agrav.rs`, `gfc.rs:153`, `gfc.rs:101-107`
+  Frame-Fold, `hips.rs:793`, `static/constants.js`/`membrane.html`,
+  `docs/concepts/archivar-mathematikerin.md` Presence-Klausel.
 
 ### SABER — verdiktet: B + A (eigene Weltlinie + Messvolumen) (eigen)
 - **Status:** eigen · **verdiktet** (Rat 2026-10-14: B + A) | **Bindung:** eigen
@@ -267,6 +246,9 @@ Origin: mountain-348 (2026-10-15):
 Der Commit ist die letzte Handlung; das Operator-Wort trägt Commit und Push. Dieses Atom
 (mountain-348) committet: den `archiv/`-Move der folge347, die Prosa-Heilung der drei
 XFER-MISSING im folge347-Block (Register-Hygiene, `--tokens --noecho-fail` exit 0), die
-Ratsrunde „Epochen-Absenz" — Frontier-Sitze (Runde A) **und** offene Gewichte über tryingopen
-(Runde B, Operator-Wort), Rohantworten `state/stimmen/` (Lock `open-weight-ui` gesetzt und
-gelöst) — und diese Fortschreibung.
+Ratsrunde „Epochen-Absenz" — meine Frontier-Runde und die tryingopen-Runde (Operator-Wort,
+Lock `open-weight-ui` gesetzt und gelöst), **dann der volle Roster aus der Operator-Hand**
+(die sechs Frontier-Sitze + die offenen Gewichte), mit der **Baum-Verifikation** (der
+„u32/u64"-Einwand der Stimmen ist ein Namens-Artefakt — die Maske ist ein f64-Bitfeld) und dem
+**gebundenen Verdikt** + der einen offenen Wahl (Brücke vs. Diskriminator) — und diese
+Fortschreibung.
