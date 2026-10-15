@@ -2,7 +2,7 @@
 title: Handover — River-Folge 213
 class: handover
 date: 2026-10-15
-sha256: e725cf1b153f5aedc96eb448106b739090e0646f8e616a357962da7654983e27
+sha256: 9e3cb283ab1869e9b4d2d93b3d5bc7defd86f3c45d4391c3489fbf98d579e552
 status: live
 -->
 # Handover — River-Folge 213 (2026-10-15)
@@ -28,6 +28,7 @@ Wort | Datum | Quelle
 „bitte auch gegen den zufall prüfen und es erscheint mir fast so als gäbe es eine kurve und einen sweetspot ist das richtig?" | 2026-10-15 | Operator (Session, River-214) — die Einzelstation gegen die Kreisschub-Null prüfen und die Detektor-Kurve (Stationszahl/Schwelle) als Sweet-Spot messen.
 „genau das ziel muss sein bei welcher toleranz mit welcher anzahl ist die machine am schärfsten … für jedes ereignis ein messprotokoll … wie es auf der toleranz und pro anzahl aussieht" | 2026-10-15 | Operator (Session, River-214) — Zielsetzung: die **Schärfe-Fläche** (Toleranz × Stationszahl) und daraus ein **Ereignis-Messprotokoll**.
 „können wir rausfinden ob es ein muster gibt wie stationen zueinander stehen müssen damit der trefferanteil nicht sinkt … praktisch eine te mustererkennung für die positionierung der stationen" | 2026-10-15 | Operator (Session, River-214) — eine **Stations-Platzierungsregel** (TE-Muster) finden, die den Trefferanteil hält oder steigert.
+„ginge nicht sogar eine polarlichtabhängige ‚live'-aktivierung oder ist das für eine vorhersage unbrauchbar da der sturm ja schon angekommen ist, oder trägt der gedanke, aurora als stationstrigger" | 2026-10-15 | Operator (Session, River-214) — die Aurora als **dynamischer Stationsschalter** (welche Stationen unter dem Polarlichtstrom liegen) und die Vorlauf-Frage.
 
 Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `state/operator-gespraeche/2026-10-14-river.md` (Vorsession).
 
@@ -153,7 +154,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `st
 - **Trigger:** Operator-Wort 2026-10-15: „bei welcher toleranz mit welcher anzahl ist die machine am schärfsten" + „ein muster … wie stationen zueinander stehen müssen … eine te mustererkennung für die positionierung".
 - **Lage:** (gemessen 2026-10-15 via `ci_manage` + lokaler `gic_onset_detector`) die Einzel-Schwellenkurve ist gemessen (s. GIC-Onset); die Stationszahl-Kurve fehlt. **Gebaut:** `.github/workflows/gic-station-sweep.yml` — ordnet eine Familie nach `|cgm_lat|` (aus `phi/sources.φ`), lädt die xyz-Bins **einmal** (je 420 MB), baut die kumulativen Einhüllenden für `counts=1,2,3,4,6,8,12,16,24,31` und fährt je Zählung den Detektor mit `--null 200` (die `compare`-Zeilen tragen 5/15/30 min). Der Lauf folgt dem Commit; die Bins sind ~13 GB pro Lauf → CI.
 - **Blockade:** keine (CI-Lauf).
-- **Braucht:** (a) die Schärfe-Fläche aus dem Sweep; (b) **zuerst den Schärfe-Begriff definieren** — die Toleranz ist eine Matching-Definition (eine lockere Toleranz hebt Präzision *und* Rückruf mechanisch), kein Detektor-Regler; die harten Regler sind Stationszahl und Schwelle. Der Metric (z. B. F1 bei fester Toleranz oder Präzision bei fester Ausbeute) ist eine **Methodik-/Architekturentscheidung → Rat** (fünf Stimmen + Recherche-Roster, s. Operator-Wort „council bedeutet recherche roster (full) und rat"); (c) das **Stations-Platzierungsmuster**: Teilmengen-Suche über die 154 Stationen, geführt durch paarweise TE/Kopplung (welche Stationen komplementäre Information tragen) — ebenfalls Rat-Design vor dem Bau.
+- **Braucht:** (a) die Schärfe-Fläche aus dem Sweep; (b) **zuerst den Schärfe-Begriff definieren** — die Toleranz ist eine Matching-Definition (eine lockere Toleranz hebt Präzision *und* Rückruf mechanisch), kein Detektor-Regler; die harten Regler sind Stationszahl und Schwelle. Der Metric (z. B. F1 bei fester Toleranz oder Präzision bei fester Ausbeute) ist eine **Methodik-/Architekturentscheidung → Rat** (fünf Stimmen + Recherche-Roster, s. Operator-Wort „council bedeutet recherche roster (full) und rat"); (c) das **Stations-Platzierungsmuster**: Teilmengen-Suche über die 154 Stationen, geführt durch paarweise TE/Kopplung (welche Stationen komplementäre Information tragen) — ebenfalls Rat-Design vor dem Bau; (d) **Aurora als dynamischer Stationsschalter** (Operator-Wort 2026-10-15): die Polarlicht-Oval-Lage wählt je Zeit die Stationen unter dem Strom (dynamische Auswahl statt fester Netz-Zahl). Vorlauf-Riss benannt: die Aurora ist eine **Schwester**-Erscheinung des Sturms (gleiche Ursache), kein Vorläufer — der Vorlauf Boden-`dB/dt`→GIC ist kurz; messbar als Lag zwischen Aurora/AL-Onset und Boden-`dB/dt`. Rat-Design.
 
 ### Newell-OMNI-Alignment — Zelle gemessen (n=22137), TE silent
 - **Status:** eigen (gemessen, silent) | **Bindung:** eigen
