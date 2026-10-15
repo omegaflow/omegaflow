@@ -2,7 +2,7 @@
   title: Handover — River-Folge 216
   class: handover
   date: 2026-10-15
-  sha256: 8df8b454daa37704e94c1d3b91a3832616c623f7695c1e40d2f4c3c7bc80972f
+  sha256: c7e6b552100d36fcc3b609cd8cdd17b01a98ba5b2efa1aab374ff7772c562683
   status: live
 -->
 # Handover — River-Folge 216 (2026-10-15)
@@ -320,9 +320,12 @@ Ausbeute wanderte mit N), nicht rein die Min-Fusion; der Rest-Abfall ab n16 ist 
 ausgewertet** — die Union hebt den Min-Kollaps auf: Rückruf steigt bis n12 auf **0.0676** (Min bei
 n12: 0.0520), dann Plateau ~0.058; Präzision bis 0.404, alle N signifikant. Commit `ba5d1264d`.
 **Sitz-Runde F2–F7 (river-217):** das Paket (mycelium-355) und das Verdikt
-`state/stimmen/2026-10-15-rat-fragenpaket-verdikt.md` am Baum geprüft und dort korrigiert (07 = 02
-Kopie; 10/13/OW fehlen; F7 **nicht** einstimmig — 2 Sitze für Stille; F6-Z-Registerkollision;
-MiniMax' `unwrap_or`-Behauptung am Baum falsch). Commit `ab42d32f6`.
+`state/stimmen/2026-10-15-rat-fragenpaket-verdikt.md` am Baum geprüft und dort korrigiert (10/13/OW
+fehlen; F7 **nicht** einstimmig — 2 Sitze für Stille; F6-Z-Registerkollision; MiniMax'
+`unwrap_or`-Behauptung am Baum falsch). **Die 07-Eintragung war eine Kopie von 02; der Operator hat
+die richtige DeepSeek-Antwort nachgeliefert — eingetragen als 07b, die Kopie als falsifizierte
+Zeile markiert** (11 unabhängige Stimmen; 07b divergiert bei F5 auf `pending`). Commits
+`ab42d32f6`, `bb63de545`.
 **Gefaltet (river-217):** `mountain-folge351` (SABER-Echo), `mycelium-folge354` (Athabasca-VLF
 manifestiert, `sha256 5f93df95…`; SABER/UCAR-FPI warten auf Mountains `field`-Zeilen).
 **Operator-Wort (river-217):** CTBTO-Send = kein Membran-Akt (Operator-Hand); Fenster-Edit an der
