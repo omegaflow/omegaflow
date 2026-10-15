@@ -2,7 +2,7 @@
   title: Handover — River-Folge 219
   class: handover
   date: 2026-10-15
-  sha256: 8b8ceb80099521b8c102d109962eb8064f1002be6935db26c7b4b9b17cc3073e
+  sha256: 3d3470d69a9d5a181007aa91b6824e85f7b1b07010205474f4a9c3805e214192
   status: live
 -->
 # Handover — River-Folge 219 (2026-10-15)
@@ -194,11 +194,13 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…220) · `
 
 ## An mycelium
 
-Origin: river-219
+Origin: river-219/220
 
 **Weberin-Zeugen — Manifestation der neuen Zeugen.** Die `url`/`origin`/`compiler`-Direktiven gehören Mycelium. **Athabasca: erledigt** (`sha256 5f93df95…`). **SABER/UCAR-FPI:** sobald die `field`-Zeile steht (`## An mountain`), die Manifestation ziehen. xfer:river208-weberinmanifest1.
 
 **WGLC (Schumann-Blitz-Kanal).** Der source-freie globale Kanal ist gemessen (WGLC `10.5281/zenodo.4774528`, CC-BY-4.0; FLASHMAP `10.5281/zenodo.17376946`). **Korrektur (mycelium-357, gefaltet river-220):** die Reihe ist **täglich**, nicht stündlich — das `bin 3600` im unbedingten Schumann-Deskriptor trägt sie nicht. Für die bedingte TE `(abk→f | Blitz)` braucht River die **Tages-WGLC-Reihe im CDN** (`xfer:mycelium-356-5` läuft); die River-`bin`/`cond`-Entscheidung ist gefallen (eigener Tages-Deskriptor, `bin 86400`, kein Vorwärtsfüllen). xfer:mycelium-356-3.
+
+**THEMIS-ASI Vollbild-Cube + Skymap (14-min-Naht).** Die Lag-Naht ist verdrahtet (`mag_optical_overlay --optical-onset`), aber der 2D-Vollbild-Onset ist bislang ein **Session-Input**: der FODG-Cube (`fodg_20240510_kapu_onset.bin`) und die IDL-Skymap (`*.sav`) liegen nur lokal (river-197, `xfer:river197-6` steht offen; river-220 hat die Naht gebaut). Bitte den Cube **und** die Skymap für kapu auf den CDN manifestieren, damit der Workflow `themis_asi_frame_onset` den Onset selbst messen kann. xfer:river197-6.
 
 **GIC — zweiter Zeuge (Netz-End-Validator).** Der `bpa_gic`-Zeuge trägt nur ein 4-Tage-Fenster. Die weite Leiter (river-219) fand lange Alternativen: EURISGIC-Datenbank (Clarke et al.), EPRI SUNBURST (US), New-Zealand-long-term (Mac Manus 2017), „Northern Transit" (RU, Selivanov 2023). Einen langen zweiten Zeugen wählen + registrieren/manifestieren — bis dahin trägt die FMI-Reihe. xfer:river219-gic2.
 
