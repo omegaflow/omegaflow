@@ -23,7 +23,7 @@ fn json_escape(s: &str) -> String {
 
 fn request_body(query: &str, from: usize, size: usize) -> String {
     format!(
-        "{{\"index\":[\"psyndex\",\"psycharchives\",\"persons\",\"tests\"],\"from\":{},\"size\":{},\"track_total_hits\":true,\"query\":{{\"bool\":{{\"must\":[{{\"multi_match\":{{\"query\":{},\"fields\":[\"hasInstanceBundle.title.label^5\",\"testname^5\",\"summary.label.val^5\",\"subject.label^3\"]}}}}]}}}}}}",
+        "{{\"index\":[\"psyndex\",\"psycharchives\",\"persons\",\"tests\"],\"from\":{},\"size\":{},\"track_total_hits\":true,\"query\":{{\"bool\":{{\"must\":[{{\"multi_match\":{{\"query\":{},\"operator\":\"and\",\"fields\":[\"hasInstanceBundle.title.label^5\",\"testname^5\",\"summary.label.val^5\",\"subject.label^3\"]}}}}]}}}}}}",
         from,
         size,
         json_escape(query)
