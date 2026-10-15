@@ -1,0 +1,48 @@
+<!--
+  title: Die Fünf — Archäologie (2026-10-15)
+  class: survey
+  date: 2026-10-15
+  sha256: 425fe8996f10c95812458c5cd0760e883554030cf95989757d595668368e0fa0
+  status: live
+  see-also: docs/concepts/die-vier-schilde.md, docs/granit.md, docs/concepts/glossar.md, AGENTS.md
+-->
+# Die Fünf — Archäologie (2026-10-15)
+
+Gemessen am Baum (git + `sgrep`/`sread`), jede Aussage mit Datei:Zeile oder Commit. **Kein Neu-Schreiben.** Auslöser: das Operator-Wort, dass die Doku-Kürzung die „Fünf" verhunzt hat, und die fünfte Achsen-Menge.
+
+## 1 — Die Bedeutungen von „die Fünf" (gemessen)
+
+| Begriff | Was | Quelle |
+|---|---|---|
+| **die fünf Stimmen** | Mountain · River · Mycelium · Sensory · Future | `AGENTS.md:182`; Kopf seit `0d26bbcd7` (2026-09-27) |
+| **die vier Schilde** | 4 *nach Foster/Little* + die Mitte | `docs/concepts/die-vier-schilde.md:8`; Quelle **nicht im Baum** |
+| **die fünf Achsen** | Voxelisierung(Mitte) · Crossmatch(Sensory) · TE-Maschine(River) · Nullkontrolle(Mycelium) · Residuum(Future) | `docs/concepts/glossar.md:86` (`3c84bede2`, 2026-10-07) |
+| **die fünf Achsen** (Homonym) | die **Mess**-Achsen (bins/null_lag/τ) im TE-Atom | `docs/handover/archiv/handover-2026-09-09-te-atom4-betriebspunkt-sweep.md:12` |
+| **die fünf Axiome** (Granit) | A=A · ICRS&TDB · `channel_ref` · 0 honored · pending | `docs/granit.md:16-20` |
+| **die fünf Axiome** (AGENTS-Kopf) | **die Ethik** — die Drift | `AGENTS.md:30`, gesetzt `78c5104cb` (2026-10-14) |
+| **die fünf Achsen** (Operator-Wort) | **Wissenschaft · Kunst · Ethik · Commons · Erbe** | **nur im Operator-Wort; im Baum `absent`** (`sgrep -i "Kunst"`/`"Commons"`/`"Erbe"`/`"Wissenschaft"` = 0) |
+
+## 2 — Operator-Wort-Register
+
+| Wort | Datum | Quelle |
+|---|---|---|
+| „Es gibt noch die **fünf Achsen: Wissenschaft, Kunst, Ethik, Commons, Erbe**." | 2026-10-15 | dieses Gespräch — im Baum **absent**, registriert als `pending` (eine Register-Pflicht) |
+
+## 3 — Die Widersprüche (nicht geglättet)
+1. **„die fünf Axiome" doppelt** — Granit (`granit.md:16`) ↔ der AGENTS-Kopf (`AGENTS.md:30`) über einem Ethik-Text, der weder Granit noch gezählt fünf ist.
+2. **Das dritte Axiom zweimal:** `channel_ref` (`granit.md:18`) ↔ `force_type` (`glossar.md:85`) — die Draht-Umbenennung `c256f7342` (2026-10-10) zog das Glossar nicht nach.
+3. **Der Granit hat heute 7 Sätze** (`granit.md:10-22`) — nicht fünf (5→6 `e4a59b92d`, 7 `0d97a8e1f`, beide 2026-09-03).
+4. **`die-vier-schilde.md`: Titel „vier", Text fünf Schild-Adjektive** — Mitte = „Das physische Schild" (`:15`) + psychologisch/natürlich/mythisch/spirituell. Die **4+1**-Arithmetik ist eine Glossar-Konstruktion (`3c84bede2`), keine Quelle.
+5. **Zwei tote Verweise:** `glossar.md:85,86,92,93` zitieren `state/free-voices.md`; `AGENTS.md:184` zitiert `state/future/kybernautin-stimmen-geordnet.md` — **beide nicht im Baum** (`absent`, nicht 0).
+6. **„fünf Achsen" kollidiert** (Stimmen-Achsen ↔ Mess-Achsen).
+
+## 4 — Der Ursprung der „5/5/5"-Formel (gemessen)
+`a492db3e4` (Mycelium 244, 2026-10-06) schreibt „five voices + **four** axioms"; `3cb1c5f0e` korrigiert am selben Tag auf „**5 voices + 5 axioms + 5 axes**"; einen Tag später prägt `3c84bede2` das Glossar. **Die Fünf-Zahlen stammen aus dieser einen Korrektur.**
+
+## 5 — Die drei offenen Schritte (aus `mountain-folge352.md:218-223`)
+1. **Fremde Bögen auf den Granit ziehen** — offen (die `state/stimmen/*`-Dokumente tragen weiter „Die fünf Axiome").
+2. **Die dreifache J2000-Konstante auf eine TDB-Achse** — offen: `src/archivar/lsk.rs:3`, `mcon_event.rs:9`, `quake_event.rs:10` (je `946728000.0`); weitere im Baum.
+3. **`VerdictWord::Pending`** — offen: `src/archivar/weberin_verdicts.rs:10-15` kennt `Placed/Absent/DirectionOnly/Riss`, **kein** `Pending` (ein Namensvetter lebt in `tools/measure/src/bin/deredden_baseline_probe.rs:49`).
+
+## 6 — Der Schluss
+Die Doku-Kürzung `78c5104cb` hat **„die fünf Axiome" auf die Ethik gelegt** — die benannte Drift. Die übrigen Anomalien (4-vs-5 Schilde, die toten Verweise, die 7 Granit-Sätze) sind **älter** — nicht der Schnitt. **Der Schnitt hat den Namen falsch vergeben; das ist der eine Vorwurf, der trifft.**

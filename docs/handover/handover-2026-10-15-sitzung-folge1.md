@@ -2,7 +2,7 @@
   title: Handover — Sitzung 2026-10-15 (Schwärzer, Quellen, --all-Fix, Ökonomie)
   class: handover
   date: 2026-10-15
-  sha256: 948a7836268c5ba6bcae1360015052cbe6931f330ee9624bfd4eedac23ce292a
+  sha256: 8f7010b6cd05bcd324be78cafbabe7bb80c874c7e7ef404e92640d595a1e44ca
   status: live
   see-also: docs/handover/handover-2026-10-15-quellen-neu-und-riss-ucar.md, docs/handover/briefs-2026-10-15-mountain-mycelium.md, docs/concepts/sitzungs-oekonomie.md
 -->
@@ -26,6 +26,7 @@ Dieses Register trägt nur Offenes. Erledigtes steht in git.
 - **Der Gateway-Filter** (der Operator-Wunsch): den ausgehenden Prompt im Gateway schwärzen und die Antwort entschwärzen (`OMEGAFLOW_FILTER=1`) — der starke Kopf im privaten Haus, ohne dass PII die Maschine verlässt. **Nicht gebaut.**
 - **Der Future-Spiegel** (Weg A) — hmm, durch den Filter **unnötig**; bis der Filter steht, bleibt der Spiegel der robuste Weg.
 - **Die Ökonomie-Wand:** das Turn-/Kosten-Plugin + die Session-Länge als Maß — **nicht gebaut** (die Prosa steht in `sitzungs-oekonomie.md`).
+- **Die Fünf — Archäologie** (`docs/surveys/survey-2026-10-15-die-fuenf-archaeologie.md`, **neu diese Sitzung**): sie trägt das **Operator-Wort** (die fünf Achsen **Wissenschaft · Kunst · Ethik · Commons · Erbe** — im Baum `absent`, `sgrep` leer) und die **vier Namens-Korrekturen** (der AGENTS-Kopf `AGENTS.md:30`, `force_type`→`channel_ref` im Glossar, die **7** Granit-Sätze, die 4-vs-5-Schilde). **Nicht ausgeführt** — benannt für die Linien.
 - **Mein Beitrag `sitzungs-oekonomie.md`** ist der Grund dieses Handovers (das own-handover-Gate verlangt die Nennung).
 - **`data/`** (MODVOLC-Rohdaten) — Myceliums lebende Arbeit, unberührt gelassen.
 - **Die Antworten der drei Mails** — wenn sie kommen: am Baum messen (Mountain verdiktet).
