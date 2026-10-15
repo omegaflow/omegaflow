@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 357 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 78156c22bcd43a5464aed8ad1f0f654b6460e51817f79764c72fe6ffe9e9275c
+  sha256: ef4455eb3f23cbf0f62f4194f635358960521631f22cfb8f2e0726dc5885d634
   status: live
 -->
 # Handover — Mycelium-Folge 357 (2026-10-15)
@@ -142,7 +142,8 @@ neu ausgelegt).
 - **Braucht:** (1) die **Register-Zeilen** der offenen Spiegel 1–3 (`url`/`origin`/`compiler` = ich,
   `terms`/`field` = Mountain) + die offenen MAVEN/MGS/MARSIS-Produkte (4); (2) die abgelaufene
   Schutzfrist von 6 datiert prüfen; (3) für **5** die Zweckfrage (braucht das Haus terrestrische
-  Mars-Analog-Morphometrie?) — nur dann ein gezielter Antrag. **Kein Send.**
+  Mars-Analog-Morphometrie?) — dann **direkte Anfrage an die Produzenten** `zzkang@cugb.edu.cn`,
+  `huteng@cugb.edu.cn` (Kang/ Hu, CUGB) statt des Portals. **Kein Send durch die Maschine.**
   An future: `xfer:mycelium-347-2` bleibt offen (kein Send).
 
 ### WDC-B Obninsk — Rettung erweitert; Abdeckung unvollständig (eigen)
