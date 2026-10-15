@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 357 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 9abb57bf29642c5e88f739fc3108fba9e031ed5b50b5257a0c6885f6d0c3630f
+  sha256: 8548e0762f8ec6741683f83dd9ddbf427ef1793a72eae1a31882c48c5b529f5b
   status: live
 -->
 # Handover — Mycelium-Folge 357 (2026-10-15)
@@ -125,21 +125,21 @@ neu ausgelegt).
 - **Braucht:** Mountain-Zeilen. An Mountain: `xfer:future.…7d5c9163` · `xfer:mycelium-344-5` ·
   `xfer:mycelium-343-3` · `xfer:mycelium-342-10`/`-343-2`.
 
-### NSSDC/CLPDS-Planetologie — offene Spiegel (eigen) + Antrag nur für `有条件共享`
-- **Status:** eigen (Spiegel = eigen; Antrag = Operator-Hand) | **Bindung:** eigen
-- **Trigger:** die offenen Spiegel (Mycelium) · der Antrag (Operator)
-- **Lage:** (gemessen 2026-10-15) Die Quelle zerfällt: **`完全共享` ist anonym ladbar**; nur
-  **`有条件共享`** ist operator-gebunden. **Offene-Spiegel-Prüfung je Datensatz** (Taucher + am Baum
-  verifiziert, Formular `state/stimmen/2026-10-15-china-planetendaten-formular.md`): **kein exakter
-  China-Datensatz offen**; der **Zweck von 1–3** (lunare/Mars-Topographie, SH-Modelle) ist über
-  **LOLA/MOLA-Shape-Modelle auf Zenodo (CC-BY-4.0)** gedeckt; der China-DOI
-  `10.12176/03.70.00011-V01` löst **HTTP 404**; **4/5/6** haben nur verwandte offene Produkte →
-  `pending`. Der bedingte Weg verlangt Arbeitsstelle + Handynummer + handschriftliches Versprechen,
-  Freigabe ist **Ermessen** des Fachleiters (Aussicht für einen Privatbewerber außerhalb Chinas:
-  niedrig bis mittel).
-- **Braucht:** (1) die Spiegel-Blöcke der Restfälle (meine Seite; Mountain `terms`); (2) **nur falls
-  kein offener Spiegel reicht** den Antrag für `有条件共享` (Operator-Hand, Entwurf bei Future).
-  An future: `xfer:mycelium-347-2`.
+### NSSDC/CLPDS-Planetologie — Rat-Verdikt: kein Antrag; 1–3 offen gedeckt, 4–6 `pending`
+- **Status:** eigen (Register) | **Bindung:** eigen | **Verdikt:** der Rat (12/13 Sitze) — **kein
+  bedingter Antrag**
+- **Trigger:** die Register-Zeilen der offenen Spiegel
+- **Lage:** (gemessen 2026-10-15; Verdikt `state/stimmen/2026-10-15-china-planetendaten-rat-verdikt.md`)
+  Für **1–3** ist der Zweck über die offenen **LOLA/MOLA-Shape-Modelle auf Zenodo (CC-BY-4.0)**
+  gedeckt; **4–6** haben nur verwandte offene Produkte (ScienceDB-Simulation · Qaidam-Analog
+  **CC BY-NC** · IBD1500-Polarkarten) → `pending`. Der China-DOI `10.12176/03.70.00011-V01` löst
+  **HTTP 404** (nicht adressierbar, nicht nur bedingt). Der bedingte Weg verlangt Arbeitsstelle +
+  Handynummer + handschriftliches Versprechen; die Freigabe ist Ermessen des Fachleiters.
+  **Kein Send.**
+- **Braucht:** (1) die **Register-Zeilen** der offenen Spiegel 1–3 (`url`/`origin`/`compiler` =
+  ich, `terms`/`field` = Mountain); (2) den 404 datiert erneut auflösen; (3) 4–6: exakte
+  NSSDC-Metadaten aus einer Quelle außerhalb des Portals gegen die Kandidaten stellen. **Kein
+  Antrag.** An future: `xfer:mycelium-347-2` bleibt offen (kein Send).
 
 ### WDC-B Obninsk — Rettung erweitert; Abdeckung unvollständig (eigen)
 - **Status:** eigen (Rest = Vollständigkeit + Verdikte) | **Bindung:** eigen
