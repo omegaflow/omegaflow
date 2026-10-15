@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-15
-  sha256: 849b2e8d40f9f62acf6fe9b7d09b7221c38bc4aca68b225eb6ea33d8b41852dd
+  sha256: b47f64f32311ef8727e78b1eb8720156faccc5953209bf9f71d62e566ec5f054
   status: live
   see-also: AGENTS.md
 -->
@@ -15,7 +15,7 @@ Die öffentlichen Linien zitieren **diese** Fassung, nie die private.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `c4a0fe9d5` | 2026-10-15 |
+| HEAD | `4b73e1927` | 2026-10-15 |
 | rote CI-Läufe | **279** non-success — Träger: `ci-gate` (170) · `register-coverage` (68) · `tools-build` (23) · `gic-al-network` (4) · `quake-feeds-cdn` (2) · `matrix-rotor` (2) · `m10-mdis-raw-cdn` (2) · `health-check` (2) · `zenodo-raw-cdn` · `ssd-jpl-raw-cdn` · `venus-radar-cdn` · `ci-check` · `themis_asi-fodg-cdn` | 2026-10-15 |
 
 **Gemessener Kern-Befund (nicht geraten).** Der **globale** Blitz-Kanal für die Schumann-TE ist
@@ -35,6 +35,14 @@ einzige Stelle, an der die Basemap-`0` als NoData geehrt werden kann) und **Arec
 80,9-GB-Basemap steht die Formatentscheidung in der Linie: **byte-exakter `.parts`-Split**
 (md5-Ganzes + sha256/Teil); bis der streamende Splitter steht, wird der Träger provisorisch per
 HTTP-Range vom Origin-COG gelesen.
+
+**Rätsel-Matrix korrigiert.** Ein Fremdtext führte acht fehlende Fäden als „nicht registriert";
+nachgemessen am Register (`phi/sources.φ` + Commit-Historie): **sechs** haben ihre Quelle schon
+(RAVE, GALAH, KiDS, EPTA, WALLABY, LHAASO, Auger, IceCube — Registrierung am 13.10.), es fehlt die
+**Kanal-Zeile**; als ganzer Block fehlt nur **WGLC** (dort steht bloß der Compiler). Echte
+Quellen-Lücken daneben: SILSO, EDGES/21 cm, TGF, Wolken. Die Korrektur-Survey
+(`survey-2026-10-15-raetsel-matrix-korrektur.md`) und ein **Tauchauftrag** (acht begrenzte Suchen,
+je ein Taucher, harte Bandagen) liegen für die nächste Session bereit.
 
 **Noch unread:** die tiefen Log-Gründe der fremden roten Läufe (kein Polling); die eigenen
 Push-Läufe am HEAD `b17570464` sind queued. Die öffentliche Tafel ist ein Flutstand aus den
