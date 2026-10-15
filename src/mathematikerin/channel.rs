@@ -1535,7 +1535,7 @@ impl ChannelRegistry {
         let h = d.hash();
         if let Some(&i) = self.id.get(&h) {
             let existing = &self.descs[i];
-            if existing.unit != d.unit {
+            if !units_convertible(existing.unit, d.unit) {
                 return Err(ChannelUnitConflict {
                     registered_unit: existing.unit,
                     incoming_unit: d.unit,
@@ -2174,6 +2174,171 @@ pub fn unit_token(token: &str) -> Option<&'static str> {
         "kg/(m^2 s)" => Some("kg/(m^2 s)"),
         "m^-3" => Some("m^-3"),
         _ => None,
+    }
+}
+
+fn dim_scale(d: [i8; 7], k: i8) -> [i8; 7] {
+    d.map(|x| x.saturating_mul(k))
+}
+
+fn dim_mul(a: [i8; 7], b: [i8; 7]) -> [i8; 7] {
+    let mut r = [0i8; 7];
+    for i in 0..7 {
+        r[i] = a[i].saturating_add(b[i]);
+    }
+    r
+}
+
+fn dim_div(a: [i8; 7], b: [i8; 7]) -> [i8; 7] {
+    let mut r = [0i8; 7];
+    for i in 0..7 {
+        r[i] = a[i].saturating_sub(b[i]);
+    }
+    r
+}
+
+fn symbol_dim(sym: &str) -> Option<[i8; 7]> {
+    let mut d = [0i8; 7];
+    match sym {
+        "1" => {}
+        "g" | "kg" => d[0] = 1,
+        "m" => d[1] = 1,
+        "s" => d[2] = 1,
+        "A" => d[3] = 1,
+        "K" => d[4] = 1,
+        "mol" => d[5] = 1,
+        "cd" => d[6] = 1,
+        "N" => {
+            d[0] = 1;
+            d[1] = 1;
+            d[2] = -2;
+        }
+        "J" => {
+            d[0] = 1;
+            d[1] = 2;
+            d[2] = -2;
+        }
+        "W" => {
+            d[0] = 1;
+            d[1] = 2;
+            d[2] = -3;
+        }
+        "Pa" => {
+            d[0] = 1;
+            d[1] = -1;
+            d[2] = -2;
+        }
+        "Hz" => d[2] = -1,
+        "V" => {
+            d[0] = 1;
+            d[1] = 2;
+            d[2] = -3;
+            d[3] = -1;
+        }
+        "T" | "nT" => {
+            d[0] = 1;
+            d[2] = -2;
+            d[3] = -1;
+        }
+        _ => return None,
+    }
+    Some(d)
+}
+
+fn parse_dim_int(it: &mut std::iter::Peekable<std::str::Chars>) -> Option<i8> {
+    let mut sign = 1i8;
+    if let Some('-') = it.peek() {
+        sign = -1;
+        it.next();
+    }
+    let mut val = 0i8;
+    let mut any = false;
+    while let Some(c) = it.peek() {
+        if let Some(d) = c.to_digit(10) {
+            val = val.checked_mul(10)?.checked_add(d as i8)?;
+            it.next();
+            any = true;
+        } else {
+            break;
+        }
+    }
+    if !any {
+        return None;
+    }
+    Some(sign.saturating_mul(val))
+}
+
+fn parse_dim_factor(it: &mut std::iter::Peekable<std::str::Chars>) -> Option<[i8; 7]> {
+    let base = if let Some('(') = it.peek() {
+        it.next();
+        let e = parse_dim_expr(it)?;
+        if it.next() != Some(')') {
+            return None;
+        }
+        e
+    } else {
+        let mut sym = String::new();
+        while let Some(c) = it.peek() {
+            if c.is_ascii_alphabetic() {
+                sym.push(*c);
+                it.next();
+            } else {
+                break;
+            }
+        }
+        symbol_dim(&sym)?
+    };
+    let mut exp = 1i8;
+    if let Some('^') = it.peek() {
+        it.next();
+        exp = parse_dim_int(it)?;
+    } else if let Some(c) = it.peek() {
+        if c.is_ascii_digit() {
+            exp = parse_dim_int(it)?;
+        }
+    }
+    Some(dim_scale(base, exp))
+}
+
+fn parse_dim_expr(it: &mut std::iter::Peekable<std::str::Chars>) -> Option<[i8; 7]> {
+    let mut acc = parse_dim_factor(it)?;
+    loop {
+        match it.peek() {
+            Some('*') => {
+                it.next();
+                acc = dim_mul(acc, parse_dim_factor(it)?);
+            }
+            Some('/') => {
+                it.next();
+                acc = dim_div(acc, parse_dim_factor(it)?);
+            }
+            Some(')') | None => break,
+            Some(c) if c.is_ascii_alphabetic() || *c == '(' => {
+                acc = dim_mul(acc, parse_dim_factor(it)?);
+            }
+            _ => break,
+        }
+    }
+    Some(acc)
+}
+
+pub fn unit_dimension(unit: &str) -> Option<[i8; 7]> {
+    let norm: String = unit.chars().filter(|c| !c.is_whitespace()).collect();
+    if norm.is_empty() || norm == "1" {
+        return Some([0i8; 7]);
+    }
+    let mut it = norm.chars().peekable();
+    let dims = parse_dim_expr(&mut it)?;
+    if it.next().is_some() {
+        return None;
+    }
+    Some(dims)
+}
+
+pub fn units_convertible(a: &str, b: &str) -> bool {
+    match (unit_dimension(a), unit_dimension(b)) {
+        (Some(da), Some(db)) => da == db,
+        _ => a == b,
     }
 }
 
@@ -3567,6 +3732,47 @@ mod tests {
         assert_eq!(conflict.registered_unit, "kg/m^3");
         assert_eq!(conflict.incoming_unit, "V/m");
         assert_eq!(reg.len(), 1, "the refused descriptor is not inserted");
+    }
+
+    #[test]
+    fn units_of_one_dimension_are_convertible_and_a_foreign_dimension_is_not() {
+        assert_eq!(unit_dimension("kg/m^3"), unit_dimension("kg m^-3"));
+        assert_eq!(unit_dimension("V/m"), unit_dimension("kg m s^-3 A^-1"));
+        assert_eq!(unit_dimension("Pa"), unit_dimension("N/m^2"));
+        assert_eq!(unit_dimension("1"), Some([0i8; 7]));
+        assert_ne!(unit_dimension("kg/m^3"), unit_dimension("m^-3"));
+        assert_eq!(unit_dimension("furlongs"), None);
+        assert!(units_convertible("kg/m^3", "kg m^-3"));
+        assert!(units_convertible("V/m", "kg m s^-3 A^-1"));
+        assert!(!units_convertible("kg/m^3", "m^-3"));
+        assert!(!units_convertible("kg/m^3", "V/m"));
+        assert!(units_convertible("furlongs", "furlongs"));
+        assert!(!units_convertible("furlongs", "kg/m^3"));
+    }
+
+    #[test]
+    fn the_register_accepts_one_dimension_written_two_ways() {
+        let mut reg = ChannelRegistry::with_capacity(4);
+        let si = ChannelDescriptor::parse_spec(
+            "mass:primary:flux-fick:parabolic:fluid:unspecified:none",
+            "kg/m^3",
+        )
+        .expect("si density parses");
+        let idx = reg
+            .register_checked(si.clone())
+            .expect("first registration");
+        let mut alias = si.clone();
+        alias.unit = "kg m^-3";
+        let same = reg
+            .register_checked(alias)
+            .expect("one dimension written two ways stays convertible");
+        assert_eq!(idx, same);
+        let mut other = si.clone();
+        other.unit = "m^-3";
+        assert!(
+            reg.register_checked(other).is_err(),
+            "a different dimension is refused"
+        );
     }
 
     #[test]
