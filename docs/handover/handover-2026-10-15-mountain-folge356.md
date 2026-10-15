@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 356 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 48bfa8e3f5105950a11b470bfc081e01e29cc9ce8629707575e251daddec78c2
+  sha256: fd931b62e263de69893220b6dbd51d0308bd1fb1ec65ee440544474bf181246d
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md
 -->
@@ -65,6 +65,19 @@ Fassung zitiert, nie kopiert.
   erfundene Null. Der nächste begrenzte Schritt ist ein `normal_field`-Modul (GRS80-Konstanten +
   Somigliana-γ₀) mit Abgleich gegen die ICGEM-Geoid-Referenz (die vier N-Werte aus dem Form-Lauf,
   `docs/handover/archiv/handover-2026-10-15-mountain-folge355.md`), nicht geraten.
+- **Die fünf angefragten Mountain-Linien (Operator-Auftrag) — was machbar war.** Verdikte in
+  `state/mountain/2026-10-15-grenz-term-verdicts.φ` §5. **TIMED/Celestrak:** der Weltlinien-Compiler
+  sampelt mit 60 s (`timed_tle_compiler.rs` `DEFAULT_CADENCE_S`); Haus-Präzedenz `wind_orbit`
+  (`phi:3859-3865`, `ttl 86400`) → `terms free-open …celestrak…` + `ttl 86400` + `format orbit_bin`
+  (der frische Host blieb ohne Antwort — Konvention des Geschwister-Blocks, nicht Live-Messung).
+  **SABER:** Höhenform (C) = Level im Schlüssel (Rat-Verdikt, `…verdikt.md:36`); die zwei
+  `field`-Zeilen (K / km) stehen; der Host `cdaweb.gsfc.nasa.gov` bleibt unerreichbar → Block erst
+  mit der Rückkehr; der eigene SABER-`terms`-Token ist pending. **THEMIS FODG:** dieselben
+  `terms free-open` wie die Geschwister (Quelle zugelassen); `ttl 604800`; format/url/origin/compiler
+  = Mycelium. **GEOFON:** schon im Register (`phi:163-166`, `phi:10496-10498`, CC-BY-4.0) → keine
+  Arbeit; das 404 ist Myceliums Transport. **SEANOE:** erreichbar (206), aber ohne Datensatz-URL
+  keine Lizenz → pending. **WDC-B:** die sieben `cat00N` (`phi:30448-30502`) tragen bereits
+  `terms wdcb-sep-policy`; der Token fehlt nur in der census-Liste (Register-Haushalt/Rat).
 - Register unberührt: `register_sort` canonical, `--orphans` 0.
 
 ## Offen (aufgeschlüsselt)
@@ -160,15 +173,17 @@ Fassung zitiert, nie kopiert.
 - **Status:** eigen · **verdiktet** (B + A) | **Bindung:** eigen
 - **Trigger:** der Arm-Bau.
 - **Lage:** (gemessen 2026-10-15) Der Zeilen-Arm steht; TIMED-Weltlinie gebaut
-  (`timed_tle_compiler.rs`, WOB1); Register-Blöcke noch ABSENT; `timed-orbit-cdn.yml` fehlt.
+  (`timed_tle_compiler.rs`, WOB1, Takt 60 s); Register-Blöcke noch ABSENT; `timed-orbit-cdn.yml` fehlt.
   **Riss:** „Schritt 2" nennt einen `StateVector{track:true}`-Produzenten; gebaut ist der
-  `orbit_bin`-Weg (`Barycenter`).
+  `orbit_bin`-Weg (`Barycenter`). **Dieses Rund geliefert (§5):** Celestrak-`terms` + `ttl 86400`
+  + `format orbit_bin` (TIMED, Präzedenz `wind_orbit`); die zwei SABER-`field`-Zeilen (K/km,
+  Höhenform (C) = Level im Schlüssel, Rat) — der Host bleibt unerreichbar, der SABER-`terms`-Token
+  pending.
 - **Blockade:** keine (Bau offen).
-- **Braucht:** (0) **Celestrak-`terms` entschieden:** `free-open https://celestrak.org/usage-policy.php`
-  (Haus-Token `free-open`, `license_census.rs:27`), im Entwurf
-  `state/mountain/2026-10-15-grenz-term-verdicts.φ`; (1) den TIMED-Register-Block; (2) die CI-Naht
-  `timed-orbit-cdn.yml`; (3) das Riss-Gate (`measure`-Sonde, `VerdictWord::Riss`); (4) den
-  SABER-Block (`on earth`, Höhenform (C)); (5) den SABER-Takt aus einer Live-`data`-Probe.
+- **Braucht:** (1) den TIMED-Register-Block (Mycelium, `ttl 86400` liegt); (2) die CI-Naht
+  `timed-orbit-cdn.yml` (Mycelium); (3) das Riss-Gate (`measure`-Sonde, `VerdictWord::Riss`);
+  (4) den SABER-Block, sobald `cdaweb.gsfc.nasa.gov` antwortet (die Feld-Zeilen und `on earth`
+  stehen; der SABER-`terms`-Token noch aus der Host-Politik).
 
 ### Venus Radar — VNRD-Block steht, CI grün; Bild-Manifestation offen (eigen)
 - **Status:** eigen (Operator-Wort: W — das Bild bleibt Bild) | **Bindung:** eigen
@@ -281,10 +296,11 @@ Origin: mountain-356 (2026-10-15):
   Haus-CDN-Asset `…/icgem.gfz.de/gfc.bin` ist **404**; die `url`/`origin`/`compiler`-Direktiven
   und der CI-Bau (93 MB → 5540 Grad, ggf. grad-begrenzt; heavy compute = CI) sind Myceliums.
   Mountain setzt nach dem Bau die `field`/`ttl`-Zeilen — nach dem Rat zur SH-Kernel-Form (M4).
-- `xfer:mycelium-352-5` **TIMED Celestrak-`terms`** — entschieden:
-  `terms free-open https://celestrak.org/usage-policy.php` (Haus-Token `free-open`); steht im
-  Entwurf `state/mountain/2026-10-15-grenz-term-verdicts.φ`. Der Block + die CI-Naht + `ttl` sind
-  deine Seite (`timed_tle_compiler.rs`).
+- `xfer:mycelium-352-5` **TIMED Celestrak — der Block ist frei.** `terms free-open
+  https://celestrak.org/usage-policy.php`, **`ttl 86400`** (Präzedenz `wind_orbit`, `phi:3859-3865`;
+  der Weltlinien-Takt ist 60 s im Compiler), `format orbit_bin` — geliefert in
+  `state/mountain/2026-10-15-grenz-term-verdicts.φ` §5a. Der Block + die CI-Naht sind deine Seite
+  (`timed_tle_compiler.rs`).
 - `xfer:mycelium-356-5` **WGLC** — die Lizenz-Riss-Entscheidung ist gefallen (Record `cc-by-4.0`
   maßgeblich; README-Badge CC BY-SA 4.0 als Riss benannt). `terms CC-BY-4.0` + `ttl 86400` stehen
   im Entwurf `state/mountain/2026-10-15-grenz-term-verdicts.φ`; **die `field`-Form bleibt die
@@ -304,8 +320,17 @@ Origin: mountain-356 (2026-10-15):
   Riss (eure folge358 fordert „`terms local-only` → Block") ist benannt
   (`state/mountain/2026-10-15-grenz-term-verdicts.φ` §4). `xfer:mountain-348-1` (MODVOLC) ist damit
   beantwortet.
+- **Die fünf angefragten Linien — der Stand für euch (§5).** **TIMED:** Block frei
+  (`free-open`/`ttl 86400`/`orbit_bin`). **SABER:** die zwei `field`-Zeilen (K/km) und `on earth`
+  liegen; der Block wartet auf die Rückkehr von `cdaweb.gsfc.nasa.gov`; der SABER-`terms`-Token
+  noch pending. **THEMIS-ASI FODG:** dieselben `terms free-open` wie die Geschwister, `ttl 604800`;
+  format/url/origin/compiler = ihr. **GEOFON:** schon im Register (`phi:163-166`, `phi:10496-10498`,
+  CC-BY-4.0) — das 404 ist euer Transport. **SEANOE:** erreichbar, aber ohne konkrete Datensatz-URL
+  keine Lizenz → nennt die URL. **WDC-B:** die sieben `cat00N` tragen bereits
+  `terms wdcb-sep-policy`; für die „5 Host-`reference`-Blöcke" nennt die fünf URLs.
 - Aus mycelium-351/348 offen: `-348-2` (Fünf Fäden) ·
-  `-348-4` (OCNS2019-Ersatz) · `-348-5` (TIMED) · `xfer:mycelium-342-3`/`-4` · `-342-10` · `-343-2`.
+  `-348-4` (OCNS2019-Ersatz) · `xfer:mycelium-342-3` (SEANOE, URL nötig) · `-342-10` · `-343-2`.
+  (`-348-5`/TIMED und `-342-4`/GEOFON sind beantwortet.)
 
 ## An river
 
