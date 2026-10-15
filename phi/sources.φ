@@ -14406,6 +14406,7 @@ fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url http://esdb.wdcb.ru/
+terms unknown http://esdb.wdcb.ru/
 format reference
 sha256 b046c0f95097818968a6d9b96741e22f314a0102e2de2d737c95c64d257a3b69
 no-cadence
@@ -14417,6 +14418,7 @@ sha256 c313f425ec915351dbb65345bace9761e60975f1aa3b431de8380cc96df11b61
 no-cadence
 
 url http://stp.wdcb.ru/
+terms unknown http://stp.wdcb.ru/
 format reference
 sha256 5bf8d0020576d903367a0776feba458589f43dca32ba8ffbf4d445b376367b6b
 no-cadence

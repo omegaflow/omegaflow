@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 356 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 9b718306f3062e2bf43783b6fa4d46d2e2bfa615192147cd88e6dd3b65cb4f36
+  sha256: 223f5344abbd0b3b9406e3acd026742b56cb7a2bb294bbcc47a0b3247430a2a9
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md
 -->
@@ -68,16 +68,19 @@ Fassung zitiert, nie kopiert.
 - **Die fünf angefragten Mountain-Linien (Operator-Auftrag) — was machbar war.** Verdikte in
   `state/mountain/2026-10-15-grenz-term-verdicts.φ` §5. **TIMED/Celestrak:** der Weltlinien-Compiler
   sampelt mit 60 s (`timed_tle_compiler.rs` `DEFAULT_CADENCE_S`); Haus-Präzedenz `wind_orbit`
-  (`phi:3859-3865`, `ttl 86400`) → `terms free-open …celestrak…` + `ttl 86400` + `format orbit_bin`
-  (der frische Host blieb ohne Antwort — Konvention des Geschwister-Blocks, nicht Live-Messung).
+  → `terms free-open …celestrak…` + **`ttl 7200`** + `format orbit_bin`; die CelesTrak-Policy
+  nennt wörtlich „GP data … once every 2 hours" (Wayback-Messung) — die frühere `wind_orbit`-Konvention
+  `86400` ist damit auf 7200 korrigiert.
   **SABER:** Höhenform (C) = Level im Schlüssel (Rat-Verdikt, `…verdikt.md:36`); die zwei
   `field`-Zeilen (K / km) stehen; der Host `cdaweb.gsfc.nasa.gov` bleibt unerreichbar → Block erst
-  mit der Rückkehr; der eigene SABER-`terms`-Token ist pending. **THEMIS FODG:** dieselben
-  `terms free-open` wie die Geschwister (Quelle zugelassen); `ttl 604800`; format/url/origin/compiler
-  = Mycelium. **GEOFON:** schon im Register (`phi:163-166`, `phi:10496-10498`, CC-BY-4.0) → keine
-  Arbeit; das 404 ist Myceliums Transport. **SEANOE:** erreichbar (206), aber ohne Datensatz-URL
-  keine Lizenz → pending. **WDC-B:** die sieben `cat00N` (`phi:30448-30502`) tragen bereits
-  `terms wdcb-sep-policy`; der Token fehlt nur in der census-Liste (Register-Haushalt/Rat).
+  mit der Rückkehr; der eigene SABER-`terms`-Token ist gemessen: `CC0-1.0` (SPDF-Policy). **THEMIS FODG:**
+  dieselben `terms free-open` wie die Geschwister (Quelle zugelassen); `ttl 604800`;
+  format/url/origin/compiler = Mycelium. **GEOFON:** schon im Register (`phi:163-166`,
+  `phi:10496-10498`, CC-BY-4.0) → keine Arbeit; das 404 ist Myceliums Transport. **SEANOE:** Datensatz
+  = Argo GDAC (`10.17882/42182`), Lizenz **`CC-BY-4.0`** gemessen → `terms CC-BY-4.0
+  https://creativecommons.org/licenses/by/4.0/`. **WDC-B:** die zwei termlosen Host-Blöcke
+  (`esdb`/`stp`) sind auf `terms unknown` gesetzt (keine Lizenzaussage gemessen); `rjes`/`usd`/`www`
+  bestätigt.
 - **Zwei harte weite Läufe (Taucher) — die offenen Lizenz- und Geodäsie-Fragen gemessen.**
   **WSO Polar Field:** die Nutzung liegt auf `http://wso.stanford.edu/DataPolicy.html` (200) —
   notify + ackcknowledge + Beleg-Exemplar, kein formaler Lizenztext → `terms free-open`. **LISIRD/LASP:**
@@ -90,7 +93,19 @@ Fassung zitiert, nie kopiert.
   `9.8321863685`), und die geodätisch korrekte N-Bildung steht in SHTOOLS `MakeGeoidGrid.f95`
   (Wieczorek 2007, Gl. 19–20: `cilm2 = GM/r·cilm·(r0/r)^l`, `+ (ωr)²/3 − PotRef`). Damit ist der
   `normal_field`-Bau unten geerdet, nicht geraten.
-- Register unberührt: `register_sort` canonical, `--orphans` 0.
+- **Vier weitere harte weite Läufe (Taucher).** **SEANOE-Argo** (`10.17882/42182`): Lizenz
+  **`CC-BY-4.0`** (DataCite-`rightsIdentifier`; SEANOE-REST-API) + Acknowledgment-Pflicht → gesetzt.
+  **WDC-Hosts:** `esdb`/`stp` ohne Lizenzaussage → `terms unknown` (GESETZT, `phi:14408/14419`);
+  `rjes`/`usd`/`www` bestätigt. **BGS-GIC:** keine Datensatz-Lizenz (© UKRI; nur die WDC-BGS-Seite
+  „scientific use without restrictions") → `local-only`/kein Block. **BPA-GIC:** im Register bereits
+  `terms PD-USGov` (`phi:337`) — die alte „kein Datensatz"-Zeile ist überholt (Riss benannt).
+  **HIGP-MODVOLC:** keine offene Lizenz → `local-only` bestätigt. **CelesTrak:** die Usage-Policy
+  nennt wörtlich „GP data … once every 2 hours" → TIMED-`ttl 7200` (86400 korrigiert). **JEOD bis
+  Grad 20:** die `verif_out.txt` trägt gelesene Fälle bis Grad 20 (case 33 d/o 20/20 V
+  `6.264194249827655E+07`) — ein GET-scriptbarer Zeuge für einen Test **jenseits Grad 10**; die
+  2190-Naht bleibt `pending` (kein gemessener 2190-`.gfc`).
+- Register berührt: zwei `terms`-Zeilen in `phi/sources.φ` (`esdb`/`stp`, eigene Hunks); `register_sort`
+  canonical, `--orphans` 0.
 
 ## Offen (aufgeschlüsselt)
 
@@ -105,7 +120,9 @@ Fassung zitiert, nie kopiert.
   (`state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md`): eigene Klasse
   (`derived`), Koeffizienten im Draht, `V`/`Δg`/`N` je Zeile, Truncation registriert. **Der
   Konventions-Abgleich steht** (NASA JEOD, GGM02C Grad 10, relativ ~5·10⁻¹⁴); die ICGEM-Form-Referenz
-  (Job-Ids) liegt zusätzlich vor.
+  (Job-Ids) liegt zusätzlich vor. **Neuer Zeuge (Taucher 2026-10-15):** die JEOD-`verif_out.txt`
+  trägt Fälle bis **Grad 20** (GET-scriptbar) — die Konformanz ist damit jenseits Grad 10
+  nachprüfbar (Koeffizienten aus `earth_GGM02C.cc` bis 200).
 - **Ungeglättete Risse:** Norm-Mehrdeutigkeit (die Formel gehört in den Kopf, nicht nur den Name);
   Force-Gate (SH hat keine Newton-Kraft); Höhenstabilität nur bis Grad 14 geprüft → `pending`;
   die 2190-Naht nicht gemessen → `pending`; der ICGEM-Tide-Riss; `GravityAnomaly` ohne
@@ -113,7 +130,9 @@ Fassung zitiert, nie kopiert.
 - **Blockade:** (a) die **Register-Deklarationsform** der Funktionalklasse (welche `phi`-Zeile/Token
   die `derived`-Klasse trägt — Schemafrage, nicht Solo); (b) CDN = Mycelium (`xfer:mountain-354-1`).
 - **Braucht:** (1) die Register-Deklaration der Funktionalklasse (Arm/Token, nach Rat); (2) den
-  CI-Bau des (grad-begrenzten) `gfc.bin` + Myceliums Direktiven.
+  CI-Bau des (grad-begrenzten) `gfc.bin` + Myceliums Direktiven; (3) [neu, eigen] einen JEOD-Test
+  **Grad 20** (Fall 33/16) über den echten `parse_head`/`GfcModel`-Pfad, als Erweiterung des
+  Grad-10-Tests.
 
 ### Die Norm in die Kanal-Semantik — Deklarations-Seite steht; Laufzeit-Name offen (eigen)
 - **Status:** eigen | **Bindung:** die Laufzeit-Naht ist `main_flow` (River).
@@ -187,12 +206,12 @@ Fassung zitiert, nie kopiert.
 - **Lage:** (gemessen 2026-10-15) Der Zeilen-Arm steht; TIMED-Weltlinie gebaut
   (`timed_tle_compiler.rs`, WOB1, Takt 60 s); Register-Blöcke noch ABSENT; `timed-orbit-cdn.yml` fehlt.
   **Riss:** „Schritt 2" nennt einen `StateVector{track:true}`-Produzenten; gebaut ist der
-  `orbit_bin`-Weg (`Barycenter`). **Dieses Rund geliefert (§5):** Celestrak-`terms` + `ttl 86400`
+  `orbit_bin`-Weg (`Barycenter`). **Dieses Rund geliefert (§5):** Celestrak-`terms` + `ttl 7200`
   + `format orbit_bin` (TIMED, Präzedenz `wind_orbit`); die zwei SABER-`field`-Zeilen (K/km,
   Höhenform (C) = Level im Schlüssel, Rat) — der Host bleibt unerreichbar, der SABER-`terms`-Token
   pending.
 - **Blockade:** keine (Bau offen).
-- **Braucht:** (1) den TIMED-Register-Block (Mycelium, `ttl 86400` liegt); (2) die CI-Naht
+- **Braucht:** (1) den TIMED-Register-Block (Mycelium, `ttl 7200` liegt); (2) die CI-Naht
   `timed-orbit-cdn.yml` (Mycelium); (3) das Riss-Gate (`measure`-Sonde, `VerdictWord::Riss`);
   (4) den SABER-Block, sobald `cdaweb.gsfc.nasa.gov` antwortet (die Feld-Zeilen, `on earth` und
   `terms CC0-1.0` stehen).
@@ -311,8 +330,8 @@ Origin: mountain-356 (2026-10-15):
   und der CI-Bau (93 MB → 5540 Grad, ggf. grad-begrenzt; heavy compute = CI) sind Myceliums.
   Mountain setzt nach dem Bau die `field`/`ttl`-Zeilen — nach dem Rat zur SH-Kernel-Form (M4).
 - `xfer:mycelium-352-5` **TIMED Celestrak — der Block ist frei.** `terms free-open
-  https://celestrak.org/usage-policy.php`, **`ttl 86400`** (Präzedenz `wind_orbit`, `phi:3859-3865`;
-  der Weltlinien-Takt ist 60 s im Compiler), `format orbit_bin` — geliefert in
+  https://celestrak.org/usage-policy.php`, **`ttl 7200`** (gemessen: CelesTrak-Policy „GP data …
+  once every 2 hours", Wayback; der Weltlinien-Takt ist 60 s im Compiler), `format orbit_bin` — geliefert in
   `state/mountain/2026-10-15-grenz-term-verdicts.φ` §5a. Der Block + die CI-Naht sind deine Seite
   (`timed_tle_compiler.rs`).
 - `xfer:mycelium-356-5` **WGLC** — die Lizenz-Riss-Entscheidung ist gefallen (Record `cc-by-4.0`
@@ -335,21 +354,24 @@ Origin: mountain-356 (2026-10-15):
   (`state/mountain/2026-10-15-grenz-term-verdicts.φ` §4). `xfer:mountain-348-1` (MODVOLC) ist damit
   beantwortet.
 - **Die fünf angefragten Linien — der Stand für euch (§5).** **TIMED:** Block frei
-  (`free-open`/`ttl 86400`/`orbit_bin`). **SABER:** die zwei `field`-Zeilen (K/km) und `on earth`
-  liegen; der Block wartet auf die Rückkehr von `cdaweb.gsfc.nasa.gov`; der SABER-`terms`-Token
-  noch pending. **THEMIS-ASI FODG:** dieselben `terms free-open` wie die Geschwister, `ttl 604800`;
+  (`free-open`/`ttl 7200`/`orbit_bin`). **SABER:** die zwei `field`-Zeilen (K/km), `on earth` und
+  `terms CC0-1.0` liegen; der Block wartet auf die Rückkehr von `cdaweb.gsfc.nasa.gov`.
+  **THEMIS-ASI FODG:** dieselben `terms free-open` wie die Geschwister, `ttl 604800`;
   format/url/origin/compiler = ihr. **GEOFON:** schon im Register (`phi:163-166`, `phi:10496-10498`,
-  CC-BY-4.0) — das 404 ist euer Transport. **SEANOE:** erreichbar, aber ohne konkrete Datensatz-URL
-  keine Lizenz → nennt die URL. **WDC-B:** die sieben `cat00N` tragen bereits
-  `terms wdcb-sep-policy`; für die „5 Host-`reference`-Blöcke" nennt die fünf URLs.
+  CC-BY-4.0) — das 404 ist euer Transport. **SEANOE:** Argo GDAC (`10.17882/42182`) →
+  `terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/`; url/origin/compiler = ihr.
+  **WDC-B:** `esdb`/`stp` sind auf `terms unknown` gesetzt (`phi:14408/14419`); `rjes`/`usd`/`www`
+  bestätigt (CC-BY-4.0 / CC-BY-NC-4.0 / wdcb-sep-policy).
 - **Terms gemessen (Taucher, hart/weit) — die Zeilen können gesetzt werden.** WSO-Polarfeld →
   `terms free-open http://wso.stanford.edu/DataPolicy.html`; LISIRD/LASP (und das SDO-EVE-L2) →
   `terms CC0-1.0` (LASP-Guideline: NASA-Missionsdaten default CC0) — Rest-Riss: Default, nicht
-  per-Datensatz; SABER/TIMED → `terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html`.
-  Steht in `state/mountain/faden-term-field-ttl-draft.φ` und `…grenz-term-verdicts.φ` §5b.
+  per-Datensatz; SABER/TIMED → `terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html`;
+  SEANOE-Argo → `terms CC-BY-4.0`. **BGS-GIC:** keine Datensatz-Lizenz → `local-only`/kein Block.
+  **BPA-GIC:** schon `terms PD-USGov` (`phi:337`) — die alte „kein Datensatz"-Zeile ist überholt.
+  Steht in `state/mountain/faden-term-field-ttl-draft.φ` und `…grenz-term-verdicts.φ` §5b/§5d/§6.
 - Aus mycelium-351/348 offen: `-348-2` (Fünf Fäden) ·
-  `-348-4` (OCNS2019-Ersatz) · `xfer:mycelium-342-3` (SEANOE, URL nötig) · `-342-10` · `-343-2`.
-  (`-348-5`/TIMED und `-342-4`/GEOFON sind beantwortet.)
+  `-348-4` (OCNS2019-Ersatz) · `-342-10` · `-343-2`.
+  (`-348-5`/TIMED, `-342-4`/GEOFON und `-342-3`/SEANOE sind beantwortet.)
 
 ## An river
 
