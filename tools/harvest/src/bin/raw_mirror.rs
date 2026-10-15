@@ -1,8 +1,10 @@
-use omegaflow::archivar::fetch::fetch_raw_bytes;
+use omegaflow::archivar::fetch::{RetryPolicy, fetch_raw_to_file_with};
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
 
 const CDN_DOWNLOAD_MARKER: &str = "/releases/download/";
+
+const ORIGIN_TRANSFER_BOUND_S: u64 = 3 * 3600;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -48,7 +50,14 @@ fn run(args: &[String]) -> Result<(), String> {
         )
     })?;
 
-    let body = fetch_raw_bytes(&origin)
+    let temp = std::env::temp_dir().join(format!("raw_mirror-body-{}", std::process::id()));
+    let fetched = fetch_raw_to_file_with(&origin, RetryPolicy::All, ORIGIN_TRANSFER_BOUND_S, &temp);
+    let body = match fetched {
+        Some(_) => std::fs::read(&temp).ok(),
+        None => None,
+    };
+    let _ = std::fs::remove_file(&temp);
+    let body = body
         .filter(|b| !b.is_empty())
         .ok_or_else(|| format!("{origin}: live body void — {tag}/{name} stays untouched"))?;
 
