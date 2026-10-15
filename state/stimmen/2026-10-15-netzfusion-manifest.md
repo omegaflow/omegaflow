@@ -92,92 +92,77 @@ glätten. Wo eine Doktrin geschlagen ist, sag es. Prosa, klar, knapp.
 
 ---
 
-## Roster — Sitze (ein Antwort-Platzhalter je Modell)
+## Roster — Sitze (Einstellungen fest, bekannte Runde)
 
-Der Roster ist variabel; je Runde wird das gefahrene Modell am Sitz gemessen und hier eingetragen
-(Platzhalter → gemessener Wert). Die langsamen Reasoning-/Research-Sitze zuerst stellen, das
-langsamste zuletzt abholen. Ein Sitz, der nicht antwortet, wird als `pending` mit genanntem Grund
-verbucht — nie als stille Null.
+Der Roster ist variabel; gefahren werden die bekannten Einstellungen. Ein Sitz ohne Antwort wird als
+`pending` mit genanntem Grund verbucht — nie als stille Null. Die langsamen Reasoning-/Research-Sitze
+zuerst stellen, das langsamste zuletzt abholen.
 
 ### 01 · Duck.ai
 - **Site:** `https://duck.ai/`
-- **Modell/Einstellung:** _<Platzhalter>_
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** GPT (primär OpenAI) · kein Modell wählbar · Websuche
 - **Antwort:**
 
 ### 02 · Claude
 - **Site:** `https://claude.ai/new`
-- **Modell/Einstellung:** _<Platzhalter>_
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** Claude Sonnet 5.5 · „extra hoch"
 - **Antwort:**
 
 ### 03 · Qwen
 - **Site:** `https://chat.qwen.ai/`
-- **Modell/Einstellung:** _<Platzhalter>_
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** Qwen 3.8 Max · Think
 - **Antwort:**
 
 ### 04 · Z.ai / GLM
 - **Site:** `https://chat.z.ai/`
-- **Modell/Einstellung:** _<Platzhalter>_ (Deep Think Max für Reasoning-Runden)
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** GLM 5.3 · Deep Think Max · Advanced Search
 - **Antwort:**
 
 ### 05 · DeepSeek
 - **Site:** `https://chat.deepseek.com/`
-- **Modell/Einstellung:** _<Platzhalter>_
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** DeepSeek V4 Pro · tiefes Denken · erweiterte Suche
 - **Antwort:**
 
 ### 06 · Mistral
 - **Site:** `https://chat.mistral.ai/`
-- **Modell/Einstellung:** _<Platzhalter>_
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** Mistral Large · Standard
 - **Antwort:**
 
 ### 07 · Gemini AI Studio
 - **Site:** `https://aistudio.google.com/app/prompts/new_chat`
-- **Modell/Einstellung:** _<Platzhalter>_
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** Gemini 3.1 Pro Preview · Grounding mit Google Search
 - **Antwort:**
 
 ### 08 · MiniMax
 - **Site:** `https://agent.minimax.io/`
-- **Modell/Einstellung:** _<Platzhalter>_
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** MiniMax M3
 - **Antwort:**
 
 ### 09 · Kimi
 - **Site:** `https://www.kimi.ai/`
-- **Modell/Einstellung:** _<Platzhalter>_
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** Kimi · schnell · hoch
 - **Antwort:**
 
 ### 10 · Lumo (Proton)
 - **Site:** `https://lumo.proton.me/`
-- **Modell/Einstellung:** _<Platzhalter>_
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** Lumo 2.0 Max · Websuche
 - **Antwort:**
 
 ### 11 · Perplexity (Deep Research)
 - **Site:** `https://www.perplexity.ai/`
-- **Modell/Einstellung:** _<Platzhalter>_
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** Deep Research · Suche
 - **Antwort:**
 
 ### 12 · Sakana Namazu
 - **Site:** `https://chat.sakana.ai/`
-- **Modell/Einstellung:** _<Platzhalter>_
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** Namazu · High
 - **Antwort:**
 
 ### 13 · Sakana Fugu
 - **Site:** `https://chat.sakana.ai/`
-- **Modell/Einstellung:** _<Platzhalter>_
-- **Zeit:** _<Platzhalter>_
+- **Modell/Einstellung:** Fugu · Max · High
 - **Antwort:**
 
 ### Geteilte Open-Weight-Seats (`tryingopen.com` · Gruppe `open-weight-ui`, Zugang nur über das Lock)
-- **Modelle der Runde:** _<Platzhalter>_ (ein Tab je Modell, kein Modellwechsel im Chat)
-- **Zeit:** _<Platzhalter>_
+- **Modelle der Runde:** _<gemessen je Runde>_ (ein Tab je Modell, kein Modellwechsel im Chat)
 - **Antwort (je Modell):**
