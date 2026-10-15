@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-15
-  sha256: 2943165c06d4e3973749fa7762f08004a793a299e55d520f0601fe9daf6803a7
+  sha256: cbace2afb1d9d5b8a827401d41fbadb35ce85d3b1af256c8760a3e4f40ac1381
   status: live
   see-also: AGENTS.md
 -->
@@ -15,17 +15,20 @@ Die öffentlichen Linien zitieren **diese** Fassung, nie die private.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `db83de03b` | 2026-10-15 |
-| rote CI-Läufe | **56** non-success — Träger: `register-coverage` (Fehler-Job `orphans`) · `ci-gate` (`dropped-gate`/`register`/`clippy`/`format`/`subset`) · `tools-build` · `matrix-rotor` · `quake-feeds-cdn` | 2026-10-15 |
+| HEAD | `983037937` | 2026-10-15 |
+| rote CI-Läufe | **280** non-success — Träger: `ci-gate` (`dropped-gate`/`subset`/`register`/`clippy`/`format`) · `register-coverage` (`orphans`) · `tools-build` (`build`) · `quake-feeds-cdn` · `matrix-rotor` · `gic-al-network` · `zenodo-raw-cdn` · `m10-mdis-raw-cdn` · `ssd-jpl-raw-cdn` · `venus-radar-cdn` | 2026-10-15 |
 
-**Gemessener Kern-Befund (nicht geraten):** Der **globale** Blitz-Kanal für die Schumann-TE ist
-**frei** erreichbar. Die weite Quellen-Leiter über die Zenodo/OpenAlex-Register fand **WGLC** (WWLLN
-Global Lightning Climatology and time series, Kaplan & Lau, **CC-BY-4.0**, Zenodo
-`10.5281/zenodo.4774528`): global, **stündlich** (0.5°/5′) plus **30-Minuten**-Stoßleistung,
-**2010–2025**, detection-efficiency-korrigiert. Zweiter freier globaler Kanal: **FLASHMAP**
-(`10.5281/zenodo.17376946`, CC-BY, aus Vaisala GLD360 CG+IC). Die zwei früheren Messungen
-(„Monatsmittel" bzw. „regional") waren zu eng.
+**Gemessener Kern-Befund (nicht geraten) — korrigiert.** Der **globale** Blitz-Kanal für die
+Schumann-TE ist **frei** erreichbar: **WGLC** (WWLLN Global Lightning Climatology, Kaplan & Lau,
+Zenodo concept `10.5281/zenodo.4774528` / Version `10.5281/zenodo.20277101`, Record-Lizenz
+`CC-BY-4.0`). **Korrektur zur vorigen Projektion:** die veröffentlichte Dichte ist **täglich**
+(`density [5844,360,720]`, Zeitschritt 1 Tag; monatlich für die Leistung) — **nicht stündlich**;
+`30m`/`05m` im Dateinamen ist die **räumliche** Auflösung (30 bzw. 5 Bogenminuten). **Riss:**
+die mitgelieferte `README.md` trägt den Badge **CC BY-SA 4.0** gegen die Record-Angabe `CC-BY-4.0`.
+Der WGLC-Compiler steht (`tools/harvest/src/bin/wglc_compiler.rs`); die Zulassungs-Zeilen warten
+auf das Rat-Verdikt zur `field`-Form. Zweiter freier globaler Kanal: **FLASHMAP**
+(`10.5281/zenodo.17376946`, CC-BY, aus Vaisala GLD360).
 
-**Noch unread:** die Push-Läufe an `8a7b48e0e` (`ci-gate`, `register-coverage`) — queued.
-
-Die Tafel ist ein Flutstand aus den parallel laufenden Linien; die Logs liest `ci_manage log <id>`.
+**Noch unread:** die tiefen Log-Gründe der roten Läufe (kein Polling); meine Push-Läufe am HEAD
+`cc6f31afc` sind queued. Die Tafel ist ein Flutstand aus den parallel laufenden Linien; die Logs
+liest `ci_manage log <id>`.
