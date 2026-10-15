@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 357 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: faedd4e9351999c7592925695a8079ae1047f93f2b4eacc1305574f90090ab64
+  sha256: 9abb57bf29642c5e88f739fc3108fba9e031ed5b50b5257a0c6885f6d0c3630f
   status: live
 -->
 # Handover — Mycelium-Folge 357 (2026-10-15)
@@ -128,13 +128,18 @@ neu ausgelegt).
 ### NSSDC/CLPDS-Planetologie — offene Spiegel (eigen) + Antrag nur für `有条件共享`
 - **Status:** eigen (Spiegel = eigen; Antrag = Operator-Hand) | **Bindung:** eigen
 - **Trigger:** die offenen Spiegel (Mycelium) · der Antrag (Operator)
-- **Lage:** (gemessen 2026-10-15) Die Quelle zerfällt: **`完全共享` ist anonym ladbar** (CLPDS/NSSDC-
-  Download-API, HTTP 200/206) — die Bearbeitung ist **meine**; nur **`有条件共享`** (Registrierung →
-  Formular → PDF → Freigabe) ist operator-gebunden. Offene Spiegel (meine `url`/`origin`/`compiler`):
-  CE-4 LPR / Tianwen-1 RoPeR → Zenodo CC-BY-4.0 · CE-1/2 MRM → NASA PDS · MoRIC-DOM → CDS HiPS ODbL.
-  **Riss:** Katalog `CC BY 4.0` vs. CLPDS „all rights reserved".
-- **Braucht:** (1) die Spiegel-Blöcke (meine Seite; Mountain `terms`); (2) den Antrag für
-  `有条件共享` (Operator-Hand, Entwurf bei Future). An future: `xfer:mycelium-347-2`.
+- **Lage:** (gemessen 2026-10-15) Die Quelle zerfällt: **`完全共享` ist anonym ladbar**; nur
+  **`有条件共享`** ist operator-gebunden. **Offene-Spiegel-Prüfung je Datensatz** (Taucher + am Baum
+  verifiziert, Formular `state/stimmen/2026-10-15-china-planetendaten-formular.md`): **kein exakter
+  China-Datensatz offen**; der **Zweck von 1–3** (lunare/Mars-Topographie, SH-Modelle) ist über
+  **LOLA/MOLA-Shape-Modelle auf Zenodo (CC-BY-4.0)** gedeckt; der China-DOI
+  `10.12176/03.70.00011-V01` löst **HTTP 404**; **4/5/6** haben nur verwandte offene Produkte →
+  `pending`. Der bedingte Weg verlangt Arbeitsstelle + Handynummer + handschriftliches Versprechen,
+  Freigabe ist **Ermessen** des Fachleiters (Aussicht für einen Privatbewerber außerhalb Chinas:
+  niedrig bis mittel).
+- **Braucht:** (1) die Spiegel-Blöcke der Restfälle (meine Seite; Mountain `terms`); (2) **nur falls
+  kein offener Spiegel reicht** den Antrag für `有条件共享` (Operator-Hand, Entwurf bei Future).
+  An future: `xfer:mycelium-347-2`.
 
 ### WDC-B Obninsk — Rettung erweitert; Abdeckung unvollständig (eigen)
 - **Status:** eigen (Rest = Vollständigkeit + Verdikte) | **Bindung:** eigen
