@@ -58,6 +58,15 @@ poll_once() {
   while IFS=$'\t' read -r id wf started; do
     [ -n "$id" ] && [ -n "$wf" ] && [ -n "$started" ] && [ "$started" != "?" ] || continue
     seen "$id" && continue
+    # release workflows run long by design (a cold build, a large CDN upload); the
+    # 2x-median rule would kill a correct build against a cache-hit median
+    case "$wf" in
+      tools-build|*-cdn)
+        log "run $id in_progress ($wf) — release workflow, exempt from the median cancel"
+        mark "$id"
+        continue
+        ;;
+    esac
     local s med dur
     s=$(date -d "$started" +%s 2>/dev/null) || continue
     med=$(median_duration "$wf")
