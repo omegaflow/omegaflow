@@ -16,6 +16,6 @@ Kybernetic field system — pure Rust, WebGPU point cloud, ICRS block universe. 
 
 **Zwei Lehren (2026-10-15):** *Prosa ist keine Wand — ein Gate ist eine Wand.* · *Kein Provider ohne den Gateway.*
 
-**Abschluss:** the commit is the last act — own paths only, English; the send stays the operator's hand.
+**Abschluss:** commit and push are the last act — own paths, English; the mail send is the operator's.
 
 All further rules live in `docs/concepts/` (code-rules, house-rules, kybernetische-ethik, agent-profiles, source-curation, docs-naming, archivar-mathematikerin).
