@@ -74,10 +74,11 @@
 #   DEFAULT_CADENCE_S = 60.0 gesampelt (--cadence), Format `orbit_bin` (wind_orbit::write_bin).
 #   Haus-Präzedenz einer Orbit-Reihe: `wind_orbit` (phi:3859-3865) trägt `ttl 86400`, terms CC0-1.0.
 #   Der TIMED-TLE ist ein Celestrak-Snapshot, der CI baut bei neuem Element-Satz.
-#   Mountain-Verdikt: `terms free-open https://celestrak.org/usage-policy.php`; `ttl 86400`;
+#   Mountain-Verdikt: `terms free-open https://celestrak.org/usage-policy.php`; `ttl 7200`;
 #   `format orbit_bin`; Weltlinien-Takt 60 s (im Compiler). url/origin/compiler = Mycelium.
-#   Ein frischer Host-Zugriff (celestrak.org gp.php) blieb am 2026-10-15 ohne Antwort ->
-#   der ttl-Wert ist die Haus-Konvention des Geschwister-Blocks, nicht eine Live-Host-Messung.
+#   ttl GEMESSEN (Taucher 2026-10-15): die CelesTrak-Usage-Policy nennt wörtlich „For GP data
+#   that is once every 2 hours" (Wayback 20260516, 200) -> 2 h = 7200 s. (Korrigiert die frühere
+#   Konvention 86400 des Geschwister-Blocks wind_orbit; für einen live gefetchten GP-Satz gilt 7200.)
 
 # 5b — SABER Feld-Zeile (Höhenform (C)) (teil-machbar)
 #   Rat-Verdikt (C): das Level steht IM Schlüssel (dotted `ktemp.<i>`), nicht im Wert
@@ -99,22 +100,70 @@
 #   Mountain-Verdikt: dieselben `terms free-open`; `ttl 604800` (Geschwister-Keogramme phi:10347/10356).
 #   format/field/url/origin/compiler = Mycelium nach Rivers Format.
 
-# 5d — SEANOE-Zulassung (nicht machbar ohne Datensatz-URL)
-#   Gemessen (2026-10-15): seanoe.org HTTP 206 erreichbar. Kein Haus-Block, keine Lizenzmessung im
-#   Baum. SEANOE-Deposits tragen JE EIGENE Lizenzen, nicht eine Haus-Lizenz -> die Zulassung ist
-#   an die konkrete Datensatz-URL gebunden und bleibt pending, bis Mycelium sie nennt.
-#   `xfer:mycelium-342-3`.
+# 5d — SEANOE-Zulassung (GEMESSEN, Datensatz-URL geliefert)
+#   Datensatz: Argo GDAC `https://www.seanoe.org/data/00311/42182/` (DOI 10.17882/42182).
+#   Lizenz GEMESSEN (Taucher 2026-10-15): DataCite-DOI-API `https://api.datacite.org/dois/10.17882/42182`
+#   (200) traegt in `rightsList` `rightsIdentifier: cc-by-4.0`
+#   (`https://creativecommons.org/licenses/by/4.0/legalcode`); die SEANOE-REST-API
+#   `https://www.seanoe.org/api/find-by-id/42182` (200) nennt `licenceUrl .../by/4.0/`.
+#   Nutzung: Acknowledgment-Pflicht (freiwillig mit DOI) — „These data were collected and made
+#   freely available by the international Argo project …".
+#   Mountain-Verdikt: `terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/`; url/origin/
+#   compiler = Mycelium. (Riss: die Annahme „Lizenz nur per API" traf nicht zu — die SSR-Seite
+#   traegt `Licence` + `Utilisation` im HTML; beide Zeugen stehen.) SEANOE-Metadaten sind CC0;
+#   die Daten je Datensatz — hier CC-BY-4.0.
 
 # 5e — GEOFON-FDSN-Zulassung (schon im Register, keine Arbeit)
 #   Gemessen (2026-10-15): phi:163-166 (`fdsn_waveform.bin`) und phi:10496-10498 (`fdsn_event.bin`)
 #   tragen `terms CC-BY-4.0 https://geofon.gfz.de/eqinfo/faq/`. Die Zulassung steht; das gemeldete
 #   CDN-Asset-404 ist Myceliums Transport, kein Mountain-Tor. `xfer:mycelium-342-4`.
 
-# 5f — WDC-B SEP Host-`terms` (Token steht; Vokabel offen)
-#   Gemessen (2026-10-15): die sieben lebenden Katalog-Blöcke cat001..cat007 (phi:30448-30502)
-#   tragen `terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html`. Der Token ist NICHT in der
-#   census-Liste (`tools/register/src/bin/license_census.rs:9-33`) -> terms-vocab-Ausweis.
-#   Das Haus-Verdikt steht also; offen ist nur die Vokabel-Aufnahme (Register-Haushalt) oder eine
-#   Umbenennung auf einen Listentoken — eine Register-/Rat-Entscheidung, kein stiller Schreibakt.
-#   Die „5 Host-`reference`-Blöcke" sind ohne Myceliums Liste nicht adressierbar -> bitte die fünf
-#   konkreten URLs nennen.
+# 5f — Die fünf WDC-Host-`reference`-Blöcke, `terms` GEMESSEN (Adressen von Mycelium)
+#   Die fünf Blöcke stehen phi:14408-14434. Taucher 2026-10-15 (alle HTTP 200, kein Wayback nötig):
+#     - `http://esdb.wdcb.ru/`  — KEINE Lizenzaussage auf der Host-Seite -> `terms unknown` GESETZT
+#     - `http://stp.wdcb.ru/`   — KEINE Lizenzaussage -> `terms unknown` GESETZT
+#     - `http://rjes.wdcb.ru/`  — `terms CC-BY-4.0` (Bestand, bestätigt)
+#     - `http://usd.wdcb.ru/`   — `terms CC-BY-NC-4.0` (Bestand, bestätigt)
+#     - `http://www.wdcb.ru/sep/` — `terms wdcb-sep-policy` (Bestand, bestätigt)
+#   `esdb`/`stp` sind damit gesetzt; die zwei Blöcke waren zuvor termlos (license_census NO-TERMS).
+#   Riss-Rest: der Token `wdcb-sep-policy` ist NICHT in der census-Liste
+#   (`tools/register/src/bin/license_census.rs:9-33`) -> terms-vocab-Ausweis; die Vokabel-Aufnahme
+#   ist Register-Haushalt (oder eine Rat-Frage), kein stiller Schreibakt.
+
+# ============================================================
+# 6 — TAUCher-BEFUNDE 2026-10-15 (GIC-Lizenzen, HIGP, Schwerebau-Grad, CelesTrak-Takt)
+# ============================================================
+
+# 6a — BGS-GIC (British Geological Survey, geomagnetisch induzierte Stroeme)
+#   Gemessen (Taucher): die GIC-Service-Seite `https://geomag.bgs.ac.uk/data_service/space_weather/
+#   gic_services.html` (200) TRAEGT KEINE Datensatz-Lizenz — nur den Fuss „© UKRI".
+#   Umfeld: BGS-Site-Terms; BGS Open/Non-Commercial-Lizenzen; das WDC for Geomagnetism
+#   (`https://wdc.bgs.ac.uk/usage`, 206): „data and services at the WDC are available for scientific
+#   use without restrictions. For commercial applications … contact the relevant institute directly."
+#   + Acknowledgment-Pflicht.
+#   Mountain-Verdikt: BGS-GIC ist keine offene Lizenz (ukri-copyright, kein Datensatz-`terms`) ->
+#   `local-only`/kein phi-Block, bis eine direkte BGS-Lizenz gemessen ist. (Gegen den alten
+#   „terms pending"-Vermerk; beide Zeilen stehen — Riss benannt, nicht geglaettet.)
+#   Riss (alt vs. neu): mountain-319 fuehrte „BGS-GIC `terms pending`"; der Baum fuehrt BGS/NERC-GMD
+#   ohne phi-Block (not-admit, 322-326). Der Taucherbefund deckt das not-admit.
+
+# 6b — BPA-GIC: im Register bereits `terms PD-USGov` (phi:336-337) — die alte Handover-Zeile
+#   „kein deklarierter Datensatz" ist VERALTET (git: mountain 253 termlos -> 283 `unbestimmt`
+#   -> heute `PD-USGov`). Kein Mountain-Akt noetig; die Handover-Zeile wird korrigiert.
+
+# 6c — HIGP-MODVOLC-Gegenprobe: KEINE offene Lizenz gemessen -> `local-only` bestaetigt (§4a).
+#   (Taucher 2026-10-15; der Bestand steht gegen den LANCE/NRT-Block phi:12065-12072.)
+
+# 6d — Schwerebau-Fremdvalidierung jenseits Grad 10 (neuer Zeuge)
+#   Gemessen (Taucher): die NASA-JEOD-Datei `.../grav_geospherical/data/verif_out.txt` (200,
+#   GET-scriptbar) traegt jetzt gelesene Faelle bis **Grad 20**: case 33 (d/o 20/20) V
+#   `6.264194249827655E+07`, case 16 (19/9) `6.249848805691522E+07`, case 20 (15/3, perturbOnly=1)
+#   `-1.703914919154019E+04`, case 7 (13/7) `9.453570602224305E+06` (Modell earth_GGM02C,
+#   degree=order 200, mu 3.986004415E+14, radius 6378136.3). **Die 40 Faelle bis Grad 20 sind
+#   ein GET-scriptbarer Zeuge fuer einen Test jenseits Grad 10** (die GGM02C-Koeffizienten aus
+#   `earth_GGM02C.cc` gehen bis 200). Ein reiner GET-scriptbarer V/dg/N-Punktsatz bis Grad 360
+#   wurde NICHT gefunden (nur OSDC-EGM96-W via POST-Evaluate; NGA EGM2008 hinter PKI).
+#   Naechster Bau: den JEOD-Fall Grad 20 ueber den echten `parse_head`/`GfcModel`-Pfad pruefen
+#   (Koeffizienten bis Grad 20 aus earth_GGM02C.cc), wie Fall 13 Grad 10.
+#   Die 2190-Naht: kein gemessener 2190-`.gfc`-Kopf im Register (nur der synthetische Test-Head
+#   parse.rs:3714); XGM2019e traegt max_degree 5540 -> die 2190-Naht bleibt `pending`.
