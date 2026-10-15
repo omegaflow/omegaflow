@@ -98,24 +98,23 @@ fn station_dh(
     )
 }
 
-fn envelope(stations: &[Vec<(f64, f64)>], min_stations: usize) -> Vec<(f64, f64)> {
-    let mut acc: BTreeMap<i64, Vec<f64>> = BTreeMap::new();
-    for s in stations {
-        for (t, v) in s {
-            if v.is_finite() {
-                acc.entry(*t as i64).or_default().push(*v);
+fn fold_envelope(acc: &mut BTreeMap<i64, (f64, u32)>, series: &[(f64, f64)]) {
+    for (t, v) in series {
+        if v.is_finite() {
+            let e = acc.entry(*t as i64).or_insert((f64::INFINITY, 0));
+            if *v < e.0 {
+                e.0 = *v;
             }
+            e.1 += 1;
         }
     }
-    let mut out = Vec::new();
-    for (t, vals) in acc {
-        if vals.len() >= min_stations {
-            let mut sorted = vals;
-            sorted.sort_by(|a, b| a.total_cmp(b));
-            out.push((t as f64, sorted[0]));
-        }
-    }
-    out
+}
+
+fn envelope_series(acc: BTreeMap<i64, (f64, u32)>, min_stations: usize) -> Vec<(f64, f64)> {
+    acc.into_iter()
+        .filter(|(_, (_, c))| *c as usize >= min_stations)
+        .map(|(t, (m, _))| (t as f64, m))
+        .collect()
 }
 
 fn family_code(line: &str) -> Option<String> {
@@ -220,7 +219,8 @@ fn main() {
         eprintln!("al_network_proxy: manifest carries no station");
         std::process::exit(1);
     }
-    let mut series: Vec<Vec<(f64, f64)>> = Vec::new();
+    let mut acc: BTreeMap<i64, (f64, u32)> = BTreeMap::new();
+    let mut station_count = 0usize;
     for (code, decl, path) in &stations {
         let Ok(bytes) = std::fs::read(path) else {
             eprintln!("al_network_proxy: {code} {path} read void");
@@ -249,9 +249,10 @@ fn main() {
             "station {code} decl {dword} samples {} baseline_block {block}",
             samples.len()
         );
-        series.push(dh);
+        fold_envelope(&mut acc, &dh);
+        station_count += 1;
     }
-    let env = envelope(&series, min_stations);
+    let env = envelope_series(acc, min_stations);
     if env.is_empty() {
         eprintln!(
             "al_network_proxy: envelope empty — no timestamp carries {min_stations} station(s)"
@@ -261,7 +262,7 @@ fn main() {
     println!(
         "envelope samples {} min_stations {min_stations} stations {}",
         env.len(),
-        series.len()
+        station_count
     );
     if let Some(out) = arg_value(&args, "--out") {
         let records: Vec<(f64, f64, u32)> = env.iter().map(|(t, v)| (*t, *v, 0)).collect();
@@ -332,18 +333,26 @@ mod tests {
         assert_eq!(family_code("   "), None);
     }
 
+    fn network_envelope(stations: &[Vec<(f64, f64)>], min_stations: usize) -> Vec<(f64, f64)> {
+        let mut acc: BTreeMap<i64, (f64, u32)> = BTreeMap::new();
+        for s in stations {
+            fold_envelope(&mut acc, s);
+        }
+        envelope_series(acc, min_stations)
+    }
+
     #[test]
     fn the_lower_envelope_takes_the_minimum_and_gates_on_coverage() {
         let a = vec![(0.0, 5.0), (60.0, -3.0), (120.0, 7.0)];
         let b = vec![(0.0, 1.0), (60.0, -8.0)];
-        assert_eq!(envelope(&[a, b], 2), vec![(0.0, 1.0), (60.0, -8.0)]);
+        assert_eq!(network_envelope(&[a, b], 2), vec![(0.0, 1.0), (60.0, -8.0)]);
     }
 
     #[test]
     fn a_timestamp_with_one_station_is_not_an_envelope() {
         let a = vec![(0.0, 5.0), (60.0, -3.0)];
         let b = vec![(0.0, 1.0)];
-        assert_eq!(envelope(&[a, b], 2), vec![(0.0, 1.0)]);
+        assert_eq!(network_envelope(&[a, b], 2), vec![(0.0, 1.0)]);
     }
 
     #[test]
