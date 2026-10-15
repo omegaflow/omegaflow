@@ -69,9 +69,7 @@ impl Md5 {
             120 - self.buf_len
         };
         let tail_len = pad + 8;
-        for i in 0..8 {
-            tail[tail_len - 8 + i] = ((bit_len >> (8 * i)) & 0xff) as u8;
-        }
+        tail[tail_len - 8..tail_len].copy_from_slice(&bit_len.to_le_bytes());
         let saved = self.total_bits;
         self.update(&tail[..tail_len]);
         self.total_bits = saved;
