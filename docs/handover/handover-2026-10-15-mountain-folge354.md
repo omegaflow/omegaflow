@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 354 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: bbb492ad3ef4a821d99c6908e3e3bb8b62b2c4d93a53f354571e63d97e0cbc64
+  sha256: 8ff388d1c3afed44a622ff7379169aee290c657229972728bc818740d37ac0ac
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -56,13 +56,17 @@ Der Stehende Pass wird als **öffentliche** Fassung zitiert, nie kopiert.
   den rat", „liste der seats … eintragen", „alles stimmen sind da").** Die weite Leiter ist gefahren
   (`bin/all_wide "spherical harmonic synthesis gravity field evaluation callable kernel function"`,
   Stopp nach 444 Zeilen/61 Armen, Spill `…1792070842_…`, 921 Zeilen gelesen). Das Paket
-  `state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel.md` trägt die **Sitz-Liste**; **9
+  `state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel.md` trägt die **Sitz-Liste**; **10
   M4-Stimmen** sind eingetragen. Das Verdikt liegt in
   `state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md`, jede Kern-Behauptung am Baum
   geprüft (Kernel-Registry `extract.rs:1700` = 7 Formen; Force-Gate `membrane.rs:456`, **nicht**
   `extract.rs:1701`; 5540 → 15 354 111 Paare). **Konvergenz:** eigene Klasse, Koeffizienten im
   Draht, `V`/`Δg`/`N` je Zeile, Truncation registriert, 5. Riss verschärft. **Riss:** der
   **Kopfweg** (Draht vs. `phi`) konvergiert nicht → Operator.
+- **Der Kopf gebaut (Operator-Wort „in den kasten").** `SourceConfig` trägt `head: Option<ModelHead>`;
+  `parse_sources` liest `gm`/`radius`/`norm`/`tide`/`max_degree` und verweigert einen partiellen Kopf;
+  `gfc_compiler` erzeugt die Direktiven aus dem gemessenen Kopf. `cargo check` 0/0, 3 neue Parse-Tests
+  grün, Draht unangetastet.
 - Register unberührt: `register_sort` canonical (2807), `--orphans` 0.
 
 ## Offen (aufgeschlüsselt)
@@ -156,7 +160,7 @@ Antwort unten) · `xfer:mycelium-356-1` (SABER/UCAR-FPI — die Arm-Antwort steh
 - **Blockade:** keine.
 - **Braucht:** die Bild-Manifestation (W).
 
-### ICGEM gfc — Kopf gemessen, Kern gebaut, Kopfweg entschieden (b); offen: Bau + Block (eigen)
+### ICGEM gfc — Kopf gemessen, Kern gebaut, Kopf gebaut (b); offen: Liefer-Gate + Block (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Feld-Bau.
 - **Lage:** (gemessen/gebaut/verdiktet 2026-10-15, dieses Rund) Der Kopf ist gemessen und der Kern
@@ -177,11 +181,20 @@ Antwort unten) · `xfer:mycelium-356-1` (SABER/UCAR-FPI — die Arm-Antwort steh
   Kopf); Force-Gate (SH hat keine Newton-Kraft); Höhenstabilität nur bis Grad 14 geprüft → `pending`;
   die 2190-Naht ist **nicht** gemessen → `pending`; Verallgemeinerung (alle Normen/Körper). Sitz-Stand:
   Mistral/Duck/Tryingopen `pending` (benannt); **Kimi nachgetragen** (N24-Antwort ersetzt).
-- **Blockade:** keine für den Kopf-Bau (Wort liegt); die Konformanzmessung gegen eine fremde Referenz
-  (ICGEM-Calculation-Service/pyshtools) bei niedrigem Grad; der CDN-Block ist Myceliums.
-- **Braucht:** (1) den Bau der Kopf-Direktiven `gm`/`radius`/`norm`/`tide`/`max_degree` aus `GfcHead`
-  + das Liefer-Gate; (2) die Konformanzmessung; (3) den CI-Bau des (grad-begrenzten) `gfc.bin` +
-  Myceliums Direktiven (`xfer:mountain-354-1`).
+- Der Modellkopf steht jetzt in der Quellen-Zeile: `SourceConfig.head: Option<ModelHead>`, die
+  Direktiven `gm`/`radius`/`norm`/`tide`/`max_degree` aus dem gemessenen Kopf; ein **partieller**
+  Kopf wird verweigert (ein ungemessenes `norm` lässt ihn absent, nie Default). 3 neue Parse-Tests
+  grün; `cargo check` 0/0; **der 26×f64-Draht bleibt unangetastet**.
+- **Blockade:** keine für den Kopf (Wort liegt, Bau steht); die Konformanzmessung gegen eine fremde
+  Referenz (ICGEM-Calculation-Service/pyshtools) bei niedrigem Grad; der CDN-Block ist Myceliums.
+- **Braucht:** (1) das **Liefer-Gate** (ein gfc-Frame ohne Kopf-Direktiven → verweigern; `n >
+  max_degree` → verweigern) und die **Norm in die Kanal-Semantik**; (2) die Konformanzmessung;
+  (3) den CI-Bau des (grad-begrenzten) `gfc.bin` + Myceliums Direktiven (`xfer:mountain-354-1`).
+- **Gefunden (fremd, rot):** die `archivar::parse`-Testsuite ist **rot** — 8 Fehler
+  (`the_register_declares_a_channel_for_every_live_force_tag`, die `p10_2a`-Grammatik, die
+  `range`-Fälle, `field_regime`), alle aus der **Kanal-/Register-Schicht** (fremde river-Änderungen
+  an `channel.rs`/`phi`), **nicht** aus dem additiven Kopf-Bau (der Diff ist rein additiv). Benannt,
+  nicht angefasst.
 
 ### UCAR-FPI — Arm + Zeilen stehen; Manifestation wartet auf die `field`-Zeilen (eigen)
 - **Status:** eigen (Rest Mycelium-/River-gebunden) | **Bindung:** eigen
@@ -369,5 +382,7 @@ Register canonical (2807), `--orphans` 0. Das Roster-Paket **M4** ist gestellt (
 Dokument), **10 Stimmen** eingetragen (Kimi nachgetragen) und das **Verdikt** geschrieben
 (`state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md`, am Baum verifiziert).
 Der **Kopfweg ist entschieden: (b)** (Operator-Wort — der Kopf in die Quellen-Beschreibung, nicht in
-die Rohdaten). Offen: der Kopf-Bau, die Konformanzmessung und der CDN-Block.
+die Rohdaten) **und gebaut** (Kopf-Direktiven `gm`/`radius`/`norm`/`tide`/`max_degree` in der
+Quellen-Zeile; der 26×f64-Draht bleibt unangetastet). Offen: das Liefer-Gate, die Konformanzmessung
+und der CDN-Block. **Fremd rot (benannt):** `archivar::parse` 8 Fehler aus der Kanal-/Register-Schicht.
 Diese Fortschreibung (folge353 → `archiv/`).
