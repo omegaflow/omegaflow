@@ -1,18 +1,18 @@
 <!--
   title: Physical Constants
   class: concept
-  sha256: 22b6a0232f042ab7b2287d1a5af01377f7497ab2da85c9f13303a8d7b3ba47a4
+  sha256: cc51ce87d6ed9ec831d69d4ae253398ecbf93167d29aeecb60b7def5d9037d6b
   status: live
 -->
 # Physical Constants
 
-`src/main.rs` (const block)
+`src/archivar/types.rs` (const block)
 
 | Constant | Value | Use |
 |----------|-------|-----|
 | Φ | 1.618033988749895 | golden ratio — caching, fetch timing, windowing |
 | J2000_EPOCH | 2451545.0 | J2000.0 Julian Date |
-| UNIX_J2000_OFFSET | 946728000.0 | UNIX epoch → J2000 offset (seconds) |
+| J2000_UNIX_OFFSET | 946728000.0 | J2000 (TDB seconds) → UNIX epoch offset (seconds) |
 | PARSEC_M | 3.085677581e16 | parsec in meters |
 | C_LIGHT | 299792458.0 | speed of light (m/s) |
 | HUBBLE_H0 | 70000.0 / (PARSEC_M * 1e6) | Hubble constant in s⁻¹ |

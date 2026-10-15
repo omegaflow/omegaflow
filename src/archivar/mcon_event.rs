@@ -1,13 +1,12 @@
-use crate::archivar::{Aperture, FieldConfig, force_id_of, kernel_id_for_force};
+use crate::archivar::{
+    Aperture, FieldConfig, J2000_EPOCH, J2000_UNIX_OFFSET, SECONDS_PER_DAY, force_id_of,
+    kernel_id_for_force,
+};
 
 pub const MAGIC: [u8; 4] = *b"MCON";
 pub const VERSION: u8 = 1;
 pub const HEADER_LEN: usize = 13;
 pub const REC_BYTES: usize = 32;
-
-pub const J2000_JD: f64 = 2451545.0;
-pub const J2000_UNIX_OFFSET: f64 = 946728000.0;
-pub const SECONDS_PER_DAY: f64 = 86400.0;
 
 pub const PRES_TIME: u8 = 0x01;
 pub const PRES_SML: u8 = 0x02;
@@ -77,7 +76,7 @@ pub fn jd_from_unix(unix_seconds: f64) -> Option<f64> {
     if !unix_seconds.is_finite() {
         return None;
     }
-    let jd = J2000_JD + (unix_seconds - J2000_UNIX_OFFSET) / SECONDS_PER_DAY;
+    let jd = J2000_EPOCH + (unix_seconds - J2000_UNIX_OFFSET) / SECONDS_PER_DAY;
     if !jd.is_finite() {
         return None;
     }
@@ -88,7 +87,7 @@ pub fn unix_from_jd(jd_utc: f64) -> Option<f64> {
     if !jd_utc.is_finite() {
         return None;
     }
-    let unix = (jd_utc - J2000_JD) * SECONDS_PER_DAY + J2000_UNIX_OFFSET;
+    let unix = (jd_utc - J2000_EPOCH) * SECONDS_PER_DAY + J2000_UNIX_OFFSET;
     if !unix.is_finite() {
         return None;
     }

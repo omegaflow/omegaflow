@@ -2,7 +2,7 @@
   title: Remove-Bias — der Bias-Tilgungsplan (aus omegaflow-legacy geholt)
   class: concept
   date: 2026-10-07
-  sha256: f83ee3a3ffb0962fa56877ed1a4c3b6f5995dd50105f1b228427fa25b9b1a942
+  sha256: 0975a4464e5a104fe6c0b49a8dc5609bb3ab44ed9c24b8acc5753df74ca3e3c4
   status: live
   see-also: docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md docs/handover/archiv/handover-2026-10-07-river-folge127.md
 -->
@@ -685,7 +685,7 @@ fn render_url(
     body_name: &str,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> String {
-    let unix = tdb_secs + UNIX_J2000_OFFSET;
+    let unix = tdb_secs + J2000_UNIX_OFFSET;
     let secs = unix as u64;
     let days = secs / 86400;
     let (ty, tm, td) = days_to_ymd(days);

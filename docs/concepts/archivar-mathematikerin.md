@@ -2,7 +2,7 @@
   title: Archivar & Mathematikerin — Spec und Drei-Schichten-Vertrag
   class: concept
   date: 2026-10-15
-  sha256: a02f9a15a120c1e8f36eaccd4639d81b88c1bbe60688a9a7a940138c84997032
+  sha256: 513b9c0258a4e5c5f346f20b26ae07747c7f285f8fa510ed70f805924864eb22
   status: live
   see-also: AGENTS.md, docs/specs/binary-protocol.md, docs/specs/wgsl-shader.md
 -->
@@ -84,7 +84,7 @@ Any permutation, omission, or type-width change in the Rust serialization silent
 - **`phi/sources.φ` parsing correctness** — column name mapping, cmap path resolution, motion law computation (Surface/Barycenter/Linear), force/tau/key propagation. `cargo check` verifies the parser compiles, not that it produces correct samples.
 - **Enclosure Lemma correctness** — the search radius dilation formula, propagation to common epoch, exact filter. Pure mathematics with no type-level guard.
 - **Chebyshev ephemeris evaluation** — polynomial coefficient loading, degree matching (`CHEBYSHEV_N`), granule window coverage, rotation matrix time-derivative interpolation.
-- **Coordinate system consistency** — ICRS throughout; J2000 epoch offset (`UNIX_J2000_OFFSET`), body-fixed vs. inertial frame mixing in motion law evaluation.
+- **Coordinate system consistency** — ICRS throughout; J2000 epoch offset (`J2000_UNIX_OFFSET`), body-fixed vs. inertial frame mixing in motion law evaluation.
 - **WebSocket framing** — `write_ws_binary` header construction, masking, extended payload length encoding.
 - **Temporal decay mathematics** — the retarded fold `e^(−max(0, |Δt| − d/c) / ttl)` (`ttl`, not `τ`: `ttl` is the source retention directive, `τ` the field's process decay) and light-travel retardation `max(0, |Δt| − d/c)` in both Rust response construction and WGSL `fold_eff` must agree.
 - **Dead code paths** — functions, branches, or modules that compile but have no callers. Only visible as warnings when enabled.

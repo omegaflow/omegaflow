@@ -1,3 +1,4 @@
+use crate::archivar::{J2000_EPOCH, J2000_UNIX_OFFSET, SECONDS_PER_DAY};
 use crate::mathematikerin::healpix::ang2pix_nest;
 
 pub const MAGIC: [u8; 4] = *b"ERBQ";
@@ -5,10 +6,6 @@ pub const VERSION: u8 = 1;
 pub const HEADER_LEN: usize = 13;
 pub const REC_BYTES: usize = 32;
 pub const NSIDE: i64 = 1024;
-
-pub const J2000_JD: f64 = 2451545.0;
-pub const J2000_UNIX_OFFSET: f64 = 946728000.0;
-pub const SECONDS_PER_DAY: f64 = 86400.0;
 
 pub const PRES_LAT: u8 = 0x01;
 pub const PRES_LON: u8 = 0x02;
@@ -48,7 +45,7 @@ pub fn parse_series(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
     let events = parse_bin(bytes)?;
     let mut out = Vec::with_capacity(events.len() * 2);
     for e in events {
-        let unix = (e.jd_utc - J2000_JD) * SECONDS_PER_DAY + J2000_UNIX_OFFSET;
+        let unix = (e.jd_utc - J2000_EPOCH) * SECONDS_PER_DAY + J2000_UNIX_OFFSET;
         if !unix.is_finite() {
             continue;
         }
@@ -93,7 +90,7 @@ impl QuakeEvent {
         if !unix_seconds.is_finite() {
             return None;
         }
-        let jd = J2000_JD + (unix_seconds - J2000_UNIX_OFFSET) / SECONDS_PER_DAY;
+        let jd = J2000_EPOCH + (unix_seconds - J2000_UNIX_OFFSET) / SECONDS_PER_DAY;
         if !jd.is_finite() {
             return None;
         }
@@ -227,7 +224,7 @@ mod tests {
     #[test]
     fn jd_from_unix_carries_the_j2000_convention() {
         let jd = QuakeEvent::jd_from_unix(J2000_UNIX_OFFSET).unwrap();
-        assert!((jd - J2000_JD).abs() < 1e-9);
+        assert!((jd - J2000_EPOCH).abs() < 1e-9);
     }
 
     #[test]

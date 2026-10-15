@@ -565,6 +565,10 @@ pub struct SourceConfig {
 
 pub const J2000_EPOCH: f64 = 2451545.0;
 
+pub const J2000_UNIX_OFFSET: f64 = 946_728_000.0;
+
+pub const SECONDS_PER_DAY: f64 = 86400.0;
+
 pub const PARSEC_M: f64 = 3.085677581e16;
 
 pub const NO_CADENCE: u64 = 1 << 25;
