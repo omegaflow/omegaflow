@@ -2,7 +2,7 @@
   title: Standpass — Mycelium (privat)
   class: zustand
   date: 2026-10-15
-  sha256: 6ee90ab86446d7223fdd0aa8599ebde2abfae7da80b9494f3a4ed8432d94fc18
+  sha256: 8d4fdd94226177c1ecb8490850b13040e070b95b58487ba6c98fa05f2dcac0dc
   status: live
   see-also: docs/zustand/standing-pass.md
 -->
@@ -78,7 +78,9 @@ Meine eigenen Push-Läufe am HEAD `cc6f31afc` sind **queued/unread**.
 
 - **WGLC-Compiler gebaut** + die Messung korrigiert (täglich, Lizenz-Riss), s. o.
 - `mountain-folge354` gefaltet: WGLC-Antwort (Lizenz-Riss benannt, `field`-Form = Rat) ·
-  DMSP-SSJ-Direktiven am Baum bestätigt · Celestrak-`terms` als gemessene Blockade benannt.
+  DMSP-SSJ-Direktiven am Baum bestätigt · Celestrak-`terms` über `archive_search --jina` gemessen
+  (`usage-policy.php`, 501(c)(3), frei, Rate-Limits, kein Lizenztext) — die frühere „nicht
+  erreichbar"-Meldung war die falsche Route.
 - folge356 → `archiv/`; folge357 geschrieben; der Commit steht (`f4e566c8f`, `cc6f31afc`).
 
 ## Snapshot / Tools
