@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 357 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 1aef16ea4b9bf1853ea5ae007d78a0e170daeeda9776611588a583a5c88606c6
+  sha256: 14ff8f4c6c51be00b8b7204750ad765973ca812695331af200432d6055357b1c
   status: live
 -->
 # Handover — Mycelium-Folge 357 (2026-10-15)
@@ -123,6 +123,21 @@ neu ausgelegt).
   benennen — Rat-Frage); (2) den Kopf des **Provenienz-Rasters** lesen (12 Klassen); (3) die
   **Bild-Registerzeilen** der gespiegelten GeoTIFFs (`url`/`origin`/`compiler` = ich, `terms` =
   Mountain) — der Träger wird **gespiegelt + client-seitig per Range** gelesen, nicht „gebaut".
+
+### THEMIS-ASI FODG-Cube + Skymap — gebaut + verifiziert; Spiegeln/Registrieren offen
+- **Status:** eigen (Bau fertig; Manifestation offen) | **Bindung:** eigen
+- **Lage:** (gemessen 2026-10-15) Rivers Auftrag `xfer:river197-6`. Der **Compiler**
+  `tools/measure/src/bin/themis_asi_frame_onset.rs` (river-220, `45e36d5cd`) liest die
+  PGM-Minutenbilder + die IDL-Skymap und schreibt den FODG-Cube. **Gebaut + verifiziert:**
+  die Minutenbilder `ut06..ut08` (2024-05-10, `label=kapu_themis21`, 150 Frames; 30 fehlen/absent)
+  + Skymap `themis_skymap_kapu_20240909-%2B_v02.sav` gezogen; der Lauf reproduziert das
+  river-197-Band (`07:54:45`, az 230–240, el 55). **Artefakte:** `fodg_20240510_kapu_onset.bin`
+  3 888 544 B `sha256 3ad742b3…` · Skymap 3 539 400 B `sha256 adc8208a…`.
+- **Braucht:** (1) **Spiegeln** der zwei Dateien auf den CDN (Tag `data.phys.ucalgary.ca` ist
+  zugelassen, `free-open`) — CI-Naht `*-cdn.yml` (url/origin/compiler = ich); (2) die
+  **Registerzeile** (Mountain: `terms`/`format`/`field`/`ttl`; die Geschwister-Blöcke
+  `themis_asi_timed_keogram`/`themis_asi_keogram`, `phi:10342-10354`); (3) danach misst der
+  Workflow `themis_asi_frame_onset` den Onset selbst. An river: `xfer:river197-6`.
 
 ### Vier Endpunkte — SEANOE/GEOFON offen (ICGEM/gamma-cat gefaltet)
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen | **Trigger:** Mountains Zulassung
