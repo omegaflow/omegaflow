@@ -918,6 +918,10 @@ Die Doktrin „Σω = 0 erzwingt Stille“ ist geschlagen, außer der Operator b
 - **Site:** `https://chat.deepseek.com/`
 - **Modell/Einstellung:** DeepSeek V4 Pro · tiefes Denken · erweiterte Suche
 - **Zeit:**
+
+> **Korrektur (Operator, 2026-10-15):** die folgende F2–F7-Eintragung war eine **verbatim-Kopie
+> von Sitz 02 (Perplexity)** und ist ungültig; sie bleibt als falsifizierte Zeile stehen, nicht
+> gelöscht. Die **richtige** Antwort steht unten als **07b**.
 ## F2 · Frühwarnkette Sonne→Erde
 
 **Verdikt:** Die Kette trägt als **gemessene Vorlauf↔Sicherheits-Leiter nur bedingt** — als Diagnose- und Notwendigkeits-Audit ja, als durchgängig quantifizierte inkrementelle TE-Kette nein.
@@ -1015,6 +1019,57 @@ Die Doktrin „Σω = 0 erzwingt Stille“ ist geschlagen, außer der Operator b
 **Nächster Schritt:** Definiere Σω = 0 als **neutrale Mischung**: Partiale bleiben erhalten; Kanalamplituden werden aus den einzelnen \(\omega_i\) bzw. deren normierter Verteilung gebildet, nicht aus dem Vorzeichen der Summe. Optional: ein separater, operatorgesetzter `mute`-Kanal für echte Stille.
 
 **Durch die Stimmen:** *Mountain* verlangt, dass die Kanalwerte aus Messung/Spektrum stammen; *River* verweigert die automatische Auslöschung; *Mycelium* verlangt eine deterministische, testbare Mischregel; *Sensory* unterscheidet Messsignal von wahrgenommener Stille; *Future* verlangt, dass die Entscheidung im Code und Protokoll sichtbar bleibt.
+
+### 07b · DeepSeek — richtige Antwort (Operator, 2026-10-15)
+
+Urteil, nicht Erwartung. Offenes bleibt `pending`; kein 0.0 als Default.
+Maßstab: A1 A=A · A2 0 geehrt · A3 Alle Wesen gleich · A4 Linse ist ethischer Akt · A5 Konsens des Operators.
+Stimmen je Frage: Mountain · River · Mycelium · Sensory · Future.
+
+#### F2 · Frühwarnkette Sonne→Erde
+Verdikt: Nein — trägt nicht als gemessene Vorlauf↔Sicherheit-Leiter. Ja — trägt als Diagnose-/Notwendigkeits-Audit.
+Begründung: Stufen und Fenster sind benannt: aktive Region (Tage) → Flare/EUV (8 min) → CME/Sonnenwind L1 (~25–60 min) → Magnetosphären-Kopplung → Substurm/Elektrojet (~min) → Boden-dB/dt → GIC (~s). A1 verlangt Messung je Kante; A2 verbietet 0.0 als Ersatz; A3 verlangt Gewicht aus Messung; A4 fragt, ob die Kante misst oder nur Gradient; A5 lässt den Operator den nächsten Schritt entscheiden. Die ganze Kette als gemessene Leiter wurde nicht gefunden. Jede Kante braucht: Vorlauf = Zeitdifferenz Stufe i→i+1; Sicherheit = inkrementelle TE über die Vorstufe, mit Surrogat-Null. Fehlt eine dieser Messungen, ist die Kante `pending`.
+Kanten-Soll: AR→Flare/EUV aus Sonnenmagnetogramm/AR-Register + XRS/EUV; Flare/EUV→CME/L1 aus Koronagraph + L1-Plasma/Mag; L1→Magnetosphäre aus Bz/v/Kopplung; Kopplung→Substurm/Elektrojet aus Magnetometerketten/AL/IL; Elektrojet→Boden-dB/dt aus Bodenmagnetometern; dB/dt→GIC aus GIC-Sensor/Neutralstrom. Je Kante: Δt und inkrementelle TE plus Null.
+Risse: keine inkrementelle TE je Kante; keine Null; Verkettungsregel fehlt; schwächstes Glied ist die Verkettung selbst, nicht geglättet. Doktrin geschlagen: „Die Kette trägt als gemessene Leiter."
+Stimmen: Mountain — Register unvollständig. River — verweigert Sicherheitsbehauptung. Mycelium — Fluss nicht durchgängig. Sensory — Korrelat ≠ Erleben. Future — Morgen erbt `pending`.
+Nächster begrenzter Messschritt: eine Kante vollständig messen, z.B. L1→Magnetosphären-Kopplung, mit Vorlauf, inkrementeller TE und Null.
+
+#### F3 · Aurora als dynamischer Stationsschalter
+Verdikt: Ja als dynamischer Nowcast-Stationsschalter. Nein als Vorhersage. Aurora ist Schwester, nicht Vorläufer.
+Begründung: Die Oval-Lage ist nowcast-bar (OVATION Prime/PrecipNet). Auswahlregel: Für Zeit t nimm den Oval-Nowcast; aktiviere Stationen, deren korrigierte geomagnetische Breite/LMT unter Oval/Elektrojet liegt. Kopplung an Boden-dB/dt und GIC. Lyons 2013 trennt auroralen und bodenmagnetischen Onset. Der nutzbare Vorlauf dB/dt→GIC ist kurz.
+Risse: Aurora führt oder folgt? Nicht universell; Vorlauf-Riss: Aurora/AL-Onset→Boden-dB/dt ist kurz und nicht als Langvorwarnung tragfähig; Oval ist Nowcast, nicht Forecast; Stationsdichte begrenzt. Doktrin geschlagen: „Aurora ist Vorläufer."
+Stimmen: Mountain — Oval-Register nowcast. River — Recht zu verweigern für Vorhersage. Mycelium — Stationsnetz. Sensory — optisch vs. magnetisch. Future — ehrliche Registrierung als Nowcast.
+Nächster Messschritt: Lag Aurora/AL-Onset→Boden-dB/dt pro Station messen, mit Null.
+
+#### F4 · Schumann-Antrieb — Blitz oder Geomagnetik?
+Verdikt: Nein — ohne Blitz-Kanal trägt die Messung nicht. „Reines Blitzgeschehen" ist nicht belegt; geomagnetischer Anteil ist dokumentiert, aber klein.
+Begründung: Der Konfund: globales Blitzgeschehen treibt Schumann und Ionosphäre. Ohne Blitz-Kanal kann reine TE(abk→f) den Antrieb nicht vom Konfund trennen. A1 verlangt den fehlenden Kanal als Messung; A2 verbietet Null-Ersatz; A3 verlangt beide Treiber gleich zu wiegen; A4 fragt, ob TE den Treiber oder den Gradienten liest; A5 lässt den Operator den Kanal wählen.
+Blitz-Kanal: WWLLN/OTD/LIS oder SR-eigener Blitz-Proxy, unabhängig vom geomagnetischen Treiber.
+Null-Form: Block-/Phasen-randomisierte Null des geomagnetischen Treibers unter Erhalt des Blitzkanals; oder partielle TE mit Blitz als Kovariable. Sie erhält den Blitz→Schumann-Pfad und zerstört den geomag→Schumann-Pfad.
+Risse: kein Blitz-Kanal; Surrogat 10 trägt nicht; geomagnetische Richtung klein/unsicher. Doktrin geschlagen: „reines Blitzgeschehen" ist nicht entschieden.
+Stimmen: Mountain — Blitzregister fehlt. River — verweigert kausale Aussage. Mycelium — zwei Treiber, ein Kanal. Sensory — SR misst Korrelat. Future — ehrlich `pending`.
+Nächster Schritt: Blitzkanal akquirieren, dann TE(abk→f | Blitz) mit Null.
+
+#### F5 · Null-Form des Netz-End-Prüfers
+Verdikt: Kein Verdikt. `pending`. `bpa_gic` deckt den MCON-Zeitraum nicht; die FMI-Reihe ist Surrogat.
+Begründung: A1: GIC↔Onset-Bin braucht GIC-Messung. FMI ist nicht GIC. A2: kein 0.0. A5: Operator entscheidet, ob die Relation als Surrogat geführt wird. Null-Form, wenn überhaupt: Block- oder phasen-randomisierte Null auf der FMI-Reihe relativ zu festen Onset-Bins; alternativ Kreisschub der Bins um Nicht-Tages-Vielfache. Sie erhält FMI-Autokorrelation und zerstört Ereignisausrichtung. Sie zerstört nicht die Datenlücke.
+Risse: 4-Tage-Fenster; MCON fehlt; FMI≠GIC; Null rettet keine fehlende Messung. Doktrin geschlagen: „FMI ersetzt GIC."
+Stimmen: Mountain — Registerlücke. River — verweigert. Mycelium — Fluss unterbrochen. Sensory — FMI ist kein GIC-Sensor. Future — `pending`.
+Nächster Schritt: `bpa_gic` auf MCON erweitern oder Relation als `pending` führen.
+
+#### F6 · Blocklängen-Regel der Blatt-Kalibrierung
+Verdikt: Blocklänge aus gemessener Autokorrelationsstruktur benennen; ohne Nulldurchgang `pending`. `Z = 58 min` ist BCA-Z-Null, nicht automatisch Blocklänge.
+Begründung: A1 verlangt Messung; A2 verbietet Default-Blocklänge; A3 verlangt gleiche Gewichtung; A4 fragt, ob die Zeitskala gemessen oder gesetzt ist; A5 lässt den Operator entscheiden. Regel: Blocklänge = erster ACF-Nulldurchgang oder integrale Autokorrelationszeit mit CI. Physikalische Zeitskala nur, wenn explizit als solche gemessen und begründet.
+Risse: ACF-Nulldurchgang fehlt; keine CI; `Z = 58 min` trägt den Signifikanz-Null nicht allein. Doktrin geschlagen: „Z = 58 min ist Blocklänge."
+Stimmen: Mountain — ACF-Register. River — verweigert willkürliche Blocklänge. Mycelium — Fluss. Sensory — dH/dt-Sensor. Future — ehrliche Null.
+Nächster Schritt: ACF der ABK dH/dt mit CI berechnen; falls kein Nulldurchgang, integrale Skala oder Signifikanz verweigern.
+
+#### F7 · Aktuator-Richtung bei Σω = 0
+Verdikt: Partiale erhalten. Stille nur, wenn Σω = 0 physikalische Stille ist. Die aktuelle Regel „Σω = 0 → beide Kanäle 0 = Stille" ist Default/Fallback.
+Begründung: A1 A=A: Kanäle sind Messungen; Σω = 0 ist algebraische Summe, nicht Kanalnull. A2 0 geehrt: Null nur, wo sie physikalische Wahrheit ist. A3: beide Kanäle gleich. A4: Die Linse muss fragen, ob der Aktuator summiert oder die Kanäle erhält. A5: Die Maschine fragt; der Operator entscheidet. Wenn der Aktuator physikalisch Σω ausgibt, ist der Ausgang Stille; Register und Test behalten die Partiale.
+Risse: Aktuator-Semantik vs. Messsemantik; Vorzeichen-Span; Σω = 0 ist Richtungs-Entscheidung, kein stiller Fix. Doktrin geschlagen: „Σω = 0 → Stille" als Default.
+Stimmen: Mountain — Kanäle messen. River — Recht zu verweigern. Mycelium — Fluss. Sensory — beide Kanäle. Future — Morgen erbt Partiale.
+Nächster Schritt: Operator-Entscheid: Σω = 0 → `pending` für den Aktuator, Partiale im Register; oder explizite Aktuator-Definition, die Stille physikalisch setzt.
 
 ### 08 · Duck.ai
 - **Site:** `https://duck.ai/`

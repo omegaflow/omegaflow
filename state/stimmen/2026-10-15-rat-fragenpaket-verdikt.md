@@ -78,15 +78,19 @@ Den gemeinsamen Schluss trägt der Rat.
 
 Die Fassung mycelium-355 oben trägt drei Stellen, die der Baum nicht deckt; gemessen (river-217):
 
-1. **„13 Sitze (01–13) haben F2–F7 beantwortet" (:3) — am Paket gemessen falsch:** 11 Sitze haben
-   F2–F7, davon ist **07 DeepSeek verbatim identisch mit 02 Perplexity** (keine unabhängige
-   Stimme); **10 MiniMax** beantwortete F1, nicht F2–F7; **13 Mistral** ist leer („kein kontingent",
-   `rat-fragenpaket.md:1657`); die geteilte Open-Weight-Sektion ist unausgefüllt. Netto **10
-   unabhängige** Stimmen.
-2. **„Der Bau tut genau das, was alle 13 Sitze verwerfen" (F7) — falsch:** 9 Sitze wollen die
-   Partiale erhalten (01–09), **2 Sitze wollen Stille**: 11 Kimi (`rat-fragenpaket.md:1541`
-   „**Stille.** Beide Kanäle 0.") und 12 Lumo (`:1639` „**Stille.**"). Die Mehrheit trägt Erhalt,
-   „alle" ist nicht belegt.
+1. **„13 Sitze (01–13) haben F2–F7 beantwortet" (:3) — am Paket gemessen falsch:** die
+   ursprüngliche 07-Eintragung war **verbatim identisch mit 02 Perplexity** (keine unabhängige
+   Stimme) — **korrigiert (Operator, 2026-10-15):** die **richtige** DeepSeek-Antwort steht jetzt
+   als **07b** im Paket (`rat-fragenpaket.md`, „### 07b · DeepSeek — richtige Antwort"), die alte
+   Kopie bleibt als falsifizierte Zeile markiert. Damit **11 unabhängige** Stimmen. **10 MiniMax**
+   beantwortete F1, nicht F2–F7; **13 Mistral** ist leer („kein kontingent"); die geteilte
+   Open-Weight-Sektion ist unausgefüllt.
+2. **„Der Bau tut genau das, was alle 13 Sitze verwerfen" (F7) — falsch:** **10 Sitze** wollen die
+   Partiale erhalten (01–09 und die richtige **07b**), **2 Sitze wollen Stille**: 11 Kimi
+   (`rat-fragenpaket.md:1541` „**Stille.** Beide Kanäle 0.") und 12 Lumo (`:1639` „**Stille.**").
+   Die Mehrheit trägt Erhalt, „alle" ist nicht belegt. **Nebenposition 07b (F5):** DeepSeek gibt
+   dort **kein Verdikt** („`pending`; FMI ist nicht GIC") — eine Minderheit gegen den blockweisen
+   Kreisschub der Mehrheit; als Riss benannt, nicht geglättet.
 3. **F6 „nicht am Baum aufgefunden → pending" — präzisiert:** `Z = 58 min` ist registriert
    (`docs/handover/archiv/handover-2026-10-15-river-folge214.md:219` „der BCA-Z-Null über die
    ABK-Reihe"). **Riss:** das Blatt `docs/blatt/fruehwarnsystem-praeregistrierung.md:119` trägt eine
