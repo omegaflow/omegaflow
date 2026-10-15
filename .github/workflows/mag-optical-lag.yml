@@ -1,0 +1,58 @@
+name: mag-optical-lag
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: ISO day YYYY-MM-DD
+        required: true
+        default: "2024-05-10"
+      stations:
+        description: magnetometer station codes, comma-separated (named, never defaulted)
+        required: true
+        default: "ykc,fcc,ott"
+      keogram:
+        description: TKDG meridian-brightness keogram bin URL
+        required: true
+        type: string
+        default: "https://github.com/omegaflow/sources/releases/download/data.phys.ucalgary.ca/themis_asi_timed_keogram_20240510_kapu.bin"
+      window:
+        description: onset search window as start,end (ISO UTC); empty = the whole day
+        required: false
+        default: "2024-05-10T06:50:00Z,2024-05-10T08:15:00Z"
+      k:
+        description: robust threshold multiple (median + k*1.4826*MAD)
+        required: false
+        default: "6"
+
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  lag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the meridian keogram
+        run: |
+          set -euo pipefail
+          curl -fsSL -o /tmp/keogram.bin "${{ inputs.keogram }}"
+      - name: Onset/lag readout — optical keogram vs magnetometer
+        run: |
+          set -euo pipefail
+          cargo run --release -p omegaflow-measure --bin mag_optical_overlay -- \
+            --date "${{ inputs.date }}" --stations "${{ inputs.stations }}" \
+            --optical /tmp/keogram.bin \
+            --window "${{ inputs.window }}" --k "${{ inputs.k }}" | tee /tmp/lag.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mag-optical-lag
+          path: /tmp/lag.txt

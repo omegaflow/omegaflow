@@ -148,6 +148,31 @@ fn minute_slot(epoch: f64, day_start: f64) -> Option<usize> {
     Some((off / 60.0) as usize)
 }
 
+const ROBUST_SIGMA: f64 = 1.4826;
+
+fn median_mad(values: &[f64]) -> (f64, f64) {
+    let mut v: Vec<f64> = values.to_vec();
+    v.sort_by(|a, b| a.total_cmp(b));
+    if v.is_empty() {
+        return (f64::NAN, f64::NAN);
+    }
+    let med = v[(v.len() - 1) / 2];
+    let mut dev: Vec<f64> = v.iter().map(|x| (x - med).abs()).collect();
+    dev.sort_by(|a, b| a.total_cmp(b));
+    let mad = dev[(dev.len() - 1) / 2];
+    (med, mad)
+}
+
+fn onset_slot(slots: &[Option<f64>], lo: usize, hi: usize, k: f64) -> Option<usize> {
+    let vals: Vec<f64> = (lo..hi).filter_map(|i| slots[i]).collect();
+    let (med, mad) = median_mad(&vals);
+    if !(mad > 0.0) {
+        return None;
+    }
+    let thr = med + k * ROBUST_SIGMA * mad;
+    (lo..hi).find(|&i| slots[i].is_some_and(|v| v >= thr))
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let date = match arg_value(&args, "--date") {
@@ -285,6 +310,55 @@ fn main() {
             line.push_str(&format!(" {mean:8.1} {max:8.1} {min:8.1}"));
         }
         println!("{line}");
+    }
+
+    if let Some(win) = arg_value(&args, "--window") {
+        let k = arg_value(&args, "--k")
+            .and_then(|s| s.parse::<f64>().ok())
+            .filter(|v| *v > 0.0)
+            .unwrap_or(6.0);
+        let (ws, we) = match win.split_once(',') {
+            Some((a, b)) => (
+                iso_to_unix(a).unwrap_or(day_start),
+                iso_to_unix(b).unwrap_or(day_start + DAY),
+            ),
+            None => (day_start, day_start + DAY),
+        };
+        let slot_of = |t: f64| {
+            if t <= day_start {
+                0usize
+            } else if t >= day_start + DAY {
+                MINUTE_SLOTS
+            } else {
+                ((t - day_start) / 60.0) as usize
+            }
+        };
+        let (lo, hi) = (slot_of(ws), slot_of(we));
+        println!(
+            "# onset window {}..{} k {k}",
+            iso_utc(day_start + lo as f64 * 60.0),
+            iso_utc(day_start + hi as f64 * 60.0)
+        );
+        let optical_onset = optical.as_ref().and_then(|s| onset_slot(s, lo, hi, k));
+        match optical_onset {
+            Some(i) => println!("onset optical {}", iso_utc(day_start + i as f64 * 60.0)),
+            None => println!("onset optical pending (no crossing above the robust threshold)"),
+        }
+        for (st, slots) in &mag {
+            match onset_slot(slots, lo, hi, k) {
+                Some(i) => {
+                    let lag = match optical_onset {
+                        Some(o) => (i as i64 - o as i64) * 60,
+                        None => 0,
+                    };
+                    println!(
+                        "onset {st} {} lag_s {lag}",
+                        iso_utc(day_start + i as f64 * 60.0)
+                    );
+                }
+                None => println!("onset {st} pending (no crossing above the robust threshold)"),
+            }
+        }
     }
 
     if let Some(out) = out_path {
