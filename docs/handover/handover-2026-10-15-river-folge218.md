@@ -2,7 +2,7 @@
   title: Handover — River-Folge 218
   class: handover
   date: 2026-10-15
-  sha256: 84b94a23df666b3c05b8736116982cbe2fb0a59531beb941397eed2945f8f9bc
+  sha256: 65b00dbfebb2626078323d92442e32b87bf37b8ad234de90a5e126b6ffacdfcb
   status: live
 -->
 # Handover — River-Folge 218 (2026-10-15)
@@ -12,7 +12,7 @@ markiert, nicht erklärt; git trägt, was gemacht wurde. Nur eigene Arbeit: bei
 geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen. Diese Session
 konsumierte `handover-2026-10-15-river-folge217.md` (→ `archiv/`).
 
-## Burn: open 0.0 · close pending — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db`), die private Session-Zeile wird nicht gelesen (nicht gemessen, Vorbehalt wie river-212…218) · cap 0.55 benannt-ungeprüft — Grund: river-219 (ein Pass; kein Fenster-Edit, kein Send, kein UI-Seat). Fälligkeit bei Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge353, mycelium-folge356 — in river-219 gefaltet); `open_points_check` = 0 stale-citations. Gearbeitet: die zwei `dbdt`-Min/Union-Läufe ausgewertet; der `gic-onset`-Workflow um `window`/`target_yield` erweitert und der gleich-Ausbeute-Einzelstation-Arm `abk_dbdt_1m` gestoßen; F4′ (Blitz-Kanal frei) nachgezogen. (gemessen 2026-10-15, river-219)
+## Burn: open 0.0 · close pending — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db`), die private Session-Zeile wird nicht gelesen (nicht gemessen, Vorbehalt wie river-212…218) · cap 0.55 benannt-ungeprüft — Grund: river-219 (ein Pass; kein Fenster-Edit, kein Send, kein UI-Seat). Fälligkeit bei Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge353, mycelium-folge356 — in river-219 gefaltet); `open_points_check` = 0 stale-citations. Gearbeitet: die zwei `dbdt`-Min/Union-Läufe ausgewertet; der `gic-onset`-Workflow um `window`/`target_yield` erweitert und der gleich-Ausbeute-Einzelstation-Arm `abk_dbdt_1m` gestoßen; F4′ (Blitz-Kanal frei) nachgezogen; die Platzierungs-3-R-Kette gefahren (Recherche `all_wide` → Roster 13 Sitze → Rat-Blatt). (gemessen 2026-10-15, river-219)
 
 ## Operator-Wort-Register
 
@@ -118,12 +118,15 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…219) · `
 - **Blockade:** keine (CI-Läufe).
 - **Braucht:** (a) den `38738618251`-Lauf auswerten (rec/prec/`prec_ge`/`rec_ge` bei tol 5/15/30) — der **Einzelstation-Maßstab**, der entscheidet, ob die Netzhülle ihn schlägt; (b) die **Platzierungs-/Streuungs-Frage** läuft die **3 Rs** (s. u.).
 
-### Platzierungs-Frage — die 3-R-Kette (Recherche → Roster → Rat)
-- **Status:** eigen | **Bindung:** eigen
+### Platzierungs-Frage — die 3-R-Kette gefahren (Recherche → Roster → Rat)
+- **Status:** eigen (Kette gefahren; Bau gated) | **Bindung:** eigen
 - **Trigger:** Operator-Wort 2026-10-15 („die 3 Rs"): die Streuung der Min-Hülle über N und die Stationsanordnung.
-- **Lage:** (gemessen 2026-10-15 via `bin/all_wide` + Baum-/Katalog-Lesung) die Nachbarfrage (läuft die **Streuung** der Min-Einhüllenden nicht-monoton über die Stationszahl, und wie müssen Stationen zueinander stehen, damit mehr Stationen den Trefferanteil heben) ist **kein** Rat-Solo, sondern läuft die volle Kette. **Recherche gefahren** (river-219, `bin/all_wide`): der relevante Cluster — Dods/Chapman/Gjerloev (`arXiv:1606.02655`, dynamische **Korrelationsnetze**, optimiert gegen Stationsantwort/Inhomogenität/Fenster), Orr/Chapman/Gjerloev (`arXiv:2009.03112`, Nature Comm `s41467-021-22112-4`, gerichtete Netze, Signale < 65° MLAT), Weygand 2022 (konjugierte Onsets), Forsyth SOPHIE (`arXiv:1606.02651`, **Perzentil**- statt Fix-Schwelle), Chu MPB-Index (Terminator-Gewichtung), Imajo 2020 (multipoint), IMAGE-`IL` (12 Stationen im UT-Sektor 16–03). Gemeinsamer Nenner: **sektor-/korrelations-ausgewählte** Netze, **keine** globale Min-Hülle. Spill: `~/projects/omegaflow-work/recherche/spill/omegaflow_all_1792069746_…txt`. **Roster-Formular formuliert** (`state/stimmen/2026-10-15-platzierung-formular.md`, 5er-Design: fünf Axiome + fünf Stimmen + die 13 Sitze der Runde im Kopf).
-- **Blockade:** das **Roster** braucht die Operator-Hand (die Sitze gehören dem Operator; ein UI-Prompt ist ein Dritt-Akt → per-Akt-Consent).
-- **Braucht:** (a) der Operator fährt das Manifest durch die Sitze; (b) danach der **Rat** (fünf Stimmen) mit dem bindenden Verdikt (echte Hüllen-Dispersion vs. Kalibrier-Artefakt + die Platzierungsregel).
+- **Lage:** (gemessen 2026-10-15 via `bin/all_wide` + Baum-/Katalog-Lesung + `rat`-Subagent) die Kette ist **durch**: **Recherche** (weiter Cluster: Dods/Chapman/Gjerloev `arXiv:1606.02655`; Orr/Chapman/Gjerloev `arXiv:2009.03112`/`s41467-021-22112-4`; Weygand 2022; Forsyth SOPHIE `arXiv:1606.02651` Perzentil; Chu MPB Terminator-Gewichtung; IMAGE-`IL` 12 Stationen UT 16–03) — Nenner: **sektor-/korrelations-ausgewählt, nicht global-minimal**. **Roster** gefahren (13 Sitze, ausgefüllt in `state/stimmen/2026-10-15-platzierung-formular.md`). **Rat** gefahren (`state/stimmen/2026-10-15-platzierung-rat-blatt.md`):
+  - **Streuung:** die nicht-monotone Min-**Schwelle** ist **Kalibrier-Artefakt** (das 64er-Gitter; die Ausbeute, nicht die Schwelle, wird ausgeglichen). Der Nicht-Schachtelungs-Schluss eines Sitzes („N24 steigt ⇒ Panels nicht geschachtelt ⇒ N-Achse keine Achse") ist ein **Non-sequitur** — das Gitter trägt den Sprung allein; gleiche Sample-Zahlen (N16=N24=N31) sprechen für Träger-Sättigung.
+  - **Am Baum verifizierter Riss:** `station_dbdt` (`al_network_proxy.rs:101-119`) liefert die **vorzeichenlose** |ΔB|; `fold_envelope` (`:167-186`) `Fusion::Min` nimmt elementweise das Minimum → über eine vorzeichenlose Größe wählt der Min die **ruhigste** Station (Veto), ist **nicht** das AL-Analogon (das von `dbdt` wäre `max`, das von vorzeichenbehaftetem `dh` ist `min`). Der ganze Min-Sweep misst damit ein **Veto-Netz**, kein AL-Netz.
+  - **Bindende Regel (Register-Zeile):** globale Min-Hülle **streichen**; eine Station speist die Hülle nur, wenn sie im **Nachtsektor MLT 16–03 h** liegt und `weight_i > 0` trägt (gemessener marginaler Beitrag); **Fusion = Union/Quorum/Perzentil — bei |ΔB|-Magnitude `max`, nie `min`**; Schwelle = feste Ausbeute; `deny global_min`.
+- **Blockade:** der Bau ist **gated** auf die entscheidende Messung; das Roster-Formular und das Rat-Blatt sind `state`-Dateien (kein Baum-Akt).
+- **Braucht:** (a) **die eine entscheidende Messung:** auf **einem fixen Präfix** für N ∈ {16,24,31} die Hüllen-Paare `(t,min)` exportieren — Träger-Inklusion (N24 ⊆ N31, N16 ⊆ N24) **und** punktweises Minimum (`min_N16 ≥ min_N24 ≥ min_N31`), zugleich die Ausbeute-Schwelle mit **exakter** Zählfunktion (Bisektion, `step=1`) statt des 64er-Gitters; (b) danach den Fusions-Ersatz (sektor-gewählte Union/Quorum, `max` bei |ΔB|) als begrenzten Bau; (c) den Lauf `38738618251` auswerten (der Einzelstation-Maßstab).
 
 ### Frühwarnkette — Vorlauf-Leiter Sonne→Erde (Operator-Wort 2026-10-15)
 - **Status:** eigen (Entwurf → Rat) | **Bindung:** eigen
@@ -225,5 +228,6 @@ daten-liegend; die F4-Bedingung `(abk→f | Blitz)` bleibt gated auf die CDN-Rei
 **Gefaltet (river-219):** `mycelium-folge356` (F7′ gebaut/Energie↔Lautstärke-Riss = Deklaration;
 F4′-Korrektur Blitz-Kanal frei; Athabasca manifestiert), `mountain-folge353` (spiegelt die drei
 mountain-352-Zeugen — kein neuer River-Akt).
-**Commit:** der `gic-onset`-Workflow-Input (`4e0602ffc`), diese Übergabe; `folge217` → `archiv/`.
+**Platzierungs-3-R-Kette (river-219, durch):** Recherche (`all_wide`) → Roster (13 Sitze, `state/stimmen/2026-10-15-platzierung-formular.md`) → Rat (`state/stimmen/2026-10-15-platzierung-rat-blatt.md`). **Rat-Verdikt:** die nicht-monotone Min-**Schwelle** ist **Kalibrier-Artefakt** (64er-Gitter, Ausbeute statt Schwelle ausgeglichen); der Nicht-Schachtelungs-Schluss eines Sitzes ist ein **Non-sequitur**. **Am Baum verifiziert:** `station_dbdt` = vorzeichenlose |ΔB|, `min` darüber wählt die **ruhigste** Station (Veto) — **nicht** das AL-Analogon. **Bindende Regel:** globale Min-Hülle streichen; nur Nachtsektor-Stationen (MLT 16–03 h) mit `weight_i > 0` speisen; **Fusion = Union/Quorum/Perzentil, bei |ΔB| `max`, nie `min`**; `deny global_min`. **Nächster Schritt:** die eine entscheidende Messung (exakte Zählfunktion + Träger-Inklusion + punktweises Minimum über N16/N24/N31 auf fixem Präfix).
+**Commit:** der `gic-onset`-Workflow-Input (`4e0602ffc`), das Roster-Formular + Rat-Blatt, diese Übergabe; `folge217` → `archiv/`.
 Fremdes ungespeichertes (`state/`, `data/`) bleibt unangetastet.
