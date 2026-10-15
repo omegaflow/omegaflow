@@ -1,0 +1,38 @@
+# Grenz-Term-/Feld-/ttl-Verdikte — Mountain-Teil
+# Datum 2026-10-15 · Linie Mountain · Messgrundlage mycelium-357 + die ICGEM-/JEOD-Messungen dieses Atoms
+# Junktim: terms/field/ttl = Mountain; url/origin/compiler/Tags = Mycelium (hier bewusst leer).
+# Eine Zeile je Quelle; kein Verdikt ohne Messung; Risse stehen, nie geglättet.
+
+# ============================================================
+# 1 — WGLC (WWLLN Global Lightning Climatology), Zenodo 4774528 / Version 20277101
+# ============================================================
+#   Lizenz-Riss (gemessen mycelium-357, nicht geglättet):
+#     Record-Metadaten  metadata.license.id = cc-by-4.0   (die Lizenz des Records)
+#     README.md-Badge                        = CC BY-SA 4.0 (die mitgelieferte Datei)
+#   Verdikt Mountain (A = A): die Lizenz des Records ist maßgeblich —
+#     terms CC-BY-4.0 https://zenodo.org/records/4774528
+#     Der Badge-Widerspruch bleibt als benannter Riss stehen (beide Zeilen).
+#   Zeitform: täglich (Dichte [5844,360,720], Zeitschritt 1 Tag); Leistung monatlich.
+#     ttl 86400
+#   field: PENDING — die Form eines global gemessenen Dichte-Gitters ist die
+#     Rat-Schemafrage (kein Ort der Quelle, kein Punkt-Kernel; eigene Klasse, vgl. M4.1/M4.3).
+#     Bis zum Rat keine field-Zeile, kein erfundenes τ/Kernel (0 geehrt).
+#   compiler (Mycelium): tools/harvest/src/bin/wglc_compiler.rs; url/origin (Mycelium). Kein Block ohne ihre Zeilen.
+
+# ============================================================
+# 2 — TIMED / Celestrak GP (SABER-Weltlinie)
+# ============================================================
+#   terms free-open https://celestrak.org/usage-policy.php
+#     (CelesTrak 501(c)(3), GP frei für die space community, Rate-Limits, kein Lizenztext —
+#      gemessen mycelium-357; `free-open` ist ein Haus-Token, license_census.rs:27)
+#   ttl: PENDING (pro Orbit/Pfad-Takt; timed_tle_compiler.rs baut Mycelium)
+#   field: PENDING (SABER/TIMED-Fäden, s. Live-Handover)
+
+# ============================================================
+# 3 — Venera-Polar / Venus-Radar-Bild (Zenodo 18176179)
+# ============================================================
+#   terms CC-BY-4.0 https://zenodo.org/records/18176179
+#     — BEREITS im Register (phi:31325, Block venus_radar_Processed.zip). Kein neuer Akt:
+#       Venera-Polar ist eine Datei derselben Deposition, dieselbe Lizenz. Bestätigt.
+#   Träger: gespiegelt + client-seitig per Range gelesen (Mycelium); kein COG-/Overviews-Bauer
+#     im Haus gemessen -> Overviews pending.
