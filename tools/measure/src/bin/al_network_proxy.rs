@@ -98,12 +98,44 @@ fn station_dh(
     )
 }
 
-fn fold_envelope(acc: &mut BTreeMap<i64, (f64, u32)>, series: &[(f64, f64)]) {
+#[derive(Clone, Copy, PartialEq, Debug)]
+enum Fusion {
+    Min,
+    Max,
+}
+
+impl Fusion {
+    fn word(self) -> &'static str {
+        match self {
+            Fusion::Min => "min",
+            Fusion::Max => "max",
+        }
+    }
+}
+
+fn fusion_of(args: &[String]) -> Result<Fusion, String> {
+    match arg_value(args, "--fusion").as_deref() {
+        None | Some("min") => Ok(Fusion::Min),
+        Some("max") => Ok(Fusion::Max),
+        Some(other) => Err(format!("--fusion is neither min nor max: {other}")),
+    }
+}
+
+fn fold_envelope(acc: &mut BTreeMap<i64, (f64, u32)>, series: &[(f64, f64)], fusion: Fusion) {
     for (t, v) in series {
         if v.is_finite() {
-            let e = acc.entry(*t as i64).or_insert((f64::INFINITY, 0));
-            if *v < e.0 {
-                e.0 = *v;
+            let e = acc.entry(*t as i64).or_insert((*v, 0));
+            match fusion {
+                Fusion::Min => {
+                    if *v < e.0 {
+                        e.0 = *v;
+                    }
+                }
+                Fusion::Max => {
+                    if *v > e.0 {
+                        e.0 = *v;
+                    }
+                }
             }
             e.1 += 1;
         }
@@ -219,6 +251,13 @@ fn main() {
         eprintln!("al_network_proxy: manifest carries no station");
         std::process::exit(1);
     }
+    let fusion = match fusion_of(&args) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("al_network_proxy: {e}");
+            std::process::exit(2);
+        }
+    };
     let mut acc: BTreeMap<i64, (f64, u32)> = BTreeMap::new();
     let mut station_count = 0usize;
     for (code, decl, path) in &stations {
@@ -249,7 +288,7 @@ fn main() {
             "station {code} decl {dword} samples {} baseline_block {block}",
             samples.len()
         );
-        fold_envelope(&mut acc, &dh);
+        fold_envelope(&mut acc, &dh, fusion);
         station_count += 1;
     }
     let env = envelope_series(acc, min_stations);
@@ -260,9 +299,10 @@ fn main() {
         std::process::exit(1);
     }
     println!(
-        "envelope samples {} min_stations {min_stations} stations {}",
+        "envelope samples {} min_stations {min_stations} stations {} fusion {}",
         env.len(),
-        station_count
+        station_count,
+        fusion.word()
     );
     if let Some(out) = arg_value(&args, "--out") {
         let records: Vec<(f64, f64, u32)> = env.iter().map(|(t, v)| (*t, *v, 0)).collect();
@@ -333,10 +373,14 @@ mod tests {
         assert_eq!(family_code("   "), None);
     }
 
-    fn network_envelope(stations: &[Vec<(f64, f64)>], min_stations: usize) -> Vec<(f64, f64)> {
+    fn network_envelope(
+        stations: &[Vec<(f64, f64)>],
+        min_stations: usize,
+        fusion: Fusion,
+    ) -> Vec<(f64, f64)> {
         let mut acc: BTreeMap<i64, (f64, u32)> = BTreeMap::new();
         for s in stations {
-            fold_envelope(&mut acc, s);
+            fold_envelope(&mut acc, s, fusion);
         }
         envelope_series(acc, min_stations)
     }
@@ -345,14 +389,37 @@ mod tests {
     fn the_lower_envelope_takes_the_minimum_and_gates_on_coverage() {
         let a = vec![(0.0, 5.0), (60.0, -3.0), (120.0, 7.0)];
         let b = vec![(0.0, 1.0), (60.0, -8.0)];
-        assert_eq!(network_envelope(&[a, b], 2), vec![(0.0, 1.0), (60.0, -8.0)]);
+        assert_eq!(
+            network_envelope(&[a, b], 2, Fusion::Min),
+            vec![(0.0, 1.0), (60.0, -8.0)]
+        );
+    }
+
+    #[test]
+    fn the_upper_envelope_takes_the_maximum_the_non_conjunctive_union() {
+        let a = vec![(0.0, 5.0), (60.0, -3.0), (120.0, 7.0)];
+        let b = vec![(0.0, 1.0), (60.0, -8.0)];
+        assert_eq!(
+            network_envelope(&[a, b], 2, Fusion::Max),
+            vec![(0.0, 5.0), (60.0, -3.0)]
+        );
+    }
+
+    #[test]
+    fn the_fusion_word_reads_min_and_an_unknown_one_is_refused() {
+        assert_eq!(fusion_of(&[]).map(Fusion::word), Ok("min"));
+        assert_eq!(
+            fusion_of(&["--fusion".to_string(), "max".to_string()]).map(Fusion::word),
+            Ok("max")
+        );
+        assert!(fusion_of(&["--fusion".to_string(), "mean".to_string()]).is_err());
     }
 
     #[test]
     fn a_timestamp_with_one_station_is_not_an_envelope() {
         let a = vec![(0.0, 5.0), (60.0, -3.0)];
         let b = vec![(0.0, 1.0)];
-        assert_eq!(network_envelope(&[a, b], 2), vec![(0.0, 1.0)]);
+        assert_eq!(network_envelope(&[a, b], 2, Fusion::Min), vec![(0.0, 1.0)]);
     }
 
     #[test]
