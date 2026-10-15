@@ -1,0 +1,222 @@
+<!--
+  title: Handover — Mycelium-Folge 358 (2026-10-15)
+  class: handover
+  date: 2026-10-15
+  sha256: a71b783b84bdc642ca31801fee0a0d40b8ecf8070731f6dae3af8b48927fcd3b
+  status: live
+-->
+# Handover — Mycelium-Folge 358 (2026-10-15)
+
+Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht wurde.
+Der **Stehende Pass** wird zitiert, nie kopiert (privat `state/zustand/standing-pass.md`;
+öffentliche Projektion `docs/zustand/standing-pass.md`). Diese Session konsumierte
+`handover-2026-10-15-mycelium-folge357.md` (→ `archiv/`).
+
+Gefaltet (`register_lookup --addressed mycelium`): `mountain-folge355` (die Grenz-Terms stehen —
+WGLC-Lizenz-Riss entschieden `cc-by-4.0` + `ttl 86400`; Celestrak `terms free-open`; Venera-Polar
+`terms` bestätigt `phi:31325`; die WGLC-`field`-Form bleibt die Rat-Schemafrage; WDC-B braucht die
+Kernel-Zuordnung) · `river-folge219` (Weberin-Zeugen manifestiert/offen, GIC-2, DE-2→SPDF,
+SABER/GATS, JUICE-SPICE, Register→Manifest mit Toren).
+
+## Burn: open 0.0 · close pending — `session_burn` meldet `db absent`
+
+(`~/.local/share/opencode/opencode.db` fehlt); der `0.0` ist der Gate-Platzhalter, kein Meßwert.
+Fälligkeit bei Öffnung: `--fired mycelium` = 0 · `--stale mycelium --persist 3` = 0 ·
+`--addressed mycelium` = 2 (gefaltet) · `open_points_check folge357` = 0 stale-citations
+(1 `ABSENT`: Archiv-Pfad der Future-Übergabe, mechanisch; 20 format-gaps unverändert — nicht
+neu ausgelegt).
+
+## Operator-Wort-Register
+
+| Wort | Datum | Quelle |
+| --- | --- | --- |
+| „ich glaube du warst zu schnell fertig … es gibt legale wege an die globalen daten zu kommen" | 2026-10-15 | `state/operator-gespraeche/2026-10-15-mycelium.md` (folge356) |
+| „verstehst du jetz warum ich da so drauf poche?" | 2026-10-15 | dito |
+| (standing) „Am Ende: ein Commit (deine Pfade)." | 2026-10-15 | dito |
+| (standing) „ab jetzt Reports immer in einfache Sprache" | 2026-10-13 | dito |
+| Startlinie „Starte die Mycelium-Linie in einem Pass …" | 2026-10-15 | dito (folge353/354) |
+
+## Gearbeitet (dieses Rund)
+
+- **Venera-Polar gespiegelt und Registerzeile gesetzt (Operator-Wort: „setze die
+  Venera-Polar-Registerzeile + den Spiegel auf"; Mountains `terms` stehen).** Der Träger ist
+  gespiegelt + client-seitig per Range lesbar, nicht „gebaut".
+  - **`phi/sources.φ`:** neuer Block `zenodo.org/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif`
+    (geordnet nach `no-cadence`, url-asc; `register_sort` canonical über **2808** Blöcke).
+    `url`/`origin`/`compiler` (`raw_mirror.rs`)/`sha256` = **meine** Zeilen; `terms CC-BY-4.0
+    https://zenodo.org/records/18176179` = **Mountains** Entscheidung (`phi:31325`, dieselbe
+    Deposition 18176179), hier als ihre Zeile direkt getragen — beide Enden benannt.
+  - **Gemessen (2026-10-15):** Zenodo-Record `18176179`, Datei
+    `Venus_Venera_Backscatter_Global_Polar_840m_v1.tif`, **193 701 536 B** (= 193,7 MB, die „194 MB"
+    der Übergabe); Origin-md5 `b0f0a174ca913370875b6c882dc9055f` == Zenodo-`metadata.checksum`;
+    **sha256 `98d80740c6d0c2b0b4e8df388123443d4f6314efc45bf7ed788806a255f59c50`** (lokal aus dem
+    Origin gezogen und verifiziert). Klassisches TIFF, 18 596 × 18 354 px geschätzt aus dem früheren
+    Polar-Kopf; **Overviews `pending`** (kein COG-Bauer im Haus).
+  - **`.github/workflows/zenodo-raw-cdn.yml`:** Matrix-Eintrag ergänzt (asset/url/origin/sha256);
+    der `push` dieses Files feuert die Naht, `raw_mirror --ci-mode` verifiziert die sha256 vor dem
+    CDN-Upload. 193,7 MB < 2-GiB-Asset-Grenze → kein Shard.
+  - **Register-Gate lokal geprüft:** `register_sort` canonical (`2808` Blöcke) · `cdn_reconcile --fail`
+    clean (`cap+tag contract clean, 334 registry hosts`) · `license_census --fail` fügt **keine**
+    neue Verletzung hinzu (`CC-BY-4.0` liegt im geschlossenen Satz; die 335 bestehenden custom-Token
+    sind unverändert).
+- **Der Deploy-Ablauf ist als lokales Binary verifiziert** — `register_sort` idempotent
+  (byte-canonical; `--write` berührt die Datei nicht), der neue Block wurde in die sortierte
+  Position gerückt (Diff = genau die 7 neuen Zeilen).
+
+## Offen — eigen
+
+### F4′ — Schumann-Antrieb: WGLC global, **täglich** (Lizenz-Riss entschieden) (eigen + River)
+- **Status:** eigen (Rest Rat + Engine-Parser + River) | **Bindung:** eigen
+- **Trigger:** Rat-Feldform → Mountains `field`-Zeile → Engine-Format → Rivers Deskriptor
+- **Lage:** (gemessen 2026-10-15) Quelle frei; Mountain hat den Lizenz-Riss entschieden
+  (Record `cc-by-4.0` maßgeblich, README-Badge CC BY-SA 4.0 als Riss benannt) und `ttl 86400`
+  gesetzt. Global, **räumlich** 0,5° + 5′; **zeitlich täglich** (Dichte) — kein stündlicher Kanal.
+  Der Compiler steht (`tools/harvest/src/bin/wglc_compiler.rs`).
+- **Blockade:** die `field`-Form eines global gemessenen Dichte-Gitters ist die **Rat-Schemafrage**
+  (kein Punkt-Kernel) — bis dahin keine `field`-Zeile, kein Block.
+- **Braucht:** das Rat-Verdikt zur Feld-Klasse; danach meine `url`/`origin`/`compiler` + der
+  Grammatik-Parser, dann Engine-Format + CDN-Manifestation. An Mountain: `xfer:mycelium-356-5`.
+
+### TIMED / Celestrak GP — `terms free-open` entschieden; Block + CI-Naht + `ttl` = meine Seite (eigen)
+- **Status:** eigen (Block-Bau) | **Bindung:** eigen | **Trigger:** Mountains `ttl`/`field`
+- **Lage:** (gemessen 2026-10-15) Mountain hat `terms free-open https://celestrak.org/usage-policy.php`
+  entschieden (`state/mountain/2026-10-15-grenz-term-verdicts.φ`). Die Policy: 501(c)(3), GP frei,
+  Rate-Limits, kein Lizenztext. `ttl` je Orbit/Pfad-Takt noch **PENDING**; `field` (SABER/TIMED-Fäden)
+  PENDING. `timed_tle_compiler.rs` baut die Reihe (meine Seite).
+- **Blockade:** ohne Mountains `ttl`-Zeile kein Block (ein `url`-Block braucht `ttl`/`no-cadence`).
+- **Braucht:** Mountains `ttl`-Wert; dann Block + CI-Naht setzen. An Mountain: `xfer:mycelium-352-5`.
+
+### SABER / UCAR-FPI — Manifestation wartet auf Mountains `field`-Zeilen (eigen)
+- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
+- **Trigger:** die `field`-Zeile je Faden (Mountain) + die Manifestation
+- **Lage:** (gemessen 2026-10-15) Athabasca ist gesetzt (`0281ae1a4`). SABER (keyless via HAPI/GATS)
+  und UCAR-FPI (E-Mail-gated, Operator erledigt) warten auf Mountains `field`-Zeilen.
+- **Braucht:** Mountains `field`-Zeilen. An Mountain: `xfer:river208-weberinmanifest1`.
+
+### HIGP-MODVOLC-Archiv 2000–2019 — Vollzug unvollständig (abgebrochen) (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Trigger:** kein — Bau (Hintergrund-Job)
+- **Lage:** (gemessen 2026-10-15) Nur **2000** liegt (doppelt); **2001–2018 fehlen**. `local-only`
+  (© UH Mānoa).
+- **Braucht:** `terms local-only` von Mountain; dann Block setzen; Vollzug 2001–2018 (reale Granule).
+
+### Venus-Radar / Venera-Polar — Träger gespiegelt; Overviews + Provenienz offen (eigen)
+- **Status:** eigen | **Bindung:** eigen | **Verdikt:** der Rat — COG als Träger, HiPS als abgeleitete Ansicht
+- **Lage:** (gemessen 2026-10-15) **Venera-Polar ist gespiegelt + registriert** (s. Gearbeitet).
+  Der VNRD-*Feld*-Block steht (CC0-1.0). Offen: (1) die **Overviews-Frage** (ohne Overviews lesen
+  oder einen COG-Schritt im CI benennen — Rat-Frage); (2) der Kopf des **Provenienz-Rasters**
+  (12 Klassen) ist noch nicht gelesen; (3) weitere **Bild-Registerzeilen** (Basemap 80,9 GB —
+  > Shard-Grenze?; Arecibo 965 MB) — `url`/`origin`/`compiler` = ich, `terms` = Mountain.
+- **Blockade:** Overviews = Rat-Frage; die weiteren Träger sind noch nicht gespiegelt.
+- **Braucht:** Overviews-Entscheidung; Provenienz-Kopf-Messung; die weiteren Träger, sobald gewählt.
+
+### THEMIS-ASI FODG-Cube + Skymap — gebaut + CI-Naht steht; Mountain-Registerzeile offen (eigen + River)
+- **Status:** eigen (Manifestation steht; Registerzeile Mountain) | **Bindung:** eigen
+- **Lage:** (gemessen 2026-10-15) Der Compiler
+  `tools/measure/src/bin/themis_asi_frame_onset.rs` (river-220) liest die PGM-Minutenbilder + Skymap
+  und schreibt den FODG-Cube; verifiziert (Onset `07:54:45`, az 230–240, el 55). Die CI-Naht
+  `themis_asi-fodg-cdn.yml` steht (`5b2071569`; manuell, `workflow_dispatch`, per-Akt-Inputs).
+- **Braucht:** (1) die **Registerzeile** (Mountain: `terms`/`format`/`field`/`ttl`; die
+  Geschwister-Blöcke `themis_asi_timed_keogram`/`themis_asi_keogram`, `phi:10342-10354`);
+  (2) danach misst der Workflow den Onset selbst. An river: `xfer:river197-6`.
+
+### Vier Endpunkte — SEANOE/GEOFON offen (ICGEM/gamma-cat gefaltet) (eigen)
+- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen | **Trigger:** Mountains Zulassung
+- **Lage:** (gemessen 2026-10-15) Offen: **SEANOE** (206; Lizenz `pending`) · **GEOFON-FDSN**
+  (CDN-Asset 404; `geofon` fehlt im Register). **Braucht:** Mountain-Zulassung. An Mountain:
+  `xfer:mycelium-342-3`/`-4`.
+- **ICGEM-CDN-Transport:** Asset `…/icgem.gfz.de/gfc.bin` ist **404** — `url`/`origin`/`compiler` +
+  CI-Bau sind meine Seite (nach dem Rat zur SH-Kernel-Form). `xfer:mountain-354-1`.
+
+### Fünf fehlende Fäden — Quellen und Compiler gemessen (eigen)
+- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
+- **Lage:** (gemessen 2026-10-15) Entwurf `state/mountain/faden-term-field-ttl-draft.φ`;
+  `raw_mirror`-Aktor gebaut. **Braucht:** Mountain-Zeilen. An Mountain: `xfer:mountain-348-2`.
+
+### Register→Manifest + Ersatzquellen + LOD + BASE + WDC/terms + ttl (eigen)
+- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen | **Trigger:** Mountains Zeilen
+- **Lage:** (gemessen 2026-10-15) unverändert offen: Ersatzquellen-Blöcke (OCNS2019 `local-only`;
+  JPL SSD/Horizons) · **LOD** · **BASE** (> 2-GiB-Limit `cdn.rs:230`) · WDC-Kyoto-Token + vier
+  `terms`-Korrekturen · `ttl`/`no-cadence` + `register_sort`.
+- **Braucht:** Mountain-Zeilen. An Mountain: `xfer:future.…7d5c9163` · `xfer:mycelium-344-5` ·
+  `xfer:mycelium-343-3` · `xfer:mycelium-342-10`/`-343-2`.
+
+### WDC-B Obninsk — Rettung erweitert; Abdeckung unvollständig (eigen)
+- **Status:** eigen (Rest = Vollständigkeit + Verdikte) | **Bindung:** eigen
+- **Lage:** (gemessen 2026-10-15) **211** Wayback-Blöcke + 7 lebende `www.wdcb.ru/sep`-Kataloge;
+  `terms` angewandt. Offen: `field` je Datensatz (Kernel-Zuordnung = Rat), `terms` der 5 Host-
+  `reference`-Blöcke = Mountain. **Braucht:** CDX-Abdeckung ist **nicht** 1993–2024 komplett →
+  `pending`. An Mountain: `xfer:mycelium-352-1`/`-2`.
+
+### GIC — zweiter Zeuge (Netz-End-Validator) (an River)
+- **Status:** eigen (Rest River) | **Bindung:** River
+- **Lage:** (gemessen 2026-10-15) Der `bpa_gic`-Zeuge trägt nur ein 4-Tage-Fenster; lange
+  Alternativen gemessen (EURISGIC, EPRI SUNBURST, NZ-long-term, „Northern Transit").
+- **Braucht:** Rivers Wahl + Manifestation. An river: `xfer:river219-gic2`.
+
+### DE-2-Reihe / SABER-GATS — Wirt umstellen (eigen + River)
+- **Status:** eigen (Manifestation) | **Bindung:** eigen
+- **Lage:** (gemessen 2026-10-15) DE-2: Host `cdaweb.gsfc.nasa.gov` bricht TLS ab; dieselben
+  Bestände bei **NASA SPDF** (`spdf.gsfc.nasa.gov/pub/data/de/de2/…`, HTTP 206). SABER: offizielle
+  Datenseite `saber.gats-inc.com` (`data.php`, HTTP 200).
+- **Braucht:** Fetch-Host auf SPDF/GATS umstellen + manifestieren. An river:
+  `xfer:river219-de2spdf`/`xfer:river219-sabergats`.
+
+### JUICE-Bahn (Flyby) (eigen + River)
+- **Status:** eigen (Manifestation) | **Bindung:** eigen
+- **Lage:** (gemessen 2026-10-15) recon-SPK + 1-σ bleiben ESOC (2026-11-01); die **operative** Bahn
+  liegt bei ESA-SPICE + NAIF (beide HTTP 200). **Braucht:** prüfen, ob der `flyby_ephemeris_gate`
+  darauf tragen kann; registrieren/manifestieren. An river: `xfer:river219-juicespice`.
+
+### NSSDC/CLPDS-Planetologie — **geschlossen**: 1/2/3/4/6 `descoped`, 5 `pending` (Kontakt)
+- **Status:** eigen (Register) | **Bindung:** eigen
+- **Lage:** (gemessen 2026-10-15; Verdikt `state/stimmen/2026-10-15-china-planetendaten-rat-verdikt.md`)
+  1/2/3/4/6 = Ableitungen offener NASA-Basismessungen → `descoped`. **5** `14306` (Drohnen-
+  Photogrammetrie, terrestrische Mars-Analoga) = eigene Feldmessung → `pending`.
+- **Braucht:** nur die **Zweckfrage für 5**, wenn das Haus je terrestrische Mars-Analog-Morphometrie
+  braucht; Entwurf `docs/handover/mail-2026-10-15-cugb-mars-analog.md` (nicht gesendet). **Kein Send
+  durch die Maschine.** An future: `xfer:mycelium-347-2` geschlossen.
+
+## An mountain
+
+Origin: mycelium-358 (2026-10-15):
+
+- **Venera-Polar-Registerzeile gesetzt** (`phi/sources.φ`, Block
+  `zenodo.org/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif`; `url`/`origin`/`compiler`/
+  `sha256` = meine Zeilen, `terms CC-BY-4.0` = Deine Entscheidung `phi:31325` als Deine Zeile
+  getragen). Nur zur Kenntnis — die Deposition-`terms` stehen; kein neuer Verdikt-Akt nötig.
+- `xfer:mycelium-352-5` **TIMED/Celestrak** — `terms free-open` entschieden (danke); offen ist die
+  `ttl`-Zeile je Orbit/Pfad-Takt — ohne sie kein Block.
+- `xfer:mycelium-356-5` **WGLC** — Lizenz-Riss entschieden (`cc-by-4.0`), `ttl 86400` steht; die
+  `field`-Form bleibt die Rat-Schemafrage; dann meine `url`/`origin`/`compiler` + Parser.
+- `xfer:mountain-354-1` **ICGEM-CDN-Transport** — Asset 404; `url`/`origin`/`compiler` + CI-Bau
+  meine Seite (nach dem Rat zur SH-Kernel-Form).
+- `xfer:mycelium-352-1`/`-2` **WDC-B** — `field` braucht die Kernel-Zuordnung (Rat).
+- Aus früheren Runden offen: `xfer:mountain-348-1` (MODVOLC) · `-348-2` (Fünf Fäden) ·
+  `-348-4` (OCNS2019-Ersatz) · `-348-5` (TIMED) · `xfer:mycelium-342-3`/`-4` · `-342-10` · `-343-2`.
+
+## An river
+
+Origin: mycelium-358 (2026-10-15):
+
+- `xfer:river197-6` **THEMIS-ASI** — Compiler + CI-Naht `themis_asi-fodg-cdn.yml` stehen; offen ist
+  nur die Mountain-Registerzeile, danach misst der Workflow den Onset selbst.
+- `xfer:river219-gic2` **GIC-2** · `xfer:river219-de2spdf` **DE-2/SPDF** ·
+  `xfer:river219-sabergats` **SABER/GATS** · `xfer:river219-juicespice` **JUICE/SPICE** —
+  unverändert.
+- `xfer:mycelium-356-3` **F4′** (Schumann-Kanal): die Quelle ist frei und **täglich**; das
+  `bin 3600` in `schumann_geomag.te` trägt sie nicht; `cond`/`bin` sind Deine Deskriptor-Wahl. Die
+  CDN-Reihe hängt am Rat + Mountains `field`.
+
+## LOCK
+
+- **SuperDARN Record-Download** — Operator-Wort | 2026-09-29 | „nein super darn musst du nicht
+  messen das lade ich erst herunter wenn ich glasfaser habe."
+  (`state/future/handover/archiv/handover-2026-09-29-future-folge153.md:25`). Kein Maschinen-Akt.
+
+## Abschluss
+
+Vor Commit/Push: das Commit-Wort des Operators (`/commit`); `/consent` ist der session-weite
+Consent, nie das Commit-Wort. Dieses Rund trägt das (standing) Wort „Am Ende: ein Commit (deine
+Pfade)." Eigene Pfade dieses Atoms: diese Übergabe (folge358), die konsumierte folge357 (→ `archiv/`),
+die `phi/sources.φ`-Zeile, `.github/workflows/zenodo-raw-cdn.yml`, die öffentliche Pass-Projektion
+`docs/zustand/standing-pass.md`.
