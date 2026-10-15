@@ -2,7 +2,7 @@
   title: Standpass — Mycelium (privat)
   class: zustand
   date: 2026-10-15
-  sha256: 3b75445e163928a0a5182e9e355ef1d180497cbb44287e8ea67caa3c9b7b6bbd
+  sha256: 891f3631c1400541e02ffb9ed91aecc4e096a64bee3fc89ecd1d5b5e7c81b3c8
   status: live
   see-also: docs/zustand/standing-pass.md
 -->
@@ -11,7 +11,7 @@
 Vollständige Fassung. Öffentlich gilt allein die Projektion
 `docs/zustand/standing-pass.md` (nur HEAD + rote Läufe, kein Personenbezug).
 
-HEAD `b07e37f82` (== `origin/main`) · geschrieben 2026-10-15 17:00Z · **Mycelium-358**.
+HEAD `c4a0fe9d5` (== `origin/main`) · geschrieben 2026-10-15 17:05Z · **Mycelium-358**.
 
 ## Rote Läufe (gemessen via `ci_manage`, kein Polling)
 
@@ -82,6 +82,9 @@ Push-Läufe sind **queued/in_progress/unread** — `zenodo-raw-cdn` spiegelt die
   provisorische HTTP-Range-Lesung vom Origin-COG.
 - **River-Übergabe gefaltet:** DE-2/SPDF, SABER/GATS, JUICE/SPICE sind eigene Hol-/Ablage-Aufgaben
   (kein Token); GIC-2 trägt River selbst.
+- **Mountains zwei Anforderungen beantwortet:** SEANOE-Datensatz-Adresse geliefert
+  (`www.seanoe.org/data/00311/42182/`, DOI `10.17882/42182`, Argo GDAC) + die fünf
+  WDC-Host-Adressen (`esdb`/`rjes`/`stp`/`usd`/`www.wdcb.ru/sep`); GEOFON steht bereits im Register.
 - folge357 → `archiv/`; folge358 geschrieben; Commits `cf6c8b4d9` … `b17570464` / `b07e37f82` gepusht.
 
 ## Snapshot / Tools
