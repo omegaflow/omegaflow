@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 351 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 0ac1125ecf82d3b14dcdea370fd6ce4bd1f583ebca25c46a663ebecb7a662ddf
+  sha256: 71d84423b7069657114b5204773d053a744515841793456a28e8ddc557dcc1f4
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md
 -->
@@ -109,11 +109,12 @@ Baum getragen (git: `36b50dfca`). Was folgt, ist offen.
   (Peer-Körper) ist **gebaut** (`timed_tle_compiler.rs`, WOB1; Roundtrip parst). **Riss benannt:** die
   Übergabe nennt „Schritt 2" einen `Position::StateVector{track:true}`-Produzenten; gebaut ist der
   `orbit_bin`-Weg als `Motion::Barycenter`. Beide Zeugen stehen, keine Glättung.
+- **Taucher-Messung 2026-10-15:** SABER-HAPI **`TIMED_L2A_SABER`** (`cdaweb.gsfc.nasa.gov/hapi/info?id=TIMED_L2A_SABER` 200; Parameter `Time`, **`ktemp`** K, `tpgpaltitude` km, u. a.; **Span 2002-01-25 → 2026-10-06**); **Takt nicht im `info`** (aus einer Live-`data`-Probe zu lesen — offen); Terms = SABER **„Rules of the Road"** (`spdf.gsfc.nasa.gov/pub/data/timed/saber/SABER_rules_of_the_road.txt`, offen, Co-Autorenschaft angeboten). TLE-Route `celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE` intermittierend (direkt pending). **Register-Blöcke ABSENT:** `sgrep -i "saber" phi/sources.φ` = 0; kein `at timed`-`orbit_bin`-Block; **`timed-orbit-cdn.yml` existiert nicht** (`glob .github/workflows/*`).
 - **Blockade:** keine (der Bau ist offen, kein externes Tor).
 - **Braucht:** (1) den **TIMED-Register-Block** (`format orbit_bin`, `at timed`; Mycelium setzt
   `url`/`origin`/`compiler` — `xfer:mountain-348-5`); (2) die CI-Naht `timed-orbit-cdn.yml`;
   (3) das **Riss-Gate** (`measure`-Sonde, `VerdictWord::Riss`); (4) den SABER-Block (`at earth`,
-  Tangentialgeometrie, Höhe als geschlossene Level-Achse).
+  Tangentialgeometrie, Höhe als geschlossene Level-Achse); (5) den SABER-**Takt** aus einer Live-`data`-Probe.
 
 ### Venus Radar — Projektion gemessen; VNRD-Block steht; Bild-Manifestation offen (eigen)
 - **Status:** eigen (Operator-Wort 2026-10-14: W — das Bild bleibt Bild) | **Bindung:** eigen
@@ -131,10 +132,9 @@ Baum getragen (git: `36b50dfca`). Was folgt, ist offen.
 - **Lage:** (gemessen 2026-10-14) `gfc.rs` ist Parser+Channels ohne Auswerter; die
   Kugelflächen-Synthese fehlt. Präzedenz: `IgrfCoeffs::synthesize`, `vmf3_sh::b_c`. **Riss:** der Frame
   trägt GM/radius **nicht**; `norm` „fully normalized" (4π) ≠ IGRF-Schmidt; `product_type` muss verzweigen.
+- **Taucher-Messung 2026-10-15:** Route statisch `https://icgem.gfz.de/getmodel/gfc/<modelid>/<Model>.gfc` (XGM2019e-URL 206); DOI `10.5880/icgem.2019.007` = **CC-BY-4.0 bestätigt**; Format-Doc „The ICGEM-format" 2023 (`icgem.gfz.de/files/6defd9f8….pdf`) — Header: `product_type`/`modelname`/`earth_gravity_constant`/`radius`/`max_degree`/`errors`/`tide_system`/`norm`. `gfc.rs` parst den 26×f64-Draht **ohne** GM/radius/norm/tide (bestätigt, `sgrep` = 0); `gfc_compiler.rs` liest `norm`/GM/radius, druckt sie aber nur nach **stderr**; `product_type`/`tide_system` werden **nicht** gelesen. Haus-CDN-Asset `…/icgem.gfz.de/gfc.bin` = **404**. Die „4π"-Behauptung ist im Format-Doc **nicht** bestätigt (Formel-Ebene offen, STR09/02).
 - **Blockade:** die **Epochen-Absenz** (eigener Punkt).
-- **Braucht:** (0) die Epochen-Ablage (Modellart-Unterscheider); (1) GM/radius/norm/tide in
-  den Frame oder an den Auswerter reichen; (2) die Kugelflächen-Synthese in `gfc.rs`; (3) Block
-  `url …/icgem.gfz.de/gfc.bin`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`.
+- **Braucht:** (0) die Epochen-Ablage (Modellart-Unterscheider); (1) GM/radius/norm/tide **in den Draht oder an den Auswerter** reichen (heute stderr-verworfen); (2) die Kugelflächen-Synthese in `gfc.rs`; (3) Block `url https://icgem.gfz.de/getmodel/gfc/…`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007` (das `gfc.bin`-CDN-Asset fehlt, 404).
 
 ### UCAR-FPI — Arm + Zeilen stehen; Athabasca-Koordinate gemessen (river-213) (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -190,10 +190,16 @@ Baum getragen (git: `36b50dfca`). Was folgt, ist offen.
   ISC, EarthScope-FDSN, GEOFON-Event/-Wellform, EIDA-Terms, **GSRAS** (1993-Catalog) und
   **NGL-ARDA** (als **GNSS-Zeuge** umklassifiziert) — die Kraft-/Lizenz-Zeilen stehen
   (mountain-349). Offen/gesperrt: EGGN/EPOS-Equip-G, CGrav/CEIC, GOCE, NIED.
+- **Taucher-Messung 2026-10-15 (die vier Offenen):**
+  - **EGGN/EPOS-Equip-G → `pending`.** EQUIP-G = Horizon-Europe-Projekt (Quanten-Gravimetrie, Instrumental-Park, Start 2025-06) — **kein Datenprodukt** (`https://www.epos-eu.org/equip-g` 200, keine Lizenz). „EGGN" ist ein **Fehlname** (reale Netze ECGN/UEGN/EGGP; Schwestern IGETS/BGI) — Operator-Wort.
+  - **CGrav/CEIC → `riss`.** CEIC = China Earthquake Networks Center; **zwei Objekte**: seismisches **CB offen** (FDSN `service.iris.edu/fdsnws/station/1/query?network=CB` 200, DOI `10.7914/SN/CB`), Schwere **CGrav gated** (Login, `esdc.ac.cn/class/20`). re3data `r3d100011154` sagt „open", **Lizenz-Feld leer** — die zwei Zeugen konvergieren nicht.
+  - **GOCE → `pending` + Namens-Riss.** ESA-Schweremission; L1/L2 + Global-Gravity-Models **frei** (ESA-EO-Data-Policy; `earth.esa.int/eogateway/...` 200; Koeffizienten via ICGEM). Im Register steht `GOCE` **nur als Magnet** (`phi:65-70`) — der Handover nennt GOCE als **Schwere**: ein Token, zwei Objekte.
+  - **NIED → `pending`.** Japan MOWLAS (Hi-net/F-net/K-NET/…); **konto-gated**, „Prohibition of Redistribution"; kein FDSN. Kein `phi`-Token.
+- **Riss (Taucher, ungeglättet):** `survey-2026-10-05` zitiert `dead_sources.φ`/`declined_sources.φ` — **beide existieren nicht im Baum** (`glob`/`archive_search --root phi` = 0); die Zitate haben keine aktuelle Stelle.
 - **Blockade:** die Kernel-Zuordnung ist keine Pro-Solo-Entscheidung — das Meßgesetz einer Quelle
   berührt den Force-/Kernel-Kontrakt (Rat).
 - **Braucht:** (0) IGETS-`origin` — bereits `sftp://igetsftp.gfz.de` (Myceliums Zeilenklasse);
-  (1) die Kernel-Lücke schließen (Rat); (2) EGGN/China/GOCE/NIED als `pending`/`riss` benennen.
+  (1) die Kernel-Lücke schließen (Rat); (2) **erledigt** — EGGN/CGrav/GOCE/NIED sind als `pending`/`riss` **benannt** (s. Taucher-Messung; keine `phi`-Zeile ohne Blockform).
 
 ### Adressierte Register-Fäden — Lizenzen gemessen, MODVOLC-Verdikt steht (eigen)
 - **Status:** eigen (Register-Writes) | **Bindung:** eigen
@@ -201,10 +207,10 @@ Baum getragen (git: `36b50dfca`). Was folgt, ist offen.
 - **Lage:** (gemessen 2026-10-14, Browser) MODVOLC HIGP (`http://modis.higp.hawaii.edu/data/`): **keine** Lizenzzeile (genuine
   Absenz) → `local-only`; kein HIGP-Block in `phi`. DE-2 (`phi:854`) und AWESOME/WALDO (`phi:8266`) sind gesetzt.
   OCNS2019-Ersatz: JPL SSD/Horizons/NAIF offen (NASA SMD, SPD-41a), Danksagung erbeten, kein CC0-Zeichen.
-- **Blockade:** MODVOLC braucht einen **neuen** Block — Mycelium setzt `url`/`origin`/`compiler`
-  (`xfer:mountain-348-1`).
-- **Braucht:** MODVOLC-Block + `terms local-only`; OCNS2019-Ersatz als offene Alternative
-  registrieren (`xfer:mountain-348-4`).
+- **Taucher-Messung 2026-10-15:** **OCNS2019** = Yuan et al. 2021 (A&A 645 A48, DOI `10.12149/101048`; `ocns2019.zip` 8 MB, Host `paperdata.china-vo.org` pending → nur Wayback) — ein **Beobachtungs-Katalog**; der genannte **JPL-Ersatz ersetzt ihn nicht** (`nep097`, `phi:31378` `terms PD`, ist die *aus* der Astrometrie berechnete Ephemeride) → **Riss**, keine Alternative. **MODVOLC HIGP** lebt (`/data/` HTTP 206, Jahre 2000–2019, keine Lizenz); die einzige registrierte MODVOLC-Zeile ist der **LANCE/NRT**-Block (`phi:12065-12072`, `terms PD`, anderer Host).
+- **Riss (Taucher, ungeglättet):** die Handover-Forderung „MODVOLC braucht einen neuen Block / `terms local-only`" widerspricht `source-curation.md:90-102` (**ein `local-only`-Ursprung bekommt keine `phi`-Zeile**); HIGP wurde bewusst entfernt (`1b519375b`) → **kein neuer Block**.
+- **Blockade:** keine (die Zeilen sind Verdikt-/Doku-Arbeit).
+- **Braucht:** (1) OCNS2019 als `local-only` **stehen lassen** (kein JPL-Ersatz; der Riss bleibt Zeuge); (2) die MODVOLC-Forderung **korrigieren** auf „HIGP `local-only`, kein Block; LANCE/NRT-Block bleibt"; (3) ein echter offener **Beobachtungs**-Ersatz ist ungemessen (Lead NSDB `10.1051/0004-6361/200911645`).
 
 ### `em mw` / `advective kg/m2/s` — Freeze (eigen)
 - **Status:** wartend | **Bindung:** eigen
@@ -221,11 +227,12 @@ Baum getragen (git: `36b50dfca`). Was folgt, ist offen.
   schreibt ein SRTM-Gestalt-Witness ohne Geoid-/Datum-/Toleranz-Anker; `load_gestalt_surface_threads`
   (`main_flow.rs:580`) hat nur `tests.rs` als Aufrufer; `ilrs_npt_compiler.rs` steht, aber **kein**
   Lese-Arm in `src/`; `icrf3_compiler.rs` schreibt JSON, kein SKD1/Golden-File/Round-Trip.
+- **Taucher-Messung 2026-10-15:**
+  - **OpenTopography-Raster:** der Compiler liest in Wahrheit `https://topex.ucsd.edu/pub/srtm15_plus/SRTM15_V2.6.nc` (Scripps SRTM15+, **nicht** OpenTopography) — **Namens-Riss**. Der Höhenbezug des OT-Produkts ist **EGM96-Geoid/orthometrisch (EPSG:5773)** (`portal.opentopography.org/datasetMetadata?otCollectionID=OT.122019.4326.1`); **Toleranz am Ursprung `absent`** (OT-Haftungsausschluss; SRTM15+-README nur Ozeantiefe ~73 m).
+  - **ILRS NPT:** Producer steht; Route **EDC offen/anonym** `https://edc.dgfi.tum.de/pub/slr/data/npt_crd/<sat>/<jahr>/` (200, Verzeichnis), CDDIS login-gated; Format **CRD v1/v2.01**; Terms = **Nennung/Zitation** (Pearlman 2019 `10.1007/s00190-019-01241-1`), keine Datei-Lizenz. **Kein Lese-Arm in `extract.rs`** (bestätigt).
+  - **ICRF3:** `icrf3_compiler.rs` liest `…/icrf3sx.txt` + `…/icrf3k.txt` (IERS) — **drei** Dateien (`icrf3xka.txt` dazu), **kein SKD1**; SKD1 ist ein separates SCHED-Katalog-Rendering.
 - **Blockade:** keine.
-- **Braucht:** (1) Höhenbezug + Toleranz vor der `opentopography_raster`-Registrierung, dann Block;
-  (2) `load_gestalt_surface_threads` an einen Produktions-Aufrufer binden **oder** `descoped`;
-  (3) `ilrs_npt`-Lese-Arm in `extract.rs` + Block; (4) `icrf3` erst Vertrag versionieren + Round-Trip
-  + Golden-File, dann SKD1. `docs/SOURCE_PORT.md`.
+- **Braucht:** (1) Höhenbezug (EGM96/EPSG:5773) in die `opentopography_raster`-Zeile, **Toleranz am Ursprung absent** → benennen, dann Block (oder Compiler umbenennen — Namens-Riss); (2) `load_gestalt_surface_threads` an einen Produktions-Aufrufer binden **oder** `descoped`; (3) `ilrs_npt`-Lese-Arm in `extract.rs` + Block (`format ilrs_npt`, Host `edc.dgfi.tum.de`); (4) `icrf3` erst Vertrag versionieren + Round-Trip + Golden-File, dann SKD1. `docs/SOURCE_PORT.md`.
 
 ## An mycelium
 
@@ -263,6 +270,8 @@ Origin: mountain-349 (2026-10-15):
 - **„Der WDC-B-Punkt ändert sich: es sind nicht mehr die 32 Zeilen allein, sondern ~205. Und die Lizenz differiert: Wayback-Erbe (die 32 + die neuen Gruppen) = CC-BY-NC-4.0 (die Bulletin-Dateien); der lebende sep/-Baum: keine Datei-Lizenz — nur die Site-Policy (frei für Forschung/Lehre, nicht-kommerziell, Nennung). Das gehört als terms-Zeile ehrlich benannt, nicht als CC-Ersatz."** | 2026-10-15 | (mountain 349 — die WDC-B-Ergänzung).
 - **Der Auftrag `briefs-2026-10-15-mountain-mycelium.md` (§&nbsp;/mountain) — die sechs Register-Schreibakte (`xfer:mycelium-351-1…-6`), die zwei WDC-B-Zeilenklassen und die vier Korrekturen.** | 2026-10-15 | (mountain 350) — am Baum verifiziert: getragen von mountain-349 (`36b50dfca`); **nicht erneut ausgeführt**.
 - **„kannst du bitte taucher mit harten bandagen und archive search all!!! auf — SWIFF · WINDMI · MAGION · MOSWOC-Kp · OVATION-AACGM — loslassen"** | 2026-10-15 | (mountain 351 — der harte Ketten-Quellen-Lauf; Messblatt `docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md`).
+- **„kannst du die bitte vermessen [Flare-Verifikation · REFM · Kp-Zeitreihe · OVATION-Prime-Papiere]"** | 2026-10-15 | (mountain 351 — die vier MOSWOC-Nachbarn an der Quelle gemessen).
+- **„ok bitte arbeite nun bitte die offenen punkte mit tauchern ab."** | 2026-10-15 | (mountain 351 — fünf Taucher auf die offenen Register-Punkte: Quellen-Gewebe · Adressierte Register-Fäden · ALFALFA · SABER/TIMED · ICGEM gfc).
 
 ## Abschluss
 
@@ -271,5 +280,9 @@ Der Commit ist die letzte Handlung; das Operator-Wort trägt Commit und Push. Di
 `bin/all_wide`-Läufe), die fünf Befunde am Baum nachgemessen (Register `--root phi` = 0/0)
 und das Messblatt `docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md` geschrieben;
 die vier Risse gegen river-214 benannt (MOSWOC restricted, OVATION eine Station, MAGION
-Satelliten-Serie, WINDMI Dauerlauf) und den `all_wide`-Profil-Defekt gemessen. Kein Code
-geändert (`cargo check` unberührt). Diese Fortschreibung (folge350 → `archiv/`).
+Satelliten-Serie, WINDMI Dauerlauf) und den `all_wide`-Profil-Defekt gemessen. Danach **fünf
+Taucher** auf die offenen Register-Punkte (Quellen-Gewebe, Adressierte Register-Fäden, ALFALFA,
+SABER/TIMED, ICGEM gfc); die Messungen sind in die Punkte getragen, die neuen Risse benannt
+(GOCE Namens-Riss, CGrav re3data-vs-Portal, OCNS2019 kein JPL-Ersatz, MODVOLC-Forderung
+widersprüchlich, OpenTopography-Namens-Riss, `dead_sources.φ` fehlt). Kein Code geändert
+(`cargo check` unberührt). Diese Fortschreibung (folge350 → `archiv/`).
