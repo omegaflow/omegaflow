@@ -2,7 +2,7 @@
   title: Archivar & Mathematikerin — Spec und Drei-Schichten-Vertrag
   class: concept
   date: 2026-10-15
-  sha256: 513b9c0258a4e5c5f346f20b26ae07747c7f285f8fa510ed70f805924864eb22
+  sha256: c44827f28b91ad1a2216345e6d480522606f128d0701e8af14e9fc2880b2d600
   status: live
   see-also: AGENTS.md, docs/specs/binary-protocol.md, docs/specs/wgsl-shader.md
 -->
@@ -100,3 +100,7 @@ Any permutation, omission, or type-width change in the Rust serialization silent
 - **Confirm rendering** — `cargo run`, open browser at `127.0.0.1:1618`. A non-black window with point cloud visible confirms the data contract is intact. A black window is a fully realized state only when intentional — never the default verification outcome. Headless, the machine reads the `φ window:` stderr line — the HUD's machine-readable twin (`te thr tau pe state focus keys perm flow gen`); `OMEGAFLOW_HIDDEN=1 cargo run` drives the full ω-loop with every radiator silent, and a run is verified by reading the line, not by looking at pixels.
 
 `cargo check` is a syntax gate. It is not verification. The Kybernaut is the verifier.
+
+## Block Universe Physics
+
+The presence is a free line in ICRS at rest at the SSB origin; arrows thrust, `s` halts. No body is privileged — every body is an equal ephemeris source. Exactly one admission criterion (the presence hull) and one declared receiver worldline per measurement; a body name the code chooses — default, gate bypass, sort key, closed set — is the bias, never a body name the data declares. The loader is agnostic when the hull is the only admission criterion and each receiver is declared per-record data whose absence is refused (Operator-Wort 2026-10-06; verdict: `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md`; the word is `Receiver` — Observer-as-vantage is forbidden, Receiver-as-worldline is the legitimate physics).

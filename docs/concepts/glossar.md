@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: c6a91243ed3c776e049c609c64c3da60dc03b98c07baa0c440000b407cdf7b82
+  sha256: c169c2eca00613f5cf64ac73e9de2a5d68890975b6cfbb2b4cf184eb2a9c3bf6
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
 -->
@@ -93,8 +93,8 @@ fabriziert.
 - **UI-Chat · Frontier · Open-Weight · Seat** — UI-Chat = zweiter Kanal (Web-UI); Frontier = starke geschlossene Modelle; Open-Weight = offene Modelle (tryingopen); Seat = ein Modell-Sitz. · `privat/free-voices.md:24-28,80-89`, `AGENTS.md:529-533`
 - **Gretchenfrage** — der Aufnahmetest für einen Seat (Fähigkeit ≥ 4/4 + gemessenes Tempo); ungemessen/Timeout → `pending`, kein Roster-Mitglied. · `AGENTS.md:533`
 - **Weltlinie** — die Linie der Presence im Block; sie gehört dem Operator, er stimmt sie; die Presence ruht, sie bewegt sich nie selbst. · `AGENTS.md`, `docs/concepts/glossar.md:30`
-- **4D-Block** — Raumzeit als Block: Zeit ist eine Koordinate, kein Fluss; ICRS + TDB; alle Körper gleich. · `AGENTS.md` (Block Universe Physics), `docs/concepts/glossar.md:29`
-- **Receiver** — die deklarierte Empfänger-Weltlinie je Messung (nie „Observer" als Vantage); Zulassungskriterium der Agnostik. · `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md:82`, `AGENTS.md`
+- **4D-Block** — Raumzeit als Block: Zeit ist eine Koordinate, kein Fluss; ICRS + TDB; alle Körper gleich. · `docs/concepts/archivar-mathematikerin.md` (Block Universe Physics), `docs/concepts/glossar.md:29`
+- **Receiver** — die deklarierte Empfänger-Weltlinie je Messung (nie „Observer" als Vantage); Zulassungskriterium der Agnostik. · `docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md:82`, `docs/concepts/archivar-mathematikerin.md`
 - **omegaflow (Projektname, extern besetzt)** — das kybernetische Feldsystem; der Name kollidiert mit `omry/OmegaFlow` (OSS, PyPI/omegaflow.dev) und dem Undertale-„Omega Flowey"-Cluster, Wikipedia absent (gemessen 2026-10-07 via `archive_search --github/--wiki/--verdict`). Die Identität trägt das Rollenvokabular, nicht der Projektname. · `docs/concepts/glossar.md:75`
 - **omegaflow-legacy** — das privat-archivierte Vorgänger-Repo (2114 Commits, archiviert 2026-09-03); Träger der verlorenen Konzepte (Silence Map, Certainty, TDA/Betti-0, …); kein Netz-Fußabdruck (GitHub 404, Wayback leer). · `docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md:11-14`
 
