@@ -35,7 +35,7 @@ pub fn parse_series(data: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
         return None;
     }
     let epoch = le_f64(data, 8)?;
-    if !epoch.is_finite() || epoch <= 0.0 {
+    if !epoch.is_finite() {
         return None;
     }
     let mut out = Vec::with_capacity(count * 3);
@@ -81,10 +81,13 @@ mod tests {
     }
 
     #[test]
-    fn parse_rejects_absent_epoch() {
-        let mut zero = write_bin(&[[1.0, 2.0, 3.0]], 1.47e9);
-        zero[8..16].copy_from_slice(&0.0f64.to_le_bytes());
-        assert!(parse_series(&zero).is_none());
+    fn parse_keeps_j2000_and_pre_j2000_and_refuses_an_absent_epoch() {
+        let zero = write_bin(&[[1.0, 2.0, 3.0]], 0.0);
+        let series = parse_series(&zero).expect("0.0 is J2000, a measured epoch");
+        assert_eq!(series[0], (0.0, 1.0, COMP_GX));
+        let negative = write_bin(&[[1.0, 2.0, 3.0]], -1.0e9);
+        let series = parse_series(&negative).expect("a negative epoch is pre-J2000");
+        assert_eq!(series[0], (-1.0e9, 1.0, COMP_GX));
         let mut nan = write_bin(&[[1.0, 2.0, 3.0]], 1.47e9);
         nan[8..16].copy_from_slice(&f64::NAN.to_le_bytes());
         assert!(parse_series(&nan).is_none());

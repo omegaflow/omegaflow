@@ -396,6 +396,7 @@ fn main() {
             cgm_source: None,
             geomag_lat: None,
             weberin_role: None,
+            model_kind: None,
             witness: None,
         };
         match build_netcdf4_volume(&src, &bytes) {

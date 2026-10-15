@@ -491,6 +491,20 @@ pub enum QueryCenter {
     Anchor,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ModelKind {
+    Static,
+    TimeVariable,
+}
+
+pub fn source_model_kind(format: &str) -> Option<ModelKind> {
+    match format {
+        "gfc" => Some(ModelKind::Static),
+        "gfct" => Some(ModelKind::TimeVariable),
+        _ => None,
+    }
+}
+
 #[derive(Clone)]
 pub struct SourceConfig {
     pub ttl: u64,
@@ -505,6 +519,7 @@ pub struct SourceConfig {
     pub rights_uri: Option<String>,
     pub frame: Frame,
     pub format: String,
+    pub model_kind: Option<ModelKind>,
     pub extracts: Vec<Extract>,
     pub channels: Vec<ChannelDescriptor>,
     pub headers: Vec<(String, String)>,
@@ -587,5 +602,25 @@ pub fn frame_body_name(frame: &Frame) -> String {
     match frame {
         Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => body_name.clone(),
         Frame::Manifest => String::new(),
+    }
+}
+
+#[cfg(test)]
+mod model_kind_tests {
+    use super::*;
+
+    #[test]
+    fn gfc_is_the_static_icgem_format() {
+        assert_eq!(source_model_kind("gfc"), Some(ModelKind::Static));
+    }
+
+    #[test]
+    fn gfct_is_the_time_variable_icgem_format() {
+        assert_eq!(source_model_kind("gfct"), Some(ModelKind::TimeVariable));
+    }
+
+    #[test]
+    fn an_unknown_format_carries_no_guessed_kind() {
+        assert_eq!(source_model_kind("ephemeris_binary"), None);
     }
 }
