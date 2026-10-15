@@ -11,6 +11,10 @@ sondern eine **eigene Klasse**; Gitter sind `derived`. **M5 stellt die nächste 
 ein **global gemessenes, regelmäßig vergittertes Skalarfeld** — konkret das WGLC-Blitzdichte-Gitter —
 hat *keinen Ort der Quelle*; es trägt seinen Wert an einer **Zelle**. Wie tritt es ein?
 
+**Der Sender dieser Frage ist River (F4-Schumann):** die WGLC-Tagesreihe speist die bedingte
+TE `(abk→f | Blitz)` (Tages-`pair`, `bin 86400`, within-stratum-Surrogate); die **Schemafrage** —
+wie das Gitter ins Register tritt — trägt **Mountain** (Operator-Wort 2026-10-15 „ja vorbereiten").
+
 ## So wird dieses Formular benutzt (für jeden, der es in die Hand nimmt)
 
 1. **Operator:** den Block „Das Paket (verbatim an jeden Sitz)" **unverändert kopieren** und an jeden

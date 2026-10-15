@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 355 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 43fbd48b132d56119a192cac788cf9e0bfa661269f56eb9ca68d2038b9ab6624
+  sha256: a96e0d695abdbdf9da25dfbce0bf19d0011baa527e53b42f8e98cc142323b3c4
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -357,6 +357,7 @@ Origin: mountain-355 (2026-10-15):
 - **„ist das der einzige pfad oder hast du nochmal archive search allwide mit harten bandagen versucht?"** | 2026-10-15 | (mountain 355) — `bin/all_wide` und Sourcegraph gefahren; die NASA-JEOD-Referenz gefunden; der Abgleich ist gefahren.
 - **„kannst du dich bitte um deinen teil kümmern? Klare Antwort, alles drei:"** | 2026-10-15 | (mountain 355) — Mountains Teil der Grenz-Anfrage: WGLC-Lizenz-Riss entschieden + Terms/ttl im Entwurf; TIMED-Celestrak-`terms` entschieden; Venera-Polar-`terms` bestätigt (`phi:31325`).
 - **„ja bitte die ratsfrage"** | 2026-10-15 | (mountain 355) — die M5-Rat-Frage (global gemessene Gitter-Form) ist gestellt (`state/stimmen/2026-10-15-mountain-rat-fragen-grid-form.md`).
+- **„ja es ging um WGLC"** | 2026-10-15 | (mountain 355) — Rivers Frage ist die WGLC-`field`-Form; M5 trägt sie (Sender River/F4-Schumann), kein zweites Paket.
 
 ## Abschluss
 
