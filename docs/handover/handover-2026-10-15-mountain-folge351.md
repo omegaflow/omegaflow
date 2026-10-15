@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 351 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: dd414397821c9fe9fd2b2e68f747fed054622d9708597e8da4b88f33a170f0d7
+  sha256: c4ca9f3294b5cab8147b72bfb276545df39966383281ff336a69349095139009
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -238,7 +238,8 @@ Baum getragen (git: `36b50dfca`). Was folgt, ist offen.
 - **Status:** eigen · **gemessen 2026-10-15** (fünf Taucher) | **Bindung:** eigen
 - **Trigger:** Operator-Frage 2026-10-15 („und für all die risse gibt es keine alternativen?") — abgearbeitet.
 - **Lage:** (gemessen 2026-10-15 via fünf Taucher) Messblatt `docs/surveys/survey-2026-10-15-riss-alternativen.md` (sha `5a742c74…`). Jeder Daten-Riss trägt eine offene Alternative: **OCNS2019 → NSDB** (`nsdb.imcce.fr`, frei für Forschung + Nennung) · **GOCE-Schwere → ICGEM** `10.5880/ICGEM.2019.004` (CC-BY-4.0) · **CGrav/CEIC → schon gedeckt** (AGrav+IGETS tragen die chinesischen Stationen) · **MOSWOC-Kp → GFZ-Kp** (CC-BY-4.0, 1932–; der `phi:1230-1234`-Block deckt nur heute→morgen) · **WINDMI-Zielwerte → schon im Register** (`wdc_dst_nt`/`wdc_ae_al_nt`) · **OVATION (eine Station) → BAS-IMAGE-Boundaries** (OGL v3, global, 2000-2002) + **DMSP-SSJ** Zenodo `10.5281/zenodo.3373812` (CC-BY-4.0). Die drei Baum-Risse gelöst: MODVOLC→LANCE/NRT-Block (`phi:12065`), OpenTopography→OT-API-Block (`phi:26638`), MAGION→Hauptsatellit IMAP-3. `dead_sources.φ` bleibt ohne Alternative (Streichung).
-- **Gebaut (Mountain, begrenzter Schritt):** `tools/harvest/src/bin/nsdb_compiler.rs` — der **NSDB-Ernte-Compiler** (NSDB-Tabelle → `NSDB`-Bin, `epoch_unix`/`ra_deg`/`dec_deg`/`mag`/`band`/`obscode`, 40-B-Record, Roundtrip-Selbsttest, `cargo check` 0/0, `--selftest` grün). Vorbild `ilrs_npt_compiler.rs` (Producer zuerst). Der `format nsdb`-**Lese-Arm** in `extract.rs` fehlt noch (nächster begrenzter Schritt).
+- **Gebaut (Mountain, begrenzte Schritte):** (1) `tools/harvest/src/bin/nsdb_compiler.rs` — der **NSDB-Ernte-Compiler** (NSDB-Tabelle → `NSDB`-Bin, `epoch_unix`/`ra_deg`/`dec_deg`/`mag`/`band`/`obscode`, 40-B-Record, Roundtrip-Selbsttest, `--selftest` grün). (2) `src/archivar/nsdb.rs` — der **Lese-Arm**: `parse_bin` + **`direction_unit`/`directions`** (die Beobachtung als **Einheitsvektor `x,y,z`** auf der Sphäre — kein positionsloser Skalar), verdrahtet in `extract.rs` (`verify_records "nsdb"`). `cargo check` 0/0, rustfmt sauber.
+- **Riss (offen, Contract):** NSDB ist eine **richtungs-only** Serie **ohne** astrometrische Fehler; der bestehende S²-Witness-Weg (`astrometry_series`, AST1) verlangt `e_ra_mas/e_dec_mas > 0`. Der NSDB-Witness/Weg ins Feld braucht darum eine kleine Kontrakt-Ergänzung (fehlerlose Richtungs-Serie) — **nächster begrenzter Schritt**, kein stiller Pad. Quelle: `main_flow.rs:3742` „moving RA/Dec rests on the sphere, no scalar Channel slot".
 - **Blockade:** keine.
 - **Braucht:** die vier **neu zu registrierenden** offenen Routen (ICGEM-GOCE-Schwere · NSDB · BAS-IMAGE · DMSP-SSJ) als Blockform (Mycelium `url`/`origin`/`compiler`) + Mountain-`terms`; die Kp-Block-Ergänzung (Archiv statt Heute→Morgen); den NSDB-Lese-Arm + je einen Parser für BAS-IMAGE/DMSP-SSJ (Mountain).
 
@@ -291,6 +292,7 @@ Origin: mountain-349 (2026-10-15):
 - **„und für all die risse gibt es keine alternativen?"** | 2026-10-15 | (mountain 351 — fünf Taucher auf die Riss-Familien; Messblatt `docs/surveys/survey-2026-10-15-riss-alternativen.md`; jeder Daten-Riss trägt eine offene Route).
 - **„also schickst du bitte taucher los um alle offenen registrierungen zu machen?"** | 2026-10-15 | (mountain 351 — die Register-Zeile ist zweihändig: Taucher schreibt sie nicht; die offenen Registrierungen als `xfer:mountain-351-1…-5` an Mycelium gestellt).
 - **„aber du kannst die parser bauen oder macht das auch mycelium?"** | 2026-10-15 | (mountain 351 — Parser/Compiler baut Mountain; Mycelium baut CI/CDN/Matrix. Erster Producer `nsdb_compiler.rs` gebaut).
+- **„…heisst das ihr habt jetzt ein fabricated tor eingebaut anstatt wirklich die werte zu messen — die punkte können doch gar nicht positionslos sein, irgendwo in xyz müssen sie doch sein… und mach das bitte fertig"** | 2026-10-15 | (mountain 351 — das 0.0-Pad ist die sanktionierte Draht-Form mit Presence-Flag, kein Fabricat; die Beobachtung trägt ihren Ort als `x,y,z`-Einheitsvektor (S²). NSDB-Lese-Arm gebaut.)
 
 ## Abschluss
 
