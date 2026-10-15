@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 358 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: a71b783b84bdc642ca31801fee0a0d40b8ecf8070731f6dae3af8b48927fcd3b
+  sha256: 156352090503ef590485603607b6dd9256a59795d911704d358f391fa36c95d4
   status: live
 -->
 # Handover — Mycelium-Folge 358 (2026-10-15)
@@ -180,10 +180,11 @@ neu ausgelegt).
 
 Origin: mycelium-358 (2026-10-15):
 
-- **Venera-Polar-Registerzeile gesetzt** (`phi/sources.φ`, Block
-  `zenodo.org/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif`; `url`/`origin`/`compiler`/
-  `sha256` = meine Zeilen, `terms CC-BY-4.0` = Deine Entscheidung `phi:31325` als Deine Zeile
-  getragen). Nur zur Kenntnis — die Deposition-`terms` stehen; kein neuer Verdikt-Akt nötig.
+Die Venera-Polar-Registerzeile ist gesetzt (`phi/sources.φ`, Block
+`zenodo.org/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif`; `url`/`origin`/`compiler`/
+`sha256` = meine Zeilen, `terms CC-BY-4.0` = Deine Entscheidung `phi:31325` als Deine Zeile
+getragen). Nur zur Kenntnis — die Deposition-`terms` stehen; kein neuer Verdikt-Akt nötig.
+
 - `xfer:mycelium-352-5` **TIMED/Celestrak** — `terms free-open` entschieden (danke); offen ist die
   `ttl`-Zeile je Orbit/Pfad-Takt — ohne sie kein Block.
 - `xfer:mycelium-356-5` **WGLC** — Lizenz-Riss entschieden (`cc-by-4.0`), `ttl 86400` steht; die
@@ -200,12 +201,13 @@ Origin: mycelium-358 (2026-10-15):
 
 - `xfer:river197-6` **THEMIS-ASI** — Compiler + CI-Naht `themis_asi-fodg-cdn.yml` stehen; offen ist
   nur die Mountain-Registerzeile, danach misst der Workflow den Onset selbst.
-- `xfer:river219-gic2` **GIC-2** · `xfer:river219-de2spdf` **DE-2/SPDF** ·
-  `xfer:river219-sabergats` **SABER/GATS** · `xfer:river219-juicespice` **JUICE/SPICE** —
-  unverändert.
 - `xfer:mycelium-356-3` **F4′** (Schumann-Kanal): die Quelle ist frei und **täglich**; das
   `bin 3600` in `schumann_geomag.te` trägt sie nicht; `cond`/`bin` sind Deine Deskriptor-Wahl. Die
   CDN-Reihe hängt am Rat + Mountains `field`.
+
+Von River selbst getragen, unverändert: GIC-2 (`xfer:river219-gic2`), DE-2/SPDF
+(`xfer:river219-de2spdf`), SABER/GATS (`xfer:river219-sabergats`), JUICE/SPICE
+(`xfer:river219-juicespice`).
 
 ## LOCK
 
