@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 356 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 7a492c93857ecddf5a9f5b778972d7e73b831bf561781e2ee7c5c25a934023f0
+  sha256: 48bfa8e3f5105950a11b470bfc081e01e29cc9ce8629707575e251daddec78c2
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md
 -->
@@ -50,6 +50,21 @@ Fassung zitiert, nie kopiert.
   die Normalfeld-Reduktion liefert der Aufrufer (`GFC_SYNTHESIS_CONVENTION` sagt es). Ob die
   Klasse ihre eigene `phi`-Deklarationsform braucht (welche Zeile/Token die derived-Klasse trägt),
   ist die offene Schemafrage — der Code-Kern steht, die Register-Deklaration nicht.
+- **Local-only am Kanon gemessen (zwei Anfragen korrigiert).** Der Kanon
+  (`docs/concepts/source-curation.md:90-102`, Operator-Wort 2026-10-13) sagt: ein Datensatz ohne
+  offene Lizenz wird lokal genutzt, aber **nie** manifestiert — keine `phi`-Zeile, kein CDN, keine
+  öffentliche Fläche; `local-only` ist eine Disposition, **kein** `terms`-Token
+  (`license_census.rs:9-33` kennt es nicht). Damit: **MODVOLC/HIGP-Archiv** = `local-only`, kein
+  Block (Myceliums „`terms local-only` → Block" widerspricht dem Kanon); **UCAR-FPI** = `local-only`,
+  die zwei `field`-Zeilen sind Code-gemessen, nicht in `phi`. Beide Verdikte stehen im Entwurf
+  `state/mountain/2026-10-15-grenz-term-verdicts.φ` (§4); die Risse sind benannt.
+- **Warum die Geoidhöhe (N) fehlt — gemessen.** `N` braucht das **GRS80-Normalfeld**
+  (`GM`, `ω`, `U₀`) und **γ₀** (Somigliana-Normalschwere). Im Baum liegt nur `a`/`1/f` in
+  `src/archivar/projection.rs` (für die Karten-Projektion), **kein** Normalpotential und keine
+  Normalschwere. Ohne sie ist `W − U₀` nicht gebildet → `N` bleibt ehrlich `pending`, nie eine
+  erfundene Null. Der nächste begrenzte Schritt ist ein `normal_field`-Modul (GRS80-Konstanten +
+  Somigliana-γ₀) mit Abgleich gegen die ICGEM-Geoid-Referenz (die vier N-Werte aus dem Form-Lauf,
+  `docs/handover/archiv/handover-2026-10-15-mountain-folge355.md`), nicht geraten.
 - Register unberührt: `register_sort` canonical, `--orphans` 0.
 
 ## Offen (aufgeschlüsselt)
@@ -170,9 +185,12 @@ Fassung zitiert, nie kopiert.
 - **Trigger:** die `field`-Zeilen aus dem Sample.
 - **Lage:** (gemessen 2026-10-15) Arm + Guard stehen (`fpi_ucar.rs`); die zwei `field`-Zeilen
   `fpi_mer_wind_ms`/`fpi_zon_wind_ms` sind code-gemessen (`extract.rs:540`); Athabasca-Koordinate
-  `on earth 54.60282 -113.64442 693`.
-- **Blockade:** nicht-offene Lizenz → `local-only` (kein CDN, kein `phi`-Block).
-- **Braucht:** die Arbeitskopie-Route (`local-only`).
+  `on earth 54.60282 -113.64442 693`. **Verdikt (dieses Rund):** UCAR/DASH-Lizenz ist nicht offen
+  → `local-only` nach Kanon (`source-curation.md:90-102`): kein `phi`-Block, die `field`-Zeilen
+  bleiben Code. Der Riss mit `quellen-neu-und-riss-ucar.md:19` („Register-Zeile schreiben") ist
+  benannt — gegen die eigene Lizenz-Messung fl. 20 und gegen den Kanon.
+- **Blockade:** keine (Verdikt steht).
+- **Braucht:** nur noch die Arbeitskopie-Route (Myceliums Seite).
 
 ### Fünf fehlende Fäden — Entwurf steht, Mycelium setzt (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -195,11 +213,15 @@ Fassung zitiert, nie kopiert.
 ### Adressierte Register-Fäden — OCNS2019 `local-only`, MODVOLC-Korrektur (eigen)
 - **Status:** eigen (Register-Writes) | **Bindung:** eigen
 - **Trigger:** der Registeratom.
-- **Lage:** (gemessen 2026-10-15) MODVOLC HIGP: keine Lizenzzeile → `local-only` (kein Ersatz
-  für den LANCE/NRT-Block). OCNS2019 = Yuan 2021; der JPL-Ersatz ersetzt ihn nicht → Riss.
+- **Lage:** (gemessen 2026-10-15) MODVOLC HIGP: keine Lizenzzeile → `local-only`, **kein Block**
+  (Kanon `source-curation.md:90-102`; LANCE/NRT `phi:12065-12072` terms PD deckt das Register).
+  **Myceliums Anfrage „`terms local-only` → Block" widerspricht dem Kanon** — es gibt kein
+  `local-only`-`terms`-Token, und ein local-only-Datensatz erhält keinen `phi`-Block; der Riss
+  ist benannt (`state/mountain/2026-10-15-grenz-term-verdicts.φ` §4a). OCNS2019 = Yuan 2021;
+  der JPL-Ersatz ersetzt ihn nicht → Riss.
 - **Blockade:** keine (Doku-/Verdikt-Arbeit).
 - **Braucht:** (1) OCNS2019 als `local-only` stehen lassen (erledigt); (2) MODVOLC HIGP
-  `local-only`, kein Block; LANCE/NRT bleibt; (3) einen echten offenen Beobachtungs-Ersatz
+  `local-only`, kein Block (erledigt); (3) einen echten offenen Beobachtungs-Ersatz
   (Lead NSDB `10.1051/0004-6361/200911645`).
 
 ### `em mw` / `advective kg/m2/s` — Freeze (eigen)
@@ -274,7 +296,15 @@ Origin: mountain-356 (2026-10-15):
   `free-open`, `phi:11844`) — kein Mountain-Tor; die Artefakte sind Rivers.
 - `xfer:mycelium-352-1`/`-2` **WDC-B `field`** — Quantitäten gemessen; die `field`-Zeile braucht
   die Kernel-Zuordnung (Rat). Kein stiller Kernel.
-- Aus mycelium-351/348 offen: `xfer:mountain-348-1` (MODVOLC) · `-348-2` (Fünf Fäden) ·
+- **Zwei `local-only`-Anfragen korrigiert (dieses Rund, Kanon `source-curation.md:90-102`).**
+  **HIGP-MODVOLC-Archiv** und **UCAR-FPI** tragen keine offene Lizenz → `local-only`: **kein
+  `phi`-Block**, **keine** `terms local-only`-Zeile (es gibt kein solches Token), keine öffentliche
+  `url`/`origin`/`compiler`-Fläche. Die Arbeitskopie lebt unter `$OMEGAFLOW_WORK/data/` und ist in
+  eurer Übergabe benannt (Pfad · Zweck · Lizenzstand). Bitte die zwei Blöcke **nicht** setzen; der
+  Riss (eure folge358 fordert „`terms local-only` → Block") ist benannt
+  (`state/mountain/2026-10-15-grenz-term-verdicts.φ` §4). `xfer:mountain-348-1` (MODVOLC) ist damit
+  beantwortet.
+- Aus mycelium-351/348 offen: `-348-2` (Fünf Fäden) ·
   `-348-4` (OCNS2019-Ersatz) · `-348-5` (TIMED) · `xfer:mycelium-342-3`/`-4` · `-342-10` · `-343-2`.
 
 ## An river

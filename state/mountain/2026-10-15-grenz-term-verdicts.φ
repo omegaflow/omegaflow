@@ -36,3 +36,31 @@
 #       Venera-Polar ist eine Datei derselben Deposition, dieselbe Lizenz. Bestätigt.
 #   Träger: gespiegelt + client-seitig per Range gelesen (Mycelium); kein COG-/Overviews-Bauer
 #     im Haus gemessen -> Overviews pending.
+
+# ============================================================
+# 4 — LOCAL-ONLY-ENTSCHIEDE (Kanon: Operator-Wort 2026-10-13,
+#     docs/concepts/source-curation.md:90-102)
+# ============================================================
+# Kanon (zitiert, nicht kopiert): ein Datensatz ohne offene Lizenz darf lokal gehalten und
+#   genutzt werden (Arbeitskopie unter $OMEGAFLOW_WORK/data/, außerhalb des Repos), wird aber
+#   NIE manifestiert — keine phi-Zeile, kein CDN-Release, keine öffentliche origin/url/compiler-
+#   Fläche. Die Disposition heißt `local-only`, ein Zustand neben `descoped`/`declined`; sie wird
+#   in der Linien-Übergabe benannt (Pfad · Zweck · Lizenzstand). `local-only` ist KEIN terms-Token
+#   (die Vokabelliste license_census.rs:9-33 kennt es nicht, und ein local-only-Datensatz bekommt
+#   gar keinen Block). Mountain korrigiert zwei Anfragen, die einen local-only-Block verlangen.
+
+# 4a — MODVOLC/HIGP-Archiv 2000–2019 (© UH Mānoa, keine offene Lizenz)
+#   Gemessen (survey-2026-10-15-riss-alternativen.md:84-86): die offene Alternative liegt im
+#   Register (LANCE/NRT `phi:12065-12072`, terms PD). Das HIGP-Archiv ist für das Register
+#   redundant und lizenzlos -> local-only, KEIN neuer Block.
+#   Riss (benannt, nicht geglättet): mycelium-folge358:96-100 verlangt „terms local-only von
+#   Mountain; dann Block setzen". Beides widerspricht dem Kanon — es gibt kein `local-only`-terms-
+#   Token, und ein local-only-Datenbestand erhält keinen phi-Block. Mountain setzt keinen Block.
+
+# 4b — UCAR-FPI (UCAR/DASH-Nutzungssatz, nicht offen; kein FPI-DOI benannt)
+#   Gemessen (handover-2026-10-15-quellen-neu-und-riss-ucar.md:20): Lizenz = local-only.
+#   Die zwei field-Zeilen (`fpi_mer_wind_ms`/`fpi_zon_wind_ms`, extract.rs:540) sind Code-gemessen,
+#   NICHT in phi zu setzen. Kein Block; die Arbeitskopie-Route trägt die Daten.
+#   Riss (benannt): dieselbe Zeile fl. 19 verlangt „die Register-Zeile schreiben" — das steht gegen
+#   die gemessene Lizenz (fl. 20) und gegen den Kanon. Die Messung fl. 20 hat Vorrang; die
+#   „Register-Zeile"-Forderung fl. 19 ist damit überholt und wird nicht ausgeführt.
