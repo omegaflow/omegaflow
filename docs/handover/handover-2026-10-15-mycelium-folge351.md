@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 351 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 168f582a6c976aa09fb051f796894ec183728d78427b99af4099d6d71431822c
+  sha256: e6d045c9bc93ccc343b3bc481a0a096f00abd00a50ca27701f854124acea42cf
   status: live
 -->
 # Handover — Mycelium-Folge 351 (2026-10-15)
@@ -29,6 +29,7 @@ Quellen, `register_sort`/`cdn_reconcile`/`license_census`.
 | --- | --- | --- |
 | „url/origin/compiler je neuer offener Quelle setzen: BGI · IGETS · GSRAS-ftp · WDC-B · ISC · CMONOC-GNSS (Zenodo) · CEDC 8084659 · CB-FDSN · NGL-ARDA. Danach die Manifestation ziehen, wo fällig. ARDA NICHT als Schwere/Seismik — es ist eine GNSS-Station." | 2026-10-15 | `state/operator-gespraeche/2026-10-15-mycelium.md` |
 | „bitte schicke taucher los um den echten pfad zu messen WDC-B (Obninsk)" | 2026-10-15 | dito |
+| „aber machen wir das nicht schon ist das nicht unser beitrag zum erbe?" — die Archiv-Rettung (Wayback→CDN) ist Haus-Praxis, keine neue Zulassungsfrage | 2026-10-15 | dito |
 | „Starte die Mycelium-Linie in einem Pass — kein Planungstheater, keine Tafel, kein Consent-Stopp für Bekanntes." | 2026-10-15 | dito |
 | „auf jedem fall mit antrag" — Route (b): CN-NSSDC-Datenantrag | 2026-10-14 | `state/operator-gespraeche/2026-10-14-mycelium.md` |
 | „Führe den … bestätigten Plan aus … Commit und Push trägt `/commit`." — session-weiter Consent (Delegation), **nicht** das Commit-Wort | 2026-10-14 | dito |
@@ -61,18 +62,19 @@ Quellen, `register_sort`/`cdn_reconcile`/`license_census`.
   `agrav_compiler.rs`) — die Quellen-Blatt-Zeile ist das Portal dieser selben Ware; **kein
   zweiter Block**. **CB** = getragen vom All-Netz-Stationsblock (`phi:8200`,
   `fdsn_station_compiler.rs` kann `network=CB` filtern); **kein eigener Block**.
-- **WDC-B (Obninsk) — echter Pfad gemessen (Taucher, 2026-10-15).** Die lebende Seite
-  `cat_OBN.html` (200) bewirbt `…zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/<year>/cat<yyyymm>.dat`
-  — **jede** Variante (zeus/www/wdcb.ru, http/https, `Obn/`/`Obninsk/`) liefert **404**/000;
-  `zeus.wdcb.ru/` trägt heute eine Debian-Apache-Wartungsseite. Der **echte** historische Pfad
-  war `…/sdata/Obninsk/catalog/<year>/cat<yyyymm>.dat` (volles Wort `Obninsk/`, nicht `Obn/`);
-  die Daten überleben **nur** als sparsame Wayback-Snapshots (34 URLs, 120 Captures,
-  2003-05-13…2019-09-05; 10 Monats-Kataloge + ~23 Bulletins, **nicht** 1993–2024 komplett).
-  Verifiziert: `https://web.archive.org/web/20180212024625id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/1993/cat199301.dat`
-  (15 536 B, sha256 `8b44665f…`, fixed-column Operative Seismological Catalogue). Lizenz
-  (Seiten-Fuß): CC-BY-NC-4.0. **Kein `phi`-Block** — die lebende Quelle ist tot (0 honored);
-  der Befund steht als `pending` (s. „Offen"). Riss: die Seite nennt `Obn/`, der gesamte
-  historische Baum `Obninsk/`; der Descr-Link `cat_OBN_descr.ru.html` 404t.
+- **WDC-B (Obninsk) — echter Pfad gemessen UND gerettet (Taucher, 2026-10-15).** Die lebende
+  Seite `cat_OBN.html` (200) bewirbt `…/sdata/Obn/catalog/<year>/cat<yyyymm>.dat` — **jede**
+  Variante (zeus/www/wdcb.ru, http/https, `Obn/`/`Obninsk/`) liefert **404**/000;
+  `zeus.wdcb.ru/` trägt eine Debian-Apache-Wartungsseite. Der **echte** historische Pfad war
+  `…/sdata/Obninsk/` (volles Wort); die Daten überleben **nur** als Internet-Archive-Snapshots.
+  **Erbe-Rettung (Operator-Wort):** der gesamte bestätigte Satz — **32 Dateien** (10 Monats-Kataloge
+  1993–2014 + 22 Bulletins 1998–2000, 34 CDX-URLs/120 Captures, 2003-05-13…2019-09-05) — ist
+  als **32 `raw_mirror`-Blöcke** in `phi/sources.φ` registriert (`url …/web.archive.org/<name>`,
+  `origin https://web.archive.org/web/<ts>id_/…`, sha256 je Datei, `no-cadence`), plus der neue
+  Lauf **`.github/workflows/wdcb-obn-wayback-cdn.yml`** (32er-Matrix) — die Bytes kommen damit
+  auf das CDN (die Messreihe gehört der Zukunft). Lizenz (Seiten-Fuß): CC-BY-NC-4.0. Haus-Präzedenz:
+  `phi:12851` trägt schon einen Wayback-`origin`. Riss: die Seite nennt `Obn/`, der Baum `Obninsk/`;
+  `cat_OBN_descr.ru.html` 404t. **Nicht** 1993–2024 komplett — nur die archivierten Monate.
 - **ISC** (`phi:10671`) stand (url/terms/format/origin/compiler/sha256/at/ttl); die
   `field`-Zeile fehlt → Mountain.
 - `register_sort` canonical (2 582 Blöcke) · `cdn_reconcile --fail` clean (327 Hosts) ·
@@ -152,12 +154,12 @@ Quellen, `register_sort`/`cdn_reconcile`/`license_census`.
 - **Blockade:** Operator.
 - **Braucht:** nur noch den Autofill-Eintrag im Browser entfernen.
 
-### WDC-B Obninsk — lebende Quelle tot; nur Wayback-Snapshots (eigen, `pending`)
-- **Status:** eigen | **Bindung:** eigen
-- **Trigger:** Operators Wort, ob der Archiv-Weg zulässig ist
-- **Lage:** (gemessen 2026-10-15, Taucher) Kein lebender Datenpfad: die Seite bewirbt `Obn/`, alle Varianten 404/000, `zeus.wdcb.ru` = Apache-Wartung. Der echte Pfad war `…/sdata/Obninsk/catalog/<year>/cat<yyyymm>.dat`; nur sparsame Wayback-Snapshots (34 URLs, 2003–2019, 10 Kataloge + ~23 Bulletins). Lizenz CC-BY-NC-4.0.
-- **Blockade:** kein lebender Pfad; die Wayback-Abdeckung ist unvollständig.
-- **Braucht:** Operators Entscheid, ob ein Wayback-`id_`-Mirror (der bestätigten Snapshots) als Quelle zulässig ist; sonst bleibt der Punkt `pending` ohne Block.
+### WDC-B Obninsk — Rettung registriert; Abdeckung unvollständig (eigen)
+- **Status:** eigen (Rettung erledigt; Rest = Vollständigkeit) | **Bindung:** eigen
+- **Trigger:** kein — Beobachtung neuer/anderer Archive
+- **Lage:** (gemessen 2026-10-15) Die 32 bestätigten Internet-Archive-Snapshots sind als `raw_mirror`-Blöcke registriert und im Lauf `wdcb-obn-wayback-cdn.yml` manifestiert; `terms`/`field` = Mountain (`xfer:mycelium-351-6`). Die lebende Quelle (`zeus.wdcb.ru`) ist tot.
+- **Blockade:** keine.
+- **Braucht:** die Abdeckung ist **nicht** 1993–2024 — nur die 2003–2019 archivierten Monate. Weitere Mirror/Archive beobachten; der Rest bleibt `pending`.
 
 ## An mountain
 
@@ -168,7 +170,7 @@ Origin: mycelium-351 (2026-10-15):
 - `xfer:mycelium-351-3` **CEDC (Zenodo 8084659)** — Block `cedc_catalog.xlsx` (`raw_zenodo`, `no-cadence`); Lizenz `cc-by-4.0`; setze `terms`/`field` (der Katalog ist eine xlsx-Tabelle).
 - `xfer:mycelium-351-4` **NGL-ARDA (GNSS)** — Block `ngl_arda.tenv3` (`on earth 41.111 42.699 1834.093`, ttl 86400); setze `terms` (NBMG/UNR-Policy, Nennung erbeten) und klassifiziere als **GNSS-Zeuge** um (Ardahan, Türkei) — **nicht** Schwere/Seismik.
 - `xfer:mycelium-351-5` **ISC** (`phi:10671`) — der `field`-Zeile fehlt (url/terms/format/origin/compiler/sha256/at/ttl stehen).
-- `xfer:mycelium-351-6` **WDC-B Obninsk** — der echte historische Pfad ist `…/sdata/Obninsk/catalog/<year>/cat<yyyymm>.dat` (nicht `Obn/`); er ist **live tot** (404/000, `zeus` = Wartungsseite), die Daten überleben nur als sparsame Wayback-Snapshots (2003–2019, nicht komplett). Lizenz CC-BY-NC-4.0. Als `pending` gemessen; kein `phi`-Block (kein live Pfad). Entscheide, ob ein *Archiv*-Weg (Wayback-`id_`-Mirror der bestätigten Snapshots) als Quelle zulässig ist.
+- `xfer:mycelium-351-6` **WDC-B Obninsk (Erbe-Rettung)** — 32 `raw_mirror`-Blöcke (`phi/sources.φ`, `url …/web.archive.org/<name>`, `origin https://web.archive.org/web/<ts>id_/…`, sha256, `no-cadence`); der Lauf `wdcb-obn-wayback-cdn.yml` spiegelt sie auf das CDN. Setze `terms` (Seiten-Fuß: **CC-BY-NC-4.0** `http://creativecommons.org/licenses/by-nc/4.0/deed.ru`) und `field` (der Katalog: fixed-column Text, lat/lon/tiefe/M). Der Bin trägt die Wayback-`id_`-Route; die lebende Quelle (`zeus.wdcb.ru`) ist tot.
 - Aus mycelium-350/348 noch offen: `xfer:mountain-348-1` (MODVOLC `terms local-only`) · `xfer:mountain-348-2` (Fünf Fäden aus dem Entwurf) · `xfer:mountain-348-4` (OCNS2019-Ersatz) · `xfer:mountain-348-5` (TIMED-Block) · `xfer:mycelium-342-3`/`-4` (SEANOE/GEOFON) · `xfer:mycelium-342-10`/`xfer:mycelium-343-2` (WDC/terms).
 
 ## An river
