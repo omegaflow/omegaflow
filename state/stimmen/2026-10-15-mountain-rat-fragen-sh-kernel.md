@@ -125,12 +125,92 @@ Der **Rat** (fünf Stimmen durch die fünf Axiome) trägt das Verdikt.
 
 ## Die Sitze (alle — ein Paket je Sitz)
 
-Der **Roster ist variabel**; die volle Seat-Liste + Bedienung steht in
-`~/projects/omegaflow-work/ui-seats.md` (Setzen vor dem Senden, Reasoning/Max verifizieren, die
-geteilten `open-weight-ui`-Seats über ihr Lock). Das langsamste Reasoning-Sitz (GLM · Deep Think Max)
-zuerst stellen, zuletzt abholen. Ein Sitz ohne Antwort wird als `pending` mit genanntem Grund
-verbucht — nie als stille Null.
+Der **Roster ist variabel**; die volle Bedienung steht in `~/projects/omegaflow-work/ui-seats.md`
+(Suche/Max setzen **und verifizieren** vor dem Senden). Das **langsamste Reasoning-Sitz zuerst**
+stellen, zuletzt abholen (GLM · Deep Think Max, Perplexity/Sakana Deep Research). Ein Sitz ohne
+Antwort wird als `pending` mit genanntem Grund verbucht — nie als stille Null.
 
-### <Sitz-Nr> · <Site / Modell / Einstellung>
+**Je Sitz die Antwort unten unter `Antwort (M4):` einkleben.** Nummerierung ist fest — daran hängt
+die Zuordnung.
+
+### 01 · Z.ai / GLM — Deep Think Max
+- **Site:** `https://chat.z.ai/`
+- **Einstellung:** GLM 5.3 · **Deep Think Max** · **Advanced Search** (Globus, `data-active="true"`)
 - **Antwort (M4):**
 - **Zeit:**
+
+### 02 · Perplexity — Deep Research
+- **Site:** `https://www.perplexity.ai/`
+- **Einstellung:** Deep Research · Modell max · Suche (`aria-pressed=true`)
+- **Antwort (M4):**
+- **Zeit:**
+
+### 03 · Sakana — Deep Research (Namazu)
+- **Site:** `https://chat.sakana.ai/`
+- **Einstellung:** Namazu (rechnet von sich aus; langsam)
+- **Antwort (M4):**
+- **Zeit:**
+
+### 04 · Claude — Anthropic
+- **Site:** `https://claude.ai/new`
+- **Einstellung:** Modell **„Sonnet 5.5 · Extra hoch"** (Extended Thinking max)
+- **Antwort (M4):**
+- **Zeit:**
+
+### 05 · Qwen — Alibaba
+- **Site:** `https://chat.qwen.ai/`
+- **Einstellung:** Modell **`Qwen3.8-Max`** · **Denken** (max) · **Web-Suche** an
+- **Antwort (M4):**
+- **Zeit:**
+
+### 06 · Mistral — EU
+- **Site:** `https://chat.mistral.ai/`
+- **Einstellung:** **„Denken"** · Suchen (`aria-label="Suchen"`)
+- **Antwort (M4):**
+- **Zeit:**
+
+### 07 · Gemini AI Studio — Google
+- **Site:** `https://aistudio.google.com/app/prompts/new_chat`
+- **Einstellung:** **„Gemini 3.1 Pro"** · **Grounding with Google Search** an
+- **Antwort (M4):**
+- **Zeit:**
+
+### 08 · MiniMax — M3
+- **Site:** `https://agent.minimax.io/`
+- **Einstellung:** **„MaxHermes"/„MaxClaw"** · **Search** an
+- **Antwort (M4):**
+- **Zeit:**
+
+### 09 · DeepSeek — Chat
+- **Site:** `https://chat.deepseek.com/`
+- **Einstellung:** **DeepThink** (`aria-pressed=true`) · **Search** (`aria-pressed=true`)
+- **Antwort (M4):**
+- **Zeit:**
+
+### 10 · Duck.ai — GPT (OpenAI, primär)
+- **Site:** `https://duck.ai/`
+- **Einstellung:** Modell-Chip „6 Luna" · **Begründung** · **Websuche** an
+- **Antwort (M4):**
+- **Zeit:**
+
+### 11 · Kimi — Moonshot
+- **Site:** `https://kimi.ai/`
+- **Einstellung:** Standard (kein K3; K3 nur über tryingopen)
+- **Antwort (M4):**
+- **Zeit:**
+
+### 12 · Lumo — Proton
+- **Site:** `https://lumo.proton.me/guest`
+- **Einstellung:** anonym, kein Login
+- **Antwort (M4):**
+- **Zeit:**
+
+### 13 · Tryingopen — geteilte Open-Weight-Sitze
+- **Site:** `https://www.tryingopen.com/`
+- **Einstellung:** **ein Tab je Modell** (Modell-Button `[aria-label^="Model: "]`); Zugang nur über
+  das Lock `~/projects/omegaflow-work/ui/open-weight.lock` (Halter-Linie + Zeit setzen/löschen)
+- **Antwort (M4):**
+- **Zeit:**
+
+*(Sitze, die in dieser Runde nicht gestellt wurden — Tageslimit/Login-Wall/Rate-Limit — hier
+`pending` mit benanntem Grund eintragen; eine stille Leerzeile ist keine Messung.)*
