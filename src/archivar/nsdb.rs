@@ -1,3 +1,6 @@
+use crate::archivar::astrometry_series::{AstroSample, AstroSeries};
+use crate::archivar::lsk::LeapSeconds;
+
 pub const MAGIC: [u8; 4] = *b"NSDB";
 pub const HEADER_BYTES: usize = 8;
 pub const RECORD_BYTES: usize = 40;
@@ -84,6 +87,26 @@ pub fn directions(obs: &[Obs]) -> Vec<([f64; 3], f64)> {
         .collect()
 }
 
+pub fn to_astro_series(obs: &[Obs], name: &str, lsk: &LeapSeconds) -> AstroSeries {
+    let samples = obs
+        .iter()
+        .filter_map(|o| {
+            let tdb = lsk.unix_to_tdb(o.epoch_unix)?;
+            Some(AstroSample {
+                tdb,
+                ra_deg: o.ra_deg,
+                dec_deg: o.dec_deg,
+                e_ra_mas: 0.0,
+                e_dec_mas: 0.0,
+            })
+        })
+        .collect();
+    AstroSeries {
+        name: name.to_string(),
+        samples,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -163,5 +186,30 @@ mod tests {
             },
         ];
         assert_eq!(directions(&obs).len(), 1);
+    }
+
+    #[test]
+    fn observations_fold_onto_the_ast1_direction_witness_without_errors() {
+        let lsk = crate::archivar::embedded_lsk()
+            .expect("the embedded naif0012 table is program identity");
+        let obs = vec![Obs {
+            epoch_unix: 1.02e9,
+            ra_deg: 311.4545,
+            dec_deg: -18.1667,
+            mag: None,
+            band: 0,
+            obscode: 807,
+        }];
+        let series = to_astro_series(&obs, "NSDB Neptune", &lsk);
+        assert_eq!(series.name, "NSDB Neptune");
+        assert_eq!(series.samples.len(), 1);
+        let s = &series.samples[0];
+        assert_eq!(s.e_ra_mas, 0.0);
+        assert_eq!(s.e_dec_mas, 0.0);
+        assert_eq!(s.ra_deg, 311.4545);
+        let expect = lsk
+            .unix_to_tdb(1.02e9)
+            .expect("the epoch folds onto the TDB axis");
+        assert_eq!(s.tdb, expect);
     }
 }

@@ -36,9 +36,9 @@ fn sample_is_a_measurement(s: &AstroSample) -> bool {
         && s.ra_deg.is_finite()
         && s.dec_deg.is_finite()
         && s.e_ra_mas.is_finite()
-        && s.e_ra_mas > 0.0
+        && s.e_ra_mas >= 0.0
         && s.e_dec_mas.is_finite()
-        && s.e_dec_mas > 0.0
+        && s.e_dec_mas >= 0.0
 }
 
 pub fn write_bin(series: &[AstroSeries]) -> Option<Vec<u8>> {
@@ -194,7 +194,7 @@ mod tests {
     }
 
     #[test]
-    fn bin_refuses_non_finite_or_absent_measurements() {
+    fn bin_refuses_non_finite_measurements_and_negative_errors() {
         let mut bad = sample_series();
         bad.samples[0].tdb = f64::NAN;
         assert!(write_bin(&[bad]).is_none());
@@ -204,16 +204,29 @@ mod tests {
         assert!(write_bin(&[bad]).is_none());
 
         let mut bad = sample_series();
-        bad.samples[0].e_ra_mas = 0.0;
+        bad.samples[0].e_ra_mas = -1.0;
         assert!(write_bin(&[bad]).is_none());
 
         let mut bad = sample_series();
-        bad.samples[0].e_dec_mas = -1.0;
+        bad.samples[0].e_dec_mas = f64::NAN;
         assert!(write_bin(&[bad]).is_none());
 
         let bytes = write_bin(&[sample_series()]).unwrap();
         assert!(parse_bin(&bytes[..bytes.len() - 1]).is_none());
         assert!(parse_bin(b"").is_none());
+    }
+
+    #[test]
+    fn a_direction_only_sample_carries_absent_errors_as_the_pad() {
+        let mut series = sample_series();
+        series.samples[0].e_ra_mas = 0.0;
+        series.samples[0].e_dec_mas = 0.0;
+        let bytes = write_bin(&[series]).expect("a direction-only sample encodes");
+        let parsed = parse_bin(&bytes).expect("the direction-only sample reads back");
+        assert_eq!(parsed[0].samples[0].e_ra_mas, 0.0);
+        assert_eq!(parsed[0].samples[0].e_dec_mas, 0.0);
+        assert_eq!(parsed[0].samples[0].ra_deg, 12.3456);
+        assert_eq!(parsed[0].samples[1].e_ra_mas, 12.0);
     }
 
     #[test]

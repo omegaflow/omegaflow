@@ -87,7 +87,8 @@ pub fn parse(line1: &str, line2: &str) -> Option<Tle> {
     let no_kozai = no_revday / (1440.0 / TWOPI);
     let days = super::lsk::days_from_civil(i64::from(year), 1, 1)? as f64;
     let epoch_jd = days + 2440587.5 + (epoch_days - 1.0);
-    if !(ecco >= 0.0 && ecco < 1.0 && no_kozai > 0.0 && epoch_days > 0.0) {
+    let measured = (0.0..1.0).contains(&ecco) && no_kozai > 0.0 && epoch_days > 0.0;
+    if !measured {
         return None;
     }
     Some(Tle {
@@ -144,7 +145,7 @@ pub fn sgp4_init(tle: &Tle) -> Option<Satrec> {
     let ecco = tle.ecco;
     let inclo = tle.inclo;
     let no_kozai = tle.no_kozai;
-    if !(no_kozai > 0.0) {
+    if no_kozai.is_nan() || no_kozai <= 0.0 {
         return None;
     }
     let omeosq = 1.0 - ecco * ecco;
@@ -338,7 +339,7 @@ pub fn sgp4(sat: &Satrec, tsince: f64) -> Option<([f64; 3], [f64; 3])> {
     }
 
     let nm0 = sat.no_unkozai;
-    if !(nm0 > 0.0) {
+    if nm0.is_nan() || nm0 <= 0.0 {
         return None;
     }
     let mut em = sat.ecco - tempe;
