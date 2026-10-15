@@ -380,6 +380,17 @@ fn load_names() -> (HashSet<String>, HashSet<String>) {
         }
         None => eprintln!("llm_gateway: data/redact/stopwoerter.txt absent - that stop list stays inert"),
     }
+    match read_redact_file("funktionswoerter.txt") {
+        Some(text) => {
+            for line in text.lines() {
+                let label = line.trim();
+                if !label.is_empty() && !label.starts_with('#') {
+                    stop.insert(label.to_lowercase());
+                }
+            }
+        }
+        None => eprintln!("llm_gateway: data/redact/funktionswoerter.txt absent - that function-word list stays inert"),
+    }
     (names, stop)
 }
 
@@ -1110,7 +1121,10 @@ fn p_name(ch: &[char], i: usize, names: &HashSet<String>, stop: &HashSet<String>
     while j < ch.len() && j - i < 40 && c_name(ch[j]) {
         j += 1;
     }
-    if j - i < 2 {
+    if j - i <= 3 {
+        return None;
+    }
+    if !ch[i].is_uppercase() {
         return None;
     }
     let token: String = ch[i..j].iter().collect::<String>().to_lowercase();
