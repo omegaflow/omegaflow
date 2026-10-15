@@ -2,7 +2,7 @@
   title: Handover — River-Folge 215
   class: handover
   date: 2026-10-15
-  sha256: d1c903f02fc78ddc00151687f2dc21efa9ae5f62c87dd58ba0568e23147e2f40
+  sha256: 2ae18c8fc3b8b6d062b0f6c20c3afe55d2fe4a2799453da9bc591e24d680aaf7
   status: live
 -->
 # Handover — River-Folge 215 (2026-10-15)
@@ -158,8 +158,8 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session + river
   - **25 Stationen subauroral** (Lauf `38690576424`, river-214): 13 150 080 Samples, Schwelle 16.61 nT/min, **4** Onsets (2000–2024); prec/rec 0.250/0.000008 · 0.750/0.000023 · 1.000/0.000046; Null `prec_ge=61/12/2`, `rec_ge=61/27/10` → bei 15 min **nicht** über der Null, bei 5/30 min an der Grenze — die subaurorale Hülle ist nahezu stumm (4 Onsets in 25 Jahren).
   - **Schwellen-Kurve der Einzelstation (Operator-Wort 2026-10-15; lokal gemessen mit dem gebauten `gic_onset_detector`, da der CI-Lauf `38691966981` am CDN-Fetch hing und gecancelt wurde; `k=6` = Default `median+6·1.4826·MAD`):** über `k=0.01…12` steigt die Präzision und fällt der Rückruf **monoton**; `prec_ge=0`/`rec_ge=0` bei **jedem** k und jeder Toleranz. Toleranz 30 min: k=0.05 P=0.435/R=0.547 · k=0.1 0.436/0.534 · k=0.5 0.447/0.445 · k=1 0.459/0.372 · k=6 (Default) 0.533/0.125 · k=12 0.572/0.051; Schwellen-Median (k→0) P=0.433/R=0.562, thr=7.0 P=0.432/R=0.574. F1 fällt monoton vom sensiblen Ende (≈0.49) zum Default (0.20). **Kein inneres Optimum („Sweet Spot"):** die Kurve bevorteilt durchweg die höchste Empfindlichkeit — der Default `k=6` ist für den Rückruf ein schlechter Arbeitspunkt; die Präzision ist am sensiblen Ende flach (~0.43), nicht einbrechend. **Die Netz-Kurve spiegelt es (31 auroral, Lauf `38695956296`):** k=1 prec 0.282/rec 0.0127 (`prec_ge=0`, signifikant), k=6 (Default) prec 0.340/rec 0.00012 (`prec_ge=26`, **nicht** signifikant), k=12 prec 0.250/rec 0.000011 (`prec_ge=136`) — auch das Netz ist bei niedriger Schwelle besser **und** trägt; die Einzelstation bleibt überlegen (rec 0.29 am sensiblen Ende).
   - **Riss benannt (ungeglättet):** die Netzhülle detektiert viel weniger Onsets als die Einzelstation (rec 0.002–0.004 vs 0.066–0.125) — mehr Stationen heben die Detektorschwelle (6 Stationen 17.1 → 31 auroral 129.0 → subauroral nahezu stumm). Die wenigen Netzfunde liegen teils über dem Kreisschub-Null (6 Stationen: alle 200), teils nicht (subauroral). **Die Einzelstation schlägt den Null an allen Toleranzen und hat den höchsten Rückruf** — mehr Stationen sind hier kein Gewinn; ein inneres Optimum (Sweet Spot) über die Stationszahl zeigt die Messung **nicht** (Rückruf fällt monoton).
-- **Blockade:** keine — der midlat-Lauf `38709132540` (98 Stationen, `--null 200`, river-215) ist **wieder** am `runner shutdown` gescheitert: `ci_manage log` zeigt alle 98 Stationen geladen (der `al_network_proxy`-Lauf), dann `exit 143` „The runner has received a shutdown signal" — Infrastruktur, kein Code-Defekt (die zwei Vorgänger `38690576605`/`38709132540` starben identisch). **Neu angestoßen (river-216): `38711782156`** (midlat, `--null 200`); Ergebnis folgt als eigener Schritt (kein Polling).
-- **Braucht:** (a) den midlat-Lauf auswerten (`38711782156`); (b) **Operator-Wort 2026-10-15 (erledigt):** die Einzelstation gegen die Null geprüft (Lauf `38691967292`, `prec_ge=0`/`rec_ge=0` bei 5/15/30 min); (c) die Kurve/Sweet-Spot-Frage — erledigt (lokal gemessen, s. oben); **der feste-Schwelle-N-Sweep ist ausgewertet (river-216, s. GIC-Schärfe-Fläche)**.
+- **Blockade (river-216 geklärt: es war kein Pech, es war der Speicher):** der midlat-Lauf `38711782156` starb **wieder** am exakt selben Punkt — alle 98 Stationen geladen, dann `exit 143`/runner shutdown. Gemessen im Code: `al_network_proxy` hielt **alle** Stationsreihen (`Vec<Vec<(f64,f64)>>`) **und** sammelte im Einhüllen-Schritt **alle** Werte je Zeitstempel (`BTreeMap<i64, Vec<f64>>`) — bei 98 Stationen à ~13M Samples ≈ **~20 GB** → OOM-Kill (auroral/31 Stationen war knapp unter der Grenze). **Geheilt (river-216):** die Einhülle wird jetzt **inkrementell** gefaltet (laufendes Minimum + Stationszähler je Zeitstempel, eine Reihe nach der anderen verworfen) — der Speicher fällt auf die Zeitstempel-Map. **Neu angestoßen: `38717814124`** (midlat, `--null 200`); Ergebnis folgt als eigener Schritt (kein Polling).
+- **Braucht:** (a) den midlat-Lauf auswerten (`38717814124`); (b) **Operator-Wort 2026-10-15 (erledigt):** die Einzelstation gegen die Null geprüft (Lauf `38691967292`, `prec_ge=0`/`rec_ge=0` bei 5/15/30 min); (c) die Kurve/Sweet-Spot-Frage — erledigt (lokal gemessen, s. oben); **der feste-Schwelle-N-Sweep ist ausgewertet (river-216, s. GIC-Schärfe-Fläche)**.
 
 ### GIC-Familien-Partition — deklariertes Artefakt gebaut; die zwei Register-Nägel offen
 - **Status:** eigen (Artefakt gebaut) | **Bindung:** eigen (Rest: Mountain-Nägel)
@@ -303,9 +303,11 @@ bleibt mit S = 0.0213 die schärfste. Vollständige Zahlen im Block „GIC-Schä
 Geschwister-Modul, nicht im Scope; von mountain-348 eingeführt). **Geheilt:** Helfer in
 `matrix_rebuild_tests` ergänzt; `cargo check` 0/0, `rustfmt` 0. Mycelium-352s Kern-Befund war
 korrekt (nicht überholt).
-**midlat-Lauf `38709132540` als Infrastruktur-Fehlschlag gemessen** (`exit 143`, runner shutdown
-nach dem Laden aller 98 Stationen) — **neu angestoßen: `38711782156`** (`gic-al-network`, midlat,
-`--null 200`); Ergebnis folgt als eigener Schritt.
+**midlat-Lauf als Speicher-Kollaps gemessen und geheilt (river-216):** `38711782156` starb wie
+`38709132540`/`38690576605` am `exit 143` nach dem Laden aller 98 Stationen — Ursache gemessen im
+Code: `al_network_proxy` hielt alle 98 Reihen **und** sammelte alle Werte je Zeitstempel (~20 GB,
+OOM). **Geheilt:** inkrementelle Einhüllen-Faltung (laufendes Minimum + Zähler je Zeitstempel);
+**neu angestoßen: `38717814124`** (`gic-al-network`, midlat, `--null 200`); Ergebnis als eigener Schritt.
 **ci-gate am HEAD `1651bc246` (`38709923691`):** `build`/`dropped-gate` success; `clippy` = die vier
 Archivar-Lints (Mountain); `format`/`subset`/`register` offen. Mit dem geheilten `frame_earth` ist
 das Kern-Test-Modul compile-fähig — der `subset`-Compile war bis river-215 an 3× E0425 blockiert.
