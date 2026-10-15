@@ -269,6 +269,7 @@ pub fn verify_records(format: &str, bytes: &[u8]) -> Option<usize> {
         }
         "hips_png" => hips::parse_bin(bytes).map(|_| 1),
         "astrometry_series" => astrometry_series_counts(bytes).map(|(_, samples)| samples),
+        "nsdb" => nsdb::parse_bin(bytes).map(|obs| obs.len()),
         "viking_grav" => pds3_table::parse_table(bytes).map(|t| t.rows.len()),
         _ => None,
     }
@@ -8479,6 +8480,24 @@ mod fixed_width_series_tests {
         assert!(series_named("astrometry_series", &bin).is_none());
         assert!(astrometry_series_counts(b"XXXX").is_none());
         assert!(verify_records("astrometry_series", b"XXXX").is_none());
+    }
+
+    #[test]
+    fn nsdb_reads_a_position_direction_series() {
+        let mut bin = Vec::new();
+        bin.extend_from_slice(&nsdb::MAGIC);
+        bin.extend_from_slice(&1u32.to_le_bytes());
+        bin.extend_from_slice(&1.02e9f64.to_le_bytes());
+        bin.extend_from_slice(&311.4545f64.to_le_bytes());
+        bin.extend_from_slice(&(-18.1667f64).to_le_bytes());
+        bin.extend_from_slice(&0.0f64.to_le_bytes());
+        bin.extend_from_slice(&807u32.to_le_bytes());
+        bin.extend_from_slice(&0u32.to_le_bytes());
+        assert_eq!(verify_records("nsdb", &bin), Some(1));
+        let obs = nsdb::parse_bin(&bin).expect("the record parses");
+        let d = nsdb::direction_unit(obs[0].ra_deg, obs[0].dec_deg).expect("a direction");
+        assert!((d[0] * d[0] + d[1] * d[1] + d[2] * d[2] - 1.0).abs() < 1e-12);
+        assert!(verify_records("nsdb", b"XXXX").is_none());
     }
 }
 

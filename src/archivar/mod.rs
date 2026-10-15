@@ -167,6 +167,7 @@ pub mod ndk;
 pub mod netcdf;
 pub mod nexrad;
 pub mod noaa_nodd;
+pub mod nsdb;
 pub mod odf;
 pub mod odp;
 pub mod oe417;
