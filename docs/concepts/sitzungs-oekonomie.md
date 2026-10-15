@@ -2,7 +2,7 @@
   title: Sitzungs-Ökonomie — die Turn-Disziplin (2026-10-15)
   class: concept
   date: 2026-10-15
-  sha256: cab6ae4889cab62083970f2c6f68e573637b4f7978b289aaa18e9cb4e1dc079e
+  sha256: ff9f11fe500d0251f1432716b56ee975b00014125faffad509687872c42d69f7
   status: live
   see-also: docs/concepts/house-rules.md, docs/concepts/agent-profiles.md, docs/concepts/kybernetische-ethik.md
 -->
@@ -41,7 +41,7 @@ Die LLM-Linien haben **kein Gedächtnis der Regel**; ihr Default ist „weiterma
 **Gemessen (2026-10-15):** die lebenden Handover = **106 528 B** (~26 000 Token), die größten **44 372** (river) und **33 687** (mountain); AGENTS + `tool-forms.md` = **31 630 B** (~8 000 Token) — die erste Handlung jeder Session.
 
 **Die Regeln (Prosa — für den, der sie liest):**
-1. **Der Handover trägt nur das OFFENE.** Erledigtes wird **gelöscht**, nie „done" markiert, nie erklärt — git trägt es. *(Die Haus-Regel sagt das schon; die Praxis bricht sie.)*
+1. **Der Handover trägt nur das OFFENE.** Erledigtes wird **gelöscht**, nie „done" markiert, nie erklärt — git trägt es. *(Die Haus-Regel sagt das schon; die Praxis bricht sie.)* **Und kein ZUSTAND:** ein Satz wie „ist gebaut", „läuft", „live bewiesen" gehört **nicht** in einen Handover — der Zustand ist das **Register** (`phi/sources.φ`, das Offen-Blatt), die Geschichte ist **git**. Ein Dokument, das den Zustand oder die Historie erzählt, ist **Compliance-Theater** (Operator-Wort, 2026-10-15).
 2. **Keine Kommentare, keine Beispiele, keine Wiederholung der Sachlage** — ein Offen-Punkt ist ein **Zeiger** (Datei:Zeile/Commit), keine Erzählung.
 3. **Die Kommunikation aller Linien → EIN Dokument.** Der `## An <line>`-Block lebt künftig in **einem** gemeinsamen Kommunikations-Blatt (die Postbox!) statt in jedem Handover — der Absender schreibt dort, der Empfänger liest dort, nichts wird über fremde Handover gestreut.
 4. **Der eigene Handover = nur die eigenen offenen Todos.** Fremde Punkte stehen in **deren** Blatt (der Zeiger genügt).
