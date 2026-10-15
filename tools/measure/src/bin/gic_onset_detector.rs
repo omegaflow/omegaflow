@@ -303,30 +303,23 @@ fn calibrate_threshold(
         return None;
     }
     vals.sort_by(|a, b| a.total_cmp(b));
-    let n = vals.len();
-    let count_at = |i: usize| count_onsets(series, vals[i], min_sep, lo, hi) as f64;
-    if count_at(0) <= target {
-        return Some(vals[0]);
-    }
-    if count_at(n - 1) > target {
-        return Some(vals[n - 1]);
-    }
-    let (mut a, mut b) = (0usize, n - 1);
-    while a < b {
-        let mid = a + (b - a) / 2;
-        if count_at(mid) > target {
-            a = mid + 1;
-        } else {
-            b = mid;
+    let step = vals.len() / 1024;
+    let mut best_t = vals[0];
+    let mut best_d = f64::INFINITY;
+    let last = vals.len() - 1;
+    for (k, &t) in vals.iter().enumerate() {
+        let sampled = step == 0 || k % step == 0;
+        if !sampled && k != last {
+            continue;
+        }
+        let n = count_onsets(series, t, min_sep, lo, hi) as f64;
+        let d = (n - target).abs();
+        if d < best_d {
+            best_d = d;
+            best_t = t;
         }
     }
-    let here = count_at(a);
-    let prev = if a > 0 { count_at(a - 1) } else { here };
-    if a > 0 && (prev - target).abs() < (here - target).abs() {
-        Some(vals[a - 1])
-    } else {
-        Some(vals[a])
-    }
+    Some(best_t)
 }
 
 fn mean(values: &[f64]) -> f64 {
