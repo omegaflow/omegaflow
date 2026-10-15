@@ -2,7 +2,7 @@
   title: Survey — Gewebe & Fäden: was die zwei Messungen über die nötigen Fäden sagen (2026-10-14)
   class: survey
   date: 2026-10-14
-  sha256: fd669ef1d53e708c61a56d0ec5a389a927952e4f7cea597f48c8ddd737d546de
+  sha256: e3e083ead2020c109ad6769634e07fc0faa9d740c9d703c853896837389a53a6
   status: live
   see-also: phi/sources.φ docs/surveys/survey-2026-10-09-domaenen.md docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md docs/surveys/survey-2026-10-13-raetsel-master-matrix.md docs/concepts/source-curation.md
 -->
@@ -97,7 +97,7 @@ Richtungen mit **anderen Gesetzen** füllen:
 
 - **Gravitation (13 Felder, 2 Gesetze):** Schwerefeld-**Zeitreihen**. Verifizierte
   Routen liegen in `survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` §2:
-  IGETS/BGI (`isdc.gfz.de` / `api.sedoo.fr`), EGGN / EPOS-Equip-G (Nachfolger
+  IGETS/BGI (`isdc.gfz.de` / `api.sedoo.fr`), EQUIP-G (Fehlname „EGGN") (Nachfolger
   `pending`), CGrav China (Antrag), Satelliten-Gravimetrie (GRACE-FO / GOCE),
   LLR. Fehlende Kernel: `point` (Punktmasse/Quellgröße), `exp.-decay`.
 - **Seismik (20 Felder, 2 Gesetze):** Vollwellenform / OBS / DAS. Routen
