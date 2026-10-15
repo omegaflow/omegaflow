@@ -4,6 +4,7 @@ use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::process::{Command, Stdio};
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
+use std::sync::OnceLock;
 
 struct Route {
     prefix: &'static str,
@@ -306,6 +307,582 @@ fn json_escape(s: &str) -> String {
     out.push('"');
     out
 }
+static REDACTOR: OnceLock<Option<Redactor>> = OnceLock::new();
+
+struct Redactor {
+    forward: Vec<(String, String)>,
+    reverse: Vec<(String, String)>,
+}
+
+fn filter_enabled() -> bool {
+    match std::env::var("OMEGAFLOW_FILTER") {
+        Ok(v) => v == "1" || v.eq_ignore_ascii_case("on"),
+        Err(_) => false,
+    }
+}
+
+fn active_redactor() -> Option<&'static Redactor> {
+    REDACTOR
+        .get_or_init(|| {
+            let dir = match std::env::var("OMEGAFLOW_PRIVATE") {
+                Ok(p) if !p.is_empty() => p,
+                _ => match std::env::var("HOME") {
+                    Ok(h) => format!("{h}/projects/{}", concat!("omegaflow", "-personal")),
+                    Err(_) => String::new(),
+                },
+            };
+            let path = format!("{dir}/redact.map");
+            match fs::read_to_string(&path) {
+                Ok(text) => Some(Redactor::from_map(&text)),
+                Err(_) => {
+                    eprintln!("llm_gateway: redact.map absent at {path} - filter inert");
+                    None
+                }
+            }
+        })
+        .as_ref()
+}
+
+impl Redactor {
+    fn from_map(text: &str) -> Redactor {
+        let mut forward: Vec<(String, String)> = Vec::new();
+        for line in text.lines() {
+            let line = line.trim();
+            if line.is_empty() || line.starts_with('#') {
+                continue;
+            }
+            if let Some((real, ph)) = line.split_once('=') {
+                let real = real.trim();
+                let ph = ph.trim();
+                if !real.is_empty() && !ph.is_empty() {
+                    forward.push((real.to_string(), ph.to_string()));
+                }
+            }
+        }
+        forward.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
+        let mut reverse: Vec<(String, String)> =
+            forward.iter().map(|(r, p)| (p.clone(), r.clone())).collect();
+        reverse.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
+        Redactor { forward, reverse }
+    }
+
+    fn redact(&self, s: &str) -> String {
+        let mut out = apply_patterns(s);
+        for (real, ph) in &self.forward {
+            if out.contains(real.as_str()) {
+                out = out.replace(real.as_str(), ph.as_str());
+            }
+        }
+        out
+    }
+
+    fn restore(&self, s: &str) -> String {
+        let mut out = s.to_string();
+        for (ph, real) in &self.reverse {
+            if out.contains(ph.as_str()) {
+                out = out.replace(ph.as_str(), real.as_str());
+            }
+        }
+        out
+    }
+
+    fn key_at(&self, ch: &[char], i: usize) -> Option<(usize, usize)> {
+        for (idx, (ph, _)) in self.reverse.iter().enumerate() {
+            let l = ph.chars().count();
+            if l > 0 && i + l <= ch.len() && ch[i..i + l].iter().copied().eq(ph.chars()) {
+                return Some((l, idx));
+            }
+        }
+        None
+    }
+
+    fn key_prefix(&self, ch: &[char], i: usize) -> bool {
+        let r = ch.len() - i;
+        self.reverse.iter().any(|(ph, _)| {
+            let l = ph.chars().count();
+            l > r && ch[i..].iter().copied().eq(ph.chars().take(r))
+        })
+    }
+
+    fn restore_stream(&self, pending: &mut String) -> String {
+        let ch: Vec<char> = pending.chars().collect();
+        let mut out = String::with_capacity(pending.len());
+        let mut i = 0;
+        while i < ch.len() {
+            match self.key_at(&ch, i) {
+                Some((l, idx)) if !self.key_prefix(&ch, i) => {
+                    out.push_str(&self.reverse[idx].1);
+                    i += l;
+                }
+                None if !self.key_prefix(&ch, i) => {
+                    out.push(ch[i]);
+                    i += 1;
+                }
+                _ => break,
+            }
+        }
+        *pending = ch[i..].iter().collect();
+        out
+    }
+}
+
+fn starts(ch: &[char], i: usize, s: &str) -> bool {
+    let mut j = i;
+    for c in s.chars() {
+        if j >= ch.len() || ch[j] != c {
+            return false;
+        }
+        j += 1;
+    }
+    true
+}
+
+fn run_while<F: Fn(char) -> bool>(ch: &[char], mut i: usize, p: F) -> usize {
+    while i < ch.len() && p(ch[i]) {
+        i += 1;
+    }
+    i
+}
+
+fn c_key(c: char) -> bool {
+    c.is_ascii_alphanumeric() || c == '_' || c == '-'
+}
+
+fn c_upnum(c: char) -> bool {
+    c.is_ascii_uppercase() || c.is_ascii_digit()
+}
+
+fn c_tok(c: char) -> bool {
+    c.is_ascii_alphanumeric() || c == '.' || c == '_' || c == '-'
+}
+
+fn c_mail(c: char) -> bool {
+    c.is_ascii_alphanumeric() || c == '.' || c == '_' || c == '%' || c == '+' || c == '-'
+}
+
+fn c_dom(c: char) -> bool {
+    c.is_ascii_alphanumeric() || c == '.' || c == '-'
+}
+
+fn c_word(c: char) -> bool {
+    c.is_ascii_alphanumeric() || c == '_'
+}
+
+fn c_de_lower(c: char) -> bool {
+    c.is_ascii_lowercase()
+        || c == '-'
+        || c == '\u{e4}'
+        || c == '\u{f6}'
+        || c == '\u{fc}'
+        || c == '\u{df}'
+}
+
+fn c_de_upper(c: char) -> bool {
+    c.is_ascii_uppercase() || c == '\u{c4}' || c == '\u{d6}' || c == '\u{dc}'
+}
+
+fn subst<F: FnMut(&[char], usize) -> Option<usize>>(s: &str, repl: &str, mut m: F) -> String {
+    let ch: Vec<char> = s.chars().collect();
+    let mut out = String::with_capacity(s.len());
+    let mut i = 0;
+    while i < ch.len() {
+        match m(&ch, i) {
+            Some(e) if e > i => {
+                out.push_str(repl);
+                i = e;
+            }
+            _ => {
+                out.push(ch[i]);
+                i += 1;
+            }
+        }
+    }
+    out
+}
+
+fn p_sk(ch: &[char], i: usize) -> Option<usize> {
+    if starts(ch, i, "sk-") {
+        let e = run_while(ch, i + 3, c_key);
+        if e >= i + 19 {
+            return Some(e);
+        }
+    }
+    None
+}
+
+fn p_github(ch: &[char], i: usize) -> Option<usize> {
+    if starts(ch, i, "github_pat_") {
+        let e = run_while(ch, i + 11, |c| c.is_ascii_alphanumeric() || c == '_');
+        if e >= i + 31 {
+            return Some(e);
+        }
+    }
+    None
+}
+
+fn p_gh(ch: &[char], i: usize) -> Option<usize> {
+    match ch.get(i + 2).copied() {
+        Some(c) if starts(ch, i, "gh") && "pousr".contains(c) && ch.get(i + 3) == Some(&'_') => {}
+        _ => return None,
+    }
+    let e = run_while(ch, i + 4, |c| c.is_ascii_alphanumeric());
+    if e >= i + 24 {
+        Some(e)
+    } else {
+        None
+    }
+}
+
+fn p_akia(ch: &[char], i: usize) -> Option<usize> {
+    if starts(ch, i, "AKIA") {
+        let e = i + 20;
+        if e <= ch.len() && ch[i + 4..e].iter().copied().all(c_upnum) {
+            return Some(e);
+        }
+    }
+    None
+}
+
+fn p_aiza(ch: &[char], i: usize) -> Option<usize> {
+    if starts(ch, i, "AIza") {
+        let e = run_while(ch, i + 4, c_key);
+        if e >= i + 34 {
+            return Some(e);
+        }
+    }
+    None
+}
+
+fn p_mac(ch: &[char], i: usize) -> Option<usize> {
+    let mut j = i;
+    for k in 0..6 {
+        if k > 0 {
+            if ch.get(j) != Some(&':') {
+                return None;
+            }
+            j += 1;
+        }
+        if j + 2 > ch.len() || !ch[j].is_ascii_hexdigit() || !ch[j + 1].is_ascii_hexdigit() {
+            return None;
+        }
+        j += 2;
+    }
+    Some(j)
+}
+
+fn p_uuid(ch: &[char], i: usize) -> Option<usize> {
+    let groups = [8usize, 4, 4, 4, 12];
+    let mut j = i;
+    for (k, g) in groups.iter().enumerate() {
+        if k > 0 {
+            if ch.get(j) != Some(&'-') {
+                return None;
+            }
+            j += 1;
+        }
+        if j + g > ch.len() || !ch[j..j + g].iter().all(|c| c.is_ascii_hexdigit()) {
+            return None;
+        }
+        j += g;
+    }
+    Some(j)
+}
+
+fn p_xox(ch: &[char], i: usize) -> Option<usize> {
+    match ch.get(i + 3).copied() {
+        Some(c) if starts(ch, i, "xox") && "baprs".contains(c) && ch.get(i + 4) == Some(&'-') => {}
+        _ => return None,
+    }
+    let e = run_while(ch, i + 5, |c| c.is_ascii_alphanumeric() || c == '-');
+    if e >= i + 15 {
+        Some(e)
+    } else {
+        None
+    }
+}
+
+fn p_hf(ch: &[char], i: usize) -> Option<usize> {
+    if starts(ch, i, "hf_") {
+        let e = run_while(ch, i + 3, |c| c.is_ascii_alphanumeric());
+        if e >= i + 23 {
+            return Some(e);
+        }
+    }
+    None
+}
+
+fn p_bearer(ch: &[char], i: usize) -> Option<usize> {
+    if starts(ch, i, "Bearer") {
+        let ws = run_while(ch, i + 6, |c| c.is_whitespace());
+        if ws > i + 6 {
+            let e = run_while(ch, ws, c_tok);
+            if e >= ws + 16 {
+                return Some(e);
+            }
+        }
+    }
+    None
+}
+
+fn ci_first(ch: &[char], i: usize, w: &str) -> bool {
+    let mut it = w.chars();
+    let first = match it.next() {
+        Some(c) => c,
+        None => return true,
+    };
+    if i >= ch.len() {
+        return false;
+    }
+    let cur = ch[i];
+    if cur != first.to_ascii_lowercase() && cur != first.to_ascii_uppercase() {
+        return false;
+    }
+    let mut j = i + 1;
+    for c in it {
+        if j >= ch.len() || ch[j] != c {
+            return false;
+        }
+        j += 1;
+    }
+    true
+}
+
+fn kw_at(ch: &[char], i: usize) -> Option<(usize, usize)> {
+    let mut ke: Option<usize> = None;
+    for w in ["password", "passwd", "secret", "token", "key"] {
+        if ci_first(ch, i, w) {
+            ke = Some(i + w.chars().count());
+            break;
+        }
+    }
+    if ke.is_none()
+        && i + 3 <= ch.len()
+        && (ch[i] == 'A' || ch[i] == 'a')
+        && starts(ch, i + 1, "pi")
+    {
+        let mut j = i + 3;
+        if j < ch.len() && (ch[j] == '-' || ch[j] == '_') {
+            j += 1;
+        }
+        if ci_first(ch, j, "key") {
+            ke = Some(j + 3);
+        }
+    }
+    let ke = ke?;
+    let mut j = run_while(ch, ke, |c| c.is_whitespace());
+    if ch.get(j) != Some(&':') && ch.get(j) != Some(&'=') {
+        return None;
+    }
+    j += 1;
+    j = run_while(ch, j, |c| c.is_whitespace());
+    let v = run_while(ch, j, |c| !c.is_whitespace());
+    if v == j {
+        return None;
+    }
+    Some((ke, v))
+}
+
+fn rep_kw(s: &str) -> String {
+    let ch: Vec<char> = s.chars().collect();
+    let mut out = String::with_capacity(s.len());
+    let mut i = 0;
+    while i < ch.len() {
+        if let Some((ke, end)) = kw_at(&ch, i) {
+            let kw: String = ch[i..ke].iter().collect();
+            out.push_str(&kw);
+            out.push_str("=<SECRET>");
+            i = end;
+        } else {
+            out.push(ch[i]);
+            i += 1;
+        }
+    }
+    out
+}
+
+fn p_email(ch: &[char], i: usize) -> Option<usize> {
+    let j = run_while(ch, i, c_mail);
+    if j == i || ch.get(j) != Some(&'@') {
+        return None;
+    }
+    let d0 = j + 1;
+    let d1 = run_while(ch, d0, c_dom);
+    if d1 == d0 {
+        return None;
+    }
+    let mut p = d1;
+    while p > d0 {
+        p -= 1;
+        if ch[p] == '.' {
+            let mut t = p + 1;
+            while t < d1 && ch[t].is_ascii_alphabetic() {
+                t += 1;
+            }
+            if t >= p + 3 {
+                return Some(t);
+            }
+        }
+    }
+    None
+}
+
+fn p_iban(ch: &[char], i: usize) -> Option<usize> {
+    if i + 4 <= ch.len()
+        && ch[i].is_ascii_uppercase()
+        && ch[i + 1].is_ascii_uppercase()
+        && ch[i + 2].is_ascii_digit()
+        && ch[i + 3].is_ascii_digit()
+    {
+        let e = run_while(ch, i + 4, c_upnum);
+        if e >= i + 14 {
+            return Some(e);
+        }
+    }
+    None
+}
+
+fn street_tail(ch: &[char], start: usize) -> Option<usize> {
+    let mut j = start;
+    let sp = j;
+    while j < ch.len() && j - sp < 2 && ch[j] == ' ' {
+        j += 1;
+    }
+    let d = j;
+    while j < ch.len() && j - d < 4 && ch[j].is_ascii_digit() {
+        j += 1;
+    }
+    if j == d {
+        return None;
+    }
+    if j < ch.len() && ch[j].is_ascii_lowercase() {
+        j += 1;
+    }
+    if j < ch.len() && c_word(ch[j]) {
+        return None;
+    }
+    Some(j)
+}
+
+fn p_street(ch: &[char], i: usize) -> Option<usize> {
+    if !c_de_upper(ch[i]) {
+        return None;
+    }
+    let suffixes = [
+        "stra\u{df}e",
+        "str.",
+        "weg",
+        "gasse",
+        "platz",
+        "allee",
+        "ring",
+        "damm",
+        "ufer",
+    ];
+    let mut best: Option<usize> = None;
+    let mut s = i + 3;
+    while s < ch.len() {
+        if ch[i + 1..s].iter().copied().all(c_de_lower) {
+            for suf in suffixes {
+                if starts(ch, s, suf) {
+                    if let Some(e) = street_tail(ch, s + suf.chars().count()) {
+                        if best.map_or(true, |b| e > b) {
+                            best = Some(e);
+                        }
+                    }
+                }
+            }
+        }
+        s += 1;
+    }
+    best
+}
+
+fn p_plz(ch: &[char], i: usize) -> Option<usize> {
+    let mut j = i;
+    for _ in 0..5 {
+        if j < ch.len() && ch[j].is_ascii_digit() {
+            j += 1;
+        } else {
+            return None;
+        }
+    }
+    let sp = j;
+    while j < ch.len() && j - sp < 2 && ch[j] == ' ' {
+        j += 1;
+    }
+    if j == sp || !c_de_upper(ch.get(j).copied()?) {
+        return None;
+    }
+    j += 1;
+    let b = j;
+    while j < ch.len() && c_de_lower(ch[j]) {
+        j += 1;
+    }
+    if j >= b + 2 {
+        Some(j)
+    } else {
+        None
+    }
+}
+
+fn p_tel(ch: &[char], i: usize) -> Option<usize> {
+    if i > 0 && c_word(ch[i - 1]) {
+        return None;
+    }
+    let mut ke: Option<usize> = None;
+    for w in ["Telefon", "Mobil", "Handy", "Tel", "Fax"] {
+        if starts(ch, i, w) {
+            ke = Some(i + w.chars().count());
+            break;
+        }
+    }
+    let ke = ke?;
+    let mut j = run_while(ch, ke, |c| c.is_whitespace());
+    while j < ch.len() && (ch[j] == ':' || ch[j] == '.') {
+        j += 1;
+    }
+    j = run_while(ch, j, |c| c.is_whitespace());
+    if j >= ch.len() || !(ch[j] == '+' || ch[j].is_ascii_digit()) {
+        return None;
+    }
+    let first = j;
+    let e = run_while(ch, first + 1, |c| {
+        c.is_ascii_digit() || c == ' ' || c == '(' || c == ')' || c == '/' || c == '.' || c == '-'
+    });
+    if e < first + 7 {
+        return None;
+    }
+    let mut p = e;
+    while p > first + 1 {
+        p -= 1;
+        if ch[p].is_ascii_digit() && p >= first + 6 {
+            let end = p + 1;
+            if end >= ch.len() || !c_word(ch[end]) {
+                return Some(end);
+            }
+        }
+    }
+    None
+}
+
+fn apply_patterns(s: &str) -> String {
+    let s = subst(s, "<KEY>", p_sk);
+    let s = subst(&s, "<KEY>", p_github);
+    let s = subst(&s, "<KEY>", p_gh);
+    let s = subst(&s, "<KEY>", p_akia);
+    let s = subst(&s, "<KEY>", p_aiza);
+    let s = subst(&s, "<MAC>", p_mac);
+    let s = subst(&s, "<UUID>", p_uuid);
+    let s = subst(&s, "<KEY>", p_xox);
+    let s = subst(&s, "<KEY>", p_hf);
+    let s = subst(&s, "Bearer <KEY>", p_bearer);
+    let s = rep_kw(&s);
+    let s = subst(&s, "<EMAIL>", p_email);
+    let s = subst(&s, "<IBAN>", p_iban);
+    let s = subst(&s, "<ADDR>", p_street);
+    let s = subst(&s, "<ORT>", p_plz);
+    subst(&s, "<TEL>", p_tel)
+}
 
 fn provenance_sink() -> String {
     match std::env::var("OMEGAFLOW_GATEWAY_LOG") {
@@ -584,7 +1161,7 @@ fn paid_allowed(prefix: &str) -> bool {
     false
 }
 
-fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -> (u16, String) {
+fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str, red: Option<&Redactor>) -> (u16, String) {
     let start = Instant::now();
     let model = match json_string_field(body, "model") {
         Some(m) => m,
@@ -700,10 +1277,14 @@ fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str) -
         answered_model.as_deref(),
         &result.1,
     );
-    result
+    let (code, raw) = result;
+    match red {
+        Some(r) => (code, r.restore(&raw)),
+        None => (code, raw),
+    }
 }
 
-fn stream_chat(stream: &mut TcpStream, body: &str, secrets: &HashMap<String, String>, auth: &str) {
+fn stream_chat(stream: &mut TcpStream, body: &str, secrets: &HashMap<String, String>, auth: &str, red: Option<&Redactor>) {
     let start = Instant::now();
     let model = match json_string_field(body, "model") {
         Some(m) => m,
@@ -732,7 +1313,11 @@ fn stream_chat(stream: &mut TcpStream, body: &str, secrets: &HashMap<String, Str
                 None => "0000000000".to_string(),
             };
             let (code, resp) = horde_chat(body, provider_model, &key);
-            reply(stream, code, &resp);
+            let out = match red {
+                Some(r) => r.restore(&resp),
+                None => resp,
+            };
+            reply(stream, code, &out);
             return;
         }
         let key = match key_for(route, secrets, auth) {
@@ -766,17 +1351,54 @@ fn stream_chat(stream: &mut TcpStream, body: &str, secrets: &HashMap<String, Str
             Ok(mut c) => {
                 if let Some(mut out) = c.stdout.take() {
                     let mut buf = [0u8; 8192];
-                    loop {
-                        match out.read(&mut buf) {
-                            Ok(0) => break,
-                            Ok(n) => {
-                                if stream.write_all(&buf[..n]).is_err() {
-                                    break;
+                    match red {
+                        Some(r) => {
+                            let mut pending = String::new();
+                            let mut carry: Vec<u8> = Vec::new();
+                            loop {
+                                match out.read(&mut buf) {
+                                    Ok(0) => break,
+                                    Ok(n) => {
+                                        let mut joined = std::mem::take(&mut carry);
+                                        joined.extend_from_slice(&buf[..n]);
+                                        let valid = match std::str::from_utf8(&joined) {
+                                            Ok(s) => s.len(),
+                                            Err(e) => e.valid_up_to(),
+                                        };
+                                        pending.push_str(&String::from_utf8_lossy(&joined[..valid]));
+                                        carry = joined[valid..].to_vec();
+                                        let emit = r.restore_stream(&mut pending);
+                                        if !emit.is_empty() {
+                                            if stream.write_all(emit.as_bytes()).is_err() {
+                                                break;
+                                            }
+                                            let _ = stream.flush();
+                                        }
+                                    }
+                                    Err(_) => break,
                                 }
+                            }
+                            if !carry.is_empty() {
+                                pending.push_str(&String::from_utf8_lossy(&carry));
+                            }
+                            let tail = r.restore(&pending);
+                            if !tail.is_empty() {
+                                let _ = stream.write_all(tail.as_bytes());
                                 let _ = stream.flush();
                             }
-                            Err(_) => break,
                         }
+                        None => loop {
+                            match out.read(&mut buf) {
+                                Ok(0) => break,
+                                Ok(n) => {
+                                    if stream.write_all(&buf[..n]).is_err() {
+                                        break;
+                                    }
+                                    let _ = stream.flush();
+                                }
+                                Err(_) => break,
+                            }
+                        },
                     }
                 }
                 let _ = c.wait();
@@ -1210,6 +1832,9 @@ fn main() {
     };
     let secrets = load_secrets();
     let auth = load_auth_text();
+    if filter_enabled() {
+        active_redactor();
+    }
     eprintln!(
         "llm_gateway: listening on http://{addr} ({} routes)",
         ROUTES.len()
@@ -1244,8 +1869,13 @@ fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>, auth: &str)
         Some(t) => t,
         None => return,
     };
+    let red = if filter_enabled() { active_redactor() } else { None };
+    let outgoing = match red {
+        Some(r) => r.redact(&body),
+        None => body.clone(),
+    };
     if method == "POST" && path == "/v1/chat/completions" && json_bool_field(&body, "stream") {
-        stream_chat(stream, &body, secrets, auth);
+        stream_chat(stream, &outgoing, secrets, auth, red);
         return;
     }
     if method == "GET" && path.starts_with("/private/read") {
@@ -1292,7 +1922,7 @@ fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>, auth: &str)
     let (code, out) = match (method.as_str(), path.as_str()) {
         ("GET", "/v1/models") => (200, list_models(secrets, auth)),
         ("GET", "/health") => (200, "{\"status\":\"ok\"}".to_string()),
-        ("POST", "/v1/chat/completions") => chat_completions(&body, secrets, auth),
+        ("POST", "/v1/chat/completions") => chat_completions(&outgoing, secrets, auth, red),
         _ => (404, "{\"error\":{\"message\":\"not found\"}}".to_string()),
     };
     reply(stream, code, &out);
