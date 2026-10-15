@@ -167,6 +167,7 @@ origin https://geofon.gfz-potsdam.de/fdsnws/dataselect/1/query
 compiler tools/harvest/src/bin/fdsn_waveform_compiler.rs
 at earth
 ttl 60
+field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms erfc seismic-surface m/s 60.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/geomag.usgs.gov/usgs_geomag_efield_BOU.bin
 terms PD https://geomag.usgs.gov/
@@ -29526,6 +29527,17 @@ rows .
 lat 0
 lon 1
 quantity 2 venera15_16_surface_radius_km inverse-square geometry km 33554432.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/venus_radar_level2.bin
+terms CC0-1.0 https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/
+origin https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/
+compiler tools/harvest/src/bin/venus_radar_compiler.rs
+format vnrd
+at venus
+no-cadence
+field venus_radar_inc_deg venus_radar_inc_deg inverse-square geometry deg 33554432.0 0.0 0.0
+field venus_radar_ocp venus_radar_ocp inverse-square em 1 33554432.0 0.0 0.0
+field venus_radar_scp venus_radar_scp inverse-square em 1 33554432.0 0.0 0.0
 
 url https://pds-ppi.igpp.ucla.edu/annex/GO-X-RSS-1-ODR-V1.0/
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
