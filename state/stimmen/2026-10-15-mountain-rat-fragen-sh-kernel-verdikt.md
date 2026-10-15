@@ -1,7 +1,7 @@
 # Verdikt — Die Kugelflächen-Synthese als Feld/Kernel (M4, Mountain, 2026-10-15)
 
-*(Ein benannter Akt. **Neun** Sitz-Antworten liegen vor (`state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel.md`);
-Perplexity/Sakana Deep Research, GLM Deep Think Max, Claude, Qwen, Gemini, MiniMax, DeepSeek, Lumo.
+*(Ein benannter Akt. **Zehn** Sitz-Antworten liegen vor (`state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel.md`);
+Perplexity/Sakana Deep Research, GLM Deep Think Max, Claude, Qwen, Gemini, MiniMax, DeepSeek, Lumo, Kimi.
 Die **Session verifiziert jede Behauptung am Baum**, nie die Stimme; das **Verdikt trägt der Rat**
 (fünf Stimmen durch die fünf Axiome des Granits: A = A · ICRS & TDB · channel_ref · 0 geehrt · pending).
 Kein Riss geglättet.)*
@@ -26,7 +26,7 @@ Kein Riss geglättet.)*
 
 ### M4.1 · Kernel-Form, eigene Klasse, oder kein Feld? — **eigene Klasse**
 
-Von den neun Antworten tragen **acht** dieselbe Sache: die SH-Synthese tritt **nicht** als achte
+Von den zehn Antworten tragen **neun** dieselbe Sache (einmütig): die SH-Synthese tritt **nicht** als achte
 Punkt-Kernel-Form in die `field`-Zeile. Sie ist eine **eigene Klasse** — vom M3-Rat schon als
 `model_output`/`derived` benannt — mit globaler Signatur `evaluate(r, colat, lon, funktional)`,
 parameterisiert durch GM/Radius/Norm/Tide. Der Grund ist bei allen derselbe: die sieben Kernel sind
@@ -41,16 +41,20 @@ fabrizieren (Axiom 1/2).
 
 ### M4.2 · Weg des Modellkopfs — **RISS, keine Konvergenz**
 
-Der Rat **konvergiert nicht**:
-- **(a) Kopf im Draht** (eigener Kopf-Record / erweiterter Frame): Perplexity, Claude, Qwen, DeepSeek.
+Der Rat **konvergiert nicht** — **5 : 5** (roh):
+- **(a) Kopf im Draht** (eigener Kopf-Record / erweiterter Frame): Perplexity, Claude, Qwen, DeepSeek,
+  **Kimi**.
 - **(b) Kopf in der `phi`-Zeile** (neue Direktiven `gm`/`radius`/`norm`/`tide`/`max_degree`):
   GLM, Gemini, MiniMax, Lumo — Sakana „(b) primär, ergänzt um (a)".
 
 Beide Lager teilen: der Draht trägt die **Koeffizienten**, der Kopf ist **Modellidentität**, und die
 `phi`-Zeile trägt mindestens den **Verweis** und die Auswerte-Wahl (Funktional, `max_degree_used`).
-Der Streit ist **wo die Kopf-Werte leben** — im Draht (Ko-Lieferung, Kollisionsfreiheit) oder in der
-`phi`-Zeile (Text, Namen ehrlich, kein Enum-in-f64). **Das ist eine Axiom-5-Frage: der Operator
-entscheidet** (s. u.).
+Der Streit ist **wo die Kopf-Werte leben** — im Draht (Ko-Lieferung, Kollisionsfreiheit, `parse_head`
+erzeugt ihn) oder in der `phi`-Zeile (Text, Namen ehrlich, kein Enum-in-f64, vom Compiler erzeugt).
+**Gewichtet** (Sprachrangfolge A×2/B×1/C×0,5, **kein Messwert**): (a) Claude+Kimi (A) + Perplexity+Qwen
+(B) + DeepSeek (C) = **6,5**; (b) GLM+Lumo (A) + Sakana (B) = **5,0**, dazu Gemini und MiniMax **ohne
+Rang** (nicht gewichtet). Die Rangfolge ist kein Messwert; der Ausgang hängt an den ungereihten Sitzen.
+**Das ist eine Axiom-5-Frage: der Operator entscheidet** (s. u.).
 
 ### M4.3 · Koeffizienten oder Gitterwerte? — **Koeffizienten** (einmütig)
 
@@ -92,6 +96,12 @@ Einheiten-Modifier**. Folge: Kanal-Semantik ehrlich deklarieren (n als Grad/Well
 nur explizit, mit Provenienz), jeder bedeutungslose Slot `absent`/`pending` — keine Leer-Gleichheit
 aus Nullen.
 
+**Riss der Stimmen (benannt):** **Kimi** widerspricht — der 5. Riss greife **nicht** auf der
+Koeffizienten-Zeile (C/S sind dimensionslos und homogen, `unit 1` ist dort ehrlich), sondern nur an
+den **Funktional-Ausgängen** (nT/mGal/m/km nebeneinander). Beide Lesungen stehen: die Koeffizienten-Zeile
+ist in sich homogen, aber die **Slot-Namen** (`FREQ`/`BIN_WIDTH`) logen — der Riss sitzt an der
+**Benennung**, nicht an der Einheit. Keine der zwei Zeilen geglättet.
+
 ## Ungeglättete Risse
 
 1. **Kopfweg (a vs b)** — der Rat konvergiert nicht; Axiom-5-Entscheid des Operators.
@@ -114,11 +124,13 @@ aus Nullen.
 - **Mistral** — `pending`: „kein kontingent" (Kontingent leer).
 - **Duck.ai** — `pending`: „nicht verfügbar".
 - **Tryingopen** (geteilte Open-Weight-Sitze) — `pending`: Sitz leer, kein Modell gefahren.
-- **Kimi** — **Riss:** der Slot trägt eine Antwort auf die **Platzierungs-/Dispersions-Frage (N24)**,
-  **nicht** auf M4. Die Antwort gehört einer anderen Runde; Kimi trägt **keine** M4-Stimme. Beide
-  Enden benannt, nicht geglättet.
+- **Kimi** — **nachgetragen** (Operator-Wort „hab kimi nachgetragen"): der Slot trug zuerst die
+  Antwort auf die **Platzierungs-/Dispersions-Frage (N24)**; sie ist ersetzt durch die **M4-Antwort**
+  (Kopfweg **(a) Draht**, q7: der 5. Riss greift *nicht* auf der Koeffizienten-Zeile — C/S sind
+  dimensionslos/homogen —, nur an den Funktional-Ausgängen). Der frühere Fehl-Eintrag bleibt als
+  benannter Vorgang, der aktuelle zählt.
 
-Neun M4-Stimmen tragen. Das ist die Konvergenz Grundlage.
+Zehn M4-Stimmen tragen (Kopfweg **5 : 5**). Das ist die Konvergenz-Grundlage.
 
 ## Nächster begrenzter Schritt (Rat, autonom fahrbar)
 

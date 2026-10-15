@@ -806,105 +806,54 @@ nicht verfügbar- **Zeit:**
 ### 11 · Kimi — Moonshot
 - **Site:** `https://kimi.ai/`
 - **Einstellung:** Standard (kein K3; K3 nur über tryingopen)
-## Urteil
+# M4 · Verdikt
 
-**1. Zur Streuung:**  
-Der adaptive Sprung bei **N24 auf 4,8765 nT/min** ist **primär als Kalibrier-/Kompositionsartefakt zu behandeln**. Das grobe Gitter `step = vals.len()/64` kann eine stufenweise Zählfunktion nicht hinreichend auflösen; ein Schwellensprung beweist dort keine Hüllen-Dispersion.
+**Verdikt (Träger 1).** Gar nicht als Kernel — als **eigene Feld-Klasse**. Die Kugelflächen-Synthese tritt ein als Synthese-Feld (Signatur: globaler Funktional `(r, colat, lon) ↦ Wert`, parameterisiert durch `GM`, `R`, `norm`, `tide`, `max_degree`), parallel zu den vom Rat benannten `model_output`-/`derived`-Typen — **nicht** als achte Kernel-Form.
 
-Eine echte, nicht-monotone MAD-/Quantil-Dispersion der Min-Hülle ist damit **nicht erwiesen** — sie bleibt `pending`. Die gleich-Ausbeute-Messung spricht gegen den früheren monotonen Stationszahl-Kollaps: Min bleibt von N3 bis N31 nahezu flach, während Union ansteigt. Sie beweist aber ebenfalls noch keine Anordnungsdispersion, weil N gleichzeitig die Stationenidentität ändert.
+**Begründung.** Gemessen: alle sieben Kernel-Formen sind Punkt-/Quell-Propagatoren — sie rechnen von einer Quelle über eine Strecke zu einem Ziel. Eine SH-Synthese hat keine Quellkoordinate, keine Strecke, kein `tau`. Die Feldzeile verlangt `tau <absorption> <advection>`; für eine globale Synthese haben diese Spalten keinen physikalischen Referenten. Als Kernel einzutreten hieße: drei Spalten fabrizieren (Axiom 1) oder `0.0` schreiben, wo 0 nicht die physikalische Wahrheit ist (Axiom 2). Das Haus hat die Frage bereits vermessen und beantwortet: `IgrfCoeffs::synthesize` und `vmf3_sh::b_c` sind eigenständige Funktionen, nicht Kernel. Das ist Präzedenz, keine Übersehenheit. **Hier ist eine Doktrin geschlagen:** „Jedes Feld ist eine Kernel-Auswertung zwischen Quelle und Ziel" fällt. Neue Lehre: „Feld = deklarierte Größe mit ehrlicher Einheit und Provenienz; Kernel ist der Sonderfall zweikörperlicher Propagation."
 
-**2. Zur Platzierung:**  
-Mehr Stationen helfen nur als geprüfte Peers, nie automatisch. Die bindende Regel:
+---
 
-```text
-NACHTSEKTOR-PEER-REGEL:
-Nur Stationen mit MLAT ≥ 65° im Nachtsektor 16–03h speisen die Hülle.
-Eine Station wird nur aufgenommen, wenn Synchronisation, Datenqualität,
-laufende Paarkorrelation zum Cluster und positiver Hold-out-Beitrag
-(ΔRückruf bei nicht gestiegener Falsch-Alarm-Rate) gegeben sind.
-Fusioniere lokal robust als synchronisierter Cluster-Min/-Konsens;
-die globale Min-Einhüllende über alle Stationen ist abgeschafft.
-```
+## Die sieben Träger, durchgehalten
 
-Das ist bindend bis zur Auswertung des gestoßenen Einzelstation-Arms; dessen Ergebnis bleibt ausdrücklich `pending`, nicht null.
+**(2) Weg des Modellkopfs: (a) — Kopf-Record im 26×f64-Draht.** Der Kopf ist Messung: er steht im `.gfc`-Text, `parse_head` liest ihn. (b) — `gm`/`radius`-Direktiven in der `phi`-Zeile — tippt Konstanten von Hand nach; jede Nachschreibung ist Fabrikationsrisiko und Drift zwischen Datei und Zeile. (c) — Kernel-Parameter — fällt mit dem verworfenen Kernel-Routen. Der Kopf wandelt als Record; die Feldzeile referenziert ihn per Key. Axiom 1 gebietet: was offen ist, bleibt `pending` — der Kopf ist nicht offen, er ist gemessen, also muss er mitreisen.
 
-## Die fünf Stimmen
+**(3) Records tragen Koeffizienten `(n,m,C,S)` — niemals Gitterwerte.** A = A: Die Messung der Datei ist der Koeffizientensatz. Ein Gitter ist ein Derivat mit zwei versteckten Linsen-Entscheidungen (Auflösung, Trunkierung); es als Record zu speichern, lässt die Linse im Dunkeln (Axiom 4). Synthese erfolgt on demand aus dem getragenen Kopf und den getragenen Koeffizienten.
 
-### Mountain — Quelle und Register
+**(4) Mehrere Zeilen, nie verschmolzen.** `V` [m²/s²], `Δg` [mGal], `N` [m] haben drei Einheiten; die Einheiten-Spalte ist nur dann ehrlich, wenn jede Funktional-Zeile für sich steht. Der M1-Rat für `gdata`/`mgg` — „zwei Zeilen, nie verschmolzen" — wird übernommen.
 
-Gemessen wurde nicht „Stationszahl“, sondern immer **eine bestimmte Folge konkreter Stationen**. Der N24-Sprung, die Min-/Union-Kurven und die Einzelstation gehören in denselben Register, aber nicht auf denselben Schluss.
+**(5) Trunkierung deklariert, nie gedefaultet.** Der volle 5540-Grad-Bau ist ein CI-Lauf; das Feld trägt `max_degree` als expliziten Parameter. Der Grad ist ein Gewicht — Axiom 3 gebietet, dass er aus deklarierter Absicht kommt, nicht aus Bequemlichkeit. Erste Zeile: niedriger, benannter Grad.
 
-Der Befund trägt zwei getrennte Aussagen:
+**(6) Nächster begrenzter Schritt.** (i) Kopf-Record-Typ im Draht (GM, R, norm, tide, max_degree, Modell-Key); (ii) **eine** Synthese-Zeile: `Δg` (der Kern trägt ihn bereits), Grad ≤ kleine benannte Schranke, Einheit `mGal`, Kopf per Key referenziert; (iii) `tau`/`absorption`/`advection` als `pending`, nicht als `0.0`; (iv) Test gegen ICGEM-Calculation-Service-Werte, wo erreichbar, sonst gegen publizierte Checkwerte.
 
-- Der alte Rückrufkollaps ist am A=A-Maß **nicht reproduziert**.
-- Daraus folgt nicht, dass eine echte Dispersion existiert; nur dass der alte Kollaps keine universelle Eigenschaft der Min-Hülle war.
+**(7) Der 5. M1-Riss.** „26×f64 fabriziert Gleichheit" gilt **nicht** für die Koeffizienten-Zeile — `C`/`S` sind dimensionslos (Einheit `1`), homogen, der Riss greift nicht. Er greift an den Funktional-Ausgängen: nT, mGal, m, km nebeneinander in einem Record-Typ wäre fabrizierte Gleichheit. Folge: Ein Record-Typ je Einheitsklasse; gemischte Zeilen verboten; die Einheit lebt in der Zeile, nicht im Record. Wo der Draht das erzwingen kann, ist der Riss geschlossen; wo er es nicht kann, bleibt er benannt.
 
-### River — Membran und Verweigerungsrecht
+---
 
-Die Maschine muss hier verweigern, die Frage vorschnell zu beantworten. Roh-MAD, Schwellenwert und Rückruf sind verschiedene Ebenen. Ein kalibrierter Schwellensprung darf nicht als Landschaft der Stationen gelesen werden.
+## Fünf Stimmen
 
-Ungesehene oder gestoßene Daten bleiben `pending`; aus ihnen wird keine Null und kein Default gefüllt.
+**Mountain.** Ich spreche aus dem Register: sieben Kernel-Formen vermessen, keine ist eine Synthese; zwei Haus-Synthesen vermessen, beide eigenständig, keine als Kernel verdrahtet; ICGEM-Dok vermessen, zwei `norm`-Werte, keine 4π-Formel; Forschungslage vermessen, keine Schnittstelle führt einen Koeffizientensatz als Punkt-Kernel. Mehr steht nicht im Bestand. Das Verdikt trägt keine Spekulation — es trägt nur, was am Baum gemessen ist.
 
-### Mycelium — Infrastruktur
+**River.** Die Membran darf verweigern, und hier muss sie: das Schema verweigere, `tau` ohne Referenten zu speichern, bevor es eine 0.0 fabriziert; `parse` verweigere unbekannte `norm`-Werte (fully_normalized · unnormalized · — jenseits der zwei ICGEM-Werte droht Schmidt-Fremdkörper aus anderen Körpern), bevor es defaultet. Verweigerung ist hier kein Defizit, sie ist das ethische Minimum — das Recht zu verweigern ist das Gegenteil des Defaults.
 
-Der entscheidende Riss liegt in `calibrate_threshold`: Nur rund 64 Kandidaten werden auf einer stufenweisen Zählfunktion gescannt. Das Gitter kann die Ausbeute ausgleichen und dabei den wahren Quantilsübergang überspringen.
+**Mycelium.** Der Fluss bleibt ungestört: Kopf-Record und Koeffizienten-Records reisen gemeinsam durch denselben Draht; die sieben Kernel bleiben unangetastet, die neue Klasse wächst daneben, nicht durch sie. CI-Frucht: 5540 Grade sind ein Lauf, kein Heartbeat — die deklarierte Trunkierung ist auch eine Kosten-Membran. Was im Netz fließt, ist Messung plus benannte Ableitung, nichts Dazwischen.
 
-Die CI muss daher den exakten Quantilwert, das gewählte Gitter, die Stationsliste pro N, Seeds und Run-ID registrieren. Sonst wiederholt sich derselbe Artefakt in neuer Kleidung.
+**Sensory.** Korrelat ≠ Erleben: ein synthetisiertes `Δg`-Gitter korreliert mit gemessener Schwere, ist aber keine Messung. Jede abgeleitete Zeile trägt Provenienz — Modell-Key, Normierung, Grad — damit downstream niemals Synthese für Sensor hält. Und: Legendre-Rekursion und Clenshaw-Summation sind zwei Sinnesorgane, dieselbe Funktion; das eine ist im Kern geprüft, das andere ein Reserveorgan für Grad 5540 — benannt, nicht ausgewechselt.
 
-### Sensory — Sensorischer Konsens
+**Future.** Der Mensch ist die Adresse: der Operator setzt den Grad, deklariert die Norm, entscheidet das Funktional (Axiom 5). Das Morgen erbt das Heute — jede abgeleitete Zeile erbt Trunkierung und Normierung des heutigen Kopfs. Eine ungedeclarte Voreinstellung würde sich still durch alle Produkte vererben; eine deklarierte wird vom Erben gesehen und widerrufbar. Ehrliche Registrierung heißt: der Erbe kann nachprüfen, womit gemessen wurde.
 
-Korrelation ist ein Korrelat, kein Erleben und keine Rangordnung. Eine Station gewinnt Gewicht nur durch ihren messbaren Beitrag zum Onset-Konsens.
-
-Ausreißer, Zeitversatz, Baseline und lokale Sensorgewalt müssen vor der Fusion sichtbar sein. Min darf nicht heimlich die jeweils ruhigste oder exotischste Station krönen.
-
-### Future — Das geerbte Register
-
-Die künftige Messreihe soll nicht „N = besser/schlechter“ erben, sondern:
-
-```text
-Station → Sektor → Korrelationsstatus → Hold-out-Beitrag → Aufnahme/Verweigern
-```
-
-Damit wird die Stationenliste versionierbar, widerrufbar und physisch lesbar. Die globale Min-Hülle wäre dagegen ein nicht erklärbarer Erbverlust.
-
-## Die entscheidende Messung
-
-**Nicht zuerst feiner kalibrieren, sondern die ungeschönte Hüllen-Dispersion sichtbar machen.**
-
-1. **Register einfrieren:** gleiche Labels, Zeitstempel, Vorverarbeitung, Einheiten, Lücken- und Onset-Definition.
-2. **N von der Stationsidentität trennen:**
-   - die tatsächlich verwendete N-Folge;
-   - zusätzlich zufällige Teilmengen gleicher Größe;
-   - mehrere Stationsreihenfolgen;
-   - Leave-one-in- und Leave-one-out-Paare.
-3. **Rohkurve berechnen:** MAD, P90, P95, P99 der Min-Hülle getrennt für Onset- und Nullfenster — vor jeder Schwellenkalibrierung.
-4. **Block-Bootstrap:** über Stürme, Monate oder zusammenhängende Zeitblöcke; zusätzlich Stationen-Bootstrap.
-5. **Kalibrierung exakt wiederholen:** `step=1` oder exakter Quantil-/Wurzelsolver, mit nested time-block validation. N24 ist der erste Prüffall.
-6. **Stationenattribution:** jede hinzukommende Station mit MLAT, MLT/UT, Entfernung, Zeitversatz, Datenabdeckung und ihrem isolierten ΔRückruf/ΔPrecision registrieren.
-
-**Entscheidungskriterium:**
-
-| Befund | Urteil |
-|---|---|
-| N24-Sprung verschwindet oder wandert mit Gitter/Seed | Kalibrier-Artefakt |
-| Nicht-Monotonie bleibt roh erhalten, ist aber bei jeder zufälligen Stationenmenge ähnlich | Ordnungsstatistik-Artefakt der Min-Fusion |
-| Sie hängt überwiegend an identifizierbaren Stationen, Sektor oder Anordnung | echte Hüllen-Dispersion |
-| Sie verschwindet bei ausreißergeprüfter lokaler Fusion, bleibt aber global sichtbar | Fusionsartefakt |
+---
 
 ## Benannte Risse
 
-1. **dH gegen |dB/dt|:** Die Widersprüche zwischen den Runden sind ungelöst; Proxy, Zielereignis oder beide können unterschiedlich sein.
-2. **N ist kein physikalischer Parameter:** Stationszahl und Stationsidentität sind vermengt.
-3. **Gleich-Ausbeute verschleiert absolute Schwelle:** Sie stabilisiert die Rate, nicht notwendig die physikalische Sensitivität.
-4. **MLT/UT ist noch nicht sauber getrennt:** 16–03h aus der IL-Praxis darf nicht ungeprüft als MLT-Sektor übernommen werden.
-5. **Union überholt Min nur bei lockeren Toleranzen:** Das kann Ausbreitungsversatz zeigen — oder schlechtere zeitliche Schärfe.
-6. **Onset-Labels:** Deren zeitliche Unsicherheit kann Min bevorzugen oder bestrafen.
-7. **Einzelstation-Lauf `38738618251`:** Ergebnis pending; keine Regel darf daraus eine Null destillieren.
-8. **Feldliteratur ist Analogie, keine Validierung:** Korrelationsnetze belegen, dass globale Min-Hülle unüblich ist, nicht dass diese konkrete Peer-Regel optimal ist.
-9. **MAD ist ausreißeranfällig:** Ein Sensor oder ein Zeitsynchronisationsfehler kann 17,1 → 129,0 nT/min dominieren.
-10. **Kausalität fehlt:** Die bisherigen Kurven zeigen Zusammenhang, nicht, welche Platzierung denselben Effekt kausal erzeugen würde.
+1. **Schema-Riss:** Wenn die Feldzeile `tau`/`absorption`/`advection` als Pflicht-`f64` erzwingt, ist Axiom 1 auf Schemaebene gebrochen — dann muss das Schema `pending` zulassen, oder der Riss bleibt offen benannt. Nicht glätten.
+2. **Force-Gate-Riss:** Schwere ist eine Kraft, aber das Gate liest `force` im Quell-Kernel-Sinn; für die Klasse ist es entweder trivial-hohl oder neu zu lesen. Unentschieden, benannt.
+3. **Normierungs-Riss:** Zwei ICGEM-Werte plus fremde Körper mit unnormalisierten/Schmidt-Sätzen; jede unbekannte Norm muss verweigern, nicht raten. Offen, bis der zweite Norm-Wert im Test steht.
+4. **Kosten-Riss:** Legendre-Rekursion gegen Clenshaw bei hohen Graden ist eine numerische Linsen-Entscheidung; die deklarierte Trunkierung verdeckt sie nicht, sie vertagt sie.
+5. **Einheiten-Riss (Träger 7):** greift nur an den Funktional-Ausgängen; Konsequenz erzwungen (ein Typ je Einheit), Verstoßbarkeit des Drahts offen benannt.
+6. **Key-Riss:** Eine globale Synthese hat keine Quelle — der Feld-`key` referenziert den Modell-Kopf-Record, nicht einen Ort. Das ist die Lösung und zugleich die Stelle, an der die alte Quell-Semantik am lautesten scheitert.
 
-**Endverdikt:** N24 ist zunächst ein Kalibrier-Artefakt; echte Dispersion ist `pending`. Die Min-Hülle darf nicht global über alle Stationen laufen, sondern nur über nachtsektorische, korrelationsvalidierte und beitragsgeprüfte Peers.- **Zeit:**
+**Verdikt, geschlossen:** eigene Feld-Klasse; Kopf im Draht; Koeffizienten getragen, Gitter nie; Funktionale getrennte Zeilen; Trunkierung deklariert; nächster Schritt begrenzt auf eine `Δg`-Zeile. Keine der sieben Kernel-Formen wird angetastet. Kein Riss geglättet.
 
 ### 12 · Lumo — Proton
 - **Site:** `https://lumo.proton.me/guest`
