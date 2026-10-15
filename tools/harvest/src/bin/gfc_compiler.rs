@@ -1,7 +1,7 @@
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::gfc::{
     FUNC_GFC, FUNC_GFCT, SLOT_BIN_WIDTH, SLOT_CHANNEL, SLOT_EPOCH, SLOT_FREQ, SLOT_KERNEL,
-    SLOT_PRESENCE, SLOT_TTL, SLOT_VAL, channel_of, channels, write_bin,
+    SLOT_PRESENCE, SLOT_TTL, SLOT_VAL, channel_of, channels, parse_head, write_bin,
 };
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::archivar::{embedded_lsk, parse_iso_tdb};
@@ -15,16 +15,6 @@ const COMPILER: &str = "tools/harvest/src/bin/gfc_compiler.rs";
 const DEFAULT_URL: &str = "https://icgem.gfz.de/getmodel/gfc/8e01a2aba4f291ac0638b79a390155713b70fdc9b266981023c756839c11c9b8/XGM2019e.gfc";
 const OUT_PATH: &str = "data/icgem.gfz.de/gfc.bin";
 
-#[derive(Clone, Debug, PartialEq)]
-struct Header {
-    modelname: String,
-    max_degree: u32,
-    norm: Option<String>,
-    earth_gravity_constant: f64,
-    radius: f64,
-    epoch: Option<String>,
-}
-
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
         .position(|a| a == name)
@@ -37,55 +27,6 @@ fn line_tokens(line: &[u8]) -> Vec<&str> {
         Ok(s) => s.split_whitespace().collect(),
         Err(_) => Vec::new(),
     }
-}
-
-fn header_of(bytes: &[u8]) -> Option<(Header, usize)> {
-    let mut modelname: Option<String> = None;
-    let mut max_degree: Option<u32> = None;
-    let mut norm: Option<String> = None;
-    let mut gravity_constant: Option<f64> = None;
-    let mut radius: Option<f64> = None;
-    let mut epoch: Option<String> = None;
-    let mut in_head = false;
-    let mut end_line = None;
-    for (i, raw) in bytes.split(|&b| b == b'\n').enumerate() {
-        let Some(line) = std::str::from_utf8(raw).ok().map(str::trim) else {
-            continue;
-        };
-        if line.starts_with("begin_of_head") {
-            in_head = true;
-            continue;
-        }
-        if line.starts_with("end_of_head") {
-            end_line = Some(i);
-            break;
-        }
-        if !in_head {
-            continue;
-        }
-        let mut it = line.split_whitespace();
-        let (Some(key), Some(value)) = (it.next(), it.next()) else {
-            continue;
-        };
-        match key {
-            "modelname" => modelname = Some(value.to_string()),
-            "max_degree" => max_degree = value.parse::<u32>().ok(),
-            "norm" => norm = Some(value.to_string()),
-            "earth_gravity_constant" => gravity_constant = value.parse::<f64>().ok(),
-            "radius" => radius = value.parse::<f64>().ok(),
-            "epoch" | "ref_epoch" => epoch = Some(value.to_string()),
-            _ => {}
-        }
-    }
-    let header = Header {
-        modelname: modelname?,
-        max_degree: max_degree?,
-        norm,
-        earth_gravity_constant: gravity_constant?,
-        radius: radius?,
-        epoch,
-    };
-    Some((header, end_line?))
 }
 
 fn epoch_of(
@@ -139,16 +80,16 @@ fn compile(
     origin: &str,
     ci_mode: bool,
 ) -> Result<(), String> {
-    let (header, end_line) = header_of(bytes).ok_or_else(|| {
+    let (head, end_line) = parse_head(bytes).ok_or_else(|| {
         "the ICGEM header (begin_of_head/end_of_head) stays unread — the asset stays unwritten"
             .to_string()
     })?;
     let lsk = embedded_lsk().ok_or("the embedded naif0012 table stays unread")?;
-    let epoch = epoch_of(&header.epoch, &epoch_override, &lsk).ok_or_else(|| {
+    let epoch = epoch_of(&head.epoch, &epoch_override, &lsk).ok_or_else(|| {
         "neither the ICGEM header nor --epoch <ISO-8601> supplies a parseable epoch — the asset stays unwritten"
             .to_string()
     })?;
-    let cap = max_degree.unwrap_or(header.max_degree);
+    let cap = max_degree.unwrap_or(head.max_degree);
     let channel_ref =
         force_id_of("gravity").ok_or("gravity carries no force id — the asset stays unwritten")?;
     let kernel = kernel_id_for_force(channel_ref)
@@ -220,14 +161,16 @@ fn compile(
     let sha = sha256_hex(&bytes_out);
 
     eprintln!(
-        "{}: modelname {}, d/o {} (cap {}), norm {}, GM {:e}, radius {} m",
+        "{}: product_type {}, modelname {}, d/o {} (cap {}), norm {}, tide_system {}, GM {:e}, radius {} m",
         origin,
-        header.modelname,
-        header.max_degree,
+        head.product_type.as_deref().unwrap_or("absent"),
+        head.modelname,
+        head.max_degree,
         cap,
-        header.norm.as_deref().unwrap_or("absent"),
-        header.earth_gravity_constant,
-        header.radius
+        head.norm.name(),
+        head.tide_system.as_deref().unwrap_or("absent"),
+        head.gm_m3_s2,
+        head.radius_m
     );
     eprintln!(
         "{out}: {lines_parsed} coefficient line(s) -> {} record(s) (of {lines_seen} read, {lines_capped} beyond the cap, {lines_ignored} other functional(s) skipped), {} B, sha256 {sha}",
@@ -342,25 +285,25 @@ gfc 2 2 2.439370331756250E-06 -1.400307649958125E-06 0.0 0.0\n";
 
     #[test]
     fn header_reads_the_mandatory_keys() {
-        let (header, _) = header_of(PROBE.as_bytes()).expect("the probe header parses");
-        assert_eq!(header.modelname, "XGM2019e");
-        assert_eq!(header.max_degree, 2);
-        assert_eq!(header.norm.as_deref(), Some("fully_normalized"));
-        assert_eq!(header.earth_gravity_constant, 3.986004415E14);
-        assert!((header.radius - 6378136.3).abs() < 1e-6);
+        let (head, _) = parse_head(PROBE.as_bytes()).expect("the probe header parses");
+        assert_eq!(head.modelname, "XGM2019e");
+        assert_eq!(head.max_degree, 2);
+        assert_eq!(head.norm.name(), "fully_normalized");
+        assert_eq!(head.gm_m3_s2, 3.986004415E14);
+        assert!((head.radius_m - 6378136.3).abs() < 1e-6);
     }
 
     #[test]
     fn header_of_finds_the_end_of_head_and_the_coefficients() {
-        let (header, end_line) = header_of(PROBE.as_bytes()).expect("the probe header parses");
-        assert_eq!(header.max_degree, 2);
+        let (head, end_line) = parse_head(PROBE.as_bytes()).expect("the probe header parses");
+        assert_eq!(head.max_degree, 2);
         assert_eq!(end_line, 9);
     }
 
     #[test]
     fn coefficients_fold_onto_the_gfc_and_gfct_channels() {
         let bytes = PROBE.as_bytes();
-        let (header, end_line) = header_of(bytes).unwrap();
+        let (head, end_line) = parse_head(bytes).unwrap();
         let mut records: Vec<[f64; 26]> = Vec::new();
         for (i, raw) in bytes.split(|&b| b == b'\n').enumerate() {
             if i <= end_line {
@@ -382,7 +325,7 @@ gfc 2 2 2.439370331756250E-06 -1.400307649958125E-06 0.0 0.0\n";
                 c,
                 s,
                 0.0,
-                header.max_degree as f64,
+                head.max_degree as f64,
                 0,
             );
         }
