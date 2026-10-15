@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 356 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 78da38fa8411714b0b3a34e7ecf8e812b8f1657ecd22a213c464f6e6058c6356
+  sha256: e2a058652b5b7923b1c310427b13da1fc562b184bb750d8223f187f6f5d5fa06
   status: live
 -->
 # Handover — Mycelium-Folge 356 (2026-10-15)
@@ -39,6 +39,8 @@ Fälligkeit bei Öffnung: `--fired mycelium` = 1 (NSSDC/CLPDS-Datenantrag, berei
 | „und bau" | 2026-10-15 | dito |
 | (standing) „Am Ende: ein Commit (deine Pfade)." | 2026-10-15 | dito (folge352) |
 | (standing) „ab jetzt Reports immer in einfache Sprache" | 2026-10-13 | dito |
+| „ich glaube du warst zu schnell fertig … es gibt legale wege an die globalen daten zu kommen" | 2026-10-15 | `state/operator-gespraeche/2026-10-15-mycelium.md` (folge356) |
+| „verstehst du jetz warum ich da so drauf poche?" | 2026-10-15 | dito |
 
 ## Gearbeitet (dieses Rund)
 
