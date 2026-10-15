@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-15
-  sha256: f0717fc75b723635f920a089ce63f73b20a653b547ba1e90e6854e36eb0a36e3
+  sha256: 993b741dd7cd6cd90b932c425fc8181dfcecb3bae86550be457dbdb9a7a47283
   status: live
   see-also: AGENTS.md
 -->
@@ -16,19 +16,21 @@ leck-fähige Faden (das Register-Lesen) geschnitten, nicht nur verschoben.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `378359ab3` | 2026-10-15 |
-| rote CI-Läufe | `ci-gate` `38704082180` (HEAD `d42e27eb8`, **failure** — der gemessene Kern-Befund, s. unten) · `ci-gate` `38704269028` (HEAD `f7852a78f`, queued — **unread**) · `ci-gate` `38704150827` (unread) · `register-coverage` `38704150805` (queued — **unread**) · `sources-repo-licence` `38704081473` (in Arbeit) · `wdcb-obn-wayback-cdn` `38704081781` (queued — der neue **211er**-Matrix-Rettungslauf) · `wdcb-sep-live-cdn` `38704082015` (in Arbeit — der **7er**-Lauf des lebenden `www.wdcb.ru/sep`-Baums) · `zenodo-raw-cdn` `38693040881` (HEAD `b8fd39b49`, unread) | 2026-10-15 |
+| HEAD | `1ccd3f852` | 2026-10-15 |
+| rote CI-Läufe | `ci-gate` `38704150827` (HEAD `378359ab3`, **failure** — der Kern-Befund, s. unten) · `ci-gate` `38704269028` (HEAD `f7852a78f`, in Arbeit — **unread**) · `ci-gate` `38704378380` (queued — **unread**) · `ci-gate` `38704992362` (queued — **unread**) · `wdcb-obn-wayback-cdn` `38704081781` (queued — der neue **211er**-Matrix-Rettungslauf) · `zenodo-raw-cdn` `38693040881` (HEAD `b8fd39b49`, unread) | 2026-10-15 |
 
 **Gemessener Kern-Befund (nicht geraten):** `ci-gate` `38704082180` (HEAD `d42e27eb8`,
 `failure`) bricht im Kern — `could not compile omegaflow (lib) due to 7 previous errors`
 (eine fehlende Funktion im Test-Modul `src/mathematikerin/machines/tests.rs`, dazu
 Clippy-Lints in `src/archivar/` und `src/mathematikerin/`). Träger: River (Feld/Kern).
-Kein Mycelium-Pfad; der gleiche Befund stand schon am HEAD `10b521783` (`38702218068`).
+Kein Mycelium-Pfad; der gleiche Befund steht seit HEAD `10b521783` (`38702218068`).
 
-**Grün am jüngsten Stand:** `register-coverage` `38704081810` **success** ·
-`harvest-dispatch` `38704082223` **success** · `register-coverage` `38702218028` **success**.
+**Grün am jüngsten Stand:** `wdcb-sep-live-cdn` `38704082015` **success** ·
+`sources-repo-licence` `38704081473` **success** · `register-coverage` `38704081810`
+**success** · `register-coverage` `38704150805` **success** · `harvest-dispatch`
+`38704082223` **success**.
 
-Lokal am HEAD `378359ab3` gemessen: `register_sort` canonical (2 805 Blöcke),
+Lokal am HEAD `1ccd3f852` gemessen: `register_sort` canonical (2 805 Blöcke),
 `cdn_reconcile --fail` clean (334 Hosts), `register_lookup --orphans --fail` 0,
 `register_lookup --tokens --noecho-fail` exit 0, `cargo check` 0/0.
 
