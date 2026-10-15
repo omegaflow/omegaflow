@@ -53,6 +53,23 @@ pub fn channel_intensity(omega: &[f32], aperture: &[f32], state: &[TriState]) ->
     channel_reduce(omega, aperture, state)
 }
 
+pub fn channel_magnitude(omega: &[f32], aperture: &[f32], state: &[TriState]) -> Option<f32> {
+    let n = omega.len().min(aperture.len()).min(state.len());
+    let mut weighted = 0.0f64;
+    let mut weight = 0.0f64;
+    for i in 0..n {
+        if state[i] != TriState::Present {
+            continue;
+        }
+        weighted += omega[i].abs() as f64 * aperture[i] as f64;
+        weight += aperture[i] as f64;
+    }
+    if weight == 0.0 {
+        return None;
+    }
+    Some((weighted / weight) as f32)
+}
+
 pub fn kinetic_sample(frame: &PresenceFrame) -> f32 {
     let n = frame.n as usize;
     let Some(v) = channel_intensity(&frame.omega[..n], &frame.aperture[..n], &frame.state[..n])
@@ -137,6 +154,13 @@ pub fn acoustic_pcm(frame: &PresenceFrame, phases: &mut [f32; CHANNEL_CAP]) -> V
     let Some(intensity) = channel_intensity(omega, aperture, state) else {
         return vec![0u8; PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2];
     };
+    let Some(magnitude) = channel_magnitude(omega, aperture, state).filter(|m| *m > 0.0) else {
+        return vec![0u8; PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2];
+    };
+    let balance = (intensity / magnitude).clamp(-1.0, 1.0);
+    let pan = (1.0 + balance) * std::f32::consts::FRAC_PI_4;
+    let gain_left = pan.cos();
+    let gain_right = pan.sin();
     let step = std::f32::consts::TAU / PCM_SAMPLE_RATE_HZ as f32;
     let mut pcm = Vec::with_capacity(PCM_SAMPLES_PER_TICK as usize * PCM_CHANNELS * 2);
     for _ in 0..PCM_SAMPLES_PER_TICK {
@@ -150,8 +174,8 @@ pub fn acoustic_pcm(frame: &PresenceFrame, phases: &mut [f32; CHANNEL_CAP]) -> V
         }
         let s = acoustic_partials(omega, aperture, state, &phases[..n], delays)
             .clamp(-PCM_S16_BOUND, PCM_S16_BOUND);
-        let left = if intensity < 0.0 { s } else { 0.0 };
-        let right = if intensity > 0.0 { s } else { 0.0 };
+        let left = (s * gain_left).clamp(-PCM_S16_BOUND, PCM_S16_BOUND);
+        let right = (s * gain_right).clamp(-PCM_S16_BOUND, PCM_S16_BOUND);
         pcm.extend_from_slice(&(left as i16).to_le_bytes());
         pcm.extend_from_slice(&(right as i16).to_le_bytes());
     }
