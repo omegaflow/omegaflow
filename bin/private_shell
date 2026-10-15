@@ -1,12 +1,41 @@
 #!/bin/sh
-# private_shell — the private house's shell wrapper. It declares the ONE private root
-# so the tools (smail, register_lookup, open_points_check) find the register: mail/,
-# zustand/, future/. Without it, state_dir() falls back to ~/.local/state/omegaflow —
-# no mailbox, "sieht nichts". Then it hands over to bash, unchanged.
+# private_shell — the private house's shell: declares the roots AND raises the walls.
 #
-# It lives in the public bin/ only because that is where a file can be made
-# executable from the public session; it names the private root by its declared path.
-export OMEGAFLOW_STATE="${OMEGAFLOW_STATE:-$HOME/projects/omegaflow-personal}"
-export OMEGAFLOW_PRIVATE="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}"
-export OMEGAFLOW_REPO="${OMEGAFLOW_REPO:-$HOME/projects/omegaflow}"
-exec /bin/bash "$@"
+# The private editor must use the SAME tools as the public one — the same form-guard
+# plugin and the same permission block. Without them the private session falls back to
+# raw bash (cat/tail/ls/grep) and breaks on shapes the public house forbids. This wrapper
+# copies the plugin and merges the permission block from the repo (it runs outside the
+# cage), then opens the shell in the private root.
+set -eu
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+priv="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}"
+export OMEGAFLOW_REPO="$root"
+export OMEGAFLOW_PRIVATE="$priv"
+export OMEGAFLOW_STATE="$priv"
+export OMEGAFLOW_WORK="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
+[ -f "$root/bin/_roots.sh" ] && . "$root/bin/_roots.sh" || true
+
+mkdir -p "$priv/.opencode/plugin"
+cp -f "$root/.opencode/plugin/form-guard.ts" "$priv/.opencode/plugin/form-guard.ts" 2>/dev/null || true
+
+if [ -f "$priv/opencode.json" ] && [ -f "$root/opencode.json" ]; then
+  merged="$(jaq -s '
+    .[0] as $p | .[1] as $r
+    | $p * {
+        permission: ($r.permission * {
+          bash: ($r.permission.bash + {
+            "bin/task_dispatch *": "allow",
+            "bin/rat_dispatch *": "allow",
+            "bin/private_read *": "allow",
+            "bin/future_spiegel *": "allow"
+          })
+        })
+      }
+  ' "$priv/opencode.json" "$root/opencode.json" 2>/dev/null || true)"
+  if [ -n "$merged" ]; then
+    printf '%s\n' "$merged" > "$priv/opencode.json"
+  fi
+fi
+
+cd "$priv"
+exec /bin/bash
