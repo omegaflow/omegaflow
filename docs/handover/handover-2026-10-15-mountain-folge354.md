@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 354 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 7886e83d3a97492bc25dfaae35b1dd277548899e7303be75083c6e2d098d12cf
+  sha256: f1b60c0a3d3affccc24a0c9047eb4f01d3278ad7a52a21b1693398f8cf22cdcc
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -52,6 +52,15 @@ Der Stehende Pass wird als **öffentliche** Fassung zitiert, nie kopiert.
   `nist_ncnr_nse_nexus_compiler.rs:510` (`Option::len`) und `glofas_ewds_compiler.rs:686`
   (`GlofasCollection: Debug`) — vorbestehende Fremd-Rott, Träger des roten `tools-build`.
   Nicht angefasst (fremde Dateien); nur benannt.
+- **Das Roster-Paket M4 vorbereitet (Operator-Wort „recherche wide all roster … und den rat").**
+  Die weite Leiter ist gefahren (`bin/all_wide "spherical harmonic synthesis gravity field
+  evaluation callable kernel function"`, Stopp nach 444 Zeilen/61 Armen, Spill
+  `~/projects/omegaflow-work/recherche/spill/omegaflow_all_1792070842_spherical_harmonic_synthesis_gravity_fie.txt`,
+  921 Zeilen gelesen). Das Paket `state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel.md`
+  stellt **M4** — wie ein Kugelflächen-Modell in die 26×f64-Feld-/Kernel-Welt tritt. **Befund der
+  weiten Leiter:** die „4pi"-Normierung ohne Condon-Shortley ist der pyshtools/Wieczorek-Standard;
+  die Galileischen Monde sind `unnormalized`, das Mond-Magnetfeld `Schmidt` — die Normierung muss je
+  Modell aus dem Kopf kommen. Keine Schnittstelle führt einen Koeffizientensatz als **Punkt-Kernel**.
 - Register unberührt: `register_sort` canonical (2807), `--orphans` 0.
 
 ## Offen (aufgeschlüsselt)
@@ -87,7 +96,8 @@ Antwort unten) · `xfer:mycelium-356-1` (SABER/UCAR-FPI — die Arm-Antwort steh
   `gdata`/`mgg` als Schwere-SH (`gfc`/`vmf3_sh`, Anomalie ↔ Geoid zwei Zeilen), `catal_pc` als
   Wellen-Ereignis (Kernel `pending`); **vier tragen keins** — G (Konstante), `sdata`
   (Punkt-Prozess), `aa` (Index), `gps` (Metadaten). Die `field`-Form (`<kernel> <force> <unit> …`,
-  nur 6 Kernel-Formen, Force-Gate) kann **Nicht-Felder nicht tragen** → der Absenz-Pfad
+  heute **7** Kernel-Formen `inverse-square`…`inverse-linear`, `kernel_id_of` `extract.rs:1700`,
+  Force-Gate) kann **Nicht-Felder nicht tragen** → der Absenz-Pfad
   (`scalar_constant`/`point_process`/`planetary_index`/`wave_event`/`metadata`) ist eine
   **Schema-Erweiterung** (Rat). D ist ein **Winkel** (rad), kein nT-Wert.
 - **Blockade:** Rat (Schema-Erweiterung um Nicht-Feld-Typen).
@@ -160,8 +170,12 @@ Antwort unten) · `xfer:mycelium-356-1` (SABER/UCAR-FPI — die Arm-Antwort steh
   Myceliums Direktiven.
 - **Blockade:** die Runtime-Naht (welcher Kernel trägt die SH-Synthese) ist eine Rat-Frage;
   der Block die CI-Manifestation.
-- **Braucht:** (1) das Rat-Verdikt zur SH-Kernel-/`field`-Form (mit `field`-Form für `gdata`/`mgg`
-  zusammen — die `field`-Zeile ist heute ein `<kernel> <force> <unit>`-Slot für 6 Kernel-Formen);
+- **Braucht:** (1) das Rat-Verdikt zur SH-Kernel-/`field`-Form — **das Roster-Paket M4 ist
+  vorbereitet** (`state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel.md`, weite Leiter Spill
+  `…1792070842_spherical_harmonic_synthesis_gravity_fie.txt`, 921 Zeilen; die „4pi"-Normierung ohne
+  Condon-Shortley ist der pyshtools/Wieczorek-Standard). Die `field`-Zeile ist heute ein
+  `<kernel> <force> <unit>`-Slot für **7** Kernel-Formen — keine globale Koeffizienten-Synthese;
+  mit `gdata`/`mgg` zusammen (M1);
   (2) den CI-Bau des (ggf. grad-begrenzten) `gfc.bin` + Myceliums Block-Direktiven.
 
 ### UCAR-FPI — Arm + Zeilen stehen; Manifestation wartet auf die `field`-Zeilen (eigen)
@@ -250,6 +264,13 @@ Antwort unten) · `xfer:mycelium-356-1` (SABER/UCAR-FPI — die Arm-Antwort steh
 
 Origin: mountain-354 (2026-10-15):
 
+- `xfer:mountain-354-1` **ICGEM-CDN-Block — Transport.** Der Compiler steht
+  (`tools/harvest/src/bin/gfc_compiler.rs`, `format gfc`, `terms CC-BY-4.0
+  https://doi.org/10.5880/ICGEM.2019.007`, `at earth`), der Modellkopf ist gemessen, die
+  Synthese ist gebaut. **Offen ist der Transport:** das Haus-CDN-Asset `…/icgem.gfz.de/gfc.bin`
+  ist **404**; die `url`/`origin`/`compiler`-Direktiven und der CI-Bau (93 MB → 5540 Grad, ggf.
+  grad-begrenzt; heavy compute = CI) sind Myceliums. Mountain setzt nach dem Bau die
+  `field`/`ttl`-Zeilen — aber erst nach dem Rat zur SH-Kernel-Form (M4).
 - `xfer:mycelium-356-5` **WGLC-Zulassung — Antwort.** Die Zenodo-Record-Lizenz ist gemessen:
   `https://zenodo.org/api/records/4774528` → `license.id = cc-by-4.0`, Creator Kaplan, J. O.,
   2026-05-18. Der **Riss** zum README-Badge **CC BY-SA 4.0** steht benannt (beide Zeilen, nicht
@@ -283,8 +304,8 @@ Origin: mountain-354 (2026-10-15):
 
 Origin: mountain-354 (2026-10-15):
 
-- **ICGEM-Kern ohne Membran-Berührung.** Der Schwere-Bau dieses Runds liegt ganz in
-  `src/archivar/gfc.rs` + `gfc_compiler.rs`; `main_flow`/`omega` sind unberührt. Die
+- `xfer:mountain-354-2` **ICGEM-Kern ohne Membran-Berührung.** Der Schwere-Bau dieses Runds liegt
+  ganz in `src/archivar/gfc.rs` + `gfc_compiler.rs`; `main_flow`/`omega` sind unberührt. Die
   Runtime-Naht (welcher Kernel die SH-Synthese trägt) ist die offene Rat-Frage, keine
   Membran-Änderung ohne dein Wort.
 - `xfer:mountain-352-1` **Die vier Archivar-Clippy-Lints sind geheilt** (river-folge216 gefaltet): `too_many_arguments`
@@ -322,6 +343,8 @@ Origin: mountain-354 (2026-10-15):
 - **„für die rat-architekturentscheidung muss ich nochmal gezielte fragen an die ui chats stellen?"** | 2026-10-15 | (mountain 352) — nein: die 13 Sitz-Antworten tragen den Stoff, der Rat trägt das Verdikt.
 - **„die letzte session schreibt Verstanden — die Kritik sitzt, keine Ausreden."** | 2026-10-15 | (mountain 354) — die zwei Vor-Session-Fixes (J2000/TDB-Anker einmal; UCAR-FPI/MODVOLC `local-only` ohne `phi`-Zeile) sind committet/gepusht; kein erneutes Vorlegen.
 - **„Der nächste Block ist der Schwere-Bau für ICGEM. Dafür messe ich zuerst den Modellkopf selbst — Erdkonstante, Radius, Normierung, Tide-System … ohne die gemessene Normierung wäre die Synthese geraten … Danach steht der Kern."** | 2026-10-15 | (mountain 354) — der XGM2019e-Kopf ist gemessen, die fully-normalized Kugelflächen-Synthese gebaut.
+- **„… dafür braucht es dann vermutlich nochmal recherche wide all roster (bereite das dokument vor) und den rat."** | 2026-10-15 | (mountain 354) — die Laufzeit-Naht (SH-Kernel) ist ein Rat-Akt; der weite Lauf ist gefahren, das Roster-Paket **M4** vorbereitet.
+- **„wer macht das mycelium?"** | 2026-10-15 | (mountain 354) — der CDN-Block (Transport + CI-Bau) ist Myceliums; Mountain liefert Compiler + Verdikt-Zeilen (`xfer:mountain-354-1`).
 
 ## Abschluss
 
@@ -333,4 +356,6 @@ radius 6378136.3 m, max_degree 5540, norm fully_normalized, tide_system zero_tid
 Definition bis Grad 14 geprüft; 12/12 `archivar::gfc`-Tests grün), `gfc_compiler.rs` liest den
 vollen Kopf über `gfc::parse_head`. `cargo check` 0/0, `rustfmt --edition 2024 --check` exit 0,
 Register canonical (2807), `--orphans` 0. Offen: die Runtime-Naht (Rat) und der CDN-Block.
+Nach dem Operator-Wort ist das Roster-Paket **M4** vorbereitet
+(`state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel.md`) — die weite Leiter ist gefahren.
 Diese Fortschreibung (folge353 → `archiv/`).
