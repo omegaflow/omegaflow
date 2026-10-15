@@ -2,7 +2,7 @@
   title: Handover — River-Folge 218
   class: handover
   date: 2026-10-15
-  sha256: f79f88beb72d7df78657f393891516c4a5ebc04e12cd575c95eb0bc6d9e592b2
+  sha256: 399d95c8d314ed2dcad50013fc73c7783e42ff74fd9b339026fc207194b444b4
   status: live
 -->
 # Handover — River-Folge 218 (2026-10-15)
@@ -61,8 +61,8 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…219) · `
 - **Status:** eigen (teilgebaut) | **Bindung:** eigen
 - **Trigger:** die DE-2-Reihe liegt im CDN → dann `K` aus dem gemessenen Overlap.
 - **Lage:** (gemessen 2026-10-14 river-210) der co-lokale Kanal ist deklariert (`phi/sources.φ:596-616`: url `DE2_UA16S_ALL`, hapi-Mapping, die vier `channel`-Zeilen, `constraint quasi-neutral`, `coupling ion-neutral-friction … rate pending`). Die GPU-Seite ist gebaut (`FIELD_WGSL` `apply_couplings`, Binding 10 `coupling_at`; `omega.rs` `coupling_descriptor_rows`); die CPU-Naht `ChannelCouplingLayer::from_sources` steht; Test `coupling_injection_wgsl_matches_the_cpu_exchange` (`src/mathematikerin/tests.rs:2960`, läuft im `ci-gate`-`subset`).
-- **Blockade:** (1) die DE-2-Reihe ist noch nicht im CDN (Manifestation gebaut, `2d696704a`; Lauf scheitert am Host `cdaweb.gsfc.nasa.gov` TLS-Abbruch); (2) `K` = `rate pending`; (3) die WGSL-Validierung + das Paritäts-Gate liefen noch nicht.
-- **Braucht:** (1) die DE-2-Reihe im CDN; (2) `K` aus dem co-lokalen Overlap; (3) einen `subset`, der den `mathematikerin::tests`-Block erreicht (WGSL-Parse + `coupling_injection_wgsl_matches_the_cpu_exchange`).
+- **Blockade:** (1) die DE-2-Reihe ist noch nicht im CDN (Manifestation gebaut, `2d696704a`; Lauf scheitert am Host `cdaweb.gsfc.nasa.gov` TLS-Abbruch) — **der Host hat eine Alternative (river-219, `bin/all_wide`): NASA SPDF trägt dieselben DE-2-Bestände** (`spdf.gsfc.nasa.gov/pub/data/de/de2/{magnetic_electrical_fields_vefi_magb,magneticfieldsmagb,combinedplasmaneutralsua}/`, am Baum HTTP 206; `omniweb.gsfc.nasa.gov/ftpbrowser/de2_mag.html` HTTP 200). Der Block ist damit ein **Fetch-Host-Wechsel**, nicht eine fehlende Quelle. (2) `K` = `rate pending`; (3) die WGSL-Validierung + das Paritäts-Gate liefen noch nicht.
+- **Braucht:** (1) die DE-2-Reihe aus **SPDF** (nicht cdaweb) ziehen + manifestieren (Mycelium) — `xfer:river219-de2spdf`; (2) `K` aus dem co-lokalen Overlap; (3) einen `subset`, der den `mathematikerin::tests`-Block erreicht (WGSL-Parse + `coupling_injection_wgsl_matches_the_cpu_exchange`).
 
 ### P10 flache Tokens → Kanal-Deskriptor (`force_id_of`/`FIXED_CHANNELS`/Modul `force` weg) — gated
 - **Status:** wartend | **Bindung:** eigen
@@ -195,6 +195,8 @@ Origin: river-219
 **WGLC (Schumann-Blitz-Kanal).** Der source-freie globale Kanal ist gemessen (WGLC `10.5281/zenodo.4774528`, CC-BY-4.0; FLASHMAP `10.5281/zenodo.17376946`). Für die bedingte TE `(abk→f | Blitz)` braucht River die **stündliche WGLC-Reihe im CDN** (`xfer:mycelium-356-5` läuft). xfer:mycelium-356-3.
 
 **GIC — zweiter Zeuge (Netz-End-Validator).** Der `bpa_gic`-Zeuge trägt nur ein 4-Tage-Fenster. Die weite Leiter (river-219) fand lange Alternativen: EURISGIC-Datenbank (Clarke et al.), EPRI SUNBURST (US), New-Zealand-long-term (Mac Manus 2017), „Northern Transit" (RU, Selivanov 2023). Einen langen zweiten Zeugen wählen + registrieren/manifestieren — bis dahin trägt die FMI-Reihe. xfer:river219-gic2.
+
+**DE-2-Reihe (P7.1).** Die Manifestation scheitert am Host `cdaweb.gsfc.nasa.gov` (TLS-Abbruch). Die weite Leiter (river-219) fand dieselben Bestände bei **NASA SPDF** (`spdf.gsfc.nasa.gov/pub/data/de/de2/…`, am Baum HTTP 206). Bitte den Fetch-Host auf SPDF umstellen und die Reihe manifestieren — die Quelle ist da, nur der Wirt war falsch. xfer:river219-de2spdf.
 
 **Register→Manifest — Bau-Wort (mit Toren).** Der Verbinder existiert (`harvest-dispatch.yml` feuert auf `push` auf `phi/sources.φ`); der Defekt ist die **Doppelbedeutung von `format`**. Erste Messung: 2565 Blöcke; 636 `format reference`; 1239 mit eigenem Compiler; generisches Format 23, davon 19 ohne Compiler. Tore: Lizenz, Fingerabdruck, Format, Registrierung. xfer:river208-registermanifest1.
 
