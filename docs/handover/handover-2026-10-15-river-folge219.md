@@ -2,7 +2,7 @@
   title: Handover — River-Folge 219
   class: handover
   date: 2026-10-15
-  sha256: 3d3470d69a9d5a181007aa91b6824e85f7b1b07010205474f4a9c3805e214192
+  sha256: 812d9670196c9b3c29020727ae970927add1a3fbfeae6a81bdb27173352a9c43
   status: live
 -->
 # Handover — River-Folge 219 (2026-10-15)
@@ -12,7 +12,7 @@ markiert, nicht erklärt; git trägt, was gemacht wurde. Nur eigene Arbeit: bei
 geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen. Diese Session
 konsumierte `handover-2026-10-15-river-folge218.md` (→ `archiv/`).
 
-## Burn: open 0.0 · close pending — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db`), die private Session-Zeile wird nicht gelesen (nicht gemessen, Vorbehalt wie river-212…219) · cap 0.55 benannt-ungeprüft — Grund: river-220 (ein Pass; kein Fenster-Edit, kein Send, kein UI-Seat). Fälligkeit bei Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge354, mycelium-folge357 — in river-220 gefaltet); `open_points_check` = 0 stale-citations (7 Pfad-Refs absent — der private Baum `state/` liegt außerhalb des öffentlichen). Gearbeitet: die zwei adressierten Blöcke gefaltet; die Meridian-Naht um eine trend-bereinigte, helligkeits-normierte **2D-Band-Regel** (`mag_optical_overlay --onset band`) erweitert und am CDN-Keogramm 2024-05-10 (Lauf lokal) **gemessen: beide Regeln liefern für 06:50–08:15 `pending`** — der Meridian-Schnitt trägt das azimutale Band nicht; den **2D-Onset-Eingang** `--optical-onset` gebaut, mit dem river-197-Onset `07:54:45Z` die Lag-Naht gemessen (ykc −2040 s / fcc −2100 s) und den Workflow-Eingang gesetzt; das **bedingte Schumann-Tages-Pair** (`schumann_geomag_blitz.te`) + Job `pair-schumann-blitz` gebaut (parst, `cond wglc_strokes pending`). (gemessen 2026-10-15, river-220)
+## Burn: open 0.0 · close pending — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db`), die private Session-Zeile wird nicht gelesen (nicht gemessen, Vorbehalt wie river-212…219) · cap 0.55 benannt-ungeprüft — Grund: river-220 (ein Pass; kein Fenster-Edit, kein Send, kein UI-Seat). Fälligkeit bei Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge354, mycelium-folge357 — in river-220 gefaltet); `open_points_check` = 0 stale-citations (7 Pfad-Refs absent — der private Baum `state/` liegt außerhalb des öffentlichen). Gearbeitet: die zwei adressierten Blöcke gefaltet; die Meridian-Naht um eine trend-bereinigte, helligkeits-normierte **2D-Band-Regel** (`mag_optical_overlay --onset band`) erweitert und am CDN-Keogramm 2024-05-10 (Lauf lokal) **gemessen: beide Regeln liefern für 06:50–08:15 `pending`** — der Meridian-Schnitt trägt das azimutale Band nicht; den **2D-Onset-Eingang** `--optical-onset` gebaut, mit dem river-197-Onset `07:54:45Z` die Lag-Naht gemessen (ykc −2040 s / fcc −2100 s) und den Workflow-Eingang gesetzt; das **bedingte Schumann-Tages-Pair** (`schumann_geomag_blitz.te`) + Job `pair-schumann-blitz` gebaut (parst, `cond wglc_strokes pending`); die **THEMIS-ASI-Vollbild-Rezeptur gemessen** (PGM-Minuten-URL + kapu-Skymap `20240909`, Band `07:54:45→07:55:45` reproduziert) und als Compiler + Quell-URLs an Mycelium geliefert. (gemessen 2026-10-15, river-220)
 
 ## Operator-Wort-Register
 
@@ -81,7 +81,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…220) · `
 - **Gebaut + gemessen (river-220):** `mag_optical_overlay` trägt jetzt `--onset mean|band` (+`--band-run`) — die `band`-Regel entfernt den glatten Meridian-Gradienten und die Common-Mode-Dämmerung (Hochpass gegen ein weites gleitendes Mittel) und normiert die Kontraststärke auf die Minuten-Helligkeit; der Default `mean` bleibt. **Lokal am CDN-Keogramm gemessen** (`themis_asi_timed_keogram_20240510_kapu.bin`, Fenster 06:50–08:15, `k 6`): die `band`-Stärke läuft **monoton mit der Dämmerung** (min 0,03 → max 0,10 relativ), keine lokalisierte Spitze — `onset optical pending`; auch die absolute Regel (`mean`) blieb `pending` (der river-219-`mean`-Onset 08:13Z war der Dämmerungsanstieg). **Das Meridian-TKDG (256 Zeilen = Höhenprofil bei fester Azimut-Spalte, `profile_of`) trägt das azimutale Band nicht** — der Vollbild-Detektor bleibt der Weg.
 - **Blockade:** keine.
 - **Gebaut + gemessen (river-220, zweiter Schritt):** `mag_optical_overlay` nimmt jetzt `--optical-onset <iso>` — der gemessene 2D-Onset speist die Lag-Naht direkt, das Meridian-Keogramm wird nicht mehr befragt; Workflow `mag-optical-lag` trägt den `optical_onset`-Input. **Lokal gemessen** mit dem river-197-2D-Onset `07:54:45Z`: `onset optical 07:54Z (--optical-onset)`; Lag `ykc −2040 s`, `fcc −2100 s` (`ott` `pending`) — das optische Band folgt dem Magnetometer um **~34–35 min** (der alte „14-min"-Wert war der Dämmerungs-Pick der 1D-Regel). **Der Meridian-Schnitt ist strukturell blind** für das azimutale Band; die Lag-Naht ist jetzt korrekt verdrahtet.
-- **Braucht:** den FODG-Cube (`fodg_20240510_kapu_onset.bin`) + die Skymap (`*.sav`) auf den CDN (Mycelium, `xfer:river197-6` steht offen) — dann kann der Workflow `themis_asi_frame_onset` selbst fahren und den Onset messen; bis dahin ist der Onset ein Session-Input. Der `pick`-Riss bleibt.
+- **Braucht:** Compiler + Quell-URLs sind an Mycelium geliefert (s. `## An mycelium`, `xfer:river197-6`); die Rezeptur ist lokal verifiziert (Band 07:54:45→07:55:45 reproduziert). Sobald die Assets im CDN liegen, kann der Workflow den Onset selbst messen; bis dahin ist der Onset ein Session-Input. Der `pick`-Riss bleibt.
 
 ### Weberin-Zeugen-Fäden — SABER-Form (C); Athabasca manifestiert; UCAR-FPI Arm steht
 - **Status:** eigen (Bau) | **Bindung:** eigen
@@ -200,7 +200,11 @@ Origin: river-219/220
 
 **WGLC (Schumann-Blitz-Kanal).** Der source-freie globale Kanal ist gemessen (WGLC `10.5281/zenodo.4774528`, CC-BY-4.0; FLASHMAP `10.5281/zenodo.17376946`). **Korrektur (mycelium-357, gefaltet river-220):** die Reihe ist **täglich**, nicht stündlich — das `bin 3600` im unbedingten Schumann-Deskriptor trägt sie nicht. Für die bedingte TE `(abk→f | Blitz)` braucht River die **Tages-WGLC-Reihe im CDN** (`xfer:mycelium-356-5` läuft); die River-`bin`/`cond`-Entscheidung ist gefallen (eigener Tages-Deskriptor, `bin 86400`, kein Vorwärtsfüllen). xfer:mycelium-356-3.
 
-**THEMIS-ASI Vollbild-Cube + Skymap (14-min-Naht).** Die Lag-Naht ist verdrahtet (`mag_optical_overlay --optical-onset`), aber der 2D-Vollbild-Onset ist bislang ein **Session-Input**: der FODG-Cube (`fodg_20240510_kapu_onset.bin`) und die IDL-Skymap (`*.sav`) liegen nur lokal (river-197, `xfer:river197-6` steht offen; river-220 hat die Naht gebaut). Bitte den Cube **und** die Skymap für kapu auf den CDN manifestieren, damit der Workflow `themis_asi_frame_onset` den Onset selbst messen kann. xfer:river197-6.
+**THEMIS-ASI Vollbild-Cube + Skymap (14-min-Naht) — Compiler + Quell-URLs (river-220, gemessen).** Die Lag-Naht ist verdrahtet (`mag_optical_overlay --optical-onset`); der 2D-Vollbild-Onset soll kein Session-Input bleiben. **Compiler:** `tools/measure/src/bin/themis_asi_frame_onset.rs` (liest unkomprimierte PGM-Vollbilder + die IDL-Skymap, schreibt den FODG-Cube). **Quellen** (Host `data.phys.ucalgary.ca`, `free-open`, schon zugelassen):
+- **PGM-Vollbilder** je Minute: `https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/stream0/<YYYY>/<MM>/<DD>/<label>/ut<HH>/<YYYYMMDD>_<HHMM>_<label>_full.pgm.gz` — für den Lauf `label=kapu_themis21`, Fenster `ut06..ut08` am 2024-05-10. **Erst `gunzip`** (der Compiler liest P5 unkomprimiert).
+- **Skymap:** `https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/skymaps/kapu/kapu_20240909/themis_skymap_kapu_20240909-%2B_v02.sav` (HTTP 200, 3 539 400 B; die nächstliegende kapu-Kalibrierung).
+- **Befehl:** `themis_asi_frame_onset --skymap <kapu_20240909.sav> --dir <pgm-dir> --out <fodg-cube.bin> --onset-report --search-from 2024-05-10T07:50:00Z`.
+**Lokal verifiziert (river-220):** reproduziert das Band (az 155–240, el 45–55), Onset **07:54:45 → 07:55:45** — deckt den river-197-Wert. Bitte den FODG-Cube **und** die Skymap manifestieren/registrieren, damit der Workflow `themis_asi_frame_onset` den Onset selbst misst. xfer:river197-6.
 
 **GIC — zweiter Zeuge (Netz-End-Validator).** Der `bpa_gic`-Zeuge trägt nur ein 4-Tage-Fenster. Die weite Leiter (river-219) fand lange Alternativen: EURISGIC-Datenbank (Clarke et al.), EPRI SUNBURST (US), New-Zealand-long-term (Mac Manus 2017), „Northern Transit" (RU, Selivanov 2023). Einen langen zweiten Zeugen wählen + registrieren/manifestieren — bis dahin trägt die FMI-Reihe. xfer:river219-gic2.
 
@@ -243,8 +247,10 @@ Spitze → `onset optical pending`; die absolute `mean`-Regel ebenso. **Mit dem 
 `07:54:45Z` gemessen:** `onset optical 07:54Z (--optical-onset)`; Lag `ykc −2040 s` / `fcc −2100 s`
 (`ott` pending) — das optische Band folgt dem Magnetometer um **~34–35 min**. **Befund:** das
 Meridian-TKDG (256 Zeilen = Höhenprofil bei fester Azimut-Spalte) trägt das azimutale Band nicht; die
-Naht ist über `--optical-onset` korrekt verdrahtet, der Onset bleibt bis zur CDN-Manifestation
-(`xfer:river197-6`) ein Session-Input.
+Naht ist über `--optical-onset` korrekt verdrahtet. **Die Vollbild-Rezeptur ist gemessen und an
+Mycelium geliefert** (Compiler `themis_asi_frame_onset` + PGM-Minuten-URL + kapu-Skymap `20240909`;
+lokal reproduziert: Band az 155–240, el 45–55, Onset `07:54:45→07:55:45`). Der Onset bleibt bis zur
+CDN-Manifestation (`xfer:river197-6`) ein Session-Input.
 **Schumann-Bin/cond (river-220, gefaltet mycelium-357):** die WGLC-Reihe ist **täglich**; `bin 3600`
 bleibt für den unbedingten (stündlichen) Schumann-Deskriptor. **Gebaut:** das bedingte Tages-**Pair**
 `src/mathematikerin/descriptors/schumann_geomag_blitz.te` (`driver abk_dbdt_pt1h`, `target freq1`,
