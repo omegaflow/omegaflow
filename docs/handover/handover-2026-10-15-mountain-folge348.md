@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 348 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 712201860cff9013ff19a2f14d99857f19d8d3ceebb344edfdc1dca312e5e277
+  sha256: bc85943acf26a3673b970582f3429fd52565c836971b655062707c9766d34104
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -129,8 +129,14 @@ mit gemessenem Teil-Roster.
   `Static`-Batch **vor** dem Wert ab (`model_kind == Some(Static) || !channel.epoch.is_finite()`),
   also wird der 0.0-Pad einer statischen `gfc`-Quelle nie als J2000 geankert. Test
   `a_static_epoch_stays_absent_and_a_time_variable_zero_epoch_is_j2000`; `cargo check` 0/0, rustfmt clean.
-- **Braucht:** die `phi`-Direktive `model_kind` explizit (Mountain-Zeilenklasse), falls je ein
-  Format den Kind nicht schon trägt — heute leitet `source_model_kind(format)` ihn aus `gfc`/`gfct` ab.
+- **Gebaut (mountain-348):** die `phi`-Direktive `model_kind static|time_variable` steht — gelesen in
+  `parse.rs` (`parse_model_kind` in `types.rs`), sie **überschreibt** die Format-Ableitung und fällt
+  sonst auf `source_model_kind(format)` zurück; ein unbekanntes Token meldet einen Anomalie-Zeuge.
+  Tests: `an_explicit_model_kind_directive_overrides_the_format_derivation` +
+  `a_model_kind_falls_back_to_the_format_when_undeclared`. **Kein Block trägt die Zeile heute** — der
+  `gfc`-Block (ICGEM) ist noch nicht registriert, und `gfc` leitet `static` schon aus dem Format ab;
+  die Zeile landet mit der ICGEM-Manifestation.
+- **Braucht:** nichts an dieser Stelle.
 
 ### SABER — verdiktet: B + A (eigene Weltlinie + Messvolumen) (eigen)
 - **Status:** eigen · **verdiktet** (Rat 2026-10-14: B + A) | **Bindung:** eigen
