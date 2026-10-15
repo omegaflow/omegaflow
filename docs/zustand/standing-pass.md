@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-15
-  sha256: 9ae9d010c0627bd1b609ef6417a1a44cb0a3da22ccbdeb3e318ad065fbad5fa9
+  sha256: 849b2e8d40f9f62acf6fe9b7d09b7221c38bc4aca68b225eb6ea33d8b41852dd
   status: live
   see-also: AGENTS.md
 -->
@@ -15,7 +15,7 @@ Die öffentlichen Linien zitieren **diese** Fassung, nie die private.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `b07e37f82` | 2026-10-15 |
+| HEAD | `c4a0fe9d5` | 2026-10-15 |
 | rote CI-Läufe | **279** non-success — Träger: `ci-gate` (170) · `register-coverage` (68) · `tools-build` (23) · `gic-al-network` (4) · `quake-feeds-cdn` (2) · `matrix-rotor` (2) · `m10-mdis-raw-cdn` (2) · `health-check` (2) · `zenodo-raw-cdn` · `ssd-jpl-raw-cdn` · `venus-radar-cdn` · `ci-check` · `themis_asi-fodg-cdn` | 2026-10-15 |
 
 **Gemessener Kern-Befund (nicht geraten).** Der **globale** Blitz-Kanal für die Schumann-TE ist
