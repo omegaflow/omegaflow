@@ -5,6 +5,7 @@ Eine Zeile je Quelle: Menge — Weg — Lizenz.
 vornamen.txt — Wikidata, P31 Q12308941 (maennlich) + Q11879590 (weiblich), rdfs:label@de — https://query.wikidata.org/sparql — CC0 1.0
 plz.txt — GeoNames Postal Code Data, allCountries.zip — https://download.geonames.org/export/zip/ — CC BY 4.0
 patterns.md — validator.js v13.15.0, Regex-Referenz — https://github.com/validatorjs/validator.js — MIT
+stopwoerter.txt — hermitdave/FrequencyWords, OpenSubtitles 2018 content/2018/{de,en}/, top 5000 de + top 2000 en, klein geschrieben + eindeutig — https://github.com/hermitdave/FrequencyWords — CC BY-SA 4.0 (Inhalt; Code MIT) — 6603
 
 nachnamen.txt — Union, sortiert + case-insensitiv eindeutig — 1293653 Namen. Quellen:
 - Wikidata Familienname P31 Q101352, rdfs:label@de via Label-Service, seichte Offsets 0/1000/2000/4000 — https://query.wikidata.org/sparql — CC0 1.0 — 4000
