@@ -2,7 +2,7 @@
   title: Survey — Ketten-Quellen: harter Taucherlauf über fünf Quellen (2026-10-15)
   class: survey
   date: 2026-10-15
-  sha256: ff8d9a9bf9c6225419005486fbfe1ae7603fbf3efd1e28dd142c4acef8668981
+  sha256: 3de10f358d1566d49773c8fe311a9dc76d65f537fe4793a268c6c2b6b1448dec
   status: live
   see-also: phi/sources.φ docs/concepts/source-curation.md docs/concepts/tools-map.md docs/handover/handover-2026-10-15-river-folge214.md docs/handover/handover-2026-10-15-mountain-folge351.md
 -->
@@ -144,18 +144,39 @@ die fünf nicht namentlich; ein Doku↔Baum-Riss.
   der fünf, aber thematisch benachbart zur Stationsfrage.
 - **NASA/SPDF + CDPP Interball-Magnetometer** (IMAP-3, CC0/DOI) — offen und
   DOI't, aber Hauptsatellit, nicht MAGION.
-- **MOSWOC-Kp, gezielter `all_wide` 2026-10-15** (Spill
-  `omegaflow_all_1792056472_MOSWOC_Kp.txt`, 436 Zeilen): die Kp-Datei bleibt die
-  eine **restricted** (`5211482`); daneben liegen **offene** MOSWOC-Verifikations-
-  sätze — Flare-Verifikation `10.5281/zenodo.344886` („other-open") und
-  REFM-Elektronenfluenz `10.5281/zenodo.16846575` (apache-2.0), beide **andere
-  Größen, nicht Kp**. Dazu ein **offener Kp-Zeitreihen-Satz**
-  `10.5281/zenodo.18718835` (CC-BY-4.0, **tägliches Kp 2010–2024** aus NOAA SWPC
-  + GFZ Potsdam) — möglicher Kp-Wahrheits-Lead.
-- **MOSWOC-operationales Aurora-Modell** (OVATION-Prime 2013): Mooney et al. 2021
-  `10.1029/2020SW002688` und 2024 `10.1029/2023JA031478` — MOSWOC's Betriebsmodell,
-  gegen IMAGE-Satelliten-Grenzen validiert; thematisch eng an der Stationsfrage
-  (nicht Teil der fünf).
+### MOSWOC-Nachbarn — direkt vermessen 2026-10-15 (`--jina` Zenodo-API + `--datacite`)
+
+Der gezielte `all_wide` auf MOSWOC-Kp (Spill `omegaflow_all_1792056472_MOSWOC_Kp.txt`,
+436 Zeilen) brachte drei offene Nachbarn; sie sind hier an der Quelle gemessen.
+
+- **Flare-Verifikation `10.5281/zenodo.344886`** — „sophiemurray/moswoc-flare-verification",
+  Murray, 2017-03-01, **Software**, `access open`, Lizenz **`other-open`** (kein
+  SPDX-Name); eine Datei `…-v1.0.zip` (42 244 B, md5 `1a930e1d…`); Daten+Codes
+  zum Paper „Flare forecasting at MOSWOC". **Größe: Sonnen-Flares (X-ray), nicht
+  Kp** — direkter Abruf offen.
+- **REFM-Elektronenfluenz `10.5281/zenodo.16846575`** — „Operational REFM Forecasts
+  from MOSWOC", Bocquet (Met Office; ORCID 0000-0002-1414-4326), 2025-08-13,
+  **Dataset**, `open`, **Apache-2.0**; eine Datei `operational_refm_outputs.tgz`
+  (1.9 MB, md5 `371458e3…`); Felder: rohe REFM-Elektronenfluenz T+24/48/72,
+  Offsets, debiased Fluenz. **Größe: Strahlungsgürtel-Elektronen, nicht Kp** —
+  direkter Abruf offen.
+- **Kp-Zeitreihe `10.5281/zenodo.18718835`** (Concept `18718106`) — Gamba Torres,
+  2026-02-21, **Version 1.1**, **CC-BY-4.0**; Dateien
+  `Kp_Hybrid_ML_ARIMA_Processed_Dataset.csv` (378 KB, md5 `4d284794…`) + README +
+  drei `.m`-Scripts; **tägliche** Reihe **2010–2024** aus NOAA SWPC + GFZ Potsdam;
+  Variablen: Kp-Komponenten, Ap (Komponenten + Tagesmittel), Sunspot Number,
+  F10.7, Bartels-Rotation. **Riss zur Behauptung „Kp-Wahrheit":** es ist eine
+  **prozessierte, abgeleitete Tages-Reihe**, **keine rohe 3-h-Kp-Reihe** — als
+  Wahrheits-Lead nur mit Vorbehalt (die Primär-Kp liegt bei GFZ/NOAA, nicht hier).
+- **MOSWOC-Betriebs-Aurora-Modell** (OVATION-Prime 2013): Mooney et al. 2021,
+  „Evaluating Auroral Forecasts Against Satellite Observations",
+  `10.1029/2020SW002688` (JGR Space Physics, OpenAlex W3021080074); Mooney et al.
+  2024, „…Under Different Levels of Geomagnetic Activity", `10.1029/2023JA031478`
+  (W4403409033). MOSWOC's Operationsmodell (30-min-Aurora-Oval), gegen
+  **IMAGE-FUV**-Aurora-Grenzen validiert; das Modell trifft die äquatorwärtige
+  Grenze gut, die polwärtige/Nachtseite schlechter. Beide DOI direkt **403**
+  (AGU-Paywall), Wayback-Snapshot vorhanden. **Nicht Teil der fünf**, aber der
+  direkte Bezug zur Aurora-/Stationsfrage.
 
 ## Offen
 
