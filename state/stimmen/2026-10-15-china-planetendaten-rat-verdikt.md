@@ -21,6 +21,34 @@ Stimme; das Verdikt trägt der Rat.
   **Handynummer** (chinesisches Format) · Captcha; Ausdruck + handschriftliches Versprechen; die
   Freigabe ist Ermessen eines chinesischen Fachleiters (`授权`, „Protected Period").
 
+## Der Riss aufgelöst — die echten China-Angaben (gemessen 2026-10-15)
+
+Die VSSO-Detail-API (`vsso.nssdc.ac.cn/nssdc/coreMetadata/getDetail?linkId=<id>`) liefert die
+Feldwerte, die die gerenderte Seite leer lässt. Gemessen:
+
+- **Datensatz 1** (linkId `14255`, „Lunar topography 1500 o/d"): die Beschreibung nennt die
+  Quelle **„MOON LRO LOLA DEM 118m V1"** → sphärische Entwicklung, **Grad 1500**; Instrument
+  **LOLA/LRO**, Zeit 2009-07…2013-07, Größe 4,20 GB, CC BY 4.0. Das offene Zenodo-Modell
+  `10820774` ist **dasselbe LOLA-Modell bis Grad 5759** — **gleiche Messung, feiner offen**.
+- **Datensatz 3** (linkId `13517`, „Mars SHCs topography"): Quelle **„MARS MGS MOLA DEM 463m V2"**
+  → SH bis **Grad 21600**; Instrument **MOLA/MGS**, Größe 3,79 GB, CC BY 4.0. Das offene
+  Zenodo-Modell `10794059` geht bis **Grad 5759** — **gleiche Quelle (MOLA)**, die China-Entwicklung
+  feiner, aber aus dem **offenen MOLA-DEM** berechenbar.
+- **Datensatz 4** (linkId `15855`, „Observational data of the Martian space environment and magnetic
+  field"): Quelle **MAVEN, MGS, MARSIS**, Zeit 1996…2020, Größe 153 GB, CC BY 4.0 — **die
+  Messungen liegen offen** (MAVEN/MGS auf NASA PDS, MARSIS auf ESA).
+- **Datensatz 6** (linkId `14790`, „Enhanced visualization map dataset of lunar polar region"):
+  **LOLA-abgeleitet**, 19,4 MB, CC BY 4.0, **Schutzfrist 2024-03-05…2026-03-05 → abgelaufen**.
+- **Datensatz 2** (DOI `10.12176/03.70.00011-V01`, HTTP 404) und **Datensatz 5** sind über die
+  gated IDs **nicht identifiziert** (die frühere id 15057 = eine andere Quelle, geomagnetische
+  Station Xilinhaote) → `pending`.
+
+**Ergebnis:** Die bedingten China-Produkte sind **Ableitungen aus offen verfügbaren NASA-Basis-
+messungen** (LOLA · MOLA · MAVEN · MGS · MARSIS) — keine unabhängigen Messungen. Der Zweck von
+1/3/4/6 ist damit offen gedeckt (das offene Modell ist für 1 sogar feiner); die China-Fassung
+trägt **keinen eigenen Messzweck**. Nur der Grad der SH-Entwicklung (3: 21600 vs. 5759) und die
+Sortierung unterscheiden sie — ableitbar aus dem offenen DEM.
+
 ## Das Verdikt (überwiegend einstimmig)
 
 1. **Kein bedingter Antrag.** Für die Datensätze **1–3** (lunare/Mars-Topographie, sphärisch-
@@ -40,10 +68,12 @@ Stimme; das Verdikt trägt der Rat.
 
 ## Die offenen Risse (ungeglättet)
 
-- **Produkt-Identität ungemessen:** „kein exakter offener Spiegel" ist ein **Zugangsbefund**, kein
-  Zweckbefund. Ob die `有条件共享`-Fassung ein *anderes Produkt* ist (Auflösung/Kalibrierung/Epoche)
-  oder *dieselbe Messung in einer Tür* — bleibt **offen**. Ohne diesen Nachweis trägt sie keinen
-  eigenen Zweck.
+- **Produkt-Identität — für 1/3/4/6 aufgelöst:** „kein exakter offener Spiegel" war ein
+  **Zugangsbefund**; die gemessenen Quellen zeigen: die China-Fassungen sind **Ableitungen
+  derselben offenen NASA-Basismessungen** (LOLA/MOLA/MAVEN/MGS/MARSIS) → **keine eigene Messung,
+  kein eigener Zweck**. Offen bleibt nur der **Grad** der SH-Entwicklung (3: 21600 vs. 5759) —
+  aus dem offenen DEM berechenbar. Für **2 und 5** bleibt die Identität **`pending`** (nicht
+  identifiziert).
 - **Der tote Anker:** Datensatz 2 löst 404 — der Registereintrag ohne auflösende Adresse ist eine
   Behauptung, kein Bestand (als „nicht adressierbar" zu führen, nicht „bedingt").
 - **Lizenz-Membran am Verwandten:** Datensatz 5s offener Verwandter steht unter **CC BY-NC 4.0** —
@@ -53,12 +83,13 @@ Stimme; das Verdikt trägt der Rat.
 
 ## Nächster begrenzter Messschritt
 
-- **1–3:** offene Zenodo-Spiegel als primäre Quelle registrieren (`url`/`origin`/`compiler` =
-  Mycelium, `terms`/`field` = Mountain); die NSSDC-DOIs als Registerverweis führen.
-- **2:** den 404 datiert erneut auflösen; bleibt er → „nicht adressierbar".
-- **4–6:** je Datensatz die exakten NSSDC-Metadaten (Auflösung/Instrument/Epoche) aus einer Quelle
-  außerhalb des Portals gegen den offenen Kandidaten stellen. Bleibt eine messbare Differenz →
-  gezielter Antrag nur dieses Datensatzes; bleibt keine → `pending`.
+- **1–3:** die offenen Zenodo-Spiegel (`10820774`, `10796953`, `10794059`) als primäre Quellen
+  registrieren (`url`/`origin`/`compiler` = Mycelium, `terms`/`field` = Mountain).
+- **4:** die offenen **MAVEN/MGS/MARSIS**-Produkte (NASA PDS / ESA) als primäre Quellen prüfen und
+  registrieren — die Messung liegt offen.
+- **6:** die **abgelaufene** Schutzfrist (2026-03-05) datiert prüfen; die LOLA-Polarprodukte offen.
+- **2 und 5:** über die VSSO-Suche (Endpunkt noch nicht gefunden) oder den Produzenten
+  identifizieren; bis dahin `pending`.
 - **Kein Send.**
 
 **Kern in einem Satz:** Fünf Zeilen sind gedeckt oder verwandt, eine nicht adressierbar, **keine
