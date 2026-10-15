@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 351 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: a0c3c077da18c7828141442f6057cf13d8ee8cfa78fa70b9e6f4674d4e195b62
+  sha256: 57460d2c543f29eb18e21b2bc80488f5a74ccf91f64d1c8c823ab96da15db9a3
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md
 -->
@@ -48,7 +48,7 @@ Baum getragen (git: `36b50dfca`). Was folgt, ist offen.
 ### Ketten-Quellen (SWIFF · WINDMI · MAGION · MOSWOC-Kp · OVATION-AACGM) — harter Lauf gemessen (eigen)
 - **Status:** eigen · **gemessen 2026-10-15** (fünf Taucher + vier Mountain-`bin/all_wide`-Läufe) | **Bindung:** eigen
 - **Trigger:** Operator-Wort 2026-10-15 („taucher mit harten bandagen und archive search all") — abgearbeitet.
-- **Lage:** (gemessen 2026-10-15 via fünf Taucher + vier `bin/all_wide`-Läufe + `archive_search --root phi` + `--jina`/`--verdict`) volles Messblatt `docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md` (sha `e6479096…`); keine der fünf steht in `phi/sources.φ` (`--root phi` = **0/0** für alle fünf). Ergebnis:
+- **Lage:** (gemessen 2026-10-15 via fünf Taucher + vier `bin/all_wide`-Läufe + `archive_search --root phi` + `--jina`/`--verdict`) volles Messblatt `docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md` (sha `ff8d9a9b…`); keine der fünf steht in `phi/sources.φ` (`--root phi` = **0/0** für alle fünf). Ergebnis:
   - **SWIFF** — FP7-Projekt/Paper/Modell (CORDIS 263340, DOI `10.1051/swsc/2013027`, Nachfolger BSPM bei PITHIA); **kein Datensatz** (absent auf Zenodo/DataCite/re3data/…, gemessen).
   - **WINDMI** — CCMC-Rechenmodell (Dst/AL), Live-Nowcast + Rolling-`.gif`-Baum 2012–2026, ~1 h Vorlauf bestätigt (DOI `10.1029/2008SW000459`); **kein numerisches Produkt, keine DOI**; **Riss:** „Nutzung auf Anfrage" nicht getragen (Dauerlauf, keine Request-Route, 404).
   - **MAGION** — tschechische Mikro-Subsatelliten-Serie (S2-X/S2-A), Magnetometer **SG-R8/DMA** separat; **kein offenes MAGION-Produkt mit DOI** (nur PI-gated IKI, Host `worsta.iki.rssi.ru` TCP-Timeout); offene DOI'te Magnetometer-Daten sind der Hauptsatellit IMAP-3 (CDPP `10.24400/802406/mqcs-ddjr`, NASA/SPDF CC0).

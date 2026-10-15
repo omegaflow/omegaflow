@@ -2,7 +2,7 @@
   title: Survey — Ketten-Quellen: harter Taucherlauf über fünf Quellen (2026-10-15)
   class: survey
   date: 2026-10-15
-  sha256: e647909695c5d8e97c24cd9701b92a31ad344602d51c1be7f28693c52407e85d
+  sha256: ff8d9a9bf9c6225419005486fbfe1ae7603fbf3efd1e28dd142c4acef8668981
   status: live
   see-also: phi/sources.φ docs/concepts/source-curation.md docs/concepts/tools-map.md docs/handover/handover-2026-10-15-river-folge214.md docs/handover/handover-2026-10-15-mountain-folge351.md
 -->
@@ -144,6 +144,18 @@ die fünf nicht namentlich; ein Doku↔Baum-Riss.
   der fünf, aber thematisch benachbart zur Stationsfrage.
 - **NASA/SPDF + CDPP Interball-Magnetometer** (IMAP-3, CC0/DOI) — offen und
   DOI't, aber Hauptsatellit, nicht MAGION.
+- **MOSWOC-Kp, gezielter `all_wide` 2026-10-15** (Spill
+  `omegaflow_all_1792056472_MOSWOC_Kp.txt`, 436 Zeilen): die Kp-Datei bleibt die
+  eine **restricted** (`5211482`); daneben liegen **offene** MOSWOC-Verifikations-
+  sätze — Flare-Verifikation `10.5281/zenodo.344886` („other-open") und
+  REFM-Elektronenfluenz `10.5281/zenodo.16846575` (apache-2.0), beide **andere
+  Größen, nicht Kp**. Dazu ein **offener Kp-Zeitreihen-Satz**
+  `10.5281/zenodo.18718835` (CC-BY-4.0, **tägliches Kp 2010–2024** aus NOAA SWPC
+  + GFZ Potsdam) — möglicher Kp-Wahrheits-Lead.
+- **MOSWOC-operationales Aurora-Modell** (OVATION-Prime 2013): Mooney et al. 2021
+  `10.1029/2020SW002688` und 2024 `10.1029/2023JA031478` — MOSWOC's Betriebsmodell,
+  gegen IMAGE-Satelliten-Grenzen validiert; thematisch eng an der Stationsfrage
+  (nicht Teil der fünf).
 
 ## Offen
 
