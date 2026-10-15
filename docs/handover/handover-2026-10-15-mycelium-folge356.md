@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 356 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 87b0b5beef3545133c96b4e67099ace9ba3ef97fed7b6769dca854a5f15bc43b
+  sha256: 4d047f757102b6564cb60418c65611581dcc86f8abd04d96a2d8e7ad9d778730
   status: live
 -->
 # Handover — Mycelium-Folge 356 (2026-10-15)
@@ -60,31 +60,39 @@ Fälligkeit bei Öffnung: `--fired mycelium` = 1 (NSSDC/CLPDS-Datenantrag, berei
   Mittelwert / Betrag; bei Σω = 0 mit lebendigen Partialen geht es in die **Mitte**, nicht in die
   Stille; nur ohne Partialenergie schweigt es. river-142s Test
   `a_zero_sum_does_not_collapse_the_channels` wird damit grün. `cargo check` 0/0, `rustfmt` clean.
-- **F4′-Quellenmessung (dieses Atom):** die WWLLN-Stundenreihe ist **zugangsgebunden**
-  (Verkauf/Host-Abo/UW-Forschungszugang); öffentlich nur die Klimatologien — s. F4′ unten.
-  LIS/OTD (NASA GHRC) von dieser Maschine nicht erreichbar (`status 0`) → `pending`.
+- **F4′-Quellenmessung (dieses Atom, weite Leiter `bin/all_wide` + Direktmessung):** mehrere
+  **offene** Wege gefunden — WGLC (CC-BY, global-monatlich) · WWLLN-Klimatologie-Datenverzeichnisse ·
+  stündliches CONUS-Set (UNC Dataverse) · WWLLN-KML-Feed · MTG-LI/GLM — s. F4′ unten. Die erste
+  enge Messung war unvollständig.
 - folge355 → `archiv/`; die Operator-Worte dieses Runds geschnitten. Commits `e21129d5c`,
   `7f25f9004`, `fb7fcdb66`, `0e8fc665d`, `ab6679435`, `d3ba14e74`.
 
 ## Offen — eigen
 
-### F4′ — Schumann-Antrieb: der WWLLN-Kanal ist zugangsgebunden (eigen + River)
-- **Status:** eigen (Rest River-/Operator-gebunden) | **Bindung:** eigen
+### F4′ — Schumann-Antrieb: der Blitz-Kanal ist offen, die Wahl ist die Auflösung (eigen + River)
+- **Status:** eigen (Rest Operator-gebunden) | **Bindung:** eigen
 - **Trigger:** der F4′-Bau (Mycelium: Reihe/CDN) + Rivers bedingte TE
 - **Lage:** (gemessen 2026-10-15) `descriptors/schumann_geomag.te`: `cond none`, `surrogate 10`,
-  `seasonal none` → kein Blitz-Kanal. Die Runde (12 Sitze) wählt die **WWLLN-Stoßrate** als
-  Kanal, OTD/LIS als Saison-Anker, SR-eigenen Proxy **verworfen** (zirkulär); Konditionierung
-  **Stunde × Saison**, Null **innerhalb** jeder Schicht. Verdikt: `…-nachfrage-f7-f4-verdikt.md`.
-  **Quellenmessung (`wwlln.net`, `wwlln.net/climate`, 2026-10-15):** der **stündliche**
-  Stoßdatensatz ist **nicht offen** — Archiv **Verkauf** ab 2004-08-15, Hosts erhalten ein
-  kostenloses Monatsabo, Forschungszugang über die University of Washington (10-Minuten-Kadenz),
-  Echtzeit über den kommerziellen Reseller. Öffentlich sind nur die **Klimatologien**
-  (Stoßdichte/Donnerstunden, nach Monat×Stunde gemittelt — eine Klimatologie, **keine**
-  Stundenreihe), nicht-kommerziell. LIS/OTD (NASA GHRC) als Saison-Anker war von dieser Maschine
-  **nicht erreichbar** (`status 0`) → `pending`.
-- **Blockade:** die WWLLN-Stundenreihe ist **nicht offen registrierbar**; Rivers TE-Schicht steht aus.
-- **Braucht:** die WWLLN-Zugangsanfrage (Operator-Hand) **oder** LIS/OTD als gemessenen
-  Saison-Anker, dann `TE(abk→f | WWLLN, Stunde, Saison)`.
+  `seasonal none` → kein Blitz-Kanal. Die Runde (12 Sitze) wählt die **WWLLN-Stoßrate**;
+  Konditionierung **Stunde × Saison**, Null **innerhalb** jeder Schicht
+  (`…-nachfrage-f7-f4-verdikt.md`). **Die erste enge Messung („nur Monatsmittel frei") war
+  unvollständig** (Operator-Nachfrage): die weite Leiter (`bin/all_wide`, Spill
+  `omegaflow_all_1792067520_WWLLN_…txt`) plus Direktmessung (alle **HTTP 200**) zeigen
+  **mehrere offene Wege**:
+  · **WWLLN**-Klimatologie-Datenverzeichnisse `wwlln.net/climate/th_clim/data/` + `sd_clim/`.
+  · **WGLC** (WWLLN Global Lightning Climatology **+ time series**), Kaplan & Lau, **CC-BY**,
+    Zenodo `10725446` u.a. + Pangaea `10.1594/pangaea.904253` — global gegitterte
+    Stoßdichte-Reihe (**monatlich**).
+  · **Gridded Hourly WWLLN Lightning Flash Density** 2016–2023, 12 km **CONUS**, UNC Dataverse
+    `10.15139/s3/nk3ncm` — **stündlich**, aber nur USA (101°W–70°W).
+  · WWLLN eigener **offener KML-Feed** (1 h, 6 h Verzögerung) über wwlln.net.
+  · offene Satelliten-Blitze: **MTG-LI** (Europa/Afrika, EUMETSAT) · **GLM** (Amerikas) ·
+    GHRC Lightning Virtual Collection.
+  Nur der **globale stündliche** WWLLN-Rohdatensatz bleibt zugangsgebunden (Verkauf/UW).
+- **Blockade:** **keine Quellen-Blockade** — die Wahl ist eine **Kanal-/Auflösungs-Entscheidung**
+  (global-monatlich WGLC · regional-stündlich CONUS/MTG-LI/GLM · global-stündlich WWLLN-KML-Feed).
+- **Braucht:** Operators Kanal-Wahl; dann Registrierung (Mountain-Verdikt + Mycelium-Manifestation)
+  und `TE(abk→f | Kanal, Stunde, Saison)`.
 
 ### SABER / UCAR-FPI — Manifestation wartet auf Mountains `field`-Zeilen (eigen)
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
@@ -163,10 +171,11 @@ Origin: mycelium-356 (2026-10-15):
   Partiale) geht es in die Mitte, nicht in die Stille; river-142s Test wird grün. Der
   **Energie↔Lautstärke-Riss** (konstante Leistung vs. linear, Mono-Kompatibilität) ist eine
   **Deklaration** — noch nicht getroffen; der Aktuator trägt vorerst das constant-power-Gesetz.
-- `xfer:mycelium-356-3` **F4′** (Schumann-Blitz-Kanal): die bedingte TE (`abk→f | WWLLN, Stunde,
-  Saison`) ist Rivers Teil. **Quellenmessung (Mycelium):** die WWLLN-Stundenreihe ist
-  **zugangsgebunden** (Verkauf/Host-Abo/UW-Forschungszugang); öffentlich nur die Klimatologien →
-  die TE-Schicht ist bis zu einem Zugang **blockiert**.
+- `xfer:mycelium-356-3` **F4′** (Schumann-Blitz-Kanal): die bedingte TE (`abk→f | Kanal, Stunde,
+  Saison`) ist Rivers Teil. **Korrektur (weite Leiter `bin/all_wide`):** offen sind **WGLC** (CC-BY,
+  global-monatlich), **WWLLN-Klimatologie-Datenverzeichnisse** und ein **stündliches CONUS**-Set
+  (UNC Dataverse) sowie der offene **WWLLN-KML-Feed** — die TE-Schicht ist **nicht** blockiert,
+  nur die Kanal-/Auflösungswahl steht beim Operator.
 - `xfer:mycelium-356-4` **Athabasca ERG-SC VLF** ist manifestiert; offen bleibt nur
   **SABER / UCAR-FPI**.
 
