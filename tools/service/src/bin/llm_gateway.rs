@@ -313,6 +313,7 @@ struct Redactor {
     forward: Vec<(String, String)>,
     reverse: Vec<(String, String)>,
     names: HashSet<String>,
+    stop: HashSet<String>,
 }
 
 fn filter_enabled() -> bool {
@@ -352,7 +353,7 @@ fn read_redact_file(name: &str) -> Option<String> {
     None
 }
 
-fn load_names() -> HashSet<String> {
+fn load_names() -> (HashSet<String>, HashSet<String>) {
     let mut names: HashSet<String> = HashSet::new();
     for file in ["vornamen.txt", "nachnamen.txt"] {
         match read_redact_file(file) {
@@ -367,7 +368,19 @@ fn load_names() -> HashSet<String> {
             None => eprintln!("llm_gateway: data/redact/{file} absent - that name list stays inert"),
         }
     }
-    names
+    let mut stop: HashSet<String> = HashSet::new();
+    match read_redact_file("stopwoerter.txt") {
+        Some(text) => {
+            for line in text.lines() {
+                let label = line.trim();
+                if !label.is_empty() && !label.starts_with('#') {
+                    stop.insert(label.to_lowercase());
+                }
+            }
+        }
+        None => eprintln!("llm_gateway: data/redact/stopwoerter.txt absent - that stop list stays inert"),
+    }
+    (names, stop)
 }
 
 fn active_redactor() -> Option<&'static Redactor> {
@@ -387,12 +400,12 @@ fn active_redactor() -> Option<&'static Redactor> {
             if map_text.is_none() {
                 eprintln!("llm_gateway: redact.map absent at {path} - map layer inert");
             }
-            let names = load_names();
+            let (names, stop) = load_names();
             if map_text.is_none() && names.is_empty() {
                 eprintln!("llm_gateway: redact layer inert - no map and no name lists");
                 return None;
             }
-            let redactor = Redactor::from_parts(map_text.as_deref(), names);
+            let redactor = Redactor::from_parts(map_text.as_deref(), names, stop);
             let elapsed_ms = started.elapsed().as_secs_f64() * 1000.0;
             let rss_after = rss_kib();
             let rss_note = match (rss_before, rss_after) {
@@ -410,7 +423,7 @@ fn active_redactor() -> Option<&'static Redactor> {
 }
 
 impl Redactor {
-    fn from_parts(map_text: Option<&str>, names: HashSet<String>) -> Redactor {
+    fn from_parts(map_text: Option<&str>, names: HashSet<String>, stop: HashSet<String>) -> Redactor {
         let mut forward: Vec<(String, String)> = Vec::new();
         if let Some(text) = map_text {
             for line in text.lines() {
@@ -431,11 +444,11 @@ impl Redactor {
         let mut reverse: Vec<(String, String)> =
             forward.iter().map(|(r, p)| (p.clone(), r.clone())).collect();
         reverse.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
-        Redactor { forward, reverse, names }
+        Redactor { forward, reverse, names, stop }
     }
 
     fn redact(&self, s: &str) -> String {
-        let mut out = apply_patterns(s, &self.names);
+        let mut out = apply_patterns(s, &self.names, &self.stop);
         for (real, ph) in &self.forward {
             if out.contains(real.as_str()) {
                 out = out.replace(real.as_str(), ph.as_str());
@@ -1086,7 +1099,7 @@ fn c_name(c: char) -> bool {
     c.is_alphabetic() || c == '-' || c == '\'' || c == '\u{2019}'
 }
 
-fn p_name(ch: &[char], i: usize, names: &HashSet<String>) -> Option<usize> {
+fn p_name(ch: &[char], i: usize, names: &HashSet<String>, stop: &HashSet<String>) -> Option<usize> {
     if !ch[i].is_alphabetic() {
         return None;
     }
@@ -1101,6 +1114,9 @@ fn p_name(ch: &[char], i: usize, names: &HashSet<String>) -> Option<usize> {
         return None;
     }
     let token: String = ch[i..j].iter().collect::<String>().to_lowercase();
+    if stop.contains(&token) {
+        return None;
+    }
     if names.contains(&token) {
         Some(j)
     } else {
@@ -1168,7 +1184,7 @@ fn p_postal(ch: &[char], i: usize) -> Option<usize> {
     }
 }
 
-fn apply_patterns(s: &str, names: &HashSet<String>) -> String {
+fn apply_patterns(s: &str, names: &HashSet<String>, stop: &HashSet<String>) -> String {
     let s = subst(s, "<KEY>", p_sk);
     let s = subst(&s, "<KEY>", p_github);
     let s = subst(&s, "<KEY>", p_gh);
@@ -1190,7 +1206,7 @@ fn apply_patterns(s: &str, names: &HashSet<String>) -> String {
     let s = subst(&s, "<VAT>", p_vat);
     let s = subst(&s, "<TEL>", p_phone);
     let s = subst(&s, "<POSTAL>", p_postal);
-    subst(&s, "<NAME>", |ch, i| p_name(ch, i, names))
+    subst(&s, "<NAME>", |ch, i| p_name(ch, i, names, stop))
 }
 
 fn json_ws(b: u8) -> bool {
