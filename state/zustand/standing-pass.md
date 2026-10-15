@@ -2,58 +2,59 @@
   title: Standpass — Mycelium (privat)
   class: zustand
   date: 2026-10-15
-  sha256: eec26fd1e3d6232e00e64946307bd86971a76e9dda6ea30b6048b4c6632bad15
+  sha256: dc2b15d312b36c2d83ac37c42390867adf6610d71774fc6a7d05969966e80b31
   status: live
   see-also: docs/zustand/standing-pass.md
 -->
-# Stehender Pass — Mycelium (privat, folge358)
+# Stehender Pass — Mycelium (privat, folge359)
 
 Vollständige Fassung. Öffentlich gilt allein die Projektion
 `docs/zustand/standing-pass.md` (nur HEAD + rote Läufe, kein Personenbezug).
 
-HEAD `4b73e1927` (== `origin/main`) · geschrieben 2026-10-15 17:15Z · **Mycelium-358**.
+HEAD `5923562d2` (== `origin/main`) · geschrieben 2026-10-15 17:35Z · **Mycelium-359**.
 
 ## Rote Läufe (gemessen via `ci_manage`, kein Polling)
 
-`ci_manage reds` (einmal): **279** non-success Läufe — ein **Flutstand** aus den parallel laufenden
-Linien. Verteilung (gemessen) + ein gemessener Fehler-Job je Träger (`ci_manage jobs`):
+`ci_manage reds` (einmal): **283** non-success Läufe — ein **Flutstand** aus den parallel laufenden
+Linien. Verteilung (gemessen, Summe 283) + ein gemessener Fehler-Job je Träger (`ci_manage jobs`):
 
-| run-id | workflow (n) | gemessener Fehler-Job | Beispiel-HEAD |
-|---|---|---|---|
-| `38768669705` | `ci-gate` (170) | `clippy` · `register` · `subset` · `format` (`build`/`dropped-gate` success) | `024b341e3` |
-| `38769414504` | `register-coverage` (68) | `orphans` → `--tokens --noecho-fail` (8 unbeglichen, 4 XFER-MISSING) | `c755d4b0c` |
-| — | `tools-build` (23) | `build` | — |
-| — | `gic-al-network` (4) · `quake-feeds-cdn` (2) · `matrix-rotor` (2) · `m10-mdis-raw-cdn` (2) · `health-check` (2) | — | — |
-| `38767860985` | `themis_asi-fodg-cdn` (1, **eigen**) | `themis-asi-fodg` — gemessen: `gzip: …0830….pgm.gz: not in gzip format` (die 0830-URL antwortet 301/HTML) — **behoben** (`b20976b78`) | `5b2071569` |
-| — | `zenodo-raw-cdn` (1, **eigen**) · `ssd-jpl-raw-cdn` (1) · `venus-radar-cdn` (1) · `ci-check` (1) | — | — |
+| workflow (n) | gemessener Fehler-Job |
+|---|---|
+| `ci-gate` (173) | `clippy` · `register` · `dropped-gate` · `format` · `subset` (`build` success) |
+| `register-coverage` (72) | `orphans` → `--tokens --noecho-fail`: **15 unbeglichen, 3 XFER-MISSING** (7 blocks) |
+| `tools-build` (23) | `build` |
+| `gic-al-network` (4) | — |
+| `quake-feeds-cdn` (3) | — |
+| `m10-mdis-raw-cdn` (2) · `themis_asi-fodg-cdn` · `ssd-jpl-raw-cdn` · `ci-check` · `zenodo-raw-cdn` · `health-check` · `venus-radar-cdn` | — |
 
-Der tiefere Log-Grund der fremden Träger ist **unread** (kein Polling). **Eigene Befunde:** (a) die
-rote `themis_asi-fodg-cdn`-Naht war die einzige gemessene eigene — **behoben** (gzip-Magic-Guard);
-(b) `register-coverage` scheitert am `--tokens`-Gate (fremde + eigene unbeglichene Xfer) und am
-`--orphan-docs`-Carrier-Mangel; die eigene folge358 fügt **keine** XFER-MISSING mehr hinzu. Meine
-Push-Läufe sind **queued/in_progress/unread** — `zenodo-raw-cdn` spiegelt die erweiterte Matrix
-(Venera-Polar, Provenienz, Arecibo 1988).
+Der tiefere Log-Grund der fremden Träger ist **unread** (kein Polling). **Eigener Befund:** die
+`register-coverage`-Naht scheitert am `--tokens`-Gate (fremde + eigene unbeglichene Xfer) und am
+`--orphan-docs`-Carrier-Mangel (29); die eigene folge359 fügt **keine** neue XFER-MISSING hinzu.
+Push-Läufe am neuen HEAD sind **queued/unread**.
 
-## Lokal gemessen am HEAD `b17570464`
+## Lokal gemessen am HEAD `5923562d2`
 
-- **Drei Venus-Bildträger gespiegelt + registriert** (`phi/sources.φ`, `zenodo-raw-cdn.yml`):
-  **Venera-Polar** (193 701 536 B, sha256 `98d80740…`), **Provenienz-Raster** (89 312 099 B, sha256
-  `6aa27235…`), **Arecibo 1988** (965 390 866 B, sha256 `fe5ed9f8…`). `register_sort` canonical
-  über **2810** Blöcke; `cdn_reconcile --fail` clean; `license_census` unverändert.
-- **Provenienz-Kopf gemessen** (HTTP-Range): klassisches TIFF, 18 775 × 9 388, **4-bit**,
-  unkomprimiert, gekachelt 128×128 (10 878 Kacheln), GeoTIFF-GeoKeys; die **12 Klassen (0–11)** aus
-  dem Sidecar-XML (0 NoData · 1 Pioneer · 2/3 Arecibo 2001/1988 · 4 Venera 15/16 · 5/6 Arecibo
-  2015/2017 · 7–11 Magellan). **Arecibo 1988:** 30 032 × 31 973, 8-bit, unkomprimiert, 128er Kacheln.
-- **80,9-GB-Basemap:** Rat-Entscheidung steht (byte-exakter `.parts`-Split), Ausführung braucht einen
-  **streamenden Splitter** — `raw_mirror` gattert auf die vorab-bekannte Ganz-Sha256 (77-GB-Grenze).
-- `register_lookup --orphans --fail` = 0; `--orphan-docs` = **30**; `--fired mycelium` = 0;
-  `--stale mycelium --persist 3` = 0. `open_points_check` folge357 = 0 stale-citations.
+- **Der Tauchauftrag lief (Mycelium-359): acht `taucher`, ein Faden je Dispatch, harte Bandagen.**
+  Die vollständigen Messungen stehen in `docs/surveys/survey-2026-10-15-tauchbefunde-acht-faeden.md`.
+  Kern: HMI (JSOC steht, `hmi`-Kanal fehlt; `hmi_polar`-Tag-Riss `jsoc1` vs. `ssd.jpl`), SILSO
+  (Riss: Git-Verdikt `decline unphysical` + `port.rs:2048` + `specs/sunspots.md` vs. „Lücke"),
+  XUV/logR'HK (RAVE/GALAH tragen keinen Index; EVE im Code, register-/CDN-los; `phi:9898` HTTP 400),
+  Shear (KiDS 16,50 GiB + Conicus 32,04 GiB; alle CDN-`url` 404; `tar_zst`/`hips3d` ohne Reader),
+  Neutrino (**Code-Riss**: vier Compiler verlangen `S2Direction`, `witness.rs` gibt `PointEvent` →
+  Zeile-1-Abbruch, Grund der 404), EDGES (Quellen öffentlich; Lücke in phi), PTA (kein
+  Residuum im Zip; CDN 404), TGF/Wolken (FSSC PD-Katalog mit sha256; Open-Meteo keyless).
+- Register-Nullstände (nachgemessen): `hmi`/`silso`/`sunspot`/`neutrino`/`lensing`/`eve_`/`format eve`
+  = 0; `hips3d` = 2, `tar_zst` = 1 (nur die jeweiligen Format-Zeilen).
+- `register_lookup --orphans --fail` = **0**; `--orphan-docs` = **29**; `--fired mycelium` = 0;
+  `--stale mycelium --persist 3` = 0; `--addressed mycelium` = 2 (mountain-folge356, river-folge221 —
+  gefaltet).
+- folge358 → `archiv/`; folge359 geschrieben; Commit `5923562d2` gepusht.
 
 ## Postfach
 
 - `post/in` (privates Haus, `~/projects/omegaflow-work/post/in`):
   `2026-10-14-mycelium-nssdc-datenantrag.md` — **bereits gewortet, nicht erneut vorgelegt**.
-  `post/paid-open` (27 B, zuvor 17 B) — fremde Linie; nur die Größe gelesen, kein Inhalt.
+  `post/paid-open` (27 B) — fremde Linie; nur die Größe gelesen, kein Inhalt.
 
 ## Ereignis-Stand
 
@@ -62,39 +63,33 @@ Push-Läufe sind **queued/in_progress/unread** — `zenodo-raw-cdn` spiegelt die
 
 ## Orphan-Zensus
 
-- `register_lookup --orphans` = 0. `--orphan-docs` = 30 (Träger fehlt; gemessen).
+- `register_lookup --orphans` = 0. `--orphan-docs` = 29 (Träger fehlt; gemessen).
 
 ## Mehrfach-Träger
 
-- Offen (in `mycelium-folge358`): `xfer:mycelium-352-5` (Mountain) · `xfer:mycelium-356-5` (echoed) ·
-  `xfer:mountain-354-1` (echoed) · `xfer:mycelium-352-1`/`-2` (echoed) · `xfer:mountain-348-1`
-  (Mountain) · `xfer:mycelium-356-3` (River) · `xfer:river197-6` (echoed).
+- Neu (folge359): `xfer:mycelium-359-1 … -8` (acht Fäden → Mountain). Offen aus früheren Runden:
+  `xfer:mycelium-352-5` (Mountain) · `xfer:mycelium-356-5` (echoed) · `xfer:mountain-354-1`
+  (echoed) · `xfer:mycelium-352-1`/`-2` (echoed) · `xfer:mountain-348-1` (Mountain) ·
+  `xfer:mycelium-356-3` (River) · `xfer:river197-6` (echoed).
 - `river219-de2spdf` / `-sabergats` / `-juicespice` → eigene Hol-/Ablage (kein Token);
   `river219-gic2` → River selbst.
-- Gefaltet/geschlossen: mountain-folge355, river-folge219.
+- Gefaltet/geschlossen: mountain-folge356, river-folge221 (dieses Rund); mountain-folge355,
+  river-folge219 (früher).
 
 ## Gearbeitet (dieses Rund)
 
-- Venera-Polar, Provenienz und Arecibo 1988 gespiegelt + registriert; Provenienz-Kopf + Klassen
-  gemessen; `themis_asi-fodg-cdn`-Naht repariert.
-- **Basemap-Formatentscheidung in der Linie gefällt** (kein Rückfrage-Punkt): byte-exakter
-  `.parts`-Split (Rat-Form), md5-Ganzes + sha256/Teil; bis der streamende Splitter steht,
-  provisorische HTTP-Range-Lesung vom Origin-COG.
-- **River-Übergabe gefaltet:** DE-2/SPDF, SABER/GATS, JUICE/SPICE sind eigene Hol-/Ablage-Aufgaben
-  (kein Token); GIC-2 trägt River selbst.
-- **Fremdtext (GLM) zur Rätsel-Matrix nachgemessen + korrigiert:** Block ≠ Kanal — sechs der acht
-  Fäden haben ihre Quelle schon (`a727df6ff` u. a.), es fehlt der Kanal; nur **WGLC** fehlt als
-  Block. Korrektur-Survey geschrieben + der **Tauchauftrag** (je ein Taucher, harte Bandagen) in
-  folge358 für die nächste Session.
-- **Mountains zwei Anforderungen beantwortet:** SEANOE-Datensatz-Adresse geliefert
-  (`www.seanoe.org/data/00311/42182/`, DOI `10.17882/42182`, Argo GDAC) + die fünf
-  WDC-Host-Adressen (`esdb`/`rjes`/`stp`/`usd`/`www.wdcb.ru/sep`); GEOFON steht bereits im Register.
-- folge357 → `archiv/`; folge358 geschrieben; Commits `cf6c8b4d9` … `b17570464` / `b07e37f82` gepusht.
+- Der Tauchauftrag der acht Fäden ausgeführt (je ein `taucher`, harte Bandagen) — Survey
+  `survey-2026-10-15-tauchbefunde-acht-faeden.md`; folge359 mit acht Mountain-Anfragen.
+- **Kern der Korrektur bestätigt:** für HMI/XUV/Shear/Neutrino/PTA steht die Quelle — der Kanal
+  fehlt; für SILSO/EDGES/TGF/Wolken fehlt die Quelle.
+- **Zwei harte Risse benannt:** (a) der Neutrino-Compiler-`S2Direction`-Riss (Kreuz-Riss, ein Atom
+  zwei Linien); (b) der `hmi_polar`-Tag-Riss (`jsoc1` unregistriert vs. Asset `ssd.jpl`).
 
 ## Snapshot / Tools
 
-- `git_safety --snapshot` gesetzt (dieses Rund). `.tools_ensure`-Sweep: das Skript verlangt einen
-  Tool-Namen (kein Einzelnamen-Sweep); die Release-Route trägt weiter die Wrapper.
+- `git_safety --snapshot` gesetzt (dieses Rund, `refs/safety/1792084075`). `.tools_ensure`-Sweep:
+  das Skript verlangt einen Tool-Namen (kein Einzelnamen-Sweep); die Release-Route trägt weiter die
+  Wrapper.
 
 ## session_burn
 

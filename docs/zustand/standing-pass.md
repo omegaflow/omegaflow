@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-15
-  sha256: b47f64f32311ef8727e78b1eb8720156faccc5953209bf9f71d62e566ec5f054
+  sha256: b9e7d62bfe73f523352095fe954447c3209ea1b254129ed3c2de3c571afeaab1
   status: live
   see-also: AGENTS.md
 -->
@@ -15,35 +15,27 @@ Die öffentlichen Linien zitieren **diese** Fassung, nie die private.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `4b73e1927` | 2026-10-15 |
-| rote CI-Läufe | **279** non-success — Träger: `ci-gate` (170) · `register-coverage` (68) · `tools-build` (23) · `gic-al-network` (4) · `quake-feeds-cdn` (2) · `matrix-rotor` (2) · `m10-mdis-raw-cdn` (2) · `health-check` (2) · `zenodo-raw-cdn` · `ssd-jpl-raw-cdn` · `venus-radar-cdn` · `ci-check` · `themis_asi-fodg-cdn` | 2026-10-15 |
+| HEAD | `5923562d2` | 2026-10-15 |
+| rote CI-Läufe | **283** non-success — Träger: `ci-gate` (173) · `register-coverage` (72) · `tools-build` (23) · `gic-al-network` (4) · `quake-feeds-cdn` (3) · `m10-mdis-raw-cdn` (2) · `themis_asi-fodg-cdn` · `ssd-jpl-raw-cdn` · `ci-check` · `zenodo-raw-cdn` · `health-check` · `venus-radar-cdn` | 2026-10-15 |
 
-**Gemessener Kern-Befund (nicht geraten).** Der **globale** Blitz-Kanal für die Schumann-TE ist
-**frei** erreichbar: **WGLC** (Zenodo concept `10.5281/zenodo.4774528` / Version
-`10.5281/zenodo.20277101`, Record-Lizenz `CC-BY-4.0`; der README-Badge `CC BY-SA 4.0` steht als
-benannter Riss daneben). Die veröffentlichte Dichte ist **täglich** (`density [5844,360,720]`,
-Zeitschritt 1 Tag; monatlich für die Leistung) — `30m`/`05m` im Dateinamen ist die **räumliche**
-Auflösung. Der WGLC-Compiler steht (`tools/harvest/src/bin/wglc_compiler.rs`); die Zulassungs-Zeilen
-warten auf das Rat-Verdikt zur `field`-Form. Zweiter freier globaler Kanal: **FLASHMAP**
-(`10.5281/zenodo.17376946`, CC-BY, aus Vaisala GLD360).
+**Der Tauchauftrag der acht Fäden ist gelaufen.** Acht `taucher` (ein Faden je Dispatch, harte
+Bandagen) haben die acht offenen Fäden gemessen; die vollständigen Befunde stehen in
+`docs/surveys/survey-2026-10-15-tauchbefunde-acht-faeden.md`. Die Kern-Korrektur ist bestätigt:
+**Block ≠ Kanal** — für **HMI**, **XUV/log R'HK**, **Shear**, **Neutrino** und **PTA** steht der
+Quellen-Block schon, es fehlt die **Kanal-Zeile** (`field`); für **SILSO**, **EDGES/21 cm**, **TGF**
+und **Wolkenbedeckung** fehlt die Quelle. Nur **WGLC** fehlt als ganzer Block (die `field`-Form ist
+die Rat-Schemafrage).
 
-**Venus-Bildträger gespiegelt.** Drei COG-Träger sind registriert (`phi/sources.φ`) und laufen über
-die `zenodo-raw`-Matrix byte-für-byte auf das CDN: **Venera-Polar** (194 MB, Zenodo `18176179`,
-CC-BY-4.0), das **Provenienz-Klassen-Raster** (89 MB — die Herkunft jeder Basemap-Kachel, die
-einzige Stelle, an der die Basemap-`0` als NoData geehrt werden kann) und **Arecibo 1988**
-(965 MB). Der Provenienz-Kopf ist gemessen (18 775 × 9 388, 4-bit, 12 Klassen 0–11). Für die
-80,9-GB-Basemap steht die Formatentscheidung in der Linie: **byte-exakter `.parts`-Split**
-(md5-Ganzes + sha256/Teil); bis der streamende Splitter steht, wird der Träger provisorisch per
-HTTP-Range vom Origin-COG gelesen.
+**Zwei Risse stehen ungeglättet.** (a) **SILSO ist keine Lücke, sondern ein Verwurf** — das
+Git-Verdikt `decline unphysical` (`e988e464d`), `docs/specs/sunspots.md` und `src/archivar/port.rs:2048`
+verwerfen die Sonnenfleckenzahl; die Weltmessung findet die Quelle dagegen öffentlich. (b) **Der
+Neutrino-Kanal ist doppelt leer** — vier Record-Compiler (`auger`/`icecat`/`antares_vo`/`amon`)
+verlangen die Zeugen-Art `S2Direction`, `src/archivar/witness.rs` bildet dieselben MAGICs aber auf
+`PointEvent` → sie brechen in Zeile 1 ab; das erklärt die 404 der Neutrino-/CR-Assets zwanglos.
 
-**Rätsel-Matrix korrigiert.** Ein Fremdtext führte acht fehlende Fäden als „nicht registriert";
-nachgemessen am Register (`phi/sources.φ` + Commit-Historie): **sechs** haben ihre Quelle schon
-(RAVE, GALAH, KiDS, EPTA, WALLABY, LHAASO, Auger, IceCube — Registrierung am 13.10.), es fehlt die
-**Kanal-Zeile**; als ganzer Block fehlt nur **WGLC** (dort steht bloß der Compiler). Echte
-Quellen-Lücken daneben: SILSO, EDGES/21 cm, TGF, Wolken. Die Korrektur-Survey
-(`survey-2026-10-15-raetsel-matrix-korrektur.md`) und ein **Tauchauftrag** (acht begrenzte Suchen,
-je ein Taucher, harte Bandagen) liegen für die nächste Session bereit.
+**Venus-Bildträger + externe Quellen unverändert.** Drei COG-Träger sind registriert und laufen über
+die `zenodo-raw`-Matrix auf das CDN (Venera-Polar 194 MB, Provenienz-Raster 89 MB, Arecibo 1988
+965 MB). GEOFON steht im Register; SEANOE ist mit `4f2fe9ff7` als Duplikat von `argo_gc` überholt.
 
 **Noch unread:** die tiefen Log-Gründe der fremden roten Läufe (kein Polling); die eigenen
-Push-Läufe am HEAD `b17570464` sind queued. Die öffentliche Tafel ist ein Flutstand aus den
-parallel laufenden Linien; die Logs liest `ci_manage log <id>`.
+Push-Läufe am neuen HEAD sind queued. Die Logs liest `ci_manage log <id>`.
