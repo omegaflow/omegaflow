@@ -57,6 +57,18 @@ jobs:
             url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/resonance_schumann.csv"
             origin: "https://zenodo.org/api/records/15225820/files/NiNo_SR_params_2024.csv/content"
             sha256: 3183a14fafba0762f91522dfdddf356fa2609b86797d6512aefc2104bf7b0272
+          - asset: gps_cmonoc.dat
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/gps_cmonoc.dat"
+            origin: "https://zenodo.org/api/records/7798617/files/gps_cmonoc.dat/content"
+            sha256: 7766cd0ac5cc754cfdc8a6cac1de888fe07f770bf0984608ea7c0f13a5c39bde
+          - asset: gps_campaign.dat
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/gps_campaign.dat"
+            origin: "https://zenodo.org/api/records/7798617/files/gps_campaign.dat/content"
+            sha256: 06f66d84a74576716eeeaece77ebf7c4fb641cd46e921f3c5c19ce8ed6757725
+          - asset: cedc_catalog.xlsx
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/cedc_catalog.xlsx"
+            origin: "https://zenodo.org/api/records/8084659/files/CEDC%20catalog.xlsx/content"
+            sha256: 40ba4601d3f8d32753dd8de8eedd7ffe2bb5c341c3ae9f3303e43c474d75dfb4
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
