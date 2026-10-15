@@ -2,7 +2,7 @@
   title: Handover — River-Folge 214
   class: handover
   date: 2026-10-15
-  sha256: a3d96cc0071f9f54937c9e543b5e63e12eee0b95b6c115965a0141ecfdd2a6f5
+  sha256: 3094d4c642fa00472d8e2f4ab16f5f885589a87bf32124e64f925184337d45b6
   status: live
 -->
 # Handover — River-Folge 214 (2026-10-15)
@@ -148,8 +148,8 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `st
   - **25 Stationen subauroral** (Lauf `38690576424`, river-214): 13 150 080 Samples, Schwelle 16.61 nT/min, **4** Onsets (2000–2024); prec/rec 0.250/0.000008 · 0.750/0.000023 · 1.000/0.000046; Null `prec_ge=61/12/2`, `rec_ge=61/27/10` → bei 15 min **nicht** über der Null, bei 5/30 min an der Grenze — die subaurorale Hülle ist nahezu stumm (4 Onsets in 25 Jahren).
   - **Schwellen-Kurve der Einzelstation (Operator-Wort 2026-10-15; lokal gemessen mit dem gebauten `gic_onset_detector`, da der CI-Lauf `38691966981` am CDN-Fetch hing und gecancelt wurde; `k=6` = Default `median+6·1.4826·MAD`):** über `k=0.01…12` steigt die Präzision und fällt der Rückruf **monoton**; `prec_ge=0`/`rec_ge=0` bei **jedem** k und jeder Toleranz. Toleranz 30 min: k=0.05 P=0.435/R=0.547 · k=0.1 0.436/0.534 · k=0.5 0.447/0.445 · k=1 0.459/0.372 · k=6 (Default) 0.533/0.125 · k=12 0.572/0.051; Schwellen-Median (k→0) P=0.433/R=0.562, thr=7.0 P=0.432/R=0.574. F1 fällt monoton vom sensiblen Ende (≈0.49) zum Default (0.20). **Kein inneres Optimum („Sweet Spot"):** die Kurve bevorteilt durchweg die höchste Empfindlichkeit — der Default `k=6` ist für den Rückruf ein schlechter Arbeitspunkt; die Präzision ist am sensiblen Ende flach (~0.43), nicht einbrechend. **Die Netz-Kurve spiegelt es (31 auroral, Lauf `38695956296`):** k=1 prec 0.282/rec 0.0127 (`prec_ge=0`, signifikant), k=6 (Default) prec 0.340/rec 0.00012 (`prec_ge=26`, **nicht** signifikant), k=12 prec 0.250/rec 0.000011 (`prec_ge=136`) — auch das Netz ist bei niedriger Schwelle besser **und** trägt; die Einzelstation bleibt überlegen (rec 0.29 am sensiblen Ende).
   - **Riss benannt (ungeglättet):** die Netzhülle detektiert viel weniger Onsets als die Einzelstation (rec 0.002–0.004 vs 0.066–0.125) — mehr Stationen heben die Detektorschwelle (6 Stationen 17.1 → 31 auroral 129.0 → subauroral nahezu stumm). Die wenigen Netzfunde liegen teils über dem Kreisschub-Null (6 Stationen: alle 200), teils nicht (subauroral). **Die Einzelstation schlägt den Null an allen Toleranzen und hat den höchsten Rückruf** — mehr Stationen sind hier kein Gewinn; ein inneres Optimum (Sweet Spot) über die Stationszahl zeigt die Messung **nicht** (Rückruf fällt monoton).
-- **Blockade:** keine — der midlat-Lauf (`38690576605`, 98 Stationen) ist am `runner shutdown` (`exit 143`, Infrastruktur) **gescheitert**; neu anstoßen.
-- **Braucht:** (a) den midlat-Lauf neu anstoßen und auswerten; (b) **Operator-Wort 2026-10-15 (erledigt):** die Einzelstation gegen die Null geprüft (Lauf `38691967292`, `prec_ge=0`/`rec_ge=0` bei 5/15/30 min); (c) die Kurve/Sweet-Spot-Frage — erledigt (lokal gemessen, s. oben); im CI offen, weil der Sweep-Lauf `38691966981` am CDN-Fetch hing und gecancelt wurde.
+- **Blockade:** keine — der midlat-Lauf (`38690576605`, 98 Stationen) ist am `runner shutdown` (`exit 143`, Infrastruktur) **gescheitert**; **neu angestoßen (river-215): `38709132540`** (98 Stationen, `--null 200`); Ergebnis folgt als eigener Schritt.
+- **Braucht:** (a) den midlat-Lauf auswerten (`38709132540`); (b) **Operator-Wort 2026-10-15 (erledigt):** die Einzelstation gegen die Null geprüft (Lauf `38691967292`, `prec_ge=0`/`rec_ge=0` bei 5/15/30 min); (c) die Kurve/Sweet-Spot-Frage — erledigt (lokal gemessen, s. oben); im CI offen, weil der Sweep-Lauf `38691966981` am CDN-Fetch hing und gecancelt wurde.
 
 ### GIC-Familien-Partition — deklariertes Artefakt gebaut; die zwei Register-Nägel offen
 - **Status:** eigen (Artefakt gebaut) | **Bindung:** eigen (Rest: Mountain-Nägel)
