@@ -1,0 +1,90 @@
+name: gic-envelope-nesting
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      family:
+        description: which declared family to order and grow
+        type: choice
+        options:
+          - auroral
+          - subauroral
+          - midlat
+          - all
+        default: auroral
+      counts:
+        description: comma list of cumulative station counts to compare (>=2; a 1-station envelope is none)
+        required: false
+        default: "16,24,31"
+      baseline_block:
+        description: block-median baseline length (samples at 1 min)
+        required: false
+        default: "60"
+      quantity:
+        description: per-station quantity folded into the envelope — dh is the signed H disturbance, dbdt the per-minute |dB/dt| magnitude
+        type: choice
+        options:
+          - dh
+          - dbdt
+        default: dbdt
+
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  nesting:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Order the family by |cgm_lat| and fetch its xyz bins once
+        run: |
+          set -euo pipefail
+          fam="${{ inputs.family }}"
+          grep -v '^#' docs/zustand/gic-station-families.tsv > /tmp/part.tsv
+          if [ "$fam" = "all" ]; then
+            cut -f1 /tmp/part.tsv > /tmp/fam.txt
+          else
+            awk -F'\t' -v f="$fam" '$2==f { print $1 }' /tmp/part.tsv > /tmp/fam.txt
+          fi
+          awk '/^station /{s=tolower($2)} /^cgm_lat /{if (s != "") { print s "\t" $2; s="" }}' \
+            phi/sources.φ > /tmp/lat.tsv
+          awk 'NR==FNR { n[$1]=$2; next } { lat=n[$1]; if (lat=="") lat=-999; print $1 "\t" lat }' \
+            /tmp/lat.tsv /tmp/fam.txt | sort -t$'\t' -k2,2gr > /tmp/order.tsv
+          cut -f1 /tmp/order.tsv > /tmp/order.txt
+          echo "family $fam ordered by |cgm_lat| (station	lat):"
+          cat /tmp/order.tsv
+          mkdir -p /tmp/xyz
+          base=https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk
+          while read -r c; do
+            [ -z "$c" ] && continue
+            curl -fsSL -o "/tmp/xyz/${c}_xyz_1m.bin" "$base/${c}_xyz_1m.bin"
+          done < /tmp/order.txt
+      - name: Build the envelopes on the cumulative prefixes and compare the carriers
+        run: |
+          set -euo pipefail
+          : > /tmp/nesting.txt
+          bins=""
+          for n in $(echo "${{ inputs.counts }}" | tr ',' ' '); do
+            head -n "$n" /tmp/order.txt > "/tmp/prefix_${n}.txt"
+            echo "=== stations $n ===" >> /tmp/nesting.txt
+            cargo run --release -p omegaflow-measure --bin al_network_proxy -- \
+              --family "/tmp/prefix_${n}.txt" --dir /tmp/xyz --decl auto \
+              --baseline-block ${{ inputs.baseline_block }} --min-stations 2 \
+              --fusion min --quantity ${{ inputs.quantity }} \
+              --out "/tmp/env_${n}.bin" >> /tmp/nesting.txt 2>&1
+            bins="$bins /tmp/env_${n}.bin"
+          done
+          cargo run --release -p omegaflow-measure --bin net_envelope_compare -- $bins >> /tmp/nesting.txt 2>&1
+          cat /tmp/nesting.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gic-envelope-nesting
+          path: /tmp/nesting.txt
