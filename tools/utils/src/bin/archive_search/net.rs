@@ -3802,22 +3802,25 @@ fn load_logged_yields() -> HashMap<String, f64> {
         Ok(b) => b,
         Err(_) => return map,
     };
-    let mut runs: HashMap<String, (u64, u64)> = HashMap::new();
+    let mut runs: HashMap<String, (u64, u64, bool)> = HashMap::new();
     for line in body.lines() {
-        let f: Vec<&str> = line.splitn(6, " | ").collect();
-        if f.len() < 5 {
+        let f: Vec<&str> = line.splitn(7, " | ").collect();
+        if f.len() < 6 {
             continue;
         }
         let h: u64 = match f[4].trim().parse() {
             Ok(v) => v,
             Err(_) => continue,
         };
-        let e = runs.entry(f[2].trim().to_string()).or_insert((0, 0));
+        let pending = f.len() >= 7 && f[5].trim() == "pending";
+        let e = runs.entry(f[2].trim().to_string()).or_insert((0, 0, false));
         e.0 += 1;
         e.1 += h;
+        e.2 = pending;
     }
-    for (m, (r, h)) in runs {
-        map.insert(m, h as f64 / r as f64);
+    for (m, (r, h, pending)) in runs {
+        let y = if pending { 0.0 } else { h as f64 / r as f64 };
+        map.insert(m, y);
     }
     map
 }
@@ -3876,6 +3879,10 @@ fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<Stri
         None => DEFAULT_ALL_STOP,
     };
     let min_arms = 6usize;
+    let arm_cap = match (stop_threshold / min_arms) {
+        0 => stop_threshold,
+        c => c,
+    };
 
     let logged = load_logged_yields();
     let rank = |m: &str| match logged.get(m) {
@@ -3910,7 +3917,7 @@ fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<Stri
         }
         let lines = run_lines_max(mode, query, env, None, max);
         let n = lines.len();
-        accumulated += lines.iter().filter(|l| l.contains("] url ")).count();
+        accumulated += lines.iter().filter(|l| l.contains("] url ")).count().min(arm_cap);
         ran += 1;
         full.push(format!("=== {} ({}) ===", mode, n));
         full.extend(lines.iter().cloned());
@@ -3992,12 +3999,12 @@ pub fn run_lines_max(
 ) -> Vec<String> {
     let lines = run_lines_dispatch(mode, query, env, out, max);
     if mode != "all" {
-        log_query(mode, query, &lines);
+        log_query(mode, query, &lines, max);
     }
     lines
 }
 
-fn log_query(mode: &str, query: &str, lines: &[String]) {
+fn log_query(mode: &str, query: &str, lines: &[String], max: usize) {
     let repo = match std::env::var_os("OMEGAFLOW_REPO") {
         Some(r) => std::path::PathBuf::from(r),
         None => return,
@@ -4014,10 +4021,12 @@ fn log_query(mode: &str, query: &str, lines: &[String]) {
         Ok(v) => v,
         Err(_) => "-".to_string(),
     };
-    let hits = lines
+    let url_lines = lines
         .iter()
         .filter(|l| l.starts_with(&format!("[{mode}] url ")))
         .count();
+    let hits = url_lines.min(max);
+    let pending = url_lines == 0 && lines.iter().any(|l| l.contains("] pending"));
     let clean: String = query
         .chars()
         .map(|c| {
@@ -4028,8 +4037,9 @@ fn log_query(mode: &str, query: &str, lines: &[String]) {
             }
         })
         .collect();
+    let state = if pending { "pending" } else { "ok" };
     let line = format!(
-        "{stamp} | {session} | {mode} | {} | {hits} | {clean}\n",
+        "{stamp} | {session} | {mode} | {} | {hits} | {state} | {clean}\n",
         lines.len()
     );
     if let Ok(mut f) = std::fs::OpenOptions::new()
