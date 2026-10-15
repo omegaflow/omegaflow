@@ -243,3 +243,19 @@ jobs:
         with:
           name: field-te-matrix-schumann
           path: field-te-matrix-schumann.txt
+  pair-schumann-blitz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Schumann f1 conditioned on the daily global lightning channel — abk dB/dt -> f1 | WGLC
+        shell: bash
+        run: |
+          set -o pipefail
+          cargo run --release -p omegaflow-measure --bin field_te_query -- --descriptor src/mathematikerin/descriptors/schumann_geomag_blitz.te | tee field-te-pair-schumann-blitz.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: field-te-pair-schumann-blitz
+          path: field-te-pair-schumann-blitz.txt

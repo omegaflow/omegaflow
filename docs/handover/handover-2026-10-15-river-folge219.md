@@ -2,7 +2,7 @@
   title: Handover — River-Folge 219
   class: handover
   date: 2026-10-15
-  sha256: d89bc099e5f0a2a1c58eed1bd41eb780d2e25a124dd51da9565c26271f29b064
+  sha256: 8b8ceb80099521b8c102d109962eb8064f1002be6935db26c7b4b9b17cc3073e
   status: live
 -->
 # Handover — River-Folge 219 (2026-10-15)
@@ -12,7 +12,7 @@ markiert, nicht erklärt; git trägt, was gemacht wurde. Nur eigene Arbeit: bei
 geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen. Diese Session
 konsumierte `handover-2026-10-15-river-folge218.md` (→ `archiv/`).
 
-## Burn: open 0.0 · close pending — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db`), die private Session-Zeile wird nicht gelesen (nicht gemessen, Vorbehalt wie river-212…219) · cap 0.55 benannt-ungeprüft — Grund: river-220 (ein Pass; kein Fenster-Edit, kein Send, kein UI-Seat). Fälligkeit bei Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge354, mycelium-folge357 — in river-220 gefaltet); `open_points_check` = 0 stale-citations (7 Pfad-Refs absent — der private Baum `state/` liegt außerhalb des öffentlichen). Gearbeitet: die zwei adressierten Blöcke gefaltet; die Meridian-Naht um eine trend-bereinigte, helligkeits-normierte **2D-Band-Regel** (`mag_optical_overlay --onset band`) erweitert und am CDN-Keogramm 2024-05-10 (Lauf lokal, HTTP-bereit) **gemessen: beide Regeln liefern für 06:50–08:15 `pending`** — der Meridian-Schnitt trägt das azimutale Band nicht, der Vollbild-Detektor bleibt der Weg; die Schumann-`bin`/`cond`-Entscheidung ins Register geschrieben (mycelium-357). (gemessen 2026-10-15, river-220)
+## Burn: open 0.0 · close pending — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db`), die private Session-Zeile wird nicht gelesen (nicht gemessen, Vorbehalt wie river-212…219) · cap 0.55 benannt-ungeprüft — Grund: river-220 (ein Pass; kein Fenster-Edit, kein Send, kein UI-Seat). Fälligkeit bei Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge354, mycelium-folge357 — in river-220 gefaltet); `open_points_check` = 0 stale-citations (7 Pfad-Refs absent — der private Baum `state/` liegt außerhalb des öffentlichen). Gearbeitet: die zwei adressierten Blöcke gefaltet; die Meridian-Naht um eine trend-bereinigte, helligkeits-normierte **2D-Band-Regel** (`mag_optical_overlay --onset band`) erweitert und am CDN-Keogramm 2024-05-10 (Lauf lokal) **gemessen: beide Regeln liefern für 06:50–08:15 `pending`** — der Meridian-Schnitt trägt das azimutale Band nicht; den **2D-Onset-Eingang** `--optical-onset` gebaut, mit dem river-197-Onset `07:54:45Z` die Lag-Naht gemessen (ykc −2040 s / fcc −2100 s) und den Workflow-Eingang gesetzt; das **bedingte Schumann-Tages-Pair** (`schumann_geomag_blitz.te`) + Job `pair-schumann-blitz` gebaut (parst, `cond wglc_strokes pending`). (gemessen 2026-10-15, river-220)
 
 ## Operator-Wort-Register
 
@@ -74,13 +74,14 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…220) · `
 - **Blockade:** `phi/sources.φ` trägt noch 7943 flache `field`-Zeilen.
 - **Braucht:** nach Mountains Migration den flachen Parser-Branch (`parse.rs:1600`) + die `force_id_of`-Aufrufe streichen und auf `descriptor_from_axes`/`ChannelRegistry::handle_of` ziehen; `cargo check` 0/0; CI-`ci-gate` ist das Netz.
 
-### 14-min-Lücke Magnetometer→Optik — Meridian-Band-Regel gebaut, am Keogramm gemessen: trägt das azimutale Band nicht
+### 14-min-Lücke Magnetometer→Optik — Naht gebaut: Meridian-Regel blind, 2D-Onset-Eingang verdrahtet und gemessen
 - **Status:** eigen (getragener Riss) | **Bindung:** eigen
 - **Trigger:** die Naht ist **gebaut** (river-219): `mag_optical_overlay --window --k` liest den optischen Keogramm-Onset und den Magnetometer-Onset je Station (robustes Maß `median + k·1.4826·MAD`) und druckt die Lags; Workflow `mag-optical-lag` (`b81c126be`). Die frühere Hülle „GIC-Onset-Relationsschritt" war kein Pfad — `gic_onset_relation.rs` ist eine **andere** Naht (GIC↔MCON, river-192/193, Ratio 1,217; `bpa_gic` `pending`, 4 Tage).
 - **Lage:** (gemessen 2026-10-12 river-197 + river-200) 2D: kein kohärenter off-meridian optischer Eintritt bei 07:41; der optische Onset ist ein einzelnes **azimutal** wanderndes Band 07:54:45→07:55:45. Ganznacht: Stundenmittel 03–06 ≈ 3310–3343, 07 = 3370.6, Ränder 02 = 3895 / 08 = 3911; Hauptsturm 17:00–23:00 UT (Tageslicht). **Riss:** der river-196-Pick „07:41" ist nicht eindeutig (Stunde 07 trägt eine Kette 07:13–07:48, größte YKC-Spitze 07:20); die „+14 min 27 s" ist pick-abhängig.
 - **Gebaut + gemessen (river-220):** `mag_optical_overlay` trägt jetzt `--onset mean|band` (+`--band-run`) — die `band`-Regel entfernt den glatten Meridian-Gradienten und die Common-Mode-Dämmerung (Hochpass gegen ein weites gleitendes Mittel) und normiert die Kontraststärke auf die Minuten-Helligkeit; der Default `mean` bleibt. **Lokal am CDN-Keogramm gemessen** (`themis_asi_timed_keogram_20240510_kapu.bin`, Fenster 06:50–08:15, `k 6`): die `band`-Stärke läuft **monoton mit der Dämmerung** (min 0,03 → max 0,10 relativ), keine lokalisierte Spitze — `onset optical pending`; auch die absolute Regel (`mean`) blieb `pending` (der river-219-`mean`-Onset 08:13Z war der Dämmerungsanstieg). **Das Meridian-TKDG (256 Zeilen = Höhenprofil bei fester Azimut-Spalte, `profile_of`) trägt das azimutale Band nicht** — der Vollbild-Detektor bleibt der Weg.
 - **Blockade:** keine.
-- **Braucht:** den **Vollbild-Detektor** `themis_asi_frame_onset` (Full-Frame PGM + Skymap, az/el-Zellen) in die `mag-optical-lag`-Naht ziehen — der Meridian-Schnitt ist strukturell blind für das azimutale Band; der `pick`-Riss bleibt. (Der river-219-Lauf `38750488818` bleibt: `ykc` 07:20Z / `fcc` 07:19Z, `ott` `pending`.)
+- **Gebaut + gemessen (river-220, zweiter Schritt):** `mag_optical_overlay` nimmt jetzt `--optical-onset <iso>` — der gemessene 2D-Onset speist die Lag-Naht direkt, das Meridian-Keogramm wird nicht mehr befragt; Workflow `mag-optical-lag` trägt den `optical_onset`-Input. **Lokal gemessen** mit dem river-197-2D-Onset `07:54:45Z`: `onset optical 07:54Z (--optical-onset)`; Lag `ykc −2040 s`, `fcc −2100 s` (`ott` `pending`) — das optische Band folgt dem Magnetometer um **~34–35 min** (der alte „14-min"-Wert war der Dämmerungs-Pick der 1D-Regel). **Der Meridian-Schnitt ist strukturell blind** für das azimutale Band; die Lag-Naht ist jetzt korrekt verdrahtet.
+- **Braucht:** den FODG-Cube (`fodg_20240510_kapu_onset.bin`) + die Skymap (`*.sav`) auf den CDN (Mycelium, `xfer:river197-6` steht offen) — dann kann der Workflow `themis_asi_frame_onset` selbst fahren und den Onset messen; bis dahin ist der Onset ein Session-Input. Der `pick`-Riss bleibt.
 
 ### Weberin-Zeugen-Fäden — SABER-Form (C); Athabasca manifestiert; UCAR-FPI Arm steht
 - **Status:** eigen (Bau) | **Bindung:** eigen
@@ -162,7 +163,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…220) · `
 - **Status:** eigen (Trigger gefeuert; Bau fertig) | **Bindung:** eigen
 - **Trigger:** die Reihe `resonance_schumann.csv` (f1/f2/f3) liegt im CDN — **gefeuert** (`curl -I` = HTTP 200).
 - **Lage:** (gemessen 2026-10-15) die Quelle ist registriert (`phi:1057-1068`, CC-BY-4.0, Zenodo 15225820, `sha256 3183a14f…`, `harvest raw_zenodo`). Nadel ⅩⅣ (`docs/concepts/kybernetische-astrophysik.md:368`). Der Matrix-Deskriptor `src/mathematikerin/descriptors/schumann_geomag.te` (Driver `abk_dbdt_pt1h`, Targets `freq1,freq2,freq3`, `expect cells 3`, `surrogate 10`, `cond none`) und der Job `matrix-schumann` stehen.
-- **Bin/cond-Entscheidung (river-220, gefaltet mycelium-357):** der globale Blitz-Kanal (WGLC) ist **täglich**, nicht stündlich. Der unbedingte Deskriptor trägt das **stündliche** Schumann-Ziel (`resonance_schumann.csv`, hourly) — `bin 3600` **bleibt**; die bedingte Form `(abk→f | Blitz)` braucht einen **eigenen** Deskriptor mit **Tages-bin (`86400`)** und `cond <wglc> pending|built`; die Tagesreihe wird **nie** auf 3600 vorwärtsgefüllt (das wäre eine erfundene Intrastunden-Variation). Im Deskriptor niedergelegt (`schumann_geomag.te`, Kommentar-Block). Kein Direktiven-Wechsel am unbedingten Deskriptor (sonst regrediert `matrix-schumann` auf `pending`).
+- **Bin/cond-Entscheidung (river-220, gefaltet mycelium-357):** der globale Blitz-Kanal (WGLC) ist **täglich**, nicht stündlich. Der unbedingte Deskriptor trägt das **stündliche** Schumann-Ziel (`resonance_schumann.csv`, hourly) — `bin 3600` **bleibt**; die bedingte Form `(abk→f | Blitz)` braucht einen **eigenen** Deskriptor mit **Tages-bin (`86400`)** und `cond <wglc> pending|built`; die Tagesreihe wird **nie** auf 3600 vorwärtsgefüllt (das wäre eine erfundene Intrastunden-Variation). Im Deskriptor niedergelegt (`schumann_geomag.te`, Kommentar-Block). Kein Direktiven-Wechsel am unbedingten Deskriptor (sonst regrediert `matrix-schumann` auf `pending`). **Gebaut (river-220):** `src/mathematikerin/descriptors/schumann_geomag_blitz.te` — die Matrix trägt `cond rest|none` nur, daher als **pair** (`driver abk_dbdt_pt1h`, `target freq1`, `cond wglc_strokes pending`, `bin 86400`); Job `pair-schumann-blitz` in `field-te-query.yml`. Lokal geprüft: der Deskriptor parst und meldet `PENDING cond wglc_strokes pending — descriptor state pending (register duty)`; der Pair bleibt ungemessen, bis die WGLC-Reihe steht.
 - **Blockade:** (1) der Konfund „globales Blitzgeschehen treibt Schumann und die Ionosphäre" — der Blitz-Kanal ist **source-frei** (WGLC/FLASHMAP, mycelium-356), aber **noch nicht registriert** und **nicht im CDN** (am Baum: keine `phi`-Zeile); (2) `workflow_dispatch` liest den entfernten Ref; `field-te-query` feuert die ganze 14-Job-Suite.
 - **Braucht:** (1) die **WGLC-Tagesreihe im CDN** (Mycelium) + die Registrierung (Mountain) → dann die bedingte TE `(abk→f | Blitz)` im eigenen Tages-Deskriptor, within-stratum-Surrogate (F4-Verdikt); (2) dann den `matrix-schumann`-Lauf mit der Surrogat-Null.
 
@@ -231,18 +232,23 @@ erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mou
 mycelium-folge357 — in river-220 gefaltet) · `open_points_check` = 0 stale-citations (7 Pfad-Refs
 absent — der private Baum `state/`) · `session_burn` nicht gemessen (`db absent`).
 **14-min-Lücke (river-220, gebaut + lokal gemessen):** `mag_optical_overlay` trägt `--onset mean|band`
-(+`--band-run`) — die `band`-Regel entfernt den glatten Meridian-Gradienten **und** die
-Common-Mode-Dämmerung (Hochpass gegen ein weites gleitendes Mittel) und normiert die Kontraststärke
-auf die Minuten-Helligkeit; der Default `mean` bleibt (additiv, kein Regress). **Am CDN-Keogramm
-gemessen** (`themis_asi_timed_keogram_20240510_kapu.bin`, Fenster 06:50–08:15, `k 6`): die
-`band`-Stärke läuft **monoton mit der Dämmerung** (relativ 0,03 → 0,10), keine lokalisierte Spitze →
-`onset optical pending`; die absolute `mean`-Regel ebenso. **Befund:** das Meridian-TKDG (256 Zeilen
-= Höhenprofil bei fester Azimut-Spalte) trägt das **azimutale** Band nicht — der Vollbild-Detektor
-`themis_asi_frame_onset` bleibt der Weg.
+(+`--band-run`) und neu `--optical-onset <iso>`; Workflow `mag-optical-lag` trägt `optical_onset`.
+Die `band`-Regel entfernt den glatten Meridian-Gradienten **und** die Common-Mode-Dämmerung (Hochpass
+gegen ein weites gleitendes Mittel) und normiert die Kontraststärke auf die Minuten-Helligkeit.
+**Am CDN-Keogramm gemessen** (`themis_asi_timed_keogram_20240510_kapu.bin`, Fenster 06:50–08:15,
+`k 6`): die `band`-Stärke läuft monoton mit der Dämmerung (relativ 0,03 → 0,10), keine lokalisierte
+Spitze → `onset optical pending`; die absolute `mean`-Regel ebenso. **Mit dem 2D-Onset-Eingang
+`07:54:45Z` gemessen:** `onset optical 07:54Z (--optical-onset)`; Lag `ykc −2040 s` / `fcc −2100 s`
+(`ott` pending) — das optische Band folgt dem Magnetometer um **~34–35 min**. **Befund:** das
+Meridian-TKDG (256 Zeilen = Höhenprofil bei fester Azimut-Spalte) trägt das azimutale Band nicht; die
+Naht ist über `--optical-onset` korrekt verdrahtet, der Onset bleibt bis zur CDN-Manifestation
+(`xfer:river197-6`) ein Session-Input.
 **Schumann-Bin/cond (river-220, gefaltet mycelium-357):** die WGLC-Reihe ist **täglich**; `bin 3600`
-bleibt für den unbedingten (stündlichen) Schumann-Deskriptor; die bedingte Form `(abk→f | Blitz)`
-braucht einen **eigenen** Tages-Deskriptor (`bin 86400`, `cond <wglc> pending|built`), **kein**
-Vorwärtsfüllen der Tagesreihe. In `schumann_geomag.te` (Kommentar-Block) niedergelegt.
+bleibt für den unbedingten (stündlichen) Schumann-Deskriptor. **Gebaut:** das bedingte Tages-**Pair**
+`src/mathematikerin/descriptors/schumann_geomag_blitz.te` (`driver abk_dbdt_pt1h`, `target freq1`,
+`cond wglc_strokes pending`, `bin 86400`) + Job `pair-schumann-blitz`; die Matrix-Form trägt
+`cond rest|none` nur, daher das Pair. Lokal geprüft: parst, meldet `PENDING cond wglc_strokes`.
+Die Entscheidung steht zusätzlich als Kommentar in `schumann_geomag.te`.
 **Gefaltet (river-220):** `mountain-folge354` (ICGEM-Kern ohne Membran-Berührung — Runtime-Naht =
 **Rat**; vier Clippy-Lints geheilt; NSDB gated auf Registrierung; Aurora-Grenzbreiten = **Rat**),
 `mycelium-folge357` (F4′ täglich; F7′ unverändert; Athabasca manifestiert). Die
@@ -253,7 +259,9 @@ stehen unverändert in `## An mycelium`.
 SABER/UCAR-FPI **0** (Weberin blockiert); Juice-recon **absent** in `data/` (Flyby-Termin steht);
 `ci-gate` rot an fremden Trägern (Receiver-Apertur blockiert); `gic_onset_relation.rs` existiert
 (14-min-Werkzeug da).
-**Commit:** `tools/measure/src/bin/mag_optical_overlay.rs` (`--onset band`), `.github/workflows/mag-optical-lag.yml`
-(`onset`/`band_run`-Inputs), `src/mathematikerin/descriptors/schumann_geomag.te` (Kommentar-Entscheidung),
-diese Übergabe; `folge218` → `archiv/`.
+**Commit:** `tools/measure/src/bin/mag_optical_overlay.rs` (`--onset band` + `--optical-onset`),
+`.github/workflows/mag-optical-lag.yml` (`onset`/`band_run`/`optical_onset`-Inputs),
+`.github/workflows/field-te-query.yml` (Job `pair-schumann-blitz`),
+`src/mathematikerin/descriptors/schumann_geomag.te` (Kommentar) +
+`schumann_geomag_blitz.te` (bedingtes Tages-Pair), diese Übergabe; `folge218` → `archiv/`.
 Fremdes ungespeichertes (`state/`, `data/`, `src/archivar/gfc.rs`) bleibt unangetastet.
