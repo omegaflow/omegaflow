@@ -641,7 +641,7 @@ impl MatrixMachine {
             crate::archivar::Frame::Manifest => None,
         };
         for (channel, sensor) in channels {
-            if channel.epoch <= 0.0 || !channel.epoch.is_finite() {
+            if !channel.epoch.is_finite() {
                 continue;
             }
             let anchor = match &channel.position {

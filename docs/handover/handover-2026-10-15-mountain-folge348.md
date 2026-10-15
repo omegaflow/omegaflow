@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 348 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: e26fd0934a507493bcc451156df37ba6be7ea3af708f85f3fc8d4c8ebb446883
+  sha256: bb636b4b8bc9a3f34318b01bc6e73695c2d0be2ab3d61356e2bb3a581d17798a
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -102,20 +102,30 @@ mit gemessenem Teil-Roster.
   - **Die zwei Achsen NICHT mischen** (DeepSeek/Perplexity/GLM): ein statisches `gfc` kann eine
     Referenz-/Katalogepoche tragen, ein `gfct` pro Record keine — `epoch-anwendbar|nicht` ist
     **nicht** `static|zeitvariabel`. Wer sie mischt, baut das Presence-Bit unter neuem Namen.
-  - **Keine zwei Wahrheiten:** die record-seitige `NaN` ist eine **mechanisch aus der Modellart
-    abgeleitete Projektion** (source gewinnt; Divergenz = harter Contract-Verstoß, nie still) —
-    Perplexity/GLM/DeepSeek. Decode am Codec-Rand in `Option<Epoch>` (Claude/GLM).
+  - **Keine zwei Wahrheiten:** die record-seitige Absenz folgt **mechanisch aus der Modellart**
+    (source gewinnt) — Perplexity/GLM/DeepSeek. Decode am Codec-Rand in `Option<Epoch>` (Claude/GLM).
   - **Die (c)-Stimmen** (Sakana/Lumo/DeepSeek) lösen sich darin auf: „beides" heißt hier **zwei
-    Achsen mit einer Quelle** (source = Modellart-Wahrheit, record = abgeleitetes `finite|NaN`),
-    nicht zwei handgeschriebene Wahrheiten. **Duck** blieb als Einziger bei (a), **Z.ai** lief noch.
-- **Verdikt (gebunden, voller Roster 2026-10-15):** **Achse 1** bauen — `model_kind` source-level
-  am `SourceConfig`/`phi`-Block (`gfc` ⇒ `static`, `gfct` ⇒ `time_variable`) — **und Achse 2** —
-  der Epoch-Slot trägt `NaN` bei statisch, sonst endliche TDB; Leser dekodieren am Rand in
-  `Option<Epoch>`; `matrix.rs:644`/`drs_fits.rs:38` lesen `is_finite()` statt `<= 0.0`. Ein
-  Validator weist `static ∧ finite-slot` und `time_variable ∧ NaN-slot` als Contract-Verstoß ab.
+    Achsen mit einer Quelle** (source = Modellart-Wahrheit, record = abgeleitete Absenz), nicht zwei
+    handgeschriebene Wahrheiten. **Duck** blieb als Einziger bei (a), **Z.ai** lief noch.
+- **Riss (Agenten-Fund, am Baum bestätigt) — der Rat-NaN fällt:** die Runde riet auf einen
+  **NaN-Pad** im Epoch-Slot. Der Baum verbietet ihn: die 0-Kanon-Zeile
+  (`docs/concepts/archivar-mathematikerin.md:64`, `AGENTS.md:56`) sagt **„NaN never crosses the
+  wire"**, und die `phase`-Präzedenz löst **denselben** Fall (0 rad ist ein echter Winkel) seit jeher
+  mit einem **Presence-Bit** (`PRESENCE_FLAG_PHASE`) + 0.0-Pad. Der Rat war an dieser Axiom-Zeile
+  **ungefüttert**. **Der Baum gewinnt** — kein NaN auf dem Draht.
+- **Verdikt (korrigiert am Baum):** **Achse 1** — `model_kind` source-level (`static`|`time_variable`)
+  ist die Wahrheit; der Draht behält den 0.0-Pad; **NaN nie** (Presence-Bit per Operator-Wort
+  verworfen). Ein epoch-opaker Leser ohne Hülle ist blind — (b)-pur.
+- **Bau (Agenten, 2026-10-15):** Achse 1 steht — `ModelKind` + `source_model_kind(format)` +
+  `SourceConfig.model_kind` (`types.rs`), abgeleitet im Parser (`parse.rs`); die zwei Leselinien
+  löschen `0.0`/negative Epochen nicht mehr (`matrix.rs:644`, `drs_fits.rs:38` → `is_finite`). Die
+  NaN-Pad-Änderung ist **zurückgenommen**. `cargo check` 0/0; die drei berührten Bins bauen
+  (`gfc_compiler`, `field_te_query`, `volume_builder`); rustfmt clean. Die Kontrakt-Klausel steht
+  canon-konform in `docs/concepts/archivar-mathematikerin.md`.
 - **Blockade:** keine.
-- **Braucht:** den **Bau** (Achse 1 + Achse 2 + die zwei Leselinien + die Presence-/Datenkontrakt-Klausel
-  in `docs/concepts/archivar-mathematikerin.md`), `cargo check` 0/0; kein weiteres Tor.
+- **Braucht:** (1) den **Faden des `model_kind` in den Lesepfad** — die zwei Leselinien gegen das
+  Quell-Kind gaten, nicht gegen den Wert (sonst liest ein statischer 0.0-Pad als J2000); (2) die
+  `phi`-Direktive `model_kind` (Mountain-Zeilenklasse) für `gfc`/`gfct`.
 
 ### SABER — verdiktet: B + A (eigene Weltlinie + Messvolumen) (eigen)
 - **Status:** eigen · **verdiktet** (Rat 2026-10-14: B + A) | **Bindung:** eigen

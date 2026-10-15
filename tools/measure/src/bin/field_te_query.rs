@@ -6425,6 +6425,7 @@ mod tests {
             cgm_source: None,
             geomag_lat: None,
             weberin_role: None,
+            model_kind: None,
             witness: None,
         }
     }

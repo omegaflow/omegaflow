@@ -444,4 +444,31 @@ mod matrix_rebuild_tests {
             "earth and moon longitudes differ"
         );
     }
+
+    #[test]
+    fn record_keeps_j2000_and_pre_j2000_and_drops_an_absent_epoch() {
+        let (_tx, rx) = mpsc::channel();
+        let mut m = MatrixMachine::new(rx);
+        m.state_path = "/tmp/omegaflow_matrix_epoch_test_state.bin".to_string();
+        m.record(
+            &frame_earth(),
+            vec![
+                mk_channel("j2000", 0.0, 1.0),
+                mk_channel("pre_j2000", -86400.0, 2.0),
+                mk_channel("absent", f64::NAN, 3.0),
+            ],
+        );
+        assert!(
+            m.metas.contains_key("j2000"),
+            "0.0 is J2000, a measured epoch"
+        );
+        assert!(
+            m.metas.contains_key("pre_j2000"),
+            "a negative epoch is pre-J2000"
+        );
+        assert!(
+            !m.metas.contains_key("absent"),
+            "a NaN epoch is absent and stays silent"
+        );
+    }
 }
