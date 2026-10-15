@@ -1,8 +1,12 @@
 use omegaflow::archivar::pds4::{XElem, parse_xml};
+use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::archivar::{LeapSeconds, embedded_lsk, parse_iso_tdb, pds4_img, vnrd};
+use omegaflow::cdn::{CDN_PART_MAX_BYTES, GITHUB_RELEASE_ASSET_MAX_BYTES, format_parts_manifest, part_name, parts_manifest_name, upload_release};
 use std::path::{Path, PathBuf};
 
 const IMG_BYTES: usize = pds4_img::LINE_COUNT * pds4_img::SAMPLE_COUNT * pds4_img::ELEMENT_BYTES;
+
+const NETLOC: &str = "pds-geosciences.wustl.edu";
 
 struct Product {
     img: PathBuf,
@@ -140,14 +144,68 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn usage() {
     eprintln!(
-        "usage: venus_radar_compiler [--input <product.img>]... [--dir <directory>]... --output <series.bin>\n\
+         "usage: venus_radar_compiler [--input <product.img>]... [--dir <directory>]... --output <series.bin> [--ci-mode]\n\
          one invocation bundles the level-2 Venus radar products into one VNRD asset:\n\
          t = the label epoch (TDB), v = the whole-map mean, comp = inc (0) | ocp (1) | scp (2)"
     );
 }
 
+fn upload_vnrd(tag: &str, path: &str, bytes: &[u8]) -> Result<(), String> {
+    let asset = std::path::Path::new(path)
+        .file_name()
+        .and_then(|name| name.to_str())
+        .ok_or_else(|| format!("{path}: name is not utf-8 — the upload stays unraised"))?;
+    if bytes.len() as u64 <= GITHUB_RELEASE_ASSET_MAX_BYTES {
+        if !upload_release(tag, path) {
+            return Err(format!("{tag}/{asset}: the CDN upload returned void"));
+        }
+        return Ok(());
+    }
+    let parent = match std::path::Path::new(path).parent() {
+        Some(dir) if !dir.as_os_str().is_empty() => dir,
+        _ => {
+            return Err(format!(
+                "{path}: carries no directory — the part upload stays unraised"
+            ))
+        }
+    };
+    let total = sha256_hex(bytes);
+    let part_max = CDN_PART_MAX_BYTES as usize;
+    let mut parts: Vec<(String, String, u64)> = Vec::new();
+    for (idx, chunk) in bytes.chunks(part_max).enumerate() {
+        let pname = part_name(asset, idx);
+        let ppath = parent.join(&pname);
+        std::fs::write(&ppath, chunk)
+            .map_err(|e| format!("{}: write void ({e})", ppath.display()))?;
+        let pstr = ppath.to_str().ok_or_else(|| {
+            format!("{}: name is not utf-8 — the part upload stays unraised", ppath.display())
+        })?;
+        if !upload_release(tag, pstr) {
+            return Err(format!("{tag}/{pname}: the CDN part upload returned void"));
+        }
+        parts.push((pname, sha256_hex(chunk), chunk.len() as u64));
+    }
+    let manifest = format_parts_manifest(&total, &parts);
+    let mpath = parent.join(parts_manifest_name(asset));
+    std::fs::write(&mpath, manifest)
+        .map_err(|e| format!("{}: write void ({e})", mpath.display()))?;
+    let mstr = mpath.to_str().ok_or_else(|| {
+        format!("{}: name is not utf-8 — the manifest upload stays unraised", mpath.display())
+    })?;
+    if !upload_release(tag, mstr) {
+        return Err(format!("{tag}/{asset}: the CDN manifest upload returned void"));
+    }
+    eprintln!(
+        "{tag}/{asset}: {} B over the GitHub asset limit — split into {} part(s) + manifest",
+        bytes.len(),
+        parts.len()
+    );
+    Ok(())
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
     if args.iter().any(|a| a == "--help" || a == "-h") {
         usage();
         std::process::exit(2);
@@ -255,6 +313,10 @@ fn main() {
     }
     if std::fs::write(&output, &bin).is_err() {
         eprintln!("venus_radar_compiler: write {output} void");
+        std::process::exit(1);
+    }
+    if ci_mode && let Err(message) = upload_vnrd(NETLOC, &output, &bin) {
+        eprintln!("venus_radar_compiler: {message}");
         std::process::exit(1);
     }
     for &(t, v, comp) in &rows {
