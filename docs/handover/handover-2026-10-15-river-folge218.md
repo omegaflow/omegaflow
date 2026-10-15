@@ -2,7 +2,7 @@
   title: Handover — River-Folge 218
   class: handover
   date: 2026-10-15
-  sha256: 297f89dcefc0389b9d5dd57e945a0c38a1a0ae9416cbc46492a72e017601b79d
+  sha256: d396d66ccb094b997fc3889e8ad442d146c7b6cf26a9bb914fbfc2578f7d0ac9
   status: live
 -->
 # Handover — River-Folge 218 (2026-10-15)
@@ -112,7 +112,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…219) · `
   - **Min** (N3 18113 Onsets · thr 1.2247 nT/min → N31 17748 · thr 0.3162): rec 0.0179/0.0524/0.0872 → 0.0197/0.0576/0.0972 — **flach, leicht steigend**.
   - **Union/max** (N3 18387 · thr 2.0469 → N31 17714 · thr 8.2112): rec 0.0179/0.0522/0.0863 → 0.0198/0.0688/0.1112 — **steigt mit N**, überholt Min bei tol15 (N16 0.0702 vs 0.0555) und tol30 (N24 0.1148 vs 0.1072); bei tol5 liegen beide innerhalb 0.002.
   - **Befund:** der river-217-„Min-Kollaps" (dH, gleiche Ausbeute: rec n3 0.0513→n12 0.0520, Sturz ab n16) reproduziert sich am **A=A-Maß** (per-Minute-|dB/dt|) unter equal-yield **nicht** — Min bleibt flach; Union gewinnt nur am lockeren Toleranzende. Die frühere Drift des Vergleichsfensters ist durch das fixe Fenster 2000–2024 aufgehoben.
-  - **Riss (benannt, ungeglättet):** der adaptive Min-Threshold springt bei **N24 auf 4.8765 nT/min** (N16 0.6481, N31 0.3162) — die Min-Hüllen-Verteilung verschiebt sich sprunghaft mit dem Präfix, obwohl die Onset-Zahl bei ~2/Tag bleibt (`target_yield`); der Arbeitspunkt ist nicht monoton.
+  - **Kalibrier-Notiz (kein Riss — eine Linie, kein Widerspruch zweier):** der adaptive Min-Threshold springt bei **N24 auf 4.8765 nT/min** (N16 0.6481, N31 0.3162). Am Baum gemessen (river-219): `calibrate_threshold` (`gic_onset_detector.rs:285`) gleicht die **Ausbeute** aus (onsets/Tag), **nicht** die Schwelle — die drei Onset-Zahlen 18190/17909/17748 liegen innerhalb 2.5 % um 2/Tag, der Arbeitspunkt ist also gehalten; die Schwelle ist das Mittel, kein Monotonie-Ziel. Die Kandidaten-Suche scannt ~64 Punkte (`step = vals.len()/64`) auf einer stufenweisen Zählfunktion — die gewählte Schwelle kann ohne physikalische Bedeutung wandern. Der Sprung **berührt den Befund nicht** (Rückruf/Präzision sind an den tatsächlichen Onset-Listen bei gleicher Ausbeute gemessen, `prec_ge=0`/`rec_ge=0` überall). Ob die Min-Hüllen-**Dispersion** selbst in N nicht-monoton streut, ist eine getrennte Frage der Platzierungs-Achse (Rat-Design), nicht dieser Messung.
 - **Gebaut (river-219):** der `gic-onset`-Workflow trägt jetzt `window` + `target_yield`-Inputs (der Detektor hatte sie seit river-216 `9ddde1788`; es fehlte nur die Dispatch-Naht) — `4e0602ffc`. **Gestoßen** (kein Polling): der **gleich-Ausbeute-Einzelstation-Arm** `abk_dbdt_1m` (Kanal `phi/sources.φ:2050`, Kadenz 60) gegen denselben 200er-Null, fixes Fenster 2000–2024, `target_yield=2` — Lauf `38738618251`.
 - **Blockade:** keine (CI-Läufe).
 - **Braucht:** (a) den `38738618251`-Lauf auswerten (rec/prec/`prec_ge`/`rec_ge` bei tol 5/15/30) — der **Einzelstation-Maßstab**, der entscheidet, ob die Netzhülle ihn schlägt; (b) das **Stations-Platzierungsmuster** (Teilmengen-Suche über die 154, TE-geführt) und die **Aurora als dynamischer Stationsschalter** sind Rat-Design vor dem Bau (F3: ja als Nowcast, nein als Vorhersage).
@@ -206,7 +206,8 @@ mycelium-folge356 — in river-219 gefaltet) · `open_points_check` = 0 stale-ci
 ausgewertet (per-Minute-|dB/dt|, fixes Fenster 2000–2024, `target_yield=2`, `null=200`): beide
 Hüllen schlagen den Null bei jedem N (`prec_ge=0`/`rec_ge=0`); **Min flach** (rec@30 0.0872→0.0972),
 **Union steigt** (rec@30 0.0863→0.1112, überholt Min bei tol15/30) — der river-217-„Min-Kollaps"
-reproduziert sich am A=A-Maß nicht. Riss: der Min-Threshold springt bei N24. Der `gic-onset`-Workflow
+reproduziert sich am A=A-Maß nicht. Kalibrier-Notiz (kein Riss): der Min-Threshold springt bei N24 —
+`calibrate_threshold` gleicht die Ausbeute aus, nicht die Schwelle, und scannt ~64 Kandidaten. Der `gic-onset`-Workflow
 trägt jetzt `window`/`target_yield`-Inputs (`4e0602ffc`); der gleich-Ausbeute-Einzelstation-Arm
 `abk_dbdt_1m` wurde gestoßen (`38738618251`) — Auswertung ist der nächste begrenzte Schritt.
 **F4′/Schumann (river-219, am Baum geprüft):** der globale stündliche Blitz-Kanal ist **frei**
