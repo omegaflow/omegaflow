@@ -69,3 +69,17 @@ Die angebotene Dichotomie Feld/Schalter ist **geschlagen**. Vorliegt ein **dritt
 M1 → **Mountain** (Register/Parser/Datenkontrakt) · M2 → **Mountain** + **Sensory** (Aurora) · M3 → **Mountain** (+ Querverweis Katalog-F3).
 
 **Alle fünf Axiome gehalten; alle fünf Stimmen gehört; kein Riss geglättet.**
+
+## Nachtrag — Operator-Wort 2026-10-15 (M3)
+
+„Wie bei den maps, die aus messpunkten entstanden sind — wir wollen die **gemessenen
+gitterpunkte**, mit denen die modelle erstellt wurden, also die **rohdaten**." Damit ist der
+M3-Operator-Entscheid gefallen: Träger ist die **Messung**, aus der das Modell entstand — nicht
+der Modell-Output. Für OVATION ist die DMSP-SSJ-Partikelmessung `dmsp16_ssj` (`phi:1670-1671`,
+`em ev/cm²/ster/s`) **schon registriert**; der Mohe-Modell-Extrakt wird **kein Feld** (er wäre
+`model_output`/F3-nah, `pending`). Der Aurora-Oval-Grenzfall (BAS/DMSP) folgt demselben Prinzip:
+der gemessene Gitterpunkt trägt, das Modell ist abgeleitet.
+
+Zur zweiten Frage (neue UI-Runde für die Rat-Architekturentscheidung): **nein** — die 13
+Sitz-Antworten tragen den Stoff (die `field`-Form kann Nicht-Felder nicht tragen); der Rat
+(fünf Stimmen) trägt das Verdikt über die Schema-Erweiterung.
