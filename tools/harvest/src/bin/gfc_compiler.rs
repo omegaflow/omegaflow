@@ -189,6 +189,13 @@ fn compile(
     println!("compiler {COMPILER}");
     println!("sha256 {sha}");
     println!("at earth");
+    println!("gm {}", head.gm_m3_s2);
+    println!("radius {}", head.radius_m);
+    println!("norm {}", head.norm.name());
+    if let Some(tide) = &head.tide_system {
+        println!("tide {tide}");
+    }
+    println!("max_degree {}", cap);
     println!("ttl {}", ttl as u64);
     for c in channels() {
         println!(
