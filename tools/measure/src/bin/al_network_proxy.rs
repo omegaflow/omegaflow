@@ -156,12 +156,32 @@ impl Fusion {
     }
 }
 
-fn fusion_of(args: &[String]) -> Result<Fusion, String> {
+fn fusion_of(args: &[String], quantity: Quantity) -> Result<Fusion, String> {
     match arg_value(args, "--fusion").as_deref() {
-        None | Some("min") => Ok(Fusion::Min),
-        Some("max") => Ok(Fusion::Max),
-        Some(other) => Err(format!("--fusion is neither min nor max: {other}")),
+        Some("min") => Ok(Fusion::Min),
+        Some("max") | Some("union") => Ok(Fusion::Max),
+        None => Ok(match quantity {
+            Quantity::Dh => Fusion::Min,
+            Quantity::DbDt => Fusion::Max,
+        }),
+        Some(other) => Err(format!("--fusion is neither min, max nor union: {other}")),
     }
+}
+
+fn allow_global_min(args: &[String]) -> bool {
+    args.iter().any(|a| a == "--allow-global-min")
+}
+
+fn check_global_min(quantity: Quantity, fusion: Fusion, allow: bool) -> Result<(), String> {
+    if quantity == Quantity::DbDt && fusion == Fusion::Min && !allow {
+        return Err(
+            "the global min over an unsigned |dB/dt| magnitude selects the quietest station — a \
+             veto, not the AL analogue (Rat 2026-10-15, deny global_min); the AL analogue of a \
+             magnitude is max/union. Pass --allow-global-min only to reproduce the veto-net control."
+                .to_string(),
+        );
+    }
+    Ok(())
 }
 
 fn fold_envelope(acc: &mut BTreeMap<i64, (f64, u32)>, series: &[(f64, f64)], fusion: Fusion) {
@@ -296,13 +316,6 @@ fn main() {
         eprintln!("al_network_proxy: manifest carries no station");
         std::process::exit(1);
     }
-    let fusion = match fusion_of(&args) {
-        Ok(f) => f,
-        Err(e) => {
-            eprintln!("al_network_proxy: {e}");
-            std::process::exit(2);
-        }
-    };
     let quantity = match quantity_of(&args) {
         Ok(q) => q,
         Err(e) => {
@@ -310,6 +323,17 @@ fn main() {
             std::process::exit(2);
         }
     };
+    let fusion = match fusion_of(&args, quantity) {
+        Ok(f) => f,
+        Err(e) => {
+            eprintln!("al_network_proxy: {e}");
+            std::process::exit(2);
+        }
+    };
+    if let Err(e) = check_global_min(quantity, fusion, allow_global_min(&args)) {
+        eprintln!("al_network_proxy: {e}");
+        std::process::exit(2);
+    }
     let mut acc: BTreeMap<i64, (f64, u32)> = BTreeMap::new();
     let mut station_count = 0usize;
     for (code, decl, path) in &stations {
@@ -470,13 +494,30 @@ mod tests {
     }
 
     #[test]
-    fn the_fusion_word_reads_min_and_an_unknown_one_is_refused() {
-        assert_eq!(fusion_of(&[]).map(Fusion::word), Ok("min"));
+    fn the_fusion_default_follows_the_quantity_and_an_unknown_one_is_refused() {
+        assert_eq!(fusion_of(&[], Quantity::Dh).map(Fusion::word), Ok("min"));
+        assert_eq!(fusion_of(&[], Quantity::DbDt).map(Fusion::word), Ok("max"));
         assert_eq!(
-            fusion_of(&["--fusion".to_string(), "max".to_string()]).map(Fusion::word),
+            fusion_of(&["--fusion".to_string(), "max".to_string()], Quantity::Dh).map(Fusion::word),
             Ok("max")
         );
-        assert!(fusion_of(&["--fusion".to_string(), "mean".to_string()]).is_err());
+        assert_eq!(
+            fusion_of(
+                &["--fusion".to_string(), "union".to_string()],
+                Quantity::DbDt
+            )
+            .map(Fusion::word),
+            Ok("max")
+        );
+        assert!(fusion_of(&["--fusion".to_string(), "mean".to_string()], Quantity::Dh).is_err());
+    }
+
+    #[test]
+    fn the_global_min_over_a_magnitude_is_denied_until_explicitly_allowed() {
+        assert!(check_global_min(Quantity::DbDt, Fusion::Min, false).is_err());
+        assert!(check_global_min(Quantity::DbDt, Fusion::Min, true).is_ok());
+        assert!(check_global_min(Quantity::Dh, Fusion::Min, false).is_ok());
+        assert!(check_global_min(Quantity::DbDt, Fusion::Max, false).is_ok());
     }
 
     #[test]
