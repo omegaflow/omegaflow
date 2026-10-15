@@ -89,3 +89,95 @@ Unsere Methode ist eine andere: **Transfer-Entropie mit Surrogat-Null**. Genau d
 
 Keine Spekulation (kein „vermutlich/wahrscheinlich/scheinbar"). Jeden Riss benennen, keinen
 glätten. Wo eine Doktrin geschlagen ist, sag es. Prosa, klar, knapp.
+
+---
+
+## Roster — Sitze (ein Antwort-Platzhalter je Modell)
+
+Der Roster ist variabel; je Runde wird das gefahrene Modell am Sitz gemessen und hier eingetragen
+(Platzhalter → gemessener Wert). Die langsamen Reasoning-/Research-Sitze zuerst stellen, das
+langsamste zuletzt abholen. Ein Sitz, der nicht antwortet, wird als `pending` mit genanntem Grund
+verbucht — nie als stille Null.
+
+### 01 · Duck.ai
+- **Site:** `https://duck.ai/`
+- **Modell/Einstellung:** _<Platzhalter>_
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### 02 · Claude
+- **Site:** `https://claude.ai/new`
+- **Modell/Einstellung:** _<Platzhalter>_
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### 03 · Qwen
+- **Site:** `https://chat.qwen.ai/`
+- **Modell/Einstellung:** _<Platzhalter>_
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### 04 · Z.ai / GLM
+- **Site:** `https://chat.z.ai/`
+- **Modell/Einstellung:** _<Platzhalter>_ (Deep Think Max für Reasoning-Runden)
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### 05 · DeepSeek
+- **Site:** `https://chat.deepseek.com/`
+- **Modell/Einstellung:** _<Platzhalter>_
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### 06 · Mistral
+- **Site:** `https://chat.mistral.ai/`
+- **Modell/Einstellung:** _<Platzhalter>_
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### 07 · Gemini AI Studio
+- **Site:** `https://aistudio.google.com/app/prompts/new_chat`
+- **Modell/Einstellung:** _<Platzhalter>_
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### 08 · MiniMax
+- **Site:** `https://agent.minimax.io/`
+- **Modell/Einstellung:** _<Platzhalter>_
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### 09 · Kimi
+- **Site:** `https://www.kimi.ai/`
+- **Modell/Einstellung:** _<Platzhalter>_
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### 10 · Lumo (Proton)
+- **Site:** `https://lumo.proton.me/`
+- **Modell/Einstellung:** _<Platzhalter>_
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### 11 · Perplexity (Deep Research)
+- **Site:** `https://www.perplexity.ai/`
+- **Modell/Einstellung:** _<Platzhalter>_
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### 12 · Sakana Namazu
+- **Site:** `https://chat.sakana.ai/`
+- **Modell/Einstellung:** _<Platzhalter>_
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### 13 · Sakana Fugu
+- **Site:** `https://chat.sakana.ai/`
+- **Modell/Einstellung:** _<Platzhalter>_
+- **Zeit:** _<Platzhalter>_
+- **Antwort:**
+
+### Geteilte Open-Weight-Seats (`tryingopen.com` · Gruppe `open-weight-ui`, Zugang nur über das Lock)
+- **Modelle der Runde:** _<Platzhalter>_ (ein Tab je Modell, kein Modellwechsel im Chat)
+- **Zeit:** _<Platzhalter>_
+- **Antwort (je Modell):**
