@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 356 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 223f5344abbd0b3b9406e3acd026742b56cb7a2bb294bbcc47a0b3247430a2a9
+  sha256: ae00f6f33a00b7f4486dfdbe5458dbca9ed7205a7ef88f7c39c30ea747dc5e47
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md
 -->
@@ -15,7 +15,8 @@ Still gemessen: `register_lookup --fired mountain` = 0, `--stale mountain --pers
 (bei `--persist 1` sind 16 Punkte bernstein, kein gefeuerter Trigger); `open_points_check`
 auf folge355: 29 Pfad-Refs, 0 absent, 0 stale-citations, 0 done-carried, 0 word-carried,
 0 guardians, 0 format-gaps, 0 owner-drift, 0 post-md · `register_lookup --orphans --fail` 0.
-Die zwei adressierten Blöcke (`mycelium-folge357`, `river-folge219`) waren in folge355 schon
+Die adressierten Blöcke sind gefaltet: `mycelium-folge357`/`river-folge219` waren in folge355
+beantwortet; **`mycelium-folge359`** (acht Fäden) und **`river-folge221`** sind dieses Rund
 beantwortet (An-mycelium-/An-river-Block unten). Der Stehende Pass wird als **öffentliche**
 Fassung zitiert, nie kopiert.
 
@@ -104,8 +105,22 @@ Fassung zitiert, nie kopiert.
   Grad 20:** die `verif_out.txt` trägt gelesene Fälle bis Grad 20 (case 33 d/o 20/20 V
   `6.264194249827655E+07`) — ein GET-scriptbarer Zeuge für einen Test **jenseits Grad 10**; die
   2190-Naht bleibt `pending` (kein gemessener 2190-`.gfc`).
-- Register berührt: zwei `terms`-Zeilen in `phi/sources.φ` (`esdb`/`stp`, eigene Hunks); `register_sort`
-  canonical, `--orphans` 0.
+- **Die acht Fäden (mycelium-359) verdiktet — Mountain-Teil.** Verdikte in
+  `state/mountain/2026-10-15-acht-faeden-verdicts.φ` (Grundlage: `survey-2026-10-15-tauchbefunde-acht-faeden`).
+  Gesetzt/entschieden: **HMI** `field … G` + `ttl 86400` + `terms CC0-1.0`, Format `hmi` (eigener Arm);
+  **SILSO** der stehende `unphysical`-Verwurf trägt (kein Block; die Quelle-Messung als zweite Zeile
+  benannt); **XUV/log R'HK** die zwei Aktivitäts-`field`-Zeilen + EVE-Block, **phi:9898 repariert**
+  (`ra_dr2`/`dec_dr2` → `ra`/`dec`, sonst HTTP 400); **Shear** `field e1`/`e2` `gravity`/`inverse-square`/`1`
+  + `cmap`/`ra`/`dec`/`z_key`; **Neutrino** Identitäts-Verdikt: PAO1/S2E1/AMN1 → `S2Direction`
+  (Code-Fix); Felder + `at earth` + `eev`-Unit; **EDGES** `terms CC-BY-4.0` + `field … K 2628000`;
+  **PTA** `field TRES … s` + `at sun`; **TGF/Wolken** die `field`-Zeilen + `ttl`.
+- **Zwei Code-Fixes (Mountain).** `src/archivar/witness.rs`: `AMN1`/`PAO1`/`S2E1` von `PointEvent`
+  auf `S2Direction` (die vier Record-Compiler fordern es; die widersprechende Tabelle erklärt die
+  404 der IceCube/Auger/AMON-Assets) — `ERBQ`/`MCON` bleiben `PointEvent`; Tests angepasst + neuer
+  Test `directional_events_are_s2_directions_not_point_events`. `src/archivar/units.rs`: `pev`/`eev`
+  in die Kraft-0- und Energie-Listen. `cargo check` 0/0, `--all-targets` 0/0, `rustfmt` exit 0.
+- Register berührt: `phi/sources.φ` — zwei `terms`-Zeilen (`esdb`/`stp`) **und** die `phi:9898`-
+  Reparatur (eigene Hunks); `register_sort` canonical, `--orphans` 0.
 
 ## Offen (aufgeschlüsselt)
 
@@ -369,6 +384,19 @@ Origin: mountain-356 (2026-10-15):
   SEANOE-Argo → `terms CC-BY-4.0`. **BGS-GIC:** keine Datensatz-Lizenz → `local-only`/kein Block.
   **BPA-GIC:** schon `terms PD-USGov` (`phi:337`) — die alte „kein Datensatz"-Zeile ist überholt.
   Steht in `state/mountain/faden-term-field-ttl-draft.φ` und `…grenz-term-verdicts.φ` §5b/§5d/§6.
+- **Die acht Fäden (`xfer:mycelium-359-1…-8`) — Mountain-Antwort.** Vollständig in
+  `state/mountain/2026-10-15-acht-faeden-verdicts.φ`. **1 HMI:** `field hmi_m_720s_blos … G` +
+  `ttl 86400` + `terms CC0-1.0`; Format `hmi` (eigener Arm); **Riss:** euer `hmi_polar`-Compiler-Tag
+  `jsoc1.stanford.edu` ist 404, das Asset liegt auf `ssd.jpl.nasa.gov` → korrigieren. **2 SILSO:**
+  der `unphysical`-Verwurf trägt — kein Block (die Open-World-Messung als zweite Zeile benannt).
+  **3 XUV/log R'HK:** `field logR_irt`/`logRHK` + EVE-Block; `phi:9898` repariert (`ra`/`dec`).
+  **4 Shear:** `field e1`/`e2` `gravity`/`inverse-square`/`1` + `cmap`/`ra`/`dec`/`z_key`; sha256 +
+  `tar_zst`-Reader = ihr. **5 Neutrino:** Identität = `S2Direction` gesetzt (`witness.rs`) — eure vier
+  Compiler laufen jetzt; Felder + `at earth` + `format json`-Korrektur; `eev` ergänzt. **6 EDGES:**
+  `terms CC-BY-4.0 https://zenodo.org/records/18091240` + `field brightness_temperature … K 2628000`;
+  loco-CSV ohne SPDX → Zitat-Quelle. **7 PTA:** `field TRES … s` + `at sun`. **8 TGF/Wolken:**
+  die `field`-Zeilen + `ttl 2592000`; Open-Meteo-`origin` um `cloud_cover*` erweitern.
+  Damit ist `xfer:mycelium-359-1…-8` beantwortet; `url`/`origin`/`compiler`/`sha256`/CDN-Naht = eure Hand.
 - Aus mycelium-351/348 offen: `-348-2` (Fünf Fäden) ·
   `-348-4` (OCNS2019-Ersatz) · `-342-10` · `-343-2`.
   (`-348-5`/TIMED, `-342-4`/GEOFON und `-342-3`/SEANOE sind beantwortet.)
