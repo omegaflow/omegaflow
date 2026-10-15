@@ -2,7 +2,7 @@
   title: Die Fünf — Archäologie (2026-10-15)
   class: survey
   date: 2026-10-15
-  sha256: 425fe8996f10c95812458c5cd0760e883554030cf95989757d595668368e0fa0
+  sha256: c473ced94100ddb5aa762f12804dea5577c7d436ad059d8986be1110698b68b6
   status: live
   see-also: docs/concepts/die-vier-schilde.md, docs/granit.md, docs/concepts/glossar.md, AGENTS.md
 -->
@@ -20,13 +20,13 @@ Gemessen am Baum (git + `sgrep`/`sread`), jede Aussage mit Datei:Zeile oder Comm
 | **die fünf Achsen** (Homonym) | die **Mess**-Achsen (bins/null_lag/τ) im TE-Atom | `docs/handover/archiv/handover-2026-09-09-te-atom4-betriebspunkt-sweep.md:12` |
 | **die fünf Axiome** (Granit) | A=A · ICRS&TDB · `channel_ref` · 0 honored · pending | `docs/granit.md:16-20` |
 | **die fünf Axiome** (AGENTS-Kopf) | **die Ethik** — die Drift | `AGENTS.md:30`, gesetzt `78c5104cb` (2026-10-14) |
-| **die fünf Achsen** (Operator-Wort) | **Wissenschaft · Kunst · Ethik · Commons · Erbe** | **nur im Operator-Wort; im Baum `absent`** (`sgrep -i "Kunst"`/`"Commons"`/`"Erbe"`/`"Wissenschaft"` = 0) |
+| **die fünf Achsen** (Operator-Wort) | **Wissenschaft · Kunst · Ethik · Commons · Erbe** | im **öffentlichen** Baum `absent` (`sgrep -i "Kunst"`/`"Commons"`/`"Erbe"`/`"Wissenschaft"` = 0) — **getragen im privaten Repo** (Operator-Wort 2026-10-15) |
 
 ## 2 — Operator-Wort-Register
 
 | Wort | Datum | Quelle |
 |---|---|---|
-| „Es gibt noch die **fünf Achsen: Wissenschaft, Kunst, Ethik, Commons, Erbe**." | 2026-10-15 | dieses Gespräch — im Baum **absent**, registriert als `pending` (eine Register-Pflicht) |
+| „Es gibt noch die **fünf Achsen: Wissenschaft, Kunst, Ethik, Commons, Erbe**." | 2026-10-15 | dieses Gespräch — im **öffentlichen** Baum `absent`, **getragen im privaten Repo** (Operator-Wort); der öffentliche Baum registriert es als `pending` (eine Register-Pflicht) |
 
 ## 3 — Die Widersprüche (nicht geglättet)
 1. **„die fünf Axiome" doppelt** — Granit (`granit.md:16`) ↔ der AGENTS-Kopf (`AGENTS.md:30`) über einem Ethik-Text, der weder Granit noch gezählt fünf ist.
