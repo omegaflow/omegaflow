@@ -283,11 +283,13 @@ fn main() {
     let Some(min_stations) =
         arg_value(&args, "--min-stations").and_then(|v| v.parse::<usize>().ok())
     else {
-        eprintln!("al_network_proxy needs --min-stations <n> (an envelope over 1 station is none)");
+        eprintln!("al_network_proxy needs --min-stations <n> (1 = a single station's own series)");
         std::process::exit(2);
     };
-    if min_stations < 2 {
-        eprintln!("--min-stations must be at least 2");
+    if min_stations < 1 {
+        eprintln!(
+            "--min-stations must be at least 1 (a 1-station envelope is that station's own series)"
+        );
         std::process::exit(2);
     }
     if stations.is_empty() {
