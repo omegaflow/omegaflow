@@ -343,38 +343,7 @@ impl GfcModel {
 
     pub fn from_wire(head: GfcHead, bytes: &[u8]) -> Option<GfcModel> {
         let records = parse_records(bytes)?;
-        let mut coeffs: Vec<GfcCoeff> = Vec::new();
-        let mut pending: std::collections::HashMap<(u32, u32), GfcCoeff> =
-            std::collections::HashMap::new();
-        for r in records {
-            let comp = r[SLOT_CHANNEL];
-            let n = r[SLOT_FREQ];
-            let m = r[SLOT_BIN_WIDTH];
-            if !comp.is_finite() || !n.is_finite() || !m.is_finite() {
-                continue;
-            }
-            if comp < 1.0 || comp > 4.0 || n < 0.0 || m < 0.0 || m > n {
-                continue;
-            }
-            let (n, m) = (n as u32, m as u32);
-            if (comp as u32) <= 2 {
-                let e = pending.entry((n, m)).or_insert(GfcCoeff {
-                    n,
-                    m,
-                    c: 0.0,
-                    s: 0.0,
-                });
-                if !r[SLOT_VAL].is_finite() {
-                    continue;
-                }
-                if comp < 1.5 {
-                    e.c = r[SLOT_VAL];
-                } else {
-                    e.s = r[SLOT_VAL];
-                }
-            }
-        }
-        coeffs.extend(pending.into_values());
+        let coeffs = coeffs_from_records(&records);
         GfcModel::from_coeffs(head, &coeffs)
     }
 
@@ -423,6 +392,71 @@ impl GfcModel {
             anomaly: gm / (radius_m * radius_m) * sums.weighted,
         })
     }
+}
+
+pub fn coeffs_from_records(records: &[[f64; 26]]) -> Vec<GfcCoeff> {
+    let mut pending: std::collections::HashMap<(u32, u32), GfcCoeff> =
+        std::collections::HashMap::new();
+    for r in records {
+        let comp = r[SLOT_CHANNEL];
+        let n = r[SLOT_FREQ];
+        let m = r[SLOT_BIN_WIDTH];
+        if !comp.is_finite() || !n.is_finite() || !m.is_finite() {
+            continue;
+        }
+        if comp < 1.0 || comp > 4.0 || n < 0.0 || m < 0.0 || m > n {
+            continue;
+        }
+        let (n, m) = (n as u32, m as u32);
+        if (comp as u32) <= 2 {
+            let e = pending.entry((n, m)).or_insert(GfcCoeff {
+                n,
+                m,
+                c: 0.0,
+                s: 0.0,
+            });
+            if !r[SLOT_VAL].is_finite() {
+                continue;
+            }
+            if comp < 1.5 {
+                e.c = r[SLOT_VAL];
+            } else {
+                e.s = r[SLOT_VAL];
+            }
+        }
+    }
+    pending.into_values().collect()
+}
+
+pub const GFC_DELIVERY_GATE: &str = "a gfc frame is admitted only when the source line carries the measured model head (gm/radius/norm/max_degree) and every coefficient rides inside max_degree; a frame without the head, a coefficient beyond the degree, an unread frame or a coefficientless frame is refused; the norm is constrained to fully_normalized/unnormalized at parse time (an unknown token leaves the head absent, so it too is refused)";
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum DeliveryRefusal {
+    FrameUnread,
+    NoCoefficients,
+    HeadAbsent,
+    DegreeBeyondHead { n: u32, max_degree: u32 },
+}
+
+pub fn gate_delivery(
+    head: Option<&crate::archivar::ModelHead>,
+    bytes: &[u8],
+) -> Result<Vec<GfcCoeff>, DeliveryRefusal> {
+    let head = head.ok_or(DeliveryRefusal::HeadAbsent)?;
+    let records = parse_records(bytes).ok_or(DeliveryRefusal::FrameUnread)?;
+    let coeffs = coeffs_from_records(&records);
+    if coeffs.is_empty() {
+        return Err(DeliveryRefusal::NoCoefficients);
+    }
+    for k in &coeffs {
+        if k.n > head.max_degree {
+            return Err(DeliveryRefusal::DegreeBeyondHead {
+                n: k.n,
+                max_degree: head.max_degree,
+            });
+        }
+    }
+    Ok(coeffs)
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -712,5 +746,76 @@ gfc      2     2    2.439370331756250E-06   -1.400307649958125E-06    8.11752994
         let model = GfcModel::from_wire(head, &bytes).expect("the wire model parses");
         let sums = model.harmonic_sums(90.0, 0.0, model.head.radius_m).unwrap();
         assert!(sums.sigma.is_finite());
+    }
+
+    fn measured_model_head(max_degree: u32) -> crate::archivar::ModelHead {
+        crate::archivar::ModelHead {
+            gm_m3_s2: 3.986004415E14,
+            radius_m: 6378136.3,
+            norm: Norm::FullyNormalized,
+            tide_system: Some("zero_tide".to_string()),
+            max_degree,
+        }
+    }
+
+    #[test]
+    fn the_delivery_gate_refuses_a_frame_without_a_head() {
+        let bytes = write_bin(&[record(0.0, 1.0, 1.0, 0.0, 0.0)]).expect("frames");
+        assert_eq!(
+            gate_delivery(None, &bytes),
+            Err(DeliveryRefusal::HeadAbsent)
+        );
+    }
+
+    #[test]
+    fn the_delivery_gate_admits_a_frame_within_the_head() {
+        let bytes = write_bin(&[
+            record(0.0, 1.0, 1.0, 0.0, 0.0),
+            record(0.0, -4.841694947475625E-04, 1.0, 2.0, 0.0),
+        ])
+        .expect("frames");
+        let head = measured_model_head(2);
+        let coeffs = gate_delivery(Some(&head), &bytes).expect("the frame is within the head");
+        assert!(coeffs.iter().any(|k| k.n == 2 && k.m == 0));
+    }
+
+    #[test]
+    fn the_delivery_gate_refuses_a_coefficient_beyond_the_head() {
+        let bytes =
+            write_bin(&[record(0.0, -4.841694947475625E-04, 1.0, 3.0, 0.0)]).expect("frames");
+        let head = measured_model_head(2);
+        assert_eq!(
+            gate_delivery(Some(&head), &bytes),
+            Err(DeliveryRefusal::DegreeBeyondHead {
+                n: 3,
+                max_degree: 2
+            })
+        );
+    }
+
+    #[test]
+    fn the_delivery_gate_refuses_an_unread_frame_and_an_empty_one() {
+        let head = measured_model_head(2);
+        assert_eq!(
+            gate_delivery(Some(&head), b"XXXX"),
+            Err(DeliveryRefusal::FrameUnread)
+        );
+        let mut empty = Vec::new();
+        empty.extend_from_slice(&MAGIC);
+        empty.extend_from_slice(&0.0f64.to_le_bytes());
+        empty.extend_from_slice(&0u32.to_le_bytes());
+        empty.extend_from_slice(&0u32.to_le_bytes());
+        assert_eq!(empty.len(), FRAME_HEADER);
+        assert_eq!(
+            gate_delivery(Some(&head), &empty),
+            Err(DeliveryRefusal::NoCoefficients)
+        );
+    }
+
+    #[test]
+    fn only_the_two_documented_norms_are_known() {
+        assert_eq!(Norm::parse("fully_normalized"), Some(Norm::FullyNormalized));
+        assert_eq!(Norm::parse("unnormalized"), Some(Norm::Unnormalized));
+        assert_eq!(Norm::parse("schmidt_semi_normalized"), None);
     }
 }
