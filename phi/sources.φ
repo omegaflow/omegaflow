@@ -9895,7 +9895,7 @@ alt PRES decibar
 field TEMP argo_dac_temp_c erfc thermal C 604800 0.0 0.0
 field PSAL argo_dac_salinity_psu erfc diffusion psu 604800 0.0 0.0
 
-url https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra_dr2,dec_dr2,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
+url https://datacentral.org.au:443/vo/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,teff,rv_galah,parallax+FROM+galah_dr3.main_star+WHERE+parallax+IS+NOT+NULL
 terms datacentral-acknowledgement https://datacentral.org.au/
 format tap
 ttl 604800

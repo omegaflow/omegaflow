@@ -17,10 +17,10 @@ pub enum FieldIdentity {
 
 pub fn magic_identity(magic: [u8; 4]) -> Option<FieldIdentity> {
     match &magic {
-        b"AMN1" | b"PAO1" | b"S2E1" | b"ERBQ" | b"MCON" => {
-            Some(FieldIdentity::Witness(WitnessKind::PointEvent))
+        b"ERBQ" | b"MCON" => Some(FieldIdentity::Witness(WitnessKind::PointEvent)),
+        b"SKY1" | b"SKD1" | b"VLDE" | b"AMN1" | b"PAO1" | b"S2E1" => {
+            Some(FieldIdentity::Witness(WitnessKind::S2Direction))
         }
-        b"SKY1" | b"SKD1" | b"VLDE" => Some(FieldIdentity::Witness(WitnessKind::S2Direction)),
         b"GBCO" | b"GL30" | b"GL90" | b"SLB2" | b"OCS1" | b"ERI1" | b"GMR1" | b"G3D1" | b"SRTM"
         | b"BDOM" | b"EMOD" => Some(FieldIdentity::Witness(WitnessKind::Gestalt)),
         b"ISCB" | b"EHB1" => Some(FieldIdentity::Witness(WitnessKind::Presence)),
@@ -323,9 +323,21 @@ mod tests {
     #[test]
     fn gate_holds_a_scalar_witness() {
         assert_eq!(
-            witness_gate(Some(*b"AMN1"), Some(WitnessKind::PointEvent), true),
+            witness_gate(Some(*b"MCON"), Some(WitnessKind::PointEvent), true),
             WitnessVerdict::Holds(WitnessKind::PointEvent)
         );
+    }
+
+    #[test]
+    fn directional_events_are_s2_directions_not_point_events() {
+        for magic in [*b"AMN1", *b"PAO1", *b"S2E1"] {
+            assert_eq!(
+                magic_identity(magic),
+                Some(FieldIdentity::Witness(WitnessKind::S2Direction)),
+                "{:?} carries a direction",
+                std::str::from_utf8(&magic)
+            );
+        }
     }
 
     #[test]
@@ -339,7 +351,7 @@ mod tests {
     #[test]
     fn gate_refuses_a_bare_coordinate() {
         assert_eq!(
-            witness_gate(Some(*b"AMN1"), Some(WitnessKind::PointEvent), false),
+            witness_gate(Some(*b"MCON"), Some(WitnessKind::PointEvent), false),
             WitnessVerdict::BareCoordinate
         );
     }

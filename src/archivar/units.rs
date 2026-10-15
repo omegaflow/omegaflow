@@ -385,6 +385,8 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "ev",
             "gev",
             "mev",
+            "pev",
+            "eev",
             "gv",
             "jy",
             "mjy",
@@ -522,7 +524,7 @@ pub fn allowed_units_for_quantity(kind: u8) -> &'static [&'static str] {
         0 => &[
             "g_mass", "kg", "t", "m_sun", "m_earth", "m_jup", "gt", "kt_mass",
         ],
-        1 => &["j", "erg", "ev", "gev", "kwh", "e10j", "e22j"],
+        1 => &["j", "erg", "ev", "gev", "pev", "eev", "kwh", "e10j", "e22j"],
         2 => &["millionths", "m2"],
         3 => &["dbz", "n-units", "nmgy", "db", "ppm"],
         4 => &["uj/sr", "w/m2/sr", "jy/sr", "nw/cm2/sr"],
