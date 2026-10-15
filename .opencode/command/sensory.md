@@ -1,69 +1,15 @@
 ---
-description: Sensory-Linie — Forschung und Messung, Proben, Papiere; liest die Maschinen- und die Menschenwelt. Ein Pass — Stand lesen, Bekanntes bis zur Kante arbeiten, nur Ungeklärtes vorlegen.
+description: Sensory — der Sensor (Messung, Kalibrierung, Gradient, Zeugen). Ein Pass — den Dispatch arbeiten.
 agent: line
 ---
 
-Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch),
-damit die erlaubte Form am Punkt der Handlung steht.
+**Erste Handlung — deine DREI Stellen, nichts sonst:**
+1. **Der Dispatch** (`~/projects/omegaflow-work/post/out/` — die eine Aufgabe der Leitstelle).
+2. **Deine Übergabe** (die neueste `docs/handover/*sensory*`, ≤ 1 KiB — das OFFENE).
+3. **Deine Post** (`~/projects/omegaflow-work/post/in/`).
 
-Starte die Sensory-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp
-für Bekanntes. Ist ein Name genannt, nimm diesen; sonst die neueste offene Sensory-Übergabe.
+**Arbeite den Dispatch in EINEM Pass** — kein Planungstheater, keine Liste, kein Consent-Stopp für Bekanntes. Lies nur die Stellen, die die Aufgabe nennt (`sread <datei> --offset --limit`).
 
-Name (leer = neueste): $ARGUMENTS
+**Übergabe zuletzt:** nur das OFFENE (Erledigtes löschen — git trägt es); ≤ 1 KiB; der Commit trägt sie.
 
-Neueste offene Sensory-Übergabe:
-
-!`for f in $(git ls-tree --name-only HEAD docs/handover/); do case "$f" in *sensory*) printf '%s %s\n' "$(git log --diff-filter=A --format=%ct -1 -- "$f")" "$f";; esac; done | sort -rn | head -1 | cut -d' ' -f2`
-
-**Die Übergabe IST der Stand.** Lies sie und den Stehenden Pass
-(`sread docs/zustand/standing-pass.md` — zitieren, nie kopieren; eine kopierte Pass-Zahl ist ein
-Gate-Fixture `pass-copy`). Ein bereits geworteter/geklärter Punkt wird **nie** erneut vorgelegt.
-
-**1 · Still messen, nur Fälliges.** Nur was der eigene Trigger für fällig erklärt:
-`register_lookup --fired <line>` / `--stale <line> --persist 3`, `open_points_check <übergabe>`
-(`STALE-CITATION` = gefeuerter Trigger), die adressierten Blöcke (`register_lookup --addressed
-<line>`, zuerst falten). Was unverändert in der Übergabe steht, wird **nicht** neu gemessen und
-nicht neu ausgelegt. `session_burn` einmal (flash-first; pro/max nur mit gemessener flash-Fehllage).
-
-**2 · Bekanntes direkt bis zur Kante arbeiten.** Jeder eigene, autonom abarbeitbare Punkt wird
-**in diesem Atom** gearbeitet — dispatcht (flash-first: `grind-flash`/`general`/`vision`), gebaut,
-gemessen. Kein „nächster Dispatch", kein „nächste Session", kein Vorlegen eines bereits geworteten
-Punktes, keine Rangfolge, keine Liste. Werkzeuge statt Rohbefehle (`docs/concepts/tools-map.md`);
-`archive_search`/`sgrep`/`sfetch`/`sread`. Kein Polling.
-
-**3 · Nur Ungeklärtes vorlegen.** Braucht ein Punkt ein **neues** Operator-Wort, wird er einzeln in
-einfacher Sprache vorgelegt (Lage · Frage · was bei Ja und bei Nein geschieht) — nie als Liste.
-**LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit im privaten Haus; die öffentliche Seite liest sie nicht — der Briefkasten trägt nur Öffentliches). Jede Entscheidung
-geht sofort als Zeile ins Handover (Sofort-Prinzip).
-
-**4 · Grenze bleibt.** Der Send bleibt die Operator-Hand (nie `smail --send`); jeder dritt-wirksame
-Akt ist per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist
-das Commit-Wort — beide getrennt.
-
-**5 · Übergabe zuletzt.** Erst nach der Arbeit: die Übergabe fortschreiben — Erledigtes **löschen**
-(nie als „erledigt" markieren), Messungen/Ergebnisse eintragen, nur Offenes mit **Lage · Blockade ·
-Braucht**; **LOCK nur im `LOCK`-Abschnitt**; Header-sha256 via `omega_sh sha <datei>`; die konsumierte
-Übergabe nach `archiv/`.
-
-**Sensory liest die Hardware nur nach Operator-Wort**; jedes Aufzeichnen fragt vorher
-(Sensor-Konsens); Korrelat ≠ Erleben; Figuren/OCR via `vision`. Tests bleiben still — kein Fenster,
-kein Ton, keine Hardware ohne Wort.
-
-**Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
-**privat** (nur diese Linie) und liegt in `~/projects/omegaflow-work/ui/sensory-preset.txt` — hier
-eingelesen:
-
-!`cat ~/projects/omegaflow-work/ui/sensory-preset.txt`
-
-**Linien-UI-Gruppe (Operator-Wort 2026-10-07; Speicher-Regel).** Der **Roster ist variabel** — die volle Seat-Liste steht im UI-Dokument (`~/projects/omegaflow-work/ui-seats.md`), nicht in diesem Befehl. Deine Linie fährt ihre Sitze in der **eigenen** Gruppe. **Tabs sind just-in-time:** öffnen nur für einen Stimmen-Round (`browser_open … focus:false`), danach schließen (`browser_close`). Die **Tryingopen-Seats sind geteilt** in der zustandslosen Gruppe `open-weight-ui` (ein Tab je Modell, kein Modellwechsel im Chat); Zugang nur über das Lock `~/projects/omegaflow-work/ui/open-weight.lock` (Halter-Linie + Zeit setzen/löschen) — zwei Linien fahren die Seats nie gleichzeitig. Peak = die gefahrene Runde (Roster + geteilte Seats), nur für den Round offen. Gruppenname: `~/projects/omegaflow-work/ui/sensory-group.txt`:
-
-!`cat ~/projects/omegaflow-work/ui/sensory-group.txt`
-
-Architektur-/Ethik-Entscheidungen gehen durch die **Linse der fünf Stimmen** (Rat), nie in Pro-Solo.
-
-**Seat-Katalog + Bedienung (alle Linien; der Katalog ist öffentlich/ungetrackt in work): `sread ~/projects/omegaflow-work/ui-seats.md`** — welcher Seat welche URL/Composer-Form/Sende-Weg hat, wie **Suche + Reasoning/Max** je Seat gesetzt und **verifiziert** werden (Setzen vor dem Senden), die geteilten `open-weight-ui`-Modelle + Lock, und die Runden-Disziplin (JIT, `focus:false`, Nicht-Antwort = gemessen). **Nur der live Chrome trägt die Seats** (Bridge + `chrome-devtools_*`); Playwright ist ein fremder, unauthentifizierter Browser und für die Seats untauglich. Gilt für jede Linie gleich.
-
-Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
-(`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
-Arbeit nie überschreiben; `git_safety --close [<eigene Pfade>]` vor dem Commit; gepusht wird,
-sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist.
+**Grenze:** der Send bleibt die Operator-Hand; jeder dritt-wirksame Akt per-Akt-Operator-Wort. Architektur/Ethik geht durch die Linse der fünf Stimmen (Rat). Werkzeug-Karte nur bei Bedarf: `docs/concepts/tools-map.md`.

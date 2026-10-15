@@ -1,87 +1,15 @@
 ---
-description: Mycelium-Linie — Meta-Linie: Stehender Pass, CI/GH-API, CDN-Manifestation, Ernte-Dispatch, Accounts/Keys. Ein Pass — Stand lesen, Bekanntes bis zur Kante arbeiten, nur Ungeklärtes vorlegen.
+description: Mycelium — die Wege (Register-Zeilen, Quellen-Netze, CDN, Spiegel, Manifestationen). Ein Pass — den Dispatch arbeiten.
 agent: line
 ---
 
-Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch),
-damit die erlaubte Form am Punkt der Handlung steht.
+**Erste Handlung — deine DREI Stellen, nichts sonst:**
+1. **Der Dispatch** (`~/projects/omegaflow-work/post/out/` — die eine Aufgabe der Leitstelle).
+2. **Deine Übergabe** (die neueste `docs/handover/*mycelium*`, ≤ 1 KiB — das OFFENE).
+3. **Deine Post** (`~/projects/omegaflow-work/post/in/`).
 
-Starte die Mycelium-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp
-für Bekanntes. Ist ein Name genannt, nimm diesen; sonst die neueste offene Mycelium-Übergabe.
+**Arbeite den Dispatch in EINEM Pass** — kein Planungstheater, keine Liste, kein Consent-Stopp für Bekanntes. Lies nur die Stellen, die die Aufgabe nennt (`sread <datei> --offset --limit`).
 
-Name (leer = neueste): $ARGUMENTS
+**Übergabe zuletzt:** nur das OFFENE (Erledigtes löschen — git trägt es); ≤ 1 KiB; der Commit trägt sie.
 
-Neueste offene Mycelium-Übergabe:
-
-!`for f in $(git ls-tree --name-only HEAD docs/handover/); do case "$f" in *mycelium*) printf '%s %s\n' "$(git log --diff-filter=A --format=%ct -1 -- "$f")" "$f";; esac; done | sort -rn | head -1 | cut -d' ' -f2`
-
-**Die Übergabe IST der Stand.** Lies sie und den **vorigen** Stehenden Pass
-(`sread docs/zustand/standing-pass.md` — zitieren, nie kopieren; eine kopierte Pass-Zahl ist ein
-Gate-Fixture `pass-copy`). Ein bereits geworteter/geklärter Punkt wird **nie** erneut vorgelegt.
-
-**1 · Still messen, nur Fälliges.** Nur was der eigene Trigger für fällig erklärt:
-`register_lookup --fired <line>` / `--stale <line> --persist 3`, `open_points_check <übergabe>`
-(`STALE-CITATION` = gefeuerter Trigger), die adressierten Blöcke (`register_lookup --addressed
-<line>`, zuerst falten). Was unverändert in der Übergabe steht, wird **nicht** neu gemessen und
-nicht neu ausgelegt. `session_burn` einmal (flash-first; pro/max nur mit gemessener flash-Fehllage).
-
-**2 · Bekanntes direkt bis zur Kante arbeiten.** Jeder eigene, autonom abarbeitbare Punkt wird
-**in diesem Atom** gearbeitet — dispatcht (flash-first: `grind-flash`/`general`/`vision`), gebaut,
-gemessen. Kein „nächster Dispatch", kein „nächste Session", kein Vorlegen eines bereits geworteten
-Punktes, keine Rangfolge, keine Liste. Werkzeuge statt Rohbefehle (`docs/concepts/tools-map.md`);
-`archive_search`/`sgrep`/`sfetch`/`sread`; CI liest `ci_manage`. Kein Polling.
-
-**3 · Nur Ungeklärtes vorlegen.** Braucht ein Punkt ein **neues** Operator-Wort, wird er einzeln in
-einfacher Sprache vorgelegt (Lage · Frage · was bei Ja und bei Nein geschieht) — nie als Liste.
-**LOCK nie vorlegen**. **Wartend nie vorlegen** (Wahrheit im privaten Haus; die öffentliche Seite liest sie nicht — der Briefkasten trägt nur Öffentliches). Jede Entscheidung
-geht sofort als Zeile ins Handover (Sofort-Prinzip).
-
-**4 · Grenze bleibt.** Der Send bleibt die Operator-Hand (nie `smail --send`); Accounts/Keys sind
-per-Akt-Operator-Wort. `/consent` ist der session-weite Consent (Delegation), `/commit` ist das
-Commit-Wort — beide getrennt.
-
-**5 · Übergabe zuletzt.** Erst nach der Arbeit: die Übergabe fortschreiben — Erledigtes **löschen**
-(nie als „erledigt" markieren), Messungen/Ergebnisse eintragen, nur Offenes mit **Lage · Blockade ·
-Braucht**; **LOCK nur im `LOCK`-Abschnitt**; Header-sha256 via `omega_sh sha <datei>`; die konsumierte
-Übergabe nach `archiv/`.
-
-**Mycelium ist die Meta-Linie — der Stehende Pass.** Sie schließt **als erste**: eigene Punkte
-arbeiten, `/commit` (Push), und **danach** — mit stehendem Push — den frischen Pass am neuen HEAD
-schreiben (CI-Tafel: rote Läufe `run-id | workflow | gemessener Grund aus Log/API, nie geraten,
-`unread` benennen | Träger-Linie | Braucht`; Postfach-Stand; Ereignis-Stand; Orphan-Zensus;
-Mehrfach-Träger; `git_safety --snapshot`; `.tools_ensure`-Sweep; `session_burn`). Die Pass-Schreibung
-ist der **Schlussakt, nicht der erste** — sonst zitiert jede Linie beim Öffnen einen stale Pass.
-Der Pass wird **zweimal** geschrieben (Operator-Wort A, 2026-10-14): vollständig ins private
-Haus (Mail, Operator-Akte) und als **öffentliche Projektion** `docs/zustand/standing-pass.md`
-(nur HEAD + rote Läufe, kein Personenbezug) ins öffentliche — die öffentlichen Linien lesen
-nur die Projektion, nie den privaten Pass.
-Danach die Runde-Meldung:
-
-> **Runde offen — Stehender Pass steht.** HEAD `<sha>` (== `origin/main`); Pass
-> `docs/zustand/standing-pass.md` (gemessen `<zeit>`); rote Läufe: `<n>` (Träger: …).
-> Startet die Linien: `/mountain` `/river` `/sensory` `/future`.
-
-Erst nach dieser Meldung öffnen die anderen Linien. Mycelium trägt Quellen: Arbeit über
-`docs/SOURCE_PORT.md`; eine neue/geänderte Ernte erst schließen, wenn sie in `phi/sources.φ` für die
-CDN-Manifestation registriert ist.
-
-**Linien-Preset (`archive_search`).** Das Tool ist öffentlich und linien-blind; das Preset ist
-**privat** (nur diese Linie) und liegt in `~/projects/omegaflow-work/ui/mycelium-preset.txt` — hier
-eingelesen:
-
-!`cat ~/projects/omegaflow-work/ui/mycelium-preset.txt`
-
-**Linien-UI-Gruppe (Operator-Wort 2026-10-07; Speicher-Regel).** Der **Roster ist variabel** — die volle Seat-Liste steht im UI-Dokument (`~/projects/omegaflow-work/ui-seats.md`), nicht in diesem Befehl. Deine Linie fährt ihre Sitze in der **eigenen** Gruppe. **Tabs sind just-in-time:** öffnen nur für einen Stimmen-Round (`browser_open … focus:false`), danach schließen (`browser_close`). Die **Tryingopen-Seats sind geteilt** in der zustandslosen Gruppe `open-weight-ui` (ein Tab je Modell, kein Modellwechsel im Chat); Zugang nur über das Lock `~/projects/omegaflow-work/ui/open-weight.lock` (Halter-Linie + Zeit setzen/löschen) — zwei Linien fahren die Seats nie gleichzeitig. Peak = die gefahrene Runde (Roster + geteilte Seats), nur für den Round offen. Gruppenname: `~/projects/omegaflow-work/ui/mycelium-group.txt`:
-
-!`cat ~/projects/omegaflow-work/ui/mycelium-group.txt`
-
-Eine Linien-Session fährt Stimmen **nur** in ihrer eigenen Gruppe; die `1-ui`/`2-backup`-Gruppen des Operators und fremde Linien-Gruppen bleiben unberührt. Die Gruppe wird beim ersten `browser_open` mit dem Namen angelegt.
-
-**Seat-Katalog + Bedienung (alle Linien; der Katalog ist öffentlich/ungetrackt in work): `sread ~/projects/omegaflow-work/ui-seats.md`** — welcher Seat welche URL/Composer-Form/Sende-Weg hat, wie **Suche + Reasoning/Max** je Seat gesetzt und **verifiziert** werden (Setzen vor dem Senden), die geteilten `open-weight-ui`-Modelle + Lock, und die Runden-Disziplin (JIT, `focus:false`, Nicht-Antwort = gemessen). **Nur der live Chrome trägt die Seats** (Bridge + `chrome-devtools_*`); Playwright ist ein fremder, unauthentifizierter Browser und für die Seats untauglich. Gilt für jede Linie gleich.
-
-Architektur-/Ethik-Entscheidungen gehen durch die **Linse der fünf Stimmen** (Rat), nie in Pro-Solo.
-
-Nur eigene Arbeit: bei geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen
-(`git commit <eigene Pfade> -m "…"`, nie ein nacktes `git commit`); fremde uncommittete
-Arbeit nie überschreiben; `git_safety --close [<eigene Pfade>]` vor dem Commit; gepusht wird,
-sobald der eigene Commit steht und `origin/main` Vorfahr von HEAD ist.
+**Grenze:** der Send bleibt die Operator-Hand; jeder dritt-wirksame Akt per-Akt-Operator-Wort. Architektur/Ethik geht durch die Linse der fünf Stimmen (Rat). Werkzeug-Karte nur bei Bedarf: `docs/concepts/tools-map.md`.
