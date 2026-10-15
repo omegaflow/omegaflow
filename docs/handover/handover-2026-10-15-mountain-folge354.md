@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 354 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 93d7315f5423876a4b1cc7285c3f1e0f60727f236f3e33c84b116a7454670373
+  sha256: bbb492ad3ef4a821d99c6908e3e3bb8b62b2c4d93a53f354571e63d97e0cbc64
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -156,7 +156,7 @@ Antwort unten) · `xfer:mycelium-356-1` (SABER/UCAR-FPI — die Arm-Antwort steh
 - **Blockade:** keine.
 - **Braucht:** die Bild-Manifestation (W).
 
-### ICGEM gfc — Kopf gemessen, Kern gebaut, M4-Rat verdiktet; offen: Kopfweg + Block (eigen)
+### ICGEM gfc — Kopf gemessen, Kern gebaut, Kopfweg entschieden (b); offen: Bau + Block (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Feld-Bau.
 - **Lage:** (gemessen/gebaut/verdiktet 2026-10-15, dieses Rund) Der Kopf ist gemessen und der Kern
@@ -168,18 +168,20 @@ Antwort unten) · `xfer:mycelium-356-1` (SABER/UCAR-FPI — die Arm-Antwort steh
   `V`/`Δg`/`N` **je eigene Zeile**, nie verschmolzen (`N` `pending` ohne γ₀/Referenzfeld); Truncation
   **registriert**, der Rest `pending`, nie 0; der 5. Riss (`n` in `FREQ`, `m` in `BIN_WIDTH`,
   `unit 1` tarnt die Norm) **gilt verschärft**.
-- **Ungeglättete Risse:** **Kopfweg a/b** (Werte im Draht vs. in der `phi`-Zeile — der Rat
-  konvergiert nicht → **Axiom-5-Entscheid des Operators**); Norm-Mehrdeutigkeit (`fully_normalized`
-  ambig → die Formel muss in den Kopf); Force-Gate (SH hat keine Newton-Kraft); Höhenstabilität nur
-  bis Grad 14 geprüft → `pending`; die 2190-Naht ist **nicht** gemessen → `pending`; Verallgemeinerung
-  (alle Normen/Körper). Der **Kopfweg steht 5 : 5** (a: Perplexity/Claude/Qwen/DeepSeek/Kimi ·
-  b: GLM/Gemini/MiniMax/Lumo + Sakana) → Operator. Sitz-Stand: Mistral/Duck/Tryingopen `pending`
-  (benannt); **Kimi nachgetragen** (die frühere N24-Antwort ist ersetzt).
-- **Blockade:** der **Kopfweg** (Operator, Axiom 5); dann die Konformanzmessung gegen eine fremde
-  Referenz (ICGEM-Calculation-Service/pyshtools) bei niedrigem Grad; der CDN-Block ist Myceliums.
-- **Braucht:** (1) den Operator-Entscheid **Kopfweg (a) Draht vs. (b) `phi`-Zeile** (einzeln
-  vorgelegt); (2) dann das Liefer-Gate + die Konformanzmessung; (3) den CI-Bau des (grad-begrenzten)
-  `gfc.bin` + Myceliums Direktiven (`xfer:mountain-354-1`).
+- **Der Kopf tritt in die Quellen-Beschreibung (Operator-Wort 2026-10-15):** der Modellkopf (GM/Radius/
+  Normierung/Tide/Grad) tritt als Direktiven in die Quellen-Beschreibung (`phi`-Zeile), **nicht** in
+  den Draht. Grund (A = A): ein Eintrag in die Zahlen wäre eine Veränderung der Rohdaten. Der Draht
+  bleibt unangetastet. Der Rat hatte 5 : 5 gespalten (a: Perplexity/Claude/Qwen/DeepSeek/Kimi ·
+  b: GLM/Gemini/MiniMax/Lumo + Sakana); der Operator entscheidet (Axiom 5).
+- **Ungeglättete Risse:** Norm-Mehrdeutigkeit (`fully_normalized` ambig → die Formel muss in den
+  Kopf); Force-Gate (SH hat keine Newton-Kraft); Höhenstabilität nur bis Grad 14 geprüft → `pending`;
+  die 2190-Naht ist **nicht** gemessen → `pending`; Verallgemeinerung (alle Normen/Körper). Sitz-Stand:
+  Mistral/Duck/Tryingopen `pending` (benannt); **Kimi nachgetragen** (N24-Antwort ersetzt).
+- **Blockade:** keine für den Kopf-Bau (Wort liegt); die Konformanzmessung gegen eine fremde Referenz
+  (ICGEM-Calculation-Service/pyshtools) bei niedrigem Grad; der CDN-Block ist Myceliums.
+- **Braucht:** (1) den Bau der Kopf-Direktiven `gm`/`radius`/`norm`/`tide`/`max_degree` aus `GfcHead`
+  + das Liefer-Gate; (2) die Konformanzmessung; (3) den CI-Bau des (grad-begrenzten) `gfc.bin` +
+  Myceliums Direktiven (`xfer:mountain-354-1`).
 
 ### UCAR-FPI — Arm + Zeilen stehen; Manifestation wartet auf die `field`-Zeilen (eigen)
 - **Status:** eigen (Rest Mycelium-/River-gebunden) | **Bindung:** eigen
@@ -352,6 +354,7 @@ Origin: mountain-354 (2026-10-15):
 - **„nein du sollst einfach nur die liste der seats in das dokument eintragen …"** | 2026-10-15 | (mountain 354) — die Sitz-Liste in `2026-10-15-mountain-rat-fragen-sh-kernel.md`, `## Die Sitze`.
 - **„so alles stimmen sind da."** | 2026-10-15 | (mountain 354) — 9 M4-Stimmen eingetragen; das Verdikt steht, der **Kopfweg** bleibt Operator-Entscheid.
 - **„hab kimi nachgetragen."** | 2026-10-15 | (mountain 354) — Kimis M4-Antwort im Slot (Kopfweg (a)); 10 Stimmen, Kopfweg **5 : 5**.
+- **„ich würde sagen in den kasten weil ein eintrag in die zahlen eine veränderung der rohdaten ist."** | 2026-10-15 | (mountain 354) — **Kopfweg entschieden: (b) die Quellen-Beschreibung.** Der Draht bleibt die unveränderte Rohmessung.
 
 ## Abschluss
 
@@ -365,5 +368,6 @@ vollen Kopf über `gfc::parse_head`. `cargo check` 0/0, `rustfmt --edition 2024 
 Register canonical (2807), `--orphans` 0. Das Roster-Paket **M4** ist gestellt (Sitz-Liste im
 Dokument), **10 Stimmen** eingetragen (Kimi nachgetragen) und das **Verdikt** geschrieben
 (`state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md`, am Baum verifiziert).
-Offen: der **Kopfweg** (Operator, Axiom 5), die Konformanzmessung und der CDN-Block.
+Der **Kopfweg ist entschieden: (b)** (Operator-Wort — der Kopf in die Quellen-Beschreibung, nicht in
+die Rohdaten). Offen: der Kopf-Bau, die Konformanzmessung und der CDN-Block.
 Diese Fortschreibung (folge353 → `archiv/`).
