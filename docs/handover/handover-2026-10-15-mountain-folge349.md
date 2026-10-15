@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 349 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: b69c4026902e28499a2ee7b1e61dbcb7505701940fe9d07c9b246566368d5d62
+  sha256: 42151966e571e05979ac52f5b83518966c6b085b192dc892c331f65039915ea5
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -126,6 +126,16 @@ Die sechs Register-Transporte `xfer:mycelium-351-1`, `xfer:mycelium-351-2`,
   Zwei Risse offen (WSO-Polarfeld ohne Terms; LISIRD ohne Terms); 21 cm EBHIS bereits registriert.
 - **Blockade:** keine.
 - **Braucht:** Mycelium setzt `url`/`origin`/`compiler` je Faden auf den Entwurf; dann `register_sort`.
+
+### Taucherstaffel 347 — Messungen und nächste Schritte (eigen)
+- **Status:** descoped (überführt) | **Bindung:** eigen
+- **Trigger:** keiner
+- **Lage:** (gemessen 2026-10-15) Die vier Taucher-Messungen (die fünf CDN-Quellen geklärt,
+  `opentopography_coverage`-`terms` gesetzt, `catalog_mpcorb`/`cosmic_ro`/`heasarc_w3browse`
+  descoped, Venus-Roh-Block, SABER-/TIMED-Bau) sind auf die Punkte „Venus Radar", „SABER" und
+  „Fünf fehlende Fäden" übergegangen; kein eigener offener Gegenstand bleibt hier.
+- **Blockade:** keine.
+- **Braucht:** nichts an dieser Stelle.
 
 ### Quellen-Gewebe — Kraft × Kernel gemessen; die dünnen Fäden (eigen)
 - **Status:** eigen | **Bindung:** eigen
