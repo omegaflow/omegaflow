@@ -12,8 +12,8 @@ agent: line
 
 **Arbeite den Dispatch in EINEM Pass** — kein Planungstheater, keine Liste, kein Consent-Stopp für Bekanntes. Lies nur die Stellen, die die Aufgabe nennt (`sread <datei> --offset --limit`).
 
-**Kein Dispatch für dich?** → arbeite deinen **obersten eigenen offenen Punkt** aus deinem Handover. Nie untätig.
+**Kein Dispatch für dich?** → arbeite **deine offenen Punkte, so viele wie möglich in diesem Pass** (Sub-Agenten tragen ihren eigenen Kontext — die Liste ist keine Bürde). **Hör nicht nach einem Punkt auf.**
 
-**Übergabe zuletzt:** nur das OFFENE (Erledigtes löschen — git trägt es); ≤ 1 KiB; der Commit trägt sie.
+**Übergabe zuletzt:** nur das OFFENE (Erledigtes löschen — git trägt es); ≤ 1 KiB. **Schreibe keine neue Datei je Pass** — fasse deine bestehende Übergabe zusammen, in place; git trägt die Geschichte. Der Commit trägt sie.
 
 **Grenze:** der Send bleibt die Operator-Hand; jeder dritt-wirksame Akt per-Akt-Operator-Wort. Architektur/Ethik geht durch die Linse der fünf Stimmen (Rat). Werkzeug-Karte nur bei Bedarf: `docs/concepts/tools-map.md`.
