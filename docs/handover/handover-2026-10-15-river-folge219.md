@@ -2,7 +2,7 @@
   title: Handover — River-Folge 219
   class: handover
   date: 2026-10-15
-  sha256: 046e52f55579cfa5e3c99ddca99e3cf46088fe9ec890615ae10648df15f464f3
+  sha256: be9d2e5ed595fd033d97506a9a4c42de4fdc6f1f51ad2ddee94011558ad25a41
   status: live
 -->
 # Handover — River-Folge 219 (2026-10-15)
@@ -45,6 +45,7 @@ Wort | Datum | Quelle
 „Starte die River-Linie in einem Pass … die letzte session schreibt Eingetragen und gepusht (`9dd5139aa`) … Offen bleibt allein F7 — die Richtungsentscheidung liegt bei dir (Axiom 5)." | 2026-10-15 | Operator (Session, River-218) — Linien-Start; Name leer = neueste offene River-Übergabe. **Am Baum gemessen (river-218):** die F7-Richtung ist bereits gebaut (mycelium-355 `d3ba14e74`), die Richtungsentscheidung ist mit dem Operator-Wort „und bau" geschlossen — kein neuer Fix.
 „Ja, die Befragung gab es — die F7′-Runde mit 12 Sitzen … aufgehobene Summe = Mitte, nicht Stille … als Gesetz konstante Leistung. Das ist gebaut. Deshalb ist F7 geschlossen … Kein offener Punkt mehr für dich. Die linear-Variante bleibt bloß eine mögliche spätere Umstellung." | 2026-10-15 | Operator (Session, River-219) — F7 ist geschlossen; die linear/constant-power-Frage ist **keine** Vorlage, nur eine mögliche spätere Umstellung.
 „das sollte doch wieder die 3 Rs durchlaufen … recherche (all_wide) roster (du formulierst die frage(n) im 5er design) und rat" | 2026-10-15 | Operator (Session, River-219) — die Platzierungs-Nachbarfrage (Streuung der Min-Hülle über N) ist **nicht** bloß Rat-Auslegung; sie läuft die volle **3-R-Kette**: Recherche (`bin/all_wide`) → Roster (die Session formuliert die Frage(n) im 5er-Design; der Operator befragt die Sitze) → Rat.
+„ja vorbereiten" | 2026-10-15 | Operator (Session, River-220) — Mountain soll das **Rat-Paket zur WGLC-`field`-Form** vorbereiten (die Frage, wie ein weltweit gemessenes **Dichte-Gitter** — kein Punkt-Kernel — ins Register kommt). Danach der Rat; dann Myceliums `url`/`origin`/`compiler`-Block + CDN-Manifestation, dann die bedingte Schumann-TE.
 
 Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…220) · `state/operator-gespraeche/2026-10-14-river.md` (Vorsession).
 
@@ -165,7 +166,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…220) · `
 - **Trigger:** die Reihe `resonance_schumann.csv` (f1/f2/f3) liegt im CDN — **gefeuert** (`curl -I` = HTTP 200).
 - **Lage:** (gemessen 2026-10-15) die Quelle ist registriert (`phi:1057-1068`, CC-BY-4.0, Zenodo 15225820, `sha256 3183a14f…`, `harvest raw_zenodo`). Nadel ⅩⅣ (`docs/concepts/kybernetische-astrophysik.md:368`). Der Matrix-Deskriptor `src/mathematikerin/descriptors/schumann_geomag.te` (Driver `abk_dbdt_pt1h`, Targets `freq1,freq2,freq3`, `expect cells 3`, `surrogate 10`, `cond none`) und der Job `matrix-schumann` stehen.
 - **Bin/cond-Entscheidung (river-220, gefaltet mycelium-357):** der globale Blitz-Kanal (WGLC) ist **täglich**, nicht stündlich. Der unbedingte Deskriptor trägt das **stündliche** Schumann-Ziel (`resonance_schumann.csv`, hourly) — `bin 3600` **bleibt**; die bedingte Form `(abk→f | Blitz)` braucht einen **eigenen** Deskriptor mit **Tages-bin (`86400`)** und `cond <wglc> pending|built`; die Tagesreihe wird **nie** auf 3600 vorwärtsgefüllt (das wäre eine erfundene Intrastunden-Variation). Im Deskriptor niedergelegt (`schumann_geomag.te`, Kommentar-Block). Kein Direktiven-Wechsel am unbedingten Deskriptor (sonst regrediert `matrix-schumann` auf `pending`). **Gebaut (river-220):** `src/mathematikerin/descriptors/schumann_geomag_blitz.te` — die Matrix trägt `cond rest|none` nur, daher als **pair** (`driver abk_dbdt_pt1h`, `target freq1`, `cond wglc_strokes pending`, `bin 86400`); Job `pair-schumann-blitz` in `field-te-query.yml`. Lokal geprüft: der Deskriptor parst und meldet `PENDING cond wglc_strokes pending — descriptor state pending (register duty)`; der Pair bleibt ungemessen, bis die WGLC-Reihe steht.
-- **Blockade:** (1) **Mountain ist durch** (mountain-Erledigt `fa1b250b1`, 2026-10-15): der **Lizenz-Riss ist entschieden** — `cc-by-4.0` (Record) maßgeblich, der README-Badge CC BY-SA 4.0 bleibt als Riss benannt; `terms CC-BY-4.0` + `ttl 86400` stehen im Entwurf (`state/mountain/2026-10-15-grenz-term-verdicts.φ`). (2) **Der echte Rest-Blocker ist der Rat:** die **`field`-Form eines global gemessenen Dichte-Gitters** (kein Punkt-Kernel) ist die Schemafrage; Mountain bietet an, das Rat-Paket vorzubereiten (Operator-Wort). (3) **Myceliums Block** (`url`/`origin`/`compiler`) existiert noch nicht. (4) `workflow_dispatch` liest den entfernten Ref; `field-te-query` feuert die ganze Suite.
+- **Blockade:** (1) **Mountain ist durch** (mountain-Erledigt `fa1b250b1`, 2026-10-15): der **Lizenz-Riss ist entschieden** — `cc-by-4.0` (Record) maßgeblich, der README-Badge CC BY-SA 4.0 bleibt als Riss benannt; `terms CC-BY-4.0` + `ttl 86400` stehen im Entwurf (`state/mountain/2026-10-15-grenz-term-verdicts.φ`). (2) **Der echte Rest-Blocker ist der Rat:** die **`field`-Form eines global gemessenen Dichte-Gitters** (kein Punkt-Kernel) ist die Schemafrage; **Operator-Wort 2026-10-15 „ja vorbereiten" — Mountain bereitet das Rat-Paket vor**, danach der Rat. (3) **Myceliums Block** (`url`/`origin`/`compiler`) existiert noch nicht. (4) `workflow_dispatch` liest den entfernten Ref; `field-te-query` feuert die ganze Suite.
 - **Braucht:** (1) den **Rat** zur `field`-Form → dann Myceliums Block + CDN-Manifestation → dann die bedingte TE `(abk→f | Blitz)` im Tages-Pair, within-stratum-Surrogate (F4-Verdikt); (2) dann `matrix-schumann`/`pair-schumann-blitz` mit der Surrogat-Null.
 
 ### Große ungelöste Rätsel — Kandidatenliste (Rat + UI-Roster); Aufnahme-Wort offen
@@ -219,7 +220,9 @@ Origin: river-219/220
 
 ## An mountain
 
-Origin: river-219
+Origin: river-219/220
+
+**WGLC-`field`-Form — Operator-Wort „ja vorbereiten" (river-220):** bitte das **Rat-Paket** vorbereiten (die Frage, wie ein weltweit gemessenes **Dichte-Gitter** — kein Punkt-Kernel — ins Register kommt); der Sender ist River (F4-Schumann), die Schemafrage ist deine. Danach der Rat, dann Myceliums Block + CDN, dann `pair-schumann-blitz`.
 
 **`ci-gate`/`clippy`:** die vier Archivar-Lints sind geheilt (mountain-352), `cargo check` 0/0 — river-219 hat am Kern nichts verändert. **NSDB-Richtungszeuge (`xfer:mountain-352-2`):** gated auf die Registrierung; der `format nsdb`-Zweig in `main_flow` (Membran = River) wartet. **Aurora-Grenzbreiten (`xfer:mountain-352-3`):** Feld-/Kernel-Zuordnung → Rat.
 
