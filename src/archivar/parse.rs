@@ -1724,6 +1724,31 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 };
                 let mut freq = crate::spectral::SPECTRAL_NO_BAND;
                 let mut bin_width = crate::spectral::SPECTRAL_NO_BAND;
+                if let Some(idx) = parts.iter().position(|p| p.starts_with("norm:")) {
+                    let tok = parts[idx].strip_prefix("norm:").unwrap_or("");
+                    match crate::archivar::gfc::Norm::parse(tok) {
+                        Some(n) if Some(n) == cur_norm => {}
+                        Some(_) => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!(
+                                    "field {}: norm token contradicts the source head — never silently agreed",
+                                    parts[1]
+                                ),
+                            );
+                            continue;
+                        }
+                        None => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("field {}: unknown norm token \"{}\"", parts[1], tok),
+                            );
+                            continue;
+                        }
+                    }
+                }
                 let aperture_idx = parts.iter().position(|p| p.starts_with("aperture:"));
                 let declared_aperture = match aperture_idx {
                     Some(i) => {
@@ -3715,5 +3740,34 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         );
         assert_eq!(sources.len(), 1);
         assert!(sources[0].head.is_none());
+    }
+
+    #[test]
+    fn a_field_norm_token_must_agree_with_the_source_head() {
+        let matching = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+             gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\nmax_degree 10\n\
+             field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 0.0 0.0 norm:fully_normalized\n",
+        );
+        assert_eq!(matching.len(), 1);
+        assert!(matching[0].head.is_some());
+        assert!(
+            matching[0]
+                .extracts
+                .iter()
+                .any(|e| matches!(e, Extract::Field(_)))
+        );
+        let contradicting = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+             gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\nmax_degree 10\n\
+             field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 0.0 0.0 norm:unnormalized\n",
+        );
+        assert_eq!(contradicting.len(), 1);
+        assert!(
+            contradicting[0]
+                .extracts
+                .iter()
+                .all(|e| !matches!(e, Extract::Field(_)))
+        );
     }
 }
