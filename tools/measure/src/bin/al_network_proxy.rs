@@ -98,6 +98,49 @@ fn station_dh(
     )
 }
 
+fn station_dbdt(samples: &[(f64, f64, f64, f64)]) -> Vec<(f64, f64)> {
+    let mut out = Vec::with_capacity(samples.len());
+    for w in samples.windows(2) {
+        let (pt, px, py, pz) = w[0];
+        let (t, x, y, z) = w[1];
+        let dt = t - pt;
+        if !(dt.is_finite() && dt > 0.0) {
+            continue;
+        }
+        let dx = x - px;
+        let dy = y - py;
+        let dz = z - pz;
+        if !(dx.is_finite() && dy.is_finite() && dz.is_finite()) {
+            continue;
+        }
+        out.push((t, (dx * dx + dy * dy + dz * dz).sqrt()));
+    }
+    out
+}
+
+#[derive(Clone, Copy, PartialEq, Debug)]
+enum Quantity {
+    Dh,
+    DbDt,
+}
+
+impl Quantity {
+    fn word(self) -> &'static str {
+        match self {
+            Quantity::Dh => "dh",
+            Quantity::DbDt => "dbdt",
+        }
+    }
+}
+
+fn quantity_of(args: &[String]) -> Result<Quantity, String> {
+    match arg_value(args, "--quantity").as_deref() {
+        None | Some("dh") => Ok(Quantity::Dh),
+        Some("dbdt") => Ok(Quantity::DbDt),
+        Some(other) => Err(format!("--quantity is neither dh nor dbdt: {other}")),
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Debug)]
 enum Fusion {
     Min,
@@ -258,6 +301,13 @@ fn main() {
             std::process::exit(2);
         }
     };
+    let quantity = match quantity_of(&args) {
+        Ok(q) => q,
+        Err(e) => {
+            eprintln!("al_network_proxy: {e}");
+            std::process::exit(2);
+        }
+    };
     let mut acc: BTreeMap<i64, (f64, u32)> = BTreeMap::new();
     let mut station_count = 0usize;
     for (code, decl, path) in &stations {
@@ -276,19 +326,30 @@ fn main() {
             eprintln!("al_network_proxy: {code} {path} carries no sample");
             std::process::exit(1);
         }
-        let Some(dh) = station_dh(&samples, *decl, block) else {
-            eprintln!("al_network_proxy: {code} cannot derive a declination (no finite sample)");
-            std::process::exit(1);
+        let series = match quantity {
+            Quantity::Dh => {
+                let Some(dh) = station_dh(&samples, *decl, block) else {
+                    eprintln!(
+                        "al_network_proxy: {code} cannot derive a declination (no finite sample)"
+                    );
+                    std::process::exit(1);
+                };
+                let dword = match decl {
+                    Some(v) => format!("{v}"),
+                    None => "auto".to_string(),
+                };
+                println!(
+                    "station {code} decl {dword} samples {} baseline_block {block}",
+                    samples.len()
+                );
+                dh
+            }
+            Quantity::DbDt => {
+                println!("station {code} dbdt samples {}", samples.len());
+                station_dbdt(&samples)
+            }
         };
-        let dword = match decl {
-            Some(v) => format!("{v}"),
-            None => "auto".to_string(),
-        };
-        println!(
-            "station {code} decl {dword} samples {} baseline_block {block}",
-            samples.len()
-        );
-        fold_envelope(&mut acc, &dh, fusion);
+        fold_envelope(&mut acc, &series, fusion);
         station_count += 1;
     }
     let env = envelope_series(acc, min_stations);
@@ -299,10 +360,11 @@ fn main() {
         std::process::exit(1);
     }
     println!(
-        "envelope samples {} min_stations {min_stations} stations {} fusion {}",
+        "envelope samples {} min_stations {min_stations} stations {} fusion {} quantity {}",
         env.len(),
         station_count,
-        fusion.word()
+        fusion.word(),
+        quantity.word()
     );
     if let Some(out) = arg_value(&args, "--out") {
         let records: Vec<(f64, f64, u32)> = env.iter().map(|(t, v)| (*t, *v, 0)).collect();
@@ -430,5 +492,28 @@ mod tests {
         let parsed = omegaflow::intermagnet::parse_bin(&bytes).expect("parse void");
         assert_eq!(parsed.len(), 2);
         assert_eq!(parsed[1].1, -3.0);
+    }
+
+    #[test]
+    fn the_quantity_reads_dh_and_an_unknown_one_is_refused() {
+        assert_eq!(quantity_of(&[]).map(Quantity::word), Ok("dh"));
+        assert_eq!(
+            quantity_of(&["--quantity".to_string(), "dbdt".to_string()]).map(Quantity::word),
+            Ok("dbdt")
+        );
+        assert!(quantity_of(&["--quantity".to_string(), "rate".to_string()]).is_err());
+    }
+
+    #[test]
+    fn dbdt_is_the_per_minute_difference_magnitude() {
+        let samples = vec![
+            (0.0, 0.0, 0.0, 0.0),
+            (60.0, 3.0, 4.0, 0.0),
+            (120.0, 3.0, 4.0, 12.0),
+        ];
+        let d = station_dbdt(&samples);
+        assert_eq!(d.len(), 2);
+        assert!((d[0].1 - 5.0).abs() < 1e-12);
+        assert!((d[1].1 - 12.0).abs() < 1e-12);
     }
 }
