@@ -11,11 +11,11 @@ Sitzen ein.
 |---|---|---|---|---|
 | 1 | Netz-Fusion + Stationsplatzierung | ✅ | ✅ `2026-10-15-netzfusion-manifest.md` | ✅ `…-rat-verdikt.md` |
 | 2 | Frühwarnkette (Stufen · Metrik · Null) | ✅ (river-214/215) | ⬜ | teil (Rat 2026-10-15) |
-| 3 | Aurora als dynamischer Stationsschalter | ⬜ | ⬜ | ⬜ |
-| 4 | Schumann-Antrieb (Blitz vs. geomagnetisch) | ⬜ | ⬜ | ⬜ |
-| 5 | Null-Form des Netz-End-Prüfers | ⬜ | ⬜ | ⬜ |
-| 6 | Blocklängen-Regel (Blatt-Kalibrierung) | ⬜ | ⬜ | ⬜ |
-| 7 | Aktuator-Richtung (Σω=0: Stille oder Partiale) | ⬜ | ⬜ | ⬜ |
+| 3 | Aurora als dynamischer Stationsschalter | ✅ (river-216) | ⬜ | ⬜ |
+| 4 | Schumann-Antrieb (Blitz vs. geomagnetisch) | ✅ (river-216) | ⬜ | ⬜ |
+| 5 | Null-Form des Netz-End-Prüfers | ✅ (river-217) | ⬜ | ⬜ |
+| 6 | Blocklängen-Regel (Blatt-Kalibrierung) | ✅ (river-217) | ⬜ | ⬜ |
+| 7 | Aktuator-Richtung (Σω=0: Stille oder Partiale) | ✅ (river-217) | ⬜ | ⬜ |
 
 ---
 
@@ -132,6 +132,25 @@ welcher Blitz-Kanal, aus welcher Quelle (SR-eigener Blitz-Proxy vs. WWLLN/OTD). 
 **Stand.** `bpa_gic` deckt den MCON-Zeitraum nicht (4-Tage-Fenster; kein Archiv, nur FOIA); die
 Relation läuft über die FMI-Reihe. Vor jeder Behauptung steht die Null-Form.
 
+**Weite Suche (river-217, `bin/all_wide`, Spill `…1792060736_surrogate_null_test_network_detection_si.txt`).**
+- **Kreisschub/Permutation als Netzwerkkonnektivitäts-Null ist Standard:** Gilson et al. 2017
+  (`10.1162/netn_a_00019`) — random permutations **oder circular shifts** der Zeitreihen erzeugen die
+  Null-Verteilung; kontrolliert den Typ-I-Fehler und findet Kanten besser als der parametrische Test.
+- **TE-spezifisch — genau unser Fall:** Diks & Fang 2017 (`10.3390/e19070372`) — „Transfer Entropy for
+  Nonparametric Granger Causality Detection: An Evaluation of Different Resampling Methods": Surrogat-
+  Algorithmen **und** smoothed bootstrap werden verglichen; die Referenz für den TE-Null.
+- **Eigenschafts-basierte Randomisierung für komplexe Null-Hypothesen:** Vuokko 2012 (Aalto-Thesis,
+  „Testing the Significance of Patterns with Complex Null Hypotheses"). Gerichtete Graph-Surrogat-
+  Tests: Chan et al. 2026 (`arXiv:2606.00758`).
+- **Zirkuläre Cluster-Statistik für phasen-gekoppelte Daten:** Berther et al. 2026
+  (`10.1371/journal.pcbi.1014672`, robuste kreisförmige cluster-basierte Statistik).
+- **Warnung dokumentiert:** Surrogat-Pathologien und falsch-positive Null-Verwerfung
+  (Schreiber/…, `cs.toronto.edu/~schmah/pubs/RaCeWaAlSch01_Surrogate.pdf`); rs-fMRI-Null-Modelle
+  (Miller et al. 2018, `10.3389/fnins.2018.00551`) — die Null muss zur Hypothese passen.
+- **Riss:** keine Doktrin benennt die Null **für die GIC↔Onset-Bin**; der gebaute Kreisschub ist eine
+  der anerkannten Familien (Gilson/Diks), aber die Wahl unter den Familien ist eine Messung, keine
+  Konvention.
+
 **Was die Antwort tragen muss.** (1) Die Null (Kreisschub? Block? Phasen-randomisiert?). (2) Warum
 sie diesen Konfund erhält/zerstört. (3) Der nächste Schritt.
 
@@ -143,6 +162,24 @@ benannt?
 **Stand.** Der BCA-Z-Null über die ABK-Reihe ist gemessen (`Z = 58 min`); der Signifikanz-Null
 braucht eine Blocklänge (Autokorrelations-Nulldurchgang fehlt).
 
+**Weite Suche (river-217, `bin/all_wide`, Spill `…1792060726_block_bootstrap_block_length_selection_a.txt`).**
+- **Die automatische Regel existiert und ruht auf der Autokorrelation:** Politis & White 2004,
+  „Automatic Block-Length Selection for the Dependent Bootstrap" (`10.1081/etc-120028836`) —
+  die Standardregel (b̂_opt aus der geschätzten Autokorrelationsstruktur, nicht aus einem
+  subjektiven Nulldurchgang). Künsch & Bühlmann 1994 (`10.3929/ethz-a-001366062`); R-Paket
+  `blocklength` (CRAN) implementiert sie.
+- **Periodisch-korreliert / langes Gedächtnis:** Bertail & Dudek 2024 (`10.3150/23-bej1683`)
+  (optimale Blocklänge für periodisch korrelierte Reihen); Kim & Kim 2017 (`10.5351/csam.2017.24.1.001`,
+  Bootstrap für long-memory); das passt auf geomagnetische 1-min-Reihen (Tag/Nacht-Periodik).
+- **Zirkulärer Moving-Block-Bootstrap:** Yu et al. 2025 (`10.20944/preprints202512.1112.v1`) —
+  CMBB für Signifikanz lokaler Ähnlichkeit, ausdrücklich gegen Non-Stationarität.
+- **Raumphysik-Kontext:** Reiff 1990 (`10.5636/jgg.42.1145`, „use and misuse of statistics in space
+  physics" — bootstrap/jackknife); Mudelsee 2018 (`10.1016/j.earscirev.2018.12.005`,
+  Block-Bootstrap zur Erhaltung der Autokorrelationsstruktur).
+- **Riss:** `Z = 58 min` ist ein **BCA-Konfidenzniveau** (95 %-Quantil), keine Blocklänge; ob der
+  Autokorrelations-Nulldurchgang der ABK-Reihe mit einer Politis-White-`b̂_opt` zusammenfällt, ist
+  **nicht gemessen** — die Regel ist benannt, ihr Wert am Korn fehlt.
+
 **Was die Antwort tragen muss.** (1) Die Blocklängen-Regel (aus dem Autokorrelations-Nulldurchgang?
 aus einer physikalischen Zeitskala?). (2) Warum sie hier trägt. (3) Der nächste Schritt.
 
@@ -153,6 +190,22 @@ aus einer physikalischen Zeitskala?). (2) Warum sie hier trägt. (3) Der nächst
 
 **Stand.** `acoustic_pcm` spannt nach dem Vorzeichen der Σω; Σω = 0 → beide Kanäle 0 = Stille. Der
 Test will die Partiale erhalten — das ist eine Richtungs-Entscheidung, kein stiller Fix.
+
+**Weite Suche (river-217, `bin/all_wide`, Spill `…1792060732_zero_sum_phase_cancellation_preserve_par.txt`).**
+- **Das Prinzip ist etabliert:** aktive Schallkontrolle / **Phasenauslöschung** — De Bortoli et al.
+  2024 (`10.17743/jaes.2022.0171`, „Active Acoustics with a Phase Cancelling Modal Reverberator");
+  Cheer 2024 (`10.1121/at.2024.20.2.31`, „Beyond Anti-Noise"); Guicking (aktive Schall-/Vibrations-
+  kontrolle).
+- **Die genau passende Form — Null-Steering mit Signalerhaltung:** „Null-Steering Beamformer-Based
+  Feedback Cancellation … **With Incoming Signal Preservation**" (U. Oldenburg, `SP2018_8.pdf`):
+  eine Richtung wird ausgelöscht, die andere **erhalten** — exakt die Σω=0-Frage (Auslöschung eines
+  Anteils bei Bewahrung des Rests).
+- **Partiale/Phasen-Kohärenz:** Laroche & Dolson 1997 (`Phase-Vocoder: About this phasiness business`)
+  — die Behandlung der Phase bei Überlagerung; Phasen-Dekorrelation (Guo 2012).
+- **Riss:** das ist **unser** Apparat (`acoustic_pcm`); die Literatur liefert das **Prinzip**
+  (Auslöschung vs. Erhaltung), aber keine Doktrin „bei Σω=0 die Partialen erhalten". Die Entscheidung
+  ist axiomatisch (A = A: jeder Kanal ist, was er ist — die Summe 0 ist keine Stille, sondern die
+  Superposition), nicht aus der Literatur ableitbar.
 
 **Was die Antwort tragen muss.** (1) Das Verdikt (Stille oder Partiale). (2) Welches Axiom es
 stützt (A = A? 0 geehrt?). (3) Der nächste Schritt.

@@ -2,7 +2,7 @@
   title: Handover — River-Folge 216
   class: handover
   date: 2026-10-15
-  sha256: 0c271e8b10236f20fcfd53c62ebcd0ed96c627469e18b891cad493998183c07c
+  sha256: 102c573b05864b7c2cf084f6c9a9c1085b237fb9c783c738b00933c59bfc96e3
   status: live
 -->
 # Handover — River-Folge 216 (2026-10-15)
@@ -322,6 +322,14 @@ manifestiert, `sha256 5f93df95…`; SABER/UCAR-FPI warten auf Mountains `field`-
 **Operator-Wort (river-217):** CTBTO-Send = kein Membran-Akt (Operator-Hand); Fenster-Edit an der
 `ReceiverAperture` = Membran-Akt (Operator-Wort gegeben); Große-Rätsel = arbeit-gebunden, GIC =
 Arbeit (kein Wort).
+**Die drei letzten weiten Suchen gefahren + in den Katalog eingetragen (river-217):** Q5 Null-Form
+(Kreisschub/`circular shift` als Netzwerkkonnektivitäts-Null: Gilson 2017 `10.1162/netn_a_00019`;
+TE-Resampling: Diks & Fang 2017 `10.3390/e19070372`; Spill `…1792060736…`) · Q6 Blocklänge
+(Politis & White 2004 `10.1081/etc-120028836` automatische Regel aus der Autokorrelation; Spill
+`…1792060726…`) · Q7 Aktuator (Phasenauslöschung / Null-Steering mit Signalerhaltung, De Bortoli
+2024 `10.17743/jaes.2022.0171`; Spill `…1792060732…`). Der Rat-Fragen-Katalog
+(`state/stimmen/2026-10-15-rat-fragen-katalog.md`) trägt jetzt `weite Suche ✅` für Q3–Q7; das
+Manifest (Frage durch 5 Axiome + 5 Stimmen) ist je Frage der Katalog-Kopf.
 **Commit:** diese Übergabe (`folge216` neu, `folge215` → `archiv/`), der `--fusion`-Bau
 (`al_network_proxy.rs` + `gic-station-sweep.yml`). Fremdes ungespeichertes (`state/`, `data/`, fremde
 Workflow-/`phi`-Änderungen) bleibt unangetastet.
