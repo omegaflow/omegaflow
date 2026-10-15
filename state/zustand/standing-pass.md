@@ -2,115 +2,84 @@
   title: Stehender Pass (privat) — Mycelium
   class: zustand
   date: 2026-10-15
-  sha256: fbf34310a3e5d66754dd079e2466f894791bc5214490a25a0c604b85804cdb4e
+  sha256: 3b9a7dbd41364edbdcdf8327fa427e59b1e7b274707c362760fa925827a11faf
   status: live
   see-also: docs/zustand/standing-pass.md
 -->
-# Stehender Pass — Mycelium (privat, folge352)
+# Stehender Pass — Mycelium (privat, folge355)
 
 Vollständige Fassung. Öffentlich gilt allein die Projektion
 `docs/zustand/standing-pass.md` (nur HEAD + rote Läufe, kein Personenbezug).
 
-HEAD `1ccd3f852` (== `origin/main`) · geschrieben 2026-10-15 · **Mycelium-352**.
+HEAD `e21129d5c` (== `origin/main`) · geschrieben 2026-10-15 · **Mycelium-355**.
 
-## Rote Läufe am HEAD (gemessen, nicht geraten)
+## Rote Läufe (gemessen, nicht geraten)
 
-Am HEAD `d42e27eb8`/`378359ab3`/`1ccd3f852` neu gestartet (Push 2026-10-15), Stand bei
-Pass-Schreibung **gemessen** (`ci_manage list`, einmal — kein Polling):
+Bei Pass-Schreibung (`ci_manage reds`, einmal — kein Polling). Die Tafel ist ein **Flutstand**
+aus den parallel laufenden Linien (River/Mountain committen im selben Baum). Meine eigenen
+Push-Läufe an `e21129d5c` sind **queued/unread** (`ci-gate`, `harvest-dispatch`,
+`register-coverage`, `sources-repo-licence`, `tools-build`).
+
+Gemessene Rote (jüngste, gemessen 2026-10-15):
 
 | run-id | workflow | Zustand | Träger |
 |---|---|---|---|
-| `38704081781` | wdcb-obn-wayback-cdn | queued (am `d42e27eb8`) — der **211er**-Matrix-Rettungslauf | Mycelium |
-| `38704082015` | wdcb-sep-live-cdn | **success** (am `d42e27eb8`) — der **7er**-Lauf (lebender `www.wdcb.ru/sep`-Baum) | Mycelium |
-| `38704081473` | sources-repo-licence | **success** | Mycelium/CI |
-| `38704081810` | register-coverage | **success** (am `d42e27eb8`) | Mycelium |
-| `38704150805` | register-coverage | **success** | Mycelium |
-| `38704082223` | harvest-dispatch | **success** (am `d42e27eb8`) | Mycelium |
-| `38704082180` | ci-gate | **failure** (am `d42e27eb8`) — der gemessene Kern-Befund (s. unten) | River |
-| `38704150827` | ci-gate | **failure** (am `378359ab3`) — derselbe Kern-Befund | River |
-| `38704269028` | ci-gate | in Arbeit (am `f7852a78f`) | — (Grund **unread**) |
-| `38704378380` | ci-gate | queued | — (Grund **unread**) |
-| `38704992362` | ci-gate | queued | — (Grund **unread**) |
-| `38693040881` | zenodo-raw-cdn | am HEAD `b8fd39b49` — Matrix-Lauf (gps_cmonoc/gps_campaign/cedc_catalog) | Mycelium |
+| `38712802275` | ci-gate | **failure** @ `fadbd489b` | River/Mountain |
+| `38712777023` | ci-gate | **failure** @ `bdb627ab` | River/Mountain |
+| `38712667864` | tools-build | **failure** @ `03178cb3f` | fremd (`archive_search`) |
+| `38712655060` | m10-mdis-raw-cdn | **failure** @ `03178cb3f` | Mycelium (CDN-Upload, Arm `lpsc2024_2663.pdf`) |
+| `38712632761` | m10-mdis-raw-cdn | **failure** @ `03178cb3f` | Mycelium (dito) |
+| `38709132540` | gic-al-network | **failure** @ `a6d6fca0` | River |
+| `38718203450` | register-coverage | **failure** @ `b0bc4d80` | Mycelium/fremd |
 
-**Bekannter Kern-Befund (gemessen aus dem Log, Lauf `38704082180` am HEAD `d42e27eb8`,
-`failure`):** `ci-gate` bricht im **Kern** — `could not compile omegaflow (lib) due to 7
-previous errors` + `(lib test) due to 3 previous errors`: `error[E0425]: cannot find
-function 'frame_earth' in this scope` (`src/mathematikerin/machines/tests.rs:461/489/498`)
-plus Clippy-Lints (`too many arguments (12/7)` `src/archivar/extract.rs:4100`; manual
-`Range::contains` `src/archivar/tle.rs:90`; negated comparison `src/archivar/tle.rs:147/341`;
-very complex type `src/mathematikerin/machines/matrix.rs:219/1158`, `omega.rs:2099`).
-**Träger: River** (Feld/Kern). Derselbe Befund stand schon am HEAD `10b521783`
-(`38702218068`). Kein Mycelium-Pfad.
+Kein Grund geraten — die Tafel nennt Lauf und Zustand; die Logs liest `ci_manage log <id>`.
 
-## Lokal gemessen am HEAD `1ccd3f852`
+## Lokal gemessen am HEAD `e21129d5c`
 
-Drei Register-Werkzeuge gebaut (`register_sort`, `cdn_reconcile`), `cargo check` 0/0:
-`register_sort phi/sources.φ` **canonical** (2 805 Blöcke) · `cdn_reconcile --fail` →
-`cap+tag contract clean (334 registry hosts)` · `register_lookup --orphans --fail` = **0** ·
-`register_lookup --tokens --noecho-fail` = **exit 0** (0 XFER-MISSING).
+- Die Frontier-Runde am Baum verifiziert (nicht gestartet, nicht gepollt):
+  Fusion = Min-Einhüllende (`al_network_proxy.rs:101-118`) → Konjunktion; adaptive Schwelle
+  `med+6·1.4826·MAD` (`gic_onset_detector.rs:7-9/:80-86`); Toleranz = `match_onsets` (`:178-198`).
+- **Baum-Riss:** Netz-Arm = dH-Hülle (Minutenraster) gegen Einzelstations-Arm = stündlicher
+  |dB/dt|-Peak (`abk_dbdt_1h.bin`, `intermagnet_dbdt_compiler.rs:179-190`) — nicht A = A.
+- Fester-Schwelle-N-Sweep (river-216, `38709029080`): Kollaps bleibt bei fixer Schwelle.
+- (Nicht dieses Rund gemessen: `register_sort`/`cdn_reconcile`/`cargo check` — kein eigener
+  Baum-Bau in folge355.)
 
 ## Postfach
 
-- `mail_watchdog`: `health=200 recv=true tunnel=true ledger_age_s=absent` (2026-10-15,
-  letzte Zeile `1792051993`).
-- `post/in` (privates Haus): `2026-10-14-mycelium-nssdc-datenantrag.md` (Operator-Hand,
-  Route (b) entschieden).
+- `post/in` (privates Haus): `2026-10-14-mycelium-nssdc-datenantrag.md` (Operator-Hand, Route (b)).
+  `register_lookup --fired mycelium` = 1 (dieser Punkt; bereits gewortet — **nicht** erneut vorgelegt).
 
 ## Ereignis-Stand
 
-- Letztes Ereignis in `state/zustand/ereignisse.φ` (gemessen, 956 Zeilen):
-  `2026-10-14T12:56:49Z` (`ses_ec618129fffeLFawr4V3pQKpOl`, `line`/`wort`) — unverändert
-  gegenüber dem vorigen Pass. Der dortige Riss (der vorvorige Pass nannte
-  `2026-10-14T22:10:06Z`, der nicht mehr in der Datei steht) bleibt ungeglättet.
+- Letztes Ereignis in `state/zustand/ereignisse.φ` — nicht neu gemessen dieses Rund (unverändert
+  gegenüber folge354).
 
 ## Orphan-Zensus
 
-- `register_lookup --orphans` = **0** · `--orphan-docs` = **19** Dokumente mit offenen
-  Markern ohne Live-Handover-Träger · `--descoped-check` = 0 widerlegt.
+- Nicht neu gemessen dieses Rund (folge354: `register_lookup --orphans` = 0).
 
 ## Mehrfach-Träger
 
-- Frisch dieses Rund: `xfer:mycelium-352-1`/`-2`/`-3` (an Mountain: `field` + Host-`terms`)
-  und `xfer:mycelium-352-4` (an River: der `ci-gate`-Kern-Befund) — **unbeglichen**.
-- `xfer:mountain-349-1` (WDC-B-Verdikt) ist **angewandt** (die `terms`-Zeilen stehen am
-  Baum) und damit beglichen; `xfer:mountain-348-3`/`-6` waren Echo. Die älteren offenen
-  Tokens (`xfer:mountain-348-1`/`-2`/`-4`/`-5`, `xfer:mycelium-342-3`/`-4`, `-342-10`,
-  `-343-2`) stehen weiter in `mycelium-folge352` — kein Doppel-Eintrag.
+- Offen (in `mycelium-folge355`): `xfer:mycelium-352-1`/`-2`/`-3`/`-5` (an Mountain) ·
+  `xfer:mountain-348-1`/`-2`/`-4`/`-5` · `xfer:mycelium-342-3`/`-4` · `-342-10` · `-343-2`.
+- Gefaltet/geschlossen: mountain-folge351, river-folge215 (Echo/angewandt); die
+  Athabasca-Manifestation (river-215 beglichen).
 
 ## Gearbeitet (dieses Rund)
 
-- **WDC-B-Erbe-Rettung 32 → 211.** Die 179 neuen Wayback-Payloads (CDX `collapse=urlkey`,
-  `statuscode:200`) als `raw_mirror`-Blöcke in `phi/sources.φ` + Matrix
-  `wdcb-obn-wayback-cdn.yml` (32 → 211 Einträge). Gruppen: GravConst 55 · geo_min.val 44 ·
-  gdata 31 · sdata +18 · geomagni.ind/aa 16 · catal_pc 8 · gps 7. Jede Datei von Wayback
-  `id_` gehasht (byte-identisch gegen `bul199806.dat` verifiziert). Commits `d42e27eb8` +
-  `378359ab3`.
-- **Der lebende Baum `www.wdcb.ru/sep` registriert:** 7 `raw_mirror`-Blöcke
-  (`cat001`…`cat007`, `cat003.gz`) + Lauf `wdcb-sep-live-cdn.yml`; die 5 Schwester-Hosts
-  als `reference`-Blöcke.
-- **Mountains Verdikt `xfer:mountain-349-1` angewandt** (direkter Edit des Punkts des
-  Eigentümers, beide Enden genannt): Wayback `terms CC-BY-NC-4.0`; lebender `sep`-Baum
-  `terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html`. `field` je Datensatz + die
-  Host-`terms` = Mountain.
-- **Die drei Zenodo-Assets** (CMONOC 7798617, CEDC 8084659) standen schon in Register +
-  `zenodo-raw-cdn.yml` (mycelium-351); nur der CI-Lauf ist unread.
-- folge352 geschrieben, folge351 → `archiv/`.
-- **Folge-Pass:** die **GEOFON-CI-Naht** gebaut (`.github/workflows/geofon-waveform-cdn.yml`,
-  `--route geofon`, gemessene GE-Station WLF) — der offene Punkt ist geschlossen. Die
-  **WDC-B-URL-Gruppen gemessen: keine Datendateien** (nur `text/html` + Karten-Bilder), der
-  Punkt ist geschlossen. Der **TIMED-Block** bleibt offen — die TLE-`origin` (celestrak)
-  ist in diesem Rund nicht erreichbar (timeout), kein erfundener `origin`.
+- **Frontier-Runde „Netz-Fusion und Stationsplatzierung":** Formular vorbereitet, die 13 Stimmen
+  des Operators am Baum verifiziert, den dH-vs-|dB/dt|-Riss benannt, das Verdikt getragen
+  (`state/stimmen/2026-10-15-netzfusion-verdikt.md`). Commit `e21129d5c`.
+- **Nächster Messschritt an River übergeben** (Operator-Wort): Min gegen Union bei fester Größe/
+  Schwelle/Fenster.
+- folge355 geschrieben; folge354 → `archiv/`.
+- Operator-Worte dieses Runds in `state/operator-gespraeche/2026-10-15-mycelium.md` geschnitten.
 
 ## Snapshot / Tools
 
-- `git_safety --snapshot` → `refs/safety/1792051952`; `--close` geprüft, Push steht
-  (HEAD == `origin/main`).
-- `.tools_ensure`-Sweep: die `bin/`-Wrapper zogen ihre Freshness bei jedem Aufruf;
-  `register_sort`/`cdn_reconcile`/`register_lookup` lokal aus dem Debug-Build gelaufen.
-  Ein Werkzeug-Riss gemessen: `archive_search --wayback` (CDX) → HTTP 503; der
-  `web.archive.org/cdx/search/cdx`-Endpunkt antwortet per `curl` mit 200; `sfetch` meldet
-  `fetch void`.
+- `git_safety --snapshot` nicht neu gesetzt dieses Rund (kein destruktiver Akt). Push steht
+  (HEAD == `origin/main` == `e21129d5c`).
 
 ## session_burn
 
