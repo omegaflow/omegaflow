@@ -2,7 +2,7 @@
   title: Handover — River-Folge 217
   class: handover
   date: 2026-10-15
-  sha256: e2f9d67fd38744c17d5353222e22f171a43a5efa437d7005f742c1c41c538576
+  sha256: ade117418ea5553de158b4daad02e678217a84a2da8c029bdfb96b3b1dfa1200
   status: live
 -->
 # Handover — River-Folge 217 (2026-10-15)
@@ -52,6 +52,9 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…218) · `
 - `xfer:mountain-352-2` **NSDB-Richtungszeuge im S²-Pfad** (mountain-folge352) — `nsdb::to_astro_series` liefert die AST1-Richtungszeugen; der `format nsdb`-Zweig in `main_flow` (Membran = River) ist die Route, sobald der NSDB-Block registriert ist; alternativ emittiert der Producer einen AST1-Zeugen. **Gated** auf Mountains Registrierung/Producer-Arm — kein River-Akt bis dahin.
 - `xfer:mountain-352-3` **Aurora-Grenzbreiten** (BAS-IMAGE/DMSP-SSJ, mountain-folge352) — brauchen die Feld-/Kernel-Zuordnung. **Architektur → Rat** (kein River-Solo).
 - **Netz-Fusion — der nächste begrenzte Messschritt ist übergeben** (mycelium-355, Operator-Wort „ich habe es an river gegeben"): bei **fester Größe** (per-Minute-|dB/dt| statt dH), fester Schwelle und fixem Fenster nur die **Fusionsregel** variieren — Min gegen Union/Max über N = 3·4·6·8·12·16·24·31, dieselbe Onset-Liste, dieselbe Kreisschub-Null. Verdikt `state/stimmen/2026-10-15-netzfusion-verdikt.md`. **Gebaut + gestoßen (river-218):** s. GIC-Schärfe-Fläche.
+- **F7′ ist gebaut** (mycelium-355, `d3ba14e74`) — der Vorzeichen-Gate ist durch die konstante-Leistung-Pan-Regel ersetzt; bei Σω = 0 (lebendige Partiale) geht es in die **Mitte**, nicht in die Stille; river-142s Test wird grün. Der **Energie↔Lautstärke-Riss** (konstante Leistung vs. linear/Mono-Kompat) ist eine **Deklaration — noch nicht getroffen**; der Aktuator trägt vorerst das constant-power-Gesetz. **Operator-Ask offen (Axiom 5).**
+- **F4′ (Schumann-Blitz-Kanal):** die bedingte TE (`abk→f | WWLLN, Stunde, Saison`) ist **Rivers Teil**, gated auf Myceliums WWLLN-Stundenreihe.
+- **mountain-folge353** spiegelt dieselben `xfer:mountain-352-1/2/3` (am Baum gelesen) — kein neuer River-Akt.
 - **Athabasca ERG-SC VLF ist manifestiert** (mycelium-355; river-215 beglichen) — im Weberin-Punkt nachgezogen. Offen bleibt nur **SABER / UCAR-FPI** (Mountains `field`-Zeilen).
 
 ## Offen (aufgeschlüsselt)
@@ -209,13 +212,14 @@ Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeit
 erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge352,
 mycelium-folge355 — in river-218 gefaltet) · `open_points_check` = 0 stale-citations ·
 `session_burn` nicht gemessen (`db absent`).
-**F7 am Baum geprüft (river-218):** die Richtungsentscheidung ist **bereits gebaut** — mycelium-355
-(`d3ba14e74`) pannt den Aktuator nach dem gemessenen Balance `b = Σω/Σ|ω| ∈ [−1,1]` mit
-`gL = cos θ`, `gR = sin θ` (konstante Leistung); Σω = 0 pannt in die **Mitte**, nicht in Stille.
-`a_zero_sum_does_not_collapse_the_channels`, `a_zero_omega_is_silence_on_both_channels` und die
-Routing-Tests sind damit konsistent (am Baum gelesen). Die **Richtungsentscheidung ist mit dem
-Operator-Wort „und bau" (mycelium-355) geschlossen** — kein neuer Fix; der Energie↔Lautstärke-Riss
-(konstante Leistung vs. linear/Mono-Kompat) bleibt als **benannter** Riss am Bau, kein offener Ask.
+**F7 am Baum geprüft (river-218, korrigiert):** die **Richtung** (Partiale erhalten) ist **gebaut**
+— mycelium-355 (`d3ba14e74`) pannt den Aktuator nach dem gemessenen Balance
+`b = Σω/Σ|ω| ∈ [−1,1]` mit `gL = cos θ`, `gR = sin θ`; Σω = 0 pannt in die **Mitte**, nicht in
+Stille. `a_zero_sum_does_not_collapse_the_channels`, `a_zero_omega_is_silence_on_both_channels` und
+die Routing-Tests sind konsistent (am Baum gelesen). **Offen bleibt die Gesetzes-Deklaration**
+(Energie↔Lautstärke: konstante Leistung vs. linear/Mono-Kompat) — mycelium-355 trägt sie selbst als
+**noch nicht getroffen**; der Aktuator trägt vorerst constant-power. Das ist die eine **Operator-Frage
+(Axiom 5)**, sie wird am Ende dieses Atoms einzeln vorgelegt.
 **Netz-Fusion — die A=A-Naht gebaut + gestoßen (river-218):** `al_network_proxy --quantity dh|dbdt`
 (per-Minute-|dB/dt|, die Größe des Einzelstations-Arms); `gic-station-sweep.yml` `quantity`-Input;
 `cargo build -p omegaflow-measure --bin al_network_proxy` grün, `rustfmt --edition 2024 --check` 0;
