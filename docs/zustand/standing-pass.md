@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-15
-  sha256: 65a7a86c221b2f91fdd818cea5b2615aee8911cb4c931915db34aa738288dbea
+  sha256: 9ae9d010c0627bd1b609ef6417a1a44cb0a3da22ccbdeb3e318ad065fbad5fa9
   status: live
   see-also: AGENTS.md
 -->
@@ -15,7 +15,7 @@ Die öffentlichen Linien zitieren **diese** Fassung, nie die private.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `b17570464` | 2026-10-15 |
+| HEAD | `b07e37f82` | 2026-10-15 |
 | rote CI-Läufe | **279** non-success — Träger: `ci-gate` (170) · `register-coverage` (68) · `tools-build` (23) · `gic-al-network` (4) · `quake-feeds-cdn` (2) · `matrix-rotor` (2) · `m10-mdis-raw-cdn` (2) · `health-check` (2) · `zenodo-raw-cdn` · `ssd-jpl-raw-cdn` · `venus-radar-cdn` · `ci-check` · `themis_asi-fodg-cdn` | 2026-10-15 |
 
 **Gemessener Kern-Befund (nicht geraten).** Der **globale** Blitz-Kanal für die Schumann-TE ist
@@ -31,9 +31,10 @@ warten auf das Rat-Verdikt zur `field`-Form. Zweiter freier globaler Kanal: **FL
 die `zenodo-raw`-Matrix byte-für-byte auf das CDN: **Venera-Polar** (194 MB, Zenodo `18176179`,
 CC-BY-4.0), das **Provenienz-Klassen-Raster** (89 MB — die Herkunft jeder Basemap-Kachel, die
 einzige Stelle, an der die Basemap-`0` als NoData geehrt werden kann) und **Arecibo 1988**
-(965 MB). Der Provenienz-Kopf ist gemessen (18 775 × 9 388, 4-bit, 12 Klassen 0–11). Die 80,9-GB-
-Basemap bleibt offen: die Rat-Form ist der byte-exakte `.parts`-Split, der Transport braucht noch
-einen streamenden Splitter.
+(965 MB). Der Provenienz-Kopf ist gemessen (18 775 × 9 388, 4-bit, 12 Klassen 0–11). Für die
+80,9-GB-Basemap steht die Formatentscheidung in der Linie: **byte-exakter `.parts`-Split**
+(md5-Ganzes + sha256/Teil); bis der streamende Splitter steht, wird der Träger provisorisch per
+HTTP-Range vom Origin-COG gelesen.
 
 **Noch unread:** die tiefen Log-Gründe der fremden roten Läufe (kein Polling); die eigenen
 Push-Läufe am HEAD `b17570464` sind queued. Die öffentliche Tafel ist ein Flutstand aus den
