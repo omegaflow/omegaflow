@@ -3,7 +3,7 @@
   session: Mountain-Folge 357
   class: handover
   date: 2026-10-16
-  sha256: f6bdb61f8c5f7b9ecbc3f4010e89769db8fc1f039a176c68fc5ec0122e512807
+  sha256: eeb6de0928322b4b573b2c2f9004129fac5b5dff670dc38203e6a00b5a1416e6
   status: live
 -->
 # Handover — Mountain-Folge 357 (2026-10-16)
@@ -15,7 +15,7 @@ Dispatch `post/out/…river-…md` an **River**; Token am HEAD geschlossen (`mag
 
 ## Offen
 - ICGEM `gfc`: `derived`-Deklaration (Rat) + JEOD Grad 20 · CDN `mountain-354-1`.
-- Norm `icgem_gfc_c` = Membran (River `mountain-355-1`) · WGLC/WDC-B `field` = Rat (`mycelium-352`).
+- Norm `icgem_gfc_c` = Membran (River) · WGLC/WDC-B `field` = Rat.
 - SABER: TIMED-Block + `timed-orbit-cdn.yml` · Riss-Gate · bis cdaweb.
-- Venus-Radar Bild · UCAR-FPI · Fünf-Fäden → Mycelium, `register_sort`.
+- `themis_asi_fodg`-Block gesetzt (unblockt River) · Venus-Radar Bild · UCAR-FPI → Mycelium.
 - `em mw`-Freeze · ALFALFA-Ersatz · `VerdictWord::Pending` (Rat) · An mycelium/river: `archiv/…356`.

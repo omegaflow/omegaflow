@@ -10346,6 +10346,15 @@ compiler tools/harvest/src/bin/themis_asi_keogram_compiler.rs
 format themis_asi_keogram
 ttl 604800
 
+url https://github.com/omegaflow/sources/releases/download/data.phys.ucalgary.ca/themis_asi_fodg_20240510_kapu_themis21_onset.bin
+terms free-open https://data.phys.ucalgary.ca/data/how_to_cite.html
+format themis_asi_fodg
+origin https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/stream0/<YYYY>/<MM>/<DD>/<label>/ut<HH>/<YYYYMMDD>_<HHMM>_<label>_full.pgm.gz
+compiler tools/measure/src/bin/themis_asi_frame_onset.rs
+station KAPU
+on earth 49.392 -82.320 179.94
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/data.phys.ucalgary.ca/themis_asi_timed_keogram_20240510_kapu_themis21.bin
 terms free-open https://data.phys.ucalgary.ca/data/how_to_cite.html
 origin https://data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/stream0/<YYYY>/<MM>/<DD>/<label>/ut<HH>/<YYYYMMDD>_<HHMM>_<label>_full.pgm.gz
