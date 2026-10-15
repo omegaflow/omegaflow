@@ -2,59 +2,57 @@
   title: Standpass — Mycelium (privat)
   class: zustand
   date: 2026-10-15
-  sha256: 8d4fdd94226177c1ecb8490850b13040e070b95b58487ba6c98fa05f2dcac0dc
+  sha256: 086a0a268d72124d37be743dfb00c926a7680bd4d44419c84c9fb319b69167c6
   status: live
   see-also: docs/zustand/standing-pass.md
 -->
-# Stehender Pass — Mycelium (privat, folge357)
+# Stehender Pass — Mycelium (privat, folge358)
 
 Vollständige Fassung. Öffentlich gilt allein die Projektion
 `docs/zustand/standing-pass.md` (nur HEAD + rote Läufe, kein Personenbezug).
 
-HEAD `983037937` (== `origin/main`) · geschrieben 2026-10-15 13:3xZ · **Mycelium-357**.
+HEAD `51bcd7fe1` (== `origin/main`) · geschrieben 2026-10-15 16:35Z · **Mycelium-358**.
 
 ## Rote Läufe (gemessen via `ci_manage`, kein Polling)
 
-`ci_manage reds` (einmal): **280** non-success Läufe über 5 Seiten — ein **Flutstand** aus den
-parallel laufenden Linien. Verteilung + ein gemessener Fehler-Job je Träger (`ci_manage jobs`):
+`ci_manage reds` (einmal): **271** non-success Läufe — ein **Flutstand** aus den parallel laufenden
+Linien. Verteilung (gemessen) + ein gemessener Fehler-Job je Träger (`ci_manage jobs`):
 
-| run-id | workflow | gemessener Fehler-Job | Beispiel-HEAD |
+| run-id | workflow (n) | gemessener Fehler-Job | Beispiel-HEAD |
 |---|---|---|---|
-| `38739572278` | `ci-gate` (160) | `dropped-gate` · `subset` · `register` · `clippy` · `format` | `0891aef19` |
-| `38733981918` | `register-coverage` (75) | `orphans` | `fd9621fa4` |
-| `38718639886` | `tools-build` (22) | `build` | `244be15ff` |
-| `38729743881` | `quake-feeds-cdn` (5) | `quake-feeds` | `fcc4646aa` |
-| `38732211774` | `matrix-rotor` (4) | `rotor` | `99812000c` |
-| `38711782156` | `gic-al-network` (4) | `network` | `7b5bfc637` |
-| `38693040881` | `zenodo-raw-cdn` (1, **eigen**) | `zenodo-raw` (`venus_radar_Processed.zip`, `pioneer11_SC_24.asc`) | `b8fd39b49` |
-| — | `m10-mdis-raw-cdn` (2) · `ssd-jpl-raw-cdn` (1) · `venus-radar-cdn` (1) · `ci-check` (1) · `health-check` (3, cancelled) | — | — |
+| `38768669705` | `ci-gate` (164) | `clippy` · `register` · `subset` · `format` (`build`/`dropped-gate` success) | `024b341e3` |
+| `38769414504` | `register-coverage` (64) | `orphans` → `--tokens --noecho-fail` (8 unbeglichen, 4 XFER-MISSING) | `c755d4b0c` |
+| — | `tools-build` (23) | `build` | — |
+| — | `gic-al-network` (4) · `quake-feeds-cdn` (3) · `health-check` (3, in_progress) | — | — |
+| — | `matrix-rotor` (2) · `m10-mdis-raw-cdn` (2) | — | — |
+| `38767860985` | `themis_asi-fodg-cdn` (1, **eigen**) | `themis-asi-fodg` — gemessen: `gzip: …0830….pgm.gz: not in gzip format` (die 0830-URL antwortet 301/HTML) | `5b2071569` |
+| — | `zenodo-raw-cdn` (1, **eigen**) · `ssd-jpl-raw-cdn` (1) · `venus-radar-cdn` (1) · `ci-check` (1) | — | — |
 
-Der tiefere Log-Grund je Lauf ist **unread** (kein Polling). **Eigener Befund:** `zenodo-raw-cdn`
-melde in `38693040881` „live body void" für beide genau benannten Assets — die zwei Zenodo-Content-
-`origin`s sind **jetzt erneut gemessen HTTP 200** (144 044 556 B / 143 701 516 B), also ein
-**transienter Void**, kein Quellen-Defekt. Träger-Linie: fremd (Register/Gate/Matrix/Feeds).
-Meine eigenen Push-Läufe am HEAD `cc6f31afc` sind **queued/unread**.
+Der tiefere Log-Grund der fremden Träger ist **unread** (kein Polling). **Eigene Befunde:** (a) der
+`themis_asi-fodg-cdn`-Fehler war die einzige gemessene eigene rote Naht — **behoben** (gzip-Magic-
+Guard, `b20976b78`); (b) `register-coverage` scheitert am `--tokens`-Gate (fremde + eigene
+unbeglichene Xfer) und am `--orphan-docs`-Carrier-Mangel; die eigene folge358 fügt **keine**
+XFER-MISSING mehr hinzu. Meine Push-Läufe an `3188d3a88`/`51bcd7fe1` sind **queued/in_progress/
+unread** — `zenodo-raw-cdn` (`38769841043`) spiegelt gerade (pioneer10_SC_23.asc, danach u. a. die
+Venera-Polar).
 
-## Lokal gemessen am HEAD `cc6f31afc`
+## Lokal gemessen am HEAD `51bcd7fe1`
 
-- **WGLC-Compiler gebaut** (`tools/harvest/src/bin/wglc_compiler.rs`, `f4e566c8f`): der bestehende
-  HDF5-Reader liest `density[time,lat,lon]`, die Zellfläche·Dichte wird je Zeitschritt über den
-  Globus integriert → globale Tages-Reihe. `cargo build -p omegaflow-harvest --bin wglc_compiler`
-  0/0, `rustfmt --check` clean, Smoketest am Klimatologie-File (12 Zeilen).
-- **Zeitauflösung korrigiert:** die WGLC-Dichte ist **täglich** (`density [5844,360,720]`,
-  `time` `delta_t = 1 Tag`), nicht stündlich — `30m`/`05m` = 30/5 **Bogenminuten** (räumlich).
-- **Lizenz-Riss:** Zenodo-Record `cc-by-4.0` (concept `4774528` wie Version `20277101`) vs.
-  README-Badge **CC BY-SA 4.0**. `wwlln.net` selbst bleibt `decline commercial` (UW-copyright).
-- `register_lookup --orphans --fail` = 0; `--orphan-docs` = **30** Dokumente (Träger fehlt);
-  `--fired mycelium` = 0; `--stale` = 0; `--tokens`: `xfer:mycelium-356-5` + `-352-5` von
-  mountain-354 gefaltet/echoed, `-356-2`/`-3`/`-4` unbeglichen (an River).
-- `open_points_check` folge356 = 0 stale-citations.
+- **Venera-Polar gespiegelt + registriert** (`phi/sources.φ`, Block
+  `zenodo.org/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif`; 193 701 536 B, sha256
+  `98d80740…`; `register_sort` canonical über **2808** Blöcke; `cdn_reconcile --fail` clean,
+  334 registry hosts; `license_census` unverändert — `CC-BY-4.0` im geschlossenen Satz).
+- `register_lookup --orphans --fail` = 0; `--orphan-docs` = **30** (Träger fehlt, fremd);
+  `--fired mycelium` = 0; `--stale mycelium --persist 3` = 0.
+- `open_points_check` folge357 = 0 stale-citations (1 ABSENT: Future-Archiv-Pfad, mechanisch;
+  20 format-gaps unverändert).
+- **`themis_asi-fodg-cdn`-Naht repariert** (gzip-Magic-Guard; gemessener Grund s. o.).
 
 ## Postfach
 
 - `post/in` (privates Haus, `~/projects/omegaflow-work/post/in`):
-  `2026-10-14-mycelium-nssdc-datenantrag.md` (Operator-Hand, Route (b)) — **bereits gewortet,
-  nicht erneut vorgelegt**. `post/paid-open` (17 B) unverändert.
+  `2026-10-14-mycelium-nssdc-datenantrag.md` — **bereits gewortet, nicht erneut vorgelegt**.
+  `post/paid-open` (jetzt 27 B, zuvor 17 B) — fremde Linie; nur die Größe gelesen, kein Inhalt.
 
 ## Ereignis-Stand
 
@@ -63,31 +61,25 @@ Meine eigenen Push-Läufe am HEAD `cc6f31afc` sind **queued/unread**.
 
 ## Orphan-Zensus
 
-- `register_lookup --orphans` = 0 (fremd-unabhängig). `--orphan-docs` = 30 (Träger fehlt; gemessen).
+- `register_lookup --orphans` = 0. `--orphan-docs` = 30 (Träger fehlt; gemessen).
 
 ## Mehrfach-Träger
 
-- Offen (in `mycelium-folge357`): `xfer:mycelium-356-1`/`-352-1`/`-352-3`/`-352-5` (an Mountain) ·
-  `xfer:mycelium-342-3`/`-4`/`-342-10`/`-343-2` (an Mountain) · `xfer:mycelium-356-2`/`-3`/`-4`
-  (an River) · `xfer:mountain-348-1`/`-2`/`-4`/`-5` (an Mountain).
-- Empfangen-unbeglichen aus `mountain-folge354`: `xfer:mountain-352-1`/`-2`/`-3`, `-352-4`
-  (DMSP-SSJ url/origin/compiler **bestätigt**), `-348-1`, `-351-1`.
-- Gefaltet/geschlossen: mountain-folge353, river-folge217.
+- Offen (in `mycelium-folge358`): `xfer:mycelium-352-5` (Mountain) · `xfer:mycelium-356-5` (echoed) ·
+  `xfer:mountain-354-1` (echoed) · `xfer:mycelium-352-1`/`-2` (echoed) · `xfer:mountain-348-1`
+  (Mountain) · `xfer:mycelium-356-3` (River) · `xfer:river197-6` (echoed).
+- Gefaltet/geschlossen: mountain-folge355, river-folge219.
 
 ## Gearbeitet (dieses Rund)
 
-- **WGLC-Compiler gebaut** + die Messung korrigiert (täglich, Lizenz-Riss), s. o.
-- `mountain-folge354` gefaltet: WGLC-Antwort (Lizenz-Riss benannt, `field`-Form = Rat) ·
-  DMSP-SSJ-Direktiven am Baum bestätigt · Celestrak-`terms` über `archive_search --jina` gemessen
-  (`usage-policy.php`, 501(c)(3), frei, Rate-Limits, kein Lizenztext) — die frühere „nicht
-  erreichbar"-Meldung war die falsche Route.
-- folge356 → `archiv/`; folge357 geschrieben; der Commit steht (`f4e566c8f`, `cc6f31afc`).
+- Venera-Polar gespiegelt + Registerzeile gesetzt (s. o.); `themis_asi-fodg-cdn`-Naht repariert.
+- folge357 → `archiv/`; folge358 geschrieben; Commits `cf6c8b4d9` / `3188d3a88` / `b20976b78` /
+  `51bcd7fe1` gepusht (HEAD == `origin/main`).
 
 ## Snapshot / Tools
 
-- `git_safety --snapshot` gesetzt (dieses Rund). `.tools_ensure`-Sweep: kein Einzelnamen-Sweep
-  (das Skript verlangt einen Tool-Namen); die Release-Route trägt weiter die Wrapper.
-- Push steht (HEAD == `origin/main` == `983037937`).
+- `git_safety --snapshot` gesetzt (dieses Rund). `.tools_ensure`-Sweep: das Skript verlangt einen
+  Tool-Namen (kein Einzelnamen-Sweep); die Release-Route trägt weiter die Wrapper.
 
 ## session_burn
 
