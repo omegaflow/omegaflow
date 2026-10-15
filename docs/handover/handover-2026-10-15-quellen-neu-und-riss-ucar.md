@@ -4,7 +4,7 @@
   date: 2026-10-15
   sha256: 52bd66fca1c8b6287350ae97e1ae113160c5b6b6d5d0ed57f8be145623b49164
   status: live
-  see-also: docs/handover/handover-2026-10-14-river-folge212.md, docs/handover/handover-2026-10-14-mountain-folge346.md, docs/surveys/survey-2026-10-14-gewebe-faeden.md
+  see-also: docs/handover/archiv/handover-2026-10-14-river-folge212.md, docs/handover/archiv/handover-2026-10-14-mountain-folge346.md, docs/surveys/survey-2026-10-14-gewebe-faeden.md
 -->
 # Quellen-Blatt — der UCAR-Riss und die neuen offenen Fäden (2026-10-15)
 
