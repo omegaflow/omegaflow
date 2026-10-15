@@ -2,7 +2,7 @@
   title: Drei Mails — CEIC (Schwere-Zugang), UCAR-FPI (DOI/Terms), re3data (Korrektur)
   class: handover
   date: 2026-10-15
-  sha256: e1910ed66608141e4aa9bab341a2078797608ca7e8283b6ba231277c79da1992
+  sha256: 00df18848ceffe15563c6442d72e140553fae2ed02bc9e498d77260929efcc50
   status: live
   see-also: docs/handover/handover-2026-10-15-quellen-neu-und-riss-ucar.md
 -->
@@ -14,20 +14,21 @@ Jede Mail ist **wahrheitsgeprüft** (kein Überversprechen), nennt **eine** konk
 
 ## 1. CEIC — Schwere-Zugang
 **To:** `datashare@seis.ac.cn`
-**Subject:** Access request — gravity datasets (absolute / continuous / mobile), National Earthquake Science Data Center
+**Subject:** D18000 gravity data — real-name verification for an independent foreign researcher
 
 Hello,
 
-I am an independent, non-commercial researcher working with open geophysical data. I found your gravity datasets ("重力测量数据", D18000): the absolute gravity observations (2009–2015), the continuous gravity network, and the mobile gravity surveys. I would like to apply for access under your terms.
+I have read the application guide for the D18000 gravity datasets (absolute, continuous and mobile) — thank you, the process is clear: registration, real-name verification, dataset selection, order, review.
 
-Could you please tell me:
-1. the exact application procedure (form, agreement, any fee);
-2. the data formats, units and reference (datum);
-3. whether non-commercial research use and the publication of derived results are permitted, and how you would like the data cited.
+One point decides whether I can apply at all, and I would like to ask before registering:
 
-Context: the data would support a small, independent project on the time-varying gravity field. I will follow your terms and cite the data as you require.
+1. **Real-name verification (实名认证):** can an **independent, non-commercial foreign researcher** complete it — with a **passport**, or is a Chinese ID document required?
+2. If a passport is accepted, which fields/documents exactly, and is there a nationality restriction on the application?
+3. Once verified: are the D18000 datasets (absolute 2009–2015, continuous, mobile) available to a foreign applicant, and are **non-commercial research use and publication of derived results** permitted under your terms?
 
-您好，我是一名独立研究者，希望申请贵中心的绝对重力、连续重力与流动重力观测数据（D18000，重力测量数据）。请问申请流程、数据格式与引用方式是什么？谢谢。
+My purpose: a small, independent, non-commercial project on the **time-varying gravity field** — I use multiple stations over the full available span, compute the gravity residual (after tide and drift correction), and test whether it carries information about other geophysical series. Not a single fault-zone study; I would take the widest station set your terms allow. I will follow your terms and cite the data as you require.
+
+您好，我是一名独立的外国研究者，希望申请 D18000 重力测量数据。请问实名认证是否接受**护照**？外国申请者是否受限？谢谢。
 
 Kind regards,
 [NAME]
