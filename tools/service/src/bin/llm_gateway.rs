@@ -312,6 +312,7 @@ static REDACTOR: OnceLock<Option<Redactor>> = OnceLock::new();
 struct Redactor {
     forward: Vec<(String, String)>,
     reverse: Vec<(String, String)>,
+    names: HashSet<String>,
 }
 
 fn filter_enabled() -> bool {
@@ -321,9 +322,59 @@ fn filter_enabled() -> bool {
     }
 }
 
+fn rss_kib() -> Option<u64> {
+    let text = fs::read_to_string("/proc/self/status").ok()?;
+    for line in text.lines() {
+        if let Some(rest) = line.strip_prefix("VmRSS:") {
+            return rest.split_whitespace().next()?.parse().ok();
+        }
+    }
+    None
+}
+
+fn read_redact_file(name: &str) -> Option<String> {
+    let rel = format!("data/redact/{name}");
+    if let Ok(text) = fs::read_to_string(&rel) {
+        return Some(text);
+    }
+    if let Ok(repo) = std::env::var("OMEGAFLOW_REPO") {
+        if !repo.is_empty() {
+            if let Ok(text) = fs::read_to_string(format!("{repo}/data/redact/{name}")) {
+                return Some(text);
+            }
+        }
+    }
+    if let Ok(home) = std::env::var("HOME") {
+        if let Ok(text) = fs::read_to_string(format!("{home}/projects/omegaflow/data/redact/{name}")) {
+            return Some(text);
+        }
+    }
+    None
+}
+
+fn load_names() -> HashSet<String> {
+    let mut names: HashSet<String> = HashSet::new();
+    for file in ["vornamen.txt", "nachnamen.txt"] {
+        match read_redact_file(file) {
+            Some(text) => {
+                for line in text.lines() {
+                    let label = line.trim();
+                    if !label.is_empty() && !label.starts_with('#') {
+                        names.insert(label.to_lowercase());
+                    }
+                }
+            }
+            None => eprintln!("llm_gateway: data/redact/{file} absent - that name list stays inert"),
+        }
+    }
+    names
+}
+
 fn active_redactor() -> Option<&'static Redactor> {
     REDACTOR
         .get_or_init(|| {
+            let started = Instant::now();
+            let rss_before = rss_kib();
             let dir = match std::env::var("OMEGAFLOW_PRIVATE") {
                 Ok(p) if !p.is_empty() => p,
                 _ => match std::env::var("HOME") {
@@ -332,30 +383,47 @@ fn active_redactor() -> Option<&'static Redactor> {
                 },
             };
             let path = format!("{dir}/redact.map");
-            match fs::read_to_string(&path) {
-                Ok(text) => Some(Redactor::from_map(&text)),
-                Err(_) => {
-                    eprintln!("llm_gateway: redact.map absent at {path} - filter inert");
-                    None
-                }
+            let map_text = fs::read_to_string(&path).ok();
+            if map_text.is_none() {
+                eprintln!("llm_gateway: redact.map absent at {path} - map layer inert");
             }
+            let names = load_names();
+            if map_text.is_none() && names.is_empty() {
+                eprintln!("llm_gateway: redact layer inert - no map and no name lists");
+                return None;
+            }
+            let redactor = Redactor::from_parts(map_text.as_deref(), names);
+            let elapsed_ms = started.elapsed().as_secs_f64() * 1000.0;
+            let rss_after = rss_kib();
+            let rss_note = match (rss_before, rss_after) {
+                (Some(a), Some(b)) if b >= a => format!("+{} KiB", b - a),
+                (Some(a), Some(b)) => format!("{} KiB", b as i64 - a as i64),
+                _ => "unread".to_string(),
+            };
+            eprintln!(
+                "llm_gateway: redact layer loaded in {elapsed_ms:.1} ms - {} names - rss {rss_note}",
+                redactor.names.len()
+            );
+            Some(redactor)
         })
         .as_ref()
 }
 
 impl Redactor {
-    fn from_map(text: &str) -> Redactor {
+    fn from_parts(map_text: Option<&str>, names: HashSet<String>) -> Redactor {
         let mut forward: Vec<(String, String)> = Vec::new();
-        for line in text.lines() {
-            let line = line.trim();
-            if line.is_empty() || line.starts_with('#') {
-                continue;
-            }
-            if let Some((real, ph)) = line.split_once('=') {
-                let real = real.trim();
-                let ph = ph.trim();
-                if !real.is_empty() && !ph.is_empty() {
-                    forward.push((real.to_string(), ph.to_string()));
+        if let Some(text) = map_text {
+            for line in text.lines() {
+                let line = line.trim();
+                if line.is_empty() || line.starts_with('#') {
+                    continue;
+                }
+                if let Some((real, ph)) = line.split_once('=') {
+                    let real = real.trim();
+                    let ph = ph.trim();
+                    if !real.is_empty() && !ph.is_empty() {
+                        forward.push((real.to_string(), ph.to_string()));
+                    }
                 }
             }
         }
@@ -363,11 +431,11 @@ impl Redactor {
         let mut reverse: Vec<(String, String)> =
             forward.iter().map(|(r, p)| (p.clone(), r.clone())).collect();
         reverse.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
-        Redactor { forward, reverse }
+        Redactor { forward, reverse, names }
     }
 
     fn redact(&self, s: &str) -> String {
-        let mut out = apply_patterns(s);
+        let mut out = apply_patterns(s, &self.names);
         for (real, ph) in &self.forward {
             if out.contains(real.as_str()) {
                 out = out.replace(real.as_str(), ph.as_str());
@@ -385,7 +453,6 @@ impl Redactor {
         }
         out
     }
-
 }
 
 fn starts(ch: &[char], i: usize, s: &str) -> bool {
@@ -827,7 +894,281 @@ fn p_tel(ch: &[char], i: usize) -> Option<usize> {
     None
 }
 
-fn apply_patterns(s: &str) -> String {
+fn p_card(ch: &[char], i: usize) -> Option<usize> {
+    if i > 0 && (ch[i - 1].is_ascii_digit() || ch[i - 1] == '-') {
+        return None;
+    }
+    let mut j = i;
+    let mut digits = 0usize;
+    while j < ch.len() {
+        let c = ch[j];
+        if c.is_ascii_digit() {
+            digits += 1;
+            j += 1;
+        } else if (c == ' ' || c == '-') && j + 1 < ch.len() && ch[j + 1].is_ascii_digit() {
+            j += 1;
+        } else {
+            break;
+        }
+    }
+    if (13..=19).contains(&digits) && (j >= ch.len() || !c_word(ch[j])) {
+        Some(j)
+    } else {
+        None
+    }
+}
+
+fn p_bic(ch: &[char], i: usize) -> Option<usize> {
+    if i > 0 && c_word(ch[i - 1]) {
+        return None;
+    }
+    let mut j = i;
+    let mut k = 0;
+    while k < 6 {
+        match ch.get(j) {
+            Some(c) if c.is_ascii_uppercase() => {
+                j += 1;
+                k += 1;
+            }
+            _ => return None,
+        }
+    }
+    let mut k2 = 0;
+    while k2 < 2 {
+        match ch.get(j) {
+            Some(c) if c.is_ascii_alphanumeric() => {
+                j += 1;
+                k2 += 1;
+            }
+            _ => return None,
+        }
+    }
+    let base = j;
+    let extended = (0..3).all(|d| ch.get(base + d).map_or(false, |c| c.is_ascii_alphanumeric()));
+    if extended {
+        j = base + 3;
+    }
+    if j >= ch.len() || !c_word(ch[j]) {
+        Some(j)
+    } else {
+        None
+    }
+}
+
+const VAT_PREFIX: &[&str] = &[
+    "AT", "BE", "BG", "CH", "CY", "CZ", "DE", "DK", "EE", "EL", "ES", "FI", "FR", "GB", "HR",
+    "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "NO", "PL", "PT", "RO", "SE", "SI", "SK",
+    "XI",
+];
+
+fn p_vat(ch: &[char], i: usize) -> Option<usize> {
+    if i > 0 && c_word(ch[i - 1]) {
+        return None;
+    }
+    if i + 2 > ch.len() {
+        return None;
+    }
+    let cc: String = ch[i..i + 2].iter().collect();
+    if !VAT_PREFIX.contains(&cc.as_str()) {
+        return None;
+    }
+    let mut j = i + 2;
+    while j < ch.len() && (ch[j] == ' ' || ch[j] == '.' || ch[j] == '-') {
+        j += 1;
+    }
+    let start = j;
+    while j < ch.len() && ch[j].is_ascii_alphanumeric() {
+        j += 1;
+    }
+    let n = j - start;
+    if (8..=12).contains(&n) && (j >= ch.len() || !c_word(ch[j])) {
+        Some(j)
+    } else {
+        None
+    }
+}
+
+fn p_phone(ch: &[char], i: usize) -> Option<usize> {
+    if i > 0 && (c_word(ch[i - 1]) || ch[i - 1] == '+' || ch[i - 1] == '.') {
+        return None;
+    }
+    let mut j = i;
+    if ch[j] == '+' {
+        j += 1;
+    }
+    if j >= ch.len() || !ch[j].is_ascii_digit() {
+        return None;
+    }
+    let mut digits = 0usize;
+    while j < ch.len() {
+        let c = ch[j];
+        if c.is_ascii_digit() {
+            digits += 1;
+            j += 1;
+        } else if c == '(' || c == ')' {
+            j += 1;
+        } else if (c == ' ' || c == '-' || c == '/' || c == '.')
+            && j + 1 < ch.len()
+            && (ch[j + 1].is_ascii_digit() || ch[j + 1] == '(')
+        {
+            j += 1;
+        } else {
+            break;
+        }
+    }
+    if (7..=15).contains(&digits) && (j >= ch.len() || !c_word(ch[j])) {
+        Some(j)
+    } else {
+        None
+    }
+}
+
+fn postal_nl(ch: &[char], i: usize) -> Option<usize> {
+    let mut j = i;
+    let mut k = 0;
+    while k < 4 {
+        match ch.get(j) {
+            Some(c) if c.is_ascii_digit() => {
+                j += 1;
+                k += 1;
+            }
+            _ => return None,
+        }
+    }
+    if ch.get(j) == Some(&' ') {
+        j += 1;
+    }
+    let mut k2 = 0;
+    while k2 < 2 {
+        match ch.get(j) {
+            Some(c) if c.is_ascii_alphabetic() => {
+                j += 1;
+                k2 += 1;
+            }
+            _ => return None,
+        }
+    }
+    if j >= ch.len() || !c_word(ch[j]) {
+        Some(j)
+    } else {
+        None
+    }
+}
+
+fn postal_ca(ch: &[char], i: usize) -> Option<usize> {
+    let mut j = i;
+    let mut step = 0;
+    while step < 6 {
+        let c = ch.get(j)?;
+        if step == 3 && (*c == ' ' || *c == '-') {
+            j += 1;
+            continue;
+        }
+        let ok = if step % 2 == 0 {
+            c.is_ascii_alphabetic()
+        } else {
+            c.is_ascii_digit()
+        };
+        if !ok {
+            return None;
+        }
+        j += 1;
+        step += 1;
+    }
+    if j >= ch.len() || !c_word(ch[j]) {
+        Some(j)
+    } else {
+        None
+    }
+}
+
+fn c_name(c: char) -> bool {
+    c.is_alphabetic() || c == '-' || c == '\'' || c == '\u{2019}'
+}
+
+fn p_name(ch: &[char], i: usize, names: &HashSet<String>) -> Option<usize> {
+    if !ch[i].is_alphabetic() {
+        return None;
+    }
+    if i > 0 && c_name(ch[i - 1]) {
+        return None;
+    }
+    let mut j = i;
+    while j < ch.len() && j - i < 40 && c_name(ch[j]) {
+        j += 1;
+    }
+    if j - i < 2 {
+        return None;
+    }
+    let token: String = ch[i..j].iter().collect::<String>().to_lowercase();
+    if names.contains(&token) {
+        Some(j)
+    } else {
+        None
+    }
+}
+
+fn postal_pairs(ch: &[char], i: usize) -> Option<usize> {
+    if !ch.get(i).map_or(false, |c| c.is_ascii_digit()) {
+        return None;
+    }
+    let mut j = i;
+    let mut a = 0usize;
+    while j < ch.len() && ch[j].is_ascii_digit() && a < 6 {
+        j += 1;
+        a += 1;
+    }
+    let sep = ch.get(j).copied();
+    if sep != Some('-') && sep != Some(' ') {
+        return None;
+    }
+    j += 1;
+    let mut b = 0usize;
+    while j < ch.len() && ch[j].is_ascii_digit() {
+        j += 1;
+        b += 1;
+    }
+    let pair = (a, b);
+    if matches!(pair, (2, 3) | (3, 2) | (3, 4) | (4, 3) | (5, 3) | (5, 4))
+        && (j >= ch.len() || !c_word(ch[j]))
+    {
+        Some(j)
+    } else {
+        None
+    }
+}
+
+fn p_postal(ch: &[char], i: usize) -> Option<usize> {
+    if i > 0 && (ch[i - 1].is_ascii_alphanumeric() || ch[i - 1] == '-') {
+        return None;
+    }
+    if let Some(e) = postal_nl(ch, i) {
+        return Some(e);
+    }
+    if let Some(e) = postal_ca(ch, i) {
+        return Some(e);
+    }
+    if let Some(e) = postal_pairs(ch, i) {
+        return Some(e);
+    }
+    if !ch[i].is_ascii_digit() {
+        return None;
+    }
+    let mut j = i;
+    while j < ch.len() && ch[j].is_ascii_digit() {
+        j += 1;
+    }
+    let n = j - i;
+    if (n == 4 || n == 5 || n == 6)
+        && (j >= ch.len() || (!ch[j].is_ascii_alphanumeric() && ch[j] != '-'))
+    {
+        Some(j)
+    } else {
+        None
+    }
+}
+
+fn apply_patterns(s: &str, names: &HashSet<String>) -> String {
     let s = subst(s, "<KEY>", p_sk);
     let s = subst(&s, "<KEY>", p_github);
     let s = subst(&s, "<KEY>", p_gh);
@@ -842,8 +1183,14 @@ fn apply_patterns(s: &str) -> String {
     let s = subst(&s, "<EMAIL>", p_email);
     let s = subst(&s, "<IBAN>", p_iban);
     let s = subst(&s, "<ADDR>", p_street);
-    let s = subst(&s, "<ORT>", p_plz);
-    subst(&s, "<TEL>", p_tel)
+    let s = subst(&s, "<POSTAL>", p_plz);
+    let s = subst(&s, "<TEL>", p_tel);
+    let s = subst(&s, "<CARD>", p_card);
+    let s = subst(&s, "<BIC>", p_bic);
+    let s = subst(&s, "<VAT>", p_vat);
+    let s = subst(&s, "<TEL>", p_phone);
+    let s = subst(&s, "<POSTAL>", p_postal);
+    subst(&s, "<NAME>", |ch, i| p_name(ch, i, names))
 }
 
 fn json_ws(b: u8) -> bool {
