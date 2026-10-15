@@ -2,7 +2,7 @@
 title: Handover — River-Folge 213
 class: handover
 date: 2026-10-15
-sha256: 9e3cb283ab1869e9b4d2d93b3d5bc7defd86f3c45d4391c3489fbf98d579e552
+sha256: 4109d8f32f188f881213204f9d2042af659a3fc647a0625d6d665b53ed944373
 status: live
 -->
 # Handover — River-Folge 213 (2026-10-15)
@@ -29,6 +29,7 @@ Wort | Datum | Quelle
 „genau das ziel muss sein bei welcher toleranz mit welcher anzahl ist die machine am schärfsten … für jedes ereignis ein messprotokoll … wie es auf der toleranz und pro anzahl aussieht" | 2026-10-15 | Operator (Session, River-214) — Zielsetzung: die **Schärfe-Fläche** (Toleranz × Stationszahl) und daraus ein **Ereignis-Messprotokoll**.
 „können wir rausfinden ob es ein muster gibt wie stationen zueinander stehen müssen damit der trefferanteil nicht sinkt … praktisch eine te mustererkennung für die positionierung der stationen" | 2026-10-15 | Operator (Session, River-214) — eine **Stations-Platzierungsregel** (TE-Muster) finden, die den Trefferanteil hält oder steigert.
 „ginge nicht sogar eine polarlichtabhängige ‚live'-aktivierung oder ist das für eine vorhersage unbrauchbar da der sturm ja schon angekommen ist, oder trägt der gedanke, aurora als stationstrigger" | 2026-10-15 | Operator (Session, River-214) — die Aurora als **dynamischer Stationsschalter** (welche Stationen unter dem Polarlichtstrom liegen) und die Vorlauf-Frage.
+„wir finden doch gerade heraus was der sonnensturm alles treibt oder beeinflusst die komplette kette von der sonne bis zur erde wir könnten also sozusagen eine frühwarnkette einrichten die logischerweise je näher an zur erde desto kurzfristger" | 2026-10-15 | Operator (Session, River-214) — die **Frühwarnkette** als Vorlauf-Leiter (Sonne → … → Erde), deren Vorlauf nach unten kürzer wird.
 
 Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `state/operator-gespraeche/2026-10-14-river.md` (Vorsession).
 
@@ -152,9 +153,16 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `st
 ### GIC-Schärfe-Fläche + Stations-Platzierungsmuster (Operator-Wort 2026-10-15)
 - **Status:** eigen (neu, Bau) | **Bindung:** eigen
 - **Trigger:** Operator-Wort 2026-10-15: „bei welcher toleranz mit welcher anzahl ist die machine am schärfsten" + „ein muster … wie stationen zueinander stehen müssen … eine te mustererkennung für die positionierung".
-- **Lage:** (gemessen 2026-10-15 via `ci_manage` + lokaler `gic_onset_detector`) die Einzel-Schwellenkurve ist gemessen (s. GIC-Onset); die Stationszahl-Kurve fehlt. **Gebaut:** `.github/workflows/gic-station-sweep.yml` — ordnet eine Familie nach `|cgm_lat|` (aus `phi/sources.φ`), lädt die xyz-Bins **einmal** (je 420 MB), baut die kumulativen Einhüllenden für `counts=1,2,3,4,6,8,12,16,24,31` und fährt je Zählung den Detektor mit `--null 200` (die `compare`-Zeilen tragen 5/15/30 min). Der Lauf folgt dem Commit; die Bins sind ~13 GB pro Lauf → CI.
+- **Lage:** (gemessen 2026-10-15 via `ci_manage` + lokaler `gic_onset_detector`) die Einzel-Schwellenkurve steht (s. GIC-Onset). **Stationszahl-Kurve gemessen (Lauf `38696906878`, auroral nach `|cgm_lat|` absteigend, Auto-Schwelle, `--null 200`):** der Rückruf (15 min) fällt mit der Zahl: n3 0.0283 · n4 0.0283 · n6 0.0020 · n8 0.00027 · n12 0.000015 · n16 0.00020 · n24 0.00015 · n31 0.00012 (n2 mit kürzerem Fenster, `n_mcp=52999`, nicht vergleichbar) — **die Einzelstation bleibt mit 0.066 der beste Arm**; die Präzision liegt über alle Netze bei ~0.30–0.54. Die höchsten Breiten tragen, jeder weitere (tiefere) Standort verschlechtert. Der Detektor ist mit der **einen** höchsten Station am schärfsten; ein inneres Optimum der Stationszahl gibt es nicht. **Gebaut:** `.github/workflows/gic-station-sweep.yml` (ordnet nach `|cgm_lat|`, lädt die Bins einmal, kumulative Einhüllenden); die Bins sind ~13 GB pro Lauf → CI.
 - **Blockade:** keine (CI-Lauf).
 - **Braucht:** (a) die Schärfe-Fläche aus dem Sweep; (b) **zuerst den Schärfe-Begriff definieren** — die Toleranz ist eine Matching-Definition (eine lockere Toleranz hebt Präzision *und* Rückruf mechanisch), kein Detektor-Regler; die harten Regler sind Stationszahl und Schwelle. Der Metric (z. B. F1 bei fester Toleranz oder Präzision bei fester Ausbeute) ist eine **Methodik-/Architekturentscheidung → Rat** (fünf Stimmen + Recherche-Roster, s. Operator-Wort „council bedeutet recherche roster (full) und rat"); (c) das **Stations-Platzierungsmuster**: Teilmengen-Suche über die 154 Stationen, geführt durch paarweise TE/Kopplung (welche Stationen komplementäre Information tragen) — ebenfalls Rat-Design vor dem Bau; (d) **Aurora als dynamischer Stationsschalter** (Operator-Wort 2026-10-15): die Polarlicht-Oval-Lage wählt je Zeit die Stationen unter dem Strom (dynamische Auswahl statt fester Netz-Zahl). Vorlauf-Riss benannt: die Aurora ist eine **Schwester**-Erscheinung des Sturms (gleiche Ursache), kein Vorläufer — der Vorlauf Boden-`dB/dt`→GIC ist kurz; messbar als Lag zwischen Aurora/AL-Onset und Boden-`dB/dt`. Rat-Design.
+
+### Frühwarnkette — Vorlauf-Leiter Sonne→Erde (Operator-Wort 2026-10-15)
+- **Status:** eigen (neu, Entwurf → Rat) | **Bindung:** eigen
+- **Trigger:** Operator-Wort 2026-10-15: „eine frühwarnkette einrichten die logischerweise je näher an zur erde desto kurzfristger".
+- **Lage:** (gemessen 2026-10-15 via Register-/Kanal-Zensus am Baum) die Kette ist eine **Vorlauf-Leiter**: aktive Region (Tage) → Flare/EUV (8 min, Lichtgeschwindigkeit) → CME/Sonnenwind bei L1 (~25–60 min) → Magnetosphären-Kopplung → Substurm/Elektrojet (Aurora, ~min) → Boden-`dB/dt` → GIC (~s). Jede Stufe ist Ziel *und* Prädiktor der nächsten; die nutzbare Vorlaufzeit eines Ziels ist durch die früheste tragende Beobachtung begrenzt. Der Haus-Apparat trägt die Bausteine: die TE-Maschine (`te_compute`/`field_te_query`) misst je Kante, ob der Pfeil trägt (Surrogat-Null); viele Kanäle (GOES XRS, OMNI/Sonnenwind, Newell, INTERMAGNET `dB/dt`) stehen.
+- **Blockade:** kein Draht — der **Entwurf** (welche Stufen, welche Fenster, welcher Vorlauf je Stufe, wie verkettet) ist Architektur → **Rat** (fünf Stimmen + Recherche-Roster). Riss benannt: nicht jede Stufe trägt eigenständig (manche sind dieselbe Information, weitergewandert) — eine Kette aus nicht-tragenden Gliedern ist keine Kette.
+- **Braucht:** den Rat-Entwurf (Stufen, Metrik, Null je Kante); danach die Kanten als TE-Messungen fahren und die Frühest-Warnung je Zielstufe herausziehen.
 
 ### Newell-OMNI-Alignment — Zelle gemessen (n=22137), TE silent
 - **Status:** eigen (gemessen, silent) | **Bindung:** eigen
