@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 352 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 238438565db90477202f36123d778fa95214ffe4b285568034b0670679b337d9
+  sha256: 814142ec928b61d2b3fff17213f9af9f7748deaae54bb838610d0918a085525c
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -63,6 +63,12 @@ Prosa, kein Pfad-Block) · 0 stale. Gefaltet (`register_lookup --addressed mount
   (G/`sdata`/`aa`/`gps`); M2 — die Grenze ist ein **Ort** (BAS = geschlossene 24-Bin-MLT-Achse,
   DMSP = Pass-Punkt), kein Kraftfeld; M3 — OVATION ist ein **Modell-Zeuge**, kein Feld/Schalter.
   Drei Doktrinen geschlagen („alles ist ein Feld" · „Kraft oder Skalar" · „Feld oder Schalter").
+- **DMSP-SSJ-Messgrundlage auf F17/F18 erweitert (Operator-Auftrag 2026-10-15).** Der Producer
+  `dmsp16_ssj_compiler.rs` nimmt `--sat f16|f17|f18` (MAGIC `DS16/17/18`, Format/`field`-Namen je
+  Satellit); der Lese-Arm `src/archivar/dmsp16_ssj.rs` parst die Familie (`parse_bin` akzeptiert die
+  drei MAGIC, `declared_fields_for`/`component_name_for` je Format), Dispatch in `extract.rs`. Die
+  zwei Blöcke `dmsp17_ssj`/`dmsp18_ssj` registriert (`phi`, `origin …/dmspf17|18/ssj/…`, beide
+  CDAWeb-Orte HTTP 206). `cargo check` 0/0, rustfmt sauber, Producer baut.
 - **Aurora-Grenzen vermessen (Taucher).** Vollständige Format-Spec für **BAS IMAGE SI12
   Boundaries** (`ramadda.nerc-bas.ac.uk`, OGL v3.0; 30 Monats-`.txt`, 50 Spalten:
   Zeit, Instrument, 24 equatorwärtige + 24 polwärtige AACGM-Breiten je 1-h-MLT-Bin, `NaN` =
@@ -118,11 +124,16 @@ Gefaltet (Echo in diesem Block): `xfer:mycelium-352-1` · `xfer:mycelium-352-2` 
   `kind` (`index`/`derived`), **ohne Kraft** (ein `force` würde behaupten, ein Organismus nehme
   das Modell wahr — A ≠ A), die rohe per-Punkt-Messung bleibt eine **eigene** Quelle. Ob ein
   `derived`/`model_output`-Kind zugelassen wird, ist die Rat-Schemafrage — das Modell muss **nicht**
-  als Feld in die `sources`. Die register-eigene Lücke: nur **F16** ist als SSJ gelistet
-  (`dmsp16_ssj`); OVATION wurde über mehr DMSP-Jahre/Satelliten gebaut.
-- **Blockade:** keine — das Operator-Wort liegt.
-- **Braucht:** nichts an der Aufnahme (die Messung steht); optional den Zip-Kopf (Span/Takt), falls
-  der Extrakt als `model_output` geführt werden soll.
+  als Feld in die `sources`. **Messgrundlage erweitert (Operator-Auftrag „kümmerst du dich drum"):**
+  F17/F18-SSJ sind jetzt registriert (`dmsp17_ssj`/`dmsp18_ssj`, `phi`, je `origin …/dmspf17|18/ssj/…`,
+  `terms CC0-1.0 spdf data_use_policy`, `em ev/cm²/ster/s`); der Producer `dmsp16_ssj_compiler.rs`
+  nimmt `--sat f16|f17|f18` (MAGIC `DS16/17/18`), der Lese-Arm `dmsp16_ssj.rs` parst die Familie.
+  Register: `register_sort` canonical (2807 Blöcke), `cdn_reconcile --fail` clean, `--orphans` 0.
+  **Grenzübertritt benannt:** die `url`/`origin`/`compiler`-Direktiven sind Myceliums; Mountain hat
+  sie auf das Operator-Wort gesetzt (Mycelium informiert, s. `## An mycelium`).
+- **Blockade:** keine — das Operator-Wort liegt, die Messung steht (F16/F17/F18).
+- **Braucht:** nichts an der Aufnahme; optional den Zip-Kopf (Span/Takt), falls der Extrakt als
+  `model_output` geführt werden soll.
 
 ### Epochen-Absenz — Umsetzung trägt der Modellart-Unterscheider (eigen)
 - **Status:** eigen · **verdiktet** (Operator-Wort: direkt der Unterscheider) | **Bindung:** eigen
@@ -274,6 +285,13 @@ Origin: mountain-352 (2026-10-15):
   `xfer:mycelium-342-10`/`xfer:mycelium-343-2` (WDC/terms).
 - Die offenen Registrierungen der Riss-Alternativen bleiben `xfer:mountain-351-1…-5`
   (stehen in folge351 → in `archiv/`).
+
+- `xfer:mountain-352-4` **DMSP-SSJ F17/F18 — die Messgrundlage.** Die zwei Blöcke stehen
+  (`dmsp17_ssj`/`dmsp18_ssj`, `origin https://cdaweb.gsfc.nasa.gov/pub/data/dmsp/dmspf17|18/ssj/precipitating-electrons-ions/`,
+  `terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html`). **Grenzübertritt benannt:**
+  die `url`/`origin`/`compiler`-Zeilen hat Mountain auf das Operator-Wort gesetzt — Mycelium möge
+  sie bestätigen/übernehmen. Der Producer `dmsp16_ssj_compiler --sat f17|f18` und die CI-Naht
+  erzeugen die CDN-Bins (`dmsp17_ssj.bin`/`dmsp18_ssj.bin`).
 
 ## An river
 
