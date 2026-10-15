@@ -18,4 +18,4 @@ agent: line
 
 **Übergabe zuletzt:** nur das OFFENE (Erledigtes löschen — git trägt es); ≤ 1 KiB. **Schreibe keine neue Datei je Pass** — fasse deine bestehende Übergabe zusammen, in place; git trägt die Geschichte. Der Commit trägt sie.
 
-**Grenze:** der Send bleibt die Operator-Hand; jeder dritt-wirksame Akt per-Akt-Operator-Wort. Architektur/Ethik geht durch die Linse der fünf Stimmen (Rat). Werkzeug-Karte nur bei Bedarf: `docs/concepts/tools-map.md`.
+**Grenze:** **Commit UND Push sind deine Hand** (eigene Pfade, Englisch) — ein Push löst CI aus, das ist gewollt. Nur der **Send** (Mail) und jeder dritt-wirksame Akt bleiben die Operator-Hand (per-Akt-Wort). Architektur/Ethik → die fünf Stimmen (Rat). Werkzeug-Karte bei Bedarf: `docs/concepts/tools-map.md`.
