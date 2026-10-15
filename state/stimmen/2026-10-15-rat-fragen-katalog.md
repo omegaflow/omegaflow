@@ -76,8 +76,23 @@ Ursache), kein Vorläufer — der nutzbare Vorlauf Boden-dB/dt→GIC ist kurz. M
 zwischen Aurora/AL-Onset und Boden-dB/dt. Physik (Weygand 2021): dB/dt dehnt sich nach Onset N/W/O
 aus, kaum S.
 
+**Weite Suche (river-216, `bin/all_wide`, Spill `…1792059953_auroral_oval_location_substorm_onset_mag.txt`).**
+- **Die Oval-Lage ist nowcast-bar:** OVATION Prime / **PrecipNet** (McGranaghan et al. 2021,
+  `10.1029/2020sw002684`) liefern die Partikel-Prezipitation/Oval-Nowcast; unser Ketten-Zeuge
+  **OVATION-AACGM** (Zhao 2026, Zenodo 19651247, river-215) ist derselbe Arm; NOAA führt ein
+  operatives Aurora-Tutorial (Oval = Funktion von Kp/Bz/Sonnenwind).
+- **Der Vorlauf-Riss ist dokumentiert:** Lyons et al. 2013 (`10.1002/jgra.50384`, „Distinction
+  between auroral substorm onset and traditional ground magnetic onset signatures") trennt auroralen
+  und bodenmagnetischen Onset — genau die Frage, ob das Oval **führt** oder **folgt**.
+- **Onset relativ zur Harang-Diskontinuität** (Weygand et al. 2008, `10.1029/2007JA012537`) — die
+  Position des Onsets unter dem Stromsystem.
+- **Oval-Mapping ist ein Riss:** „Problems with mapping the auroral oval" (2015, `10.1186/s40623-015-0336-6`);
+  „Substorms on a contracted auroral oval" (2023).
+- **Direkt verwandt:** „Forecasting auroras from regional and global magnetic field measurements"
+  (2016) — der Schalter als Vorhersage.
 **Was die Antwort tragen muss.** (1) Trägt der Schalter (ja/nein + warum). (2) Die Auswahlregel
-(welche Station je Zeit). (3) Der ehrliche Vorlauf-Riss. (4) Der nächste Messschritt.
+(welche Station je Zeit, aus welchem Nowcast). (3) Der ehrliche Vorlauf-Riss (führt oder folgt das
+Oval?). (4) Der nächste Messschritt.
 
 ## Frage 4 · Schumann-Antrieb — Blitz oder Geomagnetik?
 
