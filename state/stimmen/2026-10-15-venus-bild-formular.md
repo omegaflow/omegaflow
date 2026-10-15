@@ -13,11 +13,11 @@ Forschungslage unten.)*
 >
 > ### Die Frage
 >
-> **Wie soll eine planetare Radar-Bildsammlung (Venus, GeoTIFF-Mosaike bis 80,9 GB) im Haus als
-> BILD manifestiert werden — welche Darstellung (Kachel-Pyramide oder ein Raster), welche
-> Kachelung/Auflösungsstufen, welcher Transportweg durch das 2-GB-CDN-Limit, und wie erreicht der
-> Blick des Operators die höchste Auflösung — damit „das Bild ein Bild bleibt" und nicht in
-> skalare Punktfelder zerlegt wird?**
+> **Was machen wir mit dem Venus-Radar-Bild?** — wofür ist es da, welchen Platz hat es im Haus
+> (Basemap? Gestalt neben den Feldern? Blick-Stück?), und **erst daraus** die Form: in welcher
+> Darstellung (Kachel-Pyramide oder Raster) kommt es ins Haus, und über welchen Weg durch das
+> 2-GB-Limit — damit „das Bild ein Bild bleibt" und nicht in skalare Punktfelder zerlegt wird.
+> Die Zweckfrage steht vorn; die Technik folgt aus ihr, nicht umgekehrt.
 >
 > ### Der gemessene Befund (der Boden der Frage — nicht geraten)
 >
@@ -83,15 +83,18 @@ Forschungslage unten.)*
 >
 > ### Was die Antwort tragen muss
 >
-> 1. **Die Form:** HiPS (HEALPix) · COG (Raster mit Overviews) · quadratische XYZ-Kacheln · ein
->    einzelnes Raster-Asset — welches, und warum. Die Felder bleiben Felder, das Bild bleibt Bild.
-> 2. **Die Pyramide:** Kacheleinheit, Zoomstufen, Projektion — und wie die rohe Rückstreuung/Phase
->    erhalten bleibt (kein erfundenes Farbbild).
-> 3. **Der Transport:** wie ein 80,9-GB-Mosaik durch das 2-GB-Limit geht (Split/Parts, R2, oder
+> 1. **Der Zweck (vorn):** wofür das Venus-Radar-Bild im Haus da ist — die eine Sache, die es
+>    leistet und die die Felder nicht leisten. Wenn es keinen eigenen Zweck trägt, sag das.
+> 2. **Der Platz:** wie das Bild neben den laufenden Radar-Feldern (`inc_deg/_ocp/_scp`) steht —
+>    was Bild bleibt, was Feld bleibt, wo sie sich berühren.
+> 3. **Die Form (folgt aus dem Zweck):** HiPS (HEALPix) · COG (Raster mit Overviews) · quadratische
+>    XYZ-Kacheln · ein einzelnes Raster-Asset — welches, und warum. Die rohe Rückstreuung bleibt
+>    erhalten (kein erfundenes Farbbild).
+> 4. **Der Transport:** wie ein 80,9-GB-Mosaik durch das 2-GB-Limit geht (Split/Parts, R2, oder
 >    Kacheln aus dem CI) — was am Kachel-Rand sich wiederholt und was `pending` bleibt.
-> 4. **Der Blick:** wie der Operator Zoom/Region erreicht; was im Hintergrund läuft (headless) und
+> 5. **Der Blick:** wie der Operator Zoom/Region erreicht; was im Hintergrund läuft (headless) und
 >    was der Operator sieht.
-> 5. **Der nächste begrenzte Messschritt.**
+> 6. **Der nächste begrenzte Messschritt.**
 >
 > ### Form
 >
