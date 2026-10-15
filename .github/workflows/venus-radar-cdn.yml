@@ -1,0 +1,74 @@
+# harvest: format=vnrd asset=fehlt arm=venus_radar_compiler pattern=^venus_radar_level2\.bin$ idempotent=true timeout=240 tag=pds-geosciences.wustl.edu
+
+name: venus-radar-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "tools/harvest/src/bin/venus_radar_compiler.rs"
+      - ".github/workflows/venus-radar-cdn.yml"
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  venus-radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if gh release view pds-geosciences.wustl.edu --repo omegaflow/sources \
+             --json assets --jq ".assets[]?.name" 2>/dev/null | grep -qx "venus_radar_level2.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset venus_radar_level2.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset venus_radar_level2.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the pds-geosciences.wustl.edu release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view pds-geosciences.wustl.edu --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create pds-geosciences.wustl.edu --repo omegaflow/sources \
+              --title "pds-geosciences.wustl.edu" \
+              --notes "NASA PDS Geosciences Node products compiled to omegaflow oscillator series (CDN tag = netloc)"
+          fi
+      - name: Free the runner disk for the 15 x 960 MB level-2 products
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          sudo apt-get clean
+      - name: Fetch the Venus radar level-2 products
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          base="https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/data"
+          mkdir -p venus_products
+          for year in 1988 2012 2015 2017 2020; do
+            for comp in inc ocp scp; do
+              stem="venus_${year}_north_${comp}"
+              curl -sSfL --retry 3 --max-time 900 -o "venus_products/${stem}.img" "$base/${stem}.img"
+              curl -sSfL --retry 3 --max-time 120 -o "venus_products/${stem}.xml" "$base/${stem}.xml"
+            done
+          done
+      - name: Compile the VNRD series and upload to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run -p omegaflow-harvest --release --bin venus_radar_compiler -- \
+            --dir venus_products \
+            --output data/pds-geosciences.wustl.edu/venus_radar_level2.bin \
+            --ci-mode \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "venus-radar-cdn: venus_radar_level2.bin returned void" \
+                 "venus_radar_compiler returned void for the PDS Venus radar level-2 bundle. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
