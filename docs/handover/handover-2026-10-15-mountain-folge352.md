@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 352 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 7c80566115e8ccaec488c91b4f366a6fde4d84bec7d1ee20785696c47c08587e
+  sha256: 3bf36cbab4462131a0a7269f62adb50ceded6fe990339fc7160409da27726853
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -107,8 +107,15 @@ Gefaltet (Echo in diesem Block): `xfer:mycelium-352-1` · `xfer:mycelium-352-2` 
   Energiefluss-Modells an Mohe), **kein Feld, kein Schalter**; Typ `model_output`, Antriebsvektor +
   Modellversion Pflicht. **Span/Takt/Version/Treiber ungelesen** → `pending`. **Operator-Entscheid
   offen:** jetzt als `model_output` (F3-nah) aufnehmen oder auf ein globales Gitter warten?
-- **Blockade:** Operator-Wort (Aufnahme des Modell-Zeugen).
-- **Braucht:** den Operator-Entscheid (Axiom 5) + den Zip-Kopf (Span/Takt/Version/Treiber).
+  **Operator-Wort 2026-10-15 (entschieden):** „wie bei den maps, die aus messpunkten entstanden
+  sind — wir wollen die **gemessenen gitterpunkte**, mit denen die modelle erstellt wurden, also
+  die **rohdaten**." Träger ist die **Messung**, nicht der Modell-Output; das Modell ist abgeleitet.
+  Für OVATION ist die DMSP-SSJ-Partikelmessung `dmsp16_ssj` (`phi:1670-1671`, `em ev/cm²/ster/s`)
+  **schon registriert**; der Mohe-Modell-Extrakt wird **nicht als Feld** eingetragen (er wäre
+  `model_output`/F3-nah, `pending`).
+- **Blockade:** keine — das Operator-Wort liegt.
+- **Braucht:** nichts an der Aufnahme (die Messung steht); optional den Zip-Kopf (Span/Takt), falls
+  der Extrakt als `model_output` geführt werden soll.
 
 ### Epochen-Absenz — Umsetzung trägt der Modellart-Unterscheider (eigen)
 - **Status:** eigen · **verdiktet** (Operator-Wort: direkt der Unterscheider) | **Bindung:** eigen
@@ -296,6 +303,8 @@ Origin: mountain-352 (2026-10-15):
 - **„also schickst du bitte taucher los um alle offenen registrierungen zu machen?"** | 2026-10-15 | (mountain 351).
 - **„aber du kannst die parser bauen oder macht das auch mycelium?"** | 2026-10-15 | (mountain 351).
 - **„…heisst das ihr habt jetzt ein fabricated tor eingebaut … und mach das bitte fertig"** | 2026-10-15 | (mountain 351 — das 0.0-Pad ist die sanktionierte Draht-Form; der Ort lebt als `x,y,z`; NSDB-Lese-Arm + AST1-Absenz-Vertrag gebaut, mountain 352).
+- **„naja eigentlich wie bei den maps, die aus messpunkten entstanden sind — wir wollen die gemessenen gitterpunkte, mit denen die modelle erstellt wurden, also die rohdaten."** | 2026-10-15 | (mountain 352) — für ein Modell trägt das Register die **Messung**, nicht den Modell-Output; OVATION-Mohe wird kein Feld (`dmsp16_ssj` ist die Rohdatenzeile).
+- **„für die rat-architekturentscheidung muss ich nochmal gezielte fragen an die ui chats stellen?"** | 2026-10-15 | (mountain 352) — nein: die 13 Sitz-Antworten tragen den Stoff, der Rat trägt das Verdikt.
 
 ## Abschluss
 
