@@ -2,7 +2,7 @@
   title: Standpass — Mycelium (privat)
   class: zustand
   date: 2026-10-15
-  sha256: 086a0a268d72124d37be743dfb00c926a7680bd4d44419c84c9fb319b69167c6
+  sha256: 99da7ee9ee484b4fbe558782be8a6a16895b7c26cadff730bc3b5e3728ecf12d
   status: live
   see-also: docs/zustand/standing-pass.md
 -->
@@ -11,48 +11,49 @@
 Vollständige Fassung. Öffentlich gilt allein die Projektion
 `docs/zustand/standing-pass.md` (nur HEAD + rote Läufe, kein Personenbezug).
 
-HEAD `51bcd7fe1` (== `origin/main`) · geschrieben 2026-10-15 16:35Z · **Mycelium-358**.
+HEAD `b17570464` (== `origin/main`) · geschrieben 2026-10-15 16:50Z · **Mycelium-358**.
 
 ## Rote Läufe (gemessen via `ci_manage`, kein Polling)
 
-`ci_manage reds` (einmal): **271** non-success Läufe — ein **Flutstand** aus den parallel laufenden
+`ci_manage reds` (einmal): **279** non-success Läufe — ein **Flutstand** aus den parallel laufenden
 Linien. Verteilung (gemessen) + ein gemessener Fehler-Job je Träger (`ci_manage jobs`):
 
 | run-id | workflow (n) | gemessener Fehler-Job | Beispiel-HEAD |
 |---|---|---|---|
-| `38768669705` | `ci-gate` (164) | `clippy` · `register` · `subset` · `format` (`build`/`dropped-gate` success) | `024b341e3` |
-| `38769414504` | `register-coverage` (64) | `orphans` → `--tokens --noecho-fail` (8 unbeglichen, 4 XFER-MISSING) | `c755d4b0c` |
+| `38768669705` | `ci-gate` (170) | `clippy` · `register` · `subset` · `format` (`build`/`dropped-gate` success) | `024b341e3` |
+| `38769414504` | `register-coverage` (68) | `orphans` → `--tokens --noecho-fail` (8 unbeglichen, 4 XFER-MISSING) | `c755d4b0c` |
 | — | `tools-build` (23) | `build` | — |
-| — | `gic-al-network` (4) · `quake-feeds-cdn` (3) · `health-check` (3, in_progress) | — | — |
-| — | `matrix-rotor` (2) · `m10-mdis-raw-cdn` (2) | — | — |
-| `38767860985` | `themis_asi-fodg-cdn` (1, **eigen**) | `themis-asi-fodg` — gemessen: `gzip: …0830….pgm.gz: not in gzip format` (die 0830-URL antwortet 301/HTML) | `5b2071569` |
+| — | `gic-al-network` (4) · `quake-feeds-cdn` (2) · `matrix-rotor` (2) · `m10-mdis-raw-cdn` (2) · `health-check` (2) | — | — |
+| `38767860985` | `themis_asi-fodg-cdn` (1, **eigen**) | `themis-asi-fodg` — gemessen: `gzip: …0830….pgm.gz: not in gzip format` (die 0830-URL antwortet 301/HTML) — **behoben** (`b20976b78`) | `5b2071569` |
 | — | `zenodo-raw-cdn` (1, **eigen**) · `ssd-jpl-raw-cdn` (1) · `venus-radar-cdn` (1) · `ci-check` (1) | — | — |
 
-Der tiefere Log-Grund der fremden Träger ist **unread** (kein Polling). **Eigene Befunde:** (a) der
-`themis_asi-fodg-cdn`-Fehler war die einzige gemessene eigene rote Naht — **behoben** (gzip-Magic-
-Guard, `b20976b78`); (b) `register-coverage` scheitert am `--tokens`-Gate (fremde + eigene
-unbeglichene Xfer) und am `--orphan-docs`-Carrier-Mangel; die eigene folge358 fügt **keine**
-XFER-MISSING mehr hinzu. Meine Push-Läufe an `3188d3a88`/`51bcd7fe1` sind **queued/in_progress/
-unread** — `zenodo-raw-cdn` (`38769841043`) spiegelt gerade (pioneer10_SC_23.asc, danach u. a. die
-Venera-Polar).
+Der tiefere Log-Grund der fremden Träger ist **unread** (kein Polling). **Eigene Befunde:** (a) die
+rote `themis_asi-fodg-cdn`-Naht war die einzige gemessene eigene — **behoben** (gzip-Magic-Guard);
+(b) `register-coverage` scheitert am `--tokens`-Gate (fremde + eigene unbeglichene Xfer) und am
+`--orphan-docs`-Carrier-Mangel; die eigene folge358 fügt **keine** XFER-MISSING mehr hinzu. Meine
+Push-Läufe sind **queued/in_progress/unread** — `zenodo-raw-cdn` spiegelt die erweiterte Matrix
+(Venera-Polar, Provenienz, Arecibo 1988).
 
-## Lokal gemessen am HEAD `51bcd7fe1`
+## Lokal gemessen am HEAD `b17570464`
 
-- **Venera-Polar gespiegelt + registriert** (`phi/sources.φ`, Block
-  `zenodo.org/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif`; 193 701 536 B, sha256
-  `98d80740…`; `register_sort` canonical über **2808** Blöcke; `cdn_reconcile --fail` clean,
-  334 registry hosts; `license_census` unverändert — `CC-BY-4.0` im geschlossenen Satz).
-- `register_lookup --orphans --fail` = 0; `--orphan-docs` = **30** (Träger fehlt, fremd);
-  `--fired mycelium` = 0; `--stale mycelium --persist 3` = 0.
-- `open_points_check` folge357 = 0 stale-citations (1 ABSENT: Future-Archiv-Pfad, mechanisch;
-  20 format-gaps unverändert).
-- **`themis_asi-fodg-cdn`-Naht repariert** (gzip-Magic-Guard; gemessener Grund s. o.).
+- **Drei Venus-Bildträger gespiegelt + registriert** (`phi/sources.φ`, `zenodo-raw-cdn.yml`):
+  **Venera-Polar** (193 701 536 B, sha256 `98d80740…`), **Provenienz-Raster** (89 312 099 B, sha256
+  `6aa27235…`), **Arecibo 1988** (965 390 866 B, sha256 `fe5ed9f8…`). `register_sort` canonical
+  über **2810** Blöcke; `cdn_reconcile --fail` clean; `license_census` unverändert.
+- **Provenienz-Kopf gemessen** (HTTP-Range): klassisches TIFF, 18 775 × 9 388, **4-bit**,
+  unkomprimiert, gekachelt 128×128 (10 878 Kacheln), GeoTIFF-GeoKeys; die **12 Klassen (0–11)** aus
+  dem Sidecar-XML (0 NoData · 1 Pioneer · 2/3 Arecibo 2001/1988 · 4 Venera 15/16 · 5/6 Arecibo
+  2015/2017 · 7–11 Magellan). **Arecibo 1988:** 30 032 × 31 973, 8-bit, unkomprimiert, 128er Kacheln.
+- **80,9-GB-Basemap:** Rat-Entscheidung steht (byte-exakter `.parts`-Split), Ausführung braucht einen
+  **streamenden Splitter** — `raw_mirror` gattert auf die vorab-bekannte Ganz-Sha256 (77-GB-Grenze).
+- `register_lookup --orphans --fail` = 0; `--orphan-docs` = **30**; `--fired mycelium` = 0;
+  `--stale mycelium --persist 3` = 0. `open_points_check` folge357 = 0 stale-citations.
 
 ## Postfach
 
 - `post/in` (privates Haus, `~/projects/omegaflow-work/post/in`):
   `2026-10-14-mycelium-nssdc-datenantrag.md` — **bereits gewortet, nicht erneut vorgelegt**.
-  `post/paid-open` (jetzt 27 B, zuvor 17 B) — fremde Linie; nur die Größe gelesen, kein Inhalt.
+  `post/paid-open` (27 B, zuvor 17 B) — fremde Linie; nur die Größe gelesen, kein Inhalt.
 
 ## Ereignis-Stand
 
@@ -72,9 +73,10 @@ Venera-Polar).
 
 ## Gearbeitet (dieses Rund)
 
-- Venera-Polar gespiegelt + Registerzeile gesetzt (s. o.); `themis_asi-fodg-cdn`-Naht repariert.
+- Venera-Polar, Provenienz und Arecibo 1988 gespiegelt + registriert; Provenienz-Kopf + Klassen
+  gemessen; `themis_asi-fodg-cdn`-Naht repariert.
 - folge357 → `archiv/`; folge358 geschrieben; Commits `cf6c8b4d9` / `3188d3a88` / `b20976b78` /
-  `51bcd7fe1` gepusht (HEAD == `origin/main`).
+  `51bcd7fe1` / `61d824527` / `b17570464` gepusht.
 
 ## Snapshot / Tools
 
