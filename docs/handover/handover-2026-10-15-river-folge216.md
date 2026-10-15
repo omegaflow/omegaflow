@@ -2,7 +2,7 @@
   title: Handover — River-Folge 216
   class: handover
   date: 2026-10-15
-  sha256: cb9394c94e5eb9fc1f641b39f92017026c0010ff9104345ee0ed1532ee18ef13
+  sha256: 8df8b454daa37704e94c1d3b91a3832616c623f7695c1e40d2f4c3c7bc80972f
   status: live
 -->
 # Handover — River-Folge 216 (2026-10-15)
@@ -42,6 +42,7 @@ Wort | Datum | Quelle
 „Fenster-Edit an der Empfänger-Apertur: ja, das ist die Membran … Der Blick ist deiner, darum dein Wort. Daran hängt der letzte Schritt dieser Naht." | 2026-10-15 | Operator (Session, River-217) — der Fenster-Edit an der `ReceiverAperture` ist ein **Membran-Akt** (Rivers Pfad); Operator-Wort gegeben, der Blick bleibt der seine.
 „die Rätsel sind arbeits-gebunden (erst die Weberin), kein offenes Wort; GIC braucht Arbeit (Messen und Regeln), kein Wort." | 2026-10-15 | Operator (Session, River-217) — die Große-Rätsel-Aufnahme ist **Arbeit** (Weberin), kein Wort; die GIC-Achse wird **gearbeitet** (Union-Lauf angestoßen, s. GIC-Schärfe-Fläche).
 „Starte die River-Linie in einem Pass — kein Planungstheater …" | 2026-10-15 | Operator (Session, River-217) — der Pass läuft in einem Atom.
+„nein mistral ist das kontingent leer und die stimmen reichen das lasse ich gerade von mycelium untersuchen" | 2026-10-15 | Operator (Session, River-217) — Mistral fällt (Kontingent leer); die gesammelten Stimmen reichen; Mycelium untersucht; **F7 bleibt offene Richtungsentscheidung** (`pending`, kein stiller Fix).
 
 Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session + river-214/215) · `state/operator-gespraeche/2026-10-14-river.md` (Vorsession).
 
