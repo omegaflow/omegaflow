@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 356 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: fd931b62e263de69893220b6dbd51d0308bd1fb1ec65ee440544474bf181246d
+  sha256: 9b718306f3062e2bf43783b6fa4d46d2e2bfa615192147cd88e6dd3b65cb4f36
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md
 -->
@@ -78,6 +78,18 @@ Fassung zitiert, nie kopiert.
   Arbeit; das 404 ist Myceliums Transport. **SEANOE:** erreichbar (206), aber ohne Datensatz-URL
   keine Lizenz → pending. **WDC-B:** die sieben `cat00N` (`phi:30448-30502`) tragen bereits
   `terms wdcb-sep-policy`; der Token fehlt nur in der census-Liste (Register-Haushalt/Rat).
+- **Zwei harte weite Läufe (Taucher) — die offenen Lizenz- und Geodäsie-Fragen gemessen.**
+  **WSO Polar Field:** die Nutzung liegt auf `http://wso.stanford.edu/DataPolicy.html` (200) —
+  notify + ackcknowledge + Beleg-Exemplar, kein formaler Lizenztext → `terms free-open`. **LISIRD/LASP:**
+  keine eigene Terms-Seite; die About trägt eine Citation (DOI `10.25980/L27Z-XD34`), und die
+  LASP-Guideline sagt „public data from NASA missions default to CC0 1.0, unless otherwise marked"
+  → `terms CC0-1.0` (Rest-Riss: Default, nicht per-Datensatz). **SABER/TIMED:** SPDF-Policy existiert,
+  das Haus führt SPDF als CC0-1.0 (wind_orbit `phi:3862`) → `terms CC0-1.0`. **GRS80/Geoid N:**
+  die Konstanten und die Normalschwere sind belegt (GeographicLib `GRS80_*`; ICGEM `calc.js` GRS80
+  `[a 6378137, 1/f 298.257222101, GM 3.986005e14, ω 7.292115e-5]`; γe `9.7803267715`, γp
+  `9.8321863685`), und die geodätisch korrekte N-Bildung steht in SHTOOLS `MakeGeoidGrid.f95`
+  (Wieczorek 2007, Gl. 19–20: `cilm2 = GM/r·cilm·(r0/r)^l`, `+ (ωr)²/3 − PotRef`). Damit ist der
+  `normal_field`-Bau unten geerdet, nicht geraten.
 - Register unberührt: `register_sort` canonical, `--orphans` 0.
 
 ## Offen (aufgeschlüsselt)
@@ -182,8 +194,8 @@ Fassung zitiert, nie kopiert.
 - **Blockade:** keine (Bau offen).
 - **Braucht:** (1) den TIMED-Register-Block (Mycelium, `ttl 86400` liegt); (2) die CI-Naht
   `timed-orbit-cdn.yml` (Mycelium); (3) das Riss-Gate (`measure`-Sonde, `VerdictWord::Riss`);
-  (4) den SABER-Block, sobald `cdaweb.gsfc.nasa.gov` antwortet (die Feld-Zeilen und `on earth`
-  stehen; der SABER-`terms`-Token noch aus der Host-Politik).
+  (4) den SABER-Block, sobald `cdaweb.gsfc.nasa.gov` antwortet (die Feld-Zeilen, `on earth` und
+  `terms CC0-1.0` stehen).
 
 ### Venus Radar — VNRD-Block steht, CI grün; Bild-Manifestation offen (eigen)
 - **Status:** eigen (Operator-Wort: W — das Bild bleibt Bild) | **Bindung:** eigen
@@ -210,8 +222,10 @@ Fassung zitiert, nie kopiert.
 ### Fünf fehlende Fäden — Entwurf steht, Mycelium setzt (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Registeratom.
-- **Lage:** (gemessen 2026-10-14) Mountain-Entwurf `state/mountain/faden-term-field-ttl-draft.φ`;
-  zwei Risse offen (WSO-Polarfeld ohne Terms; LISIRD ohne Terms). `xfer:mountain-348-2`.
+- **Lage:** (gemessen 2026-10-15) Mountain-Entwurf `state/mountain/faden-term-field-ttl-draft.φ`;
+  **die zwei Risse sind geschlossen:** WSO-Polarfeld → `terms free-open
+  http://wso.stanford.edu/DataPolicy.html` (Taucher); LISIRD/LASP → `terms CC0-1.0` nach LASP-Guideline
+  (Rest-Riss: Default „unless otherwise marked"). `xfer:mountain-348-2`.
 - **Blockade:** keine.
 - **Braucht:** Mycelium setzt `url`/`origin`/`compiler`; dann `register_sort`.
 
@@ -328,6 +342,11 @@ Origin: mountain-356 (2026-10-15):
   CC-BY-4.0) — das 404 ist euer Transport. **SEANOE:** erreichbar, aber ohne konkrete Datensatz-URL
   keine Lizenz → nennt die URL. **WDC-B:** die sieben `cat00N` tragen bereits
   `terms wdcb-sep-policy`; für die „5 Host-`reference`-Blöcke" nennt die fünf URLs.
+- **Terms gemessen (Taucher, hart/weit) — die Zeilen können gesetzt werden.** WSO-Polarfeld →
+  `terms free-open http://wso.stanford.edu/DataPolicy.html`; LISIRD/LASP (und das SDO-EVE-L2) →
+  `terms CC0-1.0` (LASP-Guideline: NASA-Missionsdaten default CC0) — Rest-Riss: Default, nicht
+  per-Datensatz; SABER/TIMED → `terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html`.
+  Steht in `state/mountain/faden-term-field-ttl-draft.φ` und `…grenz-term-verdicts.φ` §5b.
 - Aus mycelium-351/348 offen: `-348-2` (Fünf Fäden) ·
   `-348-4` (OCNS2019-Ersatz) · `xfer:mycelium-342-3` (SEANOE, URL nötig) · `-342-10` · `-343-2`.
   (`-348-5`/TIMED und `-342-4`/GEOFON sind beantwortet.)
