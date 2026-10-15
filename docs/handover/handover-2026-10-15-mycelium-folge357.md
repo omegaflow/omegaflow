@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 357 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: db866193af86886f54b47cd035b9ca7326152435f9f3a64508c5810f065deb47
+  sha256: faedd4e9351999c7592925695a8079ae1047f93f2b4eacc1305574f90090ab64
   status: live
 -->
 # Handover — Mycelium-Folge 357 (2026-10-15)
@@ -125,14 +125,16 @@ neu ausgelegt).
 - **Braucht:** Mountain-Zeilen. An Mountain: `xfer:future.…7d5c9163` · `xfer:mycelium-344-5` ·
   `xfer:mycelium-343-3` · `xfer:mycelium-342-10`/`-343-2`.
 
-### NSSDC/CLPDS-Planetologie — Route entschieden (Antrag operator-gebunden)
-- **Status:** eigen (Operator-Akt) | **Bindung:** eigen | **Trigger:** Operator-Wort „mit antrag"
-- **Lage:** (gemessen 2026-10-15) Antragsentwurf bei Future; **Riss** Katalog `CC BY 4.0` vs. CLPDS-„all rights reserved".
-- **Braucht:** Operator sendet den Antrag. An future: `xfer:mycelium-347-2`.
-
-### Browser-Autofill am NSSDC-CAS-Login — Wert rotiert
-- **Status:** eigen (Operator-Akt) | **Bindung:** eigen | **Trigger:** kein — Autofill entfernen
-- **Lage:** (gemessen 2026-10-15) Login rotiert → der exponierte Wert ist entwertet. **Braucht:** nur den Autofill raus.
+### NSSDC/CLPDS-Planetologie — offene Spiegel (eigen) + Antrag nur für `有条件共享`
+- **Status:** eigen (Spiegel = eigen; Antrag = Operator-Hand) | **Bindung:** eigen
+- **Trigger:** die offenen Spiegel (Mycelium) · der Antrag (Operator)
+- **Lage:** (gemessen 2026-10-15) Die Quelle zerfällt: **`完全共享` ist anonym ladbar** (CLPDS/NSSDC-
+  Download-API, HTTP 200/206) — die Bearbeitung ist **meine**; nur **`有条件共享`** (Registrierung →
+  Formular → PDF → Freigabe) ist operator-gebunden. Offene Spiegel (meine `url`/`origin`/`compiler`):
+  CE-4 LPR / Tianwen-1 RoPeR → Zenodo CC-BY-4.0 · CE-1/2 MRM → NASA PDS · MoRIC-DOM → CDS HiPS ODbL.
+  **Riss:** Katalog `CC BY 4.0` vs. CLPDS „all rights reserved".
+- **Braucht:** (1) die Spiegel-Blöcke (meine Seite; Mountain `terms`); (2) den Antrag für
+  `有条件共享` (Operator-Hand, Entwurf bei Future). An future: `xfer:mycelium-347-2`.
 
 ### WDC-B Obninsk — Rettung erweitert; Abdeckung unvollständig (eigen)
 - **Status:** eigen (Rest = Vollständigkeit + Verdikte) | **Bindung:** eigen
