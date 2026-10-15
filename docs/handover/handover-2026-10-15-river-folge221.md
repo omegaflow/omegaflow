@@ -2,7 +2,7 @@
   title: Handover — River-Folge 221
   class: handover
   date: 2026-10-15
-  sha256: 5b6a69abd40b93c39876310214231fa1e248feca826cc2e3307a558c454d90b2
+  sha256: a288ef43c500539f66ae8c8324fa731566c4e2f67c23007eba4442d72ad49010
   status: live
 -->
 # Handover — River-Folge 221 (2026-10-15)
@@ -12,7 +12,7 @@ markiert, nicht erklärt; git trägt, was gemacht wurde. Nur eigene Arbeit: bei
 geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen. Diese Session
 konsumierte `handover-2026-10-15-river-folge220.md` (→ `archiv/`).
 
-## Burn: open 0.0 · close pending — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db`), die private Session-Zeile wird nicht gelesen (nicht gemessen, Vorbehalt wie river-212…221) · cap 0.55 benannt-ungeprüft — Grund: river-222 (ein Pass; kein Fenster-Edit, kein Send, kein UI-Seat). Fälligkeit bei Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge356, mycelium-folge358 — in river-222 gefaltet); `open_points_check` = 0 stale-citations (7 Pfad-Refs absent — der private Baum `state/` liegt außerhalb des öffentlichen). Gearbeitet: die adressierten Blöcke gefaltet (mountain-356 unverändert zur 355 — das Norm-Wort ist gefallen; mycelium-358: **DE-2/SPDF, SABER/GATS und JUICE/SPICE sind Myceliums eigene Hol-/Ablage-Aufgaben** geworden, **GIC-2 trägt River selbst**); die Blocker still gemessen — **der THEMIS-ASI-FODG-Kubus liegt NICHT im CDN** (nur die vier `themis_asi_timed_keogram_*.bin`, gemessen über die Release-Asset-Liste `data.phys.ucalgary.ca`, 2026-10-15) → die 14-min-Naht wartet; **die EURISGIC-GIC-Quelle (`eurisgic.ru`, HTTP 200) ist das nordisch-finnische GIC-Archiv** (Yllikkälä/Rauma/Mäntsälä/Pirttikoski + Lovozero) — **überlappt den FMI-Träger, also kein unabhängiger zweiter Zeuge**; die **Sektor-Hälfte der Fusionsregel** ist an eine fehlende **MLT-Naht** gebunden (im Haus existiert kein MLT; `aacgm.rs` gibt verifiziert (lat, lon), aber ohne Subsolar-/Zeit-Seam) — benannter nächster Bau, kein stiller. (gemessen 2026-10-15, river-222)
+## Burn: open 0.0 · close pending — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db`), die private Session-Zeile wird nicht gelesen (nicht gemessen, Vorbehalt wie river-212…221) · cap 0.55 benannt-ungeprüft — Grund: river-222 (ein Pass; kein Fenster-Edit, kein Send, kein UI-Seat). Fälligkeit bei Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge356, mycelium-folge358 — in river-222 gefaltet); `open_points_check` = 0 stale-citations (7 Pfad-Refs absent — der private Baum `state/` liegt außerhalb des öffentlichen). Gearbeitet: die adressierten Blöcke gefaltet (mountain-356 unverändert zur 355 — das Norm-Wort ist gefallen; mycelium-358: **DE-2/SPDF, SABER/GATS und JUICE/SPICE sind Myceliums eigene Hol-/Ablage-Aufgaben** geworden, **GIC-2 trägt River selbst**); die Blocker still gemessen — **der THEMIS-ASI-FODG-Kubus liegt NICHT im CDN** (nur die vier `themis_asi_timed_keogram_*.bin`, gemessen über die Release-Asset-Liste `data.phys.ucalgary.ca`, 2026-10-15) → die 14-min-Naht wartet; **die EURISGIC-GIC-Quelle (`eurisgic.ru`, HTTP 200) ist das nordisch-finnische GIC-Archiv** (Yllikkälä/Rauma/Mäntsälä/Pirttikoski + Lovozero) — **überlappt den FMI-Träger, also kein unabhängiger zweiter Zeuge**; **die MLT-Naht gebaut** — `aacgm.rs` trägt jetzt `subsolar_point`/`aacgm_v2_mlt`/`aacgm_v2_mlt_unix` (Subsolar-Seam + `MLT = 12 + (λ_aacgm − λ_subsolar_aacgm)/15`), und `al_network_proxy` gated per `--night-sector` (`--mlt-min`/`--mlt-max`, Default 16–03) auf die manifest-`lat lon` je Station; lokal gemessen: die Weigerung ohne geodätische Koordinate (exit 2). `cargo check` 0/0. (gemessen 2026-10-15, river-222)
 
 ## Operator-Wort-Register
 
@@ -122,19 +122,20 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…221) · `
 - **Gebaut (river-219):** der `gic-onset`-Workflow trägt `window` + `target_yield`-Inputs — `4e0602ffc`. **Gestoßen:** der Einzelstation-Arm `abk_dbdt_1m` gegen denselben 200er-Null — Lauf `38738618251`; die **dichte Reihe** (`al_network_proxy --min-stations 1` aus dem `xyz`-Bin, `5ec870efd`) ausgewertet (`38748551546`): threshold **1,1314**, **18 272** Onsets, `prec_ge=0`/`rec_ge=0` — **signifikant**; rec 5/15/30 = 0,0232/0,0639/**0,1054**. Die Einzelstation **schlägt die Min-Hülle** (Min rec@30 ~0,087–0,097) bei gleicher Ausbeute — der Rat („die Einzelstation war die schärfste") steht am A=A-Maß.
 - **Gebaut + gemessen (river-221, der Fusions-Ersatz — Rat-Regel `deny global_min`):** `tools/measure/src/bin/al_network_proxy.rs` — (1) die Fusion leitet sich aus der Größe ab: `dh` → `min` (das AL-Analogon der vorzeichenbehafteten H-Störung), `|ΔB|`/`dbdt` → `max` (Union); (2) ein **explizites `--fusion min` über die vorzeichenlose |dB/dt|-Magnitude wird verweigert** (exit 2, benannte Weigerung), außer `--allow-global-min` ist gesetzt — nur für den Veto-Netz-Kontrolllauf; (3) `union` wird als `max`-Alias akzeptiert. **Lokal am gebauten Binär gemessen:** `--quantity dbdt --fusion min` → exit 2 mit der Weigerung; `+ --allow-global-min` → läuft weiter; ohne `--fusion` (dbdt) → läuft weiter (Default `max`). Workflows nachgezogen: `gic-onset-xyz` (Fusion-Default statt hardcoded min), `gic-envelope-nesting` (`--allow-global-min`, der Rat-Kontrolllauf), `gic-station-sweep` (neuer Input `allow_global_min`). `rustfmt --check` exit 0; `cargo build -p omegaflow-measure --bin al_network_proxy` grün.
 - **Blockade:** keine.
-- **Braucht:** (a) **die Sektor-Hälfte der Rat-Regel** — eine Station speist die Hülle nur, wenn sie im **Nachtsektor MLT 16–03 h** liegt und `weight_i > 0` trägt (marginaler TE-Beitrag). **Gemessener Blocker (river-222):** im Haus existiert **keine** MLT-Rechnung — `src/archivar/aacgm.rs` gibt verifiziert `(lat, lon)` (gegen die Upstream-C-Witnesses getestet), aber nur `aacgm_v2_latitude` ist öffentlich, und es fehlt der **Subsolar-/Zeit-Seam** (die AACGM-MLT braucht die AACGM-Länge des Subsolarpunkts je UT). Ein rohes `MLT = UT + cgm_lon/15` wäre eine unbenannte Näherung (Dipol-Neigung ignoriert) → **nicht gebaut** (A=A). Der begrenzte nächste Bau ist daher zweiteilig: (1) `aacgm.rs` um die Längen-Ausgabe + einen verifizierten Subsolar-Seam erweitern; (2) erst dann `al_network_proxy` je Station `cgm_lon` + UTC-Zeitfeld nehmen und auf `MLT ∈ [16,03)` gaten; `weight_i` aus dem gemessenen marginalen TE-Beitrag. **Erst dann** ein Lauf gegen denselben 200er-Null. (b) die **Ordinalstatistik k von N** (Netz-Fusion-Verdikt) braucht eine andere Speicherstrategie als der inkrementelle Min/Max-Fold (river-216 OOM-Fix), sonst OOM.
+- **Gebaut (river-222):** die **MLT-Naht** — `src/archivar/aacgm.rs` trägt `subsolar_point` (NOAA/Spencer-Reihe, < 1°), `aacgm_v2_mlt` (`MLT = 12 + (λ_aacgm − λ_subsolar_aacgm)/15`) und `aacgm_v2_mlt_unix` (Hinnant-civil-days); `al_network_proxy` gated per `--night-sector` (`--mlt-min 16`/`--mlt-max 3`, Wrap über Mitternacht) auf die je Station im Manifest geführten geodätischen `lat lon` (neue 4./5. Spalte: `CODE decl bin glat glon`). Die `aacgm`-Tests identifizieren Subsolar = MLT 12 und den Antipoden = MLT 0; `cargo check` 0/0; `rustfmt --check` exit 0. **Lokal gemessen:** `--night-sector` ohne geodätische Koordinate → exit 2 (benannte Weigerung). **Benannte Grenze:** die AACGM-Epochen decken **2010–2030**; Samples davor werden als `pending` (pro Station gezählt) verworfen, **nicht** still als Tag gezählt.
+- **Braucht:** (a) die `--night-sector`-Naht in `gic-station-sweep`/`gic-al-network` verdrahten (die `on earth`-Koordinate je Station aus `phi/sources.φ` in ein Manifest schreiben) **und** die **AACGM-Epochen vor 2010** nachziehen, damit das volle Fenster 2000–2024 trägt; `weight_i` (marginaler TE-Beitrag) bleibt der zweite Teil; **erst dann** ein Lauf gegen denselben 200er-Null. (b) die **Ordinalstatistik k von N** braucht eine andere Speicherstrategie als der inkrementelle Min/Max-Fold (river-216 OOM-Fix), sonst OOM.
 
-### Platzierungs-Frage — die 3-R-Kette gefahren (Recherche → Roster → Rat); Fusions-Ersatz-Kern gebaut
-- **Status:** eigen (Kette gefahren; Kern gebaut, Sektor-Hälfte offen) | **Bindung:** eigen
+### Platzierungs-Frage — die 3-R-Kette gefahren (Recherche → Roster → Rat); Fusions-Ersatz-Kern + Sektor-Naht gebaut
+- **Status:** eigen (Kette gefahren; Kern + MLT/Sektor-Naht gebaut) | **Bindung:** eigen
 - **Trigger:** Operator-Wort 2026-10-15 („die 3 Rs"): die Streuung der Min-Hülle über N und die Stationsanordnung.
 - **Lage:** (gemessen 2026-10-15 via `bin/all_wide` + Baum-/Katalog-Lesung + `rat`-Subagent) die Kette ist **durch**: Recherche (Dods/Chapman/Gjerloev `arXiv:1606.02655`; Orr/Chapman/Gjerloev `arXiv:2009.03112`/`s41467-021-22112-4`; Weygand 2022; Forsyth SOPHIE `arXiv:1606.02651`; Chu MPB; IMAGE-`IL` 12 Stationen UT 16–03) — Nenner: **sektor-/korrelations-ausgewählt, nicht global-minimal**. Roster (13 Sitze, `state/stimmen/2026-10-15-platzierung-formular.md`). Rat (`state/stimmen/2026-10-15-platzierung-rat-blatt.md`, bestätigt durch `state/stimmen/2026-10-15-netzfusion-rat-verdikt.md`):
   - **Streuung:** die nicht-monotone Min-**Schwelle** ist **Kalibrier-Artefakt** (64er-Gitter; die Ausbeute, nicht die Schwelle, wird ausgeglichen).
   - **Am Baum verifizierter Riss:** `station_dbdt` (`al_network_proxy.rs:101-119`) liefert die **vorzeichenlose** |ΔB|; `fold_envelope` `Fusion::Min` nimmt das Minimum → über eine vorzeichenlose Größe wählt Min die **ruhigste** Station (Veto), ist **nicht** das AL-Analogon.
   - **Bindende Regel (Register-Zeile):** globale Min-Hülle **streichen**; eine Station speist nur aus dem **Nachtsektor MLT 16–03 h** mit `weight_i > 0`; **Fusion = Union/Quorum/Perzentil — bei |ΔB| `max`, nie `min`**; Schwelle = feste Ausbeute; `deny global_min`.
 - **Gebaut + ausgewertet (river-219):** Träger-Prüfung (`net_envelope_compare` + `gic-envelope-nesting`, `adf8f1871`; Lauf `38744578300`): N16/N24/N31 tragen **identische** Zeitmengen (13 626 500, voll geteilt), `larger_above_smaller=0` — punktweises Minimum monoton; Streuung fällt monoton (MAD 0,5369 → 0,3595 → 0,2975). Der Rat ist am Baum bestätigt. Die Bisektion regredierte (nicht-monotone Zählfunktion), behoben (`76c10de27`, 1024-Raster). Min-`dbdt`-Sweep `38748544088`: N16 0,6481 → **N24 0,4123** → N31 0,3317, monoton fallend — Kalibrier-Artefakt endgültig bestätigt.
-- **Gebaut (river-221):** der **Fusions-Kern** des Ersatzes (s. GIC-Schärfe-Block) — `deny global_min` + größen-abgeleitete Defaults + `union`-Alias, lokal gemessen.
+- **Gebaut (river-221/222):** der **Fusions-Kern** des Ersatzes (river-221: `deny global_min` + größen-abgeleitete Defaults + `union`-Alias) und die **Sektor-/MLT-Naht** (river-222: `aacgm`-MLT + `--night-sector`) — s. GIC-Schärfe-Block.
 - **Blockade:** keine.
-- **Braucht:** die **Sektor-Hälfte** (MLT 16–03 + `weight_i`) als begrenzten Bau (s. GIC-Schärfe-Block (a)); danach ein Lauf gegen denselben Null.
+- **Braucht:** die `--night-sector`-Naht in die Workflows ziehen + die AACGM-Epochen vor 2010 (volles Fenster); `weight_i` (marginaler TE-Beitrag) als zweiter Teil; danach ein Lauf gegen denselben Null (s. GIC-Schärfe-Block (a)).
 
 ### Frühwarnkette — Vorlauf-Leiter Sonne→Erde (Operator-Wort 2026-10-15)
 - **Status:** eigen (Entwurf → Rat) | **Bindung:** eigen
@@ -245,16 +246,18 @@ Mountain-Registerzeile. **EURISGIC-GIC (`eurisgic.ru`, HTTP 200)** ist das nordi
 GIC-Archiv (Yllikkälä/Rauma/Mäntsälä/Pirttikoski/Lovozero) — **überlappt den FMI-Träger, kein
 unabhängiger zweiter Zeuge**; der unabhängige Kandidat (EPRI SUNBURST/NERC-GMD US) ist in diesem
 Pass nicht erreichbar gemessen → GIC-2 bleibt `pending`, nicht still gewählt.
-**Blocker der Sektor-Hälfte (river-222, exakt benannt):** im Haus existiert **keine** MLT-Rechnung;
-`aacgm.rs` gibt verifiziert `(lat, lon)`, öffentlich aber nur `aacgm_v2_latitude`, und der
-**Subsolar-/Zeit-Seam** fehlt. Ein rohes `MLT = UT + cgm_lon/15` wäre eine unbenannte Näherung
-(Dipol-Neigung ignoriert) → **nicht gebaut**. Der nächste begrenzte Bau ist zweiteilig: (1) die
-Längen-Ausgabe + einen verifizierten Subsolar-Seam in `aacgm.rs`; (2) dann der `MLT ∈ [16,03)`-Gate
-in `al_network_proxy` mit `weight_i` aus dem gemessenen marginalen TE-Beitrag. Die
-**Ordinalstatistik k von N** braucht eine andere Speicherstrategie als der inkrementelle Fold.
-**Vorgetragen (river-222) — kein neues Operator-Wort nötig:** alle vorstehenden Punkte sind
-gated (Mountain/Rat/CDN) oder autonom als nächster Bau benannt; nichts wird zur Entscheidung
-vorgelegt. **Kein Bau dieses Passes** — der Fusions-Ersatz-Kern steht seit river-221; river-222
-maß die Blocker und faltete die Abgabe.
-**Commit:** diese Übergabe (`folge221`); `folge220` → `archiv/`. Fremdes ungespeichertes (`state/`,
-`data/`, `docs/zustand/standing-pass.md`, `phi/sources.φ`) bleibt unangetastet.
+**Gebaut (river-222) — die MLT-Naht (= die Sektor-Hälfte):** `src/archivar/aacgm.rs` trägt
+`subsolar_point` (NOAA/Spencer-Reihe, < 1°), `aacgm_v2_mlt` (`MLT = 12 + (λ_aacgm −
+λ_subsolar_aacgm)/15`) und `aacgm_v2_mlt_unix`; `al_network_proxy` gated per `--night-sector`
+(`--mlt-min`/`--mlt-max`, Default 16–03, Wrap über Mitternacht) auf die je Station im Manifest
+geführten geodätischen `lat lon` (4./5. Spalte `CODE decl bin glat glon`). Die `aacgm`-Tests
+identifizieren Subsolar = MLT 12 und Antipode = MLT 0 (Lauf im `ci-gate`-`subset`); `cargo check`
+0/0, `rustfmt --check` exit 0; **lokal gemessen:** `--night-sector` ohne Koordinate → exit 2.
+**Benannte Grenze:** die AACGM-Epochen decken **2010–2030**; Samples davor werden pro Station als
+`pending` gezählt und verworfen, **nicht** still als Tag gewertet — das volle GIC-Fenster 2000–2024
+braucht zusätzliche Epochen-Dateien (nächster begrenzter Bau) oder ein geteiltes Fenster.
+**Vorgetragen (river-222) — kein neues Operator-Wort nötig:** die vorstehenden Punkte sind gated
+(Mountain/Rat/CDN) oder autonom als nächster Bau benannt; nichts wird zur Entscheidung vorgelegt.
+**Commit:** `src/archivar/aacgm.rs` (MLT-Naht), `tools/measure/src/bin/al_network_proxy.rs`
+(`--night-sector`), diese Übergabe (`folge221`); `folge220` → `archiv/`. Fremdes ungespeichertes
+(`state/`, `data/`, `docs/zustand/standing-pass.md`, `phi/sources.φ`) bleibt unangetastet.
