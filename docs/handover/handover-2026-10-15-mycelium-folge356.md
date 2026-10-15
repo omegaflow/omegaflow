@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 356 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: e2a058652b5b7923b1c310427b13da1fc562b184bb750d8223f187f6f5d5fa06
+  sha256: c33bbfd97bef69cccfcff1254a86d91fc13c69ae65b116f8fad6445627350ef2
   status: live
 -->
 # Handover — Mycelium-Folge 356 (2026-10-15)
@@ -66,6 +66,10 @@ Fälligkeit bei Öffnung: `--fired mycelium` = 1 (NSSDC/CLPDS-Datenantrag, berei
   **globale** Kanal ist frei — **WGLC** (`10.5281/zenodo.4774528`, CC-BY, **stündlich**, 2010–2025)
   und **FLASHMAP** (`10.5281/zenodo.17376946`, CC-BY) — s. F4′ unten. Zwei vorherige Messungen
   waren zu eng (Operator-Nachfrage).
+- **WGLC-Registrierung angestoßen (Operator-Wort „ja bitte"):** Quelle gemessen (Dateien/Sizes/
+  Lizenz, HDF5/NetCDF4), Reader-Stand am Baum geprüft, **Verdikt-Anfrage an Mountain**
+  (`xfer:mycelium-356-5`); der Mycelium-Compiler + die CDN-Manifestation sind der nächste
+  begrenzte Dispatch.
 - folge355 → `archiv/`; die Operator-Worte dieses Runds geschnitten. Commits `e21129d5c`,
   `7f25f9004`, `fb7fcdb66`, `0e8fc665d`, `ab6679435`, `d3ba14e74`.
 
@@ -87,8 +91,10 @@ Fälligkeit bei Öffnung: `--fired mycelium` = 1 (NSSDC/CLPDS-Datenantrag, berei
   WWLLN-Klimatologie-Datenverzeichnisse · WGLC monatlich · stündliches CONUS (UNC Dataverse
   `10.15139/s3/nk3ncm`) · WWLLN-KML-Feed · MTG-LI/GLM.
 - **Blockade:** **keine** — der globale (sub-)stündliche Kanal ist frei (CC-BY).
-- **Braucht:** Registrierung des **WGLC**-Kanals (Mountain-Verdikt + Mycelium-Manifestation
-  `url`/`origin`/`compiler`), dann `TE(abk→f | WGLC, Stunde, Saison)`.
+- **Braucht:** Mountain-Zulassungs-Verdikt (Zulassung/`ttl`/`field`), dann Mycelium-Bau
+  (WGLC-NetCDF4-Compiler + CDN-Manifestation; der Reader steht bereits: `src/archivar/netcdf.rs`
+  `nc4_group` + `tools/utils/src/bin/{hdf5,netcdf}_reader.rs`) — dann `TE(abk→f | WGLC, Stunde, Saison)`.
+  An Mountain: `xfer:mycelium-356-5`.
 
 ### SABER / UCAR-FPI — Manifestation wartet auf Mountains `field`-Zeilen (eigen)
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
@@ -154,6 +160,10 @@ Origin: mycelium-356 (2026-10-15):
 - `xfer:mycelium-352-1`/`-2`/`-3` **WDC-B** (Wayback + lebender Baum + Schwester-Hosts) — **`field`
   je Datensatz** + **`terms` je Host** setzen (Zensus in folge355, Belege je `datei:zeile`).
 - `xfer:mycelium-352-5` **TIMED-Block — Celestrak-`terms` gesucht.**
+- `xfer:mycelium-356-5` **WGLC-Zulassung** — „WWLLN Global Lightning Climatology and time series"
+  (Zenodo `10.5281/zenodo.4774528`, **CC-BY-4.0**, global, **stündlich** 0.5°/5′ + 30-Min-Stoßleistung,
+  2010–2025; HDF5/NetCDF4; größte Datei `wglc_timeseries_30m_daily.nc` = 1,83 GiB). Zulassung/`ttl`/
+  `field` setzen; der Mycelium-Compiler + die CDN-Manifestation folgen.
 - `xfer:mycelium-356-1` **SABER / UCAR-FPI** — die Manifestation wartet auf die `field`-Zeilen.
 - Aus mycelium-351/348 noch offen: `xfer:mountain-348-1` (MODVOLC) · `-348-2` (Fünf Fäden) ·
   `-348-4` (OCNS2019-Ersatz) · `-348-5` (TIMED) · `xfer:mycelium-342-3`/`-4` · `-342-10` · `-343-2`.
