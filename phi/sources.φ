@@ -30515,6 +30515,20 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 0b2da752990e2d92a46622cb49efd7bcea758ebcb5f47300d8413aad18949959
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_Arecibo_1988_Global_440m_v1.tif
+terms CC-BY-4.0 https://zenodo.org/records/18176179
+origin https://zenodo.org/api/records/18176179/files/Venus_Arecibo_1988_Global_440m_v1.tif/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 fe5ed9f80c69d570b17b865f5d38c349e71fb2445e69fc9bb89209676f776888
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_RadarBasemap_2025_Provenance_2025m_v1.tif
+terms CC-BY-4.0 https://zenodo.org/records/18176179
+origin https://zenodo.org/api/records/18176179/files/Venus_RadarBasemap_2025_Provenance_2025m_v1.tif/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 6aa2723571c07e8df6c6622873a1076b4189c02f057ad8aff29bad536ac0c2a4
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif
 terms CC-BY-4.0 https://zenodo.org/records/18176179
 origin https://zenodo.org/api/records/18176179/files/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif/content

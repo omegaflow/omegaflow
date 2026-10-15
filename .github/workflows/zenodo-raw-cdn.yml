@@ -57,6 +57,14 @@ jobs:
             url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif"
             origin: "https://zenodo.org/api/records/18176179/files/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif/content"
             sha256: 98d80740c6d0c2b0b4e8df388123443d4f6314efc45bf7ed788806a255f59c50
+          - asset: Venus_RadarBasemap_2025_Provenance_2025m_v1.tif
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_RadarBasemap_2025_Provenance_2025m_v1.tif"
+            origin: "https://zenodo.org/api/records/18176179/files/Venus_RadarBasemap_2025_Provenance_2025m_v1.tif/content"
+            sha256: 6aa2723571c07e8df6c6622873a1076b4189c02f057ad8aff29bad536ac0c2a4
+          - asset: Venus_Arecibo_1988_Global_440m_v1.tif
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_Arecibo_1988_Global_440m_v1.tif"
+            origin: "https://zenodo.org/api/records/18176179/files/Venus_Arecibo_1988_Global_440m_v1.tif/content"
+            sha256: fe5ed9f80c69d570b17b865f5d38c349e71fb2445e69fc9bb89209676f776888
           - asset: resonance_schumann.csv
             url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/resonance_schumann.csv"
             origin: "https://zenodo.org/api/records/15225820/files/NiNo_SR_params_2024.csv/content"
