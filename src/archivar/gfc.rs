@@ -271,7 +271,7 @@ fn tri_index(n: u32, m: u32) -> usize {
 }
 
 fn tri_len(nmax: u32) -> usize {
-    ((nmax as usize + 1) * (nmax as usize + 2) / 2) as usize
+    (nmax as usize + 1) * (nmax as usize + 2) / 2
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -522,18 +522,21 @@ pub fn fully_normalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
         let nf = n as f64;
         p[n][n] = ((2.0 * nf + 1.0) / (2.0 * nf)).sqrt() * sinth * p[n - 1][n - 1];
         p[n][n - 1] = (2.0 * nf + 1.0).sqrt() * costh * p[n - 1][n - 1];
-        for m in 0..=(n - 2) {
+        let (head, tail) = p.split_at_mut(n);
+        let (prev1, prev2) = (&head[n - 1], &head[n - 2]);
+        for (m, pn) in tail[0].iter_mut().enumerate().take(n - 1) {
             let mf = m as f64;
             let a = (((2.0 * nf - 1.0) * (2.0 * nf + 1.0)) / ((nf - mf) * (nf + mf))).sqrt();
             let b = (((2.0 * nf + 1.0) * (nf + mf - 1.0) * (nf - mf - 1.0))
                 / ((nf - mf) * (nf + mf) * (2.0 * nf - 3.0)))
                 .sqrt();
-            p[n][m] = a * costh * p[n - 1][m] - b * p[n - 2][m];
+            *pn = a * costh * prev1[m] - b * prev2[m];
         }
     }
     p
 }
 
+#[allow(clippy::needless_range_loop)] // p[n][m] index-arithmetic recurrences; m/n are grid indices
 pub fn unnormalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
     let costh = theta.cos();
     let sinth = theta.sin();
@@ -944,7 +947,7 @@ gfc      2     2    2.439370331756250E-06   -1.400307649958125E-06    8.11752994
         let value = model
             .evaluate(r, colat, lon, Functional::Potential)
             .expect("the potential stands");
-        let expected = -4.843731614932750E+03;
+        let expected = -4.843_731_614_932_75E3;
         assert!(
             (value - expected).abs() <= 1e-9 * expected.abs(),
             "JEOD case 13: computed {value} vs reference {expected}"

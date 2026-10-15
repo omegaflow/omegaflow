@@ -2292,10 +2292,10 @@ fn parse_dim_factor(it: &mut std::iter::Peekable<std::str::Chars>) -> Option<[i8
     if let Some('^') = it.peek() {
         it.next();
         exp = parse_dim_int(it)?;
-    } else if let Some(c) = it.peek() {
-        if c.is_ascii_digit() {
-            exp = parse_dim_int(it)?;
-        }
+    } else if let Some(c) = it.peek()
+        && c.is_ascii_digit()
+    {
+        exp = parse_dim_int(it)?;
     }
     Some(dim_scale(base, exp))
 }
