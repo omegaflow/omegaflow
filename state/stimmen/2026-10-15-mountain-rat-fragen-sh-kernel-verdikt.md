@@ -139,13 +139,18 @@ Zehn M4-Stimmen tragen (Kopfweg **5 : 5**). Das ist die Konvergenz-Grundlage.
 Danach — eigener Schritt — die `derived`-Klasse mit `V`/`Δg` als zwei Zeilen, **validiert an fremden
 ICGEM-Punkten** bis Grad 360.
 
-## Operator-Entscheide (Axiom 5; einzeln, nicht als Liste)
+## Operator-Entscheid (Axiom 5) — **gefallen: (b)**
 
 - **Der Kopfweg.** Wo leben die Kopf-Werte (GM, Radius, Norm, Tide) — **(a) im Draht** als eigener
   Kopf-Record (ko-geliefert, kollisionsfrei, aber ein neuer Record-Typ bricht die 26×f64-Annahme),
-  oder **(b) in der `phi`-Zeile`** als Direktiven (Text trägt Namen ehrlich, kein Enum-in-f64, aber
-  der Draht ist ohne `phi` blind)? Der Rat konvergiert hier nicht; die Maschine fragt, der Operator
-  entscheidet.
+  oder **(b) in der `phi`-Zeile** als Direktiven (Text trägt Namen ehrlich, kein Enum-in-f64, aber
+  der Draht ist ohne `phi` blind)? Der Rat konvergierte nicht (5 : 5).
+
+  **Operator-Wort 2026-10-15:** „ich würde sagen **in den kasten** weil ein eintrag in die zahlen
+  eine veränderung der rohdaten ist." → **entschieden: (b) — die Quellen-Beschreibung (`phi`-Zeile).**
+  Begründung aus Axiom 1 (A = A): die Zahlen sind die **unveränderte Rohmessung**; ein Eintrag in
+  sie wäre eine Änderung der Rohdaten. Der Modellkopf (GM, Radius, Normierung, Tide, Grad) tritt als
+  Direktiven in den Kasten. Der Draht bleibt unangetastet.
 
 ## Träger
 
