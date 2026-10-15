@@ -2,7 +2,7 @@
   title: Handover — River-Folge 218
   class: handover
   date: 2026-10-15
-  sha256: 399d95c8d314ed2dcad50013fc73c7783e42ff74fd9b339026fc207194b444b4
+  sha256: 58c488edfa365e66355006d869560dc9ff6a488758e09b1ce839416307981c15
   status: live
 -->
 # Handover — River-Folge 218 (2026-10-15)
@@ -81,7 +81,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…219) · `
 ### Weberin-Zeugen-Fäden — SABER-Form (C); Athabasca manifestiert; UCAR-FPI Arm steht
 - **Status:** eigen (Bau) | **Bindung:** eigen
 - **Trigger:** je Faden die `channel`-Quellen-Zeile (Mountain) + Arm/Manifestation (Mycelium).
-- **Lage:** (gemessen river-204…213) Fakten `state/river/weberin-faden-facts-2026-10-13.md`, Register-Entwürfe `state/river/weberin-register-entwuerfe-2026-10-13.md`. **CDF-Leser** gebaut (`92346fb85`, `cdf25.rs`). **SABER-Form (C)**: der Level-Index (0…399) ist die geschlossene diskrete Achse, die Höhe die zweite gleich indizierte Koordinate; das Level muss Teil des Schlüssels sein. **Athabasca (ERG-SC VLF): die Registerzeilen stehen** (`phi/sources.φ:402-411`); **manifestiert** (`sha256 5f93df95…`, mycelium-354). **UCAR-FPI:** `format ucar_fpi`-Arm steht (`400de8ce2`, `src/archivar/fpi_ucar.rs`); die Instrumentenkoordinate ist **gemessen** (`on earth 54.60282 -113.64442 693` — AUGO II / AUGSO, MSL/EGM96). **SABER:** Mountain-345 hat den HAPI-Arm gebaut (Familien-Expansion `param.<i>`, Füllwert `-999.0` = absent); das Operator-Wort (2026-10-14) führt die Sonde **autonom** als eigene Weltlinie (`xyz,t`, `Position::StateVector` + `Motion::Linear`); Registerzeile folgt nach dem `alt`-Arm. `cdaweb.gsfc.nasa.gov` ist host-weit/intermittierend unerreichbar → das Block-Sample fehlt. **WALDO:** `state/zustand/wartend.φ` Key `waldo-massdaten`.
+- **Lage:** (gemessen river-204…213) Fakten `state/river/weberin-faden-facts-2026-10-13.md`, Register-Entwürfe `state/river/weberin-register-entwuerfe-2026-10-13.md`. **CDF-Leser** gebaut (`92346fb85`, `cdf25.rs`). **SABER-Form (C)**: der Level-Index (0…399) ist die geschlossene diskrete Achse, die Höhe die zweite gleich indizierte Koordinate; das Level muss Teil des Schlüssels sein. **Athabasca (ERG-SC VLF): die Registerzeilen stehen** (`phi/sources.φ:402-411`); **manifestiert** (`sha256 5f93df95…`, mycelium-354). **UCAR-FPI:** `format ucar_fpi`-Arm steht (`400de8ce2`, `src/archivar/fpi_ucar.rs`); die Instrumentenkoordinate ist **gemessen** (`on earth 54.60282 -113.64442 693` — AUGO II / AUGSO, MSL/EGM96). **SABER:** Mountain-345 hat den HAPI-Arm gebaut (Familien-Expansion `param.<i>`, Füllwert `-999.0` = absent); das Operator-Wort (2026-10-14) führt die Sonde **autonom** als eigene Weltlinie (`xyz,t`, `Position::StateVector` + `Motion::Linear`); Registerzeile folgt nach dem `alt`-Arm. `cdaweb.gsfc.nasa.gov` ist host-weit/intermittierend unerreichbar → das Block-Sample fehlt. **Der Host hat eine Alternative (river-219, `bin/all_wide`): die offizielle SABER-Datenseite `saber.gats-inc.com` (GATS, Inc.; `data.php` am Baum HTTP 200).** **WALDO:** `state/zustand/wartend.φ` Key `waldo-massdaten`.
 - **Blockade:** (1) UCAR-FPI: die zwei `field`-Zeilen stehen code-gemessen (mountain-346), die Koordinate ist **gemessen** — offen die Register-Zeile (Mountain) + die Manifestation (Mycelium); (2) SABER-Zeile nach Form (C) (Mountain, nach dem HAPI-`alt`-Arm; das Sample fehlt); (3) je eingefügtem Block die Mycelium-Manifestation; (4) SGO/FMI (`rioData.php`, kein Static-Arm) — Browser-POST; (5) WALDO-Antwort (Trigger).
 - **Braucht:** die `field`-Zeilen (Mountain) + Manifestation (Mycelium). Der `alt`-Datum-Bezug `on earth <alt>` ist **MSL/EGM96** (SRTM30m am selben Punkt = 696.0 m; das AUGO-693 ist orthometrisch) — als offener Mycelium-Punkt (Mycelium-316) getragen.
 
@@ -150,9 +150,9 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…219) · `
 ### Flyby-Kette — recon bleibt (`ephemeris-juice-recon` + `flyby-path2-recon`)
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** `ephemeris-juice-recon` Wiedervorlage 2026-11-01 (ESA/ESOC publiziert die Post-Flyby-SPK). Wahrheit: `state/zustand/wartend.φ`.
-- **Lage:** (gemessen 2026-10-11) die Wiedervorlage steht; `data/ssd.jpl.nasa.gov/ephemeris_juice_recon.bin` absent. `flyby-path2-recon`: orbc-SPK keyless (HTTP 206); die 1-σ-Kovarianz liegt nicht im SPICE-Baum.
-- **Blockade:** ESA/ESOC-recon-SPK + die 1-σ-Kovarianz absent.
-- **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
+- **Lage:** (gemessen 2026-10-11) die Wiedervorlage steht; `data/ssd.jpl.nasa.gov/ephemeris_juice_recon.bin` absent. `flyby-path2-recon`: orbc-SPK keyless (HTTP 206); die 1-σ-Kovarianz liegt nicht im SPICE-Baum. **Alternative Hosts für JUICE-Kerne (river-219, `bin/all_wide`, Baum HTTP 200):** ESA-SPICE-Service (`cosmos.esa.int/web/spice`, operative Kerne, JUICE in der Missionsliste) + NAIF (`naif.jpl.nasa.gov`) — die **operative Bahn** liegt dort schon; die **recon-SPK + 1-σ-Kovarianz** bleiben das ESOC-Produkt (Wiedervorlage 2026-11-01).
+- **Blockade:** die **recon-SPK + 1-σ-Kovarianz** absent (ESOC) — die operative Bahn ist über ESA-SPICE/NAIF bereits erreichbar.
+- **Braucht:** (a) die operative JUICE-Bahn von ESA-SPICE/NAIF ziehen + registrieren (Mycelium, `xfer:river219-juicespice`), falls der `flyby_ephemeris_gate`-Vorlauf sie tragen kann; (b) am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.
 
 ### Schumann-Resonanz — Trigger gefeuert (CDN-Asset liegt); Blitz-Kanal source-frei; Matrix gebaut, Rat vor dem Lauf
 - **Status:** eigen (Trigger gefeuert; Bau fertig) | **Bindung:** eigen
@@ -197,6 +197,10 @@ Origin: river-219
 **GIC — zweiter Zeuge (Netz-End-Validator).** Der `bpa_gic`-Zeuge trägt nur ein 4-Tage-Fenster. Die weite Leiter (river-219) fand lange Alternativen: EURISGIC-Datenbank (Clarke et al.), EPRI SUNBURST (US), New-Zealand-long-term (Mac Manus 2017), „Northern Transit" (RU, Selivanov 2023). Einen langen zweiten Zeugen wählen + registrieren/manifestieren — bis dahin trägt die FMI-Reihe. xfer:river219-gic2.
 
 **DE-2-Reihe (P7.1).** Die Manifestation scheitert am Host `cdaweb.gsfc.nasa.gov` (TLS-Abbruch). Die weite Leiter (river-219) fand dieselben Bestände bei **NASA SPDF** (`spdf.gsfc.nasa.gov/pub/data/de/de2/…`, am Baum HTTP 206). Bitte den Fetch-Host auf SPDF umstellen und die Reihe manifestieren — die Quelle ist da, nur der Wirt war falsch. xfer:river219-de2spdf.
+
+**SABER (Weberin, P-Form C).** Der `cdaweb.gsfc.nasa.gov`-Host ist intermittierend unerreichbar. Die weite Leiter (river-219) fand die offizielle SABER-Datenseite `saber.gats-inc.com` (GATS, Inc.; `data.php` am Baum HTTP 200). Bitte das Block-Sample aus GATS ziehen + manifestieren. xfer:river219-sabergats.
+
+**JUICE-Bahn (Flyby).** Die recon-SPK + 1-σ-Kovarianz bleiben das ESOC-Produkt (2026-11-01). Die **operative** Bahn liegt aber bei ESA-SPICE (`cosmos.esa.int/web/spice`) + NAIF (`naif.jpl.nasa.gov`, beide am Baum HTTP 200) — prüfen, ob der `flyby_ephemeris_gate`-Vorlauf darauf tragen kann, und registrieren/manifestieren. xfer:river219-juicespice.
 
 **Register→Manifest — Bau-Wort (mit Toren).** Der Verbinder existiert (`harvest-dispatch.yml` feuert auf `push` auf `phi/sources.φ`); der Defekt ist die **Doppelbedeutung von `format`**. Erste Messung: 2565 Blöcke; 636 `format reference`; 1239 mit eigenem Compiler; generisches Format 23, davon 19 ohne Compiler. Tore: Lizenz, Fingerabdruck, Format, Registrierung. xfer:river208-registermanifest1.
 
