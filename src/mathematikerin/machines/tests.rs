@@ -360,6 +360,15 @@ mod matrix_rebuild_tests {
         }
     }
 
+    fn frame_earth() -> crate::archivar::Frame {
+        crate::archivar::Frame::Surface {
+            body_name: "earth".to_string(),
+            lat: 34.7,
+            lon: -72.4,
+            alt: 0.0,
+        }
+    }
+
     fn mk_channel(
         name: &str,
         epoch: f64,
