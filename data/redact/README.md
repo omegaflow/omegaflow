@@ -5,7 +5,7 @@ Eine Zeile je Quelle: Menge — Weg — Lizenz.
 vornamen.txt — Wikidata, P31 Q12308941 (maennlich) + Q11879590 (weiblich), rdfs:label@de — https://query.wikidata.org/sparql — CC0 1.0
 plz.txt — GeoNames Postal Code Data, allCountries.zip — https://download.geonames.org/export/zip/ — CC BY 4.0
 patterns.md — validator.js v13.15.0, Regex-Referenz — https://github.com/validatorjs/validator.js — MIT
-stopwoerter.txt — hermitdave/FrequencyWords, OpenSubtitles 2018 content/2018/{de,en}/, top 5000 de + top 2000 en, klein geschrieben + eindeutig — https://github.com/hermitdave/FrequencyWords — CC BY-SA 4.0 (Inhalt; Code MIT) — 6603
+stopwoerter.txt — hermitdave/FrequencyWords, OpenSubtitles 2018 content/2018/{de,en}/{de,en}_50k.txt, top 50000 de + top 20000 en, klein geschrieben + dedupliziert, Treffer in den Namenslisten ausgeschlossen (haeufige Nachnamen wie Schmidt/Mueller bleiben rot), vorherige Liste erhalten, Zusatzblock aus stopwords-iso German (MIT) + kuratierten Beugungen — https://github.com/hermitdave/FrequencyWords — CC BY-SA 4.0 (Inhalt; Code MIT) — 51615
 
 nachnamen.txt — Union, sortiert + case-insensitiv eindeutig — 1293653 Namen. Quellen:
 - Wikidata Familienname P31 Q101352, rdfs:label@de via Label-Service, seichte Offsets 0/1000/2000/4000 — https://query.wikidata.org/sparql — CC0 1.0 — 4000
@@ -24,3 +24,5 @@ Begrenzung sichtbar, nicht still:
 - mikeymo-Datasets NICHT aufgenommen: Vor- und Nachnamen gemischt, nicht trennbar.
 - SA-CSV: nur einteilige Namen uebernommen (651).
 - Normalisierung: All-Caps -> Titelform, sonst erste Buchstabe gross; Dedupe case-insensitiv; ohne Komma/Anfuehrungszeichen, max 60 Zeichen; mehrteilige Namen erhalten.
+- stopwoerter.txt: Quellmenge = top 50000 de + top 20000 en = 62335 eindeutige Formen (klein, dedupliziert). Davon 13190 in den Namenslisten (vornamen+nachnamen), deshalb NICHT exempt (sonst waeren Schmidt, Mueller, Fischer ... rot-frei); 2421 davon bleiben ueber die vorherige Liste exempt (bitte, hallo, wolf, ...). Exempt aus der Frequenz: 49145. Vorherige Liste 6603 erhalten. Kern 51566. Zusatzblock 49. Gesamt 51615.
+- Zusatzblock (eigener benannter Block in der Datei): nur Formen, die die Frequenzliste nicht fuehrt — stopwords-iso German (MIT) + kuratierte Beugungen. Gemessen: die Frequenzliste fuehrt wiederhole/wiederholen/text/woertlich; woertliche/woertlichen/woertlicher/woertliches, wiederholend, wiederholtest fehlten und stehen im Zusatzblock.
