@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 360 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: daeb510a6dc26dbabb1df969380b0930666348546e433eb33bd6657d262f4a73
+  sha256: ac931616629b082355857bb577e87fdb3ef59ab74157c56122b49d2b87bbf229
   status: live
 -->
 # Handover — Mycelium-Folge 360 (2026-10-15)
@@ -35,34 +35,6 @@ mechanisch; 53 format-gaps unverändert — nicht neu ausgelegt) · `register_lo
 | „je einen `taucher` auf jeden der acht Fäden, harte Bandagen, ein Dispatch = ein Faden" | 2026-10-15 | dito (folge358) |
 | „ich glaube du warst zu schnell fertig … es gibt legale wege an die globalen daten zu kommen" | 2026-10-15 | dito (folge356) |
 | „ab jetzt Reports immer in einfache Sprache" | 2026-10-13 | dito |
-
-## Gearbeitet (dieses Rund)
-
-- **Der streamende `.parts`-Splitter steht** — der Transport-Grundriss für die 80,9-GB-Basemap:
-  - **`src/archivar/md5.rs` (neu):** std-only inkrementeller MD5 (RFC 1321, alle Vektoren geprüft)
-    — die Quelle Zenodo veröffentlicht md5 (`md5:9d7ccd0d12e402b82a8390ea3837ab1f` für das
-    Basemap), und ein Datensatz-Maß passt nie ganz in den Speicher.
-  - **`src/archivar/sha256.rs`:** inkrementeller `Sha256`-Hasher; `sha256_hex`/`sha256_raw`
-    delegieren (bestehende Vektoren grün, Streaming == One-shot gemessen).
-  - **`raw_mirror` (`tools/harvest/src/bin/raw_mirror.rs`):** der Split liest den Temp-Body
-    **stromweise** (8-MiB-Chunks) in `CDN_PART_MAX_BYTES`-Teile, statt das ganze Maß zu halten;
-    das Ganze trägt sha256 (Manifest-Total) **und** md5 (Quell-Tor). Neues Tor `--md5 <hex>`
-    als Alternative zu `--sha256 <hex>` (genau eines). Der kleine Pfad (≤ 2 GiB) unverändert.
-  - **`raw_mirror_blocks.sh`:** liest jetzt auch die `md5`-Registerzeile und reicht `--md5` durch
-    (Fingerabdruck-Tor: `sha256` **oder** `md5`).
-  - **Nicht neu gefahren:** der 80,9-GB-Lauf selbst. **Gemessene Grenze:** `raw_mirror` holt den
-    Body zuerst in den Temp und splittet dann → **Temp + Teile ≈ 162 GB** lokaler Platte; der
-    Standard-Runner (14 GB SSD) trägt das nicht. Der nächste begrenzte Bau ist der **direkte
-    curl→parts-Strom mit Upload-as-you-go** (~2 GiB Platte, ein Teil zur Zeit) — und das
-    **curl-Retry-Verhalten** auf einen stdout-Strom ist ungemessen. (Rat: „der 80,9-GB-Transport
-    ist im Haus noch nie gefahren".)
-- **Messung, nicht mein Code:** `cargo check` · `cargo check --features browser_relay` ·
-  `cargo check --tests` (core) weiß; `cargo build -p omegaflow-harvest --bin raw_mirror` weiß;
-  `rustfmt --edition 2024 --check` auf den eigenen Dateien leer. **Riss:** der `harvest`-Testbau
-  (`cargo check --tests -p omegaflow-harvest`) bricht **fremd** ab — `glofas_ewds_compiler.rs:686`
-  und `nist_ncnr_nse_compiler.rs:212` rufen `unwrap_err()` auf Nicht-`Debug`-Typen (nicht meine
-  Dateien; der Grund der `ci-gate`-Rots).
-- Die acht Fäden aus folge359 bleiben unverändert; nur der Venus-Transport-Grundriss ist gebaut.
 
 ## Offen — eigen
 
