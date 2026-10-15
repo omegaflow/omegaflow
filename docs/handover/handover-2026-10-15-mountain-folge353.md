@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 353 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: d60777bd05db24bbe129478367760d7fb914dae05535957ae533a558ebafe0db
+  sha256: b0779920cf6e109131e1f52eecd36085241cfacfe332b0909a0de33946d1abe9
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -34,6 +34,12 @@ Der Stehende Pass wird als **öffentliche** Fassung zitiert, nie kopiert.
   `UNIX_J2000_OFFSET`; die vier Dokumentstellen (`constants.md`, `archivar-mathematikerin.md`,
   `remove-bias.md`, `AGENTS.md`) tragen jetzt `J2000_UNIX_OFFSET` — die 20 Code-Fundstellen
   waren bereits so. Header-sha256 der drei Header-Dokumente neu gesetzt.
+- **Lokal-only-Korrektur (A = A).** Die Live-Übergabe forderte für **UCAR-FPI** einen
+  `phi`-Block und trug die **MODVOLC**-Block-Forderung — beide widersprechen
+  `source-curation.md:90-102` (eine nicht-offene Lizenz → `local-only`: *keine* `phi`-Zeile,
+  kein CDN, keine `origin`/`url`/`compiler`-Fläche). Die zwei Live-Punkte sind korrigiert;
+  die zwei UCAR-FPI-Feldnamen stehen als Code im Lese-Arm (`extract.rs:540`), der MODVOLC-Ersatz
+  ist der vorhandene LANCE/NRT-Block.
 - Register unberührt: `register_sort` canonical (2807), `--orphans` 0.
 
 ## Offen (aufgeschlüsselt)
@@ -125,7 +131,7 @@ Gefaltet (Echo in diesem Block): `xfer:mycelium-352-1` · `xfer:mycelium-352-2` 
 - **Lage:** (gemessen 2026-10-15) Arm + Guard stehen (`fpi_ucar.rs`); die zwei `field`-Zeilen `fpi_mer_wind_ms`/
   `fpi_zon_wind_ms` sind code-gemessen; Athabasca-Koordinate `on earth 54.60282 -113.64442 693`.
 - **Blockade:** nicht-offene Lizenz → `local-only` (kein CDN).
-- **Braucht:** den UCAR-FPI-Block + die zwei `field`-Zeilen + die Arbeitskopie-Route.
+- **Braucht:** **kein `phi`-Block** (`source-curation.md:90-102`: `local-only` heißt *keine* `phi`-Zeile, kein CDN, keine `origin`/`url`/`compiler`-Fläche — die frühere Forderung „UCAR-FPI-Block" war der Riss); die zwei Feldnamen `fpi_mer_wind_ms`/`fpi_zon_wind_ms` stehen als Code im Lese-Arm (`extract.rs:540`); offen bleibt nur die Arbeitskopie-Route.
 
 ### Fünf fehlende Fäden — Entwurf steht, Mycelium setzt (eigen)
 - **Status:** eigen | **Bindung:** eigen
@@ -152,9 +158,10 @@ Gefaltet (Echo in diesem Block): `xfer:mycelium-352-1` · `xfer:mycelium-352-2` 
   bleibt. Riss: die Forderung „MODVOLC braucht einen neuen Block" widerspricht
   `source-curation.md` (ein `local-only`-Ursprung bekommt keine `phi`-Zeile).
 - **Blockade:** keine (Doku-/Verdikt-Arbeit).
-- **Braucht:** (1) OCNS2019 als `local-only` stehen lassen; (2) die MODVOLC-Forderung auf
-  „HIGP `local-only`, kein Block; LANCE/NRT bleibt" korrigieren; (3) ein echter offener
-  Beobachtungs-Ersatz (Lead NSDB `10.1051/0004-6361/200911645`).
+- **Braucht:** (1) OCNS2019 als `local-only` stehen lassen (erledigt); (2) MODVOLC HIGP
+  `local-only`, **kein Block**; LANCE/NRT bleibt — die Forderung ist per `source-curation.md:90-102`
+  widersprochen und die Live-Übergabe trägt jetzt die korrekte Disposition (erledigt);
+  (3) ein echter offener Beobachtungs-Ersatz (Lead NSDB `10.1051/0004-6361/200911645`).
 
 ### `em mw` / `advective kg/m2/s` — Freeze (eigen)
 - **Status:** wartend | **Bindung:** eigen
