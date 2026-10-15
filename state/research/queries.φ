@@ -1,0 +1,1607 @@
+1791976534 | - | nssdc | 82 | 0 | lunar
+1791976540 | - | nssdc | 65 | 0 | mars
+1791976646 | - | tavily | 1 | 0 | Mistral AI API pricing per million tokens Mistral Large Medium Small
+1791976653 | - | exa | 25 | 25 | Mistral AI API pricing per million tokens
+1791976654 | - | mwmbl | 12 | 12 | Mistral AI API pricing
+1791977389 | - | searxng | 10 | 10 | docs.mistral.ai pricing API models
+1791977594 | - | tavily | 1 | 0 | Cohere Command A API pricing per 1M tokens input output
+1791977681 | - | exa | 24 | 24 | test
+1791977682 | - | linkup | 20 | 20 | test
+1791977684 | - | serper | 9 | 9 | test
+1791977689 | - | firecrawl | 1 | 0 | test
+1791977694 | - | linkup | 20 | 20 | Cohere Command A API pricing per million tokens 2026
+1791977696 | - | exa | 25 | 25 | Cohere Command A pricing input output tokens
+1791977760 | - | exa | 25 | 25 | Cohere data processing addendum zero data retention training customer data API
+1791977860 | - | linkup | 20 | 20 | Nebius Token Factory AI Studio pricing per million tokens
+1791977861 | - | linkup | 20 | 20 | Scaleway Generative APIs pricing per million tokens Mistral Llama
+1791977912 | - | exa | 25 | 25 | Scaleway Generative APIs data not used to train models hosted in France
+1791977913 | - | exa | 25 | 25 | OVHcloud AI Endpoints data not used to train models hosted France GDPR
+1791978036 | - | exa | 25 | 25 | Nebius Token Factory terms of service training customer data region EU
+1791978069 | - | linkup | 20 | 20 | Mistral API free tier La Plateforme experiment free tokens limit
+1791978519 | - | exa | 25 | 25 | DeepInfra Mistral Small 4 price per 1M tokens
+1791992607 | - | nssdc | 21 | 0 | Chang'E-4
+1791992615 | - | nssdc | 36 | 0 | moon
+1791992647 | - | tavily | 1 | 0 | TIMED_L2A_SABER HAPI info parameters
+1791992655 | - | exa | 25 | 25 | HAPI server specification position parameters spacecraft
+1791992664 | - | tavily | 1 | 0 | ICGEM gfc format specification spherical harmonics synthesis
+1791992668 | - | sniff | 5 | 1 | https://doi.org/10.12176/03.04.003
+1791992719 | - | sniff | 5 | 1 | /tmp/opencode/icgem-format-2023.pdf
+1791992759 | - | wayback-available | 1 | 0 | https://www.nasa.gov/multimedia/guidelines/index.html
+1791992765 | - | wayback-available | 1 | 0 | https://www.nasa.gov/nasa-data-policy/
+1791993090 | - | nssdc | 9 | 0 | Chang'E-4 radio spectrometer
+1791994170 | - | mwmbl | 1 | 0 | TIMED spacecraft SPK kernel ephemeris NAIF
+1791994170 | - | marginalia | 1 | 1 | TIMED SPK kernel orbit ephemeris
+1791995003 | - | tavily | 1 | 0 | 10.12176/03.70.00023-V01
+1791995098 | - | nssdc | 9 | 0 | Chang'E-4 Low-Frequency Radio Spectrometer
+1791995105 | - | nssdc | 1 | 0 | c1f07e23-79c1-45b1-99a0-cbb57139d69f
+1791995141 | - | nssdc | 10 | 0 | Chang'E-5
+1791995180 | - | sniff | 5 | 1 | /tmp/opencode/nssdc-coreMetadata-1260.network-response
+1791995280 | - | mwmbl | 1 | 1 | TIMED spacecraft SPK ephemeris kernel
+1791995320 | - | marginalia | 1 | 0 | TIMED satellite ephemeris SPK
+1791995467 | - | nssdca | 12 | 0 | TIMED
+1791995469 | - | ntrs | 11 | 11 | TIMED spacecraft orbit
+1791995479 | - | exa | 25 | 25 | TIMED satellite NORAD two-line elements TLE orbit ephemeris
+1791995480 | - | searxng | 1 | 0 | TIMED NORAD 26880 TLE orbit
+1791995530 | - | zenodo | 250 | 238 | TIMED spacecraft orbit ephemeris
+1791995543 | - | openalex | 252 | 250 | TIMED spacecraft orbit ephemeris
+1791995546 | - | exa | 25 | 25 | TIMED spacecraft orbit ephemeris
+1791995556 | - | psychporta | 252 | 250 | TIMED spacecraft orbit ephemeris
+1791995557 | - | linkup | 20 | 20 | TIMED spacecraft orbit ephemeris
+1791995558 | - | semanticscholar | 2 | 0 | TIMED spacecraft orbit ephemeris
+1791995909 | - | wayback-available | 1 | 1 | https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=tle
+1791996595 | - | openalex | 5 | 3 | Chang'E-4 Low-Frequency Radio Spectrometer Level 2C lunar data download
+1791996606 | - | psychporta | 252 | 250 | Chang'E-4 Low-Frequency Radio Spectrometer Level 2C lunar data download
+1791996652 | - | zenodo | 252 | 237 | Chang'E-4 Low-Frequency Radio Spectrometer Level 2C lunar data download
+1791996658 | - | exa | 25 | 25 | Chang'E-4 Low-Frequency Radio Spectrometer Level 2C lunar data download
+1791996659 | - | linkup | 20 | 20 | Chang'E-4 Low-Frequency Radio Spectrometer Level 2C lunar data download
+1791996661 | - | crossref | 26 | 25 | Chang'E-4 Low-Frequency Radio Spectrometer Level 2C lunar data download
+1791996778 | - | psychporta | 252 | 250 | TIMED 1 26998U 01055B
+1791996819 | - | zenodo | 250 | 229 | TIMED 1 26998U 01055B
+1791996819 | - | openalex | 1 | 0 | TIMED 1 26998U 01055B
+1791996821 | - | crossref | 26 | 25 | TIMED 1 26998U 01055B
+1791996827 | - | exa | 25 | 25 | TIMED 1 26998U 01055B
+1791996832 | - | linkup | 20 | 20 | TIMED 1 26998U 01055B
+1791996850 | - | psychporta | 252 | 250 | TIMED 1 26998U 01055B
+1791996892 | - | psychporta | 252 | 250 | Chang'E-4 Lunar Penetrating Radar LPR open data download
+1791996892 | - | psychporta | 252 | 250 | Chang'E-5 microwave radiometer MRM data PDS NASA
+1791996893 | - | zenodo | 250 | 229 | TIMED 1 26998U 01055B
+1791996893 | - | openalex | 1 | 0 | TIMED 1 26998U 01055B
+1791996894 | - | crossref | 26 | 25 | TIMED 1 26998U 01055B
+1791996895 | - | exa | 25 | 25 | TIMED 1 26998U 01055B
+1791996896 | - | nssdc | 4 | 0 | Tianwen-1 HiRIC
+1791996897 | - | linkup | 20 | 20 | TIMED 1 26998U 01055B
+1791996897 | - | exa | 25 | 25 | Tianwen-1 Mars data open mirror PDS
+1791996900 | - | core | 25 | 25 | TIMED 1 26998U 01055B
+1791996901 | - | ntrs | 1 | 0 | TIMED 1 26998U 01055B
+1791996902 | - | serper | 10 | 10 | TIMED 1 26998U 01055B
+1791996903 | - | reactome | 25 | 25 | TIMED 1 26998U 01055B
+1791996904 | - | datacite | 1 | 0 | TIMED 1 26998U 01055B
+1791996904 | - | go | 25 | 25 | TIMED 1 26998U 01055B
+1791996906 | - | re3data | 1 | 0 | TIMED 1 26998U 01055B
+1791996907 | - | nssdc | 7 | 0 | Tianwen-1
+1791996913 | - | mwmbl | 1 | 0 | Tianwen-1 HiRIC MoRIC open data download
+1791996916 | - | zenodo | 252 | 250 | Chang'E-4 Lunar Penetrating Radar LPR open data download
+1791996916 | - | openalex | 5 | 3 | Chang'E-4 Lunar Penetrating Radar LPR open data download
+1791996918 | - | crossref | 26 | 25 | Chang'E-4 Lunar Penetrating Radar LPR open data download
+1791996919 | - | nssdc | 10 | 0 | Mars ionosphere
+1791996922 | - | nssdc | 20 | 0 | Mars magnetic field
+1791996924 | - | nssdc | 30 | 0 | Mars topography
+1791996924 | - | exa | 25 | 25 | Chang'E-4 Lunar Penetrating Radar LPR open data download
+1791996926 | - | linkup | 20 | 20 | Chang'E-4 Lunar Penetrating Radar LPR open data download
+1791996936 | - | zenodo | 252 | 244 | Chang'E-5 microwave radiometer MRM data PDS NASA
+1791996936 | - | openalex | 8 | 6 | Chang'E-5 microwave radiometer MRM data PDS NASA
+1791996938 | - | crossref | 26 | 25 | Chang'E-5 microwave radiometer MRM data PDS NASA
+1791996944 | - | exa | 25 | 25 | Chang'E-5 microwave radiometer MRM data PDS NASA
+1791996946 | - | linkup | 20 | 20 | Chang'E-5 microwave radiometer MRM data PDS NASA
+1791996947 | - | arxiv | 21 | 20 | TIMED 1 26998U 01055B
+1791996948 | - | pangaea | 25 | 25 | TIMED 1 26998U 01055B
+1791996959 | - | sniff | 5 | 1 | https://alasky.cds.unistra.fr/Planets/CDS_P_Mars_Tianwen1-MoRIC/properties
+1791996963 | - | chembl | 25 | 25 | TIMED 1 26998U 01055B
+1791996964 | - | dataeuropa | 25 | 25 | TIMED 1 26998U 01055B
+1791996966 | - | dataverse | 25 | 25 | TIMED 1 26998U 01055B
+1791996966 | - | seanoe | 10 | 10 | TIMED 1 26998U 01055B
+1791996967 | - | searxng | 1 | 0 | TIMED 1 26998U 01055B
+1791996969 | - | ads | 1 | 0 | TIMED 1 26998U 01055B
+1791996969 | - | mwmbl | 1 | 0 | TIMED 1 26998U 01055B
+1791996993 | - | sourcegraph | 1 | 0 | TIMED 1 26998U 01055B
+1791996995 | - | ckan | 25 | 25 | TIMED 1 26998U 01055B
+1791997001 | - | zenodo | 252 | 226 | Tianwen-1 HiRIC
+1791997001 | - | apis | 1 | 0 | TIMED 1 26998U 01055B
+1791997001 | - | europepmc | 1 | 0 | TIMED 1 26998U 01055B
+1791997001 | - | psychporta | 252 | 250 | Chang'E-5 Lunar Penetrating Radar LPR data open download PDS
+1791997001 | - | psychporta | 252 | 250 | Chang'E-4 Low Frequency Radio Spectrometer LFRS lunar surface data
+1791997002 | - | osf | 1 | 0 | TIMED 1 26998U 01055B
+1791997002 | - | psychporta | 252 | 250 | Chang'E VNIS visible near infrared imaging spectrometer data download
+1791997002 | - | wiki | 1 | 0 | TIMED 1 26998U 01055B
+1791997002 | - | awmf | 1 | 0 | TIMED 1 26998U 01055B
+1791997003 | - | psychporta | 252 | 250 | Chang'E-1 Chang'E-2 CCD stereo camera DOM digital orthophoto lunar data
+1791997003 | - | stackexchange | 1 | 0 | TIMED 1 26998U 01055B
+1791997003 | - | github | 1 | 0 | TIMED 1 26998U 01055B
+1791997003 | - | marginalia | 2 | 2 | TIMED 1 26998U 01055B
+1791997005 | - | ia-search | 1 | 0 | TIMED 1 26998U 01055B
+1791997006 | - | scrape | 1 | 0 | TIMED 1 26998U 01055B
+1791997006 | - | doaj | 1 | 0 | TIMED 1 26998U 01055B
+1791997020 | - | zenodo | 78 | 75 | Chang'E-4 Low Frequency Radio Spectrometer LFRS lunar surface data
+1791997020 | - | zenodo | 128 | 119 | Chang'E VNIS visible near infrared imaging spectrometer data download
+1791997021 | - | openalex | 6 | 4 | Chang'E-4 Low Frequency Radio Spectrometer LFRS lunar surface data
+1791997021 | - | openalex | 6 | 4 | Chang'E VNIS visible near infrared imaging spectrometer data download
+1791997021 | - | crossref | 2 | 0 | Chang'E VNIS visible near infrared imaging spectrometer data download
+1791997023 | - | crossref | 26 | 25 | Chang'E-4 Low Frequency Radio Spectrometer LFRS lunar surface data
+1791997024 | - | zenodo | 128 | 121 | Chang'E-1 Chang'E-2 CCD stereo camera DOM digital orthophoto lunar data
+1791997025 | - | zenodo | 128 | 125 | Chang'E-5 Lunar Penetrating Radar LPR data open download PDS
+1791997026 | - | openalex | 33 | 31 | Chang'E-1 Chang'E-2 CCD stereo camera DOM digital orthophoto lunar data
+1791997026 | - | core | 25 | 25 | Chang'E VNIS visible near infrared imaging spectrometer data download
+1791997026 | - | openalex | 4 | 2 | Chang'E-5 Lunar Penetrating Radar LPR data open download PDS
+1791997027 | - | crossref | 2 | 0 | Chang'E-5 Lunar Penetrating Radar LPR data open download PDS
+1791997028 | - | pubmed | 251 | 250 | TIMED 1 26998U 01055B
+1791997028 | - | core | 25 | 25 | Chang'E-4 Low Frequency Radio Spectrometer LFRS lunar surface data
+1791997028 | - | chembl | 25 | 25 | Chang'E VNIS visible near infrared imaging spectrometer data download
+1791997029 | - | base | 1 | 0 | TIMED 1 26998U 01055B
+1791997029 | - | duckduckgo-instant | 1 | 0 | TIMED 1 26998U 01055B
+1791997029 | - | crossref | 26 | 25 | Chang'E-1 Chang'E-2 CCD stereo camera DOM digital orthophoto lunar data
+1791997029 | - | crates | 1 | 0 | TIMED 1 26998U 01055B
+1791997030 | - | searchapi | 1 | 0 | TIMED 1 26998U 01055B
+1791997030 | - | core | 25 | 25 | Chang'E-5 Lunar Penetrating Radar LPR data open download PDS
+1791997030 | - | serpapi | 1 | 0 | TIMED 1 26998U 01055B
+1791997031 | - | oeis | 1 | 0 | TIMED 1 26998U 01055B
+1791997031 | - | hal | 1 | 0 | TIMED 1 26998U 01055B
+1791997031 | - | wiby | 1 | 0 | TIMED 1 26998U 01055B
+1791997033 | - | ngmdb | 1 | 0 | TIMED 1 26998U 01055B
+1791997033 | - | rss-bridge | 1 | 0 | TIMED 1 26998U 01055B
+1791997033 | - | kiwix | 1 | 0 | TIMED 1 26998U 01055B
+1791997033 | - | shodan | 1 | 0 | TIMED 1 26998U 01055B
+1791997033 | - | opencellid | 1 | 0 | TIMED 1 26998U 01055B
+1791997033 | - | core | 25 | 25 | Chang'E-1 Chang'E-2 CCD stereo camera DOM digital orthophoto lunar data
+1791997033 | - | gfw | 1 | 0 | TIMED 1 26998U 01055B
+1791997033 | - | oapen | 1 | 0 | TIMED 1 26998U 01055B
+1791997034 | - | regtap | 1 | 0 | TIMED 1 26998U 01055B
+1791997040 | - | wayback | 1 | 0 | TIMED 1 26998U 01055B
+1791997046 | - | chembl | 25 | 25 | Chang'E-4 Low Frequency Radio Spectrometer LFRS lunar surface data
+1791997047 | - | chembl | 25 | 25 | Chang'E-5 Lunar Penetrating Radar LPR data open download PDS
+1791997048 | - | chembl | 25 | 25 | Chang'E-1 Chang'E-2 CCD stereo camera DOM digital orthophoto lunar data
+1791997050 | - | cc | 1 | 0 | TIMED 1 26998U 01055B
+1791997051 | - | cochrane | 1 | 0 | TIMED 1 26998U 01055B
+1791997051 | - | materialsproject | 1 | 0 | TIMED 1 26998U 01055B
+1791997052 | - | clinicaltrials | 1 | 0 | TIMED 1 26998U 01055B
+1791997053 | - | openfda | 1 | 0 | TIMED 1 26998U 01055B
+1791997053 | - | pubchem | 1 | 0 | TIMED 1 26998U 01055B
+1791997054 | - | uniprot | 1 | 0 | TIMED 1 26998U 01055B
+1791997054 | - | pdb | 1 | 0 | TIMED 1 26998U 01055B
+1791997058 | - | zenodo | 252 | 227 | Tianwen-1 MoRIC
+1791997061 | - | ensembl | 1 | 0 | TIMED 1 26998U 01055B
+1791997062 | - | openlibrary | 1 | 0 | TIMED 1 26998U 01055B
+1791997063 | - | unpaywall | 1 | 0 | TIMED 1 26998U 01055B
+1791997063 | - | interpro | 1 | 0 | TIMED 1 26998U 01055B
+1791997063 | - | alphafold | 1 | 0 | TIMED 1 26998U 01055B
+1791997067 | - | alphaxiv | 5 | 0 | TIMED 1 26998U 01055B
+1791997068 | - | tavily | 1 | 0 | Tianwen-1 HiRIC data open download mirror
+1791997069 | - | alphaxiv-researchers | 5 | 0 | TIMED 1 26998U 01055B
+1791997070 | - | sniff | 5 | 1 | https://pds.wh.sdu.edu.cn
+1791997071 | - | exa | 25 | 25 | Tianwen-1 magnetometer MOMAG data
+1791997072 | - | exa | 25 | 25 | Tianwen-1 Mars Mineralogical Spectrometer MMS data
+1791997072 | - | consensus | 1 | 0 | TIMED 1 26998U 01055B
+1791997079 | - | perplexity | 1 | 0 | TIMED 1 26998U 01055B
+1791997079 | - | linkup | 25 | 25 | Tianwen-1 MoRIC HiRIC CLPDS open data CDS
+1791997079 | - | gemini | 1 | 0 | TIMED 1 26998U 01055B
+1791997080 | - | wikidata | 1 | 0 | TIMED 1 26998U 01055B
+1791997080 | - | googlecse | 1 | 0 | TIMED 1 26998U 01055B
+1791997080 | - | cmr | 1 | 0 | TIMED 1 26998U 01055B
+1791997087 | - | figshare | 25 | 25 | Chang'E lunar
+1791997088 | - | opensn | 1 | 0 | TIMED 1 26998U 01055B
+1791997088 | - | pangaea | 25 | 25 | Chang'e lunar
+1791997088 | - | dryad | 1 | 0 | TIMED 1 26998U 01055B
+1791997089 | - | vizier | 1 | 0 | Chang'e
+1791997089 | - | re3data | 1 | 0 | Chang'e lunar planetary data
+1791997090 | - | frbcat | 1 | 0 | TIMED 1 26998U 01055B
+1791997090 | - | dataverse | 25 | 25 | Chang'e lunar
+1791997090 | - | arcgis | 1 | 0 | TIMED 1 26998U 01055B
+1791997092 | - | copernicus | 1 | 0 | TIMED 1 26998U 01055B
+1791997093 | - | vires | 1 | 0 | TIMED 1 26998U 01055B
+1791997093 | - | openaire | 1 | 0 | TIMED 1 26998U 01055B
+1791997093 | - | figshare | 1 | 0 | TIMED 1 26998U 01055B
+1791997102 | - | simbad | 1 | 0 | TIMED 1 26998U 01055B
+1791997105 | - | vizier | 1 | 0 | TIMED 1 26998U 01055B
+1791997105 | - | nssdc | 1 | 0 | HiRIC
+1791997106 | - | exoplanet-archive | 1 | 0 | TIMED 1 26998U 01055B
+1791997108 | - | nssdc | 1 | 0 | MoRIC
+1791997110 | - | nssdc | 1 | 0 | RoPeR
+1791997115 | - | zenodo | 252 | 239 | Chang'e camera terrain panoramic VNIS lunar
+1791997120 | - | searxng | 1 | 0 | Tianwen-1 HiRIC high resolution camera data download
+1791997123 | - | pubmed | 1 | 0 | Chang'E-5 Lunar Regolith Penetrating Radar LRPR data download
+1791997124 | - | pubmed | 1 | 0 | Chang'E-4 terrain camera panoramic camera images dataset download
+1791997124 | - | pubmed | 1 | 0 | Chang'E-1 Chang'E-2 CCD stereo camera image data PDS archive download
+1791997133 | - | psychporta | 252 | 250 | Chang'E-5 Lunar Regolith Penetrating Radar LRPR data download
+1791997134 | - | psychporta | 252 | 250 | Chang'E-4 terrain camera panoramic camera images dataset download
+1791997134 | - | psychporta | 252 | 250 | Chang'E-1 Chang'E-2 CCD stereo camera image data PDS archive download
+1791997159 | - | marginalia | 1 | 0 | Tianwen-1 HiRIC high resolution camera data
+1791997166 | - | figshare | 8 | 8 | Tianwen-1
+1791997166 | - | ned | 1 | 0 | TIMED 1 26998U 01055B
+1791997167 | - | dataverse | 25 | 25 | Tianwen-1 host=dataverse.harvard.edu
+1791997167 | - | pangaea | 1 | 0 | Tianwen-1
+1791997168 | - | mast | 1 | 0 | TIMED 1 26998U 01055B
+1791997172 | - | zenodo | 252 | 242 | Chang'E-5 Lunar Regolith Penetrating Radar LRPR data download
+1791997173 | - | openalex | 4 | 2 | Chang'E-5 Lunar Regolith Penetrating Radar LRPR data download
+1791997176 | - | core | 25 | 25 | Chang'E-5 Lunar Regolith Penetrating Radar LRPR data download
+1791997179 | - | gaia | 1 | 0 | TIMED 1 26998U 01055B
+1791997180 | - | horizons | 1 | 0 | TIMED 1 26998U 01055B
+1791997180 | - | overpass | 1 | 0 | TIMED 1 26998U 01055B
+1791997180 | - | nominatim | 1 | 0 | TIMED 1 26998U 01055B
+1791997180 | - | open-meteo | 1 | 0 | TIMED 1 26998U 01055B
+1791997180 | - | nssdc | 21 | 0 | terrain
+1791997180 | - | gbif | 1 | 0 | TIMED 1 26998U 01055B
+1791997181 | - | fdsn | 1 | 0 | TIMED 1 26998U 01055B
+1791997182 | - | zenodo | 228 | 212 | Chang'E-4 terrain camera panoramic camera images dataset download
+1791997182 | - | openalex | 5 | 3 | Chang'E-4 terrain camera panoramic camera images dataset download
+1791997183 | - | zenodo | 203 | 194 | Chang'E-1 Chang'E-2 CCD stereo camera image data PDS archive download
+1791997183 | - | openalex | 3 | 1 | Chang'E-1 Chang'E-2 CCD stereo camera image data PDS archive download
+1791997185 | - | core | 25 | 25 | Chang'E-4 terrain camera panoramic camera images dataset download
+1791997186 | - | dataone | 1 | 0 | TIMED 1 26998U 01055B
+1791997186 | - | huggingface | 1 | 0 | TIMED 1 26998U 01055B
+1791997186 | - | dblp | 1 | 0 | TIMED 1 26998U 01055B
+1791997188 | - | core | 25 | 25 | Chang'E-1 Chang'E-2 CCD stereo camera image data PDS archive download
+1791997188 | - | orcid | 25 | 25 | TIMED 1 26998U 01055B
+1791997189 | - | ror | 20 | 20 | TIMED 1 26998U 01055B
+1791997189 | - | opencitations | 1 | 0 | TIMED 1 26998U 01055B
+1791997189 | - | grepapp | 1 | 0 | TIMED 1 26998U 01055B
+1791997189 | - | scholexplorer | 1 | 0 | TIMED 1 26998U 01055B
+1791997190 | - | mendeley | 25 | 25 | TIMED 1 26998U 01055B
+1791997192 | - | chembl | 25 | 25 | Chang'E-5 Lunar Regolith Penetrating Radar LRPR data download
+1791997197 | - | usgs | 1 | 0 | TIMED 1 26998U 01055B
+1791997197 | - | scopus | 1 | 0 | TIMED 1 26998U 01055B
+1791997198 | - | geonames | 1 | 0 | TIMED 1 26998U 01055B
+1791997198 | - | tavily | 1 | 0 | TIMED 1 26998U 01055B
+1791997199 | - | firecrawl | 1 | 0 | TIMED 1 26998U 01055B
+1791997199 | - | semanticscholar | 2 | 0 | TIMED 1 26998U 01055B
+1791997202 | - | chembl | 25 | 25 | Chang'E-4 terrain camera panoramic camera images dataset download
+1791997203 | - | chembl | 25 | 25 | Chang'E-1 Chang'E-2 CCD stereo camera image data PDS archive download
+1791997213 | - | linkup | 20 | 20 | Chang'E-4 VNIS visible near infrared spectrometer data download dataset
+1791997214 | - | osf | 1 | 0 | Chang'e lunar
+1791997214 | - | searxng | 1 | 0 | Chang'e moon data download
+1791997215 | - | ia-search | 31 | 30 | Chang'e lunar data
+1791997218 | - | exa | 25 | 25 | Chang'E-4 terrain camera panoramic camera image dataset
+1791997220 | - | hal | 158 | 157 | Chang'e lunar
+1791997225 | - | duckduckgo-instant | 1 | 0 | Tianwen-1 HiRIC data product download
+1791997230 | - | nssdc | 2 | 0 | Mars-like
+1791997231 | - | exa | 25 | 25 | Chang'e 3 lander terrain camera pcam tcam dataset planetary.s3
+1791997232 | - | exa | 25 | 25 | IEEE DataPort Real Chang'e Lunar Landscape Dataset
+1791997236 | - | nssdc | 5 | 0 | spherical harmonic
+1791997242 | - | nssdc | 6 | 0 | Mars gravity
+1791997248 | - | nssdc | 3 | 0 | Mars dust
+1791997266 | - | mwmbl | 1 | 0 | Tianwen-1 HiRIC open data
+1791997266 | - | duckduckgo-instant | 1 | 0 | Tianwen-1 MMS hyperspectral data download
+1791997285 | - | sniff | 5 | 1 | http://casdc.china-vo.org/archive/change3/download
+1791997290 | - | exa | 25 | 25 | Tianwen-1 HiRIC data archive download
+1791997292 | - | exa | 25 | 25 | Mars SHC spherical harmonic topography model
+1791997293 | - | psychporta | 252 | 250 | Chang'e VNIS reflectance spectra dataset Zenodo Figshare PANGAEA
+1791997294 | - | exa | 25 | 25 | Tianwen-1 Mars Mineralogical Spectrometer MMS dataset repository
+1791997295 | - | exa | 25 | 25 | Qaidam Mars-like terrain dataset observation
+1791997299 | - | exa | 25 | 25 | Martian Dust Storm Database Shandong University
+1791997313 | - | exa | 25 | 25 | ICGEM Mars gravity model spherical harmonic
+1791997314 | - | linkup | 20 | 20 | Tianwen-1 HiRIC image data release Mars
+1791997349 | - | zenodo | 252 | 246 | Chang'e VNIS reflectance spectra dataset Zenodo Figshare PANGAEA
+1791997350 | - | hal | 1 | 0 | Chang'e VNIS reflectance spectra dataset Zenodo Figshare PANGAEA
+1791997350 | - | pubmed | 1 | 0 | Chang'e VNIS reflectance spectra dataset Zenodo Figshare PANGAEA
+1791997353 | - | core | 25 | 25 | Chang'e VNIS reflectance spectra dataset Zenodo Figshare PANGAEA
+1791997354 | - | chembl | 25 | 25 | Chang'e VNIS reflectance spectra dataset Zenodo Figshare PANGAEA
+1791997354 | - | exa | 25 | 25 | ICGEM Mars static gravity field model download
+1791997355 | - | exa | 25 | 25 | Tianwen-1 HiRIC data moon.bao.ac.cn download
+1791997355 | - | linkup | 20 | 20 | Mars spherical harmonic topography model download
+1791997358 | - | exa | 25 | 25 | Tianwen-1 MMS ferric oxides data availability Zenodo figshare
+1791997371 | - | psychporta | 252 | 250 | Chang'e-3 VNIS shortwave infrared spectrometer data Zenodo
+1791997373 | - | datacite | 1 | 1 | Tianwen-1 HiRIC
+1791997373 | - | datacite | 1 | 0 | Mars SHCs topography
+1791997373 | - | datacite | 1 | 1 | Tianwen-1 MoRIC
+1791997421 | - | exa | 25 | 25 | TIMED satellite 26998 TLE history archive 2002 2026
+1791997432 | - | exa | 25 | 25 | Mars Express OMEGA ferric oxide global map PSA
+1791997436 | - | exa | 25 | 25 | MOLA DEM Mars PDS download
+1791997439 | - | zenodo | 252 | 238 | Chang'e-3 VNIS shortwave infrared spectrometer data Zenodo
+1791997439 | - | hal | 1 | 0 | Chang'e-3 VNIS shortwave infrared spectrometer data Zenodo
+1791997440 | - | pubmed | 1 | 0 | Chang'e-3 VNIS shortwave infrared spectrometer data Zenodo
+1791997443 | - | core | 25 | 25 | Chang'e-3 VNIS shortwave infrared spectrometer data Zenodo
+1791997453 | - | openalex | 144 | 142 | Tianwen-1 HiRIC
+1791997453 | - | base | 4 | 4 | Tianwen-1 HiRIC data
+1791997459 | - | chembl | 25 | 25 | Chang'e-3 VNIS shortwave infrared spectrometer data Zenodo
+1791997480 | - | figshare | 1 | 0 | HiRIC
+1791997481 | - | figshare | 13 | 13 | Mars Mineralogical Spectrometer
+1791997481 | - | psychporta | 252 | 250 | Chang'E-5 LRPR lunar regolith penetrating radar dataset Zenodo open
+1791997482 | - | pangaea | 25 | 25 | Mars topography
+1791997483 | - | exa | 25 | 25 | MarsTopo719 spherical harmonic topography model
+1791997483 | - | dataverse | 25 | 25 | Tianwen-1 host=dataverse.harvard.edu
+1791997486 | - | exa | 25 | 25 | Tianwen-1 MINPA ion neutral particle analyzer data download
+1791997491 | - | exa | 25 | 25 | Tianwen-1 PDS NASA planetary data system bundle hiRIC
+1791997492 | - | cmr | 1 | 0 | Tianwen-1
+1791997499 | - | huggingface | 2 | 2 | space-track-tle-history
+1791997502 | - | exa | 25 | 25 | MarsTopo719 Wieczorek spherical harmonic topography
+1791997531 | - | zenodo | 252 | 246 | Chang'E-5 LRPR lunar regolith penetrating radar dataset Zenodo open
+1791997532 | - | pubmed | 1 | 0 | Chang'E-5 LRPR lunar regolith penetrating radar dataset Zenodo open
+1791997532 | - | hal | 1 | 0 | Chang'E-5 LRPR lunar regolith penetrating radar dataset Zenodo open
+1791997533 | - | openalex | 1 | 0 | Chang'E-5 LRPR lunar regolith penetrating radar dataset Zenodo open
+1791997537 | - | core | 25 | 25 | Chang'E-5 LRPR lunar regolith penetrating radar dataset Zenodo open
+1791997564 | - | psychporta | 252 | 250 | Chang'e-4 VNIS raw spectra lunar farside data download site
+1791997593 | - | zenodo | 252 | 245 | Chang'e VNIS spectrometer reflectance
+1791997605 | - | openalex | 122 | 120 | Tianwen-1 HiRIC data
+1791997608 | - | core | 25 | 25 | Tianwen-1 HiRIC data
+1791997609 | - | zenodo | 252 | 240 | Chang'e-4 VNIS raw spectra lunar farside data download site
+1791997610 | - | pubmed | 1 | 0 | Chang'e-4 VNIS raw spectra lunar farside data download site
+1791997610 | - | ia-search | 1 | 0 | Tianwen-1 HiRIC
+1791997610 | - | hal | 1 | 0 | Chang'e-4 VNIS raw spectra lunar farside data download site
+1791997610 | - | wiby | 1 | 0 | Tianwen-1 HiRIC data
+1791997611 | - | openalex | 3 | 1 | Chang'e-4 VNIS raw spectra lunar farside data download site
+1791997615 | - | core | 25 | 25 | Chang'e-4 VNIS raw spectra lunar farside data download site
+1791997624 | - | figshare | 1 | 0 | Chang'e terrain camera CCD stereo lunar
+1791997625 | - | psychporta | 252 | 250 | Tianwen-1 HiRIC data download
+1791997634 | - | psychporta | 252 | 250 | Chang'e-1 Chang'e-2 CCD stereo camera level 2 image data archive mirror
+1791997658 | - | zenodo | 252 | 242 | Chang'e terrain camera landing camera images CE-4
+1791997664 | - | zenodo | 252 | 240 | Tianwen-1 HiRIC data download
+1791997665 | - | openalex | 10 | 8 | Tianwen-1 HiRIC data download
+1791997666 | - | pubmed | 1 | 0 | Tianwen-1 HiRIC data download
+1791997666 | - | hal | 1 | 0 | Tianwen-1 HiRIC data download
+1791997669 | - | core | 25 | 25 | Tianwen-1 HiRIC data download
+1791997682 | - | zenodo | 252 | 245 | Chang'e-1 Chang'e-2 CCD stereo camera level 2 image data archive mirror
+1791997683 | - | openalex | 7 | 5 | Chang'e-1 Chang'e-2 CCD stereo camera level 2 image data archive mirror
+1791997684 | - | pubmed | 1 | 0 | Chang'e-1 Chang'e-2 CCD stereo camera level 2 image data archive mirror
+1791997684 | - | hal | 1 | 0 | Chang'e-1 Chang'e-2 CCD stereo camera level 2 image data archive mirror
+1791997690 | - | core | 25 | 25 | Chang'e-1 Chang'e-2 CCD stereo camera level 2 image data archive mirror
+1791997701 | - | exa | 25 | 25 | Qaidam Mars-like terrain dataset
+1791997704 | - | exa | 25 | 25 | Mars Dust Storm Sequence Dataset MDSSD Wang download
+1791997723 | - | exa | 25 | 25 | Qaidam Basin Mars analog terrain dataset surface
+1791997731 | - | figshare | 1 | 0 | Chang'e-4 camera image lunar
+1791997732 | - | linkup | 20 | 20 | Tianwen-1 MMS Mars Mineralogical Spectrometer data
+1791997733 | - | datacite | 1 | 0 | Tianwen-1 MMS
+1791997733 | - | exa | 25 | 25 | Qaidam Mars analog terrain dataset
+1791997734 | - | openaire | 14 | 14 | Tianwen-1 HiRIC
+1791997737 | - | exa | 25 | 25 | MAVEN magnetometer MAG level 2 PDS data
+1791997739 | - | psychporta | 252 | 250 | Chang'E-3 LPR Channel 1 raw data download open
+1791997740 | - | psychporta | 252 | 250 | Chang'E DOM digital orthophoto map lunar image data download
+1791997748 | - | exa | 25 | 25 | Qaidam Mars-like terrain
+1791997752 | - | exa | 25 | 25 | Tianwen-1 MMS hyperspectral cube Mars
+1791997769 | - | zenodo | 252 | 237 | Chang'e-3 lunar penetrating radar channel raw
+1791997776 | - | zenodo | 252 | 249 | Chang'E-3 LPR Channel 1 raw data download open
+1791997777 | - | zenodo | 252 | 246 | Chang'E DOM digital orthophoto map lunar image data download
+1791997777 | - | openalex | 4 | 2 | Chang'E-3 LPR Channel 1 raw data download open
+1791997778 | - | pubmed | 1 | 0 | Chang'E-3 LPR Channel 1 raw data download open
+1791997778 | - | openalex | 9 | 7 | Chang'E DOM digital orthophoto map lunar image data download
+1791997779 | - | pubmed | 1 | 0 | Chang'E DOM digital orthophoto map lunar image data download
+1791997789 | - | core | 25 | 25 | Chang'E DOM digital orthophoto map lunar image data download
+1791997791 | - | chembl | 25 | 25 | Chang'E DOM digital orthophoto map lunar image data download
+1791997792 | - | core | 25 | 25 | Chang'E-3 LPR Channel 1 raw data download open
+1791997809 | - | chembl | 25 | 25 | Chang'E-3 LPR Channel 1 raw data download open
+1791998797 | - | exa | 25 | 25 | orbit_celestrak_active.json celestrak
+1791998799 | - | github | 25 | 25 | orbit_celestrak
+1792002937 | - | psychporta | 252 | 250 | deterministic PII redaction secret scanning before LLM pipeline gitleaks trufflehog detect-secrets no credentials leak
+1792002970 | - | zenodo | 252 | 235 | deterministic PII redaction secret scanning before LLM pipeline gitleaks trufflehog detect-secrets no credentials leak
+1792002971 | - | openalex | 1 | 0 | deterministic PII redaction secret scanning before LLM pipeline gitleaks trufflehog detect-secrets no credentials leak
+1792002978 | - | core | 25 | 25 | deterministic PII redaction secret scanning before LLM pipeline gitleaks trufflehog detect-secrets no credentials leak
+1792002991 | - | chembl | 25 | 25 | deterministic PII redaction secret scanning before LLM pipeline gitleaks trufflehog detect-secrets no credentials leak
+1792002991 | - | go | 25 | 25 | deterministic PII redaction secret scanning before LLM pipeline gitleaks trufflehog detect-secrets no credentials leak
+1792003160 | - | stackexchange | 1 | 0 | gitleaks trufflehog detect-secrets PII redaction anonymization pipeline
+1792003165 | - | searxng | 1 | 0 | secret scanning gitleaks
+1792003207 | - | mwmbl | 17 | 17 | PII redaction
+1792003617 | - | mwmbl | 1 | 1 | detect-secrets gitleaks trufflehog secret scanning
+1792003758 | - | searxng | 1 | 0 | gitleaks secret scanning
+1792003831 | - | exa | 25 | 25 | EPOS Equip-G gravimetry data portal successor
+1792003831 | - | exa | 25 | 25 | EIDA ARDA ORFEUS seismology data node
+1792003962 | - | exa | 25 | 25 | ARDA archive retrieval data access EIDA seismology node
+1792003966 | - | exa | 25 | 25 | CGrav China gravimetry network data access application data.earthquake.cn
+1792003978 | - | exa | 25 | 25 | NIED MOWLAS data policy license terms of use waveform
+1792003979 | - | exa | 25 | 25 | BGI AGrav sedoo Bureau Gravimetrique data license terms
+1792003979 | - | exa | 25 | 25 | GSRAS Russia seismological data open access catalog paid
+1792003989 | - | exa | 25 | 25 | ESA GOCE data licence terms of use Earth Observation open
+1792003990 | - | exa | 25 | 25 | NIED Hi-net F-net data download registration terms of use
+1792004003 | - | exa | 25 | 25 | ARDA seismology data node
+1792004015 | - | exa | 25 | 25 | China Earthquake Data Center data sharing terms registration license gravity
+1792004036 | - | exa | 25 | 25 | GRACE-FO science data PODAAC license public domain terms
+1792004164 | - | mwmbl | 1 | 0 | ARDA seismology ORFEUS data
+1792012649 | - | searxng | 1 | 0 | EPOS Equip-G gravimetry data
+1792012649 | - | searxng | 1 | 0 | GSRAS gravimetry seismic data
+1792012687 | - | mwmbl | 1 | 0 | EGGN European Gravity Geodetic Network gravimeter
+1792012688 | - | mwmbl | 1 | 0 | CGrav China gravimetry CEIC gravity data
+1792012688 | - | mwmbl | 1 | 0 | ARDA gravity data
+1792012691 | - | tavily | 1 | 0 | EPOS Equip-G gravimetry
+1792012691 | - | tavily | 1 | 0 | GSRAS gravimetry data
+1792012696 | - | exa | 25 | 25 | EPOS Equip-G
+1792012696 | - | exa | 25 | 25 | EGGN European Gravity Geodetic Network gravimeter
+1792012698 | - | linkup | 20 | 20 | EPOS Equip-G
+1792012698 | - | linkup | 20 | 20 | EGGN European Gravity Geodetic Network gravimeter
+1792012708 | - | exa | 25 | 25 | EGGN European Gravity and Geodetic Network
+1792012708 | - | exa | 25 | 25 | China Earthquake Networks Center gravity CGrav data
+1792012709 | - | exa | 25 | 25 | ARDA gravity database archive
+1792012709 | - | exa | 25 | 25 | GSRAS gravity data
+1792012747 | - | zenodo | 252 | 243 | EPOS gravimetry data TCS gravity
+1792012754 | - | zenodo | 252 | 238 | CGrav gravimetry China
+1792012761 | - | re3data | 1 | 0 | EGGN gravity
+1792012763 | - | re3data | 1 | 0 | EPOS gravity
+1792012763 | - | datacite | 15 | 15 | ARDA gravity
+1792012763 | - | datacite | 1 | 0 | CGrav gravity China
+1792012764 | - | datacite | 1 | 0 | EGGN gravity network
+1792012764 | - | datacite | 2 | 2 | GSRAS
+1792012765 | - | re3data | 1 | 1 | China Earthquake
+1792012767 | - | re3data | 1 | 0 | GSRAS
+1792012769 | - | re3data | 1 | 1 | ARDA
+1792012802 | - | sniff | 5 | 1 | https://www.re3data.org/repository/r3d100011154
+1792012802 | - | sniff | 5 | 1 | https://www.epos-eu.org/equip-g
+1792012810 | - | sniff | 5 | 1 | http://www.gsras.ru/new/eng/ssd.htm
+1792012810 | - | github | 1 | 0 | ARDA gravimetry
+1792012811 | - | linkup | 20 | 20 | ARDA seismic gravity data center geophysics
+1792012813 | - | exa | 25 | 25 | EPOS data portal gravity
+1792012844 | - | sourcegraph | 1 | 0 | ARDA gravity network
+1792012849 | - | searxng | 1 | 0 | ARDA database acronym
+1792012854 | - | exa | 24 | 24 | ARDA data archive
+1792012862 | - | exa | 25 | 25 | EPOS ICS-C API gravity
+1792012863 | - | pangaea | 25 | 25 | gravity IGETS BGI absolute
+1792012863 | - | exa | 25 | 25 | ARDA geodesy GNSS
+1792012864 | - | searxng | 1 | 0 | ARDA seismology network
+1792012867 | - | exa | 25 | 25 | ARDA geodetic network
+1792012884 | - | searxng | 1 | 0 | ARDA geophysics gravity seismology data center
+1792012886 | - | linkup | 20 | 20 | ARDA geophysical observatory network
+1792012924 | - | marginalia | 1 | 0 | ARDA seismic data
+1792012924 | - | wiby | 1 | 0 | ARDA seismology
+1792012927 | - | ia-search | 1 | 0 | ARDA gravimetry geophysics
+1792012933 | - | fdsn | 1 | 0 | ARDA
+1792012935 | - | openalex | 24 | 22 | ARDA gravimetry
+1792012935 | - | doaj | 1 | 0 | ARDA gravity data
+1792012936 | - | huggingface | 1 | 0 | ARDA gravity
+1792013020 | - | exa | 25 | 25 | EPOS TCS gravity Thematic Core Service
+1792013043 | - | pangaea | 25 | 25 | China gravity network CEIC
+1792013043 | - | datacite | 1 | 0 | China gravity observations CEIC earthquake
+1792013044 | - | github | 1 | 0 | ChinArray gravity CEIC
+1792013066 | - | ror | 1 | 1 | ARDA
+1792013066 | - | searxng | 1 | 0 | ARDA gravity absolute database
+1792013066 | - | wikidata | 1 | 0 | ARDA gravity
+1792013068 | - | linkup | 20 | 20 | ARDA data center earth science
+1792013068 | - | openaire | 3 | 3 | ARDA gravimetry
+1792013197 | - | psychporta | 1 | 0 | GSRAS
+1792013200 | - | zenodo | 1 | 0 | GSRAS
+1792013209 | - | fdsn | 25 | 25 | CB
+1792013210 | - | fdsn | 1 | 0 | network=CB
+1792013210 | - | psychporta | 252 | 250 | European absolute gravity network
+1792013210 | - | psychporta | 252 | 250 | EGGN European Gravity Network
+1792013210 | - | psychporta | 252 | 250 | EPOS gravimetry Equip-G
+1792013212 | - | openalex | 252 | 250 | GSRAS
+1792013213 | - | core | 8 | 8 | GSRAS
+1792013214 | - | chembl | 1 | 0 | GSRAS
+1792013215 | - | go | 1 | 0 | GSRAS
+1792013220 | - | ror | 1 | 1 | ARDA
+1792013220 | - | wikidata | 25 | 25 | ARDA
+1792013221 | - | fdsn | 1 | 0 | ARDA
+1792013222 | - | re3data | 1 | 1 | ARDA
+1792013225 | - | tavily | 1 | 0 | ARDA seismology data node gravimetry
+1792013225 | - | searxng | 1 | 0 | ARDA gravimetry geodesy data
+1792013226 | - | linkup | 20 | 20 | ARDA gravimetry seismic geodetic data center
+1792013229 | - | psychporta | 204 | 202 | GSRAS seismological bulletin
+1792013230 | - | exa | 25 | 25 | EIDA ARDA ORFEUS seismology data node
+1792013237 | - | sniff | 5 | 1 | /tmp/opencode/cb_wf.mseed
+1792013243 | - | zenodo | 153 | 145 | EGGN European Gravity Network
+1792013244 | - | openalex | 4 | 2 | EGGN European Gravity Network
+1792013244 | - | psychporta | 170 | 168 | CEIC gravity
+1792013244 | - | zenodo | 252 | 244 | European absolute gravity network
+1792013244 | - | zenodo | 2 | 0 | CEIC gravity
+1792013246 | - | zenodo | 78 | 74 | GSRAS seismological bulletin
+1792013246 | - | zenodo | 252 | 246 | EPOS gravimetry Equip-G
+1792013248 | - | openalex | 50 | 48 | GSRAS seismological bulletin
+1792013248 | - | psychporta | 252 | 250 | China earthquake data center
+1792013248 | - | reactome | 1 | 0 | GSRAS seismological bulletin
+1792013248 | - | openalex | 45 | 43 | EPOS gravimetry Equip-G
+1792013249 | - | core | 25 | 25 | EGGN European Gravity Network
+1792013249 | - | chembl | 13 | 13 | EGGN European Gravity Network
+1792013250 | - | go | 25 | 25 | EGGN European Gravity Network
+1792013250 | - | ckan | 3 | 3 | GSRAS seismological bulletin
+1792013250 | - | zenodo | 2 | 0 | China earthquake data center
+1792013254 | - | dataeuropa | 25 | 25 | GSRAS seismological bulletin
+1792013254 | - | core | 25 | 25 | EPOS gravimetry Equip-G
+1792013257 | - | openalex | 252 | 250 | CEIC gravity
+1792013257 | - | reactome | 1 | 0 | CEIC gravity
+1792013257 | - | openalex | 252 | 250 | European absolute gravity network
+1792013258 | - | ckan | 1 | 0 | CEIC gravity
+1792013259 | - | dataeuropa | 25 | 25 | CEIC gravity
+1792013261 | - | core | 25 | 25 | European absolute gravity network
+1792013261 | - | chembl | 25 | 25 | European absolute gravity network
+1792013262 | - | go | 25 | 25 | European absolute gravity network
+1792013263 | - | openalex | 252 | 250 | China earthquake data center
+1792013263 | - | reactome | 25 | 25 | China earthquake data center
+1792013265 | - | chembl | 25 | 25 | EPOS gravimetry Equip-G
+1792013265 | - | go | 25 | 25 | EPOS gravimetry Equip-G
+1792013266 | - | ckan | 4 | 4 | China earthquake data center
+1792013267 | - | dataeuropa | 25 | 25 | China earthquake data center
+1792013276 | - | sniff | 5 | 1 | /tmp/opencode/cb_wf2.mseed
+1792013430 | - | psychporta | 1 | 0 | GSRAS
+1792013430 | - | zenodo | 1 | 0 | GSRAS
+1792013435 | - | psychporta | 170 | 168 | CEIC gravity
+1792013438 | - | psychporta | 252 | 250 | China Earthquake Data Center
+1792013443 | - | openalex | 252 | 250 | GSRAS
+1792013444 | - | dataeuropa | 16 | 16 | GSRAS
+1792013445 | - | dataverse | 1 | 0 | GSRAS
+1792013445 | - | orcid | 1 | 0 | GSRAS
+1792013453 | - | psychporta | 1 | 0 | ARDA gravimetry
+1792013464 | - | zenodo | 252 | 231 | China Earthquake Data Center
+1792013475 | - | zenodo | 252 | 242 | CEIC gravity
+1792013477 | - | openalex | 252 | 250 | China Earthquake Data Center
+1792013478 | - | dataeuropa | 25 | 25 | China Earthquake Data Center
+1792013479 | - | dataverse | 25 | 25 | China Earthquake Data Center
+1792013480 | - | orcid | 25 | 25 | China Earthquake Data Center
+1792013486 | - | openalex | 252 | 250 | CEIC gravity
+1792013486 | - | zenodo | 228 | 220 | ARDA gravimetry
+1792013487 | - | dataeuropa | 25 | 25 | CEIC gravity
+1792013488 | - | dataverse | 5 | 5 | CEIC gravity
+1792013488 | - | openalex | 24 | 22 | ARDA gravimetry
+1792013488 | - | orcid | 25 | 25 | CEIC gravity
+1792013489 | - | mendeley | 25 | 25 | ARDA gravimetry
+1792013493 | - | exa | 25 | 25 | ARDA gravimetry
+1792013497 | - | datacite | 2 | 2 | EPOS gravimetry
+1792013497 | - | openalex | 4 | 2 | European Gravity Network EGGN
+1792013498 | - | zenodo | 53 | 50 | EPOS Equip-G gravity
+1792013499 | - | zenodo | 28 | 24 | EGGN European Gravity Network gravimeter
+1792013501 | - | core | 25 | 25 | ARDA gravimetry
+1792013503 | - | pangaea | 1 | 0 | EGGN
+1792013504 | - | re3data | 1 | 0 | EGGN gravimetry
+1792013504 | - | pangaea | 25 | 25 | absolute gravity Europe
+1792013506 | - | re3data | 25 | 25 | EPOS
+1792013512 | - | psychporta | 1 | 0 | CGrav
+1792013523 | - | psychporta | 252 | 250 | CEIC absolute gravity
+1792013527 | - | zenodo | 11 | 9 | CGrav
+1792013535 | - | openalex | 139 | 137 | CGrav
+1792013536 | - | mendeley | 25 | 25 | CGrav
+1792013537 | - | fdsn | 1 | 0 | ARDA
+1792013537 | - | openalex | 24 | 22 | ARDA gravimetry
+1792013537 | - | fdsn | 1 | 0 | network=AR
+1792013538 | - | re3data | 1 | 1 | ARDA
+1792013538 | - | ror | 1 | 1 | ARDA
+1792013540 | - | datacite | 15 | 15 | ARDA gravity
+1792013540 | - | exa | 24 | 24 | CGrav
+1792013546 | - | linkup | 20 | 20 | ARDA
+1792013547 | - | exa | 25 | 25 | ARDA seismic network
+1792013549 | - | core | 16 | 16 | CGrav
+1792013549 | - | exa | 25 | 25 | ARDA gravity data center
+1792013558 | - | psychporta | 252 | 250 | EGGN European Gravity Network
+1792013560 | - | zenodo | 252 | 241 | CEIC absolute gravity
+1792013561 | - | isc | 1 | 0 | GSRAS
+1792013561 | - | fdsn | 1 | 0 | GSRAS
+1792013562 | - | sniff | 5 | 1 | http://www.gsras.ru
+1792013563 | - | sniff | 5 | 1 | http://mseism.gsras.ru
+1792013567 | - | scrape | 11 | 11 | http://mseism.gsras.ru
+1792013568 | - | scrape | 1 | 0 | http://www.gsras.ru
+1792013570 | - | openalex | 164 | 162 | CEIC absolute gravity
+1792013570 | - | mendeley | 25 | 25 | CEIC absolute gravity
+1792013574 | - | exa | 25 | 25 | CEIC absolute gravity
+1792013577 | - | core | 25 | 25 | CEIC absolute gravity
+1792013582 | - | pangaea | 25 | 25 | CEIC gravity
+1792013582 | - | datacite | 1 | 0 | CEIC gravity
+1792013584 | - | re3data | 1 | 0 | CEIC gravity
+1792013586 | - | zenodo | 1 | 0 | gsras
+1792013586 | - | pangaea | 1 | 0 | gsras
+1792013587 | - | datacite | 2 | 2 | gsras
+1792013587 | - | exa | 25 | 25 | GSRAS Russian seismological survey
+1792013587 | - | zenodo | 252 | 245 | EGGN European Gravity Network
+1792013588 | - | openalex | 4 | 2 | EGGN European Gravity Network
+1792013589 | - | linkup | 20 | 20 | GSRAS Russian seismological survey
+1792013589 | - | mendeley | 25 | 25 | EGGN European Gravity Network
+1792013590 | - | sourcegraph | 25 | 25 | gsras
+1792013592 | - | exa | 25 | 25 | EGGN European Gravity Network
+1792013592 | - | github | 17 | 17 | gsras
+1792013593 | - | ia-search | 1 | 0 | gsras
+1792013595 | - | core | 25 | 25 | EGGN European Gravity Network
+1792013606 | - | scrape | 25 | 25 | http://www.gsras.ru/new/eng/ssd.htm
+1792013606 | - | zenodo | 252 | 242 | CEIC gravity
+1792013610 | - | github | 2 | 2 | data.earthquake.cn
+1792013610 | - | huggingface | 1 | 0 | CEIC gravity
+1792013610 | - | fdsn | 1 | 0 | China earthquake
+1792013627 | - | fdsn | 2 | 2 | OBN
+1792013628 | - | fdsn | 10 | 10 | ARU
+1792013629 | - | fdsn | 4 | 4 | YAK
+1792013631 | - | sourcegraph | 1 | 0 | CEIC gravity
+1792013632 | - | github | 1 | 0 | EPOS Equip-G gravity
+1792013632 | - | datacite | 1 | 1 | EPOS gravity data portal
+1792013633 | - | openaire | 1 | 0 | EGGN gravity
+1792013634 | - | exa | 15 | 15 | EGGN gravity
+1792013635 | - | linkup | 15 | 15 | EGGN European Gravity Network gravimeter data
+1792013644 | - | ia-search | 1 | 0 | EGGN European gravity
+1792013651 | - | sniff | 5 | 1 | https://service.iris.edu/fdsnws/station/1/query?network=CB&level=station&format=text&nodata=404
+1792013651 | - | sniff | 5 | 1 | https://service.iris.edu/fdsnws/station/1/query?network=CB&level=network&format=text&nodata=404
+1792013656 | - | scrape | 1 | 0 | https://service.iris.edu/fdsnws/station/1/query?network=CB&level=network&format=text&nodata=404
+1792013656 | - | sourcegraph | 1 | 0 | EGGN gravity
+1792013656 | - | huggingface | 1 | 0 | gravity gravimeter
+1792013661 | - | sniff | 5 | 1 | https://service.iris.edu/fdsnws/dataselect/1/query?net=CB&sta=CAD&cha=BHZ&start=2010-01-01T00:00:00&end=2010-01-01T00:10:00
+1792013668 | - | ia-search | 7 | 6 | EPOS Equip-G
+1792013668 | - | sniff | 5 | 1 | https://service.iris.edu/fdsnws/dataselect/1/query?net=II&sta=OBN&cha=BHZ&start=2024-01-01T00:00:00&end=2024-01-01T00:01:00
+1792013669 | - | isc | 2 | 0 | start=2024-01-01 end=2024-01-02 minmag=4.0 minlat=40 maxlat=80 minlon=20 maxlon=180
+1792013678 | - | exa | 19 | 19 | EGGN
+1792013678 | - | linkup | 15 | 15 | EQUIP-G EPOS quantum gravimeter network data access
+1792013679 | - | exa | 20 | 20 | EQUIP-G gravity project data
+1792013684 | - | psychporta | 204 | 202 | GSRAS bulletin
+1792013685 | - | psychporta | 252 | 250 | Russian earthquake catalogue
+1792013692 | - | scrape | 19 | 19 | https://equip-g.eu/
+1792013692 | - | openaire | 17 | 17 | EQUIP-G gravity
+1792013693 | - | github | 1 | 0 | EQUIP-G gravimetry
+1792013694 | - | exa | 15 | 15 | quantum gravimeter network Europe
+1792013696 | - | linkup | 12 | 12 | EQUIP-G project open data repository gravimeter
+1792013710 | - | zenodo | 252 | 227 | GSRAS bulletin
+1792013713 | - | psychporta | 6 | 4 | CEIC seismic
+1792013715 | - | openalex | 107 | 105 | GSRAS bulletin
+1792013716 | - | mendeley | 25 | 25 | GSRAS bulletin
+1792013719 | - | exa | 25 | 25 | GSRAS bulletin
+1792013720 | - | zenodo | 183 | 166 | EQUIP-G
+1792013720 | - | datacite | 1 | 0 | EQUIP-G quantum gravimetry
+1792013722 | - | core | 25 | 25 | GSRAS bulletin
+1792013722 | - | zenodo | 252 | 229 | Russian earthquake catalogue
+1792013722 | - | sourcegraph | 20 | 20 | EQUIP-G
+1792013722 | - | zenodo | 28 | 23 | CEIC seismic
+1792013723 | - | psychporta | 252 | 250 | China gravity network
+1792013724 | - | zenodo | 2 | 0 | China gravity network
+1792013727 | - | openalex | 110 | 108 | CEIC seismic
+1792013728 | - | mendeley | 25 | 25 | CEIC seismic
+1792013730 | - | exa | 15 | 15 | EPOS TCS gravimetry
+1792013731 | - | linkup | 12 | 12 | EPOS Thematic Core Service gravimetry data portal absolute gravity
+1792013733 | - | openalex | 252 | 250 | Russian earthquake catalogue
+1792013734 | - | mendeley | 25 | 25 | Russian earthquake catalogue
+1792013734 | - | exa | 25 | 25 | CEIC seismic
+1792013735 | - | openalex | 252 | 250 | China gravity network
+1792013736 | - | mendeley | 25 | 25 | China gravity network
+1792013737 | - | base | 4 | 4 | EQUIP-G gravity
+1792013737 | - | exa | 25 | 25 | Russian earthquake catalogue
+1792013738 | - | exa | 15 | 15 | EGGN European gravity network geodesy
+1792013739 | - | core | 25 | 25 | CEIC seismic
+1792013739 | - | crossref | 16 | 15 | EGGN gravity network
+1792013739 | - | exa | 25 | 25 | China gravity network
+1792013740 | - | core | 15 | 15 | EPOS quantum gravimetry
+1792013741 | - | core | 25 | 25 | Russian earthquake catalogue
+1792013742 | - | core | 25 | 25 | China gravity network
+1792013745 | - | openalex | 148 | 146 | EGGN
+1792013745 | - | doaj | 1 | 0 | EGGN gravity
+1792013755 | - | exa | 25 | 25 | EIDA ARDA ORFEUS seismology data node
+1792013756 | - | tavily | 1 | 0 | ARDA
+1792013757 | - | exa | 23 | 23 | ARDA
+1792013766 | - | openalex | 252 | 250 | ARDA
+1792013768 | - | mwmbl | 1 | 0 | CGrav
+1792013770 | - | exa | 25 | 25 | CGrav gravity China
+1792013792 | - | linkup | 20 | 20 | ARDA station 4-character GNSS IGS log
+1792013793 | - | exa | 25 | 25 | ARDA GNSS station Iran Ardakan
+1792013795 | - | linkup | 20 | 20 | ARDA GPS station Iran geodetic
+1792013804 | - | scrape | 25 | 25 | https://www.epos-eu.org/dataportal
+1792013807 | - | openalex | 15 | 13 | ARDA GPS site Iran position velocity
+1792013809 | - | exa | 25 | 25 | GPS station ARDA Iran Oman geodetic
+1792013819 | - | exa | 15 | 15 | EPOS gravimetry TCS thematic core service
+1792013819 | - | exa | 15 | 15 | EQUIP-G data repository FAIR
+1792013820 | - | linkup | 15 | 15 | EPOS Thematic Core Service gravimetry gravity data portal
+1792013821 | - | linkup | 12 | 12 | EQUIP-G data repository DMP public access quantum gravimeter measurements
+1792013826 | - | hal | 151 | 150 | EQUIP-G
+1792013866 | - | osf | 1 | 0 | EQUIP-G gravimetry
+1792013867 | - | figshare | 11 | 11 | EQUIP-G gravity
+1792013873 | - | datacite | 25 | 25 | absolute gravity
+1792013874 | - | linkup | 12 | 12 | EQUIP-G repository
+1792013877 | - | exa | 15 | 15 | EQUIP-G data management plan deliverable
+1792013890 | - | nominatim | 2 | 2 | Ardakan Iran
+1792013902 | - | wikidata | 25 | 25 | ARDA
+1792013904 | - | dataone | 16 | 16 | ARDA
+1792013905 | - | base | 7 | 7 | ARDA geodesy
+1792013905 | - | zenodo | 202 | 196 | EQUIP-G quantum gravimeter measurements
+1792013906 | - | datacite | 5 | 5 | European quantum gravimetry
+1792013906 | - | pangaea | 15 | 15 | quantum gravimetry
+1792013907 | - | zenodo | 202 | 195 | European gravity network absolute gravimeter
+1792013920 | - | scrape | 25 | 25 | https://www.epos-eu.org/community-portals
+1792013939 | - | psychporta | 252 | 250 | EPOS Equip-G gravimetry
+1792013951 | - | datacite | 8 | 8 | Earthquake Science Data Center China gravity
+1792013952 | - | openaire | 3 | 3 | ARDA gravimetry
+1792013955 | - | re3data | 1 | 0 | absolute gravity
+1792013962 | - | re3data | 8 | 8 | earthquake
+1792013965 | - | exa | 25 | 25 | IGETS superconducting gravimeter China
+1792013965 | - | re3data | 1 | 1 | China Earthquake
+1792013966 | - | zenodo | 252 | 246 | EPOS Equip-G gravimetry
+1792013967 | - | re3data | 2 | 2 | geodesy
+1792013970 | - | openalex | 45 | 43 | EPOS Equip-G gravimetry
+1792013970 | - | hal | 2 | 1 | EPOS Equip-G gravimetry
+1792013972 | - | mendeley | 25 | 25 | EPOS Equip-G gravimetry
+1792013975 | - | exa | 25 | 25 | EPOS Equip-G gravimetry
+1792013996 | - | exa | 10 | 10 | International Gravity Reference Frame BGI data
+1792013998 | - | linkup | 10 | 10 | IGETS gravity data GFZ ISDC access
+1792014040 | - | nominatim | 2 | 2 | Ardahan Turkey
+1792014071 | - | datacite | 1 | 1 | Wuhan superconducting gravimeter
+1792014071 | - | datacite | 1 | 0 | Lhasa superconducting gravimeter
+1792014100 | - | ckan | 1 | 0 | ARDA
+1792014101 | - | dataeuropa | 25 | 25 | ARDA
+1792014101 | - | arcgis | 25 | 25 | ARDA
+1792014102 | - | dataverse | 1 | 1 | ARDA
+1792014103 | - | cmr | 1 | 0 | ARDA
+1792014103 | - | figshare | 25 | 25 | ARDA
+1792014104 | - | dryad | 1 | 1 | ARDA
+1792014106 | - | mendeley | 25 | 25 | ARDA
+1792014166 | - | datacite | 25 | 25 | IGETS superconducting gravimeter
+1792014167 | - | ia-search | 251 | 250 | ARDA
+1792014169 | - | ngmdb | 1 | 0 | ARDA
+1792014190 | - | psychporta | 3 | 1 | ARDA geodesy
+1792014200 | - | psychporta | 12 | 10 | ARDA gravity
+1792014209 | - | zenodo | 12 | 10 | ARDA geodesy
+1792014213 | - | zenodo | 12 | 10 | ARDA gravity
+1792014220 | - | openalex | 12 | 10 | ARDA geodesy
+1792014224 | - | openalex | 12 | 10 | ARDA gravity
+1792014225 | - | ia-search | 1 | 0 | ARDA geodesy
+1792014225 | - | hal | 1 | 0 | ARDA geodesy
+1792014226 | - | mendeley | 1 | 1 | ARDA geodesy
+1792014238 | - | marginalia | 10 | 10 | CEIC gravity
+1792014238 | - | tavily | 1 | 0 | China earthquake gravity data
+1792014238 | - | linkup | 18 | 18 | CEIC gravity China
+1792014243 | - | ia-search | 2 | 1 | CEIC gravity
+1792014254 | - | ia-search | 7 | 6 | ARDA gravity
+1792014257 | - | hal | 4 | 3 | ARDA gravity
+1792014257 | - | mendeley | 1 | 1 | ARDA gravity
+1792014263 | - | datacite | 2 | 2 | 10.12080
+1792014265 | - | base | 25 | 25 | Earthquake Science Data Center of China gravity
+1792014265 | - | searxng | 1 | 0 | 国家地震科学数据中心 重力 data.earthquake.cn
+1792014292 | - | fdsn | 1 | 0 | ARDA
+1792014293 | - | fdsn | 1 | 0 | ARDA
+1792014338 | - | sniff | 5 | 1 | https://www.opentopography.org/about
+1792014376 | - | base | 25 | 25 | superconducting gravimeter data base
+1792014377 | - | base | 25 | 25 | EPOS gravimetry quantum gravimeter
+1792014379 | - | base | 24 | 24 | China absolute gravity observation network
+1792014379 | - | base | 1 | 0 | seismological catalogue Obninsk GSRAS
+1792014426 | - | base | 16 | 16 | CMONOC gravity
+1792014432 | - | psychporta | 170 | 168 | CMONOC gravity
+1792014438 | - | crossref | 26 | 25 | 10.19975/j.dqyxx.2024-022
+1792014439 | - | openalex | 31 | 29 | 10.19975/j.dqyxx.2024-022
+1792014456 | - | zenodo | 252 | 241 | CMONOC gravity
+1792014469 | - | openalex | 252 | 250 | CMONOC gravity
+1792014470 | - | ia-search | 1 | 0 | CMONOC gravity
+1792014470 | - | hal | 1 | 0 | CMONOC gravity
+1792014474 | - | exa | 25 | 25 | CMONOC gravity
+1792014480 | - | mwmbl | 1 | 0 | opentopography terms of use
+1792014480 | - | duckduckgo-instant | 1 | 0 | opentopography terms of use
+1792014500 | - | datacite | 25 | 25 | CMONOC
+1792014501 | - | github | 4 | 4 | CMONOC
+1792014501 | - | re3data | 1 | 0 | Crustal Movement Observation Network of China
+1792014506 | - | linkup | 20 | 20 | CMONOC GNSS data access download registration
+1792014508 | - | exa | 25 | 25 | CMONOC data download how to access
+1792014516 | - | openalex | 252 | 250 | Crustal Movement Observation Network of China data sharing open
+1792014581 | - | searxng | 1 | 0 | OpenTopography terms of use
+1792014583 | - | linkup | 20 | 20 | OpenTopography terms of use
+1792014600 | - | openalex | 252 | 250 | Simultaneous calibration of instrument scale factor and drift rate in network adjustment for continental-scale gravity survey campaign
+1792014606 | - | unpaywall | 1 | 1 | 10.1093/gji/ggab419
+1792014631 | - | base | 2 | 2 | Crustal Movement Observation Network of China data policy open access
+1792014632 | - | linkup | 20 | 20 | CMONOC data center China Earthquake Administration download
+1792014633 | - | exa | 25 | 25 | CMONOC 数据中心 数据共享
+1792014641 | - | linkup | 20 | 20 | CMONOC 数据共享系统 陆态网络
+1792014643 | - | exa | 25 | 25 | 陆态网络数据共享子系统
+1792014652 | - | tavily | 1 | 0 | Establishment of Absolute Gravity Datum in CMONOC Acta Geodaetica et Cartographica Sinica 2016 site
+1792014681 | - | datacite | 2 | 2 | CMONOC gravity
+1792014681 | - | pangaea | 1 | 0 | CMONOC
+1792014691 | - | sniff | 5 | 1 | https://babamul.caltech.edu/
+1792014692 | - | sniff | 5 | 1 | https://lasp.colorado.edu/eve/data_access/
+1792014693 | - | sniff | 5 | 1 | http://maxi.riken.jp/
+1792014693 | - | sniff | 5 | 1 | http://vo.lmd.jussieu.fr/
+1792014694 | - | mwmbl | 1 | 1 | Acta Geodaetica et Cartographica Sinica absolute gravity datum CMONOC
+1792014695 | - | zenodo | 252 | 242 | CMONOC absolute gravity
+1792014697 | - | mwmbl | 1 | 0 | 测绘学报 绝对重力基准 CMONOC 邢乐林
+1792014700 | - | datacite | 25 | 25 | CMONOC
+1792014700 | - | base | 1 | 0 | CMONOC absolute gravity data sharing network China Earthquake
+1792014706 | - | unpaywall | 1 | 1 | 10.1016/j.geog.2015.01.002
+1792014706 | - | datacite | 1 | 0 | CMONOC absolute gravity dataset
+1792014708 | - | crossref | 26 | 25 | CMONOC
+1792014709 | - | exa | 25 | 25 | 中国地壳运动观测网络 重力数据 共享 下载
+1792014739 | - | base | 6 | 6 | 中国地壳运动观测网络
+1792014740 | - | base | 25 | 25 | CMONOC data
+1792014745 | - | marginalia | 1 | 0 | Acta Geodaetica et Cartographica Sinica absolute gravity
+1792014751 | - | searxng | 1 | 0 | Acta Geodaetica et Cartographica Sinica absolute gravity datum CMONOC
+1792014751 | - | linkup | 20 | 20 | Establishment of Absolute Gravity Datum in CMONOC and its application Acta Geodaetica
+1792014757 | - | sourcegraph | 25 | 25 | CMONOC
+1792014790 | - | scrape | 1 | 0 | https://academic.oup.com/gji/article/228/3/1541/6396751
+1792014838 | - | wayback-available | 1 | 1 | https://academic.oup.com/gji/article/228/3/1541/6396751
+1792014847 | - | psychporta | 252 | 250 | Babamul ZTF alert stream data license terms
+1792014874 | - | zenodo | 252 | 248 | Babamul ZTF alert stream data license terms
+1792014875 | - | openalex | 3 | 1 | Babamul ZTF alert stream data license terms
+1792014876 | - | ia-search | 1 | 0 | Babamul ZTF alert stream data license terms
+1792014882 | - | exa | 25 | 25 | Babamul ZTF alert stream data license terms
+1792014882 | - | hal | 1 | 0 | Babamul ZTF alert stream data license terms
+1792014889 | - | firecrawl | 1 | 0 | https://academic.oup.com/gji/article/228/3/1541/6396751
+1792014890 | - | core | 1 | 0 | Simultaneous calibration of instrument scale factor and drift rate in network adjustment
+1792014893 | - | psychporta | 252 | 250 | MAXI RIKEN JAXA data policy license use
+1792014895 | - | exa | 25 | 25 | Simultaneous calibration instrument scale factor drift rate network adjustment continental-scale gravity survey campaign data availability
+1792014902 | - | serper | 10 | 10 | 10.1093/gji/ggab419 data availability gravity
+1792014922 | - | zenodo | 252 | 247 | MAXI RIKEN JAXA data policy license use
+1792014922 | - | openalex | 1 | 0 | MAXI RIKEN JAXA data policy license use
+1792014925 | - | exa | 25 | 25 | MAXI RIKEN JAXA data policy license use
+1792014927 | - | dataeuropa | 25 | 25 | MAXI RIKEN JAXA data policy license use
+1792014930 | - | core | 25 | 25 | MAXI RIKEN JAXA data policy license use
+1792014932 | - | wayback | 3 | 3 | https://www.sciencedirect.com/science/article/pii/S1674984715000129
+1792014940 | - | psychporta | 252 | 250 | SDO EVE LASP data license terms of use
+1792014955 | - | figshare | 1 | 0 | time-varying terrestrial gravity South China data
+1792014956 | - | datacite | 4 | 4 | China mobile gravity earthquake prediction
+1792014968 | - | zenodo | 252 | 242 | SDO EVE LASP data license terms of use
+1792014972 | - | openalex | 39 | 37 | SDO EVE LASP data license terms of use
+1792014974 | - | zenodo | 252 | 240 | CMONOC absolute gravity datum China
+1792014976 | - | exa | 25 | 25 | SDO EVE LASP data license terms of use
+1792014978 | - | dataeuropa | 25 | 25 | SDO EVE LASP data license terms of use
+1792014982 | - | core | 25 | 25 | SDO EVE LASP data license terms of use
+1792014993 | - | psychporta | 252 | 250 | LMD VO Paris Mars dust CDOD data license terms
+1792014994 | - | zenodo | 28 | 25 | LMD VO Paris Mars dust CDOD data license terms
+1792014995 | - | openalex | 1 | 0 | LMD VO Paris Mars dust CDOD data license terms
+1792014995 | - | zenodo | 228 | 223 | simultaneous calibration instrument scale factor drift rate gravity network
+1792014996 | - | dataeuropa | 25 | 25 | LMD VO Paris Mars dust CDOD data license terms
+1792014999 | - | exa | 25 | 25 | LMD VO Paris Mars dust CDOD data license terms
+1792015002 | - | core | 25 | 25 | LMD VO Paris Mars dust CDOD data license terms
+1792015093 | - | psychporta | 252 | 250 | Chinese absolute gravity dataset
+1792015093 | - | psychporta | 4 | 2 | CMONOC GNSS
+1792015100 | - | psychporta | 170 | 168 | CMONOC gravity
+1792015103 | - | psychporta | 252 | 250 | Crustal Movement Observation Network of China data
+1792015112 | - | zenodo | 252 | 233 | Chinese absolute gravity dataset
+1792015121 | - | zenodo | 203 | 197 | CMONOC GNSS
+1792015122 | - | zenodo | 153 | 145 | Crustal Movement Observation Network of China data
+1792015125 | - | openalex | 252 | 250 | Chinese absolute gravity dataset
+1792015126 | - | dataeuropa | 25 | 25 | Chinese absolute gravity dataset
+1792015129 | - | exa | 25 | 25 | Chinese absolute gravity dataset
+1792015131 | - | zenodo | 153 | 147 | CMONOC gravity
+1792015132 | - | core | 25 | 25 | Chinese absolute gravity dataset
+1792015133 | - | openalex | 252 | 250 | CMONOC GNSS
+1792015133 | - | openalex | 252 | 250 | Crustal Movement Observation Network of China data
+1792015135 | - | dataeuropa | 25 | 25 | CMONOC GNSS
+1792015136 | - | dataeuropa | 25 | 25 | Crustal Movement Observation Network of China data
+1792015138 | - | exa | 25 | 25 | CMONOC GNSS
+1792015139 | - | exa | 25 | 25 | Crustal Movement Observation Network of China data
+1792015141 | - | core | 25 | 25 | CMONOC GNSS
+1792015142 | - | openalex | 252 | 250 | CMONOC gravity
+1792015143 | - | dataeuropa | 25 | 25 | CMONOC gravity
+1792015143 | - | exa | 25 | 25 | CMONOC gravity
+1792015146 | - | core | 25 | 25 | CMONOC gravity
+1792015150 | - | core | 25 | 25 | Crustal Movement Observation Network of China data
+1792015181 | - | psychporta | 12 | 10 | 中国地壳运动观测网络
+1792015182 | - | psychporta | 3 | 1 | CMONOC superconducting gravimeter
+1792015192 | - | psychporta | 252 | 250 | CMONOC absolute gravity
+1792015200 | - | psychporta | 252 | 250 | CMONOC gravity data repository
+1792015200 | - | psychporta | 252 | 250 | China time-varying gravity supplementary data
+1792015200 | - | psychporta | 252 | 250 | China gravimeter raw data open
+1792015207 | - | zenodo | 53 | 50 | CMONOC gravity data repository
+1792015207 | - | zenodo | 103 | 98 | China time-varying gravity supplementary data
+1792015207 | - | zenodo | 103 | 95 | CMONOC absolute gravity
+1792015208 | - | zenodo | 78 | 75 | China gravimeter raw data open
+1792015209 | - | openalex | 26 | 24 | CMONOC gravity data repository
+1792015211 | - | dataeuropa | 25 | 25 | CMONOC gravity data repository
+1792015213 | - | zenodo | 203 | 198 | CMONOC superconducting gravimeter
+1792015214 | - | openalex | 131 | 129 | CMONOC absolute gravity
+1792015214 | - | exa | 25 | 25 | CMONOC gravity data repository
+1792015215 | - | openalex | 21 | 19 | CMONOC superconducting gravimeter
+1792015215 | - | dataeuropa | 25 | 25 | CMONOC absolute gravity
+1792015216 | - | dataeuropa | 25 | 25 | CMONOC superconducting gravimeter
+1792015217 | - | zenodo | 228 | 201 | 中国地壳运动观测网络
+1792015218 | - | core | 25 | 25 | CMONOC gravity data repository
+1792015219 | - | exa | 25 | 25 | CMONOC superconducting gravimeter
+1792015219 | - | openalex | 252 | 250 | China gravimeter raw data open
+1792015220 | - | openalex | 252 | 250 | China time-varying gravity supplementary data
+1792015220 | - | exa | 25 | 25 | CMONOC absolute gravity
+1792015222 | - | core | 25 | 25 | CMONOC superconducting gravimeter
+1792015222 | - | dataeuropa | 25 | 25 | China time-varying gravity supplementary data
+1792015222 | - | dataeuropa | 25 | 25 | China gravimeter raw data open
+1792015222 | - | core | 25 | 25 | CMONOC absolute gravity
+1792015225 | - | exa | 25 | 25 | China time-varying gravity supplementary data
+1792015228 | - | exa | 25 | 25 | China gravimeter raw data open
+1792015228 | - | openalex | 252 | 250 | 中国地壳运动观测网络
+1792015228 | - | core | 25 | 25 | China time-varying gravity supplementary data
+1792015228 | - | dataeuropa | 25 | 25 | 中国地壳运动观测网络
+1792015232 | - | exa | 25 | 25 | 中国地壳运动观测网络
+1792015234 | - | core | 25 | 25 | 中国地壳运动观测网络
+1792015234 | - | core | 25 | 25 | China gravimeter raw data open
+1792015251 | - | crossref | 26 | 25 | 10.19975/j.dqyxx.2024-022
+1792015251 | - | crossref | 26 | 25 | 10.19987/j.dzkxjz.2022-066
+1792015252 | - | crossref | 2 | 0 | 10.11947/j.AGCS.2016.20140653
+1792015252 | - | crossref | 2 | 0 | 10.1093/gji/ggab419
+1792015252 | - | openalex | 1 | 0 | 10.19987/j.dzkxjz.2022-066
+1792015252 | - | crossref | 2 | 0 | 10.11947/j.AGCS.2021.20200386
+1792015252 | - | openalex | 3 | 1 | 10.11947/j.AGCS.2016.20140653
+1792015253 | - | openalex | 5 | 3 | 10.1093/gji/ggab419
+1792015253 | - | openalex | 3 | 1 | 10.11947/j.AGCS.2021.20200386
+1792015253 | - | unpaywall | 1 | 0 | 10.19987/j.dzkxjz.2022-066
+1792015253 | - | unpaywall | 1 | 0 | 10.11947/j.AGCS.2016.20140653
+1792015253 | - | unpaywall | 1 | 1 | 10.1093/gji/ggab419
+1792015253 | - | unpaywall | 1 | 0 | 10.11947/j.AGCS.2021.20200386
+1792015253 | - | openalex | 31 | 29 | 10.19975/j.dqyxx.2024-022
+1792015254 | - | unpaywall | 1 | 0 | 10.19975/j.dqyxx.2024-022
+1792015271 | - | crossref | 26 | 25 | 10.3389/feart.2023.1124573
+1792015271 | - | crossref | 26 | 25 | arXiv:2504.00588
+1792015272 | - | crossref | 2 | 0 | 10.3390/rs14051142
+1792015272 | - | crossref | 26 | 25 | 10.3724/SP.J.1246.2012.00001.3
+1792015272 | - | openalex | 4 | 2 | arXiv:2504.00588
+1792015272 | - | openalex | 7 | 5 | 10.3389/feart.2023.1124573
+1792015272 | - | openalex | 3 | 1 | 10.3390/rs14051142
+1792015272 | - | openalex | 1 | 0 | 10.3724/SP.J.1246.2012.00001.3
+1792015272 | - | unpaywall | 1 | 0 | arXiv:2504.00588
+1792015273 | - | unpaywall | 1 | 1 | 10.3389/feart.2023.1124573
+1792015273 | - | unpaywall | 1 | 1 | 10.3390/rs14051142
+1792015273 | - | unpaywall | 1 | 1 | 10.3724/SP.J.1246.2012.00001.3
+1792015273 | - | unpaywall | 1 | 1 | 10.1016/j.geog.2015.01.002
+1792015286 | - | figshare | 7 | 7 | CMONOC
+1792015286 | - | datacite | 25 | 25 | CMONOC
+1792015286 | - | base | 25 | 25 | CMONOC
+1792015286 | - | pangaea | 1 | 0 | CMONOC
+1792015288 | - | re3data | 1 | 0 | CMONOC
+1792015289 | - | zenodo | 22 | 19 | CMONOC
+1792015296 | - | crossref | 26 | 25 | CMONOC
+1792015296 | - | ia-search | 2 | 1 | CMONOC
+1792015297 | - | github | 4 | 4 | CMONOC
+1792015308 | - | openalex | 252 | 250 | CMONOC gravity
+1792015318 | - | psychporta | 252 | 250 | UCAR FPI Athabasca Fabry-Perot interferometer site coordinate latitude longitude altitude
+1792015319 | - | sourcegraph | 25 | 25 | CMONOC
+1792015328 | - | linkup | 20 | 20 | CMONOC gravity data open access
+1792015330 | - | exa | 25 | 25 | CMONOC gravity data
+1792015340 | - | zenodo | 252 | 243 | UCAR FPI Athabasca Fabry-Perot interferometer site coordinate latitude longitude altitude
+1792015341 | - | openalex | 1 | 0 | UCAR FPI Athabasca Fabry-Perot interferometer site coordinate latitude longitude altitude
+1792015344 | - | dataeuropa | 25 | 25 | UCAR FPI Athabasca Fabry-Perot interferometer site coordinate latitude longitude altitude
+1792015348 | - | exa | 25 | 25 | UCAR FPI Athabasca Fabry-Perot interferometer site coordinate latitude longitude altitude
+1792015351 | - | tavily | 1 | 0 | 中国大陆构造环境监测网络 重力数据 下载
+1792015352 | - | core | 25 | 25 | UCAR FPI Athabasca Fabry-Perot interferometer site coordinate latitude longitude altitude
+1792015364 | - | linkup | 20 | 20 | CMONOC absolute gravity superconducting gravimeter data availability
+1792015459 | - | exa | 25 | 25 | Gravity changes before and after the 2010 Ms7.1 Yushu earthquake data availability
+1792015475 | - | figshare | 1 | 0 | CMONOC gravity
+1792015476 | - | datacite | 2 | 2 | CMONOC gravity
+1792015493 | - | scrape | 1 | 0 | https://raw.githubusercontent.com/brandon-rhodes/python-sgp4/master/sgp4/propagation.py
+1792015502 | - | zenodo | 252 | 241 | CMONOC gravity
+1792015519 | - | marginalia | 1 | 0 | CMONOC gravity data download
+1792015548 | - | ckan | 1 | 0 | CMONOC
+1792015556 | - | mwmbl | 25 | 25 | CMONOC gravity data
+1792015603 | - | sniff | 5 | 1 | https://registration.hao.ucar.edu/hao-reg_email.php?file=20246300athabasca.dat
+1792015626 | - | tavily | 1 | 0 | Athabasca Fabry-Perot interferometer FPI station latitude longitude altitude
+1792015629 | - | exa | 25 | 25 | Athabasca Fabry-Perot interferometer FPI site coordinates
+1792015657 | - | scrape | 25 | 25 | https://fpi.hao.ucar.edu/fpi_data_files_Drup.php
+1792015671 | - | nominatim | 1 | 0 | Athabasca University Geophysical Observatory
+1792015671 | - | marginalia | 3 | 3 | Athabasca Fabry-Perot interferometer thermospheric wind
+1792015693 | - | datacite | 1 | 0 | CMONOC gravitational
+1792015694 | - | mwmbl | 1 | 0 | Athabasca Fabry-Perot interferometer NCAR site location
+1792015705 | - | datacite | 25 | 25 | Crustal Movement Observation Network gravity
+1792015710 | - | searxng | 1 | 0 | Athabasca Fabry-Perot interferometer latitude longitude NCAR
+1792015712 | - | exa | 25 | 25 | Athabasca FPI thermospheric wind NCAR instrument location coordinates
+1792015923 | - | exa | 25 | 25 | Athabasca FPI 54.6 113.6 Fabry-Perot observatory Canada
+1792015950 | - | exa | 25 | 25 | AUGO II Athabasca observatory latitude longitude remote site Schofield Connors
+1792016020 | - | exa | 25 | 25 | AUGO II Athabasca 25 km southwest coordinates observatory Schofield
+1792016033 | - | exa | 25 | 25 | NCAR FPI Athabasca AUGSO AUGO II Fabry-Perot sky scanner deployment
+1792016052 | - | ckan | 1 | 0 | portal=data.ucar.edu FPI athabasca
+1792016054 | - | exa | 25 | 25 | Athabasca FPI Fabry-Perot AUGSO AUGO II thermospheric wind Wu 2024 2025
+1792016092 | - | marginalia | 1 | 0 | Athabasca Fabry-Perot interferometer AUGSO AUGO II
+1792016105 | - | exa | 25 | 25 | Athabasca FPI Qian Wu NSF award deployment Fabry-Perot Canada
+1792016123 | - | exa | 25 | 25 | autumn.athabascau.ca FPI Fabry-Perot instrument list Athabasca
+1792016127 | - | wayback-available | 1 | 0 | https://augo.athabascau.ca/location/index.php
+1792016155 | - | psychporta | 252 | 250 | TIMED NORAD 26998 TLE
+1792016183 | - | zenodo | 250 | 243 | TIMED NORAD 26998 TLE
+1792016184 | - | openalex | 3 | 1 | TIMED NORAD 26998 TLE
+1792016186 | - | dataeuropa | 25 | 25 | TIMED NORAD 26998 TLE
+1792016188 | - | exa | 25 | 25 | TIMED NORAD 26998 TLE
+1792016189 | - | exa | 25 | 25 | Athabasca University Geophysical Observatory instruments list FPI Fabry-Perot AUGO II AUGSO
+1792016191 | - | core | 25 | 25 | TIMED NORAD 26998 TLE
+1792016208 | - | wayback | 25 | 25 | https://augo.athabascau.ca/projects/index.php
+1792016224 | - | marginalia | 1 | 0 | Athabasca University Geophysical Observatory FPI Fabry-Perot
+1792016242 | - | wayback | 25 | 25 | https://augo.athabascau.ca/location/index.php
+1792016255 | - | semanticscholar | 52 | 50 | Athabasca Fabry-Perot interferometer thermospheric wind
+1792016275 | - | wayback-timemap | 28 | 28 | https://augo.athabascau.ca/projects/index.php
+1792016276 | - | exa | 24 | 24 | Athabasca Fabry-Perot interferometer 2025 thermospheric wind Wu Connors AUGSO
+1792016277 | - | ads | 15 | 14 | Athabasca Fabry-Perot interferometer thermospheric wind
+1792016286 | - | wayback | 20 | 20 | https://augo.athabascau.ca/information/augo2/
+1792016308 | - | psychporta | 1 | 0 | EGGN
+1792016308 | - | zenodo | 2 | 0 | EGGN
+1792016314 | - | openalex | 148 | 146 | EGGN
+1792016315 | - | dataeuropa | 40 | 40 | EGGN
+1792016317 | - | exa | 39 | 39 | EGGN
+1792016319 | - | core | 9 | 9 | EGGN
+1792016320 | - | exa | 25 | 25 | AUGSO Fabry-Perot interferometer thermospheric wind Athabasca
+1792016320 | - | exa | 25 | 25 | Athabasca FPI 54.60 246.36 AUGSO Fabry-Perot dark site
+1792016323 | - | psychporta | 1 | 0 | GSRAS
+1792016324 | - | zenodo | 1 | 0 | GSRAS
+1792016328 | - | psychporta | 1 | 0 | ARDA gravimetry
+1792016335 | - | openalex | 252 | 250 | GSRAS
+1792016335 | - | ads | 2 | 1 | Athabasca thermospheric winds Fabry-Perot 2025
+1792016335 | - | dataeuropa | 16 | 16 | GSRAS
+1792016338 | - | exa | 25 | 25 | GSRAS
+1792016341 | - | zenodo | 252 | 245 | ARDA gravimetry
+1792016342 | - | openalex | 24 | 22 | ARDA gravimetry
+1792016343 | - | dataeuropa | 25 | 25 | ARDA gravimetry
+1792016344 | - | core | 8 | 8 | GSRAS
+1792016346 | - | exa | 25 | 25 | ARDA gravimetry
+1792016351 | - | core | 25 | 25 | ARDA gravimetry
+1792016352 | - | psychporta | 170 | 168 | CEIC gravity
+1792016354 | - | wayback | 20 | 20 | https://augo.athabascau.ca/information/augo/
+1792016355 | - | psychporta | 252 | 250 | Chinese absolute gravity dataset
+1792016356 | - | psychporta | 252 | 250 | China time-varying gravity data repository
+1792016356 | - | psychporta | 170 | 168 | CMONOC gravity
+1792016363 | - | psychporta | 3 | 1 | ARDA geodesy
+1792016364 | - | zenodo | 2 | 0 | ARDA geodesy
+1792016364 | - | zenodo | 103 | 92 | Chinese absolute gravity dataset
+1792016364 | - | zenodo | 153 | 147 | CEIC gravity
+1792016364 | - | zenodo | 128 | 124 | China time-varying gravity data repository
+1792016366 | - | zenodo | 78 | 74 | CMONOC gravity
+1792016368 | - | openalex | 91 | 89 | ARDA geodesy
+1792016370 | - | dataeuropa | 25 | 25 | ARDA geodesy
+1792016370 | - | psychporta | 27 | 25 | EPOS gravimetry
+1792016373 | - | exa | 25 | 25 | ARDA geodesy
+1792016374 | - | zenodo | 28 | 25 | EPOS gravimetry
+1792016375 | - | ads | 3 | 2 | Athabasca Fabry-Perot interferometer 2024
+1792016375 | - | exa | 25 | 25 | NCAR FPI Athabasca AUGSO AUGO II 2024 deployment dark site Fabry-Perot wind
+1792016378 | - | openalex | 252 | 250 | Chinese absolute gravity dataset
+1792016378 | - | openalex | 252 | 250 | CEIC gravity
+1792016379 | - | dataeuropa | 25 | 25 | Chinese absolute gravity dataset
+1792016381 | - | dataeuropa | 25 | 25 | CEIC gravity
+1792016382 | - | openalex | 252 | 250 | CMONOC gravity
+1792016383 | - | exa | 25 | 25 | Chinese absolute gravity dataset
+1792016383 | - | core | 25 | 25 | ARDA geodesy
+1792016383 | - | dataeuropa | 25 | 25 | CMONOC gravity
+1792016384 | - | openalex | 252 | 250 | China time-varying gravity data repository
+1792016384 | - | exa | 25 | 25 | CMONOC gravity
+1792016384 | - | exa | 25 | 25 | CEIC gravity
+1792016384 | - | psychporta | 204 | 202 | GSRAS bulletin Obninsk
+1792016385 | - | openalex | 166 | 164 | EPOS gravimetry
+1792016385 | - | psychporta | 252 | 250 | ARDA seismic network
+1792016386 | - | dataeuropa | 25 | 25 | EPOS gravimetry
+1792016386 | - | zenodo | 2 | 0 | ARDA seismic network
+1792016387 | - | zenodo | 28 | 25 | GSRAS bulletin Obninsk
+1792016387 | - | dataeuropa | 25 | 25 | China time-varying gravity data repository
+1792016388 | - | core | 25 | 25 | Chinese absolute gravity dataset
+1792016389 | - | exa | 25 | 25 | EPOS gravimetry
+1792016389 | - | psychporta | 252 | 250 | Russian seismological survey
+1792016389 | - | openalex | 40 | 38 | GSRAS bulletin Obninsk
+1792016389 | - | core | 25 | 25 | CEIC gravity
+1792016389 | - | psychporta | 252 | 250 | Russian earthquake catalogue
+1792016389 | - | psychporta | 252 | 250 | ARDA geodetic data
+1792016390 | - | zenodo | 2 | 0 | ARDA geodetic data
+1792016392 | - | exa | 25 | 25 | China time-varying gravity data repository
+1792016392 | - | core | 25 | 25 | EPOS gravimetry
+1792016394 | - | zenodo | 28 | 25 | Russian earthquake catalogue
+1792016394 | - | dataeuropa | 25 | 25 | GSRAS bulletin Obninsk
+1792016395 | - | core | 25 | 25 | CMONOC gravity
+1792016396 | - | exa | 25 | 25 | GSRAS bulletin Obninsk
+1792016397 | - | openalex | 101 | 99 | ARDA geodetic data
+1792016399 | - | core | 25 | 25 | GSRAS bulletin Obninsk
+1792016399 | - | openalex | 251 | 249 | ARDA seismic network
+1792016399 | - | dataeuropa | 25 | 25 | ARDA geodetic data
+1792016400 | - | dataeuropa | 25 | 25 | ARDA seismic network
+1792016402 | - | exa | 25 | 25 | ARDA seismic network
+1792016403 | - | exa | 25 | 25 | ARDA geodetic data
+1792016405 | - | openalex | 252 | 250 | Russian earthquake catalogue
+1792016406 | - | dataeuropa | 25 | 25 | Russian earthquake catalogue
+1792016406 | - | core | 25 | 25 | China time-varying gravity data repository
+1792016407 | - | core | 25 | 25 | ARDA geodetic data
+1792016407 | - | zenodo | 228 | 219 | Russian seismological survey
+1792016408 | - | core | 25 | 25 | ARDA seismic network
+1792016408 | - | psychporta | 252 | 250 | European gravity data network
+1792016409 | - | zenodo | 2 | 0 | European gravity data network
+1792016409 | - | psychporta | 252 | 250 | Equip-G quantum gravimeter
+1792016409 | - | zenodo | 2 | 0 | Equip-G quantum gravimeter
+1792016409 | - | exa | 25 | 25 | Russian earthquake catalogue
+1792016415 | - | core | 25 | 25 | Russian earthquake catalogue
+1792016420 | - | openalex | 252 | 250 | Russian seismological survey
+1792016422 | - | dataeuropa | 25 | 25 | Russian seismological survey
+1792016424 | - | psychporta | 252 | 250 | CMONOC GNSS data
+1792016424 | - | psychporta | 252 | 250 | CMONOC superconducting gravimeter data
+1792016424 | - | openalex | 252 | 250 | European gravity data network
+1792016424 | - | openalex | 252 | 250 | Equip-G quantum gravimeter
+1792016425 | - | exa | 25 | 25 | Russian seismological survey
+1792016426 | - | dataeuropa | 25 | 25 | Equip-G quantum gravimeter
+1792016426 | - | psychporta | 252 | 250 | China gravimeter raw data open
+1792016427 | - | dataeuropa | 25 | 25 | European gravity data network
+1792016427 | - | psychporta | 252 | 250 | China earthquake data center
+1792016430 | - | exa | 25 | 25 | Equip-G quantum gravimeter
+1792016430 | - | core | 25 | 25 | Russian seismological survey
+1792016430 | - | exa | 25 | 25 | European gravity data network
+1792016434 | - | core | 25 | 25 | Equip-G quantum gravimeter
+1792016436 | - | core | 25 | 25 | European gravity data network
+1792016437 | - | zenodo | 103 | 96 | CMONOC GNSS data
+1792016437 | - | zenodo | 128 | 125 | China gravimeter raw data open
+1792016437 | - | zenodo | 153 | 148 | CMONOC superconducting gravimeter data
+1792016437 | - | zenodo | 103 | 84 | China earthquake data center
+1792016438 | - | openalex | 20 | 18 | CMONOC superconducting gravimeter data
+1792016439 | - | dataeuropa | 25 | 25 | CMONOC superconducting gravimeter data
+1792016442 | - | exa | 25 | 25 | CMONOC superconducting gravimeter data
+1792016442 | - | wikidata | 25 | 25 | ARDA
+1792016442 | - | datacite | 25 | 25 | ARDA
+1792016443 | - | re3data | 1 | 1 | ARDA
+1792016443 | - | github | 25 | 25 | ARDA
+1792016445 | - | core | 25 | 25 | CMONOC superconducting gravimeter data
+1792016447 | - | fdsn | 1 | 0 | station=ARU
+1792016447 | - | fdsn | 1 | 0 | station=OBN
+1792016447 | - | fdsn | 1 | 0 | station=YAK
+1792016447 | - | isc | 8 | 0 | start=2019-01-01 end=2019-12-31 minmag=6.0 minlat=41 maxlat=82 minlon=19 maxlon=180
+1792016448 | - | openalex | 252 | 250 | CMONOC GNSS data
+1792016448 | - | openalex | 252 | 250 | China gravimeter raw data open
+1792016448 | - | nominatim | 15 | 15 | ARDA
+1792016449 | - | openalex | 252 | 250 | China earthquake data center
+1792016449 | - | base | 10 | 10 | ARDA geodetic
+1792016449 | - | dataeuropa | 25 | 25 | CMONOC GNSS data
+1792016449 | - | ia-search | 1 | 0 | ARDA geophysical network
+1792016450 | - | dataeuropa | 25 | 25 | China earthquake data center
+1792016450 | - | dataeuropa | 25 | 25 | China gravimeter raw data open
+1792016451 | - | sourcegraph | 25 | 25 | ARDA
+1792016452 | - | exa | 25 | 25 | CMONOC GNSS data
+1792016452 | - | exa | 25 | 25 | China gravimeter raw data open
+1792016453 | - | exa | 25 | 25 | China earthquake data center
+1792016453 | - | fdsn | 1 | 0 | network=II station=OBN
+1792016454 | - | fdsn | 2 | 2 | OBN
+1792016455 | - | core | 25 | 25 | CMONOC GNSS data
+1792016455 | - | core | 25 | 25 | China gravimeter raw data open
+1792016455 | - | core | 25 | 25 | China earthquake data center
+1792016457 | - | linkup | 20 | 20 | ARDA gravimetry network
+1792016458 | - | fdsn | 10 | 10 | ARU
+1792016458 | - | fdsn | 4 | 4 | YAK
+1792016459 | - | psychporta | 6 | 4 | CEIC seismic
+1792016459 | - | exa | 25 | 25 | ARDA geodesy GNSS station
+1792016463 | - | openalex | 78 | 75 | ARDA
+1792016464 | - | datacite | 1 | 0 | EQUIP-G gravimetry
+1792016465 | - | re3data | 1 | 0 | EQUIP-G gravimetry
+1792016469 | - | psychporta | 252 | 250 | CMONOC absolute gravity
+1792016470 | - | psychporta | 252 | 250 | China absolute gravity
+1792016470 | - | crossref | 26 | 25 | 10.19975/j.dqyxx.2024-022
+1792016471 | - | unpaywall | 1 | 0 | 10.19975/j.dqyxx.2024-022
+1792016471 | - | pangaea | 20 | 20 | EPOS gravimetry
+1792016471 | - | figshare | 1 | 0 | EPOS gravimetry
+1792016471 | - | re3data | 1 | 0 | gravimetry
+1792016472 | - | openalex | 31 | 29 | 10.19975/j.dqyxx.2024-022
+1792016472 | - | figshare | 12 | 12 | quantum gravimeter
+1792016473 | - | re3data | 20 | 20 | EPOS
+1792016474 | - | zenodo | 78 | 70 | CMONOC absolute gravity
+1792016474 | - | scrape | 1 | 0 | ARDA https://geodesy.unr.edu/NGLStationPages/stations/ARDA.sta
+1792016474 | - | zenodo | 153 | 137 | CEIC seismic
+1792016475 | - | sniff | 5 | 1 | https://geodesy.unr.edu/NGLStationPages/stations/ARDA.sta
+1792016475 | - | fdsn | 1 | 0 | ARDA
+1792016475 | - | zenodo | 53 | 48 | China absolute gravity
+1792016479 | - | openalex | 110 | 108 | CEIC seismic
+1792016480 | - | openalex | 131 | 129 | CMONOC absolute gravity
+1792016480 | - | exa | 25 | 25 | GSRAS
+1792016481 | - | datacite | 20 | 20 | EPOS
+1792016481 | - | linkup | 20 | 20 | GSRAS
+1792016482 | - | dataeuropa | 25 | 25 | CEIC seismic
+1792016482 | - | dataeuropa | 25 | 25 | CMONOC absolute gravity
+1792016484 | - | crossref | 1 | 0 | filter=doi:10.19975/j.dqyxx.2024-022
+1792016485 | - | openalex | 1 | 0 | filter=doi:10.19975/j.dqyxx.2024-022
+1792016485 | - | exa | 25 | 25 | CEIC seismic
+1792016485 | - | exa | 25 | 25 | CMONOC absolute gravity
+1792016490 | - | sourcegraph | 25 | 25 | gsras
+1792016490 | - | openalex | 252 | 250 | China absolute gravity
+1792016491 | - | base | 20 | 20 | EQUIP-G
+1792016491 | - | dataeuropa | 25 | 25 | China absolute gravity
+1792016492 | - | core | 25 | 25 | CMONOC absolute gravity
+1792016492 | - | openalex | 252 | 250 | GSRAS
+1792016492 | - | github | 17 | 17 | gsras
+1792016492 | - | zenodo | 1 | 0 | GSRAS
+1792016493 | - | datacite | 2 | 2 | GSRAS
+1792016493 | - | ia-search | 1 | 0 | GSRAS
+1792016493 | - | pangaea | 1 | 0 | GSRAS
+1792016494 | - | ia-search | 1 | 0 | GS RAS seismology Obninsk
+1792016494 | - | psychporta | 12 | 10 | 中国地壳运动观测网络
+1792016495 | - | exa | 25 | 25 | China absolute gravity
+1792016495 | - | core | 25 | 25 | CEIC seismic
+1792016498 | - | core | 25 | 25 | China absolute gravity
+1792016502 | - | ia-search | 201 | 200 | EQUIP-G
+1792016502 | - | mwmbl | 2 | 2 | ISC bulletin licence data use
+1792016503 | - | mwmbl | 3 | 3 | gsras.ru data licence terms
+1792016505 | - | openalex | 3 | 1 | filter=doi:https://doi.org/10.3390/rs14051142
+1792016510 | - | tavily | 1 | 0 | ARDA gravity network
+1792016511 | - | linkup | 20 | 20 | ARDA seismic network acronym
+1792016514 | - | zenodo | 203 | 178 | 中国地壳运动观测网络
+1792016514 | - | openalex | 202 | 200 | EQUIP-G
+1792016515 | - | zenodo | 202 | 185 | EQUIP-G
+1792016517 | - | crossref | 2 | 1 | filter=doi:10.3390/rs14051142
+1792016517 | - | github | 20 | 20 | EQUIP-G
+1792016520 | - | linkup | 20 | 20 | ARDA gravimetric database
+1792016526 | - | openalex | 252 | 250 | 中国地壳运动观测网络
+1792016527 | - | openalex | 1 | 0 | filter=doi:https://doi.org/10.19975/j.dqyxx.2024-022
+1792016527 | - | openalex | 1 | 0 | filter=doi:https://doi.org/10.19987/j.dzkxjz.2022-066
+1792016527 | - | dataeuropa | 25 | 25 | 中国地壳运动观测网络
+1792016527 | - | openalex | 3 | 1 | filter=doi:https://doi.org/10.11947/j.AGCS.2016.20140653
+1792016528 | - | openalex | 3 | 1 | filter=doi:https://doi.org/10.1093/gji/ggab419
+1792016528 | - | openalex | 3 | 1 | filter=doi:https://doi.org/10.11947/j.AGCS.2021.20200386
+1792016529 | - | fdsn | 1 | 0 | network=CB
+1792016530 | - | exa | 25 | 25 | 中国地壳运动观测网络
+1792016531 | - | re3data | 1 | 1 | China Earthquake Data Center
+1792016533 | - | openalex | 3 | 1 | filter=doi:https://doi.org/10.3389/feart.2023.1124573
+1792016533 | - | core | 25 | 25 | 中国地壳运动观测网络
+1792016533 | - | openalex | 3 | 1 | filter=doi:https://doi.org/10.3724/SP.J.1246.2012.00001.3
+1792016533 | - | openalex | 3 | 1 | filter=doi:https://doi.org/10.1016/j.geog.2015.01.002
+1792016533 | - | unpaywall | 1 | 1 | 10.3390/rs14051142
+1792016533 | - | unpaywall | 1 | 0 | 10.19987/j.dzkxjz.2022-066
+1792016537 | - | arxiv | 2 | 1 | 2504.00588
+1792016537 | - | gemini | 1 | 0 | ARDA
+1792016537 | - | unpaywall | 1 | 0 | 10.11947/j.AGCS.2016.20140653
+1792016537 | - | unpaywall | 1 | 1 | 10.1093/gji/ggab419
+1792016538 | - | unpaywall | 1 | 0 | 10.11947/j.AGCS.2021.20200386
+1792016538 | - | linkup | 20 | 20 | ARDA absolute gravity station
+1792016538 | - | fdsn | 25 | 25 | CB
+1792016538 | - | unpaywall | 1 | 1 | 10.3389/feart.2023.1124573
+1792016538 | - | base | 25 | 25 | China Earthquake Data Center
+1792016538 | - | unpaywall | 1 | 1 | 10.3724/SP.J.1246.2012.00001.3
+1792016539 | - | unpaywall | 1 | 1 | 10.1016/j.geog.2015.01.002
+1792016539 | - | exa | 25 | 25 | ARDA GNSS station velocity field
+1792016539 | - | sourcegraph | 20 | 20 | EQUIP-G
+1792016542 | - | exa | 25 | 25 | CGrav China gravity
+1792016543 | - | datacite | 25 | 25 | China Earthquake Data Center
+1792016544 | - | linkup | 20 | 20 | CGrav China gravity data
+1792016556 | - | zenodo | 252 | 229 | China earthquake gravity
+1792016559 | - | pangaea | 25 | 25 | China gravity
+1792016583 | - | base | 25 | 25 | China Earthquake Data Center
+1792016599 | - | datacite | 25 | 25 | China gravity
+1792016600 | - | figshare | 25 | 25 | China gravity data
+1792016601 | - | openalex | 252 | 250 | China earthquake data center
+1792016602 | - | pangaea | 25 | 25 | China gravity
+1792016603 | - | re3data | 1 | 0 | China gravity
+1792016603 | - | base | 17 | 17 | China absolute gravity dataset
+1792016606 | - | re3data | 25 | 25 | EPOS
+1792016607 | - | zenodo | 2 | 0 | CMONOC gravity
+1792016607 | - | datacite | 30 | 30 | CMONOC
+1792016608 | - | re3data | 1 | 0 | CMONOC gravity
+1792016615 | - | zenodo | 2 | 0 | CMONOC
+1792016615 | - | figshare | 7 | 7 | CMONOC
+1792016616 | - | re3data | 1 | 0 | CMONOC
+1792016618 | - | re3data | 1 | 0 | crustal movement China
+1792016618 | - | sniff | 5 | 1 | /tmp/opencode/cb.mseed
+1792016619 | - | figshare | 1 | 0 | China earthquake gravity monitoring
+1792016622 | - | zenodo | 252 | 241 | CMONOC gravity
+1792016623 | - | cmr | 1 | 0 | ARDA gravity
+1792016623 | - | arcgis | 25 | 25 | ARDA
+1792016624 | - | pangaea | 4 | 4 | ARDA
+1792016625 | - | seanoe | 10 | 10 | ARDA
+1792016625 | - | dataone | 16 | 16 | ARDA
+1792016626 | - | geonames | 25 | 25 | ARDA
+1792016628 | - | openaire | 24 | 24 | ARDA gravity
+1792016629 | - | base | 16 | 16 | CMONOC gravity
+1792016630 | - | base | 30 | 30 | CMONOC GNSS
+1792016630 | - | ia-search | 251 | 250 | China earthquake data center
+1792016631 | - | ia-search | 2 | 1 | CMONOC
+1792016631 | - | pangaea | 1 | 0 | CMONOC
+1792016635 | - | openalex | 131 | 129 | CMONOC absolute gravity
+1792016636 | - | linkup | 20 | 20 | EQUIP-G gravimetry data access
+1792016636 | - | crossref | 31 | 30 | CMONOC absolute gravity
+1792016639 | - | exa | 25 | 25 | EQUIP-G gravimetry data
+1792016639 | - | sourcegraph | 10 | 10 | data.earthquake.cn
+1792016640 | - | github | 2 | 2 | data.earthquake.cn
+1792016640 | - | datacite | 1 | 0 | Geophysical Survey Russian Academy of Sciences Obninsk
+1792016659 | - | crossref | 26 | 25 | CGrav China gravity
+1792016663 | - | zenodo | 252 | 239 | Obninsk seismic
+1792016681 | - | nssdc | 55 | 0 | gravity
+1792016693 | - | duckduckgo-instant | 14 | 14 | ARDA
+1792016693 | - | wiki | 25 | 25 | ARDA
+1792016702 | - | scrape | 1 | 0 | https://www.mdpi.com/2072-4292/14/5/1142 selector=.html-data-availability
+1792016702 | - | scrape | 1 | 0 | https://www.frontiersin.org/articles/10.3389/feart.2023.1124573/full selector=#data-availability-statement
+1792016706 | - | exa | 24 | 24 | CGrav
+1792016707 | - | linkup | 20 | 20 | CGrav gravity China
+1792016733 | - | marginalia | 1 | 0 | ARDA
+1792016757 | - | searxng | 1 | 0 | open Chinese terrestrial gravity data repository
+1792016796 | - | mwmbl | 1 | 0 | China absolute gravity dataset download
+1792016811 | - | openaire | 25 | 25 | China gravity dataset
+1792016813 | - | scrape | 25 | 25 | https://data.earthquake.cn/datashare/report.shtml?PAGEID=datasourcelist&dt=40280d0453e5add30153e5f03dd10022
+1792016835 | - | github | 4 | 4 | CMONOC
+1792016836 | - | exa | 30 | 30 | CMONOC GNSS data download
+1792016838 | - | linkup | 20 | 20 | CMONOC GNSS data download
+1792016850 | - | marginalia | 1 | 0 | absolute gravity China CMONOC
+1792016851 | - | sourcegraph | 30 | 30 | CMONOC
+1792016865 | - | datacite | 2 | 2 | CMONOC gravity
+1792016866 | - | scrape | 1 | 0 | http://xb.sinomaps.com/CN/10.11947/j.AGCS.2016.20140653
+1792016870 | - | nssdc | 7 | 0 | CMONOC
+1792016873 | - | re3data | 1 | 1 | earthquake China
+1792016888 | - | openalex | 3 | 1 | filter=doi:https://doi.org/10.1007/s00024-022-03095-9
+1792016943 | - | scrape | 25 | 25 | https://cedarscience.org/poster-2024/recent-results-ncar-fpi-observations
+1792016983 | - | openaire | 6 | 6 | terrestrial gravity China plateau dataset
+1792016987 | - | datacite | 17 | 17 | time-varying gravity China absolute
+1792017008 | - | linkup | 20 | 20 | China absolute gravity data download CMONOC
+1792017009 | - | exa | 25 | 25 | open Chinese terrestrial gravity dataset repository
+1792017017 | - | openalex | 3 | 1 | filter=doi:https://doi.org/10.1038/s43247-024-01209-w
+1792017077 | - | nssdc | 46 | 0 | 重力
+1792017083 | - | nssdc | 1 | 0 | 地壳运动
+1792017200 | - | github | 4 | 4 | CMONOC
+1792017206 | - | exa | 19 | 19 | eqdsc CMONOC
+1792017207 | - | linkup | 20 | 20 | eqdsc CMONOC GNSS
+1792041722 | - | sniff | 5 | 1 | file:///tmp/opencode/atha.dat
+1792041793 | - | sniff | 5 | 1 | file:///tmp/opencode/augo_map.png
+1792042460 | - | duckduckgo-instant | 1 | 0 | J2000 epoch TDB zero seconds reference
+1792042461 | - | searxng | 1 | 0 | ICGEM gfc static gravity model epoch of coefficients
+1792042463 | - | wiki | 25 | 25 | J2000 epoch
+1792043250 | - | sniff | 5 | 1 | https://data.earthquake.cn/datashare/login.jsp
+1792043251 | - | sniff | 5 | 1 | https://data.earthquake.cn/datashare/register.jsp
+1792043252 | - | sniff | 5 | 1 | https://data.earthquake.cn/datashare/report.shtml?PAGEID=register
+1792045318 | - | sniff | 5 | 1 | https://bgi.obs-mip.fr/data-products/gravity-databases/absolute-gravity-data/
+1792045326 | - | wiki | 25 | 25 | tagged union
+1792045327 | - | searxng | 1 | 0 | ICGEM gravity model static gfct time-variable reference epoch format
+1792046201 | - | sniff | 5 | 1 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/2024/cat202401.dat
+1792046202 | - | wayback-available | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/2024/cat202401.dat
+1792046216 | - | wayback-timemap | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/2024/cat202401.dat
+1792046234 | - | tavily | 1 | 0 | WDC-B Obninsk earthquake catalog download cat_OBN
+1792046237 | - | exa | 25 | 25 | Obninsk earthquake catalogue WDC-B wdcb.ru data
+1792046242 | - | linkup | 20 | 20 | Obninsk seismological catalog wdcb download monthly dat
+1792046280 | - | mwmbl | 1 | 0 | wdcb.ru cat_OBN Obninsk
+1792046320 | - | marginalia | 1 | 0 | Obninsk earthquake catalog WDCB
+1792046328 | - | cc | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/2010/cat201001.dat
+1792046331 | - | cc | 1 | 0 | http://www.wdcb.ru/sep/data/sdata/Obn/catalog/2010/cat201001.dat
+1792046338 | - | isc | 1 | 0 | agency=MOS start=2024-01-01 end=2024-01-31 minmag=0
+1792046344 | - | exa | 25 | 25 | zeus.wdcb.ru wdcb sep data Obn catalog
+1792046344 | - | exa | 25 | 25 | Обнинский каталог землетрясений скачать wdcb
+1792046364 | - | wayback-timemap | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/2010/cat201001.dat
+1792046367 | - | wayback-timemap | 1 | 0 | http://www.wdcb.ru/sep/data/sdata/Obn/catalog/2010/cat201001.dat
+1792046387 | - | exa | 15 | 15 | site:zeus.wdcb.ru Obn catalog dat
+1792046388 | - | tavily | 1 | 0 | zeus.wdcb.ru Obninsk earthquake catalog
+1792046388 | - | brave | 1 | 0 | wdcb.ru Obninsk catalog earth
+1792046397 | - | wayback-available | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/
+1792046399 | - | isc | 25 | 0 | start=2024-01-01 end=2024-01-02 minmag=4
+1792046401 | - | wayback-available | 1 | 1 | http://www.wdcb.ru/sep/seismology/cat_OBN.html
+1792046403 | - | wayback-available | 1 | 1 | http://zeus.wdcb.ru/
+1792046431 | - | wayback-timemap | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/1993/cat199301.dat
+1792046432 | - | wayback-timemap | 125 | 125 | http://zeus.wdcb.ru/
+1792046435 | - | exa | 25 | 25 | wdcb.ru sep data sdata Obn bulletin catalog dat
+1792046436 | - | wayback-timemap | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/2005/cat200501.dat
+1792046438 | - | wayback-timemap | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/
+1792046443 | - | cc | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/
+1792046447 | - | wayback-timemap | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/
+1792046451 | - | wayback-timemap | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/bulletin/2024/bul202401.dat
+1792046453 | - | cc | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/
+1792046526 | - | wayback-available | 1 | 1 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/1993/cat199301.dat
+1792046526 | - | wayback-available | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/1993/cat199301.dat
+1792047503 | - | psychporta | 1 | 0 | ВЦД Москва геофизика
+1792047505 | - | zenodo | 2 | 0 | ВЦД Москва геофизика
+1792047506 | - | openalex | 1 | 0 | ВЦД Москва геофизика
+1792047506 | - | ia-search | 1 | 0 | ВЦД Москва геофизика
+1792047507 | - | dataeuropa | 40 | 40 | ВЦД Москва геофизика
+1792047510 | - | exa | 40 | 40 | ВЦД Москва геофизика
+1792047512 | - | psychporta | 341 | 339 | zeus.wdcb.ru archive
+1792047512 | - | zenodo | 2 | 0 | zeus.wdcb.ru archive
+1792047512 | - | openalex | 6 | 4 | zeus.wdcb.ru archive
+1792047513 | - | psychporta | 402 | 400 | WDC-B Moscow
+1792047513 | - | ia-search | 1 | 0 | zeus.wdcb.ru archive
+1792047514 | - | dataeuropa | 40 | 40 | zeus.wdcb.ru archive
+1792047517 | - | zenodo | 2 | 0 | WDC-B Moscow
+1792047517 | - | exa | 40 | 40 | zeus.wdcb.ru archive
+1792047528 | - | openalex | 402 | 400 | WDC-B Moscow
+1792047529 | - | ia-search | 15 | 14 | WDC-B Moscow
+1792047530 | - | dataeuropa | 40 | 40 | WDC-B Moscow
+1792047533 | - | exa | 40 | 40 | WDC-B Moscow
+1792047536 | - | psychporta | 252 | 250 | World Data System Russia
+1792047539 | - | psychporta | 78 | 76 | wdcb.ru sep seismology
+1792047543 | - | zenodo | 2 | 0 | wdcb.ru sep seismology
+1792047543 | - | openalex | 5 | 3 | wdcb.ru sep seismology
+1792047544 | - | ia-search | 1 | 0 | wdcb.ru sep seismology
+1792047545 | - | dataeuropa | 40 | 40 | wdcb.ru sep seismology
+1792047548 | - | psychporta | 402 | 400 | World Data Center B solid earth
+1792047548 | - | psychporta | 402 | 400 | WDC-B Russia data catalog
+1792047550 | - | zenodo | 2 | 0 | World Data Center B solid earth
+1792047550 | - | zenodo | 2 | 0 | WDC-B Russia data catalog
+1792047551 | - | exa | 40 | 40 | wdcb.ru sep seismology
+1792047557 | - | openalex | 171 | 169 | WDC-B Russia data catalog
+1792047557 | - | ia-search | 1 | 0 | WDC-B Russia data catalog
+1792047561 | - | dataeuropa | 40 | 40 | WDC-B Russia data catalog
+1792047564 | - | exa | 40 | 40 | WDC-B Russia data catalog
+1792047566 | - | psychporta | 1 | 0 | wdcb.ru wayback
+1792047566 | - | zenodo | 2 | 0 | wdcb.ru wayback
+1792047566 | - | openalex | 1 | 0 | wdcb.ru wayback
+1792047566 | - | psychporta | 1 | 0 | Обнинск каталог зеркало
+1792047566 | - | openalex | 402 | 400 | World Data Center B solid earth
+1792047567 | - | ia-search | 1 | 0 | wdcb.ru wayback
+1792047568 | - | dataeuropa | 12 | 12 | wdcb.ru wayback
+1792047569 | - | zenodo | 2 | 0 | Обнинск каталог зеркало
+1792047570 | - | openalex | 4 | 2 | Обнинск каталог зеркало
+1792047571 | - | ia-search | 1 | 0 | Обнинск каталог зеркало
+1792047571 | - | exa | 39 | 39 | wdcb.ru wayback
+1792047571 | - | dataeuropa | 40 | 40 | Обнинск каталог зеркало
+1792047573 | - | exa | 40 | 40 | Обнинск каталог зеркало
+1792047575 | - | zenodo | 252 | 248 | World Data System Russia
+1792047576 | - | psychporta | 402 | 400 | World Data Center B Moscow mirror
+1792047576 | - | zenodo | 2 | 0 | World Data Center B Moscow mirror
+1792047576 | - | psychporta | 402 | 400 | wdcb sep data archive
+1792047577 | - | ia-search | 401 | 400 | World Data Center B solid earth
+1792047579 | - | zenodo | 2 | 0 | wdcb sep data archive
+1792047579 | - | openalex | 7 | 5 | wdcb sep data archive
+1792047580 | - | dataeuropa | 40 | 40 | World Data Center B solid earth
+1792047580 | - | ia-search | 1 | 0 | wdcb sep data archive
+1792047582 | - | dataeuropa | 40 | 40 | wdcb sep data archive
+1792047583 | - | exa | 40 | 40 | World Data Center B solid earth
+1792047585 | - | exa | 40 | 40 | wdcb sep data archive
+1792047587 | - | openalex | 252 | 250 | World Data System Russia
+1792047587 | - | openalex | 402 | 400 | World Data Center B Moscow mirror
+1792047590 | - | ia-search | 117 | 116 | World Data Center B Moscow mirror
+1792047592 | - | dataeuropa | 40 | 40 | World Data Center B Moscow mirror
+1792047596 | - | exa | 40 | 40 | World Data Center B Moscow mirror
+1792047598 | - | ia-search | 251 | 250 | World Data System Russia
+1792047599 | - | dataeuropa | 25 | 25 | World Data System Russia
+1792047605 | - | exa | 25 | 25 | World Data System Russia
+1792047610 | - | re3data | 1 | 1 | World Data Center Solid Earth Physics
+1792047610 | - | re3data | 1 | 1 | World Data Center Solar-Terrestrial Physics Moscow
+1792047612 | - | datacite | 8 | 8 | World Data Center Solid Earth Physics Moscow
+1792047619 | - | openalex | 252 | 250 | World Data Center Solid Earth Physics Moscow seismic catalog
+1792047630 | - | github | 1 | 0 | wdcb.ru sep seismology
+1792047630 | - | pangaea | 25 | 25 | World Data Center Solid Earth Physics
+1792047633 | - | ia-search | 54 | 53 | World Data Center Solid Earth Physics Moscow
+1792047652 | - | wayback-timemap | 125 | 125 | http://zeus.wdcb.ru/
+1792047652 | - | wayback-timemap | 605 | 605 | http://www.wdcb.ru/
+1792047655 | - | psychporta | 236 | 234 | WDC Moscow successor
+1792047655 | - | wayback-available | 1 | 1 | http://www.wdcb.ru/
+1792047656 | - | wayback-available | 1 | 1 | https://usd.wdcb.ru/
+1792047657 | - | wayback-available | 1 | 1 | http://esdb.wdcb.ru/
+1792047658 | - | sourcegraph | 13 | 13 | wdcb.ru
+1792047658 | - | wayback-available | 1 | 1 | http://zeus.wdcb.ru/
+1792047670 | - | zenodo | 252 | 245 | World Data Center Solid Earth Physics Moscow
+1792047674 | - | wayback-available | 1 | 1 | http://www.wdcb.ru/sep/seismology/cat_OBN.html
+1792047675 | - | wayback-available | 1 | 1 | http://www.wdcb.ru/stp/data/
+1792047675 | - | wayback-available | 1 | 1 | http://wdcb.ru/WDCB/IPY/
+1792047675 | - | wayback-available | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/
+1792047675 | - | wayback-available | 1 | 1 | http://www.wdcb.ru/sep/
+1792047675 | - | wayback-available | 1 | 1 | http://usd.wdcb.ru/data/
+1792047677 | - | linkup | 20 | 20 | World Data Center for Solid Earth Physics Moscow seismology data catalog
+1792047679 | - | wayback-available | 1 | 0 | http://elpub.wdcb.ru/
+1792047679 | - | wayback-available | 1 | 0 | http://www.wdcb.ru/metadata/
+1792047680 | - | exa | 25 | 25 | World Data Center for Solid Earth Physics Moscow data archive
+1792047683 | - | ia-search | 1 | 0 | wdcb.ru
+1792047683 | - | datacite | 3 | 3 | wdcb
+1792047684 | - | github | 1 | 0 | wdcb.ru
+1792047685 | - | linkup | 20 | 20 | World Data Center B Moscow data archive
+1792047687 | - | exa | 40 | 40 | wdcb.ru Obninsk data
+1792047694 | - | zenodo | 252 | 243 | WDC Moscow successor
+1792047694 | - | openalex | 22 | 20 | WDC Moscow successor
+1792047695 | - | ia-search | 1 | 0 | WDC Moscow successor
+1792047696 | - | dataeuropa | 25 | 25 | WDC Moscow successor
+1792047696 | - | openalex | 402 | 400 | World Data Center B Moscow
+1792047701 | - | exa | 24 | 24 | WDC Moscow successor
+1792047710 | - | sourcegraph | 14 | 14 | wdcb.ru
+1792047711 | - | psychporta | 252 | 250 | Obninsk seismic catalogue mirror
+1792047747 | - | zenodo | 252 | 246 | Obninsk seismic catalogue mirror
+1792047748 | - | openalex | 3 | 1 | Obninsk seismic catalogue mirror
+1792047749 | - | ia-search | 1 | 0 | Obninsk seismic catalogue mirror
+1792047750 | - | dataeuropa | 25 | 25 | Obninsk seismic catalogue mirror
+1792047753 | - | exa | 25 | 25 | Obninsk seismic catalogue mirror
+1792047765 | - | psychporta | 252 | 250 | ISC Obninsk agency
+1792047792 | - | wayback-timemap | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/2000/cat200001.dat
+1792047793 | - | wayback-timemap | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/
+1792047793 | - | wayback-available | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obn/catalog/2000/cat200001.dat
+1792047793 | - | wayback-timemap | 3 | 3 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_ALT9299.dat
+1792047794 | - | wayback-timemap | 1 | 1 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200001.dat
+1792047802 | - | cc | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/
+1792047804 | - | zenodo | 252 | 249 | ISC Obninsk agency
+1792047806 | - | openalex | 44 | 42 | ISC Obninsk agency
+1792047807 | - | ia-search | 1 | 0 | ISC Obninsk agency
+1792047808 | - | dataeuropa | 25 | 25 | ISC Obninsk agency
+1792047809 | - | wayback-timemap | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/*
+1792047812 | - | exa | 25 | 25 | ISC Obninsk agency
+1792047812 | - | wayback | 13 | 13 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/
+1792047814 | - | wayback | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/
+1792047815 | - | wayback-available | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200001.dat
+1792047822 | - | psychporta | 252 | 250 | WDC solid earth physics heir
+1792047848 | - | wayback | 1 | 0 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200001.dat
+1792047852 | - | zenodo | 252 | 237 | WDC solid earth physics heir
+1792047853 | - | openalex | 5 | 3 | WDC solid earth physics heir
+1792047853 | - | ia-search | 1 | 0 | WDC solid earth physics heir
+1792047854 | - | dataeuropa | 25 | 25 | WDC solid earth physics heir
+1792047855 | - | exa | 25 | 25 | WDC solid earth physics heir
+1792047899 | - | isc | 7 | 0 | start=2020-01-01 end=2020-01-02 minmag=5
+1792047911 | - | openalex | 252 | 250 | World Data Center Solid Earth Physics Moscow
+1792047934 | - | zenodo | 252 | 245 | Obninsk seismic catalogue
+1792047940 | - | datacite | 25 | 25 | World Data Center Solid Earth Physics
+1792047941 | - | re3data | 15 | 15 | World Data Center
+1792047949 | - | pangaea | 25 | 25 | Obninsk seismic catalogue
+1792047969 | - | sourcegraph | 14 | 14 | wdcb.ru
+1792047970 | - | github | 1 | 0 | obninsk seismic catalog
+1792047974 | - | exa | 25 | 25 | World Data Center for Solid Earth Physics Moscow successor
+1792047975 | - | linkup | 20 | 20 | World Data Center Solid Earth Physics Russia
+1792047975 | - | searchapi | 1 | 0 | World Data Center Solid Earth Physics Moscow
+1792047997 | - | wayback-available | 1 | 1 | http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku03.dat
+1792047998 | - | wayback-available | 1 | 1 | http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9901.ZIP
+1792048000 | - | wayback-available | 1 | 1 | http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_INDEX.TXT
+1792048493 | - | zenodo | 3 | 1 | 7798617
+1792048493 | - | sniff | 5 | 1 | https://geodesy.unr.edu/Acknowledgements.php
+1792048496 | - | zenodo | 3 | 1 | 8084659
+1792048503 | - | scrape | 13 | 13 | https://geodesy.unr.edu/Disclaimer.php
+1792048731 | - | scrape | 1 | 0 | https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_2.dat
+1792049043 | - | openalex | 252 | 250 | space weather forecast chain Sun to Earth lead time certainty cascade
+1792049052 | - | arxiv | 21 | 20 | geomagnetically induced current forecast lead time
+1792049069 | - | openalex | 252 | 250 | transfer entropy space weather geomagnetic prediction
+1792049069 | - | openalex | 252 | 250 | space weather forecast verification lead time geomagnetic storm prediction
+1792049120 | - | exa | 25 | 25 | Sun to Earth space weather forecast chain lead time certainty cascade
+1792049121 | - | semanticscholar | 52 | 50 | transfer entropy geomagnetic solar wind prediction
+1792049130 | - | semanticscholar | 4 | 3 | causal chain transfer entropy solar wind magnetosphere ionosphere information flow
+1792049135 | - | exa | 25 | 25 | incremental information gain lead time early warning chain geospace
+1792049153 | - | psychporta | 252 | 250 | WDC-B sep data
+1792049226 | - | zenodo | 252 | 249 | WDC-B sep data
+1792049237 | - | openalex | 252 | 250 | WDC-B sep data
+1792049239 | - | ia-search | 12 | 11 | WDC-B sep data
+1792049239 | - | base | 1 | 0 | space weather forecast chain lead time certainty geomagnetic storm
+1792049240 | - | base | 5 | 5 | transfer entropy solar wind magnetosphere geomagnetic coupling
+1792049241 | - | dataeuropa | 25 | 25 | WDC-B sep data
+1792049244 | - | exa | 25 | 25 | WDC-B sep data
+1792049246 | - | base | 1 | 0 | information flow chain solar wind magnetosphere ionosphere ground geomagnetic
+1792049247 | - | base | 1 | 0 | geomagnetically induced current early warning lead time forecast
+1792049250 | - | base | 20 | 20 | space weather early warning chain
+1792049251 | - | base | 25 | 25 | geomagnetic induced current forecast
+1792049252 | - | base | 25 | 25 | information flow magnetosphere ionosphere
+1792049256 | - | base | 25 | 25 | lead time geomagnetic storm forecast
+1792049310 | - | psychporta | 252 | 250 | wdcb.ru seismology catalogue
+1792049310 | - | psychporta | 252 | 250 | usd.wdcb.ru space data
+1792049337 | - | zenodo | 252 | 244 | usd.wdcb.ru space data
+1792049338 | - | openalex | 5 | 3 | usd.wdcb.ru space data
+1792049339 | - | ia-search | 1 | 0 | usd.wdcb.ru space data
+1792049340 | - | dataeuropa | 25 | 25 | usd.wdcb.ru space data
+1792049344 | - | exa | 25 | 25 | usd.wdcb.ru space data
+1792049364 | - | mwmbl | 2 | 2 | zeus.wdcb.ru wdcb archive
+1792049365 | - | ia-search | 1 | 0 | wdcb.ru obninsk seismology
+1792049380 | - | zenodo | 252 | 245 | wdcb.ru seismology catalogue
+1792049381 | - | openalex | 4 | 2 | wdcb.ru seismology catalogue
+1792049382 | - | ia-search | 1 | 0 | wdcb.ru seismology catalogue
+1792049383 | - | dataeuropa | 25 | 25 | wdcb.ru seismology catalogue
+1792049385 | - | exa | 25 | 25 | wdcb.ru seismology catalogue
+1792049386 | - | sourcegraph | 13 | 13 | wdcb.ru
+1792049404 | - | marginalia | 1 | 0 | wdcb sdata wayback
+1792049899 | - | wayback | 1 | 0 | zeus.wdcb.ru/wdcb/sep/GravConst/*
+1792049904 | - | scrape | 23 | 23 | http://www.wdcb.ru/sep/
+1792049908 | - | wayback | 1 | 0 | web.archive.org
+1792049913 | - | wayback | 1 | 0 | zeus.wdcb.ru/wdcb/*
+1792049918 | - | wayback-available | 1 | 1 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/1998/bul199806.dat
+1792049919 | - | wayback-timemap | 3 | 3 | http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/1998/bul199806.dat
+1792049928 | - | wayback | 1 | 0 | zeus.wdcb.ru
+1792052318 | - | psychporta | 252 | 250 | space weather forecast chain lead time certainty transfer entropy geomagnetic station network
+1792052412 | - | zenodo | 53 | 47 | space weather forecast chain lead time certainty transfer entropy geomagnetic station network
+1792052413 | - | openalex | 7 | 5 | space weather forecast chain lead time certainty transfer entropy geomagnetic station network
+1792052414 | - | ia-search | 1 | 0 | space weather forecast chain lead time certainty transfer entropy geomagnetic station network
+1792052416 | - | dataeuropa | 25 | 25 | space weather forecast chain lead time certainty transfer entropy geomagnetic station network
+1792052420 | - | exa | 25 | 25 | space weather forecast chain lead time certainty transfer entropy geomagnetic station network
+1792052453 | - | psychporta | 252 | 250 | space weather forecast chain lead time certainty transfer entropy geomagnetic station network
+1792052611 | - | zenodo | 178 | 170 | space weather forecast chain lead time certainty transfer entropy geomagnetic station network
+1792052612 | - | openalex | 7 | 5 | space weather forecast chain lead time certainty transfer entropy geomagnetic station network
+1792052613 | - | ia-search | 1 | 0 | space weather forecast chain lead time certainty transfer entropy geomagnetic station network
+1792052614 | - | dataeuropa | 25 | 25 | space weather forecast chain lead time certainty transfer entropy geomagnetic station network
+1792052614 | - | exa | 25 | 25 | space weather forecast chain lead time certainty transfer entropy geomagnetic station network
+1792052624 | - | crossref | 26 | 25 | space weather early warning chain lead time uncertainty transfer entropy geomagnetic
+1792052628 | - | psychporta | 402 | 400 | WDC-B seismology catalogue
+1792052628 | - | datacite | 14 | 14 | space weather early warning chain lead time uncertainty transfer entropy geomagnetic
+1792052636 | - | hal | 1 | 0 | space weather early warning chain lead time transfer entropy geomagnetic
+1792052647 | - | core | 25 | 25 | space weather early warning chain lead time transfer entropy geomagnetic
+1792052657 | - | zenodo | 2 | 0 | WDC-B seismology catalogue
+1792052660 | - | openalex | 87 | 85 | WDC-B seismology catalogue
+1792052661 | - | ia-search | 1 | 0 | WDC-B seismology catalogue
+1792052664 | - | dataeuropa | 40 | 40 | WDC-B seismology catalogue
+1792052667 | - | exa | 40 | 40 | WDC-B seismology catalogue
+1792052682 | - | psychporta | 208 | 206 | Obninsk seismic bulletin
+1792052688 | - | psychporta | 402 | 400 | IGETS superconducting gravimeter data license
+1792052694 | - | zenodo | 2 | 0 | IGETS superconducting gravimeter data license
+1792052695 | - | openalex | 31 | 29 | IGETS superconducting gravimeter data license
+1792052696 | - | ia-search | 1 | 0 | IGETS superconducting gravimeter data license
+1792052698 | - | dataeuropa | 40 | 40 | IGETS superconducting gravimeter data license
+1792052701 | - | exa | 40 | 40 | IGETS superconducting gravimeter data license
+1792052719 | - | zenodo | 2 | 0 | Obninsk seismic bulletin
+1792052730 | - | openalex | 372 | 370 | Obninsk seismic bulletin
+1792052731 | - | ia-search | 1 | 0 | Obninsk seismic bulletin
+1792052733 | - | dataeuropa | 40 | 40 | Obninsk seismic bulletin
+1792052736 | - | exa | 40 | 40 | Obninsk seismic bulletin
+1792052762 | - | psychporta | 402 | 400 | CC-BY-4.0 gravity data
+1792052763 | - | psychporta | 402 | 400 | CMONOC gravity data
+1792052763 | - | psychporta | 402 | 400 | superconducting gravimeter time series
+1792052763 | - | zenodo | 2 | 0 | superconducting gravimeter time series
+1792052774 | - | openalex | 402 | 400 | superconducting gravimeter time series
+1792052775 | - | ia-search | 3 | 2 | superconducting gravimeter time series
+1792052776 | - | dataeuropa | 40 | 40 | superconducting gravimeter time series
+1792052779 | - | zenodo | 2 | 0 | CMONOC gravity data
+1792052779 | - | exa | 40 | 40 | superconducting gravimeter time series
+1792052792 | - | zenodo | 2 | 0 | CC-BY-4.0 gravity data
+1792052793 | - | openalex | 276 | 274 | CMONOC gravity data
+1792052794 | - | ia-search | 1 | 0 | CMONOC gravity data
+1792052796 | - | dataeuropa | 40 | 40 | CMONOC gravity data
+1792052799 | - | exa | 40 | 40 | CMONOC gravity data
+1792052804 | - | openalex | 402 | 400 | CC-BY-4.0 gravity data
+1792052807 | - | ia-search | 61 | 60 | CC-BY-4.0 gravity data
+1792052810 | - | dataeuropa | 40 | 40 | CC-BY-4.0 gravity data
+1792052810 | - | zenodo | 250 | 243 | space weather early warning chain lead time
+1792052813 | - | exa | 40 | 40 | CC-BY-4.0 gravity data
+1792052972 | - | grepapp | 1 | 0 | extract_witness_channels
+1792052972 | - | crates | 25 | 25 | transfer entropy
+1792052972 | - | huggingface | 1 | 0 | timeseries anomaly
+1792052973 | - | github | 25 | 25 | raw_mirror
+1792052975 | - | core | 25 | 25 | transfer entropy
+1792052992 | - | sourcegraph | 1 | 0 | fn extract_witness_channels
+1792052998 | - | sniff | 5 | 1 | https://fmhy.net/ai
+1792052998 | - | sniff | 5 | 1 | https://github.com/felladrin/awesome-ai-web-search
+1792053001 | - | grepapp | 1 | 0 | transfer_entropy
+1792053005 | - | sourcegraph | 25 | 25 | fn main
+1792053013 | - | sniff | 5 | 1 | https://raw.githubusercontent.com/felladrin/awesome-ai-web-search/main/LICENSE
+1792053050 | - | sniff | 5 | 1 | https://raw.githubusercontent.com/fmhy/edit/main/LICENSE
+1792053051 | - | sniff | 5 | 1 | https://raw.githubusercontent.com/fmhy/edit/main/LICENSE.md
+1792053051 | - | sniff | 5 | 1 | https://raw.githubusercontent.com/fmhy/edit/main/COPYING
+1792053095 | - | sourcegraph | 9 | 9 | wgsl fn
+1792053098 | - | sourcegraph | 19 | 19 | def transfer_entropy
+1792053106 | - | sniff | 5 | 1 | https://raw.githubusercontent.com/felladrin/awesome-ai-web-search/main/README.md
+1792053336 | - | scrape | 1 | 0 | https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE
+1792053357 | - | mwmbl | 1 | 0 | TLE API norad catnr celestrak alternative
+1792053385 | - | github | 1 | 0 | 26998 TIMED TLE
+1792053394 | - | marginalia | 1 | 1 | TLE satellite element set API celestrak n2yo
+1792053399 | - | linkup | 20 | 20 | celestrak TLE mirror keyless API 26998
+1792053401 | - | exa | 25 | 25 | celestrak TLE mirror keyless satellite element set API
+1792053508 | - | psychporta | 252 | 250 | SWIFF space weather integrated forecasting framework
+1792053581 | - | zenodo | 252 | 246 | SWIFF space weather integrated forecasting framework
+1792053583 | - | openalex | 29 | 27 | SWIFF space weather integrated forecasting framework
+1792053584 | - | ia-search | 1 | 0 | SWIFF space weather integrated forecasting framework
+1792053585 | - | dataeuropa | 25 | 25 | SWIFF space weather integrated forecasting framework
+1792053588 | - | exa | 25 | 25 | SWIFF space weather integrated forecasting framework
+1792053609 | - | psychporta | 252 | 250 | WINDMI real-time AL substorm forecast solar wind
+1792053708 | - | zenodo | 252 | 250 | WINDMI real-time AL substorm forecast solar wind
+1792053709 | - | openalex | 25 | 23 | WINDMI real-time AL substorm forecast solar wind
+1792053710 | - | ia-search | 1 | 0 | WINDMI real-time AL substorm forecast solar wind
