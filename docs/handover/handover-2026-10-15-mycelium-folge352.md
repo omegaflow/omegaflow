@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 352 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 7435bbce2b9a8b300bc593d1643bc51f47322c406822e12b073f91945bfad598
+  sha256: 679cfc1822b3e8bb36b0634e14ce0c2ee6987af62ab76ad561f9723a9bec7d4e
   status: live
 -->
 # Handover — Mycelium-Folge 352 (2026-10-15)
@@ -72,9 +72,16 @@ Meßwert. Grund: die Register-Messung, die 191 neue `raw_mirror`/`reference`-Bl�
   `compiler raw_mirror.rs`/`harvest raw_zenodo`/sha256/`at earth`/`no-cadence` in
   `phi/sources.φ` **und** in der Matrix `.github/workflows/zenodo-raw-cdn.yml`. Nur der
   CI-Lauf (`zenodo-raw-cdn`) ist noch unread.
+- **GEOFON-CI-Naht gebaut:** `.github/workflows/geofon-waveform-cdn.yml` — `workflow_dispatch`,
+  `fdsn_station_compiler --network GE` + `fdsn_waveform_compiler --route geofon --network GE
+  --station WLF --channel BHZ` (gemessene GE-Station WLF, Walferdange/Luxemburg), Upload auf
+  den `geofon.gfz-potsdam.de`-Tag. Der offene Punkt „CI-Naht fehlt" ist geschlossen.
+- **Läufe dieses Runds gemessen:** `wdcb-sep-live-cdn` `38704082015` **success** ·
+  `sources-repo-licence` `38704081473` **success** · `register-coverage` `38704150805`
+  **success**; `wdcb-obn-wayback-cdn` `38704081781` **queued** (die 211er-Matrix).
 - **Werkzeug-Riss gemessen:** `archive_search --wayback` (CDX) liefert `HTTP 503`; der
   `web.archive.org/cdx/search/cdx`-Endpunkt antwortet per `curl` mit 200. Die CDX-Belege
-  (dieses Runde) wurden über den Endpunkt geholt; `sfetch` meldet `fetch void`. Kein
+  (diese Runde) wurden über den Endpunkt geholt; `sfetch` meldet `fetch void`. Kein
   Register-Akt, nur die Route.
 
 ## Offen — eigen
@@ -98,15 +105,6 @@ Meßwert. Grund: die Register-Messung, die 191 neue `raw_mirror`/`reference`-Bl�
   (SILSO, EDGES, Fermi-TGF) brauchen eine registrierte `sha256`.
 - **Blockade:** der Bau berührt die Register-Semantik (Fingerabdruck-Tor) → Rat.
 - **Braucht:** generischen Aktor entwerfen/bauen (Mycelium, Rat-Vorlage).
-
-### GEOFON-Wellenform — Block + `field` stehen; CI-Naht offen
-- **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
-- **Trigger:** kein — Bau
-- **Lage:** (gemessen 2026-10-15/351) Das `field` ist geantwortet: `fdsn_waveform_bhz_ms …
-  erfc seismic-surface m/s 60.0` (`phi:170`). Die **CI-Naht** (`geofon`-Job-Variante von
-  `fdsn-waveform-cdn.yml`) fehlt.
-- **Blockade:** keine.
-- **Braucht:** die CI-Naht bauen.
 
 ### Venus-Radar (Level-2 VNRD) — Block steht; Bild-Manifestation offen
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
@@ -149,14 +147,18 @@ Meßwert. Grund: die Register-Messung, die 191 neue `raw_mirror`/`reference`-Bl�
   `xfer:mycelium-344-5` (LOD) · `xfer:mycelium-343-3` (BASE) · `xfer:mycelium-342-10`/
   `xfer:mycelium-343-2` (WDC/terms).
 
-### TIMED-Weltlinie — Block zu setzen
+### TIMED-Weltlinie — Block zu setzen; TLE-`origin` ungemessen
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen
 - **Trigger:** kein — Bau
-- **Lage:** (gemessen 2026-10-14/348) Der Compiler steht (`timed_tle_compiler.rs`); Block
-  `url`/`origin`/`compiler`, `format orbit_bin`, `at timed` fehlt; `terms`/`ttl` = Mountain.
-- **Blockade:** keine.
-- **Braucht:** den Block setzen; danach die CI-Naht `timed-orbit-cdn.yml`. An Mountain:
-  `xfer:mountain-348-5`.
+- **Lage:** (gemessen 2026-10-15/352) Der Compiler steht (`timed_tle_compiler.rs`, das
+  eingebettete TLE für NORAD 26998); `data/timed_orbit.bin` liegt (sha256
+  `bf5609e9…`). Der Block (`url`/`origin`/`compiler`, `format orbit_bin`, `at timed`) fehlt;
+  **die `origin`-Zeile ist ungemessen** — der kanonische TLE-Dienst `celestrak.org/NORAD/…`
+  ist in diesem Rund **nicht** erreichbar (curl timeout, 000). Kein erfundener `origin`.
+  `terms`/`ttl` = Mountain.
+- **Blockade:** die TLE-`origin` (celestrak) time-out — ungemessen.
+- **Braucht:** die TLE-`origin` messen (bei erreichbarem Celestrak), dann den Block setzen;
+  danach die CI-Naht `timed-orbit-cdn.yml`. An Mountain: `xfer:mountain-348-5`.
 
 ### NSSDC/CLPDS-Planetologie — `完全共享` anonym ladbar; `有条件共享` mit Antrag
 - **Status:** eigen (Antrag operator-gebunden; Route entschieden) | **Bindung:** eigen
@@ -187,8 +189,10 @@ Meßwert. Grund: die Register-Messung, die 191 neue `raw_mirror`/`reference`-Bl�
   (`xfer:mycelium-352-1`/`-2`/`-3`).
 - **Blockade:** keine.
 - **Braucht:** die CDX-Abdeckung ist **nicht** 1993–2024 komplett; weitere Mirror/Archive
-  beobachten; der Rest bleibt `pending`. Die URL-Gruppen `sep/strong` (431), `sep/traverses`
-  (174), `sep/hp` (166) sind **noch nicht** gezogen — ein eigener Bau.
+  beobachten; der Rest bleibt `pending`. **Gemessen (2026-10-15/352): die URL-Gruppen
+  `sep/strong` (422 URLs), `sep/traverses` (172), `sep/hp` (153) tragen KEINE
+  Datendateien** — ausschließlich `text/html` und `image/gif|jpeg` (Beben-Seiten und
+  Kartenbilder); der Punkt ist damit geschlossen, kein Mirror.
 
 ## An mountain
 
