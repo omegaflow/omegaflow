@@ -287,6 +287,82 @@ pub fn aacgm_v2_latitude(
     Some(lat)
 }
 
+fn day_of_year(year: i64, month: u32, day: u32) -> f64 {
+    const CUM: [u32; 12] = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    let leap = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+    let mut doy = CUM[(month - 1) as usize] + day;
+    if leap && month > 2 {
+        doy += 1;
+    }
+    doy as f64
+}
+
+fn civil_from_days(z: i64) -> (i64, u32, u32) {
+    let z = z + 719_468;
+    let era = if z >= 0 { z } else { z - 146_096 } / 146_097;
+    let doe = (z - era * 146_097) as u64;
+    let yoe = (doe - doe / 1460 + doe / 36_524 - doe / 146_096) / 365;
+    let y = yoe as i64 + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = (doy - (153 * mp + 2) / 5 + 1) as u32;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 } as u32;
+    (if m <= 2 { y + 1 } else { y }, m, d)
+}
+
+pub fn subsolar_point(day_of_year: f64, ut_hours: f64) -> (f64, f64) {
+    use std::f64::consts::PI;
+    let gamma = 2.0 * PI / 365.0 * (day_of_year - 1.0 + (ut_hours - 12.0) / 24.0);
+    let decl = 0.006918 - 0.399912 * gamma.cos() + 0.070257 * gamma.sin()
+        - 0.006758 * (2.0 * gamma).cos()
+        + 0.000907 * (2.0 * gamma).sin()
+        - 0.002697 * (3.0 * gamma).cos()
+        + 0.00148 * (3.0 * gamma).sin();
+    let eot_min = 229.18
+        * (0.000075 + 0.001868 * gamma.cos()
+            - 0.032077 * gamma.sin()
+            - 0.014615 * (2.0 * gamma).cos()
+            - 0.040849 * (2.0 * gamma).sin());
+    let sub_lon = 180.0 - 15.0 * (ut_hours + eot_min / 60.0);
+    (decl.to_degrees(), sub_lon.rem_euclid(360.0))
+}
+
+pub fn aacgm_v2_mlt(
+    date_year: f64,
+    day_of_year: f64,
+    ut_hours: f64,
+    geodetic_lat_deg: f64,
+    lon_deg: f64,
+    altitude_km: f64,
+) -> Option<f64> {
+    let model = model_for_year(date_year)?;
+    let (_, lon_aacgm) = model.geodetic_to_aacgm(geodetic_lat_deg, lon_deg, altitude_km)?;
+    let (decl_deg, sub_lon_deg) = subsolar_point(day_of_year, ut_hours);
+    let (_, sub_lon_aacgm) = model.geodetic_to_aacgm(decl_deg, sub_lon_deg, 0.0)?;
+    Some((12.0 + (lon_aacgm - sub_lon_aacgm) / 15.0).rem_euclid(24.0))
+}
+
+pub fn aacgm_v2_mlt_unix(
+    unix_seconds: f64,
+    geodetic_lat_deg: f64,
+    lon_deg: f64,
+    altitude_km: f64,
+) -> Option<f64> {
+    let days = (unix_seconds / 86_400.0).floor();
+    let ut_hours = (unix_seconds - days * 86_400.0) / 3600.0;
+    let (year, month, day) = civil_from_days(days as i64);
+    let doy = day_of_year(year, month, day);
+    let date_year = year as f64 + (doy - 1.0) / 365.25;
+    aacgm_v2_mlt(
+        date_year,
+        doy,
+        ut_hours,
+        geodetic_lat_deg,
+        lon_deg,
+        altitude_km,
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -354,5 +430,69 @@ mod tests {
                 "longitude {lon} differs from {lon_expected} at fyear {fyear}"
             );
         }
+    }
+
+    #[test]
+    fn the_subsolar_point_carries_the_season() {
+        let (decl_equinox, sub_lon_equinox) = subsolar_point(80.0, 12.0);
+        assert!(
+            decl_equinox.abs() < 1.5,
+            "the equinox declination is {decl_equinox}"
+        );
+        assert!(
+            sub_lon_equinox.abs() < 1.0,
+            "the subsolar longitude at 12 UT is {sub_lon_equinox}"
+        );
+        let (decl_june, _) = subsolar_point(172.0, 12.0);
+        assert!(
+            (decl_june - 23.4).abs() < 1.0,
+            "the June-solstice declination is {decl_june}"
+        );
+        let (_, sub_lon_midnight) = subsolar_point(80.0, 0.0);
+        assert!(
+            (sub_lon_midnight - 180.0).abs() < 5.0,
+            "the subsolar longitude at 0 UT is {sub_lon_midnight}"
+        );
+    }
+
+    #[test]
+    fn the_subsolar_point_is_magnetic_noon_and_its_antipode_midnight() {
+        let doy = 130.0;
+        let ut = 15.0;
+        let (decl, sub_lon) = subsolar_point(doy, ut);
+        let mlt_noon =
+            aacgm_v2_mlt(2024.5, doy, ut, decl, sub_lon, 0.0).expect("the subsolar point converts");
+        assert!(
+            (mlt_noon - 12.0).abs() < 1e-6,
+            "the subsolar point is not MLT 12: {mlt_noon}"
+        );
+        let mlt_midnight = aacgm_v2_mlt(2024.5, doy, ut, -decl, sub_lon + 180.0, 0.0)
+            .expect("the antipode converts");
+        let distance = mlt_midnight.min(24.0 - mlt_midnight);
+        assert!(
+            distance < 1.0,
+            "the antipode is not near MLT 0: {mlt_midnight}"
+        );
+    }
+
+    #[test]
+    fn the_unix_seam_yields_an_mlt_the_subsolar_point_confirms() {
+        let unix = 1_715_322_885.0;
+        let mlt = aacgm_v2_mlt_unix(unix, 60.0, 20.0, 0.0).expect("an epoch in range");
+        assert!((0.0..24.0).contains(&mlt) && mlt.is_finite(), "MLT {mlt}");
+        let days = (unix / 86_400.0).floor();
+        let ut = (unix - days * 86_400.0) / 3600.0;
+        let (decl, sub_lon) = subsolar_point(131.0, ut);
+        let noon = aacgm_v2_mlt_unix_subsolar_check(unix, decl, sub_lon);
+        assert!((noon - 12.0).abs() < 0.2, "subsolar MLT {noon}");
+    }
+
+    fn aacgm_v2_mlt_unix_subsolar_check(unix: f64, decl: f64, sub_lon: f64) -> f64 {
+        let days = (unix / 86_400.0).floor();
+        let ut = (unix - days * 86_400.0) / 3600.0;
+        let (year, month, day) = civil_from_days(days as i64);
+        let doy = day_of_year(year, month, day);
+        let date_year = year as f64 + (doy - 1.0) / 365.25;
+        aacgm_v2_mlt(date_year, doy, ut, decl, sub_lon, 0.0).expect("the subsolar point converts")
     }
 }

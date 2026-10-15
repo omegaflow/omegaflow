@@ -3,6 +3,16 @@ use std::collections::BTreeMap;
 
 const MAGIC: &[u8; 4] = b"IMXZ";
 
+type Station = (String, Option<f64>, String, Option<(f64, f64)>);
+
+fn in_mlt_sector(mlt: f64, min: f64, max: f64) -> bool {
+    if min <= max {
+        mlt >= min && mlt < max
+    } else {
+        mlt >= min || mlt < max
+    }
+}
+
 fn write_imdt(records: &[(f64, f64, u32)]) -> Vec<u8> {
     let mut out = Vec::with_capacity(8 + records.len() * 16);
     out.extend_from_slice(b"IMDT");
@@ -225,7 +235,7 @@ fn family_code(line: &str) -> Option<String> {
     if code.is_empty() { None } else { Some(code) }
 }
 
-fn load_family(path: &str, dir: &str) -> Vec<(String, Option<f64>, String)> {
+fn load_family(path: &str, dir: &str) -> Vec<Station> {
     let Ok(text) = std::fs::read_to_string(path) else {
         eprintln!("al_network_proxy: {path} read void");
         std::process::exit(1);
@@ -234,13 +244,13 @@ fn load_family(path: &str, dir: &str) -> Vec<(String, Option<f64>, String)> {
     for line in text.lines() {
         if let Some(code) = family_code(line) {
             let bin = format!("{dir}/{code}_xyz_1m.bin");
-            out.push((code, None, bin));
+            out.push((code, None, bin, None));
         }
     }
     out
 }
 
-fn load_manifest(path: &str) -> Vec<(String, Option<f64>, String)> {
+fn load_manifest(path: &str) -> Vec<Station> {
     let Ok(text) = std::fs::read_to_string(path) else {
         eprintln!("al_network_proxy: {path} read void");
         std::process::exit(1);
@@ -253,7 +263,9 @@ fn load_manifest(path: &str) -> Vec<(String, Option<f64>, String)> {
         }
         let parts: Vec<&str> = line.split_whitespace().collect();
         if parts.len() < 3 {
-            eprintln!("al_network_proxy: manifest line needs `CODE decl|auto bin-path`: {line}");
+            eprintln!(
+                "al_network_proxy: manifest line needs `CODE decl|auto bin-path [geodetic_lat geodetic_lon]`: {line}"
+            );
             std::process::exit(1);
         }
         let decl = if parts[1] == "auto" {
@@ -270,7 +282,20 @@ fn load_manifest(path: &str) -> Vec<(String, Option<f64>, String)> {
                 }
             }
         };
-        out.push((parts[0].to_string(), decl, parts[2].to_string()));
+        let geo = if parts.len() >= 5 {
+            match (parts[3].parse::<f64>(), parts[4].parse::<f64>()) {
+                (Ok(la), Ok(lo)) => Some((la, lo)),
+                _ => {
+                    eprintln!(
+                        "al_network_proxy: manifest geodetic coordinate is not two numbers: {line}"
+                    );
+                    std::process::exit(1);
+                }
+            }
+        } else {
+            None
+        };
+        out.push((parts[0].to_string(), decl, parts[2].to_string(), geo));
     }
     out
 }
@@ -334,9 +359,26 @@ fn main() {
         eprintln!("al_network_proxy: {e}");
         std::process::exit(2);
     }
+    let night_sector = args.iter().any(|a| a == "--night-sector");
+    let mlt_min = arg_value(&args, "--mlt-min")
+        .and_then(|v| v.parse::<f64>().ok())
+        .unwrap_or(16.0);
+    let mlt_max = arg_value(&args, "--mlt-max")
+        .and_then(|v| v.parse::<f64>().ok())
+        .unwrap_or(3.0);
+    if night_sector {
+        for (code, _, _, geo) in &stations {
+            if geo.is_none() {
+                eprintln!(
+                    "al_network_proxy: {code} carries no geodetic coordinate — --night-sector needs the manifest's `lat lon` fields"
+                );
+                std::process::exit(2);
+            }
+        }
+    }
     let mut acc: BTreeMap<i64, (f64, u32)> = BTreeMap::new();
     let mut station_count = 0usize;
-    for (code, decl, path) in &stations {
+    for (code, decl, path, geo) in &stations {
         let Ok(bytes) = std::fs::read(path) else {
             eprintln!("al_network_proxy: {code} {path} read void");
             std::process::exit(1);
@@ -375,6 +417,40 @@ fn main() {
                 station_dbdt(&samples)
             }
         };
+        let series: Vec<(f64, f64)> = if night_sector {
+            let Some((glat, glon)) = geo else {
+                eprintln!(
+                    "al_network_proxy: {code} carries no geodetic coordinate — --night-sector needs the manifest's `lat lon` fields"
+                );
+                std::process::exit(2);
+            };
+            let total = series.len();
+            let mut outside = 0usize;
+            let gated: Vec<(f64, f64)> = series
+                .into_iter()
+                .filter(|(t, _)| {
+                    match omegaflow::archivar::aacgm::aacgm_v2_mlt_unix(*t, *glat, *glon, 0.0) {
+                        Some(mlt) => in_mlt_sector(mlt, mlt_min, mlt_max),
+                        None => {
+                            outside += 1;
+                            false
+                        }
+                    }
+                })
+                .collect();
+            if outside > 0 {
+                println!(
+                    "station {code} sector-gate: {outside} sample(s) outside the AACGM epochs (2010–2030) — pending, not zero"
+                );
+            }
+            println!(
+                "station {code} sector-gate mlt [{mlt_min},{mlt_max}) kept {} of {total} sample(s)",
+                gated.len()
+            );
+            gated
+        } else {
+            series
+        };
         fold_envelope(&mut acc, &series, fusion);
         station_count += 1;
     }
@@ -386,11 +462,16 @@ fn main() {
         std::process::exit(1);
     }
     println!(
-        "envelope samples {} min_stations {min_stations} stations {} fusion {} quantity {}",
+        "envelope samples {} min_stations {min_stations} stations {} fusion {} quantity {}{}",
         env.len(),
         station_count,
         fusion.word(),
-        quantity.word()
+        quantity.word(),
+        if night_sector {
+            format!(" sector mlt [{mlt_min},{mlt_max})")
+        } else {
+            String::new()
+        }
     );
     if let Some(out) = arg_value(&args, "--out") {
         let records: Vec<(f64, f64, u32)> = env.iter().map(|(t, v)| (*t, *v, 0)).collect();
@@ -558,5 +639,16 @@ mod tests {
         assert_eq!(d.len(), 2);
         assert!((d[0].1 - 5.0).abs() < 1e-12);
         assert!((d[1].1 - 12.0).abs() < 1e-12);
+    }
+
+    #[test]
+    fn the_night_sector_wraps_midnight() {
+        assert!(in_mlt_sector(16.0, 16.0, 3.0));
+        assert!(in_mlt_sector(23.9, 16.0, 3.0));
+        assert!(in_mlt_sector(2.9, 16.0, 3.0));
+        assert!(!in_mlt_sector(3.0, 16.0, 3.0));
+        assert!(!in_mlt_sector(12.0, 16.0, 3.0));
+        assert!(in_mlt_sector(1.5, 0.0, 6.0));
+        assert!(!in_mlt_sector(6.0, 0.0, 6.0));
     }
 }
