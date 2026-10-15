@@ -1,0 +1,30 @@
+#!/bin/sh
+# task_dispatch — the Leitstelle's brief: ONE task for ONE line, into the post.
+#
+# The Leitstelle (Future) cuts the work and writes a brief; the line reads ONLY the
+# brief, its own handover and its post. The brief is a pointer (the places), never prose.
+#
+# Usage: task_dispatch <line> "<the one task>" ["<place>" ...]
+set -eu
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+work="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
+line="${1:?usage: task_dispatch <line> \"<task>\" [<place>]...}"
+task="${2:?usage: task_dispatch <line> \"<task>\" [<place>]...}"
+shift 2
+mkdir -p "$work/post/out"
+slug="$(printf '%s' "$task" | tr 'A-ZÄÖÜ' 'a-zäöü' | tr -c 'a-z0-9\n' '-' | cut -c1-48)"
+out="$work/post/out/$(date +%Y-%m-%d)-$line-$slug.md"
+{
+  printf '# Dispatch — %s, %s\n\n' "$line" "$(date +%Y-%m-%d)"
+  printf '## Die eine Aufgabe\n\n%s\n\n' "$task"
+  printf '## Lies (nur die Stellen — nichts sonst)\n\n'
+  if [ "$#" -gt 0 ]; then
+    for p in "$@"; do printf -- '- `%s`\n' "$p"; done
+  else
+    printf -- '- (die Leitstelle trägt die Stellen ein)\n'
+  fi
+  printf '\n## Lies NICHT\n\nDas Repo, fremde Handover, die Geschichte (git), die Form-Karte, die Tools-Map.\n'
+  printf 'Deine **drei Stellen**: dieser Dispatch · dein Handover (<= 1 KiB) · deine Post.\n\n'
+  printf '## Fertig, wenn\n\n<das Kriterium — die Leitstelle trägt es ein>\n'
+} > "$out"
+printf 'dispatch: %s\n' "$out"
