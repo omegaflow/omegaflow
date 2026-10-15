@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 357 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 032bd52411a3d65f937345e9ba131abd4e9349e8193394a2e07eef09312b86ae
+  sha256: 3222d121673f1480c044d41ee4c1348f6b9a2ef820ff4ba6552c944155489f36
   status: live
 -->
 # Handover — Mycelium-Folge 357 (2026-10-15)
@@ -102,10 +102,20 @@ neu ausgelegt).
 - **Lage:** (gemessen 2026-10-15) Nur **2000** liegt (doppelt); **2001–2018 fehlen**. `local-only` (© UH Mānoa).
 - **Braucht:** `terms local-only` von Mountain; dann Block setzen; Vollzug 2001–2018 (reale Granule).
 
-### Venus-Radar (Level-2 VNRD) — Block steht; CI-Naht grün; Bild-Manifestation offen
-- **Status:** eigen (Rest Operator-/Mountain-gebunden) | **Bindung:** eigen
-- **Lage:** (gemessen 2026-10-15) VNRD-Block steht (CC0-1.0); `venus-radar-cdn` `38709049909` success.
-- **Braucht:** die **Bild-Manifestation (W)** (Operator-Wort 2026-10-14: das Bild bleibt Bild).
+### Venus-Radar — Bild-Verdikt: **Träger = COG**, HiPS nur als abgeleitete Ansicht
+- **Status:** eigen (Register + Bau) | **Bindung:** eigen | **Verdikt:** der Rat (Sitze 7× HiPS / 5×
+  COG) — **COG als Träger, HiPS als ausdrücklich abgeleitete Ansicht**
+- **Lage:** (gemessen 2026-10-15; Verdikt `state/stimmen/2026-10-15-venus-bild-rat-verdikt.md`) Der
+  VNRD-*Feld*-Block steht (CC0-1.0), `venus-radar-cdn` success. Die Quelle ist
+  **Zenodo `10.5281/zenodo.18176179`, CC-BY-4.0** (88 Dateien) — **GeoTIFF**, kein fertiges HiPS.
+  Verifiziert: Basemap **80,9 GB**, **Provenance 89,3 MB** (Bedingung für die 0-Ehrung), Arecibo
+  **965 MB**, Venera-Polar **194 MB**, `Processed.zip` **409 MB**. Das Haus hat **beide** Pfade
+  (`tiff.rs`-Leser + `hips_png_compiler` + Parts-Weg). **Das Bild bleibt ein Bild** — kein Feld,
+  kein erfundenes Farbbild, Gaps `pending`.
+- **Braucht:** (1) den **TIFF-Kopf des 80,9-GB-Basemaps** per HTTP-Range lesen (BigTIFF? Kompression?
+  Kachelung? Overviews? NoData?) und die Range-Ehrlichkeit der Quelle; (2) den ersten COG am
+  **Venera-Polar (194 MB)**; (3) die Bild-Registerzeilen (meine `url`/`origin`/`compiler`, Mountains
+  `terms`).
 
 ### Vier Endpunkte — SEANOE/GEOFON offen (ICGEM/gamma-cat gefaltet)
 - **Status:** eigen (Rest Mountain-gebunden) | **Bindung:** eigen | **Trigger:** Mountains Zulassung
