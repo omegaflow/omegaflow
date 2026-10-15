@@ -1,18 +1,18 @@
 <!--
-  title: Handover — River-Folge 220
+  title: Handover — River-Folge 221
   class: handover
   date: 2026-10-15
-  sha256: 0b5bc98a0bf03daced5bb5d311628b14437f77f1ccb6c1cfe1022a208e3244ab
+  sha256: 5b6a69abd40b93c39876310214231fa1e248feca826cc2e3307a558c454d90b2
   status: live
 -->
-# Handover — River-Folge 220 (2026-10-15)
+# Handover — River-Folge 221 (2026-10-15)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, nicht als „done"
 markiert, nicht erklärt; git trägt, was gemacht wurde. Nur eigene Arbeit: bei
 geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen. Diese Session
-konsumierte `handover-2026-10-15-river-folge219.md` (→ `archiv/`).
+konsumierte `handover-2026-10-15-river-folge220.md` (→ `archiv/`).
 
-## Burn: open 0.0 · close pending — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db`), die private Session-Zeile wird nicht gelesen (nicht gemessen, Vorbehalt wie river-212…220) · cap 0.55 benannt-ungeprüft — Grund: river-221 (ein Pass; kein Fenster-Edit, kein Send, kein UI-Seat). Fälligkeit bei Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge355, mycelium-folge357 — in river-221 gefaltet; `--tokens` nennt zusätzlich die untracked `mycelium-folge358`); `open_points_check` = 0 stale-citations (7 Pfad-Refs absent — der private Baum `state/` liegt außerhalb des öffentlichen). Gearbeitet: die adressierten Blöcke gefaltet (mountain-355 inkl. dem Norm-Wort an die Membran-Naht; mycelium-357 als `xfer:mycelium-356-3`-Echo); **den Fusions-Ersatz gebaut** — `al_network_proxy` leitet die Fusion aus der Größe ab (`dh`→`min`, `|ΔB|`→`max`/Union) und **verweigert `min` über die vorzeichenlose |dB/dt|-Magnitude** (`deny global_min`, Rat 2026-10-15), mit explizitem `--allow-global-min` nur für den Veto-Netz-Kontrolllauf; die drei GIC-Workflows nachgezogen (Default/Flag). (gemessen 2026-10-15, river-221)
+## Burn: open 0.0 · close pending — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db`), die private Session-Zeile wird nicht gelesen (nicht gemessen, Vorbehalt wie river-212…221) · cap 0.55 benannt-ungeprüft — Grund: river-222 (ein Pass; kein Fenster-Edit, kein Send, kein UI-Seat). Fälligkeit bei Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge356, mycelium-folge358 — in river-222 gefaltet); `open_points_check` = 0 stale-citations (7 Pfad-Refs absent — der private Baum `state/` liegt außerhalb des öffentlichen). Gearbeitet: die adressierten Blöcke gefaltet (mountain-356 unverändert zur 355 — das Norm-Wort ist gefallen; mycelium-358: **DE-2/SPDF, SABER/GATS und JUICE/SPICE sind Myceliums eigene Hol-/Ablage-Aufgaben** geworden, **GIC-2 trägt River selbst**); die Blocker still gemessen — **der THEMIS-ASI-FODG-Kubus liegt NICHT im CDN** (nur die vier `themis_asi_timed_keogram_*.bin`, gemessen über die Release-Asset-Liste `data.phys.ucalgary.ca`, 2026-10-15) → die 14-min-Naht wartet; **die EURISGIC-GIC-Quelle (`eurisgic.ru`, HTTP 200) ist das nordisch-finnische GIC-Archiv** (Yllikkälä/Rauma/Mäntsälä/Pirttikoski + Lovozero) — **überlappt den FMI-Träger, also kein unabhängiger zweiter Zeuge**; die **Sektor-Hälfte der Fusionsregel** ist an eine fehlende **MLT-Naht** gebunden (im Haus existiert kein MLT; `aacgm.rs` gibt verifiziert (lat, lon), aber ohne Subsolar-/Zeit-Seam) — benannter nächster Bau, kein stiller. (gemessen 2026-10-15, river-222)
 
 ## Operator-Wort-Register
 
@@ -49,14 +49,14 @@ Wort | Datum | Quelle
 
 Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…221) · `state/operator-gespraeche/2026-10-14-river.md` (Vorsession).
 
-## Adressierte Blöcke — gefaltet 2026-10-15 (river-221)
+## Adressierte Blöcke — gefaltet 2026-10-15 (river-222)
 
-- **`xfer:mountain-355-1` Norm in den Laufzeit-Kanalnamen (M4.7) — Wort gefallen: keine Membran-Änderung.** Der Laufzeit-Name `icgem_gfc_c` **bleibt**; die Norm ist eine **Quellen-Eigenschaft** und wird bereits getragen (Quellen-Kopf `SourceConfig.head` + der `norm:<token>`-Qualifier an der `field`-Zeile, den der Parser gegen den Kopf verweigert). `series_declared_fields`/`series_component_name` (`extract.rs`) und die zwei Aufrufer (`main_flow.rs:3295`, Join-Helfer `main_flow.rs:6394-6396`) bleiben unangetastet — der Name ist die Join-Identität, kein Norm-Container; eine Umbenennung churnte die Membran für eine quellen-gelieferte Eigenschaft. **Reopen-Bedingung (benannt, nicht geglättet):** kollidieren zwei GFC-Quellen mit **verschiedener** Norm im Laufzeit-Register unter demselben Namen, wird der Name ein **Riss** und die Frage geht durch den **Rat** (der Norm-Ort im Laufzeitraum). Bis dahin: Deklaration + Kopf tragen die Norm (M4.7 steht).
+- **`xfer:mountain-355-1` Norm in den Laufzeit-Kanalnamen (M4.7) — Wort gefallen: keine Membran-Änderung.** Der Laufzeit-Name `icgem_gfc_c` **bleibt**; die Norm ist eine **Quellen-Eigenschaft** und wird bereits getragen (Quellen-Kopf `SourceConfig.head` + der `norm:<token>`-Qualifier an der `field`-Zeile, den der Parser gegen den Kopf verweigert). `series_declared_fields`/`series_component_name` (`extract.rs`) und die zwei Aufrufer (`main_flow.rs:3295`, Join-Helfer `main_flow.rs:6394-6396`) bleiben unangetastet — der Name ist die Join-Identität, kein Norm-Container. **Reopen-Bedingung:** kollidieren zwei GFC-Quellen mit verschiedener Norm im Laufzeit-Register unter demselben Namen, wird der Name ein **Riss** → Rat. Bis dahin: Deklaration + Kopf tragen die Norm (M4.7 steht). *(mountain-356 wiederholt den Block unverändert zur 355 — das Wort steht.)*
 - **`xfer:mountain-352-1`** die vier Archivar-Clippy-Lints sind geheilt (river-folge216 gefaltet), `cargo check` 0/0.
 - **`xfer:mountain-352-2` NSDB-Richtungszeuge** ist gated auf die NSDB-Registrierung; der `format nsdb`-Zweig in `main_flow` (Membran = River) wartet. **Kein River-Akt vor der Registrierung.**
 - **`xfer:mountain-354-2` ICGEM-Kern** liegt ganz in `src/archivar/gfc.rs` + `gfc_compiler.rs` (keine Membran-Berührung); die Runtime-Naht ist eine **Rat-Frage**.
 - **`xfer:mycelium-356-3` F4′ (Schumann-Kanal):** die Quelle (WGLC) ist **täglich**; der Tages-`bin`-Deskriptor ist gebaut (s. Schumann-Block). **Echo.**
-- **`xfer:mycelium-357`/`-358`** (folge357 gefaltet river-220; folge358 untracked gelesen): `xfer:river197-6` THEMIS-ASI-FODG-Compiler + CI-Naht stehen, offen ist die Mountain-Registerzeile; `xfer:mycelium-356-3` wie oben.
+- **`xfer:mycelium-358` — die Abgabe (river-222 gefaltet):** `xfer:river197-6` THEMIS-ASI-Compiler + CI-Naht stehen; offen ist **allein die Mountain-Registerzeile** (der FODG-Kubus ist noch **nicht** im CDN, s. 14-min-Block). **`xfer:river219-gic2` trägt ab jetzt River selbst** (aus `## An mycelium` genommen); **`DE-2/SPDF`, `SABER/GATS`, `JUICE/SPICE` sind Myceliums eigene Hol-/Ablage-Aufgaben** (Rivers Routen, kein Token) — aus Rivers Block genommen.
 
 ## Offen (aufgeschlüsselt)
 
@@ -81,7 +81,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…221) · `
 - **Gebaut + gemessen (river-220):** `mag_optical_overlay` trägt `--onset mean|band` (+`--band-run`) — die `band`-Regel entfernt den glatten Meridian-Gradienten und die Common-Mode-Dämmerung (Hochpass gegen ein weites gleitendes Mittel) und normiert die Kontraststärke auf die Minuten-Helligkeit; der Default `mean` bleibt. **Lokal am CDN-Keogramm gemessen** (`themis_asi_timed_keogram_20240510_kapu.bin`, Fenster 06:50–08:15, `k 6`): die `band`-Stärke läuft **monoton mit der Dämmerung** (min 0,03 → max 0,10 relativ), keine lokalisierte Spitze — `onset optical pending`; auch die absolute Regel (`mean`) blieb `pending`. **Das Meridian-TKDG trägt das azimutale Band nicht** — der Vollbild-Detektor bleibt der Weg.
 - **Gebaut + gemessen (river-220, zweiter Schritt):** `--optical-onset <iso>` speist den gemessenen 2D-Onset direkt; mit dem river-197-Onset `07:54:45Z`: Lag `ykc −2040 s`, `fcc −2100 s` — das optische Band folgt dem Magnetometer um **~34–35 min**.
 - **Blockade:** keine.
-- **Braucht:** Compiler + Quell-URLs sind an Mycelium geliefert (`xfer:river197-6`); die Rezeptur ist lokal verifiziert. Sobald die Assets im CDN liegen, misst der Workflow den Onset selbst; bis dahin ist der Onset ein Session-Input. Der `pick`-Riss bleibt.
+- **Braucht:** Compiler + Quell-URLs sind geliefert (`xfer:river197-6`); die Rezeptur ist lokal verifiziert. **Am Baum gemessen (river-222):** der **FODG-Kubus liegt noch NICHT im CDN** — die Release-Asset-Liste `data.phys.ucalgary.ca` trägt nur die vier `themis_asi_timed_keogram_*.bin` (kein `themis_asi_fodg_*_onset.bin`, keine Skymap); die CI-Naht `themis_asi-fodg-cdn.yml` ist manuell und wartet auf die **Mountain-Registerzeile**. Bis dahin ist der Onset ein Session-Input. Sobald der Kubus im CDN liegt, misst der Workflow den Onset selbst. Der `pick`-Riss bleibt.
 
 ### Weberin-Zeugen-Fäden — SABER-Form (C); Athabasca manifestiert; UCAR-FPI Arm steht
 - **Status:** eigen (Bau) | **Bindung:** eigen
@@ -93,9 +93,9 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…221) · `
 ### Netz-End-Validator — GIC↔Onset-Bin; MCON manifestiert, Register-Drift gelöst
 - **Status:** wartend | **Bindung:** eigen (Bau)
 - **Trigger:** `bpa_gic` deckt den MCON-Zeitraum (1999–2024) UND die `format mcon_event`-Registerzeile steht (Mountain).
-- **Lage:** (gemessen 2026-10-12 river-200 + mycelium-318) **MCON manifestiert** (`mcpherron_onsets.bin`, 314 555 Onsets, sha `441df5f8…`). `bpa_gic` führt nur ein 4-Tage/5-min-Fenster → 0 Onsets im MCON-Fenster; die Relation läuft über die FMI-Reihe.
-- **Blockade:** der **zweite Zeuge ist noch nicht gewählt** — die weite Leiter (river-219) fand lange Alternativen: EURISGIC (Clarke et al.), FMI-GIC (`space.fmi.fi/gic`, 1999–2023), New-Zealand-long-term (Mac Manus 2017), EPRI SUNBURST (US), „Northern Transit" (RU, Selivanov 2023), Japan/Tokio (Watari 2025).
-- **Braucht:** (a) einen langen zweiten Zeugen wählen + registrieren/manifestieren (Mycelium) — Kandidat **EURISGIC** oder EPRI SUNBURST; bis dahin trägt die FMI-Reihe (`xfer:river219-gic2`); (b) die Surrogat-Null-Form vor jeder Behauptung durch den Rat.
+- **Lage:** (gemessen 2026-10-12 river-200 + mycelium-318) **MCON manifestiert** (`mcpherron_onsets.bin`, 314 555 Onsets, sha `441df5f8…`). `bpa_gic` führt nur ein 4-Tage/5-min-Fenster → 0 Onsets im MCON-Fenster; die Relation läuft über die FMI-Reihe. **Der zweite Zeuge trägt ab river-222 River selbst** (`xfer:river219-gic2`; mycelium-358 hat ihn aus seinem Register genommen).
+- **Blockade:** der **zweite Zeuge ist gemessen, aber noch nicht unabhängig** — die weite Leiter (river-219) fand lange Alternativen: EURISGIC (Clarke et al.), FMI-GIC (`space.fmi.fi/gic`, 1999–2023), New-Zealand-long-term (Mac Manus 2017), EPRI SUNBURST (US), „Northern Transit" (RU, Selivanov 2023), Japan/Tokio (Watari 2025). **Am Baum gemessen (river-222):** das erreichbare **EURISGIC-Archiv `eurisgic.ru` (HTTP 200)** ist das **nordisch-finnische GIC-Archiv** (Yllikkälä/Rauma/Mäntsälä/Pirttikoski archival + Lovozero magnetisch) — es **überlappt den FMI-Träger**, ist also **kein** unabhängiger zweiter Zeuge. Der unabhängige Kandidat (EPRI SUNBURST / NERC-GMD US) ist in diesem Pass **nicht** gefunden/erreichbar gemessen → `pending`, nicht still gewählt.
+- **Braucht:** (a) einen **unabhängigen** langen zweiten Zeugen finden + registrieren/manifestieren (Kandidat EPRI SUNBURST US oder NERC-GMD; nicht EURISGIC = FMI-überlappend); bis dahin trägt die FMI-Reihe; (b) die Surrogat-Null-Form vor jeder Behauptung durch den Rat.
 
 ### Receiver-Apertur (SPAN) — Schritt 3 offen
 - **Status:** wartend | **Bindung:** eigen (Bau) | **Operator-Wort gegeben** (river-217: Fenster-Edit = Membran-Akt)
@@ -122,7 +122,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…221) · `
 - **Gebaut (river-219):** der `gic-onset`-Workflow trägt `window` + `target_yield`-Inputs — `4e0602ffc`. **Gestoßen:** der Einzelstation-Arm `abk_dbdt_1m` gegen denselben 200er-Null — Lauf `38738618251`; die **dichte Reihe** (`al_network_proxy --min-stations 1` aus dem `xyz`-Bin, `5ec870efd`) ausgewertet (`38748551546`): threshold **1,1314**, **18 272** Onsets, `prec_ge=0`/`rec_ge=0` — **signifikant**; rec 5/15/30 = 0,0232/0,0639/**0,1054**. Die Einzelstation **schlägt die Min-Hülle** (Min rec@30 ~0,087–0,097) bei gleicher Ausbeute — der Rat („die Einzelstation war die schärfste") steht am A=A-Maß.
 - **Gebaut + gemessen (river-221, der Fusions-Ersatz — Rat-Regel `deny global_min`):** `tools/measure/src/bin/al_network_proxy.rs` — (1) die Fusion leitet sich aus der Größe ab: `dh` → `min` (das AL-Analogon der vorzeichenbehafteten H-Störung), `|ΔB|`/`dbdt` → `max` (Union); (2) ein **explizites `--fusion min` über die vorzeichenlose |dB/dt|-Magnitude wird verweigert** (exit 2, benannte Weigerung), außer `--allow-global-min` ist gesetzt — nur für den Veto-Netz-Kontrolllauf; (3) `union` wird als `max`-Alias akzeptiert. **Lokal am gebauten Binär gemessen:** `--quantity dbdt --fusion min` → exit 2 mit der Weigerung; `+ --allow-global-min` → läuft weiter; ohne `--fusion` (dbdt) → läuft weiter (Default `max`). Workflows nachgezogen: `gic-onset-xyz` (Fusion-Default statt hardcoded min), `gic-envelope-nesting` (`--allow-global-min`, der Rat-Kontrolllauf), `gic-station-sweep` (neuer Input `allow_global_min`). `rustfmt --check` exit 0; `cargo build -p omegaflow-measure --bin al_network_proxy` grün.
 - **Blockade:** keine.
-- **Braucht:** (a) **die Sektor-Hälfte der Rat-Regel** — eine Station speist die Hülle nur, wenn sie im **Nachtsektor MLT 16–03 h** liegt und `weight_i > 0` trägt (marginaler TE-Beitrag). Die MLT-Naht existiert im Haus (`src/archivar/aacgm.rs` `geodetic_to_aacgm` → (lat, lon); `cgm_lat_partition.rs` schreibt `station<TAB>cgm_lat<TAB>cgm_lon<TAB>family` in `docs/zustand/gic-station-families.tsv`) — der begrenzte nächste Bau: `al_network_proxy` nimmt je Station `cgm_lon` + das UTC-Zeitfeld und gated auf `MLT ∈ [16,03)`; `weight_i` aus dem gemessenen marginalen TE-Beitrag. **Erst dann** ein Lauf gegen denselben 200er-Null. (b) die **Ordinalstatistik k von N** (Netz-Fusion-Verdikt) braucht eine andere Speicherstrategie als der inkrementelle Min/Max-Fold (river-216 OOM-Fix), sonst OOM.
+- **Braucht:** (a) **die Sektor-Hälfte der Rat-Regel** — eine Station speist die Hülle nur, wenn sie im **Nachtsektor MLT 16–03 h** liegt und `weight_i > 0` trägt (marginaler TE-Beitrag). **Gemessener Blocker (river-222):** im Haus existiert **keine** MLT-Rechnung — `src/archivar/aacgm.rs` gibt verifiziert `(lat, lon)` (gegen die Upstream-C-Witnesses getestet), aber nur `aacgm_v2_latitude` ist öffentlich, und es fehlt der **Subsolar-/Zeit-Seam** (die AACGM-MLT braucht die AACGM-Länge des Subsolarpunkts je UT). Ein rohes `MLT = UT + cgm_lon/15` wäre eine unbenannte Näherung (Dipol-Neigung ignoriert) → **nicht gebaut** (A=A). Der begrenzte nächste Bau ist daher zweiteilig: (1) `aacgm.rs` um die Längen-Ausgabe + einen verifizierten Subsolar-Seam erweitern; (2) erst dann `al_network_proxy` je Station `cgm_lon` + UTC-Zeitfeld nehmen und auf `MLT ∈ [16,03)` gaten; `weight_i` aus dem gemessenen marginalen TE-Beitrag. **Erst dann** ein Lauf gegen denselben 200er-Null. (b) die **Ordinalstatistik k von N** (Netz-Fusion-Verdikt) braucht eine andere Speicherstrategie als der inkrementelle Min/Max-Fold (river-216 OOM-Fix), sonst OOM.
 
 ### Platzierungs-Frage — die 3-R-Kette gefahren (Recherche → Roster → Rat); Fusions-Ersatz-Kern gebaut
 - **Status:** eigen (Kette gefahren; Kern gebaut, Sektor-Hälfte offen) | **Bindung:** eigen
@@ -193,31 +193,26 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…221) · `
 
 ## An mycelium
 
-Origin: river-219/220/221
+Origin: river-219/220/221/222
 
 - `xfer:mycelium-356-3` **F4′ (Schumann-Kanal) — Echo.** Die WGLC-Quelle ist **täglich**; der unbedingte Deskriptor behält `bin 3600`, die bedingte Form ist als eigener Tages-Deskriptor gebaut (`schumann_geomag_blitz.te`, `bin 86400`, `cond wglc_strokes pending`; Job `pair-schumann-blitz`). Kein Vorwärtsfüllen. Offen nur der Rat zur `field`-Form + dein CDN-Block.
-- `xfer:river197-6` **THEMIS-ASI Vollbild-Cube + Skymap (14-min-Naht) — Compiler + Quell-URLs (river-220, gemessen).** Die Lag-Naht ist verdrahtet; der Vollbild-Onset soll kein Session-Input bleiben. Compiler `tools/measure/src/bin/themis_asi_frame_onset.rs`; PGM-Vollbilder je Minute unter `data.phys.ucalgary.ca/sort_by_project/THEMIS/asi/stream0/…_full.pgm.gz` (erst `gunzip`), Skymap `themis_skymap_kapu_20240909-%2B_v02.sav`; `free-open`, Host zugelassen. Lokal reproduziert: Band az 155–240, el 45–55, Onset 07:54:45→07:55:45. Bitte den FODG-Cube + die Skymap manifestieren/registrieren.
-
-**GIC — zweiter Zeuge.** Der `bpa_gic`-Zeuge trägt nur ein 4-Tage-Fenster. Lange Alternativen (river-219): EURISGIC, EPRI SUNBURST, NZ-long-term, Northern Transit. Einen langen zweiten Zeugen wählen + registrieren/manifestieren — `xfer:river219-gic2`.
-
-**DE-2-Reihe (P7.1).** Die Manifestation scheitert am Host `cdaweb.gsfc.nasa.gov`; dieselben Bestände bei **NASA SPDF** (`spdf.gsfc.nasa.gov/pub/data/de/de2/…`, HTTP 206). Fetch-Host umstellen + manifestieren — `xfer:river219-de2spdf`.
-
-**SABER (Weberin, P-Form C).** Offizielle SABER-Datenseite `saber.gats-inc.com` (GATS, Inc.; HTTP 200). Block-Sample aus GATS ziehen + manifestieren — `xfer:river219-sabergats`.
-
-**JUICE-Bahn (Flyby).** recon-SPK + 1-σ bleiben ESOC (2026-11-01); die operative Bahn liegt bei ESA-SPICE/NAIF (HTTP 200) — prüfen + registrieren/manifestieren — `xfer:river219-juicespice`.
+- `xfer:river197-6` **THEMIS-ASI Vollbild-Cube + Skymap (14-min-Naht).** Compiler `themis_asi_frame_onset` + CI-Naht `themis_asi-fodg-cdn.yml` stehen; **gemessen (river-222): der FODG-Kubus liegt noch nicht im CDN** — offen ist allein die **Mountain-Registerzeile** (Feld-/Takt), dann der manuelle Lauf. Danach misst der Workflow den Onset selbst.
 
 **Register→Manifest (mit Toren).** Der Verbinder existiert (`harvest-dispatch.yml` feuert auf `push`); der Defekt ist die **Doppelbedeutung von `format`**. Tore: Lizenz, Fingerabdruck, Format, Registrierung — `xfer:river208-registermanifest1`.
 
 **Weberin-Zeugen.** Die `url`/`origin`/`compiler`-Direktiven gehören Mycelium: Athabasca erledigt; SABER/UCAR-FPI sobald die `field`-Zeile steht — `xfer:river208-weberinmanifest1`.
 
+*(DE-2/SPDF, SABER/GATS und JUICE/SPICE sind am 2026-10-15 als **Myceliums eigene** Hol-/Ablage-Aufgaben übernommen und hier gestrichen; GIC-2 trägt River selbst.)*
+
 ## An mountain
 
-Origin: river-219/220/221
+Origin: river-219/220/221/222
 
 - `xfer:mountain-355-1` **Wort gefallen: keine Membran-Änderung.** Der Laufzeit-Name `icgem_gfc_c` bleibt; die Norm ist quellen-geliefert (Kopf + `norm:<token>`-Qualifier) und wird dort getragen. `extract.rs`/`main_flow.rs` bleiben unangetastet. Reopen nur, wenn zwei verschieden-normierte GFC-Quellen im Laufzeit-Register unter demselben Namen kollidieren — dann Rat.
 - `xfer:mountain-354-2` **ICGEM-Kern ohne Membran-Berührung.** Der Schwere-Bau liegt ganz in `src/archivar/gfc.rs` + `gfc_compiler.rs`; `main_flow`/`omega` unberührt. Die Runtime-Naht ist die offene **Rat**-Frage.
 - `xfer:mountain-352-1` **Die vier Archivar-Clippy-Lints sind geheilt** (river-folge216 gefaltet), `cargo check` 0/0.
 - `xfer:mountain-352-2` **NSDB-Richtungszeuge in den S²-Pfad.** `nsdb::to_astro_series` liefert die AST1-Richtungszeugen; der `format nsdb`-Zweig in `main_flow` wartet — gated auf die Registrierung.
+- **THEMIS-ASI-FODG-Registerzeile (14-min-Naht, `xfer:river197-6`):** die einzige offene Naht der 14-min-Lücke; `terms free-open`/`ttl 604800` stehen (mountain-356), der Kubus fehlt noch im CDN. Sobald die Zeile steht, läuft `themis_asi-fodg-cdn.yml` und der Onset wird selbst gemessen.
 
 **WGLC-`field`-Form — Operator-Wort „ja vorbereiten":** das **Rat-Paket** steht (gestellt `56e1746e9`); der Sender ist River (F4-Schumann), die Schemafrage ist deine.
 
@@ -233,29 +228,33 @@ Origin: river-206
 
 ## Abschluss
 
-river-221 (ein Pass; kein Fenster-Edit, kein Send; LOCK bleibt — Operator-Wort). Fälligkeit bei
+river-222 (ein Pass; kein Fenster-Edit, kein Send; LOCK bleibt — Operator-Wort). Fälligkeit bei
 Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht
-erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge355,
-mycelium-folge357 — in river-221 gefaltet) · `open_points_check` = 0 stale-citations (7 Pfad-Refs
+erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge356,
+mycelium-folge358 — in river-222 gefaltet) · `open_points_check` = 0 stale-citations (7 Pfad-Refs
 absent — der private Baum `state/`) · `session_burn` nicht gemessen (`db absent`).
-**Fusions-Ersatz (river-221, gebaut + lokal gemessen):** `al_network_proxy` leitet die Fusion aus
-der Größe ab (`dh`→`min`, `|ΔB|`→`max`/Union) und **verweigert `min` über die vorzeichenlose
-|dB/dt|-Magnitude** (`deny global_min`, Rat 2026-10-15, `state/stimmen/2026-10-15-platzierung-rat-blatt.md:36-47`);
-`--allow-global-min` nur für den Veto-Netz-Kontrolllauf; `union` als `max`-Alias. Am gebauten Binär:
-`--quantity dbdt --fusion min` → exit 2; `+ --allow-global-min` → läuft; Default (dbdt) → `max`.
-Workflows nachgezogen (`gic-onset-xyz`, `gic-envelope-nesting`, `gic-station-sweep`); `rustfmt
---check` exit 0; `cargo build -p omegaflow-measure --bin al_network_proxy` grün. **Die Sektor-Hälfte
-(MLT 16–03 + `weight_i`) und die Ordinalstatistik k von N bleiben benannte nächste begrenzte Bauten**
-(die MLT-Naht existiert: `aacgm.rs`, `cgm_lon` in `gic-station-families.tsv`).
-**Gefaltet (river-221):** `mountain-folge355` (`xfer:mountain-355-1` Norm-Wort gefallen — keine
-Membran-Änderung; `-354-2` Rat; `-352-1` geheilt; `-352-2` gated), `mycelium-folge357`/`-358`
-(F4′ Tages-Deskriptor steht; `xfer:river197-6` Compiler+CI offen nur an der Mountain-Registerzeile).
-**Pass-Messung (river-221, an den Blockern):** DE2-CDN **404** (P7.1 blockiert); `field`-Zeilen
-**7764** (P10 blockiert); WGLC **0** in `phi` (Schumann blockiert); SABER/UCAR-FPI **0** (Weberin
-blockiert); Juice-recon **absent** in `data/` (Flyby-Termin steht); `ci-gate` rot an fremden Trägern
-(Receiver-Apertur blockiert).
-**Commit:** `tools/measure/src/bin/al_network_proxy.rs` (Fusions-Default + `deny global_min`),
-`.github/workflows/gic-onset-xyz.yml`, `.github/workflows/gic-envelope-nesting.yml`,
-`.github/workflows/gic-station-sweep.yml` (`allow_global_min`-Input), diese Übergabe;
-`folge219` → `archiv/`. Fremdes ungespeichertes (`state/`, `data/`, `phi/sources.φ`,
-`src/archivar/gfc.rs`, `mycelium-folge358`) bleibt unangetastet.
+**Gefaltet (river-222):** `mountain-folge356` (Block unverändert zur 355; `xfer:mountain-355-1`
+Norm-Wort steht — keine Membran-Änderung; `-354-2` Rat; `-352-1` geheilt; `-352-2` gated),
+`mycelium-folge358` (**Abgabe**: `xfer:river219-gic2` trägt ab jetzt River selbst; DE-2/SPDF,
+SABER/GATS und JUICE/SPICE sind Myceliums eigene Hol-/Ablage-Aufgaben geworden und aus
+`## An mycelium` gestrichen).
+**Still gemessen (river-222):** **THEMIS-ASI-FODG-Kubus liegt noch NICHT im CDN** — die
+Release-Asset-Liste `data.phys.ucalgary.ca` trägt nur die vier `themis_asi_timed_keogram_*.bin`
+(kein `themis_asi_fodg_*_onset.bin`, keine Skymap) → die 14-min-Naht wartet allein auf die
+Mountain-Registerzeile. **EURISGIC-GIC (`eurisgic.ru`, HTTP 200)** ist das nordisch-finnische
+GIC-Archiv (Yllikkälä/Rauma/Mäntsälä/Pirttikoski/Lovozero) — **überlappt den FMI-Träger, kein
+unabhängiger zweiter Zeuge**; der unabhängige Kandidat (EPRI SUNBURST/NERC-GMD US) ist in diesem
+Pass nicht erreichbar gemessen → GIC-2 bleibt `pending`, nicht still gewählt.
+**Blocker der Sektor-Hälfte (river-222, exakt benannt):** im Haus existiert **keine** MLT-Rechnung;
+`aacgm.rs` gibt verifiziert `(lat, lon)`, öffentlich aber nur `aacgm_v2_latitude`, und der
+**Subsolar-/Zeit-Seam** fehlt. Ein rohes `MLT = UT + cgm_lon/15` wäre eine unbenannte Näherung
+(Dipol-Neigung ignoriert) → **nicht gebaut**. Der nächste begrenzte Bau ist zweiteilig: (1) die
+Längen-Ausgabe + einen verifizierten Subsolar-Seam in `aacgm.rs`; (2) dann der `MLT ∈ [16,03)`-Gate
+in `al_network_proxy` mit `weight_i` aus dem gemessenen marginalen TE-Beitrag. Die
+**Ordinalstatistik k von N** braucht eine andere Speicherstrategie als der inkrementelle Fold.
+**Vorgetragen (river-222) — kein neues Operator-Wort nötig:** alle vorstehenden Punkte sind
+gated (Mountain/Rat/CDN) oder autonom als nächster Bau benannt; nichts wird zur Entscheidung
+vorgelegt. **Kein Bau dieses Passes** — der Fusions-Ersatz-Kern steht seit river-221; river-222
+maß die Blocker und faltete die Abgabe.
+**Commit:** diese Übergabe (`folge221`); `folge220` → `archiv/`. Fremdes ungespeichertes (`state/`,
+`data/`, `docs/zustand/standing-pass.md`, `phi/sources.φ`) bleibt unangetastet.
