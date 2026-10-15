@@ -2,7 +2,7 @@
   title: Handover — River-Folge 214
   class: handover
   date: 2026-10-15
-  sha256: 732ac5c972a62124e3d529433e2eb374fbc174f463da6d3b7940cfcde432dfa2
+  sha256: a3d96cc0071f9f54937c9e543b5e63e12eee0b95b6c115965a0141ecfdd2a6f5
   status: live
 -->
 # Handover — River-Folge 214 (2026-10-15)
@@ -162,7 +162,7 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (diese Session) · `st
 - **Status:** eigen (neu, Bau) | **Bindung:** eigen
 - **Trigger:** Operator-Wort 2026-10-15: „bei welcher toleranz mit welcher anzahl ist die machine am schärfsten" + „ein muster … wie stationen zueinander stehen müssen … eine te mustererkennung für die positionierung".
 - **Lage:** (gemessen 2026-10-15 via `ci_manage` + lokaler `gic_onset_detector`) die Einzel-Schwellenkurve steht (s. GIC-Onset). **Stationszahl-Kurve gemessen (Lauf `38696906878`, auroral nach `|cgm_lat|` absteigend, Auto-Schwelle, `--null 200`):** der Rückruf (15 min) fällt mit der Zahl: n3 0.0283 · n4 0.0283 · n6 0.0020 · n8 0.00027 · n12 0.000015 · n16 0.00020 · n24 0.00015 · n31 0.00012 (n2 mit kürzerem Fenster, `n_mcp=52999`, nicht vergleichbar) — **die Einzelstation bleibt mit 0.066 der beste Arm**; die Präzision liegt über alle Netze bei ~0.30–0.54. Die höchsten Breiten tragen, jeder weitere (tiefere) Standort verschlechtert. Der Detektor ist mit der **einen** höchsten Station am schärfsten; ein inneres Optimum der Stationszahl gibt es nicht. **Gebaut:** `.github/workflows/gic-station-sweep.yml` (ordnet nach `|cgm_lat|`, lädt die Bins einmal, kumulative Einhüllenden); die Bins sind ~13 GB pro Lauf → CI. **Gebaut (river-215, Rat-Verdikt 2026-10-15):** der Workflow nimmt jetzt einen `thresholds`-Input (CSV fester Schwellen, die über **alle** Stationszahlen konstant gehalten werden; `--threshold` je Detektorlauf) — damit trennt der Lauf den **Fusion**-Effekt vom **Schwellen-Drift** (die Stationszahl ging bisher zweimal ein: über die Min-Einhüllende *und* über die je N neu berechnete `robust_threshold`). Fällt der Rückruf bei fester Schwelle **nicht** mehr monoton, ist der Kollaps als Schwellen-Drift bewiesen.
-- **Blockade:** keine (CI-Lauf); der Lauf liest den entfernten Ref → er folgt dem Commit des Workflows (kein Vorlauf im selben Atom).
+- **Blockade:** keine (CI-Lauf); der Lauf liest den entfernten Ref → er folgt dem Commit des Workflows (kein Vorlauf im selben Atom). **Angestoßen (river-215):** Lauf `38709029080` (`family=auroral`, `thresholds=17.11,50.37`, `--null 200`; die Bins ~13 GB → CI). Ergebnis folgt als eigener Schritt (kein Polling).
 - **Braucht:** (a) die Schärfe-Fläche aus dem Sweep; (b) **zuerst den Schärfe-Begriff definieren** — die Toleranz ist eine Matching-Definition (eine lockere Toleranz hebt Präzision *und* Rückruf mechanisch), kein Detektor-Regler; die harten Regler sind Stationszahl und Schwelle. Der Metric (z. B. F1 bei fester Toleranz oder Präzision bei fester Ausbeute) ist eine **Methodik-/Architekturentscheidung → Rat** (fünf Stimmen + Recherche-Roster, s. Operator-Wort „council bedeutet recherche roster (full) und rat"); (c) das **Stations-Platzierungsmuster**: Teilmengen-Suche über die 154 Stationen, geführt durch paarweise TE/Kopplung (welche Stationen komplementäre Information tragen) — ebenfalls Rat-Design vor dem Bau; (d) **Aurora als dynamischer Stationsschalter** (Operator-Wort 2026-10-15): die Polarlicht-Oval-Lage wählt je Zeit die Stationen unter dem Strom (dynamische Auswahl statt fester Netz-Zahl). Vorlauf-Riss benannt: die Aurora ist eine **Schwester**-Erscheinung des Sturms (gleiche Ursache), kein Vorläufer — der Vorlauf Boden-`dB/dt`→GIC ist kurz; messbar als Lag zwischen Aurora/AL-Onset und Boden-`dB/dt`. Rat-Design.
 
 ### Frühwarnkette — Vorlauf-Leiter Sonne→Erde (Operator-Wort 2026-10-15)
@@ -284,8 +284,9 @@ River-Akt) · mycelium-352 — `xfer:mycelium-352-4` ci-gate-Rot: der dort genan
 **N-Sweep bei fester Schwelle gebaut (river-215, Rat-Verdikt):** `.github/workflows/gic-station-sweep.yml`
 trägt jetzt einen `thresholds`-Input (feste Schwellen, über alle N konstant) — die Isolation des
 Fusion-Effekts vom Schwellen-Drift. Der Lauf liest den entfernten Ref, folgt also dem Commit dieses
-Atoms. Ergebnis dann: fällt der Rückruf bei fester Schwelle nicht mehr monoton, ist der Kollaps als
-Schwellen-Drift bewiesen.
+Atoms — **angestoßen: `38709029080`** (`auroral`, `thresholds=17.11,50.37`, `--null 200`). Ergebnis
+dann: fällt der Rückruf bei fester Schwelle nicht mehr monoton, ist der Kollaps als Schwellen-Drift
+bewiesen.
 **Breitlauf für die Ketten-Quellen (river-215):** `bin/all_wide` (Stop 400) + Einzelmodi für
 SWIFF · WINDMI · MAGION · MOSWOC-Kp · OVATION-AACGM; `--zenodo` verifiziert `5211482` (MOSWOC Kp
 Verification, Bingham 2021) und `19651247` (OVATION-AACGM, Zhao 2026, CC-BY-4.0). Keine der fünf
