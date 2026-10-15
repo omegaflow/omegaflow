@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-15
-  sha256: b2576fa8d98df2986af5ca841bf407c16bdbe5d0addcfb8ecb6e315b468319be
+  sha256: 9c5ca70b7e1eec30bfaffe1095aa85ddf06ae4d7ddbff16884e86a56200ed010
   status: live
   see-also: AGENTS.md
 -->
@@ -16,7 +16,7 @@ leck-fähige Faden (das Register-Lesen) geschnitten, nicht nur verschoben.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `88e051c65` | 2026-10-15 |
+| HEAD | `378fc958c` | 2026-10-15 |
 | rote CI-Läufe | `ci-gate` `38693094480` (HEAD `88e051c65`, queued — **unread**) · `register-coverage` `38693094427` (HEAD `88e051c65`, queued — **unread**) · `ci-gate` `38693040722` (HEAD `b8fd39b49`, in Arbeit `subset → cargo test --lib` — **unread**) · `sources-repo-licence` `38693040838` (HEAD `b8fd39b49`, in Arbeit — **unread**) · `zenodo-raw-cdn` `38693040881` (HEAD `b8fd39b49`, queued — der neue Matrix-Lauf über die drei neuen Assets) | 2026-10-15 |
 
 Am HEAD `b8fd39b49` (Ware-Commit) ist `register-coverage` `38693040719` **success** und
