@@ -38,4 +38,7 @@ if [ -f "$priv/opencode.json" ] && [ -f "$root/opencode.json" ]; then
 fi
 
 cd "$priv"
+if [ "$#" -gt 0 ]; then
+  exec /bin/bash "$@"
+fi
 exec /bin/bash

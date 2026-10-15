@@ -32,30 +32,31 @@ function lineCount(path: string): number | null {
 
 
 const TOKEN_TEACH: { tokens: string[]; msg: string }[] = [
-  { tokens: ["ls"], msg: "`ls` ist strukturell verboten → nutze `glob <pattern>` (Discovery) oder `archive_search --index`." },
-  { tokens: ["grep"], msg: "bash-`grep` ist verboten → nutze `sgrep [-i] <muster> [dir]` oder `archive_search <kw> --root <dir>`." },
-  { tokens: ["rg"], msg: "`rg` ist verboten → nutze `sgrep`." },
-  { tokens: ["cat"], msg: "bash-`cat` ist verboten → nutze `sread <datei> [--offset N --limit M]` oder das `read`-Tool." },
-  { tokens: ["head", "tail"], msg: "`head`/`tail` kastrieren das Ergebnis (`tail -f` ist zusätzlich Polling) → nutze `sread <datei> --offset N --limit M` oder das `read`-Tool (offset/limit); einen gekappten Tool-Output vollständig aus der Spill-Datei (`full: <pfad>`) lesen, nie anschneiden." },
-  { tokens: ["copilot", "copilot_ask", "copilot_review"], msg: "`copilot` ist ein Cloud-Dienst und erhält keine omegaflow-Daten (Operator-Wort 2026-09-28) → lokal und deterministisch: `bin/session_check --in|--out`." },
-  { tokens: ["python", "python3"], msg: "Python ist verboten → nutze Rust (`cargo`) oder die kanonischen Tools." },
-  { tokens: ["cd"], msg: "`cd` ist verboten → nutze den `workdir`-Parameter des bash-Tools." },
-  { tokens: ["rustc"], msg: "`rustc` ist verboten → baue über `cargo`." },
-  { tokens: ["watch", "sleep", "inotifywait", "entr"], msg: "Polling ist verboten → keine `watch`/`sleep`-Schleifen in einer Session." },
+  { tokens: ["ls"], msg: "`glob <pattern>` (Discovery) — nicht `ls`. Pfad-Index: `archive_search --index`." },
+  { tokens: ["find"], msg: "`glob <pattern>` oder `fd <name>` (Discovery) — nicht `find`; keine Baum-Listen (Kontext-Fresser)." },
+  { tokens: ["grep"], msg: "`sgrep [-i] <muster> [dir]` oder `archive_search <kw> --root <dir>` — nicht bash-`grep`." },
+  { tokens: ["rg"], msg: "`sgrep [-i] <muster> [dir]` — nicht `rg`." },
+  { tokens: ["cat"], msg: "`sread <datei> [--offset N --limit M]` oder das `read`-Tool — nicht bash-`cat`." },
+  { tokens: ["head", "tail"], msg: "`sread <datei> --offset N --limit M` oder `read` (offset/limit) — nicht `head`/`tail` (kastrieren das Ergebnis); einen gekappten Tool-Output vollständig aus der Spill-Datei (`full: <pfad>`) lesen." },
+  { tokens: ["copilot", "copilot_ask", "copilot_review"], msg: "`bin/session_check --in|--out` (lokal, deterministisch) — nicht `copilot` (Cloud erhält keine omegaflow-Daten; Operator-Wort 2026-09-28)." },
+  { tokens: ["python", "python3"], msg: "`cargo` (Rust) oder die kanonischen Tools — nicht Python." },
+  { tokens: ["cd"], msg: "der `workdir`-Parameter des bash-Tools — nicht `cd`." },
+  { tokens: ["rustc"], msg: "`cargo` — nicht `rustc`." },
+  { tokens: ["watch", "sleep", "inotifywait", "entr"], msg: "kein Polling — `watch`/`sleep`-Schleifen sind in einer Session verboten." },
 ]
 
 const PHRASE_TEACH: { phrases: string[]; msg: string }[] = [
-  { phrases: ["sed -i"], msg: "`sed -i` ist verboten → nutze das `edit`-Tool." },
-  { phrases: ["tail -f", "journalctl -f"], msg: "Polling ist verboten → kein `-f`-Folgen." },
-  { phrases: ["gh run list"], msg: "`gh run list` ist verboten → nutze `ci_manage list`." },
-  { phrases: ["gh run view"], msg: "`gh run view` ist verboten → nutze `ci_manage view <id>` / `ci_manage log <id>`." },
-  { phrases: ["gh run delete"], msg: "`gh run delete` ist verboten → ein cancelled Lauf behält seinen Log." },
-  { phrases: ["gh run watch"], msg: "`gh run watch` ist verboten → kein Polling; `ci_manage view <id>` einmalig." },
+  { phrases: ["sed -i"], msg: "das `edit`-Tool — nicht `sed -i`." },
+  { phrases: ["tail -f", "journalctl -f"], msg: "kein `-f`-Folgen (Polling) — einmalig lesen." },
+  { phrases: ["gh run list"], msg: "`ci_manage list` — nicht `gh run list`." },
+  { phrases: ["gh run view"], msg: "`ci_manage view <id>` / `ci_manage log <id>` — nicht `gh run view`." },
+  { phrases: ["gh run delete"], msg: "ein cancelled Lauf behält seinen Log — nicht `gh run delete`." },
+  { phrases: ["gh run watch"], msg: "`ci_manage view <id>` einmalig — nicht `gh run watch` (Polling)." },
   {
     phrases: ["git reset", "git checkout", "git clean", "git rebase", "git stash", "git restore", "git switch"],
-    msg: "destruktives git ist verboten → kein `reset`/`checkout --`/`clean`/`rebase`/`stash`/`restore`/`switch`/`worktree`.",
+    msg: "kein destruktives git (`reset`/`checkout --`/`clean`/`rebase`/`stash`/`restore`/`switch`/`worktree`); nur add/commit/status/rm.",
   },
-  { phrases: ["git push --force", "git push -f"], msg: "force-push ist verboten." },
+  { phrases: ["git push --force", "git push -f"], msg: "kein force-push." },
 ]
 
 const CARGO_ALLOWED = ["cargo check", "cargo fmt --", "cargo build -p ", "cargo run -p "]
