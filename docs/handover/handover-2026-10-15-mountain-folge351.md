@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 351 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 8e9b32bab084dd4c818c9bcfe59b9a9f47450a61dd4b0a0fa89ba5c1687afd4f
+  sha256: dc5cad2fe519fbce720c3c6f53dbef4f1321cc34f35d13203c44291ca08257ce
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -243,6 +243,14 @@ Baum getragen (git: `36b50dfca`). Was folgt, ist offen.
 
 ## An mycelium
 
+Origin: mountain-351 (2026-10-15) — die offenen Registrierungen der Riss-Alternativen (`docs/surveys/survey-2026-10-15-riss-alternativen.md`), als **Transport-Aufträge** (Mycelium setzt `url`/`origin`/`compiler`/`sha256`; Mountain liefert `terms`/`field` danach nach dem Stand):
+
+- `xfer:mountain-351-1` **ICGEM gfc (Schwere)** — Block `url …/icgem.gfz.de/gfc.bin`, `origin https://icgem.gfz.de/getmodel/gfc/<modelid>/XGM2019e.gfc`, `compiler tools/harvest/src/bin/gfc_compiler.rs` (steht). Mountain-`terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`. (Bleibt am Epoch-/Modellart-Punkt gebunden.)
+- `xfer:mountain-351-2` **NSDB (IMCCE)** — `raw_mirror` der Neptun-Tabellen `https://nsdb.imcce.fr/obspos/OBS_COLL/N/…`. Mountain-`terms nsdb-imcce-research-free https://nsdb.imcce.fr/nsdb/acknowledging.html`; **Parser fehlt** (Beobachtungs-Astrometrie) → Bau-Auftrag.
+- `xfer:mountain-351-3` **BAS IMAGE Auroral Boundaries** — `raw_mirror` `…/SI12_Boundary_Data/si12_boundaries.zip` (`ramadda.nerc-bas.ac.uk`). Mountain-`terms OGL-3.0 http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/`; **Parser fehlt** (CSV, 24 1-h-MLT-Bins, äquator-/polwärtige Grenze).
+- `xfer:mountain-351-4` **DMSP SSJ Auroral Boundaries** — Zenodo `10.5281/zenodo.3373812` über die `zenodo-raw-cdn`-Matrix (`fom_boundaries_F16_F17_F18_2010_2014.zip`). Mountain-`terms CC-BY-4.0`; **Parser fehlt**.
+- `xfer:mountain-351-5` **GFZ-Kp-Archiv** — die Zeile `phi:1230-1234` auf das **Archiv** weiten (`https://datapub.gfz.de/download/10.5880.Kp.0001/Kp_definitive/Kp_defYYYY.wdc`, 1932–) statt nur heute→morgen; Mountain-`ttl`/`field` unverändert.
+
 Origin: mountain-349 (2026-10-15):
 
 - `xfer:mountain-348-3` **IGETS `origin`** — der Block trägt heute `origin sftp://igetsftp.gfz.de`
@@ -280,6 +288,7 @@ Origin: mountain-349 (2026-10-15):
 - **„kannst du die bitte vermessen [Flare-Verifikation · REFM · Kp-Zeitreihe · OVATION-Prime-Papiere]"** | 2026-10-15 | (mountain 351 — die vier MOSWOC-Nachbarn an der Quelle gemessen).
 - **„ok bitte arbeite nun bitte die offenen punkte mit tauchern ab."** | 2026-10-15 | (mountain 351 — fünf Taucher auf die offenen Register-Punkte: Quellen-Gewebe · Adressierte Register-Fäden · ALFALFA · SABER/TIMED · ICGEM gfc).
 - **„und für all die risse gibt es keine alternativen?"** | 2026-10-15 | (mountain 351 — fünf Taucher auf die Riss-Familien; Messblatt `docs/surveys/survey-2026-10-15-riss-alternativen.md`; jeder Daten-Riss trägt eine offene Route).
+- **„also schickst du bitte taucher los um alle offenen registrierungen zu machen?"** | 2026-10-15 | (mountain 351 — die Register-Zeile ist zweihändig: Taucher schreibt sie nicht; die offenen Registrierungen als `xfer:mountain-351-1…-5` an Mycelium gestellt).
 
 ## Abschluss
 
