@@ -178,12 +178,12 @@ pub struct NameMeta {
     pub station_code: Option<String>,
 }
 
-type FrameBundle = (
+pub type FrameBundle = (
     crate::archivar::Frame,
     Option<crate::archivar::ModelKind>,
     Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
 );
-type FrameRx = mpsc::Receiver<FrameBundle>;
+pub type FrameRx = mpsc::Receiver<FrameBundle>;
 
 pub struct MatrixMachine {
     pub rings: HashMap<String, Vec<(f64, f32)>>,
@@ -215,13 +215,7 @@ pub struct MatrixMachine {
 }
 
 impl MatrixMachine {
-    pub fn new(
-        rx: mpsc::Receiver<(
-            crate::archivar::Frame,
-            Option<crate::archivar::ModelKind>,
-            Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
-        )>,
-    ) -> MatrixMachine {
+    pub fn new(rx: FrameRx) -> MatrixMachine {
         MatrixMachine {
             rings: HashMap::new(),
             metas: HashMap::new(),
@@ -1155,11 +1149,7 @@ impl MatrixMachine {
         ring_gen: u64,
     ) {
         self.rng = ring_gen;
-        let batches: Vec<(
-            crate::archivar::Frame,
-            Option<crate::archivar::ModelKind>,
-            Vec<(crate::archivar::Channel, crate::archivar::FieldConfig)>,
-        )> = match &self.rx {
+        let batches: Vec<FrameBundle> = match &self.rx {
             Some(rx) => {
                 let mut out = Vec::new();
                 while let Ok(batch) = rx.try_recv() {
