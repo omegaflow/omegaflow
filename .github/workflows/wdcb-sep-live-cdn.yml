@@ -1,0 +1,86 @@
+# harvest: format=raw_live arm=raw_mirror pattern=^cat00[1-7]\.(dat|gz)$ idempotent=true timeout=240 tag=www.wdcb.ru
+# WDC-B Moscow / GC RAS — the living World Data Center for Solid Earth Physics tree
+# (http://www.wdcb.ru/sep/, Apache autoindex, no key). The seismology catalogue series
+# cat001..cat007 (live, 2023-07-17) is mirrored byte-for-byte to the CDN so the series is
+# held independently of the host. Site policy (http://www.wdcb.ru/sep/policy.html): open
+# and freely available for scientific, educational and other non-commercial purposes
+# without restriction, with a reference to the source; commercial use by contact.
+# Each matrix entry carries the registered url/origin/sha256; raw_mirror refuses to upload
+# unless the live body hashes to the registered sha256.
+
+name: wdcb-sep-live-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tools/harvest/src/bin/raw_mirror.rs'
+      - '.github/workflows/wdcb-sep-live-cdn.yml'
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+  R2_BUCKET: ${{ secrets.R2_BUCKET }}
+  OMEGAFLOW_R2_MIRROR: ${{ vars.OMEGAFLOW_R2_MIRROR }}
+  OMEGAFLOW_R2_WORKER: ${{ vars.OMEGAFLOW_R2_WORKER }}
+
+jobs:
+  wdcb-sep-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - asset: cat001.dat
+            url: "https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat001.dat"
+            origin: "http://www.wdcb.ru/sep/seismology/catalogues/cat001.dat"
+            sha256: c252fd358d4e61ca98a5dbfd096ff2ff2df3a1e9eb1db7bf9a86b011e1bad067
+          - asset: cat002.dat
+            url: "https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat002.dat"
+            origin: "http://www.wdcb.ru/sep/seismology/catalogues/cat002.dat"
+            sha256: e352bf3eb858353ca7a83b349ddc99b166fda13636613b5e57f52c2dc4c12274
+          - asset: cat003.gz
+            url: "https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat003.gz"
+            origin: "http://www.wdcb.ru/sep/seismology/catalogues/cat003.gz"
+            sha256: 96eb8bf017514656ccd0e2d289f1eb9fed95b46a64c15f8a6a9f4da9e9354d2c
+          - asset: cat004.dat
+            url: "https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat004.dat"
+            origin: "http://www.wdcb.ru/sep/seismology/catalogues/cat004.dat"
+            sha256: 7a7dc9c2a2778bb046e769102bc5f3877214a28b49a0ea1e320bdc8e7805a100
+          - asset: cat005.dat
+            url: "https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat005.dat"
+            origin: "http://www.wdcb.ru/sep/seismology/catalogues/cat005.dat"
+            sha256: d583e01ae4b6ba31a74a2302ba2ce2ef20669049b9a725e3524e04ff203de9be
+          - asset: cat006.dat
+            url: "https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat006.dat"
+            origin: "http://www.wdcb.ru/sep/seismology/catalogues/cat006.dat"
+            sha256: 984eae9e53984fe757d2755a7aa081ae9dc77e2adef9d76f7e78c1508623d21b
+          - asset: cat007.dat
+            url: "https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat007.dat"
+            origin: "http://www.wdcb.ru/sep/seismology/catalogues/cat007.dat"
+            sha256: a6721f52eca4fe09ae7f3a746539e105438d220f7d5e79fa2deb877def4903aa
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Mirror ${{ matrix.asset }} to the CDN
+        run: |
+          cargo run --release -p omegaflow-harvest --bin raw_mirror -- \
+            --ci-mode \
+            --url "${{ matrix.url }}" \
+            --origin "${{ matrix.origin }}" \
+            --sha256 "${{ matrix.sha256 }}" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "wdcb-sep-live-cdn: ${{ matrix.asset }} returned void" \
+                 "raw_mirror returned void for ${{ matrix.asset }} (${{ matrix.origin }}). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }

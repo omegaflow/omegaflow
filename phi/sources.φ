@@ -14382,6 +14382,31 @@ fold cos_deg WDIR WDIR inverse-square advective 1 21600
 fold sin_deg MWD MWD inverse-square advective 1 21600
 fold cos_deg MWD MWD inverse-square advective 1 21600
 
+url http://esdb.wdcb.ru/
+format reference
+sha256 b046c0f95097818968a6d9b96741e22f314a0102e2de2d737c95c64d257a3b69
+no-cadence
+
+url http://rjes.wdcb.ru/
+format reference
+sha256 c313f425ec915351dbb65345bace9761e60975f1aa3b431de8380cc96df11b61
+no-cadence
+
+url http://stp.wdcb.ru/
+format reference
+sha256 5bf8d0020576d903367a0776feba458589f43dca32ba8ffbf4d445b376367b6b
+no-cadence
+
+url http://usd.wdcb.ru/
+format reference
+sha256 1f2dc8aa18d44e8575b3920ec7af3cafd9e6d98f53b3e24a390635f68b078309
+no-cadence
+
+url http://www.wdcb.ru/sep/
+format reference
+sha256 55ed81c6222363aaed1c080486e43a4ea2f48a073ceaf371f55963c0f0640291
+no-cadence
+
 url https://api.antares.noirlab.edu/v1/loci?page%5Blimit%5D=1000&page%5Boffset%5D=0
 witness s2-direction
 record skydirection
@@ -28573,6 +28598,1230 @@ sha256 2d1a8d9942bae59cb177ff6e0194757339cdc7aad69edfe1733117abd1ccec4f
 at sun
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/000330.dat
+origin https://web.archive.org/web/20030326190440id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/000330.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 41a5ac247884afe8e2fc1a3c8863f3f0a3145ec3642e348ee11e59adffb79c1f
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/1_catal.txt
+origin https://web.archive.org/web/20030118142125id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/1_catal.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 f78e275e59d6199696e079da4b20fd2ccbadd75d0f664fc6992de4a9c49c8021
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/57-59.txt
+origin https://web.archive.org/web/20030118141636id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/57-59.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 658ce77c29476b3cd95fdef6c2a83d13c23ea0c517d10df5a5fc4037ccb35a6b
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/60-63.txt
+origin https://web.archive.org/web/20030118140744id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/60-63.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 a4da423038fce7baa8a21adf5ac1245f0737b7ea11b2023c6c1480567c9261e3
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/64-66.txt
+origin https://web.archive.org/web/20030118142307id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/64-66.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 11c22b602d256eb0ee66250aa350bde1e8af04b09aa6194a3916f0e6474daa96
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/67-69.txt
+origin https://web.archive.org/web/20030118140942id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/67-69.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 0c8bbf554830032b95f9a67c9f646a9c6e866e22c7241ffa3edcbe139829c5ca
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/73-74.txt
+origin https://web.archive.org/web/20030121035100id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/73-74.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 434e872434e86c56b4b8a17568dc2b6e64bf6624d0e62b28276b7ac342385c59
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/79-82.txt
+origin https://web.archive.org/web/20030121035226id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/79-82.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 81d6d7a8a3e20fb78cddeb2da38361e0a903aa7bfefd8dd2f965321fd47f4bbf
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/850419.dat
+origin https://web.archive.org/web/20030326183429id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/850419.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 ce37e030e4da010bf43ab84dd38a6f6059aa1019eff1a161ebddc8581bcc079c
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/850629.dat
+origin https://web.archive.org/web/20030326183531id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/850629.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 33f8ce4c9f2fc782c47fa7011cbd7701e78cbd86cdb3c822ab24aec8ee2aecc1
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/851211.dat
+origin https://web.archive.org/web/20030329170752id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/851211.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 d341a2175101d617ea80092ebde0013b4d3ef29b81b89e9963d8f23bdb92fef8
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/860326.dat
+origin https://web.archive.org/web/20030329171149id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/860326.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 f94c769d50e4201a7363cb40f04c55555cd4d01483548946698a32a44f0a61d3
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/870104.dat
+origin https://web.archive.org/web/20030329171214id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/870104.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7b83c50e47479a8017359f5e3512b232313edc29d8250fa5824c5f6c1711f17b
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/870303.dat
+origin https://web.archive.org/web/20030329171406id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/870303.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 75541c1b1f93e5ef43192c48c4d5d7de75cec68103bb8e09861d85df1d3e20f0
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/870714.dat
+origin https://web.archive.org/web/20030329171759id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/870714.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 e9f05c7403a9a5dc83aa9146e975968001fb5f286b6f81309e04e705761a1a54
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/870722.dat
+origin https://web.archive.org/web/20030329171328id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/870722.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 4c396af9b1a1f57e0a8261e1daf1a4856a3e724e9c08bdfebd7ec072b43a4418
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/870924.dat
+origin https://web.archive.org/web/20030329171219id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/870924.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 a2f7446fb891ddac5419e84b60b5e0a5da24bd9041061b880eb790c94a5aaa51
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/871111.dat
+origin https://web.archive.org/web/20030329172057id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/871111.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 dadedb32c30ad41a34efa92f9f77f2e2cdfecb9cfcae250576c49c980c1f3d97
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/880802.dat
+origin https://web.archive.org/web/20030329171933id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/880802.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 d8281c61923475fbfdc029b38f5a1ad39effc65f975c975be5147a605bb8ee6e
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/880805.dat
+origin https://web.archive.org/web/20030329171839id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/880805.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 6f871db56a9dbecf418bf73099b61a6bd8c41d23f2522fb004ecc2eff589d479
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/89-92.txt
+origin https://web.archive.org/web/20030123064715id_/http://zeus.wdcb.ru/wdcb/stp/catal_pc/89-92.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 296013740f7b07981a695a5e8be9bbddee69325e54f961d04ef5b0f33cc671f1
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/890309.dat
+origin https://web.archive.org/web/20030401054336id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/890309.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 59d43e0279b2a0c078e58b55366fe0568548dd1450311789da76659803a43990
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/890606.dat
+origin https://web.archive.org/web/20030401051045id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/890606.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 4c11f1bf322836436f12312ba37d463412d79f47481895406681a636bda0f29f
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/890620.dat
+origin https://web.archive.org/web/20030401051634id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/890620.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 c0c7a4b1ceaab9ea414557ac11f195424820b80430e6587a653d072c4b22e60c
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/901113.dat
+origin https://web.archive.org/web/20030401052256id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/901113.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 4bb7ded0e36583ee04fb5c9272452cdbb6235d656ed905e772a6434f42edbc4c
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/910516.dat
+origin https://web.archive.org/web/20030401052726id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/910516.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 4fe3890825c9209cb72b1485ca10d18703a9b33c19f42c70da133b70c6d766b7
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/910829.dat
+origin https://web.archive.org/web/20030401052101id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/910829.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 2e7bda6a8e4e8b39bda024f3b5ddebdb9fa4a9ef510534539e539e82f2e32bf2
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/920116.dat
+origin https://web.archive.org/web/20030401052041id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/920116.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 85c4d68e9c61fbdb89955c94bfb55e35c765bdc46f8f86ee1be594f2afc95727
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/920225.dat
+origin https://web.archive.org/web/20030401052603id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/920225.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 024cec53fb5d301c1e29962282d5ff78b84af606c027f0dd57837efa9ffc5d06
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/930321.dat
+origin https://web.archive.org/web/20030505025634id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/930321.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 3966310ce48c626ae0564d653822cc1c2313459dbfbd623555ca583ec32ebd42
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/930622.dat
+origin https://web.archive.org/web/20030401053352id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/930622.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 04026a341b67ce42ec0a7a2149af41a20cfd81afe12d6183327dcd8582567121
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/931130.dat
+origin https://web.archive.org/web/20030505025529id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/931130.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 cf3c4c6102575531850f96b9e522771b8e2664d8826fcab6f415628de6093e90
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/940705.dat
+origin https://web.archive.org/web/20030929052834id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/940705.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 90cb8246cf3bd04e437e8bdcbff0e2859b0b9ed298c15880b923fd60afc1e6b3
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/941220.dat
+origin https://web.archive.org/web/20030505025741id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/941220.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 5df1f4d2c4549edeb0ac77a11852289be9256cc5fd9cc0ddbf1e0259f0d2bc8d
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/950206.dat
+origin https://web.archive.org/web/20030505025853id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/950206.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 997ad1c22c71af3eac6e430c229a3ec19e332f38b8c32cbe84be4ec416bca196
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/950525.dat
+origin https://web.archive.org/web/20030505024702id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/950525.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 fb9a32b283a0014b285e7b6a470501f913d77e99145487f4e104464862c3a9b2
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/950614.dat
+origin https://web.archive.org/web/20030505024129id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/950614.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 2abd1c4fca83ba0b376caaebdc56bd6631a06048129b1275fad21a5bb65bb28c
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/951019.dat
+origin https://web.archive.org/web/20030505024300id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/951019.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 3f191c14ff15fb3f5b607701c3056536ff0e771a03461a200688a124527a8f80
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/960222.dat
+origin https://web.archive.org/web/20030505024902id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/960222.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 d1f577c11651fb481455340251c47604585fc4b2d1d1ccaf45e65eca82cc1184
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/960328.dat
+origin https://web.archive.org/web/20030505025023id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/960328.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 2b7c98f00e5e54624b4679725e2215146d81b8cba360e596df5cd857a2a61827
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/960522.dat
+origin https://web.archive.org/web/20030505025022id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/960522.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 10206e2ad7dd60721343a4a187d3b2ac32714ba9d7a387e5d570a4f65b0df332
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/960605.dat
+origin https://web.archive.org/web/20030505025652id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/960605.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 8e797a30d5dcba4daa717846c01df0c11c9ec9c2688ef6db625f89a6f714dc97
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/960906.dat
+origin https://web.archive.org/web/20030505030135id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/960906.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 e133afccbad8f581e3333c74e87e86a31ce01dc6f7f33c7f4b716bf499629217
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/961017.dat
+origin https://web.archive.org/web/20030929055229id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/961017.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 d0d8b99a68b73314a2f846490a508c13c94ed9701dcf050eb083e35b9879fac1
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/961104.dat
+origin https://web.archive.org/web/20030506213227id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/961104.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 98602f46b5b4f08942715fef8d1b6c16180af27390486f014f616e2e8ee68220
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/961125.dat
+origin https://web.archive.org/web/20030506213459id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/961125.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 22288630863fe88500ee9a95932853c3d807cf4834bbba637cc1cf167182fc89
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/970506.dat
+origin https://web.archive.org/web/20030506213705id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/970506.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 0e267820a7d1ab25eb4e7556cc176d883ec3e45e8d3b17bda7c9bf35f3cf48ce
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/970704.dat
+origin https://web.archive.org/web/20030506213716id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/970704.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 68b8b0278356e87c20503817c1a898da48ec0b93256a8106ca7c3ab38420d0e8
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/970815.dat
+origin https://web.archive.org/web/20030506213627id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/970815.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 422b9acddd843b1560e55176c9351db5c6ef12a6c64cf8b4b4609649629ee846
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/970916.dat
+origin https://web.archive.org/web/20030506213847id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/970916.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 b4dd6a4568aad80db10164c3f29c8c288cce78eedd1b4bc8d7c48e0ef9031bda
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/970930.dat
+origin https://web.archive.org/web/20030506214204id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/970930.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 f8a9468a940ac09beda79c037abbee345c60d6d92d3c94caf35bcfddbc00f1a7
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/980112.dat
+origin https://web.archive.org/web/20030506213903id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/980112.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 2858b3b9c9eaa1cf8eea67898b6b6b92e8c6b3d0c750153626ed6c1af05f1a6d
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/980122.dat
+origin https://web.archive.org/web/20030506214001id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/980122.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 981d2be49dc324a52a0a03c511150b28737b0122e3fc744e5aa8c1a0e686684f
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/980202.dat
+origin https://web.archive.org/web/20030506214128id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/980202.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 66b6ff8e47b48241835357f0f653ac8c7944db85367187d5b17deecc5e4fea3f
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/980310.dat
+origin https://web.archive.org/web/20030506214041id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/980310.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 34df49e7b8ebed9631ff0b40aa4714d0700c57bccc522e00a097d1b9f0b3d1bc
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/980605.dat
+origin https://web.archive.org/web/20030506213527id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/980605.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 bf7f1a72db6b717715d44bf159e243c0fc0344ffe4d0e5802fee1585a75e74ec
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/980918.dat
+origin https://web.archive.org/web/20030506213301id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/980918.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 fd87007219a6d71426294dc69c042305e7008a431335675e8b6e4b085ee8aa3e
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/990611.dat
+origin https://web.archive.org/web/20030930093209id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/990611.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 b0e7df8db25ea3182a62fa33dc3ab2fc23ab5381f9ab5fe071e523b07b585dd6
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/AA3398.txt
+origin https://web.archive.org/web/20030926204438id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA3398.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7a3578bf25682943c86ac4efff2e55aa208304348881f3ec3f6615eb55eb9956
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/AA_IMA.fmt
+origin https://web.archive.org/web/20030926204245id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_IMA.fmt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7304494de20b4630e30d94fe594ebf8fafef2e519d825d5e009ce1428aa454fe
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/AA_INDEX.TXT
+origin https://web.archive.org/web/20030926204059id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/AA_INDEX.TXT
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 f41a57c595fe01ce0d23bf99cb2c7fc08a869ca5338bcbd7a849ac265ca694f1
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/AF_form.1min.txt
+origin https://web.archive.org/web/20030724185707id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/AF_form.1min.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 9faed116f0c633452a871342b4a4b17625c291897961beddde9727256fcd31c1
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aa_month
+origin https://web.archive.org/web/20030926204019id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/Aa_month
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 986aa5126a6d3da8c374b6a146153a3bf5dd41b3b0a5a73cc9b7895c33c8c7df
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aa_year
+origin https://web.archive.org/web/20030926203947id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/Aa_year
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 b214acadd15ca5d33a72caa3dc76afe319faf29cf02aac4f516b82116d97728a
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku03.dat
+origin https://web.archive.org/web/20170409034634id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku03.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 78d89fef914b599946148661cc567af77fe16678b0ebe74c06abaab18caf194c
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku05.dat
+origin https://web.archive.org/web/20170409034950id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku05.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7dd5c007f4b9b3a2de69b795ac097ae3e1088b86a05a1e472756b599d6c6a3f5
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku15.dat
+origin https://web.archive.org/web/20170409034956id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku15.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 b45c6b1f14d222c0fe8f012c6406ffa90424fc35078ae1498e90cfd7b5eb634b
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku20.dat
+origin https://web.archive.org/web/20170409035001id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku20.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 c686c738a899bf06b8c0da4f07219c313fcbed4a4fb0d279819dbd02fae9d0ce
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku23.dat
+origin https://web.archive.org/web/20170409035006id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku23.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 5a96cb31750ef0ceaae01a296f27894fb41991fa6adeeec1137a347359b20f8f
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku28.dat
+origin https://web.archive.org/web/20170409035011id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku28.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 bac3999879872f68efd906e7b79f3e5f44a5996a6f2adf5e2a2cc6d6de8bbb32
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku30a.dat
+origin https://web.archive.org/web/20170409034639id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku30a.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 2982f0a3238d1dc74ed4b7bc0283d5946b2e608aac4c4374b710a77b10cbe160
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku30b.dat
+origin https://web.archive.org/web/20170409034644id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku30b.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 086542150f54f088c8f647f94fc18feee84537c73018f0f75dc24e2442a22280
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Aku31.dat
+origin https://web.archive.org/web/20170409034649id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Aku31.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 07494cf09c069eb7c9da639b675149c423358f70ce9b9078aed30f1540bc2600
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Ast10.dat
+origin https://web.archive.org/web/20040704075345id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Ast10.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 462dfe7e43b039b583945f13f070d8dce5f6acc81559f25a48dd4d1f33e29bd5
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme03.dat
+origin https://web.archive.org/web/20170409034654id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme03.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 bc803f9770967aeadc26fbb96fad0e4ef09c500f3181dad9f6a52afc30bd3a19
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme05.dat
+origin https://web.archive.org/web/20091023174944id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme05.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 06fdca0d1c4d5d557a75c3b2ba26f08ea417e0d635aa96a3eaf1e36c4fc325fa
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme06.dat
+origin https://web.archive.org/web/20170409035026id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme06.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 b9eb92bde5d6f9123ef5fa862a97727540c1af6c32f7b3ff2cd0f0461843e73a
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme07.dat
+origin https://web.archive.org/web/20100206214913id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme07.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 8c65731e1d40967f3dfad4c7eb5a2c62335264d6183360bacff994dd2b611c2b
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme09.dat
+origin https://web.archive.org/web/20101230152900id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme09.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 ac397bf80054f3d1508d1e474c39d781d8b502a2a792baf6d6fb3647a5846b81
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme10.dat
+origin https://web.archive.org/web/20170408173843id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme10.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 d6bdfe99d37faee41b89222837b2fe612c0ac2dec640eaee836c4c1a9d3c366d
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme18.dat
+origin https://web.archive.org/web/20120910000634id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme18.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 3e8a0ce111854875d15f16549a04691f1601a3a41d1ce5d2adeef7c8fa50e858
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme21.dat
+origin https://web.archive.org/web/20170409034659id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme21.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 bb42abfc538b4e2b4638471e3792258ef0f6ab5941a01d6ff5eab7acb6e527f3
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme24.dat
+origin https://web.archive.org/web/20170408173854id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme24.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 4b0b5320cc03146551c7a1b1cba801b8d18d4e90dba05877f16f0885cfc44f19
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme28.dat
+origin https://web.archive.org/web/20170408173858id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme28.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 dfb3f639bc56f63696b9b68b9094250aaf26b3af2e0f00e871513d313c5663d3
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme30.dat
+origin https://web.archive.org/web/20170408173904id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme30.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 85ab5d3653f87203042a16f3c784c531361f1890f4629cbb03bc7dbca5469fbe
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme31.dat
+origin https://web.archive.org/web/20170408173909id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme31.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7e320a9ecf7c20bcb9bfab510a081d469e2af44951a31cf0dbd2a7e8f838379b
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme37.dat
+origin https://web.archive.org/web/20170409035034id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme37.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7fada7481f2db0a348504f582b19515ff49efd1961fddfc0f040e27b0bfabc54
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Dme38.dat
+origin https://web.archive.org/web/20170408173914id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Dme38.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 79386f844063637b613cee511f53cabfc0c65fe83e93f1a05ae188829894d1fb
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/G_lib.c
+origin https://web.archive.org/web/20030506214231id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.c
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 c50bd82bf0c48ed2861c12e44e2d8134202a75aecab4f007ddaa09227fdfe598
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/G_lib.h
+origin https://web.archive.org/web/20030506214120id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/G_lib.h
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 42000c7f87f5032b5eb532765217ea5ad45149158523a8c247dba91cb87a1d7c
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Iki01.dat
+origin https://web.archive.org/web/20170408173919id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki01.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 f14a3122ff6864ce4b7e012feaa4e2f057b3122490ca56985bc81d1a9b69a033
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Iki02.dat
+origin https://web.archive.org/web/20170409034744id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Iki02.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 8740c648c75be9285a7c4427965e144bee432680c558ccac68f5b84eea03bd85
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9502M.WDC
+origin https://web.archive.org/web/20030905064538id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR95/MIR9502M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 deb31eba43d64feb28ab0817c5e2cedf870a390a15c5acbcd2b89868df939c14
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9504M.WDC
+origin https://web.archive.org/web/20030905041444id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR95/MIR9504M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 9735e93993fadd1f27197f6ccf768584a088947b528521a1f2983f0ffbd67f6c
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9506M.WDC
+origin https://web.archive.org/web/20030905041540id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR95/MIR9506M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 006853f5e8413d66daffd8c91a7334f69ef14492c7ebebc24e28aa32c9dd7d17
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9507M.WDC
+origin https://web.archive.org/web/20030905041726id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR95/MIR9507M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 3ed2ebe6239ae19316fd7761c5a2b19288be9bf86d4a46becd7d7a86562bd62b
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9508M.WDC
+origin https://web.archive.org/web/20030905041921id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR95/MIR9508M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 f94f01e3906bf9de50c67120b0962ff4afae1cdd26aa463581d663b0819f2bdb
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9509M.WDC
+origin https://web.archive.org/web/20030905041938id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR95/MIR9509M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 04a349b2911387722a54ea730a0db6273f0ce7f622956a2ed11409e7483c321a
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9510M.WDC
+origin https://web.archive.org/web/20030905042343id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR95/MIR9510M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 843d5d71e90d3505dca51f2fa59257b997de62a2051fe26df7a1b9d48594face
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9511M.WDC
+origin https://web.archive.org/web/20030905042400id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR95/MIR9511M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 5c1e827f1aa4420b67d95f160c41f58b8f9e6d07a0c9f716de8cd0500683769a
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9702M.WDC
+origin https://web.archive.org/web/20030905043131id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR97/MIR9702M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 f535d285615f1d5e068d493f1755389352f36ff0a53c1a007096c3d74b2cbc95
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9703M.WDC
+origin https://web.archive.org/web/20030905042947id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR97/MIR9703M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 8a0b011d6196852d374524b1f55f491ca24ab224477a624d1a7128e33b99d205
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9704M.WDC
+origin https://web.archive.org/web/20030905043157id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR97/MIR9704M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 b5ffd945486d541d85c561b56319d894f51b5266be6548c1e8b542dddc009670
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9705M.WDC
+origin https://web.archive.org/web/20030905043547id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR97/MIR9705M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 823f7409355506c964e42a7b0976432351cbfc8f2b78aff12ed77b2aae5590af
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9706M.WDC
+origin https://web.archive.org/web/20030905043822id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR97/MIR9706M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 6cdae77a4b738f2c61994c11f13ef18f825117292244df270ecaafce7baf2a47
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9708M.WDC
+origin https://web.archive.org/web/20030905043924id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR97/MIR9708M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 cc5625c81296905c6f430b4faa2597aaaae46306eb7bb36e0145ae985675a33e
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9709M.WDC
+origin https://web.archive.org/web/20030907053738id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR97/MIR9709M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 504b548bd9b418bad8b1de2c581eb6b57bcb61e93aa76596614f4372be3effa4
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MIR9712M.WDC
+origin https://web.archive.org/web/20030907054041id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MIR/MIR97/MIR9712M.WDC
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 a37987724907dd95bd22bc40680c09d8f22323bcad98323538fff499dacf41b0
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9702.ZIP
+origin https://web.archive.org/web/20030728124059id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk97/MSK9702.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 052f6006b7d07b582ca27439a4eb262b28c90aa6007048b73fd69d7ddfaf8d0d
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9703.ZIP
+origin https://web.archive.org/web/20030728124036id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk97/MSK9703.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 02bcdb438b1dd134bb259c37e3e8d41e317d9fa5fc19554b4a19c78f0ac4309b
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9704.ZIP
+origin https://web.archive.org/web/20030728124447id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk97/MSK9704.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 d05c640db1da7e55bc2bfa4a69a9fc595a58b586471fac13d3637cb3ab0c7cc3
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9706.ZIP
+origin https://web.archive.org/web/20030728124657id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk97/MSK9706.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 66c253a3941ca02d35b1fe249b3bb2250e16915ff20df2f854f5288f939af293
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9707.ZIP
+origin https://web.archive.org/web/20030728185250id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk97/MSK9707.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 21bf6c025c35e59521585438019453e9ecc7cc43448f7e1d296cd944e4d1301e
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9708.ZIP
+origin https://web.archive.org/web/20030728185107id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk97/MSK9708.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 9d9c82698defbd455798250b86494ffdb5fb38e74dc20d7824b4623001d1155d
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9711.ZIP
+origin https://web.archive.org/web/20030728185332id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk97/MSK9711.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 9528d8cc08bf880cdd0478b20a6fa3f72a99f50a14e984cc8754748c3abf99b0
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9712.ZIP
+origin https://web.archive.org/web/20030728185413id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk97/MSK9712.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 028ce4841c94b53592b0a1cfbc1a3e192062f7cefc2c6de70041083c8ff40e49
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9801.ZIP
+origin https://web.archive.org/web/20030609190446id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9801.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 ea78102ce98fb7d7a0d00f5a8debf5c0566db4ab18b6762d0323a576d48a593b
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9802.ZIP
+origin https://web.archive.org/web/20030609190214id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9802.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 6a34cc238f4b620ad0cd248a2009ebd3e042a0940202f2a4ab63bfab9665b965
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9803.ZIP
+origin https://web.archive.org/web/20030609190529id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9803.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 5fd998a678dc9fa64436af6bedaed8f9f0593473b290a657ae4e587f815277fb
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9805.ZIP
+origin https://web.archive.org/web/20030609191305id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9805.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 a12212be239b1fe8f832ba12242baf48b8b805b5f35893dafbe02262c71a14ed
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9806.ZIP
+origin https://web.archive.org/web/20030609191132id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9806.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 eb6736ee72dafe9e612e162d30b54a1fe20968b722bfcefd3283e6566a375f8a
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9807.ZIP
+origin https://web.archive.org/web/20030609191515id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9807.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 84eca3237709c2cc5a71aaf50b07f875c47c94123ee56299a496f670e5119d64
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9808.ZIP
+origin https://web.archive.org/web/20030609191251id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9808.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 9858d972d5be88f67242ccb9ce2e9349bb960bf8856f8acdc23398e1878bbd11
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9809.ZIP
+origin https://web.archive.org/web/20030609191535id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9809.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 22cd8a0df6ff0d633bfd4af05270f0988f5ec4b4aa932e978a562c4494304dbd
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9810.ZIP
+origin https://web.archive.org/web/20030609192121id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9810.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 db1d8f04adfde0488c374a2c1ae7dd2f4ec474bacbb2ec67e7e1b15ee6cf0afe
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9811.ZIP
+origin https://web.archive.org/web/20030609192330id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk98/MSK9811.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 bee7e5e43db6fbe3e01ec7a2f618c6da58981a845e261fa2d64c5198921944e4
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9901.ZIP
+origin https://web.archive.org/web/20030728194137id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9901.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 21b7665f690a88532363b3c6687f45d0cf9629e24c19f46249b0a232bc77c8e6
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9903.ZIP
+origin https://web.archive.org/web/20030728194535id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9903.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 6cd951c3c32a590cebf6dd7c808ca21ea3b68a205dc22f2f08ee310db400fbfc
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9904.ZIP
+origin https://web.archive.org/web/20030728194457id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9904.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 659510dda54bc9f4c0a29fbec7d06df95879a70c9178837424462ca49b967960
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9905.ZIP
+origin https://web.archive.org/web/20030728194744id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9905.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 257401ea50bc707aa4bca42c3351633cdd67fde51ec77a87d544b9d2f056c83f
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9906.ZIP
+origin https://web.archive.org/web/20030728194925id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9906.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 f053764e3412446de43710657eb5f93ff889cdebadbd98c596b15117a971f237
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9907.ZIP
+origin https://web.archive.org/web/20030729001338id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9907.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 fa17067029c470ba15a28801d048f5a93670c7e742dd68958be68e70d1c68b20
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9909.ZIP
+origin https://web.archive.org/web/20030729001547id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9909.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 27f0dcf105dd583f54e03b0ae9c7a6f16f40f63767a614d4b50f3bdf97d5841d
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9910.ZIP
+origin https://web.archive.org/web/20030729001711id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9910.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 0b900961afe5183c96881acbd8464e3c32612ee03f7e9862624c2af6d790b09c
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/MSK9912.ZIP
+origin https://web.archive.org/web/20030729001926id_/http://zeus.wdcb.ru/wdcb/stp/geo_min.val/MSK/msk99/MSK9912.ZIP
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 b1c73c38954ff62e66b5d677acdbb5bfedfdec750c994fe8fb3465b4cedd11a3
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/OBN2000.txt
+origin https://web.archive.org/web/20030512231230id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 5177cde22f59d173f50a22ac37a074e3d333401f51662bca7e76fd640ba6200a
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/OBN2000_6.txt
+origin https://web.archive.org/web/20020622175149id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000_6.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 feddbc910752f71323c84743948b31b245b414a8b1ff3c80e7f94d8a0839879c
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/OBN2000_65.txt
+origin https://web.archive.org/web/20020622175428id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000_65.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 b96324278f8af1dda32a93e162421f6cbb79015d19b07a21a8f5d7a8db43f615
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/OBN2000_7.txt
+origin https://web.archive.org/web/20020624191812id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/OBN2000_7.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7c131404896da4dce23d7ad870a9dc1b4db264e3ffcdd4f1afc54699bfaa235a
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Pet12.dat
+origin https://web.archive.org/web/20170409034803id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Pet12.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 777e7addb58f566cc11ca6aceba0068fd29e449c6dbc8a32ed60d0d3fdc0568f
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Star1969.dat
+origin https://web.archive.org/web/20170409035036id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Star1969.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 181018335ad6ba9a46506ac3f324c0bcd0539697826d4514772fe51a435ca6d4
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/Vit51.dat
+origin https://web.archive.org/web/20170408173924id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/mgg/Vit51.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 e52d367db6208d9b0f751e195be602ac23fa1e8dc721dec202025d1f97f54422
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa.doc
+origin https://web.archive.org/web/20030831181542id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.doc
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 143462925b3bef0e8b46ae79cb85d70f6fd3fb1820965c6676a9437c174953c0
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa.fmt
+origin https://web.archive.org/web/20030926204123id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.fmt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 e2bd1a427ef7e60753692339169b9abf901ec6aafc062a88ca2f5a6ae7d3524f
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa.txt
+origin https://web.archive.org/web/20030926204325id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 088e7504af8b2e89d55a20a4799f3a73b311acd8cafb4f5f60a80a3b3bf8b5ee
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa1993.ima
+origin https://web.archive.org/web/20030926203948id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1993.ima
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 ad3566cb0c55aa4b50510ab3a38287d7cabf50ec9e117d8adb0a282e770936f4
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa1994.ima
+origin https://web.archive.org/web/20030926204136id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1994.ima
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 a7ec824c5d38e6c8d3fb3ce0dd8340aa2feea2cb27a7e358711d1730377bdb59
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa1995.ima
+origin https://web.archive.org/web/20030926204439id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1995.ima
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 463147b7ddd1b7c46a12cbde5d8284293981f88c1695d8c739cc2fabafb8bc3e
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa1997.ima
+origin https://web.archive.org/web/20030926204154id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1997.ima
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 486c9d4d256121c3a4519e4108a33ed167fa60acab62207cb4eba87d49e55a68
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa1999.ima
+origin https://web.archive.org/web/20030926204511id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa1999.ima
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 393a0b653af9a4f6c39f3eb87d43f888fd9c94e3d4578091738521fc20df8cf7
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa2000_ima.txt
+origin https://web.archive.org/web/20030926203900id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2000_ima.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 495e8d3db5b39fa1e44eacb8bb7e22e10df71f410236b534967deb86b21f9487
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/aa2001_ima.txt
+origin https://web.archive.org/web/20030926203826id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aa2001_ima.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 1f011a6b5b5dac8b001c7890cf50dfa9e90f0ff2d1f1ad6b44419a35b37098f4
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/aastar.lst
+origin https://web.archive.org/web/20030831055450id_/http://zeus.wdcb.ru/wdcb/stp/geomagni.ind/aa/aastar/aastar.lst
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 778eca3054b8f95f561a496e9eaa814fc505520340b10177b83cfa2ee6ce3a71
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul199806.dat
 origin https://web.archive.org/web/20080115071747id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/1998/bul199806.dat
 compiler tools/harvest/src/bin/raw_mirror.rs
@@ -28793,6 +30042,30 @@ terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
 field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat002.dat
+origin https://web.archive.org/web/20081221113021id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat002.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 e352bf3eb858353ca7a83b349ddc99b166fda13636613b5e57f52c2dc4c12274
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat004.dat
+origin https://web.archive.org/web/20130426203510id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat004.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7a7dc9c2a2778bb046e769102bc5f3877214a28b49a0ea1e320bdc8e7805a100
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat005.dat
+origin https://web.archive.org/web/20220117080136id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat005.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 d583e01ae4b6ba31a74a2302ba2ce2ef20669049b9a725e3524e04ff203de9be
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat199301.dat
 origin https://web.archive.org/web/20180212024625id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/1993/cat199301.dat
 compiler tools/harvest/src/bin/raw_mirror.rs
@@ -28893,6 +30166,190 @@ terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
 field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_ALT.dat
+origin https://web.archive.org/web/20160428111806id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_ALT.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 a58f2cfb914f23a0129d44d8a2075bc8a93e04bc29be58e5ee2cc73c6606506a
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_ALT9299.dat
+origin https://web.archive.org/web/20161007182100id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_ALT9299.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 8b299611c51eb8cabb29e88ac2e1d17be625a455f90774369f20ce82c5288602
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_CAU.dat
+origin https://web.archive.org/web/20170817132607id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CAU.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 f299beb06ed799290e8816d365bc865ac22542c6495148487b390d2304fbea3c
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_CAU9200.dat
+origin https://web.archive.org/web/20161007182250id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CAU9200.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 a51e04b73db62f5d2a6f63647a4ead5e109060a5b02e7be091ddfd4e8a1401d5
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_CRM.dat
+origin https://web.archive.org/web/20160428152634id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CRM.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 8f09f368365181e996155caea8cc2f5182eda1d9728928dbae82727e729f04e5
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_CRP.dat
+origin https://web.archive.org/web/20160427192236id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_CRP.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 702c90a2bde9ec213db56c5a21631984018a2f3021809907d418473b113dd178
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_MAK.dat
+origin https://web.archive.org/web/20160428152650id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_MAK.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 788f51a5a051a0427b42b0877e6efc78ef79b5ec12a500c2b2019aa6e30989ff
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_NTS.dat
+origin https://web.archive.org/web/20160427210257id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_NTS.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 cad22bac7c8179320702ac4b6d446d1fb9f1a6a1b2783b831e984a05a74293b0
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_TRM.dat
+origin https://web.archive.org/web/20160427201745id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_TRM.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 71989cbf537317e96d41cffbc61a1456d04f82fbbe9bcebfecef78414a482b5a
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_TRM9200.dat
+origin https://web.archive.org/web/20161007182107id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_TRM9200.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 d9f79754280e94fb911fef25054d5d8ccd21b088fa794f87eba4ce1e88672c41
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/chap7.rtf
+origin https://web.archive.org/web/20040717141640id_/http://zeus.wdcb.ru/wdcb/gps/doc/chap7.rtf
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 2c3bd624e602bfd291a230f5e1c2cdda2e30e38c3517d7d33d8a6f28a9c7d806
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/formula.exe
+origin https://web.archive.org/web/20030506214133id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/formula.exe
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7f1471db829d3b9556247de8d86daf3adc97e72f99806028ae535c7299dbe787
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/grav_15min.dat
+origin https://web.archive.org/web/20110326050241id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/catalogs/grav_15min.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 de6955d1be79be99d662226150222b5c4b209b255072878166be4d7ac253a0df
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/grav_1deg.dat
+origin https://web.archive.org/web/20110326044853id_/http://zeus.wdcb.ru/wdcb/sep/data/gdata/catalogs/grav_1deg.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 dca536f9166ccf23007753dbd08cbeaa507274ae3d8438031a832b5a34813bfa
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/readme
+origin https://web.archive.org/web/20030508125846id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 3a2622e7230e0d047caddfb17387253d1d93fbd3070cd6ad68a0cd2ebf63edb9
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/readme_en
+origin https://web.archive.org/web/20030930094210id_/http://zeus.wdcb.ru/wdcb/sep/GravConst/data/readme_en
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7386018b1e3e79086832ba5d6b9435a13c27f509b0e6148671c5740edf0ac9af
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/rinex2.txt
+origin https://web.archive.org/web/20181218114937id_/http://zeus.wdcb.ru/wdcb/gps/rinex2.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 687088082523828f1417c42d8f8a914d397c190fc612ba96f5f2bbc7fcbdc848
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/session.info
+origin https://web.archive.org/web/20181218114954id_/http://zeus.wdcb.ru/wdcb/gps/session.info
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 2dd72e67727412def4af99890321054e36a5b43d99fe0ea3cd942811a45c37fb
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/sestbl.global
+origin https://web.archive.org/web/20181218114959id_/http://zeus.wdcb.ru/wdcb/gps/sestbl.global
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 b146e9391edea5e51f6260d49be8b85992eea9c5000a86b355a5c5d40a8c6803
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/sestbl.regional
+origin https://web.archive.org/web/20181218115022id_/http://zeus.wdcb.ru/wdcb/gps/sestbl.regional
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 77df40a0d3d4563e23a7f7f3165f67a9ff67c317becebbbe74ec3e778be34895
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/sig_2000.txt
+origin https://web.archive.org/web/20020624191412id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/sig_2000.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 118ca04b68199aec66aa4fe1b25f7e8d20d854cebba0d9336e6c192915b9b78e
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/sittbl.txt
+origin https://web.archive.org/web/20181218115029id_/http://zeus.wdcb.ru/wdcb/gps/sittbl.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7fe0cc4d28c576d1f28f02114fa58f1362fe5c7985e64a8aed2ed3ce76cd6fa2
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
+url https://github.com/omegaflow/sources/releases/download/web.archive.org/station_info.txt
+origin https://web.archive.org/web/20181218115242id_/http://zeus.wdcb.ru/wdcb/gps/station_info.txt
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 be546b4f3beb51ab8123ed930b722777874d3fd1f0a8b2883c1e32bae6cf2000
+at earth
+no-cadence
+terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
+
 url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlass_tap_component.bin
 terms cadc-open https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/
 format catalog_vlass_tap_component
@@ -28961,6 +30418,62 @@ origin https://www.nasa.gov/wp-content/uploads/static/history/SP-59.pdf
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 a46e1712d30b04c559d3a24625ca788201e95cd3f0d82919c331746ef02b0c60
 no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat001.dat
+origin http://www.wdcb.ru/sep/seismology/catalogues/cat001.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 c252fd358d4e61ca98a5dbfd096ff2ff2df3a1e9eb1db7bf9a86b011e1bad067
+at earth
+no-cadence
+terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+
+url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat002.dat
+origin http://www.wdcb.ru/sep/seismology/catalogues/cat002.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 e352bf3eb858353ca7a83b349ddc99b166fda13636613b5e57f52c2dc4c12274
+at earth
+no-cadence
+terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+
+url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat003.gz
+origin http://www.wdcb.ru/sep/seismology/catalogues/cat003.gz
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 96eb8bf017514656ccd0e2d289f1eb9fed95b46a64c15f8a6a9f4da9e9354d2c
+at earth
+no-cadence
+terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+
+url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat004.dat
+origin http://www.wdcb.ru/sep/seismology/catalogues/cat004.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 7a7dc9c2a2778bb046e769102bc5f3877214a28b49a0ea1e320bdc8e7805a100
+at earth
+no-cadence
+terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+
+url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat005.dat
+origin http://www.wdcb.ru/sep/seismology/catalogues/cat005.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 d583e01ae4b6ba31a74a2302ba2ce2ef20669049b9a725e3524e04ff203de9be
+at earth
+no-cadence
+terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+
+url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat006.dat
+origin http://www.wdcb.ru/sep/seismology/catalogues/cat006.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 984eae9e53984fe757d2755a7aa081ae9dc77e2adef9d76f7e78c1508623d21b
+at earth
+no-cadence
+terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+
+url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat007.dat
+origin http://www.wdcb.ru/sep/seismology/catalogues/cat007.dat
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 a6721f52eca4fe09ae7f3a746539e105438d220f7d5e79fa2deb877def4903aa
+at earth
+no-cadence
+terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
 
 url https://github.com/omegaflow/sources/releases/download/www2.census.gov/zcta_gazetteer.bin
 terms PD https://www.census.gov/
