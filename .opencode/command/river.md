@@ -3,8 +3,14 @@ description: River-Linie — die lebendige Membran (ω()-Loop, WebGPU-Feld, Prä
 agent: line
 ---
 
-Erste Handlung: `sread docs/concepts/tool-forms.md` — die Form-Karte (verboten → kanonisch),
-damit die erlaubte Form am Punkt der Handlung steht.
+**Erste Handlung — deine DREI Stellen, nichts sonst:**
+1. **Der Dispatch** (`~/projects/omegaflow-work/post/out/` — die eine Aufgabe der Leitstelle).
+2. **Deine Übergabe** (sread; ≤ 1 KiB — das OFFENE, nicht die Geschichte).
+3. **Deine Post** (`~/projects/omegaflow-work/post/in/`).
+
+**Lies NICHT:** das Repo, fremde Handover, die Geschichte (git!), die Form-Karte, die Tools-Map.
+Die Form lehren **`form-guard` + die Deny-Wände** (CODE, am Punkt der Handlung — nicht Prosa).
+Lies nur die Stellen, die **die Aufgabe** nennt (`sread <datei> --offset --limit`).
 
 Starte die River-Linie **in einem Pass** — kein Planungstheater, keine Tafel, kein Consent-Stopp
 für Bekanntes. Ist ein Name genannt, nimm diesen; sonst die neueste offene River-Übergabe.
