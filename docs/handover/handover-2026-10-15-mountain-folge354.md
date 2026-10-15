@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 354 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: f1b60c0a3d3affccc24a0c9047eb4f01d3278ad7a52a21b1693398f8cf22cdcc
+  sha256: db536cdfc66011a91b2127aee8ac1ab6645030732b6074ef0cccd540294ac6ce
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md, docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md, docs/surveys/survey-2026-10-15-riss-alternativen.md
 -->
@@ -52,15 +52,17 @@ Der Stehende Pass wird als **öffentliche** Fassung zitiert, nie kopiert.
   `nist_ncnr_nse_nexus_compiler.rs:510` (`Option::len`) und `glofas_ewds_compiler.rs:686`
   (`GlofasCollection: Debug`) — vorbestehende Fremd-Rott, Träger des roten `tools-build`.
   Nicht angefasst (fremde Dateien); nur benannt.
-- **Das Roster-Paket M4 vorbereitet (Operator-Wort „recherche wide all roster … und den rat").**
-  Die weite Leiter ist gefahren (`bin/all_wide "spherical harmonic synthesis gravity field
-  evaluation callable kernel function"`, Stopp nach 444 Zeilen/61 Armen, Spill
-  `~/projects/omegaflow-work/recherche/spill/omegaflow_all_1792070842_spherical_harmonic_synthesis_gravity_fie.txt`,
-  921 Zeilen gelesen). Das Paket `state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel.md`
-  stellt **M4** — wie ein Kugelflächen-Modell in die 26×f64-Feld-/Kernel-Welt tritt. **Befund der
-  weiten Leiter:** die „4pi"-Normierung ohne Condon-Shortley ist der pyshtools/Wieczorek-Standard;
-  die Galileischen Monde sind `unnormalized`, das Mond-Magnetfeld `Schmidt` — die Normierung muss je
-  Modell aus dem Kopf kommen. Keine Schnittstelle führt einen Koeffizientensatz als **Punkt-Kernel**.
+- **Das Roster-Paket M4 gestellt und verdiktet (Operator-Worte „recherche wide all roster … und
+  den rat", „liste der seats … eintragen", „alles stimmen sind da").** Die weite Leiter ist gefahren
+  (`bin/all_wide "spherical harmonic synthesis gravity field evaluation callable kernel function"`,
+  Stopp nach 444 Zeilen/61 Armen, Spill `…1792070842_…`, 921 Zeilen gelesen). Das Paket
+  `state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel.md` trägt die **Sitz-Liste**; **9
+  M4-Stimmen** sind eingetragen. Das Verdikt liegt in
+  `state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md`, jede Kern-Behauptung am Baum
+  geprüft (Kernel-Registry `extract.rs:1700` = 7 Formen; Force-Gate `membrane.rs:456`, **nicht**
+  `extract.rs:1701`; 5540 → 15 354 111 Paare). **Konvergenz:** eigene Klasse, Koeffizienten im
+  Draht, `V`/`Δg`/`N` je Zeile, Truncation registriert, 5. Riss verschärft. **Riss:** der
+  **Kopfweg** (Draht vs. `phi`) konvergiert nicht → Operator.
 - Register unberührt: `register_sort` canonical (2807), `--orphans` 0.
 
 ## Offen (aufgeschlüsselt)
@@ -154,29 +156,29 @@ Antwort unten) · `xfer:mycelium-356-1` (SABER/UCAR-FPI — die Arm-Antwort steh
 - **Blockade:** keine.
 - **Braucht:** die Bild-Manifestation (W).
 
-### ICGEM gfc — Kopf gemessen + Kern gebaut; offen: Block + Runtime-Naht (eigen)
+### ICGEM gfc — Kopf gemessen, Kern gebaut, M4-Rat verdiktet; offen: Kopfweg + Block (eigen)
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** der Feld-Bau.
-- **Lage:** (gemessen/gebaut 2026-10-15, dieses Rund) Der Kopf ist gemessen und der Kern steht
-  (s. „Gearbeitet"): `gfc.rs` trägt `GfcHead`/`GfcModel`/`synthesize` (fully-normalized 4π),
-  `gfc_compiler.rs` liest den vollen Kopf. **Geschehen sind:** GM/radius/norm/tide an den
-  Auswerter; die Kugelflächen-Synthese. **Offen bleibt:**
-  (a) die **Runtime-Naht** — der ω()-Loop liest den 26×f64-Draht, aber kein Kernel ruft
-  `GfcModel::synthesize`; `declared_fields` deklariert weiter die Koeffizienten-Kanäle
-  (`icgem_gfc_c/_s`), keine Δg/N-Zeile (Δg mit Gewicht (n−1), N = T/γ₀ braucht die
-  Störungs-Reduktion + γ₀ — der Aufrufer, nicht der Kopf);
-  (b) der **Block** — Haus-CDN-Asset `.../icgem.gfz.de/gfc.bin` = 404; die volle 93 MB → 5540
-  Grad ist ein CI-Bau (Consent: heavy compute in CI), und `url`/`origin`/`compiler` sind
-  Myceliums Direktiven.
-- **Blockade:** die Runtime-Naht (welcher Kernel trägt die SH-Synthese) ist eine Rat-Frage;
-  der Block die CI-Manifestation.
-- **Braucht:** (1) das Rat-Verdikt zur SH-Kernel-/`field`-Form — **das Roster-Paket M4 ist
-  vorbereitet** (`state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel.md`, weite Leiter Spill
-  `…1792070842_spherical_harmonic_synthesis_gravity_fie.txt`, 921 Zeilen; die „4pi"-Normierung ohne
-  Condon-Shortley ist der pyshtools/Wieczorek-Standard). Die `field`-Zeile ist heute ein
-  `<kernel> <force> <unit>`-Slot für **7** Kernel-Formen — keine globale Koeffizienten-Synthese;
-  mit `gdata`/`mgg` zusammen (M1);
-  (2) den CI-Bau des (ggf. grad-begrenzten) `gfc.bin` + Myceliums Block-Direktiven.
+- **Lage:** (gemessen/gebaut/verdiktet 2026-10-15, dieses Rund) Der Kopf ist gemessen und der Kern
+  steht (s. „Gearbeitet"): `gfc.rs` trägt `GfcHead`/`GfcModel`/`synthesize` (fully-normalized 4π),
+  `gfc_compiler.rs` liest den vollen Kopf. **Der M4-Rat ist gelaufen** (9 Stimmen; Verdikt
+  `state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md`): die SH-Synthese tritt
+  **nicht** als achte Kernel-Form in die `field`-Zeile, sondern als **eigene Klasse**
+  (`model_output`/`derived`); der Draht trägt die **Koeffizienten**, Gitter sind `derived`;
+  `V`/`Δg`/`N` **je eigene Zeile**, nie verschmolzen (`N` `pending` ohne γ₀/Referenzfeld); Truncation
+  **registriert**, der Rest `pending`, nie 0; der 5. Riss (`n` in `FREQ`, `m` in `BIN_WIDTH`,
+  `unit 1` tarnt die Norm) **gilt verschärft**.
+- **Ungeglättete Risse:** **Kopfweg a/b** (Werte im Draht vs. in der `phi`-Zeile — der Rat
+  konvergiert nicht → **Axiom-5-Entscheid des Operators**); Norm-Mehrdeutigkeit (`fully_normalized`
+  ambig → die Formel muss in den Kopf); Force-Gate (SH hat keine Newton-Kraft); Höhenstabilität nur
+  bis Grad 14 geprüft → `pending`; die 2190-Naht ist **nicht** gemessen → `pending`; Verallgemeinerung
+  (alle Normen/Körper). Sitz-Stand: Mistral/Duck/Tryingopen `pending` (benannt); **Kimi trug die
+  falsche Antwort** (N24-Platzierung, keine M4-Stimme) — Riss, benannt.
+- **Blockade:** der **Kopfweg** (Operator, Axiom 5); dann die Konformanzmessung gegen eine fremde
+  Referenz (ICGEM-Calculation-Service/pyshtools) bei niedrigem Grad; der CDN-Block ist Myceliums.
+- **Braucht:** (1) den Operator-Entscheid **Kopfweg (a) Draht vs. (b) `phi`-Zeile** (einzeln
+  vorgelegt); (2) dann das Liefer-Gate + die Konformanzmessung; (3) den CI-Bau des (grad-begrenzten)
+  `gfc.bin` + Myceliums Direktiven (`xfer:mountain-354-1`).
 
 ### UCAR-FPI — Arm + Zeilen stehen; Manifestation wartet auf die `field`-Zeilen (eigen)
 - **Status:** eigen (Rest Mycelium-/River-gebunden) | **Bindung:** eigen
@@ -345,6 +347,9 @@ Origin: mountain-354 (2026-10-15):
 - **„Der nächste Block ist der Schwere-Bau für ICGEM. Dafür messe ich zuerst den Modellkopf selbst — Erdkonstante, Radius, Normierung, Tide-System … ohne die gemessene Normierung wäre die Synthese geraten … Danach steht der Kern."** | 2026-10-15 | (mountain 354) — der XGM2019e-Kopf ist gemessen, die fully-normalized Kugelflächen-Synthese gebaut.
 - **„… dafür braucht es dann vermutlich nochmal recherche wide all roster (bereite das dokument vor) und den rat."** | 2026-10-15 | (mountain 354) — die Laufzeit-Naht (SH-Kernel) ist ein Rat-Akt; der weite Lauf ist gefahren, das Roster-Paket **M4** vorbereitet.
 - **„wer macht das mycelium?"** | 2026-10-15 | (mountain 354) — der CDN-Block (Transport + CI-Bau) ist Myceliums; Mountain liefert Compiler + Verdikt-Zeilen (`xfer:mountain-354-1`).
+- **„ja ich meine die sprachmodelle … ich will nur copy und paste machen …"** | 2026-10-15 | (mountain 354) — „die Modelle" = die Sprach-Modelle/UI-Sitze, nicht die Feld-Modelle.
+- **„nein du sollst einfach nur die liste der seats in das dokument eintragen …"** | 2026-10-15 | (mountain 354) — die Sitz-Liste in `2026-10-15-mountain-rat-fragen-sh-kernel.md`, `## Die Sitze`.
+- **„so alles stimmen sind da."** | 2026-10-15 | (mountain 354) — 9 M4-Stimmen eingetragen; das Verdikt steht, der **Kopfweg** bleibt Operator-Entscheid.
 
 ## Abschluss
 
@@ -355,7 +360,8 @@ radius 6378136.3 m, max_degree 5540, norm fully_normalized, tide_system zero_tid
 (`GfcHead`/`parse_head`/`GfcModel`/`harmonic_sums`/`synthesize`, die Rekursion gegen die
 Definition bis Grad 14 geprüft; 12/12 `archivar::gfc`-Tests grün), `gfc_compiler.rs` liest den
 vollen Kopf über `gfc::parse_head`. `cargo check` 0/0, `rustfmt --edition 2024 --check` exit 0,
-Register canonical (2807), `--orphans` 0. Offen: die Runtime-Naht (Rat) und der CDN-Block.
-Nach dem Operator-Wort ist das Roster-Paket **M4** vorbereitet
-(`state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel.md`) — die weite Leiter ist gefahren.
+Register canonical (2807), `--orphans` 0. Das Roster-Paket **M4** ist gestellt (Sitz-Liste im
+Dokument), **9 Stimmen** eingetragen und das **Verdikt** geschrieben
+(`state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md`, am Baum verifiziert).
+Offen: der **Kopfweg** (Operator, Axiom 5), die Konformanzmessung und der CDN-Block.
 Diese Fortschreibung (folge353 → `archiv/`).
