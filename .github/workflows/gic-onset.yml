@@ -12,6 +12,14 @@ on:
         required: true
         type: string
         default: "https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/abk_dbdt_1h.bin"
+      window:
+        description: fixed comparison window as start,end (ISO YYYY-MM-DD), held equal to the station sweep so the recall rows compare; empty = the series span
+        required: false
+        default: ""
+      target_yield:
+        description: onsets per day; when set, the detector calibrates the threshold to an equal yield (overrides the adaptive threshold) — the operating point the station sweep holds; empty = the detector's adaptive robust threshold
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -36,8 +44,18 @@ jobs:
       - name: Bay-onset detector — self-derived onsets against McPherron, with the surrogate null
         run: |
           set -euo pipefail
+          win_args=""
+          if [ -n "${{ inputs.window }}" ]; then
+            wstart="$(echo "${{ inputs.window }}" | cut -d, -f1)"
+            wend="$(echo "${{ inputs.window }}" | cut -d, -f2)"
+            win_args="--window-start $wstart --window-end $wend"
+          fi
+          ty_args=""
+          if [ -n "${{ inputs.target_yield }}" ]; then
+            ty_args="--target-yield ${{ inputs.target_yield }}"
+          fi
           cargo run -p omegaflow-measure --release --bin gic_onset_detector -- \
             --series /tmp/dbdt.bin \
             --station abk \
             --mcpherron /tmp/mcpherron/CorrOnsFiles/ftims.txt \
-            --null 200
+            --null 200 $win_args $ty_args
