@@ -173,6 +173,42 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Print the KSG/KDE estimator split
         run: cargo run --release -p omegaflow-measure --bin te_fn_probe
+  fpr-surr-200:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run gate_fpr_autocorrelation_block_null_binned_n_surr_200
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_block_null_binned_n_surr_200
+      - name: Run gate_fpr_autocorrelation_block_null_ksg_n_surr_200
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_block_null_ksg_n_surr_200
+      - name: Run gate_fpr_autocorrelation_shift_null_binned_n_surr_200
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_shift_null_binned_n_surr_200
+      - name: Run gate_fpr_autocorrelation_shift_null_ksg_n_surr_200
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_shift_null_ksg_n_surr_200
+      - name: Run gate_fpr_autocorrelation_restricted_null_binned_n_surr_200
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_restricted_null_binned_n_surr_200
+      - name: Run gate_fpr_autocorrelation_xshift_null_binned_n_surr_200
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_xshift_null_binned_n_surr_200
+      - name: Run gate_fpr_autocorrelation_arx_null_binned_n_surr_200
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_arx_null_binned_n_surr_200
+      - name: Run gate_fpr_autocorrelation_coherent_phase_null_binned_n_surr_200
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_fpr_autocorrelation_coherent_phase_null_binned_n_surr_200
+  calibration-heavy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Run calibration_fp_independent_ar1_stays_near_chance
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture calibration_fp_independent_ar1_stays_near_chance
+      - name: Run calibration_self_null_discriminator_white_driver_stays_at_the_floor
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture calibration_self_null_discriminator_white_driver_stays_at_the_floor
+      - name: Run gate_conditional_embedded_fp_common_driver_stays_near_chance
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_embedded_fp_common_driver_stays_near_chance
+      - name: Run gate_conditional_embedded_fn_true_coupling_is_found
+        run: cargo test --release -p omegaflow --lib -- --ignored --nocapture gate_conditional_embedded_fn_true_coupling_is_found
   issue:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -195,6 +231,8 @@ jobs:
       - lag-sweep
       - fn-bias
       - probe
+      - fpr-surr-200
+      - calibration-heavy
     if: failure()
     steps:
       - uses: actions/checkout@v7
@@ -202,5 +240,5 @@ jobs:
         run: |
           bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                "te-gate: a gate job carries a finding" \
-               "One te-gate gate job carries a finding. Gated: shift-sweep, fpr-binned, fpr-ksg-arx, fpr-ksg-shift, fpr-membrane, fpr-diagnostic, block-sweep, ksg-sweep, ksg-k-gate, arx-sweep, conditional-arx, coupling-scan, fpr-bins, mi-lag, flare (assert, n=400), lag-sweep, fn-bias, probe. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+               "One te-gate gate job carries a finding. Gated: shift-sweep, fpr-binned, fpr-ksg-arx, fpr-ksg-shift, fpr-membrane, fpr-diagnostic, block-sweep, ksg-sweep, ksg-k-gate, arx-sweep, conditional-arx, coupling-scan, fpr-bins, mi-lag, flare (assert, n=400), lag-sweep, fn-bias, probe, fpr-surr-200, calibration-heavy. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                health
