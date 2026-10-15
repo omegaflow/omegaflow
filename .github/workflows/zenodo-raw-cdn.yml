@@ -1,7 +1,9 @@
 # harvest: format=raw_zenodo arm=raw_mirror pattern=^<asset>$ idempotent=true timeout=240 tag=zenodo.org
 # Zenodo raw mirrors (CC-BY-4.0) byte-for-byte to the omegaflow/sources CDN. Each matrix
-# entry carries the registered url/origin/sha256; raw_mirror refuses to upload unless the
-# live body hashes to the registered sha256.
+# entry carries the registered url/origin and one fingerprint: sha256, or the md5 Zenodo
+# publishes for the dataset-scale assets. raw_mirror refuses to index an upload unless the
+# live body hashes to the registered print. A body over the GitHub 2 GiB asset ceiling is
+# fetched window-by-window (`--origin-size`), so the runner never holds more than one part.
 
 name: zenodo-raw-cdn
 
@@ -81,16 +83,21 @@ jobs:
             url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/cedc_catalog.xlsx"
             origin: "https://zenodo.org/api/records/8084659/files/CEDC%20catalog.xlsx/content"
             sha256: 40ba4601d3f8d32753dd8de8eedd7ffe2bb5c341c3ae9f3303e43c474d75dfb4
+          - asset: Venus_RadarBasemap_2025_Global_75m_v1.tif
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_RadarBasemap_2025_Global_75m_v1.tif"
+            origin: "https://zenodo.org/api/records/18176179/files/Venus_RadarBasemap_2025_Global_75m_v1.tif/content"
+            md5: 9d7ccd0d12e402b82a8390ea3837ab1f
+            size: 80909342816
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
       - name: Mirror ${{ matrix.asset }} to the CDN
         run: |
-          cargo run --release -p omegaflow-harvest --bin raw_mirror -- \
-            --ci-mode \
-            --url "${{ matrix.url }}" \
-            --origin "${{ matrix.origin }}" \
-            --sha256 "${{ matrix.sha256 }}" \
+          args=(--ci-mode --url "${{ matrix.url }}" --origin "${{ matrix.origin }}")
+          if [ -n "${{ matrix.sha256 }}" ]; then args+=(--sha256 "${{ matrix.sha256 }}"); fi
+          if [ -n "${{ matrix.md5 }}" ]; then args+=(--md5 "${{ matrix.md5 }}"); fi
+          if [ -n "${{ matrix.size }}" ]; then args+=(--origin-size "${{ matrix.size }}"); fi
+          cargo run --release -p omegaflow-harvest --bin raw_mirror -- "${args[@]}" \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
                  "zenodo-raw-cdn: ${{ matrix.asset }} returned void" \
                  "raw_mirror returned void for ${{ matrix.asset }} (${{ matrix.origin }}). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \

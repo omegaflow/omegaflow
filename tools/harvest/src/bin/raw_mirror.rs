@@ -1,8 +1,9 @@
-use omegaflow::archivar::fetch::{RetryPolicy, fetch_raw_to_file_with};
+use omegaflow::archivar::fetch::{RetryPolicy, curl_base, fetch_raw_to_file_with};
 use omegaflow::archivar::md5::Md5;
 use omegaflow::archivar::sha256::{Sha256, sha256_hex};
-use omegaflow::cdn::upload_release;
+use omegaflow::cdn::{delete_release_asset, part_name, parts_manifest_name, upload_release};
 use std::io::{BufReader, Read, Write};
+use std::process::Command;
 
 const CDN_DOWNLOAD_MARKER: &str = "/releases/download/";
 
@@ -205,6 +206,181 @@ fn split_streaming(
     Ok(())
 }
 
+fn parse_content_range(headers: &str) -> Option<u64> {
+    for line in headers.lines() {
+        let lower = line.to_ascii_lowercase();
+        if let Some(rest) = lower.strip_prefix("content-range:") {
+            if let Some(total) = rest.trim().rsplit('/').next() {
+                return total.trim().parse::<u64>().ok();
+            }
+        }
+    }
+    None
+}
+
+fn origin_size(origin: &str) -> Option<u64> {
+    let mut cmd = Command::new("curl");
+    cmd.arg("-s")
+        .arg("-S")
+        .arg("-L")
+        .arg("-g")
+        .arg("--max-time")
+        .arg("60")
+        .arg("--connect-timeout")
+        .arg("10")
+        .arg("-r")
+        .arg("0-0")
+        .arg("-o")
+        .arg("/dev/null")
+        .arg("-D")
+        .arg("-")
+        .arg(origin);
+    let out = cmd.output().ok()?;
+    if !out.status.success() {
+        return None;
+    }
+    parse_content_range(&String::from_utf8_lossy(&out.stdout))
+}
+
+fn count_window(
+    path: &std::path::Path,
+    want: u64,
+    whole_sha: &mut Sha256,
+    whole_md5: &mut Md5,
+) -> Result<(String, u64), String> {
+    let got = match std::fs::metadata(path) {
+        Ok(meta) => meta.len(),
+        Err(e) => return Err(format!("{}: no window on disk ({e})", path.display())),
+    };
+    if got != want {
+        return Err(format!(
+            "{}: delivered {got} B, not the {want} B the range named (range ignored?)",
+            path.display()
+        ));
+    }
+    let file = std::fs::File::open(path).map_err(|e| format!("open {}: {e}", path.display()))?;
+    let mut reader = BufReader::with_capacity(STREAM_CHUNK_BYTES, file);
+    let mut part_sha = Sha256::new();
+    let mut buf = vec![0u8; STREAM_CHUNK_BYTES];
+    loop {
+        let n = reader
+            .read(&mut buf)
+            .map_err(|e| format!("read {}: {e}", path.display()))?;
+        if n == 0 {
+            break;
+        }
+        whole_sha.update(&buf[..n]);
+        whole_md5.update(&buf[..n]);
+        part_sha.update(&buf[..n]);
+    }
+    Ok((omegaflow::archivar::sha256::hex(&part_sha.finalize()), want))
+}
+
+fn mirror_windows(
+    total: u64,
+    tag: &str,
+    name: &str,
+    origin: &str,
+    gate: &Gate,
+    ci_mode: bool,
+) -> Result<(), String> {
+    let dir = std::path::Path::new("data").join(tag);
+    std::fs::create_dir_all(&dir).map_err(|e| format!("create {} void: {e}", dir.display()))?;
+
+    let mut whole_sha = Sha256::new();
+    let mut whole_md5 = Md5::new();
+    let mut parts: Vec<(String, String, u64)> = Vec::new();
+
+    let mut start: u64 = 0;
+    let mut idx: usize = 0;
+    while start < total {
+        let end = (start + omegaflow::cdn::CDN_PART_MAX_BYTES - 1).min(total - 1);
+        let want = end - start + 1;
+        let pname = part_name(name, idx);
+        let ppath = dir.join(&pname);
+        let _ = std::fs::remove_file(&ppath);
+
+        let mut cmd = curl_base(RetryPolicy::All, ORIGIN_TRANSFER_BOUND_S, 0);
+        cmd.arg("-r")
+            .arg(format!("{start}-{end}"))
+            .arg("-o")
+            .arg(&ppath)
+            .arg(origin);
+        let out = cmd
+            .output()
+            .map_err(|e| format!("{origin}: curl spawn void: {e}"))?;
+        if !out.status.success() {
+            let _ = std::fs::remove_file(&ppath);
+            return Err(format!(
+                "{origin}: window {start}-{end} void: {}",
+                String::from_utf8_lossy(&out.stderr).trim()
+            ));
+        }
+
+        let counted = count_window(&ppath, want, &mut whole_sha, &mut whole_md5);
+        let (part_sha, part_len) = match counted {
+            Ok(v) => v,
+            Err(e) => {
+                let _ = std::fs::remove_file(&ppath);
+                return Err(e);
+            }
+        };
+
+        if ci_mode {
+            let pstr = ppath.to_str().ok_or_else(|| {
+                format!(
+                    "{}: path is not utf-8 — the part upload stays unraised",
+                    ppath.display()
+                )
+            })?;
+            if !upload_release(tag, pstr) {
+                let _ = std::fs::remove_file(&ppath);
+                return Err(format!("{tag}/{pname}: the CDN part upload returned void"));
+            }
+        }
+        let _ = std::fs::remove_file(&ppath);
+        parts.push((pname, part_sha, part_len));
+        start = end + 1;
+        idx += 1;
+    }
+
+    let whole_sha_hex = omegaflow::archivar::sha256::hex(&whole_sha.finalize());
+    let whole_md5_hex = omegaflow::archivar::md5::hex(&whole_md5.finalize());
+    if let Err(e) = verify(gate, &whole_sha_hex, &whole_md5_hex, origin) {
+        if ci_mode {
+            for (pname, _, _) in &parts {
+                if !delete_release_asset(tag, pname) {
+                    eprintln!("{tag}/{pname}: gate miss — the part could not be deleted again");
+                }
+            }
+        }
+        return Err(e);
+    }
+
+    let manifest = omegaflow::cdn::format_parts_manifest(&whole_sha_hex, &parts);
+    let mpath = dir.join(parts_manifest_name(name));
+    std::fs::write(&mpath, manifest)
+        .map_err(|e| format!("{}: write void ({e})", mpath.display()))?;
+    if ci_mode {
+        let mstr = mpath.to_str().ok_or_else(|| {
+            format!(
+                "{}: path is not utf-8 — the manifest upload stays unraised",
+                mpath.display()
+            )
+        })?;
+        if !upload_release(tag, mstr) {
+            return Err(format!(
+                "{tag}/{name}.parts: the CDN manifest upload returned void"
+            ));
+        }
+    }
+    eprintln!(
+        "{tag}/{name}: {total} B streamed in {} window(s) + manifest (whole sha256 {whole_sha_hex})",
+        parts.len()
+    );
+    Ok(())
+}
+
 fn run(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let url = arg_value(args, "--url").ok_or_else(|| {
@@ -220,6 +396,13 @@ fn run(args: &[String]) -> Result<(), String> {
             "{url}: carries no /releases/download/<tag>/<asset> — the release path stays unread"
         )
     })?;
+
+    let known = arg_value(args, "--origin-size").and_then(|v| v.parse::<u64>().ok());
+    if let Some(size) = known.or_else(|| origin_size(&origin))
+        && size > omegaflow::cdn::GITHUB_RELEASE_ASSET_MAX_BYTES
+    {
+        return mirror_windows(size, &tag, &name, &origin, &gate, ci_mode);
+    }
 
     let temp = std::env::temp_dir().join(format!("raw_mirror-body-{}", std::process::id()));
     let fetched = fetch_raw_to_file_with(&origin, RetryPolicy::All, ORIGIN_TRANSFER_BOUND_S, &temp);
@@ -285,7 +468,7 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(
-            "usage: raw_mirror --url <cdn release url> --origin <source url> (--sha256 <hex> | --md5 <hex>) [--ci-mode]"
+            "usage: raw_mirror --url <cdn release url> --origin <source url> (--sha256 <hex> | --md5 <hex>) [--origin-size <bytes>] [--ci-mode]"
         );
         std::process::exit(2);
     }
@@ -372,5 +555,14 @@ mod tests {
             .is_err()
         );
         assert!(parse_gate(&["--md5".to_string(), "not-hex".to_string()]).is_err());
+    }
+
+    #[test]
+    fn content_range_names_the_total() {
+        let head = "HTTP/1.1 206 Partial Content\r\nContent-Range: bytes 0-0/80909342816\r\nContent-Length: 1\r\n\r\n";
+        assert_eq!(parse_content_range(head), Some(80_909_342_816));
+        let redirect = "HTTP/1.1 302 Found\r\nLocation: https://x/y\r\n\r\nHTTP/1.1 206 Partial Content\r\ncontent-range: bytes 0-0/4096\r\n\r\n";
+        assert_eq!(parse_content_range(redirect), Some(4096));
+        assert_eq!(parse_content_range("HTTP/1.1 200 OK\r\n\r\n"), None);
     }
 }
