@@ -2,7 +2,7 @@
   title: Handover — Mycelium-Folge 357 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 7531229233559ca0511a6005273cc9c2469df73ddd19a293b5838c1a7dbe63f2
+  sha256: 78156c22bcd43a5464aed8ad1f0f654b6460e51817f79764c72fe6ffe9e9275c
   status: live
 -->
 # Handover — Mycelium-Folge 357 (2026-10-15)
@@ -130,17 +130,19 @@ neu ausgelegt).
   bedingter Antrag**
 - **Trigger:** die Register-Zeilen der offenen Spiegel
 - **Lage:** (gemessen 2026-10-15; Verdikt `state/stimmen/2026-10-15-china-planetendaten-rat-verdikt.md`)
-  Die VSSO-Detail-API (`coreMetadata/getDetail?linkId=…`) liefert die gated Feldwerte: **Datensatz 1**
-  = **LOLA**-DEM → SH Grad **1500** (offen: Zenodo-LOLA-Modell bis **5759**, gleiche Messung);
-  **Datensatz 3** = **MOLA**-DEM → SH Grad **21600** (offen: Zenodo-MOLA bis **5759**, gleiche
-  Quelle); **Datensatz 4** = **MAVEN/MGS/MARSIS** (Messungen offen auf PDS/ESA); **Datensatz 6** =
-  LOLA-Polarkarten, **Schutzfrist 2024-03-05…2026-03-05 abgelaufen**. → **Ableitungen aus offenen
-  NASA-Basismessungen, kein eigener Zweck.** Datensatz 2 (DOI `…00011-V01`, **HTTP 404**) und 5
-  sind gated **nicht identifiziert** → `pending`. Der bedingte Weg verlangt Arbeitsstelle +
-  Handynummer + handschriftliches Versprechen; Freigabe = Ermessen. **Kein Send.**
+  Die VSSO-Detail-API (`coreMetadata/getDetail?linkId=…`) + die Suche (`POST …/coreMetadataList`)
+  + die Handle-API liefern die gated Feldwerte — **alle sechs identifiziert**: **1** `14255` LOLA →
+  SH **1500** (offen 5759); **2** `13521` LOLA, lunare SH-Koeffizienten (1 MB); **3** `13517` MOLA →
+  SH **21600** (offen 5759); **4** `15855` **MAVEN/MGS/MARSIS** (offen PDS/ESA); **6** `14790`
+  LOLA-Polarkarten, **Schutzfrist 2026-03-05 abgelaufen**. → **1/2/3/4/6 = Ableitungen offener
+  NASA-Basismessungen, kein eigener Zweck.** **Ausnahme: 5** `14306` = **Drohnen-Photogrammetrie**
+  (`UAV;Camera;RTK`, Metashape) terrestrischer Mars-Analoga — eine **eigene Feldmessung** (offen nur
+  das Qaidam-Analog CC BY-NC) → möglicher eigener Zweck, `pending`. Der bedingte Weg verlangt
+  Arbeitsstelle + Handynummer + handschriftliches Versprechen; Freigabe = Ermessen. **Kein Send.**
 - **Braucht:** (1) die **Register-Zeilen** der offenen Spiegel 1–3 (`url`/`origin`/`compiler` = ich,
   `terms`/`field` = Mountain) + die offenen MAVEN/MGS/MARSIS-Produkte (4); (2) die abgelaufene
-  Schutzfrist von 6 datiert prüfen; (3) Datensatz 2 und 5 identifizieren. **Kein Antrag.**
+  Schutzfrist von 6 datiert prüfen; (3) für **5** die Zweckfrage (braucht das Haus terrestrische
+  Mars-Analog-Morphometrie?) — nur dann ein gezielter Antrag. **Kein Send.**
   An future: `xfer:mycelium-347-2` bleibt offen (kein Send).
 
 ### WDC-B Obninsk — Rettung erweitert; Abdeckung unvollständig (eigen)
