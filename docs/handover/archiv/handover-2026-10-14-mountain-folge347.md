@@ -3,8 +3,8 @@
   session: Mountain-Linie — ein Pass: der ci-gate-register-Rot geheilt (fünf stale CDN-Workflows entfernt), vier Taucher, dann gebaut — der SABER-Zeilen-Arm + der TIMED-TLE/SGP4-Compiler; opentopography terms gesetzt
   class: handover
   date: 2026-10-14
-  sha256: d56ce4c1fca6790f54b00eddffd8fa1be16a78b1cf3fcc84edfe57cd3e2de91c
-  status: live
+  sha256: cd13db6278e77bb957fbb4b46026f055163d30b0c4178b6b9a7b3ee86c6066f0
+  status: archived
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
 # Handover — Mountain-Folge 347 (2026-10-14)
@@ -204,9 +204,11 @@ Fassung zitiert, nie kopiert: HEAD `6b5aaf2c1` (2026-10-14).
   terms-URL `https://data.ucar.edu/dataset/fpi-resolute`. **Riss:** kein Athabasca-FPI-DOI.
   Die zwei `field`-Zeilen sind code-gemessen (`fpi_mer_wind_ms` `fpi_ucar.rs:10`,
   `fpi_zon_wind_ms` `fpi_ucar.rs:12`; `extract.rs:534/535`).
-- **Blockade:** nicht-offene Lizenz → `local-only` (kein CDN); die FPI-eigene
-  Athabasca-Instrumentenkoordinate ist ungemessen (die File-/DASH-Seiten tragen nur
-  Palmer/Resolute/Boulder; der einzige Zahlenwert löst auf AUGO auf — Riss, ungeglättet).
+- **Blockade:** nicht-offene Lizenz → `local-only` (kein CDN).
+- **Korrektur (2026-10-15, river-213 `465e11940`):** die frühere Zeile „die FPI-eigene
+  Athabasca-Instrumentenkoordinate ist ungemessen" ist **stale** und gestrichen — gemessen
+  steht `on earth 54.60282 -113.64442 693` (AUGO II / AUGSO, orthometrisch MSL/EGM96;
+  SRTM30m am Punkt 696.0 m). Beide Enden benannt, nicht geglättet.
 - **Braucht:** die **FPI-eigene** Athabasca-Instrumentenkoordinate an der Primärquelle
   (`qwu@ucar.edu` / DASH-Resource-Support) messen; dann die zwei `field`-Zeilen + die
   Arbeitskopie-Route (`local-only`).

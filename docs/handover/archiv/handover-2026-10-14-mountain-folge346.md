@@ -3,8 +3,8 @@
   session: Mountain-Linie — ein Pass: pds3_img BAND_STORAGE_TYPE (BSQ/BIL/BIP) + vier Taucher + Rat (SABER, Venus-Projektion, ICGEM, Lizenzen, Epochen-Absenz)
   class: handover
   date: 2026-10-14
-  sha256: 9821c612c798e552e9e0893f0c2ddf48a12de2ee63a3e01bc5b597c50b3ff38d
-  status: live
+  sha256: b32185406209b2635025f19e46ec2ec7c2a3d75c7a2b30dc0747fcfd7196e978
+  status: archived
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
 # Handover — Mountain-Folge 346 (2026-10-14)
@@ -200,9 +200,11 @@ zitiert, nie kopiert: HEAD `9b2517557` (2026-10-14).
   terms-URL `https://data.ucar.edu/dataset/fpi-resolute`. **Riss:** kein Athabasca-FPI-DOI.
   Die zwei `field`-Zeilen sind code-gemessen (`fpi_mer_wind_ms` `fpi_ucar.rs:10`,
   `fpi_zon_wind_ms` `fpi_ucar.rs:12`; `extract.rs:534/535`).
-- **Blockade:** nicht-offene Lizenz → `local-only` (kein CDN); die FPI-eigene
-  Athabasca-Instrumentenkoordinate ist ungemessen (die File-/DASH-Seiten tragen nur
-  Palmer/Resolute/Boulder; der einzige Zahlenwert löst auf AUGO auf — Riss, ungeglättet).
+- **Blockade:** nicht-offene Lizenz → `local-only` (kein CDN).
+- **Korrektur (2026-10-15, river-213 `465e11940`):** die frühere Zeile „die FPI-eigene
+  Athabasca-Instrumentenkoordinate ist ungemessen" ist **stale** und gestrichen — gemessen
+  steht `on earth 54.60282 -113.64442 693` (AUGO II / AUGSO, orthometrisch MSL/EGM96;
+  SRTM30m am Punkt 696.0 m). Beide Enden benannt, nicht geglättet.
 - **Braucht:** die **FPI-eigene** Athabasca-Instrumentenkoordinate an der Primärquelle
   (`qwu@ucar.edu` / DASH-Resource-Support) messen; dann die zwei `field`-Zeilen + die
   Arbeitskopie-Route (`local-only`).
