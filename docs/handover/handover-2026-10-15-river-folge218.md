@@ -2,7 +2,7 @@
   title: Handover — River-Folge 218
   class: handover
   date: 2026-10-15
-  sha256: 45b9b1c510dc788f0024d95f2575ca8a6c55d529f67c25aa4c5ef312e4f6b9f4
+  sha256: 550b5b4a257cd9293af853a2b012594b5a969aef3b29f7d0578b19e821b91eee
   status: live
 -->
 # Handover — River-Folge 218 (2026-10-15)
@@ -12,7 +12,7 @@ markiert, nicht erklärt; git trägt, was gemacht wurde. Nur eigene Arbeit: bei
 geteilten Dateien nur die eigenen Hunks; pfad-begrenzt committen. Diese Session
 konsumierte `handover-2026-10-15-river-folge217.md` (→ `archiv/`).
 
-## Burn: open 0.0 · close pending — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db`), die private Session-Zeile wird nicht gelesen (nicht gemessen, Vorbehalt wie river-212…218) · cap 0.55 benannt-ungeprüft — Grund: river-219 (ein Pass; kein Fenster-Edit, kein Send, kein UI-Seat). Fälligkeit bei Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge353, mycelium-folge356 — in river-219 gefaltet); `open_points_check` = 0 stale-citations. Gearbeitet: die zwei `dbdt`-Min/Union-Läufe ausgewertet; der `gic-onset`-Workflow um `window`/`target_yield` erweitert und der gleich-Ausbeute-Einzelstation-Arm `abk_dbdt_1m` gestoßen; F4′ (Blitz-Kanal frei) nachgezogen; die Platzierungs-3-R-Kette gefahren (Recherche `all_wide` → Roster 13 Sitze → Rat-Blatt); die exakte Kalibrierung gebaut (`843c404d5`) + den entscheidenden Min-Sweep gestoßen (`38743967791`); die Träger-Prüfung gebaut (`adf8f1871`) + ausgewertet (`38744578300`: Hülle monoton → Kalibrator); die Bisektion regredierte, behoben (`76c10de27`, 1024-Raster) + zwei Läufe neu gestoßen (`38748544088`, `38748551546`); den Einzelstation-Arm gelesen (dünn) + die dichte Reihe gebaut (`5ec870efd`) + ausgewertet (`38748551546`: signifikant, schlägt die Min-Hülle). (gemessen 2026-10-15, river-219)
+## Burn: open 0.0 · close pending — `session_burn` meldet `db absent` (`~/.local/share/opencode/opencode.db`), die private Session-Zeile wird nicht gelesen (nicht gemessen, Vorbehalt wie river-212…218) · cap 0.55 benannt-ungeprüft — Grund: river-219 (ein Pass; kein Fenster-Edit, kein Send, kein UI-Seat). Fälligkeit bei Pass-Öffnung: `--fired river` = 1 (die Große-Rätsel-Kandidatenliste, **arbeits-gebunden** — nicht erneut vorgelegt), `--stale river --persist 3` = 0, `--addressed river` = 2 (mountain-folge353, mycelium-folge356 — in river-219 gefaltet); `open_points_check` = 0 stale-citations. Gearbeitet: die zwei `dbdt`-Min/Union-Läufe ausgewertet; der `gic-onset`-Workflow um `window`/`target_yield` erweitert und der gleich-Ausbeute-Einzelstation-Arm `abk_dbdt_1m` gestoßen; F4′ (Blitz-Kanal frei) nachgezogen; die Platzierungs-3-R-Kette gefahren (Recherche `all_wide` → Roster 13 Sitze → Rat-Blatt); die exakte Kalibrierung gebaut (`843c404d5`) + den entscheidenden Min-Sweep gestoßen (`38743967791`); die Träger-Prüfung gebaut (`adf8f1871`) + ausgewertet (`38744578300`: Hülle monoton → Kalibrator); die Bisektion regredierte, behoben (`76c10de27`, 1024-Raster) + zwei Läufe neu gestoßen (`38748544088`, `38748551546`); den Einzelstation-Arm gelesen (dünn) + die dichte Reihe gebaut (`5ec870efd`) + ausgewertet (`38748551546`: signifikant, schlägt die Min-Hülle); die fehlende Meridian-Naht gebaut (`b81c126be`) + gestoßen (`38750488818`). (gemessen 2026-10-15, river-219)
 
 ## Operator-Wort-Register
 
@@ -73,10 +73,10 @@ Verbatim: `state/operator-gespraeche/2026-10-15-river.md` (river-214…219) · `
 
 ### 14-min-Lücke Magnetometer→Optik — im 2D + Ganznacht gemessen, Pick-Riss getragen
 - **Status:** eigen (getragener Riss) | **Bindung:** eigen
-- **Trigger:** **keiner gebaut** — der frühere Trigger-Name „der GIC-Onset-Relationsschritt auf der Meridian-Spur" war eine Hülle ohne Pfad (kein Werkzeug, kein Workflow). Am Baum: `gic_onset_relation.rs` ist eine **andere** Naht (GIC↔MCON, lief river-192/193 lokal, Ratio 1,217; `bpa_gic`-Arm `pending`, 4-Tage-Spanne). Die Keogramm-Kette (`themis_asi_timed_keogram.rs`) und die GIC-Onset-Kette stehen, die **Naht dazwischen (optischer Onset ↔ Magnetometer/GIC-Onset auf der Spur) fehlt**.
+- **Trigger:** die Naht ist **gebaut** (river-219): `mag_optical_overlay --window --k` liest den optischen Keogramm-Onset und den Magnetometer-Onset je Station (robustes Maß `median + k·1.4826·MAD`) und druckt die Lags; Workflow `mag-optical-lag` (`b81c126be`). **Gestoßen:** Lauf `38750488818` (2024-05-10, Stationen `ykc,fcc,ott`, Keogramm `themis_asi_timed_keogram_20240510_kapu.bin` = CDN HTTP 206, Fenster 06:50–08:15). Die frühere Hülle „GIC-Onset-Relationsschritt" war kein Pfad — `gic_onset_relation.rs` ist eine **andere** Naht (GIC↔MCON, lief river-192/193, Ratio 1,217; `bpa_gic` `pending`, 4 Tage).
 - **Lage:** (gemessen 2026-10-12 river-197 + river-200) 2D: kein kohärenter off-meridian optischer Eintritt bei 07:41; der optische Onset ist ein einzelnes azimutal wanderndes Band 07:54:45→07:55:45. Ganznacht-Overlay (CDN-TKDG `themis_asi_timed_keogram_20240510_kapu.bin`): Stundenmittel 03–06 ≈ 3310–3343, 07 = 3370.6, Ränder 02 = 3895 / 08 = 3911; der Hauptsturm 17:00–23:00 UT (Tageslicht). **Riss:** der river-196-Pick „07:41" ist nicht eindeutig (Stunde 07 trägt eine Kette 07:13–07:48, größte YKC-Spitze 07:20); die „+14 min 27 s" ist pick-abhängig.
 - **Blockade:** keine.
-- **Braucht:** (a) die fehlende Naht bauen — den optischen Keogramm-Onset je Minute gegen den Magnetometer-/GIC-Onset der Meridian-Stationen legen (Phasendifferenz + Pick-Abhängigkeit), sonst bleibt die „+14 min 27 s" ungemessen; (b) den `pick`-Riss tragen.
+- **Braucht:** den Lauf `38750488818` auswerten — optischer Onset + Lag je Station, und die Pick-Abhängigkeit (die Kette 07:13–07:48) benennen; den `pick`-Riss tragen.
 
 ### Weberin-Zeugen-Fäden — SABER-Form (C); Athabasca manifestiert; UCAR-FPI Arm steht
 - **Status:** eigen (Bau) | **Bindung:** eigen
