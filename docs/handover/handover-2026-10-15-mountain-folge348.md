@@ -2,7 +2,7 @@
   title: Handover — Mountain-Folge 348 (2026-10-15)
   class: handover
   date: 2026-10-15
-  sha256: 6089625fe874eeb1c289d785e5dc49b37f8785b8348b828c78f066f7c7d22417
+  sha256: e26fd0934a507493bcc451156df37ba6be7ea3af708f85f3fc8d4c8ebb446883
   status: live
   see-also: docs/concepts/tool-forms.md, AGENTS.md
 -->
@@ -78,43 +78,44 @@ mit gemessenem Teil-Roster.
   (`matrix.rs:644`, `drs_fits.rs:38` vs. `agrav.rs`/`gfc.rs`/`hips.rs`) bleibt als **Zeuge** stehen,
   bis der Unterscheider ihn an der Wurzel löst.
 
-### Modellart-Unterscheider — Recherche + Rat-Runde, Riss in der Platzierung (eigen)
+### Modellart-Unterscheider — Recherche + voller Rat; Verdikt gebunden (eigen)
 - **Status:** eigen · **Operator-Wort 2026-10-15: direkt der Unterscheider** (statt der Bit-Brücke)
-  · **Rat-Runde gefahren — kein Konsens, ein Riss** | **Bindung:** eigen
+  · **Rat-Runde vollständig (Operator-Hand) — Verdikt gebunden** | **Bindung:** eigen
 - **Trigger:** der Bau
 - **Lage:** (gemessen 2026-10-15) Der Wire bleibt fix 26 × f64. **Recherche-Haus-Präzedenz:** der
   Baum trägt den Unterscheider am Rand **schon als `Option`**, nicht als Bit — `SourceConfig.catalog_epoch:
   Option<f64>` (`types.rs:526`) und `itrf_sinex.rs:40` `ref_epoch: Option<RefEpoch>`; ICGEM taggt
   selbst `gfc`/`gfct` pro Datensatz; der `Frame` (`types.rs:468`) trägt Körper/Modus, aber keine
   Zeitabhängigkeit. Web-Präzedenz: getaggte/diskriminierte Union (Wikipedia „Tagged union").
-- **Rat-Runde (2026-10-15, 6 Stimmen; Rohantworten `state/stimmen/2026-10-15_disc_*.json`):**
-  - **(b) source-/frame-level:** **GLM 5.3** · **Sakana** · **Lumo**. GLM: die Modellart ist eine
-    **Datensatz-Eigenschaft**, konstant über alle Records → sie gehört zur Quelle, mit dem Enum
-    `model_kind ∈ {static, time_variable}` (gfc|gfct), **nicht** „Epoch anwendbar|nicht" (das ist
-    eine Folge). Frame-level reicht nicht: ein Frame kann statisch **und** zeitvariabel für denselben
-    Körper tragen (statisches Mittelfeld + GRACE-Zeitreihe). Sakana/Lumo: der Unterscheider gehört
-    nicht in jeden Record; (a) würde einen Slot opfern (1/26) und einen Sentinel in die Wertdomäne
-    zwingen.
-  - **(a) pro Record (26×f64-Slot):** **DeepSeek V4 Pro** · **Duck (GPT-6 Luna)**. DeepSeek: eine
-    **rohe Wire-Leserin ohne Quellwissen** bleibt nur ehrlich, wenn der Record den Unterscheider
-    selbst trägt; Quelle/Frame ist **Provenienz**, nicht Wahrheit. Duck: exakter Integer-Code in
-    einem f64-Slot; statisch ⇒ der Epoch-Slot behauptet keine Epoche (Wert ignoriert), zeitvariabel
-    ⇒ echte Epoche inkl. `0.0 = J2000`; fehlt/nicht-ganzzahlig der Code ⇒ „unbekannt/ungültig",
-    nie raten.
-  - **Z.ai** lief noch („Thinking…") — kein Votum abgeholt.
-  - **Gemeinsamer stärkster Riss beider Lager:** (a) = denormalisierte Konstante → **doppelte
-    Wahrheitsquelle** und Enum-im-f64-Slot; (b) = **losgelöste Records werden mehrdeutig ohne
-    Erkennung** (Naked-Wire-Problem). (c) „beides" erzeugt per Konstruktion den Dual-Truth-Konflikt,
-    den beide verwerfen (DeepSeek: nur als abgeleiteter, validierter Cache, nie als zweiter Autor).
-- **Riss (ungeglättet):** die Stimmen sind **2× (a) / 3× (b)** gespalten; der Riss ist echt (wer
-  muss ehrlich sein — die rohe Wire-Leserin oder der Record-in-seiner-Hülle?). **Kein Verdikt**,
-  solange dieser Riss nicht tie-break't ist.
-- **Blockade:** die Platzierungs-Spaltung — kein Konsens der Runde.
-- **Braucht:** (1) den **Tie-Break** (weitere Stimmen der Frontier-Sitze auf dieselbe Frage, oder
-  Operator-/Rat-Wort); (2) dann den Bau: bei **(b)** `model_kind` als source-level `Option`-Enum am
-  `SourceConfig`/`phi`-Block + `gfc.rs`-Anbindung; bei **(a)** ein reservierter f64-Slot mit exaktem
-  Integer-Code + Decode-Vertrag (ungültig ⇒ Rückweisung); (3) die Leselinien `matrix.rs:644` /
-  `drs_fits.rs:38` an die Wurzel ziehen (Absenz aus dem Typ ableiten, nicht aus `epoch <= 0.0`).
+- **Rat-Runde (2026-10-15, voller Roster; meine 6 Stimmen `state/stimmen/2026-10-15_disc_*.json`,
+  der Rest aus der Operator-Hand).** Die Runde ist **konvergiert — auf zwei getrennte Achsen**,
+  nicht auf ein Enum:
+  - **Achse 1 — Modellart, source-level (die Wahrheit):** `model_kind ∈ {static, time_variable}`
+    (= ICGEM `gfc`/`gfct`, 1:1 ohne Übersetzungsverlust). Sie nennen GLM · Claude · DeepSeek ·
+    MiniMax · Duck. **Frame-level verworfen** (GLM/Claude/MiniMax: ein Frame trägt statisch **und**
+    zeitvariabel — statisches Mittelfeld + GRACE-Zeitreihe). Haus-Präzedenz (`catalog_epoch`/
+    `ref_epoch`) stützt den Ort.
+  - **Achse 2 — Epoch-Anwendbarkeit, record-level, als `finite | NaN` im Epoch-Slot** (nicht als
+    Extra-Slot, nicht als zweites Enum): `NaN` = keine Epoche. **Der Pad wird `NaN` statt `0.0`**
+    — der eigentliche Abschluss (GLM: „der Unterscheider heilt den Pad nicht"); getragen von
+    Claude/DeepSeek/Duck/Sakana/Perplexity. `0.0` bleibt echter J2000; statisch ⇒ `NaN`.
+  - **Die zwei Achsen NICHT mischen** (DeepSeek/Perplexity/GLM): ein statisches `gfc` kann eine
+    Referenz-/Katalogepoche tragen, ein `gfct` pro Record keine — `epoch-anwendbar|nicht` ist
+    **nicht** `static|zeitvariabel`. Wer sie mischt, baut das Presence-Bit unter neuem Namen.
+  - **Keine zwei Wahrheiten:** die record-seitige `NaN` ist eine **mechanisch aus der Modellart
+    abgeleitete Projektion** (source gewinnt; Divergenz = harter Contract-Verstoß, nie still) —
+    Perplexity/GLM/DeepSeek. Decode am Codec-Rand in `Option<Epoch>` (Claude/GLM).
+  - **Die (c)-Stimmen** (Sakana/Lumo/DeepSeek) lösen sich darin auf: „beides" heißt hier **zwei
+    Achsen mit einer Quelle** (source = Modellart-Wahrheit, record = abgeleitetes `finite|NaN`),
+    nicht zwei handgeschriebene Wahrheiten. **Duck** blieb als Einziger bei (a), **Z.ai** lief noch.
+- **Verdikt (gebunden, voller Roster 2026-10-15):** **Achse 1** bauen — `model_kind` source-level
+  am `SourceConfig`/`phi`-Block (`gfc` ⇒ `static`, `gfct` ⇒ `time_variable`) — **und Achse 2** —
+  der Epoch-Slot trägt `NaN` bei statisch, sonst endliche TDB; Leser dekodieren am Rand in
+  `Option<Epoch>`; `matrix.rs:644`/`drs_fits.rs:38` lesen `is_finite()` statt `<= 0.0`. Ein
+  Validator weist `static ∧ finite-slot` und `time_variable ∧ NaN-slot` als Contract-Verstoß ab.
+- **Blockade:** keine.
+- **Braucht:** den **Bau** (Achse 1 + Achse 2 + die zwei Leselinien + die Presence-/Datenkontrakt-Klausel
+  in `docs/concepts/archivar-mathematikerin.md`), `cargo check` 0/0; kein weiteres Tor.
 
 ### SABER — verdiktet: B + A (eigene Weltlinie + Messvolumen) (eigen)
 - **Status:** eigen · **verdiktet** (Rat 2026-10-14: B + A) | **Bindung:** eigen
@@ -287,5 +288,7 @@ Lock `open-weight-ui` gesetzt und gelöst), **dann der volle Roster aus der Oper
 (die sechs Frontier-Sitze + die offenen Gewichte), mit der **Baum-Verifikation** (der
 „u32/u64"-Einwand der Stimmen ist ein Namens-Artefakt — die Maske ist ein f64-Bitfeld); dann das
 **Operator-Wort „direkt der Unterscheider"**, die **Recherche** (source-level `Option`-Präzedenz
-`catalog_epoch`/`ref_epoch`) und die **zweite Rat-Runde** zum Modellart-Unterscheider (2× per-Record
-/ 3× source-level — der Riss bleibt ungeglättet) — und diese Fortschreibung.
+`catalog_epoch`/`ref_epoch`) und die **zweite Rat-Runde** zum Modellart-Unterscheider — voller Roster,
+**konvergiert auf zwei getrennte Achsen** (Modellart source-level; Epoch-Anwendbarkeit record-level
+als `finite|NaN` mit NaN-Pad; keine gemischten Achsen, keine zwei Wahrheiten) — und diese
+Fortschreibung. Der **Bau** der zwei Achsen trägt der eigene Punkt.
