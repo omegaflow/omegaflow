@@ -22,6 +22,7 @@ pub const FLAG_NO_TIME: u32 = 1 << 6;
 
 const TOF_LO_S: f64 = 0.5;
 const TOF_HI_S: f64 = 6.0;
+const MINI_RMS_SAT_PS: f64 = 99_900.0;
 const EPOCH_LO_UTC: f64 = -31_536_000.0;
 const EPOCH_HI_UTC: f64 = 4_133_980_800.0;
 
@@ -361,7 +362,17 @@ pub fn parse_mini(bytes: &[u8]) -> Option<Vec<NormalPoint>> {
                 if tok.is_empty() || mini_all_nines(tok) {
                     None
                 } else {
-                    mini_f64(tok)
+                    match mini_f64(tok) {
+                        Some(carrier) => {
+                            let ps = carrier * 0.1;
+                            if ps >= MINI_RMS_SAT_PS {
+                                None
+                            } else {
+                                Some(ps)
+                            }
+                        }
+                        None => None,
+                    }
                 }
             }
             None => None,

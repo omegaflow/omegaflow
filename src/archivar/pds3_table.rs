@@ -281,26 +281,29 @@ pub fn record_stride(meta: &TableMeta, file_len: usize) -> Option<usize> {
 
 pub fn unix_of_iso(s: &str) -> Option<f64> {
     let b = s.as_bytes();
-    if b.len() < 19 || b[4] != b'-' || b[10] != b'T' {
+    if b.len() < 19 || b[4] != b'-' {
         return None;
     }
     let year = s.get(0..4)?.parse::<i64>().ok()?;
-    let days = if b[7] == b'-' {
+    let (days, off) = if b[7] == b'-' {
         let month = s.get(5..7)?.parse::<i64>().ok()?;
         let day = s.get(8..10)?.parse::<i64>().ok()?;
-        days_from_civil(year, month, day)?
+        (days_from_civil(year, month, day)?, 0usize)
     } else {
         let doy = s.get(5..8)?.parse::<i64>().ok()?;
         if !(1..=366).contains(&doy) {
             return None;
         }
-        days_from_civil(year, 1, 1)? + (doy - 1)
+        (days_from_civil(year, 1, 1)? + (doy - 1), 2usize)
     };
-    let hour = s.get(11..13)?.parse::<i64>().ok()?;
-    let minute = s.get(14..16)?.parse::<i64>().ok()?;
-    let second = s.get(17..19)?.parse::<i64>().ok()?;
-    let frac = if b.get(19) == Some(&b'.') {
-        let frac_str = s.get(20..)?.trim_end_matches('Z');
+    if b.get(10 - off) != Some(&b'T') {
+        return None;
+    }
+    let hour = s.get(11 - off..13 - off)?.parse::<i64>().ok()?;
+    let minute = s.get(14 - off..16 - off)?.parse::<i64>().ok()?;
+    let second = s.get(17 - off..19 - off)?.parse::<i64>().ok()?;
+    let frac = if b.get(19 - off) == Some(&b'.') {
+        let frac_str = s.get(20 - off..)?.trim_end_matches('Z');
         if frac_str.is_empty() {
             0.0
         } else {
