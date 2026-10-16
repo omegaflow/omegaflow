@@ -1,0 +1,32 @@
+#!/bin/sh
+# where — the canonical pointer for a term, BEFORE a new internet search: register,
+# then the live handovers, then the spilled searches we already ran, then the
+# history, then the docs. One call instead of a repo-wide hunt.
+# usage: where <term>
+set -u
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+. "$root/bin/_roots.sh"
+term="${1:?usage: where <term>}"
+
+printf '== register (phi/sources) ==\n'
+sgrep -i "$term" "$root/phi" 2>/dev/null || true
+
+printf '== live handovers ==\n'
+sgrep -i -g 'handover-*.md' "$term" "$root/docs/handover" 2>/dev/null || true
+
+printf '== spilled searches (already run) ==\n'
+if [ -n "${OMEGAFLOW_SPILL_DIR:-}" ] && [ -d "$OMEGAFLOW_SPILL_DIR" ]; then
+    fd -H -t f "$term" "$OMEGAFLOW_SPILL_DIR" 2>/dev/null || true
+fi
+
+printf '== history (archiv) ==\n'
+sgrep -i --all -g 'handover-*.md' "$term" "$root/docs/handover/archiv" 2>/dev/null || true
+
+printf '== docs ==\n'
+sgrep -i "$term" "$root/docs" 2>/dev/null || true
