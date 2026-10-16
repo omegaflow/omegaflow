@@ -21,7 +21,7 @@ real="$(realpath -m -- "$p" 2>/dev/null)" || { printf 'voice_read_full: bad path
 tmp="$(realpath -m -- "${TMPDIR:-/tmp}")"
 root="$(cd "$(dirname "$0")/.." && pwd)"
 . "$root/bin/_roots.sh"
-repo_spill="$(realpath -m -- "${OMEGAFLOW_SPILL_DIR:-$OMEGAFLOW_WORK/recherche/spill}")"
+repo_spill="$(realpath -m -- "${OMEGAFLOW_SPILL_DIR:-$OMEGAFLOW_WORK/recherche/spills/search}")"
 case "$real" in
   "$tmp"/omegaflow_all_*.txt|"$repo_spill"/omegaflow_all_*.txt) : ;;
   *)
