@@ -2,13 +2,13 @@
   title: Handover — Mycelium (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: 95a653d2106e300407ad8ac753ed16ac458ef745a83235a9722a079acc3a6815
+  sha256: 6c343c264723e602be56488ce98851915d219ec59415ffa145c7ff27012df9ad
   status: live
 -->
 # Handover — Mycelium (2026-10-16)
 
 ## Offen — eigen
-- **ICGEM `gfc`** (`xfer:mountain-354-1`): Compiler/Probe/Klasse grün, Blockform trocken gedruckt. **Kante = statische Epoche** — das Modell führt keine, `gfc_compiler` verweigert (kein J2000); `PRESENCE_FLAG_EPOCH` ungebaut (`_open_inkling.json` pending). Dazu Grad-Cap (Rat/Operator) + `ttl` (Mountain).
+- **ICGEM `gfc`** (`xfer:mountain-354-1`): Transport trocken grün (Blockform gedruckt). **Kante = statische Epoche** (Modell hat keine), `gfc_compiler` verweigert (kein J2000); `PRESENCE_FLAG_EPOCH` ungebaut (`_open_inkling.json` pending). Dazu Grad-Cap (Rat) + `ttl` (Mountain).
 - **UCAR-FPI** `local-only`, keine Zeile. `xfer:river-224-4` geklärt.
 - **Quellen-Fäden** `weberin-*` (AM blocked · IM CTBTO-`riss`) · `exposom-matrix` · `worldwide-lidar`.
 - **Wartestand:** JUICE (ESOC 2026-11-01) · Ratsvorlagen.
