@@ -30581,6 +30581,13 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 fe5ed9f80c69d570b17b865f5d38c349e71fb2445e69fc9bb89209676f776888
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_RadarBasemap_2025_Global_75m_v1.tif
+terms CC-BY-4.0 https://zenodo.org/records/18176179
+origin https://zenodo.org/api/records/18176179/files/Venus_RadarBasemap_2025_Global_75m_v1.tif/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 1ddfcd6b9a9feff5ac3a573c8c26dc7a9a03685a99aed84bf5ce95e28b03d98b
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_RadarBasemap_2025_Provenance_2025m_v1.tif
 terms CC-BY-4.0 https://zenodo.org/records/18176179
 origin https://zenodo.org/api/records/18176179/files/Venus_RadarBasemap_2025_Provenance_2025m_v1.tif/content
