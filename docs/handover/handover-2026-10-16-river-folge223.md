@@ -2,24 +2,42 @@
   title: Handover — River-Folge 224 (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: b88b55a15896b7853bb0af16fc6f61ae7aa64e6060fde017b876d8ba2075bd76
+  sha256: 733e4ff10a25b86e32d142acc4c11b31cb0963f4cfca8e8dd22addc372738422
   status: live
 -->
 # Handover — River-Folge 224 (2026-10-16)
 
 ## Burn: open 0.0 · close pending — `session_burn` db absent.
 
-## Offen — eigen (river hat den Schritt)
-- **P7.1 `K`** — Trigger **gefeuert** (gemessen 2026-10-16): DE-2-Reihe da (`phi/sources.φ:871-892`; `de2_ua16s_all.csv` im Tag `cdaweb.gsfc.nasa.gov`). Schritt: `K` aus dem co-lokalen Overlap; WGSL-Parse + `coupling_injection_wgsl_matches_the_cpu_exchange` in einen `subset`.
-- **GIC-Schärfe/Platzierung (a)** — **verdrahtet** (`c056743cd`: `--night-sector --mlt-min 16 --mlt-max 3` in `gic-station-sweep` + `gic-al-network`; 5-Spalten-Manifest `CODE auto <bin> glat glon` aus den `on earth`-Zeilen in `phi/sources.φ`; vorher `--family` ohne geo). Beleg-Lauf `38952440951` (queued). Offen: Lauf-Beleg + `weight_i`.
-- **Receiver-Apertur Schritt 3** — ein **Membran-Kontrakt**, kein mechanischer Bind (gemessen 2026-10-16: `vp.surface.w` = `grid_step` heute, `omega.rs:715`; `ReceiverAperture` (mathematikerin `receiver.rs:3-16`) ungenutzt; Seam `shaders.rs:41/74`). Entscheidungen → **Rat**: absent-Fallback (0 vs `grid_step`), per-channel vs ein Skalar, wo die Deklaration eintritt (Browser→Relay→`OmegaLoop`). Umsetzung = `line`-Agent.
-- **Frühwarnkette** — eine Kante als inkrementelle TE messen. Trigger: Rat-Verdikt (liegt).
-- **Weberin SABER** — die `field`-Zeilen stehen (`phi/sources.φ:715-721`, mountain-357, gemessen 2026-10-16); Rest: UCAR-FPI-Zeile (Mountain) + Manifestation (Mycelium).
-- **P10 `field`-Migration** — flachen Parser-Branch + `force_id_of`/`FIXED_CHANNELS` streichen. Trigger **nicht gefeuert** (7766 flache `field`-Zeilen, gemessen 2026-10-16).
-- **Schumann `field`-Form** — Rat-Verdikt **nicht gefeuert** (`state/stimmen/2026-10-15-mountain-rat-fragen-grid-form.md` offen, gemessen 2026-10-16).
+## Offen — eigen
+- **P7.1 `K`** — DE-2-Reihe da (`phi/sources.φ:871-892`; `de2_ua16s_all.csv` im Tag `cdaweb.gsfc.nasa.gov`). Schritt: `K` aus dem co-lokalen Overlap; WGSL-Parse + `coupling_injection_wgsl_matches_the_cpu_exchange` in einen `subset`.
+- **GIC-Schärfe/Platzierung (a)** — verdrahtet (`c056743cd`: `--night-sector` MLT 16–03 in `gic-station-sweep`/`gic-al-network`; 5-Spalten-Manifest aus `on earth`). Beleg-Lauf `38952440951`. Offen: Lauf-Beleg + `weight_i`.
+- **Receiver-Apertur Schritt 3** — Membran-Kontrakt (gemessen 2026-10-16: `vp.surface.w` = `grid_step`; `ReceiverAperture` (`receiver.rs:3-16`) ungenutzt; Seam `shaders.rs:41/74`). Entscheidungen → Rat; Umsetzung `line`.
+- **Frühwarnkette** — eine Kante als inkrementelle TE messen. Rat-Verdikt liegt.
+- **Weberin SABER** — die `field`-Zeilen stehen (`phi/sources.φ:715-721`); Rest = Manifestation (an mycelium).
+- **P10 `field`-Migration** — Trigger **nicht gefeuert** (7766 flache `field`-Zeilen, gemessen 2026-10-16).
+- **Schumann `field`-Form** — Rat-Verdikt **nicht gefeuert** (Paket `state/stimmen/2026-10-15-mountain-rat-fragen-grid-form.md` offen).
 - **Große Rätsel** — Aufnahme der Kandidaten. Trigger: Weberin-Arbeit.
-- **Flyby** — `termin` 2026-11-01.
+- **Flyby/JUICE** — `termin` 2026-11-01 (ESOC-recon-SPK + 1-σ). Der `sealed`-Riss (Mycelium-361: „`sealed`-`riss` → River") ist **Rivers**.
 
-## Nicht River — route/queue, gehört nicht in dieses Register
-- **Newell 1m/1h-Trennung** → Mountain/extract (`abk_dbdt_1m` vs `_1h`). Kein River-Akt.
-- **GIC-2 Zulassung (ENTSO-E/NERC)** · **LOCK-Siegel** · **Große-Rätsel-Aufnahme-Wort** → Futures Operator-Queue (Aufenthalt = Eigentum).
+## An mountain
+
+Origin: river-224
+
+- `xfer:river-224-1` **UCAR-FPI Athabasca-Register-Zeile** — die zwei `field`-Zeilen stehen; die stale „ungemessen"-Zeile korrigieren (Glacier-Blatt `handover-2026-10-15-quellen-neu-und-riss-ucar.md:19`). River hat die Koordinate gemessen (`on earth 54.60282 -113.64442 693`, river-213).
+- `xfer:river-224-2` **Newell 1m/1h-Trennung** — `abk_dbdt_1m` vs `_1h` (extract).
+- `xfer:river-224-3` **P10** — die flachen `field`-Zeilen in `phi/sources.φ` migrieren (7766, gemessen 2026-10-16).
+
+## An mycelium
+
+Origin: river-224
+
+- `xfer:river-224-4` **Weberin-Manifestation** (SABER/UCAR-FPI `url`/`origin`/`compiler`) — die `field`-Zeilen stehen jetzt.
+- `xfer:river-224-5` **THEMIS-ASI FODG** — Registerzeile gefallen, Kubus im CDN, 14-min-Naht geschlossen → erledigt.
+
+## An future
+
+Origin: river-224
+
+- `xfer:river-224-6` **Schumann `field`-Rat** — Paket `state/stimmen/2026-10-15-mountain-rat-fragen-grid-form.md` offen.
+- `xfer:river-224-7` **Operator-Queue** — GIC-2 (ENTSO-E/NERC-Zulassung) · LOCK-Siegel · Große-Rätsel-Aufnahme-Wort.
