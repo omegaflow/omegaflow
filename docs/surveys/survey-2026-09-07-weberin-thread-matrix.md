@@ -2,7 +2,7 @@
   title: Survey — Die Weberin Faden-Matrix (thread matrix)
   class: survey
   date: 2026-09-07
-  sha256: 0bcaec965c5b3f31dcfa6634bfa995123044830945b14f3518966c5362e64dea
+  sha256: 8bc8cc92e5fabd4cdbce9989ea3e625855810ad0e18e9be57807259f13305573
   status: live
   see-also: docs/concepts/die-weberin.md docs/concepts/archivar-mathematikerin.md
 -->
@@ -82,7 +82,7 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 | Gamma: Fermi-LAT 4FGL | built | `fermi_4fgl_compiler` |
 | X-ray: Chandra CSC; X-ray binaries; magnetars | in-register | chandra_csc, lmxbdata, magnetar_flat |
 | **VHE γ-ray: TeVCat** (published sources: HAWC/H.E.S.S./MAGIC/VERITAS/CTA detections) | built | tevcat_flat.json |
-| VHE instruments individually (HAWC 2HWC, H.E.S.S./MAGIC/VERITAS/CTA event lists, LHAASO) | not-published (no asset/register entry) | — |
+| VHE instruments individually (HAWC 2HWC, H.E.S.S./MAGIC/VERITAS/CTA event lists, LHAASO) | **gebaut** (HAWC `phi:12629`, LHAASO `phi:28529` — Nachzug 2026-10-16); H.E.S.S./MAGIC/VERITAS/CTA event lists bleiben not-published | hawc_compiler/lhaaso_compiler |
 | Solar: GOES XRS/EUVS/X-ray, SDO AIA, SDO/EVE, GONG modes, HMI/WSO polar, F10.7 | in-register + built | goes/euvs/aia/eve/gong/hmi/wso/f107 compilers |
 | Solar wind & IMF (OMNI, ACE, PSP, RTSW, GOES mag, DONKI CME/flare) | in-register + built | omni2_compiler; live hapi |
 | Radio: Wind/WAVES; Breakthrough Listen L-band | in-register + built | wind_waves_compiler, bl_narrowband |
@@ -92,7 +92,7 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 | **Particle provenance em (Cherenkov/shower)**: IceCube | built | `amon_compiler` (.amn1 alerts), `icecat_compiler` (S2E1+SKY1, ROOT_NEUTRINO); data-release portal 403 → blocked |
 | ANTARES / KM3NeT ant20_01 events | built | `antares_vo_compiler` (S2E1 + SKY1, particle_root neutrino); VO route registered in blocked |
 | Pierre Auger (UHECR) | built | `auger_compiler` (.pao1) |
-| TA / KM3NeT detector / Super-K / JUNO / LHAASO catalogs | not-published in-system | no open route in register (KASCADE-Grande semi-open — absent) |
+| TA / KM3NeT detector / Super-K / JUNO catalogs | not-published in-system; **LHAASO ist gebaut** (`phi:28529`) | TA: nur Einzelereignis (Zenodo 8427755, kein Vollkatalog); KM3NeT/Super-K/JUNO no open route; KASCADE-Grande absent |
 | CMB (Planck SMICA), dust extinction, cosmic flows | in-register + built | cmb_planck/cosmicflows/dust_map compilers |
 | Pulsars, white dwarfs, binaries (sb9/WDS), KBO elements, comets (dcom5/cometels) | in-register + built | ssd jsons; mpcobs/kbo/dcom5/cometels compilers |
 
@@ -116,7 +116,7 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 | Solar p-modes (GONG, BiSON) | built | gong_compiler/gong_series, bison/basu/shift |
 | Air pressure fields (register acoustic label: METAR/OM pressure) | in-register | weather stations |
 | **Infrasound (CTBTO IMS)** | BGR-Netz in-register + built (Nachzug 2026-09-27: `bgr_infrasound.bin`, `phi/sources.φ`:9751); die CTBTO-IMS-Route bleibt blocked account (vDEC) | harvester-leads |
-| **Hydroacoustics / ocean noise (NOAA PMEL hydrophones, NCEI)** | pending — no actor | harvester-leads |
+| **Hydroacoustics / ocean noise** (NOAA NRS, ONC Hydrophon, PANGAEA PALAOA) | **gebaut** (`phi:11859` flac, `:10355` onc_hydrophone — Nachzug 2026-10-16); **Riss:** die Register-`origin` (Pfad-Stil) liefert 404, nur das GCS-`storage/v1`-JSON-Listing ist 200 | harvester-leads |
 
 ### seismic (3 body / 4 surface)
 
@@ -124,7 +124,7 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 |---|---|---|
 | Earthquake event feeds (JMA EEW/quake, p2pquake, vedur.is, GeoNet, USGS all_day + regional FDSN, seismicportal, INGV, ArcGIS Worldwide/ROMPLUS) | in-register | seismic-body / seismic-surface live |
 | Archival quake catalog | built | `seismic_quakes_compiler` |
-| Seismic station *networks* as station worldlines (IRIS/FDSN broadband) | pending — events only, no station worldlines in register | gap noted |
+| Seismic station *networks* as station worldlines (IRIS/FDSN broadband) | Roh-Fetch-Block **steht** (`phi:8250` EarthScope FDSN `station/1`, `terms CC-BY-4.0`, Nachzug 2026-10-16); weitere Netze (GEOFON GE, RaspberryShake AM) offen | fdsn_station_compiler |
 
 ### thermal (5)
 
@@ -169,4 +169,4 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 | **SuperDARN polar radar** | in-register + built (Nachzug 2026-09-27: `superdarn_rawacf.bin`/`superdarn_fitacf.bin`, `phi/sources.φ`:9814/11487, `superdarn_*_compiler`) | leads |
 | INTERMAGNET dB/dt (induction driver for GIC) | built (2 stations) | abk/sod 1-h bins |
 
-**Gaps — thread categories with NO actor yet:** **hydrophone/ocean-noise** networks (acoustic; NOAA-NRS live, no compiler); **seismic station network** worldlines (only event threads); die restricted **CTBTO-IMS** route (acoustic/vDEC, blocked account); plus the individual VHE/neutrino/CR telescopes without open routes (HAWC 2HWC, TA, Super-K, JUNO, LHAASO, KASCADE-Grande) — all `pending`/`not-published`, never zero-fabricated. **Geschlossen (Nachzug 2026-09-27):** ground **gravimeters** (IGETS), **infrasound** (BGR), **GIC**, **lightning** (WWLLN), **SuperDARN**, **HF-radar** (HFRNet), **BGC-Argo** (Argovis).
+**Gaps — thread categories with NO actor yet (Stand 2026-10-16, gemessen):** die restricted **CTBTO-IMS**-Route (roh vDEC blocked account; **offener Weg** = IRIS `fdsnws/station/1/query?network=IM`, 200 → IMS-Stationen inkl. Hydroakustik); die VHE/ν/CR-Teleskope **ohne** offenen Vollkatalog (TA, Super-K, JUNO, KM3NeT, KASCADE-Grande) — `pending`/`not-published`, nie null-erfunden. **Seither geschlossen (Nachzug 2026-10-16):** **hydrophone/ocean-noise** (NOAA-NRS, ONC, PANGAEA — `phi:11859`/`:10355`/`:10412`), **seismic station networks** (EarthScope `phi:8250`), **HAWC 2HWC + LHAASO** (`phi:12629`/`:28529`). **Geschlossen (Nachzug 2026-09-27):** ground **gravimeters** (IGETS), **infrasound** (BGR), **GIC**, **lightning** (WWLLN), **SuperDARN**, **HF-radar** (HFRNet), **BGC-Argo** (Argovis).
