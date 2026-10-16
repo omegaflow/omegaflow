@@ -20,9 +20,8 @@ pub fn declared_fields(names: &[String], tau: f64) -> Vec<FieldConfig> {
     };
     names
         .iter()
-        .enumerate()
-        .map(|(comp, _)| {
-            let name = component_name(comp as u32);
+        .map(|name| {
+            let name = name.clone();
             FieldConfig {
                 key: name.clone(),
                 name,
