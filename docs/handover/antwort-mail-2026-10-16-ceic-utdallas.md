@@ -7,28 +7,28 @@
 -->
 # Antwort-Mails — Entwurf (2026-10-16)
 
-**Der Send bleibt die Operator-Hand.** KIT/re3data auf Deutsch (sie schrieben Deutsch), UT Dallas
-auf Englisch. Kein Jargon.
+**Der Send bleibt die Operator-Hand.** Usus: antworte in der Sprache des Briefes. KIT schrieb
+Englisch → Englisch (mit der Option auf Deutsch). UT Dallas → Englisch. Kein Jargon.
 
 ---
 
-## An KIT / re3data (deutsch)
+## An KIT / re3data (english)
 
-**Betreff:** Re: Eintrag „China Earthquake Data Center"
+**Subject:** Re: China Earthquake Data Center — data access
 
-Guten Tag,
+Dear Sir or Madam,
 
-vielen Dank für Ihre schnelle Antwort und die Richtigstellung. Wir haben verstanden: Die Datensätze
-sind eingeschränkt zugänglich, während die Metadaten-Übersicht (Data Service / 数据汇交) weiterhin offen
-zugänglich bleibt. Vielen Dank auch für den Hinweis auf die Policy.
+Thank you for your quick reply and for correcting the record. We understand: the datasets are
+restricted, while the metadata overview (Data Service / 数据汇交) remains openly accessible.
+Thank you also for the pointer to the policy.
 
-Wir nutzen nur die offenen Metadaten und geben keine eingeschränkten Daten weiter. Falls es einen Weg
-gibt, die eingeschränkten Datensätze zu beantragen, wären wir für einen Hinweis dankbar; wenn nicht,
-ist das völlig in Ordnung — Ihre Antwort hilft uns sehr.
+We will use only the open metadata and will not redistribute any restricted data. If there is a
+way to apply for the restricted datasets, we would be grateful for a pointer; if not, that is
+entirely fine — your reply is a great help. *(Gerne auch auf Deutsch, falls Ihnen das lieber ist.)*
 
-Vielen Dank für Ihre Mühe.
+Thank you for your time.
 
-Mit freundlichen Grüßen
+Best regards,
 <Name>
 
 ---
@@ -39,9 +39,8 @@ Mit freundlichen Grüßen
 
 Dear Sir,
 
-Thank you for the clear answer — it is much appreciated. We understand that the NWM data are not
-available because the instrument did not perform as hoped. Thank you for the detail; it is good
-to know.
+Thank you for the clear answer — much appreciated. We understand that the NWM data are not
+available because the instrument did not perform as hoped. Thank you for the detail.
 
 If the lessons learned are ever written down, or a follow-on instrument flies, we would be glad to
 hear of it. And we hope the common-volume measurement of ion and neutral motions comes together
