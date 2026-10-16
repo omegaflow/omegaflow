@@ -100,7 +100,7 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let out = arg_value(&args, "--out");
     let network = arg_value(&args, "--network");
-    let mut url = BASE_URL.to_string();
+    let mut url = arg_value(&args, "--base-url").unwrap_or_else(|| BASE_URL.to_string());
     if let Some(net) = network {
         if !net.is_empty() {
             url.push_str("&network=");

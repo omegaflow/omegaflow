@@ -2,7 +2,7 @@
   title: Handover — Future / Leitstelle (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: b7170ec193ef8d042c27fae47b3a1570f2c8712112910c23ac5a27f341b40639
+  sha256: 06aa7bc9ffb2add68b0116a492920532bb28670d0454077f63c4cbe1a9acde5a
   status: live
 -->
 # Handover — Future / Leitstelle (2026-10-16)
@@ -28,8 +28,8 @@ Operator-Wort: Crambler raus · ein Käfig, zwei Profile · Regel-Listen gestric
   `systemctl --user` hat im Käfig keinen Bus — Dienste sind dort nicht schaltbar.
 - **Rat über API (bald):** `bin/rat_dispatch` zeigt noch auf den entfernten Gateway
   (127.0.0.1:1621) → auf direkte APIs umstellen; `ui-seats.md` (259 Zeilen UI-Bedienung)
-  wird zur kurzen `seat → modell`-Liste. Gilt das alte GEFÜTTERT-Wort noch, oder ersetzt
-  „nur die Frage" es?
+  wird zur kurzen `seat → modell`-Liste. Operator-Wort: der **Kanal** wird die API —
+  das GEFÜTTERT-Wort **bleibt**.
 - **B/C** (Komfort-Wrapper · Wände/Gates · eigenes Werk) unangetastet; die vier
   Linien-Lehren aus `post/in` warten auf den Rat.
 - **Operator-Hand:** Antwort-Mails (KIT/re3data, UT Dallas) · CN-NSSDC-Datenantrag ·
