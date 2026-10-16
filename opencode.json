@@ -7,15 +7,31 @@
   "model": "deepseek/deepseek-flash",
   "small_model": "deepseek/deepseek-flash",
   "default_agent": "line",
-  "experimental": {
-    "batch_tool": false
+  "watcher": {
+    "ignore": [
+      "target/**",
+      "*.φ",
+      ".continue/**",
+      "docs/**",
+      "data/**",
+      "cache/**",
+      "state/**",
+      "**/*.log",
+      "**/*.fits",
+      "**/*.fits.gz",
+      "**/*.h5",
+      "**/*.bsp",
+      "**/*.tif",
+      "**/*.tiff",
+      "**/*.gz",
+      "**/*.bin"
+    ]
   },
   "agent": {
     "rat": {
       "mode": "subagent",
       "model": "deepseek/deepseek-flash",
       "variant": "low",
-      "prompt": "Read `AGENTS.md` and `docs/council.yaml`. Hold the five voices (Mountain, River, Mycelium, Sensory, Future). GEFÜTTERT wird der Rat: gemessene Recherche + der volle Roster (`~/projects/omegaflow-work/ui-seats.md`). Fehlt eines, erst holen.",
       "permission": {
         "edit": "deny",
         "task": "deny"
@@ -40,8 +56,6 @@
       "mode": "subagent",
       "model": "deepseek/deepseek-flash",
       "variant": "low",
-      "description": "Routine-Recherche/Verify ohne Architektur-Urteil.",
-      "prompt": "Routine-Recherche/Verify. `archive_search` zuerst (URL→`--verdict`→`--sniff`→`--playwright`; keyless `--mwmbl`/`--marginalia`; Breite `bin/all_wide`, den `full:`-Spill vollständig lesen). Lokal `sgrep`/`sread`/`sfetch`/`omega_sh`; CI `ci_manage list/view/log` (nie `gh run`). Karte `docs/concepts/tools-map.md`. Login-gattert bis zur Auth-Kante messen: 401/403 mit Token = key-needed, ohne Konto = account, 404 = pending. Zustands-Behauptungen erst nach Baum-Gegenprobe (Register/Asset/Code) — eine Doku-Zeile ist eine Behauptung; Divergenz = Riss, nie glätten.",
       "permission": {
         "edit": "deny",
         "task": "deny",
@@ -74,25 +88,5 @@
     "max_lines": 80,
     "max_bytes": 4096
   },
-  "logLevel": "WARN",
-  "watcher": {
-    "ignore": [
-      "target/**",
-      "*.φ",
-      ".continue/**",
-      "docs/**",
-      "data/**",
-      "cache/**",
-      "state/**",
-      "**/*.log",
-      "**/*.fits",
-      "**/*.fits.gz",
-      "**/*.h5",
-      "**/*.bsp",
-      "**/*.tif",
-      "**/*.tiff",
-      "**/*.gz",
-      "**/*.bin"
-    ]
-  }
+  "logLevel": "WARN"
 }
