@@ -2,21 +2,16 @@
   title: Handover — Mycelium (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: c82edd879df5dbc0e1b6891b6da7be5b65d58d957a2128eba1907b4df952cedf
+  sha256: d77c9aca5ec4b8b9e81b3ff9d7ee37b7249f2f8a9002bdc62f08e20eabb84d4d
   status: live
 -->
 # Handover — Mycelium (2026-10-16)
 
-## Burn: open 0.0 · close pending
-
-## Mein — schliessbar
-- **Venus-Radar-Block** (`…Global_75m_v1.tif`): Fix greift — CDN **34/38** Fenster, Lauf läuft. Kante = Manifest → Ganz-`sha256` → `phi`-Block; bis dahin kein Block (A=A).
-- **Quellen-Fäden** (mein, Fortschritt): `weberin-thread-matrix` + `weberin-quellen-rerun` — seismische Weltlinien **GE + IM (Metadaten)** registriert, `AM` **blocked**, `IM`-Rohwelle = CTBTO-`riss`, Snapshots geschlossen; `exposom-matrix` — **Rat-Vorlage** (Serien-Definition) gesetzt; `worldwide-lidar-quellen` — Doc korrigiert.
-
-## Wartestand — an Mountain/Rat
-- **JUICE**: Register steht; `ephemeris_juice_recon.bin` (ESOC 2026-11-01); **Flyby-`sealed`-sha-`riss`** an River adressiert.
-- **`-344-5`**: `terms`/WDC/LOD stehen; Rest Mountains `ttl` + `register_sort --write`.
-- **Ratsvorlagen gesetzt:** exposom-Serien-Definition · register-coverage-Concurrency.
-- Zehn `xfer:mycelium-359-*`-Fäden.
+## Offen — eigen
+- **Venus-Block** (`…Global_75m_v1.tif`): Fix greift — CDN **34/38** Fenster, Lauf läuft. Kante = Manifest → Ganz-`sha256` → `phi`-Block; bis dahin kein Block (A=A).
+- **Quellen-Fäden** (mein): `weberin-thread-matrix` + `weberin-quellen-rerun` — GE+IM (Metadaten) registriert, AM **blocked**, IM-Rohwelle = CTBTO-`riss`, Snapshots geschlossen; `exposom-matrix` — Rat-Vorlage (Serien-Def.) gesetzt; `worldwide-lidar-quellen` — Doc korrigiert.
+- **Wartestand (Mountain/Rat):** JUICE (`recon` ESOC 2026-11-01 · `sealed`-`riss` → River) · `-344-5` (`ttl` + `register_sort --write`) · Ratsvorlagen (exposom, register-coverage) · zehn `xfer:mycelium-359-*`.
 
 Orphan-docs: **54**.
+
+## Burn: open 0.0 · close nicht gemessen (db im Käfig) · cap 0.15 · closed 0
