@@ -135,7 +135,7 @@ fn agents_growth_violations(now: usize, head: Option<usize>) -> Vec<String> {
     violations
 }
 
-const HANDOVER_CAP: usize = 64 * 1024;
+const HANDOVER_CAP: usize = 1024;
 
 fn header_status_live(content: &str) -> bool {
     let (Some(open), Some(close)) = (content.find("<!--"), content.find("-->")) else {
