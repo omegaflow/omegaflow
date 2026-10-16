@@ -3,7 +3,7 @@
   session: Mountain-Folge 357
   class: handover
   date: 2026-10-16
-  sha256: 5320656547d31c3405d82bf226057b1ee074ea7933313cd70421f028d56aad26
+  sha256: acbf25810a3d5ce02c10729244ff1d16a6803cbe1502c7170d64f8a1e155345e
   status: live
 -->
 # Handover — Mountain-Folge 357 (2026-10-16)
@@ -11,7 +11,7 @@
 ## Burn: open 0.0 · close nicht gemessen (db absent)
 
 ## Offen
-- SABER-Block steht (`phi:715-721`): `TIMED_L2A_SABER`, `on earth`, Form (C), τ=68 s = live gemessener Takt (bimodal 47/80 s = Riss); `tpgpaltitude`=gravity km (Ratchet verweigert thermal/km); erste `.<i>`-Registerzeile (`extract.rs:7170`). Push `c54e90df4` → harvest-dispatch ✓ → `timed-orbit-cdn 38947897737`; Gate `always()` — cdaweb grün, CelesTrak void = Riss.
+- SABER-Block steht (`phi:715-721`): `TIMED_L2A_SABER`, `on earth`, Form (C), τ=68 s (live, bimodal 47/80 = Riss); `tpgpaltitude`=gravity km; erste `.<i>`-Registerzeile. **Gate gemessen:** `timed-orbit-cdn 38947897737` → `riss-gate: cdaweb green (HTTP 200)` (`if: always()` hielt es trotz Fetch-Fehler). **Offen:** CelesTrak-GP void → `timed_orbit.bin` fehlt noch.
 - ci-gate `c54e90df4` rot: **eigene Anteile geheilt** — 335 terms-vocab-Token (44 Vokabeln in `license_census.rs` aufgenommen, 0 übrig) · `["eros"]`-Anchor ohne Ephemeride (neuer Block `ephemeris_eros.bin`, `phi:27082`; register_sort kanonisch, 2814 Blöcke). **Fremd bleibt:** `cargo fmt` archive_search/net.rs (Mycelium) · ~50 lib-Tests (projection/weberin/mci/port) · supermag-Test = River (`75630136a`).
 - ICGEM `gfc`: `derived` (Rat), JEOD Grad 20, CDN `mountain-354-1`; `icgem_gfc_c`=Membran (River); WGLC/WDC-B `field`=Rat.
 - `em mw`-Freeze · ALFALFA-Ersatz · `VerdictWord::Pending` (Rat) · mycelium/river: `archiv/…356`.
