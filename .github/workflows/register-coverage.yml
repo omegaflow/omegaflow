@@ -1,3 +1,12 @@
+# Rat 2026-10-17 · R3 Concurrency-Schlüssel — 3:3, ungeglättet (kein stiller Wechsel).
+# A per-SHA (GLM-5.3, DeepSeek V4 Pro, Lumo 2.0): der HEAD-Zustand ist je SHA definiert.
+# B per-ref (Sakana Fugu, Mistral Large 4, Kimi K3): die Raumzeit-Adresse des HEAD ist der
+#   Ref, nicht der SHA — per-SHA adressiert die Vergangenheit, nicht die Gegenwart. Der
+#   Check ist zustands- statt commit-basiert (mit jedem Push wird der laufende Vorgänger
+#   obsolet); ein Cancel mid-write kann inkonsistenten Zustand hinterlassen (Writes
+#   idempotent halten); `cancelled` darf nicht als Failure gelesen werden.
+# B trägt die härtere Begründung, A bleibt gleichberechtigt — der Wechsel braucht das
+# Operator-/Rat-Wort. Gemessen: 8 Läufe/10 min, 7 cancelled, Gate bei `0 jobs`.
 name: register-coverage
 on:
   workflow_dispatch:
