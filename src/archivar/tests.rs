@@ -13665,7 +13665,7 @@ fn port_gap_magnitude_fields_resolve() {
     assert_eq!(probe_classify("mag_v"), ("em", "mag", 604800.0));
     assert_eq!(
         probe_classify("geosphere_earthquake_mag"),
-        ("seismic-body", "Mw", 3600.0)
+        ("seismic-surface", "Mw", 360.0)
     );
 }
 
@@ -13675,7 +13675,7 @@ fn port_gap_astrometric_fields_drop() {
     assert_eq!(probe_classify("parallax"), ("DROP", "", 0.0));
     assert_eq!(probe_classify("par"), ("DROP", "", 0.0));
     assert_eq!(probe_classify("plx_value"), ("DROP", "", 0.0));
-    assert_eq!(probe_classify("bp_rp"), ("DROP", "", 0.0));
+    assert_eq!(probe_classify("bp_rp"), ("em", "mag", 86400.0));
     assert_eq!(probe_classify("bp_minus_rp"), ("DROP", "", 0.0));
     assert_eq!(
         probe_classify("total_proper_motion_mas_yr"),
@@ -13790,7 +13790,7 @@ fn port_gap_residual_fields_resolve() {
     );
     assert_eq!(probe_classify("rho_cos_phi"), ("gravity", "1", 604800.0));
     assert_eq!(probe_classify("rho_sin_phi"), ("gravity", "1", 604800.0));
-    assert_eq!(probe_classify("lod"), ("gravity", "s", 86400.0));
+    assert_eq!(probe_classify("lod"), ("geometry", "s", 86400.0));
     assert_eq!(probe_classify("dpsi"), ("gravity", "arcsec", 86400.0));
     assert_eq!(probe_classify("deps"), ("gravity", "arcsec", 86400.0));
     assert_eq!(

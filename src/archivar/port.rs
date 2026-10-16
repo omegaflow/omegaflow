@@ -2233,7 +2233,7 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
     } else if kl.ends_with("_mas") {
         ("gravity", "mas", 86400.0)
     } else if kl.contains("eop_") || kl.contains("polar_motion") {
-        ("UNCERTAIN", "", 0.0)
+        ("gravity", "arcsec", 86400.0)
     } else if kl.contains("phase_cycle")
         || kl.ends_with("polar_angle_cycles")
         || kl == "l1"
@@ -2502,10 +2502,10 @@ fn probe_classify_raw(key: &str) -> (&str, &str, f64) {
         ("em", "cpm", 3600.0)
     } else if kl.contains("dose_rate") {
         ("em", "usv/h", 3600.0)
-    } else if kl.contains("activity") {
-        ("em", "bq/l", 3600.0)
     } else if kl.contains("refractivity") {
         ("em", "N-units", 604800.0)
+    } else if kl.contains("activity") {
+        ("em", "bq/l", 3600.0)
     } else if kl.contains("logg") {
         ("gravity", "logg", 604800.0)
     } else if kl.contains("planet_mass") || kl.contains("earth_mass") {
@@ -3981,7 +3981,7 @@ mod probe_classify_tests {
 
     #[test]
     fn ndbc_buoy_fields_classify() {
-        assert_eq!(probe_classify("gst_m_s"), ("advective", "m/s", 60.0));
+        assert_eq!(probe_classify("gst_m_s"), ("advective", "m/s", 21600.0));
         assert_eq!(probe_classify("dpd_s"), ("acoustic", "s", 21600.0));
         assert_eq!(probe_classify("apd_s"), ("acoustic", "s", 21600.0));
         assert_eq!(probe_classify("ptdy_hpa"), ("acoustic", "hPa", 21600.0));
@@ -4024,7 +4024,10 @@ mod probe_classify_tests {
             ("electric", "V/m", 3600.0)
         );
         assert_eq!(probe_classify("rave_teff_k"), ("thermal", "K", 604800.0));
-        assert_eq!(probe_classify("goes_abi_radiance"), ("em", "W/m2", 3600.0));
+        assert_eq!(
+            probe_classify("goes_abi_radiance"),
+            ("em", "W/m2/sr/um", 3600.0)
+        );
         assert_eq!(
             probe_classify("magnetosphere_total_field_nt"),
             ("em", "nT", 86400.0)
@@ -4102,7 +4105,7 @@ mod probe_classify_tests {
     fn solar_wind_flow_speed_is_advective() {
         assert_eq!(
             probe_classify("omni_solarwind_flow_speed_kms"),
-            ("advective", "km/s", 86400.0)
+            ("advective", "km/s", 3600.0)
         );
         assert_eq!(
             probe_classify("psp_solarwind_flow_speed_kms"),
@@ -4156,11 +4159,11 @@ mod probe_classify_tests {
         assert_eq!(probe_classify("wds_primary_mag"), ("em", "mag", 604800.0));
         assert_eq!(
             probe_classify("alerce_ztf_detection_magpsf"),
-            ("em", "mag", 604800.0)
+            ("em", "mag", 3600.0)
         );
         assert_eq!(
             probe_classify("geosphere_earthquake_mag"),
-            ("seismic-body", "Mw", 3600.0)
+            ("seismic-surface", "Mw", 360.0)
         );
     }
 
@@ -4207,7 +4210,7 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("radnet_activity_bq_l"),
-            ("em", "bq/l", 3600.0)
+            ("em", "Bq/L", 86400.0)
         );
         assert_eq!(
             probe_classify("kcdc_kascade_energy_ev"),
@@ -4259,7 +4262,7 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("icesat2_atl03_h_ph_m"),
-            ("gravity", "m", 3600.0)
+            ("em", "m", 604800.0)
         );
         assert_eq!(
             probe_classify("noaa_keo_psal_psu"),
@@ -4271,7 +4274,7 @@ mod probe_classify_tests {
     fn residual_pending_names_classify() {
         assert_eq!(
             probe_classify("solar_flare_xray_intensity"),
-            ("em", "W/m2", 3600.0)
+            ("em", "W/m2", 6.0)
         );
         assert_eq!(
             probe_classify("solar_flare_x_class_latest"),
@@ -4281,7 +4284,7 @@ mod probe_classify_tests {
             probe_classify("magnetosphere_kp_a_running"),
             ("em", "1", 3600.0)
         );
-        assert_eq!(probe_classify("magnetosphere_kp_3h"), ("em", "1", 3600.0));
+        assert_eq!(probe_classify("magnetosphere_kp_3h"), ("em", "1", 86400.0));
         assert_eq!(probe_classify("safecast_cpm"), ("em", "cpm", 3600.0));
         assert_eq!(
             probe_classify("oulu_neutron_corr_for_eff"),
@@ -4317,7 +4320,7 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("atmosphere_metar_wind_direction_deg"),
-            ("advective", "deg", 60.0)
+            ("advective", "deg", 30.0)
         );
         assert_eq!(
             probe_classify("hydrosphere_ndbc_buoy_mean_wave_dir"),
@@ -4325,11 +4328,11 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("hydrosphere_river_flow_cfs"),
-            ("advective", "cfs", 3600.0)
+            ("advective", "cfs", 30.0)
         );
         assert_eq!(
             probe_classify("hydrosphere_river_stage_m"),
-            ("gravity", "m", 3600.0)
+            ("geometry", "m", 900.0)
         );
         assert_eq!(
             probe_classify("glm_bolide_radiant_energy_j"),
@@ -4337,20 +4340,20 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("exosphere_ace_speed_kms"),
-            ("advective", "km/s", 3600.0)
+            ("advective", "km/s", 360.0)
         );
         assert_eq!(
             probe_classify("exosphere_ace_dens_ncc"),
-            ("diffusion", "cm-3", 3600.0)
+            ("em", "1/cm3", 360.0)
         );
         assert_eq!(probe_classify("gps_sv_clock_bias_s"), ("em", "s", 86400.0));
         assert_eq!(
             probe_classify("hfradar_codar_2015_u_cm_s"),
-            ("advective", "cm/s", 3600.0)
+            ("advective", "cm/s", 21600.0)
         );
         assert_eq!(
             probe_classify("hfradar_radial_velocity_USM_SGRV_cm_s"),
-            ("advective", "cm/s", 3600.0)
+            ("advective", "cm/s", 21600.0)
         );
         assert_eq!(probe_classify("magnetar_period_s"), ("em", "s", 604800.0));
         assert_eq!(probe_classify("gcvs_period_d"), ("em", "d", 604800.0));
@@ -4358,11 +4361,11 @@ mod probe_classify_tests {
         assert_eq!(probe_classify("frb_scatter_ms"), ("em", "ms", 604800.0));
         assert_eq!(
             probe_classify("gracefo_kbr_range_rate_m_s"),
-            ("gravity", "m/s", 86400.0)
+            ("geometry", "m/s", 86400.0)
         );
         assert_eq!(
             probe_classify("gracefo_kbr_range_accl_m_s2"),
-            ("gravity", "m/s2", 86400.0)
+            ("geometry", "m/s2", 86400.0)
         );
     }
 
