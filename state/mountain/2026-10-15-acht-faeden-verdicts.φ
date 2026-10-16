@@ -1,120 +1,114 @@
-# Acht-Fäden-Verdikte — Mountain-Teil
-# Datum 2026-10-15 · Linie Mountain · Messgrundlage docs/surveys/survey-2026-10-15-tauchbefunde-acht-faeden.md
+# Acht-Fäden-Verdikte — Mountain-Teil, nach dem Rat (2026-10-17)
+# Datum 2026-10-15/17 · Linie Mountain · Messgrundlage docs/surveys/survey-2026-10-15-tauchbefunde-acht-faeden.md
 # Junktim: terms/field/ttl/Identität = Mountain; url/origin/compiler/sha256/CDN-Naht = Mycelium.
-# Kein Verdikt ohne Messung; jede Zeile nennt ihre Grundlage. Risse stehen, nie geglättet.
+# Kein Verdikt ohne Messung. Das Rat-Verdikt steht in state/stimmen/2026-10-17-rat-acht-faeden.md
+#   (fünf Sitze × neun Fäden, vollständig). Mountain trägt ein; der Rat entscheidet.
+# Bilanz: GLM 6 bestätigt/2 überstimmt/3 pending · DeepSeek 7/2/0 · Fugu 5/2/3 · Lumo 2/6/3 · Mistral 2/6/1.
+# Mehrheit gegen den Entwurf bei 3,4,5,6,7,8.
 
 # ============================================================
 # 1 — HMI (Photosphären-Magnetogramm) — Kanal-Lücke über JSOC
 # ============================================================
-# Quelle steht (AIA-Block ab phi:2081). Lizenz: CC0-1.0 für hmi.X (JSOC-Policy, gemessen).
+# VERDIKT: bestätigt. Grund: Kraft `em`, eigener `format hmi`-Arm (4/5: GLM, DeepSeek, Lumo, Mistral;
+#   Fugu pending).
+# Riss: `blos` ist sichtlinienprojiziert (GLM) · „Gauss = Feldstärke, nicht Kraft" (Lumo) ·
+#   Fugu: α-Term fehlt (pending).
 # Mountain-Zeilen:
-#   terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-#   ttl 86400
+#   terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html · ttl 86400
 #   field hmi_m_720s_blos hmi_m_720s_blos inverse-square em G 86400 0.0 0.0
-# Format-Entscheid (Mountain): eigener Arm `format hmi` (Kanal-Achse CAMERA 1/2/3 + Einheit
-#   Gauss unterscheiden sich von aia; `aia`-Wiederverwendung überlüde den Reader). Der Arm ist
-#   ein begrenzter Bau (extract.rs + Compiler), nicht dieser Akt.
-# Riss A (Mycelium): der `hmi_polar_compiler.rs:393` zielt auf den Tag `jsoc1.stanford.edu`
-#   (nicht registriert, GitHub 404); das Asset liegt auf `ssd.jpl.nasa.gov` (206). Compiler-Ziel
-#   ≠ Asset-Ort -> Mycelium korrigiert den Tag; der CDN-Tag `jsoc.stanford.edu` ist schon da.
+# Format `hmi`: eigener Arm (Kanal-Achse CAMERA 1/2/3 + Einheit Gauss ≠ aia) — begrenzter Bau.
+# Riss A (Mycelium): `hmi_polar_compiler.rs:393` zielt auf Tag `jsoc1.stanford.edu` (404); Asset auf
+#   `ssd.jpl.nasa.gov` (206). Compiler-Ziel ≠ Asset-Ort.
 
 # ============================================================
-# 2 — SILSO (Sonnenfleckenzahl) — kein Kanal, ein Verwurf (Mountain-Verdikt)
+# 2 — SILSO (Sonnenfleckenzahl) — kein Kanal, ein Verwurf
 # ============================================================
-# Verdikt Mountain: der stehende `unphysical`-Verwurf TRAEGT. Die SSN ist ein Zähl-Index
-#   (docs/specs/sunspots.md: „a human invention … an index, not a physical measurement";
-#   port.rs:2048 Refuse-Liste). Kein `phi`-Block, keine `terms`-Zeile. Die Messung der Quelle
-#   (sidc.be, 200, sha256 4c452439…, Lizenz CC-BY-NC-4.0) bleibt als zweite Zeile benannt:
-#   die Korrektur-Survey nennt es eine „Lücke", der Baum verweigert — Riss, nicht geglättet.
-#   (F10.7/GOES-X-Ray/Magnetfeld bleiben die zugelassenen Wahrheiten.)
+# VERDIKT: bestätigt (3/5: GLM, Fugu, Mistral; DeepSeek + Lumo überstimmt). Grund: die SSN ist eine
+#   definierte Zählung / dokumentierter Proxy (4 Jh.) — der stehende `unphysical`-Verwurf trägt.
+# Riss: DeepSeek „Index ist definierte Zählung" · Lumo „V1→V2 +45 %" · Mistral: als `quantity`
+#   führen · GLM: als `witness` ungedeckt. Kein `phi`-Block, keine `terms`-Zeile.
+#   F10.7 / GOES-X-Ray / Magnetfeld bleiben die zugelassenen Wahrheiten.
 
 # ============================================================
-# 3 — Stellar-Aktivität (XUV, log R'HK) — Kanal-Lücke über RAVE/GALAH
+# 3 — Stellar-Aktivität (log R'HK) — Kanal-Lücke über RAVE/GALAH
 # ============================================================
-# RAVE/GALAH tragen KEINEN Aktivitätsindex (VizieR TAP gemessen: nur [Ca/H]-Häufigkeit).
-# Die echten Quellen: VizieR J/A+A/697/A230 (logR'IRT, vizier-scientific-free);
-#   Zenodo 18834075 LAMOST DR11 (CC-BY-4.0); SDO EVE L3 (CC0-1.0).
-# Mountain-Zeilen:
-#   field logR_irt freund_logr_irt gaussian-inverse-square em 1 604800 0.0 0.0
-#   field logRHK lamost_dr11_logrhk gaussian-inverse-square em 1 604800 0.0 0.0
-#   (Aktivitäts-Index = dimensionslos; Shape/Force-Klasse `gaussian-inverse-square`/`em`
-#    nach dem Survey-Entwurf — ein Kontrakt-Entscheid, hier als Mountain-Verdikt gesetzt.)
-#   EVE: `format eve` EXISTIERT im Code (extract.rs:126), fehlt nur im Register. 11 Zeilen
-#   `field eve_<N>_line_irradiance <name> inverse-square em wm2_1au 3600` + `at sun`;
-#   terms CC0-1.0 https://lasp.colorado.edu/lisird/ — url/origin/compiler/EVE-L3-Datei = Mycelium.
-# Register-Reparatur (Mountain, GESETZT): phi:9898 GALAH nutzte `ra_dr2`/`dec_dr2`; das
-#   Datacentral-TAP kennt nur `ra`/`dec` (HTTP 400) -> auf `ra`,`dec` korrigiert.
+# VERDIKT: überstimmt (3/5: GLM, Lumo, Mistral; DeepSeek bestätigt; Fugu „bestimmt").
+# Grund: KEIN räumlicher Kernel — ein Verhältnis kompensiert 1/r²; ein Scheibenindex hat keine
+#   räumliche Ausbreitung. `gaussian-inverse-square` trägt nicht.
+# Riss: „Raumkern sinnlos für Scheibenindex" (Lumo) · „keine räumliche Ausbreitung → kein
+#   gaussian-inverse-square" (Mistral).
+# Neuer Stand: die Feld-/Kernel-Zeile ist zurückgezogen; die Shape/Force-Klasse ist offen (pending,
+#   benannt). Quellen bleiben (Freund `logR'IRT`, LAMOST DR11, EVE L3).
+# Riss A (EVE): `format eve` existiert im Code (extract.rs:126), fehlt im Register; 11 Linien.
+# Riss B: GALAH-Block `phi:9898` `ra_dr2`/`dec_dr2` → `ra`/`dec` (HTTP 400) — GESETZT.
 
 # ============================================================
 # 4 — Schwache Linsen / Shear — Kanal-Lücke über KiDS WL
 # ============================================================
-# KiDS DR4.1 WL (zenodo 16366035, cc-by-4.0) + Conicus3D (18776222, cc-by-4.0) stehen als Blöcke.
-# Mountain-Zeilen (phi:31178 KiDS-WL-Block):
-#   cmap .
-#   ra RAJ2000
-#   dec DECJ2000
-#   z_key Z_B
-#   field e1 kids_dr4_wl_e1 inverse-square gravity 1 31536000 0.0 0.0
-#   field e2 kids_dr4_wl_e2 inverse-square gravity 1 31536000 0.0 0.0
-# Physik-Verdikt Mountain (der Rat kann es überstimmen): Kraft = `gravity` (die Linsenwirkung
-#   ist gravitativ), Kernel = `inverse-square`, Einheit `1` (nie `scalar`). Riss: die Shear ist
-#   geometrisch (Formverzerrung), keine Newton-Kraft — als `gravity` benannt, nicht geglättet.
-# Transport (Mycelium): sha256 + CDN-Matrix; `format tar_zst` hat keinen Reader (Conicus).
-#   16,5-GiB-Vollzug ohne Spaltensubset = Blocker.
+# VERDIKT: überstimmt (2/5: DeepSeek, Mistral; GLM + Lumo bestätigen `gravity`, Kernel pending;
+#   Fugu: „die Kraft ist em nicht").
+# Grund: die Shear ist eine geometrische Verzerrung, keine Kraft; `gravity`/`em` strittig.
+# Riss: die Kraftzeile beschreibt den Kanal, nicht die Interpretation (DeepSeek); „geometrische
+#   Verzerrung, keine Kraft" (Mistral).
+# Transport (Mycelium): sha256 + CDN-Matrix; `format tar_zst` ohne Reader (Conicus); 16,5-GiB-Blocker.
 
 # ============================================================
 # 5 — Neutrino / IceCube / Auger / LHAASO — Kanal-Lücke
 # ============================================================
-# Identitäts-Verdikt Mountain (Kreuz-Riss): PAO1 (Auger), S2E1 (S2-Event/IceCube-ANTARES),
-#   AMN1 (AMON) tragen eine RICHTUNG -> WitnessKind::S2Direction, nicht PointEvent.
-#   GESETZT in src/archivar/witness.rs (die vier Compiler fordern bereits S2Direction; sie
-#   brachen an der widersprechenden Tabelle ab — das erklärt die 404 der Assets).
-#   ERBQ/MCON bleiben PointEvent (kein Compiler fordert sie; ungemessen).
-# Mountain-Zeilen:
-#   field icecube_icetracks_dr2 icecube_icetracks_dr2 inverse-square em 1 31536000 0.0 0.0
-#   field auger_... (analog); `at earth` ergänzen; `format json` der IceCube-Zeile korrigieren.
-#   Unit: `eev` (EeV) in src/archivar/units.rs ergänzt (Kraft 0 / Energie).
-#   LHAASO bleibt (die zwei γ-Felder korrekt); ein `field … neutrino` wäre Fabrikation.
+# VERDIKT: überstimmt (Gruppierung heterogen). Korrektur (Lumo): der Faden trägt DREI Boten mit DREI
+#   Kräften, nicht einen.
+# Grund: Neutrinos wechselwirken SCHWACH, nicht `em` (Mistral); ein `em`-Feld für die Gruppe wäre
+#   Fabrikation.
+# Riss: Identität `PAO1|S2E1|AMN1 → S2Direction` ist gesetzt (Kreuz-Riss aufgelöst); `ERBQ`/`MCON`
+#   bleiben `PointEvent` (DeepSeek bestätigt). LHAASO bleibt (die zwei γ-Felder korrekt); ein
+#   `field … neutrino` wäre Fabrikation. Unit `eev` in units.rs gesetzt (Kraft 0/Energie).
 
 # ============================================================
 # 6 — 21 cm / EDGES — die Lücke liegt in phi
 # ============================================================
-# Quellen offen: Zenodo 16881868 -> Record 18091240 (cc-by-4.0, Kalibration);
-#   loco.lab.asu.edu/download/790 (figure1_plotdata.csv, 200) — KEINE SPDX-Lizenz, Zitatpflicht
-#   (Bowman 2018 + Murray 2026).
-# Mountain-Zeilen:
-#   terms CC-BY-4.0 https://zenodo.org/records/18091240   (Kalibration)
-#   field brightness_temperature edges_lowband_t21_k inverse-square em K 2628000 0.0 0.0
-#   at earth · `ttl`/`no-cadence` per Serie. Kernel `inverse-square` (Survey-Entwurf).
-#   Die loco-CSV trägt kein SPDX -> als Zitat-Quelle benannt, kein stiller Token.
+# VERDIKT: überstimmt (2/5: Lumo, Mistral; GLM, DeepSeek, Fugu bestätigen).
+# Grund: kosmologisches FLÄCHENSIGNAL, keine Punktquelle (Mistral); SPDX ≠ bibliographische Lizenz
+#   (Lumo).
+# Riss: der Mechanismus ist strittig; die Zitat-Quelle (Bowman 2018 + Murray 2026) trägt kein SPDX.
 # Mycelium: edges_compiler.rs (frequenz-nativ) + url/origin/sha256.
-# Riss: WALLABY (phi:14519, ODbL-1.0, format hips3d) hat keine field-Zeile UND `format hips3d`
-#   keinen Reader (src/ = 0) -> offen, benannt.
+# Riss: WALLABY (`phi:14519`, ODbL-1.0, `format hips3d`) ohne field UND ohne Reader — offen.
 
 # ============================================================
 # 7 — PTA / Pulsar-Timing — Kanal-Lücke über EPTA DR2
 # ============================================================
-# Block phi:30615 trägt nur url/terms/format zip/origin/no-cadence.
-#   EPTA-DR2.zip 39 275 794 B; TRES (µs) steht im .par (Residuum erst per TEMPO2-Fit).
-# Mountain-Zeilen:
-#   at sun · cmap . · ra RAJ · dec DECJ
-#   field TRES pulsar_timing_residual_s inverse-square em s 31536000 0.0 0.0
-#   (µs -> s gerechnet; `us` verweigert das Gate.) Frame: `at sun` (Quelle), nicht `at earth`.
+# VERDIKT: überstimmt (3/5: Fugu, Lumo, Mistral; GLM bestätigt `at sun` aber überstimmt die Einheit;
+#   DeepSeek bestätigt).
+# Grund: der Frame ist BARYZENTRISCH (SSB), nicht `at sun` (Fugu, Lumo, Mistral); die Größe ist GW,
+#   nicht EM (Mistral).
+# FACHKORREKTUR (Lumo): τ = 31 536 000 s = 365,0 Tage — NICHT julianisch (31 557 600 s), Abweichung
+#   21 600 s. Benannt, nicht geglättet.
 # Mycelium: epta_dr2_compiler.rs (Vorbild llr_compiler.rs) + url/origin/sha256.
-#   `format zip` -> der Compiler liest das Zip.
 
 # ============================================================
 # 8 — TGF / Wolkenbedeckung
 # ============================================================
-# TGF: FSSC-TGF-Katalog (Roberts 2018, 4144 TGFs) — terms PD (Haus-Form, phi:14696).
-#   Mountain-Zeilen (Block-Entwurf):
-#     format gbm_tgf · on earth 0 0 0 · map . · lat Lat · lon Lon
-#     field gbm_tgf_bgo0_counts ... inverse-square em count 2592000 0.0 0.0
-#     field gbm_tgf_nai_counts ... inverse-square em count 2592000 0.0 0.0
-#     field gbm_tgf_discovery_bin_ms ... inverse-square em ms 2592000 0.0 0.0
-#     ttl 2592000
-#   Der „3. TGF-Katalog" (Roberts, ~15 000) ist `pending` (keine Datensatz-URL).
-# Wolken: Open-Meteo-Archive (CC-BY-4.0, generischer Compiler, Block phi:1626).
-#   Mountain-Zeilen: origin um `cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high`
-#   erweitern; vier `field cloud_cover(_low/_mid/_high) ... gaussian-inverse-square diffusion % 3600`.
-#   Mycelium: url/origin/compiler.
+# VERDIKT: überstimmt (2/5 klar: Lumo, Mistral; Fugu überstimmt Wolken; GLM/DeepSeek bestätigen TGF,
+#   `diffusion` pending/trägt gemischt).
+# Grund: `diffusion` trägt nicht (keine Grundkraft — Fugu, Mistral, Lumo); der TGF-Katalog ist
+#   DISKRET → als `quantity` führen, nicht `field` (Lumo, Mistral).
+# Riss: „TGF diskret; Wolken keine `diffusion`" (Mistral). Der „3. TGF-Katalog" bleibt `pending`
+#   (keine Datensatz-URL) — die weite Recherche fand Zenodo 14771272 (11-Jahres-GBM-Katalog,
+#   cc-by-4.0) als Kandidat, ungemessen.
+
+# ============================================================
+# 9 — WGLC (Gitterfeld)
+# ============================================================
+# VERDIKT: pending (alle fünf Sitze). Grund: Gitterfeld vs. Punktwolke/Raster (Mistral); lokaler
+#   Frame ≠ ICRS (Fugu); Modellprodukt, Basis deklarieren (Lumo). Benannt, nicht still.
+
+# ============================================================
+# Querschnitt — der ungeglättete Riss (kein Konsens bei 6 von 9 Fäden)
+# ============================================================
+# Der tiefste Befund (Lumo, fadenübergreifend):
+#   „Kraft ist überladen — in den Fäden 4, 5, 7, 8 fallen Erwerbskanal und Kausalkanal auseinander,
+#    und nur Faden 7 macht das explizit."
+# Der Satz, den drei Sitze teilen: Kraft ≠ Kraft-Beschreibung.
+# GLM: „das Register sampelt Kräfte an Adressen, die Physik liefert Verhältnisse/Projektionen/Felder."
+# Lumo: „ICRS/TDB trägt nur für Himmelsadressen; Faden 9 braucht einen zweiten Rahmenzweig —
+#    und acht Fäden sind es nicht."
+# Kein stilles pending. Der Rat entscheidet; Mountain trägt ein.
