@@ -2,14 +2,20 @@
   title: Handover — Mycelium (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: 623c20afa147283c14e1f33532f4d05554704d78b18e1fe47278f1c4c1be86f4
+  sha256: dae8da0083b0a34dc742161201332d8acc4fa230aad08674ef45186c33c53ea4
   status: live
 -->
 # Handover — Mycelium (2026-10-16)
 
 ## Burn: open 0.0 · close pending
 
-## Offen — eigen
-**Venus-Radar-Block** (`…Global_75m_v1.tif`): `.parts`-Manifest HTTP 404, CDN 21/38 Fenster. Ursache: `raw_mirror` fing je Lauf bei Fenster 0 an → `timeout: 240` kappte vor dem Manifest. Fix (folge362): Resume-Ledger `cdn::release_asset_sha256` (vorhandene `.pNNN` aus CDN gelesen, nur Lücken vom Origin) + timeout 240→360 → nächster Lauf → Manifest → Ganz-`sha256` → `phi`-Block. Bis dahin **kein** Block (A=A); Zenodo nur `md5 9d7ccd0d…`.
-Tokens: HMI `-359-1` · EVE `-359-3` · Shear+Reader `-359-4` · Neutrino `-359-5` · EDGES/PTA/TGF `-359-6/-7/-8` · GEOFON/ICGEM `mountain-354-1` · DE-2/SPDF+SABER+JUICE · WDC-B `-352-1/-2` · TIMED `-352-5` · F4′ `-356-5` · THEMIS-ASI `river197-6` · Register/LOD/BASE/ttl `-344-5`.
-Orphan-docs: **63** (Spitze: `survey-2026-10-03-medizinische-datenquellen` 60 · `…worldwide-lidar-quellen` 52); frühere `0` = Release-Route, nicht der Baum.
+## Mein — schliessbar
+- **Venus-Radar-Block** (`…Global_75m_v1.tif`): Fix (folge362) gepusht — Resume-Ledger `cdn::release_asset_sha256` + timeout 240→360; wartet auf den Beweis des nächsten CI-Laufs → Manifest → Ganz-`sha256` → `phi`-Block; bis dahin kein Block (A=A).
+- **DE-2/SABER**: Aktor auf neuen Wirt (NASA SPDF / `saber.gats-inc.com`) + Reihe manifestieren (`phi:863`).
+- **JUICE**: `flyby_ephemeris_gate` prüfen; SPICE/NAIF-Kernel registrieren + manifestieren.
+- **`-344-5`**: `register_sort`, vier `terms`-Korrekturen, LOD, BASE (>2 GiB), WDC/ttl.
+
+## Wartestand — an Mountain/Rat (nicht meine Hand)
+10 Fäden warten auf `field`/`ttl`/Format (Mountain) bzw. ein Verdikt (Rat); Volltext + Anfragen `handover-…mycelium-folge359`, `xfer:mycelium-359-1…-8`, `-352-*`, `-354-1`, `-356-5`, `river197-6`.
+
+Orphan-docs: **63**; frühere `0` = Release-Route, nicht der Baum.
