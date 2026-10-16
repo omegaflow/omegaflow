@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-10-14
-  sha256: 539077c53d59c0b825e1bed01a28f974bdaf5534456dfeb6bb795c40748354bb
+  sha256: 8fdd0c1def6d84453d237164df8764b720a890b58ebe801ab347be441cc5ad34
   status: live
   see-also: AGENTS.md
 -->

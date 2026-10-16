@@ -4,7 +4,7 @@
   date: 2026-09-03
   sha256: 837c5cc791159472c7a35c37a58a4979464c9531ac9c8328d77aa342b1a0318e
   status: live
-  see-also: AGENTS.md, docs/concepts/system-directive.md
+  see-also: AGENTS.md, docs/concepts/archiv/system-directive.md
 -->
 ### Kybernaut-Native Methodology
 

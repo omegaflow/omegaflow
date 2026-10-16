@@ -4,7 +4,7 @@
   date: 2026-10-15
   sha256: 1c19cf13c56d25c51da76a20bda8568b73238d5b44916393cded0c83f323d763
   status: live
-  see-also: docs/concepts/house-rules.md, docs/concepts/agent-profiles.md, docs/concepts/kybernetische-ethik.md
+  see-also: docs/concepts/house-rules.md, docs/concepts/archiv/agent-profiles.md, docs/concepts/kybernetische-ethik.md
 -->
 # Sitzungs-Ökonomie — die Turn-Disziplin (2026-10-15)
 

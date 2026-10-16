@@ -2,9 +2,9 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-16
-  sha256: a5ca7c8ff9013348a348eef929714a70b100b6a59ade72c7d33df2cc084466d4
+  sha256: 62570811e314a8303b623f40be3f2e2a05a26febf649d37cefe844bcfccd3cac
   status: draft
-  see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/docs-naming.md
+  see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/archiv/docs-naming.md
 -->
 # DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
 
