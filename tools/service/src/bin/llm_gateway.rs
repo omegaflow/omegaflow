@@ -507,9 +507,6 @@ impl Redactor {
     }
 
     fn redact(&self, s: &str) -> String {
-        if let Some(out) = private_read(s) {
-            return out;
-        }
         let mut out = apply_patterns(s, &self.names, &self.stop);
         for (real, ph) in &self.forward {
             if out.contains(real.as_str()) {
