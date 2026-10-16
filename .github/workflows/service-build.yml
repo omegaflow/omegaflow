@@ -25,7 +25,6 @@ jobs:
           target/release/smail_recv
           target/release/mail_watchdog
           target/release/mail_digest
-          target/release/cds_watchdog
           target/release/job_dashboard
           target/release/job_monitor
           target/release/notes_notify
