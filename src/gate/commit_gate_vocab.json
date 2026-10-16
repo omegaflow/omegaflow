@@ -562,8 +562,7 @@
     "burn-over-cap": "the handover's close burn exceeds the effective cap — the session ran over budget; the default cap is 0.15 USD (the heavy-tail threshold: the four sessions over $0.15 carried 70% of the burn), or the raised cap declared on the burn line",
     "burn-cap-unreasoned": "a raised burn cap must carry a reason — a declared cap without a Grund is self-consent, not a measured exception",
     "burn-cap-above-hard": "a raised burn cap exceeds the hard ceiling 0.5 USD",
-    "promised-gate": "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line",
-    "handover-ratchet": "a living handover carries only the open, ≤ 1 KiB — this one is bigger: delete what is done (git carries it), keep the open as pointers (file:line)"
+    "promised-gate": "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"
   },
   "german_chars": [
     "ä",
