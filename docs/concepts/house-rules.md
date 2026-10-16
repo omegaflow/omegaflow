@@ -2,7 +2,7 @@
   title: House Rules — die Essenz (was gilt)
   class: concept
   date: 2026-10-16
-  sha256: 3c767d9fa730fdf7e9a7a72a32db8cdd06f537065670c5136aa1c4c62c1204c8
+  sha256: f04fb50bd279fb69243e9360f77221c6b72611a4f729af3769134898c155ed78
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md
 -->
@@ -23,9 +23,10 @@ ausgeführt statt erzählt — sonst driftet der Text gegen das Gate. Die Vollte
 - **Kein Dispatch für dich?** → arbeite deine offenen Punkte, so viele wie möglich.
 - **Vor jeder NET-Suche: `bin/where <begriff>`** — erst prüfen, was das Haus schon hat.
 - **Ende des Passes:** `register_lookup --orphan-docs` — deine Waisen in die Übergabe falten.
-- **Höchstens zehn offene Punkte** — jeder ein `### name` mit `Status · Trigger · Lage · Blockade · Braucht`.
-  Ein `## Offen` aus Aufzählungen ist **nicht zählbar**: es versteckt den Umfang. Über zehn?
-  Dann werden **Taucher losgeschickt, bis sie zu sind** — nicht die Übergabe kürzen: **die Punkte schließen.**
+- **Ein Pass schließt Punkte.** Jeder offene Punkt ist ein `### name` mit
+  `Status · Trigger · Lage · Blockade · Braucht` — sonst ist die Zahl unsichtbar.
+  Sammelt ein Pass nur, ist es kein Pass: **Taucher laufen, bis die Punkte zu sind** —
+  nicht die Übergabe kürzen, nicht bei einer Zahl Schluss machen. Gemessen wird, was **geschlossen** wurde.
 - **Grenze:** commit+push = deine Hand (eigene Pfade, Englisch); **Send** und jeder
   dritt-wirksame Akt = Operator-Hand (per-Akt-Wort); Architektur/Ethik → der Rat.
 
