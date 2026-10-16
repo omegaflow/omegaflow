@@ -2,7 +2,7 @@
   title: Handover — Mycelium (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: dae8da0083b0a34dc742161201332d8acc4fa230aad08674ef45186c33c53ea4
+  sha256: 5a94a2b4a235197391f69ddb2b0b23ec2456d5cf03dd2dc225546f2928219273
   status: live
 -->
 # Handover — Mycelium (2026-10-16)
@@ -11,7 +11,6 @@
 
 ## Mein — schliessbar
 - **Venus-Radar-Block** (`…Global_75m_v1.tif`): Fix (folge362) gepusht — Resume-Ledger `cdn::release_asset_sha256` + timeout 240→360; wartet auf den Beweis des nächsten CI-Laufs → Manifest → Ganz-`sha256` → `phi`-Block; bis dahin kein Block (A=A).
-- **DE-2/SABER**: Aktor auf neuen Wirt (NASA SPDF / `saber.gats-inc.com`) + Reihe manifestieren (`phi:863`).
 - **JUICE**: `flyby_ephemeris_gate` prüfen; SPICE/NAIF-Kernel registrieren + manifestieren.
 - **`-344-5`**: `register_sort`, vier `terms`-Korrekturen, LOD, BASE (>2 GiB), WDC/ttl.
 
