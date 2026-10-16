@@ -2,7 +2,7 @@
   title: Survey — Die Weberin Faden-Matrix (thread matrix)
   class: survey
   date: 2026-09-07
-  sha256: 8bc8cc92e5fabd4cdbce9989ea3e625855810ad0e18e9be57807259f13305573
+  sha256: 636fb1dcecaa62105e5d469ec90c8f1c53ae1aa5a280203ffb43b57b75de2fd0
   status: live
   see-also: docs/concepts/die-weberin.md docs/concepts/archivar-mathematikerin.md
 -->
@@ -124,7 +124,7 @@ Status legend: **built** = compiler in tools/harvest → asset; **in-register** 
 |---|---|---|
 | Earthquake event feeds (JMA EEW/quake, p2pquake, vedur.is, GeoNet, USGS all_day + regional FDSN, seismicportal, INGV, ArcGIS Worldwide/ROMPLUS) | in-register | seismic-body / seismic-surface live |
 | Archival quake catalog | built | `seismic_quakes_compiler` |
-| Seismic station *networks* as station worldlines (IRIS/FDSN broadband) | Roh-Fetch-Block **steht** (`phi:8250` EarthScope FDSN `station/1`, `terms CC-BY-4.0`, Nachzug 2026-10-16); weitere Netze (GEOFON GE, RaspberryShake AM) offen | fdsn_station_compiler |
+| Seismic station *networks* as station worldlines (IRIS/FDSN broadband) | Roh-Fetch-Blöcke stehen: EarthScope, **GEOFON GE**, **EarthScope IM** (alle `terms CC-BY-4.0`, Nachzug 2026-10-16). **Riss:** der IM-Token deckt nur die **Metadaten**; die IM-Roh-Wellenform ist CTBTO-vDEC-vertragsgebunden. **RaspberryShake AM = blocked** (Redistribution untersagt) | fdsn_station_compiler (`--base-url`) |
 
 ### thermal (5)
 
