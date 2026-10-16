@@ -118,8 +118,7 @@ pub fn utm_inverse(
     if !lat.is_finite() {
         return None;
     }
-    let lon = (zone - 1.0) * 6.0 - 180.0
-        + 3.0
+    let lon = ((zone - 1.0) * 6.0 - 180.0 + 3.0).to_radians()
         + (d - (1.0 + 2.0 * t1 + c1) * d * d * d / 6.0
             + (5.0 - 2.0 * c1 + 28.0 * t1 - 3.0 * c1 * c1 + 8.0 * ep2 + 24.0 * t1 * t1)
                 * d
