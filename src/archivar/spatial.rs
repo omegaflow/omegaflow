@@ -892,7 +892,7 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
     }
     let qf = center;
     let dt = (t2 - hash.epoch_min).abs() + delta_t_cache;
-    let rho = enclosure_rho(hash.anchor_vmax, hash.anchor_amax, dt, pad);
+    let rho = C_LIGHT * dt + enclosure_rho(hash.anchor_vmax, hash.anchor_amax, dt, pad);
     let s = hash.cell_size;
     let qlo = cell_of([qf[0] - rho, qf[1] - rho, qf[2] - rho], s);
     let qhi = cell_of([qf[0] + rho, qf[1] + rho, qf[2] + rho], s);
@@ -924,14 +924,21 @@ pub fn query_hash(hash: &SpatialHash, ctx: MembraneCtx<'_>, records: &mut Vec<Sa
             if age > sample.ttl * 64.0 {
                 continue;
             }
+            let body_medium = sample
+                .motion
+                .anchor_body()
+                .and_then(|name| eph.get(name))
+                .and_then(|e| e.medium.as_ref());
             let Some(reach_signal) = sample.channel_ref.and_then(|channel_ref| {
-                signal_reach(
-                    channel_ref,
-                    sample.advection,
-                    age,
-                    sample.freq,
-                    sample.bin_width,
-                )
+                medium_reach(channel_ref as u8, age, body_medium, sample.advection).or_else(|| {
+                    signal_reach(
+                        channel_ref,
+                        sample.advection,
+                        age,
+                        sample.freq,
+                        sample.bin_width,
+                    )
+                })
             }) else {
                 continue;
             };

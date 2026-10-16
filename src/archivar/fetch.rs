@@ -604,27 +604,27 @@ pub fn record_in_enclosure(
     if age > effective_ttl * 64.0 {
         return false;
     }
-    let Some(front) = fc
-        .channel_ref
-        .and_then(|channel_ref| medium_reach(channel_ref, age, medium, fc.advection))
-        .or_else(|| {
-            fc.channel_ref.and_then(|channel_ref| {
-                signal_reach(channel_ref as f64, fc.advection, age, fc.freq, fc.bin_width)
-            })
-        })
-    else {
+    let Some(channel_ref) = fc.channel_ref else {
         return true;
+    };
+    if crate::mathematikerin::channel::descriptor_for_channel_ref(channel_ref).is_none() {
+        return true;
+    }
+    let Some(front) = medium_reach(channel_ref, age, medium, fc.advection)
+        .or_else(|| signal_reach(channel_ref as f64, fc.advection, age, fc.freq, fc.bin_width))
+    else {
+        return false;
     };
     let rho = enclosure_rho(anchor_vmax, anchor_amax, age, pad);
     presences
         .iter()
-        .any(|&(_, px, py, pz, _range, vx, vy, vz, _thrust, grid_step)| {
+        .any(|&(_, px, py, pz, range, vx, vy, vz, _thrust, grid_step)| {
             let v_abs = (vx * vx + vy * vy + vz * vz).sqrt();
             let body_term = match body_radius {
                 Some(r) => r.max(Φ * grid_step),
                 None => Φ * grid_step,
             };
-            let limit = front + rho + v_abs * age + body_term;
+            let limit = front + rho + v_abs * age + body_term + range;
             let dx = p_r[0] - px;
             let dy = p_r[1] - py;
             let dz = p_r[2] - pz;
@@ -685,7 +685,7 @@ pub fn body_in_enclosure(
         name: String::new(),
         band_id: None,
         kernel: 0,
-        channel_ref: Some(1),
+        channel_ref: Some(2),
         tau: f64::INFINITY,
         absorption: 0.0,
         advection: 0.0,
