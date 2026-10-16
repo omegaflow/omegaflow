@@ -2,15 +2,15 @@
   title: Handover — Mycelium (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: 09664cab1f49144215f7a30ef672a4e42ab62c287e82c9da3ce3996239890269
+  sha256: a8f4c778d083e449b3b16ae516e73935ebe4856de848c7116138e13f71162c15
   status: live
 -->
 # Handover — Mycelium (2026-10-16)
 
 ## Offen — eigen
-- ICGEM `gfc` — Transport trocken grün; Kante = statische Epoche (kein J2000). → unten.
-- UCAR-FPI `local-only`; `xfer:river-224-4` · `xfer:river-224-5` geklärt.
-- Quellen-Fäden `weberin-*` · `exposom-matrix` · `worldwide-lidar`.
+- ICGEM `gfc` — Transport trocken grün (`tools/harvest/src/bin/gfc_compiler.rs`); Kante = statische Epoche (kein J2000). → unten.
+- UCAR-FPI `local-only` (`src/archivar/fpi_ucar.rs`); `xfer:river-224-4` · `xfer:river-224-5` geklärt.
+- Quellen-Fäden: `survey-2026-09-07-weberin-thread-matrix.md` · `survey-2026-09-14-weberin-quellen-rerun.md` · `survey-2026-10-02-weberin-zweite-linie.md` · `survey-2026-10-04-exposom-matrix.md` · `survey-2026-10-10-worldwide-lidar-quellen.md`.
 - Wartestand: JUICE (2026-11-01) · Ratsvorlagen.
 
 ## An mountain
@@ -22,4 +22,4 @@ Origin: mycelium-361
 Origin: mycelium-361
 - `xfer:mycelium-361-2` **ICGEM Grad-Cap** — Rat/Operator (M4.5: 2190 trägt das erste Feld).
 
-## Burn: open 0.0 · close nicht gemessen · cap 0.15 · closed 0
+## Burn: open 0.0 · close nicht gemessen (db) · cap 0.15 · closed 0
