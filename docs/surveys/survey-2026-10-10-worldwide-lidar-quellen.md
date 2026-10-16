@@ -2,7 +2,7 @@
   title: Survey — Weltweite LiDAR-/Punktwolken-Landschaft (offene Quellen)
   class: survey
   date: 2026-10-10
-  sha256: 05197c93c6b9a4e2928295c60db9805309d45bf735b1bdfc669830731d513b3d
+  sha256: 389a5eb58acde1e5622a99537e573038d185b496a0c19558335790a32054494a
   status: live
   see-also: docs/handover/archiv/handover-2026-10-10-mycelium-folge297.md
 -->
@@ -369,6 +369,8 @@ CDN-Aufrufer (`*-cdn.yml`). Die Registrierung (`url`/`origin`/`compiler`/`at`/
 5. **GEBCO/ETOPO/SRTM15+** (Unterwasser-Grid) + **NCEI/IHO-DCDB-Multibeam** —
    Bathymetrie (Grid-Reader + Multibeam-Arm; `netcdf`/Grid im Archivar messen).
 6. **Bayern DOM20** — COG-Kachel, `dom_compiler`.
+
+**Baustand (2026-10-16, gemessen):** der generische Reader (`src/archivar/las/`) und die COPC/LAS-Compiler stehen; gebaut/registriert sind NOAA-NOS (`phi:10917`), open-lidar-data BE (`:10963`), die Coverage für NL/CH/FR/UK/NZ (`:10947/:10296/:10304/:10433/:10955`), GEDI L2A (`:10332`), ICESat-2 ATL03 (`:10341`), ETOPO/SRTM15+/NCEI-DCDB und Bayern DOM20 (`:31848`). **Echte Reste:** der USGS-Slab-Manifestor + `usgs-lidar-cdn.yml` (fehlt); GEDI **L4A** + ICESat **ATL08** (eigene Arme, Earthdata-Login); die `terms`-Zeile bei NOAA-NOS (`:10917`) und am GEBCO-Witness — die Liste „je Quelle fehlt ein Manifestator" war 2026-10-10, der Baum ist weiter.
 
 Erster konkreter Schritt (**gemessen 2026-10-10**): der open-lidar-data-Bucket
 `?list-type=2&max-keys=1000` liefert **999 COPC-Keys** (erste Seite = `data/BE/…`,

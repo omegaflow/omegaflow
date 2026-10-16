@@ -2,7 +2,7 @@
   title: Exposom-Quellenmatrix — somatisch + psychosomatisch (Stand 2026-10-04)
   class: survey
   date: 2026-10-04
-  sha256: d25a7e3750733906d91cf90db3c997680169c440fafe6f80a3a9cb95b0febad2
+  sha256: 52025b7571607f56740499e0d5a4d216eaed9c9526d400d60974ed81e258a2ee
   status: live
   see-also: docs/concepts/kybernaut-native-methodology.md
 -->
@@ -244,7 +244,7 @@ Surrogat-Schwelle (mean + 2σ, phasen-randomisiert) und die Richtung. Für die
 volle Feld-Query (Konditionierung, Kanal-Liste, FDR über die Matrix) trägt
 `field_te_query` (`tools/measure/src/bin/field_te_query.rs`) dieselbe Zeile über
 `matrix <label> rect|full|upper` + `--descriptor <pfad>.te` (Kanal-Dateien, Form
-wie `phi/pipeline/descriptors/solar_seconds_matrix.te`).
+wie `src/mathematikerin/descriptors/solar_seconds_matrix.te`).
 
 **Feed-Mechanik:** pro Matrix-Zeile genau eine Zahl je Kanal-Datei und Zeitstempel
 (y-Achse = Outcome-Serie, x-Achse = Exposom-Serie), beides auf dieselbe
@@ -252,12 +252,15 @@ Zeitbasis/`bin` gebracht; eine Zeile → ein `te_pair_probe`-Lauf → eine Zeile
 Ergebnis-Register. Das ist der generische Lauf: keine Klasse wird ausgewählt,
 keine Domäne ausgeschlossen.
 
-**Offener CI-Dispatch:** der Lauf gehört in CI (kein lokaler Heavy-Compute,
+**CI-Dispatch:** der Lauf gehört in CI (kein lokaler Heavy-Compute,
 `AGENTS.md`): ein Workflow, der die Matrix aus den feedbaren y-Serien + den
 offenen x-Serien baut und `te_pair_probe`/`field_te_query` je Zeile fährt. Der
-Dispatch steht offen (`pending`): Workflow-Datei noch nicht angelegt,
-`gh workflow run <workflow>` noch nicht möglich. Nächster Schritt: Workflow-YAML
-unter `.github/workflows/` + Descriptor je X-Klasse, dann `gh workflow run`.
+Workflow **steht** (`.github/workflows/exposom-matrix-te.yml`, committet
+`9f7019e06`, 2026-10-11; nennt die 4 x-Kern-Serien, Input `ort_achse:
+time-only|site`), `gh workflow run exposom-matrix-te.yml` ist **möglich** — der
+frühere Satz „Workflow-Datei noch nicht angelegt" war gegen den Baum veraltet
+(benannt 2026-10-16, nicht geglättet). Offen bleiben: Descriptor je X-Klasse und
+die y-Serien-Compiler — die Matrix-Zeilen tragen noch keine Register-Blöcke.
 
 **Kollokations-Gate im Lauf:** eine Zeile ohne gemeinsamen Ort (Kollokation
 `nein`/`pending`) fährt nur die zeitliche Kopplung; der Lauf markiert sie als
