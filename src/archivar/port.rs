@@ -2052,7 +2052,7 @@ fn port_drop_key(kl: &str) -> bool {
         || kl.contains("_heating_weeks")
         || kl.contains("exceedance")
         || kl.contains("percentile")
-        || kl.contains("uncertainty")
+        || (kl.contains("uncertainty") && unit_from_name_suffix(kl).is_none())
         || kl.contains("confidence")
         || kl.contains("std_dev")
         || kl.contains("_score")
