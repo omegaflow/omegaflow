@@ -4,7 +4,7 @@
   date: 2026-10-15
   sha256: 3de10f358d1566d49773c8fe311a9dc76d65f537fe4793a268c6c2b6b1448dec
   status: live
-  see-also: phi/sources.φ docs/concepts/source-curation.md docs/concepts/tools-map.md docs/handover/handover-2026-10-15-river-folge214.md docs/handover/handover-2026-10-15-mountain-folge351.md
+  see-also: phi/sources.φ docs/concepts/source-curation.md docs/concepts/tools-map.md docs/handover/archiv/handover-2026-10-15-river-folge214.md docs/handover/archiv/handover-2026-10-15-mountain-folge351.md
 -->
 # Survey — Ketten-Quellen: harter Taucherlauf über fünf Quellen (2026-10-15)
 

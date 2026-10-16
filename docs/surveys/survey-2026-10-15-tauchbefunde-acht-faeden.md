@@ -4,7 +4,7 @@
   date: 2026-10-15
   sha256: c16929573be62352d3e61af93a2099a6797392aaee6a858cb9eee42b177ae10a
   status: live
-  see-also: docs/surveys/survey-2026-10-15-raetsel-matrix-korrektur.md docs/handover/handover-2026-10-15-mycelium-folge359.md
+  see-also: docs/surveys/survey-2026-10-15-raetsel-matrix-korrektur.md docs/handover/archiv/handover-2026-10-15-mycelium-folge359.md
 -->
 # Survey — Tauchbefunde der acht Fäden (2026-10-15)
 
