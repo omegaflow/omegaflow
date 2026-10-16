@@ -1,5 +1,5 @@
 <!--
-  title: Antwort-Mails — CEIC und UT Dallas (Entwurf, 2026-10-16)
+  title: Antwort-Mails — KIT/re3data und UT Dallas (Entwurf, 2026-10-16)
   class: concept
   date: 2026-10-16
   status: live
@@ -7,31 +7,33 @@
 -->
 # Antwort-Mails — Entwurf (2026-10-16)
 
-Zwei kurze, höfliche Antworten, Englisch. Kein Jargon. **Der Send bleibt die Operator-Hand.**
+**Der Send bleibt die Operator-Hand.** KIT/re3data auf Deutsch (sie schrieben Deutsch), UT Dallas
+auf Englisch. Kein Jargon.
 
 ---
 
-## An CEIC
+## An KIT / re3data (deutsch)
 
-**Subject:** Re: China Earthquake Data Center — data access
+**Betreff:** Re: Eintrag „China Earthquake Data Center"
 
-Dear Sir or Madam,
+Guten Tag,
 
-Thank you for your quick reply and for clarifying the access status. We understand: the datasets
-are restricted, while the metadata overview (Data Service / 数据汇交) remains openly accessible.
+vielen Dank für Ihre schnelle Antwort und die Richtigstellung. Wir haben verstanden: Die Datensätze
+sind eingeschränkt zugänglich, während die Metadaten-Übersicht (Data Service / 数据汇交) weiterhin offen
+zugänglich bleibt. Vielen Dank auch für den Hinweis auf die Policy.
 
-We will use only the open metadata and will not redistribute any restricted data. If there is a
-way to apply for the restricted datasets, we would be grateful for a pointer; if not, that is
-entirely fine — you have answered our question.
+Wir nutzen nur die offenen Metadaten und geben keine eingeschränkten Daten weiter. Falls es einen Weg
+gibt, die eingeschränkten Datensätze zu beantragen, wären wir für einen Hinweis dankbar; wenn nicht,
+ist das völlig in Ordnung — Ihre Antwort hilft uns sehr.
 
-Thank you again for your help.
+Vielen Dank für Ihre Mühe.
 
-Best regards,
+Mit freundlichen Grüßen
 <Name>
 
 ---
 
-## An UT Dallas
+## An UT Dallas (english)
 
 **Subject:** Re: NWM / C/NOFS — neutral wind data
 
