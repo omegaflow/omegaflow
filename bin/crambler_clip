@@ -1,0 +1,38 @@
+#!/bin/sh
+# crambler_clip — die Zwischenablage schwärzen und zurücklegen.
+#
+# Systemweit:  Text markieren → Strg+C → Tastenkürzel → Strg+V  (geschwärzt).
+# Es ist derselbe Schwärzer wie bin/crambler (bin/private_read).
+# Läuft im Terminal/Desktop des OPERATORS, nie im Agent-Käfig.
+set -eu
+here="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+priv="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}"
+
+# Clipboard-Werkzeug erkennen: Wayland zuerst, dann X11.
+if [ -n "${WAYLAND_DISPLAY:-}" ] && command -v wl-paste >/dev/null 2>&1; then
+  get() { wl-paste --no-newline; }
+  put() { wl-copy; }
+elif command -v xclip >/dev/null 2>&1; then
+  get() { xclip -selection clipboard -o; }
+  put() { xclip -selection clipboard -i; }
+elif command -v xsel >/dev/null 2>&1; then
+  get() { xsel -b -o; }
+  put() { xsel -b -i; }
+else
+  printf 'crambler_clip: kein Clipboard-Werkzeug (installiere wl-clipboard oder xclip)\n' >&2
+  exit 2
+fi
+
+tmp="$priv/.crambler.clip.$$"
+trap 'rm -f "$tmp"' EXIT INT TERM
+get > "$tmp"
+if [ ! -s "$tmp" ]; then
+  printf 'crambler_clip: Zwischenablage leer.\n' >&2
+  exit 0
+fi
+
+"$here/private_read" "$tmp" | put
+
+if command -v notify-send >/dev/null 2>&1; then
+  notify-send "crambler" "Zwischenablage geschwärzt ✓"
+fi
