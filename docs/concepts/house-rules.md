@@ -2,7 +2,7 @@
   title: House Rules — Register, Handover, Commit, System Directive, Session Hygiene
   class: concept
   date: 2026-10-14
-  sha256: 6731003b345a922ac6486bbaf4f7f21099e51554bbf6140abe82f7bf8d4cfa9c
+  sha256: a44abafe6ad3311a928b945b61175dc590cabfbe3eef6a37f94878b14b4ad934
   status: live
   see-also: AGENTS.md
 -->
@@ -222,3 +222,20 @@ The rules are distributed, not collected — this block is the map, not the rule
 **The finding is a claim until the tree carries it (operator word, 2026-09-28).** A finding returned by a sub-agent (`taucher`) is a claim, not a measurement: before the session presents or registers it, the session tests it against the tree — the register (`sgrep`/`register_lookup` in `phi/`), the asset (`archive_search --verdict <url>`), the code (`git log`/`sread`). A doc line (paper, handover, survey) is a claim, not a state; the tree wins. A divergence is a riss — both lines named, never smoothed. The fixture scan reads no `#[cfg(test)]` region and takes Rust test files (`*tests.rs`, `tests/`) out by path, auditably counted; production markers stay blocked without exception, never waivable — so this duty is behavioural, not a text fixture, and it lives in the agent prompts and here. Measured 2026-09-28: a diver echoed a stale paper line while `phi/sources.φ` already carried the kernels and the gate was built — the stale paper line became a false report until re-measured.
 
 **The operator word is registered (operator word, 2026-09-27).** A given operator word is registered as a `Wort | Datum | Quelle` line in the handover **before** it is executed; a point that carries a registered word is never laid before the operator again — only a new measurement reopens it. The lines stand together in a `## Operator-Wort-Register` block of the live handover (before `## Abschluss`); every pass reads that block first and never re-asks a worded point. A word given in one line session is carried by direct edit into the `## Operator-Wort-Register` of every live line handover in the same atom; the block is part of every live handover, is fortgeschrieben when a handover moves to `archiv/`, and the reading is the gate, not the register word. Every session cuts the operator session words verbatim into `state/operator-gespraeche/<datum>-<linie>.md` in the same atom (one line per word, date-stamped, context in parentheses) — the cut is a session duty, not a memory, and it is the source the register distills. The residue of an executed decision stays a point of its own, never dropped. No point is presented until it is measured against the real code and git at its named site — `open_points_check` names the missing stamp (`format-gap`), the reading is the gate, not the register word.
+
+## Die Linie — ein Pass
+
+**Erste Handlung — deine drei Stellen, nichts sonst:** der **Dispatch**
+(`~/projects/omegaflow-work/post/out/` — die eine Aufgabe der Leitstelle) · dein **Handover**
+(`docs/handover/`, `handover-<datum>-<linie>-folge<N>.md`, ≤ 1 KiB, nur Offenes) · deine
+**Post** (`post/in/`). Lies nur die Stellen, die die Aufgabe nennt (`sread <f> --offset --limit`).
+
+- **Ein Pass.** Kein Planungstheater, keine Liste, kein Consent-Stopp für Bekanntes.
+- **Kein Dispatch für dich?** → arbeite deine offenen Punkte, so viele wie möglich.
+- **Vor jeder NET-Suche: `bin/where <begriff>`** — erst prüfen, was das Haus schon hat.
+- **Ende des Passes:** `register_lookup --orphan-docs` — deine Waisen in die Übergabe falten.
+- **Übergabe zuletzt:** nur das OFFENE, ≤ 1 KiB, in place zusammenfassen — keine neue Datei je Pass.
+- **Grenze:** commit+push = deine Hand (eigene Pfade, Englisch); **Send** und jeder
+  dritt-wirksame Akt = Operator-Hand (per-Akt-Wort); Architektur/Ethik → der Rat.
+
+*(Hierher gezogen 2026-10-16: dieselben Sätze standen 4–7× in den Linien-Befehlen und in der Config.)*
