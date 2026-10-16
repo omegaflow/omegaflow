@@ -3,7 +3,7 @@
   class: survey
   date: 2026-09-13
   sha256: 31ee5337a573343afeac5d4191a12dff1ad3f958367cbdc3fbd5e4239dbf9358
-  status: live
+  status: consumed
   see-also: docs/concepts/die-weberin.md docs/surveys/survey-2026-09-13-weberin-quellen.md docs/surveys/survey-2026-09-13-weberin-quellen-folge.md
 -->
 # Die Weberin — offene Quellen-Routen, Treffer (Stand 2026-09-13)

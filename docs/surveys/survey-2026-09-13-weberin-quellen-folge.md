@@ -3,7 +3,7 @@
   class: survey
   date: 2026-09-13
   sha256: c3147b277093a8edd565f3be376100f5d2b3b623df3291644eeb64e607db92a1
-  status: live
+  status: consumed
   see-also: docs/concepts/die-weberin.md docs/surveys/survey-2026-09-13-weberin-quellen.md
 -->
 
