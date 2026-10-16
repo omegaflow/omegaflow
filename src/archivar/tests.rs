@@ -4040,8 +4040,8 @@ fn test_build_asteroid_samples_gm_radius_and_query() {
     assert_eq!(far_gm.val, 2.5e8);
     assert_eq!(gm.kernel_id, 0.0);
     assert_eq!(radius.kernel_id, 1.0);
-    assert_eq!(gm.channel_ref, Some(1.0));
-    assert_eq!(radius.channel_ref, Some(1.0));
+    assert_eq!(gm.channel_ref, Some(2.0));
+    assert_eq!(radius.channel_ref, Some(2.0));
     assert!(gm.extent == 3000.0 && gm.tau.is_infinite());
     assert!(radius.extent == 3000.0 && radius.tau.is_infinite());
     let Motion::Kepler { rec: rec_gm } = &gm.motion else {
@@ -4590,7 +4590,7 @@ fn test_build_netcdf_channels() {
 fn receiver_aperture_declaration_parses_measured_lengths() {
     let aperture = ReceiverAperture::parse_declaration("em:flux:1.0e7,seismic-body:none:3.0e5");
     assert_eq!(aperture.get(0, Aperture::Flux), Some(1.0e7));
-    assert_eq!(aperture.get(3, Aperture::None), Some(3.0e5));
+    assert_eq!(aperture.get(1, Aperture::None), Some(3.0e5));
     let invalid = ReceiverAperture::parse_declaration("em:flux:-1,em:flux:0");
     assert_eq!(invalid.get(0, Aperture::Flux), None);
 }

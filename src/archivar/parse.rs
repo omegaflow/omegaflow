@@ -3017,7 +3017,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         assert_eq!(field.kernel, 0, "inverse-square is kernel 0");
         assert_eq!(
             field.channel_ref,
-            Some(8),
+            Some(6),
             "maxwell/elliptic/vacuum resolves to electric"
         );
         assert_eq!(field.unit, "V/m");
@@ -3058,7 +3058,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             .expect("the optional interaction may be absent — the line is admitted, never silently dropped");
         assert_eq!(
             field.channel_ref,
-            Some(8),
+            Some(6),
             "the interaction-absent form resolves to the same channel as the interaction-present form"
         );
         assert_eq!(field.unit, "V/m");
@@ -3216,16 +3216,16 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn range_directive_with_zero_or_negative_step_stays_unrecorded() {
-        let zero = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 0\nttl 604800\n";
+        let zero = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 0\nat sun\nttl 604800\n";
         let negative =
-            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 -0.15\nttl 604800\n";
+            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 -0.15\nat sun\nttl 604800\n";
         assert_eq!(parse_sources(zero)[0].range, None);
         assert_eq!(parse_sources(negative)[0].range, None);
     }
 
     #[test]
     fn range_directive_with_void_arity_stays_unrecorded() {
-        let content = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0\nttl 604800\n";
+        let content = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0\nat sun\nttl 604800\n";
         assert_eq!(parse_sources(content)[0].range, None);
     }
 
