@@ -507,13 +507,13 @@ impl Redactor {
     }
 
     fn redact(&self, s: &str) -> String {
-        let mut out = apply_patterns(s, &self.names, &self.stop);
+        let mut out = s.to_string();
         for (real, ph) in &self.forward {
             if out.contains(real.as_str()) {
                 out = out.replace(real.as_str(), ph.as_str());
             }
         }
-        out
+        apply_patterns(&out, &self.names, &self.stop)
     }
 
     fn restore(&self, s: &str) -> String {
@@ -1160,9 +1160,6 @@ fn p_name(ch: &[char], i: usize, names: &HashSet<String>, stop: &HashSet<String>
         j += 1;
     }
     if j - i <= 3 {
-        return None;
-    }
-    if !ch[i].is_uppercase() {
         return None;
     }
     let token: String = ch[i..j].iter().collect::<String>().to_lowercase();
