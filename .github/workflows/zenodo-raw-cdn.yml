@@ -91,7 +91,22 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          names="$(gh release view zenodo.org --repo omegaflow/sources \
+                   --json assets --jq '.assets[]?.name' 2>/dev/null || true)"
+          asset='${{ matrix.asset }}'
+          if printf '%s\n' "$names" | grep -qxF "$asset" \
+             || printf '%s\n' "$names" | grep -qxF "$asset.parts"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset $asset already present — mirror skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset $asset missing — mirroring"
+          fi
       - name: Mirror ${{ matrix.asset }} to the CDN
+        if: steps.idempotence.outputs.present == 'false'
         run: |
           args=(--ci-mode --url "${{ matrix.url }}" --origin "${{ matrix.origin }}")
           if [ -n "${{ matrix.sha256 }}" ]; then args+=(--sha256 "${{ matrix.sha256 }}"); fi
