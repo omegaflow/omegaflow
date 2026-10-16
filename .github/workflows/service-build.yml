@@ -27,5 +27,4 @@ jobs:
           target/release/mail_digest
           target/release/job_dashboard
           target/release/job_monitor
-          target/release/notes_notify
           target/release/ci_manage
