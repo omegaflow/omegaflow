@@ -676,6 +676,7 @@ pub fn tar_stream<R: std::io::Read>(
 ) -> Result<u64, String> {
     let mut scan = TarScan::new();
     let mut buf = [0u8; 65536];
+    let mut total = 0u64;
     loop {
         let n = src
             .read(&mut buf)
@@ -683,6 +684,7 @@ pub fn tar_stream<R: std::io::Read>(
         if n == 0 {
             break;
         }
+        total += n as u64;
         scan.feed(&buf[..n], &mut want, &mut emit);
     }
     if let Some(e) = scan.err {
@@ -691,7 +693,7 @@ pub fn tar_stream<R: std::io::Read>(
     if !scan.ended {
         return Err("tar stream ends before the zero-block terminator".into());
     }
-    Ok(scan.total)
+    Ok(total)
 }
 
 struct ZStream<'a, R: std::io::Read> {
