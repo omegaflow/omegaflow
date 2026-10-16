@@ -35,7 +35,9 @@ fn read_stamp() -> Option<f64> {
 }
 
 fn write_stamp() {
-    let Some(stamp) = base_gate_stamp() else { return };
+    let Some(stamp) = base_gate_stamp() else {
+        return;
+    };
     if let Some(now) = unix_now() {
         if let Ok(mut f) = OpenOptions::new()
             .write(true)
@@ -85,11 +87,7 @@ fn base_gate() {
     }
     let entered = unix_now();
     loop {
-        match OpenOptions::new()
-            .write(true)
-            .create_new(true)
-            .open(&lock)
-        {
+        match OpenOptions::new().write(true).create_new(true).open(&lock) {
             Ok(mut held) => {
                 space_requests();
                 write_stamp();

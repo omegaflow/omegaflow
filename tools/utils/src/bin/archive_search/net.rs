@@ -3917,7 +3917,11 @@ fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<Stri
         }
         let lines = run_lines_max(mode, query, env, None, max);
         let n = lines.len();
-        accumulated += lines.iter().filter(|l| l.contains("] url ")).count().min(arm_cap);
+        accumulated += lines
+            .iter()
+            .filter(|l| l.contains("] url "))
+            .count()
+            .min(arm_cap);
         ran += 1;
         full.push(format!("=== {} ({}) ===", mode, n));
         full.extend(lines.iter().cloned());
