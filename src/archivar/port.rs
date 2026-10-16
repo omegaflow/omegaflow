@@ -4052,8 +4052,8 @@ mod probe_classify_tests {
             probe_classify("eop_iers_polar_motion_x_arcsec"),
             ("gravity", "arcsec", 86400.0)
         );
-        assert_eq!(probe_classify("ut1_utc"), ("gravity", "s", 86400.0));
-        assert_eq!(probe_classify("pmx"), ("gravity", "arcsec", 86400.0));
+        assert_eq!(probe_classify("ut1_utc"), ("geometry", "s", 86400.0));
+        assert_eq!(probe_classify("pmx"), ("geometry", "arcsec", 86400.0));
         assert_eq!(probe_classify("ul_phase_cycles"), ("em", "cycle", 604800.0));
         assert_eq!(
             probe_classify("polar_angle_cycles"),
