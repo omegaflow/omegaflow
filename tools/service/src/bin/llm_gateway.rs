@@ -455,11 +455,18 @@ impl Redactor {
                     continue;
                 }
                 if let Some((real, ph)) = line.split_once('=') {
-                    let real = real.trim();
-                    let ph = ph.trim();
-                    if !real.is_empty() && !ph.is_empty() {
-                        forward.push((real.to_string(), ph.to_string()));
+                    let mut real = real.trim();
+                    let mut ph = ph.trim();
+                    if real.is_empty() || ph.is_empty() {
+                        continue;
                     }
+                    if real.starts_with('<') && !ph.starts_with('<') {
+                        std::mem::swap(&mut real, &mut ph);
+                    }
+                    if real.starts_with('<') || !ph.starts_with('<') {
+                        continue;
+                    }
+                    forward.push((real.to_string(), ph.to_string()));
                 }
             }
         }
