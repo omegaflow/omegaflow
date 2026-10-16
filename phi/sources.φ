@@ -8276,6 +8276,7 @@ ttl 86400
 url https://spiftp.esac.esa.int/data/SPICE/JUICE/kernels/spk/juice_orbc_000116_230414_310721_v01.bsp
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
 format reference
+sha256 e7a20a60fc53f6ce696caada4655418f3494ce0bb4cc24fd98be36f8a49bf8dd
 ttl 86400
 
 url https://stac.itslive.cloud
