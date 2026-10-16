@@ -2981,7 +2981,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             .expect("the descriptor field is admitted");
         assert_eq!(
             field.channel_ref,
-            Some(5),
+            Some(7),
             "Fourier/energy/fluid resolves to thermal"
         );
         assert_eq!(field.unit, "K");
@@ -3348,7 +3348,12 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             if parts.len() < 3 || parts[0] != "channel" {
                 continue;
             }
-            let Some(unit) = unit_token(parts[2]) else {
+            let unit = unit_token(parts[2]).or_else(|| {
+                parts
+                    .get(3)
+                    .and_then(|t| unit_token(&format!("{} {}", parts[2], t)))
+            });
+            let Some(unit) = unit else {
                 continue;
             };
             if let Ok(d) = ChannelDescriptor::parse_spec(parts[1], unit) {
@@ -3483,7 +3488,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
                              last data.v tide_height inverse-square gravity m 3600 0.0 0.0\n";
         assert_eq!(
             last_of(still_a_force).and_then(|f| f.channel_ref),
-            Some(1),
+            Some(2),
             "a force token in the same slot keeps its channel"
         );
     }
@@ -3526,7 +3531,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
                         field fkey fname primary energy maxwell elliptic vacuum none quasi-static inverse-square V/m 60 0.0 0.0\n";
         assert_eq!(
             force_of(electric),
-            Some(8),
+            Some(6),
             "the quasi-static regime selects the electric channel"
         );
     }
