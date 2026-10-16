@@ -291,6 +291,12 @@ fn mirror_windows(
     let mut whole_md5 = Md5::new();
     let mut parts: Vec<(String, String, u64)> = Vec::new();
 
+    let on_cdn = if ci_mode {
+        omegaflow::cdn::release_asset_sha256(tag)
+    } else {
+        std::collections::HashMap::new()
+    };
+
     let mut start: u64 = 0;
     let mut idx: usize = 0;
     while start < total {
@@ -299,6 +305,36 @@ fn mirror_windows(
         let pname = part_name(name, idx);
         let ppath = dir.join(&pname);
         let _ = std::fs::remove_file(&ppath);
+
+        if let Some(recorded) = on_cdn.get(&pname) {
+            let url = format!("{}/{tag}/{pname}", omegaflow::cdn::CDN_BASE);
+            if fetch_raw_to_file_with(&url, RetryPolicy::All, ORIGIN_TRANSFER_BOUND_S, &ppath)
+                .is_none()
+            {
+                let _ = std::fs::remove_file(&ppath);
+                return Err(format!(
+                    "{url}: the mirrored part could not be read back for the whole fingerprint"
+                ));
+            }
+            let (part_sha, part_len) =
+                match count_window(&ppath, want, &mut whole_sha, &mut whole_md5) {
+                    Ok(v) => v,
+                    Err(e) => {
+                        let _ = std::fs::remove_file(&ppath);
+                        return Err(e);
+                    }
+                };
+            let _ = std::fs::remove_file(&ppath);
+            if &part_sha != recorded {
+                return Err(format!(
+                    "{tag}/{pname}: the CDN part hashes to {part_sha}, not the recorded {recorded} — the mirror stays inconsistent"
+                ));
+            }
+            parts.push((pname, part_sha, part_len));
+            start = end + 1;
+            idx += 1;
+            continue;
+        }
 
         let mut cmd = curl_base(RetryPolicy::All, ORIGIN_TRANSFER_BOUND_S, 0);
         cmd.arg("-r")
