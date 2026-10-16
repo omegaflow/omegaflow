@@ -27079,6 +27079,14 @@ compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at eris
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_eros.bin
+terms PD-USGov https://ssd.jpl.nasa.gov/
+format ephemeris_binary
+origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+compiler tools/harvest/src/bin/ephemeris_compiler.rs
+at eros
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_europa.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
