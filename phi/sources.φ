@@ -712,6 +712,14 @@ field themis_gmag_h_nt themis_gmag_h_nt inverse-square em nT 3600 0.0 0.0
 field themis_gmag_e_nt themis_gmag_e_nt inverse-square em nT 3600 0.0 0.0
 field themis_gmag_z_nt themis_gmag_z_nt inverse-square em nT 3600 0.0 0.0
 
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=tpgpaltitude,ktemp&format=json
+terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
+ttl 3600
+on earth 0 0 0
+hapi tpgpaltitude.<i>=saber_tpgpaltitude ktemp.<i>=saber_ktemp
+field saber_ktemp saber_ktemp inverse-square thermal K 68 0.0 0.0
+field saber_tpgpaltitude saber_tpgpaltitude inverse-square gravity km 68 0.0 0.0
+
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_MFI@0&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BGSE&format=json
 terms PD https://cdaweb.gsfc.nasa.gov/
 ttl 3600
@@ -1226,6 +1234,14 @@ on earth 65.05 25.47 0
 rows .
 epoch 0
 field 1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600.0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/celestrak.org/timed_orbit.bin
+format orbit_bin
+origin https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE
+terms free-open https://celestrak.org/usage-policy.php
+compiler tools/harvest/src/bin/timed_tle_compiler.rs
+at timed
+ttl 7200
 
 url https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z&index=Kp&status=def,nowcast&format=JSON
 terms CC-BY-4.0 https://kp.gfz.de/
@@ -3863,14 +3879,6 @@ terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/wind_orbit_compiler.rs
 at wind
 ttl 86400
-
-url https://github.com/omegaflow/sources/releases/download/celestrak.org/timed_orbit.bin
-format orbit_bin
-origin https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE
-terms free-open https://celestrak.org/usage-policy.php
-compiler tools/harvest/src/bin/timed_tle_compiler.rs
-at timed
-ttl 7200
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/wind_waves.bin
 format wind_waves
