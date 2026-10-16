@@ -222,6 +222,37 @@ fn envelope_series(acc: BTreeMap<i64, (f64, u32)>, min_stations: usize) -> Vec<(
         .collect()
 }
 
+fn loo_envelope(
+    per_station: &[(String, BTreeMap<i64, f64>)],
+    skip: usize,
+    fusion: Fusion,
+    min_stations: usize,
+) -> Vec<(f64, f64)> {
+    let mut acc: BTreeMap<i64, (f64, u32)> = BTreeMap::new();
+    for (j, (_, m)) in per_station.iter().enumerate() {
+        if j == skip {
+            continue;
+        }
+        for (t, v) in m {
+            let e = acc.entry(*t).or_insert((*v, 0));
+            match fusion {
+                Fusion::Min => {
+                    if *v < e.0 {
+                        e.0 = *v;
+                    }
+                }
+                Fusion::Max => {
+                    if *v > e.0 {
+                        e.0 = *v;
+                    }
+                }
+            }
+            e.1 += 1;
+        }
+    }
+    envelope_series(acc, min_stations)
+}
+
 fn family_code(line: &str) -> Option<String> {
     let line = line.trim();
     if line.is_empty() || line.starts_with('#') {
@@ -377,6 +408,7 @@ fn main() {
         }
     }
     let mut acc: BTreeMap<i64, (f64, u32)> = BTreeMap::new();
+    let mut per_station: Vec<(String, BTreeMap<i64, f64>)> = Vec::new();
     let mut station_count = 0usize;
     for (code, decl, path, geo) in &stations {
         let Ok(bytes) = std::fs::read(path) else {
@@ -451,6 +483,13 @@ fn main() {
         } else {
             series
         };
+        let mut per: BTreeMap<i64, f64> = BTreeMap::new();
+        for (t, v) in &series {
+            if v.is_finite() {
+                per.insert(*t as i64, *v);
+            }
+        }
+        per_station.push((code.clone(), per));
         fold_envelope(&mut acc, &series, fusion);
         station_count += 1;
     }
@@ -480,6 +519,25 @@ fn main() {
             Err(e) => {
                 eprintln!("al_network_proxy: {out} write void: {e}");
                 std::process::exit(1);
+            }
+        }
+    }
+    if let Some(dir) = arg_value(&args, "--leave-one-out") {
+        if let Err(e) = std::fs::create_dir_all(&dir) {
+            eprintln!("al_network_proxy: {dir} mkdir void: {e}");
+            std::process::exit(1);
+        }
+        for i in 0..per_station.len() {
+            let loo = loo_envelope(&per_station, i, fusion, min_stations);
+            let code = &per_station[i].0;
+            let path = format!("{dir}/{code}.bin");
+            let records: Vec<(f64, f64, u32)> = loo.iter().map(|(t, v)| (*t, *v, 0)).collect();
+            match std::fs::write(&path, write_imdt(&records)) {
+                Ok(()) => println!("leave-one-out {code}: {} sample(s) → {path}", loo.len()),
+                Err(e) => {
+                    eprintln!("al_network_proxy: {path} write void: {e}");
+                    std::process::exit(1);
+                }
             }
         }
     }
