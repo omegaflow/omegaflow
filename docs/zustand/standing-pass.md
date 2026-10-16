@@ -2,7 +2,7 @@
   title: Standpass — öffentliche Projektion
   class: zustand
   date: 2026-10-17
-  sha256: 7562c1235133f84983e05c29080f6e50df73e600e6fd8cc5219cefba864d25c0
+  sha256: a07028bdd8dd0bb409c470eccfcf02ff56be5cc443c0885ad730a8284f61f1c0
   status: live
   see-also: AGENTS.md
 -->
@@ -15,8 +15,8 @@ Die öffentlichen Linien zitieren **diese** Fassung, nie die private.
 
 | Feld | Wert | gemessen |
 |---|---|---|
-| HEAD | `4e2ff67d8` (== `origin/main`) | 2026-10-17 |
-| rote CI-Läufe | **612** non-success über 12 Seiten — Träger: `ci-gate` (353) · `register-coverage` (155) · `tools-build` (44) · `quake-feeds-cdn` (14) · `matrix-rotor` (11) · `m10-mdis-raw-cdn` (8) · `health-check` (6) · `zenodo-raw-cdn` (4) · `gic-al-network` (4) · `timed-orbit-cdn` (2) · `geofon-waveform-cdn` (2) · `ci-check` (2) · je 1: `wdcb-obn-wayback-cdn` · `venus-radar-cdn` · `themis_asi-fodg-cdn` · `ssd-jpl-raw-cdn` · `hips-png-cdn` · `de2-cdn` | 2026-10-17 |
+| HEAD | `f53afdffc` (== `origin/main`) | 2026-10-17 |
+| rote CI-Läufe | **611** non-success über 12 Seiten — Träger: `ci-gate` (358) · `register-coverage` (151) · `tools-build` (44) · `quake-feeds-cdn` (13) · `matrix-rotor` (10) · `m10-mdis-raw-cdn` (8) · `health-check` (5) · `zenodo-raw-cdn` (4) · `gic-al-network` (4) · `venus-radar-cdn` (2) · `timed-orbit-cdn` (2) · `geofon-waveform-cdn` (2) · `ci-check` (2) · je 1: `wdcb-obn-wayback-cdn` · `themis_asi-fodg-cdn` · `ssd-jpl-raw-cdn` · `hips-png-cdn` · `de2-cdn` · `.github/workflows/gic-al-network.yml` | 2026-10-17 |
 
-Der `ci-gate`-Kern am HEAD `4e2ff67d8` (Lauf `38975908313`): `build`, `register`, `clippy` grün;
-`format`, `subset`, `dropped-gate` rot. Der `format`-Drift ist in diesem Rund geräumt.
+Der `ci-gate`-Kern am HEAD `f53afdffc`: `build`, `register`, `clippy`, **`format`** grün;
+`subset` (3 archivar-Tests) und `dropped-gate` (sechs neue Drops) rot.
