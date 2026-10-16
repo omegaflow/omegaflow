@@ -77,6 +77,7 @@ map .
 lat earthquake.hypocenter.latitude
 lon earthquake.hypocenter.longitude
 field earthquake.hypocenter.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:none Pa
 
 url https://api.vedur.is/quakes/events
 terms free-open https://en.vedur.is/about-imo/the-web/conditions
@@ -30033,6 +30034,7 @@ no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
 field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:free-surface Pa
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_1.dat
 origin https://web.archive.org/web/20030514061444id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_1.dat
