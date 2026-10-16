@@ -43,7 +43,7 @@ on:
       optical_cube:
         description: FODG full-frame cube URL (the themis_asi_frame_onset product); when set, the 2D onset is derived from the cube
         required: false
-        default: ""
+        default: "https://github.com/omegaflow/sources/releases/download/data.phys.ucalgary.ca/themis_asi_fodg_20240510_kapu_themis21_onset.bin"
       cube_window:
         description: causal window in frames for the cube onset
         required: false
