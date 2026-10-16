@@ -169,6 +169,33 @@ fn handover_cap_violation(path: &str, content: &str) -> Option<String> {
     ))
 }
 
+fn git_head_content(path: &str) -> Option<String> {
+    let out = Command::new("git")
+        .args(["-c", "core.quotePath=false", "show", &format!("HEAD:{path}")])
+        .output()
+        .ok()?;
+    if !out.status.success() {
+        return None;
+    }
+    Some(String::from_utf8_lossy(&out.stdout).to_string())
+}
+
+fn count_open_points(content: &str) -> usize {
+    let mut in_offen = false;
+    let mut n = 0;
+    for line in content.lines() {
+        let t = line.trim_start();
+        if let Some(rest) = t.strip_prefix("## ") {
+            in_offen = rest.trim().to_lowercase().starts_with("offen");
+            continue;
+        }
+        if in_offen && t.starts_with("### ") {
+            n += 1;
+        }
+    }
+    n
+}
+
 fn main() {
     let no_canon = std::env::args().skip(1).any(|a| a == "--no-canon");
     let out = Command::new("git")
@@ -444,6 +471,20 @@ fn main() {
         };
         if let Some(message) = handover_cap_violation(path, &content) {
             eprintln!("commit_check: {message}");
+        }
+        if let Some(before) = git_head_content(path) {
+            let was = count_open_points(&before);
+            let now = count_open_points(&content);
+            if was > 0 && now > was {
+                eprintln!(
+                    "commit_check: {path}: the open grew ({was} -> {now}) — a pass closes points; send taucher until they are done, do not collect"
+                );
+                fail = true;
+            } else if was > 0 && now == was {
+                eprintln!(
+                    "commit_check: {path}: the open did not shrink ({was}) — a pass closes at least one point"
+                );
+            }
         }
         for (line, rule, feedback) in status_proof_violations(&content) {
             eprintln!("commit_check: {path}:{line}: {rule} - {feedback}");

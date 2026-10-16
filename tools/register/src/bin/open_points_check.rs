@@ -456,9 +456,6 @@ fn point_format_gaps(content: &str) -> Option<Vec<String>> {
                 .to_string(),
         );
     }
-    if points > 10 {
-        gaps.push(format!("{points} open points (cap 10) — close them, do not hide them"));
-    }
     let mut current: Option<(&str, Vec<&str>)> = None;
     for line in section {
         if let Some(name) = line.trim_start().strip_prefix("### ") {
@@ -807,18 +804,6 @@ mod tests {
         let content = "## Offen\n\n- **GIC-2** pending · **Platzierung** offen · **Apertur** 3\n";
         let gaps = point_format_gaps(content).unwrap();
         assert!(gaps[0].contains("no point"), "{:?}", gaps);
-    }
-
-    #[test]
-    fn flags_more_than_ten_points() {
-        let mut content = String::from("## Offen\n\n");
-        for i in 0..11 {
-            content.push_str(&format!(
-                "### P{i}\n- **Status:** eigen\n- **Trigger:** now\n- **Lage:** offen (gemessen 2026-10-16 via `rg`)\n- **Blockade:** keine\n- **Braucht:** `bin/where:19`\n\n"
-            ));
-        }
-        let gaps = point_format_gaps(&content).unwrap();
-        assert!(gaps.iter().any(|g| g.contains("cap 10")), "{:?}", gaps);
     }
 
     #[test]
