@@ -672,7 +672,12 @@ fn main() {
                         iso_utc(day_start + i as f64 * 60.0)
                     );
                 }
-                None => println!("onset {st} pending (no crossing above the robust threshold)"),
+                None => {
+                    let peak = (lo..hi).filter_map(|i| slots[i]).fold(f64::NAN, f64::max);
+                    println!(
+                        "onset {st} riss (no crossing above the robust threshold; window peak |dH/dt| {peak:.2} nT/min)"
+                    );
+                }
             }
         }
     }
