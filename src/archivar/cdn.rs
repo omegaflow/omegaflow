@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::io::Write;
 use std::process::{Command, Stdio};
 use std::sync::{Mutex, OnceLock};
@@ -534,6 +534,43 @@ pub fn delete_release_asset(tag: &str, name: &str) -> bool {
             false
         }
     }
+}
+
+pub fn release_asset_sha256(tag: &str) -> HashMap<String, String> {
+    let mut map = HashMap::new();
+    if std::env::var("GH_TOKEN").is_err() {
+        return map;
+    }
+    let out = Command::new("gh")
+        .arg("release")
+        .arg("view")
+        .arg(tag)
+        .arg("--repo")
+        .arg(CDN_REPO)
+        .arg("--json")
+        .arg("assets")
+        .arg("--jq")
+        .arg(".assets[] | \"\\(.name) \\(.digest)\"")
+        .output();
+    let Ok(o) = out else {
+        return map;
+    };
+    if !o.status.success() {
+        return map;
+    }
+    for line in String::from_utf8_lossy(&o.stdout).lines() {
+        let mut it = line.split_whitespace();
+        let (Some(name), Some(digest)) = (it.next(), it.next()) else {
+            continue;
+        };
+        if let Some(hex) = digest.strip_prefix("sha256:") {
+            let hex = hex.to_ascii_lowercase();
+            if is_sha256_hex(&hex) {
+                map.insert(name.to_string(), hex);
+            }
+        }
+    }
+    map
 }
 
 pub fn ensure_release(tag: &str) -> bool {

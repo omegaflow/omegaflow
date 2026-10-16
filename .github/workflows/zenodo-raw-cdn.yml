@@ -1,4 +1,4 @@
-# harvest: format=raw_zenodo arm=raw_mirror pattern=^<asset>$ idempotent=true timeout=240 tag=zenodo.org
+# harvest: format=raw_zenodo arm=raw_mirror pattern=^<asset>$ idempotent=true timeout=360 tag=zenodo.org
 # Zenodo raw mirrors (CC-BY-4.0) byte-for-byte to the omegaflow/sources CDN. Each matrix
 # entry carries the registered url/origin and one fingerprint: sha256, or the md5 Zenodo
 # publishes for the dataset-scale assets. raw_mirror refuses to index an upload unless the
@@ -34,7 +34,7 @@ env:
 jobs:
   zenodo-raw:
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 360
     strategy:
       fail-fast: false
       matrix:
