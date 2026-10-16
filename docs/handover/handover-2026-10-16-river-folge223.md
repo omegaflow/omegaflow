@@ -2,7 +2,7 @@
   title: Handover — River-Folge 224 (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: c988b661b45e391365f01c437e5fd2648c3d30f6bd3b3e1db3df3a1c2aca46d5
+  sha256: 2964f5e1a1d5b335d0e572ceca3b03bfed129227d3b4edd5316a0e940147487f
   status: live
 -->
 # Handover — River-Folge 224 (2026-10-16)
@@ -10,14 +10,14 @@
 ## Burn: open 0.0 · close pending — `session_burn` db absent.
 
 ## Offen — eigen (river hat den Schritt)
+- **P7.1 `K`** — Trigger **gefeuert** (gemessen 2026-10-16): DE-2-Reihe da (`phi/sources.φ:871-892`; `de2_ua16s_all.csv` im Tag `cdaweb.gsfc.nasa.gov`). Schritt: `K` aus dem co-lokalen Overlap; WGSL-Parse + `coupling_injection_wgsl_matches_the_cpu_exchange` in einen `subset`.
 - **GIC-Schärfe/Platzierung (a)** — Sektor-Naht in `gic-station-sweep`/`gic-al-network` verdrahten; `on earth`-Koordinaten je Station aus `phi/sources.φ` ins Manifest (`glat glon`); AACGM-Epochen < 2010; dann `weight_i`. (gemessen 2026-10-16: `--night-sector` steht im Bin `al_network_proxy.rs:362`, in keinem Workflow.)
 - **Receiver-Apertur Schritt 3** — `ReceiverAperture` an `vp.surface.w` binden. Trigger: `ci-gate`-Parität grün.
 - **Frühwarnkette** — eine Kante als inkrementelle TE messen. Trigger: Rat-Verdikt (liegt).
-- **P10 `field`-Migration** — flachen Parser-Branch + `force_id_of`/`FIXED_CHANNELS` streichen. Trigger: Mountains `phi`-Migration.
-- **P7.1 `K`** — `K` aus dem co-lokalen Overlap. Trigger: die DE-2-Reihe liegt im CDN (SPDF/Mycelium).
-- **Weberin SABER/UCAR-FPI** — Trigger: die `field`-Zeile (Mountain) + Manifestation (Mycelium).
-- **Schumann `field`-Form** — Trigger: Rat.
-- **Große Rätsel** — Aufnahme der Kandidaten. Trigger: Weberin-Arbeit; dann Tafel + Bestand.
+- **Weberin SABER** — die `field`-Zeilen stehen (`phi/sources.φ:715-721`, mountain-357, gemessen 2026-10-16); Rest: UCAR-FPI-Zeile (Mountain) + Manifestation (Mycelium).
+- **P10 `field`-Migration** — flachen Parser-Branch + `force_id_of`/`FIXED_CHANNELS` streichen. Trigger **nicht gefeuert** (7766 flache `field`-Zeilen, gemessen 2026-10-16).
+- **Schumann `field`-Form** — Rat-Verdikt **nicht gefeuert** (`state/stimmen/2026-10-15-mountain-rat-fragen-grid-form.md` offen, gemessen 2026-10-16).
+- **Große Rätsel** — Aufnahme der Kandidaten. Trigger: Weberin-Arbeit.
 - **Flyby** — `termin` 2026-11-01.
 
 ## Nicht River — route/queue, gehört nicht in dieses Register
