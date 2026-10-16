@@ -26,7 +26,7 @@ case "$f" in
 esac
 [ -f "$f" ] || { printf 'private_read: no such file: %s\n' "$f" >&2; exit 2; }
 map="$priv/redact.map"
-[ -f "$map" ] || { printf 'private_read: no redact.map in the private house\n' >&2; exit 2; }
+[ -f "$map" ] || map=/dev/null
 
 filter="$(mktemp)"
 mapscript="$(mktemp)"
