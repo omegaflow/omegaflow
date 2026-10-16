@@ -4,7 +4,7 @@
   date: 2026-10-15
   sha256: e3e0f5b5c65ae0fa911a13928bca3874ccea3123b17210eb78a35cdec26254c7
   status: live
-  see-also: docs/concepts/sitzungs-oekonomie.md
+  see-also: docs/concepts/archiv/sitzungs-oekonomie.md
 -->
 # Handover — Sitzung 2026-10-15 (folge1)
 

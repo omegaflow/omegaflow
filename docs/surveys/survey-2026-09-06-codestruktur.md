@@ -4,7 +4,7 @@
   date: 2026-09-06
   sha256: 65ea20b73f41f4bece856d9bc77430084b038f6b964d42ba4eca122e2304551f
   status: live
-  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/docs-naming.md
+  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/die-weberin.md docs/concepts/archiv/docs-naming.md
 -->
 # Survey — Codestruktur: Archivar, Mathematikerin, Tools
 

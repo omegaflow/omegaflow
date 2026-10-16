@@ -4,7 +4,7 @@
   date: 2026-10-08
   sha256: f23ea3992a67bab98a926a032a8c3c1d2ecfe1b3736f1725dff98625f2f20093
   status: live
-  see-also: docs/concepts/ui-seats.md AGENTS.md docs/SOURCE_PORT.md
+  see-also: ~/projects/omegaflow-work/ui-seats.md AGENTS.md docs/SOURCE_PORT.md
 -->
 # Survey — FMHY/Awesome-Mining: Research-Landschaft (Seats + Suchwege)
 
