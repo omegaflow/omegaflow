@@ -9940,8 +9940,8 @@ format tap
 ttl 604800
 at sun
 cmap .
-ra ra_dr2
-dec dec_dr2
+ra ra
+dec dec
 plx parallax
 field teff galah_dr3_effective_temp_k erfc thermal K 604800 0.0 0.0
 field rv_galah galah_dr3_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0

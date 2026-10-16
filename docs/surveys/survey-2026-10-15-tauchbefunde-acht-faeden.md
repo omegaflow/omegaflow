@@ -117,15 +117,17 @@ Kein Compiler, kein Workflow vorhanden (`sgrep -i -c 'silso' tools/harvest/src/b
 - **Die echten freien Aktivitätsquellen:** VizieR `J/A+A/697/A230/catalog` (Freund et al. 2025,
   Spalte **`logR'IRT`**, `vizier-scientific-free`); Zenodo **18834075** LAMOST DR11
   (`S_L, S_MWO, R_HK, R′_HK`, **CC-BY-4.0**), Zenodo **10841693** DR8.
-- **XUV:** SDO EVE L3 merged SSI (LISIRD `sdo_eve_ssi_l3`, 6–106 nm, **CC0-1.0**, FITS/NetCDF,
-  `…/merged/latest_EVE_L3_merged.fit` HTTP 206); EVE L2 Stundenraster.
+- **XUV:** SDO EVE L3 merged SSI (LISIRD `sdo_eve_ssi_1nm_l3`, 6–106 nm, **CC0-1.0**,
+  `…/eve/data_access/eve_data/products/merged/latest_EVE_L3_merged_1nm.fit` HTTP 206); EVE L2 Stundenraster.
 
 **Riss A (EVE ist im Code gebaut, im Register nicht).** `src/archivar/eve.rs` (MAGIC `EVL1`, 11 Linien),
 `extract.rs:126` (`"eve" => eve::parse_bin`), `main_flow.rs:3215`, `tools/harvest/src/bin/eve_compiler.rs`
 (CDN-Tag `lasp.colorado.edu-eve`) — aber `format eve` = 0, kein `eve-cdn.yml`, Tag 404. Der Kanal ist
 verdrahtet, aber register- und CDN-los.
-**Riss B (GALAH-Block kaputt).** `phi:9898` nutzt `ra_dr2`/`dec_dr2`; das Datacentral-TAP kennt nur
-`ra`/`dec` → HTTP **400**.
+**Riss B (GALAH-Block kaputt).** Der Register-Block `phi:9937–9944` (Survey-Kürzel `phi:9898` ist
+offset-stale) trägt in den `cmap`-Zeilen `ra_dr2`/`dec_dr2`; das Datacentral-TAP kennt nur `ra`/`dec`
+→ HTTP **400**. Die registrierte **URL** (`:9937`) fragt bereits `ra,dec` — der Fehler sitzt in der
+`cmap` (`:9943-9944`), nicht in der Abfrage. (Gegenprobe + Fix 2026-10-16, Sensory.)
 
 **Kanal-Entwürfe (Vorschlag):** EVE 11 Zeilen `field eve_<N>_line_irradiance … inverse-square em wm2_1au 3600`;
 `field logR'IRT freund_logr_irt gaussian-inverse-square em 1 604800`; `field logRHK lamost_dr11_logrhk …`.
@@ -214,9 +216,10 @@ Spiegel, sha256. Mountain: `field`/`quantity`-Admission, Witness-Identität, `ee
 **Riss (nicht geglättet).** Die Handover nennt EDGES eine „echte Quellen-Lücke"; die Weltmessung
 zeigt das Gegenteil. Der Vorgänger `xfer:mycelium-344-2` hatte Zenodo `16881868` am 2026-10-13
 **schon gemessen**; der Entwurf `state/mycelium/block-drafts/2026-10-13-faden-schliessung.φ` ist
-**nicht mehr im Baum** — der Befund wurde nie registriert. **Zweiter Riss:** WALLABY (`phi:14519`,
-ODbL-1.0, `format hips3d`) hat keine `field`-Zeile **und** `format hips3d` hat **keinen Reader**
-(`src/` = 0).
+**nicht mehr im Baum** — der Befund wurde nie registriert. **Zweiter Riss:** WALLABY (`phi:14519` = offset-stale, real heute
+`phi:14569–14574`, ODbL-1.0, `format hips3d`) hat keine `field`-Zeile **und** `format hips3d` hat
+**keinen Reader** (`src/` = 0). Zusatz: der Block registriert das CDS-**HiPS-Produkt** (`ODbL-1.0`),
+nicht den Survey; die Daten stehen bei CASDA/CSIRO unter **CC-BY-4.0** (`10.25919/hg66-4v60`).
 
 **Kanal-Entwurf / Compiler.** `spectral_compiler.rs` ist **λ-nativ**, EDGES **frequenz-nativ** in K →
 ein eigener `edges_compiler.rs` auf demselben Schreibpfad (`write_spectral_bin`). Entwurf:
