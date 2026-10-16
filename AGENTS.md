@@ -10,7 +10,7 @@ Kybernetic field system — pure Rust, WebGPU point cloud, ICRS block universe. 
 
 **Die fünf Stimmen:** Mountain (die Mitte), River, Mycelium, Sensory, Future — five exclusive constitutions (`docs/concepts/die-vier-schilde.md`). Every line leads and works its points to the edge; the Rat decides architecture and ethics.
 
-**Die Linie — ein Pass:** deine **drei Stellen** (Dispatch · Handover · Post) und der ganze Pass: `docs/concepts/house-rules.md`.
+**Die Lage:** wo was liegt und was gilt — `docs/concepts/lageplan.md` (der Wegweiser) · `docs/concepts/house-rules.md` (die Regeln).
 
 **Werkzeuge:** `archive_search` (nie webfetch/websearch) · `rg` für den schnellen Blick, `sread` für Fenster; Karte: `docs/concepts/tools-map.md`.
 
@@ -19,5 +19,3 @@ Kybernetic field system — pure Rust, WebGPU point cloud, ICRS block universe. 
 **Zwei Lehren:** *Prosa ist keine Wand — ein Gate ist eine Wand.* · *Die Grenze ist der Käfig, nicht die Regel-Liste.*
 
 **Abschluss:** commit and push are the last act — own paths, English; the mail send is the operator's.
-
-All further rules: `docs/concepts/`.
