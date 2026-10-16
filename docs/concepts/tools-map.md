@@ -432,14 +432,12 @@ sonst client-seitig `jaq 'select(.conclusion=="failure")'`; der kanonische Leser
 
 Vier Werkzeuge für Eingang/Ausgang und die Nachschau auf das Veröffentlichte. Kein
 Gate (das bleibt `commit_check`), kein Send. Die `state/`-Daten verlassen die
-Maschine nie; `ci_triage`/`public_audit` fahren nur über den **public** Baum.
+Maschine nie.
 
 | Werkzeug | Kann | Scope | Profile |
 |---|---|---|---|
 | `bin/session_check --in <handover>` / `--out` | Ein-/Ausgangs-Check in einem Turn: (in) HEAD/origin-Relation + dirty, `open_points_check`, `--orphan-docs`, `--orphans`, `ci_manage status`; (out) `git show --stat HEAD`, `git log origin/main..HEAD --name-only`, `--history`, `git_safety --snapshot`. Kastriert nichts, keine Gate-Schicht | lokal | P1/P4 |
-| `bin/ci_triage <run-id> [--all]` | analysiert den **public** CI-Log (`ci_manage log`) in einem leeren Temp-Dir; Copilot nennt genau eine Zeile — `job \| step \| error-line`, sonst `green`/`unread`. `state/` wird nie berührt | Netz (public) | P1 |
 | `bin/house_audit [--staged] [--spec]` | mechanische Hausregeln des getrackten Baums: `pii` (Adresse/Telefon/Mail, nie getrackt), `ident` (`Archiver`/`Mathematician`), `spec` (opt-in) | lokal | P1 |
-| `bin/public_audit [<pfad…>]` | prüft den **bereits public** Baum (`git archive HEAD` in leerem Temp-Dir) auf nicht-grep-bare Hausregeln: unbelegte Zustandsbehauptung, Widerspruch, Identitäts-Verletzung, Fabrikationsmuster; liefert Kandidaten | Netz (public) | P1 |
 
 ## Browser-Anbindung — die vier Pfade (Rat 2026-09-20: nicht konsolidieren; Pfad 4 registriert 2026-09-23)
 

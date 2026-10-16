@@ -109,12 +109,7 @@ Cloud-Dienst jenseits des laufenden Agenten. Die lokale `copilot`-CLI ist darum
 Der Eingangs-/Ausgangscheck läuft **lokal und deterministisch** über
 `bin/session_check --in|--out` — 0 Cloud-Token, identisch in jeder Session.
 
-Ausnahme — **nur public**: der CI-Log eines public Repos ist public. `bin/ci_triage
-<run-id>` lädt den Log und lässt Copilot in einem leeren Temp-Verzeichnis daraus
-**nur** die gemessene Ursache nennen (Plan-Modus, kein MCP, Credit-Deckel); der
-private Baum wird nicht berührt. Der CI-Blindfleck des Stehenden Passes (`unread`)
-schließt sich damit, ohne Datenabfluss. Die Ursache ist eine zweite Stimme über
-public-Daten — die Session misst sie am Log, bevor sie als Ursache zählt.
+Ausnahme — **keine**: die lokale `copilot`-CLI ist entfernt; es gibt keinen Cloud-Weg für private oder public Daten über eine zweite Stimme. Der CI-Log wird lokal über `ci_manage log` gelesen.
 
 **Secret-Hygiene — Schlüsselnamen, nie Werte (Operator-Wort 2026-09-30).** Ein
 Secret-Wert, der einmal in den Modell-Transcript gelaufen ist, ist veröffentlicht;
