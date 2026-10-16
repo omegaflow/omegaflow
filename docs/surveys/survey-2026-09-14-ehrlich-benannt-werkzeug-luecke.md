@@ -4,7 +4,7 @@
   date: 2026-09-14
   sha256: d57f4eb4138291d1e6461d3bb47281bea05622ba21256c75ffe54cd25d15def6
   status: live
-  see-also: docs/specs/ref-auth-apis.md docs/concepts/docs-naming.md
+  see-also: docs/specs/ref-auth-apis.md docs/concepts/archiv/docs-naming.md
 -->
 # Ehrlich benannt — wo das Werkzeug fehlte (Stand 2026-09-14)
 

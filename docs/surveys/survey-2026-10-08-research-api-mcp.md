@@ -4,7 +4,7 @@
   date: 2026-10-08
   sha256: 871441c34c2d2f5bb17de438743192e310cb09007a7ec9c0b26acc1ea96a98e7
   status: live
-  see-also: docs/surveys/survey-2026-10-08-fmhy-research-landscape.md docs/concepts/ui-seats.md docs/concepts/tools-map.md
+  see-also: docs/surveys/survey-2026-10-08-fmhy-research-landscape.md ~/projects/omegaflow-work/ui-seats.md docs/concepts/tools-map.md
 -->
 # Survey — Research-APIs & MCPs
 

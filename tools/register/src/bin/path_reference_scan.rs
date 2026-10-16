@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -22,6 +23,10 @@ fn tracked_files(root: &Path) -> Vec<PathBuf> {
 
 fn scan(root: &Path) -> (usize, usize) {
     let files = tracked_files(root);
+    let tracked: HashSet<String> = files
+        .iter()
+        .map(|f| f.to_string_lossy().to_string())
+        .collect();
 
     let mut missing = 0usize;
     let mut absolute = 0usize;
@@ -71,6 +76,9 @@ fn scan(root: &Path) -> (usize, usize) {
                 let resolved = resolve(root, &full, &cleaned);
                 if !resolved.exists() {
                     if is_git_ignored(root, &resolved) {
+                        continue;
+                    }
+                    if is_cross_house(&cleaned) && !tracked.contains(&cleaned) {
                         continue;
                     }
                     missing += 1;
@@ -165,7 +173,16 @@ fn is_skipped(rel: &str) -> bool {
         || rel.contains("docs/reference/")
         || rel == "src/gate/commit_gate_vocab.json"
         || rel.starts_with("mail/")
-        || rel.starts_with("state/reports/")
+        || rel.starts_with("state/")
+        || rel == "opencode.json"
+        || rel.ends_with(".stunnel.conf")
+}
+
+fn is_cross_house(target: &str) -> bool {
+    target.starts_with("state/")
+        || target.starts_with("data/")
+        || target.starts_with("privat/")
+        || target.starts_with("~/")
 }
 
 fn is_git_ignored(root: &Path, path: &Path) -> bool {
@@ -226,10 +243,26 @@ mod tests {
     }
 
     #[test]
-    fn gitignored_target_is_not_a_broken_reference() {
-        let root = repo_root();
-        let target = root.join("state/zustand/external-state.md");
-        assert!(is_git_ignored(&root, &target));
+    fn cross_house_target_is_not_a_broken_reference() {
+        assert!(is_cross_house("state/zustand/external-state.md"));
+        assert!(is_cross_house(
+            "state/future/gic-riss-154-wunschliste-2026-10-06.md"
+        ));
+        assert!(is_cross_house("data/flyby2/anderson-probe-2026-09-28.json"));
+        assert!(is_cross_house("privat/free-voices.md"));
+        assert!(is_cross_house("~/projects/omegaflow-work/ui-seats.md"));
+        assert!(!is_cross_house("docs/concepts/tools-map.md"));
+        assert!(!is_cross_house("phi/sources.φ"));
+    }
+
+    #[test]
+    fn runtime_logs_and_configs_are_out_of_scope() {
+        assert!(is_skipped("state/zustand/ereignisse.φ"));
+        assert!(is_skipped("state/research/queries.φ"));
+        assert!(is_skipped("opencode.json"));
+        assert!(is_skipped("bin/relay-tls.stunnel.conf"));
+        assert!(!is_skipped("bin/agent_sandbox"));
+        assert!(!is_skipped("tools/register/src/bin/register_lookup.rs"));
     }
 
     #[test]

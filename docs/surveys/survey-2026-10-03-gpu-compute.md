@@ -4,7 +4,7 @@
   date: 2026-10-03
   sha256: 8113b7f202c0c50dce91d783481bd423b73f6f254a6f1dfaf49b6a18df6cf844
   status: live
-  see-also: docs/concepts/github-pipeline.md state/future/bewerbungen-vs-zai-export.md state/future/survey-funding-pflichtfrei.md
+  see-also: docs/concepts/archiv/github-pipeline.md state/future/bewerbungen-vs-zai-export.md state/future/survey-funding-pflichtfrei.md
 -->
 # Survey — GPU-Rechenzeit: freie Wege und GitHub-Runner
 
