@@ -3216,16 +3216,17 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn range_directive_with_zero_or_negative_step_stays_unrecorded() {
-        let zero = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 0\nat sun\nttl 604800\n";
-        let negative =
-            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 -0.15\nat sun\nttl 604800\n";
+        let zero =
+            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 0\nat sun\nttl 604800\n";
+        let negative = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 -0.15\nat sun\nttl 604800\n";
         assert_eq!(parse_sources(zero)[0].range, None);
         assert_eq!(parse_sources(negative)[0].range, None);
     }
 
     #[test]
     fn range_directive_with_void_arity_stays_unrecorded() {
-        let content = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0\nat sun\nttl 604800\n";
+        let content =
+            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0\nat sun\nttl 604800\n";
         assert_eq!(parse_sources(content)[0].range, None);
     }
 
