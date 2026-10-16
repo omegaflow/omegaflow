@@ -495,7 +495,10 @@ fn check_point(name: &str, body: &[&str], gaps: &mut Vec<String>) {
         false
     });
     if !has_path {
-        gaps.push(format!("{}  point without a path — name its file:line", name));
+        gaps.push(format!(
+            "{}  point without a path — name its file:line",
+            name
+        ));
     }
     if let Some(lage) = trimmed.iter().find(|l| l.starts_with("- **Lage:**")) {
         if !lage.contains("(gemessen") {
