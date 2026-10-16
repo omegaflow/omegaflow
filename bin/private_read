@@ -34,7 +34,7 @@ trap 'rm -f "$filter" "$mapscript"' EXIT
 
 # ---- Stage 2 config (the Mistral check) ----
 gateway="${OMEGAFLOW_GATEWAY:-http://127.0.0.1:1621/v1/chat/completions}"
-model="${OMEGAFLOW_REDACT_MODEL-mistral/mistral-small-latest}"
+model="${OMEGAFLOW_REDACT_MODEL:-}"
 prompt='Dieser Text ist BEREITS geschwärzt: Personen, Adressen, Kontakte und Kennungen stehen als Platzhalter wie <NAME>, <ADDR>, <TEL>, <EMAIL>, <DEVICE>, <CONTACT>. Finde NUR NOCH die Reste, die übersehen wurden — Personennamen (auch einzelne Vor- oder Nachnamen), Adressen, Telefonnummern, Mailadressen, Konten-, Geräte- und Netz-Kennungen — und ersetze sie durch dieselben Platzhalter. Lass die vorhandenen Platzhalter und den übrigen Text WÖRTLICH unverändert. Gib NUR den Text zurück — keine Erklärung, keine Anführungszeichen.'
 
 # ---- Stage 1: the patterns ----
