@@ -2,7 +2,7 @@
   title: The solar 24-s seconds matrix — a 72-pair fleet measurement (XRS to EUV)
   class: paper
   date: 2026-09-12
-  sha256: f14341db1d9206954403de76b4c1b1b6e4af7cbb80f195f957fcd6e7c52980c0
+  sha256: 2715e7db46821e13a28894df38c01109f52017d607589fd5fb8b2593a3ab20e9
   status: live
   see-also: docs/blatt/blatt-solar-seconds-matrix.md
 -->
@@ -19,7 +19,7 @@ The solar seconds matrix stacks nine actors on a common 24-s grid over 2013–20
 
 The coupling is measured with transfer entropy. Flare events are cut from the GOES XRSB b_flux as 24-s medians above the C5.0 threshold 5e-6 W/m², with a refractory of 75 cells (30 min); each event window spans ±40 min around the peak. A directed pair A→B reads "A drives B": transfer entropy runs with B as target and A as driver, and each event contributes D = (TE(A→B) − TE(B→A)) / (|TE(A→B)| + |TE(B→A)|). The pair stacks the mean per-event D over its events. Lags span 0–12 cells (0–288 s). Each cell carries ten phase-randomized surrogates. The family threshold is the strongest surrogate stacked D over all 72 directed pairs × 13 lags × 10 surrogates: fam = 1.3966e-1. A pair is an ARROW when D > fam, a family bound when D exceeds its own mean + 2σ surrogate floor but not fam, still otherwise; a pair below the event floor carries no statement.
 
-The XRS side is registered at the shared CDN as `goes_xrs.bin` (fields `goes_xrs_xrsa`, `goes_xrs_xrsb`); the EUV-lines side is registered as `eve_lines_2011.bin`. Both are listed in `phi/sources.φ`. The measured seconds corpus itself is the AIA fullyear/monthly bins from `jsoc.stanford.edu` and the GOES-15 2-s XRS year tars (`goes15_xrs_2s_{2013,2014,2015}.tar`) from `ncei.noaa.gov`.
+The XRS side is registered at the shared CDN as `goes_xrs.bin` (fields `goes_xrs_xrsa`, `goes_xrs_xrsb`). The EUV-lines side is **not** registered: no `phi/sources.φ` block carries `eve_lines_2011.bin` — the channel is wired in code (`tools/harvest/src/bin/eve_compiler.rs`, `src/archivar/eve.rs`) but register- and CDN-less (measured 2026-10-16). The measured seconds corpus itself is the AIA fullyear/monthly bins from `jsoc.stanford.edu` and the GOES-15 2-s XRS year tars (`goes15_xrs_2s_{2013,2014,2015}.tar`) from `ncei.noaa.gov`.
 
 ## The finding
 
