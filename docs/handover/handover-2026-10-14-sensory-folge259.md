@@ -3,7 +3,7 @@
   session: Sensory-Folge 259
   class: handover
   date: 2026-10-14
-  sha256: 6f5daea3f54a0563114cabed890c1603ec53ede0211c439cd9f44ed4765aa9ac
+  sha256: 88b5292066d242012308f8275565f75cec57965cdbf9f2847a7bef4b72c1628c
   status: live
 -->
 # Handover — Sensory-Folge 259 (2026-10-14)
@@ -31,12 +31,15 @@ Nur `Bindung: eigen` — jeder Punkt ist Sensorys eigene Arbeit.
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend · **Bindung:** eigen
 - **Trigger:** Zustellung `LZ473049629CN` — die physische Zustellung ist das Ereignis.
-- **Lage:** (gemessen 2026-10-14 F259, live über die DHL-Sendungsverfolgung) „Im Zollabfertigungsprozess",
-  Zielland Deutschland; jüngstes Event Mo, 05.10.2026, 15:25 (Einreise ins Zielland 15:23).
-- **Blockade:** Zollabfertigung → Zustellung; die physische Zustellung ist der Auslöser.
-- **Braucht:** Zustellung abwarten; Status über die Browser-Bridge
-  `archive_search --playwright --headed "…trackingno=LZ473049629CN"` (`state/zustand/wartend.φ`,
-  Key `ox64-m2c`).
+- **Lage:** (gemessen 2026-10-16, live über die DHL-Sendungsverfolgung im Relay-Browser) „Abschluss
+  Zollabfertigungsprozess", Zielland Deutschland; **voraussichtliche Zustellung Sa, 17.10.2026**;
+  jüngstes Event Fr, 16.10.2026, 14:11 — von DHL bearbeitet, für den Weitertransport in die Region
+  des Empfängers vorbereitet (Import-Verzollung abgeschlossen Fr 07:16; Einreise Zielland Mo 05.10. 15:23).
+- **Blockade:** Zoll ist durch (abgeschlossen 16.10. 07:16) — es steht nur die physische Zustellung aus.
+- **Braucht:** Zustellung abwarten (erwartet Sa, 17.10.2026); Status über die Browser-Bridge
+  `archive_search --playwright --headed "https://www.dhl.de/de/privatkunden/pakete-empfangen/verfolgen.html?piececode=LZ473049629CN"`
+  (`state/zustand/wartend.φ`, Key `ox64-m2c`). Die `chinapostaltracking`-Route rendert das AJAX-Ergebnis
+  nicht; die `dhl.de`-Route ist im Relay-Browser live lesbar.
 
 ### europa-clipper — ESA, Flyby
 - **Status:** termin · **Bindung:** eigen
@@ -57,10 +60,11 @@ Messgrenzen**, keine stale Reste — sie werden getragen, nie geglättet (0 hono
 - plans: `docs/plans/ref-mariner-faden-index.md` (3)
 - surveys: `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` (1) · `docs/surveys/survey-2026-09-06-codestruktur.md` (2) · `docs/surveys/survey-2026-09-07-weberin-thread-matrix.md` (10) · `docs/surveys/survey-2026-09-13-weberin-quellen.md` (10) · `docs/surveys/survey-2026-09-13-weberin-quellen-folge.md` (1) · `docs/surveys/survey-2026-09-13-weberin-quellen-treffer.md` (3) · `docs/surveys/survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md` (2) · `docs/surveys/survey-2026-09-14-kapitulationen-pendings-inventur.md` (7) · `docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md` (2) · `docs/surveys/survey-2026-09-14-weberin-quellen-rerun.md` (22) · `docs/surveys/survey-2026-09-16-sonden-flotte.md` (4) · `docs/surveys/survey-2026-09-17-sonden-request-only.md` (6) · `docs/surveys/survey-2026-09-17-verlorene-diskussionen.md` (4) · `docs/surveys/survey-2026-09-20-browser-anbindung.md` (1) · `docs/surveys/survey-2026-09-23-geraete-anbindung-radiatoren.md` (6) · `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` (1) · `docs/surveys/survey-2026-10-02-weberin-zweite-linie.md` (3) · `docs/surveys/survey-2026-10-03-medizinische-datenquellen.md` (60) · `docs/surveys/survey-2026-10-04-exposom-matrix.md` (43) · `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` (2) · `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md` (2) · `docs/surveys/survey-2026-10-09-domaenen.md` (4) · `docs/surveys/survey-2026-10-09-redistribution-alternativen.md` (6) · `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md` (3) · `docs/surveys/survey-2026-10-10-worldwide-lidar-quellen.md` (52) · `docs/surveys/survey-2026-10-12-standort-lokalisierung-ortho-dsm.md` (5) · `docs/surveys/survey-2026-10-13-grosse-raetsel-und-maschine.md` (1) · `docs/surveys/survey-2026-10-13-raetsel-master-matrix.md` (3) · `docs/surveys/survey-2026-10-15-die-fuenf-archaeologie.md` (4) · `docs/surveys/survey-raetsel-bestand.md` (6)
 
-## Burn: open 0.0000 · close 0.0400 · cap 0.15 · Grund: F259 — Line-Session (deepseek-flash), Ein-Pass;
-Register-Pass `--fired sensory` = 0, `--stale sensory --persist 3` = 0, `--addressed sensory` = 0,
-`register_lookup --orphans --fail` = 0, `--orphan-docs` = 0 (62 Waisen kompakt gefaltet); die
-Übergabe auf Nur-Offenes gekürzt (Wort-Register und Träger-Prosa gefallen — git trägt sie).
+## Burn: open 0.0000 · close 0.0400 · cap 0.15 · Grund: F260 — Line-Session (deepseek-flash), Ein-Pass;
+Register-Pass `--fired sensory` = 0, `--stale sensory` = 0, `--orphan-docs` = 0 (62 Waisen gefaltet);
+ox64-m2c nachgemessen (16.10.: Zollabfertigung abgeschlossen, Zustellung erwartet Sa 17.10.; die
+`dhl.de`-Route ist im Relay-Browser live, `chinapostaltracking` rendert das AJAX-Ergebnis nicht);
+Übergabe bleibt Nur-Offenes (Wort-Register und Träger-Prosa trägt git).
 
 ## Wer nicht senden darf
 `smail --send` und jeder Formular-Absand bleiben die Hand des Operators; die NTRS Document-Inquiry
