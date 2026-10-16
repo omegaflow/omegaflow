@@ -2268,7 +2268,18 @@ fn parse_dim_int(it: &mut std::iter::Peekable<std::str::Chars>) -> Option<i8> {
     Some(sign.saturating_mul(val))
 }
 
+fn skip_dim_ws(it: &mut std::iter::Peekable<std::str::Chars>) {
+    while let Some(c) = it.peek() {
+        if c.is_whitespace() {
+            it.next();
+        } else {
+            break;
+        }
+    }
+}
+
 fn parse_dim_factor(it: &mut std::iter::Peekable<std::str::Chars>) -> Option<[i8; 7]> {
+    skip_dim_ws(it);
     let base = if let Some('(') = it.peek() {
         it.next();
         let e = parse_dim_expr(it)?;
@@ -2303,6 +2314,7 @@ fn parse_dim_factor(it: &mut std::iter::Peekable<std::str::Chars>) -> Option<[i8
 fn parse_dim_expr(it: &mut std::iter::Peekable<std::str::Chars>) -> Option<[i8; 7]> {
     let mut acc = parse_dim_factor(it)?;
     loop {
+        skip_dim_ws(it);
         match it.peek() {
             Some('*') => {
                 it.next();
@@ -2327,7 +2339,7 @@ pub fn unit_dimension(unit: &str) -> Option<[i8; 7]> {
     if norm.is_empty() || norm == "1" {
         return Some([0i8; 7]);
     }
-    let mut it = norm.chars().peekable();
+    let mut it = unit.chars().peekable();
     let dims = parse_dim_expr(&mut it)?;
     if it.next().is_some() {
         return None;

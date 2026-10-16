@@ -395,7 +395,7 @@ mod matrix_rebuild_tests {
                 name: name.to_string(),
                 band_id: None,
                 kernel: 0,
-                channel_ref: Some(1),
+                channel_ref: Some(2),
                 tau: 21600.0,
                 absorption: 0.0,
                 advection: 0.0,
