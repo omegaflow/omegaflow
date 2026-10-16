@@ -1460,6 +1460,16 @@ epoch 0
 field 4 hfradar_icatmar_total_eastward_m_s inverse-square advective m/s 21600 0.0 0.0
 field 5 hfradar_icatmar_total_northward_m_s inverse-square advective m/s 21600 0.0 0.0
 
+url https://geofon.gfz.de/fdsnws/station/1/query?level=station&format=text&network=GE
+terms CC-BY-4.0 https://geofon.gfz.de/eqinfo/faq/
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+lat 2
+lon 3
+field 4 fdsn_station_elevation_m erfc seismic-surface m 86400.0 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/ads.atmosphere.copernicus.eu/cams_so2_emission.nc
 terms free-open https://www.copernicus.eu/en/access-data/copyright-and-licences
 origin https://ads.atmosphere.copernicus.eu/api/
