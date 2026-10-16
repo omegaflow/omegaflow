@@ -6,6 +6,9 @@ omegaflow.wasm
 !.opencode/agent/
 .opencode/agent/*
 !.opencode/agent/council.md
+!.opencode/agent/rat.md
+!.opencode/agent/taucher.md
+!.opencode/agent/future.md
 !.opencode/command/
 .opencode/command/*
 !.opencode/command/council.md
