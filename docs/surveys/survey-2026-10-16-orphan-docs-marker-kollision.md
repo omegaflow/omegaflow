@@ -2,7 +2,7 @@
   title: Survey — Orphan-Docs: Marker-Kollision (nicht Aufgaben)
   class: survey
   date: 2026-10-16
-  sha256: 101614e66c59638d55f4e0fb483c8602b95b90cff041d17d03ff4e0982e858e0
+  sha256: b982402d05043f6f0fed73dd95e0fd7cdccf9c74489733960ddbb30b26c5f877
   status: done
 -->
 # Survey — Orphan-Docs: Marker-Kollision, nicht Aufgaben
@@ -30,21 +30,37 @@ Ernte fehlt), `offen` heißt offene Lizenz / Open Data. Das Gate zählt damit di
 - **Daneben echt:** `docs/auftrag/auftrag-flyby2-kette.md` (`## Frist / Owner / nächster Schritt`),
   `docs/auftrag/auftrag-2026-10-11-wartend-aufloesung.md` (`## Teil C — offene Messlücken`).
 
-**Momentwert.** `register_lookup --orphan-docs` = **53** (gemessen 2026-10-17 an `278fb1202`; Lauf
-`./target/release/register_lookup --orphan-docs`, zweimal identisch). Der Zähler ist **live**: erste
-Messung 2026-10-16 = 62, Minuten später 56 (andere Linien committen parallel Träger) — eine
-**Momentaufnahme, kein Bestand**. Die Zahl ist **keine Aufgabenliste**.
+**Momentwert (mit Schwelle).** `register_lookup --orphan-docs` = **56** (gemessen 2026-10-17 an
+`faa73108a`, `./target/release/register_lookup --orphan-docs`). Der Zähler ist **live**: 2026-10-16 =
+**62**, Minuten später 56, am 2026-10-17 53 und 56 — **Schwelle 53–62** (parallel committende Linien
+tragen ihre Docs). Der Wert ist eine **Momentaufnahme, kein Bestand** — und **keine Aufgabenliste**.
 
 **Verdikt.** Eine belastbare Trennung *Aufgabe / Lärm* ist mit der jetzigen Heuristik **nicht
 berechenbar** — das ist der Befund, kein Messfehler. Der Zähler mischt Kanon-Vokabel (`pending`,
 `offen`) und echte Träger-Lücke. **Er ist kein Aufgabenregister.**
 
-**Rat (Architektur) — nicht meine Hand.** Drei Wege:
-1. `--owner`-Filter für `--orphan-docs` (analog `--orphans --owner <linie>`).
-2. Marker nur in **echter Statuszeile** (nicht in Tabellenzelle/Prosa).
-3. `pending`/`offen` aus der Marker-Liste nehmen (Kanon-Wörter).
+**Rat-Stand R4 (2026-10-17) — 5 Sitze, 4 Positionen** (`state/stimmen/2026-10-17-rat-offene-fragen.md`).
+Der Rat ist gespalten; ich entscheide nicht allein:
+- **Leitstelle hausweit** — DeepSeek V4 Pro, Lumo 2.0 Max. DeepSeek: `pending`/`offen` fallen aus der
+  Marker-Liste, Marker nur in echter Statuszeile. Lumo: Leitstelle + `--owner`-Filter, `pending` und
+  `offen` **getrennt** listen.
+- **Abgeleitete Abfrage** — Sakana Fugu: jede Linie trägt ihre eigenen Docs; die Leitstelle nur als
+  **residualer** Träger (`pending`). `pending`/`offen` bleiben Kanon, zählen aber **nur in einer
+  Status-Grammatik**, nie als Substring.
+- **Beides geschichtet** — GLM-5.3: „die Dichotomie ‚Leitstelle ODER Linie' ist ein **falscher
+  Rahmen**"; `--orphan-docs` soll **`channel_ref`-Abwesenheit** messen, nicht Marker-Präsenz.
+- **Linienlokal mit Verweigerungsvorbehalt** — Mistral Large 4: die Leitstelle nur als „letzte
+  Adresse der Messung"; `pending` fällt aus `OPEN_MARKERS`.
 
-Bis dahin bleibt der Zähler ein **Lärm-Signal**; wer trägt, entscheidet die Leitstelle bzw. je Urheber.
+**Zwei einige Befunde** (tragen alle vier Positionen):
+1. `--orphan-docs` **misst die falsche Sache**: Marker-Präsenz statt Träger-`channel_ref`-Abwesenheit
+   (GLM, Fugu, Mistral, unabhängig).
+2. Die Kanon-Vokabel **`pending`/`offen` in `OPEN_MARKERS`** erzeugt den Lärm (alle).
+
+Der verbindende Kern (Fugu): eine **geborgte Adresse** — der Träger als gespeichertes Flag statt
+abgeleiteter Abfrage. **Kein stilles `pending`:** der Riss bleibt offen; die drei Wege (Owner-Filter ·
+Status-Grammatik statt Substring · `pending`/`offen` aus der Liste) stehen dem Rat bzw. dem
+Operator-Wort anheim.
 
 **Grenze.** Eine abschließende Per-Linie-Zuordnung der *echten* Punkte ist hier nicht gemessen
 (Näherung) — die Register-Heuristik kann sie nicht liefern. Der Momentwert:
