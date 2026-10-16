@@ -2,9 +2,9 @@
   title: Kanal-Ontologie — kompletter Bau (feste 9 → Kapazität 2ⁿ + lebendiges n)
   class: concept
   date: 2026-10-10
-  sha256: 343c021d12b12bf52b791952a3e820e0e57396cc4c272026266a4ac8db2778c3
+  sha256: 98a50e0b9f5b1498f4f6da52cc522f10cf41206db878069a245690a44870e1ad
   status: live
-  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
+  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/archiv/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
 -->
 # Kanal-Ontologie — kompletter Bau
 

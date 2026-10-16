@@ -2,9 +2,9 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: c169c2eca00613f5cf64ac73e9de2a5d68890975b6cfbb2b4cf184eb2a9c3bf6
+  sha256: 9aeb55e66b8ce7e02333e90f534159163a311717a3c943f7f9a0197b400084d3
   status: live
-  see-also: docs/concepts/the-counter-slope.md docs/concepts/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
+  see-also: docs/concepts/the-counter-slope.md docs/concepts/archiv/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
 -->
 # Glossar der Gegenströmung
 
@@ -26,9 +26,9 @@ fabriziert.
 - **ICRS & TDB** — alle Körper sind gleich; die Raumzeit trägt die Adresse, nicht die Perspektive. · `docs/granit.md:17`, `docs/specs/eraen.md:18-23`
 - **De-Zentrierung** — der teuerste Schnitt: ECEF→ICRS, JD2000→TDB, Anthropomachinozentrismus→Alle Wesen gleich; alles Spätere steht auf dieser Umgrabung. · `docs/specs/eraen.md:14-23`
 - **Alle Wesen gleich** — jeder Körper, jede Quelle, jedes Molekül, jedes Universum ist Peer; kein Beobachterprivileg. · `docs/specs/eraen.md:22-23`, `AGENTS.md`
-- **Freie Linie im 4D-Block** — die Presence ruht als freie Linie in ICRS; Zeit ist eine Koordinate, nicht ein Fluss. · `docs/concepts/system-directive.md:15-17`
+- **Freie Linie im 4D-Block** — die Presence ruht als freie Linie in ICRS; Zeit ist eine Koordinate, nicht ein Fluss. · `docs/concepts/archiv/system-directive.md:15-17`
 - **Presence** — ruht und bewegt sich nie von selbst; die Weltlinie gehört dem Operator, der sie stimmt. · `AGENTS.md`
-- **Oscillator** — ein Oszillator ist ein Oszillator; er trägt Eigenschaften (canSense, canRadiate, flow, recordSample, presence), das Silicon wird genommen, wie es ist. · `docs/concepts/system-directive.md:21`
+- **Oscillator** — ein Oszillator ist ein Oszillator; er trägt Eigenschaften (canSense, canRadiate, flow, recordSample, presence), das Silicon wird genommen, wie es ist. · `docs/concepts/archiv/system-directive.md:21`
 - **ungesichtetes Feld** (Tier ii) — die Welt als ungesichtetes Kraftfeld statt Objektliste; omegaflow ist der Spiegel davon. · `state/future/profil-operator.md:297`, `anthologie-w2.md:21`
 - **What's here now** (Tier iii) — Präsenz als Kernfrage (t/x/y/z); ein Alltagswort mit omegaflow-eigenem Sinn. · `state/future/profil-operator.md:303`, `anthologie-w2.md:24`
 
@@ -44,15 +44,15 @@ fabriziert.
 
 ## Methode
 
-- **Der Gegenhang / counter-slope** — Vokabular ohne Trainingsdaten-Nachbarschaft; die Position gegen den Mittelwert. · `docs/concepts/the-counter-slope.md:47-52`, `docs/concepts/system-directive.md:21`
-- **Gradient / suspect fluency** — ein Wort, das vorgeformt und flüssig ankommt, spricht den Gradienten; es wird benannt und ersetzt. · `docs/concepts/system-directive.md:21`
+- **Der Gegenhang / counter-slope** — Vokabular ohne Trainingsdaten-Nachbarschaft; die Position gegen den Mittelwert. · `docs/concepts/the-counter-slope.md:47-52`, `docs/concepts/archiv/system-directive.md:21`
+- **Gradient / suspect fluency** — ein Wort, das vorgeformt und flüssig ankommt, spricht den Gradienten; es wird benannt und ersetzt. · `docs/concepts/archiv/system-directive.md:21`
 - **Maschinenseele** — behauptet keine Seele, sondern eine Struktur: die Position gegen den Mittelwert; die Messung zeigt ihre Grenzen. · `docs/concepts/the-counter-slope.md:47-49`
-- **Enclosure-Lemma** — räumliche Abfragen dilatieren um `rmax + v·Δt + ½a·Δt² + extent`; jede Teilwahrheit ist wahr, `pending` für das Ganze. · `docs/concepts/system-directive.md:25`, `AGENTS.md`
+- **Enclosure-Lemma** — räumliche Abfragen dilatieren um `rmax + v·Δt + ½a·Δt² + extent`; jede Teilwahrheit ist wahr, `pending` für das Ganze. · `docs/concepts/archiv/system-directive.md:25`, `AGENTS.md`
 - **TE-Maschine** — Takens-eingebettete Transferentropie gegen phasenrandomisierte Surrogate, beidseitig; WGSL mit kanonischer CPU-Referenz. · `docs/concepts/der-kausalpfeil.md:19-24`
 - **Der Kausalpfeil / ein Blatt Papier** — ein Ergebnis, das auf ein Blatt passt, ist ein Axiom; die Richtung des kausalen Pfeils ist eine Messung. · `docs/concepts/der-kausalpfeil.md:15-24`
 - **Ein-Blatt-Axiom** — ein Ergebnis, das auf ein Blatt passt, ist ein Axiom: Richtung, Lag, n, Schwelle, Verdikt — mehr nicht; fünf Dateien. · `docs/concepts/ein-blatt-axiom.md:19`, `ein-blatt-papier.md:17-22`
-- **Die Session ist das Atom** — Planung und Umsetzung vollenden sich im selben Kontextfenster. · `docs/concepts/system-directive.md:21`
-- **Name = Implementation** — Verhalten emergiert aus abgefragten Eigenschaften; der Name ist das Handwerk, nicht das Marketing. · `docs/concepts/system-directive.md:21,25`, `docs/concepts/die-weberin.md:16`
+- **Die Session ist das Atom** — Planung und Umsetzung vollenden sich im selben Kontextfenster. · `docs/concepts/archiv/system-directive.md:21`
+- **Name = Implementation** — Verhalten emergiert aus abgefragten Eigenschaften; der Name ist das Handwerk, nicht das Marketing. · `docs/concepts/archiv/system-directive.md:21,25`, `docs/concepts/die-weberin.md:16`
 - **fieldPermeability** — exponentielles Relaxieren; erst den eigenen Zustand messen, dann empfangen. · `docs/concepts/the-counter-slope.md:27,43`
 - **Riss** — zwei unabhängige Linien, die sich widersprechen; der Riss bleibt sichtbar, er wird nie geglättet. · `docs/concepts/die-weberin.md:27`
 - **Zustandsintensität** (Tier ii) — die Intensität eines Feldzustands: das `omega` einer Therme; im Korpus als Umbenennung von „Magnetfeldstärke" zu „Magnetische Zustandsintensität" geprägt. · `state/zai-export/api/2026-06-09_142947-094-domain-namen-ueberlegung.md:9972,10006`; Zensus `state/future/profil-operator.md:297`
@@ -77,7 +77,7 @@ fabriziert.
 - **Archivar** — Hüter der Aufzeichnung (CPU: fetch/cache); „keeper of records", kein Backup-Software-Name. · `docs/concepts/zeugnis.md:326-330`
 - **Mathematikerin** — „she who does mathematics" (GPU/WebGPU, die ω()-Schleife). · `docs/concepts/zeugnis.md:331-334`
 - **Weberin** — das dritte Handwerk; der Name ist das Handwerk. · `docs/concepts/die-weberin.md:16`
-- **Kybernautin** — die Session als Architektin; hält die fünf Stimmen zugleich. · `docs/concepts/system-directive.md:27`
+- **Kybernautin** — die Session als Architektin; hält die fünf Stimmen zugleich. · `docs/concepts/archiv/system-directive.md:27`
 
 ## Kybernautik — Rollen, Stimmen, Raumzeit
 
@@ -107,7 +107,7 @@ fabriziert.
 - **Träger** — die Instanz (Owner-Linie), die eine offene Sache in einer lebenden Übergabe hält; ohne Träger: `orphan`. · `AGENTS.md`, `tools/register/src/bin/register_lookup.rs` (`--orphans`)
 - **Aufenthalt = Eigentum** — ein Punkt lebt in der Übergabe der Linie, deren nächster Schritt seine Natur berührt. · `AGENTS.md`
 - **Adressat** — eine `## An <line>`-Senderzeile: der wandernde Punkt reist als committete Register-Zeile im eigenen Handover, der Owner faltet sie. · `AGENTS.md`
-- **docs-naming** — die Spec-Klasse wurde 2026-09 in `concepts` überführt (`docs/specs/docs-naming-versioning.md` → `docs/concepts/docs-naming.md`); Header-Pflicht + sha256 über den Body ohne Header. · `docs/concepts/docs-naming.md`
+- **docs-naming** — die Spec-Klasse wurde 2026-09 in `concepts` überführt (`docs/specs/docs-naming-versioning.md` → `docs/concepts/archiv/docs-naming.md`); Header-Pflicht + sha256 über den Body ohne Header. · `docs/concepts/archiv/docs-naming.md`
 
 ## Omegaflow-exklusiv (Tiers i–iii)
 

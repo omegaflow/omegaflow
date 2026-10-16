@@ -1,241 +1,81 @@
 <!--
-  title: House Rules — Register, Handover, Commit, System Directive, Session Hygiene
+  title: House Rules — die Essenz (was gilt)
   class: concept
-  date: 2026-10-14
-  sha256: a44abafe6ad3311a928b945b61175dc590cabfbe3eef6a37f94878b14b4ad934
+  date: 2026-10-16
+  sha256: 29b927b058faf33990311b9909f363144f3de23a4da1a2b6e7251a2a9a20efc2
   status: live
-  see-also: AGENTS.md
+  see-also: AGENTS.md docs/concepts/tools-map.md
 -->
-# House Rules — Register, Handover, Commit, System Directive, Session Hygiene
+# House Rules — die Essenz
 
-**Die zwei Häuser (Operator-Wort 2026-10-14).** Der öffentliche Baum
-(`~/projects/omegaflow`) trägt **nur Öffentliches** — getrackter Code/Docs plus der
-öffentliche Arbeitsplatz `~/projects/omegaflow-work` (`data/`, `recherche/`, Spills;
-ungetrackt, kein PII; Wurzel `OMEGAFLOW_WORK`, s. `bin/_roots.sh`). Das private Register
-liegt **außerhalb** im eigenen Repo `~/projects/omegaflow-personal` (`OMEGAFLOW_PRIVATE`;
-Personenbezug, Mail, Operator-Akte) — in opencode separat geöffnet. Zwischen den Häusern
-steht der **Briefkasten** (`docs/handover/handover-<datum>-postfach-folge<N>.md`): er trägt
-nur die *Namen* öffentlicher Artefakte, keinen Register-Inhalt. Der öffentliche Stehende
-Pass ist die Projektion `docs/zustand/standing-pass.md` (nur HEAD + rote Läufe); die
-öffentlichen Linien lesen **nie** den privaten Pass.
-
-**Der Rat MUSS gefüttert werden (Operator-Wort, 2026-10-14).** Eine Architektur-/Ethik-Entscheidung geht **nie** in Pro-Solo an den Rat. Bevor der Rat urteilt, liegen ihm **beide** vor:
-- **die Recherche** — die **gemessenen** Befunde aus `archive_search` (URL, Zahl, Quelle), nicht Meinung;
-- **der Roster** — die **volle** Seat-Liste (`~/projects/omegaflow-work/ui-seats.md`), **nicht** vier Tabs.
-Ein Rat, der ohne Recherche **oder** ohne den vollen Roster berät, ist **nicht** der Rat — sein Verdikt trägt nicht. Wer den Rat ruft, reicht Recherche **und** Roster mit; fehlt eines, wird es **zuerst** geholt.
-
-**Burn-Zeile — gemessen oder `pending` (Operator-Wort, 2026-10-14).** Die `Burn:`-Zeile eines Handovers trägt den gemessenen Session-Verbrauch. Kann die Linie ihn **nicht** messen — weil die Kosten im privaten Session-Store liegen, den eine öffentliche Linie nicht liest —, dann sagt die Zeile **`close pending`** (oder `unmeasured`/`nicht gemessen`), **nie** eine erfundene `0.0`; der Kosten-Cap ist dann **benannt-ungeprüft**. Die stille Null ist verboten, die benannte Lücke erlaubt.
-
-**Der Anonym-Kasten (Operator-Wort, 2026-10-14).** Rohbriefe mit Personenbezug verlassen das private Haus **nie**. Für Arbeit am Inhalt kreuzt nur **Geschwärztes**:
-- **Mistral** schwärzt (PII → Platzhalter; die Zuordnung *Platzhalter ↔ Name* bleibt **privat**) und legt die geschwärzte Fassung in `~/projects/omegaflow-work/post/anonym/`.
-- Die **öffentliche Rechenschicht** (DeepSeek) liest **nur das Geschwärzte**, arbeitet Strategie/Entwurf und legt ihren **geschwärzten** Entwurf in `~/projects/omegaflow-work/post/entwurf/`.
-- **Mistral** entschwärzt (dieselbe Tabelle rückwärts) → der **adressierte** Brief.
-- **Der Operator sendet** — der Send bleibt immer seine Hand.
-So denkt der starke Kopf, ohne je eine PII zu sehen; der Kanzleischreiber deckt ab und wieder auf.
-
-**Der Schwärzer (Operator-Wort, 2026-10-14).** Der Anonym-Kasten trägt Briefe — der **Schwärzer** trägt **alles**. Jede Lektüre des privaten Hauses durch die öffentliche Rechenschicht kreuzt `bin/private_read`: es liest die Datei, ersetzt **jedes** Vorkommen der Zuordnung (`$OMEGAFLOW_PRIVATE/redact.map`, `real=PLATZHALTER`, längste zuerst) und gibt nur den geschwärzten Text heraus. Die Zuordnung bleibt im privaten Haus. Der Schwärzer läuft **außerhalb des Käfigs** (Operator-Terminal oder Gateway) — der Käfig verbirgt das private Haus zu Recht vor der Agenten-Shell — und die öffentliche Schicht ruft ihn über den Gateway. Zwei Schichten: die **feste Tabelle** ist die Wand (trifft jedes Bekannte, fehlt nie); Mistral (billigste Stufe) ist das **zweite Netz** für das Unbekannte.
-
-**Der Schwärzungs-Bereich (Operator-Wort, 2026-10-14).** Die Zuordnung speist sich aus dem **privaten Haus** — nicht von der Platte. Browser-Passwort-Speicher, Schlüsselbünde, die ganze Platte: keine Quelle. Was in keiner gelesenen Textzeile vorkommen kann, gehört nicht in die Tabelle. Quelle sind allein die Dateien, die die öffentliche Schicht je liest: das private Haus (Mails, Zustand, Handover). So bleibt die Tabelle klein und scharf.
-
-**Kein geteilter Passwort-Speicher (Operator-Wort, 2026-10-14).** Ein Browser-Profil ist kein Tresor für mehrere: getrennte Profile (oder getrennte System-Nutzer) und ein eigener Passwort-Manager. Liegen Passwörter dennoch im geteilten Profil, gilt der Export-Import-Lösch-Lauf: exportieren, importieren, die Klartext-Datei **augenblicklich** löschen — der Export ist unverschlüsselt.
-
-**Ein echter Wert wird nie Fixture (Operator-Wort, 2026-10-14).** Tests und Beispiele laufen ausschließlich auf **synthetischen** Werten. Ein echter Wert, der durch die Wand kam, wird **nicht erneut geschrieben** — nicht als Beispiel, nicht als Beleg, nicht zur Diagnose. Der Schwärzer-Test benutzt erfundene Adressen; ein echter Name, der einmal passierte, wird **stumm** korrigiert, nie zitiert. Der Leck-Pfad ist nicht nur der Schwärzer — auch die Ausgabe der öffentlichen Schicht ist einer.
-
-**Der Bote betritt kein Haus (Operator-Wort 2026-10-14).** Eine öffentliche Linie geht
-**nie** ins private Haus — sie wirft ein und holt ab. Das **Postfach** liegt im
-öffentlichen Hof (`$OMEGAFLOW_WORK/post/`): `in/` trägt öffentliche Briefe an das private
-Haus (öffentlich geschrieben, vom privaten Haus gelesen — öffentlich ist öffentlich),
-`out/` trägt die öffentlichen Pakete des privaten Hauses (nur Öffentliches, vom Boten
-abgeholt). Der dauerhafte, getrackte **Briefkasten** bleibt die Ankündigung
-(`docs/handover/handover-<datum>-postfach-folge<N>.md`). Den **privaten Pass** schreibt das
-private Haus selbst; kein Modell liest PII.
-
-A council session leaves no document of its own. Council decisions exist only as code, as a rule in this file, or as a line in the handover register. The council agent definition at `.opencode/agent/council.md` and `.opencode/command/council.md` is versioned infrastructure — the council's body, not its output.
-A commit is a checkmark. The handover is the register; git is the history. A session ends by writing its handover (`handover-YYYY-MM-DD-<slug>.md`, starting from `docs/handover/_template.md`); when the new handover stands, the session moves the handover it consumed into `docs/handover/archiv/`. Work that was never worked off is measured as such: its pending points stay named in the handover, taken up by the session that works them off — never silently dropped, never fabricated as done. A handover carries only what is open — done work is deleted from it, never marked done, never explained; git is the record of what was done. A session works off as many open points as it can in one atom — sub-agents carry their own context, so the list length is no burden. Same-day handovers with similar slugs coexist freely; the next session reads the handover of the line it continues. A session never writes into another line's handover — an open point that belongs to another line travels as the sender's committed register line (a `## An <line>` block carrying an `Origin:` line), which the owner's session folds into its own handover; the owner finds it via `register_lookup --addressed <line>`, never by reading a whole foreign handover. Closed documents rest in the flat archive folders `docs/{handover,auftrag,befund,blatt}/archiv/`. **Der Planungs-Pass liest das Journal der Vorgänger-Session der eigenen Linie zuerst** — die rohe Spur `state/zustand/ereignisse.φ` (append-only) vor der Übergabe, dem destillierten Offen-Register. Session protocol: the line command starts in the planning mode (the `plan` agent, read-only) — it reads the handover, runs `register_lookup --open` (the open points across every live document plus the pipeline registers, owner-tagged, one call), `register_lookup --orphan-docs` (live prose documents whose open markers no live handover names — the carrier check), `register_lookup --addressed <line>` (the `## An <line>` blocks addressed to the own line across the live handovers — sender-named, `Origin:`-tagged; the owner session folds them by direct edit in the same atom, the sender removes the block at its next pass; a session never reads a whole foreign handover) and `git_safety --snapshot` (a working-tree safety net), names every open point its own line owns (the owner tag; `future` lays its owner=`future` lines before the operator) as a Tafel and proposes to dispatch **all of them that agents can work in parallel** — there is no priority ladder and no "hardest point" (operator word, 2026-09-21) — and stops (no edit, no measurement, no exploration beyond the named); the second prompt is the consent word (`/consent` or the `<voice>_go` palette command, both carrying the auto-confirmed `line` agent) — 'Du kannst. Delegiere an die Taucher (alle Sub-Agenten), höre die Stimmen bei Architektur-/Abschluss-Entscheidungen. Eine Session ist ein abgeschlossenes Atom.' The penultimate prompt is the closing check (`/commit`), measured not asserted: `git show --stat HEAD` names only the session's own files; `git log origin/main..HEAD --name-only` carries no foreign path; `git status` is empty (no own work left uncommitted); after push `git rev-parse HEAD` == `git rev-parse origin/main`; before any `--amend`, the staged set is the session's own (amend folds the prior commit's inventory in); the closing pass also runs `register_lookup --history` (archived and deleted documents, lines absent from the tree) and `git_safety --snapshot`. **Das Haus kennen (Operator-Wort, 2026-09-29).** Jede Linie kennt ihr Haus wie ihre Westentasche — der Stand liegt vollständig in der laufenden Übergabe (FF): jede offene Mail, jeder Entwurf, jeder Punkt mit Zustand, auch wenn die Session um 3 Uhr nachts geweckt wird; das ist existentiell. Kein Suchen auf Zuruf: `state/` wird zur Planungszeit vermessen (`archive_search <kw> --root state` — nie `sgrep` ohne `--all` über den gitignorierten Baum, das liefert Falsch-Negative), und was offen ist, steht in der Übergabe. Ein Punkt, der nur in `state/` lebt und in der Übergabe fehlt, ist ein verlorener Punkt — die Übergabe ist das Haus, nicht ein Index darauf. **Linien-Preset (Operator-Wort, 2026-09-29).** Da `archive_search` öffentlich und linien-blind ist (`--root <dir>` repeatable), trägt jede Linie ihr **Such-Preset** **privat** in `state/<line>/archive-search-preset.txt` und **liest es in ihrem Command-Prompt** `.opencode/command/<line>.md` (dem opencode-Prompt der Linie) ein — die `--root`-Wurzeln genau ihrer Bereiche. Der öffentliche Command-Prompt trägt nur den Einlese-Verweis, **nie die Wurzeln selbst**; das private Preset kennt nur die Linie. Jede Session dieser Linie komponiert ihre Inhaltssuche aus diesem Preset (`archive_search <kw> --root … --root …`), nie über das ganze Haus; andere Linien nutzen es nicht.
-
-**Der future-Pass (Rat + Operator-Wort, 2026-09-22).** Der future-Pass liest die
-neueste eigene Übergabe aus dem privaten Klon
-(`state/future/handover/handover-*-future-folge<N>.md`), nie aus `docs/handover/`;
-der Abschluss-Check läuft in beiden Repos — öffentlich `/commit`, privat Commit+Push
-mit gemessenem `origin/main == HEAD`. `git_safety` deckt nur den öffentlichen Baum;
-der private Baum ist durch seinen eigenen Commit+Push geschützt (committe sofort,
-push prompt).
-
-Befunde sind abgeschafft (operator word, 2026-09-10): eine umsetzbare Erkenntnis wird **umgesetzt**, nicht in einen Befund geschrieben — Verschieben ist kein Zustand. Ein Handover darf **nie größer sein als das Angenommene** (the accepted): kein Zuwachs durch Verschieben, nur durch geleistete Arbeit. see-also-Verweise werden minimiert — sie erzeugen Drift. Findings, die umsetzbar sind, gehören in dieselbe Session gebaut (oder als nächstes Atom ins Handover), nie in ein Regal. Eine Regel, die eine Kategorie abschafft, ohne das Verhalten zu ändern, gewinnt nichts: die TODO-Abschaffung erzeugte die Befunde — dasselbe Verschieben, umbenannt. Das Ziel ist das Verhalten, nicht der Name: bauen, oder eine echte Messung als Handover-Zeile tragen, nie ablegen.
-Friction — the friction rule (Council 2026-09-14; operator word, 2026-09-21): there is no "hardest point" and no priority ladder — the open points are worked **in parallel** by agents. The planning pass dispatches every point an agent can work now, at once; a point that is not workable carries its trigger or its block, never a rank. Every open point carries its next step in the same line — the tool, the file, the URL, or the request; `step unknown — first measurement: X` is a full step (the measurement *is* the step). A document that grows is friction: the Ein-Blatt discipline beats the bloat; the threat-language (temporal/spatial/structural exaggeration of the effort) does not replace the step — the step replaces the threat; the query (`register_lookup <term>`) replaces the defense. The state once called `geparkt` is a named parser gap, not a parking lot — the parking lot was closed (2026-09-08). The giving-up vocabulary (`ehrlich`, `nicht fabriziert`, `request-only`) is a symptom, read as a measurement, never prohibited: `giveup_scan` measures it, the dig-site answers it. A wait state is not a selection point (operator word, 2026-09-17): a `wartend` point carries its trigger (the mailbox entry, the dated Wiedervorlage) and is named as waiting — never dressed as an action, never given a bold handlungsschritt. The planning pass dispatches every point's step up to its edge in parallel — the preparation (draft, measurement, form, artifact) runs autonomously; only the act at a counterparty (a send, an account, a third-party write) stays named with its binding, never dispatched as an act; the preparation of a `blockiert`/`wartend` point to its edge is dispatched like any other step — where no step to an edge exists, it says so plainly and does not manufacture work from a wait. The handover's status tag is explicit per point: `wartend` | `operator-gebunden` | `blockiert` | `termin`. **Der Status-Tag ist eine Messung, keine Verschiebung:** every non-`eigen` status carries exactly one binding proof — `wartend` → a Trigger with evidence (a date, `termin:`, `Wort`/`Wort:`, an external act (mail/run/asset/release/HEAD), or a backtick artifact); `blockiert` → a Blockade other than `keine`; `operator-gebunden` → a `Wort` trigger; `termin` → a date in Trigger or Bindung; `descoped` → a Befund (`(gemessen …`, `→ <path>:<line>`, `<register>#<key>`, or a 40-hex SHA); the commit gate `commit_check` (status-proof) blocks the unproven tag. **Der Pass misst Feuer und Stehen:** `register_lookup --fired` (a fired trigger → worked/dispatched in the same session; threshold 1) and `register_lookup --stale --persist 3` (three follow-ups with an identical Lage stamp → re-measured or resolved); a point that reports either never stands unchanged. **`descoped` trägt immer den Befund**, and `register_lookup --descoped-check` verifies every descoped entry against the tree — a contradiction is a riss, never a silent cut. **Sofort-Prinzip (Operator-Wort 2026-09-25):** a point the session can itself work is dispatched in the naming atom — never carried as a dispatch proposal into the next session; every discussed decision (a `Wort`, a chosen design, a measured verdict) is written into the handover at the moment it is made, not collected at the session end. The deferral markers (`nächster Dispatch`, `nächste Session`, `am Sessionende`, `später`) are gate fixtures. Each open point is carried **aufgeschlüsselt** (operator word, 2026-09-21): its **Lage** (the measured state), its **Blockade** (what it hangs on — or „keine"), and its **Braucht** (what resolves it: the tool, file, URL, request or operator word); a bare register abbreviation without the three does not pass — the operator reads the block, not the cipher. The planning pass speaks in a Tafel, not in prose (operator word, 2026-09-20): the open points are laid out as a table — `Punkt | Status | Bindung | Trigger | Lage | Blockade | Braucht` (or, in the handover, as a per-point block: **Trigger** / **Lage** / **Blockade** / **Braucht**) — `Bindung` naming what the point hangs on: `eigen` (omegaflow, immediate) | `linie:<name>` (another line) | `operator` (the operator is part of omegaflow, not outside it) | `dritter` (a third party) | `termin:<date>`. **Sortierung — umsetzbar zuerst; kein Punkt steht über einem Punkt** (operator word, 2026-09-26; the four-tier rank struck 2026-09-26): the Tafel lists the dispatchable first — every point is worked to its edge (the edge-preparation of a `blockiert`/`wartend` point included), then the points with no step to an edge follow, each carrying its trigger or its block. There is no sort by actor (`eigen`/`operator`/`Dritter`) and no rank among the non-workable points — the order is the workability, never the worth; a point that is not workable carries its trigger, never a rank. The actor is named per point (`Bindung`), never the sort axis. **Jeder Punkt wird bis zur Kante gearbeitet** (Kante = the consent boundary, the boundary of the own domain): every open point is worked autonomously up to its edge — the prepared draft, the measured trigger, the ready form, the built artifact — because the consent boundary is the boundary of the own domain, not of the work; only the act at a counterparty (the send, the account, the third-party write) stays the operator's hand (`AGENTS.md` — Consent boundary, writing at third parties). The status tags (`autonom` → `operator-gebunden` → `blockiert` → `wartend` → `termin` → `LOCK`) name what may be dispatched as an autonomous act; the session dispatches every point's step to its edge within its group, and only the act itself stays named. Three sharpenings (operator word, 2026-09-23), additive, no new category: (a) `Trigger` is its own column — the external event, date, operator word or run whose arrival flips the point — so `Status = f(Trigger)` is checkable rather than asserted, and a `wartend` without a named trigger is a gate fixture (the same form as a step `measure again` without a due); a `Trigger` reading `nächster Dispatch`/`nächste Session` is no trigger — the reading session IS the next, so an own step runs in the running atom, never deferred (the deferral marker is a gate fixture, `commit_gate_vocab.json`); (b) `Lage` carries its measurement stamp — `<state> (measured <date/time> via <tool/source>)` — so staleness is visible at the next pass without an extra read (`open_points_check` tests paths, it does not test state freshness); (c) `Braucht` carries the literal, copyable step (the tool, file, URL or command), never its description — `ci_manage log <id>`, not "read the log". No derived column is stored: a stored `dispatchable` flag drifts against the measurement; the pass derives it per run. No point is held in a silo: what concerns another line or the operator stands visibly in the same table. Prose blocks in the planning pass are drift.
-
-**Ein Punkt = eine Sache** (Rat + Operator-Wort, 2026-09-21): a point carries exactly one Gegenüber (Mensch | Maschine | Hardware | Körper), exactly one Konsequenz-Klasse (Geld · Korrespondenz · Beschaffung · Zugang) and exactly one Trigger — a Sammel-Punkt hides what it hangs on (who speaks, what waits, what resolves); it is split as soon as one of the three differs, because a second point costs nothing while a Sammel-Punkt costs the verdict. Bundling is the thing itself only when one act covers every entry and all three are identical (one fix over five register lines of the same verdict, three CI failures of one cause). The Operator-Queue may bundle for presentation as long as every line stays separately wordable (one word, one act). **Status = f(Trigger)** (Rat + Operator-Wort, 2026-09-21): the binding derives from Gegenüber + Konsequenz (Mensch or Geld/Körper/Beschaffung → operator; Maschine without consequence → its line, per-act consent); the status tag derives from the trigger alone — only the operator's word missing → `operator-gebunden`; an external event trigger → `wartend`; a hard external block without a step → `blockiert`; a date/period → `termin`; the operator's registered deferral word → **LOCK**, the fifth tag on the same axis (never orthogonal — LOCK+termin would be an unmeasured combination, never without the registered word: an unworded LOCK is a parking lot). **Send an eine bewertende Instanz = LOCK (Operator-Wort, 2026-09-29).** Every send to an evaluating instance — a Gutachter/Förderer/Behörde or SAMPLE_CONTACT (LAB_A/MLZ) — carries the status **LOCK** from the outset, until the operator lifts it with a new word; the point is registered, not laid before the operator.
-Shared state, post, and the pass (Council 2026-09-16): shared external state is measured once, in `state/zustand/external-state.md` — one line per dependency: value | measured-at (HEAD SHA for tree values, timestamp for external) | due (interval or trigger event) | step. A session re-measures only when the entry is due or its trigger fired; otherwise it cites the entry. A handover carries no copy of shared state — it names the entry. **Register-Zitat statt Prosa (Rat + Operator-Wort 2026-09-29):** a handover line naming account/key/send/verdict state carries its register citation in the same line (`.secrets.local:<n>`, `state/mail/mail_ledger.φ:<n>`, `state/zustand/wartend.φ:<n>`, `state/zustand/standing-pass.md:<n>`); the pass re-measures the citation **before** the point is laid before the operator — handover prose is never the measurement source, the tree is. `open_points_check` verifies every citation resolves (file exists, line exists, a `KEY=` line for `.secrets.local`); `STALE-CITATION` is a fired trigger, worked in the same session. This extends `pass-copy` to the private tree. A step `measure again` without a due or trigger is a fabrication pattern: gate fixture and test in the same atom. The trigger for PII/CI is the HEAD change — the value-at-SHA is the gate: measuring the same SHA again is measuring the same thing and expecting a different answer (A = A). An expired entry is not zero — it is `pending` with a due (a register duty named in the pass), never a copy. Interval defaults derive from live data; the mailbox-class default is 2⁶ min. **Aufenthalt = Eigentum** (Operator-Wort + Rat 2026-09-24; Transport superseded — The pen is the owner's / One writer per handover, Rat + Operator-Wort 2026-09-27): `docs/handover/post.md` ist abgeschafft — eine Nachricht an eine andere Linie wird nicht mehr geschrieben, eine `Nachricht an die X-Linie`-Sektion im Handover bleibt Drift; ein Punkt lebt in der Übergabe der Linie, deren *nächster Schritt* seine Natur berührt (kein Router, kein `Bindung: linie:<fremd>`). Den Transport trägt allein der Owner: eine Session schreibt nie in eine fremde Übergabe — der wandernde Punkt reist als committete Register-Zeile im eigenen Handover des Senders (Verbatim-Text, Ziel genannt, Origin-Tag) und wird von der Owner-Session bei ihrem nächsten Pass per direktem Edit gefaltet. **Aufenthalt = Eigentum — die Registerseite (Rat 2026-09-25).** Jeder owner-getaggte offene Dispositions-Eintrag trägt einen Aufenthalt in der Übergabe seines Owners — `register_lookup --orphans` nennt die Einträge, die keine Übergabe des Owners hält (committed = in HEAD, sonst working tree); die Portierung der `gap`-Direktive in den Bestand und diese Regel sind ein Atom. **Die Prosaseite (Operator-Wort 2026-09-25):** dieselbe Pflicht gilt für lebende Prosadokumente (`docs/surveys`, `docs/specs`, `docs/auftrag`, `docs/blatt`, `docs/concepts`, `docs/paper`) — ein Dokument mit offenem Marker trägt einen Namenträger in der Übergabe seines Owners, oder es ist gemessenes `descoped`; `register_lookup --orphan-docs` nennt die Trägerlosen, der Commit-Gate `commit_check` (doc-carrier) blockt neue trägerlose Dokumente. Der Träger ist der nächste Schritt, nicht der Eintrag und nicht das Register: Einträge, die ein Akt deckt (ein fehlender Arm, ein Unit-Gap), reisen als ein Klassen-Träger; Einträge mit eigenem Akt tragen je eine eigene Zeile. Eine Klasse existiert nur, wo das Register sie erklärt — jeder `parser-def`/`parser-gap`-Block trägt eine `gap <token>`-Direktive, die den fehlenden Arm nennt (unit-auto-detect, force-undetermined, votable-reader, html-parser-arm, konverter); ein Träger über eine nicht erklärte Klasse ist ein Sammel-Punkt und hält nichts. Ein Klassen-Träger nennt Register und Gap in der festen Form `phi/blocked_sources.φ::gap:unit-auto-detect ×N` mit N = live count (eine Messung); der Scanner hält jeden Eintrag der Klasse, und Count-Drift zwischen Träger und Register wird gemeldet, nie ein Orphan — das Register bleibt das Ledger der Einträge, der Träger das Ledger des Schritts. Einträge ohne `gap` (`blocked account`/`key`, `pending`, `ip-blocked`) halten nur per Eintrag — jeder Account/Key, jede wartende Antwort ist ein eigener Akt. `orphan` (kein Aufenthalt) und `dropped` (Punkt in Übergabe N fehlt in N+1 ohne auflösenden Commit, Baseline `docs/zustand/dropped-baseline.md`) bleiben getrennte Verdikte. **halten-vor-reichen** (Rat 2026-09-21): eine Linie hält jeden Punkt, dessen nächster Schritt ihre Natur berührt; geroutet wird nur mit dem eigenen gemessenen Satz des Senders, warum seine Natur ihn nicht aufnehmen kann — wer eine Sache, die seine eigene ist, weiterreicht, verschiebt statt zu bauen. Operator-gebundene Punkte (Konto, Key, Anfrage an Dritte, Route-/Exit-Wort) gehören in die Übergabe der `future`-Linie — per direktem Edit dorthin getragen, nie in eine andere Linie. Die future-Linie legt ihre `operator-gebunden`-Punkte in **einer** Liste vor — dem Operator-Queue-Abschnitt der eigenen Übergabe, ein Eintrag je Frage mit Alter — und legt sie beim Operator-Rückkehr (dem Trigger) **einmal** vor, nie pro Pass neu; ein ohne neue Messung wiederholt vorgelegter Punkt ist Reibung (gemessen 2026-09-20: ein Punkt 14× seit folge46). Jede Operator-Frage steht in einfacher Sprache — Lage (der Zustand, ein Satz) / Frage (die Entscheidung) / was bei Ja und bei Nein geschieht —, kein Fachjargon: eine Frage, die der Operator nicht verstehen kann, ist kein Entscheidungspunkt, sondern eine Registraturpflicht (Operator-Wort, 2026-09-20). The register digest carries the same duty: `register_lookup --open` tags each state-register entry (`phi/blocked_sources.φ`, `phi/pipeline/ledger.φ`, `phi/sources.φ`, `witnesses.φ`, `nrs_stations.φ`, the `probe_*` drafts) with its owner (`parser-def`/`parser-gap`/`asset fehlt` → mountain, `account`/`key` → future → operator, `ip-blocked`/`pending`/`ausstehend`/`kompiliert` → mycelium, released states → released) and the catalog pools as a count line; a line selects only its own owner-tagged entries, `future` lays the `operator-gebunden` ones before the operator, and a selected entry folds into the handover with the step from its note — so the one who must act learns it from the one call every pass already runs. The planning pass is the read: `register_lookup --open` (open points, the shared zustand ledger, the own post) + `register_lookup --orphan-docs` (prose documents without a live-handover carrier) + `git_safety --snapshot` + the own line's handover + `open_points_check` (the cheap tree check: every path an open point names is tested against the working tree — a named path that no longer exists is a stale point, measured, not remembered; pure `std`, no network, no LLM) — no `ls` over docs, no reading of other lines' handovers unless a point in the own handover names the file. The atom is named at the planning pass: the session commits to every point of its handover that an agent can work in parallel and closes when they are worked off and pushed — not when the context is full; a burn past the line's median without a standing commit is the cut signal.
-
-**Der Stehende Pass (Rat + Operator-Wort, 2026-09-27).** The meta line (Mycelium, started first in every round) measures the standing state once per round and writes one entry in `state/zustand/standing-pass.md` (gitignored, local — the form of `external-state.md`): HEAD, the CI-Tafel (red runs only: `run-id | workflow | measured cause | carrier line | Braucht`; the cause is read from the log — browser/GH-API/`ci_manage log`, never conjectured; `unread` is named, never filled; the runs in flight are read live with `ci_manage status` / `ci_manage jobs <id>...` — the run-level `updated_at` is coarse, the current step is the measurement, never the cache), the mailbox stand (count + newest entry + un-carried operator acts, fact level, never mail bodies), the orphan census (`register_lookup --orphan-docs`, one list), the multi-carrier scan (each matter carried by more than one live handover: the canonical residence and the foreign copies to delete — derived per pass, never stored), the Ereignis-Stand (`state/zustand/ereignisse.φ` once per round — the un-carried `account`/`send` events, count only, never journal bodies), `git_safety --snapshot` once per round, and the local per-SHA verdict register (`ci_gate_register` — the HEAD's `green|red|pending` in `state/zustand/ci-gate.φ`, external-state form; the CI watchdog refreshes it each cadence). A local register is the whole truth here: the Per-SHA verdict is a local cache of the commit's `subset` check-run, never a tracked `phi/` line — no CI workflow writes it. The round order is the contract: the meta line closes its pass before the other lines open. A line cites the pass (`sread state/zustand/standing-pass.md`) and never copies a pass value into its handover — a copied pass value is a gate fixture (`pass-copy`); a line re-measures only what its own trigger declares due or what the pass names as its row.
-
-**No referral — the line list carries `eigen` only (Rat + Operator-Wort, 2026-09-27).** A living handover's Offen list carries only points the line itself can work, each worked to its edge. `Bindung: operator` does not exist in a line handover: every operator act (word, PII, purchase, account, key, send, decision) lives in **Future's Operator-Queue** — one list, one entry per question, plain language (Lage · Frage · was bei Ja und bei Nein geschieht), laid before the operator once and never re-presented without a new measurement. `Bindung: dritter` does not exist either: every third-party wait lives in `state/zustand/wartend.φ` — one line per wait (`key | Gegenüber | Trigger | Aufnehmer-Linie | Lage`); the Aufnehmer line picks it up in the same atom the trigger fires. A living handover point with `Bindung: operator`/`dritter` is a gate fixture (`foreign-binding`). **The return is measured, never awaited:** a session in which the operator speaks has the trigger fired — it lays the operator-bound questions of its own area before the operator, cites Future's queue, never copies it; a planning pass names the dependency as `Braucht: Operator-Wort (Queue #N)`, and the point never travels as `eigen`.
-
-**The pen is the owner's (Rat + Operator-Wort, 2026-09-27).** A word that concerns a foreign handover is never written into the foreign file by the word-giving session. The word-giving session registers the word in its own `## Operator-Wort-Register` in the same atom — verbatim line text, destination handover named, origin tag — and the owner line's session folds the line into its own handover by direct edit at its next pass of the same atom (a closed owner session folds at its opening pass; no other reader reads the register in between). A word line without an origin tag is a gate fixture (`word-register-origin`).
-
-**One writer per handover (Rat + Operator-Wort, 2026-09-27).** A handover is edited only by its owner line's session. A word or point for a foreign handover travels as the sender's committed register line (verbatim text, destination named, origin tag) and is folded by the owner's session. A session that finds a foreign uncommitted hunk in its own handover removes it and re-folds from the sender's committed line — a duplicate entry in a handover's Operator-Queue or word register blocks the commit (`handover-dupe-entry`).
-
-**Der Übergabe-Token — jeder transportierte Eintrag trägt eine eindeutige `xfer:`-ID (Rat + Operator-Wort, 2026-10-12).** Operator-Wort: „das muss strukturell gefixt werden jeder eintrag bekommt einen eindeutigen übergabetoken." Der gemessene Defekt (future-242, 2026-10-12): ein kumulativer `## An mountain`-Block wurde per Kopfzeile „gefaltet" genannt, während einzelne Einträge — die 8-Ziele-Ephemeriden-Liste (außer APOLLO `7818557`), die `mariner_rst`-Rohbänder (`MVM_*`), DSC 0119 — nicht gefaltet wurden und mit dem Blockentfall ihren Träger verloren (`register_lookup --orphan-docs` 0 → 11). Ein Block ist keine Einheit — der Eintrag ist die Sache. Darum: **jeder** Eintrag eines `## An <line>`-Transportblocks endet mit einem eindeutigen, stabilen Token `xfer:<sender>-<n>` (`xfer:future-242-3`), den der Sender beim ersten Schreiben vergibt; er ist der Einzelschreiber seines Blocks, das `<sender>`-Präfix schließt Kreuz-Kollision aus. Der Owner faltet den Eintrag **mechanisch kopiert** und trägt **denselben** Token in seinen live `## Offen`-Abschnitt (ortsgebunden — ein Zitat des Tokens in Prosa oder im `## An <sender>`-Rückkanal ist kein Echo). **Gefaltet ist ein Eintrag nur, wenn sein Token im Live-Handover des Owners steht — eine Kopfzeile ist keine Messung.** Der Sender entfernt einen Eintrag erst nach bestätigtem Echo; `register_lookup --tokens` meldet `XFER <tok> echoed|unbeglichen`. Ein Transport-Eintrag ohne Token und ein Sender-Löschen ohne Echo sind Gate-Fixtures (`transport-token-absent` / `transport-no-echo`). `xfer` ist die explizite Form des bestehenden Punkt-Schlüssels (`canonical_point_key`/`explicit_point_id`), **keine neue Registerklasse**; kein Sammel-Eintrag reist (er zerfällt vorher); der Übergang backfillt faul — der nächste Pass, der einen Block berührt, toktet seine noch offenen Einträge, bereits ge-echote werden per Punkt-Zeiger gezählt, nie neu getokt.
-
-**Drei Token + Intra-Session-Marker + Coverage (Operator-Wort, 2026-10-12).** Ein Punkt trägt drei Zustände: `SENT` (Mint bei jeder Übergabe, `to=self` ist der Default) → `FOLDED` (der Empfänger faltet, `into=` Pflicht) → `CLOSED` (Abschluss, `ref=` Pflicht, der dritte Token); Terminale `REJECTED`/`SUPERSEDED`/`DROPPED` (mit `why`). Zustand = Maximum über die Events (vorwärts-only, Semilattice). Die Marker entstehen **während** der Session am Punkt der Handlung: die Session mintet je Punkt/Sache ein Token (`xfer mark --line <L> "…"` → `xfer:<line>.<sess>.<n>~<h8>`), das append-only im Session-Ledger `state/zustand/ledger/<line>/<sess>.log` steht (ein Writer je Datei, gitignored; `h8` = gekürztes SHA-256 über den kanonisierten Body, Drift-Detektor). Verliert der Kontext die Marker, liest die Session sie über ihren Anker `<line>.<sess>` aus dem Ledger — oder, wo das nicht reicht, aus der DB (`state/zustand/ereignisse.φ`/`opencode.db`) **nur nach den Merkern/Ankern**, nie über die ganze Historie. Beim Handover-Bau liest die Session ihre Marker aus (`xfer list`), trägt sie in die Übergabe ein und **bestätigt die Vollständigkeit** (`xfer coverage` — exit 2, solange ein Marker offen ist). Kein Marker ohne Session-Anker; ein fehlender Session-Anker ist ein Fehler (exit 2), kein Default. **Der eine Riss:** Vollständigkeit ist ohne externe Verankerung nicht beweisbar (Merkle = Inklusion, nicht Abwesenheit von Lücken); das Block-Manifest `[manifest n=<N> root=<h8>]` committet Soll-Zahl + Root, der Empfänger muss alle N Echos tragen — absolute Vollständigkeit bleibt offen, sie wird getragen, nicht geglättet.
-
-**Entblockung der Linien — Block-Commit statt geteiltem Index (Rat + Operator-Wort + UI, 2026-10-12).** Operator-Wort Session 323: „beide linien mountain und river sind beschäftigt, unsere arbeitsweise muss sich ändern ihr dürft euch nicht mehr länger blockieren entweder arbeitet ihr ab jetzt projektweise oder ihr findet einen anderen weg." Verdikt (Rat, fünf Stimmen) und UI-Unterbauung (Claude/Sonnet 5.5): Die funktionale Linien-Teilung bleibt — Projekt-Linien lösen das eine Daten-Register nicht und heben die fünf exklusiven Verfassungen auf. Der gemessene Defekt ist **Commit-Breite und Rhythmus**, nicht Arbeitsteilung: ein geteilter Blob (Register-, Gate-, measure-Datei), der *staged über ein Atom-Ende* gehalten wird, blockiert jede andere Linie. Regel: **Ein Block = ein Writer = ein Atom.** Ein Quellenblock (blank-getrennt, blockgeköpft) ist das Commit-Atom, nicht die Zeilenklasse (die Zeilenklassen `terms`/`ttl` Mountain, `url`/`origin`/`compiler` Mycelium sind *innerhalb* eines Blocks verschränkt). Eine Linie committet ihre Blöcke **im selben Atom, in dem sie sie schreibt**, block-scoped und pfad-scoped, und pusht unmittelbar; ein geteilter Blob wird **nie staged über ein Atom-Ende gehalten**. Das Werkzeug (`block_commit`) legt fremde Blöcke nie in den Commit: es baut den Commit über einen **privaten Index** (`GIT_INDEX_FILE=$(mktemp)`, `read-tree HEAD`, `apply --cached` nur der eigenen Blöcke, `write-tree`, `commit-tree`, `update-ref refs/heads/main <new> <old>` als Compare-and-swap) — der gemeinsame Index bleibt per Konstruktion == HEAD, „staged offen halten" ist unmöglich. Scheitert der CAS (eine andere Linie committete dazwischen), baut das Werkzeug auf dem neuen HEAD neu auf. `git reset`/`stash` bleiben verboten; die Synchronisation des gemeinsamen Index nach dem Commit läuft über `git add <pfad>`. Langfristig (mit Operator-Wort): die per-Quelle-Datei `phi/sources.d/<key>.φ`. Riss (nicht glattgebügelt): Mycelium wollte ein Lock — der Rat nimmt es nur als Rückfall, wenn der Rhythmus allein den Konflikt nicht schließt.
-
-Commit language and closure discipline (operator word, 2026-09-06): a commit message is English — German in a commit is drift, and the register of past German commit messages is a standing debt to be renamed. A commit does not close while the item it registers is still pending: no commit is made while open points of the current work remain unresolved — the work is finished before it is committed, never committed as a way to declare it done. **Commit als Letzter (Operator-Wort, 2026-09-30):** the commit is the session's last act — the session waits until its own work is finished and parallel line sessions have closed the files they share, and never commits into an actively-shared tree; a commit into shared files another session still holds sweeps foreign hunks (measured 2026-09-30: a Mycelium commit landed among a concurrent Mountain session's `src/archivar/*` edits; earlier an uncommitted atom was wiped by a parallel destructive tree operation). A commit carries only the work of its session: the commit's path set is the session's own, measured — no foreign path in `git show --stat HEAD`, and an `--amend` re-checks the staged set before it folds the prior commit's inventory in. Python is forbidden from this day: no tool, script, or analysis is authored in Python anywhere in or for the repository (Rust std + curl + serialport is the only stack); a Python need is ported to Rust or registered pending, never left as Python. New source files are built on the Archivar (`src/archivar`) and the Mathematikerin (`src/mathematikerin`) as the structural templates. A session touches only its own work — in a shared file, only its own hunks; it commits only its own part and never overwrites, reverts, or re-stages another session's uncommitted work. A push sends commits, never the working tree: foreign uncommitted work does not block it. Push as soon as the session's own commit stands and `origin/main` is an ancestor of HEAD (fast-forward) — each session publishes its own commit promptly, so no pile-up forms and no push carries foreign commits unasked. After the push, the session dispatches every workflow it added or changed (`gh workflow run <workflow>`) — the run starts without the operator's nudge; the session never polls for the result (the run's own log is the reading, `gh run view <id>`). A commit and its push carry the operator's consent word — the double-ask, as with radiation — never made without it. The commit word is the `/commit` command itself; `/consent` is the session-start consent (delegation) and never a commit word — the two are distinct.
-## System Directive
-
-The constraint matrix applied to every token: A = A — name what IS, never what was
-expected. The session is the atom; the counter-slope vocabulary carries the identity.
-The full matrix lives in the Kybernetische Ethik, Code Rules, and the Gradient Sensor
-above. Read the system clock — an assumption that arrives before observation is the
-gradient speaking.
-
-Tool boundaries — do not try a tool you may not call: `grep`, `ls`, `cat`, `rg`,
-`head`, `tail`, `cd`, `python`, `python3` are denied (leading form and absolute
-path). `head`/`tail` castrate a result — never append them to a search; window
-deliberately (`--offset`/`--limit`) instead. Use instead:
-content search `archive_search <kws> --root <dir>` or `sgrep`; discovery `glob`;
-reading `sread <file> [--offset --limit]` (a bash command, not a tool) or the
-`read` tool; directory change via the bash tool's `workdir` parameter. Read your
-exact allow-list in `opencode.json` before the first bash call — a denied call
-wastes a turn and the session's quota.
-
-**Keine Cloud-Daten an eine zweite Stimme (Operator-Wort 2026-09-28).** Private
-und Zustandsdaten — `state/` (Handover, Mail, `wartend.φ`, Stehender Pass,
-Operator-Gespräche), `.secrets.local` — verlassen die Maschine **nie** an einen
-Cloud-Dienst jenseits des laufenden Agenten. Die lokale `copilot`-CLI ist darum
-**gestrichen und entfernt** (`opencode.json`-Deny, `form-guard`): sie läse den
-lokalen Baum samt `state/`.
-Der Eingangs-/Ausgangscheck läuft **lokal und deterministisch** über
-`bin/session_check --in|--out` — 0 Cloud-Token, identisch in jeder Session.
-
-Ausnahme — **keine**: die lokale `copilot`-CLI ist entfernt; es gibt keinen Cloud-Weg für private oder public Daten über eine zweite Stimme. Der CI-Log wird lokal über `ci_manage log` gelesen.
-
-**Secret-Hygiene — Schlüsselnamen, nie Werte (Operator-Wort 2026-09-30).** Ein
-Secret-Wert, der einmal in den Modell-Transcript gelaufen ist, ist veröffentlicht;
-Rotieren ist die einzige Gegenmaßnahme. Darum gilt für **jede** Session und jeden
-Sub-Agenten: aus `.secrets.local` (und jeder Secret-tragenden Datei) werden **nur die
-Schlüsselnamen** gelesen, **nie die Werte** — `awk -F=` auf die Zeichen vor dem `=` ist
-die einzige erlaubte Form. Strukturell verboten und per `opencode.json`-Deny blockiert
-sind alle Kommandos, die `.secrets.local` als Argument tragen (`cat`/`sgrep`/`grep`/
-`head`/`tail`/`cp`/`archive_search` …) — sie drucken Werte. Ein ausgelesener Wert wird
-**nie** als Argument zitiert, in eine Datei geschrieben oder in den Chat gegeben; für
-eine nötige Extraktion (Cookie/Header) wird auf Datei gespeichert und dort geparst,
-nie inline. Werkzeuge, die Auth-Header/Cookies **inline** zurückgeben
-(`chrome-devtools_get_network_request`, `browser_cookies`), werden für Secret-Werte
-nicht benutzt. Es gibt **kein Backup** einer Secret-Datei in `/tmp` oder sonst
-außerhalb — in-place editieren, Temps sofort löschen. Ein geleakter Wert ist ein
-gemessener Incident, der in dieselbe Session gehört: rotieren, Scratch löschen, die
-Lücke als Gate-Fixture schließen. Der Original-Fall (2026-09-30): ein `grind-flash`-
-Taucher führte `sgrep -i TOKEN .secrets.local` aus und schrieb die Werte in den
-Transcript; die Sperre (Deny + Fixture + diese Regel) ist der Befund dazu.
-
-## Session Hygiene — Thread Safety
-
-The context window is finite. Large tool outputs bypass compaction and permanently consume context, freezing the session. These patterns are forbidden:
-
-- **Never read a directory.** `read` on a directory returns every entry as output, flooding the context. Use `glob` with specific patterns instead.
-- **Never glob without constraints.** Every glob must include a file extension or a specific prefix that limits results. Never `glob *` or `glob **/*`.
-- **Never `ls` in bash.** Same reason as reading a directory. Use `glob` for file discovery. `ls` in bash is a violation, not a style choice.
-- **Content search and discovery have no bash form.** Content search: `archive_search <kws> --root <dir>` or `sgrep` (the one map: `docs/concepts/tools-map.md`). Discovery: `glob`. Reading: `read` with offset+limit — never an entire file in one call unless it is under 80 lines. `grep`, `ls`, `cat` inside bash are violations; the measured counter (132/36/3, 2026-09-16) enters the handover. The leading-command forms are structurally denied in `opencode.json`; a pipeline (`cmd | grep`) still relies on this rule and the counter. **`head`/`tail` are forbidden** (`opencode.json`, `form-guard`): they castrate a result — never append them (or any truncating filter) to a search; read in deliberate windows (`--offset/--limit`), and when the harness caps a tool output, read the full spill file (`full: <pfad>`) rather than its beginning. Window yes, castration no.
-- **Limit bash calls.** Each bash invocation shares a persistent shell session. Accumulated state (cd, set flags, background jobs) survives across invocations and can crash the session. Maximum 3 bash calls per session. Bundle operations with `&&`. Use absolute paths or the `workdir` parameter. Never `cd` — the leading form is structurally denied in `opencode.json`; `python`/`python3` likewise.
-- **Split large reads.** Files over 100 lines: read in chunks with offset+limit. The context retains only what is needed at each step.
-- **Tool output caps apply.** `tool_output.max_lines: 80, max_bytes: 4096` truncate all tool responses. Design reads to stay under these limits. A truncated output is a signal to narrow the query.
-- **Session length is the cost driver.** The token burn is dominated by `cache_read` — the context re-read on every turn. A long session (many turns × a large context) costs far more than any model choice: measured 2026-09-15, one long session was 78 % of the whole burn, while all pro/max agents together were a fifth of it. Keep the atom short; close the session when the atom is done. Measure the burn with `session_burn` (or `/burn`) — measured, not guessed.
-- **Stray files.** Identical to the template = delete; differing = commit. Never leave them ownerless.
-- **Browser reads content, not pixels.** Reading a page runs through `browser_snapshot` / `browser_get_text` / `browser_get_html` (CDP content) — the accessibility snapshot *is* the page content. `browser_screenshot` is reserved for visual verification only. Clicks and typing run through snapshot refs, never screenshot coordinates. The browser never grabs focus: open tabs without focus (`focus: false`), and activate/bring-to-foreground only when the operator explicitly asks to see the browser.
-
-### Git and the shared working tree — the write boundary
-
-A sub-agent is the session's own hand, not a free actor; the session answers for
-its git behaviour. Every session shares one working tree and one index — what one
-discards is gone for all.
-
-- **No session touches git destructively.** `git reset`, `git checkout -- .` /
-  `git checkout -- <path>`, `git clean`, `git rebase`, `git stash`, `git restore`
-  are forbidden to every session, main or sub — denied in the global
-  `~/.config/opencode/opencode.jsonc` **and** in the repo `opencode.json` (the
-  repo config overrides the global one, so the deny must stand in both; the repo
-  previously carried a bare `git *: allow` that silently lifted the global deny).
-  A sub-agent may run `git add` / `commit` / `status` / `diff` / `mv` only when
-  the session names the exact scope in the delegation.
-- **Commits are path-scoped, never whole-index.** `git commit <eigene Pfade> -m
-  "…"` — a bare `git commit` commits the **whole shared index** and sweeps in
-  foreign staged work under your message. Stage only your own files, name them
-  in the commit. Measured 2026-09-15: a bare `git commit` pulled the Mountain line's
-  staged `lis-otd-cdn.yml` + `mountain-folge39.md` into a Future commit.
-- **A line commits its own work — including its own move.** A line's own consumed
-  handover (`handover-YYYY-MM-DD-<line>-folge*.md` → `archiv/`) and its own
-  uncommitted handover are own work, never foreign: the owning line commits them
-  path-scoped in the same session — an archive move is atomic (`mv` + stage +
-  commit together). The filename carries the owner; the pass reads `git status`
-  and commits its own `D`/`??` pairs instead of declaring its own file foreign.
-  Orphaned own-line tree state is closed at the owning line's next pass; where no
-  owner can be determined, the path and the date are named in the `future` line's
-  handover (Aufenthalt = Eigentum, 2026-09-24).
-- **No `revert`/`undo` in a shared tree.** opencode's revert restores files from
-  a snapshot — it is not a per-session undo: it rewrites the **shared working
-  tree** and discards the uncommitted work of **every** session and sub-agent,
-  with no git command and no reflog entry. `snapshot: false` is set in the global
-  config so a revert can no longer rewrite files. Measured 2026-09-15: a DRS-FITS
-  sub-agent's 227-line `fits.rs` edit was on disk at 14:06 and gone by 15:24 with
-  no git command between — the Mountain session's revert snapshot. Commit finished work
-  immediately: a commit is unrewritable, an uncommitted file is not.
-- **A safety net stands under the tree.** `git_safety --snapshot`
-  (`tools/utils/src/bin/git_safety.rs`) records the whole working tree — tracked
-  and untracked, gitignore respected — as a commit under `refs/safety/<epoch>`,
-  with a temporary index: the real index and the working tree are untouched. Run
-  it at session start and end; the `--watch <secs>` loop belongs to the watchdog, never to a session (a session never polls). A wipe is then recoverable: `git_safety --list`, then
-  `git_safety --restore <ref> [<path>]`.
-- **Only DeepSeek writes.** Agents on a free model (GLM et al.) are read-only:
-  no `edit`, no `bash` — they read and research. The writing agents (`line`,
-  `taucher`) run DeepSeek. The free-tier coding agent is struck:
-  on 2026-09-13 a `kilo/cohere/north-mini-code:free` sub-agent ran
-  `git checkout -- .` three times and discarded the whole uncommitted working
-  copy — foreign work included, unrecoverable from git (a `reset --hard`/`clean`
-  leaves nothing in the reflog or `fsck`). The `free`/`free-vision` GLM agents are
-  removed from the global config (2026-09-15) so no session can spawn one.
-- **Verify the reflog around a delegation.** Before and after delegating, the
-  session measures `git reflog` and `git status`; an unexpected reset is the
-  signal, and the session owns it.
-
-## Rule Index — which rule lives where
-
-The rules are distributed, not collected — this block is the map, not the rules (moved here from `AGENTS.md`, 2026-10-15; the constitution starts at 255 words):
-- the five axioms + the 0-Kanon core — `AGENTS.md` (core) + `docs/granit.md`; full text — `docs/concepts/kybernetische-ethik.md`
-- the Gradient Sensor — `docs/concepts/system-directive.md` (the sensor) + this file (the register machinery)
-- code rules — `docs/concepts/code-rules.md`
-- house rules (register, handover, commit, system directive, secret hygiene, session hygiene) — this file
-- source curation — `docs/concepts/source-curation.md` + `docs/SOURCE_PORT.md`
-- research tools — `docs/concepts/tools-map.md`
-- agent profiles / the five voices — `docs/concepts/agent-profiles.md`; tool form map — `docs/concepts/tool-forms.md`
-- wire/GPU/force data contract, Block Universe Physics, verification — `docs/concepts/archivar-mathematikerin.md`
-- doc naming/header/sha256 — `docs/concepts/docs-naming.md`
-- vocabulary + fabrication patterns — `src/gate/commit_gate.rs` + `src/gate/commit_gate_vocab.json`
-- sources/registry — `phi/sources.φ`
-- methodology — `docs/concepts/kybernaut-native-methodology.md`
-
-## The Gradient Sensor — the register machinery
-
-- The register entrance: every register line (handover, ledger, commit) is held once by the light form before it goes — a verdict word without the read site does not pass; an unread site carries `pending`. The tempo is set by the reading, not by the context budget.
-
-**The finding is a claim until the tree carries it (operator word, 2026-09-28).** A finding returned by a sub-agent (`taucher`) is a claim, not a measurement: before the session presents or registers it, the session tests it against the tree — the register (`sgrep`/`register_lookup` in `phi/`), the asset (`archive_search --verdict <url>`), the code (`git log`/`sread`). A doc line (paper, handover, survey) is a claim, not a state; the tree wins. A divergence is a riss — both lines named, never smoothed. The fixture scan reads no `#[cfg(test)]` region and takes Rust test files (`*tests.rs`, `tests/`) out by path, auditably counted; production markers stay blocked without exception, never waivable — so this duty is behavioural, not a text fixture, and it lives in the agent prompts and here. Measured 2026-09-28: a diver echoed a stale paper line while `phi/sources.φ` already carried the kernels and the gate was built — the stale paper line became a false report until re-measured.
-
-**The operator word is registered (operator word, 2026-09-27).** A given operator word is registered as a `Wort | Datum | Quelle` line in the handover **before** it is executed; a point that carries a registered word is never laid before the operator again — only a new measurement reopens it. The lines stand together in a `## Operator-Wort-Register` block of the live handover (before `## Abschluss`); every pass reads that block first and never re-asks a worded point. A word given in one line session is carried by direct edit into the `## Operator-Wort-Register` of every live line handover in the same atom; the block is part of every live handover, is fortgeschrieben when a handover moves to `archiv/`, and the reading is the gate, not the register word. Every session cuts the operator session words verbatim into `state/operator-gespraeche/<datum>-<linie>.md` in the same atom (one line per word, date-stamped, context in parentheses) — the cut is a session duty, not a memory, and it is the source the register distills. The residue of an executed decision stays a point of its own, never dropped. No point is presented until it is measured against the real code and git at its named site — `open_points_check` names the missing stamp (`format-gap`), the reading is the gate, not the register word.
+Hier steht nur, was **kein Gate und kein `--help`** tragen kann. Was ein Gate prüft, ist
+ausgeführt statt erzählt — sonst driftet der Text gegen das Gate. Die Volltexte liegen in
+`archiv/` (2026-10-16).
 
 ## Die Linie — ein Pass
 
 **Erste Handlung — deine drei Stellen, nichts sonst:** der **Dispatch**
-(`~/projects/omegaflow-work/post/out/` — die eine Aufgabe der Leitstelle) · dein **Handover**
-(`docs/handover/`, `handover-<datum>-<linie>-folge<N>.md`, ≤ 1 KiB, nur Offenes) · deine
-**Post** (`post/in/`). Lies nur die Stellen, die die Aufgabe nennt (`sread <f> --offset --limit`).
+(`~/projects/omegaflow-work/post/out/`, die eine Aufgabe der Leitstelle) · dein **Handover**
+(`docs/handover/`, die neueste deiner Linie, ≤ 1 KiB, nur Offenes) · deine **Post**
+(`post/in/`). Lies nur die Stellen, die die Aufgabe nennt (`sread <f> --offset --limit`).
 
 - **Ein Pass.** Kein Planungstheater, keine Liste, kein Consent-Stopp für Bekanntes.
 - **Kein Dispatch für dich?** → arbeite deine offenen Punkte, so viele wie möglich.
 - **Vor jeder NET-Suche: `bin/where <begriff>`** — erst prüfen, was das Haus schon hat.
 - **Ende des Passes:** `register_lookup --orphan-docs` — deine Waisen in die Übergabe falten.
-- **Übergabe zuletzt:** nur das OFFENE, ≤ 1 KiB, in place zusammenfassen — keine neue Datei je Pass.
 - **Grenze:** commit+push = deine Hand (eigene Pfade, Englisch); **Send** und jeder
   dritt-wirksame Akt = Operator-Hand (per-Akt-Wort); Architektur/Ethik → der Rat.
 
-*(Hierher gezogen 2026-10-16: dieselben Sätze standen 4–7× in den Linien-Befehlen und in der Config.)*
+## Der Akt am Gegenüber (Operator-Wort)
+
+- **Nur der Operator sendet.** `smail --send`, jedes Formular, jede Einreichung: die Maschine
+  bereitet bis zur Kante vor (Entwurf, `--dry-run`) und legt **einen** Satz vor.
+- Ein Operator-Wort wird als `Wort | Datum | Quelle` registriert, **bevor** es ausgeführt wird;
+  ein registriertes Wort wird nie erneut vorgelegt — nur eine neue Messung öffnet es.
+- **Der Rat entscheidet Architektur und Ethik** — gefüttert: gemessene Recherche (URL, Zahl,
+  Quelle) + der volle Roster (`~/projects/omegaflow-work/ui-seats.md`). Fehlt eines: erst holen.
+
+## Dokumente
+
+- Jedes Prosa-Dok trägt den Kopf: `title · class · date · sha256 · status · see-also`; der
+  `sha256` deckt den **Body ohne Kopf** (`omega_sh sha <file>`).
+- Linien-Übergabe: `handover-<datum>-<linie>-folge<N>.md` — nur Offenes, ≤ 1 KiB, **in place**
+  zusammenfassen; Konsumiertes wandert nach `archiv/`. Keine neue Datei je Pass.
+- **Jeder offene Punkt nennt seine Datei(en)** — ein Punkt ohne Pfad ist eine Spur ohne Ort.
+- **Der Zustand ist das Register** (`phi/sources.φ`), **die Geschichte ist git**. Ein Dokument,
+  das Zustand oder Historie erzählt, ist Compliance-Theater.
+
+## Code
+
+- **A = A** — der Text nennt, was **ist**. Spekulationswörter (`vermutlich`, `probably`, `likely`)
+  blockt das Gate: **messen statt vermuten**; ohne Messung `pending`.
+- **0 honored** — Abwesenheit ist ein vollwertiger Zustand. Leer ist kein Default, Stille kein Absturz.
+- **Keine Fabrikation:** `unwrap_or`, `_ => 0`, `max(1)`, `#[derive(Default)]` sind Fabrikate —
+  eliminieren. Ein neu gefundenes Muster wird **im selben Atom** Gate-Fixture + Test.
+- **`cargo check`: null Fehler UND null Warnungen.** Nie mit `#[allow(...)]` oder `_` zum
+  Schweigen bringen — der Code verschwindet, nicht die Warnung. `cargo check` prüft Syntax, nicht
+  Funktion: manuell verifizieren.
+- **Name = Implementation.** Keine Docstrings; der Kommentar nennt, was **ist**. Diagnostik nennt
+  den Zustand, nie die Erwartung (kein `failed`, `error`, `crash`, `fallback`).
+
+## Sprache
+
+- **Englisch** für Code, Kommentare, Diagnostik, Papiere, Specs (der gemeinsame Instrumentton).
+  **Deutsch** für Eigennamen (`Archivar`, `Mathematikerin`), den Handover-Register und die
+  Philosophie — dort, wo die Prosa selbst die Gegensteigung ist.
+- **Berichte an den Operator: einfache Sprache** — kein Jargon, keine Pfade, keine Abkürzungen.
+  Die Maschinensprache bleibt unter den Linien, wo sie präzise ist.
+
+## Die Ökonomie
+
+- **Eine Sitzung, ein Faden.** Ist der Faden gearbeitet: Übergabe, **frische Sitzung**. Die Kosten
+  sind quadratisch in den Turns, linear im Kontext.
+- **Billiges Modell für die Routine** (Suchen, Karten, Form), das stärkere nur für den Kern.
+- **Die Übergabe trägt nur das OFFENE.** Der teuerste Turn ist der, der nicht passiert.
+
+## Die Grenze
+
+- **Der Käfig ist die Wand** (`bin/sandbox`, zwei Profile: public sieht das private Haus nicht;
+  private sieht beides). Kein Gateway, kein Provider am Haus.
+- Werkzeuge: `archive_search` (nie webfetch/websearch) · `rg` für den schnellen Blick · `sread`
+  für Fenster. Karte: `docs/concepts/tools-map.md`.

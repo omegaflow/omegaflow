@@ -2,7 +2,7 @@
   title: Self-hosted Runner (t420) — Routing, intelligente Drosselung, Grenzen
   class: concept
   date: 2026-10-10
-  sha256: 52f2354dacf5ffd242de0e74e63f7d845c4813aadcd73c4d4802144b28556d20
+  sha256: c4ab09c196d53f7e99361cb049eb1ffb5981747e8029b831cb702daccb450a95
   status: live
   see-also: docs/concepts/github-pipeline.md bin/runner_throttle.sh .github/workflows/ci-gate.yml
 -->
@@ -68,7 +68,7 @@ Konfiguration: `/etc/default/runner-throttle` (`IFACE`, `MIN_KBIT`, `MAX_KBIT`, 
 ## Grenzen (0 honored)
 
 - **Der Media-PC ist ein eigenes Gerät** — der t420 sieht dessen Verkehr nicht. Die ehrliche,
-  lokale Regel ist deshalb **Headroom lassen** (Kappe + Adaption über die gemessene Gateway-Latenz).
+  lokale Regel ist deshalb **Headroom lassen** (Kappe + Adaption über die gemessene Latenz).
   Die **wirklich** adaptive Stelle bei getrennten WLAN-Clients wäre **QoS am Router** (Bufferbloat-
   Management, `cake`/SQM) — **gemessen `descoped` (2026-10-11, FRITZ!Box 7530, `Internet → Filter →
   Priorisierung`):** die Firmware bietet **keine Geräte-Priorisierung** — nur *Anwendungs*-Regeln
