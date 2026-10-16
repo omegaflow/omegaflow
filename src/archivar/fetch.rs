@@ -1500,6 +1500,9 @@ pub fn fetch_one(
 }
 
 pub fn cache_root() -> std::path::PathBuf {
+    if let Ok(dir) = std::env::var("OMEGAFLOW_CACHE") {
+        return std::path::PathBuf::from(dir);
+    }
     if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
         return std::path::PathBuf::from(dir).join("archivar_cache");
     }
