@@ -5,9 +5,15 @@ use std::io::Write;
 use std::thread;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-const BASE_GATE_DIR: &str = "/tmp/opencode";
-const BASE_GATE_LOCK: &str = "/tmp/opencode/archive_search_base.lock";
-const BASE_GATE_STAMP: &str = "/tmp/opencode/archive_search_base.ts";
+fn base_gate_dir() -> Option<String> {
+    std::env::var("OMEGAFLOW_TMP").ok()
+}
+fn base_gate_lock() -> Option<String> {
+    base_gate_dir().map(|d| format!("{d}/archive_search_base.lock"))
+}
+fn base_gate_stamp() -> Option<String> {
+    base_gate_dir().map(|d| format!("{d}/archive_search_base.ts"))
+}
 const BASE_GATE_SPACING_SECS: f64 = 1.1;
 const BASE_GATE_WAIT_SECS: f64 = 5.0;
 const BASE_GATE_STALE_SECS: f64 = 10.0;
@@ -21,7 +27,7 @@ fn unix_now() -> Option<f64> {
 }
 
 fn read_stamp() -> Option<f64> {
-    fs::read_to_string(BASE_GATE_STAMP)
+    fs::read_to_string(base_gate_stamp()?)
         .ok()?
         .trim()
         .parse::<f64>()
@@ -29,12 +35,13 @@ fn read_stamp() -> Option<f64> {
 }
 
 fn write_stamp() {
+    let Some(stamp) = base_gate_stamp() else { return };
     if let Some(now) = unix_now() {
         if let Ok(mut f) = OpenOptions::new()
             .write(true)
             .create(true)
             .truncate(true)
-            .open(BASE_GATE_STAMP)
+            .open(stamp)
         {
             let _ = f.write_all(format!("{now}\n").as_bytes());
         }
@@ -61,12 +68,19 @@ fn release_if_stale() {
         None => true,
     };
     if stale {
-        let _ = fs::remove_file(BASE_GATE_LOCK);
+        if let Some(lock) = base_gate_lock() {
+            let _ = fs::remove_file(lock);
+        }
     }
 }
 
 fn base_gate() {
-    if fs::create_dir_all(BASE_GATE_DIR).is_err() {
+    let Some(lock) = base_gate_lock() else {
+        eprintln!("base gate: OMEGAFLOW_TMP absent — gate inert (named, not defaulted)");
+        return;
+    };
+    let Some(dir) = base_gate_dir() else { return };
+    if fs::create_dir_all(&dir).is_err() {
         return;
     }
     let entered = unix_now();
@@ -74,7 +88,7 @@ fn base_gate() {
         match OpenOptions::new()
             .write(true)
             .create_new(true)
-            .open(BASE_GATE_LOCK)
+            .open(&lock)
         {
             Ok(mut held) => {
                 space_requests();
@@ -83,7 +97,7 @@ fn base_gate() {
                     let _ = held.write_all(format!("{now}\n").as_bytes());
                 }
                 drop(held);
-                let _ = fs::remove_file(BASE_GATE_LOCK);
+                let _ = fs::remove_file(&lock);
                 return;
             }
             Err(_) => {
