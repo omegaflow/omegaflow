@@ -104,8 +104,8 @@ wastes a turn and the session's quota.
 und Zustandsdaten — `state/` (Handover, Mail, `wartend.φ`, Stehender Pass,
 Operator-Gespräche), `.secrets.local` — verlassen die Maschine **nie** an einen
 Cloud-Dienst jenseits des laufenden Agenten. Die lokale `copilot`-CLI ist darum
-**gestrichen** (`opencode.json`-Deny, `form-guard`, `bin/copilot_ask`/
-`bin/copilot_review` verweigern): sie läse den lokalen Baum samt `state/`.
+**gestrichen und entfernt** (`opencode.json`-Deny, `form-guard`): sie läse den
+lokalen Baum samt `state/`.
 Der Eingangs-/Ausgangscheck läuft **lokal und deterministisch** über
 `bin/session_check --in|--out` — 0 Cloud-Token, identisch in jeder Session.
 
