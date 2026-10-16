@@ -2,7 +2,7 @@
   title: Handover — Future / Leitstelle (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: b0129f6e156811effe3dfb04cdfc6da74818fadebf60d7469f0fce98793cfba6
+  sha256: b7170ec193ef8d042c27fae47b3a1570f2c8712112910c23ac5a27f341b40639
   status: live
 -->
 # Handover — Future / Leitstelle (2026-10-16)
@@ -26,6 +26,10 @@ Operator-Wort: Crambler raus · ein Käfig, zwei Profile · Regel-Listen gestric
 - **Riss:** der GH_TOKEN wurde bei einer Messung gedruckt → **rotieren**.
 - **Käfig-Lücken:** `~/backup-…` liegt außerhalb (Backups liegen in `omegaflow-work/`);
   `systemctl --user` hat im Käfig keinen Bus — Dienste sind dort nicht schaltbar.
+- **Rat über API (bald):** `bin/rat_dispatch` zeigt noch auf den entfernten Gateway
+  (127.0.0.1:1621) → auf direkte APIs umstellen; `ui-seats.md` (259 Zeilen UI-Bedienung)
+  wird zur kurzen `seat → modell`-Liste. Gilt das alte GEFÜTTERT-Wort noch, oder ersetzt
+  „nur die Frage" es?
 - **B/C** (Komfort-Wrapper · Wände/Gates · eigenes Werk) unangetastet; die vier
   Linien-Lehren aus `post/in` warten auf den Rat.
 - **Operator-Hand:** Antwort-Mails (KIT/re3data, UT Dallas) · CN-NSSDC-Datenantrag ·
