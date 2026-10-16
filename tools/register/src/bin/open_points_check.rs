@@ -469,6 +469,23 @@ fn check_point(name: &str, body: &[&str], gaps: &mut Vec<String>) {
             gaps.push(format!("{}  missing {}", name, field));
         }
     }
+    let has_path = body.iter().any(|line| {
+        let mut rest = *line;
+        while let Some(open) = rest.find('`') {
+            let after = &rest[open + 1..];
+            let Some(close) = after.find('`') else {
+                break;
+            };
+            if after[..close].contains('/') {
+                return true;
+            }
+            rest = &after[close + 1..];
+        }
+        false
+    });
+    if !has_path {
+        gaps.push(format!("{}  point without a path — name its file:line", name));
+    }
     if let Some(lage) = trimmed.iter().find(|l| l.starts_with("- **Lage:**")) {
         if !lage.contains("(gemessen") {
             gaps.push(format!("{}  lage unstamped", name));
@@ -742,22 +759,30 @@ mod tests {
 
     #[test]
     fn accepts_well_formed_point() {
-        let content = "## Offen\n\n### Punkt A\n- **Status:** eigen | **Bindung:** eigen\n- **Trigger:** now\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n";
+        let content = "## Offen\n\n### Punkt A\n- **Status:** eigen | **Bindung:** eigen\n- **Trigger:** now\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** `docs/concepts/tools-map.md:12`\n";
         let gaps = point_format_gaps(content).unwrap();
         assert!(gaps.is_empty(), "{:?}", gaps);
     }
 
     #[test]
     fn flags_missing_braucht() {
-        let content = "## Offen\n\n### Punkt A\n- **Status:** eigen\n- **Trigger:** now\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n";
+        let content = "## Offen\n\n### Punkt A\n- **Status:** eigen\n- **Trigger:** now\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine (`bin/where:19`)\n";
         let gaps = point_format_gaps(content).unwrap();
         assert_eq!(gaps.len(), 1);
         assert!(gaps[0].contains("Braucht"), "{:?}", gaps);
     }
 
     #[test]
+    fn flags_point_without_a_path() {
+        let content = "## Offen\n\n### Punkt A\n- **Status:** eigen\n- **Trigger:** now\n- **Lage:** offen (gemessen 2026-09-24 via sgrep)\n- **Blockade:** keine\n- **Braucht:** step\n";
+        let gaps = point_format_gaps(content).unwrap();
+        assert_eq!(gaps.len(), 1);
+        assert!(gaps[0].contains("without a path"), "{:?}", gaps);
+    }
+
+    #[test]
     fn flags_unstamped_lage() {
-        let content = "## Offen\n\n### Punkt A\n- **Status:** eigen\n- **Trigger:** now\n- **Lage:** offen\n- **Blockade:** keine\n- **Braucht:** step\n";
+        let content = "## Offen\n\n### Punkt A\n- **Status:** eigen\n- **Trigger:** now\n- **Lage:** offen\n- **Blockade:** keine\n- **Braucht:** `src/gate/commit_gate.rs:1802`\n";
         let gaps = point_format_gaps(content).unwrap();
         assert_eq!(gaps.len(), 1);
         assert!(gaps[0].contains("lage unstamped"), "{:?}", gaps);

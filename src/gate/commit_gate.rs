@@ -1808,7 +1808,7 @@ pub fn check_handover_size(path: &str, content: &str) -> Option<Verdict> {
         return None;
     }
     handover_line_owner(path)?;
-    const CAP: usize = 8 * 1024;
+    const CAP: usize = 1024;
     let bytes = content.len();
     if bytes <= CAP {
         return None;
