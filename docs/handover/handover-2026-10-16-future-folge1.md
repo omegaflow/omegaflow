@@ -2,7 +2,7 @@
   title: Handover — Future / Leitstelle, Folge 1 (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: c1f644d6c4e5a95842590cc360bda5c7d13fdcab6b583659a4648ca39d82c88e
+  sha256: 86700fb8c34c29345704c835c8bbf7c10767d7b3ce9b8f619be55ee871710b57
   status: live
 -->
 # Handover — Future / Leitstelle, Folge 1 (2026-10-16)
@@ -23,6 +23,7 @@ Operator-Wort: Crambler raus · ein Käfig, zwei Profile · Regel-Listen gestric
 - **UI-Chats raus** (Operator-Wort): der `chrome-devtools-voices`-Block (15 Chats: duck.ai, claude.ai, qwen, z.ai, kimi, minimax, aistudio, deepseek, mistral, lumo, perplexity, sakana) ist gestrichen. Der Rat kommt künftig **direkt über die API — nur die Frage, schnell**.
 - **Eine Quelle** (`docs/concepts/house-rules.md`): der gemeinsame Linien-Pass steht **einmal** dort — `AGENTS.md` trägt nur den Zeiger (die Ratsche: die Verfassung wächst nie), die fünf `.opencode/command/{mountain,river,mycelium,sensory,future}.md` sind dünn (Persona + Zeiger), die Config verliert die Prompts. Vorher: derselbe Text 4–7×, 16,9 KB Befehle.
 - **Essenz gezogen** (Operator-Wort): `docs/concepts/house-rules.md` = **4,6 KB** (vorher 56,5 KB) — nur, was kein Gate und kein `--help` trägt. Die Volltexte + sechs Regel-Dokumente nach `docs/concepts/archiv/`, darunter `docs/concepts/archiv/house-rules-voll-2026-10-16.md`. Lebende concepts: 45 → 37, im Archiv 9.
+- **Lageplan** (`docs/concepts/lageplan.md`): die eine Seite „wo liegt was" — Wurzeln, Baum, Werkzeuge, die zwei Häuser, die fünf Stimmen. Die **Verweise sind zurück** (die concepts-Liste, die ich in AGENTS.md gestrichen hatte, lebt dort). `AGENTS.md` zeigt darauf.
 
 ## Offen- **Riss:** der GH_TOKEN wurde bei einer Messung gedruckt → **rotieren**.
 - **Käfig-Lücken:** `~/backup-…` liegt außerhalb (Backups liegen in `omegaflow-work/`);
@@ -38,3 +39,6 @@ Operator-Wort: Crambler raus · ein Käfig, zwei Profile · Regel-Listen gestric
 
 ## Träger (Orphan-Faltung, gemessen 2026-10-16)
 Offene Marker ohne lebenden Träger: `docs/concepts/glossar.md` · `docs/concepts/kanal-ontologie-komplettbau.md` · `docs/concepts/zeugnis.md` · `docs/concepts/archiv/house-rules-voll-2026-10-16.md` (Volltext vor dem Essenz-Schnitt — der Schnitt berührt die Marker, nicht die Fragen).
+
+## Burn: open 0.0 · close nicht gemessen (db absent — `~/.local/share/opencode` liegt außerhalb des Käfigs) · cap 0.15
+Grund: Leitstelle — Crambler raus · ein Käfig, zwei Profile · Listen gestrichen · Essenz gezogen.
