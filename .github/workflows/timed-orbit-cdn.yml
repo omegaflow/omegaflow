@@ -1,0 +1,88 @@
+# harvest: format=orbit_bin asset=fehlt arm=timed_tle_compiler pattern=^timed_orbit\.bin$ idempotent=true timeout=120 tag=celestrak.org
+
+name: timed-orbit-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  timed-orbit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the TIMED worldline is already manifested
+        id: idempotence
+        run: |
+          if gh release view celestrak.org --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "timed_orbit.bin"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "timed_orbit.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "timed_orbit.bin missing — compiling and manifesting"
+          fi
+      - name: Ensure the celestrak.org release exists on the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          if ! gh release view celestrak.org --repo omegaflow/sources >/dev/null 2>&1; then
+            gh release create celestrak.org --repo omegaflow/sources \
+              --title "celestrak.org" \
+              --notes "CelesTrak GP element sets compiled to omegaflow worldlines (CDN tag = netloc)"
+          fi
+      - name: Fetch the TIMED (NORAD 26998) element set and compile the worldline
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          set -euo pipefail
+          mkdir -p data/celestrak.org
+          curl -sSfL --retry 3 --max-time 120 -o data/celestrak.org/timed.gp \
+            "https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "timed-orbit-cdn: the CelesTrak GP element set returned void" \
+                 "curl on celestrak.org reached no TIMED element set. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+          cargo run -p omegaflow-harvest --release --bin timed_tle_compiler -- \
+            --tle-file data/celestrak.org/timed.gp \
+            --out data/celestrak.org/timed_orbit.bin \
+            --cadence 60
+      - name: Upload the TIMED worldline to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          gh release upload celestrak.org data/celestrak.org/timed_orbit.bin \
+            --clobber --repo omegaflow/sources \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "timed-orbit-cdn: timed_orbit.bin upload returned void" \
+                 "gh release upload celestrak.org failed. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
+      - name: Riss-Gate — the SABER route must reach cdaweb (green or a named riss)
+        run: |
+          # The SABER route ends at cdaweb (the field data host); the TIMED worldline
+          # above comes from CelesTrak. The gate measures the cdaweb host: green closes
+          # the route, an unreachable host is a riss named in red — never smoothed.
+          code="$(curl -sIL -o /dev/null -w '%{http_code}' --max-time 30 \
+            https://cdaweb.gsfc.nasa.gov/hapi 2>/dev/null || echo void)"
+          case "$code" in
+            200|302)
+              verdict="riss-gate: cdaweb green (HTTP $code)"
+              printf '%s\n' "$verdict" >> "$GITHUB_STEP_SUMMARY"
+              printf '%s\n' "$verdict"
+              ;;
+            *)
+              verdict="riss-gate: cdaweb unreachable (HTTP $code) — named riss, the SABER field sample stays pending"
+              printf '%s\n' "$verdict" >> "$GITHUB_STEP_SUMMARY"
+              bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                "timed-orbit-cdn: the SABER route does not reach cdaweb" \
+                "$verdict. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                health
+              exit 1
+              ;;
+          esac

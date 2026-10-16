@@ -3864,6 +3864,14 @@ compiler tools/harvest/src/bin/wind_orbit_compiler.rs
 at wind
 ttl 86400
 
+url https://github.com/omegaflow/sources/releases/download/celestrak.org/timed_orbit.bin
+format orbit_bin
+origin https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE
+terms free-open https://celestrak.org/usage-policy.php
+compiler tools/harvest/src/bin/timed_tle_compiler.rs
+at timed
+ttl 7200
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/wind_waves.bin
 format wind_waves
 origin https://spdf.gsfc.nasa.gov/pub/data/wind/waves/wav_h1/
