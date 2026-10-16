@@ -446,6 +446,7 @@ pub fn allowed_units_for_force(force: u8) -> &'static [&'static str] {
             "mw/m2",
             "db",
             "ppm",
+            "n-units",
             "w/m2/sr",
             "w/m2/sr/um",
             "w/m2/hz",
