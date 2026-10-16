@@ -12,7 +12,7 @@ Kybernetic field system — pure Rust, WebGPU point cloud, ICRS block universe. 
 
 **Die Linie — ein Pass:** deine **drei Stellen** (Dispatch · Handover · Post) und der ganze Pass: `docs/concepts/house-rules.md`.
 
-**Werkzeuge:** `archive_search` (never webfetch/websearch) · `sgrep`/`sread` · `git_safety` · `ci_manage` (never the `gh run` family). Map: `docs/concepts/tools-map.md`.
+**Werkzeuge:** `archive_search` (nie webfetch/websearch) · `rg` für den schnellen Blick, `sread` für Fenster; Karte: `docs/concepts/tools-map.md`.
 
 **Die drei Häuser:** public repo `~/projects/omegaflow` · workspace `~/projects/omegaflow-work/` · post `post/in/` · private house `~/projects/omegaflow-personal` (`docs/concepts/house-rules.md`).
 
