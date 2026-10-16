@@ -38,8 +38,20 @@ Akt am Gegenüber bleibt benannt (die Vorbereitung eines `blockiert`/`wartend`-P
 bis zur Kante wird dispatcht wie jeder Schritt). Gibt es
 keinen Schritt zur Kante, sagt die Session das. Jeder Punkt trägt seinen
 Status-Tag (`wartend` | `blockiert` | `termin`); ein Operator-Akt trägt in einer
-Linien-Übergabe keinen Status — er lebt in Futures Operator-Queue
-(No-referral, Aufenthalt = Eigentum).
+Linien-Übergabe keinen Status — er lebt in Futures Operator-Queue (No-referral).
+
+**Eigentum — ein Fremdakt wird verwiesen, nicht geführt (Rat 2026-10-17, R1).**
+„Aufenthalt = Eigentum" ist **geschlagen**: eine Linie darf **keinen** Punkt als
+`eigen` führen, dessen **nächster Akt beim Gegenüber** liegt (andere Linie oder
+Operator). Ein solcher Punkt steht als **`pending`-Verweis mit Adresse** —
+`an:<line>` oder `operator` —, nie als `eigen`. Die river-223-Lehre: **12 fremde
+Punkte als ein `eigen`-Kürzel → 12 ≠ 1** (ein Aggregat ohne `n` ist keine Messung).
+Kein stilles `pending`. **Riss, ungeglättet (Rat 2026-10-17):** der Rat spaltete —
+**Feld** mit Adress-Pflicht (`eigen`/`dispatcht_an:<line>`/`operator`;
+GLM · DeepSeek · Mistral · Lumo) **gegen** **Quittung/abgeleitetes Eigentum** (Fugu:
+Eigentum aus dem Transfer-Log abgeleitet, nie unabhängig schreibbar — „zwei
+Speicherorte für eine Tatsache heißt, einer ist fabriziert"). Beide Lager sind
+begründet; die **Form der Heilung** entscheidet der **Operator/Rat**, nicht die Linie.
 
 **Vorbereitung ≠ Akt (Operator-Wort 2026-09-24).** Ein `operator-gebundener`
 Punkt wird **immer** in zwei Zeilen getrennt geführt, nie in einer: die
