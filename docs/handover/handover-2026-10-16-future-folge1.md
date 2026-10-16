@@ -2,7 +2,7 @@
   title: Handover — Future / Leitstelle, Folge 1 (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: 1a9713197d18d1bde805e84f7bc98eb2e26cfb8140c40af63d32670116882029
+  sha256: 5443d96198a245607be260f38cc4265c1ca08d70c065cee7585ce86f9bd95d94
   status: live
 -->
 # Handover — Future, Folge 1 (2026-10-16)
@@ -17,5 +17,5 @@
 ## Träger (2026-10-16)
 `glossar.md` · `kanal-ontologie-komplettbau.md` · `zeugnis.md` · `house-rules-voll-2026-10-16.md`
 
-## Burn: open 0.0 · close nicht gemessen (db im Käfig unsichtbar) · cap 0.15
+## Burn: open 0.0 · close nicht gemessen (db im Käfig unsichtbar) · cap 0.15 · closed 0
 Grund: Crambler raus · Käfig · Listen gestrichen · Essenz + Lageplan · zwei Gates.

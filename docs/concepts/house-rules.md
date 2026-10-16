@@ -2,7 +2,7 @@
   title: House Rules — die Essenz (was gilt)
   class: concept
   date: 2026-10-16
-  sha256: f04fb50bd279fb69243e9360f77221c6b72611a4f729af3769134898c155ed78
+  sha256: 2d296e526bbb6b14412d4c5583ddd2104cd1674e349e93a2187b96105e954907
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md
 -->
@@ -43,6 +43,9 @@ ausgeführt statt erzählt — sonst driftet der Text gegen das Gate. Die Vollte
 
 - Jedes Prosa-Dok trägt den Kopf: `title · class · date · sha256 · status · see-also`; der
   `sha256` deckt den **Body ohne Kopf** (`omega_sh sha <file>`).
+- Die **Burn-Zeile** nennt die **Bilanz**: `open <usd> · close <usd> · cap 0.15 · closed <n> · Grund: …`.
+  `closed` = wie viele offene Punkte **dieser Pass geschlossen hat**. Das Gate vergleicht die Zahl
+  mit dem git-Diff — eine Behauptung, die nicht stimmt, ist eine Fabrikation (A = A).
 - Linien-Übergabe: `handover-<datum>-<linie>-folge<N>.md` — nur Offenes, ≤ 1 KiB, **in place**
   zusammenfassen; Konsumiertes wandert nach `archiv/`. Keine neue Datei je Pass.
 - **Jeder offene Punkt nennt seine Datei(en)** — ein Punkt ohne Pfad ist eine Spur ohne Ort.
