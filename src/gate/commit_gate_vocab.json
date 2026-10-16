@@ -563,7 +563,7 @@
     "burn-cap-unreasoned": "a raised burn cap must carry a reason — a declared cap without a Grund is self-consent, not a measured exception",
     "burn-cap-above-hard": "a raised burn cap exceeds the hard ceiling 0.5 USD",
     "promised-gate": "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line",
-    "handover-ratchet": "a living handover carries only the open — this one grew past 8 KiB; delete what is done (git carries it), keep the open (≤ 1 KiB)"
+    "handover-ratchet": "a living handover carries only the open, ≤ 1 KiB — this one is bigger: delete what is done (git carries it), keep the open as pointers (file:line)"
   },
   "german_chars": [
     "ä",
