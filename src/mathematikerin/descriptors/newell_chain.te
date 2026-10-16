@@ -1,0 +1,20 @@
+# newell_chain.te — die Vorlauf-Kette als inkrementelle TE, EINE Kante (Rat 2026-10-15).
+# Treiber: Newell dPhi/dt (L1-Kopplung, deklarierter abgeleiteter Knoten).
+# Ziel: abk dB/dt (Boden). Konditionierer (`cond rest`): die Sonnenwind-DICHTE —
+#   ein zweiter, nicht in Newell enthaltener Antrieb (Newell traegt by/bz/speed).
+# So traegt der Pool mehr als Treiber+Ziel, und der cte-Arm
+#   (conditional_embedded_te_phase) feuert; ohne ihn blieb die Kette `silent`
+#   (river-folge221).
+# Lauf: .github/workflows/field-te-query.yml Job `matrix-newell-chain` (CI), nie lokal.
+matrix newell_chain full
+register sources
+channels newell_dphi_dt_omni,abk_dbdt_pt1h,omni_solarwind_density_percc
+from newell_dphi_dt_omni omni_imf_by_gsm_nt,omni_imf_bz_gsm_nt,omni_solarwind_flow_speed_kms
+cond rest
+fdr bh 0.05 over matrix
+expect cells 6
+lags 0,1
+surrogate 200
+cadence live
+bin 3600
+seasonal none
