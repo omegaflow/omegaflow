@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: bf292d18246c4d420f0a76477d61894f9ce485c440ddac33445a381f3ea471d9
+  sha256: 5ef8ccc9693ef094609dc6577c4aa2b6083e6013346097208bb6fd41e781581d
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -64,13 +64,20 @@ kein `pending`, sondern **`absent`** — physikalisch leer. Der CINDI-`blocked a
 (`neutral_gas_wats/`, `combined_plasma_neutrals_ua/` = kollokales in-situ-Paar) · **ICON/MIGHTI**
 `…/pub/data/icon/` (remote, **kein** in-situ-Paar).
 
-## E — MODVOLC Collection 6 (offener Archivhost tot)
+## E — MODVOLC Collection 6 (HIGP-Host tot → historische Route bei NASA LAADS)
 
-**Gemessen:** `modis.higp.hawaii.edu/data/…` → **Timeout (HTTP 000)**; `--wayback` kein Snapshot.
-Lokal: `data/modis.higp.hawaii.edu/2000/` = **75 570** Dateien, 429 MB (nur Jahr 2000). Register-Route
-`phi/sources.φ:12136` = nrt3 **Collection 6.1, nur Recent** (200, echtes Listing). Spiegel-Suche:
-`zenodo`/`github`/`ia-search`/`figshare` = kein Treffer. Offene Alternativen (200):
-**NASA FIRMS** `firms.modaps.eosdis.nasa.gov` · **MIROVA** `mirovaweb.it`.
+**Gemessen:** `modis.higp.hawaii.edu/data/…` → **Timeout (HTTP 000)**; DNS löst auf (`128.171.157.89`,
+CNAME `hotspot3.higp.soest.hawaii.edu`), HTTP aber tot. `--wayback` kein Snapshot. Lokal:
+`data/modis.higp.hawaii.edu/2000/` = **75 570** Dateien, 429 MB (nur Jahr 2000). Register-Route
+`phi/sources.φ:12136` = nrt3 **Collection 6.1, nur Recent** (200).
+
+**Die historische Collection 6 liegt unter anderem Namen bei NASA LAADS:**
+`https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/6/MODVOLC/<Jahr>/<DOY>/MODVOLC.A<YYYYDDD>.HHMM.006.dat`
+→ **303 → Earthdata Login** (auth-gated). Das Haus trägt `EARTHDATA_EDL_TOKEN` (`.secrets.local`) —
+die fehlenden Jahre 2001–2019 sind damit erreichbar. **Naming-Riss:** HIGP `…000.000000` · LAADS `…006`
+· LANCE `…061.NRT` — deshalb fand die **Dateinamen**-Suche nichts; die **Struktur**-Suche (Jahr/DOY)
+fand LAADS. `--all` (416 Z., `zenodo`/`crossref`/`dataverse` …) = **kein** freies Mirror.
+Offene Alternativen (200): **NASA FIRMS** `firms.modaps.eosdis.nasa.gov` · **MIROVA** `mirovaweb.it`.
 
 ## Grenze
 
