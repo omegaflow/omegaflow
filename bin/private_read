@@ -97,15 +97,4 @@ stage1="$(awk '
   { print }
 ' "$f" | sed -f "$filter" | sed -f "$mapscript")"
 
-# ---- Stage 2: the Mistral check on the already-redacted text ----
-out="$stage1"
-if [ -n "$model" ]; then
-  body="$(printf '%s\n' "$stage1" | jaq -Rs --arg m "$model" --arg s "$prompt" \
-    '{model:$m,temperature:0,messages:[{role:"system",content:$s},{role:"user",content:.}]}' 2>/dev/null || true)"
-  if [ -n "$body" ]; then
-    resp="$(curl -s -m 120 "$gateway" -H 'Content-Type: application/json' -d "$body" 2>/dev/null || true)"
-    red="$(printf '%s' "$resp" | jaq -r '.choices[0].message.content // empty' 2>/dev/null || true)"
-    [ -n "$red" ] && out="$red"
-  fi
-fi
-printf '%s\n' "$out"
+printf '%s\n' "$stage1"
