@@ -4,7 +4,7 @@
   date: 2026-10-15
   sha256: 5a742c74099e6c33c37b0990cd36c6e966208d4aa4183d6fd39424cd76475b01
   status: live
-  see-also: phi/sources.φ docs/concepts/source-curation.md docs/handover/handover-2026-10-15-mountain-folge351.md docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md
+  see-also: phi/sources.φ docs/concepts/source-curation.md docs/handover/archiv/handover-2026-10-15-mountain-folge351.md docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md
 -->
 # Survey — Riss-Alternativen: fünf Taucher, offene Ersatzwege (2026-10-15)
 
