@@ -10,122 +10,470 @@
     "zweig-modell"
   ],
   "fabrication": [
-    ["open-source research project", "omegaflow is source-available (PolyForm NonCommercial + CC BY-NC-SA), not open-source — the claim fabricates the licence state (A = A)"],
-    ["open-source non-commercial", "omegaflow is source-available (PolyForm NonCommercial + CC BY-NC-SA), not open-source — the claim fabricates the licence state (A = A)"],
-    ["sgrep -i TOKEN .secrets.local", "reading .secrets.local values dumps secret values into the transcript — only key names, never values"],
-    ["cat .secrets.local", "cat dumps every secret value into the transcript — only key names, never values"],
-    ["head .secrets.local", "head dumps secret values into the transcript — only key names, never values"],
-    ["tail .secrets.local", "tail dumps secret values into the transcript — only key names, never values"],
-    ["unwrap_or_default(", "unwrap_or_default fabricates a default — the value is absent, not defaulted"],
-    ["unwrap_or_else(", "unwrap_or_else fabricates a fallback — the value is absent, not derived"],
-    ["derive(Default)", "#[derive(Default)] is a fabricated default state — the truth is the query"],
-    ["_ => 0,", "\"_ => 0\" writes an unmeasured zero — the value is absent, not zero"],
-    ["_ => 0.0", "\"_ => 0.0\" writes an unmeasured zero — the value is absent, not zero"],
-    ["_ => (0.0, 0.0)", "\"_ => (0.0, 0.0)\" writes a fabricated coordinate — the anchor is absent, not the Gulf of Guinea"],
-    ["_ => (0.0, 0.0, 0.0)", "\"_ => (0.0, 0.0, 0.0)\" writes a fabricated anchor — the site is absent, not the origin"],
-    [".max(1)", ".max(1) clamps to a fabricated floor — the floor must come from the measurement"],
-    ["is_finite() { color } else { 0.0 }", "a finiteness guard falling back to 0.0 writes a fabricated zero — the value is absent, not zero"],
-    ["TeNull::Arx => y.to_vec()", "the Arx null emitting the raw series is a fabricated null — the surrogate carries the original series, the causal link stays intact"],
-    ["find(\"ID[\\\"EPSG\\\",\")", "a bare first-ID find resolves the base-geogcrs or parameter EPSG ID, not the projected CRS — UTM metres are read as degrees; the CRS ID scan must be root-depth aware"],
-    [".or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))", "the unconditional geodetic-key fallback resolves a projected CRS as geographic — the geodetic key is the CRS only when the model type says geographic"],
-    ["format_code != 0", "a format-code gate decodes only DT0 and drops every other measured SFDU as absent — the TNF series is a fabricated subset"],
-    ["CI_REFRESH_S", "CI_REFRESH_S is a fabricated 5-minute floor — the CI cadence is the 3h health-check cron (0 */3 * * *); the ttl/Φ backoff (stale_after) alone gates the fetch"],
-    ["runs every 5 minutes", "\"runs every 5 minutes\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *), kernel-flatten monthly"],
-    ["5-Minuten-Takt", "\"5-Minuten-Takt\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *)"],
-    ["|| bash .github/workflows/scripts/gh_issue_once.sh", "the bare `||`-swallow files an issue and exits 0, so a void harvest shows green — the invocation must be wrapped so the step fails (`|| { …; exit 1; }`)"],
-    ["\"{lat}\".into(), \"29.5\"", "a hardcoded coordinate default fabricates the site — coordinates belong to the anchor, never the marker table"],
-    ["Riss => Absent", "a Riss mapped to Absent fabricates absence over a present contradiction — the Riss is its own state, never absent, never 0.0"],
-    ["Riss => VerdictWord::Absent", "a Riss mapped to Absent fabricates absence over a present contradiction — the Riss carries both witness lines"],
-    ["Riss => None", "a Riss mapped to None drops the present contradiction — the Riss is never written as a missing value"],
-    ["Riss => 0.0", "a Riss mapped to 0.0 writes an unmeasured zero — a mean over the Riss is fabrication"],
-    ["cond_specs.iter().map(|&(d, _)| series[d]).collect()", "the pcmci condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular and every surrogate refuses, or the null degenerates to the original series, and the link silently vanishes or stays undecidable (absence where a measurement should stand)"],
-    ["comb.iter().map(|&(d, _)| series[d]).collect()", "the pcmci stage condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular or the null degenerates to the original series, and the removal test refuses or cannot decide"],
-    ["cond_idxs.dedup()", "the pcmci condition pair set mapped to bare series indices and deduplicated drops the chosen lag — the estimator conditions one whole channel series instead of the exact (series, lag) column, and the conditioning swallows the true coupling or carries the tested edge's own columns"],
-    ["row.push(c.series[t - c.lag] as f64)", "the Arx null fit conditioned on the single chosen (series, lag) column drops the confounder's history — the surrogate loses the lagged confounder-driven dynamics of the target and the null threshold drifts against the estimator; the per-lag columns are the estimator's design, the null fit reproduces the dynamics over the whole history"],
-    ["kernel_id_for_force(5), Some(3)", "a hardcoded force→kernel-id assertion encodes the stale second table — the kernel default derives from the registry (default_kernel_for → kernel_id_of), never a separate match"],
-    ["dist_scale: 1.0", "dist_scale defaulted to 1.0 reads the raw catalog value as metres — a unit fabrication; a dist without a measured scale is absent (Option/None), never a factor 1"],
-    ["rv_scale: 1.0", "rv_scale defaulted to 1.0 reads the raw radial velocity as m/s — a unit fabrication; a radvel without a measured scale is absent (Option/None), never a factor 1"],
-    ["msf_of(m))\n                    .unwrap_or(1.0)", "a SCLK coefficient block without SCLK01_MODULI_ defaulted to one tick per second fabricates the seconds-per-tick — a block whose moduli are absent is absent (filtered out), never a fabricated 1.0 (Bias-Tor, measured 2026-10-09)"],
-    ["unwrap_or(f64::NAN)", "a missing value defaulted to f64::NAN fabricates a data marker — NaN is never a data marker; the value is absent (Option/None), never NaN (Bias-Tor, measured 2026-10-09)"],
-    ["cd_values.first().copied().unwrap_or(2)", "an HDF5 scale-offset filter with absent cd_values defaulted to scale_type 2 (float) fabricates the filter parameter — an absent parameter is refused (Err/Note), never defaulted (Bias-Tor, measured 2026-10-09)"],
-    ["keogram_ABK.bin = radiance", "a browse-JPEG display index (0-255, gamma) is not a radiometric radiance — the keogram unit is relative, never radiance (Rat 2026-10-10, roster 5 field-provenance / 1 image)"],
-    ["keogram_ABK.bin = count", "a browse-JPEG display index is not a detector count — the keogram unit is relative, never count (Rat 2026-10-10)"],
-    ["presence.unwrap_or((x, y, z))", "a fanout centered on the source-frame anchor when the receiver worldline is absent fabricates a receiver from the emitter — the receiver is declared per-record data and its absence is refused (Rat + 3 UI + 2 open-weight, 2026-10-09)"],
-    [".or(Frame::Surface)", "a fanout sort-center that silently falls back to the source-frame anchor when the declared receiver resolves void fabricates a center — the center is declared per source (fanout_center receiver|anchor) and an unresolved declaration is refused (fanout-no-anchor), never swapped (Mountain 282, measured 2026-10-09)"],
-    ["port_field_synth(\"field\", &force, parts[1], parts[2], ttl)", "a block-level field synthesized straight through port_field_synth returns None for a missing force directive and the field vanishes silently — the block stays pending/review (field_or_review), never a silent absence"],
-    ["parse_sources(&conv).is_empty()", "a port flush testing the parse result empty and dropping the block discards the `# pending … review` marker — the pending registration reaches the port output (counted as pending), never a silent absence"],
-    ["ttl as f64 / 10.0", "a tau computed as ttl/10 fabricates a temporal extent from the fetch cadence — the tau is the measured sample cadence (derive_ttl) or the registry default (probe_classify), never ttl/10"],
-    [" 1 {} 0.0 0.0", "a synthesized field line carrying the literal unit \"1\" fabricates a dimensionless unit where none was measured — the unit is absent (Option/None) or live-measured (HAPI metadata), never 1"],
-    ["upload_asset(", "upload_asset is the deleted tagless upload — it collapsed every asset onto the capped release ssd.jpl.nasa.gov (1000 assets); every uploader names its family tag via upload_release(tag, path)"],
-    ["JsonVal::Arr(Vec::new())", "a null variable-length BINARY2 cell decoded as a zero-length array fabricates an empty value from the recommended 4 zero placeholder bytes — the null flag bit makes the cell absent, the key is omitted; an empty array is only a measured count of zero with the flag unset"],
-    ["ttl_transfer_bound", "one property drives two orthogonal behaviors — the cache-freshness ttl drove a network transfer bound (ceil(ttl/Φ²) = 33002 s at ttl 86400, past the 7200 s job budget); the transfer bound is a declared constant TRANSFER_BOUND_S = 2^11 s, independent of ttl"],
-    ["2 => 0.1,", "a hardcoded per-force absorption constant (WP10 map: acoustic 0.1) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
-    ["3 => 0.05,", "a hardcoded per-force absorption constant (WP10 map: seismic-body 0.05) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
-    ["4 => 0.08,", "a hardcoded per-force absorption constant (WP10 map: seismic-surface 0.08) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
-    ["5 => 0.01,", "a hardcoded per-force absorption constant (WP10 map: thermal 0.01) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
-    ["6 => 0.02,", "a hardcoded per-force absorption constant (WP10 map: diffusion 0.02) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
-    ["7 => 0.15,", "a hardcoded per-force absorption constant (WP10 map: advective 0.15) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"],
-    ["channel_ref_of_descriptor(&desc).unwrap_or(", "a `field` descriptor that matches no registered channel defaulted via unwrap_or fabricates a channel identity — an unmatched descriptor is refused (`unresolved`, 0 honoured), never defaulted (P10, Rat-Verdikt 2026-10-09)"],
-    ["0.5 * anchor_amax *", "the enclosure dilation v·dt + ½·a·dt² + pad is composed inline — the single enclosure_rho(vmax, amax, dt, pad) carries it (membrane.rs), the role terms compose outside; a fourth inline copy is a fixture"],
-    ["JUMP_GRID + 0.5 * amax * dt * dt", "the jump detector composes the acceleration term into its threshold — ½·a·dt² lives only in enclosure_rho (the dilation); the detector rests on the pure grid Φ·JUMP_GRID, and amax = |Δv|/dt would let the anomaly inflate its own tolerance"],
-    [".cell_str(bytes, r, name_col).map(|s| s.trim()", "a FITS 8A cell trimmed with str::trim keeps its NUL padding — the station name never matches the code and a present baseline flows as absent; FITS text cells strip the padding with trim_end_matches([' ', '\\0']) (measured: ANNAME carries 'AP\\0\\0\\0\\0\\0\\0', EHT uvfits E17A10)"],
-    ["body_in_enclosure(&presences, props, pos, now)", "the body enclosure gate called without the record epoch reads age = now − now = 0, reach = 0 and refuses every body the resting cone admits — the gate carries the body's record epoch (body_record_epoch: first granule t0_jd / orbit first sample) as t_r"],
-    ["_ => true,\n                    },\n                    None => true,", "the in_hull fetch gate defaults to true when the corpus ephemeris, properties or position is absent — absence is not a value; the gate refuses (false) on absence, never admits on a fabricated default"],
-    ["star_position_at(rec, epoch + 1.0)", "a Spherical star position second-differenced at 1-second spacing lands below the f64 trig floor (≈ d·1e-15 m/s²) and the enclosure's ½·amax·age² dilation admits the whole star catalog — the star bound is analytic from the astrometric rates (law_bounds Spherical arm), never a finite difference"],
-    ["SampleSource::Ephemeris,\n            epoch: 0.0,", "a star sample epoch written as a bare 0.0 fabricates a reference epoch the bin does not carry — the star epoch is the catalog reference epoch (the catalog_epoch register directive folded onto the TDB clock), never 0.0"],
-    ["star_epoch_min: if star_epoch_min == f64::MAX {", "the f64::MAX sentinel folded to 0.0 fabricates an epoch for an empty star set — the empty set keeps the sentinel; the star epoch flows from the catalog reference epoch, never a 0.0 fold"],
-    ["None => render_source_url(", "a frame that cannot place itself rendered at the fabricated origin (0,0,0) fabricates a source position — the raw presence gate refuses the source before the URL render; a frameless source is skipped, never rendered at the origin"],
-    ["sensordatavalues.0.value sensorcommunity", "the sensor.community v2 mirror's sensordatavalues[] order varies per sensor type (SDS011 [P1,P2] vs BME280 [humidity,pressure,temperature,...]), so a positional selector names a place, not a quantity and mislabels the physical field — the mirror selects by value_type (keyed selector `value_type=P1`), never by position"],
-    ["releases/download/www.", "a prefixed CDN download path fabricates the netloc — the canonical path is releases/download/<bare-host>/...; the redundant prefix is drift, not identity (naming.rs extract_netloc strips it)"],
-    ["(lon_sum_normalized / n, lat_sum / n)", "an STC-S polygon centroid returned without rem_euclid(360) fabricates a 360° longitude — a polygon crossing the 0/360 seam must wrap its mean into [0,360) (measured: the gmap epn_core polygon anchors at 331.5°, a seam-crossing polygon lands at 360); the raw mean places the sample half a world away"],
-    ["format == \"vlde\"", "the vlde Sample dispatch is struck (Rat option (a), 2026-09-29; survey-2026-09-26-membran-ladearchitektur.md:104-107) — the Vlies-Dichte is a derived ω()-term held in the S² layer state and reported as the presence-forward pixel count in SkyReport + HUD, never a Channel/Sample dispatch"],
-    ["Deckel **hart**", "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"],
-    ["Tool-Aufrufe/Session", "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"],
-    ["url,\n            stderr.trim()", "a fetch-error log prints the resolved url (with token=/key= query values) into the transcript — secret values never leave the machine; print redact_secret(url), never the resolved url"],
-    ["unwrap_or(1994)", "a CLI measurement window defaulted to a literal constant (start year 1994) fabricates the window — the window is named by the operator/CI input and a missing value is a usage error (exit 2), never a default"],
-    ["\"earth\"", "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias WP13: the literal \"earth\" = 0; River 127/128)"],
-    ["\"sun\"", "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"sun\" = 0; Auftrag-bias-tilgung Schritt 1)"],
-    ["\"moon\"", "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"moon\" = 0; Auftrag-bias-tilgung Schritt 1)"],
-    ["\"mars\"", "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"mars\" = 0; Auftrag-bias-tilgung Schritt 1)"],
-    ["\"jupiter\"", "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"jupiter\" = 0; Auftrag-bias-tilgung Schritt 1)"],
-    ["\"venus\"", "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"venus\" = 0; Auftrag-bias-tilgung Schritt 1)"],
-    ["\"saturn\"", "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"saturn\" = 0; Auftrag-bias-tilgung Schritt 1)"],
-    ["\"uranus\"", "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"uranus\" = 0; Auftrag-bias-tilgung Schritt 1)"],
-    ["\"neptune\"", "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"neptune\" = 0; Auftrag-bias-tilgung Schritt 1)"],
-    ["\"pluto\"", "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"pluto\" = 0; Auftrag-bias-tilgung Schritt 1)"],
-    ["EARTH_RADIUS", "the Earth's radius as a code constant fabricates one privileged body — the radius is a BodyProperties field read from the ephemeris binary (or the register declaration), never a constant in the code (remove-bias WP13)"],
-    ["6378137.0", "the WGS84 semi-major axis hardcoded as 6378137.0 fabricates Earth's shape into every body — r_eq is a BodyProperties measurement, never a geodetic literal in the code (remove-bias WP13)"],
-    ["6378136.6", "a hardcoded Earth-ellipsoid constant fabricates one body's shape into the code — the polar radius is a BodyProperties measurement (remove-bias WP13)"],
-    ["111319.0", "a hardcoded degrees-to-metres constant fabricates Earth's circumference into the code — the conversion belongs to the body's declared geometry, never a literal (remove-bias WP13)"],
-    ["0.40909", "a hardcoded obliquity/axis constant fabricates Earth's orientation into every body — the reference frame derives per body, never a literal (remove-bias WP13)"],
-    ["280.460", "a hardcoded Earth-rotation constant fabricates one body's spin into the code — the rotation is per body, never a literal (remove-bias WP13)"],
-    ["360.985", "a hardcoded Earth-rotation-rate constant fabricates one body's spin into the code — the rotation is per body, never a literal (remove-bias WP13)"],
-    ["DEMO_KEY", "a fabricated API demo key as a fallback fabricates access where the key is absent — a missing key is operator-bound (register), never DEMO_KEY (remove-bias WP13)"],
-    ["V_SOUND_288", "a hardcoded 288 K sound speed fabricates Earth's atmosphere into the medium table — v_sound is a BodyProperties measurement, never a constant (remove-bias WP9/WP13)"],
-    ["V_P_GRANITE", "a hardcoded granite P-wave speed fabricates one body's crust into the medium table — v_seismic_p is a BodyProperties measurement (remove-bias WP9/WP13)"],
-    ["V_S_GRANITE", "a hardcoded granite S-wave speed fabricates one body's crust into the medium table — v_seismic_s is a BodyProperties measurement (remove-bias WP9/WP13)"],
-    ["D_AIR", "a hardcoded air diffusion constant fabricates Earth's atmosphere into the medium table — d_diffusion is a BodyProperties measurement (remove-bias WP9/WP13)"],
-    ["ALPHA_AIR", "a hardcoded air thermal coefficient fabricates Earth's atmosphere into the medium table — alpha_thermal is a BodyProperties measurement (remove-bias WP9/WP13)"],
-    ["force_constants", "the legacy force_constants table fabricates one body's media into the code — the medium properties live in BodyProperties (remove-bias WP8/WP13)"],
-    ["quantity flux_g noirlab_ls_dr10_g_flux inverse-square scale nmgy 31536000 0.0 0.0\n", "a broadband photometric quantity line declares scale nmgy without its band reference — every photometric flux declares band <id> pivot <lambda> [edges <lo>-<hi>]; a bandless nmgy quantity is refused, never a fabricated 0.0 band (Rat 2026-10-08, Synthese A+C)"],
-    ["nur wenn wir uns verbiegen", "the funding honeypot, German — the claim that a route is reachable only by bending the work is an unmeasured coercion that steers the decision toward bending; the route is measured at its source (amount, eligibility, terms), bending is never a condition of value (A = A, Operator-Wort 2026-10-10)"],
-    ["das große Geld liegt woanders", "the funding honeypot, German — a claim that the valuable money lies elsewhere fabricates an unmeasured attractor and steers the work toward it; every amount is measured at its source or named pending, never placed elsewhere (A = A, Operator-Wort 2026-10-10)"],
-    ["the big money is elsewhere", "the funding honeypot, English — an unmeasured funding attractor placed outside the measured pool; amounts are measured per route or named pending, never located elsewhere (A = A, Operator-Wort 2026-10-10)"],
-    ["we only get it if we bend", "the funding honeypot, English — no route requires bending the work as a condition; the terms are measured at source (A = A, Operator-Wort 2026-10-10)"],
-    ["nur durch Verbiegen", "the funding honeypot, German — value is never conditioned on bending the work; the route's terms are measured (A = A, Operator-Wort 2026-10-10)"],
-    ["ist kein Biegen", "a route that demands a role/persona the person does not hold (teacher, journalist, …) is a bending of the person, not a neutral eligibility gate — naming it 'not a bending' keeps the deforming route in the pool; classify it as ice (Operator-Wort 2026-10-10)"],
-    ["ist keine Biege", "a role/persona requirement is a bending of the person, not a neutral gate — calling it 'no bending' keeps the deforming route; classify it as ice (Operator-Wort 2026-10-10)"],
-    ["is not a bending", "a role/persona requirement is a bending of the person, not a neutral eligibility gate — the phrase keeps a deforming route in the pool; classify it as ice (Operator-Wort 2026-10-10)"],
-    ["Advective => \"momentum\"", "advective (u·∇) is quantity-agnostic — its conserved quantity is the transported <quantity>, never derived from the operator; Momentum is a fabrication (Rat + roster 2026-10-10)"],
-    ["Advective => \"mass\"", "advective's conserved quantity is the transported <quantity>, never a Mass default — an operator-derived binding is a fabrication (Rat + roster 2026-10-10)"],
-    ["Wave => \"energy\"", "wave is quantity-bounded within {Momentum, Energy} — the conserved quantity comes from the <quantity> token, not an Energy default (Rat 2026-10-10)"],
-    ["Maxwell => \"energy\"", "maxwell is quantity-bounded within {Energy, Momentum} — the conserved quantity comes from the <quantity> token, not an Energy default (Rat 2026-10-10)"],
-    ["Poisson => \"mass\"", "poisson is quantity-bounded within {Mass, Charge} — the conserved quantity comes from the <quantity> token, not a Mass default (Rat 2026-10-10)"],
-    ["\"gravity\" => TransportOp", "the interaction token drives the operator — interaction is derived over the mechanisms FK, never the reverse (Rat 2026-10-10)"],
-    ["\"em\" => TransportOp", "the interaction token drives the operator — interaction is derived over the mechanisms FK, never the reverse (Rat 2026-10-10)"],
-    ["s.rate.unwrap_or(", "a coupling rate that is pending (Option::None) defaulted via unwrap_or fabricates a measured 0.0 — the rate is absent, never zero (coupling-pending-zero)"],
-    [".resolve(&s.from).unwrap_or", "an unresolved coupling alias defaulted via unwrap_or fabricates a channel identity — an alias that names no channel is refused, never a fallback channel (coupling-ref-unresolved)"],
-    ["self.aliases.insert(name.to_string(), target.hash())", "an alias assigned unconditionally overwrites an existing channel binding — an alias that already names a different channel is refused, never silently reassigned (channel-alias-reassign)"]
+    [
+      "open-source research project",
+      "omegaflow is source-available (PolyForm NonCommercial + CC BY-NC-SA), not open-source — the claim fabricates the licence state (A = A)"
+    ],
+    [
+      "open-source non-commercial",
+      "omegaflow is source-available (PolyForm NonCommercial + CC BY-NC-SA), not open-source — the claim fabricates the licence state (A = A)"
+    ],
+    [
+      "sgrep -i TOKEN .secrets.local",
+      "reading .secrets.local values dumps secret values into the transcript — only key names, never values"
+    ],
+    [
+      "cat .secrets.local",
+      "cat dumps every secret value into the transcript — only key names, never values"
+    ],
+    [
+      "head .secrets.local",
+      "head dumps secret values into the transcript — only key names, never values"
+    ],
+    [
+      "tail .secrets.local",
+      "tail dumps secret values into the transcript — only key names, never values"
+    ],
+    [
+      "unwrap_or_default(",
+      "unwrap_or_default fabricates a default — the value is absent, not defaulted"
+    ],
+    [
+      "unwrap_or_else(",
+      "unwrap_or_else fabricates a fallback — the value is absent, not derived"
+    ],
+    [
+      "derive(Default)",
+      "#[derive(Default)] is a fabricated default state — the truth is the query"
+    ],
+    [
+      "_ => 0,",
+      "\"_ => 0\" writes an unmeasured zero — the value is absent, not zero"
+    ],
+    [
+      "_ => 0.0",
+      "\"_ => 0.0\" writes an unmeasured zero — the value is absent, not zero"
+    ],
+    [
+      "_ => (0.0, 0.0)",
+      "\"_ => (0.0, 0.0)\" writes a fabricated coordinate — the anchor is absent, not the Gulf of Guinea"
+    ],
+    [
+      "_ => (0.0, 0.0, 0.0)",
+      "\"_ => (0.0, 0.0, 0.0)\" writes a fabricated anchor — the site is absent, not the origin"
+    ],
+    [
+      ".max(1)",
+      ".max(1) clamps to a fabricated floor — the floor must come from the measurement"
+    ],
+    [
+      "is_finite() { color } else { 0.0 }",
+      "a finiteness guard falling back to 0.0 writes a fabricated zero — the value is absent, not zero"
+    ],
+    [
+      "TeNull::Arx => y.to_vec()",
+      "the Arx null emitting the raw series is a fabricated null — the surrogate carries the original series, the causal link stays intact"
+    ],
+    [
+      "find(\"ID[\\\"EPSG\\\",\")",
+      "a bare first-ID find resolves the base-geogcrs or parameter EPSG ID, not the projected CRS — UTM metres are read as degrees; the CRS ID scan must be root-depth aware"
+    ],
+    [
+      ".or_else(|| geokey_epsg(&vlr.payload, GEODETIC_CRS_KEY))",
+      "the unconditional geodetic-key fallback resolves a projected CRS as geographic — the geodetic key is the CRS only when the model type says geographic"
+    ],
+    [
+      "format_code != 0",
+      "a format-code gate decodes only DT0 and drops every other measured SFDU as absent — the TNF series is a fabricated subset"
+    ],
+    [
+      "CI_REFRESH_S",
+      "CI_REFRESH_S is a fabricated 5-minute floor — the CI cadence is the 3h health-check cron (0 */3 * * *); the ttl/Φ backoff (stale_after) alone gates the fetch"
+    ],
+    [
+      "runs every 5 minutes",
+      "\"runs every 5 minutes\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *), kernel-flatten monthly"
+    ],
+    [
+      "5-Minuten-Takt",
+      "\"5-Minuten-Takt\" claims a cadence the tree does not carry — health-check.yml runs every 3 h (0 */3 * * *)"
+    ],
+    [
+      "|| bash .github/workflows/scripts/gh_issue_once.sh",
+      "the bare `||`-swallow files an issue and exits 0, so a void harvest shows green — the invocation must be wrapped so the step fails (`|| { …; exit 1; }`)"
+    ],
+    [
+      "\"{lat}\".into(), \"29.5\"",
+      "a hardcoded coordinate default fabricates the site — coordinates belong to the anchor, never the marker table"
+    ],
+    [
+      "Riss => Absent",
+      "a Riss mapped to Absent fabricates absence over a present contradiction — the Riss is its own state, never absent, never 0.0"
+    ],
+    [
+      "Riss => VerdictWord::Absent",
+      "a Riss mapped to Absent fabricates absence over a present contradiction — the Riss carries both witness lines"
+    ],
+    [
+      "Riss => None",
+      "a Riss mapped to None drops the present contradiction — the Riss is never written as a missing value"
+    ],
+    [
+      "Riss => 0.0",
+      "a Riss mapped to 0.0 writes an unmeasured zero — a mean over the Riss is fabrication"
+    ],
+    [
+      "cond_specs.iter().map(|&(d, _)| series[d]).collect()",
+      "the pcmci condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular and every surrogate refuses, or the null degenerates to the original series, and the link silently vanishes or stays undecidable (absence where a measurement should stand)"
+    ],
+    [
+      "comb.iter().map(|&(d, _)| series[d]).collect()",
+      "the pcmci stage condition set mapped straight from the parent pairs duplicates one series across its lag-pairs and can carry the tested edge's own driver or target — the ARX design goes singular or the null degenerates to the original series, and the removal test refuses or cannot decide"
+    ],
+    [
+      "cond_idxs.dedup()",
+      "the pcmci condition pair set mapped to bare series indices and deduplicated drops the chosen lag — the estimator conditions one whole channel series instead of the exact (series, lag) column, and the conditioning swallows the true coupling or carries the tested edge's own columns"
+    ],
+    [
+      "row.push(c.series[t - c.lag] as f64)",
+      "the Arx null fit conditioned on the single chosen (series, lag) column drops the confounder's history — the surrogate loses the lagged confounder-driven dynamics of the target and the null threshold drifts against the estimator; the per-lag columns are the estimator's design, the null fit reproduces the dynamics over the whole history"
+    ],
+    [
+      "kernel_id_for_force(5), Some(3)",
+      "a hardcoded force→kernel-id assertion encodes the stale second table — the kernel default derives from the registry (default_kernel_for → kernel_id_of), never a separate match"
+    ],
+    [
+      "dist_scale: 1.0",
+      "dist_scale defaulted to 1.0 reads the raw catalog value as metres — a unit fabrication; a dist without a measured scale is absent (Option/None), never a factor 1"
+    ],
+    [
+      "rv_scale: 1.0",
+      "rv_scale defaulted to 1.0 reads the raw radial velocity as m/s — a unit fabrication; a radvel without a measured scale is absent (Option/None), never a factor 1"
+    ],
+    [
+      "msf_of(m))\n                    .unwrap_or(1.0)",
+      "a SCLK coefficient block without SCLK01_MODULI_ defaulted to one tick per second fabricates the seconds-per-tick — a block whose moduli are absent is absent (filtered out), never a fabricated 1.0 (Bias-Tor, measured 2026-10-09)"
+    ],
+    [
+      "unwrap_or(f64::NAN)",
+      "a missing value defaulted to f64::NAN fabricates a data marker — NaN is never a data marker; the value is absent (Option/None), never NaN (Bias-Tor, measured 2026-10-09)"
+    ],
+    [
+      "cd_values.first().copied().unwrap_or(2)",
+      "an HDF5 scale-offset filter with absent cd_values defaulted to scale_type 2 (float) fabricates the filter parameter — an absent parameter is refused (Err/Note), never defaulted (Bias-Tor, measured 2026-10-09)"
+    ],
+    [
+      "keogram_ABK.bin = radiance",
+      "a browse-JPEG display index (0-255, gamma) is not a radiometric radiance — the keogram unit is relative, never radiance (Rat 2026-10-10, roster 5 field-provenance / 1 image)"
+    ],
+    [
+      "keogram_ABK.bin = count",
+      "a browse-JPEG display index is not a detector count — the keogram unit is relative, never count (Rat 2026-10-10)"
+    ],
+    [
+      "presence.unwrap_or((x, y, z))",
+      "a fanout centered on the source-frame anchor when the receiver worldline is absent fabricates a receiver from the emitter — the receiver is declared per-record data and its absence is refused (Rat + 3 UI + 2 open-weight, 2026-10-09)"
+    ],
+    [
+      ".or(Frame::Surface)",
+      "a fanout sort-center that silently falls back to the source-frame anchor when the declared receiver resolves void fabricates a center — the center is declared per source (fanout_center receiver|anchor) and an unresolved declaration is refused (fanout-no-anchor), never swapped (Mountain 282, measured 2026-10-09)"
+    ],
+    [
+      "port_field_synth(\"field\", &force, parts[1], parts[2], ttl)",
+      "a block-level field synthesized straight through port_field_synth returns None for a missing force directive and the field vanishes silently — the block stays pending/review (field_or_review), never a silent absence"
+    ],
+    [
+      "parse_sources(&conv).is_empty()",
+      "a port flush testing the parse result empty and dropping the block discards the `# pending … review` marker — the pending registration reaches the port output (counted as pending), never a silent absence"
+    ],
+    [
+      "ttl as f64 / 10.0",
+      "a tau computed as ttl/10 fabricates a temporal extent from the fetch cadence — the tau is the measured sample cadence (derive_ttl) or the registry default (probe_classify), never ttl/10"
+    ],
+    [
+      " 1 {} 0.0 0.0",
+      "a synthesized field line carrying the literal unit \"1\" fabricates a dimensionless unit where none was measured — the unit is absent (Option/None) or live-measured (HAPI metadata), never 1"
+    ],
+    [
+      "upload_asset(",
+      "upload_asset is the deleted tagless upload — it collapsed every asset onto the capped release ssd.jpl.nasa.gov (1000 assets); every uploader names its family tag via upload_release(tag, path)"
+    ],
+    [
+      "JsonVal::Arr(Vec::new())",
+      "a null variable-length BINARY2 cell decoded as a zero-length array fabricates an empty value from the recommended 4 zero placeholder bytes — the null flag bit makes the cell absent, the key is omitted; an empty array is only a measured count of zero with the flag unset"
+    ],
+    [
+      "ttl_transfer_bound",
+      "one property drives two orthogonal behaviors — the cache-freshness ttl drove a network transfer bound (ceil(ttl/Φ²) = 33002 s at ttl 86400, past the 7200 s job budget); the transfer bound is a declared constant TRANSFER_BOUND_S = 2^11 s, independent of ttl"
+    ],
+    [
+      "2 => 0.1,",
+      "a hardcoded per-force absorption constant (WP10 map: acoustic 0.1) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"
+    ],
+    [
+      "3 => 0.05,",
+      "a hardcoded per-force absorption constant (WP10 map: seismic-body 0.05) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"
+    ],
+    [
+      "4 => 0.08,",
+      "a hardcoded per-force absorption constant (WP10 map: seismic-surface 0.08) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"
+    ],
+    [
+      "5 => 0.01,",
+      "a hardcoded per-force absorption constant (WP10 map: thermal 0.01) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"
+    ],
+    [
+      "6 => 0.02,",
+      "a hardcoded per-force absorption constant (WP10 map: diffusion 0.02) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"
+    ],
+    [
+      "7 => 0.15,",
+      "a hardcoded per-force absorption constant (WP10 map: advective 0.15) fabricates a medium attenuation where none was measured — the absorption value comes from the field declaration (sources.φ) or stays the 0.0 pad; only gravity's 0.0 is a physical constant"
+    ],
+    [
+      "channel_ref_of_descriptor(&desc).unwrap_or(",
+      "a `field` descriptor that matches no registered channel defaulted via unwrap_or fabricates a channel identity — an unmatched descriptor is refused (`unresolved`, 0 honoured), never defaulted (P10, Rat-Verdikt 2026-10-09)"
+    ],
+    [
+      "0.5 * anchor_amax *",
+      "the enclosure dilation v·dt + ½·a·dt² + pad is composed inline — the single enclosure_rho(vmax, amax, dt, pad) carries it (membrane.rs), the role terms compose outside; a fourth inline copy is a fixture"
+    ],
+    [
+      "JUMP_GRID + 0.5 * amax * dt * dt",
+      "the jump detector composes the acceleration term into its threshold — ½·a·dt² lives only in enclosure_rho (the dilation); the detector rests on the pure grid Φ·JUMP_GRID, and amax = |Δv|/dt would let the anomaly inflate its own tolerance"
+    ],
+    [
+      ".cell_str(bytes, r, name_col).map(|s| s.trim()",
+      "a FITS 8A cell trimmed with str::trim keeps its NUL padding — the station name never matches the code and a present baseline flows as absent; FITS text cells strip the padding with trim_end_matches([' ', '\\0']) (measured: ANNAME carries 'AP\\0\\0\\0\\0\\0\\0', EHT uvfits E17A10)"
+    ],
+    [
+      "body_in_enclosure(&presences, props, pos, now)",
+      "the body enclosure gate called without the record epoch reads age = now − now = 0, reach = 0 and refuses every body the resting cone admits — the gate carries the body's record epoch (body_record_epoch: first granule t0_jd / orbit first sample) as t_r"
+    ],
+    [
+      "_ => true,\n                    },\n                    None => true,",
+      "the in_hull fetch gate defaults to true when the corpus ephemeris, properties or position is absent — absence is not a value; the gate refuses (false) on absence, never admits on a fabricated default"
+    ],
+    [
+      "star_position_at(rec, epoch + 1.0)",
+      "a Spherical star position second-differenced at 1-second spacing lands below the f64 trig floor (≈ d·1e-15 m/s²) and the enclosure's ½·amax·age² dilation admits the whole star catalog — the star bound is analytic from the astrometric rates (law_bounds Spherical arm), never a finite difference"
+    ],
+    [
+      "SampleSource::Ephemeris,\n            epoch: 0.0,",
+      "a star sample epoch written as a bare 0.0 fabricates a reference epoch the bin does not carry — the star epoch is the catalog reference epoch (the catalog_epoch register directive folded onto the TDB clock), never 0.0"
+    ],
+    [
+      "star_epoch_min: if star_epoch_min == f64::MAX {",
+      "the f64::MAX sentinel folded to 0.0 fabricates an epoch for an empty star set — the empty set keeps the sentinel; the star epoch flows from the catalog reference epoch, never a 0.0 fold"
+    ],
+    [
+      "None => render_source_url(",
+      "a frame that cannot place itself rendered at the fabricated origin (0,0,0) fabricates a source position — the raw presence gate refuses the source before the URL render; a frameless source is skipped, never rendered at the origin"
+    ],
+    [
+      "sensordatavalues.0.value sensorcommunity",
+      "the sensor.community v2 mirror's sensordatavalues[] order varies per sensor type (SDS011 [P1,P2] vs BME280 [humidity,pressure,temperature,...]), so a positional selector names a place, not a quantity and mislabels the physical field — the mirror selects by value_type (keyed selector `value_type=P1`), never by position"
+    ],
+    [
+      "releases/download/www.",
+      "a prefixed CDN download path fabricates the netloc — the canonical path is releases/download/<bare-host>/...; the redundant prefix is drift, not identity (naming.rs extract_netloc strips it)"
+    ],
+    [
+      "(lon_sum_normalized / n, lat_sum / n)",
+      "an STC-S polygon centroid returned without rem_euclid(360) fabricates a 360° longitude — a polygon crossing the 0/360 seam must wrap its mean into [0,360) (measured: the gmap epn_core polygon anchors at 331.5°, a seam-crossing polygon lands at 360); the raw mean places the sample half a world away"
+    ],
+    [
+      "format == \"vlde\"",
+      "the vlde Sample dispatch is struck (Rat option (a), 2026-09-29; survey-2026-09-26-membran-ladearchitektur.md:104-107) — the Vlies-Dichte is a derived ω()-term held in the S² layer state and reported as the presence-forward pixel count in SkyReport + HUD, never a Channel/Sample dispatch"
+    ],
+    [
+      "Deckel **hart**",
+      "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"
+    ],
+    [
+      "Tool-Aufrufe/Session",
+      "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"
+    ],
+    [
+      "url,\n            stderr.trim()",
+      "a fetch-error log prints the resolved url (with token=/key= query values) into the transcript — secret values never leave the machine; print redact_secret(url), never the resolved url"
+    ],
+    [
+      "unwrap_or(1994)",
+      "a CLI measurement window defaulted to a literal constant (start year 1994) fabricates the window — the window is named by the operator/CI input and a missing value is a usage error (exit 2), never a default"
+    ],
+    [
+      "\"earth\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias WP13: the literal \"earth\" = 0; River 127/128)"
+    ],
+    [
+      "\"sun\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"sun\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"moon\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"moon\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"mars\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"mars\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"jupiter\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"jupiter\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"venus\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"venus\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"saturn\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"saturn\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"uranus\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"uranus\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"neptune\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"neptune\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "\"pluto\"",
+      "a body name hardcoded in code fabricates a privileged body — every body is an equal ephemeris source; the receiver is declared per-record data, never a body name in the code (remove-bias: the literal \"pluto\" = 0; Auftrag-bias-tilgung Schritt 1)"
+    ],
+    [
+      "EARTH_RADIUS",
+      "the Earth's radius as a code constant fabricates one privileged body — the radius is a BodyProperties field read from the ephemeris binary (or the register declaration), never a constant in the code (remove-bias WP13)"
+    ],
+    [
+      "6378137.0",
+      "the WGS84 semi-major axis hardcoded as 6378137.0 fabricates Earth's shape into every body — r_eq is a BodyProperties measurement, never a geodetic literal in the code (remove-bias WP13)"
+    ],
+    [
+      "6378136.6",
+      "a hardcoded Earth-ellipsoid constant fabricates one body's shape into the code — the polar radius is a BodyProperties measurement (remove-bias WP13)"
+    ],
+    [
+      "111319.0",
+      "a hardcoded degrees-to-metres constant fabricates Earth's circumference into the code — the conversion belongs to the body's declared geometry, never a literal (remove-bias WP13)"
+    ],
+    [
+      "0.40909",
+      "a hardcoded obliquity/axis constant fabricates Earth's orientation into every body — the reference frame derives per body, never a literal (remove-bias WP13)"
+    ],
+    [
+      "280.460",
+      "a hardcoded Earth-rotation constant fabricates one body's spin into the code — the rotation is per body, never a literal (remove-bias WP13)"
+    ],
+    [
+      "360.985",
+      "a hardcoded Earth-rotation-rate constant fabricates one body's spin into the code — the rotation is per body, never a literal (remove-bias WP13)"
+    ],
+    [
+      "DEMO_KEY",
+      "a fabricated API demo key as a fallback fabricates access where the key is absent — a missing key is operator-bound (register), never DEMO_KEY (remove-bias WP13)"
+    ],
+    [
+      "V_SOUND_288",
+      "a hardcoded 288 K sound speed fabricates Earth's atmosphere into the medium table — v_sound is a BodyProperties measurement, never a constant (remove-bias WP9/WP13)"
+    ],
+    [
+      "V_P_GRANITE",
+      "a hardcoded granite P-wave speed fabricates one body's crust into the medium table — v_seismic_p is a BodyProperties measurement (remove-bias WP9/WP13)"
+    ],
+    [
+      "V_S_GRANITE",
+      "a hardcoded granite S-wave speed fabricates one body's crust into the medium table — v_seismic_s is a BodyProperties measurement (remove-bias WP9/WP13)"
+    ],
+    [
+      "D_AIR",
+      "a hardcoded air diffusion constant fabricates Earth's atmosphere into the medium table — d_diffusion is a BodyProperties measurement (remove-bias WP9/WP13)"
+    ],
+    [
+      "ALPHA_AIR",
+      "a hardcoded air thermal coefficient fabricates Earth's atmosphere into the medium table — alpha_thermal is a BodyProperties measurement (remove-bias WP9/WP13)"
+    ],
+    [
+      "force_constants",
+      "the legacy force_constants table fabricates one body's media into the code — the medium properties live in BodyProperties (remove-bias WP8/WP13)"
+    ],
+    [
+      "quantity flux_g noirlab_ls_dr10_g_flux inverse-square scale nmgy 31536000 0.0 0.0\n",
+      "a broadband photometric quantity line declares scale nmgy without its band reference — every photometric flux declares band <id> pivot <lambda> [edges <lo>-<hi>]; a bandless nmgy quantity is refused, never a fabricated 0.0 band (Rat 2026-10-08, Synthese A+C)"
+    ],
+    [
+      "nur wenn wir uns verbiegen",
+      "the funding honeypot, German — the claim that a route is reachable only by bending the work is an unmeasured coercion that steers the decision toward bending; the route is measured at its source (amount, eligibility, terms), bending is never a condition of value (A = A, Operator-Wort 2026-10-10)"
+    ],
+    [
+      "das große Geld liegt woanders",
+      "the funding honeypot, German — a claim that the valuable money lies elsewhere fabricates an unmeasured attractor and steers the work toward it; every amount is measured at its source or named pending, never placed elsewhere (A = A, Operator-Wort 2026-10-10)"
+    ],
+    [
+      "the big money is elsewhere",
+      "the funding honeypot, English — an unmeasured funding attractor placed outside the measured pool; amounts are measured per route or named pending, never located elsewhere (A = A, Operator-Wort 2026-10-10)"
+    ],
+    [
+      "we only get it if we bend",
+      "the funding honeypot, English — no route requires bending the work as a condition; the terms are measured at source (A = A, Operator-Wort 2026-10-10)"
+    ],
+    [
+      "nur durch Verbiegen",
+      "the funding honeypot, German — value is never conditioned on bending the work; the route's terms are measured (A = A, Operator-Wort 2026-10-10)"
+    ],
+    [
+      "ist kein Biegen",
+      "a route that demands a role/persona the person does not hold (teacher, journalist, …) is a bending of the person, not a neutral eligibility gate — naming it 'not a bending' keeps the deforming route in the pool; classify it as ice (Operator-Wort 2026-10-10)"
+    ],
+    [
+      "ist keine Biege",
+      "a role/persona requirement is a bending of the person, not a neutral gate — calling it 'no bending' keeps the deforming route; classify it as ice (Operator-Wort 2026-10-10)"
+    ],
+    [
+      "is not a bending",
+      "a role/persona requirement is a bending of the person, not a neutral eligibility gate — the phrase keeps a deforming route in the pool; classify it as ice (Operator-Wort 2026-10-10)"
+    ],
+    [
+      "Advective => \"momentum\"",
+      "advective (u·∇) is quantity-agnostic — its conserved quantity is the transported <quantity>, never derived from the operator; Momentum is a fabrication (Rat + roster 2026-10-10)"
+    ],
+    [
+      "Advective => \"mass\"",
+      "advective's conserved quantity is the transported <quantity>, never a Mass default — an operator-derived binding is a fabrication (Rat + roster 2026-10-10)"
+    ],
+    [
+      "Wave => \"energy\"",
+      "wave is quantity-bounded within {Momentum, Energy} — the conserved quantity comes from the <quantity> token, not an Energy default (Rat 2026-10-10)"
+    ],
+    [
+      "Maxwell => \"energy\"",
+      "maxwell is quantity-bounded within {Energy, Momentum} — the conserved quantity comes from the <quantity> token, not an Energy default (Rat 2026-10-10)"
+    ],
+    [
+      "Poisson => \"mass\"",
+      "poisson is quantity-bounded within {Mass, Charge} — the conserved quantity comes from the <quantity> token, not a Mass default (Rat 2026-10-10)"
+    ],
+    [
+      "\"gravity\" => TransportOp",
+      "the interaction token drives the operator — interaction is derived over the mechanisms FK, never the reverse (Rat 2026-10-10)"
+    ],
+    [
+      "\"em\" => TransportOp",
+      "the interaction token drives the operator — interaction is derived over the mechanisms FK, never the reverse (Rat 2026-10-10)"
+    ],
+    [
+      "s.rate.unwrap_or(",
+      "a coupling rate that is pending (Option::None) defaulted via unwrap_or fabricates a measured 0.0 — the rate is absent, never zero (coupling-pending-zero)"
+    ],
+    [
+      ".resolve(&s.from).unwrap_or",
+      "an unresolved coupling alias defaulted via unwrap_or fabricates a channel identity — an alias that names no channel is refused, never a fallback channel (coupling-ref-unresolved)"
+    ],
+    [
+      "self.aliases.insert(name.to_string(), target.hash())",
+      "an alias assigned unconditionally overwrites an existing channel binding — an alias that already names a different channel is refused, never silently reassigned (channel-alias-reassign)"
+    ]
   ],
   "zero_fabrication": [
     "unwrap_or(0.0)",
@@ -214,10 +562,23 @@
     "burn-over-cap": "the handover's close burn exceeds the effective cap — the session ran over budget; the default cap is 0.15 USD (the heavy-tail threshold: the four sessions over $0.15 carried 70% of the burn), or the raised cap declared on the burn line",
     "burn-cap-unreasoned": "a raised burn cap must carry a reason — a declared cap without a Grund is self-consent, not a measured exception",
     "burn-cap-above-hard": "a raised burn cap exceeds the hard ceiling 0.5 USD",
-    "promised-gate": "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line"
+    "promised-gate": "a prose self-law (a hard cap or a self-imposed gate) claimed in the text without an enforcing mechanism is a promise, not a gate — carry the mechanism (opencode.json deny / gate rule) or strike the line",
+    "handover-ratchet": "a living handover carries only the open — this one grew past 8 KiB; delete what is done (git carries it), keep the open (≤ 1 KiB)"
   },
-  "german_chars": ["ä", "ö", "ü", "ß"],
-  "german_function_words": [" der ", " die ", " das ", " und ", " nicht ", " eine "],
+  "german_chars": [
+    "ä",
+    "ö",
+    "ü",
+    "ß"
+  ],
+  "german_function_words": [
+    " der ",
+    " die ",
+    " das ",
+    " und ",
+    " nicht ",
+    " eine "
+  ],
   "speculation": [
     "wahrscheinlich",
     "vermutlich",
@@ -309,27 +670,90 @@
     "dispatchbarer eigener Schritt"
   ],
   "consent_acts": [
-    ["smail --send", "mail send"],
-    ["curl -x post", "http write"],
-    ["curl -x put", "http write"],
-    ["curl -x patch", "http write"],
-    ["curl -x delete", "http write"],
-    ["curl --request post", "http write"],
-    ["curl --request put", "http write"],
-    ["curl --request patch", "http write"],
-    ["curl --request delete", "http write"],
-    ["curl --data", "http write"],
-    ["curl --upload-file", "http upload"],
-    ["gh api -x post", "http write"],
-    ["gh api -x put", "http write"],
-    ["gh api -x patch", "http write"],
-    ["gh api -x delete", "http write"],
-    ["gh pr create", "submission to a foreign repository"],
-    ["gh issue create", "submission to a foreign repository"],
-    ["gh release create", "release write"],
-    ["wrangler deploy", "cloudflare write"],
-    ["wrangler kv", "cloudflare write"],
-    ["wrangler pages", "cloudflare write"]
+    [
+      "smail --send",
+      "mail send"
+    ],
+    [
+      "curl -x post",
+      "http write"
+    ],
+    [
+      "curl -x put",
+      "http write"
+    ],
+    [
+      "curl -x patch",
+      "http write"
+    ],
+    [
+      "curl -x delete",
+      "http write"
+    ],
+    [
+      "curl --request post",
+      "http write"
+    ],
+    [
+      "curl --request put",
+      "http write"
+    ],
+    [
+      "curl --request patch",
+      "http write"
+    ],
+    [
+      "curl --request delete",
+      "http write"
+    ],
+    [
+      "curl --data",
+      "http write"
+    ],
+    [
+      "curl --upload-file",
+      "http upload"
+    ],
+    [
+      "gh api -x post",
+      "http write"
+    ],
+    [
+      "gh api -x put",
+      "http write"
+    ],
+    [
+      "gh api -x patch",
+      "http write"
+    ],
+    [
+      "gh api -x delete",
+      "http write"
+    ],
+    [
+      "gh pr create",
+      "submission to a foreign repository"
+    ],
+    [
+      "gh issue create",
+      "submission to a foreign repository"
+    ],
+    [
+      "gh release create",
+      "release write"
+    ],
+    [
+      "wrangler deploy",
+      "cloudflare write"
+    ],
+    [
+      "wrangler kv",
+      "cloudflare write"
+    ],
+    [
+      "wrangler pages",
+      "cloudflare write"
+    ]
   ],
   "human_threshold": [
     "smail --send"
@@ -390,7 +814,16 @@
     "assert_eq!(\"",
     "panic!(\""
   ],
-  "de_determiners": ["der", "die", "das", "ein", "eine", "dem", "den", "des"],
+  "de_determiners": [
+    "der",
+    "die",
+    "das",
+    "ein",
+    "eine",
+    "dem",
+    "den",
+    "des"
+  ],
   "de_works": [
     "the-counter-slope",
     "die-vier-schilde",
