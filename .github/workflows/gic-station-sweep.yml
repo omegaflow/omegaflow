@@ -91,9 +91,13 @@ jobs:
           fi
           awk '/^station /{s=tolower($2)} /^cgm_lat /{if (s != "") { print s "\t" $2; s="" }}' \
             phi/sources.φ > /tmp/lat.tsv
+          awk '/^station /{s=tolower($2)} /^on earth /{la=$3; lo=$4} /^$/ {if (s != "" && la != "" && !seen[s]++) print s "\t" la "\t" lo; s=""; la=""; lo=""}' \
+            phi/sources.φ > /tmp/geo.tsv
           awk 'NR==FNR { n[$1]=$2; next } { lat=n[$1]; if (lat=="") lat=-999; print $1 "\t" lat }' \
             /tmp/lat.tsv /tmp/fam.txt | sort -t$'\t' -k2,2gr > /tmp/order.tsv
           cut -f1 /tmp/order.tsv > /tmp/order.txt
+          awk 'NR==FNR { la[$1]=$2; lo[$1]=$3; next } { glat=la[$1]; glon=lo[$1]; if (glat=="" || glon=="") { print "al_network_proxy: " $1 " carries no geodetic coordinate in phi/sources.φ" > "/dev/stderr"; exit 1 } print $1 "\t" "auto" "\t" "/tmp/xyz/" $1 "_xyz_1m.bin" "\t" glat "\t" glon }' \
+            /tmp/geo.tsv /tmp/order.txt > /tmp/order.manifest
           echo "family $fam ordered by |cgm_lat| (station	lat):"
           cat /tmp/order.tsv
           mkdir -p /tmp/xyz
@@ -131,10 +135,10 @@ jobs:
               echo "=== stations $n skipped (a 1-station envelope is none) ===" >> /tmp/sweep.txt
               continue
             fi
-            head -n "$n" /tmp/order.txt > /tmp/prefix.txt
+            head -n "$n" /tmp/order.manifest > /tmp/prefix.manifest
             echo "=== stations $n (min_stations 2) ===" >> /tmp/sweep.txt
             cargo run --release -p omegaflow-measure --bin al_network_proxy -- \
-              --family /tmp/prefix.txt --dir /tmp/xyz --decl auto \
+              --manifest /tmp/prefix.manifest --night-sector --mlt-min 16 --mlt-max 3 \
               --baseline-block ${{ inputs.baseline_block }} --min-stations 2 \
               --fusion ${{ inputs.fusion }} $gmin_args --quantity ${{ inputs.quantity }} \
               --out /tmp/env.bin >> /tmp/sweep.txt 2>&1
