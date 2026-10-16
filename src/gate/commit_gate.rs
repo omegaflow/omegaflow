@@ -1086,6 +1086,9 @@ impl Gate {
         if let Some(v) = check_handover_burn(&path, &content) {
             return Some(v);
         }
+        if let Some(v) = check_handover_size(&path, &content) {
+            return Some(v);
+        }
         if let Some(v) = check_addressed_origin(&path, &content) {
             return Some(v);
         }
@@ -1797,6 +1800,26 @@ fn burn_reason_after(body: &str, cap_pos: usize) -> bool {
         }
     }
     false
+}
+
+pub fn check_handover_size(path: &str, content: &str) -> Option<Verdict> {
+    let name = path.rsplit('/').next().unwrap_or(path);
+    if name.starts_with('_') || path.contains("/archiv/") {
+        return None;
+    }
+    handover_line_owner(path)?;
+    const CAP: usize = 8 * 1024;
+    let bytes = content.len();
+    if bytes <= CAP {
+        return None;
+    }
+    Some(Verdict {
+        severity: Severity::Soft,
+        rule: "handover-ratchet".to_string(),
+        line: 0,
+        feedback: feedback("handover-ratchet").to_string(),
+        quote: format!("{bytes} bytes (cap {CAP})"),
+    })
 }
 
 pub fn check_handover_burn(path: &str, content: &str) -> Option<Verdict> {
