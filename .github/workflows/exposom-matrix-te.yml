@@ -1,17 +1,3 @@
-# Rat 2026-10-17 · R2 exposom-Serien-Definition — ungeglättet (kein stiller Wechsel).
-# EI-Kanal bleibt `pending`: die 19 Spalten von `index/GERMANY/<id>/EI.csv` sind nicht mit
-#   Einheit + Herkunft gemessen (Mistral, Fugu). Kandidaten: `Mean_Temp` (GLM, DeepSeek),
-#   `exposure_index` (Lumo) — keine Wahl ohne Messung (A = A).
-# Konvention C (GLM, DeepSeek, Fugu): A `*_axis_value_text` (`t v`, Haus-Familie, Archiv-Kraft)
-#   kanonisch + B „eine Zahl je Zeile" (Probe-Kraft) abgeleitet; Fugu: Invariantentest
-#   `B == parse(A)`. Lumo wählt B, Mistral bleibt `pending` bei allem.
-# Event-Binning offen: „nur Severe" (DeepSeek) gegen „alle Events, Severity als Attribut"
-#   (Fugu, Lumo).
-# Format-Teil = Compiler-Fix (nach `tools/measure/src/bin/pair_te_fetch.rs:425`, `push_str` +
-#   `upload_release`) + Registerzeile — baubar, sobald der EI-Kanal gemessen ist. Kein neuer
-#   Archivar-Reader nötig.
-# Gemessen: TOLIFE Zenodo 16642439, `index.zip` 963 225 B / 758 Member; x = 19-Spalten-CSV,
-#   y = Ereignisliste (`Type ∈ {Moderate, Severe}`), keine Wertzeile.
 # exposom-matrix — the exposom TE pair matrix in CI (survey-2026-10-04-exposom-matrix §E).
 #
 # Chosen path (survey §E:240): `te_pair_probe` — two channel files, one number per
