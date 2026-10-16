@@ -3,7 +3,7 @@
   class: survey
   date: 2026-09-13
   sha256: 4640770d061ff3ce47d7afb4383dc4c22583716cb057c6f18c04bc6bb5275111
-  status: live
+  status: consumed
   see-also: docs/concepts/die-weberin.md docs/surveys/survey-2026-09-07-weberin-thread-matrix.md docs/auftrag/archiv/auftrag-extern-weberin-faden-luecken.md
 -->
 

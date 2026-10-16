@@ -3,7 +3,7 @@
   class: survey
   date: 2026-09-14
   sha256: 521e7578fcd8cb9e0c8243cc7757b748e1bee0c85493221793357bd8b5608381
-  status: live
+  status: consumed
   see-also: phi/blocked_sources.φ phi/dead_sources.φ AGENTS.md
 -->
 # Kapitulationen & Pendings — Register-Inventur (Stand 2026-09-14)
