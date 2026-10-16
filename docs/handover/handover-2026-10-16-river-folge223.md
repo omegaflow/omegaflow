@@ -2,13 +2,24 @@
   title: Handover — River-Folge 224 (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: 83c141a3a4e89cd49758a6b8f686afee8aafab00735fb6483c160c3cb6848462
+  sha256: c988b661b45e391365f01c437e5fd2648c3d30f6bd3b3e1db3df3a1c2aca46d5
   status: live
 -->
 # Handover — River-Folge 224 (2026-10-16)
 
 ## Burn: open 0.0 · close pending — `session_burn` db absent.
 
-## Offen — eigen
-- **GIC-2** 2. Zeuge `pending` (ENTSO-E/NERC-Zulassung) · **Platzierung** `weight_i`+AACGM<2010 · **Apertur** 3 · **Schumann** `field`-Rat · **Weberin** SABER/UCAR-FPI · **P7.1** DE-2/SPDF `K` · **P10** `field`-Migration · **Newell** 1m/1h · **Flyby** 11-01 · **Rätsel** arbeits-geb. · **LOCK** (Op.)
-- Aufgeschlüsselt: `archiv/handover-2026-10-15-river-folge221.md`.
+## Offen — eigen (river hat den Schritt)
+- **GIC-Schärfe/Platzierung (a)** — Sektor-Naht in `gic-station-sweep`/`gic-al-network` verdrahten; `on earth`-Koordinaten je Station aus `phi/sources.φ` ins Manifest (`glat glon`); AACGM-Epochen < 2010; dann `weight_i`. (gemessen 2026-10-16: `--night-sector` steht im Bin `al_network_proxy.rs:362`, in keinem Workflow.)
+- **Receiver-Apertur Schritt 3** — `ReceiverAperture` an `vp.surface.w` binden. Trigger: `ci-gate`-Parität grün.
+- **Frühwarnkette** — eine Kante als inkrementelle TE messen. Trigger: Rat-Verdikt (liegt).
+- **P10 `field`-Migration** — flachen Parser-Branch + `force_id_of`/`FIXED_CHANNELS` streichen. Trigger: Mountains `phi`-Migration.
+- **P7.1 `K`** — `K` aus dem co-lokalen Overlap. Trigger: die DE-2-Reihe liegt im CDN (SPDF/Mycelium).
+- **Weberin SABER/UCAR-FPI** — Trigger: die `field`-Zeile (Mountain) + Manifestation (Mycelium).
+- **Schumann `field`-Form** — Trigger: Rat.
+- **Große Rätsel** — Aufnahme der Kandidaten. Trigger: Weberin-Arbeit; dann Tafel + Bestand.
+- **Flyby** — `termin` 2026-11-01.
+
+## Nicht River — route/queue, gehört nicht in dieses Register
+- **Newell 1m/1h-Trennung** → Mountain/extract (`abk_dbdt_1m` vs `_1h`). Kein River-Akt.
+- **GIC-2 Zulassung (ENTSO-E/NERC)** · **LOCK-Siegel** · **Große-Rätsel-Aufnahme-Wort** → Futures Operator-Queue (Aufenthalt = Eigentum).
