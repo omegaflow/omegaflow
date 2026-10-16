@@ -482,8 +482,14 @@ mod tests {
         };
         let forward = ci.p(&target, &driver, &[]).unwrap();
         assert!(forward < 0.05, "forward p {}", forward);
-        let reverse = ci.p(&driver, &target, &[]).unwrap();
-        assert!(reverse > forward, "reverse {} forward {}", reverse, forward);
+        let forward_te = ci.te(&target, &driver, &[]).unwrap();
+        let reverse_te = ci.te(&driver, &target, &[]).unwrap();
+        assert!(
+            forward_te > reverse_te,
+            "forward te {} reverse te {}",
+            forward_te,
+            reverse_te
+        );
     }
 
     #[test]
