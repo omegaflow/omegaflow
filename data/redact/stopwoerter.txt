@@ -1,3 +1,7 @@
+# stopwoerter.txt — Funktionswörter: was NIE geschwärzt wird.
+# Regel: nur Artikel, Präpositionen, Konjunktionen, Pronomen, Partikeln, Hilfsverben.
+# Keine Vornamen, keine Nachnamen, keine Inhaltswörter.
+# Geheilt 2026-10-16: 392 Vornamen entfernt (sie waren fälschlich gesperrt); Prüfquelle: vornamen.txt.
 # stopwoerter.txt -- redaction stop list (lowercased, deduplicated)
 # core: hermitdave/FrequencyWords, OpenSubtitles 2018, CC BY-SA 4.0
 #   top 50000 de + top 20000 en, minus tokens present in the name lists
@@ -135,10 +139,8 @@ aalglatt
 a-and
 aang
 aargh
-aaron
 aarons
 aasgeier
-ab
 abaddon
 abändern
 abandoned
@@ -931,7 +933,6 @@ actually
 acute
 a.d.
 adalind
-adam
 adamant
 adamsapfel
 adapt
@@ -1210,7 +1211,6 @@ aileen
 aimed
 aiming
 aims
-ain
 air
 airbag
 airbags
@@ -1310,7 +1310,6 @@ akzeptierten
 al
 aladdin
 alaikum
-alan
 alans
 alarm
 alarmanlage
@@ -1340,7 +1339,6 @@ albernen
 alberner
 albernes
 albernheiten
-albert
 albright
 albtraum
 albträume
@@ -1360,14 +1358,11 @@ aleister
 aleksei
 alerted
 alex
-alexander
 alexej
-alf
 alfa
 alfalfa
 alfie
 alfons
-alfred
 alfreds
 algae
 algebra
@@ -1377,10 +1372,8 @@ algerien
 algorithm
 algorithmen
 algorithmus
-ali
 alibi
 alibis
-alice
 alices
 a.l.i.e.
 alien
@@ -1391,7 +1384,6 @@ alike
 alimente
 alimony
 alisa
-alison
 alisons
 alive
 aljoscha
@@ -1427,7 +1419,6 @@ alleinstehend
 alleinstehende
 allem
 allemal
-allen
 allenfalls
 allens
 aller
@@ -1587,7 +1578,6 @@ am
 äm
 amaar
 amamiya
-amanda
 amandas
 amateure
 amateuren
@@ -1687,7 +1677,6 @@ amüsieren
 amüsierst
 amüsiert
 amusing
-amy
 amyas
 'an
 an
@@ -1781,7 +1770,6 @@ andermal
 andern
 ändern
 andernfalls
-anders
 andersherum
 andersons
 andersrum
@@ -1804,7 +1792,6 @@ andocken
 andorianer
 andrehen
 andrej
-andrew
 androhung
 android
 androide
@@ -2206,8 +2193,6 @@ anmerkung
 anmerkungen
 anmut
 anmutig
-ann
-anna
 annabeth
 annähen
 annähern
@@ -2219,12 +2204,10 @@ annahme
 annahmen
 annalen
 annapolis
-anne
 annehmbar
 annehme
 annehmen
 annehmlichkeiten
-annie
 annies
 annihilate
 annihilation
@@ -2435,7 +2418,6 @@ anteilnahme
 antenna
 antennen
 anthem
-anthony
 anthonys
 anthrax
 anthropologie
@@ -2462,7 +2444,6 @@ antiquität
 antiquitäten
 antiquitätenhändler
 antlitz
-anton
 antrag
 anträge
 antrat
@@ -2473,7 +2454,6 @@ antreten
 antrieb
 antritt
 antue
-antun
 antust
 antut
 antwort
@@ -2705,7 +2685,6 @@ approve
 approved
 approximately
 aprikosen
-april
 aprils
 apron
 apropos
@@ -2782,7 +2761,6 @@ archäologe
 archäologen
 archäologie
 archbishop
-archer
 archers
 archimedes
 architect
@@ -2828,7 +2806,6 @@ argumentiert
 arguments
 argwohn
 argwöhnisch
-ari
 ariadne
 arier
 arigold
@@ -2862,7 +2839,6 @@ armeen
 ärmel
 ärmelkanal
 ärmeln
-armen
 armenhaus
 armer
 ärmer
@@ -2938,7 +2914,6 @@ arschtritt
 arse
 arsehole
 arsenic
-art
 art.
 'artagnan
 artefakt
@@ -2952,7 +2927,6 @@ arteries
 artery
 artgenossen
 arthritis
-arthur
 articles
 articulate
 artie
@@ -3111,7 +3085,6 @@ asyl
 asylum
 'at
 at
-ate
 a-team
 atelier
 atem
@@ -3243,7 +3216,6 @@ audition
 auditioning
 auditions
 auditorium
-audrey
 audreys
 auf
 aufatmen
@@ -3728,7 +3700,6 @@ augenzeugen
 augenzeugin
 auggie
 äuglein
-august
 auktion
 auktionator
 auktionshaus
@@ -4721,7 +4692,6 @@ barabbas
 baracke
 baracken
 baratheon
-barbara
 barbarei
 barbaren
 barbarians
@@ -4756,7 +4726,6 @@ barmherzigkeit
 bar-mizwa
 barn
 barnaby
-barney
 barneys
 barometer
 baron
@@ -4773,11 +4742,9 @@ barrikade
 barrikaden
 barrister
 barrows
-barry
 barrymore
 barrys
 barstow
-bart
 bart.
 bärte
 bartender
@@ -4956,7 +4923,6 @@ bearings
 beast
 beastmaster
 beasts
-beat
 beate
 beaten
 beating
@@ -5714,7 +5680,6 @@ bemühte
 bemühung
 bemühungen
 bemuttern
-ben
 benachbarten
 benachrichtige
 benachrichtigen
@@ -5749,11 +5714,9 @@ benign
 benimm
 benimmst
 benimmt
-benjamin
 benji
 benjy
 bennie
-benny
 benommen
 benötige
 benötigen
@@ -5849,7 +5812,6 @@ bereuen
 bereust
 bereut
 bereute
-berg
 bergab
 bergarbeiter
 bergauf
@@ -5875,7 +5837,6 @@ berichts
 berlin
 bermuda
 bermudas
-bernard
 bernburg
 berries
 berserk
@@ -6303,13 +6264,11 @@ beteiligt
 beteiligte
 beteiligten
 beteiligung
-beten
 betest
 betet
 betete
 beteten
 beteuert
-beth
 bethesda
 beths
 betone
@@ -6411,7 +6370,6 @@ bettnässer
 bettruhe
 bettwanzen
 bettwäsche
-betty
 bettys
 bettzeug
 between
@@ -6708,7 +6666,6 @@ bildschirm
 bildschirme
 bildschön
 bildung
-bill
 billardtisch
 billboard
 billig
@@ -6723,7 +6680,6 @@ billionaire
 billionen
 billions
 bills
-billy
 billys
 bimbam
 bimbo
@@ -7152,8 +7108,6 @@ board.tv4user.de
 boast
 boat
 boats
-bob
-bobby
 bobbys
 bobs
 böcke
@@ -7388,7 +7342,6 @@ brachten
 brächten
 brachtest
 brackett
-brad
 braddock
 brads
 bragging
@@ -7540,7 +7493,6 @@ brettspiele
 brewery
 brewing
 brezeln
-brian
 briarcliff
 briareos
 bribe
@@ -7659,7 +7611,6 @@ broyles
 brr
 brrr
 brubaker
-bruce
 bruchbude
 brüche
 brüchig
@@ -7761,7 +7712,6 @@ buckets
 bucklige
 bucks
 bucky
-bud
 budapest
 buddeln
 buddhas
@@ -7770,7 +7720,6 @@ buddhismus
 buddhist
 buddhisten
 buddies
-buddy
 budge
 budget
 budgets
@@ -8154,21 +8103,17 @@ caress
 caretaker
 caribbean
 caring
-carl
 carlito
 carlitos
-carlos
 carm
 carmilla
 carnage
 carol
-caroline
 carolines
 carotid
 carousel
 carpets
 carriage
-carrie
 carried
 carriers
 carrolls
@@ -8386,11 +8331,9 @@ charismatic
 charismatisch
 charities
 charity
-charles
 charlie
 charlie36
 charlies
-charlotte
 charlottes
 charlottesville
 charm
@@ -8562,7 +8505,6 @@ chinesische
 chinesischen
 chinesischer
 chinesisches
-chip
 chipped
 chipping
 chips
@@ -8582,7 +8524,6 @@ chisum
 chittering
 chivalry
 chlamydien
-chloe
 chloes
 chlor
 chlorine
@@ -8626,9 +8567,7 @@ christ
 christbaum
 christening
 christentum
-christian
 christianity
-christine
 christines
 christkind
 christlich
@@ -8637,7 +8576,6 @@ christlichen
 christlicher
 christliches
 christmas
-christopher
 christus
 chrom
 chromosomen
@@ -8654,7 +8592,6 @@ chrysanthemen
 chrysler
 chte
 chubby
-chuck
 chucked
 chuckie
 chuckle
@@ -8691,7 +8628,6 @@ cincinnati
 cinco
 cinderella
 cindi
-cindy
 cindys
 cinema
 cinematography
@@ -8735,7 +8671,6 @@ claim
 claimed
 claiming
 claims
-claire
 claires
 clamoring
 clamp
@@ -8748,13 +8683,10 @@ clank
 clanking
 clanks
 clapping
-clara
 claremont
-clarence
 clarify
 clarinet
 clarity
-clark
 clarkes
 clarks
 clash
@@ -8773,7 +8705,6 @@ clatters
 claustrophobic
 claw
 claws
-clay
 claypool
 clea
 clean
@@ -8925,7 +8856,6 @@ col.
 colada
 cold
 cold-blooded
-cole
 colfax
 collaborate
 collaboration
@@ -8967,7 +8897,6 @@ colour
 coloured
 colourful
 colours
-colt
 colts
 colum
 columbia
@@ -9220,7 +9149,6 @@ conned
 connery
 connie
 'connor
-connor
 connors
 conquered
 conquering
@@ -9376,7 +9304,6 @@ coolste
 coolsten
 coop
 cooped
-cooper
 cooperate
 cooperating
 cooperation
@@ -9548,7 +9475,6 @@ cracks
 cradle
 crafts
 crafty
-craig
 craigslist
 crammed
 cramped
@@ -9753,7 +9679,6 @@ curses
 cursing
 curtain
 curtains
-curtis
 curve
 curved
 curves
@@ -9885,7 +9810,6 @@ damn
 damnation
 damned
 damnit
-damon
 dämon
 dämonen
 dämonenblut
@@ -9901,8 +9825,6 @@ dämpfen
 dampfer
 dämpfer
 damsel
-dan
-dana
 danach
 danby
 dance
@@ -9918,7 +9840,6 @@ danger
 dangerous
 dangerously
 dangling
-daniel
 daníel
 dänisch
 dänische
@@ -10040,8 +9961,6 @@ daughters
 däumchen
 daumen
 daumenabdruck
-dave
-david
 davis
 davon
 davonfliegen
@@ -10056,7 +9975,6 @@ davonläuft
 davontragen
 davonzukommen
 davonzulaufen
-davor
 dawg
 daxam
 'day
@@ -10115,7 +10033,6 @@ dealings
 deals
 dealst
 dealt
-dean
 deanie
 dear
 dearest
@@ -10193,7 +10110,6 @@ deej
 deeks
 deemed
 deena
-deep
 deeper
 deepest
 deeply
@@ -10364,7 +10280,6 @@ demütigt
 demütigung
 demütigungen
 demzufolge
-den
 denen
 denial
 denied
@@ -10383,7 +10298,6 @@ denkzettel
 denmark
 denn
 denni331
-dennis
 dennoch
 denounce
 dense
@@ -10445,7 +10359,6 @@ derartigen
 derartiges
 derb
 derbe
-derek
 dereks
 deren
 derevko
@@ -10611,7 +10524,6 @@ devoured
 devout
 dewitt
 dex
-dexter
 dezember
 dezernat
 dezimiert
@@ -10649,9 +10561,7 @@ diamanten
 diamantring
 diameter
 diamonds
-diana
 dianas
-diane
 diaper
 diapers
 diaphragm
@@ -10671,7 +10581,6 @@ dichters
 dichtgemacht
 dichtmachen
 dichtung
-dick
 dickdarm
 dicke
 dickem
@@ -10703,7 +10612,6 @@ diebstahl
 diebstähle
 diebstahls
 died
-diego
 diejenige
 diejenigen
 dienen
@@ -11070,11 +10978,9 @@ dna-spuren
 dna-test
 dns
 dns-test
-do
 do-
 doakes
 dobermann
-doc
 doch
 docked
 docking
@@ -11135,7 +11041,6 @@ dominiert
 dominikaner
 dominion
 dominus
-don
 doña
 donated
 donating
@@ -11145,7 +11050,6 @@ done
 döner
 donkey
 donkeys
-donna
 donnell
 donnergrollen
 donnern
@@ -11233,7 +11137,6 @@ doubtful
 doubting
 doubts
 douchebag
-doug
 dough
 doughnut
 doughnuts
@@ -11913,7 +11816,6 @@ each
 eager
 eagerly
 eagle
-earl
 earlier
 earliest
 earls
@@ -11989,9 +11891,7 @@ ecosystem
 ecstasy
 ecstatic
 ecuador
-ed
 edam
-eddie
 eddies
 eddington
 edelmänner
@@ -12022,7 +11922,6 @@ educate
 educated
 education
 educational
-edward
 edwardes
 ee
 eeg
@@ -12983,17 +12882,14 @@ elischka
 elite
 elixier
 elixir
-elizabeth
 elizabeths
 elk
 ellbogen
-ellen
 ellie
 ellington
 elope
 eloped
 elroy
-else
 elsewhere
 elspeth
 elterliche
@@ -13039,7 +12935,6 @@ emergency
 emerges
 emerging
 émilie
-emily
 emilys
 eminence
 eminent
@@ -13047,7 +12942,6 @@ eminenz
 emissary
 emissions
 emitter
-emma
 emmet
 emmit
 emmy
@@ -13672,7 +13566,6 @@ erdbeeren
 erdboden
 erde
 erde-2
-erden
 erdenkliche
 erdenklichen
 erderwärmung
@@ -13876,11 +13769,9 @@ erholung
 erhöre
 erhören
 erhört
-eric
 éric
 erics
 erika
-erin
 erinner
 erinnere
 erinnern
@@ -14048,7 +13939,6 @@ erniedrigen
 erniedrigend
 erniedrigt
 erniedrigung
-ernst
 ernste
 ernstes
 ernstfall
@@ -14480,7 +14370,6 @@ etc.
 eternal
 eternally
 eternity
-ethan
 ethans
 ethical
 ethics
@@ -14541,7 +14430,6 @@ euros
 eurotape
 euter
 ev
-eva
 evacuate
 evacuated
 evacuation
@@ -14553,7 +14441,6 @@ evaluation
 evangeline
 evangelium
 evasive
-even
 evening
 evenings
 evenly
@@ -15427,7 +15314,6 @@ feldmarschall
 feldwebel
 feldzug
 felgen
-felix
 fell
 fellas
 fellow
@@ -15798,7 +15684,6 @@ finishes
 finishing
 finito
 finland
-finn
 finnen
 finnisch
 finnische
@@ -16509,11 +16394,8 @@ française
 france
 franchise
 francie
-francis
-francisco
 françoise
 francs
-frank
 frankensteins
 frankie
 frankies
@@ -16526,7 +16408,6 @@ franky
 frannie
 franny
 frantic
-franz
 franzose
 franzosen
 französin
@@ -16563,7 +16444,6 @@ freaky
 frechdachs
 frechheit
 freckles
-fred
 freddys
 freds
 free
@@ -17217,7 +17097,6 @@ gartenschlauch
 gartenzwerg
 gärtnerei
 gärtnern
-gary
 garys
 gas
 gases
@@ -17230,7 +17109,6 @@ gasoline
 gaspedal
 gasping
 gasps
-gast
 gäste
 gästehaus
 gästeliste
@@ -18277,7 +18155,6 @@ geometry
 geopfert
 geordi
 geordnet
-george
 georgetown
 geortet
 geoutet
@@ -18430,7 +18307,6 @@ gerissener
 geritten
 geritzt
 germ
-german
 germanen
 germans
 germs
@@ -19317,7 +19193,6 @@ glockenspiel
 glockenturm
 gloom
 gloomy
-gloria
 glorified
 glorious
 glorreich
@@ -19489,7 +19364,6 @@ goon
 goons
 goose
 gör
-gordon
 göre
 gören
 gorgeous
@@ -19573,7 +19447,6 @@ grabstein
 grabsteine
 grabt
 gräbt
-grace
 graceful
 graceland
 graces
@@ -19621,7 +19494,6 @@ grandparents
 grandpas
 granite
 granny
-grant
 granted
 grantig
 grapefruit
@@ -20028,7 +19900,6 @@ gummibärchen
 gummis
 gummistiefel
 gummizelle
-gun
 gunfire
 gungellan
 gunman
@@ -20059,7 +19930,6 @@ gürtel
 gürtellinie
 gürtelschnalle
 guru
-gus
 gut
 gut.
 gutachten
@@ -20103,7 +19973,6 @@ gutted
 guttun
 gutzumachen
 guv
-guy
 guys
 g.w.
 gwen
@@ -20403,18 +20272,14 @@ hängst
 hängt
 hängte
 hängten
-hank
 hankmed
 hanks
-hanna
 hanna27
-hannah
 hannahs
 hannas
 hannover
 hanoi
 hanover
-hans
 hänseln
 hanswurst
 hanuman
@@ -20457,7 +20322,6 @@ häretiker
 harfe
 harlan
 harlem
-harm
 harmed
 harmful
 harming
@@ -20474,15 +20338,12 @@ harmonika
 harmonisch
 harmonische
 harmony
-harold
 harolds
 harpo
 harpune
 harriman
 harris
-harry
 harsh
-hart
 harte
 härte
 hartem
@@ -20503,7 +20364,6 @@ harumi
 harv
 harvard
 harvest
-harvey
 harveys
 has
 hasch
@@ -20925,7 +20785,6 @@ heldentat
 heldentaten
 heldentum
 heldin
-helen
 helenas
 helens
 helfe
@@ -20972,7 +20831,6 @@ hemorrhaging
 henceforth
 hendersons
 henkersmahlzeit
-henry
 hentai
 hep
 heparin
@@ -21114,7 +20972,6 @@ herkommst
 herkommt
 herkriegen
 herkunft
-herman
 hermetisch
 hermit
 hernehmen
@@ -21875,7 +21732,6 @@ höflichkeitsbesuch
 hofnarr
 hofrat
 hofstadter
-hogan
 hogwarts
 hohe
 höhe
@@ -21939,7 +21795,6 @@ holly
 hollys
 hollywood
 hollywoods
-holmes
 holocaust
 holodeck
 hologram
@@ -21968,7 +21823,6 @@ homeland
 homeless
 homemade
 homepage
-homer
 homers
 homerun
 homes
@@ -22002,7 +21856,6 @@ honk
 honking
 honks
 honolulu
-honor
 honorar
 honorary
 honored
@@ -22026,7 +21879,6 @@ hoot
 hooters
 hooting
 hooves
-hope
 hope1403
 hoped
 hopeful
@@ -22144,7 +21996,6 @@ housing
 hovering
 'how
 how
-howard
 howards
 howdy
 however
@@ -22994,7 +22845,6 @@ inning
 innings
 innit
 innocence
-innocent
 innocents
 innovation
 innovativ
@@ -23277,7 +23127,6 @@ intimidating
 intimidation
 intimität
 intimsten
-into
 intolerable
 intoleranz
 intoxicated
@@ -23552,7 +23401,6 @@ jaaaa
 jab
 jabba
 jachthafen
-jack
 jackal
 jackass
 jacke
@@ -23565,7 +23413,6 @@ jackett
 jackie
 jackies
 jackpot
-jackson
 jacksons
 jacksonville
 jacob
@@ -23632,7 +23479,6 @@ jähzornig
 jail
 jailed
 jakarta
-jake
 jakey
 jalousien
 jamaica
@@ -23640,7 +23486,6 @@ jamaican
 jamaika
 jamaikaner
 jamba
-james
 jamie
 jamies
 jamison
@@ -23659,7 +23504,6 @@ jammerst
 jammert
 jamming
 jan.
-jane
 janeway
 janie
 janine
@@ -23683,7 +23527,6 @@ japsen
 japst
 jarod
 jasmine
-jason
 jasons
 jauchegrube
 jauchzen
@@ -23695,7 +23538,6 @@ jawohl
 jawoll
 jawort
 jaws
-jay
 jazz
 jazzhead
 jazzmusik
@@ -23709,9 +23551,7 @@ jd
 je
 jealous
 jealousy
-jean
 jeanie
-jeannie
 jeannies
 jebediah
 jede
@@ -23732,7 +23572,6 @@ jeeps
 jeeter
 jeeves
 jeez
-jeff
 jeffersonian
 jeffersons
 jegliche
@@ -23765,14 +23604,12 @@ jennas
 jennie
 jennifer
 jennifers
-jenny
 jennys
 jenseits
 jeopardize
 jeopardy
 jep
 jepp
-jeremy
 jeremys
 jericho
 jerk
@@ -23780,7 +23617,6 @@ jerking
 jerks
 jerky
 jerri
-jerry
 jerrys
 jersey
 jess
@@ -23788,9 +23624,7 @@ jessas
 jesse
 jesses
 jessi
-jessica
 jessicas
-jesus
 jetlag
 jets
 jett
@@ -23815,14 +23649,11 @@ jiffy
 jig
 jigsaw
 jihad
-jill
 jills
 jilly
-jim
 jimbo
 jim-bob
 jiminy
-jimmy
 jimmys
 jims
 jingle
@@ -23839,14 +23670,12 @@ jj
 jjü
 jo
 joanie
-job
 jobangebot
 jobs
 jobsuche
 jockeys
 jodeln
 jodelt
-joe
 joelle
 joes
 joey
@@ -23861,11 +23690,9 @@ joghurt
 johanna
 johannesburg
 johlen
-john
 john-boy
 john-boys
 johnnie
-johnny
 johnnys
 johnson
 johnsons
@@ -23880,8 +23707,6 @@ joker
 jokes
 joking
 jolinar
-jonas
-jonathan
 jonathans
 jones
 jonesy
@@ -23893,9 +23718,7 @@ jordan
 jordanien
 jor-el
 joseon
-joseph
 josey
-josh
 jota
 journalism
 journalismus
@@ -23917,7 +23740,6 @@ jr
 jr.
 j.t.
 jt
-juan
 juanita
 juanito
 jubei
@@ -23949,7 +23771,6 @@ jüdischen
 jüdischer
 jüdisches
 judo
-judy
 judys
 jugend
 jugendamt
@@ -23975,11 +23796,7 @@ juicy
 juju
 jukebox
 julchen
-juli
-julia
-julian
 julias
-julie
 juliens
 jumbo
 jumong
@@ -24019,7 +23836,6 @@ jungs
 jüngste
 jüngsten
 jüngster
-juni
 junior
 juniors
 junkie
@@ -24046,7 +23862,6 @@ justieren
 justification
 justified
 justify
-justin
 justiz
 justizirrtum
 justizminister
@@ -24313,12 +24128,10 @@ kardinäle
 kardinals
 kardiologe
 kardiologie
-karen
 karens
 karibik
 karibu
 karikatur
-karl
 karloff
 karneval
 karnickel
@@ -24386,13 +24199,11 @@ katastrophale
 katastrophalen
 katastrophe
 katastrophen
-kate
 kategorie
 kategorien
 kategorisch
 katey
 kathedrale
-katherine
 katheter
 kathi
 katholik
@@ -24490,7 +24301,6 @@ kellys
 kelp
 kelso
 kelzi
-ken
 kendal
 kenia
 kenn
@@ -24512,14 +24322,12 @@ kenntnisse
 kenntnissen
 kennung
 kennwort
-kenny
 kennys
 kennzeichen
 kennzeichnen
 kenobi
 kenshiro
 kensington
-kent
 kentern
 kentucky
 kepner
@@ -24554,7 +24362,6 @@ keuchend
 keucht
 keuschheit
 kev
-kevin
 kevins
 kevlar
 key
@@ -24676,7 +24483,6 @@ kindlichen
 kindly
 kindness
 kindskopf
-king
 kingdom
 kingdoms
 kings
@@ -24701,7 +24507,6 @@ kirchenglocken
 kirchliche
 kirchturm
 kiriu
-kirk
 kirmes
 kirre
 kirschkuchen
@@ -24818,7 +24623,6 @@ klatschpresse
 klatscht
 klaue
 klauen
-klaus
 klausel
 klaust
 klaustrophobie
@@ -26057,7 +25861,6 @@ kurse
 kursen
 kurses
 kursieren
-kurt
 kurtisane
 kururugi
 kurve
@@ -26208,7 +26011,6 @@ ladyschaft
 ladyship
 laertes
 lag
-lage
 läge
 lagebericht
 lagen
@@ -26251,8 +26053,6 @@ lallt
 lammkeule
 lampe
 lampenfieber
-lana
-lance
 land
 landarbeiter
 landbesitzer
@@ -26379,7 +26179,6 @@ largest
 lark
 lärm
 larrabee
-larry
 larrys
 larven
 las
@@ -26390,7 +26189,6 @@ lashes
 läsionen
 lass
 laß
-lasse
 lassen
 lässig
 lassiter
@@ -26476,7 +26274,6 @@ laundry
 laune
 launen
 launisch
-laura
 lausche
 lauschen
 lauscher
@@ -26883,9 +26680,7 @@ lennie
 lennier
 lenore
 lenses
-leo
 léo
-leonard
 leoparden
 leprechaun
 lerne
@@ -26959,7 +26754,6 @@ levels
 leverage
 leviathan
 leviten
-lewis
 lex
 lexie
 lexikon
@@ -26982,7 +26776,6 @@ l-i
 liability
 liable
 liaison
-liam
 liams
 liar
 liars
@@ -27191,12 +26984,9 @@ limousinen
 limp
 limping
 linc
-lincoln
 lincolns
-linda
 lindbergh
 linderung
-line
 lineage
 lineal
 linear
@@ -27227,7 +27017,6 @@ liquidieren
 liquidiert
 liquor
 liras
-lisa
 lisas
 lisbon
 lissabon
@@ -27366,7 +27155,6 @@ lohnen
 lohnerhöhung
 lohnliste
 lohnt
-lois
 lokal
 lokale
 lokalen
@@ -27482,8 +27270,6 @@ louder
 loudly
 loudspeaker
 louie
-louis
-louise
 louisiana
 louisville
 loukauskis
@@ -27529,7 +27315,6 @@ ltd
 lt`s
 luann
 lübeck
-lucas
 lucid
 lucifer
 lucious
@@ -27540,7 +27325,6 @@ lucky
 lucrative
 lucretia
 lucrezia
-lucy
 lucys
 luden
 ludicrous
@@ -27585,7 +27369,6 @@ lügnerin
 lügnern
 lügst
 lügt
-luke
 lukrativ
 lukrative
 lukrativen
@@ -27643,7 +27426,6 @@ luzifer
 lwaxana
 lydecker
 lydgate
-lydia
 lyin
 lying
 lyla
@@ -27666,7 +27448,6 @@ m-16
 m5
 'm-a
 'ma
-ma
 mã
 mac
 macallan
@@ -27708,7 +27489,6 @@ mackerel
 maclaren
 macleish
 macs
-mad
 madagaskar
 madam
 madame
@@ -27749,7 +27529,6 @@ magengeschwür
 magenschmerzen
 magenverstimmung
 mageren
-maggie
 maggies
 maggot
 maggots
@@ -27796,7 +27575,6 @@ mähne
 mahnung
 mahone
 mäht
-mai
 maids
 maiglöckchen
 mailbox
@@ -27846,7 +27624,6 @@ makrele
 makrelen
 mal
 malaysia
-malcolm
 malcom
 male
 malen
@@ -27866,7 +27643,6 @@ malpractice
 malst
 malware
 mama
-mami
 mamiya
 mammal
 mammals
@@ -27959,7 +27735,6 @@ männlichkeit
 mannomann
 mannschaft
 mannschaften
-manny
 mannys
 manor
 manöver
@@ -27985,22 +27760,18 @@ manure
 manuscript
 manuskript
 manuskripte
-many
 maple
 mappe
 marbles
-marcel
 marched
 märchen
 märchenprinz
 marching
-marcus
 marderhunde
 margaret
 margarine
 margaritas
 margy
-maria
 mariah
 maricruz
 marie
@@ -28014,7 +27785,6 @@ marisol
 marissa
 marital
 maritza
-mark
 marke
 marked
 marken
@@ -28055,7 +27825,6 @@ marries
 marrow
 marry
 marrying
-mars
 marschbefehl
 marschiere
 marschieren
@@ -28064,27 +27833,22 @@ marschiert
 marschierte
 marschierten
 marschmusik
-marshall
 marshalls
 marshals
 marshmallow
 marshmallows
 marsianer
 marsmenschen
-martha
 marthas
 martians
-martin
 martinshorn
 martok
-marty
 märtyrer
 märtyrerin
 martyrs
 marv
 marvellous
 marvelous
-mary
 maryann
 marybeth
 marylin
@@ -28117,7 +27881,6 @@ maskierter
 maskottchen
 masks
 maskulin
-mason
 masons
 masquerade
 massachusetts
@@ -28178,7 +27941,6 @@ match
 matched
 matches
 matching
-mate
 matéo
 material
 materialien
@@ -28210,12 +27972,10 @@ matrose
 matrosen
 matsch
 matschig
-matt
 matter
 mattered
 matterhorn
 matters
-matthew
 mattress
 mature
 maturity
@@ -28242,7 +28002,6 @@ mausi
 mausoleum
 maverick
 maw
-max
 maxie
 maximal
 maximale
@@ -28252,7 +28011,6 @@ maximieren
 maximum
 maximus
 maxine
-may
 maybe
 maybelle
 maybourne
@@ -28407,7 +28165,6 @@ meetings
 meets
 meg
 megafon
-megan
 megans
 megaphon
 megatron
@@ -28687,23 +28444,18 @@ mhn
 'm-i
 mi5
 mi6
-mia
 miami
 miauen
 micawber
 mich
-michael
 michala
-michel
 michelangelo
 michèle
-michelle
 michelles
 michima
 michonne
 michse
 micht
-mickey
 micki
 mickrig
 mickrige
@@ -28732,7 +28484,6 @@ midwife
 mieder
 miene
 miep
-mies
 miese
 miesepeter
 mieser
@@ -28757,7 +28508,6 @@ migration
 mikado
 mikaelson
 mikaelsons
-mike
 mikey
 mikro
 mikroben
@@ -28787,7 +28537,6 @@ mildernde
 mildly
 mildred
 mileage
-miles
 milf
 milhouse
 milieu
@@ -28818,7 +28567,6 @@ milky
 millennia
 millennium
 millennium-gruppe
-miller
 milliardär
 milliardäre
 milliarde
@@ -29034,7 +28782,6 @@ mitbringsel
 mitbringst
 mitbringt
 mitbürger
-mitchell
 mitchells
 mitchum
 miteinander
@@ -29315,7 +29062,6 @@ molesley
 molested
 molière
 molkerei
-molly
 mollys
 moloch
 molten
@@ -29334,7 +29080,6 @@ momma
 mommy
 moms
 'mon
-mona
 monarch
 monarchen
 monarchie
@@ -29368,7 +29113,6 @@ moneypenny
 mongolei
 mongolen
 mongrel
-monica
 monitore
 monitored
 monitoren
@@ -29508,7 +29252,6 @@ morpheus
 morphin
 morphine
 morphium
-morris
 mörser
 morsezeichen
 mortadella
@@ -29878,7 +29621,6 @@ muzzle
 muzzy
 mwah
 'my
-my
 my-
 mya
 mycroft
@@ -30200,7 +29942,6 @@ naming
 nämlich
 na-na
 nanaka
-nancy
 nandu
 naniten
 nanking
@@ -30258,8 +29999,6 @@ nassen
 nasty
 natã
 natascha
-nate
-nathan
 nathans
 nation
 national
@@ -30364,7 +30103,6 @@ necessity
 neck
 necklace
 necks
-ned
 neddy
 nee
 need
@@ -30419,7 +30157,6 @@ neigte
 neigung
 neigungen
 'neil
-neil
 'neill
 neils
 nein
@@ -30427,7 +30164,6 @@ nein.
 neither
 nektar
 nelke
-nelson
 nelsons
 nem
 nemesis
@@ -30622,7 +30358,6 @@ nichtsnutz
 nichtsnutze
 nichtsnutziger
 nichtstun
-nick
 nicke
 nicked
 nicken
@@ -30634,7 +30369,6 @@ nicknames
 nicks
 nickt
 nicky
-nicole
 nicotine
 nidge
 nie
@@ -30720,7 +30454,6 @@ nimmermehr
 nimmerwiedersehen
 nimmst
 nimmt
-nina
 niña
 nine
 niners
@@ -30763,7 +30496,6 @@ no
 no-
 no.
 nö
-noah
 noahs
 nobby
 nobelpreis
@@ -30811,7 +30543,6 @@ noora
 noose
 nope
 nor
-nora
 norad
 norah
 norbit
@@ -30854,7 +30585,6 @@ normalisieren
 normalisiert
 normalität
 normally
-norman
 normandy
 normannen
 normen
@@ -31362,9 +31092,7 @@ oleson
 olesons
 oliven
 olivenöl
-oliver
 olivers
-olivia
 olivias
 ölung
 ölwechsel
@@ -31648,7 +31376,6 @@ os
 o-saft
 osama
 osbourne
-oscar
 oscars
 osgood
 oslo
@@ -31690,7 +31417,6 @@ other
 others
 otherwise
 otilia
-otto
 ottoman
 ottos
 ought
@@ -31776,7 +31502,6 @@ overwhelming
 ow
 owe
 owed
-owen
 owes
 owing
 owl
@@ -31895,7 +31620,6 @@ palästinenser
 palestine
 palestinian
 palestinians
-palmer
 palms
 pampa
 pamphlet
@@ -31992,8 +31716,6 @@ parents
 parfüm
 pargalı
 parieren
-paris
-park
 parkbank
 parked
 parken
@@ -32140,7 +31862,6 @@ patiently
 patients
 patio
 patna
-patrick
 patricks
 patrioten
 patriotic
@@ -32166,8 +31887,6 @@ pattern
 patterns
 pauke
 pauken
-paul
-paula
 paulas
 pause
 pausen
@@ -32242,7 +31961,6 @@ peg
 pegasus
 pegged
 peggotty
-peggy
 peilsender
 peilung
 peinlich
@@ -32294,7 +32012,6 @@ penniless
 pennst
 pennsylvania
 pennt
-penny
 pennys
 pennywise
 penrose
@@ -32314,7 +32031,6 @@ pepperoni
 peppers
 peppone
 pepsi
-per
 perceive
 perceived
 percent
@@ -32432,8 +32148,6 @@ pessimistisch
 pestering
 pestizide
 petals
-pete
-peter
 petersburg
 petes
 petition
@@ -32565,7 +32279,6 @@ phew
 phil
 philadelphia
 philanthrop
-philip
 philippinen
 philippines
 philosophen
@@ -32666,7 +32379,6 @@ piepton
 pierced
 piercing
 piercings
-pierre
 pig
 pigeons
 piggott
@@ -33444,7 +33156,6 @@ prevents
 preview
 previous
 previously
-price
 priceless
 prices
 pricks
@@ -33467,7 +33178,6 @@ primitive
 primitiven
 primitiver
 primitives
-prince
 princess
 princesses
 princeton
@@ -34235,7 +33945,6 @@ rache
 räche
 racheakt
 rachefeldzug
-rachel
 rachels
 rachen
 rächen
@@ -34328,7 +34037,6 @@ raketenwerfer
 raleigh
 rally
 rallye
-ralph
 ralphie
 ralston
 rambaldis
@@ -34347,14 +34055,12 @@ ramse
 ramses
 ran
 rancho
-rand
 randale
 randalls
 ränder
 random
 randomly
 randvoll
-randy
 randys
 ranfahren
 ränge
@@ -34657,11 +34363,9 @@ ravens
 ravishing
 raw
 rawls
-ray
 rayborn
 rayburn
 raylan
-raymond
 raymonds
 razor
 razzia
@@ -34751,7 +34455,6 @@ reassure
 reassuring
 rebadow
 rebbekah
-rebecca
 rebeccas
 rebecka
 rebekah
@@ -34883,7 +34586,6 @@ recyceln
 recycelt
 recycle
 recycling
-red
 redakteur
 redakteurin
 redaktion
@@ -34960,7 +34662,6 @@ refuse
 refused
 refuses
 refusing
-reg
 regained
 regale
 regalen
@@ -35094,14 +34795,12 @@ reihenfolge
 reihenhaus
 reily
 reimt
-rein
 reinbeißen
 reinbekommen
 reinbitten
 reinbringen
 reincarnation
 reindeer
-reine
 reinem
 reinfahren
 reinfall
@@ -35706,8 +35405,6 @@ rhythmisches
 rhythmus
 ribbon
 ribbons
-rich
-richard
 richest
 richfield
 richte
@@ -35733,11 +35430,9 @@ richtlinie
 richtlinien
 richtung
 richtungen
-rick
 rickie
 rickshaw
 rickwaert
-ricky
 rid
 riddance
 ridden
@@ -35855,7 +35550,6 @@ risking
 risks
 risky
 risotto
-rita
 ritalin
 riten
 ritten
@@ -35905,7 +35599,6 @@ robberies
 robbery
 robbing
 roben
-robert
 roberta
 robes
 robespierre
@@ -35944,7 +35637,6 @@ rodent
 rodeo
 roderick
 rods
-roger
 roggenbrot
 rohen
 rohes
@@ -35972,7 +35664,6 @@ rollt
 rollte
 rolltreppe
 rom
-roman
 romance
 romanen
 romanian
@@ -35996,7 +35687,6 @@ romulaner
 romulanern
 romulanische
 romulanischen
-ron
 ronnie
 ronnies
 ronon
@@ -36020,14 +35710,11 @@ rooted
 rooting
 roots
 ropes
-rory
 rorys
-rosa
 rosalee
 rosalind
 rosamund
 rosarote
-rose
 rosé
 rosebud
 rosemarie
@@ -36039,7 +35726,6 @@ rosinen
 rosita
 rosmarie
 rosmarin
-ross
 rosten
 rösten
 roster
@@ -36095,7 +35781,6 @@ rows
 roxanne
 roxie
 roxy
-roy
 royal
 royale
 royalle
@@ -36373,7 +36058,6 @@ rushmore
 rusk
 ruß
 rüssel
-russell
 russen
 russia
 russian
@@ -36395,7 +36079,6 @@ rustling
 rüstung
 rüstungen
 rute
-ruth
 ruthless
 rutschen
 rutschig
@@ -36563,7 +36246,6 @@ salzige
 salzsäure
 salzwasser
 sam
-samantha
 samanthas
 samaritan
 samariter
@@ -36642,12 +36324,10 @@ sanjay
 sank
 sankt
 sanktionen
-santa
 são
 saphira
 sapna
 sapphire
-sara
 sarah
 sarahs
 sarajevo
@@ -38199,7 +37879,6 @@ scorpions
 scorpius
 scotch
 scots
-scott
 scottie
 scottish
 scotts
@@ -38281,7 +37960,6 @@ seagulls
 sealed
 seals
 seams
-sean
 séance
 seany
 seaquest
@@ -38305,7 +37983,6 @@ seavers
 seaweed
 seaworld
 seb
-sebastian
 sechs
 sechseinhalb
 sechsen
@@ -38660,7 +38337,6 @@ separation
 separatisten
 seppel
 sepsis
-september
 septic
 sequel
 sequence
@@ -38673,7 +38349,6 @@ serbien
 serbische
 serbischen
 serbs
-serena
 serenas
 serenity
 sergeant
@@ -38720,7 +38395,6 @@ sessel
 sesshaft
 session
 sessions
-set
 setauket
 setback
 sets
@@ -38827,7 +38501,6 @@ shameless
 shamoto
 shampoo
 shana
-shane
 shanes
 shanghai
 shangri-la
@@ -38877,7 +38550,6 @@ sheffield
 shéhérazade
 sheila
 shekhar
-sheldon
 sheldons
 sheldrake
 shelf
@@ -39217,7 +38889,6 @@ similar
 similarities
 similarly
 sim-karte
-simon
 simpel
 simple
 simplen
@@ -39708,7 +39379,6 @@ sokka
 sokrates
 solace
 solang
-solange
 solarium
 solch
 solche
@@ -39833,7 +39503,6 @@ sonntagmorgen
 sonntagnachmittag
 sonntags
 sonntagsschule
-sonny
 son-of-a-bitch
 sonora
 sonst
@@ -39850,7 +39519,6 @@ soong
 sooo
 soothe
 soothing
-sophie
 sophies
 sophisticated
 sophomore
@@ -40666,7 +40334,6 @@ stamped
 stampede
 stampfen
 stampft
-stan
 stance
 stand
 standard
@@ -40700,7 +40367,6 @@ standst
 stand-up
 stangen
 stank
-stanley
 stanleys
 stans
 stapeln
@@ -40874,7 +40540,6 @@ steele
 steeles
 steep
 steering
-stefan
 steffi
 steh
 stehe
@@ -40904,7 +40569,6 @@ steigerung
 steigst
 steigt
 steile
-stein
 steinbruch
 steine
 steinigen
@@ -40938,7 +40602,6 @@ stepfather
 stepford
 stéphanie
 stephanies
-stephen
 stepmother
 stepped
 steppen
@@ -41006,8 +40669,6 @@ steuerst
 steuerte
 steuerung
 steuerzahler
-steve
-steven
 stevie
 stew
 stewardess
@@ -41537,7 +41198,6 @@ study
 studying
 stufe
 stufen
-stuff
 stuffed
 stuffing
 stuffy
@@ -41767,7 +41427,6 @@ summary
 sümmchen
 summe
 summen
-summer
 summertime
 summit
 summon
@@ -41906,7 +41565,6 @@ surviving
 survivor
 survivors
 surya
-susan
 susans
 susceptible
 suse
@@ -42165,7 +41823,6 @@ taft
 tag
 tagaus
 tagchen
-tage
 tagebuch
 tagebücher
 tagein
@@ -42317,7 +41974,6 @@ taping
 tapped
 tappt
 taps
-tara
 tarantel
 targaryen
 target
@@ -42460,7 +42116,6 @@ tb
 t-bag
 t.c.
 tc
-tea
 teach
 teacher
 teachers
@@ -42508,8 +42163,6 @@ technology
 techno-musik
 techtelmechtel
 tector
-ted
-teddy
 teddybär
 teddybären
 teddys
@@ -42899,7 +42552,6 @@ thirty-five
 'this
 this
 this-
-thomas
 thompkins
 thompsons
 thoraxdrainage
@@ -43059,10 +42711,8 @@ tights
 tijuana
 'til
 tilda
-till
 tilney
 tilt
-tim
 timber
 timberlake
 timbuktu
@@ -43080,7 +42730,6 @@ timing
 timings
 timmy
 tims
-tina
 tingling
 tiniest
 tink
@@ -43153,15 +42802,12 @@ toben
 tobruk
 tobt
 tobte
-toby
 tobys
 tochter
 töchter
 töchterchen
 töchtern
-tod
 today
-todd
 toddler
 todds
 toddy
@@ -43250,7 +42896,6 @@ tollsten
 tollwut
 tollwütiger
 tölpel
-tom
 tomahawk
 tomás
 tomate
@@ -43262,10 +42907,8 @@ tomatoes
 tombola
 tombstone
 tomie
-tommy
 tommys
 tomorrow
-ton
 tonart
 tonband
 tonbandgerät
@@ -43306,7 +42949,6 @@ topless
 topped
 toppen
 top-secret
-tor
 torched
 torches
 torchwood
@@ -43434,7 +43076,6 @@ tracks
 tract
 traction
 tractor
-tracy
 tracys
 trade
 traded
@@ -43661,7 +43302,6 @@ traveller
 travellers
 travelling
 travels
-travis
 travolta
 treacherous
 treachery
@@ -43886,7 +43526,6 @@ troublesome
 troubling
 trough
 trousers
-troy
 troys
 trüb
 trübe
@@ -43983,7 +43622,6 @@ tüchtiger
 tucked
 tückisch
 tucson
-tue
 tuen
 tuesday
 tuesdays
@@ -45920,7 +45558,6 @@ vandalen
 vandalism
 vandalismus
 vanderbilt
-vanessa
 vanessas
 vanilla
 vanille
@@ -47618,7 +47255,6 @@ verwurzelt
 verwüsten
 verwüstet
 verwüstung
-very
 verzagen
 verzählt
 verzaubern
@@ -47692,7 +47328,6 @@ vibrations
 vibrator
 vibrieren
 vibriert
-vic
 vicar
 vicinity
 vicious
@@ -47701,8 +47336,6 @@ vicodin
 vicomedia
 victim
 victims
-victor
-victoria
 victorias
 victories
 victorious
@@ -47791,8 +47424,6 @@ villagers
 villages
 villains
 vilma
-vince
-vincent
 vinegar
 vineyard
 vinnie
@@ -47812,7 +47443,6 @@ viper
 vipern
 vips
 virgilia
-virginia
 virginity
 virgins
 virtual
@@ -47985,7 +47615,6 @@ volvo
 vom
 vomit
 vomiting
-von
 vonda
 voneinander
 vonnöten
@@ -48210,7 +47839,6 @@ vorliegen
 vorliegenden
 vorliegt
 vorliest
-vorm
 vormachen
 vormarsch
 vormittags
@@ -48454,7 +48082,6 @@ wacko
 wacky
 waco
 wad
-wade
 waden
 waere
 waffe
@@ -48580,7 +48207,6 @@ walfänger
 walhalla
 walk
 walked
-walker
 walkers
 walkie
 walkie-talkie
@@ -48602,9 +48228,7 @@ walnüsse
 walnut
 walross
 walrus
-walt
 walten
-walter
 walton
 waltons
 walts
@@ -48711,7 +48335,6 @@ warpfeld
 warpgeschwindigkeit
 warpkern
 warrants
-warren
 warrens
 warrior
 warriors
@@ -48774,7 +48397,6 @@ washburn
 washed
 washes
 washing
-washington
 washingtons
 washroom
 wasn
@@ -48831,7 +48453,6 @@ waverly
 waves
 waving
 way
-wayne
 waynes
 ways
 wayward
@@ -48911,7 +48532,6 @@ wegbeschreibung
 wegblasen
 wegbleiben
 wegbringen
-wege
 wegen
 weges
 wegfahren
@@ -49712,15 +49332,11 @@ wildschwein
 wildschweine
 wilgul
 wilkommen
-will
 willa
-wille
 willen
 willenskraft
-william
 williams
 williamsburg
-willie
 willige
 willigt
 willigte
@@ -49737,7 +49353,6 @@ willow
 willpower
 willst
 willste
-wilson
 wilsons
 wimbledon
 wimmeln
@@ -50004,7 +49619,6 @@ wohnzimmer
 wok
 woke
 woken
-wolf
 wölfe
 wölfen
 wölfin
@@ -50421,7 +50035,6 @@ z
 z.
 za
 zachs
-zack
 zacken
 zackig
 zaghaft
@@ -50870,7 +50483,6 @@ zocken
 zocker
 zod
 zodiac
-zoe
 zoé
 zoes
 zoey
