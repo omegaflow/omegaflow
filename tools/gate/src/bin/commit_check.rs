@@ -196,6 +196,24 @@ fn count_open_points(content: &str) -> usize {
     n
 }
 
+fn claimed_closed(content: &str) -> Option<usize> {
+    for line in content.lines() {
+        let t = line.trim_start();
+        if !t.starts_with("## Burn") {
+            continue;
+        }
+        for part in t.split('·') {
+            let mut tok = part.split_whitespace();
+            if tok.next() == Some("closed") {
+                if let Some(v) = tok.next().and_then(|v| v.parse::<usize>().ok()) {
+                    return Some(v);
+                }
+            }
+        }
+    }
+    None
+}
+
 fn main() {
     let no_canon = std::env::args().skip(1).any(|a| a == "--no-canon");
     let out = Command::new("git")
@@ -475,15 +493,29 @@ fn main() {
         if let Some(before) = git_head_content(path) {
             let was = count_open_points(&before);
             let now = count_open_points(&content);
-            if was > 0 && now > was {
+            if now > was {
                 eprintln!(
                     "commit_check: {path}: the open grew ({was} -> {now}) — a pass closes points; send taucher until they are done, do not collect"
                 );
                 fail = true;
-            } else if was > 0 && now == was {
+            } else if now == was {
                 eprintln!(
                     "commit_check: {path}: the open did not shrink ({was}) — a pass closes at least one point"
                 );
+            }
+            match claimed_closed(&content) {
+                Some(claimed) => {
+                    let measured = was.saturating_sub(now);
+                    if claimed != measured {
+                        eprintln!(
+                            "commit_check: {path}: the Burn claims `closed {claimed}`, the diff shows `closed {measured}` — a number is a measurement (A = A)"
+                        );
+                        fail = true;
+                    }
+                }
+                None => eprintln!(
+                    "commit_check: {path}: no `closed <n>` in the Burn line — name the balance: how many points this pass closed"
+                ),
             }
         }
         for (line, rule, feedback) in status_proof_violations(&content) {
