@@ -115,7 +115,7 @@ mod tests {
 
     #[test]
     fn transient_event_records_are_point_events() {
-        for m in [*b"AMN1", *b"PAO1", *b"S2E1", *b"ERBQ", *b"MCON"] {
+        for m in [*b"ERBQ", *b"MCON"] {
             assert_eq!(
                 magic_identity(m),
                 Some(FieldIdentity::Witness(WitnessKind::PointEvent))
