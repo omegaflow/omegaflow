@@ -8257,6 +8257,16 @@ format reference
 sha256 299454de329124f941688b67d59aee456a6e4118fd83a194c58fec8fcb322b19
 ttl 86400
 
+url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&network=IM
+terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
+ttl 86400
+format text
+on earth 0 0 0
+rows .
+lat 2
+lon 3
+field 4 fdsn_station_elevation_m erfc seismic-surface m 86400.0 0.0 0.0
+
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&nodata=404
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 ttl 86400
