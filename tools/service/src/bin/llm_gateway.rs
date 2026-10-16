@@ -3,8 +3,8 @@ use std::fs;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::process::{Command, Stdio};
-use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use std::sync::OnceLock;
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
 
 struct Route {
     prefix: &'static str,
@@ -346,7 +346,9 @@ fn read_redact_file(name: &str) -> Option<String> {
         }
     }
     if let Ok(home) = std::env::var("HOME") {
-        if let Ok(text) = fs::read_to_string(format!("{home}/projects/omegaflow/data/redact/{name}")) {
+        if let Ok(text) =
+            fs::read_to_string(format!("{home}/projects/omegaflow/data/redact/{name}"))
+        {
             return Some(text);
         }
     }
@@ -365,7 +367,9 @@ fn load_names() -> (HashSet<String>, HashSet<String>) {
                     }
                 }
             }
-            None => eprintln!("llm_gateway: data/redact/{file} absent - that name list stays inert"),
+            None => {
+                eprintln!("llm_gateway: data/redact/{file} absent - that name list stays inert")
+            }
         }
     }
     let mut stop: HashSet<String> = HashSet::new();
@@ -378,7 +382,9 @@ fn load_names() -> (HashSet<String>, HashSet<String>) {
                 }
             }
         }
-        None => eprintln!("llm_gateway: data/redact/stopwoerter.txt absent - that stop list stays inert"),
+        None => eprintln!(
+            "llm_gateway: data/redact/stopwoerter.txt absent - that stop list stays inert"
+        ),
     }
     match read_redact_file("funktionswoerter.txt") {
         Some(text) => {
@@ -389,7 +395,9 @@ fn load_names() -> (HashSet<String>, HashSet<String>) {
                 }
             }
         }
-        None => eprintln!("llm_gateway: data/redact/funktionswoerter.txt absent - that function-word list stays inert"),
+        None => eprintln!(
+            "llm_gateway: data/redact/funktionswoerter.txt absent - that function-word list stays inert"
+        ),
     }
     (names, stop)
 }
@@ -434,7 +442,11 @@ fn active_redactor() -> Option<&'static Redactor> {
 }
 
 impl Redactor {
-    fn from_parts(map_text: Option<&str>, names: HashSet<String>, stop: HashSet<String>) -> Redactor {
+    fn from_parts(
+        map_text: Option<&str>,
+        names: HashSet<String>,
+        stop: HashSet<String>,
+    ) -> Redactor {
         let mut forward: Vec<(String, String)> = Vec::new();
         if let Some(text) = map_text {
             for line in text.lines() {
@@ -452,10 +464,17 @@ impl Redactor {
             }
         }
         forward.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
-        let mut reverse: Vec<(String, String)> =
-            forward.iter().map(|(r, p)| (p.clone(), r.clone())).collect();
+        let mut reverse: Vec<(String, String)> = forward
+            .iter()
+            .map(|(r, p)| (p.clone(), r.clone()))
+            .collect();
         reverse.sort_by(|a, b| b.0.len().cmp(&a.0.len()));
-        Redactor { forward, reverse, names, stop }
+        Redactor {
+            forward,
+            reverse,
+            names,
+            stop,
+        }
     }
 
     fn redact(&self, s: &str) -> String {
@@ -579,11 +598,7 @@ fn p_gh(ch: &[char], i: usize) -> Option<usize> {
         _ => return None,
     }
     let e = run_while(ch, i + 4, |c| c.is_ascii_alphanumeric());
-    if e >= i + 24 {
-        Some(e)
-    } else {
-        None
-    }
+    if e >= i + 24 { Some(e) } else { None }
 }
 
 fn p_akia(ch: &[char], i: usize) -> Option<usize> {
@@ -647,11 +662,7 @@ fn p_xox(ch: &[char], i: usize) -> Option<usize> {
         _ => return None,
     }
     let e = run_while(ch, i + 5, |c| c.is_ascii_alphanumeric() || c == '-');
-    if e >= i + 15 {
-        Some(e)
-    } else {
-        None
-    }
+    if e >= i + 15 { Some(e) } else { None }
 }
 
 fn p_hf(ch: &[char], i: usize) -> Option<usize> {
@@ -871,11 +882,7 @@ fn p_plz(ch: &[char], i: usize) -> Option<usize> {
     while j < ch.len() && c_de_lower(ch[j]) {
         j += 1;
     }
-    if j >= b + 2 {
-        Some(j)
-    } else {
-        None
-    }
+    if j >= b + 2 { Some(j) } else { None }
 }
 
 fn p_tel(ch: &[char], i: usize) -> Option<usize> {
@@ -968,7 +975,10 @@ fn p_bic(ch: &[char], i: usize) -> Option<usize> {
         }
     }
     let base = j;
-    let extended = (0..3).all(|d| ch.get(base + d).map_or(false, |c| c.is_ascii_alphanumeric()));
+    let extended = (0..3).all(|d| {
+        ch.get(base + d)
+            .map_or(false, |c| c.is_ascii_alphanumeric())
+    });
     if extended {
         j = base + 3;
     }
@@ -980,9 +990,8 @@ fn p_bic(ch: &[char], i: usize) -> Option<usize> {
 }
 
 const VAT_PREFIX: &[&str] = &[
-    "AT", "BE", "BG", "CH", "CY", "CZ", "DE", "DK", "EE", "EL", "ES", "FI", "FR", "GB", "HR",
-    "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "NO", "PL", "PT", "RO", "SE", "SI", "SK",
-    "XI",
+    "AT", "BE", "BG", "CH", "CY", "CZ", "DE", "DK", "EE", "EL", "ES", "FI", "FR", "GB", "HR", "HU",
+    "IE", "IT", "LT", "LU", "LV", "MT", "NL", "NO", "PL", "PT", "RO", "SE", "SI", "SK", "XI",
 ];
 
 fn p_vat(ch: &[char], i: usize) -> Option<usize> {
@@ -1655,7 +1664,12 @@ fn paid_allowed(prefix: &str) -> bool {
     false
 }
 
-fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str, red: Option<&Redactor>) -> (u16, String) {
+fn chat_completions(
+    body: &str,
+    secrets: &HashMap<String, String>,
+    auth: &str,
+    red: Option<&Redactor>,
+) -> (u16, String) {
     let start = Instant::now();
     let model = match json_string_field(body, "model") {
         Some(m) => m,
@@ -1778,7 +1792,13 @@ fn chat_completions(body: &str, secrets: &HashMap<String, String>, auth: &str, r
     }
 }
 
-fn stream_chat(stream: &mut TcpStream, body: &str, secrets: &HashMap<String, String>, auth: &str, red: Option<&Redactor>) {
+fn stream_chat(
+    stream: &mut TcpStream,
+    body: &str,
+    secrets: &HashMap<String, String>,
+    auth: &str,
+    red: Option<&Redactor>,
+) {
     let start = Instant::now();
     let model = match json_string_field(body, "model") {
         Some(m) => m,
@@ -1837,12 +1857,16 @@ fn stream_chat(stream: &mut TcpStream, body: &str, secrets: &HashMap<String, Str
             .arg("-H")
             .arg("Content-Type: application/json")
             .arg("--data-binary")
-            .arg(&forward)
+            .arg("@-")
+            .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::null())
             .spawn()
         {
             Ok(mut c) => {
+                if let Some(mut si) = c.stdin.take() {
+                    let _ = si.write_all(forward.as_bytes());
+                }
                 if let Some(mut out) = c.stdout.take() {
                     let mut buf = [0u8; 8192];
                     match red {
@@ -2364,7 +2388,11 @@ fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>, auth: &str)
         Some(t) => t,
         None => return,
     };
-    let red = if filter_enabled() { active_redactor() } else { None };
+    let red = if filter_enabled() {
+        active_redactor()
+    } else {
+        None
+    };
     let outgoing = match red {
         Some(r) => transform_content(&body, "messages", &|s| r.redact(s)),
         None => body.clone(),
@@ -2390,7 +2418,11 @@ fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>, auth: &str)
             Err(_) => match std::env::var("HOME") {
                 Ok(h) => format!("{h}/projects/omegaflow"),
                 Err(_) => {
-                    reply(stream, 500, "HOME and OMEGAFLOW_REPO absent - cannot locate the redactor");
+                    reply(
+                        stream,
+                        500,
+                        "HOME and OMEGAFLOW_REPO absent - cannot locate the redactor",
+                    );
                     return;
                 }
             },
