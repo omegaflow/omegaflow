@@ -57,7 +57,7 @@
           "rat": "allow"
         },
         "bash": {
-          "*": "ask",
+          "*": "deny",
           "cargo check*": "allow",
           "cargo fmt --*": "allow",
           "cargo build -p *": "allow",
