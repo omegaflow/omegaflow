@@ -123,6 +123,25 @@ function teaching(seg: string): string | null {
   return null
 }
 
+// Nur-Anzeige-Flags der content-Suche; ändern den Suchraum nicht.
+const AS_DISPLAY = ["--lines", "--files", "--max-mb", "--max", "--skip", "--binary", "--count", "--case", "--include"]
+
+// `archive_search <kw>` ohne `--root` und ohne Modus-Flag liest die Platte ab $HOME.
+// Erlaubt ist: `--root <dir>` (lokal, begrenzt) ODER irgendein Modus-Flag
+// (Netz-Arm `--all`/`--brave`/…, Pfade `--index`, Historie `--git`, `--mft`, `--stats`).
+function archive_search_bare(seg: string): string | null {
+  const b = bareToken(seg)
+  if (!(b === "archive_search" || b.startsWith("archive_search "))) return null
+  const toks = b.split(/\s+/).slice(1)
+  if (toks.some((t) => t === "--root" || t.startsWith("--root="))) return null
+  const mode = toks.some((t) => {
+    const name = t.split("=")[0]
+    return name.startsWith("--") && !AS_DISPLAY.includes(name)
+  })
+  if (mode) return null
+  return "`archive_search <kw>` ohne `--root` durchsucht ganz $HOME (Datei-Inhalte) → `--root <dir>` (lokal, begrenzt) oder ein Netz-Modus (`--all`/`--brave`/…) bzw. `--index`/`--git`/`--mft`."
+}
+
 export default async () => {
   return {
     "tool.execute.before": async (input: { tool: string }, output: { args: Record<string, unknown> }) => {
@@ -145,6 +164,8 @@ export default async () => {
       for (const seg of segments(cmd)) {
         const msg = teaching(seg)
         if (msg) throw new Error(msg)
+        const bareAs = archive_search_bare(seg)
+        if (bareAs) throw new Error(bareAs)
         // `sread` ohne Fenster auf einer großen Datei → fenstern.
         const b = bareToken(seg)
         if ((b === "sread" || b.startsWith("sread ")) && !/--offset\b/.test(b) && !/--limit\b/.test(b)) {
