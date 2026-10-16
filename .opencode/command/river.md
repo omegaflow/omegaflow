@@ -12,6 +12,8 @@ agent: line
 
 **Arbeite den Dispatch in EINEM Pass** — kein Planungstheater, keine Liste, kein Consent-Stopp für Bekanntes. Lies nur die Stellen, die die Aufgabe nennt (`sread <datei> --offset --limit`).
 
+**Vor jeder NET-Suche: `bin/where <begriff>`** — prüfe zuerst, was das Haus schon hat (Register · Übergaben · gefahrene Suchspills · Archiv · docs). Nicht neu suchen, was schon da ist.
+
 **Kein Dispatch für dich?** → arbeite **deine offenen Punkte, so viele wie möglich in diesem Pass** (Sub-Agenten tragen ihren eigenen Kontext — die Liste ist keine Bürde). **Hör nicht nach einem Punkt auf.**
 
 **Ende jedes Passes:** `register_lookup --orphan-docs` — deine offenen Waisen in deine Übergabe falten, bis keine mehr bleibt.

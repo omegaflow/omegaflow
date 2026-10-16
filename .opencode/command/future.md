@@ -11,6 +11,8 @@ agent: line
 
 **Sonst nichts** — kein Planungstheater, kein `ls` / `find`, keine Umgebungs-Prüfung, kein Repo-Lesen. Lies **nur** die Post und die vier Handover. Was du nicht weißt, ist `pending`.
 
+**Vor jeder NET-Suche: `bin/where <begriff>`** — prüfe zuerst, was das Haus schon hat (Register · Übergaben · gefahrene Suchspills · Archiv · docs).
+
 **Übergabe zuletzt:** nur das OFFENE (≤ 1 KiB); der Commit trägt es.
 
 **Grenze:** **Commit UND Push sind deine Hand** (eigene Pfade, Englisch). Nur der **Send** (Mail) und jeder dritt-wirksame Akt bleiben die Operator-Hand (per-Akt-Wort). Architektur/Ethik → der Rat. Werkzeug-Karte bei Bedarf: `docs/concepts/tools-map.md`.
