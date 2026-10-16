@@ -71,6 +71,13 @@ awk -F'=' '
     # Sicherheit: NUR echte Schwärz-Zeilen (rechts ein <PLATZHALTER>). Eine Zeile,
     # deren rechte Seite KEIN Platzhalter ist, würde den rechten Wert ÜBERALL
     # einsetzen (der beobachtete Bug) — sie wird übersprungen, nie angewandt.
+    # Nach dem Tausch muss LINKS der echte Wert stehen und RECHTS ein <Platzhalter>.
+    # Eine Zeile, deren LINKE Seite ein Platzhalter ist, würde eine gerade
+    # geschwärzte Stelle WIEDER in einen echten Wert verwandeln (der beobachtete Bug).
+    if (substr(a,1,1)=="<") {
+      print "private_read: skipped a map line whose left side is a <placeholder> (line " NR ")" > "/dev/stderr"
+      next
+    }
     if (substr(b,1,1)!="<") {
       print "private_read: skipped a map line whose right side is not a <placeholder> (line " NR ")" > "/dev/stderr"
       next
