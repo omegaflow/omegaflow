@@ -445,6 +445,20 @@ fn point_format_gaps(content: &str) -> Option<Vec<String>> {
         .unwrap_or(lines.len());
     let section = &lines[start + 1..end];
     let mut gaps = Vec::new();
+    let points = section
+        .iter()
+        .filter(|l| l.trim_start().starts_with("### "))
+        .count();
+    let has_content = section.iter().any(|l| !l.trim().is_empty());
+    if has_content && points == 0 {
+        gaps.push(
+            "the open carries no point — every open point is a `### name` with Status/Trigger/Lage/Blockade/Braucht, so the count is visible"
+                .to_string(),
+        );
+    }
+    if points > 10 {
+        gaps.push(format!("{points} open points (cap 10) — close them, do not hide them"));
+    }
     let mut current: Option<(&str, Vec<&str>)> = None;
     for line in section {
         if let Some(name) = line.trim_start().strip_prefix("### ") {
@@ -786,6 +800,25 @@ mod tests {
         let gaps = point_format_gaps(content).unwrap();
         assert_eq!(gaps.len(), 1);
         assert!(gaps[0].contains("lage unstamped"), "{:?}", gaps);
+    }
+
+    #[test]
+    fn flags_open_without_points() {
+        let content = "## Offen\n\n- **GIC-2** pending · **Platzierung** offen · **Apertur** 3\n";
+        let gaps = point_format_gaps(content).unwrap();
+        assert!(gaps[0].contains("no point"), "{:?}", gaps);
+    }
+
+    #[test]
+    fn flags_more_than_ten_points() {
+        let mut content = String::from("## Offen\n\n");
+        for i in 0..11 {
+            content.push_str(&format!(
+                "### P{i}\n- **Status:** eigen\n- **Trigger:** now\n- **Lage:** offen (gemessen 2026-10-16 via `rg`)\n- **Blockade:** keine\n- **Braucht:** `bin/where:19`\n\n"
+            ));
+        }
+        let gaps = point_format_gaps(&content).unwrap();
+        assert!(gaps.iter().any(|g| g.contains("cap 10")), "{:?}", gaps);
     }
 
     #[test]
