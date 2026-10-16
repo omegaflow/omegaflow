@@ -492,7 +492,7 @@ impl Weberin {
                 (None, None) => None,
             };
             let mpc = t.mpc.as_ref().and_then(|r| mpcorb::state_at(r, jd));
-            let inpop_woven = inpop_map.is_some_and(|m| m.contains_key(&t.name));
+            let inpop_woven = self.major_bodies.contains(&t.name);
             let inpop = if inpop_woven {
                 match inpop_map {
                     Some(m) => body_barycenter_position(&t.name, tdb, m),
