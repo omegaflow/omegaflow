@@ -1,51 +1,6 @@
 #!/bin/sh
-# agent_sandbox — a bubblewrap cage for the public agents. STRICT ALLOW-LIST.
-#
-# POSITIVE LIST: inside this namespace ONLY these are visible —
-#   (1) the public repo   /home/johannes/projects/omegaflow
-#   (2) the work yard     /home/johannes/projects/omegaflow-work
-#   (3) the minimal program base to run (programs, libraries, DNS, certs)
-#   (4) the net           (shared, not unshared)
-# Everything else under /home — private documents, other projects, ~/.ssh, ~/.gpg —
-# is NOT MOUNTED: it does not exist in here. A path outside the cage cannot be
-# sniffed, not even by mistake.
-#
-# DELIBERATELY NOT MOUNTED (each was an exposure):
-#   /run        — the per-user runtime sockets (ssh-agent, gpg-agent, keyring,
-#                 desktop services). Only an EMPTY /run (tmpfs) is created, plus
-#                 the systemd stub-resolver so /etc/resolv.conf still resolves.
-#   /proc       — a fresh, PID-UNSHARED procfs: no host processes, no foreign
-#                 environ/fd. (`--unshare-pid`)
-#   /tmp/opencode — a shared host directory. /tmp is a pure tmpfs instead.
-# The program base (/usr /bin /sbin /lib /lib64 /etc) stays: it is read-only and
-# carries no private content — you cannot run without it.
-set -eu
-root=/home/johannes/projects/omegaflow
-work=/home/johannes/projects/omegaflow-work
-# The public token only: GH_TOKEN from .secrets.local (name read, value passed to
-# the cage's env — never printed). It is scoped to omegaflow/omegaflow; the full
-# account login (~/.config/gh) stays OUT of the cage, in the private house.
-ghtok="$(sed -n 's/^GH_TOKEN=//p' "$root/.secrets.local" 2>/dev/null | sed -n '1p')"
-exec bwrap \
-  --ro-bind /usr /usr \
-  --ro-bind-try /lib /lib \
-  --ro-bind-try /lib64 /lib64 \
-  --ro-bind-try /bin /bin \
-  --ro-bind-try /sbin /sbin \
-  --ro-bind /etc /etc \
-  --tmpfs /run \
-  --ro-bind-try /run/systemd/resolve /run/systemd/resolve \
-  --unshare-pid \
-  --proc /proc \
-  --dev /dev \
-  --tmpfs /tmp \
-  --bind "$root" "$root" \
-  --bind "$work" "$work" \
-  --ro-bind-try /home/johannes/.cargo /home/johannes/.cargo \
-  --ro-bind-try /home/johannes/.rustup /home/johannes/.rustup \
-  --ro-bind-try /home/johannes/.local/bin /home/johannes/.local/bin \
-  --ro-bind-try /home/johannes/.gitconfig /home/johannes/.gitconfig \
-  --setenv GH_TOKEN "$ghtok" \
-  --share-net \
-  --chdir "$root" \
-  /bin/bash "$@"
+# agent_sandbox — der öffentliche Käfig. Ein Zeiler auf den EINEN Apparat
+# (bin/sandbox, Profil `public`): öffentliches Repo + Werkstatt eingehängt,
+# das private Haus NICHT (es existiert hier drin nicht), .secrets.local überdeckt.
+# Die Einhänge-Listen stehen an einer Stelle: bin/sandbox. Hier nur der Name.
+exec "$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)/sandbox" public "$@"

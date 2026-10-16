@@ -1,11 +1,12 @@
 #!/bin/sh
-# private_shell — the private house's shell: declares the roots AND raises the walls.
+# private_shell — das private Haus: setzt die Wurzeln und öffnet den privaten Käfig.
 #
-# The private editor must use the SAME tools as the public one — the same form-guard
-# plugin and the same permission block. Without them the private session falls back to
-# raw bash (cat/tail/ls/grep) and breaks on shapes the public house forbids. This wrapper
-# copies the plugin and merges the permission block from the repo (it runs outside the
-# cage), then opens the shell in the private root.
+# Die Grenze steht in `bin/sandbox` (Profil `private`): private Haus UND öffentliches
+# Repo eingehängt — Einweg. Hier nur die Wurzeln und der geteilte Lehre-Plugin.
+#
+# Der frühere „Merge" ist gefallen: er wollte den öffentlichen Permission-Block in die
+# private Config schreiben und lief dabei ins Leere (`jaq -s` schluckt auf 3.1.1 jede
+# Datei einzeln → `.[1]` = null → Fehler → `|| true`). Und die Listen gibt es nicht mehr.
 set -eu
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 priv="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}"
@@ -18,27 +19,4 @@ export OMEGAFLOW_WORK="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
 mkdir -p "$priv/.opencode/plugin"
 cp -f "$root/.opencode/plugin/form-guard.ts" "$priv/.opencode/plugin/form-guard.ts" 2>/dev/null || true
 
-if [ -f "$priv/opencode.json" ] && [ -f "$root/opencode.json" ]; then
-  merged="$(jaq -s '
-    .[0] as $p | .[1] as $r
-    | $p * {
-        permission: ($r.permission * {
-          bash: ($r.permission.bash + {
-            "bin/task_dispatch *": "allow",
-            "bin/rat_dispatch *": "allow",
-            "bin/private_read *": "allow",
-            "bin/future_spiegel *": "allow"
-          })
-        })
-      }
-  ' "$priv/opencode.json" "$root/opencode.json" 2>/dev/null || true)"
-  if [ -n "$merged" ]; then
-    printf '%s\n' "$merged" > "$priv/opencode.json"
-  fi
-fi
-
-cd "$priv"
-if [ "$#" -gt 0 ]; then
-  exec /bin/bash "$@"
-fi
-exec /bin/bash
+exec "$root/bin/sandbox" private "$@"
