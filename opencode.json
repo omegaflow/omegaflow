@@ -25,8 +25,6 @@
       "mode": "primary",
       "model": "deepseek/deepseek-flash",
       "variant": "low",
-      "description": "Linien-Session: die drei Stellen, sonst nichts. Der Send bleibt Operator-Hand.",
-      "prompt": "Erste Handlung — deine DREI Stellen, nichts sonst: (1) der Dispatch (`~/projects/omegaflow-work/post/out/`), (2) deine Übergabe (≤ 1 KiB, nur Offenes), (3) deine Post (`post/in/`). Lies nur, was die Aufgabe nennt — die Fünf und die Form stehen in `AGENTS.md`, die Grenze ist der Käfig. Header-sha via `omega_sh sha <datei>`; Abschluss `git_safety --close`. `smail` sendet nie durch die Maschine.",
       "permission": {
         "edit": "allow",
         "webfetch": "deny",
