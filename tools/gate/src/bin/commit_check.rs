@@ -171,7 +171,12 @@ fn handover_cap_violation(path: &str, content: &str) -> Option<String> {
 
 fn git_head_content(path: &str) -> Option<String> {
     let out = Command::new("git")
-        .args(["-c", "core.quotePath=false", "show", &format!("HEAD:{path}")])
+        .args([
+            "-c",
+            "core.quotePath=false",
+            "show",
+            &format!("HEAD:{path}"),
+        ])
         .output()
         .ok()?;
     if !out.status.success() {

@@ -1,7 +1,10 @@
 use omegaflow::archivar::pds4::{XElem, parse_xml};
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::archivar::{LeapSeconds, embedded_lsk, parse_iso_tdb, pds4_img, vnrd};
-use omegaflow::cdn::{CDN_PART_MAX_BYTES, GITHUB_RELEASE_ASSET_MAX_BYTES, format_parts_manifest, part_name, parts_manifest_name, upload_release};
+use omegaflow::cdn::{
+    CDN_PART_MAX_BYTES, GITHUB_RELEASE_ASSET_MAX_BYTES, format_parts_manifest, part_name,
+    parts_manifest_name, upload_release,
+};
 use std::path::{Path, PathBuf};
 
 const IMG_BYTES: usize = pds4_img::LINE_COUNT * pds4_img::SAMPLE_COUNT * pds4_img::ELEMENT_BYTES;
@@ -144,7 +147,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 
 fn usage() {
     eprintln!(
-         "usage: venus_radar_compiler [--input <product.img>]... [--dir <directory>]... --output <series.bin> [--ci-mode]\n\
+        "usage: venus_radar_compiler [--input <product.img>]... [--dir <directory>]... --output <series.bin> [--ci-mode]\n\
          one invocation bundles the level-2 Venus radar products into one VNRD asset:\n\
          t = the label epoch (TDB), v = the whole-map mean, comp = inc (0) | ocp (1) | scp (2)"
     );
@@ -166,7 +169,7 @@ fn upload_vnrd(tag: &str, path: &str, bytes: &[u8]) -> Result<(), String> {
         _ => {
             return Err(format!(
                 "{path}: carries no directory — the part upload stays unraised"
-            ))
+            ));
         }
     };
     let total = sha256_hex(bytes);
@@ -178,7 +181,10 @@ fn upload_vnrd(tag: &str, path: &str, bytes: &[u8]) -> Result<(), String> {
         std::fs::write(&ppath, chunk)
             .map_err(|e| format!("{}: write void ({e})", ppath.display()))?;
         let pstr = ppath.to_str().ok_or_else(|| {
-            format!("{}: name is not utf-8 — the part upload stays unraised", ppath.display())
+            format!(
+                "{}: name is not utf-8 — the part upload stays unraised",
+                ppath.display()
+            )
         })?;
         if !upload_release(tag, pstr) {
             return Err(format!("{tag}/{pname}: the CDN part upload returned void"));
@@ -190,10 +196,15 @@ fn upload_vnrd(tag: &str, path: &str, bytes: &[u8]) -> Result<(), String> {
     std::fs::write(&mpath, manifest)
         .map_err(|e| format!("{}: write void ({e})", mpath.display()))?;
     let mstr = mpath.to_str().ok_or_else(|| {
-        format!("{}: name is not utf-8 — the manifest upload stays unraised", mpath.display())
+        format!(
+            "{}: name is not utf-8 — the manifest upload stays unraised",
+            mpath.display()
+        )
     })?;
     if !upload_release(tag, mstr) {
-        return Err(format!("{tag}/{asset}: the CDN manifest upload returned void"));
+        return Err(format!(
+            "{tag}/{asset}: the CDN manifest upload returned void"
+        ));
     }
     eprintln!(
         "{tag}/{asset}: {} B over the GitHub asset limit — split into {} part(s) + manifest",
