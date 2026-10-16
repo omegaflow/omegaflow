@@ -64,6 +64,9 @@ jobs:
                  "gh release upload celestrak.org failed. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
       - name: Riss-Gate — the SABER route must reach cdaweb (green or a named riss)
+        # `always()`: the gate measures cdaweb even when the CelesTrak fetch above
+        # returned void — the SABER route's reachability is never silently skipped.
+        if: always()
         run: |
           # The SABER route ends at cdaweb (the field data host); the TIMED worldline
           # above comes from CelesTrak. The gate measures the cdaweb host: green closes
