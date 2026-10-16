@@ -68,6 +68,13 @@ awk -F'=' '
       t=a; a=b; b=t
       print "private_read: swapped a reversed map line (real and placeholder were inverted)" > "/dev/stderr"
     }
+    # Sicherheit: NUR echte Schwärz-Zeilen (rechts ein <PLATZHALTER>). Eine Zeile,
+    # deren rechte Seite KEIN Platzhalter ist, würde den rechten Wert ÜBERALL
+    # einsetzen (der beobachtete Bug) — sie wird übersprungen, nie angewandt.
+    if (substr(b,1,1)!="<") {
+      print "private_read: skipped a map line whose right side is not a <placeholder> (line " NR ")" > "/dev/stderr"
+      next
+    }
     print length(a)"\t"a"\t"b
   }
 ' "$map" | sort -rn | while IFS="$(printf '\t')" read -r _ real ph; do
