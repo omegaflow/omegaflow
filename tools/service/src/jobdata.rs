@@ -10,7 +10,14 @@ const JOB_KEYWORDS: [&str; 12] = [
 ];
 
 const CI_REPO: &str = "omegaflow/omegaflow";
-const LOG_DIRS: [&str; 3] = ["data/reports", "state/reports", "/tmp/opencode"];
+
+fn log_dirs() -> Vec<String> {
+    let mut v = vec!["data/reports".to_string(), "state/reports".to_string()];
+    if let Ok(tmp) = std::env::var("OMEGAFLOW_TMP") {
+        v.push(tmp);
+    }
+    v
+}
 
 pub struct UnitJob {
     pub name: String,
@@ -272,8 +279,8 @@ pub fn log_hint(keys: &[String], journal: Option<&str>) -> Option<String> {
         }
     }
     for key in keys {
-        for dir in LOG_DIRS {
-            if let Some(line) = newest_dir_match(dir, key) {
+        for dir in log_dirs() {
+            if let Some(line) = newest_dir_match(&dir, key) {
                 return Some(line);
             }
         }
@@ -285,8 +292,8 @@ pub fn proc_progress(exec: Option<&str>, name: &str) -> Option<Progress> {
     let year = exec.and_then(extract_year);
     let has_c2 = exec.map(|e| e.contains("--confound2")).unwrap_or(false);
     let variants = key_variants(name);
-    for dir in LOG_DIRS {
-        let entries = match fs::read_dir(dir) {
+    for dir in log_dirs() {
+        let entries = match fs::read_dir(&dir) {
             Ok(e) => e,
             Err(_) => continue,
         };

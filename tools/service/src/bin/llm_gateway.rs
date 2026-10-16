@@ -345,13 +345,6 @@ fn read_redact_file(name: &str) -> Option<String> {
             }
         }
     }
-    if let Ok(home) = std::env::var("HOME") {
-        if let Ok(text) =
-            fs::read_to_string(format!("{home}/projects/omegaflow/data/redact/{name}"))
-        {
-            return Some(text);
-        }
-    }
     None
 }
 
