@@ -7,7 +7,7 @@
 #     xclip -o | bin/crambler
 #
 # Es ist DERSELBE Schwärzer wie im Gateway (bin/private_read — Stufe 1 deterministisch,
-# Stufe 2 optional). Nur zum Hineinkopieren von Hand. Läuft im Terminal des OPERATORS:
+# einstufig). Nur zum Hineinkopieren von Hand. Läuft im Terminal des OPERATORS:
 # der Agent-Käfig hat keinen Zugang zum privaten Haus.
 set -eu
 here="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"

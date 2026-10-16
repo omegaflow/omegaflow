@@ -1,12 +1,7 @@
 #!/bin/sh
 # private_read — the redactor, in the operator's order:
 #   Stage 1 — deterministic (patterns + map): the wall. Runs always, on the machine.
-#   Stage 2 — the Mistral check (via the local gateway): it sees the ALREADY-redacted
-#             text and replaces only what stage 1 missed (a name without a shape, a
-#             contact, a device id). It sits BETWEEN the redactor and the reader, so
-#             even its logging carries placeholders, not the original.
-# Stage 2 runs only when OMEGAFLOW_REDACT_MODEL is set (default: a small Mistral).
-# If the gateway is closed (paid gate) or unreachable, stage 1's output is returned as is.
+#   Stage 2 (the model check) is REMOVED — nothing leaves this machine.
 #
 # It must run OUTSIDE the cage: the cage rightly hides the private house from the
 # public agent's shell. So it is launched by the operator (their terminal) or by the
@@ -31,11 +26,6 @@ map="$priv/redact.map"
 filter="$(mktemp)"
 mapscript="$(mktemp)"
 trap 'rm -f "$filter" "$mapscript"' EXIT
-
-# ---- Stage 2 config (the Mistral check) ----
-gateway="${OMEGAFLOW_GATEWAY:-http://127.0.0.1:1621/v1/chat/completions}"
-model="${OMEGAFLOW_REDACT_MODEL:-}"
-prompt='Dieser Text ist BEREITS geschwärzt: Personen, Adressen, Kontakte und Kennungen stehen als Platzhalter wie <NAME>, <ADDR>, <TEL>, <EMAIL>, <DEVICE>, <CONTACT>. Finde NUR NOCH die Reste, die übersehen wurden — Personennamen (auch einzelne Vor- oder Nachnamen), Adressen, Telefonnummern, Mailadressen, Konten-, Geräte- und Netz-Kennungen — und ersetze sie durch dieselben Platzhalter. Lass die vorhandenen Platzhalter und den übrigen Text WÖRTLICH unverändert. Gib NUR den Text zurück — keine Erklärung, keine Anführungszeichen.'
 
 # ---- Stage 1: the patterns ----
 cat > "$filter" <<'SED'
