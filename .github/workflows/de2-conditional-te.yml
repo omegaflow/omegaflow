@@ -1,0 +1,61 @@
+name: de2-conditional-te
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      bin_seconds:
+        description: 'common bin width in seconds (DE-2 and AE are averaged into it)'
+        required: false
+        type: string
+        default: '300'
+      max_lag:
+        description: 'lag sweep in bins, 1..max_lag'
+        required: false
+        type: string
+        default: '3'
+      surr:
+        description: 'ARX surrogate draws per TE cell'
+        required: false
+        type: string
+        default: '50'
+permissions:
+  contents: read
+env:
+  RUSTFLAGS: -D warnings
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Fetch the registered DE-2 CSV and the WDC AE bin
+        run: |
+          set -euo pipefail
+          mkdir -p data/cdaweb.gsfc.nasa.gov data/wdc.kugi.kyoto-u.ac.jp
+          curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
+            -o data/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv \
+            'https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv'
+          echo 'c128daa832b1fb14a749d019fff8bbc66f136702bd2783559191912355ac0067  data/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv' | sha256sum -c -
+          curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
+            -o data/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin \
+            'https://github.com/omegaflow/sources/releases/download/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin'
+      - name: Run the conditioned TE (both directions, raw vs AE-conditioned)
+        run: |
+          {
+            echo "SHA $(git rev-parse HEAD)"
+            echo "BIN_SECONDS ${{ inputs.bin_seconds }} MAX_LAG ${{ inputs.max_lag }} SURR ${{ inputs.surr }}"
+            cargo run --release -p omegaflow-measure --bin de2_conditional_te -- \
+              --bin-seconds '${{ inputs.bin_seconds }}' \
+              --max-lag '${{ inputs.max_lag }}' \
+              --surr '${{ inputs.surr }}'
+          } > de2-conditional-te.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: de2-conditional-te
+          path: de2-conditional-te.txt
