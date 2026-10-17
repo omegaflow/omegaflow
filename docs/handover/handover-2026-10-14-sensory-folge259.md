@@ -3,7 +3,7 @@
   session: Sensory-Folge 259
   class: handover
   date: 2026-10-14
-  sha256: bd550beb26cae0ab5649297fe5bae3008953775c42cbcf1fa51268f497cf51b6
+  sha256: fea4641ff66c325e828a90a209488e0cd18473edb7c6c00931695415156001ae
   status: live
 -->
 # Sensory — nur Offenes. Punkt = **Trigger / Lage / Blockade / Braucht**; Bindung in der Zeile.
@@ -11,7 +11,6 @@
 - BLE-HR-Reader (PENDING `external-state.md:41`) gebaut, Live-Lauf am Gerät nur nach Operator-Wort; Polar H10: FIT nn=0, Live-BLE `NotSupported` → Future-Queue; DEMETER verlässt das Gerät nie. Register `state/zustand/*`, `wartend.φ`; privat `~/projects/omegaflow-personal`.
 - Träger: Sensor-Riss orphan-docs-Marker-Kollision (Gate `tools/register/src/bin/register_lookup.rs:31`: Kanon-Vokabel `pending`/`offen` als „offen" gezählt) + **Rat-Stand R4** (5 Sitze, 4 Positionen; zwei einige Befunde), Momentwert `56` (Schwelle 53–62) — `docs/surveys/survey-2026-10-16-orphan-docs-marker-kollision.md`.
 - Träger: Härtefälle-Survey (Operator-Auftrag) — Sonden request-only **1/5 offen** (Cassini, geerntet); Redistributions-Declines (RouteViews BY-vs-BY-SA-Riss); Gated China (**D18000 keine keyless Route** — Korrektur); C/NOFS-NWM **absent** (Absage), offene Alternative DE-2; MODVOLC-Collection-6-Host **tot** — `docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md`.
-- Träger: DE-2 Ion↔Neutral-Kopplung (Operator-Auftrag; an Mountain abgegeben) — r=+0,256 (Tag 0,358), Haus-TE **beidseitig bei allen Lags** (Richtung dreht mit dem Lag) — `docs/surveys/survey-2026-10-17-de2-ion-neutral-kopplung.md`.
 ## Offen
 ### ox64-m2c — PINE64, LZ473049629CN · wartend · eigen
 - **Trigger:** Zustellung. **Lage:** (2026-10-16, DHL live) Zoll abgeschlossen, DE, **Zustellung erwartet Sa 17.10.** **Blockade:** Zoll durch. **Braucht:** abwarten; `dhl.de …piececode=LZ473049629CN` (live; `chinapostaltracking` rendert AJAX nicht).
