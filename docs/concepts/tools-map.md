@@ -2,7 +2,7 @@
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
   date: 2026-10-17
-  sha256: 3223ca9e660b18943fff545095b1534e8183f09772248fc4dc8e5a21b5a56ec0
+  sha256: 932bd609ad46e39be8f9cae8996283d1ebe26ab353500c6523de4255d3951dd3
   status: live
   see-also: AGENTS.md
 -->
@@ -98,7 +98,7 @@ die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --h
 | `--crossref` | 3,48 s | | `--zenodo` | 11,6 s (101 Zeilen) |
 | `--openalex` | 10,8 s (101 Zeilen) | | `--supermag` | 3,4 s Daten / 0,54 s Inventory |
 | `--pubmed` | — (neu) | | `--europepmc` | — (neu) |
-| `--psychporta` | — (neu, ES-POST) | | `--all` / `--wide` | Σ der Keyword-Modi (88; `--help` = Kanon) — letzte Stufe, nie der erste Zug · `--wide` = dieselbe Leiter mit Stopp **400** statt 20 (die gehaltenen Arme ziehen); `bin/all_wide` = dieselbe Breite |
+| `--psychporta` | — (neu, ES-POST) | | `--all` / `--wide` | Σ der Keyword-Modi (88; `--help` = Kanon) — letzte Stufe, nie der erste Zug · `--wide` = dieselbe Leiter mit Stopp **400** statt 20 (die gehaltenen Arme ziehen) |
 | `--awmf` | — (neu, API-Key) | | `--cochrane` | — (neu, via Europe PMC) |
 | `--mwmbl` | 0,78 s (neu, keyless JSON, kein Gate) | | | |
 | `--clinicaltrials` | — (neu) | | `--openfda` | — (neu) |
@@ -158,8 +158,8 @@ die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --h
   gelesen**, die Vorschau ist nie das Ergebnis. Eine stille Kappung („top 5", „excerpt") als
   Grundlage eines Befunds ist eine ungemessene Behauptung = Fabrikation (`AGENTS.md`).
   `--all` hält nach **20** Ergebniszeilen; **`--wide`** hebt die Schwelle auf **400** (die
-  gehaltenen Arme ziehen), `OMEGAFLOW_ALL_STOP` überschreibt beide. `bin/all_wide` trägt dieselbe Breite
-  für das Release-Binary, kein zweiter Modus.
+  gehaltenen Arme ziehen), `OMEGAFLOW_ALL_STOP` überschreibt beide. `bin/all_wide` ist
+  gestrichen (2026-10-17) — `--wide` ist der eine Weg, kein zweiter Modus.
 - `archive_search --consensus <query>` — Consensus-Literatursuche (`api.consensus.app/v1/search`,
   `CONSENSUS_API_KEY`); `title`/`doi`/`publish_year`/`citation_count`/`study_type`/`takeaway`.
   Gemessen 2026-10-08: liefert echte Literatur (Titel/DOI/Zitat/Studientyp/Takeaway).
