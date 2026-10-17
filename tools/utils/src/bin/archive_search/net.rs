@@ -4015,11 +4015,37 @@ pub fn run_lines_max(
     out: Option<&str>,
     max: usize,
 ) -> Vec<String> {
-    let lines = run_lines_dispatch(mode, query, env, out, max);
+    let mut lines = run_lines_dispatch(mode, query, env, out, max);
+    annotate_declared(&mut lines, env);
     if mode != "all" {
         log_query(mode, query, &lines, max);
     }
     lines
+}
+
+fn annotate_declared(lines: &mut [String], env: &HashMap<String, String>) {
+    for line in lines.iter_mut() {
+        if !line.contains("absent from .secrets.local") {
+            continue;
+        }
+        let Some(rest) = line.split("pending — ").nth(1) else {
+            continue;
+        };
+        let Some(names) = rest.split(" absent").next() else {
+            continue;
+        };
+        let declared: Vec<&str> = names
+            .split('/')
+            .map(str::trim)
+            .filter(|name| env.get(*name).is_some_and(|value| value.is_empty()))
+            .collect();
+        if !declared.is_empty() {
+            line.push_str(&format!(
+                " — declared on the host ({}): the gate is covered, do not ask for the key",
+                declared.join("/")
+            ));
+        }
+    }
 }
 
 fn log_query(mode: &str, query: &str, lines: &[String], max: usize) {
@@ -5843,5 +5869,19 @@ mod tests {
         assert_eq!(resolve_stop_threshold(Some(400), Some("50")), 400);
         assert_eq!(resolve_stop_threshold(None, Some("50")), 50);
         assert_eq!(resolve_stop_threshold(None, Some("not-a-number")), 20);
+    }
+
+    #[test]
+    fn a_declared_but_empty_key_says_the_gate_is_covered() {
+        let mut env = HashMap::new();
+        env.insert("BASE_API_KEY".to_string(), String::new());
+        let mut lines = vec!["pending — BASE_API_KEY absent from .secrets.local/.env".to_string()];
+        annotate_declared(&mut lines, &env);
+        assert!(lines[0].contains("gate is covered"), "{}", lines[0]);
+
+        let mut unknown =
+            vec!["pending — NASA_ADS_TOKEN absent from .secrets.local/.env".to_string()];
+        annotate_declared(&mut unknown, &env);
+        assert!(!unknown[0].contains("gate is covered"), "{}", unknown[0]);
     }
 }
