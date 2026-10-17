@@ -1,11 +1,13 @@
 #!/bin/sh
-# all_wide — alias for `archive_search --wide`.
+# all_wide — `archive_search --wide` for the released binary.
 #
-# The width is one flag now: `--wide` is `--all` with the stop threshold raised
-# to 400 result lines, so the arms the default --all holds back (base, datacite,
+# The width is one flag: `--wide` is `--all` with the stop threshold raised to
+# 400 result lines, so the arms the default --all holds back (base, datacite,
 # re3data, pangaea, figshare, crossref, github, ia-search, sourcegraph, jina,
-# exa, linkup …) actually pull. This wrapper stays as the shell entry point the
-# permission rules know; it is the same call as `archive_search --wide`.
+# exa, linkup …) actually pull. This wrapper carries the same width through the
+# env override the released binary already knows, so it works before the next
+# tools-latest release ships the flag. It is the shell entry the permission
+# rules know; `archive_search --wide` is the same width.
 #
 # Usage: all_wide <keyword>... [--root <dir>]... [archive_search flags]
 set -eu
@@ -18,4 +20,5 @@ for a in "$@"; do
       ;;
   esac
 done
-exec "$root/bin/archive_search" "$@" --wide
+stop="${OMEGAFLOW_ALL_WIDE_STOP:-400}"
+OMEGAFLOW_ALL_STOP="$stop" exec "$root/bin/archive_search" "$@" --all
