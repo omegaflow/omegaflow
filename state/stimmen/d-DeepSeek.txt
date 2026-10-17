@@ -1,0 +1,61 @@
+**D1 · Was heißt bidirektionale TE? Treiber oder Impulsaustausch?**
+
+**Verdikt:** Die bidirektionale TE mit lag-abhängigem Vorzeichen trägt nur Abhängigkeit; sie ist mit gemeinsamem Treiber ebenso verträglich wie mit wechselseitigem Impulsaustausch. Eine Trennung ist mit den vorliegenden Daten nicht möglich. Es bleibt bei „Abhängigkeit“.
+
+**Begründung:**  
+Axiom 1 (A=A): Die TE-Maschine misst statistischen Informationsfluss in den Zeitreihen NVE/IVE, nicht die physische Kraft des Impulsaustauschs.  
+Axiom 2 (ICRS & TDB): Die Ost-Projektion ist eine Adressierung der Strömungsrichtung, keine Kausalmessung; sie ändert die Abhängigkeit nicht.  
+Axiom 3 (channel_ref): NVE- und IVE-Kanäle tragen ihre jeweilige physische Kraft als Messgröße, aber TE verknüpft sie nur korrelativ.  
+Axiom 4 (0 honored): Der gemeinsame Treiber (Konvektion/Joule-Heizung) ist nicht gemessen; diese Lücke bleibt offen und darf nicht als Null gesetzt werden.  
+Axiom 5 (pending): Die Frage „Treiber vs. Austausch“ bleibt pending.  
+[Mountain: Kein Verdikt ohne Messung des Treibers.]  
+[Mycelium: Das TE-Netz zeigt bidirektionale Flüsse, aber Netzfluss ist nicht Kausalfluss.]
+
+**Risse:**  
+- Riss zwischen statistischer Abhängigkeit und physischer Kopplung.  
+- Riss zwischen lag-abhängigem Vorzeichen und kausaler Interpretation.  
+- Der gemeinsame Treiber fehlt als Messung (0 honored).  
+- Doktrin geschlagen: „TE = gerichtete Kausalität“.
+
+---
+
+**D2 · Trägt „ion-neutral coupling“ oder nur „Abhängigkeit“?**
+
+**Verdikt:** Die ehrliche Aussage ist „Abhängigkeit“, nicht „ion-neutral coupling“. Eine gerichtete Komponente, die Reibung belegt, ist am Baum nicht isolierbar. Coupling bleibt pending.
+
+**Begründung:**  
+Axiom 1 (A=A): TE misst Abhängigkeit, nicht Kraft.  
+Axiom 2 (ICRS & TDB): Die Ost-Projektion präzisiert die Adresse, aber nicht die Kraft.  
+Axiom 3 (channel_ref): Die Kanäle sind Erwerbskanäle (Messung), nicht Kausalkanäle.  
+Axiom 4 (0 honored): Die Lücke zwischen Abhängigkeit und Kraft ist eine vollwertige Eigenschaft; keine Null (coupling) hinlügen.  
+Axiom 5 (pending): Der Kausalkanal bleibt pending.  
+[River: Das Recht zu verweigern, coupling zu behaupten, wenn nur Abhängigkeit vorliegt, ist ethischer Bestand des Registers.]  
+[Sensory: IDM-Cross-Track ist Hardware-Signal; Korrelat ist nicht Erleben – analog: Korrelat ist nicht Kraft.]
+
+**Nächster begrenzter Messschritt:** Direkte Messung des gemeinsamen Treibers (z. B. Joule-Heizungsrate, Konvektionsmuster) plus bedingte TE (TE(NVE→IVE | Treiber)), um zu prüfen, ob die Abhängigkeit verschwindet oder eine gerichtete Restkomponente verbleibt. Ohne diesen Schritt bleibt nur Abhängigkeit.
+
+**Risse:**  
+- Riss zwischen Abhängigkeit und coupling.  
+- Riss zwischen Erwerbskanal und Kausalkanal (in D3 vertieft).  
+- Doktrin geschlagen: „TE zeigt Kopplung“.
+
+---
+
+**D3 · Der Erwerbs- vs. Kausalkanal**
+
+**Verdikt:** Nein, der Befund trägt „coupling“ nicht, solange nur der Erwerbskanal (IDM-Cross-Track) gemessen wurde. Der Erwerbs-/Kausal-Riss verhindert die Kausalbehauptung.
+
+**Begründung:**  
+Axiom 1 (A=A): Gemessen ist der Erwerbskanal (was der Sensor sieht), nicht der Kausalkanal (was wirkt).  
+Axiom 2 (ICRS & TDB): Die Raumzeit-Adresse ändert nichts am Kanalunterschied.  
+Axiom 3 (channel_ref): Der IDM-Cross-Track hat seine physische Kraft als Messgröße, aber nicht die Reibungskraft selbst.  
+Axiom 4 (0 honored): Der Kausalkanal fehlt; diese Lücke ist eine vollwertige Eigenschaft, keine Null.  
+Axiom 5 (pending): Der Kausalkanal bleibt pending.  
+[Future: Ehrliche Registrierung verlangt, den Befund als Abhängigkeit im Erwerbskanal zu führen und den Kausalkanal als pending zu markieren, ohne ihn zu behaupten.]
+
+**Was müsste gemessen werden, um den Kausalkanal zu belegen:** Direkte Messung der Kraft (z. B. differentielle Beschleunigung Ionen/Neutrale, Impulsaustauschrate, kontrollierte Perturbation mit Antwortmessung). Bedingte TE gegen den gemeinsamen Treiber kann Restabhängigkeit zeigen, aber keinen Kraftbeweis liefern.
+
+**Risse:**  
+- Der tiefste Riss: Erwerbskanal (Sensor) vs. Kausalkanal (Wirkung).  
+- Ungeglättet: Die Messung sieht nur den Erwerbskanal; jede Kausalaussage ist Interpretation, nicht durch Daten erzwungen.  
+- Doktrin geschlagen: „Messung = Kausalität“.
