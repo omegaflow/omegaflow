@@ -5,16 +5,33 @@
     "AGENTS.md"
   ],
   "model": "deepseek/deepseek-flash",
-  "small_model": "deepseek/deepseek-flash",
   "default_agent": "line",
+  "permissions": [
+    { "action": "*", "resource": "*", "effect": "ask" },
+    { "action": "read", "resource": "*", "effect": "allow" },
+    { "action": "edit", "resource": "*", "effect": "allow" },
+    { "action": "shell", "resource": "archive_search *", "effect": "allow" },
+    { "action": "shell", "resource": "sgrep *", "effect": "allow" },
+    { "action": "shell", "resource": "git push *", "effect": "ask" },
+    { "action": "subagent", "resource": "taucher", "effect": "allow" },
+    { "action": "subagent", "resource": "*", "effect": "deny" },
+    { "action": "webfetch", "resource": "*", "effect": "deny" },
+    { "action": "websearch", "resource": "*", "effect": "deny" }
+  ],
+  "agents": {
+    "line": {
+      "mode": "primary"
+    },
+    "taucher": {
+      "mode": "subagent"
+    }
+  },
   "watcher": {
     "ignore": [
       "target/**",
       "**/*.φ",
-      ".continue/**",
       "docs/**",
       "data/**",
-      "cache/**",
       "state/**",
       "**/*.log",
       "**/*.fits",
@@ -26,54 +43,5 @@
       "**/*.gz",
       "**/*.bin"
     ]
-  },
-  "agent": {
-    "rat": {
-      "mode": "subagent",
-      "model": "deepseek/deepseek-flash",
-      "variant": "low",
-      "permission": {
-        "edit": "deny",
-        "task": "deny"
-      }
-    },
-    "line": {
-      "mode": "primary",
-      "model": "deepseek/deepseek-flash",
-      "variant": "low",
-      "permission": {
-        "edit": "allow",
-        "webfetch": "deny",
-        "websearch": "deny",
-        "task": {
-          "*": "deny",
-          "taucher": "allow",
-          "rat": "allow"
-        }
-      }
-    },
-    "taucher": {
-      "mode": "subagent",
-      "model": "deepseek/deepseek-flash",
-      "variant": "low",
-      "permission": {
-        "edit": "deny",
-        "task": "deny"
-      }
-    }
-  },
-  "logLevel": "WARN",
-  "permission": {
-    "edit": "allow",
-    "webfetch": "deny",
-    "websearch": "deny"
-  },
-  "lsp": true,
-  "compaction": {
-    "auto": true
-  },
-  "tool_output": {
-    "max_lines": 80,
-    "max_bytes": 4096
   }
 }

@@ -6,7 +6,6 @@ omegaflow.wasm
 .opencode/*
 !.opencode/agent/
 .opencode/agent/*
-!.opencode/agent/rat.md
 !.opencode/agent/taucher.md
 !.opencode/command/
 .opencode/command/*
@@ -16,7 +15,6 @@ omegaflow.wasm
 !.opencode/command/future.md
 !.opencode/command/mountain.md
 !.opencode/command/mycelium.md
-!.opencode/command/rat.md
 !.opencode/command/river.md
 !.opencode/command/sensory.md
 # TUI-Plugin: die `_new`-Befehle (/new + Linien-Prompt in einer Session) — versioniert wie die Commands.
