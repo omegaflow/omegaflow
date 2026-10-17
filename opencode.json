@@ -64,15 +64,15 @@
     }
   },
   "mcp": {
-    "chrome-devtools": {
-      "type": "local",
-      "command": [
-        "bin/chrome-devtools-mcp",
-        "--autoConnect"
-      ],
-      "cwd": ".",
-      "enabled": true,
-      "timeout": 180000
+    "servers": {
+      "chrome-devtools": {
+        "type": "local",
+        "command": [
+          "bin/chrome-devtools-mcp",
+          "--autoConnect"
+        ],
+        "cwd": "."
+      }
     }
   },
   "permission": {
