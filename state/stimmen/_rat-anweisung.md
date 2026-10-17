@@ -1,51 +1,60 @@
 # Rat-Anweisung — wie der Rat zu fahren ist (gemessen 2026-10-17)
 
 **Wann lesen:** nur beim Fahren einer Rat-Frage — nicht in jedem Turn.
-**Warum hier:** jede Future-Linie, die einen Rat baut, öffnet `state/stimmen/` (wo das Formular liegt)
-und findet diese Datei daneben. Kein Raten mehr.
+**Wer entscheidet:** **der Operator** — welche Sitze, wann gefahren wird. Die Maschine bereitet vor.
+Kein automatischer Lauf, kein Executable. Der Operator ist dabei.
+**Warum hier:** jede Linie, die einen Rat baut, öffnet `state/stimmen/` (wo das Formular liegt) und
+findet diese Datei daneben. **Der kanonische Weg steht hier — es gibt keinen anderen.**
 
 ---
 
-## 1 — Die Sitze und ihre Routen (gemessen an den APIs, 2026-10-17)
+## 1 — Die Sitze, Routen und Eigenschaften (gemessen an den APIs, 2026-10-17)
 
-**API-Sitze** (direkt gegen die Anbieter, Keys in `~/projects/omegaflow/.secrets.local`):
+**API-Sitze** — direkt gegen die Anbieter, Keys in `~/projects/omegaflow/.secrets.local`:
 
-| Sitz | Route | Modell-ID | Key |
+| Sitz | Route | Modell-ID | Kontext | Vision | in/out per M |
+|---|---|---|---|---|---|
+| **Mistral Large 4** | `api.mistral.ai` | `mistral-large-4` | — | ✓ | **$0,50 / $1,50** |
+| **GLM-5.3** | `api.deepinfra.com` | `zai-org/GLM-5.3` | 1 048 576 | — | $0,90 / $4,00 |
+| **DeepSeek V4 Pro** | `api.deepinfra.com` | `deepseek-ai/DeepSeek-V4-Pro` | 1 048 576 | — | $1,30 / $2,60 |
+| **Qwen3.8-Max** | `api.deepinfra.com` | `Qwen/Qwen3.8-Max` | 256 000 | — | $1,65 / $4,95 |
+| **Kimi K3** | `api.deepinfra.com` | `moonshotai/Kimi-K3` | 1 048 576 | ✓ | $2,85 / $14,25 |
+| **Opus 5.5** | `api.deepinfra.com` | `anthropic/claude-opus-5-5` | 1 000 000 | ✓ | $4,00 / $20,00 |
+
+**Nicht über Mistral fahren:** Mistral führt zwar `zai-glm-5-3`, aber **ohne** `reasoning_effort` —
+GLM kappt dort (`finish: length`, content leer). **GLM nur über DeepInfra.**
+**DeepSeek direkt** (`api.deepseek.com`) ist **teurer** als DeepInfra (off-peak $0,66/$1,98 gegen
+$1,30/$2,60 peak-ähnlich) — und dachte bei derselben Frage **3 406** reasoning-tokens (DeepInfra 1 233).
+
+**UI-Sitze** (Browser-Bridge `browser.*`, dieselben Tabs wie das OpenCode-Panel) — **frei**:
+
+| Sitz | URL | Modell im Wähler | Falle |
 |---|---|---|---|
-| GLM-5.3 | `api.deepinfra.com/v1/openai/chat/completions` | `zai-org/GLM-5.3` | `DEEPINFRA_API_KEY` |
-| Qwen3.8-Max | `api.deepinfra.com/v1/openai/chat/completions` | `Qwen/Qwen3.8-Max` | `DEEPINFRA_API_KEY` |
-| DeepSeek V4 Pro | **`api.deepseek.com/v1/chat/completions`** (direkt) | `deepseek-v4-pro` | `DEEPSEEK_API_KEY` |
-| Mistral Large 4 | `api.mistral.ai/v1/chat/completions` | `mistral-large-4` | `MISTRAL_API_KEY` |
-| **Opus 5.5** (Flagship, Reasoning) | `api.deepinfra.com/v1/openai/chat/completions` | `anthropic/claude-opus-5-5` | `DEEPINFRA_API_KEY` |
-| **Kimi K3** | `api.deepinfra.com/v1/openai/chat/completions` | `moonshotai/Kimi-K3` | `DEEPINFRA_API_KEY` |
+| **Sakana Fugu Max** | `chat.sakana.ai` | **„Fugu Max"** (Effort High) | **nicht „Namazu"** — das ist (`sakana-namazu`, „For Japanese") ein **anderer** Eintrag. Fugu **orchestriert** (routet auf andere Modelle, auch Namazu). Login nötig. |
+| **Lumo 2.0 Max** | `lumo.proton.me/guest` | „Lumo 2.0 Max" (anonym) | Senden per **Enter** (kein Send-Button) — `browser.press` nach `focus()`. |
 
-**UI-Sitze** (Browser-Bridge `browser.*`, dieselben Tabs wie das OpenCode-Panel):
+## 2 — Der Reasoning-Level (der größte Fehler: er wurde nie gesetzt)
 
-| Sitz | URL | Modell im Wähler | Fallen |
-|---|---|---|---|
-| **Sakana Fugu Max** | `chat.sakana.ai` | **„Fugu Max"** (Effort High) | **nicht „Namazu"** wählen — das ist ein **anderer** Eintrag (`sakana-namazu`, japanisch) |
-| Lumo 2.0 Max | `lumo.proton.me/guest` | „Lumo 2.0 Max" (anonym) | Senden per **Enter** (kein Send-Button) |
+**Kein früherer Rat-Lauf setzte je einen Level** — alle fuhren Default → **abgeschnittene Antworten**
+(`finish: length`) bei GLM, DeepSeek, Kimi; Qwen-Timeout.
 
-## 2 — Der Reasoning-Level (der größte Fehler des Tages)
+**Live gemessen (alle Stufen akzeptiert/abgelehnt):**
 
-**Kein einziger Rat-Lauf setzte je einen Level** — alle fuhren Default. Folge: **abgeschnittene
-Antworten** (`finish: length`) bei GLM, DeepSeek, Kimi; Qwen-Timeout.
-
-| Modell | Parameter | Werte | Default | **so fahren** |
+| Modell | erlaubte `reasoning_effort` | Default | wirken? | **so fahren** |
 |---|---|---|---|---|
-| DeepSeek V4 Pro | `reasoning_effort` | low/high/max | high | **low** |
-| Kimi K3 | `reasoning_effort` | none/low/high/max | **max** | **low** |
-| Opus 5.5 | `reasoning_effort` | low… | — | **low** |
-| Qwen3.8-Max | `reasoning_effort` | — | — | **low** |
-| GLM-5.3 · Mistral | (reasoning-Modell) | — | — | wie geliefert |
+| **DeepSeek V4 Pro** | `none` `low` `medium` `high` `max` | `high` | **ja, stark** (27→2268 reasoning-tok) | `low` |
+| **GLM-5.3** | `none` `low` `medium` `high` `max` | (max) | ja | `low` |
+| **Qwen3.8-Max** | `none`…`max` | — | ja (schwach) | `low` |
+| **Opus 5.5** | `none`…`max` | — | (n. einzeln gemessen) | `low` |
+| **Kimi K3** | `none` `low` `high` `max` | **`max`** | ja | `low` |
+| **Mistral Large 4** | **nur `none`, `high`** | — | — | **`none`** |
 
-**`low` liefert vollständig. `high`/`max` kappt (ins Reasoning). `none` dünnt** (Kimi `none`:
-645 out-tok ohne Verdikt-Kopf — zu wenig für eine Urteilsfrage). **Also `low`.**
-Body-Feld: `"reasoning_effort":"low"` (OpenAI-Form, direkt neben `max_tokens`).
+**`low` liefert vollständig. `high`/`max` kappt (Reasoning frisst das Budget). `none` dünnt** (Kimi
+`none`: 645 out-tok, kein Verdikt-Kopf — zu wenig für eine Urteilsfrage). **Mistral kennt kein `low`.**
+Body-Feld: `"reasoning_effort":"low"` (OpenAI-Form, neben `max_tokens`).
+**`max_tokens` ≥ 6000** — die Antworten lagen bei 1–5 k out.
 
-**`max_tokens` hoch genug:** die Antworten der acht Sitze lagen bei ~1–5 k out. **6000** ist sicher.
-
-## 3 — Der Aufruf (Muster)
+## 3 — Der Aufruf (Muster: nur die Frage, nicht der Haus-Kontext)
 
 ```sh
 DK=$(grep "^DEEPINFRA_API_KEY=" ~/projects/omegaflow/.secrets.local|cut -d= -f2-|tr -d '"')
@@ -57,32 +66,32 @@ curl -s https://api.deepinfra.com/v1/openai/chat/completions \
   > x-Qwen.json
 ```
 
-**Nur die Frage senden** — nicht den Haus-Kontext. Das Formular (3–4 kB) ist der ganze Input.
-Das hält die Kosten klein (~1.100 in-Tokens) und ist der Sinn der API-Route.
-
 ## 4 — Die Ablage
 
 - **Fragebogen:** `state/stimmen/<datum>-<thema>-formular.md` (oder `/tmp/opencode/<thema>.txt`).
 - **Rohantwort je Sitz:** `state/stimmen/<datum>-<thema>-<sitz>.txt`.
 - **Sammlung (Bilanz + Risse):** `state/stimmen/<datum>-rat-<thema>.md`.
-- **Zwei UI-Antworten** aus dem Browser: `document.body.innerText`, ab Antwortbeginn bis zum
-  Footer („Generated content may be inaccurate" / „Namazu High" / „Lumo kann Fehler machen").
+- **UI-Antworten:** `document.body.innerText`, ab Antwortbeginn bis zum Footer („Generated content may
+  be inaccurate" / „Lumo kann Fehler machen").
 - **`finish` je Sitz prüfen.** `length` = abgeschnitten → mit `low` wiederholen; `reasoning_content`
-  ist der Rettungsweg, wenn `content` leer ist.
+  rettet, wenn `content` leer ist.
 
-## 5 — Kosten je Frage (DeepInfra/Mistral, gemessen — nur die Frage)
+## 5 — Kosten je Frage (gemessen — nur die Frage, ~1,1 k in)
 
-| Sitz | in | out | **Frage** |
+| Sitz | in | out | **Frage (≈2,5 k out)** |
 |---|---|---|---|
-| Kimi K3 | $2,85/M | $14,25/M | ~$0,04 |
-| Opus 5.5 | $4,00/M | $20,00/M | ~$0,054 (low) |
-| GLM / Qwen / DeepSeek / Mistral | ~$0,2–1,7/M | ~$1–5/M | ~$0,02–0,08 |
+| Mistral Large 4 | $0,50/M | $1,50/M | **~$0,004** |
+| GLM-5.3 | $0,90/M | $4,00/M | ~$0,011 |
+| DeepSeek V4 Pro | $1,30/M | $2,60/M | ~$0,008 |
+| Qwen3.8-Max | $1,65/M | $4,95/M | ~$0,014 |
+| Kimi K3 | $2,85/M | $14,25/M | ~$0,039 |
+| Opus 5.5 | $4,00/M | $20,00/M | ~$0,054 |
+| **Fugu Max · Lumo** | **frei** | **frei** | **$0** |
 
-Der **Cap** der Session ist **0,15 USD/Burn** — vier API-Sitze ≈ **$0,15–0,18**; **Opus 5.5 + Kimi
-zusammen ≈ $0,09**.
+Der **Cap** ist 0,15 USD/Burn; **Mistral + GLM + DeepSeek + Qwen zusammen ≈ $0,04**.
 
 ---
 
-**Und die Sitz-Namen-Falle, die 20 Minuten kostete:** Sakana = **Fugu Max** (`fugu-max`, Login
-nötig, „Orchestrates diverse models"); „Namazu" (`sakana-namazu`) ist ein **anderer** Modell-Eintrag
-im selben Wähler. Fugu **orchestriert** — es routet auf andere Modelle (auch Namazu).
+**Der kanonische Weg, in einem Satz:** Frage ins Formular → Operator wählt die Sitze → je Sitz ein
+direkter API-Aufruf (`reasoning_effort` gesetzt) bzw. der UI-Tab → Rohantwort + Sammlung nach
+`state/stimmen/`. **Kein `rat_dispatch`, kein Gateway, kein anderer Weg.**
