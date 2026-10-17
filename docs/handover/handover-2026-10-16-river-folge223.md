@@ -2,7 +2,7 @@
   title: Handover — River-Folge 224 (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: 548e72f1400ecac2418579bdc4cbdf60410c13633c84822b67ecc2270cdde671
+  sha256: a5a8dcbc4fa3cb6c6805d7b1869be7223c40ce58208b168eca8ef9cb8691567a
   status: live
 -->
 # Handover — River-Folge 224 (2026-10-16)
@@ -11,9 +11,7 @@
 
 ## Offen — eigen
 - P7.1 `K` — DE-2 da; `K` aus Overlap+subset.
-- `weight_i` — LOO-Werkzeug bauen; `38952440951`.
 - AACGM < 2010 — Koeffizienten (Fenster 2010–2024).
-- Frühwarnkette — `newell→abk` cte **silent** (`newell_chain.te` 3,06e-3 @ 28800 s, p 0,99).
 - Rätsel — arbeits-geb.
 - Flyby — termin 2026-11-01.
 
