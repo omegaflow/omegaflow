@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: cb57b73035193235d4a0bcdb3588e6c72c02e8c83e893af468059a30f733a8bd
+  sha256: bde68c51a31e9755a6bfdd488e806c548b28c184f998986656ef81bf3c4c82d6
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -182,16 +182,41 @@ epm2021.bsp` = **200, 154 278 912 B** (61,7 MB im 40-s-Fenster); `quasar.ipa.nw.
 connection refused. Der Register-Block `weberin_verdicts` führt EPM2021 längst als `origin`
 (`terms Open-Licence-2.0`). Das `pending` maß den alten Host.
 
-**Jeder Punkt nachgeprüft (Katalog + Inhalt, 2026-10-17, dritter Pass):**
-- `osdr.nasa.gov` **re-homed**: `/` und `/bio/` → `science.nasa.gov/biological-physical/data/` (**200**, OSDR dort 9×); die alten API-Pfade `/geode-py/ws/api/*` und `/bio/api` = **404**. Der Dosimetrie-Feed bleibt **ungemessen** — „200" hieß nur „Redirect", nicht „API lebt".
-- `pskreporter.info` liefert **XML** (`<receptionReports>` mit Frequenz/Mode) — **Registry** (Empfangsreports), kein Feld am Punkt; `reversebeacon.net/raw_data/` **200** (HTML). Eignungsfrage, keine Abwesenheit.
-- `dods.wh.gov`: `--verdict` = direkt **keine Antwort** · Proton **absent** · Wayback **ohne Snapshot** → absent.
-- **Viking:** `PSPG-00011` = „Data Identified but not Received" (Tracking); **`PSPG-00457`** = „Ready for Offline Distribution" (SDDPT Radio Science) → nicht leer, **offline**.
-- **Voyager:** `PSNO-00007` = „Ready for Offline Distribution" (PDS, Imaging); Tracking bleibt request-only. **Mariner 10** `PSCM-00009` = „Ready for Offline Distribution" (offline, nicht online).
-- **CEIC D18000:** keine Keyword-Route (OpenAIRE/DataCite **absent**); die **Zenodo-Subsets** `10.5281/zenodo.7112529` / `…7855090` = **200** (Figuren, nicht die Reihe).
-- **LSST/Rubin:** TAP `data.lsst.cloud/api/tap` = **401**; offene Alternative **Fink** `api.lsst.fink-portal.org/api/v1/schema` = **200**.
-- **C/NOFS:** NSSDCA `spacecraft=c/nofs` = **absent**; die `absent`-Aussage ruht auf dem UT-Dallas-Brief, nicht auf dem Katalog.
-- **Juno pre-EFB:** NSSDCA führt viele Juno-PDS-Volumes, das pre-EFB-ODF **nicht** — die Aussage bleibt spezifisch.
+**Jeder Punkt nachgeprüft (Katalog + Inhalt + Leiter, 2026-10-17, dritter Pass):**
+- **OSDR:** API **lebt** — `/geode-py/ws/studies` (Liste) und `/geode-py/ws/repo/search?term=dosimetry`
+  (**123** Treffer, u. a. `OS-166` „Space Radiation Dosimetry On Board Cosmos 936", `OS-161`
+  „HZE-Particle Dosimetry", `OS-513` „Environmental Radiation Measurements on Mir"). Aber die Treffer
+  sind **Experiment-/Studien-Records** (bioscience), **kein** Roh-Zeitreihen-Feed: `DOSTEL` **0**,
+  `Liulin` **0**, `TEPC` **1** (nicht Dosimetrie). Die Prämisse „OSDR trägt ISS-Dosimetrie" ist als
+  **Roh-Feed nicht belegt**; die alte `/bio/api`-Route ist **404**, der Redirect geht auf
+  `science.nasa.gov/biological-physical/data/`.
+- **pskreporter:** Query-API `retrieve.pskreporter.info/query` liefert **`<receptionReports>`**
+  (Empfangsrecords: Callsign, Frequenz, Mode) — **Registry**, kein Feld am Punkt. **reversebeacon:**
+  Telnet-Port **7000 offen**, `raw_data/` 200 (HTML) — ebenfalls Empfangsreport-Netz. Eignungsfrage.
+- **dods.wh.gov:** `--verdict` = direkt **keine Antwort** · Proton **absent** · Wayback **ohne
+  Snapshot** (auch Timemap leer) → **absent**, nicht nur DNS.
+- **C/NOFS NWM:** NSSDCA `spacecraft=c/nofs` und `CINDI` = **absent**; **CDAWeb** `pub/data/cnofs/cindi/`
+  = **200**, führt aber **nur IVM** (Ionendrift, 500 ms CDF/HDF), **kein NWM**. Die `absent`-Aussage
+  ist damit auch am Archiv belegt, nicht nur am Brief.
+- **Juno pre-EFB:** PDS `jnogrv_0001` (**Outer Cruise**, post-EFB) ODF beginnt bei **`2013284`**
+  (2013-10-11); `jnogrv_1001` ist „Jupiter, science phase from July 2016". Ein pre-EFB-ODF-Volume
+  existiert **nicht** — bestätigt.
+- **Viking:** `PSPG-00011` = „Data Identified but not Received" (Tracking); **`PSPG-00457`** =
+  „Ready for Offline Distribution" (SDDPT Radio Science); **`PSPA-00015`** = „Doppler and Range
+  Tracking Data", „Ready for Offline Distribution" → **offline**, nicht online.
+- **Mariner 10:** `PSCM-00009` = „Ready for Offline Distribution"; die Teilroute ist **live** —
+  `…/red_tele_signal_data_venus_occlt/` führt **9 TARs** (`PSPA-00316_DD0296xx`), HEAD **200**,
+  **19 619 840 B**, `application/x-tar`, Range-Kopf `PSPA-00316_…dir/`. Vollkorpus request-only.
+- **Voyager:** Saturn closed-loop **live** (V1 14 TARs, V2 6 TARs, Univac-1108); PDS
+  `voyager_rss_raw` = **Jupiter (V1/V2) + Uranus (V2 49xr)** open-loop, **kein** Cruise/Post-Saturn
+  closed-loop; `PSNO-00007` = „Ready for Offline Distribution" (PDS, Imaging). Cruise/Post-Saturn
+  bleibt request-only.
+- **CEIC D18000:** Zenodo-Suche `q=D18000` = **0**; OpenAIRE/DataCite = **absent**; die **D18000-Seiten**
+  auf `data.earthquake.cn` sind **200** (Katalog sichtbar, 重力/Gravity/D18000), der Download verlangt
+  **注册/登录** → **Registrierungs-Gate, keine fehlende Quelle**. Zenodo `7112529`/`7855090` = **200**
+  (Figuren-Subsets).
+- **LSST/Rubin:** TAP `data.lsst.cloud/api/tap` = **401** (`WWW-Authenticate: Basic realm="data.lsst.cloud"`);
+  offene Alternative **Fink** `api.lsst.fink-portal.org/api/v1/schema` = **200**.
 
 **Der stille Eimer „nicht gemessen":** **50** Register-Blöcke tragen keine `terms`-Zeile
 (überwiegend Routen, Manifeste, PDFs, JSON — nicht jede ist eine Quelle). Jede ist eine offene
