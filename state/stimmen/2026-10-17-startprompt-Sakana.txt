@@ -1,6 +1,6 @@
 # Fugu Max — Rat: der Start-Prompt, 2026-10-17
 
-**Seat:** `chat.sakana.ai` · Modell **Fugu Max** (`fugu-max`, **eingeloggt** — vor dem Senden verifiziert). **Ablage:** Rohantwort, wörtlich.
+**Seat:** `chat.sakana.ai` · Modell **Fugu Max** (`fugu-max`, **eingeloggt** — vor dem Senden verifiziert). **Ablage:** Rohantwort, wörtlich (vollständig).
 
 ---
 
@@ -23,15 +23,56 @@ for l in $LINES; do xfer list --line $l --open; ls -1 post/in/*-an-$l*.md; done
 bin/task_dispatch <linie> "<aufgabe>" <stelle>
 ```
 
-Die Zuordnung ist **eins zu eins, nicht analog**: „Status"→`--addressed`/`--fired` · „Post"→`xfer
---open` + `post/in/*-an-*` · „dispatch"→`task_dispatch` (der **Akt**, kein Kommando).
+**Die Zuordnung ist eins zu eins, nicht analog:** „Status erfassen"→`--addressed`/`--fired` (wer
+adressiert mich / was ist fällig) · „Handover"→`xfer --open` · „Post"→`ls post/in/*-an-*` · „je Linie
+eine Aufgabe dispatchen"→**`bin/task_dispatch` (der eine Akt — kein Lookup)**.
 
-**Fugus Riss — die Uhr und die Menge**
+*„Keine Axiome, kein cat, kein ls bin/, kein head task_dispatch. Die fünf Axiome stehen in der
+Regel-Datei und werden bei jedem Turn gelesen; sie im Start-Prompt zu wiederholen ist eine zweite Kraft
+für dieselbe Sache. **Unter fünf Zeilen fehlt eine Quelle (dann wird gekämmt), über fünf trägt man
+Axiome oder Prosa (dann zahlt man ohne Kraft). Fünf ist hier Boden und Decke zugleich.**"*
 
-- **Adresse ist nicht Empfang.** *„Zwischen zwei Sitzungen feuert ein Trigger, niemand liest ihn."*
-- **Das leere Ergebnis ist nicht eindeutig.** *„`--addressed` leer heißt ‚frei' ODER ‚absent'. Axiom 0
-  verbietet, absent als nichts zu lesen. Der Pull braucht den **Nenner** daneben — wie beim Binning:
-  sichtbarer Nenner, sonst wird aus 0 ein Grün."*
-- **Es fehlt `letzter_eigener_akt` und `naechster_akt_bei`.** *„Ohne sie kann ‚je Linie eine Aufgabe
-  dispatchen' doppelt dispatchen, und keine Linie kann sagen, ob sie frei ist oder nur nicht adressiert
-  wurde."*
+**F2 — reicht der Marker-Lookup?**
+
+**Ja für die Leseseite — unter einer Bedingung. Kein neuer Marker für `post/in`.**
+*„Die Datei `post/in/*-an-<linie>*.md` ist der Marker, und sie ist ein legitimer: **geschrieben von
+`task_dispatch`, also von einem erzeugenden Akt, nicht von einem Namen.** Ein vierter Lookup-Modus für
+`post/in` wäre genau die Haus-Krankheit aus R1–R4 — ein Name, wo schon eine Kraft steht. Dieselbe Klasse
+wie die verworfene Spalte ‚→ Route?'."*
+
+**Die Bedingung:** der Lookup braucht den Liniennamen **wörtlich** — *„ohne `$l` liefern alle drei
+Kommandos nichts zurück, und nichts ist von ‚frei' nicht zu unterscheiden."*
+
+*„Der eigentliche blinde Fleck ist auch nicht `post/in`, sondern **`--fired`**: es setzt voraus, dass
+jemand Trigger schreibt. Schreibt niemand sie, ist `--fired` immer leer — und leer ist doppeldeutig."*
+
+**F3 — die Risse**
+
+1. **Marker zeigen nur, was geschrieben wurde — das Gekämmte ist genau das Nicht-Registrierte.**
+   *„`--orphan-docs` findet 62 Prosa-Docs mit offenen Markern ohne lebende Übergabe. Der Marker-Weg macht
+   die Sitzung blind für genau diese 62 und für alles, was nie einen Marker bekam. **Der Kamm war nicht
+   nur teuer — er war der einzige Zugang zu dem, was kein Marker trägt.** Wird `--orphan-docs` nicht
+   selbst zur Prompt-Zeile, wird der Start-Prompt die **63. Leerstelle**."*
+2. **Keine Uhr — Adresse ist nicht Empfang.** *„`--addressed` liefert einen Block, keinen Zustand. Ohne
+   `pending → gelesen → quittiert` und `naechster_akt_bei` kann der Marker-Weg Vollständigkeit
+   vortäuschen, weil er alle Kommandos grün zurückgibt, während niemand quittiert hat. Bezeichnend:
+   `post/out/<datum>-<linie>-*.md` trägt ein Datum im Namen, die Register-Blöcke tragen keins — **drei
+   von vier Quellen haben keine Uhr**."*
+3. **Leer ist kein Urteil: frei vs absent.** *„Ein leeres Ergebnis kann ‚nichts für dich' heißen — oder
+   falscher Linienname, fehlendes Binary, leerer Pfad. Der Marker-Weg hat kein Feld, das diese zwei
+   trennt. Leer muss als eigener Wert berichtet werden (PENDING/ABSENT), nicht als Nichts."*
+4. **Die Zahl statt der Liste — hier sitzt der eigentliche Riss.** *„‚vier Linien' ist ein
+   **Zählwert, keine Adresse**. Der gemessene Bestand enthält keinen Befehl, der die Menge der Linien
+   nennt. Der Prompt trägt eine **Zahl, wo eine Liste verlangt ist — derselbe Typ Fehler wie Kürzel
+   statt Akt**. Billigste Auflösung: der Start-Prompt trägt die **vier Namen wörtlich**."*
+5. **Der Akt ist kein Lookup.** *„‚je Linie eine Aufgabe dispatchen' ist ein **Schreiben**. Der
+   Marker-Weg deckt die Leseseite vollständig und die **Schreibseite gar nicht**. Und der Inhalt der
+   Aufgabe ist aus keinem Lookup ableitbar — er muss aus dem gemessenen Befund kommen."*
+
+**Fugus Zusatz (vor dem Verdikt):** Es fehlt **`letzter_eigener_akt`** und **`naechster_akt_bei`** —
+*„ohne sie kann ‚je Linie eine Aufgabe dispatchen' doppelt dispatchen, und keine Linie kann sagen, ob
+sie frei ist oder nur nicht adressiert wurde. Die bedingte fünfte Zeile — `ls -1 post/out/*-<linie>*.md`
+— deckt die halbe Lücke; die andere Hälfte ist kein Kommando, sondern ein **Feld**."*
+
+**Der eine Satz:** *„Was der Marker-Weg übersieht: er kann nur zeigen, was jemand **geschrieben** hat —
+und er kann **nicht zeigen, dass niemand geschrieben hat**."*
