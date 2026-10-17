@@ -10,7 +10,7 @@
   "watcher": {
     "ignore": [
       "target/**",
-      "*.φ",
+      "**/*.φ",
       ".continue/**",
       "docs/**",
       "data/**",
