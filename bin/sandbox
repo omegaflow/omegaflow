@@ -39,14 +39,25 @@ fi
 # Das Gerüst + das Profil, als bwrap-Flags (unsere Pfade tragen kein Leerzeichen).
 # public: die Schlüssel-NAMEN als leere Werte sichtbar, nie ein Wert.
 names_file=""
-if [ "$profile" = public ] && [ -f "$root/.secrets.local" ]; then
+src_secrets="$root/.secrets.local"
+if [ ! -f "$src_secrets" ] && [ -f "$priv/.secrets.local" ]; then
+  src_secrets="$priv/.secrets.local"
+fi
+if [ "$profile" = public ] && [ -f "$src_secrets" ]; then
   names_file="$root/target/.secrets.names"
   mkdir -p "$root/target"
   awk -F= '
     /^[[:space:]]*#/ { next }
     /^[[:space:]]*$/ { next }
-    { key = $1; sub(/[[:space:]]+$/, "", key); if (key != "") print key "=" }
-  ' "$root/.secrets.local" > "$names_file"
+    index($0, "=") == 0 { next }
+    {
+      key = $1
+      sub(/[[:space:]]+$/, "", key)
+      val = substr($0, index($0, "=") + 1)
+      sub(/^[[:space:]]+/, "", val)
+      if (key != "" && val != "") print key "="
+    }
+  ' "$src_secrets" > "$names_file"
   chmod 644 "$names_file"
 fi
 
@@ -94,7 +105,7 @@ MOUNTS="$(flags "$profile")"
 # Nur der öffentliche Token — Name gelesen, Wert nur in den Käfig-Env, nie gedruckt.
 # Beide Profile: so ist `gh` im Käfig authentifiziert, ohne dass ~/.config/gh
 # (der volle Konto-Login) eingehängt werden muss.
-ghtok="$(sed -n 's/^GH_TOKEN=//p' "$root/.secrets.local" 2>/dev/null | sed -n '1p')"
+ghtok="$(sed -n 's/^GH_TOKEN=//p' "$src_secrets" 2>/dev/null | sed -n '1p')"
 if [ -n "${ghtok:-}" ]; then
   # shellcheck disable=SC2086
   exec bwrap --setenv GH_TOKEN "$ghtok" $MOUNTS --chdir "$cd_into" /bin/bash "$@"
