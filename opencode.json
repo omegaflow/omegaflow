@@ -38,11 +38,6 @@
       "effect": "deny"
     },
     {
-      "action": "shell",
-      "resource": "git push *",
-      "effect": "deny"
-    },
-    {
       "action": "edit",
       "resource": "AGENTS.md",
       "effect": "deny"
