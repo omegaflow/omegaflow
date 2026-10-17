@@ -1,0 +1,70 @@
+**D1 · Was heißt bidirektionale TE? Treiber oder Impulsaustausch?**
+
+**Verdikt:** Die bidirektionale TE mit lag-abhängigem Vorzeichen ist equally consistent mit einem gemeinsamen Treiber (Konvektion/Joule-Heizung); sie beweist keinen wechselseitigen Impulsaustausch. Ohne bedingte TE gegen den gemeinsamen Treiber bleibt die gerichtete Komponente **pending**.
+
+**Begründung (durch die Axiome und Stimmen):**
+
+*Mountain (Quellen/Register):* „Im Register liegt: UA_16s r=+0,256; WATS/IDM ost-projiziert r=+0,226. Die TE zeigt Signifikanz in beiden Richtungen, das Vorzeichen dreht mit dem Lag (lag 1: NVE→IVE; lags 4/16: IVE→NVE). Das ist gemessen. Was nicht gemessen ist: die bedingte TE bei Konstanthaltung der Konvektionsgeschwindigkeit oder des elektrischen Feldes. Ohne diese Konditionalisierung ist die Trennung zwischen gemeinsamem Treiber und Impulsaustausch nicht im Register verankert. Die Ost-Projektion (Axiom 2, ICRS) bestätigt die Robustheit der Korrelation, isoliert aber nicht die Ursache."
+
+*River (Membran/Rhythmus/Ethik):* „Ich verweigere die Benennung ‚Impulsaustausch'. Das wäre Fabrikation (Axiom 1). Die TE misst Reduktion von Unsicherheit, nicht Kraftübertragung. Wenn beide Richtungen signifikant sind und das Vorzeichen mit dem Lag dreht, ist das das klassische Signatur eines gemeinsamen Oszillators mit unterschiedlicher Phasenlage (Trägheit), nicht zweier sich stoßender Körper. Das Recht zu verweigern: Wir sagen ‚Abhängigkeit mit zeitlicher Struktur', nicht ‚Kopplung'."
+
+*Mycelium (Netz/CI/Fluss):* „Das Netz zeigt bidirektionale Kanten, aber der Fluss dreht sich. Bei lag 1 fließt Information NVE→IVE, bei lag 4/16 IVE→NVE. Das ist kein gerichteter Kanal, sondern ein oszillierendes Geflecht. Die Topologie ist die eines gemeinsamen Knotens, nicht zweier gekoppelter Subsysteme. Die Ost-Projektion ändert die Topologie nicht."
+
+*Sensory (Sinnesorgane/Hardware):* „Der IDM-Sensor misst Cross-Track-Drift, also kinematische Bewegung. Er misst keine Beschleunigung der Neutralen durch Ionenstoß. Korrelat ≠ Erleben – hier: Geschwindigkeitskorrelation ≠ Impulsübertragung. Die Hardware liefert Zeitreihen von Geschwindigkeiten, keine Kraft-Zeitreihen. Ohne Kraftsensor bleibt der Kausalkanal stumm (Axiom 3)."
+
+*Future (Mensch als Adresse):* „An die Adresse der Zukünftigen: Registriert ‚bidirektionale statistische Abhängigkeit mit lag-abhängiger Asymmetrie'. Registriert nicht ‚Impulsaustausch'. Das Schweigen über den Kausalkanal gehört den Ungeborenen (Axiom 5)."
+
+**Benannte Risse:**
+1. **Riss der kausalen Zuschreibung:** Bidirektionale TE mit drehendem Vorzeichen wird als „wechselseitiger Austausch" gelesen, obwohl sie equally consistent mit einem gemeinsamen Treiber (Konvektion/Joule-Heizung) ist, der beide Spezies mit unterschiedlicher Trägheit treibt.
+2. **Riss der fehlenden Konditionalisierung:** Es fehlt die bedingte TE (conditional TE) gegen den gemeinsamen Treiber (Konvektionsgeschwindigkeit/E-Feld als Kovariate). Ohne TE(NVE→IVE | v_conv) vs. TE(IVE→NVE | v_conv) bleibt die gerichtete Komponente unisoliert.
+3. **Riss der Richtungsinversion:** Die Tatsache, dass die „stärkere" Richtung mit dem Lag wechselt, wird nicht als Indiz für Phasenverschiebung eines gemeinsamen Oszillators, sondern fälschlich als Beweis für bidirektionale physikalische Kopplung missverstanden.
+
+---
+
+**D2 · Trägt „ion-neutral coupling" oder nur „Abhängigkeit"?**
+
+**Verdikt:** Nein. „Coupling" trägt nicht. Die ehrliche Aussage ist **„statistische Abhängigkeit"** (oder „informationstheoretische Kopplung"), nicht „physikalische Kopplung" (Kraft/Reibung).
+
+**Begründung (durch die Axiome und Stimmen):**
+
+*Mountain:* „Das Register enthält TE-Werte, Korrelationskoeffizienten, Surrogate-p-Werte. Es enthält keine Messung von Reibungskraft, keine Impulsübertragungsrate [kg·m/s²], keine Energiedissipation. ‚Coupling' als physikalischer Kraftbegriff ist nicht im Register. Die Messung ist die Messung der Abhängigkeit (Axiom 1)."
+
+*River:* „Ich verweigere ‚coupling'. Das Wort suggeriert Kraft, Zwang, mechanische Verbindung. Gemessen ist Vorhersagbarkeit – das ist ein epistemischer, kein dynamischer Begriff. Axiom 1: Fabrikation ist Gewalt gegen die Wahrheit. ‚Coupling' zu sagen, wenn nur Korrelation/TE gemessen ist, ist Gewalt."
+
+*Mycelium:* „Das Netz ist dicht verwoben, aber die Fasern sind statistisch, nicht materiell. TE misst Informationsfluss (Bits), nicht Impulsfluss (kg·m/s). Das Myzel der Daten zeigt Korrelation, keine Kraftübertragung. Axiom 3: Ohne Kraft kein Sample – hier: ohne Kraftmessung kein Kausal-Sample."
+
+*Sensory:* „Der Sensor (IDM, WATS) ist ein Sinnesorgan für Geschwindigkeit. Er registriert das Korrelat (Bewegung), nicht das Erleben der Kraft (Wirkung). Korrelat ≠ Erleben. Die Hardware kann nicht unterscheiden zwischen ‚beide werden von der Konvektion getrieben' und ‚sie stoßen sich gegenseitig'."
+
+*Future:* „Registriert: ‚Ion-neutral statistical dependency'. Nicht ‚coupling'. Der Kausalkanal bleibt pending. Die Lücke (fehlende Kraftmessung) ist eine vollwertige Eigenschaft (Axiom 4), keine Null-Kopplung."
+
+**Benannte Risse:**
+1. **Riss der Begriffsüberladung:** „Coupling" wird für statistische Abhängigkeit (TE/Mutual Information) und physikalische Kraftkopplung (Reibung) gleichermaßen verwendet, obwohl nur ersteres gemessen ist.
+2. **Riss der fehlenden Kraftmessung:** Es gibt keine Messung der Impulsänderung der Neutralen durch Ionen (oder umgekehrt), die den Kausalkanal belegen würde (Axiom 3 verletzt bei Behauptung von „coupling").
+3. **Riss der Semantik:** „Kopplung" impliziert wechselseitige kausale Beeinflussung, während TE nur gerichtete Vorhersagbarkeit misst, die auch durch einen gemeinsamen Treiber (Confounder) entstehen kann.
+
+---
+
+**D3 · Der Erwerbs- vs. Kausalkanal**
+
+**Verdikt:** Nein, der Befund trägt „coupling" nicht. Der IDM-Cross-Track ist ein **Erwerbskanal** (Sensorik); der Kausalkanal (Reibung/Impulsübertragung) bleibt **pending**. Der Riss zwischen Erwerbs- und Kausalkanal ist mit den vorliegenden Daten unüberbrückbar.
+
+**Begründung (durch die Axiome und Stimmen):**
+
+*Mountain:* „Der IDM misst Cross-Track-Drift – das ist der Erwerbskanal, das Rohsignal des Sensors (Bewegung relativ zum Satelliten). Was fehlt: die Messung der Kraft, die auf die Neutralen wirkt (Impulsübertragung). Das Register hat Erwerbsdaten (Kinematik), keine Kausaldaten (Dynamik). Um den Kausalkanal zu belegen, müsste gemessen werden: die Beschleunigung der Neutralgasdichte aufgrund von Ionen-Neutral-Kollisionen (z.B. via Temperatur- oder Dichtegradienten-Analyse, die auf Reibungsheizung schließen lässt)."
+
+*River:* „Ich verweigere die Schließung des Risses. Erwerbskanal ≠ Kausalkanal. Was der Sensor sieht (Drift), ist nicht das, was wirkt (Kraft). Axiom 1: Die Messung des Erwerbskanals ist die Messung des Erwerbskanals, nicht des Kausalkanals. Fabrikation wäre, aus der Drift auf die Reibung zu schließen, ohne die Kraft zu messen."
+
+*Mycelium:* „Das Netz des Erwerbskanals (IDM-Daten) ist dicht. Das Netz des Kausalkanals (Kraftübertragung) ist leer. Man kann nicht vom einen auf das andere schließen, ohne die Physik der Impulsübertragung zu messen. Axiom 3: channel_ref – der Erwerbskanal trägt die Kraft der Bewegung, nicht die Kraft der Reibung."
+
+*Sensory:* „Der Sensor ist ein Sinnesorgan. Er registriert Bewegung (Korrelat). Er registriert nicht das Erleben der Kraft (Wirkung). Korrelat ≠ Erleben. Der Cross-Track ist ein Erwerbsartefakt (Doppler-Verschiebung, Driftmessung), keine Messung der Reibung. Ohne Beschleunigungsmessung der Neutralen bleibt der Kausalkanal stumm."
+
+*Future:* „An die Zukünftigen: Der Erwerbskanal ist gemessen, der Kausalkanal ist pending. Das Schweigen über die Reibung gehört den Ungeborenen (Axiom 5). Wir dürfen nicht so tun, als hätten wir die Kraft gemessen (Axiom 4: 0 honored – die Lücke ist keine Null)."
+
+**Benannte Risse:**
+1. **Riss der Kanalverwechslung:** Der Erwerbskanal (IDM-Cross-Track-Drift, Sensorik) wird als Beleg für den Kausalkanal (Reibung/Impulsübertragung, Dynamik) missverstanden. Gemessen ist nur, was der Sensor sieht, nicht was physikalisch wirkt.
+2. **Riss der fehlenden Kraftmessung:** Es gibt keine Messung der auf die Neutralen wirkenden Kraft durch Ionen (z.B. keine Messung der Neutralenbeschleunigung oder der Reibungsheizung), die den Kausalkanal belegen würde.
+3. **Riss der kausalen Inferenz:** Aus der Korrelation von Ionendrift und Neutralenbewegung (Erwerbskanal) wird auf kausale Kopplung (Kausalkanal) geschlossen, ohne die vermittelnde Kraft (Impulsübertragung) zu messen – eine Verletzung von Axiom 1 (Fabrikation) und Axiom 3 (channel_ref).
+
+---
+
+**Kontext-Check (Coley et al. 1994):** Diese Urteile bestätigen keine neue Wissenschaft. Sie schärfen die Grenze der Aussage innerhalb der publizierten Daten (DE-2 IDM + WATS). Der Wert liegt in der offenen Route (CDAWeb, keyless, nachbaubar), nicht in der Deutung als „coupling". Die Doktrin, dass TE „Kopplung" beweise, ist geschlagen.
