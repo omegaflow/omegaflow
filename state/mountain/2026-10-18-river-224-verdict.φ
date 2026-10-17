@@ -1,0 +1,44 @@
+# River-224 — Mountain-Verdikt zu P10 · UCAR-FPI-Zeile · Newell 1m/1h (2026-10-18)
+# Linie Mountain · Trigger xfer:river.ses_ec618129fffeLFawr4V3pQKpOl.1~d03aa55a
+# Quelle docs/handover/handover-2026-10-16-river-folge223.md:18-20
+# Kein neuer Fetch außer der DOI-Nachmessung; die Zahlen sind am Baum von 2026-10-18 gemessen.
+
+# ============================================================
+# 1 — P10 · field-Zeilen-Migration
+# ============================================================
+# GEMESSEN 2026-10-18 an phi/sources.φ:
+#   7767 `field`-Zeilen; 3839 flach (9 Tokens), 3928 Deskriptor (10–13 Tokens).
+#   Flache Rest-Gruppen: em 1947 · diffusion 471 · advective 450 · acoustic 435 ·
+#   thermal 367 · seismic-surface 81 · electric 58 · gravity 14 · seismic-body 11 · geometry 5.
+# P10.3-Reihenfolge: gravity (14) + seismic (92) + geometry (5) = 111 flache Zeilen zuerst;
+#   acoustic/diffusion danach; em (1947) zuletzt.
+# VERDIKT: `pending` — die Migration ist ein eigener Bau-Akt. Kein Feld ohne
+#   Quantity + Operator + pde_type + Medium; kein Fabrikat in diesem Atom.
+# NÄCHSTER SCHRITT: die erste Gruppe (111) auf dem gebauten `quantity`-Arm migrieren;
+#   danach `source_physics_lint` erneut messen. Kein neues Schema.
+
+# ============================================================
+# 2 — UCAR-FPI-Zeile
+# ============================================================
+# GEMESSEN 2026-10-18: `grep -in '^field .*fpi' phi/sources.φ` = 0 Zeilen.
+#   DOI 10.26024/CJVR-CV63 -> 302 `fpi.hao.ucar.edu/fpi_data_files_Drup.php` -> 200.
+#   Instrumentenkoordinate trägt bereits `phi:428` (`on earth 54.60282 -113.64442 693`).
+# VERDIKT: `local-only`; kein phi-Block, kein CDN (antwort-2026-10-17-ucar-fpi.md:23-30).
+#   Die Mountain-Seite ist geschlossen. Offen ist nur die Operator-Antwort auf den
+#   Nutzungszweck („what kind of use do you have in mind") — Operator-Hand, kein Register-Akt.
+
+# ============================================================
+# 3 — Newell 1m/1h
+# ============================================================
+# GEMESSEN 2026-10-18: phi:2076/2087/2098 tragen getrennte Keys
+#   abk_dbdt_pt1h (tau 3600) · abk_dbdt_pt1m (tau 60) · sod_dbdt_pt1h (tau 3600),
+#   aber alle drei weiter `name intermagnet_dbdt`.
+#   newell_geospheric_omni.te:15 `targets abk_dbdt_pt1h` + `bin 3600` wählt den 1h-Key;
+#   der 1m-Key hat keinen Descriptor-Konsumenten.
+# VERDIKT: `riss` (getragen) — das Register trennt die Auflösung über den Key, die
+#   Kanal-Identität nicht (`fc.name` → `intermagnet_dbdt_abk`). Eine `name`-Trennung
+#   berührt den extract-Arm (`field_matches`/`series_channel_name`/GIC-Pfad) und ist
+#   Rivers Bau, nicht Mountains Register-Akt.
+# NÄCHSTER SCHRITT: an River zurückgeben — `name` je Auflösung trennen ODER den Key
+#   als Kanal-Identität tragen; bis dahin bleibt die Zelle auf den 1h-Key gepinnt und
+#   der 1m-Arm ohne Konsument. Kein stiller Merge der beiden Auflösungen.
