@@ -8343,7 +8343,7 @@ hapi Absolute_VTEC=swarm_absolute_vertical_tec_tecu
 field swarm_absolute_vertical_tec_tecu swarm_absolute_vertical_tec_tecu inverse-square em TECU 86400 0.0 0.0
 
 url https://waldo.world
-terms CDLA-Permissive-1.0 https://doi.org/10.48322/fzcf-f191
+terms CC0-1.0 https://doi.org/10.48322/fzcf-f191
 at earth
 ttl 86400
 
