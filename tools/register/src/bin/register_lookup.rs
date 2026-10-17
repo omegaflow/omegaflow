@@ -2788,26 +2788,36 @@ fn run_dropped(args: &[String]) {
     }
     let content_index = load_commit_content_index(&token_set);
     let register_index = load_register_content_index(&token_set);
+    let unmeasured_only = args.iter().any(|a| a == "--dropped-unmeasured");
     let mut resolved = 0usize;
-    let mut pending = 0usize;
+    let mut no_witness = 0usize;
+    let mut unmeasured = 0usize;
     for p in &points {
-        let git_status = match &p.token {
+        let (git_status, split) = match &p.token {
             Some(token) => {
                 let by_message = commit_token_resolved(token);
                 let touched = by_message == Some(true)
                     || content_index.contains(token)
                     || register_index.contains(token);
                 let status = resolution_status(None, Some(touched));
-                if status == "resolved" {
-                    resolved += 1;
-                }
-                status
+                (status, witness_split(true, touched))
             }
-            None => {
-                pending += 1;
-                "pending"
-            }
+            None => ("pending", witness_split(false, false)),
         };
+        match split {
+            "resolved" => resolved += 1,
+            "no-witness" => no_witness += 1,
+            _ => unmeasured += 1,
+        }
+        if unmeasured_only {
+            if p.token.is_none() {
+                match canonical_point_key(&p.text) {
+                    Some(key) => println!("{}", key),
+                    None => println!("{}:{}", p.n_path, p.lineno),
+                }
+            }
+            continue;
+        }
         if keys_only {
             if p.token.is_some() && git_status != "resolved" {
                 if let Some(key) = canonical_point_key(&p.text) {
@@ -2827,13 +2837,36 @@ fn run_dropped(args: &[String]) {
                 p.persist,
                 git_status
             );
+            match split {
+                "no-witness" => match canonical_point_key(&p.text) {
+                    Some(key) => println!(
+                        "NO-WITNESS\t{}\t{}:{}\t{}",
+                        p.line, p.n_path, p.lineno, key
+                    ),
+                    None => println!(
+                        "NO-WITNESS\t{}\t{}:{}\t{}",
+                        p.line,
+                        p.n_path,
+                        p.lineno,
+                        snippet(&p.text, 80)
+                    ),
+                },
+                "unmeasured" => println!(
+                    "UNMEASURED\t{}\t{}:{}\t{}",
+                    p.line,
+                    p.n_path,
+                    p.lineno,
+                    snippet(&p.text, 80)
+                ),
+                _ => {}
+            }
         }
     }
-    if keys_only {
+    if keys_only || unmeasured_only {
         return;
     }
     if count_only {
-        println!("{}", dropped - resolved - pending);
+        println!("{}", dropped - resolved - unmeasured);
         return;
     }
     let scope = match filter {
@@ -2841,9 +2874,19 @@ fn run_dropped(args: &[String]) {
         None => String::new(),
     };
     println!(
-        "register_lookup --dropped{}: {} pairs, {} candidates, {} dropped, {} commit-resolved, {} pending/unmeasured, persist >= {}",
-        scope, pairs, candidates, dropped, resolved, pending, threshold
+        "register_lookup --dropped{}: {} pairs, {} candidates, {} dropped, {} commit-resolved, {} no-witness, {} unmeasured, persist >= {}",
+        scope, pairs, candidates, dropped, resolved, no_witness, unmeasured, threshold
     );
+}
+
+fn witness_split(has_token: bool, touched: bool) -> &'static str {
+    if touched {
+        "resolved"
+    } else if has_token {
+        "no-witness"
+    } else {
+        "unmeasured"
+    }
 }
 
 fn canonical_open_point_keys(text: &str) -> BTreeSet<String> {
@@ -3436,7 +3479,7 @@ fn run_descoped_check(_args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count] [--changed-since <sha>]   (open points of handover N absent from handover N+1 with no resolving commit in between; --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line; --changed-since <sha> restricts the pairs to handovers changed in the range <sha>..HEAD and the witness log to that range — the diff-scoped CI gate)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --tokens [--fail] [--noecho-fail]   (per entry of every `## An <line>` transport block: XFER `<tok>` echoed|unbeglichen against the owner line's `## Offen` token echo OR a durable FOLDED/CLOSED ledger event, XFER-MANIFEST ok|open for a block carrying `[manifest n=<N> root=<h8>]`, XFER-MISSING for an entry without a token, XFER-NOECHO for a sender that dropped its block without an echo; --fail exits 2 on any unbeglichen/MISSING/MANIFEST-open/NOECHO, --noecho-fail only on MISSING/NOECHO — the CI-runtime gate)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count] [--changed-since <sha>]   (open points of handover N absent from handover N+1 with no resolving commit in between; two measurements are kept apart: absence (NO-WITNESS) and the missing resolving commit (UNMEASURED = no distinctive token at all); --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved and unmeasured points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line; --dropped-unmeasured prints the absent points that carry no distinctive token, one per line; --changed-since <sha> restricts the pairs to handovers changed in the range <sha>..HEAD and the witness log to that range — the diff-scoped CI gate)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --tokens [--fail] [--noecho-fail]   (per entry of every `## An <line>` transport block: XFER `<tok>` echoed|unbeglichen against the owner line's `## Offen` token echo OR a durable FOLDED/CLOSED ledger event, XFER-MANIFEST ok|open for a block carrying `[manifest n=<N> root=<h8>]`, XFER-MISSING for an entry without a token, XFER-NOECHO for a sender that dropped its block without an echo; --fail exits 2 on any unbeglichen/MISSING/MANIFEST-open/NOECHO, --noecho-fail only on MISSING/NOECHO — the CI-runtime gate)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     eprintln!(
         "       register_lookup --compilers   (one line per phi/sources.φ block carrying a compiler: <binary> | <format> | <source-url> | at <anchor>, then a domain/count summary over the format prefix)\n       register_lookup --compilers --no-directive   (tree compilers tools/*/src/bin/*_compiler.rs without a compiler directive: classified by measured channel workflow|register:<file>|variant|pending|unregistered)"
@@ -5309,6 +5352,13 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         assert_eq!(distinctive_token(&tokens), Some("8218f46a".to_string()));
         let words = vec!["der".to_string(), "die".to_string()];
         assert_eq!(distinctive_token(&words), None);
+    }
+
+    #[test]
+    fn witness_split_keeps_absence_and_witness_apart() {
+        assert_eq!(witness_split(true, true), "resolved");
+        assert_eq!(witness_split(true, false), "no-witness");
+        assert_eq!(witness_split(false, false), "unmeasured");
     }
 
     #[test]
