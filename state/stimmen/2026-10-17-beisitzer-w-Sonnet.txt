@@ -1,0 +1,62 @@
+# Urteil
+
+**Verdikt:** Der Vorschlag (Fugu + Lumo + Kimi + Sonnet + Mistral, ≈ $0,03) ist **eine Person zu groß**. Minimal tragend sind **vier**: Fugu, Lumo, Kimi, Mistral. Sonnet wird nicht gestrichen, sondern **zur Rolle degradiert, die kein eigener Sitz sein muss**. Opus bleibt als bedingter Fünfter.
+
+## F1: Wie viele Sitze?
+
+**Antwort: 4 (2 frei + 2 API), nicht 2, nicht 3.**
+
+**Begründung aus dem Befund:**
+- Die Kern-Aussage trägt jeder Sitz. Sie ist also kein Auswahlkriterium, sondern die Grundlinie, und sie ist gratis mitgeliefert.
+- Die Risse sind **von verschiedener Art**:
+  - **Messung gegen den Bestand** (Fugu: Deckung 98,1 %; Lumo: 1.087 Slots; Kimi: Kernel-Dominanz),
+  - **Begriffsschnitt** (Mistral: `Sample` vs. `Messung`).
+- Die zwei freien UI-Sitze liefern schon zwei Messrisse bei $0. Sie lassen sich nicht ersetzen, aber auch nichts kostet sie: **immer setzen**.
+- Ein einzelner API-Sitz reicht nicht, weil Kimi (Messung) und Mistral (Begriff) **verschiedene Fehlerklassen** abdecken. Beide sind so billig ($0,018 zusammen), dass Streichen keine nennenswerte Ersparnis bringt, aber Streuung kostet.
+- Zwei freie Sitze allein: Sie bleiben beim Bestandsmessen und haben den Begriffsriss nicht geliefert.
+
+**Benannter Riss in meinem Urteil:** Der Befund ist aus **zwei Runden zu einem Thema** (Axiome, `channel_ref`). Dass Mistral den Begriffsriss immer liefert, ist nicht gezeigt, nur dass er es hier tat. Die Auswahl gilt für diesen **Themenschnitt**, nicht universell.
+
+## F2: Kimi und Sonnet, redundant?
+
+**Teilweise redundant, aber nicht gleichrangig.**
+
+- **Kimi** liefert einen **inhaltlichen Riss** (Homogenität: 5834 von 7767). Er ist im Material verankert und ohne ihn fehlt dem Rat ein Befund.
+- **Sonnet** liefert einen **epistemischen Vorbehalt** („nicht nachgezählt, das Verdikt hängt an der Zahl"). Das ist ehrlich und nützlich, aber es ist eine **Haltung**, kein neuer Befund. Opus hat den Zählfehler dann tatsächlich **gefunden** (7808 ≠ 7958). Der Vorbehalt war also richtig, der Beleg kam von anderer Seite.
+- Sonnets Beitrag ist durch eine **Zeile im Prompt** ersetzbar: „Benenne jede Zahl, die du nicht selbst geprüft hast, und woran das Verdikt hängt." Diese Zeile gehört in die **Linse** und hebt die Beweislast für **alle** Sitze, nicht nur für einen.
+
+**Folge:** Sonnet raus, Beweislast-Zeile in die Linse. Wird sie bei Kimi/Mistral nicht geliefert, ist das ein messbarer Befund gegen die Annahme, und Sonnet kommt zurück.
+
+**Riss:** Ob die Prompt-Zeile Sonnets Verhalten wirklich bei anderen Modellen erzeugt, ist **ungemessen**. Es ist eine Hypothese, kein Befund.
+
+## Opus: bedingt
+
+Opus ($0,054) lieferte den einzigen **verifizierten Zählfehler**. Das ist kein Riss in der Form, sondern in der Zahlenbasis. Deshalb: **Opus nur setzen, wenn das Urteil an einer gezählten Zahl hängt** (wie 7767 hier). Das ist eine Bedingung, keine Dauerbesetzung.
+
+## F3: KPI je Stimme
+
+**Kriterium wörtlich:**
+
+> **Eine Stimme ist tragend, wenn sie mindestens einen Riss benennt, der (a) in keiner Antwort der übrigen Sitze sinngemäß vorkommt und (b) am Material oder am Verdikt überprüfbar ist, so dass ein Operator bei Wegfall der Stimme das Urteil ändern oder einschränken würde. Sonst ist sie bestätigend.**
+
+Die Messung:
+1. **Einzigartigkeit:** Riss kommt bei k=1 von n Sitzen vor (k≥2 = bestätigend).
+2. **Prüfbarkeit:** Der Riss lässt sich belegen oder widerlegen (Zahl, Gegenbeispiel, Begriff). Eine bloße Formulierung zählt nicht.
+3. **Wirkung:** Er hat das Verdikt verändert oder eingeschränkt (Ja/Nein).
+4. **Kosten je tragendem Riss** = Kosten/Frage ÷ Zahl tragender Risse, über mehrere Runden gemittelt.
+
+**Regel:** Ein Sitz, der **über drei Runden** keinen tragenden Riss liefert, fliegt raus. Ein Sitz mit einem tragenden Riss bleibt, solange er ihn ersetzt nicht bekommt.
+
+**Riss im Kriterium:** Bedingung (a) bewertet nur **Sinngleichheit**, und die entscheidet der Operator, also subjektiv. Das lässt sich nur durch eine feste Paraphrase-Liste je Runde mildern. Und ein Riss, den **niemand** außer einem Sitz sieht, kann auch Rauschen sein: deshalb ist (b) Pflicht.
+
+## Gesamtbild
+
+| Rolle | Sitz | Kosten |
+|---|---|---|
+| Bestandsmessung | Fugu, Lumo | $0 |
+| Bestandshomogenität | Kimi K3 | $0,014 |
+| Begriffsschnitt | Mistral Large 4 | $0,004 |
+| Beweislast | Zeile in der Linse | $0 |
+| Bedingt (Zahlenbasis) | Opus 5.5 | $0,054 |
+
+**Regelkosten ≈ $0,018**, mit Opus ≈ $0,072.
