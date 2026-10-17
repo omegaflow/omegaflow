@@ -95,3 +95,26 @@ Der **Cap** ist 0,15 USD/Burn; **Mistral + GLM + DeepSeek + Qwen zusammen ≈ $0
 **Der kanonische Weg, in einem Satz:** Frage ins Formular → Operator wählt die Sitze → je Sitz ein
 direkter API-Aufruf (`reasoning_effort` gesetzt) bzw. der UI-Tab → Rohantwort + Sammlung nach
 `state/stimmen/`. **Kein `rat_dispatch`, kein Gateway, kein anderer Weg.**
+
+## 6 — Die KPI je Stimme (der Streich-Test) + die minimale Auswahl
+
+**Nach jedem Rat messen, wer trug — der Streich-Test** (Kimi/Sonnet/Mistral, einig):
+
+> **Eine Stimme ist tragend, wenn ihr Riss das Verdikt ändert oder stürzt, sobald man ihn streicht.**
+> Sonst ist sie **bestätigend** (redundant). Kriterien: einzigartig (k=1 von n) **und** am Material
+> prüfbar **und** wirksam (hat das Verdikt verändert).
+
+**Regel:** Sitze, die **nur bestätigen**, sitzen die **nächste** Runde aus.
+
+**Die minimale Auswahl — gemessen, aber Betreiber-Sache** (der Rat ist bei der eigenen Zusammensetzung
+**befangen**: jeder hält sich für nötig — die drei API-Sitze warfen je **andere** raus):
+
+| Rolle | Sitz | Kosten/Frage |
+|---|---|---|
+| Bestandsmessung (immer, frei) | **Fugu Max + Lumo 2.0** | **$0** |
+| Tiefe | **Kimi K3** *oder* **Sonnet 5.5** | ~$0,014 |
+| Struktur | **Mistral Large 4** | $0,004 |
+
+**≈ $0,018** — das gemessene Minimum mit Streuung. **Opus 5.5 fällt** (4× teurer, kein Mehr-Tragen).
+**Kimi vs. Sonnet:** beide trugen; Sonnet die Beweislast („ich habe die Zahl nicht nachgezählt"),
+Kimi die Bestands-Homogenität. **Einer reicht.**
