@@ -15,10 +15,10 @@
 
 ## An future
 Origin: 361
-- `xfer:mycelium-361-2` · `-361-3` · `-361-5`.
+- `xfer:mycelium.ses_ec618129fffeLFawr4V3pQKpOl.1~ed07ad98` · `xfer:mycelium.ses_ec618129fffeLFawr4V3pQKpOl.3~7a1c533b` · `xfer:mycelium.ses_ec618129fffeLFawr4V3pQKpOl.4~11ab9d9b`.
 
 ## An river
 Origin: 361
-- `xfer:mycelium-361-6` mcpherron-Drop.
+- `xfer:mycelium.ses_ec618129fffeLFawr4V3pQKpOl.2~e192689e` mcpherron-Drop.
 
 ## Burn: open 0.0 · close nicht gemessen (db) · cap 0.15 · closed 0 · Grund: 3 Token + Split.
