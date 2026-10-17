@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: bde68c51a31e9755a6bfdd488e806c548b28c184f998986656ef81bf3c4c82d6
+  sha256: fc09a79078d10db6eb8bfd3479d4fd4a6919d101f908d2090f86dcdb4fed57e0
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -190,15 +190,20 @@ connection refused. Der Register-Block `weberin_verdicts` führt EPM2021 längst
   sind **Experiment-/Studien-Records** (bioscience), **kein** Roh-Zeitreihen-Feed: `DOSTEL` **0**,
   `Liulin` **0**, `TEPC` **1** (nicht Dosimetrie). Die Prämisse „OSDR trägt ISS-Dosimetrie" ist als
   **Roh-Feed nicht belegt**; die alte `/bio/api`-Route ist **404**, der Redirect geht auf
-  `science.nasa.gov/biological-physical/data/`.
+  `science.nasa.gov/biological-physical/data/`. **Offene Roh-Dosimetrie liegt außerhalb OSDR:**
+  CDAWeb `ISS_DOSANL_TEPC` (1-min Dosis/Äquivalent, 2010–2018) und `BIOSENTINEL_LET_LETS`
+  (160-Bin-LET, 2022–2025); PDS/PPI `PSFP-00706` (MSL-RAD-EDR) und `PSFP-00698` (LRO-CRaTER-EDR),
+  Level 0, 200. HREDA `DOSIS-3D` = **403** („Anonymous users cannot download data").
 - **pskreporter:** Query-API `retrieve.pskreporter.info/query` liefert **`<receptionReports>`**
   (Empfangsrecords: Callsign, Frequenz, Mode) — **Registry**, kein Feld am Punkt. **reversebeacon:**
   Telnet-Port **7000 offen**, `raw_data/` 200 (HTML) — ebenfalls Empfangsreport-Netz. Eignungsfrage.
 - **dods.wh.gov:** `--verdict` = direkt **keine Antwort** · Proton **absent** · Wayback **ohne
   Snapshot** (auch Timemap leer) → **absent**, nicht nur DNS.
-- **C/NOFS NWM:** NSSDCA `spacecraft=c/nofs` und `CINDI` = **absent**; **CDAWeb** `pub/data/cnofs/cindi/`
-  = **200**, führt aber **nur IVM** (Ionendrift, 500 ms CDF/HDF), **kein NWM**. Die `absent`-Aussage
-  ist damit auch am Archiv belegt, nicht nur am Brief.
+- **C/NOFS NWM:** NSSDCA `spacecraft=c/nofs` und `CINDI` = **absent** (NSSDCA listet C/NOFS gar
+  nicht); **CDAWeb** `pub/data/cnofs/cindi/` = **200**, führt aber **nur IVM** (Ionendrift,
+  500 ms CDF/HDF), **kein NWM**. Das Archiv belegt **kein NWM-Produkt**; die stärkere Aussage
+  „nie funktioniert" ist **widerlegt** (Earle 2013 / Haaser 2013: meridionale NWM-Daten 2011,
+  nur N-S-Kanal) — es gibt nur **kein öffentliches Datenprodukt**.
 - **Juno pre-EFB:** PDS `jnogrv_0001` (**Outer Cruise**, post-EFB) ODF beginnt bei **`2013284`**
   (2013-10-11); `jnogrv_1001` ist „Jupiter, science phase from July 2016". Ein pre-EFB-ODF-Volume
   existiert **nicht** — bestätigt.
@@ -209,15 +214,28 @@ connection refused. Der Register-Block `weberin_verdicts` führt EPM2021 längst
   `…/red_tele_signal_data_venus_occlt/` führt **9 TARs** (`PSPA-00316_DD0296xx`), HEAD **200**,
   **19 619 840 B**, `application/x-tar`, Range-Kopf `PSPA-00316_…dir/`. Vollkorpus request-only.
 - **Voyager:** Saturn closed-loop **live** (V1 14 TARs, V2 6 TARs, Univac-1108); PDS
-  `voyager_rss_raw` = **Jupiter (V1/V2) + Uranus (V2 49xr)** open-loop, **kein** Cruise/Post-Saturn
-  closed-loop; `PSNO-00007` = „Ready for Offline Distribution" (PDS, Imaging). Cruise/Post-Saturn
-  bleibt request-only.
+  `voyager_rss_raw` = **Jupiter (V1/V2) + Uranus (V2 49xr)** open-loop. **Post-Saturn closed-loop
+  existiert** — NSSDCA `PSCM-00004` (Uranus) / `PSCM-00003` (Neptun), Doppler+Range, Univac 1108 —
+  aber **„Ready for Offline Distribution"**; `PSNO-00007` = offline (PDS, Imaging). Cruise/Post-Saturn
+  bleibt **request-only** (nicht „nirgends").
 - **CEIC D18000:** Zenodo-Suche `q=D18000` = **0**; OpenAIRE/DataCite = **absent**; die **D18000-Seiten**
   auf `data.earthquake.cn` sind **200** (Katalog sichtbar, 重力/Gravity/D18000), der Download verlangt
   **注册/登录** → **Registrierungs-Gate, keine fehlende Quelle**. Zenodo `7112529`/`7855090` = **200**
-  (Figuren-Subsets).
+  (Sichuan/Lushan-Subset: **74 Rohdateien** + Code + Figuren, **kein** Voll-Mirror).
 - **LSST/Rubin:** TAP `data.lsst.cloud/api/tap` = **401** (`WWW-Authenticate: Basic realm="data.lsst.cloud"`);
   offene Alternative **Fink** `api.lsst.fink-portal.org/api/v1/schema` = **200**.
+
+**Vier Taucher, harte Bandagen (2026-10-17):**
+- **OSDR:** Experiment-Route `/geode-py/ws/repo/experiments/<OS-ID>` → `files: []` bei `OS-166`,
+  `OS-161`, `OS-202`, `OS-291`, `OS-513`; nur Prosa-Mittelwerte. Kein Roh-Feed.
+- **RBN:** Handshake `Please enter your call:` → Callsign (kein Passwort/Key), `Spot rate: 4/s`;
+  Schema `de,freq,dx,db,wpm,time,diff,band,type,mode,epoch`; `call_info` lat/long = QRZ-Lookup;
+  Tages-CSV `data.reversebeacon.net/rbn_history/YYYYMMDD.zip` (20261016: **24 568 336 B**,
+  **368 763** Zeilen, 243 Spotter); `raw_data/` ist ein Index (robots disallow). Registry.
+- **CEIC:** D18000 = **zwei** Datensätze — flow 1998–2015 (**300 GB**) und absolute 2009–2015
+  (**22 GB**); Order-Endpunkt → **302 `login.jsp`**; Registrierung faktisch **+86/China**.
+  Zenodo `7112529`/`7855090` = **74 Rohdateien** + Code + Figuren (Sichuan/Lushan 2010–2013),
+  **kein** Voll-Mirror; NEDC-DOIs `10.12080/nedc.gc_zl.ds0001.2026` = **404**.
 
 **Der stille Eimer „nicht gemessen":** **50** Register-Blöcke tragen keine `terms`-Zeile
 (überwiegend Routen, Manifeste, PDFs, JSON — nicht jede ist eine Quelle). Jede ist eine offene
