@@ -4041,9 +4041,13 @@ fn annotate_declared(lines: &mut [String], env: &HashMap<String, String>) {
             .collect();
         if !declared.is_empty() {
             line.push_str(&format!(
-                " — declared on the host ({}): the gate is covered, do not ask for the key",
+                " — declared on the host ({}): the gate is covered, do not ask for the key (bin/secrets_keys lists all)",
                 declared.join("/")
             ));
+        } else {
+            line.push_str(
+                " — bin/secrets_keys lists the gates that carry a value; a missing name is the only open gate",
+            );
         }
     }
 }

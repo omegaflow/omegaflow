@@ -39,25 +39,28 @@ fi
 # Das Gerüst + das Profil, als bwrap-Flags (unsere Pfade tragen kein Leerzeichen).
 # public: die Schlüssel-NAMEN als leere Werte sichtbar, nie ein Wert.
 names_file=""
-src_secrets="$root/.secrets.local"
+src_secrets="${OMEGAFLOW_SECRETS_FILE:-$root/.secrets.local}"
 if [ ! -f "$src_secrets" ] && [ -f "$priv/.secrets.local" ]; then
   src_secrets="$priv/.secrets.local"
 fi
 if [ "$profile" = public ] && [ -f "$src_secrets" ]; then
   names_file="$root/target/.secrets.names"
   mkdir -p "$root/target"
-  awk -F= '
-    /^[[:space:]]*#/ { next }
-    /^[[:space:]]*$/ { next }
-    index($0, "=") == 0 { next }
-    {
-      key = $1
-      sub(/[[:space:]]+$/, "", key)
-      val = substr($0, index($0, "=") + 1)
-      sub(/^[[:space:]]+/, "", val)
-      if (key != "" && val != "") print key "="
-    }
-  ' "$src_secrets" > "$names_file"
+  {
+    printf '# projection: names only, values empty\n'
+    awk -F= '
+      /^[[:space:]]*#/ { next }
+      /^[[:space:]]*$/ { next }
+      index($0, "=") == 0 { next }
+      {
+        key = $1
+        sub(/[[:space:]]+$/, "", key)
+        val = substr($0, index($0, "=") + 1)
+        sub(/^[[:space:]]+/, "", val)
+        if (key != "" && val != "") print key "="
+      }
+    ' "$src_secrets"
+  } > "$names_file"
   chmod 644 "$names_file"
 fi
 
