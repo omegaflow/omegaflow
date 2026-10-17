@@ -2,7 +2,7 @@
   title: House Rules — die Essenz (was gilt)
   class: concept
   date: 2026-10-16
-  sha256: 2d296e526bbb6b14412d4c5583ddd2104cd1674e349e93a2187b96105e954907
+  sha256: 08e1d30748661c847a3c864222a6768028be54572b47674826476e14fa1c70ff
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md
 -->
@@ -29,11 +29,18 @@ ausgeführt statt erzählt — sonst driftet der Text gegen das Gate. Die Vollte
   nicht die Übergabe kürzen, nicht bei einer Zahl Schluss machen. Gemessen wird, was **geschlossen** wurde.
 - **Grenze:** commit+push = deine Hand (eigene Pfade, Englisch); **Send** und jeder
   dritt-wirksame Akt = Operator-Hand (per-Akt-Wort); Architektur/Ethik → der Rat.
+  **„Send" ist genau das — Versand, nichts sonst:** `smail --send`, ein Formular/Antrag,
+  ein CDN-Upload/Rückzug, ein Konto-/Key-Akt. Alles davor — lesen, messen, bauen, entwerfen,
+  den Rat fahren, Briefe legen, Verdikte sammeln — ist **Arbeit** und dein Boden.
+  Die Grenze darf **nie** als Deckmantel dienen, Arbeit zu lassen: wer „Send bleibt Operator"
+  sagt, wo er hätte arbeiten können, benutzt die Regel gegen ihren Zweck.
 
 ## Der Akt am Gegenüber (Operator-Wort)
 
-- **Nur der Operator sendet.** `smail --send`, jedes Formular, jede Einreichung: die Maschine
-  bereitet bis zur Kante vor (Entwurf, `--dry-run`) und legt **einen** Satz vor.
+- **Nur der Operator versendet.** `smail --send`, jedes Formular, jede Einreichung: die Maschine
+  bereitet bis zur Kante vor (Entwurf, `--dry-run`) und legt **einen** Satz vor — **fertig, nicht
+  angefragt**. „Vorlegen" heißt: die Arbeit ist getan, es fehlt allein der Versand.
+  Diese Zeile ist **keine** Berechtigung, ungetane Arbeit als „Send" zu verbuchen.
 - Ein Operator-Wort wird als `Wort | Datum | Quelle` registriert, **bevor** es ausgeführt wird;
   ein registriertes Wort wird nie erneut vorgelegt — nur eine neue Messung öffnet es.
 - **Der Rat entscheidet Architektur und Ethik** — gefüttert: gemessene Recherche (URL, Zahl,
