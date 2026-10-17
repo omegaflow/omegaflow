@@ -1,0 +1,39 @@
+# Fugu Max — Rat: der channel_ref-Ersatz (2026-10-17)
+
+**Seat:** `chat.sakana.ai` · Modell **Fugu Max** (Effort High). **Ablage:** Rohantwort, wörtlich.
+
+---
+
+**Verdikt**
+
+**F1.** Der Ersatz ist die **Form der Messzeile**, nicht `witness`, nicht etwas Drittes. Belegt an
+der Masse: `field` hat **7767** Vorkommen = **98,1 %** der 7921 Mess-Zeilen. Spalte 4 (Kernel) ist in
+6715 Zeilen benannt (86,5 %), Spalte 5 (Kraft) in 6680 (86,0 %). Die Kraft steckt nicht neben der
+Messzeile, sie steckt in ihr — Spalte 5, `em` 4885×.
+
+**F2.** `witness` ist **keine Grundlage**. 28 von 7958 Zeilen = **0,35 %**; `channel` 13 = 0,16 %.
+Ein Axiom kann nicht auf 28 Zeilen ruhen. `witness` ist der Ausnahmefall — wo die Kraft nicht trägt.
+Er bleibt als ehrlicher Rand registriert (unter `0 honored`), aber er trägt die Regel nicht. Die
+Regel trägt die Form.
+
+**F3.** Wörtlich, in der Form der Masse:
+
+```
+field <name> <name> <KERNEL> <KRAFT> <EINHEIT>
+```
+
+**Begründung.** `channel_ref` forderte „jede Messung trägt ihre Kraft" — als Prosa, 0× im Bestand.
+Die Form sagt dasselbe, aber als Grammatik: die Pflichtfelder Kernel, Kraft, Einheit sind Spalten
+4–6, und 7767 Zeilen haben genau diese Gestalt. Der Ersatz ist damit kein Wunsch, sondern eine
+Messung über den Bestand: 98,1 % Deckung. Die zwei Randformen decken zusammen 41 Zeilen (0,5 %); sie
+können die Regel nicht tragen, und ein Rand darf nie die Grundlage einer Masse werden.
+
+**Benannte Risse**
+
+- **Riss Spaltenwort:** Spalte 5 heißt Kraft, trägt aber auch Transport (`diffusion` 471,
+  `advective` 450) und Medium-Moden (`acoustic` 435). Die Form ist belegt, das Wort Kraft ist der
+  Riss. Der Ersatz ruht daher auf der Gestalt, nicht auf dem Etikett.
+- **Riss Rest:** 113 Zeilen sind weder `field` noch `witness` noch `channel`; 1052 Kernel- und 1087
+  Kraft-Slots der `field`-Zeilen sind unbenannt. Das bleibt als Rest stehen, ungeglättet (`0 honored`).
+- **Riss eigene Zeile:** „`no fabricate`" — die fünfte Zeile aus dem Vorlauf — ist **nicht**
+  bestand-gedeckt, sondern ein Wunsch. `0 honored` deckt Ehrlichkeit bereits.

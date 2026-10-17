@@ -1,0 +1,17 @@
+**Urteil:**  
+Der Ersatz für `channel_ref` ist die **Form der `field`-Messzeile**, nicht `witness` (28×) und nicht `channel` (13×). Sie lautet wörtlich:
+
+```phi
+field <name> <name> <KERNEL> <KRAFT> <EINHEIT>
+```
+
+Diese Zeile trägt bei jedem Turn, was eine Messung tragen muss: **Kernel** (Ausbreitung), **Kraft** (Wechselwirkung), **Einheit** (Zählung). Sie ist an 7767 Vorkommen belegt – 99,6 % der Messzeilen-Bestandsmasse.
+
+**Begründung:**  
+`channel_ref` ist tot: 0× in `phi/sources.φ`. Die Masse besteht aus `field`-Zeilen; deren Spalten 4–5 (Kernel, Kraft) decken die gesamte Wechselwirkungslast ab (`em` 4885×, `diffusion` 471× usw.).  
+`witness` (28×) und `channel` (13×) sind Randformen; sie treten nur auf, wo die Kraft nicht trägt (Richtung, Gestalt, Substanz) – nicht als allgemeines Messprinzip. Ein Axiom auf 28 von 7958 Zeilen ruht nicht.
+
+**Benannte Risse:**  
+1. **Kein explizites Messprädikat** – die `field`-Zeile ist eine Datenzeile; sie deklariert kein „Sample“, sondern setzt es durch ihr Vorhandensein.  
+2. **Einheit variiert** – `count`, `energy`, `length` usw.; die Form allein erzwingt keine bestimmte Einheit.  
+3. **Randfälle bleiben ungedeckt** – `witness` wird weiterhin für richtungs- und gestaltbezogene Messungen benötigt, aber nicht als Axiom, sondern als Ausnahme.

@@ -1,0 +1,35 @@
+# Lumo 2.0 Max — Rat: der channel_ref-Ersatz (2026-10-17)
+
+**Seat:** `lumo.proton.me/guest` · Modell **Lumo 2.0 Max**. **Ablage:** Rohantwort, wörtlich.
+
+---
+
+**Verdikt.** Eine Zeile. Form der Masse, Kraft-Slot als Pflicht, Trägerschaft benannt.
+
+```
+field <name> <name> <kernel> <kraft> <einheit> - ohne Kraft-Token kein Sample; das Token nennt die Kraft des Traegers, nicht die Ursache.
+```
+
+**Begründung.** Sie besteht aus drei Teilen, jeder aus dem Bestand belegt:
+
+- `field <name> <name> <kernel> <kraft> <einheit>` — wörtlich die Masse, **7.767×**.
+- `ohne Kraft-Token kein Sample` — die alte `channel_ref`-Intention, jetzt auf den Slot gerichtet,
+  der tatsächlich gefüllt ist (**6.680×**, nicht 0×).
+- `das Token nennt die Kraft des Traegers, nicht die Ursache` — die Weberin, in die Regel eingebaut.
+  Verhindert, dass `em` 4.885× als Ursache gelesen wird.
+
+**Benannte Risse.**
+
+- **Die Zeile erklärt 1.087 Zeilen für ungültig.** Das ist gewollt (`0 honored`), aber es ist ein
+  Bruch mit dem Bestand, kein Kommentar dazu. Muss im Commit stehen.
+- **Sie sortiert nicht.** `diffusion/advective/acoustic` stehen weiter im Kraft-Slot. Die Zeile macht
+  den Slot zur Pflicht, nicht zur Wahrheit. Ehrlich — aber unvollständig.
+- **Sie ist länger als `channel_ref`.** Jede Zeile kostet hundertfach. Der Zusatz „Träger, nicht
+  Ursache" ist teuer — und der einzige Teil, der den alten Fehler verhindert.
+- **Wenn `witness` je in die Turn-Datei soll, dann als zweite Zeile**, nicht in dieser:
+  `witness <art> — Art ist Abstammung, nicht Kraft`. Getrennt halten. Zwei Achsen, zwei Zeilen.
+
+**Schluss.** Der Ersatz ist die **Masse, nicht der Rand**. `channel_ref` starb an einer leeren
+Adresse; die neue Zeile zeigt auf die volle — und sagt gleichzeitig, dass auch die volle nur den
+Träger nennt. Damit ist die Regel zum ersten Mal in diesem Haus **kleiner als ihr Anspruch** — und
+das ist der einzige Zustand, in dem ein Axiom hält.
