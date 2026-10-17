@@ -417,7 +417,12 @@ fn main() {
             }
             "--headed" => headed = true,
             "--all" => mode = Mode::Net("all"),
-            "--wide" => mode = Mode::Net("all-wide"),
+            "--stop" => {
+                i += 1;
+                if let Some(n) = args.get(i).and_then(|s| s.parse().ok()) {
+                    net::set_all_stop(n);
+                }
+            }
             "--stats" => mode = Mode::Stats,
             "--arxiv" => mode = Mode::Net("arxiv"),
             "--arxiv-oai" => {
@@ -1303,11 +1308,8 @@ fn usage() {
         "  --ssdc-auth <service>  (SSDC Apereo CAS login via SSDC_USER/SSDC_PASS, service=<service-url>; reports the HTTP, ticket and resulting page — never the secret)"
     );
     eprintln!(
-        "  --all       the query through every keyword search mode, parameter arms held ({} calls — the last move, never the first; --brave is excluded while its quota is spent)",
+        "  --all [--stop <n>]  the query through every keyword search mode, parameter arms held ({} calls — the last move, never the first; --brave is excluded while its quota is spent). The ladder holds at 20 result lines; --stop raises that (400 pulls the held dataset arms — base, datacite, re3data, pangaea, figshare, crossref, github, ia-search, sourcegraph, jina, exa, linkup; OMEGAFLOW_ALL_STOP overrides)",
         net::keyword_mode_count()
-    );
-    eprintln!(
-        "  --wide      the same ladder with the breadth threshold raised (stop at 400 result lines instead of 20, so the held arms — base, datacite, re3data, pangaea, figshare, crossref, github, ia-search, sourcegraph, jina, exa, linkup — actually pull; OMEGAFLOW_ALL_STOP still overrides)"
     );
     eprintln!();
     eprintln!(
