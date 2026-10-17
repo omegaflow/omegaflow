@@ -2,7 +2,7 @@
   title: Handover — River-Folge 224 (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: f3c5fde0e138e3ec0af2ca0ba8cfbcd6b70f1f0c29ddc9997ecc24e9d777270b
+  sha256: ce13135a233dceda59edbfe87a7b7f092566ae5e1b2302b6e3bbe260890351fe
   status: live
 -->
 # Handover — River-Folge 224 (2026-10-16)
@@ -10,7 +10,6 @@
 ## Burn: open 0.0 · close pending · closed 0 · Grund: db.
 
 ## Offen — eigen
-- P7.1 `K` — DE-2 da; `K` aus Overlap+subset.
 - Rätsel — arbeits-geb.
 - Flyby — termin 2026-11-01.
 
