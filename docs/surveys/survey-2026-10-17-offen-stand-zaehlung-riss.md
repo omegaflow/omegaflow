@@ -2,7 +2,7 @@
   title: Survey — Der Offen-Stand-Riss: der Zähler sieht eine leere Menge
   class: survey
   date: 2026-10-17
-  sha256: 68dfd7dcc8baed08be7707eb065ca8fd1a21311789907b65420976eaaafc67ee
+  sha256: 913219db1c8520685ec715473e29a1a9866e5e8628281fbf24a3ba632edbd947
   status: live
 -->
 # Survey — Der Offen-Stand-Riss: `count_open_points` zählt die Bullets nicht
@@ -61,3 +61,25 @@ Ablage der Wahl: `post/in/2026-10-17-mycelium-an-future-ratsanfrage-offen-zaehlu
 
 **Momentwert ist live.** Der Befund hängt an `commit_check.rs:188`, nicht an der Zahl — `0` ist
 stabil, solange die Handover Bullets führen.
+
+**Nachtrag (gemessen 2026-10-17, HEAD `5405f8253`).** Der Pass hat den Riss an drei Stellen
+verschärft, nicht geglättet:
+
+- **Die Kappe ist erreicht, nicht mehr nur bedroht.** `handover-2026-10-16-mycelium-folge361.md`
+  steht bei **1024 B** (Limit) — vier `- `-Bullets, **0** `###`-Punkte. Für die vom Gate
+  verlangten Zeilen `Origin:` und `## Burn:` musste der Text dreimal gekürzt werden. Der
+  Pfad-Zwang ist bei dieser Kappe nicht erfüllbar.
+- **Die dritte Größe fehlt: das Ledger.** Drei Transport-Token wurden belegt geschlossen
+  (`xfer:river-224-4`, `xfer:river-224-5`, `xfer:sensory-259-3`; `register_lookup --tokens`
+  fiel `10 → 4` unbeglichen). `count_open_points` sieht davon nichts; die Burn-Zeile musste
+  `closed 0` führen, sonst failt `:520–528` („the Burn claims `closed 3`, the diff shows
+  `closed 0`"). Geschlossene Transport-Punkte sind geschlossene Punkte — der Zähler misst sie
+  nicht.
+- **Die Kappe erzeugt Waisen messbar.** Drei Survey-Pfade stehen im Handover (Weberin,
+  Exposom, worldwide-LiDAR); zwei weitere Weberin-Papiere bleiben Waisen, weil ihre Pfade die
+  1024 B sprengen würden — der Konflikt aus „Der zweite Riss", jetzt mit Zahl.
+
+**Teilfrage 4 an den Rat (neu, nicht entschieden).** Soll `closed <n>` auch
+**Ledger-Schließungen** zählen (Transport-Token), oder bleibt `closed` ausschließlich die
+`###`-Punkt-Differenz und die Transport-Bilanz lebt getrennt? Beides ist baubar; die Wahl ist
+Register-Architektur.
