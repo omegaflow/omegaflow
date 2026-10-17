@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: d1e3034461c110370cd2fb5ee57e237c44da3294b4fceb8c7feab399302e018a
+  sha256: fbd23cbf7891324af485534c0f55d7ec2c3b96200fb68283da2e4e516ccf2b71
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -257,6 +257,33 @@ connection refused. Der Register-Block `weberin_verdicts` führt EPM2021 längst
 - **C/NOFS 2011 NWM:** nicht beziehbar — UTD-Portal lieferte nie NWM (Wayback: 159 IVM, **0 NWM**),
   CGI seit 2018 **403**; formale Route nur E-Mail (Hairston `hairston@utdallas.edu`, Heelis
   `roderick.heelis@utdallas.edu`, Earle `earle@vt.edu`); alte Terms: „may not be redistributed".
+
+**Vier Taucher mit `bin/all_wide` (die breite 109-Modus-Leiter, `OMEGAFLOW_ALL_STOP=400`; kein `--wide`-Flag),
+2026-10-17 — die vier Restlücken erschöpfend:**
+- **DOSIS-3D/DOSTEL:** HREDA keyless TAP: `v_dataset` 163 Zeilen, `v_file_metadata` 105 618 616 — für
+  DOSIS/DOSTEL **0**; `EuTEF DOSTEL` `10.57780/esa-8hfqjak` und `DOSIS 3D` `10.57780/esa-znu2ukt` =
+  `data_available=false`. `file_metadata_oid=2488390` gehört zu `SutureInSpace_ISS` (Name trägt
+  „DOSIS-3D" nur als Herkunft); Download-Route 403/500 = **kein** sauberer Auth-Kanten-Beweis (Riss).
+  Zenodo `DOSTEL` = 2 Volltext-Zufallstreffer, `type=dataset` 0; DataCite = **1** echtes Dataset
+  (`10.48733/ifjpan/oebph2`, Dosis-Tabelle). Nächstbestes: **CRaTER GCR LET-Spektren**
+  `10.5281/zenodo.22883077` (CC-BY-4.0, echtes LET-Spektrum, aber **LRO/Mond**).
+- **CEIC D18000:** `all_wide` über alle Arme = **kein** Voll-Mirror. Nur `7855090`/`7112529`
+  (Sichuan/Lushan, 7 Kampagnen 2010–2013, 1 Absolutpunkt belegt: `AG201006.txt` → `51060301`);
+  RAR5 → p7zip kann 109/110 Einträge nicht dekodieren (Punktzahl bleibt Behauptung, nicht Messung).
+  **Am Original bestätigt:** 300,0 GB / 22,0 GB; `doi.org` „**This DOI cannot be found**",
+  DataCite `prefix=10.12080` = **0** registrierte DOIs.
+- **Voyager Uranus/Neptun:** **kein** keyless Digitalisat. Gegenprobe, die es beweist:
+  `PSCM-00002` (Mariner 9) trägt den Satz „transferred to CD-WO as part of NASA's **Science Digital
+  Data Preservation Task**" — bei `PSCM-00003`/`-00004` **fehlt** er. NTRS/DataCite/OpenAIRE/Zenodo/
+  Wayback = nur Papers/Bild-CDs; `voyager2_rss_neptune_raw` = **404**. Uranus offen nur open-loop
+  (Parkes PODR, 1986-01-22…25). **Präzedenz:** Pioneer 10/11 Doppler **sind** auf Zenodo
+  (`10.5281/zenodo.13309156`/`13309040`, ASCII, John Anderson — derselbe Data Provider) → Voyager
+  hat das Gegenstück nicht.
+- **C/NOFS NWM:** **kein** Produkt. CDAWeb HAPI: 3636 IDs, 5 C/NOFS (alle IVM/PLP/VEFI); SPASE
+  `NWM`/`neutral wind meter` = 0; DataCite `C/NOFS` = 14 (kein NWM); Wayback-CDX 1080 URLs:
+  **5 NWM-Seiten, 0 NWM-Dateien**. **Riss:** das Suchformular bot `R1=NWM` an, obwohl die Datenseite
+  „keine NWM-Daten" sagt; CGI nie archiviert → nicht messbar. **Ungemessen:** `ads`/`base` (Token fehlt)
+  — genau dort wäre ein NWM-Datensatz registriert.
 
 **Der stille Eimer „nicht gemessen":** **50** Register-Blöcke tragen keine `terms`-Zeile
 (überwiegend Routen, Manifeste, PDFs, JSON — nicht jede ist eine Quelle). Jede ist eine offene
