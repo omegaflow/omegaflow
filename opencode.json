@@ -12,11 +12,14 @@
     { "action": "edit", "resource": "*", "effect": "allow" },
     { "action": "shell", "resource": "archive_search *", "effect": "allow" },
     { "action": "shell", "resource": "sgrep *", "effect": "allow" },
-    { "action": "shell", "resource": "git push *", "effect": "ask" },
     { "action": "subagent", "resource": "taucher", "effect": "allow" },
     { "action": "subagent", "resource": "*", "effect": "deny" },
     { "action": "webfetch", "resource": "*", "effect": "deny" },
-    { "action": "websearch", "resource": "*", "effect": "deny" }
+    { "action": "websearch", "resource": "*", "effect": "deny" },
+    { "action": "shell", "resource": "git push *", "effect": "deny" },
+    { "action": "edit", "resource": "AGENTS.md", "effect": "deny" },
+    { "action": "edit", "resource": "opencode.json", "effect": "deny" },
+    { "action": "edit", "resource": ".opencode/**", "effect": "deny" }
   ],
   "agents": {
     "line": {

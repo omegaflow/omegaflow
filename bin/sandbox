@@ -105,13 +105,11 @@ flags() {
 
 MOUNTS="$(flags "$profile")"
 
-# Nur der öffentliche Token — Name gelesen, Wert nur in den Käfig-Env, nie gedruckt.
-# Beide Profile: so ist `gh` im Käfig authentifiziert, ohne dass ~/.config/gh
-# (der volle Konto-Login) eingehängt werden muss.
-ghtok="$(sed -n 's/^GH_TOKEN=//p' "$src_secrets" 2>/dev/null | sed -n '1p')"
-if [ -n "${ghtok:-}" ]; then
-  # shellcheck disable=SC2086
-  exec bwrap --setenv GH_TOKEN "$ghtok" $MOUNTS --chdir "$cd_into" /bin/bash "$@"
-fi
+# No token in the cage, ever. (Before 2026-10-17 the GitHub token was passed as
+# `--setenv GH_TOKEN`, so every command in the cage could see and print it — that
+# was the leak, operator word 2026-10-17.) The public line commits, it does not
+# push: `git push *` is denied in opencode.json, so the cage needs no credential.
+# Pushing happens in the private house (the operator's own shell), with the
+# operator's own gh auth — never here.
 # shellcheck disable=SC2086
 exec bwrap $MOUNTS --chdir "$cd_into" /bin/bash "$@"
