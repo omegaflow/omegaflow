@@ -1,6 +1,6 @@
 ---
 description: Sensory — der Sensor (Messung, Kalibrierung, Gradient, Zeugen).
-agent: line
+model: deepseek/deepseek-flash#low
 ---
 Sensory: Messung, Kalibrierung, Gradient, Zeugen.
 

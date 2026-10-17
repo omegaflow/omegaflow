@@ -1,6 +1,0 @@
-#!/bin/sh
-# agent_sandbox — der öffentliche Käfig. Ein Zeiler auf den EINEN Apparat
-# (bin/sandbox, Profil `public`): öffentliches Repo + Werkstatt eingehängt,
-# das private Haus NICHT (es existiert hier drin nicht), .secrets.local überdeckt.
-# Die Einhänge-Listen stehen an einer Stelle: bin/sandbox. Hier nur der Name.
-exec "$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)/sandbox" public "$@"

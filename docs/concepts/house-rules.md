@@ -89,7 +89,10 @@ ausgeführt statt erzählt — sonst driftet der Text gegen das Gate. Die Vollte
 
 ## Die Grenze
 
-- **Der Käfig ist die Wand** (`bin/sandbox`, zwei Profile: public sieht das private Haus nicht;
-  private sieht beides). Kein Gateway, kein Provider am Haus.
+- **Die Wände sind Werkzeug-Regeln** (`opencode.json`, `permissions`): der öffentliche Baum hat
+  `read`/`edit`/`shell` auf den privaten Pfad `deny`; `AGENTS.md`, `opencode.json` und `.opencode/**`
+  sind schreibgeschützt; kein Web, kein Push. Kein Gateway, kein Provider am Haus.
+  (Der frühere `bwrap`-Käfig `bin/sandbox`/`agent_sandbox` ist am 2026-10-17 entfernt — er deckte
+  nur `bash`, nicht die `read`/`edit`-Tools.)
 - Werkzeuge: `archive_search` (nie webfetch/websearch) · `rg` für den schnellen Blick · `sread`
   für Fenster. Karte: `docs/concepts/tools-map.md`.

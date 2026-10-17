@@ -49,9 +49,10 @@ bemühen, um herauszufinden, **wo etwas liegt**. Ein Eintrag je Ort — mit dem 
 
 ## Die zwei Häuser
 
-- **Öffentlich** (`agent_sandbox → bin/sandbox public`): sieht Repo + Werkstatt. Das private Haus **existiert dort nicht**; `.secrets.local` ist überdeckt.
-- **Privat** (`private_shell → bin/sandbox private`): sieht **beides** — privat und öffentlich. Einweg.
-- Kein Gateway. Die Grenze ist der Käfig.
+- **Öffentlich** (`.`, Repo `omegaflow`): sieht Repo + Werkstatt. Das private Haus ist per
+  `permissions` gesperrt (`read`/`edit`/`shell` deny auf den privaten Pfad).
+- **Privat** (`.`, Repo `omegaflow-personal`): sieht **beides** — privat und öffentlich. Einweg.
+- Kein Gateway. Die Grenze sind die Werkzeug-Regeln (`opencode.json`), nicht ein Mount-Käfig.
 
 ## Die fünf Stimmen
 
