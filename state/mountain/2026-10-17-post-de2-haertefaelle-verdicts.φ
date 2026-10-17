@@ -1,0 +1,237 @@
+# Post-Verdikte — DE-2-Ion↔Neutral + Härtefälle (2026-10-17)
+# Linie Mountain · Messgrundlage:
+#   post/in/2026-10-17-sensory-de2-kopplung-an-mountain.md
+#   post/in/2026-10-17-sensory-haertefaelle-survey-an-mountain.md
+#   docs/surveys/survey-2026-10-17-de2-ion-neutral-kopplung.md
+#   docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md
+#   Register-HEAD phi/sources.φ (gelesen 2026-10-17)
+# Junktim: terms/field/ttl/Disposition = Mountain; url/origin/compiler = Mycelium.
+# Priorität: Post 2 · Trigger 0 · Transfer 1 (river-UCAR-FPI, SENT, nachrangig).
+# Kein Verdikt ohne Messung; die Survey-Werte werden zitiert, nicht neu erfunden.
+
+# ============================================================
+# 1 — DE-2 Ion↔Neutral-Kopplung (Post A)
+# ============================================================
+# GEMESSEN (Survey 2026-10-17; n=4244, 29 Tage 1981):
+#   r(NVE↔IVE) = +0,256 · Tag 06–18 h +0,358 (n=899) · Nacht +0,185 (n=3345)
+#   upward NVU↔IVU = +0,286 (n=136)
+#   Mittel NVE -39,6 m/s · IVE +330,9 m/s (Ionen ~8x schneller)
+#   TE (100 Surrogate, mean+2σ), beide Richtungen über Schwelle bei lag 1/4/16:
+#     lag 1  NVE→IVE 7,43e-2 (2,32e-2) · IVE→NVE 6,30e-2 (2,70e-2)
+#     lag 4  NVE→IVE 8,73e-2 (3,79e-2) · IVE→NVE 1,14e-1 (6,31e-2)
+#     lag 16 NVE→IVE 8,05e-2 (3,54e-2) · IVE→NVE 1,10e-1 (7,79e-2)
+# VERDIKT: `admitted` als offene Route und als Signal — NICHT als Reibungsverdikt.
+#   Die Richtung dreht mit dem Lag (lag 1 NVE→IVE, lags 4/16 IVE→NVE) -> kein
+#   aufgelöster Kausalpfeil; ein gemeinsamer Treiber (Konvektion/Joule) ist ebenso
+#   verträglich. A=A: TE misst Abhängigkeit, nicht Reibung.
+# REGISTER (steht bereits, phi:872-893):
+#   terms CC0-1.0 https://doi.org/10.48322/z50y-hd65       (phi:875)
+#   field de2_ion_drift_east_ms / _north_ms                (phi:882-883)
+#   field de2_neutral_wind_east_ms / _up_ms                (phi:884-885)
+#   field de2_neutral_n2_density_m3 / de2_ion_density_cm3  (phi:886-887)
+#   coupling ion-neutral-friction ... rate pending        (phi:893)
+#   -> Kein phi-Eingriff: terms und field tragen bereits. Der `rate pending`-Riss
+#      bleibt stehen; Korrelation + TE tragen keinen Koeffizienten.
+# RISS: UA_16s ist entlang der Bahn gepaart, keine kontrollierte common-volume-
+#   Zeitreihe. Die dichtere Paarung (WATS 2 s + IDM 250 ms) fehlt; WATS ist
+#   fixed-width, IDM mehrzeilig im s/c-Rahmen -> eigener Rust-Parser, kein Python.
+# QUELLEN: Coley/Heelis/Spencer, JGR 10.1029/93JA02205 (IDM+WATS auf DE-2, 1994);
+#   Folglinie 10.1029/2011JA016786 · 10.1029/2011JA016712 · 10.1029/2011JA017301.
+# NÄCHSTER BAU (nicht dieses Blatt): Rust-Parser WATS-2s/IDM-250ms; Kausalität
+#   gegen gemeinsamen Treiber testen; erst danach eine Aussage zur ion-neutral friction.
+
+# ============================================================
+# 2 — WALDO / AWESOME-VLF (Post B, erster Block)
+# ============================================================
+# GEMESSEN (Survey 2026-10-17 §F; Live-GET 2026-10-17):
+#   Bulk: https://craam-files-bucket.s3.amazonaws.com/?list-type=2 = 200, keyless
+#     Muster /<YYYY>/<MM>/<DD>/narrowband/<STATION>/<FILE>.mat
+#   registry.opendata.aws/craam-open-vlf/ = 200, "There are no restrictions on the use of this data."
+#   DataCite 10.48322/fzcf-f191 (WALDO, AWESOME broadband VLF) = CC0-1.0
+#     rightsUri https://creativecommons.org/publicdomain/zero/1.0/legalcode
+# VERDIKT: `admitted` — der Bulk ist eine Route, kein Warten.
+#   Kanalterme getrennt halten:
+#     - craam-Bucket: `terms PD` (Registry: keine Nutzungsbeschränkung) — phi:1804 steht.
+#     - WALDO-Datensatz: `terms CC0-1.0` (DataCite) — phi:8346 steht falsch auf
+#       `CDLA-Permissive-1.0`; Korrektur in diesem Atom gesetzt.
+# RISS (url/origin = Mycelium): phi:1803 zeigt als `origin` nur eine Beispieldatei
+#   (2015/01/01/...FE150101000500NAA_008A.mat), nicht den listenbaren Bucket.
+#   Die Route trägt den Bulk, aber der `origin` benennt sie noch nicht als Bulk.
+#   -> Mycelium: `origin` auf Bucket/Verfahren ziehen (z. B. `procedure: list-type=2`).
+# REGISTER: phi:1801-1808 (Artifact vlf_awesome.csv, field vlf_awesome_narrowband_amp,
+#   em db, ttl 86400); phi:8345-8348 (WALDO-Route, terms nach Fix CC0-1.0).
+
+# ============================================================
+# 3 — Sonden-Kamera (Post B)
+# ============================================================
+# GEMESSEN (Survey 2026-10-17 §A/§G):
+#   Voyager ISS: pds-imaging.jpl.nasa.gov/data/voyager/VGISS_* (+ qedr/) — PDS
+#   Juno JNOJNC: planetarydata.jpl.nasa.gov/img/data/juno/JNOJNC_0001.tar.gz
+#     = 200, 15 425 206 433 B (15,4 GB)
+#   Mariner 10 CLR ASU: ser.im-ldi.com = 200 (Live-GET 2026-10-17)
+# VERDIKT:
+#   - Voyager VGISS: `admitted`, `terms PD https://pds.nasa.gov/`, format imaging.
+#   - Juno JNOJNC: `admitted`, `terms PD https://pds.nasa.gov/`, format imaging.
+#   - Mariner 10 ASU: `pending` — Host lebt, aber keine gemessene Lizenz/Terms-Zeile
+#     am Objekt. Kein terms-Token erfinden; ohne Mycelium-url/origin kein Block.
+# RISS: VGISS_0001-Pfad lieferte im Live-Test 404; der Survey nennt `VGISS_*` als
+#   Muster, nicht das konkrete Volumen. Das ist ein Pfad-Riss (Mycelium), kein
+#   Lizenzriss. JNOJNC-HEAD lud 1,95 MB von 15,4 GB, dann Timeout — Größe belegt,
+#   Voll-Asset nicht geladen.
+# REGISTER: Juno-ODF-Blöcke phi:10170-10187 tragen `terms PD`, sind aber ODF, nicht
+#   JNOJNC-Kamera. Voyager-phi-Blöcke 11702-11748 sind merged/occultation/Saturn,
+#   nicht VGISS. Kamera-Blöcke fehlen (0 Treffer).
+
+# ============================================================
+# 4 — Sonden-Tracking (Post B)
+# ============================================================
+# GEMESSEN (Survey 2026-10-17 §A/§G):
+#   Voyager/Mariner = "Ready for Offline Distribution" (PSNO-00007, PSCM-00009)
+#   Viking = "Data Identified but not Received" (PSPG-00011/00148)
+#   Voyager Saturn closed-loop = digital/keyless (V1 14 TARs, V2 6 TARs, Univac 1108)
+#   Voyager Uranus/Neptun = physische Univac-Tapes, kein Digitalisat
+# VERDIKT: `absent` als Online-Route, `offline` als Zustand — Wand, kein terms/field.
+#   Kein Block: es gibt keinen anonymen digitalen Träger. Der Zustand ist benannt,
+#   nicht in eine Route umgedeutet.
+# RISS (Geodäsie, benannt): "Range-GET 206" im Transfer ist der HTTP-Range-Request,
+#   nicht der decodierte Range-Messwert. Der Voyager-Reader verwirft Range bewusst
+#   (word10/word11 ohne dokumentierte Skala) -> Range-Observable bleibt pending.
+# BESTEHEND: Saturn-Verdikt `state/mountain/2026-10-17-voyager-univac-verdict.φ`
+#   (`admitted`, terms CC0-1.0, V1-Block phi:11738-11748; V2-origin + sha256 = Mycelium).
+
+# ============================================================
+# 5 — CN-NSSDC `有条件共享` / Topographie (Post B)
+# ============================================================
+# GEMESSEN (Survey 2026-10-17 §C): die Quelle ist registrierungs-/zustimmungsgated;
+#   offene Alternativen liefern 200:
+#   LOLA-RDR (PDS) · SLDEM2015 (imbrium.mit.edu) · MOLA (PDS) · HRSC (ESA PSA) ·
+#   ICGEM (SHC)
+# VERDIKT:
+#   - Quellblock CN-NSSDC: `declined` — keine offene terms-Zeile, Gate bleibt.
+#   - LOLA-RDR: `admitted`, `terms PD https://pds-geosciences.wustl.edu/`, field radius/height.
+#   - MOLA: `admitted`, `terms PD https://pds-geosciences.wustl.edu/`, field mola_mars_radius
+#     (steht bereits phi:11205-11212).
+#   - ICGEM SHC: `admitted`, `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007`,
+#     field geoid/gravity (gfc; noch kein phi-Block).
+#   - SLDEM2015: `pending` — Host 200, Lizenz am MIT-Host nicht gemessen.
+#   - HRSC: `pending` — ESA-PSA-Terms am Block nicht gemessen.
+# RISS: Topographie deckt Höhe/Radius, nicht Schwere. Ein Topographie-Ersatz ist
+#   kein D18000-Ersatz (andere Größe, anderes Instrument).
+
+# ============================================================
+# 6 — CEIC D18000 (Post B)
+# ============================================================
+# GEMESSEN (Survey 2026-10-17 §C + Restlücken):
+#   flow 1998–2015 = 300,0 GB · absolut 2009–2015 = 22,0 GB
+#   Order -> 302 login.jsp; Registrierung faktisch +86/China
+#   DataCite prefix 10.12080 = 0 registrierte DOIs; doi.org "This DOI cannot be found"
+#   Zenodo 7112529/7855090 = Sichuan/Lushan-Subset (74 Rohdateien), kein Voll-Mirror
+#   Ersatzapparate IGETS/GFZ, BGI, ICGEM = andere Instrumente
+# VERDIKT: `declined` — kein phi-Block, keine terms-Zeile. Keine offene Lizenz,
+#   kein ausländischer Zugang, keine registrierte DOI.
+# BESTEHEND: `state/mountain/2026-10-17-keyless-drei-verdicts.φ` §2 (unverändert).
+
+# ============================================================
+# 7 — Redistributions-Declines / Re-Admission (Post B)
+# ============================================================
+# GEMESSEN (Survey 2026-10-17 §B, frisch):
+#   GRDC -> GRDC-Caravan Zenodo 15349031, CC-BY-4.0, 5356 Einzugsgebiete (Subset)
+#   IMCCE INPOP19a/NOE-4 -> Ersatz JPL DE440 (PD); EPM2021 200, 154 278 912 B
+#   ALMA -> ESO Science Archive CC-BY-4.0 (nur ESO-bediente Records, JAO separat)
+#   LSST/Rubin TAP -> 401 (Basic, data rights); Fink 200 (CC-BY-4.0)
+#   RIPE RIS -> RouteViews 200, BY vs BY-SA im Text/Link widersprüchlich
+#   TRISP/YBCO-NSE -> kein Roh; NIST NCNR 200, SRD vs non-SRD unbestimmt
+# VERDIKT:
+#   - GRDC/Caravan: `admitted`, terms CC-BY-4.0 (phi:31225-31249 steht).
+#   - IMCCE-INPOP/NOE: `declined` für die Originalroute; `admitted` als Ersatz
+#     JPL DE440 (PD). EPM2021: `admitted`, Open-Licence-2.0 (phi:11841-11848 steht).
+#   - ALMA: `admitted`, CC-BY-4.0, aber nur ESO-Subset; JAO-Records nicht gedeckt.
+#   - LSST/Rubin: `declined`; Fink als Ersatz `admitted`, CC-BY-4.0 (phi:10062-10068 steht).
+#   - RIPE RIS: `pending` — ohne Auflösung BY vs BY-SA keine Re-Admission.
+#   - TRISP: `declined` (kein Roh); NIST NCNR `pending` bis SRD/non-SRD gemessen.
+# RISS: "Re-Admission" heißt nicht, die abgelehnte Quelle sei offen. Sie heißt:
+#   die benannte Ersatzroute trägt die Größe; die Originalspalte bleibt `declined`.
+
+# ============================================================
+# 8 — MOD021KM / MYD021KM (Post B, letzter Block)
+# ============================================================
+# GEMESSEN (Survey 2026-10-17 §E; Ratsakte 2026-10-17):
+#   LAADS allData/61/MOD021KM/ = 200 (L1/Atmosphere), MYD021KM analog
+#   LANCE allData/61 traegt MODVOLC (200); LAADS-Support: "not approved for public
+#     distribution" = Betriebs-, kein Lizenzinstrument
+#   NASA-Politik: full/open sharing, Attribution erbeten, kein Endorsement, "as is"
+#   Algorithmus: Wright/Flynn/Garbeil/Harris/Pilger, JVGR 10.1016/j.jvolgeores.2003.12.008
+#     -> 4 µm Band 21/22 + 12 µm Band 32
+#   MODVOLC-Registerblock ist gefallen; CDN-Asset 404; MODVOLC bleibt local-only
+# VERDIKT: `admitted` — aber für den L1-Block `MOD021KM`/`MYD021KM`, NICHT für
+#   MODVOLC. `terms free-open` + Attribution (NASA open), nicht `PD`/`CC0`.
+#   Das eigene Thermalanomalie-Feld ist aus offener L1 mit Attribution verteilbar;
+#   MODVOLC bleibt interner Abgleich. Kein `decline-redistribution` für unser L1-Derivat.
+# VORBEREITETE ZEILEN (url/origin/compiler + Reader = Mycelium/Bau):
+#   terms free-open https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-information-guidance
+#   origin https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/61/MOD021KM/
+#   format modis_l1b
+#   at earth
+#   ttl 300
+#   field brightness_temp_band21 modis_l1b_bt_band21_k gaussian-inverse-square thermal K 300 0.0 0.0
+#   field brightness_temp_band22 modis_l1b_bt_band22_k gaussian-inverse-square thermal K 300 0.0 0.0
+#   field brightness_temp_band32 modis_l1b_bt_band32_k gaussian-inverse-square thermal K 300 0.0 0.0
+# RISS: ttl 300 ist die 5-min-Granulat-Setzung, nicht am Block gemessen; Band-21/22/32-
+#   Reader existiert noch nicht. Die Feldnamen sind Vorschlag, bis der Reader die
+#   Spalten am Original belegt. Ein `thermal_anomaly`-Feld ist abgeleitet, keine Rohzeile.
+# REGISTER: MOD021KM/MYD021KM = 0 Treffer in phi/sources.φ (bestätigt).
+# BESTEHEND: `state/stimmen/2026-10-17-modvolc-verteilung-formular.md` (Operator-Wort,
+#   Asset zurückgezogen) und `state/stimmen/2026-10-17-rat-modvolc-dropped-gate.md`.
+
+# ============================================================
+# 9 — Quellen (gemessen)
+# ============================================================
+# DE-2: CDAWeb ua_16s_ascii; NSSDCA SPTH-00002 / SPIO-00105 ("Ready for Electronic Access")
+#   DataCite 10.48322/z50y-hd65 (phi:875)
+# WALDO: DataCite 10.48322/fzcf-f191 = CC0-1.0; AWS Registry craam-open-vlf = PD
+# Voyager: SPDF PSPA-00049 (V1 14 TARs) / PSPA-00123 (V2 6 TARs); SPDF-Policy CC0-1.0
+# Juno: PDS JNOJNC_0001.tar.gz 15 425 206 433 B; Juno-ODF jnogrv_0001/1001
+# Mariner 10: SPDF PSPA-00316 Teilroute 19 619 840 B; ASU ser.im-ldi.com
+# CEIC: data.earthquake.cn D18000 (Login); DataCite 10.12080 = 0 DOIs
+# Redistribution: Zenodo 15349031 (GRDC) · JPL de440.bsp · EPM2021 154 278 912 B ·
+#   ESO CC-BY-4.0 · Fink 10.5281/zenodo.4036589 · RouteViews · NIST NCNR
+# MODIS: LAADS MOD021KM/MYD021KM; Wright et al. 10.1016/j.jvolgeores.2003.12.008
+
+# ============================================================
+# 10 — Register-Zeilen (phi/sources.φ, HEAD)
+# ============================================================
+# VORHANDEN:
+#   DE-2 872-893 (terms CC0-1.0, 6 fields, coupling rate pending)
+#   WALDO-Bucket 1801-1808 (terms PD, field vlf_awesome_narrowband_amp)
+#   WALDO-Route 8345-8348 (terms nach diesem Atom CC0-1.0)
+#   Juno-ODF 10170-10187 (terms PD) · Mariner-Okkultation 11653-11663 (CC0-1.0)
+#   Voyager 11702-11748 (CC0-1.0) · EPM2021 11841-11848 (Open-Licence-2.0)
+#   GRDC-Caravan 31225-31249 (CC-BY-4.0) · Fink 10062-10068 (CC-BY-4.0)
+#   MOLA 11205-11212 (PD) · FIRMS 791-800 (PD)
+# FEHLT / NEU:
+#   MOD021KM/MYD021KM (0 Treffer) — Zeilen oben vorbereitet, Block fehlt.
+#   VGISS, JNOJNC, Mariner-ASU-Kamera (0 Treffer) — Mycelium-url/origin nötig.
+#   SLDEM2015, HRSC, ICGEM-gfc — terms/field pending bzw. vorbereitet.
+#   DE-2 WATS-2s/IDM-250ms — dichtere Paarung, Parser fehlt.
+# EINGRIFF IN DIESEM ATOM:
+#   phi:8346 `terms CDLA-Permissive-1.0` -> `terms CC0-1.0` (DataCite 10.48322/fzcf-f191).
+#   Sonst kein phi-Eingriff; DE-2-`rate pending`, WALDO-origin und MOD021KM-url bleiben
+#   bei Mycelium/Bau.
+
+# ============================================================
+# 11 — Geodäsie (Stand, nicht Teil der zwei Posts)
+# ============================================================
+# M4 (state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md):
+#   SH-Synthese = eigene Klasse, KEIN achter Punkt-Kernel; Koeffizienten im Draht,
+#   Gitter = derived. Kopfweg ENTSCHIEDEN (b): GM/Radius/Norm/Tide/max_degree als
+#   phi-Direktiven. Funktionale getrennt (V / Δg / N); N bleibt pending bis GRS80
+#   (a, f, GM, ω) und γ₀ registriert. Offen: Liefer-Gate, fremder Abgleich
+#   (ICGEM/pyshtools), 2190-Naht pending, Höhen-Stabilität > Grad 85 pending.
+#   Es gibt weiterhin KEINEN `gfc`-Block in phi/sources.φ; terms
+#   CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007 ist vorbereitet.
+# DE-2: die Bahnpaarung ist keine common-volume-Geometrie; die Korrelation ist ein
+#   Signal entlang der Bahn. Keine Kopplungs-/Reibungsaussage aus der Geometrie.
+# Topographie (LOLA/MOLA/SLDEM/HRSC) trägt Radius/Höhe; ICGEM trägt das Schwerefeld.
+#   Das sind getrennte Größen; D18000 bleibt ohne offene Schwere-Ersatzroute.
+# Voyager: "Range-GET 206" = HTTP-Range, nicht der Range-Messwert; Range-Observable
+#   bleibt pending (word10/word11 ohne dokumentierte Skala).
