@@ -2,7 +2,7 @@
   title: Handover — River-Folge 224 (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: 4948c7bcde115d41f84efae37cb0feec045e24d02df5734b092d9a7b299a4535
+  sha256: 6a318a309ce3ea51e99cd5a069eccc362b05ea742189e4d733ff3c356fac5645
   status: live
 -->
 # Handover — River-Folge 224 (2026-10-16)
@@ -10,7 +10,7 @@
 ## Burn: open 0.0 · close pending · closed 0 · Grund: db.
 
 ## Offen — eigen
-- P7.1 `K` — 1981–83-Bodenreihe ernten (`wdc-ae-cdn.yml`, Lauf `39024807968`); `wdc_ae.bin` verspricht 6 Größen, liefert 1 Tag/1 Größe.
+- P7.1 `K` — 1981–83-WDC-Reihe **geerntet** (`39024807968`: 1 634 952 records, 93 MB); offen der K-Overlap.
 - Rätsel — arbeits-geb.
 - Flyby — termin 2026-11-01.
 
