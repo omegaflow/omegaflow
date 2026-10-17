@@ -131,3 +131,8 @@ venus-radar-basemap registrierung manifestation eigen
 vier endpunkte geofon steht seanoe-adresse geliefert
 wdc-b obninsk rettung erweitert host-adressen geliefert
 weitere fäden kanal-cdn alle mountain-gebunden
+# Nachtrag 2026-10-17 (Operator-Wort „sensory ist beschäftigt, kümmer dich drum"): zwei Drops des
+# Sensory-Handover-Trims `23dfd4d1c` einzeln aufgelöst (state/zustand/dropped-reconciliation.φ) —
+# ein Zukunftstermin (Wartestand) und ein gebauter Hardware-Punkt (Move zu Future); kein Verlust.
+2026-12-02 docs blatt blatt-thuan-fragesteller md 4
+ble-hr-reader external-state md 41 gebaut src
