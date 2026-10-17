@@ -2,7 +2,7 @@
   title: Rat-Formular — MODVOLC-Verteilung (Verteilungs-Ethik)
   class: concept
   date: 2026-10-17
-  sha256: 2b66ed49d0c59db9d9aaaf0984ce0b7c322d4be089f5bfae72f86ff29d2df683
+  sha256: 34a5c16bf0109284a89aeefe381264e7162b6b1c3401c47982f85648dd4f7fe1
   status: live
 -->
 # Rat-Formular — MODVOLC-Verteilung (Verteilungs-Ethik), 2026-10-17
@@ -11,16 +11,16 @@
 Wissen und trägt zur Verteilungsfrage nichts Eigenes bei — die Frage gehört an den **Rat**.
 
 **Gemessen (Belege):**
-- **LANCE-Route** `nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC` — im Register `terms PD`
-  (`phi/sources.φ:12134`), belegt über die NASA-Datapolitik
+- **LANCE-Route** `nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC` — damals im Register `terms PD`
+  (Block später gefallen, s. Nachtrag 2), belegt über die NASA-Datapolitik
   `earthdata.nasa.gov/engage/open-data-services-software-policies/data-information-guidance`
   („full and open sharing … all data … distributed … by NASA data systems"); Messung **mountain-340**
   (2026-10-13); Route gesetzt von **mycelium-343**.
 - **HIGP-Route** `modis.higp.hawaii.edu` — **keine** offene Lizenz (© UH Mānoa, Data-Use-Agreement) →
   `local-only`; Host zudem tot (Timeout, DNS löst auf `128.171.157.89`).
 - **Neu, widersprechend:** LAADS Support — „this product is **not approved for public distribution**."
-- Das kompilierte `modvolc_thermal.bin` (**4 306 035 B**) liegt bereits auf dem **öffentlichen** CDN
-  (`…/nrt3.modaps.eosdis.nasa.gov/modvolc_thermal.bin`, HTTP 200).
+- Das kompilierte `modvolc_thermal.bin` (**4 306 035 B**) lag auf dem **öffentlichen** CDN — inzwischen
+  **zurückgezogen** (Asset **HTTP 404**, gemessen 2026-10-17).
 - Gate-Lücke: `license_census` prüft die **Existenz** einer `terms`-Zeile, nicht ihre **Wahrheit**.
 
 **Fragen an den Rat:**
@@ -49,5 +49,12 @@ Das Haus liest es als UI-Überstimmen (`state/stimmen/2026-10-17-rat-modvolc-dro
 wir rechnen eh selber." → **MODVOLC-CDN-Asset zurückziehen** (Mycelium), Block `local-only` (kein
 `terms PD`), lokal zum **Abgleich**; das **Feld** trägt der **L1-Block `MOD021KM`** (NASA-open +
 Attribution). Der Spalt ist damit **durch das Operator-Wort** entschieden — kein neuer Rat nötig.
+
+**Nachtrag 2 (gemessen, Sensory-Pass 2026-10-17):** Vollzogen: der Register-Block ist **gefallen**
+(`phi/sources.φ` trägt **keine** MODVOLC-Zeile; Mycelium `796ae91c3`, „no fabricated PD line") und das
+CDN-Asset ist **HTTP 404** (zurückgezogen). MODVOLC bleibt `local-only`; der Träger ist der **L1-Block
+`MOD021KM`/`MYD021KM`** bei Mountain (`xfer:mycelium-361-7`; terms/field/ttl + Band-21/22/32-Reader).
+Die vier API-Sitze (`decline-redistribution`) und die zwei UI-Sitze (`LANCE offen`) stehen **benannt**,
+nicht geglättet; die `license_census`-Lücke (Existenz ≠ Wahrheit) bleibt **Rat-getragene Wand**.
 
 **Speist:** die gemessene Recherche oben + der Roster `~/projects/omegaflow-work/ui-seats.md`.

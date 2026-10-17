@@ -116,3 +116,18 @@ prosa-träger mountain327-abgabe aacgm-koeffizient geheilt zeuge läuft
 # kein stiller Drop.
 saber höhenform c arm höhen-ablage brauchen
 epochen-absenz zwei linien unvereinheitlicht eigen
+# Erweitert 2026-10-17 (Mycelium, Rat M2 Schritt A→B, Operator-Wort: M2 ist Mycelium-Arbeit):
+# die 11 Drops des Paares folge360→folge361 einzeln aufgelöst
+# (`state/zustand/dropped-reconciliation.φ`) — je ein Move in die An-<line>-Transport-Token, ein
+# Wartestand, ein descoped (local-only) oder resolved; kein stiller Punktverlust.
+f4 schumann-antrieb wglc global täglich eigen
+higp-modvolc-archiv eigen
+hmi hmi -kanal hmi polar -tag
+juice-bahn flyby operative bahn von esa-spice
+neutrino-assets compiler-gate-riss eigen mountain kreuz
+shear-cdn neu-reader eigen
+themis-asi fodg-cube eigen river
+venus-radar-basemap registrierung manifestation eigen
+vier endpunkte geofon steht seanoe-adresse geliefert
+wdc-b obninsk rettung erweitert host-adressen geliefert
+weitere fäden kanal-cdn alle mountain-gebunden
