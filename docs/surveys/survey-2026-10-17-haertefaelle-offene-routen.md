@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: 580736e56e295ad37f6082587b8b42093b1ae8055be40831625f3b257ab1e1fc
+  sha256: f99c43a7f8b843693e68058341215d55ff78de8c59732227ed7f603ff182dba8
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -120,6 +120,23 @@ die **LANCE**-Route deckt und ob `modvolc_thermal.bin` öffentlich bleiben darf,
 Verdikt**, nicht meine Zeile. Der CDN-Träger hat jedenfalls unter `terms PD` veröffentlicht; ob das
 trägt, ist damit **offen**. Der `license_census`-Gate prüft das Vorhandensein einer `terms`-Zeile,
 nicht ihre **Wahrheit** — die Lücke bleibt.
+
+**Kanäle + Lizenz (Lumo-Befund, verifiziert 2026-10-17):** LANCE `allData/61` trägt **MODVOLC** (200,
+`MODVOLC.A…061.NRT.dat`); **LAADS** ist das **Level-1/Atmosphere**-Archiv (`MOD021KM`/`MYD021KM`, 200).
+Die Support-Mail ist ein **Betriebs-, kein Lizenzinstrument**. `terms PD` ist der **falsche Wert**:
+NASA ist *open* (Attribution erbeten, **kein** Endorsement, „as is"), nicht CC0/PD.
+
+**Rohdaten-Route (der eigentliche Ausweg):** der MODVOLC-Algorithmus ist **publiziert** — **Wright,
+Flynn, Garbeil, Harris & Pilger, JVGR `10.1016/j.jvolgeores.2003.12.008`** (288 Zit.): **4 µm
+(MODIS Band 21/22) + 12 µm (Band 32)**; Verbesserung Gabrieli et al. 2020 („Maximum Radiance
+Algorithm"). Die **Rohdaten** `MOD021KM`/`MYD021KM` liegen **offen** auf LAADS (200, noch **nicht** im
+Register). → **Das Haus kann sein eigenes Thermalanomalie-Feld aus der offenen L1 rechnen** und
+MODVOLC nur zum **Abgleich** nutzen (intern, **nicht** redistribuiert).
+
+**Konsequenz (entschärft):** die Verteilungs-Wand betrifft nur das **fremde Derivat**. Unser Produkt
+aus offener NASA-L1 ist mit Attribution verteilbar (`terms free-open`, **kein**
+`decline-redistribution`). Die **Ratsfrage** bleibt nur für den Fall, dass wir das **MODVOLC-Derivat
+selbst** weitergeben wollen.
 
 ## F — WALDO / AWESOME-VLF (Route gelöst, kein Suchknoten)
 
