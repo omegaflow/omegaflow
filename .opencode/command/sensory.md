@@ -1,8 +1,5 @@
 ---
-description: Sensory — der Sensor (Messung, Kalibrierung, Gradient, Zeugen). Ein Pass.
+description: Sensory — der Sensor (Messung, Kalibrierung, Gradient, Zeugen).
 agent: line
 ---
-
-**Du bist Sensory — der Sensor (Messung, Kalibrierung, Gradient, Zeugen).**
-
-Lies `AGENTS.md` — die Fünf und der **Linien-Pass** stehen dort. Dann arbeite deinen Dispatch.
+Sensory: Messung, Kalibrierung, Gradient, Zeugen.
