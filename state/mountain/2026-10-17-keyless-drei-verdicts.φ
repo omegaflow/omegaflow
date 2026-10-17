@@ -1,0 +1,71 @@
+# Keyless-Drei — Mountain-Verdikte zu sensory-259-4 / -5 / -6 (2026-10-17)
+# Linie Mountain · Messgrundlage docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md
+#   (Pass 2026-10-17, vier + fünf Taucher) und docs/handover/antwort-2026-10-16-ceic-utdallas.md.
+# Junktim: terms/field/ttl/Disposition = Mountain; url/origin/compiler = Mycelium.
+# Kein Verdikt ohne Messung. Diese Session hat nicht neu gefetcht; sie verdiktet den gemessenen Survey-Stand.
+# Priorität der Zeilen: Post 0 · Trigger 0 · Transfer = diese drei (die zwei echoed Tokens -1/-2 bleiben geschlossen).
+
+# ============================================================
+# 1 — sensory-259-4 · DOSIS-3D / DOSTEL
+# ============================================================
+# GEMESSEN (Survey 2026-10-17, Abschnitte C/„Restlücken" und §Dosis):
+#   HREDA `DOSIS-3D` = 403 („Anonymous users cannot download data")
+#   DOSTEL-DOI 10.57780/esa-8hfqjak · DOSIS-3D-DOI 10.57780/esa-znu2ukt = data_available=false, 0 Dateien
+#   keyless TAP: v_dataset 163 Zeilen / v_file_metadata 105 618 616 -> DOSIS/DOSTEL = 0
+#   kein ISS-Rohspektrum (CDAWeb ISS_DOSANL_TEPC nur DOSE/DOSE_EQ60, 1-min)
+# VERDIKT: `blocked` — kein phi-Block, keine terms-Zeile. Die Daten sind nicht abwesend,
+#   sondern hinter ESA-LDAP; ein Block ohne anonymen Pfad wäre eine Route, die es nicht gibt.
+# RISS (benannt): 403/500 ist kein sauberer Auth-Kanten-Beweis; „Inhalt ungeprüft" bleibt stehen.
+#
+# NÄCHSTBESTES, ZUGELASSEN — CRaTER (LRO), NICHT ISS:
+#   terms CC-BY-4.0 https://zenodo.org/records/22883077   (DOI 10.5281/zenodo.22883077)
+#   at moon
+#   field PENDING — echtes GCR-LET-Spektrum, Spalten/kernel noch nicht am Block gemessen
+#   ttl no-cadence (Datensatz)
+#   url/origin/compiler = Mycelium; ohne ihre Zeilen steht kein Block.
+# RISS: CRaTER ist LRO/Mond, kein ISS-Ersatz; die Zeile trägt die Größe (LET-Spektrum), nicht den Ort.
+#   IFJ PAN 10.48733/ifjpan/oebph2 (Dosis-Tabelle) bleibt als zweiter nicht-ISS-Zeuge benannt, ungemessen.
+
+# ============================================================
+# 2 — sensory-259-5 · CEIC D18000 (Schwere)
+# ============================================================
+# GEMESSEN (Survey 2026-10-17, Abschnitte C/„Gated China" und „Restlücken"):
+#   D18000 = zwei Datensätze: flow 1998–2015 (300,0 GB) und absolut 2009–2015 (22,0 GB)
+#   Order-Endpunkt -> 302 login.jsp; Registrierung faktisch +86/China („中国公民都可申请", Name „nur Han")
+#   kein keyless Mirror; Zenodo 7112529/7855090 = Sichuan/Lushan-Subset (74 Rohdateien), kein Voll-Mirror
+#   DataCite prefix=10.12080 = 0 registrierte DOIs; doi.org „This DOI cannot be found"
+#   offene Ersatzapparate (IGETS/GFZ, BGI, ICGEM) = andere Instrumente, decken D18000 nicht
+# VERDIKT: `declined` — kein phi-Block. Keine offene Lizenz, kein ausländischer Zugang, keine
+#   registrierte DOI; ein terms-Token wäre erfunden.
+# RISS (benannt, nicht geglättet): die Zenodo-Subsets sind Figuren/Teilmengen, NICHT „dieselbe
+#   CEIC-Schwere, republiziert" — die frühere Note war überzogen.
+# FOLGE: der CEIC-Operator-Kanal (dcogcd@163.com / datashare@seis.ac.cn) bleibt die einzige Route;
+#   eine Antwort wäre eine Zulieferung und würde neu gemessen, nie roh geglaubt.
+
+# ============================================================
+# 3 — sensory-259-6 · C/NOFS NWM (Neutralwind)
+# ============================================================
+# GEMESSEN (Survey 2026-10-17, §D + „Restlücken"; Antwort UT Dallas 2026-10-16):
+#   UTD: das NWM hat nie funktioniert (Kammer-Leck, verrauschte Ionenquelle) -> keine NWM-Daten
+#   CDAWeb pub/data/cnofs/cindi/ = 200, aber nur IVM (Ionendrift, 500 ms CDF/HDF), kein NWM
+#   NSSDCA spacecraft=c/nofs und CINDI = absent; SPASE „NWM"/„neutral wind meter" = 0
+#   DataCite C/NOFS = 14 (kein NWM); Wayback-CDX 1080 URLs: 5 NWM-Seiten, 0 NWM-Dateien
+# VERDIKT: `absent` — kein phi-Block, kein pending. Es gibt kein öffentliches NWM-Produkt.
+# RISS (benannt): die stärkere Aussage „nie funktioniert" ist widerlegt (Earle 2013 / Haaser 2013:
+#   meridionale NWM-Daten 2011, nur N-S-Kanal); gemessen ist die Abwesenheit eines Produkts, nicht der Physik.
+# UNGEMESSEN (benannt): ads/base (Token fehlt) — dort wäre ein NWM-Datensatz am ehesten registriert.
+# ERSATZROUTE (nicht NWM): DE-2 WATS + IDM = kollokales in-situ-Paar (NSSDCA SPTH-00002 / SPIO-00105,
+#   „Ready for Electronic Access"); ICON/MIGHTI ist remote, kein in-situ-Paar. Das ist Rivers Bau, nicht dieser Block.
+
+# ============================================================
+# 4 — Geodäsie-Stand (nicht Teil der drei Transfers, unverändert)
+# ============================================================
+# M4 (state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md, Operator-Entscheid):
+#   SH-Synthese = eigene Klasse, KEIN achter Punkt-Kernel; Koeffizienten im Draht, Gitter = derived.
+#   Kopfweg ENTSCHIEDEN (b): GM/Radius/Norm/Tide/max_degree als phi-Direktiven, Draht unangetastet.
+#   Funktionale getrennt (V / Δg / N); N bleibt pending bis GRS80 (a, f, GM, ω) und γ₀ registriert.
+#   Offen: Liefer-Gate, fremder Abgleich (ICGEM/pyshtools), 2190-Naht pending, Höhen-Stabilität > Grad 85 pending.
+# REGISTER: es gibt weiterhin KEINEN `gfc`-Block in phi/sources.φ (state/mountain/2026-10-15-grenz-term-verdicts.φ §7);
+#   terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007 steht im Compiler, die Zeile ist vorbereitet.
+#   url/origin/compiler = Mycelium (Token xfer:mycelium-361-1 bereits beglichen).
+# ZEUGE: JEOD verif_out.txt bis Grad 20 GET-scriptbar (state/mountain/2026-10-15-grenz-term-verdicts.φ §6d).
