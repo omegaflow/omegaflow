@@ -74,7 +74,7 @@ fn wats_series(paths: &[String]) -> Vec<Wats> {
 fn heading_north(track: &[Wats]) -> Vec<f64> {
     let n = track.len();
     let mut out = vec![0.0f64; n];
-    for i in 0..n {
+    for (i, slot) in out.iter_mut().enumerate() {
         let (j, k) = if i == 0 { (0, 1) } else { (i - 1, i) };
         if k >= n {
             continue;
@@ -86,7 +86,7 @@ fn heading_north(track: &[Wats]) -> Vec<f64> {
         let east = dlon * coslat;
         let hypot = (north * north + east * east).sqrt();
         if hypot > 0.0 {
-            out[i] = north / hypot;
+            *slot = north / hypot;
         }
     }
     out
@@ -196,7 +196,9 @@ fn main() {
     let wats = collect("--wats");
     let idm = collect("--idm");
     if wats.is_empty() || idm.is_empty() {
-        eprintln!("usage: de2_pair_probe --wats <file>... --idm <file>... [--east] [--out-a <path>] [--out-b <path>]");
+        eprintln!(
+            "usage: de2_pair_probe --wats <file>... --idm <file>... [--east] [--out-a <path>] [--out-b <path>]"
+        );
         exit(2);
     }
     let east = args.iter().any(|a| a == "--east");
@@ -218,16 +220,17 @@ fn main() {
     let mut ive_east: Vec<f64> = Vec::new();
     let mut cursor = 0usize;
     for (i, rec) in track.iter().enumerate() {
-        while cursor + 1 < v.len() && (v[cursor + 1].0 - rec.time).abs() <= (v[cursor].0 - rec.time).abs()
+        while cursor + 1 < v.len()
+            && (v[cursor + 1].0 - rec.time).abs() <= (v[cursor].0 - rec.time).abs()
         {
             cursor += 1;
         }
-        if let Some((ti, value)) = v.get(cursor) {
-            if (ti - rec.time).abs() <= tolerance {
-                nve.push(rec.wind as f64);
-                ive_raw.push(*value as f64);
-                ive_east.push(*value as f64 * heading[i]);
-            }
+        if let Some((ti, value)) = v.get(cursor)
+            && (ti - rec.time).abs() <= tolerance
+        {
+            nve.push(rec.wind as f64);
+            ive_raw.push(*value as f64);
+            ive_east.push(*value as f64 * heading[i]);
         }
     }
     let pair = |a: &Vec<f64>, b: &Vec<f64>| -> Vec<(f64, f64)> {
@@ -249,9 +252,16 @@ fn main() {
         println!("raw   : ive mean {:.1} | r(nve,ive) = {:.4}", mean, r);
     }
     if let Some((mean, r)) = correlation(&pair(&nve, &ive_east)) {
-        println!("east  : ive mean {:.1} | r(nve,ive) = {:.4}  (ive * hn)", mean, r);
+        println!(
+            "east  : ive mean {:.1} | r(nve,ive) = {:.4}  (ive * hn)",
+            mean, r
+        );
     }
-    let out_b: Vec<f64> = if east { ive_east.clone() } else { ive_raw.clone() };
+    let out_b: Vec<f64> = if east {
+        ive_east.clone()
+    } else {
+        ive_raw.clone()
+    };
     if let Some(path) = find("--out-a") {
         let body: String = nve.iter().map(|x| format!("{}\n", x)).collect();
         match std::fs::write(&path, body) {

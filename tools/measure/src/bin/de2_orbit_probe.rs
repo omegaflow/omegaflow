@@ -23,7 +23,9 @@ fn read_var(bytes: &[u8], file: &CdfFile, name: &str) -> Result<Vec<f64>, String
         "sparse={} record_vary={} max_rec={}",
         var.sparse, var.record_vary, var.max_rec
     );
-    let records = file.var_records(bytes, var).map_err(|e| format!("{}: {:?}", meta, e))?;
+    let records = file
+        .var_records(bytes, var)
+        .map_err(|e| format!("{}: {:?}", meta, e))?;
     Ok(records
         .into_iter()
         .filter_map(|(_, values)| values.into_iter().next())
