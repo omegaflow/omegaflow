@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: 22cf215cd9d086660546c28fe0a59919ab22008302bbfb8143de920e15dcc0d0
+  sha256: e4e4af8943b147980ca455384d65e3e8b7dc6f3534963e15c817c4bc2ab6f70d
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -32,8 +32,8 @@
 `pds4/bundles/` trägt nur `voyager_rss_raw` (ODR open-loop) neben `cassini_iss/uvis/vims`, `gll.rss`.
 **Kamera offen**, **Tracking zu**. **Neu nutzbar:** die **NSSDCA-Metadaten** sind **keyless**
 (`archive_search --nssdca <id>`): `PSNO-00007` (Voyager, „Ready for Offline Distribution") ·
-`PSCM-00009` (Mariner 10, dito) · `PSPG-00011` (Viking, „Data Identified but not Received") — der
-Rohbestand bleibt offline, aber der Zustand ist belegbar benannt.
+`PSCM-00009` (Mariner 10, dito) · `PSPG-00011` / `PSPG-00148` (Viking 1/2 Orbiter, „Data Identified but
+not Received") — der Rohbestand bleibt offline, aber der Zustand ist belegbar benannt.
 
 ## B — Redistributions-Declines (41) — die Blockierten, frisch gemessen
 
@@ -71,6 +71,11 @@ kein `pending`, sondern **`absent`** — physikalisch leer. Der CINDI-`blocked a
 **hinfällig**. Offene Alternativen (200): **DE-2** `cdaweb.gsfc.nasa.gov/pub/data/de/de2/`
 (`neutral_gas_wats/`, `combined_plasma_neutrals_ua/` = kollokales in-situ-Paar) · **ICON/MIGHTI**
 `…/pub/data/icon/` (remote, **kein** in-situ-Paar).
+
+**NSSDCA belegt es — keyless (`archive_search --nssdca <id>`):** `SPTH-00002` „DE-2 WATS 2-sec Neutral
+Wind, Density and Temperature in ASCII" → **„Ready for Electronic Access"**; `SPIO-00105` „DE-2 IDM
+0.25-sec ion drift in ASCII" → **„Ready for Electronic Access"**. Das ist das **kollokale
+in-situ-Ion↔Neutral-Paar**, das die NWM-Lücke füllt — **offen bestätigt**, nicht behauptet.
 
 ## E — MODVOLC Collection 6 (HIGP-Host tot → historische Route bei NASA LAADS)
 
