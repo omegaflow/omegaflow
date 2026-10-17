@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: cbac079cb82ba4a927645e07eec57c2f27a19a8ee20b6832c5091766e033f0d3
+  sha256: d324472e8e9c07a11e2c72c6d3e6d62ad9b2a8c719679716f5205fb992a15862
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -99,8 +99,8 @@ in-situ-Ion↔Neutral-Paar**, das die NWM-Lücke füllt — **offen bestätigt**
 
 **Gemessen:** `modis.higp.hawaii.edu/data/…` → **Timeout (HTTP 000)**; DNS löst auf (`128.171.157.89`,
 CNAME `hotspot3.higp.soest.hawaii.edu`), HTTP aber tot. `--wayback` kein Snapshot. Lokal:
-`data/modis.higp.hawaii.edu/2000/` = **75 570** Dateien, 429 MB (nur Jahr 2000). Register-Route
-`phi/sources.φ:12136` = nrt3 **Collection 6.1, nur Recent** (200).
+`data/modis.higp.hawaii.edu/2000/` = **75 570** Dateien, 429 MB (nur Jahr 2000). Die damalige
+Register-Route (nrt3 **Collection 6.1, nur Recent**, 200) ist **gefallen** — s. Abschluss unten.
 
 **Die historische Collection 6 liegt unter anderem Namen bei NASA LAADS:**
 `https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/6/MODVOLC/<Jahr>/<DOY>/MODVOLC.A<YYYYDDD>.HHMM.006.dat`
@@ -110,8 +110,8 @@ die fehlenden Jahre 2001–2019 sind damit erreichbar. **Naming-Riss:** HIGP `�
 fand LAADS. `--all` (416 Z., `zenodo`/`crossref`/`dataverse` …) = **kein** freies Mirror.
 Offene Alternativen (200): **NASA FIRMS** `firms.modaps.eosdis.nasa.gov` · **MIROVA** `mirovaweb.it`.
 
-**Riss (Lizenz — nachvollziehbar, nicht „unbelegt"):** Das Register führt `terms PD
-https://www.earthdata.nasa.gov/` (`phi/sources.φ:12134`) — die Lizenz **wurde gemessen**
+**Riss (Lizenz — nachvollziehbar, nicht „unbelegt"):** Das Register führte damals `terms PD
+https://www.earthdata.nasa.gov/` — die Lizenz **wurde gemessen**
 (mountain-340, 2026-10-13: HIGP-Route = keine offene Lizenz → `local-only`; der NASA-LANCE-Spiegel =
 PD über die NASA-Datapolitik `earthdata.nasa.gov/…/data-information-guidance`; mycelium-343 stellte die
 Route auf `nrt3.modaps.eosdis.nasa.gov`). **Neu und widersprechend:** LAADS Support: „this product is
@@ -144,6 +144,15 @@ nicht … was wollen wir uns streiten, wenn wir eh selber rechnen können." → 
 zurückziehen** (Mycelium); der Register-Block fällt auf `local-only` (kein `terms PD`), lokal bleibt es
 zum **Abgleich**; das **Feld** trägt der **L1-Block `MOD021KM`** (NASA-open + Attribution). Quelle:
 Operator (Session). Damit ist der 4:2-Ratsspalt **durch das Operator-Wort** entschieden (konservativ).
+
+**Abschluss (gemessen, Sensory-Pass 2026-10-17):** Der Register-Block ist **gefallen** —
+`phi/sources.φ` trägt **keine** MODVOLC-Zeile mehr (Mycelium `796ae91c3`, „no fabricated PD line");
+MODVOLC ist `local-only`. Das CDN-Asset ist **zurückgezogen**:
+`…/releases/download/nrt3.modaps.eosdis.nasa.gov/modvolc_thermal.bin` → **HTTP 404** (der Tag steht
+noch, **ohne** das Asset). Der Träger des Feldes ist der **L1-Block `MOD021KM`/`MYD021KM`** (NASA-open + Attribution, Wright et al. 2003) — noch **nicht** im Register; terms/field/ttl + der
+Band-21/22/32-Reader liegen bei Mountain (`xfer:mycelium-361-7`). Die `terms decline-redistribution`-Zeile,
+die der Dispatch als „bereits gesetzt" nannte, hat es **nie** gegeben — der Dispatch las `e789578d3`
+(die Entschärfung) mit dem älteren 02:41-Dispatch zusammen.
 
 ## F — WALDO / AWESOME-VLF (Route gelöst, kein Suchknoten)
 
