@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: 79343fc4c96258c187ac2c021df19498c2de9db99129759a65a4465d3137504d
+  sha256: 580736e56e295ad37f6082587b8b42093b1ae8055be40831625f3b257ab1e1fc
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -35,6 +35,10 @@
 `PSCM-00009` (Mariner 10, dito) · `PSPG-00011` / `PSPG-00148` (Viking 1/2 Orbiter, „Data Identified but
 not Received") — der Rohbestand bleibt offline, aber der Zustand ist belegbar benannt.
 
+**Kamera-Direktlinks (aufgelöst, alle 200):** Voyager ISS `pds-imaging.jpl.nasa.gov/data/voyager/VGISS_*`
+(+ `qedr/`) · Juno JNOJNC `planetarydata.jpl.nasa.gov/img/data/juno/JNOJNC_0001.tar.gz` (**15 425 206 433 B**)
+· Mariner 10 CLR ASU `ser.im-ldi.com`.
+
 ## B — Redistributions-Declines (41) — die Blockierten, frisch gemessen
 
 | Quelle | legale Route heute | HTTP | Riss |
@@ -62,6 +66,12 @@ not Received") — der Rohbestand bleibt offline, aber der Zustand ist belegbar 
 sind **Figuren-Subsets** (~1,0 / 1,3 MB, „a constant value is removed for reading") — **nicht** die
 D18000-Reihe. Eine frühere Note („dieselbe CEIC-Schwere, republiziert") war **überzogen**. Für D18000
 selbst existiert **keine** keyless Route.
+
+**Direktlinks der Alternativen (aufgelöst, 200):** LOLA-RDR
+`pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/` · SLDEM2015
+`imbrium.mit.edu/DATA/SLDEM2015/GLOBAL/{FLOAT_IMG,JP2}/` (README 1769 B) · MOLA
+`pds-geosciences.wustl.edu/mgs/mgs-m-mola-3-prdr-l1a-v1/` · ICGEM
+`icgem.gfz-potsdam.de/tom_longtime`.
 
 ## D — C/NOFS NWM (Absage → `absent`)
 
