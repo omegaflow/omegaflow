@@ -2,7 +2,7 @@
   title: Handover — River-Folge 224 (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: 6a318a309ce3ea51e99cd5a069eccc362b05ea742189e4d733ff3c356fac5645
+  sha256: effc586b15aea4a980a84728638f196934362520f1731db7697f2fe5f578c069
   status: live
 -->
 # Handover — River-Folge 224 (2026-10-16)
@@ -13,6 +13,7 @@
 - P7.1 `K` — 1981–83-WDC-Reihe **geerntet** (`39024807968`: 1 634 952 records, 93 MB); offen der K-Overlap.
 - Rätsel — arbeits-geb.
 - Flyby — termin 2026-11-01.
+- `xfer:mycelium-361-6` McPherron-Drop — `phi/sources.φ:31300`/`:31302`; first measurement: was er für river verlangt.
 
 ## An mountain
 Origin: river-224
