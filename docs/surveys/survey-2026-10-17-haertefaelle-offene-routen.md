@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: 5ef8ccc9693ef094609dc6577c4aa2b6083e6013346097208bb6fd41e781581d
+  sha256: 964fb703a0fd58fb466874af84df44b8ac581d6da709a390d663e34f91bd6be7
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -78,6 +78,16 @@ die fehlenden Jahre 2001–2019 sind damit erreichbar. **Naming-Riss:** HIGP `�
 · LANCE `…061.NRT` — deshalb fand die **Dateinamen**-Suche nichts; die **Struktur**-Suche (Jahr/DOY)
 fand LAADS. `--all` (416 Z., `zenodo`/`crossref`/`dataverse` …) = **kein** freies Mirror.
 Offene Alternativen (200): **NASA FIRMS** `firms.modaps.eosdis.nasa.gov` · **MIROVA** `mirovaweb.it`.
+
+**Riss (Lizenz, nicht geglättet):** Das Register behauptet `terms PD https://www.earthdata.nasa.gov/`
+(`phi/sources.φ:12134`) — der **Anbieter widerspricht**: LAADS-Support: „this product is **not approved
+for public distribution**, so users cannot access this product"; HIGP trägt **keine** Lizenzzeile
+(© UH Mānoa). Ein `terms PD` ist damit **unbelegt**. Und das Haus hat `modvolc_thermal.bin`
+(**4 306 035 B**) bereits auf seinem **öffentlichen** GitHub-Release-CDN veröffentlicht — unter genau
+dieser PD-Behauptung. → `redistribution` ist die **Veto-Kategorie**: MODVOLC gehört ins
+Decline-Register (`decline redistribution`), das CDN-Asset muss **zurückgezogen** werden (Fremdhand,
+Operator), Ersatz-Feld: FIRMS/MIROVA (Terms zu messen). Der `license_census`-Gate greift nur bei
+`ohne-lizenz`, **nicht** bei einer **falschen** `terms`-Zeile — das ist die Lücke.
 
 ## Grenze
 
