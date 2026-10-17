@@ -2,7 +2,7 @@
   title: Rat-Formular — MODVOLC-Verteilung (Verteilungs-Ethik)
   class: concept
   date: 2026-10-17
-  sha256: 9d7316f4fd57ec690adb285a705b37567557328721c3d8942a92cbae1a8a35f6
+  sha256: 87edceba0368fb3070fe2d9e735bd85de5447aa3c7b121278956b2f0657bc0ee
   status: live
 -->
 # Rat-Formular — MODVOLC-Verteilung (Verteilungs-Ethik), 2026-10-17
@@ -30,6 +30,15 @@ Wissen und trägt zur Verteilungsfrage nichts Eigenes bei — die Frage gehört 
 3. Soll das veröffentlichte CDN-Asset **zurückgezogen** werden (Operator-Hand) — und wird bis zum
    Entscheid **nicht weiter** veröffentlicht?
 4. Verdient die Gate-Lücke (Existenz vs. **Wahrheit** einer `terms`-Zeile) eine **Wand**?
+
+**Nachtrag (2026-10-17) — entschärft durch die Rohdaten-Route.** Verifiziert: LANCE `allData/61` trägt
+MODVOLC, **LAADS** ist das **L1/Atmosphere**-Archiv (`MOD021KM`/`MYD021KM`, 200); die Support-Mail ist
+kein Lizenzinstrument; `terms PD` ist der **falsche Wert** (NASA = open/Attribution/kein Endorsement).
+Der MODVOLC-Algorithmus ist **publiziert** (Wright et al., JVGR `10.1016/j.jvolgeores.2003.12.008`:
+4 µm Band 21/22 + 12 µm Band 32) → das Haus kann sein **eigenes** Thermalanomalie-Feld aus der **offenen
+L1** rechnen und MODVOLC nur zum **Abgleich** nutzen. **Damit bleibt die Ratsfrage nur für den einen
+Fall: geben wir das MODVOLC-Derivat selbst weiter?** Für unser L1-Derivat genügt Mountains `terms`-Verdikt
+(`free-open` + Attribution).
 
 **Speist:** die gemessene Recherche oben + der Roster `~/projects/omegaflow-work/ui-seats.md`.
 **Stand der Absendung (2026-10-17):** `bin/rat_dispatch` an 9 Sitze gestellt — **alle `gateway unread`**
