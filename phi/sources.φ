@@ -30662,6 +30662,15 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 0b2da752990e2d92a46622cb49efd7bcea758ebcb5f47300d8413aad18949959
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/KC0PEclipseLogU2.txt
+terms CC-BY-4.0 https://zenodo.org/records/999021
+origin https://zenodo.org/api/records/999021/files/KC0PEclipseLogU2.txt/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+harvest raw_zenodo
+sha256 17b46aebe6083e4d9ef97da47fc256b9f83b1c4be6704f6e5f9d83bff1f58c1c
+at earth
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_Arecibo_1988_Global_440m_v1.tif
 terms CC-BY-4.0 https://zenodo.org/records/18176179
 origin https://zenodo.org/api/records/18176179/files/Venus_Arecibo_1988_Global_440m_v1.tif/content
@@ -30688,6 +30697,15 @@ terms CC-BY-4.0 https://zenodo.org/records/18176179
 origin https://zenodo.org/api/records/18176179/files/Venus_Venera_Backscatter_Global_Polar_840m_v1.tif/content
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 98d80740c6d0c2b0b4e8df388123443d4f6314efc45bf7ed788806a255f59c50
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/WL7C_Zenodo_Upload_Diary.csv
+terms CC-BY-4.0 https://zenodo.org/records/1067790
+origin https://zenodo.org/api/records/1067790/files/WL7C_Zenodo_Upload_Diary.csv/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+harvest raw_zenodo
+sha256 52717fdefe137a95dac29f88f85bb10ea70b08e87552cbb53b85d494c91b0d98
+at earth
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/alerce_features.parquet

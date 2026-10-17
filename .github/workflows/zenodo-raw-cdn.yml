@@ -127,6 +127,16 @@ jobs:
             origin: "https://zenodo.org/api/records/10673982/files/2019-05_RBN.gz/content"
             sha256: 52f3d812a486f77038895bc902fedeb4ce8c2ed3219e76e238d08db83eada8ab
             size: 440799800
+          - asset: KC0PEclipseLogU2.txt
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/KC0PEclipseLogU2.txt"
+            origin: "https://zenodo.org/api/records/999021/files/KC0PEclipseLogU2.txt/content"
+            sha256: 17b46aebe6083e4d9ef97da47fc256b9f83b1c4be6704f6e5f9d83bff1f58c1c
+            size: 2933
+          - asset: WL7C_Zenodo_Upload_Diary.csv
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/WL7C_Zenodo_Upload_Diary.csv"
+            origin: "https://zenodo.org/api/records/1067790/files/WL7C_Zenodo_Upload_Diary.csv/content"
+            sha256: 52717fdefe137a95dac29f88f85bb10ea70b08e87552cbb53b85d494c91b0d98
+            size: 52185
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
