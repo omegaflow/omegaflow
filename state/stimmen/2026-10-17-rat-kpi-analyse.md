@@ -58,3 +58,22 @@ sie hätte **ein** Sitz getragen. Der **Wert** liegt in den **Rissen**, und die 
 **Die Regel, die daraus folgt (KPI je Rat messen):**
 > Nach jedem Rat: **wer fand einen Riss, den kein anderer nannte?** Sitze, die **nur bestätigen**,
 > kommen in die **nächste** Runde nicht mit — bis ein Thema ihre Stärke braucht.
+
+## Nachtrag — der Vor-Test Sonnet 5.5 vs. Kimi K3 (2026-10-17, dieselbe Axiom-Frage)
+
+Um zu wissen, ob das **billige** Anthropic-Modell trägt (statt Opus), lief ein Test gegen Kimi K3:
+
+| Sitz | Kosten (diese Frage) | finish | trägt? |
+|---|---|---|---|
+| **Kimi K3** | **$0,0137** | stop | **ja** (Kernel-Riss) |
+| **Sonnet 5.5** | **$0,0147** | stop | **ja** (4 Risse) |
+| Opus 5.5 | $0,054 | stop | ja (Zähl-Fehler) |
+
+**Sonnet 5.5 trug** — und fand den Riss, den **nicht mal Opus** nannte: *„Die Zahl 7767 stammt aus
+deiner Messung. Ich habe sie nicht nachgezählt. Das Verdikt steht und fällt mit ihr."* + *„‚Muss
+tragen' ist Ableitung — der Bestand zeigt, was Zeilen enthalten, nicht dass eine ohne Kraft ungültig
+wäre."*
+
+**Befund:** Kimi K3 und Sonnet 5.5 kosten **fast dasselbe** (~$0,014) und sind **~4× billiger** als
+Opus — bei **gleichem Tragen**. **Im nächsten Rat laufen Kimi + Sonnet mit** (der direkte Vergleich);
+**Opus fällt** (teurer, kein Mehr-Tragen gemessen).

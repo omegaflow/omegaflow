@@ -21,7 +21,7 @@ und Sammlung liegen daneben (`state/stimmen/<datum>-…`).
 | 7 | 2026-10-17 | M1 MODVOLC · M2 dropped-gate | 4 API + 2 UI | **entschieden** | `2026-10-17-rat-modvolc-dropped-gate.md` | M1→Sensory · M2→Mycelium | — |
 | 8 | 2026-10-17 | DE-2 Ion↔Neutral TE | 4 API + 2 UI | **entschieden** | `2026-10-17-rat-de2-ion-neutral.md` | →Mountain | Fugu/Lumo schärfsten Riss |
 | 9 | 2026-10-17 | Die Axiome (channel_ref-Ersatz) | 8 (6 API + 2 UI) | **entschieden** | `2026-10-17-rat-axiome2.md` | → AGENTS (Leitstelle trägt ein) | Opus·Kimi tief · Mistral·GLM·DeepSeek struktur · Fugu·Lumo messen |
-| 10 | 2026-10-17 | Die minimale Beisitzer-Auswahl | — | **offen** | — | — | — |
+| 10 | 2026-10-17 | Die minimale Beisitzer-Auswahl | **geplant: Fugu + Lumo + Kimi K3 + Sonnet 5.5 + Mistral** | **offen** | — | — | Kimi/Sonnet-Verleich: welcher trägt (beide ~$0,014) |
 
 *(Die Spalte KPI wird ab Frage 5 geführt — ab hier wird je Rat gemessen, wer trug.)*
 
