@@ -1160,6 +1160,7 @@ pub fn main_flow() {
     }
     let mut last_bootstrap: f64 = 0.0;
     let mut tick: u64 = 0;
+    let ambiguous_series = Arc::new(ambiguous_field_names(&archive.sources));
     let mut vagus = crate::archivar::hrv::VagusTone::new();
     let mut nn_buf: Vec<f64> = Vec::new();
     loop {
@@ -3229,6 +3230,7 @@ pub fn main_flow() {
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
                 let src_ttl = src.ttl;
+                let ambiguous_series = Arc::clone(&ambiguous_series);
                 thread::spawn(move || {
                     let empty = |fetch_ok: bool| FetchResult {
                         source_idx: src_idx,
@@ -3302,6 +3304,13 @@ pub fn main_flow() {
                         let _ = ftx.send(empty(true));
                         return;
                     }
+                    let key_qualified_names: HashSet<&str> = fields
+                        .iter()
+                        .filter(|fc| {
+                            ambiguous_series.contains(&(fc.name.clone(), src.station_code.clone()))
+                        })
+                        .map(|fc| fc.name.as_str())
+                        .collect();
                     let mut channels = Vec::with_capacity(records.len());
                     let mut unjoined: std::collections::BTreeSet<u32> =
                         std::collections::BTreeSet::new();
@@ -3340,7 +3349,12 @@ pub fn main_flow() {
                                 epoch: row.t,
                                 station_code: src.station_code.clone(),
                                 position: Position::Source,
-                                name: series_channel_name(&fc.name, src.station_code.as_deref()),
+                                name: series_channel_name(
+                                    &fc.name,
+                                    &fc.key,
+                                    src.station_code.as_deref(),
+                                    key_qualified_names.contains(fc.name.as_str()),
+                                ),
                                 value: row.value,
                             },
                             fc.clone(),
@@ -6399,16 +6413,42 @@ pub fn field_line_matches(fc: &FieldConfig, name: &str) -> bool {
     fc.name == name || fc.key == name
 }
 
-fn series_channel_name(field_name: &str, station_code: Option<&str>) -> String {
+fn ambiguous_field_names(sources: &[SourceConfig]) -> HashSet<(String, Option<String>)> {
+    let mut keys: HashMap<(String, Option<String>), HashSet<String>> = HashMap::new();
+    for src in sources {
+        for e in &src.extracts {
+            if let Extract::Field(fc) = e {
+                keys.entry((fc.name.clone(), src.station_code.clone()))
+                    .or_default()
+                    .insert(fc.key.clone());
+            }
+        }
+    }
+    keys.into_iter()
+        .filter_map(|(name, keys)| (keys.len() > 1).then_some(name))
+        .collect()
+}
+
+fn series_channel_name(
+    field_name: &str,
+    field_key: &str,
+    station_code: Option<&str>,
+    key_is_identity: bool,
+) -> String {
+    let base = if key_is_identity && field_key != field_name {
+        field_key
+    } else {
+        field_name
+    };
     match station_code {
-        Some(code) => format!("{}_{}", field_name, code.to_ascii_lowercase()),
-        None => field_name.to_string(),
+        Some(code) => format!("{}_{}", base, code.to_ascii_lowercase()),
+        None => base.to_string(),
     }
 }
 
 #[cfg(test)]
 mod series_field_name_tests {
-    use super::{series_channel_name, series_field_name};
+    use super::{ambiguous_field_names, series_channel_name, series_field_name};
 
     #[test]
     fn joins_static_table_or_data_driven_names() {
@@ -6428,17 +6468,58 @@ mod series_field_name_tests {
     #[test]
     fn qualifies_the_channel_identity_with_the_station() {
         assert_eq!(
-            series_channel_name("intermagnet_dbdt", Some("ABK")),
+            series_channel_name("intermagnet_dbdt", "intermagnet_dbdt", Some("ABK"), false),
             "intermagnet_dbdt_abk"
         );
         assert_eq!(
-            series_channel_name("intermagnet_dbdt", Some("SOD")),
+            series_channel_name("intermagnet_dbdt", "intermagnet_dbdt", Some("SOD"), false),
             "intermagnet_dbdt_sod"
         );
         assert_eq!(
-            series_channel_name("intermagnet_dbdt", None),
+            series_channel_name("intermagnet_dbdt", "intermagnet_dbdt", None, false),
             "intermagnet_dbdt"
         );
+    }
+
+    #[test]
+    fn carries_the_key_when_one_name_holds_two_resolutions() {
+        assert_eq!(
+            series_channel_name("intermagnet_dbdt", "abk_dbdt_pt1h", Some("ABK"), true),
+            "abk_dbdt_pt1h_abk"
+        );
+        assert_eq!(
+            series_channel_name("intermagnet_dbdt", "abk_dbdt_pt1m", Some("ABK"), true),
+            "abk_dbdt_pt1m_abk"
+        );
+        assert_ne!(
+            series_channel_name("intermagnet_dbdt", "abk_dbdt_pt1h", Some("ABK"), true),
+            series_channel_name("intermagnet_dbdt", "abk_dbdt_pt1m", Some("ABK"), true),
+            "the two resolutions must not share one channel identity"
+        );
+    }
+
+    #[test]
+    fn one_name_per_station_stays_key_free() {
+        let sources = crate::archivar::parse_sources(
+            "url https://example.com/abk1h\nttl 3600\nstation ABK\nfield abk_dbdt_pt1h intermagnet_dbdt inverse-square em nT 3600 0.0 0.0\n\
+             url https://example.com/sod1h\nttl 3600\nstation SOD\nfield sod_dbdt_pt1h intermagnet_dbdt inverse-square em nT 3600 0.0 0.0\n",
+        );
+        let ambiguous = ambiguous_field_names(&sources);
+        assert!(
+            ambiguous.is_empty(),
+            "no station holds two keys for one name"
+        );
+    }
+
+    #[test]
+    fn two_resolutions_of_one_name_are_ambiguous_per_station() {
+        let sources = crate::archivar::parse_sources(
+            "url https://example.com/abk1h\nttl 3600\nstation ABK\nfield abk_dbdt_pt1h intermagnet_dbdt inverse-square em nT 3600 0.0 0.0\n\
+             url https://example.com/abk1m\nttl 3600\nstation ABK\nfield abk_dbdt_pt1m intermagnet_dbdt inverse-square em nT 60 0.0 0.0\n",
+        );
+        let ambiguous = ambiguous_field_names(&sources);
+        assert_eq!(ambiguous.len(), 1);
+        assert!(ambiguous.contains(&("intermagnet_dbdt".to_string(), Some("ABK".to_string()))));
     }
 }
 
