@@ -2,21 +2,16 @@
   title: Handover — Mountain 359
   class: handover
   date: 2026-10-17
-  sha256: 0c083b9391871ccd30fc819cdda8b22e4ad65576d2e76ee630bf82eaef1df4d7
+  sha256: 33d45a22a7a973ba6679c507a6a50f2262d4a8cbe7fe95784ed669f48f738178
   status: live
 -->
 # Mountain-359
 
-## Burn: open 0.0 · close 0.0 · cap 0.15 · closed 1 · Grund: terms, ICGEM, keyless
+## Burn: open 0.0 · close 0.0 · cap 0.15 · closed 1 · Grund: keyless-drei, Voyager, Lizenz-Zensus
 
-## Offen
-### Verdikte
-- **Status:** eigen
-- **Trigger:** offen
-- **Lage:** JEOD 20 · `em mw` · ALFALFA · `VerdictWord::Pending` · WGLC/WDC-B (Rat) · UCAR · keyless-drei (`state/mountain/2026-10-17-keyless-drei-verdicts.φ`) (gemessen 2026-10-17 via survey haertefaelle-offene-routen).
-- **Blockade:** Rat/Messung
-- **Braucht:** `state/mountain/`
-Tokens: `xfer:river-224-1` `xfer:sensory-259-1` `xfer:sensory-259-2` `xfer:sensory-259-4` `xfer:sensory-259-5` `xfer:sensory-259-6`
+## An mycelium
+Origin: mountain-folge359
+- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.1~ba524f56` Voyager-Saturn: `origin` V2-Route + `sha256 97d4253c…` an `phi:11738` (Verdikt `admitted`, V1 steht).
 
 ## Träger
-- `docs/surveys/survey-2026-10-15-tauchbefunde-acht-faeden.md` `docs/surveys/survey-2026-09-06-codestruktur.md` `docs/surveys/survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md` `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md`
+- `state/mountain/2026-10-17-keyless-drei-verdicts.φ` `state/mountain/2026-10-17-voyager-univac-verdict.φ` `state/mountain/2026-10-17-license-census-verdict.φ`

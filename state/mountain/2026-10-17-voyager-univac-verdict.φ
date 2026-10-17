@@ -1,0 +1,76 @@
+# Voyager-Saturn closed-loop — Mountain-Verdikt (2026-10-17)
+# Linie Mountain · Messgrundlage docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md
+#   §A:22 und §G:174-179 (Stand 2026-10-17), ergänzt um die Live-Nachmessung dieses Atoms.
+# Transfer: `xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.1~df88e174`
+# Junktim: terms/field/ttl/Disposition = Mountain; url/origin/compiler = Mycelium.
+# Kein Verdikt ohne Messung. Der Register-Block existiert bereits; dieses Blatt entscheidet ihn,
+#   es legt keinen neuen Block an und ändert keine andere Datei.
+
+# ============================================================
+# 1 — Voyager 1/2 Saturn-Encounter closed-loop (SPDF PSPA-00049 / PSPA-00123)
+# ============================================================
+# GEMESSEN (Survey 2026-10-17 §A:22, §G:174-179; Live-Nachmessung 2026-10-17):
+#   Route V1: https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_encounter_data/
+#     = HTTP 200, Listing 3 151 B, 14 `PSPA-00049_DD0595xx_*.tar` (17-28 Okt .. 28 Nov 1980)
+#   Route V2: https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/radio_science_rss/saturn_encounter_data/
+#     = HTTP 200, Listing 1 807 B, 6 `PSPA-00123_DD0595xx_*.tar` (07 Aug .. 02 Sep 1981)
+#   Range-GET auf `PSPA-00049_DD059517_21-OCT-80.tar`, r 0-511:
+#     HTTP 206, `Content-Range: bytes 0-511/12738560`, `Content-Type: application/x-tar`
+#   `attrib/PSPA-00049_DD059517_21-OCT-80_att` (2 837 B) bestätigt:
+#     `MACHINE_REPRESENTATION = "Univac 1108"`, `NUMBER_OF_BYTES_IN_CANONICAL_STREAMS = "12728148"`,
+#     `STREAM_RECORD_DELIMITER = "2-BYTE HEADER"`, `MAXIMUM_RECORD_LENGTH_BYTES = "8066"`,
+#     `MEDIA_TO_DISK_REPORT = "Copied from tape to disk and passed validation"`
+#   terms: https://spdf.gsfc.nasa.gov/data_use_policy.html = HTTP 200, 21 927 B (Live-GET 2026-10-17).
+#     Der Text sagt wörtlich: „Unless otherwise noted, the content, data, … is public domain and made
+#     available with a Creative Commons Zero (CC0) dedication … copy, modify, distribute … without asking
+#     permission." -> Kanon-Token `CC0-1.0` (tools/register/src/bin/license_census.rs:9-33).
+#   Register-Block steht bereits: phi/sources.φ:11738-11748
+#     url/format/origin(V1)/terms CC0-1.0/compiler/at earth/ttl 604800
+#     field doppler_count_hp · doppler_count_lp (em count) · angle_a · angle_b (em rad)
+#   UNIVAC-Reader existiert: src/archivar/voyager_saturn.rs (458 Zeilen; `parse`, `kind`, `parse_series`,
+#     `write_vsat_bin`/`parse_vsat_bin`, 7 Tests im `#[cfg(test)]`-Modul) und
+#     tools/harvest/src/bin/voyager_saturn_compiler.rs:5-8 (liest beide ROUTES), Dispatch:
+#     .github/workflows/voyager-saturn-cdn.yml:21-28.
+#   CDN-Asset existiert: GitHub-API `releases/tags/spdf.gsfc.nasa.gov`, Asset `voyager_saturn.bin`,
+#     size 125 062 872 B, digest `sha256:97d4253c7e8a5ae932082f242c050183402293e1de4370330b4269aab7731aff`,
+#     updated 2026-09-16; die Größe ist exakt 8 + 822 782 × 19 × 8
+#     (822 782 Tracking-Records, docs/handover/archiv/handover-2026-09-15-forschung-folge20.md:32).
+# VERDIKT: `admitted`
+#   Die Quelle ist offen (kein Key/Account), die Route liefert (200/206), die Lizenz ist mit
+#   gemessenem URL und Kanon-Token `CC0-1.0` belegt, der UNIVAC-1108-Reader und das CDN-Asset
+#   existieren. Kein phi-Neubau, keine terms-Erfindung: der Block trägt die Zeile bereits.
+# RISS (benannt):
+#   - Range-Observable fehlt in der Serie: der Reader verwirft Range bewusst (word10 zykliert 4..100,
+#     word11 wrappt ~30 min; keine dokumentierte Skala) — docs/handover/archiv/handover-2026-09-24-mountain-folge149.md:53-58.
+#     „Range-GET 206" im Transfer meint den HTTP-Range-Request, nicht den decodierten Range-Messwert.
+#   - `angle_a`/`angle_b` (em rad) sind aus den Slots `status_a`/`status_b` gespeist
+#     (src/archivar/voyager_saturn.rs:217-218, 273-274); die Umrechnung Zählwort -> rad ist eine Setzung,
+#     keine am Original belegte Winkelskala. Field bleibt damit `pending`, nicht `declined`.
+#   - `origin` in phi/sources.φ:11740 führt nur V1; der Compiler liest V1 **und** V2
+#     (tools/harvest/src/bin/voyager_saturn_compiler.rs:5-8), das Asset enthält beide (Spanne bis 1981).
+#   - Der Block trägt keinen `sha256`-Pin; der Asset-Digest oben ist gemessen, aber nicht in die Zeile gesetzt.
+#   - `ttl 604800` ist Register-Konvention für statische SPDF-Quellen, kein gemessener Kadenztakt
+#     (Encounter 1980/81); semantisch näher wäre `no-cadence`. Nicht in diesem Atom geändert.
+# BRAUCHT (Mycelium, Zulassung ohne diese Zeilen nur für V1 vollständig):
+#   - `origin` um die V2-Route ergänzen:
+#     https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/radio_science_rss/saturn_encounter_data/
+#     (z. B. `origin V1 ; V2`, wie bei voyager_occlt in phi/sources.φ:11728).
+#   - `sha256 97d4253c7e8a5ae932082f242c050183402293e1de4370330b4269aab7731aff` an die bestehende
+#     url-Zeile phi/sources.φ:11738 setzen (Asset-Pin, Mycelium-Manifestation).
+#   - `url` und `compiler` stehen bereits; dafür ist keine neue Mycelium-Zeile nötig.
+# FOLGE (Mountain, nach der Mycelium-Zeile):
+#   - terms für den V2-Anteil: derselbe gemessene Satz
+#     `terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html` (kein zweites Token).
+#   - field unverändert: doppler_count_hp/lp = `em count`; angle_a/angle_b = `em rad` mit
+#     benanntem `pending`-Riss (Skala ungemessen).
+#   - ttl: 604800 belassen oder bei der nächsten Register-Hand auf `no-cadence` ziehen — Entscheidung
+#     liegt bei Mountain, keine neue Messung nötig.
+# UNGEMESSEN (ausdrücklich):
+#   - Das CDN-Asset wurde in diesem Atom nicht vollständig geladen (Abbruch bei 23 328 680 von
+#     125 062 872 B); der sha256 stammt aus dem GitHub-API-Digest, nicht aus einer lokalen Rechnung.
+#   - Die Reader-Tests wurden nicht ausgeführt (cargo-Build lief in das 120-s-Zeitfenster); gelesen ist
+#     der Quelltext samt 7 Tests, nicht deren Lauf.
+#   - Kein End-to-End-Parse des Assets in diesem Atom; Record-Zahl 822 782 und Spanne 1980-295..1981-261
+#     stammen aus dem Handover, die Byte-Arithmetik oben bestätigt nur die Zahl.
+#   - Keine dataset-spezifische Lizenz-Ausnahme geprüft: das `attrib` trägt kein Lizenzfeld; belegt ist
+#     die blanket-SPDF-Policy, nicht eine Ausnahme „otherwise noted".
