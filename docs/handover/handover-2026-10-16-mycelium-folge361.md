@@ -2,7 +2,7 @@
   title: Handover — Mycelium (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: be5d1e16279cfaf2bf44427e9dcbfcf395d4c04562ed6aa3b499aab6034fe2a3
+  sha256: 496d0e38b0a3bb07e6b5b88045628ad997683822f79570fb5d79f39eef820943
   status: live
 -->
 # Handover — Mycelium (2026-10-16)
@@ -15,7 +15,7 @@
 
 ## An mountain
 Origin: mycelium-361
-- `xfer:mycelium-361-1` ICGEM-Epoche · `-361-4` `subset` (3 archivar-Tests) · `m10`-Drops.
+- `xfer:mycelium-361-1` ICGEM-Epoche · `-361-4` `subset` (3 archivar-Tests) · `-361-7` MODVOLC-`terms`-Vokabel (NASA open+Attribution, nicht PD) + L1 `MOD021KM` · `m10`-Drops.
 - `xfer:mycelium-359-1` · `-359-3` · `-359-4` · `-359-5` · `-359-6` · `-359-7` · `-359-8` · `-352-5` · `-356-5`.
 
 ## An future
