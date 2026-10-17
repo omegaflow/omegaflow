@@ -30592,6 +30592,69 @@ compiler tools/harvest/src/bin/zcta_gazetteer_compiler.rs
 format zcta_gazetteer
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/2018-11_RBN.gz
+terms CC-BY-4.0 https://zenodo.org/records/10673982
+origin https://zenodo.org/api/records/10673982/files/2018-11_RBN.gz/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+harvest raw_zenodo
+sha256 cd84e1b7501d590e31790654af9771c2039655c57d4f46d71125ae4074c7c5a4
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/2018-12_RBN.gz
+terms CC-BY-4.0 https://zenodo.org/records/10673982
+origin https://zenodo.org/api/records/10673982/files/2018-12_RBN.gz/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+harvest raw_zenodo
+sha256 ea29631ca1512380b09eb6ddf4d11e46a0e2be0693d5f0dffbf91c391e119ee5
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-01_RBN.gz
+terms CC-BY-4.0 https://zenodo.org/records/10673982
+origin https://zenodo.org/api/records/10673982/files/2019-01_RBN.gz/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+harvest raw_zenodo
+sha256 ead2a38ca371fca9c621c113f02d7fc538a72a86ff04d2c91b1b5cc7f801ece1
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-02_RBN.gz
+terms CC-BY-4.0 https://zenodo.org/records/10673982
+origin https://zenodo.org/api/records/10673982/files/2019-02_RBN.gz/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+harvest raw_zenodo
+sha256 38bb438edba63806796132df8187832c140aef9392f7443aed971e11359b2daf
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-03_RBN.gz
+terms CC-BY-4.0 https://zenodo.org/records/10673982
+origin https://zenodo.org/api/records/10673982/files/2019-03_RBN.gz/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+harvest raw_zenodo
+sha256 75267f67b944107327d413f10bb60e8fa8f3585b62dfcbe58600222ca45ed6de
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-04_RBN.gz
+terms CC-BY-4.0 https://zenodo.org/records/10673982
+origin https://zenodo.org/api/records/10673982/files/2019-04_RBN.gz/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+harvest raw_zenodo
+sha256 cbfcc88dd6c5d41e296b529bb1da0ea098f021d678afd7a4009dbd364950077e
+at earth
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-05_RBN.gz
+terms CC-BY-4.0 https://zenodo.org/records/10673982
+origin https://zenodo.org/api/records/10673982/files/2019-05_RBN.gz/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+harvest raw_zenodo
+sha256 52f3d812a486f77038895bc902fedeb4ce8c2ed3219e76e238d08db83eada8ab
+at earth
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/BC430.tar.gz
 terms CC-BY-4.0 https://zenodo.org/records/3558850
 origin https://zenodo.org/api/records/3558850/files/BC430.tar.gz/content
