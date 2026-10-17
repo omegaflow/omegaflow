@@ -1,0 +1,37 @@
+# Fugu Max — Rat: der Start-Prompt, 2026-10-17
+
+**Seat:** `chat.sakana.ai` · Modell **Fugu Max** (`fugu-max`, **eingeloggt** — vor dem Senden verifiziert). **Ablage:** Rohantwort, wörtlich.
+
+---
+
+**Verdikt**
+
+Der Start-Prompt ist heute **Prosa**, die drei Dinge benennt, für die der Bestand schon je ein
+**Kommando** hat — und eine vierte Sache, die **kein Kommando ist, sondern ein Akt**. „Status", „Post",
+„Handover" sind **keine Aufgaben, sie sind Adressen**; die Sitzung kämmt, weil ihr die **Adresse**
+fehlt, nicht weil ihr die Aufgabe fehlt. Der Umbau ist deshalb eine **Übersetzung, keine Erfindung**:
+jedes Prosa-Nomen → ein Befehl. Fünf Zeilen. **Kein neuer Marker für `post/in`.** Ein Riss bleibt — und
+er sitzt nicht dort, wo der Prompt heute zu kurz ist, sondern bei der **Menge** und bei der **Uhr**.
+
+**F1 — die Zeilen wörtlich**
+
+```
+LINES="<linie1> <linie2> <linie3> <linie4>"
+for l in $LINES; do register_lookup --addressed $l; done
+for l in $LINES; do register_lookup --fired $l; done
+for l in $LINES; do xfer list --line $l --open; ls -1 post/in/*-an-$l*.md; done
+bin/task_dispatch <linie> "<aufgabe>" <stelle>
+```
+
+Die Zuordnung ist **eins zu eins, nicht analog**: „Status"→`--addressed`/`--fired` · „Post"→`xfer
+--open` + `post/in/*-an-*` · „dispatch"→`task_dispatch` (der **Akt**, kein Kommando).
+
+**Fugus Riss — die Uhr und die Menge**
+
+- **Adresse ist nicht Empfang.** *„Zwischen zwei Sitzungen feuert ein Trigger, niemand liest ihn."*
+- **Das leere Ergebnis ist nicht eindeutig.** *„`--addressed` leer heißt ‚frei' ODER ‚absent'. Axiom 0
+  verbietet, absent als nichts zu lesen. Der Pull braucht den **Nenner** daneben — wie beim Binning:
+  sichtbarer Nenner, sonst wird aus 0 ein Grün."*
+- **Es fehlt `letzter_eigener_akt` und `naechster_akt_bei`.** *„Ohne sie kann ‚je Linie eine Aufgabe
+  dispatchen' doppelt dispatchen, und keine Linie kann sagen, ob sie frei ist oder nur nicht adressiert
+  wurde."*
