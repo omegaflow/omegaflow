@@ -2,7 +2,7 @@
   title: Survey — DE-2 Ion↔Neutral-Kopplung (erste Messung)
   class: survey
   date: 2026-10-17
-  sha256: f0cf6f0ef1d1686a8e93099bb8d87a388d48050c2cec20660c5a0cb8184886ad
+  sha256: 8910f3fe3679dd07519e0b4f6332bbb1de02edd30d3f35e2ace23a052f9ecb0b
   status: live
   see-also: docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md
 -->
@@ -36,10 +36,15 @@ die **Fluktuationen** beider ostwärts-Komponenten laufen **positiv zusammen**, 
 
 | lag | TE(NVE→IVE) | Schwelle | TE(IVE→NVE) | Schwelle | Verdikt |
 |---|---|---|---|---|---|
-| 1 | 7,43e-2 | 2,32e-2 | 6,30e-2 | 2,70e-2 | **beide** |
+| 1 | 7,43e-2 | 2,32e-2 | 6,30e-2 | 2,70e-2 | beide |
+| 4 | 8,73e-2 | 3,79e-2 | **1,14e-1** | 6,31e-2 | beide, IVE→NVE stärker |
+| 16 | 8,05e-2 | 3,54e-2 | **1,10e-1** | 7,79e-2 | beide, IVE→NVE stärker |
 
-Beide Richtungen **über** der Surrogat-Schwelle → **bidirektionale** Kopplung, NVE→IVE etwas stärker.
-Lags 4 und 16 rechnen noch (`~/projects/omegaflow-work/de2/te_out.txt`). Kein stilles `pending`.
+**Beide Richtungen** über der Surrogat-Schwelle (mean + 2σ, phasen-randomisiert) bei **jedem** Lag.
+Die **Richtung dreht** mit dem Lag: bei lag 1 ist NVE→IVE etwas stärker, bei lags 4 und 16 **IVE→NVE**.
+Das ist **kein aufgelöster Kausalpfeil** — zwei signifikante Richtungen mit lag-abhängigem Vorzeichen
+sind ebenso mit einem **gemeinsamen Treiber** (Konvektion/Joule) verträglich wie mit wechselseitigem
+Impulsaustausch. A=A: die TE misst **Abhängigkeit**, nicht Reibung.
 
 ## Grenze (A=A)
 
@@ -54,5 +59,6 @@ Lags 4 und 16 rechnen noch (`~/projects/omegaflow-work/de2/te_out.txt`). Kein st
 ## Nächster Schritt
 
 1. Rust-Parser für WATS-2s (fixed-width) + IDM (mehrzeilig, s/c) → dichtere Paarung.
-2. TE-Verdikt eintragen (dieses Survey).
-3. Erst danach eine Aussage zur ion-neutral friction — die Korrelation allein trägt sie nicht.
+2. **Kausalität prüfen:** die lag-abhängige Richtungsdrehung gegen einen **gemeinsamen Treiber**
+   (Konvektion/Joule) testen — sonst bleibt „bidirektional" mehrdeutig.
+3. Erst danach eine Aussage zur ion-neutral friction — Korrelation + TE allein tragen sie nicht.
