@@ -167,3 +167,16 @@
 #   (Koeffizienten bis Grad 20 aus earth_GGM02C.cc), wie Fall 13 Grad 10.
 #   Die 2190-Naht: kein gemessener 2190-`.gfc`-Kopf im Register (nur der synthetische Test-Head
 #   parse.rs:3714); XGM2019e traegt max_degree 5540 -> die 2190-Naht bleibt `pending`.
+
+# ============================================================
+# 7 — ICGEM `gfc` (Schwere-SH-Modell) — Epoch-/Modellart-Kante (2026-10-17)
+# ============================================================
+#   Gemessen (gelesen `tools/harvest/src/bin/gfc_compiler.rs`, 2026-10-17):
+#     `epoch_of` nimmt den Kopf-Epoch des `.gfc` oder ein `--epoch`-Override; der Wert steht
+#     im Record-Slot `SLOT_EPOCH`. Das Modell ist statisch — die Epoche ist die des Modells,
+#     keine Harvest-Zeit. `ttl` traegt der Aufrufer; sie ist Harvest-Takt, nicht Datenlebensdauer.
+#   Verdikt: `field`-Zeile force `gravity` (der Compiler schreibt `field … inverse-square gravity`);
+#     Modellart `derived` — SH-Koeffizienten sind ein abgeleitetes Produkt, kein Punktmesswert.
+#     `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007` (im Compiler gesetzt, hier bestaetigt).
+#   Riss: es gibt KEINEN `gfc`-Block in `phi/sources.φ` — die Zeile ist vorbereitet, nicht gesetzt;
+#     url/origin/compiler = Mycelium. Token `xfer:mycelium-361-1` mit dieser Messung beglichen.
