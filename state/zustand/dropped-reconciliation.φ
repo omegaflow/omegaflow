@@ -20,3 +20,8 @@ weitere fäden kanal-cdn alle mountain-gebunden | move | xfer:mycelium-359-6/-7/
 #
 # Schritt B (Freeze): diese 11 Schlüssel in docs/zustand/dropped-legacy-baseline.txt aufgenommen
 # (Operator-Wort 2026-10-17: M2 ist Mycelium-Arbeit, nicht eine offene Rat-Frage). Quelle = diese Liste.
+#
+# --- Nachtrag 2026-10-17: zwei fremde Drops (Sensory-Handover-Trim `23dfd4d1c`), auf Operator-Wort
+#     „sensory ist beschäftigt, kümmer dich drum" von Mycelium einzeln aufgelöst:
+2026-12-02 docs blatt blatt-thuan-fragesteller md 4 | wartestand | termin 2026-12-02 (docs/blatt/blatt-thuan-fragesteller.md, 4 Marker) — Zukunftstermin, kein verlorener Punkt
+ble-hr-reader external-state md 41 gebaut src | move | Hardware gebaut (external-state.md:41); Live-BLE-Lauf = Operator-/Future-Wort (Polar H10 FIT nn=0, NotSupported)
