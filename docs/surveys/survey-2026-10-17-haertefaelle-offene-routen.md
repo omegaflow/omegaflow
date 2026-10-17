@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: 032d7d8b0b56fc46e2f09c7321a38dd49ca28f8a3a21630e89868914f19d7186
+  sha256: 79343fc4c96258c187ac2c021df19498c2de9db99129759a65a4465d3137504d
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -119,6 +119,13 @@ nicht ihre **Wahrheit** — die Lücke bleibt.
 `10.48322/fwte-dv13` VLF/LF — Belege `docs/auftrag/auftrag-2026-10-11-wartend-aufloesung.md:29-39`).
 Offen bleibt nur `waldo-massdaten` (der Bulk), **kein** Discovery-Problem — der Inhaltstrick hat hier
 nichts zu holen.
+
+**Direktlink aufgelöst (2026-10-17):** der Bulk liegt im **AWS-Open-Data-Bucket**
+`https://craam-files-bucket.s3.amazonaws.com/?list-type=2` (keyless listbar, HTTP 200; Muster
+`/<YYYY>/<MM>/<DD>/narrowband/<STATION>/<FILE>.mat`; Beispiel
+`…/2015/01/01/narrowband/FE/FE150101000500NAA_008A.mat` = HTTP 200, **352 232 B**). Lizenz **PD** über
+`https://registry.opendata.aws/craam-open-vlf/` (200). Das Haus führt den Block bereits
+(`phi/sources.φ:1801`, `terms PD`) → `waldo-massdaten` ist damit eine **Route**, kein Warten.
 
 ## Grenze
 
