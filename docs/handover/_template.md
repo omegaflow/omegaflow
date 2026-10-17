@@ -152,7 +152,6 @@ Zustand-Ledger. Karte: `docs/concepts/tools-map.md` — bei Widerspruch gilt `--
 - `git_safety` — `--snapshot`/`--restore`/`--list`.
 - `ci_manage` — `list`/`view`/`log`/`cancel`/`rerun`; statt `gh run list`/`gh run view`.
 - `sread [--offset --limit]` — Datei lesen.
-- `session_burn` — Burn je Session.
 - `gh` — nur `workflow run`/`run download`.
 
 ## Offen (aufgeschlüsselt)
