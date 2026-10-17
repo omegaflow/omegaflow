@@ -26,9 +26,16 @@ fn wats_series(paths: &[String]) -> Vec<(f64, f32)> {
         let mut line = 0;
         while line + 1 < lines.len() {
             let head: Vec<&str> = lines[line].split_whitespace().collect();
+            let is_date = head
+                .first()
+                .is_some_and(|t| t.len() == 5 && t.bytes().all(|b| b.is_ascii_digit()));
+            if !is_date {
+                line += 1;
+                continue;
+            }
             let data: Vec<&str> = lines[line + 1].split_whitespace().collect();
             line += 2;
-            if head.len() < 12 || data.len() < 2 {
+            if head.len() < 3 || data.len() < 2 {
                 continue;
             }
             if !matches!(head[2].chars().next(), Some('3') | Some('4')) {
