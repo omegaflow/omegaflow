@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: f99c43a7f8b843693e68058341215d55ff78de8c59732227ed7f603ff182dba8
+  sha256: cbac079cb82ba4a927645e07eec57c2f27a19a8ee20b6832c5091766e033f0d3
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -137,6 +137,12 @@ MODVOLC nur zum **Abgleich** nutzen (intern, **nicht** redistribuiert).
 aus offener NASA-L1 ist mit Attribution verteilbar (`terms free-open`, **kein**
 `decline-redistribution`). Die **Ratsfrage** bleibt nur für den Fall, dass wir das **MODVOLC-Derivat
 selbst** weitergeben wollen.
+
+**Operator-Wort (2026-10-17) — der Rückzug ist entschieden:** „wir nehmens runter im Zweifel lieber
+nicht … was wollen wir uns streiten, wenn wir eh selber rechnen können." → **MODVOLC-CDN-Asset
+zurückziehen** (Mycelium); der Register-Block fällt auf `local-only` (kein `terms PD`), lokal bleibt es
+zum **Abgleich**; das **Feld** trägt der **L1-Block `MOD021KM`** (NASA-open + Attribution). Quelle:
+Operator (Session). Damit ist der 4:2-Ratsspalt **durch das Operator-Wort** entschieden (konservativ).
 
 ## F — WALDO / AWESOME-VLF (Route gelöst, kein Suchknoten)
 

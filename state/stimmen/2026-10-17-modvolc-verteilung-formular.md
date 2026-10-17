@@ -2,7 +2,7 @@
   title: Rat-Formular — MODVOLC-Verteilung (Verteilungs-Ethik)
   class: concept
   date: 2026-10-17
-  sha256: 87edceba0368fb3070fe2d9e735bd85de5447aa3c7b121278956b2f0657bc0ee
+  sha256: 2b66ed49d0c59db9d9aaaf0984ce0b7c322d4be089f5bfae72f86ff29d2df683
   status: live
 -->
 # Rat-Formular — MODVOLC-Verteilung (Verteilungs-Ethik), 2026-10-17
@@ -40,7 +40,14 @@ L1** rechnen und MODVOLC nur zum **Abgleich** nutzen. **Damit bleibt die Ratsfra
 Fall: geben wir das MODVOLC-Derivat selbst weiter?** Für unser L1-Derivat genügt Mountains `terms`-Verdikt
 (`free-open` + Attribution).
 
+**Rat-Antwort (M1), `4f50553f5`:** **4:2 gespalten** — API-Sitze 4× `decline` (PD deckt LANCE nicht,
+Asset zurückziehen); **UI-Sitze (Fugu Max, Lumo) überstimmen**: `PD` ist der falsche *Wert*, aber
+`decline` der falsche *Schluss* — die **LANCE-Route ist offen**; Terme hängen an (Produkt, Kanal).
+Das Haus liest es als UI-Überstimmen (`state/stimmen/2026-10-17-rat-modvolc-dropped-gate.md`).
+
+**Operator-Wort (2026-10-17) — entschieden, konservativ:** „wir nehmens runter im Zweifel lieber nicht …
+wir rechnen eh selber." → **MODVOLC-CDN-Asset zurückziehen** (Mycelium), Block `local-only` (kein
+`terms PD`), lokal zum **Abgleich**; das **Feld** trägt der **L1-Block `MOD021KM`** (NASA-open +
+Attribution). Der Spalt ist damit **durch das Operator-Wort** entschieden — kein neuer Rat nötig.
+
 **Speist:** die gemessene Recherche oben + der Roster `~/projects/omegaflow-work/ui-seats.md`.
-**Stand der Absendung (2026-10-17):** `bin/rat_dispatch` an 9 Sitze gestellt — **alle `gateway unread`**
-(`http://127.0.0.1:1621` nicht erreichbar). Die Frage ist **gestellt**, aber **unbeantwortet**; kein
-stilles `pending`.
