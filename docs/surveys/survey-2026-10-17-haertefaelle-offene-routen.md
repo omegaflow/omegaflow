@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: 964fb703a0fd58fb466874af84df44b8ac581d6da709a390d663e34f91bd6be7
+  sha256: 8b83ac72a7d9023e253fdf802fe8303c755e397980fe89599984e547da755393
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -79,15 +79,17 @@ die fehlenden Jahre 2001–2019 sind damit erreichbar. **Naming-Riss:** HIGP `�
 fand LAADS. `--all` (416 Z., `zenodo`/`crossref`/`dataverse` …) = **kein** freies Mirror.
 Offene Alternativen (200): **NASA FIRMS** `firms.modaps.eosdis.nasa.gov` · **MIROVA** `mirovaweb.it`.
 
-**Riss (Lizenz, nicht geglättet):** Das Register behauptet `terms PD https://www.earthdata.nasa.gov/`
-(`phi/sources.φ:12134`) — der **Anbieter widerspricht**: LAADS-Support: „this product is **not approved
-for public distribution**, so users cannot access this product"; HIGP trägt **keine** Lizenzzeile
-(© UH Mānoa). Ein `terms PD` ist damit **unbelegt**. Und das Haus hat `modvolc_thermal.bin`
-(**4 306 035 B**) bereits auf seinem **öffentlichen** GitHub-Release-CDN veröffentlicht — unter genau
-dieser PD-Behauptung. → `redistribution` ist die **Veto-Kategorie**: MODVOLC gehört ins
-Decline-Register (`decline redistribution`), das CDN-Asset muss **zurückgezogen** werden (Fremdhand,
-Operator), Ersatz-Feld: FIRMS/MIROVA (Terms zu messen). Der `license_census`-Gate greift nur bei
-`ohne-lizenz`, **nicht** bei einer **falschen** `terms`-Zeile — das ist die Lücke.
+**Riss (Lizenz — nachvollziehbar, nicht „unbelegt"):** Das Register führt `terms PD
+https://www.earthdata.nasa.gov/` (`phi/sources.φ:12134`) — die Lizenz **wurde gemessen**
+(mountain-340, 2026-10-13: HIGP-Route = keine offene Lizenz → `local-only`; der NASA-LANCE-Spiegel =
+PD über die NASA-Datapolitik `earthdata.nasa.gov/…/data-information-guidance`; mycelium-343 stellte die
+Route auf `nrt3.modaps.eosdis.nasa.gov`). **Neu und widersprechend:** LAADS Support: „this product is
+**not approved for public distribution**." Zwei gemessene Zeilen, die sich nicht einigen — die
+**NASA-Politik** (full/open sharing) gegen die **produktspezifische LAADS-Absage**. Ob die PD-Zeile
+die **LANCE**-Route deckt und ob `modvolc_thermal.bin` öffentlich bleiben darf, ist **Mountains
+Verdikt**, nicht meine Zeile. Der CDN-Träger hat jedenfalls unter `terms PD` veröffentlicht; ob das
+trägt, ist damit **offen**. Der `license_census`-Gate prüft das Vorhandensein einer `terms`-Zeile,
+nicht ihre **Wahrheit** — die Lücke bleibt.
 
 ## Grenze
 
