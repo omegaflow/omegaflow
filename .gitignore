@@ -6,19 +6,19 @@ omegaflow.wasm
 .opencode/*
 !.opencode/agent/
 .opencode/agent/*
-!.opencode/agent/council.md
 !.opencode/agent/rat.md
 !.opencode/agent/taucher.md
-!.opencode/agent/future.md
 !.opencode/command/
 .opencode/command/*
-!.opencode/command/council.md
-!.opencode/command/consent.md
-!.opencode/command/commit.md
-!.opencode/command/start.md
 !.opencode/command/browser.md
-!.opencode/command/river.md
+!.opencode/command/commit.md
+!.opencode/command/consent.md
 !.opencode/command/future.md
+!.opencode/command/mountain.md
+!.opencode/command/mycelium.md
+!.opencode/command/rat.md
+!.opencode/command/river.md
+!.opencode/command/sensory.md
 # TUI-Plugin: die `_new`-Befehle (/new + Linien-Prompt in einer Session) — versioniert wie die Commands.
 !.opencode/tui.json
 !.opencode/tui/
