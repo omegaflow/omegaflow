@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: fc09a79078d10db6eb8bfd3479d4fd4a6919d101f908d2090f86dcdb4fed57e0
+  sha256: d1e3034461c110370cd2fb5ee57e237c44da3294b4fceb8c7feab399302e018a
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -236,6 +236,28 @@ connection refused. Der Register-Block `weberin_verdicts` führt EPM2021 längst
   (**22 GB**); Order-Endpunkt → **302 `login.jsp`**; Registrierung faktisch **+86/China**.
   Zenodo `7112529`/`7855090` = **74 Rohdateien** + Code + Figuren (Sichuan/Lushan 2010–2013),
   **kein** Voll-Mirror; NEDC-DOIs `10.12080/nedc.gc_zl.ds0001.2026` = **404**.
+
+**Fünf Taucher, zweite Runde (2026-10-17) — die Restlücken:**
+- **ISS-Rohspektren:** CDAWeb `ISS_DOSANL_TEPC` hat nur `DOSE`/`DOSE_EQ60` (1-min); PDS-Registry
+  `TEPC/DOSTEL/Liulin/DOSIS/MATROSHKA` = **0**; NSSDCA absent. Offene Spektren nur **nicht-ISS**:
+  `BIOSENTINEL_LET_LETS` (160 Bin), CRaTER `10.5281/zenodo.22883077` (CC-BY-4.0), IFJ PAN
+  `10.48733/ifjpan/oebph2` (Dosis-Tabelle). **DOSIS-3D-XLSX: hartes ESA-LDAP, kein anonymer Pfad,
+  Inhalt ungeprüft** (DOSTEL-DOI `10.57780/esa-8hfqjak`: `data_available=false`, 0 Dateien).
+- **RBN-Lizenz:** keine offene Lizenz, `about/terms/privacy/legal/copyright` = **404**; einziger Satz:
+  „freely available for study and analysis" + Bitte um Ideen — **kein Redistributions-Grant**.
+  CDN = **pending**, schriftliche Anfrage nötig.
+- **CEIC:** Ausländer-Zugang **nein** — `^1[3-9]\d{9}`, Name „nur Han", Provinz-Adresse, Nutzungsregel
+  „中国公民都可申请"; Order → 302 `login.jsp` (Auth, nicht Geo). Email-Kanal: `dcogcd@163.com`,
+  `datashare@seis.ac.cn` (ob Ausland beliefert wird: offen). **DOI-Korrektur:** `ds0001.2026`
+  existiert **nicht**; die echten sind `ds0005.2026` (flow), `ds0006.2026`, `ds00001.2024` — alle
+  „DOI does not exist" (2026-Charge ungemünzt); 2025er lösen auf.
+- **Voyager:** kein Web-Bestellpfad — `order/download/request.action` = identische **3 645-B-Soft-404**
+  (md5 `de205919…`); realer Weg = **CRUSO** `gsfc-dl-nssdca-request@mail.nasa.gov`, Ermessen +
+  Kostenübernahme + ggf. Digitalisierung. Uranus/Neptun = **physische Univac-1108-Tapes**, kein
+  Digitalisat; Saturn = digital/keyless (14+6 TARs).
+- **C/NOFS 2011 NWM:** nicht beziehbar — UTD-Portal lieferte nie NWM (Wayback: 159 IVM, **0 NWM**),
+  CGI seit 2018 **403**; formale Route nur E-Mail (Hairston `hairston@utdallas.edu`, Heelis
+  `roderick.heelis@utdallas.edu`, Earle `earle@vt.edu`); alte Terms: „may not be redistributed".
 
 **Der stille Eimer „nicht gemessen":** **50** Register-Blöcke tragen keine `terms`-Zeile
 (überwiegend Routen, Manifeste, PDFs, JSON — nicht jede ist eine Quelle). Jede ist eine offene
