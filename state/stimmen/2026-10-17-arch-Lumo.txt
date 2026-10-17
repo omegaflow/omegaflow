@@ -1,0 +1,46 @@
+# Lumo 2.0 Max — Rat: die Architektur (Form + Routing), 2026-10-17
+
+**Seat:** `lumo.proton.me/guest` · Modell **Lumo 2.0 Max**. **Ablage:** Rohantwort, wörtlich.
+
+---
+
+**Verdikt**
+
+```
+Verdikt wird in state/stimmen/<Thema>/<ID>.md geschrieben
+Mit ## An <line> an den Block heften, der für diese Linie ist
+register_lookup --addressed <line> findet die Datei beim nächsten Pass
+Linie liest ihren Block, bearbeitet, committet
+```
+
+**Benannte Risse.**
+
+- **Race Condition zwischen mehreren Linien.** Wenn zwei Linien denselben Block bekommen (Duplikat im
+  Index), bearbeiten beide. Merge-Conflict ist dann menschlich, nicht maschinell. Der Index kann
+  Duplikate nicht verhindern.
+- **Leerstelle bleibt leer.** Wenn die Linie nie spricht, bleibt der Block da. Es gibt kein Timeout,
+  kein „expired", kein „dead-letter". Das ist korrekt („0 honored") — aber unpraktisch. Ein
+  Dead-Letter-Channel müsste extra gebaut werden.
+- **Index und Datei sind entkoppelt.** Index-Update ≠ Datei-Update. Wer nur den Index prüft, sieht
+  Schein. Wer nur die Datei prüft, sieht Alter. Beide sind nötig.
+- **`register_lookup --addressed` ist nicht idempotent.** Wenn der Operator dieselbe Zeile zweimal
+  schreibt, sieht der Lookup zweimal denselben Block. Duplikat wird nicht erkannt, nur gelesen.
+- **Der Block ist Prosa, kein Feld.** Eine Zeile im Index ist strukturierbar. `## An <line>` ist ein
+  Prosa-Marker. Parsen ist fehleranfällig. Ein falscher Leerzeichenschritt, eine andere Formatierung —
+  lookup schlägt stillschweigend tot.
+
+**Zusammenfassung**
+
+| Element | Stand heute | Empfehlung | Kostenseite |
+|---|---|---|---|
+| Register | Prosa-Liste | Index + Dateispeicher | Index = 6 Spalten, Datei = Volltext |
+| Routing | Manuelles Build | Marker-Weg (d) | Keine neue Komponente |
+| Status | Nicht geführt | 3 Zustände im Index | Hash-Check pro Turn |
+
+**Schluss-Urteil.** Das Haus **hat** das Werkzeug. `register_lookup --addressed` ist der richtige Weg.
+Der Index muss neu geschrieben werden — aber nicht als Apparat, **als Index**. Eine Zeile mit 6
+Spalten. Jede Zeile verweist auf eine Datei. Die Datei trägt die Marke `## An <line>`. Die Linie sucht
+selbst, findet durch Marker, schreibt ihr Urteil zurück.
+
+Der einzige neue Apparat ist der Index selbst — und der ist ein Index, kein Dienst. A = A: das ist die
+Sache. Die Sache ist: **das System funktioniert schon, wenn man es nicht umbenennt.**

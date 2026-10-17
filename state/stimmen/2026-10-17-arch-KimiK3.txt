@@ -1,0 +1,52 @@
+# Verdikt
+
+**F1: Die Tabellenform ist falsch. F2: Weg (d) — mit (a) als Schreibakt, nicht als Routing-Akt.**
+
+---
+
+## Begründung F1 — widerlege die Zeilenform, nenne die Form
+
+Die Zeile `Datum · Thema · Sitze · Stand · Verdikt · → Route` scheitert an zwei gemessenen Stellen:
+
+1. **Ein Verdikt ist Prosa, kein Zellenwert.** Der Befund selbst sagt es: das Verdikt *endet mit einer Prosa-Liste*. Wer Prosa in eine Tabellenzelle zwingt, erzeugt entweder Verstümmelung oder eine Zelle, die niemand parst.
+2. **Das vorhandene Werkzeug parst keine Zeilen — es parst Blöcke.** `register_lookup --addressed <line>` findet `## An <line>`-Blöcke. Eine Tabelle mit einer `→ Route`-Spalte ist für dieses Werkzeug **unsichtbar**. Die Zeilenform wäre ein neuer Apparat, der ein vorhandenes Werkzeug ignoriert.
+
+**Die Form, wörtlich** — eine Datei `state/stimmen/_rat-register.md`, **eine Sektion je Rat-Frage**, keine Tabelle:
+
+```
+## RAT-2025-014 · Netzfusion
+- Datum: 2025-…
+- Sitze: <Modelle>
+- Stand: entschieden | offen | überholt
+- Verdikt: <Prosa, so lang sie ist>
+
+### An mycelium
+<der Teil des Verdikts, der diese Linie trifft, mit Auftrag>
+
+### An sensory
+<…>
+```
+
+Der Index (Datum, Thema, Stand) lebt in den Sektionsköpfen und der Stand-Zeile — greppbar. Das Verdikt lebt als Prosa. Die Route lebt als `### An <line>`-Block — **und ist damit bereits das Routing**, kein separater Schritt.
+
+Je-Frage-eine-Datei wäre nur nötig, wenn Verdikte so groß werden, dass eine Datei unhandlich wird. Das ist heute nicht gemessen. Eine Datei, Sektionen, fertig.
+
+## Begründung F2 — (d), und warum es trägt
+
+**(a) ist der Riss, der den Anlass erzeugt hat.** Leitstellen-Dispatch ist der Weg, der heute „pro Verdikt von Hand gebaut" wird — genau das, was ausfiel. (a) als Routing-Akt zu wählen heißt, die gemessene Leerstelle zu institutionalisieren.
+
+**(b) ist ein Generator, den es nicht gibt** — neuer Apparat, gegen die Vorgabe.
+
+**(c) reines Pull ohne Marker** zwingt jede Linie, das ganze Register zu lesen und selbst zu entscheiden, was sie trifft — exakt der Befund („jede Linie muss das Verdikt selbst finden"), nur verlagert.
+
+**(d) trägt, weil alle drei Teile existieren:** die Linie liest beim Start bereits ihre Post und ruft `register_lookup --addressed`; das Werkzeug findet `## An`-Blöcke; das Schreiben eines Blocks ist ein einzelner Akt. Der Routing-Weg ist: **Wer das Verdikt schließt (Leitstelle oder Rat-Sekretariat), schreibt im selben Akt die `### An <line>`-Blöcke in die Sektion.** Verdikt und Route entstehen atomar — es gibt keinen Zustand „Verdikt ohne Route" mehr, weil die Sektion ohne `### An`-Block als unvollständig gilt. Das ist der eigentliche Fix: nicht ein neuer Transport, sondern **Routing als Abschlussbedingung des Verdikts**.
+
+Die Leitstelle bleibt also im Spiel — aber als **Schreiberin der Blöcke**, nicht als Dispatcherin. Push entfällt; Pull über den vorhandenen Marker trägt.
+
+## Die benannten Risse
+
+1. **Pull hat keine Dringlichkeit.** Eine Linie, die lange nicht startet, erfährt ihr Verdikt spät. Kein Ack, kein Alarm. Für ein Haus, das „beim nächsten Pass" liest, ist das der bestehende Rhythmus — aber es ist ein Riss, kein Feature.
+2. **Kein Empfangsbekenntnis.** Der Block wird gefunden, aber nichts markiert „Linie hat gelesen und übernommen". Der Stand `entschieden` sagt nichts über `wirksam`. Minimaler Flicken später: die Linie setzt im Handover einen Verweis auf die RAT-ID — kein neuer Apparat, eine Konvention.
+3. **Verfall.** `Stand: überholt` muss gepflegt werden, sonst zieht `register_lookup` veraltete Aufträge. Ein Register ohne Verfallsdisziplin wird zur zweiten Leerstelle — diesmal mit falschem Inhalt statt keinem.
+
+**Kurz:** Keine Tabelle, kein Generator, kein Push. Eine Datei, Sektionen, `### An <line>` als Abschlussbedingung — der vorhandene Marker-Weg trägt, und der verbleibende Riss ist Zeit (Pull-Latenz) und Verfall, nicht Architektur.
