@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: 8b83ac72a7d9023e253fdf802fe8303c755e397980fe89599984e547da755393
+  sha256: 22cf215cd9d086660546c28fe0a59919ab22008302bbfb8143de920e15dcc0d0
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -26,6 +26,14 @@
 **Riss (nicht geglättet):** die Fünfer-Liste stammt aus `docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md:27`
 (archiviert; „PDS trägt nur open-loop + derived"); der Live-Bestand trägt **Cassini** längst als
 `cassini_tnf.bin` (`phi/sources.φ:10160`). Die Aufgabe trägt eine veraltete Prämisse. **Summe: 1/5 offen.**
+
+**Inhaltstrick angewandt (2026-10-17):** Label-Suche (`PRODUCER_ID=DSN`, `ODF`, `ATDF`, `TRK-2-34`,
+`Voyager ISS EDR`) über `--openaire`/`--ia-search`/`--heasarc` = **absent**; PDS-Rings
+`pds4/bundles/` trägt nur `voyager_rss_raw` (ODR open-loop) neben `cassini_iss/uvis/vims`, `gll.rss`.
+**Kamera offen**, **Tracking zu**. **Neu nutzbar:** die **NSSDCA-Metadaten** sind **keyless**
+(`archive_search --nssdca <id>`): `PSNO-00007` (Voyager, „Ready for Offline Distribution") ·
+`PSCM-00009` (Mariner 10, dito) · `PSPG-00011` (Viking, „Data Identified but not Received") — der
+Rohbestand bleibt offline, aber der Zustand ist belegbar benannt.
 
 ## B — Redistributions-Declines (41) — die Blockierten, frisch gemessen
 
@@ -90,6 +98,14 @@ die **LANCE**-Route deckt und ob `modvolc_thermal.bin` öffentlich bleiben darf,
 Verdikt**, nicht meine Zeile. Der CDN-Träger hat jedenfalls unter `terms PD` veröffentlicht; ob das
 trägt, ist damit **offen**. Der `license_census`-Gate prüft das Vorhandensein einer `terms`-Zeile,
 nicht ihre **Wahrheit** — die Lücke bleibt.
+
+## F — WALDO / AWESOME-VLF (Route gelöst, kein Suchknoten)
+
+`vlf.stanford.edu` tot → **`https://waldo.world`** (200) trägt die AWESOME-VLF-Daten unter
+**CC0-1.0** (DataCite `10.48322/fzcf-f191` broadband · `10.48322/6t7b-s324` narrowband ·
+`10.48322/fwte-dv13` VLF/LF — Belege `docs/auftrag/auftrag-2026-10-11-wartend-aufloesung.md:29-39`).
+Offen bleibt nur `waldo-massdaten` (der Bulk), **kein** Discovery-Problem — der Inhaltstrick hat hier
+nichts zu holen.
 
 ## Grenze
 
