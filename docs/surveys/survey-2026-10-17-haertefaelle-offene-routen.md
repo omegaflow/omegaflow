@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: d324472e8e9c07a11e2c72c6d3e6d62ad9b2a8c719679716f5205fb992a15862
+  sha256: f6d2e94608cec3b2a0b00ce49491e6a90fb591863053e6c2b73a902e33625af5
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -19,7 +19,7 @@
 |---|---|---|---|---|
 | **Cassini** closed-loop (TNF/ODF) | `atmos.nmsu.edu/pdsd/archive/data/co-s-rss-1-*/…/odf/` (PDS3, DSN-NAV) | 200 | ja | **offen** — im Haus schon als `cassini_tnf.bin` geerntet |
 | **Mariner 10** (762 7-Track-Tapes) | nur Teilroute: `spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/…/red_tele_signal_data_venus_occlt/PSPA-00316_DD029604_05-FEB-74.tar` (19,6 MB) | 200 | ja | Roh-Tapes (`PSCM-00009`) request-only |
-| **Voyager 1/2** closed-loop | keine Route (SPDF nur Okkultation/ODR; NSSDC `PSNO-00007` „archive, not distribution") | – | – | request-only |
+| **Voyager 1/2** closed-loop | **Saturn-Encounter offen**: SPDF `pub/data/voyager/voyager{1,2}/radio_science_rss/saturn_encounter_data/` (Univac-1108-Binär; V1 `PSPA-00049` **14 TARs**, V2 `PSPA-00123` **6 TARs**). Cruise/Post-Saturn: keine Route (NSSDC `PSNO-00007` „archive, not distribution") | 206 | ja | **Saturn offen**, Rest request-only |
 | **Viking 1/2** Doppler+Range | keine Route (`PSPG-00011` „Data Identified but not Received") | – | – | request-only/absent |
 | **Juno** pre-EFB 2013-10-09 | keine Route (Juno-ODF erst post-EFB; EFB = 2013-282) | – | – | request-only |
 
@@ -47,7 +47,7 @@ not Received") — der Rohbestand bleibt offline, aber der Zustand ist belegbar 
 | **LSST/Rubin** TAP | **nein** (401, `WWW-Authenticate: Basic`; Policy: „No access … without Rubin data rights") | 401 | nur Ersatz: Gaia (andere Daten) |
 | **GRDC** | **ja**: GRDC-Caravan `zenodo.org/records/15349031` **CC BY 4.0** | 200 | Subset (5356 Einzugsgebiete), nicht die volle DB |
 | **RIPE RIS** | fragil: `archive.routeviews.org` | 200 | **RouteViews BY vs BY-SA**: Text sagt BY, Inline-Link zeigt `by-sa/4.0` |
-| **IMCCE** INPOP19a/NOE-4 | Ersatz: JPL `ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de440.bsp` (PD) | 200 | **EPM2021** `quasar.ipa.nw.ru` = **Timeout** → `pending` |
+| **IMCCE** INPOP19a/NOE-4 | Ersatz: JPL `ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de440.bsp` (PD) | 200 | **EPM2021 offen**: `ftp.iaaras.ru/pub/epm/EPM2021/SPICE/epm2021.bsp` = **200, 154 278 912 B**; `quasar.ipa.nw.ru` tot (der alte Host, nicht das Produkt); im Register als `origin` |
 | **TRISP/YBCO-NSE** (MPI-FKF) | kein Roh; Ersatz NIST NCNR (`nist.gov/open/license`) | 200 | NIST **SRD vs non-SRD** je Datensatz unbestimmt |
 
 **Feld-fähige „neu-zulassen" (gemessen):** `giro.uml.edu/didbase` 200 **CC BY-NC-SA 4.0**
@@ -168,6 +168,28 @@ nichts zu holen.
 `…/2015/01/01/narrowband/FE/FE150101000500NAA_008A.mat` = HTTP 200, **352 232 B**). Lizenz **PD** über
 `https://registry.opendata.aws/craam-open-vlf/` (200). Das Haus führt den Block bereits
 (`phi/sources.φ:1801`, `terms PD`) → `waldo-massdaten` ist damit eine **Route**, kein Warten.
+
+## G — weitere Nüsse (gemessen 2026-10-17, zweiter Pass)
+
+**Voyager-Saturn closed-loop (die Route ist da, der Parser fehlt).** `…/voyager1/radio_science_rss/
+saturn_encounter_data/` = **200** (V1: 14 `PSPA-00049_DD0595xx_*.tar`, 3–17 MB; V2: 6
+`PSPA-00123_DD0595xx_*.tar`, 3–28 MB; `SHA1SUM` + `attrib/`). Die Attributdatei bestätigt
+`MACHINE_REPRESENTATION = "Univac 1108"`, Tape-Image, `NUMBER_OF_BYTES_IN_CANONICAL_STREAMS =
+12 728 148`; Range-GET = **206**, `application/x-tar`. Die blanket-Aussage „Voyager closed-loop =
+request-only" gilt nur für Cruise/Post-Saturn. Zulassung/Parser = Mountain.
+
+**EPM2021 (der Host war tot, nicht das Produkt).** `ftp.iaaras.ru/pub/epm/EPM2021/SPICE/
+epm2021.bsp` = **200, 154 278 912 B** (61,7 MB im 40-s-Fenster); `quasar.ipa.nw.ru:80` =
+connection refused. Der Register-Block `weberin_verdicts` führt EPM2021 längst als `origin`
+(`terms Open-Licence-2.0`). Das `pending` maß den alten Host.
+
+**Live, aber als pending geführt:** `osdr.nasa.gov` **200** · `pskreporter.info` **200** ·
+`reversebeacon.net` **200** — Katalog-/Eignungsfragen, keine Abwesenheit. **DNS-tot:** `dods.wh.gov`
+(000, „Could not resolve host") — wirklich absent.
+
+**Der stille Eimer „nicht gemessen":** **50** Register-Blöcke tragen keine `terms`-Zeile
+(überwiegend Routen, Manifeste, PDFs, JSON — nicht jede ist eine Quelle). Jede ist eine offene
+Lizenz-Messung, keine Abwesenheit; `license_census` prüft Existenz, nicht Wahrheit.
 
 ## Grenze
 
