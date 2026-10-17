@@ -58,23 +58,11 @@
       "variant": "low",
       "permission": {
         "edit": "deny",
-        "task": "deny",
-        "playwright_*": "allow"
+        "task": "deny"
       }
     }
   },
-  "mcp": {
-    "servers": {
-      "chrome-devtools": {
-        "type": "local",
-        "command": [
-          "bin/chrome-devtools-mcp",
-          "--autoConnect"
-        ],
-        "cwd": "."
-      }
-    }
-  },
+  "logLevel": "WARN",
   "permission": {
     "edit": "allow",
     "webfetch": "deny",
@@ -87,6 +75,5 @@
   "tool_output": {
     "max_lines": 80,
     "max_bytes": 4096
-  },
-  "logLevel": "WARN"
+  }
 }
