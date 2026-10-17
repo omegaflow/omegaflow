@@ -2,7 +2,7 @@
   title: Handover — Mycelium (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: f1de1ca5ebd8a70abadc0f854384b2790735672d77cc7e70eef10815e8f2376e
+  sha256: be5d1e16279cfaf2bf44427e9dcbfcf395d4c04562ed6aa3b499aab6034fe2a3
   status: live
 -->
 # Handover — Mycelium (2026-10-16)
@@ -11,7 +11,7 @@
 - ICGEM `gfc` — Kante = statische Epoche (`gfc_compiler.rs`).
 - UCAR-FPI `local-only` (`fpi_ucar.rs`).
 - Quellen-Fäden `weberin-*` · `exposom-matrix` · `worldwide-lidar`.
-- Wartestand: JUICE (2026-11-01) · Ratsvorlagen.
+- Wartestand: JUICE (2026-11-01) · Ratsvorlagen · Offen-Stand-Riss (`docs/surveys/survey-2026-10-17-offen-stand-zaehlung-riss.md`, Rat A/B/C).
 
 ## An mountain
 Origin: mycelium-361

@@ -2,7 +2,7 @@
   title: Survey — Der Offen-Stand-Riss: der Zähler sieht eine leere Menge
   class: survey
   date: 2026-10-17
-  sha256: 728aa406ede2198921e3f95183d376dcdd9dfc381f500a0f899cc438ddda9139
+  sha256: 68dfd7dcc8baed08be7707eb065ca8fd1a21311789907b65420976eaaafc67ee
   status: live
 -->
 # Survey — Der Offen-Stand-Riss: `count_open_points` zählt die Bullets nicht
@@ -29,6 +29,14 @@ führt `## Offen — eigen` als **4** `- `-Bullets; der Zähler liest **0**. Zah
 `count_open_points` `0 → 4`; `:501–505` failt hart: „The open grew (0 -> 4) — a pass closes
 points". **Das Gate sperrt das Format, das die Regel verlangt** (`docs/concepts/house-rules.md:26`
 fordert `### name`).
+
+**Fleet-Momentwert (gemessen 2026-10-17, `b0a6893fa`).** Der Riss ist nicht punktuell. Über die
+**11** lebenden `docs/handover/handover-*.md` liest `count_open_points` genau **3** Punkte — alle im
+einzigen Blatt im `### name`-Format (`handover-2026-10-14-sensory-folge259.md`); **28** offene Punkte
+stehen als `- `-Bullets in **6** weiteren Blättern und sind unsichtbar (`sitzung-folge1` 4 ·
+`future-dna` 2 · `future-folge1` 5 · `mountain-folge358` 7 · `river-folge223` 6 · `mycelium-folge361`
+4). Der Format-Split ist die Ursache: `house-rules.md:26` fordert `### name`, die Mehrheit schreibt
+`- `. Die Burn-Bilanz des ganzen Hauses bilanziert damit eine fast leere Menge.
 
 **Der zweite Riss — Kappe gegen Pfad-Zwang.** `house-rules.md:27` verlangt ≤ 1 KiB;
 `house-rules.md:51` verlangt „jeder offene Punkt nennt seine Datei(en)". Die fünf Survey-Pfade
