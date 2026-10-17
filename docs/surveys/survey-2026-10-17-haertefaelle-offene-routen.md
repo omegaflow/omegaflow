@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: f6d2e94608cec3b2a0b00ce49491e6a90fb591863053e6c2b73a902e33625af5
+  sha256: cb57b73035193235d4a0bcdb3588e6c72c02e8c83e893af468059a30f733a8bd
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -183,9 +183,16 @@ epm2021.bsp` = **200, 154 278 912 B** (61,7 MB im 40-s-Fenster); `quasar.ipa.nw.
 connection refused. Der Register-Block `weberin_verdicts` führt EPM2021 längst als `origin`
 (`terms Open-Licence-2.0`). Das `pending` maß den alten Host.
 
-**Live, aber als pending geführt:** `osdr.nasa.gov` **200** · `pskreporter.info` **200** ·
-`reversebeacon.net` **200** — Katalog-/Eignungsfragen, keine Abwesenheit. **DNS-tot:** `dods.wh.gov`
-(000, „Could not resolve host") — wirklich absent.
+**Jeder Punkt nachgeprüft (Katalog + Inhalt, 2026-10-17, dritter Pass):**
+- `osdr.nasa.gov` **re-homed**: `/` und `/bio/` → `science.nasa.gov/biological-physical/data/` (**200**, OSDR dort 9×); die alten API-Pfade `/geode-py/ws/api/*` und `/bio/api` = **404**. Der Dosimetrie-Feed bleibt **ungemessen** — „200" hieß nur „Redirect", nicht „API lebt".
+- `pskreporter.info` liefert **XML** (`<receptionReports>` mit Frequenz/Mode) — **Registry** (Empfangsreports), kein Feld am Punkt; `reversebeacon.net/raw_data/` **200** (HTML). Eignungsfrage, keine Abwesenheit.
+- `dods.wh.gov`: `--verdict` = direkt **keine Antwort** · Proton **absent** · Wayback **ohne Snapshot** → absent.
+- **Viking:** `PSPG-00011` = „Data Identified but not Received" (Tracking); **`PSPG-00457`** = „Ready for Offline Distribution" (SDDPT Radio Science) → nicht leer, **offline**.
+- **Voyager:** `PSNO-00007` = „Ready for Offline Distribution" (PDS, Imaging); Tracking bleibt request-only. **Mariner 10** `PSCM-00009` = „Ready for Offline Distribution" (offline, nicht online).
+- **CEIC D18000:** keine Keyword-Route (OpenAIRE/DataCite **absent**); die **Zenodo-Subsets** `10.5281/zenodo.7112529` / `…7855090` = **200** (Figuren, nicht die Reihe).
+- **LSST/Rubin:** TAP `data.lsst.cloud/api/tap` = **401**; offene Alternative **Fink** `api.lsst.fink-portal.org/api/v1/schema` = **200**.
+- **C/NOFS:** NSSDCA `spacecraft=c/nofs` = **absent**; die `absent`-Aussage ruht auf dem UT-Dallas-Brief, nicht auf dem Katalog.
+- **Juno pre-EFB:** NSSDCA führt viele Juno-PDS-Volumes, das pre-EFB-ODF **nicht** — die Aussage bleibt spezifisch.
 
 **Der stille Eimer „nicht gemessen":** **50** Register-Blöcke tragen keine `terms`-Zeile
 (überwiegend Routen, Manifeste, PDFs, JSON — nicht jede ist eine Quelle). Jede ist eine offene
