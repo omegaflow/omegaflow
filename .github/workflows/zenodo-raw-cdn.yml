@@ -88,6 +88,10 @@ jobs:
             origin: "https://zenodo.org/api/records/18176179/files/Venus_RadarBasemap_2025_Global_75m_v1.tif/content"
             md5: 9d7ccd0d12e402b82a8390ea3837ab1f
             size: 80909342816
+          - asset: grbr_cnofs_2012_2014.zip
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/grbr_cnofs_2012_2014.zip"
+            origin: "https://zenodo.org/api/records/21380428/files/GRBR%20input%20data.zip/content"
+            sha256: e606ed2182d954407ce6369a0f890d208ac85b6beed32a648a26e0a2e7a0de99
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
