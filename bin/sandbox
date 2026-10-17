@@ -2,7 +2,8 @@
 # sandbox — der Käfig: EIN Apparat, ZWEI Profile (Operator-Wort 2026-10-16).
 #
 #   public   das öffentliche Repo + die Werkstatt. Das private Haus ist NICHT
-#            eingehängt — es existiert hier drin nicht. .secrets.local ist überdeckt.
+#            eingehängt — es existiert hier drin nicht. `.secrets.local` zeigt nur
+#            die Schlüssel-NAMEN (Werte leer), damit `bin/secrets_keys` sie nennt.
 #   private  dasselbe PLUS das private Haus. EINWEG: privat sieht öffentlich,
 #            öffentlich sieht privat nicht. (Hier sitzt der Operator mit Future.)
 #
@@ -36,6 +37,19 @@ if [ "$profile" = private ]; then
 fi
 
 # Das Gerüst + das Profil, als bwrap-Flags (unsere Pfade tragen kein Leerzeichen).
+# public: die Schlüssel-NAMEN als leere Werte sichtbar, nie ein Wert.
+names_file=""
+if [ "$profile" = public ] && [ -f "$root/.secrets.local" ]; then
+  names_file="$root/target/.secrets.names"
+  mkdir -p "$root/target"
+  awk -F= '
+    /^[[:space:]]*#/ { next }
+    /^[[:space:]]*$/ { next }
+    { key = $1; sub(/[[:space:]]+$/, "", key); if (key != "") print key "=" }
+  ' "$root/.secrets.local" > "$names_file"
+  chmod 644 "$names_file"
+fi
+
 flags() {
   printf '%s\n' \
     --ro-bind /usr /usr \
@@ -59,8 +73,13 @@ flags() {
     public)
       printf '%s\n' \
         --bind "$root" "$root" \
-        --bind "$work" "$work" \
-        --ro-bind /dev/null "$root/.secrets.local" ;;
+        --bind "$work" "$work"
+      if [ -n "$names_file" ]; then
+        printf '%s\n' --ro-bind "$names_file" "$root/.secrets.local"
+      else
+        printf '%s\n' --ro-bind /dev/null "$root/.secrets.local"
+      fi
+      ;;
     private)
       printf '%s\n' \
         --bind "$root" "$root" \
