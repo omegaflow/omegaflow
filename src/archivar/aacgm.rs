@@ -1,6 +1,9 @@
 use std::borrow::Cow;
 use std::sync::OnceLock;
 
+pub const AACGM14_1995_TEXT: &str = include_str!("aacgm_coeffs-14-1995.asc");
+pub const AACGM14_2000_TEXT: &str = include_str!("aacgm_coeffs-14-2000.asc");
+pub const AACGM14_2005_TEXT: &str = include_str!("aacgm_coeffs-14-2005.asc");
 pub const AACGM14_2010_TEXT: &str = include_str!("aacgm_coeffs-14-2010.asc");
 pub const AACGM14_2015_TEXT: &str = include_str!("aacgm_coeffs-14-2015.asc");
 pub const AACGM14_2020_TEXT: &str = include_str!("aacgm_coeffs-14-2020.asc");
@@ -248,6 +251,9 @@ fn real_spherical_harmonics(colat: f64, lon: f64, order: usize, ylmval: &mut [f6
     }
 }
 
+static AACGM14_1995: OnceLock<Option<AacgmV2>> = OnceLock::new();
+static AACGM14_2000: OnceLock<Option<AacgmV2>> = OnceLock::new();
+static AACGM14_2005: OnceLock<Option<AacgmV2>> = OnceLock::new();
 static AACGM14_2010: OnceLock<Option<AacgmV2>> = OnceLock::new();
 static AACGM14_2015: OnceLock<Option<AacgmV2>> = OnceLock::new();
 static AACGM14_2020: OnceLock<Option<AacgmV2>> = OnceLock::new();
@@ -255,6 +261,9 @@ static AACGM14_2025: OnceLock<Option<AacgmV2>> = OnceLock::new();
 
 fn epoch_model(epoch: u16) -> Option<&'static AacgmV2> {
     let (cell, text): (&OnceLock<Option<AacgmV2>>, &str) = match epoch {
+        1995 => (&AACGM14_1995, AACGM14_1995_TEXT),
+        2000 => (&AACGM14_2000, AACGM14_2000_TEXT),
+        2005 => (&AACGM14_2005, AACGM14_2005_TEXT),
         2010 => (&AACGM14_2010, AACGM14_2010_TEXT),
         2015 => (&AACGM14_2015, AACGM14_2015_TEXT),
         2020 => (&AACGM14_2020, AACGM14_2020_TEXT),
@@ -265,7 +274,7 @@ fn epoch_model(epoch: u16) -> Option<&'static AacgmV2> {
 }
 
 fn model_for_year(date_year: f64) -> Option<Cow<'static, AacgmV2>> {
-    if !(2010.0..2030.0).contains(&date_year) {
+    if !(1995.0..2030.0).contains(&date_year) {
         return None;
     }
     let lower_epoch = (date_year / 5.0).floor() as u16 * 5;
@@ -370,6 +379,9 @@ mod tests {
     #[test]
     fn every_committed_epoch_file_loads_with_the_full_coefficient_count() {
         for (epoch, text) in [
+            (1995u16, AACGM14_1995_TEXT),
+            (2000, AACGM14_2000_TEXT),
+            (2005, AACGM14_2005_TEXT),
             (2010u16, AACGM14_2010_TEXT),
             (2015, AACGM14_2015_TEXT),
             (2020, AACGM14_2020_TEXT),
@@ -383,7 +395,7 @@ mod tests {
 
     #[test]
     fn a_date_outside_the_published_epochs_returns_none() {
-        assert!(aacgm_v2_latitude(2009.9, 45.5, -23.5, 0.0).is_none());
+        assert!(aacgm_v2_latitude(1994.9, 45.5, -23.5, 0.0).is_none());
         assert!(aacgm_v2_latitude(2030.0, 45.5, -23.5, 0.0).is_none());
         assert!(aacgm_v2_latitude(f64::NAN, 45.5, -23.5, 0.0).is_none());
     }
@@ -407,6 +419,20 @@ mod tests {
         }
         let anchored = model_for_year(2015.0).expect("2015 is inside the window");
         assert_eq!(anchored.values, lower.values);
+    }
+
+    #[test]
+    fn the_pre_2010_pair_blends_linearly_between_its_epochs() {
+        let lower = epoch_model(2000).expect("2000 parses");
+        let upper = epoch_model(2005).expect("2005 parses");
+        let midpoint = model_for_year(2002.5).expect("2002.5 is inside the window");
+        for (idx, (&lo, &hi)) in lower.values.iter().zip(upper.values.iter()).enumerate() {
+            let expected = lo + 0.5 * (hi - lo);
+            assert!(
+                (midpoint.values[idx] - expected).abs() < 1e-12,
+                "coefficient {idx} is not the epoch midpoint"
+            );
+        }
     }
 
     #[test]

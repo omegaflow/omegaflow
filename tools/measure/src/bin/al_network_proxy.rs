@@ -472,7 +472,7 @@ fn main() {
                 .collect();
             if outside > 0 {
                 println!(
-                    "station {code} sector-gate: {outside} sample(s) outside the AACGM epochs (2010–2030) — pending, not zero"
+                    "station {code} sector-gate: {outside} sample(s) outside the AACGM epochs (1995–2030) — pending, not zero"
                 );
             }
             println!(
