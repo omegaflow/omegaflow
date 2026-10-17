@@ -115,7 +115,7 @@ jobs:
           det() {
             cargo run --release -p omegaflow-measure --bin gic_onset_detector -- \
               --series "$1" --station "$2" --mcpherron "$mkft" --null 0 \
-              --target-yield 2 --window-start 2000-01-01 --window-end 2024-12-31 2>/dev/null
+              --threshold 1.2675 --window-start 2000-01-01 --window-end 2024-12-31
           }
           rec() { sed -n 's/.*tol_min=5 .*rec_mcp=\([0-9.]*\).*/\1/p' | head -1; }
           full=$(det /tmp/env_full.bin full | rec)
