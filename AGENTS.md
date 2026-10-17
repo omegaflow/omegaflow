@@ -1,9 +1,9 @@
 # omegaflow
 
 A = A
-  ICRS/TDB — alle Körper gleich
+  ICRS/TDB
   field <name> <name> <kernel> <kraft> <einheit>
-  0 honored
-0: null-echt | absent | pending | riss
+  0 honored: null-echt | absent | riss
+  keine harten Schwellen
+  PII bleibt im Haus
 messen · bauen · abschließen · committen · pushen
-commits: eigene Pfade, Englisch
