@@ -2,16 +2,16 @@
   title: Handover — Mycelium (2026-10-16)
   class: handover
   date: 2026-10-17
-  sha256: 7ebfe18844849e05b2fb085210a6f9d8cfa4283ffb5ae26e3e36f9567f484775
+  sha256: 24460640c35ab811771755b94f3c2cdc91dfbdca81f8d5be74372dd58743cc98
   status: live
 -->
 # Mycelium (2026-10-16)
 
 ## Offen — eigen
-- ICGEM `gfc`: url/origin/CI; Rat SH-Kernel-Norm (`state/stimmen/2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md`).
+- ICGEM `gfc`: url/origin/CI (`gfc_compiler.rs`); Rat SH-Kernel-Norm.
 - UCAR-FPI + MODVOLC `local-only`; L1 `MOD021KM` = Mountain.
 - Quellen (docs/surveys/): `survey-2026-10-02-weberin-zweite-linie.md` · `survey-2026-10-04-exposom-matrix.md` · `survey-2026-10-10-worldwide-lidar-quellen.md`.
-- Wartestand: JUICE 2026-11-01 · Ratsvorlagen · Offen-Riss (A/B/C).
+- Wartestand: JUICE 2026-11-01 · Offen-Riss (`docs/surveys/survey-2026-10-17-offen-stand-zaehlung-riss.md`, A/B/C).
 
 ## An mountain
 Origin: 361
