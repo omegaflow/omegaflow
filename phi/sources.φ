@@ -10309,6 +10309,7 @@ quantity emtf_zyy_im emtf_zyy_im inverse-square impedance ohm 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.fingrid.fi/fingrid_datasets.bin
 origin https://data.fingrid.fi/api/datasets
+terms per-service-terms https://data.fingrid.fi/en/instructions
 compiler tools/harvest/src/bin/fingrid_compiler.rs
 format fingrid_datasets
 sha256 1779eabe9aed7fff9344a49ed147df064bd8914b3759faf09af443e929084439
@@ -10462,6 +10463,7 @@ ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/ewds.climate.copernicus.eu/glofas_ewds_coverage.manifest
 origin https://ewds.climate.copernicus.eu/api/catalogue/v1/collections
+terms other-attribution https://ewds.climate.copernicus.eu/datasets/cems-glofas-historical
 compiler tools/harvest/src/bin/glofas_ewds_compiler.rs
 format coverage_manifest
 at earth
@@ -10515,6 +10517,7 @@ field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/figshare.com/eaglei_2014.bin
 origin https://ndownloader.figshare.com/files/42547717
+terms CC-BY-4.0 https://doi.org/10.6084/m9.figshare.24237376
 compiler tools/harvest/src/bin/eaglei_compiler.rs
 sha256 c791efe081d52248a1fc14a89b56b1030bc4885432daf61bc6e2ef5fa8aef064
 format eaglei_outage
@@ -11001,6 +11004,7 @@ field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/openenergyhub.ornl.gov/oe417.bin
 origin https://openenergyhub.ornl.gov/api/records/1.0/download/?dataset=oe-417-annual-summaries&format=csv
+terms PD https://openenergyhub.ornl.gov/
 compiler tools/harvest/src/bin/oe417_compiler.rs
 sha256 282bc3a1cdc173d9031bd82f966f5adcd75e316c642ac7e6b92ffe68e9e5e848
 format oe417
@@ -11887,6 +11891,7 @@ field pcm nrs_hydrophone_pcm gaussian-inverse-square acoustic count 604800 0.0 0
 
 url https://github.com/omegaflow/sources/releases/download/superdarn.ca/superdarn_fitacf.bin
 origin https://superdarn.ca/
+terms other-attribution https://superdarn.ca/data-access
 compiler tools/harvest/src/bin/superdarn_compiler.rs
 format superdarn_fitacf
 at earth
@@ -12709,6 +12714,7 @@ ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/ers.usda.gov/usda_fara_low_access.bin
 origin https://www.ers.usda.gov/media/5627/2019-large-retailer-access-map-lram-formerly-known-as-the-food-access-research-atlas-fara-data.zip
+terms USGov-disclaimer https://www.ers.usda.gov/about-ers/policies-and-standards
 compiler register-only
 format usda_fara_low_access
 at earth
@@ -14479,6 +14485,7 @@ sha256 55ed81c6222363aaed1c080486e43a4ea2f48a073ceaf371f55963c0f0640291
 no-cadence
 
 url https://api.antares.noirlab.edu/v1/loci?page%5Blimit%5D=1000&page%5Boffset%5D=0
+terms CC-BY-4.0 https://datalab.noirlab.edu/about/disclaimers
 witness s2-direction
 record skydirection
 force em
@@ -14536,24 +14543,28 @@ record gbco
 no-cadence
 
 url https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml
+terms hawc-public https://data.hawc-observatory.org/datasets/2hwc-survey/2HWC.yaml
 witness s2-direction
 record sky1
 force em
 no-cadence
 
 url https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml
+terms hawc-public https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml
 witness s2-direction
 record sky1
 force em
 no-cadence
 
 url https://dataverse.harvard.edu/api/access/datafile/7502710
+terms dataverse-per-dataset https://dataverse.harvard.edu/api/access/datafile/7502710
 witness s2-direction
 record s2e1 sky1
 force em
 no-cadence
 
 url https://gcn.gsfc.nasa.gov/amon_icecube_gold_bronze_events.html
+terms other-attribution https://gcn.gsfc.nasa.gov/amon.html
 witness s2-direction
 record amn1
 force em
@@ -19036,6 +19047,7 @@ no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/oderest.rsl.wustl.edu/live2.json
 origin https://oderest.rsl.wustl.edu/
+terms PD-USGov-PDS https://pds.nasa.gov/
 compiler register-only
 format live2
 at earth
@@ -28078,6 +28090,7 @@ sha256 b1ca2c73e9d8f64bf0dee0aef209d3020b31d5dcfb56ff4a30ec1c2dfc1bda66
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/vlies_density.vlde
+terms PD-USGov https://ssd.jpl.nasa.gov/
 witness s2-direction
 record vlde
 force em
@@ -30511,6 +30524,7 @@ field fibermag_r lamost_r_fiber_mag inverse-square em mag 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/www.nasa.gov/SP-59.pdf
 origin https://www.nasa.gov/wp-content/uploads/static/history/SP-59.pdf
+terms PD-USGov https://www.nasa.gov/nasa-brand-center/images-and-media/
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 a46e1712d30b04c559d3a24625ca788201e95cd3f0d82919c331746ef02b0c60
 no-cadence
@@ -31357,12 +31371,14 @@ at earth
 sha256 2ee3cb25d55f74931d5f72a9de9f3ff6ba8d9763a5a2862091dca585bf7bac23
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_OD1_0p33_0.txt
+terms CC-BY-4.0 https://zenodo.org/records/7286412
 witness substance
 record rixs
 force em
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_UD_0p33_0.txt
+terms CC-BY-4.0 https://zenodo.org/records/7286412
 witness substance
 record rixs
 force em
@@ -31427,24 +31443,28 @@ sha256 8018463de4d911b659f2916830fe91594f6f11cbffa4b7d336f96d9638856a20
 no-cadence
 
 url https://gracedb.ligo.org/api/superevents/S250207bg/files/
+terms ligo-public https://gracedb.ligo.org/
 witness s2-direction
 record sky1
 force gravity
 no-cadence
 
 url https://gsaweb.ast.cam.ac.uk/alerts/alertsindex
+terms other-attribution https://gsaweb.ast.cam.ac.uk/alerts/
 witness s2-direction
 record skydirection
 force em
 no-cadence
 
 url https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
+terms other-attribution https://hess-experiment.eu/wp-content/uploads/2025/12/hess_dl3_dr1.tar
 witness s2-direction
 record sky1
 force em
 no-cadence
 
 url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
+terms per-service-terms https://lasair-ztf.lsst.ac.uk/
 witness s2-direction
 record skydirection
 force em
@@ -31521,6 +31541,7 @@ at sun
 no-cadence
 
 url https://opendata.auger.org/catalog/data.zip
+terms CC-BY-SA-4.0 https://opendata.auger.org/
 witness s2-direction
 record pao1
 force em
@@ -31558,6 +31579,7 @@ at earth
 no-cadence
 
 url https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
+terms no-license https://www.nist.gov/srd/public-law
 witness substance
 record srd6
 force em
@@ -31659,6 +31681,7 @@ dist_scale 3.085677581e16
 field Ksmag carmenes_ks_mag inverse-square em mag 86400 0.0 0.0
 
 url https://topex.ucsd.edu/pub/srtm15_plus/SRTM15_V2.6.nc
+terms PD https://opentopography.org/usageterms
 witness gestalt
 record srtm
 no-cadence
@@ -31713,6 +31736,7 @@ field Gmag gaia_dr2_opencluster_gmag gaussian-inverse-square em mag 604800 0.0 0
 field BP-RP gaia_dr2_opencluster_bp_rp gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://vo.km3net.de/ant20_01/nu/cone/form
+terms free-open https://www.km3net.org/about-km3net/open-access
 witness s2-direction
 record s2e1 sky1
 force em
@@ -31751,22 +31775,26 @@ dec DEC_Source
 field Total_flux_source vlass_ql_total_flux_mjy inverse-square em mJy 604800 0.0 0.0
 
 url https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=esriascii
+terms CC-BY-4.0 https://www.gmrt.org/about/terms_of_use.php
 witness gestalt
 record gmr1
 no-cadence
 
 url https://www.gmrt.org/services/GridServer?minlongitude=-10&maxlongitude=-9&minlatitude=40&maxlatitude=41&format=geotiff
+terms CC-BY-4.0 https://www.gmrt.org/about/terms_of_use.php
 witness gestalt
 record gmr1
 no-cadence
 
 url https://www.jma.go.jp/bosai/quake/data/list.json
+terms jp-public-data-license-1.0 https://www.jma.go.jp/bosai/quake/data/list.json
 witness point-event
 record erbq
 force seismic-body
 no-cadence
 
 url https://zenodo.org/api/records/15179114/files/data.zip/content
+terms CC-BY-4.0 https://zenodo.org/records/15179114
 witness substance
 record rixc
 force em
@@ -31780,6 +31808,7 @@ compiler tools/harvest/src/bin/zenodo_record_harvester.rs
 no-cadence
 
 url https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content
+terms CC-BY-4.0 https://zenodo.org/records/21859473
 witness substance
 record eels
 force em
@@ -31863,6 +31892,7 @@ field GIC kellerman_node7_gic_a inverse-square electric A 1 0.0 0.0
 field GIC_QDC kellerman_node7_gic_qdc_a inverse-square electric A 1 0.0 0.0
 
 url https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content
+terms CC-BY-4.0 https://zenodo.org/records/7286412
 witness substance
 record rixs
 force em
