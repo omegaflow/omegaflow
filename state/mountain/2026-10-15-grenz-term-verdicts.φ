@@ -180,3 +180,25 @@
 #     `terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007` (im Compiler gesetzt, hier bestaetigt).
 #   Riss: es gibt KEINEN `gfc`-Block in `phi/sources.φ` — die Zeile ist vorbereitet, nicht gesetzt;
 #     url/origin/compiler = Mycelium. Token `xfer:mycelium-361-1` mit dieser Messung beglichen.
+
+# ============================================================
+# 8 — Die zwei Lizenz-Klassen der 46 termlosen Bloecke (2026-10-17)
+# ============================================================
+#   Gemessen (license_census vor/nach): 46 -> 0 ohne terms, 50 -> 0 pending.
+#   Klasse A — echte Quellen (8): fingrid `per-service-terms` (Zugang nur nach Registrierung;
+#     keine offene Lizenz auf der Seite), GloFAS/EWDS `other-attribution` (Katalog sagt
+#     `license: other`), Eagle-I `CC-BY-4.0` (figshare 10.6084/m9.figshare.24237376, gemessen
+#     2026-10-11), OE-417 `PD` (Katalog: "Public Domain"), SuperDARN `other-attribution`
+#     (Zugang nur mit den Rules of the Road), USDA-FARA `USGov-disclaimer`, ODEREST
+#     `PD-USGov-PDS`, NASA SP-59 `PD-USGov`.
+#   Klasse B — Adress-Zeiger (22 Bloecke): sie spiegeln die Rechte ihres Harvest-Blocks
+#     (NOIRLab CC-BY-4.0, HAWC hawc-public, LIGO ligo-public, HESS/GSA/AMON other-attribution,
+#     Auger CC-BY-SA-4.0, GMRT CC-BY-4.0, KM3NeT free-open, JMA jp-public-data-license-1.0,
+#     Zenodo CC-BY-4.0, SRTM15 PD).
+#   Riss (gemessen, nicht geglaettet): NIST `srdata.nist.gov/CeramicDataPortal` ist
+#     Standard Reference Data — "copyrighted ... all rights reserved ... no reproduction
+#     ... without prior permission" (`nist.gov/srd/public-law`). Der Zeiger traegt
+#     `no-license` und bleibt ohne Weitergabe. Kein offener Punkt, ein Verdikt.
+#   Regel: ein Zeiger ohne CDN-`url` gibt nichts weiter; seine `terms` sind die seines
+#     Harvest-Blocks. Ein Dienst ohne offene Lizenz traegt `per-service-terms`/`other-attribution`,
+#     nie ein erfundenes CC.
