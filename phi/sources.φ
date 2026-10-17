@@ -12130,15 +12130,6 @@ ttl 2592000
 at earth
 field ghcnm_tavg_c ghcnm_tavg_c exponential-decay thermal C 2592000 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/nrt3.modaps.eosdis.nasa.gov/modvolc_thermal.bin
-terms PD https://www.earthdata.nasa.gov/
-format modvolc_thermal
-origin https://nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC/Recent
-compiler tools/harvest/src/bin/modvolc_compiler.rs
-at earth
-ttl 2592000
-field modvolc_thermal modvolc_thermal inverse-square em w/m2/sr/um 86400 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/opendata.dwd.de/dwd_cdc_00044_dwd_air_temperature_max.bin
 terms CC-BY-4.0 https://opendata.dwd.de/climate_environment/CDC/Terms_of_use.pdf
 format dwd_cdc

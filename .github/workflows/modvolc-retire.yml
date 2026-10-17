@@ -1,0 +1,45 @@
+# retirement: MODVOLC is held local-only (operator word 2026-10-17). The register line carried
+# `terms PD`; the licence stands disputed (the LAADS channel says "not approved for public
+# distribution", the LANCE route is measured open; the house has no rule when two channels of one
+# producer disagree). The data stay local for comparison; the open L1 route (MOD021KM) is the
+# carrier. This job withdraws the public asset so no fabricated licence line stays published.
+name: modvolc-retire
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+jobs:
+  retire:
+    runs-on: [self-hosted, Linux]
+    timeout-minutes: 30
+    steps:
+      - name: Withdraw the modvolc_thermal.bin asset and the emptied release
+        run: |
+          set -euo pipefail
+          repo=omegaflow/sources
+          tag=nrt3.modaps.eosdis.nasa.gov
+          if ! gh release view "$tag" --repo "$repo" >/dev/null 2>&1; then
+            echo "release $tag absent — nothing to withdraw"
+            exit 0
+          fi
+          if gh release view "$tag" --repo "$repo" --json assets \
+               --jq '.assets[]?.name' | grep -qx "modvolc_thermal.bin"; then
+            gh release delete-asset "$tag" modvolc_thermal.bin --repo "$repo" --yes
+            echo "withdrawn $tag/modvolc_thermal.bin"
+          else
+            echo "asset modvolc_thermal.bin already absent"
+          fi
+          left="$(gh release view "$tag" --repo "$repo" --json assets --jq '.assets[]?.name' || true)"
+          if [ -z "$left" ]; then
+            gh release delete "$tag" --repo "$repo" --yes
+            echo "release $tag deleted (empty)"
+          else
+            echo "release $tag keeps: $left"
+          fi
