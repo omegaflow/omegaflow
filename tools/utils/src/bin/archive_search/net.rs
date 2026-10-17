@@ -4028,6 +4028,9 @@ fn annotate_declared(lines: &mut [String], env: &HashMap<String, String>) {
         if !line.contains("absent from .secrets.local") {
             continue;
         }
+        if line.contains("the gate is covered") {
+            continue;
+        }
         let Some(rest) = line.split("pending — ").nth(1) else {
             continue;
         };
@@ -5887,5 +5890,16 @@ mod tests {
             vec!["pending — NASA_ADS_TOKEN absent from .secrets.local/.env".to_string()];
         annotate_declared(&mut unknown, &env);
         assert!(!unknown[0].contains("gate is covered"), "{}", unknown[0]);
+    }
+
+    #[test]
+    fn annotating_twice_does_not_grow_the_gate_tail() {
+        let mut env = HashMap::new();
+        env.insert("BASE_API_KEY".to_string(), String::new());
+        let mut lines = vec!["pending — BASE_API_KEY absent from .secrets.local/.env".to_string()];
+        annotate_declared(&mut lines, &env);
+        let once = lines[0].clone();
+        annotate_declared(&mut lines, &env);
+        assert_eq!(lines[0], once, "the --all aggregate pass duplicated the tail");
     }
 }
