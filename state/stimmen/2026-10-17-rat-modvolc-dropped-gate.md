@@ -14,8 +14,8 @@ wie die erste Runde (`2026-10-17-rat-offene-fragen.md`): fünf Axiome, fünf Sti
 
 | Frage | Konsens | Riss (ungeglättet) |
 |---|---|---|
-| **M1 · MODVOLC-Verteilung** | **4× einig** (GLM, DeepSeek, Qwen, Mistral): `terms PD` deckt die LANCE-Route **nicht** → **`decline-redistribution`**; die **produktspezifische** LAADS-Absage trägt über die allgemeine Politik; das veröffentlichte `modvolc_thermal.bin` **zurückziehen**; die Gate-Lücke (Existenz statt Wahrheit einer `terms`-Zeile) **verdient eine Wand**. | **Kein Widerspruch im Verdikt.** Die Risse liegen im Vollzug: Der Rückzug heilt die **Zukunft**, nicht die **Vergangenheit** (GLM: „bereits geladene Kopien sind nicht revidierbar"); der **Derivat**-Status ist selbst messpflichtig (GLM/Mistral: „Transformation wäscht keine Lizenz"); der **Kanal-Konflikt** (LANCE vs. LAADS, derselbe Produzent) hat keine Haus-Regel (Mistral). |
-| **M2 · dropped-gate** | **4× einig** (GLM, DeepSeek, Qwen, Mistral): **Option C** — Ledger bauen **und** Baseline frieren — aber **sequentiell**: erst das Ledger und die Einzel-Auflösung, **dann** der Freeze; **Operator/Rat** friert, **nicht** CI. | **Kein Widerspruch im Verdikt.** Die Risse: die Baseline selbst trägt **89 ungeprüfte** Keys (GLM: „niemand weiß, ob Legacy-Lücke oder Legacy-*Beleglose*"); die **CI/lokal**-Diskrepanz **11 vs. 6** ist selbst ein Mess-Riss (Sensory: Korrelat ≠ Erleben); `--dropped` **konfundiert** zwei Messungen in eins (alle vier). |
+| **M1 · MODVOLC-Verteilung** | **API-Sitze 4× einig** (GLM, DeepSeek, Qwen, Mistral): `terms PD` deckt die LANCE-Route **nicht** → **`decline-redistribution`**; Asset zurückziehen; Gate-Lücke → Wand. **Die zwei UI-Sitze überstimmen:** Fugu + Lumo sagen, `PD` ist der *falsche Wert*, aber **`decline` der falsche Schluss** — die LANCE-Route ist **offen**. **Gelöst (Sensory `e789578d3`):** nicht MODVOLC, sondern der **L1-Block `MOD021KM`** trägt die Verteilung. | **API-Sitze gegen UI-Sitze.** Die API-Sitze lasen den Support-Satz als Absage; die UI-Sitze prüften die Kanalterme. Fugu: „Terme hängen an **(Produkt, Kanal)**, nicht am Produzenten — diese Brücke existiert nicht." Lumo: „`PD` ist der falsche Wert (NASA = open, Attribution, „as is")." |
+| **M2 · dropped-gate** | **4× einig** (GLM, DeepSeek, Qwen, Mistral) **und Fugu:** **Option C**, aber **sequentiell** — erst Ledger + Einzel-Auflösung, **dann** Freeze; **Operator/Rat** friert, **nicht** CI. Fugu schärft: **A, dann B** (nicht C als Einzelakt); Baseline trägt **als Zeuge**. | **Kein Widerspruch im Verdikt.** Risse: die Baseline selbst trägt **89 ungeprüfte** Keys; CI/lokal **11 vs. 6** ist selbst ein Mess-Riss; `--dropped` **konfundiert** zwei Messungen; das Ledger-Dir fehlt. Fugu: jeder Drop ohne Commit-Witness ist **`pending`**, nicht `fail`. |
 
 **Der eine Satz (vier unabhängige Zeugen).** Alle vier sagen **getrennt**: bei beiden Fragen ist das
 **Verdikt einig** — der Streit liegt allein im **Vollzug** (Reihenfolge, Vergangenheit, Kanal-Regel).
@@ -71,12 +71,39 @@ dem ein Witness zählen könnte).
 
 ---
 
-## Was die Linien damit tun (Vorschlag — der Akt bleibt bei ihnen)
+## Die zwei UI-Sitze (nachgeholt 2026-10-17) — und die Überstimmung
 
-- **Sensory (M1):** das veröffentlichte `modvolc_thermal.bin` **zurückziehen** (Operator-Hand am CDN);
-  die `terms`-Zeile der LANCE-Route auf **`decline-redistribution`** / `local-only` setzen; die
-  LAADS-Absage als `source_ref` registrieren (mit Ticket/Dokument, nicht bloß als Notiz). Die
-  Gate-Lücke (`license_census`: Existenz ≠ Wahrheit) als **Rat-getragene Wand** benennen.
+Auf Operator-Wort nachgeholt: **Fugu Max** (Sakana, eingeloggt) und **Lumo 2.0 Max** (Proton).
+Beide **überstimmen die vier API-Sitze** in M1 — und decken sich gegenseitig:
+
+- **Fugu Max** (9156 Zeichen, vollständig, `state/stimmen/2026-10-17_rat2_fugu.json.txt`):
+  „`terms PD` deckt die Route **nicht sauber ab** — aber MODVOLC ist auf dieser Aktenlage **kein
+  `decline-redistribution`-Fall**. Die Route ist **offen**." **M1.3: nicht zurückziehen** — „ein
+  Rückzug, gestützt allein auf einen Support-Satz, wäre ein Akt auf einer ungemessenen Restriktion
+  — selbst ein Verstoß gegen A = A." **Sechs geschlagene Doktrinen**, u. a.: „gleicher Produzent ⇒
+  gleiche Terme" (Terme hängen an **(Produkt, Kanal)**) · „ein Support-Satz setzt oder widerruft
+  eine Lizenz" (Zeugnis ≠ Term-Dokument) · „Existenz einer terms-Zeile ⇒ lizenziert".
+  M2: **A, dann B** (nicht C als Einzelakt); Baseline trägt **als Zeuge**, nie neu frieren, um Grün
+  zu erzeugen; jeder Drop ohne Commit-Witness ist **`pending`**, nicht `fail`.
+- **Lumo 2.0 Max** (Web-gestützt, während des Streams gelesen): „`terms PD` **deckt** die LANCE-Route
+  (Verzeichnis 61 enthält MODVOLC) — aber **`PD` ist der falsche Wert** (NASA = open, Attribution,
+  kein Endorsement, „as is" — nicht CC0). **Decline-redistribution: nein** für die LANCE-Route."
+  Es trägt „keine der beiden allein, sondern die **Kanal-Bindung**." **Fachkorrektur:** LANCE liefert
+  `allData/61` mit MODVOLC; **LAADS ist ein anderer Kanal** (L1/Atmosphere); die Support-Mail ist
+  **kein Lizenzinstrument**.
+
+**Die Überstimmung in einem Satz:** Die vier API-Sitze lasen den **Support-Satz** als Produkt-Absage
+und schlossen `decline-redistribution`; die zwei UI-Sitze prüften die **Kanalterme** und fanden:
+`PD` ist der *falsche Wert*, aber **`decline` ist der falsche Schluss** — die LANCE-Route ist offen.
+
+## Was die Linien damit tun (Stand nach der Überstimmung)
+
+- **Sensory (M1) — hat die Ratsfrage entschärft (Commit `e789578d3`):** statt MODVOLC (HIGP-abgeleitet)
+  trägt jetzt der **L1-Block `MOD021KM`** (NASA-open, Attribution) die Verteilung — das **eigene
+  Thermalanomalie-Feld aus offener L1** (Wright et al. 2003, JVGR `10.1016/j.jvolgeores.2003.12.008`)
+  ist mit Attribution verteilbar (`terms free-open`, **kein** `decline-redistribution`). MODVOLC selbst
+  bleibt `local-only`. **Offen:** `MOD021KM`/`MYD021KM` sind noch **nicht im Register** (0 Treffer) —
+  der L1-Block + ein Band-21/22/32-Reader sind der nächste Bau.
 - **Mycelium (M2):** `state/zustand/ledger/` anlegen; die 6 lokalen / 11 CI-Drops einzeln reconcilen
   (3× `m10` → Mountain, 2× `mcpherron` → River, 4× φ-Blöcke → Mycelium); `--dropped` in **zwei**
   Messungen splitten; **danach** den Baseline-Freeze dem Operator-/Rat-Wort vorlegen. `dropped-gate`
