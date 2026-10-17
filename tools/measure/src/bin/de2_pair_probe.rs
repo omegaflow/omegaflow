@@ -6,6 +6,13 @@ use omegaflow::archivar::SECONDS_PER_DAY;
 const WATS_CADENCE_MS: f64 = 2000.0;
 const WATS_FILL: f32 = 9999.0;
 
+struct Wats {
+    time: f64,
+    wind: f32,
+    lat: f32,
+    lon: f32,
+}
+
 fn read_lines(path: &str) -> Option<Vec<String>> {
     let text = std::fs::read_to_string(path).ok()?;
     Some(text.lines().map(|l| l.to_string()).collect())
@@ -17,7 +24,7 @@ fn absolute_ms(date: &str, ut_ms: &str) -> Option<f64> {
     Some(day * SECONDS_PER_DAY * 1000.0 + ms)
 }
 
-fn wats_series(paths: &[String]) -> Vec<(f64, f32)> {
+fn wats_series(paths: &[String]) -> Vec<Wats> {
     let mut out = Vec::new();
     for path in paths {
         let Some(lines) = read_lines(path) else {
@@ -35,24 +42,53 @@ fn wats_series(paths: &[String]) -> Vec<(f64, f32)> {
             }
             let data: Vec<&str> = lines[line + 1].split_whitespace().collect();
             line += 2;
-            if head.len() < 3 || data.len() < 2 {
+            if head.len() < 3 || data.len() < 6 {
                 continue;
             }
             if !matches!(head[2].chars().next(), Some('3') | Some('4')) {
                 continue;
             }
-            let (Some(time), Ok(v_geo_cor)) =
-                (absolute_ms(head[0], head[1]), data[1].parse::<f32>())
-            else {
+            let (Some(time), Ok(wind), Ok(lat), Ok(lon)) = (
+                absolute_ms(head[0], head[1]),
+                data[1].parse::<f32>(),
+                data[4].parse::<f32>(),
+                data[5].parse::<f32>(),
+            ) else {
                 continue;
             };
-            if v_geo_cor.abs() >= WATS_FILL {
+            if wind.abs() >= WATS_FILL {
                 continue;
             }
-            out.push((time, v_geo_cor));
+            out.push(Wats {
+                time,
+                wind,
+                lat,
+                lon,
+            });
         }
     }
-    out.sort_unstable_by(|a, b| a.0.total_cmp(&b.0));
+    out.sort_unstable_by(|a, b| a.time.total_cmp(&b.time));
+    out
+}
+
+fn heading_north(track: &[Wats]) -> Vec<f64> {
+    let n = track.len();
+    let mut out = vec![0.0f64; n];
+    for i in 0..n {
+        let (j, k) = if i == 0 { (0, 1) } else { (i - 1, i) };
+        if k >= n {
+            continue;
+        }
+        let dlat = track[k].lat as f64 - track[j].lat as f64;
+        let dlon = track[k].lon as f64 - track[j].lon as f64;
+        let coslat = (track[k].lat as f64).to_radians().cos();
+        let north = dlat;
+        let east = dlon * coslat;
+        let hypot = (north * north + east * east).sqrt();
+        if hypot > 0.0 {
+            out[i] = north / hypot;
+        }
+    }
     out
 }
 
@@ -110,6 +146,28 @@ fn idm_series(paths: &[String]) -> Vec<(f64, f32)> {
     out
 }
 
+fn correlation(pairs: &[(f64, f64)]) -> Option<(f64, f64)> {
+    let n = pairs.len();
+    if n < 2 {
+        return None;
+    }
+    let nf = n as f64;
+    let mean_a = pairs.iter().map(|p| p.0).sum::<f64>() / nf;
+    let mean_b = pairs.iter().map(|p| p.1).sum::<f64>() / nf;
+    let (mut sab, mut sa, mut sb) = (0.0f64, 0.0f64, 0.0f64);
+    for (a, b) in pairs {
+        let da = a - mean_a;
+        let db = b - mean_b;
+        sab += da * db;
+        sa += da * da;
+        sb += db * db;
+    }
+    if sa <= 0.0 || sb <= 0.0 {
+        return None;
+    }
+    Some((mean_b, sab / (sa.sqrt() * sb.sqrt())))
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let collect = |flag: &str| -> Vec<String> {
@@ -138,76 +196,71 @@ fn main() {
     let wats = collect("--wats");
     let idm = collect("--idm");
     if wats.is_empty() || idm.is_empty() {
-        eprintln!("usage: de2_pair_probe --wats <file>... --idm <file>... [--out-a <path>] [--out-b <path>]");
+        eprintln!("usage: de2_pair_probe --wats <file>... --idm <file>... [--east] [--out-a <path>] [--out-b <path>]");
         exit(2);
     }
+    let east = args.iter().any(|a| a == "--east");
 
-    let w = wats_series(&wats);
+    let track = wats_series(&wats);
+    let heading = heading_north(&track);
     let v = idm_series(&idm);
-    if w.is_empty() || v.is_empty() {
+    if track.is_empty() || v.is_empty() {
         println!(
             "de2_pair_probe: wats {} samples | idm {} samples -> no pairing (no fabrication)",
-            w.len(),
+            track.len(),
             v.len()
         );
         return;
     }
     let tolerance = WATS_CADENCE_MS / 2.0;
-    let mut pairs: Vec<(f32, f32)> = Vec::new();
+    let mut nve: Vec<f64> = Vec::new();
+    let mut ive_raw: Vec<f64> = Vec::new();
+    let mut ive_east: Vec<f64> = Vec::new();
     let mut cursor = 0usize;
-    for (time, nve) in &w {
-        while cursor + 1 < v.len()
-            && (v[cursor + 1].0 - time).abs() <= (v[cursor].0 - time).abs()
+    for (i, rec) in track.iter().enumerate() {
+        while cursor + 1 < v.len() && (v[cursor + 1].0 - rec.time).abs() <= (v[cursor].0 - rec.time).abs()
         {
             cursor += 1;
         }
-        if let Some((ti, ive)) = v.get(cursor) {
-            if (ti - time).abs() <= tolerance {
-                pairs.push((*nve, *ive));
+        if let Some((ti, value)) = v.get(cursor) {
+            if (ti - rec.time).abs() <= tolerance {
+                nve.push(rec.wind as f64);
+                ive_raw.push(*value as f64);
+                ive_east.push(*value as f64 * heading[i]);
             }
         }
     }
-    let n = pairs.len();
+    let pair = |a: &Vec<f64>, b: &Vec<f64>| -> Vec<(f64, f64)> {
+        a.iter().cloned().zip(b.iter().cloned()).collect()
+    };
+    let n = nve.len();
     println!(
-        "de2_pair_probe: wats {} | idm {} | paired {} | tolerance {} ms (wats cadence / 2)",
-        w.len(),
+        "de2_pair_probe: wats {} | idm {} | paired {} | tolerance {} ms | east projection {}",
+        track.len(),
         v.len(),
         n,
-        tolerance
+        tolerance,
+        if east { "on" } else { "off (raw)" }
     );
     println!(
-        "frames: wats v_geo_cor = geographic east (corotating); idm = s/c z-axis (direction flag even), quality 0/1"
+        "frames: wats v_geo_cor = geographic east (corotating); idm = s/c z-axis (even), quality 0/1; heading north-component hn from the wats track"
     );
-    if n >= 2 {
-        let nf = n as f64;
-        let mean_a = pairs.iter().map(|p| p.0 as f64).sum::<f64>() / nf;
-        let mean_b = pairs.iter().map(|p| p.1 as f64).sum::<f64>() / nf;
-        let (mut sab, mut sa, mut sb) = (0.0f64, 0.0f64, 0.0f64);
-        for (a, b) in &pairs {
-            let da = *a as f64 - mean_a;
-            let db = *b as f64 - mean_b;
-            sab += da * db;
-            sa += da * da;
-            sb += db * db;
-        }
-        if sa > 0.0 && sb > 0.0 {
-            println!(
-                "means: nve {:.1} | ive {:.1} | r = {:.4}",
-                mean_a,
-                mean_b,
-                sab / (sa.sqrt() * sb.sqrt())
-            );
-        }
+    if let Some((mean, r)) = correlation(&pair(&nve, &ive_raw)) {
+        println!("raw   : ive mean {:.1} | r(nve,ive) = {:.4}", mean, r);
     }
+    if let Some((mean, r)) = correlation(&pair(&nve, &ive_east)) {
+        println!("east  : ive mean {:.1} | r(nve,ive) = {:.4}  (ive * hn)", mean, r);
+    }
+    let out_b: Vec<f64> = if east { ive_east.clone() } else { ive_raw.clone() };
     if let Some(path) = find("--out-a") {
-        let body: String = pairs.iter().map(|p| format!("{}\n", p.0)).collect();
+        let body: String = nve.iter().map(|x| format!("{}\n", x)).collect();
         match std::fs::write(&path, body) {
             Ok(()) => println!("wrote nve -> {}", path),
             Err(e) => eprintln!("{}: {}", path, e),
         }
     }
     if let Some(path) = find("--out-b") {
-        let body: String = pairs.iter().map(|p| format!("{}\n", p.1)).collect();
+        let body: String = out_b.iter().map(|x| format!("{}\n", x)).collect();
         match std::fs::write(&path, body) {
             Ok(()) => println!("wrote ive -> {}", path),
             Err(e) => eprintln!("{}: {}", path, e),
