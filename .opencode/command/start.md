@@ -26,7 +26,7 @@ Neueste offene Übergabe:
 `register_lookup --fired <line>` / `--stale <line> --persist 3`, `open_points_check <übergabe>`
 (`STALE-CITATION` = gefeuerter Trigger), die adressierten Blöcke (`register_lookup --addressed
 <line>`, zuerst falten). Was unverändert in der Übergabe steht, wird **nicht** neu gemessen und
-nicht neu ausgelegt. `session_burn` einmal (flash-first; pro/max nur mit gemessener flash-Fehllage).
+nicht neu ausgelegt.
 
 **2 · Bekanntes direkt bis zur Kante arbeiten.** Jeder eigene, autonom abarbeitbare Punkt wird
 **in diesem Atom** gearbeitet — dispatcht (flash-first: `grind-flash`/`general`/`vision`), gebaut,
