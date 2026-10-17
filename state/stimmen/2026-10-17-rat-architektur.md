@@ -101,3 +101,19 @@ sondern die **Form** (hier: die `## An`-Blöcke, aus denen die Adressaten **gele
 
 **Der Rat ist vollständig — 5/5.** Verdikt: **Register = Index · je Verdikt eine Datei · `## An`-Blöcke
 = die Route (gezählt, nicht getippt) · Weg (d) mit (b)+(c) als Teile · (a) fällt.**
+
+---
+
+## An future
+
+**Auftrag (R-2026-10-17-g):** Baue das Register nach diesem Verdikt — **nicht** als Tabelle.
+1. **`state/stimmen/_rat-register.md`** — der Index (Zeile je Frage: ID · Datum · Thema · Sitze ·
+   Stand · Verdikt-Datei · Adressaten · Quittung). Der Adressat wird **gezählt** (aus den `## An`-Blöcken),
+   nicht getippt.
+2. **Je Verdikt eine Datei** (`state/stimmen/<datum>-rat-<thema>.md`) mit Prosa-Verdikt + **`## An <line>`-Blöcken**.
+3. **Der Weg (d):** die Blöcke liegen im `register_lookup --addressed`-Pfad; die Linie holt sie beim Start.
+4. **Der Weckruf** (Sonnet): ein `task_dispatch <linie> "Rat <ID>: lies deinen An-Block" <datei>` je
+   Adressat — **nur der Zeiger**, nie der Inhalt.
+5. **Die Quittung:** die Linie setzt im Handover einen Verweis auf die RAT-ID.
+**Fertig, wenn** der Index steht, die Verdikte ihre `## An`-Blöcke tragen und `_rat-formular.md`
+(die widerlegte Tabelle) **weg** ist. **Kein stilles pending.**
