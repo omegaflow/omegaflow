@@ -13,6 +13,9 @@ pub(crate) fn secret(name: &str) -> Option<String> {
             if !value.is_empty() {
                 return Some(value.clone());
             }
+            eprintln!(
+                "secrets: {name} is declared but carries no value in this profile — the key exists on the host, the gate is covered; do not ask for it"
+            );
         }
     }
     std::env::var(name).ok().filter(|v| !v.is_empty())

@@ -88,6 +88,11 @@ pub enum Secret {
 
 pub fn resolve_key(template: &str, env: &HashMap<String, String>) -> Secret {
     if let Some(marker) = unresolved_key(template, env) {
+        if env.contains_key(&marker) {
+            eprintln!(
+                "secrets: {marker} is declared but carries no value in this profile — the key exists on the host, the gate is covered; do not ask for it"
+            );
+        }
         return Secret::Absent(Some(marker));
     }
     let value = resolve_secret(template, env);
