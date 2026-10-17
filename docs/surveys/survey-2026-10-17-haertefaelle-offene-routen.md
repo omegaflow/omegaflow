@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: e4e4af8943b147980ca455384d65e3e8b7dc6f3534963e15c817c4bc2ab6f70d
+  sha256: 032d7d8b0b56fc46e2f09c7321a38dd49ca28f8a3a21630e89868914f19d7186
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -76,6 +76,13 @@ kein `pending`, sondern **`absent`** — physikalisch leer. Der CINDI-`blocked a
 Wind, Density and Temperature in ASCII" → **„Ready for Electronic Access"**; `SPIO-00105` „DE-2 IDM
 0.25-sec ion drift in ASCII" → **„Ready for Electronic Access"**. Das ist das **kollokale
 in-situ-Ion↔Neutral-Paar**, das die NWM-Lücke füllt — **offen bestätigt**, nicht behauptet.
+
+**Direktlinks (aufgelöst, gemessen 2026-10-17, alle HTTP 200):**
+- **WATS Neutralwind** (2 s ASCII): `https://cdaweb.gsfc.nasa.gov/pub/data/de/de2/neutral_gas_wats/n_T_v_2s_ascii/<YYYYDDD>_de2_wats_2s_v01.asc`
+- **IDM Ionendrift** (250 ms ASCII): `https://cdaweb.gsfc.nasa.gov/pub/data/de/de2/plasma_idm/vi_250ms_ascii/<Jahr>/<MM>/<YYYYDDDT…>_de2_idm_250ms_v01.asc`
+- **Kollokaler Satz** (16 s ASCII): `…/combined_plasma_neutrals_ua/ua_16s_ascii/<YYYYDDD>_de2_ua_16s_v01.asc`
+- **CDF-Varianten:** `…/neutral_gas_wats/wind2s_wats_cdaweb/` · `…/plasma_idm/vion250ms_cdaweb/` · `…/combined_plasma_neutrals_ua/ua16s_all_cdaweb/`
+- **NSSDCA-Detailseite:** `https://nssdc.gsfc.nasa.gov/nmc/dataset/display.action?id=SPTH-00002` (`SPIO-00105` analog)
 
 ## E — MODVOLC Collection 6 (HIGP-Host tot → historische Route bei NASA LAADS)
 
