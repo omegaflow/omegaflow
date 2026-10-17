@@ -2,7 +2,7 @@
   title: Survey — DE-2 Ion↔Neutral-Kopplung (erste Messung)
   class: survey
   date: 2026-10-17
-  sha256: 8910f3fe3679dd07519e0b4f6332bbb1de02edd30d3f35e2ace23a052f9ecb0b
+  sha256: d804d1cd8e16defb11234e56427881751b1da744dc124a82c744304dc906c2ae
   status: live
   see-also: docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md
 -->
@@ -45,6 +45,21 @@ Die **Richtung dreht** mit dem Lag: bei lag 1 ist NVE→IVE etwas stärker, bei 
 Das ist **kein aufgelöster Kausalpfeil** — zwei signifikante Richtungen mit lag-abhängigem Vorzeichen
 sind ebenso mit einem **gemeinsamen Treiber** (Konvektion/Joule) verträglich wie mit wechselseitigem
 Impulsaustausch. A=A: die TE misst **Abhängigkeit**, nicht Reibung.
+
+## Vorlauf (Prior Art — nicht neu erfinden)
+
+Die DE-2-IDM+WATS-Ion↔Neutral-Kopplung ist eine **publizierte Linie der Heelis-Gruppe** (UT Dallas,
+Center for Space Sciences) — **derselben Gruppe**, die den C/NOFS-NWM baute:
+- **Coley, Heelis & Spencer** — „Comparison of low-latitude ion and neutral zonal drifts using DE 2
+  data", JGR `10.1029/93JA02205` — **genau IDM + WATS auf DE-2**, statistischer Ion↔Neutral-Vergleich.
+- Folge auf C/NOFS/ROCSAT-1: Pacheco, Heelis & Su `10.1029/2011JA016786` · Stoneback et al.
+  `10.1029/2011JA016712` · Coley & Heelis `10.1029/2011JA017301`.
+- Modell/Kontext: St.-Maurice & Schunk `10.1029/ja086ia13p11299` · Ferdousi et al. `10.1029/2018JA026193`.
+
+**Konsequenz (A=A):** unser Fund ist **kein neuer Befund** — die Daten und die Analyse sind seit 1994
+publiziert (von dieser Gruppe). Der Wert ist die **offene Route** auf dieselben Daten
+(CDAWeb/NSSDCA „Ready for Electronic Access") für das Haus, **nicht** die Deutung. **Kein Brief an die
+Gruppe** — es sind ihre eigenen Daten; eine Rückantwort wäre anmaßend.
 
 ## Grenze (A=A)
 
