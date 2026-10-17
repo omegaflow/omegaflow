@@ -1,6 +1,6 @@
 ---
 description: River — die lebendige Membran (ω()-Loop, WebGPU-Feld, Fenster/Gaze).
-agent: line
+model: deepseek/deepseek-flash#low
 ---
 River: ω()-Loop, WebGPU-Feld, Fenster/Gaze, Rhythmus.
 

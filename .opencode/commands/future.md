@@ -1,6 +1,6 @@
 ---
 description: Future — die Menschenwelt als Adresse (Leitstelle).
-agent: line
+model: deepseek/deepseek-flash#low
 ---
 Future: Förderung, Korrespondenz, Operator-Queue, Geld · Körper · Hardware.
 

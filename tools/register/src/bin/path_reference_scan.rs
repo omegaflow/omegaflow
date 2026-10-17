@@ -261,7 +261,7 @@ mod tests {
         assert!(is_skipped("state/research/queries.φ"));
         assert!(is_skipped("opencode.json"));
         assert!(is_skipped("bin/relay-tls.stunnel.conf"));
-        assert!(!is_skipped("bin/agent_sandbox"));
+        assert!(!is_skipped("bin/omega_sh"));
         assert!(!is_skipped("tools/register/src/bin/register_lookup.rs"));
     }
 

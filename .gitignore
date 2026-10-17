@@ -4,28 +4,7 @@ debug/
 !state/zustand/ledger/**/*.log
 omegaflow.wasm
 .opencode/*
-!.opencode/agent/
-.opencode/agent/*
-!.opencode/agent/taucher.md
-!.opencode/command/
-.opencode/command/*
-!.opencode/command/browser.md
-!.opencode/command/commit.md
-!.opencode/command/consent.md
-!.opencode/command/future.md
-!.opencode/command/mountain.md
-!.opencode/command/mycelium.md
-!.opencode/command/river.md
-!.opencode/command/sensory.md
-# TUI-Plugin: die `_new`-Befehle (/new + Linien-Prompt in einer Session) — versioniert wie die Commands.
-!.opencode/tui.json
-!.opencode/tui/
-.opencode/tui/*
-!.opencode/tui/line-new.ts
-# Server-Plugin: der Deny lehrt (verbotene Leading-Form → kanonische Form als Meldung).
-!.opencode/plugin/
-.opencode/plugin/*
-!.opencode/plugin/form-guard.ts
+!.opencode/commands/
 *.pdb
 phi/health.json
 phi/kernels/

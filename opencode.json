@@ -1,34 +1,99 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "shell": "/home/johannes/projects/omegaflow/bin/agent_sandbox",
-  "instructions": [
-    "AGENTS.md"
+  "shell": "/bin/bash",
+  "permissions": [
+    {
+      "action": "*",
+      "resource": "*",
+      "effect": "ask"
+    },
+    {
+      "action": "read",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "edit",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "archive_search *",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "sgrep *",
+      "effect": "allow"
+    },
+    {
+      "action": "webfetch",
+      "resource": "*",
+      "effect": "deny"
+    },
+    {
+      "action": "websearch",
+      "resource": "*",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "git push *",
+      "effect": "deny"
+    },
+    {
+      "action": "edit",
+      "resource": "AGENTS.md",
+      "effect": "deny"
+    },
+    {
+      "action": "edit",
+      "resource": "opencode.json",
+      "effect": "deny"
+    },
+    {
+      "action": "edit",
+      "resource": ".opencode/**",
+      "effect": "deny"
+    },
+    {
+      "action": "read",
+      "resource": "**/.secrets.local",
+      "effect": "deny"
+    },
+    {
+      "action": "edit",
+      "resource": "**/.secrets.local",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "*secrets.local*",
+      "effect": "deny"
+    },
+    {
+      "action": "read",
+      "resource": "**/auth.json",
+      "effect": "deny"
+    },
+    {
+      "action": "read",
+      "resource": "/home/johannes/projects/omegaflow-personal/**",
+      "effect": "deny"
+    },
+    {
+      "action": "edit",
+      "resource": "/home/johannes/projects/omegaflow-personal/**",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "*omegaflow-personal*",
+      "effect": "deny"
+    }
   ],
   "model": "deepseek/deepseek-flash",
-  "default_agent": "line",
-  "permissions": [
-    { "action": "*", "resource": "*", "effect": "ask" },
-    { "action": "read", "resource": "*", "effect": "allow" },
-    { "action": "edit", "resource": "*", "effect": "allow" },
-    { "action": "shell", "resource": "archive_search *", "effect": "allow" },
-    { "action": "shell", "resource": "sgrep *", "effect": "allow" },
-    { "action": "subagent", "resource": "taucher", "effect": "allow" },
-    { "action": "subagent", "resource": "*", "effect": "deny" },
-    { "action": "webfetch", "resource": "*", "effect": "deny" },
-    { "action": "websearch", "resource": "*", "effect": "deny" },
-    { "action": "shell", "resource": "git push *", "effect": "deny" },
-    { "action": "edit", "resource": "AGENTS.md", "effect": "deny" },
-    { "action": "edit", "resource": "opencode.json", "effect": "deny" },
-    { "action": "edit", "resource": ".opencode/**", "effect": "deny" }
-  ],
-  "agents": {
-    "line": {
-      "mode": "primary"
-    },
-    "taucher": {
-      "mode": "subagent"
-    }
-  },
   "watcher": {
     "ignore": [
       "target/**",
