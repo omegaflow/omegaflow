@@ -1,8 +1,8 @@
 <!--
   title: Tools-Map — was jedes Werkzeug kann, was es kostet, wer es darf
   class: concept
-  date: 2026-10-14
-  sha256: 8fdd0c1def6d84453d237164df8764b720a890b58ebe801ab347be441cc5ad34
+  date: 2026-10-17
+  sha256: 48ad1f48522a57566f42ac232c8f4fd2703f3fedb2d26b553d6f5b5c49cac485
   status: live
   see-also: AGENTS.md
 -->
@@ -98,7 +98,7 @@ die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --h
 | `--crossref` | 3,48 s | | `--zenodo` | 11,6 s (101 Zeilen) |
 | `--openalex` | 10,8 s (101 Zeilen) | | `--supermag` | 3,4 s Daten / 0,54 s Inventory |
 | `--pubmed` | — (neu) | | `--europepmc` | — (neu) |
-| `--psychporta` | — (neu, ES-POST) | | `--all` | Σ der Keyword-Modi (88; `--help` = Kanon) — letzte Stufe, nie der erste Zug |
+| `--psychporta` | — (neu, ES-POST) | | `--all` / `--wide` | Σ der Keyword-Modi (88; `--help` = Kanon) — letzte Stufe, nie der erste Zug · `--wide` = dieselbe Leiter mit Stopp **400** statt 20 (die gehaltenen Arme ziehen); `bin/all_wide` = derselbe Aufruf |
 | `--awmf` | — (neu, API-Key) | | `--cochrane` | — (neu, via Europe PMC) |
 | `--mwmbl` | 0,78 s (neu, keyless JSON, kein Gate) | | | |
 | `--clinicaltrials` | — (neu) | | `--openfda` | — (neu) |
@@ -157,6 +157,9 @@ die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --h
   als **Vorschau** und schreibt das Volle in den `full: <pfad>`-Spill — der wird **vollständig
   gelesen**, die Vorschau ist nie das Ergebnis. Eine stille Kappung („top 5", „excerpt") als
   Grundlage eines Befunds ist eine ungemessene Behauptung = Fabrikation (`AGENTS.md`).
+  `--all` hält nach **20** Ergebniszeilen; **`--wide`** hebt die Schwelle auf **400** (die
+  gehaltenen Arme ziehen), `OMEGAFLOW_ALL_STOP` überschreibt beide. `bin/all_wide` ist derselbe
+  Aufruf (`archive_search --wide`), kein zweiter Modus.
 - `archive_search --consensus <query>` — Consensus-Literatursuche (`api.consensus.app/v1/search`,
   `CONSENSUS_API_KEY`); `title`/`doi`/`publish_year`/`citation_count`/`study_type`/`takeaway`.
   Gemessen 2026-10-08: liefert echte Literatur (Titel/DOI/Zitat/Studientyp/Takeaway).

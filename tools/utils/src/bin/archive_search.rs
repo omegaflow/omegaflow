@@ -417,6 +417,7 @@ fn main() {
             }
             "--headed" => headed = true,
             "--all" => mode = Mode::Net("all"),
+            "--wide" => mode = Mode::Net("all-wide"),
             "--stats" => mode = Mode::Stats,
             "--arxiv" => mode = Mode::Net("arxiv"),
             "--arxiv-oai" => {
@@ -1304,6 +1305,9 @@ fn usage() {
     eprintln!(
         "  --all       the query through every keyword search mode, parameter arms held ({} calls — the last move, never the first; --brave is excluded while its quota is spent)",
         net::keyword_mode_count()
+    );
+    eprintln!(
+        "  --wide      the same ladder with the breadth threshold raised (stop at 400 result lines instead of 20, so the held arms — base, datacite, re3data, pangaea, figshare, crossref, github, ia-search, sourcegraph, jina, exa, linkup — actually pull; OMEGAFLOW_ALL_STOP still overrides; bin/all_wide is the same call)"
     );
     eprintln!();
     eprintln!(

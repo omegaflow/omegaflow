@@ -3787,6 +3787,15 @@ pub fn keyword_mode_count() -> usize {
 }
 
 const DEFAULT_ALL_STOP: usize = 20;
+const DEFAULT_ALL_WIDE_STOP: usize = 400;
+
+fn resolve_stop_threshold(wide: bool, override_value: Option<&str>) -> usize {
+    match override_value.and_then(|s| s.trim().parse().ok()) {
+        Some(v) => v,
+        None if wide => DEFAULT_ALL_WIDE_STOP,
+        None => DEFAULT_ALL_STOP,
+    }
+}
 
 const UNRANKED_ARM: f64 = 0.05;
 
@@ -3868,16 +3877,11 @@ fn builtin_yield(mode: &str) -> f64 {
     }
 }
 
-fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<String> {
+fn all_lines(query: &str, env: &HashMap<String, String>, max: usize, wide: bool) -> Vec<String> {
     let mut out = Vec::new();
     let mut full = Vec::new();
-    let stop_threshold: usize = match std::env::var("OMEGAFLOW_ALL_STOP")
-        .ok()
-        .and_then(|s| s.parse().ok())
-    {
-        Some(v) => v,
-        None => DEFAULT_ALL_STOP,
-    };
+    let stop_threshold =
+        resolve_stop_threshold(wide, std::env::var("OMEGAFLOW_ALL_STOP").ok().as_deref());
     let min_arms = 6usize;
     let arm_cap = match stop_threshold / min_arms {
         0 => stop_threshold,
@@ -3901,7 +3905,7 @@ fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<Stri
     });
 
     out.push(format!(
-        "=== coverage: {} keyword modes ranked by measured yield; {} parameter-arm(s) held (need endpoint=/server=): {} — stop at {stop_threshold} result lines (OMEGAFLOW_ALL_STOP) ===",
+        "=== coverage: {} keyword modes ranked by measured yield; {} parameter-arm(s) held (need endpoint=/server=): {} — stop at {stop_threshold} result lines (--wide raises it; OMEGAFLOW_ALL_STOP overrides) ===",
         modes.len(),
         PARAMETER_MODES.len(),
         PARAMETER_MODES.join(" ")
@@ -3935,7 +3939,7 @@ fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<Stri
     }
     if stopped {
         out.push(format!(
-            "=== stop: {accumulated} result line(s) ≥ {stop_threshold} after {ran} arm(s) — the remaining arms are held (raise OMEGAFLOW_ALL_STOP to widen) ==="
+            "=== stop: {accumulated} result line(s) ≥ {stop_threshold} after {ran} arm(s) — the remaining arms are held (pass --wide or raise OMEGAFLOW_ALL_STOP to widen) ==="
         ));
     }
     if let Some(path) = write_full(query, &full) {
@@ -4002,7 +4006,7 @@ pub fn run_lines_max(
     max: usize,
 ) -> Vec<String> {
     let lines = run_lines_dispatch(mode, query, env, out, max);
-    if mode != "all" {
+    if mode != "all" && mode != "all-wide" {
         log_query(mode, query, &lines, max);
     }
     lines
@@ -4064,11 +4068,11 @@ fn run_lines_dispatch(
     max: usize,
 ) -> Vec<String> {
     crate::token::set_secrets(env.clone());
-    if mode == "all" {
+    if mode == "all" || mode == "all-wide" {
         if query.trim().is_empty() {
-            return vec!["usage — archive_search --all <query>".to_string()];
+            return vec!["usage — archive_search --all|--wide <query>".to_string()];
         }
-        return all_lines(query, env, max);
+        return all_lines(query, env, max, mode == "all-wide");
     }
     if !BROWSE_MODES.contains(&mode) && query.trim().is_empty() {
         return vec![format!("usage — archive_search --{mode} <query>")];
@@ -5819,5 +5823,16 @@ mod tests {
             ntrs_authors(&v),
             Some("A, B, C, D, E, F, G, H, et al.".to_string())
         );
+    }
+
+    #[test]
+    fn wide_is_the_one_width_control_over_all() {
+        assert_eq!(resolve_stop_threshold(false, None), DEFAULT_ALL_STOP);
+        assert_eq!(DEFAULT_ALL_STOP, 20);
+        assert_eq!(resolve_stop_threshold(true, None), DEFAULT_ALL_WIDE_STOP);
+        assert_eq!(DEFAULT_ALL_WIDE_STOP, 400);
+        assert_eq!(resolve_stop_threshold(true, Some("50")), 50);
+        assert_eq!(resolve_stop_threshold(false, Some("50")), 50);
+        assert_eq!(resolve_stop_threshold(true, Some("not-a-number")), 400);
     }
 }

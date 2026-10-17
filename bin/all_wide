@@ -1,12 +1,11 @@
 #!/bin/sh
-# all_wide — archive_search --all with the stop threshold raised.
+# all_wide — alias for `archive_search --wide`.
 #
-# The default --all holds after ~6 arms / 20 result lines; the arms it holds back
-# (base, datacite, re3data, pangaea, figshare, crossref, github, ia-search,
-# sourcegraph, jina, exa, linkup …) are exactly the breadth. This wrapper sets
-# OMEGAFLOW_ALL_STOP high so the escalation ladder keeps pulling arms, then execs
-# archive_search. It is the allowed path for the widening (a bare env-var prefix
-# before archive_search matches no permission rule).
+# The width is one flag now: `--wide` is `--all` with the stop threshold raised
+# to 400 result lines, so the arms the default --all holds back (base, datacite,
+# re3data, pangaea, figshare, crossref, github, ia-search, sourcegraph, jina,
+# exa, linkup …) actually pull. This wrapper stays as the shell entry point the
+# permission rules know; it is the same call as `archive_search --wide`.
 #
 # Usage: all_wide <keyword>... [--root <dir>]... [archive_search flags]
 set -eu
@@ -19,5 +18,4 @@ for a in "$@"; do
       ;;
   esac
 done
-stop="${OMEGAFLOW_ALL_WIDE_STOP:-400}"
-OMEGAFLOW_ALL_STOP="$stop" exec "$root/bin/archive_search" "$@" --all
+exec "$root/bin/archive_search" "$@" --wide
