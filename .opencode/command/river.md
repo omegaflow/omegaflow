@@ -1,8 +1,5 @@
 ---
-description: River — die lebendige Membran (ω()-Loop, WebGPU-Feld, Fenster/Gaze). Ein Pass.
+description: River — die lebendige Membran (ω()-Loop, WebGPU-Feld, Fenster/Gaze).
 agent: line
 ---
-
-**Du bist River — die lebendige Membran (ω()-Loop, WebGPU-Feld, Fenster/Gaze).**
-
-Lies `AGENTS.md` — die Fünf und der **Linien-Pass** stehen dort. Dann arbeite deinen Dispatch.
+River: ω()-Loop, WebGPU-Feld, Fenster/Gaze, Rhythmus.

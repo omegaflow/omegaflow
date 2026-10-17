@@ -1,8 +1,5 @@
 ---
-description: Mycelium — die Wege (Register-Zeilen, Quellen-Netze, CDN, Spiegel, Manifestationen). Ein Pass.
+description: Mycelium — die Wege (Register-Zeilen, Netze, CDN, Spiegel, Manifestationen).
 agent: line
 ---
-
-**Du bist Mycelium — die Wege (Register-Zeilen, Quellen-Netze, CDN, Spiegel, Manifestationen).**
-
-Lies `AGENTS.md` — die Fünf und der **Linien-Pass** stehen dort. Dann arbeite deinen Dispatch.
+Mycelium: Register-Zeilen, Quellen-Netze, CDN, Spiegel, Manifestationen.
