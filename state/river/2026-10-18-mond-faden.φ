@@ -51,3 +51,18 @@
 # ============================================================
 #   Der Faden ist gebaut und getestet, nicht gemessen. Der nächste Akt ist der Lauf:
 #     cond=ae,dst,kp,lt,alt,lunar, max_lag=36, bins=4.
+
+# ============================================================
+# ERGEBNIS Lauf 39166259860 (2026-10-19)
+# ============================================================
+#   Konfiguration: bin=300s · cond=ae,dst,kp,lt,alt,lunar · cond_bin=10800s ·
+#     max_lag=36 · surr=50 · bins=4 · n=23200 · span 1981-08-16..1983-02-16.
+#   Befund: konditioniert NVE->IVE 0/36 Lags, IVE->NVE 0/36; roh NVE->IVE 5/36.
+#   Die Schwelle wandert von thr=+0.001829 (5 Konditionierer, 3 Lags) auf
+#     thr=+0.009247 (6 Konditionierer, 300 s) — Faktor 5 —, weil 4^6 = 4096 Zellen
+#     bei n=23200 nur ~5,7 Zeilen je Zelle lassen. Der ARX-Null wird breit.
+#   Die gemessene TE bleibt ~0.003–0.009 und liegt damit unter dem aufgeblähten Null.
+#   Das ist KEIN Mond-Effekt: es ist der statistische Preis des sechsten Konditionierers.
+#   Der Lauf beantwortet die Lag-Frage (Dynamo vs. Ionendrag) NICHT.
+#   Nächster Schnitt: bins=3 (729 Zellen) ODER zwei Läufe — 5-Kond-Baseline gegen
+#     dieselbe Baseline + lunar, Schwellen getrennt vergleichen, nicht in einer Zelle.
