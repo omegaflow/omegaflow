@@ -2,7 +2,7 @@
   title: Das Ion-Neutral-Vlies — DE-2, ICRS·TDB und die Fäden, die sonst niemand spannt
   class: concept
   date: 2026-10-18
-  sha256: a9b72a67db669a424f2c936af3e7644a4e0849c3ead592449d6657c4d1ed9b75
+  sha256: d4e5cb7d501b9ba4e55640d0deff734140aa27e4d95a286f61e4c6508289ece4
   status: draft
   see-also: docs/concepts/die-weberin.md docs/handover/handover-2026-10-18-river-folge227.md
 -->
@@ -141,15 +141,17 @@ keiner verdeckt den anderen.
 
 ## Der Riss, der bleibt
 
-- **Richtung:** `NVE→IVE` bei 5–15 min ist mit dem Wind-Dynamo verträglich,
-  aber nicht mit Ionendrag. Erst der 3-h-Lag-Sweep trennt die beiden.
-- **Regime:** Ein globaler DE-2-Punkt mischt Hoch- und Niedrigbreiten. Die
-  Richtung kann sich mit der Breite umdrehen.
-- **Mond:** Der lunare Faden ist berechenbar, aber noch nicht gemessen.
-- **Sonnenwind:** Der L1→Magnetopause-Versatz ist berechenbar, aber noch
-  nicht angewandt.
-- **K:** Die Kraftfrage ist nicht beantwortet und wird durch TE nicht
-  beantwortet.
+- **Offen:** Richtung — `NVE→IVE` bei 5–15 min ist mit dem Wind-Dynamo verträglich,
+  aber nicht mit Ionendrag. Der 3-h-Lag-Sweep trennt die beiden (Lauf `39154644922`
+  wurde abgebrochen, kein Ergebnis).
+- **Offen:** Regime — ein globaler DE-2-Punkt mischt Hoch- und Niedrigbreiten; die
+  Richtung kann sich mit der Breite umdrehen. Trennung nach Breite/MLT fehlt.
+- **Offen:** Mond — der lunare Gezeitenfaden ist berechenbar, aber nicht gemessen.
+  Es fehlen SSCWeb-Lat/Lon im Orbit-Loader, `ephemeris_moon.bin` und `--cond moon`.
+- **Offen:** Sonnenwind — der L1→Magnetopause-Versatz ist berechenbar, aber nicht
+  angewandt (TDB-Alignment fehlt).
+- **Offen:** K — die Kraftfrage ist nicht beantwortet und wird durch TE nicht
+  beantwortet (`∇p`, `B/j`, Kollisionsfrequenz, Dichte-Differenz fehlen).
 
 ## Belege
 
