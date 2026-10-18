@@ -93,3 +93,19 @@ Die flache `url` `…/kids_dr4_wl_cat.fits` bleibt **404** (over-2-GiB-Konstrukt
 - ~~**CDN-Matrix blind für `.parts`**~~ — **geschlossen.** `cdn_reconcile` erkennt jetzt `raw_mirror`s `.parts` (`is_manifest`) und die `.pNNN`-Shards (`shard_base`), mit Tests (`is_manifest_accepts_parts_and_manifest`, `shard_base_recognises_p_parts_numeric_and_underscore`). Snapshot neu erzeugt: `missing_assets` **962 → 777** (185 zuvor fälschlich „fehlende" Shard-Assets werden nun über Manifest+Shards bewiesen), `kids_dr4_wl_cat.fits` und Venus raus; `--fail`-Contract clean.
 - ~~**Ungeparste Register-Blöcke**~~ — **geschlossen.** `cdn_reconcile` liest die CDN-`url`s jetzt zusätzlich **roh** aus dem Register (`raw_cdn_urls`), nicht nur aus den vom Parser akzeptierten `sources`. Damit zählen auch Blöcke, die `load_sources_from` ohne Whitelist-`format`/Frame verwirft (`parse.rs:145–154`). Venus ist aus `missing_assets` **und** `divergence` verschwunden; Divergenz 8275 → 8181.
 - **FITS-interner Subset-Leser fehlt** (§2): Shard-Reassembly ja, „nur Zeilen/HDU lesen" nein.
+
+## 10. Triage der 12 neu aufgetauchten `missing_assets`
+
+Alle 12 Origins erreichbar (HEAD 200, 22 KB–66 MB). `format reference` heißt im Register **gespiegeltes Referenz-Asset ohne Daten-Parser** (605 Präzedenzfälle mit CDN-`url`), nicht „nicht auf dem CDN".
+
+| Asset | Klasse | Entscheidung | Beleg |
+|---|---|---|---|
+| `SP-59.pdf`, `19740012502.pdf` | Dokument | route + `format reference` | 206 auf `nasa.gov` / `ntrs.nasa.gov` |
+| `dsc_0119.pdf`, 3× Mariner-4-`DSC_*.pdf`, `spreadsheet_dsc.xls` | Dokument | route + `format reference` | 5× 206 auf `spdf.gsfc.nasa.gov` |
+| `epta_dr2.zip` | Daten | route (`zenodo-raw-cdn`-Matrix, md5+size) | 206 |
+| `uncover_dr4_sps_catalog.fits` | Daten | route (`zenodo-raw-cdn`-Matrix) | 206 |
+| `20261009__atha_themis02_full-keogram.pgm.jpg` | Daten (datiert) | route (`themis_asi-keogram-cdn`, station+date) | 206 |
+| `POS_M1_ENC_42SEC.DAT/.LBL` | Daten (PDS-raw) | **`absent`** | kein Raw-Arm; `pds-ppi-cdn` ist ein EPN-TAP-Compiler, kein Raw-Mirror |
+
+**Wirkung:** `missing_assets` 789 → **779** (10 von 12 geräumt); die 2 PDS-Dateien bleiben als benanntes `absent` stehen.
+**Werkzeuge:** `.github/workflows/spdf-docs-raw-cdn.yml` (7 Docs, `on: workflow_dispatch`, idempotent), `zenodo-raw-cdn.yml` (+2 Einträge), `themis_asi-keogram-cdn` (Dispatch).
