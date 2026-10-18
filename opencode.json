@@ -103,6 +103,11 @@
       "effect": "allow"
     },
     {
+      "action": "shell",
+      "resource": "python*",
+      "effect": "deny"
+    },
+    {
       "action": "webfetch",
       "resource": "*",
       "effect": "deny"
