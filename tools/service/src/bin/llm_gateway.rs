@@ -1769,6 +1769,89 @@ fn models_tsv(models: &HashMap<String, ModelInfo>) -> String {
     out
 }
 
+fn route_by_prefix(prefix: &str) -> Option<&'static Route> {
+    ROUTES.iter().find(|r| r.prefix == prefix)
+}
+
+fn jq_one(body: &str, filter: &str) -> String {
+    let mut child = match Command::new("jq")
+        .args(["-r", filter])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+    {
+        Ok(c) => c,
+        Err(_) => return String::new(),
+    };
+    if let Some(mut si) = child.stdin.take() {
+        let _ = si.write_all(body.as_bytes());
+    }
+    match child.wait_with_output() {
+        Ok(o) => String::from_utf8_lossy(&o.stdout).trim().to_string(),
+        Err(_) => String::new(),
+    }
+}
+
+fn openrouter_balance(body: &str) -> Option<f64> {
+    let tsv = jq_one(body, "[.data.total_credits, .data.total_usage] | @tsv");
+    let mut it = tsv.split('\t');
+    let credits = it.next()?.parse::<f64>().ok()?;
+    let usage = it.next()?.parse::<f64>().ok()?;
+    Some(credits - usage)
+}
+
+fn deepseek_balance(body: &str) -> Option<f64> {
+    jq_one(body, ".balance_infos[0].total_balance").parse::<f64>().ok()
+}
+
+fn probe_balance(secrets: &HashMap<String, String>, auth: &str) -> Vec<(String, f64)> {
+    let mut out = Vec::new();
+    if let Some(r) = route_by_prefix("openrouter") {
+        if let Some(key) = key_for(r, secrets, auth) {
+            if let Some((code, body)) =
+                curl_get_timeout("https://openrouter.ai/api/v1/credits", &key, "12")
+            {
+                if code == 200 {
+                    if let Some(b) = openrouter_balance(&body) {
+                        out.push(("openrouter".to_string(), b));
+                    }
+                }
+            }
+        }
+    }
+    if let Some(r) = route_by_prefix("deepseek") {
+        if let Some(key) = key_for(r, secrets, auth) {
+            if let Some((code, body)) =
+                curl_get_timeout("https://api.deepseek.com/user/balance", &key, "12")
+            {
+                if code == 200 {
+                    if let Some(b) = deepseek_balance(&body) {
+                        out.push(("deepseek".to_string(), b));
+                    }
+                }
+            }
+        }
+    }
+    out
+}
+
+fn balance_tsv(balances: &[(String, f64)]) -> String {
+    let mut out = String::from("provider\tbalance_usd\n");
+    for (p, b) in balances {
+        out.push_str(&format!("{p}\t{b}\n"));
+    }
+    out
+}
+
+fn balance_json(secrets: &HashMap<String, String>, auth: &str) -> String {
+    let balances = probe_balance(secrets, auth);
+    let items: Vec<String> = balances
+        .iter()
+        .map(|(p, b)| format!("{{\"provider\":\"{p}\",\"balance_usd\":{b}}}"))
+        .collect();
+    format!("{{\"balances\":[{}]}}", items.join(","))
+}
+
 fn is_paid_prefix(prefix: &str) -> bool {
     matches!(
         prefix,
@@ -2528,6 +2611,14 @@ fn main() {
         models_tsv(&models),
     );
     let _ = MODELS.set(models);
+    let balances = probe_balance(&secrets, &auth);
+    for (p, b) in &balances {
+        eprintln!("llm_gateway: balance {p} {b}");
+    }
+    let _ = fs::write(
+        format!("{}/state/zustand/llm-gateway-balance.tsv", repo_root()),
+        balance_tsv(&balances),
+    );
     if filter_enabled() {
         active_redactor();
     }
@@ -2625,6 +2716,7 @@ fn handle(stream: &mut TcpStream, secrets: &HashMap<String, String>, auth: &str)
     }
     let (code, out) = match (method.as_str(), path.as_str()) {
         ("GET", "/v1/models") => (200, list_models(secrets, auth)),
+        ("GET", "/v1/balance") => (200, balance_json(secrets, auth)),
         ("GET", "/health") => (200, "{\"status\":\"ok\"}".to_string()),
         ("POST", "/v1/chat/completions") => chat_completions(&outgoing, secrets, auth, red),
         _ => (404, "{\"error\":{\"message\":\"not found\"}}".to_string()),
