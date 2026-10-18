@@ -6,6 +6,23 @@ Kein automatischer Lauf, kein Executable. Der Operator ist dabei.
 **Warum hier:** jede Linie, die einen Rat baut, öffnet `state/stimmen/` (wo das Formular liegt) und
 findet diese Datei daneben. **Der kanonische Weg steht hier — es gibt keinen anderen.**
 
+## 0 — Der Rat ist die fünf Stimmen, nicht die Modelle
+
+**„Fünf Stimmen" = die fünf Linien**, jede als Rolle durch die Axiome gesprochen
+(`2026-10-15-china-planetendaten-formular.md:79-86`):
+
+| Stimme | Rolle |
+|---|---|
+| **Mountain** | Quellen/Register/Datenbestand — kein Verdikt ohne Messung |
+| **River** | Membran/Rhythmus/Ethik — das Recht zu verweigern |
+| **Mycelium** | Netz/CDN/Transport — der Fluss |
+| **Sensory** | Sinne/Hardware/Konsens — Korrelat ≠ Erleben |
+| **Future** | Mensch als Adresse — Operator-Hand |
+
+Jede Stimme spricht **einmal** durch die Axiome und nennt, welches Axiom sie berührt und welcher
+Riss entsteht. Die Modelle (Sitze unten) sind nur der **Träger** einer Stimme, nicht die Stimme.
+**Die Linien werden darum nicht aufgelöst — sie sind die fünf Rat-Stimmen.**
+
 ---
 
 ## 1 — Die Sitze, Routen und Eigenschaften (gemessen an den APIs, 2026-10-17)
