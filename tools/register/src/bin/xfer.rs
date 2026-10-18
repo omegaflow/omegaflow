@@ -13,6 +13,7 @@ enum Derived {
     Sent,
     Folded,
     Closed,
+    Acked,
     Rejected,
     Superseded,
     Dropped,
@@ -25,6 +26,7 @@ impl Derived {
             Derived::Sent => "SENT",
             Derived::Folded => "FOLDED",
             Derived::Closed => "CLOSED",
+            Derived::Acked => "ACKED",
             Derived::Rejected => "REJECTED",
             Derived::Superseded => "SUPERSEDED",
             Derived::Dropped => "DROPPED",
@@ -36,6 +38,8 @@ impl Derived {
         !matches!(self, Derived::Sent | Derived::Contested)
     }
 }
+
+const RECEIPT: &str = "ACK";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct Token {
@@ -53,9 +57,14 @@ fn usage() {
          xfer list --line <L> [--open]                        one line per token and its derived state\n\
          xfer fold <tok> --line <L> --into <target>           append FOLDED (the folding session)\n\
          xfer close <tok> --line <L> --ref <commit|path>      append CLOSED with its reference\n\
+         xfer ack <tok> --line <L> --ref <commit|path>        the addressee's receipt, written in the addressee's own ledger\n\
          xfer manifest --line <L> --to <target> [--file <p>]  print [manifest n=<N> root=<h8>] per An-<target> block\n\
          xfer migrate --line <L> [--handover <p>] [--write]   convert legacy xfer:<sender>-<n> in the line's An-blocks to anchored tokens (single track)\n\
-         xfer coverage --line <L>                             emitted vs disposed; exit 2 while any token is open\n\
+         xfer coverage --line <L>                             emitted vs disposed vs acknowledged; exit 2 while an own token is open\n\
+         \n\
+         close and fold are the emitter's acts and stay in the emitter's ledger. ack is the\n\
+         addressee's act and never writes into another line: the token keeps its state at the\n\
+         emitter, the receipt lives with the addressee, the emitter sees it read-only.\n\
          \n\
          --line falls back to OMEGAFLOW_LINE; the session id to OMEGAFLOW_SESSION, then\n\
          state/reports/active_session.phi. A missing line or session exits 2, never a fabricated id.\n\
@@ -216,7 +225,11 @@ fn derive_state(states: &[&str]) -> Option<Derived> {
             });
         }
     }
-    best
+    match best {
+        Some(b) => Some(b),
+        None if states.iter().any(|s| *s == RECEIPT) => Some(Derived::Acked),
+        None => None,
+    }
 }
 
 fn coverage_exit(states: &[Derived]) -> i32 {
@@ -287,6 +300,58 @@ fn aggregate(events: &[(String, String)]) -> BTreeMap<String, Vec<String>> {
 fn derived_of(states: &[String]) -> Option<Derived> {
     let refs: Vec<&str> = states.iter().map(|s| s.as_str()).collect();
     derive_state(&refs)
+}
+
+fn belongs_to(tok: &str, line: &str) -> bool {
+    match parse_token(tok) {
+        Some(t) => t.line == line,
+        None => true,
+    }
+}
+
+fn addressee_of(text: &str, tok: &str) -> Option<String> {
+    for raw in text.lines() {
+        let mut it = raw.split_whitespace();
+        if it.next().is_none() {
+            continue;
+        }
+        if it.next() != Some("SENT") || it.next() != Some(tok) {
+            continue;
+        }
+        for field in it {
+            if let Some(to) = field.strip_prefix("to=") {
+                return Some(to.to_string());
+            }
+        }
+    }
+    None
+}
+
+fn ledger_lines(root: &Path) -> Vec<String> {
+    let mut out = Vec::new();
+    let Ok(entries) = fs::read_dir(root) else {
+        return out;
+    };
+    for e in entries.flatten() {
+        if e.path().is_dir() {
+            out.push(e.file_name().to_string_lossy().to_string());
+        }
+    }
+    out.sort();
+    out
+}
+
+fn receipts_for(root: &Path, token: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    for line in ledger_lines(root) {
+        let agg = aggregate(&read_dir_events(&root.join(&line)));
+        for (tok, states) in &agg {
+            if tok == token && derived_of(states) == Some(Derived::Acked) {
+                out.push(line.clone());
+            }
+        }
+    }
+    out
 }
 
 fn parse_flag<'a>(args: &'a [String], i: &mut usize, name: &str) -> Option<&'a String> {
@@ -456,6 +521,80 @@ fn cmd_transition(args: &[String], state: &str) -> i32 {
     0
 }
 
+fn cmd_ack(args: &[String]) -> i32 {
+    let mut tok: Option<String> = None;
+    let mut line_opt: Option<String> = None;
+    let mut reference: Option<String> = None;
+    let mut i = 0;
+    while i < args.len() {
+        if let Some(v) = parse_flag(args, &mut i, "--line") {
+            line_opt = Some(v.clone());
+        } else if let Some(v) = parse_flag(args, &mut i, "--ref") {
+            reference = Some(v.clone());
+        } else if tok.is_none() {
+            tok = Some(args[i].clone());
+        }
+        i += 1;
+    }
+    let tok = match tok {
+        Some(t) => t,
+        None => fail("ack: token absent"),
+    };
+    let parsed = match parse_token(&tok) {
+        Some(t) => t,
+        None => fail(&format!(
+            "ack: token malformed — the anchored form xfer:<line>.<sess>.<n>~<h8> is required: {tok}"
+        )),
+    };
+    let line = match resolve_line(line_opt) {
+        Ok(l) => l,
+        Err(e) => fail(&e),
+    };
+    if !valid_component(&line) {
+        fail("ack: --line carries a forbidden character");
+    }
+    if line == parsed.line {
+        fail("ack: the emitter does not acknowledge its own token — use close or fold");
+    }
+    let reference = match reference {
+        Some(r) => r,
+        None => fail("ack: --ref absent"),
+    };
+    let emitter_ledger = ledger_dir()
+        .join(&parsed.line)
+        .join(format!("{}.log", parsed.sess));
+    let text = match fs::read_to_string(&emitter_ledger) {
+        Ok(t) => t,
+        Err(e) => fail(&format!("ack: {}: {e}", emitter_ledger.display())),
+    };
+    match addressee_of(&text, &tok) {
+        None => fail(&format!(
+            "ack: no SENT record for {tok} in the emitter's ledger — unknown token"
+        )),
+        Some(to) if to != line => fail(&format!(
+            "ack: {line} is not the addressee of {tok} (to={to})"
+        )),
+        Some(_) => {}
+    }
+    let sess = match resolve_sess() {
+        Ok(s) => s,
+        Err(e) => fail(&e),
+    };
+    if !valid_component(&sess) {
+        fail("ack: session id carries a forbidden character");
+    }
+    let file = ledger_dir().join(&line).join(format!("{sess}.log"));
+    let rec = format!(
+        "{} {RECEIPT} {tok} by={line}.{sess} ref={reference}",
+        utc_now()
+    );
+    if let Err(e) = append_ledger(&file, &rec) {
+        fail(&e);
+    }
+    println!("{tok}\tACK");
+    0
+}
+
 fn cmd_coverage(args: &[String]) -> i32 {
     let mut line_opt: Option<String> = None;
     let mut i = 0;
@@ -472,12 +611,17 @@ fn cmd_coverage(args: &[String]) -> i32 {
     if !valid_component(&line) {
         fail("coverage: --line carries a forbidden character");
     }
-    let agg = aggregate(&read_dir_events(&ledger_dir().join(&line)));
+    let root = ledger_dir();
+    let agg = aggregate(&read_dir_events(&root.join(&line)));
     let mut emitted = 0usize;
     let mut disposed = 0usize;
+    let mut acknowledged = 0usize;
     let mut open: Vec<(String, Derived)> = Vec::new();
     let mut states: Vec<Derived> = Vec::new();
     for (tok, evs) in &agg {
+        if !belongs_to(tok, &line) {
+            continue;
+        }
         let Some(st) = derived_of(evs) else {
             continue;
         };
@@ -488,13 +632,25 @@ fn cmd_coverage(args: &[String]) -> i32 {
         } else {
             open.push((tok.clone(), st));
         }
+        if !receipts_for(&root, tok).is_empty() {
+            acknowledged += 1;
+        }
     }
     println!("xfer coverage — line {line}");
     println!("emitted  {emitted}");
     println!("disposed {disposed}");
     println!("open     {}", emitted - disposed);
+    println!("acknowledged {acknowledged}");
     for (tok, st) in &open {
         println!("{tok}\t{}", st.name());
+    }
+    for (tok, evs) in &agg {
+        if belongs_to(tok, &line) {
+            continue;
+        }
+        if derived_of(evs) == Some(Derived::Acked) {
+            println!("{tok}\tRECEIPT");
+        }
     }
     coverage_exit(&states)
 }
@@ -785,6 +941,7 @@ fn main() {
         "list" => cmd_list(rest),
         "fold" => cmd_transition(rest, "FOLDED"),
         "close" => cmd_transition(rest, "CLOSED"),
+        "ack" => cmd_ack(rest),
         "manifest" => cmd_manifest(rest),
         "migrate" => cmd_migrate(rest),
         "coverage" => cmd_coverage(rest),
@@ -1033,5 +1190,44 @@ mod tests {
         assert!(out.contains("xfer:mycelium.s.1~deadbeef"), "{out}");
         assert!(out.contains("xfer:future.s.2~aaaaaaaa"), "{out}");
         assert!(!out.contains("xfer:mountain-7"), "{out}");
+    }
+
+    #[test]
+    fn a_receipt_is_a_receipt_not_a_token_state() {
+        assert_eq!(derive_state(&["ACK"]), Some(Derived::Acked));
+        assert_eq!(coverage_exit(&[Derived::Acked]), 0);
+        assert_eq!(
+            derive_state(&["SENT"]),
+            Some(Derived::Sent),
+            "a sent token is never read as acknowledged"
+        );
+        assert_eq!(
+            derive_state(&["ACK", "SENT"]),
+            Some(Derived::Sent),
+            "the emitter's state outranks the receipt"
+        );
+    }
+
+    #[test]
+    fn a_foreign_token_is_not_an_emitted_token_of_this_line() {
+        assert!(belongs_to("xfer:river.ses.1~aaaaaaaa", "river"));
+        assert!(!belongs_to("xfer:mountain.ses.1~aaaaaaaa", "river"));
+        assert!(belongs_to("legacy-token", "river"));
+    }
+
+    #[test]
+    fn the_addressee_is_read_from_the_emitters_sent_record() {
+        let text = "2026-10-17T21:22:16Z SENT xfer:river.s.1~aaaaaaaa by=river.s to=mountain\n\
+                    2026-10-17T21:22:16Z SENT xfer:river.s.2~bbbbbbbb by=river.s to=mycelium\n\
+                    2026-10-17T21:22:40Z ACK xfer:mountain.s.1~cccccccc by=river.s ref=7148dc3be\n";
+        assert_eq!(
+            addressee_of(text, "xfer:river.s.1~aaaaaaaa"),
+            Some("mountain".to_string())
+        );
+        assert_eq!(
+            addressee_of(text, "xfer:river.s.2~bbbbbbbb"),
+            Some("mycelium".to_string())
+        );
+        assert_eq!(addressee_of(text, "xfer:river.s.3~dddddddd"), None);
     }
 }
