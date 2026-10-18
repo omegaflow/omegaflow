@@ -136,3 +136,10 @@ weitere fäden kanal-cdn alle mountain-gebunden
 # ein Zukunftstermin (Wartestand) und ein gebauter Hardware-Punkt (Move zu Future); kein Verlust.
 2026-12-02 docs blatt blatt-thuan-fragesteller md 4
 ble-hr-reader external-state md 41 gebaut src
+# Erweitert 2026-10-18 (River-Linie, mcpherron-Drop aus Mycelium folge361): die zwei
+# `mcpherron-cdn-lauf`-Drops sind belegt erledigt — Register-Block `phi/sources.φ`
+# (`format mcon_event`, sha256 441df5f8…), Compiler `tools/harvest/src/bin/mcpherron_compiler.rs`,
+# Workflow `.github/workflows/mcpherron-cdn.yml`, CDN-Asset `mcpherron_onsets.bin`
+# (sha256 441df5f8…, Lauf 38176003927 success); Drift geheilt in 0f61dd505, Retarget 61c7257e9.
+mcpherron-cdn-lauf register-block river-188 mcpherron-cdn yml dispatch
+mcpherron-cdn-lauf register-block river-188 weiter mcpherron-cdn yml
