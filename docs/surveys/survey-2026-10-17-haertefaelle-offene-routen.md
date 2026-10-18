@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: fbd23cbf7891324af485534c0f55d7ec2c3b96200fb68283da2e4e516ccf2b71
+  sha256: 66de32856f40114856d9246281895f5d13353741c849e7d174eaeba1532dd9c8
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -12,6 +12,21 @@
 **Absagen**. Drei `taucher` + zwei eigene Messungen (2026-10-17); Werkzeuge `bin/where`,
 `archive_search` (`--nssdc`, `--heasarc`, `--openaire`, `--zenodo`, `--verdict` …) und HTTP per
 `curl -w`. **Keine Architektur** — die Zulassung ist Mountains Verdikt, CDN/Route Myceliums.
+
+## Versandvorbereitung (2026-10-18) — vorbereitet, Operator-Sendewort nötig
+
+Drei offene Punkte sind als **exakte, sendbare Entwürfe** vorbereitet — **nicht gesendet, nicht
+gelöst**. Der Operator hält das Sendewort; jede Antwort ist eine Zulieferung und wird am Baum
+gemessen. Artefakt: `state/stimmen/2026-10-18-haertefaelle-anfragen.md`.
+
+| Punkt | Kanal (gemessen) | Stand 2026-10-18 | Artefakt |
+|---|---|---|---|
+| **RBN** Lizenz/Redistribution | Webformular `reversebeacon.net/contact` (keine E-Mail veröffentlicht) | **vorbereitet, Operator-Sendewort nötig** — Lizenzseiten 5/5 **404**, nur „freely available for study and analysis", **kein** Grant; Callsign-Feld braucht Operator-Wert oder `N/A` | §1 |
+| **CEIC D18000** | `datashare@seis.ac.cn`, Cc `dcogcd@163.com` | **vorbereitet, Operator-Sendewort nötig** — DOIs 4/4 **404**, DataCite `prefix=10.12080` = **0**, Order → `login.jsp` | §2 |
+| **DOSIS-3D / EuTEF DOSTEL** | `hreda.info@sdc.upm.es` (HREDA registration support) | **vorbereitet, Operator-Sendewort nötig** — TAP `v_doi_investigation`: `data_available=false` für beide | §3 |
+
+Die drei Entwürfe sind **Fragen, keine Anträge mit Zusage**; sie behaupten keine Datenrechte. Die
+Antworten sind Zulieferungen — Zulassung/Register bleibt Mountains bzw. Myceliums Hand.
 
 ## A — Sonden-Rohdaten (request-only)
 
@@ -245,12 +260,16 @@ connection refused. Der Register-Block `weberin_verdicts` führt EPM2021 längst
   Inhalt ungeprüft** (DOSTEL-DOI `10.57780/esa-8hfqjak`: `data_available=false`, 0 Dateien).
 - **RBN-Lizenz:** keine offene Lizenz, `about/terms/privacy/legal/copyright` = **404**; einziger Satz:
   „freely available for study and analysis" + Bitte um Ideen — **kein Redistributions-Grant**.
-  CDN = **pending**, schriftliche Anfrage nötig.
+  CDN = **pending**, schriftliche Anfrage nötig. → **vorbereitet, Operator-Sendewort nötig**
+  (Webformular `reversebeacon.net/contact`, Entwurf `state/stimmen/2026-10-18-haertefaelle-anfragen.md` §1).
 - **CEIC:** Ausländer-Zugang **nein** — `^1[3-9]\d{9}`, Name „nur Han", Provinz-Adresse, Nutzungsregel
   „中国公民都可申请"; Order → 302 `login.jsp` (Auth, nicht Geo). Email-Kanal: `dcogcd@163.com`,
   `datashare@seis.ac.cn` (ob Ausland beliefert wird: offen). **DOI-Korrektur:** `ds0001.2026`
   existiert **nicht**; die echten sind `ds0005.2026` (flow), `ds0006.2026`, `ds00001.2024` — alle
-  „DOI does not exist" (2026-Charge ungemünzt); 2025er lösen auf.
+  „DOI does not exist" (2026-Charge ungemünzt); 2025er lösen auf. → **vorbereitet,
+  Operator-Sendewort nötig** (Mail an `datashare@seis.ac.cn`, Cc `dcogcd@163.com`, Entwurf
+  `state/stimmen/2026-10-18-haertefaelle-anfragen.md` §2; nachgemessen 2026-10-18: 4/4 DOI 404,
+  DataCite `prefix=10.12080` = 0).
 - **Voyager:** kein Web-Bestellpfad — `order/download/request.action` = identische **3 645-B-Soft-404**
   (md5 `de205919…`); realer Weg = **CRUSO** `gsfc-dl-nssdca-request@mail.nasa.gov`, Ermessen +
   Kostenübernahme + ggf. Digitalisierung. Uranus/Neptun = **physische Univac-1108-Tapes**, kein
@@ -268,6 +287,10 @@ connection refused. Der Register-Block `weberin_verdicts` führt EPM2021 längst
   Zenodo `DOSTEL` = 2 Volltext-Zufallstreffer, `type=dataset` 0; DataCite = **1** echtes Dataset
   (`10.48733/ifjpan/oebph2`, Dosis-Tabelle). Nächstbestes: **CRaTER GCR LET-Spektren**
   `10.5281/zenodo.22883077` (CC-BY-4.0, echtes LET-Spektrum, aber **LRO/Mond**).
+  → **vorbereitet, Operator-Sendewort nötig** (Mail an `hreda.info@sdc.upm.es`, Entwurf
+  `state/stimmen/2026-10-18-haertefaelle-anfragen.md` §3; nachgemessen 2026-10-18: HREDA-TAP
+  `v_doi_investigation` = `data_available=false` für beide, auch für die drei übrigen
+  DOSIS-Investigationen).
 - **CEIC D18000:** `all_wide` über alle Arme = **kein** Voll-Mirror. Nur `7855090`/`7112529`
   (Sichuan/Lushan, 7 Kampagnen 2010–2013, 1 Absolutpunkt belegt: `AG201006.txt` → `51060301`);
   RAR5 → p7zip kann 109/110 Einträge nicht dekodieren (Punktzahl bleibt Behauptung, nicht Messung).
