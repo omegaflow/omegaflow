@@ -39,6 +39,7 @@ sie sagt **wo das Verdikt liegt** und **wer es bekommt** — nicht, was entschie
 | R-2026-10-18-e | 2026-10-18 | **Wo prüft der Gate die RAT-ID?** (commit-msg-Hook) | Codestral · Qwen3-Coder · Kimi K2.6 · Schwarm | **entschieden** (3/4 A) | `2026-10-18-rat-gate-rat-id.md` | →future · →mountain · →river · →mycelium · →sensory | — |
 | R-2026-10-18-f | 2026-10-18 | **gfc-Block** — Cap 5540/3211/2190/760, Epoche unbelegt, `ttl` NO_CADENCE, 5399-vs-5480 | *offen — Operator wählt* | **offen** | `2026-10-18-gfc-block-formular.md` | →future | — |
 | R-2026-10-18-g | 2026-10-18 | **P10-Restarme** — eionet-Emissionen, Infraschall-/Feuer-Intensität, TEC/Pseudorange/`vis_nmi`, Stern-Metadaten, FDSN-Kanal, `kg/(m^2 s)` | *offen — Operator wählt* | **offen** | `2026-10-18-p10-restarme-formular.md` | →future | — |
+| R-2026-10-18-h | 2026-10-18 | **`is_paid` nach Kosten, nicht Provider** — freie Modelle auf bezahlfähigen Routen (`openrouter/…:free`, Preis 0/0) werden als „billed route" (402) geblockt | *offen — Operator fährt* | **offen** | `2026-10-18-is-paid-kosten-formular.md` | →future | — |
 
 **Stand-Vokabular:** `offen · entschieden · geroutet · quittiert · verworfen`.
 
