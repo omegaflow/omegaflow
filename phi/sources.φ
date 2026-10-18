@@ -1264,9 +1264,10 @@ field 1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/celestrak.org/timed_orbit.bin
 format orbit_bin
-origin https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE
+origin https://tle.ivanstanojevic.me/api/tle/26998 (CelesTrak GP mirror; upstream gp.php?CATNR=26998)
 terms free-open https://celestrak.org/usage-policy.php
 compiler tools/harvest/src/bin/timed_tle_compiler.rs
+sha256 31b3f9b3374931ff8ae4e22f07ea8f6dd442d04739bde0377be332e49ab2b2e9
 at timed
 ttl 7200
 
