@@ -119,6 +119,7 @@ pub mod hdf5;
 pub mod heasarc_w3browse;
 pub mod hfrnet_rtv;
 pub mod hips;
+pub mod hmi;
 pub mod hmi_polar;
 pub mod hrv;
 pub mod hsd;

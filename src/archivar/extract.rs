@@ -123,6 +123,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "f107" => f107::parse_series(bytes),
         "goes_euvs" => euvs::parse_bin(bytes),
         "aia" => aia::parse_bin(bytes),
+        "hmi" => hmi::parse_bin(bytes),
         "eve" => eve::parse_bin(bytes),
         "hapi_csv" => hapi_csv::parse_bin(bytes),
         "kasi" => kasi::parse_series(bytes),
@@ -638,6 +639,10 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             aia::COMP_211 => Some("aia_211_dn"),
             aia::COMP_304 => Some("aia_304_dn"),
             aia::COMP_335 => Some("aia_335_dn"),
+            _ => None,
+        },
+        "hmi" => match comp {
+            hmi::COMP_FRONT | hmi::COMP_SIDE | hmi::COMP_COMBINED => Some("hmi_m_720s_blos"),
             _ => None,
         },
         "eve" => match comp {
