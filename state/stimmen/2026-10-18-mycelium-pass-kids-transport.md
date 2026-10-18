@@ -193,7 +193,7 @@ Grenze (Mountain `state/mountain/2026-10-18-restarme-entscheide.φ`): Mountain e
 - **EPTA (gebaut):** `tools/harvest/src/bin/epta_dr2_compiler.rs` liest das gemirrorte `epta_dr2.zip` (CC-BY-4.0, `sha256 2ae54694…`), nimmt `DR2full/*/*.par`, `TRES × 1e-6` s, Position `RAJ/DECJ` mit `ELONG/ELAT`-Fallback (3 Pulsare), schreibt **SKY1**. 26 `.par` → **25 eindeutige Pulsare** (`J1751-withoutBON128` ist die BON-lose Variante von `J1751-2857`, dedupliziert). Asset `epta_dr2.sky1`, 513 B, `sha256 3c4285c2…`, CDN **206**. Block (Mountain): `format sky1`, `record sky1`, `field TRES … s`, `at sun`.
 - **EVE (gebaut):** Compiler-Pfad `…/level2b/YYYY/DOY/EVL_L2B_YYYYDOY_008_01.fit.gz` trägt (206); **2011 DOY 40–130** (vor MEGS-A-Ausfall, alle 11 Linien) → **1 146 616 Records**, 22 932 328 B, `sha256 0c0de10e…`, `epoch_tdb` 350 481 696..358 344 036, 0 void. Asset `eve_l2b.bin`; **hochgeladen:** CDN **206** unter Tag `lasp.colorado.edu-eve`.
 - **WALLABY (gebaut):** CASDA TAP `AS102.wallaby_pdr2_sourcecatalogue_v01` (43 Spalten), Abzug `name,ra,dec,freq,w20,w50,dist_h,log_m_hi` → **3 454 Zeilen**, JSON 730 934 B, `sha256 45fc9aea…`. Asset `wallaby_pdr2_sourcecatalogue.json`; **hochgeladen:** CDN **206** unter Tag `casda.csiro.au`; Block (`cmap .`, `ra ra`, `dec dec`, `quantity` HI-Masse/Breite, `at sun`) steht (Mountain `4d66dbf18`).
-- **HMI (gebaut + live, 2026-10-18):** `src/archivar/hmi.rs` (`HMI1`, comp = CAMERA 1/2/3) + `format hmi` in `extract.rs` + `tools/harvest/src/bin/hmi_compiler.rs`. Route: **direktes Archiv** `jsoc1.stanford.edu/data/hmi/fits/YYYY/MM/DD/` (keyless, 206), **stündlich** (23–24 Files/Tag); diese Dateien sind **1024² boxcar-4-gebinnt** (nicht der 4096²-Export; `DATAMEAN` ist skalierungsinvariant). Header-Range 0–20 000 B; `DATAMEAN` [G], `T_REC` (TAI→TDB über LSK), `CAMERA`; 1 Record/T_REC, Dedup über die Zeit. Asset `hmi_m_720s.bin`, 2020-01-01 + 5 Tage → **119 Records**, 2 388 B (= 8 + n×20), `sha256 d89dbe29…`, CDN **206** (Tag `jsoc.stanford.edu`, über den AIA-Block registriert). Einheit **`nt`** (Mountain): der Compiler rechnet `DATAMEAN` (Gauß) **× 100 000** → nT; `CAMERA` ist Pflicht (kein erfundenes 0). Mountain: `format hmi`, `field hmi_m_720s_blos`, `at sun`, `ttl 86400`.
+- **HMI (gebaut + live, 2026-10-18):** `src/archivar/hmi.rs` (`HMI1`, comp = CAMERA 1/2/3) + `format hmi` in `extract.rs` + `tools/harvest/src/bin/hmi_compiler.rs`. Route: **direktes Archiv** `jsoc1.stanford.edu/data/hmi/fits/YYYY/MM/DD/` (keyless, 206), **stündlich** (23–24 Files/Tag); diese Dateien sind **1024² boxcar-4-gebinnt** (nicht der 4096²-Export; `DATAMEAN` ist skalierungsinvariant). Header-Range 0–20 000 B; `DATAMEAN` [G], `T_REC` (TAI→TDB über LSK), `CAMERA`; 1 Record/T_REC, Dedup über die Zeit. Asset `hmi_m_720s.bin` — **volle Serie 2010–2026** über `jsoc_info?op=rs_list` (`DATAMEAN,T_REC,CAMERA`, Jahresabrufe): **705 477 Records**, 14 109 548 B (= 8 + n×20), `sha256 08f0fd9f…`, CDN **206**. 2009 trägt keine HMI-Daten (SDO-Start 2010); `DATAMEAN` in **nT** (Gauß × 100 000), `CAMERA` Pflicht. Der FITS-Header-Weg bleibt als `--day`-Fallback. Mountain: `format hmi`, `field hmi_m_720s_blos`, `at sun`, `ttl 86400`.
 
 ## 17. matrix-vlies — die n=0-Zellen sind ein Datenfenster (2026-10-18)
 
@@ -206,3 +206,29 @@ Die 210 Zellen sind nicht leer wegen Code, sondern weil die vier RTSW/SWPC-Felde
 | `AC_H0_SWE` | `Np`, `Vp` | 1998-02 → 2024-07 | 64 s — **`Np=-1.0E31` (Fill)**, nicht als Wert lesen |
 
 Gemeinsames Fenster **2017-07 → 2026-08 (~9 Jahre)**. Mountain registriert die vier Felder auf diese Quellen (Tag `cdaweb.gsfc.nasa.gov`, `at sun`); Mycelium erntet stündlich (decimate) und stößt den Lauf an: `matrix-vlies` ist ein **CI-Job** (`.github/workflows/field-te-query.yml`, Descriptor `vlies_matrix.te`), nie lokal.
+
+## 18. n=0-Zellen — Ernte + Matrix-Lauf (2026-10-18)
+
+Die vier Felder sind auf **stündliche CDN-Assets** umgestellt; die Quelle bleibt CDAWeb HAPI (PD-USGov), die `hapi`/`terms`/Felder der Blöcke unverändert:
+
+- `ace_h0_mfi_hourly.json` — 17 328 415 B, `sha256 aa849e89…`, **248 907** Stundenwerte, **1997-09 → 2026-08** (`Magnitude` = Bt, `BGSM` = By/Bz), CDN **206**.
+- `ace_k0_swe_hourly.json` — 4 296 883 B, `sha256 cb1d5028…`, **85 335** Stundenwerte, **2017-07 → 2026-10** (`Np`, `Vp`), CDN **206**. `AC_K0_SWE` beginnt erst 2017-07; die frühere `AC_H0_SWE`-Reihe (1998–2024) trägt Fill `-1.0E31` und wäre ein **eigener Arm**, kein stiller Mix.
+
+Compiler `tools/harvest/src/bin/ace_rtsw_compiler.rs`: monatsweise CDAWeb-CSV → Stundenmittel → HAPI-JSON; Fill `-1.0E31` wird **verworfen**, nie gemittelt. Die Blöcke tragen jetzt `url` (CDN), `origin` (HAPI-CSV-Abfrage), `compiler`, `sha256`; `terms`/`hapi`/`at sun` bleiben. Lauf: `field-te-query` dispatchen (enthält `matrix-vlies`).
+
+**Ergebnis Lauf `39165623701` (matrix-vlies 5m25s, Commit `a9eb27a77`) und Bestätigung `39166372464` (Commit `6704a3dae`):**
+- **Korrektur einer eigenen Fehlmessung:** der erste Grep zählte die `cond`-Spalte (immer 0), nicht die `n`-Spalte. Korrekt (n-Spalte, drittes Feld): `n=0`-Zellen **126 → 112** (Lauf 391) bzw. **120** (Lauf 664); `alignment pending` **126 → 84** (391) bzw. **92** (664). Die frühere Behauptung „210 → 0" war falsch.
+- **RTSW-Zellen** (4 Felder × 25 Paare = 100): `n>0` **28 → 52** (391) bzw. **44** (664); `n=0` **72 → 48** (391) bzw. **56** (664). Die verbleibenden RTSW-Nullen liegen an den **Partnern**, nicht an der ACE-Reihe: AIA 2013, EVE 2011, Swarm/QBO (kurz/diskontinuierlich), INTERMAGNET-Riss, D20. Die 8 Extra-Pending in Lauf 664 sind **alle** `d20_thermocline_depth_m` (Live-Quelle im Lauf ausgefallen).
+- Die vier ACE-Arme tragen echte n: 21 479 (XRS→Bt/Bz), 3 155 (XRS→Speed, Lauf 664), 28 223 (OMNI→Bz, Lauf 664), 3 309/3 338 (TAO), 108 (ENSO).
+- `unit` war rot an einem **vorbestehenden Fixture** (`SourceConfig` ohne `head`, `field_te_query.rs:6383`); Fix `head: None`, lokal **80/80** Tests grün; Bestätigungslauf `39166372464`: `unit` ✓, `matrix-vlies` ✓.
+
+## 19. CelesTrak TIMED — Ausweichroute belegt (2026-10-19)
+
+Der Block `celestrak.org/timed_orbit.bin` war **404**: das Release-Tag existierte, trug 0 Assets; der Upstream `gp.php?CATNR=26998` lief in Timeouts (**HTTP 000**, 30 s). Belegte Ausweichroute: `https://tle.ivanstanojevic.me/api/tle/26998` → **200, 0,8 s**, `line1`/`line2`, TLE-Epoche `26291.37163704`. Der Workflow `timed-orbit-cdn.yml` holt jetzt das Mirror-JSON und schreibt per `jq` die zwei TLE-Zeilen nach `data/celestrak.org/timed.gp`; der Compiler bleibt unverändert (TLE-Text). Asset: **1 441 Records**, 80 704 B, `sha256 31b3f9b3…`, CDN **206**. Lizenz: `free-open` / CelesTrak Usage Policy (Upstream), Mirror als Relay; **kein Login, kein Konto**. Der Pin bleibt stabil, weil die Idempotenz-Stufe den vorhandenen Blob nicht überschreibt. Die alte lokale Datei (`bf5609e9…`, TLE 26287) ist durch die neue Epoche ersetzt.
+
+## 20. Haus ist non-commercial — NC-Arme im Scope (2026-10-19)
+
+Operator-Entscheid: Das Haus arbeitet **non-commercial**. Damit sind die NC-Terme der bereits registrierten Arme **im Scope**, kein „commercial decline":
+- **INTERMAGNET** `CC-BY-NC-4.0`, **NMDB** `nmdb-non-commercial`, **GIRO** `CC-BY-NC-SA-4.0`, **ESA ESDC** `CC-BY-NC-3.0-IGO`, **Ocean Networks Canada** `onc-open`, **Columbia/GCMT** `columbia-research-noncommercial`.
+
+**Pflichten bleiben:** Namensnennung, keine kommerzielle Weiterverwendung, bei GIRO **Share-Alike** für Ableitungen. Die `terms`-Zeilen bleiben unverändert; die CDN-Assets sind für den NC-Betrieb zulässig. Verbleibende echte Blocker: **CSES-01** (Registrierung), **WWLLN** (offline/Kosten), **RESEDA/BaZrO3** und **Kuprat 5. Ader** (Operator/privat). **Conicus/TGF-3/REACH/EDGES** sind Produkt-/Modellfragen, keine Lizenz.

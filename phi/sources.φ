@@ -855,7 +855,7 @@ url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/
 terms PD-USGov https://spdf.gsfc.nasa.gov/data_use_policy.html
 origin https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&time.min=2017-07-01T00:00:00Z&time.max=2026-08-04T00:00:00Z&parameters=Magnitude,BGSM&format=csv
 compiler tools/harvest/src/bin/ace_rtsw_compiler.rs
-sha256 4bc047eb0eb19dc5cd5efdfc8d6fb3662e835d1b5432fa11c09029b00f6dd3a2
+sha256 aa849e89216a414535560245533b572a48bcd11d6a36dcbd0f7a939fdfd271f4
 ttl 3600
 at sun
 hapi Magnitude=magnetosphere_imf_bt_nt BGSM.1=magnetosphere_imf_by_nt BGSM.2=magnetosphere_imf_bz_nt
@@ -867,7 +867,7 @@ url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/
 terms PD-USGov https://spdf.gsfc.nasa.gov/data_use_policy.html
 origin https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_K0_SWE&time.min=2017-07-01T00:00:00Z&time.max=2026-10-10T00:00:00Z&parameters=Np,Vp&format=csv
 compiler tools/harvest/src/bin/ace_rtsw_compiler.rs
-sha256 663eddf9675e0afaac106781c9d5112a30d9e0ff5946825dd3e165c467b1e341
+sha256 cb1d5028103a4c772b5eba3e69b9e966fc2d6da13ac0d14cfa56202ec7940a47
 ttl 3600
 at sun
 hapi Np=solar_wind_density_cm3 Vp=solar_wind_speed_km_s
@@ -1264,9 +1264,10 @@ field 1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/celestrak.org/timed_orbit.bin
 format orbit_bin
-origin https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE
+origin https://tle.ivanstanojevic.me/api/tle/26998 (CelesTrak GP mirror; upstream gp.php?CATNR=26998)
 terms free-open https://celestrak.org/usage-policy.php
 compiler tools/harvest/src/bin/timed_tle_compiler.rs
+sha256 31b3f9b3374931ff8ae4e22f07ea8f6dd442d04739bde0377be332e49ab2b2e9
 at timed
 ttl 7200
 
@@ -2738,9 +2739,9 @@ field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/hmi_m_720s.bin
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format hmi
-origin https://jsoc1.stanford.edu/data/hmi/fits
+origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list&ds=hmi.M_720s (DATAMEAN,T_REC,CAMERA)
 compiler tools/harvest/src/bin/hmi_compiler.rs
-sha256 d89dbe290f2098a4246d1dd4e78f83f5b7a8c179b3a653eec78cc22320837695
+sha256 08f0fd9fb28007899d931bac7a49342a1e078d8781202b46971da68e568c7fbd
 at sun
 ttl 86400
 field hmi_m_720s_blos hmi_m_720s_blos inverse-square em nt 3600 0.0 0.0
