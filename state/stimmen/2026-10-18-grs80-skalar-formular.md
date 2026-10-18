@@ -12,9 +12,10 @@ Lizenz zu erfinden?
 
 ## Der gemessene Defekt (2026-10-18, mountain)
 
-- Der Parser kennt `gm`, `radius`, `norm`, `tide`, `max_degree` nur als **Kopf-Direktiven
-  eines Modellblocks** (`src/archivar/parse.rs:2270-2299`); `a`, `f`, `ω`, `γe`, `γp`
-  haben keine Direktive.
+- Der Parser kennt `gm` (2282), `radius` (2288), `norm` (2297), `tide` (2303),
+  `max_degree` (2304) nur als **Kopf-Direktiven eines Modellblocks**
+  (`src/archivar/parse.rs:2282-2304`); `a`, `f`, `ω`, `γe`, `γp` haben keine Direktive
+  (`"f"`/`"omega"`/`"grs80"` = 0 Treffer; das einzige `"a"` (2027) ist KeplerMap).
 - `phi/sources.φ` ist das Datenregister; `#`-Kommentare und `note` sind dort per Gate
   verboten. Eine Kommentarzeile mit den Werten wäre eine tote Notiz, kein Registerakt.
 - `N = T/γ₀` in `src/archivar/gfc.rs:404` liefert `None` (pending), bis GRS80-Normalfeld
@@ -82,5 +83,5 @@ bleiben unregistriert. `N` bleibt pending, weil γ₀ fehlt.
 
 - `state/mountain/2026-10-18-geodesy-grs80.φ` §2 (GRS80/γ₀) und §3 (`gfc`)
 - `state/mountain/2026-10-18-icgem-calc-license.φ` (local-only)
-- `src/archivar/parse.rs:2270-2299`, `src/archivar/gfc.rs:404`
+- `src/archivar/parse.rs:2270-2304` (Direktiv-Arme 2282/2288/2297/2303/2304), `src/archivar/gfc.rs:404`
 - `phi/sources.φ` am HEAD: 0 Treffer für `gfc`, `GRS80`, `gamma0`/`γ0`, `ICGEM`

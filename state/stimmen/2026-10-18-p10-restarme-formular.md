@@ -5,8 +5,8 @@
 
 ## Die Frage
 
-P10 ist mit **241 Umtagungen** abgeschlossen (7767→7526 `field`, 141→382 `quantity`).
-Sechs Restgruppen tragen Name und Einheit, aber **kein vorhandener Quantity-/Kanal-Arm**
+P10 ist mit **241 Umtagungen** abgeschlossen (7767→7526 `field`, 141→382 `quantity`;
+`state/mountain/2026-10-18-p10-em.φ:122-125`). Sechs Restgruppen tragen Name und Einheit, aber **kein vorhandener Quantity-/Kanal-Arm**
 passt. Sollen für sie neue Arme gebaut werden, bleiben sie `field` mit benanntem Riss,
 oder wird nur die kleinste sichere Teilmenge gebaut?
 
@@ -21,7 +21,7 @@ oder wird nur die kleinste sichere Teilmenge gebaut?
 | `vis_nmi`, `morph_sigma` | 73 + 1 | dimensionslose Indizes / Morphologie-Maß |
 | Stern-Metadaten (Teff/logg/mag) | klein | Einzelwerte sind `source-parameter`; eine gemeinsame Achse ist nicht gebaut |
 | FDSN-BHZ-Kanalidentität | 2 | zwei Wellenfelder teilen dieselbe stationlose Kanalidentität in `Matrix::metas` |
-| `kg/(m^2 s)`-Token | klein | Deskriptor-Parser trennt am Leerzeichen → `unknown unit "kg/(m^2"` |
+| `kg/(m^2 s)`-Token | klein | `channel`-Direktive trennt am Leerzeichen → `unknown channel unit "kg/(m^2"` (`unit-token.φ:8-12`; nicht der Deskriptor-Parser) |
 
 ## Die Optionen
 
@@ -58,7 +58,7 @@ Sammelentscheidung verschiedene Physik zusammenwirft.
 
 ## Belege
 
-- `state/mountain/2026-10-18-p10-migration.φ` §4/§6
-- `state/mountain/2026-10-18-p10-tranche2.φ`, `-tranche3.φ`, `-p10-em.φ`
-- `state/mountain/2026-10-18-p10-residuals.φ` §2 (FDSN/`kg/(m^2 s)`)
+- `state/mountain/2026-10-18-p10-migration.φ` §4/§6; FDSN-BHZ ×2 in `-migration.φ:59`
+- `state/mountain/2026-10-18-p10-tranche2.φ`, `-tranche3.φ`, `-p10-em.φ:122-125` (241-Bilanz)
+- `state/mountain/2026-10-18-p10-residuals.φ`; `kg/(m^2 s)` in `-unit-token.φ:8-12`
 - `state/mountain/2026-10-18-cmonoc-momentum.φ`
