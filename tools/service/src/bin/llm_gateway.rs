@@ -1646,6 +1646,7 @@ struct ModelInfo {
     prompt: Option<f64>,
     completion: Option<f64>,
     context: Option<u64>,
+    chat: Option<bool>,
 }
 
 static MODELS: OnceLock<HashMap<String, ModelInfo>> = OnceLock::new();
@@ -1660,11 +1661,11 @@ fn repo_root() -> String {
     }
 }
 
-fn catalog_rows(body: &str) -> Vec<(String, Option<f64>, Option<f64>, Option<u64>)> {
+fn catalog_rows(body: &str) -> Vec<(String, Option<f64>, Option<f64>, Option<u64>, Option<bool>)> {
     let mut child = match Command::new("jq")
         .args([
             "-r",
-            ".data[]? | [.id, (.pricing.prompt // \"\"), (.pricing.completion // \"\"), (.context_length // \"\")] | @tsv",
+            ".data[]? | [.id, (.pricing.prompt // \"\"), (.pricing.completion // \"\"), (.context_length // \"\"), (if has(\"architecture\") then (.architecture.output_modalities == [\"text\"]) else null end)] | @tsv",
         ])
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -1687,7 +1688,8 @@ fn catalog_rows(body: &str) -> Vec<(String, Option<f64>, Option<f64>, Option<u64
             let prompt = it.next().and_then(|s| s.parse::<f64>().ok());
             let completion = it.next().and_then(|s| s.parse::<f64>().ok());
             let context = it.next().and_then(|s| s.parse::<u64>().ok());
-            Some((id, prompt, completion, context))
+            let chat = it.next().and_then(|s| s.parse::<bool>().ok());
+            Some((id, prompt, completion, context, chat))
         })
         .collect()
 }
@@ -1711,21 +1713,24 @@ fn refresh_catalog(secrets: &HashMap<String, String>, auth: &str) -> HashMap<Str
             continue;
         }
         let _ = fs::write(format!("{dir}/{}.json", r.prefix), &body);
-        let priced: HashMap<String, (Option<f64>, Option<f64>, Option<u64>)> = catalog_rows(&body)
-            .into_iter()
-            .map(|(i, p, c, x)| (i, (p, c, x)))
-            .collect();
+        let priced: HashMap<String, (Option<f64>, Option<f64>, Option<u64>, Option<bool>)> =
+            catalog_rows(&body)
+                .into_iter()
+                .map(|(i, p, c, x, ch)| (i, (p, c, x, ch)))
+                .collect();
         for id in json_string_values(&body, id_key) {
             let info = match priced.get(&id) {
-                Some((p, c, x)) => ModelInfo {
+                Some((p, c, x, ch)) => ModelInfo {
                     prompt: *p,
                     completion: *c,
                     context: *x,
+                    chat: *ch,
                 },
                 None => ModelInfo {
                     prompt: None,
                     completion: None,
                     context: None,
+                    chat: None,
                 },
             };
             models.insert(format!("{}/{}", r.prefix, id), info);
@@ -1899,9 +1904,14 @@ fn health_check(
 ) -> HashSet<String> {
     let free_ids: Vec<String> = models
         .iter()
-        .filter(|(id, info)| match (info.prompt, info.completion) {
-            (Some(p), Some(c)) => p == 0.0 && c == 0.0,
-            _ => !is_paid_prefix(id.split('/').next().unwrap_or("")),
+        .filter(|(id, info)| {
+            if info.chat == Some(false) {
+                return false;
+            }
+            match (info.prompt, info.completion) {
+                (Some(p), Some(c)) => p == 0.0 && c == 0.0,
+                _ => !is_paid_prefix(id.split('/').next().unwrap_or("")),
+            }
         })
         .map(|(id, _)| id.clone())
         .collect();
@@ -2733,15 +2743,22 @@ fn main() {
         let secrets = secrets.clone();
         let auth = auth.clone();
         std::thread::spawn(move || {
+            let alive_path = format!("{}/state/zustand/llm-gateway-alive.tsv", repo_root());
+            if let Ok(meta) = fs::metadata(&alive_path) {
+                if let Ok(modified) = meta.modified() {
+                    if let Ok(elapsed) = modified.elapsed() {
+                        if elapsed.as_secs() < 86_400 {
+                            return;
+                        }
+                    }
+                }
+            }
             let Some(models) = MODELS.get() else {
                 return;
             };
             let alive = health_check(&secrets, &auth, models);
             eprintln!("llm_gateway: alive {} free models", alive.len());
-            let _ = fs::write(
-                format!("{}/state/zustand/llm-gateway-alive.tsv", repo_root()),
-                alive_tsv(&alive),
-            );
+            let _ = fs::write(alive_path, alive_tsv(&alive));
         });
     }
     if filter_enabled() {
