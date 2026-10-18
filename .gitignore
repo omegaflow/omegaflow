@@ -52,10 +52,11 @@ cloudflare/.wrangler/
 # Lokale Tunnel-Config (absoluter Credential-Pfad — Deployment, kein Repo-Gegenstand)
 cloudflare/cloudflared-config.yml
 
-# `state/` lebt nicht mehr im öffentlichen Baum: das private Register liegt im privaten
-# Haus (`~/projects/omegaflow-personal`), der Laufzeit-Zustand unter
-# `~/.local/state/omegaflow`. Im öffentlichen Baum steht nur der getrackte Zeiger
-# `docs/zustand/external-state.md`; der öffentliche Hof ist `~/projects/omegaflow-work`.
+# `state/` ist getrackt nur als kuratierte Rat-Schicht (`state/stimmen`, ab 2026-10-15).
+# Roh-Antworten und Spills liegen ungetrackt in `$OMEGAFLOW_WORK/stimmen`; der Zeiger
+# auf den privaten Zustand ist `docs/zustand/external-state.md`.
+state/*
+!state/stimmen/
 
 # Login-/Konto-Prüflisten (persönlich — nie ins Repo)
 markiert.csv
