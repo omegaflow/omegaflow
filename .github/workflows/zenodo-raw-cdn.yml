@@ -142,6 +142,16 @@ jobs:
             origin: "https://zenodo.org/api/records/16366035/files/KiDS_DR4.1_ugriZYJHKs_SOM_gold_WL_cat.fits/content"
             md5: 3e764558bb1679c7c7f706786393c542
             size: 17712469440
+          - asset: epta_dr2.zip
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.zip"
+            origin: "https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content"
+            md5: 307b2b99cd352876b07409899448af8b
+            size: 39275794
+          - asset: uncover_dr4_sps_catalog.fits
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/uncover_dr4_sps_catalog.fits"
+            origin: "https://zenodo.org/api/records/14281664/files/UNCOVER_DR4_SPS_catalog.fits/content"
+            md5: 96a59621fff89208f0cd3272c89fd5d8
+            size: 65905920
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1

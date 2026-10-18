@@ -19044,6 +19044,7 @@ origin https://ntrs.nasa.gov/api/citations/19740012502/downloads/19740012502.pdf
 terms PD-USGov https://ntrs.nasa.gov/citations/19740012502
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 9b4902bff834617b6b91590a1d5e0bf01f1e501566d72ed7f4b364271a0a7cb4
+format reference
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/oderest.rsl.wustl.edu/live2.json
@@ -26919,6 +26920,7 @@ origin https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/old
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 fee7b06ee5faf91e69f4fcda5d0464c406597970c4aa02eead27035dfd5b2a56
+format reference
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_celestial-mechanics_64-077a-09a_DSC_0119.pdf
@@ -26933,6 +26935,7 @@ origin https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/ren
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 37745a467d5e152602bad14fa49877437472c69b608dfcd987d4effa3cd95562
+format reference
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_helium-magnetometer_64-077a-02a_DSC_0176.pdf
@@ -26940,6 +26943,7 @@ origin https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/ren
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 51d288e175ea46d1966da5fa9eb395b99aa6e9b1ec27e36a870ce03a775c00ce
+format reference
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_mag_64-077a-02b_DSC_0074.pdf
@@ -26947,6 +26951,7 @@ origin https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/ren
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 30ba3e6bdec3920e9e7c93d1cf5a8d37ebfff388e3b76d368075da30908c1abe
+format reference
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_odg.bin
@@ -26970,6 +26975,7 @@ origin https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/old
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 b1f8523dd90eecfb307fbc35878b47dc5d18f99b37a94e92fc267f6bc5470ea3
+format reference
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
@@ -30528,6 +30534,7 @@ origin https://www.nasa.gov/wp-content/uploads/static/history/SP-59.pdf
 terms PD-USGov https://www.nasa.gov/nasa-brand-center/images-and-media/
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 a46e1712d30b04c559d3a24625ca788201e95cd3f0d82919c331746ef02b0c60
+format reference
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat001.dat
@@ -30796,6 +30803,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.z
 terms CC-BY-4.0 https://zenodo.org/records/8300645
 format zip
 origin https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
+compiler tools/harvest/src/bin/raw_mirror.rs
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gps_campaign.dat
@@ -31535,6 +31543,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/uncover_dr
 terms CC-BY-4.0 https://zenodo.org/records/14281664
 format fits
 origin https://zenodo.org/api/records/14281664/files/UNCOVER_DR4_SPS_catalog.fits/content
+compiler tools/harvest/src/bin/raw_mirror.rs
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/venus_radar_Processed.zip
