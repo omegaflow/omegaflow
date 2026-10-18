@@ -2,7 +2,7 @@
   title: Survey — dead_sources.φ Relevanz-Erstpass + Force-Gate-Verdikt (2026-09-16)
   class: survey
   date: 2026-09-16
-  sha256: ac672e3e39436c4fd337031ead63df51745d7384e334258f9c8318b4c92d9654
+  sha256: 1a763ebc30f9e363c798a54ca618ce31a9f49381fdda5ab557e4c4fcfac97c0a
   status: live
   see-also: phi/dead_sources.φ docs/SOURCE_PORT.md phi/sources.φ phi/declined_sources.φ
 -->
@@ -53,21 +53,27 @@ propagierendes Feld).
 - `remon.jrc.ec.europa.eu` — JRC REM Radioaktivitäts-Monitoring (em).
 - `www.irsn.fr` (×2) — IRSN Strahlen-Monitoring (em).
 
-**Pending — behalten (4):**
-- `dods.wh.gov` — Pfad „acoustic" deutet Unterwasser-Akustik an, Netloc
-  unverifiziert. Schritt: Nachfolger des OPeNDAP-Acoustic-Endpoints suchen
-  (`archive_search --verdict` + `--brave`).
-- `osdr.nasa.gov` — OSDR trägt ISS-Dosimetrie (em); der tote `/bio/api` ist eine
-  Repository-Route. Schritt: direkten Dosimetrie-Feed im OSDR-Katalog messen,
-  sonst `decline registry/katalog`.
-- `pskreporter.info` + `reversebeacon.net` — Amateurfunk-Propagation: Empfangsreport-
-  Registry (SNR von Menschensignalen) als Ionosphären-Proxy, kein Feld am Punkt.
-  Schritt: gegen sources.φ-Ionosphären-Abdeckung (TEC/Ionosonde) wiegen; gedeckt →
-  `decline registry/katalog`.
-
-**Bereits disponiert — behalten (2):**
-- `arvo-registry.sci.am` (×2) — bereits `dead unreachable` (SOURCE_PORT §16.4),
-  Proton-Eskalation offen.
+**Gemessen — geschlossen (4, 2026-10-18):**
+- `dods.wh.gov` — DNS **NXDOMAIN** (`getent` rc=2, `curl` 6); `--verdict` direkt
+  und Proton ohne Antwort, Wayback ohne Snapshot, `--mwmbl` absent. Kein
+  Akustik-/OPeNDAP-Nachfolger gefunden. → **absent**.
+- `osdr.nasa.gov` — API lebt: `/geode-py/ws/studies` **200, 6360 B**;
+  `repo/search?term=dosimetry` **123** Treffer, aber nur
+  `experiment`/`hardware`/`payload`/`study`-Records (z. B. `GSE51417`); `DOSTEL` **0**,
+  `TEPC` **1** (Transkriptomik, nicht Dosimetrie); alte `/bio/api`-Route **404**.
+  → **Registry/Metadaten, kein Roh-Zeitreihen-Feed.** Roh-Dosis liegt außerhalb:
+  CDAWeb `ISS_DOSANL_TEPC` (`/pub/data/international_space_station_iss/dos_tepc/`
+  **200, 2098 B**; CDF 2017 **200, 13 451 393 B**, `DOSE` µGy/min, SPASE `PT10S`).
+- `pskreporter.info` + `reversebeacon.net` — PSKReporter-Query **200, 1 517 299 B**
+  `<receptionReports>` (Callsign/Locator/Frequenz); RBN Port 7000 **Timeout (rc=124)**.
+  Beides Empfangsreport-**Register**, kein Feld am Punkt. Die TEC-Abdeckung ist da:
+  5 `sources.φ`-Blöcke (CHAMP, CDAWeb GPS-TEC, CDDIS IONEX, Swarm), 0 Ionosonde.
+  → **`decline registry/katalog` (gedeckt)**.
+- `arvo-registry.sci.am` (×2) — **nicht tot**, nur HTTPS: DNS `93.187.165.59`;
+  `https://…/tap` **000** (443 refused), `http://arvo-registry.sci.am/` **200, 1452 B**,
+  `/tap/sync` ADQL `SELECT TOP 1 * FROM TAP_SCHEMA.tables` **200, 114 B**. Die alte
+  `dead unreachable`-Messung (SOURCE_PORT §16.4) traf den TLS-Weg; der HTTP-TAP lebt.
+  → **Korrektur: live über HTTP; der HTTPS/Proton-Pfad bleibt geschlossen.**
 
 ## Zwei lebende Dienste — keine neuen Quellen
 

@@ -2,7 +2,7 @@
   title: Handover — Sensory 259
   class: handover
   date: 2026-10-14
-  sha256: a46fa3a48c9e89ddae1339ad4d9ee4d65443d0033ab156cdfbe37924268c0932
+  sha256: 7a716e394a7704e5053267a5c181e4aa731c71c109fa65d628f32641f2ac99a2
   status: live
 -->
 # Sensory 259
@@ -17,6 +17,7 @@
 
 ## Träger
 - `state/stimmen/2026-10-17-modvolc-verteilung-formular.md` · `docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md` · `docs/surveys/survey-2026-10-17-de2-ion-neutral-kopplung.md` · `docs/surveys/survey-2026-09-17-sonden-request-only.md` · `docs/blatt/blatt-solar-seconds-matrix.md`.
+- Besitz 2026-10-18 (b729a7f97, 16 Docs): `docs/surveys/survey-2026-10-08-open-sources-delta.md` · `docs/concepts/das-eine-instrument.md` · `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` · `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` · `docs/surveys/survey-2026-10-13-grosse-raetsel-und-maschine.md` · `docs/surveys/survey-2026-10-15-tauchbefunde-acht-faeden.md` · `docs/surveys/survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md` · `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` · `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md` · `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md` · `docs/surveys/survey-2026-09-16-sonden-flotte.md` · `docs/surveys/survey-2026-09-17-verlorene-diskussionen.md` · `docs/surveys/survey-2026-10-15-die-fuenf-archaeologie.md` · `docs/surveys/survey-2026-10-12-standort-lokalisierung-ortho-dsm.md` · `docs/surveys/survey-2026-09-23-geraete-anbindung-radiatoren.md` · `docs/surveys/survey-raetsel-bestand.md`.
 
 ## An mountain
 Origin: sensory-259
