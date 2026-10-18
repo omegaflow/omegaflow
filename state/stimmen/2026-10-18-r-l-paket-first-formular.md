@@ -75,3 +75,18 @@ aus dem Asset/Manifest. Nur Mountain trägt Option 1 (gepinnter Posten). F3 ist 
 | Mistral | Login-Wall | nach Terms-Akzeptanz „anmelden oder registrieren" |
 
 **1:1 gespalten (Duck vs. Qwen)** — F3 bleibt offen. Die fünf Stimmen laufen in beiden Sitzen sauber (je Axiom + Riss), aber die Träger-Wahl (gepinnter Posten vs. Manifest-Digest) ist nicht konvergiert.
+
+## F3 (Flyby-sealed) — alle fahrbaren Sitze, voller Prompt (2026-10-18)
+| Sitz | Urteil |
+|---|---|
+| Duck.ai (GPT-6 Luna) | **Option 1** |
+| Qwen3.8-Max | **Option 2** |
+| Perplexity | **Option 1** + Zeit-Riss (Flyby 2026-11-01 vs JUICE-Chronologie) |
+| Lumo 2.0 Max | **Option 2** |
+| Sakana Fugu Max | **Option 1** („Vergleich an die Wurzel, nicht an den Fluss") |
+| MiniMax / Mistral | Login-Wall |
+
+**3:2 für Option 1** — gepinnter versiegelter Posten bleibt Träger; das Gate prüft gegen ihn, ersetzt
+nicht. Minderheit (Qwen, Lumo) trägt Option 2 (Digest aus Manifest). **Nicht einstimmig** — der
+Zeit-Riss (Perplexity: Flyby-Datum vs. öffentliche JUICE-Chronologie) bleibt offen und betrifft die
+Frage selbst, nicht nur die Träger-Wahl.
