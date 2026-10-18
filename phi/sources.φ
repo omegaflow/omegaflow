@@ -14676,6 +14676,7 @@ url https://github.com/omegaflow/sources/releases/download/crystallography.net/e
 origin https://zenodo.org/api/records/21859473/files/Fig4_eels_and_peakfitting.mat/content
 terms CC-BY-4.0 https://zenodo.org/records/21859473
 compiler tools/harvest/src/bin/crystal_compiler.rs
+sha256 eaee21811b21b9b9f11ba98b33fd573f17858cd0b24a100e56643b4966842ec0
 format eels_acoustic
 at earth
 no-cadence
@@ -14684,6 +14685,7 @@ url https://github.com/omegaflow/sources/releases/download/crystallography.net/r
 origin https://zenodo.org/api/records/15179114/files/data.zip/content
 terms CC-BY-4.0 https://zenodo.org/records/15179114
 compiler tools/harvest/src/bin/crystal_compiler.rs
+sha256 3846da527aa21caf9b7b4cf6de8189fb9d03211685709bf5d07e30e8fd4e4038
 format rixs_charge
 at earth
 no-cadence
@@ -14692,6 +14694,7 @@ url https://github.com/omegaflow/sources/releases/download/crystallography.net/r
 origin https://zenodo.org/api/records/7286412/files/UnravellingNatureofSpinAndChargeExcitations-theory%2BexpData.zip/content
 terms CC-BY-4.0 https://zenodo.org/records/7286412
 compiler tools/harvest/src/bin/crystal_compiler.rs
+sha256 e4b3335d38666344389417c11b322119efad819d27f1fb7f27eab6ac2f992b54
 format rixs_spin
 at earth
 no-cadence
