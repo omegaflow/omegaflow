@@ -2,7 +2,7 @@
   title: Source-Port: Der eine Pfad
   class: concept
   date: 2026-10-11
-  sha256: 06825581e95d664a094fd3a26d82aa7ecb38827192565c3b240d7d60fc5680fa
+  sha256: 876ee134fed7a4cadeb468d71449e0e52e84abe5fa19676b65f158f972f246dc
   status: live
   see-also: docs/README.md AGENTS.md phi/sources.φ
 -->
@@ -277,7 +277,9 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   `ws.`) ist NXDOMAIN, `www.cadc-ccda.…` trägt die Site (200), der TAP läuft
   auf `ws.cadc-ccda.…` (400 ohne Query = lebt); `www.rubinobservatory.org`
   resettet TLS, `rubinobservatory.org` (ohne www) ist 200; `arvo.byu.edu` ist
-  NXDOMAIN (tot) — der ARVO-TAP ist `arvo-registry.sci.am` (000, reset by peer).
+  NXDOMAIN (tot) — der ARVO-TAP ist `arvo-registry.sci.am`; HTTPS (443) wird
+  vom Peer zurückgesetzt (000), aber HTTP (80) trägt die Site (200) und der
+  TAP antwortet ADQL (nachgetragen 2026-10-18, siehe Ledger unten).
 - **Länder-Exits (free plan, gemessen 2026-09-13)**: Der `protonvpn`-CLI
   wählt im Free-Plan **kein Land** („Location selection is not available on
   the free plan") — `protonvpn connect` nimmt den schnellsten freien Server.
@@ -679,8 +681,12 @@ VOTable-only, oder Redirect-Landing); `kein-http` = keine HTTP-Antwort.
   TAPVizieR-Quellen in sources.φ); der 501-Befund und der 400-Befund sind
   Zeitpunkte desselben Hosts, ein Eintrag trägt beide.
 - **kein-http aufgelöst (4 → 0):** die zwei relativen `/tap` sind Artefakte
-  (oben). `arvo-registry.sci.am/tap` → `dead unreachable` (DNS löst auf,
-  http+https werden vom Peer zurückgesetzt; Proton-VPN-Route offen). Der
+  (oben). `arvo-registry.sci.am/tap` war kein Tod, nur kein HTTPS: DNS löst
+  auf, HTTPS (443) wird vom Peer zurückgesetzt (000), aber HTTP (80) ist
+  erreichbar und der TAP antwortet — ADQL `SELECT TOP 1 * FROM
+  TAP_SCHEMA.tables` → HTTP 200 (nachgemessen 2026-10-18). Der Eintrag
+  wandert damit aus `dead/kein-http` in den Live-http-Bestand; die
+  zurückgesetzte Hälfte ist HTTPS. Der
   CADC-ARGUS (`ivo://cadc.nrc.ca/argus`) war kein Tod: die RegTAP-`access_url`
   ist `/argus` ohne `/sync`, der TAP liegt unter `/argus/sync` und ist schon
   in `tap_index_cadc.φ` (21 Tabellen, --votable-Ernte 2026-08-20) — als
