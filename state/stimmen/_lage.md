@@ -1,6 +1,6 @@
-# Lage — generiert 2026-10-18T15:25:22Z
+# Lage — generiert 2026-10-18T15:27:14Z
 
-HEAD `636ad13e0`
+HEAD `17279769e`
 
 ## Sitze / Routen (Gateway)
 - Katalog: 1918 Modelle
