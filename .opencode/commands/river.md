@@ -1,6 +1,6 @@
 ---
 description: River — die lebendige Membran (ω()-Loop, WebGPU-Feld, Fenster/Gaze).
-model: mistral/mistral-large-4
+model: deepseek/deepseek-flash#low
 ---
 Lage zuerst: `sread state/stimmen/_lage.md`
 

@@ -93,7 +93,7 @@
       "effect": "deny"
     }
   ],
-  "model": "mistral/mistral-large-4",
+  "model": "deepseek/deepseek-flash",
   "watcher": {
     "ignore": [
       "target/**",
