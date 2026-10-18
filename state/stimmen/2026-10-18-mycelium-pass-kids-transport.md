@@ -216,8 +216,8 @@ Die vier Felder sind auf **stündliche CDN-Assets** umgestellt; die Quelle bleib
 
 Compiler `tools/harvest/src/bin/ace_rtsw_compiler.rs`: monatsweise CDAWeb-CSV → Stundenmittel → HAPI-JSON; Fill `-1.0E31` wird **verworfen**, nie gemittelt. Die Blöcke tragen jetzt `url` (CDN), `origin` (HAPI-CSV-Abfrage), `compiler`, `sha256`; `terms`/`hapi`/`at sun` bleiben. Lauf: `field-te-query` dispatchen (enthält `matrix-vlies`).
 
-**Ergebnis Lauf `39165623701` (matrix-vlies 5m25s, Commit `a9eb27a77`):**
-- **`n=0`-Zellen: 210 → 0** (Vergleich Lauf `38119733631`: 210 n=0, 126 `alignment pending`).
-- `alignment pending`: 126 → **84** — die Reste sind **paarweise Fensterlücken** (AIA 2013, EVE 2011, Swarm 2014+ gegen ACE 2017+), nicht mehr die RTSW-Kurzreihe.
-- Die vier ACE-Arme tragen echte n: 21 479 (XRS→Bt/Bz), 21 438 (XRS→Speed/Density), 79 049 (OMNI→Bt/Bz), 3 309/3 338 (TAO), 108 (ENSO).
-- `unit` war rot an einem **vorbestehenden Fixture** (`SourceConfig` ohne `head`, `field_te_query.rs:6383`); Fix `head: None`, lokal **80/80** Tests grün. `matrix-vlies` selbst war grün und lieferte das Artefakt.
+**Ergebnis Lauf `39165623701` (matrix-vlies 5m25s, Commit `a9eb27a77`) und Bestätigung `39166372464` (Commit `6704a3dae`):**
+- **Korrektur einer eigenen Fehlmessung:** der erste Grep zählte die `cond`-Spalte (immer 0), nicht die `n`-Spalte. Korrekt (n-Spalte, drittes Feld): `n=0`-Zellen **126 → 112** (Lauf 391) bzw. **120** (Lauf 664); `alignment pending` **126 → 84** (391) bzw. **92** (664). Die frühere Behauptung „210 → 0" war falsch.
+- **RTSW-Zellen** (4 Felder × 25 Paare = 100): `n>0` **28 → 52** (391) bzw. **44** (664); `n=0` **72 → 48** (391) bzw. **56** (664). Die verbleibenden RTSW-Nullen liegen an den **Partnern**, nicht an der ACE-Reihe: AIA 2013, EVE 2011, Swarm/QBO (kurz/diskontinuierlich), INTERMAGNET-Riss, D20. Die 8 Extra-Pending in Lauf 664 sind **alle** `d20_thermocline_depth_m` (Live-Quelle im Lauf ausgefallen).
+- Die vier ACE-Arme tragen echte n: 21 479 (XRS→Bt/Bz), 3 155 (XRS→Speed, Lauf 664), 28 223 (OMNI→Bz, Lauf 664), 3 309/3 338 (TAO), 108 (ENSO).
+- `unit` war rot an einem **vorbestehenden Fixture** (`SourceConfig` ohne `head`, `field_te_query.rs:6383`); Fix `head: None`, lokal **80/80** Tests grün; Bestätigungslauf `39166372464`: `unit` ✓, `matrix-vlies` ✓.
