@@ -1641,13 +1641,30 @@ fn retry_after_secs(headers: &str) -> Option<u64> {
     }
 }
 
-static FREE_MODELS: OnceLock<HashSet<String>> = OnceLock::new();
+#[derive(Clone)]
+struct ModelInfo {
+    prompt: Option<f64>,
+    completion: Option<f64>,
+    context: Option<u64>,
+}
 
-fn free_ids_from_json(body: &str) -> Vec<String> {
+static MODELS: OnceLock<HashMap<String, ModelInfo>> = OnceLock::new();
+
+fn repo_root() -> String {
+    match std::env::var("OMEGAFLOW_REPO") {
+        Ok(r) => r,
+        Err(_) => match std::env::var("HOME") {
+            Ok(h) => format!("{h}/projects/omegaflow"),
+            Err(_) => String::new(),
+        },
+    }
+}
+
+fn catalog_rows(body: &str) -> Vec<(String, Option<f64>, Option<f64>, Option<u64>)> {
     let mut child = match Command::new("jq")
         .args([
             "-r",
-            ".data[]? | select(((.pricing.prompt // -1) | tonumber) == 0 and (((.pricing.completion // -1) | tonumber) == 0)) | .id",
+            ".data[]? | [.id, (.pricing.prompt // \"\"), (.pricing.completion // \"\"), (.context_length // \"\")] | @tsv",
         ])
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -1659,36 +1676,97 @@ fn free_ids_from_json(body: &str) -> Vec<String> {
     if let Some(mut si) = child.stdin.take() {
         let _ = si.write_all(body.as_bytes());
     }
-    match child.wait_with_output() {
-        Ok(o) => String::from_utf8_lossy(&o.stdout)
-            .lines()
-            .map(|s| s.trim().to_string())
-            .filter(|s| !s.is_empty())
-            .collect(),
-        Err(_) => Vec::new(),
-    }
+    let out = match child.wait_with_output() {
+        Ok(o) => String::from_utf8_lossy(&o.stdout).to_string(),
+        Err(_) => return Vec::new(),
+    };
+    out.lines()
+        .filter_map(|l| {
+            let mut it = l.split('\t');
+            let id = it.next()?.to_string();
+            let prompt = it.next().and_then(|s| s.parse::<f64>().ok());
+            let completion = it.next().and_then(|s| s.parse::<f64>().ok());
+            let context = it.next().and_then(|s| s.parse::<u64>().ok());
+            Some((id, prompt, completion, context))
+        })
+        .collect()
 }
 
-fn load_free_models(secrets: &HashMap<String, String>, auth: &str) -> HashSet<String> {
-    let mut free = HashSet::new();
-    for r in ROUTES.iter().filter(|r| is_paid_prefix(r.prefix)) {
-        let Some((url, _)) = models_url(r, secrets) else {
-            continue;
-        };
+fn refresh_catalog(secrets: &HashMap<String, String>, auth: &str) -> HashMap<String, ModelInfo> {
+    let root = repo_root();
+    let dir = format!("{root}/state/zustand/llm-gateway-catalog");
+    let _ = fs::create_dir_all(&dir);
+    let mut models = HashMap::new();
+    for r in ROUTES {
         let Some(key) = key_for(r, secrets, auth) else {
             continue;
         };
-        let Some((code, body)) = curl_get(&url, &key) else {
+        let Some((url, id_key)) = models_url(r, secrets) else {
+            continue;
+        };
+        let Some((code, body)) = curl_get_timeout(&url, &key, "12") else {
             continue;
         };
         if code != 200 {
             continue;
         }
-        for id in free_ids_from_json(&body) {
-            free.insert(format!("{}/{}", r.prefix, id));
+        let _ = fs::write(format!("{dir}/{}.json", r.prefix), &body);
+        let priced: HashMap<String, (Option<f64>, Option<f64>, Option<u64>)> = catalog_rows(&body)
+            .into_iter()
+            .map(|(i, p, c, x)| (i, (p, c, x)))
+            .collect();
+        for id in json_string_values(&body, id_key) {
+            let info = match priced.get(&id) {
+                Some((p, c, x)) => ModelInfo {
+                    prompt: *p,
+                    completion: *c,
+                    context: *x,
+                },
+                None => ModelInfo {
+                    prompt: None,
+                    completion: None,
+                    context: None,
+                },
+            };
+            models.insert(format!("{}/{}", r.prefix, id), info);
         }
     }
-    free
+    models
+}
+
+fn models_tsv(models: &HashMap<String, ModelInfo>) -> String {
+    let mut rows: Vec<(&String, &ModelInfo)> = models.iter().collect();
+    rows.sort_by(|a, b| a.0.cmp(b.0));
+    let mut out = String::from("id\tprovider\tprompt\tcompletion\tcontext\tfree\n");
+    for (id, info) in rows {
+        let provider = id.split('/').next().unwrap_or("");
+        let prompt = match info.prompt {
+            Some(v) => v.to_string(),
+            None => String::new(),
+        };
+        let completion = match info.completion {
+            Some(v) => v.to_string(),
+            None => String::new(),
+        };
+        let context = match info.context {
+            Some(v) => v.to_string(),
+            None => String::new(),
+        };
+        let free = match (info.prompt, info.completion) {
+            (Some(p), Some(c)) => {
+                if p == 0.0 && c == 0.0 {
+                    "free"
+                } else {
+                    "paid"
+                }
+            }
+            _ => "",
+        };
+        out.push_str(&format!(
+            "{id}\t{provider}\t{prompt}\t{completion}\t{context}\t{free}\n"
+        ));
+    }
+    out
 }
 
 fn is_paid_prefix(prefix: &str) -> bool {
@@ -1710,9 +1788,11 @@ fn is_paid_prefix(prefix: &str) -> bool {
 }
 
 fn is_paid(model: &str) -> bool {
-    if let Some(free) = FREE_MODELS.get() {
-        if free.contains(model) {
-            return false;
+    if let Some(models) = MODELS.get() {
+        if let Some(info) = models.get(model) {
+            if let (Some(p), Some(c)) = (info.prompt, info.completion) {
+                return !(p == 0.0 && c == 0.0);
+            }
         }
     }
     let prefix = model.split('/').next().unwrap_or("");
@@ -2033,8 +2113,12 @@ fn stream_chat(
 }
 
 fn curl_get(url: &str, key: &str) -> Option<(u16, String)> {
+    curl_get_timeout(url, key, "30")
+}
+
+fn curl_get_timeout(url: &str, key: &str, secs: &str) -> Option<(u16, String)> {
     let out = Command::new("curl")
-        .args(["-s", "-S", "--max-time", "30", "-w", "\n%{http_code}"])
+        .args(["-s", "-S", "--max-time", secs, "-w", "\n%{http_code}"])
         .arg(url)
         .arg("-H")
         .arg(format!("Authorization: Bearer {key}"))
@@ -2437,13 +2521,13 @@ fn main() {
     };
     let secrets = load_secrets();
     let auth = load_auth_text();
-    {
-        let s = secrets.clone();
-        let a = auth.clone();
-        std::thread::spawn(move || {
-            let _ = FREE_MODELS.get_or_init(|| load_free_models(&s, &a));
-        });
-    }
+    let models = refresh_catalog(&secrets, &auth);
+    eprintln!("llm_gateway: catalog {} models", models.len());
+    let _ = fs::write(
+        format!("{}/state/zustand/llm-gateway-models.tsv", repo_root()),
+        models_tsv(&models),
+    );
+    let _ = MODELS.set(models);
     if filter_enabled() {
         active_redactor();
     }
