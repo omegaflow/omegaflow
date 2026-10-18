@@ -1799,7 +1799,7 @@ fn marginalia_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
-const SEARXNG_INSTANCES: &[&str] = &["https://sx.xo.st", "https://search.mectov.my.id"];
+const SEARXNG_INSTANCES: &[&str] = &["https://search.mectov.my.id"];
 
 fn searxng_bases() -> Vec<String> {
     match std::env::var("OMEGAFLOW_SEARXNG") {
@@ -5900,6 +5900,9 @@ mod tests {
         annotate_declared(&mut lines, &env);
         let once = lines[0].clone();
         annotate_declared(&mut lines, &env);
-        assert_eq!(lines[0], once, "the --all aggregate pass duplicated the tail");
+        assert_eq!(
+            lines[0], once,
+            "the --all aggregate pass duplicated the tail"
+        );
     }
 }

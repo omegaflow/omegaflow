@@ -134,3 +134,48 @@ nicht zusammenpassten:
 
 **Konsistenz mit dem Key-Befund:** Die Konsole zeigt API-Nutzung (abrechenbar), aber der Gateway
 bekommt seit 2026-10-17 **401** — der Key ist abgelaufen, das Konto nicht. Neueustrierung genügt.
+
+## 7 — Nach dem Gateway-Neustart: die 401er waren ein Artefakt, nicht die Anbieter
+
+**Ursache gefunden und behoben (2026-10-18).** Der Gateway lädt **alle drei Key-Quellen genau einmal
+beim Start** (`load_secrets()` in `main()`, `llm_gateway.rs:2378`; `key_for :230–244`; `load_auth_text :199`)
+und friert sie ein. Der Operator hatte den neuen Mistral-Key **nach** dem Start eingegeben — der
+laufende Prozess konnte ihn prinzipiell nicht sehen. **Neustart des Gateways** (niemand war verbunden)
+→ alle drei bezahlten APIs antworten jetzt auf `GET /models` mit **200**:
+
+| Anbieter | vorher | **nach Neustart** |
+|---|---|---|
+| **mistral** | 401 (0) | **200 — 54 IDs** |
+| **deepinfra** | 401 (0) | **200 — 180 IDs** |
+| **deepseek** | 401 (0) | **200 — 2 IDs** |
+
+Damit ist Abschnitt 1 korrigiert: Die 401er waren der **eingefrorene Prozess**, nicht kaputte Keys.
+
+### Mistral live (54 IDs) — die GLM-Reihe
+
+`mistral/glm-5-2` · `mistral/zai-glm-5` · `mistral/zai-glm-5-2` · **`mistral/zai-glm-5-3`** ·
+`mistral/zai-glm-latest` — **GLM-5.2 und GLM-5.3 (voll) sind live über Mistral; GLM-5.3-Flash existiert dort nicht.**
+
+### GLM-5.2-Flash: existiert nirgends
+
+Live-Suche über alle Routen: **keine einzige Route führt `glm-5.2-flash`.** Die Erinnerung
+„GLM 5.2 Flash in opencode" war **5.3**: `opencode/glm-5.3-flash-free`.
+
+### GLM-5.3-Flash: die Existenz-Matrix (live)
+
+`deepinfra/zai-org/GLM-5.3-Flash` · `zai/glm-5.3-flash` · `cf/@cf/zai-org/glm-5.3-flash` ·
+`hf/zai-org/GLM-5.3-Flash(-BF16)` · `kenari/glm-5-3-flash(:free)` · `kilo/z-ai/glm-5.3-flash` ·
+`llm7/GLM-5.3-Flash` · `nim/z-ai/glm-5.3-flash` · `ollama/glm-5.3-flash` ·
+`openrouter/z-ai/glm-5.3-flash` · `unorouter/glm-5.3-flash` · `opencode/glm-5.3-flash-free`
+
+### Die Reasoning-Messung (Live-Calls, 2026-10-18)
+
+| Modell | Route | `reasoning_effort: low` | Befund |
+|---|---|---|---|
+| **GLM-5.3-Flash** | deepinfra | **wird honoriert** | mit low: **0** rt · ohne (Default): **139** rt — der Knopf greift messbar (139 → 0) |
+| **DeepSeek-V4.1-Flash-1017** | deepinfra | läuft | **11 rt**, `finish=stop` |
+| **GLM-5.3 voll** | mistral (neuer Key) | **live wieder da** | `finish=stop`, akzeptiert low; **Preis ungemessen** (zählt aufs Kontingent) |
+| GLM-5.3-Flash | cf | ✗ | **LEER** — taugt nicht |
+
+**Kostenprobe (BEREIT-Test):** GLM-5.3-Flash ohne effort: ~139 out × $0,50/1M ≈ **$0,00007** —
+die Messung selbst kostet praktisch nichts.
