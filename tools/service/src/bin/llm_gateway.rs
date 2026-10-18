@@ -434,35 +434,6 @@ fn active_redactor() -> Option<&'static Redactor> {
         .as_ref()
 }
 
-fn private_read(text: &str) -> Option<String> {
-    let repo = std::env::var("OMEGAFLOW_REPO").ok()?;
-    let script = format!("{repo}/bin/private_read");
-    if !std::path::Path::new(&script).exists() {
-        return None;
-    }
-    let dir = match std::env::var("OMEGAFLOW_PRIVATE") {
-        Ok(p) if !p.is_empty() => p,
-        _ => format!(
-            "{}/projects/{}",
-            std::env::var("HOME").ok()?,
-            concat!("omegaflow", "-personal")
-        ),
-    };
-    let tmp = format!("{}/.gw.redact.{}", dir, std::process::id());
-    std::fs::write(&tmp, text).ok()?;
-    let out = std::process::Command::new(&script).arg(&tmp).output().ok();
-    let _ = std::fs::remove_file(&tmp);
-    let out = out?;
-    if !out.status.success() {
-        return None;
-    }
-    let mut s = String::from_utf8_lossy(&out.stdout).into_owned();
-    if s.ends_with('\n') {
-        s.pop();
-    }
-    Some(s)
-}
-
 impl Redactor {
     fn from_parts(
         map_text: Option<&str>,
