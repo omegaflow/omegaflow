@@ -35,6 +35,7 @@ sie sagt **wo das Verdikt liegt** und **wer es bekommt** — nicht, was entschie
 | R-2026-10-18-a | 2026-10-18 | **Quittung im Token-Ledger** — Empfänger quittiert im eigenen Ledger statt im fremden (`xfer ack`, `--addressed`-Sicht) | *offen — future + Operator* | **offen** | `2026-10-18-xfer-quittung-formular.md` | →future | — |
 | R-2026-10-18-b | 2026-10-18 | **GRS80/γ₀-Register** — skalare Referenzkonstanten ohne Parser-Arm: neue Direktive vs. Block vs. local-only; `N` bleibt pending | *offen — Operator wählt* | **offen** | `2026-10-18-grs80-skalar-formular.md` | →future | — |
 | R-2026-10-18-c | 2026-10-18 | **Pass = Arbeit statt Faltung?** (Besitz + sofortige Delegation) | GLM-5.3 · Mistral 4 · Fugu · Lumo | **entschieden** (4/4 A) | `2026-10-18-rat-pass-arbeit.md` | →future · →mountain · →river · →mycelium · →sensory | — |
+| R-2026-10-18-d | 2026-10-18 | **Prosa statt Antrag + Linien ändern Architektur?** | GLM-5.3 · Mistral 4 · Fugu · Lumo | **entschieden** (4/4 B) | `2026-10-18-rat-prosa-architektur.md` | →future · →mountain · →river · →mycelium · →sensory | — |
 
 **Stand-Vokabular:** `offen · entschieden · geroutet · quittiert · verworfen`.
 
