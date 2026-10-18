@@ -1,0 +1,5 @@
+Verdikt: A — Begründung: Bezahlt ist ein Modell genau dann, wenn sein konkreter Preis > 0 ist. `:free` oder Katalogpreis 0/0 bedeutet frei, unabhängig vom Anbieter-Prefix. — Riss: Die bisherige providerbasierte Prefix-Liste erzeugt false positives für kostenlose Modelle unter bezahlten Anbietern.
+
+Zusatz 1 (Preis-Wahrheit): Der Katalogpreis ist maßgeblich; `:free`-Suffix ist nur ein Label, das mit dem Preis übereinstimmen sollte.  
+Zusatz 2: `paid-open` soll Modell-IDs nennen, nicht Routen.  
+Zusatz 3: Ja, die modellpreisbasierte Logik gilt für alle Prefixe, einschließlich `unorouter` und übriger – sofern der konkrete Preis bekannt ist.
