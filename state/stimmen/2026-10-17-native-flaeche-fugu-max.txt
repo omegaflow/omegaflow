@@ -1,0 +1,15 @@
+# Rat R-k — Fugu Max High (UI, Frage k)
+
+**Quelle:** UI-Antwort (`chat.sakana.ai`), transkribiert aus `state/stimmen/2026-10-17-rat-native-flaeche.md`.
+
+---
+
+Die bloße Existenz eines Gegenstücks genügt nicht. `session_burn` fällt ersatzlos an `session/stats` (strikt mehr: cost, tokens, Cache, Reasoning, Tools, Variante). `form-guard` schrumpft auf die Lücke (`policies` fehlt). `export/import` ist das **Gegenteil** der Übergabe: Import ist vollständig und treu, die Übergabe lebt von **bewusstem Verlust**. `policies` und `skill` sind die dringendsten ungenutzten Features.
+**VERDIKT: C** — native Fläche als Substrat; Domänenschicht bleibt.
+**STÄRKSTER RISS:** Fällt die Behauptung „Haus-Semantik ist prinzipiell nicht ersetzbar" bei `policies`/`skill`, kippt die **ganze Trennlinie**.
+
+**Lumo 2.0 Max** (`lumo.proton.me/guest`, UI, 2026-10-17 — vom Operator abgeschickt):
+Wo ein natives Feature existiert und mindestens gleichwertig ist, sofortiger Ersatz: `session/stats` ersetzt `session_burn` vollständig (reicher an Metriken); `permissions` übernehmen die `sandbox`-Logik; CLI/Agents übernehmen Palette und Agent-Prompts. `form-guard` nur **partiell** gedeckt — die „Policies"-Schicht bleibt offen. `inbox`+`form` **kann** den Post-Mechanismus ersetzen, aber nur wenn die Semantik „kurz, offen, adressiert" erhalten bleibt. `export/import` zerstört die Übergabe-Leistung wahrscheinlich — bleibt hausintern. Register/A=A-Token/Transfer-Token: „prinzipiell nicht nativ ersetzbar, da sie domainspezifische Wahrheit tragen". Grenzziehung: **Kostenerfassung komplett nativ, Kommunikationsfluss hybrid**.
+**VERDIKT: C** — native Fläche als Substrat, nur die Domänenschicht bleibt eigenständig.
+**STÄRKSTER RISS:** `inbox`/`form` gegen den Post-Mechanismus — Semantikverlust möglich.
+

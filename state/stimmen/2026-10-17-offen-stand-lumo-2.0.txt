@@ -1,0 +1,18 @@
+# Rat R-i — Lumo 2.0 Max (UI, Frage i)
+
+**Quelle:** UI-Antwort (Operator hat abgeschickt), transkribiert aus der Sammlung
+`2026-10-17-rat-offen-stand.md`. Der Chat-Tab trug den Verlauf nicht mehr beim Nachlesen — **Roh-Transkript fehlt**, der Wortlaut steht in der Sammlung.
+
+---
+
+**Lumo 2.0 Max** (`lumo.proton.me/guest`, UI, 2026-10-17):
+Der Zähler misst Syntax, nicht Tat. Der Konflikt löst sich nicht durch Reihenfolge, sondern durch **Vereinigung**: der Zähler muss beide Formate lesen (dedupliziert), dann ist Migration ein Nullsummenspiel und braucht keine Ausnahme. Zur Kappe: 970 B gegen 1024 B passt, aber die Marge ist 54 B — die Kappe ist heute richtig dimensioniert und morgen falsch konstruiert. **Die Pflicht „nenne deine Datei(en)" gehört nicht in dieselbe Kappe wie der Prosatext; Pfade sind Belege, keine Prosa.** `closed <n>` darf Ledger-Schließungen zählen, aber beide Mengen müssen **sichtbar getrennt** sein — ein Skalar über beide vergleicht Ungleiches.
+**VERDIKT: A** — Union-Lesung, `closed` um Ledger-Schließungen, aber Punkte und Transport-Token getrennt ausweisen; Kappe auf Prosa begrenzen, Pfade ausnehmen.
+**STÄRKSTER RISS:** Die Union tauscht eine falsche Null gegen eine unerzwungene Pflicht — Bullets tragen keine Datei-Nennung, also wird aus unsichtbarer Schuld sichtbare Schuld ohne Beleg; und der eine Skalar verdeckt, dass zwei Ledger gezählt werden.
+
+**Fugu Max High** (`chat.sakana.ai`, UI, 2026-10-17):
+Bleibt die Kappe starr, ist die Regel schlicht überbeschränkt und **muss angehoben werden, nicht der Pfad-Zwang gestrichen**. Ledger-Schließungen sind Taten; `closed 0` gegen einen Diff, der real 3 schließt, ist die Bilanz, die die Tat verbirgt.
+**VERDIKT: A** — Bullets und `###` zählen; `closed` zusätzlich Ledger-Schließungen; **Kappe an die Punktmenge koppeln, nicht an die Pfadliste**.
+**STÄRKSTER RISS:** Toleriert der Zähler beide Formate, verschwindet der Migrationsdruck — und damit der Zwang zu einem Format.
+
+## Bilanz
