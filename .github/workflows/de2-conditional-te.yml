@@ -86,7 +86,11 @@ jobs:
             chunk=$(mktemp)
             curl -sSfL --retry 5 --retry-all-errors --max-time 600 \
               "https://cdaweb.gsfc.nasa.gov/hapi/data?id=DE2_LAPI_ORBIT-ATTITUDE@0&time.min=${1}T00:00:00Z&time.max=${2}T00:00:00Z&parameters=Time,LAPI__Altitude,LAPI__Local&format=csv" -o "$chunk"
-            test "$(head -c 1 "$chunk")" != "{"
+            if [ "$(head -c 1 "$chunk")" = "{" ]; then
+              echo "orbit chunk has no data: $range"
+              rm -f "$chunk"
+              continue
+            fi
             cat "$chunk" >> "$out"
             rm -f "$chunk"
           done

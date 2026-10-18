@@ -2,7 +2,7 @@
   title: Handover — River-Folge 227 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: 1f3035d7213c6f9a9fc37b421f82bb9898156b50346a9841b695b6be7c64ecfd
+  sha256: f306d1089450d622cc5e8e1e9152d4a4448dd789d768c489ddea6b52ca5f432c
   status: live
 -->
 # River-226
@@ -16,7 +16,7 @@
 - **Trigger:** Rat R-2026-10-17-j (5/5 A)
 - **Lage:** pending (gemessen 2026-10-18) — Mountain-Zeile ist gesetzt (`state/mountain/2026-10-18-k-pending.φ`, Träger `phi:893`, `xfer:mountain.…9~3ed32602`); `phi/sources.φ` hat keine `K`-Skalarzeile (grep 0), die Grammatik trägt `pending` nur als coupling-Rate
 - **Blockade:** kein `∇p`, kein `B/j`, Ein-Satellit — die physikalische Impulsbilanz-Lücke; **nicht** die Mountain-Zeile
-- **Offen:** `K` selbst bleibt pending; der TE-Indikator `TE(NVE→IVE | AE/Dst/Kp)` ist als eigener Punkt gebaut und kadenz-geprüft — DE-2 300 s, AE **oder** Dst **oder** Kp **allein** gröber: NVE→IVE pass bei Lag 300/600/900 s (je 3/3); der 3-h-Ausfall im gemeinsamen Bin ist DE-2-Auflösung/Statistik, nicht die Index-Auflösung. **Falsifikationsbedingung:** fällt TE(NVE→IVE | AE_3h/Dst_3h/Kp_3h) bei DE-2 300 s unter die ARX-Schwelle, trägt der Indikator nicht. Riss: Kp ist im Register nur `last`-Live-Wert (`phi:1252`); der Test liest die offene WDC-Kyoto-Reihe `hour3h_kp` (1932–heute, CC-BY-4.0) direkt, ihre Registrierung/Ernte ist ein eigener Quellenakt. Beleg: `state/river/2026-10-18-k-te-kadenz.φ`, `de2-conditional-te.yml` (Commits `764c5ca2f`, `f2c241df5`, `3b7971533`)
+- **Offen:** `K` bleibt pending; der TE-Indikator ist **nicht geschlossen**. Einzelindex-Konditionierung trägt (AE/Dst/Kp je 3/3 bei Lag 300/600/900 s), aber die **gemeinsame** Konditionierung mit LT+Höhe (DE-2 300 s, bins=4, n=4413, nur 1981-08-17..1982-01-29) **fällt bei 300/600 s**, nur 900 s pass. **Falsifikationsbedingung:** F1 Einzelindex (nicht eingetreten), F2 gemeinsam AE+LT+Höhe (eingetreten). Riss: die HAPI-orbit-attitude-Reihe ist lückenhaft; der volle 19-Monats-Span braucht die monatlichen 250-MB-CDFs oder eine andere Ephemeride — Beschaffungsakt, kein Methodenfix. Kp ist im Register nur `last`-Live-Wert (`phi:1252`); der Test liest `hour3h_kp` (WDC Kyoto, 1932–heute, CC-BY-4.0) direkt. Beleg: `state/river/2026-10-18-k-te-kadenz.φ`, `de2-conditional-te.yml` (Commits `764c5ca2f`, `f2c241df5`, `3b7971533`, `d27791a38`, `1f41d3682`)
 - **Braucht:** `state/stimmen/2026-10-17-rat-k-identifizierbar.md:1`
 
 ### Rätsel
