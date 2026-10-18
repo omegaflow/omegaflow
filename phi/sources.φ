@@ -14731,8 +14731,9 @@ no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/dataverse.harvard.edu/icecube_icetracks_dr2.bin
 terms CC0-1.0 https://creativecommons.org/publicdomain/zero/1.0/
-origin https://dataverse.harvard.edu/api/search?q=IceCube
-format json
+origin https://dataverse.harvard.edu/api/access/datafile/13597936
+compiler tools/harvest/src/bin/icecube_compiler.rs
+sha256 90a2dba7e2b0e5944f1ab94ea5e4bb7c72b0d0b69dd3b100474c03ac68651c0e
 witness s2-direction
 record skydirection
 force em
