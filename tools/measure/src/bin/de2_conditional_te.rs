@@ -52,11 +52,11 @@ fn bin_of(t: f64, bin_s: f64) -> i64 {
     (t / bin_s).floor() as i64
 }
 
-fn read_ae(path: &str, bin_s: f64) -> BTreeMap<i64, f64> {
+fn read_cond(path: &str, bin_s: f64, field: &str) -> BTreeMap<i64, f64> {
     let bytes = match std::fs::read(path) {
         Ok(b) => b,
         Err(e) => {
-            eprintln!("de2_conditional_te: AE bin unread {path}: {e}");
+            eprintln!("de2_conditional_te: conditioner bin unread {path}: {e}");
             std::process::exit(2);
         }
     };
@@ -66,7 +66,12 @@ fn read_ae(path: &str, bin_s: f64) -> BTreeMap<i64, f64> {
     };
     let mut acc: BTreeMap<i64, Acc> = BTreeMap::new();
     for r in records {
-        if let Some(v) = r.ae_nt
+        let v = match field {
+            "dst" => r.dst_nt,
+            "symd" => r.sym_d_nt,
+            _ => r.ae_nt,
+        };
+        if let Some(v) = v
             && usable(v)
             && r.t_unix.is_finite()
         {
@@ -193,9 +198,17 @@ fn main() {
     let max_lag: usize = parse_arg(&args, "--max-lag", 3);
     let bins: usize = parse_arg(&args, "--bins", 8);
     let n_surr: usize = parse_arg(&args, "--surr", 50);
+    let cond_field = match arg_value(&args, "--cond") {
+        Some(v) => v,
+        None => "ae".to_string(),
+    };
+    if !["ae", "dst", "symd"].contains(&cond_field.as_str()) {
+        eprintln!("de2_conditional_te: --cond names no ae|dst|symd");
+        std::process::exit(2);
+    }
 
     let (ion, neutral) = read_de2(&csv, bin_s);
-    let ae_bins = read_ae(&ae, cond_s);
+    let ae_bins = read_cond(&ae, cond_s, &cond_field);
     let ae_at = |k: i64| -> Option<f64> {
         let coarse = bin_of(k as f64 * bin_s, cond_s);
         ae_bins.get(&coarse).copied()
@@ -239,9 +252,10 @@ fn main() {
     );
 
     println!(
-        "de2_conditional_te: n={} bin={}s cond_bin={}s span={} segments={} gap_median={}s gap_max={}s bins={} surr={} null=Arx est=Binned seed={:#x}",
+        "de2_conditional_te: n={} bin={}s cond={} cond_bin={}s span={} segments={} gap_median={}s gap_max={}s bins={} surr={} null=Arx est=Binned seed={:#x}",
         keys.len(),
         bin_s,
+        cond_field,
         cond_s,
         span,
         segments,
@@ -308,9 +322,10 @@ fn main() {
             any_cond_pass |= cond_pass;
             let (raw_line, _) = fmt(obs_raw, stats_raw);
             println!(
-                "LAG {:>5}s {:>8} cond[AE]: {}",
+                "LAG {:>5}s {:>8} cond[{}]: {}",
                 lag as f64 * bin_s,
                 label,
+                cond_field,
                 cond_line
             );
             println!(
