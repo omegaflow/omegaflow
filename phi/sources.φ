@@ -1264,10 +1264,9 @@ field 1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/celestrak.org/timed_orbit.bin
 format orbit_bin
-origin https://tle.ivanstanojevic.me/api/tle/26998 (CelesTrak GP mirror; upstream gp.php?CATNR=26998)
+origin https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE
 terms free-open https://celestrak.org/usage-policy.php
 compiler tools/harvest/src/bin/timed_tle_compiler.rs
-sha256 31b3f9b3374931ff8ae4e22f07ea8f6dd442d04739bde0377be332e49ab2b2e9
 at timed
 ttl 7200
 
@@ -2739,9 +2738,9 @@ field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/hmi_m_720s.bin
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format hmi
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list&ds=hmi.M_720s (DATAMEAN,T_REC,CAMERA)
+origin https://jsoc1.stanford.edu/data/hmi/fits
 compiler tools/harvest/src/bin/hmi_compiler.rs
-sha256 08f0fd9fb28007899d931bac7a49342a1e078d8781202b46971da68e568c7fbd
+sha256 d89dbe290f2098a4246d1dd4e78f83f5b7a8c179b3a653eec78cc22320837695
 at sun
 ttl 86400
 field hmi_m_720s_blos hmi_m_720s_blos inverse-square em nt 3600 0.0 0.0
