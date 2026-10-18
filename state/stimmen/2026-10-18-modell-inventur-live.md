@@ -103,3 +103,34 @@ Key-/Base-Pfad**. Zu prüfen in `key_for` (`:230–244`) und `effective_base`.
 
 `opencode models` (56/18/10/2) · Gateway-stderr `/proc/2986373/fd/2` (Live-Codes) ·
 `llm_gateway.rs:2139–2186` · `2026-10-18-kosten-kontingente.md`
+
+## 6 — Mistral-Konsole (Operator-Ablesung 2026-10-18): zwei Kanäle, drei neue Modelle
+
+Die Konsole zählt **getrennt nach Kanal** — das erklärt, warum die API-Liste und das Live-Bild
+nicht zusammenpassten:
+
+**Kanal „Completion" (= API, abrechenbar, zählt aufs Kontingent):**
+`mistral-large-2512` **136** · `mistral-small-2603` **90** · `mistral-large-4` **32** ·
+`mistral-small-latest` 10 · `mistral-medium-3-5` 3 · `codestral-2508` 2 · `codestral-latest` 1 ·
+`ministral-3b/8b/14b-*` je 1 · `mistral-code-fim-latest` 1 · `mistral-code-latest` 1 ·
+`voxtral-small-2507/-latest` je 1 · **`zai-glm-5-3` 1** → **Σ ≈ 285 abrechenbare Calls = 1,23 €**
+
+**Kanal „Vibe Work" / „Connectors" (Mistral-Produkt, NICHT abrechenbar, Abo inklusive):**
+**`glm-5-latest-short` 137** · `ministral-8b-2512` 81 · `mistral-moderation-2603-internal` 60 ·
+`web_search` 60 · (`mistral-small-latest` 3 über Vibe Code)
+
+**Drei Befunde:**
+
+1. **`zai-glm-5-3` ist API-real:** 1 Completion-Call, abrechenbar. GLM-5.3 **voll** ist über die
+   Mistral-API **wirklich verfügbar** (nicht Flash — Flash taucht nirgends auf).
+2. **`glm-5-latest-short` existiert — aber nicht in unserer API-Liste.** Es läuft über **Vibe Work**
+   (Mistral-eigenes Produkt), **nicht abrechenbar**, 137 Calls. Das ist ein **Produkt-Kanal**, kein
+   Gateway-Kanal: mit dem API-Key nicht erreichbar, in `opencode models` nicht vorhanden.
+   → Ein **GLM-5-Modell, das im Abo inklusive ist** — als **UI-/Produkt-Sitz** vergleichbar mit
+   Fugu/Lumo, nicht als API-Sitz.
+3. **Die Kostenrechnung kalibriert sich selbst:** ≈ 285 abrechenbare Calls = 1,23 € →
+   **≈ 0,0043 € je Call** — exakt die gerechneten 0,0043 €/Frage für Mistral Large 4.
+   Die Kontingent-Rechnung trägt also.
+
+**Konsistenz mit dem Key-Befund:** Die Konsole zeigt API-Nutzung (abrechenbar), aber der Gateway
+bekommt seit 2026-10-17 **401** — der Key ist abgelaufen, das Konto nicht. Neueustrierung genügt.
