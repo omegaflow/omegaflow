@@ -11,9 +11,9 @@ const GOES_CDN: &str =
 const F107_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/f107_penticton.bin";
 const OMNI2_CDN: &str =
-    "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_serie.bin";
+    "https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie.bin";
 const OMNI2_1H_CDN: &str =
-    "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_serie_1h.bin";
+    "https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie_1h.bin";
 const EUVS_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_euvs.bin";
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
@@ -432,7 +432,7 @@ fn main() {
             return None;
         }
         let mut best: Option<(usize, f64)> = None;
-        let mut best_thr = f64::NAN;
+        let mut best_thr: Option<f64> = None;
         let mut surr_max = f64::NEG_INFINITY;
         for &lag in lags {
             let seed = SURROGATE_SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
@@ -445,7 +445,7 @@ fn main() {
             if let Some(te) = transfer_entropy_lag(&xs, &ys, lag) {
                 if best.map_or(true, |(_, b)| te > b) {
                     best = Some((lag, te));
-                    best_thr = mean_plus_2sigma(&surr).unwrap_or(f64::NAN);
+                    best_thr = mean_plus_2sigma(&surr);
                 }
             }
         }
@@ -456,7 +456,7 @@ fn main() {
             n: xs.len(),
             best_lag,
             te,
-            thr: best_thr,
+            thr: best_thr?,
             surr_max,
         })
     }
