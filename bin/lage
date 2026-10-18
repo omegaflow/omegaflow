@@ -17,6 +17,7 @@ alive=$(tail -n +2 state/zustand/llm-gateway-alive.tsv 2>/dev/null | wc -l)
 free=$(tail -n +2 state/zustand/llm-gateway-models.tsv 2>/dev/null | awk -F'\t' '$3==0 && $4==0' | wc -l)
 unknown=$(tail -n +2 state/zustand/llm-gateway-models.tsv 2>/dev/null | awk -F'\t' '$6==""' | wc -l)
 age() { [ -f "$1" ] && echo "$(( ( $(date +%s) - $(stat -c %Y "$1") ) / 3600 ))h" || echo '?'; }
+hage() { t=$(git log -1 --format=%ct -- "$1" 2>/dev/null); [ -n "${t:-}" ] || t=$(stat -c %Y "$1" 2>/dev/null); [ -n "${t:-}" ] && echo "$(( ( $(date +%s) - t ) / 3600 ))h" || echo '?'; }
 balance=$(tail -n +2 state/zustand/llm-gateway-balance.tsv 2>/dev/null | sed 's/^/  /')
 
 line_rows=$(for line in mountain mycelium river sensory future; do
@@ -28,7 +29,8 @@ line_rows=$(for line in mountain mycelium river sensory future; do
   for f in $(awk '/^## Offen/{f=1;next} /^## /{f=0} f' "$h" | grep -o '`[^`]*`' | tr -d '`' | sed -E 's/:[0-9]+$//' | grep -E '^(state|docs)/' | sort -u); do
     [ -f "$f" ] && grep -qi 'offen' "$f" && c=$((c+1))
   done
-  printf '  %-9s %2s offen · %2s Braucht · %2s offene Traeger · %s\n' "$line" "$n" "$b" "$c" "$(basename "$h")"
+  d=$(basename "$h" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1)
+  printf '  %-9s %2s offen · %2s Braucht · %2s offene Traeger · %s (Folge %s · Commit %s)\n' "$line" "$n" "$b" "$c" "$(basename "$h")" "${d:-?}" "$(hage "$h")"
 done)
 
 {
