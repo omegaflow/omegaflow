@@ -2,7 +2,7 @@
   title: Auftrag — Das universelle Vlies (alles gegen alles)
   class: auftrag
   date: 2026-10-05
-  sha256: dbaf8884531124a1630d8c5cfed0cfad652a9b9c49c41910c8ef8e10e73b1df2
+  sha256: aee9e8046544fe8ee216f191455ecfaa5700521d397c60563f5da33ac4b99a3f
   status: live
   see-also: docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md docs/specs/negativ-fuzzy-index.md docs/concepts/archivar-mathematikerin.md
 -->

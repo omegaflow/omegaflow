@@ -2,7 +2,7 @@
   title: House Rules — die Essenz (was gilt)
   class: concept
   date: 2026-10-16
-  sha256: d2e2b6d6fa150c4e4820b6fc8d57e1606ad2ce017cf0e44666ec1c4cd9d33231
+  sha256: c2d8c42ba448e53a2baf3d1b9ba0e6684e12b0c3b748596255952907aee6a31c
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md
 -->
@@ -93,8 +93,10 @@ ausgeführt statt erzählt — sonst driftet der Text gegen das Gate. Die Vollte
 ## Die Grenze
 
 - **Die Wände sind Werkzeug-Regeln** (`opencode.json`, `permissions`): der öffentliche Baum hat
-  `read`/`edit`/`shell` auf den privaten Pfad `deny`; `AGENTS.md`, `opencode.json` und `.opencode/**`
-  sind schreibgeschützt; kein Web, kein Push. Kein Gateway, kein Provider am Haus.
+  `read`/`edit`/`shell` auf den privaten Pfad `deny`; `AGENTS.md`, `opencode.json`, `.opencode/**`
+  und `tools/gate/**` sind schreibgeschützt — **über `edit` UND `shell`**. Der `chmod`+`sed`-Weg
+  über die Shell war bis 2026-10-18 die Lücke (die Wand deckte nur `edit`); seitdem ist auch
+  `shell` auf diesen Pfaden `deny`. Kein Web, kein Push. Kein Gateway, kein Provider am Haus.
   (Der frühere `bwrap`-Käfig `bin/sandbox`/`agent_sandbox` ist am 2026-10-17 entfernt — er deckte
   nur `bash`, nicht die `read`/`edit`-Tools.)
 - Werkzeuge: `archive_search` (nie webfetch/websearch) · `rg` für den schnellen Blick · `sread`
