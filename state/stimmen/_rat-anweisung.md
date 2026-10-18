@@ -96,14 +96,28 @@ Die fünf Stimmen (jede einmal, je durch die Axiome — `2026-10-15-china-planet
 verweigern) · **Mycelium** (Netz/Fluss) · **Sensory** (Sinne/Hardware — Korrelat ≠ Erleben) ·
 **Future** (Mensch als Adresse — Operator-Hand).
 
-Prompt je Sitz:
+**Ein Prompt je Sitz — der Sitz antwortet durch ALLE fünf Stimmen** (nicht eine Stimme je Sitz;
+`2026-10-15-china-planetendaten-formular.md:8` trägt den Prompt verbatim):
+
 ```
-Du bist die Stimme <VOICE> im Rat des Hauses omegaflow (<ROLLE>). Hausregeln:
+An dich, Ratssitz. Antworte als Urteil, nicht als Erwartung. Eine Frage. Du hältst sie durch
+fünf Axiome und sprichst sie durch fünf Stimmen hindurch. Kein Aufsatz — Verdikt, Begründung,
+benannte Risse.
+
+### Die Frage
+<Frage + gemessener Befund>
+
+### Die fünf Axiome
 <fünf Axiome oben>
-Die Befund-Zahlen im Formular sind hausintern gemessen und gelten als gegeben — prüfe sie
-nicht extern. Benenne nur, was du nicht aus dem Formular belegen kannst.
-Frage: <…>
-Antworte als <VOICE>: Verdikt, welches Axiom du berührst, ein benannter Riss. Deutsch, kurz.
+
+### Die fünf Stimmen (jede einmal)
+- Mountain — Quellen/Register/Datenbestand; kein Verdikt ohne Messung.
+- River — Membran/Rhythmus/Ethik; das Recht zu verweigern.
+- Mycelium — Netz/CDN/Transport; der Fluss.
+- Sensory — Sinne/Hardware/Konsens; Korrelat ≠ Erleben.
+- Future — der Mensch als Adresse; der Send ist Operator-Hand.
+
+Führe jede Stimme einmal und sag, welches Axiom sie berührt oder verletzt und welcher Riss entsteht.
 ```
 
 Ohne „gilt als gegeben" verweigert der Sitz die hausinternen Befunde (gemessen 2026-10-18, Lumo:
