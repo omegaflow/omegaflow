@@ -14729,13 +14729,13 @@ band g i r y z
 footprint des_dr2_coverage.fp01
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/dataverse.harvard.edu/icecube_icetracks_dr2.bin
+url https://github.com/omegaflow/sources/releases/download/dataverse.harvard.edu/icecube_dr2_events.s2e1
 terms CC0-1.0 https://creativecommons.org/publicdomain/zero/1.0/
-origin https://dataverse.harvard.edu/api/access/datafile/13597936
+origin https://doi.org/10.7910/DVN/MMIIZA
 compiler tools/harvest/src/bin/icecube_compiler.rs
-sha256 90a2dba7e2b0e5944f1ab94ea5e4bb7c72b0d0b69dd3b100474c03ac68651c0e
+sha256 c44fd465121ac931e40c4ef980d2adb11b77d5791949e782fbc409668052b216
 witness s2-direction
-record skydirection
+record s2e1 sky1
 force em
 at earth
 no-cadence
