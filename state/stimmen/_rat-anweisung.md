@@ -87,10 +87,10 @@ curl -s https://api.deepinfra.com/v1/openai/chat/completions \
 - **Zielkonflikt** (R-i): Schwarm wägt anders (B statt A) — vertretbar, aber ohne Träger.
 - In **3 von 3** Runden hat der Schwarm einen Einwand produziert, den **kein** Paid-Sitz hatte.
 
-**Schwarm (gemessen antwortfähig):** `cf/@cf/openai/gpt-oss-120b` · `kenari/agnes-3-0-flash:free` ·
-`pollinations/openai-fast` · `ollama/gemma4:31b`.
-**Ausgeschlossen — HTTP 200, aber leer:** `groq/*` · `kilo/*` · `llm7/GLM-5.3-Flash`.
-**Immer Inhalt prüfen:** HTTP-Erfolg ≠ Antwort.
+**Der Schwarm ist die freie Menge, keine fixe Zahl.** Die freien Modelle stehen in
+`state/zustand/llm-gateway-models.tsv` (Preis 0/0 + freie Präfixe), bei jedem Gateway-Start frisch
+abgeholt. Die frühere „4 gemessene Sitze" / „44 Träger"-Zahl war Bias; die Menge ist, was der Katalog
+misst. Immer Inhalt prüfen: HTTP-Erfolg ≠ Antwort.
 
 **Grenze:** Der Schwarm **trägt nicht**. Sein Verdikt ist eine Mindermeinung, seine Risse sind
 der Wert. Kein Register-Schreibakt aus einem Schwarm-Lauf.
