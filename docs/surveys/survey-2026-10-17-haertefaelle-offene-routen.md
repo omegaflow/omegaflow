@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: e55a329e09115bb050f443e154596022af986618090ab12c9a113f96b856e23c
+  sha256: c15f4a210d81be8955319fd47443793ce12626944dafcc932c5cb2cbc0bf68f5
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -32,8 +32,8 @@ Antworten sind Zulieferungen — Zulassung/Register bleibt Mountains bzw. Myceli
 
 - **RBN:** keyless **CC-BY-4.0** auf Zenodo — `10.5281/zenodo.13362701` (Amateur Radio
   Spot Data 2018-11…2019-05, Monats-TARs RBN/WSPRNet/PSKReporter), `2483022` (HamSCI 2017
-  SEQP, aggregiertes RBN-CSV), `5799649`, `1067790`. → **Anfrage nicht nötig** für einen
-  Korpus; der volle RBN-Stream bleibt ohne Redistributions-Grant.
+  SEQP, aggregiertes RBN-CSV), `5799649`, `1067790`. → Für einen **Korpus** keine Anfrage nötig; für den **vollen RBN-Stream**
+  bleibt die Anfrage der einzige Weg (kein Redistributions-Grant).
 - **CEIC D18000:** kein exakter Mirror; aber CEA/CENC-abgeleitete **CC-BY-4.0**-Wellenformen
   auf Zenodo (`23103204` Weiyuan SAC, `13978646` CENC-Katalog+Wellenformen, `10499328`
   CNSN). → Alternativen vorhanden, **nicht** das D18000-Produkt.
