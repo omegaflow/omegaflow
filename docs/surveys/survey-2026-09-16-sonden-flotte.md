@@ -3,7 +3,7 @@
   class: survey
   date: 2026-09-16
   sha256: 1bf94eeab3785367aa07ec70f0aa967899e0f94b8bb376a3ea6ba5b20571212e
-  status: live
+  status: done
   see-also: phi/sources.φ phi/blocked_sources.φ docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md
 -->
 # Survey — Sonden-Flotte (Stand 2026-09-16)

@@ -3,7 +3,7 @@
   class: survey
   date: 2026-10-17
   sha256: 9a16d8da387966d95bcb2fd8851af5b97e3b5a9b42f02d0579a0d76afe1a701f
-  status: live
+  status: done
   see-also: docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md
 -->
 # Survey — DE-2 Ion↔Neutral-Kopplung (erste Messung, 2026-10-17)

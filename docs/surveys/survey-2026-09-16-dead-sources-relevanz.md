@@ -3,7 +3,7 @@
   class: survey
   date: 2026-09-16
   sha256: 51527d7246b5c2e56ed03945c66fd9c1e646d059695143365cb93e513a17e5a4
-  status: live
+  status: done
   see-also: phi/dead_sources.φ docs/SOURCE_PORT.md phi/sources.φ phi/declined_sources.φ
 -->
 # Survey — `dead_sources.φ` Relevanz-Erstpass + Force-Gate-Verdikt (2026-09-16)
