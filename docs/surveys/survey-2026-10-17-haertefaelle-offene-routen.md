@@ -3,7 +3,7 @@
   class: survey
   date: 2026-10-17
   sha256: 758966ea7fe7c34b94d99b224b8d507cee0a308b2a5c9be6439431f5f70243cf
-  status: live
+  status: done
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
 # Survey — Härtefälle: offene Routen (2026-10-17)
