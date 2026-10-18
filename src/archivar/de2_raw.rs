@@ -1,4 +1,3 @@
-
 use crate::lsk::days_from_civil;
 
 pub const WATS_FILL_SCALAR: f64 = -9.0;
