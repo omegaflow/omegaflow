@@ -53,3 +53,39 @@
 #   Mycelium kann Inventory + einen Orbit + Reader + CDN bauen; die Feld-/Format-Frage
 #   geht an Mountain. Erster messbarer Schritt: `lolardr_122590153` lesen und
 #   `Radius_1` gegen `Selenoid_Radius` prüfen.
+
+# ============================================================
+# GÜLTIGKEITSREGEL — gemessen an lolardr_122590153 (2026-10-19)
+# ============================================================
+#   Alle 199 976 Records, alle fünf Spots (RADIUS_N ab Byte 49/89/129/169/209,
+#   SHOT_FLAG_N ab 77/117/157/197/237; Byte 1-basiert, LSB).
+#   Kandidatenregel: (SHOT_FLAG_N & 0xFCFF) == 0  — nur Bits 8/9 (RMU-Phase A/B)
+#   dürfen gesetzt sein; Bits 0–7, 10–15 sind Fehler-/Editierbits.
+#   Befund:
+#     spot1 present=35365  flag_ok=31964  davon geometrisch plausibel 31964 (100%), 0 Ausreißer
+#     spot2 present=22698  flag_ok=17063  davon plausibel 17063 (100%)
+#     spot3 present=29616  flag_ok=22050  davon plausibel 22050 (100%)
+#     spot4 present=24439  flag_ok=17060  davon plausibel 17060 (100%)
+#     spot5 present=28008  flag_ok=21730  davon plausibel 21730 (100%)
+#     zusammen 109 867 gültige Spot-Records, 0 mit |Radius−Selenoid| > 20 km.
+#   Die +85-km-Probe (rec 2560, flag 0x2A41 = Bits 0,6,9,11,13) fällt über Bit 11
+#     (signal not acquired) und Bit 13 (failed slope edit) heraus.
+#   Gegenprobe: 9 660 flag-verworfene Records sind geometrisch plausibel
+#     (spot1 1649, spot2 1260, spot3 2970, spot4 2314, spot5 1467) — die Regel ist
+#     konservativ (editierte/unsichere Schüsse raus), nicht geometrisch blind.
+#   Die FMT-Zeile „Any values other than 0 … invalid" ist damit widerlegt: Bits 8/9
+#     sind RMU-Phase B und bei gültigen Messungen gesetzt (0x0200/0x0300). Der
+#     Kommentar „bits 12–15 … give reasons bit 0 is set" bestätigt: Bit 0 gesetzt
+#     heißt editiert/verworfen.
+
+# ============================================================
+# ENTSCHEID (River, 2026-10-19)
+# ============================================================
+#   1. Gültig: Radius_N != -1 (Missing) UND (SHOT_FLAG_N & 0xFCFF) == 0
+#      UND |Radius_N − Selenoid_Radius| <= 20 000 000 mm (20 km, Wächter).
+#   2. Elevation = (Radius_N − Selenoid_Radius) / 1000 [m]; Radius in km.
+#   3. Alle fünf Spots einzeln lesen; ein Record trägt 0..5 gültige Schüsse.
+#   4. Zeitraum: erster Schnitt = lro_es_01, EIN Orbit (lolardr_122590153) als
+#      Referenz-Asset; danach per Orbit shard-en, nicht global. 51,2 MB/Orbit.
+#   5. Reader: `LSB_UNSIGNED_INTEGER` in pds3_fixed_width ergänzen (Mycelium).
+#   6. Keine Rohwerte ohne diese Regel in den Arm.
