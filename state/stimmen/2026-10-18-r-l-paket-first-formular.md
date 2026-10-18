@@ -65,3 +65,13 @@ benannt, bis die Reihenfolge steht.
 
 **4:1 für Option 2** — die Gate-Mechanik löst sich vom festen `SEALED_SHA256`, der Digest kommt
 aus dem Asset/Manifest. Nur Mountain trägt Option 1 (gepinnter Posten). F3 ist damit entschieden.
+
+## F3 (Flyby-sealed) — reale Sitze, voller Prompt (ein Sitz → alle fünf Stimmen, 2026-10-18)
+| Sitz | Urteil | Kern |
+|---|---|---|
+| Duck.ai (GPT-6 Luna, Begründung) | **Option 1** | Operator setzt gepinnten Posten in versioniertem Commit; Gate vergleicht beide Anker, meldet Riss statt still zu ersetzen |
+| Qwen3.8-Max (Thinking) | **Option 2** | Gate löst sich vom starren SEALED_SHA256; Digest aus signiertem Manifest; Mountain prüft, Future setzt als Operator |
+| MiniMax | Login-Wall | „Sign in or create an account" |
+| Mistral | Login-Wall | nach Terms-Akzeptanz „anmelden oder registrieren" |
+
+**1:1 gespalten (Duck vs. Qwen)** — F3 bleibt offen. Die fünf Stimmen laufen in beiden Sitzen sauber (je Axiom + Riss), aber die Träger-Wahl (gepinnter Posten vs. Manifest-Digest) ist nicht konvergiert.
