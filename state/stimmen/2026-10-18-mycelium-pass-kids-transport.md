@@ -151,3 +151,25 @@ Ich hatte „UCAR-FPI E-Mail-gated = Operator" aus den Archiv-Notizen übernomme
 - **Charge/Plasmon** (Zenodo 15179114, `data.zip`): `Fig1c.csv` = **`XAS,XAS_hv`**; `Fig2b/Fig3a/Fig2c/*.txt` = Kopf **`# H = <wert> (<H scan|theta scan>)`** + **`# Energy (meV) Intensity (arb. units)`**.
 - **EELS** (Zenodo 21859473, `.mat` v5): Variablen **`ene`** (Energieachse) + **`eels_lineprofile`** (Linienprofil), Peak-Fitting → Spin-Oszillatoren (`harvest_eels`).
 - **SRD62**: NIST CeramicDataPortal, Penetration-Depth-Tabelle (`srd62_compiler`).
+
+**5. Ader (NSE I(q,t), privat):** Paper **Haug et al., *New Journal of Physics* 12, 105006 (2010)**, DOI `10.1088/1367-2630/12/10/105006`, arXiv `1008.4298` — „Neutron scattering study of the magnetic phase diagram of underdoped YBa2Cu3O6+x". 13 Läufe **3,47–32,52 K**, Q=(0.5, 0.5, 1.000), LAB_A/MLZ. Spalten: `.dat` (Echo-Fit) **`tau, FREQ1/2, I0/DI0, Pol/dPol, x0/Dx0, dL, Chisq`**; `.log` (Fit) **`P0/dP0, Gamma/dGamma, ChiSqr, QH/QK/QL, KF, TTAMEAN`**. Rohdaten **privat** (`LOCK`), nicht auf IOP-Suppdata/iMPULSE/Diss.; `src/archivar/lab_reader.rs` und `tools/harvest/src/bin/lab_reader_compiler.rs` sind im aktuellen Baum **absent** (Riss).
+
+**Öffentliche Suche mit den Spaltenköpfen (2026-10-18):** `archive_search --all "TTAMEAN FREQ1 Pol dPol Chisq neutron spin echo"` → **kein** Datensatz mit diesen Spalten (Zenodo/OpenAlex/Dryad/PANGAEA absent für `TTAMEAN`). Die exakten 13 YBCO-Läufe sind **nicht öffentlich**. Nächstliegend: **hGBP1**-NSE (Zenodo `6534557`, CC-BY-4.0, JCNS/MLZ; aber 0,5–2,7 GB/tgz, Protein, anderes Reduktionsformat), **BaZrO3/RESEDA** (Zenodo `18306252` — **restricted**, nicht public) und SESANS (`14161883`, 4-Spalten, anderes Format). Paper public, Daten privat.
+
+**Fuzzy-Suche (2026-10-18, ebenfalls negativ):** `--all` mit den `.log`-Spalten (`ChiSqr Gamma dGamma QH QK QL KF NSE`) → nur unbeteiligte Treffer (Hydrologie-`NSE` = Nash-Sutcliffe, Gamma-Strahlung; kein Neutron/Spin-Echo); `--github`/`--sourcegraph` `TTAMEAN` → absent; `--zenodo` nur generische Neutron-Software. **Kein öffentlicher NSE-Datensatz mit diesen Spalten.** Der RESEDA/BaZrO3-Akt ist an future geroutet (`post/out/2026-10-18-mycelium-reseda-nse-datenantrag.md`): Operator-Datenantrag bei Braun, bei Freigabe als öffentlicher NSE-Parser-Fixture.
+
+## 14. Mountain-Restarme (Token `.10~15b6b847`): Triage
+
+Gemessen 2026-10-18 am HEAD. **Kein Arm ist „nur Mycelium-Bau":** drei Assets fehlen, einer ist lizenz-blockiert, einer hat keine Residuen.
+
+| Arm | Block | Asset | Reader/Compiler | Blocker |
+|---|---|---|---|---|
+| HMI | `hmi_polar` steht (`hmi_polar_compiler`) | ? | `hmi_compiler`/`format hmi` fehlt | neuer Bau; Terms CC0 (river-208) |
+| EVE | fehlt (entfernt `9c60ddf89`) | fehlt | `format eve` steht; `eve-cdn.yml` fehlt | **Lizenz `permission-required`** (Operator/Rat) |
+| EPTA | `format zip`+raw_mirror | **206** (39 MB) | `.par`/TRES-Compiler fehlt | nur **TOAs, keine Residuen** (river-208) |
+| EDGES | fehlt | ? | `edges_compiler` fehlt | Quelle/Lizenz ungemessen |
+| WALLABY | `format hips3d` | **fehlt** (404) | `hips3d`-Reader fehlt | kein exaktes HiPS3D-Produkt (river-208) |
+| Conicus | `format tar_zst` | **fehlt** (404) | `tar_zst`-Reader fehlt | 34,4 GB; `zstd` nicht im Core-Crate |
+| IceCube | `format json`+witness | **fehlt** (404) | Compiler fehlt | `origin` = Dataverse-**Suchseite**, keine Datei |
+
+**Folge:** Die Builds, die ohne neue Daten/Lizenz gehen, sind HMI (CC0) und die Reader (`hips3d`, `tar_zst`) — letztere brauchen aber erst die fehlenden Assets. EPTA ist TOA-only, Conicus 34 GB, WALLABY ohne Produkt, EVE ohne Lizenz. Das ist eine **mehrpassige** Arbeit mit externen Blockern, keine stille Ein-Pass-Erledigung.
