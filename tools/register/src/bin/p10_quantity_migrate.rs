@@ -4,7 +4,7 @@ use std::fs;
 
 const DEFAULT_REGISTER: &str = "phi/sources.φ";
 
-fn quantity_kind(force: &str, name: &str) -> Option<&'static str> {
+fn quantity_kind(force: &str, name: &str, unit: &str) -> Option<&'static str> {
     match force {
         "gravity" => match name {
             "saber_tpgpaltitude"
@@ -43,6 +43,59 @@ fn quantity_kind(force: &str, name: &str) -> Option<&'static str> {
             | "rave_dr6_teff_irfm" => Some("source-parameter"),
             _ => None,
         },
+        "em" => {
+            if matches!(
+                name,
+                "ra" | "dec"
+                    | "glat"
+                    | "glon"
+                    | "fdsn_event_latitude_deg"
+                    | "viking_grav_latitude_deg"
+                    | "fdsn_event_longitude_deg"
+                    | "viking_grav_longitude_deg"
+                    | "viking_grav_altitude_km"
+                    | "ola_radius"
+                    | "nlr_eros_radius"
+                    | "mola_mars_radius"
+                    | "hay_lidar_range"
+                    | "mla_range"
+                    | "nlr_range"
+                    | "viking_lander_range_km"
+                    | "\"DISTANCE\""
+                    | "fdsn_event_depth_m"
+                    | "gedi_l2a_rh98_m"
+                    | "icesat2_atl03_h_ph_m"
+                    | "las_x_icrs_m"
+                    | "las_y_icrs_m"
+                    | "las_z_icrs_m"
+                    | "kcdc_grande_x_core_m"
+                    | "kcdc_grande_y_core_m"
+                    | "kcdc_kascade_x_core_m"
+                    | "kcdc_kascade_y_core_m"
+                    | "wds_separation_arcsec"
+                    | "swpc_solar_region_extent_deg"
+                    | "voyager_saturn_angle_a"
+                    | "voyager_saturn_angle_b"
+            ) {
+                Some("geometry")
+            } else if unit == "mag"
+                || matches!(
+                    name,
+                    "gcvs_period_d"
+                        | "vsx_period_d"
+                        | "pulsar_period_s"
+                        | "redshift"
+                        | "extinction_rv"
+                        | "extinction_rv_unc"
+                        | "fdsn_event_magnitude"
+                        | "exofop_toi_transit_depth_ppm"
+                )
+            {
+                Some("source-parameter")
+            } else {
+                None
+            }
+        }
         "seismic-body" | "seismic-surface" => {
             if name.ends_with("_depth")
                 || name.ends_with("_depth_km")
@@ -66,7 +119,7 @@ fn quantity_kind(force: &str, name: &str) -> Option<&'static str> {
 fn usage() {
     eprintln!("usage: p10_quantity_migrate [path] [--write]");
     eprintln!(
-        "  report only, or --write to retag the P10 tranches (gravity/geometry/seismic, acoustic, diffusion, advective, thermal) field→quantity"
+        "  report only, or --write to retag the P10 tranches (gravity/geometry/seismic, acoustic, diffusion, advective, thermal, em) field→quantity"
     );
 }
 
@@ -123,11 +176,14 @@ fn main() {
                     | "diffusion"
                     | "advective"
                     | "thermal"
+                    | "em"
             )
+            && (tokens[4] != "em" || tokens.len() == 9)
         {
             let force = tokens[4];
             let name = tokens[2];
-            match quantity_kind(force, name) {
+            let unit = tokens[5];
+            match quantity_kind(force, name, unit) {
                 Some(kind) => {
                     let mut t = tokens.clone();
                     t[0] = "quantity";
