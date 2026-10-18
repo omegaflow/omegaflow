@@ -2,7 +2,7 @@
   title: Survey — Sonden request-only: die vier (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: 57f0b01b7eafadaa67bba1088545939893048e1493ce9d24e8778541249b6c36
+  sha256: 7951a020a979d1b0cf9df4b303a5938ee5a4af63181f1dbd0811b78d9ddbbb46
   status: live
   see-also: docs/surveys/survey-2026-09-16-sonden-flotte.md docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md phi/blocked_sources.φ
 -->
@@ -58,7 +58,8 @@ wurden 2026-09-16 gesendet (`state/mail/mail_ledger.φ:207–211`); **keine Antw
 ## Parser-Lücke (geschlossen 2026-09-17)
 
 `src/archivar/odf.rs` dekodiert jetzt alle **18** TRK-2-34-Codes (`odf.rs:1639`
-match; zuvor nur `format_code 0`/DT0); offen bleibt der native Serien-Arm. Die TRK-2-18-Spec (Text-Sidecar
+match; zuvor nur `format_code 0`/DT0); der native Serien-Arm ist gebaut
+(`tools/harvest/src/bin/tnf_compiler.rs:71` → `write_podf_bin_bands`; `src/archivar/odf.rs:104` PODF). Die TRK-2-18-Spec (Text-Sidecar
 `docs/reference/dsn_trk-2-18.1988-01-15.txt`) definiert das gesuchte Produkt: ODF,
 Format ID 1, **Data Type 12 = Two-way Doppler**, Observable in Hz + Time Tag.
 Referenz-Parser `NASA-PDS/PyTrk234` (`.tmp-trk234-components.txt`).
