@@ -2,7 +2,7 @@
   title: Sensory — Besitz-Disposition der 16 Docs (2026-10-18)
   class: ref
   date: 2026-10-18
-  sha256: 8490a4928be51fd89dd47c545a06cbc9fcde088cd243180b20e751bc200b1266
+  sha256: 5812b28de25321035f866de6edbc3b6d6d6c59435cd5617531b91803dbf2bad5
   status: live
   see-also: docs/handover/handover-2026-10-14-sensory-folge259.md state/stimmen/2026-10-18-orphan-zuordnung.md
 -->
@@ -73,7 +73,7 @@ nur hier: Token `14` an future, Brief `post/in/2026-10-18-sensory-an-future-beob
 
 ## Pass-Abschluss (R-2026-10-18-c, 4/4 · 2026-10-18)
 
-Messung (Linie `sensory-259`): Post 0 (`post/in` nicht im Baum) · Trigger 0
+Messung (Linie `sensory-259`): Post 0 (Postfach in `$OMEGAFLOW_WORK/post`, dort 0 `*-an-sensory*`) · Trigger 0
 (`register_lookup --addressed sensory-259` = 0) · Transfer 4 offen
 (`xfer coverage --line sensory-259`: emitted 14 · disposed 10 · open 4). Delegiert
 (4 freie Subagenten, done-when vom Pass), Belege geprüft, drei Punkte geschlossen:
@@ -88,8 +88,8 @@ Messung (Linie `sensory-259`): Post 0 (`post/in` nicht im Baum) · Trigger 0
 
 Nicht geschlossen (Urteil bleibt bei der Linie, nicht delegierbar): `open-sources-delta`
 Teilchen-/Dark-Matter-Experiment und `stoerungs-experiment` CTBTO VDEC (beide Operator-Wort).
-Die vier offenen Transport-Token `.9/.10/.13/.14` sind Empfänger-Arbeit (future/mycelium),
-nicht in dieser Sitzung schließbar — kein Ledger-Schluss gesetzt.
+Die vier Transport-Token `.9/.10/.13/.14` waren Empfänger-Arbeit (future/mycelium); `.13`
+ist im Nachtrag geschlossen, `.9/.10/.14` bleiben offen (Urteil bei future/Operateur).
 
 ## Nachtrag-Pass (R-2026-10-18-c, 4/4 · 2026-10-18)
 
@@ -106,5 +106,18 @@ emitted 14 / disposed 10 / **open 4** → nach dem Schluss disposed 11 / **open 
   `CLOSED … .13~99e00470 by=sensory-259.ses_… ref=3e27dff0f`.
 
 Nicht geschlossen: `.9~1da7eb85` sowie `.10~67b095df`/`.14~dfc6aa3a` an `future` —
-kein `future`-Ledger im Baum (`ls state/zustand/ledger/`), `post/` nie getragen
-(`git ls-files 'post/*'` leer); Empfänger-Arbeit, kein Ledger-Schluss.
+kein `future`-Ledger im Baum (`ls state/zustand/ledger/`: mountain · mycelium · river ·
+sensory-259), keine Empfänger-Quittung im Postfach; Empfänger-Arbeit, kein Ledger-Schluss.
+
+### Kalibrierung (die zwei Command-Risse, gemessen 2026-10-18)
+
+- **Postfach-Wurzel.** `post/in/*` löst relativ zum Repo auf und findet nichts; das
+  Postfach liegt in `$OMEGAFLOW_WORK` (`bin/_roots.sh`, Default `~/projects/omegaflow-work`).
+  Dort `ls -1 post/in/*-an-sensory*.md` → **0** (kein Eingang an sensory), aber die
+  abgegebenen Briefe liegen dort, z. B. `post/in/2026-10-18-sensory-an-future-offene-entscheide.md`.
+  Der frühere Befund „`post/` nicht im Baum" war der **Pfad-Riss**, kein leerer Korb
+  (gespiegelt: `post/in/2026-10-18-sensory-an-future-postfach-pfad-gemessen.md`).
+- **xfer-Linienname.** `xfer list --line sensory --open` ist leer; der Ledger liegt unter
+  `state/zustand/ledger/sensory-259/`. Mit `--line sensory-259` erscheinen die Token.
+  `.opencode/commands/**` ist `edit:deny` — die Korrektur ist als Beobachtung an `future`
+  geroutet (Token `.14`), nicht in dieser Linie baubar.
