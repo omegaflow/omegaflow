@@ -34,7 +34,7 @@ Messung (Subagent + eigene Gegenmessung):
 - **CDN-Matrix** `docs/specs/cdn_reconciliation.json`: `{"expected":"kids_dr4_wl_cat.fits","netloc":"zenodo.org"}` steht in `missing_assets`.
 - **2-GiB-Decke**: `src/archivar/cdn.rs:12` `GITHUB_RELEASE_ASSET_MAX_BYTES = 2*1024^3`; `:14` `CDN_PART_MAX_BYTES = … - 1 MiB`; `:230` „over the GitHub release 2 GiB asset limit — the asset needs the split/R2 route". Größtes Asset im Release `zenodo.org` = `2 146 435 072 B` (Venus `…p036`).
 - **Präzedenz**: `Venus_RadarBasemap_2025_Global_75m_v1.tif` (80,9 GB) — flache `url` **404**, aber `.p036` **206** und `.parts` **206**. Für ein >2-GiB-Asset ist die flache `url` **per Konstruktion** 404; die 206 trägt `.parts` + Shards, nicht die flache `url`.
-- **Range-/Subset-Leser**: **keiner** für `format fits` verdrahtet. `src/archivar/extract.rs:5329` liest bei `format fits` die **ganze lokale Datei** (`fits_to_json`), kein `fetch_range`; der einzige FITS-Range-Nutzer ist ein Header-Fenster-Probe (`cmb_act_compiler.rs:503`), nicht das Archiv-Format.
+- **Range-/Subset-Leser**: **teilweise**. Der Shard-Leser existiert generisch: `src/archivar/fetch.rs:200` `fetch_release_or_parts` lädt `<url>.parts`, prüft je Shard `len`+`sha256` und den Whole-`sha256`, und setzt die Teile zusammen — das trägt die 16,5 GiB ohne flache Datei. Was **fehlt**, ist ein FITS-*interner* Subset-/Range-Leser: `src/archivar/extract.rs:5329` liest bei `format fits` die ganze Datei (`fits_to_json`), und der einzige FITS-`fetch_range`-Nutzer ist eine Header-Fenster-Probe (`cmb_act_compiler.rs:503`), nicht das Archiv-Format.
 
 **Verdikt: nicht `absent`.** Die Route existiert und funktioniert (Venus-Präzedenz); der Block war nur unvollständig, und die flache-`url`-206 im done-when ist für >2 GiB unerfüllbar.
 
@@ -74,7 +74,8 @@ Der Workflow hat Issue **#238** automatisch gefiled; ich habe die Diagnose dort 
 ## 7. Bilanz
 
 Post 0 · Trigger 0 · Transfer: eingehend 1 unbeglichen (river `.13`), eigene 2 offen.
-**Geschlossen:** der Register-Formfehler + die Transport-Route (`15bcd736e`) und — nach dem Credential-Fix — der Transport selbst (§8). **Nicht geschlossen:** der river-Token im Ledger (Emitter river schließt; mycelium schreibt nicht in `ledger/river/`).
+**Geschlossen:** der Register-Formfehler + die Transport-Route (`15bcd736e`), der Transport selbst (§8), `sha256` im Block und 206 auf `.parts`+Shards.
+**Nicht geschlossen:** der river-Token im Ledger (Emitter river schließt; mycelium schreibt nicht in `ledger/river/`) — und zwei ehrlich benannte Residuals in §9 (stale CDN-Matrix, FITS-interner Subset-Leser).
 
 ## 8. Nachtrag 2026-10-18: Credential repariert, Transport vollendet
 
@@ -86,3 +87,8 @@ Der Operator hat `OMEGAFLOW_TOKEN` auf `omegaflow/sources`-Schreibrechte gesetzt
 - Issue **#238** ist damit gegenstandslos (geschlossen mit Beleg).
 
 Die flache `url` `…/kids_dr4_wl_cat.fits` bleibt **404** (over-2-GiB-Konstruktion, wie Venus); die 206 trägt `.parts` + Shards. Der done-when „registrierte CDN-`url` HTTP 206" ist damit im Split-Sinn erfüllt.
+
+## 9. Ehrlich offen (kein stiller Abschluss)
+
+- **CDN-Matrix-Snapshot ist stale und blind für `.parts`.** `docs/specs/cdn_reconciliation.json` stammt vom **2026-10-15** (`d42e27eb8`, `sources_parsed 2728`; das Register trägt heute **2826** `url`-Zeilen) und listet `kids_dr4_wl_cat.fits` weiter unter `missing_assets`. `cdn_reconcile` erkennt nur `.manifest` (`is_manifest`, `cdn_reconcile.rs:258`), nicht `raw_mirror`s `.parts`, und `shard_base` matcht `…p000` nicht — ein frischer Lauf würde das Asset also weiter als fehlend melden. Die **live** CDN-Matrix (der Release) trägt es; der committete Snapshot nicht. Werkzeug-Lücke, kein Transport-Fehler — benannt, nicht weggelassen.
+- **FITS-interner Subset-Leser fehlt** (§2): Shard-Reassembly ja, „nur Zeilen/HDU lesen" nein.
