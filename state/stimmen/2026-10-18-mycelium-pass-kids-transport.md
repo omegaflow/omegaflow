@@ -137,3 +137,11 @@ Ich hatte „UCAR-FPI E-Mail-gated = Operator" aus den Archiv-Notizen übernomme
 - **Tag-Drift `ssd.jpl`:** in den Kuprat-Armen **nicht vorhanden** — `crystal_compiler`/`srd62_compiler` und die Probes nutzen `crystallography.net`/`srdata.nist.gov`.
 - **5. Ader:** `LOCK privat` (unverändert, nichts verlässt das Haus). **Kein `witness kuprat`** (4 Zeugenklassen).
 - **Korrektur:** sensorys früherer `.15~8e8cf9f8` (raetsel-bestand) war eine **Fehlleitung**; `survey-raetsel-bestand` ist **Mountains Träger**, die Meta/Prosa-Beobachtung ist mit Token `14` an **future** geroutet.
+
+### Papiere & Spaltenköpfe (gemessen 2026-10-18, `archive_search --all` + `--openalex`)
+
+- **RIXS spin/charge (Zenodo 7286412):** Zhang et al., *npj Quantum Materials* **7**, 105 (2022), DOI `10.1038/s41535-022-00528-5`, open PDF `nature.com/articles/s41535-022-00528-5.pdf`. Daten: `exp_data/azimuthal_analysis/<UD|OD1|OD2>_<p>_<p>/rixs_phi_<phi>_<sigma|pi>.txt`, Spaltenkopf **`Eloss  RIXS  err`** (Energieverlust eV, Intensität, Fehler); `absorption_coeff` trägt `faa`/`fcc`.
+- **Charge/Plasmon (Zenodo 15179114):** „Out-of-phase Plasmon Excitations in the Trilayer Cuprate Bi2223", *Phys. Rev. B* **111**, 165141 (2025), DOI `10.5281/zenodo.15179114`.
+- **EELS (Zenodo 21859473):** `Fig4_eels_and_peakfitting.mat` (MAT, Peak-Fitting).
+- **Weitere Cuprat-Daten mit expliziten Spalten:** Zenodo `18877118` („Unveiling the Nature of Collective Charge Excitations", `data_description_zenodo.md`), `6914223` (Sr14-xCaxCu24O41-Leitern), `12721667` (RIXS/XAS, `xy`-Spalten, Header = Incidenzenergien), `7264820` (Kagome, Header = Temperaturen), `8430044`/`4724109` (CDW `Height`/`FWHM` vs T).
+- **Penetration depth/Superfluid (SRD62-Kanal):** Zenodo `8040941` (Superfluid/London), `15688310` (4Hb-TaS2, penetration-depth + superfluid-density `.txt`); Autoren Bernhard (Konstanz), Khasanov (μSR).
