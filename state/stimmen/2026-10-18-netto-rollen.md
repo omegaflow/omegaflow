@@ -4,7 +4,8 @@
 falsche Rangfolge. Beide kosten echtes Geld. Die vom Operator vorgegebene Leiter gilt:
 
 > **free > Mistral inklusive > DeepSeek paid > Mistral paid**
-> **DeepInfra nur für PII (wo wirklich nötig) und echte Frontier-Probleme (Kimi-Klasse).**
+> **DeepInfra nur für (a) PII, wo Mistral nicht ausreicht, und (b) echte Frontier-Probleme (Kimi-Klasse).**
+> **PII läuft zuerst über Mistral** (Vertragsdeckung); DeepInfra erst, wenn Mistral die Aufgabe nicht trägt.
 
 ## 1 — Die Töpfe (Operator-Angaben, 2026-10-18)
 
@@ -17,8 +18,9 @@ falsche Rangfolge. Beide kosten echtes Geld. Die vom Operator vorgegebene Leiter
 | **Mistral paid** | **20 €** Credits (14.10.) | Pay-as-you-go | **voller Preis** |
 | **DeepInfra** | **$8,49** Balance + **$91,05** Top-up | **reserviert, metered** | **voller Preis — schonen** |
 
-**DeepInfra ist kein „letzter Rang", sondern ein zweckgebundener Topf:** PII und Frontier.
-Für Linienarbeit wird er **nicht** angefasst.
+**DeepInfra ist kein „letzter Rang", sondern ein zweckgebundener Topf:** PII (nur wo Mistral nicht
+ausreicht) und Frontier. Für Linienarbeit wird er **nicht** angefasst. PII zuerst über Mistral —
+DeepInfra ist die Ausnahme, nicht der Standard.
 
 ## 2 — Der Agenten-Test (kostenlose Modelle, Urteil + Werkzeug)
 
@@ -53,7 +55,7 @@ Grenze: **n = 1 Fork je Modell** — indikativ, nicht endgültig.
 | **Mechanik/Delegation** | `opencode/glm-5.3-flash-free#low` | $0, Werkzeug ok, Urteile nein |
 | **Rat-Struktur** | `mistral/mistral-large-4` (inkl.) | vorausbezahlt, 0,0043 €/Call kalibriert |
 | **Tiefe/Backup** | `deepseek/deepseek-v4-pro` | ≈$90 vorausbezahlt |
-| **PII** | **DeepInfra** — nur wo Vertrag/Art es verlangt und günstiger/stimmiger als Mistral/GLM | reserviert |
+| **PII** | **Mistral** (inkl., Vertragsdeckung) — **DeepInfra nur, wo Mistral nicht ausreicht** | reserviert |
 | **Frontier (Kimi-Klasse)** | **DeepInfra** (z. B. Kimi K3) | nur hier verfügbar |
 
 ## 5 — Reichweite der Töpfe (gerechnet mit gemessenen Preisen)
