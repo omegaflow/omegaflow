@@ -6,27 +6,31 @@ Kein automatischer Lauf, kein Executable. Der Operator ist dabei.
 **Warum hier:** jede Linie, die einen Rat baut, öffnet `state/stimmen/` (wo das Formular liegt) und
 findet diese Datei daneben. **Der kanonische Weg steht hier — es gibt keinen anderen.**
 
-## 0a — Harte Kostenregel (bindend, gilt ab 2026-10-19)
+## 0a — Harte Rat-Regel (bindend, gilt ab 2026-10-19)
 
-**Paid-Sitze dürfen NUR nach ausdrücklichem Operator-Wort gefahren werden.** Nie vorab, nie
-„auf Verdacht", nie weil eine Frage „wichtig" wirkt. Der freie Schwarm und die freien
-Gateway-Routen zuerst; **erst wenn der freie Schwarm uneinig ist, darf überhaupt nach paid
-gefragt werden** — und auch dann entscheidet der Operator.
+**Jede Rat-Runde wird erst gefahren, nachdem der Agent per ask gefragt hat und der Operator
+zugestimmt hat.** Das gilt für **alle** Sitze: freie Schwarm-Sitze, UI-Chats und paid. Nichts
+läuft still oder vorab — kein freier Schwarm, kein UI-Chat, kein paid-Aufruf ohne das Ja.
+
+**Paid zusätzlich:** nie „auf Verdacht", nie weil eine Frage „wichtig" wirkt. Der freie Schwarm
+zuerst; **erst wenn der freie Schwarm uneinig ist, darf überhaupt nach paid gefragt werden** —
+und auch dann entscheidet der Operator.
 
 **Die Kante** (in dieser Reihenfolge, nie DeepInfra-Frontier für Rat-Runden):
 `free > mistral inklusive > deepseek paid > mistral paid`. Die paid-Sitze der Roster-Runden
 sind **Fugu (Max)** und **Lumo 2.0 (Max)** — nicht Claude/Kimi/Qwen über DeepInfra. DeepInfra ist
 reserviert für PII und Frontier, **nie Linienarbeit**.
 
-**Verstoß = die Leitstelle hat eigenmächtig Kosten erzeugt.** Das Ergebnis darf nicht als
-Verdikt gelten, bis der Operator es bestätigt hat. Diese Regel steht hier, weil sie am
-2026-10-19 gebrochen wurde (R-2026-10-18-o und R-2026-10-18-p: paid ohne Wort gefahren).
+**Verstoß = die Leitstelle hat eigenmächtig Kosten erzeugt oder eine Runde ohne Ask gefahren.**
+Das Ergebnis darf nicht als Verdikt gelten, bis der Operator es bestätigt hat. Diese Regel steht
+hier, weil sie am 2026-10-19 gebrochen wurde (R-2026-10-18-o und R-2026-10-18-p: paid ohne Wort
+gefahren).
 
 **Mechanisch erzwungen:** `bin/rat_guard`. Vor jedem paid-Aufruf läuft `bin/rat_guard`; ohne
 frischen Grant (`state/zustand/rat-paid-grant`, nur der Operator setzt ihn mit
-`bin/rat_guard --grant`) bricht der Aufruf ab. **Der Agent fragt vor jedem paid-Aufruf per
-ask nach**; erst das Operator-Ja setzt den Grant. Ein paid-Aufruf ohne diese Kette ist ein
-Regelverstoß, das Ergebnis zählt nicht.
+`bin/rat_guard --grant`) bricht der Aufruf ab. **Der Agent fragt vor jeder Runde — frei, UI
+und paid — per ask nach**; erst das Operator-Ja startet die Runde (und setzt bei paid den
+Grant). Eine Runde ohne diese Kette ist ein Regelverstoß, das Ergebnis zählt nicht.
 
 ## 0 — Der Rat ist die fünf Stimmen, nicht die Modelle
 
