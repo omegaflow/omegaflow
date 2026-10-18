@@ -2,7 +2,7 @@
   title: Survey — Gegen-Audit: Quellen-Delta zum Open-Sources-Audit (2026-10-08)
   class: survey
   date: 2026-10-08
-  sha256: c7eb6aa3c94c8119a14489595b13d3696635c36f54eee69317ab9639c4799aba
+  sha256: e2eb1bd0541020dcad083dcb0a7de09f6b9104ed802d4a21b151f02c717ce1e8
   status: live
   see-also: state/future/open-sources-audit-2026-10-08.md docs/concepts/tools-map.md docs/SOURCE_PORT.md
 -->
@@ -133,6 +133,12 @@ gegen `state/zustand/external-state.md` und `phi/blocked_sources.φ`:
 | **LEOS `www.leos.ac.cn`** | descoped (Captcha) | **206**; `--jina` rendert App | **NEU**, unregistriert |
 | NSSDC (Voyager/Mariner/Viking/Juno) | offene Anfragen | keine Antwort; Follow-up 2026-09-30 | Anfrage offen |
 | NED bulk redshift | Anfrage | ByParams + Token (2026-10-01) | resolved (Alternative) |
+
+**Nachgemessen 2026-10-18 (direkt, `curl -L`):** SuperMAG `data-api.php` **200/19 B**
+(username-Param weiter nötig), BepiColombo PSA **200/1562 B**, ESA LPF **500/87 B**,
+Lasair `api/` **000** (direct), SSDC Limadou **200/60 809 B**, DEMETER `rs-order`
+**403/358 B**, `moon.bao.ac.cn` **000** (vorher 206 — Portal jetzt down),
+LEOS **200/7 542 B**. Unverändert blockiert: LPF, Lasair, DEMETER; NEU down: Chang'e.
 
 ## Riss (benannt)
 Der Diver zitierte CSES als `phi/sources.φ:17149-17192` — der Baum trägt dort **Vega 2 MISCHA**
