@@ -57,6 +57,9 @@ cloudflare/cloudflared-config.yml
 # auf den privaten Zustand ist `docs/zustand/external-state.md`.
 state/*
 !state/stimmen/
+# Verdikt-Register je Linie: die .φ-Verdikte sind kanonisch, nicht Roh-Zustand.
+!state/mountain/
+!state/river/
 
 # Login-/Konto-Prüflisten (persönlich — nie ins Repo)
 markiert.csv
