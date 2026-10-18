@@ -170,7 +170,7 @@ pub const GFC_SYNTHESIS_CONVENTION: &str = "ICGEM gravity-field spherical-harmon
 
 pub const GFC_HEAD_MEASURED: &str = "XGM2019e (measured 2026-10-15, https://icgem.gfz.de/getmodel/gfc/8e01a2aba4f291ac0638b79a390155713b70fdc9b266981023c756839c11c9b8/XGM2019e.gfc): product_type gravity_field, earth_gravity_constant 3.986004415E+14 m^3/s^2, radius 6378136.3 m, max_degree 5540, norm fully_normalized, tide_system zero_tide";
 
-pub const GFC_DEGREE_SEAM_MEASURED: &str = "XGM2019e degree seam (measured 2026-10-18): the head carries max_degree 5540 and no 2190 boundary or provenance note; the DOI 10.5880/ICGEM.2019.007 abstract says 'up to d/o 5399' and places topographic forward modelling 'beyond d/o 719' — a 2190 seam is not supported by head or abstract, while 5399 (abstract) and 5540 (head and file end) remain an unresolved wording difference";
+pub const GFC_DEGREE_SEAM_MEASURED: &str = "XGM2019e degree provenance (measured 2026-10-18): the head carries max_degree 5540 and no 2190 boundary or provenance note; the DOI 10.5880/ICGEM.2019.007 abstract and Zingerle et al. 2020 (DOI 10.1007/s00190-020-01398-0) both say 'up to d/o 5399' and place topographic forward modelling 'beyond d/o 719'. A 2190 processing seam is not supported by anything measured. The publication does name 2190, but as a delivery truncation: 'provide the model pre-calculated at three different spectral resolutions: d/o 5540, 2190 and 760' (Sect. 4.3), and 'only been used up to a spectral resolution of d/o 2190 ... to be comparable with the resolution of EGM2008 and EIGEN6-C4' (Sect. 4.2). The same paper cuts the spheroidal model 'at d/o 5480' (Sect. 3.3), while the delivered spherical file carries nonzero coefficients at degree 5540; 5399 (abstract) is repeated nowhere in the body and remains an unresolved wording difference";
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct GfcHead {
@@ -534,7 +534,7 @@ fn scaled_by_pow2(mut x: f64, mut e: i32) -> f64 {
     x * f64::from_bits(((e + 1023) as u64) << 52)
 }
 
-pub const GFC_LEGENDRE_RECURRENCE: &str = "fully_normalized_legendre runs column by column over m with a mantissa/exponent pair (scaled_by_pow2); the sectorial seed Pbar_mm ~ m^(1/4) * sin^m(theta) falls below f64 around m ~ 2155 at 45 deg, and a quantised subnormal seed would be amplified by the forward recurrence in n (measured 1.3e21 at degree 3211, 2.3e271 at 5540); the column is rescaled so the returned values underflow only where the true function itself is below f64";
+pub const GFC_LEGENDRE_RECURRENCE: &str = "fully_normalized_legendre runs column by column over m with a mantissa/exponent pair (scaled_by_pow2); the sectorial seed Pbar_mm ~ m^(1/4) * sin^m(theta) falls below f64 around m ~ 2155 at 45 deg, and a quantised subnormal seed would be amplified by the forward recurrence in n (measured 1.3e21 at degree 3211, 2.3e271 at 5540); the column is rescaled so the returned values underflow only where the true function itself is below f64. The m = 0 column is the exception: it uses the unnormalised recurrence with integer coefficients, P_n = ((2n-1) x P_{n-1} - (n-1) P_{n-2})/n, then multiplies by sqrt(2n+1) (measured 2026-10-18: the normalised-coefficient recurrence drifted to 8.167e-10 in the addition theorem at 0 deg/5540, the integer form to 2.2e-16)";
 
 pub fn fully_normalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
     let costh = theta.cos();
@@ -544,14 +544,24 @@ pub fn fully_normalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
     if nmax == 0 {
         return p;
     }
+    let mut zonal_prev2 = 1.0f64;
+    let mut zonal_prev1 = costh;
+    p[1][0] = 3.0f64.sqrt() * costh;
+    for n in 2..=nmax {
+        let nf = n as f64;
+        let zonal = ((2.0 * nf - 1.0) * costh * zonal_prev1 - (nf - 1.0) * zonal_prev2) / nf;
+        p[n][0] = (2.0 * nf + 1.0).sqrt() * zonal;
+        zonal_prev2 = zonal_prev1;
+        zonal_prev1 = zonal;
+    }
     const LN_2: f64 = std::f64::consts::LN_2;
     let two_pow_500 = f64::from_bits(((500 + 1023) as u64) << 52);
     let two_pow_m500 = f64::from_bits(((1023 - 500) as u64) << 52);
     let mut log_seed = 0.0f64;
-    for m in 0..=nmax {
+    for m in 1..=nmax {
         if m == 1 {
             log_seed = 0.5 * 3.0f64.ln() + sinth.ln();
-        } else if m > 1 {
+        } else {
             let mf = m as f64;
             log_seed += 0.5 * ((2.0 * mf + 1.0) / (2.0 * mf)).ln() + sinth.ln();
         }
@@ -852,6 +862,74 @@ gfc      2     2    2.439370331756250E-06   -1.400307649958125E-06    8.11752994
             let p = fully_normalized_legendre(m, theta);
             assert!(p[m][m].is_finite(), "P[{m}][{m}] must stay finite");
         }
+    }
+
+    #[test]
+    fn the_zonal_column_holds_the_addition_theorem_at_degree_5540() {
+        let nmax = 5540usize;
+        let p = fully_normalized_legendre(nmax, 0.0);
+        let mut worst_rel = 0.0f64;
+        let mut worst_n = 0usize;
+        for n in 0..=nmax {
+            let sum = p[n][0] * p[n][0];
+            let expected = (2 * n + 1) as f64;
+            let rel = (sum - expected).abs() / expected;
+            if rel > worst_rel {
+                worst_rel = rel;
+                worst_n = n;
+            }
+            for m in 1..=n {
+                assert_eq!(
+                    p[n][m], 0.0,
+                    "P[{n}][{m}] at the pole must be exactly zero, got {}",
+                    p[n][m]
+                );
+            }
+        }
+        eprintln!("zonal 0 deg: addition_rel={worst_rel:.3e} at n={worst_n}");
+        assert!(
+            worst_rel <= 1e-14,
+            "zonal addition theorem drifted: rel {worst_rel:.3e} at n {worst_n}"
+        );
+    }
+
+    #[test]
+    fn the_unnormalized_recurrence_overflows_before_degree_162_at_45_deg() {
+        let theta = std::f64::consts::FRAC_PI_4;
+        let p = unnormalized_legendre(200, theta);
+        let first = (1..=200)
+            .find(|&m| !p[m][m].is_finite())
+            .expect("the unnormalized diagonal overflows below degree 201");
+        assert!(
+            (155..=165).contains(&first),
+            "first unnormalized overflow at m = {first}, expected near 161"
+        );
+        assert!(p[first - 1][first - 1].is_finite());
+
+        let head = GfcHead {
+            product_type: Some(PRODUCT_TYPE_GRAVITY_FIELD.to_string()),
+            modelname: "unnormalized-overflow".to_string(),
+            gm_m3_s2: 3.986004415E14,
+            radius_m: 6378136.3,
+            max_degree: 200,
+            norm: Norm::Unnormalized,
+            tide_system: None,
+            epoch: None,
+        };
+        let model = GfcModel::from_coeffs(
+            head,
+            &[GfcCoeff {
+                n: 200,
+                m: 200,
+                c: 1.0,
+                s: 0.0,
+            }],
+        )
+        .expect("the unnormalized probe model builds");
+        assert!(
+            model.harmonic_sums(45.0, 0.0, 6378136.3).is_none(),
+            "an overflowed unnormalized synthesis must decline, not fabricate"
+        );
     }
 
     #[test]
