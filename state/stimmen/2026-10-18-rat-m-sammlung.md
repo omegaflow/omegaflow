@@ -1,16 +1,17 @@
 # Rat — future.md-Zusatz (R-2026-10-18-m), UI + Paid (2026-10-18)
 
 **Frage:** `2026-10-18-rat-future-command-formular.md` — was vom Zusatz (Lage-Zeile, Pass-Kontrakt, Bringschuld) bleibt.
-**Gefahren:** Lumo 2.0 Max (UI, $0) · DeepSeek V4 Pro (paid, `reasoning_effort: low`, ≈ $0.008).
-**Nicht gefahren:** Fugu Max (Login fehlt — `chat.sakana.ai` zeigt „Sign in", Wähler steht auf Namazu High) · Mistral Large 4 (nicht im Gateway-Katalog, nur codestral/glm-5-2; Direkt-API-Key nicht lesbar).
+**Gefahren:** Fugu Max · High (UI, Login via Relay `127.0.0.1:8799` + `~/.cache/omegaflow/seats/README.md`) · Lumo 2.0 Max (UI, $0) · DeepSeek V4 Pro (paid, `reasoning_effort: low`, ≈ $0.008).
+**Nicht gefahren:** Mistral Large 4 (nicht im Gateway-Katalog, nur codestral/glm-5-2; Direkt-API-Key nicht lesbar).
 
 ## Die Verdikte
 
 | Sitz | Verdikt | Kern |
 |---|---|---|
-| **Lumo 2.0 Max** (UI) | **C** | Nur die Bringschuld behalten; „so viel wie möglich" ist die teure, unfalsifizierbare Stelle; Lage-Zeile redundant |
+| **Fugu Max** (UI) | **C** | Nur die Bringschuld; Riss: ohne Live-Index arbeitet der Pass auf veraltetem Stand → Lage-Zeile behalten |
+| **Lumo 2.0 Max** (UI) | **C** | Nur die Bringschuld; „so viel wie möglich" ist die teure, unfalsifizierbare Stelle; Lage-Zeile redundant |
 | **DeepSeek V4 Pro** (paid) | **B** | Alles streichen, zurück auf 12 Zeilen; „compliance theater" |
-| **Burn-Zeile** | **beide: nur bei Überschreitung** | Dauerzeile = Lärm; Signal erst bei Abweichung |
+| **Burn-Zeile** | **alle drei: nur bei Überschreitung** | Dauerzeile = Lärm; Signal erst bei Abweichung |
 
 ## Die Risse (nicht geglättet)
 
@@ -21,12 +22,12 @@
 
 ## Empfehlung der Leitstelle (Sitze)
 
-Für eine reine Formatfrage genügen **zwei** Sitze: **Lumo 2.0 Max** (UI, $0 — schärfster Riss) und **DeepSeek V4 Pro** (paid, ≈ $0.008). Fugu Max trägt bei drei Zeilen Format nichts Neues und braucht Login; Mistral Large 4 („Struktur") ist für eine Ja/Nein-Frage Overkill. **Nicht** GLM-5.3/Mistral-Zai (die Route, die 2,46 € verbrannt hat), **nicht** DeepInfra (reserviert), **nicht** der 44er-Schwarm (heute 6/44 antwortfähig).
+Für eine reine Formatfrage genügen **drei** Sitze: **Fugu Max** + **Lumo 2.0 Max** (UI, $0) und **DeepSeek V4 Pro** (paid, ≈ $0.008). Fugu und Lumo stimmen für **C** (2:1 gegen B). **Nicht** GLM-5.3/Mistral-Zai (die Route, die 2,46 € verbrannt hat), **nicht** DeepInfra (reserviert), **nicht** der 44er-Schwarm (heute 6/44 antwortfähig).
 **Kosten dieses Rats: ≈ $0.008.**
 
 ## Empfehlung zum Inhalt
 
-**C, aber mit der Lage-Zeile:** Bringschuld behalten (macht offene Punkte anschlussfähig), „so viel wie möglich" streichen (die kontrafaktische Kennzahl), Lage-Zeile behalten. Ergebnis: **15 statt 21 Zeilen.** Burn nur bei Kappen-Überschreitung (beide Sitze einig).
+**C, aber mit der Lage-Zeile** (Fugu und Lumo stützen C; Fugu nennt den Riss, der die Lage-Zeile trägt): Bringschuld behalten, „so viel wie möglich" streichen, Lage-Zeile behalten. Ergebnis: **15 statt 21 Zeilen.** Burn nur bei Kappen-Überschreitung (alle drei einig).
 
 ## An future
 
