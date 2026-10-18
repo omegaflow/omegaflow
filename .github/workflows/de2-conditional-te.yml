@@ -72,7 +72,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p data/cdaweb.gsfc.nasa.gov
-          curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
+          curl -sSfL --retry 5 --retry-all-errors --max-time 900 \
             -o data/cdaweb.gsfc.nasa.gov/de2_orbit_lt_alt.csv \
             'https://cdaweb.gsfc.nasa.gov/hapi/data?id=DE2_LAPI_ORBIT-ATTITUDE@0&time.min=1981-08-08T00:00:00Z&time.max=1983-02-17T00:00:00Z&parameters=Time,LAPI__Altitude,LAPI__Local&format=csv'
           test "$(head -c 1 data/cdaweb.gsfc.nasa.gov/de2_orbit_lt_alt.csv)" != "{"
