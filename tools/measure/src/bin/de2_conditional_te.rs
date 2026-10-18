@@ -590,9 +590,15 @@ fn main() {
         .collect();
     let empty: [LaggedCond; 0] = [];
     let mut any_cond_pass = false;
+    let mut max_cond: [(f64, f64); 2] = [(f64::NEG_INFINITY, f64::NEG_INFINITY); 2];
+    let mut max_raw: [(f64, f64); 2] = [(f64::NEG_INFINITY, f64::NEG_INFINITY); 2];
 
     for lag in 1..=max_lag {
-        for (label, driver, target) in [("NVE->IVE", &nve, &ive), ("IVE->NVE", &ive, &nve)] {
+        for (dir, (label, driver, target)) in
+            [("NVE->IVE", &nve, &ive), ("IVE->NVE", &ive, &nve)]
+                .into_iter()
+                .enumerate()
+        {
             let obs_cond = transfer_entropy_conditional_binned_n(driver, target, &cond, lag, bins);
             let stats_cond = conditional_te_stats_lagged_n(
                 driver,
@@ -639,6 +645,14 @@ fn main() {
             let (cond_line, cond_pass) = fmt(obs_cond, stats_cond);
             any_cond_pass |= cond_pass;
             let (raw_line, _) = fmt(obs_raw, stats_raw);
+            if let (Some(o), Some((_, _, thr))) = (obs_cond, stats_cond) {
+                max_cond[dir].0 = max_cond[dir].0.max(thr);
+                max_cond[dir].1 = max_cond[dir].1.max(o);
+            }
+            if let (Some(o), Some((_, _, thr))) = (obs_raw, stats_raw) {
+                max_raw[dir].0 = max_raw[dir].0.max(thr);
+                max_raw[dir].1 = max_raw[dir].1.max(o);
+            }
             println!(
                 "LAG {:>5}s {:>8} cond[{}]: {}",
                 lag as f64 * bin_s,
@@ -655,6 +669,20 @@ fn main() {
         }
     }
 
+    for (dir, label) in ["NVE->IVE", "IVE->NVE"].into_iter().enumerate() {
+        let (thr, te) = max_cond[dir];
+        let pass = te.is_finite() && te > thr;
+        println!(
+            "MAX-NULL {label} cond[{cond_label}]: te_max={te:+.6} thr_max={thr:+.6} pass={}",
+            if pass { "yes" } else { "no" }
+        );
+        let (thr, te) = max_raw[dir];
+        let pass = te.is_finite() && te > thr;
+        println!(
+            "MAX-NULL {label} raw     : te_max={te:+.6} thr_max={thr:+.6} pass={}",
+            if pass { "yes" } else { "no" }
+        );
+    }
     println!(
         "de2_conditional_te: any conditioned lag above the ARX null: {}",
         if any_cond_pass { "yes" } else { "no" }
