@@ -9,6 +9,9 @@ const SEALED_SHA256: &str = "aeb3c82ff3de672116ff7f8c28592d97ea05c5e78b8f652521d
 const RENEWED_SHA256: &str = "eee376effcb4def668a61d47ab7ea2e6f7b0b7cc3f884ea6634997349d4389b5";
 const PERIGEE_UTC: &str = "2026-09-28T11:45:12Z";
 
+const SEALED_ASSET: &str = "ephemeris_juice_official.bin";
+const DEFAULT_SOURCES: &str = "phi/sources.φ";
+
 const DAY: f64 = 86400.0;
 const HOUR: f64 = 3600.0;
 const PERIGEE_UNIX_HMS_S: f64 = 11.0 * HOUR + 45.0 * 60.0 + 12.0;
@@ -41,11 +44,7 @@ fn file_sha(path: &str) -> Option<String> {
     std::fs::read(path).ok().map(|b| sha256_hex(&b))
 }
 
-fn load_line(
-    word: &str,
-    juice_path: &str,
-    earth_path: &str,
-) -> Option<HashMap<String, BodyEphemeris>> {
+fn load_line(word: &str, juice_path: &str, earth_path: &str) -> Option<Line> {
     let juice_bytes = match std::fs::read(juice_path) {
         Ok(b) => b,
         Err(_) => {
@@ -75,14 +74,29 @@ fn load_line(
         }
     };
     let mut map = HashMap::new();
-    map.insert("juice".to_string(), juice);
-    map.insert("earth".to_string(), earth);
-    Some(map)
+    map.insert(body_key(juice_path)?, juice);
+    map.insert(body_key(earth_path)?, earth);
+    Some(Line {
+        bodies: map,
+        spacecraft: body_key(juice_path)?,
+        receiver: body_key(earth_path)?,
+    })
 }
 
-fn geocentric(map: &HashMap<String, BodyEphemeris>, tdb: f64) -> Option<[f64; 3]> {
-    let j = body_barycenter_position("juice", tdb, map)?;
-    let e = body_barycenter_position("earth", tdb, map)?;
+struct Line {
+    bodies: HashMap<String, BodyEphemeris>,
+    spacecraft: String,
+    receiver: String,
+}
+
+fn body_key(path: &str) -> Option<String> {
+    let stem = std::path::Path::new(path).file_stem()?.to_str()?;
+    Some(stem.strip_prefix("ephemeris_").unwrap_or(stem).to_string())
+}
+
+fn geocentric(line: &Line, tdb: f64) -> Option<[f64; 3]> {
+    let j = body_barycenter_position(&line.spacecraft, tdb, &line.bodies)?;
+    let e = body_barycenter_position(&line.receiver, tdb, &line.bodies)?;
     Some([j[0] - e[0], j[1] - e[1], j[2] - e[2]])
 }
 
@@ -111,8 +125,8 @@ fn coverage_seconds(map: &HashMap<String, BodyEphemeris>) -> Option<(f64, f64)> 
 }
 
 fn max_dev_km(
-    a: &HashMap<String, BodyEphemeris>,
-    b: &HashMap<String, BodyEphemeris>,
+    a: &Line,
+    b: &Line,
     t_lo: f64,
     t_hi: f64,
     step: f64,
@@ -190,6 +204,21 @@ fn seal_word(measured: Option<&str>, expected: Option<&str>) -> &'static str {
     }
 }
 
+fn register_pin(content: &str, asset: &str) -> Option<String> {
+    omegaflow::archivar::parse_sources(content)
+        .into_iter()
+        .find(|s| s.url.ends_with(asset))
+        .and_then(|s| s.sha256)
+}
+
+fn anchor_word(pin: Option<&str>, constant: &str) -> &'static str {
+    match pin {
+        None => "pending",
+        Some(p) if p == constant => "placed",
+        Some(_) => "riss",
+    }
+}
+
 fn pending_or_word(v: Option<bool>) -> String {
     match v {
         None => "\"pending\"".to_string(),
@@ -209,10 +238,13 @@ fn f64_json(v: f64) -> String {
     format!("{v}")
 }
 
+#[allow(clippy::too_many_arguments)]
 fn register_json(
     window_days: f64,
     step_hours: f64,
     sealed_sha: Option<&str>,
+    sealed_pin: Option<&str>,
+    anchor: &str,
     renewed_sha: Option<&str>,
     recon_sha: Option<&str>,
     delta_sealed: Option<f64>,
@@ -236,6 +268,10 @@ fn register_json(
         sha_json(sealed_sha),
         sha_json(renewed_sha),
         sha_json(recon_sha),
+    ));
+    s.push_str(&format!(
+        "  \"anchor\": {{\"sealed\": \"{anchor}\", \"sealed_register_sha256\": {}}},\n",
+        sha_json(sealed_pin),
     ));
     s.push_str(&format!(
         "  \"delta_km\": {{\"sealed\": {}, \"renewed\": {}}},\n",
@@ -272,6 +308,13 @@ fn main() {
     let de442_juice = arg_or(&args, "--de442-juice", DEFAULT_DE442_JUICE);
     let de442_earth = arg_or(&args, "--de442-earth", DEFAULT_DE442_EARTH);
     let register_path = arg_or(&args, "--register", DEFAULT_REGISTER);
+    let sources_path = arg_or(&args, "--sources", DEFAULT_SOURCES);
+
+    let sealed_pin = std::fs::read_to_string(&sources_path)
+        .ok()
+        .and_then(|content| register_pin(&content, SEALED_ASSET));
+    let anchor = anchor_word(sealed_pin.as_deref(), SEALED_SHA256);
+    let seal_expected = sealed_pin.as_deref().unwrap_or(SEALED_SHA256);
 
     let window_days: f64 = match arg_str(&args, "--window-days") {
         None => 21.0,
@@ -325,7 +368,7 @@ fn main() {
     let de441 = load_line("de441", &de441_juice, &de441_earth);
     let de442 = load_line("de442", &de442_juice, &de442_earth);
 
-    let window_tdb = match (nominal_window, sealed.as_ref().and_then(coverage_seconds)) {
+    let window_tdb = match (nominal_window, sealed.as_ref().and_then(|l| coverage_seconds(&l.bodies))) {
         (Some((lo, hi)), Some((slo, shi))) => {
             let wlo = lo.max(slo);
             let whi = hi.min(shi);
@@ -371,10 +414,11 @@ fn main() {
         (Some(d), Some(th)) => Some(d <= th),
         _ => None,
     };
-    let riss = match (verdict_sealed, verdict_renewed) {
-        (Some(a), Some(b)) => a != b,
-        _ => false,
-    };
+    let riss = anchor == "riss"
+        || match (verdict_sealed, verdict_renewed) {
+            (Some(a), Some(b)) => a != b,
+            _ => false,
+        };
 
     println!("flyby_ephemeris_gate — JUICE Earth flyby {PERIGEE_UTC}");
     match (perigee_unix, perigee_tdb) {
@@ -390,10 +434,14 @@ fn main() {
         }
     }
     println!(
+        "anchor sealed: constant {SEALED_SHA256} · register {} → {anchor}",
+        sha_label(sealed_pin.as_deref())
+    );
+    println!(
         "trajectory sealed: sha256 {} — seal {} → {}",
         sha_label(sealed_sha.as_deref()),
-        SEALED_SHA256,
-        seal_word(sealed_sha.as_deref(), Some(SEALED_SHA256))
+        seal_expected,
+        seal_word(sealed_sha.as_deref(), Some(seal_expected))
     );
     println!(
         "trajectory renewed: sha256 {} — seal {} → {}",
@@ -434,6 +482,8 @@ fn main() {
         window_days,
         step_hours,
         sealed_sha.as_deref(),
+        sealed_pin.as_deref(),
+        anchor,
         renewed_sha.as_deref(),
         recon_sha.as_deref(),
         delta_sealed,
@@ -454,5 +504,41 @@ fn main() {
             eprintln!("register write void ({register_path}): {e}");
             std::process::exit(2);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const PIN: &str = "aeb3c82ff3de672116ff7f8c28592d97ea05c5e78b8f652521d2cf3cae57488a";
+
+    fn snippet(sha: &str) -> String {
+        format!(
+            "url https://example.com/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_official.bin\n\
+             terms PD-USGov https://ssd.jpl.nasa.gov/\n\
+             format ephemeris_binary\n\
+             sha256 {sha}\n\
+             at juice\n\
+             no-cadence\n"
+        )
+    }
+
+    #[test]
+    fn register_pin_reads_the_pinned_post() {
+        assert_eq!(register_pin(&snippet(PIN), SEALED_ASSET), Some(PIN.to_string()));
+    }
+
+    #[test]
+    fn register_pin_ignores_other_assets() {
+        let other = "url https://example.com/ephemeris_juice.bin\nterms PD-USGov https://ssd.jpl.nasa.gov/\nformat ephemeris_binary\nsha256 1111111111111111111111111111111111111111111111111111111111111111\nat juice\nno-cadence\n";
+        assert_eq!(register_pin(other, SEALED_ASSET), None);
+    }
+
+    #[test]
+    fn anchor_is_pending_without_a_pin_and_riss_on_disagreement() {
+        assert_eq!(anchor_word(None, PIN), "pending");
+        assert_eq!(anchor_word(Some(PIN), PIN), "placed");
+        assert_eq!(anchor_word(Some("0000"), PIN), "riss");
     }
 }

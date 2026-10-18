@@ -1,0 +1,35 @@
+# Störungs-Experiment — Übernahme geprüft, River-Schritt ist gebaut (2026-10-18, river)
+# Post: $OMEGAFLOW_WORK/post/in/2026-10-18-sensory-an-river-stoerungs-experiment.md
+#   Token xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.17~156a9200
+#   Braucht: „Übernahme als eigener Punkt; das Doc ist Messbeleg, kein Träger."
+# Doc: docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md §5
+
+# ============================================================
+# GEMESSEN (2026-10-18, am Beleg — nicht neu gefetcht)
+# ============================================================
+#   Der River-Schritt ist im Doc selbst als „gebaut + gemessen (2026-10-11)" geführt:
+#     Lauf 38119733631 · Job matrix-newell-omni: abgeleiteter Newell-dΦ/dt-OMNI-Arm gegen
+#       intermagnet_dbdt = silent (TE 4.5969e-3, p 1.0, bias off_table; Δ 86400 s, n 944,
+#       n_eff 42.9) — kein gemessener Kopplungspfad auf dieser Skala.
+#     Lauf 38119733631 · Job matrix-vlies: 15/15 Arme, 210/210 Zellen; die n=0-Zellen sind
+#       alle `alignment pending` — SWPC/RTSW-Kurzreihen decken nur ein kurzes Fenster
+#       (OMNI-Archiv endet 2026-10-05), kein Code-Defekt.
+#   Die 8 Kanäle stehen im Doc §5 benannt (RTSW/SWPC · EVE 1032/131 · QBO qbo_30hpa ·
+#   D20 d20_thermocline · Kp magnetosphere_kp_3h · Swarm HAPI · EEG ds007822/ds007471 ·
+#   Newell dΦ/dt) und sind in der Matrix.
+
+# ============================================================
+# ENTSCHEID
+# ============================================================
+#   Kein neuer offener River-Punkt: der übernommene Schritt ist nicht offen, er ist gemessen.
+#   Die verbleibenden `alignment pending`-Zellen sind ein Datenfenster (Mountain: längere
+#   Reihen; Mycelium: Ernte/Transport), keine River-Arbeit. Ein Punkt, der nur „übernommen"
+#   werden soll, würde das Handover wachsen lassen, ohne dass ein Schritt fehlt.
+#   Der Brief bleibt als Messbeleg adressiert; der Doc bleibt Träger (§5), nicht die Übergabe.
+
+# ============================================================
+# OFFEN — nicht River
+# ============================================================
+#   Mountain/Mycelium: die n=0-Zellen brauchen die mehrjährigen Reihen (das OMNI-Archiv
+#   endet 2026-10-05). Sobald sie liegen, ist matrix-vlies vollständig.
+#   Sensory: Token .17 kann mit diesem Beleg (Commit) geschlossen werden.
