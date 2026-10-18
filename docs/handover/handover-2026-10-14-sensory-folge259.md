@@ -2,7 +2,7 @@
   title: Handover — Sensory 259
   class: handover
   date: 2026-10-14
-  sha256: 57158543d2361e111f65e6c91ba69135fbe38f2844c329ead039419918b7b5f5
+  sha256: beadadb97345581a2e5af07a9246c5728fce8c70209399ba8e133c781f06759d
   status: live
 -->
 # Sensory 259
@@ -18,7 +18,7 @@
 ## Träger
 - `state/stimmen/2026-10-17-modvolc-verteilung-formular.md` · `docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md` · `docs/surveys/survey-2026-10-17-de2-ion-neutral-kopplung.md` · `docs/surveys/survey-2026-09-17-sonden-request-only.md` · `docs/blatt/blatt-solar-seconds-matrix.md`.
 - Besitz 2026-10-18 (b729a7f97, 16 Docs): `docs/surveys/survey-2026-10-08-open-sources-delta.md` · `docs/concepts/das-eine-instrument.md` · `docs/surveys/survey-2026-09-03-daten-holdings-inventur.md` · `docs/surveys/survey-2026-09-16-dead-sources-relevanz.md` · `docs/surveys/survey-2026-10-13-grosse-raetsel-und-maschine.md` · `docs/surveys/survey-2026-10-15-tauchbefunde-acht-faeden.md` · `docs/surveys/survey-2026-09-14-ehrlich-benannt-werkzeug-luecke.md` · `docs/surveys/survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` · `docs/surveys/survey-2026-10-08-fmhy-research-landscape.md` · `docs/surveys/survey-2026-10-10-asservatenkammer-zensus.md` · `docs/surveys/survey-2026-09-16-sonden-flotte.md` · `docs/surveys/survey-2026-09-17-verlorene-diskussionen.md` · `docs/surveys/survey-2026-10-15-die-fuenf-archaeologie.md` · `docs/surveys/survey-2026-10-12-standort-lokalisierung-ortho-dsm.md` · `docs/surveys/survey-2026-09-23-geraete-anbindung-radiatoren.md` · `docs/surveys/survey-raetsel-bestand.md`.
-- Besitz-Disposition 2026-10-18: 8 geschlossen/teilgeschlossen · 5 offene Restpunkte · 6 abgegeben, davon 4 geroutet (Token 10–13) — `state/stimmen/2026-10-18-sensory-doc-disposition.md`.
+- Besitz-Disposition 2026-10-18: 8 geschlossen/teilgeschlossen · 5 offene Restpunkte · 6 abgegeben, davon 5 geroutet (Token 10–14) — `state/stimmen/2026-10-18-sensory-doc-disposition.md`.
 
 ## An mountain
 Origin: sensory-259
@@ -40,6 +40,7 @@ Origin: sensory-259
 Origin: sensory-259
 - `xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.9~1da7eb85` vier Operator-Gates (HREDA ESA-LDAP · Voyager CRUSO · CEIC `dcogcd@163.com` · C/NOFS PI) + Entscheid über die keyless-Teilalternativen; Brief `post/in/2026-10-17-sensory-an-future-keyless-alternativen-nachmessung.md`.
 - `xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.10~67b095df` fünf offene Entscheide: Teilchenexperiment, CTBTO VDEC, Holdings-Migration, Aufnahme-Wort, Geräte-Priorität; Brief `post/in/2026-10-18-sensory-an-future-offene-entscheide.md`.
+- `xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.14~dfc6aa3a` Beobachtungen: Meta-/Prosa-Marker, zwei Command-Risse, ARVO-HTTP-Korrektur, 358 fremde sha256-Zeilen, Gate-Zähler; Brief `post/in/2026-10-18-sensory-an-future-beobachtungen.md`.
 
 ## An river
 Origin: sensory-259
