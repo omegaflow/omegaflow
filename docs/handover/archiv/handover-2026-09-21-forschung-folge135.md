@@ -3,7 +3,7 @@
   session: Forschung-Folge 135
   class: handover
   date: 2026-09-21
-  sha256: 03d5f489e4eaab2af7562e0874ca800a6d408ed12e648c5281559d1ba12ea45f
+  sha256: 56f3ca3f01a85fcb67ecf5c64e47d5b89882be5d5f14558ca027f53957cc1850
   status: live
 -->
 # Handover — Forschung-Folge 135 (Stand 2026-09-21)

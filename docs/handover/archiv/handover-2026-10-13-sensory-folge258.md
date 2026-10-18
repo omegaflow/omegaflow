@@ -3,7 +3,7 @@
   session: Sensory-Folge 258
   class: handover
   date: 2026-10-13
-  sha256: 313f50853e22dc51cd0dc8bc5f305936e8563df90f7d68c78c27c6af308c240e
+  sha256: 9bb0b093ef15323c2604a5c2be4718a4901b950e9789db726b7919c256a679e0
   status: live
 -->
 # Handover — Sensory-Folge 258 (2026-10-13)

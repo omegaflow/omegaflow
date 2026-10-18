@@ -3,7 +3,7 @@
   session: Mycelium-Linie — Meta-Pass in einem Atom; API-Modell-Test, Stehender Pass
   class: handover
   date: 2026-10-06
-  sha256: 29fa35b21e26feec54092f63898d1f2defda6e5b4fd3af76c6e6505bf2b22841
+  sha256: d755a403e6f597bd6aaa376d0c7366a276b4492a5e7854195da250ef3499d8a9
   status: live
 -->
 # Handover — Mycelium-Folge 244 (2026-10-06)

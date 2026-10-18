@@ -2,7 +2,7 @@
   title: Daten-Holdings-Inventur (Teil B) — was existiert, wo, was gehört wohin
   class: survey
   date: 2026-09-03
-  sha256: af62c5dab6818f27930c88dcc5853734566972f89b134fe2feae3aeda2e8d338
+  sha256: 141705c5ccdc0b65ce02171f55341aecd73c4b5cb49d0053956c36a190b61a43
   status: live
   see-also: AGENTS.md (The Cache Ablage), docs/specs/ref-phi-register.md docs/specs/ref-auth-apis.md 
 -->

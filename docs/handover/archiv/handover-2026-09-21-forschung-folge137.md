@@ -3,7 +3,7 @@
   session: Forschung-Folge 137
   class: handover
   date: 2026-09-21
-  sha256: 63784e55e9a249b32562d6591fa6de7064991f5bf08f4e1012faad8eafd9aa6f
+  sha256: 09a2ca87603502e2c43c1d2083dd8451a157a2a3d24e3b9618385f0f583f270f
   status: live
 -->
 # Handover — Forschung-Folge 137 (Stand 2026-09-21)

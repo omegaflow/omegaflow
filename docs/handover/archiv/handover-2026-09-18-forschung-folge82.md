@@ -3,7 +3,7 @@
   session: Forschung-Folge 82
   class: handover
   date: 2026-09-18
-  sha256: 31a7235160a985248278eddacba0e430fe5b429d6c6c6b9cd046aab452771cf8
+  sha256: 785d614c5b33060cdfa3a75d049d897a18fcddaed24b4b0ea464dc5b8398e73c
   status: live
 -->
 # Handover — Forschung-Folge 82 (2026-09-18)

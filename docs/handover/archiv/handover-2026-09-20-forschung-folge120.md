@@ -3,7 +3,7 @@
   session: Forschung-Folge 120
   class: handover
   date: 2026-09-20
-  sha256: 9040ebede0f64b39f5622a969d57362947b82e325c36f18ca201129fd426462d
+  sha256: 701ebded71990dafc7043be42c06b644c7cf025c7b6d97fd13187fc0ce53cc65
   status: live
 -->
 # Handover — Forschung-Folge 120 (2026-09-20)

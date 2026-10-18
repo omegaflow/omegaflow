@@ -3,7 +3,7 @@
   session: Sensory-Folge 183
   class: handover
   date: 2026-09-27
-  sha256: f3d667ce153a4c19604e7f792d766579a0a98fc30c2b6f7f1606ba5141e056b6
+  sha256: 1bfbe4a7a1ca6094064ffc62ce6af5b9e9ad6ca6d062ae4d03fcd56efdcea236
   status: live
 -->
 # Handover — Sensory-Folge 183 (2026-09-27)

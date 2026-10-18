@@ -3,7 +3,7 @@
   session: Ernte-Folge 35
   class: handover
   date: 2026-09-15
-  sha256: 65c52063167824a6f7b5b572f471ef2302d3e662a23a992f3081155910afb8ed
+  sha256: 2fed209628aff9ca309d1781eb57205ca955a7c5e80411ea11dc366b94e94383
   status: live
 -->
 # Handover — Ernte-Folge 35 (2026-09-15)

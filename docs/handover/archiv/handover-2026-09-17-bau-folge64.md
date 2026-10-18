@@ -3,7 +3,7 @@
   session: Bau-Folge 64
   class: handover
   date: 2026-09-17
-  sha256: f2b1838a54cb5ce455fc6e298410e7ecfb38957a1a05353969a8293b27671d09
+  sha256: c3e9dc74ffbabea23945fa436be0982d9da992b322e6f53b9c90f0b2cc2be8b7
   status: live
 -->
 # Handover — Bau-Folge 64 (2026-09-17)

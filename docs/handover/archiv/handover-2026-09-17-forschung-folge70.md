@@ -3,7 +3,7 @@
   session: Forschung-Folge 70
   class: handover
   date: 2026-09-17
-  sha256: b098fe433ca0b7a0da442517926171fde002223174beddc5676fbb91b31e7a34
+  sha256: 6aba309cc80c0ac01c99947430cda442d3d7b0d3a16e3df168cf5df75e8296ba
   status: live
 -->
 # Handover — Forschung-Folge 70 (2026-09-17)

@@ -2,7 +2,7 @@
   title: Lageplan — wo was liegt (eine Seite, geladen statt gesucht)
   class: concept
   date: 2026-10-16
-  sha256: 762bcd408c8e10fb66175e108ff7dcfa3dd7488ba9b4e3dcdf8ee9a3b1999ddc
+  sha256: 6362b7902cc509d715cc106564b204f82f299aa1f4dc5f8eda15f914f81f28b6
   status: live
   see-also: AGENTS.md docs/concepts/house-rules.md docs/concepts/tools-map.md
 -->

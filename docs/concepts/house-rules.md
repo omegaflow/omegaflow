@@ -2,7 +2,7 @@
   title: House Rules — die Essenz (was gilt)
   class: concept
   date: 2026-10-16
-  sha256: 08e1d30748661c847a3c864222a6768028be54572b47674826476e14fa1c70ff
+  sha256: 23d2375cf12cc79a10c9c479e0dccc899645d9c8f309352197bc3a6d84d17a95
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md
 -->

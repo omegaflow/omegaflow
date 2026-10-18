@@ -2,7 +2,7 @@
   title: Survey — Tauchbefunde der acht Fäden (2026-10-15)
   class: survey
   date: 2026-10-15
-  sha256: c16929573be62352d3e61af93a2099a6797392aaee6a858cb9eee42b177ae10a
+  sha256: 6db5fc74c93b1d5663aa1d39e550d098140b23a994fb4f097f6e9ab50c573f38
   status: live
   see-also: docs/surveys/survey-2026-10-15-raetsel-matrix-korrektur.md docs/handover/archiv/handover-2026-10-15-mycelium-folge359.md
 -->

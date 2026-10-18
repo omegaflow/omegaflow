@@ -3,7 +3,7 @@
   session: Forschung-Folge 98
   class: handover
   date: 2026-09-19
-  sha256: 31217a33d0440ab599478147a2117a437a97b70c13dfa1a06274a45e30fc66cd
+  sha256: 776be6bbfe1e9b8f7db8a101b073f5bc54ec69430606bb89ab3c0cb30db27139
   status: live
 -->
 # Handover — Forschung-Folge 98 (2026-09-19)

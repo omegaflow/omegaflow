@@ -3,7 +3,7 @@
   session: Forschung-Folge 133
   class: handover
   date: 2026-09-21
-  sha256: 97ee04f08223aea05650a45984063849fdbe7d5b729689595d01cdd0a873cded
+  sha256: fe2ab1946134576ecd3f710acbaf3d6c78c15b657fdd42b60bebbacf38e68a98
   status: live
 -->
 # Handover — Forschung-Folge 133 (Stand 2026-09-21)

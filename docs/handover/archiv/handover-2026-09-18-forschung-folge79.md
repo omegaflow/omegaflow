@@ -3,7 +3,7 @@
   session: Forschung-Folge 79
   class: handover
   date: 2026-09-18
-  sha256: 4c863303720b0d54f77f68617e48deeef964b19a2a0cb7c2d60e01658d14626f
+  sha256: a3ea8ebe392f1314b2ccf76311b26ae494e95090f2519f3b2cacbbbbf295da4f
   status: live
 -->
 # Handover — Forschung-Folge 79 (2026-09-18)
