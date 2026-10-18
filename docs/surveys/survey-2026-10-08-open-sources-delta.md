@@ -2,7 +2,7 @@
   title: Survey — Gegen-Audit: Quellen-Delta zum Open-Sources-Audit (2026-10-08)
   class: survey
   date: 2026-10-08
-  sha256: 6a25649fb252b0186bb6c642d23e38d9872ec557c7bea872e13b3d84a4f36bcb
+  sha256: c7eb6aa3c94c8119a14489595b13d3696635c36f54eee69317ab9639c4799aba
   status: live
   see-also: state/future/open-sources-audit-2026-10-08.md docs/concepts/tools-map.md docs/SOURCE_PORT.md
 -->
@@ -83,7 +83,7 @@ GEBCO · `occupation_data` · `opendata.cern` · Zenodo XENONnT/LZ · `super-k` 
 | ESA Swarm dissemination | `swarm-diss.eo.esa.int/` | 200 |
 | GIRO / DIDBase | `ulcar.uml.edu/DIDBase/` | 200 |
 | OMNIWeb | `omniweb.gsfc.nasa.gov/` | 200 |
-| CSES official | `www.cses.ac.cn` | SSL abgelaufen (pending) |
+| CSES official | `www.cses.ac.cn` | TLS abgelaufen, aber **Route lebt**: `--jina` **200** (首页), `curl -k` **200/64 942 B**; HTTP **468** (WAF) |
 | DEMETER (CNES info) | `cnes.fr/projets/demeter` | 200 (Daten order/login) |
 
 ### IX · FRB
