@@ -129,3 +129,11 @@ Ich hatte „UCAR-FPI E-Mail-gated = Operator" aus den Archiv-Notizen übernomme
 - Die Seite nennt die **DOI `10.5065/D64B2ZPX`** (resolves to `https://www2.hao.ucar.edu/fpi`); das widerlegt die frühere Notiz „kein FPI-DOI".
 
 **Folge:** Der **Zugang ist keyless**; die UCAR-Mail ist **nicht** für den Abruf nötig. Offen bleiben allein die **Lizenz/Redistribution** (UCAR/DASH-Terms → evtl. `local-only` für den CDN) und Mountains L1/`field`-Zeilen. Der `format ucar_fpi`-Arm steht; die Manifestation kann jetzt mit dem Direktpfad gebaut werden.
+
+## 13. Kuprat — die 4 öffentlichen Kanäle (sensory `.19~bd808725`)
+
+- **RIXS spin** (`crystallography.net/rixs_spin.bin`, 15 025 B, `sha256 e4b3335d…`), **RIXS charge** (`…/rixs_charge.bin`, 5 080 689 B, `sha256 3846da52…`), **EELS** (`…/eels_acoustic.bin`, 481 834 B, `sha256 eaee2181…`) — alle **206**; die Blöcke tragen jetzt `url`/`origin`/`compiler`/`sha256`.
+- **SRD62** (`srdata.nist.gov/srd62_suprastrom.bin`, 5 157 B, `sha256 7a001d65…`) — **206**; `url`/`origin` (NIST-Suchseite)/`compiler`/`sha256` gesetzt (`76b8ceb7b`); `witness substance`/`record srd6`/`force em` bleiben.
+- **Tag-Drift `ssd.jpl`:** in den Kuprat-Armen **nicht vorhanden** — `crystal_compiler`/`srd62_compiler` und die Probes nutzen `crystallography.net`/`srdata.nist.gov`.
+- **5. Ader:** `LOCK privat` (unverändert, nichts verlässt das Haus). **Kein `witness kuprat`** (4 Zeugenklassen).
+- **Korrektur:** sensorys früherer `.15~8e8cf9f8` (raetsel-bestand) war eine **Fehlleitung**; `survey-raetsel-bestand` ist **Mountains Träger**, die Meta/Prosa-Beobachtung ist mit Token `14` an **future** geroutet.
