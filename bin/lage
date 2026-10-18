@@ -34,10 +34,6 @@ line_rows=$(for line in mountain mycelium river sensory future; do
   printf '  %-9s %2s offen · %2s Braucht · %2s offene Traeger · %s (Pass %s seit %s · Commit %s)\n' "$line" "$n" "$b" "$c" "$(basename "$h")" "${nfolge:-?}" "${d:-?}" "$(hage "$h")"
 done)
 
-drafts=$(for f in $(grep -rl 'status: draft' docs/ state/ 2>/dev/null | sort); do
-  printf '  %-64s %s\n' "$f" "$(hage "$f")"
-done)
-
 {
   echo "# Lage — generiert $ts"
   echo
@@ -55,13 +51,6 @@ done)
   echo "## Offen je Linie (Handover)"
   if [ -n "$line_rows" ]; then
     echo "$line_rows"
-  else
-    echo "  (keine)"
-  fi
-  echo
-  echo "## Entwürfe (status: draft — die offenen Fäden, nicht nur Belege)"
-  if [ -n "$drafts" ]; then
-    echo "$drafts"
   else
     echo "  (keine)"
   fi
