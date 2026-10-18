@@ -2,7 +2,7 @@
   title: Handover — Mountain 363 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: b84540b4d6e98c7732434cccce4af27be6d7191ccfc610f5c253b77dc4fb94d6
+  sha256: 32e6d5cff2c0b716b2486c450be3784a20b19a3f6987f1ab28773ac26e8da2d4
   status: live
 -->
 # Mountain-363
@@ -15,6 +15,7 @@
 - `docs/surveys/survey-2026-10-15-tauchbefunde-acht-faeden.md`
 - `docs/surveys/survey-2026-10-15-die-fuenf-archaeologie.md`
 - `docs/surveys/survey-2026-09-17-verlorene-diskussionen.md`
+- `docs/surveys/survey-raetsel-bestand.md`
 
 ## Offen — eigen
 
