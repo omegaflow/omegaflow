@@ -30,3 +30,7 @@ benannt, bis die Reihenfolge steht.
 - F3 braucht tragende Sitze: Quorum-Stabilisator + Lastpfad-Kopplung (openrouter nennt Sitz 12/19).
 - nano timeout · pollinations 402 · groq/xingchen unklar.
 - Bestätigt: F3 bleibt mit 2:3 unentscheidbar; die Reihenfolge hängt an F3.
+
+## UI-Sitze (Fugu Max High, 2026-10-18)
+- **Kein Verdikt** — „Ich kenne die Regeln/das Abstimmungsprotokoll der River-Triade nicht; ich erfinde keines."
+- **Folge:** die R-l-Frage ist für den Sitz nicht selbsttragend — sie muss den Regel-Kontext nennen (was F1/F2/F3, WGLC-Gitter, Apertur Schritt 3 inhaltlich sind), nicht nur die Stimmzahlen.
