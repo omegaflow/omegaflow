@@ -33,6 +33,7 @@ sie sagt **wo das Verdikt liegt** und **wer es bekommt** — nicht, was entschie
 | R-2026-10-17-j | 2026-10-17 | **`K` nach der 1981–83-WDC-Ernte identifizierbar?** | Fugu · Lumo · DeepSeek V4 Pro · Kimi K3 · Mistral 4 | **entschieden** (5/5 A) | `2026-10-17-rat-k-identifizierbar.md` | →mountain · →river | — |
 | R-2026-10-17-k | 2026-10-17 | **Native Fläche statt Bastellösungen?** (API/CLI/Features vs. Eigenbau) | Fugu · Lumo · GLM-5.3 · Mistral 4 | **entschieden** (4/4 C) | `2026-10-17-rat-native-flaeche.md` | →future | — |
 | R-2026-10-18-a | 2026-10-18 | **Quittung im Token-Ledger** — Empfänger quittiert im eigenen Ledger statt im fremden (`xfer ack`, `--addressed`-Sicht) | *offen — Operator wählt* | **offen** | `2026-10-18-xfer-quittung-formular.md` | →river (Bau steht, Verdikt offen) | — |
+| R-2026-10-18-b | 2026-10-18 | **GRS80/γ₀-Register** — skalare Referenzkonstanten ohne Parser-Arm: neue Direktive vs. Block vs. local-only; `N` bleibt pending | *offen — Operator wählt* | **offen** | `2026-10-18-grs80-skalar-formular.md` | →future | — |
 
 **Stand-Vokabular:** `offen · entschieden · geroutet · quittiert · verworfen`.
 
