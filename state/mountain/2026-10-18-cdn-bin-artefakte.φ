@@ -15,8 +15,17 @@
 #   **0 Assets** (GitHub-API: kein browser_download_url). Die Zeile ist damit tot; der lokale
 #   Blob ist nicht publiziert. KEIN sha256 gesetzt — ohne publiziertes Asset wäre er eine
 #   Behauptung. Der Riss bleibt benannt, nicht geglättet.
-# Offen (nicht in diesem Pass): Asset `timed_orbit.bin` in das Release legen (Operator/CDN-Akt)
-#   oder die Zeile als absent führen; danach sha256 bf5609e9… setzen.
+# Offen (nicht in diesem Pass): der Upload ist **kein Operator-Akt** — er läuft im Workflow
+#   `.github/workflows/timed-orbit-cdn.yml` (`workflow_dispatch`, `gh release upload celestrak.org`).
+#   GEMESSEN: die letzten zwei Läufe (38947897737, 38877128321; 2026-10-16) scheiterten am
+#   CelesTrak-GP-Abruf („the CelesTrak GP element set returned void"). Am 2026-10-18 neu
+#   dispatcht (39144407096, Mountain/CDN-Duty): wieder `void` im Schritt
+#   „Fetch the TIMED (NORAD 26998) element set"; das Release `celestrak.org` trägt weiter 0 Assets.
+#   Upstream am 2026-10-18: gp.php?CATNR=26998 (mit/ohne FORMAT), celestrak.com und http liefen
+#   alle nach 15–30 s in einen Timeout (HTTP 000). Der Block ist die Erreichbarkeit von CelesTrak,
+#   nicht ein fehlender Handgriff. Nächster Schritt: Workflow erneut dispatchen, sobald der Host
+#   antwortet — oder eine belegte Ausweichroute (Mycelium/Compiler-Entscheid) bauen; danach
+#   `sha256 bf5609e9…` setzen.
 
 # ============================================================
 # 2 — data/weberin_verdicts.bin — CDN 200, sha256 GESETZT
