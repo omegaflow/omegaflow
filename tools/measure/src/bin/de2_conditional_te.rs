@@ -184,16 +184,26 @@ fn main() {
         eprintln!("de2_conditional_te: --bin-seconds must be positive");
         std::process::exit(2);
     }
+    let cond_arg: f64 = parse_arg(&args, "--cond-seconds", 0.0);
+    let cond_s = if cond_arg == 0.0 { bin_s } else { cond_arg };
+    if !(cond_s.is_finite() && cond_s >= bin_s) {
+        eprintln!("de2_conditional_te: --cond-seconds must be finite and >= --bin-seconds");
+        std::process::exit(2);
+    }
     let max_lag: usize = parse_arg(&args, "--max-lag", 3);
     let bins: usize = parse_arg(&args, "--bins", 8);
     let n_surr: usize = parse_arg(&args, "--surr", 50);
 
     let (ion, neutral) = read_de2(&csv, bin_s);
-    let ae_bins = read_ae(&ae, bin_s);
+    let ae_bins = read_ae(&ae, cond_s);
+    let ae_at = |k: i64| -> Option<f64> {
+        let coarse = bin_of(k as f64 * bin_s, cond_s);
+        ae_bins.get(&coarse).copied()
+    };
 
     let mut keys: Vec<i64> = ion
         .keys()
-        .filter(|k| neutral.contains_key(k) && ae_bins.contains_key(k))
+        .filter(|k| neutral.contains_key(*k) && ae_at(**k).is_some())
         .copied()
         .collect();
     keys.sort_unstable();
@@ -208,7 +218,10 @@ fn main() {
 
     let mut nve: Vec<f32> = keys.iter().map(|k| neutral[k] as f32).collect();
     let mut ive: Vec<f32> = keys.iter().map(|k| ion[k] as f32).collect();
-    let ae_series: Vec<f32> = keys.iter().map(|k| ae_bins[k] as f32).collect();
+    let ae_series: Vec<f32> = keys
+        .iter()
+        .map(|k| ae_at(*k).expect("keys were filtered on ae_at") as f32)
+        .collect();
     let mut ae_c: Vec<f32> = ae_series.clone();
     demean(&mut nve);
     demean(&mut ive);
@@ -226,9 +239,10 @@ fn main() {
     );
 
     println!(
-        "de2_conditional_te: n={} bin={}s span={} segments={} gap_median={}s gap_max={}s bins={} surr={} null=Arx est=Binned seed={:#x}",
+        "de2_conditional_te: n={} bin={}s cond_bin={}s span={} segments={} gap_median={}s gap_max={}s bins={} surr={} null=Arx est=Binned seed={:#x}",
         keys.len(),
         bin_s,
+        cond_s,
         span,
         segments,
         gap_median as f64 * bin_s,
@@ -243,7 +257,7 @@ fn main() {
         lag: 0,
     }];
     let empty: [LaggedCond; 0] = [];
-    let mut any_pass = false;
+    let mut any_cond_pass = false;
 
     for lag in 1..=max_lag {
         for (label, driver, target) in [("NVE->IVE", &nve, &ive), ("IVE->NVE", &ive, &nve)] {
@@ -275,34 +289,41 @@ fn main() {
                     null: TeNull::Arx,
                 },
             );
-            let mut fmt = |obs: Option<f64>, st: Option<(f64, f64, f64)>| match (obs, st) {
-                (Some(o), Some((m, sd, thr))) => {
-                    let pass = o > thr;
-                    any_pass |= pass;
-                    format!(
-                        "te={o:+.6} null_mean={m:+.6} null_sd={sd:.6} thr={thr:+.6} pass={}",
-                        if pass { "yes" } else { "no" }
-                    )
+            let fmt = |obs: Option<f64>, st: Option<(f64, f64, f64)>| -> (String, bool) {
+                match (obs, st) {
+                    (Some(o), Some((m, sd, thr))) => {
+                        let pass = o > thr;
+                        (
+                            format!(
+                                "te={o:+.6} null_mean={m:+.6} null_sd={sd:.6} thr={thr:+.6} pass={}",
+                                if pass { "yes" } else { "no" }
+                            ),
+                            pass,
+                        )
+                    }
+                    _ => ("te=absent".to_string(), false),
                 }
-                _ => "te=absent".to_string(),
             };
+            let (cond_line, cond_pass) = fmt(obs_cond, stats_cond);
+            any_cond_pass |= cond_pass;
+            let (raw_line, _) = fmt(obs_raw, stats_raw);
             println!(
                 "LAG {:>5}s {:>8} cond[AE]: {}",
                 lag as f64 * bin_s,
                 label,
-                fmt(obs_cond, stats_cond)
+                cond_line
             );
             println!(
                 "LAG {:>5}s {:>8} raw     : {}",
                 lag as f64 * bin_s,
                 label,
-                fmt(obs_raw, stats_raw)
+                raw_line
             );
         }
     }
 
     println!(
         "de2_conditional_te: any conditioned lag above the ARX null: {}",
-        if any_pass { "yes" } else { "no" }
+        if any_cond_pass { "yes" } else { "no" }
     );
 }
