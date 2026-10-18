@@ -3,7 +3,7 @@
   class: handover
   date: 2026-10-17
   sha256: 2a5f9d66d3cfded8bc6f9f95d3ddb84b1cae2192e90bc9f3c424245b055dfd6c
-  status: live
+  status: consumed
 -->
 # Mountain-359
 
