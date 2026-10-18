@@ -2,7 +2,7 @@
   title: Handover — Mycelium (2026-10-16)
   class: handover
   date: 2026-10-17
-  sha256: ad194d51762a3640221d6909da91372336691d8097f66a6a85ce315bd468777e
+  sha256: c837fb294df7f2d469636cbccd46a0d029692fc762d771b137dcf34fbdc9cd75
   status: live
 -->
 # Mycelium (2026-10-16)
