@@ -9860,7 +9860,7 @@ cmap .
 ra RAdeg
 dec DEdeg
 field HRV rave_dr4_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
-field Teff_K rave_dr4_effective_temp_k erfc thermal K 604800 0.0 0.0
+quantity Teff_K rave_dr4_effective_temp_k erfc source-parameter K 604800 0.0 0.0
 
 url https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitude=-155.6&current=carbon_dioxide
 terms CC-BY-4.0 https://open-meteo.com/en/licence
@@ -9943,7 +9943,7 @@ cmap .
 ra ra
 dec dec
 plx parallax
-field teff galah_dr3_effective_temp_k erfc thermal K 604800 0.0 0.0
+quantity teff galah_dr3_effective_temp_k erfc source-parameter K 604800 0.0 0.0
 field rv_galah galah_dr3_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
 
 url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
@@ -9966,7 +9966,7 @@ dec dej2000
 plx parallax
 radvel rv
 rv_scale 1000.0
-field teff_k rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+quantity teff_k rave_teff_k gaussian-inverse-square source-parameter K 604800 0.0 0.0
 field Jmag rave_jmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://eas.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+right_ascension,declination,flux_detection_total+FROM+catalogue.mer_catalogue+WHERE+flux_detection_total+IS+NOT+NULL
@@ -10000,7 +10000,7 @@ ra ra
 dec dec
 dist sy_dist
 dist_scale 3.085677581e16
-field st_teff exo_stellarhost_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+quantity st_teff exo_stellarhost_teff_k gaussian-inverse-square source-parameter K 604800 0.0 0.0
 
 url https://gea.esac.esa.int/tap-server/tap/sync?request=doQuery&lang=adql&format=json&query=SELECT+TOP+500+ra,dec,phot_g_mean_mag,parallax+FROM+gaiadr3.gaia_source+WHERE+non_single_star+>+0+AND+phot_g_mean_mag+<+14
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
@@ -11600,7 +11600,7 @@ pmdec pmdec
 radvel rv
 rv_scale 1000.0
 dist_scale 3.085677581e16
-field teff rave_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+quantity teff rave_teff_k gaussian-inverse-square source-parameter K 604800 0.0 0.0
 field gmag rave_gmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/sdc-serv.usask.ca/superdarn_fitacf.bin
@@ -12088,8 +12088,8 @@ compiler tools/harvest/src/bin/soho_lasco_compiler.rs
 at sun
 ttl 2592000
 field soho_lasco_cme_speed_kms soho_lasco_cme_speed_kms patch-levy advective km/s 2592000 0.0 0.0
-field soho_lasco_cme_width_deg soho_lasco_cme_width_deg patch-levy advective deg 2592000 0.0 0.0
-field soho_lasco_cme_pa_deg soho_lasco_cme_pa_deg patch-levy advective deg 2592000 0.0 0.0
+quantity soho_lasco_cme_width_deg soho_lasco_cme_width_deg patch-levy geometry deg 2592000 0.0 0.0
+quantity soho_lasco_cme_pa_deg soho_lasco_cme_pa_deg patch-levy geometry deg 2592000 0.0 0.0
 field soho_lasco_cme_accel_m_s2 soho_lasco_cme_accel_m_s2 patch-levy advective m/s2 2592000 0.0 0.0
 quantity soho_lasco_cme_mass_g soho_lasco_cme_mass_g patch-levy mass g_mass 2592000 0.0 0.0
 quantity soho_lasco_cme_ke_erg soho_lasco_cme_ke_erg patch-levy energy erg 2592000 0.0 0.0
@@ -28239,7 +28239,7 @@ radvel rv
 rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag corot_vmag gaussian-inverse-square em mag 604800 0.0 0.0
-field teff corot_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+quantity teff corot_teff_k gaussian-inverse-square source-parameter K 604800 0.0 0.0
 quantity logg corot_logg gaussian-inverse-square source-parameter logg 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/cosmicflows_cf4.json
@@ -28394,7 +28394,7 @@ pmdec pmdec
 radvel rv
 rv_scale 1000.0
 dist_scale 3.085677581e16
-field teff polarbase_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+quantity teff polarbase_teff_k gaussian-inverse-square source-parameter K 604800 0.0 0.0
 quantity logg polarbase_logg gaussian-inverse-square source-parameter logg 604800 0.0 0.0
 field mag polarbase_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 
@@ -28514,7 +28514,7 @@ ra ra
 dec dec
 plx plx
 field mag wd_vmag gaussian-inverse-square em mag 604800 0.0 0.0
-field teff wd_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+quantity teff wd_teff_k gaussian-inverse-square source-parameter K 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/topex.ucsd.edu/srtm15_plus_v2.5.5.nc
 terms PD https://opentopography.org/usageterms
@@ -28620,7 +28620,7 @@ pmdec pmdec
 radvel rv
 rv_scale 1000.0
 dist_scale 3.085677581e16
-field teff pastel_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
+quantity teff pastel_teff_k gaussian-inverse-square source-parameter K 604800 0.0 0.0
 quantity logg pastel_logg gaussian-inverse-square source-parameter logg 604800 0.0 0.0
 field mag pastel_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 
@@ -31756,7 +31756,7 @@ at sun
 cmap .
 ra RAJ2000
 dec DEJ2000
-field Teff apogee_dr17_teff_rv gaussian-inverse-square thermal K 604800 0.0 0.0
+quantity Teff apogee_dr17_teff_rv gaussian-inverse-square source-parameter K 604800 0.0 0.0
 field Jmag apogee_dr17_jmag gaussian-inverse-square em mag 604800 0.0 0.0
 field Hmag apogee_dr17_hmag gaussian-inverse-square em mag 604800 0.0 0.0
 field Ksmag apogee_dr17_ksmag gaussian-inverse-square em mag 604800 0.0 0.0
@@ -31798,8 +31798,8 @@ ra RAJ2000
 dec DEJ2000
 radvel HRV
 rv_scale 1000.0
-field Teffs rave_dr6_teffs_sparv gaussian-inverse-square thermal K 604800 0.0 0.0
-field Teffir rave_dr6_teff_irfm gaussian-inverse-square thermal K 604800 0.0 0.0
+quantity Teffs rave_dr6_teffs_sparv gaussian-inverse-square source-parameter K 604800 0.0 0.0
+quantity Teffir rave_dr6_teff_irfm gaussian-inverse-square source-parameter K 604800 0.0 0.0
 
 url https://vizier.cds.unistra.fr/viz-bin/asu-tsv?-source=J/A+A/598/A78&-out.max=623604&-out.all
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
