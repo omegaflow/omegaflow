@@ -98,6 +98,19 @@ fn register_hosts_raw(content: &str) -> BTreeSet<String> {
     hosts
 }
 
+fn raw_cdn_urls(content: &str) -> BTreeSet<String> {
+    let mut out: BTreeSet<String> = BTreeSet::new();
+    for line in content.lines() {
+        if let Some(rest) = line.trim().strip_prefix("url ") {
+            let url = rest.trim();
+            if cdn_tag_from_url(url).is_some() {
+                out.insert(url.to_string());
+            }
+        }
+    }
+    out
+}
+
 fn gh_api_releases() -> Option<String> {
     let out = Command::new("gh")
         .arg("api")
@@ -458,6 +471,12 @@ fn main() {
         };
         canonical_map.insert(s.url.clone(), name);
     }
+    let raw_urls = raw_cdn_urls(&content);
+    for url in &raw_urls {
+        canonical_map
+            .entry(url.clone())
+            .or_insert_with(|| reference_name_from_url(url));
+    }
     let canonical_of = |u: &str| -> String {
         match canonical_map.get(u) {
             Some(n) => n.clone(),
@@ -491,6 +510,15 @@ fn main() {
                     }
                 }
             }
+        }
+    }
+    for url in &raw_urls {
+        if let Some(tag) = cdn_tag_from_url(url) {
+            let (netloc, _) = release_tag_netloc(tag);
+            netloc_of_source
+                .entry(netloc.to_string())
+                .or_default()
+                .insert(url.clone());
         }
     }
 
@@ -844,5 +872,24 @@ no-cadence
         assert_eq!(shard_base("foo_12.bin").as_deref(), Some("foo.bin"));
         assert_eq!(shard_base("plain.fits"), None);
         assert_eq!(shard_base("not.p001x"), None);
+    }
+
+    #[test]
+    fn raw_cdn_urls_binds_blocks_the_parser_drops() {
+        let content = "\
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/a.tif
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 00
+no-cadence
+
+url https://example.com/not-a-cdn.bin
+origin https://example.com/x
+
+origin https://example.com/origin-only
+";
+        let urls = raw_cdn_urls(content);
+        assert_eq!(urls.len(), 1);
+        assert!(urls
+            .contains("https://github.com/omegaflow/sources/releases/download/zenodo.org/a.tif"));
     }
 }
