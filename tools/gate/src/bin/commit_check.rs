@@ -252,7 +252,15 @@ fn open_points_without_braucht(content: &str) -> Vec<String> {
         if hashes > 0 && *kind != 0 {
             continue;
         }
-        let end = sections.get(idx + 1).map(|(_, l, _)| *l).unwrap_or(lines.len());
+        let end = match *kind {
+            0 => sections
+                .iter()
+                .skip(idx + 1)
+                .find(|(k, _, _)| *k == 0)
+                .map(|(_, l, _)| *l)
+                .unwrap_or(lines.len()),
+            _ => sections.get(idx + 1).map(|(_, l, _)| *l).unwrap_or(lines.len()),
+        };
         let has = lines[*line_idx..end]
             .iter()
             .any(|l| l.to_lowercase().contains("braucht"));
