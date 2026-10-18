@@ -82,3 +82,41 @@ Origin: rat-2026-10-18-e
 **Aktion:** 8 Bau/Doku bleiben. Die **5 Entscheidungen** sind weder zurückgebaut noch stillschweigend
 behalten — sie stehen hier **namentlich als offen** (RAT-ID nachreichen oder Rückbau). Kein pauschaler
 Revert: rivers `post_lookup` und mountains `secrets_keys` sind Bau.
+
+## KPI-Nachlese (gemessen 2026-10-18, Operator-Frage: „Hätte es Kimi gebraucht?")
+
+**Echte Kosten je Sitz:**
+
+| Sitz | Kosten | out | reasoning |
+|---|---|---|---|
+| Schwarm (4 frei + Koordinator) | **$0,00** | — | — |
+| Codestral-2508 | **$0,00216** | 212 | 0 |
+| Qwen3-Coder-480B | **$0,00212** | 65 | 0 |
+| **Kimi K2.6** | **$0,01444** | 368 | **2.143** |
+
+**Summe:** $0,0187 (Kimi = 77 % davon).
+
+**Streich-Test:** Eine Stimme trägt, wenn ihr Riss das Verdikt ändert oder stürzt, sobald man ihn streicht.
+
+| Sitz | Rolle | Begründung |
+|---|---|---|
+| **Kimi** | **tragend** | (1) „Nur Syntax — eine Register-Prüfung blockt neue RATs" (Bootstrapping); (2) „Bau- und Architektur-Dateien nicht in einem Commit mischen". Beides sonst niemand. |
+| **Codestral** | bestätigend + Gegenposition | A, aber **Register-Prüfung** — die Kimi widerlegt. Ohne Codestral fehlt die Gegenposition, nicht das Verdikt. |
+| **Qwen** | **negativ** | nur „B", 65 out-Tokens, kein Argument. Entfernen ändert A (2:1) nicht. |
+| **Schwarm** | tragend (Riss) | A + Bootstrapping-Paradox, $0. |
+
+**Der gemessene Test, ob ein billiges Modell Kimi ersetzen kann:** Qwen3-Coder bekam gezielt die
+Fork-Frage („Syntax oder Register?") — und wählte **b (Register)**, also **die falsche Variante**.
+Der Fehlerfall, den Kimi nannte (die neue ID blockiert sich selbst), wurde nicht gesehen.
+→ **Der billige Nachtrag ersetzt das Reasoning-Modell nicht.**
+
+**Der günstigste Weg mit derselben Qualität (gemessen):**
+```
+Schwarm (frei)  +  Codestral ($0,00216)  +  Kimi ($0,01444)   =  $0,0166
+```
+Qwen streichen spart **$0,00212 (11 %)** — mehr nicht. Kimi zu ersetzen ist **nicht** gelungen.
+
+**Die Lehre:** Der Kosten-Treiber ist **Reasoning**, nicht der Token-Preis. Ein Reasoning-Sitz
+verdient sein Geld an **Design-Gabelungen** (hier: wie wird die ID validiert), nicht an breiten Fragen.
+Für die nächste Runde ist die **ungetestete** Hypothese: `deepseek/deepseek-v4-pro` ($0,66/$1,98,
+`#low`) als Reasoning-Sitz — halber Preis von Kimi, gleiche Klasse. **Nicht gemessen, nur benannt.**
