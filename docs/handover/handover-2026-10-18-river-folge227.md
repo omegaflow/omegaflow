@@ -2,7 +2,7 @@
   title: Handover — River-Folge 227 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: 00d5e7ae21f53dd940f78b2afcc45d33abf283f4010be5d941caa3d7b8ea6197
+  sha256: c829269baada65c29dcff69e5d56bd3bd653da5d84ee4ba3eb6836cd47500ec1
   status: live
 -->
 # River-226
@@ -19,10 +19,11 @@
 - **Braucht:** `state/stimmen/2026-10-17-rat-k-identifizierbar.md:1`
 
 ### Rätsel
-- **Status:** eigen
+- **Status:** eigen, unerledigt
 - **Trigger:** Arbeit
 - **Lage:** offen (gemessen 2026-10-18)
-- **Blockade:** arbeits-geb
+- **Blockade:** keine — „arbeits-gebunden“ heißt: keine Entscheidung und keine Zulieferung offen, es fehlt nur Ausführung (Weberin)
+- **Nächster Schritt:** Weberin-Pass über die Große-Rätsel-Kandidatenliste; noch nicht in einen messbaren Einzelschritt geschnitten
 - **Braucht:** `state/river/2026-10-18-pass-offene-punkte.φ:1`
 
 ### Flyby
