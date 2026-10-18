@@ -1,0 +1,44 @@
+cf/@cf/meta/llama-3.2-1b-instruct	OK	verdikte=0	len=26	finish=stop	err=
+cf/@cf/daily-co/phonellm-mini-alpha-2	OK	verdikte=1	len=660	finish=stop	err=
+cf/@cf/aisingapore/gemma-sea-lion-v4-27b-it	OK	verdikte=1	len=376	finish=stop	err=
+cf/@cf/meta/llama-3.3-70b-instruct-fp8-fast	OK	verdikte=1	len=804	finish=stop	err=
+cf/@cf/meta/llama-3.1-8b-instruct-fp8	OK	verdikte=1	len=543	finish=stop	err=
+cf/@cf/meta/llama-4-scout-17b-16e-instruct	OK	verdikte=1	len=1080	finish=stop	err=
+cf/@cf/ibm-granite/granite-4.0-h-micro	OK	verdikte=1	len=1624	finish=stop	err=
+cf/@cf/openai/gpt-oss-20b	OK	verdikte=1	len=1186	finish=stop	err=
+cf/@cf/mistral/mistral-7b-instruct-v0.2-lora	OK	verdikte=0	len=560	finish=stop	err=
+cf/@cf/google/gemma-7b-it-lora	OK	verdikte=1	len=683	finish=stop	err=
+cf/@cf/qwen/qwen2.5-coder-32b-instruct	OK	verdikte=1	len=606	finish=stop	err=
+groq/allam-2-7b	OK	verdikte=1	len=865	finish=stop	err=
+cf/@cf/openai/gpt-oss-120b	OK	verdikte=1	len=1394	finish=stop	err=
+groq/qwen/qwen3.8-27b	OK	verdikte=1	len=1350	finish=stop	err=
+cf/@cf/qwen/qwen3-30b-a3b-fp8	OK	verdikte=1	len=448	finish=stop	err=
+cf/@cf/zai-org/glm-4.7-flash	LEER	verdikte=0	len=0	finish=length	err=
+cf/@cf/qwen/qwq-32b	OK	verdikte=1	len=2968	finish=stop	err=
+kenari/agnes-3-0-flash:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+cf/@cf/meta-llama/llama-2-7b-chat-hf-lora	OK	verdikte=0	len=5927	finish=stop	err=
+kenari/deepseek-v4-1-flash:free	LEER	verdikte=0	len=0	finish=?	err=free-model daily limit reached; the counter resets at 00:00 UTC. Top up from Rp1.000 at https://kenari.id/pay to keep going, or subscribe to raise the limit
+kenari/dots-3-note-preview:free	LEER	verdikte=0	len=0	finish=?	err=free-model daily limit reached; the counter resets at 00:00 UTC. Top up from Rp1.000 at https://kenari.id/pay to keep going, or subscribe to raise the limit
+kenari/agnes-2-5-flash:free	LEER	verdikte=0	len=0	finish=?	err=free-model daily limit reached; the counter resets at 00:00 UTC. Top up from Rp1.000 at https://kenari.id/pay to keep going, or subscribe to raise the limit
+kenari/beam-1-0:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/nemotron-3-nano-omni-30b-a3b-reasoning:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/hy3:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/nemotron-3-super-120b-a12b:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/nemotron-3-ultra-550b-a55b:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kilo/kilo-auto/small	OK	verdikte=1	len=688	finish=stop	err=
+llm7/minimax-m2.7	LEER	verdikte=0	len=0	finish=?	err=Rate limit exceeded. Retry after 1 seconds.
+llm7/codestral-latest	OK	verdikte=1	len=493	finish=stop	err=
+ollama/gemma4:31b	OK	verdikte=1	len=331	finish=stop	err=
+openrouter/nvidia/nemotron-3-ultra-550b-a55b:free	LEER	verdikte=0	len=0	finish=?	err=openrouter is a billed route — the operator's word is required (name the route in $OMEGAFLOW_WORK/post/paid-open, e.g. `mistral`, or set OMEGAFLOW_PAID=mistral)
+openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free	LEER	verdikte=0	len=0	finish=?	err=openrouter is a billed route — the operator's word is required (name the route in $OMEGAFLOW_WORK/post/paid-open, e.g. `mistral`, or set OMEGAFLOW_PAID=mistral)
+openrouter/xingchen-agi/xing4.0-29b-a4b:free	LEER	verdikte=0	len=0	finish=?	err=openrouter is a billed route — the operator's word is required (name the route in $OMEGAFLOW_WORK/post/paid-open, e.g. `mistral`, or set OMEGAFLOW_PAID=mistral)
+openrouter/poolside/laguna-s-2.1:free	LEER	verdikte=0	len=0	finish=?	err=openrouter is a billed route — the operator's word is required (name the route in $OMEGAFLOW_WORK/post/paid-open, e.g. `mistral`, or set OMEGAFLOW_PAID=mistral)
+llm7/DeepSeek-V4-Flash-0731	LEER	verdikte=0	len=0	finish=length	err=
+llm7/mistral-Nemo-Instruct-2407	OK	verdikte=1	len=672	finish=stop	err=
+ovh/Mistral-Small-3.2-24B-Instruct-2506	OK	verdikte=1	len=482	finish=stop	err=
+ovh/Qwen2.5-VL-72B-Instruct	OK	verdikte=1	len=343	finish=stop	err=
+ovh/Mistral-Nemo-Instruct-2407	OK	verdikte=1	len=303	finish=stop	err=
+kenari/space-bunny:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+pollinations/openai-fast	OK	verdikte=1	len=1696	finish=stop	err=
+kenari/step-5-preview:free	LEER	verdikte=0	len=0	finish=?	err=free-model daily limit reached; the counter resets at 00:00 UTC. Top up from Rp1.000 at https://kenari.id/pay to keep going, or subscribe to raise the limit
+ovh/Meta-Llama-3_3-70B-Instruct	OK	verdikte=1	len=1024	finish=stop	err=
