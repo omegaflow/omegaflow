@@ -2,7 +2,7 @@
   title: Survey — DE-2 Ion↔Neutral-Kopplung (erste Messung)
   class: survey
   date: 2026-10-17
-  sha256: 9a16d8da387966d95bcb2fd8851af5b97e3b5a9b42f02d0579a0d76afe1a701f
+  sha256: 4f1514941bf8c375a3f8e8efb538fe07043727223c88e4b0831dd06294381a23
   status: done
   see-also: docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md
 -->
@@ -76,9 +76,11 @@ dichtere Paarung entsteht — ohne Shell, ohne `awk`:
 `idm_250ms_1981227T0344.asc` (3 Records, 32 + 1 + 32 Paare) aus den CDAWeb-Dateien.
 `cargo test --lib de2_raw` → **4 passed**; `cargo check` grün.
 
-**Grenze:** gebaut ist der **Parser**, nicht die Paarung. Die 2-s/250-ms-Zeitreihe ist
-noch nicht über den vollen Rohbestand gefahren; die unten gezeigten Zahlen bleiben die
-**16-s-HAPI-Paarung**.
+**Paarung gebaut und gefahren (2026-10-18):** `tools/harvest/src/bin/de2_pair.rs` paart
+WATS-2-s- und IDM-250-ms-Records über `yyddd_unix_ms` (max |dt| 1500 ms). Lauf auf
+1981-229 (WATS + IDM T0807): 3494 WATS-Records, 60 IDM-Records/977 Samples, **763 Paare**,
+mean |dt| 573,8 ms. Der **volle** Rohbestand ist noch nicht durchgelaufen; die TE-Zahlen
+unten bleiben die **16-s-HAPI-Paarung**.
 
 ## Kausalitätstest (gemessen, 2026-10-18)
 
