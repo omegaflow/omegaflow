@@ -225,3 +225,10 @@ Compiler `tools/harvest/src/bin/ace_rtsw_compiler.rs`: monatsweise CDAWeb-CSV �
 ## 19. CelesTrak TIMED — Ausweichroute belegt (2026-10-19)
 
 Der Block `celestrak.org/timed_orbit.bin` war **404**: das Release-Tag existierte, trug 0 Assets; der Upstream `gp.php?CATNR=26998` lief in Timeouts (**HTTP 000**, 30 s). Belegte Ausweichroute: `https://tle.ivanstanojevic.me/api/tle/26998` → **200, 0,8 s**, `line1`/`line2`, TLE-Epoche `26291.37163704`. Der Workflow `timed-orbit-cdn.yml` holt jetzt das Mirror-JSON und schreibt per `jq` die zwei TLE-Zeilen nach `data/celestrak.org/timed.gp`; der Compiler bleibt unverändert (TLE-Text). Asset: **1 441 Records**, 80 704 B, `sha256 31b3f9b3…`, CDN **206**. Lizenz: `free-open` / CelesTrak Usage Policy (Upstream), Mirror als Relay; **kein Login, kein Konto**. Der Pin bleibt stabil, weil die Idempotenz-Stufe den vorhandenen Blob nicht überschreibt. Die alte lokale Datei (`bf5609e9…`, TLE 26287) ist durch die neue Epoche ersetzt.
+
+## 20. Haus ist non-commercial — NC-Arme im Scope (2026-10-19)
+
+Operator-Entscheid: Das Haus arbeitet **non-commercial**. Damit sind die NC-Terme der bereits registrierten Arme **im Scope**, kein „commercial decline":
+- **INTERMAGNET** `CC-BY-NC-4.0`, **NMDB** `nmdb-non-commercial`, **GIRO** `CC-BY-NC-SA-4.0`, **ESA ESDC** `CC-BY-NC-3.0-IGO`, **Ocean Networks Canada** `onc-open`, **Columbia/GCMT** `columbia-research-noncommercial`.
+
+**Pflichten bleiben:** Namensnennung, keine kommerzielle Weiterverwendung, bei GIRO **Share-Alike** für Ableitungen. Die `terms`-Zeilen bleiben unverändert; die CDN-Assets sind für den NC-Betrieb zulässig. Verbleibende echte Blocker: **CSES-01** (Registrierung), **WWLLN** (offline/Kosten), **RESEDA/BaZrO3** und **Kuprat 5. Ader** (Operator/privat). **Conicus/TGF-3/REACH/EDGES** sind Produkt-/Modellfragen, keine Lizenz.
