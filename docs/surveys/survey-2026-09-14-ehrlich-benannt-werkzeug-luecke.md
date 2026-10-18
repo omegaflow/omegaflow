@@ -3,7 +3,7 @@
   class: survey
   date: 2026-09-14
   sha256: 4aab5b37a0e4d70f38806978ece6f7b5eb2950dd64940d0b3752147f1be14811
-  status: live
+  status: done
   see-also: docs/specs/ref-auth-apis.md docs/concepts/archiv/docs-naming.md
 -->
 # Ehrlich benannt — wo das Werkzeug fehlte (Stand 2026-09-14)

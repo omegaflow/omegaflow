@@ -3,7 +3,7 @@
   class: survey
   date: 2026-10-08
   sha256: e2eb1bd0541020dcad083dcb0a7de09f6b9104ed802d4a21b151f02c717ce1e8
-  status: live
+  status: done
   see-also: state/future/open-sources-audit-2026-10-08.md docs/concepts/tools-map.md docs/SOURCE_PORT.md
 -->
 # Survey — Gegen-Audit: Quellen-Delta
