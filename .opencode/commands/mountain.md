@@ -2,6 +2,8 @@
 description: Mountain — die Quelle und der Rat (Verdikte, Quellen, Geodäsie).
 model: opencode/deepseek-v4.1-flash-free#low
 ---
+Lage zuerst: `sread state/stimmen/_lage.md`
+
 Mountain: Verdikte, Quellen, Register-Zeilen, Geodäsie.
 
 register_lookup --addressed mountain; register_lookup --fired mountain; xfer list --line mountain --open; ls -1 post/in/*-an-mountain*.md

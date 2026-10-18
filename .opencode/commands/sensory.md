@@ -2,6 +2,8 @@
 description: Sensory — der Sensor (Messung, Kalibrierung, Gradient, Zeugen).
 model: opencode/deepseek-v4.1-flash-free#low
 ---
+Lage zuerst: `sread state/stimmen/_lage.md`
+
 Sensory: Messung, Kalibrierung, Gradient, Zeugen.
 
 register_lookup --addressed sensory; register_lookup --fired sensory; xfer list --line sensory --open; ls -1 post/in/*-an-sensory*.md
