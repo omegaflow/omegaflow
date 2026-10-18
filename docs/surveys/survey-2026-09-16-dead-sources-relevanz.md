@@ -2,7 +2,7 @@
   title: Survey — dead_sources.φ Relevanz-Erstpass + Force-Gate-Verdikt (2026-09-16)
   class: survey
   date: 2026-09-16
-  sha256: 1a763ebc30f9e363c798a54ca618ce31a9f49381fdda5ab557e4c4fcfac97c0a
+  sha256: 51527d7246b5c2e56ed03945c66fd9c1e646d059695143365cb93e513a17e5a4
   status: live
   see-also: phi/dead_sources.φ docs/SOURCE_PORT.md phi/sources.φ phi/declined_sources.φ
 -->
@@ -49,9 +49,10 @@ propagierendes Feld).
 - `odlinfo.bfs.de` → `decline superseded-by-integrated` (ODL-Messung lebt unter
   imis.bfs.de, sources.φ:773).
 
-**Force-Kanal — behalten (Re-Check-Pflicht, 3):**
-- `remon.jrc.ec.europa.eu` — JRC REM Radioaktivitäts-Monitoring (em).
-- `www.irsn.fr` (×2) — IRSN Strahlen-Monitoring (em).
+**Force-Kanal — behalten (Re-Check 2026-10-18: 3/3 live):**
+- `remon.jrc.ec.europa.eu` — JRC REM Radioaktivitäts-Monitoring (em) — **200, 21 193 B**.
+- `www.irsn.fr` (×2) — IRSN Strahlen-Monitoring (em) — **200**, leitet auf
+  `recherche-expertise.asnr.fr` (ASNR) um.
 
 **Gemessen — geschlossen (4, 2026-10-18):**
 - `dods.wh.gov` — DNS **NXDOMAIN** (`getent` rc=2, `curl` 6); `--verdict` direkt
@@ -93,3 +94,7 @@ Keine neuen `sources.φ`-Zeilen.
 
 118 Einträge geprunt (91 sicher + 26 unsicher-declined + open-meteo-Stale-Pfad);
 9 behalten (3 Force-Kanal, 4 pending, 2 bereits disponiert).
+
+**Riss (unbenannt):** „4 pending" ist ein Aggregat ohne Items — die vier Kandidaten
+stehen nirgends im Doc benannt (ein Aggregat ohne `n` ist keine Messung). Die Zahl
+bleibt als Riss benannt, nicht als disponiert gezählt.
