@@ -55,6 +55,7 @@ pub mod copernicus;
 pub mod cors;
 pub mod coverage_manifest;
 pub mod dastcom;
+pub mod de2_raw;
 pub mod decaps;
 pub mod demeter;
 pub mod des_y6;
