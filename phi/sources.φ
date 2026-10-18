@@ -588,8 +588,8 @@ field temp pirep_air_temp_c exponential-decay thermal C 360 0.0 0.0
 field wdir pirep_wind_direction_deg patch-levy advective deg 360 0.0 0.0
 field wspd pirep_wind_speed_knot patch-levy advective knot 360 0.0 0.0
 
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H2_MFI&time.min=2010-01-01T00:00:00Z&time.max=2024-07-01T00:00:00Z&parameters=Magnitude,BGSM&format=json
-terms PD-USGov https://sti.nasa.gov/disclaimers/
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&time.min=2017-07-01T00:00:00Z&time.max=2026-08-04T00:00:00Z&parameters=Magnitude,BGSM&format=json
+terms PD-USGov https://spdf.gsfc.nasa.gov/data_use_policy.html
 ttl 3600
 at sun
 hapi Magnitude=magnetosphere_imf_bt_nt BGSM.1=magnetosphere_imf_by_nt BGSM.2=magnetosphere_imf_bz_nt
@@ -597,14 +597,13 @@ field magnetosphere_imf_bt_nt magnetosphere_imf_bt_nt inverse-square em nT 3600 
 field magnetosphere_imf_by_nt magnetosphere_imf_by_nt inverse-square em nT 3600 0.0 0.0
 field magnetosphere_imf_bz_nt magnetosphere_imf_bz_nt inverse-square em nT 3600 0.0 0.0
 
-url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H2_SWE&time.min=2010-01-01T00:00:00Z&time.max=2024-07-01T00:00:00Z&parameters=Np,Vp,Tpr&format=json
-terms PD-USGov https://sti.nasa.gov/disclaimers/
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_K0_SWE&time.min=2017-07-01T00:00:00Z&time.max=2026-10-10T00:00:00Z&parameters=Np,Vp&format=json
+terms PD-USGov https://spdf.gsfc.nasa.gov/data_use_policy.html
 ttl 3600
 at sun
-hapi Np=solar_wind_density_cm3 Vp=solar_wind_speed_km_s Tpr=solar_wind_temp_k
+hapi Np=solar_wind_density_cm3 Vp=solar_wind_speed_km_s
 field solar_wind_speed_km_s solar_wind_speed_km_s patch-levy advective km/s 3600 0.0 400000.0
 field solar_wind_density_cm3 solar_wind_density_cm3 gaussian-inverse-square diffusion 1/cm3 3600 0.0 0.0
-field solar_wind_temp_k solar_wind_temp_k exponential-decay thermal K 3600 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=MMS1_EDP_FAST_L2_DCE&time.min={hour_ago}T00:00:00Z&time.max={now}Z&parameters=mms1_edp_dce_gse_fast_l2&format=json
 terms PD-USGov https://sti.nasa.gov/disclaimers/
@@ -652,6 +651,7 @@ terms other-attribution https://lasp.colorado.edu/eve/data_access/
 format eve
 origin https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2b
 compiler tools/harvest/src/bin/eve_compiler.rs
+sha256 0c0de10e1edc6fd06e4c8abeca4e14b4464b762b92ee40c1019d7f8825adc87a
 at sun
 ttl 3600
 field eve_94_line_irradiance eve_94_line_irradiance inverse-square em w/m2 3600 0.0 0.0
@@ -2149,6 +2149,7 @@ terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format hmi
 origin https://jsoc1.stanford.edu/data/hmi/fits
 compiler tools/harvest/src/bin/hmi_compiler.rs
+sha256 d89dbe290f2098a4246d1dd4e78f83f5b7a8c179b3a653eec78cc22320837695
 at sun
 ttl 86400
 field hmi_m_720s_blos hmi_m_720s_blos inverse-square em nt 3600 0.0 0.0
@@ -14622,6 +14623,7 @@ url https://github.com/omegaflow/sources/releases/download/casda.csiro.au/wallab
 terms CC-BY-4.0 https://doi.org/10.25919/qw7w-tn96
 format json
 origin https://doi.org/10.25919/qw7w-tn96
+sha256 45fc9aea7e290ceb76bc1058ecf2025a918c07cb184a0516534eec8c003e5d6e
 at sun
 no-cadence
 field ra wallaby_ra_deg inverse-square geometry deg 31536000 0.0 0.0
