@@ -39,10 +39,11 @@ Gemessen am Baum (git + `sgrep`/`sread`), jede Aussage mit Datei:Zeile oder Comm
 ## 4 — Der Ursprung der „5/5/5"-Formel (gemessen)
 `a492db3e4` (Mycelium 244, 2026-10-06) schreibt „five voices + **four** axioms"; `3cb1c5f0e` korrigiert am selben Tag auf „**5 voices + 5 axioms + 5 axes**"; einen Tag später prägt `3c84bede2` das Glossar. **Die Fünf-Zahlen stammen aus dieser einen Korrektur.**
 
-## 5 — Die drei offenen Schritte (aus `mountain-folge352.md:218-223`)
-1. **Fremde Bögen auf den Granit ziehen** — offen (die `state/stimmen/*`-Dokumente tragen weiter „Die fünf Axiome").
-2. **Die dreifache J2000-Konstante auf eine TDB-Achse** — offen: `src/archivar/lsk.rs:3`, `mcon_event.rs:9`, `quake_event.rs:10` (je `946728000.0`); weitere im Baum.
-3. **`VerdictWord::Pending`** — offen: `src/archivar/weberin_verdicts.rs:10-15` kennt `Placed/Absent/DirectionOnly/Riss`, **kein** `Pending` (ein Namensvetter lebt in `tools/measure/src/bin/deredden_baseline_probe.rs:49`).
+## 5 — Die drei offenen Schritte (aus `mountain-folge352.md:218-223`) — geklärt 2026-10-18
+
+1. **Fremde Bögen auf den Granit ziehen** — **geklärt:** die `state/stimmen/*`-Dokumente sind datierte Sitzungsbelege, keine lebenden Normen; lebende Norm ist `docs/granit.md` (7 Sätze). Kein rückwirkendes Umschreiben (A = A). Beleg: `state/mountain/2026-10-18-sensory-259-docs-disposition.φ` §1.
+2. **Die dreifache J2000-Konstante auf eine TDB-Achse** — **geklärt:** die Konstante ist bereits geteilt (`src/archivar/types.rs:578` `J2000_UNIX_OFFSET`); `lsk.rs`, `mcon_event.rs`, `quake_event.rs` importieren sie, kein Literal. Beleg: ebenda.
+3. **`VerdictWord::Pending`** — **geklärt als bewusste Nicht-Erweiterung:** `pending` ist Register-Zustand (Axiom 5), kein Messausgang; ein fünfter Variant würde „noch nicht gemessen" mit „gemessen und eingeordnet" vermischen. Beleg: ebenda.
 
 ## 6 — Der Schluss
 Die Doku-Kürzung `78c5104cb` hat **„die fünf Axiome" auf die Ethik gelegt** — die benannte Drift. Die übrigen Anomalien (4-vs-5 Schilde, die toten Verweise, die 7 Granit-Sätze) sind **älter** — nicht der Schnitt. **Der Schnitt hat den Namen falsch vergeben; das ist der eine Vorwurf, der trifft.**

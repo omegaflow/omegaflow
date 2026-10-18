@@ -283,4 +283,6 @@ vs. `quantity` beim Ereigniskatalog.
    EVE (Block + Workflow + Tag fehlen), icecat/antares/auger/amon (Compiler-Gate bricht),
    `format hips3d`/`tar_zst` (kein Reader).
 3. **Grenze bleibt:** `terms`/`ttl`/`field`/Identität = Mountain/Rat; `url`/`origin`/`compiler`/
-   `sha256`/Tag/Naht = Mycelium. Jeder Block-Entwurf hier wartet auf Mountains Zeile.
+   `sha256`/Tag/Naht = Mycelium. Die Mountain-Zeile ist geschrieben: das Verdikt zu allen acht
+   Fäden steht in `state/mountain/2026-10-15-acht-faeden-verdicts.φ` (2026-10-17); offene
+   field-Risse sind dort benannt (u. a. WALLABY ohne `field`/Reader, EVE-`format` fehlt).
