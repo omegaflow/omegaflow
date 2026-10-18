@@ -1,9 +1,9 @@
-# Lage — generiert 2026-10-18T15:46:46Z
+# Lage — generiert 2026-10-18T16:53:06Z
 
-HEAD `3697f16d7`
+HEAD `9e07825e6`
 
 ## Sitze / Routen (Gateway)
-- Katalog (tsv, letzter Start: 2h): 1917 · frei: 47 · Preis unbekannt: 1007 · lebendig: 9 (3h alt)
+- Katalog (tsv, letzter Start: 4h): 1917 · frei: 47 · Preis unbekannt: 1007 · lebendig: 9 (4h alt)
 - Freier Schwarm: live aus den Preis-0-Zeilen + OpenCode-free — keine feste Zahl
 - Guthaben (USD):
   openrouter	-1.7770357660000116
@@ -12,10 +12,10 @@ HEAD `3697f16d7`
 
 ## Offen je Linie (Handover)
   mountain   1 offen ·  1 Braucht ·  0 offene Traeger · handover-2026-10-18-mountain-folge363.md (Pass 363 seit 2026-10-18 · Commit 0h)
-  mycelium   3 offen ·  0 Braucht ·  1 offene Traeger · handover-2026-10-16-mycelium-folge361.md (Pass 361 seit 2026-10-16 · Commit 0h)
-  river      3 offen ·  3 Braucht ·  3 offene Traeger · handover-2026-10-18-river-folge227.md (Pass 227 seit 2026-10-18 · Commit 0h)
+  mycelium   1 offen ·  2 Braucht ·  0 offene Traeger · handover-2026-10-16-mycelium-folge361.md (Pass 361 seit 2026-10-16 · Commit 0h)
+  river      3 offen ·  3 Braucht ·  3 offene Traeger · handover-2026-10-18-river-folge227.md (Pass 227 seit 2026-10-18 · Commit 1h)
   sensory    2 offen ·  2 Braucht ·  0 offene Traeger · handover-2026-10-14-sensory-folge259.md (Pass 259 seit 2026-10-14 · Commit 0h)
-  future     5 offen ·  5 Braucht ·  0 offene Traeger · handover-2026-10-18-future-folge1.md (Pass 1 seit 2026-10-18 · Commit 2h)
+  future     4 offen ·  4 Braucht ·  0 offene Traeger · handover-2026-10-18-future-folge1.md (Pass 1 seit 2026-10-18 · Commit 0h)
 
 ## Rat-Fragen (offen | rat-konvergiert)
   | R-2026-10-18-i | 2026-10-18 | **F1 — Quittung im Token-Ledger** — ACK im Empfänger-Ledger vs. `CLOSED` im Emitter; `--addressed` S1/S2 | Fugu · Lumo · DeepSeek | **Runde 2 gefahren** — 2:1 **A + S2** (Fugu, Lumo), DeepSeek **C + S2**; Schwarm R1 A. **rat-konvergiert → Schließung** | `2026-10-18-f1-quittung-formular.md` | →future | `2026-10-18-rat-3f-runde2-sammlung.md` |
