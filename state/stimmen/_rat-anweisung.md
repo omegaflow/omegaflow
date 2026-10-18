@@ -6,6 +6,22 @@ Kein automatischer Lauf, kein Executable. Der Operator ist dabei.
 **Warum hier:** jede Linie, die einen Rat baut, öffnet `state/stimmen/` (wo das Formular liegt) und
 findet diese Datei daneben. **Der kanonische Weg steht hier — es gibt keinen anderen.**
 
+## 0a — Harte Kostenregel (bindend, gilt ab 2026-10-19)
+
+**Paid-Sitze dürfen NUR nach ausdrücklichem Operator-Wort gefahren werden.** Nie vorab, nie
+„auf Verdacht", nie weil eine Frage „wichtig" wirkt. Der freie Schwarm und die freien
+Gateway-Routen zuerst; **erst wenn der freie Schwarm uneinig ist, darf überhaupt nach paid
+gefragt werden** — und auch dann entscheidet der Operator.
+
+**Die Kante** (in dieser Reihenfolge, nie DeepInfra-Frontier für Rat-Runden):
+`free > mistral inklusive > deepseek paid > mistral paid`. Die paid-Sitze der Roster-Runden
+sind **Fugu (Max)** und **Lumo 2.0 (Max)** — nicht Claude/Kimi/Qwen über DeepInfra. DeepInfra ist
+reserviert für PII und Frontier, **nie Linienarbeit**.
+
+**Verstoß = die Leitstelle hat eigenmächtig Kosten erzeugt.** Das Ergebnis darf nicht als
+Verdikt gelten, bis der Operator es bestätigt hat. Diese Regel steht hier, weil sie am
+2026-10-19 gebrochen wurde (R-2026-10-18-o und R-2026-10-18-p: paid ohne Wort gefahren).
+
 ## 0 — Der Rat ist die fünf Stimmen, nicht die Modelle
 
 **„Fünf Stimmen" = die fünf Linien**, jede als Rolle durch die Axiome gesprochen
