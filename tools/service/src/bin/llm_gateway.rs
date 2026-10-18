@@ -1641,11 +1641,57 @@ fn retry_after_secs(headers: &str) -> Option<u64> {
     }
 }
 
-fn is_paid(model: &str) -> bool {
-    if model.ends_with(":free") {
-        return false;
+static FREE_MODELS: OnceLock<HashSet<String>> = OnceLock::new();
+
+fn free_ids_from_json(body: &str) -> Vec<String> {
+    let mut child = match Command::new("jq")
+        .args([
+            "-r",
+            ".data[]? | select(((.pricing.prompt // -1) | tonumber) == 0 and (((.pricing.completion // -1) | tonumber) == 0)) | .id",
+        ])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+    {
+        Ok(c) => c,
+        Err(_) => return Vec::new(),
+    };
+    if let Some(mut si) = child.stdin.take() {
+        let _ = si.write_all(body.as_bytes());
     }
-    let prefix = model.split('/').next().unwrap_or("");
+    match child.wait_with_output() {
+        Ok(o) => String::from_utf8_lossy(&o.stdout)
+            .lines()
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect(),
+        Err(_) => Vec::new(),
+    }
+}
+
+fn load_free_models(secrets: &HashMap<String, String>, auth: &str) -> HashSet<String> {
+    let mut free = HashSet::new();
+    for r in ROUTES.iter().filter(|r| is_paid_prefix(r.prefix)) {
+        let Some((url, _)) = models_url(r, secrets) else {
+            continue;
+        };
+        let Some(key) = key_for(r, secrets, auth) else {
+            continue;
+        };
+        let Some((code, body)) = curl_get(&url, &key) else {
+            continue;
+        };
+        if code != 200 {
+            continue;
+        }
+        for id in free_ids_from_json(&body) {
+            free.insert(format!("{}/{}", r.prefix, id));
+        }
+    }
+    free
+}
+
+fn is_paid_prefix(prefix: &str) -> bool {
     matches!(
         prefix,
         "deepinfra"
@@ -1661,6 +1707,16 @@ fn is_paid(model: &str) -> bool {
             | "nim"
             | "openrouter"
     )
+}
+
+fn is_paid(model: &str) -> bool {
+    if let Some(free) = FREE_MODELS.get() {
+        if free.contains(model) {
+            return false;
+        }
+    }
+    let prefix = model.split('/').next().unwrap_or("");
+    is_paid_prefix(prefix)
 }
 
 fn paid_allowed(model: &str) -> bool {
@@ -2381,6 +2437,13 @@ fn main() {
     };
     let secrets = load_secrets();
     let auth = load_auth_text();
+    {
+        let s = secrets.clone();
+        let a = auth.clone();
+        std::thread::spawn(move || {
+            let _ = FREE_MODELS.get_or_init(|| load_free_models(&s, &a));
+        });
+    }
     if filter_enabled() {
         active_redactor();
     }
