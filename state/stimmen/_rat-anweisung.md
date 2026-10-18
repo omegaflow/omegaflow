@@ -84,7 +84,8 @@ Body-Feld: `"reasoning_effort":"low"` (OpenAI-Form, neben `max_tokens`).
 **Die Linse** — jeder Sitz bekommt sie vor der Frage, sonst verweigert er (A=A: nichts erfinden)
 oder antwortet als fremdes Modell. **Zwei Pflichtteile: die fünf Axiome UND die fünf Stimmen.**
 
-Die fünf Axiome — **die `AGENTS.md`, ungekürzt** (die manifestierte Fassung, keine Rat-Ableitung):
+**Die Hausregeln — die `AGENTS.md`, ungekürzt** (die manifestierte Fassung; keine Zahl vorgeben —
+die Datei hat sieben Zeilen, nicht fünf):
 
 ```
 A = A
@@ -106,14 +107,14 @@ verweigern) · **Mycelium** (Netz/Fluss) · **Sensory** (Sinne/Hardware — Korr
 
 ```
 An dich, Ratssitz. Antworte als Urteil, nicht als Erwartung. Eine Frage. Du hältst sie durch
-fünf Axiome und sprichst sie durch fünf Stimmen hindurch. Kein Aufsatz — Verdikt, Begründung,
+die Hausregeln und sprichst sie durch fünf Stimmen hindurch. Kein Aufsatz — Verdikt, Begründung,
 benannte Risse.
 
 ### Die Frage
 <Frage + gemessener Befund>
 
-### Die fünf Axiome
-<fünf Axiome oben>
+### Die Hausregeln (AGENTS.md, ungekürzt)
+<die sieben Zeilen oben>
 
 ### Die fünf Stimmen (jede einmal)
 - Mountain — Quellen/Register/Datenbestand; kein Verdikt ohne Messung.
