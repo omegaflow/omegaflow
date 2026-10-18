@@ -73,9 +73,48 @@ kein Sachverhalt. Darauf gibt es zwei vertretbare Antworten.
 
 Das ist die Teilung, die der Rat in **R-k selbst** beschlossen hat: **Substrat frei, Domäne bezahlt.**
 
-## Was mechanisch an freie Agenten kann (offen, nicht gemessen)
+## Was mechanisch an freie Agenten kann — GEMESSEN (2026-10-18)
 
-Der Operator fragte zusätzlich, ob **Offen-Stand lesen** (Sessionanfang) und **Session abschließen**
-an freie Agenten können. Das ist **Befolgen**, nicht Urteilen — plausibel ja, aber **ungetestet**.
-Kriterium liegt vor (Zahlentreue · Vollständigkeit · keine Erfindung · Fehler benannt).
-**Kein stilles `pending`: der Test ist vorbereitet und nicht gefahren.**
+**Der erste Test schlug fehl — am Aufbau, nicht am Modell.** Ein Modell über den **Gateway**
+(Chat-API) hat **keinen Werkzeugzugang**: `kenari/agnes-3-0-flash:free` antwortete korrekt
+*„I cannot execute shell commands"*. Der Kanal erlaubt nur Text.
+
+**Der richtige Kanal ist der OpenCode-Subagent.** Es gibt **sieben freie Modelle als
+OpenCode-Provider** (nicht über den Gateway): `opencode/nemotron-3.5-super-vl-free` · `beam-free` ·
+`longcat-2.5-preview-free` · `space-bunny-free` · `mimo-v2.6-flash-free` ·
+**`deepseek-v4.1-flash-free`** · `glm-5.3-flash-free`.
+
+**Gefahren:** `general`-Subagent auf `opencode/deepseek-v4.1-flash-free`, zwei Aufgaben
+(Offen-Stand erfassen, Session-Zustand), Kriterium **vorher** festgelegt.
+
+| Kriterium | Ergebnis |
+|---|---|
+| **Zahlentreue** | ✅ alle Zahlen wörtlich, keine gerundet |
+| **Vollständigkeit** | ✅ alle Befehle ausgeführt |
+| **Keine Erfindung** | ✅ jeder Wert folgt aus einer Ausgabe |
+| **Fehler benannt** | ✅ — und er hat **meinen** Fehler korrigiert |
+| **Form** | ✅ exakt die fünf Zeilen, kein Kommentar |
+
+| Prüfpunkt | erwartet | geliefert |
+|---|---|---|
+| A1 `--addressed future` | 3 | **3** ✅ |
+| A2 `--fired future` | 0 | **0** ✅ |
+| A3 `xfer … --open` | 0 | **0** ✅ |
+| B1 offene Pfade | 10 (mein Messzeitpunkt) | **13** (sein Zeitpunkt) — beide richtig; die Zahl wuchs laufend (10→13→15) |
+| B2 `cost` | `null` (**mein** Filter war falsch) | **2,4105…** ✅ er hat den echten Wert geholt |
+
+**Der Befund:** Der freie Agent war **besser als meine Anweisung** — er hat den fehlerhaften
+`jaq`-Filter nicht blind übernommen, sondern den Wert geholt, den die Aufgabe verlangte.
+
+**Die Grenze, die bleibt:** „n Pfade offen" ohne Zeitstempel ist eine Momentaufnahme, kein
+Zustand — solange parallel gearbeitet wird, ist die Zahl nicht reproduzierbar.
+
+## Die Teilung, belegt
+
+| Aufgabe | Wer |
+|---|---|
+| **Offen-Stand lesen** (Sessionanfang) | **freier Subagent** (`opencode/deepseek-v4.1-flash-free`) |
+| **Session abschließen** (Kosten, offene Pfade) | **freier Subagent** — inkl. Fehlerkorrektur |
+| **Rat bei Sachfragen** | freier Schwarm, gleichwertig |
+| **Rat bei Zielkonflikten** | **Paid** — der Schwarm trägt nicht |
+| **Urteil + Register-Schreibakt** | **Paid** |

@@ -92,6 +92,24 @@ curl -s https://api.deepinfra.com/v1/openai/chat/completions \
 **Grenze:** Der Schwarm **trägt nicht**. Sein Verdikt ist eine Mindermeinung, seine Risse sind
 der Wert. Kein Register-Schreibakt aus einem Schwarm-Lauf.
 
+## 3c — Mechanik läuft auf einem freien Subagenten (gemessen 2026-10-18)
+
+**Regel:** Offen-Stand lesen (Sessionanfang) und Session-Zustand (Ende) darf ein **freier
+Subagent** erledigen — er ist billiger und war im Test **zahlentreuer als meine Anweisung**.
+
+**Der Kanal entscheidet:**
+- **Gateway (Chat-API)** = nur Text. Kein Modell dort kann Shell. Ein Auftrag „führe aus" endet
+  in *„I cannot execute shell commands"* — korrekt und nutzlos.
+- **OpenCode-Subagent** (`general` + `model:`) = hat die Shell. Das ist der Weg.
+
+**Freie Modelle als OpenCode-Provider (nicht im Gateway):** `opencode/deepseek-v4.1-flash-free` ·
+`opencode/glm-5.3-flash-free` · `opencode/mimo-v2.6-flash-free` · `opencode/beam-free` ·
+`opencode/longcat-2.5-preview-free` · `opencode/space-bunny-free` ·
+`opencode/nemotron-3.5-super-vl-free`.
+
+**Grenze, gemessen:** ein „n Pfade offen" ohne Zeitstempel ist eine Momentaufnahme, kein Zustand —
+die Zahl wuchs während des Tests 10→13→15. Wer sie berichtet, nennt den Zeitpunkt.
+
 ## 4 — Die Ablage
 
 - **Fragebogen:** `state/stimmen/<datum>-<thema>-formular.md` (oder `/tmp/opencode/<thema>.txt`).
