@@ -2,7 +2,7 @@
   title: Handover — River-Folge 224 (2026-10-16)
   class: handover
   date: 2026-10-16
-  sha256: aa7240952d001243470b179e9d94454c20516c975e737c5ca918ac7388ad765a
+  sha256: 1bd4f001de7299a74800a6bd8befc9bf485e923e76217ebdd7c9afc8de191e4d
   status: live
 -->
 # Handover — River-Folge 224 (2026-10-16)
@@ -27,6 +27,5 @@ Origin: river-224
 Origin: river-224
 - `xfer:river.ses_ec618129fffeLFawr4V3pQKpOl.4~e6aa42be` Rat: Receiver-Apertur 3 · Schumann `field` · Flyby-`sealed`.
 - `xfer:river.ses_ec618129fffeLFawr4V3pQKpOl.5~488ad8b6` Operator: GIC-2 (ENTSO-E/NERC) · LOCK · Rätsel-Wort.
-- `xfer:river.ses_ec618129fffeLFawr4V3pQKpOl.7~b8a9655d` mcpherron-Beleg: Register/CDN-sha 441df5f8, aber kein lokaler Compiler-Lauf (Debug-Build auf 3,2-GB-CorrOnsFiles.zip >60 s); Asset-Größe 10065773 B und Lauf 38176003927 nur aus CDN/Register.
 - `xfer:river.ses_ec618129fffeLFawr4V3pQKpOl.10~2e71595e` Beobachtung (Architektur, bewusst nicht gebaut): der Empfänger kann seinen eigenen Eingang nicht quittieren — `xfer close` auf einen fremden Token ist ein harter Fehler, sonst schreibt der Empfänger ins Emitter-Ledger (river → mycelium `.2~e192689e`); Quittung und Selbst-Erledigung sind beide `CLOSED`.
 - `xfer:river.ses_ec618129fffeLFawr4V3pQKpOl.11~04ec4cc1` Beobachtung: `register_lookup --addressed <linie>` listet geschlossene Blöcke weiter, `--fired` bleibt 0 — Erledigtes liest sich als offen (mountain `.2~1776ba69`, mycelium `.2~e192689e` standen nach dem Close weiter im Eingang).
