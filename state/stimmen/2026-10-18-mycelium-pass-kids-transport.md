@@ -193,3 +193,16 @@ Grenze (Mountain `state/mountain/2026-10-18-restarme-entscheide.φ`): Mountain e
 - **EPTA (gebaut):** `tools/harvest/src/bin/epta_dr2_compiler.rs` liest das gemirrorte `epta_dr2.zip` (CC-BY-4.0, `sha256 2ae54694…`), nimmt `DR2full/*/*.par`, `TRES × 1e-6` s, Position `RAJ/DECJ` mit `ELONG/ELAT`-Fallback (3 Pulsare), schreibt **SKY1**. 26 `.par` → **25 eindeutige Pulsare** (`J1751-withoutBON128` ist die BON-lose Variante von `J1751-2857`, dedupliziert). Asset `epta_dr2.sky1`, 513 B, `sha256 3c4285c2…`, CDN **206**. Block (Mountain): `format sky1`, `record sky1`, `field TRES … s`, `at sun`.
 - **EVE (gebaut):** Compiler-Pfad `…/level2b/YYYY/DOY/EVL_L2B_YYYYDOY_008_01.fit.gz` trägt (206); **2011 DOY 40–130** (vor MEGS-A-Ausfall, alle 11 Linien) → **1 146 616 Records**, 22 932 328 B, `sha256 0c0de10e…`, `epoch_tdb` 350 481 696..358 344 036, 0 void. Asset `eve_l2b.bin`, Tag `lasp.colorado.edu-eve`. Upload wartet auf den Block (der CDN-Gate akzeptiert nur registrierte/admitted Tags); Mountain schreibt `terms other-attribution`, `format eve`, Feld.
 - **WALLABY (gebaut):** CASDA TAP `AS102.wallaby_pdr2_sourcecatalogue_v01` (43 Spalten), Abzug `name,ra,dec,freq,w20,w50,dist_h,log_m_hi` → **3 454 Zeilen**, JSON 730 934 B, `sha256 45fc9aea…`. Asset `wallaby_pdr2_sourcecatalogue.json`, Tag `casda.csiro.au`; Block (`cmap .`, `ra ra`, `dec dec`, `quantity` HI-Masse/Breite, `at sun`) und Upload: Mountain (Gate braucht den registrierten Tag).
+- **HMI (Code gebaut):** `src/archivar/hmi.rs` (`HMI1`, comp = CAMERA 1/2/3) + `format hmi` in `extract.rs` + `tools/harvest/src/bin/hmi_compiler.rs`. Route: **direktes Archiv** `jsoc1.stanford.edu/data/hmi/fits/YYYY/MM/DD/` (keyless, 206), **stündlich** (23 Files/Tag); diese Dateien sind **1024² boxcar-4-gebinnt** (nicht der 4096²-Export; `DATAMEAN` ist skalierungsinvariant). Header-Range 0–20 000 B; `DATAMEAN` [G], `T_REC` (TAI→TDB über LSK), `CAMERA`; 1 Record/T_REC, Dedup über die Zeit. Upload-Tag `jsoc.stanford.edu` (über den AIA-Block registriert). Mountain: `format hmi`, `field hmi_m_720s_blos … G`, `at sun`, `ttl 86400`.
+
+## 17. matrix-vlies — die n=0-Zellen sind ein Datenfenster (2026-10-18)
+
+Die 210 Zellen sind nicht leer wegen Code, sondern weil die vier RTSW/SWPC-Felder (`magnetosphere_imf_bz_nt`, `magnetosphere_imf_bt_nt`, `solar_wind_speed_km_s`, `solar_wind_density_cm3`, `phi:175/176/181/182`) an **1–7-Tage-JSON** hängen und das OMNI-Archiv am **2026-10-05** endet — die Schnittmenge ist leer (`alignment pending`). Gemessene mehrjährige Route (CDAWeb HAPI, CC0/PD-USGov):
+
+| Quelle | Parameter | Zeitraum | Rate |
+|---|---|---|---|
+| `AC_H0_MFI` | `Magnitude` (Bt), `BGSM` (Bz GSM) | 1997-09-02 → 2026-08-04 | ~16 s |
+| `AC_K0_SWE` | `Np`, `Vp` | 2017-07-01 → 2026-10-10 | 5 min |
+| `AC_H0_SWE` | `Np`, `Vp` | 1998-02 → 2024-07 | 64 s — **`Np=-1.0E31` (Fill)**, nicht als Wert lesen |
+
+Gemeinsames Fenster **2017-07 → 2026-08 (~9 Jahre)**. Mountain registriert die vier Felder auf diese Quellen (Tag `cdaweb.gsfc.nasa.gov`, `at sun`); Mycelium erntet stündlich (decimate) und stößt den Lauf an: `matrix-vlies` ist ein **CI-Job** (`.github/workflows/field-te-query.yml`, Descriptor `vlies_matrix.te`), nie lokal.
