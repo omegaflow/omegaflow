@@ -2,7 +2,7 @@
   title: Handover — Sensory 259
   class: handover
   date: 2026-10-14
-  sha256: beadadb97345581a2e5af07a9246c5728fce8c70209399ba8e133c781f06759d
+  sha256: c2a788ad992c22b9cb7651cf77820d27c0ae53a5cbe1ff9055dd7aef4016fa5f
   status: live
 -->
 # Sensory 259
@@ -11,7 +11,7 @@
 
 ## Offen — eigen
 ### ox64-m2c · wartend · eigen
-- **Trigger:** Zustellung. **Lage:** PINE64 `LZ473049629CN`, Zoll durch, Sa 17.10. **Braucht:** `dhl.de` piececode.
+- **Trigger:** Zustellung. **Lage:** PINE64 `LZ473049629CN`, Zoll durch, Sa 17.10.; DHL-Suche 2026-10-18 **404** (kein Status abrufbar). **Braucht:** Zustell-Beleg; `dhl.de …?piececode=LZ473049629CN` (live, JS).
 ### europa-clipper · termin · eigen
 - **Trigger:** Flyby 2026-12-03. **Lage:** `ephemeris_europa_clipper.bin`, `3b03ea69…`. **Braucht:** `kernel-flatten.yml`+`sniff`.
 
