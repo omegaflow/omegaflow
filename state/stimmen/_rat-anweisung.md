@@ -29,7 +29,12 @@ PII läuft zuerst über Mistral.
 deepseek 2 live; `mistral/zai-glm-5-3` trägt `low`, `finish=stop`).
 **Die alte 17.10.-Tabelle ist überholt** — sie führte alle Paid-Sitze über DeepInfra.
 
-**Keine UI-Sitze.** „Der Operator fährt Fugu/Lumo im Browser" war ein Mythos (aus Bequemlichkeit eingetragen). Der Rat läuft ausschließlich über die API-Leiter oben, via Gateway `127.0.0.1:1621`. Die Maschine fährt die Sitze; der Operator legt nur fest, ob Paid (Rang 4/5) dazukommt.
+**UI-Sitze** (Browser-Bridge `browser.*`, dieselben Tabs wie das OpenCode-Panel) — **frei**, **die Maschine fährt sie** (nicht der Operator):
+
+| Sitz | URL | Modell im Wähler | Falle |
+|---|---|---|---|
+| **Sakana Fugu Max** | `chat.sakana.ai` | **„Fugu Max"** (Effort High) | **nicht „Namazu"** — das ist (`sakana-namazu`, „For Japanese") ein **anderer** Eintrag. Fugu **orchestriert** (routet auf andere Modelle, auch Namazu). Login nötig. |
+| **Lumo 2.0 Max** | `lumo.proton.me/guest` | „Lumo 2.0 Max" (anonym) | Senden per **Enter** (kein Send-Button) — `browser.press` nach `focus()`. |
 
 ## 2 — Der Reasoning-Level (der größte Fehler: er wurde nie gesetzt)
 
