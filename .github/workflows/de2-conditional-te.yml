@@ -32,6 +32,11 @@ on:
         required: false
         type: string
         default: '50'
+      bins:
+        description: 'bins per conditioner (joint Z multiplies: 5 conds at 4 bins = 1024 cells)'
+        required: false
+        type: string
+        default: '8'
 permissions:
   contents: read
 env:
@@ -83,7 +88,8 @@ jobs:
               --kp-csv data/wdc.kugi.kyoto-u.ac.jp/hour3h_kp.csv \
               --orbit-csv data/cdaweb.gsfc.nasa.gov/de2_orbit_lt_alt.csv \
               --max-lag '${{ inputs.max_lag }}' \
-              --surr '${{ inputs.surr }}'
+              --surr '${{ inputs.surr }}' \
+              --bins '${{ inputs.bins }}'
           } > de2-conditional-te.txt
       - uses: actions/upload-artifact@v4
         if: always()
