@@ -2738,9 +2738,9 @@ field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/hmi_m_720s.bin
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format hmi
-origin https://jsoc1.stanford.edu/data/hmi/fits
+origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list&ds=hmi.M_720s (DATAMEAN,T_REC,CAMERA)
 compiler tools/harvest/src/bin/hmi_compiler.rs
-sha256 d89dbe290f2098a4246d1dd4e78f83f5b7a8c179b3a653eec78cc22320837695
+sha256 08f0fd9fb28007899d931bac7a49342a1e078d8781202b46971da68e568c7fbd
 at sun
 ttl 86400
 field hmi_m_720s_blos hmi_m_720s_blos inverse-square em nt 3600 0.0 0.0
