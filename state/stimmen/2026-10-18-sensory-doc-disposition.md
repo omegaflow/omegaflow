@@ -2,7 +2,7 @@
   title: Sensory — Besitz-Disposition der 16 Docs (2026-10-18)
   class: ref
   date: 2026-10-18
-  sha256: 1a79776dbb56c0eb276d4a4ce9526b2cc6b3b6df2ed90e1ea171284dcf063d88
+  sha256: 04a00e7c0b30fdd05f5013c04c288ab82685c8be64a2799799bdd496b2758d99
   status: live
   see-also: docs/handover/handover-2026-10-14-sensory-folge259.md state/stimmen/2026-10-18-orphan-zuordnung.md
 -->
@@ -24,16 +24,16 @@ Tabellen-/Prosa-Zeilen); die Linie entscheidet, was ein Punkt ist.
 | `survey-2026-10-08-fmhy-research-landscape.md` | MiMo NXDOMAIN; Jina-Arm gebaut; SearXNG-Arm gebaut |
 | `survey-2026-10-12-standort-lokalisierung-ortho-dsm.md` | Apple Look Around NXDOMAIN; NRCan canimage 404; Bing Streetside kein API-Doc |
 | `survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` (Gravimetrie) | EQUIP-G 000/unregistriert; IGETS + BGI/SEDOO registriert/live |
+| `survey-2026-10-08-open-sources-delta.md` Re-Audit 126–132 | Zitat Zeile 193–194: „13 Punkte, 13 gedeckt (2 nachgemessen 2026-10-18)"; Commit `5058ade61` |
+| `survey-2026-10-08-fmhy-research-landscape.md` SearXNG-Instanz | Instanz gesetzt + gemessen: `SEARXNG_INSTANCES = ["https://search.lumy.live"]` (`tools/utils/src/bin/archive_search/net.rs:1802`); Commit `3e27dff0f` |
+| `survey-2026-09-16-sonden-flotte.md` Zeilen 77/161/162 | kein offener Marker (`sed -n '77p;161p;162p'`), Historie; Commit `5058ade61` |
 
 ## Offen — mechanisch/Operator (benannt)
 
 | Doc | Punkt | Zustand |
 |---|---|---|
 | `open-sources-delta` | Teilchen-/Dark-Matter-Experiment | Operator-Wort (Kuprat vs. Detektor) |
-| `open-sources-delta` | Re-Audit-Zeilen 126–132 | historisch; durch „Blockierte vier — GEKNACKT" überholt |
 | `stoerungs-experiment` | CTBTO VDEC | Operator-Webform; root 404, request 403, unregistriert |
-| `fmhy` | SearXNG-Instanz | Arm gebaut; Instanzwahl offen |
-| `sonden-flotte` | request-only-Zeilen 77/161/162 | Historie, kein Messpunkt |
 
 ## Abgegeben (Grund)
 
@@ -70,3 +70,23 @@ nur hier: Token `14` an future, Brief `post/in/2026-10-18-sensory-an-future-beob
 - `europa-clipper`: Termin 03.12.2026; der Schritt ist ausdrücklich nach dem Flyby.
 - `xfer:sensory-259…9~1da7eb85` an future: `SENT`/`unbeglichen` (kein future-Handover
   im Checkout).
+
+## Pass-Abschluss (R-2026-10-18-c, 4/4 · 2026-10-18)
+
+Messung (Linie `sensory-259`): Post 0 (`post/in` nicht im Baum) · Trigger 0
+(`register_lookup --addressed sensory-259` = 0) · Transfer 4 offen
+(`xfer coverage --line sensory-259`: emitted 14 · disposed 10 · open 4). Delegiert
+(4 freie Subagenten, done-when vom Pass), Belege geprüft, drei Punkte geschlossen:
+
+- **Open-Sources-Delta Re-Audit 126–132** — geschlossen. Zitat Zeile 193–194:
+  „13 Punkte, 13 gedeckt (2 nachgemessen 2026-10-18)." Commit `5058ade61`.
+- **FMHY SearXNG-Instanz** — geschlossen. `tools/utils/src/bin/archive_search/net.rs:1802`
+  `const SEARXNG_INSTANCES: &[&str] = &["https://search.lumy.live"];`; Commit `3e27dff0f`.
+  Der Doc-Marker (Zeile 74) ist nachgetragen.
+- **Sonden-Flotte Zeilen 77/161/162** — kein Punkt. Kein offener Marker
+  (`sed -n '77p;161p;162p'`); Commit `5058ade61`.
+
+Nicht geschlossen (Urteil bleibt bei der Linie, nicht delegierbar): `open-sources-delta`
+Teilchen-/Dark-Matter-Experiment und `stoerungs-experiment` CTBTO VDEC (beide Operator-Wort).
+Die vier offenen Transport-Token `.9/.10/.13/.14` sind Empfänger-Arbeit (future/mycelium),
+nicht in dieser Sitzung schließbar — kein Ledger-Schluss gesetzt.
