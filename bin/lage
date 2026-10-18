@@ -30,7 +30,8 @@ line_rows=$(for line in mountain mycelium river sensory future; do
     [ -f "$f" ] && grep -qi 'offen' "$f" && c=$((c+1))
   done
   d=$(basename "$h" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1)
-  printf '  %-9s %2s offen · %2s Braucht · %2s offene Traeger · %s (Folge %s · Commit %s)\n' "$line" "$n" "$b" "$c" "$(basename "$h")" "${d:-?}" "$(hage "$h")"
+  nfolge=$(basename "$h" | grep -oE 'folge[0-9]+' | grep -oE '[0-9]+' | head -1)
+  printf '  %-9s %2s offen · %2s Braucht · %2s offene Traeger · %s (Pass %s seit %s · Commit %s)\n' "$line" "$n" "$b" "$c" "$(basename "$h")" "${nfolge:-?}" "${d:-?}" "$(hage "$h")"
 done)
 
 {
