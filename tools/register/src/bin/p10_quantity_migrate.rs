@@ -89,6 +89,7 @@ fn quantity_kind(force: &str, name: &str, unit: &str) -> Option<&'static str> {
                         | "extinction_rv_unc"
                         | "fdsn_event_magnitude"
                         | "exofop_toi_transit_depth_ppm"
+                        | "morph_sigma"
                 )
             {
                 Some("source-parameter")

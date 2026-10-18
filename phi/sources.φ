@@ -14889,7 +14889,7 @@ field spec_pl_e_ref spec_pl_e_ref inverse-square em TeV 33554432.0 0.0 0.0
 field spec_dnde_1tev spec_dnde_1tev inverse-square em m-2.s-1.tev-1 33554432.0 0.0 0.0
 field spec_flux_1tev spec_flux_1tev inverse-square em ph/s/cm2 33554432.0 0.0 0.0
 field spec_eflux_1tev_10tev spec_eflux_1tev_10tev inverse-square em erg/cm2/s 33554432.0 0.0 0.0
-field morph_sigma morph_sigma inverse-square em deg 33554432.0 0.0 0.0
+quantity morph_sigma morph_sigma inverse-square source-parameter deg 33554432.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/heasarc.gsfc.nasa.gov/akari_psc.json
 terms PD https://heasarc.gsfc.nasa.gov/
