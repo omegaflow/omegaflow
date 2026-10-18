@@ -76,7 +76,7 @@ at earth
 map .
 lat earthquake.hypocenter.latitude
 lon earthquake.hypocenter.longitude
-field earthquake.hypocenter.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+quantity earthquake.hypocenter.depth quake_depth_km gaussian-inverse-square geometry km 3600 0.0 0.0
 channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:none Pa
 
 url https://api.vedur.is/quakes/events
@@ -86,7 +86,7 @@ at earth
 map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field properties.depth vedur_quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+quantity properties.depth vedur_quake_depth_km gaussian-inverse-square geometry km 3600 0.0 0.0
 
 url https://api.geonet.org.nz/quake?MMI=4
 terms CC-BY-3.0 https://www.geonet.org.nz/policy
@@ -96,7 +96,7 @@ map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
 alt geometry.coordinates.2
-field properties.magnitude geonet_quake_magnitude gaussian-inverse-square seismic-body Mw 60.0 0.0 0.0
+quantity properties.magnitude geonet_quake_magnitude gaussian-inverse-square source-parameter Mw 60.0 0.0 0.0
 
 url https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson
 terms PD https://earthquake.usgs.gov/
@@ -106,8 +106,8 @@ map features
 mag_type_key properties.magType
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
-field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+quantity geometry.coordinates.2 geosphere_quake_depth_km erfc geometry km 6.0 0.0 0.0
+quantity properties.mag geosphere_quake_magnitude erfc source-parameter Mw 6.0 0.0 0.0
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
 terms PD https://earthquake.usgs.gov/
@@ -143,8 +143,8 @@ map features
 mag_type_key properties.magType
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field geometry.coordinates.2 geosphere_quake_depth_km erfc seismic-surface km 6.0 0.0 0.0
-field properties.mag geosphere_quake_magnitude erfc seismic-surface Mw 6.0 0.0 0.0
+quantity geometry.coordinates.2 geosphere_quake_depth_km erfc geometry km 6.0 0.0 0.0
+quantity properties.mag geosphere_quake_magnitude erfc source-parameter Mw 6.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/eyes.nasa.gov/dsn_snapshot.bin
 terms PD https://eyes.nasa.gov/
@@ -197,7 +197,7 @@ at earth
 map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field properties.mag geosphere_ga_mag_today erfc seismic-surface Mw 6.0 0.0 0.0
+quantity properties.mag geosphere_ga_mag_today erfc source-parameter Mw 6.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
 terms PD https://www.swpc.noaa.gov/
@@ -245,7 +245,7 @@ at earth
 map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field properties.depth quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+quantity properties.depth quake_depth_km gaussian-inverse-square geometry km 3600 0.0 0.0
 
 url http://arclink.ethz.ch/fdsnws/event/1/query?format=csv&starttime={today}&endtime={tomorrow}&minmagnitude=1.0&limit=500&orderby=time
 terms free-open https://www.seismo.ethz.ch/en/knowledge/earthquake-data-and-analysis-tools/waveform-data/
@@ -256,7 +256,7 @@ rows .
 epoch 1
 lat 2
 lon 3
-field 4 sed_quake_depth_km gaussian-inverse-square seismic-body km 3600 0.0 0.0
+quantity 4 sed_quake_depth_km gaussian-inverse-square geometry km 3600 0.0 0.0
 
 url http://reg.bom.gov.au/fwo/IDN60901/IDN60901.95765.json
 terms CC-BY-4.0 https://reg.bom.gov.au/other/copyright.shtml
@@ -366,7 +366,7 @@ at earth
 map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field properties.mag geosphere_ga_mag_3day erfc seismic-surface Mw 30.0 0.0 0.0
+quantity properties.mag geosphere_ga_mag_3day erfc source-parameter Mw 30.0 0.0 0.0
 
 url https://waterservices.usgs.gov/nwis/iv/?format=json&bBox={lon_min},{lat_min},{lon_max},{lat_max}&parameterCd=00060&siteStatus=active
 terms PD https://waterservices.usgs.gov/
@@ -549,7 +549,7 @@ at earth
 map features
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field properties.mag geosphere_ga_mag_month erfc seismic-surface Mw 180.0 0.0 0.0
+quantity properties.mag geosphere_ga_mag_month erfc source-parameter Mw 180.0 0.0 0.0
 
 url https://api.meteo.lt/v1/stations/vilniaus-ams/observations/latest
 terms CC-BY-SA-4.0 https://api.meteo.lt/
@@ -719,7 +719,7 @@ ttl 3600
 on earth 0 0 0
 hapi tpgpaltitude.<i>=saber_tpgpaltitude ktemp.<i>=saber_ktemp
 field saber_ktemp saber_ktemp inverse-square thermal K 68 0.0 0.0
-field saber_tpgpaltitude saber_tpgpaltitude inverse-square gravity km 68 0.0 0.0
+quantity saber_tpgpaltitude saber_tpgpaltitude inverse-square geometry km 68 0.0 0.0
 
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=WI_H0_MFI@0&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BGSE&format=json
 terms PD https://cdaweb.gsfc.nasa.gov/
@@ -1193,8 +1193,8 @@ map features
 mag_type_key properties.magType
 lat geometry.coordinates.1
 lon geometry.coordinates.0
-field geometry.coordinates.2 geosphere_earthquake_depth_km erfc seismic-surface km 360.0 0.0 0.0
-field properties.mag geosphere_earthquake_mag erfc seismic-surface Mw 360.0 0.0 0.0
+quantity geometry.coordinates.2 geosphere_earthquake_depth_km erfc geometry km 360.0 0.0 0.0
+quantity properties.mag geosphere_earthquake_mag erfc source-parameter Mw 360.0 0.0 0.0
 
 url https://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&format=json
 terms ioc-data-exchange-no-commercial https://www.ioc-sealevelmonitoring.org/
@@ -1468,7 +1468,7 @@ on earth 0 0 0
 rows .
 lat 2
 lon 3
-field 4 fdsn_station_elevation_m erfc seismic-surface m 86400.0 0.0 0.0
+quantity 4 fdsn_station_elevation_m erfc geometry m 86400.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ads.atmosphere.copernicus.eu/cams_so2_emission.nc
 terms free-open https://www.copernicus.eu/en/access-data/copyright-and-licences
@@ -8203,10 +8203,10 @@ terms PD https://maia.usno.navy.mil/
 format finals
 at earth
 ttl 86400
-field ut1_utc ut1_utc inverse-square geometry s 86400 0.0 0.0
-field pmx pmx inverse-square geometry arcsec 86400 0.0 0.0
-field pmy pmy inverse-square geometry arcsec 86400 0.0 0.0
-field lod eop_iers_lod_s inverse-square geometry s 86400 0.0 0.0
+quantity ut1_utc ut1_utc inverse-square geometry s 86400 0.0 0.0
+quantity pmx pmx inverse-square geometry arcsec 86400 0.0 0.0
+quantity pmy pmy inverse-square geometry arcsec 86400 0.0 0.0
+quantity lod eop_iers_lod_s inverse-square geometry s 86400 0.0 0.0
 
 url https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json
 terms PD https://mars.nasa.gov/
@@ -8265,7 +8265,7 @@ on earth 0 0 0
 rows .
 lat 2
 lon 3
-field 4 fdsn_station_elevation_m erfc seismic-surface m 86400.0 0.0 0.0
+quantity 4 fdsn_station_elevation_m erfc geometry m 86400.0 0.0 0.0
 
 url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=text&nodata=404
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
@@ -8275,7 +8275,7 @@ on earth 0 0 0
 rows .
 lat 2
 lon 3
-field 4 fdsn_station_elevation_m erfc seismic-surface m 86400.0 0.0 0.0
+quantity 4 fdsn_station_elevation_m erfc geometry m 86400.0 0.0 0.0
 
 url https://services.arcgis.com/wjcPoefzjpzCgffS/arcgis/rest/services/Environment_Canada_Wind_Speed_and_Direction/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultRecordCount=500
 terms eccc-end-use-licence https://eccc-msc.github.io/open-data/licence/readme_en/
@@ -8362,7 +8362,7 @@ terms columbia-research-noncommercial https://www.ldeo.columbia.edu/chrr/terms_o
 format ndk
 at earth
 ttl 86400
-field m0 gcmt_scalar_moment_nm gaussian-inverse-square seismic-body N·m 6.0 0.0 0.0
+quantity m0 gcmt_scalar_moment_nm gaussian-inverse-square source-parameter N·m 6.0 0.0 0.0
 
 url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
 format igra_zip
@@ -10215,7 +10215,7 @@ field copernicus_air_dewpoint copernicus_air_dewpoint exponential-decay thermal 
 field copernicus_air_temperature copernicus_air_temperature exponential-decay thermal K 3600 0.0 0.0
 field copernicus_dew_point_depression copernicus_dew_point_depression exponential-decay thermal K 3600 0.0 0.0
 field copernicus_eastward_wind_speed copernicus_eastward_wind_speed gaussian-inverse-square advective m/s 3600 0.0 0.0
-field copernicus_geopotential_height copernicus_geopotential_height inverse-square gravity m 3600 0.0 0.0
+quantity copernicus_geopotential_height copernicus_geopotential_height inverse-square geometry m 3600 0.0 0.0
 field copernicus_northward_wind_speed copernicus_northward_wind_speed gaussian-inverse-square advective m/s 3600 0.0 0.0
 field copernicus_relative_humidity copernicus_relative_humidity gaussian-inverse-square diffusion % 3600 0.0 0.0
 field copernicus_specific_humidity copernicus_specific_humidity gaussian-inverse-square diffusion kg/kg 3600 0.0 0.0
@@ -10760,7 +10760,7 @@ compiler tools/harvest/src/bin/isc_bulletin_compiler.rs
 sha256 a20da758359e15a4a20483b8f88d2072bc7f5edfae685e35283680329c21b334
 at earth
 ttl 604800
-field isc_bulletin_magnitude isc_bulletin_magnitude erfc seismic-surface Mw 604800 0.0 0.0
+quantity isc_bulletin_magnitude isc_bulletin_magnitude erfc source-parameter Mw 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/isdc-data.gfz.de/champ_plpt.bin
 terms CC-BY-4.0 https://isdc.gfz-potsdam.de/champ-isdc/access-to-the-champ-data
@@ -19069,7 +19069,7 @@ compiler tools/harvest/src/bin/venus_radar_compiler.rs
 format vnrd
 at venus
 no-cadence
-field venus_radar_inc_deg venus_radar_inc_deg inverse-square geometry deg 33554432.0 0.0 0.0
+quantity venus_radar_inc_deg venus_radar_inc_deg inverse-square geometry deg 33554432.0 0.0 0.0
 field venus_radar_ocp venus_radar_ocp inverse-square em 1 33554432.0 0.0 0.0
 field venus_radar_scp venus_radar_scp inverse-square em 1 33554432.0 0.0 0.0
 
@@ -26731,7 +26731,7 @@ origin https://portal.opentopography.org/API/globaldem?demtype=SRTM15Plus&south=
 format geotiff
 no-cadence
 at earth
-field elevation srtm15_plus_opentopography_elevation_m inverse-square gravity m 31536000 0.0 0.0
+quantity elevation srtm15_plus_opentopography_elevation_m inverse-square geometry m 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ps1images.stsci.edu/ps1_dr2_binary.fp01
 origin https://ps1images.stsci.edu/rings.v3.skycell/
@@ -28240,7 +28240,7 @@ rv_scale 1000.0
 dist_scale 3.085677581e16
 field mag corot_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 field teff corot_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
-field logg corot_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
+quantity logg corot_logg gaussian-inverse-square source-parameter logg 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/cosmicflows_cf4.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -28395,7 +28395,7 @@ radvel rv
 rv_scale 1000.0
 dist_scale 3.085677581e16
 field teff polarbase_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
-field logg polarbase_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
+quantity logg polarbase_logg gaussian-inverse-square source-parameter logg 604800 0.0 0.0
 field mag polarbase_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/psr.json
@@ -28522,7 +28522,7 @@ origin https://topex.ucsd.edu/pub/srtm15_plus/SRTM15_V2.5.5.nc
 format netcdf
 no-cadence
 at earth
-field elevation srtm15_plus_elevation_m inverse-square gravity m 31536000 0.0 0.0
+quantity elevation srtm15_plus_elevation_m inverse-square geometry m 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/denis.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
@@ -28621,7 +28621,7 @@ radvel rv
 rv_scale 1000.0
 dist_scale 3.085677581e16
 field teff pastel_teff_k gaussian-inverse-square thermal K 604800 0.0 0.0
-field logg pastel_logg gaussian-inverse-square gravity logg 604800 0.0 0.0
+quantity logg pastel_logg gaussian-inverse-square source-parameter logg 604800 0.0 0.0
 field mag pastel_vmag gaussian-inverse-square em mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/vizier.cds.unistra.fr/wds.json
@@ -29938,8 +29938,8 @@ sha256 2a473911eb81894a9a88929dbe7e52fb9974c49f582e55d4dbb8c350d5c4c4eb
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200001_2.dat
 origin https://web.archive.org/web/20030513014037id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_2.dat
@@ -29948,8 +29948,8 @@ sha256 5c6e0a42d4787cccb6e656e380b0ad0b75d0409e13212f785714509b8662bfed
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200001_3.dat
 origin https://web.archive.org/web/20030513014119id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200001_3.dat
@@ -29958,8 +29958,8 @@ sha256 b2ab4dd2a96a31a7b104585caba8b06cc7a3532c00f186b599f32c6a57b09db8
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_1.dat
 origin https://web.archive.org/web/20030513181110id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_1.dat
@@ -29968,8 +29968,8 @@ sha256 f30f3cd22527fdc613fd1beee3fa4b37bc7bd10d7edfd29ad7eec48eb232bdcb
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_2.dat
 origin https://web.archive.org/web/20030930094743id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_2.dat
@@ -29978,8 +29978,8 @@ sha256 9df523b8d483fd89af7613b41602bf972d63e06af98afee7061e964e918f94e1
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200002_3.dat
 origin https://web.archive.org/web/20030513013706id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200002_3.dat
@@ -29988,8 +29988,8 @@ sha256 c306d8a091a4e5e2ca49bd8de01042b2a6838d989dfcd43f1874053cc1a77f75
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200003_1.dat
 origin https://web.archive.org/web/20030513013759id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_1.dat
@@ -29998,8 +29998,8 @@ sha256 76c4b3ccb08c00561988f49489ec292d7fc701487b0ff4fa96e4fa50f21c90d9
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200003_2.dat
 origin https://web.archive.org/web/20030513014417id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_2.dat
@@ -30008,8 +30008,8 @@ sha256 f31beb854edf53294d562fcfbcdb0fc7eedcbc2293c2a589ac8bd4f62822de23
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200003_3.dat
 origin https://web.archive.org/web/20030513013922id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200003_3.dat
@@ -30018,8 +30018,8 @@ sha256 7b3cf9beb6ac89e577a9414606e27928b937483a629ca265dd1df787e9482842
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200004_1.dat
 origin https://web.archive.org/web/20030513013843id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_1.dat
@@ -30028,8 +30028,8 @@ sha256 aaac78a69e89856912a739cf0136117daa71a5bec925224d226a1c3895187b2c
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200004_2.dat
 origin https://web.archive.org/web/20030514060940id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_2.dat
@@ -30038,8 +30038,8 @@ sha256 269468eef13b9abea69f6bb43df4ee830fa03786e8feecffacdd13d8c6b18a02
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200004_3.dat
 origin https://web.archive.org/web/20030514061246id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200004_3.dat
@@ -30048,8 +30048,8 @@ sha256 fa2792d62b8bda299ca8867d7f7ff79ef1b478bb0e83c0c22ef5181066758c78
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200005_1.dat
 origin https://web.archive.org/web/20030514061343id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_1.dat
@@ -30058,8 +30058,8 @@ sha256 a6450188b9e12370d856b66e3d24d888c0e861a0d927fc24fce2e10ad9017f86
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200005_2.dat
 origin https://web.archive.org/web/20030514061346id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_2.dat
@@ -30068,8 +30068,8 @@ sha256 09d6ff5d82e7ba1eb060fbca2c246a71101246dd5fe98382884966e1c63467a7
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200005_3.dat
 origin https://web.archive.org/web/20030514061256id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200005_3.dat
@@ -30078,8 +30078,8 @@ sha256 d5c1ce7714b61566cbd13b4502c5fee438cfd8b79fcb22c34f9f2e5b3949cb56
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:free-surface Pa
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_1.dat
@@ -30089,8 +30089,8 @@ sha256 448002f5e875eea45e5f6fd91fbf130a6af97d9bf3d1b96286932be1ab76ed06
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_2.dat
 origin https://web.archive.org/web/20030514061510id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_2.dat
@@ -30099,8 +30099,8 @@ sha256 20ccb6a922a7ee342d41886da72e27616e875404bd160850ec6183e8c53e19c2
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200006_3.dat
 origin https://web.archive.org/web/20030514061523id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200006_3.dat
@@ -30109,8 +30109,8 @@ sha256 26eec2866b44148810ebe0aeeaaf8db5b9e4828704ad603e4a9a6a240ebfa80e
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200007_1.dat
 origin https://web.archive.org/web/20030514061626id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_1.dat
@@ -30119,8 +30119,8 @@ sha256 9f147341c0e1a95de0bd8c07eb0ce4ba41d715464c8f32fcfb4c548fab92ebd9
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200007_2.dat
 origin https://web.archive.org/web/20030514061730id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200007_2.dat
@@ -30129,8 +30129,8 @@ sha256 d8701f23e623f8bd6c269d99fc2a827cce0ec29721a89694288361162f07004a
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200008_1.dat
 origin https://web.archive.org/web/20030514061251id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_1.dat
@@ -30139,8 +30139,8 @@ sha256 e752644ecc1c34411e32d0dd897d9d865e546253af853e664e36d9059f2f77ad
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/bul200008_2.dat
 origin https://web.archive.org/web/20030514061335id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/bulletin/2000/bul200008_2.dat
@@ -30149,8 +30149,8 @@ sha256 89de9c28ab97f96ba765a970705402735a91bb98a51c99c5df3aa133a189f93b
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat002.dat
 origin https://web.archive.org/web/20081221113021id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat002.dat
@@ -30183,8 +30183,8 @@ sha256 8b44665facdfd61ff6b897e74b2955a234bbc65730a6bc330bc317a0f2d11ec9
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200001.dat
 origin https://web.archive.org/web/20030514061309id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200001.dat
@@ -30193,8 +30193,8 @@ sha256 116f0c7c26b2a24f815b795b76ad1e784d9cd79d26c37c7b8754cb6f96fb6ebe
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200002.dat
 origin https://web.archive.org/web/20030514061423id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200002.dat
@@ -30203,8 +30203,8 @@ sha256 d9273bd6592993d300da484723bc64689ec0c148cdbed7f00e5666b0303afba7
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200005.dat
 origin https://web.archive.org/web/20030514061640id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200005.dat
@@ -30213,8 +30213,8 @@ sha256 fd56c77b67a77b795da2c4fe99c706e0227421273342c29a527d029593e53354
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200006.dat
 origin https://web.archive.org/web/20030515081038id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200006.dat
@@ -30223,8 +30223,8 @@ sha256 00ecda8051a04ca0576195ebd43dcd11e23d5dc0a9b54f1be7ca9adb1c6b27d9
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200007.dat
 origin https://web.archive.org/web/20030515081122id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2000/cat200007.dat
@@ -30233,8 +30233,8 @@ sha256 02555dc7b880a3456f8b196bb9f42ac2b72dc50830ac22e5e82a445a292099ce
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200101.dat
 origin https://web.archive.org/web/20180212024918id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2001/cat200101.dat
@@ -30243,8 +30243,8 @@ sha256 50fd686642af89f6a1ee8094c59809203fa1fa1edb20484c469dc493d128e21b
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat200901.dat
 origin https://web.archive.org/web/20180212021813id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2009/cat200901.dat
@@ -30253,8 +30253,8 @@ sha256 f9390259b6ba408f51e882e8c4cb532e43b5abe6e1ea89d16b9cb7cee8d70301
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat201406.dat
 origin https://web.archive.org/web/20181102023325id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201406.dat
@@ -30263,8 +30263,8 @@ sha256 e2160ebd5d3e7796056b0ad93a6c06ee0d6e73116497b0cd4a31ee7858d6629b
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat201407.dat
 origin https://web.archive.org/web/20181102023200id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/Obninsk/catalog/2014/cat201407.dat
@@ -30273,8 +30273,8 @@ sha256 4c0d988fc4be0428b8ae6489fe8ede45cc29a8cb5fddd5c875257962b3a8aac8
 at earth
 no-cadence
 terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
-field obn_obninsk_depth obn_obninsk_depth erfc seismic-surface km 31536000 0.0 0.0
-field obn_obninsk_magnitude obn_obninsk_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity obn_obninsk_depth obn_obninsk_depth erfc geometry km 31536000 0.0 0.0
+quantity obn_obninsk_magnitude obn_obninsk_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/web.archive.org/cat_ALT.dat
 origin https://web.archive.org/web/20160428111806id_/http://zeus.wdcb.ru/wdcb/sep/data/sdata/catalogs/cat_ALT.dat
@@ -30502,7 +30502,7 @@ sha256 781d33abfe61af66241260696684a514758c2f613aefac891e0eb99f619f8861
 at earth
 no-cadence
 terms free-open http://www.gsras.ru/
-field gsras_teleseismic_catalog_magnitude gsras_teleseismic_catalog_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity gsras_teleseismic_catalog_magnitude gsras_teleseismic_catalog_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/www.kari.re.kr/ephemeris_kplo.bin
 terms kari-public-release https://www.kari.re.kr/kpds/search/dirviewer/download/KPLO/KPLO/PublicRelease/kernels/spice_kernels/spk/
@@ -30750,7 +30750,7 @@ sha256 40ba4601d3f8d32753dd8de8eedd7ffe2bb5c341c3ae9f3303e43c474d75dfb4
 at earth
 no-cadence
 terms CC-BY-4.0 https://zenodo.org/records/8084659
-field cedc_catalog_magnitude cedc_catalog_magnitude erfc seismic-surface Mw 31536000 0.0 0.0
+quantity cedc_catalog_magnitude cedc_catalog_magnitude erfc source-parameter Mw 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/conicus3d_wl_lightcone.tar.zst
 terms CC-BY-4.0 https://zenodo.org/records/18776222
@@ -30783,7 +30783,7 @@ format zip
 compiler tools/harvest/src/bin/zip_member_compiler.rs
 no-cadence
 at earth
-field vs llnl_g3d_shear_velocity gaussian-inverse-square seismic-body km/s 31536000 0.0 0.0
+quantity vs llnl_g3d_shear_velocity gaussian-inverse-square source-parameter km/s 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.zip
 terms CC-BY-4.0 https://zenodo.org/records/8300645
@@ -31483,7 +31483,7 @@ format ascii
 compiler tools/harvest/src/bin/ascii_table_compiler.rs
 at earth
 no-cadence
-field vs s40rts_shear_velocity gaussian-inverse-square seismic-body km/s 31536000 0.0 0.0
+quantity vs s40rts_shear_velocity gaussian-inverse-square source-parameter km/s 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/smss-dr4-param-public-5.fits.zip
 terms CC-BY-4.0 https://zenodo.org/records/15108911
