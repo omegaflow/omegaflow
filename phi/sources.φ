@@ -12120,7 +12120,7 @@ origin https://earthquake.usgs.gov/fdsnws/event/1/query
 compiler tools/harvest/src/bin/usgs_comcat_compiler.rs
 at earth
 ttl 2592000
-field usgs_comcat_m45 usgs_comcat_m45_rate gaussian-inverse-square seismic-body count 2592000.0 0.0 0.0
+quantity usgs_comcat_m45 usgs_comcat_m45_rate gaussian-inverse-square relative count 2592000.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/metoffice.gov.uk/hadisst_sst.bin
 terms non-commercial-government-licence-2.0 https://www.metoffice.gov.uk/hadobs/hadisst/
