@@ -53,6 +53,10 @@ Lumo · MiniMax · Kimi (Kontingent) · Google AI Studio (Gemini) · Tryingopen 
 DeepSeek V4 Pro, Qwen3.8, Nemotron, GLM 5.3, MiMo, GPT-OSS, Inkling, Mistral Large 4).
 **Die Maschine fährt sie, nicht der Operator.** Die frühere 2-Sitz-Tabelle (Fugu/Lumo) war ein
 Schnitt, kein Roster.
+**Max je Sitz nicht vergessen** (aus `ui-seats.md`, Spalte „Suche/Max"): Qwen `Denken=max` ·
+DeepSeek `DeepThink` · Z.ai `Deep Think Max` · Duck.ai `Begründung` · Claude `Sonnet 5.5 Extra hoch` ·
+MiniMax `Search` · Gemini `Grounding`. Ohne den Schalter antwortet das Modell teils „kein Suchwerkzeug"
+bzw. ohne Reasoning.
 
 ## 2 — Der Reasoning-Level (der größte Fehler: er wurde nie gesetzt)
 
@@ -202,9 +206,18 @@ Die Grenzkosten folgen der Leiter, nicht dem Listenpreis (`2026-10-18-netto-roll
 
 ---
 
-**Der kanonische Weg, in einem Satz:** Frage ins Formular → Operator wählt die Sitze → je Sitz ein
-direkter API-Aufruf (`reasoning_effort` gesetzt) bzw. der UI-Tab → Rohantwort + Sammlung nach
-`state/stimmen/`. **Kein `rat_dispatch`, kein Gateway, kein anderer Weg.**
+**Der kanonische Weg, in einem Satz:** Frage ins Formular (Prompt verbatim mit fünf Axiomen + fünf
+Stimmen) → Operator wählt die Sitze → je Sitz ein direkter API-Aufruf (`reasoning_effort` gesetzt)
+bzw. der UI-Tab (Max-Einstellung je Sitz aus `ui-seats.md`) → Rohantwort + Sammlung nach
+`state/stimmen/`.
+
+**Die drei Kanäle (je Sitz-Klasse):**
+- **Freier Schwarm** → lokales Gateway `127.0.0.1:1621/v1/chat/completions` (freie Modelle aus
+  `llm-gateway-alive.tsv`) **oder** OpenCode-free (`opencode models | grep -- '-free$'`).
+- **Paid API** → direkt (`api.deepseek.com`, `api.deepinfra.com`, Mistral-API), `reasoning_effort` gesetzt.
+- **UI-Sitz** → Browser (`browser.*`), Login/Max je Sitz; die Maschine fährt, nicht der Operator.
+
+**Kein `rat_dispatch`** (tot, `58bec95d7`).
 
 ## 6 — Die KPI je Stimme (der Streich-Test) + die minimale Auswahl
 
