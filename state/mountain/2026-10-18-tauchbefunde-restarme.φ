@@ -69,8 +69,10 @@
 # GEMESSEN: Zenodo 18776222 -> 200/206, 34 407 793 603 B, CC-BY-4.0, md5 a42e208a...;
 #   erste 100 MB: 1 229 tar-Eintraege, lp_dataset_patched/06/phNNN_lc{1,2}_YYY.npy,
 #   je 131 200 B, <f8, Shape (1,128,128). Kein e1/e2, kein kappa, keine WCS/Redshift-Tabelle.
-# VERDIKT: Produkt-Mismatch — das ist eine delta-Overdensity-Simulation, kein Shear-Katalog.
-#   Kein Shear-field erfinden. Reader waeren tar_zst + .npy + Namensgeometrie.
+# VERDIKT: `declined` für den Shear-Kanal — das ist eine delta-Overdensity-Simulation,
+#   kein Shear-Katalog. Keine phi-Zeile, keine e1/e2-Felder, keine Rohdaten im Haus;
+#   Zenodo 18776222 bleibt die externe Referenz. Ein kleiner Fixture (eine .npy, 131 200 B)
+#   waere nur sinnvoll, wenn wir je einen δ/κ-Reader bauen — dafuer gibt es heute keinen Nutzer.
 
 # ============================================================
 # 7 — IceCube IceTracks DR2 — exakt, drei Blocker
