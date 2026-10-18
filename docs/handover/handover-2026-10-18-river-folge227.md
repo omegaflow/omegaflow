@@ -2,7 +2,7 @@
   title: Handover — River-Folge 227 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: b299221ff595801e4e00ccdf2b38e31244e42c3dcd521cbf41063b1f6ec25344
+  sha256: 4fbe100d5eb0f0bf17bda6754dd5a21a1c40d9c08bface64e55ca86dbf87b7fb
   status: live
 -->
 # River-226
@@ -16,7 +16,7 @@
 - **Trigger:** Rat R-2026-10-17-j (5/5 A)
 - **Lage:** pending (gemessen 2026-10-18) — Mountain-Zeile ist gesetzt (`state/mountain/2026-10-18-k-pending.φ`, Träger `phi:893`, `xfer:mountain.…9~3ed32602`); `phi/sources.φ` hat keine `K`-Skalarzeile (grep 0), die Grammatik trägt `pending` nur als coupling-Rate
 - **Blockade:** kein `∇p`, kein `B/j`, Ein-Satellit — die physikalische Impulsbilanz-Lücke; **nicht** die Mountain-Zeile
-- **Offen:** bedingte TE als eigener Indikator, nicht als `K`; vor dem Bau Kadenz-Mismatch beantworten (Kp 3 h / Dst 1 h / AE 1 min gegen 1 Satellit)
+- **Offen:** `K` selbst bleibt pending; der TE-Indikator `TE(NVE→IVE | AE)` ist als eigener Punkt gebaut und kadenz-geprüft — DE-2 300 s, AE **allein** auf 1 h/3 h vergröbert: NVE→IVE pass bei Lag 300/600/900 s (3/3); der 3-h-Ausfall im gemeinsamen Bin ist DE-2-Auflösung/Statistik, nicht die Index-Auflösung. **Falsifikationsbedingung:** fällt TE(NVE→IVE | AE_3h) bei DE-2 300 s unter die ARX-Schwelle, trägt der Indikator nicht. Riss: Kp (nicht im Register) und Dst ungemessen; AE-3h ist Bin-Mittel, kein Kp-Äquivalent. Beleg: `state/river/2026-10-18-k-te-kadenz.φ`, `de2-conditional-te.yml` (Commit `764c5ca2f`)
 - **Braucht:** `state/stimmen/2026-10-17-rat-k-identifizierbar.md:1`
 
 ### Rätsel
