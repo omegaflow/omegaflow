@@ -52,6 +52,21 @@ jobs:
           check dr3_stars.bin ssd.jpl.nasa.gov
           check twomass_psc.bin irsa.ipac.caltech.edu
           check ephemeris_sun.bin ssd.jpl.nasa.gov-ephemeris
+          pin_asset=ephemeris_juice_official.bin
+          pin_release=ssd.jpl.nasa.gov-ephemeris
+          pin="$(awk '/^url .*\/ephemeris_juice_official\.bin$/{f=1;next} f&&/^sha256 /{print $2;exit}' "$register")"
+          if [ -n "$pin" ] && curl -fsSL --max-time 120 "$base/$pin_release/$pin_asset" -o "$pin_asset"; then
+            got="$(sha256sum "$pin_asset" | cut -d' ' -f1)"
+            if [ "$got" = "$pin" ]; then
+              printf '%-26s %-26s %-6s %s\n' "$pin_release" "$pin_asset" "pin" "placed" | tee -a cdn-health.txt
+            else
+              printf '%-26s %-26s %-6s %s\n' "$pin_release" "$pin_asset" "pin" "riss ($got)" | tee -a cdn-health.txt
+              fail=1
+            fi
+          else
+            printf '%-26s %-26s %-6s %s\n' "$pin_release" "$pin_asset" "pin" "pending" | tee -a cdn-health.txt
+            fail=1
+          fi
           {
             printf '## cdn-health — %s\n' "$(date -u +%FT%TZ)"
             printf '```\n'
