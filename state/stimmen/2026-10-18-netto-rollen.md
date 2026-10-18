@@ -14,7 +14,7 @@ falsche Rangfolge. Beide kosten echtes Geld. Die vom Operator vorgegebene Leiter
 | **OpenCode frei** (`opencode/*-free`) | 10 Modelle, `cost 0/0` | frei | **$0** |
 | **Freie Träger** (Gateway) | 44 gemessen | frei | **$0** |
 | **Mistral inklusive** | **7,27 €** Rest von 8,50 € | Abo, monatlich | **€0** bis erschöpft |
-| **DeepSeek paid** | **$128,86** gewährt (Ausfall-Kompensation), davon **≈ $90** übrig | vorausbezahlt, echtes Geld | **voller Preis** |
+| **DeepSeek paid** | **$128,86** gewährt (Ausfall-Kompensation) **+ $90** übrig = **$218,86** | vorausbezahlt, echtes Geld | **voller Preis** |
 | **Mistral paid** | **20 €** Credits (14.10.) | Pay-as-you-go | **voller Preis** |
 | **DeepInfra** | **$8,49** Balance + **$91,05** Top-up | **reserviert, metered** | **voller Preis — schonen** |
 
@@ -64,8 +64,7 @@ Grenze: **n = 1 Fork je Modell** — indikativ, nicht endgültig.
 |---|---|---|
 | Mistral inklusive (7,27 €) | 0,0043 € | **≈ 1 690** |
 | Mistral paid (20 €) | 0,0043 € | ≈ 4 651 |
-| DeepSeek paid (≈$90 übrig, V4 Pro) | $0,00793 | **≈ 11 350** |
-| DeepSeek paid (Grant $128,86, V4 Pro) | $0,00793 | ≈ 16 250 |
+| **DeepSeek paid ($218,86, V4 Pro)** | $0,00793 | **≈ 27 600** |
 | DeepInfra GLM-5.3-Flash ($99,54) | $0,001415 | ≈ 70 350 |
 | **DeepInfra Kimi K3 (Frontier)** | ≈ $0,0388 | **≈ 2 560** |
 
