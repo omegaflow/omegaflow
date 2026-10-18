@@ -14845,6 +14845,21 @@ field nufnu_syn nufnu_syn inverse-square em erg/cm2/s 33554432.0 0.0 0.0
 field highest_energy highest_energy inverse-square em GeV 33554432.0 0.0 0.0
 field pivot_energy pivot_energy inverse-square em MeV 33554432.0 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/fermi.gsfc.nasa.gov/gbm_tgf_catalog_offline.csv
+terms PD-USGov https://fermi.gsfc.nasa.gov/
+format gbm_tgf
+origin https://fermi.gsfc.nasa.gov/ssc/data/access/gbm/tgf/gbm_tgf_catalog_offline.csv
+sha256 f75cf291b0f1d524746d7f4d3bb5bb6336a3e89e40c5649e9cf02dbee233ea07
+on earth 0 0 0
+map .
+lat Lat
+lon Lon
+no-cadence
+field BGO_0_N gbm_tgf_bgo0_counts inverse-square em count 31536000 0.0 0.0
+field BGO_1_N gbm_tgf_bgo1_counts inverse-square em count 31536000 0.0 0.0
+field NAI_N gbm_tgf_nai_counts inverse-square em count 31536000 0.0 0.0
+field Width_ms gbm_tgf_width_ms inverse-square em ms 31536000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/firms.modaps.eosdis.nasa.gov/MODIS_C6_1_Global_7d.csv
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 origin https://firms.modaps.eosdis.nasa.gov/data/active_fire/modis-c6.1/csv/MODIS_C6_1_Global_7d.csv

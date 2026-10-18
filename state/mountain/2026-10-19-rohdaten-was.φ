@@ -51,16 +51,22 @@
 #   comments 16); Header `BGO_0_N, BGO_1_N, NAI_N, Width_ms, Lat, Lon, Alt, TRIG_ID ...`.
 # ENTSCHEID: Point-Event-Arm, `terms PD-USGov`, Felder `gbm_tgf_bgo0_counts`,
 #   `gbm_tgf_nai_counts`, `gbm_tgf_width_ms`, `gbm_tgf_lat/lon/alt`; `format gbm_tgf`.
-#   Block nach dem Asset; der 3. Katalog existiert nicht (pending).
+# GESETZT: Asset `fermi.gsfc.nasa.gov/gbm_tgf_catalog_offline.csv` (658 059 B,
+#   sha256 f75cf291b0f1d524746d7f4d3bb5bb6336a3e89e40c5649e9cf02dbee233ea07) ist live;
+#   Block steht mit `format gbm_tgf`, PD-USGov, den vier Feldern (BGO0/BGO1/NaI/Width_ms).
+#   Der 3. Katalog existiert nicht (pending).
 
 # ============================================================
 # 6 — WWLLN
 # ============================================================
 # GEMESSEN: die GBM-WWLLN-CSV (1 544 Zeilen) ist Teil des TGF-Katalogs (NASA PD);
-#   die WWLLN-Rohdaten (`wwlln.net/climate/th_yr/data/`, Thunder-Hour 2025, 48.7 MB)
-#   tragen eigene Terms — vor dem Block messen.
-# ENTSCHEID: Point-Event-Arm fuer die WWLLN-Treffer, Felder `wwlln_time`, `wwlln_lat`,
-#   `wwlln_lon`, `wwlln_count`, `wwlln_separation_km`; Terms erst nach Messung.
+#   die WWLLN-Rohdaten (`wwlln.net`, LargeStrokes.txt 604 818 B, sha c9ea29ba...) tragen
+#   auf der Website: "WWLLN archival data are copyrighted by the University of Washington
+#   and are available at nominal cost." — **kein offener Term**.
+# ENTSCHEID: die offene WWLLN-Zeile ist die **GBM-WWLLN-CSV** (PD-USGov, 1 544 Treffer),
+#   Point-Event-Felder `wwlln_time/lat/lon/count/separation_km`. Die 8 184 Large Strokes
+#   aus `wwlln.net` sind **declined** fuer das offene Register (copyright, Kosten);
+#   Zugang ist ein Operator-/Future-Akt. Der Tag `wwlln.net` bleibt unregistriert.
 
 # ============================================================
 # 7 — SOHO/MDI+EIT
