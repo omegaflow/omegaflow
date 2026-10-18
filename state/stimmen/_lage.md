@@ -1,9 +1,9 @@
-# Lage — generiert 2026-10-18T15:39:31Z
+# Lage — generiert 2026-10-18T15:43:43Z
 
-HEAD `9b4bef096`
+HEAD `06981ed01`
 
 ## Sitze / Routen (Gateway)
-- Katalog (tsv, letzter Gateway-Start): 1917 · frei: 47 · lebendig: 9
+- Katalog (tsv, letzter Start: 2h): 1917 · frei: 47 · Preis unbekannt: 1007 · lebendig: 9 (3h alt)
 - Freier Schwarm: live aus den Preis-0-Zeilen + OpenCode-free — keine feste Zahl
 - Guthaben (USD):
   openrouter	-1.7770357660000116
