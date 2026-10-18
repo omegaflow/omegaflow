@@ -1852,6 +1852,116 @@ fn balance_json(secrets: &HashMap<String, String>, auth: &str) -> String {
     format!("{{\"balances\":[{}]}}", items.join(","))
 }
 
+fn probe_alive(route: &Route, key: &str, provider_model: &str, secrets: &HashMap<String, String>) -> bool {
+    let Some(base) = effective_base(route, secrets) else {
+        return false;
+    };
+    let url = format!("{}/chat/completions", base);
+    let body = format!(
+        "{{\"model\":\"{provider_model}\",\"messages\":[{{\"role\":\"user\",\"content\":\"ok\"}}],\"max_tokens\":1}}"
+    );
+    let out = Command::new("curl")
+        .args(["-s", "-S", "--max-time", "8", "-X", "POST"])
+        .arg(&url)
+        .arg("-H")
+        .arg(format!("Authorization: Bearer {key}"))
+        .arg("-H")
+        .arg("Content-Type: application/json")
+        .arg("--data-binary")
+        .arg(&body)
+        .arg("-w")
+        .arg("\n%{http_code}")
+        .output();
+    let Some(out) = out.ok() else {
+        return false;
+    };
+    let raw = String::from_utf8_lossy(&out.stdout).to_string();
+    let Some(i) = raw.rfind('\n') else {
+        return false;
+    };
+    let code = match raw[i + 1..].trim().parse::<u16>() {
+        Ok(c) => c,
+        Err(_) => return false,
+    };
+    if !(200..300).contains(&code) {
+        return false;
+    }
+    let resp = &raw[..i];
+    resp.contains("\"content\"")
+        && !resp.contains("\"content\":null")
+        && !resp.contains("\"content\":\"\"")
+}
+
+fn health_check(
+    secrets: &HashMap<String, String>,
+    auth: &str,
+    models: &HashMap<String, ModelInfo>,
+) -> HashSet<String> {
+    let free_ids: Vec<String> = models
+        .iter()
+        .filter(|(id, info)| match (info.prompt, info.completion) {
+            (Some(p), Some(c)) => p == 0.0 && c == 0.0,
+            _ => !is_paid_prefix(id.split('/').next().unwrap_or("")),
+        })
+        .map(|(id, _)| id.clone())
+        .collect();
+    let ids = std::sync::Arc::new(free_ids);
+    let idx = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+    let secrets = std::sync::Arc::new(secrets.clone());
+    let auth = std::sync::Arc::new(auth.to_string());
+    let results = std::sync::Arc::new(std::sync::Mutex::new(HashSet::new()));
+    let mut handles = Vec::new();
+    for _ in 0..16 {
+        let ids = ids.clone();
+        let idx = idx.clone();
+        let secrets = secrets.clone();
+        let auth = auth.clone();
+        let results = results.clone();
+        handles.push(std::thread::spawn(move || loop {
+            let i = idx.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+            if i >= ids.len() {
+                break;
+            }
+            let id = &ids[i];
+            let alive = match route_for(id) {
+                Some(route) => match key_for(route, secrets.as_ref(), auth.as_str()) {
+                    Some(key) => {
+                        let provider_model = &id[route.prefix.len() + 1..];
+                        probe_alive(route, &key, provider_model, secrets.as_ref())
+                    }
+                    None => false,
+                },
+                None => false,
+            };
+            if alive {
+                if let Ok(mut r) = results.lock() {
+                    r.insert(id.clone());
+                }
+            }
+        }));
+    }
+    for h in handles {
+        let _ = h.join();
+    }
+    match std::sync::Arc::try_unwrap(results) {
+        Ok(m) => match m.into_inner() {
+            Ok(h) => h,
+            Err(p) => p.into_inner(),
+        },
+        Err(_) => HashSet::new(),
+    }
+}
+
+fn alive_tsv(alive: &HashSet<String>) -> String {
+    let mut ids: Vec<&String> = alive.iter().collect();
+    ids.sort();
+    let mut out = String::from("model\n");
+    for id in ids {
+        out.push_str(&format!("{id}\n"));
+    }
+    out
+}
+
 fn is_paid_prefix(prefix: &str) -> bool {
     matches!(
         prefix,
@@ -2619,6 +2729,21 @@ fn main() {
         format!("{}/state/zustand/llm-gateway-balance.tsv", repo_root()),
         balance_tsv(&balances),
     );
+    {
+        let secrets = secrets.clone();
+        let auth = auth.clone();
+        std::thread::spawn(move || {
+            let Some(models) = MODELS.get() else {
+                return;
+            };
+            let alive = health_check(&secrets, &auth, models);
+            eprintln!("llm_gateway: alive {} free models", alive.len());
+            let _ = fs::write(
+                format!("{}/state/zustand/llm-gateway-alive.tsv", repo_root()),
+                alive_tsv(&alive),
+            );
+        });
+    }
     if filter_enabled() {
         active_redactor();
     }
