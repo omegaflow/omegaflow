@@ -37,6 +37,7 @@ pub use archivar::copernicus;
 pub use archivar::cors;
 pub use archivar::dastcom;
 pub use archivar::decaps;
+pub use archivar::de2_raw;
 pub use archivar::demeter;
 pub use archivar::des_y6;
 pub use archivar::dmap;
