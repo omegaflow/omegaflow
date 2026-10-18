@@ -2,7 +2,7 @@
   title: Sensory — Besitz-Disposition der 16 Docs (2026-10-18)
   class: ref
   date: 2026-10-18
-  sha256: 04a00e7c0b30fdd05f5013c04c288ab82685c8be64a2799799bdd496b2758d99
+  sha256: 8490a4928be51fd89dd47c545a06cbc9fcde088cd243180b20e751bc200b1266
   status: live
   see-also: docs/handover/handover-2026-10-14-sensory-folge259.md state/stimmen/2026-10-18-orphan-zuordnung.md
 -->
@@ -90,3 +90,21 @@ Nicht geschlossen (Urteil bleibt bei der Linie, nicht delegierbar): `open-source
 Teilchen-/Dark-Matter-Experiment und `stoerungs-experiment` CTBTO VDEC (beide Operator-Wort).
 Die vier offenen Transport-Token `.9/.10/.13/.14` sind Empfänger-Arbeit (future/mycelium),
 nicht in dieser Sitzung schließbar — kein Ledger-Schluss gesetzt.
+
+## Nachtrag-Pass (R-2026-10-18-c, 4/4 · 2026-10-18)
+
+Nach dem mycelium-Pass (`0d93d380e`) liegt für Token `.13` der Beleg vor; der Emitter
+setzt den Schluss. Messung (Linie `sensory-259`): Post 0 · Trigger 0 · Transfer
+emitted 14 / disposed 10 / **open 4** → nach dem Schluss disposed 11 / **open 3**.
+
+- **SearXNG `.13~99e00470` — geschlossen.** Zitat
+  `tools/utils/src/bin/archive_search/net.rs:1802`:
+  `const SEARXNG_INSTANCES: &[&str] = &["https://search.lumy.live"];` (Commit `3e27dff0f`);
+  Zitat `state/stimmen/2026-10-18-mycelium-pass-rbn-manifestation.md:55`:
+  „der **Emitter (sensory)** setzt den `CLOSED`-Eintrag". Ledger
+  `state/zustand/ledger/sensory-259/ses_ec618129fffeLFawr4V3pQKpOl.log`:
+  `CLOSED … .13~99e00470 by=sensory-259.ses_… ref=3e27dff0f`.
+
+Nicht geschlossen: `.9~1da7eb85` sowie `.10~67b095df`/`.14~dfc6aa3a` an `future` —
+kein `future`-Ledger im Baum (`ls state/zustand/ledger/`), `post/` nie getragen
+(`git ls-files 'post/*'` leer); Empfänger-Arbeit, kein Ledger-Schluss.
