@@ -75,7 +75,7 @@ Der Workflow hat Issue **#238** automatisch gefiled; ich habe die Diagnose dort 
 
 Post 0 · Trigger 0 · Transfer: eingehend 1 unbeglichen (river `.13`), eigene 2 offen.
 **Geschlossen:** der Register-Formfehler + die Transport-Route (`15bcd736e`), der Transport selbst (§8), `sha256` im Block und 206 auf `.parts`+Shards.
-**Nicht geschlossen:** der river-Token im Ledger (Emitter river schließt; mycelium schreibt nicht in `ledger/river/`) — und zwei ehrlich benannte Residuals in §9 (stale CDN-Matrix, FITS-interner Subset-Leser).
+**Nicht geschlossen:** der river-Token im Ledger (Emitter river schließt; mycelium schreibt nicht in `ledger/river/`) — und ein ehrlich benanntes Residual in §9 (FITS-interner Subset-Leser).
 
 ## 8. Nachtrag 2026-10-18: Credential repariert, Transport vollendet
 
@@ -91,5 +91,5 @@ Die flache `url` `…/kids_dr4_wl_cat.fits` bleibt **404** (over-2-GiB-Konstrukt
 ## 9. Ehrlich offen (kein stiller Abschluss)
 
 - ~~**CDN-Matrix blind für `.parts`**~~ — **geschlossen.** `cdn_reconcile` erkennt jetzt `raw_mirror`s `.parts` (`is_manifest`) und die `.pNNN`-Shards (`shard_base`), mit Tests (`is_manifest_accepts_parts_and_manifest`, `shard_base_recognises_p_parts_numeric_and_underscore`). Snapshot neu erzeugt: `missing_assets` **962 → 777** (185 zuvor fälschlich „fehlende" Shard-Assets werden nun über Manifest+Shards bewiesen), `kids_dr4_wl_cat.fits` und Venus raus; `--fail`-Contract clean.
-- **Neu benannt (nicht behoben): ungeparste Register-Blöcke.** `load_sources_from` verwirft Blöcke ohne Whitelist-`format` und ohne Frame/Extract (`parse.rs:145–154`). Die Venus-`tif`-Blöcke (nur `compiler`/`sha256`/`no-cadence`) werden so nicht zu `sources`; ihre Shards erscheinen als Divergenz. Das ist ein Altdefekt der Venus-Blöcke, nicht des `.parts`-Fixes.
+- ~~**Ungeparste Register-Blöcke**~~ — **geschlossen.** `cdn_reconcile` liest die CDN-`url`s jetzt zusätzlich **roh** aus dem Register (`raw_cdn_urls`), nicht nur aus den vom Parser akzeptierten `sources`. Damit zählen auch Blöcke, die `load_sources_from` ohne Whitelist-`format`/Frame verwirft (`parse.rs:145–154`). Venus ist aus `missing_assets` **und** `divergence` verschwunden; Divergenz 8275 → 8181.
 - **FITS-interner Subset-Leser fehlt** (§2): Shard-Reassembly ja, „nur Zeilen/HDU lesen" nein.
