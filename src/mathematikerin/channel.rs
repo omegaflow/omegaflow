@@ -2168,11 +2168,16 @@ pub fn unit_token(token: &str) -> Option<&'static str> {
     match token {
         "V/m" => Some("V/m"),
         "m/s^2" => Some("m/s^2"),
+        "m/s" => Some("m/s"),
+        "m/s2" => Some("m/s2"),
+        "nm/s2" => Some("nm/s2"),
+        "mm/s2" => Some("mm/s2"),
         "Pa" => Some("Pa"),
         "K" => Some("K"),
         "kg/m^3" => Some("kg/m^3"),
         "kg/(m^2 s)" => Some("kg/(m^2 s)"),
         "m^-3" => Some("m^-3"),
+        "1" => Some("1"),
         _ => None,
     }
 }

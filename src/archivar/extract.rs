@@ -4074,6 +4074,14 @@ fn hapi_family_field<'a>(extracts: &'a [Extract], name: &str) -> Option<&'a Fiel
     })
 }
 
+fn hapi_level_key(fc: &FieldConfig, level: usize) -> String {
+    if fc.key.contains("<i>") {
+        fc.key.replace("<i>", &level.to_string())
+    } else {
+        format!("{}_{}", fc.key, level)
+    }
+}
+
 fn hapi_feed_level(row: &[JsonVal], idx: Option<usize>, level: usize) -> Option<f64> {
     let cell = row.get(idx?)?;
     match cell {
@@ -4147,14 +4155,9 @@ fn hapi_emit_row(
                 if fill.is_some_and(|f| val == f) {
                     continue;
                 }
-                let name_i = if name.contains("<i>") {
-                    name.replace("<i>", &i.to_string())
-                } else {
-                    format!("{name}_{i}")
-                };
+                let key_i = hapi_level_key(fc, i);
                 let mut eff_fc = fc.clone();
-                eff_fc.key = name_i.clone();
-                eff_fc.name = name_i.clone();
+                eff_fc.key = key_i.clone();
                 channels.push((
                     Channel {
                         z: 0.0,
@@ -4170,7 +4173,7 @@ fn hapi_emit_row(
                             i,
                             ctx.body_name,
                         ),
-                        name: name_i,
+                        name: key_i,
                         value: val,
                     },
                     eff_fc,
@@ -7188,14 +7191,9 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     if fill.is_some_and(|f| val == f) {
                                         continue;
                                     }
-                                    let name_i = if name.contains("<i>") {
-                                        name.replace("<i>", &i.to_string())
-                                    } else {
-                                        format!("{name}_{i}")
-                                    };
+                                    let key_i = hapi_level_key(fc, i);
                                     let mut eff_fc = fc.clone();
-                                    eff_fc.key = name_i.clone();
-                                    eff_fc.name = name_i.clone();
+                                    eff_fc.key = key_i.clone();
                                     channels.push((
                                         Channel {
                                             z: 0.0,
@@ -7204,7 +7202,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                             epoch: now,
                                             station_code: None,
                                             position: Position::Source,
-                                            name: name_i,
+                                            name: key_i,
                                             value: val,
                                         },
                                         eff_fc,
