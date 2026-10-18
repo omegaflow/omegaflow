@@ -25,6 +25,24 @@ fn quantity_kind(force: &str, name: &str) -> Option<&'static str> {
             _ => None,
         },
         "diffusion" => None,
+        "advective" => match name {
+            "soho_lasco_cme_pa_deg" | "soho_lasco_cme_width_deg" => Some("geometry"),
+            _ => None,
+        },
+        "thermal" => match name {
+            "rave_dr4_effective_temp_k"
+            | "galah_dr3_effective_temp_k"
+            | "rave_teff_k"
+            | "exo_stellarhost_teff_k"
+            | "corot_teff_k"
+            | "polarbase_teff_k"
+            | "pastel_teff_k"
+            | "wd_teff_k"
+            | "apogee_dr17_teff_rv"
+            | "rave_dr6_teffs_sparv"
+            | "rave_dr6_teff_irfm" => Some("source-parameter"),
+            _ => None,
+        },
         "seismic-body" | "seismic-surface" => {
             if name.ends_with("_depth")
                 || name.ends_with("_depth_km")
@@ -48,7 +66,7 @@ fn quantity_kind(force: &str, name: &str) -> Option<&'static str> {
 fn usage() {
     eprintln!("usage: p10_quantity_migrate [path] [--write]");
     eprintln!(
-        "  report only, or --write to retag the P10 tranches (gravity/geometry/seismic, acoustic) field→quantity"
+        "  report only, or --write to retag the P10 tranches (gravity/geometry/seismic, acoustic, diffusion, advective, thermal) field→quantity"
     );
 }
 
@@ -103,6 +121,8 @@ fn main() {
                     | "seismic-surface"
                     | "acoustic"
                     | "diffusion"
+                    | "advective"
+                    | "thermal"
             )
         {
             let force = tokens[4];
