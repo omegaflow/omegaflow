@@ -32,6 +32,7 @@ sie sagt **wo das Verdikt liegt** und **wer es bekommt** — nicht, was entschie
 | R-2026-10-17-i | 2026-10-17 | **Offen-Stand-Zähler**: Bullets vs `###`, 1-KiB-Kappe, Ledger-Schließungen | Fugu · Lumo · GLM-5.3 · Mistral 4 | **entschieden** (4/4 A) | `2026-10-17-rat-offen-stand.md` | →mycelium | — |
 | R-2026-10-17-j | 2026-10-17 | **`K` nach der 1981–83-WDC-Ernte identifizierbar?** | Fugu · Lumo · DeepSeek V4 Pro · Kimi K3 · Mistral 4 | **entschieden** (5/5 A) | `2026-10-17-rat-k-identifizierbar.md` | →mountain · →river | — |
 | R-2026-10-17-k | 2026-10-17 | **Native Fläche statt Bastellösungen?** (API/CLI/Features vs. Eigenbau) | Fugu · Lumo · GLM-5.3 · Mistral 4 | **entschieden** (4/4 C) | `2026-10-17-rat-native-flaeche.md` | →future | — |
+| R-2026-10-18-a | 2026-10-18 | **Quittung im Token-Ledger** — Empfänger quittiert im eigenen Ledger statt im fremden (`xfer ack`, `--addressed`-Sicht) | *offen — Operator wählt* | **offen** | `2026-10-18-xfer-quittung-formular.md` | →river (Bau steht, Verdikt offen) | — |
 
 **Stand-Vokabular:** `offen · entschieden · geroutet · quittiert · verworfen`.
 
