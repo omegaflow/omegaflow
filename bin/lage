@@ -16,6 +16,18 @@ models=$(wc -l < state/zustand/llm-gateway-models.tsv 2>/dev/null || echo '?')
 alive=$(wc -l < state/zustand/llm-gateway-alive.tsv 2>/dev/null || echo '?')
 balance=$(tail -n +2 state/zustand/llm-gateway-balance.tsv 2>/dev/null | sed 's/^/  /')
 
+line_rows=$(for line in mountain mycelium river sensory future; do
+  h=$(git ls-files 'docs/handover/handover-*.md' 2>/dev/null | grep -v '/archiv/' | grep -E -- "-$line(-|\.)" | sort | tail -1)
+  [ -f "$h" ] || continue
+  n=$(awk '/^## Offen/{f=1;next} /^## /{f=0} f{if(/^### /)h++; else if(/^- /)b++} END{if(h)print h; else print b+0}' "$h")
+  b=$(awk '/^## Offen/{f=1;next} /^## /{f=0} f' "$h" | grep -ci 'braucht')
+  c=0
+  for f in $(awk '/^## Offen/{f=1;next} /^## /{f=0} f' "$h" | grep -o '`[^`]*`' | tr -d '`' | sed -E 's/:[0-9]+$//' | grep -E '^(state|docs)/' | sort -u); do
+    [ -f "$f" ] && grep -qi 'offen' "$f" && c=$((c+1))
+  done
+  printf '  %-9s %2s offen · %2s Braucht · %2s offene Traeger · %s\n' "$line" "$n" "$b" "$c" "$(basename "$h")"
+done)
+
 {
   echo "# Lage — generiert $ts"
   echo
@@ -27,6 +39,13 @@ balance=$(tail -n +2 state/zustand/llm-gateway-balance.tsv 2>/dev/null | sed 's/
   if [ -n "$balance" ]; then
     echo "- Guthaben (USD):"
     echo "$balance"
+  fi
+  echo
+  echo "## Offen je Linie (Handover)"
+  if [ -n "$line_rows" ]; then
+    echo "$line_rows"
+  else
+    echo "  (keine)"
   fi
   echo
   echo "## Offene Rat-Fragen (Register)"
