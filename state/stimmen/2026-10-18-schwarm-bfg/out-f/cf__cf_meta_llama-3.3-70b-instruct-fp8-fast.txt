@@ -1,0 +1,21 @@
+Um den `gfc`-Block für XGM2019e zu erstellen, müssen mehrere Entscheidungen getroffen werden, da der Block an vier Stellen nicht direkt setzbar ist: **Modell/Cap**, **Epoche**, **ttl** (Time to Live) und **Bootstrap-Reihenfolge**. Zudem gibt es einen Metadaten-Widerspruch bezüglich des Grades des Modells (5399 vs. 5540/5480). Hier sind die Entscheidungsvorschläge für jede der vier Stellen sowie für den Umgang mit dem Metadaten-Widerspruch und anderen offenen Punkten:
+
+1. **Modell/Cap**: 
+   - **Option A (D=2190)** scheint eine gute Wahl zu sein, da es sich um ein offizielles Teilmodell handelt, das release-tauglich ist und keine künstliche Cap-Erfindung darstellt. Es entspricht dem im Paper belegten `XGM2019e_2159` und hat eine angemessene Größe von etwa 999 MB.
+
+2. **Epoche**:
+   - Da keine Referenzepoche angegeben ist und der Compiler ohne `--epoch` nicht funktioniert, sollte nach einem Volltextbeleg gesucht werden. Wenn kein Beleg gefunden wird, könnte ein statischer Compiler-Pfad gebaut werden, um die Epoche zu definieren. Alternativ könnte entschieden werden, keinen Block zu setzen, solange keine belegte Epoche existiert, um Inkonsistenzen zu vermeiden.
+
+3. **ttl (Time to Live)**:
+   - Der vorgeschlagene Wert `NO_CADENCE` = 33554432 Sekunden (2²⁵) scheint angemessen, um eine sehr lange Gültigkeitsdauer zu gewährleisten, ohne dass der Block zu schnell abläuft. Dieser Wert kann Zustimmung finden, oder es kann über einen anderen Wert diskutiert werden, je nach den spezifischen Anforderungen und Vorlieben.
+
+4. **Bootstrap-Reihenfolge**:
+   - Die Reihenfolge `Block → Build → sha256 → Workflow → Asset` scheint logisch, da sie eine klare Abfolge von der Planung (Block) über die Ausführung (Build) und Überprüfung (sha256) bis hin zur Integration in den Workflow und schließlich der Asset-Erstellung vorsieht. Alternativ könnte die Reihenfolge `Build/Asset` und dann der Block erstellt werden, je nachdem, wie die Prozesse organisiert sind. Der Assetname `gfc.bin` vs. `gfc_2159.bin`/`gfc_760.bin` hängt von der Entscheidung zum Modell/Cap ab.
+
+5. **5399 vs. 5540/5480**:
+   - Es ist ratsam, den Widerspruch bei den Autoren oder auf der ICGEM-Plattform zu klären, um eine offizielle Stellungnahme zu erhalten. Bis dahin kann der Widerspruch im Block oder im Verdikt als offener Metadaten-Widerspruch geführt werden, um Transparenz zu wahren.
+
+6. **Unnormalisierte Modelle > Grad ~160**:
+   - Für Modelle, die Überläufe bei Grad ~160 verursachen, könnte eine skalierte Synthese in `harmonic_sums` implementiert werden, um präzise Berechnungen zu ermöglichen. Alternativ könnte weiterhin `None` verwendet werden, wenn dies für die spezifischen Anwendungen ausreichend ist.
+
+Zusammenfassend bietet Option A (D=2190) eine praktikable Lösung für das Modell/Cap, während für die Epoche, ttl und Bootstrap-Reihenfolge sorgfältig abgewogene Entscheidungen getroffen werden sollten, um Konsistenz und Genauigkeit zu gewährleisten. Der Metadaten-Widerspruch sollte geklärt werden, um die Integrität der Daten zu sichern.

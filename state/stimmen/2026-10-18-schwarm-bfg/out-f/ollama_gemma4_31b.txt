@@ -1,0 +1,38 @@
+Dies ist eine technische Entscheidungsvorlage für den Operator. Basierend auf den vorliegenden Messwerten und den systemischen Constraints der `mountain`-Linie wird folgende Empfehlung für die Konfiguration des `gfc`-Blocks ausgesprochen:
+
+### 1. Modell/Cap: Entscheidung für Option A (D=2190)
+**Begründung:** 
+- **Release-Tauglichkeit:** Mit ~999 MB liegt das Asset sicher unter dem 2 GiB-Limit, was einen Split/R2-Aufwand (Option C) vermeidet.
+- **Integrität:** Im Gegensatz zu Option B (Cap 3211) ist D=2190 eine offiziell belegte Auslieferungs-Trunkierung des XGM2019e-Modells. Es ist ein "ehrlicher" Bau ohne willkürliche Kappe.
+- **Präzision:** Es bietet eine signifikant höhere Auflösung als Option D, ohne die Infrastruktur zu überlasten.
+- **Konfiguration:** `max_degree 2190` im Kopf.
+
+### 2. Epoche: Block-Suspendierung
+**Entscheidung:** **Keinen Block setzen.**
+**Begründung:** Da weder Kopf, DataCite noch die GFZ-Landingpage eine Referenzepoche nennen und der Compiler ohne `--epoch` mit `exit 1` abbricht, darf keine Epoche "erraten" oder statisch erfunden werden. Ein Architektur-Akt zur Implementierung eines Default-Pfads ist vorzuziehen, aber für diesen spezifischen Block gilt: **Keine belegte Epoche $\rightarrow$ kein registrierter Block.**
+
+### 3. ttl: Zustimmung zu `NO_CADENCE`
+**Entscheidung:** Zustimmung zu `33554432.0` (2²⁵ s).
+**Begründung:** Die Kanonisierung zu `no-cadence` im Register ist konsistent mit der Natur von statischen Gravitationsmodellen, die keine zeitliche Variabilität (Cadence) innerhalb des Assets aufweisen.
+
+### 4. Bootstrap-Reihenfolge & Benennung
+**Reihenfolge:** `Build` $\rightarrow$ `Asset` $\rightarrow$ `sha256` $\rightarrow$ `Block` $\rightarrow$ `Workflow`.
+**Begründung:** Da der `sha256` erst nach dem Bau messbar ist und der Block die Integrität des Assets referenzieren muss, kann der Block erst das finale Glied der Kette sein.
+**Assetname:** `gfc_2159.bin` (entsprechend der Modellbezeichnung `XGM2019e_2159`), um Kollisionen mit anderen Auflösungen im Cache zu vermeiden.
+
+### 5. Metadaten-Widerspruch (5399 vs. 5540/5480)
+**Entscheidung:** Als **offener Widerspruch im Verdikt** führen.
+**Begründung:** Die dateiseitige Analyse (Null-Werte ab 5481) widerlegt das Abstract (5399) faktisch. Da wir jedoch Option A (D=2190) wählen, ist dieser Widerspruch für den aktuellen Build irrelevant, muss aber für die Dokumentation der Modell-Provenienz im Register vermerkt werden.
+
+### 6. Unnormalisierte Modelle (> Grad 160)
+**Entscheidung:** Weiterhin `None`.
+**Begründung:** Ein API-Design-Akt zur Implementierung skalierter Synthesen in `harmonic_sums` ist ein zu großer Scope für diesen Block-Satz. Da wir auf D=2190 trunkieren, bleibt das Problem des Überlaufs bei $m=161$ bestehen, wird aber durch die Entscheidung gegen den Vollbau (D=5540) in der operativen Auswirkung begrenzt.
+
+---
+
+**Zusammenfassung für den Operator:**
+*   **Modell:** `XGM2019e_2159` (D=2190)
+*   **Epoche:** $\emptyset$ (Block bleibt offen/ungesetzt)
+*   **ttl:** `33554432.0`
+*   **Asset:** `gfc_2159.bin`
+*   **Status:** Bereit zur Ausführung, sobald die Epochen-Frage durch den Operator oder einen Architektur-Akt gelöst ist.
