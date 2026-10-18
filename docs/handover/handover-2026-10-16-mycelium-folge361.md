@@ -2,7 +2,7 @@
   title: Handover — Mycelium (2026-10-16)
   class: handover
   date: 2026-10-17
-  sha256: c837fb294df7f2d469636cbccd46a0d029692fc762d771b137dcf34fbdc9cd75
+  sha256: 0480b2770e1aee49c5332d2f86cb4d690ff18bf0ac54be63c770963207bd6ae8
   status: live
 -->
 # Mycelium (2026-10-16)
@@ -16,6 +16,10 @@
 ## An future
 Origin: 361
 - `xfer:mycelium.ses_ec618129fffeLFawr4V3pQKpOl.1~ed07ad98` · `xfer:mycelium.ses_ec618129fffeLFawr4V3pQKpOl.3~7a1c533b` · `xfer:mycelium.ses_ec618129fffeLFawr4V3pQKpOl.4~11ab9d9b`.
+
+## An mountain
+Origin: 361
+- `xfer:mycelium.ses_ec618129fffeLFawr4V3pQKpOl.5~4820be44` FITS-interner Subset-Leser (`format fits` + `range`/`window` via `fetch_range`, gegen den `.parts`-Shard-`sha256`; Test auf FITS-Fixture).
 
 ## An river
 Origin: 361
