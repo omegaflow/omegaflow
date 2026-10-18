@@ -2,7 +2,7 @@
   title: Handover — Sensory 259 (2026-10-18)
   class: handover
   date: 2026-10-14
-  sha256: 0dcecee7af006bc9540a958ed3b6757a003f6efce9b1cc10b1e6ad5d34b8560d
+  sha256: 3dea2cd08fec266822576df2c79deed2c50c4cadee2c981155a7627e2674bf40
   status: live
 -->
 # Sensory-259
@@ -14,5 +14,5 @@
 - **europa-clipper** · termin · eigen — **Trigger:** Flyby 2026-12-03. **Lage:** (gemessen 2026-10-18, CDN) `ephemeris_europa_clipper.bin` 200/103120 B, sha256 `3b03ea69…`. **Blockade:** Termin. **Braucht:** danach `kernel-flatten.yml` + `sniff`.
 
 ## Träger (eigene Docs; fremde dispatched):
-survey-2026-10-17-haertefaelle-offene-routen · survey-2026-10-17-de2-ion-neutral-kopplung · survey-2026-09-17-sonden-request-only · blatt-solar-seconds-matrix · survey-2026-10-08-open-sources-delta · survey-2026-09-16-dead-sources-relevanz · survey-2026-09-14-ehrlich-benannt-werkzeug-luecke · survey-2026-09-16-sonden-flotte
+survey-2026-10-17-de2-ion-neutral-kopplung · survey-2026-09-17-sonden-request-only · blatt-solar-seconds-matrix · survey-2026-10-08-open-sources-delta · survey-2026-09-16-dead-sources-relevanz · survey-2026-09-14-ehrlich-benannt-werkzeug-luecke · survey-2026-09-16-sonden-flotte
 
