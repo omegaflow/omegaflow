@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: c15f4a210d81be8955319fd47443793ce12626944dafcc932c5cb2cbc0bf68f5
+  sha256: 758966ea7fe7c34b94d99b224b8d507cee0a308b2a5c9be6439431f5f70243cf
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -39,6 +39,17 @@ Antworten sind Zulieferungen — Zulassung/Register bleibt Mountains bzw. Myceli
   CNSN). → Alternativen vorhanden, **nicht** das D18000-Produkt.
 - **DOSIS:** keine offene Datenroute in `--all` gefunden (nur Paper/ORCID DLR-Dosimetrie).
   → Anfrage bleibt.
+
+### Verdikt-Abgleich (2026-10-18)
+
+- **RBN — überholt.** Zenodo **CC-BY-4.0** (`10.5281/zenodo.13362701`), bereits an
+  **Mycelium** geroutet (`c11b17329`). Die RBN-Anfrage wird **zurückgezogen**.
+- **CEIC D18000 — `declined`** (`state/mountain/2026-10-17-keyless-drei-verdicts.φ`;
+  `71c57d6c6`). Der Operator-Kanal `dcogcd@163.com` / `datashare@seis.ac.cn` ist laut
+  Verdikt die **einzige Route**; der Entwurf bleibt als Operator-Akt.
+- **DOSIS-3D — `blocked`** (ebd.). Die HREDA-Anfrage ist der einzige Pfad zu DOSIS
+  selbst; **CRaTER** (LRO, `10.5281/zenodo.22883077`, CC-BY-4.0) und **IFJ PAN**
+  (`10.48733/ifjpan/oebph2`) sind benannte, aber **andere** Zeugen.
 
 ## A — Sonden-Rohdaten (request-only)
 
