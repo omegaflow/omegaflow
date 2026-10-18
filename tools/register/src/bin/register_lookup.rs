@@ -2839,10 +2839,9 @@ fn run_dropped(args: &[String]) {
             );
             match split {
                 "no-witness" => match canonical_point_key(&p.text) {
-                    Some(key) => println!(
-                        "NO-WITNESS\t{}\t{}:{}\t{}",
-                        p.line, p.n_path, p.lineno, key
-                    ),
+                    Some(key) => {
+                        println!("NO-WITNESS\t{}\t{}:{}\t{}", p.line, p.n_path, p.lineno, key)
+                    }
                     None => println!(
                         "NO-WITNESS\t{}\t{}:{}\t{}",
                         p.line,
@@ -3832,6 +3831,31 @@ fn addressed_report(root: &Path, target: &str) -> Vec<String> {
     addressed_report_inner(root, target, false)
 }
 
+fn addressed_block_settled(root: &Path, target: &str, block: &str) -> bool {
+    let entries = block_entries(block);
+    if entries.is_empty() {
+        return false;
+    }
+    entries.iter().all(|entry| match entry_token(entry) {
+        Some(token) => owner_has_echo(root, target, &token),
+        None => false,
+    })
+}
+
+fn addressed_unsettled(root: &Path, target: &str) -> usize {
+    let target = canonical_line(target);
+    let mut unsettled = 0usize;
+    for (sender, list) in collect_live_handovers_in(root) {
+        for h in list {
+            unsettled += addressed_blocks(&h.text, target)
+                .iter()
+                .filter(|block| !addressed_block_settled(root, &sender, block))
+                .count();
+        }
+    }
+    unsettled
+}
+
 fn run_addressed(args: &[String]) {
     let target = match mode_line_filter(args, "--addressed") {
         Some(t) => t.to_string(),
@@ -3848,8 +3872,15 @@ fn run_addressed(args: &[String]) {
     for line in &lines {
         println!("{}", line);
     }
-    if fail && count > 0 {
-        std::process::exit(2);
+    if fail {
+        let unsettled = addressed_unsettled(Path::new("."), &target);
+        eprintln!(
+            "register_lookup --addressed {}: {} addressed block(s), {} unbeglichen",
+            target, count, unsettled
+        );
+        if unsettled > 0 {
+            std::process::exit(2);
+        }
     }
 }
 
@@ -5648,6 +5679,35 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
             mountain
         );
         assert!(!mountain.iter().any(|l| l.contains("the HUD line")));
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn addressed_unsettled_counts_only_blocks_without_a_disposition() {
+        let base = env::temp_dir().join(format!("rl-addressed-fail-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("state/zustand/ledger/sender")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-10-12-sender-folge331.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An river\n\n- settled xfer:sender.ses_a.1~deadbeef\n\n## An river\n\n- open xfer:sender.ses_a.2~cafebabe\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("state/zustand/ledger/sender/ses_a.log"),
+            "2026-10-12T11:00:00Z SENT xfer:sender.ses_a.1~deadbeef by=sender.ses_a to=river\n\
+             2026-10-12T12:00:00Z CLOSED xfer:sender.ses_a.1~deadbeef by=sender.ses_a ref=abc1234\n",
+        )
+        .unwrap();
+        assert_eq!(addressed_unsettled(&base, "river"), 1);
+        fs::write(
+            base.join("state/zustand/ledger/sender/ses_a.log"),
+            "2026-10-12T11:00:00Z SENT xfer:sender.ses_a.1~deadbeef by=sender.ses_a to=river\n\
+             2026-10-12T12:00:00Z CLOSED xfer:sender.ses_a.1~deadbeef by=sender.ses_a ref=abc1234\n\
+             2026-10-12T12:05:00Z FOLDED xfer:sender.ses_a.2~cafebabe by=sender.ses_a into=river\n",
+        )
+        .unwrap();
+        assert_eq!(addressed_unsettled(&base, "river"), 0);
         let _ = fs::remove_dir_all(&base);
     }
 
