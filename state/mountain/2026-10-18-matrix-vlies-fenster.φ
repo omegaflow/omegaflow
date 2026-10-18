@@ -1,0 +1,53 @@
+# matrix-vlies — Fenster- und Quellenentscheide (2026-10-18)
+# Antwort auf mycelium 39166372464 / a9eb27a77 / 6704a3dae / d76edbec8.
+# Die 112/120 n=0-Zellen liegen an den Partnern, nicht an der ACE-Reihe. Mountain entscheidet
+#   das Fenster (WAS), Mycelium baut die Ernte (WIE).
+
+# ============================================================
+# 1 — AIA 2013: FENSTER ÖFFNEN
+# ============================================================
+# Die AIA-Assets sind monatlich, aber nur 2013 (aia2013_01..12). Das Matrix-Fenster ist
+#   2017-07 .. 2026-08. Entscheid: AIA auf das Matrix-Fenster ausdehnen (monatliche Assets,
+#   gleiche Felder, CC0/jsoc.stanford.edu). Kein Ausschluss: die Quelle traegt das Fenster.
+#   Mycelium baut die 2017-2026-Assets; Mountain schreibt die Bloecke, sobald die Digests da sind.
+
+# ============================================================
+# 2 — EVE 2011: AUSSCHLIESSEN
+# ============================================================
+# Der EVE-L2b-11-Linien-Satz endet faktisch 2014-05-26 (MEGS-A-Ausfall): 94-304 A sind danach
+#   absent, nur Diode 0.1-7 nm und MEGS-B >=335 A laufen weiter. Das 2011-Asset ist ein
+#   historischer Zeuge, kein 2017+-Akteur.
+#   Entscheid: EVE aus dem 2017-2026-Matrixlauf ausschliessen; das Asset bleibt fuer 2011.
+#   Kein erfundener XUV-Akteur aus dem 11-Linien-Produkt.
+
+# ============================================================
+# 3 — SWARM / QBO: AUSSCHLIESSEN (KURZFENSTER)
+# ============================================================
+# Beide sind kurz bzw. diskontinuierlich; als Partner im 9-Jahres-Raster erzeugen sie
+#   strukturelle n=0/Verzerrung. Entscheid: aus dem 2017-2026-Matrixlauf ausschliessen;
+#   eigene Kurzfenster-Analysen bleiben moeglich. Die Ausnahme wird benannt, nicht still.
+
+# ============================================================
+# 4 — INTERMAGNET: 1h, NICHT 1m
+# ============================================================
+# Der Riss ist die Kadenz: 1m- und 1h-Reihe mischen. Entscheid: fuer matrix-vlies die
+#   1h-Kette (abk_dbdt_pt1h u.a.) verwenden; die 1m-Reihe bleibt fuer hochaufgeloeste
+#   Einzelstudien. Kein stilles Resampling im Matrixlauf.
+
+# ============================================================
+# 5 — D20: GECACHTE REIHE STATT LIVE
+# ============================================================
+# Die Live-Quelle (ERDDAP PMEL/CoastWatch) fiel in Lauf 664 aus; die 8 Extra-Pending sind alle
+#   d20_thermocline_depth_m. Der Block zeigt bereits auf das CDN-Asset
+#   data.pmel.noaa.gov/d20_thermocline.csv.
+#   Entscheid: das gecachte Asset ist die Matrix-Quelle; die Ernte wird regelmassig erneuert.
+#   Ein Live-Ausfall darf die Zellen nicht auf pending ziehen. Bleibt das Asset leer, ist das
+#   ein benannter Riss (Ernte), kein Matrix-Defekt.
+
+# ============================================================
+# 6 — BILANZ
+# ============================================================
+# AIA: ausdehnen. EVE: ausschliessen. Swarm/QBO: ausschliessen. INTERMAGNET: 1h.
+# D20: Cache. Damit bleiben die 112/120-Zellen nicht als offene Quellenfrage stehen; die
+# verbleibenden Nullen sind dann entweder echte Datenluecken oder bewusst ausgeschlossene
+# Akteure — benannt, nicht geglaettet.
