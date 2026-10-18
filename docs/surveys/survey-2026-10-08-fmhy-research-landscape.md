@@ -2,7 +2,7 @@
   title: Survey — FMHY/Awesome-Mining: Research-Landschaft (Seats + Suchwege)
   class: survey
   date: 2026-10-08
-  sha256: e43abd9ffa717393a115a047515ade615e720dbb5eb3c3068dadb91a4a722ddf
+  sha256: c272df9553a0fa1f40b6766cd7a9934224133f61d063ac076f182ebc5ecee087
   status: live
   see-also: ~/projects/omegaflow-work/ui-seats.md AGENTS.md docs/SOURCE_PORT.md
 -->
@@ -71,7 +71,9 @@ MathArena · Artificial Analysis), `paper2gal`, `hyperspace`.
 2. **`archive_search --searxng <query>`** (keyless Metasuche): gemessen — `searx.be`
    `?format=json` liefert **HTML** (JSON-Format nicht freigeschaltet); braucht eine Instanz
    mit `format: json` (self-host oder freigegebene Instanz). **Arm gebaut** (2026-10-18:
-   `--searxng` in `archive_search`); **Instanz festlegen** bleibt offen.
+   `--searxng` in `archive_search`); **Instanz gesetzt** 2026-10-18: default
+   `SEARXNG_INSTANCES = ["https://search.lumy.live"]` (`tools/utils/src/bin/archive_search/net.rs:1802`),
+   gemessen `3e27dff0f` (lumy.live trägt relevantes JSON).
 3. **AI2 Playground als UI-Seat** (kein Sign-Up, Olmo — neue Zuchtlinie): Gretchenfrage
    (Fähigkeit 4/4 + Tempo), dann in `docs/concepts/ui-seats.md` + Roster.
 4. **Elicit + Consensus als Research-Seats/Quellen**: Literatur-Review-Antworten gegen
