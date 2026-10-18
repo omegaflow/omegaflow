@@ -50,3 +50,18 @@ benannt, bis die Reihenfolge steht.
 | Future | **A** | messen·bauen·abschließen·committen·pushen | Synchronisations-Kluft |
 
 **5:0 für A (Paket first)** — die Sequenz bleibt: Mountain-Paket vor dem Rat, dann Rat, dann Myceliums Block.
+
+## F3 (Flyby-sealed) — reale Sitze, Max-Einstellungen
+- **Duck.ai (GPT-6 Luna, Begründung=max):** Verdikt **1** (gepinnter Posten). Bis zum Flyby 2026-11-01 setzt der Ephemeriden-Maintainer den gepinnten Posten mit vollem SHA-256; der Ratssitz zeichnet ihn ab; den CDN-Digest nicht als versiegelten Posten übernehmen. Riss: sha-riss (versiegelter SHA ≠ CDN-Digest, Posten ohne SHA).
+
+## F3 (Flyby-sealed) — die fünf Stimmen (2026-10-18, korrekte Axiome)
+| Stimme | Verdikt | Axiom | Riss | Wer setzt |
+|---|---|---|---|---|
+| Mountain | **1** | A = A | sha-riss (ephemeris_juice) | Register-Wächter |
+| River | **2** | A = A | no-cadence | CDN-Operator |
+| Mycelium | **2** | A = A | sha-riss | CDN-Orchestrator |
+| Sensory | **2** | messen | sha-riss | Gate-Mechanik (Manifest-Sync) |
+| Future | **2** | A = A | sha-riss | Operator |
+
+**4:1 für Option 2** — die Gate-Mechanik löst sich vom festen `SEALED_SHA256`, der Digest kommt
+aus dem Asset/Manifest. Nur Mountain trägt Option 1 (gepinnter Posten). F3 ist damit entschieden.
