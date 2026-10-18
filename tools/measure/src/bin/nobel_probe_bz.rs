@@ -6,7 +6,7 @@ use omegaflow::lsk::days_from_civil;
 use omegaflow::te::{PcmciParams, TeEstimator, TeNull, benjamini_hochberg, pcmci_links};
 
 const OMNI2_1H_CDN: &str =
-    "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_serie_1h.bin";
+    "https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie_1h.bin";
 const OMNI2_INDICES_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_indices.bin";
 const HOUR: f64 = 3600.0;
