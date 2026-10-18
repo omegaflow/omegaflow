@@ -112,7 +112,8 @@ fn read_orbit_csv(path: &str) -> Vec<(f64, f64, f64)> {
         ) else {
             continue;
         };
-        if t.is_finite() && alt.is_finite() && lt.is_finite() {
+        if t.is_finite() && usable(alt) && alt > 0.0 && lt.is_finite() && (0.0..=24.0).contains(&lt)
+        {
             rows.push((t, alt, lt));
         }
     }
@@ -133,6 +134,9 @@ fn interp_orbit(rows: &[(f64, f64, f64)], t: f64) -> Option<(f64, f64)> {
     let span = t1 - t0;
     if !(span.is_finite() && span > 0.0) {
         return Some((alt0, lt0));
+    }
+    if span > 600.0 {
+        return None;
     }
     let f = ((t - t0) / span).clamp(0.0, 1.0);
     let dlt = ((lt1 - lt0 + 12.0).rem_euclid(24.0)) - 12.0;
