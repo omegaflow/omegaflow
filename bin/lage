@@ -1,0 +1,49 @@
+#!/bin/bash
+# lage — generiert state/stimmen/_lage.md aus git + Register + Gateway-Stand.
+# Der Live-Index, den jede Sitzung zuerst liest. Kein Hand-Prosa, nur Abgeleitetes.
+set -u
+repo="${OMEGAFLOW_REPO:-$HOME/projects/omegaflow}"
+cd "$repo" || exit 1
+
+head_sha=$(git rev-parse --short HEAD 2>/dev/null || echo '?')
+ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+open_rows=$(grep -E '\*\*offen\*\*|\*\*Runde 2 gefahren\*\*|offen — Operator' state/stimmen/_rat-register.md 2>/dev/null | sed 's/^/  /' | head -25)
+
+last_runs=$(ls -1t state/stimmen/ 2>/dev/null | grep -E 'sammlung|verdikt|lage' | head -8 | sed 's/^/  /')
+
+models=$(wc -l < state/zustand/llm-gateway-models.tsv 2>/dev/null || echo '?')
+alive=$(wc -l < state/zustand/llm-gateway-alive.tsv 2>/dev/null || echo '?')
+balance=$(tail -n +2 state/zustand/llm-gateway-balance.tsv 2>/dev/null | sed 's/^/  /')
+
+{
+  echo "# Lage — generiert $ts"
+  echo
+  echo "HEAD \`$head_sha\`"
+  echo
+  echo "## Sitze / Routen (Gateway)"
+  echo "- Katalog: $models Modelle"
+  echo "- Lebendige freie Chat-Modelle: $alive"
+  if [ -n "$balance" ]; then
+    echo "- Guthaben (USD):"
+    echo "$balance"
+  fi
+  echo
+  echo "## Offene Rat-Fragen (Register)"
+  if [ -n "$open_rows" ]; then
+    echo "$open_rows"
+  else
+    echo "  (keine)"
+  fi
+  echo
+  echo "## Letzte Läufe / Sammlungen"
+  if [ -n "$last_runs" ]; then
+    echo "$last_runs"
+  else
+    echo "  (keine)"
+  fi
+  echo
+  echo "Regenerieren: \`bin/lage\`"
+} > state/stimmen/_lage.md
+
+echo "geschrieben: state/stimmen/_lage.md (HEAD $head_sha)"

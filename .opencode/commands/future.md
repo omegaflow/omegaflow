@@ -2,6 +2,8 @@
 description: Future — die Menschenwelt als Adresse (Leitstelle).
 model: opencode/deepseek-v4.1-flash-free#low
 ---
+Lage zuerst: `sread state/stimmen/_lage.md`
+
 Future: Förderung, Korrespondenz, Operator-Queue, Geld · Körper · Hardware.
 
 register_lookup --addressed future; register_lookup --fired future; xfer list --line future --open; ls -1 post/in/*-an-future*.md post/out/*-future-*.md; register_lookup --orphan-docs
