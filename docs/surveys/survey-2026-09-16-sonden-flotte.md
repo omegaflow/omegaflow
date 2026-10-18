@@ -2,7 +2,7 @@
   title: Survey — Sonden-Flotte (Stand 2026-09-16)
   class: survey
   date: 2026-09-16
-  sha256: 49c56350510289b241a3c2810fd6a5cae09094d80c431f2994932f766bd6d593
+  sha256: c4710dfbac0dbbc64399499c2d11284267769ee168ee928f1908ef0e0a245fc5
   status: live
   see-also: phi/sources.φ phi/blocked_sources.φ docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md
 -->
@@ -79,8 +79,8 @@ PDS3-TNF/ODF **nicht** katalogisiert — die Dateien liegen in den RSS-Volumes
 (`…/tnf/`, `…/odf/`), anonym ladbar. Die Flotte wächst damit um **drei**.
 
 Nachzug 2026-09-17: Cassini und DART sind geerntet und in `phi/sources.φ`
-registriert (`cassini_tnf.bin`:9202, `dart_tnf.bin`:9194); MAVEN bleibt offen
-(kein Eintrag in `sources.φ`).
+registriert (`cassini_tnf.bin`:9202, `dart_tnf.bin`:9194). MAVEN ist ebenfalls
+registriert (gemessen 2026-10-18: `sources.φ:19111`, `maven_tnf_compiler`).
 
 **Parser-Lücke (gemessen 2026-09-16, `src/archivar/odf.rs`):** das SFDU-Framing steht
 (`read_tnf_sfdu`/`scan_tnf_sfdus`, `sfdu_length` @12–19, Zeit-Tag @48–60) und
@@ -88,8 +88,9 @@ dekodierte damals **format_code 0** (`tnf_dt0`, DT0/Uplink-Carrier-Phase). Nachz
 2026-09-17: alle **18 Format-Codes** sind dekodiert (`odf.rs:1639` match über UL/DL
 Carrier-, Seq-/PN-Ranging-Phase, Doppler, Range, Angle, Ramp, VLBI, DRVID, Smoothed
 Noise, Allan Deviation, PN-/Tone-Range, Carrier-/Total-Phase Observable); die
-17-Code-Lücke ist geschlossen. Offen bleibt der native Serien-Arm (der `tnf_compiler`
-schreibt CSV, `format csv`). Referenz-Parser: `github.com/NASA-PDS/PyTrk234`; SIS:
+17-Code-Lücke ist geschlossen. Der native Serien-Arm ist gebaut (gemessen 2026-10-18):
+`tnf_compiler.rs:71` schreibt `write_podf_bin_bands` (binäres PODF), nicht CSV.
+Referenz-Parser: `github.com/NASA-PDS/PyTrk234`; SIS:
 `pds-geosciences.wustl.edu/radiosciencedocs/…/dsn_trk-2-34.2021-06-03.pdf`.
 
 ## Zähl-Konvention

@@ -2,7 +2,7 @@
   title: Survey — Ehrlich benannt: wo das Werkzeug fehlte (Stand 2026-09-14)
   class: survey
   date: 2026-09-14
-  sha256: d57f4eb4138291d1e6461d3bb47281bea05622ba21256c75ffe54cd25d15def6
+  sha256: 3c50da0677959adf24bf4fb2f33534fcc0dec582deac1faa30aa6993b05c5445
   status: live
   see-also: docs/specs/ref-auth-apis.md docs/concepts/archiv/docs-naming.md
 -->
@@ -158,6 +158,7 @@ Verdikt existiert nicht mehr als Register-Zeile; die Lücke war real gemessen
   `https://opendap.earthdata.nasa.gov/collections/C2263336836-POCLOUD/granules/goma_GGFO_MM_SHC_200204-202606_v01.dds`
   + EDL-Token → **HTTP 200**, echter DDS (Grids `time_GFZ`/`time_CSR`/`goma_CSR`);
   anonym `coastwatch.pfeg.noaa.gov/erddap/info/index.json` → 200. GES-DISC-OPeNDAP
-  von diesem Host aus direct+Proton `pending` — Route, kein Verdikt. **Fehlende
-  Arme: Parquet-Reader, GRIB-2-Reader, OPeNDAP(DAP2)-Client** — die Quellen sind
-  offen, diese drei bleiben der offene Bau.
+  von diesem Host aus direct+Proton `pending` — Route, kein Verdikt. **Die drei
+  Arme sind gebaut** (gemessen 2026-10-18): `tools/utils/src/bin/parquet_reader.rs`,
+  `grib2_reader.rs`, `opendap_reader.rs` + `src/archivar/{parquet,grib2,opendap}.rs`.
+  Die Quellen sind offen; die Werkzeug-Lücke ist geschlossen.

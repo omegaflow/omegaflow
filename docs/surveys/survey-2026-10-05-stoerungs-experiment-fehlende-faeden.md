@@ -2,7 +2,7 @@
   title: Survey — Störungs-Experiment: fehlende Fäden (2026-10-05)
   class: survey
   date: 2026-10-05
-  sha256: b0db58fe31c75ca27b9205c4a39804941638568c244208b826778b4ebd22059c
+  sha256: 3e141dd988749a15583bdc2965ad0d7fa3f6c8d004c4c61f8a335a3a41b046c4
   status: live
   see-also: docs/concepts/tools-map.md phi/sources.φ docs/handover/archiv/handover-2026-10-05-river-folge93.md
 -->
@@ -59,7 +59,7 @@ Taucher-gemessen am 2026-10-05 (`archive_search --verdict/--sniff`, Register via
 | Seismik CEIC China (CB) | nein | EarthScope `fdsnws/station?network=CB` 200 | über EarthScope offen | StationXML | dataselect CB prüfen |
 | Seismik NIED (BO/Hi-net) | `dead_sources.φ:884` (BO tot) | `fnet.bosai.go.jp` — FDSN 404; `mowlas.bosai.go.jp` | Registrierung | SAC/WIN | kein FDSN; NIED-Weg messen |
 | Seismik GSRAS Russland | nein | `gsras.ru` (direkt kein Response; EarthScope-GSN-Stationen OBN/ARU/YAK) | GSN frei | miniSEED | GSN-Arm deckt ab |
-| Gravimetrie ECGN/UEGN/EGGP (Fehlname „EGGN") | nein | EQUIP-G `epos-eu.org/equip-g` | pending | pending | Die realen Schwestern sind IGETS/GFZ (CC-BY-4.0) und BGI (frei); EQUIP-G erst nach 2029. Kein `phi`-Block (2026-10-12 gemessen: `register_lookup equip-g` = 0 Registerzeilen) |
+| Gravimetrie ECGN/UEGN/EGGP (Fehlname „EGGN") | nein | EQUIP-G `epos-eu.org/equip-g` | **000** (Timeout, 2026-10-18) | — | **geschlossen (2026-10-18):** EQUIP-G unerreichbar/unregistriert; die realen Schwestern IGETS (`sources.φ:10407`) und BGI/SEDOO (`sources.φ:10070`, `station/nearto` **200**) sind registriert und live |
 | Gravimetrie China CGrav | nein | `data.earthquake.cn` | restricted (Antrag) | nationales Netz | Antrag = Dritter |
 | Gravimetrie IGETS/BGI | `sources.φ:9528` / `blocked:166` | `isdc.gfz.de` / `api.sedoo.fr/get-agrav-rest/` | sftp-Account / frei | ASCII/JSON | IGETS gebaut; BGI Mycelium-Arm |
 | Wetter ERA5 / GFS | descoped (`declined:1279`, `noaa_nodd_disposition:254`) | `cds.climate.copernicus.eu` / `nomads.ncep.noaa.gov` | Key / frei | GRIB/NetCDF | **Modellprodukt** — kein Messfaden (§3) |

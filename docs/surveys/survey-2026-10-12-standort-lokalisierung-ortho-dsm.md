@@ -2,7 +2,7 @@
   title: Survey — Standort-Lokalisierung (Orthofoto · DSM/DOM · Street-Level)
   class: survey
   date: 2026-10-12
-  sha256: a1e2208751d082709440ab68b0db2ae0fa9b4bbec05e07877d9ccffff008252f
+  sha256: 9b208147e8fc9b82709b5582e94af721f050f9b3c501a859a5d268d792e536ec
   status: live
   see-also: docs/surveys/survey-2026-10-10-worldwide-lidar-quellen.md state/river/themis/calibration-2026-10-12.md
 -->
@@ -24,7 +24,7 @@ oder `pending`.
    Ein Orthofoto misst **keine** Höhe; ein DSM **trägt die Struktur**, die das Auge im Bild nicht auflöst.
 2. **Identifikation (Orthofoto).** Grundriss/Kontext; das Objekt muss in **mehrere Pixel** fallen
    (2–3 m @ 0,33 m/px ≈ 6–9 px; @ 10–20 cm ≈ 10–30 px). Schein durch Schatten/Parallaxe.
-3. **Bestätigung (Street-Level / Site-Plan).** Mapillary/KartaView/Panoramax (offen), Google SV,
+3. **Bestätigung (Street-Level / Site-Plan).** Mapillary (Token), KartaView/Panoramax (keyless), Google SV (Key),
    oder nationaler Site-Plan.
 
 **Der gemessene Beleg (THEMIS-ASI-Dom):** HRDEM `dsm − dtm` (1 m native EPSG:3979) lokalisierte ein
@@ -63,7 +63,7 @@ isoliertes ~1,6–1,8 m-Objekt; die Orthofotos (ESRI 33 cm / Bing 17 cm / Google
 |---|---|---|---|---|---|
 | Global | **Mapillary** | `graph.mapillary.com/` | 200 (Token-Root 500) | CC-BY-SA | **Token keyed** |
 | Global | **KartaView** | `kartaview.org/api/` | 206 | CC-BY-SA | keyless |
-| Global | **Panoramax** (offen) | `api.panoramax.xyz/api/` | 200 | je Bild offen | **keyless** |
+| Global | **Panoramax** (keyless) | `api.panoramax.xyz/api/` | 200 | je Bild offen | **keyless** |
 | Global | Google Street View (Static) | `maps.googleapis.com/maps/api/streetview` | 400 ohne Key | Google-ToS | **Key key-needed** |
 | Global | Bing Streetside | `bing.com/maps/streetside` | 206 | Bing-ToS | kein öffentl. API |
 
@@ -77,14 +77,16 @@ isoliertes ~1,6–1,8 m-Objekt; die Orthofotos (ESRI 33 cm / Bing 17 cm / Google
 - **Satelliten-DSM** (30/90 m) ≫ Objekt → nur Kontext.
 - **Auth-Grenzen** (kein Quellen-Verdikt, Operator-Aufgabe): Google SV, Mapillary, OpenTopography-GlobalDEM, ALOS.
 
-## Offene Messungen (pending)
+## Nachgemessen (2026-10-18) — keine Route
 
-| Punkt | Suchbegriff / Endpunkt | Status |
+| Punkt | Endpunkt | Befund |
 |---|---|---|
-| NRCan National Ortho | `maps.geogratis.gc.ca/wms/canimage` | 404 |
-| Apple Look Around | „Apple Look Around API endpoint" | pending |
-| Bing Streetside API | „Bing Maps Streetside REST" | Web 206, kein API-Doc |
-| Auflösung je Zoom (ESRI/Bing/Google) | Programm-Doku je Zoom | nicht via `--verdict` messbar |
+| NRCan National Ortho | `maps.geogratis.gc.ca/wms/canimage?service=WMS&request=GetCapabilities` | **404, 296 B** |
+| Apple Look Around | `lookaround.apple.com` | **NXDOMAIN**; `maps.apple.com` **200** (nur Webkarte), kein öffentliches API |
+| Bing Streetside API | `www.bing.com/maps/streetside` | Web **200, 24 568 B**; kein öffentliches REST-API-Doc |
+| Auflösung je Zoom (ESRI/Bing/Google) | Programm-Doku je Zoom | nicht via `--verdict` messbar; Doku-Frage, keine Route |
+
+Panoramax ist keyless erreichbar (`api.panoramax.xyz/api/` **200**); KartaView **206**.
 
 **Der Deckel:** höchste Geländehöhe = HRDEM (CA, 1 m) / 3DEP (US, keyless REST); die **Standort-Koordinate**
 und die **Objektgröße unter der Zellgröße** bleiben der Boden — kein DEM schließt beide.
