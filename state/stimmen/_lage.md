@@ -1,6 +1,6 @@
-# Lage — generiert 2026-10-18T19:26:54Z
+# Lage — generiert 2026-10-18T19:27:22Z
 
-HEAD `f4577bae7`
+HEAD `2c44326bf`
 
 ## Sitze / Routen (Gateway)
 - Katalog (tsv, letzter Start: 6h): 1917 · frei: 47 · Preis unbekannt: 1007 · lebendig: 9 (6h alt)
@@ -18,8 +18,7 @@ HEAD `f4577bae7`
   future     4 offen ·  4 Braucht ·  0 offene Traeger · handover-2026-10-18-future-folge1.md (Pass 1 seit 2026-10-18 · Commit 0h)
 
 ## Rat-Fragen (offen | rat-konvergiert)
-  | R-2026-10-18-l | 2026-10-18 | **River-Triade** — Receiver-Apertur Schritt 3 · Schumann `field` (WGLC-Gitter) · Flyby-`sealed`-Träger | Schwarm R1 (6 von 44 antwortfähig) | **offen** — Schwarm R1: F1 **A 6:0** · F2i **A 4:1** · F2ii **nein 4:0** · F3 **2:3 gespalten**. **geschlossen** — fünf Stimmen 5:0 **A** (Paket first) · F3 5:3 **Option 1** (gepinnter versiegelter Posten, „gepinnt, nicht bestanden") — reale Sitze + Sonnet 5.5 + GLM 5.3 (`2026-10-18-r-l-paket-first-formular.md`) | `2026-10-18-river-apertur-schumann-flyby-formular.md` | →future · →river · →mountain | `2026-10-18-rat-river-triade.md` |
-  | R-2026-10-18-m | 2026-10-18 | **future.md-Zusatz** — Lage-Zeile, Pass-Kontrakt, Bringschuld: behalten oder streichen? | Fugu Max (UI) · Lumo 2.0 (UI) · DeepSeek V4 Pro (paid) | **gefahren** — Fugu **C**, Lumo **C**, DeepSeek **B** (2:1 C); Burn-Zeile alle **nur bei Überschreitung**. **geschlossen** (Operator 2026-10-18) — Edit `future.md` auf C = Operator-Hand | `2026-10-18-rat-future-command-formular.md` | →future | `2026-10-18-rat-m-sammlung.md` |
+  (keine)
 
 ## Letzte Läufe / Sammlungen
   _lage.md
