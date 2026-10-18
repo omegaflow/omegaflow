@@ -1,0 +1,32 @@
+#!/bin/sh
+# rat_guard — paid Rat-Sitze nur mit ausdrücklichem Operator-Grant.
+# Der Grant ist eine Datei, die NUR der Operator setzt (state/ ist gitignored, privat):
+#   state/zustand/rat-paid-grant
+# Er gilt nur für den Tag seiner Erteilung. Ohne frischen Grant bricht jeder paid-Aufruf ab.
+#
+#   bin/rat_guard            -> exit 1, wenn kein frischer Grant vorliegt (der paid-Aufruf darf nicht laufen)
+#   bin/rat_guard --grant    -> (nur Operator) den Grant für heute setzen
+set -u
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+grant="$root/state/zustand/rat-paid-grant"
+
+if [ "${1:-}" = "--grant" ]; then
+    mkdir -p "$(dirname "$grant")"
+    printf '%s\n' "paid-grant $(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$grant"
+    echo "rat_guard: paid-Grant für heute gesetzt ($grant)"
+    exit 0
+fi
+
+if [ -f "$grant" ]; then
+    d="$(date -u +%F)"
+    g="$(sed -n '1s/^paid-grant //p' "$grant" | cut -dT -f1)"
+    if [ "$d" = "$g" ]; then
+        echo "rat_guard: paid erlaubt (Grant $g)"
+        exit 0
+    fi
+fi
+
+echo "rat_guard: STOP — ein paid-Rat-Aufruf verlangt ein Operator-Wort." >&2
+echo "rat_guard: kein frischer Grant in $grant" >&2
+echo "rat_guard: der Operator setzt ihn mit: bin/rat_guard --grant" >&2
+exit 1

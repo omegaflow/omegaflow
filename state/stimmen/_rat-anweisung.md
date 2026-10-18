@@ -22,6 +22,12 @@ reserviert für PII und Frontier, **nie Linienarbeit**.
 Verdikt gelten, bis der Operator es bestätigt hat. Diese Regel steht hier, weil sie am
 2026-10-19 gebrochen wurde (R-2026-10-18-o und R-2026-10-18-p: paid ohne Wort gefahren).
 
+**Mechanisch erzwungen:** `bin/rat_guard`. Vor jedem paid-Aufruf läuft `bin/rat_guard`; ohne
+frischen Grant (`state/zustand/rat-paid-grant`, nur der Operator setzt ihn mit
+`bin/rat_guard --grant`) bricht der Aufruf ab. **Der Agent fragt vor jedem paid-Aufruf per
+ask nach**; erst das Operator-Ja setzt den Grant. Ein paid-Aufruf ohne diese Kette ist ein
+Regelverstoß, das Ergebnis zählt nicht.
+
 ## 0 — Der Rat ist die fünf Stimmen, nicht die Modelle
 
 **„Fünf Stimmen" = die fünf Linien**, jede als Rolle durch die Axiome gesprochen
