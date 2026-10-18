@@ -137,6 +137,11 @@ jobs:
             origin: "https://zenodo.org/api/records/1067790/files/WL7C_Zenodo_Upload_Diary.csv/content"
             sha256: 52717fdefe137a95dac29f88f85bb10ea70b08e87552cbb53b85d494c91b0d98
             size: 52185
+          - asset: kids_dr4_wl_cat.fits
+            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/kids_dr4_wl_cat.fits"
+            origin: "https://zenodo.org/api/records/16366035/files/KiDS_DR4.1_ugriZYJHKs_SOM_gold_WL_cat.fits/content"
+            md5: 3e764558bb1679c7c7f706786393c542
+            size: 17712469440
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1

@@ -31370,6 +31370,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/kids_dr4_w
 terms CC-BY-4.0 https://zenodo.org/records/16366035
 format fits
 origin https://zenodo.org/api/records/16366035/files/KiDS_DR4.1_ugriZYJHKs_SOM_gold_WL_cat.fits/content
+compiler tools/harvest/src/bin/raw_mirror.rs
 at sun
 no-cadence
 
