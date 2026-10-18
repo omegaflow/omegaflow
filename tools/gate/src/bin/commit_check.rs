@@ -579,6 +579,9 @@ fn main() {
                 eprintln!(
                     "commit_check: {path}: the open did not shrink ({was}) — a pass closes at least one point"
                 );
+                if std::env::var("OMEGAFLOW_SYNC").is_err() {
+                    fail = true;
+                }
             }
             match claimed_closed(&content) {
                 Some(claimed) => {
