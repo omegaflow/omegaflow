@@ -10875,7 +10875,7 @@ field T cmb_spt_d1_T gaussian-inverse-square thermal K 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ncnr.nist.gov/nist_ncnr_nse_coverage.manifest
 origin https://ncnr.nist.gov/pub/ncnrdata/nse/
-terms no-license https://www.nist.gov/open/license
+terms other-attribution https://www.nist.gov/open/license
 compiler tools/harvest/src/bin/nist_ncnr_nse_compiler.rs
 sha256 eee1e943ec8e2c6db81d7f08d66d08a824a84bd99d399b11e83d50dff2911bcd
 format coverage_manifest
@@ -27061,16 +27061,6 @@ sha256 b1f8523dd90eecfb307fbc35878b47dc5d18f99b37a94e92fc267f6bc5470ea3
 format reference
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/srdata.nist.gov/srd62_suprastrom.bin
-origin https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
-terms no-license https://www.nist.gov/srd/public-law
-compiler tools/harvest/src/bin/srd62_compiler.rs
-sha256 7a001d65192acd5a790b33a0d4a7ff03ad91ecb815b950d05b2263d3a7d53672
-witness substance
-record srd6
-force em
-no-cadence
-
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
@@ -31817,6 +31807,16 @@ no-cadence
 url https://pds-ppi.igpp.ucla.edu/mission/Mariner%2010
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
 at earth
+no-cadence
+
+url https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
+origin https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
+terms no-license https://www.nist.gov/srd/public-law
+compiler tools/harvest/src/bin/srd62_compiler.rs
+sha256 7a001d65192acd5a790b33a0d4a7ff03ad91ecb815b950d05b2263d3a7d53672
+witness substance
+record srd6
+force em
 no-cadence
 
 url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+MPC,massINPOP25c,sigmaINPOP25c+FROM+%22J/A%2BA/705/A189/tablea1%22
