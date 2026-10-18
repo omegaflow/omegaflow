@@ -1653,13 +1653,17 @@ field epa_aqs_voc_46201 epa_aqs_voc_46201 gaussian-inverse-square diffusion ppbC
 
 url https://github.com/omegaflow/sources/releases/download/archive-api.open-meteo.com/open_meteo_archive.json
 terms CC-BY-4.0 https://open-meteo.com/en/licence
-origin https://archive-api.open-meteo.com/v1/archive?latitude=52.52&longitude=13.405&hourly=temperature_2m,pressure_msl&start_date=2025-01-01&end_date=2025-01-02
+origin https://archive-api.open-meteo.com/v1/archive?latitude=52.52&longitude=13.405&hourly=temperature_2m,pressure_msl,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high&start_date=2025-01-01&end_date=2025-01-02
 format open_meteo_archive
 compiler tools/harvest/src/bin/open_meteo_archive_compiler.rs
 ttl 86400
 at earth
 field temperature_2m open_meteo_archive_air_temp_c gaussian-inverse-square thermal C 3600 0.0 0.0
 field pressure_msl open_meteo_archive_mslp_hpa gaussian-inverse-square advective hPa 3600 0.0 0.0
+field cloud_cover open_meteo_archive_cloud_cover_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
+field cloud_cover_low open_meteo_archive_cloud_cover_low_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
+field cloud_cover_mid open_meteo_archive_cloud_cover_mid_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
+field cloud_cover_high open_meteo_archive_cloud_cover_high_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/archive.podaac.earthdata.nasa.gov/swot_l2_lr_ssh.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
@@ -14732,7 +14736,9 @@ format json
 witness s2-direction
 record skydirection
 force em
+at earth
 no-cadence
+field icecube_icetracks_dr2 icecube_icetracks_dr2 inverse-square em 1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/download.bgr.de/BGR_infrasound_mb_hf_product.zip
 terms CC-BY-NC-SA-4.0 https://doi.org/10.25928/bgrseis_mbhf-ifsd
@@ -19066,6 +19072,7 @@ origin https://opendata.auger.org/catalog/data.zip
 compiler tools/harvest/src/bin/auger_compiler.rs
 at earth
 no-cadence
+field auger_sd1500 auger_sd1500 inverse-square em 1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/venus_radar_level2.bin
 terms CC0-1.0 https://pds-geosciences.wustl.edu/venus/urn-nasa-pds-venus_radar_level2/
@@ -31387,6 +31394,12 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 dcc2bf039190d0c53542f6f08ac6ce27e749dd31999cd4ab049edd4d41fbef32
 at sun
 no-cadence
+cmap .
+ra RAJ2000
+dec DECJ2000
+z_key Z_B
+field e1 kids_dr4_wl_e1 inverse-square gravity 1 31536000 0.0 0.0
+field e2 kids_dr4_wl_e2 inverse-square gravity 1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/kyoto_pressure.bin
 terms CC-BY-NC-4.0 https://zenodo.org/records/8098323
