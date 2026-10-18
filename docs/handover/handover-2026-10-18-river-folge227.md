@@ -2,7 +2,7 @@
   title: Handover — River-Folge 227 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: ecebd4f0215ec821e20a805d2b53b9330226288f3ec3ae393f3b8d5313a4070e
+  sha256: 0e116b1c79d7ece34c7dc12cf92c852e7b7448ca67c162dda706e88af1d62c09
   status: live
 -->
 # River-226
@@ -40,4 +40,4 @@ Origin: river-226
 
 ## An future
 Origin: river-folge227
-- `xfer:river.ses_ec618129fffeLFawr4V3pQKpOl.15~dcdcb011` Befund, nicht gebaut: `commit_check` Braucht-Prüfung blind (`tools/gate/src/bin/commit_check.rs:229` beendet `###`-Abschnitt am nächsten Bullet statt am nächsten `###`; Slice = nur Überschrift). Reproduziert an dieser Handover: Warnung für K, Rätsel, Flyby — auch für die unveränderten Punkte. Vorschlag: Abschnittsende = nächstes `###`. `the open did not shrink` ist dagegen korrekt.
+- `xfer:river.ses_ec618129fffeLFawr4V3pQKpOl.16~ea09631b` Leichenregister (2 Drafts ohne Punkt, Lauf `39154644922` cancelled, 2 falsche `Braucht`, ci-gate rot); Brief `post/in/2026-10-18-river-an-future-leichenregister.md`.
