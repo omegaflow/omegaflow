@@ -7,7 +7,7 @@ use omegaflow::lsk::days_from_civil;
 
 const CDN_TAG: &str = "lasp.colorado.edu-eve";
 
-const BASE: &str = "https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2";
+const BASE: &str = "https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2b";
 const MAGIC: [u8; 4] = *b"EVL1";
 const LINES: [(u32, &str); 11] = [
     (0, "Fe XVIII 94A"),
@@ -179,34 +179,32 @@ fn main() {
     } else {
         let mut voids = 0usize;
         for doy in start_doy..=end_doy {
-            for hour in 0..24 {
-                let name = format!("EVL_L2_{}{:03}_{:02}_008_01.fit.gz", year, doy, hour);
-                let url = format!("{}/{}/{}/{}", BASE, year, format!("{:03}", doy), name);
-                let cache_path = format!("{}/{}", cache_dir, name);
-                if std::fs::metadata(&cache_path).is_err() {
-                    match fetch_raw_bytes(&url) {
-                        Some(bytes) => {
-                            if std::fs::write(&cache_path, &bytes).is_err() {
-                                voids += 1;
-                                continue;
-                            }
-                        }
-                        None => {
+            let name = format!("EVL_L2B_{}{:03}_008_01.fit.gz", year, doy);
+            let url = format!("{}/{}/{:03}/{}", BASE, year, doy, name);
+            let cache_path = format!("{}/{}", cache_dir, name);
+            if std::fs::metadata(&cache_path).is_err() {
+                match fetch_raw_bytes(&url) {
+                    Some(bytes) => {
+                        if std::fs::write(&cache_path, &bytes).is_err() {
                             voids += 1;
                             continue;
                         }
                     }
-                }
-                match extract_hour(&cache_path, &lsk, &mut records) {
-                    Some(k) => {
-                        if k == 0 {
-                            eprintln!("{}: 0 records", name);
-                        }
-                    }
                     None => {
-                        eprintln!("{}: parses void", name);
                         voids += 1;
+                        continue;
                     }
+                }
+            }
+            match extract_hour(&cache_path, &lsk, &mut records) {
+                Some(k) => {
+                    if k == 0 {
+                        eprintln!("{}: 0 records", name);
+                    }
+                }
+                None => {
+                    eprintln!("{}: parses void", name);
+                    voids += 1;
                 }
             }
         }
