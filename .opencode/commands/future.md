@@ -1,6 +1,6 @@
 ---
 description: Future — die Menschenwelt als Adresse (Leitstelle).
-model: mistral/mistral-large-4
+model: deepseek/deepseek-v4-pro#low
 ---
 Lage zuerst: `sread state/stimmen/_lage.md`
 
