@@ -145,3 +145,9 @@ Ich hatte „UCAR-FPI E-Mail-gated = Operator" aus den Archiv-Notizen übernomme
 - **EELS (Zenodo 21859473):** `Fig4_eels_and_peakfitting.mat` (MAT, Peak-Fitting).
 - **Weitere Cuprat-Daten mit expliziten Spalten:** Zenodo `18877118` („Unveiling the Nature of Collective Charge Excitations", `data_description_zenodo.md`), `6914223` (Sr14-xCaxCu24O41-Leitern), `12721667` (RIXS/XAS, `xy`-Spalten, Header = Incidenzenergien), `7264820` (Kagome, Header = Temperaturen), `8430044`/`4724109` (CDW `Height`/`FWHM` vs T).
 - **Penetration depth/Superfluid (SRD62-Kanal):** Zenodo `8040941` (Superfluid/London), `15688310` (4Hb-TaS2, penetration-depth + superfluid-density `.txt`); Autoren Bernhard (Konstanz), Khasanov (μSR).
+
+**Rohdaten-Spalten (gemessen 2026-10-18, heruntergeladen und gelesen):**
+- **RIXS** (Zenodo 7286412): `rixs_phi_<phi>_<sigma|pi>.txt` mit Kopf **`Eloss  RIXS  err`**; Readme: `exp_figure_data`, `azimuthal_analysis` (UD/OD1/OD2 × q), `absorption_coeff` (`faa`/`fcc`).
+- **Charge/Plasmon** (Zenodo 15179114, `data.zip`): `Fig1c.csv` = **`XAS,XAS_hv`**; `Fig2b/Fig3a/Fig2c/*.txt` = Kopf **`# H = <wert> (<H scan|theta scan>)`** + **`# Energy (meV) Intensity (arb. units)`**.
+- **EELS** (Zenodo 21859473, `.mat` v5): Variablen **`ene`** (Energieachse) + **`eels_lineprofile`** (Linienprofil), Peak-Fitting → Spin-Oszillatoren (`harvest_eels`).
+- **SRD62**: NIST CeramicDataPortal, Penetration-Depth-Tabelle (`srd62_compiler`).
