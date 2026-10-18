@@ -1799,7 +1799,7 @@ fn marginalia_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
-const SEARXNG_INSTANCES: &[&str] = &["https://search.mectov.my.id"];
+const SEARXNG_INSTANCES: &[&str] = &["https://search.lumy.live"];
 
 fn searxng_bases() -> Vec<String> {
     match std::env::var("OMEGAFLOW_SEARXNG") {
