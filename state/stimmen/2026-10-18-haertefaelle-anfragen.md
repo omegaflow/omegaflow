@@ -4,6 +4,8 @@
 **Bezug:** `docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md` (RBN-Lizenz · CEIC D18000 · DOSIS-3D/EuTEF DOSTEL)
 **Regel:** Jede Antwort ist eine Zulieferung und wird am Baum gemessen (Mountain), nie roh geglaubt. Keine Zusage über Datenrechte in diesen Texten.
 
+**Nachtrag 2026-10-18:** Die **RBN-Anfrage ist zurückgezogen** — überholt durch Zenodo **CC-BY-4.0** (`10.5281/zenodo.13362701`), an Mycelium geroutet (`c11b17329`). **CEIC D18000 = `declined`**, **DOSIS-3D = `blocked`** (`state/mountain/2026-10-17-keyless-drei-verdicts.φ`); für beide ist der Operator-Kanal laut Verdikt die **einzige Route** — die Entwürfe bleiben als Operator-Akt.
+
 ---
 
 ## 0 — Nachmessung 2026-10-18 (die tragenden Fakten)
@@ -233,3 +235,10 @@ Kind regards,
   (CENC-Katalog+Wellenformen), `10499328` (CNSN). Das exakte D18000 bleibt auth-gated.
 - **DOSIS — keine offene Route gefunden.** `--all` liefert nur Paper/ORCID
   (DLR-Dosimetrie), keine Daten. Anfrage bleibt der Weg.
+
+
+### Verdikt-Abgleich (2026-10-18)
+
+- RBN: zurückgezogen (Zenodo CC-BY-4.0, Mycelium).
+- CEIC: `declined`; Operator-Kanal ist die einzige Route.
+- DOSIS: `blocked`; HREDA ist der einzige Pfad, CRaTER/IFJ PAN sind andere Zeugen.
