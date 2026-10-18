@@ -1,0 +1,56 @@
+Du bist ein Ratssitz im Hause omegaflow (A = A; 0 honored: null-echt | absent | riss; keine harten Schwellen; PII bleibt im Haus).
+
+AUFTRAG: Drei offene Architekturfragen der Leitstelle. Je Frage: (1) Verdikt A/B/C(/D), (2) zwei bis drei Sätze Begründung, (3) der stärkste Riss/Gegenbeleg, (4) bei Unsicherheit ausdrücklich „pending“ + was zum Messen fehlt.
+
+WICHTIG: Erfinde keine Fakten. Zahlen und Zitate nur aus den unten gegebenen Belegen. Antwort auf Deutsch. Maximal ~700 Wörter.
+
+## Frage 1 — R-2026-10-18-a: Wo wird die Quittung im Token-Ledger belegt?
+Heute lebt der Zustand eines Tokens (xfer) nur im Ledger des Absenders (Emitter). Der Empfänger kann seinen eigenen Eingang nicht quittieren: `xfer close` auf einen fremden Token ist ein harter Fehler. Quittung und Selbst-Erledigung sind beide `CLOSED` — nicht unterscheidbar. Zusätzlich listet `register_lookup --addressed <linie>` geschlossene Blöcke weiter; `--fired` bleibt 0, Erledigtes liest sich als offen. Ein früher gebauter `xfer ack`-Arm wurde zurückgenommen (Commit eb2f1b749, −202 Zeilen).
+
+Optionen (Ort der Quittung):
+A — eigener Akt `ACK <tok> by=<linie>.<sitz>` im Ledger des Empfängers; ACKED unterscheidbar von CLOSED.
+B — wie heute: Empfänger schreibt CLOSED ins Emitter-Ledger.
+C — kein neuer Akt: der Quittungszustand wird aus dem Token-Ledger read-only abgeleitet.
+D — ein Ledger je Token statt je Linie (beide schreiben dieselbe Ablage).
+Zweitfrage `--addressed` (unabhängig): S1 geschlossene Blöcke ausblenden · S2 weiter listen, aber mit Zustandsspalte.
+
+## Frage 2 — R3 aus R-2026-10-17-a: Concurrency-Schlüssel von `register-coverage`
+Soll `register-coverage.yml` auf `group: register-coverage-${{ github.sha }}` mit `cancel-in-progress: true` umgestellt werden (wie `ci-gate` seit 2026-10-08) statt heute `group: …-${{ github.ref }}` mit `false`?
+Gemessen: ein Push auf main feuert 5–7 Gates; letzte 100 Läufe = 25 verschiedene HEAD-SHAs; in 10 Minuten acht `register-coverage`-Läufe, sieben `cancelled` — in einer Concurrency-Gruppe löscht ein neuer Lauf die wartenden Vorgänger, `cancel-in-progress: false` schützt nur den laufenden. Das Gate prüft den HEAD-Zustand des Registers, kein je-SHA-Artefakt.
+Vorrunde: 3:3 Patt. A per-SHA (GLM, DeepSeek, Lumo: „der HEAD ist je SHA definiert") · B per-ref (Fugu, Mistral, Kimi: „die Adresse des HEAD ist der Ref, per-SHA adressiert die Vergangenheit"). Kimi praktisch: ein Cancel mid-write kann inkonsistenten Zustand hinterlassen; das Gate muss `cancelled` ignorieren.
+Optionen: A per-SHA + true · B per-ref + true (nur der jüngste Lauf lebt) · C Debounce/Batch.
+
+## Frage 3 — R-2026-10-18-e Folge: Das Register kennt `state/stimmen` nicht
+`register_lookup` (Rust) durchsucht `docs/{handover,surveys,plans,auftrag,blatt,concepts,paper}` — aber NICHT `state/stimmen/`, wo alle Rat-Verdikte liegen (gemessen 2026-10-18: `grep -c stimmen` = 0). Folge: eine Linie fragt „was ist für mich offen?" und sieht fremde Verdikte nur, wenn die Leitstelle sie von Hand als Brief verteilt.
+Die Linien dürfen Architektur nicht selbst ändern (R-2026-10-18-d/e: Architekturpfade brauchen eine RAT-ID). Das Verdikt-Format ist: `## An <linie>`-Blöcke am Ende der Verdikt-Datei.
+Optionen:
+A — `state/stimmen/` als zusätzliche Dokumentwurzel im Leser aufnehmen.
+B — derive: Verdikte wandern als `## An <linie>`-Blöcke in das lebende Handover der Empfängerlinie.
+C — ein neues Register-Dokument `state/stimmen/_register.md` (nur Index) als eigene Quelle.
+D — status quo: die Leitstelle verteilt weiter von Hand.
+Zusatzfrage: Muss die Wahl selbst als RAT-ID im Index stehen, bevor sie gebaut wird?
+
+Antworte je Frage in der Form:
+F1 Verdikt: <A|B|C|D|pending> [+ S1|S2] — Begründung: … — Riss: …
+F2 Verdikt: … — Begründung: … — Riss: …
+F3 Verdikt: … — Begründung: … — Riss: … — Zusatz: ja/nein, weil …
+
+---
+
+## Schwarm-Risse (vor den Paid-Sitzen — Mindermeinung, kein Verdikt)
+
+Aus dem freien Lauf über die 44 gemessenen Träger (2026-10-18, $0). Nur die Einwände, die eine eigene Farbe haben:
+
+**Zu F1 (Quittung):**
+- Der zurückgenommene `xfer ack`-Arm (`eb2f1b749`, −202 Zeilen) ist der stärkste Gegenbeleg gegen A — warum er scheiterte, ist nicht belegt.
+- A verteilt den Zustand auf **zwei** Ledger (Mehraufwand); S1/S2 korrigieren nur die **Anzeige**, nicht die Ablage.
+- Für C (read-only) fehlt jede Messung, ob CLOSED vs. ACKED zuverlässig unterscheidbar bleibt.
+
+**Zu F2 (Concurrency):**
+- Ein Cancel **mid-write** kann einen inkonsistenten Registerzustand hinterlassen (Kimi, zitiert — **nicht gemessen**). Das Gate müsste `cancelled` ignorieren.
+- Per-SHA erzeugt mehr Läufe, die denselben HEAD prüfen; die Inkonsistenz-Rate unter Last ist ungemessen.
+
+**Zu F3 (state/stimmen lesen):**
+- A ist ein **Reader-/Architektur-Akt** → die RAT-ID muss **vor** dem Bau im Index stehen (Zirkularität: lesen ↔ registriert sein).
+- B respektiert die Regel „Linien ändern keine Architektur" und legt die Blöcke dorthin, wo sie gelesen werden.
+- Performance/Rauschen bei hoher Dokumentdichte ist ungemessen; C und D wurden von keinem Schwarm-Sitz diskutiert.
