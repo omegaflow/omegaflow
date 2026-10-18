@@ -1,6 +1,6 @@
 ---
 description: Mycelium — die Wege (Register-Zeilen, Netze, CDN, Spiegel, Manifestationen).
-model: opencode/deepseek-v4.1-flash-free#low
+model: mistral/mistral-large-4
 ---
 Lage zuerst: `sread state/stimmen/_lage.md`
 
