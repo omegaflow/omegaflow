@@ -83,6 +83,50 @@ fn valid_component(s: &str) -> bool {
     !s.is_empty() && !s.chars().any(|c| c == '/' || c == '~' || c.is_whitespace())
 }
 
+fn ledger_matches(requested: &str, name: &str) -> bool {
+    name == requested
+        || name
+            .strip_prefix(requested)
+            .is_some_and(|rest| rest.starts_with('-') && rest.len() > 1)
+}
+
+fn matching_ledgers(line: &str) -> Result<Vec<String>, String> {
+    let root = ledger_dir();
+    let entries = fs::read_dir(&root)
+        .map_err(|e| format!("{}: ledger root unreadable: {e}", root.display()))?;
+    let mut names: Vec<String> = entries
+        .filter_map(|e| e.ok())
+        .filter(|e| e.path().is_dir())
+        .map(|e| e.file_name().to_string_lossy().to_string())
+        .filter(|name| ledger_matches(line, name))
+        .collect();
+    names.sort();
+    if names.is_empty() {
+        return Err(format!("no ledger for line {line} — nothing was written"));
+    }
+    Ok(names)
+}
+
+fn target_ledger(line: &str) -> Result<String, String> {
+    match matching_ledgers(line) {
+        Ok(mut names) if names.len() == 1 => Ok(names.remove(0)),
+        Ok(names) => Err(format!(
+            "line {line} is ambiguous — ledgers {}; pass the full name",
+            names.join(", ")
+        )),
+        Err(e) if e.starts_with("no ledger for line") => Ok(line.to_string()),
+        Err(e) => Err(e),
+    }
+}
+
+fn read_line_events(line: &str) -> Result<Vec<(String, String)>, String> {
+    let mut out = Vec::new();
+    for name in matching_ledgers(line)? {
+        out.extend(read_dir_events(&ledger_dir().join(&name)));
+    }
+    Ok(out)
+}
+
 fn resolve_line(explicit: Option<String>) -> Result<String, String> {
     if let Some(l) = explicit {
         let t = l.trim();
@@ -316,7 +360,14 @@ fn cmd_mark(args: &[String]) -> i32 {
     if text.is_empty() {
         fail("mark: empty text");
     }
-    let line = match resolve_line(line_opt) {
+    let requested = match resolve_line(line_opt) {
+        Ok(l) => l,
+        Err(e) => fail(&e),
+    };
+    if !valid_component(&requested) {
+        fail("mark: --line carries a forbidden character");
+    }
+    let line = match target_ledger(&requested) {
         Ok(l) => l,
         Err(e) => fail(&e),
     };
@@ -377,7 +428,11 @@ fn cmd_list(args: &[String]) -> i32 {
     if !valid_component(&line) {
         fail("list: --line carries a forbidden character");
     }
-    let agg = aggregate(&read_dir_events(&ledger_dir().join(&line)));
+    let events = match read_line_events(&line) {
+        Ok(e) => e,
+        Err(e) => fail(&e),
+    };
+    let agg = aggregate(&events);
     for (tok, states) in &agg {
         if let Some(st) = derived_of(states) {
             if open && st.disposed() {
@@ -420,14 +475,20 @@ fn cmd_transition(args: &[String], state: &str) -> i32 {
         Ok(l) => l,
         Err(e) => fail(&e),
     };
-    if line != parsed.line {
+    let ledgers = match matching_ledgers(&line) {
+        Ok(n) => n,
+        Err(e) => fail(&e),
+    };
+    if !ledgers.iter().any(|n| n == &parsed.line) {
         fail(&format!(
-            "{}: --line {} differs from the token line {}",
+            "{}: token line {} has no ledger under --line {} (ledgers: {})",
             state.to_lowercase(),
+            parsed.line,
             line,
-            parsed.line
+            ledgers.join(", ")
         ));
     }
+    let line = parsed.line.clone();
     let extra = match extra {
         Some(e) => e,
         None => fail(&format!("{}: {extra_flag} absent", state.to_lowercase())),
@@ -472,7 +533,11 @@ fn cmd_coverage(args: &[String]) -> i32 {
     if !valid_component(&line) {
         fail("coverage: --line carries a forbidden character");
     }
-    let agg = aggregate(&read_dir_events(&ledger_dir().join(&line)));
+    let events = match read_line_events(&line) {
+        Ok(e) => e,
+        Err(e) => fail(&e),
+    };
+    let agg = aggregate(&events);
     let mut emitted = 0usize;
     let mut disposed = 0usize;
     let mut open: Vec<(String, Derived)> = Vec::new();
@@ -969,6 +1034,16 @@ mod tests {
             resolve_sess_from(None, Some("ses_file\n".to_string())).ok(),
             Some("ses_file".to_string())
         );
+    }
+
+    #[test]
+    fn base_line_sees_its_pass_ledgers_without_rename() {
+        assert!(ledger_matches("sensory", "sensory"));
+        assert!(ledger_matches("sensory", "sensory-259"));
+        assert!(ledger_matches("river", "river-227"));
+        assert!(!ledger_matches("sensory", "sensorys"));
+        assert!(!ledger_matches("sensory", "sensory-"));
+        assert!(!ledger_matches("river", "riverine"));
     }
 
     #[test]
