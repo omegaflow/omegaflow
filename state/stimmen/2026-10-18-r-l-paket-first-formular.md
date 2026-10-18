@@ -39,3 +39,14 @@ benannt, bis die Reihenfolge steht.
 - **Verdikt B** (Apertur first); F3 = 2 von 5, Mindestrückhalt nicht erreicht.
 - **Riss: sequentielle Kopplung → Pipeline-Bottleneck**; C (parallel) senkt Latenz, erhöht Kohärenzrisiko.
 - Stand: Schwarm gespalten (A/B) · Fugu kein Verdikt (Kontext fehlt) · Lumo B. Keine Konvergenz — F3 braucht mehr Sitze.
+
+## Die fünf Stimmen (2026-10-18, je durch die Axiome)
+| Stimme | Verdikt | Axiom | Riss |
+|---|---|---|---|
+| Mountain | **A** | A = A (Identität vor Definition) | Gitter-Vakuum |
+| River | **A** | messen·bauen·abschließen | Chronos-Lücke („ohne Paket committen wir ins Leere") |
+| Mycelium | **A** | A = A | Latenz-Scherung |
+| Sensory | **A** | messen·bauen·abschließen | Latenz-Gap |
+| Future | **A** | messen·bauen·abschließen·committen·pushen | Synchronisations-Kluft |
+
+**5:0 für A (Paket first)** — die Sequenz bleibt: Mountain-Paket vor dem Rat, dann Rat, dann Myceliums Block.

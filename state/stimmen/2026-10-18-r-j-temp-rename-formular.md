@@ -44,3 +44,15 @@ Bau erst nach Wort.
 - **Verdikt C** (temp+rename + fsync + Lock); Geltungsbereich **alle `register_*` als Gruppe**.
 - **Riss: cross-file atomicity ohne Transaktionslog** — ohne Journal bleibt die zwischenzeitliche Inkonsistenz bei Mehrdatei-Operationen.
 - Stand: Schwarm 4× A · Fugu A · Lumo C. Die Risse (Durability, cross-file) schieben beide auf die C-Bestandteile; offen bleibt A-vs-C als Tragentscheid + ob ein Transaktionsjournal nötig ist.
+
+## Die fünf Stimmen (2026-10-18, je durch die Axiome)
+| Stimme | Verdikt | Axiom | Riss |
+|---|---|---|---|
+| Mountain | **C** | A = A (Konsistenz) | Partial-Write-Void |
+| River | **C** | abschließen | atomarer Splitter (rename schützt Datei, nicht die drei) |
+| Mycelium | **C** | committen→pushen | Fragmentierungs-Riss |
+| Sensory | **C** | abschließen·committen·pushen | atomicity_gap_multi_file |
+| Future | **C** | abschließen·committen·pushen | Atomaritäts-Lücke (Partial-Write) |
+
+**5:0 für C** — einstimmig. Jede Stimme nennt einen anderen Axiom-Anker und einen eigenen Riss,
+alle konvergieren auf temp+rename + fsync + Lock. Kein Sitz trägt A oder B.
