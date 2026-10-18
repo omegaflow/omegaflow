@@ -204,12 +204,3 @@ Die 210 Zellen sind nicht leer wegen Code, sondern weil die vier RTSW/SWPC-Felde
 | `AC_H0_SWE` | `Np`, `Vp` | 1998-02 → 2024-07 | 64 s — **`Np=-1.0E31` (Fill)**, nicht als Wert lesen |
 
 Gemeinsames Fenster **2017-07 → 2026-08 (~9 Jahre)**. Mountain registriert die vier Felder auf diese Quellen (Tag `cdaweb.gsfc.nasa.gov`, `at sun`); Mycelium erntet stündlich (decimate) und stößt den Lauf an: `matrix-vlies` ist ein **CI-Job** (`.github/workflows/field-te-query.yml`, Descriptor `vlies_matrix.te`), nie lokal.
-
-## 18. n=0-Zellen — Ernte + Matrix-Lauf (2026-10-18)
-
-Die vier Felder sind auf **stündliche CDN-Assets** umgestellt; die Quelle bleibt CDAWeb HAPI (PD-USGov), die `hapi`/`terms`/Felder der Blöcke unverändert:
-
-- `ace_h0_mfi_hourly.json` — 5 539 356 B, `sha256 4bc047eb…`, **79 551** Stundenwerte, 2017-07 → 2026-08 (`Magnitude` = Bt, `BGSM` = By/Bz), CDN **206**.
-- `ace_k0_swe_hourly.json` — 4 077 990 B, `sha256 663eddf9…`, **80 991** Stundenwerte, 2017-07 → 2026-10 (`Np`, `Vp`), CDN **206**.
-
-Compiler `tools/harvest/src/bin/ace_rtsw_compiler.rs`: monatsweise CDAWeb-CSV → Stundenmittel → HAPI-JSON; Fill `-1.0E31` wird **verworfen**, nie gemittelt. Die Blöcke tragen jetzt `url` (CDN), `origin` (HAPI-CSV-Abfrage), `compiler`, `sha256`; `terms`/`hapi`/`at sun` bleiben. Lauf: `field-te-query` dispatchen (enthält `matrix-vlies`).

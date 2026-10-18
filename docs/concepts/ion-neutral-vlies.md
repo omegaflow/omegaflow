@@ -2,7 +2,7 @@
   title: Das Ion-Neutral-Vlies — DE-2, ICRS·TDB und die Fäden, die sonst niemand spannt
   class: concept
   date: 2026-10-18
-  sha256: d4e5cb7d501b9ba4e55640d0deff734140aa27e4d95a286f61e4c6508289ece4
+  sha256: 503c2fd02777a9d34abf5b10f7b55aebc4c9e99cf396fa6f691fd496e3e6d1fb
   status: draft
   see-also: docs/concepts/die-weberin.md docs/handover/handover-2026-10-18-river-folge227.md
 -->
@@ -146,8 +146,9 @@ keiner verdeckt den anderen.
   wurde abgebrochen, kein Ergebnis).
 - **Offen:** Regime — ein globaler DE-2-Punkt mischt Hoch- und Niedrigbreiten; die
   Richtung kann sich mit der Breite umdrehen. Trennung nach Breite/MLT fehlt.
-- **Offen:** Mond — der lunare Gezeitenfaden ist berechenbar, aber nicht gemessen.
-  Es fehlen SSCWeb-Lat/Lon im Orbit-Loader, `ephemeris_moon.bin` und `--cond moon`.
+- **Offen:** Mond — der Faden ist gebaut (`--cond lunar`: SSCWeb-Lat/Lon im Orbit-CSV,
+  Gezeitenpotenzial gegen `ephemeris_moon.bin`/`ephemeris_earth.bin`), aber noch nicht
+  gefahren. Beleg: `state/river/2026-10-18-mond-faden.φ`.
 - **Offen:** Sonnenwind — der L1→Magnetopause-Versatz ist berechenbar, aber nicht
   angewandt (TDB-Alignment fehlt).
 - **Offen:** K — die Kraftfrage ist nicht beantwortet und wird durch TE nicht
