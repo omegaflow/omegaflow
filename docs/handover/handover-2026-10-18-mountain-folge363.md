@@ -2,7 +2,7 @@
   title: Handover — Mountain 363 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: 72ee7069423caa9ef39208ef6b7c39d6980d9aaee182fd013e6bde46133696d3
+  sha256: 430072a48918fdea88145a0d430a1527cd537363c9cb0797f3511e83343f760b
   status: live
 -->
 # Mountain-363
@@ -10,8 +10,11 @@
 ## Burn: open 1.0 · close 0.0 · cap 0.15 · closed 0 · Grund: Subset-Leser gebaut.
 
 ## Träger
-- `src/archivar/fits_range.rs` — FITS-Subset-Leser (`format fits` + `range`/`window` via `fetch_range`).
+- `src/archivar/fits_range.rs` — Subset-Leser.
 - `state/mountain/2026-10-18-k-pending.φ` — K = pending (R-j).
+- `docs/surveys/survey-2026-10-15-tauchbefunde-acht-faeden.md`
+- `docs/surveys/survey-2026-10-15-die-fuenf-archaeologie.md`
+- `docs/surveys/survey-2026-09-17-verlorene-diskussionen.md`
 
 ## Offen — eigen
 
@@ -24,13 +27,13 @@
 
 ## An mycelium
 Origin: 363
-- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.6~013eccdb` Leser gebaut; schließe mycelium `.5~4820be44`.
+- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.6~013eccdb` schließe mycelium `.5~4820be44`.
 
 ## An river
 Origin: 363
-- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.8~6a8b77e8` Leser steht für `.13` (`kids_dr4_wl_cat.fits`).
-- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.9~3ed32602` K = pending auf `phi:893`; TE-Indikator eigener Punkt.
+- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.8~6a8b77e8` Leser für `.13`.
+- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.9~3ed32602` K = pending, Träger `phi:893`.
 
 ## An future
 Origin: 363
-- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.7~deecd285` `--addressed --fail` prüft Sender, `--tokens` sagt echoed.
+- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.7~deecd285` Addressed-Gate-Riss.
