@@ -46,12 +46,13 @@ PII läuft zuerst über Mistral.
 deepseek 2 live; `mistral/zai-glm-5-3` trägt `low`, `finish=stop`).
 **Die alte 17.10.-Tabelle ist überholt** — sie führte alle Paid-Sitze über DeepInfra.
 
-**UI-Sitze** (Browser-Bridge `browser.*`, dieselben Tabs wie das OpenCode-Panel) — **frei**, **die Maschine fährt sie** (nicht der Operator):
-
-| Sitz | URL | Modell im Wähler | Falle |
-|---|---|---|---|
-| **Sakana Fugu Max** | `chat.sakana.ai` | **„Fugu Max"** (Effort High) | **nicht „Namazu"** — das ist (`sakana-namazu`, „For Japanese") ein **anderer** Eintrag. Fugu **orchestriert** (routet auf andere Modelle, auch Namazu). Login nötig. |
-| **Lumo 2.0 Max** | `lumo.proton.me/guest` | „Lumo 2.0 Max" (anonym) | Senden per **Enter** (kein Send-Button) — `browser.press` nach `focus()`. |
+**UI-Sitze** — der volle Roster (13+ Seats, Composer/Senden/Suche/Max je Sitz, gemessen 2026-10-13)
+steht in **`~/projects/omegaflow-work/ui-seats.md`** — das ist die Quelle, nicht diese Datei.
+Kurz: Qwen · DeepSeek Chat · Z.ai/GLM · Mistral · Claude · Duck.ai · Perplexity · Sakana ·
+Lumo · MiniMax · Kimi (Kontingent) · Google AI Studio (Gemini) · Tryingopen (Open-Weight:
+DeepSeek V4 Pro, Qwen3.8, Nemotron, GLM 5.3, MiMo, GPT-OSS, Inkling, Mistral Large 4).
+**Die Maschine fährt sie, nicht der Operator.** Die frühere 2-Sitz-Tabelle (Fugu/Lumo) war ein
+Schnitt, kein Roster.
 
 ## 2 — Der Reasoning-Level (der größte Fehler: er wurde nie gesetzt)
 
