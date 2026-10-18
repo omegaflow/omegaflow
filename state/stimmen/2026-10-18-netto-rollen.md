@@ -1,70 +1,83 @@
-# Netto-Rollen — Grenzkosten statt Listenpreis (gemessen 2026-10-18)
+# Netto-Rollen — Grenzkosten statt Listenpreis (korrigiert 2026-10-18)
 
-**Korrektur des Maßstabs.** Bisher habe ich Listenpreise gerankt. „Netto" heißt: Was kostet der
-**nächste** Call, gegeben das Kontingent, das der Operator **schon bezahlt hat**?
+**Korrektur.** Die erste Fassung verwechselte **DeepInfra** und **DeepSeek** und baute daraus eine
+falsche Rangfolge. Beide kosten echtes Geld. Die vom Operator vorgegebene Leiter gilt:
 
-## 1 — Die Kontingente (wer zahlt was)
+> **free > Mistral inklusive > DeepSeek paid > Mistral paid**
+> **DeepInfra nur für PII (wo wirklich nötig) und echte Frontier-Probleme (Kimi-Klasse).**
 
-| Quelle | Stand | Charakter | Grenzkosten je Call |
+## 1 — Die Töpfe (Operator-Angaben, 2026-10-18)
+
+| Topf | Stand | Charakter | Grenzkosten/Call |
 |---|---|---|---|
-| **OpenCode frei** (`opencode/*-free`) | 10 Modelle, `cost 0/0` | frei, rate-limitiert | **$0** |
+| **OpenCode frei** (`opencode/*-free`) | 10 Modelle, `cost 0/0` | frei | **$0** |
 | **Freie Träger** (Gateway) | 44 gemessen | frei | **$0** |
-| **Mistral** (Abo) | **7,27 €** Rest von 8,50 € | **vorausbezahlt**, verfällt monatlich | **€0 bis erschöpft** (danach ~0,0043 €) |
-| **DeepSeek direkt** | „riesen Kontingent" (Operator-Angabe, **ungemessen**) | vorausbezahlt | **$0 bis erschöpft** |
-| **DeepInfra** | **$8,49** Balance + **$91,05** Top-up | **Pay-as-you-go, echtes Geld** | **voller Preis** — der kostbarste Topf |
+| **Mistral inklusive** | **7,27 €** Rest von 8,50 € | Abo, monatlich | **€0** bis erschöpft |
+| **DeepSeek paid** | **≈ $90** übrig | vorausbezahlt, echtes Geld | **voller Preis** |
+| **Mistral paid** | **20 €** Credits (14.10.) | Pay-as-you-go | **voller Preis** |
+| **DeepInfra** | **$128,86** gewährt (Ausfall-Kompensation) + $8,49 Balance | **reserviert** | **voller Preis — schonen** |
 
-→ **DeepInfra ist der einzige Topf, der bei jedem Call wirklich Geld verbrennt.** Die anderen sind
-vorausbezahlt oder frei. Darum: DeepInfra nur für das, was **nichts anderes** trägt.
+**DeepInfra ist kein „letzter Rang", sondern ein zweckgebundener Topf:** PII und Frontier.
+Für Linienarbeit wird er **nicht** angefasst.
 
-## 2 — Der Agenten-Test (nicht nur „BEREIT", sondern Urteil + Werkzeug)
+## 2 — Der Agenten-Test (kostenlose Modelle, Urteil + Werkzeug)
 
-Zwei **kostenlose** Modelle als Subagenten, identische Aufgabe: Zeile 35 aus dem Rat-Register
-**wörtlich zitieren** (Werkzeug) **und** die Bootstrapping-Fork beantworten, an der Kimi `#none`
-gescheitert ist. Richtig ist **(b) Syntax**, weil eine Register-Prüfung den Bau des Hooks selbst blockt.
+Zwei freie Modelle als Subagenten, identische Aufgabe: Zeile 35 aus dem Rat-Register wörtlich
+zitieren **und** die Bootstrapping-Fork beantworten, an der Kimi `#none` scheiterte.
+Richtig ist **(b) Syntax** (eine Register-Prüfung blockt den Bau des Hooks selbst).
 
-| Modell | Werkzeug (Zitat) | Fork | Befund |
+| Modell | Werkzeug | Fork | Befund |
 |---|---|---|---|
-| **`opencode/deepseek-v4.1-flash-free#low`** | ✅ korrekt | **✅ (b)** + Bootstrapping-Riss wörtlich | **taugt** — $0 |
-| **`opencode/glm-5.3-flash-free#low`** | ✅ korrekt | **❌ (a)** — Register-Prüfung | **taugt nicht für Urteile**; Output zusätzlich mit Sprachmüll („Form邮 малыша") |
+| **`opencode/deepseek-v4.1-flash-free#low`** | ✅ | **✅ (b)** + Riss | **taugt — $0** |
+| **`opencode/glm-5.3-flash-free#low`** | ✅ | **❌ (a)** | **keine Urteile** (Sprachmüll im Output) |
 
-**Das ist derselbe Fehlertyp wie Kimi `#none`.** Bezahlter GLM-5.3 **voll** `#low` hatte die Fork
-**richtig** gewählt (`rat-gate-rat-id.md:131`). Also: **GLM-5.3-Flash ist die schwache Variante**,
-nicht der Provider.
+Grenze: **n = 1 Fork je Modell** — indikativ, nicht endgültig.
 
-Grenze: **n = 1 Fork je Modell.** Indikativ, nicht endgültig — für ein Urteil sollten 2–3 Forks
-laufen. Das Signal deckt sich aber mit dem bekannten Muster.
+## 3 — Die korrigierte Leiter (für normale Arbeit)
 
-## 3 — Die ehrliche Netto-Rangfolge
-
-| Rang | Modell | Grenzkosten | Geeignet für |
+| Rang | Modell | Topf | Grenzkosten |
 |---|---|---|---|
-| **1** | **`opencode/deepseek-v4.1-flash-free#low`** | **$0** | **Linien + Leitstelle** (Fork bestanden) |
-| 2 | `opencode/glm-5.3-flash-free#low` | **$0** | **nur Mechanik** (Fork gerissen) |
-| 3 | **`mistral/mistral-large-4`** / `mistral/zai-glm-5-3` | **€0 im Kontingent** (7,27 € ≈ 1 690 Calls) | Rat-Struktur, Urteile (vorausbezahlt) |
-| 4 | **`deepseek/deepseek-v4-pro`** (direkt) | **$0 im „riesen" Kontingent** | Tiefe / Backup, wenn frei rate-limitiert |
-| 5 | **`deepinfra/…`** (GLM-5.3-Flash, DeepSeek-V4.1-Flash-1017, V4-Pro) | **voller Preis** | **nur wenn 1–4 nicht tragen** (z. B. Rate-Limit-Ausfall) |
+| **1** | **`opencode/deepseek-v4.1-flash-free#low`** | OpenCode frei | **$0** |
+| **2** | `opencode/glm-5.3-flash-free#low` — **nur Mechanik** | OpenCode frei | **$0** |
+| **3** | **`mistral/mistral-large-4`** · `mistral/zai-glm-5-3` | **Mistral inklusive** (7,27 €) | **€0** bis erschöpft |
+| **4** | **`deepseek/deepseek-v4-pro`** | DeepSeek paid (≈$90) | voller Preis |
+| **5** | `mistral/*` nach Erschöpfung | Mistral paid (20 €) | voller Preis |
+| **—** | **`deepinfra/…`** | **reserviert** | **nur PII + Frontier** |
 
-## 4 — Die Rollen (aus der Rangfolge, nicht aus dem Listenpreis)
+## 4 — Die Rollen
 
-| Rolle | Erste Wahl | Begründung |
+| Rolle | Erste Wahl | Warum |
 |---|---|---|
-| **Linien** | `opencode/deepseek-v4.1-flash-free#low` | $0, Fork bestanden, Werkzeug funktioniert |
+| **Linien** | `opencode/deepseek-v4.1-flash-free#low` | $0, Fork bestanden |
 | **Leitstelle (Future)** | `opencode/deepseek-v4.1-flash-free#low` | $0, Fork bestanden — **nicht** GLM-Flash |
-| **Mechanik/Delegation** | `opencode/glm-5.3-flash-free#low` | $0, Werkzeug ok; Urteile nicht |
-| **Rat-Struktur** | `mistral/mistral-large-4` | vorausbezahlt, 0,0043 €/Call kalibriert |
-| **Tiefe/Backup** | `deepseek/deepseek-v4-pro` | großes Kontingent |
-| **Letzte Reserve** | DeepInfra | echtes Geld, nur bei Ausfall der anderen |
+| **Mechanik/Delegation** | `opencode/glm-5.3-flash-free#low` | $0, Werkzeug ok, Urteile nein |
+| **Rat-Struktur** | `mistral/mistral-large-4` (inkl.) | vorausbezahlt, 0,0043 €/Call kalibriert |
+| **Tiefe/Backup** | `deepseek/deepseek-v4-pro` | ≈$90 vorausbezahlt |
+| **PII** | **DeepInfra** — nur wo Vertrag/Art es verlangt und günstiger/stimmiger als Mistral/GLM | reserviert |
+| **Frontier (Kimi-Klasse)** | **DeepInfra** (z. B. Kimi K3) | nur hier verfügbar |
 
-## 5 — Was noch fehlt (und was ich nicht messen kann)
+## 5 — Reichweite der Töpfe (gerechnet mit gemessenen Preisen)
 
-- **DeepSeek-Balance:** „riesen Kontingent" ist **Operator-Angabe**, nicht von mir gemessen. Der
-  Gateway kann sie nicht abfragen (kein `/user/balance`-Proxy). Wenn du den exakten Stand willst:
-  Konsole ablesen oder den Key kurz in einen direkten Call geben.
-- **GLM-Free vs. GLM-Flash:** Der Fork-Test ist n = 1. Für die Entscheidung „Leitstelle auf DeepSeek
-  Free" reicht das Signal; für „GLM-Flash ganz raus" sollten 2–3 Forks laufen.
-- **OpenCode-Rate-Limits** sind ungemessen — der Grund, warum Rang 4/5 als Backup bleiben.
+| Topf | Preis/Call | Calls |
+|---|---|---|
+| Mistral inklusive (7,27 €) | 0,0043 € | **≈ 1 690** |
+| Mistral paid (20 €) | 0,0043 € | ≈ 4 651 |
+| DeepSeek paid (≈$90, V4 Pro) | $0,00793 | **≈ 11 350** |
+| DeepInfra GLM-5.3-Flash ($137,35) | $0,001415 | ≈ 97 000 |
+| DeepInfra GLM-5.3-Flash (nur $128,86) | $0,001415 | ≈ 91 000 |
+| **DeepInfra Kimi K3 (Frontier)** | ≈ $0,0388 | **≈ 3 320–3 540** |
+
+→ **Die Frontier-Reserve ist der kleinste Topf:** ~3 300 Kimi-Calls. Genau deshalb bleibt DeepInfra
+für PII und Frontier reserviert, nicht für Linienarbeit.
+
+## 6 — Was offen bleibt
+
+- **DeepSeek-Balance** ist Operator-Angabe (≈$90), nicht vom Gateway gemessen (kein Balance-Proxy).
+- **DeepInfra-Grant** ($128,86) und **Balance** ($8,49) sind getrennt zu führen — ob der Grant
+  verfällt, ist **nicht entscheidbar**.
+- **n = 1 Fork** — für „GLM-Flash ganz raus" sollten 2–3 Forks laufen.
 
 ## Belege
 
-`opencode models` (frei: 10; `cost 0/0`; variants low/high/max) · Subagenten-Test (2 Modelle,
-identische Fork) · `2026-10-18-modell-inventur-live.md` · `2026-10-18-kosten-kontingente.md`
+`opencode models` (frei: 10, `cost 0/0`, variants low/high/max) · Subagenten-Test (2 Modelle) ·
+`2026-10-18-modell-inventur-live.md` · `2026-10-18-kosten-kontingente.md` · Operator-Angaben (Töpfe)
