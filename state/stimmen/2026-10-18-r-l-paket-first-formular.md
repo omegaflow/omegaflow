@@ -103,3 +103,17 @@ kein Flyby (JUICE-Flyby war 28.09.2026). Mit Korrektur bleibt das Urteil stabil:
 | Sakana Fugu Max | **Option 1** |
 
 **3:2 Option 1, unverändert** — die Korrektur räumt nur den Prompt-Fehler weg, der Träger-Entscheid steht.
+
+## F3 — mit Frontier-Sitz (Kimi K3, DeepInfra)
+| Sitz | Urteil |
+|---|---|
+| Duck.ai | Option 1 |
+| Perplexity | Option 1 |
+| Sakana Fugu Max | Option 1 |
+| Qwen3.8-Max | Option 2 |
+| Lumo 2.0 Max | Option 2 |
+| **Kimi K3 (Frontier)** | **Option 2** |
+
+**3:3 — echter Gleichstand.** Der Frontier-Sitz kippt auf Option 2 und teilt das Feld. Kimis Zusatz-Tiefe:
+„Mountain hält den Posten, River hält das Veto (absent → Sperrung), Future hält die Hand am Send."
+F3 ist damit **nicht mehr entscheidbar durch Abstimmung** — der Operator schließt.
