@@ -3,7 +3,7 @@
 **Frage:** `state/stimmen/2026-10-18-pass-arbeit-formular.md` (inkl. Nachtrag des Operators:
 *messen → sofort delegieren → prüfen → schließen*)
 **Gefahren:** 2026-10-18 — freier Schwarm (2 Läufe, $0) · GLM-5.3 · Mistral Large 4.
-**UI-Sitze (Lumo · Fugu): ausstehend** — vom Operator zu senden.
+**UI-Sitze gefahren (Lumo · Fugu), 2026-10-18.**
 
 ## Die gemessene Lage
 
@@ -38,9 +38,27 @@ offene Menge liegt in Docs, die **niemand besitzt**. Wer keinen Punkt hat, kann 
 
 ## Bilanz
 
-**Beide: A im Kern, mit C (Rollentrennung) und D (Pipeline als Takt).** Kein Widerspruch.
-Der freie Schwarm (2 Läufe: C · A+D) hat die Risse geliefert, die beide Paid-Sitze aufgreifen:
-*Resignations-Delegation* und *Durchlauferhitzer*.
+**4 von 4 Sitzen: A im Kern** (GLM · Mistral · Fugu · Lumo) — mit C als Rollenform und D als Takt.
+Kein Widerspruch im Verdikt.
+
+### Die UI-Sitze
+
+**Fugu Max High** (`chat.sakana.ai`, UI):
+> Ein Pass endet mit **mindestens einem geschlossenen Punkt samt Beleg**; Lesen und Falten sind
+> Vorbedingung, nicht Ergebnis. Nach dem Messen wird **in derselben Sitzung** delegiert, nicht erst
+> nach dem Handover. Parallelität gehört zum Kontrakt, gedrosselt nur wo Punkte sich berühren oder
+> ein Urteil verlangen. Messgröße ist **nicht `closed`**, sondern „geschlossene Punkte mit Beleg pro
+> Pass" und „Orphan-Docs pro Linie = 0".
+> **VERDIKT: A** — owner bleibt die Linie, delegiert wird nur Mechanik, Pass ohne geschlossenen Punkt ist kein Pass.
+> **RISS:** „Niemand" als owner — die 61 Orphan-Docs müssen **vor der ersten Delegation** namentlich zugewiesen sein, sonst verteilt A nur Unsichtbarkeit statt Verantwortung.
+
+**Lumo 2.0 Max** (`lumo.proton.me`, UI):
+> Was im eigenen Handover-Fahrwasser liegt, gehört der Linie; alles darunter fällt an eine
+> **Leitstellen-Triage mit Frist**. Ein Pass ohne geschlossenen Punkt ist **Lektüre, keine Arbeit**.
+> Delegation ist **Kontrakt, nicht Abwurf**; Sobriety vor Speed. **Beleg vor Metrik** — der Zähler
+> rendert nur, was der Ledger trägt.
+> **VERDIKT: A** + B als Ausführungsmechanismus.
+> **RISS:** 418 offene Punkte in 61 Docs, die niemandem zugewiesen sind — der Engpass ist **fehlende Ownership**, und der Zähler **maskiert** diese Struktur.
 
 ## Der Riss (nicht geglättet)
 
@@ -53,7 +71,7 @@ Der freie Schwarm (2 Läufe: C · A+D) hat die Risse geliefert, die beide Paid-S
 
 ## Stand
 
-**entschieden** (2026-10-18, API-Sitze) — **UI-Sitze ausstehend**; sie können überstimmen.
+**entschieden** (2026-10-18) — **4/4 Sitze**, kein Widerspruch.
 
 ## An future
 
