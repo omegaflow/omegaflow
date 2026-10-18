@@ -335,6 +335,7 @@ pub fn medium_reach(
         }
         TransportOp::Flux(_) => None,
         TransportOp::Advective => slot_measured(advection).then_some(advection * age),
+        TransportOp::Creep => None,
     }
 }
 

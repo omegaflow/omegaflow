@@ -1515,6 +1515,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     TransportOp::Flux(FluxKind::Fourier) => "energy",
                     TransportOp::Flux(FluxKind::Ohm) => "charge",
                     TransportOp::Flux(FluxKind::NewtonViscous) => "momentum",
+                    TransportOp::Creep => "momentum",
                     TransportOp::Advective
                     | TransportOp::Wave
                     | TransportOp::Maxwell
@@ -2985,6 +2986,71 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             "Fourier/energy/fluid resolves to thermal"
         );
         assert_eq!(field.unit, "K");
+    }
+
+    #[test]
+    fn the_cmonoc_descriptor_fields_resolve_to_the_momentum_channel() {
+        let fields_of = |content: &str| -> Vec<(Option<u8>, String)> {
+            parse_sources(content)
+                .first()
+                .map(|s| {
+                    s.extracts
+                        .iter()
+                        .filter_map(|e| match e {
+                            Extract::Field(fc) => Some((fc.channel_ref, fc.unit.clone())),
+                            _ => None,
+                        })
+                        .collect()
+                })
+                .unwrap_or_default()
+        };
+        let head = "url https://example.com/x\nttl 600\nat earth\n";
+        let campaign = format!(
+            "{head}field cmonoc_campaign_velocity cmonoc_campaign_velocity_mm_yr primary momentum creep elliptic elastic-solid none gaussian-inverse-square mm/yr 31536000 0.0 0.0\n"
+        );
+        let continuous = format!(
+            "{head}field cmonoc_continuous_velocity cmonoc_continuous_velocity_mm_yr primary momentum creep elliptic elastic-solid none gaussian-inverse-square mm/yr 31536000 0.0 0.0\n"
+        );
+        assert_eq!(
+            fields_of(&campaign),
+            vec![(Some(9), "mm/yr".to_string())],
+            "the campaign line runs as a descriptor field on the momentum channel"
+        );
+        assert_eq!(
+            fields_of(&continuous),
+            vec![(Some(9), "mm/yr".to_string())],
+            "the continuous line runs as a descriptor field on the momentum channel"
+        );
+
+        let seismic = format!(
+            "{head}field probe probe primary energy wave hyperbolic elastic-solid none gaussian-inverse-square Pa 60 0.0 0.0\n"
+        );
+        assert_eq!(
+            fields_of(&seismic),
+            vec![(Some(1), "Pa".to_string())],
+            "seismic-body keeps channel 1 untouched"
+        );
+        let advective = format!("{head}field probe probe patch-levy advective m/s 60 0.0 0.0\n");
+        let adv_desc = descriptor_from_axes(
+            "primary",
+            "mass",
+            "advective",
+            "advective",
+            "fluid",
+            "none",
+            "kg/(m^2 s)",
+        )
+        .expect("the advective axes build");
+        assert_eq!(
+            channel_ref_of_descriptor(&adv_desc),
+            Some(4),
+            "the advective descriptor alone resolves to channel 4"
+        );
+        assert_eq!(
+            fields_of(&advective),
+            vec![(Some(4), "m/s".to_string())],
+            "the flat advective line keeps channel 4 untouched"
+        );
     }
 
     #[test]

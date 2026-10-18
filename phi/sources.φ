@@ -30799,7 +30799,8 @@ sha256 06f66d84a74576716eeeaece77ebf7c4fb641cd46e921f3c5c19ce8ed6757725
 at earth
 no-cadence
 terms CC-BY-4.0 https://zenodo.org/records/7798617
-field cmonoc_campaign_velocity cmonoc_campaign_velocity_mm_yr gaussian-inverse-square seismic-body mm/yr 31536000 0.0 0.0
+field cmonoc_campaign_velocity cmonoc_campaign_velocity_mm_yr primary momentum creep elliptic elastic-solid none gaussian-inverse-square mm/yr 31536000 0.0 0.0
+channel momentum:primary:creep:elliptic:elastic-solid:unspecified:none mm/yr
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gps_cmonoc.dat
 origin https://zenodo.org/api/records/7798617/files/gps_cmonoc.dat/content
@@ -30809,7 +30810,7 @@ sha256 7766cd0ac5cc754cfdc8a6cac1de888fe07f770bf0984608ea7c0f13a5c39bde
 at earth
 no-cadence
 terms CC-BY-4.0 https://zenodo.org/records/7798617
-field cmonoc_continuous_velocity cmonoc_continuous_velocity_mm_yr gaussian-inverse-square seismic-body mm/yr 31536000 0.0 0.0
+field cmonoc_continuous_velocity cmonoc_continuous_velocity_mm_yr primary momentum creep elliptic elastic-solid none gaussian-inverse-square mm/yr 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gras_2c_roper_hx1-ro_gras_roper-hf-hh_sci_n_20210525042001_20210525043243_00011_a.bin
 terms CC-BY-4.0 https://zenodo.org/records/15812343
