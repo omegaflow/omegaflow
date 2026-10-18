@@ -67,35 +67,46 @@ jobs:
           curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
             -o data/wdc.kugi.kyoto-u.ac.jp/hour3h_kp.csv \
             'https://wdc.kugi.kyoto-u.ac.jp/hapi/data?id=hour3h_kp&start=1981-08-08T00:00:00Z&stop=1983-02-17T00:00:00Z&format=csv'
-      - name: Fetch the DE-2 orbit (altitude and local time) in chunks
+      - name: Fetch the DE-2 orbit from SSCWeb (altitude and local time)
         if: contains(inputs.cond_field, 'lt') || contains(inputs.cond_field, 'alt')
         run: |
           set -euo pipefail
           mkdir -p data/cdaweb.gsfc.nasa.gov
+          cargo build --release -q -p omegaflow-measure --bin de2_ssc_orbit
           out=data/cdaweb.gsfc.nasa.gov/de2_orbit_lt_alt.csv
           : > "$out"
           for range in \
-            "1981-08-08 1981-11-15" \
-            "1981-11-15 1982-02-15" \
-            "1982-02-15 1982-05-15" \
-            "1982-05-15 1982-08-15" \
-            "1982-08-15 1982-11-15" \
-            "1982-11-15 1983-02-17"
+            "1981-08-15 1981-09-01" \
+            "1981-09-01 1981-10-01" \
+            "1981-10-01 1981-11-01" \
+            "1981-11-01 1981-12-01" \
+            "1981-12-01 1982-01-01" \
+            "1982-01-01 1982-02-01" \
+            "1982-02-01 1982-03-01" \
+            "1982-03-01 1982-04-01" \
+            "1982-04-01 1982-05-01" \
+            "1982-05-01 1982-06-01" \
+            "1982-06-01 1982-07-01" \
+            "1982-07-01 1982-08-01" \
+            "1982-08-01 1982-09-01" \
+            "1982-09-01 1982-10-01" \
+            "1982-10-01 1982-11-01" \
+            "1982-11-01 1982-12-01" \
+            "1982-12-01 1983-01-01" \
+            "1983-01-01 1983-02-01" \
+            "1983-02-01 1983-02-17"
           do
             set -- $range
-            chunk=$(mktemp)
-            curl -sSfL --retry 5 --retry-all-errors --max-time 600 \
-              "https://cdaweb.gsfc.nasa.gov/hapi/data?id=DE2_LAPI_ORBIT-ATTITUDE@0&time.min=${1}T00:00:00Z&time.max=${2}T00:00:00Z&parameters=Time,LAPI__Altitude,LAPI__Local&format=csv" -o "$chunk"
-            if [ "$(head -c 1 "$chunk")" = "{" ]; then
-              echo "orbit chunk has no data: $range"
-              rm -f "$chunk"
-              continue
-            fi
-            cat "$chunk" >> "$out"
-            rm -f "$chunk"
+            xml=$(mktemp)
+            csv=$(mktemp)
+            curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
+              "https://sscweb.gsfc.nasa.gov/WS/sscr/2/locations/de2/${1}T000000Z,${2}T000000Z/GEO" -o "$xml"
+            ./target/release/de2_ssc_orbit "$xml" "$csv"
+            cat "$csv" >> "$out"
+            rm -f "$xml" "$csv"
           done
-          test "$(head -c 1 "$out")" != "{"
-          test "$(wc -l < "$out")" -gt 100000
+          test "$(wc -l < "$out")" -gt 500000
+          head -1 "$out"
           tail -1 "$out"
       - name: Run the conditioned TE (both directions, raw vs conditioned)
         run: |

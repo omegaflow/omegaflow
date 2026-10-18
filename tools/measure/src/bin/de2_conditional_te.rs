@@ -105,11 +105,9 @@ fn read_orbit_csv(path: &str) -> Vec<(f64, f64, f64)> {
         if cells.len() < 3 {
             continue;
         }
-        let (Some(t), Ok(alt), Ok(lt)) = (
-            parse_iso_seconds(cells[0]),
-            cells[1].parse::<f64>(),
-            cells[2].parse::<f64>(),
-        ) else {
+        let t = parse_iso_seconds(cells[0]).or_else(|| cells[0].parse::<f64>().ok());
+        let (Some(t), Ok(alt), Ok(lt)) = (t, cells[1].parse::<f64>(), cells[2].parse::<f64>())
+        else {
             continue;
         };
         if t.is_finite() && usable(alt) && alt > 0.0 && lt.is_finite() && (0.0..=24.0).contains(&lt)
