@@ -1,0 +1,11 @@
+Verdikt: A
+
+Begründung: Der Preis des Modells sollte entscheidend sein, nicht der Anbieter. Wenn ein Modell kostenlos ist, sollte es unabhängig vom Anbieter kostenlos sein.
+
+Riss: Der aktuelle Code prüft den Anbieter, obwohl der Modellname bereits bekannt ist. Dies führt zu falschen Ergebnissen.
+
+Zusatz 1: Der Katalogpreis sollte die Wahrheit sein, nicht das `:free`-Suffix oder die Anbieterantwort.
+
+Zusatz 2: Es sollten die Modell-IDs genannt werden, nicht die Routen.
+
+Zusatz 3: Ja, dies gilt auch für `unorouter` und die übrigen Prefixe.

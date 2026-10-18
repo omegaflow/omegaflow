@@ -1,0 +1,7 @@
+
+
+Verdikt: A — Begründung: Das Modell ist bezahlt, wenn sein Preis > 0 ist, nicht nach Anbieter. Der aktuelle Prefix-Check ist inkonsistent mit dem Modellpreis. Riss: Der Guard prüft Prefix statt Modellpreis, was zu falschen 402-Fehlern führt.  
+
+Zusatz 1: Katalog (Preis-Wahrheit ist der Modellpreis, nicht `:free` oder Anbieter).  
+Zusatz 2: `paid-open` sollte Modell-IDs nennen, nicht Routen.  
+Zusatz 3: Ja, für alle Prefixe, inkl. `unorouter`.
