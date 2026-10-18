@@ -1,0 +1,20 @@
+# Fugu Max High — F1/F2/F3 Runde 2 (2026-10-18, UI)
+Rohantwort aus dem Browser (document.body.innerText). Modell im Wähler: Fugu Max High.
+
+F1 Verdikt: A +S2 – geaendert: ja (vorher B, Zweitfrage bleibt S2)
+
+Begruendung: Der Emitter kann fremden Empfang nicht bezeugen — ein CLOSED im Emitter-Ledger ist Selbstauskunft, keine Quittung, und verletzt A=A genau dort, wo es zaehlt: nur das Empfaenger-Ledger kann den Empfang als eigenen Akt setzen. Die Ruecknahme eb2f1b749 ist kein Testbefund, sondern ein Ortsbefund ("lines do not turn screws on the architecture"): die 13 gruenen Tests aus 0e096a89f sagen, dass die Linien liefen, nicht dass der Ort stimmte — ein eigener ACK-Akt im Empfaenger-Ledger mit ACKED ≠ CLOSED setzt eine neue Schraube, statt an der alten zu drehen.
+Riss: Der ACK-Akt macht den Emitter wieder von einem Lesepfad ins fremde Ledger abhaengig — genau die Kopplung, die architektonisch entfernt wurde; ohne gemeinsame Identitaet (Token-Id + Nonce) ist der ACK orphan-faehig und faelschbar. S2 traegt nur, wenn ein Eigentuemer benannt ist, der ACKED setzt; sonst ist die Zustandsspalte Dekoration und S1 waere ehrlicher.
+
+F2 Verdikt: A – geaendert: ja (vorher B)
+
+Begruendung: Der Befund entlastet das Gate und belastet die Writer: register-coverage.yml schreibt nicht, sondern baut und liest (Z.32 --orphans --fail, Z.34 --tokens --noecho-fail) — ein cancel-Flag kann den Mid-write-Riss also gar nicht treffen, nur die Wiederholbarkeit der Messung. Per-SHA bindet jeden Lauf an genau einen gemessenen Zustand (A=A fuer CI: ein Lauf ist der Lauf eines SHA), weshalb cancel true dort nichts Einzigartiges verwirft; per-ref (B) wuerfe Laefe verschiedener Commits in einen Topf, und Debounce (C) waere eine harte Zeit-Schwelle und damit ausgeschlossen.
+Riss: Die sieben von acht abgebrochenen Lauefen sind aus dieser Datei nicht erklaerbar — Z.20 sagt cancel-in-progress: false, der Abbrecher muesste also ein anderer sein; solange der nicht benannt ist, ist jede Aussage ueber cancel-Flags unbelegt, und A schliesst den Riss am echten Ort (fs::write in place) nicht.
+
+F3 Verdikt: A – geaendert: ja (vorher B)
+
+Begruendung: B ist gemessen widerlegt: bei 521–542 B je ## An-Block und HANDOVER_CAP=1024 (commit_check.rs:138) passt genau ein Block je Handover, und 7 von 9 lebenden Handovern liegen schon ueber der Kappe — ein Verdikt als An-Block hiesse, bestehenden Text zu verdraengen. A gibt dem Register eine eigene Dokumentwurzel, die weder mit der Kappe noch mit dem Adressierungsbedarf der Handover kollidiert und die der gemessene Pfadzustand traegt (Hook-Test exit 0 fuer tools/register/**).
+Riss: Der Register liest state/stimmen bisher nicht (grep=0): A schafft eine Wurzel, die geschrieben, aber moeglicherweise nie gelesen wird — exit 0 heisst "nicht noetig", nicht "unterstuetzt", also fehlt der eigentliche Lesepfad und A=A droht zu brechen.
+Zusatz: ja, weil die RAT-ID die Adresse ist, unter der ein Verdikt wiederauffindbar wird — sie ist Zulassung zum Index, nicht Vorbedingung zum Schreiben (gemessen: keine RAT-ID noetig, exit 0); ohne sie indiziert der Index adresslose Eintraege.
+
+Meta: Diese Runde konvergiert in allen drei Fragen auf A und damit auf Schwarm A. Die drei A's sind aus verschiedenen Messungen begruendet (Ortsbefund, Nicht-Writer-Befund, Kappenmessung), aber die Deckungsgleichheit mit einer Quelle ist selbst ein Riss — beim naechsten Sitz sollte mindestens eine Frage gegen A gestellt werden.

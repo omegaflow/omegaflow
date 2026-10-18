@@ -32,7 +32,7 @@ sie sagt **wo das Verdikt liegt** und **wer es bekommt** — nicht, was entschie
 | R-2026-10-17-i | 2026-10-17 | **Offen-Stand-Zähler**: Bullets vs `###`, 1-KiB-Kappe, Ledger-Schließungen | Fugu · Lumo · GLM-5.3 · Mistral 4 | **entschieden** (4/4 A) | `2026-10-17-rat-offen-stand.md` | →mycelium | — |
 | R-2026-10-17-j | 2026-10-17 | **`K` nach der 1981–83-WDC-Ernte identifizierbar?** | Fugu · Lumo · DeepSeek V4 Pro · Kimi K3 · Mistral 4 | **entschieden** (5/5 A) | `2026-10-17-rat-k-identifizierbar.md` | →mountain · →river | — |
 | R-2026-10-17-k | 2026-10-17 | **Native Fläche statt Bastellösungen?** (API/CLI/Features vs. Eigenbau) | Fugu · Lumo · GLM-5.3 · Mistral 4 | **entschieden** (4/4 C) | `2026-10-17-rat-native-flaeche.md` | →future | — |
-| R-2026-10-18-a | 2026-10-18 | **Quittung im Token-Ledger** — Empfänger quittiert im eigenen Ledger statt im fremden (`xfer ack`, `--addressed`-Sicht) | *offen — future + Operator* | **offen** | `2026-10-18-xfer-quittung-formular.md` | →future | — |
+| R-2026-10-18-a | 2026-10-18 | **Quittung im Token-Ledger** — Empfänger quittiert im eigenen Ledger statt im fremden (`xfer ack`, `--addressed`-Sicht) | *verworfen — konsolidiert in `R-2026-10-18-i`* | **verworfen** | `2026-10-18-xfer-quittung-formular.md` | →future | — |
 | R-2026-10-18-b | 2026-10-18 | **GRS80/γ₀-Register** — skalare Referenzkonstanten ohne Parser-Arm: neue Direktive vs. Block vs. local-only; `N` bleibt pending | *offen — Operator wählt* | **offen** | `2026-10-18-grs80-skalar-formular.md` | →future | — |
 | R-2026-10-18-c | 2026-10-18 | **Pass = Arbeit statt Faltung?** (Besitz + sofortige Delegation) | GLM-5.3 · Mistral 4 · Fugu · Lumo | **entschieden** (4/4 A) | `2026-10-18-rat-pass-arbeit.md` | →future · →mountain · →river · →mycelium · →sensory | — |
 | R-2026-10-18-d | 2026-10-18 | **Prosa statt Antrag + Linien ändern Architektur?** | GLM-5.3 · Mistral 4 · Fugu · Lumo | **entschieden** (4/4 B) | `2026-10-18-rat-prosa-architektur.md` | →future · →mountain · →river · →mycelium · →sensory | — |
@@ -40,6 +40,9 @@ sie sagt **wo das Verdikt liegt** und **wer es bekommt** — nicht, was entschie
 | R-2026-10-18-f | 2026-10-18 | **gfc-Block** — Cap 5540/3211/2190/760, Epoche unbelegt, `ttl` NO_CADENCE, 5399-vs-5480 | *offen — Operator wählt* | **offen** | `2026-10-18-gfc-block-formular.md` | →future | — |
 | R-2026-10-18-g | 2026-10-18 | **P10-Restarme** — eionet-Emissionen, Infraschall-/Feuer-Intensität, TEC/Pseudorange/`vis_nmi`, Stern-Metadaten, FDSN-Kanal, `kg/(m^2 s)` | *offen — Operator wählt* | **offen** | `2026-10-18-p10-restarme-formular.md` | →future | — |
 | R-2026-10-18-h | 2026-10-18 | **`is_paid` nach Kosten, nicht Provider** — freie Modelle auf bezahlfähigen Routen (`openrouter/…:free`, Preis 0/0) werden als „billed route" (402) geblockt | *entschieden — Schwarm A 16:6:1 · DeepSeek A · Fugu A · Lumo A* | **entschieden** | `2026-10-18-rat-h-sammlung.md` | →future | — |
+| R-2026-10-18-i | 2026-10-18 | **F1 — Quittung im Token-Ledger** — ACK im Empfänger-Ledger vs. `CLOSED` im Emitter; `--addressed` S1/S2 | *offen — Operator fährt* | **offen** | `2026-10-18-f1-quittung-formular.md` | →future | — |
+| R-2026-10-18-j | 2026-10-18 | **F2 — Concurrency-Schlüssel `register-coverage`** — per-SHA vs. per-ref vs. Debounce; das Gate schreibt nicht | *offen — Operator fährt* | **offen** | `2026-10-18-f2-concurrency-formular.md` | →future | — |
+| R-2026-10-18-k | 2026-10-18 | **F3 — Register liest `state/stimmen` nicht** — Dokumentwurzel vs. Ableitung vs. eigener Index; RAT-ID vorher? | *offen — Operator fährt* | **offen** | `2026-10-18-f3-register-stimmen-formular.md` | →future | — |
 
 **Stand-Vokabular:** `offen · entschieden · geroutet · quittiert · verworfen`.
 
