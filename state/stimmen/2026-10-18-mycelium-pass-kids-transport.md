@@ -116,3 +116,16 @@ Der `Quellen-Surveys`-Punkt ist geschlossen, weil die **nächste** Route getan i
 
 Bereits registriert: GSRAS (`gsras_teleseismic_catalog_1993.txt`), ISC (bulletin/EHB), IGETS/CHAMP, CMONOC-GPS (`gps_campaign.dat`, `gps_cmonoc.dat`).
 Nicht geöffnet (bewusst benannt, nicht still): BGI-Absolutgravimetrie (Landing-Page, keine Einzeldatei), WDC-B-Obninsk (`cat_OBN`, kein Direktfile), CMONOC 7325306/7316100 (`.7z` 2–4,5 GB je Datei), CEIC-Schwere 7855090 (1,3 MB), 6365137 (restricted), CB-Metadaten (FDSN), `equip-g` (Daten ab 2029).
+
+Träger (5 Surveys): `survey-2026-10-02-weberin-zweite-linie.md` · `survey-2026-09-07-weberin-thread-matrix.md` · `survey-2026-09-14-weberin-quellen-rerun.md` · `survey-2026-10-04-exposom-matrix.md` · `survey-2026-10-10-worldwide-lidar-quellen.md`.
+
+## 12. UCAR-FPI: die Registrierung ist umgehbar (Korrektur)
+
+Ich hatte „UCAR-FPI E-Mail-gated = Operator" aus den Archiv-Notizen übernommen. Harte Gegenmessung (`archive_search --all` + `--searxng`, dann `curl`):
+
+- Die HAO-Seite `https://fpi.hao.ucar.edu/fpi_data_files_Drup.php` listet die Dateien; ihre **Links** gehen über `registration.hao.ucar.edu/hao-reg_email.php`.
+- Aber der **Direktpfad** `https://fpi.hao.ucar.edu/hao/aim3/qwu/fpi_files/athabasca/2024/20246300athabasca.dat` antwortet **HTTP 200**, 529 394 B — **ohne** Registrierung.
+- `sha256 34c08b39efa19a50c52807a452a54d0e642f4ffe546f008e514da6da0a821fd6` = identisch mit der per Registrierung geladenen Datei (`md5 66d92991…`).
+- Die Seite nennt die **DOI `10.5065/D64B2ZPX`** (resolves to `https://www2.hao.ucar.edu/fpi`); das widerlegt die frühere Notiz „kein FPI-DOI".
+
+**Folge:** Der **Zugang ist keyless**; die UCAR-Mail ist **nicht** für den Abruf nötig. Offen bleiben allein die **Lizenz/Redistribution** (UCAR/DASH-Terms → evtl. `local-only` für den CDN) und Mountains L1/`field`-Zeilen. Der `format ucar_fpi`-Arm steht; die Manifestation kann jetzt mit dem Direktpfad gebaut werden.
