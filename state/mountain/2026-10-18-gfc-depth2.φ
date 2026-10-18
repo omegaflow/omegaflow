@@ -15,7 +15,7 @@
 #     -> HTTP 200, 20048 B, sha256 921fabbbf72bc8910d8697541844fbd3544c6e0cf252e4b1516091f87b7a7181
 #   GET https://link.springer.com/content/pdf/10.1007/s00190-020-01398-0.pdf
 #     -> HTTP 200, 3766891 B, sha256 41624f4c88012a955f645bbe79d9b44843280448db119d06f607118bc7333c62
-#     -> 18 Seiten, pdftotext 1.0; Volltext-HTML zusätzlich:
+#     -> 12 Seiten, pdftotext 1.0; Volltext-HTML zusätzlich:
 #   GET https://link.springer.com/article/10.1007/s00190-020-01398-0/fulltext.html
 #     -> HTTP 200, 396260 B, sha256 fdfafafa7192fdfa5ff18769b17fd85fa3ac4a264ce6fee7f31b99843c48b8aa
 #     (die effektive URL trägt einen Springer-code-Parameter; der Text ist stabil,
