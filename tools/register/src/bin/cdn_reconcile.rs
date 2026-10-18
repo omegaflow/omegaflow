@@ -244,6 +244,11 @@ fn shard_base(name: &str) -> Option<String> {
         if !ordinal.is_empty() && ordinal.bytes().all(|b| b.is_ascii_digit()) {
             return Some(base.to_string());
         }
+        if let Some(digits) = ordinal.strip_prefix('p') {
+            if !digits.is_empty() && digits.bytes().all(|b| b.is_ascii_digit()) {
+                return Some(base.to_string());
+            }
+        }
     }
     if let Some((stem, ext)) = name.rsplit_once('.') {
         if let Some((base, shard)) = stem.rsplit_once('_') {
@@ -256,7 +261,7 @@ fn shard_base(name: &str) -> Option<String> {
 }
 
 fn is_manifest(name: &str) -> bool {
-    name.ends_with(".manifest")
+    name.ends_with(".manifest") || name.ends_with(".parts")
 }
 
 fn is_shard_of(name: &str, stems: &[String]) -> bool {
@@ -815,5 +820,29 @@ no-cadence
             "capped-release writers in .github/workflows:\n{}",
             bad.join("\n")
         );
+    }
+
+    #[test]
+    fn is_manifest_accepts_parts_and_manifest() {
+        assert!(is_manifest("kids_dr4_wl_cat.fits.parts"));
+        assert!(is_manifest("tnbfits.manifest"));
+        assert!(!is_manifest("kids_dr4_wl_cat.fits.p000"));
+        assert!(!is_manifest("kids_dr4_wl_cat.fits"));
+    }
+
+    #[test]
+    fn shard_base_recognises_p_parts_numeric_and_underscore() {
+        assert_eq!(
+            shard_base("kids_dr4_wl_cat.fits.p000").as_deref(),
+            Some("kids_dr4_wl_cat.fits")
+        );
+        assert_eq!(
+            shard_base("Venus_RadarBasemap_2025_Global_75m_v1.tif.p036").as_deref(),
+            Some("Venus_RadarBasemap_2025_Global_75m_v1.tif")
+        );
+        assert_eq!(shard_base("foo.bin.12").as_deref(), Some("foo.bin"));
+        assert_eq!(shard_base("foo_12.bin").as_deref(), Some("foo.bin"));
+        assert_eq!(shard_base("plain.fits"), None);
+        assert_eq!(shard_base("not.p001x"), None);
     }
 }
