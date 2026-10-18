@@ -109,3 +109,10 @@ Alle 12 Origins erreichbar (HEAD 200, 22 KB–66 MB). `format reference` heißt 
 
 **Wirkung:** `missing_assets` 789 → **779** (10 von 12 geräumt); die 2 PDS-Dateien bleiben als benanntes `absent` stehen.
 **Werkzeuge:** `.github/workflows/spdf-docs-raw-cdn.yml` (7 Docs, `on: workflow_dispatch`, idempotent), `zenodo-raw-cdn.yml` (+2 Einträge), `themis_asi-keogram-cdn` (Dispatch).
+
+## 11. Survey-Routen: geschlossen und offen (2026-10-18)
+
+Der `Quellen-Surveys`-Punkt ist geschlossen, weil die **nächste** Route getan ist: Zenodo 7112529 `datasets.rar` (1,0 MB, CC-BY-4.0) registriert (`phi/sources.φ`, `format reference` + `raw_mirror`) und gespiegelt (`zenodo-raw-cdn`, HTTP 206).
+
+Bereits registriert: GSRAS (`gsras_teleseismic_catalog_1993.txt`), ISC (bulletin/EHB), IGETS/CHAMP, CMONOC-GPS (`gps_campaign.dat`, `gps_cmonoc.dat`).
+Nicht geöffnet (bewusst benannt, nicht still): BGI-Absolutgravimetrie (Landing-Page, keine Einzeldatei), WDC-B-Obninsk (`cat_OBN`, kein Direktfile), CMONOC 7325306/7316100 (`.7z` 2–4,5 GB je Datei), CEIC-Schwere 7855090 (1,3 MB), 6365137 (restricted), CB-Metadaten (FDSN), `equip-g` (Daten ab 2029).
