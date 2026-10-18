@@ -1,0 +1,98 @@
+# P10 — field-Zeilen-Migration, zweite Tranche: acoustic + diffusion (2026-10-18)
+# Linie Mountain · Grundlage state/mountain/2026-10-18-p10-migration.φ (erste Tranche)
+# Gemessen am Worktree mountain-p10-tranche2, HEAD 9987f28fc. Kein neuer Fetch, kein neues Schema.
+
+# ============================================================
+# 1 — Gemessen vor der Migration (HEAD 9987f28fc)
+# ============================================================
+# `source_physics_lint` (cargo run -p omegaflow-register --bin source_physics_lint):
+#   phi/sources.φ = field 7668 · quantity 240 · geometry-candidate 73 · Exit 0.
+# Flache `field`-Zeilen (9 Tokens), per awk:
+#   3740 gesamt · em 1947 · diffusion 471 · advective 450 · acoustic 435 ·
+#   thermal 367 · electric 58 · gravity 7 · seismic-body 3 · seismic-surface 2.
+# Die 99 der ersten Tranche sind am HEAD bestätigt; die 906 dieser Tranche
+#   (acoustic 435 + diffusion 471) sind vollständig 9-Token-Zeilen — kein
+#   anderer Zeilenarm wird von dieser Tranche berührt.
+
+# ============================================================
+# 2 — Am Material gemessen, nicht übernommen
+# ============================================================
+# Beide Gruppen sind fast vollständig echte Felder:
+#   acoustic: Druck 158 (hPa/Pa/pa) · Wellenhöhe/Periode/Richtung (WVHT/DPD/APD/PRES/PTDY,
+#     hfradar 20 Stationen, ndbc) · Infraschall-Amplitude/PSD/Frequenz/Scheinbarkeit ·
+#     Schneefall (mm) · Hydrophon-PCM (count).
+#   diffusion: Emissionsinventar eionet_cdr 276 (kg, tau = 1 Jahr) · Dichten 19 ·
+#     Feuchten 9 · Konzentrationen/Gehalte 167 (ug/m3, ppbC, psu, µmol/kg, mg/m3,
+#     m-1, pH, DU, cm, …).
+# Nur sechs Zeilen tragen Name + Einheit eindeutig als Orts-/Richtungsmaß. Sie werden
+#   umgetaggt; alles andere bleibt `field` und wird in §4 als Riss benannt.
+
+# ============================================================
+# 3 — Geändert
+# ============================================================
+# Werkzeug: `tools/register/src/bin/p10_quantity_migrate.rs`
+#   → acoustic-Arm (6 Namen, `geometry`) und diffusion-Arm (explizit `None`,
+#   damit die 471 Zeilen als bewusst geprüft im Report stehen). Default Report-only,
+#   `--write` schreibt. Kein Schema, nur Direktive und Kind je Zeile.
+# Migriert: 6 flache `field`-Zeilen → `quantity` (Key/Name/Kernel/Unit/Tau unverändert):
+#   acoustic → geometry 6
+#     noaa_dcdb_depth_m               Bathy­metrie-Tiefe (m), Maß wie quake_depth_km
+#     kcdc_kascade_zenith_deg         Schauerachse, Zenitwinkel
+#     kcdc_kascade_azimuth_deg        Schauerachse, Azimut
+#     kcdc_grande_zenith_deg          Schauerachse, Zenitwinkel
+#     kcdc_grande_azimuth_deg         Schauerachse, Azimut
+#     bgr_infrasound_back_azimuth_deg Ankunftsrichtung (Gegenazimut)
+#   diffusion → geometry 0 · source-parameter 0
+#   Summe 6 → 6 geometry.
+# Grenze, die dabei gezogen wurde: `ndbc_46092_mean_wave_dir_deg` (MWD) bleibt `field`.
+#   Ein Spektralmoment des Wellenfeldes ist eine Feldgröße, kein Richtungspfeil zu einem
+#   Ort; der Gegenazimut einer Infraschall-Ankunft ist dagegen die Peilung selbst.
+
+# ============================================================
+# 4 — Riss (bewusst nicht migriert)
+# ============================================================
+# acoustic 429 — echte Wellen-/Mediumfelder, kein quantity-Kind:
+#   Druck (altim, sensorcommunity, cosmos, kyoto, kcdc_general, metar) ·
+#   Wellenhöhe/-periode/-richtung (WVHT/DPD/APD/MWD, hfradar ×20) ·
+#   Infraschall (ceein_pressure_pa, bgr_rms_amplitude_pa, hydrophone_psd_db) ·
+#   bgr_infrasound_center_frequency_hz und _apparent_velocity_ms (Signalgrößen der
+#   Ankunft, nicht Mediumparameter) · bison_pmode_velocity_m_s, gong_amp (m/s, Moden-
+#   amplitude) · nohrsc_snowfall_mm · pcm (count).
+# diffusion 471 — echte Dichte-/Konzentrations-/Emissionsfelder:
+#   eionet_cdr_* 276 (kg, tau = 1 Jahr): Emissionsinventar. `source-parameter` wäre eine
+#   semantische Erfindung — das Register hat keinen Emissions-/Ratenarm, die Zeile trägt
+#   die Masse (kg), nicht die Quellstärke; Name und Einheit belegen das Kind nicht.
+#   Dichten 19 (champ/grace_thermosphere, solar_wind, mms1, psp, tha_peim, de2, voyager,
+#   swarm, A311) · Feuchten 9 (rel_hum, relative_humidity_2m, copernicus_*, igra, dwd,
+#   sensorcommunity_humidity) · übrige 167 (PM, VOC ppbC, Salzgehalt psu, O2/Nitrat/CHLA
+#   µmol/kg bzw. mg/m3, pH, BBP700 m-1, CO2 ppm, O3 ppb, AOD, Precipitable_Water cm).
+#   `las_classification` ×2 (1) ist ein Kategoriencode — weder Koordinate noch
+#   Quell-/Mediumparameter; `osha_mass`/`osha_amount_fraction` sind Massen/Fraktionen.
+# Beide Gruppen bleiben `field`; die Deskriptor-/Kanal-Achse ist hier nicht der Engpass,
+#   sondern ein fehlendes Quantity-Kind für Kraft-/Fluss-/Emissionsgrößen (vgl. §6a der
+#   ersten Tranche).
+
+# ============================================================
+# 5 — Gemessen nach der Migration
+# ============================================================
+# `source_physics_lint`: field 7662 · quantity 246 · geometry-candidate 69 · Exit 0.
+#   (Δ field −6, Δ quantity +6, Δ geometry-candidate −4: der Lint-Hinweis kennt
+#   `depth`/`azimuth`, aber nicht `zenith`; die zwei Zenith-Zeilen senken ihn nicht.)
+# Flache `field`-Zeilen: 3734 (Δ −6) · acoustic 429 · diffusion 471 · übrige Gruppen
+#   unverändert (em 1947 · advective 450 · thermal 367 · electric 58 · gravity 7 ·
+#   seismic-body 3 · seismic-surface 2).
+# `cargo test -p omegaflow --lib archivar::parse::tests` = 51 passed, 0 failed (Exit 0).
+# `cargo check -p omegaflow-register` = Exit 0 (0 Warnungen/Fehler).
+
+# ============================================================
+# 6 — Offen / nächster Schritt
+# ============================================================
+# (a) Nächste Tranche: advective 450 + thermal 367, danach em 1947. Gleiches Prinzip:
+#     am HEAD neu messen, nur Koordinaten/Maße/Quell-/Mediumparameter umtaggen, echte
+#     Felder (Wind-, Temperatur-, Flussfelder) als Riss benennen. em zuletzt.
+# (b) Aus Tranche 1 unverändert offen: Deskriptor-Arm für echte Kraftfelder (gravity 7,
+#     seismic-Wellen 3) · cmonoc ×2 als momentum/advective neu messen (in advective zu
+#     prüfen, nicht als quantity) · usgs_comcat_m45_rate-Kind · SABER-Level-Achse.
+# (c) Aus dieser Tranche offen: kein Kind für Emissionsinventare (eionet_cdr 276) und
+#     für Signalgrößen der Infraschall-Ankunft; beide bleiben `field`, bis ein Arm sie
+#     trägt, ohne Name und physikalische Größe zu vermischen.

@@ -10791,8 +10791,8 @@ ttl 604800
 field kcdc_kascade_energy_ev kcdc_kascade_energy_ev inverse-square em eV 604800 0.0 0.0
 field kcdc_kascade_x_core_m kcdc_kascade_x_core_m inverse-square em m 604800 0.0 0.0
 field kcdc_kascade_y_core_m kcdc_kascade_y_core_m inverse-square em m 604800 0.0 0.0
-field kcdc_kascade_zenith_deg kcdc_kascade_zenith_deg inverse-square acoustic deg 604800 0.0 0.0
-field kcdc_kascade_azimuth_deg kcdc_kascade_azimuth_deg inverse-square acoustic deg 604800 0.0 0.0
+quantity kcdc_kascade_zenith_deg kcdc_kascade_zenith_deg inverse-square geometry deg 604800 0.0 0.0
+quantity kcdc_kascade_azimuth_deg kcdc_kascade_azimuth_deg inverse-square geometry deg 604800 0.0 0.0
 field kcdc_kascade_ne_count kcdc_kascade_ne_count inverse-square em count 604800 0.0 0.0
 field kcdc_kascade_nmu_count kcdc_kascade_nmu_count inverse-square em count 604800 0.0 0.0
 field kcdc_kascade_shower_age kcdc_kascade_shower_age inverse-square em 1 604800 0.0 0.0
@@ -10800,8 +10800,8 @@ field kcdc_calorimeter_nhad_count kcdc_calorimeter_nhad_count inverse-square em 
 field kcdc_calorimeter_ehad_ev kcdc_calorimeter_ehad_ev inverse-square em eV 604800 0.0 0.0
 field kcdc_grande_x_core_m kcdc_grande_x_core_m inverse-square em m 604800 0.0 0.0
 field kcdc_grande_y_core_m kcdc_grande_y_core_m inverse-square em m 604800 0.0 0.0
-field kcdc_grande_zenith_deg kcdc_grande_zenith_deg inverse-square acoustic deg 604800 0.0 0.0
-field kcdc_grande_azimuth_deg kcdc_grande_azimuth_deg inverse-square acoustic deg 604800 0.0 0.0
+quantity kcdc_grande_zenith_deg kcdc_grande_zenith_deg inverse-square geometry deg 604800 0.0 0.0
+quantity kcdc_grande_azimuth_deg kcdc_grande_azimuth_deg inverse-square geometry deg 604800 0.0 0.0
 field kcdc_grande_nch_count kcdc_grande_nch_count inverse-square em count 604800 0.0 0.0
 field kcdc_grande_nmu_count kcdc_grande_nmu_count inverse-square em count 604800 0.0 0.0
 field kcdc_grande_shower_age kcdc_grande_shower_age inverse-square em 1 604800 0.0 0.0
@@ -10892,7 +10892,7 @@ format noaa_dcdb_bathymetry
 origin https://noaa-dcdb-bathymetry-pds.s3.amazonaws.com
 compiler tools/harvest/src/bin/noaa_dcdb_bathymetry_compiler.rs
 at earth
-field noaa_dcdb_depth_m noaa_dcdb_depth_m gaussian-inverse-square acoustic m 604800 0.0 0.0
+quantity noaa_dcdb_depth_m noaa_dcdb_depth_m gaussian-inverse-square geometry m 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-eri-pds.s3.amazonaws.com/noaa_eri.manifest
 origin https://noaa-eri-pds.s3.amazonaws.com
@@ -14751,7 +14751,7 @@ origin https://download.bgr.de/bgr/geophysik/Infrasound_hf_product/netCDF/BGR_in
 compiler tools/harvest/src/bin/bgr_infrasound_compiler.rs
 on earth 0 0 0
 no-cadence
-field bgr_infrasound_back_azimuth_deg bgr_infrasound_back_azimuth_deg inverse-square acoustic deg 300 0.0 0.0
+quantity bgr_infrasound_back_azimuth_deg bgr_infrasound_back_azimuth_deg inverse-square geometry deg 300 0.0 0.0
 field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms inverse-square acoustic m/s 300 0.0 0.0
 field bgr_infrasound_rms_amplitude_pa bgr_infrasound_rms_amplitude_pa inverse-square acoustic pa 300 0.0 0.0
 field bgr_infrasound_center_frequency_hz bgr_infrasound_center_frequency_hz inverse-square acoustic hz 300 0.0 0.0

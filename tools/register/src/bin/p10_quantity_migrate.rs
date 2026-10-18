@@ -15,6 +15,16 @@ fn quantity_kind(force: &str, name: &str) -> Option<&'static str> {
             _ => None,
         },
         "geometry" => Some("geometry"),
+        "acoustic" => match name {
+            "noaa_dcdb_depth_m"
+            | "kcdc_kascade_zenith_deg"
+            | "kcdc_kascade_azimuth_deg"
+            | "kcdc_grande_zenith_deg"
+            | "kcdc_grande_azimuth_deg"
+            | "bgr_infrasound_back_azimuth_deg" => Some("geometry"),
+            _ => None,
+        },
+        "diffusion" => None,
         "seismic-body" | "seismic-surface" => {
             if name.ends_with("_depth")
                 || name.ends_with("_depth_km")
@@ -38,7 +48,7 @@ fn quantity_kind(force: &str, name: &str) -> Option<&'static str> {
 fn usage() {
     eprintln!("usage: p10_quantity_migrate [path] [--write]");
     eprintln!(
-        "  report only, or --write to retag the first P10 tranche (gravity/geometry/seismic) field→quantity"
+        "  report only, or --write to retag the P10 tranches (gravity/geometry/seismic, acoustic) field→quantity"
     );
 }
 
@@ -87,7 +97,12 @@ fn main() {
             && tokens[0] == "field"
             && matches!(
                 tokens[4],
-                "gravity" | "geometry" | "seismic-body" | "seismic-surface"
+                "gravity"
+                    | "geometry"
+                    | "seismic-body"
+                    | "seismic-surface"
+                    | "acoustic"
+                    | "diffusion"
             )
         {
             let force = tokens[4];
