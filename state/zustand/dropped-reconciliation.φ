@@ -25,3 +25,7 @@ weitere fäden kanal-cdn alle mountain-gebunden | move | xfer:mycelium-359-6/-7/
 #     „sensory ist beschäftigt, kümmer dich drum" von Mycelium einzeln aufgelöst:
 2026-12-02 docs blatt blatt-thuan-fragesteller md 4 | wartestand | termin 2026-12-02 (docs/blatt/blatt-thuan-fragesteller.md, 4 Marker) — Zukunftstermin, kein verlorener Punkt
 ble-hr-reader external-state md 41 gebaut src | move | Hardware gebaut (external-state.md:41); Live-BLE-Lauf = Operator-/Future-Wort (Polar H10 FIT nn=0, NotSupported)
+#
+# --- Nachtrag 2026-10-18: der mcpherron-Drop (Mycelium folge361 → River), zwei Keys:
+mcpherron-cdn-lauf register-block river-188 mcpherron-cdn yml dispatch | resolved | Register phi/sources.φ:31392 (`mcon_event`, sha256 441df5f8), CDN-Asset mcpherron_onsets.bin sha256 441df5f8 (Lauf 38176003927 success), Compiler/Workflow river-188 (9f9ea725a), Drift 0f61dd505, Retarget 61c7257e9
+mcpherron-cdn-lauf register-block river-188 weiter mcpherron-cdn yml | resolved | derselbe Beleg: Workflow-Dispatch + idempotenter CDN-Lauf 38176003927 success, Asset sha256 441df5f8 am Register
