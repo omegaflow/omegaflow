@@ -2,7 +2,7 @@
   title: Survey — Sonden-Flotte (Stand 2026-09-16)
   class: survey
   date: 2026-09-16
-  sha256: c4710dfbac0dbbc64399499c2d11284267769ee168ee928f1908ef0e0a245fc5
+  sha256: 1bf94eeab3785367aa07ec70f0aa967899e0f94b8bb376a3ea6ba5b20571212e
   status: live
   see-also: phi/sources.φ phi/blocked_sources.φ docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md
 -->
@@ -174,10 +174,15 @@ NSPO pending · KARI/KSDC pending · MBRSC 200 (**fehlt**) · KASI-PDA 200 (**fe
 
 ### Offene `unmeasured`-Punkte (nicht descoped)
 
-CDSN/NAOC-VLBI/Changchun (kein Archiv gesucht) · Tianwen-2 · Tianwen-1-SPICE-Kernels
-(NAIF 404) · DLR-PDS-Nachfolger-URL · `opendata.radioastron.*` (Wayback 429) ·
-`rgcps.asu.edu/venera-15-16` (Mosaik-ZIP 356,7 MB, Host kein Response) ·
-NSSDC-Einzel-Datasets Luna/Mars/Zond · ISRO-Subpfade (CH1-ISSDC, Aditya).
+(2026-10-18 gemessen) ISRO/ISSDC/PRADAN **200**: `issdc.gov.in` 27 665 B,
+`pradan.issdc.gov.in` 14 684 B, `isro.gov.in` 353 310 B — die ISRO-Subpfade sind
+offen, nicht ungemessen. `opendata.radioastron.ru` **000** (Host tot),
+Wayback-Snapshot **200** (2020-07-28, 28 426 B). `rgcps.asu.edu/venera-15-16`
+**000** (weiter kein Response). `pds.dlr.de` **000** (tot; Nachfolger-URL unbekannt).
+
+Weiter ungemessen (Suche fehlt): CDSN/NAOC-VLBI/Changchun · Tianwen-2 ·
+Tianwen-1-SPICE-Kernel (NAIF-Index 200, Kernel 404) · NSSDC-Einzel-Datasets
+Luna/Mars/Zond.
 
 ### Werkzeug-Befund
 
