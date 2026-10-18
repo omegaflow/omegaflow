@@ -2,7 +2,7 @@
   title: Handover — Mycelium (2026-10-16)
   class: handover
   date: 2026-10-17
-  sha256: 1cc21067e9ea0f8fa72d65e3e4f9cc6cbfe182017c2a758ddb654a0bdfc253db
+  sha256: 2eb2853eff0ffab97253d4f32d22e09cf03f197ebe9982732ad565e712c78ce1
   status: live
 -->
 # Mycelium (2026-10-16)
@@ -26,7 +26,7 @@
 ### JUICE — Termin 2026-11-01
 - **Status:** termin · **Bindung:** termin:2026-11-01
 - **Trigger:** 2026-11-01
-- **Lage:** (gemessen 2026-10-18) Wartestand; der Offen-Riss ist durch `R-2026-10-17-i` (`d3ce6d91e`) entschieden (beide Zähl-Stile) und hier gelöscht
+- **Lage:** (gemessen 2026-10-18 via `phi/sources.φ:27245`) Wartestand; der Offen-Riss ist durch `R-2026-10-17-i` (`d3ce6d91e`) entschieden (beide Zähl-Stile) und hier gelöscht
 - **Blockade:** Termin
 - **Braucht:** nach dem 2026-11-01 den Flyby-Punkt neu messen
 
