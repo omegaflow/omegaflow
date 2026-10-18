@@ -1,0 +1,180 @@
+# gfc-Tiefe 2 — 2190-Herkunft, 5399/5540, 0°-Zweig, unnormalisierte Rekursion
+# (2026-10-18)
+# Linie Mountain · Grundlage: state/mountain/2026-10-18-gfc-depth.φ,
+#   src/archivar/gfc.rs. Kein Verdikt ohne Messung; 0 geehrt; Risse stehen.
+
+# ============================================================
+# 1 — (a) 2190: IN DER PUBLIKATION BELEGT — ABER NICHT ALS NAHT
+# ============================================================
+# QUELLEN (2026-10-18, HTTP und Bytes gemessen, nicht aus dem Archiv):
+#   GET https://api.crossref.org/works/10.1007/s00190-020-01398-0
+#     -> HTTP 200, 19153 B, sha256 8db2c8b8474d8f392f5bb4dffc74a5bd271f97a3a98177d8bd9f113922b00666
+#   GET https://api.openalex.org/works/https://doi.org/10.1007/s00190-020-01398-0
+#     -> HTTP 200, 22972 B, sha256 01028d0f7216469c6268458025a394adfebea398d6fa44ae7234b6fcb4c98120
+#   GET https://api.datacite.org/dois/10.5880/ICGEM.2019.007
+#     -> HTTP 200, 20048 B, sha256 921fabbbf72bc8910d8697541844fbd3544c6e0cf252e4b1516091f87b7a7181
+#   GET https://link.springer.com/content/pdf/10.1007/s00190-020-01398-0.pdf
+#     -> HTTP 200, 3766891 B, sha256 41624f4c88012a955f645bbe79d9b44843280448db119d06f607118bc7333c62
+#     -> 18 Seiten, pdftotext 1.0; Volltext-HTML zusätzlich:
+#   GET https://link.springer.com/article/10.1007/s00190-020-01398-0/fulltext.html
+#     -> HTTP 200, 396260 B, sha256 fdfafafa7192fdfa5ff18769b17fd85fa3ac4a264ce6fee7f31b99843c48b8aa
+#     (die effektive URL trägt einen Springer-code-Parameter; der Text ist stabil,
+#      die Bytes sind es nicht — deshalb zählt das PDF als Zeuge.)
+#   GET http://export.arxiv.org/api/query?search_query=all:XGM2019e&max_results=5
+#     -> HTTP 200, 695 B, sha256 9c2c926d66cfe97016601038fef89c7cc2c740e1e955a4fa68cc47ab30d2a8cd
+#     -> 0 Einträge; kein arXiv-Preprint zu XGM2019e gefunden.
+#
+# WÖRTLICH (PDF/fulltext; die drei Metadaten-Abstracts sind wortgleich):
+#   Abstract: "... represented by spheroidal harmonics up to degree and order
+#     (d/o) 5399, corresponding to a spatial resolution of 2' (~ 4 km)."
+#   §4.2: "It is noted that the XGM2019e model has only been used up to a
+#     spectral resolution of d/o 2190 (see also below) in order to be
+#     comparable with the resolution of EGM2008 and EIGEN6-C4."
+#   §4.3: "It is therefore decided to provide the model pre-calculated at three
+#     different spectral resolutions: d/o 5540, 2190 and 760. All three
+#     resolutions are available on ICGEM (Zingerle et al. 2019a)."
+#   §3.3: "Since the topographic data (EARTH2014) are limited to d/o 5480, the
+#     high-degree coefficients ... are also only used up to this d/o ... it has
+#     been decided to cut the final model at d/o 5480."
+#
+# VERDIKT (a):
+#   Die 2190-Zahl IST in Zingerle et al. 2020 belegt. Sie ist dort aber keine
+#   Prozess-Naht, sondern eine von drei vorberechneten Auslieferungs-
+#   Trunkierungen (5540, 2190, 760), gewählt für den GNSS/levelling-Vergleich
+#   mit EGM2008/EIGEN6-C4. Die frühere Aussage „2190 in der Publikation nicht
+#   genannt" wird damit KORRIGIERT: genannt, aber als Delivery-Trunkierung.
+#   Die einzige belegte Daten-Naht bleibt 719 (Topographie-Forward); 2190 ist
+#   kein Modellkopf-Wert und keine Koeffizienten-Grenze.
+#   Kein Code-Fix: gfc.rs behauptet keine 2190-Naht. Der gemessene Befund steht
+#   jetzt in GFC_DEGREE_SEAM_MEASURED.
+# OFFEN (a):
+#   (a1) Die 2190-Variante selbst wurde in dieser Sitzung nicht geladen. Der
+#        Paper-Text belegt ihre Existenz auf ICGEM, nicht ihren Kopf. Wer sie
+#        ausliefert, muss ihren Kopf (max_degree/Dateiende) separat messen.
+#   (a2) Ein 2190-Cap als Auslieferungsgrad bleibt eine Operator-/Kosten-
+#        Entscheidung, kein aus dem Kopf abgeleiteter Wert. Nicht gesetzt.
+
+# ============================================================
+# 2 — (b) 5399 (Abstract) vs. 5540 (Kopf/Datei) vs. 5480 (Schnitt)
+# ============================================================
+# KOPF (2026-10-18, reproduziert; gleicher Hash wie in gfc-depth.φ):
+#   GET .../XGM2019e.gfc, Range 0-30000 -> HTTP 206, 30001 B,
+#   sha256 139c6d7578e9587ebb01263915d9661c966e8d681478c83e87e69ecf1e723488
+#   max_degree 5540, norm fully_normalized. Keine 2190-/5399-/5480-Zeile.
+# DATEIENDE (2026-10-18, Range -30000):
+#   -> HTTP 206, 30000 B,
+#   sha256 3d8a05700bfccf58a412c0c130369403a96af8447b97e050754e626147c97a85
+#   Tail umfasst n = 5540, m = 5285..5540 (256 Zeilen).
+#   ERSTE Zeile des Tails: gfc 5540 5285 C=8.297963587251797E-51 S=5.814049822295613E-51.
+#   LETZTER nicht-null Koeffizient: gfc 5540 5480
+#     C=4.432847634085920E-82 S=1.947314671184529E-80.
+#   Für m = 5481..5540 sind C und S EXAKT 0.
+#   Nicht-null bei m = 5398, 5399, 5400 (z. B. 5540/5399 C=1.024693847873521E-59,
+#     S=-1.252616079247486E-60).
+#   -> KORREKTUR zu gfc-depth.φ §1: „letzter nicht-null = 5540/5285" war falsch;
+#      5285 ist die erste Zeile des 30000-B-Tails, nicht der letzte nicht-null.
+#
+# ERKLÄRUNG (gemessen + Paper-Wortlaut):
+#   Der Papier-Schnitt liegt bei d/o 5480 (spheroidal). Die ausgelieferte
+#   Kugelflächen-Datei hat Grad 5540 und — im gemessenen Tail von Grad 5540 —
+#   Ordnung 5480; m > 5480 ist exakt 0. Das passt zur Transformation
+#   spheroidal -> sphärisch: der Grad wächst auf 5540, die Ordnung bleibt 5480.
+#   Die 5540 sind damit der Auslieferungsgrad, 5480 die Ordnungs-/Schnittgrenze.
+#   Das Paper nennt diesen Mechanismus nicht ausdrücklich; gemessen ist das
+#   Zahlenpaar (n=5540, m_max=5480), nicht die Transformationsformel.
+#   5399 ist dagegen im Abstract-Wortlaut (Crossref/DataCite/OpenAlex) und
+#   wird im Body nirgends wiederholt. Die Datei widerlegt 5399 als
+#   Koeffizienten-Grenze: bei m=5399/5400 stehen nicht-null Werte.
+# VERDIKT (b):
+#   5540 (Kopf/Datei) vs. 5480 (Schnitt) ist erklärt und datei-seitig gedeckt.
+#   5399 (Abstract) bleibt ein offener Metadaten-Widerspruch: kein Körper-Wert,
+#   keine Koeffizienten-Grenze, vermutlich ein stehengebliebener/verschriebener
+#   Abstract-Wert — belegbar ist das nicht. Er wird NICHT geglättet.
+
+# ============================================================
+# 3 — (c) 0°-ZWEIG BEI GRAD 5540: BEHEBBAR, NICHT f64-GRENZE
+# ============================================================
+# MESSUNG (2026-10-18, Python-f64-Nachbau der alten normalisierten Rekursion,
+# gegen mpmath 1.3.0 dps=80):
+#   alte Rechnung, colat 0°: P̄_5540,0 rel = 4.074e-10
+#     -> addition_rel = 2 * 4.074e-10 ≈ 8.167e-10 (Rust-Testwert exakt reproduziert).
+#   Ursache: die normalisierten Koeffizienten a,b werden in f64 gerundet; ihr
+#   Fehler akkumuliert über 5540 Schritte. Es ist NICHT die f64-Grenze der
+#   zonalen Rekursion.
+#   Alternative, algebraisch identische Rechnung für m=0:
+#     P_n = ((2n-1)x P_{n-1} - (n-1)P_{n-2})/n  (ganzzahlige Koeffizienten),
+#     danach P̄_n0 = sqrt(2n+1) * P_n.
+#     colat 0°: P̄_5540,0 rel = 1.047e-16, addition_rel = 2.220e-16.
+# FIX (implementiert, öffentliche API unverändert):
+#   fully_normalized_legendre füllt die m=0-Spalte mit der unnormalisierten
+#   Ganzzahl-Rekursion und skaliert mit sqrt(2n+1); die m>=1-Spalten laufen
+#   unverändert über Mantisse * 2^exp.
+# NACHHER (Rust-Test, --nocapture):
+#   5540/0    addition_rel 2.220e-16 (n=2048), max|P| 1.052663e2 (unverändert)
+#   5540/45   addition_rel 7.900e-13 (n=2732), ref_rel 1.035e-12 (unverändert)
+#   5540/89.9 addition_rel 5.930e-14 (n=5521), ref_rel 1.086e-12 (P̄_5540,1)
+#   Die zonalen mpmath-Referenzen bei 45°/89.9° bleiben innerhalb 1e-10
+#   (z. B. 5540/45: rel 1.58e-13; 5540/89.9: rel 6.5e-16).
+# GRENZE DES FIXES:
+#   Bei colat 0.001° bleibt der Fehler ~1.7e-10 — mit beiden Rekursionen.
+#   Das ist die tatsächliche f64-Konditionierung nahe dem Pol, nicht der
+#   behobene Koeffizienten-Rundungsfehler. Sie wird nicht als grün ausgegeben.
+# TEST: archivar::gfc::tests::the_zonal_column_holds_the_addition_theorem_at_degree_5540
+#   prüft für n=0..5540: P̄_n0^2 = 2n+1 (rel <= 1e-14) und P̄_nm = 0 für m>0.
+
+# ============================================================
+# 4 — (d) UNNORMALISIERTE REKURSION: DERSELBE FIX IST NICHT ÜBERTRAGBAR
+# ============================================================
+# MESSUNG (2026-10-18, f64-Rekursion + mpmath dps=40, colat 45°):
+#   P_mm = (2m-1)!! * sin^m(45°).
+#   m=160: 2.5402804980657307e307 (endlich)
+#   m=161: erster Überlauf -> inf; wahrer Wert 10^309.7609
+#          = 10^1.506 * f64::MAX (f64::MAX = 10^308.2547).
+#   Die frühere Angabe „m ≈ 187" (gfc-depth.φ) ist zu hoch; gemessen ist 161.
+#   (Der alte Wert 187 passt zur Asymptotik log10 P_mm ≈ 2.08 m erst bei
+#    größeren m; bei 161 ist die lokale Steigung ~2.35.)
+# WARUM KEIN FIX:
+#   Die wahren P_mm-Werte selbst liegen oberhalb f64::MAX und wachsen weiter
+#   (m=200: 10^403.6). fully_normalized_legendre/unnormalized_legendre geben
+#   Vec<Vec<f64>> zurück. Eine Mantisse*2^exp-Rechnung könnte den Wert intern
+#   halten, aber nicht durch diese Signatur ausgeben. Nutzbar würde sie erst,
+#   wenn P mit den Koeffizienten VOR der f64-Konversion multipliziert wird
+#   (skalierte Synthese in harmonic_sums) — das ist ein Design-/API-Eingriff,
+#   nicht „derselbe Fix".
+# ENTSCHEIDUNG:
+#   Kein stiller Fallback, keine Normalisierung auf dem Ingestion-Pfad in
+#   dieser Sitzung. Der Riss bleibt offen; harmonic_sums verweigert ehrlich
+#   mit None. Test:
+#   archivar::gfc::tests::the_unnormalized_recurrence_overflows_before_degree_162_at_45_deg
+#   pinnt den ersten Überlauf (155..165) und dass harmonic_sums für ein
+#   unnormalisiertes Modell mit (200,200) None liefert.
+
+# ============================================================
+# 5 — LÄUFE DIESER SITZUNG
+# ============================================================
+#   cargo test --lib archivar::gfc
+#     -> 23 passed, 0 failed; 2929 filtered out (28.84 s Testzeit;
+#        Kompilation 12m38s unter Fremdlast).
+#     Neu: the_zonal_column_holds_the_addition_theorem_at_degree_5540,
+#          the_unnormalized_recurrence_overflows_before_degree_162_at_45_deg.
+#   cargo check -p omegaflow -> exit 0, Finished dev profile (2m01s).
+#   rustfmt --edition 2024 --check src/archivar/gfc.rs -> exit 0.
+#   Keine phi/sources.φ-Zeile: Metadaten-/Code-Befund, kein neuer Datenblock.
+#   Kein Push.
+
+# ============================================================
+# 6 — OFFEN (benannt, nicht still genullt)
+# ============================================================
+#   (o1) 5399 im Abstract: offener Metadaten-Widerspruch. 5480/5540 sind
+#        gemessen und konsistent; 5399 ist es nicht. Vermutung (nicht belegt):
+#        stehengebliebener Abstract-Wert.
+#   (o2) 2190: als Auslieferungs-Trunkierung belegt, als Naht verworfen. Die
+#        2190-Datei selbst wurde nicht geladen; ihr Kopf ist ungemessen.
+#   (o3) colat 0.001°: ~1.7e-10 relative Zonalabweichung in beiden Rekursionen;
+#        echte f64-Pol-Konditionierung, nicht behoben.
+#   (o4) Unnormalisierte Modelle über Grad ~160 bei 45° sind nicht auswertbar
+#        (P_mm > f64::MAX); harmonic_sums -> None. Nächster Schritt wäre eine
+#        skalierte Synthese oder eine exakte Normierung beim Einlesen — beides
+#        erst nach eigener Messung, nicht als stiller Default.
+#   (o5) Die Ordnungsgrenze 5480 ist nur im Tail von Grad 5540 gemessen, nicht
+#        für jeden Grad der 1.8-GB-Datei. Ein vollständiger Scan steht aus.
