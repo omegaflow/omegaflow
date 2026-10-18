@@ -511,6 +511,92 @@ pub struct GfcSums {
     pub weighted: f64,
 }
 
+#[derive(Clone, Copy, Debug)]
+struct DoubleDouble {
+    hi: f64,
+    lo: f64,
+}
+
+impl DoubleDouble {
+    fn from_f64(x: f64) -> Self {
+        Self { hi: x, lo: 0.0 }
+    }
+
+    fn to_f64(self) -> f64 {
+        self.hi + self.lo
+    }
+}
+
+fn two_sum(a: f64, b: f64) -> (f64, f64) {
+    let s = a + b;
+    let bb = s - a;
+    (s, (a - (s - bb)) + (b - bb))
+}
+
+fn dd_add(a: DoubleDouble, b: DoubleDouble) -> DoubleDouble {
+    let (s, e) = two_sum(a.hi, b.hi);
+    let (hi, lo) = two_sum(s, a.lo + b.lo + e);
+    DoubleDouble { hi, lo }
+}
+
+fn dd_sub(a: DoubleDouble, b: DoubleDouble) -> DoubleDouble {
+    dd_add(
+        a,
+        DoubleDouble {
+            hi: -b.hi,
+            lo: -b.lo,
+        },
+    )
+}
+
+fn dd_mul(a: DoubleDouble, b: DoubleDouble) -> DoubleDouble {
+    let p = a.hi * b.hi;
+    let e = a.hi.mul_add(b.hi, -p) + (a.hi * b.lo + a.lo * b.hi);
+    let (hi, lo) = two_sum(p, e);
+    DoubleDouble { hi, lo }
+}
+
+fn dd_div_f64(a: DoubleDouble, b: f64) -> DoubleDouble {
+    let q1 = a.hi / b;
+    let r = dd_sub(
+        a,
+        dd_mul(DoubleDouble::from_f64(q1), DoubleDouble::from_f64(b)),
+    );
+    DoubleDouble {
+        hi: q1,
+        lo: r.hi / b,
+    }
+}
+
+fn dd_cos_theta(theta: f64) -> DoubleDouble {
+    let half = 0.5 * theta;
+    let two = DoubleDouble::from_f64(2.0);
+    if half.abs() <= std::f64::consts::FRAC_PI_4 {
+        let s = DoubleDouble::from_f64(half.sin());
+        dd_sub(DoubleDouble::from_f64(1.0), dd_mul(two, dd_mul(s, s)))
+    } else {
+        let c = DoubleDouble::from_f64(half.cos());
+        dd_add(DoubleDouble::from_f64(-1.0), dd_mul(two, dd_mul(c, c)))
+    }
+}
+
+fn zonal_column(nmax: usize, theta: f64) -> Vec<DoubleDouble> {
+    let x = dd_cos_theta(theta);
+    let mut p = Vec::with_capacity(nmax + 1);
+    p.push(DoubleDouble::from_f64(1.0));
+    if nmax == 0 {
+        return p;
+    }
+    p.push(x);
+    for n in 2..=nmax {
+        let nf = n as f64;
+        let a = dd_mul(DoubleDouble::from_f64(2.0 * nf - 1.0), dd_mul(x, p[n - 1]));
+        let b = dd_mul(DoubleDouble::from_f64(nf - 1.0), p[n - 2]);
+        p.push(dd_div_f64(dd_sub(a, b), nf));
+    }
+    p
+}
+
 fn scaled_by_pow2(mut x: f64, mut e: i32) -> f64 {
     if x == 0.0 || !x.is_finite() {
         return x;
@@ -534,7 +620,7 @@ fn scaled_by_pow2(mut x: f64, mut e: i32) -> f64 {
     x * f64::from_bits(((e + 1023) as u64) << 52)
 }
 
-pub const GFC_LEGENDRE_RECURRENCE: &str = "fully_normalized_legendre runs column by column over m with a mantissa/exponent pair (scaled_by_pow2); the sectorial seed Pbar_mm ~ m^(1/4) * sin^m(theta) falls below f64 around m ~ 2155 at 45 deg, and a quantised subnormal seed would be amplified by the forward recurrence in n (measured 1.3e21 at degree 3211, 2.3e271 at 5540); the column is rescaled so the returned values underflow only where the true function itself is below f64. The m = 0 column is the exception: it uses the unnormalised recurrence with integer coefficients, P_n = ((2n-1) x P_{n-1} - (n-1) P_{n-2})/n, then multiplies by sqrt(2n+1) (measured 2026-10-18: the normalised-coefficient recurrence drifted to 8.167e-10 in the addition theorem at 0 deg/5540, the integer form to 2.2e-16)";
+pub const GFC_LEGENDRE_RECURRENCE: &str = "fully_normalized_legendre runs column by column over m with a mantissa/exponent pair (scaled_by_pow2); the sectorial seed Pbar_mm ~ m^(1/4) * sin^m(theta) falls below f64 around m ~ 2155 at 45 deg, and a quantised subnormal seed would be amplified by the forward recurrence in n (measured 1.3e21 at degree 3211, 2.3e271 at 5540); the column is rescaled so the returned values underflow only where the true function itself is below f64. The m = 0 column is the exception: it uses the unnormalised recurrence with integer coefficients, P_n = ((2n-1) x P_{n-1} - (n-1) P_{n-2})/n, in double-double arithmetic with x = cos(theta) carried as hi+lo via the half-angle identity, then multiplies by sqrt(2n+1) (measured 2026-10-18: at 0 deg/5540 the normalised-coefficient recurrence drifted to 8.167e-10 in the addition theorem, the integer f64 form to 2.2e-16. At 0.001 deg/5540 the integer f64 form still drifted to 1.7e-10 in Pbar_n0 and 3.4e-10 in the addition theorem because rounding cos(theta) to f64 loses 1e-17 of the 1.5e-10 distance from 1, amplified by dP/dx ~ n/sin(theta); the double-double form brings Pbar_n0 to 2.8e-17 and the zonal addition to 2.2e-16 at 0 deg; at 0.001 deg the full addition theorem is 6.7e-12 because the m >= 1 columns still use the rounded cosine, with unnormalised_legendre sharing the same zonal column)";
 
 pub fn fully_normalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
     let costh = theta.cos();
@@ -544,15 +630,9 @@ pub fn fully_normalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
     if nmax == 0 {
         return p;
     }
-    let mut zonal_prev2 = 1.0f64;
-    let mut zonal_prev1 = costh;
-    p[1][0] = 3.0f64.sqrt() * costh;
-    for n in 2..=nmax {
-        let nf = n as f64;
-        let zonal = ((2.0 * nf - 1.0) * costh * zonal_prev1 - (nf - 1.0) * zonal_prev2) / nf;
-        p[n][0] = (2.0 * nf + 1.0).sqrt() * zonal;
-        zonal_prev2 = zonal_prev1;
-        zonal_prev1 = zonal;
+    let zonal = zonal_column(nmax, theta);
+    for n in 1..=nmax {
+        p[n][0] = (2.0 * n as f64 + 1.0).sqrt() * zonal[n].to_f64();
     }
     const LN_2: f64 = std::f64::consts::LN_2;
     let two_pow_500 = f64::from_bits(((500 + 1023) as u64) << 52);
@@ -608,13 +688,17 @@ pub fn unnormalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
     let sinth = theta.sin();
     let mut p = vec![vec![0.0f64; nmax + 1]; nmax + 1];
     p[0][0] = 1.0;
+    let zonal = zonal_column(nmax, theta);
+    for n in 1..=nmax {
+        p[n][0] = zonal[n].to_f64();
+    }
     for m in 1..=nmax {
         p[m][m] = (2.0 * m as f64 - 1.0) * sinth * p[m - 1][m - 1];
     }
-    for m in 0..nmax {
+    for m in 1..nmax {
         p[m + 1][m] = (2.0 * m as f64 + 1.0) * costh * p[m][m];
     }
-    for m in 0..nmax {
+    for m in 1..nmax {
         for n in (m + 2)..=nmax {
             let nf = n as f64;
             let mf = m as f64;
@@ -1241,5 +1325,55 @@ gfc      2     2    2.439370331756250E-06   -1.400307649958125E-06    8.11752994
                 .is_none(),
             "N without the GRS80 normal field is pending, never a value"
         );
+    }
+
+    #[test]
+    fn the_zonal_column_holds_near_the_pole() {
+        let nmax = 5540usize;
+        let refs = [
+            (0.0f64, 105.26632889960587963f64),
+            (0.001, 105.02038938411648702),
+            (0.01, 82.059368706961116374),
+            (0.1, -22.968183890069591163),
+            (1.0, -0.80765919251950492244),
+        ];
+        for (colat, expected) in refs {
+            let theta = colat.to_radians();
+            let p = fully_normalized_legendre(nmax, theta);
+            let got = p[nmax][0];
+            let rel = (got - expected).abs() / expected.abs();
+            let u = unnormalized_legendre(nmax, theta);
+            let expected_u = expected / (2.0 * nmax as f64 + 1.0).sqrt();
+            let rel_u = (u[nmax][0] - expected_u).abs() / expected_u.abs();
+            let mut worst_sum = 0.0f64;
+            let mut worst_n = 0usize;
+            for n in 0..=nmax {
+                let sum: f64 = p[n][..=n].iter().map(|v| v * v).sum();
+                let expected_sum = (2 * n + 1) as f64;
+                let rel_sum = (sum - expected_sum).abs() / expected_sum;
+                if rel_sum > worst_sum {
+                    worst_sum = rel_sum;
+                    worst_n = n;
+                }
+            }
+            eprintln!(
+                "colat={colat:6} zonal_rel={rel:.3e} unnormalised_rel={rel_u:.3e} \
+                 addition_rel={worst_sum:.3e} at n={worst_n}"
+            );
+            assert!(
+                rel <= 1e-12,
+                "Pbar[{nmax}][0] at colat {colat}: got {got}, mpmath {expected}, rel {rel:.3e}"
+            );
+            assert!(
+                rel_u <= 1e-12,
+                "unnormalised P[{nmax}][0] at colat {colat}: got {}, mpmath {expected_u}, \
+                 rel {rel_u:.3e}",
+                u[nmax][0]
+            );
+            assert!(
+                worst_sum <= 1e-9,
+                "addition theorem fails at colat {colat}: rel {worst_sum:.3e} at n {worst_n}"
+            );
+        }
     }
 }
