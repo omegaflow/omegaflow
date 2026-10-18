@@ -153,3 +153,5 @@ Ich hatte „UCAR-FPI E-Mail-gated = Operator" aus den Archiv-Notizen übernomme
 - **SRD62**: NIST CeramicDataPortal, Penetration-Depth-Tabelle (`srd62_compiler`).
 
 
+
+**Fuzzy-Suche (2026-10-18, ebenfalls negativ):** `--all` mit den `.log`-Spalten (`ChiSqr Gamma dGamma QH QK QL KF NSE`) → nur unbeteiligte Treffer (Hydrologie-`NSE` = Nash-Sutcliffe, Gamma-Strahlung; kein Neutron/Spin-Echo); `--github`/`--sourcegraph` `TTAMEAN` → absent; `--zenodo` nur generische Neutron-Software. **Kein öffentlicher NSE-Datensatz mit diesen Spalten.** Der RESEDA/BaZrO3-Akt ist an future geroutet (`post/out/2026-10-18-mycelium-reseda-nse-datenantrag.md`): Operator-Datenantrag bei Braun, bei Freigabe als öffentlicher NSE-Parser-Fixture.
