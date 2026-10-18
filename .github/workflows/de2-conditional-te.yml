@@ -100,7 +100,7 @@ jobs:
             xml=$(mktemp)
             csv=$(mktemp)
             curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
-              "https://sscweb.gsfc.nasa.gov/WS/sscr/2/locations/de2/${1}T000000Z,${2}T000000Z/GEO" -o "$xml"
+              "https://sscweb.gsfc.nasa.gov/WS/sscr/2/locations/de2/${1//-/}T000000Z,${2//-/}T000000Z/GEO" -o "$xml"
             ./target/release/de2_ssc_orbit "$xml" "$csv"
             cat "$csv" >> "$out"
             rm -f "$xml" "$csv"
