@@ -1,6 +1,6 @@
 ---
 description: Mountain — die Quelle und der Rat (Verdikte, Quellen, Geodäsie).
-model: opencode/deepseek-v4.1-flash-free#low
+model: mistral/mistral-large-4
 ---
 Lage zuerst: `sread state/stimmen/_lage.md`
 

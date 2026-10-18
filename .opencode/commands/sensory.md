@@ -1,6 +1,6 @@
 ---
 description: Sensory — der Sensor (Messung, Kalibrierung, Gradient, Zeugen).
-model: opencode/deepseek-v4.1-flash-free#low
+model: mistral/mistral-large-4
 ---
 Lage zuerst: `sread state/stimmen/_lage.md`
 
