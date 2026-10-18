@@ -12,3 +12,5 @@
 2026-10-18T15:35:00Z SENT xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.6~013eccdb by=mountain.ses_ec618129fffeLFawr4V3pQKpOl to=mycelium
 2026-10-18T15:35:01Z SENT xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.7~deecd285 by=mountain.ses_ec618129fffeLFawr4V3pQKpOl to=future
 2026-10-18T15:35:05Z SENT xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.8~6a8b77e8 by=mountain.ses_ec618129fffeLFawr4V3pQKpOl to=river
+2026-10-18T16:43:43Z FOLDED xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.8~6a8b77e8 by=mountain.ses_ec618129fffeLFawr4V3pQKpOl into=river
+2026-10-18T16:51:46Z SENT xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.9~3ed32602 by=mountain.ses_ec618129fffeLFawr4V3pQKpOl to=river
