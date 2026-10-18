@@ -344,6 +344,50 @@ pub fn parse_cell(field: &[u8], data_type: &str, missing: Option<f64>) -> Option
     }
 }
 
+pub fn parse_binary_cell(field: &[u8], data_type: &str, missing: Option<f64>) -> Option<f64> {
+    let dt = data_type.to_ascii_uppercase();
+    let v = match dt.as_str() {
+        "LSB_INTEGER" | "PC_INTEGER" => match field.len() {
+            4 => i32::from_le_bytes(field.try_into().ok()?) as f64,
+            8 => i64::from_le_bytes(field.try_into().ok()?) as f64,
+            _ => return None,
+        },
+        "MSB_INTEGER" => match field.len() {
+            4 => i32::from_be_bytes(field.try_into().ok()?) as f64,
+            8 => i64::from_be_bytes(field.try_into().ok()?) as f64,
+            _ => return None,
+        },
+        "LSB_UNSIGNED_INTEGER" | "PC_UNSIGNED_INTEGER" => match field.len() {
+            4 => u32::from_le_bytes(field.try_into().ok()?) as f64,
+            8 => u64::from_le_bytes(field.try_into().ok()?) as f64,
+            _ => return None,
+        },
+        "MSB_UNSIGNED_INTEGER" => match field.len() {
+            4 => u32::from_be_bytes(field.try_into().ok()?) as f64,
+            8 => u64::from_be_bytes(field.try_into().ok()?) as f64,
+            _ => return None,
+        },
+        "LSB_REAL" | "PC_REAL" => match field.len() {
+            4 => f32::from_le_bytes(field.try_into().ok()?) as f64,
+            8 => f64::from_le_bytes(field.try_into().ok()?),
+            _ => return None,
+        },
+        "MSB_REAL" | "IEEE_REAL" => match field.len() {
+            4 => f32::from_be_bytes(field.try_into().ok()?) as f64,
+            8 => f64::from_be_bytes(field.try_into().ok()?),
+            _ => return None,
+        },
+        _ => return None,
+    };
+    if !v.is_finite() {
+        return None;
+    }
+    match missing {
+        Some(m) if v == m => None,
+        _ => Some(v),
+    }
+}
+
 pub fn decode_rows(bytes: &[u8], meta: &TableMeta) -> Option<DecodeOutput> {
     let stride = record_stride(meta, bytes.len())?;
     let span = data_span(meta)?;
@@ -356,6 +400,10 @@ pub fn decode_rows(bytes: &[u8], meta: &TableMeta) -> Option<DecodeOutput> {
     if complete == 0 {
         return None;
     }
+    let binary = meta
+        .interchange
+        .as_deref()
+        .is_some_and(|s| s.eq_ignore_ascii_case("BINARY"));
     let mut rows = Vec::with_capacity(complete);
     let mut skipped = 0usize;
     for i in 0..complete {
@@ -366,7 +414,12 @@ pub fn decode_rows(bytes: &[u8], meta: &TableMeta) -> Option<DecodeOutput> {
         for c in &meta.columns {
             let from = c.start_byte - 1;
             let v = match (rec.get(from..from + c.bytes), c.data_type.as_deref()) {
-                (Some(field), Some(data_type)) => parse_cell(field, data_type, c.missing_constant),
+                (Some(field), Some(data_type)) if binary => {
+                    parse_binary_cell(field, data_type, c.missing_constant)
+                }
+                (Some(field), Some(data_type)) => {
+                    parse_cell(field, data_type, c.missing_constant)
+                }
                 _ => None,
             };
             vals.push(v);
@@ -886,5 +939,64 @@ END
         let mut bin = pack(&table);
         bin.truncate(bin.len() - 1);
         assert!(parse_table(&bin).is_none());
+    }
+
+    #[test]
+    fn binary_lsb_cells_decode_with_missing() {
+        let meta = TableMeta {
+            record_bytes: Some(8),
+            file_records: None,
+            rows: Some(1),
+            interchange: Some("BINARY".into()),
+            table_file: None,
+            start_time: None,
+            stop_time: None,
+            spacecraft_name: None,
+            target_name: None,
+            instrument_name: None,
+            product_id: None,
+            columns: vec![
+                TableColumn {
+                    name: "RADIUS".into(),
+                    unit: None,
+                    data_type: Some("LSB_INTEGER".into()),
+                    missing_constant: Some(-1.0),
+                    sampling_name: String::new(),
+                    sampling_unit: String::new(),
+                    sampling_min: None,
+                    sampling_max: None,
+                    start_byte: 1,
+                    bytes: 4,
+                },
+                TableColumn {
+                    name: "SELENOID".into(),
+                    unit: None,
+                    data_type: Some("LSB_UNSIGNED_INTEGER".into()),
+                    missing_constant: Some(4294967295.0),
+                    sampling_name: String::new(),
+                    sampling_unit: String::new(),
+                    sampling_min: None,
+                    sampling_max: None,
+                    start_byte: 5,
+                    bytes: 4,
+                },
+            ],
+        };
+        let mut bytes = Vec::new();
+        bytes.extend_from_slice(&1728352117i32.to_le_bytes());
+        bytes.extend_from_slice(&1737479142u32.to_le_bytes());
+        let (rows, skipped, trailing) = decode_rows(&bytes, &meta).expect("binary decodes");
+        assert_eq!(skipped, 0);
+        assert_eq!(trailing, 0);
+        assert_eq!(rows[0][0], Some(1728352117.0));
+        assert_eq!(rows[0][1], Some(1737479142.0));
+
+        let mut missing = Vec::new();
+        missing.extend_from_slice(&(-1i32).to_le_bytes());
+        missing.extend_from_slice(&u32::MAX.to_le_bytes());
+        let (rows, skipped, _) = decode_rows(&missing, &meta).expect("missing decodes");
+        assert_eq!(skipped, 1);
+        assert_eq!(rows[0][0], None);
+        assert_eq!(rows[0][1], None);
     }
 }
