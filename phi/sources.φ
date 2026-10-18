@@ -168,7 +168,7 @@ origin https://geofon.gfz-potsdam.de/fdsnws/dataselect/1/query
 compiler tools/harvest/src/bin/fdsn_waveform_compiler.rs
 at earth
 ttl 60
-field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms erfc seismic-surface m/s 60.0 0.0 0.0
+field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/geomag.usgs.gov/usgs_geomag_efield_BOU.bin
 terms PD https://geomag.usgs.gov/
@@ -188,7 +188,7 @@ origin https://service.earthscope.org/fdsnws/dataselect/1/query
 compiler tools/harvest/src/bin/fdsn_waveform_compiler.rs
 on earth 0 0 0
 ttl 60
-field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms erfc seismic-surface m/s 60.0 0.0 0.0
+field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0
 
 url https://seismic-api.science.unimelb.edu.au/today-quakes
 terms CC-BY-4.0 https://seiscomp.science.unimelb.edu.au/
@@ -10073,7 +10073,7 @@ format agrav
 origin https://api.sedoo.fr/get-agrav-rest/station/nearto?longitude=0&latitude=0&radiusKm=20000&institutionUuid=
 compiler tools/harvest/src/bin/agrav_compiler.rs
 at earth
-field gravity agrav_gravity_ms2 inverse-square gravity m/s2 604800 0.0 0.0
+field gravity agrav_gravity_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/acs_raw_sc_nir_20181027t221352-20181027t223353-4140-1-1-ec__4_0.tab
@@ -10411,7 +10411,7 @@ compiler tools/harvest/src/bin/igets_compiler.rs
 format igets
 ttl 604800
 at earth
-field igets_gravity_nm_s2 igets_gravity_nm_s2 inverse-square gravity nm/s2 86400 0.0 0.0
+field igets_gravity_nm_s2 igets_gravity_nm_s2 primary mass poisson elliptic vacuum none inverse-square nm/s2 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/doi.pangaea.de/pangaea_758961.json
 terms CC-BY-3.0 https://creativecommons.org/licenses/by/3.0/
@@ -10694,9 +10694,9 @@ origin https://heasarc.gsfc.nasa.gov/FTP/lpf/data/fits/
 compiler tools/harvest/src/bin/drs_fits_compiler.rs
 at earth
 ttl 604800
-field gx lpf_drs_dg_x_ms2 inverse-square gravity m/s2 604800 0.0 0.0
-field gy lpf_drs_dg_y_ms2 inverse-square gravity m/s2 604800 0.0 0.0
-field gz lpf_drs_dg_z_ms2 inverse-square gravity m/s2 604800 0.0 0.0
+field gx lpf_drs_dg_x_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0
+field gy lpf_drs_dg_y_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0
+field gz lpf_drs_dg_z_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/cmb_planck_smica_n64.json
 origin https://irsa.ipac.caltech.edu/data/Planck/release_3/all-sky-maps/maps/component-maps/cmb/COM_CMB_IQU-smica_2048_R3.00_full.fits
@@ -11266,7 +11266,7 @@ at mars
 ttl 604800
 field LATITUDE viking_grav_latitude_deg inverse-square em deg 604800 0.0 0.0
 field LONGITUDE viking_grav_longitude_deg inverse-square em deg 604800 0.0 0.0
-field ACCELERATION viking_grav_acceleration_mm_s2 inverse-square gravity mm/s2 604800 0.0 0.0
+field ACCELERATION viking_grav_acceleration_mm_s2 primary mass poisson elliptic vacuum none inverse-square mm/s2 604800 0.0 0.0
 field ALTITUDE viking_grav_altitude_km inverse-square em km 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-imaging.jpl.nasa.gov/pds3_img_m3g20081118t222604_v03_loc.bin
@@ -12759,7 +12759,7 @@ compiler tools/harvest/src/bin/gw_skymap_compiler.rs
 format sky1
 at sun
 ttl 31536000
-field gw250207_115645 gw250207_115645 inverse-square gravity 1 31536000 0.0 0.0
+field gw250207_115645 gw250207_115645 primary mass poisson elliptic vacuum none inverse-square 1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/gs.llnl.gov/LLNL_G3D_JPS.interpolated.g3d1
 terms USGov-disclaimer https://gs.llnl.gov/sites/gs/files/2021-09/llnl_g3d_jps.interpolated.zip

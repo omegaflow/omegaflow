@@ -3044,6 +3044,116 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     }
 
     #[test]
+    fn a_force_descriptor_separates_the_quantity_name_from_the_channel_key() {
+        let content = "url https://example.com/g.bin\nttl 604800\nat earth\n\
+                       field gravity agrav_gravity_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n";
+        let field = parse_sources(content)[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(fc) => Some(fc.clone()),
+                _ => None,
+            })
+            .expect("the gravity descriptor is admitted");
+        assert_eq!(
+            field.key, "gravity",
+            "the channel key stays the register key"
+        );
+        assert_eq!(
+            field.name, "agrav_gravity_ms2",
+            "the physical quantity name is not collapsed into the channel key"
+        );
+        assert_eq!(field.channel_ref, Some(2), "Poisson/mass/vacuum is gravity");
+        assert_eq!(field.unit, "m/s2", "the measured unit stays untouched");
+        assert_eq!(field.kernel, 0);
+    }
+
+    #[test]
+    fn the_descriptor_conserved_token_is_not_derived_from_the_quantity_name() {
+        let content = "url https://example.com/g.bin\nttl 604800\nat earth\n\
+                       field gravityz temperature primary mass poisson elliptic vacuum none inverse-square m/s2 60 0.0 0.0\n";
+        let field = parse_sources(content)[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(fc) => Some(fc.clone()),
+                _ => None,
+            })
+            .expect("an explicit conserved token carries the line");
+        assert_eq!(
+            field.channel_ref,
+            Some(2),
+            "temperature would resolve to energy in the name arm; the explicit mass token wins"
+        );
+    }
+
+    #[test]
+    fn the_seven_gravity_fields_keep_their_keys_names_and_units() {
+        let content = "url https://example.com/g.bin\nttl 604800\nat earth\n\
+                       field gravity agrav_gravity_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n\
+                       field igets_gravity_nm_s2 igets_gravity_nm_s2 primary mass poisson elliptic vacuum none inverse-square nm/s2 86400 0.0 0.0\n\
+                       field gx lpf_drs_dg_x_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n\
+                       field gy lpf_drs_dg_y_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n\
+                       field gz lpf_drs_dg_z_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n\
+                       field ACCELERATION viking_grav_acceleration_mm_s2 primary mass poisson elliptic vacuum none inverse-square mm/s2 604800 0.0 0.0\n\
+                       field gw250207_115645 gw250207_115645 primary mass poisson elliptic vacuum none inverse-square 1 31536000 0.0 0.0\n";
+        let fields: Vec<FieldConfig> = parse_sources(content)[0]
+            .extracts
+            .iter()
+            .filter_map(|e| match e {
+                Extract::Field(fc) => Some(fc.clone()),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(fields.len(), 7);
+        let got: Vec<(&str, &str, &str)> = fields
+            .iter()
+            .map(|fc| (fc.key.as_str(), fc.name.as_str(), fc.unit.as_str()))
+            .collect();
+        assert_eq!(
+            got,
+            vec![
+                ("gravity", "agrav_gravity_ms2", "m/s2"),
+                ("igets_gravity_nm_s2", "igets_gravity_nm_s2", "nm/s2"),
+                ("gx", "lpf_drs_dg_x_ms2", "m/s2"),
+                ("gy", "lpf_drs_dg_y_ms2", "m/s2"),
+                ("gz", "lpf_drs_dg_z_ms2", "m/s2"),
+                ("ACCELERATION", "viking_grav_acceleration_mm_s2", "mm/s2"),
+                ("gw250207_115645", "gw250207_115645", "1"),
+            ]
+        );
+        assert!(fields.iter().all(|fc| fc.channel_ref == Some(2)));
+    }
+
+    #[test]
+    fn the_two_wave_fields_stay_two_descriptor_fields() {
+        let content = "url https://example.com/geofon.bin\nttl 60\nat earth\n\
+                       field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0\n\
+                       url https://example.com/earthscope.bin\nttl 60\nat earth\n\
+                       field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0\n";
+        let sources = parse_sources(content);
+        let fields: Vec<FieldConfig> = sources
+            .iter()
+            .flat_map(|s| s.extracts.iter())
+            .filter_map(|e| match e {
+                Extract::Field(fc) => Some(fc.clone()),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(
+            fields.len(),
+            2,
+            "neither wave field is folded into the other"
+        );
+        assert!(fields.iter().all(|fc| {
+            fc.key == "fdsn_waveform_bhz_ms"
+                && fc.name == "fdsn_waveform_bhz_ms"
+                && fc.unit == "m/s"
+                && fc.channel_ref == Some(5)
+        }));
+    }
+
+    #[test]
     fn p10_2a_interaction_absent_form_parses() {
         let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum primary V/m 60.0 inverse-square\n";
         let sources = parse_sources(content);
