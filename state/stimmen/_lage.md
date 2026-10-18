@@ -1,10 +1,11 @@
-# Lage — generiert 2026-10-18T15:35:53Z
+# Lage — generiert 2026-10-18T15:35:59Z
 
-HEAD `84ef9fbcc`
+HEAD `de56b1c68`
 
 ## Sitze / Routen (Gateway)
-- Katalog: 1918 Modelle
-- Lebendige freie Chat-Modelle: 10
+- Katalog: 1917 Modelle
+- Lebendige freie Chat-Modelle: 9
+- Freier Schwarm: live aus den Preis-0-Zeilen + OpenCode-free — keine feste Zahl
 - Guthaben (USD):
   openrouter	-1.7770357660000116
   deepseek	214.24

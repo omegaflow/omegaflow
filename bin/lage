@@ -12,8 +12,8 @@ open_rows=$(grep -E '\*\*rat-offen|\*\*rat-konvergiert|\*\*offen\*\*|\*\*gefahre
 
 last_runs=$(ls -1t state/stimmen/ 2>/dev/null | grep -E 'sammlung|verdikt|lage' | head -8 | sed 's/^/  /')
 
-models=$(wc -l < state/zustand/llm-gateway-models.tsv 2>/dev/null || echo '?')
-alive=$(wc -l < state/zustand/llm-gateway-alive.tsv 2>/dev/null || echo '?')
+models=$(tail -n +2 state/zustand/llm-gateway-models.tsv 2>/dev/null | wc -l)
+alive=$(tail -n +2 state/zustand/llm-gateway-alive.tsv 2>/dev/null | wc -l)
 balance=$(tail -n +2 state/zustand/llm-gateway-balance.tsv 2>/dev/null | sed 's/^/  /')
 
 line_rows=$(for line in mountain mycelium river sensory future; do
@@ -36,6 +36,7 @@ done)
   echo "## Sitze / Routen (Gateway)"
   echo "- Katalog: $models Modelle"
   echo "- Lebendige freie Chat-Modelle: $alive"
+  echo "- Freier Schwarm: live aus den Preis-0-Zeilen + OpenCode-free — keine feste Zahl"
   if [ -n "$balance" ]; then
     echo "- Guthaben (USD):"
     echo "$balance"
