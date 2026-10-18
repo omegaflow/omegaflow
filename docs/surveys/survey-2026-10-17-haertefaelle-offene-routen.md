@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: 66de32856f40114856d9246281895f5d13353741c849e7d174eaeba1532dd9c8
+  sha256: e55a329e09115bb050f443e154596022af986618090ab12c9a113f96b856e23c
   status: live
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->
@@ -27,6 +27,18 @@ gemessen. Artefakt: `state/stimmen/2026-10-18-haertefaelle-anfragen.md`.
 
 Die drei Entwürfe sind **Fragen, keine Anträge mit Zusage**; sie behaupten keine Datenrechte. Die
 Antworten sind Zulieferungen — Zulassung/Register bleibt Mountains bzw. Myceliums Hand.
+
+### Alternativrouten (`archive_search --all`, 2026-10-18)
+
+- **RBN:** keyless **CC-BY-4.0** auf Zenodo — `10.5281/zenodo.13362701` (Amateur Radio
+  Spot Data 2018-11…2019-05, Monats-TARs RBN/WSPRNet/PSKReporter), `2483022` (HamSCI 2017
+  SEQP, aggregiertes RBN-CSV), `5799649`, `1067790`. → **Anfrage nicht nötig** für einen
+  Korpus; der volle RBN-Stream bleibt ohne Redistributions-Grant.
+- **CEIC D18000:** kein exakter Mirror; aber CEA/CENC-abgeleitete **CC-BY-4.0**-Wellenformen
+  auf Zenodo (`23103204` Weiyuan SAC, `13978646` CENC-Katalog+Wellenformen, `10499328`
+  CNSN). → Alternativen vorhanden, **nicht** das D18000-Produkt.
+- **DOSIS:** keine offene Datenroute in `--all` gefunden (nur Paper/ORCID DLR-Dosimetrie).
+  → Anfrage bleibt.
 
 ## A — Sonden-Rohdaten (request-only)
 
