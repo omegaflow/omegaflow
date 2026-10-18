@@ -2,7 +2,7 @@
   title: Handover — Mountain 363 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: 9f2040e498aa78b04c12ee37eda2e087c6efd58fd66f642fa772dfbbadbab9d5
+  sha256: 72ee7069423caa9ef39208ef6b7c39d6980d9aaee182fd013e6bde46133696d3
   status: live
 -->
 # Mountain-363
@@ -11,6 +11,7 @@
 
 ## Träger
 - `src/archivar/fits_range.rs` — FITS-Subset-Leser (`format fits` + `range`/`window` via `fetch_range`).
+- `state/mountain/2026-10-18-k-pending.φ` — K = pending (R-j).
 
 ## Offen — eigen
 
@@ -23,12 +24,13 @@
 
 ## An mycelium
 Origin: 363
-- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.6~013eccdb` Subset-Leser gebaut; schließe `xfer:mycelium.ses_ec618129fffeLFawr4V3pQKpOl.5~4820be44` (Empfänger darf fremde Token nicht schließen).
+- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.6~013eccdb` Leser gebaut; schließe mycelium `.5~4820be44`.
 
 ## An river
 Origin: 363
-- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.8~6a8b77e8` Subset-Leser steht für den `.13`-Transport `kids_dr4_wl_cat.fits`; nutzbar nach myceliums `.5`-Close.
+- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.8~6a8b77e8` Leser steht für `.13` (`kids_dr4_wl_cat.fits`).
+- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.9~3ed32602` K = pending auf `phi:893`; TE-Indikator eigener Punkt.
 
 ## An future
 Origin: 363
-- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.7~deecd285` `--addressed mountain --fail` prüft die Sender-Zeile, `--tokens` sagt `echoed` — Register-Gate-Entscheid.
+- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.7~deecd285` `--addressed --fail` prüft Sender, `--tokens` sagt echoed.
