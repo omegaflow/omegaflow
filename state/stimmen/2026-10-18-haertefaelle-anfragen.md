@@ -219,3 +219,17 @@ Kind regards,
 5. **Drei Sendeworte** (die exakten Sätze aus §1–§3) — oder ein Sammelwort, das alle drei Sätze ausdrücklich nennt.
 
 **Nicht nötig / nicht behauptet:** eine Registrierung, ein Konto, eine Unterschrift oder eine Zahlung. Keine der drei Anfragen ist ein Antrag mit Zusage; alle drei sind Fragen. Die Antworten sind Zulieferungen, keine Freigaben.
+
+---
+
+## 4 — Alternativrouten (`archive_search --all`, 2026-10-18)
+
+- **RBN — Anfrage optional.** Keyless **CC-BY-4.0** auf Zenodo: `10.5281/zenodo.13362701`
+  (Amateur Radio Spot Data 2018-11…2019-05, Monats-TARs RBN/WSPRNet/PSKReporter),
+  `2483022` (HamSCI 2017 SEQP, aggregiertes RBN-CSV), `5799649`, `1067790`. Der volle
+  RBN-Stream bleibt ohne Grant; ein Korpus ist ohne Anfrage erreichbar.
+- **CEIC D18000 — Alternativen, nicht das Produkt.** CEA/CENC-abgeleitete
+  **CC-BY-4.0**-Wellenformen: `23103204` (Weiyuan SAC), `13978646`
+  (CENC-Katalog+Wellenformen), `10499328` (CNSN). Das exakte D18000 bleibt auth-gated.
+- **DOSIS — keine offene Route gefunden.** `--all` liefert nur Paper/ORCID
+  (DLR-Dosimetrie), keine Daten. Anfrage bleibt der Weg.

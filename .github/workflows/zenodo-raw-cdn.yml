@@ -152,11 +152,6 @@ jobs:
             origin: "https://zenodo.org/api/records/14281664/files/UNCOVER_DR4_SPS_catalog.fits/content"
             md5: 96a59621fff89208f0cd3272c89fd5d8
             size: 65905920
-          - asset: ceic_gravity_7112529_datasets.rar
-            url: "https://github.com/omegaflow/sources/releases/download/zenodo.org/ceic_gravity_7112529_datasets.rar"
-            origin: "https://zenodo.org/api/records/7112529/files/datasets.rar/content"
-            md5: 392d1bf3cd696657c72b6ea0938f3267
-            size: 1019033
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
