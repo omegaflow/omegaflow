@@ -39,3 +39,8 @@ Bau erst nach Wort.
 - **Verdikt A** (temp+rename je Datei); Geltungsbereich **alle `register_*`** — das Muster `fs::write`-truncate ist der Defekt, nicht die drei Stellen; als geteilter `atomic_write`-Helper erzwingen.
 - **Riss (neu, kein Schwarm-Sitz hatte ihn): Durability/Multi-File** — rename deckt nur Sichtbarkeits-Atomarität, nicht Crash-Festigkeit (fsync Datei **und** Verzeichnis fehlt) und nicht Konsistenz über zwei Register.
 - Konvergenz: Schwarm 4× A + Fugu A = **A**, aber der Riss schiebt Richtung **C** (temp+rename+fsync+Lock).
+
+## UI-Sitze (Lumo 2.0 Max, 2026-10-18)
+- **Verdikt C** (temp+rename + fsync + Lock); Geltungsbereich **alle `register_*` als Gruppe**.
+- **Riss: cross-file atomicity ohne Transaktionslog** — ohne Journal bleibt die zwischenzeitliche Inkonsistenz bei Mehrdatei-Operationen.
+- Stand: Schwarm 4× A · Fugu A · Lumo C. Die Risse (Durability, cross-file) schieben beide auf die C-Bestandteile; offen bleibt A-vs-C als Tragentscheid + ob ein Transaktionsjournal nötig ist.
