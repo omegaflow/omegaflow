@@ -28,12 +28,15 @@ Zwei freie Modelle als Subagenten, identische Aufgabe: Zeile 35 aus dem Rat-Regi
 zitieren **und** die Bootstrapping-Fork beantworten, an der Kimi `#none` scheiterte.
 Richtig ist **(b) Syntax** (eine Register-Prüfung blockt den Bau des Hooks selbst).
 
-| Modell | Werkzeug | Fork | Befund |
+| Modell | Werkzeug | Forks (3) | Befund |
 |---|---|---|---|
-| **`opencode/deepseek-v4.1-flash-free#low`** | ✅ | **✅ (b)** + Riss | **taugt — $0** |
-| **`opencode/glm-5.3-flash-free#low`** | ✅ | **❌ (a)** | **keine Urteile** (Sprachmüll im Output) |
+| **`opencode/deepseek-v4.1-flash-free#low`** | ✅ | **1/1** (Bootstrapping ✅) | **taugt — $0** (n = 1, härtester Fork bestanden) |
+| **`opencode/glm-5.3-flash-free#low`** | ✅ | **2/3** | Bootstrapping ❌ · ack-Baubarkeit ✅ · Register-RAT-ID ✅ |
 
-Grenze: **n = 1 Fork je Modell** — indikativ, nicht endgültig.
+**Korrektur:** GLM-5.3-Flash ist **nicht** „keine Urteile". Es besteht **2 von 3** Forks und scheitert
+nur am **selbstreferenziellen Bootstrapping-Paradox** (Register-Prüfung blockt den eigenen Bau).
+→ Für normale Urteile brauchbar; **nicht** für Architektur-Fragen, die sich selbst autorisieren.
+DeepSeek-Free hat den härtesten Fork (Bootstrapping) bestanden — bleibt erste Wahl.
 
 ## 3 — Die korrigierte Leiter (für normale Arbeit)
 
