@@ -1,0 +1,13 @@
+Ich werde mich bemühen, Ihre Fragen zu beantworten.
+
+## R-b — GRS80/gamma0-Register
+
+`R-b Verdikt: B — Begründung: Ein eigener Konstanten-/Referenzblock mit url/terms scheint eine flexible Lösung zu sein, die den Anforderungen gerecht wird. Die Implementierung einer neuen Direktive für ellipsoid und normal_gravity könnte zu komplex sein. — Riss: Die Kompatibilität mit calc.js und GeographicLib muss gewährleistet sein.`
+
+## R-f — gfc-Block
+
+`R-f Verdikt: A — Begründung: Die Wahl von D=2190 (XGM2019e_2159, offizielles Teilmodell) scheint eine gute Balance zwischen Größe und Funktionalität zu bieten. Die Verwendung eines zu großen Blocks (D=5540) könnte Probleme mit der release-tauglichkeit bereiten. — Riss: Die Epoche muss noch belegt werden, um eine vollständige Lösung zu gewährleisten.`
+
+## R-g — P10-Restarme
+
+`R-g Verdikt: B — Begründung: Die Implementierung der kleinsten sicheren Teilmenge, bestehend aus dem kg/(m^2 s)-Parserfix und der Stern-Metadaten-Achse, scheint ein pragmatischer Ansatz zu sein. Dieser Ansatz minimiert den Aufwand, während er die wichtigsten Probleme löst. — Riss: Es bleibt abzuwarten, ob der Parser-Fix und die Stern-Achse ausreichen, oder ob weitere Anpassungen, wie die FDSN-Key-Aufspaltung, erforderlich sind.`

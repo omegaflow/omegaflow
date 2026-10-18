@@ -1,0 +1,1 @@
+{"error":{"message":"ovh/Mistral-Nemo-Instruct-2407 is a billed model — the operator's word is required (name the model id in $OMEGAFLOW_WORK/post/paid-open, or set OMEGAFLOW_PAID=<model-id>)"}}

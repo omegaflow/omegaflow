@@ -1,0 +1,1 @@
+{"id":"id-1792326319638","object":"chat.completion","created":1792326319,"model":"@cf/meta/llama-guard-3-8b","choices":[{"index":0,"message":{"role":"assistant","content":"\n\nsafe","refusal":null},"logprobs":null,"finish_reason":"stop"}],"usage":{"prompt_tokens":1027,"completion_tokens":3,"total_tokens":1030,"prompt_tokens_details":{"cached_tokens":0},"neurons":45.199315212369}}

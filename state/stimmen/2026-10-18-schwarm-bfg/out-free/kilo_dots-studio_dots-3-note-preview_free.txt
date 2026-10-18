@@ -1,0 +1,7 @@
+
+
+**R-b Verdikt: C** — Begründung: Da calc.js local-only ist und GeographicLib kein Lizenzhinweis hat, ist ein eigener Konstantenblock (B) nicht verpflichtend. Die direkten Register (A) und die späte Registrierung (D) sind durch die fehlende Lizenzabdeckung blockiert. — Riss: Die fehlende Lizenz für calc.js und die fehlende Registrierung der gemessenen Konstanten sind ungelöste, ungemessene Größen.
+
+**R-f Verdikt: A** — Begründung: D=2190 ist das offizielle Teilmodell XGM2019e_2159 und somit die einzig verlässliche Größe. Die anderen Optionen sind entweder zu groß (D=5540), zu klein (D=760) oder basieren auf unsicherer Kapazität (Cap 3211/719). — Riss: Die Epoche ist nirgends belegt; die Wahl von 2190 basiert auf dem offiziellen Teilmodell, nicht auf einer gemessenen Epoche.
+
+**R-g Verdikt: B** — Begründung: Der Parser-Fix für kg/(m^2 s) und die Stern-Metadaten-Achse sind die kleinste sichere Teilmenge, die sofortige, klare Probleme lösen. Der vollständige Architektur-Akt (A) ist riskant, und "nichts bauen" (C) lässt alle Risse bestehen. — Riss: Die FDSN-BHZ-Kanalidentität und die anderen Restarme bleiben als ungelöste, ungemessene Größen bestehen.

@@ -1,0 +1,1 @@
+{"errors":[{"message":"AiError: Bad input: Error: oneOf at '/' not met, 0 matches: Type mismatch of '/', 'string' not in 'object', required properties at '/' are 'image' (f13da9c2-d93a-47e3-a754-c8aa0b540cde)","code":5006}],"success":false,"result":{},"messages":[]}

@@ -1,0 +1,8 @@
+### R-b — GRS80/gamma0-Register
+**Verdikt: A** — Begründung: Die neuen Direktiven `ellipsoid` und `normal_gravity` sind die sauberste Lösung, da sie die bestehenden Messwerte integrieren und die Registrierbarkeit sicherstellen. — Riss: `calc.js` bleibt lokal, ohne Lizenzhinweis, was die Nachvollziehbarkeit gefährdet.
+
+### R-f — gfc-Block
+**Verdikt: A** — Begründung: Das offizielle Teilmodell `XGM2019e_2159` (D=2190) ist die beste Wahl, da es präzise und release-tauglich ist. — Riss: Die Epoche ist nirgends belegt, was die Validierung erschwert.
+
+### R-g — P10-Restarme
+**Verdikt: B** — Begründung: Der Parser-Fix für `kg/(m^2 s)` und die Stern-Metadaten-Achse sind minimal-invasive Lösungen, die die wichtigsten Risse beheben. — Riss: Die anderen Restgruppen bleiben unregistriert, da sie keine klare Zuordnung haben.

@@ -1,0 +1,5 @@
+V1 Verdikt: A — Begründung: Ein Live-Index standardisiert den Zugriff und reduziert Drift. Prosa-Docs als Zeiger vermeiden Duplikate. — Riss: Keine Messung, ob Sitzungen den Index tatsächlich zuerst lesen.
+
+V2 Verdikt: A — Begründung: Die 44-Sitzung ist dokumentiert und stabil. 4er-Läufe widersprechen der Definition. — Riss: Keine Messung, ob 44 Sitze tatsächlich verfügbar sind.
+
+V3 Verdikt: A — Begründung: Ein automatisierter Check erzwingt Aktualität. Git log + Run-Outputs sind objektive Referenzen. — Riss: Keine Messung, ob Sitzungen den Check durchführen.

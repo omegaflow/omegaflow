@@ -1,0 +1,5 @@
+`R-b Verdikt: B — Begründung: Eigene Konstanten/Referenzblöcke ermöglichen Kontrolle ohne Parser-Änderungen. Die URL/Terms-Bedingung muss adressiert werden, ist aber lösbar. — Riss: calc.js Lizenzierung`
+
+`R-f Verdikt: A — Begründung: D=2190 ist das offizielle Teilmodell und vermeidet die Probleme der größeren Datensätze. Es bietet eine praktikable Basis für die Weiterentwicklung. — Riss: Inkonsistenz der Dateigrößen (5399 vs. 5540)`
+
+`R-g Verdikt: B — Begründung: Parser-Fix und Stern-Metadaten-Achse sind der kleinste sichere Schritt zur Funktionalität. Dies minimiert den Architekturaufwand und liefert ersten Mehrwert. — Riss: Unvollständigkeit der Abdeckung aller Restgruppen`

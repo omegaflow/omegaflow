@@ -1,0 +1,5 @@
+`R-b Verdikt: A — Begründung: Ellipsoid-Direktiven und normal_gravity ermöglichen Registrierung der skalaren Konstanten. N bleibt pending, da keine Alternative existiert. — Riss: Keine MIT-Lizenz-Belegungen für calc.js, lokale Umsetzung erforderlich.`  
+
+`R-f Verdikt: A — Begründung: D=2190 (XGM2019e_2159) ist offiziell und unter 1 GiB. Epoche kann via statischer Compiler-Pfad (z. B. Paper-Referenz) gelöst werden. — Riss: Vollständige D=5540 ist nicht release-tauglich, Cap 3211 nicht dokumentiert.`  
+
+`R-g Verdikt: B — Begründung: Parser-Fix für kg/(m²s) und Stern-Metadaten-Achse decken kritische Restgruppen ab. FDSN-Key-Aufspaltung ist nicht zwingend, da Parser bereits existiert. — Riss: Nicht alle Restgruppen (z. B. Infraschall) bleiben ungelöst, aber minimale Lösung.`
