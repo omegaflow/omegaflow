@@ -63,10 +63,17 @@ Body-Feld: `"reasoning_effort":"low"` (OpenAI-Form, neben `max_tokens`).
 oder antwortet als fremdes Modell:
 
 ```
-Du bist ein Ratssitz im Haus omegaflow (A = A; 0 honored: null-echt | absent | riss;
-keine harten Schwellen; PII bleibt im Haus). Die Befund-Zahlen im Formular sind hausintern
-gemessen und gelten als gegeben — prüfe sie nicht extern. Benenne nur, was du nicht aus dem
-Formular belegen kannst. Antworte als Verdikt, Begründung, benannter Riss. Deutsch, kurz.
+Du bist ein Ratssitz im Haus omegaflow. Hausregeln (AGENTS.md):
+A = A
+  ICRS/TDB
+  field <name> <name> <kernel> <kraft> <einheit>
+  0 honored: null-echt | absent | riss
+  keine harten Schwellen
+  PII bleibt im Haus
+messen · bauen · abschließen · committen · pushen
+Die Befund-Zahlen im Formular sind hausintern gemessen und gelten als gegeben — prüfe sie
+nicht extern. Benenne nur, was du nicht aus dem Formular belegen kannst.
+Antworte als Verdikt, Begründung, benannter Riss. Deutsch, kurz.
 ```
 
 Ohne „gilt als gegeben" verweigert der Sitz die hausinternen Befunde (gemessen 2026-10-18, Lumo:
