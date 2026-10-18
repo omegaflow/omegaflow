@@ -84,14 +84,15 @@ Body-Feld: `"reasoning_effort":"low"` (OpenAI-Form, neben `max_tokens`).
 **Die Linse** — jeder Sitz bekommt sie vor der Frage, sonst verweigert er (A=A: nichts erfinden)
 oder antwortet als fremdes Modell. **Zwei Pflichtteile: die fünf Axiome UND die fünf Stimmen.**
 
-Die fünf Axiome (Rat `2026-10-17-rat-axiome2.md`, 8/8 — `channel_ref` und `pending` sind **raus**):
+Die fünf Axiome — **die `AGENTS.md`, ungekürzt** (die manifestierte Fassung, keine Rat-Ableitung):
 
 ```
 A = A
-ICRS/TDB
-field <name> <name> <kernel> <kraft> <einheit> — ohne Kraft-Token kein Sample; das Token
-  nennt die Kraft des Trägers, nicht die Ursache
-0 honored: null-echt | absent | riss
+  ICRS/TDB
+  field <name> <name> <kernel> <kraft> <einheit>
+  0 honored: null-echt | absent | riss
+  keine harten Schwellen
+  PII bleibt im Haus
 messen · bauen · abschließen · committen · pushen
 ```
 
