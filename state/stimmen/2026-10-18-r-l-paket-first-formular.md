@@ -34,3 +34,8 @@ benannt, bis die Reihenfolge steht.
 ## UI-Sitze (Fugu Max High, 2026-10-18)
 - **Kein Verdikt** — „Ich kenne die Regeln/das Abstimmungsprotokoll der River-Triade nicht; ich erfinde keines."
 - **Folge:** die R-l-Frage ist für den Sitz nicht selbsttragend — sie muss den Regel-Kontext nennen (was F1/F2/F3, WGLC-Gitter, Apertur Schritt 3 inhaltlich sind), nicht nur die Stimmzahlen.
+
+## UI-Sitze (Lumo 2.0 Max, 2026-10-18)
+- **Verdikt B** (Apertur first); F3 = 2 von 5, Mindestrückhalt nicht erreicht.
+- **Riss: sequentielle Kopplung → Pipeline-Bottleneck**; C (parallel) senkt Latenz, erhöht Kohärenzrisiko.
+- Stand: Schwarm gespalten (A/B) · Fugu kein Verdikt (Kontext fehlt) · Lumo B. Keine Konvergenz — F3 braucht mehr Sitze.
