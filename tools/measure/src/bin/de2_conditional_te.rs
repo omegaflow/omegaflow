@@ -87,6 +87,59 @@ fn read_kp_csv(path: &str, bin_s: f64) -> BTreeMap<i64, f64> {
         .collect()
 }
 
+fn read_orbit_csv(path: &str) -> Vec<(f64, f64, f64)> {
+    let text = match std::fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(e) => {
+            eprintln!("de2_conditional_te: orbit csv unread {path}: {e}");
+            std::process::exit(2);
+        }
+    };
+    let mut rows: Vec<(f64, f64, f64)> = Vec::new();
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let cells: Vec<&str> = line.split(',').map(str::trim).collect();
+        if cells.len() < 3 {
+            continue;
+        }
+        let (Some(t), Ok(alt), Ok(lt)) = (
+            parse_iso_seconds(cells[0]),
+            cells[1].parse::<f64>(),
+            cells[2].parse::<f64>(),
+        ) else {
+            continue;
+        };
+        if t.is_finite() && alt.is_finite() && lt.is_finite() {
+            rows.push((t, alt, lt));
+        }
+    }
+    rows.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+    rows
+}
+
+fn interp_orbit(rows: &[(f64, f64, f64)], t: f64) -> Option<(f64, f64)> {
+    if rows.is_empty() {
+        return None;
+    }
+    let i = rows.partition_point(|r| r.0 <= t);
+    if i == 0 || i == rows.len() {
+        return None;
+    }
+    let (t0, alt0, lt0) = rows[i - 1];
+    let (t1, alt1, lt1) = rows[i];
+    let span = t1 - t0;
+    if !(span.is_finite() && span > 0.0) {
+        return Some((alt0, lt0));
+    }
+    let f = ((t - t0) / span).clamp(0.0, 1.0);
+    let dlt = ((lt1 - lt0 + 12.0).rem_euclid(24.0)) - 12.0;
+    let lt = (lt0 + f * dlt).rem_euclid(24.0);
+    Some((alt0 + f * (alt1 - alt0), lt))
+}
+
 fn read_cond(path: &str, bin_s: f64, field: &str) -> BTreeMap<i64, f64> {
     let bytes = match std::fs::read(path) {
         Ok(b) => b,
@@ -224,16 +277,26 @@ fn main() {
         eprintln!("de2_conditional_te: --bin-seconds must be positive");
         std::process::exit(2);
     }
-    let cond_field = match arg_value(&args, "--cond") {
-        Some(v) => v,
-        None => "ae".to_string(),
+    let cond_fields: Vec<String> = match arg_value(&args, "--cond") {
+        Some(v) => v
+            .split(',')
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect(),
+        None => vec!["ae".to_string()],
     };
-    if !["ae", "dst", "symd", "kp"].contains(&cond_field.as_str()) {
-        eprintln!("de2_conditional_te: --cond names no ae|dst|symd|kp");
-        std::process::exit(2);
+    for field in &cond_fields {
+        if !["ae", "dst", "symd", "kp", "lt", "alt"].contains(&field.as_str()) {
+            eprintln!("de2_conditional_te: --cond names no ae|dst|symd|kp|lt|alt");
+            std::process::exit(2);
+        }
     }
     let cond_arg: f64 = parse_arg(&args, "--cond-seconds", 0.0);
-    let cond_default = if cond_field == "kp" { 10800.0 } else { bin_s };
+    let cond_default = if cond_fields.iter().any(|f| f == "kp") {
+        10800.0
+    } else {
+        bin_s
+    };
     let cond_s = if cond_arg == 0.0 { cond_default } else { cond_arg };
     if !(cond_s.is_finite() && cond_s >= bin_s) {
         eprintln!("de2_conditional_te: --cond-seconds must be finite and >= --bin-seconds");
@@ -244,7 +307,13 @@ fn main() {
     let n_surr: usize = parse_arg(&args, "--surr", 50);
 
     let (ion, neutral) = read_de2(&csv, bin_s);
-    let ae_bins = if cond_field == "kp" {
+    let mut index_bins: Vec<(String, BTreeMap<i64, f64>)> = Vec::new();
+    for field in &cond_fields {
+        if ["ae", "dst", "symd"].contains(&field.as_str()) {
+            index_bins.push((field.clone(), read_cond(&ae, cond_s, field)));
+        }
+    }
+    let kp_bins = if cond_fields.iter().any(|f| f == "kp") {
         let kp = match arg_value(&args, "--kp-csv") {
             Some(v) => v,
             None => {
@@ -252,18 +321,47 @@ fn main() {
                 std::process::exit(2);
             }
         };
-        read_kp_csv(&kp, cond_s)
+        Some(read_kp_csv(&kp, cond_s))
     } else {
-        read_cond(&ae, cond_s, &cond_field)
+        None
     };
-    let ae_at = |k: i64| -> Option<f64> {
+    let orbit = if cond_fields.iter().any(|f| f == "lt" || f == "alt") {
+        let path = match arg_value(&args, "--orbit-csv") {
+            Some(v) => v,
+            None => {
+                eprintln!("de2_conditional_te: --cond lt|alt needs --orbit-csv <time,alt_km,lt_hr>");
+                std::process::exit(2);
+            }
+        };
+        Some(read_orbit_csv(&path))
+    } else {
+        None
+    };
+
+    let value_at = |field: &str, k: i64| -> Option<f64> {
         let coarse = bin_of(k as f64 * bin_s, cond_s);
-        ae_bins.get(&coarse).copied()
+        match field {
+            "lt" | "alt" => {
+                let rows = orbit.as_ref()?;
+                let (alt, lt) = interp_orbit(rows, (k as f64 + 0.5) * bin_s)?;
+                Some(if field == "lt" { lt } else { alt })
+            }
+            "kp" => kp_bins.as_ref()?.get(&coarse).copied(),
+            _ => index_bins
+                .iter()
+                .find(|(n, _)| n == field)
+                .and_then(|(_, m)| m.get(&coarse).copied()),
+        }
     };
 
     let mut keys: Vec<i64> = ion
         .keys()
-        .filter(|k| neutral.contains_key(*k) && ae_at(**k).is_some())
+        .filter(|k| {
+            neutral.contains_key(*k)
+                && cond_fields
+                    .iter()
+                    .all(|f| value_at(f.as_str(), **k).is_some())
+        })
         .copied()
         .collect();
     keys.sort_unstable();
@@ -278,14 +376,22 @@ fn main() {
 
     let mut nve: Vec<f32> = keys.iter().map(|k| neutral[k] as f32).collect();
     let mut ive: Vec<f32> = keys.iter().map(|k| ion[k] as f32).collect();
-    let ae_series: Vec<f32> = keys
-        .iter()
-        .map(|k| ae_at(*k).expect("keys were filtered on ae_at") as f32)
-        .collect();
-    let mut ae_c: Vec<f32> = ae_series.clone();
     demean(&mut nve);
     demean(&mut ive);
-    demean(&mut ae_c);
+
+    let cond_label = cond_fields.join("+");
+    let mut cond_series: Vec<Vec<f32>> = Vec::new();
+    for field in &cond_fields {
+        let mut series: Vec<f32> = keys
+            .iter()
+            .map(|k| {
+                value_at(field.as_str(), *k).expect("keys were filtered on every conditioner")
+                    as f32
+            })
+            .collect();
+        demean(&mut series);
+        cond_series.push(series);
+    }
 
     let mut gaps: Vec<i64> = keys.windows(2).map(|w| w[1] - w[0]).collect();
     gaps.sort_unstable();
@@ -302,7 +408,7 @@ fn main() {
         "de2_conditional_te: n={} bin={}s cond={} cond_bin={}s span={} segments={} gap_median={}s gap_max={}s bins={} surr={} null=Arx est=Binned seed={:#x}",
         keys.len(),
         bin_s,
-        cond_field,
+        cond_label,
         cond_s,
         span,
         segments,
@@ -313,10 +419,10 @@ fn main() {
         SEED
     );
 
-    let cond = [LaggedCond {
-        series: &ae_c,
-        lag: 0,
-    }];
+    let cond: Vec<LaggedCond> = cond_series
+        .iter()
+        .map(|series| LaggedCond { series, lag: 0 })
+        .collect();
     let empty: [LaggedCond; 0] = [];
     let mut any_cond_pass = false;
 
@@ -372,7 +478,7 @@ fn main() {
                 "LAG {:>5}s {:>8} cond[{}]: {}",
                 lag as f64 * bin_s,
                 label,
-                cond_field,
+                cond_label,
                 cond_line
             );
             println!(
