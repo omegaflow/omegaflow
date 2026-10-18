@@ -2,7 +2,7 @@
   title: Survey — dead_sources.φ Relevanz-Erstpass + Force-Gate-Verdikt (2026-09-16)
   class: survey
   date: 2026-09-16
-  sha256: 51527d7246b5c2e56ed03945c66fd9c1e646d059695143365cb93e513a17e5a4
+  sha256: 2c8845d075b9a6843f9735ca7508db3447a9651dbad15319f94278fcb6abeae1
   status: done
   see-also: phi/dead_sources.φ docs/SOURCE_PORT.md phi/sources.φ phi/declined_sources.φ
 -->
@@ -93,8 +93,13 @@ Keine neuen `sources.φ`-Zeilen.
 ## Ergebnis
 
 118 Einträge geprunt (91 sicher + 26 unsicher-declined + open-meteo-Stale-Pfad);
-9 behalten (3 Force-Kanal, 4 pending, 2 bereits disponiert).
+**9 behalten, itemisiert:**
+- **3 Force-Kanal:** `remon.jrc.ec.europa.eu` (200), `www.irsn.fr` ×2 (200 → ASNR).
+- **4 gemessen-geschlossen (2026-10-18):** `dods.wh.gov` (absent),
+  `osdr.nasa.gov` (Registry/Metadaten), `pskreporter.info` + `reversebeacon.net`
+  (Registry, gedeckt), `arvo-registry.sci.am` ×2 (live über HTTP).
+- **2 bereits disponiert:** `api.inaturalist.org` (declined), `api.open-meteo.com`
+  (registriert).
 
-**Riss (unbenannt):** „4 pending" ist ein Aggregat ohne Items — die vier Kandidaten
-stehen nirgends im Doc benannt (ein Aggregat ohne `n` ist keine Messung). Die Zahl
-bleibt als Riss benannt, nicht als disponiert gezählt.
+Die frühere Zeile „4 pending" ist damit **itemisiert** (die vier Messpunkte oben);
+kein Aggregat ohne `n` mehr.
