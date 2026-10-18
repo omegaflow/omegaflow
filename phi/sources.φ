@@ -27248,6 +27248,7 @@ terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
 origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
+sha256 b68842c95c0bd66c3fff18c837cb7cbdeae28165890bb8c10e75356ddd2a015a
 at juice
 no-cadence
 
@@ -31544,6 +31545,13 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/uncover_dr
 terms CC-BY-4.0 https://zenodo.org/records/14281664
 format fits
 origin https://zenodo.org/api/records/14281664/files/UNCOVER_DR4_SPS_catalog.fits/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/ceic_gravity_7112529_datasets.rar
+terms CC-BY-4.0 https://zenodo.org/records/7112529
+format reference
+origin https://zenodo.org/api/records/7112529/files/datasets.rar/content
 compiler tools/harvest/src/bin/raw_mirror.rs
 no-cadence
 
