@@ -2,7 +2,7 @@
   title: Rätsel-Bestand — was wir haben, was fehlt (ein Taucher je Rätsel)
   class: survey
   date: 2026-10-03
-  sha256: e345cdb77f96407b0a636d6df2fe111c030b2c452e02c56f5312cbe0aa6658b1
+  sha256: 84d96275f36d17b60888cf3a5f5777577bd4c6204d24764a4b2ce4c18c28e20f
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/paper/probe-front-dark-matter.md
 -->
@@ -49,7 +49,7 @@ Verdikt hat keine Adresse (Rats-Konsens 2026-09-29). Die Kanäle sind registrier
 | Ⅺ Placebo | `placebo_pair_eeg_probe.rs` · **`openneuro_compiler.rs`** (+ Reader-Modul `openneuro_eeg.rs`) | `harvest.φ` 2 Assets; `sources.φ` sham/verum | Gabe×HRV×Blutmarker | CDN `openneuro.org` Assets | **keins** — Verdikt nur Archiv-Handover `folge10:24-25`; kein lebendes Blatt | `gh workflow run placebo-ave-cdn.yml`; Verdikt ins Register/Blatt |
 | Ⅻ Urknall | `bigbang_echo_probe.rs`; CI `bigbang-echo.yml` | CMB · CF4 · z-Code | PTA `declined`; **B-Moden (0 — nicht nachgemessen, open)** | keins | **keins** — Sheet `big-bang-echo-sheet-12.md:14/:35/:59-60` | `gh workflow run bigbang-echo.yml`; B-Moden messen |
 | ⅩⅢ Atmosphären-Biosignatur | Paper `jwst-disequilibrium-survey.md` (live) | JWST-Transmissionsspektren (48 Ziele) · `[Fe/H]` · log R'HK | XUV-Kanal der 30 Wirte (extern, Operator-bereitgestellt) | Paper (kein `data/`) | **keins** — Paper `jwst-disequilibrium-survey.md:23-30` (katalogisch P = 0,94; einzeln getragen) | XUV/C-O-Zeugen einlesen; Verdikt registrieren |
-| ⅩⅣ Schumann-Resonanz | keiner (glob 0) | `resonance_schumann_f1/f2/f3_hz` (registriert, CDN-Abzug pending) · `intermagnet_dbdt`-Familie · OMNI · Kp | die Schumann-Reihe im CDN; Blitz-Intensitäts-Kanal | keins | **keins** — Block `phi/sources.φ:1034-1043` (CC-BY-4.0), CDN-Abzug 404 | `## An mycelium` (Manifestation), dann Frage vorab + TE-Matrix `--null` |
+| ⅩⅣ Schumann-Resonanz | keiner (glob 0) | `resonance_schumann_f1/f2/f3_hz` (registriert, **CDN 206**) · `intermagnet_dbdt`-Familie · OMNI · Kp | die Schumann-Reihe im CDN; Blitz-Intensitäts-Kanal | keins | **keins** — Block `phi/sources.φ` (`at earth`, CC-BY-4.0); **CDN 206** (2026-10-18 gemessen, `resonance_schumann.csv` 454 417 B) | Manifestation **erledigt** (2026-10-18); offen nur die Frage vorab + TE-Matrix `--null` |
 
 ## Die Blätter und der Kuprat
 

@@ -2,7 +2,7 @@
   title: Handover — Sensory 259 (2026-10-18)
   class: handover
   date: 2026-10-14
-  sha256: a98bfd6aa1191a7770b0565720895fbe0edb96be2eb9005be580aaf05d461d45
+  sha256: 6e3c382fc1c20ca500ea6a9587485e947f0d1e5b32f40f96ea21ad5bfe6972e2
   status: live
 -->
 # Sensory-259
@@ -20,6 +20,7 @@ Origin: sensory-259
 ## An mountain
 Origin: sensory-259
 - `xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.16~844a104f` tauchbefunde + die-fuenf-archaeologie; Brief `post/in/2026-10-18-sensory-an-mountain-tauchbefunde-fuenf-archaeologie.md`.
+- `xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.20~260f2640` `survey-raetsel-bestand` als Träger führen + stale Schumann-Zeile korrigieren (CDN 206, 454 417 B; Manifestation erledigt).
 
 ## An river
 Origin: sensory-259
