@@ -1,0 +1,102 @@
+# P10 — Einzelfälle der em-Tranche entschieden: TEC, Pseudoranges/Delay, vis_nmi, morph_sigma
+# Linie Mountain · Grundlage state/mountain/2026-10-18-p10-em.φ §4 und
+#   state/stimmen/2026-10-18-p10-restarme-formular.md (R-2026-10-18-g, → future)
+# Gemessen am Worktree mountain-p10-tail, HEAD 878027758. Kein neuer Fetch, kein neues Schema,
+#   kein neues Kind, kein neuer Kanal.
+
+# ============================================================
+# 1 — Gemessen vor der Entscheidung (HEAD 878027758)
+# ============================================================
+# `source_physics_lint` (./target/debug/source_physics_lint):
+#   phi/sources.φ = field 7526 · quantity 382 · geometry-candidate 46 · Exit 0.
+# Flache `field`-Zeilen (9 Tokens): 3587 · davon em 1826.
+# Die vier benannten Gruppen, je Zeile Name / Einheit / Tau / Gruppe / Kernel / Kanal:
+#   TEC (5)
+#     48    champ_absolute_vertical_tec_tecu    TECU   10         em inverse-square
+#     1689  cdaweb_tec_tecu                     TECU   86400      em inverse-square
+#     1789  ionex_tec                           tecu   7200       em inverse-square
+#     4030  absolute_vtec_tecu                  TECU   86400      em inverse-square
+#     8343  swarm_absolute_vertical_tec_tecu    TECU   86400      em inverse-square
+#     alle `at earth`; kein eigener `channel`-Token, Kanalachse = em × inverse-square
+#   Pseudoranges / Delay (6 × m)
+#     10876 cors_rinex_c1_m            m  604800  em inverse-square   CORS/RINEX
+#     10877 cors_rinex_p1_m            m  604800  em inverse-square   CORS/RINEX
+#     10878 cors_rinex_c2_m            m  604800  em inverse-square   CORS/RINEX
+#     10879 cors_rinex_p2_m            m  604800  em inverse-square   CORS/RINEX
+#     10880 cors_rinex_c5_m            m  604800  em inverse-square   CORS/RINEX
+#     11289 galileo_ionocal_delay_m    m  604800  em inverse-square   PDS gll.rss ionocal
+#   vis_nmi (73)
+#     field VIS vis_nmi inverse-square em nmi 21600 0.0 0.0
+#     73 × identisch (NDBC-Stationen), `at earth`; nmi = nautische Meilen
+#   morph_sigma (1)
+#     14892 morph_sigma  deg  33554432  em inverse-square  gamma_cat, `at sun`
+#     Quelle am HEAD: tools/harvest/src/bin/gamma_cat_compiler.rs bindet die Spalte
+#     `morph_sigma`; das gamma-cat-FITS trägt TTYPE28 morph_type, TTYPE29 morph_sigma (deg),
+#     TTYPE30 morph_sigma_err, TTYPE31 morph_sigma2, TTYPE33 morph_pa (deg) — also die
+#     Gauß-Morphologiebreite einer Quelle, nicht Ort, nicht Feld.
+
+# ============================================================
+# 2 — Entscheidung: vorhandene Kinds, keine neuen Arme
+# ============================================================
+# TEC (5) — bleibt `field`, Riss:
+#   TECU/tecu ist eine Säulendichte (Elektronen pro Fläche), ein in-situ-Medienzustand der
+#   Ionosphäre. Kein vorhandenes Kind trägt ihn: `geometry` ist Ort/Maß, `source-parameter`
+#   ist Objektmaß, `relative count` verlangt count/1/% — TECU liegt in keinem Unit-Gate.
+#   Dasselbe Grenzverhalten wie WVHT/ATMP/WSPD: Zustandsgröße des Mediums bleibt `field`.
+# Pseudoranges / Delay (6 × m) — bleiben `field`, Riss:
+#   c1/p1/c2/p2/c5 sind rohe GNSS-Code-Observablen (Pseudoranges mit Uhren- und
+#   Atmosphärenanteil), galileo_ionocal_delay_m ist ein ionosphärischer Kalibrier-Delay.
+#   Die Einheit m macht daraus keine Geometrie: es ist keine Position und kein Objektmaß,
+#   sondern eine Laufzeit-/Beobachtungslänge. Kein Kind trägt Beobachtung/Pfadlänge.
+# vis_nmi (73) — bleibt `field`, Riss:
+#   NDBC `VIS` = Sichtweite in nautischen Meilen, ein meteorologischer Zustand. nmi ist eine
+#   Länge, aber die Zeile ist kein Ort und kein Objektmaß; `geometry` würde die Sichtweite
+#   als Geometrie erfinden. Dieselbe Grenze wie WVHT (Wellenhöhe in m) und TIDE (bereits
+#   `geometry` als Meeresoberflächenhöhe — dort ein Ort, hier ein Zustand).
+# morph_sigma (1) — migriert nach `quantity … source-parameter`:
+#   Name + Einheit (Morphologie-Sigma in deg) und die gemessene gamma-cat-Spaltenfamilie
+#   belegen eine Quellgröße: die Gauß-Breite der Quellmorphologie, analog zu Magnitude,
+#   Transit-Tiefe oder Periode. `geometry` wäre falsch (kein Ort, keine Distanz, kein
+#   Bahnmaß); `source-parameter` ist unit-frei und trägt Per-Objekt-Katalogwerte.
+# Kein neues Kind, kein neuer Kanal, keine neue Einheit, kein Schema-Eingriff.
+
+# ============================================================
+# 3 — Geändert
+# ============================================================
+# Werkzeug: `tools/register/src/bin/p10_quantity_migrate.rs`
+#   → im vorhandenen em-Arm `morph_sigma` in die source-parameter-Liste aufgenommen.
+#   Keine neue Zeilenform, keine neue Auswahl; der Lauf bleibt Default Report-only.
+# Migriert: 1 Zeile (14892)
+#   field morphology → quantity source-parameter; nur Direktive (Token 1) und Kind
+#   (Token 5) geändert, Key/Name/Kernel/Einheit/Tau unverändert (per Diff geprüft).
+# Behalten: 84 Zeilen (TEC 5 · Pseudoranges/Delay 6 · vis_nmi 73), unverändert `field`.
+
+# ============================================================
+# 4 — Gemessen nach der Migration
+# ============================================================
+# `source_physics_lint`: field 7525 · quantity 383 · geometry-candidate 46 · Exit 0.
+#   (Δ field −1, Δ quantity +1, geometry-candidate unverändert.)
+# Flache `field`-Zeilen: 3586 (Δ −1) · em 1825 (Δ −1).
+# `cargo test -p omegaflow --lib archivar::parse::tests` = 56 passed, 0 failed (Exit 0).
+# `cargo check -p omegaflow-register` = Exit 0; `rustfmt --check` auf dem geänderten
+#   Migrate-Bin = Exit 0.
+
+# ============================================================
+# 5 — Riss (bewusst behalten, nicht vergessen)
+# ============================================================
+# 84 Zeilen bleiben `field`; der Engpass ist ein fehlender Medien-/Beobachtungsarm,
+#   nicht die Kanalachse. Die Arm-Frage liegt unverändert bei R-2026-10-18-g (→ future):
+#   (a) TEC 5 (TECU/tecu): Säulendichte/Medienzustand — braucht einen Medium-/Primary-Arm
+#       mit freiem Unit-Gate, nicht `geometry`/`source-parameter`.
+#   (b) Pseudoranges 5 + Delay 1 (m): Beobachtungs-/Laufzeitlänge — braucht einen
+#       Observablen-/Pfadarm; `geometry` würde Rohdaten als Ort ausgeben.
+#   (c) vis_nmi 73 (nmi): meteorologischer Zustand — braucht einen Zustandsarm; die 73
+#       Stationen teilen dieselbe Semantik.
+#   Keine harten Schwellen, keine stillen Defaults; PII unberührt.
+
+# ============================================================
+# 6 — Bilanz
+# ============================================================
+# 85 benannte Einzelfälle: 1 migriert (source-parameter), 84 behalten (field + Riss).
+#   P10-Zähler: field 7526 → 7525 · quantity 382 → 383.
+#   Kein neuer Arm, kein neuer Kanal; die future-Arme aus R-2026-10-18-g bleiben unberührt.
