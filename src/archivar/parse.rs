@@ -30,8 +30,20 @@ fn split_directive(line: &str) -> Vec<&str> {
             }
         } else {
             let start = i;
-            while i < len && !bytes[i].is_ascii_whitespace() {
-                i += 1;
+            let mut depth: usize = 0;
+            while i < len {
+                match bytes[i] {
+                    b'(' => {
+                        depth += 1;
+                        i += 1;
+                    }
+                    b')' => {
+                        depth = depth.saturating_sub(1);
+                        i += 1;
+                    }
+                    _ if depth == 0 && bytes[i].is_ascii_whitespace() => break,
+                    _ => i += 1,
+                }
             }
             tokens.push(&line[start..i]);
         }
@@ -3831,6 +3843,63 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
                 .map(|s| s.channels.is_empty())
                 .unwrap_or(true)
         );
+    }
+
+    #[test]
+    fn a_channel_unit_with_a_space_stays_one_token() {
+        let content = "url https://example.com/x\nttl 3600\n\
+                       channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s) alias de2_neutral_wind\n";
+        let sources = parse_sources(content);
+        assert_eq!(sources.len(), 1);
+        assert_eq!(
+            sources[0].channels.len(),
+            1,
+            "kg/(m^2 s) is one unit, not a unit followed by a stray token"
+        );
+        let d = &sources[0].channels[0];
+        assert_eq!(d.unit, "kg/(m^2 s)");
+        assert_eq!(d.alias.as_deref(), Some("de2_neutral_wind"));
+    }
+
+    #[test]
+    fn a_descriptor_unit_with_a_space_stays_one_token() {
+        let content = "url https://example.com/x\nttl 3600\n\
+                       field flux_q flux_q primary mass advective advective fluid none gaussian-inverse-square kg/(m^2 s) 3600 0.0 0.0\n";
+        let sources = parse_sources(content);
+        let fc = sources
+            .first()
+            .and_then(|s| {
+                s.extracts.iter().find_map(|e| match e {
+                    Extract::Field(fc) => Some(fc.clone()),
+                    _ => None,
+                })
+            })
+            .expect("the descriptor field with a spaced unit flows");
+        assert_eq!(fc.unit, "kg/(m^2 s)");
+        assert_eq!(fc.tau, 3600.0, "the unit does not swallow tau");
+        assert_eq!(fc.absorption, 0.0);
+        assert_eq!(fc.advection, 0.0);
+        assert_eq!(
+            fc.channel_ref,
+            Some(4),
+            "mass/fluid/advective stays index 4"
+        );
+    }
+
+    #[test]
+    fn split_directive_keeps_spaced_units_and_leaves_existing_units_alone() {
+        assert_eq!(
+            split_directive("channel spec kg/(m^2 s) alias x charge 1"),
+            vec!["channel", "spec", "kg/(m^2 s)", "alias", "x", "charge", "1"]
+        );
+        for unit in ["m/s", "mm/yr", "nT", "1"] {
+            let line = format!("field x y inverse-square em {unit} 3600");
+            assert_eq!(
+                split_directive(&line),
+                vec!["field", "x", "y", "inverse-square", "em", unit, "3600"],
+                "existing unit {unit} keeps its token"
+            );
+        }
     }
 
     #[test]

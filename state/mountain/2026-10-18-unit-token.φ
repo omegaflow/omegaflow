@@ -1,0 +1,62 @@
+# Einheit mit Leerzeichen: kg/(m^2 s) bleibt ein Token (2026-10-18)
+# Linie River · Worktree river/unit-token · Basis HEAD 878027758
+# Kein phi-Eingriff, kein neues Schema — nur der Direktiven-Tokenizer.
+
+# ============================================================
+# 1 — Gemessen vor dem Fix
+# ============================================================
+# `split_directive` (src/archivar/parse.rs:11) trennte an jedem ASCII-Whitespace.
+# Eine Zeile wie
+#   channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s) alias de2_neutral_wind
+# zerfiel zu [..., "kg/(m^2", "s)", "alias", ...]:
+#   unit_token("kg/(m^2") = None → report_anomaly "unknown channel unit";
+#   das Alias rutschte auf das Bruchstück "s)".
+# Drei Tests lagen uncommittet im Worktree (Vorgabe des abgebrochenen Laufs),
+#   ohne Implementierung: a_channel_unit_with_a_space_stays_one_token,
+#   a_descriptor_unit_with_a_space_stays_one_token,
+#   split_directive_keeps_spaced_units_and_leaves_existing_units_alone.
+# phi/sources.φ:56, 888, 889 tragen die Einheit `kg/(m^2 s)`; die Zeilen sind
+#   inhaltlich unverändert (git status vor/nach dem Fix: nur src/archivar/parse.rs).
+
+# ============================================================
+# 2 — Fix
+# ============================================================
+# `split_directive` bleibt Vec<&str> (kein Aufrufer muss angefasst werden).
+# Im Nicht-Quote-Zweig zählt der Scanner '(' und ')' mit; Whitespace trennt nur
+#   bei Klammertiefe 0. Damit bleibt `kg/(m^2 s)` ein zusammenhängender Slice,
+#   verschachtelte Klammern ebenso, und der Slice ist weiterhin ein Borrow der
+#   Originalzeile — keine Allokation, keine Heuristik über Zahlen oder tau.
+# Bestehende Einheiten (m/s, mm/yr, nT, 1) und alle Feldpositionen bleiben
+#   unverändert. Die drei Vorgabe-Tests wurden nicht neu geschrieben.
+# Einziger Produktions-Aufruf: parse.rs:243 (vor dem Fix 231); weitere Aufrufe
+#   sind Tests. `origin`-Zeilen mit Klammerprosa lesen nur parts[0] und sind
+#   vom Token-Zugriff nicht betroffen.
+
+# ============================================================
+# 3 — Tests / Messung nach dem Fix
+# ============================================================
+# cargo test -p omegaflow --lib archivar::parse::tests
+#   → 59 passed, 0 failed, 0 ignored (Exit 0); darunter die drei Vorgabe-Tests.
+# cargo test -p omegaflow --lib mathematikerin::channel
+#   → 111 passed, 0 failed (Exit 0).
+# cargo test -p omegaflow --lib archivar::tests::test_allowed_units_for_force
+#   → 1 passed, 0 failed (Exit 0).
+# cargo check -p omegaflow → Exit 0.
+# source_physics_lint (cargo run -q -p omegaflow-register --bin source_physics_lint)
+#   → Exit 0 · phi/sources.φ = field 7526 · quantity 382 · geometry-candidate 46.
+#   Da phi unverändert ist, ist dies zugleich die Vorher-Messung des Laufs.
+
+# ============================================================
+# 4 — Riss (bewusst offen)
+# ============================================================
+# (a) Der Scanner kennt nur runde Klammern. Eckige/geschweifte Klammern mit
+#     Leerzeichen würden weiterhin getrennt; derzeit trägt keine Einheit in phi sie.
+# (b) Eine unbalancierte '(' zieht den Rest der Zeile in ein Token. Das ist kein
+#     stiller Default — die Direktive greift dann nicht und meldet einen unbekannten
+#     Token; ein eigener Syntax-Fehler für unbalancierte Klammern ist nicht gebaut.
+# (c) `unit_token` bleibt eine geschlossene Zulassungsliste. Dieser Fix öffnet die
+#     Tokenisierung, nicht die Zulassung: neue Einheiten mit Leerzeichen müssen dort
+#     weiterhin registriert werden.
+# (d) Quote- und Klammerlogik sind getrennt: ein gequoteter Token innerhalb einer
+#     offenen Klammer wird nicht mit den Nachbarn verschmolzen. In phi kommt diese
+#     Kombination nicht vor.
