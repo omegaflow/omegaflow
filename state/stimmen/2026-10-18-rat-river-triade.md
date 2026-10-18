@@ -1,6 +1,7 @@
 # Rat — River-Triade (R-2026-10-18-l), Schwarm R1 (2026-10-18)
 
 **Frage:** `2026-10-18-river-apertur-schumann-flyby-formular.md` (R-2026-10-18-l)
+
 **Gefahren:** freier Schwarm R1 — alle **44** Träger der free44-Liste angerufen (`2026-10-18-rat-l-schwarm/`).
 **Antwortfähig: 6** (groq/allam-2-7b · llm7/codestral-latest · llm7/mistral-Nemo · ollama/gemma4:31b ·
 pollinations/openai-fast · llm7/minimax-m2.7, letzterer bei `finish=length` abgeschnitten — nur F1 gezählt).
@@ -57,3 +58,10 @@ Origin: R-2026-10-18-l
 ## Abgrenzung
 
 Kein Register-Schreibakt aus diesem Schwarm-Lauf. Rohantworten: `2026-10-18-rat-l-schwarm/out/`.
+
+## Endstand F3 (reale Sitze, 2026-10-18)
+
+**5:3 Option 1** — Duck.ai · Perplexity · Fugu · Sonnet 5.5 · GLM 5.3 gegen Qwen · Lumo · Kimi K3.
+Beleg: `2026-10-18-r-l-paket-first-formular.md:121-132`. Diese Datei bleibt das Protokoll des
+Schwarm-R1 (Mindermeinung, F3 2:3 gespalten); der Endstand steht im Formular und in der
+Register-Zeile `_rat-register.md` (R-2026-10-18-l). Gebaut: `c407aa76f`.
