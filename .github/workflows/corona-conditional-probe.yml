@@ -19,6 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         estimator: [binned, ksg]
+        confound: [all, goes]
     steps:
       - uses: actions/checkout@v7
       - uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -42,18 +43,18 @@ jobs:
           }
       - name: Anchor the corpus
         run: |
-          echo "SHA $(git rev-parse HEAD)" > "corona-conditional-${{ matrix.estimator }}.txt"
-          echo -n "CORPUS " >> "corona-conditional-${{ matrix.estimator }}.txt"
+          echo "SHA $(git rev-parse HEAD)" > "corona-conditional-${{ matrix.estimator }}-${{ matrix.confound }}.txt"
+          echo -n "CORPUS " >> "corona-conditional-${{ matrix.estimator }}-${{ matrix.confound }}.txt"
           find data/jsoc.stanford.edu data/ncei.noaa.gov -type f -name '*.bin' -o -type f -name '*.nc' \
-            | sort | xargs sha256sum | sha256sum | cut -d' ' -f1 >> "corona-conditional-${{ matrix.estimator }}.txt"
+            | sort | xargs sha256sum | sha256sum | cut -d' ' -f1 >> "corona-conditional-${{ matrix.estimator }}-${{ matrix.confound }}.txt"
       - name: Run the full multi-force conditional (every rung conditioned on all other rungs)
         run: |
           cargo run --release -p omegaflow-measure --bin corona_conditional_probe -- \
             --year data/jsoc.stanford.edu/aia2014_fullyear.bin data/ncei.noaa.gov/goes15 \
-            --max-lag 8 --confound all --estimator "${{ matrix.estimator }}" \
-            >> "corona-conditional-${{ matrix.estimator }}.txt"
+            --max-lag 8 --confound "${{ matrix.confound }}" --estimator "${{ matrix.estimator }}" \
+            >> "corona-conditional-${{ matrix.estimator }}-${{ matrix.confound }}.txt"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: corona-conditional-${{ matrix.estimator }}
-          path: corona-conditional-${{ matrix.estimator }}.txt
+          name: corona-conditional-${{ matrix.estimator }}-${{ matrix.confound }}
+          path: corona-conditional-${{ matrix.estimator }}-${{ matrix.confound }}.txt
