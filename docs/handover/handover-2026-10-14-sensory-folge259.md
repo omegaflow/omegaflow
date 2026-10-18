@@ -2,7 +2,7 @@
   title: Handover — Sensory 259 (2026-10-18)
   class: handover
   date: 2026-10-14
-  sha256: c9ba7b8011c1299585e26b93d321974fc8a2df338422d5161591c69e766b4a80
+  sha256: 2bd7e499c24efb4e6c24f47a64f5dfc0feab78b302038ef566324530ce91c0e1
   status: live
 -->
 # Sensory-259
@@ -16,3 +16,15 @@
 ## An mycelium
 Origin: sensory-259
 - `xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.15~8e8cf9f8` raetsel-bestand: die 4 offenen Routen in `phi/sources.φ` registrieren; Brief `post/in/2026-10-18-sensory-an-mycelium-raetsel-bestand.md`.
+
+## An mountain
+Origin: sensory-259
+- `xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.16~844a104f` tauchbefunde + die-fuenf-archaeologie; Brief `post/in/2026-10-18-sensory-an-mountain-tauchbefunde-fuenf-archaeologie.md`.
+
+## An river
+Origin: sensory-259
+- `xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.17~156a9200` stoerungs-experiment; Brief `post/in/2026-10-18-sensory-an-river-stoerungs-experiment.md`.
+
+## An future
+Origin: sensory-259
+- `xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.18~dab73673` sechs Docs (daten-holdings, grosse-raetsel, standort, geraete, fmhy, verlorene-diskussionen); Brief `post/in/2026-10-18-sensory-an-future-sechs-docs.md`.
