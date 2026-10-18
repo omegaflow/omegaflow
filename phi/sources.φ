@@ -647,6 +647,25 @@ field omni_imf_by_gsm_nt_live omni_imf_by_gsm_nt_live inverse-square em nT 3600 
 field omni_imf_bz_gsm_nt_live omni_imf_bz_gsm_nt_live inverse-square em nT 3600 0.0 0.0
 field omni_solarwind_pressure_npa_live omni_solarwind_pressure_npa_live patch-levy advective nPa 3600 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/lasp.colorado.edu-eve/eve_l2b.bin
+terms other-attribution https://lasp.colorado.edu/eve/data_access/
+format eve
+origin https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2b
+compiler tools/harvest/src/bin/eve_compiler.rs
+at sun
+ttl 3600
+field eve_94_line_irradiance eve_94_line_irradiance inverse-square em w/m2 3600 0.0 0.0
+field eve_131_line_irradiance eve_131_line_irradiance inverse-square em w/m2 3600 0.0 0.0
+field eve_171_line_irradiance eve_171_line_irradiance inverse-square em w/m2 3600 0.0 0.0
+field eve_195_line_irradiance eve_195_line_irradiance inverse-square em w/m2 3600 0.0 0.0
+field eve_211_line_irradiance eve_211_line_irradiance inverse-square em w/m2 3600 0.0 0.0
+field eve_284_line_irradiance eve_284_line_irradiance inverse-square em w/m2 3600 0.0 0.0
+field eve_304_line_irradiance eve_304_line_irradiance inverse-square em w/m2 3600 0.0 0.0
+field eve_335_line_irradiance eve_335_line_irradiance inverse-square em w/m2 3600 0.0 0.0
+field eve_584_line_irradiance eve_584_line_irradiance inverse-square em w/m2 3600 0.0 0.0
+field eve_977_line_irradiance eve_977_line_irradiance inverse-square em w/m2 3600 0.0 0.0
+field eve_1032_line_irradiance eve_1032_line_irradiance inverse-square em w/m2 3600 0.0 0.0
+
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=PSP_COHO1HR_MERGED_MAG_PLASMA&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=BR,BT,BN,B,ProtonSpeed,protonDensity,protonTemp&format=json
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 ttl 3600
@@ -2124,6 +2143,15 @@ field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
 field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
 field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
 field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/hmi_m_720s.bin
+terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
+format hmi
+origin https://jsoc1.stanford.edu/data/hmi/fits
+compiler tools/harvest/src/bin/hmi_compiler.rs
+at sun
+ttl 86400
+field hmi_m_720s_blos hmi_m_720s_blos inverse-square em nt 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_02.bin
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
@@ -14589,6 +14617,20 @@ format hips3d
 origin https://alasky.cds.unistra.fr/HIPS3D/ASKAP/CDS_C_ASKAP_WALLABY-Pilot-DR2/
 at sun
 no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/casda.csiro.au/wallaby_pdr2_sourcecatalogue.json
+terms CC-BY-4.0 https://doi.org/10.25919/qw7w-tn96
+format json
+origin https://doi.org/10.25919/qw7w-tn96
+at sun
+no-cadence
+field ra wallaby_ra_deg inverse-square geometry deg 31536000 0.0 0.0
+field dec wallaby_dec_deg inverse-square geometry deg 31536000 0.0 0.0
+field freq wallaby_hi_freq_hz inverse-square em Hz 31536000 0.0 0.0
+field w20 wallaby_w20_hz inverse-square em Hz 31536000 0.0 0.0
+field w50 wallaby_w50_hz inverse-square em Hz 31536000 0.0 0.0
+field dist_h wallaby_dist_mpc inverse-square geometry mpc 31536000 0.0 0.0
+field log_m_hi wallaby_log_m_hi_dex inverse-square geometry 1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/bicepkeck.org/bk18_bandpowers_20210607.txt
 terms CC-BY-4.0 http://bicepkeck.org/bk18_2021_release.html
@@ -30822,13 +30864,16 @@ no-cadence
 at earth
 quantity vs llnl_g3d_shear_velocity gaussian-inverse-square source-parameter km/s 31536000 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.zip
-terms CC-BY-4.0 https://zenodo.org/records/8300645
-format zip
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/epta_dr2.sky1
+terms CC-BY-4.0 https://doi.org/10.5281/zenodo.8300645
+format sky1
 origin https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
-compiler tools/harvest/src/bin/raw_mirror.rs
-sha256 2ae546940419ce12a508d0f24b54db91163b0a0d204b85f8bca626eed847b43c
+compiler tools/harvest/src/bin/epta_dr2_compiler.rs
+sha256 3c4285c23bdf30b3fcee97e3a151241637939265c346a24c6c72dd1633dec151
+at sun
+record sky1
 no-cadence
+field TRES pulsar_timing_residual_s inverse-square em s 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gps_campaign.dat
 origin https://zenodo.org/api/records/7798617/files/gps_campaign.dat/content
