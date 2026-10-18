@@ -77,6 +77,7 @@ pub fn force_opaque(id: u8) -> Option<bool> {
         6 => Some(true),
         7 => Some(true),
         8 => Some(true),
+        9 => Some(false),
         _ => None,
     }
 }
@@ -92,6 +93,7 @@ pub fn default_kernel_for(force: &str) -> Option<(&'static str, &'static str)> {
         "diffusion" => Some(("gaussian-inverse-square", "diffusion")),
         "advective" => Some(("patch-levy", "advective")),
         "electric" => Some(("inverse-square", "electric")),
+        "momentum" => Some(("gaussian-inverse-square", "momentum")),
         _ => None,
     }
 }
@@ -263,12 +265,12 @@ mod tests {
 
     #[test]
     fn test_force_roundtrip() {
-        for id in 0..9 {
+        for id in 0..10 {
             let name = force_name_of(id).unwrap();
             assert_eq!(force_id_of(name), Some(id));
         }
         assert_eq!(force_id_of("biotic"), None);
-        assert_eq!(force_name_of(9), None);
+        assert_eq!(force_name_of(10), None);
     }
 
     #[test]
@@ -280,7 +282,7 @@ mod tests {
 
     #[test]
     fn test_kernel_ids() {
-        for id in 0..9 {
+        for id in 0..10 {
             let name = force_name_of(id).expect("force name");
             let (kernel, _) = default_kernel_for(name).expect("default kernel");
             assert_eq!(
@@ -289,7 +291,7 @@ mod tests {
                 "kernel id for {name} disagrees with the registry"
             );
         }
-        assert_eq!(kernel_id_for_force(9), None);
+        assert_eq!(kernel_id_for_force(10), None);
         assert_eq!(
             crate::archivar::extract::kernel_id_of("point"),
             Some(2),
@@ -347,7 +349,8 @@ mod tests {
         assert_eq!(force_opaque(6), Some(true));
         assert_eq!(force_opaque(7), Some(true));
         assert_eq!(force_opaque(8), Some(true));
-        assert_eq!(force_opaque(9), None);
+        assert_eq!(force_opaque(9), Some(false));
+        assert_eq!(force_opaque(10), None);
     }
 
     #[test]
