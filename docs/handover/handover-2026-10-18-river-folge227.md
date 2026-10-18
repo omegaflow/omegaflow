@@ -2,7 +2,7 @@
   title: Handover — River-Folge 227 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: 09cdc24ea4a5470ee82da44717d935906f3c8feda998f4f6d1fb991c0775687c
+  sha256: ac4b271e98af7b88d19d5574ea5b79f3089b961e9483d5acd6f5e97c7a47eab1
   status: live
 -->
 # River-226
@@ -22,9 +22,9 @@
 ### Rätsel
 - **Status:** eigen, unerledigt
 - **Trigger:** Arbeit
-- **Lage:** offen (gemessen 2026-10-18): der 3-h-Lag-Sweep `39154644922` wurde **abgebrochen** (kein Ergebnis); der Mond-Faden ist gebaut — `--cond lunar` in `de2_conditional_te`, SSCWeb-Lat/Lon im Orbit-CSV, Gezeitenpotenzial gegen `ephemeris_moon.bin`/`ephemeris_earth.bin` (Commit `a50ff1d83`)
-- **Blockade:** keine — der nächste Lauf ist ein `workflow_dispatch` (`cond=ae,dst,kp,lt,alt,lunar`)
-- **Nächster Schritt:** den Sweep mit `max_lag 36` und `cond moon` fahren; die Abbruch-Ursache von `39154644922` bleibt benannt, nicht geglättet
+- **Lage:** offen (gemessen 2026-10-18): der 3-h-Lag-Sweep `39154644922` wurde **manuell abgebrochen** (Akteur `omegaflow`, nach 40 min im TE-Schritt; kein Timeout, keine Concurrency) — kein Ergebnis; der Mond-Faden ist gebaut — `--cond lunar` in `de2_conditional_te`, SSCWeb-Lat/Lon im Orbit-CSV, Gezeitenpotenzial gegen `ephemeris_moon.bin`/`ephemeris_earth.bin` (Commit `a50ff1d83`). Lauf `39166259860` (36 Lags, 6 Konditionierer, bins 4): **konditioniert 0/36**, roh 5/36 — der sechste Konditionierer hebt den ARX-Null (thr 0.0018 → 0.0092) bei 4^6 Zellen
+- **Blockade:** keine — der nächste Lauf ist ein `workflow_dispatch`
+- **Nächster Schritt:** `bins 3` (729 Zellen) **oder** zwei Läufe (5-Kond-Baseline vs. Baseline+lunar, Schwellen getrennt); nicht mehr Konditionierer in eine Zelle
 - **Braucht:** `docs/concepts/ion-neutral-vlies.md:1` (die offenen Fäden: Lag-Sweep, Breite/MLT, Mond, Sonnenwind, Bodenstationen) · `docs/concepts/die-weberin.md:1`
 
 ### Flyby
