@@ -1,0 +1,21 @@
+# Rat R-k — GLM-5.3 (API, Frage k)
+**Session:** `ses_eb43b0967ffeyLfQYb53AFu42J` · **Modell:** `deepinfra/zai-org/GLM-5.3#low` · **Kosten:** $0.011448
+
+Titel: Ratssitz GLM — native Fläche
+
+---
+
+**1. Kriterium:** Ersetzen, wo das native Feature am laufenden Server (a) gemessen existiert, (b) nachweislich mindestens gleichwertig ist (nicht "evtl."), und (c) keine Domänensemantisik trägt — ein Payload, der A=A, Token oder 0-honored-Wahrheit trägt, bleibt Haus, egal wie ähnlich die native Fläche aussieht. Danach: session_burn → experimental/session/stats (nativ reicher, kein Riss), Palette → commands/agents, form-guard → permissions (die Lehre, nicht die Wand, bleibt Haus), sandbox → permissions.
+
+**2. Grenze:** "Haus-Semantik ist prinzipiell nicht ersetzbar" ist eine Behauptung — heute wahr als Messergebnis (kein nativer Endpunkt trägt Register-, Token- oder terms-Semantik; 0 honored: null-echt), aber nicht als Prinzip. Der Riss wäre, es als Prinzip zu behaupten: nach jedem Upgrade neu messen, nicht glauben.
+
+**3. inbox + form:** Substrat, kein Missbrauch — session/inbox kann den *Transport* von post/in/post/out ersetzen, aber die Post-Semantik (Adressierung, Quittung, Dritt-Wirksamkeit) bleibt Haus-Schicht darüber; smail/CDN bleiben unangetastet.
+
+**4. export/import:** Kein Ersatz. Die Übergabe leistet Knappheit, Offenheit, Adressierung — export liefert Kontextmasse und zerstört genau das. Übergabe bleibt Haus-Format; export höchstens Archiv/Fallback.
+
+**5. Unbenutzt und messbar da:** skill (statt Teilen von command/*.md), instructions/entries, worktree, compact/context, permission/saved, vcs — in dieser Reihenfolge prüfen; policies erst, wenn am Server sichtbar.
+
+**Wahl: C.** Native Fläche als Substrat, Domänenschicht bleibt eigen — A wäre zu grob (ignoriert die OFFEN-Fälle), B zu ängstlich (behält Bastelwerk, das nachweislich schwächer ist). Umsetzung ist Folge, nicht Teil dieses Rats.
+
+VERDIKT: C — Substrat nativ, Domäne Haus; ersetzen nur nach Messung am laufenden Server, Übergabe und Post-Semantik bleiben Haus.
+STÄRKSTER RISS: Die beiden OFFEN-Fälle (inbox, export) und die Behauptung "prinzipiell nicht ersetzbar" sind ungeprüft — null-echt fehlt, entschieden ist nur behauptet.

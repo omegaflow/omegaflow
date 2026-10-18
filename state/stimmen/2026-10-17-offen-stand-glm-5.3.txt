@@ -1,0 +1,11 @@
+# Rat R-i — GLM-5.3 (API, Frage i)
+**Session:** `ses_eb44bf1daffe3oMZ258vBkqtbz` · **Modell:** `deepinfra/zai-org/GLM-5.3#low` · **Kosten:** $0.0079413
+
+Titel: Ratssitz GLM — Frage i
+
+---
+
+Der Zähler soll die Wahrheit lesen, nicht das Format diktieren: `count_open_points` muss `- `-Bullets unter `## Offen*` ebenso zählen wie `### `-Überschriften — ein Punkt ist ein Punkt, egal welche Zeilenform ihn trägt (Frage 1: erweitern). Damit löst sich die Migrationsfalle von selbst: wenn beide Formate zählen, ist die Umstellung der vier Bullets keine Zähländerung mehr, kein Wachstum, kein Gate-Fail — das Henne/Ei kollabiert (Frage 2). Die 1-KiB-Kappe ist gegen den Pfad-Zwang falsch dimensioniert: wenn die Regel verlangt, dass jeder offene Punkt seine Datei(en) nennt, muss die Kappe die ehrliche Ausformulierung fassen können; 970 B von 1024 B ist Zufall, kein Design — Kappe anheben oder am Pfad-Zwang ausrichten (Frage 3). `closed <n>` soll die echte Tat bilanzieren, also auch Ledger-Schließungen zählen; wer drei Transport-Token real geschlossen hat und `closed 0` schreiben muss, schreibt eine erzwungene Lüge, und die Diff-Prüfung, die das erzwingt, misst dann nur die Blindheit des Zählers (Frage 4: mitzählen). Option A. Die Zahl soll die offene Menge messen, die existiert — nicht die, die das Parser-Regex zufällig sieht. Fehlender Beleg: ich habe hier weder den Quellcode noch die Commits selbst gelesen; die Lagebeschreibung ist als gegeben angenommen (A = A, 0 honored).
+
+VERDIKT: Option A — Zähler und Burn auf beide Formate und Ledger-Schließungen erweitern; die Zahl misst die Tat, nicht das Format.
+STÄRKSTER RISS: Der Gate-Zähler liest eine leere Menge und zwingt damit ehrliche Commits zu `closed 0` — Messinstrument und Realität sind dauerhaft entkoppelt.
