@@ -3,7 +3,7 @@
   session: Forschung-Folge 61
   class: handover
   date: 2026-09-17
-  sha256: e50b156293cd49539ba8b4352eef54cc7e1d5b03ca2cde64e296b89a4e519e73
+  sha256: ed3d00d31d60cf587169466adb8ff7a20cb1450cfbf5d91a000520610eeb73de
   status: live
 -->
 # Handover — Forschung-Folge 61 (2026-09-17)

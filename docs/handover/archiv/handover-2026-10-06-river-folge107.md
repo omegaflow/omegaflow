@@ -3,7 +3,7 @@
   session: River-Folge 107
   class: handover
   date: 2026-10-06
-  sha256: bea7f0a57b51e827556dd164dc86987c4045845b9f721a422cea8ee4cbd2f6df
+  sha256: 5cbdbd9c4b91c2dfce2599117fbc5b27189c2f6b136e2fe75308290bc8a94091
   status: live
 -->
 # Handover — River-Folge 107 (2026-10-06)

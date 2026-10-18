@@ -3,7 +3,7 @@
   session: Forschung-Folge 86
   class: handover
   date: 2026-09-19
-  sha256: dbd766036099935f2e5071e543f4522d436337db0aeb4931986853c253dfc512
+  sha256: e6aea95fc7f6e372b80ec14b55526082be171efd0f2639a15723a9460e013fef
   status: live
 -->
 # Handover — Forschung-Folge 86 (2026-09-19)

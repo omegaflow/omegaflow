@@ -2,7 +2,7 @@
   title: Browser-Wege — wofür der Browser gebraucht wird, und die zwei Lösungen
   class: concept
   date: 2026-10-17
-  sha256: PLACEHOLDER
+  sha256: 92fd01db5d9ad81734e4258b5309aa519dbc2b41f11b1aa8dcd54b977dd6ee43
   status: live
   see-also: AGENTS.md docs/concepts/house-rules.md
 -->

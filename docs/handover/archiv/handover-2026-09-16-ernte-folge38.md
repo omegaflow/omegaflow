@@ -3,7 +3,7 @@
   session: Ernte-Folge 38
   class: handover
   date: 2026-09-16
-  sha256: 9682b6b7a4aa7ad3a07af9095435b32a1f3a3cb0d59e4c0b2877b921d7b206ff
+  sha256: 13b27fe0fe23bcb120faf49c1687d9d022d081eb10fba2692f0de2e9c3f31a4e
   status: live
 -->
 # Handover — Ernte-Folge 38 (2026-09-16)

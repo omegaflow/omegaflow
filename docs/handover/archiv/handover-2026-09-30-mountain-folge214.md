@@ -3,7 +3,7 @@
   session: Mountain-Folge 214
   class: handover
   date: 2026-09-30
-  sha256: 07a719c78d5f418c8165df68b028f1bbcf594ac477e5d87c8275822d9d22a3dd
+  sha256: 3d8ce95a4fef53cd9818f4bf16c6d81232cab5840ab8fd1ba591a51cd8971b1a
   status: live
 -->
 # Handover — Mountain-Folge 214 (2026-09-30)

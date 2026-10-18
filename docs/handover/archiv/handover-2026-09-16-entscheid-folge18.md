@@ -3,7 +3,7 @@
   session: Entscheid-Folge XVIII
   class: handover
   date: 2026-09-16
-  sha256: a8042764ee4b95a800183be7ce6563f87011b2dd5171584d7f80d3c9d52b7540
+  sha256: 28b2200ee08b3da719f0c15fd1a00fb06920b757f318d4b18504a662f2102c8a
   status: live
 -->
 # Handover — Entscheid-Folge XVIII (2026-09-16)

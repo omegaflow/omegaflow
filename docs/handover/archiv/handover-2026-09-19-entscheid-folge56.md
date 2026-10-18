@@ -3,7 +3,7 @@
   session: Entscheid-Folge 56
   class: handover
   date: 2026-09-19
-  sha256: 0176f3d1c136d264b4537d3021b04d0df1d6cd6a8a1664f96c354da5067f68c1
+  sha256: 252afb7e7a5911c3ccf6e012df3ba1f475a426991d13f888f01ebd8d333529d7
   status: live
 -->
 # Handover — Entscheid-Folge 56 (2026-09-19)

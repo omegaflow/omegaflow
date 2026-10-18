@@ -3,7 +3,7 @@
   session: Forschung-Folge 73
   class: handover
   date: 2026-09-18
-  sha256: 098672700b41bebdf03952db0d13742f065760189fbd0076b83dff57957429e9
+  sha256: 4938e46c05ee3b9f2ffb90be40a6edb907c2337be80fc7f8b486a861235f6a3c
   status: live
 -->
 # Handover — Forschung-Folge 73 (2026-09-18)

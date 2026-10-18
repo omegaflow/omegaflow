@@ -3,7 +3,7 @@
   session: Mycelium-Folge 201
   class: handover
   date: 2026-09-28
-  sha256: caaa0ca145fbc90ce1ebe5679a23684ef8057e670446a2cf245019c7bde5e879
+  sha256: 91c50487e73b25b27b082cfdd4ece30dbd1f6ba1c0d9835c5d93c6646289d389
   status: live
 -->
 # Handover — Mycelium-Folge 201 (2026-09-28)

@@ -3,7 +3,7 @@
   session: Ernte-Folge 124
   class: handover
   date: 2026-09-20
-  sha256: PLACEHOLDER
+  sha256: 6bff9183c22b026516b43028da7fa706ac70b884b8fe735063adf7f799d542b1
   status: live
 -->
 # Handover — Ernte-Folge 124 (2026-09-20)

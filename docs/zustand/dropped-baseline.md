@@ -2,7 +2,7 @@
   title: Zustand — dropped-Baseline (register_lookup --dropped)
   class: zustand
   date: 2026-09-21
-  sha256: bc78c0a7758b2b6884f8658ec76a5705b91509b0ba48cd3133526d746d7d3603
+  sha256: 55581150ae61d850fbdfb108f85485b39ee8baf5cd1680dd4a143149f7a02ee9
   status: live
   see-also: AGENTS.md
 -->

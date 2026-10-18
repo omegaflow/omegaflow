@@ -3,7 +3,7 @@
   session: Entscheid-Folge 21
   class: handover
   date: 2026-09-16
-  sha256: 0035200322ba178c6eb355d19b422a6e113ef2b3966db67914861c1cc586dec7
+  sha256: 9aa11e2a0d07321169a9530b948d623e2c9b01e952ea7165fa3b4e06f07b8c8c
   status: live
 -->
 # Handover — Entscheid-Folge 21 (2026-09-16)

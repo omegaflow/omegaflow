@@ -3,7 +3,7 @@
   session: Forschung-Folge 20
   class: handover
   date: 2026-09-15
-  sha256: 57423675e29cfb2aba4d6f81b74c007eeb7c44eca0c84f45336251752d65083d
+  sha256: b9ae2e3d8f408efab1cc657e65868b5023576d5e6ec557275dfb2bcb5861fe5a
   status: live
   see-also: docs/auftrag/auftrag-sonden-rohdaten-anfragen.md, docs/paper/twenty-second-band-ground-chain.md
 -->

@@ -2,7 +2,7 @@
   title: Tool-Forms — verbotene Leading-Form → kanonischer Ersatz
   class: concept
   date: 2026-09-28
-  sha256: fcc70ee55b9735529d62f3f1bc8f2e4935203a7ccd8f265fe245788ff86367c2
+  sha256: 33b62cff2bdd4b9cbfbe5077c606d0230665397bb90e0574d3d7698a6f07b8c0
   status: live
   see-also: docs/concepts/tools-map.md AGENTS.md
 -->

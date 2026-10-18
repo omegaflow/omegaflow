@@ -3,7 +3,7 @@
   session: Forschung
   class: handover
   date: 2026-09-14
-  sha256: 12863f0584fff38f6aa60d01ab4a9651ffccfb1bb611a8ea681cf16987d3c8bd
+  sha256: d34ce3b35ca36f4d526d3b94f7f0feca7e147dcea91f3e77e0612463d619d152
   status: live
   see-also: docs/surveys/survey-2026-09-14-warteliste-offene-alternativen.md
 -->

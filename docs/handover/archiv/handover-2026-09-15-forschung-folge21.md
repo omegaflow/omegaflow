@@ -3,7 +3,7 @@
   session: Forschung-Folge 21
   class: handover
   date: 2026-09-15
-  sha256: 3df37dbd2654a0621d86f4ca6e850fee297a111268032a179fe855e75770c5fc
+  sha256: 1961378107aa52fa59c4a1dc884d0f7856de52779c5a130bc3d1d107223511a9
   status: live
   see-also: docs/paper/broken-null-control.md
 -->

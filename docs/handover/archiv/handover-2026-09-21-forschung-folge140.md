@@ -3,7 +3,7 @@
   session: Forschung-Folge 140
   class: handover
   date: 2026-09-21
-  sha256: fea30d1040d5c0c01067185bb6980cdb9adbc674135ddf5ec81041010a7caac2
+  sha256: c45450af9352848cedb34141975fb6cc0824885c4ccf4492a50a31a9013db9bf
   status: live
 -->
 # Handover — Forschung-Folge 140 (Stand 2026-09-21)

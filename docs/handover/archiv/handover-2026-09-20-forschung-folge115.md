@@ -3,7 +3,7 @@
   session: Forschung-Folge 115
   class: handover
   date: 2026-09-20
-  sha256: 8d688d52ffa39ce739cdcff423918e498154d550ba431628c2c17d51e187da13
+  sha256: 532d595cb0ac7197f6c32403dbae18c90c1b15d558e40e8a2acb238a52d30c3a
   status: live
 -->
 # Handover — Forschung-Folge 115 (2026-09-20)

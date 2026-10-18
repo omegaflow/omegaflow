@@ -3,7 +3,7 @@
   session: Mycelium-Folge 164
   class: handover
   date: 2026-09-25
-  sha256: d61387b67ddae5aab801ddb9e589ae47849da3514c337345bd4f39dbf7278c26
+  sha256: 9db057fb6a67a9c02e0a31a296c1ba15132958faf480561e8b61c1a4116e31b9
   status: live
 -->
 # Handover — Mycelium-Folge 164 (2026-09-25)

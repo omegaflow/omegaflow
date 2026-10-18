@@ -3,7 +3,7 @@
   session: Entscheid-Folge 45
   class: handover
   date: 2026-09-18
-  sha256: 4d0fa8be71d9e47a0a689f105e30501e19b4e300b4ec00620d97d5cf8e066ab1
+  sha256: ee881f2c282ac07ca299eaca6dd89b18a11b2b8a9bf000bcd6e2e365837866f1
   status: live
 -->
 # Handover — Entscheid-Folge 45 (2026-09-18)

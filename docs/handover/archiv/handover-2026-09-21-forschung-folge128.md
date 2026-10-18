@@ -3,7 +3,7 @@
   session: Forschung-Folge 128
   class: handover
   date: 2026-09-21
-  sha256: 7de4dff9d1273a6b0b087751dc4cf8c514af879a11d9d01dadc75d1f3c0e7ffa
+  sha256: d611ee0a7716da24799c5e98159afd901c09cfc1247002f6ecab15318350014f
   status: live
 -->
 # Handover — Forschung-Folge 128 (Stand 2026-09-21)

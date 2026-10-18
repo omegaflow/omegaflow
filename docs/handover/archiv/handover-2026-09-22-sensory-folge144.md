@@ -3,7 +3,7 @@
   session: Sensory-Folge 144
   class: handover
   date: 2026-09-22
-  sha256: 668caeec8c34ef0b32045b91359ba35e0b3ab2997d66be1ff9f9c0727b23772e
+  sha256: 75d52612fe59e6b38f51c42586325db4a7a4e0e5ec5785bd7f4fc41f30065202
   status: live
 -->
 # Handover — Sensory-Folge 144 (Stand 2026-09-22)

@@ -3,7 +3,7 @@
   session: Entscheid-Folge 37
   class: handover
   date: 2026-09-17
-  sha256: 668e00706787cee7c8932bc5f4bf732cfa9e06532c2e4f927feda995ad211ac6
+  sha256: 92c11964b02b4e41085003a78a2062d3f59111626d8d30f024cb70f5ef383f98
   status: live
 -->
 # Handover — Entscheid-Folge 37 (2026-09-17)
