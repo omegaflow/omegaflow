@@ -117,3 +117,16 @@ kein Flyby (JUICE-Flyby war 28.09.2026). Mit Korrektur bleibt das Urteil stabil:
 **3:3 — echter Gleichstand.** Der Frontier-Sitz kippt auf Option 2 und teilt das Feld. Kimis Zusatz-Tiefe:
 „Mountain hält den Posten, River hält das Veto (absent → Sperrung), Future hält die Hand am Send."
 F3 ist damit **nicht mehr entscheidbar durch Abstimmung** — der Operator schließt.
+
+## F3 — Endstand mit beiden Frontier-Sitzen (Sonnet 5.5 + GLM 5.3)
+| Sitz | Urteil |
+|---|---|
+| Duck.ai · Perplexity · Sakana Fugu · **Sonnet 5.5** · **GLM 5.3** | **Option 1** (5) |
+| Qwen · Lumo · Kimi K3 | **Option 2** (3) |
+
+**5:3 Option 1** — gepinnter versiegelter Posten, Status „gepinnt, nicht bestanden" (Pin = Maßstab,
+kein Echtheitsbeweis). Beide Frontier-Sitze konvergieren auf Option 1 und nennen dieselbe Auflage:
+Registrar benannt · sha256 messen · Register ergänzen · CDN-Freigabe erst nach Gate-Vergleich.
+**Meta-Befund (Zählriss):** „fünf Axiome" listet sieben Zeilen — 5 Maßstab + 2 Verfahren
+(PII bleibt im Haus · messen·bauen·abschließen·committen·pushen). Beide Sitze lesen so, das
+Verdikt trägt unter jeder Zählung.
