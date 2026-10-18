@@ -151,3 +151,4 @@ Ich hatte „UCAR-FPI E-Mail-gated = Operator" aus den Archiv-Notizen übernomme
 - **Charge/Plasmon** (Zenodo 15179114, `data.zip`): `Fig1c.csv` = **`XAS,XAS_hv`**; `Fig2b/Fig3a/Fig2c/*.txt` = Kopf **`# H = <wert> (<H scan|theta scan>)`** + **`# Energy (meV) Intensity (arb. units)`**.
 - **EELS** (Zenodo 21859473, `.mat` v5): Variablen **`ene`** (Energieachse) + **`eels_lineprofile`** (Linienprofil), Peak-Fitting → Spin-Oszillatoren (`harvest_eels`).
 - **SRD62**: NIST CeramicDataPortal, Penetration-Depth-Tabelle (`srd62_compiler`).
+
