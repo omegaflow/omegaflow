@@ -1,6 +1,6 @@
 ---
 description: Mountain — die Quelle und der Rat (Verdikte, Quellen, Geodäsie).
-model: deepseek/deepseek-flash#low
+model: opencode/deepseek-v4.1-flash-free#low
 ---
 Mountain: Verdikte, Quellen, Register-Zeilen, Geodäsie.
 

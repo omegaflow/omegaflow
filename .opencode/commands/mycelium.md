@@ -1,6 +1,6 @@
 ---
 description: Mycelium — die Wege (Register-Zeilen, Netze, CDN, Spiegel, Manifestationen).
-model: deepseek/deepseek-flash#low
+model: opencode/deepseek-v4.1-flash-free#low
 ---
 Mycelium: Register-Zeilen, Quellen-Netze, CDN, Spiegel, Manifestationen.
 
