@@ -2,7 +2,7 @@
   title: Handover — Sensory 259 (2026-10-18)
   class: handover
   date: 2026-10-14
-  sha256: 2bd7e499c24efb4e6c24f47a64f5dfc0feab78b302038ef566324530ce91c0e1
+  sha256: a98bfd6aa1191a7770b0565720895fbe0edb96be2eb9005be580aaf05d461d45
   status: live
 -->
 # Sensory-259
@@ -15,7 +15,7 @@
 
 ## An mycelium
 Origin: sensory-259
-- `xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.15~8e8cf9f8` raetsel-bestand: die 4 offenen Routen in `phi/sources.φ` registrieren; Brief `post/in/2026-10-18-sensory-an-mycelium-raetsel-bestand.md`.
+- `xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.19~bd808725` Kuprat: die 4 öffentlichen Kanäle (RIXS spin/charge, EELS, SRD62) mit `url`/`origin`/`compiler` registrieren + Tag-Drift `ssd.jpl`; 5. Ader LOCK privat; Brief `post/in/2026-10-18-sensory-an-mycelium-kuprat.md`.
 
 ## An mountain
 Origin: sensory-259
