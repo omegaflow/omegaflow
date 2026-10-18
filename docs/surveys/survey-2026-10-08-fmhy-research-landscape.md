@@ -2,7 +2,7 @@
   title: Survey — FMHY/Awesome-Mining: Research-Landschaft (Seats + Suchwege)
   class: survey
   date: 2026-10-08
-  sha256: f23ea3992a67bab98a926a032a8c3c1d2ecfe1b3736f1725dff98625f2f20093
+  sha256: e43abd9ffa717393a115a047515ade615e720dbb5eb3c3068dadb91a4a722ddf
   status: live
   see-also: ~/projects/omegaflow-work/ui-seats.md AGENTS.md docs/SOURCE_PORT.md
 -->
@@ -50,7 +50,7 @@ bereits breiter ab als beide Listen zusammen.
 | NotebookLM | notebooklm.google.com | a | 301 | Google | mittel (Auth-Route) |
 | LongCat 2.0 | longcat.ai/chat | a (Seat) | 200 | Sign-Up | mittel |
 | Tencent Hy3 | aistudio.tencent.com | a (Seat) | 200 | Sign-Up | mittel |
-| MiMo Studio | aistudio.xiaomimimo.com | a (Seat) | **000** | — | pending (nicht erreichbar) |
+| MiMo Studio | aistudio.xiaomimimo.com | a (Seat) | **000** (NXDOMAIN, 2026-10-18) | — | absent |
 | Chat Motif | chat.motiftech.io/chat | a (Seat) | 200 | nein | mittel |
 
 **Ausschluss-Kriterium (Operator-Wort 2026-10-08): nur `kommerziell` (pay-only, keine
@@ -70,7 +70,8 @@ MathArena · Artificial Analysis), `paper2gal`, `hyperspace`.
 1. **`archive_search --jina <url>`** (Jina Reader, keyless) — **GEBAUT** (`0e644437d`, `tools/utils/src/bin/archive_search/jina.rs` + Wiring). Gemessen end-to-end: `./target/debug/archive_search --jina https://example.com` → HTTP 200, liefert „Title / URL Source / Markdown Content" (1465 B). Saubere Text-Extraktion jenseits von `--playwright`/`--sniff`. Nächster Schritt: `tools-latest`-Release bestätigen (Lauf), dann nur noch nutzen.
 2. **`archive_search --searxng <query>`** (keyless Metasuche): gemessen — `searx.be`
    `?format=json` liefert **HTML** (JSON-Format nicht freigeschaltet); braucht eine Instanz
-   mit `format: json` (self-host oder freigegebene Instanz). **Arm bauen + Instanz festlegen**.
+   mit `format: json` (self-host oder freigegebene Instanz). **Arm gebaut** (2026-10-18:
+   `--searxng` in `archive_search`); **Instanz festlegen** bleibt offen.
 3. **AI2 Playground als UI-Seat** (kein Sign-Up, Olmo — neue Zuchtlinie): Gretchenfrage
    (Fähigkeit 4/4 + Tempo), dann in `docs/concepts/ui-seats.md` + Roster.
 4. **Elicit + Consensus als Research-Seats/Quellen**: Literatur-Review-Antworten gegen

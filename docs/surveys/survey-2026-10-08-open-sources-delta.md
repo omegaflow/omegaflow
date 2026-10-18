@@ -2,7 +2,7 @@
   title: Survey — Gegen-Audit: Quellen-Delta zum Open-Sources-Audit (2026-10-08)
   class: survey
   date: 2026-10-08
-  sha256: 6277dd6a2d7c751499b3648fbd42e1805e447b8d82b9482be0add4ccd1e1c941
+  sha256: 6a25649fb252b0186bb6c642d23e38d9872ec557c7bea872e13b3d84a4f36bcb
   status: live
   see-also: state/future/open-sources-audit-2026-10-08.md docs/concepts/tools-map.md docs/SOURCE_PORT.md
 -->
@@ -48,7 +48,7 @@ GEBCO · `occupation_data` · `opendata.cern` · Zenodo XENONnT/LZ · `super-k` 
 | Simons Observatory | `simonsobservatory.org/` | 200 (noch keine Daten) |
 | CMB-S4 | `cmb-s4.org/` | 200 |
 | ACT Hauptseite | `act.princeton.edu/` | 403 Cloudflare |
-| LiteBIRD | `litebird.jp` | TLS-Kette defekt → pending |
+| LiteBIRD | `litebird.jp` | 301 → JAXA-Missionsseite; TLS-CN `litebird.isas.jaxa.jp`; keine Datenroute (2026-10-18) |
 
 ### III · Koronale Heizung / Solar
 | Quelle | URL | HTTP |
@@ -191,7 +191,7 @@ Source-Registrierung (LPF-HEASARC) schließt sie.
 ## Baum-Gegenprobe (2026-10-11)
 
 Die offenen Punkte des Blatts je mit `sgrep` gegen `phi/*.φ` gemessen (Re-Audit-Tabelle,
-Blockierte vier, Riss/Offen): **13 Punkte, 11 gedeckt, 2 ungedeckt.** Der Zensus nannte 18
+Blockierte vier, Riss): **13 Punkte, 13 gedeckt (2 nachgemessen 2026-10-18).** Der Zensus nannte 18
 Marker-Zeilen (2026-10-10); gemessen heute sind es 15 (Zeilen 51, 86, 126–132, 134, 142,
 174, 181, 183, 184).
 
@@ -201,17 +201,18 @@ Marker-Zeilen (2026-10-10); gemessen heute sind es 15 (Zeilen 51, 86, 126–132,
 | BepiColombo PSA | gedeckt | `sources.φ:4421`; `blocked_sources.φ:26` |
 | ESA LPF | gedeckt | `sources.φ:11329` (HEASARC `drs_fits`) |
 | Lasair `api/` | gedeckt | `declined_sources.φ:2692`; `dead_sources.φ:147` |
-| SSDC Limadou | **ungedeckt** | nur `phi/pipeline/ledger.φ:15` (TAPSSDC 0 CSES/LIMADOU) |
+| SSDC Limadou | **geschlossen (2026-10-18)** | `ssdc.limadou.cn` NXDOMAIN; kein `ledger.φ`; `sources.φ` nur `cseslimadou.it` |
 | DEMETER `rs-order` | gedeckt | `declined_sources.φ:3277` |
 | GOSAT-GW | gedeckt | `sources.φ:19368` |
 | Chang'e `moon.bao.ac.cn` | gedeckt | `sources.φ:10957` (`clpds.bao.ac.cn`) |
 | LEOS/CSES | gedeckt | `declined_sources.φ:5096` (Lizenz NINH-MEM) |
 | NSSDC Voyager/Mariner/Viking/Juno | gedeckt | `blocked_sources.φ:30–44`; `sources.φ:19592,19507,11761` |
 | NED bulk redshift | gedeckt | `declined_sources.φ:2840` |
-| LiteBIRD (`litebird.jp`) | **ungedeckt** | keine der vier Register |
+| LiteBIRD (`litebird.jp`) | **geschlossen (2026-10-18)** | 301 → JAXA-Missionsseite; TLS-CN `litebird.isas.jaxa.jp`; keine Datenroute |
 | Teilchen-/Dark-Matter-Experiment | gedeckt | `blocked_sources.φ:58` (opendata.cern pending) |
 
-**Ungedeckte Reste:** SSDC Limadou (nur `ledger.φ:15` Kandidat), LiteBIRD (nur im Blatt).
+**Ungedeckte Reste (2026-10-18 geschlossen):** SSDC Limadou (NXDOMAIN, kein Ledger),
+LiteBIRD (301 → JAXA, keine Datenroute).
 Die Delta-Tabellen (I–V, IX, XII) sind Fund-Landschaft und wurden nicht je Zeile
 gegenregistriert; die im Blattkopf als unregistriert bestätigten (HI4PI, BK18, `gll_psc_v32`,
 GEBCO, `occupation_data`, `opendata.cern`, Zenodo XENONnT/LZ, `super-k`, `DVN/MMIIZA`,
