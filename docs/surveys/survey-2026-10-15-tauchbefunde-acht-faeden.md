@@ -304,3 +304,23 @@ TGF-3-Katalog (nur Abstract).
    `sha256`/Tag/Naht = Mycelium. Die Mountain-Zeile ist geschrieben: das Verdikt zu allen acht
    Fäden steht in `state/mountain/2026-10-15-acht-faeden-verdicts.φ` (2026-10-17); offene
    field-Risse sind dort benannt (u. a. WALLABY ohne `field`/Reader, EVE-`format` fehlt).
+
+---
+
+## Nachtrag 2026-10-18 — Restarme mit Spaltenkopf-Suche nachgemessen
+
+Fünf Taucher, `archive_search --all` plus gezielte Arme, live HTTP. Belege:
+`state/mountain/2026-10-18-tauchbefunde-restarme.φ`.
+
+| Faden | Befund | Korrektur / Disposition |
+|---|---|---|
+| 1 HMI | `hmi.M_720s` exakt: `DATAMEAN` [G], 4096², 720 s, CC0 im FITS-Header | **1 Record/T_REC, nicht 3**; `CAMERA` wechselt (1→3), kein Dedup. Export braucht einmalige E-Mail-Registrierung. Arm: `hmi_compiler.rs`/`format hmi` |
+| 3 EVE | exakt ist **L2b Lines**: `products/level2b/YYYY/DOY/EVL_L2B_…fit.gz`, `LINE_IRRADIANCE[71]`, 60 s | Compiler zeigte auf `level2` (endet 2018) → **Pfad in diesem Pass auf `level2b` + ein File/DOY geheilt**. Lizenz **nicht CC0**, sondern offen/ohne SPDX. XUV <33 nm nach MEGS-A-Ausfall 2014 nicht lieferbar |
+| 7 EPTA | Zenodo `8300645`, 39 275 794 B, `sha256 2ae54694…`, CC-BY-4.0; `.par` trägt `TRES` 26/26 | **Kein TEMPO2 für Per-Pulsar-TRES nötig**; nur für per-TOA-Serie. `RAJ/DECJ` 23/26, `ELONG/ELAT` 3 → Fallback. `sha256` gesetzt |
+| 6 EDGES | exakt: `figure1_plotdata.csv`, 7 907 B, Header `Frequency, Weight, Tsky, Tres1, Tres2, Tmodel, T21` | Nur DR1 als T21-Tabelle; Rohdaten DR3. Lizenz: kein SPDX, Zitat Bowman 2018. Arm: Block + `edges_compiler.rs` |
+| 6 WALLABY | registrierter `hips3d`-Block = **Spectral-Cube**, keine Spalten; exakter Katalog = CASDA TAP `AS102.wallaby_pdr2_sourcecatalogue_v01`, 3 454 Zeilen, 43 Spalten, CC-BY-4.0, DOI `10.25919/qw7w-tn96` | Cube ≠ Katalog. Neuer TAP-Block/Compiler; Spalten `ra/dec/freq/w20/w50/log_m_hi` |
+| 4 Conicus | Zenodo `18776222`, 34 407 793 603 B, CC-BY-4.0; `.npy` `(1,128,128)` δ-Overdensity | **Produkt-Mismatch:** kein Shear/κ. Kein Shear-field erfinden |
+| 5 IceCube | Dataverse `10.7910/DVN/MMIIZA` v3.1, 14 TSV, 1 643 355 Events, CC0; Header `run event subevent MJD log10(E/GeV) AngErr RA Dec Azimuth Zenith` | URL 404/Tag fehlt; `format json` vs `.tab`; `record skydirection` falsch → S2E1; kein Compiler |
+| 5 Auger | 109-Event-Katalog exakt; kompiliertes Asset `ssd.jpl.nasa.gov/auger_catalog.pao1` 200, 3 065 B, `sha256 03c85879…`, PAO1 n=109 | **URL in diesem Pass von `opendata.auger.org/…` (404) auf `ssd.jpl.nasa.gov/…` geheilt**, `sha256`/terms gesetzt. `eev` ist bereits in `units.rs:389` — alte Riss-Zeile stale |
+| 8 TGF-3 | **kein Datensatz**; nur AGU-Abstracts | `pending`; Weg = direkte Anfrage GBM-TGF-Team. 2. Katalog live (5 CSVs) |
+| 6 REACH | **kein Datenprodukt**; 403 = Cloudflare-WAF, `/data` = 404 | Release erst „upon detection"; nur Simulationen. `pending` |

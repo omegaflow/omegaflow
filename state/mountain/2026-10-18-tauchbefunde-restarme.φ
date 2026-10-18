@@ -1,0 +1,119 @@
+# Tauchbefunde — Restarme gemessen (2026-10-18)
+# Linie Mountain · Trigger: Operator-Wort 2026-10-18 (fünf Taucher, archive_search --all,
+#   Spaltenkopf-Suche statt Dateinamen). Quellen: docs/surveys/survey-2026-10-15-tauchbefunde-acht-faeden.md,
+#   live HTTP am 2026-10-18. Kein Produkt gespiegelt; jede Zeile mit HTTP/Spalten/DOI.
+
+# ============================================================
+# 1 — HMI (hmi.M_720s) — exakt, Arm fehlt
+# ============================================================
+# GEMESSEN: jsoc_info series_struct 200 (16 013 B); rs_list 200; FITS 200 (14 051 520 B).
+#   DATAMEAN [Gauss], BUNIT='Gauss', 4096x4096, T_REC_step 720 s, 2009-04-13 .. 2026-10-14.
+#   FITS-Header: LICENSE='... marked CC0 1.0', POLICY='... attribution Courtesy of NASA/SDO ...'.
+#   KORREKTUR: 1 Record je T_REC, nicht 3. CAMERA ist missionszeitabhaengig (1 -> 3), kein Dedup.
+#   DATAMEAN ist bei fruehen 2009er-Records 'MISSING' -> filtern.
+#   Export: frischer Request braucht einmalige E-Mail-Registrierung (status:4); der alte
+#   JSOC_20261015_004396 ist completed (120 FITS, anonym abrufbar).
+# ARM: hmi_compiler.rs + format hmi fehlen (Mycelium/Archivar). Kein phi-Block erfunden.
+
+# ============================================================
+# 2 — EVE (L2b Lines) — exakt, Compiler-Pfad in diesem Pass geheilt
+# ============================================================
+# GEMESSEN: products/level2b/2026/290/EVL_L2B_2026290_008_01.fit.gz -> 200, 390 613 B.
+#   LINE_IRRADIANCE[71], CADENCE 60 s, Spalten TAI/YYYYDOY/SOD/FLAGS/...; die 11 Parser-Indizes
+#   (0,1,3,6,8,10,11,12,23,36,38) passen exakt. LISIRD sdo_eve_lines_l2b.csv 200 (1 923 728 B/Tag).
+#   KORREKTUR: der alte Baum products/level2 endet 2018; eve_compiler.rs zeigt jetzt auf level2b,
+#   ein File je DOY (EVL_L2B_YYYYDOY_008_01.fit.gz), kein Stunden-Loop.
+# LIZENZ-KORREKTUR: kein CC0 in den EVE-Headern; offen, keine explizite SPDX-Lizenz,
+#   Acknowledgement erbeten. Die fruehere CC0-Zeile ist nicht belegt.
+# XUV-RISS: MEGS-A fiel 2014-05-26 aus; 94-304 A sind 2026 -1.0. Fortlaufend nur Quad-Diode
+#   (0.1-7 nm) und MEGS-B >=335 A. 'XUV < 33 nm' ist mit dem 11-Linien-Produkt nach 2014 nicht lieferbar.
+# ARM: Register-Block + eve-cdn.yml/Asset fehlen (Mycelium).
+
+# ============================================================
+# 3 — EPTA DR2 — exakt, Compiler fehlt
+# ============================================================
+# GEMESSEN: Zenodo 8300645 -> 200, 39 275 794 B, CC-BY-4.0, sha256 2ae54694...;
+#   .par je Pulsar: TRES in 26/26 Loesungen (0.228 .. 4.239 us), RAJ/DECJ in 23/26,
+#   ELONG/ELAT in 3 (J0030+0451, J1022+1001, J1730-2304); NTOA-Summe 56 455.
+# KORREKTUR: TRES ist bereits die gefittete Residual-RMS im .par; ein TEMPO2-Fit ist nur fuer
+#   eine per-TOA-Residualserie noetig. 8025019 = nur PDFs; VizieR J/A+A/678/A50 = 404/503.
+# REGISTER: sha256 2ae54694... gesetzt. ARM: epta_dr2_compiler.rs (unzip -> .par -> TRES*1e-6 s,
+#   RAJ/DECJ mit ELONG/ELAT-Fallback) fehlt (Mycelium).
+
+# ============================================================
+# 4 — EDGES DR1 — exakt, Compiler fehlt
+# ============================================================
+# GEMESSEN: loco.lab.asu.edu/download/790/ -> figure1_plotdata.csv 200, 7 907 B,
+#   sha256 6eebf9cd...; Header exakt:
+#   Frequency [MHz], Weight, a: Tsky [K], b: Tres1 [K], c: Tres2 [K], d: Tmodel [K], e: T21 [K].
+#   128 Zeilen, 50.012207 .. 99.621582 MHz, Delta 0.390625 MHz; T21 -0.5573 .. +0.0553 K.
+#   Nur DR1 als T21-Tabelle; DR3/2026 = Rohdaten + Pipeline. Kalibration Zenodo 18091240 (Spectra.7z 2.84 GB).
+# LIZENZ: kein SPDX auf LoCo; Zitatpflicht Bowman et al. 2018, 10.1038/nature25792.
+# ARM: Register-Block + edges_compiler.rs (CSV -> K, at earth, frequenz-nativ) fehlen (Mycelium).
+
+# ============================================================
+# 5 — WALLABY — exakter Katalog gefunden; der registrierte Block ist ein Cube
+# ============================================================
+# GEMESSEN: der registrierte HiPS3D-Block (phi:14582) ist ein Spectral-Cube: properties 200
+#   (3 102 B), Moc.fits 200 (233 280 B), hips_license ODbL-1.0, KEINE Spalten; Tile-Pfade 404.
+#   EXAKTER KATALOG: CASDA TAP https://casda.csiro.au/casda_vo_tools/tap/sync ->
+#   AS102.wallaby_pdr2_sourcecatalogue_v01, 200, 2 185 752 B CSV, 3 454 Zeilen, 43 Spalten;
+#   DOI 10.25919/qw7w-tn96, CC-BY-4.0. Spalten u.a. ra, dec (J2000), freq, w20/w50 (Hz),
+#   log_m_hi, dist_h, qflag, rel. Kein literaler velocity-Column (v = c*dnu/nu).
+# ARM: neuer Block + TAP-Compiler (oder HiPS-Block als Cube behalten, Katalog daneben).
+#   Der CDN-Mirror wallaby_pilot_dr2_hips3d.bin ist 404.
+
+# ============================================================
+# 6 — Conicus3D — exakte Datei, aber kein Shear-Produkt
+# ============================================================
+# GEMESSEN: Zenodo 18776222 -> 200/206, 34 407 793 603 B, CC-BY-4.0, md5 a42e208a...;
+#   erste 100 MB: 1 229 tar-Eintraege, lp_dataset_patched/06/phNNN_lc{1,2}_YYY.npy,
+#   je 131 200 B, <f8, Shape (1,128,128). Kein e1/e2, kein kappa, keine WCS/Redshift-Tabelle.
+# VERDIKT: Produkt-Mismatch — das ist eine delta-Overdensity-Simulation, kein Shear-Katalog.
+#   Kein Shear-field erfinden. Reader waeren tar_zst + .npy + Namensgeometrie.
+
+# ============================================================
+# 7 — IceCube IceTracks DR2 — exakt, drei Blocker
+# ============================================================
+# GEMESSEN: Dataverse DOI 10.7910/DVN/MMIIZA, API 200 (42 663 B), Version 3.1 (2026-05-21),
+#   41 Dateien, CC0-1.0. events/ = 14 TSV, 218 568 203 B, 1 643 355 Event-Zeilen; Header:
+#   # run event subevent MJD[days] log10(E/GeV) AngErr[deg] RA[deg] Dec[deg] Azimuth[deg] Zenith[deg].
+# BLOCKER: (1) phi:14732-URL .../dataverse.harvard.edu/icecube_icetracks_dr2.bin -> 404, Tag fehlt;
+#   (2) format json widerspricht .tab/TSV; record skydirection ist falsch (Event-Liste -> s2event/S2E1);
+#   (3) kein IceCube-Compiler; icecat_compiler verlangt andere Header.
+# ARM: TSV -> S2E1-Compiler + URL/Format/Record korrigieren (Mycelium).
+
+# ============================================================
+# 8 — Auger — Katalog-URL in diesem Pass geheilt
+# ============================================================
+# GEMESSEN: 109-Event-Katalog opendata.auger.org/catalog/data.zip 200, 3 467 397 B,
+#   sha256 befceb14...; 109 PAO*.json, sdrec.ra/dec/energy (EeV), 45.5 .. 165.5 EeV.
+#   Das kompilierte Asset liegt bereits: ssd.jpl.nasa.gov/auger_catalog.pao1 200, 3 065 B,
+#   sha256 03c85879..., Magic PAO1, n_rows 109.
+# REGISTER-FIX: URL von .../opendata.auger.org/auger_sd1500.pao1 (404) auf .../ssd.jpl.nasa.gov/
+#   auger_catalog.pao1; terms-URI auf die CC-Deed; sha256 gesetzt.
+# VOLLES SD1500: Zenodo 10488964, data.zip 869 470 279 B, 81 124 JSON; summary.zip 22 751 Events.
+#   Der Compiler filtert PAO*.json flach -> fuer die volle Release Adapter noetig.
+# UNIT-KORREKTUR: 'eev' ist am HEAD bereits in units.rs:389 (und allowed_units) — die alte Riss-Zeile ist stale.
+
+# ============================================================
+# 9 — TGF-3 und REACH — keine Produkte
+# ============================================================
+# TGF-3: nur AGU-Abstracts 2022/2023/2024; kein Datensatz, kein DOI. Probes tgf3/third/
+#   gbm_tgf3_catalog.csv -> 404; HEASARC/NTRS/ORCID/Zenodo/Figshare/Dataverse/Dryad/DataCite: absent.
+#   Der 2. Katalog ist live (5 CSVs, offline 4 135 Zeilen, Header BGO_0_N/BGO_1_N/NAI_N/Width_ms ...),
+#   Stichtag 2016. Weg zum 3.: direkte Anfrage beim GBM-TGF-Team.
+# REACH: Data-Availability im Nature-Paper: 'Upon detection or important scientific result our data
+#   will be made publicly available on Zenodo.' 403 = Cloudflare-WAF, /data = 404 (kein Datenendpunkt).
+#   Nur Simulationen/Inferenzketten (Zenodo 11502235, 7153212, 6474037). Nichts zu holen bis Detektion.
+
+# ============================================================
+# 10 — Bilanz
+# ============================================================
+# Exakte Quelle gefunden: HMI, EVE, EPTA, EDGES, WALLABY (CASDA), IceCube, Auger.
+# Produkt-Mismatch: Conicus3D (delta-Simulation, kein Shear).
+# Kein Produkt: TGF-3, REACH.
+# In diesem Pass gesetzt: EVE-Compiler-Pfad (level2b, ein File/DOY), Auger-URL/sha256/terms,
+#   EPTA-sha256; IceCube-Feld und Auger-Feld aus dem vorigen Pass.
+# Offene Arme (Mycelium/Archivar): HMI-Compiler/format, EVE-Block/CDN, EPTA-Compiler,
+#   EDGES-Block/Compiler, WALLABY-TAP-Compiler, IceCube-Compiler/Format, SD1500-Adapter.

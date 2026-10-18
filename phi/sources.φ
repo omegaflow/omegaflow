@@ -19065,11 +19065,12 @@ format live2
 at earth
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/opendata.auger.org/auger_sd1500.pao1
-terms CC-BY-SA-4.0 https://opendata.auger.org/
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/auger_catalog.pao1
+terms CC-BY-SA-4.0 https://creativecommons.org/licenses/by-sa/4.0/
 format auger
 origin https://opendata.auger.org/catalog/data.zip
 compiler tools/harvest/src/bin/auger_compiler.rs
+sha256 03c85879e13f3b0193345ee7b92677237108abcf0e1c95ec93a9a560a25e0fc6
 at earth
 no-cadence
 field auger_sd1500 auger_sd1500 inverse-square em 1 31536000 0.0 0.0
@@ -30816,6 +30817,7 @@ terms CC-BY-4.0 https://zenodo.org/records/8300645
 format zip
 origin https://zenodo.org/api/records/8300645/files/EPTA-DR2.zip/content
 compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 2ae546940419ce12a508d0f24b54db91163b0a0d204b85f8bca626eed847b43c
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/gps_campaign.dat
