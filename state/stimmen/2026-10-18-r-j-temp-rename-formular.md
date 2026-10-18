@@ -28,3 +28,9 @@ alle `register_*`-Writer oder nur für die drei gemessenen?
 
 Register-Architektur → **Rat**. Die F2-Umsetzung (`register-coverage` auf B) wartet auf diese Antwort;
 Bau erst nach Wort.
+
+## Schwarm-Risse (freie Sitze, 2026-10-18, $0)
+- 4× **A** (temp+rename), 1× **B** (nano), 1× unklar, 1× Rauschen.
+- Geltungsbereich gespalten: „nur die drei" (nano, nemotron-ultra, openrouter, pollinations) vs. „alle `register_*`" (gemma4).
+- Risse: **lost-update/race** (fehlender Lock) · **torn/partial write bei Crash** (fsync nötig) → Option **C** adressiert beide, A allein nicht.
+- Kein Sitz trägt B als Entscheidung.

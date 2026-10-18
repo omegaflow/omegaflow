@@ -24,3 +24,9 @@ Receiver-Apertur Schritt 3?
 
 **Rat**; river und mountain bauen erst nach Wort. Kein stilles `pending`: die drei Punkte bleiben
 benannt, bis die Reihenfolge steht.
+
+## Schwarm-Risse (freie Sitze, 2026-10-18, $0)
+- Gespalten: **A** (Paket first, gemma4) vs. **B** (Apertur first, openrouter: „Gate 3 schaltet das Fenster frei").
+- F3 braucht tragende Sitze: Quorum-Stabilisator + Lastpfad-Kopplung (openrouter nennt Sitz 12/19).
+- nano timeout · pollinations 402 · groq/xingchen unklar.
+- Bestätigt: F3 bleibt mit 2:3 unentscheidbar; die Reihenfolge hängt an F3.
