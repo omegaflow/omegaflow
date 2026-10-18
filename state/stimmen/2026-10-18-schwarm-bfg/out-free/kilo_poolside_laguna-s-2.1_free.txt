@@ -1,0 +1,5 @@
+R-b Verdikt: B — Begründung: Ein eigener Konstantenblock mit Quellenangaben ermöglicht die Registrierung der Referenzgrößen ohne Parser-Änderungen. — Riss: Die Quellen für calc.js sind nicht lizenztreu belegt, GeographicLib bleibt externer MIT-Code ohne Datensatz-Einbindung.
+
+R-f Verdikt: A — Begründung: D=2190 (XGM2019e_2159) ist ein offizielles Teilmodell und vermeidet Streaming-Probleme. — Riss: Die Epoche ist nirgends belegt; ein statischer Compiler-Pfad ohne --epoch könnte Fehler erzeugen.
+
+R-g Verdikt: B — Begründung: Der Parser-Fix für kg/(m^2 s)-Token und die Stern-Metadaten-Achse decnen die kritischsten Lücken ab. — Riss: Die FDSN-Key-Aufspaltung bleibt unberührt und könnte bei Kanalidentitäten zu Parsing-Fehlern führen.

@@ -1,0 +1,7 @@
+
+
+V1 Verdikt: A — Begründung: Ein generierter Live-Index zentralisiert den Zustand und vermeidet Duplikate; Prosa-Docs werden Zeiger. — Riss: Die Sitzung ignorierte Live-Docs, weil kein Index existierte.  
+
+V2 Verdikt: A — Begründung: 44 Träger sind dokumentiert, 4er-Läufe gelten als Fehler. — Riss: Die Sitzung führte 4 Sitze statt 44 durch, obwohl 44 explizit definiert war.  
+
+V3 Verdikt: A — Begründung: Start-Check auf git log und neueste Runs verhindert veraltete Zitate. — Riss: Die Sitzung zitierte veraltete Docs, weil kein Check durchgeführt wurde.

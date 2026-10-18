@@ -1,0 +1,1 @@
+{"error":{"message":"Model 'kling-v3.0-turbo' does not support chat endpoints.","type":"invalid_request_error","param":null,"code":"unsupported_model_feature"}}

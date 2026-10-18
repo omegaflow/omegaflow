@@ -1,0 +1,7 @@
+
+
+R-b Verdikt: C — Begründung: Lokale Nutzung ohne Lizenzprobleme, N bleibt pending. Keine zusätzlichen Direktiven oder Blockeinstellungen erforderlich. — Riss: Unregistrierte Konstanten (a, 1/f, GM, omega, gamma_e, gamma_p) als ungemessene Größe.  
+
+R-f Verdikt: B — Begründung: Cap 3211 unter 2 GiB ist release-tauglich, Epoche bleibt ungesetzt. Kein Streaming, aber stabiler Datensatz. — Riss: Epoche fehlt, Compiler erfordert --epoch für Validierung.  
+
+R-g Verdikt: B — Begründung: Parser-Fix + Stern-Achse minimieren Risiken, FDSN-Key-Aufspaltung bleibt unklar. Keine vollständige Architekturänderung. — Riss: FDSN-BHZ-Kanalidentität fehlt als stärkster Gegenbeleg.

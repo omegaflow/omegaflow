@@ -1,0 +1,1 @@
+{"id":"chatcmpl-aefd71febca0a909","choices":[{"index":0,"message":{"role":"assistant","content":"Safety: Safe\nCategories: None","tool_calls":[]},"finish_reason":"stop"}],"created":1792326505,"model":"Qwen3Guard-Gen-0.6B","object":"chat.completion","usage":{"prompt_tokens":1181,"completion_tokens":8,"total_tokens":1189}}

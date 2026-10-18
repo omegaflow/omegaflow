@@ -1,0 +1,5 @@
+R-b Verdikt: A — Begründung: Durch das Hinzufügen neuer Direktiven für Ellipsoid und Normalgravitation entsteht ein Parser‑Arm, der skalare Referenzkonstanten aufnehmen kann. Damit können a, 1/f, GM, ω, γ_e und γ_p registriert und N wieder berechnet werden. — Riss: Die Parser‑Erweiterung kann bestehende Build‑Pipelines destabilisieren, weil keine Rückwärtskompatibilität garantiert ist.  
+
+R-f Verdikt: A — Begründung: Das offizielle Teilmodell D=2190 reduziert die Datenmenge auf 999 MB und erfüllt damit die Release‑Kriterien. Es enthält die erforderlichen Modellparameter, während größere Blöcke das Speicherlimit überschreiten würden. — Riss: Trotz kleinerer Datei fehlt weiterhin ein Epoch‑Parameter, sodass der Compiler ohne --epoch‑Flag fehlschlägt.  
+
+R-g Verdikt: B — Begründung: Ein minimaler Satz aus dem Parser‑Fix für kg/(m² s) und der Stern‑Metadaten‑Achse deckt die kritischen Anwendungsfälle ab, ohne die Architektur zu überfrachten. Weitere Restgruppen können später modular ergänzt werden. — Riss: Fehlende Unterstützung für die übrigen Restgruppen, insbesondere die FDSN‑BHZ‑Kanalidentität, kann in bestehenden Analyse‑Workflows zu Datenverlust führen.
