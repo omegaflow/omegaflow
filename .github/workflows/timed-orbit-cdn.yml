@@ -44,14 +44,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p data/celestrak.org
-          curl -sSfL --retry 3 --max-time 120 -o data/celestrak.org/timed.json \
-            "https://tle.ivanstanojevic.me/api/tle/26998" \
+          curl -sSfL --retry 3 --max-time 120 -o data/celestrak.org/timed.gp \
+            "https://celestrak.org/NORAD/elements/gp.php?CATNR=26998&FORMAT=TLE" \
             || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
-                 "timed-orbit-cdn: the TLE mirror returned void" \
-                 "tle.ivanstanojevic.me reached no TIMED element set (CelesTrak gp.php times out). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 "timed-orbit-cdn: the CelesTrak GP element set returned void" \
+                 "curl on celestrak.org reached no TIMED element set. Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
                  health; exit 1; }
-          jq -r '.line1, .line2' data/celestrak.org/timed.json > data/celestrak.org/timed.gp
-          test "$(wc -l < data/celestrak.org/timed.gp)" -eq 2
           cargo run -p omegaflow-harvest --release --bin timed_tle_compiler -- \
             --tle-file data/celestrak.org/timed.gp \
             --out data/celestrak.org/timed_orbit.bin \
