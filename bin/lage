@@ -14,6 +14,7 @@ last_runs=$(ls -1t state/stimmen/ 2>/dev/null | grep -E 'sammlung|verdikt|lage' 
 
 models=$(tail -n +2 state/zustand/llm-gateway-models.tsv 2>/dev/null | wc -l)
 alive=$(tail -n +2 state/zustand/llm-gateway-alive.tsv 2>/dev/null | wc -l)
+free=$(tail -n +2 state/zustand/llm-gateway-models.tsv 2>/dev/null | awk -F'\t' '$3==0 && $4==0' | wc -l)
 balance=$(tail -n +2 state/zustand/llm-gateway-balance.tsv 2>/dev/null | sed 's/^/  /')
 
 line_rows=$(for line in mountain mycelium river sensory future; do
@@ -34,8 +35,7 @@ done)
   echo "HEAD \`$head_sha\`"
   echo
   echo "## Sitze / Routen (Gateway)"
-  echo "- Katalog (tsv, letzter Gateway-Start): $models Modelle"
-  echo "- Lebendige freie Chat-Modelle: $alive"
+  echo "- Katalog (tsv, letzter Gateway-Start): $models · frei: $free · lebendig: $alive"
   echo "- Freier Schwarm: live aus den Preis-0-Zeilen + OpenCode-free — keine feste Zahl"
   if [ -n "$balance" ]; then
     echo "- Guthaben (USD):"
