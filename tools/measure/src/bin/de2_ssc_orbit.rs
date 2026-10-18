@@ -33,9 +33,16 @@ fn main() {
     let times = tag_values(&xml, "Time");
     let radii = tag_values(&xml, "RadialLength");
     let locals = tag_values(&xml, "LocalTime");
-    let n = times.len().min(radii.len()).min(locals.len());
+    let lats = tag_values(&xml, "Latitude");
+    let lons = tag_values(&xml, "Longitude");
+    let n = times
+        .len()
+        .min(radii.len())
+        .min(locals.len())
+        .min(lats.len())
+        .min(lons.len());
     if n == 0 {
-        eprintln!("{input}: no Time/RadialLength/LocalTime records");
+        eprintln!("{input}: no Time/RadialLength/LocalTime/Latitude/Longitude records");
         exit(2);
     }
     let mut body = String::new();
@@ -46,10 +53,19 @@ fn main() {
         let Ok(lt) = locals[i].parse::<f64>() else {
             continue;
         };
-        if !(r.is_finite() && lt.is_finite()) {
+        let Ok(lat) = lats[i].parse::<f64>() else {
+            continue;
+        };
+        let Ok(lon) = lons[i].parse::<f64>() else {
+            continue;
+        };
+        if !(r.is_finite() && lt.is_finite() && lat.is_finite() && lon.is_finite()) {
             continue;
         }
-        body.push_str(&format!("{},{:.6},{:.6}\n", times[i], r, lt));
+        body.push_str(&format!(
+            "{},{:.6},{:.6},{:.6},{:.6}\n",
+            times[i], r, lt, lat, lon
+        ));
     }
     match std::fs::write(output, &body) {
         Ok(()) => println!("de2_ssc_orbit: {n} records -> {output}"),

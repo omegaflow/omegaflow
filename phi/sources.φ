@@ -588,11 +588,8 @@ field temp pirep_air_temp_c exponential-decay thermal C 360 0.0 0.0
 field wdir pirep_wind_direction_deg patch-levy advective deg 360 0.0 0.0
 field wspd pirep_wind_speed_knot patch-levy advective knot 360 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/ace_h0_mfi_hourly.json
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&time.min=2017-07-01T00:00:00Z&time.max=2026-08-04T00:00:00Z&parameters=Magnitude,BGSM&format=json
 terms PD-USGov https://spdf.gsfc.nasa.gov/data_use_policy.html
-origin https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_H0_MFI&time.min=2017-07-01T00:00:00Z&time.max=2026-08-04T00:00:00Z&parameters=Magnitude,BGSM&format=csv
-compiler tools/harvest/src/bin/ace_rtsw_compiler.rs
-sha256 4bc047eb0eb19dc5cd5efdfc8d6fb3662e835d1b5432fa11c09029b00f6dd3a2
 ttl 3600
 at sun
 hapi Magnitude=magnetosphere_imf_bt_nt BGSM.1=magnetosphere_imf_by_nt BGSM.2=magnetosphere_imf_bz_nt
@@ -600,11 +597,8 @@ field magnetosphere_imf_bt_nt magnetosphere_imf_bt_nt inverse-square em nT 3600 
 field magnetosphere_imf_by_nt magnetosphere_imf_by_nt inverse-square em nT 3600 0.0 0.0
 field magnetosphere_imf_bz_nt magnetosphere_imf_bz_nt inverse-square em nT 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/ace_k0_swe_hourly.json
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_K0_SWE&time.min=2017-07-01T00:00:00Z&time.max=2026-10-10T00:00:00Z&parameters=Np,Vp&format=json
 terms PD-USGov https://spdf.gsfc.nasa.gov/data_use_policy.html
-origin https://cdaweb.gsfc.nasa.gov/hapi/data?id=AC_K0_SWE&time.min=2017-07-01T00:00:00Z&time.max=2026-10-10T00:00:00Z&parameters=Np,Vp&format=csv
-compiler tools/harvest/src/bin/ace_rtsw_compiler.rs
-sha256 663eddf9675e0afaac106781c9d5112a30d9e0ff5946825dd3e165c467b1e341
 ttl 3600
 at sun
 hapi Np=solar_wind_density_cm3 Vp=solar_wind_speed_km_s

@@ -18,7 +18,7 @@ on:
         type: string
         default: '0'
       cond_field:
-        description: 'conditioner series, comma-separated: ae | dst | symd (WDC bin), kp (WDC Kyoto csv), lt | alt (DE-2 orbit)'
+        description: 'conditioner series, comma-separated: ae | dst | symd (WDC bin), kp (WDC Kyoto csv), lt | alt (DE-2 orbit), lunar (tidal phase, needs the ephemeris bins)'
         required: false
         type: string
         default: 'ae'
@@ -67,8 +67,8 @@ jobs:
           curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
             -o data/wdc.kugi.kyoto-u.ac.jp/hour3h_kp.csv \
             'https://wdc.kugi.kyoto-u.ac.jp/hapi/data?id=hour3h_kp&start=1981-08-08T00:00:00Z&stop=1983-02-17T00:00:00Z&format=csv'
-      - name: Fetch the DE-2 orbit from SSCWeb (altitude and local time)
-        if: contains(inputs.cond_field, 'lt') || contains(inputs.cond_field, 'alt')
+      - name: Fetch the DE-2 orbit from SSCWeb (radial length, local time, lat/lon)
+        if: contains(inputs.cond_field, 'lt') || contains(inputs.cond_field, 'alt') || contains(inputs.cond_field, 'lunar')
         run: |
           set -euo pipefail
           mkdir -p data/cdaweb.gsfc.nasa.gov
@@ -110,6 +110,17 @@ jobs:
           tail -1 "$out"
       - name: Run the conditioned TE (both directions, raw vs conditioned)
         run: |
+          moon_args=()
+          if [[ "${{ inputs.cond_field }}" == *lunar* ]]; then
+            mkdir -p data/ssd.jpl.nasa.gov
+            base=https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris
+            curl -sSfL --retry 5 --retry-all-errors --max-time 600 \
+              -o data/ssd.jpl.nasa.gov/ephemeris_moon.bin "$base/ephemeris_moon.bin"
+            curl -sSfL --retry 5 --retry-all-errors --max-time 600 \
+              -o data/ssd.jpl.nasa.gov/ephemeris_earth.bin "$base/ephemeris_earth.bin"
+            moon_args=(--moon-bin data/ssd.jpl.nasa.gov/ephemeris_moon.bin \
+                       --earth-bin data/ssd.jpl.nasa.gov/ephemeris_earth.bin)
+          fi
           {
             echo "SHA $(git rev-parse HEAD)"
             echo "BIN_SECONDS ${{ inputs.bin_seconds }} COND ${{ inputs.cond_field }} COND_SECONDS ${{ inputs.cond_seconds }} MAX_LAG ${{ inputs.max_lag }} SURR ${{ inputs.surr }}"
@@ -121,7 +132,8 @@ jobs:
               --orbit-csv data/cdaweb.gsfc.nasa.gov/de2_orbit_lt_alt.csv \
               --max-lag '${{ inputs.max_lag }}' \
               --surr '${{ inputs.surr }}' \
-              --bins '${{ inputs.bins }}'
+              --bins '${{ inputs.bins }}' \
+              "${moon_args[@]}"
           } > de2-conditional-te.txt
       - uses: actions/upload-artifact@v4
         if: always()
