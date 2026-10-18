@@ -68,3 +68,18 @@ Kein Sensory-Akt: Harvest ist Mycelium.
    (`EWCT NSCT`, `centroid_pos_error_al`), häufige ertrinken (`BR BT BN`).
 4. **Der billigste Mistral (`ministral-3b`) erfindet Belege** — in keinem von 15 Läufen ein
    spill-belegter Spaltenkopf, dafür falsche Pfade/DOIs. Nicht wiederverwenden.
+
+## Provenienz-Hinweis zu Commit `97cdbaaa6`
+
+Der Commit wurde mit vollem Index abgesetzt und trägt deshalb zusätzlich fremde,
+bereits gestagte Hunks:
+
+- `.github/workflows/timed-orbit-cdn.yml`
+- `phi/sources.φ`
+- `state/stimmen/2026-10-18-mycelium-pass-kids-transport.md`
+- `tools/harvest/src/bin/hmi_compiler.rs`
+- `tools/measure/src/bin/field_te_query.rs`
+
+Inhalte unverändert, nur die Commit-Message ist falsch. Kein Rewrite/Force-Push auf
+dem geteilten `main`. Regel ab jetzt: `git diff --cached --stat` vor jedem Commit und
+isolierter Index (`GIT_INDEX_FILE=… git read-tree HEAD`) für eigene Commits.
