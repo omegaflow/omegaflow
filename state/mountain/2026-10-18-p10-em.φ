@@ -1,0 +1,139 @@
+# P10 — field-Zeilen-Migration, vierte und letzte Tranche: em (2026-10-18)
+# Linie Mountain · Grundlage state/mountain/2026-10-18-p10-migration.φ,
+#   2026-10-18-p10-tranche2.φ, 2026-10-18-p10-tranche3.φ
+# Gemessen am Worktree mountain-p10-em, HEAD 0245cd971. Kein neuer Fetch, kein neues Schema.
+
+# ============================================================
+# 1 — Gemessen vor der Migration (HEAD 0245cd971)
+# ============================================================
+# `source_physics_lint` (./target/debug/source_physics_lint):
+#   phi/sources.φ = field 7647 · quantity 261 · geometry-candidate 69 · Exit 0.
+# Flache `field`-Zeilen (9 Tokens), per awk:
+#   3710 gesamt · em 1947 · diffusion 471 · advective 448 · acoustic 429 ·
+#   thermal 355 · electric 58 · seismic-body 2.
+# Abweichung zu Tranche 3 (dort 3720 · gravity 7 · seismic-body 3 · seismic-surface 2)
+#   ist der inzwischen gemergte Rest-Arm aus mountain/p10-residuals und
+#   river/p10-force-arm: die 7 gravity- und 2 seismic-Wellenzeilen sind Deskriptor-Felder
+#   geworden, comcat ist quantity `relative count`; cmonoc ×2 bleiben field.
+# em ist die größte Gruppe und liegt vollständig als flache Zeilen vor; zusätzlich
+#   existieren 2938 em-Deskriptor-Zeilen (10/11 Tokens) — sie sind nicht Teil dieser
+#   Tranche und bleiben unverändert.
+
+# ============================================================
+# 2 — Am Material gemessen, nicht übernommen
+# ============================================================
+# em ist fast vollständig ein Feld-, Wellen-, Fluss- und Zählraten-Katalog:
+#   Magnetfeld 1078 (nT 884, nT/Hz**1/2 192, nT^2/Hz 2) · Zählraten 385 (count) ·
+#   Flüsse/Spektren/Radiance (mJy 18, Jy 9, W/m2/Hz 11, W/m2/sr/um 10, ph/s/cm2 7,
+#     m-2.s-1.tev-1 7, ev/cm2/ster/s 6, erg/cm2/s 5, W/m2 4, uJy/nJy/nmgy/mCrab …) ·
+#   Frequenzen 50 (Hz/hz/dbhz/MHz) · Energien/Rigiditäten 57 (GeV 24, GV 23, eV/TeV/MeV,
+#     J, e10j, kt_tnt) · Phasen 16 (cycle) · TEC 5 (TECU/tecu) · Dichten 9 (1/m3, pc/cm3) ·
+#   Empfangspegel 10 (dB/dBm/dbhz) · 73 vis_nmi · 28 dimensionslose Einzelwerte.
+# Nur drei Gruppen tragen Key/Name + Einheit eindeutig als Ort/Maß oder Katalogparameter:
+#   (a) Himmels-/Bahnkoordinaten, Kernpositionen, Bahnlängen und Winkel (geometry),
+#   (b) astronomische Magnituden und Per-Objekt-Katalogwerte (source-parameter),
+#   (c) eine Tiefe und zwei Höhen-/Relativhöhen (geometry).
+
+# ============================================================
+# 3 — Geändert
+# ============================================================
+# Werkzeug: `tools/register/src/bin/p10_quantity_migrate.rs`
+#   → em-Arm; Klassifikation über Name + Einheit. `quantity_kind` nimmt jetzt zusätzlich
+#   die Einheit, der em-Arm wählt `mag` als source-parameter. Die Zeilenauswahl ist für em
+#   ausdrücklich auf 9 Tokens begrenzt; die 2938 Deskriptor-Zeilen werden nicht angefasst.
+#   Default Report-only, `--write` schreibt. Kein Schema, nur Direktive und Kind je Zeile.
+# Migriert: 121 flache `field`-Zeilen → `quantity` (121 entfernt / 121 hinzugefügt; je Zeile
+#   sind ausschließlich Direktive (Token 1) und Kind (Token 5) geändert, geprüft per Diff):
+#   geometry 44
+#     ra ×2 · dec ×2 · glat ×2 · glon ×2                      Himmelskoordinaten
+#     fdsn_event_latitude/longitude_deg · viking_grav_latitude/longitude_deg   ×4
+#     las_x/y/z_icrs_m ×6                                     ICRS-Bahnkoordinaten
+#     RANGE (hay_lidar_range ×7, mla_range, nlr_range) ×9     Bahnlänge
+#     kcdc_grande/kascade_x/y_core_m ×4                       Kernposition
+#     voyager_saturn_angle_a/angle_b ×2                       Bahnwinkel
+#     viking_grav_altitude_km · ola_radius · nlr_eros_radius · mola_mars_radius
+#     fdsn_event_depth_m                                      Tiefe
+#     gedi_l2a_rh98_m · icesat2_atl03_h_ph_m                 Höhe/Relativhöhe
+#     viking_lander_range_km · "DISTANCE" (impact parameter)  Entfernung
+#     wds_separation_arcsec · swpc_solar_region_extent_deg    Separation/Ausdehnung
+#   source-parameter 77
+#     69 × Einheit `mag` (photometrische Magnituden, E(B−V), Distanzmodul, Farbindizes)
+#     gcvs_period_d · vsx_period_d · pulsar_period_s            Per-Objekt-Perioden
+#     redshift                                                  Per-Objekt-Rotverschiebung
+#     extinction_rv · extinction_rv_unc                         Extinktionsgesetz R_V
+#     fdsn_event_magnitude                                      Katalogmagnitude
+#     exofop_toi_transit_depth_ppm                              Transit-Tiefe
+#   Summe 121 → 44 geometry + 77 source-parameter.
+# Grenzen, die dabei gezogen wurden:
+#   Magnitude ist wie in Tranche 1 (seismische Katalogmagnitude) ein Quellparameter des
+#   Objekts, kein Wellenfeld. Ein Distanzmodul in mag bleibt `mag` und wird nicht als
+#   Länge in Geometrie umgedeutet.
+#   `cors_rinex_c1/c2/c5/p1/p2_m` und `galileo_ionocal_delay_m` bleiben `field`: es sind
+#   Beobachtungs-/Pfadlängen (Pseudoranges, Ionosphären-Delay), kein Ort und kein
+#   Objektmaß; dieselbe Grenze wie bei den Niederschlagshöhen in Tranche 3.
+#   `morph_sigma` (deg) bleibt `field`: Name und Einheit sagen nicht, welches Objektmaß
+#   gemeint ist.
+
+# ============================================================
+# 4 — Riss (bewusst nicht migriert)
+# ============================================================
+# em 1826 — echte Feld-, Wellen-, Fluss-, Energie- und Zählgrößen, kein quantity-Kind:
+#   Magnetfeld 1078 (nT/nT/Hz**1/2/nT^2/Hz): Komponenten, Totalintensität und PSD; bleiben
+#     `field` im Kanal em (cryosat/champ/goce/swarm/intermagnet/omni/psp/tha/mms/wind/…).
+#   Flüsse/Spektren/Radiance 100+ (mJy, Jy, W/m2/Hz, W/m2/sr/um, ph/s/cm2, erg/cm2/s,
+#     TeV-Flüsse, pfu, sfu, uJy/nJy/nmgy/mCrab, jwst_spectra_flux ×8): Flüsse bleiben
+#     `field`; das Register hat keinen Fluss-/Intensitätsarm, der Name und Größe trennt.
+#   Energien/Rigiditäten 57 (GeV/GV/eV/TeV/MeV/J/kt_tnt): Teilchen-/Ereignisenergien,
+#     keine Koordinate; GV ist Rigidität, nicht Ort.
+#   Zählraten 385 (count) und 28 dimensionslose Werte (bk18_bin/ell, shower_age,
+#     pl_index/lp_index/variability_index/significance, w3snr/w4snr, osm_node,
+#     venus_radar_ocp/scp, AOD, giro cs): Detektor-, Index- und Qualitätsgrößen.
+#   Frequenzen 50 (Hz/hz/dbhz/MHz) und Phasen 16 (cycle): Wellen-/Observablenachsen.
+#   TEC 5 (TECU/tecu): echtes Ionosphären-Medienfeld, kein Mediumparameter im Sinne des
+#     quantity-Arms (kein Unit-Gate, aber die Zeile ist ein Feld über Zeit/Ort).
+#   Dichten 9 (1/m3, pc/cm3, 1/cm3): Plasma-/Teilchendichten.
+#   Empfangspegel 10 (dB/dBm/dbhz): Instrumentengrößen.
+#   Rest 1 usv/h · 1 Bq/L · 2 % · 1 h · 2 s (Clock Bias, Radar-Delay) · 1 MW · 2 kW ·
+#     2 GW · 1 deg (morph_sigma) · 6 m (Pseudoranges/Delay).
+#   Diese Zeilen bleiben `field`; der Engpass ist ein fehlender Wellen-/Fluss-/Energie-Arm,
+#     nicht die Kanalachse.
+# Die 2938 em-Deskriptor-Zeilen (NF>9) sind unverändert.
+
+# ============================================================
+# 5 — Gemessen nach der Migration
+# ============================================================
+# `source_physics_lint`: field 7526 · quantity 382 · geometry-candidate 46 · Exit 0.
+#   (Δ field −121, Δ quantity +121, Δ geometry-candidate −23; der Lint-Hinweis kennt
+#   `magnitude`, `lat`, `lon`, `altitude`, `angle`, `distance`, aber nicht `mag`,
+#   `ra/dec`, `glat/glon` oder `RANGE`.)
+# Flache `field`-Zeilen: 3589 (Δ −121) · em 1826 · diffusion 471 · advective 448 ·
+#   acoustic 429 · thermal 355 · electric 58 · seismic-body 2.
+# Zeilenprobe: 121 entfernt, 121 hinzugefügt; alle Paare sind bis auf Direktive und Kind
+#   tokenidentisch (Python-Multiset über `git diff`).
+# `cargo test -p omegaflow --lib archivar::parse::tests` = 55 passed, 0 failed (Exit 0).
+# `cargo check -p omegaflow-register` = Exit 0 (0 Fehler); `rustfmt --check` auf dem
+#   geänderten Migrate-Bin = Exit 0. Die zwei fremden vorbestehend unformatierten Dateien
+#   (`register_lookup.rs`, `archive_search/net.rs`) wurden nach `cargo fmt` zurückgesetzt.
+
+# ============================================================
+# 6 — P10-Abschlussbilanz
+# ============================================================
+# P10 ist mit dieser Tranche abgeschlossen (bis auf die benannten Risse).
+#   Start (Tranche 1, HEAD 7148dc3be): field 7767 · quantity 141 · geometry-candidate 152.
+#   Ende (HEAD dieser Tranche):        field 7526 · quantity 382 · geometry-candidate 46.
+#   Δ field −241 · Δ quantity +241 · Δ geometry-candidate −106.
+# Die 241 Umtagungen: 99 (gravity/geometry/seismic) + 6 (acoustic) + 14 (advective/
+#   thermal) + 121 (em) + 1 (usgs_comcat_m45_rate als quantity `relative count`).
+# Alle vier Tranchen haben am jeweiligen HEAD neu gemessen, nur Name+Einheit belegte
+#   Koordinaten/Maße/Katalogparameter umgetaggt und die Reste als Riss benannt.
+# Offene Risse (bewusst, nicht vergessen):
+#   (a) cmonoc_campaign/continuous_velocity ×2 (mm/yr, seismic-body): als
+#       momentum/advective-Kanal neu messen, nicht als quantity (river-Riss).
+#   (b) eionet_cdr_* 276 (kg, Emissionsinventar): kein Quantity-Kind für Emissionen.
+#   (c) Infraschall-Signalgrößen (bgr center_frequency/apparent_velocity, hydrophone_psd,
+#       pcm) und Feuer-Strahlungsleistung/Bandpowers (MW, uK^2): kein Intensitäts-/Leistungsarm.
+#   (d) em: Magnetfeld/Wellen/Flüsse/Energien/Zählraten bleiben `field`; TEC, Pseudoranges
+#       und Delay, `morph_sigma`, `vis_nmi` sind benannte Einzelfälle §4.
+#   (e) Stern-Metadaten-Achse (Teff/logg/mag gemeinsam) ist nicht gebaut; die Einzelwerte
+#       sind bereits source-parameter.
+#   (f) Kein neues Schema, kein neuer Fetch, keine harten Schwellen; PII unberührt.
