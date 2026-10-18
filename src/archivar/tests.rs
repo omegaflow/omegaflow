@@ -789,18 +789,44 @@ fn test_hapi_family_levels_expand_per_row_to_surface_channels() {
                 12,
                 "2 rows x 3 ktemp + 3 tpgpaltitude levels"
             );
-            let vals: Vec<(&str, f64)> = channels
+            let vals: Vec<(&str, &str, f64)> = channels
                 .iter()
-                .map(|(c, fc)| (fc.name.as_str(), c.value))
+                .map(|(c, fc)| (fc.key.as_str(), fc.name.as_str(), c.value))
                 .collect();
-            assert!(vals.contains(&("saber_ktemp_0", 201.0)), "{vals:?}");
-            assert!(vals.contains(&("saber_ktemp_2", 221.0)));
-            assert!(vals.contains(&("saber_tpgpaltitude_0", 11.0)));
-            assert!(vals.contains(&("saber_tpgpaltitude_2", 31.0)));
-            assert!(vals.contains(&("saber_ktemp_0", 200.0)));
-            assert!(vals.contains(&("saber_ktemp_2", 220.0)));
+            assert!(
+                vals.contains(&("saber_ktemp_0", "saber_ktemp", 201.0)),
+                "{vals:?}"
+            );
+            assert!(vals.contains(&("saber_ktemp_2", "saber_ktemp", 221.0)));
+            assert!(vals.contains(&("saber_tpgpaltitude_0", "saber_tpgpaltitude", 11.0)));
+            assert!(vals.contains(&("saber_tpgpaltitude_2", "saber_tpgpaltitude", 31.0)));
+            assert!(vals.contains(&("saber_ktemp_0", "saber_ktemp", 200.0)));
+            assert!(vals.contains(&("saber_ktemp_2", "saber_ktemp", 220.0)));
             let e0 = super::parse_iso_tdb("2026-08-18T00:00:00Z", &fixture_lsk()).unwrap();
             let e1 = super::parse_iso_tdb("2026-08-18T01:00:00Z", &fixture_lsk()).unwrap();
+            let mut distinct_keys: Vec<&str> =
+                channels.iter().map(|(c, _)| c.name.as_str()).collect();
+            distinct_keys.sort_unstable();
+            distinct_keys.dedup();
+            assert_eq!(
+                distinct_keys.len(),
+                6,
+                "the level index lives in the key, so the two families stay six channels"
+            );
+            for (epoch, row) in [(e0, 0), (e1, 1)] {
+                let mut keys: Vec<&str> = channels
+                    .iter()
+                    .filter(|(c, _)| (c.epoch - epoch).abs() < 1e-6)
+                    .map(|(c, _)| c.name.as_str())
+                    .collect();
+                keys.sort_unstable();
+                keys.dedup();
+                assert_eq!(
+                    keys.len(),
+                    6,
+                    "row {row}: no two levels share one channel in the same epoch"
+                );
+            }
             let mut row0 = 0;
             let mut row1 = 0;
             for (c, _) in &channels {
@@ -851,7 +877,11 @@ fn test_hapi_family_levels_expand_per_row_to_surface_channels() {
     match extract(&fill_src, fill_json, 8.0e8, &fixture_lsk()) {
         ExtractResult::Measurements(channels) => {
             assert_eq!(channels.len(), 2, "the -999.0 level is absent, not a value");
-            assert!(!channels.iter().any(|(_, fc)| fc.name == "saber_ktemp_1"));
+            assert!(!channels.iter().any(|(_, fc)| fc.key == "saber_ktemp_1"));
+            assert!(
+                channels.iter().all(|(_, fc)| fc.name == "saber_ktemp"),
+                "the physical quantity name stays level-free"
+            );
         }
         _ => panic!("extract is not Measurements"),
     }
