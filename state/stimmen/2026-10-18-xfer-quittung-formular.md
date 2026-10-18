@@ -1,7 +1,7 @@
 # Formular — Quittung im Token-Ledger (xfer)
 
 **Datum:** 2026-10-18 · **Linie:** river · **Register:** `R-2026-10-18-a`
-**Status:** offen — die Sitze sind noch nicht gefahren (Operator wählt).
+**Status:** offen — future fährt den Rat mit dem Operator (die Linie fährt keine Sitze).
 
 ## Die Frage
 
@@ -62,5 +62,5 @@ nichts anderes ändert sich.
 
 ## Riss, der bleibt
 
-Ich kann die Sitze nicht fahren: `~/projects/omegaflow/.secrets.local` ist für mich
-gesperrt (`permission.rejected`). Der Rat braucht den Operator.
+Keiner. Die Frage geht an **future**, die den Rat mit dem Operator fährt; die Linie baut
+und legt das Formular daneben, sie fährt keine Sitze.
