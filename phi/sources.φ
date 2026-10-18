@@ -31698,8 +31698,11 @@ terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
 at earth
 no-cadence
 
-url https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
+url https://github.com/omegaflow/sources/releases/download/srdata.nist.gov/srd62_suprastrom.bin
+origin https://srdata.nist.gov/CeramicDataPortal/Hts/DoSearch?Properties=44
 terms no-license https://www.nist.gov/srd/public-law
+compiler tools/harvest/src/bin/srd62_compiler.rs
+sha256 7a001d65192acd5a790b33a0d4a7ff03ad91ecb815b950d05b2263d3a7d53672
 witness substance
 record srd6
 force em
