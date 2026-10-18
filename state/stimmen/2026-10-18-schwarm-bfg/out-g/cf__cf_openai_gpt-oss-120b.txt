@@ -1,0 +1,102 @@
+**RAT‑Entscheidung – P10‑Restarme (R‑2026‑10‑18‑g)**  
+*Datum: 2026‑10‑19* – nach Durchsicht der Rest‑Residual‑Analyse (vgl. `state/mountain/2026‑10‑18‑p10‑residuals.φ`) und der geltenden Architektur‑Regeln (§ 4/§ 6 von `state/mountain/2026‑10‑18‑p10‑migration.φ`) wird folgender Beschluss gefasst.
+
+---
+
+## 1.  Was wird beschlossen?
+
+**Entscheidung D – je Rest ein eigenes Formular**  
+
+*Begründung*  
+
+| Rest‑Gruppe | Physikalischer Kontext | Risiko einer Fehl‑Aggregation | Aufwand für ein separates Arm‑Formular |
+|-------------|------------------------|------------------------------|----------------------------------------|
+| `eionet_cdr_*` | Emissions‑Inventar (kg a⁻¹) – kein existierendes *Rate‑Kind* | Ein gemeinsamer Arm würde ein neues *source‑parameter‑Kind* erzeugen, das in allen anderen P‑Pipelines nicht vorkommt. | Mittel – benötigt ein neues *Emission‑Rate‑Arm* inkl. RAT‑ID. |
+| Infraschall‑Signalgrößen | Amplituden‑/PSD‑/Frequenz‑Parameter – reine **Signal‑Kategorien** | Sie teilen keine physikalische Größe mit bestehenden *field*‑Armen. | Gering – ein *Signal‑Metric‑Arm* (nur Metadaten). |
+| Feuer‑Strahlungsleistung / Bandpowers | Leistung (MW) bzw. spektrale Power (µK²) – **Intensitäts‑/Leistungs‑Arm** fehlt. | Ein gemeinsamer Arm würde die *Intensity‑Axis* mit *Power‑Band‑Axis* vermischen. | Hoch – muss ein *Radiative‑Power‑Arm* gebaut werden, inkl. Unit‑Normalisierung. |
+| TEC / Pseudoranges / Delay | Ionosphären‑Laufzeitfeld – **Zeit‑/Delay‑Arm** fehlt. | Unterschiedliche Skalierung (m vs. s) verhindert sinnvolle Aggregation. | Mittel – ein *Propagation‑Delay‑Arm* ist nötig. |
+| `vis_nmi`, `morph_sigma` | Dimensionslose Indizes / Morphologie‑Metriken – **Index‑Achsen**. | Sie können nicht in ein physikalisches *quantity‑Arm* gepackt werden, weil sie keine Einheit besitzen. | Gering – ein *Index‑Axis‑Arm* (purely categorical). |
+| Stern‑Metadaten (Teff/logg/mag) | Stellar‑Parameter – **Source‑Parameter‑Kind** (einzelne Sterne). | Ein gemeinsamer Arm würde eine *Stellar‑Parameter‑Axis* erzeugen, die bisher nicht existiert. | Mittel – ein *Stellar‑Meta‑Arm* ist zu definieren. |
+| FDSN‑BHZ‑Kanalidentität | Zwei Wellenfelder teilen dieselbe *station‑less* Kanal‑ID. | Der aktuelle `Matrix::metas`‑Parser kann das nicht trennen → **Key‑Aufspaltung** nötig. | Gering – ein *Channel‑Key‑Split‑Arm* (nur Parser‑Erweiterung). |
+| `kg/(m^2 s)`‑Token | Token‑Parsing‑Fehler (unit‑token‑split). | Der Bug ist bereits identifiziert; ein Fix reicht aus. | Sehr gering – reiner Parser‑Patch. |
+
+Da jede Rest‑Gruppe **eigenen physikalischen Kontext** hat, würde ein Sammel‑Arm (Option A) zu einer **heterogenen, schwer wartbaren Architektur** führen und gleichzeitig mehrere neue *RAT‑IDs* benötigen, die dann wieder in separate Formulare auszulagern wären.  
+
+Option B (kleinste sichere Teilmenge) würde zwar den Parser‑Bug beheben, lässt aber die meisten physikalisch relevanten Rest‑Arme unbehandelt – das widerspricht dem Prinzip *„vollständige, nachvollziehbare Modellierung“* (vgl. § 4 Migration).  
+
+Option C (nichts bauen) würde die bestehenden Risse dauerhaft offen lassen und zukünftige Analysen unnötig behindern.  
+
+**Daher** wird **für jede Rest‑Gruppe ein eigenständiges Formular** erstellt, das den jeweiligen Arm definiert, die zugehörige RAT‑ID vergibt und die Implementierung (River‑Code + Mountain‑Register) plant.  
+
+---
+
+## 2.  Reihenfolge & Zuständigkeiten (falls A – hier als Referenz)
+
+> *Die nachfolgende Priorisierung ist nur informativ, falls ein späterer Beschluss auf Option A umschwenkt.*
+
+| Priorität | Arm‑Typ | Grund für Vorrang | River‑Team (Implementierung) | Mountain‑Team (Register‑Eintrag) |
+|-----------|---------|-------------------|------------------------------|-----------------------------------|
+| 1 | `kg/(m^2 s)`‑Token‑Fix | Bug‑Behebung, keine physikalische Änderung | **River‑Core** (unit‑token‑parser) | **Mountain‑Meta** (unit‑registry) |
+| 2 | FDSN‑BHZ‑Key‑Aufspaltung | Verhindert falsche Kanal‑Zuordnung in allen Station‑Daten | **River‑IO** (channel‑key‑split) | **Mountain‑Channel** (meta‑update) |
+| 3 | Stern‑Metadaten‑Achse | Erlaubt konsistente Stern‑Parameter‑Abfragen | **River‑Astro** | **Mountain‑Astro** |
+| 4 | TEC / Delay‑Arm | Wichtig für GNSS‑ und Ionosphären‑Modellierung | **River‑GNSS** | **Mountain‑GNSS** |
+| 5 | Feuer‑Strahlungs‑/Bandpower‑Arm | Relevanz für Vulkan‑/Feuer‑Monitoring | **River‑Thermo** | **Mountain‑Thermo** |
+| 6 | Infraschall‑Signal‑Arm | Ergänzt das akustische Monitoring‑Portfolio | **River‑Acoustic** | **Mountain‑Acoustic** |
+| 7 | `eionet_cdr_*`‑Emission‑Rate‑Arm | Basis für CO₂‑Bilanz‑Reporting | **River‑Emission** | **Mountain‑Emission** |
+| 8 | Index‑Achsen (`vis_nmi`, `morph_sigma`) | Unterstützt Klassifikations‑Workflows | **River‑Index** | **Mountain‑Index** |
+
+---
+
+## 3.  Minimal‑Notwendige Komponenten für Option B (falls doch gewählt)
+
+* **Parser‑Fix** für das `kg/(m^2 s)`‑Token (unit‑token.φ:8‑12).  
+* **Stern‑Metadaten‑Achse** (Teff, logg, mag) – ein *source‑parameter‑axis* ist bereits im `state/mountain/2026‑10‑18‑p10‑em.φ:122‑125` vorgesehen und kann ohne weitere physikalische Kinder aktiviert werden.  
+
+Die **FDSN‑Key‑Aufspaltung** ist **nicht** zwingend für die kleinste sichere Teilmenge, weil sie nur die interne Kanal‑Identität betrifft und keinen Einfluss auf die Quantitäts‑Semantik hat. Sie kann also im Rahmen von Option B weggelassen werden.
+
+---
+
+## 4.  Behandlung der nicht‑gebauten Reste (nach Beschluss D)
+
+* Jeder Rest, für den **kein Arm** gebaut wird, bleibt **`field`** und wird im **P10‑Verdikt‑Register** als **„Riss – bewusst nicht modelliert“** gekennzeichnet.  
+* Der Riss‑Eintrag enthält:
+  * **Rest‑Name** (z. B. `eionet_cdr_*`)  
+  * **Grund** (physikalisch kein passender Arm, separate Formulierung nötig)  
+  * **Verweis** auf das zu erstellende Formular (z. B. `F‑2026‑10‑19‑eionet‑arm`)  
+* Diese Kennzeichnung ist **permanent** und wird bei allen nachfolgenden Migration‑Durchläufen (P11, P12 …) berücksichtigt. Sie dient als **Erinnerungs‑ und Prioritäts‑Signal** für das zuständige Team, das später das entsprechende Formular ausarbeiten kann.
+
+---
+
+## 5.  Nächste Schritte (Umsetzung von D)
+
+| Schritt | Verantwortlich | Deadline | Ergebnis |
+|---------|----------------|----------|----------|
+| **5.1** Erstellung von 8 neuen Formular‑Templates (je Rest) | **Mountain‑Team** (Formular‑Koordinator → `M‑Formular‑Lead`) | **2026‑10‑31** | Leere, aber strukturierte Vorlagen (RAT‑ID, Scope, Dependencies). |
+| **5.2** Zuweisung der RAT‑IDs & Kurz‑Beschreibungen | **RAT‑Secretariat** | **2026‑11‑03** | Offizielle IDs (z. B. `R‑2026‑11‑01‑EIONET‑RATE`). |
+| **5.3** Implementierung der Parser‑Fixes (kg/(m^2 s) & FDSN‑Key) | **River‑Core** | **2026‑11‑10** | Unit‑Parser‑Patch, Unit‑Test‑Suite. |
+| **5.4** Erste Prototyp‑Implementierung (Stellar‑Meta‑Arm) | **River‑Astro** + **Mountain‑Astro** | **2026‑11‑20** | Funktionsfähiger Arm, Integrationstest. |
+| **5.5** Review‑Cycle (RAT) – Prüfung aller 8 Formulare + Code‑Änderungen | **RAT‑Review‑Board** | **2026‑12‑05** | Freigabe oder Rückmeldung. |
+| **5.6** Finaler Merge in `main` (River) & `mountain‑registry` (Mountain) | **Release‑Engineering** | **2026‑12‑15** | Produktions‑Release v2026.12. |
+| **5.7** Dokumentation & Schulung (für Analysten) | **Documentation‑Team** | **2026‑12‑20** | Updated `state/mountain/…` und interne Wiki‑Einträge. |
+
+---
+
+## 6.  Zusammenfassung für das Protokoll
+
+| Punkt | Entscheidung |
+|-------|--------------|
+| **1.** | **D – je Rest ein eigenes Formular** |
+| **2.** | (Nur informativ) Reihenfolge siehe Tabelle 2; River‑Team implementiert, Mountain‑Team trägt Register‑Einträge. |
+| **3.** | Für Option B (falls später gewählt) reicht **Parser‑Fix + Stern‑Metadaten‑Achse**; FDSN‑Key‑Aufspaltung ist nicht zwingend. |
+| **4.** | Nicht‑gebaute Reste bleiben **`field`** und werden als **„Riss – bewusst nicht modelliert“** im P10‑Verdikt‑Register geführt. |
+
+---
+
+*Dieses Dokument ist als offizielles RAT‑Beschlussprotokoll zu verstehen. Alle beteiligten Teams werden gebeten, die genannten Fristen einzuhalten und etwaige Risiken sofort an das RAT‑Secretariat zu melden.*  
+
+**Rat‑Unterschrift:**  
+
+```
+/rat
+_ rat-anweisung.md
+```

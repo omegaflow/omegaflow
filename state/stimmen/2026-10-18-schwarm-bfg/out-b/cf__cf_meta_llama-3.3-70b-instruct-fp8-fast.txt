@@ -1,0 +1,45 @@
+Die Frage betrifft die Registrierung von Konstanten und der Normalschwere γ₀ für das GRS80-Modell ohne einen Parser-Arm in `phi/sources.φ`. Es gibt vier Optionen, um dies zu erreichen:
+
+### Option A: Neue Direktiven im Register
+
+*   Vorteile:
+    *   Eine klare und strukturierte Möglichkeit, die Konstanten und die Normalschwere zu registrieren.
+    *   Der Parser-Arm kann in `src/archivar/parse.rs` implementiert werden.
+*   Nachteile:
+    *   Eine neue Direktive ist ein Schema-Akt, der eine Änderung der Architektur erfordert.
+    *   Es müssen zwei neue Direktiven (`ellipsoid` und `normal_gravity`) implementiert werden.
+
+### Option B: Eigener Konstanten-/Referenzblock
+
+*   Vorteile:
+    *   Eine Möglichkeit, die Konstanten und die Normalschwere in einem eigenen Block zu registrieren.
+    *   Der Block kann mit einer URL, Terms und anderen Metadaten versehen werden.
+*   Nachteile:
+    *   Die URL und die Terms für den Konstantenblock müssen gefunden werden, was bei der local-only-Quelle `calc.js` schwierig sein kann.
+    *   Es ist unklar, ob GeographicLib als Compiler zulässig ist.
+
+### Option C: Local-only, N bleibt pending
+
+*   Vorteile:
+    *   Keine Änderungen an der Architektur oder dem Parser-Arm sind erforderlich.
+    *   Die Werte können im Verdikt `state/mountain/2026-10-18-geodesy-grs80.φ` gespeichert werden.
+*   Nachteile:
+    *   Die Geoid-Funktion bleibt verschlossen, da `N` pending bleibt.
+    *   Die Werte sind nicht im Register registriert und können daher nicht von anderen Teilen des Systems verwendet werden.
+
+### Option D: Nur der künftige `gfc`-Block
+
+*   Vorteile:
+    *   Keine Änderungen an der Architektur oder dem Parser-Arm sind erforderlich.
+    *   Die Werte können im `gfc`-Block registriert werden, wenn dieser implementiert ist.
+*   Nachteile:
+    *   `N` bleibt pending, da die Normalschwere γ₀ nicht registriert ist.
+    *   Die Geoid-Funktion bleibt verschlossen, da `N` pending bleibt.
+
+Basierend auf den Vor- und Nachteilen jeder Option empfehle ich **Option A: Neue Direktiven im Register**. Diese Option bietet eine klare und strukturierte Möglichkeit, die Konstanten und die Normalschwere zu registrieren, und ermöglicht es, den Parser-Arm in `src/archivar/parse.rs` zu implementieren. Es ist jedoch wichtig, dass der Rat die Änderungen an der Architektur und dem Parser-Arm genehmigt und dass River den Parser-Arm implementiert, während Mountain die Werte setzt.
+
+Zusätzlich sollten die folgenden Punkte beachtet werden:
+
+*   Die Werte für `γe` und `γp` sind aus den vier gemessenen Konstanten gerechnet und sollten daher als solche gekennzeichnet werden.
+*   Der `gfc`-Block ist unabhängig davon offen und sollte separat bearbeitet werden.
+*   Die Belege für die Werte und die Quellen sollten sorgfältig dokumentiert werden, um die Reproduzierbarkeit und die Nachvollziehbarkeit der Ergebnisse zu gewährleisten.

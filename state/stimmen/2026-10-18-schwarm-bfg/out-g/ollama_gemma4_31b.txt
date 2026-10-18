@@ -1,0 +1,48 @@
+Dies ist eine Entscheidungsvorlage für den Rat zur Bereinigung der P10-Reste. Die Situation ist kritisch, da die Bilanz (241 Umtagungen) zwar formal abgeschlossen ist, die semantische Integrität der Reste jedoch eine Lücke in der Architektur (fehlende Arme) aufzeigt.
+
+### Analyse der Reste
+Die Reste lassen sich in drei Kategorien unterteilen:
+1. **Technische Defekte:** Der `kg/(m^2 s)`-Token (Parser-Bug).
+2. **Strukturelle Lücken:** Stern-Metadaten, FDSN-Kanalidentität (fehlende Achsen/Keys).
+3. **Physikalische Erweiterungen:** Emissionsinventar, Infraschall-Signalgrößen, Strahlungsleistung, TEC/Laufzeit (neue physikalische Kind-Typen).
+
+---
+
+### Empfehlung des Operators
+
+Ich empfehle **Option B (erweitert)**. 
+
+Ein vollständiger Ausbau (Option A) würde die Architektur-Last kurz vor dem Fahren der Sitze unnötig erhöhen und potenziell neue Instabilitäten in die `quantity`-Hierarchie einführen. Option C ist aufgrund des Parser-Bugs (`kg/(m^2 s)`) nicht vertretbar, da dies ein technischer Fehler und kein physikalischer Riss ist.
+
+**Konkreter Vorschlag zur Umsetzung von B+:**
+
+1. **Parser-Fix:** Sofortige Korrektur der `channel`-Direktive (Leerzeichen-Handling), um `kg/(m^2 s)` korrekt aufzulösen.
+2. **Strukturelle Minimal-Arme:** 
+   - Bau der **Stern-Metadaten-Achse** (da diese eine konsistente Gruppe bildet).
+   - Bau der **FDSN-Key-Aufspaltung** (da die Dubletten in `Matrix::metas` die Eindeutigkeit gefährden).
+3. **Physikalische Risse:** Alle anderen Gruppen (Emissionsinventar, Infraschall, Strahlungsleistung, TEC) bleiben `field`.
+
+---
+
+### Antworten auf die Fragen des Rates
+
+**1. A, B, C oder D?**
+**B (erweitert)**. Fokus auf technische Korrektheit und strukturelle Eindeutigkeit, Verzicht auf physikalische Expansion.
+
+**2. Falls A (nicht gewählt):**
+*Entfällt.*
+
+**3. Falls B: Reicht der Parser-Fix + Stern-Achse, oder ist die FDSN-Key-Aufspaltung ebenfalls minimal nötig?**
+Die FDSN-Key-Aufspaltung ist **minimal nötig**. Wenn zwei Wellenfelder dieselbe stationlose Identität teilen, ist die Adressierung im Register nicht mehr eindeutig. Dies ist ein strukturelles Risiko, kein physikalisches Detail.
+
+**4. Bleiben die nicht gebauten Reste dauerhaft `field` — und wird das als Riss oder als bewusste Abwesenheit geführt?**
+Sie bleiben `field`. Dies wird als **bewusste Abwesenheit** (Design-Decision) geführt und in den P10-Verdikten als "akzeptierter Riss" dokumentiert. Sollten diese Felder später für Analysen kritisch werden, muss ein neues Formular für die entsprechende physikalische Erweiterung (z.B. `Emissions-Kind`) gestellt werden.
+
+### Zusammenfassung der Anweisung für River/Mountain (falls B+ beschlossen wird):
+
+*   **River:** 
+    *   Fix `unit-token.φ:8-12` (Regex/Split-Logik für Einheiten mit Leerzeichen).
+    *   Implementierung der `Stern-Metadaten-Achse` und `FDSN-Key-Splitter`.
+*   **Mountain:** 
+    *   Umtagung der betroffenen Zeilen von `field` $\rightarrow$ `quantity` (nur für Parser-Fix, Stern und FDSN).
+    *   Dokumentation der verbleibenden `field`-Reste als "bewusste Abwesenheit" in `state/mountain/2026-10-18-p10-residuals.φ`.

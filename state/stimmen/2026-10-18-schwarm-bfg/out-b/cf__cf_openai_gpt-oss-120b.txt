@@ -1,0 +1,116 @@
+## 1. Entscheidung des Rats  
+
+**Beschluss:** **Option A** wird angenommen.  
+Wir führen **zwei neue Direktiven** ein – `ellipsoid` und `normal_gravity` – und bauen den zugehörigen Parser‑Arm in `src/archivar/parse.rs`.  
+
+*Begründung*  
+
+| Kriterium | A (neue Direktiven) | B (Konstanten‑Block) | C (lokal‑only, pending) | D (nur gfc‑Block) |
+|-----------|----------------------|----------------------|--------------------------|-------------------|
+| **Lizenz‑Konformität** | CC‑BY‑4.0 (IC‑GEM) + MIT (GeographicLib) – beides eindeutig zitier‑ und attribuier‑bar | Keine eindeutige URL/Terms → Lizenz‑Risiko | Keine Lizenz‑Angabe → Verstoß gegen § 2 (Registrierungs‑Pflicht) | Fehlende γ₀ → unvollständige Geoid‑Berechnung |
+| **Komplettheit des Registers** | Alle vier physikalischen Konstanten + γ₀ sind registriert → `N` kann berechnet werden | Werte sind im Register, aber das Schema kennt keinen „constants“‑Block → Inkonsistenz | Register bleibt lückenhaft → `N` bleibt dauerhaft pending | Gleiches Problem wie C |
+| **Wartbarkeit / Erweiterbarkeit** | Neue Direktiven passen in das bestehende *model‑block*‑Schema, werden von allen Tools (Parser, Validator, Export) automatisch unterstützt | Ein neuer Block‑Typ würde das Schema um ein Sonder‑Fall erweitern, was zu Divergenz zwischen `phi/sources.φ` und `phi/models.φ` führt | Keine Arbeit, aber das Register bleibt unbrauchbar | Keine Arbeit, aber das Register bleibt unbrauchbar |
+| **Implementations‑Aufwand** | ~ 150 Zeilen Code (Parser‑Arm, Tests) – bereits von River als *Architektur‑Akt* geplant | > 300 Zeilen (neuer Block‑Typ, neue Validierung, neue Serialisierung) | 0 (aber kein Nutzen) | 0 (aber kein Nutzen) |
+| **Zukunftssicherheit** | Direktiven können später um weitere Parameter (z. B. `flattening`, `GM`, `omega`) erweitert werden, ohne neue Block‑Typen zu definieren | Ein „constants“‑Block würde künftig für jede neue Referenz‑Konstante wiederholt werden müssen | Keine Zukunft | Keine Zukunft |
+
+Damit ist **Option A** die einzige Möglichkeit, das Register vollständig, lizenzkonform und erweiterbar zu halten.
+
+---
+
+## 2. Umsetzung – Details zu den neuen Direktiven  
+
+### 2.1 Syntax  
+
+| Direktive | Felder (Reihenfolge, optional) | Beispiel (aus dem Register) |
+|-----------|--------------------------------|------------------------------|
+| `ellipsoid` | `<name>` `a` `<m>` `f_inv` `<value>` `gm` `<m³/s²>` `omega` `<rad/s>` | `ellipsoid GRS80 a 6378137 f_inv 298.257222101 gm 3.986005e14 omega 7.292115e-5` |
+| `normal_gravity` | `<name>` `formula` `<identifier>` `gamma_e` `<m/s²>` `gamma_p` `<m/s²>` `reference` `<url>` | `normal_gravity GRS80 formula somigliana gamma_e 9.780326771535007 gamma_p 9.83218636851932 reference https://icgem.gfz.de` |
+
+*Hinweise*  
+
+* `formula` ist ein freier String, der das Berechnungsverfahren benennt – hier **somigliana**.  
+* `reference` ist obligatorisch und muss auf eine **öffentlich zugängliche** Quelle zeigen, die die Werte **explizit** oder **indirekt** (z. B. über die Formel) bereitstellt.  
+* Die Direktiven dürfen **nur** in `phi/sources.φ` vorkommen; Kommentare (`# …`) sind dort verboten, deshalb werden alle Metadaten in den Feldern selbst transportiert.
+
+### 2.2 Lizenz‑ und Quellen‑Angaben  
+
+| Quelle | Lizenz | Wie wird sie im Register angegeben? |
+|--------|--------|--------------------------------------|
+| **IC‑GEM calc.js** (enthält `refsys["GRS80"]`) | CC‑BY‑4.0 (über DOI 10.5880/ICGEM.2019.007) | `reference https://doi.org/10.5880/ICGEM.2019.007` (oder die ICGEM‑Landing‑Page) |
+| **GeographicLib** (C‑Code, Funktionen `GRS80_GM()`, `GRS80_omega()`) | MIT | `compiler GeographicLib (MIT)` – wird im **Header‑Kommentar** der Direktive als zusätzlicher optionaler Schlüssel `compiler` angegeben, z. B. `compiler "GeographicLib (MIT)"`. |
+
+Damit erfüllen wir die **Attributions‑Pflicht** beider Lizenzen:
+
+* **CC‑BY‑4.0** verlangt: *„Name, Titel, Quelle, Lizenz“* – wir geben den DOI (Quelle) und die Lizenz implizit über das Feld `reference`.  
+* **MIT** verlangt lediglich die Beibehaltung des Copyright‑Hinweises – das geschieht über das optionale Feld `compiler`.
+
+### 2.3 Parser‑Arm (Kurz‑Skizze)
+
+```rust
+// src/archivar/parse.rs  (Auszug)
+fn parse_ellipsoid(tokens: &[Token]) -> Result<Directive, ParseError> {
+    // Erwartet: ellipsoid <NAME> a <VAL> f_inv <VAL> gm <VAL> omega <VAL>
+    // Alle Werte werden als f64 gelesen, Name als String.
+    // Fehlende Felder → ParseError.
+    …
+}
+
+fn parse_normal_gravity(tokens: &[Token]) -> Result<Directive, ParseError> {
+    // Erwartet: normal_gravity <NAME> formula <ID> gamma_e <VAL> gamma_p <VAL> reference <URL> [compiler <STR>]
+    …
+}
+```
+
+*Die neuen Direktiven werden in `src/archivar/model.rs` als eigene Enum‑Varianten (`Ellipsoid`, `NormalGravity`) aufgenommen, damit die übrigen Komponenten (Validator, Exporter, `gfc`‑Berechnung) sie ohne weitere Änderungen nutzen können.*
+
+---
+
+## 3. Folgen für `N = T/γ₀`  
+
+* Sobald die `normal_gravity`‑Direktive mit `gamma_e`/`gamma_p` und dem **Referenz‑Ellipsoid‑Namen** (`GRS80`) im Register steht, kann `γ₀` (die **Normalschwere am Äquator**) aus `gamma_e` abgeleitet werden.  
+* Der Code‑Pfad `src/archivar/gfc.rs:404` wird nun **nicht mehr** `None` zurückgeben, sondern das berechnete `γ₀`.  
+
+**Darstellung im Register:**  
+
+```text
+# Die Zeile wird automatisch von `gfc` erzeugt, sobald γ₀ bekannt ist.
+N pending   // solange das Modell noch nicht geladen ist
+N 0.0001234 // nach erfolgreichem Laden von γ₀
+```
+
+*Bis die Direktiven im Register erscheinen, bleibt `N` als **pending‑Eintrag** erhalten (wie bereits im Code vorgesehen). Sobald die Direktiven committed sind, wird das `pending`‑Tag durch den numerischen Wert ersetzt – das ist das erwartete Verhalten.*
+
+---
+
+## 4. Antworten auf die konkreten Fragen  
+
+| # | Frage | Antwort |
+|---|-------|----------|
+| **1** | A, B, C oder D? | **A** (neue Direktiven) |
+| **2** | Sind zwei neue Direktiven zulässig, und baut River den Parser‑Arm, während Mountain die Werte setzt? | Ja. Das Schema erlaubt beliebig viele Direktiven, solange sie im *model‑block*‑Namespace definiert sind. River übernimmt den Parser‑Arm, Mountain fügt die beiden Zeilen (siehe Syntax oben) in `phi/sources.φ` ein. |
+| **3** | Welche `url`/`terms` trägt ein Konstanten‑Block, wenn die einzige gemessene Fundstelle local‑only ist? Ist GeographicLib (MIT, Code) als `compiler` zulässig? | Nicht mehr relevant, weil wir Option A wählen. (Falls B gewählt würde, gäbe es keine zulässige `url`/`terms` – das wäre ein Lizenz‑Risiko.) GeographicLib darf als `compiler`‑Angabe verwendet werden, weil die MIT‑Lizenz lediglich die Beibehaltung des Copyright‑Hinweises verlangt, was durch das Feld `compiler` erfüllt wird. |
+| **4** | Bleibt `N` bis zur Umsetzung pending — und wird das als `pending`‑Zeile oder als Abwesenheit geführt? | `N` bleibt **pending** und wird explizit als Zeile `N pending` im `gfc`‑Block geführt. Sobald `γ₀` aus der `normal_gravity`‑Direktive verfügbar ist, wird die Zeile automatisch durch `N <Wert>` ersetzt. |
+
+---
+
+## 5. Weiteres Vorgehen (To‑Do‑Liste)
+
+| Schritt | Verantwortlich | Frist |
+|--------|----------------|------|
+| **Schema‑Erweiterung** – Definition der neuen Direktiven im Dokumentations‑Repository (`docs/schema.md`). | River | 2026‑10‑25 |
+| **Parser‑Implementierung** – `parse_ellipsoid` & `parse_normal_gravity` + Unit‑Tests. | River | 2026‑10‑30 |
+| **Validator‑Erweiterung** – Prüfung, dass `reference` ein gültiger, öffentlich zugänglicher URL ist und dass `compiler` nur bei MIT‑/BSD‑Code verwendet wird. | River | 2026‑11‑02 |
+| **Eintrag im Register** – `phi/sources.φ` mit den beiden Direktiven, inkl. DOI‑Link und MIT‑Attribution. | Mountain | 2026‑11‑03 |
+| **Integrationstest** – `gfc`‑Berechnung läuft, `N` wird nicht mehr `None`. | Mountain | 2026‑11‑05 |
+| **Review & Merge** – Code‑Review durch den Rat, Merge in `main`. | Rat (Operator) | 2026‑11‑07 |
+| **Release‑Hinweis** – Update des Changelogs, Hinweis auf neue Direktiven. | Rat (Kommunikation) | 2026‑11‑08 |
+
+---
+
+## 6. Zusammenfassung  
+
+*Durch die Einführung der Direktiven `ellipsoid` und `normal_gravity` erhalten wir ein **vollständiges, lizenzkonformes und maschinenlesbares** Register der GRS80‑Parameter. Die `γ₀`‑Berechnung wird wieder funktionsfähig, `N` kann aus dem `gfc`‑Block abgeleitet werden, und das System bleibt erweiterbar für zukünftige Referenzellipsoide.*  
+
+Der Rat gibt hiermit den **Beschluss zu Option A** und die oben aufgeführten Implementierungs‑ und Dokumentations‑Aufgaben frei.  
+
+*Beschluss vom 2026‑10‑18, Rat für Geodäsie‑Daten‑Registrierung*
