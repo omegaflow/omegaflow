@@ -2,7 +2,7 @@
   title: Handover — Mountain 363 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: 430072a48918fdea88145a0d430a1527cd537363c9cb0797f3511e83343f760b
+  sha256: b84540b4d6e98c7732434cccce4af27be6d7191ccfc610f5c253b77dc4fb94d6
   status: live
 -->
 # Mountain-363
@@ -28,11 +28,7 @@
 ## An mycelium
 Origin: 363
 - `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.6~013eccdb` schließe mycelium `.5~4820be44`.
-
-## An river
-Origin: 363
-- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.8~6a8b77e8` Leser für `.13`.
-- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.9~3ed32602` K = pending, Träger `phi:893`.
+- `xfer:mountain.ses_ec618129fffeLFawr4V3pQKpOl.10~15b6b847` Restarme: HMI/EVE/EPTA/EDGES/WALLABY/Conicus/IceCube (Compiler, Reader, CDN).
 
 ## An future
 Origin: 363

@@ -162,6 +162,11 @@ z_key Z_B
 field e1 kids_dr4_wl_e1 <kernel> <force> 1 31536000 0.0 0.0
 field e2 kids_dr4_wl_e2 <kernel> <force> 1 31536000 0.0 0.0
 ```
+**Gesetzt 2026-10-18 (Mountain):** `phi:31397–31402` trägt jetzt `cmap .` · `ra RAJ2000` ·
+`dec DECJ2000` · `z_key Z_B` · `field e1 kids_dr4_wl_e1 inverse-square gravity 1 …` ·
+`field e2 …`. Der FITS-Subset-Leser steht (`src/archivar/fits_range.rs`, `17279769e`); die
+CDN-Naht trägt `sha256 dcc2bf03…`. Offen bleibt nur der 16,5-GiB-Vollzug im Content-Cache —
+kein fehlender field-Arm mehr.
 Offen: `force gravity` vs. `em`; `kernel inverse-square` vs. `inverse-linear`; Einheit `1` (nie
 `scalar`). Mycelium: sha256 + CDN-Matrix-Einträge + `tar_zst`-Arm. `format fits` braucht **keinen**
 neuen Compiler (eingebauter Arm), aber der 16,5-GiB-Vollzug im Content-Cache ist ein Blocker
@@ -200,6 +205,13 @@ das erklärt die 404 zwanglos. Zwei Zeilen, nie nachgezogen. Die Auflösung ber�
 Auger analog; `at earth` ergänzen; `format json` korrigieren. **Unit-Riss:** Auger-Energie in **EeV**
 fehlt in `units.rs` (`allowed_units_for_force(0)` und `-quantity(energy)`). Mycelium: Compiler-Gate,
 Spiegel, sha256. Mountain: `field`/`quantity`-Admission, Witness-Identität, `eev`-Unit.
+
+**Gesetzt 2026-10-18 (Mountain):** Auger `phi:19075` und IceCube `phi:14733` tragen
+`field … inverse-square em 1 31536000 0.0 0.0`; beide Blöcke führen `at earth`. Der
+Witness-Kreuz-Riss ist am HEAD bereits geheilt (`src/archivar/witness.rs:20-23`:
+`AMN1|PAO1|S2E1 → S2Direction`), die vier Record-Compiler laufen also nicht mehr in den
+Bruch. Offen: IceCube-`format json` vs. `.bin`, fehlender IceCube-Compiler, CDN-404 und
+die `eev`-Unit (Mycelium/Archivar).
 
 ---
 
@@ -272,6 +284,12 @@ Gated: MODIS `MOD08_D3` (LAADS, `EARTHDATA_EDL_TOKEN` **abwesend**), ERA5 via CD
 `cloud_cover,…` erweitern + vier Felder (`gaussian-inverse-square diffusion % 3600`). Mycelium:
 `url`/`origin`/`compiler`, CDN-Tags, Keys. Mountain: `field`/`ttl`/`terms`-Disposition, `field`
 vs. `quantity` beim Ereigniskatalog.
+
+**Gesetzt 2026-10-18 (Mountain):** Open-Meteo-`origin` (`phi:1656`) führt jetzt
+`cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high`; die vier Felder stehen
+`phi:1663–1666` (`gaussian-inverse-square diffusion % 3600`). Der generische
+`open_meteo_archive_compiler.rs` liest die Schlüssel. Offen: Asset-Neubau/CI und der
+TGF-3-Katalog (nur Abstract).
 
 ---
 

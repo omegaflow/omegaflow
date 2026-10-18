@@ -151,7 +151,3 @@ Ich hatte „UCAR-FPI E-Mail-gated = Operator" aus den Archiv-Notizen übernomme
 - **Charge/Plasmon** (Zenodo 15179114, `data.zip`): `Fig1c.csv` = **`XAS,XAS_hv`**; `Fig2b/Fig3a/Fig2c/*.txt` = Kopf **`# H = <wert> (<H scan|theta scan>)`** + **`# Energy (meV) Intensity (arb. units)`**.
 - **EELS** (Zenodo 21859473, `.mat` v5): Variablen **`ene`** (Energieachse) + **`eels_lineprofile`** (Linienprofil), Peak-Fitting → Spin-Oszillatoren (`harvest_eels`).
 - **SRD62**: NIST CeramicDataPortal, Penetration-Depth-Tabelle (`srd62_compiler`).
-
-
-
-**Fuzzy-Suche (2026-10-18, ebenfalls negativ):** `--all` mit den `.log`-Spalten (`ChiSqr Gamma dGamma QH QK QL KF NSE`) → nur unbeteiligte Treffer (Hydrologie-`NSE` = Nash-Sutcliffe, Gamma-Strahlung; kein Neutron/Spin-Echo); `--github`/`--sourcegraph` `TTAMEAN` → absent; `--zenodo` nur generische Neutron-Software. **Kein öffentlicher NSE-Datensatz mit diesen Spalten.** Der RESEDA/BaZrO3-Akt ist an future geroutet (`post/out/2026-10-18-mycelium-reseda-nse-datenantrag.md`): Operator-Datenantrag bei Braun, bei Freigabe als öffentlicher NSE-Parser-Fixture.
