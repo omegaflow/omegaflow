@@ -8199,7 +8199,7 @@ sha256 52cf6793f14e250ffc1436ce7f6fe6d92f6a066c433ec9efc66e4178f3d45a1f
 ttl 86400
 
 url https://maia.usno.navy.mil/ser7/finals2000A.all
-terms PD https://maia.usno.navy.mil/
+terms CC0-1.0 https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance
 format finals
 at earth
 ttl 86400
@@ -26907,7 +26907,7 @@ sha256 0a65df59c8685e22004ce7f7afa21cf54f7aedc39c2ecb5965b8fcad3dae97bd
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ser.im-ldi.com/mariner_m10_edr.bin
-terms PD https://ser.im-ldi.com/M10/
+terms CC0-1.0 https://doi.org/10.17189/1520314
 format mariner_m10_edr
 origin https://ser.im-ldi.com/M10/MVM/mvm_0001.tgz
 compiler tools/harvest/src/bin/mariner_m10_edr_compiler.rs
