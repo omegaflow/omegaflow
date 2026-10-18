@@ -160,12 +160,12 @@ fn handover_cap_violation(path: &str, content: &str) -> Option<String> {
     if !name.starts_with("handover-") || !name.ends_with(".md") {
         return None;
     }
-    if !header_status_live(content) || content.len() <= HANDOVER_CAP {
+    if !header_status_live(content) || handover_measured_len(content) <= HANDOVER_CAP {
         return None;
     }
     Some(format!(
-        "handover-cap: {path} is {} B (cap {HANDOVER_CAP}) — the open grows, the history does not. The fix is not to cut the text: close the open. The history is git. (operator word 2026-10-16)",
-        content.len()
+        "handover-cap: {path} is {} B (cap {HANDOVER_CAP}, without `## Offen`) — the open grows, the history does not. The fix is not to cut the text: close the open. The history is git. (operator word 2026-10-16)",
+        handover_measured_len(content)
     ))
 }
 
@@ -187,18 +187,80 @@ fn git_head_content(path: &str) -> Option<String> {
 
 fn count_open_points(content: &str) -> usize {
     let mut in_offen = false;
-    let mut n = 0;
+    let mut hashes = 0usize;
+    let mut bullets = 0usize;
     for line in content.lines() {
         let t = line.trim_start();
         if let Some(rest) = t.strip_prefix("## ") {
             in_offen = rest.trim().to_lowercase().starts_with("offen");
             continue;
         }
-        if in_offen && t.starts_with("### ") {
-            n += 1;
+        if !in_offen {
+            continue;
+        }
+        if t.starts_with("### ") {
+            hashes += 1;
+        } else if line.starts_with("- ") {
+            bullets += 1;
+        }
+    }
+    if hashes > 0 {
+        hashes
+    } else {
+        bullets
+    }
+}
+
+fn handover_measured_len(content: &str) -> usize {
+    let mut in_offen = false;
+    let mut n = 0usize;
+    for seg in content.split_inclusive('\n') {
+        let t = seg.trim_start();
+        if let Some(rest) = t.strip_prefix("## ") {
+            in_offen = rest.trim().to_lowercase().starts_with("offen");
+        }
+        if !in_offen {
+            n += seg.len();
         }
     }
     n
+}
+
+fn open_points_without_braucht(content: &str) -> Vec<String> {
+    let mut in_offen = false;
+    let mut sections: Vec<(usize, usize, String)> = Vec::new();
+    let mut lines: Vec<&str> = Vec::new();
+    for (i, line) in content.lines().enumerate() {
+        lines.push(line);
+        let t = line.trim_start();
+        if let Some(rest) = t.strip_prefix("## ") {
+            in_offen = rest.trim().to_lowercase().starts_with("offen");
+            continue;
+        }
+        if !in_offen {
+            continue;
+        }
+        if t.starts_with("### ") {
+            sections.push((0, i, t.trim_start_matches('#').trim().to_string()));
+        } else if line.starts_with("- ") {
+            sections.push((1, i, t.trim_start_matches("- ").chars().take(48).collect()));
+        }
+    }
+    let hashes = sections.iter().filter(|(k, _, _)| *k == 0).count();
+    let mut missing = Vec::new();
+    for (idx, (kind, line_idx, name)) in sections.iter().enumerate() {
+        if hashes > 0 && *kind != 0 {
+            continue;
+        }
+        let end = sections.get(idx + 1).map(|(_, l, _)| *l).unwrap_or(lines.len());
+        let has = lines[*line_idx..end]
+            .iter()
+            .any(|l| l.to_lowercase().contains("braucht"));
+        if !has {
+            missing.push(name.clone());
+        }
+    }
+    missing
 }
 
 fn claimed_closed(content: &str) -> Option<usize> {
@@ -485,7 +547,12 @@ fn main() {
         }
     }
     for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
-        if !path.contains("handover/") || !path.ends_with(".md") || path.contains("/archiv/") {
+        let base = path.rsplit('/').next().unwrap_or("");
+        if !path.contains("handover/")
+            || !path.ends_with(".md")
+            || path.contains("/archiv/")
+            || !base.starts_with("handover-")
+        {
             continue;
         }
         let content = match std::fs::read_to_string(path) {
@@ -494,6 +561,11 @@ fn main() {
         };
         if let Some(message) = handover_cap_violation(path, &content) {
             eprintln!("commit_check: {message}");
+        }
+        for missing in open_points_without_braucht(&content) {
+            eprintln!(
+                "commit_check: {path}: open point `{missing}` has no `Braucht:` line - a point without its missing step is not addressable"
+            );
         }
         if let Some(before) = git_head_content(path) {
             let was = count_open_points(&before);
@@ -641,7 +713,7 @@ mod tests {
         assert_eq!(
             handover_cap_violation(live_path, &big),
             Some(format!(
-                "handover-cap: {live_path} is {} B (cap {HANDOVER_CAP}) — the open grows, the history does not. The fix is not to cut the text: close the open. The history is git. (operator word 2026-10-16)",
+                "handover-cap: {live_path} is {} B (cap {HANDOVER_CAP}, without `## Offen`) — the open grows, the history does not. The fix is not to cut the text: close the open. The history is git. (operator word 2026-10-16)",
                 big.len()
             ))
         );
@@ -657,5 +729,23 @@ mod tests {
         );
         let consumed = big.replace("status: live", "status: consumed");
         assert_eq!(handover_cap_violation(live_path, &consumed), None);
+        let with_offen = format!(
+            "{header}{}\n## Offen\n{}",
+            "x".repeat(HANDOVER_CAP - header.len() - 1),
+            "y".repeat(HANDOVER_CAP)
+        );
+        assert_eq!(handover_cap_violation(live_path, &with_offen), None);
+    }
+
+    #[test]
+    fn open_points_count_both_styles() {
+        assert_eq!(
+            count_open_points("## Offen\n- one\n- two\n## An river\n- not-a-point\n"),
+            2
+        );
+        assert_eq!(
+            count_open_points("## Offen\n### a\n- sub\n### b\n## An river\n"),
+            2
+        );
     }
 }

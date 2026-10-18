@@ -1,6 +1,6 @@
-# Lage — generiert 2026-10-18T13:19:49Z
+# Lage — generiert 2026-10-18T14:13:49Z
 
-HEAD `3e3f0a4ce`
+HEAD `2f90e252c`
 
 ## Sitze / Routen (Gateway)
 - Katalog: 1918 Modelle
@@ -8,6 +8,13 @@ HEAD `3e3f0a4ce`
 - Guthaben (USD):
   openrouter	-1.7770357660000116
   deepseek	214.24
+
+## Offen je Linie (Handover)
+  mountain   0 offen ·  0 Braucht ·  0 offene Traeger · handover-2026-10-18-mountain-folge362.md
+  mycelium   4 offen ·  0 Braucht ·  1 offene Traeger · handover-2026-10-16-mycelium-folge361.md
+  river      3 offen ·  3 Braucht ·  3 offene Traeger · handover-2026-10-18-river-folge227.md
+  sensory    2 offen ·  2 Braucht ·  0 offene Traeger · handover-2026-10-14-sensory-folge259.md
+  future     5 offen ·  5 Braucht ·  0 offene Traeger · handover-2026-10-18-future-folge1.md
 
 ## Offene Rat-Fragen (Register)
   | R-2026-10-18-i | 2026-10-18 | **F1 — Quittung im Token-Ledger** — ACK im Empfänger-Ledger vs. `CLOSED` im Emitter; `--addressed` S1/S2 | Fugu · Lumo · DeepSeek | **Runde 2 gefahren** — 2:1 **A + S2** (Fugu, Lumo), DeepSeek **C + S2**; Schwarm R1 A. **Operator schließt** | `2026-10-18-f1-quittung-formular.md` | →future | `2026-10-18-rat-3f-runde2-sammlung.md` |
@@ -17,12 +24,12 @@ HEAD `3e3f0a4ce`
 
 ## Letzte Läufe / Sammlungen
   _lage.md
+  2026-10-18-rat-m-sammlung.md
   2026-10-18-rat-3f-runde2-sammlung.md
   2026-10-18-rat-h-sammlung.md
   2026-10-18-rat-3f-sammlung.md
   2026-10-15-venus-bild-rat-verdikt.md
   2026-10-15-china-planetendaten-rat-verdikt.md
   2026-10-15-mountain-rat-fragen-sh-kernel-verdikt.md
-  2026-10-15-nachfrage-f7-f4-verdikt.md
 
 Regenerieren: `bin/lage`
