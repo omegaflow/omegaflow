@@ -60,22 +60,39 @@ jobs:
             -o data/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin \
             'https://github.com/omegaflow/sources/releases/download/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin'
       - name: Fetch the WDC Kyoto Kp series (3-hourly)
-        if: inputs.cond_field == 'kp'
+        if: contains(inputs.cond_field, 'kp')
         run: |
           set -euo pipefail
           mkdir -p data/wdc.kugi.kyoto-u.ac.jp
           curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
             -o data/wdc.kugi.kyoto-u.ac.jp/hour3h_kp.csv \
             'https://wdc.kugi.kyoto-u.ac.jp/hapi/data?id=hour3h_kp&start=1981-08-08T00:00:00Z&stop=1983-02-17T00:00:00Z&format=csv'
-      - name: Fetch the DE-2 orbit (altitude and local time)
+      - name: Fetch the DE-2 orbit (altitude and local time) in chunks
         if: contains(inputs.cond_field, 'lt') || contains(inputs.cond_field, 'alt')
         run: |
           set -euo pipefail
           mkdir -p data/cdaweb.gsfc.nasa.gov
-          curl -sSfL --retry 5 --retry-all-errors --max-time 900 \
-            -o data/cdaweb.gsfc.nasa.gov/de2_orbit_lt_alt.csv \
-            'https://cdaweb.gsfc.nasa.gov/hapi/data?id=DE2_LAPI_ORBIT-ATTITUDE@0&time.min=1981-08-08T00:00:00Z&time.max=1983-02-17T00:00:00Z&parameters=Time,LAPI__Altitude,LAPI__Local&format=csv'
-          test "$(head -c 1 data/cdaweb.gsfc.nasa.gov/de2_orbit_lt_alt.csv)" != "{"
+          out=data/cdaweb.gsfc.nasa.gov/de2_orbit_lt_alt.csv
+          : > "$out"
+          for range in \
+            "1981-08-08 1981-11-15" \
+            "1981-11-15 1982-02-15" \
+            "1982-02-15 1982-05-15" \
+            "1982-05-15 1982-08-15" \
+            "1982-08-15 1982-11-15" \
+            "1982-11-15 1983-02-17"
+          do
+            set -- $range
+            chunk=$(mktemp)
+            curl -sSfL --retry 5 --retry-all-errors --max-time 600 \
+              "https://cdaweb.gsfc.nasa.gov/hapi/data?id=DE2_LAPI_ORBIT-ATTITUDE@0&time.min=${1}T00:00:00Z&time.max=${2}T00:00:00Z&parameters=Time,LAPI__Altitude,LAPI__Local&format=csv" -o "$chunk"
+            test "$(head -c 1 "$chunk")" != "{"
+            cat "$chunk" >> "$out"
+            rm -f "$chunk"
+          done
+          test "$(head -c 1 "$out")" != "{"
+          test "$(wc -l < "$out")" -gt 100000
+          tail -1 "$out"
       - name: Run the conditioned TE (both directions, raw vs conditioned)
         run: |
           {
