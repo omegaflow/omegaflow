@@ -2,7 +2,7 @@
   title: Handover — River-Folge 227 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: e69aa3218622d2f9e55761b444ac6bb7278ea99baaeb19266f4eefef5b0a4774
+  sha256: b299221ff595801e4e00ccdf2b38e31244e42c3dcd521cbf41063b1f6ec25344
   status: live
 -->
 # River-226
@@ -14,8 +14,9 @@
 ### K
 - **Status:** pending
 - **Trigger:** Rat R-2026-10-17-j (5/5 A)
-- **Lage:** pending (gemessen 2026-10-18)
-- **Blockade:** WDC-Reihe identifiziert K nicht
+- **Lage:** pending (gemessen 2026-10-18) — Mountain-Zeile ist gesetzt (`state/mountain/2026-10-18-k-pending.φ`, Träger `phi:893`, `xfer:mountain.…9~3ed32602`); `phi/sources.φ` hat keine `K`-Skalarzeile (grep 0), die Grammatik trägt `pending` nur als coupling-Rate
+- **Blockade:** kein `∇p`, kein `B/j`, Ein-Satellit — die physikalische Impulsbilanz-Lücke; **nicht** die Mountain-Zeile
+- **Offen:** bedingte TE als eigener Indikator, nicht als `K`; vor dem Bau Kadenz-Mismatch beantworten (Kp 3 h / Dst 1 h / AE 1 min gegen 1 Satellit)
 - **Braucht:** `state/stimmen/2026-10-17-rat-k-identifizierbar.md:1`
 
 ### Rätsel
