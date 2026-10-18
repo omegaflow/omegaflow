@@ -2,7 +2,7 @@
   title: Survey — Verlorene/vergessene Diskussionen über beide Historien (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: 5bd307268fe2312017aace6da0f46789c98e8d3cdd7dae70663fc230717d580e
+  sha256: 9008e5f3ae123a639a019b2c584ab183b9e3c49588b585c1145423321bcfb8d0
   status: live
   see-also: docs/surveys/survey-2026-09-17-omegaflow-legacy-konzepte.md
 -->
@@ -127,7 +127,8 @@ diese Karte ergänzt die Diskussions-/Entscheidungs-Nähte, ohne zu duplizieren.
 
 ## Die eine offene Messung vor den Entscheidungen
 
-Das sources-Repo (`omegaflow/sources`, I02/refresh.yml) ist lokal nicht geklont —
-dort entscheidet sich, ob der 5-min-Takt irgendwo lebt und ob die I02-Python-
-Behauptung noch stimmt. Erst diese Messung macht (b1) und (c5) entscheidbar:
-bauen oder Doku auf die Wahrheit korrigieren.
+Das sources-Repo (`omegaflow/sources`, I02/refresh.yml) ist lokal nicht geklont.
+**Remote gemessen 2026-10-18:** `git ls-remote` → HEAD `610dd52e`; Root = `data/` +
+README, **kein** `.github/workflows`; README: „Flattened CDN assets … the register is
+`phi/sources.φ`". Der 5-min-Takt lebt dort nicht (mehr). Damit ist (b1)/(c5)
+entscheidbar: die Doku auf die Wahrheit korrigieren, nicht bauen.
