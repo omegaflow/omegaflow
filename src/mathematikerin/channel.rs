@@ -64,6 +64,7 @@ pub enum TransportOp {
     Wave = 2,
     Poisson = 3,
     Maxwell = 4,
+    Creep = 5,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -226,6 +227,7 @@ fn regime_of(op: TransportOp, pde_type: PdeType) -> PdeRegime {
         TransportOp::Flux(_) => PdeRegime::Diffusive,
         TransportOp::Advective => PdeRegime::Advective,
         TransportOp::Poisson => PdeRegime::Constraint,
+        TransportOp::Creep => PdeRegime::QuasiStatic,
     }
 }
 
@@ -237,6 +239,7 @@ impl TransportOp {
             "flux-ohm" => Some(TransportOp::Flux(FluxKind::Ohm)),
             "flux-newton-viscous" => Some(TransportOp::Flux(FluxKind::NewtonViscous)),
             "advective" => Some(TransportOp::Advective),
+            "creep" => Some(TransportOp::Creep),
             "wave" => Some(TransportOp::Wave),
             "poisson" => Some(TransportOp::Poisson),
             "maxwell" => Some(TransportOp::Maxwell),
@@ -575,6 +578,7 @@ impl ChannelDescriptor {
             TransportOp::Wave => h = fnv1a(&[2u8], h),
             TransportOp::Poisson => h = fnv1a(&[3u8], h),
             TransportOp::Maxwell => h = fnv1a(&[4u8], h),
+            TransportOp::Creep => h = fnv1a(&[5u8], h),
         }
         h = fnv1a(&[self.pde_type as u8], h);
         h = fnv1a(&[self.medium as u8], h);
@@ -610,6 +614,7 @@ impl ChannelDescriptor {
             TransportOp::Wave => "wave",
             TransportOp::Poisson => "poisson",
             TransportOp::Maxwell => "maxwell",
+            TransportOp::Creep => "creep",
         };
         let pde = match self.pde_type {
             PdeType::Elliptic => "elliptic",
@@ -755,6 +760,9 @@ pub fn is_admissible(conserved: Conserved, op: TransportOp, medium: Medium) -> b
         ),
         TransportOp::Maxwell => conserved == Conserved::Energy || conserved == Conserved::Momentum,
         TransportOp::Poisson => matches!(conserved, Conserved::Mass | Conserved::Charge),
+        TransportOp::Creep => {
+            conserved == Conserved::Momentum && medium == Medium::ElasticSolid
+        }
     }
 }
 
@@ -853,7 +861,7 @@ pub struct Mechanism {
     pub interaction: Option<Interaction>,
 }
 
-pub const MECHANISMS: [Mechanism; 9] = [
+pub const MECHANISMS: [Mechanism; 10] = [
     Mechanism {
         tag: "em",
         operator: TransportOp::Maxwell,
@@ -917,6 +925,13 @@ pub const MECHANISMS: [Mechanism; 9] = [
         boundary: Boundary::None,
         interaction: None,
     },
+    Mechanism {
+        tag: "momentum",
+        operator: TransportOp::Creep,
+        pde_type: PdeType::Elliptic,
+        boundary: Boundary::None,
+        interaction: None,
+    },
 ];
 
 pub fn mechanism_of(tag: &str) -> Option<&'static Mechanism> {
@@ -940,7 +955,7 @@ pub struct FixedChannel {
     pub medium: Medium,
 }
 
-pub const FIXED_CHANNELS: [FixedChannel; 9] = [
+pub const FIXED_CHANNELS: [FixedChannel; 10] = [
     FixedChannel {
         tag: "em",
         conserved: Conserved::Energy,
@@ -995,6 +1010,12 @@ pub const FIXED_CHANNELS: [FixedChannel; 9] = [
         unit: "Pa",
         medium: Medium::Fluid,
     },
+    FixedChannel {
+        tag: "momentum",
+        conserved: Conserved::Momentum,
+        unit: "mm/yr",
+        medium: Medium::ElasticSolid,
+    },
 ];
 
 pub fn descriptor_for_force(name: &str, medium: Medium) -> Option<ChannelDescriptor> {
@@ -1024,12 +1045,13 @@ pub fn descriptor_for_channel_ref(ft: u8) -> Option<ChannelDescriptor> {
 
 pub fn channel_ref_of_descriptor(d: &ChannelDescriptor) -> Option<u8> {
     let h = d.hash();
-    (0..9u8).find(|&ft| descriptor_for_channel_ref(ft).is_some_and(|fd| fd.hash() == h))
+    (0..FIXED_CHANNELS.len() as u8)
+        .find(|&ft| descriptor_for_channel_ref(ft).is_some_and(|fd| fd.hash() == h))
 }
 
 pub fn live_channel_registry() -> ChannelRegistry {
     let mut reg = ChannelRegistry::with_capacity(CHANNEL_CAP);
-    for ft in 0..9u8 {
+    for ft in 0..FIXED_CHANNELS.len() as u8 {
         if let Some(d) = descriptor_for_channel_ref(ft) {
             reg.register(d);
         }
@@ -1050,7 +1072,7 @@ pub fn mode_regime(op: TransportOp) -> ModeRegime {
         TransportOp::Wave | TransportOp::Maxwell => ModeRegime::Propagating,
         TransportOp::Advective => ModeRegime::Advective,
         TransportOp::Flux(_) => ModeRegime::Diffusive,
-        TransportOp::Poisson => ModeRegime::Constraint,
+        TransportOp::Poisson | TransportOp::Creep => ModeRegime::Constraint,
     }
 }
 
@@ -2177,6 +2199,7 @@ pub fn unit_token(token: &str) -> Option<&'static str> {
         "kg/m^3" => Some("kg/m^3"),
         "kg/(m^2 s)" => Some("kg/(m^2 s)"),
         "m^-3" => Some("m^-3"),
+        "mm/yr" => Some("mm/yr"),
         "1" => Some("1"),
         _ => None,
     }
@@ -3806,10 +3829,10 @@ mod tests {
 
     #[test]
     fn every_live_channel_ref_carries_a_descriptor() {
-        for ft in 0..9u8 {
+        for ft in 0..FIXED_CHANNELS.len() as u8 {
             assert!(descriptor_for_channel_ref(ft).is_some(), "force type {ft}");
         }
-        assert!(descriptor_for_channel_ref(9).is_none());
+        assert!(descriptor_for_channel_ref(10).is_none());
     }
 
     #[test]
@@ -3847,7 +3870,7 @@ mod tests {
 
     #[test]
     fn every_channel_ref_round_trips_through_its_descriptor() {
-        for ft in 0..9u8 {
+        for ft in 0..FIXED_CHANNELS.len() as u8 {
             let d = descriptor_for_channel_ref(ft).expect("descriptor");
             assert_eq!(channel_ref_of_descriptor(&d), Some(ft), "force type {ft}");
         }
@@ -3872,9 +3895,53 @@ mod tests {
     }
 
     #[test]
-    fn a_live_registry_carries_nine_channels_and_a_stable_fingerprint() {
+    fn the_momentum_creep_channel_carries_crustal_deformation_rates() {
+        assert_eq!(unit_token("mm/yr"), Some("mm/yr"));
+        let d = descriptor_from_axes(
+            "primary",
+            "momentum",
+            "creep",
+            "elliptic",
+            "elastic-solid",
+            "none",
+            "mm/yr",
+        )
+        .expect("a secular crustal deformation rate builds a descriptor");
+        assert_eq!(channel_ref_of_descriptor(&d), Some(9));
+        assert_eq!(d.unit, "mm/yr");
+        assert_eq!(d.regime, PdeRegime::QuasiStatic);
+        assert_eq!(
+            descriptor_for_force("momentum", Medium::ElasticSolid).map(|x| x.hash()),
+            Some(d.hash())
+        );
+        let matching: Vec<u8> = (0..FIXED_CHANNELS.len() as u8)
+            .filter(|&ft| descriptor_for_channel_ref(ft).is_some_and(|fd| fd.hash() == d.hash()))
+            .collect();
+        assert_eq!(matching, vec![9], "the momentum channel stays unique");
+
+        assert_eq!(crate::force::force_id_of("seismic-body"), Some(1));
+        assert_eq!(crate::force::force_id_of("advective"), Some(4));
+
+        assert!(is_admissible(
+            Conserved::Momentum,
+            TransportOp::Creep,
+            Medium::ElasticSolid
+        ));
+        assert!(!is_admissible(
+            Conserved::Momentum,
+            TransportOp::Creep,
+            Medium::Fluid
+        ));
+        assert!(
+            !is_admissible(Conserved::Momentum, TransportOp::Advective, Medium::ElasticSolid),
+            "momentum stays outside the fluid advection law"
+        );
+    }
+
+    #[test]
+    fn a_live_registry_carries_ten_channels_and_a_stable_fingerprint() {
         let reg = live_channel_registry();
-        assert_eq!(reg.len(), 9);
+        assert_eq!(reg.len(), 10);
         assert_eq!(reg.schema_hash(), live_schema_hash());
         assert_eq!(reg.schema_hash(), live_channel_registry().schema_hash());
     }

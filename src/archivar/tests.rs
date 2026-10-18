@@ -567,7 +567,8 @@ fn test_allowed_units_for_force() {
     assert!(allowed_units_for_force(0).contains(&"nt"));
     assert!(allowed_units_for_force(7).contains(&"k"));
     assert!(allowed_units_for_force(4).contains(&"m/s"));
-    assert!(allowed_units_for_force(9).is_empty());
+    assert!(allowed_units_for_force(9).contains(&"mm/yr"));
+    assert!(allowed_units_for_force(10).is_empty());
     assert!(allowed_units_for_force(0).contains(&"mag"));
     assert!(allowed_units_for_force(0).contains(&"jy_km/s"));
     assert!(allowed_units_for_force(0).contains(&"k.m/s"));
