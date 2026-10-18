@@ -45,3 +45,14 @@ Die ASU-Seite hat keine Lizenz-/Terms-Seite. Dieselben Roh-EDRs führt das **NAS
   Harvest-Quelle auf CDDIS/PDS (neue `origin`, neuer `sha256`, CDN-Release) ist ein eigener Bau-Schritt.
 
 **Beleg:** Commit mit dieser Datei + `phi/sources.φ`. Zitate oben, gemessen 2026-10-18.
+
+## Nachtrag 2026-10-18 — die Attitude hat doch eine PD-Quelle
+
+Der Satz oben („kein Archiv mit offener Lizenz führt diese Datei") gilt für die **ASU-Datei selbst**.
+Für die **Haltung** gibt es aber eine public-domain-Alternative, die bei der ersten Messung übersehen
+wurde (NAIF-only geprüft): die **ISIS-Datenarea** `usgs_data/mariner10` (S3) führt **4 CK + 4 SPK**.
+Verifizierte Kommentare: `MERCURY_MARINER_10_A.bc` = *„RAND Corrected Type 1 Segment Mariner10"*,
+`MERCURY_MARINER_10_A.bsp` = *„RAND Corrected Type 9 Segment Mariner10"* — USGS/NASA, public domain.
+
+**Grenze:** RAND-korrigiert (1976er Netz) = **externer Fit**, kein Unabhängigkeitsbeweis; die
+ASU/Robinson-Pose kann genauer sein. `*Nominal.pvl` = Reseaus, keine Attitude.
