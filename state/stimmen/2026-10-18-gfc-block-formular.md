@@ -55,6 +55,8 @@ Schnellster Bau; 719 ist die belegte Topographie-Forward-Naht.
    und den Block zuletzt? Assetname `gfc.bin` vs. `gfc_2159.bin`/`gfc_760.bin`?
 5. **5399 vs. 5540/5480:** bei ICGEM/den Autoren klären oder als offenen Metadaten-Widerspruch
    im Block/Verdikt führen?
+6. **Unnormalisierte Modelle > Grad ~160:** Überlauf bei m=161 (wahre Werte > `f64::MAX`);
+   skalierte Synthese in `harmonic_sums` bauen (API-/Design-Akt) oder weiterhin `None`?
 
 ## Riss, der bleibt
 
