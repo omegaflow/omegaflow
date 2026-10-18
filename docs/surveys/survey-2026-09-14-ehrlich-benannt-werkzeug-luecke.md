@@ -2,7 +2,7 @@
   title: Survey — Ehrlich benannt: wo das Werkzeug fehlte (Stand 2026-09-14)
   class: survey
   date: 2026-09-14
-  sha256: 769cb3cef47118f6712c1c8c00cfad063f2efe0f6d33b957439ce45da39b069c
+  sha256: 4aab5b37a0e4d70f38806978ece6f7b5eb2950dd64940d0b3752147f1be14811
   status: live
   see-also: docs/specs/ref-auth-apis.md docs/concepts/archiv/docs-naming.md
 -->
@@ -133,9 +133,10 @@ Verdikt existiert nicht mehr als Register-Zeile; die Lücke war real gemessen
   Jahres-Verzeichnisse 2007–2015 offen, MAVEN-TNF in PDS (LID
   `urn:nasa:pds:maven.rose.raw:data.tnf`). Web-Suche (`--tavily`): kein offener
   Galileo-ODF-Host gefunden. **Fehlender Arm: TRK-2-34/TNF-Parser** — Doppler-Phase;
-  `odf.rs` trägt TRK-2-18 Format-1/2. Die Format-1-vs-2-Frage ist jetzt an echten
-  offenen Dateien messbar; der Galileo-ODF selber bleibt die einzige ungefundene
-  Datei-Klasse — `pending`, kein Wall.
+  `odf.rs` trägt TRK-2-18 Format-1/2. **Der TNF-Parser ist gebaut** (`src/archivar/odf.rs`:
+  `scan_tnf_sfdus`/`tnf_dt0`; `tools/harvest/src/bin/tnf_compiler.rs` + `*_tnf_compiler.rs`) —
+  der Doppler-Arm fehlt nicht mehr. Der Galileo-ODF selber bleibt die einzige
+  ungefundene Datei-Klasse — `pending`, kein Wall.
 - **FITS/TDAT-Reader AMS-02 — `open`; der alte dead-Eintrag ist falsifiziert.**
   `archive_search --heasarc table=ams02spec rows=5` → **live**: 10 Spalten, echte
   Zeilen (ENERGY 0.433–1800 GeV, RIGIDITY 1–1800 GV, MJD 55701–58266 =
@@ -144,8 +145,8 @@ Verdikt existiert nicht mehr als Register-Zeile; die Lücke war real gemessen
   → **HTTP 200, 174 884 B, gzip-Magic** (dazu `heasarc_ams02rates.tdat.gz`).
   Unkomprimiertes `.tdat` und `fits_files/*_fits.tar.gz` = 404 — das offene
   Artefakt ist das `.tdat.gz`; die W3Browse-Oberfläche ist heute Xamin/JS.
-  **Fehlender Arm: TDAT-Reader** — HEASARC-TDAT = FITS-Variante, am ersten
-  `.tdat.gz` messbar. Plus Register-Pflicht: AMS-02 als `live` (W3Browse+tdat)
+  **TDAT-Reader gebaut:** `src/archivar/tdat.rs` +
+  `tools/harvest/src/bin/ams02_tdat_compiler.rs`. Plus Register-Pflicht: AMS-02 als `live` (W3Browse+tdat)
   neu anlegen statt tote Zeile.
 - **Parquet / GRIB-2 / OPeNDAP — `open`.** Alle drei Formate haben offene,
   anonyme bzw. mit vorhandenem Token offene Endpunkte. Parquet:
