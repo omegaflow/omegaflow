@@ -13,10 +13,15 @@ on:
         type: string
         default: '300'
       cond_seconds:
-        description: 'conditioner bin width in seconds; 0 = same as bin_seconds (coarsen AE alone, e.g. 10800 for Kp cadence)'
+        description: 'conditioner bin width in seconds; 0 = same as bin_seconds (coarsen the conditioner alone, e.g. 10800 for Kp cadence)'
         required: false
         type: string
         default: '0'
+      cond_field:
+        description: 'conditioner series from the WDC bin: ae | dst | symd'
+        required: false
+        type: string
+        default: 'ae'
       max_lag:
         description: 'lag sweep in bins, 1..max_lag'
         required: false
@@ -53,9 +58,10 @@ jobs:
         run: |
           {
             echo "SHA $(git rev-parse HEAD)"
-            echo "BIN_SECONDS ${{ inputs.bin_seconds }} COND_SECONDS ${{ inputs.cond_seconds }} MAX_LAG ${{ inputs.max_lag }} SURR ${{ inputs.surr }}"
+            echo "BIN_SECONDS ${{ inputs.bin_seconds }} COND ${{ inputs.cond_field }} COND_SECONDS ${{ inputs.cond_seconds }} MAX_LAG ${{ inputs.max_lag }} SURR ${{ inputs.surr }}"
             cargo run --release -p omegaflow-measure --bin de2_conditional_te -- \
               --bin-seconds '${{ inputs.bin_seconds }}' \
+              --cond '${{ inputs.cond_field }}' \
               --cond-seconds '${{ inputs.cond_seconds }}' \
               --max-lag '${{ inputs.max_lag }}' \
               --surr '${{ inputs.surr }}'
