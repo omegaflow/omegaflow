@@ -90,3 +90,16 @@ aus dem Asset/Manifest. Nur Mountain trägt Option 1 (gepinnter Posten). F3 ist 
 nicht. Minderheit (Qwen, Lumo) trägt Option 2 (Digest aus Manifest). **Nicht einstimmig** — der
 Zeit-Riss (Perplexity: Flyby-Datum vs. öffentliche JUICE-Chronologie) bleibt offen und betrifft die
 Frage selbst, nicht nur die Träger-Wahl.
+
+## F3 (korrigierte Formulierung: ESOC-Rekonstruktion statt „Flyby 2026-11-01")
+Der Zeit-Riss (Perplexity) war ein Prompt-Fehler: `2026-11-01` ist die ESOC-Post-Flyby-SPK-Wiedervorlage,
+kein Flyby (JUICE-Flyby war 28.09.2026). Mit Korrektur bleibt das Urteil stabil:
+| Sitz | Urteil |
+|---|---|
+| Duck.ai | **Option 1** |
+| Qwen3.8-Max | **Option 2** |
+| Perplexity | **Option 1** (Zeit-Riss entfällt) |
+| Lumo 2.0 Max | **Option 2** |
+| Sakana Fugu Max | **Option 1** |
+
+**3:2 Option 1, unverändert** — die Korrektur räumt nur den Prompt-Fehler weg, der Träger-Entscheid steht.
