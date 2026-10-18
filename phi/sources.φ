@@ -27264,6 +27264,15 @@ sha256 b68842c95c0bd66c3fff18c837cb7cbdeae28165890bb8c10e75356ddd2a015a
 at juice
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_official.bin
+terms PD-USGov https://ssd.jpl.nasa.gov/
+format ephemeris_binary
+origin procedure: sealed official JUICE arc — recursive SPK/PCK flatten from the archived sources index (juice-arc-restore, run 37165635404)
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 aeb3c82ff3de672116ff7f8c28592d97ea05c5e78b8f652521d2cf3cae57488a
+at juice
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_cog.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
