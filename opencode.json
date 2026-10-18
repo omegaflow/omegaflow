@@ -74,6 +74,26 @@
     },
     {
       "action": "shell",
+      "resource": "opencode.json",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": ".opencode/**",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "AGENTS.md",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
+      "resource": "tools/gate/**",
+      "effect": "deny"
+    },
+    {
+      "action": "shell",
       "resource": "archive_search *",
       "effect": "allow"
     },
