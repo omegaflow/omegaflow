@@ -105,10 +105,8 @@ Subagent** erledigen — er ist billiger und war im Test **zahlentreuer als mein
   in *„I cannot execute shell commands"* — korrekt und nutzlos.
 - **OpenCode-Subagent** (`general` + `model:`) = hat die Shell. Das ist der Weg.
 
-**Freie Modelle als OpenCode-Provider (nicht im Gateway):** `opencode/deepseek-v4.1-flash-free` ·
-`opencode/glm-5.3-flash-free` · `opencode/mimo-v2.6-flash-free` · `opencode/beam-free` ·
-`opencode/longcat-2.5-preview-free` · `opencode/space-bunny-free` ·
-`opencode/nemotron-3.5-super-vl-free`.
+**Freie Modelle als OpenCode-Provider (nicht im Gateway)** — **live lesen, keine feste Liste**
+(`opencode models | grep -- '-free$'`; gemessen 2026-10-18: 9 — die alte 7er-Liste war schon veraltet).
 
 **Grenze, gemessen:** ein „n Pfade offen" ohne Zeitstempel ist eine Momentaufnahme, kein Zustand —
 die Zahl wuchs während des Tests 10→13→15. Wer sie berichtet, nennt den Zeitpunkt.

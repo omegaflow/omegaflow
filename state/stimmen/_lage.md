@@ -1,9 +1,9 @@
-# Lage — generiert 2026-10-18T15:35:59Z
+# Lage — generiert 2026-10-18T15:38:44Z
 
-HEAD `de56b1c68`
+HEAD `1d025ab2a`
 
 ## Sitze / Routen (Gateway)
-- Katalog: 1917 Modelle
+- Katalog (tsv, letzter Gateway-Start): 1917 Modelle
 - Lebendige freie Chat-Modelle: 9
 - Freier Schwarm: live aus den Preis-0-Zeilen + OpenCode-free — keine feste Zahl
 - Guthaben (USD):

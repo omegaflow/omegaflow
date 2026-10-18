@@ -34,7 +34,7 @@ done)
   echo "HEAD \`$head_sha\`"
   echo
   echo "## Sitze / Routen (Gateway)"
-  echo "- Katalog: $models Modelle"
+  echo "- Katalog (tsv, letzter Gateway-Start): $models Modelle"
   echo "- Lebendige freie Chat-Modelle: $alive"
   echo "- Freier Schwarm: live aus den Preis-0-Zeilen + OpenCode-free — keine feste Zahl"
   if [ -n "$balance" ]; then
