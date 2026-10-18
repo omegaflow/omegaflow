@@ -2,7 +2,7 @@
   title: Survey — DE-2 Ion↔Neutral-Kopplung (erste Messung)
   class: survey
   date: 2026-10-17
-  sha256: dc94b48807f45be3e040bb67df6b0771e4fb59ff2b7b8a46eef2f4a92f2395b5
+  sha256: 8fc15c8005beb9af6f841961e34448753540127ca6ff77c24fdc0e5bcc067da2
   status: live
   see-also: docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md
 -->
@@ -70,6 +70,10 @@ das Haus, **nicht** die Deutung.
 
 ## Nächster Schritt
 
+0. **HAPI-Route gebaut** (`tools/harvest/src/bin/de2_compiler.rs`: `DE2_UA16S_ALL` mit
+   `WATS_NVEneutralWind`/`WATS_NVUneutralWind` + `RPA_NIionDensity`/`IVE`/`IVN`) — die
+   16-s-Paarung ist ohne Roh-Parser baubar. Der Roh-Parser bleibt nur für die dichtere
+   2-s/250-ms-Paarung nötig.
 1. Rust-Parser für WATS-2s (fixed-width) + IDM (mehrzeilig, s/c) → dichtere Paarung.
 2. **Kausalität prüfen:** die lag-abhängige Richtungsdrehung gegen einen **gemeinsamen Treiber**
    (Konvektion/Joule) testen — sonst bleibt „bidirektional" mehrdeutig.
