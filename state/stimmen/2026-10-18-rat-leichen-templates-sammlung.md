@@ -6,6 +6,10 @@ welcher Reihenfolge?
 **Formular:** `2026-10-18-rat-leichen-templates-formular.md` · **Index:** `_rat-register.md`
 **Runde:** API-Sitze über das Gateway (9) — kein UI-Roster. Der Operator kann den UI-Roster
 ergänzen, das Verdikt steht schon.
+**Korrektur (2026-10-19):** auch diese Runde fuhr paid (DeepSeek, Kimi K3, Claude Sonnet 5.5,
+Qwen3.8-Max) **ohne Operator-Wort** — Verstoß gegen `_rat-anweisung.md` §0a. Der freie Schwarm
+(Nemotron, pollinations, Gemma, GLM-5.2) war bereits einstimmig **B**; die paid-Sitze sind
+überzogen und tragen nichts zum Verdikt bei.
 
 ## Die Bilanz — neun Sitze, ein Verdikt
 

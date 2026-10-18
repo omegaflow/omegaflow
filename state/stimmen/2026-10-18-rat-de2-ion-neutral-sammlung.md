@@ -4,6 +4,9 @@
 lag-abhängige Umkehr echt oder ein Vielfach-Test-Artefakt?
 **Formular:** `2026-10-18-rat-de2-ion-neutral-formular.md` · **Index:** `_rat-register.md`
 **Methode:** Wissenschaft (archive_search) → Schwarm (frei) → paid, mit Stimmen und Axiomen.
+**Korrektur (2026-10-19):** die paid-Runde wurde **ohne Operator-Wort** gefahren — Verstoß gegen
+`_rat-anweisung.md` §0a. Sie ist **überzogen** und trägt nichts zum Verdikt bei: der freie
+Schwarm war bereits einstimmig **D (4/4)**. Das Verdikt D gilt aus dem freien Schwarm.
 
 ## Die Bilanz — acht Sitze, ein Verdikt
 
