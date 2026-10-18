@@ -1,10 +1,9 @@
-# Lage — generiert 2026-10-18T15:38:44Z
+# Lage — generiert 2026-10-18T15:39:31Z
 
-HEAD `1d025ab2a`
+HEAD `9b4bef096`
 
 ## Sitze / Routen (Gateway)
-- Katalog (tsv, letzter Gateway-Start): 1917 Modelle
-- Lebendige freie Chat-Modelle: 9
+- Katalog (tsv, letzter Gateway-Start): 1917 · frei: 47 · lebendig: 9
 - Freier Schwarm: live aus den Preis-0-Zeilen + OpenCode-free — keine feste Zahl
 - Guthaben (USD):
   openrouter	-1.7770357660000116
