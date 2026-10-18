@@ -170,6 +170,8 @@ pub const GFC_SYNTHESIS_CONVENTION: &str = "ICGEM gravity-field spherical-harmon
 
 pub const GFC_HEAD_MEASURED: &str = "XGM2019e (measured 2026-10-15, https://icgem.gfz.de/getmodel/gfc/8e01a2aba4f291ac0638b79a390155713b70fdc9b266981023c756839c11c9b8/XGM2019e.gfc): product_type gravity_field, earth_gravity_constant 3.986004415E+14 m^3/s^2, radius 6378136.3 m, max_degree 5540, norm fully_normalized, tide_system zero_tide";
 
+pub const GFC_DEGREE_SEAM_MEASURED: &str = "XGM2019e degree seam (measured 2026-10-18): the head carries max_degree 5540 and no 2190 boundary or provenance note; the DOI 10.5880/ICGEM.2019.007 abstract says 'up to d/o 5399' and places topographic forward modelling 'beyond d/o 719' — a 2190 seam is not supported by head or abstract, while 5399 (abstract) and 5540 (head and file end) remain an unresolved wording difference";
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct GfcHead {
     pub product_type: Option<String>,
@@ -509,28 +511,82 @@ pub struct GfcSums {
     pub weighted: f64,
 }
 
+fn scaled_by_pow2(mut x: f64, mut e: i32) -> f64 {
+    if x == 0.0 || !x.is_finite() {
+        return x;
+    }
+    let two_pow_1023 = f64::from_bits(0x7fe0_0000_0000_0000);
+    let two_pow_m1022 = f64::from_bits(0x0010_0000_0000_0000);
+    while e > 1023 {
+        x *= two_pow_1023;
+        e -= 1023;
+        if !x.is_finite() {
+            return x;
+        }
+    }
+    while e < -1022 {
+        x *= two_pow_m1022;
+        e += 1022;
+        if x == 0.0 {
+            return x;
+        }
+    }
+    x * f64::from_bits(((e + 1023) as u64) << 52)
+}
+
+pub const GFC_LEGENDRE_RECURRENCE: &str = "fully_normalized_legendre runs column by column over m with a mantissa/exponent pair (scaled_by_pow2); the sectorial seed Pbar_mm ~ m^(1/4) * sin^m(theta) falls below f64 around m ~ 2155 at 45 deg, and a quantised subnormal seed would be amplified by the forward recurrence in n (measured 1.3e21 at degree 3211, 2.3e271 at 5540); the column is rescaled so the returned values underflow only where the true function itself is below f64";
+
 pub fn fully_normalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
     let costh = theta.cos();
     let sinth = theta.sin();
     let mut p = vec![vec![0.0f64; nmax + 1]; nmax + 1];
     p[0][0] = 1.0;
-    if nmax >= 1 {
-        p[1][0] = 3.0f64.sqrt() * costh;
-        p[1][1] = 3.0f64.sqrt() * sinth;
+    if nmax == 0 {
+        return p;
     }
-    for n in 2..=nmax {
-        let nf = n as f64;
-        p[n][n] = ((2.0 * nf + 1.0) / (2.0 * nf)).sqrt() * sinth * p[n - 1][n - 1];
-        p[n][n - 1] = (2.0 * nf + 1.0).sqrt() * costh * p[n - 1][n - 1];
-        let (head, tail) = p.split_at_mut(n);
-        let (prev1, prev2) = (&head[n - 1], &head[n - 2]);
-        for (m, pn) in tail[0].iter_mut().enumerate().take(n - 1) {
+    const LN_2: f64 = std::f64::consts::LN_2;
+    let two_pow_500 = f64::from_bits(((500 + 1023) as u64) << 52);
+    let two_pow_m500 = f64::from_bits(((1023 - 500) as u64) << 52);
+    let mut log_seed = 0.0f64;
+    for m in 0..=nmax {
+        if m == 1 {
+            log_seed = 0.5 * 3.0f64.ln() + sinth.ln();
+        } else if m > 1 {
             let mf = m as f64;
+            log_seed += 0.5 * ((2.0 * mf + 1.0) / (2.0 * mf)).ln() + sinth.ln();
+        }
+        if !log_seed.is_finite() {
+            continue;
+        }
+        let mut exp = (log_seed / LN_2).floor() as i32;
+        let mut q = (log_seed - exp as f64 * LN_2).exp();
+        let mf = m as f64;
+        p[m][m] = scaled_by_pow2(q, exp);
+        if m == nmax {
+            continue;
+        }
+        let mut q1 = (2.0 * mf + 3.0).sqrt() * costh * q;
+        p[m + 1][m] = scaled_by_pow2(q1, exp);
+        for n in (m + 2)..=nmax {
+            let nf = n as f64;
             let a = (((2.0 * nf - 1.0) * (2.0 * nf + 1.0)) / ((nf - mf) * (nf + mf))).sqrt();
             let b = (((2.0 * nf + 1.0) * (nf + mf - 1.0) * (nf - mf - 1.0))
                 / ((nf - mf) * (nf + mf) * (2.0 * nf - 3.0)))
                 .sqrt();
-            *pn = a * costh * prev1[m] - b * prev2[m];
+            let mut q2 = a * costh * q1 - b * q;
+            let mx = q1.abs().max(q2.abs());
+            if mx > two_pow_500 {
+                q1 *= two_pow_m500;
+                q2 *= two_pow_m500;
+                exp += 500;
+            } else if mx < two_pow_m500 && mx > 0.0 {
+                q1 *= two_pow_500;
+                q2 *= two_pow_500;
+                exp -= 500;
+            }
+            p[n][m] = scaled_by_pow2(q2, exp);
+            q = q1;
+            q1 = q2;
         }
     }
     p
@@ -677,6 +733,125 @@ gfc      2     2    2.439370331756250E-06   -1.400307649958125E-06    8.11752994
         assert!((p[2][0] - 5f64.sqrt() * (3.0 * c * c - 1.0) / 2.0).abs() < 1e-14);
         assert!((p[2][1] - 15f64.sqrt() * s * c).abs() < 1e-14);
         assert!((p[2][2] - 15f64.sqrt() / 2.0 * s * s).abs() < 1e-14);
+    }
+
+    const MP_REF: &[(usize, usize, f64, f64)] = &[
+        (85, 0, 45.0, -1.2404603756012743048),
+        (85, 1, 45.0, -0.73393786858797019682),
+        (85, 42, 45.0, 1.4750703868802640957),
+        (85, 85, 45.0, 7.3498200372266330342e-13),
+        (85, 0, 89.9, 0.1677604177244617338),
+        (85, 1, 89.9, 1.5780780321113025157),
+        (85, 42, 89.9, -0.22162310959627642106),
+        (85, 85, 89.9, 4.570832390217962276),
+        (100, 0, 45.0, -1.2390773444479872023),
+        (100, 1, 45.0, 0.71969854667053032575),
+        (100, 50, 45.0, 1.671356558707947213),
+        (100, 100, 45.0, 4.2272150510644499137e-15),
+        (100, 0, 89.9, 1.1110586821007327561),
+        (100, 1, 89.9, -0.27846885810633214557),
+        (100, 50, 89.9, -1.6935324402083511657),
+        (100, 100, 89.9, 4.7586961857535621054),
+        (2190, 0, 45.0, -0.51358464840558916697),
+        (2190, 1, 45.0, -1.7533706180622403355),
+        (2190, 1095, 45.0, 2.1908091701695147581),
+        (2190, 2190, 45.0, 2.421282600828352286e-329),
+        (2190, 0, 89.9, 0.87629587435790758175),
+        (2190, 1, 89.9, -1.005332330848525881),
+        (2190, 1095, 89.9, 0.28941866621095586526),
+        (2190, 2190, 89.9, 10.243352470919649011),
+        (3211, 0, 45.0, -0.51346565757772660671),
+        (3211, 1, 45.0, 1.7531614355019763338),
+        (3211, 1605, 45.0, -2.0601052967918170591),
+        (3211, 3211, 45.0, 5.6204349082144929146e-483),
+        (3211, 0, 89.9, 0.70781430392225261117),
+        (3211, 1, 89.9, -1.2427711608527041654),
+        (3211, 1605, 89.9, -0.24358797384396973742),
+        (3211, 3211, 89.9, 11.253924186718485479),
+        (5540, 0, 45.0, -1.2397206740328346543),
+        (5540, 1, 45.0, 0.72609968854937096286),
+        (5540, 2770, 45.0, -2.1165749083480080163),
+        (5540, 5540, 45.0, 1.8178024195861823826e-833),
+        (5540, 0, 89.9, -1.0946236675139281711),
+        (5540, 1, 89.9, 0.38740266413562647264),
+        (5540, 2770, 89.9, 0.85310963797865049823),
+        (5540, 5540, 89.9, 12.851982633058219265),
+    ];
+
+    #[test]
+    fn fully_normalized_legendre_holds_from_degree_85_to_5540() {
+        for &nmax in &[85usize, 100, 2190, 3211, 5540] {
+            for &colat in &[0.0f64, 45.0, 89.9] {
+                let p = fully_normalized_legendre(nmax, colat.to_radians());
+                let mut max_abs = 0.0f64;
+                let mut zeros = 0usize;
+                for (n, row) in p.iter().enumerate() {
+                    for (m, &v) in row.iter().enumerate().take(n + 1) {
+                        assert!(
+                            v.is_finite(),
+                            "P[{n}][{m}] not finite at nmax {nmax}, colat {colat}: {v}"
+                        );
+                        if v == 0.0 {
+                            zeros += 1;
+                        }
+                        max_abs = max_abs.max(v.abs());
+                    }
+                }
+                let mut worst_rel = 0.0f64;
+                let mut worst_n = 0usize;
+                for n in 0..=nmax {
+                    let sum: f64 = p[n][..=n].iter().map(|v| v * v).sum();
+                    let expected = (2 * n + 1) as f64;
+                    let rel = (sum - expected).abs() / expected;
+                    if rel > worst_rel {
+                        worst_rel = rel;
+                        worst_n = n;
+                    }
+                }
+                let mut worst_ref = 0.0f64;
+                for &(rn, rm, rc, expected) in MP_REF {
+                    if rn != nmax || rc != colat {
+                        continue;
+                    }
+                    let got = p[rn][rm];
+                    if expected.abs() < 1e-300 {
+                        assert_eq!(
+                            got, 0.0,
+                            "P[{rn}][{rm}] at colat {colat} must underflow to zero, got {got}"
+                        );
+                    } else {
+                        let rel = (got - expected).abs() / expected.abs();
+                        worst_ref = worst_ref.max(rel);
+                        assert!(
+                            rel <= 1e-10,
+                            "P[{rn}][{rm}] at colat {colat}: got {got}, mpmath {expected}, \
+                             rel {rel:.3e}"
+                        );
+                    }
+                }
+                eprintln!(
+                    "nmax={nmax:5} colat={colat:4.1} max|P|={max_abs:.6e} zeros={zeros:8} \
+                     addition_rel={worst_rel:.3e} at n={worst_n} ref_rel={worst_ref:.3e}"
+                );
+                assert!(
+                    worst_rel <= 1e-8,
+                    "addition theorem fails at nmax {nmax}, colat {colat}: \
+                     rel {worst_rel:.3e} at n {worst_n}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn the_factorial_boundary_is_measured_below_degree_86() {
+        let f170: f64 = (1..=170).map(|k| k as f64).product();
+        assert!(f170.is_finite() && f170 <= f64::MAX);
+        assert!((f170 * 171.0).is_infinite());
+        let theta = std::f64::consts::FRAC_PI_4;
+        for m in [85usize, 86, 100] {
+            let p = fully_normalized_legendre(m, theta);
+            assert!(p[m][m].is_finite(), "P[{m}][{m}] must stay finite");
+        }
     }
 
     #[test]
