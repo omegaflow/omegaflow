@@ -11737,9 +11737,10 @@ field amp_mean voyager_occlt_amp_mean inverse-square em count 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager_saturn.bin
 format voyager_saturn
-origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_encounter_data/
+origin https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager1/radio_science_rss/saturn_encounter_data/ ; https://spdf.gsfc.nasa.gov/pub/data/voyager/voyager2/radio_science_rss/saturn_encounter_data/
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 compiler tools/harvest/src/bin/voyager_saturn_compiler.rs
+sha256 97d4253c7e8a5ae932082f242c050183402293e1de4370330b4269aab7731aff
 at earth
 ttl 604800
 field doppler_count_hp voyager_saturn_doppler_count_hp inverse-square em count 604800 0.0 0.0
