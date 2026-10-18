@@ -120,3 +120,29 @@ Qwen streichen spart **$0,00212 (11 %)** — mehr nicht. Kimi zu ersetzen ist **
 verdient sein Geld an **Design-Gabelungen** (hier: wie wird die ID validiert), nicht an breiten Fragen.
 Für die nächste Runde ist die **ungetestete** Hypothese: `deepseek/deepseek-v4-pro` ($0,66/$1,98,
 `#low`) als Reasoning-Sitz — halber Preis von Kimi, gleiche Klasse. **Nicht gemessen, nur benannt.**
+
+## Korrektur der KPI-Nachlese (gemessen 2026-10-18, Operator: „Kann man den reasoning effort steuern?")
+
+**Ja — und er ist die entscheidende Stellschraube.** Dieselbe Gabelungsfrage, verschiedene Budgets:
+
+| Sitz | Reasoning-Tokens | Wahl | Kosten |
+|---|---|---|---|
+| Kimi K2.6 `#none` | **0** | **b — falsch** | $0,00196 |
+| DeepSeek V4 Pro `#low` | 360 | **a — richtig** | **$0,00974** |
+| GLM-5.3 `#low` | 1.572 | **a — richtig** | $0,01284 |
+| Kimi K2.6 (default/thinking) | 2.143 | a — richtig | $0,01444 |
+
+**Die vorige Aussage „Kimi war nötig" war falsch verglichen.** Sie stammte aus der **vollen** Frage
+an drei Sitze. Auf der **gezielten** Gabelung sehen **DeepSeek und GLM** das Bootstrapping genauso —
+DeepSeek am billigsten.
+
+**Der billigste Weg mit derselben Qualität (gemessen):**
+```
+Schwarm (frei)  +  gezielte Gabelungsfrage an DeepSeek V4 Pro #low   =  $0,0097
+```
+gegen $0,0187 für die volle Frage an drei Sitze → **48 % günstiger**.
+
+**Die drei Regeln, die daraus folgen:**
+1. **Breite Frage → freier Schwarm** ($0). Er findet die Risse.
+2. **Eine Gabelung → ein Reasoning-Modell mit `low`** (DeepSeek/GLM), nicht die teuerste Spitze.
+3. **`#none` ist kein Schnäppchen, sondern ein Qualitätsverlust** — Kimi ohne Reasoning wählt falsch.
