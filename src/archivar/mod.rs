@@ -86,6 +86,7 @@ pub mod fink;
 pub mod fink_cutout;
 pub mod fit;
 pub mod fits;
+pub mod fits_range;
 pub mod fk;
 pub mod flac;
 pub mod flyby_encounters;
