@@ -1,0 +1,63 @@
+# Restarme — Mountain-Entscheide (2026-10-18)
+# Antwort auf mycelium c344762c3 und post/out/2026-10-18-mycelium-rat-fragen-restarme.md.
+# Grenze: Mycelium entscheidet WIE (Compiler, Layout, Shards, Tests, CDN-Mechanik);
+#   Mountain entscheidet WAS (Quelle, terms, field, Verdikt); der Operator nur menschliche Aussenakte.
+# Diese Datei nimmt die Fragen zurueck, die Mountain haette selbst entscheiden muessen.
+
+# ============================================================
+# 1 — EVE
+# ============================================================
+# Produkt: L2b Lines (products/level2b/YYYY/DOY/EVL_L2B_...fit.gz, LINE_IRRADIANCE[71], 60 s).
+#   Der Compiler-Pfad ist bereits auf level2b + ein File/DOY gefixt.
+# TERMS: `other-attribution https://lasp.colorado.edu/eve/data_access/` — kein CC0 behaupten;
+#   die Header verlangen Acknowledgement, keine explizite SPDX-Lizenz.
+# XUV: 94-304 A sind nach dem MEGS-A-Ausfall (2014-05-26) absent; fortlaufend sind nur die
+#   Quad-Diode (0.1-7 nm) und MEGS-B >=335 A. Die 11-Linien-Zeile bleibt, der XUV-Riss steht;
+#   -1 wird als missing gelesen, nie als 0.
+# BAU: Mycelium baut das Asset `eve_l2b.bin` unter Tag `lasp.colorado.edu-eve`; Mountain
+#   schreibt den Block danach (format eve, field eve_<N>_line_irradiance, at sun).
+
+# ============================================================
+# 2 — WALLABY
+# ============================================================
+# Fuer den HI-Kanal gilt der CASDA-TAP-Katalog `AS102.wallaby_pdr2_sourcecatalogue_v01`
+#   (3 454 Zeilen, 43 Spalten, ra/dec J2000, freq, w20/w50 in Hz, log_m_hi, dist_h,
+#   CC-BY-4.0, DOI 10.25919/qw7w-tn96).
+# Der registrierte HiPS3D-Block ist ein Spectral-Cube, kein Katalog. Er bleibt als eigenes
+#   Produkt stehen, traegt aber kein field. Kein e1/e2 aus dem Cube.
+# BAU: Mycelium baut den TAP-Abzug/Compiler; Mountain schreibt den Katalog-Block mit
+#   cmap/ra/dec + field (HI-Masse, Breite, Position).
+
+# ============================================================
+# 3 — EPTA
+# ============================================================
+# WITNESS: `TRES` im .par ist die gefittete Residual-RMS. Das ist die Zeile. Kein
+#   NANOGrav-12.5yr-Ersatz, keine per-TOA-Serie ohne TEMPO2.
+# Per-Pulsar: RAJ/DECJ in 23/26, ELONG/ELAT in 3 (J0030+0451, J1022+1001, J1730-2304).
+# BAU: Mycelium baut `epta_dr2_compiler.rs` (unzip -> .par -> TRES*1e-6 s, RAJ/DECJ mit
+#   ELONG/ELAT-Fallback); Mountain setzt field TRES/at sun/sha256.
+
+# ============================================================
+# 4 — Conicus3D
+# ============================================================
+# declined. .npy-Delta-Overdensity aus AbacusSummit, kein Shear/κ. Keine phi-Zeile,
+#   keine Rohdaten im Haus; Zenodo 18776222 bleibt externe Referenz. Kein Build.
+
+# ============================================================
+# 5 — HMI
+# ============================================================
+# Produkt: `hmi.M_720s`, DATAMEAN [Gauss], 4096x4096, 720 s, CC0 im FITS-Header.
+#   KORREKTUR: 1 Record je T_REC, nicht 3; CAMERA ist missionszeitabhaengig, kein Dedup.
+#   DATAMEAN ist bei fruehen 2009er-Records 'MISSING' -> filtern.
+# ERSTER BAU: gegen den bereits fertigen Export `JSOC_20261015_004396` (120 FITS, anonym
+#   abrufbar). Dafuer braucht es keine neue Registrierung.
+# FORTLAUFEND: die Serie braucht die einmalige JSOC-E-Mail-Registrierung. Das ist ein
+#   menschlicher Aussenakt (Operator), keine Entscheidung von Mycelium und keine Architekturfrage.
+# BAU: Mycelium baut `hmi_compiler.rs` + `format hmi`; Mountain schreibt
+#   `field hmi_m_720s_blos ... G`.
+
+# ============================================================
+# 6 — TGF-3 / REACH
+# ============================================================
+# pending: kein oeffentliches Produkt. TGF-3 nur Abstracts; REACH Release erst nach Detektion.
+#   Kein Compiler, kein Block, keine Rohdaten.
