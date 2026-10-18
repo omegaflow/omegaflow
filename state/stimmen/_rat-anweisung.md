@@ -10,21 +10,24 @@ findet diese Datei daneben. **Der kanonische Weg steht hier — es gibt keinen a
 
 ## 1 — Die Sitze, Routen und Eigenschaften (gemessen an den APIs, 2026-10-17)
 
-**API-Sitze** — direkt gegen die Anbieter, Keys in `~/projects/omegaflow/.secrets.local`:
+**Die Leiter (Operator-Wort, Commits `91682fc3d` · `039a6ee55` · `2266bf2ba` · `d72e2cdc9`):**
+`free > Mistral inklusive > DeepSeek paid > Mistral paid`.
+**DeepInfra nur für (a) PII, wo Mistral nicht ausreicht, und (b) Frontier (Kimi-Klasse) — nie Linienarbeit.**
+PII läuft zuerst über Mistral.
 
-| Sitz | Route | Modell-ID | Kontext | Vision | in/out per M |
-|---|---|---|---|---|---|
-| **Mistral Large 4** | `api.mistral.ai` | `mistral-large-4` | — | ✓ | **$0,50 / $1,50** |
-| **GLM-5.3** | `api.deepinfra.com` | `zai-org/GLM-5.3` | 1 048 576 | — | $0,90 / $4,00 |
-| **DeepSeek V4 Pro** | `api.deepinfra.com` | `deepseek-ai/DeepSeek-V4-Pro` | 1 048 576 | — | $1,30 / $2,60 |
-| **Qwen3.8-Max** | `api.deepinfra.com` | `Qwen/Qwen3.8-Max` | 256 000 | — | $1,65 / $4,95 |
-| **Kimi K3** | `api.deepinfra.com` | `moonshotai/Kimi-K3` | 1 048 576 | ✓ | $2,85 / $14,25 |
-| **Opus 5.5** | `api.deepinfra.com` | `anthropic/claude-opus-5-5` | 1 000 000 | ✓ | $4,00 / $20,00 |
+| Rang | Sitz | Route / Modell | Grenzkosten |
+|---|---|---|---|
+| **1** | `opencode/deepseek-v4.1-flash-free#low` | OpenCode frei — Fork bestanden | **$0** |
+| **2** | `opencode/glm-5.3-flash-free#low` — **nur Mechanik** | OpenCode frei | **$0** |
+| **3** | `mistral/mistral-large-4` · `mistral/zai-glm-5-3` | **Mistral inklusive** (7,27 € Rest) | **€0** bis erschöpft |
+| **4** | `deepseek/deepseek-v4-pro` | DeepSeek paid (≈$90) | voll |
+| **5** | `mistral/*` nach Erschöpfung | Mistral paid (20 €) | voll |
+| **—** | `deepinfra/…` | **reserviert** | nur PII + Frontier |
 
-**Nicht über Mistral fahren:** Mistral führt zwar `zai-glm-5-3`, aber **ohne** `reasoning_effort` —
-GLM kappt dort (`finish: length`, content leer). **GLM nur über DeepInfra.**
-**DeepSeek direkt** (`api.deepseek.com`) ist **teurer** als DeepInfra (off-peak $0,66/$1,98 gegen
-$1,30/$2,60 peak-ähnlich) — und dachte bei derselben Frage **3 406** reasoning-tokens (DeepInfra 1 233).
+**Live-Beleg:** `2026-10-18-netto-rollen.md` (Leiter, Töpfe) · `2026-10-18-modell-inventur-live.md`
+(Gateway-Neustart: die 401er waren der **eingefrorene Prozess** — danach mistral 54 / deepinfra 180 /
+deepseek 2 live; `mistral/zai-glm-5-3` trägt `low`, `finish=stop`).
+**Die alte 17.10.-Tabelle ist überholt** — sie führte alle Paid-Sitze über DeepInfra.
 
 **UI-Sitze** (Browser-Bridge `browser.*`, dieselben Tabs wie das OpenCode-Panel) — **frei**:
 
@@ -120,19 +123,19 @@ die Zahl wuchs während des Tests 10→13→15. Wer sie berichtet, nennt den Zei
 - **`finish` je Sitz prüfen.** `length` = abgeschnitten → mit `low` wiederholen; `reasoning_content`
   rettet, wenn `content` leer ist.
 
-## 5 — Kosten je Frage (gemessen — nur die Frage, ~1,1 k in)
+## 5 — Kosten je Frage (live: Leiter statt Listenpreis)
 
-| Sitz | in | out | **Frage (≈2,5 k out)** |
-|---|---|---|---|
-| Mistral Large 4 | $0,50/M | $1,50/M | **~$0,004** |
-| GLM-5.3 | $0,90/M | $4,00/M | ~$0,011 |
-| DeepSeek V4 Pro | $1,30/M | $2,60/M | ~$0,008 |
-| Qwen3.8-Max | $1,65/M | $4,95/M | ~$0,014 |
-| Kimi K3 | $2,85/M | $14,25/M | ~$0,039 |
-| Opus 5.5 | $4,00/M | $20,00/M | ~$0,054 |
-| **Fugu Max · Lumo** | **frei** | **frei** | **$0** |
+Die Grenzkosten folgen der Leiter, nicht dem Listenpreis (`2026-10-18-netto-rollen.md`):
 
-Der **Cap** ist 0,15 USD/Burn; **Mistral + GLM + DeepSeek + Qwen zusammen ≈ $0,04**.
+| Rang | Sitz | Frage (≈2,5 k out) |
+|---|---|---|
+| 1–2 | OpenCode frei (`…-free#low`) | **$0** |
+| 3 | Mistral inklusive (`mistral-large-4`, `zai-glm-5-3`) | **€0** bis 7,27 € erschöpft (~1 690 Calls) |
+| 4 | DeepSeek paid (`deepseek-v4-pro`) | ≈ $0,008 |
+| 5 | Mistral paid | ≈ €0,0043 |
+| — | DeepInfra | **reserviert** (PII/Frontier) |
+
+**Cap 0,15 USD/Burn.** DeepInfra wird für Linienarbeit **nicht** angefasst.
 
 ---
 
