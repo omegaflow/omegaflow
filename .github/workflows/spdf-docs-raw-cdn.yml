@@ -1,0 +1,92 @@
+name: spdf-docs-raw-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+  R2_BUCKET: ${{ secrets.R2_BUCKET }}
+  OMEGAFLOW_R2_MIRROR: ${{ vars.OMEGAFLOW_R2_MIRROR }}
+  OMEGAFLOW_R2_WORKER: ${{ vars.OMEGAFLOW_R2_WORKER }}
+
+jobs:
+  spdf-docs-raw:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - asset: SP-59.pdf
+            tag: nasa.gov
+            url: "https://github.com/omegaflow/sources/releases/download/nasa.gov/SP-59.pdf"
+            origin: "https://www.nasa.gov/wp-content/uploads/static/history/SP-59.pdf"
+            sha256: a46e1712d30b04c559d3a24625ca788201e95cd3f0d82919c331746ef02b0c60
+          - asset: 19740012502.pdf
+            tag: ntrs.nasa.gov
+            url: "https://github.com/omegaflow/sources/releases/download/ntrs.nasa.gov/19740012502.pdf"
+            origin: "https://ntrs.nasa.gov/api/citations/19740012502/downloads/19740012502.pdf"
+            sha256: 9b4902bff834617b6b91590a1d5e0bf01f1e501566d72ed7f4b364271a0a7cb4
+          - asset: dsc_0119.pdf
+            tag: spdf.gsfc.nasa.gov
+            url: "https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/dsc_0119.pdf"
+            origin: "https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/old_data_doc/all_catalogs/dsc_0119.pdf"
+            sha256: fee7b06ee5faf91e69f4fcda5d0464c406597970c4aa02eead27035dfd5b2a56
+          - asset: mariner4_cosmic-ray-telescp_64-077a-04abcde_DSC_0045.pdf
+            tag: spdf.gsfc.nasa.gov
+            url: "https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_cosmic-ray-telescp_64-077a-04abcde_DSC_0045.pdf"
+            origin: "https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/renamed_dataset_catalogs/mariner4_cosmic-ray-telescp_64-077a-04abcde_DSC_0045.pdf"
+            sha256: 37745a467d5e152602bad14fa49877437472c69b608dfcd987d4effa3cd95562
+          - asset: mariner4_helium-magnetometer_64-077a-02a_DSC_0176.pdf
+            tag: spdf.gsfc.nasa.gov
+            url: "https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_helium-magnetometer_64-077a-02a_DSC_0176.pdf"
+            origin: "https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/renamed_dataset_catalogs/mariner4_helium-magnetometer_64-077a-02a_DSC_0176.pdf"
+            sha256: 51d288e175ea46d1966da5fa9eb395b99aa6e9b1ec27e36a870ce03a775c00ce
+          - asset: mariner4_mag_64-077a-02b_DSC_0074.pdf
+            tag: spdf.gsfc.nasa.gov
+            url: "https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner4_mag_64-077a-02b_DSC_0074.pdf"
+            origin: "https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/renamed_dataset_catalogs/mariner4_mag_64-077a-02b_DSC_0074.pdf"
+            sha256: 30ba3e6bdec3920e9e7c93d1cf5a8d37ebfff388e3b76d368075da30908c1abe
+          - asset: spreadsheet_dsc.xls
+            tag: spdf.gsfc.nasa.gov
+            url: "https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/spreadsheet_dsc.xls"
+            origin: "https://spdf.gsfc.nasa.gov/pub/documents/old/documentation_from_nssdc/old_data_doc/spreadsheet_dsc.xls"
+            sha256: b1f8523dd90eecfb307fbc35878b47dc5d18f99b37a94e92fc267f6bc5470ea3
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          names="$(gh release view '${{ matrix.tag }}' --repo omegaflow/sources \
+                   --json assets --jq '.assets[]?.name' 2>/dev/null || true)"
+          if printf '%s\n' "$names" | grep -qxF '${{ matrix.asset }}'; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ matrix.asset }} already present — mirror skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset ${{ matrix.asset }} missing — mirroring"
+          fi
+      - name: Mirror ${{ matrix.asset }} to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin raw_mirror -- \
+            --ci-mode \
+            --url "${{ matrix.url }}" \
+            --origin "${{ matrix.origin }}" \
+            --sha256 "${{ matrix.sha256 }}" \
+            || { bash .github/workflows/scripts/gh_issue_once.sh omegaflow/omegaflow \
+                 "spdf-docs-raw-cdn: ${{ matrix.asset }} returned void" \
+                 "raw_mirror returned void for ${{ matrix.asset }} (${{ matrix.origin }}). Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+                 health; exit 1; }
