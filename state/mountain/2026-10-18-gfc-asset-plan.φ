@@ -1,0 +1,306 @@
+# gfc-Asset-Plan — Größe, Range, Epoche, ttl (2026-10-18)
+# Linie Mycelium · Worktree mycelium-gfc-asset · HEAD a8c6534a2
+# Grundlage: state/mountain/2026-10-18-geodesy-grs80.φ §3,
+#   state/mountain/2026-10-18-gfc-depth.φ,
+#   tools/harvest/src/bin/gfc_compiler.rs, src/archivar/gfc.rs,
+#   src/archivar/cdn.rs, src/archivar/fetch.rs, src/archivar/types.rs,
+#   phi/sources.φ, docs/SOURCE_PORT.md.
+# Kein Verdikt ohne Messung; 0 geehrt; Risse stehen, nie geglättet.
+# KEIN Asset gebaut, KEIN phi-Block gesetzt, kein Download des vollen Modells.
+
+# ============================================================
+# 1 — COMPILER AM HEAD: OPTIONEN UND VERHALTEN
+# ============================================================
+# Gemessen am HEAD (Binary aus dem Hauptbaum auf demselben Commit a8c6534a2):
+#   gfc_compiler --help
+#     usage: gfc_compiler [--input <x.gfc>|--url <url>] [--out <file.bin>]
+#            --ttl <secs> [--max-degree <n>] [--epoch <ISO-8601>] [--ci-mode]
+# Argumente (gfc_compiler.rs:214-263):
+#   --input <x.gfc>        liest eine lokale Datei komplett in den Speicher (std::fs::read).
+#   --url <url>            Default = XGM2019e-URL; fetch_raw_bytes holt den ganzen Body.
+#   --out <file.bin>       Default data/icgem.gfz.de/gfc.bin.
+#   --ttl <secs>           PFLICHT, endlich und > 0; ttl <= 0 wird verweigert.
+#   --max-degree <n>       optional; Default = head.max_degree. Filtert nur Zeilen mit n > cap,
+#                          der Input wird trotzdem vollständig gelesen/geholt.
+#   --epoch <ISO-8601>     optionaler Override; Header-Epoche gewinnt, sonst Override, sonst Fehler.
+#   --ci-mode              ruft am Ende upload_release(NETLOC, out).
+# Epoch-Verweigerung gemessen (head-Datei des echten Modells, kein Schreiben):
+#   gfc_compiler --input /tmp/opencode/gfc_head.bin \
+#     --out /tmp/opencode/should-not-exist.bin --ttl 33554432 --max-degree 3211
+#   -> exit 1: "neither the ICGEM header nor --epoch <ISO-8601> supplies a parseable epoch
+#      — the asset stays unwritten"
+#   -> keine Datei geschrieben. Das ist die 0-treue Sperre, kein stiller Default.
+# Frame-Form (src/archivar/gfc.rs:4-6, 97-116):
+#   FRAME_HEADER = 19 B · SLOTS = 26 · RECORD_BYTES = 26*8 = 208 B.
+#   Der Compiler schreibt je gfc-Zeile zwei Records (C und S; push_coefficient,
+#   gfc_compiler.rs:49-72), auch wenn S = 0 ist.
+#   -> Asset-Bytes = 19 + 2 * (Anzahl gfc-Zeilen) * 208.
+
+# ============================================================
+# 2 — GEMESSENE MODELLE UND ERWARTETE ASSET-GRÖSSEN
+# ============================================================
+# HEAD-Antworten (2026-10-18, HEAD, Accept-Ranges: bytes, Last-Modified 2019-12-13):
+#   XGM2019e (voll):      Content-Length 1 796 436 884 B  max_degree 5540
+#   XGM2019e_2159:        Content-Length   280 962 214 B  max_degree 2190
+#   XGM2019:              Content-Length    33 928 992 B  max_degree 760
+# Kopf-Range 0-30000 (HTTP 206, 30001 B), sha256:
+#   XGM2019e:      139c6d7578e9587ebb01263915d9661c966e8d681478c83e87e69ecf1e723488
+#   XGM2019e_2159: 550be098f78cc3e2d033cfb2d776d9069abd4b3471c189b6e485c335e6ee2bde
+#   XGM2019:       dadd0dc9a719e4ac0535ca129dc2898d2976b5cd371da666607abd9cd70014ca
+# Alle drei Köpfe tragen dieselben vier Direktivenwerte:
+#   earth_gravity_constant 3.986004415E+14 · radius 6378136.3
+#   norm fully_normalized · tide_system zero_tide
+# und KEINE epoch-/ref_epoch-Zeile.
+# Die drei Teilmodelle sind am Kopf selbst belegt (Zeilen 52-54 des XGM2019e-Kopfes):
+#   "XGM2019e      | 5399 | 5540 | .../XGM2019e.gfc"
+#   "XGM2019e_2159 | 2159 | 2190 | .../XGM2019e_2159.gfc"
+#   "XGM2019       |  719 |  760 | .../XGM2019.gfc"
+# Zusätzlich auf der gemessenen ICGEM-Modellseite (/tom_longtime, Zeile 176):
+#   XGM2019e_2159 (spheroidal d/o 2159, spherical harmonic d/o 2190)
+#   XGM2019       (spheroidal d/o 719,  spherical harmonic d/o 760)
+# Beide sind von ICGEM direkt ausgeliefert, kein selbst gesetzter Cap.
+#
+# Erwartete Asset-Bytes (19 + 2*lines*208; lines = (D+1)(D+2)/2):
+#   D     lines        records      Asset-Bytes     GiB        Release <= 2 GiB?
+#   719     259 560      519 120      107 976 979  0.100561   ja
+#   760     289 941      579 882      120 615 475  0.112332   ja
+#   2190  2 401 336    4 802 672      998 955 795  0.930350   ja
+#   3211  5 160 078   10 320 156    2 146 592 467  1.999170   ja (Slack 891 181 B)
+#   3212  5 163 291   10 326 582    2 147 929 075  2.000415   NEIN (+445 427 B)
+#   5399 14 582 700   29 165 400    6 066 403 219  5.649778   nein
+#   5540 15 354 111   30 708 222    6 387 310 195  5.948646   nein
+# Probe: D=3211 ergibt exakt 2 146 592 467 B und deckt sich mit der bereits
+#   gemessenen Zahl aus 2026-10-13. Die Rechnung ist damit am bekannten Punkt verankert.
+# RISS/KORREKTUR: state/mountain/2026-10-18-geodesy-grs80.φ §3 nennt für D=5540
+#   "~12,8 GB". Das ist am HEAD NICHT reproduzierbar. 26 f64 = 208 B je Record,
+#   zwei Records je Koeffizientenzeile, 15 354 111 Zeilen -> 6 387 310 195 B.
+#   Die 12,8-GB-Zahl wird hier als ungemessen/verdoppelt benannt, nicht übernommen.
+#   Auch die 5399 aus dem Abstract ist kein Datei-Cap; die Datei trägt bis 5540.
+
+# ============================================================
+# 3 — RELEASE-DECKEL UND CDN-ROUTE
+# ============================================================
+# src/archivar/cdn.rs:12
+#   GITHUB_RELEASE_ASSET_MAX_BYTES = 2 * 1024 * 1024 * 1024 = 2 147 483 648 B.
+#   upload_release verweigert Dateien > diesem Wert (cdn.rs:230-239).
+#   CDN_PART_MAX_BYTES = 2 GiB - 1 MiB = 2 146 435 072 B (Split-Route, die der
+#   gfc-Compiler mit --ci-mode NICHT benutzt; er ruft upload_release direkt).
+# Folgen:
+#   - D=3211 passt in einen Release-Upload, D=3212 nicht.
+#   - Das volle D=5540 (6 387 310 195 B) braucht Split/R2 oder einen Cap; ein
+#     direkter --ci-mode-Upload scheitert am Deckel.
+#   - upload_release verlangt zusätzlich, dass der Tag im Register lizenziert ist
+#     (registered_netlocs aus phi/sources.φ, cdn.rs:177-246). Ohne gfc-Block ist
+#     "icgem.gfz.de" nicht lizenziert -> --ci-mode scheitert auch bei kleinerem Asset.
+#   - .github/workflows/ enthält am HEAD KEINEN gfc-Workflow
+#     (`ls .github/workflows | grep -i gfc` -> leer). Der CDN-Lauf fehlt also nicht
+#     nur am Block, sondern auch als Workflow.
+
+# ============================================================
+# 4 — RANGE-GET / STREAMING: WAS DER COMPILER KANN
+# ============================================================
+# VERDIKT: Der Compiler kann am HEAD NICHT aus einem Range-GET/Stream bauen, ohne
+#   die (ggf. gekappte) Datei vollständig zu halten.
+# Belege:
+#   - --url: src/archivar/fetch.rs:187-191 -> fetch_raw_bytes -> curl schreibt den
+#     ganzen Body in output.stdout (Vec<u8>); kein Range-Header, kein Chunk-Callback.
+#   - --input: gfc_compiler.rs:243 -> std::fs::read(&path) (komplett in den RAM).
+#   - Danach records: Vec<[f64;26]> für alle Zeilen; write_bin allokiert das ganze
+#     Ausgabe-Vec; parse_records(&bytes_out) baut zum Roundtrip ein zweites volles
+#     Vec, während records noch lebt (gfc_compiler.rs:140-153).
+#   - fetch_range existiert in src/archivar/range.rs:30, wird vom gfc-Compiler
+#     aber nicht benutzt. fetch_raw_to_file_with (fetch.rs:154-185) existiert,
+#     wird ebenfalls nicht benutzt.
+#   Folgerung: Ein Range-GET kann nur den Netz-/Platten-Input verkleinern, nicht
+#   den Speicherbedarf des Compilers unter die gehaltene Inputmenge drücken.
+#   Ein echter Streaming-Bau wäre ein Code-Akt (inkrementelles Schreiben + kein
+#   Roundtrip-Vec), nicht eine Befehlszeile.
+#
+# SPEICHER-ARITHMETIK (208 B/Record; keine gemessene RSS, sondern aus dem Code):
+#   voll  D=5540: input 1.80 GB + records 6.39 GB + out 6.39 GB + Roundtrip 6.39 GB
+#                 -> ca. 21 GB Peak. Auf CI unverantwortbar, ohne Messung nicht bauen.
+#   Cap   D=3211 mit --url: input 1.80 GB + 3*2.15 GB -> ca. 8.2 GB Peak.
+#   Cap   D=3211 mit 650-MB-Range-Input: ca. 6.7 GB Peak.
+#   Teil  D=2190: input 0.28 GB + 3*0.999 GB -> ca. 3.3 GB Peak.
+#   Teil  D=760:  input 0.034 GB + 3*0.121 GB -> ca. 0.40 GB Peak.
+#
+# EXAKTE BEFEHLE (dokumentiert, NICHT ausgeführt; <EPOCH> bleibt offen):
+#   A) volles Modell (scheitert am Release-Deckel, nicht empfohlen):
+#      target/release/gfc_compiler \
+#        --url https://icgem.gfz.de/getmodel/gfc/8e01a2aba4f291ac0638b79a390155713b70fdc9b266981023c756839c11c9b8/XGM2019e.gfc \
+#        --out data/icgem.gfz.de/gfc.bin --ttl 33554432 --epoch <EPOCH>
+#   B) Cap 3211 aus dem vollen URL-Input (lädt weiter 1 796 436 884 B):
+#      ... --out data/icgem.gfz.de/gfc.bin --ttl 33554432 --max-degree 3211 --epoch <EPOCH>
+#   C) Cap 3211 mit Range-Input (verkleinert nur den Input):
+#      curl -sS -L --retry 3 --retry-delay 2 -r 0-649999999 \
+#        -o /tmp/opencode/XGM2019e.head650m.gfc \
+#        https://icgem.gfz.de/getmodel/gfc/8e01a2aba4f291ac0638b79a390155713b70fdc9b266981023c756839c11c9b8/XGM2019e.gfc
+#      target/release/gfc_compiler --input /tmp/opencode/XGM2019e.head650m.gfc \
+#        --out data/icgem.gfz.de/gfc.bin --ttl 33554432 --max-degree 3211 --epoch <EPOCH>
+#      Messung zur Range-Wahl: an Byte 589 455 851 war die erste vollständige
+#      gfc-Zeile n=3173, an Byte 617 525 177 n=3248. 650 000 000 B enthält daher
+#      alle Zeilen n<=3211 sicher; der Cap verwirft den Rest. (Die exakte
+#      Grenze 3211->3212 wurde wegen HTTP 429 nicht mehr punktgenau gemessen.)
+#   D) offizielles Teilmodell D=2190:
+#      target/release/gfc_compiler \
+#        --url https://icgem.gfz.de/getmodel/gfc/eeb03971cf6e533e6eeb6b010336463286dcda0846684248d5530acf8e800055/XGM2019e_2159.gfc \
+#        --out data/icgem.gfz.de/gfc_2159.bin --ttl 33554432 --epoch <EPOCH>
+#      erwartet 998 955 795 B, Input 280 962 214 B.
+#   E) kleinster belegbarer Bau D=760 (oder Cap 719):
+#      target/release/gfc_compiler \
+#        --url https://icgem.gfz.de/getmodel/gfc/38f8a3efe050bab49acaa41f9624e564d5288260188b6511a063597efaa4dc99/XGM2019.gfc \
+#        --out data/icgem.gfz.de/gfc_760.bin --ttl 33554432 --epoch <EPOCH>
+#      D=760 -> 120 615 475 B; mit --max-degree 719 -> 107 976 979 B.
+#      Input nur 33 928 992 B, 289 941 Zeilen; das ist der <10-min-Kandidat.
+#   Ein Bau wurde NICHT gefahren, weil <EPOCH> fehlt. Ein erfundenes --epoch wäre
+#   ein Fabrikat; die Sperre wird nicht umgangen.
+
+# ============================================================
+# 5 — EPOCH: KEINE BELEGTE EPOCH AM HEAD
+# ============================================================
+# GEMESSEN:
+#   (1) XGM2019e-Kopf (Range 0-30000, s. §2): product_type, modelname,
+#       earth_gravity_constant, radius, max_degree, errors, norm, tide_system.
+#       grep -i 'epoch' im 30001-B-Kopf: 0 Treffer. Kein epoch, kein ref_epoch.
+#       Dasselbe gilt für die Köpfe von XGM2019e_2159 und XGM2019.
+#   (2) DataCite 10.5880/ICGEM.2019.007 (HTTP 200, 20048 B, sha256
+#       921fabbbf72bc8910d8697541844fbd3544c6e0cf252e4b1516091f87b7a7181):
+#       dates = [{"date":"2019","dateType":"Issued"},
+#                {"date":"2026-10-09","dateType":"Updated"}]
+#       Das sind Publikations-/Updatedaten, keine Referenzepoche des Feldes.
+#       Titel: "The experimental gravity field model XGM2019e" (Zitat).
+#   (3) GFZ-Landingpage (HTTP 200) und ICGEM-Modellzeile (/tom_longtime, Zeile 176):
+#       Jahr 2019, Modelllinks, Referenzen — keine Zeile "reference epoch" o. ä.
+#   (4) Zingerle et al. 2020, DOI 10.1007/s00190-020-01398-0 (Crossref-Metadaten,
+#       HTTP 200): Abstract nennt d/o 5399, GOCO06s, d/o 719 als Naht — keine Epoche.
+#       Der Volltext wurde nicht gelesen (nicht als offen gemessen).
+# VERDIKT: Es gibt am HEAD keine belegte Epoche für XGM2019e/XGM2019e_2159/XGM2019.
+#   Der Compiler verweigert ohne Header- oder --epoch-Wert (Messung §1).
+#   Ein gesetztes --epoch wäre eine Operator-Entscheidung, keine Messung.
+# OFFENE WEGE (nicht gewählt):
+#   (e1) Volltext Zingerle et al. 2020 beschaffen und dort eine Epoche belegen.
+#   (e2) Einen statischen Pfad im Compiler bauen (kein epoch, kein erfundener Wert);
+#        das ist ein Architektur-Akt, kein stiller Default.
+#   (e3) Keinen gfc-Block setzen, bis (e1) oder (e2) entschieden ist.
+
+# ============================================================
+# 6 — ttl: REGISTER-KONVENTION FÜR STATISCHE QUELLEN
+# ============================================================
+# GEMESSEN:
+#   src/archivar/types.rs:584  NO_CADENCE = 1 << 25 = 33 554 432 s (~388,4 d).
+#   src/archivar/parse.rs:344-346: die bare Direktive `no-cadence` setzt cur_ttl
+#     auf NO_CADENCE. `ttl 33554432` setzt denselben numerischen Wert.
+#   src/archivar/port.rs:326-328 und 736-738: ttl == NO_CADENCE wird als
+#     `no-cadence` serialisiert. Explizite ttl dieses Werts liest sich also als
+#     no-cadence (docs/SOURCE_PORT.md:62-65).
+#   Bestehende statische Blöcke tragen genau diese Form, z. B.
+#     no-cadence
+#     field 0 bk18_bin point em 1 33554432.0 0.0 0.0
+#   Der Compiler verlangt ein positives u64-ttl und gibt es als `ttl <u64>` aus;
+#   `no-cadence` ist kein Compiler-Argument.
+# VORSCHLAG (nicht gesetzt):
+#   --ttl 33554432
+#   Der Compiler schreibt dann `ttl 33554432`; die Register-Kanonisierung macht
+#   daraus `no-cadence`, die field-Zeilen behalten 33554432.0 als tau.
+#   XGM2019e ist ein statisches Kombinationsfeld ohne natürliche Kadenz; ein
+#   explizites 30-d/365-d-ttl wäre eine unbelegte Kadenz-Behauptung.
+#   Operator bestätigt die no-cadence-Konvention, bevor der Block gesetzt wird.
+
+# ============================================================
+# 7 — OFFENE OPERATOR-ENTSCHEIDE
+# ============================================================
+#   (O1) MODELL/CAP. Volles D=5540 (6 387 310 195 B) passt nicht in einen
+#        Release (2 GiB) und braucht Split/R2 + einen neuen Upload-Weg im
+#        Compiler/Workflow. Release-taugliche Wege:
+#          - Cap 3211 am vollen XGM2019e (2 146 592 467 B, 891 181 B Slack;
+#            ehrlich als gekappt beschriftet, Input bleibt 1,8 GB).
+#          - offizielles Teilmodell XGM2019e_2159, D=2190 (998 955 795 B;
+#            gleiche Familie, aber anderer Produktname/Origin).
+#          - offizielles Teilmodell XGM2019, D=760 (120 615 475 B) oder
+#            Cap 719 (107 976 979 B); kleinster belegbarer Bau.
+#        Empfehlung für den ersten Bau: D=760 oder D=2190, um GFC_DELIVERY_GATE
+#        und den CDN-Pfad an einem kleinen, ehrlichen Asset zu schließen. Der
+#        Cap 3211 ist eine Kosten-/Deckel-Entscheidung, kein gemessener Kopfwert.
+#   (O2) EPOCH. Keine belegte Epoche (§5). Entscheidung zwischen (e1) Volltext-
+#        Beleg, (e2) statischem Compiler-Pfad (Architektur-Akt) oder (e3) kein
+#        Block. Kein --epoch aus Publikationsjahr/Last-Modified raten.
+#   (O3) ttl. no-cadence via --ttl 33554432 bestätigen (§6).
+#   (O4) BOOTSTRAP/CDN. upload_release verlangt einen lizenzierten Tag; der Tag
+#        entsteht erst durch einen phi-Block mit url+terms. Es gibt am HEAD
+#        keinen gfc-Workflow. Zu entscheiden: Reihenfolge Block -> Build ->
+#        sha256 -> Workflow (und ob der Block zunächst ohne sha256 steht), plus
+#        Name des Assets (gfc.bin vs. gfc_2159.bin/gfc_760.bin).
+#   (O5) sha256/url. Erst nach einem echten Bau messbar. url bleibt der
+#        Release-Pfad https://github.com/omegaflow/sources/releases/download/icgem.gfz.de/<name>;
+#        das heutige gfc.bin ist 404 und wird hier nicht als Route gesetzt.
+
+# ============================================================
+# 8 — BLOCKGERÜST (VORBEREITET, NICHT IN phi/sources.φ GESETZT)
+# ============================================================
+# Variante A — Cap 3211 am vollen XGM2019e (Release-tauglich):
+#     url https://github.com/omegaflow/sources/releases/download/icgem.gfz.de/gfc.bin
+#     terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007
+#     format gfc
+#     origin https://icgem.gfz.de/getmodel/gfc/8e01a2aba4f291ac0638b79a390155713b70fdc9b266981023c756839c11c9b8/XGM2019e.gfc
+#     compiler tools/harvest/src/bin/gfc_compiler.rs
+#     sha256 <unmeasured — erst nach Bau>
+#     at earth
+#     gm 3.986004415E+14
+#     radius 6378136.3
+#     norm fully_normalized
+#     tide zero_tide
+#     max_degree 3211
+#     no-cadence
+#     field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 33554432.0 0.0 0.0 norm:fully_normalized
+#     field icgem_gfc_s icgem_gfc_s inverse-square gravity 1 33554432.0 0.0 0.0 norm:fully_normalized
+#
+# Variante B — offizielles Teilmodell XGM2019e_2159, D=2190:
+#     url https://github.com/omegaflow/sources/releases/download/icgem.gfz.de/gfc_2159.bin
+#     terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007
+#     format gfc
+#     origin https://icgem.gfz.de/getmodel/gfc/eeb03971cf6e533e6eeb6b010336463286dcda0846684248d5530acf8e800055/XGM2019e_2159.gfc
+#     compiler tools/harvest/src/bin/gfc_compiler.rs
+#     sha256 <unmeasured — erst nach Bau>
+#     at earth
+#     gm 3.986004415E+14
+#     radius 6378136.3
+#     norm fully_normalized
+#     tide zero_tide
+#     max_degree 2190
+#     no-cadence
+#     field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 33554432.0 0.0 0.0 norm:fully_normalized
+#     field icgem_gfc_s icgem_gfc_s inverse-square gravity 1 33554432.0 0.0 0.0 norm:fully_normalized
+#
+# Variante C — offizielles Teilmodell XGM2019, D=760 (kleinster Bau):
+#     url https://github.com/omegaflow/sources/releases/download/icgem.gfz.de/gfc_760.bin
+#     terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007
+#     format gfc
+#     origin https://icgem.gfz.de/getmodel/gfc/38f8a3efe050bab49acaa41f9624e564d5288260188b6511a063597efaa4dc99/XGM2019.gfc
+#     compiler tools/harvest/src/bin/gfc_compiler.rs
+#     sha256 <unmeasured — erst nach Bau>
+#     at earth
+#     gm 3.986004415E+14
+#     radius 6378136.3
+#     norm fully_normalized
+#     tide zero_tide
+#     max_degree 760
+#     no-cadence
+#     field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 33554432.0 0.0 0.0 norm:fully_normalized
+#     field icgem_gfc_s icgem_gfc_s inverse-square gravity 1 33554432.0 0.0 0.0 norm:fully_normalized
+#
+# Alle drei Gerüste bleiben Kommentar. Gesetzt wird erst nach O1-O5, echtem Bau,
+# gemessenem sha256 und grünem GFC_DELIVERY_GATE.
+
+# ============================================================
+# 9 — LÄUFE DIESER SITZUNG / OFFEN
+# ============================================================
+#   HEAD/Content-Length der drei Modelle: gemessen (s. §2).
+#   Kopf-Ranges 0-30000: gemessen, sha256 s. §2; keine epoch-Zeile.
+#   DataCite/Crossref/Landingpage: gemessen (s. §5).
+#   Compiler --help und Epoch-Verweigerung: gemessen mit dem Binary a8c6534a2.
+#   cargo build --release -p omegaflow-harvest --bin gfc_compiler im Worktree:
+#     nach 900 s Timeout abgebrochen (viele parallele cargo-Läufe im Rechner);
+#     das genutzte Binary stammt aus dem Hauptbaum auf demselben Commit.
+#     Kein Code geändert, kein Asset gebaut, kein phi-Block gesetzt.
+#   OFFEN: (O1)-(O5). Der 12,8-GB-Riss ist als Rechenkorrektur benannt (§2),
+#     nicht still ersetzt; die alte Messdatei bleibt unverändert.
