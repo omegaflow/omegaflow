@@ -68,10 +68,21 @@ Der Workflow hat Issue **#238** automatisch gefiled; ich habe die Diagnose dort 
 ## 6. Offen — nicht von mycelium zu schließen
 
 - **river `.13~ea59cd54` selbst** bleibt `SENT`/unbeglichen: der Emitter (river) schließt; ein Empfänger kann seinen eigenen Eingang nicht quittieren. Der `CLOSED`-Eintrag gehört in `state/zustand/ledger/river/…` und wird hier **nicht** geschrieben.
-- **`sha256` im Block + 206**: beides hängt am Upload. Sobald `OMEGAFLOW_TOKEN` `omegaflow/sources` schreiben darf, spiegelt der idempotente Job das Asset; dann steht der Whole-sha256 im `.parts`-Manifest und kann in den Block, und `.parts`/Shards liefern 206.
+- ~~**`sha256` im Block + 206**~~ — **erledigt** (Nachtrag §8): nach dem Credential-Fix ist das Asset gespiegelt, der Whole-sha256 steht im Block, `.parts`/Shards liefern 206.
 - **Eigene `.1~ed07ad98`** (ICGEM Grad-Cap, Rat `R-2026-10-18-f` offen) und **`.3~7a1c533b`** (Offen-Zählung/Kappe, Gate-Code hinter `edit:deny`) bleiben Rat-/Wand-blockiert.
 
 ## 7. Bilanz
 
-Post 0 · Trigger 0 · Transfer: eingehend 1 unbeglichen (river `.13`, am Credential blockiert), eigene 2 offen.
-**Geschlossen:** der Register-Formfehler + die Transport-Route (`15bcd736e`), und der Stream ist als byte-treu belegt (md5-Gate bestanden). **Nicht geschlossen:** der Token selbst — Ursache benannt (`OMEGAFLOW_TOKEN` 403 auf `omegaflow/sources`), Fix ist Operator-Arbeit.
+Post 0 · Trigger 0 · Transfer: eingehend 1 unbeglichen (river `.13`), eigene 2 offen.
+**Geschlossen:** der Register-Formfehler + die Transport-Route (`15bcd736e`) und — nach dem Credential-Fix — der Transport selbst (§8). **Nicht geschlossen:** der river-Token im Ledger (Emitter river schließt; mycelium schreibt nicht in `ledger/river/`).
+
+## 8. Nachtrag 2026-10-18: Credential repariert, Transport vollendet
+
+Der Operator hat `OMEGAFLOW_TOKEN` auf `omegaflow/sources`-Schreibrechte gesetzt (Secret neu: `2026-10-18T11:55:59Z`). Re-Dispatch `39125254693`; der `kids`-Job endet **success** (13:12:25Z). Belege:
+
+- **`.parts`-Manifest** `…/zenodo.org/kids_dr4_wl_cat.fits.parts`: `parts 9`, **`sha256 dcc2bf039190d0c53542f6f08ac6ce27e749dd31999cd4ab049edd4d41fbef32`**.
+- **9 Shards + Manifest → HTTP 206** (Range `0-0` je `kids_dr4_wl_cat.fits.p000`…`p008`); Summe `8×2146435072 + 540988864 = 17712469440` = Origin-`size`.
+- Der Block `phi/sources.φ:31369` trägt jetzt `sha256 dcc2bf03…` (hinter `compiler tools/harvest/src/bin/raw_mirror.rs`).
+- Issue **#238** ist damit gegenstandslos (geschlossen mit Beleg).
+
+Die flache `url` `…/kids_dr4_wl_cat.fits` bleibt **404** (over-2-GiB-Konstruktion, wie Venus); die 206 trägt `.parts` + Shards. Der done-when „registrierte CDN-`url` HTTP 206" ist damit im Split-Sinn erfüllt.
