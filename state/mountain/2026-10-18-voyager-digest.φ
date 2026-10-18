@@ -1,0 +1,94 @@
+# Voyager-Saturn-CDN-Asset — lokale Digest-Nachrechnung — 2026-10-18
+# Linie Mycelium (Worktree mycelium-voyager-digest)
+# Messgrundlage:
+#   phi/sources.φ:11738-11749 Block `voyager_saturn`, Pin in Zeile 11743:
+#     sha256 97d4253c7e8a5ae932082f242c050183402293e1de4370330b4269aab7731aff
+#   Pin gesetzt in Commit 532a2c99b (2026-10-18, xfer .1~ba524f56).
+#   Offener Riss zuletzt benannt in state/mountain/2026-10-17-voyager-univac-verdict.φ,
+#     Abschnitt „UNGEMESSEN“: „der sha256 stammt aus dem GitHub-API-Digest, nicht aus einer
+#     lokalen Rechnung.“ Genau dieser Riss wird hier geschlossen.
+# Gegenstand: https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/voyager_saturn.bin
+# Kein Verdikt ohne Messung; 0 geehrt. Diese Datei belegt die Rechnung, sie ändert
+# weder den Pin noch den Registerblock, keine terms-, field- oder ttl-Zeile.
+
+# ============================================================
+# 1 — HEAD-MESSUNG (2026-10-18T07:24Z)
+# ============================================================
+# GET -I -L auf die Release-URL, Redirect-Kette gemessen:
+#   302 Found  github.com  ->  Location: release-assets.githubusercontent.com/...
+#   200 OK     Azure Blob (x-ms-blob-type: BlockBlob)
+#   content-length: 125062872
+#   content-type: application/octet-stream
+#   content-disposition: attachment; filename=voyager_saturn.bin
+#   last-modified: Wed, 16 Sep 2026 08:54:49 GMT
+#   etag: "0x8DF13D02A5C854C"
+#   accept-ranges: bytes
+#   x-ms-creation-time / x-ms-server-encrypted: true
+# -> Die Route liefert; Content-Length ist exakt die erwartete Größe.
+
+# ============================================================
+# 2 — LOKALER ABRUF UND BYTE-MESSUNG
+# ============================================================
+# curl -L --fail -o /tmp/opencode/voyager_saturn.bin <url>
+#   HTTP 200 · size_download 125062872 B · 54,16 s · 2 309 127 B/s
+#   Datei: /tmp/opencode/voyager_saturn.bin
+#   stat: 125 062 872 B
+#   Content-Length == tatsächliche Bytes == erwartete Bytes -> kein Abbruch, kein Teilabruf.
+#   Das Asset liegt NUR in /tmp/opencode und wird nicht ins Repo committet.
+
+# ============================================================
+# 3 — SHA256, DREI QUELLEN, EIN WERT
+# ============================================================
+#   lokal gerechnet (sha256sum über 125 062 872 B):
+#     97d4253c7e8a5ae932082f242c050183402293e1de4370330b4269aab7731aff
+#   GitHub-API, GET /repos/omegaflow/sources/releases/tags/spdf.gsfc.nasa.gov
+#     200 · 38 278 B · Antwort-sha256 b096645c72f95d4d305b9c0f784576a5a705d7769df575f9b482a4120485b825
+#     asset.name    voyager_saturn.bin
+#     asset.size    125062872
+#     asset.digest  sha256:97d4253c7e8a5ae932082f242c050183402293e1de4370330b4269aab7731aff
+#     asset.state   uploaded
+#     asset.updated 2026-09-16T08:54:49Z
+#   Register-Pin phi/sources.φ:11743:
+#     97d4253c7e8a5ae932082f242c050183402293e1de4370330b4269aab7731aff
+# -> lokal == API-Digest == Pin. Drei unabhängige Träger, derselbe Wert.
+# -> Der Pin war API-geboren, ist aber lokal nachgerechnet und BESTÄTIGT.
+#    Er wird nicht geändert (nichts zu ändern), nur belegt.
+
+# ============================================================
+# 4 — GEGENPROBE: DIE BYTES SIND DAS ASSET, KEINE FEHLSEITE
+# ============================================================
+#   Header der lokalen Datei (xxd -l 64):
+#     56 53 41 54  fe 8d 0c 00  00 00 00 00 00 00 f0 3f  "VSAT" + u32 LE + f64 ...
+#     Magic  "VSAT"  -> Archiv-Header des voyager_saturn-Formats
+#     u32 LE 0x000c8dfe = 822 782  -> Tracking-Records, exakt die Zahl aus
+#       docs/handover/archiv/handover-2026-09-15-forschung-folge20.md:32
+#   Größen-Arithmetik: 8 + 822 782 × 19 × 8 = 8 + 125 062 864 = 125 062 872
+#     -> Byte-Zahl, Header-Recordzahl und Handover-Zahl schließen sich.
+#   Ein HTML-Fehlerbody oder ein abgeschnittenes Asset fiele hier auf; er fällt nicht auf.
+
+# ============================================================
+# 5 — VERDIKT
+# ============================================================
+#   ÜBEREINSTIMMUNG: JA.
+#   Datum       2026-10-18 (UTC-Messung 07:24-07:26Z)
+#   HTTP        302 -> 200
+#   Bytes       125 062 872 (Content-Length == size_download == stat == Arithmetik)
+#   sha256      97d4253c7e8a5ae932082f242c050183402293e1de4370330b4269aab7731aff
+#   API-Digest  sha256:97d4253c7e8a5ae932082f242c050183402293e1de4370330b4269aab7731aff
+#   Pin         unverändert, jetzt lokal gedeckt.
+#   Der in 2026-10-17-voyager-univac-verdict.φ benannte Riss
+#   „Digest nur aus der API“ ist geschlossen.
+
+# ============================================================
+# 6 — OFFENE RISSE (benannt, nicht geglättet)
+# ============================================================
+#   (a) Gedeckt ist die BYTE-Identität des CDN-Assets, nicht die inhaltliche
+#       Korrektheit der 822 782 Records. Kein End-to-End-Parse in diesem Atom;
+#       gelesen ist nur der Header. Die 19 Spalten/Record-Breite stammt aus der
+#       Compiler-/Reader-Seite, nicht aus dieser Messung.
+#   (b) Der Pin deckt das Asset, nicht die Quelle. Ändert SPDF die tar-Dateien,
+#       bleibt der Pin gültig für die alte Ableitung und sagt nichts über die neue.
+#   (c) `sha256` pinnt Bytes, nicht Verfügbarkeit: das Release-Asset kann gelöscht
+#       werden; die lokale Kopie in /tmp/opencode ist flüchtig und kein Ersatz.
+#   (d) GitHub kann den `digest`-Wert künftig neu berechnen/ändern; die lokale
+#       Rechnung aus §3 ist dann der stabilere Beleg.
