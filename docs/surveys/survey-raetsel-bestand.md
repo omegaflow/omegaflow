@@ -2,7 +2,7 @@
   title: Rätsel-Bestand — was wir haben, was fehlt (ein Taucher je Rätsel)
   class: survey
   date: 2026-10-03
-  sha256: 7e309f6ed789da8d1e7bc4b6acf8190dec5bc17ce98e13104b8987cdf09a6f96
+  sha256: e345cdb77f96407b0a636d6df2fe111c030b2c452e02c56f5312cbe0aa6658b1
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-papier.md docs/paper/probe-front-dark-matter.md
 -->
@@ -113,7 +113,7 @@ Datenlücken je ein Taucher mit `archive_search --all` (voller Katalog), jede Ro
 - Ⅺ Placebo — OpenNeuro sham/verum (`phi:3195-3823`).
 - ENSO — Becken-Windfeld: `ascat_wind` (UHR-ASCAT) (`phi:3092`).
 
-**Datenlücke offen erreichbar (4) — Route gefunden, noch nicht registriert:**
+**Datenlücke offen erreichbar (4) — Route gefunden, noch nicht registriert (2026-10-18: alle 4 Routen 200 gemessen):**
 - Ⅶ Wurmloch — Sonden-Bahnen: NAIF Voyager SPK `https://naif.jpl.nasa.gov/pub/naif/VOYAGER/kernels/spk/` (US-PD) · PDS-PPI VG1-SPICE · Zenodo Voyager-2-CSV (CC-BY-4.0).
 - Ⅷ Dunkler Fluss — z≳10: Zenodo UNCOVER `zenodo.org/records/14281664` (CC-BY-4.0, z bis ~15) · JADES z>10-FITS `zenodo.org/records/7460116`.
 - Ⅻ Urknall — B-Moden: BK18 `http://bicepkeck.org/bk18_2021_release.html` (CC-BY-4.0, live) · LAMBDA-Spiegel · Planck PLA + Zenodo `16283859`.

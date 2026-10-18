@@ -2,7 +2,7 @@
   title: Survey — Ehrlich benannt: wo das Werkzeug fehlte (Stand 2026-09-14)
   class: survey
   date: 2026-09-14
-  sha256: 3c50da0677959adf24bf4fb2f33534fcc0dec582deac1faa30aa6993b05c5445
+  sha256: 769cb3cef47118f6712c1c8c00cfad063f2efe0f6d33b957439ce45da39b069c
   status: live
   see-also: docs/specs/ref-auth-apis.md docs/concepts/archiv/docs-naming.md
 -->
@@ -120,8 +120,10 @@ Verdikt existiert nicht mehr als Register-Zeile; die Lücke war real gemessen
   HTTPS-Download mit Token: 303 → CloudFront-signierte S3-URL → **final 200**.
   Kein fehlender Arm — SigV4-Scheme gebaut (`546d39e`), Token-Handshake liefert
   Temp-Keys; die alte „scheme-unsupported/401"-Zeile ist ein
-  Register-Umbuchungsfall. Die NSIDC-SMAP-Hälfte der toten Zeile ist in diesem
-  Pass nicht re-gemessen.
+  Register-Umbuchungsfall. **NSIDC-SMAP-Hälfte (2026-10-18 gemessen):** `nsidc.org`
+  **200**, `daacdata.apps.nsidc.org` **200**; `data.nsidc.org` und
+  `n5eil01u.ecs.nsidc.org` **000**; PODAAC `s3credentials` **200**. Die NSIDC-DAAC-Route
+  lebt über `daacdata.apps.nsidc.org`, nicht über die alten Datenpools.
 - **ODF-Doppler-Extrakt (DSN TRK-2-34 ODF/TDF) — `open`; Galileo-ODF `pending`.**
   Offener, maschinenlesbarer Korpus existiert: TRK-2-18 ODF
   `https://pds-geosciences.wustl.edu/lunar/lp-odf/lpod_case1.odf` (…case8) →

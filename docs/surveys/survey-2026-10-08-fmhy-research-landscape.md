@@ -2,7 +2,7 @@
   title: Survey — FMHY/Awesome-Mining: Research-Landschaft (Seats + Suchwege)
   class: survey
   date: 2026-10-08
-  sha256: c272df9553a0fa1f40b6766cd7a9934224133f61d063ac076f182ebc5ecee087
+  sha256: 8b2f33fc3c98faaae09185311ccd0a5fb10f6056913757bb1c5b88aa8be888b5
   status: live
   see-also: ~/projects/omegaflow-work/ui-seats.md AGENTS.md docs/SOURCE_PORT.md
 -->
@@ -77,7 +77,9 @@ MathArena · Artificial Analysis), `paper2gal`, `hyperspace`.
 3. **AI2 Playground als UI-Seat** (kein Sign-Up, Olmo — neue Zuchtlinie): Gretchenfrage
    (Fähigkeit 4/4 + Tempo), dann in `docs/concepts/ui-seats.md` + Roster.
 4. **Elicit + Consensus als Research-Seats/Quellen**: Literatur-Review-Antworten gegen
-   `--openalex`/`--semanticscholar` gegenprüfen; prüfen, ob Consensus einen API-Endpoint hat.
+   `--openalex`/`--semanticscholar` gegenprüfen; **Consensus-API (2026-10-18 gemessen):
+   `https://api.consensus.app/v1/search` → 401 (Key nötig); `consensus.app/api` → 403.
+   Kein keyless Endpoint.**
 5. **Sci-Bot (Sci-Hub)**: Grauzone (UrhG/DMCA) — **Rat-Verdikt vor jeder Berührung**, nie
    blind wiren.
 6. **NVIDIA NIM** (keyless Modelle/Endpoint): als Seat **und** mögliche API-Quelle messen.
