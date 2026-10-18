@@ -52,6 +52,41 @@ fn bin_of(t: f64, bin_s: f64) -> i64 {
     (t / bin_s).floor() as i64
 }
 
+fn read_kp_csv(path: &str, bin_s: f64) -> BTreeMap<i64, f64> {
+    let text = match std::fs::read_to_string(path) {
+        Ok(t) => t,
+        Err(e) => {
+            eprintln!("de2_conditional_te: Kp csv unread {path}: {e}");
+            std::process::exit(2);
+        }
+    };
+    let mut acc: BTreeMap<i64, Acc> = BTreeMap::new();
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let cells: Vec<&str> = line.split(',').map(str::trim).collect();
+        if cells.len() < 2 {
+            continue;
+        }
+        let Some(t) = parse_iso_seconds(cells[0]) else {
+            continue;
+        };
+        let Ok(v) = cells[1].parse::<f64>() else {
+            continue;
+        };
+        if usable(v) {
+            acc.entry(bin_of(t, bin_s))
+                .or_insert(Acc::empty())
+                .add(v);
+        }
+    }
+    acc.into_iter()
+        .filter_map(|(k, a)| a.mean().map(|m| (k, m)))
+        .collect()
+}
+
 fn read_cond(path: &str, bin_s: f64, field: &str) -> BTreeMap<i64, f64> {
     let bytes = match std::fs::read(path) {
         Ok(b) => b,
@@ -189,8 +224,17 @@ fn main() {
         eprintln!("de2_conditional_te: --bin-seconds must be positive");
         std::process::exit(2);
     }
+    let cond_field = match arg_value(&args, "--cond") {
+        Some(v) => v,
+        None => "ae".to_string(),
+    };
+    if !["ae", "dst", "symd", "kp"].contains(&cond_field.as_str()) {
+        eprintln!("de2_conditional_te: --cond names no ae|dst|symd|kp");
+        std::process::exit(2);
+    }
     let cond_arg: f64 = parse_arg(&args, "--cond-seconds", 0.0);
-    let cond_s = if cond_arg == 0.0 { bin_s } else { cond_arg };
+    let cond_default = if cond_field == "kp" { 10800.0 } else { bin_s };
+    let cond_s = if cond_arg == 0.0 { cond_default } else { cond_arg };
     if !(cond_s.is_finite() && cond_s >= bin_s) {
         eprintln!("de2_conditional_te: --cond-seconds must be finite and >= --bin-seconds");
         std::process::exit(2);
@@ -198,17 +242,20 @@ fn main() {
     let max_lag: usize = parse_arg(&args, "--max-lag", 3);
     let bins: usize = parse_arg(&args, "--bins", 8);
     let n_surr: usize = parse_arg(&args, "--surr", 50);
-    let cond_field = match arg_value(&args, "--cond") {
-        Some(v) => v,
-        None => "ae".to_string(),
-    };
-    if !["ae", "dst", "symd"].contains(&cond_field.as_str()) {
-        eprintln!("de2_conditional_te: --cond names no ae|dst|symd");
-        std::process::exit(2);
-    }
 
     let (ion, neutral) = read_de2(&csv, bin_s);
-    let ae_bins = read_cond(&ae, cond_s, &cond_field);
+    let ae_bins = if cond_field == "kp" {
+        let kp = match arg_value(&args, "--kp-csv") {
+            Some(v) => v,
+            None => {
+                eprintln!("de2_conditional_te: --cond kp needs --kp-csv <time,kp,...>");
+                std::process::exit(2);
+            }
+        };
+        read_kp_csv(&kp, cond_s)
+    } else {
+        read_cond(&ae, cond_s, &cond_field)
+    };
     let ae_at = |k: i64| -> Option<f64> {
         let coarse = bin_of(k as f64 * bin_s, cond_s);
         ae_bins.get(&coarse).copied()

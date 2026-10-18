@@ -18,7 +18,7 @@ on:
         type: string
         default: '0'
       cond_field:
-        description: 'conditioner series from the WDC bin: ae | dst | symd'
+        description: 'conditioner series: ae | dst | symd (WDC bin) or kp (WDC Kyoto hour3h_kp csv)'
         required: false
         type: string
         default: 'ae'
@@ -54,7 +54,15 @@ jobs:
           curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
             -o data/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin \
             'https://github.com/omegaflow/sources/releases/download/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin'
-      - name: Run the conditioned TE (both directions, raw vs AE-conditioned)
+      - name: Fetch the WDC Kyoto Kp series (3-hourly)
+        if: inputs.cond_field == 'kp'
+        run: |
+          set -euo pipefail
+          mkdir -p data/wdc.kugi.kyoto-u.ac.jp
+          curl -sSfL --retry 5 --retry-all-errors --max-time 300 \
+            -o data/wdc.kugi.kyoto-u.ac.jp/hour3h_kp.csv \
+            'https://wdc.kugi.kyoto-u.ac.jp/hapi/data?id=hour3h_kp&start=1981-08-08T00:00:00Z&stop=1983-02-17T00:00:00Z&format=csv'
+      - name: Run the conditioned TE (both directions, raw vs conditioned)
         run: |
           {
             echo "SHA $(git rev-parse HEAD)"
@@ -63,6 +71,7 @@ jobs:
               --bin-seconds '${{ inputs.bin_seconds }}' \
               --cond '${{ inputs.cond_field }}' \
               --cond-seconds '${{ inputs.cond_seconds }}' \
+              --kp-csv data/wdc.kugi.kyoto-u.ac.jp/hour3h_kp.csv \
               --max-lag '${{ inputs.max_lag }}' \
               --surr '${{ inputs.surr }}'
           } > de2-conditional-te.txt
