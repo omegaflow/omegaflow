@@ -2,7 +2,7 @@
   title: House Rules — die Essenz (was gilt)
   class: concept
   date: 2026-10-16
-  sha256: 23d2375cf12cc79a10c9c479e0dccc899645d9c8f309352197bc3a6d84d17a95
+  sha256: d2e2b6d6fa150c4e4820b6fc8d57e1606ad2ce017cf0e44666ec1c4cd9d33231
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md
 -->
@@ -20,13 +20,16 @@ ausgeführt statt erzählt — sonst driftet der Text gegen das Gate. Die Vollte
 (`post/in/`). Lies nur die Stellen, die die Aufgabe nennt (`sread <f> --offset --limit`).
 
 - **Ein Pass.** Kein Planungstheater, keine Liste, kein Consent-Stopp für Bekanntes.
-- **Kein Dispatch für dich?** → arbeite deine offenen Punkte, so viele wie möglich.
+- **Kein Dispatch für dich?** → arbeite deine offenen Punkte, so viele wie möglich — nicht so wenige wie nötig.
 - **Vor jeder NET-Suche: `bin/where <begriff>`** — erst prüfen, was das Haus schon hat.
 - **Ende des Passes:** `register_lookup --orphan-docs` — deine Waisen in die Übergabe falten.
-- **Ein Pass schließt Punkte.** Jeder offene Punkt ist ein `### name` mit
+- **Ein Pass schließt Punkte — so viele wie möglich.** Jeder offene Punkt ist ein `### name` mit
   `Status · Trigger · Lage · Blockade · Braucht` — sonst ist die Zahl unsichtbar.
-  Sammelt ein Pass nur, ist es kein Pass: **Taucher laufen, bis die Punkte zu sind** —
+  „Mindestens ein Punkt" ist die Hintertür: **Taucher laufen, bis die Punkte zu sind** —
   nicht die Übergabe kürzen, nicht bei einer Zahl Schluss machen. Gemessen wird, was **geschlossen** wurde.
+- **Bringschuld vor der Übergabe.** Keine andere Sitzung weiß, dass dir etwas fehlt, wenn du es nicht
+  schreibst. Jeder offene Punkt nennt unter `Braucht` den wörtlichen, kopierbaren Schritt, der ihn löst;
+  die Übergabe ist die Bringschuld, nicht die Kür.
 - **Grenze:** commit+push = deine Hand (eigene Pfade, Englisch); **Send** und jeder
   dritt-wirksame Akt = Operator-Hand (per-Akt-Wort); Architektur/Ethik → der Rat.
   **„Send" ist genau das — Versand, nichts sonst:** `smail --send`, ein Formular/Antrag,
