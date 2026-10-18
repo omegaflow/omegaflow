@@ -2,7 +2,7 @@
   title: Handover — River-Folge 227 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: c829269baada65c29dcff69e5d56bd3bd653da5d84ee4ba3eb6836cd47500ec1
+  sha256: e69aa3218622d2f9e55761b444ac6bb7278ea99baaeb19266f4eefef5b0a4774
   status: live
 -->
 # River-226
@@ -36,3 +36,7 @@
 ## An mycelium
 Origin: river-226
 - `xfer:river.ses_ec618129fffeLFawr4V3pQKpOl.13~ea59cd54` KiDS-Transport.
+
+## An future
+Origin: river-folge227
+- `xfer:river.ses_ec618129fffeLFawr4V3pQKpOl.15~dcdcb011` Befund, nicht gebaut: `commit_check` Braucht-Prüfung blind (`tools/gate/src/bin/commit_check.rs:229` beendet `###`-Abschnitt am nächsten Bullet statt am nächsten `###`; Slice = nur Überschrift). Reproduziert an dieser Handover: Warnung für K, Rätsel, Flyby — auch für die unveränderten Punkte. Vorschlag: Abschnittsende = nächstes `###`. `the open did not shrink` ist dagegen korrekt.
