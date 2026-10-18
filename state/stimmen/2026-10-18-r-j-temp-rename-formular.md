@@ -34,3 +34,8 @@ Bau erst nach Wort.
 - Geltungsbereich gespalten: „nur die drei" (nano, nemotron-ultra, openrouter, pollinations) vs. „alle `register_*`" (gemma4).
 - Risse: **lost-update/race** (fehlender Lock) · **torn/partial write bei Crash** (fsync nötig) → Option **C** adressiert beide, A allein nicht.
 - Kein Sitz trägt B als Entscheidung.
+
+## UI-Sitze (Fugu Max High, 2026-10-18)
+- **Verdikt A** (temp+rename je Datei); Geltungsbereich **alle `register_*`** — das Muster `fs::write`-truncate ist der Defekt, nicht die drei Stellen; als geteilter `atomic_write`-Helper erzwingen.
+- **Riss (neu, kein Schwarm-Sitz hatte ihn): Durability/Multi-File** — rename deckt nur Sichtbarkeits-Atomarität, nicht Crash-Festigkeit (fsync Datei **und** Verzeichnis fehlt) und nicht Konsistenz über zwei Register.
+- Konvergenz: Schwarm 4× A + Fugu A = **A**, aber der Riss schiebt Richtung **C** (temp+rename+fsync+Lock).
