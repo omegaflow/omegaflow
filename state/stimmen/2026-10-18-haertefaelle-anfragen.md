@@ -224,10 +224,10 @@ Kind regards,
 
 ## 4 — Alternativrouten (`archive_search --all`, 2026-10-18)
 
-- **RBN — Anfrage optional.** Keyless **CC-BY-4.0** auf Zenodo: `10.5281/zenodo.13362701`
+- **RBN — Korpus keyless, Vollstrom nur per Anfrage.** Keyless **CC-BY-4.0** auf Zenodo: `10.5281/zenodo.13362701`
   (Amateur Radio Spot Data 2018-11…2019-05, Monats-TARs RBN/WSPRNet/PSKReporter),
-  `2483022` (HamSCI 2017 SEQP, aggregiertes RBN-CSV), `5799649`, `1067790`. Der volle
-  RBN-Stream bleibt ohne Grant; ein Korpus ist ohne Anfrage erreichbar.
+  `2483022` (HamSCI 2017 SEQP, aggregiertes RBN-CSV), `5799649`, `1067790`. Für einen **Korpus** ist keine Anfrage nötig; für den **vollen RBN-Stream**
+  bleibt die Anfrage der einzige Weg (kein Redistributions-Grant).
 - **CEIC D18000 — Alternativen, nicht das Produkt.** CEA/CENC-abgeleitete
   **CC-BY-4.0**-Wellenformen: `23103204` (Weiyuan SAC), `13978646`
   (CENC-Katalog+Wellenformen), `10499328` (CNSN). Das exakte D18000 bleibt auth-gated.
