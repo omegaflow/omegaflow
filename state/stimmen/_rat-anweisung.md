@@ -66,6 +66,32 @@ curl -s https://api.deepinfra.com/v1/openai/chat/completions \
   > x-Qwen.json
 ```
 
+## 3b — Der freie Schwarm geht VOR die Paid-Sitze (gemessen 2026-10-18)
+
+**Regel:** Vor jeder Rat-Runde darf ein **Schwarm freier Modelle** die Frage fahren — als
+**Riss-Generator**, nicht als Entscheider. Kosten $0, Laufzeit ~1 s je Modell.
+
+```
+1. Frage steht (Formular)
+2. Freier Schwarm → Risse + Mindermeinung
+3. Die Risse wandern INS Formular an die Paid-Sitze
+4. Paid entscheidet und trägt (Urteil + Autorität)
+5. Sammlung nennt BEIDES: Paid-Verdikt und Schwarm-Risse
+```
+
+**Warum:** Benchmark über drei abgeschlossene Runden (`2026-10-18-schwarm-benchmark/README.md`):
+- **Sachfragen** (R-j, R-k): Schwarm = Paid-Rat, gleiche Verdikte, **schärfere Risse**.
+- **Zielkonflikt** (R-i): Schwarm wägt anders (B statt A) — vertretbar, aber ohne Träger.
+- In **3 von 3** Runden hat der Schwarm einen Einwand produziert, den **kein** Paid-Sitz hatte.
+
+**Schwarm (gemessen antwortfähig):** `cf/@cf/openai/gpt-oss-120b` · `kenari/agnes-3-0-flash:free` ·
+`pollinations/openai-fast` · `ollama/gemma4:31b`.
+**Ausgeschlossen — HTTP 200, aber leer:** `groq/*` · `kilo/*` · `llm7/GLM-5.3-Flash`.
+**Immer Inhalt prüfen:** HTTP-Erfolg ≠ Antwort.
+
+**Grenze:** Der Schwarm **trägt nicht**. Sein Verdikt ist eine Mindermeinung, seine Risse sind
+der Wert. Kein Register-Schreibakt aus einem Schwarm-Lauf.
+
 ## 4 — Die Ablage
 
 - **Fragebogen:** `state/stimmen/<datum>-<thema>-formular.md` (oder `/tmp/opencode/<thema>.txt`).
