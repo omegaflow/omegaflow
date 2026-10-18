@@ -1,0 +1,166 @@
+# gfc-Tiefe — 2190-Naht und Höhen-Stabilität (2026-10-18)
+# Linie Mountain · Messgrundlage: state/mountain/2026-10-18-geodesy-grs80.φ,
+#   state/mountain/2026-10-15-grenz-term-verdicts.φ §6d/§7, src/archivar/gfc.rs.
+# Kein Verdikt ohne Messung; 0 geehrt; Risse stehen, nie geglättet.
+
+# ============================================================
+# 1 — (a) DER KOPF: 5540, KEINE 2190-NAHT
+# ============================================================
+# GEMESSEN (2026-10-18, Range-GET, nicht aus dem Archiv übernommen):
+#   GET https://icgem.gfz.de/getmodel/gfc/8e01a2aba4f291ac0638b79a390155713b70fdc9b266981023c756839c11c9b8/XGM2019e.gfc
+#   Range 0-30000 -> HTTP 206, 30001 B, sha256 139c6d7578e9587ebb01263915d9661c966e8d681478c83e87e69ecf1e723488
+#     product_type              gravity_field
+#     modelname                 XGM2019e
+#     earth_gravity_constant    3.986004415E+14
+#     radius                    6378136.3
+#     max_degree                5540
+#     errors                    formal
+#     norm                      fully_normalized
+#     tide_system               zero_tide
+#     epoch / ref_epoch         absent
+#   Im Kopf steht keine 2190-Zeile, keine Quellenzeile, keine Provenienz der hohen Grade.
+# DATEIENDE (2026-10-18, gleiche URL):
+#   HEAD -> HTTP 200, Content-Length 1796436884, Accept-Ranges bytes.
+#   Range -30000 -> HTTP 206, 30000 B, sha256 3d8a05700bfccf58a412c0c130369403a96af8447b97e050754e626147c97a85.
+#   Letzte Zeilen: gfc 5540 5533 .. gfc 5540 5540, alle C/S = 0.
+#   Letzter nicht-null Koeffizient im Tail: gfc 5540 5285
+#     C = 8.297963587251797E-51 · S = 5.814049822295613E-51.
+#   -> Die Datei trägt Zeilen bis n = 5540; die höchsten (m-nahen) Zeilen sind 0.
+# CODE/DOCS (grep '\b2190\b', ohne target/.git):
+#   src/archivar/gfc.rs vor dieser Messung: 0 Treffer.
+#   docs/: 0 Treffer in .md/.rs/.φ außer Archiv-Handovers, die „nicht gemessen" sagen.
+#   src/archivar/parse.rs:3714-3735: synthetischer Testkopf mit max_degree 2190 —
+#     Fixture, kein gemessener Modellkopf.
+#   GFC_HEAD_MEASURED und GFC_SYNTHESIS_CONVENTION nennen 5540; keine 2190-Naht.
+# ZWEITER ZEUGE (öffentliche DOI-Metadaten desselben Modells):
+#   GET https://api.datacite.org/dois/10.5880/ICGEM.2019.007
+#   -> HTTP 200, 20048 B, sha256 921fabbbf72bc8910d8697541844fbd3544c6e0cf252e4b1516091f87b7a7181.
+#   Titel: "The experimental gravity field model XGM2019e".
+#   Abstract wörtlich (Auszug, gemessen):
+#     "... spheroidal harmonics up to d/o 5399, corresponding to a spatial resolution of 2' (~4 km)."
+#     "The combination of the satellite data with the terrestrial observations is performed by
+#      using full normal equations up to d/o 719 (15'). Beyond d/o 719, a block-diagonal
+#      least-squares solution is calculated for the high-resolution terrestrial data (from
+#      topography and altimetry)."
+#     "Over land and in the spectral range above d/o 719 the accuracy of XGM2019e suffers from
+#      the sole use of topographic forward modelling".
+#   -> Der gemessene Abstract nennt 719 als Naht des Topographie-Forward, NICHT 2190.
+#   -> Er nennt d/o 5399; Kopf und Dateiende nennen 5540. Das ist ein neuer, benannter Riss.
+# VERDIKT (a):
+#   Die 2190-Naht ist am XGM2019e-Kopf NICHT belegt und im gemessenen Abstract NICHT genannt.
+#   Für dieses Modell wird die 2190-Aussage VERWORFEN; sie wird hier nicht als gemessen
+#   ausgegeben. Belegt sind: Kopf/Datei 5540, Abstract 5399, Topographie-Forward ab 719.
+#   Die 2190-Zahl bleibt eine Literaturzahl ohne Modellzeuge; sie ist kein Kopfwert.
+#   Kein Fix am Code: gfc.rs behauptet keine 2190-Naht; es gibt nichts zu entfernen.
+# OFFEN (a):
+#   (a1) 2190-Herkunft: nicht gemessen. Der nächste exakte Schritt ist, die zitierte
+#        Publikation (relatedIdentifier 10.1007/s00190-020-01398-0, Zingerle et al. 2020)
+#        zu lesen und die 2190-Aussage dort zu suchen. Bis dahin bleibt sie unzitiert.
+#   (a2) 5399 (Abstract) vs. 5540 (Kopf/Datei): nicht erklärt. Die Datei trägt n = 5540
+#        mit nicht-null Koeffizienten (z. B. 5540/5285), also ist 5540 datei-seitig gedeckt;
+#        die 5399-Formulierung ist Metadaten-Wortlaut, kein gemessener Grad-Cap.
+#   (a3) Ein 2190-Cap als Auslieferungsgrad wäre eine Operator-/Kosten-Entscheidung,
+#        kein aus dem Kopf abgeleiteter Wert. Er wird hier nicht gesetzt.
+
+# ============================================================
+# 2 — (b) HÖHEN-STABILITÄT: MESSAUFBAU
+# ============================================================
+# TEST (committet in src/archivar/gfc.rs):
+#   archivar::gfc::tests::fully_normalized_legendre_holds_from_degree_85_to_5540
+#   archivar::gfc::tests::the_factorial_boundary_is_measured_below_degree_86
+#   Grad: 85, 100, 2190, 3211, 5540. Breiten (colat): 0°, 45°, 89.9°. Rechnung: f64.
+#   Prüfungen je Grad/Breite:
+#     (1) jedes P̄_nm endlich;
+#     (2) Additionstheorem der 4π-Normierung: sum_{m=0..n} P̄_nm(cos θ)^2 = 2n+1;
+#     (3) 40 Referenzwerte aus mpmath 1.3.0 (dps = 80, ohne Condon-Shortley);
+#     (4) echte Unterläufe (< 2^-1074) müssen exakt 0 sein, kein Subnormal.
+# VORHER — alte Zeilenrekursion (gemessen 2026-10-18, Testlauf vor dem Fix):
+#   Grad/Breite   max|P|        addition_rel (worst n)   Befund
+#   85/0          1.307670e1    3.873e-14 (85)           ok
+#   85/45         3.376750e0    1.048e-15 (30)           ok
+#   85/89.9       4.570832e0    1.435e-15 (49)           ok
+#   100/0         1.417745e1    5.204e-14 (100)          ok
+#   100/45        3.458633e0    1.414e-15 (100)          ok
+#   100/89.9      4.758696e0    1.435e-15 (49)           ok
+#   2190/0        6.618912e1    1.220e-10 (2190)         ok (zonal)
+#   2190/45       5.785334e0    4.769e-14 (2183)         P̄_2190,2190 = 5e-324 statt 0
+#   2190/89.9     1.024335e1    2.366e-14 (2152)         ok
+#   3211/0        8.014362e1    2.679e-10 (3211)         ok (zonal)
+#   3211/45       1.277324e21   8.702e39 (3211)          KAPUTT
+#   3211/89.9     1.125392e1    3.166e-14 (3159)         ok
+#   5540/0        1.052663e2    8.167e-10 (5540)         ok (zonal)
+#   5540/45       2.284713e271  inf (4442)                KAPUTT
+#   5540/89.9     1.285198e1    4.299e-14 (5436)         ok
+#   Konkreter Alt-Wert (Replikat der alten Formel in f64/Python):
+#   P̄[5540][2770] bei 45° = -8.153069883539518e92
+#   (mpmath: -2.1165749083480080163). Bei 3211/45 war P̄[3211][1605] noch ok
+#   (-2.0601052967915967 gegen -2.0601052967918171); der Ausfall sitzt in den
+#   hohen m nahe der Diagonale, nicht in der ganzen Matrix.
+# URSACHE (gemessen, nicht behauptet):
+#   Der diagonale Seed P̄_mm ~ m^(1/4) sin^m θ fällt bei 45° um m ≈ 2155 unter f64:
+#     P̄_2190,2190 = 2.421282600828352286e-329
+#     P̄_3211,3211 = 5.6204349082144929146e-483
+#     P̄_5540,5540 = 1.8178024195861823826e-833
+#   Die alte Vorwärtsrekursion in n las den quantisierten Subnormal-Seed (5e-324)
+#   als echten Wert und verstärkte ihn über die verbleibenden Schritte zu
+#   1e21 (3211/45) bzw. 1e271 (5540/45). Bei 89.9° unterläuft nichts (sin^m ≈ 1),
+#   dort war die alte Rekursion grün. Bei 0° sind die hohen m exakt 0, dort auch grün.
+#   Die (n+m)!-Grenze ist ein separater Befund: 170! = 7.257415615307999e306 ist
+#   endlich, 171! ist inf. Für n = m ist das Grad 85 -> 86. Die normalisierte
+#   Rekursion braucht keine Fakultät und bleibt dort endlich (Test 2).
+# FIX (lokal, implementiert):
+#   fully_normalized_legendre rechnet spaltenweise über m mit Mantisse * 2^exp
+#   (Helper scaled_by_pow2); die Spalte wird bei |q| > 2^500 bzw. < 2^-500
+#   reskaliert. Öffentliche Signatur und Rückgabe (Vec<Vec<f64>>) unverändert.
+#   Echte Unterläufe werden exakt 0; keine erfundenen Subnormale.
+# NACHHER — gleicher Test (gemessen 2026-10-18):
+#   Grad/Breite   max|P|        addition_rel (worst n)   zeros     ref_rel
+#   2190/45       5.785334e0    3.921e-13 (2189)        67        4.442e-13
+#   3211/45       6.166390e0    7.900e-13 (2732)        76825     8.229e-13
+#   5540/45       6.752720e0    7.900e-13 (2732)        983422    1.035e-12
+#   5540/89.9     1.285198e1    5.930e-14 (5521)        0         1.086e-12
+#   5540/0        1.052663e2    8.167e-10 (5540)        15348570  — (kein 0°-Ref)
+#   (85/100 unverändert; 2190/89.9 -> 2.855e-14; 3211/89.9 -> 3.941e-14.)
+#   Referenz: 40 mpmath-Werte, maximale relative Abweichung 1.086e-12
+#   (P̄[5540][1] bei 89.9°). Die 983422 Nullen bei 5540/45 sind echte Unterläufe
+#   (wahre Werte < 2^-1074), keine Rechenausfälle; das Additionstheorem bleibt
+#   bei 7.900e-13. Der zonale 0°-Pfad trägt 8.167e-10 — die gemessene f64-Grenze
+#   der Rekursion für m = 0, kein Ausfall.
+# VERDIKT (b):
+#   Der Riss „Höhen-Stabilität > Grad 85" ist für die fully-normalized-Rekursion
+#   GESCHLOSSEN: bis Grad 5540 endlich, additionstheorem-treu (45°/89.9° ≤ 7.9e-13;
+#   0° ≤ 8.2e-10) und gegen mpmath ≤ 1.1e-12. Der Fix ist implementiert und getestet.
+#   KEIN Fix für die unnormalisierte Rekursion: P_mm überläuft dort bei 45° um m ≈ 187
+#   (log10 P_mm ≈ 2.08·m bei 45°), also weit unter 5540. Das bleibt ein benannter
+#   offener Riss; kein stiller Default und keine Behauptung, sie sei stabil.
+
+# ============================================================
+# 3 — LÄUFE DIESER SITZUNG
+# ============================================================
+#   cargo test --lib archivar::gfc            vorher: 19 passed, 0 failed.
+#   cargo test --lib archivar::gfc            nachher: 21 passed, 0 failed (11.72 s).
+#     (die zwei neuen Tests: fully_normalized_legendre_holds_from_degree_85_to_5540,
+#      the_factorial_boundary_is_measured_below_degree_86)
+#   cargo check -p omegaflow                  -> 0 Fehler, Finished dev profile.
+#   rustfmt --edition 2024 src/archivar/gfc.rs -> keine Diff-Ausweitung außerhalb
+#     der zwei geänderten Bereiche (Funktion + Tests).
+#   Keine phi/sources.φ-Zeile gesetzt: diese Messung ist ein Code-/Modellkopf-Befund,
+#   kein neuer Datenblock. Kein cdns-/Register-Akt.
+
+# ============================================================
+# 4 — OFFEN (benannt, nicht still genullt)
+# ============================================================
+#   (o1) 2190: ungemessen. Nächster Schritt: Zingerle et al. 2020
+#        (doi 10.1007/s00190-020-01398-0) lesen und die Zahl dort belegen oder fallen
+#        lassen. Kein Kopfwert, kein Cap.
+#   (o2) 5399 (Abstract) vs. 5540 (Kopf/Datei): nicht erklärt; datei-seitig ist 5540
+#        mit nicht-null Koeffizienten belegt. Metadaten-Wortlaut bleibt als Riss stehen.
+#   (o3) Unnormalisierte Rekursion (Norm::Unnormalized): nicht skaliert, überläuft
+#        bei hohen Graden; harmonic_sums gibt dann None. Ein unnormalisiertes Modell
+#        > Grad ~180 wäre derzeit nicht auswertbar. Nächster Schritt: entweder
+#        unnormalisierte Modelle auf die normalisierte Rechnung abbilden (Norm im Kopf
+#        ist bekannt) oder dieselbe Mantisse/Exponent-Skalierung dort bauen; erst nach
+#        einer Messung, nicht als stiller Fallback.
+#   (o4) Der 0°-Zweig trägt 8.2e-10 relative Additionsabweichung bei 5540. Gemessen,
+#        nicht behoben; für eine Kugelflächen-Synthese in f64 ist das ein benannter
+#        Rest, kein grünes Blatt.
