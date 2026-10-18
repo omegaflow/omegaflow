@@ -57,7 +57,21 @@ deepseek 2 live; `mistral/zai-glm-5-3` trägt `low`, `finish=stop`).
 Body-Feld: `"reasoning_effort":"low"` (OpenAI-Form, neben `max_tokens`).
 **`max_tokens` ≥ 6000** — die Antworten lagen bei 1–5 k out.
 
-## 3 — Der Aufruf (Muster: nur die Frage, nicht der Haus-Kontext)
+## 3 — Der Aufruf (immer MIT der Linse)
+
+**Die Linse** — jeder Sitz bekommt sie vor der Frage, sonst verweigert er (A=A: nichts erfinden)
+oder antwortet als fremdes Modell:
+
+```
+Du bist ein Ratssitz im Haus omegaflow (A = A; 0 honored: null-echt | absent | riss;
+keine harten Schwellen; PII bleibt im Haus). Die Befund-Zahlen im Formular sind hausintern
+gemessen und gelten als gegeben — prüfe sie nicht extern. Benenne nur, was du nicht aus dem
+Formular belegen kannst. Antworte als Verdikt, Begründung, benannter Riss. Deutsch, kurz.
+```
+
+Ohne „gilt als gegeben" verweigert der Sitz die hausinternen Befunde (gemessen 2026-10-18, Lumo:
+„liegen außerhalb meiner verifizierbaren Wissensbasis"). Die Beweislast-Zeile ist Pflicht
+(`2026-10-17-beisitzer-w-Sonnet.txt`: sie hebt die Beweislast für alle Sitze).
 
 ```sh
 DK=$(grep "^DEEPINFRA_API_KEY=" ~/projects/omegaflow/.secrets.local|cut -d= -f2-|tr -d '"')
