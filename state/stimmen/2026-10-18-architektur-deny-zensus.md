@@ -86,3 +86,20 @@ git log 1f73b482e..HEAD --format='%h' -- tools/gate .opencode AGENTS.md opencode
 git -C ../omegaflow-personal log --oneline 620fb02..HEAD -- AGENTS.md opencode.json .opencode                 # 4
 ls -la ../omegaflow-personal/.githooks/    # nur pre-commit
 ```
+
+## Nachtrag — der persönliche Hook ist installiert (2026-10-18)
+
+`personal/.githooks/commit-msg` zeigt auf `$OMEGAFLOW_CORE/tools/gate/commit_msg.sh`
+(Default `$HOME/projects/omegaflow`) und ist **fail-closed** (fehlt der Core-Hook, exit 1).
+
+Abnahme (gemessen):
+
+| Fall | Exit |
+|---|---|
+| personal, nichts Architektur gestaged | **0** |
+| `.opencode/x` gestaged, Nachricht ohne RAT-ID | **1** |
+| derselbe Stage, Nachricht mit `R-2026-10-18-e` | **0** |
+
+Commit `159b0d3` (personal, gepusht). Damit sind die personal Deny-Regeln auf `.opencode/**`,
+`AGENTS.md`, `opencode.json` **redundant mit dem Hook** — sie blockieren nur noch die erlaubte
+RAT-ID-Änderung. `tools/gate/**` (schützt die Prüfung) und `.secrets.local` (Schlüssel) bleiben.
