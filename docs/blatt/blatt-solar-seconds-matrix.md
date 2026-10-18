@@ -2,8 +2,8 @@
   title: BLATT — Solar-24-s-Sekunden-Matrix: der 72-Paare-Flotten-Beweis (XRS→EUV)
   class: sheet
   date: 2026-09-08
-  sha256: 4c5dc35b3fe755ef6bdd0bb393832f55f99c16ee1ccddfeb044ee67dea2d6a46
-  status: live
+  sha256: fef80b7bf7f7629507576494fbebe25800efbe8130b2bdfa3bd89c03b3ddee54
+  status: done
   see-also: docs/handover/archiv/handover-2026-09-09-te-atom-4.md docs/specs/spectral-oscillator.md
 -->
 
@@ -37,15 +37,38 @@ XRS-intern (2) bound 1 / still 1.
 | XRSB → 131A | 96 s | 1.644e-1 | ja | XRS → AIA |
 | XRSB → 193A | 96 s | 1.485e-1 | ja | XRS → AIA |
 
-## Der Schlichtungsfall (pending)
+## Der Schlichtungsfall — gemessen
 
-**211A → 193A** — der einzige intra-AIA-Pfeil — trägt nur einen Zeugen (die
-Matrix selbst): 211 und 193 antworten beide auf das Röntgen mit etwas
-unterschiedlicher Verzögerung, und die paarweise TE liest das als „211 treibt
-193". Das ist dieselbe Klasse (intra-AIA, geteilter Treiber), an der die
-konditionale Sonde ihre Hüllen-Artefakt-Kippe maß. Stufe 2 der Arbeitsteilung:
-die Matrix siebt, die konditionale Sonde schlichtet. Der Pfeil ist `pending`
-der konditionalen Prüfung — ehrlich etikettiert, nicht überinterpretiert.
+**211A → 193A** — der einzige intra-AIA-Pfeil — ist konditional geprüft. Die
+Sonde `corona_conditional_probe` führt das Paar als `193A->211A` (Ladder
+cool→hot): `TE c->h|C` ist 193→211, `TE h->c|C` ist 211→193, und
+`D|C = TE(c->h|C) − TE(h->c|C)`. Konfund ist der gemeinsame XRS-Treiber
+(GOES `b_flux`), Korpus 2014, 1315 Ereignisse, Lags 0/96/192 s, lag-bewusste
+ARX-Null, 10 Surrogate je Zelle:
+
+```
+target/release/corona_conditional_probe --year /tmp/opencode/solar-corpus/jsoc.stanford.edu/aia2014_fullyear.bin /tmp/opencode/solar-corpus/ncei.noaa.gov/goes15 --max-lag 8 --confound goes
+year 0: 1315 events (GOES b_flux > 5e-6 W/m2), window +/-40 min, 24-s cells
+stack: 1315 events; confounders goes
+path kde-1; null max_lag 8
+conditional directional excess D|C = TE(cool->hot|C) - TE(hot->cool|C), lagged null
+
+pair      | lag |   mean D|C | TE c->h|C | TE h->c|C | fwd/events | rev/events
+193A->211A |   0s |   -1.40e-2 |    5.57e-2 |    6.97e-2 | 284/1315 | 339/1315
+193A->211A |  96s |   -3.79e-2 |    7.01e-2 |    1.08e-1 | 146/1315 | 254/1315
+193A->211A | 192s |   -3.36e-2 |    8.21e-2 |    1.16e-1 | 119/1315 | 176/1315
+```
+
+Der Pfeil hält: bei 96 s trägt 211→193 die größere konditionale TE
+(1.08e-1 gegen 7.01e-2; D|C = −3.79e-2) und liegt in 254 von 1315 Ereignissen
+über seiner lag-bewussten Null (Gegenrichtung 146). Die gemeinsame
+XRS-Antwort erklärt die Richtung also nicht weg — kein Hüllen-Artefakt. Die
+Gegenprobe mit allen fünf AIA-Bändern als Konfunden (Run `36194519096`, Commit
+`42471cde`, Korpus `abc49399…`) ist jedoch schätzerabhängig: `binned` bestätigt
+das Vorzeichen (`D|C = −3.40e-3` bei 96 s, `rev` 161/1315 gegen `fwd` 117/1315),
+`ksg` kippt es (`+6.71e-3`, `fwd` 337/1315 gegen `rev` 45/1315). Der Pfeil ist
+damit XRS-konditional bestätigt, all-band-konditional aber nicht schätzerrobust
+— nicht mehr ungeklärt, und kein zweiter unabhängiger Zeuge.
 
 ## Das Verdikt
 
