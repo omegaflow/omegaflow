@@ -242,3 +242,46 @@ Erster Schnitt (River): ein Orbit, `lolardr_122590153` aus `lro_es_01`.
 - Ergebnis: **109 867** gültige Spots — exakt Rivers Gegenprobe; 0 Ausreißer unter der Maske. CSV **8 542 951 B**, `sha256 ffaa8684…`, CDN **206** unter `pds-geosciences.wustl.edu`.
 - Semantik: `Radius_N` = **Mondzentrums-Distanz** [mm] (FMT: „distance from the Moon center"); `SELENOID_RADIUS` = Geoid-Radius [mm]; Elevation = (Radius − Selenoid)/1000 [m]. Zeit = `TRANSMIT_TIME` (TT seit J2000, zwei u32: Sekunden + Fraktion).
 - Lizenz/Provenienz: PDS/NASA, offen; `origin` = Produkt-URL, `terms` schreibt Mountain.
+
+## 22. Arbeitsstand 2026-10-19 — laufende und offene Aufgaben (Arbeitszettel)
+
+Dieser Abschnitt ist der **Zustand der Linie**, nicht ein Plan: was läuft, was fehlt, was der nächste
+Schritt ist. Jede Session liest ihn zuerst und schreibt ihn am Ende fort.
+
+### Laufend (Hintergrund)
+
+**AIA hourly** — `target/release/aia_rs_list_compiler --from 2010-05-01 --to 2026-10-18 --jobs 6
+--out /tmp/aia_hourly.bin --ci-mode`, Start `2026-10-18T22:58Z`, PID 730194 (Watcher:
+`/tmp/opencode/aia_hourly.done.log`). Stand `23:55Z`: bei **2020-06** von 2026-10 (~63 %), ETA ~30–40 min.
+
+- **Bekannte Ineffizienz, Ergebnis korrekt:** jeder Monats-Task fragt weiter `367d@1h` ab (der
+  Compiler hat den Span nicht auf den Monat gekürzt). `write_aia` sortiert und dedupliziert
+  `(t, comp)` — die Überlappung kostet **12× JSOC-Zeit**, nicht Datenqualität. Fix gehört in den
+  nächsten Pass (Span = Monatslänge), **nicht** in den laufenden Job.
+- **Fertig, wenn:** Datei geschrieben, `sha256` notiert, CDN-`206` auf `jsoc.stanford.edu/aia_hourly.bin`,
+  Block (Mountain) auf `url`/`origin`/`compiler`/`sha256` gepinnt, `matrix-vlies` neu gelaufen.
+- Danach: Record-Abschnitt AIA (Lizenz CC0/PD-USGov, NASA/SDO/AIA-Courtesy, Query + Compiler + Digest).
+
+### Offen — eigene Bau-Aufgaben (mit nächstem Schritt)
+
+| Aufgabe | Stand | nächster Schritt |
+|---|---|---|
+| TGF `gbm_tgf` | Asset lebt (`fermi.gsfc.nasa.gov/gbm_tgf_catalog_offline.csv`, 658 059 B, `f75cf291…`, 206); Block gepinnt | Port-Reader `gbm_tgf` fehlt; Block nutzt `lat Lat`/`lon Lon` statt `lat_key`/`lon_key` — Syntax korrigieren (Mountain) und Reader bauen |
+| WALDO A/B | Entscheid: Zenodo-Kopie `CC-BY-4.0`, zwei Header-Ordnungen | Compiler mit `header_version=A|B`, `Fc` als zweiter Zeuge; Block danach |
+| SOHO/MDI+EIT | Entscheid (Mountain): eigener Rückwärtszeuge, 5 Felder, `other-attribution` | VSO-Compiler (MDI LOS + EIT 171/195/284/304); VSO-API-Route noch ungemessen |
+| SPK JUICE/Clipper | Kandidaten-Kerne registriert (`e7a20a60…`, `1727f61f…`) | Compiler/Reader für SPK-Assets, Block/`field` |
+| CTBTO ISF | 6/7 Felder (`duration` fehlt in ISF1.0/2.1) | `format isf`-Reader + Block mit den 6 gemessenen Feldern |
+| NANOGrav-Residuen | 15-yr-Tar 638 719 668 B, EPTA-Ersatz | kleiner `.par`/`.tim`/Residuen-Compiler (nach AIA) |
+| LOLA RDR | Referenzorbit 109 867 Spots, CSV 8 542 951 B, `ffaa8684…`, 206 | Per-Orbit-Sharding (River wählt Orbit-Set), Inventar-Spiegel + per-File-`sha256` |
+| WALLABY HiPS3D | CASDA-Katalog gebaut; HiPS3D-Route bekannt (`alasky.cds.unistra.fr`) | `hips3d`-Tile-Reader; Asset-Route/Block (Mountain) |
+| ACE SWE rückwärts | `AC_K0_SWE` beginnt 2017-07 | `AC_H0_SWE` (1998–2024, Fill `-1.0E31`) als **eigener** Arm verwerfen/ernten — kein stiller Mix |
+| EDGES | Spektralquelle, passt nicht ins Zeitreihen-`field` | Rat-/Architekturfrage, kein stiller Block |
+
+### Geschlossen in diesem Zug
+
+- **Liniennamen-Riss (Dispatch 2026-10-19):** `bin/xfer` löst den Basisnamen auf die Pass-Ledger auf
+  (`sensory` → `sensory-259`), ohne Rename. `list`/`coverage` aggregieren, `mark`/`close`/`fold`
+  schreiben in den einen vorhandenen Ledger (Token-Namensraum bleibt `sensory-259`), zwei Treffer
+  sind mehrdeutig (exit 2), ein fehlender Ledger endet exit 2. Done-when: `coverage sensory` ==
+  `coverage sensory-259` (20/15/5), `list --open` trägt `xfer:sensory-259…`, `gibt-es-nicht` → 2,
+  kein `ledger/sensory`. Tests: `cargo test -p omegaflow-register --bin xfer` (11/11).
