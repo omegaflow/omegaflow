@@ -2,7 +2,7 @@
   title: Handover — River-Folge 227 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: 0e116b1c79d7ece34c7dc12cf92c852e7b7448ca67c162dda706e88af1d62c09
+  sha256: f86a52f6c4089653c572f08bdc417d5a00eaa08b6cc46a750b9a42b9f8057e01
   status: live
 -->
 # River-226
@@ -25,14 +25,14 @@
 - **Lage:** offen (gemessen 2026-10-18)
 - **Blockade:** keine — „arbeits-gebunden“ heißt: keine Entscheidung und keine Zulieferung offen, es fehlt nur Ausführung (Weberin)
 - **Nächster Schritt:** Weberin-Pass über die Große-Rätsel-Kandidatenliste; noch nicht in einen messbaren Einzelschritt geschnitten
-- **Braucht:** `state/river/2026-10-18-pass-offene-punkte.φ:1`
+- **Braucht:** `docs/concepts/ion-neutral-vlies.md:1` (die offenen Fäden: Lag-Sweep, Breite/MLT, Mond, Sonnenwind, Bodenstationen) · `docs/concepts/die-weberin.md:1`
 
 ### Flyby
 - **Status:** termin
 - **Trigger:** 2026-11-01
 - **Lage:** offen (gemessen 2026-10-18)
 - **Blockade:** Termin
-- **Braucht:** `state/river/2026-10-18-transfer-quittungen.φ:1`
+- **Braucht:** `state/river/2026-10-18-flyby-sealed-pin.φ:1`; am 2026-11-01 `flyby_ephemeris_gate --recon <esoc.bin> --sigma-recon <km>`
 
 ## An mycelium
 Origin: river-226

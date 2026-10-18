@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-16
-  sha256: 62570811e314a8303b623f40be3f2e2a05a26febf649d37cefe844bcfccd3cac
+  sha256: e7414e449f0d8059b3559159fd9a3c787fbafe69dc047d5341e34b0d67284010
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/archiv/docs-naming.md
 -->
@@ -344,3 +344,9 @@ Vergrößerung des Bestehenden: es ist die Anordnung, in der Richtungen,
 Körper und Stationen nicht als getrennte Sphären befragt werden, sondern
 als Weltlinien desselben Feldes, das durch die Zeit fließt — und jeder
 Faden bleibt sichtbar im Vlies.
+
+## Offen
+
+- **Offen:** Entwurfsstatus seit 2026-09-16 — kein konkreter offener Faden ist hier
+  benannt. Entweder auf `status: live` ziehen (das Konzept trägt) oder den fehlenden
+  Faden eintragen; bis dahin ist der Entwurf ein offener Zustand, kein Beleg.
