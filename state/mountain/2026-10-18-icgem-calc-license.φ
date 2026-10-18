@@ -1,0 +1,126 @@
+# ICGEM-calc.js — Lizenzmessung und Disposition (local-only) — 2026-10-18
+# Linie Mountain · Messgrundlage: state/mountain/2026-10-18-geodesy-grs80.φ §2/§5(e),
+#   offener Riss „ICGEM-calc.js-Lizenz ungemessen“.
+# Gegenstand: https://icgem.gfz.de/calc.js — die GRS80-Zeile der Referenzsystem-Tabelle,
+#   NICHT das Modell XGM2019e und nicht dessen DOI.
+# Kein Verdikt ohne Messung; 0 geehrt; die Lizenz wird nicht aus der Nachbarschaft geliehen.
+
+# ============================================================
+# 1 — calc.js: ERNEUT GEMESSEN (2026-10-18)
+# ============================================================
+# GET https://icgem.gfz.de/calc.js
+#   HTTP/1.1 200 OK · Server: nginx/1.31.0 · Content-Type: application/javascript
+#   Content-Length: 12080 · Last-Modified: Fri, 17 Apr 2026 08:41:41 GMT
+#   ETag: "69e1f245-2f30" · Cache-Control: no-cache · Accept-Ranges: bytes
+#   gemessen: 12080 B, 281 Zeilen
+#   sha256 f5e76b3a15d771a611f956a7f5acabde689384f0c5188efcb677cadc485d60bb
+#   (identisch mit der Messung in geodesy-grs80.φ §2 — die Bytes sind stabil)
+# Kein Link-Header, kein Lizenz-Header in der Antwort.
+# Inhaltlich bestätigt: refsys["GRS80"] = [ "6378137.0", "298.257222101",
+#   "3.986005e+14", "7.292115e-5" ]; die Datei ist ICGEM-eigener Browser-Code
+#   (u. a. window.addEventListener, jQuery-Selektoren), kein eingebettetes Fremd-Snippet.
+
+# LIZENZSUCHE IN DER DATEI SELBST (case-insensitive, ganze Datei):
+#   licen       0 Treffer
+#   copyright   0 Treffer
+#   terms       0 Treffer
+#   CC-BY       0 Treffer
+#   MIT         0 Treffer
+#   public domain 0 Treffer
+#   GPL         0 Treffer
+#   permission  0 Treffer
+#   ©           0 Treffer
+#   -> Kein Copyright-Vermerk, kein Lizenztext, kein SPDX-Identifier, kein Hinweis
+#      auf eine offene Lizenz. Die Datei beginnt direkt mit `var refsys = {` und
+#      endet mit der schließenden Klammer der letzten Funktion; kein Kommentarkopf.
+#   -> Ein Beleg für eine offene Lizenz von calc.js existiert in der Datei NICHT.
+
+# ============================================================
+# 2 — ICGEM-SEITEN: KEINE LIZENZAUSSAGE FÜR calc.js
+# ============================================================
+# Alle Abrufe 2026-10-18, curl -L, Status und Bytes gemessen:
+#   /                 303 See Other -> Location: http://icgem.gfz.de/home
+#   /home             200, 22446 B, sha256 b6c94423cacf50900e74bab9fe313b69f4507b99deecdd5aa6e43217283eaefe
+#                     grep -i 'licen|copyright|terms of use|public domain' -> 0 Treffer
+#   /imprint          200, 13971 B (identisch mit /imprint.html)
+#   /imprint.html     200, 13971 B
+#   /dataprotection   200, 51646 B — Datenschutzerklärung (DSGVO/Matomo), keine Lizenz
+#   /data-protection  404, 726 B ("404 Not Found · Template not found · CherryPy 18.10.0")
+#   /terms            404, 726 B (derselbe CherryPy-404-Text)
+#   /license          404, 726 B (derselbe CherryPy-404-Text)
+#   /robots.txt       200, 43 B, Inhalt exakt:
+#                       Disallow: /getmodel/
+#                       Disallow: /getseries/
+#                     (keine Lizenz-, keine Erlaubnisaussage)
+# Zusatzprüfung /LICENSE, /LICENSE.txt, /license.txt, /COPYING -> alle 404.
+# /imprint ist die einzige Seite mit einer Rechtsaussage. Wörtlich:
+#   "Copyright"
+#   "Texts and photos on the GFZ website are protected by copyright. Copying these
+#    files or printing these files is only permitted for private use."
+#   "All other forms of use, such as the reproduction, modification or use of graphics,
+#    audio documents, video sequences and texts on the websites and in other electronic
+#    or printed publications for non-commercial or commercial purposes — even if they
+#    are not expressly marked as copyright-protected documents — are not permitted
+#    without the prior written consent of the copyright holder."
+#   "Content published under special licences is identified as such. It may be used in
+#    accordance with the terms of the specific licence."
+#   "Some of the data on this data portal originates from other sources. If you wish to
+#    use this data, please contact the owner of the data for the terms of use/see the
+#    respective terms of use on the websites."
+# -> Die Seite sagt: GFZ-Inhalte sind urheberrechtlich geschützt; Sondernutzungen nur,
+#    wenn ausdrücklich als solche gekennzeichnet. calc.js trägt keine solche Kennzeichnung
+#    (§1), /imprint kennzeichnet sie nicht, /terms und /license existieren nicht.
+#    Damit ist die Regel „ohne ausdrückliche Lizenz = keine offene Lizenz“ belegt.
+
+# ============================================================
+# 3 — ABGRENZUNG: DOI 10.5880/ICGEM.2019.007 GILT DEM MODELL, NICHT DEM JS
+# ============================================================
+# DataCite-API: GET https://api.datacite.org/dois/10.5880/ICGEM.2019.007
+#   200, 20048 B, sha256 921fabbbf72bc8910d8697541844fbd3544c6e0cf252e4b1516091f87b7a7181
+#   titles: ["The experimental gravity field model XGM2019e"]
+#   types.resourceTypeGeneral: Dataset · publisher: GFZ Data Services
+#   rightsList[0]: rights "Creative Commons Attribution 4.0 International",
+#                  rightsUri https://creativecommons.org/licenses/by/4.0/legalcode,
+#                  rightsIdentifier cc-by-4.0 (SPDX)
+#   rightsList[1]: "Open access" (COAR c_abf2)
+# DOI-Landingpage: GET https://dataservices.gfz.de/10.5880/icgem.2019.007/
+#   the-experimental-gravity-field-model-xgm2019e
+#   200, 47124 B, sha256 ea2d06a2877ba68840badafdee78a9c0d99a2b39fdbafef52faf8d529d00b77d
+#   zeigt CC-BY-4.0 für das Dataset XGM2019e.
+# -> Die CC-BY-4.0 ist die Lizenz eines Datensatzes (XGM2019e/gfc). Sie erstreckt sich
+#    nicht auf die davon getrennte JavaScript-Datei calc.js auf demselben Host. Eine
+#    Host-weite Vererbung wäre eine Erfindung; die DOI nennt calc.js nicht.
+#    (Der gfc-Block trägt `terms CC-BY-4.0` zu Recht — dort geht es um das Modell.)
+
+# ============================================================
+# 4 — ENTSCHEIDUNG: local-only
+# ============================================================
+# Es gibt KEINE belegte offene Lizenz für https://icgem.gfz.de/calc.js:
+#   - kein Lizenz-/Copyright-Vermerk in der Datei (§1),
+#   - keine ausdrückliche Lizenzkennzeichnung auf den ICGEM-Seiten, /terms und /license 404 (§2),
+#   - /imprint sagt im Gegenteil „protected by copyright“, Nutzung nur mit Zustimmung,
+#   - die CC-BY-4.0 der DOI gehört zum Modell XGM2019e, nicht zum JS (§3).
+# Nach dem local-only-Kanon:
+#   -> calc.js wird als local-only geführt. Keine phi-Zeile, kein terms-Token,
+#      keine erfundene Lizenz, kein CDN-Spiegeln.
+#   -> Die GRS80-Werte bleiben gemessen und in geodesy-grs80.φ §2 belegt; ihre
+#      Nicht-Registrierung ist die Syntaxlücke (kein Parser-Arm), nicht diese Lizenz.
+#      Die Lizenzfrage ist damit für calc.js geschlossen, nicht für die GRS80-Konstanten.
+#   -> calc.js ist Code, kein Datensatz. Ein phi-Block (url/origin/terms/format/field)
+#      wäre auch bei offener Lizenz nicht der richtige Ort; es existiert kein
+#      Datensatz-Block, in den eine terms-Zeile gesetzt werden könnte. §4 ist daher
+#      keine ausgefüllte Vorlage, sondern die Feststellung, dass sie nicht greift.
+
+# ============================================================
+# 5 — OFFENE RISSE (benannt, nicht geglättet)
+# ============================================================
+#   (a) local-only ist eine Disposition, keine Lizenz. Eine spätere ausdrückliche
+#       GFZ-Lizenz (z. B. auf einer neuen /license-Seite) würde die Messung
+#       ungültig machen und muss neu gemessen werden.
+#   (b) Die GRS80-Konstanten sind ohne calc.js anderweitig bezeugt (GeographicLib,
+#       MIT, geodesy-grs80.φ §2). Der Registerarm für a/f/GM/ω fehlt weiterhin;
+#       dieser Riss ist Syntax/Architektur, nicht Lizenz.
+#   (c) robots.txt sperrt /getmodel/ und /getseries/ für Crawler; das betrifft
+#       Harvest-Routen, nicht die Lizenz von calc.js. Nicht als Lizenzbeleg lesen.
+#   (d) Eine Nutzung der konkreten vier Zahlen ist Tatsachen-/Konstantennutzung und
+#       durch die separate Messung gedeckt; die Datei selbst wird nicht gespiegelt.
