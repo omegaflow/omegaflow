@@ -17,6 +17,8 @@ Hunks — committet wird nur der eigene Teil, fremde uncommittete Arbeit wird ni
 Vorfahr von HEAD ist (Fast-Forward) — ein Push sendet nur Commits, der Arbeitsbaum
 darf schmutzig sein.
 
+**Offene Punkte stehen im Handover; Trägerdateien tragen Belege, keine offenen Zustände.**
+
 **Keine Geschichts-Abschnitte (Operator-Wort 2026-09-25).** Das Handover trägt nur
 Offenes — ein Stehender-Pass-Ergebnis, ein „In diesem Atom geschlossen"-Register,
 ein Benchmark oder ein „Geteilter Baum" sind Historie und gehören nicht hinein:
