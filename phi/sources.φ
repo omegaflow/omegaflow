@@ -31547,6 +31547,13 @@ origin https://zenodo.org/api/records/14281664/files/UNCOVER_DR4_SPS_catalog.fit
 compiler tools/harvest/src/bin/raw_mirror.rs
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/ceic_gravity_7112529_datasets.rar
+terms CC-BY-4.0 https://zenodo.org/records/7112529
+format reference
+origin https://zenodo.org/api/records/7112529/files/datasets.rar/content
+compiler tools/harvest/src/bin/raw_mirror.rs
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/venus_radar_Processed.zip
 terms CC-BY-4.0 https://zenodo.org/records/18176179
 origin https://zenodo.org/api/records/18176179/files/Processed.zip/content
