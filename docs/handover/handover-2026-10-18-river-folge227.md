@@ -2,7 +2,7 @@
   title: Handover — River-Folge 227 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: 77c9fa1c71818a01d4815888d8c8ba6138bf28c03f59e37dc1f036e958ee5c4a
+  sha256: ecebd4f0215ec821e20a805d2b53b9330226288f3ec3ae393f3b8d5313a4070e
   status: live
 -->
 # River-226
@@ -16,7 +16,7 @@
 - **Trigger:** Rat R-2026-10-17-j (5/5 A)
 - **Lage:** pending (gemessen 2026-10-18) — Mountain-Zeile ist gesetzt (`state/mountain/2026-10-18-k-pending.φ`, Träger `phi:893`, `xfer:mountain.…9~3ed32602`); `phi/sources.φ` hat keine `K`-Skalarzeile (grep 0), die Grammatik trägt `pending` nur als coupling-Rate
 - **Blockade:** kein `∇p`, kein `B/j`, Ein-Satellit — die physikalische Impulsbilanz-Lücke; **nicht** die Mountain-Zeile
-- **Offen:** `K` selbst bleibt pending (kein `∇p`, kein `B/j`, Ein-Satellit); der TE-Indikator `TE(NVE→IVE | AE+Dst+Kp+LT+Radiallänge)` ist als eigener Punkt **gebaut und voll gemessen**: DE-2 300 s, 4 Bins, n=23200, 1981-08..1983-02 — **3/3 Lags pass** (300/600/900 s). Der frühere Ausfall (n=4413, 1981-08..1982-01) war die verkürzte HAPI-Orbit-Abdeckung, nicht die Konditionierung; SSCWeb liefert 1-min LT/Radiallänge für den vollen Span. **Falsifikationsbedingung:** F1 Einzelindex, F2 gemeinsam — beide nicht eingetreten. Riss: Kp im Register nur `last`-Live-Wert (`phi:1252`), Test liest `hour3h_kp` (WDC Kyoto, CC-BY-4.0) direkt; Radiallänge statt geodätischer Höhe (konstanter Offset, Binning-invariant). Beleg: `state/river/2026-10-18-k-te-kadenz.φ`, `de2-conditional-te.yml` (Commits `764c5ca2f`, `f2c241df5`, `3b7971533`, `d27791a38`, `f50fe788e`, `3735192ce`)
+- **Offen:** `K` selbst bleibt pending (kein `∇p`, kein `B/j`, Ein-Satellit); der TE-Indikator `TE(NVE→IVE | AE+Dst+Kp+LT+Radiallänge)` ist als eigener Punkt **gebaut und voll gemessen**: DE-2 300 s, 4 Bins, n=23200, 1981-08..1983-02 — **3/3 Lags pass** (300/600/900 s). Der frühere Ausfall (n=4413, 1981-08..1982-01) war die verkürzte HAPI-Orbit-Abdeckung, nicht die Konditionierung; SSCWeb liefert 1-min LT/Radiallänge für den vollen Span. **Falsifikationsbedingung:** F1 Einzelindex, F2 gemeinsam — beide nicht eingetreten. Riss: Kp im Register nur `last`-Live-Wert (`phi:1252`), Test liest `hour3h_kp` (WDC Kyoto, CC-BY-4.0) direkt; Radiallänge statt geodätischer Höhe (konstanter Offset, Binning-invariant). Beleg: `state/river/2026-10-18-k-te-kadenz.φ`, `docs/concepts/ion-neutral-vlies.md` (die Weberin-Frage: Fäden, Regime, K), `de2-conditional-te.yml` (Commits `764c5ca2f`, `f2c241df5`, `3b7971533`, `d27791a38`, `f50fe788e`, `3735192ce`)
 - **Braucht:** `state/stimmen/2026-10-17-rat-k-identifizierbar.md:1`
 
 ### Rätsel
