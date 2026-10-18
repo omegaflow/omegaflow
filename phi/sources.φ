@@ -19045,11 +19045,25 @@ origin https://naif.jpl.nasa.gov/pub/naif/JUICE/kernels/spk/juice_crema_5_2_v01.
 sha256 cd4bab15b8ac4ecb1257627ce42ce7738947ed79ccb27b29ebc32283335e3b7f
 no-cadence
 
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/juice_orbc_000116_230414_310721_v01.bsp
+format reference
+terms PD https://naif.jpl.nasa.gov/naif/rules.html
+origin https://naif.jpl.nasa.gov/pub/naif/JUICE/kernels/spk/juice_orbc_000116_230414_310721_v01.bsp
+sha256 e7a20a60fc53f6ce696caada4655418f3494ce0bb4cc24fd98be36f8a49bf8dd
+no-cadence
+
 url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/mk00062a.tsc
 format reference
 terms PD https://naif.jpl.nasa.gov/naif/rules.html
 origin https://naif.jpl.nasa.gov/pub/naif/GLL/kernels/sclk/mk00062a.tsc
 sha256 cea5234f9769f83aa6da65f360c6940a70b72461ed2c577cb531448e7498295c
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/trj_260808-261230-dco2610050829-EGACOLA0-FINAL-OD093-v1.bsp
+format reference
+terms PD https://naif.jpl.nasa.gov/naif/rules.html
+origin https://naif.jpl.nasa.gov/pub/naif/EUROPACLIPPER/kernels/spk/trj_260808-261230-dco2610050829-EGACOLA0-FINAL-OD093-v1.bsp
+sha256 1727f61f1f7786bf277745c61b04e4dc4f82a2331276eb112c52379d189126e4
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/naif.jpl.nasa.gov/ura111.bsp
