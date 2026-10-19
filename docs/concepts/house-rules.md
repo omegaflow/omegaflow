@@ -2,7 +2,7 @@
   title: House Rules — die Essenz (was gilt)
   class: concept
   date: 2026-10-19
-  sha256: 3f3db031cb85c0529ec7a4b38fda78ec7be66c72a6fb64040ae0e086352a9e97
+  sha256: e88ab7bd2a06a5badd469cedef3ada7f74d8f8df48a2cb683d8307c7a6960924
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md docs/granit.md docs/council.yaml
 -->
@@ -126,3 +126,14 @@ nur Offenes) · deine **Post** (dasselbe `post/`). Lies nur die Stellen, die die
   arbeitet, setzt sie zuerst (die Vorlage gehört ins private Haus, nie ins öffentliche Repo).
 - Werkzeuge: `archive_search` (nie webfetch/websearch) · `rg` für den schnellen Blick · `sread`
   für Fenster. Karte: `docs/concepts/tools-map.md`.
+- **Der Privat-Schnitt ist eine Repo-Grenze, keine Geheimnis-Behauptung.** Privat bleibt:
+  PII (Mails, Namen, Adressen, Konten, Keys, Session- und Provider-Logs), der Operator-Wart mit
+  Personenbezug, die rohen Operator-Gespräche und das private Archiv — sie liegen in
+  `omegaflow-private` und werden von Agenten nicht gelesen. `work/` (Handover, Post, Rat,
+  Zustand, Funde) ist die Werkstatt: privat gegenüber GitHub, **nicht** gegenüber dem Modell —
+  was ein Agent liest, geht durch den Provider. Nicht privat sind Code, Registerzeilen, Papers,
+  Specs, die gemessene Lage eines offenen Punkts (ohne PII), sein Pfad und sein Schritt. Der
+  Schnitt verschiebt Arbeit, er erlaubt keine Weitergabe: nicht-redistributierbare Rohdaten
+  bleiben in `private/nicht-redistributierbar/`, nicht in `work/sources/` und nicht im CDN; eine
+  offene Lizenz bleibt die Bedingung, nicht der Schnitt. Die Wand ist die `permissions`-Regel
+  der Maschine — ein frischer Klon hat sie nicht.
