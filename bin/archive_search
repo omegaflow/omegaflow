@@ -16,5 +16,5 @@ if [ ! -x "$bin" ]; then
 fi
 export OMEGAFLOW_REPO="$root"
 . "$root/bin/_roots.sh"
-export OMEGAFLOW_SPILL_DIR="${OMEGAFLOW_SPILL_DIR:-$OMEGAFLOW_WORK/recherche/tmp/spills/search}"
+export OMEGAFLOW_SPILL_DIR="${OMEGAFLOW_SPILL_DIR:-$OMEGAFLOW_WORK/recherche/tmp/archive_search/search}"
 exec "$bin" "$@"
