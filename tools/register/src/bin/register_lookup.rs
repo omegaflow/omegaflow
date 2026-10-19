@@ -3478,7 +3478,7 @@ fn run_descoped_check(_args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count] [--changed-since <sha>]   (open points of handover N absent from handover N+1 with no resolving commit in between; two measurements are kept apart: absence (NO-WITNESS) and the missing resolving commit (UNMEASURED = no distinctive token at all); --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved and unmeasured points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line; --dropped-unmeasured prints the absent points that carry no distinctive token, one per line; --changed-since <sha> restricts the pairs to handovers changed in the range <sha>..HEAD and the witness log to that range — the diff-scoped CI gate)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --tokens [--fail] [--noecho-fail]   (per entry of every `## An <line>` transport block: XFER `<tok>` echoed|unbeglichen against the owner line's `## Offen` token echo OR a durable FOLDED/CLOSED ledger event, XFER-MANIFEST ok|open for a block carrying `[manifest n=<N> root=<h8>]`, XFER-MISSING for an entry without a token, XFER-NOECHO for a sender that dropped its block without an echo; --fail exits 2 on any unbeglichen/MISSING/MANIFEST-open/NOECHO, --noecho-fail only on MISSING/NOECHO — the CI-runtime gate)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged)\n       register_lookup --dropped [<line>] [--persist <n>] [--count] [--changed-since <sha>]   (open points of handover N absent from handover N+1 with no resolving commit in between; two measurements are kept apart: absence (NO-WITNESS) and the missing resolving commit (UNMEASURED = no distinctive token at all); --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved and unmeasured points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line; --dropped-unmeasured prints the absent points that carry no distinctive token, one per line; --changed-since <sha> restricts the pairs to handovers changed in the range <sha>..HEAD and the witness log to that range — the diff-scoped CI gate)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers that no live handover names: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; a block whose every token carries a durable CLOSED/FOLDED ledger event is no longer addressed and is not listed; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --tokens [--fail] [--noecho-fail]   (per entry of every `## An <line>` transport block: XFER `<tok>` echoed|unbeglichen against the owner line's `## Offen` token echo OR a durable FOLDED/CLOSED ledger event, XFER-MANIFEST ok|open for a block carrying `[manifest n=<N> root=<h8>]`, XFER-MISSING for an entry without a token, XFER-NOECHO for a sender that dropped its block without an echo; --fail exits 2 on any unbeglichen/MISSING/MANIFEST-open/NOECHO, --noecho-fail only on MISSING/NOECHO — the CI-runtime gate)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     eprintln!(
         "       register_lookup --compilers   (one line per phi/sources.φ block carrying a compiler: <binary> | <format> | <source-url> | at <anchor>, then a domain/count summary over the format prefix)\n       register_lookup --compilers --no-directive   (tree compilers tools/*/src/bin/*_compiler.rs without a compiler directive: classified by measured channel workflow|register:<file>|variant|pending|unregistered)"
@@ -3751,6 +3751,9 @@ fn addressed_report_inner(root: &Path, target: &str, tokens: bool) -> Vec<String
     for (sender, list) in &handovers {
         for h in list {
             for block in addressed_blocks(&h.text, target) {
+                if !tokens && block_fully_disposed(root, &block) {
+                    continue;
+                }
                 count += 1;
                 let folge = match h.folge {
                     Some(n) => format!("folge{}", n),
@@ -3829,6 +3832,25 @@ fn addressed_report_inner(root: &Path, target: &str, tokens: bool) -> Vec<String
 
 fn addressed_report(root: &Path, target: &str) -> Vec<String> {
     addressed_report_inner(root, target, false)
+}
+
+fn block_fully_disposed(root: &Path, block: &str) -> bool {
+    let entries = block_entries(block);
+    if entries.is_empty() {
+        return false;
+    }
+    entries.iter().all(|entry| {
+        let mut rest = entry.clone();
+        let mut found = false;
+        while let Some(token) = entry_token(&rest) {
+            found = true;
+            if !ledger_disposed(root, &token) {
+                return false;
+            }
+            rest = rest.replacen(&token, "", 1);
+        }
+        found
+    })
 }
 
 fn addressed_block_settled(root: &Path, target: &str, block: &str) -> bool {
@@ -3947,9 +3969,23 @@ fn ledger_sent_events(root: &Path) -> Vec<LedgerSent> {
     out
 }
 
+fn sender_line(sender: &str) -> &str {
+    let canonical = canonical_line(sender);
+    if ADDRESSED_LINES.contains(&canonical) {
+        return canonical;
+    }
+    if let Some((head, _pass)) = canonical.rsplit_once('-') {
+        let head = canonical_line(head);
+        if ADDRESSED_LINES.contains(&head) {
+            return head;
+        }
+    }
+    canonical
+}
+
 fn sender_carries(root: &Path, sender: &str, token: &str) -> bool {
     let handovers = collect_live_handovers_in(root);
-    match handovers.get(canonical_line(sender)) {
+    match handovers.get(sender_line(sender)) {
         Some(list) => list.iter().any(|h| h.text.contains(token)),
         None => false,
     }
@@ -5708,6 +5744,64 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         )
         .unwrap();
         assert_eq!(addressed_unsettled(&base, "river"), 0);
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn addressed_report_hides_a_block_whose_tokens_are_all_disposed() {
+        let base = env::temp_dir().join(format!("rl-addressed-disposed-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("state/zustand/ledger/sender")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-10-12-sender-folge331.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An river\n\n- closed xfer:sender.ses_a.1~deadbeef\n\n## An river\n\n- still open xfer:sender.ses_a.2~cafebabe\n\n## An river\n\n- mixed xfer:sender.ses_a.3~feedface and xfer:sender.ses_a.4~0badf00d\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("state/zustand/ledger/sender/ses_a.log"),
+            "2026-10-12T11:00:00Z SENT xfer:sender.ses_a.1~deadbeef by=sender.ses_a to=river\n\
+             2026-10-12T12:00:00Z CLOSED xfer:sender.ses_a.1~deadbeef by=sender.ses_a ref=abc1234\n\
+             2026-10-12T11:01:00Z SENT xfer:sender.ses_a.2~cafebabe by=sender.ses_a to=river\n\
+             2026-10-12T11:02:00Z SENT xfer:sender.ses_a.3~feedface by=sender.ses_a to=river\n\
+             2026-10-12T12:02:00Z CLOSED xfer:sender.ses_a.3~feedface by=sender.ses_a ref=abc1234\n\
+             2026-10-12T11:03:00Z SENT xfer:sender.ses_a.4~0badf00d by=sender.ses_a to=river\n",
+        )
+        .unwrap();
+        let report = addressed_report(&base, "river");
+        assert!(!report.iter().any(|l| l.contains("deadbeef")), "{report:?}");
+        assert!(report.iter().any(|l| l.contains("cafebabe")), "{report:?}");
+        assert!(report.iter().any(|l| l.contains("feedface")), "{report:?}");
+        assert!(
+            report
+                .iter()
+                .any(|l| l.contains("register_lookup --addressed river: 2 addressed block(s)")),
+            "{report:?}"
+        );
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn noecho_resolves_a_pass_suffixed_sender_to_its_line() {
+        let base = env::temp_dir().join(format!("rl-noecho-pass-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("state/zustand/ledger/sensory-259")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-10-14-sensory-folge259.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An mountain\n\n- carried xfer:sensory-259.ses_test.1~abcd1234\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("state/zustand/ledger/sensory-259/ses_test.log"),
+            "2026-10-14T11:00:00Z SENT xfer:sensory-259.ses_test.1~abcd1234 by=sensory-259.ses_test to=mountain\n",
+        )
+        .unwrap();
+        let report = noecho_report(&base);
+        assert!(
+            !report.iter().any(|l| l.contains("abcd1234")),
+            "a sender that still carries its token is not a dropped transport: {report:?}"
+        );
         let _ = fs::remove_dir_all(&base);
     }
 
