@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# layout_check — misst die Ablage gegen den Kanon, ohne zu blockieren.
+# Die Ordnerlisten unten sind der Kanon (Rat R-2026-10-19-a, Beschluss A/E/F3):
+# ein Kanon je Haus, ein erlaubter Top-Level-Satz, neue Ordner nur mit Operator-Wort.
+# --fail macht daraus ein Gate (exit 2 bei Befund); ohne Flag ist es eine Messung.
+set -u
+cd "$(dirname "$0")/.." || exit 1
+TMP="${OMEGAFLOW_TMP:-/tmp/opencode}"
+WORK="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
+FAIL=0
+[ "${1:-}" = "--fail" ] && FAIL=1
+findings=0
+
+say() { printf '%s\n' "$*"; }
+finding() { findings=$((findings + 1)); printf '%s\n' "$*"; }
+
+REPO_TOP="AGENTS.md README.md LICENSE NOTICE CNAME Cargo.toml Cargo.lock opencode.json .gitignore .gitattributes .githooks .github .devcontainer .opencode bin cloudflare docs firmware kernels pkg phi src static tools workers target .secrets.local"
+for entry in * .[!.]*; do
+    [ -e "$entry" ] || continue
+    case "$entry" in
+        .git|.|..) continue ;;
+    esac
+    case " $REPO_TOP " in
+        *" $entry "*) ;;
+        *) finding "REPO_TOP_UNDECLARED	$entry" ;;
+    esac
+done
+
+for tree in docs phi src tools bin; do
+    [ -d "$tree" ] || continue
+    while IFS= read -r p; do
+        finding "UNTRACKED	$p"
+    done < <(git ls-files --others --exclude-standard -- "$tree" 2>/dev/null | head -50)
+done
+
+if [ -d "$TMP" ]; then
+    for entry in "$TMP"/*; do
+        [ -e "$entry" ] || continue
+        name="$(basename "$entry")"
+        case "$name" in
+            ci|out|downloads|scratch|ci_status.md) ;;
+            *) finding "TMP_TOP_UNDECLARED	$entry" ;;
+        esac
+    done
+    for pair in "out:7" "downloads:14" "scratch:2"; do
+        d="${pair%%:*}"
+        days="${pair##*:}"
+        [ -d "$TMP/$d" ] || continue
+        while IFS= read -r old; do
+            finding "TMP_EXPIRED	$d/${days}d	$old"
+        done < <(find "$TMP/$d" -mindepth 1 -maxdepth 1 -mtime +"$days" 2>/dev/null)
+    done
+    while IFS= read -r stray; do
+        finding "TMP_STRAY	$stray"
+    done < <(find "$TMP" -maxdepth 1 -type f ! -name 'ci_status.md' 2>/dev/null)
+fi
+
+if [ -d target ]; then
+    mib=$(du -sm target 2>/dev/null | cut -f1)
+    [ -n "${mib:-}" ] && [ "$mib" -gt 5120 ] && finding "TARGET_OVER_BUDGET	${mib}MiB	cap 5120"
+fi
+
+if [ -d "$WORK/zustand" ]; then
+    dirty=$(git -C "$WORK" status --porcelain 2>/dev/null | wc -l)
+    [ "$dirty" -gt 0 ] && finding "WORK_DIRTY	$dirty"
+fi
+
+say "layout_check: $findings finding(s) · repo top $(printf '%s' "$REPO_TOP" | wc -w) declared · tmp ${TMP} · work ${WORK}"
+if [ "$FAIL" = "1" ] && [ "$findings" -gt 0 ]; then
+    exit 2
+fi
