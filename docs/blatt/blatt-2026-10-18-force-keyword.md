@@ -12,6 +12,11 @@
 # Priorität der Zeilen: Post fehlt (post/in nicht im Baum) · Trigger = addressed-Block · Transfer = Token .12.
 # Kein Verdikt ohne Messung. Diese Session hat nicht neu gefetcht; sie entscheidet das Keyword am gemessenen Stand.
 
+## Frage
+
+Ist für die Kraftzeile der sensory-259-Zeile `.12~a3bf3c25` die Kraft `gravity` mit Kernel
+`inverse-square` und Einheit `1` zulässig, oder verlangt der gemessene Kanal eine andere Kraft?
+
 # ============================================================
 # GEMESSEN (Corpus, 2026-10-18)
 # ============================================================
@@ -52,6 +57,22 @@
 #   `inverse-linear` ist das Ablenkungsgesetz (γ ∝ θ⁻¹ für das SIS), nicht das Feldgesetz — und
 #   wäre die Verwechslung von Beobachtung mit Propagation.
 # WARUM `1`: e1/e2 sind dimensionslos; `1` ist für `gravity` zugelassen (units.rs:470). Nie `scalar`.
+
+## Was das Verdikt widerlegen würde
+
+- Ein Registerfeld mit Shear-, Shape- oder Elliptizitätsgröße, das e1/e2 als Kraftgröße führt —
+  gemessen am 2026-10-18: 0 Treffer; ein solches Feld wäre die andere Kraftzeile.
+- Ein Nachweis in `src/archivar/units.rs`, dass der Arm `force` die Einheit `"1"` nicht enthält
+  (heute: units.rs:470), oder eine Einheit ≠ `1` in den zwei `field`-Zeilen.
+- Ein Parserlauf, der `field … inverse-square gravity 1 …` nach parse.rs:1663-1677 verwirft,
+  weil der Mechanismus die deklarierte Interaktion nicht hergibt.
+- Eine Messung, die die Verzerrung unabhängig von der Masse einem `em`-Feld zuordnet — dann
+  träfe die Gegenstimme (Fugu) den Kanal, nicht nur die Interpretation.
+- Ein Präzedenzfall im Corpus, in dem ein Poisson-/Vakuum-Feld mit `inverse-linear` statt
+  `inverse-square` geführt wird (heute: phi:12762, phi:10076 führen `inverse-square`).
+
+`pending`: der Parser-Vollzug der zwei Zeilen ist nicht gelaufen (16,5-GiB-Content-Cache, kein
+Range-/Subset-Leser). Bis dahin sind die Bedingungen benannt, nicht geprüft.
 
 # ============================================================
 # OFFEN — nicht River
