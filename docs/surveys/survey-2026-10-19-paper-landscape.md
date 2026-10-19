@@ -2,7 +2,7 @@
   title: Paper-Landschaft — 35 Papiere gegen die Forschungslage (2026-10-19)
   class: survey
   date: 2026-10-19
-  sha256: ee51ecf60db175d128c035d400c817eb46a7bbbb3c6f72310f8677249a37d5ad
+  sha256: 9dbdaf8efcd9613f55b0252d4371bc42f303f3c81f9a1a7301ff90805d47b3a3
   status: live
 -->
 # Paper-Landschaft — 35 Papiere gegen die Forschungslage
@@ -44,7 +44,7 @@ Literaturgegenstand — die Messung nach dem Flug fehlt).
 | flyby-path-2-preregistration-revised | teilweise | 3GM-Beschleunigung LEGA (angeo-44-731, 2026) | DE441/DE442-Rift (Park 2021 deckt DE442 nicht) |
 | h0-lines-register | ja | MNRAS 2026: Priors in der Distanzleiter | unabhängiger ≲ 1 %-Faden (Pantos 2026) |
 | laic-arrow-direction | teilweise | EGUsphere 2026-2310; JSEAES 2025 | Fidani 2022 — TE-LAIC existiert bereits |
-| planet-nine-kbo-residue | ja | Siraj 2025; arXiv 2609.33080 | Selektionsfunktion (Brown 2017) |
+| planet-nine-kbo-residue | ja | Siraj 2025; arXiv 2609.33080; Phan 2025 & Chen 2025 (IRAS/AKARI far-IR) | Selektionsfunktion (Brown 2017) |
 | solar-seconds-matrix | teilweise | Fletcher 2024, Solar Flare Spectroscopy | konditionaler Test 211→193 (Stramaglia 2024) |
 | tonga-lamb-crosscheck | ja | GRL 2025; NHESS 2025 | frequenzabhängige Admittanz (JGR 2004) |
 | broken-null-control | teilweise | Kirkley 2025 (TE-Schätzer ohne Surrogat) | unabhängige FP-Kalibrierung (Rapp 2001) |
