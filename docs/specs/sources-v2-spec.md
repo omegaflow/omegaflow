@@ -1,7 +1,7 @@
 <!--
   title: sources.φ — Canonical Format Specification
   class: concept
-  sha256: 11c6db3c2981d8adc20579eda07e77194ff8694ab2e3041fe86ccdf97422b2f4
+  sha256: ed571097b0e374672eaf102aada498f0d26a0dbc6601efe49e7cc7b60f74b07a
 -->
 # sources.φ — Canonical Format Specification
 
@@ -40,7 +40,7 @@ A directive value may be wrapped in double quotes to carry whitespace (e.g.
 - Blocks are sorted by their `ttl` value (ascending — the ω() fetch cadence
   order), then alphabetically by their `url` line (case-insensitive).
 - No comment lines. The φ file carries directives only — knowledge lives in
-  docs/TODO, not in docstrings.
+  the private handover register (`~/projects/omegaflow-work/handover/`), not in docstrings.
 - One blank line between blocks; single trailing newline.
 - Directive order within a block: `url`, then block state (`ttl`, `format`,
   `header`, `post_body`, `body` for kernel_text, `at`/`on`), then the fanout

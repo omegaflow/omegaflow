@@ -2,7 +2,7 @@
   title: Source Curation — Der eine Pfad
   class: concept
   date: 2026-10-14
-  sha256: ed8844de40137d0d17927803e705a178f65023640d967cad91f5c8c94f278080
+  sha256: 125b5f3a138a3cf6d49033c48b955c6ca0bd0b75686d5d130749b34c0c639322
   status: live
   see-also: AGENTS.md docs/SOURCE_PORT.md
 -->
@@ -23,7 +23,7 @@ Vermutung:** der Eintrag verlangt den gemessenen **401 MIT dem vorhandenen Token
 Work surface: the flat `phi/` registers. The source-port backlog (`queue/`/`stage/`/`probe_*`/`ledger.φ`/`index.φ`) and the static catalog dispositions are `descoped` (2026-10-11) — live arms and `archive_search` supersede; the 12 real pending compilers stand in `state/wartend.φ`. Register: `phi/sources.φ` — the one data register; the `witness`/`record` blocks (the non-radiating witnesses) live inside it, the `field`/`force_type` blocks carry the force sources. The
 registers are the queue: `register_lookup --open` surfaces the state registers
 owner-tagged (`phi/sources.φ` + `nrs_stations.φ`;
-offene Marker → mycelium, `asset fehlt` → mountain); every state maps to an owner (gate-tested).
+offene Marker → mycelium, `asset fehlt` → mountain); every known open state maps to an owner (unit-tested: `tools/register/src/bin/register_lookup.rs`, `disposition_owner_maps_every_known_state` / `state_class_maps_every_register_state`).
 Harvested data that stays belongs on the local machine in the public
 workspace `$OMEGAFLOW_WORK/data/` (outside the repo since 2026-10-14; working
 copies `data/<netloc>/<datei>`) or the archivar
