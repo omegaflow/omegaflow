@@ -1348,6 +1348,7 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             crate::geo::COMP_EAGLEI_CUSTOMERS_OUT => Some("eaglei_customers_out"),
             _ => None,
         },
+        "grid_outage_event" => crate::archivar::grid_outage::component_name(comp),
         "ascat_wind" => match comp {
             crate::geo::COMP_ASCAT_WSPD => Some("ascat_wind_speed_m_s"),
             crate::geo::COMP_ASCAT_WDIR => Some("ascat_wind_direction_deg"),

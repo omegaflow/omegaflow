@@ -4426,6 +4426,7 @@ pub fn main_flow() {
                     | "osm_nodes"
                     | "eionet_cdr"
                     | "eaglei_outage"
+                    | "grid_outage_event"
             ) {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
@@ -6108,7 +6109,7 @@ pub fn main_flow() {
                 .and_then(|e| e.props.as_ref());
             let body_radius = match body_props {
                 Some(p) => p.radius_m,
-                None => 0.0,
+                None => f64::NAN,
             };
             let v_anchor =
                 anchor_velocity(&archive.sources[i].frame, now, &archive.body_ephemerides);
