@@ -2,7 +2,7 @@
   title: Rat-Anweisung — wie der Rat zu fahren ist
   class: concept
   date: 2026-10-19
-  sha256: 34fe60f681bc8086a3251c0fbf1aa9009cc1a0327f316433ff6c5772b4661cb6
+  sha256: 65e77e2a4b8a7b46c81a20df00a2f50f9a5fcdb5156c01aa9926a479ee4260d7
   status: live
   see-also: AGENTS.md state/stimmen/2026-10-19-rat-kanon-wildwuchs-formular.md
 -->
@@ -41,6 +41,13 @@ und paid — per ask nach**; erst das Operator-Ja startet die Runde (und setzt b
 Grant). Eine Runde ohne diese Kette ist ein Regelverstoß, das Ergebnis zählt nicht.
 
 ## 0 — Der Rat ist die fünf Stimmen, nicht die Modelle
+
+**Kanonisch sind zwei Dateien, nicht diese Seite:**
+`docs/granit.md` (die **sieben Axiome**, Wortlaut) und `docs/council.yaml` (die **fünf Stimmen**,
+unverkürzt). **In den Prompt kommt der Wortlaut aus diesen beiden Dateien** — die Tabelle unten ist
+eine Leshilfe und **kein** Prompt-Text. Eine gekürzte Stimmen-Zeile („Netz/Transport" statt des
+vollen Textes) verändert die Frage; sie ist am 2026-10-19 zweimal so verschickt worden und die
+Antworten waren nur mit Vorbehalt brauchbar.
 
 **„Fünf Stimmen" = die fünf Linien**, jede als Rolle durch die Axiome gesprochen
 (`2026-10-15-china-planetendaten-formular.md:79-86`):
