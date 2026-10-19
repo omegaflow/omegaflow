@@ -2,7 +2,7 @@
   title: Vorlage je Dateityp — Kopf, Pflichtfelder, Namensform
   class: spec
   date: 2026-10-19
-  sha256: f9eeab6a31c3e6684747c1b06dfa9b9c1efc9dece049ca8fe0a67beb689a706b
+  sha256: 05fe8e4004cc1dee717e7663d04a4b9684eb33d1313cca9b84b4c9da109ceabb
   status: live
   see-also: docs/concepts/house-rules.md bin/layout_check work/post/ work/handover/
 -->

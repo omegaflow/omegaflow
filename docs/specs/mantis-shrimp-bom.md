@@ -2,7 +2,7 @@
   title: Mantis-Shrimp BOM — kuratierte Einkaufsliste (Stand 2026-09-25)
   class: ref
   date: 2026-09-25
-  sha256: 361964a3adb74aa220d18ba0911584bcbfafa19fe4c029e5422d98b5a6b5c685
+  sha256: 44325f00bce256d3c5464119b05becdd6f1acda100dfd03f562b03c07afcdb48
 -->
 # Mantis-Shrimp BOM — kuratierte Einkaufsliste (2026-09-25)
 

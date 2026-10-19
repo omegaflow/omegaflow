@@ -2,7 +2,7 @@
   title: Survey — Härtefälle: offene Routen (Sonden · Redistributions-Declines · Gated China · C/NOFS-NWM · MODVOLC)
   class: survey
   date: 2026-10-17
-  sha256: 758966ea7fe7c34b94d99b224b8d507cee0a308b2a5c9be6439431f5f70243cf
+  sha256: 66f3041e9731f1df8e1fd601683e450afa470e17ad091ba029718d2e22f90a96
   status: done
   see-also: docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md docs/surveys/survey-2026-10-09-redistribution-alternativen.md docs/handover/handover-2026-10-14-sensory-folge259.md
 -->

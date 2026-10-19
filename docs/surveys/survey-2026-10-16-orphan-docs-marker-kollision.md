@@ -2,7 +2,7 @@
   title: Survey — Orphan-Docs: Marker-Kollision (nicht Aufgaben)
   class: survey
   date: 2026-10-16
-  sha256: b982402d05043f6f0fed73dd95e0fd7cdccf9c74489733960ddbb30b26c5f877
+  sha256: a97bf287fafe4896472cbb3c24351bbb4f94b08b94961abf97a98261254a6478
   status: done
 -->
 # Survey — Orphan-Docs: Marker-Kollision, nicht Aufgaben
