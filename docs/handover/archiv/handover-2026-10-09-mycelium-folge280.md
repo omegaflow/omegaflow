@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 280 (2026-10-09)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
-gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+gemacht wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-09-mycelium-folge279.md` (→ `archiv/`).
 
@@ -40,7 +40,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 
 ### CI — `subset`-Job nur am Tip (t420-Stau), Watchdog-Aufnehmer offen
 - **Status:** wartend | **Bindung:** eigen (CI-Infra)
-- **Trigger:** `ci-gate`-Lauf am Tip, dessen `subset` nie grün wird (gemessen im Register `state/zustand/ci-gate.φ`) — oder ein neuer `in_progress`-Ghost > 2× Median
+- **Trigger:** `ci-gate`-Lauf am Tip, dessen `subset` nie grün wird (gemessen im Register `state/ci-gate.φ`) — oder ein neuer `in_progress`-Ghost > 2× Median
 - **Lage:** (gemessen 2026-10-09) 90 `ci-gate`-Runs queued, ein `subset`-Ghost 8,5 h `in_progress` (Timeout 30 min) hielt `t420`; gecancelt, Runner nahm den nächsten Job. Ursache: jeder gepushte SHA lässt `cargo test --lib` auf dem einen self-hosted Runner laufen. **Rat-Verdikt (2026-10-09): Weg B** — der Per-SHA-Register `ci_gate_register` trägt die Historie, nicht die Run-Queue. Gebaut: `ci_gate_register` liest `skipped`/`cancelled` jetzt als `pending` (nie grün, nie rot); `ci-gate.yml` `subset`-Job-Concurrency `ci-gate-subset-${{ github.ref }}` + `cancel-in-progress` → nur der Tip belegt `t420`.
 - **Blockade:** keiner.
 - **Braucht:** Watchdog-Schritt „gequeueter `ci-gate`-Lauf mit SHA != `origin/main`-Tip → cancel" als messbarer Aufnehmer; **falls B gemessen hungert** (subset am Tip nie grün), Weg A (subset auf `ubuntu-latest`) dem Operator als neues Wort vorlegen.

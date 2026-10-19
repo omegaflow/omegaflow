@@ -24,7 +24,7 @@ Geschlossen in diesem Atom: der paper-check-Punkt — `36316318565` @`5cdf92677`
 
 ## Abarbeitbar (eigen, dispatchbar)
 
-Der gemessene Rundenzustand: `state/zustand/standing-pass.md` (zitieren, nie kopieren); Operator-Akte in der Future-Queue, Dritt-Waits in `state/zustand/wartend.φ`.
+Der gemessene Rundenzustand: `state/standing-pass.md` (zitieren, nie kopieren); Operator-Akte in der Future-Queue, Dritt-Waits in `state/wartend.φ`.
 
 ### ci-check — HEAD-Lauf lesen (eigener Arm geheilt)
 - **Status:** eigen | **Bindung:** eigen
@@ -86,7 +86,7 @@ Der gemessene Rundenzustand: `state/zustand/standing-pass.md` (zitieren, nie kop
   (gemessen 2026-09-27): die Kp-Route ist in `phi/sources.φ` **wiederhergestellt** (folge182) |
   Braucht: Epoche ernten.
 - **Europa-Clipper** | termin:2026-12-03 | Trigger: 02./03.12. | Lage (gemessen 2026-09-27):
-  Dritt-Wait in `state/zustand/wartend.φ:15` (Aufnehmer sensory) | Braucht: Epoche ernten.
+  Dritt-Wait in `state/wartend.φ:15` (Aufnehmer sensory) | Braucht: Epoche ernten.
 
 ## Träger-Zeilen (Orphan-Faltung)
 
@@ -179,5 +179,5 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 - `docs/handover/handover-2026-09-27-sensory-folge185.md`,
 - `docs/handover/archiv/handover-2026-09-27-sensory-folge184.md` (Move).
 
-Der Zustand-Ledger `state/zustand/external-state.md` ist gitignored (`.gitignore:137 /state/`) —
+Der Zustand-Ledger `state/external-state.md` ist gitignored (`.gitignore:137 /state/`) —
 lokal fortgeschrieben, nicht committet.

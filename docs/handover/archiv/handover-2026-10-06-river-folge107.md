@@ -231,7 +231,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Blockade:** (a) ist Mycelium/CI (kein River-Fenster-Edit ohne Operator-Wort).
 - **Braucht:** s. `## An mycelium`.
 
-### Flyby-Kette — OMNI2, kp `def`, JUICE-recon (aus `state/zustand/wartend.φ` portiert)
+### Flyby-Kette — OMNI2, kp `def`, JUICE-recon (aus `state/wartend.φ` portiert)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Kanal-Verfügbarkeit (OMNI2-Merge-Lag, GFZ `def`-Release, ESOC JUICE-recon).
 - **Lage:** (gemessen 2026-10-06, River 105; wartend.φ:34-36)

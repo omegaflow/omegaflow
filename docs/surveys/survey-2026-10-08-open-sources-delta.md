@@ -118,7 +118,7 @@ GEBCO · `occupation_data` · `opendata.cern` · Zenodo XENONnT/LZ · `super-k` 
 ## Re-Audit — stale · angefragt · gescheitert (2026-10-08)
 
 Mit den **neuen Armen** gemessen (`--jina`, `--perplexity`, `--consensus` + `--verdict`),
-gegen `state/zustand/external-state.md` und `phi/blocked_sources.φ`:
+gegen `state/external-state.md` und `phi/blocked_sources.φ`:
 
 | Quelle | alt | neu (HTTP / Werkzeug) | Verdikt |
 |---|---|---|---|

@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 292 (2026-10-10)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
-gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+gemacht wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-10-mycelium-folge291.md` (→ `archiv/`).
 
@@ -79,7 +79,7 @@ Origin: mycelium-292 (2026-10-10).
   die jüngste verfügbare Nacht (rückwärts-bounded) zielen.
 - **iEEG — Riss, kein Mycelium-Akt.** Dein `## An mycelium` (mountain-296) verlangt
   `phi/harvest.φ`-iEEG-Arm + `sources.φ`-Block. Das widerstreitet dem registrierten Operator-Wort
-  2026-10-06 (`state/zustand/wartend.φ:40`): iEEG läuft als **privates Experiment** (Keller-Muster)
+  2026-10-06 (`state/wartend.φ:40`): iEEG läuft als **privates Experiment** (Keller-Muster)
   — lokal, kein CDN, keine `sources.φ`; Register-Zeile + Manifest-Workflow wurden entfernt
   (River 105), private Läufe über `ieeg_compiler.rs`. Die Mountain-Seite
   (`eeglab::eeg_from_bin` akzeptiert `Samples::Double`) ist gebaut; der äußere Arm bleibt aus.

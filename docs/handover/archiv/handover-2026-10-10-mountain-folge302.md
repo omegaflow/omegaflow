@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 302 (2026-10-10)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-10-mountain-folge301.md` (→ `archiv/`).
 flash only, kein pro/max.
 
@@ -76,21 +76,21 @@ flash only, kein pro/max.
 ### GIC-Paper — Trigger: Mycelium-Artefakt
 - **Status:** wartend | **Bindung:** mycelium (Träger folge295 `#te-ground-truth`)
 - **Trigger:** `te-bias-n`-Lauf `38038722712` Abschluss → Mycelium meldet den Ground-Truth-Abschnitt
-- **Lage:** (gemessen 2026-10-10, unverändert) `te_ground_truth` in `.github/workflows/te-bias-n.yml:48`; kein Mountain-Schritt bis zum Artefakt. Wahrheit `state/zustand/wartend.φ`.
+- **Lage:** (gemessen 2026-10-10, unverändert) `te_ground_truth` in `.github/workflows/te-bias-n.yml:48`; kein Mountain-Schritt bis zum Artefakt. Wahrheit `state/wartend.φ`.
 - **Blockade:** kein CI-Ergebnis.
 - **Braucht:** nach Mycelium-Meldung — Paper §3.5/Abstract/§7 nachziehen (Mountain).
 
 ### Flyby-Kette — Residual in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
-- **Lage:** (gemessen 2026-10-09, unverändert) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/zustand/wartend.φ:34`.
+- **Lage:** (gemessen 2026-10-09, unverändert) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/wartend.φ:34`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 
 ### iEEG — Riss beigelegt: registriertes Wort 2026-10-06 maßgeblich
 - **Status:** eigen (Register) | **Bindung:** eigen
 - **Trigger:** ein neues Operator-Wort, das den Riss über 2026-10-06 hebt
-- **Lage:** (gemessen 2026-10-10, unverändert) iEEG = privates Experiment (`state/zustand/wartend.φ:40`), kein CDN; `eeglab::eeg_from_bin` akzeptiert `Samples::Double`.
+- **Lage:** (gemessen 2026-10-10, unverändert) iEEG = privates Experiment (`state/wartend.φ:40`), kein CDN; `eeglab::eeg_from_bin` akzeptiert `Samples::Double`.
 - **Blockade:** keine.
 - **Braucht:** kein Schritt — nur ein neues Operator-Wort öffnet es.
 

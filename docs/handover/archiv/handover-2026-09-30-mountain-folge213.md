@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 213 (2026-09-30)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der Stehende
-Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Dieses Atom: USGS-comcat
+Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Dieses Atom: USGS-comcat
 consumable gemacht (Reader-Arm `src/archivar/usgs_comcat.rs` + Verdikt in `sources.φ`/`harvest.φ`),
 CDSE-CCM-STAC-Arm um Zeit/Geometrie erweitert, die Kuprat-Zeugenfrage gemessen (kein
 `witness kuprat`), die fünf Sonden-Serien-Bindungen gebaut (`series_component_name`/`main_flow`/
@@ -39,7 +39,7 @@ mit Zustand, auch um 3 Uhr nachts.
   `/tmp/opencode`; `archive` = `archive-root`.
 - **Mountain-Fundstellen:** `phi/`, `src/archivar`, `src/mathematikerin`, `src/gate`,
   `tools/harvest`, `tools/measure`, `tools/register`, `docs/specs`, `docs/surveys`,
-  `state/zustand`, `state/mountain`.
+  `state`, `state/mountain`.
 - **Linien-Preset (privat):** `state/mountain/archive-search-preset.txt`; `state/` immer mit
   `archive_search --root state`.
 

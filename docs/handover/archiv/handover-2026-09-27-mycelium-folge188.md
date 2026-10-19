@@ -12,11 +12,11 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 gemacht wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** /
 **Lage** / **Blockade** / **Braucht**. Status-Tag: `wartend` | `blockiert` |
 `termin`; Operator-Akte leben in Futures Operator-Queue, Dritt-Waits in
-`state/zustand/wartend.φ`, nie als Linien-Punkt.
+`state/wartend.φ`, nie als Linien-Punkt.
 
 Diese Session konsumierte `handover-2026-09-27-mycelium-folge187.md`.
 
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`)
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`)
 — zitiert, nie in dieses Register kopiert.
 
 ## Operator-Wort-Register
@@ -26,7 +26,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - Wort | 2026-09-27 | Entscheidungen nie als Liste vorlegen — jede Entscheidung braucht eine aussagekräftige Erklärung | Operator (Future-Session).
 - Wort | 2026-09-27 | D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abarbeiten | Operator (Session, Mountain).
 - Wort | 2026-09-27 | „falte alle" — die genuin-offenen Punkte der trägerlosen Docs in die Übergaben ihrer Linien falten (Aufenthalt = Eigentum) | Operator (Mycelium-Session 184).
-- Wort | 2026-09-27 | „den rest gebe ich future" — die Tafel trägt nur `eigen`; operator-gebundene Punkte → Future-Operator-Queue, Dritt-Waits → `state/zustand/wartend.φ`; die Queue wird nicht kopiert | Operator (Mycelium-Session 185).
+- Wort | 2026-09-27 | „den rest gebe ich future" — die Tafel trägt nur `eigen`; operator-gebundene Punkte → Future-Operator-Queue, Dritt-Waits → `state/wartend.φ`; die Queue wird nicht kopiert | Operator (Mycelium-Session 185).
 
 ## Offen (aufgeschlüsselt)
 

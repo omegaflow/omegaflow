@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 323 (2026-10-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-12-mountain-folge322.md` (→ `archiv/`).
 
 ## Burn: open 0.00 · close 0.13 · cap 0.15 · reason: Linien-Session (Mountain) + ein `general`-Taucher, deepseek-flash, kein pro/max (lokal nur flash); `session_burn`-Linien-Klasse ≈ $0.08–0.13 (keine saubere Einzelsession-Isolation).

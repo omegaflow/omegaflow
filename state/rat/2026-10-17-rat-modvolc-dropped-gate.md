@@ -104,7 +104,7 @@ und schlossen `decline-redistribution`; die zwei UI-Sitze prüften die **Kanalte
   ist mit Attribution verteilbar (`terms free-open`, **kein** `decline-redistribution`). MODVOLC selbst
   bleibt `local-only`. **Offen:** `MOD021KM`/`MYD021KM` sind noch **nicht im Register** (0 Treffer) —
   der L1-Block + ein Band-21/22/32-Reader sind der nächste Bau.
-- **Mycelium (M2):** `state/zustand/ledger/` anlegen; die 6 lokalen / 11 CI-Drops einzeln reconcilen
+- **Mycelium (M2):** `state/ledger/` anlegen; die 6 lokalen / 11 CI-Drops einzeln reconcilen
   (3× `m10` → Mountain, 2× `mcpherron` → River, 4× φ-Blöcke → Mycelium); `--dropped` in **zwei**
   Messungen splitten; **danach** den Baseline-Freeze dem Operator-/Rat-Wort vorlegen. `dropped-gate`
   **rot lassen**, bis Belege oder offene Lücken sauber registriert sind.

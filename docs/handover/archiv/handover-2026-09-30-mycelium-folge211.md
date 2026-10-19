@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
 wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
-(`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
+(`state/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-09-30-mycelium-folge210.md` (→ `archiv/`).
 
 ## Operator-Wort-Register
@@ -149,7 +149,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** keine
 - **Braucht:** `## An river`.
 
-### Quellenseitige Waits (`state/zustand/wartend.φ`)
+### Quellenseitige Waits (`state/wartend.φ`)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Antwort/Readiness
 - **Lage:** (gemessen 2026-09-30 via `mail_ledger.φ`) keine neue Antwort von NSSDCA/JPL; Asmar (mail 191) verwies auf die Paper-Autoren (Antwort 192), drei ODF-Anfragen raus (193–195). SAMPLE_CONTACT-Antwort (181/184) liegt vor.
@@ -159,7 +159,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### termin-Punkte — Wiedervorlage
 - **Status:** termin | **Bindung:** termin:2026-10-02 · 2026-10-19 · 2026-12-02 · 2026-12-03 · 2027-04-01
 - **Trigger:** `superdarn-af68c4f1` · `emodnet-hfr` · `noirlab-gaia-dr4` · `europa-clipper` · `bepicolombo-more`
-- **Lage:** (gemessen 2026-09-30 via `state/zustand/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
+- **Lage:** (gemessen 2026-09-30 via `state/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
 - **Blockade:** Termin
 - **Braucht:** `archive_search --verdict <url>` beim jeweiligen Datum.
 
@@ -173,7 +173,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### `register_lookup --dropped` — Rest-Gap (Register-Träger-Index gebaut)
 - **Status:** descoped | **Bindung:** eigen
 - **Trigger:** keiner (descoped, gemessen)
-- **Lage:** (gemessen 2026-09-30 via `./target/debug/register_lookup --dropped --count`) Register-Träger-Index gebaut (`tools/register/src/bin/register_lookup.rs` `load_register_content_index`: Wort-Index gegen `phi/*.φ` + `phi/pipeline/*.φ` + `state/zustand/wartend.φ`): **1067 → 1045** (−22). Gate grün (< Baseline). Debug-Laufzeit ~60 s; das Gate (`register-dropped.yml:20`) baut **release** → schnell. Ein Lowercase-Fix im Content-Index-`offer_word` glättete auf **145** (Falsch-Positive über deutsche Groß-Nomen in Commit-Prosa) und wurde **verworfen** — der Riss ist benannt, nicht geglättet.
+- **Lage:** (gemessen 2026-09-30 via `./target/debug/register_lookup --dropped --count`) Register-Träger-Index gebaut (`tools/register/src/bin/register_lookup.rs` `load_register_content_index`: Wort-Index gegen `phi/*.φ` + `phi/pipeline/*.φ` + `state/wartend.φ`): **1067 → 1045** (−22). Gate grün (< Baseline). Debug-Laufzeit ~60 s; das Gate (`register-dropped.yml:20`) baut **release** → schnell. Ein Lowercase-Fix im Content-Index-`offer_word` glättete auf **145** (Falsch-Positive über deutsche Groß-Nomen in Commit-Prosa) und wurde **verworfen** — der Riss ist benannt, nicht geglättet.
 - **Blockade:** keine
 - **Braucht:** kein Schritt — die Messung ist der Befund.
 

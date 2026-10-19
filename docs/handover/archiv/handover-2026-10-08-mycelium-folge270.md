@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 270 (2026-10-08)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
-wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
+wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-08-mycelium-folge269.md` (→ `archiv/`).
 
 **Aufenthalt = Eigentum:** `## Offen — eigen` trägt nur Punkte, deren *nächster Schritt*

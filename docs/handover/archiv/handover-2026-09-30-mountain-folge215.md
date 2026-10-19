@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 215 (2026-09-30)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der Stehende
-Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`; Stand der Runde am
+Pass wird zitiert, nie kopiert (`state/standing-pass.md`; Stand der Runde am
 `d8c0d8340`, vor dem Mountain-Commit `8fdb361b3`). Dieses Atom: die „Ganz einfach"-Ausführung
 des Operators aufgenommen und gegen den Baum gemessen — die drei Ephemeriden-Häuser
 (DE/INPOP/EPM) als `ephemeris_house_gate` gebaut und lokal gemessen, den 16-km-Riß als
@@ -42,7 +42,7 @@ mit Zustand, auch um 3 Uhr nachts.
   `/tmp/opencode`; `archive` = `archive-root`.
 - **Mountain-Fundstellen:** `phi/`, `src/archivar`, `src/mathematikerin`, `src/gate`,
   `tools/harvest`, `tools/measure`, `tools/register`, `docs/specs`, `docs/surveys`,
-  `state/zustand`, `state/mountain`.
+  `state`, `state/mountain`.
 - **Linien-Preset (privat):** `state/mountain/archive-search-preset.txt`; `state/` immer mit
   `archive_search --root state`.
 - **Verwahrt (Operator-Wort Mountain-185):** `state/mountain-185-orphan-doc-nachzug.patch` —

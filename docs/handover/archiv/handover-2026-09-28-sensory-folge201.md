@@ -20,7 +20,7 @@ steht pro Punkt in `Bindung`.
 
 Dieses Register konsumiert `handover-2026-09-28-sensory-folge200.md` (nach `archiv/`);
 diese Folge ist 201. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md` (gemessen 2026-09-28 16:54Z, HEAD `dfd2a4a19`; der
+`state/standing-pass.md` (gemessen 2026-09-28 16:54Z, HEAD `dfd2a4a19`; der
 Arbeits-HEAD steht auf `df0617c4c` — der Pass ist damit stale, die Meta-Linie zieht ihn nach).
 
 Dieses Atom maß die lebende externe Abhängigkeit der Linie frisch an ihre Kante:
@@ -31,7 +31,7 @@ Dieses Atom maß die lebende externe Abhängigkeit der Linie frisch an ihre Kant
 Bewegung — die einzige ist die CDPP-Wiederherstellung. Dieses Atom schloss die
 Planlücke der Vorsession: für die drei datumsgebundenen Waits (`laic-cses`, `ox64-m2c`,
 `europa-clipper`) wurden die **literalen Messschritte** wiederhergestellt und im
-Wait-Register `state/zustand/wartend.φ` gespeichert (nicht mehr jede Session neu
+Wait-Register `state/wartend.φ` gespeichert (nicht mehr jede Session neu
 suchen — Operator-Wort 2026-09-28). Kein eigener dispatchbarer Punkt in diesem Atom.
 
 ## Operator-Wort-Register (Stand 2026-09-28)
@@ -112,7 +112,7 @@ suchen — Operator-Wort 2026-09-28). Kein eigener dispatchbarer Punkt in diesem
 - **Blockade:** Server-seitig — CDPP-REGARDS generiert keine Dateien (`availableFilesCount 0`, Fehlerstatistik steigt). Technisch nichts zu umgehen; der Fehler liegt in der Archiv-Pipeline, nicht beim Client.
 - **Braucht:** CDPP-Wiederherstellung abwarten — Trigger **einmal** messen (kein Polling), direct-only: `curl -s -o /dev/null -w "%{http_code} %{size_download}\n" --max-time 30 -A "Mozilla/5.0 … Chrome/128.0 Safari/537.36" "<erste Datei-URL aus data/regards.cnes.fr/order_18400.metalink>"` (202 = Running, 200 = Daten; die Token-URL bewusst **nicht** über `archive_search --verdict`, dessen Proton/Wayback-Stufen den Token an Dritte senden). Bei 200: Dateien ziehen, **vor 2026-10-05 05:04:06 UTC**. Keine Support-Mail (CDPP erklärt den Defekt selbst, Operator-Wort 2026-09-28). Offene Order-Retry-Links (`…/18373/retry`) bleiben Operator-Hand.
 
-## Aufnehmer-Waits (Aufnehmer sensory, Wohnort `state/zustand/wartend.φ`)
+## Aufnehmer-Waits (Aufnehmer sensory, Wohnort `state/wartend.φ`)
 
 Jede Zeile ein eigener Akt; die Trigger wurden am 2026-09-28 frisch gemessen.
 Der Aufnehmer (sensory) arbeitet eine Zeile im selben Atom, in dem ihr Trigger feuert —
@@ -128,7 +128,7 @@ kein Punkt wird bloß benannt, wo ein Schritt zur Kante existiert.
 ## Termin
 
 - **Europa-Clipper** | termin:2026-12-03 | Trigger: 02./03.12. | Lage (gemessen
-  2026-09-28): Dritt-Wait in `state/zustand/wartend.φ:16` (Aufnehmer sensory) |
+  2026-09-28): Dritt-Wait in `state/wartend.φ:16` (Aufnehmer sensory) |
   Braucht: nach dem Flyby `gh workflow run kernel-flatten.yml` + CDN-Sniff
   `ephemeris_europa_clipper.bin` gegen `dae553fb…`.
 
@@ -213,7 +213,7 @@ werden getragen, nie geglättet (0 honored).
   Die Dispositions-Klasse sollte weder `ip-blocked` noch `parser-def` sein, sondern
   „CDPP-Generierung defekt — wartend". Der Eintrag steht `pending` in
   `phi/blocked_sources.φ:89-91` (note: „kein ip-Block; Gate = CDPP-Konto/orderToken");
-  Myceliums Feder: die Klasse schärfen. Der Wait steht `state/zustand/wartend.φ:4`
+  Myceliums Feder: die Klasse schärfen. Der Wait steht `state/wartend.φ:4`
   (Aufnehmer sensory).
   Origin: sensory-folge194/195/196/197/199/200/201.
 
@@ -233,5 +233,5 @@ Eigene Pfade dieses Atoms (Commit/Push pending `/commit`):
 - `docs/handover/handover-2026-09-28-sensory-folge201.md` (neu),
   `docs/handover/archiv/handover-2026-09-28-sensory-folge200.md` (Move).
 
-`state/operator-gespraeche/2026-09-28-sensory.md`, `state/zustand/wartend.φ` und
-`state/zustand/external-state.md` sind gitignored (`/state/`) — lokal, nicht committet.
+`state/operator-gespraeche/2026-09-28-sensory.md`, `state/wartend.φ` und
+`state/external-state.md` sind gitignored (`/state/`) — lokal, nicht committet.

@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 206 (2026-09-29)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht wurde.
-Der Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). **Zuerst** werden
+Der Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). **Zuerst** werden
 die adressierten Blöcke gefaltet (`register_lookup --addressed mountain`: future-folge155,
 mycelium-folge206, river-folge65, sensory-folge207) — wartende Linien sind der höchste Trigger
 (Operator-Wort 2026-09-29) —, erst danach die eigene Punkt-Liste; die Sender entfernen ihre Blöcke
@@ -51,7 +51,7 @@ Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29, future-folge155).
     `~/backup/provenance/omegaflow-provenienz`, `~/backup/cdn-sources`, `~/backup/data`).
 - **Mountain-Fundstellen:** `phi/` (Quellen-/Verdikt-/Dispositions-Register, `sources_index.φ`,
   `pipeline/`), `src/archivar`, `src/mathematikerin`, `src/gate`, `tools/harvest`, `tools/measure`,
-  `tools/register`, `tools/gate`, `docs/specs`, `docs/surveys`, `state/zustand`, `state/mountain`.
+  `tools/register`, `tools/gate`, `docs/specs`, `docs/surveys`, `state`, `state/mountain`.
 - **Linien-Preset (privat):** `state/mountain/archive-search-preset.txt`, eingelesen in
   `.opencode/command/mountain.md`; die `--root`-Wurzeln genau der Mountain-Bereiche, nie im
   öffentlichen Repo. `state/` immer mit `archive_search --root state` messen, nie `sgrep` ohne
@@ -88,7 +88,7 @@ Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29, future-folge155).
 - **Braucht:** `act_recorder.ts` schreibt die `sessionID` nach `state/reports/` (dort `active_session.φ`, neu), der
   Hook liest sie (Konvention nutzt `notes_notify.rs`).
 - **Zwischenstand (gemessen 2026-09-29):** Quelle **gebaut** — `input.sessionID` der opencode-Plugin-API
-  (im Journal `state/zustand/ereignisse.φ` real belegt); `.opencode/plugin/act_recorder.ts` schreibt
+  (im Journal `state/ereignisse.φ` real belegt); `.opencode/plugin/act_recorder.ts` schreibt
   sie nach `active_session.φ` unter `state/reports/` (gitignored, zur Laufzeit geschrieben),
   `.githooks/pre-commit` liest sie, wenn
   `OMEGAFLOW_SESSION` leer ist. `commit_check.rs:171` unverändert. Verbleibt: Plugin-Neustart +
@@ -146,7 +146,7 @@ Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29, future-folge155).
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Order-Ablauf 2026-10-05 / Datei-Endpoint 200.
 - **Lage:** (gemessen 2026-09-29) Note `phi/blocked_sources.φ:92` auf `UA-Riss 403/403 vs 403/684
-  (orderToken)` nachgezogen (Träger `state/zustand/wartend.φ:4`); Order exp 2026-10-05; Riss
+  (orderToken)` nachgezogen (Träger `state/wartend.φ:4`); Order exp 2026-10-05; Riss
   bleibt Riss, beide Zeugenlinien.
 - **Blockade:** CDPP-Order.
 - **Braucht:** Order-Ablauf abwarten.
@@ -236,14 +236,14 @@ Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29, future-folge155).
 - **Braucht:** `## An mycelium` (siehe `ersstv5`-Fetch 403 oben).
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte `state/zustand/wartend.φ:3`)
+- **Status:** wartend | **Bindung:** eigen (Warte `state/wartend.φ:3`)
 - **Trigger:** `NED_BYPARAMS_TIMEOUT_TOKEN` per Mail.
 - **Lage:** (gemessen 2026-09-28) zwei NED-Einträge im Ledger, kein Token.
 - **Blockade:** Token fehlt.
 - **Braucht:** mit Token den ByParams-Job fahren.
 
 ### `kuprat` — Admission + Tag
-- **Status:** wartend | **Bindung:** mit Aufnehmer Mountain (Warte `state/zustand/wartend.φ:9`)
+- **Status:** wartend | **Bindung:** mit Aufnehmer Mountain (Warte `state/wartend.φ:9`)
 - **Trigger:** Admission + `tag kuprat`.
 - **Lage:** (gemessen mycelium-folge206) `cuprate-cdn 36555548928` + `srd62-cdn 36555554290` success;
   die vier Kanäle warten auf Admission + Tag.

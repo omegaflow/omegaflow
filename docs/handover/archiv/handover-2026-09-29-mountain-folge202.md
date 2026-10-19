@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 202 (2026-09-29)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
-wurde. Der Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`);
+wurde. Der Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`);
 gemessen wird nur, was der eigene Trigger für fällig erklärt.
 
 ## Operator-Wort-Register
@@ -98,7 +98,7 @@ Du kannst. Führe den Plan aus — als `line`-Agent (auto-bestätigt); Dispatch 
 - **Braucht:** danach Verdikt (löschen/halten in `dead_sources.φ`).
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte `state/zustand/wartend.φ:3`)
+- **Status:** wartend | **Bindung:** eigen (Warte `state/wartend.φ:3`)
 - **Trigger:** `NED_BYPARAMS_TIMEOUT_TOKEN` per Mail.
 - **Lage:** (gemessen 2026-09-28) zwei NED-Einträge im Ledger, kein Token.
 - **Blockade:** Token fehlt.

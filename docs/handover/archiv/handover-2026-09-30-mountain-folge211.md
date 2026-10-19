@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 211 (2026-09-30)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der Stehende
-Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Dieses Atom ist die
+Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Dieses Atom ist die
 **Ausführung der folge210-Tafel** (Phase 2): Parser-Arme gemessen und gebaut, Register-Verdikte
 geschrieben, die adressierten Blöcke (mycelium-folge210, river-folge70) gefaltet.
 
@@ -34,7 +34,7 @@ mit Zustand, auch um 3 Uhr nachts.
   `/tmp/opencode`; `archive` = `archive-root`.
 - **Mountain-Fundstellen:** `phi/`, `src/archivar`, `src/mathematikerin`, `src/gate`,
   `tools/harvest`, `tools/measure`, `tools/register`, `docs/specs`, `docs/surveys`,
-  `state/zustand`, `state/mountain`.
+  `state`, `state/mountain`.
 - **Linien-Preset (privat):** `state/mountain/archive-search-preset.txt`; `state/` immer mit
   `archive_search --root state`.
 
@@ -139,12 +139,12 @@ mit Zustand, auch um 3 Uhr nachts.
 - **Status:** termin | **Bindung:** termin:2026-10-05
 - **Trigger:** Order-Ablauf 2026-10-05 / Datei-Endpoint 200.
 - **Lage:** (gemessen 2026-09-29) Riss `UA-Riss 403/403 vs 403/684 (orderToken)` in
-  `phi/blocked_sources.φ`; Träger `state/zustand/wartend.φ`.
+  `phi/blocked_sources.φ`; Träger `state/wartend.φ`.
 - **Blockade:** CDPP-Order.
 - **Braucht:** Order-Ablauf abwarten.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte `state/zustand/wartend.φ`)
+- **Status:** wartend | **Bindung:** eigen (Warte `state/wartend.φ`)
 - **Trigger:** `NED_BYPARAMS_TIMEOUT_TOKEN` per Mail.
 - **Lage:** (gemessen 2026-09-30) Dave Cook (NED) bot den Timeout-Token an; Token nicht eingetroffen;
   `ned-byparams-cdn` „success" = 6 s (kein Job-Lauf). **Wort:** „der ned folowup ist nicht lange her" |

@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
 wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
-(`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
+(`state/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-09-30-mycelium-folge214.md` (→ `archiv/`).
 
 ## Burn: open 0.0047 · close 0.0000
@@ -101,7 +101,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### Legacy-CDN Re-Manifest (ssd family tag)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Lauf-Ende `nvss-cdn` / `first14-cdn`
-- **Lage:** (gemessen 2026-09-30) `tapvizier.../capabilities` 200; die 4 Register-`url`-Zeilen (`sources.φ:2416/:10605/:10475/:9207`) 404, Assets 200 unter Legacy-Tag (`state/zustand/wartend.φ:27`).
+- **Lage:** (gemessen 2026-09-30) `tapvizier.../capabilities` 200; die 4 Register-`url`-Zeilen (`sources.φ:2416/:10605/:10475/:9207`) 404, Assets 200 unter Legacy-Tag (`state/wartend.φ:27`).
 - **Blockade:** keine
 - **Braucht:** Lauf-Ende lesen; `--verdict` der 4 Assets.
 
@@ -154,7 +154,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** `gh issue` nicht erlaubt
 - **Braucht:** `## An future` (Operator-Wort für die Rolle mit `gh issue`).
 
-### Quellenseitige Waits (`state/zustand/wartend.φ`)
+### Quellenseitige Waits (`state/wartend.φ`)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Antwort/Readiness
 - **Lage:** (gemessen 2026-09-30) Aufnehmer mycelium: `ssdc-limadou`, `voyager-nssdca`, `mariner10-nssdca`, `viking-nssdca`, `cassini-trk`, `juno-jplnav`, `superdarn-af68c4f1`, `emodnet-hfr`, `bepicolombo-more`, `noirlab-gaia-dr4`, `legacy-cdn-ssd`; die ODF-Rohdaten-Anfragen (ESOC/KinetX/Turyshev) unter `:29–31`.
@@ -164,7 +164,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### termin-Punkte — Wiedervorlage
 - **Status:** termin | **Bindung:** termin:2026-10-02 · 2026-10-19 · 2026-12-02 · 2026-12-03 · 2027-04-01
 - **Trigger:** `superdarn-af68c4f1` · `emodnet-hfr` · `noirlab-gaia-dr4` · `europa-clipper` · `bepicolombo-more`
-- **Lage:** (gemessen 2026-09-30 via `state/zustand/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
+- **Lage:** (gemessen 2026-09-30 via `state/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
 - **Blockade:** Termin
 - **Braucht:** `archive_search --verdict <url>` beim jeweiligen Datum.
 

@@ -14,7 +14,7 @@ wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** / **Lage** /
 
 Diese Session konsumierte `handover-2026-09-28-mycelium-folge201.md` (→ `archiv/`).
 
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert).
 
 ## Operator-Wort-Register
@@ -73,14 +73,14 @@ zitiert, nie kopiert).
 ### DEMETER — CDPP server-seitig defekt (Klasse ungeschärft)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** quellenseitige CDPP-Reparatur / neuer Order-Versuch — `phi/blocked_sources.φ:89-91`.
-- **Lage:** (gemessen 2026-09-29) Register-Note `:89` trägt noch `pending` mit Alt-note; Wait `state/zustand/wartend.φ:4/5` (Aufnehmer sensory); Order 18400 `availableFilesCount 0`, `filesInErrorCount 1000`, Ablauf 2026-10-05.
+- **Lage:** (gemessen 2026-09-29) Register-Note `:89` trägt noch `pending` mit Alt-note; Wait `state/wartend.φ:4/5` (Aufnehmer sensory); Order 18400 `availableFilesCount 0`, `filesInErrorCount 1000`, Ablauf 2026-10-05.
 - **Blockade:** quellenseitige Reparatur; Klasse „CDPP-Generierung defekt — wartend" ungeschärft (Mountain-Note).
 - **Braucht:** `## An mountain` — Klasse schärfen; kein Code-Schritt.
 
 ### ODF-Coverage der Flyby-Fenster — Galileo-Treffer, 3 x nicht gefunden
 - **Status:** wartend | **Bindung:** eigen ← mountain
 - **Trigger:** Mountain-Verdikt / neue Pre-Flyby-Quelle (`phi/sources.φ` galileo_odf:9764 / messenger_odf:9810 / cassini_odf:8977 / rosetta_odf:8947).
-- **Lage:** (gemessen 2026-09-29 folge202, `research-max` via `archive_search`) **Galileo:** PPI-Annex `https://pds-ppi.igpp.ucla.edu/annex/GO-SUN-RSS-1-TDF-V1.0/TDF/` (200, TDF/ATDF) trägt `0333342A`–`0343344A` = 1990-11-29→1990-12-10, deckt **Earth-1** (1990-12-08). Earth-2 (1992-12): nichts. PDS3 `GO-V-RSS-1-TDF-V1.0` nominell Venus+Earth-1, aber kein Online-Zugriff gemessen. **MESSENGER/Cassini/Rosetta:** nicht gefunden — alle gemessenen Archive beginnen nach dem jeweiligen Flyby (MESSENGER 2006/07+, Cassini Roh 2001-11+, Rosetta RSI-Lücke CVP1-0004→CR2-0012 deckt 2005-03-04 nicht). **Zusatz-Riss:** `state/zustand/external-state.md:34` nennt „6 Shards" / Shard1 „82 063 760 B"; `phi/sources.φ` trägt 3 Shard-Blöcke, `harvest.φ:251`/`frame_registry.φ:71-76` nennen 6, der Taucher misst Shard1 `1 073 741 816 B`.
+- **Lage:** (gemessen 2026-09-29 folge202, `research-max` via `archive_search`) **Galileo:** PPI-Annex `https://pds-ppi.igpp.ucla.edu/annex/GO-SUN-RSS-1-TDF-V1.0/TDF/` (200, TDF/ATDF) trägt `0333342A`–`0343344A` = 1990-11-29→1990-12-10, deckt **Earth-1** (1990-12-08). Earth-2 (1992-12): nichts. PDS3 `GO-V-RSS-1-TDF-V1.0` nominell Venus+Earth-1, aber kein Online-Zugriff gemessen. **MESSENGER/Cassini/Rosetta:** nicht gefunden — alle gemessenen Archive beginnen nach dem jeweiligen Flyby (MESSENGER 2006/07+, Cassini Roh 2001-11+, Rosetta RSI-Lücke CVP1-0004→CR2-0012 deckt 2005-03-04 nicht). **Zusatz-Riss:** `state/external-state.md:34` nennt „6 Shards" / Shard1 „82 063 760 B"; `phi/sources.φ` trägt 3 Shard-Blöcke, `harvest.φ:251`/`frame_registry.φ:71-76` nennen 6, der Taucher misst Shard1 `1 073 741 816 B`.
 - **Blockade:** die registrierten ODFs sind Post-Flyby.
 - **Braucht:** Galileo-TDF-Quelle registrieren (Mountain-Verdikt + Mycelium `url`/`origin`); Shard-Zahl-/Größen-Riss tragen; MESSENGER/Cassini/Rosetta als `nicht gefunden`-Verdikt (Mountain).
 
@@ -160,7 +160,7 @@ zitiert, nie kopiert).
 
 ### Riss — `orphan-docs`-Zensus
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** nächster Stehender Pass mit frischem Bin (`state/zustand/standing-pass.md`).
+- **Trigger:** nächster Stehender Pass mit frischem Bin (`state/standing-pass.md`).
 - **Lage:** (gemessen 2026-09-29) `register_lookup --orphan-docs` = **0**; sensory-folge202 misst via flash-Taucher **4** trägerlose Docs (oben). Divergenz benannt, nicht geglättet.
 - **Blockade:** Release-Bin-Freshness unbestimmt.
 - **Braucht:** `register_lookup --orphan-docs` mit frischem Bin re-messen; die 4 Docs gegen den Baum prüfen.
@@ -189,7 +189,7 @@ zitiert, nie kopiert).
 
 - **NSE-Redistribution + Dank** | (gemessen 2026-09-28 folge199) Reply an SAMPLE_CONTACT (`state/mail/[redacted].md`) um die Lizenz-/Redistributionsfrage erweitern; Akt = Operator-Hand. Bis zum Einverständnis kein CDN.
   Origin: mycelium-folge199
-- **ENSO-Zuschnitt** | (gemessen 2026-09-28) `state/zustand/wartend.φ:23` `blatt-zuschnitt | Operator`. Braucht: Operator-Wort.
+- **ENSO-Zuschnitt** | (gemessen 2026-09-28) `state/wartend.φ:23` `blatt-zuschnitt | Operator`. Braucht: Operator-Wort.
   Origin: mycelium-folge200
 - **Kuprat-Zeugenart** | (gemessen 2026-09-28) `phi/witnesses.φ` trägt nur `s2-direction`, `gestalt`; Kuprat-Zeugenart fehlt. Braucht: Operator-Wort.
   Origin: mycelium-folge200

@@ -27,7 +27,7 @@ bemühen, um herauszufinden, **wo etwas liegt**. Ein Eintrag je Ort — mit dem 
 | Ort | was |
 |---|---|
 | `phi/sources.φ` | **das Register** — die Quelle der Wahrheit über Quellen, Blöcke, `at <anker>`, `terms`, `ttl` |
-| `state/zustand/` | der Zustand: `ereignisse.φ`, `standing-pass.md`, `external-state.md`, `wartend.φ` |
+| `state/` | der Zustand: `ereignisse.φ`, `standing-pass.md`, `external-state.md`, `wartend.φ` |
 | `state/rat/` | die Rat-Antworten (je Frage ein Blatt) |
 | `state/mail/`, `state/research/`, `state/reports/` | Post-Ablage, Suchprotokolle, Berichte |
 | `docs/handover/` | die **lebenden** Übergaben (je Linie die neueste); `archiv/` = konsumiert |

@@ -117,7 +117,7 @@ Doppelungen streichen** — eine Regel, die zweimal dasteht, kostet doppelt und 
 
 ## Schwarm: 5 aus 13 (Zufall, `shuf -n 5`)
 
-Quelle: `state/zustand/llm-gateway-alive.tsv`, frisch geschrieben 2026-10-19 09:54:04 (13 Sitze).
+Quelle: `state/llm-gateway-alive.tsv`, frisch geschrieben 2026-10-19 09:54:04 (13 Sitze).
 
 | # | Sitz |
 |---|---|

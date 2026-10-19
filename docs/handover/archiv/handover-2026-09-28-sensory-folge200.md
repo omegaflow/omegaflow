@@ -20,7 +20,7 @@ steht pro Punkt in `Bindung`.
 
 Dieses Register konsumiert `handover-2026-09-28-sensory-folge199.md` (nach `archiv/`);
 diese Folge ist 200. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md` (gemessen 14:46Z, HEAD dort `ab2b14c9e`; der Baum steht
+`state/standing-pass.md` (gemessen 14:46Z, HEAD dort `ab2b14c9e`; der Baum steht
 auf `138b785a5` — der Pass ist damit stale, die Meta-Linie zieht ihn in ihrer Runde nach).
 
 Dieses Atom maß die einzige lebende externe Abhängigkeit der Linie frisch an ihre Kante:
@@ -44,7 +44,7 @@ technisch nichts zu umgehen; die einzige Bewegung ist die Server-Wiederherstellu
 Aufnehmer-Waits (`laic-cses`, `ox64-m2c`, `europa-clipper`, `rr-brustgurt`) hängen an
 Terminen bzw. LOCK, alle > NOW. `survey-2026-09-06-codestruktur` bleibt geschlossen
 (folge199). Die `wartend.φ`-Zeile (Aufnehmer sensory) und
-`state/zustand/external-state.md:49` wurden mit dem F200-Stempel nachgezogen. **Kein eigener
+`state/external-state.md:49` wurden mit dem F200-Stempel nachgezogen. **Kein eigener
 dispatchbarer Punkt in diesem Atom** — der Plan (Phase 1) hielt mit genannten Triggern.
 
 ## Operator-Wort-Register (Stand 2026-09-28)
@@ -122,7 +122,7 @@ dispatchbarer Punkt in diesem Atom** — der Plan (Phase 1) hielt mit genannten 
 - **Blockade:** Server-seitig — CDPP-REGARDS generiert keine Dateien (`availableFilesCount 0`, Fehlerstatistik steigt). Technisch nichts zu umgehen; der Fehler liegt in der Archiv-Pipeline, nicht beim Client.
 - **Braucht:** CDPP-Wiederherstellung abwarten — Trigger messen (einmal, kein Polling): `archive_search --verdict` bzw. Order-API `/user/orders/18400?token=…` → `availableFilesCount > 0`/Datei-Endpoint `200` → Dateien aus `data/regards.cnes.fr/order_18400.metalink` ziehen, **vor 2026-10-05 05:04:06 UTC**. Keine Support-Mail (CDPP erklärt den Defekt selbst, Operator-Wort 2026-09-28). Offene Order-Retry-Links (`…/18373/retry`) bleiben Operator-Hand.
 
-## Aufnehmer-Waits (Aufnehmer sensory, Wohnort `state/zustand/wartend.φ`)
+## Aufnehmer-Waits (Aufnehmer sensory, Wohnort `state/wartend.φ`)
 
 Jede Zeile ein eigener Akt; die Trigger wurden am 2026-09-28 frisch gemessen.
 Der Aufnehmer (sensory) arbeitet eine Zeile im selben Atom, in dem ihr Trigger feuert —
@@ -138,7 +138,7 @@ kein Punkt wird bloß benannt, wo ein Schritt zur Kante existiert.
 ## Termin
 
 - **Europa-Clipper** | termin:2026-12-03 | Trigger: 02./03.12. | Lage (gemessen
-  2026-09-28): Dritt-Wait in `state/zustand/wartend.φ:15` (Aufnehmer sensory) |
+  2026-09-28): Dritt-Wait in `state/wartend.φ:15` (Aufnehmer sensory) |
   Braucht: Epoche ernten.
 
 ## Träger (Orphan-Faltung)
@@ -231,7 +231,7 @@ werden getragen, nie geglättet (0 honored).
   `DONE_WITH_WARNING` 96 978/97 078 Fehler; Grenze 12.–18.09.2026). CDPP meldet „Due to a
   technical problem, data access is not possible". Die Klasse ist damit weder `ip-blocked`
   noch `parser-def`, sondern „CDPP-Generierung defekt — wartend".
-  Der Wait steht `state/zustand/wartend.φ:4` (Aufnehmer sensory).
+  Der Wait steht `state/wartend.φ:4` (Aufnehmer sensory).
   Origin: sensory-folge194/195/196/197/199/200.
 
 ## An Mountain (gemessen, fremde Feder)
@@ -273,7 +273,7 @@ Aufnehmer future (wartend.φ gesetzt). Future legt sie dem Operator in einfacher
 - **MBRSC Hope/Al-Amal (VAE)** — `sdc.emiratesmarsmission.ae`: kostenloses Konto.
 
 **Eingetragen 2026-09-28 als `blocked account` in `phi/blocked_sources.φ`** +
-`state/zustand/wartend.φ` (Aufnehmer future).
+`state/wartend.φ` (Aufnehmer future).
 
 Origin: sensory-folge195.
 
@@ -293,5 +293,5 @@ Eigene Pfade dieses Atoms (Commit/Push pending `/commit`):
 - `docs/handover/handover-2026-09-28-sensory-folge200.md` (neu),
   `docs/handover/archiv/handover-2026-09-28-sensory-folge199.md` (Move).
 
-`state/operator-gespraeche/2026-09-28-sensory.md`, `state/zustand/wartend.φ` und
-`state/zustand/external-state.md` sind gitignored (`/state/`) — lokal, nicht committet.
+`state/operator-gespraeche/2026-09-28-sensory.md`, `state/wartend.φ` und
+`state/external-state.md` sind gitignored (`/state/`) — lokal, nicht committet.

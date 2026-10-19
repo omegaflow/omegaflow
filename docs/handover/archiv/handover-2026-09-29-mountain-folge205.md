@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 205 (2026-09-29)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht wurde.
-Der Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Die vier
+Der Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Die vier
 adressierten Blöcke (`register_lookup --addressed mountain`: future-folge155, mycelium-folge205,
 river-folge65, sensory-folge206) sind in diesem Atom gefaltet; die Sender entfernen ihre Blöcke
 beim nächsten Pass.
@@ -46,7 +46,7 @@ Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29, future-folge155).
     `~/backup/provenance/omegaflow-provenienz`, `~/backup/cdn-sources`, `~/backup/data`).
 - **Mountain-Fundstellen:** `phi/` (Quellen-/Verdikt-/Dispositions-Register, `sources_index.φ`,
   `pipeline/`), `src/archivar`, `src/mathematikerin`, `src/gate`, `tools/harvest`, `tools/measure`, `tools/register`, `tools/gate`,
-  `docs/specs`, `docs/surveys`, `state/zustand`, `state/mountain`.
+  `docs/specs`, `docs/surveys`, `state`, `state/mountain`.
 - **Linien-Preset (privat):** `state/mountain/archive-search-preset.txt`, eingelesen in
   `.opencode/command/mountain.md`; die `--root`-Wurzeln genau der Mountain-Bereiche, nie im
   öffentlichen Repo. `state/` immer mit `archive_search --root state` messen, nie `sgrep` ohne
@@ -132,7 +132,7 @@ Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29, future-folge155).
 - **Braucht:** `## An mycelium`.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte `state/zustand/wartend.φ:3`)
+- **Status:** wartend | **Bindung:** eigen (Warte `state/wartend.φ:3`)
 - **Trigger:** `NED_BYPARAMS_TIMEOUT_TOKEN` per Mail.
 - **Lage:** (gemessen 2026-09-28) zwei NED-Einträge im Ledger, kein Token.
 - **Blockade:** Token fehlt.
@@ -142,7 +142,7 @@ Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29, future-folge155).
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Order 18400 Done/available → Datei-Endpoint 200; Order exp 2026-10-05.
 - **Lage:** (gemessen 2026-09-29) `blocked_sources.φ:92` Klasse „extern wartend (Order exp
-  2026-10-05)"; Träger `state/zustand/wartend.φ:4` (sensory). **Riss:** die Note trägt den
+  2026-10-05)"; Träger `state/wartend.φ:4` (sensory). **Riss:** die Note trägt den
   F202-Stand `UA-Riss 403/403 vs 403/202`; der Träger misst heute `403/684 B` (verschlechtert) —
   nicht geglättet.
 - **Blockade:** CNES/CDPP-Order.

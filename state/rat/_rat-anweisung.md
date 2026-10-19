@@ -35,7 +35,7 @@ hier, weil sie am 2026-10-19 gebrochen wurde (R-2026-10-18-o und R-2026-10-18-p:
 gefahren).
 
 **Mechanisch erzwungen:** `bin/rat_guard`. Vor jedem paid-Aufruf läuft `bin/rat_guard`; ohne
-frischen Grant (`state/zustand/rat-paid-grant`, nur der Operator setzt ihn mit
+frischen Grant (`state/rat-paid-grant`, nur der Operator setzt ihn mit
 `bin/rat_guard --grant`) bricht der Aufruf ab. **Der Agent fragt vor jeder Runde — frei, UI
 und paid — per ask nach**; erst das Operator-Ja startet die Runde (und setzt bei paid den
 Grant). Eine Runde ohne diese Kette ist ein Regelverstoß, das Ergebnis zählt nicht.
@@ -211,7 +211,7 @@ holen — nicht danach, zur Rechtfertigung.
 Sitz). Paid erst, wenn Schwarm und UI uneinig sind. Kosten Schwarm $0, Laufzeit ~1 s je Modell.
 
 **Budget (Operator-Wort 2026-10-19, zweite Fassung):** **drei Blöcke zu fünf** —
-**5 Schwarm** per Zufall aus der frischen Alive-Liste (`shuf -n 5 state/zustand/llm-gateway-alive.tsv`,
+**5 Schwarm** per Zufall aus der frischen Alive-Liste (`shuf -n 5 state/llm-gateway-alive.tsv`,
 Maschine) · **5 UI ohne Login** (Maschine, 4 Roster-Sitze + **Fugu**) · **5 Frontier mit Login**
 (**Operator** fährt). **Kein Paid**, solange diese drei Blöcke laufen — Mistral Vibe (UI) ersetzt
 den Mistral-Paid-Aufruf. Die Auswahl wird **vor** dem Lauf veröffentlicht
@@ -236,7 +236,7 @@ die nichts trägt, ohne Ersatz zu nennen, ist nur eine fehlende Stimme.
 - In **3 von 3** Runden hat der Schwarm einen Einwand produziert, den **kein** Paid-Sitz hatte.
 
 **Der Schwarm ist die freie Menge, keine fixe Zahl.** Die freien Modelle stehen in
-`state/zustand/llm-gateway-models.tsv` (Preis 0/0 + freie Präfixe), bei jedem Gateway-Start frisch
+`state/llm-gateway-models.tsv` (Preis 0/0 + freie Präfixe), bei jedem Gateway-Start frisch
 abgeholt. Die frühere „4 gemessene Sitze" / „44 Träger"-Zahl war Bias; die Menge ist, was der Katalog
 misst. Immer Inhalt prüfen: HTTP-Erfolg ≠ Antwort.
 

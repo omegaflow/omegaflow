@@ -26,7 +26,7 @@ leer, kein Verzeichnis auf der Platte). Lebende Arme (`archive_search`) und die
 Register ersetzen sie.
 
 Der Zustand offener Arbeit liegt **nicht** mehr in einem Pipeline-Ledger: er
-liegt in `state/zustand/wartend.φ` (12 pending Compiler + Zugangs-Waits;
+liegt in `state/wartend.φ` (12 pending Compiler + Zugangs-Waits;
 gitignored, lokal) und wird owner-getaggt mit `register_lookup --open` gelesen.
 `phi/` trägt das **1 lebende Daten-Register** (`sources`),
 kein weiteres.
@@ -36,7 +36,7 @@ kein weiteres.
 | Pfad | Was es IST |
 |------|------------|
 | `phi/sources.φ` | Das kanonische Register (Annahme-Ziel): die `field`/`force_type`-Blöcke (Kraft-Quellen) + die 34 `witness`/`record`-Blöcke (nicht-strahlende Zeugen: S²-Richtung, Gestalt, Substance, point-event). |
-| `state/zustand/wartend.φ` | Das Wartend-Register (gitignored, lokal): `key \| Gegenüber \| Trigger \| Aufnehmer \| Lage`, eine Zeile je Wait; 12 pending Compiler + Zugangs-Waits. |
+| `state/wartend.φ` | Das Wartend-Register (gitignored, lokal): `key \| Gegenüber \| Trigger \| Aufnehmer \| Lage`, eine Zeile je Wait; 12 pending Compiler + Zugangs-Waits. |
 | `src/mathematikerin/descriptors/*.te` | Kanal-Deskriptoren (20) — Konsument `tools/measure/src/bin/field_te_query.rs`. |
 | `src/archivar/testdata/` | Test-Fixtures (8 Verzeichnisse: twomass, ncei_ssi, ncei_goes_xrs, noaa_goes16, noaa_gk2a, noaa_wod, cosmic_wetprf, celestrak_eop). |
 | `tools/harvest/data/` | Werkzeug-Eingaben: `asteroid/` (gm + diameters), `nrs_stations.φ`, `dust-maske.φ`. |
@@ -90,7 +90,7 @@ descoped, 2026-10-11). Der Zustand lebt an zwei Orten:
 - **Die Register selbst** sind das Ledger: eine entdeckte Quelle ist bis zur
   Disposition `pending` (Ernte/Prüfung ungebaut), danach steht ihr Verdikt in
   `phi/sources.φ`. Die drei früheren Dispositions-Register sind entfernt.
-- **`state/zustand/wartend.φ`** trägt das Warten: eine Zeile je Wait,
+- **`state/wartend.φ`** trägt das Warten: eine Zeile je Wait,
   `key | Gegenüber | Trigger | Aufnehmer | Lage`. Der Aufnehmer arbeitet die
   Zeile im selben Atom, in dem der Trigger feuert. Die 12 pending Compiler
   (copernicus-insitu ×8, noaa ×4) und die Zugangs-Waits stehen dort.
@@ -394,7 +394,7 @@ Nur die **Schlüsselnamen** werden je gelesen, nie die Werte (Secret-Hygiene).
   Registrierung), `ip-blocked` (Bot-/IP-Sperre), `parser-def`
   (Format unkonsumierbar, trägt immer den Dateityp html/json/xml/csv, nie
   nackt). Sie sind gemessene Befunde, kein eigenes Register: Key-/Account-Waits
-  stehen als Zeile in `state/zustand/wartend.φ` (Aufnehmer-Pflicht), der Rest
+  stehen als Zeile in `state/wartend.φ` (Aufnehmer-Pflicht), der Rest
   als Handover-Punkt.
   Mirror-Gate: nur Quellen bleiben, deren Daten gespiegelt werden dürfen (CDN)
   — Open-Data, Regierungs-Open-Data, Forschungsdaten → bleibt, Mirror-
@@ -403,7 +403,7 @@ Nur die **Schlüsselnamen** werden je gelesen, nie die Werte (Secret-Hygiene).
   Wayback) = entblockt → der Befund wird ein `phi/sources.φ`-Eintrag über die Prozedur (§5). `register_lookup --open` ist die
   Queue — es liest die Zustands-Register owner-getaggt (`parser-def`/
   `asset fehlt` → mountain, `pending` → mycelium, released → released) und
-  `state/zustand/wartend.φ`; es gibt keinen `phi/pipeline/`-Draft-Pfad
+  `state/wartend.φ`; es gibt keinen `phi/pipeline/`-Draft-Pfad
   (descoped 2026-10-11).
 - Grenze Zugang/Verdikt (Operator-Wort 2026-09-15): **kommerziell →
   `decline redistribution`** (nicht Zugangs-Sperre — der Zugang ist nicht gesperrt,

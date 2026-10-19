@@ -407,8 +407,8 @@ fn main() {
         .ok()
         .map(|s| s.trim().to_string())
         .filter(|s| !s.is_empty());
-    if let Ok(ereignisse) = std::fs::read_to_string("state/zustand/ereignisse.φ") {
-        let wartend = std::fs::read_to_string("state/zustand/wartend.φ").ok();
+    if let Ok(ereignisse) = std::fs::read_to_string("state/ereignisse.φ") {
+        let wartend = std::fs::read_to_string("state/wartend.φ").ok();
         let blocked = std::fs::read_to_string("phi/blocked_sources.φ").ok();
         match session.as_deref() {
             Some(name) => {
@@ -419,14 +419,14 @@ fn main() {
                     Some(name),
                 ) {
                     eprintln!(
-                        "commit_check: state/zustand/ereignisse.φ:{line}: {rule} - {feedback}"
+                        "commit_check: state/ereignisse.φ:{line}: {rule} - {feedback}"
                     );
                     fail = true;
                 }
             }
             None => {
                 eprintln!(
-                    "commit_check: state/zustand/ereignisse.φ: ereignis-ohne-folge: session name missing (OMEGAFLOW_SESSION unset) - check skipped by name"
+                    "commit_check: state/ereignisse.φ: ereignis-ohne-folge: session name missing (OMEGAFLOW_SESSION unset) - check skipped by name"
                 );
             }
         }

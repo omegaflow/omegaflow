@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit;
+`state/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit;
 fremde uncommittete Arbeit unangetastet (in dieser Session concurrent:
 `docs/reference/KERNEL_INDEX.md` gestaged, laufende Handover-Rotation
 mountain/mycelium/sensory).
@@ -71,7 +71,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
   1854–2026, Niño3.4-Subset als CSV 12 124 926 B / HTTP 200 gemessen; `--verdict`
   stage 1 HTTP 206 (2026-09-28). Der Fold `max(0,|Δt|−d/c)` (Rätsel Ⅶ) existiert
   (`src/archivar/spatial.rs:549-550`). Der Zuschnitt ist operator-gebunden
-  (`state/zustand/wartend.φ:23` `blatt-zuschnitt | Operator`, Aufnehmer river).
+  (`state/wartend.φ:23` `blatt-zuschnitt | Operator`, Aufnehmer river).
 - **Blockade:** Quellenzeile fehlt (Mountain-Verdikt + Mycelium-Manifestation, kein
   River-Akt — Feder getrennt); Blatt-/Paar-Zuschnitt wartet auf Operator-Wort.
 - **Braucht:** Mountain admitiert `ersstv5_nino34` + baut

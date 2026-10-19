@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 286 (2026-10-09)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`,
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`,
 Mycelium, gemessen 2026-10-09T15:33Z). Diese Session konsumierte
 `handover-2026-10-09-mountain-folge285.md` (→ `archiv/`). Kein pro/max.
 

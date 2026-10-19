@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 282 (2026-10-09)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
-gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+gemacht wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-09-mycelium-folge281.md` (→ `archiv/`).
 
@@ -35,7 +35,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 
 ### CI — Tip-`subset` und der `hips-png-cdn`-Lauf
 - **Status:** wartend | **Bindung:** eigen (CI-Infra)
-- **Trigger:** `state/zustand/ci-gate.φ` wird am Tip rot; `hips-png-cdn` `37932098229` endet
+- **Trigger:** `state/ci-gate.φ` wird am Tip rot; `hips-png-cdn` `37932098229` endet
 - **Lage:** (gemessen 2026-10-09 via `ci_manage`) `hips-png-cdn` `37932098229` **in_progress seit 12:45Z** (~5 h, SHA `eaf1337fd`) — der Watchdog cancelt erst past 2× der Median-Dauer; `kaguya-lrs-cdn` `37967717027` läuft am Tip. `swpc-efield-cdn` `37963071058` = **success** (Fenster-Heilung bestätigt).
 - **Blockade:** keiner.
 - **Braucht:** nächste Pass-Runde `ci_manage status`; falls `37932098229` gemessen hungert → cancelnden Watchdog-Lauf abwarten.

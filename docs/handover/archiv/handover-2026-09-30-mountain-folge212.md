@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 212 (2026-09-30)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der Stehende
-Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Dieses Atom ist die
+Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Dieses Atom ist die
 **Ausführung der folge211-Tafel bis zur Kante**: DAS2-Extract-Arm gebaut (`src/archivar/extract.rs`
 `series_parse_bin` + `hapi_csv` + Test, `cargo check` 0/0), vier stale Verdiktzeilen in
 `phi/blocked_sources.φ` auf den echten Baumstand geheilt, die adressierten Blöcke
@@ -36,7 +36,7 @@ mit Zustand, auch um 3 Uhr nachts.
   `/tmp/opencode`; `archive` = `archive-root`.
 - **Mountain-Fundstellen:** `phi/`, `src/archivar`, `src/mathematikerin`, `src/gate`,
   `tools/harvest`, `tools/measure`, `tools/register`, `docs/specs`, `docs/surveys`,
-  `state/zustand`, `state/mountain`.
+  `state`, `state/mountain`.
 - **Linien-Preset (privat):** `state/mountain/archive-search-preset.txt`; `state/` immer mit
   `archive_search --root state`.
 

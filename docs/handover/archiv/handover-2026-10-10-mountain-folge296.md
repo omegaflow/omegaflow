@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 296 (2026-10-10)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-10-mountain-folge295.md` (→ `archiv/`).
 flash only, kein pro/max. Der Baum trug fremde uncommittete Arbeit
 (`tools/measure/src/bin/ssb_field_bake.rs`) — unangetastet.
@@ -120,7 +120,7 @@ flash only, kein pro/max. Der Baum trug fremde uncommittete Arbeit
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
 - **Lage:** (gemessen 2026-10-09, unverändert) 157 ODF-Referenzen; `doppler.rs` absent;
-  Wahrheit `state/zustand/wartend.φ:34`.
+  Wahrheit `state/wartend.φ:34`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 

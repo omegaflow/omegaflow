@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
 wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
-(`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
+(`state/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-01-mycelium-folge218.md` (→ `archiv/`).
 
 ## Burn: open 0.0180 · close 0.4450 · cap 0.50 Grund: 29-Stimmen-Free-Voice-Fan-out (Sondierung) + Konzept/Workflows
@@ -115,7 +115,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### Register-Träger — `phi/pipeline/ledger.φ` SSDC
 - **Status:** termin | **Bindung:** termin:2026-10-02
 - **Trigger:** neue SSDC-Prozedur (`https://limadou.ssdc.asi.it/query.php`)
-- **Lage:** (gemessen 2026-10-02 via `state/zustand/wartend.φ:5`/`:10`) `ledger.φ:6` `ausstehend`; `query.php` CAS-Login-Wall bestätigt (future-165), Sotgiu „wait a few weeks".
+- **Lage:** (gemessen 2026-10-02 via `state/wartend.φ:5`/`:10`) `ledger.φ:6` `ausstehend`; `query.php` CAS-Login-Wall bestätigt (future-165), Sotgiu „wait a few weeks".
 - **Blockade:** Prozedur nicht live
 - **Braucht:** nach Termin `archive_search --playwright "https://limadou.ssdc.asi.it/query.php"`.
 
@@ -133,7 +133,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** `gh issue close` strukturell verweigert (`opencode.json`)
 - **Braucht:** Operator-/future-Akt: `gh issue close 113 114` (gemessen geheilt) + `#47–#53` gegen die letzten `*-cdn`-Läufe prüfen.
 
-### Quellenseitige Waits (`state/zustand/wartend.φ`)
+### Quellenseitige Waits (`state/wartend.φ`)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Antwort/Readiness
 - **Lage:** (gemessen 2026-10-02) Aufnehmer mycelium: `ssdc-limadou`, `voyager-nssdca`, `mariner10-nssdca`, `viking-nssdca`, `cassini-trk`, `juno-jplnav`, `superdarn-af68c4f1`, `emodnet-hfr`, `bepicolombo-more`, `noirlab-gaia-dr4`; die ODF-Rohdaten-Anfragen (ESOC/KinetX/Turyshev) unter `:29–31`.
@@ -143,7 +143,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### termin-Punkte — Wiedervorlage
 - **Status:** termin | **Bindung:** termin:2026-10-02 · 2026-10-19 · 2026-12-02 · 2026-12-03 · 2027-04-01
 - **Trigger:** `superdarn-af68c4f1` · `emodnet-hfr` · `noirlab-gaia-dr4` · `europa-clipper` · `bepicolombo-more` · `laic-cses`
-- **Lage:** (gemessen 2026-10-02 via `state/zustand/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
+- **Lage:** (gemessen 2026-10-02 via `state/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
 - **Blockade:** Termin
 - **Braucht:** `archive_search --verdict <url>` beim jeweiligen Datum.
 
@@ -163,7 +163,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ## LOCK
 
-- **`rr-brustgurt`** (Operator): LOCK — Hardware erst bei Förderung; Live-BLE HR NotSupported → keine RR; FIT `nn=0` (gemessen 2026-09-26); Brustgurt Polar H10/HRM-Dual. (`state/zustand/wartend.φ:22`)
+- **`rr-brustgurt`** (Operator): LOCK — Hardware erst bei Förderung; Live-BLE HR NotSupported → keine RR; FIT `nn=0` (gemessen 2026-09-26); Brustgurt Polar H10/HRM-Dual. (`state/wartend.φ:22`)
 
 ## An river
 
@@ -196,4 +196,4 @@ Origin: Operator-Wort (Mycelium-Session 2026-10-02); Caveat ehrlich registriert.
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`) — der gemessene
 Abschluss-Check läuft dann mit Commit und Push. `/consent` ist der session-weite
 Consent (Delegation), nie das Commit-Wort. Der Stehende Pass wird **nach** dem
-Commit am neuen HEAD neu gestempelt (`state/zustand/standing-pass.md`).
+Commit am neuen HEAD neu gestempelt (`state/standing-pass.md`).

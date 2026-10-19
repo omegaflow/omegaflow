@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 297 (2026-10-10)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-10-mountain-folge296.md` (→ `archiv/`).
 flash only, kein pro/max.
 
@@ -49,7 +49,7 @@ flash only, kein pro/max.
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
 - **Lage:** (gemessen 2026-10-09, unverändert) 157 ODF-Referenzen; `doppler.rs` absent;
-  Wahrheit `state/zustand/wartend.φ:34`.
+  Wahrheit `state/wartend.φ:34`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 
@@ -58,7 +58,7 @@ flash only, kein pro/max.
 - **Trigger:** ein neues Operator-Wort, das den Riss über 2026-10-06 hebt
 - **Lage:** (gemessen 2026-10-10) mycelium-292 meldet: der mountain-296-Auftrag
   (`phi/harvest.φ` iEEG-Arm + `sources.φ` Block) widerstreitet dem registrierten
-  Operator-Wort 2026-10-06 (`state/zustand/wartend.φ:40`: iEEG = privates Experiment,
+  Operator-Wort 2026-10-06 (`state/wartend.φ:40`: iEEG = privates Experiment,
   kein CDN). Die Mountain-Seite (`eeglab::eeg_from_bin` akzeptiert `Samples::Double`)
   ist gebaut; die widerstreitende Anforderung ist gestrichen, das Wort steht.
 - **Blockade:** keine.
@@ -148,7 +148,7 @@ Origin: mountain-297 (2026-10-10).
   manifestiert jetzt die April-Nacht (bereits dispatched: `38032885088`).
 - **iEEG.** Der mountain-296-Auftrag (`phi/harvest.φ` iEEG-Arm + `sources.φ` Block) ist
   gestrichen: er widerstreitet dem registrierten Operator-Wort 2026-10-06
-  (`state/zustand/wartend.φ:40`). Kein Mountain-Akt; nur ein neues Operator-Wort öffnet ihn.
+  (`state/wartend.φ:40`). Kein Mountain-Akt; nur ein neues Operator-Wort öffnet ihn.
 
 ## Abschluss
 

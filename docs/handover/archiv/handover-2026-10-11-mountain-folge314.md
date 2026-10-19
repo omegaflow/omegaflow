@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 314 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 
 ## Burn: open 0.05 · close 0.14 — Grund: Taucherstaffel (8× general, 7× grind-flash) in einem Atom; flash only. Die Breite war das Operator-Wort („Taucherstaffel auf ALLE offenen Punkte"), kein pro/max.
@@ -138,14 +138,14 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 ### Exposom-Register — geschlossen (Baum trägt die Felder)
 - **Status:** descoped | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) die Wartend-Zeile „`field`-Zeilen je Exposom-Klasse fehlen" ist **stale**: `osm_pbf` `field osm_node` (`phi:2080`) und `eionet_cdr` 276 `field`-Zeilen (`phi:21551-21834`, 92 Pollutant × 3 Medium) stehen (committet Mountain 253 `295c731a8` / 268 `4b01d9166`) und spiegeln die Compiler-Komponenten exakt. Zeile aus `state/zustand/wartend.φ` entfernt.
+- **Lage:** (gemessen 2026-10-11) die Wartend-Zeile „`field`-Zeilen je Exposom-Klasse fehlen" ist **stale**: `osm_pbf` `field osm_node` (`phi:2080`) und `eionet_cdr` 276 `field`-Zeilen (`phi:21551-21834`, 92 Pollutant × 3 Medium) stehen (committet Mountain 253 `295c731a8` / 268 `4b01d9166`) und spiegeln die Compiler-Komponenten exakt. Zeile aus `state/wartend.φ` entfernt.
 - **Blockade:** keine.
 - **Braucht:** —
 
 ### Mindat Level-1 — descoped (Operator-Wort)
 - **Status:** descoped | **Bindung:** eigen
 - **Trigger:** —
-- **Lage:** (gemessen 2026-10-11) kein keyless Bulk-Pfad (OpenMindat tokenpflichtig, `MINDAT_TOKEN` Level 0); der Operator descopte es (Alternativen für Mineralkunde existieren). Zeile aus `state/zustand/wartend.φ` entfernt.
+- **Lage:** (gemessen 2026-10-11) kein keyless Bulk-Pfad (OpenMindat tokenpflichtig, `MINDAT_TOKEN` Level 0); der Operator descopte es (Alternativen für Mineralkunde existieren). Zeile aus `state/wartend.φ` entfernt.
 - **Blockade:** keine.
 - **Braucht:** —
 
@@ -158,7 +158,7 @@ Session konsumierte `handover-2026-10-11-mountain-folge313.md` (→ `archiv/`).
 
 ### api.sensor.community — zulassen, Zielzeile unbenannt
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** das wörtliche Future-Wort (welcher Arm/welche Zeile) — `state/zustand/wartend.φ`
+- **Trigger:** das wörtliche Future-Wort (welcher Arm/welche Zeile) — `state/wartend.φ`
 - **Lage:** (gemessen 2026-10-11) HTTP 200; `sensor.community` bereits registriert (`phi:338/1218`).
 - **Blockade:** „zulassen" nennt keinen Arm/keine Zeile.
 - **Braucht:** das wörtliche Future-Wort.

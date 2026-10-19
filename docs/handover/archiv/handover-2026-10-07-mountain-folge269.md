@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 269 (2026-10-07)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-07-mountain-folge268.md` (→ `archiv/`). Kein
 pro/max. Gefaltet: der adressierte future-Block (PRIORITÄT, future-193/194 — GM-Kanal/
 Sonne/Membran/Förderung; Bias-Tor). **268-Arbeit steht** (10 GIC-/Space-Weather-Kanäle

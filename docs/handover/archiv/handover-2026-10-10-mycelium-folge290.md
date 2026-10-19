@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 290 (2026-10-10)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
-gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+gemacht wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-10-mycelium-folge289.md` (→ `archiv/`).
 
@@ -19,7 +19,7 @@ mycelium-282 (`ba59976da`/`b46c9e514`) den Rust-Bin `sources_refresh` + den
 `data/`-Commit. `mountain-294`: Blinkverse-Block registriert; INPE-BIG gedeckt
 (kein Parser-Def, `ledger.φ:86` disponiert); USGS-geomag ohne Draht-Arm (kein
 Mountain-Arm zu bauen); der iEEG-`sources.φ`-Block ist ein **Riss** — Operator-Wort
-2026-10-06 (`state/zustand/wartend.φ:40`): iEEG läuft privat, kein CDN, keine
+2026-10-06 (`state/wartend.φ:40`): iEEG läuft privat, kein CDN, keine
 `sources.φ`; mountain-294s Vorschlag widerstreitet dem registrierten Wort.
 
 ## Burn: open 0.0000 · close 0.0696 · cap 0.5 — Grund: Blinkverse-/SSB-sha256 in die Register-Blöcke, carisma-TLS-Kette gefixt (Lauf `38008321070` success, `sha256` eingetragen) und hips-png-Kadenz, `## An mycelium`-Blöcke gefaltet · deepseek-flash, kein pro/max (gemessen `session_burn` @Schluss).

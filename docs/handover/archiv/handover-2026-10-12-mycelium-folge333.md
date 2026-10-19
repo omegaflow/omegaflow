@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 333 (2026-10-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
-wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/zustand/standing-pass.md`;
+wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/standing-pass.md`;
 die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge332.md` (→ `archiv/`).
 
@@ -25,7 +25,7 @@ die Session schreibt ihn als Schlussakt am HEAD neu). Diese Session konsumierte
 
 ## Transport — eine Spur (verankerte Tokens)
 
-Der **Legacy-Zweig ist entfernt**: `xfer fold`/`close` akzeptieren nur noch `xfer:<line>.<sess>.<n>~<h8>`; es gibt kein `legacy.log`. Der Umstellungspfad ist `xfer migrate --line <L> [--write]` — es ersetzt alte `xfer:<sender>-<n>` in den `## An`-Blöcken durch verankerte Tokens und schreibt das SENT ins Ledger (append-only, `state/zustand/ledger/<line>/<sess>.log`). `register_lookup --tokens` liest den Echo **durable** aus dem Ledger (`FOLDED`/`CLOSED`) oder dem Owner-`## Offen`; `[manifest n=<N> root=<h8>]` wird geprüft; `register-coverage` erzwingt `--tokens --noecho-fail`.
+Der **Legacy-Zweig ist entfernt**: `xfer fold`/`close` akzeptieren nur noch `xfer:<line>.<sess>.<n>~<h8>`; es gibt kein `legacy.log`. Der Umstellungspfad ist `xfer migrate --line <L> [--write]` — es ersetzt alte `xfer:<sender>-<n>` in den `## An`-Blöcken durch verankerte Tokens und schreibt das SENT ins Ledger (append-only, `state/ledger/<line>/<sess>.log`). `register_lookup --tokens` liest den Echo **durable** aus dem Ledger (`FOLDED`/`CLOSED`) oder dem Owner-`## Offen`; `[manifest n=<N> root=<h8>]` wird geprüft; `register-coverage` erzwingt `--tokens --noecho-fail`.
 
 Session-Anker `ses_eceb3d78fffeTNxaWJuGfFG211` (`xfer coverage --line mycelium` = 4 disposed, 2 offen = die zwei ausgehenden Transport-Tokens unten, die auf das Echo der Empfänger warten):
 

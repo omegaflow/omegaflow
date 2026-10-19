@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 315 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge314.md` (→ `archiv/`).
 
 ## Burn: open 0.00 · close 0.2212 · cap 0.30 · reason: ci-check-Wurzel + 388 compiler-Zeilen + 4 grind-flash Taucher (MODVOLC/ITS_LIVE/MASIE-Compiler + MASIE-Loader-Arm) — Operator-Wort Taucherstaffel; kein pro/max; gemessen via `session_burn`.

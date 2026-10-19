@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 236 (2026-10-06)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
-wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
+wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-06-mycelium-folge235.md` (→ `archiv/`).
 
 ## Burn: open 0.0000 · close 0.0531
@@ -19,7 +19,7 @@ kumulativ). `bin/.tools_ensure`: ein Sweep.
 
 ## Operator-Wort-Register
 
-- Wort | 2026-10-06 | „Relay-Bind 0.0.0.0:1618 als Netzwerk-Exposition in den Stehenden Pass aufnehmen: Stand, Exposition, Träger River, Braucht Bind-Flip + Re-Messung" | Quelle: Operator-Session 2026-10-06 — Zeile `state/zustand/standing-pass.md` → `## Netzwerk-Exposition`. **Erledigt** durch river-98 (`src/archivar/relay.rs:11` `RELAY_BIND_DEFAULT = "127.0.0.1"`, gemessen HEAD `045711091`).
+- Wort | 2026-10-06 | „Relay-Bind 0.0.0.0:1618 als Netzwerk-Exposition in den Stehenden Pass aufnehmen: Stand, Exposition, Träger River, Braucht Bind-Flip + Re-Messung" | Quelle: Operator-Session 2026-10-06 — Zeile `state/standing-pass.md` → `## Netzwerk-Exposition`. **Erledigt** durch river-98 (`src/archivar/relay.rs:11` `RELAY_BIND_DEFAULT = "127.0.0.1"`, gemessen HEAD `045711091`).
 - Wort | 2026-10-06 | „Genau ein Zulassungskriterium (Presence-Hülle) und ein deklarierter Beobachter je Messung; ein Body-Name, den der Code wählt, ist der Bias" | Quelle: Operator-Session 2026-10-06 — als Regel in `AGENTS.md` `## Block Universe Physics`.
 
 ## Offen — eigen
@@ -157,4 +157,4 @@ Origin: mycelium-folge236. **Orphan-Träger + Operator-Queue:**
 ## Abschluss
 
 Der Stehende Pass wird **nach** Commit + Push am neuen HEAD neu gestempelt
-(`state/zustand/standing-pass.md`). Detail der Runde: der Pass.
+(`state/standing-pass.md`). Detail der Runde: der Pass.

@@ -13,7 +13,7 @@ wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** / **Lage** /
 **Blockade** / **Braucht**. Status-Tag: `wartend` | `blockiert` | `termin`.
 
 Diese Session konsumierte `handover-2026-09-29-mycelium-folge203.md` (→ `archiv/`).
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert).
 
 Dieser Atom hat gemessen statt getafelt: Gründe der Stauung wurden gemessen
@@ -156,7 +156,7 @@ Arm — die Realität wanderte als falscher Stand mit.
 - **Blockade:** Verdikt/Registrierung = Mountain.
 - **Braucht:** `## An mountain`.
 
-### Quellenseitige Waits (in `state/zustand/wartend.φ` geführt)
+### Quellenseitige Waits (in `state/wartend.φ` geführt)
 - **DEMETER** CDPP defekt (`blocked_sources.φ:89-91` noch `pending`; Wait `wartend.φ:4`,
   Aufnehmer sensory).
 - **hinet-cdn** `36498426236` rot: `cont status never read Available` (8 Re-Requests,
@@ -225,7 +225,7 @@ Arm — die Realität wanderte als falscher Stand mit.
 
 - **NSE-Redistribution + Dank** | (gemessen 2026-09-28 folge199) Reply an SAMPLE_CONTACT (`state/mail/[redacted].md`) um die Lizenzfrage erweitern; Akt = Operator-Hand.
   Origin: mycelium-folge199
-- **ENSO-Zuschnitt** | (gemessen 2026-09-28) `state/zustand/wartend.φ:23` `blatt-zuschnitt | Operator`.
+- **ENSO-Zuschnitt** | (gemessen 2026-09-28) `state/wartend.φ:23` `blatt-zuschnitt | Operator`.
   Origin: mycelium-folge200
 - **Kuprat-Zeugenart** | (gemessen 2026-09-28) `phi/witnesses.φ` trägt Kuprat-Zeugenart nicht.
   Origin: mycelium-folge200

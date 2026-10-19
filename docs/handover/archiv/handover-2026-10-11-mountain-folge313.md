@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 313 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge312.md` (→ `archiv/`).
 Der Auftrag `docs/auftrag/auftrag-2026-10-11-wartend-aufloesung.md` (Teil A/B)
 ist in diesem Atom **ausgeführt**: Teil A Register-Zeilen gesetzt, Teil B
@@ -87,7 +87,7 @@ Compiler gebaut. Was daraus noch offen ist, steht unten.
 - **Trigger:** Entwurf des Serien-Manifest-Formats
 - **Lage:** (gemessen 2026-10-11, unverändert) der ecad-Riss ist gelöst (netloc = Quellen-Identität); AODN-`ttl 1` = Datensatz-Kadenz.
 - **Blockade:** ohne Serien-Manifest trägt jeder Klima-Block nur einen Default-Tag.
-- **Braucht:** Serien-Manifest-Format; der CI-Wait je Block steht in `state/zustand/wartend.φ`.
+- **Braucht:** Serien-Manifest-Format; der CI-Wait je Block steht in `state/wartend.φ`.
 
 ### Frame/Epoche — Transform-Layer
 - **Status:** wartend | **Bindung:** eigen
@@ -140,7 +140,7 @@ Compiler gebaut. Was daraus noch offen ist, steht unten.
 
 ### api.sensor.community — zulassen, Zielzeile unbenannt
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** das wörtliche Future-Wort (welcher Arm/welche Zeile) — `state/zustand/wartend.φ`
+- **Trigger:** das wörtliche Future-Wort (welcher Arm/welche Zeile) — `state/wartend.φ`
 - **Lage:** (gemessen 2026-10-11) HTTP 200; `sensor.community` bereits registriert (`phi/sources.φ:338/1218`).
 - **Blockade:** „zulassen" nennt keinen Arm/keine Zeile.
 - **Braucht:** das wörtliche Future-Wort.

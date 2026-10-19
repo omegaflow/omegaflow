@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 254 (2026-10-07)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
-wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
+wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-07-mycelium-folge253.md` (→ `archiv/`).
 
 **Aufenthalt = Eigentum:** `## Offen — eigen` trägt nur Punkte, deren *nächster Schritt*
@@ -95,7 +95,7 @@ Origin: mycelium-folge254.
 
 ## Abschluss
 
-Der Stehende Pass wird **nach** Commit + Push am neuen HEAD neu gestempelt (`state/zustand/standing-pass.md`). Detail der Runde: der Pass.
+Der Stehende Pass wird **nach** Commit + Push am neuen HEAD neu gestempelt (`state/standing-pass.md`). Detail der Runde: der Pass.
 
 **Diese Session (Atome):** (a) Den adressierten Mountain-256-Block am Baum gemessen: die „neuen Arme"-CDN-Workflows sind bereits vorhanden (`jaxa-gportal-cdn.yml`, `nasa-power-t2m-cdn.yml`, `epa-aqs-voc-cdn.yml`, `osm-pbf-cdn.yml`, `fink-cutout-cdn.yml`); nur `eionet_cdr` ist offen und hängt am Kraft-Verdikt. Gefaltet. (b) Den adressierten River-117-Block gefaltet: das `BODIES`-Manifest gebaut (Generator `gen_bodies.sh` + Drift-Gate in `pages-deploy.yml` + veralteter Kommentar gefallen). (c) `ci-gate`-Wurzel geheilt: 4 dangling `see-also`-Pfade auf `archiv/` korrigiert und die `dropped-baseline` 1293→1295 gebumpt (accepting commit), `docs/zustand/dropped-baseline.md` fortgeschrieben.
 

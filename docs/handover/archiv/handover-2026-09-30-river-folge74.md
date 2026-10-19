@@ -9,7 +9,7 @@
 # Handover — River-Folge 74 (2026-09-30)
 
 Dieses Register trägt nur Offenes — git trägt, was gemacht wurde. Der Stehende
-Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md`. Nur eigene
+Pass wird zitiert, nie kopiert: `state/standing-pass.md`. Nur eigene
 Arbeit: pfad-begrenzter Commit; fremde uncommittete Arbeit unangetastet.
 
 ## Operator-Wort-Register
@@ -67,8 +67,8 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 ## Haus — River
 
 Diese Übergabe ist das Haus: Membran/`omega.rs`-Feld/Window/Gaze, TE-Maschine,
-Aktuatorik, Echo. Fundstellen: `state/zustand/standing-pass.md` ·
-`state/zustand/external-state.md` · `state/zustand/wartend.φ` · `state/operator-gespraeche/` ·
+Aktuatorik, Echo. Fundstellen: `state/standing-pass.md` ·
+`state/external-state.md` · `state/wartend.φ` · `state/operator-gespraeche/` ·
 `state/river/`. Rivers Teil: `src/mathematikerin/` (Feld, TE, WGSL), `src/archivar/`
 (Query/Vlies), Membran-Pfade `main_flow`/`omega.rs`, Aktuatorik; Papiere
 `docs/paper/gic-causal-driver.md` u. a.; Konzepte; Mess-Workflows `.github/workflows/`.
@@ -103,7 +103,7 @@ Linien-Preset privat `state/river/archive-search-preset.txt`.
 ### Flyby-path-2-Kette (Addendum + Auftrag)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** OMNI2 HAPI-Lag (~4–6 d, fällig ~2026-10-04); kp-`def`-Freigabe;
-  ESOC-`*recon*`-SPK (`state/zustand/wartend.φ`)
+  ESOC-`*recon*`-SPK (`state/wartend.φ`)
 - **Lage:** (gemessen 2026-09-30) Swarm-Zellen 16–25 gefüllt (F 34705…39627 nT);
   ACE-Zellen 23–25 gefüllt; kp 23–25 = 0.667; OMNI2 alle Zellen `pending`. Der
   Bin-Grenzfehler `u_stop = t0+(n−1)h` ist in `tools/measure/src/bin/flyby_path2_fill.rs`

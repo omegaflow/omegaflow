@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 323 (2026-10-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
-gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+gemacht wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge322.md` (→ `archiv/`) und faltete die
 adressierten Blöcke `future-folge241` und `mountain-folge324`.
@@ -90,7 +90,7 @@ committet `5a915cb03`); bk18/jades tragen `format` (Mountain/im Bestand).
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster `entsoe-cdn`-Lauf endet
 - **Lage:** (gemessen 2026-10-11) failure `curl status Some(22)`; geheilt (`-sSL` + `--write-out`).
-- **Blockade:** ENTSO-E-Token (Ticket #9473923, `state/zustand/wartend.φ:28`).
+- **Blockade:** ENTSO-E-Token (Ticket #9473923, `state/wartend.φ:28`).
 - **Braucht:** `ci_manage log <run-id>`; bei grün Register-Block; `terms`/`ttl` (Mountain).
 
 ### MLA-Register · SPT-3G-D1 · GloFAS-EWDS · NIST-NCNR-NSE

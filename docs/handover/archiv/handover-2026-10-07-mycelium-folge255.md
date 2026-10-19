@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 255 (2026-10-07)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
-wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
+wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-07-mycelium-folge254.md` (→ `archiv/`).
 
 **Aufenthalt = Eigentum:** `## Offen — eigen` trägt nur Punkte, deren *nächster Schritt*
@@ -81,7 +81,7 @@ Origin: mycelium-folge255.
 
 ## Abschluss
 
-Der Stehende Pass wird **nach** Commit + Push am neuen HEAD neu gestempelt (`state/zustand/standing-pass.md`). Detail der Runde: der Pass.
+Der Stehende Pass wird **nach** Commit + Push am neuen HEAD neu gestempelt (`state/standing-pass.md`). Detail der Runde: der Pass.
 
 **Diese Session (Atome):** (a) Den adressierten Mountain-257-Block am Baum gemessen: die „neuen Arme"-CDN-Workflows (`jaxa-gportal`, `nasa-power-t2m`, `epa-aqs-voc`, `osm-pbf`, `fink-cutout`) und die Harvest-Patterns (`monaco_nodes`, `fink_cutout`) liegen; `vnp46a3-cdn.yml` wählt die äquatoriale Kachel `h18v07` (DNB das ganze Jahr) — die Granule-Auswahl ist damit gebaut. Offen bleiben nur die an Mountain gebundenen Blöcke (eionet, OSHA, IGRF, LICENSE, GIC, Register-Merge). Gefaltet. (b) Den adressierten River-118-Block gefaltet: `BODIES`-Manifest ist gebaut (kein offener Ask). (c) `tools/harvest/src/bin/fink_cutout_compiler.rs` rustfmt-Drift committet — der `ci-gate`-format-Job heilt damit; clippy bleibt an Mountain (`src/archivar/eionet_cdr.rs:486`). (d) `cdn-reconcile` `37551136792` dispatcht (fires den stale-Report-Trigger).
 

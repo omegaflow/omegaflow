@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit;
+`state/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit;
 fremde uncommittete Arbeit unangetastet (in dieser Session concurrent:
 `src/archivar/bsp_reader/daf.rs`, `src/archivar/pds3_*`, `src/archivar/pds4_binary.rs`,
 `tools/register/src/bin/register_lookup.rs`, `AGENTS.md`, `.opencode/command/mycelium.md`,
@@ -73,7 +73,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
   Compiler verlangt genau ein `--date`), TAO-SST trägt nur die letzte Tabellenzeile
   (`:1337/:1340`); `sgrep -i enso phi/` → keine Serien-Zeile.
 - **Blockade:** der SST-Serienkanal fehlt; der Paar-/Zuschnitt ist operator-gebunden
-  (`state/zustand/wartend.φ:23` `blatt-zuschnitt | Operator`, Aufnehmer river).
+  (`state/wartend.φ:23` `blatt-zuschnitt | Operator`, Aufnehmer river).
 - **Braucht:** Quellen-Zeile einer ENSO-SST-Serie + Operator-Zuschnitt.
 
 ### Flyby-Path-2 — Füll-Lauf
@@ -85,7 +85,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 
 ### flyby-path2-recon
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** ESA/ESOC-Publikation der Post-Flyby-SPK + 1σ (`state/zustand/wartend.φ` `flyby-path2-recon`).
+- **Trigger:** ESA/ESOC-Publikation der Post-Flyby-SPK + 1σ (`state/wartend.φ` `flyby-path2-recon`).
 - **Lage:** (gemessen 2026-09-28) `data/ssd.jpl.nasa.gov/ephemeris_juice_recon.bin`
   absent; Gate `pending`.
 - **Blockade:** Publikation fehlt.

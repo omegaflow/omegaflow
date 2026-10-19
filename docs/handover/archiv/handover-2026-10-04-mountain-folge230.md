@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 230 (2026-10-04)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-03-mountain-folge229.md` (→ `archiv/`).
 
 ## Burn: open 0.0469 · close 0.4327 · cap 0.5 Grund: das Atom trug Register-Disposition (92 declines), 5 Code-Atome (AST1, EDF, CSES EFD, pradan, gras_2c), CI-Heilung und Contract-Entwurf
@@ -48,7 +48,7 @@ Wort | Datum | Quelle
 ### PETREL19 — viertes Ephemeriden-Haus (Aufnahme wartet auf Lizenz)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** eine Antwort von `tian-we@163.com` auf die Lizenz-Anfrage (der eigene Send ist kein Trigger) — Beleg `state/mail/mail_ledger.φ`.
-- **Lage:** (gemessen 2026-10-04 via `archive_search petrel19 --root state/mail`) nur der gesendete Record `mail_ledger.φ:222`, keine Antwort. GitHub `license: null`; Arm `ephemeris_compiler.rs` steht; Dritt-Wait `state/zustand/wartend.φ` (`petrel19-license`); `phi/blocked_sources.φ` `pending` (PETREL19).
+- **Lage:** (gemessen 2026-10-04 via `archive_search petrel19 --root state/mail`) nur der gesendete Record `mail_ledger.φ:222`, keine Antwort. GitHub `license: null`; Arm `ephemeris_compiler.rs` steht; Dritt-Wait `state/wartend.φ` (`petrel19-license`); `phi/blocked_sources.φ` `pending` (PETREL19).
 - **Blockade:** Lizenz ungeklärt.
 - **Braucht:** Antwort abwarten; bei Lizenz Register-Zeile in `phi/sources.φ` + `ephemeris_house_gate`/`flyby_anderson_probe` auf das vierte Haus erweitern (`ephemeris_house_gate.rs:297-299`, heute fest `de`/`inpop`/`epm`).
 

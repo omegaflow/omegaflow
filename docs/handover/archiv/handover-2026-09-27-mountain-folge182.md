@@ -11,7 +11,7 @@
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Keine Rangfolge; jeder offene Punkt aufgeschlüsselt:
 Status | Bindung / Trigger / Lage / Blockade / Braucht. Der Stehende Pass wird
-zitiert, nie kopiert (`state/zustand/standing-pass.md`).
+zitiert, nie kopiert (`state/standing-pass.md`).
 
 ## Operator-Wort-Register
 

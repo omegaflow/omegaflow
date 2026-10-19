@@ -36,7 +36,7 @@ Diese Session konsumierte `handover-2026-09-27-river-folge41.md` (nach `archiv/`
 
 ## Offen
 
-Der gemessene Rundenzustand: `state/zustand/standing-pass.md` (zitieren, nie kopieren). Operator-Akte dieser Runde liegen in der Future-Operator-Queue; Dritt-Waits in `state/zustand/wartend.φ`.
+Der gemessene Rundenzustand: `state/standing-pass.md` (zitieren, nie kopieren). Operator-Akte dieser Runde liegen in der Future-Operator-Queue; Dritt-Waits in `state/wartend.φ`.
 
 ### Flyby-Path-2 — Füll-Lauf
 - **Status:** termin:2026-09-28 | **Bindung:** termin

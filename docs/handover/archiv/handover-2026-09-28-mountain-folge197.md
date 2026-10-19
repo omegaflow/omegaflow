@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert
-(`state/zustand/standing-pass.md`); gemessen wird nur, was der eigene Trigger
+(`state/standing-pass.md`); gemessen wird nur, was der eigene Trigger
 für fällig erklärt.
 
 ## Operator-Wort-Register
@@ -37,7 +37,7 @@ Committe und pushe jetzt — nur eigene Arbeit, gemessen nicht beteuert | 2026-0
 - **Braucht:** `ci_manage list` → den jüngsten `ci-check`/`register-coverage`-Lauf auf HEAD wählen, `ci_manage log <id>` einmal lesen; grün → Punkt löschen.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/zustand/wartend.φ:3`)
+- **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/wartend.φ:3`)
 - **Trigger:** NED-Cook-Token (`NED_BYPARAMS_TIMEOUT_TOKEN`) trifft per Mail ein.
 - **Lage:** (gemessen 2026-09-28 via `sread state/mail/mail_ledger.φ`) zwei NED-Einträge — Token-Bitte an IPAC/Cook 2026-09-25/26 —, kein Token im Ledger.
 - **Blockade:** Token fehlt.
@@ -82,7 +82,7 @@ Committe und pushe jetzt — nur eigene Arbeit, gemessen nicht beteuert | 2026-0
 ## Prosa-Träger (eigene)
 
 - `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` | §7 (Nachtrag 2026-09-28 gesetzt): Enclosure-Vereinheitlichung **gebaut** (`src/archivar/membrane.rs:353`, Commit `f9ea3284c`; die Doc-„drei Kopien" waren Vor-Commit-Stand — Doc korrigiert). Reste: Prosa-Heimat „Presence-only loading and the jump" **geschrieben** (`docs/concepts/archivar-mathematikerin.md:31`; `:29` trug Star-Grid + Jump bereits), ω-Loop-Verdict-Term (**river**). Weberin-Lücke `format vlde` → **Mycelium-Feder** (Manifestations-Direktive; als `## An mycelium` getragen). Sprung-Radius **versöhnt** (`Φ·grid_step = Φ·JUMP_GRID·2^(n+3)`, eine Formel).
-- `docs/concepts/blatt-papier-beweis.md` | offen: CSES `Zugang blockiert` (SSDC account/PI authorization, Trigger 2026-10-02; `state/zustand/wartend.φ:11`, Aufnehmer sensory). Wind-Kanal **geklärt** (TAO `tao_wnd_zonal_m_s` lebt `sources.φ:774`; ERA5 declined — `decline model-forecast`); `imos_argo_sst`/`SOI acoustic` declined (2026-09-28).
+- `docs/concepts/blatt-papier-beweis.md` | offen: CSES `Zugang blockiert` (SSDC account/PI authorization, Trigger 2026-10-02; `state/wartend.φ:11`, Aufnehmer sensory). Wind-Kanal **geklärt** (TAO `tao_wnd_zonal_m_s` lebt `sources.φ:774`; ERA5 declined — `decline model-forecast`); `imos_argo_sst`/`SOI acoustic` declined (2026-09-28).
 - `docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md` | Gegenprobe **erledigt** (2026-09-28, `## Gegenprobe` im Doc): kein Widerspruch, 8 Lizenzen + Umfangszahlen reproduzieren; HAPI-Ursache 404 (nicht 403), Meltano-Zahl auf `hub.meltano.com`.
 
 ## An mycelium (fremde Feder — Aufenthalt beim Eigentümer)
@@ -106,7 +106,7 @@ Origin: mountain folge196.
 Origin: mountain folge196.
 
 - **NDK-Feld-Entscheidung** — welcher Skalar eines Moment-Tensor-Events in die 9 Kraft-Medien eingeht: `mw` am Centroid, `m0`, oder kein Skalar? (GCMT-NDK-Parser `src/archivar/ndk.rs` lebt; `extract()` trägt keinen `ndk`-Arm.) Quelle: mountain folge191/192.
-- **Sonden-Flotte Asien/Russland** — CSF/Konto-gated Routen (CNSA Chang'e/Tianwen, ISRO PRADAN, MBRSC EMM — `state/zustand/wartend.φ`) sind operator-/konto-gebunden. Quelle: sensory-folge197, mountain folge196.
+- **Sonden-Flotte Asien/Russland** — CSF/Konto-gated Routen (CNSA Chang'e/Tianwen, ISRO PRADAN, MBRSC EMM — `state/wartend.φ`) sind operator-/konto-gebunden. Quelle: sensory-folge197, mountain folge196.
 - **CSES-Zugang** (SSDC account/PI authorization, Trigger 2026-10-02). Quelle: mountain folge195.
 - **Orphan-Doc-Träger (gemessen 2026-09-28):** `docs/auftrag/auftrag-gic-einreichung.md` — die GIC-Einreichung (Reviewer ins GEMS-Formular, Absenden) ist Operator-Hand. Quelle: mountain folge196.
 

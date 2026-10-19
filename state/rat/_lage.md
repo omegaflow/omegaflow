@@ -1,13 +1,10 @@
-# Lage — generiert 2026-10-19T11:15:36Z
+# Lage — generiert 2026-10-19T11:17:21Z
 
-HEAD `91fff6f53`
+HEAD `35153b783`
 
 ## Sitze / Routen (Gateway)
-- Katalog (tsv, letzter Start: 3h): 2008 · frei: 47 · Preis unbekannt: 1098 · lebendig: 13 (3h alt)
+- Katalog (tsv, letzter Start: ?): 0 · frei: 0 · Preis unbekannt: 0 · lebendig: 0 (? alt)
 - Freier Schwarm: live aus den Preis-0-Zeilen + OpenCode-free — keine feste Zahl
-- Guthaben (USD):
-  openrouter	-1.7770357660000116
-  deepseek	200.46
 - Rat-Sitze: `state/rat/_rat-anweisung.md` (Leiter; 17.10.-Tabelle überholt)
 
 ## Offen je Linie (Handover)

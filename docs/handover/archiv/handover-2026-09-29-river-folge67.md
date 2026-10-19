@@ -9,7 +9,7 @@
 # Handover — River-Folge 67 (2026-09-29)
 
 Dieses Register trägt nur Offenes — git trägt, was gemacht wurde. Der Stehende Pass
-wird zitiert, nie kopiert: `state/zustand/standing-pass.md`. Nur eigene Arbeit:
+wird zitiert, nie kopiert: `state/standing-pass.md`. Nur eigene Arbeit:
 pfad-begrenzter Commit; fremde uncommittete Arbeit unangetastet.
 
 ## Operator-Wort-Register
@@ -40,8 +40,8 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 ## Haus — River (Stand 2026-09-29)
 
 Diese Übergabe **ist** das Haus: Membran/`omega.rs`-Feld/Window/Gaze, TE-Maschine, Aktuatorik,
-Echo — jeder Punkt mit Zustand. Fundstellen: `state/zustand/standing-pass.md` ·
-`state/zustand/external-state.md` · `state/zustand/wartend.φ` · `state/zustand/ereignisse.φ` ·
+Echo — jeder Punkt mit Zustand. Fundstellen: `state/standing-pass.md` ·
+`state/external-state.md` · `state/wartend.φ` · `state/ereignisse.φ` ·
 `state/operator-gespraeche/` · `state/river/`. Rivers Teil: `src/mathematikerin/` (Feld, TE, WGSL),
 `src/archivar/` (Query/Vlies), Membran-Pfade `main_flow`/`omega.rs`, Aktuatorik; Papiere
 `docs/paper/gic-causal-driver.md` u. a.; Konzepte `docs/concepts/*`. Linien-Preset privat

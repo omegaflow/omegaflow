@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 321 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge320.md` (→ `archiv/`).
 
 ## Burn: open 0.00 · close 0.13 · cap 0.50 · reason: Linien-Session + 2 grind-flash-Taucher (M4-Binärformat, M10-EDR-Verifikation), deepseek-flash, kein pro/max.

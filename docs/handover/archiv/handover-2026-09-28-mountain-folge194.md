@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert
-(`state/zustand/standing-pass.md`); gemessen wird nur, was der eigene Trigger
+(`state/standing-pass.md`); gemessen wird nur, was der eigene Trigger
 für fällig erklärt.
 
 ## Operator-Wort-Register
@@ -35,7 +35,7 @@ session-weiter Consent (Delegation), nicht das Commit-Wort — Commit/Push träg
 - **Braucht:** `ci_manage log <id>` des Laufs auf HEAD einmal nach Lauf-Ende lesen; grün → Punkt löschen; bleibt `dropped-gate` rot, ist mycelium der Träger.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/zustand/wartend.φ`)
+- **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/wartend.φ`)
 - **Trigger:** NED-Cook-Token (`NED_BYPARAMS_TIMEOUT_TOKEN`) trifft per Mail ein.
 - **Lage:** (gemessen 2026-09-28 via `sread state/mail/mail_ledger.φ`) zwei NED-Einträge — Token-Bitte an IPAC/Cook 2026-09-25/26 —, kein `NED_BYPARAMS_TIMEOUT_TOKEN` im Ledger; jüngster Eintrag 2026-09-27 (IGETS). `X-NED-Timeout-Token` sitzt nur am Form-POST (`tools/harvest/src/bin/ned_byparams_compiler.rs`).
 - **Blockade:** Token fehlt.
@@ -63,7 +63,7 @@ in seinem Pass. `mycelium-folge191`/`192` sind archiviert — Ziel ist `mycelium
 | Punkt | Destination | Herkunft | Lage |
 |---|---|---|---|
 | DAS2 Iowa + Occultation-DB UTFPR residual `sources.φ`-Zeile | `docs/handover/handover-2026-09-28-mycelium-folge193.md` | mountain folge189 | beide Arme gebaut (`b4106e69a`); die residuale `url`/`origin`/`compiler`/Tags-Zeile ist Myceliums Feder |
-| Stehender-Pass-Korrektur (Verify-Semantik) | `state/zustand/standing-pass.md` (mycelium) | mountain folge191 | die Zeile „die Verify-Semantik ist korrekt" gilt nur für JSON-deklarierte Arme und Void-Fetches; der non-JSON-Defekt ist in `src/archivar/port.rs::ci_body_verdict` geheilt |
+| Stehender-Pass-Korrektur (Verify-Semantik) | `state/standing-pass.md` (mycelium) | mountain folge191 | die Zeile „die Verify-Semantik ist korrekt" gilt nur für JSON-deklarierte Arme und Void-Fetches; der non-JSON-Defekt ist in `src/archivar/port.rs::ci_body_verdict` geheilt |
 | NDK-Feld-Entscheidung — welcher Skalar eines Moment-Tensor-Events in die 9 Kraft-Medien eingeht | Future Operator-Queue (`state/future/handover/`) | mountain folge191/192 | der GCMT-NDK-Parser (`src/archivar/ndk.rs`) lebt, der reverify-Sweep überspringt `format == "ndk"` (`src/archivar/main_flow.rs:1462`), und `extract()` trägt keinen `ndk`-Arm (`format-void`). Frage: `mw` am Centroid, `m0`, oder kein Skalar? |
 | LLNL_G3D_JPS/S40RTS `volume.bin` — falsche `origin`-Direktive in `sources.φ` | `docs/handover/handover-2026-09-28-mycelium-folge193.md` | mountain folge193 | die `LLNL_G3D_JPS.volume.bin`- und `S40RTS.volume.bin`-Blöcke in `phi/sources.φ` tragen die EMC/AFRP-Sammel-`origin`; die Manifestation `.github/workflows/volume-cdn.yml` holt korrekt `https://media.githubusercontent.com/media/tom-new/tomography-models/main/<name>.nc`. Myceliums Feder (Manifestations-Direktive). |
 | Register↔CDN-Tag-Drift (Copilot-Punkte: spectra · nvss · first14 · curated48 · twomass_psc · jwst_spectra) | `docs/handover/handover-2026-09-28-mycelium-folge193.md` | mountain folge194 (Check) | **Kein Quellen-Identität-Riss** (gemessen 2026-09-28 via `archive_search --verdict` gegen Baum+Compiler): Register-`origin`/`compiler` stimmen mit den Produzenten — `tap_compiler`→`tapvizier.cds.unistra.fr`, `spectral_compiler`→`ncei.noaa.gov`, `jwst_spectra_compiler`→`exoplanetarchive.ipac.caltech.edu`, `vlies_density_compiler`→`ssd.jpl.nasa.gov-vlies`. Der Riss ist die **Manifestations-/Tag-Direktive** (Myceliums Feder): (a) die 4 registrierten Quellen sind 404 unter ihrem Tag, das Asset liegt legacy unter `ssd.jpl.nasa.gov` (je 206) → Re-Manifest dispatch; (b) `twomass_psc.bin` liegt unter `irsa.ipac.caltech.edu` (206), Produzent lädt `ssd.jpl.nasa.gov-vlies` (404); (c) `jwst_spectra.bin` liegt unter `ssd.jpl.nasa.gov` (206), Produzent `exoplanetarchive…` (404), Watchlist `ssd.jpl.nasa.gov`. `jwst_spectra.bin`/`twomass_psc.bin` tragen keine Register-Zeile (Compiler-Intermediates; die Quelle `curated48_spectra.bin` ist registriert) — Admission unberührt. **Aufgelöst (Messung 2026-09-28):** der 404 ist **kein** Quellen-Identitäts-Riss — die `url`-netloc == Compiler-Tag für alle vier, das Asset liegt unter dem Legacy-`ssd.jpl.nasa.gov`-Capped-Release. Myceliums Schuld: `spectra.bin` hat **keinen** ausführenden Workflow (`spectral_compiler` wird von keinem `.yml` gerufen); `nvss-cdn.yml`/`first14-cdn.yml`/`kernel-flatten.yml`(Job `jwst-spectra`) re-dispatch. Der Stehende-Pass-Eintrag „kanonisch mountain" ist der Fehlschluss (`url`/`origin`/`compiler`/Tags = Myceliums Feder). |

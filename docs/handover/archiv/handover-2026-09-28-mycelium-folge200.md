@@ -14,7 +14,7 @@ wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** / **Lage** /
 
 Diese Session konsumierte `handover-2026-09-28-mycelium-folge199.md` (→ `archiv/`).
 
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert).
 
 ## Operator-Wort-Register
@@ -110,14 +110,14 @@ zitiert, nie kopiert).
 ### [redacted] Warte-Zeile schließen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** gefeuert — Mail-Eingang `state/mail/mail_ledger.φ:181`, Daten `data/lab_a.data/SAMPLE_NSE_[RETRACTED-SAMPLE]/`.
-- **Lage:** (gemessen 2026-09-28) `state/zustand/wartend.φ:8` (Aufnehmer mycelium) wartete auf Mail-Eingang; `mail_ledger.φ:181` (SAMPLE_CONTACT/LAB_A), Daten `data/lab_a.data/SAMPLE_NSE_[RETRACTED-SAMPLE]/`.
+- **Lage:** (gemessen 2026-09-28) `state/wartend.φ:8` (Aufnehmer mycelium) wartete auf Mail-Eingang; `mail_ledger.φ:181` (SAMPLE_CONTACT/LAB_A), Daten `data/lab_a.data/SAMPLE_NSE_[RETRACTED-SAMPLE]/`.
 - **Blockade:** keine.
-- **Braucht:** die Warte-Zeile in `state/zustand/wartend.φ` schließen.
+- **Braucht:** die Warte-Zeile in `state/wartend.φ` schließen.
 
 ### Journal-Emitter — drei Rest-Haken (a)–(d)
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** future-folge150-Block (`## An mycelium`) / `state/zustand/ereignisse.φ`-Arm.
-- **Lage:** (gemessen 2026-09-28, future-folge150) `.opencode/plugin/act_recorder.ts` schreibt nach `state/zustand/ereignisse.φ`; offen: (a) `register_lookup --open` lernt den `ereignisse.φ`-Arm; (b) die Planungs-Pass-Regel als AGENTS.md-Zeile; (c) der Stehende Pass liest `ereignisse.φ`; (d) der Mess-Test.
+- **Trigger:** future-folge150-Block (`## An mycelium`) / `state/ereignisse.φ`-Arm.
+- **Lage:** (gemessen 2026-09-28, future-folge150) `.opencode/plugin/act_recorder.ts` schreibt nach `state/ereignisse.φ`; offen: (a) `register_lookup --open` lernt den `ereignisse.φ`-Arm; (b) die Planungs-Pass-Regel als AGENTS.md-Zeile; (c) der Stehende Pass liest `ereignisse.φ`; (d) der Mess-Test.
 - **Blockade:** keine.
 - **Braucht:** (a)–(d) umsetzen; (b)/(-c) berühren AGENTS.md.
 
@@ -190,7 +190,7 @@ zitiert, nie kopiert).
 
 - **NSE-Redistribution + Dank** | (gemessen 2026-09-28 folge199) Reply an SAMPLE_CONTACT (`state/mail/[redacted].md`) um die Lizenz-/Redistributionsfrage erweitern; der Akt ist Operator-Hand. Bis zum Einverständnis kein CDN.
   Origin: mycelium-folge199
-- **ENSO-Zuschnitt** | (gemessen 2026-09-28 folge200) `state/zustand/wartend.φ:23` `blatt-zuschnitt | Operator`; der Operator setzt Blatt-Reihenfolge/-Zuschnitt. Braucht: Operator-Wort.
+- **ENSO-Zuschnitt** | (gemessen 2026-09-28 folge200) `state/wartend.φ:23` `blatt-zuschnitt | Operator`; der Operator setzt Blatt-Reihenfolge/-Zuschnitt. Braucht: Operator-Wort.
   Origin: mycelium-folge200
 - **Kuprat-Zeugenart** | (gemessen 2026-09-28 folge200) eine Kuprat-Zeugen-Art fehlt (`phi/witnesses.φ` trägt nur `s2-direction`, `gestalt`). Braucht: Operator-Wort zur Zeugenart.
   Origin: mycelium-folge200

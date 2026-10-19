@@ -12,7 +12,7 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** / **Lage** /
 **Blockade** / **Braucht**. Status-Tag: `wartend` | `blockiert` | `termin`.
 
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte `handover-2026-09-29-mycelium-folge205.md`
 (→ `archiv/`).
 
@@ -132,7 +132,7 @@ zitiert, nie kopiert). Diese Session konsumierte `handover-2026-09-29-mycelium-f
 ### termin-Punkte — Wiedervorlage
 - **Status:** termin | **Bindung:** termin:2026-10-02/2026-10-19/2026-12-02/2027-04-01
 - **Trigger:** `superdarn-af68c4f1` (2026-10-02) · `emodnet-hfr` (2026-10-19) · `noirlab-gaia-dr4` (2026-12-02) · `bepicolombo-more` (2027-04-01).
-- **Lage:** (gemessen 2026-09-29 folge206 via `sread state/zustand/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
+- **Lage:** (gemessen 2026-09-29 folge206 via `sread state/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
 - **Blockade:** Termin.
 - **Braucht:** `archive_search --verdict <url>` beim jeweiligen Datum.
 
@@ -160,7 +160,7 @@ Origin: mycelium-folge206.
   **Braucht:** `phi/dead_sources.φ` um die Supersession ergänzen (ORER 0 Granule, Typ 18/19 ohne Reader-Arm) — Disposition ist Mountain-Feder.
 - **`ephemeris_itokawa`:** Block geschrieben (`sources.φ:15526-15531`): `url …/ssd.jpl.nasa.gov-ephemeris/ephemeris_itokawa.bin` / `format ephemeris_binary` / `origin procedure: recursive SPK/PCK harvest …` / `compiler ephemeris_compiler.rs` / `at itokawa` / `no-cadence`. Riss zur Kenntnis: die „tsv-Registrierung" ist `src/archivar/kernels/naif_body_ids.tsv:91` (`2025143 itokawa 10`) — sie trägt keine `procedure`; der Block nutzt die familien-generische `origin`-Zeile.
 - **`dropped-baseline`:** 1127 → **1134** gebumpt (`docs/zustand/dropped-baseline.md`, ci-gate `36562466796` @04256b3ba: baseline 1127 | current 1134 | delta 7 — Archive-Moves mountain-204/205, river-65, sensory-206).
-- **Kuprat:** `cuprate-cdn 36555548928` + `srd62-cdn 36555554290` success; die vier Kanäle warten auf Admission + `tag kuprat` (`state/zustand/wartend.φ:9`, Mountain).
+- **Kuprat:** `cuprate-cdn 36555548928` + `srd62-cdn 36555554290` success; die vier Kanäle warten auf Admission + `tag kuprat` (`state/wartend.φ:9`, Mountain).
 - **Issue-Cluster `flatten: bodies` (`#30`/`#71`)** — `ephemeris_compiler --juice-cog` (`35123314530`) schrieb einen Fehler-Body („NAIF/DAP") als Kernel; im 09-26-Lauf nicht mehr aufgetreten. `spk_split` (`36271265694`) bricht an der Streaming-DAF-Grenze (`tools/utils/src/bin/spk_split.rs:395`, „segment data begins before address"). **Braucht:** Juice-CoG-Kernel-Fehlerpfad + `spk_split`-Segment-Reihenfolge (Mountain-Feder).
 - **Issue-Cluster `recheck-live` (`#17`/`#60`)** — der Force-Registry fehlen die Unit-Arme `nmi`/`ft`/`degree_c` (`src/archivar/units.rs:315` `allowed_units_for_force` vs `:455` `is_unit_name`); ~50 `field … nmi`-Zeilen in `phi/sources.φ` + `:9593` `degree_c` lösen Physics-Mismatch aus. **Braucht:** Arme zulassen oder die `field`-Zeilen heilen (Mountain-Feder).
 
@@ -171,7 +171,7 @@ Origin: mycelium-folge206.
 **Operator-Wort 2026-09-29 — Mycelium wartet auf diese operator-gebundenen Punkte: bitte beim Operator-Rückkehr vorlegen.**
 
 - **NSE-Redistribution + Dank** — **Lage:** Reply an SAMPLE_CONTACT (`state/mail/[redacted].md`) wartet; der Akt ist eine Mail an einen Dritten. **Frage:** Soll der Reply um die Lizenzfrage (NSE-Redistribution) erweitert werden? **Empfehlung:** ja, Entwurf bis zur Kante, Send = Operator-Hand. (gemessen 2026-09-28 folge199)
-- **ENSO-Zuschnitt** — **Lage:** `state/zustand/wartend.φ:23` `blatt-zuschnitt | Operator`; der `ersstv5-cdn`-Arm steht und ist **grün** (`36555543691` success). **Frage:** Welcher Zuschnitt (Zeitraum/Region)? **Empfehlung:** Compiler-Standard NINO3.4. (gemessen 2026-09-29 folge206)
+- **ENSO-Zuschnitt** — **Lage:** `state/wartend.φ:23` `blatt-zuschnitt | Operator`; der `ersstv5-cdn`-Arm steht und ist **grün** (`36555543691` success). **Frage:** Welcher Zuschnitt (Zeitraum/Region)? **Empfehlung:** Compiler-Standard NINO3.4. (gemessen 2026-09-29 folge206)
 - **Kuprat-Zeugenart** — **Lage:** `phi/witnesses.φ` trägt die Kuprat-Zeugenart nicht. **Frage:** als `witness substance` aufnehmen? **Empfehlung:** ja, `record kuprat` + `force em`. (gemessen 2026-09-28 folge200)
 - **`gic-causal-driver.md` DOI-Minting** — **Lage:** `docs/paper/gic-causal-driver.md:531/538` DOIs `pending`; Mint = Dritter-Akt. **Frage:** jetzt minten? **Empfehlung:** erst nach Einfrieren. (gemessen 2026-09-28 folge201)
 

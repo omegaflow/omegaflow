@@ -151,7 +151,7 @@ poll_once() {
   done
 
   # 4. per-SHA verdict: measure the current HEAD once and record it in the local
-  #    ci-gate register (state/zustand/ci-gate.phi, external-state form — a
+  #    ci-gate register (state/ci-gate.phi, external-state form — a
   #    gitignored cache of the commit's check-runs, never a tracked doc). The
   #    wrapper reads pending while its release binary is absent, named, never a
   #    silent zero; a void call leaves the register untouched.
@@ -160,7 +160,7 @@ poll_once() {
   # The snapshot is the watchdog's sensor buffer: a session reads this file at
   # the planning pass (no API call, no polling). The tracked CI-Status line in
   # docs/zustand/external-state.md (the tracked pointer) names the ledgers true
-  # home `state/zustand/external-state.md`; the session writes there.
+  # home `state/external-state.md`; the session writes there.
   {
     printf '# CI status — %s (ci_watchdog poll, every %ss)\n' "$(date -Is)" "$POLL_S"
     printf '# read by sessions at the planning pass; never written by a session\n'

@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
 wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
-(`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
+(`state/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-01-mycelium-folge217.md` (→ `archiv/`).
 
 ## Burn: open 0.0000 · close 0.1341
@@ -36,7 +36,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ## Messungen dieses Atoms (2026-10-01, Mycelium-218)
 
-- **`state/zustand/wartend.φ:27` (`legacy-cdn-ssd`) als aufgelöst geschlossen:** die Register-`url`-Zeilen zeigen auf das Legacy-Tag `ssd.jpl.nasa.gov` (`sources.φ:10365` curated48_spectra.bin, `:10381` first14.json, `:10393` nvss.json), `archive_search --verdict` = HTTP 206/found (gemessen Mycelium-217); kein Re-Manifest nötig.
+- **`state/wartend.φ:27` (`legacy-cdn-ssd`) als aufgelöst geschlossen:** die Register-`url`-Zeilen zeigen auf das Legacy-Tag `ssd.jpl.nasa.gov` (`sources.φ:10365` curated48_spectra.bin, `:10381` first14.json, `:10393` nvss.json), `archive_search --verdict` = HTTP 206/found (gemessen Mycelium-217); kein Re-Manifest nötig.
 - **Adressierte Blöcke gefaltet:** future-folge164 (Pioneer-daily-Tag ist `-horizons`, `sources.φ:16029`/`:16037` — die 404-Messung der Vor-Fix-Fassung ist überholt), mountain-folge219 (M3-Route + Ephemeriden-Re-Manifest), sensory-folge217 (`--orphan-docs` = 0, gic-Träger steht). Erledigt/überholt: pds3_img-WUSTL-Manifest + quake_ptevent-Manifest (mountain-219), Zeugen-Riss/fünfte Art `PointEvent` (gebaut in `6698f3127`).
 - **CI gemessen via `ci_manage` (Lauf-Ende abgewartet):** `ci-gate 36936698719` @`3965e3814` failure — clippy **4 Fehler** (`needless_range_loop` `src/mathematikerin/least_squares.rs:28`, `useless_vec` `:71`, `approx_constant` Φ `src/mathematikerin/omega.rs:5` + `src/mathematikerin/te.rs:1952`) · Träger **river**; **+** dropped-gate `baseline 1339 | current 1351 | delta 12` · Träger mycelium. `ci-check 36936698721` @`3965e3814` in_progress (Log `unread`); `matrix-rotor 36937794838` / `36872094696` failure (Ursache `unread`). Geheilt: `ci-check 36897754337` (5 Absolutpfade — mountain-221 `06a1e06ec`), `ci-check 36874436237` (E0425, `e4fdf7a8a`).
 - **dropped-Baseline gebumpt 1339→1351** (`docs/zustand/dropped-baseline.md`, sha `29373e0d…`) — absorbiert den bei `3965e3814` gemessenen delta 12 im annehmenden Commit.
@@ -100,7 +100,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** `gh issue close` strukturell verweigert (`opencode.json`)
 - **Braucht:** Operator-/future-Akt: `gh issue close 113 114` (gemessen geheilt) + `#47–#53` gegen die letzten `*-cdn`-Läufe prüfen; die Session darf nur listen/viewen.
 
-### Quellenseitige Waits (`state/zustand/wartend.φ`)
+### Quellenseitige Waits (`state/wartend.φ`)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Antwort/Readiness
 - **Lage:** (gemessen 2026-09-30) Aufnehmer mycelium: `ssdc-limadou`, `voyager-nssdca`, `mariner10-nssdca`, `viking-nssdca`, `cassini-trk`, `juno-jplnav`, `superdarn-af68c4f1`, `emodnet-hfr`, `bepicolombo-more`, `noirlab-gaia-dr4`; die ODF-Rohdaten-Anfragen (ESOC/KinetX/Turyshev) unter `:29–31`.
@@ -110,7 +110,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### termin-Punkte — Wiedervorlage
 - **Status:** termin | **Bindung:** termin:2026-10-02 · 2026-10-19 · 2026-12-02 · 2026-12-03 · 2027-04-01
 - **Trigger:** `superdarn-af68c4f1` · `emodnet-hfr` · `noirlab-gaia-dr4` · `europa-clipper` · `bepicolombo-more` · `laic-cses`
-- **Lage:** (gemessen 2026-09-30 via `state/zustand/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
+- **Lage:** (gemessen 2026-09-30 via `state/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
 - **Blockade:** Termin
 - **Braucht:** `archive_search --verdict <url>` beim jeweiligen Datum; `laic-cses` 2026-10-02 → `archive_search --playwright "https://limadou.ssdc.asi.it/query.php"`.
 
@@ -145,5 +145,5 @@ Origin: mycelium-folge218.
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`) — der gemessene
 Abschluss-Check läuft dann mit Commit und Push. `/consent` ist der session-weite
 Consent (Delegation), nie das Commit-Wort. Der Stehende Pass ist am stabilen gepushten
-HEAD `f181dfbc9` frisch geschrieben (`state/zustand/standing-pass.md`) und wird **nach**
+HEAD `f181dfbc9` frisch geschrieben (`state/standing-pass.md`) und wird **nach**
 dem Commit am neuen HEAD neu gestempelt.

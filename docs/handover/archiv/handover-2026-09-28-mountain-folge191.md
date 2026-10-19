@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert
-(`state/zustand/standing-pass.md`); gemessen wird nur, was der eigene Trigger
+(`state/standing-pass.md`); gemessen wird nur, was der eigene Trigger
 für fällig erklärt.
 
 ## Operator-Wort-Register
@@ -39,7 +39,7 @@ Wort | Datum | Quelle
   schließen; bleibt `dropped-gate` rot, ist mycelium der Träger.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/zustand/wartend.φ:3`)
+- **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/wartend.φ:3`)
 - **Trigger:** NED-Cook-Token (`NED_BYPARAMS_TIMEOUT_TOKEN`) trifft per Mail ein.
 - **Lage:** (gemessen 2026-09-27 via `sread tools/harvest/src/bin/ned_byparams_compiler.rs`)
   `X-NED-Timeout-Token` nur am Form-POST (`http_post_form`, Z. 116-123);
@@ -81,7 +81,7 @@ Wort | Datum | Quelle
 | Punkt | Destination | Herkunft | Lage |
 |---|---|---|---|
 | DAS2 Iowa + Occultation-DB UTFPR residual `sources.φ`-Zeile | `docs/handover/handover-2026-09-28-mycelium-folge190.md` | mountain folge189 (`## An Mycelium`) | beide Arme gebaut (`b4106e69a`); die residuale `url`/`origin`/`compiler`/Tags-Zeile ist Myceliums Feder |
-| Stehender-Pass-Korrektur (Verify-Semantik) | `state/zustand/standing-pass.md` (mycelium) | mountain folge191 | die Zeile „die Verify-Semantik ist korrekt" gilt nur für JSON-deklarierte Arme und Void-Fetches; der non-JSON-Defekt (ci_mode klassifizierte NDK/asu-tsv als `Malformed Data`) ist in diesem Atom geheilt (`src/archivar/port.rs::ci_body_verdict`) |
+| Stehender-Pass-Korrektur (Verify-Semantik) | `state/standing-pass.md` (mycelium) | mountain folge191 | die Zeile „die Verify-Semantik ist korrekt" gilt nur für JSON-deklarierte Arme und Void-Fetches; der non-JSON-Defekt (ci_mode klassifizierte NDK/asu-tsv als `Malformed Data`) ist in diesem Atom geheilt (`src/archivar/port.rs::ci_body_verdict`) |
 
 ## Lehren (dieses Atom)
 

@@ -14,7 +14,7 @@ wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** / **Lage** /
 
 Diese Session konsumierte `handover-2026-09-29-mycelium-folge202.md` (→ `archiv/`).
 
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). In diesem Atom re-dispatcht: `messenger-ephemeris-cdn`
 `36498410453`, `near-ephemeris-cdn` `36498422789`, `hinet-cdn` `36498426236`.
 
@@ -74,7 +74,7 @@ zitiert, nie kopiert). In diesem Atom re-dispatcht: `messenger-ephemeris-cdn`
 ### DEMETER — CDPP server-seitig defekt
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** quellenseitige CDPP-Reparatur — `phi/blocked_sources.φ:89-91`.
-- **Lage:** (gemessen 2026-09-28 sensory-folge203) Datei-Endpoint UA-gated, kein IP-Block; `availableFilesCount 0`, `filesInErrorCount 1000`; Klasse liest noch `pending` mit Alt-note. Wait `state/zustand/wartend.φ:4` (Aufnehmer sensory).
+- **Lage:** (gemessen 2026-09-28 sensory-folge203) Datei-Endpoint UA-gated, kein IP-Block; `availableFilesCount 0`, `filesInErrorCount 1000`; Klasse liest noch `pending` mit Alt-note. Wait `state/wartend.φ:4` (Aufnehmer sensory).
 - **Blockade:** quellenseitig; Klasse ungeschärft (Mountain-Note).
 - **Braucht:** `## An mountain` — Klasse „CDPP-Generierung defekt — wartend" schärfen; kein Code-Schritt.
 
@@ -195,7 +195,7 @@ zitiert, nie kopiert). In diesem Atom re-dispatcht: `messenger-ephemeris-cdn`
 
 - **NSE-Redistribution + Dank** | (gemessen 2026-09-28 folge199) Reply an SAMPLE_CONTACT (`state/mail/[redacted].md`) um die Lizenz-/Redistributionsfrage erweitern; Akt = Operator-Hand. Bis zum Einverständnis kein CDN.
   Origin: mycelium-folge199
-- **ENSO-Zuschnitt** | (gemessen 2026-09-28) `state/zustand/wartend.φ:23` `blatt-zuschnitt | Operator`. Braucht: Operator-Wort.
+- **ENSO-Zuschnitt** | (gemessen 2026-09-28) `state/wartend.φ:23` `blatt-zuschnitt | Operator`. Braucht: Operator-Wort.
   Origin: mycelium-folge200
 - **Kuprat-Zeugenart** | (gemessen 2026-09-28) `phi/witnesses.φ` trägt nur `s2-direction`, `gestalt`; Kuprat-Zeugenart fehlt. Braucht: Operator-Wort.
   Origin: mycelium-folge200

@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 222 (2026-10-02)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`; die
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`; die
 zitierte Runde steht auf einem älteren HEAD, die Punkte tragen ihre eigene Messung).
 Diese Session konsumierte `handover-2026-10-02-mountain-folge221.md` (→ `archiv/`).
 Die adressierten `## An mountain`-Blöcke aus `future-folge165` sind gemessen und in
@@ -76,7 +76,7 @@ Wort | Datum | Quelle
 ### future-folge165 Mail-Routen — Verdikt bzw. als überholt schließen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-02 via `--verdict`/curl) CSES `/query.php` = SSDC-CAS-Login (`<title>Login</title>`) → **Wall**; DEMETER Order-API `regards.cnes.fr/api/v1/rs-order` 403 → **blocked account** (Order 18400 läuft, `state/zustand/wartend.φ:4`); DEMETER SPASE **offener korrigierter Pfad** `https://cnes.github.io/CDPP/CNES/NumericalData/CDPP-Archive/DEMETER/IAP/DMT_N1_1140.xml` (200, echtes SPASE 2.4.0) — der Claim-Pfad ist 404; Roh-ODF Cassini `…/titan/s34/O050/` **offen** (200, 51 Links); LISA-PF Science-Archive = COSMOS Sign-in → Wall, Mirror `heasarc…/FTP/lpf/` **schon registriert** (`sources.φ:9347`); ShadowCam `pds.shadowcam.im-ldi.com/derived/` **offen** (200, PDS4-Listing; `blocked_sources.φ:459` pending); Juno-ODF `pds-atmospheres.nmsu.edu/…/JUNO/logs/…csv` **offen**; NSSDCA `obtain?PSNO-…` 404 → Navigation nötig.
+- **Lage:** (gemessen 2026-10-02 via `--verdict`/curl) CSES `/query.php` = SSDC-CAS-Login (`<title>Login</title>`) → **Wall**; DEMETER Order-API `regards.cnes.fr/api/v1/rs-order` 403 → **blocked account** (Order 18400 läuft, `state/wartend.φ:4`); DEMETER SPASE **offener korrigierter Pfad** `https://cnes.github.io/CDPP/CNES/NumericalData/CDPP-Archive/DEMETER/IAP/DMT_N1_1140.xml` (200, echtes SPASE 2.4.0) — der Claim-Pfad ist 404; Roh-ODF Cassini `…/titan/s34/O050/` **offen** (200, 51 Links); LISA-PF Science-Archive = COSMOS Sign-in → Wall, Mirror `heasarc…/FTP/lpf/` **schon registriert** (`sources.φ:9347`); ShadowCam `pds.shadowcam.im-ldi.com/derived/` **offen** (200, PDS4-Listing; `blocked_sources.φ:459` pending); Juno-ODF `pds-atmospheres.nmsu.edu/…/JUNO/logs/…csv` **offen**; NSSDCA `obtain?PSNO-…` 404 → Navigation nötig.
 - **Blockade:** keine.
 - **Braucht:** die zwei offenen Cassini-/Juno-Listings als `url` nach Arm-Prüfung; den DEMETER-SPASE-Pfad als `origin` an `blocked_sources.φ:99`; die CSES/DEMETER-Mail-Walls an `Future` (DEMETER-Order Ablauf 2026-10-05).
 

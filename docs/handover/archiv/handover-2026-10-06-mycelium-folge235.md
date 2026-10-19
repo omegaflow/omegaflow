@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
 wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
-(`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
+(`state/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-05-mycelium-folge234.md` (→ `archiv/`).
 
 ## Burn: open 0.0000 · close 0.0560
@@ -20,7 +20,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ## Operator-Wort-Register
 
-- Wort | 2026-10-06 | „Relay-Bind 0.0.0.0:1618 als Netzwerk-Exposition in den Stehenden Pass aufnehmen: Stand, Exposition, Träger River, Braucht Bind-Flip + Re-Messung" | Quelle: Operator-Session 2026-10-06 (Bezug `742a6dbbb`, `survey-2026-10-06-agnostik-llm-verdikt.md`) — Zeile in `state/zustand/standing-pass.md` → `## Netzwerk-Exposition`.
+- Wort | 2026-10-06 | „Relay-Bind 0.0.0.0:1618 als Netzwerk-Exposition in den Stehenden Pass aufnehmen: Stand, Exposition, Träger River, Braucht Bind-Flip + Re-Messung" | Quelle: Operator-Session 2026-10-06 (Bezug `742a6dbbb`, `survey-2026-10-06-agnostik-llm-verdikt.md`) — Zeile in `state/standing-pass.md` → `## Netzwerk-Exposition`.
 - Wort | 2026-10-06 | „Genau ein Zulassungskriterium (Presence-Hülle) und ein deklarierter Beobachter je Messung; ein Body-Name, den der Code wählt, ist der Bias" | Quelle: Operator-Session 2026-10-06 — als Regel in `AGENTS.md` `## Block Universe Physics` eingetragen.
 
 ## Offen — eigen
@@ -119,4 +119,4 @@ Origin: mycelium-folge235. **Routed — nicht-eigen:**
 ## Abschluss
 
 Der Stehende Pass wird **nach** Commit + Push am neuen HEAD neu gestempelt
-(`state/zustand/standing-pass.md`). Detail der Runde: der Pass.
+(`state/standing-pass.md`). Detail der Runde: der Pass.

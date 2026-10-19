@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 307 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge306.md` (→ `archiv/`).
 flash only, kein pro/max. Operator-Trigger dieser Session: die Linien-Start-Direktive
 („Mountain in einem Pass, kein Planungstheater") — Bekanntes direkt bis zur Kante
@@ -113,14 +113,14 @@ gearbeitet, 4 begrenzte Dispatches (grind-flash ×2, general ×2).
 ### Flyby-Kette — termin 2026-11-01
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
-- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/zustand/wartend.φ`.
+- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/wartend.φ`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 
 ### iEEG — registriertes Wort maßgeblich
 - **Status:** eigen (Register) | **Bindung:** eigen
 - **Trigger:** ein neues Operator-Wort, das den Riss über 2026-10-06 hebt
-- **Lage:** (gemessen 2026-10-11) iEEG = privates Experiment (`state/zustand/wartend.φ`), kein CDN.
+- **Lage:** (gemessen 2026-10-11) iEEG = privates Experiment (`state/wartend.φ`), kein CDN.
 - **Blockade:** keine.
 - **Braucht:** nur ein neues Operator-Wort öffnet es.
 
@@ -171,5 +171,5 @@ Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt auto
 - **FMHY research-data:** 69 Hosts gemessen; 54 `decline registry/katalog`-Blöcke in `phi/declined_sources.φ` (canonical, 1522 Blöcke).
 - **Asservatenkammer:** 5 Rest-Marker aufgelöst (2 CARRIED, 2 descoped, 1 → Exposom-Matrix).
 - **ECAD-Riss:** aufgelöst (netloc=Identität, origin=Distribution).
-Standing-Pass-Bezug: `state/zustand/standing-pass.md` (HEAD-Bewegung `6f0e902fd` → `c2c9a61ae`, Mycelium-302 lidar). Geteilter Baum: `tools/gate/src/bin/commit_check.rs` (Formatter) und die staged `tools/harvest/src/bin/*lidar_coverage.rs` + `.github/workflows/open-lidar-data-coverage-cdn.yml` gehören fremden Linien — nicht angefasst/committet.
+Standing-Pass-Bezug: `state/standing-pass.md` (HEAD-Bewegung `6f0e902fd` → `c2c9a61ae`, Mycelium-302 lidar). Geteilter Baum: `tools/gate/src/bin/commit_check.rs` (Formatter) und die staged `tools/harvest/src/bin/*lidar_coverage.rs` + `.github/workflows/open-lidar-data-coverage-cdn.yml` gehören fremden Linien — nicht angefasst/committet.
 Eigene Pfade dieses Atoms: `phi/sources.φ` · `phi/declined_sources.φ` · `src/archivar/root.rs` · diese Übergabe · der Archiv-Move folge306.

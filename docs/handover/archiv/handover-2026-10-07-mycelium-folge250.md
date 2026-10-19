@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 250 (2026-10-07)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
-wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
+wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-07-mycelium-folge249.md` (→ `archiv/`).
 
 **Aufenthalt = Eigentum:** `## Offen — eigen` trägt nur Punkte, deren *nächster Schritt*
@@ -110,4 +110,4 @@ Origin: mycelium-folge250.
 
 ## Abschluss
 
-Der Stehende Pass wird **nach** Commit + Push am neuen HEAD neu gestempelt (`state/zustand/standing-pass.md`). Detail der Runde: der Pass.
+Der Stehende Pass wird **nach** Commit + Push am neuen HEAD neu gestempelt (`state/standing-pass.md`). Detail der Runde: der Pass.

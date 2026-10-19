@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 308 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge307.md` (→ `archiv/`).
 flash only, kein pro/max. Operator-Trigger dieser Session: die Linien-Start-Direktive
 („Mountain in einem Pass, kein Planungstheater") — Bekanntes direkt bis zur Kante
@@ -45,7 +45,7 @@ gearbeitet, 4 begrenzte Dispatches (general ×4).
 - **Trigger:** Entwurf des Serien-Manifest-Formats
 - **Lage:** (gemessen 2026-10-11) der **ecad-Riss ist gelöst** (netloc = Quellen-Identität `ecad.eu`, origin = Distributionshost). Der Mycelium-adressierte Block gegengeprüft (general): `terms` aller 6 Klima-Quellen deckt die Behauptung (PD SURFRAD; non-commercial ECAD/WorldClim; CC-BY-4.0 DWD/AODN/KNMI); `ttl` 5/6 mit Compiler-`TTL_S` belegt (SURFRAD 604800 · ECAD 604800 · DWD 2592000 · WorldClim 315360000 · KNMI 86400). **AODN-Riss:** `ttl 1` (`phi/sources.φ:8`) = Datensatz-Kadenz (`aodn_compiler.rs:586`), kein fester Harvest-Refresh.
 - **Blockade:** ohne Serien-Manifest trägt jeder Block nur einen Default-Tag.
-- **Braucht:** Serien-Manifest-Format (Mountain) — die Compiler erzeugen je-Akt-Instanzen. Der CI-Wait je Block steht in `state/zustand/wartend.φ`.
+- **Braucht:** Serien-Manifest-Format (Mountain) — die Compiler erzeugen je-Akt-Instanzen. Der CI-Wait je Block steht in `state/wartend.φ`.
 
 ### PEP + Tudat — Schritt 3 (mehrere Bahnen) offen
 - **Status:** eigen (Register + Bau) | **Bindung:** eigen
@@ -92,7 +92,7 @@ gearbeitet, 4 begrenzte Dispatches (general ×4).
 ### Flyby-Kette — termin 2026-11-01
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
-- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/zustand/wartend.φ`.
+- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/wartend.φ`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 
@@ -113,7 +113,7 @@ gearbeitet, 4 begrenzte Dispatches (general ×4).
 ### iEEG — registriertes Wort maßgeblich
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein neues Operator-Wort, das den Riss über 2026-10-06 hebt
-- **Lage:** (gemessen 2026-10-11) iEEG = privates Experiment (`state/zustand/wartend.φ`), kein CDN.
+- **Lage:** (gemessen 2026-10-11) iEEG = privates Experiment (`state/wartend.φ`), kein CDN.
 - **Blockade:** keine.
 - **Braucht:** nur ein neues Operator-Wort öffnet es.
 
@@ -150,7 +150,7 @@ Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt auto
 - **FMHY research-data — 6 Resthosts verdiktet** (general-Messung, `--sniff`/`--playwright`): `decline registry/katalog` für `dataone.org`, `rpubs.com`, `www.kaggle.com/datasets`, `www.dbpedia.org`, `www.zooniverse.org`; `decline no-physical-force` für `censoredplanet.org` (Netz-Zensur-Messung, GraphQL). 6 Blöcke in `phi/declined_sources.φ` (canonical, url asc, 1528 `url`-Zeilen).
 - **Klima-Blöcke gegengeprüft** (general): terms 6/6 gedeckt; ttl 5/6 mit Compiler-`TTL_S` belegt; AODN-Riss benannt.
 - **ref_hz-Riss gemessen** (general): Format-Zweig ist nicht der Diskriminator; der ~104×-Riss sitzt im else-Zweig über `data_type`.
-- **owner-drift geheilt**: die zwei `Bindung linie:mycelium`-Punkte aufgelöst — GIC-Paper + Serien-CI-Wait nach `state/zustand/wartend.φ`, das Serien-Manifest-Format bleibt `eigen`.
-- Standing-Pass-Bezug: `state/zustand/standing-pass.md` (HEAD-Bewegung `6f0e902fd` → `300ac20281`); Stand zitiert, nicht kopiert.
+- **owner-drift geheilt**: die zwei `Bindung linie:mycelium`-Punkte aufgelöst — GIC-Paper + Serien-CI-Wait nach `state/wartend.φ`, das Serien-Manifest-Format bleibt `eigen`.
+- Standing-Pass-Bezug: `state/standing-pass.md` (HEAD-Bewegung `6f0e902fd` → `300ac20281`); Stand zitiert, nicht kopiert.
 - Geteilter Baum: `tools/gate/src/bin/commit_check.rs` (Formatter) ist fremd modifiziert — nicht angefasst/committet.
-- Eigene Pfade dieses Atoms: `src/archivar/root.rs` · `src/mathematikerin/pc.rs` · `src/mathematikerin/receiver.rs` · `phi/sources.φ` · `phi/declined_sources.φ` · `state/zustand/wartend.φ` · diese Übergabe · der Archiv-Move folge307.
+- Eigene Pfade dieses Atoms: `src/archivar/root.rs` · `src/mathematikerin/pc.rs` · `src/mathematikerin/receiver.rs` · `phi/sources.φ` · `phi/declined_sources.φ` · `state/wartend.φ` · diese Übergabe · der Archiv-Move folge307.

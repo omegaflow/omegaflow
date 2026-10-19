@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 283 (2026-10-09)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
-gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+gemacht wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-09-mycelium-folge282.md` (→ `archiv/`).
 
@@ -36,7 +36,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 
 ### CI — Tip-`subset`, `hips-png-cdn` und tools-build
 - **Status:** wartend | **Bindung:** eigen (CI-Infra)
-- **Trigger:** `state/zustand/ci-gate.φ` wird am Tip rot; `hips-png-cdn` `37932098229` endet
+- **Trigger:** `state/ci-gate.φ` wird am Tip rot; `hips-png-cdn` `37932098229` endet
 - **Lage:** (gemessen 2026-10-09T18:35Z via `ci_manage`) `hips-png-cdn` `37932098229` **in_progress seit 12:45Z** (~5,8 h, SHA `eaf1337fd`). Die zwei tools-build-Fehler der 282 sind **geheilt**: `channels: Vec::new()` steht (`tools/utils/src/bin/volume_builder.rs:367`), `tools-build 37972383719` = success an `588735e39`. Am Tip `81b6db7cc`: `tools-build 37972593811` in_progress, `register-dropped 37972593839` success, `register-coverage 37972593906` success, `ci-gate 37972593903` queued.
 - **Blockade:** Single-Runner-Stau.
 - **Braucht:** nächste Pass-Runde `ci_manage status`; falls `37932098229` gemessen hungert → cancelnden Watchdog-Lauf abwarten.

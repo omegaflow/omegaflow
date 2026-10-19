@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 224 (2026-10-02)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`; die
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`; die
 zitierte Runde steht auf `fb8ebc16c`, der laufende HEAD trägt die Punkte selbst).
 Diese Session konsumierte `handover-2026-10-02-mountain-folge223.md` (→ `archiv/`).
 
@@ -134,4 +134,4 @@ Origin: mountain folge224.
 
 - **future-168-Kandidaten korrigiert (Finding = Claim):** die 6 GDP/WOD/SuperDARN-Zeilen sind Landeseiten bereits registrierter Datensätze (`gdp_drifter` `sources.φ:875`, `wod` `:9640`, `superdarn` `:9261`/`:11007`) — keine neuen Quellen; BSEE×2/BOEM/PDS-PPI `descoped` (`blocked_sources.φ`), WFAU SSA als `format tap`-Quelle registriert; die alten `dead_sources.φ`-Zeilen waren stale — alle vier WFAU-TAPs (`osa/ssa/wsa/vsa`) antworten 2026-10-02.
 - **CSES `/query.php`** ist ein SSDC-CAS-Login (`<title>Login</title>`) → Wall, kein Datenkanal ohne Konto. Ein Kontoantrag ist ein per-Akt-Operator-Wort.
-- **DEMETER Order-API** `regards.cnes.fr/api/v1/rs-order` = 403 (blocked account); Order 18400 läuft, Ablauf `2026-10-05` (`state/zustand/wartend.φ:4`). Der offene SPASE-Pfad ist `origin` in `phi/blocked_sources.φ:100`; die Antwort-Frist ist ein Future-Wiedervorlage-Punkt.
+- **DEMETER Order-API** `regards.cnes.fr/api/v1/rs-order` = 403 (blocked account); Order 18400 läuft, Ablauf `2026-10-05` (`state/wartend.φ:4`). Der offene SPASE-Pfad ist `origin` in `phi/blocked_sources.φ:100`; die Antwort-Frist ist ein Future-Wiedervorlage-Punkt.

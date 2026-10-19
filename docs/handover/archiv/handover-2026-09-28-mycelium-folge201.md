@@ -14,7 +14,7 @@ wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** / **Lage** /
 
 Diese Session konsumierte `handover-2026-09-28-mycelium-folge200.md` (→ `archiv/`).
 
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert).
 
 ## Operator-Wort-Register
@@ -78,14 +78,14 @@ zitiert, nie kopiert).
 ### DEMETER — CDPP server-seitig defekt
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** quellenseitige CDPP-Reparatur / neuer Order-Versuch — `phi/blocked_sources.φ:89-91`.
-- **Lage:** (gemessen 2026-09-28 folge201) Register-Note `phi/blocked_sources.φ:89-91` geschärft: server-seitig (`availableFilesCount 0`, `filesInErrorCount 1000`), kein ip-Block, UA-Riss mountain 403/403 vs sensory 403/202; Wait `state/zustand/wartend.φ:4/5` (Aufnehmer sensory).
+- **Lage:** (gemessen 2026-09-28 folge201) Register-Note `phi/blocked_sources.φ:89-91` geschärft: server-seitig (`availableFilesCount 0`, `filesInErrorCount 1000`), kein ip-Block, UA-Riss mountain 403/403 vs sensory 403/202; Wait `state/wartend.φ:4/5` (Aufnehmer sensory).
 - **Blockade:** quellenseitige Reparatur.
 - **Braucht:** kein Code-Schritt; CDPP-Reparatur abwarten.
 
 ### ODF-Coverage der Flyby-Fenster — Fenster fehlt
 - **Status:** wartend | **Bindung:** eigen (mit sensory)
 - **Trigger:** neue Pre-Flyby-ODF-/Kernel-Quelle — `phi/sources.φ` galileo_odf:9764 / messenger_odf:9810 / cassini_odf:8977 / rosetta_odf:8947.
-- **Lage:** (gemessen 2026-09-28 folge201, durch flash-Taucher bestätigt) **keines** der vier ODF-Assets trägt das Flyby-Fenster auf Record-Ebene: galileo 1996-07→1997-12 (Flybys 1990/1992), messenger 2007-06→2015-04 (Flyby 2005-08), cassini 2002-06→2016-12 (1999-08), rosetta Shard1 2004-03→2015-05 mit Record-Loch (CVP2-0010 START 2004-09-11T23:30 → CR2-0012 START 2005-04-06T13:21:24; Flyby 2005-03-04). **Zusatz-Riss (nicht geglättet):** `state/zustand/external-state.md:34` (Rosetta ODF) nennt „6 Shards in `phi/sources.φ`" und Shard1 „82 063 760 B"; `phi/sources.φ` trägt **3** Shard-Blöcke, `harvest.φ:251`/`frame_registry.φ:71-76` nennen **6**, der Taucher misst Shard1 `1 073 741 816 B` — Shard-Zahl und Shard1-Größe divergieren zwischen den Zeugen.
+- **Lage:** (gemessen 2026-09-28 folge201, durch flash-Taucher bestätigt) **keines** der vier ODF-Assets trägt das Flyby-Fenster auf Record-Ebene: galileo 1996-07→1997-12 (Flybys 1990/1992), messenger 2007-06→2015-04 (Flyby 2005-08), cassini 2002-06→2016-12 (1999-08), rosetta Shard1 2004-03→2015-05 mit Record-Loch (CVP2-0010 START 2004-09-11T23:30 → CR2-0012 START 2005-04-06T13:21:24; Flyby 2005-03-04). **Zusatz-Riss (nicht geglättet):** `state/external-state.md:34` (Rosetta ODF) nennt „6 Shards in `phi/sources.φ`" und Shard1 „82 063 760 B"; `phi/sources.φ` trägt **3** Shard-Blöcke, `harvest.φ:251`/`frame_registry.φ:71-76` nennen **6**, der Taucher misst Shard1 `1 073 741 816 B` — Shard-Zahl und Shard1-Größe divergieren zwischen den Zeugen.
 - **Blockade:** die registrierten ODFs sind Post-Flyby-Missiondaten.
 - **Braucht:** Pre-Flyby-ODF-Quelle finden oder den Befund als Verdikt tragen (Mountain).
 
@@ -181,7 +181,7 @@ zitiert, nie kopiert).
 
 - **NSE-Redistribution + Dank** | (gemessen 2026-09-28 folge199) Reply an SAMPLE_CONTACT (`state/mail/[redacted].md`) um die Lizenz-/Redistributionsfrage erweitern; Akt = Operator-Hand. Bis zum Einverständnis kein CDN.
   Origin: mycelium-folge199
-- **ENSO-Zuschnitt** | (gemessen 2026-09-28 folge200) `state/zustand/wartend.φ:23` `blatt-zuschnitt | Operator`. Braucht: Operator-Wort.
+- **ENSO-Zuschnitt** | (gemessen 2026-09-28 folge200) `state/wartend.φ:23` `blatt-zuschnitt | Operator`. Braucht: Operator-Wort.
   Origin: mycelium-folge200
 - **Kuprat-Zeugenart** | (gemessen 2026-09-28 folge200) `phi/witnesses.φ` trägt nur `s2-direction`, `gestalt`; Kuprat-Zeugenart fehlt. Braucht: Operator-Wort.
   Origin: mycelium-folge200

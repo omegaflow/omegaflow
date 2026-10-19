@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit,
+`state/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit,
 fremde uncommittete Arbeit unangetastet.
 
 ## Operator-Wort-Register
@@ -107,7 +107,7 @@ in seinem Pass. Der Stehende Pass trägt den Mehrfach-Träger-Stand.
 
 | Punkt | Destination | Herkunft | Lage |
 |---|---|---|---|
-| ci-check `36409581203` @ `9e17cb331` rot — Job `dropped-gate` `delta 6` (baseline 1054 \| current 1060) | `state/zustand/standing-pass.md` (Mycelium) | River-Session 55 (gemessen `ci_manage log`) | 6 offene Punkte ohne auflösenden Commit gedroppt; nächster Schritt `register_lookup --dropped` (langsam, >30 min) → Punkte in die Eigentümer-Übergaben zurücknehmen oder Baseline im annehmenden Commit anheben. Der `clippy`-Red desselben Laufs (`te.rs:2279` `neg_cmp_op_on_partial_ord`) ist in River geheilt. |
+| ci-check `36409581203` @ `9e17cb331` rot — Job `dropped-gate` `delta 6` (baseline 1054 \| current 1060) | `state/standing-pass.md` (Mycelium) | River-Session 55 (gemessen `ci_manage log`) | 6 offene Punkte ohne auflösenden Commit gedroppt; nächster Schritt `register_lookup --dropped` (langsam, >30 min) → Punkte in die Eigentümer-Übergaben zurücknehmen oder Baseline im annehmenden Commit anheben. Der `clippy`-Red desselben Laufs (`te.rs:2279` `neg_cmp_op_on_partial_ord`) ist in River geheilt. |
 | `devcontainer`-CLI in einem Actions-Job (Umgebungs-Parität) | `docs/handover/handover-2026-09-28-mycelium-folge193.md` (Mycelium) | River-Session 54 (Operator-Wort) | `.devcontainer/devcontainer.json` von **keinem** Workflow konsumiert (gemessen 2026-09-28 via `sgrep -i devcontainer .`); Job mit `devcontainer up`/`exec` oder `devcontainers/ci` soll die Toolchain (Rust + lavapipe + node) reproduzierbar in CI stellen |
 | Blatt-Zuschnitt — welches Paar (ENSO Wind↔SST / Bz→Kp / LAIC) an `te_probe` gebunden wird | Future Operator-Queue (`state/future/handover/`) | river folge51/52/53 | Operator-Akt; die geerbten Pflichten (1)–(3) sind gebaut (`te.rs`), die Paar-Registrierung am Einstieg `te_probe` bleibt bis zum Zuschnitt ungebaut (`omega.rs` feed = `probe_ring`) |
 | 81-Block-Fix — `format ephemeris_binary`, `ttl 86400` | `docs/handover/handover-2026-09-28-mountain-folge194.md` (Mountain) | river folge51/52/53 | Release-skalen-Prüfintervall, gemessen aus Live-Release-Abständen oder als Potenz-von-2-Untergrenze 2²⁵ s ≈ 388 d; AGENTS.md-Präzisierung (gemessene Quellen-Eigenschaft → Mountain; Materialisierung/Transport → Mycelium) im selben Atom |

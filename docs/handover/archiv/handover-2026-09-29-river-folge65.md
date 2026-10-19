@@ -9,7 +9,7 @@
 # Handover — River-Folge 65 (2026-09-29)
 
 Dieses Register trägt nur Offenes — git trägt, was gemacht wurde. Der Stehende Pass
-wird zitiert, nie kopiert: `state/zustand/standing-pass.md`. Nur eigene Arbeit:
+wird zitiert, nie kopiert: `state/standing-pass.md`. Nur eigene Arbeit:
 pfad-begrenzter Commit; fremde uncommittete Arbeit unangetastet.
 
 ## Operator-Wort-Register
@@ -62,8 +62,8 @@ Echo — jeder Punkt mit Zustand. Ein Punkt, der nur in `state/` lebt und hier f
   `docs/concepts/die-vier-schilde.md`, `docs/concepts/blatt-papier-beweis.md`,
   `docs/concepts/archivar-mathematikerin.md`, `docs/concepts/positive-maske.md`,
   `docs/concepts/kybernetische-astrophysik.md`, `docs/concepts/te-literatur-matrix.md`.
-- **Fundstellen:** `state/zustand/standing-pass.md`, `state/zustand/external-state.md`,
-  `state/zustand/wartend.φ`, `state/zustand/ereignisse.φ`, `state/operator-gespraeche/`,
+- **Fundstellen:** `state/standing-pass.md`, `state/external-state.md`,
+  `state/wartend.φ`, `state/ereignisse.φ`, `state/operator-gespraeche/`,
   `state/river/`.
 - **Linien-Preset (privat):** `state/river/archive-search-preset.txt`, eingelesen in
   `.opencode/command/river.md`; `state/` im Ganzen ist die Hauswurzel.
@@ -257,4 +257,4 @@ die Register in `phi/` (`sources.φ` u. a.), `src/archivar/units.rs` und `tests.
 (Mountain/Sensory, eigene Commits).
 
 Privat/gitignored (nicht committet): `state/operator-gespraeche/2026-09-29-river.md`
-(fortgeschrieben) · `state/zustand/wartend.φ` (Aufnehmer river).
+(fortgeschrieben) · `state/wartend.φ` (Aufnehmer river).

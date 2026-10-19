@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit,
+`state/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit,
 fremde uncommittete Arbeit unangetastet.
 
 ## Operator-Wort-Register
@@ -95,7 +95,7 @@ in seinem Pass.
 
 | Punkt | Destination | Herkunft | Lage |
 |---|---|---|---|
-| ci-check `36409581203` @ `9e17cb331` rot — Job `dropped-gate` `delta 6` (baseline 1054 \| current 1060) | `state/zustand/standing-pass.md` (Mycelium) | River 55 (gemessen `ci_manage log`) | 6 offene Punkte ohne auflösenden Commit gedroppt; `register_lookup --dropped` → Punkte zurücknehmen oder Baseline im annehmenden Commit anheben. |
+| ci-check `36409581203` @ `9e17cb331` rot — Job `dropped-gate` `delta 6` (baseline 1054 \| current 1060) | `state/standing-pass.md` (Mycelium) | River 55 (gemessen `ci_manage log`) | 6 offene Punkte ohne auflösenden Commit gedroppt; `register_lookup --dropped` → Punkte zurücknehmen oder Baseline im annehmenden Commit anheben. |
 | `devcontainer`-CLI in einem Actions-Job (Umgebungs-Parität) | `docs/handover/handover-2026-09-28-mycelium-folge195.md` (Mycelium) | River-Session 54 (Operator-Wort) | `.devcontainer/devcontainer.json` von keinem Workflow konsumiert (gemessen 2026-09-28 via `sgrep -i devcontainer .`); Job mit `devcontainer up`/`exec` soll die Toolchain reproduzierbar in CI stellen. |
 | 81-Block-Fix — `format ephemeris_binary`, `ttl 86400` | `docs/handover/handover-2026-09-28-mountain-folge194.md` (Mountain) | river folge51/52/53 | Prüfintervall aus Live-Release-Abständen oder 2²⁵ s ≈ 388 d; AGENTS.md-Präzisierung im selben Atom. |
 | Blatt-Zuschnitt — welches Paar (ENSO Wind↔SST / Bz→Kp / LAIC) an `te_probe` gebunden wird | Future Operator-Queue (`state/future/handover/`) | river folge51/52/53 | Operator-Akt; Pflichten (1)–(3) gebaut (`te.rs`), Paar-Registrierung bis zum Zuschnitt ungebaut. |

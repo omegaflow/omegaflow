@@ -12,7 +12,7 @@ Der freie zweite CI-Rechner der Linie. Diese Karte ist der gemessene Stand und d
 Wie der Drosselung. (Azure-OSS ist **descoped**: discontinued + CC BY-NC-SA ist keine
 OSI-Lizenz — s. `survey-2026-10-10-github-ci-cdn-optimierung.md`.)
 
-## Der Runner (gemessen 2026-10-05, `state/zustand/ereignisse.φ:81058`)
+## Der Runner (gemessen 2026-10-05, `state/ereignisse.φ:81058`)
 
 - Registriert als **`t420`**, Host `johannes-ThinkPad-T420` (2011er ThinkPad), Linux Mint 22.3.
 - Labels `self-hosted, Linux, X64`; GitHub-Runner **v2.337.0** unter dem Home des `actions`-Nutzers (`~/actions-runner`).
