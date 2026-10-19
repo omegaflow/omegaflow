@@ -2,8 +2,8 @@
   title: Exzellenz-Gate — der Maßstab auf die Papers angewendet (Stand 2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: d055d9a16dbfd3b1ec4b872af2ca1f0927f4bf385dbada9e406b5ff7e6276681
-  status: live
+  sha256: 1f5339e07c3d4a99eafc9f27c61dc77e5cd5abd69d14e5c0b424300d81073727
+  status: consumed
   see-also: docs/concepts/exzellenz-konzept.md
 -->
 # Exzellenz-Gate — der Maßstab auf die Papers angewendet (Stand 2026-10-03)
