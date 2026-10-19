@@ -1139,7 +1139,11 @@ pub fn wayback_lines(query: &str, max: usize) -> Vec<String> {
     }
 }
 
-pub const CC_DEFAULT_INDEX: &str = "CC-MAIN-2024-51";
+pub const CC_DEFAULT_INDEX: &str = "CC-MAIN-2026-39";
+
+const CC_COLLINFO_URL: &str = "https://index.commoncrawl.org/collinfo.json";
+
+static CC_LATEST_INDEX: OnceLock<Option<String>> = OnceLock::new();
 
 fn cc_index(query: &str) -> Option<String> {
     query.split_whitespace().find_map(|token| {
@@ -1152,8 +1156,56 @@ fn cc_index(query: &str) -> Option<String> {
     })
 }
 
+fn cc_latest_index() -> Option<String> {
+    CC_LATEST_INDEX
+        .get_or_init(|| {
+            let body = match get(CC_COLLINFO_URL, &[], "20") {
+                Some(f) if f.status == Some(200) => f.body,
+                Some(f) => {
+                    eprintln!(
+                        "common crawl: collinfo unavailable (HTTP {}), using fallback index {}",
+                        f.status_text(),
+                        CC_DEFAULT_INDEX
+                    );
+                    return None;
+                }
+                None => {
+                    eprintln!(
+                        "common crawl: collinfo unavailable (no network), using fallback index {}",
+                        CC_DEFAULT_INDEX
+                    );
+                    return None;
+                }
+            };
+            let latest = json::parse(&body)
+                .as_ref()
+                .and_then(|v| v.as_arr())
+                .and_then(|arr| arr.first())
+                .and_then(|first| first.get("id"))
+                .and_then(|id| id.as_str())
+                .filter(|id| !id.is_empty())
+                .map(str::to_string);
+            if latest.is_none() {
+                eprintln!(
+                    "common crawl: collinfo carried no index id, using fallback index {}",
+                    CC_DEFAULT_INDEX
+                );
+            }
+            latest
+        })
+        .clone()
+}
+
+fn cc_pattern(target: &str) -> String {
+    if target.contains('*') || target.contains('/') || target.contains(char::is_whitespace) {
+        target.to_string()
+    } else {
+        format!("*.{target}")
+    }
+}
+
 fn cc_target(query: &str) -> String {
-    query
+    let target = query
         .split_whitespace()
         .filter(|token| !token.starts_with("index="))
         .map(|token| match token.strip_prefix("url=") {
@@ -1161,7 +1213,8 @@ fn cc_target(query: &str) -> String {
             None => token,
         })
         .collect::<Vec<_>>()
-        .join(" ")
+        .join(" ");
+    cc_pattern(&target)
 }
 
 pub fn zustand_dir() -> Option<std::path::PathBuf> {
@@ -1214,7 +1267,10 @@ pub fn cc_lines(query: &str, max: usize) -> Vec<String> {
     let target = cc_target(query);
     let index = match cc_index(query) {
         Some(index) => index,
-        None => CC_DEFAULT_INDEX.to_string(),
+        None => match cc_latest_index() {
+            Some(idx) => idx,
+            None => CC_DEFAULT_INDEX.to_string(),
+        },
     };
     let url = format!(
         "https://index.commoncrawl.org/{}-index?url={}&output=json&limit={}",
@@ -4960,6 +5016,19 @@ mod tests {
         );
         assert_eq!(cc_target("example.org/*"), "example.org/*");
         assert_eq!(cc_target("url=example.org/*"), "example.org/*");
+    }
+
+    #[test]
+    fn cc_target_normalizes_bare_hosts_to_the_subdomain_pattern() {
+        assert_eq!(cc_target("example.org"), "*.example.org");
+        assert_eq!(cc_target("url=example.org"), "*.example.org");
+        assert_eq!(
+            cc_target("example.org index=CC-MAIN-2023-06"),
+            "*.example.org"
+        );
+        assert_eq!(cc_target("example.org/path"), "example.org/path");
+        assert_eq!(cc_target("url=example.org/path"), "example.org/path");
+        assert_eq!(cc_target("*.example.org"), "*.example.org");
     }
 
     #[test]
