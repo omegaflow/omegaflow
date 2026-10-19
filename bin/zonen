@@ -1,0 +1,71 @@
+#!/bin/bash
+# zonen — welcher Ordner gehört in welches Haus?
+#
+# Operator-Wort: omegaflow ist die Wissenschaft, nicht die Arbeit.
+#   omegaflow         → Code, docs, state, phi, tools, bin, .github
+#   omegaflow-work    → Werkstatt (cache, data, recherche, tmp, ...) + Postfach
+#   omegaflow-personal→ privates Haus (mail, zustand, future, stimmen, ...)
+#
+# Gemeldet wird jeder Ordner der ersten Ebene, der Textdateien enthält und NICHT
+# in der Zone seines Hauses liegt — samt Anzahl Textdateien und Größe.
+# Am Ende: Textdateien auf oberster Ebene (dort gehört keine Arbeit hin).
+# Exit 1, wenn ein Haus fremde Ordner trägt.
+#
+# Usage: zonen [omegaflow|work|personal] [--quiet]
+set -u
+
+H="$(cd "$(dirname "$0")" && pwd)"
+ROOTS="$(cd "$H/.." && pwd)"
+WF="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
+PRIV="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}"
+
+TEXT_RE='\.(md|txt|markdown|rst|tsv|csv|log|json|yaml|yml|toml|sh|rs|py|js|ts)$|\.φ$'
+
+zone_omegaflow='^(bin|docs|state|phi|tools|src|target|\.github|\.githooks|scripts|tests|schemas|cloudflare|firmware|static|workers|pkg|data|\.devcontainer)$'
+# In jedem Haus erlaubt: Werkzeug-Cache, nie Arbeit, nie Doku.
+neutral='^(\.git|\.opencode|\.playwright-mcp|\.vscode|\.idea|node_modules|__pycache__|\.pytest_cache|target|\.tools|\.cargo|cache)$'
+zone_work='^(post|cache|data|recherche|tmp|de2|river|benchmark|stimmen|mountain|mycelium|reports|research|ui|tmp-sicherung-[0-9-]+|backup-[0-9-]+)$'
+zone_personal='^(mail|zustand|future|stimmen|feuer|operator-gespraeche|paper|zai-export|\.opencode|mountain|kern|akte)$'
+
+zone_of() { case "$1" in omegaflow) echo "$zone_omegaflow";; work) echo "$zone_work";; personal) echo "$zone_personal";; esac; }
+root_of() { case "$1" in omegaflow) echo "$ROOTS";; work) echo "$WF";; personal) echo "$PRIV";; esac; }
+
+# Textdateien in einem Baum (ohne .git), gezählt.
+n_text() { find "$1" -type f -regextype posix-extended -regex ".*($TEXT_RE)" -not -path '*/.git/*' 2>/dev/null | wc -l; }
+
+scan() {
+  local haus="$1" root zone ntotal=0 nfremd=0 name n sz
+  root="$(root_of "$haus")"; zone="$(zone_of "$haus")"
+  if [ ! -d "$root" ]; then printf 'SUMME\t%s\t-\t-\t(kein Baum)\n' "$haus"; return 0; fi
+  while IFS= read -r name; do
+    [ -d "$root/$name" ] || continue
+    grep -qE "$neutral" <<<"$name" && continue
+    n="$(n_text "$root/$name")"
+    [ "$n" -gt 0 ] || continue
+    ntotal=$((ntotal+1))
+    if grep -qE "$zone" <<<"$name"; then
+      printf 'OK\t%s/%s\t%s Textdateien\n' "$haus" "$name" "$n"
+    else
+      sz="$(du -sh "$root/$name" 2>/dev/null | cut -f1)"
+      printf 'FREMD\t%s/%s\t%s Textdateien\t%s\n' "$haus" "$name" "$n" "$sz"
+      nfremd=$((nfremd+1))
+    fi
+  done < <(find "$root" -maxdepth 1 -mindepth 1 -type d -printf '%f\n' 2>/dev/null | sort)
+  # Arbeit auf oberster Ebene: einzelne Textdateien, die keine Doku/Config sind.
+  local loose
+  # Eine Markdown-Datei in der Wurzel ist Doku; alles andere (json, txt, log, sh, ...)
+  # ist Arbeit, die dort nichts zu suchen hat. `.secrets.local`/bak-Config bleibt still.
+  loose="$(find "$root" -maxdepth 1 -type f -regextype posix-extended -regex ".*($TEXT_RE)" -printf '%f\n' 2>/dev/null \
+           | grep -vE '^(README|AGENTS|LICENSE|CHANGELOG|CONTRIBUTING)' \
+           | grep -vE '\.md$|\.gitignore$|opencode\.json.*$|Cargo\.toml$|\.secrets\.local$' | wc -l)"
+  printf 'SUMME\t%s\t%d Textordner\t%d fremd\t%d los oben\n' "$haus" "$ntotal" "$nfremd" "$loose"
+  [ "$nfremd" -gt 0 ] && return 1
+  [ "$loose" -gt 0 ] && return 1
+  return 0
+}
+
+case "${1:-}" in
+  omegaflow|work|personal) scan "$1";;
+  --quiet) for h in omegaflow work personal; do scan "$h" | grep '^SUMME'; done;;
+  *) rc=0; for h in omegaflow work personal; do scan "$h" || rc=1; done; exit "$rc";;
+esac
