@@ -2,7 +2,7 @@
   title: Survey — Gap-Zensus 2026-10-16 (riss · pending · ungemessen)
   class: survey
   date: 2026-10-16
-  sha256: ea1cb36520c7f2727d932ea2963dd09539aacc70af302ce7d7efde556968f72d
+  sha256: ec4b465fe812c14a6a5e36b0134e5ed5138f57ae35289b7e646c09e33e8af39c
   status: done
 -->
 # Survey — Gap-Zensus 2026-10-16: riss · pending · ungemessen

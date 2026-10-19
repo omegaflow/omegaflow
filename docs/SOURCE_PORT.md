@@ -2,7 +2,7 @@
   title: Source-Port: Der eine Pfad
   class: concept
   date: 2026-10-11
-  sha256: 876ee134fed7a4cadeb468d71449e0e52e84abe5fa19676b65f158f972f246dc
+  sha256: 65248a72eb00bf8bcedbcb346a5893150be520dbc95290d4c5d1f99c20e57e83
   status: live
   see-also: docs/README.md AGENTS.md phi/sources.φ
 -->

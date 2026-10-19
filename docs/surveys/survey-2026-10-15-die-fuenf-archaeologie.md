@@ -2,7 +2,7 @@
   title: Die Fünf — Archäologie (2026-10-15)
   class: survey
   date: 2026-10-15
-  sha256: 7713f7faea42139c9f8a9885dd9816658e1d5bb531619cdd67238a0b47aebecd
+  sha256: 2a16bc47c117c06dc28922bea5b48ef55138f64bc4884780f0d8c9d79d702986
   status: live
   see-also: docs/concepts/die-vier-schilde.md, docs/granit.md, docs/concepts/glossar.md, AGENTS.md
 -->

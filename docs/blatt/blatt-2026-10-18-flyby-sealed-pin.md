@@ -2,7 +2,7 @@
   title: Flyby-sealed — Option 1: der Pin ist ein Register-Posten
   class: blatt
   date: 2026-10-18
-  sha256: 6f59e5812a0437bfc4840b218d2b203cd47aa4b28ec4630c56e60a37476a56e9
+  sha256: ae2ee5da8c2fd22f8ef3ae1d41f8a35d9bfbb447a3cfea08b75a2e6771f38ce1
   status: live
 -->
 # Flyby-sealed — Option 1 gebaut: der Pin ist ein Register-Posten (2026-10-18, river)

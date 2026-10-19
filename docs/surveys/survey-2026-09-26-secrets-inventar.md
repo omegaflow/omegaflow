@@ -2,7 +2,7 @@
   title: Survey — Secrets-Inventar und Konsumenten-Kreuzung (Stand 2026-09-26)
   class: survey
   date: 2026-09-26
-  sha256: 474f0e8b78434c1613c1f18b71e54ea25bb4a438960402aaaf3805e61c1746e5
+  sha256: 300dd343b419a0b6b40ae77ce5c41bccb73dd38f698b21be7094c451e6646895
   status: live
 -->
 # Survey — Secrets-Inventar und Konsumenten-Kreuzung (2026-09-26)

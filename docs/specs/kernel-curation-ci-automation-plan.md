@@ -1,7 +1,7 @@
 <!--
   title: OMEGAFLOW — Kernel Curation & CI Automation Plan
   class: concept
-  sha256: a13c7314a519ef7da9ff1d9c1ddbc03669e8a27eeb4e87f6c3490c2cbd25dbe7
+  sha256: 479025344ae0fcf57760b3531537d8a83cb4ceb510b63934f4c42932f761f1f3
 -->
 I understand your concern absolutely. "For now but later" is the death of every architecture. We must not file this NASA list away as a "later problem".
 

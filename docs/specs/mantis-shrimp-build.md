@@ -2,7 +2,7 @@
   title: Mantis-Shrimp minimal — build & assembly (CORE BUILT)
   class: ref
   date: 2026-09-21
-  sha256: b927281e22215420793a028ad05a57dc8cea6b05e127ed86ee2fba3c37db9dd8
+  sha256: aea76da73a6ee02a81092422fe1deae006b692710be350535a7d26c72fc0b9d3
   status: live
   see-also: docs/specs/omegaflow-sense-hardware-spec.md, docs/specs/mantis-shrimp-bom.md
 -->

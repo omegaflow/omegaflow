@@ -2,7 +2,7 @@
   title: Axiom-Gate-Survey — cross-screening-tibet
   class: survey
   date: 2026-09-12
-  sha256: 0dc323635881a4ee127d1c1e2bfada5514deeb2303c3bca03db7aa8d386c4980
+  sha256: 4b5b254f2dead72684263df0501c773b936f6776eb0df8b190e0f8ad84ac2b58
   status: live
   see-also: docs/paper/cross-screening-tibet.md
 -->
