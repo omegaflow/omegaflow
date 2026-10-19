@@ -51,7 +51,7 @@ pub fn vlies_asset_path() -> std::path::PathBuf {
     if let Ok(p) = std::env::var("OMEGAFLOW_VLIES_ASSET") {
         return std::path::PathBuf::from(p);
     }
-    let state = crate::archivar::state_dir().join("vlies_density.vlde");
+    let state = crate::archivar::zustand_dir().join("vlies_density.vlde");
     if state.exists() {
         return state;
     }

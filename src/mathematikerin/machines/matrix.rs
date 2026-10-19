@@ -27,7 +27,7 @@ pub const MATRIX_PAD_M: f64 = 2000.0;
 pub const MATRIX_STATE_FILE: &str = "omegaflow_matrix_state.bin";
 
 pub fn matrix_state_path() -> String {
-    let base = if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+    let base = if let Ok(dir) = std::env::var("OMEGAFLOW_ZUSTAND") {
         std::path::PathBuf::from(dir)
     } else {
         std::path::PathBuf::from("data")

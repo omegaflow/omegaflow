@@ -1859,7 +1859,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     &format!("field arity {}: {}", parts.len(), line),
                 );
             }
-            "lat" if parts.len() >= 2 => match cur_extracts.last_mut() {
+            "lat" | "lat_key" if parts.len() >= 2 => match cur_extracts.last_mut() {
                 Some(Extract::Map { lat_key, .. })
                 | Some(Extract::ProfileMap { lat_key, .. })
                 | Some(Extract::Rows { lat_key, .. })
@@ -1868,7 +1868,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 }
                 _ => {}
             },
-            "lon" if parts.len() >= 2 => match cur_extracts.last_mut() {
+            "lon" | "lon_key" if parts.len() >= 2 => match cur_extracts.last_mut() {
                 Some(Extract::Map { lon_key, .. })
                 | Some(Extract::ProfileMap { lon_key, .. })
                 | Some(Extract::Rows { lon_key, .. })
@@ -3315,6 +3315,19 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         let with = parse_sources(declared);
         assert_eq!(with[0].cgm_lat, Some(40.5));
         assert_eq!(with[0].cgm_source, None);
+    }
+
+    #[test]
+    fn rows_accepts_lat_key_and_lon_key_as_the_named_column_spelling() {
+        let declared = "url https://x/y.csv\nformat gbm_tgf\non earth 0 0 0\nrows\nlat_key Lat\nlon_key Lon\nno-cadence\n";
+        let sources = parse_sources(declared);
+        match &sources[0].extracts[0] {
+            Extract::Rows { lat_key, lon_key, .. } => {
+                assert_eq!(lat_key, "Lat");
+                assert_eq!(lon_key, "Lon");
+            }
+            _ => panic!("expected Rows"),
+        }
     }
 
     #[test]

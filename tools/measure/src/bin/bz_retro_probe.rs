@@ -211,7 +211,7 @@ fn load_omni2(path: &str) -> Vec<(f64, f64, u32)> {
 const CACHE_BASE: &str = "abk_dbdt_daily";
 
 fn disk_cache(name: &str) -> String {
-    omegaflow::archivar::cache_root()
+    omegaflow::archivar::content_dir()
         .join("bz_retro")
         .join(name)
         .to_string_lossy()
@@ -1195,7 +1195,7 @@ fn run_hourly(
     println!(
         "=== Pair verdicts (threshold at the best lag, fam = multiple-comparison correction) ==="
     );
-    let fam_state = omegaflow::archivar::cache_root()
+    let fam_state = omegaflow::archivar::content_dir()
         .join("bz_retro")
         .join(format!("fam_state_{station}_{sy}.txt"))
         .to_string_lossy()

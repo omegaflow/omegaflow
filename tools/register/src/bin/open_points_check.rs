@@ -9,7 +9,7 @@ const PREFIXES: [&str; 8] = [
     "docs/",
     "phi/",
     "bin/",
-    "state/",
+    "zustand/",
     ".github/",
     "firmware/",
 ];
@@ -133,14 +133,14 @@ fn mail_home_guardians(root: &Path) -> Vec<String> {
     if !root.join("state").exists() {
         return out;
     }
-    if root.join("state/future/mail").exists() {
+    if root.join("zustand/future/mail").exists() {
         out.push(
             "zweites Mail-Heim: state/future/mail/ existiert (der Postkorb ist state/mail/)"
                 .to_string(),
         );
     }
     if root
-        .join("state/mail")
+        .join("zustand/mail")
         .symlink_metadata()
         .map(|m| m.file_type().is_symlink())
         .unwrap_or(false)
@@ -340,21 +340,21 @@ const CITATION_REGISTERS: [(&str, &str, bool); 6] = [
     (".secrets.local", ".secrets.local", true),
     (
         "mail_ledger.\u{3c6}",
-        "state/mail/mail_ledger.\u{3c6}",
+        "zustand/mail/mail_ledger.\u{3c6}",
         false,
     ),
     (
         "sent_ledger.\u{3c6}",
-        "state/mail/sent_ledger.\u{3c6}",
+        "zustand/mail/sent_ledger.\u{3c6}",
         false,
     ),
     (
         "external-state.md",
-        "state/external-state.md",
+        "zustand/external-state.md",
         false,
     ),
-    ("wartend.\u{3c6}", "state/wartend.\u{3c6}", false),
-    ("standing-pass.md", "state/standing-pass.md", false),
+    ("wartend.\u{3c6}", "zustand/wartend.\u{3c6}", false),
+    ("standing-pass.md", "zustand/standing-pass.md", false),
 ];
 
 fn trim_citation(token: &str) -> &str {
@@ -589,7 +589,7 @@ fn first_bold_words(line: &str) -> Vec<String> {
 }
 
 fn word_carried(root: &Path, rel: &str, content: &str) -> Vec<String> {
-    let dir = root.join("state/operator-gespraeche");
+    let dir = root.join("zustand/operator-gespraeche");
     let mut corpus: Vec<(String, usize, String)> = Vec::new();
     if let Ok(entries) = fs::read_dir(&dir) {
         for e in entries.flatten() {
@@ -724,11 +724,11 @@ mod tests {
         );
         assert_eq!(
             normalize("`state/mail/mail_ledger.φ`:").as_deref(),
-            Some("state/mail/mail_ledger.φ")
+            Some("zustand/mail/mail_ledger.φ")
         );
         assert_eq!(
-            normalize("`docs/zustand/dropped-baseline.md`.").as_deref(),
-            Some("docs/zustand/dropped-baseline.md")
+            normalize("`zustand/dropped-baseline.md`.").as_deref(),
+            Some("zustand/dropped-baseline.md")
         );
     }
 
@@ -754,7 +754,7 @@ mod tests {
     fn flags_second_mail_home() {
         let base = std::env::temp_dir().join(format!("opc-guard-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
-        fs::create_dir_all(base.join("state/future/mail")).unwrap();
+        fs::create_dir_all(base.join("zustand/future/mail")).unwrap();
         let g = mail_home_guardians(&base);
         assert!(g.iter().any(|s| s.contains("zweites Mail-Heim")));
         let _ = fs::remove_dir_all(&base);
@@ -765,7 +765,7 @@ mod tests {
         let base = std::env::temp_dir().join(format!("opc-guard-sym-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("state")).unwrap();
-        std::os::unix::fs::symlink(base.join("elsewhere"), base.join("state/mail")).unwrap();
+        std::os::unix::fs::symlink(base.join("elsewhere"), base.join("zustand/mail")).unwrap();
         let g = mail_home_guardians(&base);
         assert!(g.iter().any(|s| s.contains("Symlink")));
         let _ = fs::remove_dir_all(&base);
@@ -850,7 +850,7 @@ mod tests {
     #[test]
     fn resolves_register_citations() {
         assert_eq!(
-            resolve_citation("state/.secrets.local:23").map(|c| c.0),
+            resolve_citation("zustand/.secrets.local:23").map(|c| c.0),
             Some(".secrets.local".to_string())
         );
         assert_eq!(
@@ -859,11 +859,11 @@ mod tests {
         );
         assert_eq!(
             resolve_citation("`state/mail/mail_ledger.\u{3c6}:191`").map(|c| c.0),
-            Some("state/mail/mail_ledger.\u{3c6}".to_string())
+            Some("zustand/mail/mail_ledger.\u{3c6}".to_string())
         );
         assert_eq!(
             resolve_citation("wartend.\u{3c6}:4.").map(|c| c.0),
-            Some("state/wartend.\u{3c6}".to_string())
+            Some("zustand/wartend.\u{3c6}".to_string())
         );
         assert!(resolve_citation("docs/paper/gic-causal-driver.md:531").is_none());
         assert!(resolve_citation("src/gate/commit_gate.rs:1804").is_none());
@@ -873,8 +873,8 @@ mod tests {
     fn flags_stale_citation_and_accepts_live_one() {
         let base = std::env::temp_dir().join(format!("opc-cite-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
-        fs::create_dir_all(base.join("state/mail")).unwrap();
-        fs::write(base.join("state/mail/mail_ledger.\u{3c6}"), "a\nb\nc\n").unwrap();
+        fs::create_dir_all(base.join("zustand/mail")).unwrap();
+        fs::write(base.join("zustand/mail/mail_ledger.\u{3c6}"), "a\nb\nc\n").unwrap();
         assert!(
             stale_citations(&base, "h.md", "siehe `state/mail/mail_ledger.\u{3c6}:2`").is_empty()
         );

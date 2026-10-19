@@ -902,7 +902,7 @@ fn run_stats() -> Vec<String> {
             return vec!["--stats — no repo root measured; the query log stays unread".to_string()];
         }
     };
-    let path = repo.join("state/research/queries.φ");
+    let path = repo.join("zustand/research/queries.φ");
     let body = match std::fs::read_to_string(&path) {
         Ok(b) => b,
         Err(_) => {

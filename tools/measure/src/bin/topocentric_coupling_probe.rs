@@ -188,7 +188,7 @@ fn plausible_geodetic(lat: f64, lon: f64, alt: f64) -> bool {
 }
 
 fn load(name: &str) -> Option<BodyEphemeris> {
-    let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+    let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     let asset = format!("ephemeris_{name}.bin");
     ensure_bin(&path, EPHEMERIS_TAG, &asset).and_then(|bytes| parse_ephemeris_binary(&bytes))
 }

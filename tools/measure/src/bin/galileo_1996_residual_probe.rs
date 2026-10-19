@@ -9,7 +9,7 @@ const MIN_CELL: usize = 30;
 const AU_M: f64 = 1.495978707e11;
 const PASS_GAP_S: f64 = 600.0;
 const TARGET_YEAR: u32 = 1996;
-const OUT: &str = "state/reports/galileo_1996_residual.txt";
+const OUT: &str = "zustand/reports/galileo_1996_residual.txt";
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
@@ -65,7 +65,7 @@ fn median_trim_top(vals: &[f64], k: usize) -> Option<f64> {
     Some(cut[cut.len() / 2])
 }
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+    let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -139,7 +139,7 @@ fn main() {
             return;
         }
     }
-    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };

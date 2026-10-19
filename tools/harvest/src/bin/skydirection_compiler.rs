@@ -16,8 +16,8 @@ const RATE_LIMIT_BACKOFF_MS: u64 = 3000;
 const LAS_LIMIT: usize = 1000;
 const ANTARES_PAGE: usize = 1000;
 
-fn state_dir() -> std::path::PathBuf {
-    if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+fn zustand_dir() -> std::path::PathBuf {
+    if let Ok(dir) = std::env::var("OMEGAFLOW_ZUSTAND") {
         return std::path::PathBuf::from(dir);
     }
     std::path::PathBuf::from("state")
@@ -29,7 +29,7 @@ fn token_from(key: &str) -> Option<String> {
             return Some(t);
         }
     }
-    let body = std::fs::read_to_string(state_dir().join(".secrets.local")).ok()?;
+    let body = std::fs::read_to_string(zustand_dir().join(".secrets.local")).ok()?;
     for line in body.lines() {
         if let Some((k, v)) = line.split_once('=') {
             if k.trim() == key && !v.trim().is_empty() {

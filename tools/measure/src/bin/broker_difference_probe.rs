@@ -181,8 +181,8 @@ fn curl_form_post(
     Some((code, stdout[..idx].to_vec()))
 }
 
-fn cache_state_dir() -> std::path::PathBuf {
-    if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+fn cache_zustand_dir() -> std::path::PathBuf {
+    if let Ok(dir) = std::env::var("OMEGAFLOW_ZUSTAND") {
         return std::path::PathBuf::from(dir);
     }
     std::path::PathBuf::from("state")
@@ -194,7 +194,7 @@ fn token_from(key: &str) -> Option<String> {
             return Some(t);
         }
     }
-    let body = std::fs::read_to_string(cache_state_dir().join(".secrets.local")).ok()?;
+    let body = std::fs::read_to_string(cache_zustand_dir().join(".secrets.local")).ok()?;
     for line in body.lines() {
         if let Some((k, v)) = line.split_once('=') {
             if k.trim() == key && !v.trim().is_empty() {

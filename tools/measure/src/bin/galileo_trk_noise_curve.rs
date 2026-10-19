@@ -10,7 +10,7 @@ const EPS_BAND_DEG: f64 = 30.0;
 const MIN_DAYS: usize = 3;
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+    let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -148,7 +148,7 @@ fn main() {
         "binding: per-day RMS of the TRK-2-25 doppler residuum (Hz) and per-day first-difference RMS of the TRK-2-18 ODF observable (Hz), binned by solar elongation eps (angle at the Earth, deg) and heliocentric distance (AU)"
     );
 
-    let Ok(resid_bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
+    let Ok(resid_bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };
@@ -184,7 +184,7 @@ fn main() {
         bands.report(&format!("mode {mode}"));
     }
 
-    let Ok(odf_bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_odf.bin") else {
+    let Ok(odf_bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_odf.bin") else {
         println!("== TRK-2-18 ODF == asset absent (0 honored)");
         return;
     };

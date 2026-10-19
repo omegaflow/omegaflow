@@ -7,7 +7,7 @@ const DAY_S: f64 = 86400.0;
 const LOCK_HZ: f64 = 1.0e3;
 const MIN_CELL: usize = 30;
 const CONJ_ELONG_DEG: f64 = 30.0;
-const OUT: &str = "state/reports/galileo_mode2_strength_split.txt";
+const OUT: &str = "zustand/reports/galileo_mode2_strength_split.txt";
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
@@ -48,7 +48,7 @@ fn median(vals: &[f64]) -> Option<f64> {
 }
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+    let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -132,7 +132,7 @@ fn main() {
     }
     let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key("earth");
 
-    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };

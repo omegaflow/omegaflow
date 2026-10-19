@@ -389,7 +389,7 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let csv = match arg_value(&args, "--csv") {
         Some(v) => v,
-        None => "data/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv".to_string(),
+        None => "sources/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv".to_string(),
     };
     let ae = match arg_value(&args, "--ae") {
         Some(v) => v,

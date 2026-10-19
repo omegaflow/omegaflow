@@ -134,8 +134,8 @@ fn main() {
     println!("{}", resp);
 }
 
-fn state_dir() -> std::path::PathBuf {
-    if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+fn zustand_dir() -> std::path::PathBuf {
+    if let Ok(dir) = std::env::var("OMEGAFLOW_ZUSTAND") {
         return std::path::PathBuf::from(dir);
     }
     std::path::PathBuf::from("state")
@@ -177,7 +177,7 @@ fn record_sent(from: &str, to: &str, subject: &str, resp: &str, bytes: usize) {
     };
     let id = extract_id(resp);
     let line = sent_line(since.as_secs(), from, to, subject, id.as_deref(), bytes);
-    let path = state_dir().join("mail/sent_ledger.φ");
+    let path = zustand_dir().join("mail/sent_ledger.φ");
     if let Some(parent) = path.parent() {
         let _ = fs::create_dir_all(parent);
     }

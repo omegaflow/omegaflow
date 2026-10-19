@@ -1,6 +1,6 @@
 use omegaflow::archivar::C_LIGHT;
 use omegaflow::archivar::{
-    BodyEphemeris, LeapSeconds, body_barycenter_position, body_fixed_to_icrs_smooth, cache_root,
+    BodyEphemeris, LeapSeconds, body_barycenter_position, body_fixed_to_icrs_smooth, cache_root, content_dir,
     embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary,
 };
 use omegaflow::json::{JsonVal, parse_json};
@@ -211,7 +211,7 @@ fn rows_to_tdb_roemer(
 }
 
 fn ephemeris_cache_bytes(name: &str, url: &str) -> Option<Vec<u8>> {
-    let path = cache_root().join(format!("lsst_roemer_{name}.bin"));
+    let path = content_dir().join(format!("lsst_roemer_{name}.bin"));
     if let Ok(b) = std::fs::read(&path) {
         return Some(b);
     }

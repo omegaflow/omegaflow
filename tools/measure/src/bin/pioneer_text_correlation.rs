@@ -212,13 +212,13 @@ fn main() {
     let mut car11: Vec<f64> = Vec::new();
     for (path, tdb, obs, car) in [
         (
-            "data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
+            "sources/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
             &mut tdb10,
             &mut obs10,
             &mut car10,
         ),
         (
-            "data/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
+            "sources/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
             &mut tdb11,
             &mut obs11,
             &mut car11,

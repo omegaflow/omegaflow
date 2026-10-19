@@ -193,7 +193,7 @@ fn coverage(eph: &BodyEphemeris) -> (f64, f64) {
 }
 
 fn load_flyby_arc(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+    let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     if !std::path::Path::new(&path).exists() {
         std::fs::create_dir_all("data").ok();
         let url = format!("{}/ssd.jpl.nasa.gov/ephemeris_{name}.bin", CDN_BASE);
@@ -786,7 +786,7 @@ fn main() {
                 idx,
                 s.clone(),
                 format!(
-                    "data/ssd.jpl.nasa.gov/ephemeris_{}.bin",
+                    "sources/ssd.jpl.nasa.gov/ephemeris_{}.bin",
                     s.body.as_deref().unwrap_or("")
                 ),
             )

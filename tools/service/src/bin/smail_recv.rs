@@ -7,9 +7,9 @@ use omegaflow::json::{JsonVal, parse_json};
 fn main() {
     let port: u16 = env_u64("OMEGAFLOW_MAIL_PORT", 1619) as u16;
     let token = env_str("OMEGAFLOW_MAIL_TOKEN", "");
-    let default_ledger = state_dir().join("mail/mail_ledger.φ");
+    let default_ledger = zustand_dir().join("mail/mail_ledger.φ");
     let ledger = env_str("OMEGAFLOW_MAIL_LEDGER", &default_ledger.to_string_lossy());
-    let default_seen = state_dir().join("mail/seen_ids.φ");
+    let default_seen = zustand_dir().join("mail/seen_ids.φ");
     let seen = env_str("OMEGAFLOW_MAIL_SEEN", &default_seen.to_string_lossy());
     let listener = match TcpListener::bind(format!("127.0.0.1:{}", port)) {
         Ok(l) => l,
@@ -389,8 +389,8 @@ fn env_str(name: &str, default: &str) -> String {
     }
 }
 
-fn state_dir() -> std::path::PathBuf {
-    if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+fn zustand_dir() -> std::path::PathBuf {
+    if let Ok(dir) = std::env::var("OMEGAFLOW_ZUSTAND") {
         return std::path::PathBuf::from(dir);
     }
     std::path::PathBuf::from("state")

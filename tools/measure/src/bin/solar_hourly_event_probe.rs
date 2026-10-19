@@ -9,9 +9,9 @@ const GOES_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_xrs.bin";
 const OMNI2_1H_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/omni2_serie_1h.bin";
-const GOES13_DIR: &str = "data/ncei.noaa.gov/goes15_2013";
-const GOES14_DIR: &str = "data/ncei.noaa.gov/goes15";
-const GOES15_DIR: &str = "data/ncei.noaa.gov/goes15_2015";
+const GOES13_DIR: &str = "sources/ncei.noaa.gov/goes15_2013";
+const GOES14_DIR: &str = "sources/ncei.noaa.gov/goes15";
+const GOES15_DIR: &str = "sources/ncei.noaa.gov/goes15_2015";
 const AIA_DIR: &str = "data/jsoc.stanford.edu";
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
 const HOUR: f64 = 3600.0;

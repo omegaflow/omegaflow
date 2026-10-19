@@ -34,9 +34,9 @@ fn separation_m(a: [f64; 3], b: [f64; 3]) -> f64 {
 }
 
 fn main() {
-    let mpcorb_path = "data/ssd.jpl.nasa.gov/mpcorb_distant.bin";
-    let des_path = "data/cdsarc.cds.unistra.fr/des_y6_tno.bin";
-    let sun_path = "data/ssd.jpl.nasa.gov/ephemeris_sun.bin";
+    let mpcorb_path = "sources/ssd.jpl.nasa.gov/mpcorb_distant.bin";
+    let des_path = "sources/cdsarc.cds.unistra.fr/des_y6_tno.bin";
+    let sun_path = "sources/ssd.jpl.nasa.gov/ephemeris_sun.bin";
     let tol_m = 1.0e6;
 
     let mpcorb_recs = load_mpcorb(mpcorb_path);

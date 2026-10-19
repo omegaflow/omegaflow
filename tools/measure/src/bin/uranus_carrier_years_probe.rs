@@ -518,10 +518,10 @@ fn main() {
     }
 
     print!("{report}");
-    if let Err(e) = std::fs::create_dir_all("state/reports") {
+    if let Err(e) = std::fs::create_dir_all("zustand/reports") {
         eprintln!("uranus-carrier: report dir stays unbuilt — {e}");
     }
-    let path = "state/reports/uranus_carrier_years.txt";
+    let path = "zustand/reports/uranus_carrier_years.txt";
     if let Err(e) = std::fs::write(path, &report) {
         eprintln!("uranus-carrier: report write void — {e}");
     }

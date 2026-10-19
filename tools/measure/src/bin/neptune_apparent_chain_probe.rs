@@ -451,7 +451,7 @@ fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
 }
 
 fn load(name: &str) -> Option<BodyEphemeris> {
-    let path = format!("data/ssd.jpl.nasa.gov/{name}");
+    let path = format!("sources/ssd.jpl.nasa.gov/{name}");
     ensure_bin(&path, "ssd.jpl.nasa.gov", name).and_then(|bytes| parse_ephemeris_binary(&bytes))
 }
 

@@ -8,9 +8,9 @@ use omegaflow::archivar::{
 use omegaflow::lsk::days_from_civil;
 use std::collections::HashMap;
 
-const DEFAULT_DE: &str = "data/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin";
-const DEFAULT_INPOP: &str = "data/ftp.imcce.fr/ephemeris_inpop_earth.bin";
-const DEFAULT_EPM: &str = "data/ftp.iaaras.ru/ephemeris_epm_earth.bin";
+const DEFAULT_DE: &str = "sources/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin";
+const DEFAULT_INPOP: &str = "sources/ftp.imcce.fr/ephemeris_inpop_earth.bin";
+const DEFAULT_EPM: &str = "sources/ftp.iaaras.ru/ephemeris_epm_earth.bin";
 const DAY: f64 = 86400.0;
 
 fn dist_km(a: [f64; 3], b: [f64; 3]) -> f64 {

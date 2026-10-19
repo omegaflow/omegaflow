@@ -41,7 +41,7 @@ fn median(vals: &[f64]) -> Option<f64> {
     Some(s[s.len() / 2])
 }
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+    let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -73,7 +73,7 @@ fn main() {
             return;
         }
     }
-    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };
@@ -174,7 +174,7 @@ fn main() {
 
     std::fs::create_dir_all("reports").ok();
     let body = out.join("\n") + "\n";
-    match std::fs::write("state/reports/galileo_mode1_elongation.txt", &body) {
+    match std::fs::write("zustand/reports/galileo_mode1_elongation.txt", &body) {
         Ok(()) => {
             eprintln!("galileo: mode 1 elongation report written");
         }

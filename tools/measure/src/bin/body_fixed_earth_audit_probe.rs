@@ -42,15 +42,15 @@ fn main() {
     if bins.is_empty() {
         bins.push((
             "de441".to_string(),
-            "data/ssd.jpl.nasa.gov/ephemeris_earth.bin".to_string(),
+            "sources/ssd.jpl.nasa.gov/ephemeris_earth.bin".to_string(),
         ));
         bins.push((
             "inpop19a".to_string(),
-            "data/ftp.imcce.fr/ephemeris_inpop_earth.bin".to_string(),
+            "sources/ftp.imcce.fr/ephemeris_inpop_earth.bin".to_string(),
         ));
         bins.push((
             "epm2021".to_string(),
-            "data/ftp.iaaras.ru/ephemeris_epm_earth.bin".to_string(),
+            "sources/ftp.iaaras.ru/ephemeris_epm_earth.bin".to_string(),
         ));
     }
     for (word, path) in &bins {

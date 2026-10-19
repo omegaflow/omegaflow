@@ -7,7 +7,7 @@ use std::process::exit;
 use omegaflow::archivar::naming::extract_netloc;
 
 const SOURCES: &str = "phi/sources.φ";
-const DEFAULT_OUT_DIR: &str = "state/mountain/sources-repo-license/";
+const DEFAULT_OUT_DIR: &str = "zustand/mountain/sources-repo-license/";
 
 fn blocks(content: &str) -> Vec<Vec<&str>> {
     let mut out: Vec<Vec<&str>> = Vec::new();

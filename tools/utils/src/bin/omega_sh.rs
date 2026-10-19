@@ -219,7 +219,7 @@ fn sha256(data: &[u8]) -> [u8; 32] {
 }
 
 fn reports() {
-    let entries = match fs::read_dir(state_dir().join("reports")) {
+    let entries = match fs::read_dir(zustand_dir().join("reports")) {
         Ok(e) => e,
         Err(_) => {
             eprintln!("omega_sh: no <state>/reports dir");
@@ -308,8 +308,8 @@ fn jwst() {
     }
 }
 
-fn state_dir() -> PathBuf {
-    if let Ok(dir) = env::var("OMEGAFLOW_STATE") {
+fn zustand_dir() -> PathBuf {
+    if let Ok(dir) = env::var("OMEGAFLOW_ZUSTAND") {
         return PathBuf::from(dir);
     }
     PathBuf::from("state")
