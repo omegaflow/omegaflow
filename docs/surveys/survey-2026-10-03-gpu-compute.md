@@ -161,7 +161,7 @@ Gebaut: `tools/utils/src/bin/kaggle_kernel.rs` (Rust std + curl, Legacy-REST `pu
 + R-Probe-Kernel (`state/future/kaggle-gpu-probe/`, **kein Python**). Konto registriert, Legacy-API-Key
 in `~/.kaggle/kaggle.json`, API-Antwort **200**.
 
-Gemessen im Lauf (Kernel `johannestyroller/omegaflow-gpu-probe`, laut Kaggle-Seite auf **„GPU T4 x2"**):
+Gemessen im Lauf (Kernel `<USER>/omegaflow-gpu-probe`, laut Kaggle-Seite auf **„GPU T4 x2"**):
 
 - Ubuntu 22.04.4; `KAGGLE_DOCKER_IMAGE=gcr.io/kaggle-gpu-images/rstats` (R-Image).
 - `/proc/driver/nvidia/` **vorhanden** (GPU ist angehängt), **aber**: `nvidia-smi` fehlt, keine
