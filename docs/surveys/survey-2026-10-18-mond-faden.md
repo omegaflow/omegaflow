@@ -2,7 +2,7 @@
   title: Mond-Faden — cond lunar gebaut und gemessen
   class: survey
   date: 2026-10-18
-  sha256: e42612af3e3acb2e7c0a4520688a5caa449a2e30e4ca53817a7d478b909661f9
+  sha256: 3925113d53a0089e0907dc08decd0aadf1b6b19c7de8e20700aa265e5e0dc899
   status: live
 -->
 # Mond-Faden — `--cond lunar` gebaut (2026-10-18, river)
@@ -73,3 +73,23 @@
 #   Der Lauf beantwortet die Lag-Frage (Dynamo vs. Ionendrag) NICHT.
 #   Nächster Schnitt: bins=3 (729 Zellen) ODER zwei Läufe — 5-Kond-Baseline gegen
 #     dieselbe Baseline + lunar, Schwellen getrennt vergleichen, nicht in einer Zelle.
+
+# ============================================================
+# ERGEBNIS Lauf 39181822901 (bins 3, 2026-10-19T00:40Z)
+# ============================================================
+#   Konfiguration: identisch zu 39166259860 (bin=300s, cond=ae,dst,kp,lt,alt,lunar,
+#     cond_bin=10800s, max_lag=36, surr=50, n=23200), nur bins=3 (729 Zellen).
+#     ARTIFACT de2-conditional-te.zip sha256 3d8929839f7ca90d633f4439fb4a83d715e9d9129f5b3f2c0e3838e411405d01.
+#   Befund (36 Lags, Richtung getrennt):
+#     konditioniert NVE->IVE: 0/36; MAX-NULL no
+#     konditioniert IVE->NVE: 3/36 (4200, 6900, 7800 s); MAX-NULL yes
+#     roh NVE->IVE: 6/36 (900, 1200, 3000, 5700, 7200, 8700 s)
+#     roh IVE->NVE: 4/36 (2100, 4200, 8100, 8700 s)
+#   Die Vorwaerts-Richtung (NVE->IVE) bleibt konditioniert still — wie bei bins=4.
+#     Neu: die Rueckwaerts-Richtung (IVE->NVE) traegt bei bins=3 drei konditionierte
+#     Lags ueber dem ARX-Null, und der MAX-NULL-Pass liegt bei te_max=+0.000464
+#     gegen thr_max=+0.000395.
+#   Offen: ob diese drei die Lunar-Konditionierung tragen oder die feinere
+#     Zellaufloesung. Naechster Schnitt: zwei Laeufe — 5-Kond-Baseline ohne lunar
+#     gegen dieselbe Baseline + lunar, Schwellen getrennt; erst dann eine
+#     Richtungs-Aussage. Kein Mond-Effekt wird aus einer Zelle behauptet.
