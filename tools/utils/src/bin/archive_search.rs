@@ -896,13 +896,10 @@ fn main() {
 }
 
 fn run_stats() -> Vec<String> {
-    let repo = match find_repo_root() {
-        Some(r) => r,
-        None => {
-            return vec!["--stats — no repo root measured; the query log stays unread".to_string()];
-        }
+    let Some(zustand) = net::zustand_dir() else {
+        return vec!["--stats — no zustand root; the query log stays unread".to_string()];
     };
-    let path = repo.join("zustand/research/queries.φ");
+    let path = zustand.join("queries.φ");
     let body = match std::fs::read_to_string(&path) {
         Ok(b) => b,
         Err(_) => {
@@ -1329,6 +1326,16 @@ fn usage() {
     );
     eprintln!(
         "serve:    archive_search --serve [addr]   (foreground display, no writes, keys never cross the page)"
+    );
+    eprintln!();
+    eprintln!(
+        "keys:     every mode names its key above ('keyless' = none). Keys are read from .secrets.local in the repo root (gitignored), never from the command line and never printed. A missing key yields `pending — <KEY> absent from .secrets.local`, not an empty result."
+    );
+    eprintln!(
+        "exits:    direct -> live proton tunnel (proton-wg) -> its SOCKS proxy; --playwright uses the same SOCKS when one is up. Rotation is operator hand (bin/proton-wg.sh, bin/proton-exit.sh)."
+    );
+    eprintln!(
+        "limits:   read-only. No writes, no sends, no uploads; the tool never closes a front (that is the operator)."
     );
 }
 
