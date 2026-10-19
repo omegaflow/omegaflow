@@ -15,8 +15,8 @@
 
 | Layer | Document | Content |
 |-------|----------|---------|
-| **Identity** | `docs/reference/NIST_SP330_tables.md` | SI base + derived units (official BIPM tables) |
-| **Identity** | `docs/reference/NIST_SP811_units.md` | API unit normalization, non-SI conversions |
+| **Identity** | `docs/reference/nist-sp330-tables.md` | SI base + derived units (official BIPM tables) |
+| **Identity** | `docs/reference/nist-sp811-units.md` | API unit normalization, non-SI conversions |
 | **Identity** | `docs/reference/ucum-essence.xml` | UCUM v2.2 complete registry |
 | **Binding** | `docs/concepts/sources-v2-spec.md` „Force-Unit Registry" | Force names, IDs, units — the growing registry |
 | **Parser** | `src/main.rs` | force/unit handling (SI conversion is open work) |
@@ -42,8 +42,8 @@ the force. It is never silently dropped.
 ## Fallback Protocol
 
 ```
-API unit string → NIST_SP811_units.md (identify + normalize)
-                → NIST_SP330_tables.md (classify physical quantity)
+API unit string → nist-sp811-units.md (identify + normalize)
+                → nist-sp330-tables.md (classify physical quantity)
                 → SOURCES_V2_SPEC „Force-Unit Registry" (look up force binding)
                 → if missing: physics reasoning (propagation mechanism)
                 → if still unclear: operator review flag
@@ -52,8 +52,8 @@ API unit string → NIST_SP811_units.md (identify + normalize)
 ## References
 
 - `docs/concepts/sources-v2-spec.md` — force registry + units (controlling spec)
-- `docs/reference/NIST_SP330_tables.md` — SI base and derived units
-- `docs/reference/NIST_SP811_units.md` — unit normalization and conversions
+- `docs/reference/nist-sp330-tables.md` — SI base and derived units
+- `docs/reference/nist-sp811-units.md` — unit normalization and conversions
 - `docs/reference/ucum-essence.xml` — UCUM v2.2 complete registry
 - `docs/reference/ucum-essence.xml`: https://raw.githubusercontent.com/ucum-org/ucum/main/ucum-essence.xml
 - NIST SP 330: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.330-2019.pdf
