@@ -4,8 +4,14 @@ use std::process::Command;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let mut db = PathBuf::from(env::var("HOME").unwrap_or_default())
-        .join(".local/share/opencode/opencode.db");
+    let home = match env::var("HOME") {
+        Ok(h) => h,
+        Err(_) => {
+            eprintln!("HOME is absent — the opencode database path does not resolve");
+            std::process::exit(2);
+        }
+    };
+    let mut db = PathBuf::from(home).join(".local/share/opencode/opencode.db");
     let mut since: i64 = 0;
     let mut full = false;
     let mut i = 1;
@@ -17,7 +23,13 @@ fn main() {
             }
             "--since" => {
                 i += 1;
-                since = args[i].parse().unwrap_or(0);
+                since = match args[i].parse() {
+                    Ok(v) => v,
+                    Err(_) => {
+                        eprintln!("--since: not a number");
+                        std::process::exit(2);
+                    }
+                };
             }
             "--full" => full = true,
             _ => {}
@@ -54,7 +66,9 @@ fn main() {
         let session = parts.next().unwrap_or("").to_string();
         let time = parts.next().unwrap_or("").to_string();
         let body = parts.next().unwrap_or("").to_string();
-        let epoch: i64 = time.parse().unwrap_or(0);
+        let Ok(epoch) = time.parse::<i64>() else {
+            continue;
+        };
         if epoch < since {
             continue;
         }
@@ -114,32 +128,18 @@ fn is_completion(text: &str) -> bool {
         || low.contains("verdict")
 }
 
+const CLAIM_MEASURED: &str = include_str!("../../data/claim_measured.txt");
+const CLAIM_ACTED: &str = include_str!("../../data/claim_acted.txt");
+
+fn listed(list: &str, text: &str) -> bool {
+    list.lines()
+        .any(|w| !w.trim().is_empty() && text.contains(w.trim()))
+}
+
 fn claim_word(text: &str) -> &'static str {
     let low = text.to_lowercase();
-    let measured = [
-        "git", "grep", "sqlite", "gemessen", "gemeldet", "zählt", "läuft",
-    ]
-    .iter()
-    .any(|m| low.contains(m));
-    let acted = [
-        "geba",
-        "umgesetzt",
-        "committet",
-        "gemacht",
-        "implementiert",
-        "geprüft",
-        "geprueft",
-        "getestet",
-        "verifiziert",
-        "geschrieben",
-        "gelesen",
-        "gelaufen",
-        "extrahiert",
-        "geladen",
-        "gebaut",
-    ]
-    .iter()
-    .any(|a| low.contains(a));
+    let measured = listed(CLAIM_MEASURED, &low);
+    let acted = listed(CLAIM_ACTED, &low);
     if measured {
         "gemessen"
     } else if acted {

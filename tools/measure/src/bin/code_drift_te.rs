@@ -3,7 +3,9 @@ use std::collections::HashSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-const GERMAN_CHARS: &[char] = &['ä', 'ö', 'ü', 'ß', 'Ä', 'Ö', 'Ü'];
+const GERMAN_CHARS: &[char] = &[
+    '\u{e4}', '\u{f6}', '\u{fc}', '\u{df}', '\u{c4}', '\u{d6}', '\u{dc}',
+];
 
 const DICT_GERMAN: &str = "/usr/share/dict/ngerman";
 const DICT_ENGLISH: &str = "/usr/share/dict/american-english";
@@ -18,188 +20,12 @@ const CODE_NOISE: &[&str] = &[
     "elf", "zwoelf", "reih", "tief", "hoch", "breit", "lang", "kurz",
 ];
 
-const GERMAN_WORDS: &[&str] = &[
-    "aber",
-    "alle",
-    "alles",
-    "als",
-    "also",
-    "an",
-    "andere",
-    "anderen",
-    "auch",
-    "auf",
-    "aus",
-    "außer",
-    "bei",
-    "beim",
-    "beispiel",
-    "bereits",
-    "besonders",
-    "bzw",
-    "da",
-    "dabei",
-    "dafür",
-    "danach",
-    "dann",
-    "dass",
-    "dazu",
-    "de",
-    "deine",
-    "dem",
-    "den",
-    "denen",
-    "der",
-    "deren",
-    "des",
-    "dessen",
-    "deutsch",
-    "deutsche",
-    "die",
-    "dies",
-    "diese",
-    "diesem",
-    "diesen",
-    "dieser",
-    "dieses",
-    "doch",
-    "dort",
-    "durch",
-    "ein",
-    "eine",
-    "einem",
-    "einen",
-    "einer",
-    "eines",
-    "einige",
-    "einzelnen",
-    "es",
-    "etwas",
-    "falls",
-    "führen",
-    "für",
-    "gegen",
-    "gibt",
-    "gleich",
-    "hier",
-    "hin",
-    "hinter",
-    "ich",
-    "ihm",
-    "ihn",
-    "ihnen",
-    "ihr",
-    "im",
-    "immer",
-    "in",
-    "indem",
-    "ins",
-    "ist",
-    "jede",
-    "jedem",
-    "jeden",
-    "jeder",
-    "jedes",
-    "jemals",
-    "jetzt",
-    "kann",
-    "können",
-    "lässt",
-    "macht",
-    "man",
-    "manche",
-    "mehr",
-    "meiner",
-    "mit",
-    "muss",
-    "müssen",
-    "nach",
-    "nicht",
-    "noch",
-    "nur",
-    "ob",
-    "oder",
-    "ohne",
-    "sehr",
-    "sein",
-    "seine",
-    "seinem",
-    "seinen",
-    "seiner",
-    "seit",
-    "sich",
-    "sie",
-    "sind",
-    "soll",
-    "sollen",
-    "sondern",
-    "sonst",
-    "sowie",
-    "später",
-    "statt",
-    "trotz",
-    "über",
-    "um",
-    "und",
-    "uns",
-    "unter",
-    "viel",
-    "viele",
-    "vom",
-    "von",
-    "vor",
-    "war",
-    "waren",
-    "wäre",
-    "während",
-    "weil",
-    "weiter",
-    "weiterhin",
-    "welche",
-    "welchem",
-    "welchen",
-    "welcher",
-    "welches",
-    "wenig",
-    "wenn",
-    "wer",
-    "werden",
-    "wird",
-    "wir",
-    "wo",
-    "wurde",
-    "würde",
-    "zu",
-    "zum",
-    "zur",
-    "zwei",
-    "zwischen",
-    "vermutlich",
-    "vermutliche",
-    "vermutlichen",
-    "vermutlicher",
-    "anscheinend",
-    "scheinbar",
-    "wahrscheinlich",
-];
+const GERMAN_WORDS_LIST: &str = include_str!("../../data/german_words.txt");
+const GERMAN_NAME_LIST: &str = include_str!("../../data/german_name_words.txt");
 
-const GERMAN_NAME_WORDS: &[&str] = &[
-    "erfassen",
-    "messen",
-    "negativ",
-    "doppel",
-    "anomalie",
-    "korrelation",
-    "auswertung",
-    "bewegung",
-    "feld",
-    "gefäß",
-    "gefaess",
-    "gravitation",
-    "kraft",
-    "masse",
-    "zeit",
-];
+fn listed(list: &str, token: &str) -> bool {
+    list.lines().any(|l| l.trim() == token)
+}
 
 fn german_chars(s: &str) -> u32 {
     s.chars().filter(|c| GERMAN_CHARS.contains(c)).count() as u32
@@ -210,7 +36,7 @@ fn german_name_score(s: &str) -> u32 {
         return 1;
     }
     for tok in s.split(|c: char| !c.is_alphanumeric()) {
-        if GERMAN_NAME_WORDS.contains(&tok.to_lowercase().as_str()) {
+        if listed(GERMAN_NAME_LIST, &tok.to_lowercase()) {
             return 1;
         }
     }
@@ -221,7 +47,7 @@ fn german_words(s: &str) -> u32 {
     let mut n = 0u32;
     for tok in s.split(|c: char| !c.is_alphanumeric()) {
         let lower = tok.to_lowercase();
-        if GERMAN_WORDS.contains(&lower.as_str()) {
+        if listed(GERMAN_WORDS_LIST, &lower) {
             n += 1;
         }
     }
@@ -298,10 +124,24 @@ fn line_level(dir: &Path, seed: u64) {
         words = w2;
         docs = d2;
     }
-    let te_cw = transfer_entropy_lag(&chars, &words, 1).unwrap_or(0.0);
-    let te_wc = transfer_entropy_lag(&words, &chars, 1).unwrap_or(0.0);
-    let (_, _, thr_cw) = surrogate_stats(&chars, &words, 1, seed).unwrap_or((0.0, 0.0, 0.0));
-    let (_, _, thr_wc) = surrogate_stats(&words, &chars, 1, seed).unwrap_or((0.0, 0.0, 0.0));
+    let (Some(te_cw), Some(te_wc)) = (
+        transfer_entropy_lag(&chars, &words, 1),
+        transfer_entropy_lag(&words, &chars, 1),
+    ) else {
+        println!("scope={} level=line n={} te-absent", dir.display(), n);
+        return;
+    };
+    let (Some((_, _, thr_cw)), Some((_, _, thr_wc))) = (
+        surrogate_stats(&chars, &words, 1, seed),
+        surrogate_stats(&words, &chars, 1, seed),
+    ) else {
+        println!(
+            "scope={} level=line n={} surrogate-absent",
+            dir.display(),
+            n
+        );
+        return;
+    };
     let sig_cw = te_cw > thr_cw;
     let sig_wc = te_wc > thr_wc;
     println!(
@@ -334,8 +174,13 @@ fn litmus_file(path: &Path, seed: u64, expect_violation: bool) {
         println!("litmus={} n={} units-below-min", path.display(), n);
         return;
     }
-    let te_cw = transfer_entropy_lag(&chars, &words, 1).unwrap_or(0.0);
-    let (_, _, thr_cw) = surrogate_stats(&chars, &words, 1, seed).unwrap_or((0.0, 0.0, 0.0));
+    let (Some(te_cw), Some((_, _, thr_cw))) = (
+        transfer_entropy_lag(&chars, &words, 1),
+        surrogate_stats(&chars, &words, 1, seed),
+    ) else {
+        println!("litmus={} n={} te-absent", path.display(), n);
+        return;
+    };
     let sig_cw = te_cw > thr_cw;
     let doc_lines = docs.iter().filter(|&&v| v > 0.0).count();
     let doc_burst = doc_lines > 0;
@@ -374,12 +219,18 @@ fn file_level(dir: &Path, seed: u64) {
         if german_name_score(nm) > 0 {
             german_named.push(nm.to_string());
         }
-        let text = fs::read_to_string(f).unwrap_or_default();
+        let Ok(text) = fs::read_to_string(f) else {
+            continue;
+        };
         content_chars.push(german_chars(&text) as f32);
     }
-    let te_nc = transfer_entropy_lag(&name_score, &content_chars, 1).unwrap_or(0.0);
-    let (_, _, thr_nc) =
-        surrogate_stats(&name_score, &content_chars, 1, seed).unwrap_or((0.0, 0.0, 0.0));
+    let (Some(te_nc), Some((_, _, thr_nc))) = (
+        transfer_entropy_lag(&name_score, &content_chars, 1),
+        surrogate_stats(&name_score, &content_chars, 1, seed),
+    ) else {
+        println!("scope={} level=file n={} te-absent", dir.display(), n);
+        return;
+    };
     let sig_nc = te_nc > thr_nc;
     println!(
         "scope={} level=file n={} german_named={} te_name->content={:.6} (thr={:.6} {})",
