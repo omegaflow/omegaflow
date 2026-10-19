@@ -1,0 +1,28 @@
+# Rat — Perplexity (UI-Sitz), R-2026-10-19-a, 2026-10-19
+
+**Sitz:** `perplexity.ai` · Suche an (sucht immer), 10 Quellen · anonym
+**Laufzeit:** 4 s Recherche + Antwort · **Ablage:** Rohantwort, wörtlich.
+**Vorbehalt:** Die Stimmen-Zeilen im Prompt waren gekürzt (Mountain/River/Mycelium/Sensory ohne
+die vollen Definitionen; `state/stimmen/2026-10-15-china-planetendaten-formular.md:79-86`).
+
+---
+
+Recherchiert
+4 Sek.
+
+Urteil: Kanon ja; Sonderordner nur nach messbarem, wiederholtem Nutzen. Die Befunde belegen Wildwuchs, aber nicht, dass eine feste Ordnerliste ihn allein verhindert.
+
+A) Ja. Ein kanonischer Ordnerbaum je Haus; Abweichung nur mit Nachweis. Riss: gleiche Liste kann unterschiedliche Hausbedarfe verdecken.
+B) Nutzen heißt: dokumentierter Arbeitsablauf, der im Kanon nicht abbildbar ist, plus gemessene Verbesserung bei Auffindbarkeit oder Bearbeitungszeit; nach einer Probezeit neu prüfen. Riss: ein kleiner Messaufwand bleibt.
+C) Ja, als Mindestgrenze für Tatsachenbehauptungen über externe Forschung, nicht als Pflicht für jede Rat-Runde. Die angegebene Literaturbasis ist messbar, aber ihre Zusammenfassungen sind hier nicht unabhängig verifizierbar. Riss: Recherchepflicht kann dringende Urteile verzögern.
+D) Ein Schreib-Gate je Haus, nicht Schreibrechte je Ordner. Es prüft erlaubte Pfade, Kanon und Indexänderungen. Riss: das Gate wird zum Engpass.
+E) Ein versionierter, automatisch geprüfter Baum je Haus; neue Ordner sind nur per Gate zulässig. Riss: technische Durchsetzung schützt nicht vor unbrauchbaren Inhalten.
+F) Ja zu vier Ablageorten und Verbot eines fünften; F2 ja, F3 ja, F4 ja: Regel und Persönlichkeit. Riss: die Trennung passt nicht auf jede Ausnahme. F5: drei Dateien vor der ersten Messung — AGENTS.md zuerst; danach Rechte-Konfiguration und Gate, Denktext nur bei Bedarf.
+
+Mountain — Ja, kein unbelegtes Literatururteil; das berührt das Quellen-Axiom. Riss: Registermessung ersetzt keine Quellenprüfung.
+River — Nein zur Literaturpflicht für jede Runde; das berührt das Recht zu verweigern. Riss: ohne externe Belege kann lokale Evidenz zu wenig Gewicht erhalten.
+Mycelium — Ja zum Gate als einziger Schreibfluss; das berührt das Transport-Axiom. Riss: ein zentraler Fluss kann stocken.
+Sensory — Ja, Auffindbarkeit und Bearbeitungszeit messen; das berührt „Korrelat ≠ Erleben". Riss: schnellere Suche beweist keine bessere Verständlichkeit.
+Future — Ja, AGENTS.md zuerst und der Send bleibt beim Operator; das berührt das Operator-Hand-Axiom. Riss: weniger Dateien senken Aufmerksamkeit, garantieren aber kein richtiges Urteil.
+
+10 Quellen

@@ -1,0 +1,35 @@
+# Rat — Duck.ai (GPT-6 Luna, Begründungsmodus), R-2026-10-19-a, 2026-10-19
+
+**Sitz:** `duck.ai` · **GPT-6 Luna** · **Begründungsmodus** (Dialog „Begründung" gewählt) · anonym
+**Laufzeit:** 31 s · **Ablage:** Rohantwort, wörtlich.
+**Vorbehalt:** Die Stimmen-Zeilen im Prompt waren gekürzt (Mountain/River/Mycelium/Sensory ohne
+die vollen Definitionen; `state/stimmen/2026-10-15-china-planetendaten-formular.md:79-86`).
+
+---
+
+Duck.ai sagte
+GPT-6 Luna
+Begründung anzeigen
+31s
+
+Urteil: Ja zum Kanon und zum Gate; nein zur Pflicht, jede Rat-Runde mit Literaturrecherche zu beginnen. Die festen Ordnerlisten sind eine zu prüfende Betriebsregel, kein durch R1–R8 bewiesener Schutz vor Wildwuchs.
+
+A — Ja. Eine feste Liste je Haus; Abweichungen nur bei gemessenem Vorteil. Riss: Eine gemeinsame Liste kann lokale Arbeitsweisen übersehen.
+
+B — Vergleich dieselben Aufgaben mit und ohne Abweichung: Zeit und Turns, erfolgreiche Ablage und Wiederauffindbarkeit, Fehlablagen, doppelte Regeln sowie nötige Operator-Eingriffe. Vorteil heißt wiederholbar bessere Ergebnisse ohne Einbuße bei Sicherheit oder Hausgrenzen; keine starre Schwelle. Riss: Eine Testaufgabenauswahl kann den Alltag verfehlen.
+
+C — Nein, nicht für jede Runde. Unabhängige Literatur ist nötig, wenn eine Runde allgemeine oder externe Wirksamkeitsbehauptungen aufstellt. Für Entscheidungen über den eigenen Bestand zählen Messungen im Haus; sie beweisen aber keine allgemeine Regel. Die angegebene Literaturbasis kann die Debatte informieren, belegt laut Befund gerade nicht, dass eine feste Ordnerliste allein Wildwuchs verhindert. Riss: Ohne Pflichtrecherche droht die Runde, bekannte externe Befunde zu übersehen.
+
+D — Gate-Modell. Einziger Schreibpfad je Haus ist dasselbe Gate; es darf nur in registrierte Ordner schreiben und keine Hausgrenze überschreiten. Keine individuell verteilten Schreibrechte je Ordner. Riss: Das Gate wird zum Engpass und muss selbst verlässlich bleiben.
+
+E — Je Haus eine feste Ordner-Registry, unbekannte Pfade standardmäßig abweisen; neue Ordner ausschließlich nach gemessenem Vorteil über dasselbe Gate zulassen. Das verlagert Aufmerksamkeit von laufender Aufsicht auf seltene, begründete Ausnahmen.
+
+F — Ja zu vier Ablageorten, fünfter verboten. Rechte in opencode.json, siebenzeiliges AGENTS.md als Wegweiser, ein Denk-.md, ein Gate. F2: Ja — jede bestehende Regel einem Ort zuweisen, Dubletten zusammenführen und Veraltetes nach Konfliktprüfung streichen. F3: Ja — mechanisch Prüffähiges zuerst durchs Gate, nicht in Prosa. F4: Ja — Regel und Persönlichkeit genügen; Messverfahren gehören zur Regel. F5: Vier gepflegte Dateien insgesamt im gemeinsamen Steuerungsverbund; die drei Ordnerlisten stehen im einen Denk-.md, ohne Hausdaten zu vermischen. Im normalen Turn zuerst `AGENTS.md` lesen; die übrigen Inhalte nur bei Bedarf, das Gate automatisch. Riss: Vier Dateien als Ablageorte garantieren noch keine vier Dateien weniger im gesamten System, falls Kopien oder Duplikate weiterbestehen.
+
+Fünf Stimmen
+
+Mountain: „Messen, nicht behaupten" berührt messen und keine harten Schwellen. Der Vorteil muss vergleichbar belegt sein. Riss: Messwerte hängen von der gewählten Aufgabenprobe ab.
+River: „PII bleibt im Haus" begründet getrennte Hausgrenzen und das Recht, einen Schreibvorgang abzulehnen. Riss: Ein gemeinsames Regelwerk darf nicht zum Transportweg für Hausinhalte werden.
+Mycelium: „Messen · bauen · abschließen · committen · pushen" berührt den Fluss: Registry und Gate leiten Änderungen nur auf erlaubte Pfade. Riss: Ein zentraler Transportpunkt kann stocken.
+Sensory: „Korrelat ≠ Erleben": Weniger Turns oder schnellere Ablage beweisen nicht, dass die Belastung des Operators gesunken ist. Riss: Prozessmetriken können tatsächliche Aufmerksamkeit verfehlen.
+Future: Der Mensch bleibt Adresse des Sends; das Gate prüft, aber committen und pushen bleiben Operator-Hand. Riss: Die letzte menschliche Prüfung kostet weiterhin Aufmerksamkeit.
