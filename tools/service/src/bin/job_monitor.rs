@@ -310,7 +310,10 @@ fn ci_panel(color: bool) -> Vec<String> {
         "1;35",
         "▌ CI RUNS ▐  github.com/omegaflow/omegaflow · newest first · in-progress on top",
     ));
-    let now = unix_now_secs();
+    let Some(now) = unix_now_secs() else {
+        eprintln!("job-monitor: the clock stands before the UNIX epoch — no window");
+        std::process::exit(1);
+    };
     let runs = ci_runs();
     if runs.is_empty() {
         lines.push(paint(
