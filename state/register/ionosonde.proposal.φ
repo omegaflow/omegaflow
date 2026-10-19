@@ -1,0 +1,9 @@
+url https://github.com/omegaflow/sources/releases/download/downloads.sws.bom.gov.au/sws_ionosonde_0318.bin
+terms SWS-WDC-Conditions https://www.sws.bom.gov.au/World_Data_Centre
+format sws_ionosonde
+origin https://downloads.sws.bom.gov.au/wdc/iondata/de/juliusruh/0318.00/
+compiler tools/harvest/src/bin/sws_ionosonde_compiler.rs
+sha256 9eb32cae8ff47383a5fb9b14f8d2e9a543809de773a72fd05150e626b05e6397
+at earth
+ttl 3600
+field fof2_mhz sws_ionosonde_fof2_mhz inverse-square em MHz 3600 0.0 0.0
