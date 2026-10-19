@@ -1,5 +1,0 @@
-V1 — Verdikt: A — Begründung: Ein generierter Live-Index ist zentral und aktuell, er erzwingt die Nutzung des neuesten Standes und erleichtert das Verständnis des Zustandes. — Riss: Kein starker Gegenbeleg, aber Erstellung und Aktualisierung des Index erfordern Ressourcen.
-
-V2 — Verdikt: A — Begründung: Die 44 freien Sitze bilden den kanonischen Schwarm, da sie die größte und stabilste Gruppe darstellen und somit die repräsentativste Basis für Entscheidungen bieten. — Riss: Kleinere Schwärme können in bestimmten Situationen vorteilhaft sein, aber sie sind nicht so robust und repräsentativ wie der 44er-Schwarm.
-
-V3 — Verdikt: A — Begründung: Ein Start-of-Session-Check erzwingt die Nutzung des neuesten Standes und schützt vor veralteten Zitaten. — Riss: Ein solcher Check erfordert Zeit und Ressourcen am Sitzungsbeginn, kann aber durch die Vermeidung von Fehlern und die Erhöhung der Effizienz kompensiert werden.

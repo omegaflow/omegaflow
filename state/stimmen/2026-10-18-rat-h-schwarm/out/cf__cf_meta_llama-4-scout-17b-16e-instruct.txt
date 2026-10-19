@@ -1,9 +1,0 @@
-Verdikt: A — Begründung: Ein Modell sollte nur als bezahlt behandelt werden, wenn sein Preis tatsächlich größer als 0 ist, unabhängig vom Anbieter. Derzeit werden Modelle aufgrund ihres Prefix und nicht ihres tatsächlichen Preises als bezahlt oder kostenlos betrachtet, was zu irreführenden "billed route"-Anzeigen für kostenlose Modelle wie `openrouter/…:free` führt.
-
-Riss: Der aktuelle Ansatz führt zu einer ungerechten Behandlung von Modellen, die kostenlos sind, aber von Anbietern stammen, die auch bezahlte Modelle anbieten.
-
-Zusatz 1 (Preis-Wahrheit): Die Preis-Wahrheit sollte idealerweise durch den Katalog oder die Anbieterantwort gegeben sein. Das `:free`-Suffix könnte ein Hinweis sein, sollte aber nicht die alleinige Entscheidungsgrundlage bilden.
-
-Zusatz 2: `paid-open` sollte Modell-IDs nennen, um eine präzisere Kontrolle über die Behandlung von Modellen zu ermöglichen.
-
-Zusatz 3: Die Regelung sollte konsequent auf alle Prefixe, einschließlich `unorouter` und andere, angewendet werden, um Fairness und Transparenz im Umgang mit Modellpreisen zu gewährleisten.

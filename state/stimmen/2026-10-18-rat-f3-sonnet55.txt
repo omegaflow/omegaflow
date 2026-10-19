@@ -1,8 +1,0 @@
-Sitz: Claude Sonnet 5.5 "Extra hoch" (Browser, Operator gefahren), 2026-10-18
-F3 Flyby-sealed (korrigiert)
-Verdikt: Option 1 — gepinnter versiegelter Posten, aber "gepinnt, nicht bestanden" (Pin = Vergleichsmassstab, kein Echtheitsbeweis). Manifest-Digest zulaessig als Zeuge, nicht Richter.
-Zaehlriss (Meta): "fuenf Axiome" listet SIEBEN Zeilen -> 5 Massstab + 2 Verfahren (PII bleibt im Haus; messen·bauen·abschliessen·committen·pushen). Verdikt traegt unter jeder Zaehlung.
-Status (0 honored): Seal!=CDN = riss · Register ohne sha256 = absent (nicht null-echt) · Manifest-Digest ungemessen.
-Auflagen: sha256 lokal messen · Register ergaenzen (sha256, Quelle, Kernel, ICRS/TDB, Freigabe) · Repair-/Attestations-Commit mit Operator-Kennung · CDN-Freigabe erst nach Gate-Vergleich.
-Verantwortliche Hand: Release-Registrar (benannt). Wiedervorlage 2026-11-01.
-8 ausgeschlossene Begruendungen: Aktualitaet · Konsens · Bequemlichkeit · Seal-alter · "fehlender Hash harmlos" · Toleranzband · Fristdruck · Person/Schuld.

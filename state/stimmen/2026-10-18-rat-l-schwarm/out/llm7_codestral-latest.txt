@@ -1,7 +1,0 @@
-F1-Verdikt: A — Die Query-Naht-Bindung (b) ist die korrekte Form, da die Blende als Receiver-Eigenschaft behandelt wird, nicht als Teil des Records. — Riss: (c) könnte als Operator-Wort interpretiert werden, wenn die Blende dynamisch angepasst wird.
-
-F2i-Verdikt: A — Ein globales Gitter sollte als eigenes "grid"-Kind registriert werden, da es eine spezifische räumliche Struktur darstellt. — Riss: B könnte für kleine Gitter geeignet sein, aber nicht für globale Daten.
-
-F2ii-Verdikt: nein — Der Rat darf die Form nicht ohne Paket entscheiden, da Operator-Wörter eine explizite Vorbereitung erfordern. — Riss: Bei stundenloser Daten könnte eine Ausnahme gelten, aber dies ist nicht der Fall.
-
-F3-Verdikt: 2 — Die Gate-Mechanik sollte sich vom festen Digest lösen, um Flexibilität zu gewähren. — Riss: Option 1 könnte stabiler sein, aber es würde die Rekonstruktion erschweren.

@@ -1,1 +1,0 @@
-{"error":{"code":"bad_request","message":"model 'gemini-omni-flash' is not a chat model; use /v1/videos/generations instead","param":null,"type":"bad_request"}}

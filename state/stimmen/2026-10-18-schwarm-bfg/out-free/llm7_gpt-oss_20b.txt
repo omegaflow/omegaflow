@@ -1,5 +1,0 @@
-R-b Verdikt: A — Begründung: Durch die Einführung der Direktiven ellipsoid + normal_gravity wird ein Parser-Arm für die skalaren Referenzkonstanten geschaffen, sodass N berechnet werden kann. Dies verhindert, dass N als pending bleibt und ermöglicht die Nutzung von phi/sources.phi in allen Modulen. — Riss: Fehlender Parser-Arm für skalare Konstanten.
-
-R-f Verdikt: A — Begründung: Das Modell D=2190 (XGM2019e_2159) ist offiziell, hat eine handhabbare Größe und erfordert keine zusätzliche Epoch-Definition, wodurch die Kompilierung ohne --epoch möglich ist. Es vermeidet die Speicherprobleme und die fehlende ttl-Information, die bei größeren Modellen auftreten. — Riss: Fehlende Epoche im Block.
-
-R-g Verdikt: B — Begründung: Durch die Implementierung des Parser-Fixes für kg/(m² s) und die Definition einer Stern-Metadaten-Achse deckt man die wichtigsten Restgruppen ab, ohne die Architektur unnötig zu vergrößern. Diese minimal sichere Teilmenge reduziert Komplexität und Fehleranfälligkeit. — Riss: Fehlende Quantity-/Kanal-Arm für die übrigen Restgruppen.

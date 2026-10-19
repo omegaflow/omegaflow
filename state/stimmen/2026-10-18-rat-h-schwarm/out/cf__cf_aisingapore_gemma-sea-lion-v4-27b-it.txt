@@ -1,9 +1,0 @@
-Verdikt: **A** — Begründung: Der aktuelle Ansatz (B) führt zu falschen Abrechnungen für kostenlose Modelle. Kosten sollten ausschließlich am Modellpreis (und nicht am Provider) gemessen werden.
-
-Riss: Inkonsistenz zwischen Modellname (seit :1700 bekannt) und Prefix-basierter Abrechnung (ab :1725).
-
-Zusatz 1: Katalogpreis.
-
-Zusatz 2: Modell-IDs.
-
-Zusatz 3: Ja, grundsätzlich.

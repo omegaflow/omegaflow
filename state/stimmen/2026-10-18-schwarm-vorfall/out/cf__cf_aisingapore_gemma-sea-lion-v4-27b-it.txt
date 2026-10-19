@@ -1,5 +1,0 @@
-V1 Verdikt: A — Ein Index zentralisiert den Live-Zustand und ermöglicht schnellen Zugriff. Prosa-Docs werden dadurch zu verweisenden Quellen, nicht zum primären Zustand. — Riss: Index-Wartung.
-
-V2 Verdikt: A — Die 44er-Liste definiert den Schwarm, da 4er-Läufe explizit als Fehler identifiziert wurden. Ein Schwarm erfordert die volle Kapazität. — Riss: Kosten.
-
-V3 Verdikt: B — Ein automatischer Gate-Mechanismus verhindert aktiv die Nutzung veralteter Informationen. Dies ist robuster als reine Disziplin oder manuelle Checks. — Riss: Gate-Komplexität.
