@@ -2,7 +2,7 @@
   title: Rat-Anweisung — wie der Rat zu fahren ist
   class: concept
   date: 2026-10-19
-  sha256: 6712378d1e2f42a7f26926ae8fbdb1503e6c9d11546f9f0cf330b9fa024f3110
+  sha256: 34fe60f681bc8086a3251c0fbf1aa9009cc1a0327f316433ff6c5772b4661cb6
   status: live
   see-also: AGENTS.md state/stimmen/2026-10-19-rat-kanon-wildwuchs-formular.md
 -->
@@ -202,11 +202,15 @@ holen — nicht danach, zur Rechtfertigung.
 **Riss-Generator**, nicht als Entscheider. Dann die **UI-Chats** (Roster `ui-seats.md`, Max je
 Sitz). Paid erst, wenn Schwarm und UI uneinig sind. Kosten Schwarm $0, Laufzeit ~1 s je Modell.
 
-**Budget (Operator-Wort 2026-10-19):** **5 Sitze per Zufall** aus der frischen Alive-Liste
-(`shuf -n 5 state/zustand/llm-gateway-alive.tsv`) + **5 UI-Chats** (2 Operator / 3 Maschine).
-Die gezogene Auswahl wird **vor** dem Lauf veröffentlicht (`<datum>-rat-<thema>-auswahl.md`) —
-sonst ist der Zufall von der Auswahl nicht zu unterscheiden. Ein Sitz, der nicht urteilen kann
-(z. B. ein Guard-Modell), wird als **untauglich ausgewiesen**, nicht ersetzt.
+**Budget (Operator-Wort 2026-10-19, zweite Fassung):** **drei Blöcke zu fünf** —
+**5 Schwarm** per Zufall aus der frischen Alive-Liste (`shuf -n 5 state/zustand/llm-gateway-alive.tsv`,
+Maschine) · **5 UI ohne Login** (Maschine, 4 Roster-Sitze + **Fugu**) · **5 Frontier mit Login**
+(**Operator** fährt). **Kein Paid**, solange diese drei Blöcke laufen — Mistral Vibe (UI) ersetzt
+den Mistral-Paid-Aufruf. Die Auswahl wird **vor** dem Lauf veröffentlicht
+(`<datum>-rat-<thema>-auswahl.md`), sonst ist Zufall von Auswahl nicht zu unterscheiden. Ein Sitz,
+der nicht urteilen kann, wird **ersetzt** — aus derselben Liste, ohne Zurücklegen, und der Ersatz
+steht **veröffentlicht** in der Auswahl-Datei. „Untauglich ausweisen" reicht nicht: eine Stimme,
+die nichts trägt, ohne Ersatz zu nennen, ist nur eine fehlende Stimme.
 
 ```
 0. Wissenschaftsrecherche (archive_search) → `## Recherche` im Formular
