@@ -20,6 +20,19 @@ fn arg_str(args: &[String], flag: &str) -> Option<String> {
         .cloned()
 }
 
+fn earth_name() -> String {
+    match omegaflow::ephemeris::body_table()
+        .into_iter()
+        .find(|(id, _)| *id == 399)
+    {
+        Some((_, body)) => body.name,
+        None => {
+            eprintln!("earth absent from the NAIF table - 0 honored");
+            std::process::exit(2);
+        }
+    }
+}
+
 fn arg_or(args: &[String], flag: &str, default: &str) -> String {
     match arg_str(args, flag) {
         Some(v) => v,
@@ -231,7 +244,8 @@ fn main() {
     let inpop_path = arg_or(&args, "--inpop", DEFAULT_INPOP);
     let epm_path = arg_or(&args, "--epm", DEFAULT_EPM);
     let register_path = arg_or(&args, "--register", DEFAULT_REGISTER);
-    let body = arg_or(&args, "--body", "earth");
+    let default_body = earth_name();
+    let body = arg_or(&args, "--body", &default_body);
 
     let window_days: f64 = match arg_str(&args, "--window-days") {
         Some(s) => match s.parse::<f64>() {
