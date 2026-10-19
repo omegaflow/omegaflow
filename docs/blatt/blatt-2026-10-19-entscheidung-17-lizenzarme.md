@@ -2,7 +2,7 @@
   title: Entscheidungstabelle — die 17 lizenzgesperrten Arme
   class: blatt
   date: 2026-10-19
-  sha256: f6837ca072c9d8ba55dd6d94a1d01d1cf50dbd4232313235d9c2683fdba02c4a
+  sha256: 3e410df5368aebf31e99706b50cb253ec894e0bbdb3379c1952ae082e740d93a
   status: live
   see-also: phi/sources.φ tools/harvest/src/bin/ docs/surveys/survey-2026-10-09-redistribution-alternativen.md
 -->
@@ -39,7 +39,7 @@ gemessen (Operator-Gespräch 2026-10-11).
 | 3 | `dhm_gauge` | `dhm.gov.np` (`/hydrology/hms-Single`, `getRiverWatchBySeriesId_Single`) | kein Block | terms ungemessen | C; für causal-arrow die offene GloFAS-Reihe nehmen | **C** — ohne terms kein CDN; die Flut-Lücke über GloFAS/USGS schließen |
 | 4 | `erbq` | `services7.arcgis.com/.../tohoku_seismicity/FeatureServer/5/query` | JMA-Quake-Block `phi:31512` trägt `terms jp-public-data-license-1.0`; der ArcGIS-Arm selbst hat keinen Block | für den ArcGIS-Arm ungemessen; JMA-Terms nur für die JMA-Zeile | A nur wenn dieselbe Produktzeile belegt ist; sonst C | **C** — den JMA-Block nutzen, den ArcGIS-Zwilling nicht ohne eigene terms |
 | 5 | `exposome` | `exposome-explorer.iarc.fr/.../environmental_pollutants.csv.zip` | **declined** (`survey-2026-10-04-exposom-matrix.md:55`: Katalog, keine Konzentration) | kein Redistributionsrecht nötig — der Arm trägt die Messung nicht | B | **B** — bereits declined; kein Neubau |
-| 6 | `fugin` | `jvo.nao.ac.jp` (Skymap) | kein Block | terms ungemessen | C | **C** — ohne terms keine Manifestation; JVO-Zugang bleibt lokal |
+| 6 | `fugin` | `jvo.nao.ac.jp` (**NRO/FUGIN-CO-Würfel**, 3D-VRAD; nicht „Skymap") | kein Block; `fugin_skymap_compiler` steht | **kein Lizenztext** (2026-10-20 gemessen): JVO bittet um Zitierung, NAOJ-Copyright erlaubt nur die Free-Use-Scope (privat/Bildung/Nachricht), Weitergabe nicht | C | **C** — Zitierbitte ist keine Lizenz; kein Re-Host |
 | 7 | `hamqsl` | `hamqsl.com/solarxml.php` | kein Block | keine offene Lizenz gemessen | B + SWPC | **B** — SWPC ist US-PD und trägt dieselben Solar-Indizes |
 | 8 | `icrf3` | `datacenter.iers.org/.../icrf3sx.txt` + `icrf3k.txt` | kein Block | IERS-Terms nicht als SPDX gemessen; Produkte öffentlich | A nach terms; sonst C | **A** — IERS ist die autoritative Rahmenquelle; terms-URL nachtragen |
 | 9 | `ieeg` | `www.ieeg.org/services` (UPenn, Konto + User Agreement) | kein Block | research-only; keine Redistribution | C | **C** — klinische iEEG-Rohdaten bleiben lokal; kein CDN |
@@ -126,3 +126,29 @@ trug **kein Abfluss-Feld**. Der Arm `openmeteo_flood` (`bc58013db`) schließt si
 Das ist **nicht** die DHM-Stationsreihe — es ist dieselbe Größe an einem Punkt,
 keyless und redistribuierbar. `dhm_gauge` bleibt damit **C** (kein Re-Host der
 Stationsdaten), aber die Messlücke ist offen zugänglich geschlossen.
+
+## Nachtrag 2026-10-20 (3) — `fugin`: die Google-Zusammenfassung hält nicht
+
+Eine Fremdzusammenfassung („JVO Sky") behauptete, die JVO-Daten seien „in der Regel
+für Forschungs- und Bildungszwecke frei", es werde „lediglich eine Zitierung
+verlangt", und stützte das auf „offene Standards der IVOA". Nachgemessen an den
+Seiten (2026-10-20):
+
+| Quelle | Befund (wörtlich) |
+|---|---|
+| `jvo.nao.ac.jp/portal/nobeyama/fugin.do` | „the following acknowledgment would be appreciated: '[Part of] the data were retrieved from the JVO portal …'" — eine **Bitte um Zitierung**, keine Lizenz |
+| `nao.ac.jp/en/terms/` | „some websites and content are subject to different usage rules"; Copyright liegt bei NAOJ oder den jeweiligen Rechteinhabern |
+| `nao.ac.jp/en/terms/copyright.html` | Nutzung ohne Genehmigung **nur** „within the scope of free use granted under Japanese copyright law: private use, educational use, news reporting"; darüber hinaus „you must obtain permission from all copyright holders" |
+
+Drei Fehler der Zusammenfassung:
+
+1. **IVOA-Standards sind Interoperabilität, kein Datenrecht.** VOTable/SIA regeln
+   Formate und Protokolle, nicht die Weitergabe der Inhalte.
+2. **„frei für Forschung und Bildung" ist die japanische Free-Use-Scope** — privat,
+   Bildung, Berichterstattung. Ein CDN-Upload ist keine dieser drei Nutzungen.
+3. **Zitierbitte ≠ Lizenz.** Eine Acknowledgment-Bitte begründet kein
+   Redistributionsrecht; das Copyright bleibt bei NAOJ/NRO.
+
+**Ergebnis:** `fugin` bleibt **C** (off-CDN, kein Block). Kein Lizenz-Token auf
+JVO, NRO/FUGIN oder NAOJ. Der Arm ist damit nicht mehr „ungemessen" — er ist
+**gemessen ohne Weitergaberecht**.
