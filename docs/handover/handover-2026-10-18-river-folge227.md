@@ -2,7 +2,7 @@
   title: Handover — River-Folge 227 (2026-10-18)
   class: handover
   date: 2026-10-18
-  sha256: face06ac345e8b3870e4737d5ff3dcfeaaa39b4f6ae3d0df15f210aaeaf64485
+  sha256: 2c6608ec06ca51980acf32e4b65fe34bd1bf5eddc85cfe88a0d4a03e4189f22b
   status: live
 -->
 # River-226
@@ -16,7 +16,7 @@
 - **Trigger:** Rat R-2026-10-17-j (5/5 A)
 - **Lage:** pending (gemessen 2026-10-18) — Mountain-Zeile ist gesetzt (`state/mountain/2026-10-18-k-pending.φ`, Träger `phi:893`, `xfer:mountain.…9~3ed32602`); `phi/sources.φ` hat keine `K`-Skalarzeile (grep 0), die Grammatik trägt `pending` nur als coupling-Rate
 - **Blockade:** kein `∇p`, kein `B/j`, Ein-Satellit — die physikalische Impulsbilanz-Lücke; **nicht** die Mountain-Zeile
-- **Offen:** `K` selbst bleibt pending (kein `∇p`, kein `B/j`, Ein-Satellit); der TE-Indikator `TE(NVE→IVE | AE+Dst+Kp+LT+Radiallänge)` ist als eigener Punkt **gebaut und voll gemessen**: DE-2 300 s, 4 Bins, n=23200, 1981-08..1983-02 — **3/3 Lags pass** (300/600/900 s). Der frühere Ausfall (n=4413, 1981-08..1982-01) war die verkürzte HAPI-Orbit-Abdeckung, nicht die Konditionierung; SSCWeb liefert 1-min LT/Radiallänge für den vollen Span. **Falsifikationsbedingung:** F1 Einzelindex, F2 gemeinsam — beide nicht eingetreten. Riss: Kp im Register nur `last`-Live-Wert (`phi:1252`), Test liest `hour3h_kp` (WDC Kyoto, CC-BY-4.0) direkt; Radiallänge statt geodätischer Höhe (konstanter Offset, Binning-invariant). Beleg: `state/river/2026-10-18-k-te-kadenz.φ`, `docs/concepts/ion-neutral-vlies.md` (die Weberin-Frage: Fäden, Regime, K), `de2-conditional-te.yml` (Commits `764c5ca2f`, `f2c241df5`, `3b7971533`, `d27791a38`, `f50fe788e`, `3735192ce`)
+- **Offen:** `K` selbst bleibt pending (kein `∇p`, kein `B/j`, Ein-Satellit); der TE-Indikator `TE(NVE→IVE | AE+Dst+Kp+LT+Radiallänge)` ist als eigener Punkt **gebaut und voll gemessen**: DE-2 300 s, 4 Bins, n=23200, 1981-08..1983-02 — **3/3 Lags pass** (300/600/900 s). Der frühere Ausfall (n=4413, 1981-08..1982-01) war die verkürzte HAPI-Orbit-Abdeckung, nicht die Konditionierung; SSCWeb liefert 1-min LT/Radiallänge für den vollen Span. **Falsifikationsbedingung:** F1 Einzelindex, F2 gemeinsam — beide nicht eingetreten. Riss: Kp im Register nur `last`-Live-Wert (`phi:1252`), Test liest `hour3h_kp` (WDC Kyoto, CC-BY-4.0) direkt; Radiallänge statt geodätischer Höhe (konstanter Offset, Binning-invariant). Beleg: `docs/surveys/survey-2026-10-18-k-te-kadenz.md`, `docs/concepts/ion-neutral-vlies.md` (die Weberin-Frage: Fäden, Regime, K), `de2-conditional-te.yml` (Commits `764c5ca2f`, `f2c241df5`, `3b7971533`, `d27791a38`, `f50fe788e`, `3735192ce`)
 - **Braucht:** `state/stimmen/2026-10-17-rat-k-identifizierbar.md:1`
 
 ### Rätsel
@@ -32,7 +32,7 @@
 - **Trigger:** 2026-11-01
 - **Lage:** offen (gemessen 2026-10-18)
 - **Blockade:** Termin
-- **Braucht:** `state/river/2026-10-18-flyby-sealed-pin.φ:1`; am 2026-11-01 `flyby_ephemeris_gate --recon <esoc.bin> --sigma-recon <km>`
+- **Braucht:** `docs/blatt/blatt-2026-10-18-flyby-sealed-pin.md`; am 2026-11-01 `flyby_ephemeris_gate --recon <esoc.bin> --sigma-recon <km>`
 
 ## An mycelium
 Origin: river-226

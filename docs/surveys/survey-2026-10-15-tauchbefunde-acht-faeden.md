@@ -167,7 +167,7 @@ field e2 kids_dr4_wl_e2 <kernel> <force> 1 31536000 0.0 0.0
 `field e2 …`. Der FITS-Subset-Leser steht (`src/archivar/fits_range.rs`, `17279769e`); die
 CDN-Naht trägt `sha256 dcc2bf03…`. Offen bleibt nur der 16,5-GiB-Vollzug im Content-Cache —
 kein fehlender field-Arm mehr.
-Offen: nichts am Keyword — entschieden 2026-10-18 (River, `state/river/2026-10-18-force-keyword-entscheid.φ`):
+Offen: nichts am Keyword — entschieden 2026-10-18 (River, `docs/blatt/blatt-2026-10-18-force-keyword.md`):
 `force gravity` · `kernel inverse-square` · Einheit `1` (nie `scalar`). Grund: e1/e2 sind die
 transversale zweite Ableitung des Linsenpotentials (Poisson `∇²ψ = 2κ`); `inverse-linear` wäre das
 Ablenkungsgesetz (γ ∝ θ⁻¹, SIS), nicht das Feldgesetz; `em` wäre die Strahlungsgröße, nicht die Form.

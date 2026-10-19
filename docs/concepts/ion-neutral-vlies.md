@@ -33,7 +33,7 @@ gemeinsam konditioniert auf `AE + Dst + Kp + Lokalzeit + Radiallänge`
   HAPI-Orbit-Abdeckung. Mit SSCWeb (1-min `RadialLength` + `LocalTime`,
   19 Monate) dreht das Ergebnis. Der Unterschied ist Abdeckung, nicht Physik.
 
-Belege: `state/river/2026-10-18-k-te-kadenz.φ`, Lauf `39153554786`,
+Belege: `docs/surveys/survey-2026-10-18-k-te-kadenz.md`, Lauf `39153554786`,
 `de2-conditional-te.yml`, `de2_ssc_orbit.rs`.
 
 ## Der Riss
@@ -148,7 +148,7 @@ keiner verdeckt den anderen.
   Richtung kann sich mit der Breite umdrehen. Trennung nach Breite/MLT fehlt.
 - **Offen:** Mond — der Faden ist gebaut (`--cond lunar`: SSCWeb-Lat/Lon im Orbit-CSV,
   Gezeitenpotenzial gegen `ephemeris_moon.bin`/`ephemeris_earth.bin`), aber noch nicht
-  gefahren. Beleg: `state/river/2026-10-18-mond-faden.φ`.
+  gefahren. Beleg: `docs/surveys/survey-2026-10-18-mond-faden.md`.
 - **Offen:** Sonnenwind — der L1→Magnetopause-Versatz ist berechenbar, aber nicht
   angewandt (TDB-Alignment fehlt).
 - **Offen:** K — die Kraftfrage ist nicht beantwortet und wird durch TE nicht
@@ -167,7 +167,7 @@ keiner verdeckt den anderen.
 - Tan et al. 2024, `10.1029/2024JA032497`; Ham et al. 2026,
   `10.1029/2025JA034796`.
 - Rat 2026-10-17: `state/stimmen/2026-10-17-rat-de2-ion-neutral.md`.
-- Messung: `state/river/2026-10-18-k-te-kadenz.φ`,
+- Messung: `docs/surveys/survey-2026-10-18-k-te-kadenz.md`,
   `docs/handover/handover-2026-10-18-river-folge227.md`.
 - Werkzeug: `tools/measure/src/bin/de2_conditional_te.rs`,
   `tools/measure/src/bin/de2_ssc_orbit.rs`,
