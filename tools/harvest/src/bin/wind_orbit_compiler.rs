@@ -353,13 +353,17 @@ fn parse_horizons(text: &str) -> Vec<(f64, [f64; 3], [f64; 3])> {
         if cols.len() < 8 {
             continue;
         }
-        let jdt: f64 = cols[0].trim().parse().ok().unwrap_or(f64::NAN);
-        let x: f64 = cols[2].trim().parse().ok().unwrap_or(f64::NAN);
-        let y: f64 = cols[3].trim().parse().ok().unwrap_or(f64::NAN);
-        let z: f64 = cols[4].trim().parse().ok().unwrap_or(f64::NAN);
-        let vx: f64 = cols[5].trim().parse().ok().unwrap_or(f64::NAN);
-        let vy: f64 = cols[6].trim().parse().ok().unwrap_or(f64::NAN);
-        let vz: f64 = cols[7].trim().parse().ok().unwrap_or(f64::NAN);
+        let (Ok(jdt), Ok(x), Ok(y), Ok(z), Ok(vx), Ok(vy), Ok(vz)) = (
+            cols[0].trim().parse::<f64>(),
+            cols[2].trim().parse::<f64>(),
+            cols[3].trim().parse::<f64>(),
+            cols[4].trim().parse::<f64>(),
+            cols[5].trim().parse::<f64>(),
+            cols[6].trim().parse::<f64>(),
+            cols[7].trim().parse::<f64>(),
+        ) else {
+            continue;
+        };
         let t_tdb = (jdt - J2000_JD) * 86400.0;
         if !t_tdb.is_finite()
             || [x, y, z, vx, vy, vz]
