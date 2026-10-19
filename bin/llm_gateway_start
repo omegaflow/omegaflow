@@ -1,0 +1,113 @@
+#!/bin/bash
+# llm_gateway_start — das Gateway starten, neu starten, prüfen. Genau ein Weg.
+#
+# Warum: am 2026-10-18 lief `./target/debug/llm_gateway` von Hand gestartet 18 h
+# — Katalog und Alive-Liste eingefroren, der Schwarm hätte gegen uralte Daten
+# gefahren. Das Skript nimmt die Entscheidung aus der Hand: immer Release-Build,
+# immer Profil geprüft, immer eine PID-Datei, immer Log.
+#
+# Usage:
+#   bin/llm_gateway_start            neu starten (alten Prozess beenden, dann neu bauen und starten)
+#   bin/llm_gateway_start status     läuft er? welches Binary? wie alt ist der Katalog?
+#   bin/llm_gateway_start stop       beenden
+#   bin/llm_gateway_start --no-build starten ohne cargo build
+#
+# Exit 0 nur, wenn der Endpunkt nach dem Start auf 127.0.0.1:$PORT antwortet.
+set -u
+
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$REPO" || exit 1
+PORT="${OMEGAFLOW_GATEWAY_PORT:-1621}"
+RUN="$REPO/state/zustand/gateway"
+PIDF="$RUN/llm_gateway.pid"
+LOG="$RUN/llm_gateway.log"
+BIN="$REPO/target/release/llm_gateway"
+CATALOG="$REPO/state/zustand/llm-gateway-models.tsv"
+
+stamp() { date '+%Y-%m-%dT%H:%M:%S%z'; }
+say() { printf 'llm_gateway_start: %s\n' "$*"; }
+
+running_pid() {
+  # PID-Datei zuerst; sonst den Listener am Port (fremd gestartete Altlast).
+  if [ -f "$PIDF" ]; then
+    local p; p="$(cat "$PIDF" 2>/dev/null)"
+    [ -n "$p" ] && kill -0 "$p" 2>/dev/null && { echo "$p"; return; }
+  fi
+  local p; p="$(ss -ltnp 2>/dev/null | awk -v port=":$PORT" '$4 ~ port {print $0}' | grep -oE 'pid=[0-9]+' | head -1 | cut -d= -f2)"
+  [ -n "$p" ] && echo "$p"
+}
+
+profile_of() {
+  # Geprüft am Binary: ein Release-Schnitt ohne .debug_info. Debug-Builds tragen ihn.
+  local b="$1"
+  [ -x "$b" ] || { echo 'fehlt'; return; }
+  if readelf -S "$b" 2>/dev/null | grep -q '\.debug_info'; then echo 'DEBUG (mit .debug_info)'; else echo 'release (ohne .debug_info)'; fi
+}
+
+cmd_status() {
+  local pid; pid="$(running_pid)"
+  if [ -z "$pid" ]; then
+    say "läuft nicht (Port $PORT frei)"; return 1
+  fi
+  local exe; exe="$(readlink -f "/proc/$pid/exe" 2>/dev/null || echo '?')"
+  say "PID $pid · seit $(ps -o lstart= -p "$pid" 2>/dev/null | sed 's/^ *//') · Laufzeit $(ps -o etime= -p "$pid" 2>/dev/null | tr -d ' ')"
+  say "Binary: $exe · Profil: $(profile_of "$exe")"
+  [ -f "$CATALOG" ] && say "Katalog: $(basename "$CATALOG") · $(stat -c %y "$CATALOG" | cut -d. -f1) · $(( ( $(date +%s) - $(stat -c %Y "$CATALOG") ) / 3600 ))h alt"
+  say "Alive: $(tail -n +2 state/zustand/llm-gateway-alive.tsv 2>/dev/null | wc -l) Sitze"
+  return 0
+}
+
+cmd_stop() {
+  local pid; pid="$(running_pid)"
+  if [ -z "$pid" ]; then say "nichts zu beenden"; rm -f "$PIDF"; return 0; fi
+  kill "$pid" 2>/dev/null
+  for _ in $(seq 1 50); do kill -0 "$pid" 2>/dev/null || break; sleep 0.2; done
+  if kill -0 "$pid" 2>/dev/null; then kill -9 "$pid" 2>/dev/null; sleep 0.5; fi
+  rm -f "$PIDF"
+  say "beendet (PID $pid)"
+}
+
+cmd_start() {
+  local build=1
+  [ "${1:-}" = "--no-build" ] && build=0
+  mkdir -p "$RUN"
+
+  cmd_stop
+
+  if [ "$build" -eq 1 ]; then
+    say "baue Release (omegaflow-service llm_gateway) …"
+    if ! cargo build --release -p omegaflow-service --bin llm_gateway >>"$LOG" 2>&1; then
+      say "BUILD FEHLGESCHLAGEN — siehe $LOG"; return 2
+    fi
+  fi
+
+  local prof; prof="$(profile_of "$BIN")"
+  case "$prof" in
+    release*) ;;
+    *) say "ABBRUCH: $BIN ist $prof — kein Release-Binary"; return 3;;
+  esac
+
+  nohup "$BIN" >>"$LOG" 2>&1 &
+  local pid=$!
+  echo "$pid" >"$PIDF"
+  say "gestartet: PID $pid · $prof · Port $PORT"
+
+  for _ in $(seq 1 60); do
+    if ss -ltn 2>/dev/null | grep -q ":$PORT "; then
+      printf '{"model":"x","messages":[{"role":"user","content":"ping"}]}' \
+        | curl -s -o /dev/null -w '' --max-time 5 "http://127.0.0.1:$PORT/v1/chat/completions"
+      say "listen auf 127.0.0.1:$PORT · Katalog $( [ -f "$CATALOG" ] && echo "$(( ( $(date +%s) - $(stat -c %Y "$CATALOG") ) / 60 )) min alt" || echo 'fehlt')"
+      return 0
+    fi
+    kill -0 "$pid" 2>/dev/null || { say "Prozess starb beim Start — siehe $LOG"; return 4; }
+    sleep 0.5
+  done
+  say "Timeout: Port $PORT nicht offen — siehe $LOG"; return 5
+}
+
+case "${1:-start}" in
+  status) cmd_status;;
+  stop) cmd_stop;;
+  start|--no-build) cmd_start "$@";;
+  *) say "unbekannt: $1 (status|stop|start|--no-build)"; exit 2;;
+esac
