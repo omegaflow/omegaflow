@@ -285,7 +285,7 @@ struct LeadsSummary {
     prose: u64,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Mode {
     Plain,
     Leads,
@@ -309,6 +309,178 @@ enum Mode {
     Net(&'static str),
 }
 
+fn flag_mode(arg: &str) -> Option<Mode> {
+    match arg {
+        "--leads" => Some(Mode::Leads),
+        "--index" => Some(Mode::Index),
+        "--git" => Some(Mode::Git),
+        "--all" => Some(Mode::Net("all")),
+        "--stats" => Some(Mode::Stats),
+        "--arxiv" => Some(Mode::Net("arxiv")),
+        "--ads" => Some(Mode::Net("ads")),
+        "--ntrs" => Some(Mode::Net("ntrs")),
+        "--wayback" => Some(Mode::Net("wayback")),
+        "--cc" => Some(Mode::Net("cc")),
+        "--wayback-available" => Some(Mode::Net("wayback-available")),
+        "--wayback-timemap" => Some(Mode::Net("wayback-timemap")),
+        "--crossref" => Some(Mode::Net("crossref")),
+        "--wiki" => Some(Mode::Net("wiki")),
+        "--duckduckgo-instant" => Some(Mode::Net("duckduckgo-instant")),
+        "--github" => Some(Mode::Net("github")),
+        "--crates" => Some(Mode::Net("crates")),
+        "--brave" => Some(Mode::Net("brave")),
+        "--mwmbl" => Some(Mode::Net("mwmbl")),
+        "--marginalia" => Some(Mode::Net("marginalia")),
+        "--searxng" => Some(Mode::Net("searxng")),
+        "--tavily" => Some(Mode::Net("tavily")),
+        "--exa" => Some(Mode::Net("exa")),
+        "--consensus" => Some(Mode::Consensus),
+        "--lasair" => Some(Mode::Lasair),
+        "--perplexity" => Some(Mode::Perplexity),
+        "--lpf" => Some(Mode::Lpf),
+        "--linkup" => Some(Mode::Net("linkup")),
+        "--serper" => Some(Mode::Net("serper")),
+        "--firecrawl" => Some(Mode::Net("firecrawl")),
+        "--searchapi" => Some(Mode::Net("searchapi")),
+        "--serpapi" => Some(Mode::Net("serpapi")),
+        "--oeis" => Some(Mode::Net("oeis")),
+        "--hal" => Some(Mode::Net("hal")),
+        "--wiby" => Some(Mode::Net("wiby")),
+        "--ia-search" => Some(Mode::Net("ia-search")),
+        "--ngmdb" => Some(Mode::Net("ngmdb")),
+        "--rss-bridge" => Some(Mode::Net("rss-bridge")),
+        "--kiwix" => Some(Mode::Net("kiwix")),
+        "--scrape" => Some(Mode::Net("scrape")),
+        "--shodan" => Some(Mode::Net("shodan")),
+        "--opencellid" => Some(Mode::Net("opencellid")),
+        "--gfw" => Some(Mode::Net("gfw")),
+        "--oapen" => Some(Mode::Net("oapen")),
+        "--regtap" => Some(Mode::Net("regtap")),
+        "--apis" => Some(Mode::Net("apis")),
+        "--datacite" => Some(Mode::Net("datacite")),
+        "--sniff" => Some(Mode::Net("sniff")),
+        "--zenodo" => Some(Mode::Net("zenodo")),
+        "--isc" => Some(Mode::Net("isc")),
+        "--base" => Some(Mode::Net("base")),
+        "--openalex" => Some(Mode::Net("openalex")),
+        "--pubmed" => Some(Mode::Net("pubmed")),
+        "--europepmc" => Some(Mode::Net("europepmc")),
+        "--psychporta" => Some(Mode::Net("psychporta")),
+        "--awmf" => Some(Mode::Net("awmf")),
+        "--cochrane" => Some(Mode::Net("cochrane")),
+        "--cod" => Some(Mode::Net("cod")),
+        "--biomodels" => Some(Mode::Net("biomodels")),
+        "--core" => Some(Mode::Net("core")),
+        "--materialsproject" => Some(Mode::Net("materialsproject")),
+        "--semanticscholar" => Some(Mode::Net("semanticscholar")),
+        "--clinicaltrials" => Some(Mode::Net("clinicaltrials")),
+        "--openfda" => Some(Mode::Net("openfda")),
+        "--pubchem" => Some(Mode::Net("pubchem")),
+        "--uniprot" => Some(Mode::Net("uniprot")),
+        "--pdb" => Some(Mode::Net("pdb")),
+        "--chembl" => Some(Mode::Net("chembl")),
+        "--ensembl" => Some(Mode::Net("ensembl")),
+        "--entrez" => Some(Mode::Net("entrez")),
+        "--ena" => Some(Mode::Net("ena")),
+        "--doaj" => Some(Mode::Net("doaj")),
+        "--osf" => Some(Mode::Net("osf")),
+        "--openlibrary" => Some(Mode::Net("openlibrary")),
+        "--stackexchange" => Some(Mode::Net("stackexchange")),
+        "--sourcegraph" => Some(Mode::Net("sourcegraph")),
+        "--gemini" => Some(Mode::Net("gemini")),
+        "--wikidata" => Some(Mode::Net("wikidata")),
+        "--googlecse" => Some(Mode::Net("googlecse")),
+        "--ckan" => Some(Mode::Net("ckan")),
+        "--cmr" => Some(Mode::Net("cmr")),
+        "--dataeuropa" => Some(Mode::Net("dataeuropa")),
+        "--opensn" => Some(Mode::Net("opensn")),
+        "--tap" => Some(Mode::Net("tap")),
+        "--pangaea" => Some(Mode::Net("pangaea")),
+        "--re3data" => Some(Mode::Net("re3data")),
+        "--seanoe" => Some(Mode::Net("seanoe")),
+        "--arcgis" => Some(Mode::Net("arcgis")),
+        "--dataverse" => Some(Mode::Net("dataverse")),
+        "--sparql" => Some(Mode::Net("sparql")),
+        "--copernicus" => Some(Mode::Net("copernicus")),
+        "--vires" => Some(Mode::Net("vires")),
+        "--oai-pmh" => Some(Mode::Net("oai-pmh")),
+        "--stac" => Some(Mode::Net("stac")),
+        "--erddap" => Some(Mode::Net("erddap")),
+        "--openaire" => Some(Mode::Net("openaire")),
+        "--figshare" => Some(Mode::Net("figshare")),
+        "--simbad" => Some(Mode::Net("simbad")),
+        "--vizier" => Some(Mode::Net("vizier")),
+        "--exoplanet-archive" => Some(Mode::Net("exoplanet-archive")),
+        "--ned" => Some(Mode::Net("ned")),
+        "--mast" => Some(Mode::Net("mast")),
+        "--gaia" => Some(Mode::Net("gaia")),
+        "--horizons" => Some(Mode::Net("horizons")),
+        "--overpass" => Some(Mode::Net("overpass")),
+        "--nominatim" => Some(Mode::Net("nominatim")),
+        "--open-meteo" => Some(Mode::Net("open-meteo")),
+        "--gbif" => Some(Mode::Net("gbif")),
+        "--fdsn" => Some(Mode::Net("fdsn")),
+        "--dataone" => Some(Mode::Net("dataone")),
+        "--huggingface" => Some(Mode::Net("huggingface")),
+        "--dblp" => Some(Mode::Net("dblp")),
+        "--orcid" => Some(Mode::Net("orcid")),
+        "--ror" => Some(Mode::Net("ror")),
+        "--opencitations" => Some(Mode::Net("opencitations")),
+        "--grepapp" => Some(Mode::Net("grepapp")),
+        "--scholexplorer" => Some(Mode::Net("scholexplorer")),
+        "--mendeley" => Some(Mode::Net("mendeley")),
+        "--usgs" => Some(Mode::Net("usgs")),
+        "--scopus" => Some(Mode::Net("scopus")),
+        "--geonames" => Some(Mode::Net("geonames")),
+        "--dryad" => Some(Mode::Net("dryad")),
+        "--frbcat" => Some(Mode::Net("frbcat")),
+        "--go" => Some(Mode::Net("go")),
+        "--unpaywall" => Some(Mode::Net("unpaywall")),
+        "--reactome" => Some(Mode::Net("reactome")),
+        "--interpro" => Some(Mode::Net("interpro")),
+        "--alphafold" => Some(Mode::Net("alphafold")),
+        "--alphaxiv" => Some(Mode::Net("alphaxiv")),
+        "--alphaxiv-researchers" => Some(Mode::Net("alphaxiv-researchers")),
+        "--alphaxiv-tools" => Some(Mode::Net("alphaxiv-tools")),
+        "--alphaxiv-call" => Some(Mode::Net("alphaxiv-call")),
+        "--supermag" => Some(Mode::Net("supermag")),
+        "--heasarc" => Some(Mode::Net("heasarc")),
+        "--nssdc" => Some(Mode::Net("nssdc")),
+        "--nssdca" => Some(Mode::Net("nssdca")),
+        "--nssdc-auth" => Some(Mode::Net("nssdc-auth")),
+        "--ssdc-auth" => Some(Mode::Net("ssdc-auth")),
+        "--gosat" => Some(Mode::Gosat),
+        _ => None,
+    }
+}
+
+impl Mode {
+    fn label(self) -> &'static str {
+        match self {
+            Mode::Plain => "plain",
+            Mode::Leads => "leads",
+            Mode::Mft => "mft",
+            Mode::Index => "index",
+            Mode::Serve => "serve",
+            Mode::Git => "git",
+            Mode::Verdict => "verdict",
+            Mode::Jina => "jina",
+            Mode::Playwright => "playwright",
+            Mode::PdfImage => "pdf-image",
+            Mode::PdfText => "pdf-text",
+            Mode::ArxivSrc => "arxiv-src",
+            Mode::Oai => "arxiv-oai",
+            Mode::Consensus => "consensus",
+            Mode::Lasair => "lasair",
+            Mode::Perplexity => "perplexity",
+            Mode::Lpf => "lpf",
+            Mode::Gosat => "gosat",
+            Mode::Stats => "stats",
+            Mode::Net(name) => name,
+        }
+    }
+}
+
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let mut roots: Vec<String> = Vec::new();
@@ -322,7 +494,7 @@ fn main() {
     let mut kind = index::Kind::Any;
     let mut sort = index::Sort::Name;
     let mut keywords: Vec<String> = Vec::new();
-    let mut mode = Mode::Plain;
+    let mut modes: Vec<Mode> = Vec::new();
     let mut mft_path: Option<String> = None;
     let mut serve_addr: Option<String> = None;
     let mut verdict_url: Option<String> = None;
@@ -342,10 +514,8 @@ fn main() {
     let mut i = 0;
     while i < args.len() {
         match args[i].as_str() {
-            "--leads" => mode = Mode::Leads,
-            "--index" => mode = Mode::Index,
             "--serve" => {
-                mode = Mode::Serve;
+                modes.push(Mode::Serve);
                 if let Some(a) = args.get(i + 1) {
                     if a.contains(':') && !a.starts_with('-') {
                         serve_addr = Some(a.clone());
@@ -353,27 +523,26 @@ fn main() {
                     }
                 }
             }
-            "--git" => mode = Mode::Git,
             "--mft" => {
                 i += 1;
                 if let Some(p) = args.get(i) {
                     mft_path = Some(p.clone());
                 }
-                mode = Mode::Mft;
+                modes.push(Mode::Mft);
             }
             "--verdict" => {
                 i += 1;
                 if let Some(u) = args.get(i) {
                     verdict_url = Some(u.clone());
                 }
-                mode = Mode::Verdict;
+                modes.push(Mode::Verdict);
             }
             "--jina" => {
                 i += 1;
                 if let Some(u) = args.get(i) {
                     jina_input = Some(u.clone());
                 }
-                mode = Mode::Jina;
+                modes.push(Mode::Jina);
             }
             "--cacert" => {
                 i += 1;
@@ -386,28 +555,28 @@ fn main() {
                 if let Some(u) = args.get(i) {
                     playwright_input = Some(u.clone());
                 }
-                mode = Mode::Playwright;
+                modes.push(Mode::Playwright);
             }
             "--pdf-image" => {
                 i += 1;
                 if let Some(p) = args.get(i) {
                     pdf_input = Some(p.clone());
                 }
-                mode = Mode::PdfImage;
+                modes.push(Mode::PdfImage);
             }
             "--pdf-text" => {
                 i += 1;
                 if let Some(p) = args.get(i) {
                     pdf_input = Some(p.clone());
                 }
-                mode = Mode::PdfText;
+                modes.push(Mode::PdfText);
             }
             "--arxiv-src" => {
                 i += 1;
                 if let Some(p) = args.get(i) {
                     arxiv_input = Some(p.clone());
                 }
-                mode = Mode::ArxivSrc;
+                modes.push(Mode::ArxivSrc);
             }
             "--out" => {
                 i += 1;
@@ -416,17 +585,14 @@ fn main() {
                 }
             }
             "--headed" => headed = true,
-            "--all" => mode = Mode::Net("all"),
             "--stop" => {
                 i += 1;
                 if let Some(n) = args.get(i).and_then(|s| s.parse().ok()) {
                     net::set_all_stop(n);
                 }
             }
-            "--stats" => mode = Mode::Stats,
-            "--arxiv" => mode = Mode::Net("arxiv"),
             "--arxiv-oai" => {
-                mode = Mode::Oai;
+                modes.push(Mode::Oai);
                 if let Some(a) = args.get(i + 1) {
                     if !a.starts_with('-') {
                         oai_input = Some(a.clone());
@@ -440,139 +606,6 @@ fn main() {
                     oai_pages = Some(n);
                 }
             }
-            "--ads" => mode = Mode::Net("ads"),
-            "--ntrs" => mode = Mode::Net("ntrs"),
-            "--wayback" => mode = Mode::Net("wayback"),
-            "--cc" => mode = Mode::Net("cc"),
-            "--wayback-available" => mode = Mode::Net("wayback-available"),
-            "--wayback-timemap" => mode = Mode::Net("wayback-timemap"),
-            "--crossref" => mode = Mode::Net("crossref"),
-            "--wiki" => mode = Mode::Net("wiki"),
-            "--duckduckgo-instant" => mode = Mode::Net("duckduckgo-instant"),
-            "--github" => mode = Mode::Net("github"),
-            "--crates" => mode = Mode::Net("crates"),
-            "--brave" => mode = Mode::Net("brave"),
-            "--mwmbl" => mode = Mode::Net("mwmbl"),
-            "--marginalia" => mode = Mode::Net("marginalia"),
-            "--searxng" => mode = Mode::Net("searxng"),
-            "--tavily" => mode = Mode::Net("tavily"),
-            "--exa" => mode = Mode::Net("exa"),
-            "--consensus" => mode = Mode::Consensus,
-            "--lasair" => mode = Mode::Lasair,
-            "--perplexity" => mode = Mode::Perplexity,
-            "--lpf" => mode = Mode::Lpf,
-            "--linkup" => mode = Mode::Net("linkup"),
-            "--serper" => mode = Mode::Net("serper"),
-            "--firecrawl" => mode = Mode::Net("firecrawl"),
-            "--searchapi" => mode = Mode::Net("searchapi"),
-            "--serpapi" => mode = Mode::Net("serpapi"),
-            "--oeis" => mode = Mode::Net("oeis"),
-            "--hal" => mode = Mode::Net("hal"),
-            "--wiby" => mode = Mode::Net("wiby"),
-            "--ia-search" => mode = Mode::Net("ia-search"),
-            "--ngmdb" => mode = Mode::Net("ngmdb"),
-            "--rss-bridge" => mode = Mode::Net("rss-bridge"),
-            "--kiwix" => mode = Mode::Net("kiwix"),
-            "--scrape" => mode = Mode::Net("scrape"),
-            "--shodan" => mode = Mode::Net("shodan"),
-            "--opencellid" => mode = Mode::Net("opencellid"),
-            "--gfw" => mode = Mode::Net("gfw"),
-            "--oapen" => mode = Mode::Net("oapen"),
-            "--regtap" => mode = Mode::Net("regtap"),
-            "--apis" => mode = Mode::Net("apis"),
-            "--datacite" => mode = Mode::Net("datacite"),
-            "--sniff" => mode = Mode::Net("sniff"),
-            "--zenodo" => mode = Mode::Net("zenodo"),
-            "--isc" => mode = Mode::Net("isc"),
-            "--base" => mode = Mode::Net("base"),
-            "--openalex" => mode = Mode::Net("openalex"),
-            "--pubmed" => mode = Mode::Net("pubmed"),
-            "--europepmc" => mode = Mode::Net("europepmc"),
-            "--psychporta" => mode = Mode::Net("psychporta"),
-            "--awmf" => mode = Mode::Net("awmf"),
-            "--cochrane" => mode = Mode::Net("cochrane"),
-            "--cod" => mode = Mode::Net("cod"),
-            "--biomodels" => mode = Mode::Net("biomodels"),
-            "--core" => mode = Mode::Net("core"),
-            "--materialsproject" => mode = Mode::Net("materialsproject"),
-            "--semanticscholar" => mode = Mode::Net("semanticscholar"),
-            "--clinicaltrials" => mode = Mode::Net("clinicaltrials"),
-            "--openfda" => mode = Mode::Net("openfda"),
-            "--pubchem" => mode = Mode::Net("pubchem"),
-            "--uniprot" => mode = Mode::Net("uniprot"),
-            "--pdb" => mode = Mode::Net("pdb"),
-            "--chembl" => mode = Mode::Net("chembl"),
-            "--ensembl" => mode = Mode::Net("ensembl"),
-            "--entrez" => mode = Mode::Net("entrez"),
-            "--ena" => mode = Mode::Net("ena"),
-            "--doaj" => mode = Mode::Net("doaj"),
-            "--osf" => mode = Mode::Net("osf"),
-            "--openlibrary" => mode = Mode::Net("openlibrary"),
-            "--stackexchange" => mode = Mode::Net("stackexchange"),
-            "--sourcegraph" => mode = Mode::Net("sourcegraph"),
-            "--gemini" => mode = Mode::Net("gemini"),
-            "--wikidata" => mode = Mode::Net("wikidata"),
-            "--googlecse" => mode = Mode::Net("googlecse"),
-            "--ckan" => mode = Mode::Net("ckan"),
-            "--cmr" => mode = Mode::Net("cmr"),
-            "--dataeuropa" => mode = Mode::Net("dataeuropa"),
-            "--opensn" => mode = Mode::Net("opensn"),
-            "--tap" => mode = Mode::Net("tap"),
-            "--pangaea" => mode = Mode::Net("pangaea"),
-            "--re3data" => mode = Mode::Net("re3data"),
-            "--seanoe" => mode = Mode::Net("seanoe"),
-            "--arcgis" => mode = Mode::Net("arcgis"),
-            "--dataverse" => mode = Mode::Net("dataverse"),
-            "--sparql" => mode = Mode::Net("sparql"),
-            "--copernicus" => mode = Mode::Net("copernicus"),
-            "--vires" => mode = Mode::Net("vires"),
-            "--oai-pmh" => mode = Mode::Net("oai-pmh"),
-            "--stac" => mode = Mode::Net("stac"),
-            "--erddap" => mode = Mode::Net("erddap"),
-            "--openaire" => mode = Mode::Net("openaire"),
-            "--figshare" => mode = Mode::Net("figshare"),
-            "--simbad" => mode = Mode::Net("simbad"),
-            "--vizier" => mode = Mode::Net("vizier"),
-            "--exoplanet-archive" => mode = Mode::Net("exoplanet-archive"),
-            "--ned" => mode = Mode::Net("ned"),
-            "--mast" => mode = Mode::Net("mast"),
-            "--gaia" => mode = Mode::Net("gaia"),
-            "--horizons" => mode = Mode::Net("horizons"),
-            "--overpass" => mode = Mode::Net("overpass"),
-            "--nominatim" => mode = Mode::Net("nominatim"),
-            "--open-meteo" => mode = Mode::Net("open-meteo"),
-            "--gbif" => mode = Mode::Net("gbif"),
-            "--fdsn" => mode = Mode::Net("fdsn"),
-            "--dataone" => mode = Mode::Net("dataone"),
-            "--huggingface" => mode = Mode::Net("huggingface"),
-            "--dblp" => mode = Mode::Net("dblp"),
-            "--orcid" => mode = Mode::Net("orcid"),
-            "--ror" => mode = Mode::Net("ror"),
-            "--opencitations" => mode = Mode::Net("opencitations"),
-            "--grepapp" => mode = Mode::Net("grepapp"),
-            "--scholexplorer" => mode = Mode::Net("scholexplorer"),
-            "--mendeley" => mode = Mode::Net("mendeley"),
-            "--usgs" => mode = Mode::Net("usgs"),
-            "--scopus" => mode = Mode::Net("scopus"),
-            "--geonames" => mode = Mode::Net("geonames"),
-            "--dryad" => mode = Mode::Net("dryad"),
-            "--frbcat" => mode = Mode::Net("frbcat"),
-            "--go" => mode = Mode::Net("go"),
-            "--unpaywall" => mode = Mode::Net("unpaywall"),
-            "--reactome" => mode = Mode::Net("reactome"),
-            "--interpro" => mode = Mode::Net("interpro"),
-            "--alphafold" => mode = Mode::Net("alphafold"),
-            "--alphaxiv" => mode = Mode::Net("alphaxiv"),
-            "--alphaxiv-researchers" => mode = Mode::Net("alphaxiv-researchers"),
-            "--alphaxiv-tools" => mode = Mode::Net("alphaxiv-tools"),
-            "--alphaxiv-call" => mode = Mode::Net("alphaxiv-call"),
-            "--supermag" => mode = Mode::Net("supermag"),
-            "--heasarc" => mode = Mode::Net("heasarc"),
-            "--nssdc" => mode = Mode::Net("nssdc"),
-            "--nssdca" => mode = Mode::Net("nssdca"),
-            "--nssdc-auth" => mode = Mode::Net("nssdc-auth"),
-            "--ssdc-auth" => mode = Mode::Net("ssdc-auth"),
-            "--gosat" => mode = Mode::Gosat,
             "--kind" => {
                 i += 1;
                 if let Some(v) = args.get(i) {
@@ -645,48 +678,73 @@ fn main() {
                 std::process::exit(0);
             }
             other => {
-                if other.starts_with('-') {
+                if let Some(m) = flag_mode(other) {
+                    modes.push(m);
+                } else if other.starts_with('-') {
                     eprintln!("archive_search: unknown option {other}");
                     usage();
                     std::process::exit(2);
+                } else {
+                    keywords.push(other.to_string());
                 }
-                keywords.push(other.to_string());
             }
         }
         i += 1;
     }
 
-    match mode {
-        Mode::Plain => {
-            if keywords.is_empty() {
-                if std::io::stdin().is_terminal() {
-                    usage();
-                    std::process::exit(2);
-                }
-                let stdin = std::io::stdin();
-                let mut reader = stdin.lock();
-                let mut line = String::new();
-                loop {
-                    line.clear();
-                    let n = match reader.read_line(&mut line) {
-                        Ok(n) => n,
-                        Err(e) => {
-                            eprintln!("archive_search: stdin read ends: {e}");
+    if modes.is_empty() {
+        modes.push(Mode::Plain);
+    }
+    let multi = modes.len() > 1;
+    for mode in modes {
+        if multi {
+            out!("=== archive_search --{} ===", mode.label());
+        }
+        match mode {
+            Mode::Plain => {
+                if keywords.is_empty() {
+                    if std::io::stdin().is_terminal() {
+                        usage();
+                        std::process::exit(2);
+                    }
+                    let stdin = std::io::stdin();
+                    let mut reader = stdin.lock();
+                    let mut line = String::new();
+                    loop {
+                        line.clear();
+                        let n = match reader.read_line(&mut line) {
+                            Ok(n) => n,
+                            Err(e) => {
+                                eprintln!("archive_search: stdin read ends: {e}");
+                                break;
+                            }
+                        };
+                        if n == 0 {
                             break;
                         }
-                    };
-                    if n == 0 {
-                        break;
+                        let query = line.trim();
+                        if query.is_empty() {
+                            continue;
+                        }
+                        let kws: Vec<String> =
+                            query.split_whitespace().map(|s| s.to_string()).collect();
+                        run_plain(
+                            &roots,
+                            &kws,
+                            lines_per_file,
+                            max_files,
+                            max_mb,
+                            skip,
+                            binary,
+                            case_sensitive,
+                            count_only,
+                            include_glob.as_deref(),
+                        );
                     }
-                    let query = line.trim();
-                    if query.is_empty() {
-                        continue;
-                    }
-                    let kws: Vec<String> =
-                        query.split_whitespace().map(|s| s.to_string()).collect();
+                } else {
                     run_plain(
                         &roots,
-                        &kws,
+                        &keywords,
                         lines_per_file,
                         max_files,
                         max_mb,
@@ -697,199 +755,195 @@ fn main() {
                         include_glob.as_deref(),
                     );
                 }
-            } else {
-                run_plain(
-                    &roots,
-                    &keywords,
-                    lines_per_file,
-                    max_files,
-                    max_mb,
-                    skip,
-                    binary,
-                    case_sensitive,
-                    count_only,
-                    include_glob.as_deref(),
-                );
             }
-        }
-        Mode::Leads => run_leads(&roots, &keywords, lines_per_file, max_files, max_mb),
-        Mode::Mft => {
-            let device = match &mft_path {
-                Some(p) => p.clone(),
-                None => {
-                    eprintln!("archive_search --mft: the mode carries no device path");
-                    std::process::exit(2);
-                }
-            };
-            let lines = ntfs::run_lines(Path::new(&device), &keywords, max_files, max_mb, content);
-            print_lines(&lines);
-        }
-        Mode::Index => {
-            let lines = run_index(&roots, &keywords, max_files, kind, sort, path_match);
-            print_lines(&lines);
-        }
-        Mode::Serve => run_serve(serve_addr, &roots, mft_path),
-        Mode::Git => {
-            let repo = match find_repo_root() {
-                Some(r) => r,
-                None => PathBuf::from("."),
-            };
-            let query = keywords.join(" ");
-            let lines = git::run_lines(&repo, &query);
-            print_lines(&lines);
-        }
-        Mode::Verdict => {
-            let url = match verdict_url {
-                Some(u) => u,
-                None => {
-                    eprintln!("archive_search --verdict: the mode carries no url");
-                    std::process::exit(2);
-                }
-            };
-            let lines = net::verdict_lines(&url);
-            print_lines(&lines);
-        }
-        Mode::Jina => {
-            let url = match jina_input {
-                Some(u) => u,
-                None => {
-                    eprintln!("archive_search --jina: the mode carries no url");
-                    std::process::exit(2);
-                }
-            };
-            let lines = jina::jina_lines(&url);
-            print_lines(&lines);
-        }
-        Mode::Playwright => {
-            let input = match playwright_input {
-                Some(u) => u,
-                None => {
-                    eprintln!("archive_search --playwright: the mode carries no url");
-                    std::process::exit(2);
-                }
-            };
-            let lines = playwright::run_lines(&input, headed);
-            print_lines(&lines);
-        }
-        Mode::PdfImage => {
-            let input = match pdf_input {
-                Some(p) => p,
-                None => {
-                    eprintln!("archive_search --pdf-image: the mode carries no file or url");
-                    std::process::exit(2);
-                }
-            };
-            let lines = run_pdf_image(&input, pdf_out.as_deref());
-            print_lines(&lines);
-        }
-        Mode::PdfText => {
-            let input = match pdf_input {
-                Some(p) => p,
-                None => {
-                    eprintln!("archive_search --pdf-text: the mode carries no file or url");
-                    std::process::exit(2);
-                }
-            };
-            let lines = run_pdf_text(&input);
-            print_lines(&lines);
-        }
-        Mode::ArxivSrc => {
-            let input = match arxiv_input {
-                Some(p) => p,
-                None => {
-                    eprintln!("archive_search --arxiv-src: the mode carries no id or url");
-                    std::process::exit(2);
-                }
-            };
-            let lines = arxiv_src::run_lines(&input, pdf_out.as_deref());
-            print_lines(&lines);
-        }
-        Mode::Oai => {
-            let lines = oai::arxiv_oai_lines(oai_input.as_deref(), oai_pages);
-            print_lines(&lines);
-        }
-        Mode::Consensus => {
-            let query = keywords.join(" ");
-            let env_map = match find_repo_root() {
-                Some(repo) => secrets::load_env(&repo),
-                None => env::vars().collect(),
-            };
-            let key = secrets::resolve_key(
-                env_map
-                    .get("CONSENSUS_API_KEY")
-                    .map(String::as_str)
-                    .unwrap_or(""),
-                &env_map,
-            );
-            let lines = match key {
-                secrets::Secret::Value(t) => consensus::consensus_lines(&query, &t, 10),
-                secrets::Secret::Absent(marker) => {
-                    let name = match marker {
-                        Some(m) => format!("CONSENSUS_API_KEY marker {{{m}}}"),
-                        None => "CONSENSUS_API_KEY".to_string(),
-                    };
-                    vec![format!(
-                        "pending — {} absent from .secrets.local/.env",
-                        name
-                    )]
-                }
-            };
-            print_lines(&lines);
-        }
-        Mode::Lasair => {
-            let query = keywords.join(" ");
-            let lines = lasair::lasair_lines(&query);
-            print_lines(&lines);
-        }
-        Mode::Perplexity => {
-            let query = keywords.join(" ");
-            let lines = perplexity::perplexity_lines(&query);
-            print_lines(&lines);
-        }
-        Mode::Lpf => {
-            let query = keywords.join(" ");
-            let lines = lpf::lpf_lines(&query);
-            print_lines(&lines);
-        }
-        Mode::Gosat => {
-            let query = keywords.join(" ");
-            let lines = gosat::gosat_lines(&query);
-            print_lines(&lines);
-        }
-        Mode::Stats => {
-            print_lines(&run_stats());
-        }
-        Mode::Net(name) => {
-            let env_map = match find_repo_root() {
-                Some(repo) => secrets::load_env(&repo),
-                None => env::vars().collect(),
-            };
-            if keywords.is_empty() && !net::is_auth_mode(name) && !std::io::stdin().is_terminal() {
-                let stdin = std::io::stdin();
-                let mut reader = stdin.lock();
-                let mut line = String::new();
-                loop {
-                    line.clear();
-                    let n = match reader.read_line(&mut line) {
-                        Ok(n) => n,
-                        Err(_) => break,
-                    };
-                    if n == 0 {
-                        break;
+            Mode::Leads => run_leads(&roots, &keywords, lines_per_file, max_files, max_mb),
+            Mode::Mft => {
+                let device = match &mft_path {
+                    Some(p) => p.clone(),
+                    None => {
+                        eprintln!("archive_search --mft: the mode carries no device path");
+                        std::process::exit(2);
                     }
-                    let query = line.trim();
-                    if query.is_empty() {
-                        continue;
+                };
+                let lines =
+                    ntfs::run_lines(Path::new(&device), &keywords, max_files, max_mb, content);
+                print_lines(&lines);
+            }
+            Mode::Index => {
+                let lines = run_index(&roots, &keywords, max_files, kind, sort, path_match);
+                print_lines(&lines);
+            }
+            Mode::Serve => run_serve(serve_addr.clone(), &roots, mft_path.clone()),
+            Mode::Git => {
+                let repo = match find_repo_root() {
+                    Some(r) => r,
+                    None => PathBuf::from("."),
+                };
+                let query = keywords.join(" ");
+                let lines = git::run_lines(&repo, &query);
+                print_lines(&lines);
+            }
+            Mode::Verdict => {
+                let url = match &verdict_url {
+                    Some(u) => u.clone(),
+                    None => {
+                        eprintln!("archive_search --verdict: the mode carries no url");
+                        std::process::exit(2);
                     }
+                };
+                let lines = net::verdict_lines(&url);
+                print_lines(&lines);
+            }
+            Mode::Jina => {
+                let url = match &jina_input {
+                    Some(u) => u.clone(),
+                    None => {
+                        eprintln!("archive_search --jina: the mode carries no url");
+                        std::process::exit(2);
+                    }
+                };
+                let lines = jina::jina_lines(&url);
+                print_lines(&lines);
+            }
+            Mode::Playwright => {
+                let input = match &playwright_input {
+                    Some(u) => u.clone(),
+                    None => {
+                        eprintln!("archive_search --playwright: the mode carries no url");
+                        std::process::exit(2);
+                    }
+                };
+                let lines = playwright::run_lines(&input, headed);
+                print_lines(&lines);
+            }
+            Mode::PdfImage => {
+                let input = match &pdf_input {
+                    Some(p) => p.clone(),
+                    None => {
+                        eprintln!("archive_search --pdf-image: the mode carries no file or url");
+                        std::process::exit(2);
+                    }
+                };
+                let lines = run_pdf_image(&input, pdf_out.as_deref());
+                print_lines(&lines);
+            }
+            Mode::PdfText => {
+                let input = match &pdf_input {
+                    Some(p) => p.clone(),
+                    None => {
+                        eprintln!("archive_search --pdf-text: the mode carries no file or url");
+                        std::process::exit(2);
+                    }
+                };
+                let lines = run_pdf_text(&input);
+                print_lines(&lines);
+            }
+            Mode::ArxivSrc => {
+                let input = match &arxiv_input {
+                    Some(p) => p.clone(),
+                    None => {
+                        eprintln!("archive_search --arxiv-src: the mode carries no id or url");
+                        std::process::exit(2);
+                    }
+                };
+                let lines = arxiv_src::run_lines(&input, pdf_out.as_deref());
+                print_lines(&lines);
+            }
+            Mode::Oai => {
+                let lines = oai::arxiv_oai_lines(oai_input.as_deref(), oai_pages);
+                print_lines(&lines);
+            }
+            Mode::Consensus => {
+                let query = keywords.join(" ");
+                let env_map = match find_repo_root() {
+                    Some(repo) => secrets::load_env(&repo),
+                    None => env::vars().collect(),
+                };
+                let key = secrets::resolve_key(
+                    env_map
+                        .get("CONSENSUS_API_KEY")
+                        .map(String::as_str)
+                        .unwrap_or(""),
+                    &env_map,
+                );
+                let lines = match key {
+                    secrets::Secret::Value(t) => consensus::consensus_lines(&query, &t, 10),
+                    secrets::Secret::Absent(marker) => {
+                        let name = match marker {
+                            Some(m) => format!("CONSENSUS_API_KEY marker {{{m}}}"),
+                            None => "CONSENSUS_API_KEY".to_string(),
+                        };
+                        vec![format!(
+                            "pending — {} absent from .secrets.local/.env",
+                            name
+                        )]
+                    }
+                };
+                print_lines(&lines);
+            }
+            Mode::Lasair => {
+                let query = keywords.join(" ");
+                let lines = lasair::lasair_lines(&query);
+                print_lines(&lines);
+            }
+            Mode::Perplexity => {
+                let query = keywords.join(" ");
+                let lines = perplexity::perplexity_lines(&query);
+                print_lines(&lines);
+            }
+            Mode::Lpf => {
+                let query = keywords.join(" ");
+                let lines = lpf::lpf_lines(&query);
+                print_lines(&lines);
+            }
+            Mode::Gosat => {
+                let query = keywords.join(" ");
+                let lines = gosat::gosat_lines(&query);
+                print_lines(&lines);
+            }
+            Mode::Stats => {
+                print_lines(&run_stats());
+            }
+            Mode::Net(name) => {
+                let env_map = match find_repo_root() {
+                    Some(repo) => secrets::load_env(&repo),
+                    None => env::vars().collect(),
+                };
+                if keywords.is_empty()
+                    && !net::is_auth_mode(name)
+                    && !std::io::stdin().is_terminal()
+                {
+                    let stdin = std::io::stdin();
+                    let mut reader = stdin.lock();
+                    let mut line = String::new();
+                    loop {
+                        line.clear();
+                        let n = match reader.read_line(&mut line) {
+                            Ok(n) => n,
+                            Err(_) => break,
+                        };
+                        if n == 0 {
+                            break;
+                        }
+                        let query = line.trim();
+                        if query.is_empty() {
+                            continue;
+                        }
+                        let lines = net::run_lines_max(
+                            name,
+                            query,
+                            &env_map,
+                            pdf_out.as_deref(),
+                            max_results,
+                        );
+                        print_lines(&lines);
+                    }
+                } else {
+                    let query = keywords.join(" ");
                     let lines =
-                        net::run_lines_max(name, query, &env_map, pdf_out.as_deref(), max_results);
+                        net::run_lines_max(name, &query, &env_map, pdf_out.as_deref(), max_results);
                     print_lines(&lines);
                 }
-            } else {
-                let query = keywords.join(" ");
-                let lines =
-                    net::run_lines_max(name, &query, &env_map, pdf_out.as_deref(), max_results);
-                print_lines(&lines);
             }
         }
     }
@@ -2260,6 +2314,15 @@ fn truncate(s: &str, max: usize) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn multi_channel_flags_read_two_modes() {
+        let modes: Vec<Mode> = ["--arxiv", "--openalex"]
+            .iter()
+            .filter_map(|a| flag_mode(a))
+            .collect();
+        assert_eq!(modes, vec![Mode::Net("arxiv"), Mode::Net("openalex")]);
+    }
 
     #[test]
     fn truncate_leaves_short_strings() {
