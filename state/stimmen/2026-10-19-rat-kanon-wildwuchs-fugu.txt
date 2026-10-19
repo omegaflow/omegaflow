@@ -1,0 +1,40 @@
+# Rat — Sakana Fugu Max (UI-Sitz), R-2026-10-19-a, 2026-10-19
+
+**Sitz:** `chat.sakana.ai` · **Fugu Max** · **Effort High** (Footer-Beleg) · eingeloggt
+(Profil `~/.cache/omegaflow/mcp-session`, Cookie `sakana-chat`)
+**Chat:** `01a15369-df2…` · **Dauer:** ~1 min 24 s (`Diving in…`)
+**Ablage:** Rohantwort, wörtlich. Die Session verifiziert am Baum, nie die Stimme.
+**Riss:** Die Antwort endet bei F5 mitten im Satz (Token-Kappe des Sitzes) — als solches
+getragen, nicht geglättet.
+
+---
+
+Urteil — Kanon statt Wildwuchs
+
+A) Kanon je Haus + Ausnahme nur bei nachgewiesenem Vorteil — Ja.
+Die Zweiteilung wird anerkannt: Kanon ist die Voreinstellung, die Ausnahme muss verdient werden.
+Riss „Kanon als Text": Ein Kanon, der als Ordnerliste in einer .md steht, ist selbst die sechste Regelquelle. Der Kanon muss maschinenlesbar sein (Gate/Config), nicht beschrieben.
+
+B) Woran der Vorteil gemessen wird — Ja, an einer Zahl, ohne Schwelle.
+Gemessen wird: Zeichen, die ein Agent vor der ersten Messung liest, bei gleicher Auffindbarkeit — ordinal gegen den Kanon, mit Ablaufdatum, bei jedem Commit neu. Unmessbar = absent, und absent fällt in den Kanon (Hausregel „0 honored: null-echt | absent | riss"). Keine Schwelle, weil „keine harten Schwellen" gilt: der Vergleich entscheidet, nicht die Zahl.
+Riss „Vorteil durch Teilung": Wer einen Ordner halbiert, senkt die Kennzahl. Gegenmittel: Zählung je Haus statt je Ordner, plus Zahl der Regel-Duplikate (gleicher Regeltext an >1 Ort) als Minus für die Ausnahme.
+
+C) Echokammer-Regel — Ja, aber die Grenze liegt falsch gezogen.
+Richtig ist: unabhängig = von einer zweiten Partei mit derselben Zahl nachfahrbar (Host/URL, Werkzeug, Datum, Zahl). Falsch ist: als Satz im Formular. Und „offen" muss ein gültiger Ausgang sein. R1–R8 sind der Beweis: die Basis wurde gemessen und entscheidet die Frage trotzdem nicht.
+Riss „Ritual statt Membran": Eine belanglose Literaturbasis erfüllt das Feld. Die Basis muss tragend sein — das Urteil muss an ihr scheitern können. Sonst prüft C nur die Anwesenheit von Zitaten.
+
+D) Schreibrecht — Ein Ordner, der nur durch das Gate beschrieben wird.
+Kanonisches wird ausschließlich vom Gate geschrieben. Freies Schreiben nur in dem einen Denk-.md (F) und in einem Eingang, den kein Agent liest. „Ein Schreibrecht je Ordner je Haus" genügt nicht — dieselbe Regel liegt an bis zu fünf Orten, also dupliziert jedes Schreibrecht sie weiter.
+Riss „Der Gate-Ordner kann Denken nicht halten": Das Gate schreibt nur, was es messen kann. Unmessbares (ein Gedanke) braucht genau einen Ort, und der ist nicht das Gate — sonst leckt das Denken zurück in den Wildwuchs.
+
+E) Die Ablage — Flaches Register mit stabilen IDs; Ordner sind abgeleitete Etiketten.
+Nicht der Baum ist die Ablage, das Register ist es. Damit sind die 26 Doppelnamen legal (Etiketten, kein Umbenennen nötig) und die 260 fehlenden Indexe verschwinden als Klasse, weil der Index bei jedem Commit erzeugt wird, nicht je Ordner gepflegt. Billigste Aufmerksamkeit: eine Datei im Startpfad.
+Riss „Ein Register über drei Häuser verletzt PII bleibt im Haus": Wird das Register hausübergreifend gelesen, zieht omegaflow-personal in den Lesepfad. Register je Haus; das Register des persönlichen Hauses liegt in keinem Startpfad.
+
+F) Vier Orte — Ja, mit einer Korrektur.
+Riss „Unveränderlich ist ein Hash, kein Vorsatz": „AGENTS.md, sieben Zeilen, unveränderlich" ist keine Dateieigenschaft. Ohne Prüfsumme im Gate ist der fünfte Ort längst da — 219 B waren einmal sieben Zeilen.
+F2) Ja, Streichrunde — mit Ziel statt Löschung. Riss „Wahre Regeln ohne Ort fallen mit": „PII bleibt im Haus" nennt keinen Ort und ist trotzdem tragend — sie geht ins Gate, nicht weg. Und die Runde muss wiederkehren (Zählung je Ort, je Commit), sonst setzt sie nur einen Zähler zurück.
+F3) Ja, mit umgekehrter Beweislast. Riss „Mechanisch verhinderbar ist nicht mechanisch entscheidbar": Wer das entscheidet, ist der .md-Autor. Also: Voreinstellung Gate, und die .md muss die Unprüfbarkeit beweisen — sonst ist F3 ein Satz in der .md über Sätze in der .md.
+F4) Ja, zwei Arten genügen — „Persönlichkeit" braucht ein Budget. Zeilenobergrenze, benannter Eigentümer, Ablauf. Riss „Persönlichkeit wird die Resthalde": Ohne Deckel saugt die unprüfbare Art alles auf, was keinen Ort hat.
+F5) Drei Dateien. Erste Datei: AGENTS.md.
+AGENTS.md (sieben Zeilen, einzige im Startpfad) · opencode.json (nur Rechte, maschinengelesen, vom Agenten nie geöffnet) · das Gate (kein Text, eine Prüfung). Die eine Denk-.md existiert, wird aber nur
