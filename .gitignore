@@ -76,3 +76,6 @@ firmware/*/Cargo.lock
 
 # Exportierte paper-LaTeX (export_latex write step, paper-check.yml) — regenerierbar, kein Repo-Gegenstand
 docs/paper/export/
+
+# Werkzeug-Caches (nicht herunterladbar, lokal erzeugt)
+.playwright-mcp/
