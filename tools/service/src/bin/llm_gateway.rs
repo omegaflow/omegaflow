@@ -1676,7 +1676,6 @@ fn catalog_rows(body: &str) -> Vec<(String, Option<f64>, Option<f64>, Option<u64
 }
 
 fn refresh_catalog(secrets: &HashMap<String, String>, auth: &str) -> HashMap<String, ModelInfo> {
-    let root = repo_root();
     let dir = format!("{}/gateway/catalog", state_root());
     let _ = fs::create_dir_all(&dir);
     let mut models = HashMap::new();
