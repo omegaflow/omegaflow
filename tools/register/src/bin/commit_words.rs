@@ -5,8 +5,14 @@ use std::process::Command;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let mut db = PathBuf::from(env::var("HOME").unwrap_or_default())
-        .join(".local/share/opencode/opencode.db");
+    let home = match env::var("HOME") {
+        Ok(h) => h,
+        Err(_) => {
+            eprintln!("HOME is absent — the opencode database path does not resolve");
+            std::process::exit(2);
+        }
+    };
+    let mut db = PathBuf::from(home).join(".local/share/opencode/opencode.db");
     let mut top = 40usize;
     let mut context = 1usize;
     let mut i = 1;
@@ -149,56 +155,23 @@ fn lower(s: &str) -> String {
     s.to_lowercase()
 }
 
+const COMMIT_LEISTUNG: &str = include_str!("../../data/commit_leistung.txt");
+const COMMIT_MESSUNG: &str = include_str!("../../data/commit_messung.txt");
+const COMMIT_OFFEN: &str = include_str!("../../data/commit_offen.txt");
+const COMMIT_AUSREDE: &str = include_str!("../../data/commit_ausrede.txt");
+
+fn word_list(list: &'static str) -> Vec<&'static str> {
+    list.lines()
+        .map(str::trim)
+        .filter(|w| !w.is_empty())
+        .collect()
+}
+
 fn class(w: &str) -> &'static str {
-    let leistung = [
-        "commit",
-        "committet",
-        "gemacht",
-        "geba",
-        "umgesetzt",
-        "implementiert",
-        "geschrieben",
-        "gelaufen",
-        "gebaut",
-        "geprueft",
-        "geprüft",
-        "getestet",
-        "gelesen",
-        "extrahiert",
-        "geladen",
-        "erledigt",
-        "gecheckt",
-    ];
-    let messung = [
-        "git",
-        "grep",
-        "gemessen",
-        "zaehlt",
-        "zählt",
-        "sqlite",
-        "berechnet",
-        "lauf",
-    ];
-    let offen = [
-        "offen", "pending", "fehlt", "bleibt", "wartet", "noch", "nicht", "kein",
-    ];
-    let ausrede = [
-        "aber",
-        "jedoch",
-        "leider",
-        "schade",
-        "vermutlich",
-        "wahrscheinlich",
-        "irgendwann",
-        "später",
-        "spaeter",
-        "muesste",
-        "müsste",
-        "vielleicht",
-        "irgendwie",
-        "anscheinend",
-        "scheinbar",
-    ];
+    let leistung = word_list(COMMIT_LEISTUNG);
+    let messung = word_list(COMMIT_MESSUNG);
+    let offen = word_list(COMMIT_OFFEN);
+    let ausrede = word_list(COMMIT_AUSREDE);
     if leistung.contains(&w) {
         "leistung"
     } else if messung.contains(&w) {

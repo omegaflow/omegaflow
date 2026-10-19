@@ -1,0 +1,8 @@
+git
+grep
+gemessen
+zaehlt
+zählt
+sqlite
+berechnet
+lauf

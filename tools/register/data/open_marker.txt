@@ -1,0 +1,10 @@
+offen:
+pending
+wartet auf
+bleibt offen
+nächster schritt
+naechster schritt
+ausstehend
+später
+spaeter
+offen

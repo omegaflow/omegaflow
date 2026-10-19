@@ -11,8 +11,14 @@ struct Entry {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let mut db = PathBuf::from(env::var("HOME").unwrap_or_default())
-        .join(".local/share/opencode/opencode.db");
+    let home = match env::var("HOME") {
+        Ok(h) => h,
+        Err(_) => {
+            eprintln!("HOME is absent — the opencode database path does not resolve");
+            std::process::exit(2);
+        }
+    };
+    let mut db = PathBuf::from(home).join(".local/share/opencode/opencode.db");
     let mut since: i64 = 0;
     let mut i = 1;
     while i < args.len() {
@@ -23,7 +29,13 @@ fn main() {
             }
             "--since" => {
                 i += 1;
-                since = args[i].parse().unwrap_or(0);
+                since = match args[i].parse() {
+                    Ok(v) => v,
+                    Err(_) => {
+                        eprintln!("--since: not a number");
+                        std::process::exit(2);
+                    }
+                };
             }
             _ => {}
         }
@@ -68,7 +80,9 @@ fn main() {
             }
             if let Some(kind) = classify(trimmed) {
                 let short = truncate(&trimmed, 120);
-                let epoch: i64 = time.parse().unwrap_or(0);
+                let Ok(epoch) = time.parse::<i64>() else {
+                    continue;
+                };
                 if epoch < since {
                     continue;
                 }
@@ -110,29 +124,25 @@ fn classify(trimmed: &str) -> Option<&'static str> {
         return None;
     }
     let low = t.to_lowercase();
-    let has_marker = low.contains("offen:")
-        || low.contains("pending")
-        || low.contains("wartet auf")
-        || low.contains("bleibt offen")
-        || low.contains("nächster schritt")
-        || low.contains("naechster schritt")
-        || low.contains("ausstehend")
-        || low.starts_with("später")
-        || low.starts_with("spaeter")
-        || low.starts_with("offen");
-    if !has_marker {
+    if !listed(OPEN_MARKERS, &low) {
         return None;
     }
-    if low.contains("pending") || low.contains("ausstehend") {
+    if listed(PENDING_MARKERS, &low) {
         Some("PENDING")
-    } else if low.contains("nächster schritt")
-        || low.contains("naechster schritt")
-        || low.contains("wartet auf")
-    {
+    } else if listed(WAIT_MARKERS, &low) {
         Some("WAIT")
     } else {
         Some("OPEN")
     }
+}
+
+const OPEN_MARKERS: &str = include_str!("../../data/open_marker.txt");
+const PENDING_MARKERS: &str = include_str!("../../data/pending_marker.txt");
+const WAIT_MARKERS: &str = include_str!("../../data/wait_marker.txt");
+
+fn listed(list: &str, text: &str) -> bool {
+    list.lines()
+        .any(|w| !w.trim().is_empty() && text.contains(w.trim()))
 }
 
 fn truncate(s: &str, n: usize) -> String {

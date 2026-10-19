@@ -1,0 +1,8 @@
+offen
+pending
+fehlt
+bleibt
+wartet
+noch
+nicht
+kein
