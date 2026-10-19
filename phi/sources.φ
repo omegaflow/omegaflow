@@ -31738,3 +31738,89 @@ on earth 28.271297 85.377649 0.0
 ttl 600
 field hydrosphere_river_stage_m hydrosphere_river_stage_m inverse-square geometry m 600.0 0.0 0.0
 field hydrosphere_river_flow_m3s hydrosphere_river_flow_m3s erfc advective m3/s 600.0 0.0 0.0
+
+url https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
+terms auth-required https://babamul.caltech.edu/
+header Authorization Bearer {BABAMUL_API_TOKEN}
+format sky1
+origin https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
+compiler tools/harvest/src/bin/babamul_compiler.rs
+at sun
+ttl 3600
+field babamul_alert_magnitude babamul_alert_magnitude gaussian-inverse-square source-parameter mag 3600 0.0 0.0
+
+url https://regards.cnes.fr
+terms auth-required https://www.cdpp.eu/index.php/licence-sipad
+format demeter_isl
+origin https://regards.cnes.fr
+compiler tools/harvest/src/bin/demeter_compiler.rs
+at earth
+ttl 31536000
+field demeter_isl_electron_density demeter_isl_electron_density gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field demeter_isl_ion_density demeter_isl_ion_density gaussian-inverse-square diffusion cm-3 86400 0.0 0.0
+field demeter_isl_electron_temperature demeter_isl_electron_temperature exponential-decay thermal K 86400 0.0 0.0
+field demeter_isl_float_potential demeter_isl_float_potential inverse-square electric V 86400 0.0 0.0
+field demeter_isl_ion_velocity demeter_isl_ion_velocity inverse-square advective m/s 86400 0.0 0.0
+
+url https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/
+terms auth-required https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/
+header Authorization {EARTHDATA_EDL_TOKEN}
+format icrf3
+origin https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/ (Earthdata; compiler reads the same ICRF3 product from https://datacenter.iers.org/products/reference-systems/celestial/icrf3/)
+compiler tools/harvest/src/bin/icrf3_compiler.rs
+at sun
+ttl 31536000
+field ra_deg icrf3_ra_deg inverse-square geometry deg 31536000 0.0 0.0 aperture:none
+field dec_deg icrf3_dec_deg inverse-square geometry deg 31536000 0.0 0.0 aperture:none
+
+url https://www.ieeg.org/services
+terms auth-required https://www.ieeg.org/services
+format openneuro_eeg
+origin https://www.ieeg.org/services
+compiler tools/harvest/src/bin/ieeg_compiler.rs
+at earth
+ttl 86400
+field ieeg_voltage_v ieeg_voltage_v inverse-square electric V 86400 0.0 0.0
+
+url https://edc.dgfi.tum.de/en/data/npt/
+terms auth-required https://edc.dgfi.tum.de/en/data/npt/
+format ilrs_npt
+origin https://edc.dgfi.tum.de/en/data/npt/
+compiler tools/harvest/src/bin/ilrs_npt_compiler.rs
+at earth
+ttl 86400
+field round_trip_s ilrs_npt_round_trip_time_s inverse-square geometry s 86400 0.0 0.0 aperture:none
+field bin_rms_ps ilrs_npt_bin_rms_ps inverse-square geometry ps 86400 0.0 0.0 aperture:none
+field return_rate_pct ilrs_npt_return_rate_pct inverse-square em % 86400 0.0 0.0 aperture:none
+
+url https://pradan.issdc.gov.in
+terms auth-required https://pradan.issdc.gov.in
+format pradan_ch2
+origin https://pradan.issdc.gov.in
+compiler tools/harvest/src/bin/pradan_ch2_compiler.rs
+at moon
+ttl 31536000
+field pradan_ch2_cla_l1_counts pradan_ch2_cla_l1_counts inverse-square em count 31536000 0.0 0.0
+
+url https://supermag.jhuapl.edu/lib/services/?service=substorms&downloadtype=substorm_list&fmt=csv&start={start}&end={stop}&list={list}
+terms auth-required https://supermag.jhuapl.edu/lib/services/
+format substorm
+origin https://supermag.jhuapl.edu/lib/services/
+compiler tools/harvest/src/bin/substorm_compiler.rs
+at earth
+ttl 86400
+field substorm_mlt_h substorm_mlt_h inverse-square geometry h 86400 0.0 0.0
+field substorm_mlat_deg substorm_mlat_deg inverse-square geometry deg 86400 0.0 0.0
+field substorm_glon_deg substorm_glon_deg inverse-square geometry deg 86400 0.0 0.0
+field substorm_glat_deg substorm_glat_deg inverse-square geometry deg 86400 0.0 0.0
+
+url https://www.wis-tns.org/api/get/search
+terms auth-required https://www.wis-tns.org/
+format tns
+origin https://www.wis-tns.org/api/get/search
+compiler tools/harvest/src/bin/tns_compiler.rs
+at sun
+ttl 604800
+field z tns_redshift inverse-linear em 1 604800 0.0 0.0 aperture:none
+field ra_deg tns_ra_deg inverse-square geometry deg 604800 0.0 0.0 aperture:none
+field dec_deg tns_dec_deg inverse-square geometry deg 604800 0.0 0.0 aperture:none

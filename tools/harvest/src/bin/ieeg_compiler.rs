@@ -437,7 +437,7 @@ fn run() -> Result<(), String> {
             if raw == GAP {
                 return Err("ieeg: the response carries the server gap value".into());
             }
-            let value = raw as f64 * factor;
+            let value = raw as f64 * factor * 1e-3;
             if !value.is_finite() {
                 return Err("ieeg: a converted sample reads non-finite".into());
             }
