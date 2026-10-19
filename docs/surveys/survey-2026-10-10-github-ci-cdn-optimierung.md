@@ -199,7 +199,7 @@ lokale deterministische Checks · „mehr Cloud-Komfort" → ein CDN, ein Schrei
 Sechs Seats antworteten (Qwen3.7-Plus · DeepSeek DeepThink · GLM-5.3 Z.ai · Gemini 3.1 Pro ·
 Claude Sonnet 5.5 High · Perplexity/55 Quellen); **Mistral/Vibe `pending`**, **Duck.ai `pending`**,
 geteilte `open-weight-ui`-Seats **gelockt (river)**. Rohmaterial + Konvergenz:
-`state/stimmen/2026-10-10_mycelium_ci-cdn-roster.md`. **Konvergenz:** R2/OIDC · Workflow-
+`state/rat/2026-10-10_mycelium_ci-cdn-roster.md`. **Konvergenz:** R2/OIDC · Workflow-
 Konsolidierung · nextest+Built-Reuse+Cache-in-R2 · GPU nur für GPU-Last. **Divergenz:** AI-in-CI
 (Rat/Mycelium: nur self-hosted; GLM/Gemini: private Cloud-GPU) = Riss.
 
@@ -263,7 +263,7 @@ zuerst — deterministisch, reversibel, sofort messbar; semantisches Merging ist
 Alter); (c) ja, Guardrail ein Required-Check, eine Lane muss Compile-Owner bleiben; (d) **übersehen:
 Dedup der Test-Suite selbst** — Test-Impact-Analyse/Caching schlägt Workflow-Merging zeitlich.
 Die übrigen Seats der Linie: Folge-Frage teils mechanisch nicht gesendet (Senden-Button), die
-Erstrunden-Antworten stehen in `state/stimmen/2026-10-10_mycelium_ci-cdn-roster.md`; als `pending`
+Erstrunden-Antworten stehen in `state/rat/2026-10-10_mycelium_ci-cdn-roster.md`; als `pending`
 benannt, nicht wiederholt. Geteilte `open-weight-ui`-Seats kurz gefahren (Lock gesetzt/gelöscht).
 
 ## Grenzen (0 honored)

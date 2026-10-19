@@ -116,7 +116,7 @@ Codespaces (keine GPU), Binder/Deepnote. Paid-und-headless: RunPod, Vast.ai, Lam
 ## G. Stimmen-Lauf (freie LLM-Flotte, 2026-10-03)
 
 Aufruf: `opencode run --agent voice` (public-only, `archive_search_public`), **6 Modelle**, eine
-**4-teilige** Frage; Rohströme in `state/stimmen/2026-10-03_gpu-compute-*.md`.
+**4-teilige** Frage; Rohströme in `state/rat/2026-10-03_gpu-compute-*.md`.
 
 - **Ergebnis (gemessen am Lauf-Log):** nur `moonshotai/kimi-k3` endete `rc=0` — mit **leerem**
   40-Byte-Body; die fünf übrigen (nemotron-ultra/super, gemini-3.7-flash, qwen3.8-27b,

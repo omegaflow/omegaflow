@@ -66,7 +66,7 @@ gemessen, nicht aus dem Namen geraten. Die **Secret-Namen selbst** stehen in kei
 - Die 43 tsv/docs-Treffer sind nicht alle gebaute Konsumenten; ein Teil ist
   dokumentierte Absicht.
 - `ZAI_TOKEN`/`ZAI_COOKIE`/`GEMINI_API_KEY` werden von den **privaten** Skripten
-  `state/stimmen/stimme.sh` gelesen (nicht getrackt).
+  `state/rat/stimme.sh` gelesen (nicht getrackt).
 - Der Abgleich ist eine statische Messung; dynamisch gebildete Namen sind als
   Sonderfall benannt, nicht geraten.
 

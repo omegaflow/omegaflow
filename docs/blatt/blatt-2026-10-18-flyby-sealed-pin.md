@@ -7,7 +7,7 @@
 -->
 # Flyby-sealed — Option 1 gebaut: der Pin ist ein Register-Posten (2026-10-18, river)
 # Entscheid: R-2026-10-18-l F3, Endstand 5:3 Option 1 (Sonnet 5.5 + GLM 5.3)
-#   state/stimmen/2026-10-18-r-l-paket-first-formular.md:121-132;
+#   state/rat/2026-10-18-r-l-paket-first-formular.md:121-132;
 #   Auflage: Registrar benannt · sha256 messen · Register ergänzen · CDN-Freigabe erst nach Gate-Vergleich.
 # Riss, der den Bau auslöste: post/in/2026-10-16-mycelium-an-river-flyby-sealed-sha-riss.md
 #   (SEALED_SHA256 aeb3c82f… vs. registrierter Harvest-Posten ohne sha256; CDN-Digest b68842c9…).
@@ -52,7 +52,7 @@
 #   ephemeris_juice_official.bin hoch (flyby-path2-fill konsumiert es nur). Die Herkunft ist
 #   über docs/paper/flyby-path-2-addendum-2026-09-29.md:275-286 gemessen (juice-arc-restore,
 #   Run 37165635404, Archived-Index-Flatten) — der Upload-Akt selbst bleibt benannt, nicht belegt.
-#   Die Verdiktdatei state/stimmen/2026-10-18-rat-river-triade.md:18 führt F3 noch als
+#   Die Verdiktdatei state/rat/2026-10-18-rat-river-triade.md:18 führt F3 noch als
 #   „1:2 — Option 2 dünn vorn (2:3), kein tragfähiges Verdikt"; der Endstand 5:3 steht nur im
 #   Formular und in der Register-Zeile. Register-Quittung liegt bei future.
 #   Status des Pins: gepinnt, nicht bestanden — der Pin ist der Maßstab, kein Echtheitsbeweis.

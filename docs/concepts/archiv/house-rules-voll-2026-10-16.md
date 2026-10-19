@@ -12,7 +12,7 @@
 (`~/projects/omegaflow`) trägt **nur Öffentliches** — getrackter Code/Docs plus der
 öffentliche Arbeitsplatz `~/projects/omegaflow-work` (`data/`, `recherche/`, Spills;
 ungetrackt, kein PII; Wurzel `OMEGAFLOW_WORK`, s. `bin/_roots.sh`). Das private Register
-liegt **außerhalb** im eigenen Repo `~/projects/omegaflow-personal` (`OMEGAFLOW_PRIVATE`;
+liegt **außerhalb** im eigenen Repo `~/projects/omegaflow-private` (`OMEGAFLOW_PRIVATE`;
 Personenbezug, Mail, Operator-Akte) — in opencode separat geöffnet. Zwischen den Häusern
 steht der **Briefkasten** (`docs/handover/handover-<datum>-postfach-folge<N>.md`): er trägt
 nur die *Namen* öffentlicher Artefakte, keinen Register-Inhalt. Der öffentliche Stehende

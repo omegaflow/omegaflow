@@ -35,7 +35,7 @@ gesucht wird. Die genannten `recherche/`-Pfade sind der lokale (private) Recherc
 
 ## Ephemeriden-Umfeld (lokale Rohrecherche)
 - `recherche/scratch/_dumps-2026-10-12/tmp-archive-opencode/eph-1-llr … eph-8-pvo` — je ~250–270 Zeilen Rohsuche.
-- Roster-Runde: `state/stimmen/2026-10-10_mountain_ephemeris-sources-round.md` → `docs/surveys/survey-2026-10-10-ephemeris-quellen.md`.
+- Roster-Runde: `state/rat/2026-10-10_mountain_ephemeris-sources-round.md` → `docs/surveys/survey-2026-10-10-ephemeris-quellen.md`.
 
 ## Generierte Karte (nicht kuratiert)
 - `recherche/research-map.md` (vom `state_cartograph` erzeugt) — Vollbestand; nur über lokale Lesewerkzeuge sichtbar.

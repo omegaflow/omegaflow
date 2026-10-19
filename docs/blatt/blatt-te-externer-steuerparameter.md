@@ -4,7 +4,7 @@
   date: 2026-10-02
   sha256: 596553e1860b1f2b69b6218cb53f9c81c3f1d95c2df37c871d0da991f54907ef
   status: live
-  see-also: state/stimmen/2026-10-02_te-nichtzeitlich-frage.txt state/stimmen/2026-10-02_te-nichtzeitlich-nemotronsuper.md state/stimmen/2026-10-02_te-nichtzeitlich-deepseek.md state/stimmen/2026-10-02_te-nichtzeitlich-kiloultra.md
+  see-also: state/rat/2026-10-02_te-nichtzeitlich-frage.txt state/rat/2026-10-02_te-nichtzeitlich-nemotronsuper.md state/rat/2026-10-02_te-nichtzeitlich-deepseek.md state/rat/2026-10-02_te-nichtzeitlich-kiloultra.md
 -->
 # Blatt — Transfer-Entropie über einen externen Steuerparameter
 
@@ -21,7 +21,7 @@ p sind, nicht Zeitpunkte.
 ## Erhobene Evidenz
 
 Anonymisierte Methodenfrage an den Schwarm (10 Modelle, `opencode run --pure … --agent voice`,
-Done-Marker `state/stimmen/2026-10-02_te-nichtzeitlich.done`); getragen von fünf Stimmen
+Done-Marker `state/rat/2026-10-02_te-nichtzeitlich.done`); getragen von fünf Stimmen
 (nemotronsuper, nemotronultra, deepseek, muse, kiloultra), fünf trugen nichts (rc=124/
 API-Quota). Die Frage trug kein Datenbyte — nur die Methode.
 

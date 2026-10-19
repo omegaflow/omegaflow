@@ -2,7 +2,7 @@
   title: Die Fünf — Archäologie (2026-10-15)
   class: survey
   date: 2026-10-15
-  sha256: c473ced94100ddb5aa762f12804dea5577c7d436ad059d8986be1110698b68b6
+  sha256: 7713f7faea42139c9f8a9885dd9816658e1d5bb531619cdd67238a0b47aebecd
   status: live
   see-also: docs/concepts/die-vier-schilde.md, docs/granit.md, docs/concepts/glossar.md, AGENTS.md
 -->
@@ -41,7 +41,7 @@ Gemessen am Baum (git + `sgrep`/`sread`), jede Aussage mit Datei:Zeile oder Comm
 
 ## 5 — Die drei offenen Schritte (aus `mountain-folge352.md:218-223`) — geklärt 2026-10-18
 
-1. **Fremde Bögen auf den Granit ziehen** — **geklärt:** die `state/stimmen/*`-Dokumente sind datierte Sitzungsbelege, keine lebenden Normen; lebende Norm ist `docs/granit.md` (7 Sätze). Kein rückwirkendes Umschreiben (A = A). Beleg: `state/mountain/2026-10-18-sensory-259-docs-disposition.φ` §1.
+1. **Fremde Bögen auf den Granit ziehen** — **geklärt:** die `state/rat/*`-Dokumente sind datierte Sitzungsbelege, keine lebenden Normen; lebende Norm ist `docs/granit.md` (7 Sätze). Kein rückwirkendes Umschreiben (A = A). Beleg: `state/mountain/2026-10-18-sensory-259-docs-disposition.φ` §1.
 2. **Die dreifache J2000-Konstante auf eine TDB-Achse** — **geklärt:** die Konstante ist bereits geteilt (`src/archivar/types.rs:578` `J2000_UNIX_OFFSET`); `lsk.rs`, `mcon_event.rs`, `quake_event.rs` importieren sie, kein Literal. Beleg: ebenda.
 3. **`VerdictWord::Pending`** — **geklärt als bewusste Nicht-Erweiterung:** `pending` ist Register-Zustand (Axiom 5), kein Messausgang; ein fünfter Variant würde „noch nicht gemessen" mit „gemessen und eingeordnet" vermischen. Beleg: ebenda.
 

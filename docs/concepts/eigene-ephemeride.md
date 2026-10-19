@@ -15,7 +15,7 @@ Kreuz-Zeugen in der H₀-Spannung gewinnen?
 
 Dieses Konzept destilliert das EPH-Gespräch (Desktop `EPH`, 2026-10-10) gegen den
 Baum, den Rat und den vollen Roster. Rohmaterial:
-`state/stimmen/2026-10-10_sensory_eigene-ephemeride-round.md`; Referenz-Landschaft:
+`state/rat/2026-10-10_sensory_eigene-ephemeride-round.md`; Referenz-Landschaft:
 `docs/surveys/survey-2026-10-10-ephemeris-quellen.md`.
 
 ## Die These des EPH-Gesprächs

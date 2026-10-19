@@ -38,7 +38,7 @@ Befund geglaubt.
 - **Ort:** `future/handover/handover-2026-10-17-future-folge257.md:94-106` + `…folge258.md:87-96`
 - **Wörtlich** (folge258:96): „**Braucht:** Operator-Wort für **eine** Zeile im Hook (Archiv-Skip)
   — **nicht** von der Maschine gesetzt."
-- **Gelassene Arbeit:** Der Hook ist **Haus-Code** — `~/projects/omegaflow-personal/.githooks/pre-commit:24`
+- **Gelassene Arbeit:** Der Hook ist **Haus-Code** — `~/projects/omegaflow-private/.githooks/pre-commit:24`
   (`*handover*.md)`). Ein Archiv-Skip ist **eine** `case`-Zeile. Der Riss wurde exakt lokalisiert
   (29 `ABSENT`/1 `STALE-CITATION`) — die Zeile aber **nicht gebaut**.
 - **Prüfung:** `grep -n "handover" .githooks/pre-commit` → `:24  *handover*.md)` ✓ (der Ort steht).

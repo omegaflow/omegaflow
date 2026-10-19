@@ -102,8 +102,8 @@ fabriziert.
 
 - **Kanon-Schlüssel** — der kanonische Schlüssel eines offenen Punkts (sortierte, deduplizierte Token-Menge oder explizite ID); Identitätsträger im Roster. · `tools/register/src/bin/register_lookup.rs:2886`, `AGENTS.md`
 - **Roster** — die Menge kanonischer Offen-Punkt-Schlüssel der lebenden Übergaben; die Mengenform des Skalars (`--dropped`). · `AGENTS.md`, `docs/zustand/dropped-roster-baseline.txt`
-- **Pin** — die auf einen Commit/SHA fixierte Baseline-Liste; das lokale Gate liest nur den Pin, nie den Vollscan. · `docs/zustand/dropped-roster-baseline.txt`, `state/stimmen/2026-10-07_dropped-gate-design-ui-antworten.md`
-- **pending-legacy** — der eingefrorene Altbestand unbezeugter Drops; wächst nie (kein Auto-Bump), schrumpft nur durch belegte Auflösung. · `state/stimmen/2026-10-07_dropped-gate-design-ui-antworten.md`
+- **Pin** — die auf einen Commit/SHA fixierte Baseline-Liste; das lokale Gate liest nur den Pin, nie den Vollscan. · `docs/zustand/dropped-roster-baseline.txt`, `state/rat/2026-10-07_dropped-gate-design-ui-antworten.md`
+- **pending-legacy** — der eingefrorene Altbestand unbezeugter Drops; wächst nie (kein Auto-Bump), schrumpft nur durch belegte Auflösung. · `state/rat/2026-10-07_dropped-gate-design-ui-antworten.md`
 - **Träger** — die Instanz (Owner-Linie), die eine offene Sache in einer lebenden Übergabe hält; ohne Träger: `orphan`. · `AGENTS.md`, `tools/register/src/bin/register_lookup.rs` (`--orphans`)
 - **Aufenthalt = Eigentum** — ein Punkt lebt in der Übergabe der Linie, deren nächster Schritt seine Natur berührt. · `AGENTS.md`
 - **Adressat** — eine `## An <line>`-Senderzeile: der wandernde Punkt reist als committete Register-Zeile im eigenen Handover, der Owner faltet sie. · `AGENTS.md`

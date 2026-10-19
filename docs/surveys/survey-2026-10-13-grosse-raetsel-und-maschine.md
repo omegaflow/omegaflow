@@ -40,7 +40,7 @@ Fluss · FRB · Kugelblitz · Placebo · Urknall · Atmosphären-Biosignatur · 
 Volle Linien-Runde (nicht vier Seats): **Rat (5 Stimmen) · Claude · Duck.ai · Gemini 3.1 Pro ·
 Sakana · Mistral · MiniMax M3 · Perplexity** haben geantwortet. `pending`: Qwen · Z.ai ·
 DeepSeek (Reasoning), Kimi · Lumo (kein Composer im gelandeten Zustand). Rohmaterial:
-`state/stimmen/2026-10-13-river-grosse-raetsel-roster.md`.
+`state/rat/2026-10-13-river-grosse-raetsel-roster.md`.
 
 **Konvergenz (fast alle Linien):** Hubble-Spannung · UHECR-/Multimessenger-Ursprung ·
 Geodynamo/Erdkern-Jerks. **Dazu je Domäne:** Sonnen-Dynamo/Magnetzyklus ·

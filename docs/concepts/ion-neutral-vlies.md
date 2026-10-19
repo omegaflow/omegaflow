@@ -2,7 +2,7 @@
   title: Das Ion-Neutral-Vlies — DE-2, ICRS·TDB und die Fäden, die sonst niemand spannt
   class: concept
   date: 2026-10-18
-  sha256: 503c2fd02777a9d34abf5b10f7b55aebc4c9e99cf396fa6f691fd496e3e6d1fb
+  sha256: 9aa3accb8aa409ba4c6845f1970867dacda0e22fb2617d23b7152dbd7549b4f6
   status: draft
   see-also: docs/concepts/die-weberin.md docs/handover/handover-2026-10-18-river-folge227.md
 -->
@@ -166,7 +166,7 @@ keiner verdeckt den anderen.
 - Sarris et al. 2026, `10.1007/s10712-026-09937-8`.
 - Tan et al. 2024, `10.1029/2024JA032497`; Ham et al. 2026,
   `10.1029/2025JA034796`.
-- Rat 2026-10-17: `state/stimmen/2026-10-17-rat-de2-ion-neutral.md`.
+- Rat 2026-10-17: `state/rat/2026-10-17-rat-de2-ion-neutral.md`.
 - Messung: `docs/surveys/survey-2026-10-18-k-te-kadenz.md`,
   `docs/handover/handover-2026-10-18-river-folge227.md`.
 - Werkzeug: `tools/measure/src/bin/de2_conditional_te.rs`,

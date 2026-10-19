@@ -131,7 +131,7 @@ paarweise disjunkt; `cgm_lat_partition.rs --from-tsv … --emit-dir …`), Decku
 mit den drei Deskriptor-Schritten `matrix-gic-{auroral,subauroral,midlat}` (nie lokal).
 
 **Drei Kanäle (2026-10-06) — drei Linien, ungeglättet.** Rohmaterial
-`state/stimmen/2026-10-06_gic-familien-arm-ui-stimmen.md`.
+`state/rat/2026-10-06_gic-familien-arm-ui-stimmen.md`.
 - **Linie 1** (API-Rat fünf Stimmen einstimmig · ChatGPT · qwen 3.8 Max): drei getrennte
   Familien-Deskriptoren (`matrix gic_auroral full` / `_subauroral` / `_midlat`), kein Grammatik-Arm.
 - **Linie 2** (Claude Sonnet 5.5 · GLM-5.3 Deep Think Max): Stufe 1 global lassen; die Familien leben

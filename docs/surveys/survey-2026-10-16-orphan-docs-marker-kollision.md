@@ -39,7 +39,7 @@ tragen ihre Docs). Der Wert ist eine **Momentaufnahme, kein Bestand** — und **
 berechenbar** — das ist der Befund, kein Messfehler. Der Zähler mischt Kanon-Vokabel (`pending`,
 `offen`) und echte Träger-Lücke. **Er ist kein Aufgabenregister.**
 
-**Rat-Stand R4 (2026-10-17) — 5 Sitze, 4 Positionen** (`state/stimmen/2026-10-17-rat-offene-fragen.md`).
+**Rat-Stand R4 (2026-10-17) — 5 Sitze, 4 Positionen** (`state/rat/2026-10-17-rat-offene-fragen.md`).
 Der Rat ist gespalten; ich entscheide nicht allein:
 - **Leitstelle hausweit** — DeepSeek V4 Pro, Lumo 2.0 Max. DeepSeek: `pending`/`offen` fallen aus der
   Marker-Liste, Marker nur in echter Statuszeile. Lumo: Leitstelle + `--owner`-Filter, `pending` und
