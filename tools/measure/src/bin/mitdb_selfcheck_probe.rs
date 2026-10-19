@@ -61,7 +61,10 @@ fn main() {
             }
         }
     }
-    let fn_rate = fn_miss as f64 / fn_measurable.max(1) as f64;
+    let fn_rate = match fn_measurable {
+        0 => None,
+        n => Some(fn_miss as f64 / n as f64),
+    };
 
     println!(
         "false-positive rate (a ⊥ b): {}/{} direction tests = {:.1} % (2σ expectation ≈ 2,3 %)",
@@ -69,12 +72,17 @@ fn main() {
         N_TRIALS * 2,
         fp_rate * 100.0
     );
-    println!(
-        "false-negative rate (b follows a, direction a→b): {} missed of {} measurable couplings = {:.1} %",
-        fn_miss,
-        fn_measurable,
-        fn_rate * 100.0
-    );
+    match fn_rate {
+        Some(rate) => println!(
+            "false-negative rate (b follows a, direction a→b): {} missed of {} measurable couplings = {:.1} %",
+            fn_miss,
+            fn_measurable,
+            rate * 100.0
+        ),
+        None => println!(
+            "false-negative rate (b follows a, direction a→b): absent — 0 measurable couplings"
+        ),
+    }
     println!();
     let fp_sweep = fp_rate * 96.0;
     println!(

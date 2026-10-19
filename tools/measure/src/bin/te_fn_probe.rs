@@ -79,7 +79,10 @@ fn main() {
                 }
             }
         }
-        let m = meas.max(1) as f64;
+        if meas == 0 {
+            continue;
+        }
+        let m = meas as f64;
         println!(
             "{:>6} {:>6.2} {:>6.2} {:>6.2} | {:>9.4e} {:>9.4e} {:>5}/{} | {:>9.4e} {:>9.4e} {:>5}/{}",
             n,

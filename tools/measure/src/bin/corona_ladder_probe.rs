@@ -145,7 +145,8 @@ fn stack_pair(
             pos += 1;
         }
     }
-    (sum / tot.max(1) as f64, pos, tot)
+    let mean = if tot == 0 { f64::NAN } else { sum / tot as f64 };
+    (mean, pos, tot)
 }
 
 fn main() {
@@ -308,9 +309,10 @@ fn main() {
             let sig = if d > fam { "*" } else { " " };
             cells.push(format!("{:>8.2e}{}", d, sig));
         }
-        let peak_s = peak
-            .map(|(l, d)| format!("peak at lag {} ({} s) = {:.2e}", l, l * 10, d))
-            .unwrap_or_default();
+        let peak_s = match peak {
+            Some((l, d)) => format!("peak at lag {} ({} s) = {:.2e}", l, l * 10, d),
+            None => String::from("no peak"),
+        };
         println!(
             "{:>12} | lag:    0       2       4       6       8      10      12 | {}",
             pair, peak_s

@@ -170,7 +170,10 @@ fn median(vals: &mut Vec<f64>) -> f64 {
 
 fn bucket_medians(wav: &[u8], info: &WavInfo, bucket_s: f64) -> Vec<(f64, f64)> {
     let mut buckets: HashMap<u64, Vec<f64>> = HashMap::new();
-    let nchan = info.nchan.max(1);
+    if info.nchan == 0 {
+        return Vec::new();
+    }
+    let nchan = info.nchan;
     let samples = (info.data_len / 2) / nchan;
     for i in 0..samples {
         let off = info.data_off + i * 2 * nchan;
@@ -233,7 +236,10 @@ fn harvest_record(rel: &str, bucket_s: f64) -> Result<Vec<(f64, f64, u32)>, Stri
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "circor_pcg.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => String::from("circor_pcg.bin"),
+    };
     let decimate_min: f64 = arg_value(&args, "--decimate-min")
         .and_then(|v| v.parse().ok())
         .unwrap_or(DEFAULT_DECIMATE_MIN);
@@ -294,10 +300,13 @@ fn main() {
                     }
                     let rel = &records[i];
                     match harvest_record(rel, bucket_s) {
-                        Ok(recs) => series
-                            .lock()
-                            .unwrap_or_else(|e| e.into_inner())
-                            .extend(recs),
+                        Ok(recs) => {
+                            let mut guard = match series.lock() {
+                                Ok(g) => g,
+                                Err(poisoned) => poisoned.into_inner(),
+                            };
+                            guard.extend(recs);
+                        }
                         Err(note) => {
                             eprintln!("{}: {}", rel, note);
                             skipped.fetch_add(1, Ordering::SeqCst);
@@ -311,10 +320,16 @@ fn main() {
             });
         }
     });
-    let mut series = Arc::try_unwrap(series)
+    let mut series = match Arc::try_unwrap(series)
         .ok()
         .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    {
+        Some(m) => m,
+        None => {
+            eprintln!("{out}: the series lock stays held — no asset written");
+            std::process::exit(1);
+        }
+    };
     series.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.2.cmp(&b.2)));
     let skipped = skipped.load(Ordering::SeqCst);
     if series.is_empty() {
