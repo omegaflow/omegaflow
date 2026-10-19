@@ -2,8 +2,8 @@
   title: House Rules — Register, Handover, Commit, System Directive, Session Hygiene
   class: concept
   date: 2026-10-14
-  sha256: 866187715928f7ef39cc2809e7d40818311a4e5c0779bd3fbff653851e4cff51
-  status: live
+  sha256: c26a5f1d9f2ff96c981b8c84035041153341b40c8e1ba83adbbccc617a257ab8
+  status: archived
   see-also: AGENTS.md
 -->
 # House Rules — Register, Handover, Commit, System Directive, Session Hygiene
