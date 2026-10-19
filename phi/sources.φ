@@ -31956,3 +31956,12 @@ ttl 604800
 at earth
 quantity grid_outage_duration_h grid_outage_duration_h inverse-square source-parameter h 3600 0.0 0.0
 quantity grid_outage_max_customers grid_outage_max_customers inverse-square relative count 3600 0.0 0.0
+
+url https://downloads.sws.bom.gov.au/wdc/iondata/de/juliusruh/0318.00/
+terms SWS-WDC-Conditions https://www.sws.bom.gov.au/World_Data_Centre
+format sws_ionosonde
+origin https://downloads.sws.bom.gov.au/wdc/iondata/de/juliusruh/0318.00/
+compiler tools/harvest/src/bin/sws_ionosonde_compiler.rs
+at earth
+ttl 3600
+field sws_ionosonde_fof2_mhz sws_ionosonde_fof2_mhz inverse-square em MHz 3600 0.0 0.0
