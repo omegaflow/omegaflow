@@ -12,7 +12,7 @@ const LAS_TUNNEL_IFACE: &str = "proton0";
 const STALL_WORD: &str = "no response (connection stalled)";
 const UA: &str = "omegaflow-broker-difference-probe/1.0";
 const STATE_SAMPLE_DIR: &str = "tmp";
-const ALERCE_RETIRE_NOTE: &str = "api.alerce.online is the retired direct-database stub (dead_sources.φ: Direct database \
+const ALERCE_RETIRE_NOTE: &str = "api.alerce.online is the retired direct-database stub (sources.φ: Direct database \
      access is being retired) — a non-200 read is no negative, excluded from the verdict";
 
 #[derive(Clone, Copy, PartialEq, Debug)]

@@ -418,9 +418,19 @@ fn main() {
         .ok()
         .map(|s| s.trim().to_string())
         .filter(|s| !s.is_empty());
-    if let Ok(ereignisse) = std::fs::read_to_string("zustand/ereignisse.φ") {
-        let wartend = std::fs::read_to_string("zustand/wartend.φ").ok();
-        let blocked = std::fs::read_to_string("phi/blocked_sources.φ").ok();
+    let zustand = match std::env::var("OMEGAFLOW_ZUSTAND") {
+        Ok(d) => std::path::PathBuf::from(d),
+        Err(_) => match std::env::var("OMEGAFLOW_WORK") {
+            Ok(w) => std::path::PathBuf::from(w).join("zustand"),
+            Err(_) => match std::env::var("HOME") {
+                Ok(h) => std::path::PathBuf::from(h).join("projects/omegaflow-work/zustand"),
+                Err(_) => std::path::PathBuf::from("zustand"),
+            },
+        },
+    };
+    if let Ok(ereignisse) = std::fs::read_to_string(zustand.join("ereignisse.φ")) {
+        let wartend = std::fs::read_to_string(zustand.join("wartend.φ")).ok();
+        let blocked: Option<String> = None;
         match session.as_deref() {
             Some(name) => {
                 for (line, rule, feedback) in ereignis_folge_violations(
