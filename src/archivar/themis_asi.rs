@@ -168,7 +168,28 @@ pub fn component_name(comp: u32) -> String {
     format!("themis_asi_px_{comp:04}")
 }
 
-pub fn declared_fields(names: &[String], tau: f64) -> Vec<FieldConfig> {
+pub const TKDG_MAGIC: [u8; 4] = *b"TKDG";
+pub const TKDG_HEADER_BYTES: usize = 8;
+pub const TKDG_ROW_COUNT: usize = 256;
+pub const TKDG_ROW_BYTES: usize = 2;
+
+pub const FODG_MAGIC: [u8; 4] = *b"FODG";
+pub const FODG_HEADER_BYTES: usize = 16;
+pub const FODG_CELL_BYTES: usize = 4;
+
+pub fn tkdg_component_name(comp: u32) -> String {
+    format!("themis_asi_timed_keogram_row_{comp:04}")
+}
+
+pub fn fodg_component_name(comp: u32) -> String {
+    format!("themis_asi_fodg_cell_{comp:04}")
+}
+
+fn relative_fields(
+    names: &[String],
+    tau: f64,
+    name_of: impl Fn(u32) -> String,
+) -> Vec<FieldConfig> {
     let Some(channel_ref) = crate::force::force_id_of("em") else {
         return Vec::new();
     };
@@ -179,7 +200,7 @@ pub fn declared_fields(names: &[String], tau: f64) -> Vec<FieldConfig> {
         .iter()
         .enumerate()
         .map(|(comp, _)| {
-            let name = component_name(comp as u32);
+            let name = name_of(comp as u32);
             FieldConfig {
                 key: name.clone(),
                 name,
@@ -197,6 +218,18 @@ pub fn declared_fields(names: &[String], tau: f64) -> Vec<FieldConfig> {
             }
         })
         .collect()
+}
+
+pub fn declared_fields(names: &[String], tau: f64) -> Vec<FieldConfig> {
+    relative_fields(names, tau, component_name)
+}
+
+pub fn tkdg_declared_fields(names: &[String], tau: f64) -> Vec<FieldConfig> {
+    relative_fields(names, tau, tkdg_component_name)
+}
+
+pub fn fodg_declared_fields(names: &[String], tau: f64) -> Vec<FieldConfig> {
+    relative_fields(names, tau, fodg_component_name)
 }
 
 pub fn parse_bin(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
@@ -222,6 +255,66 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
             out.push((epoch, value as f64, j as u32));
         }
         off += per;
+    }
+    Some(out)
+}
+
+pub fn parse_tkdg(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    if bytes.len() < TKDG_HEADER_BYTES || bytes[0..4] != TKDG_MAGIC {
+        return None;
+    }
+    let count = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    let frame_bytes = 8 + TKDG_ROW_COUNT * TKDG_ROW_BYTES;
+    if bytes.len() != TKDG_HEADER_BYTES + count.checked_mul(frame_bytes)? {
+        return None;
+    }
+    let mut off = TKDG_HEADER_BYTES;
+    let mut out = Vec::with_capacity(count.saturating_mul(TKDG_ROW_COUNT));
+    for _ in 0..count {
+        let epoch = f64::from_le_bytes(bytes.get(off..off + 8)?.try_into().ok()?);
+        if !epoch.is_finite() {
+            return None;
+        }
+        for row in 0..TKDG_ROW_COUNT {
+            let at = off + 8 + row * TKDG_ROW_BYTES;
+            let value = u16::from_le_bytes(bytes.get(at..at + TKDG_ROW_BYTES)?.try_into().ok()?);
+            out.push((epoch, value as f64, row as u32));
+        }
+        off += frame_bytes;
+    }
+    Some(out)
+}
+
+pub fn parse_fodg(bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
+    if bytes.len() < FODG_HEADER_BYTES || bytes[0..4] != FODG_MAGIC {
+        return None;
+    }
+    let az_bins = u32::from_le_bytes(bytes[4..8].try_into().ok()?) as usize;
+    let el_bins = u32::from_le_bytes(bytes[8..12].try_into().ok()?) as usize;
+    let count = u32::from_le_bytes(bytes[12..16].try_into().ok()?) as usize;
+    let cells = az_bins.checked_mul(el_bins)?;
+    if cells == 0 {
+        return None;
+    }
+    let frame_bytes = 8 + cells.checked_mul(FODG_CELL_BYTES)?;
+    if bytes.len() != FODG_HEADER_BYTES + count.checked_mul(frame_bytes)? {
+        return None;
+    }
+    let mut off = FODG_HEADER_BYTES;
+    let mut out = Vec::with_capacity(count.saturating_mul(cells));
+    for _ in 0..count {
+        let epoch = f64::from_le_bytes(bytes.get(off..off + 8)?.try_into().ok()?);
+        if !epoch.is_finite() {
+            return None;
+        }
+        for cell in 0..cells {
+            let at = off + 8 + cell * FODG_CELL_BYTES;
+            let value = f32::from_le_bytes(bytes.get(at..at + FODG_CELL_BYTES)?.try_into().ok()?);
+            if value.is_finite() {
+                out.push((epoch, value as f64, cell as u32));
+            }
+        }
+        off += frame_bytes;
     }
     Some(out)
 }

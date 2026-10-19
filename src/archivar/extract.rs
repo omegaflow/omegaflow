@@ -98,6 +98,8 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "pds4_acs_nir" => acs_nir::parse_series(bytes),
         "iris" => iris::parse_bin(bytes),
         "themis_asi" => themis_asi::parse_bin(bytes),
+        "themis_asi_timed_keogram" => themis_asi::parse_tkdg(bytes),
+        "themis_asi_fodg" => themis_asi::parse_fodg(bytes),
         "mariner_m10_edr" => mariner_m10_edr::parse_bin(bytes),
         "mariner_rst" => mariner_rst::parse_bin(bytes),
         "mariner4_odg" => mariner4_odg::parse_bin(bytes),
@@ -439,6 +441,22 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
             let names: Vec<String> = (0..=max_comp).map(themis_asi::component_name).collect();
             (names, recs)
         }
+        "themis_asi_timed_keogram" => {
+            let recs = themis_asi::parse_tkdg(bytes)?;
+            let max_comp = recs.iter().map(|r| r.2).max()?;
+            let names: Vec<String> = (0..=max_comp)
+                .map(themis_asi::tkdg_component_name)
+                .collect();
+            (names, recs)
+        }
+        "themis_asi_fodg" => {
+            let recs = themis_asi::parse_fodg(bytes)?;
+            let max_comp = recs.iter().map(|r| r.2).max()?;
+            let names: Vec<String> = (0..=max_comp)
+                .map(themis_asi::fodg_component_name)
+                .collect();
+            (names, recs)
+        }
         "keogram" => {
             let recs = keogram::parse_bin(bytes)?;
             let mut names: Vec<String> = Vec::new();
@@ -517,6 +535,8 @@ pub fn series_declared_fields(format: &str, names: &[String], tau: f64) -> Vec<F
         "vlf_awesome" => vlf_awesome::declared_fields(tau),
         "pds4_acs_nir" => acs_nir::declared_fields(),
         "themis_asi" => themis_asi::declared_fields(names, tau),
+        "themis_asi_timed_keogram" => themis_asi::tkdg_declared_fields(names, tau),
+        "themis_asi_fodg" => themis_asi::fodg_declared_fields(names, tau),
         "iris" => iris::declared_fields(names, tau),
         "keogram" => keogram::declared_fields(names, tau),
         _ => Vec::new(),
@@ -8910,5 +8930,104 @@ mod tar_fits_tests {
     #[test]
     fn camera_angles_yield_no_rows_without_a_frame() {
         assert!(camera_angles_frames_to_json("not a camera-angle file").is_none());
+    }
+}
+
+#[cfg(test)]
+mod themis_asi_bin_tests {
+    use super::*;
+
+    fn tkdg(frames: &[(f64, Vec<u16>)]) -> Vec<u8> {
+        let mut out = Vec::new();
+        out.extend_from_slice(&themis_asi::TKDG_MAGIC);
+        out.extend_from_slice(&(frames.len() as u32).to_le_bytes());
+        for (epoch, rows) in frames {
+            assert_eq!(rows.len(), themis_asi::TKDG_ROW_COUNT);
+            out.extend_from_slice(&epoch.to_le_bytes());
+            for value in rows {
+                out.extend_from_slice(&value.to_le_bytes());
+            }
+        }
+        out
+    }
+
+    fn fodg(frames: &[(f64, Vec<f32>)], az_bins: u32, el_bins: u32) -> Vec<u8> {
+        let mut out = Vec::new();
+        out.extend_from_slice(&themis_asi::FODG_MAGIC);
+        out.extend_from_slice(&az_bins.to_le_bytes());
+        out.extend_from_slice(&el_bins.to_le_bytes());
+        out.extend_from_slice(&(frames.len() as u32).to_le_bytes());
+        for (epoch, cells) in frames {
+            assert_eq!(cells.len(), (az_bins * el_bins) as usize);
+            out.extend_from_slice(&epoch.to_le_bytes());
+            for value in cells {
+                out.extend_from_slice(&value.to_le_bytes());
+            }
+        }
+        out
+    }
+
+    #[test]
+    fn timed_keogram_reaches_samples_and_declared_fields() {
+        let epoch = 1_765_000_000.0;
+        let mut rows = vec![0u16; themis_asi::TKDG_ROW_COUNT];
+        rows[3] = 42;
+        rows[255] = 900;
+        let bytes = tkdg(&[(epoch, rows)]);
+        let rows = series_parse_bin("themis_asi_timed_keogram", &bytes).expect("tkdg parses");
+        assert_eq!(rows.len(), themis_asi::TKDG_ROW_COUNT);
+        assert_eq!(rows[3], (epoch, 42.0, 3));
+        assert_eq!(rows[255], (epoch, 900.0, 255));
+
+        let named = series_named("themis_asi_timed_keogram", &bytes).expect("named series");
+        assert_eq!(named.names.len(), themis_asi::TKDG_ROW_COUNT);
+        assert_eq!(
+            named.names[3],
+            "themis_asi_timed_keogram_row_0003".to_string()
+        );
+        let fields = series_declared_fields("themis_asi_timed_keogram", &named.names, 60.0);
+        assert_eq!(fields.len(), themis_asi::TKDG_ROW_COUNT);
+        assert_eq!(fields[3].key, "themis_asi_timed_keogram_row_0003");
+        assert_eq!(fields[3].unit, themis_asi::UNIT);
+        assert_eq!(fields[3].tau, 60.0);
+        assert_eq!(fields[3].aperture, Aperture::None);
+        assert_eq!(fields[3].freq, spectral::SPECTRAL_NO_BAND);
+    }
+
+    #[test]
+    fn full_frame_cube_reaches_samples_without_nan_cells() {
+        let epoch = 1_765_000_060.0;
+        let bytes = fodg(&[(epoch, vec![1.0, f32::NAN, 3.0, 4.0, 5.0, 6.0])], 3, 2);
+        let rows = series_parse_bin("themis_asi_fodg", &bytes).expect("fodg parses");
+        assert_eq!(
+            rows,
+            vec![
+                (epoch, 1.0, 0),
+                (epoch, 3.0, 2),
+                (epoch, 4.0, 3),
+                (epoch, 5.0, 4),
+                (epoch, 6.0, 5),
+            ]
+        );
+
+        let named = series_named("themis_asi_fodg", &bytes).expect("named series");
+        assert_eq!(named.names.len(), 6);
+        assert_eq!(named.names[2], "themis_asi_fodg_cell_0002".to_string());
+        assert_eq!(named.rows.len(), 5);
+        let fields = series_declared_fields("themis_asi_fodg", &named.names, 60.0);
+        assert_eq!(fields.len(), 6);
+        assert_eq!(fields[2].key, "themis_asi_fodg_cell_0002");
+        assert_eq!(fields[2].unit, themis_asi::UNIT);
+        assert_eq!(fields[2].aperture, Aperture::None);
+    }
+
+    #[test]
+    fn foreign_truncated_and_empty_grid_bins_stay_void() {
+        assert!(series_parse_bin("themis_asi_timed_keogram", b"XXXX").is_none());
+        assert!(series_parse_bin("themis_asi_fodg", b"XXXX").is_none());
+        let ok = tkdg(&[(1.0, vec![0u16; themis_asi::TKDG_ROW_COUNT])]);
+        assert!(series_parse_bin("themis_asi_timed_keogram", &ok[..ok.len() - 1]).is_none());
+        let empty_grid = fodg(&[], 0, 2);
+        assert!(series_parse_bin("themis_asi_fodg", &empty_grid).is_none());
     }
 }
