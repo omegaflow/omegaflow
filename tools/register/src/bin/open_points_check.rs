@@ -107,14 +107,13 @@ fn main() {
         println!("post-md-resurrected");
     }
     println!(
-        "open_points_check: {}  | {} path refs | {} absent | {} stale-citations | {} done-carried | {} word-carried | {} guardians | {} format-gaps | {} owner-drift | {} post-md",
+        "open_points_check: {}  | {} path refs | {} absent | {} stale-citations | {} done-carried | {} word-carried | {} format-gaps | {} owner-drift | {} post-md",
         rel,
         points,
         missing,
         stale.len(),
         done.len(),
         words.len(),
-        guardians.len(),
         format_gap_count,
         drifts.len(),
         post_md as usize
