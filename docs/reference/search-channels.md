@@ -2,7 +2,7 @@
   title: Suchkanäle — gemessener Stand (2026-10-19)
   class: ref
   date: 2026-10-19
-  sha256: f166832bfd8940b99a67881de896f252e7b7438c423755e8d0e9bbfdadcb9dee
+  sha256: 0aa695a87c624da48218baee9e07a38ac28a56760246ef296a36722e3d8806b1
   status: live
   see-also: docs/concepts/tools-map.md docs/surveys/survey-2026-10-19-paper-forschungslage.md
 -->
@@ -29,10 +29,13 @@ Kanal wird als „geht" geführt, weil er im Hilfetext steht — nur, weil er ge
 ## Mit Key (Key vorhanden, gemessen 200)
 
 `--base` (400-Mio-Index, **mit Jahr**), `--core`, `--openaire`, `--semanticscholar`
-(200, aber intermittierend 429), `--ads`, `--scopus`, `--datacite`
-(**Riss:** `publicationYear` steht im Body, wird aber nicht ausgegeben).
+(200, aber intermittierend 429), `--ads`, `--scopus`, `--datacite` (mit **Jahr** seit `763adf39e`).
 
 ## Account-Problem, kein fehlender Arm
+
+**Nachgemessen 2026-10-20:** unverändert — `--brave` 402, `--tavily` 432,
+`--gemini` 429 (Quota), `--searchapi` 429, `--serpapi` 429, `--consensus` 429,
+`--googlecse` 400 („API key not valid"). Der Zustand ist ein Konto-, kein Code-Problem.
 
 Key liegt vor, Provider verweigert trotzdem:
 
@@ -66,3 +69,17 @@ leerer Treffer.
 Seit `46b82ec95` fahren mehrere Flags in einem Aufruf wirklich mehrere Kanäle
 (`Vec<Mode>`, je Kopfzeile). Vorher gewann die letzte Flag — ein gemessener Defekt,
 kein Bedienfehler.
+
+## Werkzeug-Riss (2026-10-20)
+
+`bin/archive_search` meldet beim Start einen Manifest-Riss:
+
+```
+remote c580b311… vs downloaded 5b4c0b53…, keeping installed d6d8f744…
+```
+
+Die installierte Release-Binary ist älter als der veröffentlichte Manifest-Eintrag
+(`tools-build` läuft). Der Suchlauf selbst ist davon nicht betroffen — die oben
+gemessenen Codes kommen aus dem lokal gebauten Binärbaum. Sobald `tools-build`
+landet, verschwindet der Riss; bis dahin ist `bin/archive_search` für Messungen
+nicht die Wahrheit, `target/debug/archive_search` schon.
