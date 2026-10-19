@@ -85,7 +85,10 @@ fn data_json(cache: &Arc<Mutex<Option<Snapshot>>>, interval: u64) -> String {
 }
 
 fn build_json() -> String {
-    let now = unix_now_secs();
+    let Some(now) = unix_now_secs() else {
+        eprintln!("job-dashboard: the clock stands before the UNIX epoch — no snapshot");
+        std::process::exit(1);
+    };
     let load = loadavg();
     let ncpu = n_cpus();
     let (used_gb, total_gb, _frac) = mem_frac();

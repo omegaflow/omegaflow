@@ -429,11 +429,11 @@ pub fn term_width() -> usize {
     }
 }
 
-pub fn unix_now_secs() -> u64 {
-    match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(d) => d.as_secs(),
-        Err(_) => 0,
-    }
+pub fn unix_now_secs() -> Option<u64> {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .ok()
+        .map(|d| d.as_secs())
 }
 
 fn run_progress(id: &str) -> (Option<usize>, Option<usize>) {
