@@ -2,7 +2,7 @@
   title: Archivar & Mathematikerin — Spec und Drei-Schichten-Vertrag
   class: concept
   date: 2026-10-15
-  sha256: c44827f28b91ad1a2216345e6d480522606f128d0701e8af14e9fc2880b2d600
+  sha256: 01cabf9e9413ead91bac5252fbe8f30ec22093dd1aa9674e9a943e279d924caa
   status: live
   see-also: AGENTS.md, docs/specs/binary-protocol.md, docs/specs/wgsl-shader.md
 -->

@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: 9aeb55e66b8ce7e02333e90f534159163a311717a3c943f7f9a0197b400084d3
+  sha256: 6f0073e8069fccc8dd4990c5a8115e4d1dce0bdaa21ecd45804ba3b2c3e98ec5
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/archiv/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
 -->
