@@ -31824,3 +31824,13 @@ ttl 604800
 field z tns_redshift inverse-linear em 1 604800 0.0 0.0 aperture:none
 field ra_deg tns_ra_deg inverse-square geometry deg 604800 0.0 0.0 aperture:none
 field dec_deg tns_dec_deg inverse-square geometry deg 604800 0.0 0.0 aperture:none
+
+url https://github.com/omegaflow/sources/releases/download/flood-api.open-meteo.com/openmeteo_river_discharge_27.7_85.3.txt
+format openmeteo_flood_axis_value_text
+origin https://flood-api.open-meteo.com/v1/flood?latitude=27.7&longitude=85.3&daily=river_discharge&forecast_days=92&timezone=UTC
+terms CC-BY-4.0 https://open-meteo.com/en/licence
+compiler tools/harvest/src/bin/openmeteo_flood_compiler.rs
+sha256 c11240dca294d67c38b28dbe7e4dadb30966c763333631093fb3accff7a4359e
+on earth 27.7 85.3 1288
+ttl 86400
+field river_discharge_m3s river_discharge_m3s inverse-square advective m3/s 86400 0.0 0.0
