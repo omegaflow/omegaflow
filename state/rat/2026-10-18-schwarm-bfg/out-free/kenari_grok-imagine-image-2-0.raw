@@ -1,1 +1,0 @@
-{"error":{"code":"bad_request","message":"model 'grok-imagine-image-2-0' is not a chat model; use /v1/images/generations instead","param":null,"type":"bad_request"}}

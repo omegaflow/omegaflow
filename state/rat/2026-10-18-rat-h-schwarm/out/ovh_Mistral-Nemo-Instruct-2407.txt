@@ -1,2 +1,0 @@
-Verdikt: A — Begründung: Es ist wichtig, dass die Benutzer nur für die Modelle bezahlen, die sie tatsächlich verwenden, und nicht für den Anbieter als Ganzes. — Riss: Keiner.
-Zusatz 1 (Preis-Wahrheit): Katalog — Zusatz 2: Modell-IDs — Zusatz 3: Ja, das gilt auch für `unorouter` und die übrigen Prefixe.

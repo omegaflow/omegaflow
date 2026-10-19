@@ -1,1 +1,0 @@
-{"error":{"message":"ovh/Qwen2.5-VL-72B-Instruct is a billed model — the operator's word is required (name the model id in $OMEGAFLOW_WORK/post/paid-open, or set OMEGAFLOW_PAID=<model-id>)"}}

@@ -1,8 +1,0 @@
-## R-b — GRS80/gamma0-Register
-Verdikt: B — Begründung: Implementierung einer neuen Direktive ellipsoid + normal_gravity ermöglicht die Registrierung der erforderlichen skalaren Referenzkonstanten und bietet eine klare Strukturierung. Die Verwendung von GeographicLib (MIT-Code) stellt eine sichere und gut dokumentierte Lösung dar, ohne dass Datensätze benötigt werden. Riss: Die fehlende Registrierung von N bleibt ein erhebliches Problem, da es die Berechnung von Zeitwerten beeinträchtigen kann.
-
-## R-f — gfc-Block
-Verdikt: A — Begründung: Die Option A bietet eine umfassende Lösung durch die Implementierung einer neuen Direktive ellipsoid + normal_gravity, die alle erforderlichen Parameter (Modell/Cap, Epoche, ttl und Bootstrap-Reihenfolge) regelt. Dies gewährleistet eine stabile und vollständige Funktionalität. Riss: Die große Größe von D=5540 5,95 GiB ist nicht release-tauglich, was zu möglichen Problemen bei der Implementierung und dem Einsatz führen könnte.
-
-## R-g — P10-Restarme
-Verdikt: B — Begründung: Die Option B bietet eine ausgewogene Lösung durch die Implementierung der kleinsten sicheren Teilmenge, die die Parser-Fixierung und die Aufspaltung des Stern-Metadaten-Achsens beinhaltet. Dies ermöglicht eine funktionierende Lösung ohne die Risiken einer umfassenden Umsetzung. Riss: Die vollständige Umsetzung (Option A) könnte die erforderlichen Verbesserungen umfassen, aber könnte aufgrund der Größe und Komplexität möglicherweise nicht umsetzbar sein.

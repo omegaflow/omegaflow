@@ -1,6 +1,0 @@
-rei Ephemeriden-Programme: eines schreibt JSON, der Leser erwartet Binär. Vorschlag: Programm auf Binär umstellen (Vertrag gehört dem Leser), die drei nach Vollständigkeit bauen? 
- 
-Show full message
-Thinking...
-Deep Think
-Max

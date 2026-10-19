@@ -1,8 +1,0 @@
-### R-b — GRS80/gamma0-Register
-**Verdikt: A** — Begründung: Direkte Integration von ellipsoid und normal_gravity ermöglicht eine klare und nachvollziehbare Registrierung der Referenzkonstanten. Dies stellt sicher, dass alle relevanten Werte korrekt und konsistent verwaltet werden. — Riss: Die Implementierung könnte komplex und fehleranfällig sein, wenn nicht sorgfältig getestet wird.
-
-### R-f — gfc-Block
-**Verdikt: A** — Begründung: D=2190 bietet ein offizielles Teilmodell, das sowohl ausreichend genau als auch handhabbar ist. Dies stellt einen guten Kompromiss zwischen Genauigkeit und Ressourcenverbrauch dar. — Riss: Die Epoche bleibt unklar und könnte zu Inkompatibilitäten führen, wenn nicht korrekt definiert wird.
-
-### R-g — P10-Restarme
-**Verdikt: B** — Begründung: Der kleinste sichere Teilmenge stellt sicher, dass die wichtigsten Daten korrekt verarbeitet werden, ohne die Architektur übermäßig zu belasten. Dies minimiert das Risiko von Fehlern und erhöht die Effizienz. — Riss: Es könnte weitere unerkannte Abhängigkeiten geben, die nicht durch die kleinste Teilmenge abgedeckt werden.

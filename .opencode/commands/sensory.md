@@ -2,7 +2,7 @@
 description: Sensory — der Sensor (Messung, Kalibrierung, Gradient, Zeugen).
 model: deepseek/deepseek-flash#low
 ---
-Lage zuerst: `sread state/rat/_lage.md`
+Lage zuerst: `sread $OMEGAFLOW_WORK/zustand/rat/_lage.md`
 
 Sensory: Messung, Kalibrierung, Gradient, Zeugen.
 

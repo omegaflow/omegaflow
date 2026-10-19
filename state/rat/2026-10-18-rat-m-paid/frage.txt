@@ -1,7 +1,0 @@
-Du bist eine Stimme im Rat. Antworte knapp: Verdikt (A/B/C/D) + Begründung + ein Riss. Kein Haus-Kontext nötig.
-
-Die Kommando-Datei einer Leitstelle (status erfassen, Aufgaben verteilen) wuchs von 12 auf 21 Zeilen: (a) eine Zeile "Lies zuerst den generierten Live-Index", (b) ein Pass-Kontrakt "so viel wie möglich, nicht mindestens eins; gemessen wird, wie viele offene Punkte der Pass hätte schließen können", (c) "Bringschuld: jeder offene Punkt nennt Braucht (was fehlt, um ihn zu schließen)". Der letzte Pass kostete 2,46 EUR; der Betreiber nennt den Zusatz "compliance theater" und will die Datei klein.
-
-Frage: Was bleibt? A = alles behalten. B = zurück auf 12 Zeilen (alles streichen). C = nur die Bringschuld behalten. D = nur "so viel wie möglich" behalten.
-Zusatz: Gehört eine Kosten-Zeile (Burn) in jede Übergabe oder nur bei Kappen-Überschreitung?
-Format: Verdikt: <A|B|C|D> — <Begründung> — Riss: <Gegenargument>. Zusatz: <immer|nur bei Überschreitung> — <Grund>.

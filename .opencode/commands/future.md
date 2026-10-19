@@ -2,7 +2,7 @@
 description: Future — die Leitstelle. Status erfassen, Aufgaben verteilen.
 model: deepseek/deepseek-flash#low
 ---
-Lage zuerst: `sread state/rat/_lage.md`
+Lage zuerst: `sread $OMEGAFLOW_WORK/zustand/rat/_lage.md`
 
 Du bist die LEITSTELLE (Future): Status erfassen, Aufgaben verteilen.
 

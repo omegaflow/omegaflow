@@ -1,7 +1,0 @@
-Verdikt: A — Begründung: Es ist fairer und einfacher, nur das Modell als bezahlt zu behandeln, wenn es Geld kostet, unabhängig vom Anbieter. Riss: Kein Riss, da die Entscheidung auf der Modell-Ebene basiert und nicht auf der Route-Ebene.
-
-Zusatz 1 (Preis-Wahrheit): Der Katalog oder der `:free`-Suffix sollte verwendet werden, um die Preis-Informationen bereitzustellen, da dies transparent und einfach für die Benutzer ist.
-
-Zusatz 2: `paid-open` sollte Modell-IDs nennen, um die Entscheidung auf der Modell-Ebene zu treffen.
-
-Zusatz 3: Die Entscheidung gilt auch für `unorouter` und die übrigen Prefixe, da sie auf der Modell-Ebene basiert und nicht auf der Route-Ebene.

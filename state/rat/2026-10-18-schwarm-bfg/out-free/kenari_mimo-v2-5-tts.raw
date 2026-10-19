@@ -1,1 +1,0 @@
-{"error":{"code":"bad_request","message":"model 'mimo-v2-5-tts' is not a chat model; use /v1/audio/speech instead","param":null,"type":"bad_request"}}

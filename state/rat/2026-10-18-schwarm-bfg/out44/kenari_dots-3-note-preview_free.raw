@@ -1,1 +1,0 @@
-{"error":{"code":"free_quota_daily","message":"free-model daily limit reached; the counter resets at 00:00 UTC. Top up from Rp1.000 at https://kenari.id/pay to keep going, or subscribe to raise the limit","param":null,"type":"rate_limit_exceeded"}}

@@ -1,5 +1,0 @@
-
-
-**F1 Verdikt: A [S2]** — Begründung: Derzeit ist die Quittung nicht unterscheidbar, da `CLOSED` sowohl für Quittung als auch für Selbst-Erledigung steht und der Empfänger keinen Akt im eigenen Ledger erstellen kann. Ein eigener `ACK`-Akt im Empfänger-Ledger (Option A) würde dies korrigieren und `ACKED` von `CLOSED` unterscheidbar machen, was eine echte Quittung ermöglicht. Die Zusatzfrage `--addressed` wird mit S2 gelöst: eine Zustandsspalte listet geschlossene Blöcke weiter, aber mit klarerer Information, anstatt sie auszublenden (S1), da dies Verlust von Kontext bedeuten könnte. — Riss: Der aktuelle Zustand lässt keine Quittung zu und `--addressed` zeigt Erledigtes irreführend als offen an; der zurückgenommene `xfer ack`-Arm deutet auf frühere Schwierigkeiten hin, die mit A behoben werden könnten.
-
-**F2 Verdikt: B** — Begründung: Die Umstellung auf `group: ...-${{ github.ref }}` mit `cancel-in-progress: true` reduziert die Anzahl der gleichzeitigen Läufe pro Ref auf einen, was die hohe Cancel-Rate (7 von 8 Läufen in 10 Minuten) minimiert. Da das
