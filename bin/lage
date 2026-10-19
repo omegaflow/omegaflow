@@ -12,6 +12,13 @@ open_rows=$(grep -E '\*\*rat-offen|\*\*rat-konvergiert|\*\*offen\*\*|\*\*gefahre
 
 last_runs=$(ls -1t state/stimmen/ 2>/dev/null | grep -E 'sammlung|verdikt|lage' | head -8 | sed 's/^/  /')
 
+work="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
+post_in=$(ls -1 "$work"/post/in/*.md 2>/dev/null | wc -l)
+post_today=$(ls -1 "$work"/post/in/"$(date +%F)"-*.md 2>/dev/null | wc -l)
+post_out=$(ls -1 "$work"/post/out/*.md 2>/dev/null | wc -l)
+post_head=$(git -C "$work" rev-parse --short HEAD 2>/dev/null || echo 'kein Repo')
+post_dirty=$(git -C "$work" status --porcelain 2>/dev/null | wc -l)
+
 models=$(tail -n +2 state/zustand/llm-gateway-models.tsv 2>/dev/null | wc -l)
 alive=$(tail -n +2 state/zustand/llm-gateway-alive.tsv 2>/dev/null | wc -l)
 free=$(tail -n +2 state/zustand/llm-gateway-models.tsv 2>/dev/null | awk -F'\t' '$3==0 && $4==0' | wc -l)
@@ -54,6 +61,9 @@ done)
   else
     echo "  (keine)"
   fi
+  echo
+  echo "## Post (Arbeitsbaum \`$work\`)"
+  echo "- in: $post_in Briefe (heute $post_today) · out: $post_out · Postfach-Repo: \`$post_head\` · uncommitted: $post_dirty"
   echo
   echo "## Rat-Fragen (offen | rat-konvergiert)"
   if [ -n "$open_rows" ]; then
