@@ -2,7 +2,7 @@
   title: Auth-APIs für omegaflow — vollständige Liste
   class: ref
   date: 2026-09-05
-  sha256: 9617e9531135aa86547ecbcdf37c10a417c791b890372527f81554abe7a8cd30
+  sha256: 83c2776b6636e82a1ed7089171e300854d6dbb8c12266e6d9fa87c50ba4bd3dc
   status: live
 -->
 # Auth-APIs für omegaflow — vollständige Liste
@@ -10,7 +10,7 @@
 Alle in den Forschungsdateien identifizierten APIs, die **Authentifizierung** erfordern.
 Gruppiert nach Daten-Mehrwert für die 9-Kräfte-Punktwolke. Basis: Register.
 
-**Stand 2026-09-03.** Dieses Blatt ist die **Registrierungs-/Lizenz-Sicht**: welche
+**Stand 2026-09-03, Auth-Nachmessung 2026-10-19.** Dieses Blatt ist die **Registrierungs-/Lizenz-Sicht**: welche
 Accounts existieren, welche Keys wo liegen, welche Registrierungen eine
 CDN-Redistribution erlauben. Das verbindliche **Port-/Verdikt-Register** je Quelle
 lebt in `phi/sources.φ` (live), `phi/sources.φ` (decline/dead, mit note) und
@@ -119,22 +119,28 @@ retired (ERDDAP → NOAA/EMODnet umgestellt).
 
 ## Register-Anker: live / decline / dead je Quelle
 
-Gemessen aus `phi/sources.φ` (live), `phi/sources.φ` (Verdikt), 2026-09-03.
+Gemessen aus `phi/sources.φ` (live), `phi/sources.φ` (Verdikt), 2026-09-03;
+Auth-Nachmessung 2026-10-19 (nur HTTP-Status, keine Secret-Werte).
 Dies ersetzt den früheren statischen Status-Kommentar: die Verdikt-Begründung je
 Endpoint liegt in `phi/sources.φ` und ist dort nachschlagbar.
 
 **Live in sources.φ (schon da / integriert):** Open-Meteo (Punkt-/Archiv-Stationen),
 NOAA NCDC/CDO (thermal, P09-Fanout), OpenAQ (diffusion, P09-Fanout, v3/sensors),
 TNS/WIS (em, Vollkatalog), PurpleAir (diffusion), NASA DONKI CME/FLR (em),
-frost.met.no (thermal/advective). Die ZTF-Richtungs-Transienten (ALeRCE, Lasair) sind pending — Richtung ohne Distanz, siehe §E.2 und TODO. Siehe auch §E.1.
+frost.met.no (thermal/advective), Ocean Networks Canada (`onc_*`, advective),
+CDDIS IONEX (`ionex_tec_gim`, EM), GES DISC (`cosmic2_gnssro_l2b`, EM/Thermal),
+PODAAC GRACE-FO/SWOT (Gravity; Earthdata-Header + S3-Credentials). Die ZTF-Richtungs-Transienten (ALeRCE, Lasair) sind pending — Richtung ohne Distanz, siehe §E.2 und TODO. Siehe auch §E.1.
 
 **dead (Endpoint weg, `sources.φ`):** NASA-ADS-Subendpoints (`/v1/export/bibtex`),
-PODAAC/NSIDC (S3-`scheme-unsupported` + DNS), GES-DISC (`404`, GLDAS = Modell),
 EIA (`timeout`), SCISAT `databace.scisat.ca` (`404`), IAEA `nucleus.iaea.org/ILIS` (`404`),
 Insight SEIS (`404`), IRSA-TAP/Scan, CEDA-CCI-SST-Browser, ICOS-meta. Live-Probe
 2026-09-03 (aus §A/B/C nachgemessen): **JSOC** `jsoc.stanford.edu` (`dead timeout`,
 curl 000 auf allen Pfaden) und **SAWS** `api.weathersa.co.za` (`dead origin-down`,
 502/521) — beide in `phi/sources.φ` verbucht.
+Auth-Nachmessung 2026-10-19, **nicht im Register**: **AirNow** (`410 Gone`,
+Web-Service zum 2026-10-01 eingestellt) und **NASA Insight** (`api.nasa.gov/insight_weather`
+timeout 000, auch mit `DEMO_KEY`). Frühere dead-Befunde zu PODAAC-S3 und GES-DISC
+sind damit überholt: beide antworten 2026-10-19 mit Token (s. §A).
 
 **decline (Verdikt, `sources.φ`):** Copernicus CDS/ERA5 (`model-forecast`),
 Global Fishing Watch (`redistribution`), Global Forest Watch `data-api` (`derived-product`),
@@ -152,23 +158,23 @@ OpenTopography-API (`method`, 405), 511.org (`registry-premium-gzip`), arbimon/W
 
 | API | Endpoint | Auth | Kosten | Force | Status | Registrierung |
 |---|---|---|---|---|---|---|
-| **NASA ADS** | `api.adsabs.harvard.edu/v1/search/query` | Bearer-Token | frei | EM | offen (gemessen 2026-09-14: /v1/search/query = 200 mit Key; die 404 betreffen nur /v1/ und /v1/export/bibtex/) | https://ui.adsabs.harvard.edu/user/settings/token |
-| **Space-Track.org** | `www.space-track.org/basicspacedata/query/class/satcat` | Login | frei | EM | offen (gemessen 2026-09-14: ajaxauth-Login 200 + satcat-Query 200 mit Credentials; früherer Query-401 war Cookie-/Param-Fehler) | https://www.space-track.org/auth/login |
+| **NASA ADS** | `api.adsabs.harvard.edu/v1/search/query` | Bearer-Token | frei | EM | **live** (gemessen 2026-10-19: /v1/search/query = 200 mit Bearer; die 404 betreffen nur /v1/ und /v1/export/bibtex/; Port noch offen) | https://ui.adsabs.harvard.edu/user/settings/token |
+| **Space-Track.org** | `www.space-track.org/basicspacedata/query/class/satcat` | Login | frei | EM | **live** (gemessen 2026-10-19: ajaxauth-Login 200 + satcat-Query 200 mit Credentials; Port noch offen) | https://www.space-track.org/auth/login |
 | **SuperMAG** | `supermag.jhuapl.edu/services/data-api.php` | `logon=<username>` (passwortlos) | frei | EM | **funktioniert** (gemessen 10.09.2026: inventory/indices/data-api liefern echte Daten; User `omegaflow`; der frühere „geht nicht"-Befund war der falsche Parameter `user`/`username` statt `logon`) | https://supermag.jhuapl.edu/mag/ |
-| **GRACE-FO / SWOT (PODAAC)** | `podaac.jpl.nasa.gov` S3-Bucket | Earthdata | frei | Gravity | Scheme getragen (546d39e SigV4); weiter offen: s3credentials 401 ‚required client id missing' (Token gültig, legacy User-Token ohne client_id) | https://urs.earthdata.nasa.gov/users/new |
-| **SMAP Bodenfeuchte** | `nsidc.org/data/smap` | Earthdata | frei | Gravity | fehlt (Earthdata vorhanden; Live 200; on-prem n5eil01u.ecs.nsidc.org unerreichbar (deprecated)) | https://urs.earthdata.nasa.gov/users/new |
-| **CDDIS IONEX** | `cddis.nasa.gov` | Earthdata | frei | EM | fehlt (Earthdata-gated bestätigt; Datei mit Token = 404 (client_id-Block)) | https://urs.earthdata.nasa.gov/users/new |
-| **GES DISC (GPM/MODIS)** | `gesdisc.eosdis.nasa.gov` | Earthdata | frei | EM/Thermal | fehlt (griddap weiter 404; neuer earthdatacloud-OPeNDAP-Base + EDL offen) | https://urs.earthdata.nasa.gov/users/new |
-| **NASA AppEEARS** | `appeears.earthdatacloud.nasa.gov` | Earthdata | frei | Thermal | fehlt (/api/ 200, /api/product mit Token 403 (EDL client_id)) | https://urs.earthdata.nasa.gov/users/new |
+| **GRACE-FO / SWOT (PODAAC)** | `podaac.jpl.nasa.gov` S3-Bucket | Earthdata | frei | Gravity | **live** (gemessen 2026-10-19: s3credentials = 200, protected GRACE-FO-Datei = 303 auf signierte CloudFront-URL; der frühere 401 ‚client id missing' ist weg; Port noch offen) | https://urs.earthdata.nasa.gov/users/new |
+| **SMAP Bodenfeuchte** | `nsidc.org/data/smap` | Earthdata | frei | Gravity | **live** (gemessen 2026-10-19: Portal 200, NSIDC-`s3credentials` = 200 mit EDL-Token; konkreter Bucket-Pfad 404, on-prem n5eil01u.ecs.nsidc.org DNS-tot → Port über S3 noch offen) | https://urs.earthdata.nasa.gov/users/new |
+| **CDDIS IONEX** | `cddis.nasa.gov` | Earthdata | frei | EM | **live** (gemessen 2026-10-19: IONEX-Datei mit Token = 200; der frühere 404/client_id-Block ist weg; Register-Block `ionex_tec_gim` vorhanden) | https://urs.earthdata.nasa.gov/users/new |
+| **GES DISC (GPM/MODIS)** | `gesdisc.eosdis.nasa.gov` | Earthdata | frei | EM/Thermal | **live** (gemessen 2026-10-19: `data.gesdisc.earthdata.nasa.gov` Verzeichnis + OPeNDAP-Base mit Token = 200; Register-Block `cosmic2_gnssro_l2b` vorhanden; GPM/MODIS-Port noch offen) | https://urs.earthdata.nasa.gov/users/new |
+| **NASA AppEEARS** | `appeears.earthdatacloud.nasa.gov` | Earthdata | frei | Thermal | **blocked account** (gemessen 2026-10-19: /api/ 200, /api/product mit Token 403 — Zugriff auf die App-Ebene verweigert, kein Key-/Netzproblem) | https://urs.earthdata.nasa.gov/users/new |
 
 ## B. Mittel — erweitert vorhandene Daten
 
 | API | Endpoint | Auth | Kosten | Force | Status | Registrierung |
 |---|---|---|---|---|---|---|
-| **MarineTraffic AIS** | `services.marinetraffic.com/api/` | Key | teils paid | Advective | fehlt (Live 401 key-gated; Root 404) | https://www.marinetraffic.com/en/ais-api-services |
+| **MarineTraffic AIS** | `services.marinetraffic.com/api/` | Key | teils paid | Advective | **blocked key** (gemessen 2026-10-19: API = 400 `INVALID KEY`; kein Secret) | https://www.marinetraffic.com/en/ais-api-services |
 | **Open-Meteo** | `api.open-meteo.com` | Keyless | frei | Thermal/Advective | schon da (Punkt-Stationen; ERA5-Modell-Subset decline) | — |
 | **NOAA NCDC/CDO** | `www.ncdc.noaa.gov/cdo-web/api/v2/` | Token | frei | Thermal | integriert (P09-Fanout, live in sources.φ) | https://www.ncdc.noaa.gov/cdo-web/token |
-| **NASA Insight Mars** | `api.nasa.gov/insight_weather` | Key | frei | Thermal | fehlt (SEIS dead 404; API Live 200, Port offen) | https://api.nasa.gov/ |
+| **NASA Insight Mars** | `api.nasa.gov/insight_weather` | Key | frei | Thermal | **dead** (gemessen 2026-10-19: timeout 000, auch mit `DEMO_KEY`; api.nasa.gov-Root 200, aber /insight_weather antwortet nicht) | https://api.nasa.gov/ |
 | **TNS Transient** | `www.wis-tns.org/api/` + CSV-Staging | Key + User-Marker | frei | EM | integriert (Vollkatalog, csv_zip, live) | https://www.wis-tns.org/user/register |
 | **NASA DONKI** | `api.nasa.gov/DONKI/*` | Key | frei | EM | schon da (CME/FLR live; NEO/Mars-Photos decline) | https://api.nasa.gov/ |
 
@@ -184,13 +190,13 @@ OpenTopography-API (`method`, 405), 511.org (`registry-premium-gzip`), arbimon/W
 
 | API | Endpoint | Auth | Kosten | Force | Status | Registrierung |
 |---|---|---|---|---|---|---|
-| **Materials Project** | `api.materialsproject.org` | Key | frei | Diffusion | fehlt (Key vorhanden; Live 200 → docs) | https://materialsproject.org/register |
-| **AirNow EPA** | `www.airnowapi.org` | Key | frei | Diffusion | fehlt (Key vorhanden; Live 401 key-gated) | https://docs.airnowapi.org/account/request/ |
+| **Materials Project** | `api.materialsproject.org` | Key | frei | Diffusion | **live** (gemessen 2026-10-19: `/materials/summary` = 200 mit `MATERIALS_KEY`/`MP_API_KEY`; Port noch offen) | https://materialsproject.org/register |
+| **AirNow EPA** | `www.airnowapi.org` | Key | frei | Diffusion | **dead** (gemessen 2026-10-19: HTTP 410, „web service has been retired as of October 1, 2026"; Key vorhanden, aber Endpoint weg) | https://docs.airnowapi.org/account/request/ |
 | **OpenAQ** | `api.openaq.org/v3` | Key | frei | Diffusion | schon da (P09-Fanout, live; v2 → 410, v3/sensors) | https://api.openaq.org/register/ |
-| **IAEA WISER (GNIP)** | `nucleus.iaea.org/wiser` | Registrierung | frei | Diffusion | fehlt Bulk (ILIS-API dead 404; WISER 403 SSO-gated) | https://nucleus.iaea.org/wiser/ |
+| **IAEA WISER (GNIP)** | `nucleus.iaea.org/wiser` | Registrierung | frei | Diffusion | **blocked account** (gemessen 2026-10-19: 302 → `websso.iaea.org`; kein Account, ILIS-API bleibt dead 404) | https://nucleus.iaea.org/wiser/ |
 | **PurpleAir** | `api.purpleair.com/v1/` | Key | frei | Diffusion | schon da (live, `X-API-Key`-Header) | https://develop.purpleair.com/ |
-| **Ocean Networks Canada** | `data.oceannetworks.ca` | Token | frei | Advective | fehlt (Token vorhanden; Live 200; einzelne ERDDAP-URLs dead 400) | https://data.oceannetworks.ca/DataSearch |
-| **Swiss OpenTransport** | `api.opentransportdata.swiss` | Key | frei | Advective | fehlt (Root 404; Port-Pfad unverifiziert) | https://opentransportdata.swiss/en/dataset/ |
+| **Ocean Networks Canada** | `data.oceannetworks.ca` | Token | frei | Advective | **live** (gemessen 2026-10-19: `/api/locations` = 200 mit Token; mehrere `onc_*`-Blöcke im Register) | https://data.oceannetworks.ca/DataSearch |
+| **Swiss OpenTransport** | `api.opentransportdata.swiss` | Key | frei | Advective | **blocked key** (gemessen 2026-10-19: `/ojp20` mit `tedp_ojp20` = 403 `Requested endpoint is forbidden`, Root `/` + `/api/` = 404; Port-Pfad/Berechtigung offen) | https://opentransportdata.swiss/en/dataset/ |
 | **OpenTopography** | `portal.opentopography.org` | Demo-Key | frei | EM | erweitert (DEM30; Portal Live 200; API-Endpoints 405 method) | https://opentopography.org/ |
 
 > **Entfernt aus C nach Register-Verdikt (siehe `phi/sources.φ` + Decline-Tabelle):**
@@ -342,18 +348,18 @@ Login — Zugang ausschließlich über eigenes GCP-Projekt (Service-Account).
 
 ## Empfehlung: Einmal-Registrierung, max. Quellen-Freischaltung
 
-Stand 2026-09-03 — die Accounts der Schritte 1–3 sind **bereits eingelöst** (siehe
-Secrets-Matrix); die Schritte benennen, welche vorhandenen Accounts welche offenen
-Quellen in §A noch freischalten könnten.
+Stand 2026-09-03, Auth-Nachmessung 2026-10-19 — die Accounts der Schritte 1–3 sind
+**bereits eingelöst** (siehe Secrets-Matrix); die Schritte benennen, welche vorhandenen
+Accounts welche offenen Quellen in §A noch freischalten könnten.
 
-1. **NASA Earthdata-Login** (1 Account, vorhanden) → öffnet: GRACE-FO, SMAP, IONEX,
-   GES DISC, AppEEARS, MODIS GPP = 6+ Gravity/Thermal-Quellen (§A; Port offen)
-   → https://urs.earthdata.nasa.gov/users/new
-2. **NASA API-Key** (api.nasa.gov, 1 Key, vorhanden) → DONKI live; Insight (§A)
-   → https://api.nasa.gov/#signUp
-3. **NASA ADS-Token** (vorhanden) → ein `/v1`-Subendpoint (export/bibtex) ist dead 404;
-   der Such-Pfad `v1/search/query` ist der Port-Kandidat → Verifikation in einer
-   Port-Session nötig.
+1. **NASA Earthdata-Login** (1 Account, vorhanden) → Auth 2026-10-19 live für GRACE-FO,
+   SMAP (S3), IONEX und GES DISC; AppEEARS bleibt account-blocked (403 App-Berechtigung).
+   Ports weiterhin offen → https://urs.earthdata.nasa.gov/users/new
+2. **NASA API-Key** (api.nasa.gov, 1 Key, vorhanden) → DONKI live; Insight ist
+   gemessen 2026-10-19 dead (timeout) → https://api.nasa.gov/#signUp
+3. **NASA ADS-Token** (vorhanden) → `v1/search/query` gemessen 2026-10-19 = 200,
+   live; nur die Subendpoints (`/v1/`, `/v1/export/bibtex/`) sind 404. Port-Kandidat
+   bestätigt, Port selbst noch offen.
 
 ## Nächste Schritte
 
