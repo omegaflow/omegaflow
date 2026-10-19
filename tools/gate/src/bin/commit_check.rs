@@ -21,8 +21,20 @@ const DOC_DIRS: [&str; 6] = [
 
 fn live_handover_carrier() -> String {
     let mut out = String::new();
-    for dir in ["docs/handover", "zustand/future/handover"] {
-        let entries = match std::fs::read_dir(dir) {
+    let work = match std::env::var("OMEGAFLOW_WORK") {
+        Ok(w) => w,
+        Err(_) => match std::env::var("HOME") {
+            Ok(h) => format!("{h}/projects/omegaflow-work"),
+            Err(_) => return String::new(),
+        },
+    };
+    let dirs = [
+        "docs/handover".to_string(),
+        "zustand/future/handover".to_string(),
+        format!("{work}/handover"),
+    ];
+    for dir in dirs {
+        let entries = match std::fs::read_dir(&dir) {
             Ok(e) => e,
             Err(_) => continue,
         };
@@ -204,11 +216,7 @@ fn count_open_points(content: &str) -> usize {
             bullets += 1;
         }
     }
-    if hashes > 0 {
-        hashes
-    } else {
-        bullets
-    }
+    if hashes > 0 { hashes } else { bullets }
 }
 
 fn handover_measured_len(content: &str) -> usize {
@@ -259,7 +267,10 @@ fn open_points_without_braucht(content: &str) -> Vec<String> {
                 .find(|(k, _, _)| *k == 0)
                 .map(|(_, l, _)| *l)
                 .unwrap_or(lines.len()),
-            _ => sections.get(idx + 1).map(|(_, l, _)| *l).unwrap_or(lines.len()),
+            _ => sections
+                .get(idx + 1)
+                .map(|(_, l, _)| *l)
+                .unwrap_or(lines.len()),
         };
         let has = lines[*line_idx..end]
             .iter()
@@ -418,9 +429,7 @@ fn main() {
                     blocked.as_deref(),
                     Some(name),
                 ) {
-                    eprintln!(
-                        "commit_check: state/ereignisse.φ:{line}: {rule} - {feedback}"
-                    );
+                    eprintln!("commit_check: state/ereignisse.φ:{line}: {rule} - {feedback}");
                     fail = true;
                 }
             }

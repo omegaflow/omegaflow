@@ -579,10 +579,8 @@ fn orphan_held(carrier: &str, url: &str, name: &str) -> bool {
 
 fn owner_handover_texts(root: &Path) -> BTreeMap<String, String> {
     let mut map: BTreeMap<String, String> = BTreeMap::new();
-    let mut dirs: Vec<String> = HANDOVER_DIRS.iter().map(|s| s.to_string()).collect();
-    dirs.push(PRIVATE_HANDOVER_DIR.to_string());
-    for dir in dirs {
-        let entries = match fs::read_dir(root.join(&dir)) {
+    for dir in handover_roots(root, true) {
+        let entries = match fs::read_dir(&dir) {
             Ok(e) => e,
             Err(_) => continue,
         };
@@ -812,8 +810,8 @@ fn run_orphans(args: &[String]) {
 
 fn live_handover_carrier_text(root: &Path) -> String {
     let mut out = String::new();
-    for dir in ["docs/handover", PRIVATE_HANDOVER_DIR] {
-        let entries = match fs::read_dir(root.join(dir)) {
+    for dir in handover_roots(root, true) {
+        let entries = match fs::read_dir(&dir) {
             Ok(e) => e,
             Err(_) => continue,
         };
@@ -1792,6 +1790,36 @@ fn scan_dir(dir: &Path, class: &str, terms: &[String], out: &mut Vec<String>) ->
 
 const HANDOVER_DIRS: &[&str] = &["docs/handover", "docs/handover/archiv"];
 
+fn work_handover_root() -> Option<std::path::PathBuf> {
+    let base = match std::env::var("OMEGAFLOW_WORK") {
+        Ok(w) => std::path::PathBuf::from(w),
+        Err(_) => {
+            let home = std::env::var("HOME").ok()?;
+            std::path::PathBuf::from(home).join("projects/omegaflow-work")
+        }
+    };
+    let dir = base.join("handover");
+    if dir.is_dir() { Some(dir) } else { None }
+}
+
+fn handover_roots(root: &Path, with_archiv: bool) -> Vec<std::path::PathBuf> {
+    let mut out: Vec<std::path::PathBuf> = Vec::new();
+    for dir in HANDOVER_DIRS {
+        if !with_archiv && dir.ends_with("/archiv") {
+            continue;
+        }
+        out.push(root.join(dir));
+    }
+    out.push(root.join(PRIVATE_HANDOVER_DIR));
+    if let Some(work) = work_handover_root() {
+        out.push(work.clone());
+        if with_archiv {
+            out.push(work.join("archiv"));
+        }
+    }
+    out
+}
+
 const LINE_ALIASES: &[(&str, &str)] = &[
     ("bau", "mountain"),
     ("ernte", "mycelium"),
@@ -2608,8 +2636,8 @@ fn persist_threshold(args: &[String]) -> usize {
 
 fn dropped_live_carriers() -> (BTreeMap<String, String>, String) {
     let mut by_line: BTreeMap<String, String> = BTreeMap::new();
-    for dir in ["docs/handover", PRIVATE_HANDOVER_DIR] {
-        let entries = match fs::read_dir(dir) {
+    for dir in handover_roots(Path::new("."), true) {
+        let entries = match fs::read_dir(&dir) {
             Ok(e) => e,
             Err(_) => continue,
         };
@@ -3315,8 +3343,8 @@ fn fired_points(
 
 fn live_handover_paths(root: &Path) -> Vec<PathBuf> {
     let mut out: Vec<PathBuf> = Vec::new();
-    for dir in ["docs/handover", PRIVATE_HANDOVER_DIR] {
-        let entries = match fs::read_dir(root.join(dir)) {
+    for dir in handover_roots(root, false) {
+        let entries = match fs::read_dir(&dir) {
             Ok(e) => e,
             Err(_) => continue,
         };
