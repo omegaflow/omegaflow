@@ -11,9 +11,9 @@ work="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
 line="${1:?usage: task_dispatch <line> \"<task>\" [<place>]...}"
 task="${2:?usage: task_dispatch <line> \"<task>\" [<place>]...}"
 shift 2
-mkdir -p "$work/post/out"
+mkdir -p "$work/post"
 slug="$(printf '%s' "$task" | tr 'A-ZÄÖÜ' 'a-zäöü' | tr -c 'a-z0-9\n' '-' | cut -c1-48)"
-out="$work/post/out/$(date +%Y-%m-%d)-$line-$slug.md"
+out="$work/post/$(date +%Y-%m-%d)-future-an-$line-$slug.md"
 {
   printf '# Dispatch — %s, %s\n\n' "$line" "$(date +%Y-%m-%d)"
   printf '## Die eine Aufgabe\n\n%s\n\n' "$task"
