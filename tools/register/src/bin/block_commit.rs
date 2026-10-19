@@ -39,7 +39,10 @@ fn run_git_index(index: &PathBuf, args: &[&str]) -> Result<String, String> {
 fn temp_path(kind: &str) -> PathBuf {
     let nanos = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(d) => d.as_nanos(),
-        Err(_) => 0,
+        Err(e) => {
+            eprintln!("block_commit: system clock before UNIX_EPOCH: {e}");
+            exit(1);
+        }
     };
     env::temp_dir().join(format!(
         "block-commit-{}-{}-{}",

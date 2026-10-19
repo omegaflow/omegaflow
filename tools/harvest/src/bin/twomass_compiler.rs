@@ -9,6 +9,7 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 
 const NETLOC: &str = "irsa.ipac.caltech.edu";
 const PROGRESS_EVERY: u64 = 1_000_000;
+const FRESH_SCAN: u64 = 0;
 
 enum Mode {
     Stdin,
@@ -173,11 +174,14 @@ fn seen_path(rows_path: &str) -> String {
     format!("{rows_path}.seen")
 }
 
-fn load_seen(rows_path: &str) -> u64 {
-    std::fs::read(seen_path(rows_path))
-        .ok()
-        .and_then(|b| b.try_into().ok().map(u64::from_le_bytes))
-        .unwrap_or(0)
+fn load_seen(rows_path: &str) -> Option<u64> {
+    match std::fs::read(seen_path(rows_path)) {
+        Ok(b) => match b.try_into() {
+            Ok(bytes) => Some(u64::from_le_bytes(bytes)),
+            Err(_) => None,
+        },
+        Err(_) => None,
+    }
 }
 
 fn save_seen(rows_path: &str, seen: u64) -> Result<(), String> {
@@ -192,7 +196,16 @@ fn harvest(reader: &mut dyn BufRead, selection: &Selection, rows_path: &str) -> 
         .open(rows_path)
         .map_err(|_| format!("rows {rows_path}: open void"))?;
     let mut w = BufWriter::new(&mut rows_file);
-    let mut seen = load_seen(rows_path);
+    let mut seen = match load_seen(rows_path) {
+        Some(v) => v,
+        None => {
+            eprintln!(
+                "seen {}: absent — the scan starts fresh",
+                seen_path(rows_path)
+            );
+            FRESH_SCAN
+        }
+    };
     let mut read = 0u64;
     let mut void = 0u64;
     let mut selected = 0u64;

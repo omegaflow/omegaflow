@@ -75,7 +75,14 @@ fn fetch_bsp(url: &str) -> Option<PathBuf> {
         Ok(s) if s.success() => {
             let landed = match std::fs::metadata(&path) {
                 Ok(m) => m.len(),
-                Err(_) => 0,
+                Err(e) => {
+                    eprintln!(
+                        "epm: {} metadata void: {e} — the download stays rejected",
+                        url
+                    );
+                    let _ = std::fs::remove_file(&path);
+                    return None;
+                }
             };
             if landed > 0 {
                 Some(path)

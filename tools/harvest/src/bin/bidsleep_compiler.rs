@@ -10,6 +10,18 @@ use std::sync::{Arc, Mutex};
 const BASE: &str = "https://physionet.org/files/bidsleep-dataset/1.0.0/";
 const CDN_RELEASE: &str = "physionet.org";
 const DEFAULT_DECIMATE_MIN: f64 = 1.0;
+const DEFAULT_OUT: &str = "bidsleep_mehrnacht.bin";
+const NO_OFFSET: usize = 0;
+
+fn lock_carried<'a, T>(m: &'a Mutex<T>, what: &str) -> std::sync::MutexGuard<'a, T> {
+    match m.lock() {
+        Ok(g) => g,
+        Err(poisoned) => {
+            eprintln!("{what}: lock poisoned — carrying the inner state");
+            poisoned.into_inner()
+        }
+    }
+}
 
 const G_STANDARD: f64 = 9.80665;
 const IHR_BPM_MAX: f64 = 300.0;
@@ -227,7 +239,10 @@ fn main() {
         return;
     }
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "bidsleep_mehrnacht.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => DEFAULT_OUT.to_string(),
+    };
     let decimate_min: f64 = arg_value(&args, "--decimate-min")
         .and_then(|v| v.parse().ok())
         .unwrap_or(DEFAULT_DECIMATE_MIN);
@@ -243,9 +258,10 @@ fn main() {
         .and_then(|v| v.parse().ok())
         .unwrap_or(4);
     let limit: Option<usize> = arg_value(&args, "--limit").and_then(|v| v.parse().ok());
-    let offset: usize = arg_value(&args, "--offset")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(0);
+    let offset: usize = match arg_value(&args, "--offset").and_then(|v| v.parse().ok()) {
+        Some(v) => v,
+        None => NO_OFFSET,
+    };
     let Some(lsk) = embedded_lsk() else {
         eprintln!("naif0012 table void — the TDB epoch stays void (no fabricated epoch)");
         std::process::exit(1);
@@ -294,10 +310,7 @@ fn main() {
                     }
                     let (subject, night) = &nights[i];
                     match harvest_night(subject, night, bucket_s, &lsk) {
-                        Ok(recs) => series
-                            .lock()
-                            .unwrap_or_else(|e| e.into_inner())
-                            .extend(recs),
+                        Ok(recs) => lock_carried(&series, "night series").extend(recs),
                         Err(note) => {
                             eprintln!("Bidslab{}/{}: {}", subject, night, note);
                             skipped.fetch_add(1, Ordering::SeqCst);
@@ -311,10 +324,19 @@ fn main() {
             });
         }
     });
-    let mut series = Arc::try_unwrap(series)
-        .ok()
-        .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    let mut series = match Arc::try_unwrap(series) {
+        Ok(m) => match m.into_inner() {
+            Ok(v) => v,
+            Err(poisoned) => {
+                eprintln!("night series lock poisoned — carrying the inner state");
+                poisoned.into_inner()
+            }
+        },
+        Err(_) => {
+            eprintln!("night series still shared — the bin stays unwritten");
+            std::process::exit(1);
+        }
+    };
     series.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.2.cmp(&b.2)));
     let skipped = skipped.load(Ordering::SeqCst);
     if series.is_empty() {
@@ -349,12 +371,17 @@ fn main() {
 }
 
 fn merge_chunks(args: &[String]) {
-    let out = arg_value(args, "--out").unwrap_or_else(|| "bidsleep_mehrnacht.bin".to_string());
-    let chunk_paths: Vec<String> = args
-        .iter()
-        .position(|a| a == "--merge")
-        .map(|p| args[p + 1..].to_vec())
-        .unwrap_or_default();
+    let out = match arg_value(args, "--out") {
+        Some(v) => v,
+        None => DEFAULT_OUT.to_string(),
+    };
+    let chunk_paths: Vec<String> = match args.iter().position(|a| a == "--merge") {
+        Some(p) => args[p + 1..].to_vec(),
+        None => {
+            eprintln!("--merge absent — merge_chunks carries no chunk paths");
+            return;
+        }
+    };
     if chunk_paths.is_empty() {
         eprintln!("--merge carries no chunk paths");
         std::process::exit(1);

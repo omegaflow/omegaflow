@@ -12,6 +12,7 @@ const DEFAULT_ALPHA: f64 = 0.05;
 const DEFAULT_SURROGATES: usize = 100;
 const MIN_N: usize = 30;
 const SEED: u64 = 0x9E37_79B9_7F4A_7C15;
+const ECHO_CANDIDATE_INDEX: usize = 0;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Verdict {
@@ -599,7 +600,7 @@ fn main() {
     let mut counts = [0usize; 5];
     for d in &report.directed {
         let idx = match d.verdict {
-            Verdict::EchoCandidate => 0,
+            Verdict::EchoCandidate => ECHO_CANDIDATE_INDEX,
             Verdict::SignificantNotPhysical => 1,
             Verdict::Field => 2,
             Verdict::Absent => 3,

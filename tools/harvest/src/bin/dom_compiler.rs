@@ -8,6 +8,7 @@ use std::process::Command;
 const COMPILER: &str = "tools/harvest/src/bin/dom_compiler.rs";
 const FORMAT: &str = "bdom";
 const MAGIC: [u8; 4] = *b"BDOM";
+const ABSENT_EPSG: u16 = 0;
 const HEADER_BYTES: usize = 48;
 
 const TAG_IMAGE_WIDTH: u16 = 256;
@@ -519,7 +520,7 @@ fn write_bin(path: &str, dem: &Dem) -> Result<(), String> {
         .map_err(|e| format!("write {path} returned void: {e}"))?;
     let epsg: u16 = match dem.epsg {
         Some(e) => e,
-        None => 0,
+        None => ABSENT_EPSG,
     };
     f.write_all(&(dem.width as u32).to_le_bytes())
         .and_then(|_| f.write_all(&(dem.height as u32).to_le_bytes()))

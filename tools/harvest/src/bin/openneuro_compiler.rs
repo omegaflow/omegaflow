@@ -629,11 +629,15 @@ fn run(args: &[String]) -> Result<(), String> {
             format!("{bin_path}: roundtrip parse void — the asset stays unverified")
         })?;
         let n_events = match &parsed.events {
-            Some(Events::Normalized(evs)) => evs.len(),
-            Some(Events::Verbatim(_)) | None => 0,
+            Some(Events::Normalized(evs)) => Some(evs.len()),
+            Some(Events::Verbatim(_)) | None => None,
+        };
+        let n_events_label = match n_events {
+            Some(n) => n.to_string(),
+            None => "absent".to_string(),
         };
         eprintln!(
-            "{bin_path}: {} bytes, roundtrip parses ({n_events} normalized events)",
+            "{bin_path}: {} bytes, roundtrip parses ({n_events_label} normalized events)",
             bin.len()
         );
         staged.push(bin_path);

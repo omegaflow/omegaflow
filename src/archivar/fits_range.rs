@@ -1,4 +1,3 @@
-
 use std::collections::HashMap;
 
 use super::cdn::{PartsManifest, parse_parts_manifest};
@@ -7,6 +6,7 @@ use super::range::fetch_range;
 use super::sha256::sha256_hex;
 
 const BLOCK: u64 = 2880;
+const FITS_PCOUNT_DEFAULT: u64 = 0;
 
 pub trait ByteSource {
     fn read_range(&mut self, offset: u64, len: u64) -> Option<Vec<u8>>;
@@ -164,7 +164,7 @@ fn data_bytes(header: &FitsHeader) -> Option<u64> {
     let gcount = header.int("GCOUNT").unwrap_or(1) as u64;
     let pcount = match header.int("PCOUNT") {
         Some(v) => v as u64,
-        None => 0,
+        None => FITS_PCOUNT_DEFAULT,
     };
     Some(bitpix.checked_mul(axes)?.checked_mul(gcount)? + pcount)
 }
@@ -406,7 +406,10 @@ mod tests {
         let selected = row0 + 17;
         let source = reader.into_source();
         assert!(
-            !source.log.iter().any(|(off, len)| *off <= row0 && off + len > row0),
+            !source
+                .log
+                .iter()
+                .any(|(off, len)| *off <= row0 && off + len > row0),
             "row 0 is never fetched: {:?}",
             source.log
         );
@@ -458,7 +461,11 @@ mod tests {
             total_sha256: sha256_hex(&file),
             parts: vec![
                 ("asset.p000".into(), sha256_hex(&first), first.len() as u64),
-                ("asset.p001".into(), sha256_hex(&second), second.len() as u64),
+                (
+                    "asset.p001".into(),
+                    sha256_hex(&second),
+                    second.len() as u64,
+                ),
             ],
         };
         let mut tampered = first.clone();

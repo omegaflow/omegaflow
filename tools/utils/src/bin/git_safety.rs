@@ -72,17 +72,17 @@ fn repo_root() -> Option<PathBuf> {
     }
 }
 
-fn now_epoch() -> u64 {
+fn now_epoch() -> Option<u64> {
     match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(d) => d.as_secs(),
-        Err(_) => 0,
+        Ok(d) => Some(d.as_secs()),
+        Err(_) => None,
     }
 }
 
-fn now_nanos() -> u128 {
+fn now_nanos() -> Option<u128> {
     match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(d) => d.as_nanos(),
-        Err(_) => 0,
+        Ok(d) => Some(d.as_nanos()),
+        Err(_) => None,
     }
 }
 
@@ -93,7 +93,7 @@ fn snapshot(root: &Path) -> Option<String> {
     let index = env::temp_dir().join(format!(
         "omegaflow-safety-index-{}-{}",
         std::process::id(),
-        now_nanos()
+        now_nanos()?
     ));
     let _ = fs::remove_file(&index);
     run_git_index(root, &["read-tree", "HEAD"], &index)?;
@@ -105,7 +105,7 @@ fn snapshot(root: &Path) -> Option<String> {
     if tree == head_tree {
         return None;
     }
-    let epoch = now_epoch();
+    let epoch = now_epoch()?;
     let message = format!("safety snapshot {}", epoch);
     let commit = run_git_commit(root, &["commit-tree", &tree, "-p", "HEAD", "-m", &message])?
         .trim()

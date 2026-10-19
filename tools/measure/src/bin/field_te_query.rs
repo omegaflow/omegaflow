@@ -1612,9 +1612,10 @@ fn parse_epoch(s: &str) -> Option<f64> {
             let off = &time[i + 1..];
             let mut op = off.split(':');
             let oh: i64 = op.next()?.parse().ok()?;
-            let om: i64 = match op.next() {
-                Some(v) => v.parse().ok()?,
-                None => 0,
+            let om: i64 = if let Some(v) = op.next() {
+                v.parse().ok()?
+            } else {
+                0
             };
             (&time[..i], sign * (oh * 3_600 + om * 60))
         }
@@ -1629,17 +1630,20 @@ fn parse_epoch(s: &str) -> Option<f64> {
         None => "0",
     };
     let mut tp = clock.split(':');
-    let hh: i64 = match tp.next() {
-        Some(v) => v.parse().ok()?,
-        None => 0,
+    let hh: i64 = if let Some(v) = tp.next() {
+        v.parse().ok()?
+    } else {
+        0
     };
-    let mm: i64 = match tp.next() {
-        Some(v) => v.parse().ok()?,
-        None => 0,
+    let mm: i64 = if let Some(v) = tp.next() {
+        v.parse().ok()?
+    } else {
+        0
     };
-    let ss: i64 = match tp.next() {
-        Some(v) => v.parse().ok()?,
-        None => 0,
+    let ss: i64 = if let Some(v) = tp.next() {
+        v.parse().ok()?
+    } else {
+        0
     };
     let days = days_from_civil(y, m, d)?;
     Some(
@@ -2365,7 +2369,13 @@ fn load_text_rows(src: &SourceConfig, fc: &FieldConfig, bytes: &[u8]) -> Option<
                 .and_then(|c| c.trim().parse::<usize>().ok())
             {
                 Some(v) => v,
-                None => 0,
+                None => {
+                    eprintln!(
+                        "text rows for '{}': no epoch column named, column 0 stands in",
+                        fc.name
+                    );
+                    0
+                }
             };
             let key = fc.key.trim().parse::<usize>().ok()?;
             Some((epoch, key))
@@ -4297,6 +4307,8 @@ fn run_parity_witness(
     0
 }
 
+const EXIT_MEASURED: i32 = 0;
+
 fn run_descriptor_event_conditional(
     desc: &Descriptor,
     witnesses: &[WitnessRecord],
@@ -4353,7 +4365,7 @@ fn run_descriptor_event_conditional(
             println!("event-conditional witness arm stays pending — {reason}");
             0
         }
-        ArmLoad::Ready { .. } => 0,
+        ArmLoad::Ready { .. } => EXIT_MEASURED,
     }
 }
 
@@ -6093,7 +6105,10 @@ fn run_summary_panel(
     let joint = joint_columns(&cols);
     let n = match joint.first() {
         Some(column) => column.len(),
-        None => 0,
+        None => {
+            println!("panel grid carries no column; complete rows 0 honored");
+            0
+        }
     };
     println!("panel grid {grid_dt:.1}s | complete rows {n}");
     for (column, (name, _)) in cols.iter().zip(loaded.iter()) {

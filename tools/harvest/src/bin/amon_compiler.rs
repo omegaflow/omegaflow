@@ -8,6 +8,9 @@ use omegaflow::witness::{FieldIdentity, WitnessKind, magic_identity};
 use std::collections::BTreeSet;
 use std::io::{BufWriter, Read, Seek, SeekFrom, Write};
 
+const ABSENT_F32: f32 = 0.0;
+const ABSENT_U32: u32 = 0;
+
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
         .position(|a| a == name)
@@ -225,13 +228,13 @@ fn run(args: &[String]) -> Result<(), String> {
         let f32_present = |v: Option<f64>| -> f32 {
             match v {
                 Some(x) => x as f32,
-                None => 0.0,
+                None => ABSENT_F32,
             }
         };
         let u32_present = |v: Option<u32>| -> u32 {
             match v {
                 Some(x) => x,
-                None => 0,
+                None => ABSENT_U32,
             }
         };
         let r = AmonRecord {

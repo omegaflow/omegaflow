@@ -23,6 +23,8 @@ pub const ROW_PRESENCE_BYTES: usize = 8;
 const FLAG_MISSING: u32 = 1;
 const FLAG_SP_MIN: u32 = 2;
 const FLAG_SP_MAX: u32 = 4;
+const ABSENT_START_BYTE: u32 = 0;
+const ABSENT_NBYTES: u32 = 0;
 const TFLAG_DELIMITED: u32 = 1;
 const TFLAG_DELIMITER_SHIFT: u32 = 8;
 
@@ -910,13 +912,13 @@ pub fn pack(table: &Pds4Table) -> Vec<u8> {
         }
         let start_byte = match c.start_byte {
             Some(v) => v as u32,
-            None => 0,
+            None => ABSENT_START_BYTE,
         };
         bin[base + START_OFFSET..base + START_OFFSET + 4]
             .copy_from_slice(&start_byte.to_le_bytes());
         let nbytes = match c.bytes {
             Some(v) => v as u32,
-            None => 0,
+            None => ABSENT_NBYTES,
         };
         bin[base + NBYTES_OFFSET..base + NBYTES_OFFSET + 4].copy_from_slice(&nbytes.to_le_bytes());
         let mut flags = 0u32;

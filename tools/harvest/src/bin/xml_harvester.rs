@@ -2,6 +2,8 @@ use std::env;
 use std::fs;
 use std::process::Command;
 
+const NO_LIMIT: usize = 0;
+
 fn curl(url: &str, headers: &[(String, String)]) -> Option<String> {
     let mut cmd = Command::new("curl");
     cmd.arg("-sSL").arg("-m").arg("120");
@@ -405,11 +407,11 @@ fn run_s3(args: &[String]) {
     };
     let depth = match arg_usize(args, "--depth") {
         Some(v) => v,
-        None => 0,
+        None => NO_LIMIT,
     };
     let cap = match arg_usize(args, "--cap") {
         Some(v) => v,
-        None => 0,
+        None => NO_LIMIT,
     };
     let max_keys = match arg_usize(args, "--max-keys") {
         Some(v) => v,

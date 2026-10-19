@@ -34,10 +34,10 @@ fn civil_str(day: i64) -> String {
     }
 }
 
-fn month_key(day: i64) -> i64 {
+fn month_key(day: i64) -> Option<i64> {
     match omegaflow::spectral::civil_from_days(day) {
-        Some((y, m, _)) => (y as i64) * 100 + m as i64,
-        None => 0,
+        Some((y, m, _)) => Some((y as i64) * 100 + m as i64),
+        None => None,
     }
 }
 
@@ -317,7 +317,7 @@ fn main() {
         for st in trio {
             let sub: Vec<&Cell> = cells_sorted
                 .iter()
-                .filter(|c| c.st == st && month_key(c.day) == y * 100 + m)
+                .filter(|c| c.st == st && month_key(c.day) == Some(y * 100 + m))
                 .collect();
             if sub.is_empty() {
                 push(format!(

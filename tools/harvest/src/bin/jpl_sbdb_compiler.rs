@@ -10,6 +10,7 @@ use std::process::Command;
 
 const BASE_URL: &str = "https://ssd-api.jpl.nasa.gov/sbdb_query.api?fields=full_name,a,e,i,om,w,ma,epoch,H,G&sb-kind=a&full-prec=true";
 const CDN_TAG: &str = "ssd-api.jpl.nasa.gov";
+const NO_LIMIT: usize = 0;
 
 fn curl(url: &str) -> Option<String> {
     let out = Command::new("curl")
@@ -214,7 +215,7 @@ fn main() {
                 std::process::exit(2);
             }
         },
-        None => 0,
+        None => NO_LIMIT,
     };
     let page: usize = match arg_value(&args, "--page") {
         Some(v) => match v.parse() {

@@ -449,10 +449,7 @@ fn main() {
         }
         None => 4,
     };
-    let max_events: usize = match arg_value(&args, "--max-events").and_then(|s| s.parse().ok()) {
-        Some(v) => v,
-        None => 0,
-    };
+    let max_events: Option<usize> = arg_value(&args, "--max-events").and_then(|s| s.parse().ok());
     let (estimator, estimator_explicit) = match arg_value(&args, "--estimator").as_deref() {
         None => ("binned", false),
         Some("binned") => ("binned", true),
@@ -554,14 +551,16 @@ fn main() {
         );
     }
     let mut events = all_events;
-    if max_events > 0 && events.len() > max_events {
-        println!(
-            "max-events {}: first {} of {} events processed",
-            max_events,
-            max_events,
-            events.len()
-        );
-        events.truncate(max_events);
+    if let Some(max_events) = max_events {
+        if events.len() > max_events {
+            println!(
+                "max-events {}: first {} of {} events processed",
+                max_events,
+                max_events,
+                events.len()
+            );
+            events.truncate(max_events);
+        }
     }
     let path_name = if ncond <= 1 {
         "kde-1"

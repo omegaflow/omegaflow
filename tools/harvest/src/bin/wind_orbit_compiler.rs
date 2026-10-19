@@ -12,6 +12,17 @@ const PRE_BASE: &str = "https://spdf.gsfc.nasa.gov/pub/data/wind/orbit/pre_or/";
 const DEF_BASE: &str = "https://spdf.gsfc.nasa.gov/pub/data/wind/orbit/def_or/";
 const CDN_RELEASE: &str = "spdf.gsfc.nasa.gov";
 const RECORDS_PER_DAY_CAP: usize = 288;
+const DEFAULT_OUT: &str = "wind_orbit.bin";
+
+fn lock_carried<'a, T>(m: &'a Mutex<T>, what: &str) -> std::sync::MutexGuard<'a, T> {
+    match m.lock() {
+        Ok(g) => g,
+        Err(poisoned) => {
+            eprintln!("{what}: lock poisoned — carrying the inner state");
+            poisoned.into_inner()
+        }
+    }
+}
 
 fn civil_from_days(z: i64) -> (i64, i64, i64) {
     let z = z + 719468;
@@ -211,39 +222,30 @@ fn harvest_day(
     let url = match &plan.url {
         Some(u) => u.clone(),
         None => {
-            outcomes
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .push(DayOutcome {
-                    date: plan.date.clone(),
-                    emitted: 0,
-                    note: Some("listing carries no file for this day".to_string()),
-                });
+            lock_carried(outcomes, "day outcomes").push(DayOutcome {
+                date: plan.date.clone(),
+                emitted: 0,
+                note: Some("listing carries no file for this day".to_string()),
+            });
             return;
         }
     };
     let Some(bytes) = fetch(&url) else {
-        outcomes
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .push(DayOutcome {
-                date: plan.date.clone(),
-                emitted: 0,
-                note: Some("fetch void".to_string()),
-            });
+        lock_carried(outcomes, "day outcomes").push(DayOutcome {
+            date: plan.date.clone(),
+            emitted: 0,
+            note: Some("fetch void".to_string()),
+        });
         return;
     };
     let file = match Cdf25File::parse(&bytes) {
         Ok(f) => f,
         Err(note) => {
-            outcomes
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .push(DayOutcome {
-                    date: plan.date.clone(),
-                    emitted: 0,
-                    note: Some(format!("{note:?}")),
-                });
+            lock_carried(outcomes, "day outcomes").push(DayOutcome {
+                date: plan.date.clone(),
+                emitted: 0,
+                note: Some(format!("{note:?}")),
+            });
             return;
         }
     };
@@ -252,52 +254,40 @@ fn harvest_day(
         file.var_records(&bytes, var).ok()
     };
     let Some(epoch_records) = read_var("Epoch") else {
-        outcomes
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .push(DayOutcome {
-                date: plan.date.clone(),
-                emitted: 0,
-                note: Some("Epoch absent or void".to_string()),
-            });
+        lock_carried(outcomes, "day outcomes").push(DayOutcome {
+            date: plan.date.clone(),
+            emitted: 0,
+            note: Some("Epoch absent or void".to_string()),
+        });
         return;
     };
     let Some(pos_records) = read_var("GCI_POS") else {
-        outcomes
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .push(DayOutcome {
-                date: plan.date.clone(),
-                emitted: 0,
-                note: Some("GCI_POS absent or void".to_string()),
-            });
+        lock_carried(outcomes, "day outcomes").push(DayOutcome {
+            date: plan.date.clone(),
+            emitted: 0,
+            note: Some("GCI_POS absent or void".to_string()),
+        });
         return;
     };
     let Some(vel_records) = read_var("GCI_VEL") else {
-        outcomes
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .push(DayOutcome {
-                date: plan.date.clone(),
-                emitted: 0,
-                note: Some("GCI_VEL absent or void".to_string()),
-            });
+        lock_carried(outcomes, "day outcomes").push(DayOutcome {
+            date: plan.date.clone(),
+            emitted: 0,
+            note: Some("GCI_VEL absent or void".to_string()),
+        });
         return;
     };
     let n = epoch_records.len();
     if n == 0 || pos_records.len() != n || vel_records.len() != n {
-        outcomes
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .push(DayOutcome {
-                date: plan.date.clone(),
-                emitted: 0,
-                note: Some(format!(
-                    "record counts drift: Epoch {n}, GCI_POS {}, GCI_VEL {}",
-                    pos_records.len(),
-                    vel_records.len()
-                )),
-            });
+        lock_carried(outcomes, "day outcomes").push(DayOutcome {
+            date: plan.date.clone(),
+            emitted: 0,
+            note: Some(format!(
+                "record counts drift: Epoch {n}, GCI_POS {}, GCI_VEL {}",
+                pos_records.len(),
+                vel_records.len()
+            )),
+        });
         return;
     }
     let step = if n > RECORDS_PER_DAY_CAP {
@@ -331,18 +321,12 @@ fn harvest_day(
         ));
     }
     let emitted = day_records.len();
-    records
-        .lock()
-        .unwrap_or_else(|e| e.into_inner())
-        .append(&mut day_records);
-    outcomes
-        .lock()
-        .unwrap_or_else(|e| e.into_inner())
-        .push(DayOutcome {
-            date: plan.date.clone(),
-            emitted,
-            note: None,
-        });
+    lock_carried(records, "day records").append(&mut day_records);
+    lock_carried(outcomes, "day outcomes").push(DayOutcome {
+        date: plan.date.clone(),
+        emitted,
+        note: None,
+    });
 }
 
 const J2000_JD: f64 = 2451545.0;
@@ -413,7 +397,10 @@ fn main() {
     }
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let fill_horizons = args.iter().any(|a| a == "--fill-horizons");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "wind_orbit.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => DEFAULT_OUT.to_string(),
+    };
     let jobs: usize = arg_value(&args, "--jobs")
         .and_then(|v| v.parse().ok())
         .unwrap_or(8);
@@ -486,10 +473,19 @@ fn main() {
             });
         }
     });
-    let outcomes = Arc::try_unwrap(outcomes)
-        .ok()
-        .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    let outcomes = match Arc::try_unwrap(outcomes) {
+        Ok(m) => match m.into_inner() {
+            Ok(v) => v,
+            Err(poisoned) => {
+                eprintln!("day outcomes lock poisoned — carrying the inner state");
+                poisoned.into_inner()
+            }
+        },
+        Err(_) => {
+            eprintln!("day outcomes still shared — the census stays unread");
+            std::process::exit(1);
+        }
+    };
     let mut void = 0usize;
     let mut emitted_total = 0usize;
     let mut year_void: HashMap<i64, usize> = HashMap::new();
@@ -497,7 +493,13 @@ fn main() {
         emitted_total += o.emitted;
         if let Some(note) = &o.note {
             void += 1;
-            let year = o.date[..4].parse::<i64>().unwrap_or(0);
+            let Ok(year) = o.date[..4].parse::<i64>() else {
+                eprintln!(
+                    "{}: year prefix does not parse — the void stays ungrouped",
+                    o.date
+                );
+                continue;
+            };
             *year_void.entry(year).or_default() += 1;
             eprintln!("{} void: {}", o.date, note);
         }
@@ -508,10 +510,19 @@ fn main() {
         "{} days, {} void, {} records emitted, void years: {:?}",
         total, void, emitted_total, void_years
     );
-    let records = Arc::try_unwrap(records)
-        .ok()
-        .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    let records = match Arc::try_unwrap(records) {
+        Ok(m) => match m.into_inner() {
+            Ok(v) => v,
+            Err(poisoned) => {
+                eprintln!("day records lock poisoned — carrying the inner state");
+                poisoned.into_inner()
+            }
+        },
+        Err(_) => {
+            eprintln!("day records still shared — the bin stays unwritten");
+            std::process::exit(1);
+        }
+    };
     let mut records = records;
     if fill_horizons {
         let mut filled = 0usize;

@@ -3322,7 +3322,9 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         let declared = "url https://x/y.csv\nformat gbm_tgf\non earth 0 0 0\nrows\nlat_key Lat\nlon_key Lon\nno-cadence\n";
         let sources = parse_sources(declared);
         match &sources[0].extracts[0] {
-            Extract::Rows { lat_key, lon_key, .. } => {
+            Extract::Rows {
+                lat_key, lon_key, ..
+            } => {
                 assert_eq!(lat_key, "Lat");
                 assert_eq!(lon_key, "Lon");
             }

@@ -361,7 +361,9 @@ fn load_names() -> (HashSet<String>, HashSet<String>) {
                 }
             }
             None => {
-                eprintln!("llm_gateway: tools/utils/data/redact/{file} absent - that name list stays inert")
+                eprintln!(
+                    "llm_gateway: tools/utils/data/redact/{file} absent - that name list stays inert"
+                )
             }
         }
     }
@@ -1413,11 +1415,13 @@ fn emit_provenance(
     model_id: Option<&str>,
     resp: &str,
 ) {
-    let ts = match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(d) => d.as_secs(),
-        Err(_) => 0,
-    };
-    let mut s = format!("{{\"ts\":{ts},\"alias\":{}", json_escape(alias));
+    let ts = SystemTime::now().duration_since(UNIX_EPOCH).ok();
+    let mut s = "{\"ts\":".to_string();
+    match ts {
+        Some(t) => s.push_str(&t.as_secs().to_string()),
+        None => s.push_str("null"),
+    }
+    s.push_str(&format!(",\"alias\":{}", json_escape(alias)));
     if let Some(p) = provider {
         s.push_str(&format!(",\"provider\":{}", json_escape(p)));
     }
@@ -1541,11 +1545,11 @@ fn reply(stream: &mut TcpStream, code: u16, body: &str) {
     let _ = stream.flush();
 }
 
-fn curl_post(url: &str, key: &str, body: &str) -> (u16, String, String) {
+fn curl_post(url: &str, key: &str, body: &str) -> (Option<u16>, String, String) {
     curl_post_timeout(url, key, body, 180)
 }
 
-fn curl_post_timeout(url: &str, key: &str, body: &str, secs: u64) -> (u16, String, String) {
+fn curl_post_timeout(url: &str, key: &str, body: &str, secs: u64) -> (Option<u16>, String, String) {
     let dir = std::env::temp_dir();
     let body_path = dir.join("omegaflow_gw_body.txt");
     let head_path = dir.join("omegaflow_gw_headers.txt");
@@ -1568,17 +1572,17 @@ fn curl_post_timeout(url: &str, key: &str, body: &str, secs: u64) -> (u16, Strin
         .arg("-w")
         .arg("%{http_code}")
         .output();
-    let code: u16 = match out {
+    let code: Option<u16> = match out {
         Ok(o) => {
             let t = String::from_utf8_lossy(&o.stdout).trim().to_string();
             match t.parse() {
-                Ok(c) => c,
-                Err(_) => 0,
+                Ok(c) => Some(c),
+                Err(_) => None,
             }
         }
         Err(e) => {
             return (
-                0,
+                None,
                 String::new(),
                 format!("{{\"error\":{{\"message\":\"curl: {e}\"}}}}"),
             );
@@ -1786,7 +1790,9 @@ fn openrouter_balance(body: &str) -> Option<f64> {
 }
 
 fn deepseek_balance(body: &str) -> Option<f64> {
-    jq_one(body, ".balance_infos[0].total_balance").parse::<f64>().ok()
+    jq_one(body, ".balance_infos[0].total_balance")
+        .parse::<f64>()
+        .ok()
 }
 
 fn probe_balance(secrets: &HashMap<String, String>, auth: &str) -> Vec<(String, f64)> {
@@ -1837,7 +1843,12 @@ fn balance_json(secrets: &HashMap<String, String>, auth: &str) -> String {
     format!("{{\"balances\":[{}]}}", items.join(","))
 }
 
-fn probe_alive(route: &Route, key: &str, provider_model: &str, secrets: &HashMap<String, String>) -> bool {
+fn probe_alive(
+    route: &Route,
+    key: &str,
+    provider_model: &str,
+    secrets: &HashMap<String, String>,
+) -> bool {
     let Some(base) = effective_base(route, secrets) else {
         return false;
     };
@@ -1907,25 +1918,27 @@ fn health_check(
         let secrets = secrets.clone();
         let auth = auth.clone();
         let results = results.clone();
-        handles.push(std::thread::spawn(move || loop {
-            let i = idx.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
-            if i >= ids.len() {
-                break;
-            }
-            let id = &ids[i];
-            let alive = match route_for(id) {
-                Some(route) => match key_for(route, secrets.as_ref(), auth.as_str()) {
-                    Some(key) => {
-                        let provider_model = &id[route.prefix.len() + 1..];
-                        probe_alive(route, &key, provider_model, secrets.as_ref())
-                    }
+        handles.push(std::thread::spawn(move || {
+            loop {
+                let i = idx.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+                if i >= ids.len() {
+                    break;
+                }
+                let id = &ids[i];
+                let alive = match route_for(id) {
+                    Some(route) => match key_for(route, secrets.as_ref(), auth.as_str()) {
+                        Some(key) => {
+                            let provider_model = &id[route.prefix.len() + 1..];
+                            probe_alive(route, &key, provider_model, secrets.as_ref())
+                        }
+                        None => false,
+                    },
                     None => false,
-                },
-                None => false,
-            };
-            if alive {
-                if let Ok(mut r) = results.lock() {
-                    r.insert(id.clone());
+                };
+                if alive {
+                    if let Ok(mut r) = results.lock() {
+                        r.insert(id.clone());
+                    }
                 }
             }
         }));
@@ -1999,9 +2012,7 @@ fn paid_allowed(model: &str) -> bool {
         if s == "1" || s.eq_ignore_ascii_case("all") {
             return true;
         }
-        return s
-            .split(|c: char| c == ',' || c.is_whitespace())
-            .any(hit);
+        return s.split(|c: char| c == ',' || c.is_whitespace()).any(hit);
     }
     false
 }
@@ -2093,7 +2104,15 @@ fn chat_completions(
                 body.replacen(&format!("\"{model}\""), &format!("\"{provider_model}\""), 1);
             let mut attempt = 0;
             loop {
-                let (code, headers, resp) = curl_post(&url, &key, &forward);
+                let (status, headers, resp) = curl_post(&url, &key, &forward);
+                let Some(code) = status else {
+                    last_code = 502;
+                    last_body = format!(
+                        "{{\"error\":{{\"message\":\"{} {}: no http status\"}}}}",
+                        route.provider, provider_model
+                    );
+                    break;
+                };
                 if (200..300).contains(&code) {
                     answered_provider = Some(route.provider.to_string());
                     answered_model = Some(provider_model.to_string());
@@ -2330,7 +2349,7 @@ fn effective_base(r: &Route, secrets: &HashMap<String, String>) -> Option<String
     Some(format!("{}/{}/ai/v1", r.base_url, cf_account(secrets)))
 }
 
-fn curl_capture(args: &[String]) -> (u16, String) {
+fn curl_capture(args: &[String]) -> (Option<u16>, String) {
     let out = Command::new("curl").args(args).output();
     match out {
         Ok(o) => {
@@ -2338,15 +2357,15 @@ fn curl_capture(args: &[String]) -> (u16, String) {
             match raw.rfind('\n') {
                 Some(i) => {
                     let code = match raw[i + 1..].trim().parse::<u16>() {
-                        Ok(c) => c,
-                        Err(_) => 0,
+                        Ok(c) => Some(c),
+                        Err(_) => None,
                     };
                     (code, raw[..i].to_string())
                 }
-                None => (0, raw),
+                None => (None, raw),
             }
         }
-        Err(_) => (0, String::new()),
+        Err(_) => (None, String::new()),
     }
 }
 
@@ -2386,10 +2405,16 @@ fn horde_chat(body: &str, provider_model: &str, key: &str) -> (u16, String) {
         "\n%{http_code}".to_string(),
     ];
     let (code, resp) = curl_capture(&submit_args);
-    if !(200..300).contains(&code) {
+    let Some(status) = code else {
         return (
             502,
-            format!("{{\"error\":{{\"message\":\"horde submit http {code}\"}}}}"),
+            "{\"error\":{\"message\":\"horde submit: no http status\"}}".to_string(),
+        );
+    };
+    if !(200..300).contains(&status) {
+        return (
+            502,
+            format!("{{\"error\":{{\"message\":\"horde submit http {status}\"}}}}"),
         );
     }
     let id = match json_string_field(&resp, "id") {
@@ -2417,7 +2442,7 @@ fn horde_chat(body: &str, provider_model: &str, key: &str) -> (u16, String) {
             "\n%{http_code}".to_string(),
         ];
         let (scode, sresp) = curl_capture(&status_args);
-        if !(200..300).contains(&scode) {
+        if !matches!(scode, Some(status) if (200..300).contains(&status)) {
             continue;
         }
         if sresp.contains("\"done\":true") || sresp.contains("\"done\": true") {
@@ -2577,31 +2602,41 @@ fn probe(
             "{{\"model\":\"{id}\",\"messages\":[{{\"role\":\"user\",\"content\":\"ping\"}}],\"max_tokens\":4}}"
         );
         let t0 = Instant::now();
-        let (code, _headers, resp) = curl_post_timeout(&url, &key, &body, PROBE_TIMEOUT_SECS);
+        let (status, _headers, resp) = curl_post_timeout(&url, &key, &body, PROBE_TIMEOUT_SECS);
         let ms = t0.elapsed().as_millis();
-        let verdict = if code == 0 {
-            session.push(entry.clone());
-            "timeout"
-        } else if code == 402 || resp.to_lowercase().contains("insufficient") {
-            persist.push(entry.clone());
-            "quota"
-        } else if code == 429 {
-            session.push(entry.clone());
-            "ratelimit"
-        } else if (200..300).contains(&code) && ms >= SLOW_MS {
-            session.push(entry.clone());
-            "slow"
-        } else if [400u16, 403, 404, 405, 410].contains(&code) {
-            session.push(entry.clone());
-            "unsupported"
-        } else if (200..300).contains(&code) {
-            reachable += 1;
-            "ok"
-        } else {
-            "error"
+        let verdict = match status {
+            None => {
+                session.push(entry.clone());
+                "timeout"
+            }
+            Some(code) if code == 402 || resp.to_lowercase().contains("insufficient") => {
+                persist.push(entry.clone());
+                "quota"
+            }
+            Some(429) => {
+                session.push(entry.clone());
+                "ratelimit"
+            }
+            Some(code) if (200..300).contains(&code) && ms >= SLOW_MS => {
+                session.push(entry.clone());
+                "slow"
+            }
+            Some(code) if [400u16, 403, 404, 405, 410].contains(&code) => {
+                session.push(entry.clone());
+                "unsupported"
+            }
+            Some(code) if (200..300).contains(&code) => {
+                reachable += 1;
+                "ok"
+            }
+            Some(_) => "error",
+        };
+        let code_label = match status {
+            Some(code) => code.to_string(),
+            None => "absent".to_string(),
         };
         probed += 1;
-        println!("{}\t{}\t{}\t{}\t{}", r.prefix, id, code, ms, verdict);
+        println!("{}\t{}\t{}\t{}\t{}", r.prefix, id, code_label, ms, verdict);
     }
     for e in &session {
         append_disabled(DISABLED_SESSION, e);

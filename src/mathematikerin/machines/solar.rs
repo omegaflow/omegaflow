@@ -4,6 +4,10 @@ pub const SOLAR_FAST_GRID: u32 = 60;
 
 pub const SOLAR_COARSE_GRID: u32 = 43200;
 
+const SOLAR_FAST_RING: usize = 0;
+
+const SOLAR_COARSE_RING: usize = 1;
+
 pub const SOLAR_GOES_SYNC_S: f64 = 149_597_870_700.0 / 299_792_458.0;
 
 pub const SOLAR_L1_SUN_M: f64 = 1.481e11;
@@ -33,14 +37,7 @@ impl SolarChannel {
     }
 
     pub fn idx(self) -> usize {
-        match self {
-            SolarChannel::Xray => 0,
-            SolarChannel::Euv304 => 1,
-            SolarChannel::Euv284 => 2,
-            SolarChannel::BzGsm => 3,
-            SolarChannel::Density => 4,
-            SolarChannel::F107 => 5,
-        }
+        self as usize
     }
 }
 
@@ -605,8 +602,8 @@ impl SolarMachine {
         let mut max_coarse_bin = self.coarse_last_bin;
         while let Ok(cell) = self.rx.try_recv() {
             let grid = match cell.grid {
-                SOLAR_FAST_GRID => 0,
-                SOLAR_COARSE_GRID => 1,
+                SOLAR_FAST_GRID => SOLAR_FAST_RING,
+                SOLAR_COARSE_GRID => SOLAR_COARSE_RING,
                 _ => continue,
             };
             let ring = &mut self.rings[grid][cell.channel.idx()];

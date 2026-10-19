@@ -490,26 +490,23 @@ pub fn write_bin(records: &[NormalPoint]) -> Option<Vec<u8>> {
         if !put_f64(&mut out, r.np_window_length_ns, P_WINDOW, &mut present) {
             return None;
         }
-        let num_ranges = match r.num_ranges {
-            Some(v) => {
-                present |= P_NUM_RANGES;
-                v
-            }
-            None => 0,
+        let num_ranges = if let Some(v) = r.num_ranges {
+            present |= P_NUM_RANGES;
+            v
+        } else {
+            0
         };
-        let epoch_event = match r.epoch_event {
-            Some(v) => {
-                present |= P_EPOCH_EVENT;
-                v
-            }
-            None => 0,
+        let epoch_event = if let Some(v) = r.epoch_event {
+            present |= P_EPOCH_EVENT;
+            v
+        } else {
+            0
         };
-        let detector_channel = match r.detector_channel {
-            Some(v) => {
-                present |= P_DETECTOR;
-                v
-            }
-            None => 0,
+        let detector_channel = if let Some(v) = r.detector_channel {
+            present |= P_DETECTOR;
+            v
+        } else {
+            0
         };
         out.extend_from_slice(&num_ranges.to_le_bytes());
         out.extend_from_slice(&epoch_event.to_le_bytes());

@@ -10,15 +10,17 @@ struct Post {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let mut db = PathBuf::from(env::var("HOME").unwrap_or_default())
-        .join(".local/share/opencode/opencode.db");
+    let mut db = match env::var("HOME") {
+        Ok(home) => Some(PathBuf::from(home).join(".local/share/opencode/opencode.db")),
+        Err(_) => None,
+    };
     let mut top: usize = 20;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
             "--db" => {
                 i += 1;
-                db = PathBuf::from(&args[i]);
+                db = Some(PathBuf::from(&args[i]));
             }
             "--top" => {
                 i += 1;
@@ -28,6 +30,11 @@ fn main() {
         }
         i += 1;
     }
+
+    let Some(db) = db else {
+        eprintln!("session_token_te: HOME absent and no --db given — the db path stays undeclared");
+        std::process::exit(1);
+    };
 
     let posts = read_posts(&db);
     let (commit_posts, no_commit_posts): (Vec<&Post>, Vec<&Post>) =

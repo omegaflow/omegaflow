@@ -49,13 +49,28 @@ fn format_f64(x: f64) -> String {
 fn unix_of_datetime_utc(dt: &str) -> f64 {
     let parts: Vec<&str> = dt.split(['-', 'T', ':', ' ']).collect();
     if parts.len() < 5 {
-        return 0.0;
+        return f64::NAN;
     }
-    let y: i64 = parts[0].parse().unwrap_or(0);
-    let mo: i64 = parts[1].parse().unwrap_or(0);
-    let d: i64 = parts[2].parse().unwrap_or(0);
-    let h: i64 = parts[3].parse().unwrap_or(0);
-    let mi: i64 = parts[4].parse().unwrap_or(0);
+    let y: i64 = match parts[0].parse() {
+        Ok(v) => v,
+        Err(_) => return f64::NAN,
+    };
+    let mo: i64 = match parts[1].parse() {
+        Ok(v) => v,
+        Err(_) => return f64::NAN,
+    };
+    let d: i64 = match parts[2].parse() {
+        Ok(v) => v,
+        Err(_) => return f64::NAN,
+    };
+    let h: i64 = match parts[3].parse() {
+        Ok(v) => v,
+        Err(_) => return f64::NAN,
+    };
+    let mi: i64 = match parts[4].parse() {
+        Ok(v) => v,
+        Err(_) => return f64::NAN,
+    };
     let mut days = 0;
     let mut yy = 1970;
     while yy < y {
@@ -306,11 +321,20 @@ fn station_fields(body: &str) -> Vec<(String, f64, f64)> {
         let pos = idx + rel + pat.len();
         let trimmed = arr[pos..].trim_start();
         if trimmed.starts_with('"') {
-            let end = trimmed[1..].find('"').map(|e| e + 1).unwrap_or(0);
+            let end = match trimmed[1..].find('"').map(|e| e + 1) {
+                Some(end) => end,
+                None => {
+                    eprintln!("station id unterminated at {pos}: skipped");
+                    idx = pos + 1;
+                    continue;
+                }
+            };
             let id = trimmed[1..end].to_string();
             let seg = &arr[pos + end..];
-            let lat = json_number(seg, "lat").unwrap_or(f64::NAN);
-            let lon = json_number(seg, "lon").unwrap_or(f64::NAN);
+            let (Some(lat), Some(lon)) = (json_number(seg, "lat"), json_number(seg, "lon")) else {
+                idx = pos + 1;
+                continue;
+            };
             out.push((id, lat, lon));
         }
         idx = pos + 1;
@@ -347,10 +371,25 @@ fn parse_event(path: &str) -> Option<Event> {
     if window_start.is_empty() || stations.is_empty() {
         return None;
     }
+    let id = match json_field(&body, "id") {
+        Some(id) => id,
+        None => {
+            eprintln!("event field id absent in {path}");
+            return None;
+        }
+    };
+    let source = match json_field(&body, "source") {
+        Some(source) => source,
+        None => "absent".to_string(),
+    };
+    let cdn = match json_field(&body, "cdn") {
+        Some(cdn) => cdn,
+        None => "archive-api.open-meteo.com".to_string(),
+    };
     Some(Event {
-        id: json_field(&body, "id").unwrap_or_else(|| "event".into()),
-        source: json_field(&body, "source").unwrap_or_else(|| "unknown".into()),
-        cdn: json_field(&body, "cdn").unwrap_or_else(|| "archive-api.open-meteo.com".into()),
+        id,
+        source,
+        cdn,
         window_start,
         window_end,
         stations: stations
@@ -433,7 +472,10 @@ fn harvest_open_meteo(e: &Event, station: &Station) -> Vec<Series> {
     let times = json_string_array(&body, "time");
     let mut series = Vec::new();
     for v in HOURLY_KATALOG {
-        let vals = json_value_by_key(&body, v).unwrap_or_default();
+        let vals = match json_value_by_key(&body, v) {
+            Some(vals) => vals,
+            None => Vec::new(),
+        };
         let mut t = Vec::new();
         let mut vs = Vec::new();
         if times.is_empty() || vals.is_empty() {
@@ -448,7 +490,10 @@ fn harvest_open_meteo(e: &Event, station: &Station) -> Vec<Series> {
         }
         for i in 0..times.len().min(vals.len()) {
             t.push(unix_of_datetime_utc(&times[i]));
-            vs.push(vals[i].parse().unwrap_or(f64::NAN));
+            let Ok(value) = vals[i].parse() else {
+                continue;
+            };
+            vs.push(value);
         }
         series.push(Series {
             station: station.id.clone(),
