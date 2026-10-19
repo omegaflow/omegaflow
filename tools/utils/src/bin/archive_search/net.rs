@@ -3775,11 +3775,103 @@ fn sniff_lines_from(f: &Fetch, url: &str) -> Vec<String> {
     ]
 }
 
-pub fn sniff_lines(url: &str) -> Vec<String> {
-    match get(url, &[], "40") {
-        Some(f) => sniff_lines_from(&f, url),
+pub fn sniff_lines(query: &str) -> Vec<String> {
+    let mut parts = query.split_whitespace();
+    let target = match parts.next() {
+        Some(t) => t,
+        None => return vec!["absent — --sniff needs a path or URL".to_string()],
+    };
+    let pattern = parts.find_map(|p| p.strip_prefix("pattern="));
+    if !target.starts_with("http://")
+        && !target.starts_with("https://")
+        && !target.starts_with("s3://")
+    {
+        return local_sniff_lines(target, pattern);
+    }
+    match get(target, &[], "40") {
+        Some(f) => sniff_lines_from(&f, target),
         None => vec!["pending — no network".to_string()],
     }
+}
+
+fn local_sniff_lines(path: &str, pattern: Option<&str>) -> Vec<String> {
+    let bytes = match std::fs::read(path) {
+        Ok(b) => b,
+        Err(e) => return vec![format!("absent — {path} unreadable: {e}")],
+    };
+    let s = omegaflow::archivar::sniff::sniff(&bytes);
+    let mut out = vec![
+        format!("path {path}"),
+        format!("bytes {}", bytes.len()),
+        format!("format {}", s.format),
+        format!(
+            "delimiter {}",
+            match s.delimiter {
+                Some(c) => c.to_string(),
+                None => String::from("absent"),
+            }
+        ),
+        format!(
+            "header {}",
+            match s.header {
+                Some(h) => h.join(","),
+                None => String::from("absent"),
+            }
+        ),
+        format!("columns {}", s.columns.len()),
+        format!(
+            "time_column {}",
+            match s.time_column {
+                Some(i) => i.to_string(),
+                None => String::from("absent"),
+            }
+        ),
+        format!(
+            "unit {}",
+            match s.unit {
+                Some(u) => u,
+                None => String::from("absent"),
+            }
+        ),
+        format!(
+            "magic {}",
+            match s.magic {
+                Some(m) => m,
+                None => String::from("absent"),
+            }
+        ),
+    ];
+    if let Some(hex) = pattern {
+        match hex_bytes(hex) {
+            Some(needle) if !needle.is_empty() => {
+                let hits = omegaflow::archivar::sniff::find_pattern(&bytes, &needle, 16);
+                out.push(format!(
+                    "pattern {} hits {}",
+                    hex,
+                    hits.iter()
+                        .map(|o| o.to_string())
+                        .collect::<Vec<_>>()
+                        .join(",")
+                ));
+            }
+            _ => out.push(format!("pattern {hex} absent — not hex")),
+        }
+    }
+    out
+}
+
+fn hex_bytes(hex: &str) -> Option<Vec<u8>> {
+    let clean: String = hex.chars().filter(|c| !c.is_whitespace()).collect();
+    if clean.len() % 2 != 0 {
+        return None;
+    }
+    let mut out = Vec::with_capacity(clean.len() / 2);
+    let chars: Vec<char> = clean.chars().collect();
+    for pair in chars.chunks(2) {
+        let s: String = pair.iter().collect();
+        out.push(u8::from_str_radix(&s, 16).ok()?);
+    }
+    Some(out)
 }
 
 const QUERY_MODES: &[&str] = &[
@@ -5494,6 +5586,36 @@ mod tests {
         assert!(partial_lines[4].starts_with("sha256 partial "));
         assert!(partial_lines[4].contains(&raw_sha));
         assert_eq!(partial_lines[2], "bytes 4");
+    }
+
+    #[test]
+    fn local_sniff_reads_header_columns_and_time() {
+        let path = std::env::temp_dir().join(format!("sniff-local-{}", std::process::id()));
+        std::fs::write(
+            &path,
+            "time;value [s]\n2026-01-01T00:00:00;1.5\n2026-01-01T00:00:01;1.6\n",
+        )
+        .unwrap();
+        let lines = sniff_lines(&path.to_string_lossy());
+        assert!(lines.iter().any(|l| l == "format csv"), "{lines:?}");
+        assert!(lines.iter().any(|l| l == "delimiter ;"), "{lines:?}");
+        assert!(lines.iter().any(|l| l == "columns 2"), "{lines:?}");
+        assert!(lines.iter().any(|l| l == "time_column 0"), "{lines:?}");
+        assert!(lines.iter().any(|l| l == "unit s"), "{lines:?}");
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn local_sniff_finds_a_pattern() {
+        let path = std::env::temp_dir().join(format!("sniff-pattern-{}", std::process::id()));
+        std::fs::write(&path, b"HEADabcTAILabc").unwrap();
+        let query = format!("{} pattern=616263", path.display());
+        let lines = sniff_lines(&query);
+        assert!(
+            lines.iter().any(|l| l == "pattern 616263 hits 4,11"),
+            "{lines:?}"
+        );
+        let _ = std::fs::remove_file(&path);
     }
 
     #[test]
