@@ -144,16 +144,22 @@ fn retry_transient<F: FnMut() -> Option<Fetch>>(mut attempt: F) -> Option<Fetch>
 
 const RATE_LIMIT_ATTEMPTS: usize = 4;
 const RATE_LIMIT_BACKOFF_SECS: u64 = 3;
+const RATE_LIMIT_BACKOFF_MAX_SECS: u64 = 30;
 
 fn is_rate_limited(f: &Fetch) -> bool {
     matches!(f.status, Some(429) | Some(503))
 }
 
 fn get_retrying(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
-    let mut last = None;
+    let mut last: Option<Fetch> = None;
     for attempt in 0..RATE_LIMIT_ATTEMPTS {
         if attempt > 0 {
-            std::thread::sleep(Duration::from_secs(RATE_LIMIT_BACKOFF_SECS));
+            let secs = last
+                .as_ref()
+                .and_then(|f| f.retry_after)
+                .unwrap_or(RATE_LIMIT_BACKOFF_SECS)
+                .min(RATE_LIMIT_BACKOFF_MAX_SECS);
+            std::thread::sleep(Duration::from_secs(secs));
         }
         match get(url, extra, timeout) {
             Some(f) if !is_rate_limited(&f) => return Some(f),
@@ -278,6 +284,8 @@ struct RateGate {
     interval: Duration,
 }
 
+const ARXIV_MIN_INTERVAL_MS: u64 = 3000;
+
 impl RateGate {
     fn new() -> Self {
         let ms = std::env::var("ARCHIVE_SEARCH_MIN_INTERVAL_MS")
@@ -291,6 +299,16 @@ impl RateGate {
         }
     }
 
+    fn interval_for(&self, key: &str) -> Duration {
+        let host = key.split('|').next().unwrap_or(key);
+        if host == "export.arxiv.org" || host == "arxiv.org" {
+            let ms = (self.interval.as_millis() as u64).max(ARXIV_MIN_INTERVAL_MS);
+            Duration::from_millis(ms)
+        } else {
+            self.interval
+        }
+    }
+
     fn wait(&mut self, host: &str) {
         let now = Instant::now();
         if let Some(until) = self.next_allowed.get(host).copied() {
@@ -299,7 +317,7 @@ impl RateGate {
             }
         }
         self.next_allowed
-            .insert(host.to_string(), Instant::now() + self.interval);
+            .insert(host.to_string(), Instant::now() + self.interval_for(host));
     }
 
     fn blocked(&self, host: &str) -> bool {
@@ -779,6 +797,17 @@ pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
                 Some(f) if f.status == Some(406) => (
                     vec![format!(
                         "pending — the arXiv /api/query edge answers HTTP 406 to every window (measured 2026-09-27: max_results=1 and no max_results both 406); the live route is `--arxiv-oai` (OAI-PMH)"
+                    )],
+                    false,
+                ),
+                Some(f) if f.status == Some(429) => (
+                    vec![format!(
+                        "pending — arxiv HTTP 429 (edge rate limit; {}, the block outlasted the {}-second retry ladder) — the OAI route is `--arxiv-oai`",
+                        match f.retry_after {
+                            Some(s) => format!("Retry-After: {}s", s),
+                            None => "no Retry-After header".to_string(),
+                        },
+                        RATE_LIMIT_BACKOFF_SECS * (RATE_LIMIT_ATTEMPTS as u64 - 1)
                     )],
                     false,
                 ),
@@ -1274,7 +1303,7 @@ fn crossref_url(
     cursor: Option<&str>,
 ) -> String {
     let select = crate::refine::value_of(refine, "select")
-        .unwrap_or("DOI,title,issued,author,is-referenced-by-count,abstract");
+        .unwrap_or("DOI,title,issued,published,author,is-referenced-by-count,abstract");
     let mut url = format!("https://api.crossref.org/works?rows={}", max);
     if !text.is_empty() {
         url.push_str("&query=");
@@ -1345,12 +1374,39 @@ fn crossref_abstract(item: &Json) -> Option<String> {
     }
 }
 
+fn crossref_year(item: &Json) -> Option<String> {
+    for field in ["issued", "published", "published-online", "published-print"] {
+        let Some(parts) = item
+            .get(field)
+            .and_then(|p| p.get("date-parts"))
+            .and_then(|d| d.as_arr())
+        else {
+            continue;
+        };
+        let year = parts
+            .first()
+            .and_then(|p| p.as_arr())
+            .and_then(|p| p.first())
+            .and_then(|y| y.as_scalar_string());
+        if let Some(year) = year {
+            let year = year.trim();
+            if !year.is_empty() {
+                return Some(year.to_string());
+            }
+        }
+    }
+    None
+}
+
 fn crossref_line(item: &Json) -> Option<String> {
     let doi = item.get("DOI").and_then(|d| d.as_str()).unwrap_or("");
     if doi.is_empty() {
         return None;
     }
     let mut line = format!("url https://doi.org/{}\ttitle: {}", doi, doc_title(item));
+    if let Some(year) = crossref_year(item) {
+        line.push_str(&format!("\tyear: {}", year));
+    }
     if let Some(authors) = crossref_authors(item) {
         line.push_str(&format!("\tauthors: {}", authors));
     }
@@ -5537,7 +5593,7 @@ mod tests {
     fn crossref_url_carries_the_default_select_and_the_plain_query() {
         assert_eq!(
             crossref_url("gravitational waves", &[], 10, None),
-            "https://api.crossref.org/works?rows=10&query=gravitational%20waves&select=DOI%2Ctitle%2Cissued%2Cauthor%2Cis-referenced-by-count%2Cabstract"
+            "https://api.crossref.org/works?rows=10&query=gravitational%20waves&select=DOI%2Ctitle%2Cissued%2Cpublished%2Cauthor%2Cis-referenced-by-count%2Cabstract"
         );
     }
 
@@ -5556,6 +5612,28 @@ mod tests {
                 "url https://doi.org/10.1234/x\ttitle: A study\tauthors: Ada Lovelace, Alan Turing\tcites: 42\tabstract: Hello world"
                     .to_string()
             )
+        );
+    }
+
+    #[test]
+    fn crossref_line_carries_the_issued_year() {
+        let item = crossref_item(
+            r#"{"DOI":"10.1234/y","title":["Dated"],"issued":{"date-parts":[[2001,1,29]]}}"#,
+        );
+        assert_eq!(
+            crossref_line(&item),
+            Some("url https://doi.org/10.1234/y\ttitle: Dated\tyear: 2001".to_string())
+        );
+    }
+
+    #[test]
+    fn crossref_line_falls_back_past_a_null_issued_year() {
+        let item = crossref_item(
+            r#"{"DOI":"10.1234/z","title":["Undated"],"issued":{"date-parts":[[null]]},"published":{"date-parts":[[2019]]}}"#,
+        );
+        assert_eq!(
+            crossref_line(&item),
+            Some("url https://doi.org/10.1234/z\ttitle: Undated\tyear: 2019".to_string())
         );
     }
 
@@ -5611,7 +5689,7 @@ mod tests {
         let opts = vec![("filter".to_string(), "type:journal-article".to_string())];
         assert_eq!(
             crossref_url("", &opts, 10, None),
-            "https://api.crossref.org/works?rows=10&select=DOI%2Ctitle%2Cissued%2Cauthor%2Cis-referenced-by-count%2Cabstract&filter=type%3Ajournal-article"
+            "https://api.crossref.org/works?rows=10&select=DOI%2Ctitle%2Cissued%2Cpublished%2Cauthor%2Cis-referenced-by-count%2Cabstract&filter=type%3Ajournal-article"
         );
     }
 
