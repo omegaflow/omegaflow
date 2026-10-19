@@ -1164,6 +1164,18 @@ fn cc_target(query: &str) -> String {
         .join(" ")
 }
 
+pub fn zustand_dir() -> Option<std::path::PathBuf> {
+    if let Ok(d) = std::env::var("OMEGAFLOW_ZUSTAND") {
+        return Some(std::path::PathBuf::from(d));
+    }
+    if let Ok(w) = std::env::var("OMEGAFLOW_WORK") {
+        return Some(std::path::PathBuf::from(w).join("zustand"));
+    }
+    std::env::var("HOME")
+        .ok()
+        .map(|h| std::path::PathBuf::from(h).join("projects/omegaflow-work/zustand"))
+}
+
 fn cc_record_lines(body: &str, max: usize) -> Vec<String> {
     let mut out = Vec::new();
     for raw in body.lines() {
@@ -4111,11 +4123,9 @@ fn annotate_declared(lines: &mut [String], env: &HashMap<String, String>) {
 }
 
 fn log_query(mode: &str, query: &str, lines: &[String], max: usize) {
-    let repo = match std::env::var_os("OMEGAFLOW_REPO") {
-        Some(r) => std::path::PathBuf::from(r),
-        None => return,
+    let Some(dir) = zustand_dir() else {
+        return;
     };
-    let dir = repo.join("zustand");
     if std::fs::create_dir_all(&dir).is_err() {
         return;
     }
