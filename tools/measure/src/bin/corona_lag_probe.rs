@@ -164,6 +164,13 @@ fn te_conditional(x: &[f32], y: &[f32], z: &[f32], lag: usize) -> Option<f64> {
     Some(te / m as f64)
 }
 
+fn cell(v: Option<f64>) -> String {
+    match v {
+        Some(x) => format!("{x:.4e}"),
+        None => String::from("absent"),
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(xr_path) = arg_value(&args, "--xr") else {
@@ -193,18 +200,19 @@ fn main() {
         euv.len()
     );
 
-    let t0 = xra
-        .first()
-        .map(|&(t, _)| t)
-        .unwrap_or(0.0)
-        .max(xrb.first().map(|&(t, _)| t).unwrap_or(0.0))
-        .max(euv.first().map(|&(t, _)| t).unwrap_or(0.0));
-    let t1 = xra
-        .last()
-        .map(|&(t, _)| t)
-        .unwrap_or(0.0)
-        .min(xrb.last().map(|&(t, _)| t).unwrap_or(0.0))
-        .min(euv.last().map(|&(t, _)| t).unwrap_or(0.0));
+    let (Some(&(ta0, _)), Some(&(tb0, _)), Some(&(te0, _))) =
+        (xra.first(), xrb.first(), euv.first())
+    else {
+        println!("window absent — a series carries no sample");
+        return;
+    };
+    let (Some(&(ta1, _)), Some(&(tb1, _)), Some(&(te1, _))) = (xra.last(), xrb.last(), euv.last())
+    else {
+        println!("window absent — a series carries no sample");
+        return;
+    };
+    let t0 = ta0.max(tb0).max(te0);
+    let t1 = ta1.min(tb1).min(te1);
     let bins = ((t1 - t0) / DT).floor() as usize;
     let ab = bin_median(&xra, t0, bins);
     let bb = bin_median(&xrb, t0, bins);
@@ -231,13 +239,17 @@ fn main() {
         "lag", "Lya→A", "Lya→A|B", "A→Lya", "A→Lya|B"
     );
     for &lag in &lags {
-        let pf = transfer_entropy_lag(&a, &e, lag).unwrap_or(f64::NAN);
-        let cf = te_conditional(&a, &e, &b, lag).unwrap_or(f64::NAN);
-        let pr = transfer_entropy_lag(&e, &a, lag).unwrap_or(f64::NAN);
-        let cr = te_conditional(&e, &a, &b, lag).unwrap_or(f64::NAN);
+        let pf = transfer_entropy_lag(&a, &e, lag);
+        let cf = te_conditional(&a, &e, &b, lag);
+        let pr = transfer_entropy_lag(&e, &a, lag);
+        let cr = te_conditional(&e, &a, &b, lag);
         println!(
-            "{:>4} | {:>10.4e} | {:>10.4e} | {:>10.4e} | {:>10.4e}",
-            lag, pf, cf, pr, cr
+            "{:>4} | {:>10} | {:>10} | {:>10} | {:>10}",
+            lag,
+            cell(pf),
+            cell(cf),
+            cell(pr),
+            cell(cr)
         );
     }
     println!();
@@ -247,13 +259,17 @@ fn main() {
         "lag", "Lya→B", "Lya→B|A", "B→Lya", "B→Lya|A"
     );
     for &lag in &lags {
-        let pf = transfer_entropy_lag(&b, &e, lag).unwrap_or(f64::NAN);
-        let cf = te_conditional(&b, &e, &a, lag).unwrap_or(f64::NAN);
-        let pr = transfer_entropy_lag(&e, &b, lag).unwrap_or(f64::NAN);
-        let cr = te_conditional(&e, &b, &a, lag).unwrap_or(f64::NAN);
+        let pf = transfer_entropy_lag(&b, &e, lag);
+        let cf = te_conditional(&b, &e, &a, lag);
+        let pr = transfer_entropy_lag(&e, &b, lag);
+        let cr = te_conditional(&e, &b, &a, lag);
         println!(
-            "{:>4} | {:>10.4e} | {:>10.4e} | {:>10.4e} | {:>10.4e}",
-            lag, pf, cf, pr, cr
+            "{:>4} | {:>10} | {:>10} | {:>10} | {:>10}",
+            lag,
+            cell(pf),
+            cell(cf),
+            cell(pr),
+            cell(cr)
         );
     }
     println!();

@@ -1050,7 +1050,9 @@ fn run_hourly(
                             let vals = surrogate_te_values(to_s, from_s, lag, SURROGATE_SEED);
                             let fam_partial =
                                 vals.iter().copied().fold(f64::NEG_INFINITY, f64::max);
-                            let thr = mean_plus_2sigma(&vals).unwrap_or(f64::NAN);
+                            let Some(thr) = mean_plus_2sigma(&vals) else {
+                                continue;
+                            };
                             out.push((i, Some((te, thr, fam_partial))));
                         }
                         out
@@ -1073,7 +1075,9 @@ fn run_hourly(
                 };
                 let vals = surrogate_te_values(to_s, from_s, *lag, SURROGATE_SEED);
                 let fam_partial = vals.iter().copied().fold(f64::NEG_INFINITY, f64::max);
-                let thr = mean_plus_2sigma(&vals).unwrap_or(f64::NAN);
+                let Some(thr) = mean_plus_2sigma(&vals) else {
+                    continue;
+                };
                 results[i] = Some((te, thr, fam_partial));
             }
         }

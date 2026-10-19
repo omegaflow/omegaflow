@@ -133,12 +133,8 @@ fn probe(path: &str) {
     if let Some(epoch) = file.var("Epoch") {
         match file.var_records(&bytes, epoch) {
             Ok(records) => {
-                let first = records
-                    .first()
-                    .map(|(_, v)| v.first().copied().unwrap_or(f64::NAN));
-                let last = records
-                    .last()
-                    .map(|(_, v)| v.first().copied().unwrap_or(f64::NAN));
+                let first = records.first().and_then(|(_, v)| v.first().copied());
+                let last = records.last().and_then(|(_, v)| v.first().copied());
                 eprintln!(
                     "  Epoch {} records first {:?} last {:?} (unix seconds)",
                     records.len(),
@@ -263,52 +259,40 @@ fn harvest_day(
     let date = format!("{year:04}{month:02}{mday:02}");
     let url = format!("{BASE_URL}{year}/wi_h1_wav_{date}_v01.cdf");
     let Some(bytes) = fetch(&url) else {
-        outcomes
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .push(DayOutcome {
-                date,
-                emitted: 0,
-                note: Some("fetch void".to_string()),
-            });
+        outcomes.lock_recover().push(DayOutcome {
+            date,
+            emitted: 0,
+            note: Some("fetch void".to_string()),
+        });
         return;
     };
     let file = match CdfFile::parse(&bytes) {
         Ok(f) => f,
         Err(note) => {
-            outcomes
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .push(DayOutcome {
-                    date,
-                    emitted: 0,
-                    note: Some(format!("{note:?}")),
-                });
+            outcomes.lock_recover().push(DayOutcome {
+                date,
+                emitted: 0,
+                note: Some(format!("{note:?}")),
+            });
             return;
         }
     };
     let Some(epoch) = file.var("Epoch") else {
-        outcomes
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .push(DayOutcome {
-                date,
-                emitted: 0,
-                note: Some("Epoch absent".to_string()),
-            });
+        outcomes.lock_recover().push(DayOutcome {
+            date,
+            emitted: 0,
+            note: Some("Epoch absent".to_string()),
+        });
         return;
     };
     let epoch_records = match file.var_records(&bytes, epoch) {
         Ok(r) => r,
         Err(note) => {
-            outcomes
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .push(DayOutcome {
-                    date,
-                    emitted: 0,
-                    note: Some(format!("Epoch {note:?}")),
-                });
+            outcomes.lock_recover().push(DayOutcome {
+                date,
+                emitted: 0,
+                note: Some(format!("Epoch {note:?}")),
+            });
             return;
         }
     };
@@ -328,14 +312,11 @@ fn harvest_day(
         f64::NAN
     };
     let Some(t_tdb) = lsk.unix_to_tdb(t_noon) else {
-        outcomes
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .push(DayOutcome {
-                date,
-                emitted: 0,
-                note: Some("TDB void".to_string()),
-            });
+        outcomes.lock_recover().push(DayOutcome {
+            date,
+            emitted: 0,
+            note: Some("TDB void".to_string()),
+        });
         return;
     };
     let mut day_records: Vec<(f64, f64, f64, f64, u32)> = Vec::with_capacity(608);
@@ -369,16 +350,31 @@ fn harvest_day(
             if per_bin[i].is_empty() {
                 continue;
             }
-            let freq_hz = freq_vals.get(i).copied().unwrap_or(0.0) * 1000.0;
+            let Some(&f) = freq_vals.get(i) else {
+                continue;
+            };
+            let freq_hz = f * 1000.0;
             let lo = if i > 0 {
-                freq_vals.get(i - 1).copied().unwrap_or(0.0) * 1000.0
+                let Some(&fp) = freq_vals.get(i - 1) else {
+                    continue;
+                };
+                fp * 1000.0
             } else {
-                freq_hz - (freq_vals.get(1).copied().unwrap_or(0.0) * 1000.0 - freq_hz)
+                let Some(&f1) = freq_vals.get(1) else {
+                    continue;
+                };
+                freq_hz - (f1 * 1000.0 - freq_hz)
             };
             let hi = if i + 1 < bins {
-                freq_vals.get(i + 1).copied().unwrap_or(0.0) * 1000.0
+                let Some(&fn_) = freq_vals.get(i + 1) else {
+                    continue;
+                };
+                fn_ * 1000.0
             } else {
-                freq_hz + (freq_hz - freq_vals.get(bins - 2).copied().unwrap_or(0.0) * 1000.0)
+                let Some(&fprev) = freq_vals.get(bins - 2) else {
+                    continue;
+                };
+                freq_hz + (freq_hz - fprev * 1000.0)
             };
             let binw = ((hi - freq_hz) + (freq_hz - lo)) * 0.5;
             let val = median(&mut per_bin[i]);
@@ -386,18 +382,25 @@ fn harvest_day(
             emitted += 1;
         }
     }
-    records
-        .lock()
-        .unwrap_or_else(|e| e.into_inner())
-        .append(&mut day_records);
-    outcomes
-        .lock()
-        .unwrap_or_else(|e| e.into_inner())
-        .push(DayOutcome {
-            date,
-            emitted,
-            note: None,
-        });
+    records.lock_recover().append(&mut day_records);
+    outcomes.lock_recover().push(DayOutcome {
+        date,
+        emitted,
+        note: None,
+    });
+}
+
+trait LockRecover<T> {
+    fn lock_recover(&self) -> std::sync::MutexGuard<'_, T>;
+}
+
+impl<T> LockRecover<T> for std::sync::Mutex<T> {
+    fn lock_recover(&self) -> std::sync::MutexGuard<'_, T> {
+        match self.lock() {
+            Ok(g) => g,
+            Err(p) => p.into_inner(),
+        }
+    }
 }
 
 fn main() {
@@ -407,7 +410,10 @@ fn main() {
         return;
     }
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "wind_waves.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => String::from("wind_waves.bin"),
+    };
     let jobs: usize = arg_value(&args, "--jobs")
         .and_then(|v| v.parse().ok())
         .unwrap_or(4);
@@ -479,10 +485,16 @@ fn main() {
             });
         }
     });
-    let outcomes = Arc::try_unwrap(outcomes)
+    let outcomes = match Arc::try_unwrap(outcomes)
         .ok()
         .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    {
+        Some(o) => o,
+        None => {
+            eprintln!("wind-waves: the outcomes lock stays held — no manifest written");
+            std::process::exit(1);
+        }
+    };
     let mut void = 0usize;
     let mut emitted_total = 0usize;
     for o in &outcomes {
@@ -496,10 +508,16 @@ fn main() {
         "{} days, {} void, {} records emitted",
         total, void, emitted_total
     );
-    let records = Arc::try_unwrap(records)
+    let records = match Arc::try_unwrap(records)
         .ok()
         .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    {
+        Some(r) => r,
+        None => {
+            eprintln!("wind-waves: the records lock stays held — no asset written");
+            std::process::exit(1);
+        }
+    };
     let per_receiver: std::collections::HashMap<u32, usize> =
         records
             .iter()
