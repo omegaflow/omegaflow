@@ -71,6 +71,15 @@ Die 18 „teilweise" sind kein Mangel der Papers, sondern die Signatur der Metho
 | `solar-cycle-dynamo` | teilweise | informationstheoretischer Sonnenzyklus 2018 | Stille gegen F10.7 nicht repliziert |
 | `text-as-data-pioneer` | teilweise | PRL 2012, 10.1103/PhysRevLett.108.241101 | Text-als-Zahlensequenz gegen Doppler nicht publiziert |
 
+**Nachtrag 2026-10-19 (gemessen):** Die GIC-Seite von `gic-causal-driver` ist
+nicht mehr ungemessen. Gegen die registerführende Reihe `fmi_gic.bin` [A]
+(Tagesmaximum |GIC|, 2000-01-04 → 2023-09-29, 23,74 Jahre, n = 2 145 nach
+Stride 3; Surrogat-Null §3.2, zehn Surrogate, fam = 0,1877) liefert Bz→GIC
+TE = 1,9729e-2 (Schwelle 1,4848e-2, **family bound**, kein Arrow), Density→GIC
+TE = 1,3386e-2 (Schwelle 1,2877e-2, family bound), Speed→GIC und alle
+Rückrichtungen sind silent. Ergebnis: gemessen, aber kein fam-clearing Treiber;
+Details §4.8 des Papiers, Token `…2~ba777f02`.
+
 ## Was daraus folgt
 
 1. **`causal-arrow` darf so nicht weiterlaufen.** Die Ereignisliteratur erklärt die Trishuli-Flut als Fels-Eis-Kaskade; die vorregistrierte Regen→Abfluss-Prämisse ist bestritten. Entweder ko-lokale Abflussreihe beschaffen oder die Prämisse neu vorregistrieren.

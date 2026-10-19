@@ -523,6 +523,45 @@ with a temporally separated fit/test window, reporting out-of-sample CC and R²;
 the scalar-peak r = 0.9448 stays a secondary proxy. The manifested asset's
 non-overlapping window is the re-harvest riss.
 
+### 4.8 Measured GIC series [A] against the L1 drivers (gemessen 2026-10-19)
+
+Token `xfer:future.ses_ec618129fffeLFawr4V3pQKpOl.2~ba777f02`. The upper row
+of the chain is now measured against the **measured** GIC series itself, not
+against dB/dt as its proxy: target is the daily maximum of |GIC| in ampere
+from the manifested `fmi_gic.bin` (hourly peak-magnitude buckets,
+`phi/sources.φ:11089`; sha256
+`fce88a3280eb5ba146d14de858ab7348648faed847bc985b423e219599be1ea5`; 156 354
+records over 1999–2023). Drivers are the OMNI2 hourly BZ_GSM, V and N reduced
+to daily medians. Grain: daily, every third day (stride 3), so lag 1 is three
+days — the paper's daily grain (§3.4). Window: **2000-01-04 → 2023-09-29
+(8 670 days, 23.74 years; n ≥ 1 Jahr)**, 6 434 common daily samples, reduced
+by stride 3 to **n = 2 145**. Null exactly as §3.2: **ten phase-randomized
+surrogates** of the driver per pair and lag (fixed seed
+`0x9E3779B97F4A7C15`), per-lag threshold μ + 2σ, fam = the maximum surrogate
+TE over the round's six directed pairs × two lags. The lag-0 arm reproduces
+the lag-1 arm numerically for every pair (§3.1), so the twelve calls carry six
+distinct statistics. Command:
+`./target/release/gic_te_probe --start 1999-12-31 --end 2023-10-23 --n-surreps 10`
+(`tools/measure/src/bin/gic_te_probe.rs`; artifact
+`/tmp/opencode/gic_te/result.txt` in this run).
+
+| pair | lag | TE | own threshold | fam = 1.8770e-1 | verdict |
+|---|---|---|---|---|---|
+| Bz → GIC | 0 / 3 d | 1.9729e-2 | 1.4848e-2 | — | family bound |
+| GIC → Bz | 0 / 3 d | 3.2207e-2 | 1.8983e-1 | — | silent |
+| Speed → GIC | 0 / 3 d | 9.1049e-3 | 1.5414e-2 | — | silent |
+| GIC → Speed | 0 / 3 d | 2.5481e-2 | 1.4621e-1 | — | silent |
+| Density → GIC | 0 / 3 d | 1.3386e-2 | 1.2877e-2 | — | family bound |
+| GIC → Density | 0 / 3 d | 2.6433e-2 | 1.5124e-1 | — | silent |
+
+**Verdict: no arrow; Bz→GIC and Density→GIC sit at family bound.** Both exceed
+their own per-lag threshold but stay below the round maximum (fam = 0.1877),
+and all reverse directions and Speed→GIC are silent. Bz carries the larger
+point estimate of the two forward rows (1.97e-2 vs 1.34e-2), consistent with
+Bz as the leading sub-daily candidate, but the measured GIC series does not
+produce a family-clearing driver at this grain. The measurement closes the
+"GIC side not measured" gap as a measured null result, not as an arrow.
+
 ## 5. Discussion
 
 **The measured driver is sub-daily — on the yearly round and the asymmetry, not
