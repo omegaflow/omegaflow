@@ -94,11 +94,10 @@ fn doc_closed(content: &str) -> bool {
 }
 
 fn doc_has_open_marker(content: &str) -> bool {
-    let start = match content.find("-->") {
-        Some(i) => i + 3,
-        None => 0,
+    let Some(i) = content.find("-->") else {
+        return false;
     };
-    content[start..].lines().any(doc_open_marker_line)
+    content[i + 3..].lines().any(doc_open_marker_line)
 }
 
 fn handover_line_of(path: &str) -> Option<String> {
@@ -555,7 +554,7 @@ fn main() {
         .map(str::to_string)
         .collect();
     if !added_docs.is_empty() {
-        let mut own_carrier = String::new();
+        let mut own_carrier = live_handover_carrier();
         for path in files
             .lines()
             .map(str::trim)
