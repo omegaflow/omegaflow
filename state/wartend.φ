@@ -1,0 +1,49 @@
+# Wartend-Register — key | Gegenüber | Trigger | Aufnehmer | Lage (Stand 2026-10-11)
+# Eine Zeile je Warte. Der Aufnehmer arbeitet sie im selben Atom, in dem der Trigger feuert.
+# Archiv: wartend-archiv-2026-10-11.φ (Mountain 312) · …-r2.φ (Mountain 313) · …-r3.φ (Future 235, Voll-Audit).
+# 2026-10-11 (Future 235): gegen den Baum geprüft — aufgelöste Warten (keyless Route in `phi/sources.φ`
+#   registriert: voyager/mariner10/viking-NSSDCA, superdarn-Globus-Mirror) und Nicht-Dritt-Warten
+#   (Compiler-/CI-/Code-Arme, Punkt-ID/Manifest) entfernt; Credits gemessen erledigt (deepseek paid-only,
+#   zai kein Free-Tier); demeter operator-vertagt (LOCK). Rest = Termine + Akte + 2 Lizenzen.
+# 2026-10-11 (Future 235, Audit II gegen `state/`): die Taucher-Funde wurden nicht vollständig
+#   weitergegeben — 2 fehlende Dritt-Warten ergänzt: `entsoe-token` (Zugriffs-Mail gesendet, Token
+#   pending) + `slimbook-antwort` (Vendor-Antwort, Wiedervorlage 2026-09-27 überfällig).
+# 2026-10-11 (Future 235, Audit III „unnötige Warten"): je Warte gegen `state/` + `phi/sources.φ`
+#   geprüft, ob die Taucher die Lösung schon haben. `inpop-license` bleibt — Operator-Wort: **alle
+#   Ephemeriden** sind gewünscht; CDN nur bei Redistributions-Recht, sonst lokal/offene Lizenz.
+# 2026-10-11 (Future 235, Operator-Wort): `trisp-keller` **bleibt** — **privat** (das YBCO-NSE-Roh
+#   liegt lokal, LOCK „nichts verlässt das Haus") und **wartend** (Keller-Einverständnis für eine
+#   spätere Weitergabe). Der generische Kohärenz-Anspruch (`survey-raetsel-bestand`) ist unabhängig
+#   davon mit offenen NSE-Daten messbar (NIST NCNR NSE, US-PD).
+# 2026-10-12 (Mycelium): `entsoe-token` geschlossen — Token-Freigabe da (Ticket #9473923 gelöst,
+#   future-241); Repo-Secret `ENTSOE_API_TOKEN` steht, `entsoe-cdn` `38233635426` dispatcht.
+# 2026-10-12 (Mycelium, 8-Ziele Rest-Routen): JPL `ssd.jpl.nasa.gov/planets/obs_data.html`
+#   `/dat/planets/`-ASCII-Familie via `raw_mirror` in `phi/sources.φ` registriert
+#   (48 Blöcke, Tag `ssd.jpl.nasa.gov`, CI `.github/workflows/ssd-jpl-raw-cdn.yml`); die 2
+#   Viking-Range/Doppler-Dateien trägt bereits `viking_text_compiler` (`phi:20582`). PDS
+#   Venus-Radar: Level-2 gedeckt durch `zenodo.org/venus_radar_Processed.zip` (Tag `zenodo.org`)
+#   — Rohdelay-Doppler hier als Warte (Arm + Volumen).
+# 2026-10-13 (river-205): `inpop-license` geschlossen — IMCCE/SE-OP bestätigt (Mail 2026-10-12)
+#   die Open Licence / Licence Ouverte 2.0 für INPOP + NOE; GTCU `seop.obspm.fr/en/terms`. CDN frei.
+emodnet-hfr | EMODNET | Termin 2026-10-19 | mycelium | (gemessen 2026-10-11) Asset `phi/sources.φ:2077`; `--sniff` 200/24248 B sha `adb41128…`; bei Fälligkeit neu sniffen.
+noirlab-gaia-dr4 | ESA/Gaia | 2026-12-02 | mycelium | (gemessen 2026-10-11) ESA-Release-Seite nennt DR4 = 2. Dez 2026 (nicht NOIRLab); danach Epoche ernten.
+europa-clipper | ESA | 2026-12-03 | sensory | (gemessen 2026-10-11) Asset `phi/sources.φ`, Key `at europa_clipper` (Zeilennummer wandert mit `register_sort` — kein Zitat auf die Nummer); `--sniff` 200/103120 B sha `3b03ea69…`.
+bepicolombo-more | ESA/PSA | 2027-04-01 | mycelium | Anfrage 2026-09-18 (Ticket YYM-342-97327); kein Interim-Zugang (MORE-Cruise erst Science-Phase ~April 2027).
+ox64-m2c | PINE64 | Lieferung LZ473049629CN | sensory | (gemessen 2026-10-10) im Zollabfertigungsprozess, Zielland DE (05.10.2026 15:25); physische Zustellung = Trigger; Route `archive_search --playwright --headed "https://www.chinapostaltracking.com/package-tracking/?trackingno=LZ473049629CN"`.
+basis-fellowship | Orbit | Antwort @orbit.engineering | future | Antrag 2026-10-09 (Ref BF-2026-QYHC3K), rolling.
+rr-brustgurt | Operator | Förderung gewährt | future | LOCK (Hardware erst bei Förderung); Polar H10/HRM-Dual.
+juice-recon | ESA/ESOC | Termin 2026-11-01 | river | (gemessen 2026-10-11) Post-Flyby-recon-SPK + 1σ-Kovarianz; `data/ssd.jpl.nasa.gov/ephemeris_juice_recon.bin` absent, `phi/sources.φ` ohne tote url-Zeile.
+trisp-keller | MPI-FKF (Keller) | Einverständnis zur Weitergabe | future | (gemessen 2026-10-11) **privat** — das YBCO-NSE-Roh liegt lokal (`data/mlz.trisp/`, LOCK „nichts verlässt das Haus"); Wait = Keller-Einverständnis für eine spätere Weitergabe. Unabhängig davon: der generische Kohärenz-Anspruch (`survey-raetsel-bestand`) ist mit offenen NSE-Daten messbar (NIST NCNR NSE, US-PD). Send = Operator-Hand.
+slimbook-antwort | Slimbook (info@slimbook.es) | Vendor-Antwort | future | (gemessen 2026-10-11) keine Antwort; Wiedervorlage 2026-09-27 überfällig (`state/future/funding-register-fuenf-achsen-2026-10-09.md:327`); Beschaffung Hardware.
+pds-venus-radar-raw | PDS Geosciences (WUSTL) | BAND_STORAGE_TYPE-Arm (PDS3-BIP) + Volumen-/Lizenz-Wort | mountain | (gemessen 2026-10-12) delay-Doppler `arcb_nrao-v-rtls_gbt-3-delaydoppler-v1` (Arecibo/GBT 1988–2020, Campbell & Campbell 2022): 916 Index-Produkte, je PC_REAL 32 / BANDS=2 SAMPLE_INTERLEAVED / 8191×8192 ≈512 MiB → ~490 GB; `pds3_img` liest `BAND_STORAGE_TYPE` nicht (kein Fit, `src/archivar/pds3_img.rs:150-165`). Level-2 (PDS4, 15×960 MB = 14,4 GB) in Substanz gedeckt durch `zenodo.org/venus_radar_Processed.zip` (Tag `zenodo.org`, `phi/sources.φ`). Lizenz keine explizite Klausel, Zitat erbeten (`docs/plans/ref-ephemeriden-quellen-index.md:26-27`).
+robinson-camera-angles | ASU/LROC (M. S. Robinson) | Antwort | future | (gemessen 2026-10-13) Kontaktformular `lroc.im-ldi.com/contact` abgeschickt 2026-10-12 11:47:05 (Chrome-History `FORM_SUBMIT`, Profil „Profile 1"); Frage = Spaltenbedeutung C1C2C3/SXSY in `camera_angles.txt`; E-Mail-Fassung `state/mail/asu-robinson-camera-angles-2026-10-12.md` zurückgezogen (Dublette an denselben Menschen vermieden).
+cindi-nwm | UT Dallas Hanson Center (CINDI-PI) | Antwort | future | (gemessen 2026-10-13) Anfrage an den CINDI-PI gesendet (Operator-Hand, Proton); Adresse + Entwurf `state/mail/2026-10-13-cindi-nwm-anfrage-entwurf.md` (PII, nie getrackt); Ziel = co-lokale Ionendrift+Neutralwind (C/NOFS CINDI NWM; nur IVM ist offen).
+ctbto-vdec | CTBTO (vDEC) | Antwort | future | (gemessen 2026-10-13) Antrag **vom Operator eingereicht** (Webformular + Projektbeschreibung + Vertraulichkeitsvertrag); Entwurf `state/mail/2026-10-13-ctbto-vdec-antrag-entwurf.md`; jetzt wartet nur die Antwort.
+m10-rohtracking | NSSDC/CRUSO (Katie E. Groff, `gsfc-dl-nssdca-request@mail.nasa.gov`) | Katies Update-Mail / Lieferung | mountain | (gemessen 2026-10-14, Future 254) **Antwort da** (Ledger 303, 2026-10-13): PSNO-00007 + PSCM-00009 lieferbar, PSPA-00318 vorhanden, PSPA-00273/-00055 (SEDR) in Digitalisierung (evtl. nächste Woche), PSPG-00011 nie erhalten; **Request im NSSDCA-System offiziell eröffnet** — Tape-Raum-Renovierung, Lieferung frühestens Monatsende. Der CRUSO-Entwurf `state/mail/nssdc-mariner10-pscm-00009.md` bleibt Artefakt (kein separater Send — Dublette an denselben Schreibtisch, Request deckt ihn).
+waldo-massdaten | WALDO (M. Cohen `morris.cohen@waldo.world`, M. Golkowski `mark.golkowski@waldo.world`) | Antwort | river | (gemessen 2026-10-13) Massendaten-Anfrage **vom Operator per Proton abgeschickt**; Entwurf `state/mail/2026-10-13-waldo-massdaten-anfrage-entwurf.md`; Ziel = breiterer/Bulk-Zugang zu den VLF/LF-Rohdaten (`.mat`, je Site/Typ/Jahr); wartet auf Antwort.
+schumann-serie | Mycelium (CDN) | `resonance_schumann.csv` im CDN | river | (gemessen 2026-10-13) Block `phi/sources.φ:1034-1043` steht (CC-BY-4.0, Zenodo 15225820), CDN-Abzug 404, kein Aktor für `format csv`; zwei Zeilen + Dispatch (`river-folge207 ## An mycelium`, xfer:river208-schumann1). Danach läuft die vorab festgehaltene Antriebsfrage (river-folge207, Nadel).
+deepseek-datenloeschung | DeepSeek (privacy@deepseek.com) | Antwort bis 2026-11-16 | future | (gemessen 2026-10-16) Löschantrag (Art. 17 GDPR + Trainings-Opt-out) vom Operator gesendet; Entwurf `mail/2026-10-16-deepseek-datenloeschung.md`; wartet auf Bestätigung + Löschdatum.
+hreda-rohspektren | ESA (HREDA/DLR) | Antwort (Operator-Send: ESA-LDAP) | future | (gemessen 2026-10-17) anonym 403 `file_metadata_oid=2488390`; Roh-LET-Spektren nur hinter Login; keyed `ESA_USER/PASS` (Wert nicht lesbar). Send = Operator-Hand.
+voyager-uranus-neptun | NSSDC/CRUSO | Lieferung PSCM-00004 / PSCM-00003 | future | (gemessen 2026-10-17) PDS/SPDF nur Saturn + open-loop Jupiter/Uranus; NSSDCA PSCM-00004/PSCM-00003 offline, kein Digitalisat. Send = Operator-Hand (CRUSO).
+ceic-d18000 | CEIC (`dcogcd@163.com`) | Antwort | future | (gemessen 2026-10-17) Vollbestand 300/22 GB bleibt Login/+86; nur zwei Sichuan-Subsets (7112529/7855090) offen. Send = Operator-Hand (E-Mail).
+lro-lola-altimetrie | PDS Geosciences (WUSTL) | Harvest LOLA-RDR | mycelium | (gemessen 2026-10-17, haertefaelle-offene-routen.md:109-110) Route offen `pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/` (200); nur das `lola_coverage`-Manifest ist registriert, die LOLA-Altimetrie selbst fehlt.
