@@ -31728,3 +31728,13 @@ ttl 2592000
 field hmi_polar_north_t hmi_polar_north_t inverse-square em T 2592000 0.0 0.0
 field hmi_polar_south_t hmi_polar_south_t inverse-square em T 2592000 0.0 0.0
 field hmi_polar_avg_t hmi_polar_avg_t inverse-square em T 2592000 0.0 0.0
+
+url https://dhm.gov.np/hydrology/hms-Single/4913
+terms DHM-open https://dhm.gov.np/pages/about-us
+format dhm_gauge
+origin https://dhm.gov.np/hydrology/hms-Single/4913 (Bhotekoshi at Rasuwagadhi, Trishuli system; open series is stage only, discharge m3/s absent — xfer:future.ses_ec618129fffeLFawr4V3pQKpOl.1~4074aed5)
+compiler tools/harvest/src/bin/dhm_gauge_compiler.rs
+on earth 28.271297 85.377649 0.0
+ttl 600
+field hydrosphere_river_stage_m hydrosphere_river_stage_m inverse-square geometry m 600.0 0.0 0.0
+field hydrosphere_river_flow_m3s hydrosphere_river_flow_m3s erfc advective m3/s 600.0 0.0 0.0
