@@ -3,6 +3,7 @@
   class: concept
   date: 2026-08-27
   status: live
+  sha256: 686d7a6d104fddae96790aab80c025d95f1ea56114dd52507bfbb7661027451b
   see-also: docs/concepts/exzellenz-konzept.md tools/science/src/bin/export_latex.rs
 -->
 
@@ -135,20 +136,54 @@ ein Paper, das eine benannte Differenz trägt, bricht den Lauf.
 Damit gilt das Gate für jedes Paper — bestehende, neue und künftige — an drei
 Stellen: beim Schreiben (Hook), beim Erzeugen (`paper_new`) und permanent (CI).
 
-## PDF-Rendering (nächster, benannter Schritt)
+## PDF-Rendering
 
-Auf dem aktuellen Baum ist kein TeX-Engine installiert (pandoc, tectonic,
-latexmk, pdflatex, lualatex, xelatex — alle pending). Die arXiv-Form ist das
-erzeugte `.tex`; die gerenderte PDF ist der nächste Schritt, sobald ein Engine
-vorhanden ist (`tectonic docs/paper/export/<slug>.tex`), und muss dieselbe Zahl
-tragen (Exzellenz-Konzept §5.2: eine PDF, die eine Zahl anders zeigt als der
-Body, ist ein Verstoß).
+Die arXiv-Form ist das erzeugte `.tex`; die gerenderte PDF entsteht in CI. Die
+Messung auf diesem Baum: lokal ist keine TeX-Engine vorhanden — `command -v`
+liefert für `pandoc`, `tectonic`, `latexmk`, `pdflatex`, `lualatex`, `xelatex`
+je Exit 1. Der benannte Installations-Pfad steht in
+`.github/workflows/paper-check.yml`: Tectonic 0.17.0 (static musl) von
+`https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.17.0/tectonic-0.17.0-x86_64-unknown-linux-musl.tar.gz`,
+sha256 `8533d07f9ccbd7a65824b9e0459041bca34af1eb33daba48f59215593753a3b7`,
+entpackt nach `$HOME/.local/bin`, dann je Paper
+`tectonic --outdir docs/paper/export <slug>.tex`. Der Render-Schritt läuft über
+alle `docs/paper/export/*.tex`; die Artefakte sind regenerierbar und nicht im
+Repo (`docs/paper/export/` ist ignoriert).
+
+Mit genau diesem Pfad gemessen (Tectonic 0.17.0, sha256-geprüft, lokal nach
+`/tmp/opencode` entpackt): `planet-nine-kbo-residue` rendert zu einer PDF, und
+die Zahlenprüfung Body → PDF-Text (Superskripte normalisiert,
+Ziffern-Multimenge) findet keine fehlende Body-Zahl. Das ist die Bedingung §5.2: eine PDF, die eine
+Zahl anders zeigt als der Body, ist ein Verstoß. Extraktions-Artefakt, kein
+Inhaltsunterschied: `pdftotext` verschmilzt Zahlen über einem Gedankenstrich
+(`1603–3002` wird zu `16033002`); die Ziffern selbst bleiben unverändert.
+
+Das Gate prüft aber nur das `.tex` (Zahlen, Titel/Abstract, sha), nicht die PDF:
+es gibt keinen `pdftotext`-Vergleich und keinen Exit-Code für eine abweichende
+PDF — der Render-Schritt bricht nur, wenn Tectonic selbst scheitert. Die
+PDF-Zahlenprüfung ist damit belegt, aber noch kein permanentes Gate; sie ist der
+benannte offene Schritt.
 
 ## arXiv-Versions-Praxis
 
-Eine Korrektur ist eine arXiv-`replace` (Version), nie eine Neuanmeldung; die
-Commit-Historie des Papers ist die Versionshistorie. Der Dateiname bleibt stabil
-(kebab-Slug), nur der Inhalt wird in einer neuen arXiv-Version nachgezogen.
+Eine Korrektur ist eine arXiv-`replace` (Version), nie eine Neuanmeldung. Der
+Dateiname bleibt stabil: `export_latex` leitet ihn unverändert aus dem
+Dateistamm ab (`docs/paper/<slug>.md` → `docs/paper/export/<slug>.tex`); es gibt
+keinen Sanitizer und damit keine stille Umbenennung. Gemessen: alle 36
+Paper-Stämme tragen bereits nur `a-z A-Z 0-9 _ + - . , =`. Wird das `.md`
+umbenannt, wandert der `.tex`-Name mit — das ist der einzige Weg, die
+arXiv-Dateistabilität zu brechen; kein Gate hält ihn auf.
+
+Die Versionsidentität trägt der Body-`sha256`: er steht im `.tex`-Kopf
+(`% body sha256: …`), im Paper-Header und in der Ausgabe von `arxiv_submit`.
+Die Commit-Historie ist dagegen **nicht** die Versionshistorie des Papers: die
+Zeile „Version: commit …“ der Code Availability ist der Repo-HEAD **zum
+Exportzeitpunkt** (gemessen: das neu erzeugte `planet-nine-kbo-residue.tex`
+trägt `f60fcccea`, der letzte Commit des Papers ist `5e0f66c42`). `arxiv_submit`
+sendet nichts und kennt kein Versionsfeld: es prüft das Gate, druckt
+Slug/Titel/Abstract-Länge/`sha` und endet `pending` mit Exit 2. Der `replace`-Akt
+selbst bleibt Leitstellen-Arbeit (Web-Verfahren), auditiert über den
+Body-`sha256` und die Commit-Historie des Papers.
 
 ## Grenzen (benannt, nicht verborgen)
 
