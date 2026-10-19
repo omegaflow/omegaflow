@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: e743a94757db2330d6b6300f855d8350cc00511723d860685089f4ced3a96ada
+  sha256: 307db296f85fc1c6ba989145280b51787318a5879405e9360aa64b971d72f0e4
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -627,6 +627,101 @@ statement that Bz carries the larger forward point estimate does not carry
 over — at hourly grain Speed overtakes Bz from lag 2 h on, and both stay below
 fam. The daily run's Bz > Speed ordering is a grain artefact of the daily
 maxima, not a sub-daily ranking.
+
+### 4.9 The bottom rung: ground dB/dt → GIC (measured 2026-10-20)
+
+The chain Sonne → L1 → Boden → Strom was measured down to the NUR dB/dt–GIC
+*relation* (§4.7) but not down to its last edge as a directed transfer with the
+§3.2 null. This section measures that edge: NUR ground dB/dt (driver) against
+the measured FMI GIC series (target). The two assets overlap only in the
+Halloween storm window: `fmi_image_mag_nur.bin` (`IMG1`, NUR dX/dt, 10 s)
+carries 25 919 records over 2003-10-29T00:01:14 → 2003-11-01T00:00:54 UTC, and
+`fmi_gic_1min.bin` (`GIC1`, 1-min peak-magnitude buckets) carries 9 361 977
+records over 1999-01-01 → 2023-10-01 UTC. Both are reduced to **1-minute peak
+buckets**: the ground driver to the largest |dX/dt| inside each minute (nT/10 s),
+the target to |GIC| (A). The common grid has **n = 4 319** minutes in
+2003-10-29T00:01Z → 2003-10-31T23:59Z.
+
+Null exactly as §3.2: **ten phase-randomized surrogates** of the driver per
+pair and lag (fixed seed `0x9E3779B97F4A7C15`), per-lag threshold μ + 2σ, and
+fam = the maximum surrogate TE over the round's two pairs (ground→GIC and its
+reverse control) × eleven lags (0–10 min). The lag-0 arm reproduces the lag-1
+arm numerically (§3.1), so the 22 calls carry 20 distinct statistics. Command:
+
+```
+./target/release/gic_ground_probe --grain minute --start 2003-10-29 \
+  --end 2003-11-01 --max-lag 10 --n-surreps 10 --threads 4
+```
+
+(`tools/measure/src/bin/gic_ground_probe.rs`; artifacts
+`/tmp/opencode/gic_ground/result_minute.txt`, the signed control
+`result_minute_signed.txt`, and the hourly arm `result_hour.txt`.)
+
+| ground → GIC, lag min | TE | own threshold | fam = 1.2928e-1 | verdict |
+|---:|---:|---:|---|---|
+| 0 / 1 | 1.3446e-1 | 1.0106e-1 | — | arrow |
+| 2 | 1.3417e-1 | 1.0988e-1 | — | arrow |
+| 3 | 1.3581e-1 | 1.1852e-1 | — | arrow |
+| 4 | 1.3499e-1 | 1.1899e-1 | — | arrow |
+| 5 | 1.4043e-1 | 1.2064e-1 | — | arrow |
+| 6 | 1.3845e-1 | 1.2409e-1 | — | arrow |
+| 7 | 1.3259e-1 | 1.2325e-1 | — | arrow |
+| 8 | 1.3486e-1 | 1.2916e-1 | — | arrow |
+| 9 | 1.3693e-1 | 1.2549e-1 | — | arrow |
+| 10 | 1.3366e-1 | 1.2693e-1 | — | arrow |
+
+The reverse control is not silent: GIC → ground gives 1.2873e-1 at lag 0/1
+(threshold 9.1909e-2, **family bound**), 1.3324e-1 at 2 min (9.8223e-2,
+**arrow**), 1.3176e-1 at 3 min (1.0353e-1, **arrow**), 1.2938e-1 at 6 min
+(1.0734e-1, **arrow**), and 1.2632e-1 at 10 min (1.0895e-1, family bound). The
+forward/reverse ratio at matched lags is **1.01–1.12**, far below the
+instrument's only calibrated direction floor (2.1, §3.5). A signed control
+(keeping the sign of the largest |dX/dt| and the sign of the GIC bucket; fam =
+1.7848e-1) clears fam in **both** directions at every lag (forward 2.1073e-1 at
+0/1 min to 2.3071e-1 at 5 min; reverse 2.0783e-1 at 0/1 min to 2.1945e-1 at
+8 min; matched-lag ratio 0.99–1.12), so the symmetry is not an artefact of the
+magnitude reduction.
+
+**Verdict: the rung does not carry.** The forward TE clears the family bound at
+every lag, but the sweep is flat (1.326e-1–1.404e-1), lag 0 and lag 1 are the
+same statistic, and the reverse edge also clears fam. No positive lead is
+resolved: the nominal forward maximum sits at 5 min and the reverse maximum at
+2 min, a difference inside the flat sweep. The edge therefore adds **no warning
+time** — induction is simultaneous; the lead time of the chain is created
+upstream (L1 → ground), not at Boden → Strom. Under the F2 rule the rung fails
+on both conditions: no resolved Vorlauf > 0, and the reverse channel is not
+nulled.
+
+**Hourly cross-check and incremental arm.** Aggregated to hourly peaks the same
+window carries n = 72 hours; the edge is silent (ground → GIC maximum 1.1429e-1
+at 0/1 h against threshold 2.6298e-1; fam = 2.7432e-1; reverse maximum
+8.9840e-2 against 2.3825e-1). The incremental form
+cTE(GIC | ground, L1) > TE(GIC | L1), L1 = Bz or Speed, is measured on the same
+hourly grid. With L1 = Bz (**n = 72**; fam_cond = 3.0442e-1) the conditioned
+edge is 1.0062e-1 at 0/1 h (threshold 2.5794e-1) against TE(Bz → GIC) =
+1.9266e-1 (2.1033e-1); at 2 h cTE = 7.3679e-2 against TE(Bz) = 2.5427e-1. With
+L1 = Speed the overlap is only **n = 23** hours (fam_cond = 3.8420e-1): cTE =
+7.4863e-2 at 0/1 h (2.6011e-1) against TE(Speed) = 2.2953e-1 (3.0251e-1). Every
+delta is negative and every row is silent — **0 of 14 incremental rows carry**.
+The conditioned edge does not exceed the unconditioned L1 edge at any lag, so
+ground dB/dt adds no information beyond Bz/Speed in this window.
+
+**Riss.** The incremental null is measured on n = 72 (Bz) and n = 23 (Speed),
+an order of magnitude below the operating n ≈ 1 260 of §3.2; a silent
+conditional row therefore does not prove absence. The multi-year hourly arm is
+**not measurable with the manifested assets**: `fmi_gic.bin` stops 2023-10-01,
+while the only multi-year ground dB/dt assets in the register (`abk_dbdt_1h.bin`,
+`abk_dbdt_1m.bin`) carry 2024–2056 and 2053–2055 windows, i.e. no overlap with
+the GIC series (the future-dated span is named as a data defect, not used). The
+only ground series overlapping GIC is the three-day NUR window, and it carries
+one component (dX/dt at NUR, 60.50° N, 24.65° E) while the GIC station is
+Mäntsälä (60.6° N, 25.2° E, ~30 km away); the primary reduction to 1-minute
+peak magnitudes drops sign and coincidence. The lag-0/1 identity and the
+plug-in fam of §3.2 (empirical maximum, no family-wise guarantee for dependent,
+non-stationary series) bound the reading. What is measured is a symmetric,
+lag-flat, family-clearing co-movement that does not identify a direction, plus a
+negative incremental test at an underpowered n. The rung is carried as a
+measured negative, not as a closed positive.
 
 ## 5. Discussion
 
