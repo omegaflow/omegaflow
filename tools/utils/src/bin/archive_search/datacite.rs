@@ -138,6 +138,13 @@ fn parse_datacite(body: &str) -> Vec<String> {
         if let Some(abstract_) = abstract_field(attrs) {
             line.push_str(&format!("\tabstract: {}", abstract_));
         }
+        if let Some(year) = attrs
+            .get("publicationYear")
+            .and_then(|y| y.as_scalar_string())
+            .filter(|y| !y.is_empty())
+        {
+            line.push_str(&format!("\tyear: {}", year));
+        }
         if let Some(published) = attrs
             .get("published")
             .and_then(|p| p.as_str())
@@ -192,6 +199,15 @@ mod tests {
         assert_eq!(
             parse_datacite(body),
             vec!["doi: 10.1234/full\ttitle: A measured field\tauthors: Doe, Jane, Roe, Rick\tabstract: A short abstract.\tpublished: 2023-01-01".to_string()]
+        );
+    }
+
+    #[test]
+    fn reads_the_publication_year_as_year() {
+        let body = r#"{"data":[{"attributes":{"doi":"10.5281/zenodo.21643064","titles":[{"title":"A measured cohort"}],"publicationYear":2026,"published":"2026-07-28"}}]}"#;
+        assert_eq!(
+            parse_datacite(body),
+            vec!["doi: 10.5281/zenodo.21643064\ttitle: A measured cohort\tyear: 2026\tpublished: 2026-07-28".to_string()]
         );
     }
 
