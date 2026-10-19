@@ -62,7 +62,7 @@ fn usage() {
          xfer coverage --line <L>                             emitted vs disposed; exit 2 while any token is open\n\
          \n\
          --line falls back to OMEGAFLOW_LINE; the session id to OMEGAFLOW_SESSION, then\n\
-         state/reports/active_session.phi. A missing line or session exits 2, never a fabricated id.\n\
+         zustand/active-session.φ. A missing line or session exits 2, never a fabricated id.\n\
          ledger: state/ledger/<line>/<sess>.log  (gitignored, append-only)"
     );
 }
@@ -73,14 +73,22 @@ fn fail(msg: &str) -> ! {
 }
 
 fn zustand_dir() -> PathBuf {
-    match env::var("OMEGAFLOW_ZUSTAND") {
-        Ok(d) if !d.trim().is_empty() => PathBuf::from(d),
-        _ => PathBuf::from("state"),
+    if let Ok(d) = env::var("OMEGAFLOW_ZUSTAND") {
+        if !d.trim().is_empty() {
+            return PathBuf::from(d);
+        }
+    }
+    if let Ok(w) = env::var("OMEGAFLOW_WORK") {
+        return PathBuf::from(w).join("zustand");
+    }
+    match env::var("HOME") {
+        Ok(h) => PathBuf::from(h).join("projects/omegaflow-work/zustand"),
+        Err(_) => PathBuf::from("zustand"),
     }
 }
 
 fn ledger_dir() -> PathBuf {
-    zustand_dir().join("zustand/ledger")
+    zustand_dir().join("ledger")
 }
 
 fn valid_component(s: &str) -> bool {
@@ -164,15 +172,14 @@ fn resolve_sess_from(
             }
         }
         None => Err(
-            "no session: OMEGAFLOW_SESSION unset and state/reports/active_session.phi absent"
-                .to_string(),
+            "no session: OMEGAFLOW_SESSION unset and zustand/active-session.φ absent".to_string(),
         ),
     }
 }
 
 fn resolve_sess() -> Result<String, String> {
     let env_val = env::var("OMEGAFLOW_SESSION").ok();
-    let file = zustand_dir().join("reports/active_session.φ");
+    let file = zustand_dir().join("active-session.φ");
     let file_contents = fs::read_to_string(&file).ok();
     resolve_sess_from(env_val, file_contents)
 }
