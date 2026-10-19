@@ -1,25 +1,28 @@
 <!--
-  title: Ref — <Titel> (<n> Ziele, gemessen <YYYY-MM-DD>)
+  title: <Titel — was der Index verzeichnet>
   class: ref
   date: <YYYY-MM-DD>
   sha256: <sha256>
   status: live
   see-also: <pfad>
 -->
-# Ref — <Titel> (<n> Ziele, gemessen <YYYY-MM-DD>)
+# <Titel>
 
-<Ein Absatz: die Liste wurde gemessen, nicht übernommen. Jeder Eintrag trägt
-HTTP-Status, Lizenz-String, Datei/Größe und ID-Auflösung.>
+**Datum:** <YYYY-MM-DD> · **Art:** <Index | Auszug einer externen Quelle>
 
-## <Ziel> — <direkt downloadbar | request-only | account-gated>
+## Was
 
-- **<ID / URL>** — <Lizenz-String>; <Datei, Größe, Zeilen>. <Direkter Weg oder
-  der Grund, warum er fehlt.>
+<Was hier verzeichnet ist — und was ausdrücklich nicht. Ein Index behauptet
+Vollständigkeit nur, wo sie gemessen ist.>
 
-## <Ziel> — <Zustand>
+## Woher
 
-- **<ID / URL>** — <Lizenz-String>; <Datei, Größe>. <Weg oder Grund.>
+<Die Quelle(n) mit URL und Stand; bei Auszügen die exakte Fundstelle im Original.>
 
-## Nutzungsbedingungen — Fazit (gemessen <YYYY-MM-DD>)
+## Zustand
 
-- <terms-String> — <was das für Ablage, CDN und Redistribution erlaubt>.
+- <Eintrag> — <gemessen | pending | absent>, <Datum>.
+
+## Grenze
+
+<Was dieser Index nicht leisten kann — ungeglättet.>
