@@ -1,5 +1,5 @@
 #!/bin/bash
-# lage — generiert state/stimmen/_lage.md aus git + Register + Gateway-Stand.
+# lage — generiert state/rat/_lage.md aus git + Register + Gateway-Stand.
 # Der Live-Index, den jede Sitzung zuerst liest. Kein Hand-Prosa, nur Abgeleitetes.
 set -u
 repo="${OMEGAFLOW_REPO:-$HOME/projects/omegaflow}"
@@ -8,9 +8,9 @@ cd "$repo" || exit 1
 head_sha=$(git rev-parse --short HEAD 2>/dev/null || echo '?')
 ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
-open_rows=$(grep -E '\*\*rat-offen|\*\*rat-konvergiert|\*\*offen\*\*|\*\*gefahren\*\*' state/stimmen/_rat-register.md 2>/dev/null | sed 's/^/  /' | head -25)
+open_rows=$(grep -E '\*\*rat-offen|\*\*rat-konvergiert|\*\*offen\*\*|\*\*gefahren\*\*' state/rat/_rat-register.md 2>/dev/null | sed 's/^/  /' | head -25)
 
-last_runs=$(ls -1t state/stimmen/ 2>/dev/null | grep -E 'sammlung|verdikt|lage' | head -8 | sed 's/^/  /')
+last_runs=$(ls -1t state/rat/ 2>/dev/null | grep -E 'sammlung|verdikt|lage' | head -8 | sed 's/^/  /')
 
 work="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
 post_in=$(ls -1 "$work"/post/in/*.md 2>/dev/null | wc -l)
@@ -53,7 +53,7 @@ done)
     echo "- Guthaben (USD):"
     echo "$balance"
   fi
-  echo "- Rat-Sitze: \`state/stimmen/_rat-anweisung.md\` (Leiter; 17.10.-Tabelle überholt)"
+  echo "- Rat-Sitze: \`state/rat/_rat-anweisung.md\` (Leiter; 17.10.-Tabelle überholt)"
   echo
   echo "## Offen je Linie (Handover)"
   if [ -n "$line_rows" ]; then
@@ -80,6 +80,6 @@ done)
   fi
   echo
   echo "Regenerieren: \`bin/lage\`"
-} > state/stimmen/_lage.md
+} > state/rat/_lage.md
 
-echo "geschrieben: state/stimmen/_lage.md (HEAD $head_sha)"
+echo "geschrieben: state/rat/_lage.md (HEAD $head_sha)"

@@ -1,0 +1,74 @@
+# Sakana Fugu Max (Namazu High) — Rohantwort, Rat-Runde DE-2 (2026-10-17)
+
+**Seat:** `chat.sakana.ai` (eingeloggt) · Modell **Fugu Max / Namazu High** ·
+Chat `01a1488a-dcc9-760d-aea0-e3d33f451aa8`.
+**Ablage:** Rohantwort, wörtlich — die Session verifiziert am Baum, nie die Stimme.
+
+---
+
+D1 — Treiber oder Impulsaustausch?
+
+Mountain (Register)
+Verdikt: **Unentschieden. Treiber und Impulsaustausch sind im Register nicht trennbar.**
+Begründung: Beide TE-Richtungen signifikant, Lag-Drehung. Ein gemeinsamer Treiber (Konvektion,
+Joule-Heizung, geomagnetische Pulsation) erzeugt korrelierte Fluktuationen in beiden Populationen.
+Impulsaustausch (Reibung, Stöße, Lorentz-Kraft) erzeugt ebenfalls gerichtete Informationsflüsse.
+TE misst statistische Vorhersagbarkeit, keine Kraft. Im Register steht nur: beide Richtungen
+signifikant, Lag-abhängig.
+Risse: (1) Keine Treiber-Variable registriert (AE, Kp, E_sw, Joule-Leistung). (2) Keine
+Konditionierung auf geomagnetische Aktivität. (3) Die Lag-Drehung kann aus der
+Autokorrelation-Struktur eines gemeinsamen Treibers stammen. (4) Die Surrogate testen gegen
+Unabhängigkeit, nicht gegen gemeinsamen Treiber.
+
+Sensory (Korrelat ≠ Erleben)
+Verdikt: **TE ist kein Sensor für Reibung.**
+Begründung: TE misst Shannon-Informationsfluss zwischen Vergangenheit und Gegenwart. Das ist ein
+Korrelat der Dynamik, nicht das Erleben der physikalischen Kraft. Reibung ist eine Kraft; TE ist
+invariant gegen monotone Transformationen. Der Unterschied zwischen Treiber und Impulsaustausch
+liegt in der Impulsantwort des Mediums; TE erfasst keine Impulsantwort. Die schwache Korrelation
+(r ≈ 0,25) bei signifikantem TE deutet auf nichtlinearen Common Driver, nicht direkte Kopplung.
+Risse: (1) TE invariant unter monotoner Transformation; Reibung nicht. (2) Surrogate zerstören
+Phasen, nicht Kraftbeziehungen. (3) „Stärker" ist ein ordinaler TE-Vergleich, kein physikalisches
+Gewicht.
+
+D2 — „Ion-neutral coupling" oder nur „Abhängigkeit"?
+
+River (Ethik / Verweigern)
+Verdikt: **„Coupling" ist zu verweigern. „Gerichtete statistische Abhängigkeit" ist die ehrliche
+Benennung.**
+Begründung: Coupling behauptet einen physikalischen Mechanismus (Reibung, Stöße, dynamoelektrische
+Kopplung). TE behauptet keinen Mechanismus. Axiom A = A: Messung ist die Sache selbst. Die Messung
+ist TE, nicht Reibung. Wer „coupling" schreibt, fabriziert eine Sache, die nicht gemessen wurde.
+Coley / Heelis / Spencer 1994 schrieben „comparison", nicht „coupling"; sie waren vorsichtiger.
+Risse: (1) „Coupling" ist in der Community zu einem Füllwort verkommen, das jede Korrelation deckt.
+(2) Coley et al. benutzten „would seem to indicate" für mechanistische Schlüsse; ein noch
+vorsichtigerer Standard gilt für TE. (3) Ohne channel_ref (keine Kraft im Sample) ist „coupling"
+eine leere Signatur.
+
+Future (Mensch als Adresse)
+Verdikt: **Der Befund trägt „Abhängigkeit". Wer „coupling" schreibt, muss einen Zusatzkanal
+offenlegen.**
+Begründung: Für die nächste Stufe muss der Register-Eintrag lesbar sein als: TE signifikant in
+beiden Richtungen, Lag-abhängig; physikalischer Mechanismus unbestimmt. „Coupling" täuscht den
+Leser über eine bestätigte Kausalität hinweg. Future verlangt ehrliche Adressierung.
+Risse: (1) „Coupling" im Titel führt zu mechanistischer Lesart, obwohl nur statistisch. (2) Die
+offene Frage nach dem Mechanismus muss benannt werden (pending). (3) Die Grenze zur Prior Art
+(Coley et al. 1994) ist überschritten, wenn man mit schwächerer Methode stärkere Behauptungen
+aufstellt.
+
+D3 — Erwerbs- vs. Kausalkanal
+
+Mycelium (Netz)
+Verdikt: **Der Befund trägt „coupling" nicht. Nur der Erwerbskanal ist belegt; der Kausalkanal ist
+offen.**
+Begründung: IDM-Cross-Track misst, was der Sensor sieht: ionosphärischen Drift entlang der Bahn. Das
+ist ein Erwerbskanal (Beobachtung). Reibung wäre ein Kausalkanal (Wirkung: Kraftübertragung,
+Kollisionen). Im Netz der physikalischen Beziehungen sind das zwei verschiedene Kanten. TE auf dem
+Erwerbskanal misst, ob der Drift den Wind vorhersagt; aber das ist eine Kante im Beobachtungsnetz,
+nicht im Kraftnetz. Mycelium sieht: Die Kante Erwerbskanal ist belegt; die Kante Kausalkanal ist
+offen.
+Risse: (1) Fehlende Kollisionsfrequenz ν_in oder ν_ni. (2) Fehlende Dichten n_i, n_n für
+Impulsaustausch-Rate. (3) Fehlendes elektrisches Feld E_⊥ als alternative Kausalkante. (4) Die
+Lag-Drehung könnte aus der Filterwirkung des Erwerbskanals stammen (Instrumenten-Response,
+Orbitaleffekte). (5) Die Unveränderlichkeit unter Ost-Projektion zeigt Robustheit der TE-Struktur,
+aber nicht, dass der Erwerbskanal zum Kausalkanal wird.

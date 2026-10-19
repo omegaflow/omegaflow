@@ -1,0 +1,1 @@
+{"error":{"message":"Provider returned error","code":502,"metadata":{"raw":"{\"message\":\"Failed to generate completions\",\"type\":\"Internal Server Error\",\"code\":500}","provider_name":"Nvidia","is_byok":false}},"user_id":"user_3FufRCuoswSYJ9L3hTvavOyb7Wa"}

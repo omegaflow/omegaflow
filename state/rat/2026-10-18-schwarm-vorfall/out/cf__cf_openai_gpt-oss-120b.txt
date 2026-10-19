@@ -1,0 +1,5 @@
+V1 Verdikt: A — Begründung: Ein zentral erzeugter Live‑Index liefert einen eindeutigen, maschinenlesbaren Zustand, den jede Sitzung zuerst einliest; Prosa‑Docs bleiben erhalten, fungieren aber nur noch als Zeiger. — Riss: Derzeit fehlt ein automatisierter Index‑Generator, sodass Aufwand und Implementierungs‑Risiko ungemessen bleiben.  
+
+V2 Verdikt: A — Begründung: Die Dokumentation 44‑Schwarm definiert eindeutig den kanonischen Schwarm; die 4‑Sitz‑Läufe wurden als Fehler gekennzeichnet und dürfen nicht als Schwarm gelten. — Riss: In Sonderfällen (z. B. Test‑Runs) wird gelegentlich bewusst ein kleinerer Schwarm eingesetzt, was nicht im Kanon abgebildet ist.  
+
+V3 Verdikt: A — Begründung: Ein verpflichtender Start‑of‑Session‑Check (z. B. `git log -5` + aktuelle state‑Dateien) stellt sicher, dass nur aktuelle Quellen zitiert werden. — Riss: Der zusätzliche Check kann die Sitzungs‑Startzeit erhöhen und wird bei sehr hohen Durchsatz‑Anforderungen möglicherweise als zu kostenintensiv angesehen.

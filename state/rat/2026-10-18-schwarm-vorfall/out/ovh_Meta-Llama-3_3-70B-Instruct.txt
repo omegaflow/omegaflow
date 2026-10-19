@@ -1,0 +1,11 @@
+V1 — Wo soll der Live-Zustand liegen?
+A — Begründung: Ein generierter Live-Index ermöglicht eine zentrale und aktuelle Übersicht über den Zustand, während Prosa-Docs als Zeiger dienen können, um auf spezifische Informationen hinzuweisen. Dieser Ansatz reduziert die Gefahr von Inkonsistenzen und veralteten Informationen, indem er sicherstellt, dass jede Sitzung mit dem aktuellen Stand beginnt.
+ — Riss: Ein potenzieller Gegenbeleg könnte die Komplexität und der Aufwand sein, einen solchen Index zu generieren und zu pflegen, insbesondere wenn die Anzahl der Dokumente und Commits groß ist.
+
+V2 — Was ist der kanonische Schwarm?
+A — Begründung: Die Definition des kanonischen Schwarms als die 44 Träger (free44-Liste) basiert auf der Dokumentation in 2026-10-18-schwarm-44/SAMMLUNG.md, die ausdrücklich den 4er-Lauf als Fehler benennt. Dies legt nahe, dass der Schwarm als ein Ensemble von 44 Sitzen verstanden werden sollte.
+ — Riss: Ein Gegenbeleg könnte die Flexibilität und Anpassungsfähigkeit des Schwarms in verschiedenen Kontexten sein, was eine starre Definition wie "immer die 44" in Frage stellen könnte, besonders wenn sich die Anforderungen oder die Umgebung ändern.
+
+V3 — Wie verhindert man veraltete Zitate?
+A — Begründung: Ein Start-of-Session-Check, der git log und die neuesten Run-Outputs überprüft, stellt sicher, dass jede Sitzung mit dem aktuellen Wissen beginnt und veraltete Informationen vermeidet. Dieser Mechanismus ist proaktiv und reduziert das Risiko, dass veraltete Zitate verwendet werden.
+ — Riss: Ein potenzieller Gegenbeleg könnte die zusätzliche Zeit und der Aufwand sein, die für die Durchführung eines solchen Checks am Beginn jeder Sitzung erforderlich sind, was den Arbeitsablauf verlangsamen könnte, besonders wenn die Commits und Runs häufig aktualisiert werden.

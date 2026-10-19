@@ -1,0 +1,21 @@
+# Rat R-j — Mistral Large 4 (API, Frage j)
+**Session:** `ses_eb44bf151ffe80spKuCJLVpgrH` · **Modell:** `mistral/mistral-large-4#none` · **Kosten:** $0.00520449
+
+Titel: Ratssitz Mistral — Frage j
+
+---
+
+**Antwort des Ratsitzes**
+
+1. Die WDC-Reihe liefert AE/AL/AU/AO, Dst, Kp — alles Boden-/Indexgrößen. Keines davon ist `∇p`, keines ist `B/j`, keines löst das Ein-Satellit-Problem. Die Impulsbilanz-Lücke bleibt undurchquerbar.
+
+2. `K` war nie als Index definiert; es war nie ein Proxy. Dass jetzt mehr Indizes da sind, ändert nichts an der Kategorie: TE misst Abhängigkeit, nicht Kraft — das ist bereits entschieden.
+
+3. Eine Korrelation Kp↔AE wäre eine Korrelation zweier Indizes, keine Identifikation von K. Ohne benannte Definition, was K dann *ist*, wäre Option B ein Etikettenschwindel (A = A verletzt).
+
+4. Die ehrliche Register-Zeile ist daher: `K = pending` — Ernte der WDC-Reihe ist da, der Wert nicht. Der TE-Indikator (NVE→IVE | AE/Kp/Dst/LT/Höhe) ist ein eigener Punkt, kein K.
+
+5. Option C (K fällt ganz raus) wäre voreilig: die Ernte läuft, die Lücke ist nur noch nicht geschlossen. `pending` ehrt beides.
+
+VERDIKT: A mit Register-Zeile `K = pending` — WDC-Reihe stützt nur den bedingten TE-Indikator als eigenen Punkt; K bleibt nicht identifizierbar.
+STÄRKSTER RISS: Kein `∇p`, kein `B/j`, kein Ein-Satellit — die Impulsbilanz-Lücke ist durch Index-Ernte nicht zu schließen.

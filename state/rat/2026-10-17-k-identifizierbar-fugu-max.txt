@@ -1,0 +1,10 @@
+# Rat R-j — Fugu Max High (UI, Frage j)
+
+**Quelle:** UI-Antwort (`chat.sakana.ai`), transkribiert aus `state/rat/2026-10-17-rat-k-identifizierbar.md`.
+
+---
+
+Kein Index liefert `T`, `∇p` oder `B/j` — `K` wird nicht identifizierbar, nur besser kontextualisierbar. Indizes sind **Prädiktoren, nicht der Term**. Option B wäre nur mit einer benannten, extern definierten `K`-Definition zulässig; C wäre eine Überreaktion.
+**VERDIKT: A** — `K = pending`, bedingte TE als eigener Indikatorpunkt.
+**STÄRKSTER RISS:** Die reichere Z-Besetzung verleitet, den Indikator als `K`-Ersatz zu lesen — genau der Kategorienfehler, den der Rat am 2026-10-17 schon einmal zurückgewiesen hat.
+

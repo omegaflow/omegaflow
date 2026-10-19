@@ -1,0 +1,9 @@
+Verdikt: A — Begründung: Die aktuelle Implementierung führt zu Fehlern, da Modelle mit dem Suffix ":free" trotzdem als bezahlt behandelt werden, wenn der Anbieter auch bezahlte Modelle führt. Eine kostenbasierte Herangehensweise stellt sicher, dass nur Modelle mit einem Preis > 0 als bezahlt behandelt werden, unabhängig vom Anbieter.
+
+Riss: Die aktuelle Implementierung hat einen Riss, da sie auf einer harten Prefix-Liste basiert, die nicht flexibel genug ist, um verschiedene Anbieter und Modelle zu handhaben.
+
+Zusatz 1 (Preis-Wahrheit): Der Katalogpreis sollte die Wahrheit über den Preis eines Modells widerspiegeln. Das ":free"-Suffix oder die Anbieterantwort sollten nicht die alleinige Grundlage für die Preisbestimmung sein.
+
+Zusatz 2: `paid-open` sollte Modell-IDs nennen, um eine präzise Steuerung der bezahlten Modelle zu ermöglichen.
+
+Zusatz 3: Ja, diese Regelung sollte auch für `unorouter` und die übrigen Prefixe gelten, um eine konsistente und faire Behandlung aller Modelle und Anbieter zu gewährleisten.

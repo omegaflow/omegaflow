@@ -1,0 +1,10 @@
+# Rat R-i — Fugu Max High (UI, Frage i)
+
+**Quelle:** UI-Antwort (`chat.sakana.ai`), transkribiert aus `state/rat/2026-10-17-rat-offen-stand.md`.
+
+---
+
+Bleibt die Kappe starr, ist die Regel schlicht überbeschränkt und **muss angehoben werden, nicht der Pfad-Zwang gestrichen**. Ledger-Schließungen sind Taten; `closed 0` gegen einen Diff, der real 3 schließt, ist die Bilanz, die die Tat verbirgt.
+**VERDIKT: A** — Bullets und `###` zählen; `closed` zusätzlich Ledger-Schließungen; **Kappe an die Punktmenge koppeln, nicht an die Pfadliste**.
+**STÄRKSTER RISS:** Toleriert der Zähler beide Formate, verschwindet der Migrationsdruck — und damit der Zwang zu einem Format.
+

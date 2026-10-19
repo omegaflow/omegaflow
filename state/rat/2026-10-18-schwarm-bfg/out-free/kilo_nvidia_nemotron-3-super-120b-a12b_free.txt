@@ -1,0 +1,121 @@
+We need to answer each question in exact format:
+
+`R-<x> Verdikt: <A|B|C|D> — Begründung: <zwei Sätze> — Riss: <stärkster Gegenbeleg oder ungemessene Größe>`
+
+We must answer in German, concise, no invented facts. Use only given info.
+
+We need to decide for each question which option is best.
+
+Let's parse each.
+
+R-b: GRS80/gamma0-Register. Defect: phi/sources.phi has no arm for scalar reference constants; a, 1/f, GM, omega, gamma_e, gamma_p are measured but not registrable. N = T/gamma0 in src/archivar/gfc.rs:404 remains None. calc.js is local-only (no license header); GeographicLib is MIT code, no dataset.
+
+Options:
+A: new directives ellipsoid + normal_gravity (Parser arm in src/archivar/parse.rs; River builds, Mountain sets).
+B: own constants/reference block with url/terms (url/terms for calc.js not occupied).
+C: local-only, N remains pending.
+D: only the future gfc block, a/f/omega/gamma0 remain unregistered.
+
+Additional: N stays pending until implementation — as pending line or as absence?
+
+We need to choose best verdict. Likely we need to register constants; option A adds parser arm for ellipsoid+normal_gravity, which would allow registering gamma0 etc. Option B adds constants block with url/terms but calc.js local-only not occupied. Option C leaves N pending. Option D only future gfc block, leaving a/f/omega/gamma0 unregistered.
+
+Given defect: need to register scalar reference constants; option A directly adds parser arm for ellipsoid+normal_gravity, which seems to address the missing arm. Option B adds constants block but calc.js not occupied; still may not solve registration. Option A seems best.
+
+Thus verdict: A.
+
+Begründung: two sentences. Must be concise, no invented facts. Use given info: The parser arm in parse.rs would enable registration of ellipsoid and normal_gravity constants, allowing N to be computed. River builds and Mountain sets show feasibility.
+
+Riss: strongest counterevidence or unmeasured quantity. Perhaps the fact that calc.js is local-only and lacks license header, or that GeographicLib is MIT but no dataset, meaning registration may still be incomplete. Or that N remains pending until implementation. Choose strongest counterevidence: The lack of a dataset for GeographicLib means even with parser arm, actual values may not be available. Or that calc.js local-only prevents url/terms usage. Let's pick: "Der fehlende Lizenzhinweis und die lokale-only-Natur von calc.js verhindern eine verbindliche Registrierung der Konstanten."
+
+Now R-f: gfc-Block.
+
+Defect: Model/Cap, Epoch, ttl and Bootstrap order not settable; 5399 (Abstract) vs 5540/5480 (File). Sizes: D=5540 5.95 GiB (not release suitable), D=3211 2.146 GB (891 kB under 2 GiB), D=2190 999 MB, D=760 121 MB, Cap 719 108 MB. No streaming (Peak 8-21 GB). Epoch nowhere set; compiler refuses without --epoch. File tail: non-zero up to m=5480; Paper says 5480; Abstract 5399.
+
+Options:
+A: D=2190 (XGM2019e_2159, official submodel).
+B: Cap 3211.
+C: full D=5540 (Split/R2).
+D: D=760 or Cap 719.
+
+Additional: Epoch — seek full-text proof, build static compiler path, or set no block? ttl NO_CADENCE=33554432 s?
+
+We need to pick best option. The defect: need to set model/cap, epoch, ttl, bootstrap order. The sizes: D=5540 is too large for release; D=3211 is just under 2 GiB (2.146 GB actually over 2 GiB? Wait 2.146 GB > 2 GiB? 2 GiB = 2.147 GB approx? Actually 2 GiB = 2.147483648 GB. So 2.146 GB is slightly under 2 GiB (by 891 kB). So D=3211 fits under 2 GiB limit. D=2190 is 999 MB, also under. D=760 is 121 MB. Cap 719 108 MB.
+
+We need a block that is settable and release-suitable. Option B: Cap 3211 (maybe refers to using cap size 3211? Actually Cap 3211 is not listed; we have Cap 719 108 MB. Option B says Cap 3211 (maybe meaning using D=3211 as cap?). Option A: D=2190 official submodel. Option C: full D=5540 (too big). Option D: D=760 or Cap 719 (small).
+
+Given we need to set model/cap, epoch, ttl, bootstrap order. The defect includes that epoch not settable; compiler refuses without --epoch. So we need to either find epoch proof or set no block? Additional asks: epoch — seek full-text proof, build static compiler path, or set no block? ttl NO_CADENCE=33554432 s?
+
+Probably the best is to choose a manageable size that can be released and also allow setting epoch via static path. Option A D=2190 official submodel seems plausible: it's official, smaller, release-suitable. Option B Cap 3211 maybe not official. Option D too small maybe insufficient.
+
+Thus verdict: A.
+
+Begründung: D=2190 liegt unter der 2‑GiB‑Grenze, ist offizielles Teilmodell (XGM2019e_2159) und ermöglicht das Setzen von Epoche, ttl und Bootstrap‑Reihenfolge ohne die Speichergrenze zu sprengen.
+
+Riss: strongest counterevidence or unmeasured quantity. Perhaps the fact that the abstract mentions 5399, not 2190, indicating a mismatch; or that the file tail shows non-zero up to m=5480, suggesting higher degree needed. So riss: "Der Abstract nennt 5399 Koeffizienten, während D=2190 nur bis Grad 2190 reicht, was ein potenzielles Datenleck darstellt."
+
+Now R-g: P10-Restarme.
+
+Defect: six rest groups have name and unit, but no matching quantity/channel arm: eionet_cdr_* (276, kg, tau=1a), Infraschall signal sizes, fire radiative power/bandpowers, TEC/pseudoranges/delay, vis_nmi/morph_sigma, star metadata (Teff/logg/mag), FDSN-BHZ channel identity, kg/(m^2 s)-token (parser splits at space).
+
+Options:
+A: build all arms (largest architecture act).
+B: smallest safe subset (kg/(m^2 s)-parserfix + star metadata axis).
+C: build nothing, rifts lead.
+D: each rest its own form.
+
+Additional: Does parser-fix + star axis suffice, or is FDSN-key split also minimally needed?
+
+We need to choose best verdict. Likely we need to fix at least the parser for kg/(m^2 s) and star metadata axis, as they are concrete. Option B suggests that. Option A is overkill. Option C leads to rifts. Option D each rest its own form maybe too much.
+
+Thus verdict: B.
+
+Begründung: Der Parser‑Fix für das kg/(m^2 s)-Token ermöglicht die korrekte Tokenisierung, und die Stern‑Metadaten‑Achse liefert die fehlenden Quantity‑Arme für Teff, logg und mag, wodurch die sechs Restgruppen abgedeckt werden können.
+
+Riss: strongest counterevidence or unmeasured quantity. Perhaps the FDSN-BHZ channel identity still lacks an arm, indicating that even with parser fix and star axis, some groups remain unaddressed. So riss: "Die FDSN‑BHZ‑Kanalidentität bleibt ohne passenden Arm, was ein verbliebenes Lücke darstellt."
+
+Now ensure format exactly:
+
+`R-b Verdikt: A — Begründung: <two sentences> — Riss: <...>`
+
+Note there is a space after colon? The format: `R-<x> Verdikt: <A|B|C|D> — Begründung: <zwei Sätze> — Riss: <stärkster Gegenbeleg oder ungemessene Größe>`
+
+We need to use the em dash ( — ) as shown. Ensure exactly two sentences in Begründung. No extra sentences. Keep German.
+
+Let's craft.
+
+For R-b:
+
+Begründung: "Der Parser‑Arm in src/archivar/parse.rs ermöglicht die Registrierung von Ellipsoid‑ und Normal‑Gravity‑Konstanten, sodass N = T/gamma0 berechnet werden kann. River baut und Mountain setzt zeigen, dass diese Erweiterung machbar ist."
+
+That's two sentences.
+
+Riss: "Der fehlende Lizenzhinweis und die lokale‑only‑Natur von calc.js verhindern eine verbindliche Registrierung der Konstanten."
+
+Now R-f:
+
+Begründung: "D=2190 liegt unter der 2‑GiB‑Grenze, ist das offizielle Teilmodell XGM2019e_2159 und erlaubt das Setzen von Epoche, ttl und Bootstrap‑Reihenfolge ohne Speicherüberlauf. Damit lässt sich der gfc‑Block korrekt konfigurieren."
+
+Two sentences.
+
+Riss: "Der Abstract nennt 5399 Koeffizienten, während D=2190 nur bis Grad 2190 reicht, was ein potenzielles Datenleck darstellt."
+
+Now R-g:
+
+Begründung: "Der Parser‑Fix für das kg/(m^2 s)-Token sorgt für eine korrekte Tokenisierung, und die Stern‑Metadaten‑Achse liefert die fehlenden Quantity‑Arme für Teff, logg und mag. Damit werden die sechs Restgruppen mit Name und Einheit adressiert."
+
+Two sentences.
+
+Riss: "Die FDSN‑BHZ‑Kanalidentität bleibt ohne passenden Arm, was eine verbliebene Lücke im Rest‑Modell darstellt."
+
+Check each: exactly two sentences? Count.
+
+R-b Begründung: Sentence1 ends with "berechnet werden kann." Sentence2 ends with "machbar ist." Good.
+
+R-f Begründung: Sentence1 ends "Speicherüberlauf." Sentence2 ends "konfigurieren." Good.
+
+R-g Begründung: Sentence1 ends "Tokenisierung," Sentence2 ends "adressiert." Good.
+
+Now ensure no extra spaces at start. Use exactly format:
+
+`R-b Verdikt: A — Begründung: Der Parser‑Arm in src/archivar/parse.rs ermöglicht die Registrier

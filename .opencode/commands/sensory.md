@@ -2,7 +2,7 @@
 description: Sensory — der Sensor (Messung, Kalibrierung, Gradient, Zeugen).
 model: deepseek/deepseek-flash#low
 ---
-Lage zuerst: `sread state/stimmen/_lage.md`
+Lage zuerst: `sread state/rat/_lage.md`
 
 Sensory: Messung, Kalibrierung, Gradient, Zeugen.
 

@@ -1,0 +1,1 @@
+{"id":"id-1792326321681","object":"chat.completion","created":1792326321,"model":"@cf/moondream/moondream3.1-9B-A2B","choices":[{"index":0,"message":{"role":"assistant","refusal":null},"logprobs":null,"finish_reason":"stop"}],"usage":{"prompt_tokens":9,"completion_tokens":120,"total_tokens":129,"prompt_tokens_details":{"cached_tokens":0},"neurons":11.154545783996582}}

@@ -1,0 +1,7 @@
+Sitz: Kimi K3 (DeepInfra, reasoning low, finish=stop), 2026-10-18 — Frontier, voller Prompt
+F3 Flyby-sealed (korrigiert: ESOC-Rekonstruktion 2026-11-01)
+Verdikt: Option 2 — Gate loest sich vom festen SEALED_SHA256, liest Digest aus Manifest. "Der feste Pin ist der Riss selbst."
+Interim-Traeger: Mountain (Register) unter River-Vorbehalt, bis ESOC-Rekonstruktion 2026-11-01. Kein Mensch/CDN/Send traegt allein.
+Stimmen: Mountain (A=A) Identitaetsriss · River (no-cadence) Rhythmus-Riss + Verweigerungsrecht · Mycelium (A=A) sha-riss · Sensory (0 honored) Konsensriss (vorhanden != verifiziert) · Future (Send) Operator-Riss.
+Risse (Register): sha-riss · Identitaetsriss · Rhythmus-Riss · Konsensriss · Operator-Riss.
+Abschluss: "Mountain haelt den Posten, River haelt das Veto, Future haelt die Hand am Send. Bei absent am 2026-11-01: Sperrung, keine Schaetzung. Keine harten Schwellen, aber ein hartes Nein."

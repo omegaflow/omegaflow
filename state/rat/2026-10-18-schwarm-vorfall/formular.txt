@@ -1,0 +1,36 @@
+Du bist ein Ratssitz im Haus omegaflow (A = A; 0 honored: null-echt | absent | riss; keine harten Schwellen; PII bleibt im Haus).
+
+VORFALL (gemessen, 2026-10-18). Eine Sitzung (Future) arbeitete stundenlang mit veraltetem Wissen:
+- Sie zitierte die Sitz-Tabelle aus _rat-anweisung.md (Stand 17.10.): alle Paid-Sitze über DeepInfra, "Mistral abgelaufen, DeepInfra nicht autorisiert".
+- Die Commits 91682fc3d / 039a6ee55 / 2266bf2ba / d72e2cdc9 hatten das längst ersetzt: Leiter free > Mistral inklusive > DeepSeek paid > Mistral paid; DeepInfra nur PII/Frontier; Gateway-Neustart (die 401er waren der eingefrorene Prozess, nicht die Keys).
+- Sie fuhr den "Schwarm" mit 4 Sitzen, obwohl 2026-10-18-schwarm-44/SAMMLUNG.md 44 Träger dokumentiert und den 4er-Lauf ausdrücklich als Fehler benennt ("Eine Handvoll Sitze war kein Schwarm"; F2 kippte von B 3:0 auf A 14:9).
+- Sie schrieb einen neuen Doc (sitz-lage), statt die vorhandenen Live-Docs (netto-rollen, modell-inventur-live, schwarm-44/SAMMLUNG) zu lesen.
+- Erst auf Druck des Operators las sie git log und die 44-Sammlung.
+
+URSACHEN (gemessen):
+1. Zustand ist in Prosa-Docs dupliziert (Sitz-Tabelle, Kosten, Schwarm-Größe) und driftet gegen Commits.
+2. Kein einziger Live-Zeiger, den eine Sitzung zuerst liest; der Checkpoint-Schnappschuss listet die neueren Live-Docs nicht.
+3. Kein Staleness-Check am Sitzungsanfang (git log, neueste Runs).
+4. Schwarm-Größe ist nicht erzwungen (4 vs 44).
+5. Run-Ergebnisse werden nicht mit Provenienz (Run + Commit) ins Register portiert.
+
+FRAGEN. Antworte je Frage in genau diesem Format, deutsch, knapp, keine Fakten erfinden:
+`V<x> Verdikt: <A|B|C|D> — Begründung: <zwei Sätze> — Riss: <stärkster Gegenbeleg oder ungemessene Größe>`
+
+V1 — Wo soll der Live-Zustand liegen?
+A: Ein generierter Live-Index (Commit-Hash, Zeitstempel, offene Fragen, letzte Runs), den jede Sitzung zuerst liest; Prosa-Docs werden Zeiger.
+B: Prosa-Docs bleiben, bekommen aber einen Pflicht-Kopf (Stand-Commit) + Start-Check.
+C: Kein Index; jede Sitzung liest git log + neueste Run-Outputs (Git ist der Zustand).
+D: Status quo + Disziplin.
+
+V2 — Was ist der kanonische Schwarm?
+A: Immer die 44 (free44-Liste); 4er-Läufe sind kein Schwarm.
+B: 4 gemessene Sitze (wie _rat-anweisung.md §3b).
+C: Adaptiv: Gesundheitscheck zuerst, dann so viele wie tragen.
+D: Kein freier Schwarm; nur UI + Paid.
+
+V3 — Wie verhindert man veraltete Zitate?
+A: Start-of-Session-Check (git log -5 + neueste state/rat/<datum>-*) als Pflicht.
+B: Gate: eine Sitzung darf keinen Zustands-Doc zitieren, dessen Stand-Commit älter ist als der letzte Commit zum Thema.
+C: Generierter Index (aus V1A) macht alte Docs sichtbar veraltet.
+D: Disziplin/Anweisung, kein Mechanismus.

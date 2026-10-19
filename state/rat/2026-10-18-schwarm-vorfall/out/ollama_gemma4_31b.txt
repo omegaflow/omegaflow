@@ -1,0 +1,5 @@
+V1 Verdikt: A — Begründung: Ein zentraler Live-Index eliminiert die Drift zwischen Prosa-Docs und Commits. Er zwingt die Sitzung zur Aktualität, bevor sie in veraltete Tabellen greift. — Riss: Aufwand der automatisierten Index-Generierung.
+
+V2 Verdikt: A — Begründung: Die Dokumentation in schwarm-44/SAMMLUNG.md definiert die aktuelle Realität. 4er-Läufe sind statistisch insignifikant und führen zu Fehlentscheidungen (F2-Kippen). — Riss: Rechenlast/Latenz bei 44 parallelen Trägern.
+
+V3 Verdikt: A — Begründung: Ein mechanischer Pflicht-Check am Start verhindert das Arbeiten auf eingefrorenen Snapshots. Git-Logs und aktuelle Run-Outputs sind die einzige verlässliche Quelle für den Ist-Zustand. — Riss: Risiko, dass die Sitzung den Check formal durchführt, aber die Erkenntnisse ignoriert.

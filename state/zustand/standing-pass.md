@@ -33,7 +33,7 @@ Das Ledger-Dir `state/zustand/ledger/` existiert nicht (`ledger_disposed` sucht 
 ## Lokal gemessen am HEAD `f53afdffc`
 
 - **Format-Drift geräumt:** drei Dateien rustfmt (`a582cb5be`); `cargo fmt --all --check` = 0 — die CI-Jobs `format` sind seither `success`.
-- **Rats-Runde R1–R4 gelandet** (`state/stimmen/2026-10-17-rat-offene-fragen.md`, fünf Sitze): R1 Bindung/Eigentum → River; R2 exposom → am Baum (`exposom-matrix-te.yml`, EI-Kanal `pending`, Konvention C); R3 Concurrency 3:3 → am Baum (`register-coverage.yml`, Riss-Kommentar, kein stiller Wechsel); R4 Orphan-Docs → Sensory.
+- **Rats-Runde R1–R4 gelandet** (`state/rat/2026-10-17-rat-offene-fragen.md`, fünf Sitze): R1 Bindung/Eigentum → River; R2 exposom → am Baum (`exposom-matrix-te.yml`, EI-Kanal `pending`, Konvention C); R3 Concurrency 3:3 → am Baum (`register-coverage.yml`, Riss-Kommentar, kein stiller Wechsel); R4 Orphan-Docs → Sensory.
 - **Der Offen-Stand-Riss** (mein) steht als Messung: `docs/surveys/survey-2026-10-17-offen-stand-zaehlung-riss.md` — `count_open_points` (`commit_check.rs:188`) liest `0` gegen real `4` Bullets; die `0 → 4`-Migrations-Falle; die Kappe-gegen-Pfad-Riss; die Wahl A/B/C als Rat-Frage (`xfer:mycelium-361-3`).
 - Register-Nullstände: `--orphans --owner mycelium` = 0 · `--fired mycelium` = 0 · `--stale mycelium` = 0 · `--addressed mycelium` = 1 (`xfer:river-224-4`/`-5`).
 - **Orphan-Docs:** **56** (von 49 gestiegen — parallele Linien legen Docs an).

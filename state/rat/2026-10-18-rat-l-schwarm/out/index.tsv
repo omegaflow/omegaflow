@@ -1,0 +1,44 @@
+cf/@cf/google/gemma-7b-it-lora	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/meta/llama-3.2-1b-instruct	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/daily-co/phonellm-mini-alpha-2	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/ibm-granite/granite-4.0-h-micro	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/aisingapore/gemma-sea-lion-v4-27b-it	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/meta/llama-3.1-8b-instruct-fp8	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/meta/llama-4-scout-17b-16e-instruct	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/meta-llama/llama-2-7b-chat-hf-lora	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/meta/llama-3.3-70b-instruct-fp8-fast	LEER	verdikte=0	len=0	finish=	err=
+cf/@cf/mistral/mistral-7b-instruct-v0.2-lora	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/openai/gpt-oss-120b	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/openai/gpt-oss-20b	LEER	verdikte=0	len=0	finish=?	err=
+groq/qwen/qwen3.8-27b	LEER	verdikte=0	len=0	finish=?	err=groq/qwen/qwen3.8-27b is a billed model — the operator's word is required (name the model id in $OMEGAFLOW_WORK/post/paid-open, or set OMEGAFLOW_PAID=<model-id>)
+groq/allam-2-7b	OK	verdikte=4	len=929	finish=stop	err=
+cf/@cf/qwen/qwen2.5-coder-32b-instruct	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/qwen/qwq-32b	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/qwen/qwen3-30b-a3b-fp8	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/zai-org/glm-4.7-flash	LEER	verdikte=0	len=0	finish=?	err=
+kenari/beam-1-0:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/deepseek-v4-1-flash:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/dots-3-note-preview:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/hy3:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/agnes-2-5-flash:free	LEER	verdikte=0	len=0	finish=?	err=free-model daily limit reached; the counter resets at 00:00 UTC. Top up from Rp1.000 at https://kenari.id/pay to keep going, or subscribe to raise the limit
+kenari/agnes-3-0-flash:free	LEER	verdikte=0	len=0	finish=?	err=free-model daily limit reached; the counter resets at 00:00 UTC. Top up from Rp1.000 at https://kenari.id/pay to keep going, or subscribe to raise the limit
+kilo/kilo-auto/small	LEER	verdikte=0	len=0	finish=?	err=kilo/kilo-auto/small is a billed model — the operator's word is required (name the model id in $OMEGAFLOW_WORK/post/paid-open, or set OMEGAFLOW_PAID=<model-id>)
+kenari/nemotron-3-nano-omni-30b-a3b-reasoning:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/nemotron-3-super-120b-a12b:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/space-bunny:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/nemotron-3-ultra-550b-a55b:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+ollama/gemma4:31b	OK	verdikte=4	len=674	finish=stop	err=
+llm7/codestral-latest	OK	verdikte=4	len=878	finish=stop	err=
+openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free	LEER	verdikte=0	len=0	finish=	err=
+openrouter/nvidia/nemotron-3-ultra-550b-a55b:free	LEER	verdikte=0	len=0	finish=	err=
+llm7/mistral-Nemo-Instruct-2407	OK	verdikte=4	len=1239	finish=stop	err=
+ovh/Meta-Llama-3_3-70B-Instruct	LEER	verdikte=0	len=0	finish=?	err=ovh/Meta-Llama-3_3-70B-Instruct is a billed model — the operator's word is required (name the model id in $OMEGAFLOW_WORK/post/paid-open, or set OMEGAFLOW_PAID=<model-id>)
+ovh/Mistral-Nemo-Instruct-2407	LEER	verdikte=0	len=0	finish=?	err=ovh/Mistral-Nemo-Instruct-2407 is a billed model — the operator's word is required (name the model id in $OMEGAFLOW_WORK/post/paid-open, or set OMEGAFLOW_PAID=<model-id>)
+ovh/Mistral-Small-3.2-24B-Instruct-2506	LEER	verdikte=0	len=0	finish=?	err=ovh/Mistral-Small-3.2-24B-Instruct-2506 is a billed model — the operator's word is required (name the model id in $OMEGAFLOW_WORK/post/paid-open, or set OMEGAFLOW_PAID=<model-id>)
+ovh/Qwen2.5-VL-72B-Instruct	LEER	verdikte=0	len=0	finish=?	err=ovh/Qwen2.5-VL-72B-Instruct is a billed model — the operator's word is required (name the model id in $OMEGAFLOW_WORK/post/paid-open, or set OMEGAFLOW_PAID=<model-id>)
+openrouter/poolside/laguna-s-2.1:free	LEER	verdikte=0	len=0	finish=	err=
+llm7/minimax-m2.7	OK	verdikte=2	len=5266	finish=length	err=
+pollinations/openai-fast	OK	verdikte=4	len=1735	finish=stop	err=
+kenari/step-5-preview:free	LEER	verdikte=0	len=0	finish=?	err=free-model daily limit reached; the counter resets at 00:00 UTC. Top up from Rp1.000 at https://kenari.id/pay to keep going, or subscribe to raise the limit
+openrouter/xingchen-agi/xing4.0-29b-a4b:free	LEER	verdikte=0	len=0	finish=	err=
+llm7/DeepSeek-V4-Flash-0731	LEER	verdikte=0	len=0	finish=	err=

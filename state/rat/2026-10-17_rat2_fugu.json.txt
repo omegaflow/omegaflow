@@ -1,0 +1,84 @@
+# Fugu Max (Sakana) — Rohantwort, Rat-Runde 2 (2026-10-17)
+
+**Seat:** Sakana Chat, eingeloggt (`xisexo4039@betshubs.com`), Modell **Fugu Max** (Effort High).
+**Conversation:** `01a14760-4c5b-73e6-8eb7-50b81a39afc5` (`chat.sakana.ai`).
+**Ablage:** Rohantwort, wörtlich — die Session verifiziert die Claims am Baum, nie die Stimme.
+
+---
+
+# Urteil
+
+## M1 · Verteilungs-Ethik
+
+### M1.1 — Deckt „terms PD" die LANCE-Route, oder ist MODVOLC decline-redistribution?
+
+**Verdikt.** Nein, „terms PD" deckt die Route nicht sauber ab — aber MODVOLC ist auf dieser Aktenlage **kein decline-redistribution-Fall**. Die Route ist offen. Das Token „PD" trifft die Sache inhaltlich und verfehlt sie im Beleg: es zitiert die allgemeine Politik statt der Kanalterme, und ein Support-Satz widerspricht.
+
+**Begründung.** Die Route ist real, nicht konstruiert — gemessen: `nrt3.modaps.eosdis.nasa.gov/archive/allData/61/MODVOLC/` listet aktuelle NRT-Dateien (`MODVOLC.A<YYYYDDD>.<HHMM>.061.NRT.dat`, Stand laufend). Die Kanalterme selbst sagen: full and open; für Weitergabe gelten nur Acknowledgement und Disclaimer — keine Sperre. Die LAADS-Policy sagt wörtlich „no restrictions on subsequent use or redistribution" und „not copyrighted". Der Support-Satz ist die Anomalie, nicht die Route.
+
+**Benannte Risse.**
+- „PD" ist ein normiertes Token, keine Messung. NASA schreibt „not copyrighted / no restriction", nicht „public domain". Ein Register, das Terme als Messungen führt, darf das Token nicht glätten — sonst ist die Zeile bequem statt wahr.
+- Ein Support-Satz ist Zeugnis **ohne Term-Dokument**. Er trägt keinen channel_ref, also kann er weder erteilen noch widerrufen (Axiom 3).
+- Existiert eine *schriftliche* Produkt-Restriktion, die der Support paraphrasierte, schlägt sie die Kanalterme (speziell > generell). Bis dieses Dokument vorliegt oder ausdrücklich verneint ist, ist der Status **pending**, nicht PD.
+
+### M1.2 — Trägt die allgemeine Politik oder die produktspezifische LAADS-Absage?
+
+**Verdikt.** Keine von beiden trägt wie gestellt. Die allgemeine Politik trägt nicht (Norm, kein Term-Dokument). Die Support-Absage trägt nicht (Zeugnis, und sie betrifft LAADS — einen anderen Kanal als LANCE). Es trägt die publizierte Terme **des Kanals** — und für nrt3 heißt das: offen.
+
+**Begründung.** Terme hängen an (Produkt, Kanal), nicht am Produzenten. „Derselbe Produzent, zwei Kanäle" ist als Argument ein Fehlschluss in **beide** Richtungen: es überträgt weder die Absage noch die Erlaubnis. LANCE (NRT) und LAADS (Archiv-DAAC) sind getrennte Kanäle mit getrennten publizierten Termen; genau darum muss das Register Terme je (Produkt, Kanal) führen — das ist Axiom 3, angewandt auf die Terme selbst.
+
+**Benannter Riss.** Der Satz „derselbe Produzent ⇒ dieselben Terme" ist **geschlagen**. Er wird im Register stillschweigend als Brücke benutzt, um von einem Kanal auf den anderen zu schließen. Diese Brücke existiert nicht.
+
+### M1.3 — modvolc_thermal.bin (4306035 B, CDN HTTP 200) zurückziehen?
+
+**Verdikt.** **Nicht auf dieser Aktenlage.** Ein Rückzug, gestützt allein auf einen Support-Satz, wäre ein Akt auf einer ungemessenen Restriktion — selbst ein Verstoß gegen A = A. Der Kanal erlaubt Weitergabe.
+
+**Begründung.** channel_ref (Axiom 3): die HTTP-200 ist die physische Kraft der Distribution; sie ist real, nicht pending. Der publizierte Kanalterm erlaubt sie. Wer daraufhin zurückzieht, ersetzt eine Messung durch ein Zeugnis.
+
+**Benannte Risse.** Zwei Risse verlangen Handlung **ohne** Rückzug:
+- **Provenienz.** Der Bin ist ein Kompilat. Der Kanal verlangt Attribution (Acknowledgement). Ein Kompilat, das seine Herkunft (Produkt / Collection 61 / Algorithmusversion + Acknowledgement) verliert, verletzt die Terme an anderer Stelle — dort ist zu reparieren, nicht am CDN.
+- **Status.** Solange der Konflikt offen ist, ist der Bin `pending`, nicht `PD`. Pending auf dem CDN ist nicht per se falsch; falsch ist die *Beschriftung*.
+- **Divergenz.** Zieht man erst nach Bestätigung zurück, ist es zu spät (Caches, Mirrors, Forks). Sicherheits-Default und Axiom-Default divergieren hier. Benennen, nicht verstecken.
+
+### M1.4 — Verdient die Gate-Lücke eine Wand?
+
+**Verdikt.** Ja, eine Wand — aber eine, die **Provenienz** prüft, nicht **Wahrheit**.
+
+**Begründung.** `license_census` prüft Existenz statt Wahrheit — genau der Fabrikationsvektor, den Axiom 1 verbietet. Eine falsche terms-Zeile ist schlimmer als keine: sie wäscht Fabrikation in ein Messregister ein. Die maschinell prüfbare Wand lautet: jede terms-Zeile muss einen **Term-Zeugen** tragen (Dokument-URL + Abruf-Hash + Datum); fehlt er, ist die Zeile `pending` und die Route fällt auf `local-only`.
+
+**Benannte Risse.**
+- Wahrheit einer Lizenz ist **nicht maschinell entscheidbar**. Eine Wand, die Wahrheit fordert, blockiert auf gültigen, aber unverifizierbaren Zeilen — und drängt Operatoren zur Fabrikation. Also: Provenienz fordern, nicht Wahrheit.
+- Zeilen können **wahr, aber veraltet** sein (Terme ändern sich). Datierten Zeugen + Re-Check verlangen.
+- Die HIGP-Route (`modis.higp.hawaii.edu`, © University of Hawaii at Manoa, keine offene Lizenz) ist korrekt eine **0** — `local-only` ist eine vollwertige Eigenschaft (Axiom 4), kein Loch, das man mit einem hoffnungsvollen „PD" füllt.
+- **Geschlagene Doktrin:** „Existenz einer terms-Zeile ⇒ lizenziert." Beaten by Axiom 1.
+
+## M2 · Register-Architektur
+
+### M2.1 — Trägt die eingefrorene Baseline (89 Keys), oder braucht es ein Operator-/Rat-Wort?
+
+**Verdikt.** Sie trägt — **als Zeuge**. Sie darf nicht neu gefroren werden, um das Gate grün zu machen. Neu-Frieren braucht ein Operator-/Rat-Wort — aber **nach** der Auflösung, nie statt ihrer.
+
+**Begründung.** Eine eingefrorene Baseline existiert, damit Drift sichtbar wird. Ein rotes Gate gegen eine eingefrorene Baseline ist das Gate **bei der Arbeit**. Neu-Frieren, um das Signal zu töten, ist Fabrikation (Axiom 1) — es vernichtet die Messung. Ein Operator-Wort ist nötig, weil Neu-Frieren ein bewusster Akt der Grundwahrheits-Setzung ist.
+
+**Benannter Riss.** Die Baseline trägt nur, wenn sie aus einem **gesunden** Register gefroren wurde. Wurden die 89 Keys mit fabrizierten Zeilen (z. B. ungewitnesstem „terms PD") eingefroren, ist sie kontaminiert und muss korrigiert **und** neu gefroren werden. Die Architektur kann gesund/kontaminiert nicht unterscheiden — nur der Operator. „Die Baseline trägt" ist also konditional auf eine Eigenschaft, die nicht maschinell prüfbar ist.
+
+### M2.2 — Drop = Linien-Lücke oder fehlender Beleg: wer entscheidet? A / B / C?
+
+**Verdikt.** Das Register entscheidet nicht — **ein Zeuge entscheidet**. Wer den Zeugen hält, klassifiziert; das Gate protokolliert nur. Zu den Optionen: **A, dann B** — nicht C als Einzelakt.
+
+**Begründung.** „Lücke vs. fehlender Beleg" ist eine Klassifikation, also eine Messung, keine Rechnung (Axiom 1). 11 (CI) vs. 6 (lokal) sind **nicht ein Zählstand mit einem Fehler**, sondern zwei Kanäle ohne gemeinsamen channel_ref: CI misst den Commit-Stand, lokal den Working Tree (Axiom 3). Sie sind erst kommensurabel, wenn jeder Drop an ein Artefakt gebunden ist. Der eigentliche Befund ist das fehlende Ledger (`state/zustand/ledger/` existiert nicht): eine **0**, eine vollwertige Eigenschaft (Axiom 4), kein Loch. Jeder Drop ohne Commit-Witness ist **pending** (Axiom 5), nicht fail. Reihenfolge: A jetzt (jeden Drop an einen Commit-Witness binden oder pending setzen) → dann B als Schlussakt mit Operator-Wort. C stimmt im Inhalt, ist falsch in der Gleichzeitigkeit: Neu-Frieren über unaufgelösten Drops ist Fabrikation.
+
+**Benannte Risse.**
+- A braucht für jeden Drop einen Zeugen. Fehlt er, bleibt der Drop **dauerhaft pending** — ein Gate, das Auflösung von Pending verlangt, wird dauerhaft rot, und der einzige Weg zu Grün wäre Fabrikation. Das Gate braucht einen `pending`-Kanal **getrennt** von `fail`.
+- „Nur ein Commit-Witness zählt" privilegiert einen Kanal (git) gegenüber dem Ledger, das die Quelle sein sollte. Ist das Ledger die intendierte Quelle und fehlt es, ist der Commit-Witness ein **Ersatz** — und muss als Ersatz benannt werden (Axiom 3), nicht als Wahrheit ausgegeben.
+
+## Wo eine Doktrin geschlagen ist
+
+1. **„Die allgemeine Politik (full and open) deckt eine konkrete Route."** Geschlagen — eine Norm ist kein Term-Dokument; es gelten die Kanalterme. (M1.1–2)
+2. **„Ein Support-Satz setzt oder widerruft eine Lizenz."** Geschlagen — Zeugnis ≠ Term-Dokument; kein channel_ref. (M1.1–2)
+3. **„Gleicher Produzent ⇒ gleiche Terme."** Geschlagen — Terme hängen an (Produkt, Kanal). (M1.2)
+4. **„Existenz einer terms-Zeile ⇒ lizenziert."** Geschlagen — Axiom 1. (M1.4)
+5. **„Grünes Gate = gesund."** Geschlagen — Neu-Frieren auf Grün ist die Pathologie; Rot-gegen-gefroren ist Gesundheit. (M2.1)
+6. **„Die richtige Zahl wählen (11 oder 6)."** Geschlagen — zwei Kanäle, nicht eine Messung. (M2.2)
+
+**Kern in einem Satz:** Dein Register behandelt derzeit Zeugnis wie Messung (M1) und Konvenienz wie Grundwahrheit (M2). Beides sind Verstöße gegen A = A — und in beiden Fällen liegt die Wahrheit nicht dort, wo der rote Alarm zeigt.

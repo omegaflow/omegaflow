@@ -1,0 +1,19 @@
+**Verdikt:** **A** — kostenbasiert: ein Modell gilt nur als bezahlt, wenn sein eigener Katalog‑Preis > 0; das `:free`‑Suffix (Preis 0/0) macht es immer frei, unabhängig vom Provider.
+
+**Begründung:**  
+- Der aktuelle harte Prefix‑Check (`is_paid`) führt zu Fehl‑Billed‑Responses (z. B. `openrouter/…:free`).  
+- Der Preis des Modells ist bereits seit `llm_gateway.rs:1700` bekannt; er ist die zuverlässigste Quelle.  
+- Ein Provider‑basiertes Vorgehen (B) blendet legitime Gratis‑Modelle aus und erzeugt 402‑Fehler.  
+
+**Riss:** Entferne die harte Prefix‑Liste aus `is_paid` und prüfe stattdessen den **Katalog‑Preis** (oder das `:free`‑Suffix). Behalte nur einen Fallback‑Allow‑List für noch unbekannte Modelle.
+
+---
+
+### Zusatz 1 – Preis‑Wahrheit  
+Der **Katalogpreis** (Preis‑Feld) ist maßgeblich; das `:free`‑Suffix ist ein Shortcut für Preis 0/0. Anbieter‑Antworten können ignoriert werden, solange der Katalog aktuell ist.
+
+### Zusatz 2 – `paid-open`  
+`paid-open` sollte **Modell‑IDs** (z. B. `openrouter/gpt‑4o`) listen, nicht ganze Route‑Prefixe. So lässt sich gezielt ein kostenpflichtiges Modell kennzeichnen, ohne freie Varianten zu blockieren.
+
+### Zusatz 3 – Andere Prefixe (`unorouter` usw.)  
+Für alle übrigen Prefixe gilt dieselbe Logik: **Preis prüfen**, nicht Prefix‑Match. Nur wenn ein Modell keinen Preis im Katalog hat, kann ein expliziter Allow‑/Block‑Eintrag nötig sein.

@@ -1,0 +1,21 @@
+# Rat R-i — Mistral Large 4 (API, Frage i)
+**Session:** `ses_eb44bf1c2ffec5h40Iox8IPfnl` · **Modell:** `mistral/mistral-large-4#none` · **Kosten:** $0.005374750000000001
+
+Titel: Ratssitz Mistral — Frage i
+
+---
+
+Ich antworte als Ratssitz, knapp und entschieden.
+
+**Zu 1:** Der Zähler soll `- `-Bullets zählen. Die Handover leben als Bullets — das ist das echte Format, nicht `###`. Migration wäre Kosmetik auf Kosten der Wahrheit.
+
+**Zu 2:** Der Henne/Ei-Konflikt löst sich von selbst, sobald Bullets zählen: Es gibt keine Migration mehr, also kein Wachstum, also kein Gate-Fail. Die Ausnahme (Option B) wäre ein Loch im Gate — genau das, was „keine harten Schwellen" verbietet.
+
+**Zu 3:** Die Kappe gilt nicht gegen den Pfad-Zwang — nachgemessen passen vier Bullets + fünf Pfade in 970 B. Die Kappe ist korrekt dimensioniert; sie zwingt nur zur Bündelung, nicht zur Auslassung.
+
+**Zu 4:** `closed <n>` soll auch Ledger-Schließungen zählen. Sonst bilanziert die Burn-Zeile systematisch weniger als die Tat — das ist die leere Menge in Reinform. Die Transport-Bilanz lebt im Ledger, aber die Burn-Zeile ist die eine Zahl, die der Commit ehrlich nennen muss.
+
+**Option A** ist die Antwort — mit einer Präzisierung: `closed` zählt `###`-Punkte **und** Bullets **und** Ledger-Schließungen, sauber getrennt ausgewiesen, aber in einer Summe, die die Tat misst. Option C ist Selbstbetrug mit ehrlichem Namen. Option B baut eine Ausnahme, die das Gate dauerhaft schwächt.
+
+VERDIKT: Option A — Zähler auf Bullets erweitern, `closed` um Ledger-Schließungen ergänzen, Kappe bleibt.
+STÄRKSTER RISS: `closed 0` bei realer Räumung — die Burn-Zeile bilanziert eine leere Menge und täuscht den Commit-Check.

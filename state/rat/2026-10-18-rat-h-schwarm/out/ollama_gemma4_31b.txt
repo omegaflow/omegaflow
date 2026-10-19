@@ -1,0 +1,5 @@
+Verdikt: A — Begründung: Modellpreis > 0 ist die einzige objektive Wahrheit; Provider-Prefixe sind zu grob und führen zu Fehlern bei `:free`-Modellen. — Riss: `llm_gateway.rs:1644-1660` (Prefix-Check) muss durch Preis-Check ersetzt werden.
+
+Zusatz 1: Katalog (Primär), `:free`-Suffix (Fallback).
+Zusatz 2: Modell-IDs.
+Zusatz 3: Ja.

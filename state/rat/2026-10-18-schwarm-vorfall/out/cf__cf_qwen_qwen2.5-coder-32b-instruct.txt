@@ -1,0 +1,8 @@
+V1 — Wo soll der Live-Zustand liegen?
+`V1 Verdikt: A — Begründung: Ein generierter Live-Index vereint alle relevanten Informationen und stellt sicher, dass jede Sitzung den aktuellen Stand kennt; Prosa-Docs können als Zeiger auf diesen Index verwendet werden. — Riss: Die Implementierung und Pflege eines zusätzlichen Indexes erfordert zusätzliche Arbeit.`
+
+V2 — Was ist der kanonische Schwarm?
+`V2 Verdikt: A — Begründung: Der vollständige Schwarm von 44 Sitzen stellt die volle Kapazität und Redundanz sicher; kleinere Gruppen sind nicht ausreichend repräsentativ. — Riss: Die Ausführung eines 44-Sitz-Schwarms kann ressourcenintensiv sein und möglicherweise nicht immer praktikabel.`
+
+V3 — Wie verhindert man veraltete Zitate?
+`V3 Verdikt: A — Begründung: Ein Start-of-Session-Check stellt sicher, dass jede Sitzung mit dem neuesten Stand beginnt und veraltete Informationen vermieden werden; dies ist eine einfache und effektive Maßnahme. — Riss: Ein solcher Check kann die Effizienz der Sitzungen beeinträchtigen, wenn er zu umfangreich ist.`

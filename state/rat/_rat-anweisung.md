@@ -1,0 +1,322 @@
+<!--
+  title: Rat-Anweisung — wie der Rat zu fahren ist
+  class: concept
+  date: 2026-10-19
+  sha256: b4ee8df6cd6eba9b0097b2e100c8d2e962893deb11d2c16a6850e1cbc57ec072
+  status: live
+  see-also: AGENTS.md state/rat/2026-10-19-rat-kanon-wildwuchs-formular.md
+-->
+# Rat-Anweisung — wie der Rat zu fahren ist (gemessen 2026-10-17, Recherche-Pflicht 2026-10-19)
+
+**Wann lesen:** nur beim Fahren einer Rat-Frage — nicht in jedem Turn.
+**Wer entscheidet:** **der Operator** — welche Sitze, wann gefahren wird. Die Maschine bereitet vor.
+Kein automatischer Lauf, kein Executable. Der Operator ist dabei.
+**Warum hier:** jede Linie, die einen Rat baut, öffnet `state/rat/` (wo das Formular liegt) und
+findet diese Datei daneben. **Der kanonische Weg steht hier — es gibt keinen anderen.**
+
+## 0a — Harte Rat-Regel (bindend, gilt ab 2026-10-19)
+
+**Jede Rat-Runde wird erst gefahren, nachdem der Agent per ask gefragt hat und der Operator
+zugestimmt hat.** Das gilt für **alle** Sitze: freie Schwarm-Sitze, UI-Chats und paid. Nichts
+läuft still oder vorab — kein freier Schwarm, kein UI-Chat, kein paid-Aufruf ohne das Ja.
+
+**Paid zusätzlich:** nie „auf Verdacht", nie weil eine Frage „wichtig" wirkt. Der freie Schwarm
+zuerst; **erst wenn der freie Schwarm uneinig ist, darf überhaupt nach paid gefragt werden** —
+und auch dann entscheidet der Operator.
+
+**Die Kante** (in dieser Reihenfolge, nie DeepInfra-Frontier für Rat-Runden):
+`free > mistral inklusive > deepseek paid > mistral paid`. Die paid-Sitze der Roster-Runden
+sind **Fugu (Max)** und **Lumo 2.0 (Max)** — nicht Claude/Kimi/Qwen über DeepInfra. DeepInfra ist
+reserviert für PII und Frontier, **nie Linienarbeit**.
+
+**Verstoß = die Leitstelle hat eigenmächtig Kosten erzeugt oder eine Runde ohne Ask gefahren.**
+Das Ergebnis darf nicht als Verdikt gelten, bis der Operator es bestätigt hat. Diese Regel steht
+hier, weil sie am 2026-10-19 gebrochen wurde (R-2026-10-18-o und R-2026-10-18-p: paid ohne Wort
+gefahren).
+
+**Mechanisch erzwungen:** `bin/rat_guard`. Vor jedem paid-Aufruf läuft `bin/rat_guard`; ohne
+frischen Grant (`state/zustand/rat-paid-grant`, nur der Operator setzt ihn mit
+`bin/rat_guard --grant`) bricht der Aufruf ab. **Der Agent fragt vor jeder Runde — frei, UI
+und paid — per ask nach**; erst das Operator-Ja startet die Runde (und setzt bei paid den
+Grant). Eine Runde ohne diese Kette ist ein Regelverstoß, das Ergebnis zählt nicht.
+
+## 0 — Der Rat ist die fünf Stimmen, nicht die Modelle
+
+**Kanonisch sind zwei Dateien, nicht diese Seite:**
+`docs/granit.md` (die **fünf Axiome**, Wortlaut — Punkt 6/7 dort sind **Prozessregeln, keine
+Axiome**, und gehören nicht in den Axiom-Block) und `docs/council.yaml` (die **fünf Stimmen**,
+unverkürzt). **In den Prompt kommt der Wortlaut aus diesen beiden Dateien** — die Tabelle unten ist
+eine Leshilfe und **kein** Prompt-Text. Eine gekürzte Stimmen-Zeile („Netz/Transport" statt des
+vollen Textes) verändert die Frage; sie ist am 2026-10-19 zweimal so verschickt worden und die
+Antworten waren nur mit Vorbehalt brauchbar.
+
+**„Fünf Stimmen" = die fünf Linien**, jede als Rolle durch die Axiome gesprochen
+(`2026-10-15-china-planetendaten-formular.md:79-86`):
+
+| Stimme | Rolle |
+|---|---|
+| **Mountain** | Quellen/Register/Datenbestand — kein Verdikt ohne Messung |
+| **River** | Membran/Rhythmus/Ethik — das Recht zu verweigern |
+| **Mycelium** | Netz/CDN/Transport — der Fluss |
+| **Sensory** | Sinne/Hardware/Konsens — Korrelat ≠ Erleben |
+| **Future** | Mensch als Adresse — Operator-Hand |
+
+Jede Stimme spricht **einmal** durch die Axiome und nennt, welches Axiom sie berührt und welcher
+Riss entsteht. Die Modelle (Sitze unten) sind nur der **Träger** einer Stimme, nicht die Stimme.
+**Die Linien werden darum nicht aufgelöst — sie sind die fünf Rat-Stimmen.**
+
+---
+
+## 1 — Die Sitze, Routen und Eigenschaften (gemessen an den APIs, 2026-10-17)
+
+**Die Leiter (Operator-Wort, Commits `91682fc3d` · `039a6ee55` · `2266bf2ba` · `d72e2cdc9`):**
+`free > Mistral inklusive > DeepSeek paid > Mistral paid`.
+**DeepInfra nur für (a) PII, wo Mistral nicht ausreicht, und (b) Frontier (Kimi-Klasse) — nie Linienarbeit.**
+PII läuft zuerst über Mistral.
+
+| Rang | Sitz | Route / Modell | Grenzkosten |
+|---|---|---|---|
+| **1** | `opencode/deepseek-v4.1-flash-free#low` | OpenCode frei — Fork bestanden | **$0** |
+| **2** | `opencode/glm-5.3-flash-free#low` — **nur Mechanik** | OpenCode frei | **$0** |
+| **3** | `mistral/mistral-large-4` · `mistral/zai-glm-5-3` | **Mistral inklusive** (7,27 € Rest) | **€0** bis erschöpft |
+| **4** | `deepseek/deepseek-v4-pro` | DeepSeek paid (≈$90) | voll |
+| **5** | `mistral/*` nach Erschöpfung | Mistral paid (20 €) | voll |
+| **—** | `deepinfra/…` | **reserviert** | nur PII + Frontier |
+
+**Live-Beleg:** `2026-10-18-netto-rollen.md` (Leiter, Töpfe) · `2026-10-18-modell-inventur-live.md`
+(Gateway-Neustart: die 401er waren der **eingefrorene Prozess** — danach mistral 54 / deepinfra 180 /
+deepseek 2 live; `mistral/zai-glm-5-3` trägt `low`, `finish=stop`).
+**Die alte 17.10.-Tabelle ist überholt** — sie führte alle Paid-Sitze über DeepInfra.
+
+**UI-Sitze** — der volle Roster (13+ Seats, Composer/Senden/Suche/Max je Sitz, gemessen 2026-10-13)
+steht in **`~/projects/omegaflow-work/ui-seats.md`** — das ist die Quelle, nicht diese Datei.
+Kurz: Qwen · DeepSeek Chat · Z.ai/GLM · Mistral · Claude · Duck.ai · Perplexity · Sakana ·
+Lumo · MiniMax · Kimi (Kontingent) · Google AI Studio (Gemini) · Tryingopen (Open-Weight:
+DeepSeek V4 Pro, Qwen3.8, Nemotron, GLM 5.3, MiMo, GPT-OSS, Inkling, Mistral Large 4).
+**Die Maschine fährt sie, nicht der Operator.** Die frühere 2-Sitz-Tabelle (Fugu/Lumo) war ein
+Schnitt, kein Roster.
+**Max je Sitz nicht vergessen** (aus `ui-seats.md`, Spalte „Suche/Max"): Qwen `Denken=max` ·
+DeepSeek `DeepThink` · Z.ai `Deep Think Max` · Duck.ai `Begründung` · Claude `Sonnet 5.5 Extra hoch` ·
+MiniMax `Search` · Gemini `Grounding`. Ohne den Schalter antwortet das Modell teils „kein Suchwerkzeug"
+bzw. ohne Reasoning.
+
+## 2 — Der Reasoning-Level (der größte Fehler: er wurde nie gesetzt)
+
+**Kein früherer Rat-Lauf setzte je einen Level** — alle fuhren Default → **abgeschnittene Antworten**
+(`finish: length`) bei GLM, DeepSeek, Kimi; Qwen-Timeout.
+
+**Live gemessen (alle Stufen akzeptiert/abgelehnt):**
+
+| Modell | erlaubte `reasoning_effort` | Default | wirken? | **so fahren** |
+|---|---|---|---|---|
+| **DeepSeek V4 Pro** | `none` `low` `medium` `high` `max` | `high` | **ja, stark** (27→2268 reasoning-tok) | `low` |
+| **GLM-5.3** | `none` `low` `medium` `high` `max` | (max) | ja | `low` |
+| **Qwen3.8-Max** | `none`…`max` | — | ja (schwach) | `low` |
+| **Opus 5.5** | `none`…`max` | — | (n. einzeln gemessen) | `low` |
+| **Kimi K3** | `none` `low` `high` `max` | **`max`** | ja | `low` |
+| **Mistral Large 4** | **nur `none`, `high`** | — | — | **`none`** |
+
+**`low` liefert vollständig. `high`/`max` kappt (Reasoning frisst das Budget). `none` dünnt** (Kimi
+`none`: 645 out-tok, kein Verdikt-Kopf — zu wenig für eine Urteilsfrage). **Mistral kennt kein `low`.**
+Body-Feld: `"reasoning_effort":"low"` (OpenAI-Form, neben `max_tokens`).
+**`max_tokens` ≥ 6000** — die Antworten lagen bei 1–5 k out.
+
+## 3 — Der Aufruf (immer MIT der Linse)
+
+**Die Linse** — jeder Sitz bekommt sie vor der Frage, sonst verweigert er (A=A: nichts erfinden)
+oder antwortet als fremdes Modell. **Zwei Pflichtteile: die fünf Axiome UND die fünf Stimmen.**
+
+**Die Hausregeln — die `AGENTS.md`, ungekürzt** (die manifestierte Fassung; keine Zahl vorgeben —
+die Datei hat sieben Zeilen, nicht fünf):
+
+```
+A = A
+  ICRS/TDB
+  field <name> <name> <kernel> <kraft> <einheit>
+  0 honored: null-echt | absent | riss
+  keine harten Schwellen
+  PII bleibt im Haus
+messen · bauen · abschließen · committen · pushen
+```
+
+Die fünf Stimmen (jede einmal, je durch die Axiome — `2026-10-15-china-planetendaten-formular.md:79`):
+**Mountain** (Quellen/Register — kein Verdikt ohne Messung) · **River** (Membran/Ethik — Recht zu
+verweigern) · **Mycelium** (Netz/Fluss) · **Sensory** (Sinne/Hardware — Korrelat ≠ Erleben) ·
+**Future** (Mensch als Adresse — Operator-Hand).
+
+**Ein Prompt je Sitz — der Sitz antwortet durch ALLE fünf Stimmen** (nicht eine Stimme je Sitz;
+`2026-10-15-china-planetendaten-formular.md:8` trägt den Prompt verbatim):
+
+```
+An dich, Ratssitz. Antworte als Urteil, nicht als Erwartung. Eine Frage. Du hältst sie durch
+die Hausregeln und sprichst sie durch fünf Stimmen hindurch. Kein Aufsatz — Verdikt, Begründung,
+benannte Risse.
+
+### Die Frage
+<Frage + gemessener Befund>
+
+### Die Hausregeln (AGENTS.md, ungekürzt)
+<die sieben Zeilen oben>
+
+### Die fünf Stimmen (jede einmal)
+- Mountain — Quellen/Register/Datenbestand; kein Verdikt ohne Messung.
+- River — Membran/Rhythmus/Ethik; das Recht zu verweigern.
+- Mycelium — Netz/CDN/Transport; der Fluss.
+- Sensory — Sinne/Hardware/Konsens; Korrelat ≠ Erleben.
+- Future — der Mensch als Adresse; der Send ist Operator-Hand.
+
+Führe jede Stimme einmal und sag, welches Axiom sie berührt oder verletzt und welcher Riss entsteht.
+```
+
+Ohne „gilt als gegeben" verweigert der Sitz die hausinternen Befunde (gemessen 2026-10-18, Lumo:
+„liegen außerhalb meiner verifizierbaren Wissensbasis"). Die Beweislast-Zeile ist Pflicht
+(`2026-10-17-beisitzer-w-Sonnet.txt`: sie hebt die Beweislast für alle Sitze).
+
+```sh
+DK=$(grep "^DEEPINFRA_API_KEY=" ~/projects/omegaflow/.secrets.local|cut -d= -f2-|tr -d '"')
+Q=$(cat /tmp/opencode/<formular>.txt)
+curl -s https://api.deepinfra.com/v1/openai/chat/completions \
+  -H "Content-Type: application/json" -H "Authorization: Bearer $DK" \
+  -d "$(jaq -n --arg m "Qwen/Qwen3.8-Max" --arg q "$Q" \
+      '{model:$m,messages:[{role:"user",content:$q}],temperature:0.2,max_tokens:6000,reasoning_effort:"low"}')" \
+  > x-Qwen.json
+```
+
+## 3a — Die wissenschaftliche Recherche geht VOR jeden Sitz (Operator-Wort 2026-10-19)
+
+**Regel:** Keine Rat-Runde ohne **unabhängige, gemessene** Basis. Ein Rat, der nur die
+Hausbefunde hört, ist eine **Echokammer** — er bestätigt, was die Leitstelle ihm vorlegt.
+
+- **Werkzeug:** `archive_search <kw> --<kanal>` (Netz, gemessene Treffer). Erst
+  `bin/where <begriff>` — das Haus zuerst, dann das Netz.
+  **Gemessene Kanäle (2026-10-19, `--arxiv --count 3` liefert 3 Treffer):**
+  `--arxiv --openalex --semanticscholar --crossref --openaire --datacite --zenodo --dblp
+  --github --crates --stackexchange --sourcegraph`. **Für den Rat gesperrt:** die Websuche
+  (`--brave`, `--tavily`, `--exa`, `--duckduckgo-instant`) — sie ist keine Literaturbasis.
+- **Pflichtsektion im Formular:** `## Recherche` mit je Befund **Host/URL · Werkzeug · Datum ·
+  Zahl**. Zitiert eine Recherche nur Hausdokumente, **zählt sie nicht**.
+- **Kanal nach Thema**, nicht geraten: Doktrin/Architektur → `--arxiv --openalex
+  --semanticscholar --crossref`; Software/Werkzeug → `--github --crates --stackexchange`;
+  Daten/Sensoren → der passende Fachkanal.
+- **Reihenfolge:** Recherche → Formular (Recherche + Hausbefund + fünf Axiome) → **erst dann**
+  Schwarm, dann UI-Chats. Jeder Sitz bekommt die Messungen, nicht nur die Frage.
+
+**Grenze:** Der Schwarm misst nicht selbst. Was in der Recherche steht, ist vor dem Sitz zu
+holen — nicht danach, zur Rechtfertigung.
+
+## 3b — Der freie Schwarm geht VOR die UI-Chats und VOR die Paid-Sitze (gemessen 2026-10-18)
+
+**Regel:** Vor jeder Rat-Runde fährt ein **Schwarm freier Modelle** die Frage — als
+**Riss-Generator**, nicht als Entscheider. Dann die **UI-Chats** (Roster `ui-seats.md`, Max je
+Sitz). Paid erst, wenn Schwarm und UI uneinig sind. Kosten Schwarm $0, Laufzeit ~1 s je Modell.
+
+**Budget (Operator-Wort 2026-10-19, zweite Fassung):** **drei Blöcke zu fünf** —
+**5 Schwarm** per Zufall aus der frischen Alive-Liste (`shuf -n 5 state/zustand/llm-gateway-alive.tsv`,
+Maschine) · **5 UI ohne Login** (Maschine, 4 Roster-Sitze + **Fugu**) · **5 Frontier mit Login**
+(**Operator** fährt). **Kein Paid**, solange diese drei Blöcke laufen — Mistral Vibe (UI) ersetzt
+den Mistral-Paid-Aufruf. Die Auswahl wird **vor** dem Lauf veröffentlicht
+(`<datum>-rat-<thema>-auswahl.md`), sonst ist Zufall von Auswahl nicht zu unterscheiden. Ein Sitz,
+der nicht urteilen kann, wird **ersetzt** — aus derselben Liste, ohne Zurücklegen, und der Ersatz
+steht **veröffentlicht** in der Auswahl-Datei. „Untauglich ausweisen" reicht nicht: eine Stimme,
+die nichts trägt, ohne Ersatz zu nennen, ist nur eine fehlende Stimme.
+
+```
+0. Wissenschaftsrecherche (archive_search) → `## Recherche` im Formular
+1. Frage steht (Formular, mit Recherche)
+2. Freier Schwarm → Risse + Mindermeinung
+3. UI-Chats (Roster) → Verdikte mit Max-Einstellung
+4. Die Risse wandern INS Formular an die nächste Stufe
+5. Paid nur bei Uneinigkeit — und nur mit Operator-Ja
+6. Sammlung nennt ALLES: Recherche, Schwarm-Risse, UI-Verdikte, Paid-Urteil
+```
+
+**Warum:** Benchmark über drei abgeschlossene Runden (`2026-10-18-schwarm-benchmark/README.md`):
+- **Sachfragen** (R-j, R-k): Schwarm = Paid-Rat, gleiche Verdikte, **schärfere Risse**.
+- **Zielkonflikt** (R-i): Schwarm wägt anders (B statt A) — vertretbar, aber ohne Träger.
+- In **3 von 3** Runden hat der Schwarm einen Einwand produziert, den **kein** Paid-Sitz hatte.
+
+**Der Schwarm ist die freie Menge, keine fixe Zahl.** Die freien Modelle stehen in
+`state/zustand/llm-gateway-models.tsv` (Preis 0/0 + freie Präfixe), bei jedem Gateway-Start frisch
+abgeholt. Die frühere „4 gemessene Sitze" / „44 Träger"-Zahl war Bias; die Menge ist, was der Katalog
+misst. Immer Inhalt prüfen: HTTP-Erfolg ≠ Antwort.
+
+**Grenze:** Der Schwarm **trägt nicht**. Sein Verdikt ist eine Mindermeinung, seine Risse sind
+der Wert. Kein Register-Schreibakt aus einem Schwarm-Lauf.
+
+## 3c — Mechanik läuft auf einem freien Subagenten (gemessen 2026-10-18)
+
+**Regel:** Offen-Stand lesen (Sessionanfang) und Session-Zustand (Ende) darf ein **freier
+Subagent** erledigen — er ist billiger und war im Test **zahlentreuer als meine Anweisung**.
+
+**Der Kanal entscheidet:**
+- **Gateway (Chat-API)** = nur Text. Kein Modell dort kann Shell. Ein Auftrag „führe aus" endet
+  in *„I cannot execute shell commands"* — korrekt und nutzlos.
+- **OpenCode-Subagent** (`general` + `model:`) = hat die Shell. Das ist der Weg.
+
+**Freie Modelle als OpenCode-Provider (nicht im Gateway)** — **live lesen, keine feste Liste**
+(`opencode models | grep -- '-free$'`; gemessen 2026-10-18: 9 — die alte 7er-Liste war schon veraltet).
+
+**Grenze, gemessen:** ein „n Pfade offen" ohne Zeitstempel ist eine Momentaufnahme, kein Zustand —
+die Zahl wuchs während des Tests 10→13→15. Wer sie berichtet, nennt den Zeitpunkt.
+
+## 4 — Die Ablage
+
+- **Fragebogen:** `state/rat/<datum>-<thema>-formular.md` (oder `/tmp/opencode/<thema>.txt`).
+- **Rohantwort je Sitz:** `state/rat/<datum>-<thema>-<sitz>.txt`.
+- **Sammlung (Bilanz + Risse):** `state/rat/<datum>-rat-<thema>.md`.
+- **UI-Antworten:** `document.body.innerText`, ab Antwortbeginn bis zum Footer („Generated content may
+  be inaccurate" / „Lumo kann Fehler machen").
+- **`finish` je Sitz prüfen.** `length` = abgeschnitten → mit `low` wiederholen; `reasoning_content`
+  rettet, wenn `content` leer ist.
+
+## 5 — Kosten je Frage (live: Leiter statt Listenpreis)
+
+Die Grenzkosten folgen der Leiter, nicht dem Listenpreis (`2026-10-18-netto-rollen.md`):
+
+| Rang | Sitz | Frage (≈2,5 k out) |
+|---|---|---|
+| 1–2 | OpenCode frei (`…-free#low`) | **$0** |
+| 3 | Mistral inklusive (`mistral-large-4`, `zai-glm-5-3`) | **€0** bis 7,27 € erschöpft (~1 690 Calls) |
+| 4 | DeepSeek paid (`deepseek-v4-pro`) | ≈ $0,008 |
+| 5 | Mistral paid | ≈ €0,0043 |
+| — | DeepInfra | **reserviert** (PII/Frontier) |
+
+**Cap 0,15 USD/Burn.** DeepInfra wird für Linienarbeit **nicht** angefasst.
+
+---
+
+**Der kanonische Weg, in einem Satz:** Frage ins Formular (Prompt verbatim mit fünf Axiomen + fünf
+Stimmen) → Operator wählt die Sitze → je Sitz ein direkter API-Aufruf (`reasoning_effort` gesetzt)
+bzw. der UI-Tab (Max-Einstellung je Sitz aus `ui-seats.md`) → Rohantwort + Sammlung nach
+`state/rat/`.
+
+**Die drei Kanäle (je Sitz-Klasse):**
+- **Freier Schwarm** → lokales Gateway `127.0.0.1:1621/v1/chat/completions` (freie Modelle aus
+  `llm-gateway-alive.tsv`) **oder** OpenCode-free (`opencode models | grep -- '-free$'`).
+- **Paid API** → direkt (`api.deepseek.com`, `api.deepinfra.com`, Mistral-API), `reasoning_effort` gesetzt.
+- **UI-Sitz** → Browser (`browser.*`), Login/Max je Sitz; die Maschine fährt, nicht der Operator.
+
+**Kein `rat_dispatch`** (tot, `58bec95d7`).
+
+## 6 — Die KPI je Stimme (der Streich-Test) + die minimale Auswahl
+
+**Nach jedem Rat messen, wer trug — der Streich-Test** (Kimi/Sonnet/Mistral, einig):
+
+> **Eine Stimme ist tragend, wenn ihr Riss das Verdikt ändert oder stürzt, sobald man ihn streicht.**
+> Sonst ist sie **bestätigend** (redundant). Kriterien: einzigartig (k=1 von n) **und** am Material
+> prüfbar **und** wirksam (hat das Verdikt verändert).
+
+**Regel:** Sitze, die **nur bestätigen**, sitzen die **nächste** Runde aus.
+
+**Die minimale Auswahl — gemessen, aber Betreiber-Sache** (der Rat ist bei der eigenen Zusammensetzung
+**befangen**: jeder hält sich für nötig — die drei API-Sitze warfen je **andere** raus):
+
+| Rolle | Sitz | Kosten/Frage |
+|---|---|---|
+| Bestandsmessung (immer, frei) | **Fugu Max + Lumo 2.0** | **$0** |
+| Tiefe | **Kimi K3** *oder* **Sonnet 5.5** | ~$0,014 |
+| Struktur | **Mistral Large 4** | $0,004 |
+
+**≈ $0,018** — das gemessene Minimum mit Streuung. **Opus 5.5 fällt** (4× teurer, kein Mehr-Tragen).
+**Kimi vs. Sonnet:** beide trugen; Sonnet die Beweislast („ich habe die Zahl nicht nachgezählt"),
+Kimi die Bestands-Homogenität. **Einer reicht.**

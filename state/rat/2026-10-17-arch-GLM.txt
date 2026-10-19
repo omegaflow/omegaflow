@@ -1,0 +1,54 @@
+## Verdikt
+
+**F1: Die Zeilen-Form trägt — aber nur als Index, nicht als Behälter.** Und **F2: Weg (d)** — der Marker-Weg — trägt, weil er der einzige ist, der aus dem Bestand kommt, ohne neue Muskeln zu verlangen. Aber (d) hat einen versteckten Hebel, der benannt werden muss: **jemand muss den Marker setzen.** Das Verdikt ist (d) mit einer Pflicht aus (a) — die Leitstelle schreibt den `## An`-Block, alles andere bleibt Bestand.
+
+---
+
+## Begründung
+
+### F1 — Die Form
+
+Die vorgeschlagene Zeile ist fast richtig, aber sie hat einen Fehler: **`Verdikt` als Spalte ist eine Falle.** Ein Verdikt ist kein Zellinhalt. Verdikte sind lang, sie haben dissentierende Sitze, sie haben Prosa-Listen (das ist ja der gemessene Befund). Quetscht man sie in eine Tabellenspalte, entsteht genau das, was heute schon passiert: die Route geht verloren, weil niemand ein Verdikt in einer Zelle liest.
+
+**Die richtige Form: eine Datei je Rat-Frage, das Register ist nur der Index.**
+
+- `state/rat/verdikt-<datum>-<thema>.md` — das Verdikt selbst, mit `## An <linie>`-Blöcken am Ende.
+- `state/rat/_rat-register.md` — eine Zeile je Frage:
+
+```
+Datum · Thema · Sitze · Stand · Verdikt-Pfad · → Route(n)
+```
+
+Der Unterschied zum Vorschlag: `Verdikt` wird zu `Verdikt-Pfad`. Das Register sagt nicht *was* entschieden wurde, sondern **wo es liegt und wohin es geht**. Das Register ist ein Fahrplan, kein Archiv. Die sechs Formulare bleiben, was sie sind — Werkzeuge der Erhebung. Das Register ist das, was heute fehlt: **das Feld, in das die Ergebnisse laufen.**
+
+Warum eine Datei je Frage und nicht alles in einer: weil `register_lookup --addressed` Blöcke in Dateien findet, nicht in Tabellenzeilen. Die Datei-Form ist die einzige, die mit dem vorhandenen Werkzeug maschinenlesbar bleibt.
+
+### F2 — Der Weg
+
+**(d) trägt.** Begründung aus dem Bestand:
+
+- `register_lookup --addressed <line>` existiert und tut genau das: `## An <line>`-Blöcke finden.
+- Die Linien lesen beim Start ihre Post und ihren Dispatch — der Pull-Mechanismus ist bereits ihr Atem.
+- (a) erfordert, dass die Leitstelle *jedes* Verdikt aktiv dispatcht — das ist der heutige manuelle Weg, nur formalisiert. Er trägt, aber er macht Routing zu einem Flaschenhals mit einem einzigen Herzschlag.
+- (b) — Register trägt `→ Linie`, ein Generator baut Dispatch — ist ein neuer Apparat. Der Kontext verbietet ihn, solange ein vorhandener trägt.
+- (c) — Linie liest das ganze Register — verlangt, dass jede Linie jedes Verdikt scannt. Das Register wächst; das ist O(Linien × Verdikte) statt O(gerichtet).
+
+**(d)** ist O(gerichtet), braucht keine neue Maschine, und die Linien ändern ihr Verhalten **nicht** — sie tun beim Start, was sie schon tun.
+
+**Aber — und das ist der Kern des Verdikts:** (d) verlagert die Arbeit nur. Der `## An`-Block schreibt sich nicht selbst. Das Verdikt endet heute in Prosa; niemand trägt es in den Block. Also:
+
+**Die Pflicht, die (d) impliziert:** Der Rat — oder die Leitstelle als Schreiber des Rats — muss beim Verfassen des Verdikts den `## An`-Block **in derselben Bewegung** setzen. Nicht danach. Nicht beim nächsten Pass. Die Regel ist eine Zeile: *Kein Verdikt ohne Adressblock.* Das ist kein neuer Apparat; das ist eine Schreibdisziplin, die die Leerstelle schließt, die der Befund misst.
+
+---
+
+## Benannte Risse
+
+1. **Der Schreib-Riss.** (d) setzt voraus, dass der Adressblock entsteht. Solange der Rat in Prosa endet und niemand die Route nennt, ist das Register ein Fahrplan ohne Züge. Der Riss bleibt offen, bis „kein Verdikt ohne `## An`" Regel ist — und Regeln, die niemand prüft, verrotten. Es braucht einen Blick der Leitstelle auf jedes neue Verdikt: *hat es einen Block?* Das ist (a) in Miniatur — unvermeidlich.
+
+2. **Der Verfall-Riss.** Ein Register, das von Hand gepflegt wird, veraltet. `Stand`-Spalten lügen zuerst. Gegenmittel: das Register nie als Quelle der Wahrheit behandeln — der Verdikt-Pfad ist die Wahrheit, das Register nur der Zeiger. Veraltete Zeilen sind dann lästig, nicht tödlich.
+
+3. **Der Pull-Timing-Riss.** (d) heißt: die Linie erfährt ihr Verdikt erst beim nächsten Start. Dringende Verdikte („Netzfusion läuft heiß") warten auf den Pass-Zyklus. Wenn das Haus schnell werden muss, bleibt (a) als Notweg — `task_dispatch` existiert ja. Das Register sollte das aushalten: `→ Route` darf auch „sofort dispatcht" sagen können.
+
+4. **Der Eindeutigkeits-Riss.** `## An <line>`-Blöcke in Verdikt-Dateien und in `post/out/` zu mischen, heißt: `register_lookup --addressed` findet beides, und die Linie kann nicht unterscheiden, was Rat ist und was Brief. Sauber halten: Verdikte leben in `state/rat/`, Briefe in `post/out/`. Zwei Quellen, ein Lookup — aber die Linie muss wissen, aus welchem Register die Adresse kam.
+
+**Kurzfassung:** Register als Index (Datum · Thema · Sitze · Stand · Verdikt-Pfad · → Route), Verdikt als Datei mit `## An`-Block, Leitstelle prüft nur, ob der Block existiert. Kein neuer Apparat. Ein neuer Satz: *kein Verdikt ohne Adresse.*

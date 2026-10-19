@@ -1,0 +1,1 @@
+{"error":{"message":"Model 'seedance-2.0' does not support chat endpoints.","type":"invalid_request_error","param":null,"code":"unsupported_model_feature"}}

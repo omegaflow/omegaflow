@@ -1,0 +1,5 @@
+
+
+F1 Verdikt: B — Begründung: Der aktuelle Zustand (CLOSED im Emitter-Ledger) ist konsistent mit der Praxis, dass Empfänger keine Quittung schreiben können. `xfer ack` wurde zurückgenommen, was die Einführung eines neuen Akt (A) erschwert. C ist nicht praktikabel, da der Zustand nicht abgeleitet werden kann (z. B. `register_lookup` listet geschlossene Blöcke nicht korrekt). Riss: A wäre kohärenter, aber `xfer ack` wurde entfernt, was A verhindert.  
+F2 Verdikt: B — Begründung: `github.ref` adressiert den aktuellen HEAD, während `github.sha` die Vergangenheit anspricht. `cancel-in-progress: true` verhindert Konflikte, was in der Praxis (8 Läufe/10 Min.) kritisch ist. A würde inkonsistente Zustände erzeugen, da SHA nicht direkt mit dem HEAD übereinstimmt. Riss: C (Debounce) fehlt klare Messkriterien.  
+F3 Verdikt: A — Begründung: `state/rat/` muss als Dokumentwurzel hinzugefügt werden, um Verdikte zu finden. B ist nicht praktikabel, da Architekturänderungen RAT-ID erfordern. C erfordert zusätzliche Struktur, die nicht im Kontext steht. Riss: D ist unpraktisch, da manuelle Verteilung fehleranfällig ist. Zusatz: ja, weil Architekturpfade RAT-ID erfordern.

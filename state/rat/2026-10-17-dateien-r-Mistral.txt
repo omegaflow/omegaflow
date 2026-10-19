@@ -1,0 +1,177 @@
+## Verdict
+
+**Drift.** Drei Regel-Quellen konkurrieren, eine ist tot, eine doppelt sich, eine widerspricht sich selbst. Die Aufteilung Start/Turn ist invertiert: das Schwere liegt im Turn, das Leichte im Start.
+
+---
+
+## F1 — Start vs. Turn
+
+| Datei | Soll | Ist | Urteil |
+|---|---|---|---|
+| `~/.config/opencode/AGENTS.md` | **Turn** (jeder Befehl braucht Tool-Wahl) | Turn ✓ | **Richtig platziert, falsch gefüllt** — siehe F2 |
+| `omegaflow/AGENTS.md` | **Turn** (A=A, 0 honored, commit-Regeln gelten immer) | Turn ✓ | **Richtig platziert, zu dünn** — 8 Zeilen für ein ganzes Projekt |
+| `omegaflow-personal/AGENTS.md` | — | **fehlt** (nur `instructions: ["AGENTS.md"]` zeigt ins Leere oder auf falsche Datei) | **Riss** |
+| `SKILL.md` | **Start/Skill-Load** (Kontext, nicht Regel) | Skill-Load ✓ | **Richtig, aber doppelt** — siehe F2 |
+| `command/*.md` | **Start** (`/<linie>`) | Start ✓ | **Richtig** |
+| `opencode.json(c)` | **Start** (Config, nie Turn) | Start ✓ | **Richtig** |
+
+**Die eine Regel-Quelle:** `omegaflow/AGENTS.md` (Projekt) + `~/.config/opencode/AGENTS.md` (global). Zwei Ebenen, nicht drei. Der Skill ist **kein** dritter Pol — er ist ein **Spiegel** und gehört eliminiert oder auf "siehe AGENTS.md" reduziert.
+
+**Anzahl:** Maximal **2 Regel-Dateien** (global + projekt). Alles andere ist Start-Material (Commands) oder Config.
+
+---
+
+## F2 — Die Risse (wörtlich)
+
+### Riss 1: Doppelung — Tool-Tabelle vs. Grep-Regel
+`~/.config/opencode/AGENTS.md` enthält:
+> "Für Inhaltssuche immer das integrierte **Grep**-Tool nutzen (nutzt bereits ripgrep), nicht `grep` per Bash."
+
+**Und direkt darüber** in derselben Datei:
+> "| Inhalt suchen | Grep-Tool (Repo: `sgrep`) | `archive_search <kw> --root <dir>` |"
+
+**Widerspruch:** "immer Grep-Tool" vs. Fallback `archive_search`. Welches Grep-Tool? `sgrep`? Das integrierte? Zwei Namen, eine Zeile Abstand.
+
+### Riss 2: Tote Datei — `omegaflow-personal` ohne AGENTS.md
+`omegaflow-personal/opencode.json`:
+```json
+"instructions": ["AGENTS.md"],
+```
+**Zeigt auf eine Datei, die nicht existiert** (kein `omegaflow-personal/AGENTS.md` im Bestand). Entweder lädt opencode die **falsche** AGENTS.md (aus `omegaflow/`? aus `~/.config`?) oder **keine**. Unbekannter Zustand = Drift.
+
+### Riss 3: Modell-Drift — zwei Configs, zwei Realitäten
+| | `omegaflow/opencode.json` | `omegaflow-personal/opencode.json` |
+|---|---|---|
+| Modell | `deepseek/deepseek-flash` | `deepinfra/deepseek-ai/DeepSeek-V4.1-Flash` |
+| Shell | `bin/agent_sandbox` | `bin/private_shell` |
+| MCP | `chrome-devtools` | **keins** |
+| Agents | `rat`, `line`, `taucher` | nur `line` (build/plan disabled) |
+
+**Gleicher Projektname, zwei verschiedene Universen.** `omegaflow-personal` ist entweder ein **anderes Projekt** (dann: eigener AGENTS.md nötig) oder ein **anderer Modus** (dann: gleicher AGENTS.md, andere Config). Beides gleichzeitig = Drift.
+
+### Riss 4: Skill doppelt den Turn
+`SKILL.md`:
+> "When working inside the omegaflow project directory, AGENTS.md is loaded automatically and carries the full rules. This skill provides quick context when working from OTHER directories or when AGENTS.md is not available."
+
+**Aber der Skill wird geladen, wenn das Projekt aktiv ist** (sonst gäbe es keinen Skill-Load). Also: AGENTS.md **ist** verfügbar. Der Skill ist **redundant** — er wiederholt `omegaflow/AGENTS.md` + mehr, und kostet bei jedem Skill-Load Tokens für nichts.
+
+### Riss 5: `small_model` vs. `small-model`
+| Datei | Key |
+|---|---|
+| `~/.config/opencode/opencode.jsonc` | `"small_model"` |
+| `omegaflow/opencode.json` | `"small_model"` |
+| `omegaflow-personal/opencode.json` | `"small-model"` ← **Bindestrich** |
+
+**Inkonsistente Nomenklatur.** Einer der drei wird ignoriert oder falsch geparst. Welcher, ist unklar — das ist der Riss.
+
+### Riss 6: Command-Dateien — fünf Stimmen, eine Zeile
+`command/future.md` … `command/sensory.md`: Je **eine Zeile**. Aber `SKILL.md` sagt:
+> "The five voices: Mountain … River … Mycelium … Sensory … Future"
+
+**Fünf Stimmen, fünf Commands, fünf Zeilen.** Die Commands sind **Namensschilder**, keine Regeln. Die Regeln stehen im Skill (doppelt) oder in AGENTS.md (zu dünn). Wer `/river` startet, bekommt "River: ω()-Loop, WebGPU-Feld…" — und dann? Alles weitere muss er sich aus dem Skill oder der AGENTS.md holen. **Der Start trägt zu wenig, der Turn zu viel.**
+
+### Riss 7: `watcher.ignore` — `*.φ` vs. `**/*.φ`
+| Config | Pattern |
+|---|---|
+| `omegaflow/opencode.json` | `"*.φ"` |
+| `omegaflow-personal/opencode.json` | `"**/*.φ"` |
+
+**Unterschiedliche Glob-Semantik.** `*.φ` matcht nur Top-Level, `**/*.φ` rekursiv. Einer der beiden sieht `.φ`-Änderungen, der andere nicht. Welcher, hängt vom CWD ab — Drift.
+
+---
+
+## F3 — Der Bau (eine Struktur)
+
+```
+START (einmalig, pro Sitzung):
+├── ~/.config/opencode/opencode.jsonc     → Modell, MCP, globale Config (nie Regeln)
+├── omegafflow/opencode.json              → Projekt-Config: Shell, Agents, Permissions, Watcher
+│   └── "instructions": ["AGENTS.md"]     → verweist auf die EINE Regel-Datei
+│
+├── omegaflow/AGENTS.md                   → DIE REGEL-QUELLE (Projekt)
+│   └── A=A, 0 honored, commit-Regeln, Tool-Tabelle (korrigiert, siehe unten)
+│
+└── ~/.config/opencode/AGENTS.md          → GLOBALE REGELN (nur Tool-Präferenzen, systemweit)
+    └── Tool-Tabelle + "immer Grep-Tool" (einheitlich, ohne Doppel-Namen)
+
+SKILL-LOAD (nur wenn Skill explizit geladen):
+└── ~/.agents/skills/omegaflow-skill/SKILL.md
+    └── NUR: "omegaflow — siehe omegaflow/AGENTS.md für Regeln. Quick-Ref: Protokoll, Stack, Hardware."
+    └── KEINE Wiederholung von AGENTS.md-Inhalt. Max 10 Zeilen.
+
+TURN (jeder Turn, automatisch):
+├── ~/.config/opencode/AGENTS.md          → Tool-Wahl (jeder Befehl)
+└── omegaflow/AGENTS.md                   → A=A, 0 honored, commit-Regeln (jedes Handeln)
+
+/<linie> (Start eines Commands):
+└── command/<linie>.md                    → Rollendefinition + erster Schritt (max 3 Zeilen)
+    └── Verweis: "Regeln: AGENTS.md. Kontext: Skill laden mit /skill omegaflow-skill"
+```
+
+### Wörtliche Aufteilung
+
+| Datei | Trägt | Trägt NICHT |
+|---|---|---|
+| `~/.config/opencode/AGENTS.md` | Tool-Tabelle (korrigiert), "immer integriertes Grep-Tool, Fallback `sgrep` dann `archive_search`" | Projekt-Regeln, omegaflow-Vokabular |
+| `omegaflow/AGENTS.md` | A=A, 0 honored, commit-Regeln, `field`-Syntax, fünf Stimmen (nur Namen + Verweis auf Commands) | Tool-Tabelle (die ist global), Hardware-Details, Protokoll-Spezifikation |
+| `omegaflow/opencode.json` | Shell, Agents, Permissions, Watcher, MCP, Modell | Regeln, Instruktionen (nur Verweis) |
+| `SKILL.md` | Protokoll-Quick-Ref (φ, Stack, Hardware), Verweis auf AGENTS.md | **Nichts**, was AGENTS.md schon hat |
+| `command/<linie>.md` | Rolle, erster Schritt, Verweis auf Skill | Regeln, Kontext-Dump |
+
+### Korrekturen an bestehenden Dateien (wörtlich)
+
+**`~/.config/opencode/AGENTS.md`** — Zeile ersetzen:
+```
+❌ | Inhalt suchen | Grep-Tool (Repo: `sgrep`) | `archive_search <kw> --root <dir>` |
+✅ | Inhalt suchen | integriertes Grep-Tool | `sgrep` | `archive_search <kw> --root <dir>` |
+```
+Und darunter:
+```
+❌ Für Inhaltssuche immer das integrierte Grep-Tool nutzen (nutzt bereits ripgrep), nicht `grep` per Bash.
+✅ Reihenfolge: integriertes Grep-Tool → `sgrep` → `archive_search`. Nie `grep` per Bash.
+```
+
+**`omegaflow-personal/opencode.json`** — entweder:
+- **Option A** (anderes Projekt): `omegaflow-personal/AGENTS.md` anlegen (Kopie von `omegaflow/AGENTS.md` + private Ergänzungen)
+- **Option B** (anderer Modus): `"instructions": ["../omegaflow/AGENTS.md"]` oder Symlink
+
+**`omegaflow-personal/opencode.json`** — Key korrigieren:
+```
+❌ "small-model": "deepinfra/deepseek-ai/DeepSeek-V4.1-Flash",
+✅ "small_model": "deepinfra/deepseek-ai/DeepSeek-V4.1-Flash",
+```
+
+**`SKILL.md`** — reduzieren auf:
+```markdown
+---
+name: omegaflow-skill
+description: Quick context for omegaflow — a kybernetic field system. Full rules in omegaflow/AGENTS.md.
+---
+
+See `omegaflow/AGENTS.md` for all rules (A=A, 0 honored, commits, field syntax).
+
+Quick reference only:
+- Protocol: φ(x,y,z,t), ICRS/TDB, 208 B records, `0xCF 0x86` frame
+- Stack: Rust std-only, vanilla JS, WebGPU WGSL
+- Hardware: Dell XPS 13 9350 (i5, 8GB, no dGPU)
+- Five voices: /mountain /river /mycelium /sensory /future
+```
+
+**`command/<linie>.md`** — erweitern auf 3 Zeilen:
+```markdown
+agent: line
+Rolle: <Name> — <Bereich>
+Erster Schritt: <konkrete Aktion>. Regeln: AGENTS.md. Kontext: /skill omegaflow-skill
+```
+
+---
+
+## Zusammenfassung
+
+| | |
+|---|---|
+| **Regel-Quellen** | 2 (global AGENTS + projekt AGENTS) |
+| **Tote Dateien** | 1 (`omegaflow-personal` ohne AGENTS.md) |
+| **Doppelte Dateien** | 1 (SKILL.md spiegelt AGENTS.md) |
+| **Widersprüche** | 3 (Grep-Tool, small_model/small-model, watcher-Globs) |
+| **Invertierte Last** | Turn trägt zu viel (AGENTS.md dünn, Skill dick), Start zu wenig (Commands sind Namensschilder) |

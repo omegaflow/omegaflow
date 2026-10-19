@@ -1,0 +1,17 @@
+**Verdikt:** A
+
+**Begründung:**
+
+Gemäß der Situation, in der das Modellname bereits seit `:1700` bekannt ist, würde die Verwendung des `:free`-Suffixes für die Modelle, die kostenlos sind, zu einem Fehler führen, da der Guard bei `:1725` den Prefix prüft. Daher wäre die richtige Option A, wobei die Modelle, die kostenlos sind, als "frei" markiert werden.
+
+**Zusatz 1:**
+
+Im Fall der Preis-Wahrheit sollte das "frei"-Suffix des Modells in der Liste der Modelle berücksichtigt werden, nicht der Liste der Routen.
+
+**Zusatz 2:**
+
+`paid-open` nennt die Modell-IDs, nicht die Routen.
+
+**Zusatz 3:**
+
+Gilt das auch für `unorouter` und die übrigen Prefixe, muss in Zukunft geprüft werden.

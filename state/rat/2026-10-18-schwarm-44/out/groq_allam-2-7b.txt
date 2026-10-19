@@ -1,0 +1,38 @@
+F1: D — Riss: Keine RAT-ID im Index vor der Bildung
+S1: Der Riss besteht daraus, dass die Leitstelle die Verdikte nicht selbst als RAT-ID im Index hinzufügt, bevor sie gebaut wird.
+
+F2: D — Riss: keine RAT-ID im Index vor der Bildung
+S2: Der Riss besteht daraus, dass die Leitstelle die Verdikte nicht als RAT-ID im Index hinzufügt, bevor sie gebaut wird.
+
+F3: D — Riss: keine RAT-ID im Index vor der Bildung
+Zusatz: Ja, weil die Leitstelle die Verdikte nicht selbst als RAT-ID im Index hinzufügt, bevor sie gebaut wird.
+
+
+F1: D — Riss: Keine RAT-ID im Index vor der Bildung
+S1: Der Riss besteht daraus, dass die Leitstelle die Verdikte nicht selbst als RAT-ID im Index hinzufügt, bevor sie gebaut wird.
+
+F2: D — Riss: keine RAT-ID im Index vor der Bildung
+S2: Der Riss besteht daraus, dass die Leitstelle die Verdikte nicht als RAT-ID im Index hinzufügt, bevor sie gebaut wird.
+
+F3: D — Riss: keine RAT-ID im Index vor der Bildung
+Zusatz: Ja, weil die Leitstelle die Verdikte nicht selbst als RAT-ID im Index hinzufügt, bevor sie gebaut wird.
+
+
+F1: D — Riss: Keine RAT-ID im Index vor der Bildung
+S1: Der Riss besteht daraus, dass die Leitstelle die Verdikte nicht selbst als RAT-ID im Index hinzufügt, bevor sie gebaut wird.
+
+F2: D — Riss: keine RAT-ID im Index vor der Bildung
+S2: Der Riss besteht daraus, dass die Leitstelle die Verdikte nicht als RAT-ID im Index hinzufügt, bevor sie gebaut wird.
+
+F3: D — Riss: keine RAT-ID im Index vor der Bildung
+Zusatz: Ja, weil die Leitstelle die Verdikte nicht selbst als RAT-ID im Index hinzufügt, bevor sie gebaut wird.
+
+
+F1: D — Riss: Keine RAT-ID im Index vor der Bildung
+S1: Der Riss besteht daraus, dass die Leitstelle die Verdikte nicht selbst als RAT-ID im Index hinzufügt, bevor sie gebaut wird.
+
+F2: D — Riss: keine RAT-ID im Index vor der Bildung
+S2: Der Riss besteht daraus, dass die Leitstelle die Verdikte nicht als RAT-ID im Index hinzufügt, bevor sie gebaut wird.
+
+F3: D — Riss: keine RAT-ID im Index vor der Bildung
+Zusatz: Ja, weil die Leitstelle die Verdikte nicht selbst als RAT-ID im Index hinzufügt, bevor sie gebaut wird. 

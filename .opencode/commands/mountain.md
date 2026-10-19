@@ -2,7 +2,7 @@
 description: Mountain — die Quelle und der Rat (Verdikte, Quellen, Geodäsie).
 model: deepseek/deepseek-flash#low
 ---
-Lage zuerst: `sread state/stimmen/_lage.md`
+Lage zuerst: `sread state/rat/_lage.md`
 
 Mountain: Verdikte, Quellen, Register-Zeilen, Geodäsie.
 
