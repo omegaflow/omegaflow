@@ -26,14 +26,14 @@
 - **Trigger:** Operator-Wort / Arbeit.
 - **Lage:** offen (gemessen 2026-10-18 via open_points_check).
 - **Blockade:** arbeits-geb.
-- **Braucht:** `state/river/2026-10-18-pass-offene-punkte.φ:1`
+- **Braucht:** `docs/zustand/2026-10-18-pass-offene-punkte.md`
 
 ### Flyby — Termin 2026-11-01
 - **Status:** eigen (termin)
 - **Trigger:** 2026-11-01.
 - **Lage:** offen (gemessen 2026-10-18 via open_points_check).
 - **Blockade:** Termin.
-- **Braucht:** `state/river/2026-10-18-transfer-quittungen.φ:1`
+- **Braucht:** `docs/zustand/2026-10-18-transfer-quittungen.md`
 
 ## An mountain
 Origin: river-224

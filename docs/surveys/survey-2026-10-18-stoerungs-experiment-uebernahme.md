@@ -1,3 +1,10 @@
+<!--
+  title: Störungs-Experiment — Übernahme geprüft, River-Schritt gebaut
+  class: survey
+  date: 2026-10-18
+  sha256: 0d3ca471721e3b236ff00719d49f42bead9fb488149b00edcd6ea139bca683ee
+  status: live
+-->
 # Störungs-Experiment — Übernahme geprüft, River-Schritt ist gebaut (2026-10-18, river)
 # Post: $OMEGAFLOW_WORK/post/in/2026-10-18-sensory-an-river-stoerungs-experiment.md
 #   Token xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.17~156a9200

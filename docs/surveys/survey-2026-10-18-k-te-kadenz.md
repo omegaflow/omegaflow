@@ -1,3 +1,10 @@
+<!--
+  title: K-TE-Kadenz — der Lumo-Riss, gemessen
+  class: survey
+  date: 2026-10-18
+  sha256: fc4772daf87b2313467a06f169e0365b25df51d463b2a3fe04b68f10731de0ff
+  status: live
+-->
 # K-TE-Kadenz — der Lumo-Riss, gemessen (2026-10-18, river)
 # Frage: Misst TE(NVE→IVE | AE) die Kopplung — oder nur die Auflösung der Indizes?
 # Werkzeug: tools/measure/src/bin/de2_conditional_te.rs (Commit 764c5ca2f: --cond-seconds)

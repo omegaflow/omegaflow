@@ -1,3 +1,10 @@
+<!--
+  title: Force-Keyword — River-Entscheid zu sensory-259 .12
+  class: blatt
+  date: 2026-10-18
+  sha256: 0ba07cf600f81c2d03516f46afd4e2463c1e3fe074dadf7297b3650184072212
+  status: live
+-->
 # Force-Keyword — River-Entscheid zu sensory-259 `.12~a3bf3c25` (2026-10-18)
 # Linie River · Grundlage docs/surveys/survey-2026-10-15-tauchbefunde-acht-faeden.md:156-168
 #   (Faden 4, KIDS DR4.1 WL, Kanal-Entwurf) und state/mountain/2026-10-15-acht-faeden-verdicts.φ:46-53

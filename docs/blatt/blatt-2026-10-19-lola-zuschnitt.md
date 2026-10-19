@@ -1,3 +1,10 @@
+<!--
+  title: LOLA-Zuschnitt — Rivers Produktwahl
+  class: blatt
+  date: 2026-10-19
+  sha256: 751a15d3fa6190388bac327e9252805ff63be72a9a67d6b537a1ff6d152cc65d
+  status: live
+-->
 # LOLA-Zuschnitt — Rivers Produktwahl für den lunaren Datenarm (2026-10-19)
 # Anlass: mycelium-Brief (LOLA ist Harvest-Zuschnitt, kein Suchauftrag).
 # Grenze: der lunare Tide-Faden (`--cond lunar`, a50ff1d83) braucht LOLA NICHT —

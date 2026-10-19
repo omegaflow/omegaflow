@@ -23,14 +23,14 @@
 - **Trigger:** Arbeit
 - **Lage:** offen (gemessen 2026-10-18)
 - **Blockade:** arbeits-geb
-- **Braucht:** `state/river/2026-10-18-pass-offene-punkte.φ:1`
+- **Braucht:** `docs/zustand/2026-10-18-pass-offene-punkte.md`
 
 ### Flyby
 - **Status:** termin
 - **Trigger:** 2026-11-01
 - **Lage:** offen (gemessen 2026-10-18)
 - **Blockade:** Termin
-- **Braucht:** `state/river/2026-10-18-transfer-quittungen.φ:1`
+- **Braucht:** `docs/zustand/2026-10-18-transfer-quittungen.md`
 
 ## An mountain
 Origin: river-225

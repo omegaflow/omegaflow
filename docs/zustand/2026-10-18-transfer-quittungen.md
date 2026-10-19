@@ -1,3 +1,10 @@
+<!--
+  title: Transfer-Quittungen — River-Pass
+  class: zustand
+  date: 2026-10-18
+  sha256: eee08f22d005544f784de2cd99994fded7bc780a3b1d9127ea94c7468e698761
+  status: live
+-->
 # Transfer-Quittungen — River-Pass (2026-10-18)
 # Linie River · Messzeilen: register_lookup --addressed river; register_lookup --fired river;
 #   xfer list --line river --open; ls -1 post/in/*-an-river*.md

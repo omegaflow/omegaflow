@@ -1,3 +1,10 @@
+<!--
+  title: Mond-Faden — cond lunar gebaut und gemessen
+  class: survey
+  date: 2026-10-18
+  sha256: e42612af3e3acb2e7c0a4520688a5caa449a2e30e4ca53817a7d478b909661f9
+  status: live
+-->
 # Mond-Faden — `--cond lunar` gebaut (2026-10-18, river)
 # Auftrag: future-Brief 2026-10-18-future-an-river-mond-und-braucht.md · Rat R-2026-10-18-o
 # Done-when: `grep -rn 'cond lunar' src tools` zeigt den Arm; cancelled-Lauf und die zwei

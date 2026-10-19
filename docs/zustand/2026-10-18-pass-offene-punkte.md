@@ -1,3 +1,10 @@
+<!--
+  title: River-Pass — offene Punkte
+  class: zustand
+  date: 2026-10-18
+  sha256: 8da20e3e33f6d622247bd4189c6802643f5f8ceeffbe875bb35eb755e8dd3a9f
+  status: live
+-->
 # River-Pass — offene Punkte (2026-10-18)
 # Zuordnung vom Operator nachgemessen (git-Historie + Inhalt); diese Datei schließt
 # die zwei river-eigenen Punkte.

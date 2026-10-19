@@ -1,3 +1,10 @@
+<!--
+  title: Bringschuld — River-Briefe ins Postfach
+  class: zustand
+  date: 2026-10-18
+  sha256: b92c699d2f2801a440b7140d7f37af7f0982ce03677d5bb3bfeaa96cc8bf537e
+  status: live
+-->
 # Bringschuld — River-Briefe ins Postfach (2026-10-18)
 # Messzeilen: register_lookup --addressed river · register_lookup --fired river ·
 #   xfer list --line river --open · ls -1 post/in/*-an-river*.md

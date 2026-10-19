@@ -1,3 +1,10 @@
+<!--
+  title: Flyby-sealed — Option 1: der Pin ist ein Register-Posten
+  class: blatt
+  date: 2026-10-18
+  sha256: 6f59e5812a0437bfc4840b218d2b203cd47aa4b28ec4630c56e60a37476a56e9
+  status: live
+-->
 # Flyby-sealed — Option 1 gebaut: der Pin ist ein Register-Posten (2026-10-18, river)
 # Entscheid: R-2026-10-18-l F3, Endstand 5:3 Option 1 (Sonnet 5.5 + GLM 5.3)
 #   state/stimmen/2026-10-18-r-l-paket-first-formular.md:121-132;
