@@ -2,7 +2,7 @@
   title: Rat-Formular — R-2026-10-19-a Kanon statt Wildwuchs
   class: sheet
   date: 2026-10-19
-  sha256: eb4aba48a78f519cd4b51491d1e07b99f609778cb8c0bf82c38e1229897068bd
+  sha256: 3d1fa9d1ce5b9521379a5a1dbe50c4316f8680de6fa0a26b99da201d33a10d19
   status: live
   see-also: state/stimmen/_rat-anweisung.md
 -->
@@ -53,6 +53,18 @@ Leitstelle hat darüber hinaus an einem Tag **fünf** neue Regeln an vier Orten 
 - **F3 — Werkzeug statt Regel:** Wo ein Fehler mechanisch verhinderbar ist (leerer Suchlauf,
   Zitat ohne Datei, Start ohne Release-Profil), gehört er ins **Gate** — nie als Satz ins `.md`.
   Gilt diese Vorrangregel (Gate vor Prosa), auch wenn das Gate mehr Bau kostet?
+- **F4 — Zwei Arten, nicht mehr:** Womöglich ist „vier Orte" noch zu viel. Vielleicht gibt es nur
+  **Regel** und **Persönlichkeit** — „wie wird gemessen/gebaut/geprüft" gegen „wer spricht und wie".
+  Jede Datei gehört **genau einer** der beiden Arten an, und liegt an dem Ort, der ihr gehört.
+  Stimmst du der Zweiteilung zu — und welche bestehenden Dateien sind **keine** der beiden (nur
+  Ablage, kein Regelsitz) und damit aus der Regel-Frage heraus?
+- **F5 — Wie viele Dateien braucht es überhaupt?** Zählt die Turn-Kosten, nicht das Gefühl:
+  **jeder Pass** liest heute `AGENTS.md`, `house-rules.md`, `_rat-anweisung.md`, `ui-seats.md`,
+  die Command-Datei und bekommt die `opencode.json`-Rechte injiziert — sechs Regelquellen vor der
+  ersten Messung. Nenne die **kleinste Zahl**: wie viele Dateien tragen alle Regeln, ohne dass eine
+  Regel verloren geht, und welche **eine** liest ein Agent am Anfang? Ein Riss bleibt offen: was
+  passiert mit den Regeln, die dann **niemand** mehr zufällig liest, weil sie nicht in der Start-Datei
+  stehen?
 
 ### Was NICHT zu entscheiden ist
 Kein Agent verschiebt oder löscht Ordner ohne Operator-Wort. `AGENTS.md` (die Wissenschaft) bleibt
@@ -94,6 +106,14 @@ heute: Send/Operator-Hand an **5** Orten (`kern.md`, `house-rules.md`, `agent fu
 beim Lesen: `roster2_synthese.md` zitiert Rohantworten zu Google AI Studio, Claude und Qwen, die im
 Ordner **nicht existieren** — ein Befund ohne Datei, den kein Gate bemerkt. Das ist der Ist-Stand,
 über den F entscheidet.
+
+**Turn-Kosten-Befund (gemessen 2026-10-19):** vor der ersten Messung eines Passes liegen bereits
+**sechs** Regelquellen im Kontext — `AGENTS.md` (7 Zeilen, 219 B) · `opencode.json` (2 086 B,
+Rechte injiziert) · `.opencode/commands/<linie>.md` (Lines-Start) · `docs/concepts/house-rules.md`
+(103 Zeilen) · `state/stimmen/_rat-anweisung.md` (287 Zeilen) · `ui-seats.md` (Roster + alle
+Bedienregeln). Dazu kommen in einem Rat-Pass das Formular und die Auswahl. Der Operator sagt: „das
+ist mir alleine schon zu viel." **Die Zeile, die im Rat zu messen ist: nicht Zeilen sparen, sondern
+Doppelungen streichen** — eine Regel, die zweimal dasteht, kostet doppelt und widerspricht sich.
 
 ---
 
