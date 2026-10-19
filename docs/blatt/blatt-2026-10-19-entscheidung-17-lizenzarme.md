@@ -2,7 +2,7 @@
   title: Entscheidungstabelle — die 17 lizenzgesperrten Arme
   class: blatt
   date: 2026-10-19
-  sha256: 3e410df5368aebf31e99706b50cb253ec894e0bbdb3379c1952ae082e740d93a
+  sha256: 889c78380e913344acf600c3465ea117ac25cd30a2173df171049a89ec1d1d4f
   status: live
   see-also: phi/sources.φ tools/harvest/src/bin/ docs/surveys/survey-2026-10-09-redistribution-alternativen.md
 -->
@@ -36,7 +36,7 @@ gemessen (Operator-Gespräch 2026-10-11).
 |---:|---|---|---|---|---|---|
 | 1 | `babamul` | `babamul.caltech.edu/api/babamul` (ZTF/LSST-Alert-Broker, Kafka) | kein Block; Konto/Token (`BABAMUL_API_TOKEN`) | terms ungemessen; Alerts sind öffentlich, der Broker-Zugang ist ein Konto | A nur nach terms-URL; sonst C | **C** bis die Broker-Terms gemessen sind; Konto ist kein Lizenzersatz |
 | 2 | `demeter` | `regards.cnes.fr` (CDPP/CNES, Order + WAF) | **Block, `terms auth-required`** (off-CDN, 2026-10-19) | **CDPP/SIPAD-Lizenz V1.1: Weitergabe nur mit schriftlicher Zustimmung** (2026-10-20 gemessen, Web + Paper). Die Etalab-2.0-Messung vom 2026-10-11 ist **widerlegt** | C | **C** — Zugang ist kein Recht; kein Re-Host |
-| 3 | `dhm_gauge` | `dhm.gov.np` (`/hydrology/hms-Single`, `getRiverWatchBySeriesId_Single`) | kein Block | terms ungemessen | C; für causal-arrow die offene GloFAS-Reihe nehmen | **C** — ohne terms kein CDN; die Flut-Lücke über GloFAS/USGS schließen |
+| 3 | `dhm_gauge` | `https://dhm.gov.np/` — `/hydrology/river-watch`, `/pages/data`; Portal `hydrology.gov.np` (der alte Pfad `/hydrology/hms-Single` ist 404, 2026-10-20) | kein Block | **kein Lizenztext** auf der Seite (nur Karten-Attributionen, 2026-10-20) | C | **C** — kein Re-Host; die Flut-Messung trägt `openmeteo_flood` (`bc58013db`) |
 | 4 | `erbq` | `services7.arcgis.com/.../tohoku_seismicity/FeatureServer/5/query` | JMA-Quake-Block `phi:31512` trägt `terms jp-public-data-license-1.0`; der ArcGIS-Arm selbst hat keinen Block | für den ArcGIS-Arm ungemessen; JMA-Terms nur für die JMA-Zeile | A nur wenn dieselbe Produktzeile belegt ist; sonst C | **C** — den JMA-Block nutzen, den ArcGIS-Zwilling nicht ohne eigene terms |
 | 5 | `exposome` | `exposome-explorer.iarc.fr/.../environmental_pollutants.csv.zip` | **declined** (`survey-2026-10-04-exposom-matrix.md:55`: Katalog, keine Konzentration) | kein Redistributionsrecht nötig — der Arm trägt die Messung nicht | B | **B** — bereits declined; kein Neubau |
 | 6 | `fugin` | `jvo.nao.ac.jp` (**NRO/FUGIN-CO-Würfel**, 3D-VRAD; nicht „Skymap") | kein Block; `fugin_skymap_compiler` steht | **kein Lizenztext** (2026-10-20 gemessen): JVO bittet um Zitierung, NAOJ-Copyright erlaubt nur die Free-Use-Scope (privat/Bildung/Nachricht), Weitergabe nicht | C | **C** — Zitierbitte ist keine Lizenz; kein Re-Host |
