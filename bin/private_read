@@ -9,7 +9,7 @@
 #
 # Usage: private_read <path-under-private | absolute-path-under-private>
 set -eu
-priv="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}"
+priv="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-private}"
 target="${1:?usage: private_read <file-under-private|absolute>}"
 case "$target" in
   /*) f="$target" ;;

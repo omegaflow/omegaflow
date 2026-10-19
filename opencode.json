@@ -24,7 +24,7 @@
     },
     {
       "action": "edit",
-      "resource": "/home/johannes/projects/omegaflow-personal/**",
+      "resource": "/home/johannes/projects/omegaflow-private/**",
       "effect": "deny"
     },
     {
@@ -59,12 +59,12 @@
     },
     {
       "action": "read",
-      "resource": "/home/johannes/projects/omegaflow-personal/**",
+      "resource": "/home/johannes/projects/omegaflow-private/**",
       "effect": "deny"
     },
     {
       "action": "shell",
-      "resource": "*omegaflow-personal*",
+      "resource": "*omegaflow-private*",
       "effect": "deny"
     },
     {

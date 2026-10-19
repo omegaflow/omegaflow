@@ -9,7 +9,7 @@
 # It must run OUTSIDE the cage (like private_read): the cage hides the private house.
 # Usage: privat_audit [dir]     (default: the private house)
 set -eu
-priv="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}"
+priv="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-private}"
 root="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 self="$root/private_read"
 dir="${1:-$priv}"

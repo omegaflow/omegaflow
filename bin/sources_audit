@@ -37,9 +37,16 @@ HOST_RE='^https?://([^/]+)'
 mism=0; loose=0; empty=0; nourl=0; files=0
 
 check_dir() {
-  local root="$1" dir="$2" name host found
+  local root="$1" dir="$2" name host
   name="$(basename "$dir")"
   case "$name" in *.*) host="$name";; *) host="";; esac
+  local claimed=""
+  if [ -n "$host" ]; then
+    claimed="$host"
+  else
+    # Netloc tiefer in der Kette? (experiments/<experiment>/<netloc>/…)
+    claimed=$(printf '%s' "${dir#$root/}" | tr '/' '\n' | grep '\.' | tail -1)
+  fi
   while IFS= read -r f; do
     files=$((files+1))
     if [ ! -s "$f" ]; then
@@ -53,9 +60,9 @@ check_dir() {
         [ -z "$found" ] && found=$(grep -aoE '"origin"[[:space:]]*:[[:space:]]*"https?://[^/"'"'"' <>]+' "$f" 2>/dev/null | head -1 | grep -oE 'https?://[^/"'"'"' <>]+' | sed -E 's|https?://||')
         if [ -z "$found" ]; then
           nourl=$((nourl+1))
-        elif [ -n "$host" ]; then
+        elif [ -n "$claimed" ]; then
           case "$found" in
-            *"$host"*|"$host"*) : ;;
+            *"$claimed"*|"$claimed"*) : ;;
             github.com|raw.githubusercontent.com|zenodo.org|doi.org|www.w3.org|schemas.openxmlformats.org|purl.org|creativecommons.org) : ;;
             *) printf 'MISMATCH\t%s\tnennt %s\n' "$f" "$found"; mism=$((mism+1));;
           esac

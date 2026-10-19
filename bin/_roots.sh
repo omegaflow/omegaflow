@@ -4,7 +4,7 @@
 # Das private Register-Repo liegt AUSSERHALB des oeffentlichen Baums. Alle Wurzeln
 # werden hier einmal aufgeloest — kein Werkzeug erfindet einen Pfad.
 : "${OMEGAFLOW_WORK:=$HOME/projects/omegaflow-work}"
-: "${OMEGAFLOW_PRIVATE:=$HOME/projects/omegaflow-personal}"
+: "${OMEGAFLOW_PRIVATE:=$HOME/projects/omegaflow-private}"
 : "${OMEGAFLOW_TMP:=/tmp/opencode}"
 : "${OMEGAFLOW_EXPERIMENTS:=$OMEGAFLOW_WORK/experiments}"
 : "${OMEGAFLOW_SOURCES:=$OMEGAFLOW_WORK/sources}"
