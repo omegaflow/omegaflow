@@ -351,7 +351,10 @@ fn harvest_open_meteo(station: &Station, ws: &str, we: &str) -> Vec<Series> {
         let mut v = Vec::new();
         for i in 0..times.len().min(vals.len()) {
             t.push(unix_of_datetime_utc(&times[i]));
-            v.push(vals[i].parse().unwrap_or(f64::NAN));
+            let Ok(value) = vals[i].parse() else {
+                continue;
+            };
+            v.push(value);
         }
         Series {
             station: station.id,
