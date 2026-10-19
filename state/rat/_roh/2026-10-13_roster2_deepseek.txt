@@ -1,0 +1,34 @@
+Omegaflow Rat
+omegaflow-Rat: 4 Entscheidungen, je Zustimmung/Abweichung + stärkster Einwand, knapp.
+
+1. Einen globalen Höhen-Datenzeugen (SRTM15+) nur für ein Gebietsfenster um die Messstation Kapuskasing (49.39 N, −82.32 W; gemessener Bodenwert 179.94 m) registrieren und am Messwert prüfen — sinnvoll?
+
+2. Drei neue Tabellen-Leser (eigener, noch nicht gespeicherter Code der eigenen Linie) liegen in einer geteilten Datei, die auch eine andere Linie bearbeitet. Vorschlag: block-scoped speichern (nur eigene Teile, fremde unberührt)?
+
+3. Acht Ersatzquellen: sechs sind schon im Register (Duplikat) → streichen; zwei echte Lücken bleiben (Vorquelle 404; Lizenz unbekannt)?
+
+4. Drei Ephemeriden-Programme: eines schreibt JSON, der Leser erwartet Binär. Vorschlag: Programm auf Binär umstellen (Vertrag gehört dem Leser), die drei nach Vollständigkeit bauen?
+
+Kurz, je Zustimmung/Abweichung + stärkster Einwand:
+
+1. SRTM15+ nur für Kapuskasing-Fenster registrieren und am Messwert 179.94 m prüfen — sinnvoll?
+Zustimmung. Fenster-Registrierung ist der richtige Minimalumfang; der Messwert ist ein guter Sanity-Check.
+Stärkster Einwand: Ein einzelner Punkt (179.94 m) validiert nicht die Kachel-Georeferenzierung. SRTM15+ ist ein globales Modell mit begrenzter lokaler Genauigkeit — eine Abweichung von einigen Metern ist normal und darf nicht als Registrierungsfehler fehlinterpretiert werden. Besser: mehrere Kontrollpunkte im Fenster + explizite Toleranz.
+
+2. Drei neue Tabellen-Leser in geteilter Datei: block-scoped speichern (nur eigene Teile, fremde unberührt)?
+Zustimmung. Block-scoped, fremde Bereiche unangetastet, ist die richtige Strategie bei geteilter Datei.
+Stärkster Einwand: „Nur eigene Teile" ist ohne klare Eigentumsmarkierung (Abschnitts-Kommentare/IDs) nicht durchsetzbar — bei späterem Merge drohen stille Konflikte. Vorher Eigentumsgrenzen explizit markieren.
+
+3. Acht Ersatzquellen: sechs Duplikate streichen; zwei echte Lücken (404-Vorquelle, unbekannte Lizenz)?
+Zustimmung zum Streichen der sechs Duplikate.
+Stärkster Einwand: Die zwei „echten Lücken" sind nicht gleichwertig: 404-Vorquelle = Ersatz suchen oder als tot markieren; unbekannte Lizenz = nicht registrieren, bis Lizenz geklärt — sonst rechtliches Risiko im Register. Nicht beide als „Lücke" gleich behandeln.
+
+4. Drei Ephemeriden-Programme: eines schreibt JSON, Leser erwartet Binär → Programm auf Binär umstellen (Vertrag gehört dem Leser), alle drei nach Vollständigkeit bauen?
+Zustimmung zur Vertragshoheit des Lesers und zum Binär-Umstellen.
+Stärkster Einwand: „Vertrag gehört dem Leser" gilt nur, wenn der Leser tatsächlich die stabile, spezifizierte Schnittstelle ist — sonst zwingt man drei Programme einem möglicherweise provisorischen Format auf. Erst Binärformat spezifizieren/frieren, dann alle drei bauen; Reihenfolge „nach Vollständigkeit" ist zweitrangig gegenüber Format-Freeze.
+
+Kurzfazit: 1–4 alle zustimmungsfähig, aber jeweils mit einschränkendem Einwand: (1) mehrere Kontrollpunkte, (2) Eigentumsmarkierung, (3) Lizenz-Lücke separat behandeln, (4) Format erst einfrieren.
+
+DeepThink
+Search
+AI-generated, for reference only
