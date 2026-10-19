@@ -29,13 +29,16 @@ read-only Taucher (flash, 2026-10-03) über `docs/paper/*.md` + `docs/blatt/*.md
   `uranus-rift-ephemerides` + die `docs/blatt/*.md` (sonne-erde, der-grat,
   kreuz-screening-gyirong, solar-seconds, thuan, anderson-flyby, pioneer-floor,
   te-externer, fruehwarnsystem).
-- **Externe Referenz-Abstracts (kein omegaflow-Messpaper):**
-  `armstrong-1998-phase-scintillation-abstract`, `armstrong-woo-estabrook-1979-…`,
-  `asmar-2005-…`, `woo-armstrong-1979-jgr-abstract`,
-  `yu-tong-fang-hu-2022-…`, `terminologie-der-gegenstroemung` (trägt `class: paper`,
-  ist aber Begriffskanon, kein Verdikt).
-- **Fremd-Volltexte außerhalb des Genres:** `pioneer-anomaly-lrr-2010-4.txt`,
-  `armstrong-woo-estabrook-1979-….txt`.
+- **Externe Referenzen (Volltext nicht im Repo, nur bibliographisch):**
+  J. W. Armstrong, R. Woo & F. B. Estabrook (1979), *Interplanetary phase scintillation and
+  the search for VLF gravitational radiation*, ApJ; R. Woo & J. W. Armstrong (1979), JGR;
+  J. W. Armstrong (1998), *Phase scintillation* (Abstract); S. Asmar (2005), *Spacecraft
+  Doppler tracking: noise budget and accuracy*; Yu, Tong, Fang & Hu (2022), *Transfer
+  entropy … solar-wind drivers*. `terminologie-der-gegenstroemung` trägt `class: paper`,
+  ist aber Begriffskanon, kein Verdikt.
+- **Fremd-Volltexte außerhalb des Genres:** `pioneer-anomaly-lrr-2010-4.txt`.
+  Die Volltexte von Armstrong/Woo/Asmar/Yu liegen lokal unter
+  `work/sources/referenz/fremde-paper/` (Weitergabe nicht erlaubt, deshalb nicht im Repo).
 
 ## Wahrheits-Schwelle (§2) — bestätigt
 
