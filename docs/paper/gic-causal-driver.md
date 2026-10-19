@@ -562,6 +562,72 @@ Bz as the leading sub-daily candidate, but the measured GIC series does not
 produce a family-clearing driver at this grain. The measurement closes the
 "GIC side not measured" gap as a measured null result, not as an arrow.
 
+**Hourly-grain cross-check (gemessen 2026-10-19).** The daily block above is
+the paper's daily grain, not the sub-daily grain on which the driver question
+is posed. The same probe therefore measures the **native hourly target**, the
+hourly GIC peak-magnitude bucket from `fmi_gic.bin` (|GIC| in ampere, no
+further daily reduction), against the OMNI2 hourly medians of BZ_GSM, V and N.
+Window: **2003-01-01T00:00Z → 2003-12-31T23:00Z (365.00 days = 1.00 year;
+n ≥ 1 Jahr)**, with **n = 6 453** common hours. Lag sweep **0–6 h**; the six
+directed pairs × seven lags give 42 calls, of which the lag-0 and lag-1 arms
+are numerically identical per pair (§3.1), i.e. 36 distinct statistics. Null
+as §3.2: ten phase-randomized surrogates, fixed seed `0x9E3779B97F4A7C15`,
+per-lag threshold μ + 2σ, **fam = 1.4223e-1** = the maximum surrogate TE over
+the round. Command:
+`./target/release/gic_te_probe --grain hour --start 2003-01-01 --end 2004-01-01 --lags 0,1,2,3,4,5,6 --n-surreps 10 --threads 4`
+(artifact `/tmp/opencode/gic_te/result_hourly_2003.txt`).
+
+| pair | lag h | TE | own threshold | verdict |
+|---|---:|---:|---:|---|
+| Bz → GIC | 0 / 1 | 9.9131e-2 | 7.5548e-2 | family bound |
+| Bz → GIC | 2 | 8.9732e-2 | 7.9711e-2 | family bound |
+| Bz → GIC | 3 | 8.8143e-2 | 8.0132e-2 | family bound |
+| Bz → GIC | 4 | 8.7156e-2 | 7.8370e-2 | family bound |
+| Bz → GIC | 5 | 8.6383e-2 | 8.0345e-2 | family bound |
+| Bz → GIC | 6 | 8.7926e-2 | 8.0312e-2 | family bound |
+| GIC → Bz | 0 / 1 | 9.5928e-2 | 1.1432e-1 | silent |
+| GIC → Bz | 2 | 9.7727e-2 | 1.2909e-1 | silent |
+| GIC → Bz | 3 | 1.0109e-1 | 1.3511e-1 | silent |
+| GIC → Bz | 4 | 9.8829e-2 | 1.3958e-1 | silent |
+| GIC → Bz | 5 | 9.7371e-2 | 1.4228e-1 | silent |
+| GIC → Bz | 6 | 1.0221e-1 | 1.4339e-1 | silent |
+| Speed → GIC | 0 / 1 | 1.0588e-1 | 7.6508e-2 | family bound |
+| Speed → GIC | 2 | 1.2055e-1 | 8.2877e-2 | family bound |
+| Speed → GIC | 3 | 1.2139e-1 | 8.6191e-2 | family bound |
+| Speed → GIC | 4 | 1.2058e-1 | 8.4736e-2 | family bound |
+| Speed → GIC | 5 | 1.1906e-1 | 8.6600e-2 | family bound |
+| Speed → GIC | 6 | 1.1704e-1 | 8.5540e-2 | family bound |
+| GIC → Speed | 0 / 1 | 2.4730e-2 | 2.2501e-2 | family bound |
+| GIC → Speed | 2 | 3.6082e-2 | 3.3424e-2 | family bound |
+| GIC → Speed | 3 | 4.2284e-2 | 4.0350e-2 | family bound |
+| GIC → Speed | 4 | 5.0141e-2 | 4.7892e-2 | family bound |
+| GIC → Speed | 5 | 5.6436e-2 | 5.4440e-2 | family bound |
+| GIC → Speed | 6 | 6.0239e-2 | 6.0354e-2 | silent |
+| Density → GIC | 0 / 1 | 6.7324e-2 | 7.5516e-2 | silent |
+| Density → GIC | 2 | 7.0704e-2 | 7.9472e-2 | silent |
+| Density → GIC | 3 | 7.0529e-2 | 8.2281e-2 | silent |
+| Density → GIC | 4 | 7.0351e-2 | 7.9520e-2 | silent |
+| Density → GIC | 5 | 7.0000e-2 | 8.1245e-2 | silent |
+| Density → GIC | 6 | 6.9919e-2 | 8.2238e-2 | silent |
+| GIC → Density | 0 / 1 | 5.7306e-2 | 6.0491e-2 | silent |
+| GIC → Density | 2 | 7.3189e-2 | 8.4248e-2 | silent |
+| GIC → Density | 3 | 8.1630e-2 | 9.4623e-2 | silent |
+| GIC → Density | 4 | 8.7592e-2 | 9.9758e-2 | silent |
+| GIC → Density | 5 | 9.3333e-2 | 1.0782e-1 | silent |
+| GIC → Density | 6 | 9.8613e-2 | 1.0923e-1 | silent |
+
+**Hourly verdict: no fam-clearing driver.** At the hourly grain no directed
+pair reaches fam = 1.4223e-1. Bz→GIC is family bound at every lag (maximum
+9.9131e-2 at 0/1 h), Speed→GIC is family bound at every lag and rises to
+1.2139e-1 at 3 h, Density→GIC is silent at every lag, and GIC→Bz and
+GIC→Density are silent; only GIC→Speed is family bound at lags 0–5 h. The
+hourly run therefore **confirms the daily null result** (no arrow) and does not
+replace it. It does **relativize one reading of the daily block**: the daily
+statement that Bz carries the larger forward point estimate does not carry
+over — at hourly grain Speed overtakes Bz from lag 2 h on, and both stay below
+fam. The daily run's Bz > Speed ordering is a grain artefact of the daily
+maxima, not a sub-daily ranking.
+
 ## 5. Discussion
 
 **The measured driver is sub-daily — on the yearly round and the asymmetry, not
