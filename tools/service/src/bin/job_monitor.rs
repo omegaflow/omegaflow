@@ -124,42 +124,56 @@ fn system_panel(color: bool) -> Vec<String> {
     lines.push(paint(color, "1;33", "▌ SYSTEM ▐"));
     let load = loadavg();
     let ncpu = n_cpus();
-    let load = match load {
-        Some(l) => l,
-        None => 0.0,
+    let ncpu_f = ncpu as f64;
+    let (load_txt, load_col) = match load {
+        Some(l) => {
+            let frac = l / ncpu_f;
+            let col = if frac < 0.7 {
+                "1;32"
+            } else if frac < 1.3 {
+                "1;33"
+            } else {
+                "1;31"
+            };
+            (
+                format!(
+                    "load {l:.2}/{ncpu} {} {:>3}%",
+                    meter_bar(frac, 12),
+                    (frac * 100.0).round() as u64
+                ),
+                col,
+            )
+        }
+        None => ("load absent".to_string(), "2"),
     };
     let (used_gb, total_gb, frac) = mem_frac();
-    let ncpu_f = ncpu as f64;
-    let loadbar = meter_bar(load / ncpu_f, 12);
-    let membar = meter_bar(frac, 12);
-    let load_pct = ((load / ncpu_f) * 100.0).round() as u64;
-    let mem_pct = (frac * 100.0).round() as u64;
-    let load_col = if load / ncpu_f < 0.7 {
-        "1;32"
-    } else if load / ncpu_f < 1.3 {
-        "1;33"
+    let (mem_txt, mem_col) = if frac.is_finite() && total_gb.is_finite() {
+        let col = if frac < 0.7 {
+            "1;32"
+        } else if frac < 0.85 {
+            "1;33"
+        } else {
+            "1;31"
+        };
+        (
+            format!(
+                "mem {:.1}G/{:.1}G {} {:>3}%",
+                used_gb,
+                total_gb,
+                meter_bar(frac, 12),
+                (frac * 100.0).round() as u64
+            ),
+            col,
+        )
     } else {
-        "1;31"
-    };
-    let mem_col = if frac < 0.7 {
-        "1;32"
-    } else if frac < 0.85 {
-        "1;33"
-    } else {
-        "1;31"
+        ("mem absent".to_string(), "2")
     };
     lines.push(format!(
-        "  {} load {}/{} {}  {:>3}%   {} mem {}/{} {}  {:>3}%",
+        "  {} {}   {} {}",
         paint(color, load_col, "CPU"),
-        format!("{:.2}", load),
-        ncpu,
-        loadbar,
-        load_pct,
+        load_txt,
         paint(color, mem_col, "RAM"),
-        format!("{:.1}G", used_gb),
-        format!("{:.1}G", total_gb),
-        membar,
-        mem_pct,
+        mem_txt,
     ));
     lines
 }
@@ -252,10 +266,10 @@ fn unit_lines(u: &UnitJob, color: bool) -> Vec<String> {
 
 fn spin_char() -> char {
     let frames = ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷'];
-    let ms = match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(d) => d.as_millis() as usize,
-        Err(_) => 0,
+    let Ok(elapsed) = SystemTime::now().duration_since(UNIX_EPOCH) else {
+        return '·';
     };
+    let ms = elapsed.as_millis() as usize;
     frames[(ms / 180) % frames.len()]
 }
 
@@ -437,46 +451,36 @@ fn age_label(now: u64, created: Option<u64>) -> String {
 
 fn clock_label() -> String {
     let now = SystemTime::now();
-    let secs = match now.duration_since(UNIX_EPOCH) {
-        Ok(d) => d.as_secs(),
-        Err(_) => 0,
+    let Ok(elapsed) = now.duration_since(UNIX_EPOCH) else {
+        return "clock absent".to_string();
     };
-    let local = secs as i64 + local_utc_offset();
+    let Some(offset) = local_utc_offset() else {
+        return "clock absent".to_string();
+    };
+    let local = elapsed.as_secs() as i64 + offset;
     let s = local.rem_euclid(86400);
     format!("{:02}:{:02}:{:02} local", s / 3600, (s % 3600) / 60, s % 60)
 }
 
-fn local_utc_offset() -> i64 {
+fn local_utc_offset() -> Option<i64> {
     let tz = env::var("TZ").ok();
     if tz.as_deref() == Some("UTC") || tz.as_deref() == Some("Etc/UTC") {
-        return 0;
+        return Some(0);
     }
     let out = Command::new("date")
         .args(["+%z"])
         .output()
         .ok()
-        .filter(|o| o.status.success());
-    match out {
-        Some(o) => {
-            let s = String::from_utf8_lossy(&o.stdout);
-            let s = s.trim();
-            if s.len() == 5 && (s.starts_with('+') || s.starts_with('-')) {
-                let sign: i64 = if s.starts_with('-') { -1 } else { 1 };
-                let h: i64 = match s[1..3].parse() {
-                    Ok(v) => v,
-                    Err(_) => 0,
-                };
-                let m: i64 = match s[3..5].parse() {
-                    Ok(v) => v,
-                    Err(_) => 0,
-                };
-                sign * (h * 3600 + m * 60)
-            } else {
-                0
-            }
-        }
-        None => 0,
+        .filter(|o| o.status.success())?;
+    let s = String::from_utf8_lossy(&out.stdout);
+    let s = s.trim();
+    if s.len() != 5 || !(s.starts_with('+') || s.starts_with('-')) {
+        return None;
     }
+    let sign: i64 = if s.starts_with('-') { -1 } else { 1 };
+    let h: i64 = s[1..3].parse().ok()?;
+    let m: i64 = s[3..5].parse().ok()?;
+    Some(sign * (h * 3600 + m * 60))
 }
 
 fn paint(color: bool, code: &str, s: &str) -> String {

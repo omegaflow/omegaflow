@@ -9,6 +9,7 @@ const NETLOC: &str = "noaa-oar-hourly-gdp-pds.s3.amazonaws.com";
 const BASE: &str = "https://noaa-oar-hourly-gdp-pds.s3.amazonaws.com/latest/gdp-v2.01.1.zarr";
 const MAGIC: [u8; 4] = *b"GDPT";
 const REC_BYTES: usize = 40;
+const FIRST_BUOY_INDEX: usize = 0;
 
 struct DrifterRecord {
     id: u64,
@@ -521,7 +522,7 @@ fn main() {
         Some(Select::Index(
             match arg_value(&args, "--index").and_then(|v| v.parse::<usize>().ok()) {
                 Some(v) => v,
-                None => 0,
+                None => FIRST_BUOY_INDEX,
             },
         ))
     };

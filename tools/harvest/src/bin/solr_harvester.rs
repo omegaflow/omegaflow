@@ -49,7 +49,13 @@ fn main() {
                 i += 1;
             }
             "--q" => {
-                query = args.get(i + 1).cloned().unwrap_or_default();
+                query = match args.get(i + 1) {
+                    Some(v) => v.clone(),
+                    None => {
+                        eprintln!("--q carries no query");
+                        std::process::exit(1);
+                    }
+                };
                 i += 1;
             }
             "--pages" => {

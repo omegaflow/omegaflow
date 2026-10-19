@@ -80,7 +80,7 @@ fn ascii_columns(header: &FitsHeader) -> Vec<AsciiColumn> {
     let mut cols = Vec::new();
     let tfields = match header.int("TFIELDS") {
         Some(v) => v as usize,
-        None => 0,
+        None => return Vec::new(),
     };
     for i in 1..=tfields {
         let name = match header.str_unescaped(&format!("TTYPE{}", i)) {

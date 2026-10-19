@@ -11,6 +11,8 @@ use std::sync::{Arc, Mutex};
 const BASE: &str = "https://physionet.org/files/ltmm/1.0.0/";
 const CDN_RELEASE: &str = "physionet.org";
 const DEFAULT_DECIMATE_MIN: f64 = 1.0;
+const DEFAULT_OUT: &str = "ltmm_movement.bin";
+const NO_OFFSET: usize = 0;
 
 const G_STANDARD: f64 = 9.80665;
 const DEG_TO_RAD: f64 = PI / 180.0;
@@ -304,7 +306,10 @@ fn main() {
         return;
     }
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "ltmm_movement.bin".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => DEFAULT_OUT.to_string(),
+    };
     let decimate_min: f64 = arg_value(&args, "--decimate-min")
         .and_then(|v| v.parse().ok())
         .unwrap_or(DEFAULT_DECIMATE_MIN);
@@ -320,9 +325,10 @@ fn main() {
         .and_then(|v| v.parse().ok())
         .unwrap_or(4);
     let limit: Option<usize> = arg_value(&args, "--limit").and_then(|v| v.parse().ok());
-    let offset: usize = arg_value(&args, "--offset")
-        .and_then(|v| v.parse().ok())
-        .unwrap_or(0);
+    let offset: usize = match arg_value(&args, "--offset").and_then(|v| v.parse().ok()) {
+        Some(v) => v,
+        None => NO_OFFSET,
+    };
     let Some(records_text) = fetch(&format!("{}RECORDS", BASE)) else {
         eprintln!("RECORDS fetch void — the harvest stays void (0 honored)");
         std::process::exit(1);
@@ -371,10 +377,10 @@ fn main() {
                     }
                     let rel = &records[i];
                     match harvest_record(rel, bucket_s) {
-                        Ok(recs) => series
-                            .lock()
-                            .unwrap_or_else(|e| e.into_inner())
-                            .extend(recs),
+                        Ok(recs) => match series.lock() {
+                            Ok(mut guard) => guard.extend(recs),
+                            Err(poisoned) => poisoned.into_inner().extend(recs),
+                        },
                         Err(note) => {
                             eprintln!("{}: {}", rel, note);
                             skipped.fetch_add(1, Ordering::SeqCst);
@@ -388,10 +394,16 @@ fn main() {
             });
         }
     });
-    let mut series = Arc::try_unwrap(series)
-        .ok()
-        .and_then(|m| m.into_inner().ok())
-        .unwrap_or_default();
+    let mut series = match Arc::try_unwrap(series) {
+        Ok(mutex) => match mutex.into_inner() {
+            Ok(v) => v,
+            Err(poisoned) => poisoned.into_inner(),
+        },
+        Err(_) => {
+            eprintln!("series still shared after harvest — the bin stays unwritten");
+            std::process::exit(1);
+        }
+    };
     series.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.2.cmp(&b.2)));
     let skipped = skipped.load(Ordering::SeqCst);
     if series.is_empty() {
@@ -426,12 +438,14 @@ fn main() {
 }
 
 fn merge_chunks(args: &[String]) {
-    let out = arg_value(args, "--out").unwrap_or_else(|| "ltmm_movement.bin".to_string());
-    let chunk_paths: Vec<String> = args
-        .iter()
-        .position(|a| a == "--merge")
-        .map(|p| args[p + 1..].to_vec())
-        .unwrap_or_default();
+    let out = match arg_value(args, "--out") {
+        Some(v) => v,
+        None => DEFAULT_OUT.to_string(),
+    };
+    let chunk_paths: Vec<String> = match args.iter().position(|a| a == "--merge") {
+        Some(p) => args[p + 1..].to_vec(),
+        None => Vec::new(),
+    };
     if chunk_paths.is_empty() {
         eprintln!("--merge carries no chunk paths");
         std::process::exit(1);

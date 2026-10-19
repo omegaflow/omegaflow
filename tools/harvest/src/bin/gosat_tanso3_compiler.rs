@@ -27,6 +27,7 @@ const BAND1: f64 = 1.0;
 const BAND2: f64 = 2.0;
 const BAND3: f64 = 3.0;
 const RAD_MEDIAN_BOUND: f64 = 1.6384e4;
+const ABSENT_CLOCK_FIELD: i64 = 0;
 
 const BAND_GROUPS: [(&str, f64); 3] = [("Band1", BAND1), ("Band2", BAND2), ("Band3", BAND3)];
 const COMMON_LAT: &str = "/Common/SoundingGeometry/latitude";
@@ -550,15 +551,15 @@ fn epoch_unix_from_units(units: &str) -> Option<f64> {
             let hh: i64 = tp.next()?.parse().ok()?;
             let mm: i64 = match tp.next() {
                 Some(v) => v.parse().ok()?,
-                None => 0,
+                None => ABSENT_CLOCK_FIELD,
             };
             let ss: i64 = match tp.next() {
                 Some(v) => v.parse().ok()?,
-                None => 0,
+                None => ABSENT_CLOCK_FIELD,
             };
             hh * 3600 + mm * 60 + ss
         }
-        None => 0,
+        None => ABSENT_CLOCK_FIELD,
     };
     Some(days as f64 * 86400.0 + secs as f64)
 }

@@ -10,6 +10,7 @@ const NETLOC: &str = "storage.googleapis.com";
 const DEFAULT_BUCKET: &str = "noaa-passive-bioacoustic";
 const DEFAULT_PREFIX: &str = "nrs/products/";
 const STATIONS_TABLE: &str = "tools/harvest/data/nrs_stations.φ";
+const NO_LIMIT: usize = 0;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -965,7 +966,7 @@ fn run_nc_values(path: &str, args: &[String], out: Option<&str>) -> usize {
     let day = day_token(path);
     let limit = match arg_usize(args, "--limit") {
         Some(v) => v,
-        None => 0,
+        None => NO_LIMIT,
     };
     let keep_unusable = args.iter().any(|a| a == "--keep-unusable");
     let psd_obj = file.resolve("psd").ok();
@@ -1089,7 +1090,7 @@ fn run_csv_values(path: &str, args: &[String], out: Option<&str>) -> usize {
     let day = day_token(path);
     let limit = match arg_usize(args, "--limit") {
         Some(v) => v,
-        None => 0,
+        None => NO_LIMIT,
     };
     let stem = &path[..path.len() - 4];
     let mut freq_axis = nc_frequencies(&format!("{}.nc", stem));

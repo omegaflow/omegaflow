@@ -12,7 +12,7 @@ const JOB_KEYWORDS: [&str; 12] = [
 const CI_REPO: &str = "omegaflow/omegaflow";
 
 fn log_dirs() -> Vec<String> {
-    let mut v = vec!["data/reports".to_string(), "zustand/reports".to_string()];
+    let mut v = vec!["data/reports".to_string(), "zustand".to_string()];
     if let Ok(tmp) = std::env::var("OMEGAFLOW_TMP") {
         v.push(tmp);
     }
@@ -70,14 +70,10 @@ pub fn mem_frac() -> (f64, f64, f64) {
         Ok(t) => t,
         Err(_) => String::new(),
     };
-    let mut total = 0.0f64;
-    let mut avail = 0.0f64;
-    let parse_kb = |s: &str| -> f64 {
-        match s.split_whitespace().nth(1).and_then(|v| v.parse().ok()) {
-            Some(v) => v,
-            None => 0.0,
-        }
-    };
+    let mut total: Option<f64> = None;
+    let mut avail: Option<f64> = None;
+    let parse_kb =
+        |s: &str| -> Option<f64> { s.split_whitespace().nth(1).and_then(|v| v.parse().ok()) };
     for line in text.lines() {
         if line.starts_with("MemTotal:") {
             total = parse_kb(line);
@@ -85,12 +81,15 @@ pub fn mem_frac() -> (f64, f64, f64) {
             avail = parse_kb(line);
         }
     }
+    let (Some(total), Some(avail)) = (total, avail) else {
+        return (f64::NAN, f64::NAN, f64::NAN);
+    };
     let total_gb = total / 1048576.0;
     let used_gb = (total - avail) / 1048576.0;
     let frac = if total > 0.0 {
         (total - avail) / total
     } else {
-        0.0
+        f64::NAN
     };
     (used_gb, total_gb, frac)
 }
@@ -179,17 +178,14 @@ pub fn ps_jobs(active: &BTreeSet<u64>) -> Vec<ProcJob> {
         if !hits_keyword(&bin) && !bin.contains("omegaflow") {
             continue;
         }
+        let (Ok(cpu), Ok(rss_kb)) = (toks[2].parse::<f64>(), toks[3].parse::<u64>()) else {
+            continue;
+        };
         jobs.push(ProcJob {
             pid,
             etime: toks[1].to_string(),
-            cpu: match toks[2].parse() {
-                Ok(v) => v,
-                Err(_) => 0.0,
-            },
-            rss_kb: match toks[3].parse() {
-                Ok(v) => v,
-                Err(_) => 0,
-            },
+            cpu,
+            rss_kb,
             name: bin,
             exec: Some(toks[4..].join(" ")),
         });
@@ -268,7 +264,7 @@ pub fn log_hint(keys: &[String], journal: Option<&str>) -> Option<String> {
         }
     }
     for key in keys {
-        let exact = format!("zustand/reports/{}.φ", key);
+        let exact = format!("zustand/{}.φ", key);
         if let Some(line) = tail_of(Path::new(&exact)) {
             return Some(line);
         }

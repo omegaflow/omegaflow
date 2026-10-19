@@ -7,6 +7,7 @@ use std::sync::{Arc, Mutex};
 const BASE: &str = "https://physionet.org/files/mitdb/1.0.0/";
 const CDN_RELEASE: &str = "physionet.org";
 const MAGIC: [u8; 4] = *b"RRB1";
+const DEFAULT_OUT: &str = "mitdb_rr.bin";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -51,7 +52,10 @@ fn write_bin(records: &[(f64, f64, u32)]) -> Vec<u8> {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let out_path = arg_value(&args, "--out").unwrap_or_else(|| "mitdb_rr.bin".to_string());
+    let out_path = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => DEFAULT_OUT.to_string(),
+    };
     let jobs: usize = arg_value(&args, "--jobs")
         .and_then(|v| v.parse().ok())
         .unwrap_or(4);
@@ -96,7 +100,10 @@ fn main() {
                         skipped.fetch_add(1, Ordering::SeqCst);
                         continue;
                     };
-                    let mut out = all.lock().unwrap_or_else(|e| e.into_inner());
+                    let mut out = match all.lock() {
+                        Ok(guard) => guard,
+                        Err(poisoned) => poisoned.into_inner(),
+                    };
                     for (epoch, rr) in series {
                         out.push((epoch, rr, (i + 1) as u32));
                     }
@@ -105,7 +112,10 @@ fn main() {
         }
     });
 
-    let mut records_out = all.into_inner().unwrap_or_else(|e| e.into_inner());
+    let mut records_out = match all.into_inner() {
+        Ok(v) => v,
+        Err(poisoned) => poisoned.into_inner(),
+    };
     records_out.sort_by(|a, b| a.2.cmp(&b.2).then(a.0.total_cmp(&b.0)));
     let n_beats = records_out.len();
     let bytes = write_bin(&records_out);

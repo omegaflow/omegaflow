@@ -1,6 +1,6 @@
-use omegaflow::archivar::{cache_root, content_dir};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::omni2::{COMP_BZ, parse_bin as parse_omni2};
+use omegaflow::archivar::{cache_root, content_dir};
 use omegaflow::intermagnet::parse_bin as parse_dbdt_bin;
 use std::collections::HashMap;
 
@@ -20,6 +20,7 @@ const DEFAULT_MAX_LAG_MIN: usize = 180;
 const MIN_PAIRS: usize = 8;
 const SHIFT_STEP_MIN: usize = 60;
 const ALPHA: f64 = 0.05;
+const NO_SURROGATES: usize = 0;
 
 fn iso_to_unix(s: &str) -> Option<f64> {
     let s = s.trim();
@@ -396,7 +397,7 @@ fn main() {
         .unwrap_or(DEFAULT_MAX_LAG_MIN);
     let n_surr = match arg_after(&args, "--n-surr").and_then(|v| v.parse::<usize>().ok()) {
         Some(v) => v,
-        None => 0,
+        None => NO_SURROGATES,
     };
 
     println!("=== Bz -> dB/dt delay probe at the minute grain (1-min witness) ===");

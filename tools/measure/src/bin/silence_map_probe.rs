@@ -13,6 +13,7 @@ const MIN_STARS: usize = 32;
 const MIN_CELLS: usize = 8;
 const MIN_EXPECT_COUNT: f64 = 0.5;
 const FDR_LEVEL: f64 = 0.05;
+const NO_OBSERVATIONS: usize = 0;
 
 type CellKey = (i64, i64, i64);
 
@@ -226,7 +227,7 @@ fn silence_map(points: &[[f64; 3]], cell: f64) -> Option<SilenceMap> {
     for (i, k) in keys.iter().enumerate() {
         let count = match counts.get(k) {
             Some(c) => *c,
-            None => 0,
+            None => NO_OBSERVATIONS,
         };
         let lam = expectation[i];
         if count == 0 && lam < MIN_EXPECT_COUNT {
@@ -242,13 +243,10 @@ fn silence_map(points: &[[f64; 3]], cell: f64) -> Option<SilenceMap> {
         obs_counts.push(count);
         p_values.push(poisson_lower_tail(count as u64, lam));
     }
-    let cutoff = match benjamini_hochberg(&p_values, FDR_LEVEL) {
-        Some(c) => c,
-        None => 0.0,
-    };
+    let cutoff = benjamini_hochberg(&p_values, FDR_LEVEL);
     let still = p_values
         .iter()
-        .filter(|&&p| cutoff > 0.0 && p <= cutoff)
+        .filter(|&&p| cutoff.is_some_and(|c| p <= c))
         .count();
     let consistent = p_values.len() - still;
     Some(SilenceMap {
@@ -257,7 +255,10 @@ fn silence_map(points: &[[f64; 3]], cell: f64) -> Option<SilenceMap> {
         absent_cells: absent,
         blind_cells: blind,
         consistent_cells: consistent,
-        fdr_cutoff: cutoff,
+        fdr_cutoff: match cutoff {
+            Some(c) => c,
+            None => f64::NAN,
+        },
         fdr_level: FDR_LEVEL,
         deficits,
         counts: obs_counts,

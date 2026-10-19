@@ -454,9 +454,9 @@ fn main() {
 
     let columns = hsd.columns;
     let lines = hsd.lines;
-    let bits_per_pixel = match hsd.bits_per_pixel {
-        Some(v) => v,
-        None => 0,
+    let Some(bits_per_pixel) = hsd.bits_per_pixel else {
+        eprintln!("{name}: bit depth absent — the bin stays unwritten");
+        std::process::exit(1);
     };
     let counts = hsd.pixel_values;
     if counts.is_empty() {

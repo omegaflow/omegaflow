@@ -230,7 +230,7 @@ fn compile_day(
                         n_files,
                         match parsed_total {
                             Ok(n) => n,
-                            Err(_) => 0,
+                            Err(poisoned) => poisoned.into_inner().len(),
                         }
                     );
                 }
@@ -274,7 +274,12 @@ fn main() {
         let digits = day.strip_prefix("mrvmt").unwrap_or(&day).to_string();
         let yy: u32 = match digits.get(0..2).and_then(|s| s.parse::<u32>().ok()) {
             Some(v) => v,
-            None => 0,
+            None => {
+                eprintln!(
+                    "--day {day}: the two-digit year is absent — the listing stays undeclared"
+                );
+                std::process::exit(1);
+            }
         };
         let century = if yy >= 50 { "19" } else { "20" };
         let month_digits = match digits.get(0..4) {

@@ -109,10 +109,13 @@ fn store_asset(url: &str, root: &str, name: &str) -> Option<String> {
         return None;
     }
     let len = match fs::metadata(&path) {
-        Ok(m) => m.len(),
-        Err(_) => 0,
+        Ok(m) => Some(m.len()),
+        Err(_) => None,
     };
-    eprintln!("manifest {path}: origin verbatim, {len} bytes");
+    match len {
+        Some(n) => eprintln!("manifest {path}: origin verbatim, {n} bytes"),
+        None => eprintln!("manifest {path}: origin verbatim, size absent"),
+    }
     Some(path)
 }
 

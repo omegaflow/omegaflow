@@ -7,6 +7,10 @@ use std::process::exit;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const TERMINALS: [&str; 3] = ["REJECTED", "SUPERSEDED", "DROPPED"];
+const RANK_SENT: u8 = 0;
+const RANK_FOLDED: u8 = 1;
+const RANK_CLOSED: u8 = 2;
+const RANK_OTHER: u8 = 3;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Derived {
@@ -220,10 +224,10 @@ fn rank(state: &str) -> Option<u8> {
 
 fn derived_rank(d: Derived) -> u8 {
     match d {
-        Derived::Sent => 0,
-        Derived::Folded => 1,
-        Derived::Closed => 2,
-        _ => 3,
+        Derived::Sent => RANK_SENT,
+        Derived::Folded => RANK_FOLDED,
+        Derived::Closed => RANK_CLOSED,
+        _ => RANK_OTHER,
     }
 }
 

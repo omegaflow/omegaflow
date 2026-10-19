@@ -65,7 +65,7 @@ struct IndexEntry {
     name: String,
     family: String,
     size: u64,
-    mtime: u64,
+    mtime: Option<u64>,
 }
 
 fn family_of(url: &str) -> &'static str {
@@ -160,7 +160,7 @@ fn text_of(html: &str) -> String {
     out
 }
 
-fn extract_meta(after: &str) -> (u64, u64) {
+fn extract_meta(after: &str) -> (u64, Option<u64>) {
     let cap = 400usize.min(after.len());
     let mut end = cap;
     while !after.is_char_boundary(end) {
@@ -168,7 +168,7 @@ fn extract_meta(after: &str) -> (u64, u64) {
     }
     let text = text_of(&after[..end]);
     let b = text.as_bytes();
-    let mut mtime = 0u64;
+    let mut mtime: Option<u64> = None;
     let mut size = 0u64;
     let mut date_end = 0usize;
     let mut i = 0;
@@ -182,15 +182,16 @@ fn extract_meta(after: &str) -> (u64, u64) {
                 let mo: i64 = text[i + 5..i + 7].parse().unwrap();
                 let d: i64 = text[i + 8..i + 10].parse().unwrap();
                 if let Some(days) = days_from_civil(y, mo, d) {
-                    mtime = days as u64 * 86400;
-                }
-                if i + 16 <= b.len() {
-                    if let (Ok(h), Ok(mn)) = (
-                        text[i + 11..i + 13].parse::<u64>(),
-                        text[i + 14..i + 16].parse::<u64>(),
-                    ) {
-                        mtime += h * 3600 + mn * 60;
+                    let mut stamp = days as u64 * 86400;
+                    if i + 16 <= b.len() {
+                        if let (Ok(h), Ok(mn)) = (
+                            text[i + 11..i + 13].parse::<u64>(),
+                            text[i + 14..i + 16].parse::<u64>(),
+                        ) {
+                            stamp += h * 3600 + mn * 60;
+                        }
                     }
+                    mtime = Some(stamp);
                 }
                 date_end = i + 16;
                 break;
@@ -345,9 +346,13 @@ fn crawl(roots: &[String], depth: usize, out_path: &str, delay_ms: u64, jobs: us
                     let mut l = lines.lock().unwrap();
                     for f in &files {
                         if w.insert(f.url.clone()) && !done_files.contains(&f.url) {
+                            let stamp = match f.mtime {
+                                Some(m) => m.to_string(),
+                                None => "absent".to_string(),
+                            };
                             l.push(format!(
                                 "kernel {} {} {} {}\n",
-                                f.url, f.family, f.size, f.mtime
+                                f.url, f.family, f.size, stamp
                             ));
                             file_count.fetch_add(1, Ordering::Relaxed);
                         }
@@ -409,9 +414,13 @@ fn load_index(path: &str) -> Vec<IndexEntry> {
                     Some(s) => s,
                     None => continue,
                 };
-                let mtime: u64 = match parts.next().and_then(|p| p.parse().ok()) {
-                    Some(m) => m,
-                    None => 0,
+                let mtime = match parts.next() {
+                    Some("absent") => None,
+                    Some(v) => match v.parse::<u64>() {
+                        Ok(m) => Some(m),
+                        Err(_) => continue,
+                    },
+                    None => None,
                 };
                 let name = url.rsplit('/').next().unwrap_or(&url).to_string();
                 entries.push(IndexEntry {
@@ -1447,19 +1456,25 @@ fn run_juice_cog(
 
 fn summarize(index_path: &str, out_path: &str) {
     let entries = load_index(index_path);
-    let mut family_files: BTreeMap<String, (usize, u64, u64)> = BTreeMap::new();
+    let mut family_files: BTreeMap<String, (usize, u64, Option<u64>)> = BTreeMap::new();
     for e in &entries {
-        let slot = family_files.entry(e.family.clone()).or_insert((0, 0, 0));
+        let slot = family_files.entry(e.family.clone()).or_insert((0, 0, None));
         slot.0 += 1;
         slot.1 += e.size;
-        if e.mtime > slot.2 {
-            slot.2 = e.mtime;
-        }
+        slot.2 = match (slot.2, e.mtime) {
+            (Some(a), Some(b)) => Some(a.max(b)),
+            (None, Some(b)) => Some(b),
+            _ => slot.2,
+        };
     }
     let mut rows = String::new();
     let mut total_bytes = 0u64;
     for (family, (count, bytes, newest)) in &family_files {
         total_bytes += bytes;
+        let newest = match newest {
+            Some(m) => m.to_string(),
+            None => "absent".to_string(),
+        };
         rows.push_str(&format!(
             "| {} | {} | {} | {}\n",
             family, count, bytes, newest

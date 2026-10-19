@@ -197,8 +197,8 @@ pub struct OmegaLoop {
     pub s2_read_buf: Option<wgpu::Buffer>,
     pub sky: SkyState,
     pub sky_named: String,
-    pub sky_fingerprint: Option<(u64, u64)>,
-    pub vlies_fingerprint: Option<(u64, u64)>,
+    pub sky_fingerprint: Option<(u64, Option<u64>)>,
+    pub vlies_fingerprint: Option<(u64, Option<u64>)>,
     pub witness_fingerprint: Option<(usize, u64)>,
     pub sky_perm_t: Option<f64>,
     pub field_cap: u32,
@@ -912,10 +912,7 @@ impl OmegaLoop {
             let mut kinds = [0u32; 3];
             let mut offs = [0u32; 3];
             for i in 0..3 {
-                kinds[i] = match v.axes[i].kind {
-                    crate::archivar::volume::AxisKind::Uniform => 0,
-                    crate::archivar::volume::AxisKind::Explicit => 1,
-                };
+                kinds[i] = u32::from(v.axes[i].kind.to_u8());
                 offs[i] = axis.len() as u32;
                 for &val in &v.axes[i].values {
                     axis.push(val as f32);
@@ -1141,11 +1138,11 @@ impl OmegaLoop {
             }
         };
         let modified = match meta.modified() {
-            Ok(t) => match t.duration_since(std::time::UNIX_EPOCH) {
-                Ok(d) => d.as_secs(),
-                Err(_) => 0,
-            },
-            Err(_) => 0,
+            Ok(t) => t
+                .duration_since(std::time::UNIX_EPOCH)
+                .ok()
+                .map(|d| d.as_secs()),
+            Err(_) => None,
         };
         let fp = (meta.len(), modified);
         if self.sky_fingerprint == Some(fp) {
@@ -1182,11 +1179,11 @@ impl OmegaLoop {
             }
         };
         let modified = match meta.modified() {
-            Ok(t) => match t.duration_since(std::time::UNIX_EPOCH) {
-                Ok(d) => d.as_secs(),
-                Err(_) => 0,
-            },
-            Err(_) => 0,
+            Ok(t) => t
+                .duration_since(std::time::UNIX_EPOCH)
+                .ok()
+                .map(|d| d.as_secs()),
+            Err(_) => None,
         };
         let fp = (meta.len(), modified);
         if self.vlies_fingerprint == Some(fp) {
@@ -1320,8 +1317,8 @@ impl OmegaLoop {
             };
             let sigma = match o.sigma_rad {
                 Some(s) if s.is_finite() && s > 0.0 => s as f32,
-                Some(_) => 0.0,
-                None => 0.0,
+                Some(_) => f32::NAN,
+                None => f32::NAN,
             };
             self.sky.points.push(SkyPoint {
                 p: [o.p_hat[0] as f32, o.p_hat[1] as f32, o.p_hat[2] as f32],

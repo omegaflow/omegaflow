@@ -1987,7 +1987,7 @@ fn apply_filters(
                     for (i, slot) in v.iter_mut().enumerate() {
                         let word = match f.cd_values.get(8 + i / 4) {
                             Some(&w) => w,
-                            None => 0,
+                            None => return Err(Hdf5Note::Filter { id: f.id, off: 0 }),
                         };
                         *slot = word.to_le_bytes()[i % 4];
                     }

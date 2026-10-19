@@ -9,6 +9,7 @@ const NETLOC: &str = "copernicus-dem-30m.s3.amazonaws.com";
 const BASE: &str = "https://copernicus-dem-30m.s3.amazonaws.com";
 const MAGIC: [u8; 4] = *b"GL30";
 const HEADER_BYTES: usize = 48;
+const EPSG_ABSENT_CODE: u16 = 0;
 
 const TAG_IMAGE_WIDTH: u16 = 256;
 const TAG_IMAGE_LENGTH: u16 = 257;
@@ -455,7 +456,7 @@ fn write_bin(path: &str, dem: &Dem) -> Result<(), String> {
         .map_err(|e| format!("write {path} returned void: {e}"))?;
     let epsg: u16 = match dem.epsg {
         Some(e) => e,
-        None => 0,
+        None => EPSG_ABSENT_CODE,
     };
     f.write_all(&(dem.width as u32).to_le_bytes())
         .and_then(|_| f.write_all(&(dem.height as u32).to_le_bytes()))

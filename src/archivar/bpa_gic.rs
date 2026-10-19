@@ -101,10 +101,7 @@ fn parse_stamp(cell: &str) -> Option<f64> {
     let mut t = time.split(':');
     let hh: i64 = t.next()?.parse().ok()?;
     let mm: i64 = t.next()?.parse().ok()?;
-    let ss: i64 = match t.next() {
-        Some(s) => s.parse().ok()?,
-        None => 0,
-    };
+    let ss: i64 = t.next()?.parse().ok()?;
     if !(0..24).contains(&hh) || !(0..60).contains(&mm) || !(0..60).contains(&ss) {
         return None;
     }

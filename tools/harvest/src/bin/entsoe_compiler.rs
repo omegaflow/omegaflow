@@ -12,6 +12,7 @@ const DOCUMENT_TYPE: &str = "A78";
 const BUSINESS_PLANNED: u8 = 1;
 const BUSINESS_FORCED: u8 = 2;
 const BUSINESS_OTHER: u8 = 3;
+const NO_SECONDS: i64 = 0;
 
 #[derive(Clone, Debug, PartialEq)]
 struct EsRecord {
@@ -597,7 +598,7 @@ fn parse_time(time: &str) -> Option<(i64, i64, i64)> {
     let minute = parts.next()?.parse::<i64>().ok()?;
     let second = match parts.next() {
         Some(s) => s.parse::<i64>().ok()?,
-        None => 0,
+        None => NO_SECONDS,
     };
     if !(0..=23).contains(&hour) || !(0..=59).contains(&minute) || !(0..=59).contains(&second) {
         return None;

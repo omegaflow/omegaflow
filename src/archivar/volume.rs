@@ -32,6 +32,9 @@ pub enum AxisKind {
     Explicit,
 }
 
+const KIND_UNIFORM: u8 = 0;
+const KIND_EXPLICIT: u8 = 1;
+
 impl AxisKind {
     fn from_u8(k: u8) -> Option<AxisKind> {
         match k {
@@ -41,10 +44,10 @@ impl AxisKind {
         }
     }
 
-    fn to_u8(self) -> u8 {
+    pub(crate) fn to_u8(self) -> u8 {
         match self {
-            AxisKind::Uniform => 0,
-            AxisKind::Explicit => 1,
+            AxisKind::Uniform => KIND_UNIFORM,
+            AxisKind::Explicit => KIND_EXPLICIT,
         }
     }
 }
