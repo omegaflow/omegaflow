@@ -19,7 +19,7 @@ const CLUSTER_CHANNELS: [(&str, &str, &str); 3] = [
 ];
 
 fn fetch_cached(name: &str, release: &str) -> Option<Vec<u8>> {
-    let path = omegaflow::archivar::cache_root().join(name);
+    let path = omegaflow::archivar::content_dir().join(name);
     if !path.exists() {
         if let Some(parent) = path.parent() {
             std::fs::create_dir_all(parent).ok();

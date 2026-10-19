@@ -1517,11 +1517,13 @@ pub fn cache_path_for(netloc: &str, name: &str) -> String {
         .into_owned()
 }
 
+pub fn content_dir() -> std::path::PathBuf {
+    cache_root().join("content")
+}
+
 pub fn content_cache(name: &str) -> String {
-    let root = cache_root();
-    if let Some(parent) = root.parent() {
-        let _ = std::fs::create_dir_all(parent);
-    }
+    let root = content_dir();
+    let _ = std::fs::create_dir_all(&root);
     root.join(name).to_string_lossy().into_owned()
 }
 

@@ -48,7 +48,7 @@ const CH_NAMES: [&str; 6] = ["Wnd", "Quake", "Bz", "SST", "QBO", "D20"];
 const CH_MEDIA: [&str; 6] = ["atmos", "litho", "helios", "ocean", "atmos", "ocean"];
 
 fn load_local_or_fetch(name: &str, url: &str) -> Option<Vec<u8>> {
-    let cache = omegaflow::archivar::cache_root()
+    let cache = omegaflow::archivar::content_dir()
         .join(name)
         .to_string_lossy()
         .into_owned();
