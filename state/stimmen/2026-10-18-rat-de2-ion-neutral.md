@@ -288,3 +288,10 @@ Origin: rat-2026-10-18-p
 - Register: „ion-neutral coupling" über Killeen 1984 tragen; die TE als Abhängigkeit, nicht
   Reibung. Der Neulauf ist river-Aufgabe.
 
+
+## Commits dieser Runde
+
+- `0556c1506` rat: enforce the cost rule (paid only on operator word); mark the two overzealous paid runs
+- `985dbe7fd` rat R-2026-10-18-p: DE-2 ion-neutral — Verdikt D (8/8), coupling via Killeen, lag-Umkehr offen
+- `ecd1cc738` mycelium: measure the open-count riss at the cap (1024 B, 0 ### points) and name the third quantity the counter cannot see - ledger-closed transport tokens (3 closes, closed 0)
+- `187e4884f` rat: the DE-2 round — bidirectional TE is dependency, not coupling (four seats, three complete)

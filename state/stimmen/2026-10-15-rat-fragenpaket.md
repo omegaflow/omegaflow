@@ -1844,3 +1844,11 @@ Am Baum **bestätigt** (river-217): `schumann_geomag.te` `cond none`/`surrogate 
 `a_zero_sum_does_not_collapse_the_channels` (fordert Erhalt, im `subset` rot) neben `:673`
 `a_zero_omega_is_silence_on_both_channels`; `gic_onset_relation.rs` existiert.
 
+
+## Commits dieser Runde
+
+- `0e8fc665d` mycelium 355: align the questionnaires to the Granit's original five principles (A=A, ICRS&TDB, channel_ref, 0 honored, pending; the later sentences 6/7 do not apply to the forms) and add the F7/F4 science follow-up form (the panning law for the actuator, the lightning channel for Schumann)
+- `9dd5139aa` river-217: enter the operator's correct DeepSeek answer as 07b (the earlier 07 entry was a verbatim copy of 02); mark the copy invalid; update the verdict (11 independent voices, 07b diverges at F5)
+- `ab42d32f6` river-217: tree-correct the seat-round verdict (07=02 copy; 10/13/OW missing; F7 not unanimous — 2 seats for silence; F6 Z registered but name-collides with the Blatt's Z; MiniMax's unwrap_or claim false at the tree)
+- `fb7fcdb66` mycelium 355: carry the rat question package round (the 13 seat answers to F2-F7) and the tree-verified verdict (F7: the built acoustic_pcm silences at Sigma-omega=0, the round would keep the partials; F4: schumann_geomag carries no lightning channel)
+- `7f25f9004` mycelium 355: add the rat question package (the six open catalog questions F2-F7 bundled into one message per seat, the seats entered, the usage note and the line mapping)

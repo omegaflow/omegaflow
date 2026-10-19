@@ -1508,3 +1508,13 @@ Zur zweiten Frage (neue UI-Runde für die Rat-Architekturentscheidung): **nein**
 Sitz-Antworten tragen den Stoff (die `field`-Form kann Nicht-Felder nicht tragen); der Rat
 (fünf Stimmen) trägt das Verdikt über die Schema-Erweiterung.
 
+
+## Commits dieser Runde
+
+- `c755d4b0c` mountain 355: name the sender of the M5 grid-form question (River, F4-Schumann) — the operator confirms River's Rat question is the WGLC field-form, already carried by M5
+- `56e1746e9` mountain 355: the M5 Rat question is posed — how a globally measured gridded scalar field (WGLC) enters the register; the research layer (CF conventions, HEALPix/GeoTIFF/FITS, engine precedent) and the seat list stand
+- `192eb1af5` mountain 352: operator word — a model's register entry is the measurement it was built from (the raw grid points), not the model output; OVATION-Mohe stays no field; no new UI round for the schema verdict
+- `fcc4646aa` mountain 352: the M1-M3 force/kernel verdict (three carry a field, four do not; the boundary is a locus; OVATION is a model witness) — verified at the tree
+- `c2efa3761` mountain 352: the questionnaire carries the real five axioms (the Granit: A=A, ICRS&TDB, channel_ref, 0 honored, pending); record the ICRS/TDB/pending audit (J2000 triple copy, no VerdictWord::Pending)
+- `6369bc489` mountain 352: restore the fifth axiom in the questionnaire (the sensors AND the operator); name the catalog truncation
+- `e194bc23d` mountain 352: the force/kernel roster+Rat questionnaire for the three open Mountain questions (WDC-B field lines, auroral boundary, OVATION/AACGM) — five voices, five axioms, the wide search cited
