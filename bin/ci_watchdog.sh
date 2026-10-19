@@ -10,8 +10,8 @@
 # --once; without an argument the script loops itself.
 set -u
 cd "$(dirname "$0")/.." || exit 1
-LOG="${CI_WATCHDOG_LOG:-/tmp/opencode/ci_watchdog.log}"
-SEEN="${CI_WATCHDOG_SEEN:-/tmp/opencode/ci_watchdog.seen}"
+LOG="${CI_WATCHDOG_LOG:-${OMEGAFLOW_TMP:-/tmp/opencode}/ci/ci_watchdog.log}"
+SEEN="${CI_WATCHDOG_SEEN:-${OMEGAFLOW_TMP:-/tmp/opencode}/ci/ci_watchdog.seen}"
 POLL_S="${CI_WATCHDOG_POLL:-3840}"
 CI="${CI_MANAGE:-./bin/ci_manage}"
 SNAP="${CI_WATCHDOG_SNAPSHOT:-/tmp/opencode/ci_status.md}"
