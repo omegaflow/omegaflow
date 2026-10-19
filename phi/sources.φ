@@ -14309,11 +14309,13 @@ url https://github.com/omegaflow/sources/releases/download/fermi.gsfc.nasa.gov/g
 terms PD-USGov https://fermi.gsfc.nasa.gov/
 format gbm_tgf
 origin https://fermi.gsfc.nasa.gov/ssc/data/access/gbm/tgf/gbm_tgf_catalog_offline.csv
-sha256 f75cf291b0f1d524746d7f4d3bb5bb6336a3e89e40c5649e9cf02dbee233ea07
+compiler tools/harvest/src/bin/gbm_tgf_compiler.rs
+sha256 e63f68df674d1979ab45ff000bb5eb3a043965ecf7a9fdba6170fa0867f64503
 on earth 0 0 0
 rows
 lat_key Lat
 lon_key Lon
+epoch time
 no-cadence
 field BGO_0_N gbm_tgf_bgo0_counts inverse-square em count 31536000 0.0 0.0
 field BGO_1_N gbm_tgf_bgo1_counts inverse-square em count 31536000 0.0 0.0
