@@ -2,7 +2,7 @@
   title: Blatt — Transfer-Entropie über einen externen Steuerparameter
   class: sheet
   date: 2026-10-02
-  sha256: 596553e1860b1f2b69b6218cb53f9c81c3f1d95c2df37c871d0da991f54907ef
+  sha256: bab767b7a561267f81ad698a7f3272d8cf0bfddaa739359daf78b7a5a9310c70
   status: live
   see-also: state/rat/2026-10-02_te-nichtzeitlich-frage.txt state/rat/2026-10-02_te-nichtzeitlich-nemotronsuper.md state/rat/2026-10-02_te-nichtzeitlich-deepseek.md state/rat/2026-10-02_te-nichtzeitlich-kiloultra.md
 -->

@@ -2,7 +2,7 @@
   title: Survey — GitHub-, CI- und CDN-Optimierung (free GPU, AI-im-CI, opencode↔GitHub)
   class: survey
   date: 2026-10-10
-  sha256: fa9e336fc56b7fb399767a76fe80ee579bd26488951b339816cf3edd65815a61
+  sha256: fe8d2c7a947e2a73ff817cc15a97f7d568bb18b20c6e0c2c3094daf79a8412f3
   status: live
 -->
 # Survey — GitHub-, CI- und CDN-Optimierung (2026-10-10)

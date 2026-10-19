@@ -2,7 +2,7 @@
   title: Survey — Störungs-Experiment: fehlende Fäden (2026-10-05)
   class: survey
   date: 2026-10-05
-  sha256: 3e141dd988749a15583bdc2965ad0d7fa3f6c8d004c4c61f8a335a3a41b046c4
+  sha256: 4f247cf7ec4288b4588101d1e7615a04c3c4b1aefe44ff05cecb2f7b43338f3d
   status: live
   see-also: docs/concepts/tools-map.md phi/sources.φ docs/handover/archiv/handover-2026-10-05-river-folge93.md
 -->
