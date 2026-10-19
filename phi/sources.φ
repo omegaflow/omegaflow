@@ -31709,3 +31709,14 @@ at earth
 ttl 86400
 epoch 1
 field strokes_per_day wglc_strokes_per_day inverse-square em 1 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/hmi_polar.bin
+terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
+format hmi_polar
+origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch?ds=hmi.synoptic_mr_polfil_720s&op=exp_request&protocol=fits&method=url_quick
+compiler tools/harvest/src/bin/hmi_polar_compiler.rs
+at sun
+ttl 2592000
+field hmi_polar_north_t hmi_polar_north_t inverse-square em T 2592000 0.0 0.0
+field hmi_polar_south_t hmi_polar_south_t inverse-square em T 2592000 0.0 0.0
+field hmi_polar_avg_t hmi_polar_avg_t inverse-square em T 2592000 0.0 0.0
