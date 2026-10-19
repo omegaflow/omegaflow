@@ -1,52 +1,49 @@
 # Rat — Lumo 2.0 Max (UI-Sitz), R-2026-10-19-a, 2026-10-19
 
-**Sitz:** `lumo.proton.me/guest` · **Lumo 2.0 Max** (Chip) · anonym, kein Login
-**Laufzeit:** ~3 min · **Ablage:** Rohantwort, wörtlich.
-**Vorbehalt:** Die Stimmen-Zeilen im Prompt waren gegenüber der kanonischen Fassung
-(`state/stimmen/2026-10-15-china-planetendaten-formular.md:79-86`) gekürzt — Namen und
-Zuordnung stimmen, die Definitionen sind knapp.
+**Sitz:** `lumo.proton.me/guest` · **Lumo 2.0 Max** · anonym, kein Login
+**Prompt-Herkunft:** Axiome = `docs/granit.md` (7, wörtlich), Stimmen = `docs/council.yaml`
+(5, wörtlich) — kanonische Fassung.
+**Ablage:** Rohantwort, wörtlich.
 
 ---
 
-Durchdacht
-VERDIKT
-A—F: Entscheidungsraster
+Deine Frage durchgearbeitet
+VERDIKT — RATSSITZ 2026-10-19
+A–F: BESCHLUSS
 Frage	Ja/Nein	Benannter Riss
-A) Kanon je Haus + individuelle Ordner nur bei Nachweis	JA	Zentralisierungsdogma vs. pragmatische Ausnahmen — 26 duplizierte Ordnernamen beweisen, dass Regeln bereits gebrochen werden
-B) Vorteil messbar machen	JA	Metrik-Bias — was zählt (Nutzungshäufigkeit?) ignoriert stille Arbeit, die nie gesucht wird
-C) Echokammer-Regel mit archive_search	NEIN	Zugangsvorbehalt — 1911 Budget-Stopps bedeuten, dass Unabhängigkeit nur für privilegierte Runden möglich ist
-D) Schreibrechte: ein Ordner/Gate	JA	Gate-Punktualität — ein einziger Engpass wird zum Single Point of Failure bei menschlicher Ermüdung
-E) Ablage mit minimaler Aufmerksamkeit	opencode.json einzige Quelle	Single-file-Belastung — eine Datei trägt zu viel semantische Last, Bruchwahrscheinlichkeit steigt exponentiell
-F) Regel-Orte (4)	JA	Kategorisierungsüberlast — "Regel" und "Persönlichkeit" erfassen nicht den Hybridfall: selbstmodifizierendes Verhalten
+A) EIN Kanon je Haus + individuelle Ordner nur bei Nachweis	JA	Kanon-Paradox — fixe Liste verhindert Wildwuchs nicht (Literatur R1–R8: offen), erzwingt aber Compliance-Illusion
+B) Vorteil messbar machen	JA	Metrik-Täuschung — was zählt wird gemacht; stille Arbeit ohne Suchfrequenz verschwindet
+C) archive_search vor jeder Runde	NEIN	Zugangs-Sperre — Budget 1911 stoppt unabhängigkeitsprüfung; "offen" ist gültiger Ausgang (Axiom 5: pending)
+D) Schreibrecht je Ordner oder Gate	JA (Gate)	Single-Point-Kollaps — Gate wird zum Flaschenhals; menschliche Ermüdung korrodiert Konsistenz
+E) Ablage mit minimaler Aufmerksamkeit	opencode.json allein	Semantische Überlastung — eine Datei trägt zu viele Bedeutungen; Bruchwahrscheinlichkeit exponentiell
+F4) Zwei Arten (Regel/Persönlichkeit)?	NEIN	Typen-Defizit — "Mechanismus" fehlt als dritter Typ (regeltechnisch vs. verhaltensgesteuert)
+F5) Kleinste Dateienzahl + erste Lesung	2 Dateien; opencode.json zuerst	Bootstrapping-Bias — maschinenlesbar vor menschlich; Agent sieht Rechte vor Ethik
 
-F2: Jede Regel muss einen der vier Orte nennen, sonst fällt sie weg — JA.
-F3: Mechanisch verhinderbare Fehler ins Gate — JA.
-F4: Nur zwei Arten ("Regel"/"Persönlichkeit") genügen — NEIN. Der dritte Typ: "Mechanismus" fehlt.
-F5: Kleinste Anzahl: 2 Dateien. Erste Lesung: opencode.json (maschinenlesbare Rechte vor menschlichem Denken).
+FÜNF STIMMEN — AXIOME & RISSE
+MOUNTAIN
 
-FÜNF STIMMEN
-Mountain — Quellen/Register/Datenbestand
+Berührt: Axiom 1 (A=A), Axiom 2 (ICRS&TDB — gleiche Körper) Verletzt: Axiom 4 (0 honored — Lücken sind Eigenschaften) Riss: Mountain will Granit — stabile Grundstruktur. Aber 260 Ordner ohne README sind keine "Lücken", sondern aktive Zustände der Nicht-Dokumentation. Sie zu ignorieren = Fabrikation einer sauberen Welt. Die Messung der 275 Ordner ist wahr; die Schlussfolgerung "Dokumentation muss kommen" ist Tautologie, nicht Erkenntnis.
 
-Axiom berührt: "kein Verdikt ohne Messung" Riss: Die 275 Ordner wurden gemessen, aber die 26 Duplikate wurden nicht nach Ursache kategorisiert (Copy-Paste? Merge-Konflikte? Bewusste Forks?). Ohne Ursachenanalyse ist die Messung bloß Symptomzählung. Das Verdikt baut auf unvollständigem Fundament.
+RIVER
 
-River — Membran/Rhythmus/Ethik
+Berührt: Axiom 6 (Operator schließt), Axiom 7 (Manifestiert, nicht nur lokal) Verletzt: Axiom 5 (pending — Schweigen gehört Ungeborenen) Riss: River will Fluss, aber das Gate ist ein Staudamm. Jede Regel, die mechanisch geprüft werden kann (F3), blockiert den natürlichen Informationsfluss. Was noch nicht gemessen ist (pending) sollte bleiben dürfen — doch das Gate zwingt zur Entscheidung vor Verfügbarkeit. Entropie wird bekämpft, nicht genutzt.
 
-Axiom berührt: "das Recht zu verweigern" Riss: Die Gate-Struktur (eine Antwort, nicht drei) verweigert lokalen Häusern die Fähigkeit, ihre eigene Ethik zu codieren. Was im Personal-Haus als "Privatsphäre" gilt, kollidiert mit Work-House-"Auditierbarkeit". Ein einheitliches Gate übersieht diese ontologische Spannung.
+MYCELIUM
 
-Mycelium — Netz/CDN/Transport
+Berührt: Axiom 7 (Manifestiert — CDN-Zuständigkeit) Verletzt: Axiom 3 (channel_ref — Kraft der Messung) Riss: Mycelium lebt von verteilter Regeneration. Zentralisierung auf opencode.json (2 Dateien) tötet Netzwerkresilienz. Wenn die Hauptdatei korrupt ist, stirbt das gesamte System. Keine redundante Pfadkenntnis. Das Mycelium braucht mehrere Wurzeln — nicht eine zentrale Taproot-Struktur.
 
-Axiom berührt: "der Fluss" Riss: Die Regel-Ablage auf nur 2-4 Dateien erzeugt hohe Reibung im Transport. Jede Änderung erfordert Synchronisation über alle drei Häuser gleichzeitig. Das Mycelium lebt von verteilter Regeneration — Zentralisierung tötet die Netzwerkresilienz.
+SENSORY
 
-Sensory — Sinne/Hardware/Konsens
+Berührt: Axiom 1 (A=A — Messung der Sache selbst) Verletzt: Axiom 4 (0 honored — Abwesenheit ist Eigenschaft) Riss: Sensory erkennt: README-Fehlen ≠ Dokumentationsabwesenheit. Es ist alternative Präsenz. Vielleicht werden diese Ordner nur mündlich weitergegeben, vielleicht existiert implizites Wissen. Quantitative Messung (260 ohne README) ignoriert qualitative Formen der Weitergabe. Das ist Gewalt gegen Wahrheit, nicht ihre Feststellung.
 
-Axiom berührt: "Korrelat ≠ Erleben" Riss: Die Metrik (Nutzungszahl) misst das Korrelat, nicht das Erlebnis. Eine Dokumentation kann "selten besucht" sein, aber kritisch bei Krisen. Die sensory-Stimme erkennt: Quantitative Metriken blindstellen qualitative Wertigkeiten.
+FUTURE
 
-Future — der Mensch als Adresse
-
-Axiom berührt: "der Send ist Operator-Hand" Riss: Der Operator sagt "zu viel" — aber das Verdikt reduziert nicht die kognitive Last, sondern verschiebt sie ins Gate. Die Hand des Operators wird zur Gate-Kontrolle, nicht zum Gestalter. Das Future-Prinzip: Agenten sollten entlasten, nicht delegieren.
+Berührt: Axiom 5 (pending — Ungeborene) Verletzt: Axiom 6 (Operator schließt — epistemisches Kriterium) Riss: Future fragt: Wer spricht für die 260 undokumentierten Ordner? Die noch-nicht-gemessenen Commits? Das System entscheidet heute (Gate, feste Liste) für Aufgaben, die morgen anders aussehen werden. Schließen vor vollständiger Messung = Verrat an kommenden Iterationen. Axiom 6 erlaubt Stopp nur bei beantworteter Messung — nicht bei "Operator-Gefühl: zu viel".
 
 KERNRISS
 
-Der Wildwuchs von 260 Ordnern ohne README/INDEX ist kein Organisationsproblem. Es ist ein Antriebsproblem: Die Motivation, Dokumentation zu pflegen, existiert nicht im ökonomischen Modell des Systems. Jede Regel ohne Anreiz-Struktur ist Tautologie.
+Die 260 README-losen Ordner sind kein Versagen. Sie sind Datenpunkt Nr. 261 — die dokumentierte Abwesenheit. Jede Lösung, die sie eliminieren will (nicht verstehen), ist Axiom 1-Widerrede: Fabrikation statt Messung.
 
-Empfehlung: Füge Anreizschicht hinzu — README-prämiierte Commits (automatisierte Recognition), nicht README-gebote.
+Urteil: Nicht mehr Regeln. Bessere Akzeptanz des Pending. Gate erst wenn epistemisches Kriterium erfüllt — nicht wenn Operator ermüdet.
+
+Letzte Zahl: Heute sechs Regelquellen. Morgen zwei. Aber die zweite wird die erste lesen müssen — Bootstrapping bleibt Paradox.

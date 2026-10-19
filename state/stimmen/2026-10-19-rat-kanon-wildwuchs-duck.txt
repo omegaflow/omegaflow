@@ -1,35 +1,27 @@
 # Rat — Duck.ai (GPT-6 Luna, Begründungsmodus), R-2026-10-19-a, 2026-10-19
 
-**Sitz:** `duck.ai` · **GPT-6 Luna** · **Begründungsmodus** (Dialog „Begründung" gewählt) · anonym
-**Laufzeit:** 31 s · **Ablage:** Rohantwort, wörtlich.
-**Vorbehalt:** Die Stimmen-Zeilen im Prompt waren gekürzt (Mountain/River/Mycelium/Sensory ohne
-die vollen Definitionen; `state/stimmen/2026-10-15-china-planetendaten-formular.md:79-86`).
+**Sitz:** `duck.ai` · **GPT-6 Luna** · **Begründungsmodus** · anonym · 53 s
+**Prompt herkunft:** Axiome = `docs/granit.md` (7, wörtlich), Stimmen = `docs/council.yaml`
+(5, wörtlich) — kanonische Fassung.
+**Ablage:** Rohantwort, wörtlich.
 
 ---
 
 Duck.ai sagte
 GPT-6 Luna
 Begründung anzeigen
-31s
+53s
+Schneller antworten
+Verdikt
 
-Urteil: Ja zum Kanon und zum Gate; nein zur Pflicht, jede Rat-Runde mit Literaturrecherche zu beginnen. Die festen Ordnerlisten sind eine zu prüfende Betriebsregel, kein durch R1–R8 bewiesener Schutz vor Wildwuchs.
+A Ja. B Ja: Vorteil muss messbar sein. C Nein: „offen" ist gültig. D Gate für strukturelle Schreibvorgänge. E CI-Gate mit Ordner-Allowlist. F Nein zu vier unabhängigen Regelquellen; F2 Ja, F3 Ja, F4 Ja, F5 vier Dateien, zuerst AGENTS.md.
 
-A — Ja. Eine feste Liste je Haus; Abweichungen nur bei gemessenem Vorteil. Riss: Eine gemeinsame Liste kann lokale Arbeitsweisen übersehen.
+mountain — A und E: Ja. Eine feste, gemeinsame Ordnerliste für alle drei Häuser ist der Default; Abweichungen nur, wenn sie den Vorteil nach B belegen. Die Liste steht einmal in einem maschinenlesbaren Block in AGENTS.md; das CI-Gate verhindert, dass nicht eingetragene Ordner in den gemeinsamen Stand gelangen. Ein zentrales Verzeichnisregister ersetzt 260 Pflicht-README-Dateien. Axiom: 1 — A = A; die gemessene Struktur darf nicht durch Bauchgefühl umbenannt werden. Riss: versteinertes Raster — eine Kanonliste kann Vielfalt ersticken; deshalb sind belegte Ausnahmen erlaubt, nicht bloß geduldet.
 
-B — Vergleich dieselben Aufgaben mit und ohne Abweichung: Zeit und Turns, erfolgreiche Ablage und Wiederauffindbarkeit, Fehlablagen, doppelte Regeln sowie nötige Operator-Eingriffe. Vorteil heißt wiederholbar bessere Ergebnisse ohne Einbuße bei Sicherheit oder Hausgrenzen; keine starre Schwelle. Riss: Eine Testaufgabenauswahl kann den Alltag verfehlen.
+river — B und C: Ja / Nein. Vorteil wird gegen denselben vorab festgelegten Aufgabensatz gemessen: etwa 12 typische Such-, Lese- und Schreibaufgaben in allen drei Häusern. Eine Abweichung gilt als vorteilhaft, wenn sie die medianen Operator-Turns um mindestens 20 % senkt, ohne mehr Fehlablagen, unauffindbare Dokumente oder Regelkonflikte zu erzeugen. Das ist ein vorgeschlagener Prüfschwellenwert, kein bereits gemessener Befund. Eine Literaturrecherche vor jeder Rat-Runde ist keine Voraussetzung: Für empirische Behauptungen braucht es Belege; wo die Messung keine Antwort liefert, bleibt der Ausgang offen/pending. Axiom: 5 — Ungeprüftes bleibt pending; auch 0 wird nicht zur erfundenen Zahl. Riss: Messritual — eine Pflichtrecherche kann selbst Aufmerksamkeit kosten, ohne die konkrete Entscheidung zu klären.
 
-C — Nein, nicht für jede Runde. Unabhängige Literatur ist nötig, wenn eine Runde allgemeine oder externe Wirksamkeitsbehauptungen aufstellt. Für Entscheidungen über den eigenen Bestand zählen Messungen im Haus; sie beweisen aber keine allgemeine Regel. Die angegebene Literaturbasis kann die Debatte informieren, belegt laut Befund gerade nicht, dass eine feste Ordnerliste allein Wildwuchs verhindert. Riss: Ohne Pflichtrecherche droht die Runde, bekannte externe Befunde zu übersehen.
+mycelium — D: Gate, nicht Rechte-Matrix. Kein individuelles Schreibrecht pro Ordner und Haus. Neue Ordner, Umbenennungen und Änderungen an der Kanonliste laufen durch ein Gate; gewöhnliche Inhaltsarbeit bleibt beim zuständigen Haus. Das Gate prüft die Allowlist in AGENTS.md und die Manifestpflicht für neue oder geänderte Datensätze. Axiom: 7 — ein fertiger, aber nicht registrierter oder manifestierbarer Harvest bleibt Schuld, kein Haken. Riss: Engpass und Bypass — ein Gate wird zum zentralen Knoten; es muss in CI verbindlich sein, sonst ist es nur eine Empfehlung, und der Operator schließt weiterhin die Front.
 
-D — Gate-Modell. Einziger Schreibpfad je Haus ist dasselbe Gate; es darf nur in registrierte Ordner schreiben und keine Hausgrenze überschreiten. Keine individuell verteilten Schreibrechte je Ordner. Riss: Das Gate wird zum Engpass und muss selbst verlässlich bleiben.
+sensory — F2 und F3: Ja und Ja. Regeln ohne eindeutigen Ort werden gestrichen oder an ihren einen Ort verschoben. Was mechanisch prüfbar ist, prüft das Gate, statt es nur in Prosa zu behaupten. Axiom: 3 — eine Prüfung muss ihre tatsächliche Kraft haben; eine Textregel ohne durchsetzenden Mechanismus ist kein Sample der Einhaltung. Riss: falsche Präzision — das Gate kann Ordnernamen und Manifestfelder prüfen, aber nicht, ob eine Regel sinnvoll oder eine Beschreibung verständlich ist.
 
-E — Je Haus eine feste Ordner-Registry, unbekannte Pfade standardmäßig abweisen; neue Ordner ausschließlich nach gemessenem Vorteil über dasselbe Gate zulassen. Das verlagert Aufmerksamkeit von laufender Aufsicht auf seltene, begründete Ausnahmen.
-
-F — Ja zu vier Ablageorten, fünfter verboten. Rechte in opencode.json, siebenzeiliges AGENTS.md als Wegweiser, ein Denk-.md, ein Gate. F2: Ja — jede bestehende Regel einem Ort zuweisen, Dubletten zusammenführen und Veraltetes nach Konfliktprüfung streichen. F3: Ja — mechanisch Prüffähiges zuerst durchs Gate, nicht in Prosa. F4: Ja — Regel und Persönlichkeit genügen; Messverfahren gehören zur Regel. F5: Vier gepflegte Dateien insgesamt im gemeinsamen Steuerungsverbund; die drei Ordnerlisten stehen im einen Denk-.md, ohne Hausdaten zu vermischen. Im normalen Turn zuerst `AGENTS.md` lesen; die übrigen Inhalte nur bei Bedarf, das Gate automatisch. Riss: Vier Dateien als Ablageorte garantieren noch keine vier Dateien weniger im gesamten System, falls Kopien oder Duplikate weiterbestehen.
-
-Fünf Stimmen
-
-Mountain: „Messen, nicht behaupten" berührt messen und keine harten Schwellen. Der Vorteil muss vergleichbar belegt sein. Riss: Messwerte hängen von der gewählten Aufgabenprobe ab.
-River: „PII bleibt im Haus" begründet getrennte Hausgrenzen und das Recht, einen Schreibvorgang abzulehnen. Riss: Ein gemeinsames Regelwerk darf nicht zum Transportweg für Hausinhalte werden.
-Mycelium: „Messen · bauen · abschließen · committen · pushen" berührt den Fluss: Registry und Gate leiten Änderungen nur auf erlaubte Pfade. Riss: Ein zentraler Transportpunkt kann stocken.
-Sensory: „Korrelat ≠ Erleben": Weniger Turns oder schnellere Ablage beweisen nicht, dass die Belastung des Operators gesunken ist. Riss: Prozessmetriken können tatsächliche Aufmerksamkeit verfehlen.
-Future: Der Mensch bleibt Adresse des Sends; das Gate prüft, aber committen und pushen bleiben Operator-Hand. Riss: Die letzte menschliche Prüfung kostet weiterhin Aufmerksamkeit.
+future — F, F4 und F5: Nein / Ja / vier Dateien. Nein zu vier unabhängigen Regelquellen: opencode.json enthält Rechte, AGENTS.md ist Einstieg und einzige lesbare Kanonregel samt Allowlist, das Gate ist deren maschinelle Durchsetzung; kein separates Denk-.md. Ja zu zwei Arten: Regel und Persönlichkeit. Die Persönlichkeit bleibt in council.yaml; sie ist keine zusätzliche Regelquelle. Damit sind es vier Dateien: AGENTS.md, opencode.json, das Gate und council.yaml. Zuerst gelesen wird AGENTS.md; die übrigen nur, wenn der Turn Rechte, Durchsetzung oder Ratsstimmen betrifft. Command-Datei, house-rules.md, _rat-anweisung.md und ui-seats.md werden zusammengeführt oder gestrichen, nicht als fünfter bis achter Regelort weitergeführt. Axiom: 6 — das Gate darf Stopps vorschlagen; abgeschlossen wird durch den Operator. Riss: Überkompression — vier Dateien sind ein Minimum, kein Freibrief, notwendige Unterschiede in eine unlesbare Einstiegsdatei zu quetschen.
