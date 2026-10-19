@@ -334,13 +334,13 @@ fn rss_kib() -> Option<u64> {
 }
 
 fn read_redact_file(name: &str) -> Option<String> {
-    let rel = format!("data/redact/{name}");
+    let rel = format!("tools/utils/data/redact/{name}");
     if let Ok(text) = fs::read_to_string(&rel) {
         return Some(text);
     }
     if let Ok(repo) = std::env::var("OMEGAFLOW_REPO") {
         if !repo.is_empty() {
-            if let Ok(text) = fs::read_to_string(format!("{repo}/data/redact/{name}")) {
+            if let Ok(text) = fs::read_to_string(format!("{repo}/tools/utils/data/redact/{name}")) {
                 return Some(text);
             }
         }
@@ -361,7 +361,7 @@ fn load_names() -> (HashSet<String>, HashSet<String>) {
                 }
             }
             None => {
-                eprintln!("llm_gateway: data/redact/{file} absent - that name list stays inert")
+                eprintln!("llm_gateway: tools/utils/data/redact/{file} absent - that name list stays inert")
             }
         }
     }
@@ -376,7 +376,7 @@ fn load_names() -> (HashSet<String>, HashSet<String>) {
             }
         }
         None => eprintln!(
-            "llm_gateway: data/redact/stopwoerter.txt absent - that stop list stays inert"
+            "llm_gateway: tools/utils/data/redact/stopwoerter.txt absent - that stop list stays inert"
         ),
     }
     match read_redact_file("funktionswoerter.txt") {
@@ -389,7 +389,7 @@ fn load_names() -> (HashSet<String>, HashSet<String>) {
             }
         }
         None => eprintln!(
-            "llm_gateway: data/redact/funktionswoerter.txt absent - that function-word list stays inert"
+            "llm_gateway: tools/utils/data/redact/funktionswoerter.txt absent - that function-word list stays inert"
         ),
     }
     (names, stop)
@@ -1387,7 +1387,7 @@ fn restore_sse_event(event: &str, r: &Redactor) -> String {
 fn provenance_sink() -> String {
     match std::env::var("OMEGAFLOW_GATEWAY_LOG") {
         Ok(p) if !p.is_empty() => p,
-        _ => "state/gateway/provenance.jsonl".to_string(),
+        _ => format!("{}/gateway/provenance.jsonl", state_root()),
     }
 }
 
@@ -1622,6 +1622,16 @@ struct ModelInfo {
 
 static MODELS: OnceLock<HashMap<String, ModelInfo>> = OnceLock::new();
 
+fn state_root() -> String {
+    match std::env::var("OMEGAFLOW_STATE") {
+        Ok(s) => s,
+        Err(_) => match std::env::var("OMEGAFLOW_WORK") {
+            Ok(w) => format!("{w}/zustand"),
+            Err(_) => format!("{}/state", repo_root()),
+        },
+    }
+}
+
 fn repo_root() -> String {
     match std::env::var("OMEGAFLOW_REPO") {
         Ok(r) => r,
@@ -1667,7 +1677,7 @@ fn catalog_rows(body: &str) -> Vec<(String, Option<f64>, Option<f64>, Option<u64
 
 fn refresh_catalog(secrets: &HashMap<String, String>, auth: &str) -> HashMap<String, ModelInfo> {
     let root = repo_root();
-    let dir = format!("{root}/state/gateway/catalog");
+    let dir = format!("{}/gateway/catalog", state_root());
     let _ = fs::create_dir_all(&dir);
     let mut models = HashMap::new();
     for r in ROUTES {
@@ -1985,7 +1995,7 @@ fn paid_allowed(model: &str) -> bool {
             return true;
         }
     }
-    if let Ok(s) = std::fs::read_to_string(format!("{}/state/gateway/paid-open", repo_root())) {
+    if let Ok(s) = std::fs::read_to_string(format!("{}/gateway/paid-open", state_root())) {
         let s = s.trim();
         if s == "1" || s.eq_ignore_ascii_case("all") {
             return true;
@@ -2503,10 +2513,12 @@ fn arg_value(args: &[String], flag: &str) -> Option<String> {
 
 const PROBE_TIMEOUT_SECS: u64 = 12;
 const SLOW_MS: u128 = 8000;
-const DISABLED_SESSION: &str = "state/gateway/disabled.session";
-const DISABLED_PERSIST: &str = "state/gateway/disabled.persist";
+const DISABLED_SESSION: &str = "disabled.session";
+const DISABLED_PERSIST: &str = "disabled.persist";
 
-fn append_disabled(path: &str, entry: &str) {
+fn append_disabled(name: &str, entry: &str) {
+    let path = format!("{}/gateway/{}", state_root(), name);
+    let path = path.as_str();
     if let Some(parent) = std::path::Path::new(path).parent() {
         let _ = fs::create_dir_all(parent);
     }
@@ -2646,7 +2658,7 @@ fn main() {
         let auth = load_auth_text();
         let dir = match arg_value(&args, "--out") {
             Some(d) => d,
-            None => "state/gateway/catalog".to_string(),
+            None => format!("{}/gateway/catalog", state_root()),
         };
         let _ = fs::create_dir_all(&dir);
         let provider = arg_value(&args, "--provider");
@@ -2691,7 +2703,7 @@ fn main() {
     let models = refresh_catalog(&secrets, &auth);
     eprintln!("llm_gateway: catalog {} models", models.len());
     let _ = fs::write(
-        format!("{}/state/gateway/models.tsv", repo_root()),
+        format!("{}/gateway/models.tsv", state_root()),
         models_tsv(&models),
     );
     let _ = MODELS.set(models);
@@ -2700,14 +2712,14 @@ fn main() {
         eprintln!("llm_gateway: balance {p} {b}");
     }
     let _ = fs::write(
-        format!("{}/state/gateway/balance.tsv", repo_root()),
+        format!("{}/gateway/balance.tsv", state_root()),
         balance_tsv(&balances),
     );
     {
         let secrets = secrets.clone();
         let auth = auth.clone();
         std::thread::spawn(move || {
-            let alive_path = format!("{}/state/gateway/alive.tsv", repo_root());
+            let alive_path = format!("{}/gateway/alive.tsv", state_root());
             let Some(models) = MODELS.get() else {
                 return;
             };
