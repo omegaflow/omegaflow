@@ -1,8 +1,175 @@
 # Rat — R-2026-10-19-a: Kanon statt Wildwuchs (drei Häuser)
 
-*(Formular der Runde. Der Operator fährt die Sitze und trägt unter jedem Sitz **einen** Textblock
-ein — die Antwort, wie sie kam. Die Session verifiziert jede Behauptung am Baum, nie die Stimme.
-Rahmen: `docs/granit.md` (fünf Axiome) · `docs/council.yaml` (fünf Stimmen).)*
+*(Eine Datei für die ganze Runde: Frage, Recherche, Prompt, Sitze, Antworten, Bilanz. Der
+Operator fährt die Sitze und trägt unter jedem Sitz **einen** Textblock ein — die Antwort, wie sie
+kam. Die Session verifiziert jede Behauptung am Baum, nie die Stimme. Rahmen: `docs/granit.md`
+(fünf Axiome) · `docs/council.yaml` (fünf Stimmen).)*
+
+## Die Frage
+
+Drei Häuser (`omegaflow`, `omegaflow-work`, `omegaflow-personal`) tragen 275 Ordner mit Dokumenten,
+**260 davon ohne README/INDEX**. 26 Ordnernamen existieren doppelt oder dreifach, darunter
+`stimmen` und `zustand` dreifach. Die Leitstelle legt Dokumente in `state/`, `docs/`, im Root und
+in der Werkstatt ab; niemand findet sie wieder.
+
+**Entscheide über A–E. Zu jedem: ja/nein + ein benannter Riss, der bei ja entsteht.**
+
+- **A** — Es gibt **einen Kanon** je Haus (feste Ordnerliste) und **individuelle Ordner nur bei
+  nachgewiesenem praktischem Vorteil**. Anerkennst du diese Zweiteilung als Regel?
+- **B** — Wenn ja: **woran** wird der Vorteil gemessen, damit er nicht Gefühl bleibt?
+- **C** — **Echokammer-Regel:** Jede Rat-Runde verlangt vorher eine mit `archive_search` gemessene,
+  unabhängige Literaturbasis (Host/URL · Werkzeug · Datum · Zahl) im Formular; Hausdokumente allein
+  zählen nicht. Ist das die richtige Grenze?
+- **D** — **Schreiben:** Wer darf in welchen Ordner schreiben — je Haus ein Schreibrecht pro Ordner,
+  oder ein Ordner, der nur durch Gate beschrieben wird?
+- **E** — **Bester Riss:** Welche Ablage macht diesen Wildwuchs *unmöglich* und kostet dabei am
+  wenigsten Aufmerksamkeit? (Eine Antwort, nicht drei.)
+
+**F — die Regel-Ablage (Operator-Wort 2026-10-19).** Der Operator hat genug: „es gibt die
+`opencode.json`, die Agents, die `.md`s und das Gate — das ist mir alleine schon zu viel." Die
+Leitstelle hat darüber hinaus an einem Tag **fünf** neue Regeln an vier Orten angelegt
+(Recherche-Pflicht, Zufalls-Budget, „Ersatz statt Ausweis", Such-Wurzel `sgrep`, Gateway-Neustart)
+— jede einzeln begründet, zusammen ein Regelwald. Dieselbe Sache steht in `_rat-anweisung.md`,
+`house-rules.md`, `ui-seats.md`, dem Formular und jetzt hier.
+
+**Zwei Entscheide, je ja/nein + Riss:**
+- **F1 — Wo darf eine Regel künftig leben?** Vorschlag: **genau vier Orte** — `opencode.json`
+  (Rechte/Verbot, mechanisch) · `AGENTS.md` (sieben Zeilen, unveränderlich) · **ein** `.md`
+  (Denken/Architektur, keine Befehle) · das Gate (Messung). Neue Regeln in einem fünften Ort
+  sind **verboten**, nicht „unschön". Ist das die Grenze?
+- **F2 — Was mit den Regeln, die schon da sind?** Vorschlag: **eine Streichrunde** — jede Regel
+  muss einen der vier Orte nennen; wer keinen nennt, fällt nicht auf einen neuen Ort, sondern
+  **weg**. Zählt dabei, was eine Regel *einmal getragen* hat, oder nur, ob sie heute noch einen
+  Fehler verhindert?
+- **F3 — Werkzeug statt Regel:** Wo ein Fehler mechanisch verhinderbar ist (leerer Suchlauf,
+  Zitat ohne Datei, Start ohne Release-Profil), gehört er ins **Gate** — nie als Satz ins `.md`.
+  Gilt diese Vorrangregel (Gate vor Prosa), auch wenn das Gate mehr Bau kostet?
+- **F4 — Zwei Arten, nicht mehr:** Womöglich ist „vier Orte" noch zu viel. Vielleicht gibt es nur
+  **Regel** und **Persönlichkeit** — „wie wird gemessen/gebaut/geprüft" gegen „wer spricht und wie".
+  Jede Datei gehört **genau einer** der beiden Arten an, und liegt an dem Ort, der ihr gehört.
+  Stimmst du der Zweiteilung zu — und welche bestehenden Dateien sind **keine** der beiden (nur
+  Ablage, kein Regelsitz) und damit aus der Regel-Frage heraus?
+- **F5 — Wie viele Dateien braucht es überhaupt?** Zählt die Turn-Kosten, nicht das Gefühl:
+  **jeder Pass** liest heute `AGENTS.md`, `house-rules.md`, `_rat-anweisung.md`, `ui-seats.md`,
+  die Command-Datei und bekommt die `opencode.json`-Rechte injiziert — sechs Regelquellen vor der
+  ersten Messung. Nenne die **kleinste Zahl**: wie viele Dateien tragen alle Regeln, ohne dass eine
+  Regel verloren geht, und welche **eine** liest ein Agent am Anfang? Ein Riss bleibt offen: was
+  passiert mit den Regeln, die dann **niemand** mehr zufällig liest, weil sie nicht in der Start-Datei
+  stehen?
+
+### Was NICHT zu entscheiden ist
+Kein Agent verschiebt oder löscht Ordner ohne Operator-Wort. `AGENTS.md` (die Wissenschaft) bleibt
+unverändert, ebenso die drei Wurzelpfade aus `bin/_roots.sh`.
+
+---
+
+## Recherche (Pflicht — gemessen 2026-10-19, `archive_search`)
+
+| # | Befund | Host/URL | Werkzeug | Zahl |
+|---|---|---|---|---|
+| R1 | **Monorepo-Migration** ist ein dokumentiertes, messbares Vorgehen — aber die Arbeit liegt im *Splitting* bestehender Bäume, nicht in „mehrere Ordner verbieten" | `openalex.org/W7132956120` (2024) | `archive_search … --openalex` | 1 Thesis, `cites: 0` |
+| R2 | Splitting eines Monorepos ist ein eigenes, praktisches Verfahren (Werkzeug-Fokus, nicht Doku-Fokus) | `openalex.org/W4414338474` + `…/W4409593019` (2023, doi `10.34218/jcet_06_02_004`, `10.15680/ijircce.2023.1111003`) | `--openalex` | 2 Publikationen, `cites: 0` |
+| R3 | **Repository-Kontext für Agenten** wird behandelt als *erzeugte Karte* des Baums („deterministic architectural map"), nicht als Verbot neuer Ordner | `openalex.org/W7124455383` (2026, `10.48550/arxiv.2601.10112`) | `--openalex` | 1 |
+| R4 | **Git-native Kontextregeln** für Coding-Agenten sind Gegenstand einer **präregistrierten** Studie — d. h. Regeln dieser Art sind messbar, nicht nur Geschmack | `openalex.org/W7220960305` (2026, `10.1145/3843282.3844425`) | `--openalex` | 1, DOI peer-reviewed |
+| R5 | **Cursor-Rules**: empirische Studie (2026) über Agenten-Regeln im Repo, `cites: 6` — Regeln im Repo wirken, aber ihre Form ist untersuchungsbedürftig | `openalex.org/W7125921161` (2026, `10.1145/3793302.3793367`) | `--openalex` | `cites: 6` |
+| R6 | **Dokumentationsquellen sind divers** (README nur ~ Teil): Taxonomie über 950 GitHub-Repos, 4 Sprachen | arXiv `2102.12727v2` (2021) | `--arxiv` | 950 Repos |
+| R7 | **Dokumentationsqualität ist multidimensional** — 10 Dimensionen (Struktur/Inhalt/Stil); „gute Doku" ist damit definierbar statt bauchgefühlbar | arXiv `2007.10744v3` (2020) | `--arxiv` | 10 Dimensionen |
+| R8 | **Reproduzierbarkeits-Metadaten** in Repos sind ein eigenes Forschungsfeld — der Kanon hat Vorläufer | arXiv `1608.04529v2` (2016) | `--arxiv` | 1 Proposal |
+
+**Radar:** `--semanticscholar` liefert für dieselbe Frage unbrauchbare Treffer (Medizin, Archäologie)
+— der Kanal ist für Architekturfragen **nicht** belastbar und wird hier verworfen, nicht zitiert.
+`--openalex` lief ins Budget (`total: 1911`, `end: budget`) — die acht Befunde oben sind ein Schnitt,
+kein Vollbild.
+
+**Was die Recherche für die Frage bedeutet:** Die Literatur kennt (a) Monorepo-Splitting als
+Verfahren, (b) Baum-Karten und Kontextregeln als *erzeugte* Artefakte, (c) Dokumentationsqualität
+als mehrdimensional messbar. Sie kennt **keine** Arbeit, die zeigt, dass eine feste Ordnerliste
+allein Wildwuchs verhindert. Die Frage ist damit offen — genau darum geht sie an den Rat.
+
+**Hausbefund (gemessen `bin/zonen`, 2026-10-19):** 275 Dokumentordner (omegaflow 46 · work 205 ·
+personal 24) · 2037 Doku- und 769 Datendateien · 26 Namenskollisionen · 260/275 ohne README/INDEX ·
+`work` trägt ~100 kurzlebige Läufe (`stimmen/swarm-*`, `stimmen/voice-all-*`) und ~90 Hostordner
+in `cache/` **und** `data/`.
+
+**Regelwald-Befund (gemessen 2026-10-19, Leitstelle):** dieselbe Sache an mehreren Orten, allein
+heute: Send/Operator-Hand an **5** Orten (`kern.md`, `house-rules.md`, `agent future`, `cmd future`,
+`feuer`), Rat-Pflichten an **3** (`_rat-anweisung.md`, `house-rules.md`, `ui-seats.md`), Fundsachen
+beim Lesen: `roster2_synthese.md` zitiert Rohantworten zu Google AI Studio, Claude und Qwen, die im
+Ordner **nicht existieren** — ein Befund ohne Datei, den kein Gate bemerkt. Das ist der Ist-Stand,
+über den F entscheidet.
+
+**Turn-Kosten-Befund (gemessen 2026-10-19):** vor der ersten Messung eines Passes liegen bereits
+**sechs** Regelquellen im Kontext — `AGENTS.md` (7 Zeilen, 219 B) · `opencode.json` (2 086 B,
+Rechte injiziert) · `.opencode/commands/<linie>.md` (Lines-Start) · `docs/concepts/house-rules.md`
+(103 Zeilen) · `state/stimmen/_rat-anweisung.md` (287 Zeilen) · `ui-seats.md` (Roster + alle
+Bedienregeln). Dazu kommen in einem Rat-Pass das Formular und die Auswahl. Der Operator sagt: „das
+ist mir alleine schon zu viel." **Die Zeile, die im Rat zu messen ist: nicht Zeilen sparen, sondern
+Doppelungen streichen** — eine Regel, die zweimal dasteht, kostet doppelt und widerspricht sich.
+
+---
+
+
+## Auswahl der Sitze — gezogen 2026-10-19
+
+**Regel (Operator-Wort 2026-10-19, zweite Fassung):** Drei Blöcke zu fünf — **5 Schwarm (Maschine) ·
+5 UI ohne Login (Maschine, davon 4 + Fugu) · 5 Frontier mit Login (Operator)**. Gesamt 15 Stimmen.
+**Kein Paid** — DeepSeek/Mistral-API bleiben unberührt; Mistral Vibe ist ein UI-Sitz, kein API-Aufruf.
+
+## Schwarm: 5 aus 13 (Zufall, `shuf -n 5`)
+
+Quelle: `state/zustand/llm-gateway-alive.tsv`, frisch geschrieben 2026-10-19 09:54:04 (13 Sitze).
+
+| # | Sitz |
+|---|---|
+| 1 | `kenari/nemotron-3-nano-omni-30b-a3b-reasoning:free` |
+| 2 | `openrouter/nvidia/nemotron-3-ultra-550b-a55b:free` |
+| 3 | `kilo/nvidia/nemotron-3-ultra-550b-a55b:free` |
+| 4 | `ovh/Qwen3Guard-Gen-0.6B` |
+| 5 | `kilo/xingchen-agi/xing4.0-29b-a4b:free` |
+
+**Ersatz-Regel (Operator-Wort 2026-10-19):** Ein untauglicher Sitz wird **ersetzt**, aus derselben
+gezogenen Liste, mit derselben Methode (`shuf` ohne Zurücklegen über die verbleibenden Sitze) —
+und der Ersatz wird **hier veröffentlicht**, damit „ersetzt" nicht „ausgesucht" heißt.
+
+**Bekannter Untauglicher:** Sitz 4 `ovh/Qwen3Guard-Gen-0.6B` ist ein Sicherheitsklassifikator,
+kein Urteilsträger. Er läuft trotzdem **einmal** mit (Messung statt Annahme). Liefert er kein
+Verdikt, ersetzt ihn der erste Nächste aus der Restliste.
+
+## Block 2 — UI ohne Login, Maschine fährt (4 + Fugu)
+
+| # | Sitz | Composer (Roster) | Max je Sitz |
+|---|---|---|---|
+| 1 | Perplexity | `div[contenteditable]` (Enter) | Modell-Selektor; Suche immer an |
+| 2 | Duck.ai | `textarea[placeholder="Alles privat fragen"]` | **Begründungsmodus** (Enter sendet **nicht** — Senden-Button) |
+| 3 | Qwen | `textarea[placeholder*="Qwen fragen"]` | **Web-Suche** an + **Denken** + Modell `Qwen3.8-Max` |
+| 4 | MiniMax | `div[contenteditable]` („Enter message…") | „Search"; Modell MaxHermes/MaxClaw |
+| 5 | Sakana Fugu | `textarea[placeholder="Ask anything"]` | Namazu, rechnet von sich; **langsam, zuerst stellen** |
+
+**Zugang (korrigiert 2026-10-19):** Die Login-Tabelle im Roster ist **falsch** — sie führt Duck,
+MiniMax und Kimi nicht als Login-Seats. `curl` gemessen: `duck.ai` 200 · `agent.minimax.io` 200 ·
+`kimi.ai` **302 (Redirect, Konto)**. Duck.ai, MiniMax und Kimi sind **eingeloggt über das
+Operator-Profil** (derselbe lebende Chrome wie alle anderen Seats) — das ist kein offener Zugang,
+sondern der Operator-Browser, den die Maschine bedient. Mistral **Vibe** steht in keiner
+Bedien-Tabelle des Rosters → hier **nicht** gesetzt, weil unbelegt; das Gate (Composer/Senden/Max)
+ist Pflicht vor dem Senden.
+
+## Block 3 — Frontier mit Login, **Operator** fährt
+
+| # | Sitz | Warum Frontier | Max je Sitz |
+|---|---|---|---|
+| 1 | Claude | ProseMirror, 5-h-Limit | Sonnet 5.5 Extra hoch |
+| 2 | Kimi | Login-Wall (Google/Telefon), K3 | — |
+| 3 | Gemini Notebook | Dokument-Bindung, kein freier Composer | — |
+| 4 | SciSpace | Sign-up-Wall, Research-Task | — |
+| 5 | *(offen — Operator wählt den fünften aus `ui-seats.md`)* | | |
+
+**Offene Stelle:** `ui-seats.md` führt nur vier echte Login-Seats. Der fünfte wird **nicht erfunden**
+— der Operator nennt ihn beim Fahren.
+
+**Kein Paid.** Wird das Feld uneinig und die Frage verlangt Autorität, ist der nächste Schritt Ask
+an den Operator — nicht ein stiller Paid-Aufruf (`bin/rat_guard`).
+
+---
 
 ## Prompt (verbatim, an jeden Sitz)
 
