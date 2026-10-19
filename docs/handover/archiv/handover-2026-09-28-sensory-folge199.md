@@ -20,7 +20,7 @@ steht pro Punkt in `Bindung`.
 
 Dieses Register konsumiert `handover-2026-09-28-sensory-folge198.md` (nach `archiv/`);
 diese Folge ist 199. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md`.
+`state/standing-pass.md`.
 
 Dieses Atom maß die offenen Punkte der eigenen Linie an ihre Kante: **DEMETER** (Order-Datei-URL
 direct 202 / Proton 202, 0 B; Bare-Endpoint 403/358 B — Order 18400 weiter `Running`, Ablauf
@@ -30,7 +30,7 @@ und die Verifikation **gemessen**: das `matrix-state`-Release-Asset `matrix-roto
 (aktualisiert 14:31:21Z durch Lauf `36436173707`, head `4fc1221e`; `8748a39cd` Vorfahr) trägt
 **66** `φ window:`-Zeilen unter `OMEGAFLOW_HIDDEN` (`sgrep -c "window:"`); der Punkt ist
 geschlossen, der Survey-Marker auf `erledigt` gezogen. Die `wartend.φ`-Zeilen (Aufnehmer sensory)
-und `state/zustand/external-state.md:49` wurden mit den frischen Messstempeln nachgezogen.
+und `state/external-state.md:49` wurden mit den frischen Messstempeln nachgezogen.
 
 ## Operator-Wort-Register (Stand 2026-09-28)
 
@@ -105,7 +105,7 @@ und `state/zustand/external-state.md:49` wurden mit den frischen Messstempeln na
 - **Blockade:** Order 18400 noch `Running` — der Datei-Endpoint antwortet `202` (leer). Kein verfügbares Datenbyte, kein Spiegel.
 - **Braucht:** Order 18400 abschließen lassen — Trigger: Datei-Endpoint `200` mit Daten → Dateien aus `data/regards.cnes.fr/order_18400.metalink` ziehen, **vor 2026-10-05 05:04:06 UTC**. Nächste Messung (einmal, kein Polling): `archive_search --verdict '<order-file-url>'` → `202` = weiter `Running`, `200` = Daten ziehen. Register-Duty `blocked ip-blocked` (CDPP-Route) als `## An Mycelium`-Träger — die Klasse ist zu prüfen (UA-Gate, kein IP-Block).
 
-## Aufnehmer-Waits (Aufnehmer sensory, Wohnort `state/zustand/wartend.φ`)
+## Aufnehmer-Waits (Aufnehmer sensory, Wohnort `state/wartend.φ`)
 
 Jede Zeile ein eigener Akt; die Trigger wurden am 2026-09-28 frisch gemessen.
 Der Aufnehmer (sensory) arbeitet eine Zeile im selben Atom, in dem ihr Trigger feuert —
@@ -121,7 +121,7 @@ kein Punkt wird bloß benannt, wo ein Schritt zur Kante existiert.
 ## Termin
 
 - **Europa-Clipper** | termin:2026-12-03 | Trigger: 02./03.12. | Lage (gemessen
-  2026-09-28): Dritt-Wait in `state/zustand/wartend.φ:15` (Aufnehmer sensory) |
+  2026-09-28): Dritt-Wait in `state/wartend.φ:15` (Aufnehmer sensory) |
   Braucht: Epoche ernten.
 
 ## Träger (Orphan-Faltung)
@@ -208,7 +208,7 @@ werden getragen, nie geglättet (0 honored).
   (18400 `202`, 18387 `500`). Die Dispositions-Klasse `blocked ip-blocked` (CDPP) ist damit
   zu prüfen (eher `parser-def`/Route-Gate). Der Dispositions-Eintrag der Sache steht als
   `pending` in `phi/blocked_sources.φ:81-83`; Myceliums Feder: die Klasse korrigieren.
-  Der Wait steht `state/zustand/wartend.φ:4` (Aufnehmer sensory).
+  Der Wait steht `state/wartend.φ:4` (Aufnehmer sensory).
   Origin: sensory-folge194/195/196/197/199.
 
 ## An Mountain (gemessen, fremde Feder)
@@ -250,7 +250,7 @@ Aufnehmer future (wartend.φ gesetzt). Future legt sie dem Operator in einfacher
 - **MBRSC Hope/Al-Amal (VAE)** — `sdc.emiratesmarsmission.ae`: kostenloses Konto.
 
 **Eingetragen 2026-09-28 als `blocked account` in `phi/blocked_sources.φ`** +
-`state/zustand/wartend.φ` (Aufnehmer future).
+`state/wartend.φ` (Aufnehmer future).
 
 Origin: sensory-folge195.
 
@@ -271,5 +271,5 @@ Eigene Pfade dieses Atoms (Commit/Push pending `/commit`):
   `docs/handover/archiv/handover-2026-09-28-sensory-folge198.md` (Move),
   `docs/surveys/survey-2026-09-06-codestruktur.md` (Marker auf `erledigt`).
 
-`state/operator-gespraeche/2026-09-28-sensory.md`, `state/zustand/wartend.φ` und
-`state/zustand/external-state.md` sind gitignored (`/state/`) — lokal, nicht committet.
+`state/operator-gespraeche/2026-09-28-sensory.md`, `state/wartend.φ` und
+`state/external-state.md` sind gitignored (`/state/`) — lokal, nicht committet.

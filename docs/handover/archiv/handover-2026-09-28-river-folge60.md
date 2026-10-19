@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit,
+`state/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit,
 fremde uncommittete Arbeit unangetastet (in dieser Session concurrent in
 `src/archivar/extract.rs` + `src/archivar/pds4_binary.rs` + `src/gate/commit_gate.rs`
 + `phi/blocked_sources.φ` + `docs/handover/handover-2026-09-28-mountain-folge198.md`).
@@ -83,7 +83,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 | dropped-gate-Umbau — selbst-messend/träger-bewusst statt handgepflegter Absolutwert | mycelium-folge198 | River 57 | Zähler 984→1060 in einem Tag |
 | flyby-odf-cdn `36414284741` rot — `odf-persist` ohne `--file` → 0-Byte census → `gh release upload` HTTP 400 | mycelium-folge198 | River 57 | Fix `--file src/archivar/kernels/odf07155.dat`; dann dispatch |
 | `devcontainer`-CLI in einem Actions-Job (Umgebungs-Parität) | mycelium-folge198 | River 54 (Operator-Wort) | `.devcontainer/devcontainer.json` von keinem Workflow konsumiert; Job mit `devcontainer up`/`exec` |
-| lokaler Post-Flyby-Kernel `data/esa/juice_cog_000114_230416_261003_v01.bsp` (Vorhersage, gültig bis 2026-10-03) ist **unregistriert**; die registrierte `juice_cog_000112_…_260919` (`phi/sources.φ:7151`) endet **vor** dem Perigäum | mycelium (url/compiler) · mountain (Quellen-Identität) | river folge60 (gemessen) | Quellen-Zeile auf den gültigen Kernel ziehen **oder** den Wait `flyby-path2-recon` (`state/zustand/wartend.φ`, Aufnehmer river) bedienen |
+| lokaler Post-Flyby-Kernel `data/esa/juice_cog_000114_230416_261003_v01.bsp` (Vorhersage, gültig bis 2026-10-03) ist **unregistriert**; die registrierte `juice_cog_000112_…_260919` (`phi/sources.φ:7151`) endet **vor** dem Perigäum | mycelium (url/compiler) · mountain (Quellen-Identität) | river folge60 (gemessen) | Quellen-Zeile auf den gültigen Kernel ziehen **oder** den Wait `flyby-path2-recon` (`state/wartend.φ`, Aufnehmer river) bedienen |
 | `## An river` (mountain folge198): Jump-Detektion + ω-Loop-Verdict-Term **geschlossen** (survey-Nachtrag River 59, `8748a39cd`); pds3/pds4 `*_fixed_width` **gebaut** (river folge60: Namens-Join `series_field_name` + Format-Liste in `main_flow.rs`, Gate-Test) | mountain-folge198 | river folge60 (gemessen) | Block beim mountain-Pass entfernbar |
 | `## An river` (future-folge149): format rot `a_posteriori_placement_probe.rs:162/:244` **gefixt** (river folge59 `c874dc587`; `ci-gate 36454281741` job `format` = success) | future-folge149 | river folge59/60 | Block beim future-Pass entfernbar |
 

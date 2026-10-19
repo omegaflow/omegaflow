@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 328 (2026-10-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
-wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/zustand/standing-pass.md`;
+wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/standing-pass.md`;
 gemessen am HEAD `0b1c682f8`, seither fuhren Mountain (`ed536cde9`-Umfeld, folge328) und
 River (`b9375fb01`/`ed536cde9`) weiter). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge327.md` (→ `archiv/`) und faltete die
@@ -61,7 +61,7 @@ folge327; `-6..-9` neu gefaltet) und `river-folge197` (`xfer:river197-6`).
 ### 8-Ziele-Rest — PDS-PPI PVO-ORSE gebaut; JPL `obs_data` registriert; PDS-Geosciences disponiert
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** der `pvo-orse-odr-cdn`-Lauf (dispatcht `38263550677`) und der `ssd-jpl-raw-cdn`-Lauf (`38263196991`, push-getriggert) enden
-- **Lage:** (gemessen 2026-10-12) **PDS-PPI `PVO-V-ORSE-1-ODR-OPENLOOP--V1.0`**: `INDEX.TAB` = 1108 ODR-Produkte; Record-Format gemessen (RSC-11-9/-10, word-3-Recordlänge; die Label-`FILE_RECORDS` widersprechen der gemessenen Rahmung → Baum gewinnt) ⇒ **`pvo_orse_odr_compiler` gebaut** (`src/archivar/pvo_orse.rs` 431 Z., `tools/harvest/src/bin/pvo_orse_odr_compiler.rs` 387 Z., `.github/workflows/pvo-orse-odr-cdn.yml`; `cargo build -p omegaflow-harvest --bin pvo_orse_odr_compiler` grün), Register `phi:12473-12479` (`pvo_orse_odr_s0.bin`, `terms unknown`). **JPL `ssd.jpl.nasa.gov/planets/obs_data.html`**: 50 Textdateien in vier Formaten (optisches Kartenformat / DSN-Ranging-Doppler / VLBI / Radar) ⇒ **48 via `raw_mirror` registriert** (`phi:32450-32785`) + `.github/workflows/ssd-jpl-raw-cdn.yml` (die 2 Viking-Dateien trägt bereits `viking_text_compiler`, `phi:20582`). **PDS-Geosciences `venus_radar`**: Level-2 ⊂ Zenodo (`phi:32490`); Roh-Delay-Doppler (~490 GB, `BAND_STORAGE_TYPE`-Arm fehlt) ⇒ `state/zustand/wartend.φ:36`.
+- **Lage:** (gemessen 2026-10-12) **PDS-PPI `PVO-V-ORSE-1-ODR-OPENLOOP--V1.0`**: `INDEX.TAB` = 1108 ODR-Produkte; Record-Format gemessen (RSC-11-9/-10, word-3-Recordlänge; die Label-`FILE_RECORDS` widersprechen der gemessenen Rahmung → Baum gewinnt) ⇒ **`pvo_orse_odr_compiler` gebaut** (`src/archivar/pvo_orse.rs` 431 Z., `tools/harvest/src/bin/pvo_orse_odr_compiler.rs` 387 Z., `.github/workflows/pvo-orse-odr-cdn.yml`; `cargo build -p omegaflow-harvest --bin pvo_orse_odr_compiler` grün), Register `phi:12473-12479` (`pvo_orse_odr_s0.bin`, `terms unknown`). **JPL `ssd.jpl.nasa.gov/planets/obs_data.html`**: 50 Textdateien in vier Formaten (optisches Kartenformat / DSN-Ranging-Doppler / VLBI / Radar) ⇒ **48 via `raw_mirror` registriert** (`phi:32450-32785`) + `.github/workflows/ssd-jpl-raw-cdn.yml` (die 2 Viking-Dateien trägt bereits `viking_text_compiler`, `phi:20582`). **PDS-Geosciences `venus_radar`**: Level-2 ⊂ Zenodo (`phi:32490`); Roh-Delay-Doppler (~490 GB, `BAND_STORAGE_TYPE`-Arm fehlt) ⇒ `state/wartend.φ:36`.
 - **Blockade:** keine (Compiler + Register stehen); shas/shard-Zahl folgen aus CI.
 - **Braucht:** `ci_manage log <pvo-orse-odr-run-id>` / `<ssd-jpl-raw-run-id>`; die gedruckten Register-Zeilen (sha je Shard) falten. **Terms (Operator-Wort „mach einfach"):** alle **134** ursprünglichen `terms PD`-Zeilen (109 × `ssd.jpl.nasa.gov`, 25 × `pds-ppi.igpp.ucla.edu`, u. a. `voyager_odr`/`viking_text`/`horizons`) sind auf `terms unknown` gesetzt — gemessen trägt keine Seite der beiden Häuser eine Lizenz-Aussage (`docs/plans/ref-ephemeriden-quellen-index.md:31,47`).
 

@@ -8,7 +8,7 @@
 # Handover — Mycelium-Folge 316 (2026-10-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
-gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+gemacht wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-11-mycelium-folge315.md` (→ `archiv/`), faltete die drei
 adressierten Blöcke (future-238, mountain-320, river-192) und schrieb die
@@ -37,7 +37,7 @@ adressierten Blöcke (future-238, mountain-320, river-192) und schrieb die
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster `entsoe-cdn`-Lauf endet
 - **Lage:** (gemessen 2026-10-11 via `ci_manage log 38169562211`) Lauf `38169562211` **failure** — `10YFI-1--------U: fetch void — curl status Some(22)` nach 0,67 s; `read_secret` fand den Token; Body war **unread**. **Geheilt 315:** `entsoe_compiler.rs::fetch` nutzt `-sSL` + `--write-out '\n%{http_code}'`, gibt bei non-2xx `HTTP <code>: <body-Anfang>` aus. Kein neuer Lauf am HEAD `d451593b9` in der CI-Liste.
-- **Blockade:** ENTSO-E-Token-Freigabe (Ticket #9473923, `state/zustand/wartend.φ:28`).
+- **Blockade:** ENTSO-E-Token-Freigabe (Ticket #9473923, `state/wartend.φ:28`).
 - **Braucht:** `ci_manage log <run-id>` nach dem nächsten Lauf; bei grün Register-Block (`url`/`origin`/`format`/`at earth`/`ttl`); `terms`/`ttl` (Mountain).
 
 ### McPherron MCON — Workflow umgestellt + dispatcht; sha256 + Register-Block offen

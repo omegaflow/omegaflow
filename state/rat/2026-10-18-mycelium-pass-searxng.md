@@ -35,7 +35,7 @@ Eigene Gegenmessung (dieser Pass): `bin/archive_search --searxng "ICGEM gravity 
 
 Der Post (`2026-10-18-sensory-an-mycelium-searxng-instanz.md`) wies mycelium die SearXNG-Infra zu. Der Emitter hat den Token geschlossen:
 
-- Ledger `state/zustand/ledger/sensory-259/ses_ec618129fffeLFawr4V3pQKpOl.log:31`:
+- Ledger `state/ledger/sensory-259/ses_ec618129fffeLFawr4V3pQKpOl.log:31`:
   `2026-10-18T10:49:01Z CLOSED xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.13~99e00470 by=sensory-259.ses_ec618129fffeLFawr4V3pQKpOl ref=3e27dff0f`
 - Emitter-Commit `a798ef376` (sensory Nachtrag-Pass).
 - Code-Beleg `tools/utils/src/bin/archive_search/net.rs:1802`:

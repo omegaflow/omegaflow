@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 324 (2026-10-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
-gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+gemacht wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge323.md` (→ `archiv/`) und faltete die
 adressierten Blöcke `future-folge241` und `mountain-folge325`.
@@ -33,7 +33,7 @@ ausgenommen — kein Register-sha256). · **NIST-NSE-Daten-Caller gebaut**
 (`.github/workflows/nist-ncnr-nse-data-cdn.yml`, walkt das JSON-LD-Katalog,
 kompiliert + lädt je `.nxs.nse`-Satz). · **ENTSO-E-Arm dispatcht**
 (`entsoe-cdn` `38233635426` — **rot**: HTTP 400 HTML vom API); `entsoe-token` in
-`state/zustand/wartend.φ` geschlossen (Repo-Secret `ENTSOE_API_TOKEN` steht,
+`state/wartend.φ` geschlossen (Repo-Secret `ENTSOE_API_TOKEN` steht,
 gemessen via `gh secret list`).
 · `archive_search --all`-Spill honoriert bereits `$OMEGAFLOW_SPILL_DIR` (gebaut
 `03bb95e2e`, im Baum) — die Linien setzen es noch nicht (offener Punkt unten).

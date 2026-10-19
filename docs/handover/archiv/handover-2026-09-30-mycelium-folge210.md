@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
 wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
-(`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
+(`state/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-09-30-mycelium-folge209.md` (→ `archiv/`).
 
 ## Operator-Wort-Register
@@ -137,10 +137,10 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 - **Blockade:** keine
 - **Braucht:** `## An river`.
 
-### Quellenseitige Waits (`state/zustand/wartend.φ`)
+### Quellenseitige Waits (`state/wartend.φ`)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Antwort/Readiness
-- **Lage:** (gemessen 2026-09-30 via `state/zustand/wartend.φ`) NSSDCA/JPL-Antworten
+- **Lage:** (gemessen 2026-09-30 via `state/wartend.φ`) NSSDCA/JPL-Antworten
   (`mariner10`/`viking`/`cassini-trk`/`juno-jplnav`) offen; Asmar (JPL) verweist auf die
   Paper-Autoren (Antwortmail 1790697586); drei ODF-Anfragen (ESOC/KinetX/Turyshev) raus.
 - **Blockade:** Antwort
@@ -149,7 +149,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### termin-Punkte — Wiedervorlage
 - **Status:** termin | **Bindung:** termin:2026-10-02 · 2026-10-19 · 2026-12-02 · 2026-12-03 · 2027-04-01
 - **Trigger:** `superdarn-af68c4f1` · `emodnet-hfr` · `noirlab-gaia-dr4` · `europa-clipper` · `bepicolombo-more`
-- **Lage:** (gemessen 2026-09-30 via `state/zustand/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
+- **Lage:** (gemessen 2026-09-30 via `state/wartend.φ`) Wiedervorlage, Aufnehmer mycelium.
 - **Blockade:** Termin
 - **Braucht:** `archive_search --verdict <url>` beim jeweiligen Datum.
 

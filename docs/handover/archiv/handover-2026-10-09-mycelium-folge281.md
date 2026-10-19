@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 281 (2026-10-09)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
-gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+gemacht wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-09-mycelium-folge280.md` (→ `archiv/`).
 
@@ -40,10 +40,10 @@ liegen als Sender-Zeilen in `## An <line>`.
 
 ### CI — `subset` nur am Tip; zwei in_progress-Geister geheilt, Watchdog-Aufnehmer gebaut
 - **Status:** wartend | **Bindung:** eigen (CI-Infra)
-- **Trigger:** neuer `ci-gate`-`subset`-Lauf am Tip, der nie grün wird (gemessen im Register `state/zustand/ci-gate.φ`)
+- **Trigger:** neuer `ci-gate`-`subset`-Lauf am Tip, der nie grün wird (gemessen im Register `state/ci-gate.φ`)
 - **Lage:** (gemessen 2026-10-09 17:2xZ) Die t420-Jam-Ursache war nicht der sub-set-Concurrency-Mechanismus, sondern **zwei hängende `in_progress`-Läufe**: `37892764277` (`ci-gate`-`subset`, SHA `19cbb7fc7`, 11 h `in_progress` → `cargo test --lib`) und `37853161709` (`hips-png-cdn`, 4 Shards `in_progress` seit 2026-10-08T22:23) — beide **gecancelt**; dazu 5 superseded queued `ci-gate`-Runs gecancelt (`37966122239`, `37966055969`, `37965985107`, `37965927703`, `37965663000`). **Watchdog-Schritt 2b gebaut:** `bin/ci_watchdog.sh` liest den Tip via `git ls-remote origin refs/heads/main` und cancelt queued `ci-gate`-Runs mit `head_sha != Tip` (per-SHA-Verdikt bleibt `pending`, nie grün). `bash -n` sauber.
 - **Blockade:** keiner.
-- **Braucht:** nächste Pass-Runde messen, ob der Tip-`subset` am neuen HEAD grün wird (`state/zustand/ci-gate.φ`); **falls er gemessen hungert** → Weg A (`subset` auf `ubuntu-latest`) dem Operator als neues Wort vorlegen.
+- **Braucht:** nächste Pass-Runde messen, ob der Tip-`subset` am neuen HEAD grün wird (`state/ci-gate.φ`); **falls er gemessen hungert** → Weg A (`subset` auf `ubuntu-latest`) dem Operator als neues Wort vorlegen.
 
 ### Pipeline — `swpc-efield-cdn` Fenster vs. Retention, Verifikation läuft
 - **Status:** wartend | **Bindung:** eigen (Ernte)

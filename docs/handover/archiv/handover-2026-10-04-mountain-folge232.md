@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 232 (2026-10-04)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-04-mountain-folge231.md` (→ `archiv/`).
 
 ## Burn: open 0.005 · close 0.224 · cap 0.30 Grund: 17 Agenten-Läufe (Force-Gate/Reader-Arme/council/3 UI-Chats) + 3072 Register-Zeilen — flash-first, Katalog-Rest per flash 0.11

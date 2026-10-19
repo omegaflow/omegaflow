@@ -67,7 +67,7 @@ Der Workflow hat Issue **#238** automatisch gefiled; ich habe die Diagnose dort 
 
 ## 6. Offen — nicht von mycelium zu schließen
 
-- **river `.13~ea59cd54` selbst** bleibt `SENT`/unbeglichen: der Emitter (river) schließt; ein Empfänger kann seinen eigenen Eingang nicht quittieren. Der `CLOSED`-Eintrag gehört in `state/zustand/ledger/river/…` und wird hier **nicht** geschrieben.
+- **river `.13~ea59cd54` selbst** bleibt `SENT`/unbeglichen: der Emitter (river) schließt; ein Empfänger kann seinen eigenen Eingang nicht quittieren. Der `CLOSED`-Eintrag gehört in `state/ledger/river/…` und wird hier **nicht** geschrieben.
 - ~~**`sha256` im Block + 206**~~ — **erledigt** (Nachtrag §8): nach dem Credential-Fix ist das Asset gespiegelt, der Whole-sha256 steht im Block, `.parts`/Shards liefern 206.
 - **Eigene `.1~ed07ad98`** (ICGEM Grad-Cap, Rat `R-2026-10-18-f` offen) und **`.3~7a1c533b`** (Offen-Zählung/Kappe, Gate-Code hinter `edit:deny`) bleiben Rat-/Wand-blockiert.
 

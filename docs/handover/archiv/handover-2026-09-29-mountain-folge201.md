@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert
-(`state/zustand/standing-pass.md`); gemessen wird nur, was der eigene Trigger
+(`state/standing-pass.md`); gemessen wird nur, was der eigene Trigger
 für fällig erklärt.
 
 ## Operator-Wort-Register
@@ -104,7 +104,7 @@ Führe den bestätigten Plan aus — `line`-Agent, flash-first delegieren, eine 
 - **Braucht:** Feld-/Wire-Entscheidung (Rat/Operator, in `## An future`); kein CDN ohne Operator-Einverständnis.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte `state/zustand/wartend.φ:3`)
+- **Status:** wartend | **Bindung:** eigen (Warte `state/wartend.φ:3`)
 - **Trigger:** `NED_BYPARAMS_TIMEOUT_TOKEN` per Mail.
 - **Lage:** (gemessen 2026-09-28) zwei NED-Einträge im Ledger, kein Token.
 - **Blockade:** Token fehlt.

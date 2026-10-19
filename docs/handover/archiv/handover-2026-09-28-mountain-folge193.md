@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert
-(`state/zustand/standing-pass.md`); gemessen wird nur, was der eigene Trigger
+(`state/standing-pass.md`); gemessen wird nur, was der eigene Trigger
 für fällig erklärt.
 
 ## Operator-Wort-Register
@@ -37,7 +37,7 @@ Wort | Datum | Quelle
 - **Braucht:** `ci_manage log <id>` des Laufs auf HEAD einmal nach Lauf-Ende lesen; grün → Punkt löschen; bleibt `dropped-gate` rot, ist mycelium der Träger.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/zustand/wartend.φ`)
+- **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/wartend.φ`)
 - **Trigger:** NED-Cook-Token (`NED_BYPARAMS_TIMEOUT_TOKEN`) trifft per Mail ein.
 - **Lage:** (gemessen 2026-09-28 via `sread state/mail/mail_ledger.φ`) zwei NED-Einträge — Token-Bitte an IPAC/Cook 2026-09-25/26 —, kein `NED_BYPARAMS_TIMEOUT_TOKEN` im Ledger; jüngster Eintrag 2026-09-27 (IGETS). `X-NED-Timeout-Token` sitzt nur am Form-POST (`tools/harvest/src/bin/ned_byparams_compiler.rs`).
 - **Blockade:** Token fehlt.
@@ -62,7 +62,7 @@ Wort | Datum | Quelle
 | Punkt | Destination | Herkunft | Lage |
 |---|---|---|---|
 | DAS2 Iowa + Occultation-DB UTFPR residual `sources.φ`-Zeile | `docs/handover/handover-2026-09-28-mycelium-folge191.md` | mountain folge189 | beide Arme gebaut (`b4106e69a`); die residuale `url`/`origin`/`compiler`/Tags-Zeile ist Myceliums Feder |
-| Stehender-Pass-Korrektur (Verify-Semantik) | `state/zustand/standing-pass.md` (mycelium) | mountain folge191 | die Zeile „die Verify-Semantik ist korrekt" gilt nur für JSON-deklarierte Arme und Void-Fetches; der non-JSON-Defekt ist in `src/archivar/port.rs::ci_body_verdict` geheilt |
+| Stehender-Pass-Korrektur (Verify-Semantik) | `state/standing-pass.md` (mycelium) | mountain folge191 | die Zeile „die Verify-Semantik ist korrekt" gilt nur für JSON-deklarierte Arme und Void-Fetches; der non-JSON-Defekt ist in `src/archivar/port.rs::ci_body_verdict` geheilt |
 | NDK-Feld-Entscheidung — welcher Skalar eines Moment-Tensor-Events in die 9 Kraft-Medien eingeht | Future Operator-Queue (`state/future/handover/`) | mountain folge191/192 | der GCMT-NDK-Parser (`src/archivar/ndk.rs`) lebt, der reverify-Sweep überspringt `format == "ndk"` (`src/archivar/main_flow.rs:1462`), und `extract()` trägt keinen `ndk`-Arm (`format-void`). Frage: `mw` am Centroid, `m0`, oder kein Skalar? |
 | LLNL_G3D_JPS/S40RTS `volume.bin` — falsche `origin`-Direktive in `sources.φ` | `docs/handover/handover-2026-09-28-mycelium-folge191.md` | mountain folge193 | `phi/sources.φ:14381` (LLNL_G3D_JPS.volume.bin) und `:14391` (S40RTS.volume.bin) tragen die EMC/AFRP-Sammel-`origin` („data.earthscope.org … AFRP … then volume_builder"); die Manifestation `.github/workflows/volume-cdn.yml` (Jobs `llnl_g3d_jps`, `s40rts`) holt korrekt `https://media.githubusercontent.com/media/tom-new/tomography-models/main/<name>.nc` (Tag `media.githubusercontent.com`). Myceliums Feder (Manifestations-Direktive). |
 

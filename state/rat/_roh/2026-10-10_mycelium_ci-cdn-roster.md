@@ -55,7 +55,7 @@ sind Rohmaterial, das Verdikt trägt Session + Rat.
 ## Nicht geantwortet (gemessen)
 - **Mistral / Vibe** (chat.mistral.ai): „Denke nach" ohne Antwortkörper zum Lesezeitpunkt → `pending` (kein Re-Ask).
 - **Duck.ai**: Frage nicht gesendet/kein Verlaufseintrag zum Lesezeitpunkt (Tageslimit-Kandidat) → `pending`.
-- **Geteilte `open-weight-ui`-Seats**: Lock `state/zustand/ui-open-weight.lock` von **river** gehalten (2026-10-10) → nicht gefahren (Lock-Disziplin, zwei Linien nie gleichzeitig).
+- **Geteilte `open-weight-ui`-Seats**: Lock `state/ui-open-weight.lock` von **river** gehalten (2026-10-10) → nicht gefahren (Lock-Disziplin, zwei Linien nie gleichzeitig).
 
 ## Konvergenz (alle geantworteten Seats)
 1. **Cloudflare R2 via OIDC** als CDN-Ziel — einhellig (auch Claude: Worker-vermittelt, da R2 kein natives OIDC).

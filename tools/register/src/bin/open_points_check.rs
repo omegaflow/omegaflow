@@ -350,11 +350,11 @@ const CITATION_REGISTERS: [(&str, &str, bool); 6] = [
     ),
     (
         "external-state.md",
-        "state/zustand/external-state.md",
+        "state/external-state.md",
         false,
     ),
-    ("wartend.\u{3c6}", "state/zustand/wartend.\u{3c6}", false),
-    ("standing-pass.md", "state/zustand/standing-pass.md", false),
+    ("wartend.\u{3c6}", "state/wartend.\u{3c6}", false),
+    ("standing-pass.md", "state/standing-pass.md", false),
 ];
 
 fn trim_citation(token: &str) -> &str {
@@ -863,7 +863,7 @@ mod tests {
         );
         assert_eq!(
             resolve_citation("wartend.\u{3c6}:4.").map(|c| c.0),
-            Some("state/zustand/wartend.\u{3c6}".to_string())
+            Some("state/wartend.\u{3c6}".to_string())
         );
         assert!(resolve_citation("docs/paper/gic-causal-driver.md:531").is_none());
         assert!(resolve_citation("src/gate/commit_gate.rs:1804").is_none());

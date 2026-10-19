@@ -92,7 +92,7 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge177.md`.
 - **Trigger:** Antwort von `gsfc-dl-nssdca-request@mail.nasa.gov` (PSNO-00007).
 - **Lage:** (gemessen 2026-09-27 via `state/mail/mail_ledger.φ:74`) die Anfrage wurde 2026-09-16 13:47 UTC gesandt (die frühere `(:207)`-Referenz war stale); `blocked_sources.φ:54`-Note auf `→ Antwort offen` korrigiert (Tag `[wartend]`).
 - **Blockade:** keine.
-- **Braucht:** Trigger abwarten (Cook/Antworten siehe `state/zustand/wartend.φ`).
+- **Braucht:** Trigger abwarten (Cook/Antworten siehe `state/wartend.φ`).
 
 ### Termin
 

@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 219 (2026-10-01)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-01-mountain-folge218.md` (→ `archiv/`).
 Die beiden zuletzt offenen Manifestationen sind gemessen und im Register
 geschlossen: `phi/harvest.φ` `format pds3_img` → `asset present`

@@ -9,7 +9,7 @@
 # Handover — River-Folge 81 (2026-10-02)
 
 Dieses Register trägt nur Offenes — git trägt, was gemacht wurde. Der Stehende Pass
-wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
+wird zitiert, nie kopiert: `state/standing-pass.md`.
 
 ## Operator-Wort-Register
 
@@ -144,7 +144,7 @@ Origin: river folge81 (faltet `mycelium-folge221` `## An river`).
   lokal absent, in `phi` nicht registriert.
 - **Blockade:** externe Datenvorläufe
 - **Braucht:** bei Fälligkeit `flyby_path2_fill` (CI) lesen; ESOC-Arm `pending`
-  (`state/zustand/wartend.φ` `ephemeris-juice-recon`, Aufnehmer river); Registerzeile in
+  (`state/wartend.φ` `ephemeris-juice-recon`, Aufnehmer river); Registerzeile in
   `phi/sources.φ` schreibt Mountain im Atom der ersten Manifestation.
 
 ### Frühwarnsystem — Präregistrierung

@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 310 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`; Stand
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`; Stand
 HEAD `8739dffaa`). Diese Session konsumierte `handover-2026-10-11-mountain-folge309.md`
 (→ `archiv/`). flash only, kein pro/max. Operator-Trigger dieser Session: die
 Linien-Start-Direktive, „alle 5 an agenten und weitere agenten für 3", „die dead
@@ -52,7 +52,7 @@ sources leer" — 8 unabhängige Täufer parallel.
 - **Trigger:** Entwurf des Serien-Manifest-Formats
 - **Lage:** (gemessen 2026-10-11, unverändert) der ecad-Riss ist gelöst (netloc = Quellen-Identität); AODN-`ttl 1` = Datensatz-Kadenz, kein fester Refresh.
 - **Blockade:** ohne Serien-Manifest trägt jeder Klima-Block nur einen Default-Tag.
-- **Braucht:** Serien-Manifest-Format; der CI-Wait je Block steht in `state/zustand/wartend.φ`.
+- **Braucht:** Serien-Manifest-Format; der CI-Wait je Block steht in `state/wartend.φ`.
 
 ### register_sort — Tool-Gap `blocked`-Opener
 - **Status:** eigen (Bau) | **Bindung:** eigen
@@ -71,7 +71,7 @@ sources leer" — 8 unabhängige Täufer parallel.
 ### Flyby-Kette — termin 2026-11-01
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
-- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/zustand/wartend.φ`.
+- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/wartend.φ`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 
@@ -85,7 +85,7 @@ sources leer" — 8 unabhängige Täufer parallel.
 ### iEEG — registriertes Wort maßgeblich
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein neues Operator-Wort über 2026-10-06 hinaus
-- **Lage:** (gemessen 2026-10-11) iEEG = privates Experiment (`state/zustand/wartend.φ`), kein CDN.
+- **Lage:** (gemessen 2026-10-11) iEEG = privates Experiment (`state/wartend.φ`), kein CDN.
 - **Blockade:** keine.
 - **Braucht:** nur ein neues Operator-Wort öffnet es.
 

@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 320 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`; der dort
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`; der dort
 genannte HEAD war `537c5dc09`, aktueller HEAD dieser Session `7517e6016`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge319.md` (→ `archiv/`).
 
@@ -49,7 +49,7 @@ Session konsumierte `handover-2026-10-11-mountain-folge319.md` (→ `archiv/`).
 - **Trigger:** NSSDCA-Antwort (Anfrage 2026-09-16, keine Antwort) oder Operator-Wort für die Auth-Route
 - **Lage:** (gemessen 2026-10-11) 762 7-Track-Tapes, `request-only` („Ready for Offline Distribution", kein Download); `NSSDC_USER`/`NSSDC_PASS` liegen vor; es gibt **keinen** `archive_search`-Arm für NSSDC. Operator-Wort 2026-10-11: Auth ok, wenn eligible + redistributable.
 - **Blockade:** fehlender NSSDC-Arm (Build) — die Auth-Route kann nicht gefahren werden.
-- **Braucht:** einen `archive_search`-NSSDC-Arm bauen (`tools/utils`, `NSSDC_USER`/`NSSDC_PASS`) oder Operator-Hand; bis dahin `wartend` (Wahrheit `state/zustand/wartend.φ`).
+- **Braucht:** einen `archive_search`-NSSDC-Arm bauen (`tools/utils`, `NSSDC_USER`/`NSSDC_PASS`) oder Operator-Hand; bis dahin `wartend` (Wahrheit `state/wartend.φ`).
 
 ### Rätsel-Datenlücken (future-235/236) — url/origin (Mycelium) + Parse
 - **Status:** eigen | **Bindung:** eigen

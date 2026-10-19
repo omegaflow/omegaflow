@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 207 (2026-09-29)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht wurde.
-Der Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Die
+Der Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Die
 adressierten Blöcke `future-folge156`, `mycelium-folge207`, `sensory-folge208` sind in
 diesem Atom gefaltet (Antworten unten); die Sender entfernen ihre Blöcke beim nächsten Pass.
 
@@ -44,7 +44,7 @@ Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29, future-folge155).
     `~/backup/provenance/omegaflow-provenienz`, `~/backup/cdn-sources`, `~/backup/data`).
 - **Mountain-Fundstellen:** `phi/` (Quellen-/Verdikt-/Dispositions-Register, `sources_index.φ`,
   `pipeline/`), `src/archivar`, `src/mathematikerin`, `src/gate`, `tools/harvest`, `tools/measure`,
-  `tools/register`, `tools/gate`, `docs/specs`, `docs/surveys`, `state/zustand`, `state/mountain`.
+  `tools/register`, `tools/gate`, `docs/specs`, `docs/surveys`, `state`, `state/mountain`.
 - **Linien-Preset (privat):** `state/mountain/archive-search-preset.txt`, eingelesen in
   `.opencode/command/mountain.md`; `state/` immer mit `archive_search --root state` messen,
   nie `sgrep` ohne `--all` über den gitignorierten Baum.
@@ -105,7 +105,7 @@ Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29, future-folge155).
 - **Status:** termin | **Bindung:** termin:2026-10-05
 - **Trigger:** Order-Ablauf 2026-10-05 / Datei-Endpoint 200.
 - **Lage:** (gemessen 2026-09-29) Riss `UA-Riss 403/403 vs 403/684 (orderToken)` in
-  `phi/blocked_sources.φ:92`; Träger `state/zustand/wartend.φ:4`.
+  `phi/blocked_sources.φ:92`; Träger `state/wartend.φ:4`.
 - **Blockade:** CDPP-Order.
 - **Braucht:** Order-Ablauf abwarten.
 
@@ -157,14 +157,14 @@ Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29, future-folge155).
 - **Braucht:** `## An mycelium`.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte `state/zustand/wartend.φ:3`)
+- **Status:** wartend | **Bindung:** eigen (Warte `state/wartend.φ:3`)
 - **Trigger:** `NED_BYPARAMS_TIMEOUT_TOKEN` per Mail.
 - **Lage:** (gemessen 2026-09-28) zwei NED-Einträge im Ledger, kein Token.
 - **Blockade:** Token fehlt.
 - **Braucht:** mit Token den ByParams-Job fahren.
 
 ### `kuprat` — Admission + Tag
-- **Status:** wartend | **Bindung:** Aufnehmer Mountain (Warte `state/zustand/wartend.φ:9`)
+- **Status:** wartend | **Bindung:** Aufnehmer Mountain (Warte `state/wartend.φ:9`)
 - **Trigger:** Admission + `tag kuprat`.
 - **Lage:** (gemessen mycelium-folge207) `cuprate-cdn 36555548928` + `srd62-cdn 36555554290`
   success; die vier Kanäle warten auf Admission + Tag.

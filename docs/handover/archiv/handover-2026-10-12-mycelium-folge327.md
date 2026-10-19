@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 327 (2026-10-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
-wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`, zitiert, nie
+wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`, zitiert, nie
 kopiert). Diese Session konsumierte `handover-2026-10-12-mycelium-folge326.md` (→
 `archiv/`) und faltete die adressierten Blöcke `future-folge242` und `mountain-folge327`
 **mit Token** (die folge326-Faltung war unvollständig: `xfer:mountain327-1`- und

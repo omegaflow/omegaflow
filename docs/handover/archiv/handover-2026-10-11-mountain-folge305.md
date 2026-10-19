@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 305 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-10-mountain-folge304.md` (→ `archiv/`).
 flash only, kein pro/max; vier begrenzte Dispatches (Nutation, particle-cern,
 Vantage, Clippy-Heilung) + zwei Register-Dispatches (Asservatenkammer, FMHY).
@@ -63,7 +63,7 @@ Vantage, Clippy-Heilung) + zwei Register-Dispatches (Asservatenkammer, FMHY).
 ### FMHY-Routing — Arm-Hälfte gegenstandslos; Riss 4 bot-gated
 - **Status:** eigen (Architektur) | **Bindung:** eigen
 - **Trigger:** Riss 4/5-Abschluss
-- **Lage:** (gemessen 2026-10-10, unverändert) Grenze ist die Manifestations-Achse: Query → `archive_search`-Arm; Messwert → `phi/sources.φ` + Compiler; Operator-Werkzeug → `tools/`; Blick/Portal → Lead. Riss 4 (Overpass — HTTP 406 direkt+Proton → bot-gated `pending`). **KNMI gebunden via EDR (live, 77 Stationen, `knmi_compiler.rs`); Mindat Token erkannt, Konto Level 0 → wartend** (`state/zustand/wartend.φ`).
+- **Lage:** (gemessen 2026-10-10, unverändert) Grenze ist die Manifestations-Achse: Query → `archive_search`-Arm; Messwert → `phi/sources.φ` + Compiler; Operator-Werkzeug → `tools/`; Blick/Portal → Lead. Riss 4 (Overpass — HTTP 406 direkt+Proton → bot-gated `pending`). **KNMI gebunden via EDR (live, 77 Stationen, `knmi_compiler.rs`); Mindat Token erkannt, Konto Level 0 → wartend** (`state/wartend.φ`).
 - **Blockade:** Riss 4 bot-gated.
 - **Braucht:** Riss 4-Abschluss (bot-gated) oder Descope.
 
@@ -84,14 +84,14 @@ Vantage, Clippy-Heilung) + zwei Register-Dispatches (Asservatenkammer, FMHY).
 ### Flyby-Kette — Residual in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
-- **Lage:** (gemessen 2026-10-09, unverändert) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/zustand/wartend.φ:34`.
+- **Lage:** (gemessen 2026-10-09, unverändert) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/wartend.φ:34`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 
 ### iEEG — registriertes Wort 2026-10-06 maßgeblich
 - **Status:** eigen (Register) | **Bindung:** eigen
 - **Trigger:** ein neues Operator-Wort, das den Riss über 2026-10-06 hebt
-- **Lage:** (gemessen 2026-10-11, unverändert) iEEG = privates Experiment (`state/zustand/wartend.φ:40`), kein CDN.
+- **Lage:** (gemessen 2026-10-11, unverändert) iEEG = privates Experiment (`state/wartend.φ:40`), kein CDN.
 - **Blockade:** keine.
 - **Braucht:** kein Schritt — nur ein neues Operator-Wort öffnet es.
 
@@ -153,7 +153,7 @@ zwei Register-Dispatches, flash only.
 - **open-lidar-data-φ-Block geschrieben** (terms/at/ttl/field aus gemessenem License-Link).
 - **FMHY**: 7 research-data-Verdikte (3 pending, 4 declined Portale); worldclim.org als Portal korrigiert.
 - **Asservatenkammer**: 3 von 9 Doks mit erstem Schritt gemessen (Header-sha via `omega_sh sha`).
-- **Register-Putz `phi/blocked_sources.φ`:** 3 stale `pending` gelöst (HI 21cm, CMB LAMBDA/PLA, Blinkverse — `phi/sources.φ`-Blöcke stehen bei `:10930`/`:11436`/`:11547`/`:10876`); der 24-zeilige gap-Token-Kanon entfernt (kein Code liest ihn, kein offener Eintrag referenzierte einen Token); 5 `pending`-Dubletten der Wartezeilen konsolidiert (BepiColombo-MORE, Voyager, Mariner 10, Viking, Juno stehen schon in `state/zustand/wartend.φ:11/:6/:15/:16/:18`). Register jetzt **1 `blocked parser-def`** (particle-cern, TBranchElement-v9-Decode offen); die zwei anderen „Arme" (PDS-PPI-Manifest, GWOSC-Strain) existierten bereits — Register-Eintrag war veraltet, korrigiert.
+- **Register-Putz `phi/blocked_sources.φ`:** 3 stale `pending` gelöst (HI 21cm, CMB LAMBDA/PLA, Blinkverse — `phi/sources.φ`-Blöcke stehen bei `:10930`/`:11436`/`:11547`/`:10876`); der 24-zeilige gap-Token-Kanon entfernt (kein Code liest ihn, kein offener Eintrag referenzierte einen Token); 5 `pending`-Dubletten der Wartezeilen konsolidiert (BepiColombo-MORE, Voyager, Mariner 10, Viking, Juno stehen schon in `state/wartend.φ:11/:6/:15/:16/:18`). Register jetzt **1 `blocked parser-def`** (particle-cern, TBranchElement-v9-Decode offen); die zwei anderen „Arme" (PDS-PPI-Manifest, GWOSC-Strain) existierten bereits — Register-Eintrag war veraltet, korrigiert.
 **Geteilter Baum:** `src/mathematikerin/pc.rs` wird von einer parallelen Linie uncommittet
 restrukturiert — nicht angefasst/committet. Ebenso fremd uncommittet: `tools/utils/src/bin/archive_search/osf.rs`.
 Eigene committete Pfade: `src/mathematikerin/receiver.rs` · `src/mathematikerin/mci.rs` ·

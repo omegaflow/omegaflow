@@ -22,7 +22,7 @@ Diese Session konsumierte `handover-2026-09-27-sensory-folge182.md` (nach `archi
 
 ## Abarbeitbar (eigen, dispatchbar)
 
-Der gemessene Rundenzustand: `state/zustand/standing-pass.md` (zitieren, nie kopieren); Operator-Akte in der Future-Queue, Dritt-Waits in `state/zustand/wartend.φ`.
+Der gemessene Rundenzustand: `state/standing-pass.md` (zitieren, nie kopieren); Operator-Akte in der Future-Queue, Dritt-Waits in `state/wartend.φ`.
 
 ### paper-check — Lauf am HEAD lesen (Header-shas nachgezogen)
 - **Status:** eigen | **Bindung:** eigen
@@ -164,7 +164,7 @@ die Command-Verdrahtung + das Plugin `.opencode/plugin/form-guard.ts` wirken ers
 **opencode-Neustart** (Config/Plugins laden einmal beim Start). `omega_sh perms [<agent>]` ist der
 konfigurationsgestützte Druck der Deny→Ersatz-Karte; sein Test `gate_perms_matches_config` läuft in CI.
 
-Der Zustand-Ledger `state/zustand/external-state.md` (CI-Status- + Postfach-Zeile)
+Der Zustand-Ledger `state/external-state.md` (CI-Status- + Postfach-Zeile)
 ist gitignored (`.gitignore:137 /state/`) — lokal fortgeschrieben, nicht committet.
 
 Der frühere `yu-tong`-Riss (title=94 > 75, River-Werk `314fea2b5`) ist im aktuellen

@@ -3,7 +3,7 @@
 Frage wie im Rat (`state/stimmen/2026-10-10-river-c-skalenspektrum-rat.md`):
 C = native per-Paar-Skala / Skalenspektrum TE; Verhältnis zu D (Summary-Graph/PCMCI).
 Runde: `river-ui` (Duck · Claude · Qwen · Z.ai) + geteilt `open-weight-ui`
-(Qwen3.8 2.4T; tryingopen, Lock `state/zustand/ui-open-weight.lock`).
+(Qwen3.8 2.4T; tryingopen, Lock `state/ui-open-weight.lock`).
 
 ## Claude — Sonnet 5.5 Extra hoch — GEANTWORTET
 Verdikt: Die Richtung stimmt, aber drei Korrekturen + vier Änderungen.

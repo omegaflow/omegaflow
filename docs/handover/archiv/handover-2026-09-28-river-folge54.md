@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit,
+`state/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit,
 fremde uncommittete Arbeit unangetastet.
 
 ## Operator-Wort-Register
@@ -62,7 +62,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
   `36404600557` (pending) und `36401074643` (in_progress, Schritt
   „Run cargo test --release --features browser_relay"); der letzte abgeschlossene
   ci-check `36403605663` ist cancelled (superseded). Den vollen CI-Stand trägt der
-  Stehende Pass (`state/zustand/standing-pass.md`, zitiert) — er ist seinerseits
+  Stehende Pass (`state/standing-pass.md`, zitiert) — er ist seinerseits
   staleness-behaftet. Die Lade-Membran ist lokal headless
   grün (folge50).
 - **Blockade:** keine.

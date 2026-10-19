@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 235 (2026-10-05)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-05-mountain-folge234.md` (→ `archiv/`) und
 faltete die fünf offenen `## An mountain`-Blöcke (future-179, mycelium-231,
 sensory-231, river-92 ×2). Gemessen (2026-10-05): der 1-min-`dB/dt`-Arm ist gebaut

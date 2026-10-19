@@ -10,7 +10,7 @@
 
 Die öffentliche Fassung des Stehenden Passes (Operator-Wort A, 2026-10-14). Sie trägt
 **nur, was öffentlich ist** — HEAD und rote CI-Läufe. Mailstand, Operator-Akte und
-Personenbezug bleiben im privaten Haus (`state/zustand/standing-pass.md`, Linie Mycelium).
+Personenbezug bleiben im privaten Haus (`state/standing-pass.md`, Linie Mycelium).
 Die öffentlichen Linien zitieren **diese** Fassung, nie die private.
 
 | Feld | Wert | gemessen |

@@ -76,7 +76,7 @@ Verbatim: `state/operator-gespraeche/2026-10-08-river.md`. Vorherige Worte: `doc
 
 ### Flyby-Kette — RTSW + kp-`def` geschlossen, recon bleibt
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** `ephemeris-juice-recon` Wiedervorlage 2026-11-01 (ESA/ESOC publiziert die Post-Flyby-SPK). Wahrheit: `state/zustand/wartend.φ:34` (`ephemeris-juice-recon`).
+- **Trigger:** `ephemeris-juice-recon` Wiedervorlage 2026-11-01 (ESA/ESOC publiziert die Post-Flyby-SPK). Wahrheit: `state/wartend.φ:34` (`ephemeris-juice-recon`).
 - **Lage:** (gemessen 2026-10-08, River 138) **RTSW gefüllt:** der Re-Lauf mit `--snapshots data/services.swpc.noaa.gov` hat alle 26 Zellen gefüllt (Register `data/flyby2/tube-juice-2026-09-28.json`, 41 528 B). Trajectory `official: placed` (`aeb3c82…`). **kp `def` freigegeben:** der GFZ-Lauf `status=def,nowcast` liefert `HTTP 200`, alle 33 Intervalle `def`. **`omni2_bz` in der Quelle absent** (Fill `999.9`) → `pending`, nie 0.0. `wartend.φ` `flyby-chain-omni2`/`flyby-chain-kp-def` entfernt. **Verdikt bleibt `pending`:** `Δ > δ + 3·σ_recon`; `δ = 0,168 km` steht, **Δ** braucht die Post-Flyby-Rekonstruktion und **σ_recon** die Kovarianz (re-gemessen 2026-10-08: `ephemeris_juice_recon.bin` 404 über die Drei-Stufen-Leiter).
 - **Blockade:** ESA/ESOC-SPK + 1-σ-Kovarianz absent (`ephemeris_juice_recon.bin` 404).
 - **Braucht:** am 2026-11-01 `archive_search --verdict` auf den ESOC-recon-Release-Pfad; dann `flyby_ephemeris_gate --recon <recon.bin> --sigma-recon <km>`.

@@ -244,7 +244,7 @@ mod tests {
 
     #[test]
     fn cross_house_target_is_not_a_broken_reference() {
-        assert!(is_cross_house("state/zustand/external-state.md"));
+        assert!(is_cross_house("state/external-state.md"));
         assert!(is_cross_house(
             "state/future/gic-riss-154-wunschliste-2026-10-06.md"
         ));
@@ -257,7 +257,7 @@ mod tests {
 
     #[test]
     fn runtime_logs_and_configs_are_out_of_scope() {
-        assert!(is_skipped("state/zustand/ereignisse.φ"));
+        assert!(is_skipped("state/ereignisse.φ"));
         assert!(is_skipped("state/research/queries.φ"));
         assert!(is_skipped("opencode.json"));
         assert!(is_skipped("bin/relay-tls.stunnel.conf"));

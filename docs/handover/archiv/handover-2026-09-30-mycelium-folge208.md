@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
 wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
-(`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
+(`state/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-09-29-mycelium-folge207.md` (→ `archiv/`).
 
 ## Operator-Wort-Register
@@ -107,7 +107,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
   real unter gemessenen Tags: `crystallography.net/rixs_spin.bin`,
   `…/rixs_charge.bin`, `…/eels_acoustic.bin` (je 206, `crystal_compiler.rs:405/434/477/517`),
   `srdata.nist.gov/srd62_suprastrom.bin` (206, `srd62_compiler.rs:259`). `witnesses.φ:124/130/136`
-  trägt die vier Kanäle, `phi/` hat **0** Register-Zeilen. **Riss:** `state/zustand/wartend.φ:8`
+  trägt die vier Kanäle, `phi/` hat **0** Register-Zeilen. **Riss:** `state/wartend.φ:8`
   nennt Aufnehmer `mountain` („tag kuprat"), folge207 nennt Mycelium-Feder.
 - **Blockade:** Admission/format/field = Mountain; ein `kuprat`-Tag hat keinen Host
   (verstößt gegen die `<host>-<family>`-Form `cdn.rs:73`) → **nicht anlegen**
@@ -166,7 +166,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### termin-Punkte — Wiedervorlage
 - **Status:** termin | **Bindung:** termin:2026-10-02 · 2026-10-19 · 2026-12-02 · 2027-04-01
 - **Trigger:** `superdarn-af68c4f1` · `emodnet-hfr` · `noirlab-gaia-dr4` · `bepicolombo-more`
-- **Lage:** (gemessen 2026-09-30 via `state/zustand/wartend.φ`) Wiedervorlage, Aufnehmer mycelium
+- **Lage:** (gemessen 2026-09-30 via `state/wartend.φ`) Wiedervorlage, Aufnehmer mycelium
 - **Blockade:** Termin
 - **Braucht:** `archive_search --verdict <url>` beim jeweiligen Datum.
 

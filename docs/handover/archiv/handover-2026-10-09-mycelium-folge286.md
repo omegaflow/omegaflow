@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 286 (2026-10-09)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
-gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+gemacht wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-09-mycelium-folge285.md` (→ `archiv/`).
 
@@ -33,7 +33,7 @@ liegen als Sender-Zeilen in `## An <line>`.
 
 ### CI — register-Job rot am river-Survey; format/clippy/subset fremd
 - **Status:** wartend | **Bindung:** eigen (CI-Infra) · river (Survey-Fix)
-- **Trigger:** `state/zustand/ci-gate.φ` am Tip rot (`register`-Job)
+- **Trigger:** `state/ci-gate.φ` am Tip rot (`register`-Job)
 - **Lage:** (gemessen 2026-10-09T21:1xZ via `ci_manage list`/`status` + Baum-Lesen) der `register`-Job @`c95183076` (`37989730732`) rot: `path_reference_scan -- .` meldet `MISS … sonnen-render-archaeologie.md:7 see-also -> (archiviertes river-folge139)` + 2 `ABS` derselben Datei (`:12`/`:13` Host-`/home/…`-Pfade) → exit 1. Die Datei ist am Baum **unverändert** (`sread` 2026-10-09: `see-also` zeigt weiter auf den stale Zielpfad `…river-folge139.md` (real: `docs/handover/archiv/handover-2026-10-08-river-folge139.md`); `:12`/`:13` weiter `/home/…/archive-root/…`, `/home/…/knowledge/…/nebra`). Die register-eigenen Schritte (register_sort/cdn_reconcile/license_census/clean_tree) laufen clean. `format`/`clippy`/`subset` bleiben fremd: `commit_gate.rs` + `inpe_stac_compiler.rs` (mountain, **staged**), `channel.rs` E0689 / `actuators.rs` E0425 `live_schema_hash` / `parse.rs` E0507 (river).
 - **Blockade:** der river-Survey trägt einen stale see-also-Zielpfad und Host-absolute Pfade; `path_reference_scan.rs:135-160` verbietet `/home/` (auch in Backticks), `~/` trägt keinen Marker.
 - **Braucht:** river fixt `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` (see-also → `archiv/…`; Host-Pfade symbolisch) → register-Job grün.

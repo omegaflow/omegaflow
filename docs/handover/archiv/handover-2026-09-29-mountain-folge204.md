@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert
-(`state/zustand/standing-pass.md`); gemessen wird nur, was der eigene Trigger für
+(`state/standing-pass.md`); gemessen wird nur, was der eigene Trigger für
 fällig erklärt.
 
 Jeder offene Punkt trägt fünf Felder, damit der nächste Leser ohne Vorwissen
@@ -126,7 +126,7 @@ Du kannst. Führe den Plan aus — als `line`-Agent (auto-bestätigt); dispatch 
 - **Empfehlung:** Manifestation an mycelium; keine Mountain-Arbeit offen.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte `state/zustand/wartend.φ:3`)
+- **Status:** wartend | **Bindung:** eigen (Warte `state/wartend.φ:3`)
 - **Trigger:** `NED_BYPARAMS_TIMEOUT_TOKEN` per Mail.
 - **Lage:** (gemessen 2026-09-28) zwei NED-Einträge im Ledger, kein Token.
 - **Blockade:** Token fehlt.

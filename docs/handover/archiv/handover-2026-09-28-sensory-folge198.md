@@ -20,7 +20,7 @@ steht pro Punkt in `Bindung`.
 
 Dieses Register konsumiert `handover-2026-09-28-sensory-folge197.md` (nach `archiv/`);
 diese Folge ist 198. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md`.
+`state/standing-pass.md`.
 
 Dieses Atom maß die offenen Punkte der eigenen Linie an ihre Kante (Operator-Wort
 „hast du alles eigene bis zur kante gemessen"): **DEMETER** (Order-Datei-URL direct 202 /
@@ -31,7 +31,7 @@ Trigger ist im selben Atom **gefeuert**: River-Folge 57 (`8748a39cd`) hat die
 HUD-Zeile auf `self.silent || is_terminal` erweitert (`omega.rs:1788`), der
 CI-Artefakt-Weg ist gebaut; die Verifikation folgt dem nächsten Rotor-Lauf auf
 `8748a39` (noch unpushed). Die `wartend.φ`-Zeilen (Aufnehmer sensory) und
-`state/zustand/external-state.md:49` wurden mit den frischen Messstempeln
+`state/external-state.md:49` wurden mit den frischen Messstempeln
 nachgezogen. Der frühere Fußnote (Adressierungs-Arm „ausstehend /commit") ist mit
 folge197 erledigt: der Arm ist committet (`0da70c65d`).
 
@@ -111,7 +111,7 @@ folge197 erledigt: der Arm ist committet (`0da70c65d`).
 - **Blockade:** keine — der Lauf ist dispatcht.
 - **Braucht:** Lauf **`36430550956`** (dispatcht 2026-09-28T13:42:44Z, matrix-rotor) schließt ab; dann `sgrep "window:" matrix-rotor.txt` (Run-Artefakt / `matrix-state`-Release-Asset; erwartet ≥ 1), Ergebnis einmalig via `ci_manage view 36430550956`.
 
-## Aufnehmer-Waits (Aufnehmer sensory, Wohnort `state/zustand/wartend.φ`)
+## Aufnehmer-Waits (Aufnehmer sensory, Wohnort `state/wartend.φ`)
 
 Jede Zeile ein eigener Akt; die Trigger wurden am 2026-09-28T12:51:33Z gemessen.
 Der Aufnehmer (sensory) arbeitet eine Zeile im selben Atom, in dem ihr Trigger feuert —
@@ -127,7 +127,7 @@ kein Punkt wird bloß benannt, wo ein Schritt zur Kante existiert.
 ## Termin
 
 - **Europa-Clipper** | termin:2026-12-03 | Trigger: 02./03.12. | Lage (gemessen
-  2026-09-28): Dritt-Wait in `state/zustand/wartend.φ:15` (Aufnehmer sensory) |
+  2026-09-28): Dritt-Wait in `state/wartend.φ:15` (Aufnehmer sensory) |
   Braucht: Epoche ernten.
 
 ## Träger (Orphan-Faltung)
@@ -213,7 +213,7 @@ werden getragen, nie geglättet (0 honored).
   (18400 `202`, 18387 `500`). Die Dispositions-Klasse `blocked ip-blocked` (CDPP) ist damit
   zu prüfen (eher `parser-def`/Route-Gate). Der Dispositions-Eintrag der Sache steht als
   `pending` in `phi/blocked_sources.φ:81-83`; Myceliums Feder: die Klasse korrigieren.
-  Der Wait steht `state/zustand/wartend.φ:4` (Aufnehmer sensory).
+  Der Wait steht `state/wartend.φ:4` (Aufnehmer sensory).
   Origin: sensory-folge194/195/196/197.
 
 ## An Mountain (gemessen, fremde Feder)
@@ -255,7 +255,7 @@ Aufnehmer future (wartend.φ gesetzt). Future legt sie dem Operator in einfacher
 - **MBRSC Hope/Al-Amal (VAE)** — `sdc.emiratesmarsmission.ae`: kostenloses Konto.
 
 **Eingetragen 2026-09-28 als `blocked account` in `phi/blocked_sources.φ`** +
-`state/zustand/wartend.φ` (Aufnehmer future).
+`state/wartend.φ` (Aufnehmer future).
 
 Origin: sensory-folge195.
 
@@ -276,5 +276,5 @@ Eigene Pfade dieses Atoms (Commit/Push pending `/commit`):
   `docs/handover/archiv/handover-2026-09-28-sensory-folge197.md` (Move),
   `docs/surveys/survey-2026-09-06-codestruktur.md` (Marker-Nachtrag).
 
-`state/operator-gespraeche/2026-09-28-sensory.md`, `state/zustand/wartend.φ` und
-`state/zustand/external-state.md` sind gitignored (`/state/`) — lokal, nicht committet.
+`state/operator-gespraeche/2026-09-28-sensory.md`, `state/wartend.φ` und
+`state/external-state.md` sind gitignored (`/state/`) — lokal, nicht committet.

@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert
-(`state/zustand/standing-pass.md`); gemessen wird nur, was der eigene Trigger
+(`state/standing-pass.md`); gemessen wird nur, was der eigene Trigger
 für fällig erklärt.
 
 ## Operator-Wort-Register
@@ -80,7 +80,7 @@ Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus
 ### commit_check-Riegel Ereignis→Folge — gebaut, Alters-Riss offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Rat-Wort zur Alters-/Session-Begrenzung des Riegels.
-- **Lage:** (gemessen 2026-09-28) Fixture gebaut: `src/gate/commit_gate.rs` `ereignis_folge_violations` + Helfer, `commit_gate_vocab.json` (2 `feedback` + 6 `fixtures`), `tools/gate/src/bin/commit_check.rs` Riegel, 6 `#[cfg(test)]`-Tests; `cargo check -p omegaflow-gate` und `--features commit_gate --tests` je 0/0. Ereignis-Register `state/zustand/ereignisse.φ` (gitignored) führt die Klassen `account`/`send`; heute keine Zeile dieser Klasse.
+- **Lage:** (gemessen 2026-09-28) Fixture gebaut: `src/gate/commit_gate.rs` `ereignis_folge_violations` + Helfer, `commit_gate_vocab.json` (2 `feedback` + 6 `fixtures`), `tools/gate/src/bin/commit_check.rs` Riegel, 6 `#[cfg(test)]`-Tests; `cargo check -p omegaflow-gate` und `--features commit_gate --tests` je 0/0. Ereignis-Register `state/ereignisse.φ` (gitignored) führt die Klassen `account`/`send`; heute keine Zeile dieser Klasse.
 - **Blockade:** Riss — der Riegel liest das append-only-Register **ungebunden** (jede Zeile, egal wie alt): eine aufgelöste Warte ohne bleibendes Verdikt blockt dauerhaft; zudem greift er nur im öffentlichen Repo (dort wird das state-Verzeichnis nicht gestaged), nicht im privaten `state`-Commit.
 - **Braucht:** Rat-Wort zur Begrenzung (Session/Alter) oder bewusste Ungebundenheit; sonst bleibt der Riegel wie gebaut.
 
@@ -106,7 +106,7 @@ Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus
 - **Braucht:** Registrierung/Port je Route; die in `phi/pipeline/ledger.φ` als `ausstehend kandidat` eingetragenen lesen.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte in `state/zustand/wartend.φ:3`)
+- **Status:** wartend | **Bindung:** eigen (Warte in `state/wartend.φ:3`)
 - **Trigger:** NED-Cook-Token (`NED_BYPARAMS_TIMEOUT_TOKEN`) trifft per Mail ein.
 - **Lage:** (gemessen 2026-09-28 via `sread state/mail/mail_ledger.φ`) zwei NED-Einträge (Token-Bitte 2026-09-25/26), kein Token im Ledger.
 - **Blockade:** Token fehlt.
@@ -151,7 +151,7 @@ Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus
 ## Prosa-Träger (eigene)
 
 - `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` | §7: Enclosure-Vereinheitlichung gebaut (`membrane.rs:353`, `f9ea3284c`); ω-Loop-Verdict-Term → **river**; Prosa-Heimat „Presence-only loading and the jump" geschrieben (`docs/concepts/archivar-mathematikerin.md:31`).
-- `docs/concepts/blatt-papier-beweis.md` | offen: CSES `Zugang blockiert` (SSDC account/PI authorization, Trigger 2026-10-02; `state/zustand/wartend.φ:11`, Aufnehmer sensory).
+- `docs/concepts/blatt-papier-beweis.md` | offen: CSES `Zugang blockiert` (SSDC account/PI authorization, Trigger 2026-10-02; `state/wartend.φ:11`, Aufnehmer sensory).
 - `docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md` | Gegenprobe erledigt (`## Gegenprobe`); kein offener Schritt.
 - `docs/specs/livefeed-gate.md` | Livefeed-Korrelations-Gate (Spec); Sprache-Angleichung 2026-09-28 (`--quelle`→`--source`, `quelle`→`source`); offene Marker = die `pending`-Felder der Ereignis-Tabelle (Spec-Inhalt); Träger Mountain.
 
@@ -163,7 +163,7 @@ Origin: mountain folge198.
 - **DAS2 Iowa + Occultation-DB UTFPR — Admission-Riss** (gemessen 2026-09-28): beide Arme gebaut (`port.rs:739 hapi_draft_fields_csv`; `tools/harvest/src/bin/occultation_compiler.rs`), beide `pending` (`:362-368`), note „Sources-Zeile = Mycelium". Feder-Grenze: `format`/Feldzeilen = Mountain, `url`/`tag`/`pattern` = Mycelium → Riss, kein stiller Schreibakt. Braucht: Myceliums `sources.φ`-Zeile + Mountains gemessenes Feld-Verdikt.
 - **`format vlde`-Quellzeile** (gemessen 2026-09-28): Reader `src/archivar/vlies.rs` + Compiler/Probe stehen, Asset manifestiert (`34064753336`); in `phi/sources.φ` fehlen `format vlde` + Materialisierung. Manifestations-Direktive = Myceliums Feder (die sensory-Zuweisung an Mountain ist Riss).
 - **Orphan-Doc-Träger:** `docs/paper/gic-causal-driver.md` (`:531`/`:538` DOIs `pending`, DOI-Minting). Register-`url`-Drift (`twomass_psc`, `jwst_spectra`); `LLNL_G3D_JPS/S40RTS volume.bin` falsche `origin`-Direktive.
-- **Warte `[redacted]` — Trigger gefeuert** (gemessen 2026-09-28): `state/zustand/wartend.φ:8` (Aufnehmer mycelium) wartete auf „Mail-Eingang"; die Mail ist da (`state/mail/mail_ledger.φ:181`, SAMPLE_CONTACT/LAB_A), die NSE-Daten sind angekommen und von Mountain privat gesichert (`data/lab_a.data/SAMPLE_NSE_[RETRACTED-SAMPLE]/`). Der Aufnehmer kann die Warte-Zeile schließen.
+- **Warte `[redacted]` — Trigger gefeuert** (gemessen 2026-09-28): `state/wartend.φ:8` (Aufnehmer mycelium) wartete auf „Mail-Eingang"; die Mail ist da (`state/mail/mail_ledger.φ:181`, SAMPLE_CONTACT/LAB_A), die NSE-Daten sind angekommen und von Mountain privat gesichert (`data/lab_a.data/SAMPLE_NSE_[RETRACTED-SAMPLE]/`). Der Aufnehmer kann die Warte-Zeile schließen.
 - **4 `pending`-Konten-Träger** (gemessen 2026-09-28, Rat): `phi/blocked_sources.φ:373/377/381/385` (CNSA/GRAS, NSSDC, ISRO/ISSDC, MBRSC/EMM) von `blocked account` → `pending` — Konto per Operator-Hand registriert, Ernte ausstehend; die Duty wandert zu mycelium (Netz). Träger: `phi/blocked_sources.φ::pending ×4`.
 - **Kuprat-Kanäle — Zeugen, nicht `sources.φ`** (Operator-Hinweis 2026-09-28): die vier Kanäle (RIXS spin/charge, EELS, srd62-Suprastrom) gehören als `witness`-Zeilen nach `phi/witnesses.φ` — kein `ttl`/`field`, kein Feld-Source (`src/archivar/tests.rs:8088`). Eine Kuprat-Zeugen-Art fehlt noch (Operator-Wort ausstehend); bis dahin keine Registrierung. Unabhängig davon: **die Tag-Drift heilen** — die Probes/Workflows hardkodieren `…/releases/download/ssd.jpl.nasa.gov/{rixs_spin,srd62_suprastrom}.bin`, der Produzent ist Zenodo/NIST. Kein `tag kuprat`.
 
@@ -179,7 +179,7 @@ Origin: mountain folge198.
 Origin: mountain folge198.
 
 - **NDK-Feld-Entscheidung** — welcher Skalar eines Moment-Tensor-Events in die 9 Kraft-Medien eingeht: `mw` am Centroid, `m0`, oder kein Skalar? (`src/archivar/ndk.rs` lebt; `extract()` trägt keinen `ndk`-Arm.)
-- **Sonden-Flotte CSF/Konto-gated** (CNSA Chang'e/Tianwen, ISRO PRADAN, MBRSC EMM — `state/zustand/wartend.φ`).
+- **Sonden-Flotte CSF/Konto-gated** (CNSA Chang'e/Tianwen, ISRO PRADAN, MBRSC EMM — `state/wartend.φ`).
 - **CSES-Zugang** (SSDC account/PI authorization, Trigger 2026-10-02).
 - **GIC-Einreichung** (`docs/auftrag/auftrag-gic-einreichung.md`, Operator-Hand).
 - **KARI/ISRO-Konten** — Danuri/KASI (`pda.kasi.re.kr`, Login), Chandrayaan-2/3 + MOM (`chmapbrowse.issdc.gov.in`, Login/Register), Aditya-L1: `blocked account`; Konten-Entscheid.

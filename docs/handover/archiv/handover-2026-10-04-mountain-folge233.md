@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 233 (2026-10-04)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-04-mountain-folge232.md` (→ `archiv/`) und
 faltete die vier offenen `## An mountain`-Blöcke (future-177, mycelium-230,
 river-90, sensory-229): die meisten maßen gegen eine im Baum bereits erledigte

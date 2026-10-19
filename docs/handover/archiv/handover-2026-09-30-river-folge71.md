@@ -9,7 +9,7 @@
 # Handover — River-Folge 71 (2026-09-30)
 
 Dieses Register trägt nur Offenes — git trägt, was gemacht wurde. Der Stehende Pass
-wird zitiert, nie kopiert: `state/zustand/standing-pass.md`. Nur eigene Arbeit:
+wird zitiert, nie kopiert: `state/standing-pass.md`. Nur eigene Arbeit:
 pfad-begrenzter Commit; fremde uncommittete Arbeit unangetastet.
 
 ## Operator-Wort-Register
@@ -56,8 +56,8 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 ## Haus — River
 
 Diese Übergabe ist das Haus: Membran/`omega.rs`-Feld/Window/Gaze, TE-Maschine,
-Aktuatorik, Echo. Fundstellen: `state/zustand/standing-pass.md` ·
-`state/zustand/external-state.md` · `state/zustand/wartend.φ` · `state/operator-gespraeche/` ·
+Aktuatorik, Echo. Fundstellen: `state/standing-pass.md` ·
+`state/external-state.md` · `state/wartend.φ` · `state/operator-gespraeche/` ·
 `state/river/`. Rivers Teil: `src/mathematikerin/` (Feld, TE, WGSL), `src/archivar/`
 (Query/Vlies), Membran-Pfade `main_flow`/`omega.rs`, Aktuatorik; Papiere
 `docs/paper/gic-causal-driver.md` u. a.; Konzepte; Mess-Workflows `.github/workflows/`.
@@ -85,7 +85,7 @@ Linien-Preset privat `state/river/archive-search-preset.txt`.
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** derselbe `te-gate`-Lauf `36696336996`
 - **Lage:** (gemessen 2026-09-30 via `ci_manage view` + `gh issue view`) der von #13
-  referenzierte Run `34819182127` = success (14.09.); `state/zustand/external-state.md:29`
+  referenzierte Run `34819182127` = success (14.09.); `state/external-state.md:29`
   führt den n=1000-FPR-Boden als geschlossen (`35893882101`, 24.09.).
 - **Blockade:** keine
 - **Braucht:** nach grünem 128er-Lauf `gh issue close 13` (Registerakt).
@@ -99,7 +99,7 @@ Linien-Preset privat `state/river/archive-search-preset.txt`.
 - **Braucht:** Mountain re-manifestiert; danach `archive_search --sniff <url>` + σ-Zensus.
 
 ### flyby-path2-recon
-- **Status:** wartend (Aufenthalt `state/zustand/wartend.φ:28`) | **Bindung:** eigen
+- **Status:** wartend (Aufenthalt `state/wartend.φ:28`) | **Bindung:** eigen
 - **Trigger:** ESOC publiziert einen SKD `v474+`
 - **Lage:** (gemessen 2026-09-29, River 62) ABSENT; Enumeration endet `juice_cog_000114_…`
 - **Blockade:** Publikation fehlt

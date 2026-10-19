@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert
-(`state/zustand/standing-pass.md`); gemessen wird nur, was der eigene Trigger
+(`state/standing-pass.md`); gemessen wird nur, was der eigene Trigger
 für fällig erklärt.
 
 ## Operator-Wort-Register
@@ -35,7 +35,7 @@ Hier ausführen, keine Rangfolge, flash-first delegieren — session-weiter Cons
 - **Braucht:** `ci_manage list` → den jüngsten `ci-check`/`register-coverage`-Lauf auf HEAD wählen, dann `ci_manage log <id>` einmal lesen; grün → Punkt löschen. `register-coverage` prüft den `UNVERIFIABLE_PRIVATE`-Arm (`tools/register/src/bin/register_lookup.rs`); bleibt der Job `orphans` rot, ist dessen Log der nächste Schritt.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/zustand/wartend.φ`)
+- **Status:** wartend | **Bindung:** eigen (Warte liegt in `state/wartend.φ`)
 - **Trigger:** NED-Cook-Token (`NED_BYPARAMS_TIMEOUT_TOKEN`) trifft per Mail ein.
 - **Lage:** (gemessen 2026-09-28 via `sread state/mail/mail_ledger.φ`) zwei NED-Einträge — Token-Bitte an IPAC/Cook 2026-09-25/26 —, kein `NED_BYPARAMS_TIMEOUT_TOKEN` im Ledger. `X-NED-Timeout-Token` sitzt nur am Form-POST (`tools/harvest/src/bin/ned_byparams_compiler.rs`).
 - **Blockade:** Token fehlt.

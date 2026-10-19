@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
 wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
-(`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
+(`state/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-02-mycelium-folge219.md` (→ `archiv/`).
 
 ## Burn: open 0.0000 · close 0.2281 · cap 0.50 Grund: jwst-Manifest-Ursache + JADES-/DSN-Workflow + 8 CI-Läufe gemessen (gemessen `session_burn` $2.2130 → $2.4411)
@@ -67,7 +67,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 ### Register-Träger — `phi/pipeline/ledger.φ` SSDC
 - **Status:** termin | **Bindung:** termin:2026-10-02
 - **Trigger:** neue SSDC-Zugangsprozedur (`https://limadou.ssdc.asi.it/query.php`)
-- **Lage:** (gemessen 2026-10-02 via `archive_search --verdict`) `query.php` HTTP 200 / 6894 B — die CAS-Login-Seite, nicht der Datenzugang (Wall bestätigt; `ledger.φ:6` `ausstehend`); `state/zustand/wartend.φ:10` (laic-cses) verlangt nach Termin `archive_search --playwright`, CAS-Login = Gate zu.
+- **Lage:** (gemessen 2026-10-02 via `archive_search --verdict`) `query.php` HTTP 200 / 6894 B — die CAS-Login-Seite, nicht der Datenzugang (Wall bestätigt; `ledger.φ:6` `ausstehend`); `state/wartend.φ:10` (laic-cses) verlangt nach Termin `archive_search --playwright`, CAS-Login = Gate zu.
 - **Blockade:** Prozedur nicht live
 - **Braucht:** `archive_search --playwright "https://limadou.ssdc.asi.it/query.php"` sobald SSDC den offenen Zugang meldet (Antwort Sotgiu / neue Prozedur).
 
@@ -87,7 +87,7 @@ wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
 
 ## LOCK
 
-- **`rr-brustgurt`** (Operator): LOCK — Hardware erst bei Förderung; Live-BLE HR NotSupported → keine RR; FIT `nn=0` (gemessen 2026-09-26); Brustgurt Polar H10/HRM-Dual. (`state/zustand/wartend.φ:22`)
+- **`rr-brustgurt`** (Operator): LOCK — Hardware erst bei Förderung; Live-BLE HR NotSupported → keine RR; FIT `nn=0` (gemessen 2026-09-26); Brustgurt Polar H10/HRM-Dual. (`state/wartend.φ:22`)
 
 ## An river
 
@@ -117,4 +117,4 @@ Origin: mycelium-folge220.
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`) — der gemessene
 Abschluss-Check läuft dann mit Commit und Push. `/consent` ist der session-weite
 Consent (Delegation), nie das Commit-Wort. Der Stehende Pass wird **nach** dem
-Commit am neuen HEAD neu gestempelt (`state/zustand/standing-pass.md`).
+Commit am neuen HEAD neu gestempelt (`state/standing-pass.md`).

@@ -13,7 +13,7 @@ wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** / **Lage** /
 **Blockade** / **Braucht**. Status-Tag: `wartend` | `blockiert` | `termin`.
 
 Diese Session konsumierte `handover-2026-09-29-mycelium-folge204.md` (→ `archiv/`).
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert).
 
 ## Operator-Wort-Register
@@ -154,7 +154,7 @@ zitiert, nie kopiert).
 - **Trigger:** nächster transienter Rot-Lauf — **gefeuert** durch `matrix-rotor 36529830258` (Runner-Shutdown).
 - **Lage:** (gemessen 2026-09-29 folge205) transienter Grund gemessen; Watchdog-Rerun steht aus.
 - **Blockade:** keine.
-- **Braucht:** Watchdog-Snapshot `state/zustand/ci_status.md` beim nächsten Pass.
+- **Braucht:** Watchdog-Snapshot `state/ci_status.md` beim nächsten Pass.
 - **Empfehlung:** Snapshot beim nächsten Pass lesen; der Rerun des transienten `matrix-rotor` ist die Bestätigung des Matchers.
 
 ### D5-Orphan-Residuum
@@ -174,7 +174,7 @@ zitiert, nie kopiert).
 - **Braucht:** `archive_search --verdict <url>` beim Termin.
 - **Empfehlung:** beim jeweiligen Datum messen; kein Vorlauf, keine Vorarbeit.
 
-### Quellenseitige Waits (in `state/zustand/wartend.φ` geführt)
+### Quellenseitige Waits (in `state/wartend.φ` geführt)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Quellen-Readiness bzw. Re-Dispatch (`hinet-cdn` Lauf `36498426236`; `gosat-cdn` Lauf `36283215548`).
 - **Lage:** (gemessen 2026-09-29 folge205) DEMETER CDPP defekt (`blocked_sources.φ:89-91` `pending`,
@@ -208,7 +208,7 @@ zitiert, nie kopiert).
 
 - **NSE-Redistribution + Dank** — **Lage:** Reply an SAMPLE_CONTACT (`state/mail/[redacted].md`) wartet; der Akt ist eine Mail an einen Dritten. **Frage:** Soll der Reply um die Lizenzfrage (NSE-Redistribution) erweitert werden? **Empfehlung:** ja, Entwurf bis zur Kante vorbereiten, Send bleibt Operator-Hand. (gemessen 2026-09-28 folge199)
   Origin: mycelium-folge199
-- **ENSO-Zuschnitt** — **Lage:** `state/zustand/wartend.φ:23` `blatt-zuschnitt | Operator`; der `ersstv5-cdn`-Arm ist jetzt gebaut. **Frage:** Welcher Zuschnitt (Zeitraum/Region) für das Blatt? **Empfehlung:** den Compiler-Standard NINO3.4 (`-5..5` lat, `190..240` lon, 1854–2026) bestätigen. (gemessen 2026-09-28)
+- **ENSO-Zuschnitt** — **Lage:** `state/wartend.φ:23` `blatt-zuschnitt | Operator`; der `ersstv5-cdn`-Arm ist jetzt gebaut. **Frage:** Welcher Zuschnitt (Zeitraum/Region) für das Blatt? **Empfehlung:** den Compiler-Standard NINO3.4 (`-5..5` lat, `190..240` lon, 1854–2026) bestätigen. (gemessen 2026-09-28)
   Origin: mycelium-folge200
 - **Kuprat-Zeugenart** — **Lage:** `phi/witnesses.φ` trägt die Kuprat-Zeugenart nicht. **Frage:** Als `witness substance` aufnehmen? **Empfehlung:** ja, als Substance-Träger em (analog `eels`), Zeile `record kuprat` + `force em`. (gemessen 2026-09-28)
   Origin: mycelium-folge200

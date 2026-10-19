@@ -153,7 +153,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
   - ✅ **iEEG läuft als privates Experiment nach dem [RETRACTED-CONTACT]-Muster (Operator-Wort 2026-10-06):**
     Daten lokal unter `data/` (gitignored, `www.ieeg.org`), Reader/Compiler `ieeg_compiler.rs`
     bleibt für lokale Läufe — **kein CDN, keine `sources.φ`, kein `--ci-mode`**. Präzedenz:
-    `[RETRACTED-INSTRUMENT]-[redacted]` (`state/zustand/wartend.φ:7`, Operator-Wort 2026-10-01 „nichts was die von
+    `[RETRACTED-INSTRUMENT]-[redacted]` (`state/wartend.φ:7`, Operator-Wort 2026-10-01 „nichts was die von
     [redacted] zugesandten daten betrifft verlässt das haus"). **Das ist die allgemeine Route für
     DUA-/ungeklärte Körperdaten: privat, nie veröffentlicht.**
   - **Kein `license`/`terms`-Feld** im Register (`phi/sources.φ`) oder `SourceConfig`
@@ -256,7 +256,7 @@ Vorherige Worte der Linie: siehe `docs/handover/archiv/handover-2026-10-06-river
 - **Blockade:** (a) ist Mycelium/CI (kein River-Fenster-Edit ohne Operator-Wort).
 - **Braucht:** s. `## An mycelium`.
 
-### Flyby-Kette — OMNI2, kp `def`, JUICE-recon (aus `state/zustand/wartend.φ` portiert)
+### Flyby-Kette — OMNI2, kp `def`, JUICE-recon (aus `state/wartend.φ` portiert)
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Kanal-Verfügbarkeit (OMNI2-Merge-Lag, GFZ `def`-Release, ESOC JUICE-recon).
 - **Lage:** (gemessen 2026-10-06, River 105; wartend.φ:34-36)

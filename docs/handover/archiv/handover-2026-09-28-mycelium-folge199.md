@@ -14,7 +14,7 @@ wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** / **Lage** /
 
 Diese Session konsumierte `handover-2026-09-28-mycelium-folge198.md` (→ `archiv/`).
 
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert).
 
 ## Operator-Wort-Register

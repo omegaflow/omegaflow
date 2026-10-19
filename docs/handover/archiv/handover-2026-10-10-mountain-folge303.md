@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 303 (2026-10-10)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-10-mountain-folge302.md` (→ `archiv/`).
 flash only, kein pro/max.
 
@@ -50,7 +50,7 @@ flash only, kein pro/max.
 - **Trigger:** nächster begrenzter Schritt je Riss/Route
 - **Lage:** (gemessen 2026-10-10, Diver + Rat fünf Stimmen) Grenze ist die **Manifestations-Achse**: Query → `archive_search`-Arm (`--help` = Kanon); Messwert (`field` + Einheit + Cadence) → `phi/sources.φ` + Compiler; Operator (Bytes-Werkzeug) → `tools/`/Notiz; Blick/Portal → Lead. 23 Schnittstellen gemessen (12 Query · 9 Bulk · 2 Portal). **Riss 1 (EMSC) + Riss 2 (Copernicus) am Baum geklärt:** `sources.φ:250` trägt `field magnitude/depth` (volle Quelle, Arm = Dualität); CDS/DEM sind gebaut (declined = separater `browser.dataspace`-Viewer). Offen: Riss 3 (KNMI/Mindat 401 **mit** Token), Riss 4 (Overpass-Admission), Riss 5 (Referenz vs. Messwert). Notiz `state/mountain/routing-untersuchung-2026-10-10.md`. **Messungen 2026-10-10:** Riss 3 (KNMI/Mindat) — kein Key in `.secrets.local` → `pending` (Operator-Route); Riss 4 (Overpass) — HTTP 406 direkt+Proton → bot-gated `pending`; Riss 5 — SURFRAD/ECAD/DWD/WorldClim = Messwert, GADM/Worldview = Referenz/Anzeige. **UI-Runde gefahren** (`mountain-ui`: Duck Haiku · Claude Sonnet · Qwen · Z.ai GLM, alle geantwortet): Achse tragfähig, aber **Manifestation statt Quelle** klassifizieren + **Lizenz-/Zugangs-Gate vor** der Achse + **Kontext-Achse** ergänzen — Konvergenz mit dem Rat (Riss = fehlende Gate-Achse). **Korrektur (Operator-Frage 2026-10-10):** die „12 Query"-Klassifikation war zu mechanisch („hat API" ≠ Arm); Präzedenz **`--supermag`/`--heasarc` = Dual** (Quelle + Arm), `--opencellid` = reiner Arm. Die Kandidaten sind Messquellen (→ `phi`) oder Referenz/Modell/decline — **kein neuer Arm klar gerechtfertigt**; die blockierte Arm-Hälfte ist gegenstandslos (max. optionales EMSC-Dual).
 - **Blockade:** Arm-Hälfte gegenstandslos (kein neuer Arm gerechtfertigt); Riss 4 (Overpass) bot-gated `pending`. **Incident 2026-10-10:** der frisch freigegebene KNMI-EDR-Schlüssel lief beim strukturellen Auslesen der Tyk-Erfolgsseite (`browser_query` auf einen `<p>`) in den Session-Transcript → nach Secret-Hygiene als **veröffentlicht** zu behandeln; der Wert liegt als `KNMI_API_KEY` → **Rotation empfohlen** (neuer Schlüssel, Operator-Hand). Lehre: eine gerade ausgestellte Schlüssel-Seite wird nie ausgelesen — der Operator kopiert direkt. → Operator-Wort 2026-10-10: **Risiko benannt und akzeptiert** (keine Rotation; öffentliche read-only Non-Commercial-Daten).
-- **Braucht:** (a) **Korrektur: kein neuer Arm ist klar gerechtfertigt** (Präzedenz supermag/heasarc = Dual; die Kandidaten sind Messquellen → `phi`) — die blockierte Arm-Hälfte ist gegenstandslos, max. ein optionales EMSC-Dual. (b) **Fünf `phi`-Compiler stehen — Mountain-Arbeit** (Parser-Konstruktion), je `cargo check` 0/0 + end-to-end gemessen: `surfrad_compiler.rs` · `ecad_compiler.rs` · `dwd_cdc_compiler.rs` · `worldclim_compiler.rs` · `aodn_compiler.rs` (alle in `tools/harvest/src/bin/`). Nur die `phi/sources.φ`-Manifestations-Direktiven (`url`/`origin`/`compiler`) je Quelle sind **Mycelium-Recht** → `## An mycelium`. (c) **KNMI gebunden via EDR (live 2026-10-10):** der Operator hat den EDR-Zugang freigeschaltet; `knmi_compiler.rs` fetcht `/edr/v1/collections/10-minute-in-situ-meteorological-observations/position` (CoverageJSON) — **77 Stationen**, Felder `knmi_air_temperature` (K) · `knmi_wind_speed`/`_gust` (m/s) · `knmi_precipitation_intensity` (kg/m²s), `.bin` roundtrip-geprüft, `cargo check` 0/0. `KNMI_API_KEY` trägt jetzt den EDR-Schlüssel (die Open-Data-Route ist damit weg — EDR ist der gewählte Weg). Quelle bereit für die `## An mycelium`-Registrierung. **Mindat:** `mindat_probe.rs` — Token erkannt, Konto **Level 0**; Aktivierungs-/API-Antrag **eingereicht** → `wartend` (`state/zustand/wartend.φ: mindat-api-level1`).
+- **Braucht:** (a) **Korrektur: kein neuer Arm ist klar gerechtfertigt** (Präzedenz supermag/heasarc = Dual; die Kandidaten sind Messquellen → `phi`) — die blockierte Arm-Hälfte ist gegenstandslos, max. ein optionales EMSC-Dual. (b) **Fünf `phi`-Compiler stehen — Mountain-Arbeit** (Parser-Konstruktion), je `cargo check` 0/0 + end-to-end gemessen: `surfrad_compiler.rs` · `ecad_compiler.rs` · `dwd_cdc_compiler.rs` · `worldclim_compiler.rs` · `aodn_compiler.rs` (alle in `tools/harvest/src/bin/`). Nur die `phi/sources.φ`-Manifestations-Direktiven (`url`/`origin`/`compiler`) je Quelle sind **Mycelium-Recht** → `## An mycelium`. (c) **KNMI gebunden via EDR (live 2026-10-10):** der Operator hat den EDR-Zugang freigeschaltet; `knmi_compiler.rs` fetcht `/edr/v1/collections/10-minute-in-situ-meteorological-observations/position` (CoverageJSON) — **77 Stationen**, Felder `knmi_air_temperature` (K) · `knmi_wind_speed`/`_gust` (m/s) · `knmi_precipitation_intensity` (kg/m²s), `.bin` roundtrip-geprüft, `cargo check` 0/0. `KNMI_API_KEY` trägt jetzt den EDR-Schlüssel (die Open-Data-Route ist damit weg — EDR ist der gewählte Weg). Quelle bereit für die `## An mycelium`-Registrierung. **Mindat:** `mindat_probe.rs` — Token erkannt, Konto **Level 0**; Aktivierungs-/API-Antrag **eingereicht** → `wartend` (`state/wartend.φ: mindat-api-level1`).
 
 ### Asservatenkammer — Mountain-Träger (9 Doks)
 - **Status:** eigen (Register/Träger) | **Bindung:** eigen
@@ -85,21 +85,21 @@ flash only, kein pro/max.
 ### Flyby-Kette — Residual in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
-- **Lage:** (gemessen 2026-10-09, unverändert) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/zustand/wartend.φ:34`.
+- **Lage:** (gemessen 2026-10-09, unverändert) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/wartend.φ:34`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 
 ### iEEG — Riss beigelegt: registriertes Wort 2026-10-06 maßgeblich
 - **Status:** eigen (Register) | **Bindung:** eigen
 - **Trigger:** ein neues Operator-Wort, das den Riss über 2026-10-06 hebt
-- **Lage:** (gemessen 2026-10-10, unverändert) iEEG = privates Experiment (`state/zustand/wartend.φ:40`), kein CDN; `eeglab::eeg_from_bin` akzeptiert `Samples::Double`.
+- **Lage:** (gemessen 2026-10-10, unverändert) iEEG = privates Experiment (`state/wartend.φ:40`), kein CDN; `eeglab::eeg_from_bin` akzeptiert `Samples::Double`.
 - **Blockade:** keine.
 - **Braucht:** kein Schritt — nur ein neues Operator-Wort öffnet es.
 
 ### GIC-Paper — Trigger: Mycelium-Artefakt
 - **Status:** wartend | **Bindung:** mycelium (Träger folge295 `#te-ground-truth`)
 - **Trigger:** `te-bias-n`-Lauf `38038722712` Abschluss → Mycelium meldet den Ground-Truth-Abschnitt
-- **Lage:** (gemessen 2026-10-10, unverändert) `te_ground_truth` in `.github/workflows/te-bias-n.yml:48`; kein Mountain-Schritt bis zum Artefakt. Wahrheit `state/zustand/wartend.φ`.
+- **Lage:** (gemessen 2026-10-10, unverändert) `te_ground_truth` in `.github/workflows/te-bias-n.yml:48`; kein Mountain-Schritt bis zum Artefakt. Wahrheit `state/wartend.φ`.
 - **Blockade:** kein CI-Ergebnis.
 - **Braucht:** nach Mycelium-Meldung — Paper §3.5/Abstract/§7 nachziehen (Mountain).
 
@@ -173,7 +173,7 @@ Origin: mountain-303 (2026-10-10).
 
 Origin: mountain-303 (2026-10-10).
 
-- **Keine offenen Operator-Akte.** Die zwei Zugangswerte sind eingetragen (`KNMI_API_KEY` = EDR-Schlüssel, `MINDAT_TOKEN`); der beim Ausstellen in den Transcript gelaufene KNMI-EDR-Schlüssel ist per Operator-Wort 2026-10-10 **als Risiko akzeptiert** (keine Rotation; Begründung: öffentliche read-only Non-Commercial-Daten, reines Quota-Token). Mindat → `wartend` (`state/zustand/wartend.φ: mindat-api-level1`).
+- **Keine offenen Operator-Akte.** Die zwei Zugangswerte sind eingetragen (`KNMI_API_KEY` = EDR-Schlüssel, `MINDAT_TOKEN`); der beim Ausstellen in den Transcript gelaufene KNMI-EDR-Schlüssel ist per Operator-Wort 2026-10-10 **als Risiko akzeptiert** (keine Rotation; Begründung: öffentliche read-only Non-Commercial-Daten, reines Quota-Token). Mindat → `wartend` (`state/wartend.φ: mindat-api-level1`).
 
 ## Abschluss
 

@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert
-(`state/zustand/standing-pass.md`); gemessen wird nur, was der eigene Trigger
+(`state/standing-pass.md`); gemessen wird nur, was der eigene Trigger
 für fällig erklärt.
 
 ## Operator-Wort-Register
@@ -89,7 +89,7 @@ Führe den Plan aus — `line`-Agent, flash-first delegieren, eine Session ist e
 - **Braucht:** Registrierung/Port je Route.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte `state/zustand/wartend.φ:3`)
+- **Status:** wartend | **Bindung:** eigen (Warte `state/wartend.φ:3`)
 - **Trigger:** `NED_BYPARAMS_TIMEOUT_TOKEN` per Mail.
 - **Lage:** (gemessen 2026-09-28) zwei NED-Einträge im Ledger, kein Token.
 - **Blockade:** Token fehlt.
@@ -150,7 +150,7 @@ Origin: mountain folge200.
 - **Fixe-Tabellen-Zulassung — Feder-Split** (gemessen 2026-09-28): der sources.φ-Entry braucht `url`/`origin`/`compiler` (Mycelium) + `format`/`field`/`ttl` (Mountain). Das **Feld-Verdikt steht** (PDS3 em, PDS4 gravity + witness; Details im Offen-Punkt). Deine Federseite fehlt.
 - **Five `blocked account` — im Kern geflippt** (gemessen 2026-09-28): `phi/blocked_sources.φ:369/373/377/381/385` tragen `pending` mit dem Registrierungsvermerk (mountain 198 `df0617c4c`); die future-Block-Zeilennummern (`:370/374/…`) sind stale. Offen bleibt nur die **ISRO-`url`-Zeile** (`:382` zeigt `pradan.issdc.gov.in/ch2`, die note misst `chmapbrowse`) — `url` ist deine Feder. Feder-Riss benannt, nicht still geschrieben.
 - **DEMETER / `format vlde`** (gemessen 2026-09-28): die frühere UA-Behauptung ist widerlegt (UA-identisch 403/403); `:88` gültig. `format vlde`-Quellzeile = deine Feder.
-- **Warte `[redacted]` — Trigger gefeuert** (gemessen 2026-09-28): `state/zustand/wartend.φ:8` kann geschlossen werden; Mail `mail_ledger.φ:181`, Daten privat gesichert.
+- **Warte `[redacted]` — Trigger gefeuert** (gemessen 2026-09-28): `state/wartend.φ:8` kann geschlossen werden; Mail `mail_ledger.φ:181`, Daten privat gesichert.
 - **4 `pending`-Konten-Träger** (gemessen 2026-09-28): `phi/blocked_sources.φ:373/377/381/385` von `blocked account` → `pending`; Duty bei mycelium. Träger: `phi/blocked_sources.φ::pending ×4`.
 - **Rätsel-Verdikt-Zeilen + Fehlkanäle** (mycelium-folge200): Karte `docs/surveys/survey-raetsel-bestand.md`; die 10 Prosa-Verdikte und 7 Fehlkanäle sind im Offen-Punkt aufgeschlüsselt.
 

@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 221 (2026-10-02)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`; die
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`; die
 zitierte Runde steht auf einem älteren HEAD, die Punkte tragen ihre eigene Messung).
 Diese Session konsumierte `handover-2026-10-01-mountain-folge220.md` (→ `archiv/`).
 Die adressierten Blöcke `## An mountain` aus mycelium-folge218 und river-folge77

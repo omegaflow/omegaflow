@@ -13,7 +13,7 @@ gemacht wurde. Nur eigene Arbeit: pfad-begrenzter Commit, fremde uncommittete
 Arbeit unangetastet; gepusht wird, sobald `origin/main` Vorfahr von HEAD ist.
 Kein Rang; jeder Punkt aufgeschlüsselt: **Trigger** / **Lage** (mit Messstempel) /
 **Blockade** / **Braucht**. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md`.
+`state/standing-pass.md`.
 
 Diese Session konsumierte `handover-2026-09-27-river-folge44.md` (nach `archiv/`).
 

@@ -8,7 +8,7 @@
 # Handover — Mycelium-Folge 343 (2026-10-13)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
-wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/zustand/standing-pass.md`).
+wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/standing-pass.md`).
 Diese Session konsumierte `handover-2026-10-13-mycelium-folge342.md` (→ `archiv/`).
 
 Gefaltet: `## An mycelium` aus `future-folge251` (Origin future-247), `mountain-folge340`,

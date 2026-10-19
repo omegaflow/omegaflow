@@ -19,7 +19,7 @@ Messstempel) / **Blockade** / **Braucht**. Sortierung: **umsetzbar zuerst**; der
 steht pro Punkt in `Bindung`.
 
 Diese Session konsumierte `handover-2026-09-28-sensory-folge194.md` (nach `archiv/`).
-Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
+Der Stehende Pass wird zitiert, nie kopiert: `state/standing-pass.md`.
 
 Der Demo-Punkt aus folge194 (PDF→Bild-Konversion) ist gemessen geschlossen: die
 Konversion ist gebaut (`archive_search --pdf-image`), der Befund im Träger-Dokument
@@ -91,7 +91,7 @@ als Nachtrag gesetzt. Der Träger bleibt für die echten `request-only`-Marker.
 ## Termin
 
 - **Europa-Clipper** | termin:2026-12-03 | Trigger: 02./03.12. | Lage (gemessen
-  2026-09-28): Dritt-Wait in `state/zustand/wartend.φ:15` (Aufnehmer sensory) |
+  2026-09-28): Dritt-Wait in `state/wartend.φ:15` (Aufnehmer sensory) |
   Braucht: Epoche ernten.
 
 ## Träger (Orphan-Faltung)
@@ -171,7 +171,7 @@ werden getragen, nie geglättet (0 honored).
   im Browser; kein Spiegel (SPDF/CDAWeb/NCEI `pub/data/demeter/` → 404).
   Der Dispositions-Eintrag der Sache steht als `pending` in `phi/blocked_sources.φ:81-83`;
   die WAF-Route-Klasse `blocked ip-blocked` (CDPP) fehlt. Myceliums Feder: den
-  `blocked ip-blocked`-Eintrag setzen. Der Wait steht `state/zustand/wartend.φ:4`
+  `blocked ip-blocked`-Eintrag setzen. Der Wait steht `state/wartend.φ:4`
   (Aufnehmer sensory). Origin: sensory-folge194/195.
 
 ## An Mountain (gemessen, fremde Feder)
@@ -213,7 +213,7 @@ Aufnehmer future (wartend.φ gesetzt). Future legt sie dem Operator in einfacher
 - **MBRSC Hope/Al-Amal (VAE)** — `sdc.emiratesmarsmission.ae`: kostenloses Konto.
 
 **Eingetragen 2026-09-28 als `blocked account` in `phi/blocked_sources.φ`** +
-`state/zustand/wartend.φ` (Aufnehmer future).
+`state/wartend.φ` (Aufnehmer future).
 
 Origin: sensory-folge195.
 
@@ -234,5 +234,5 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 - `docs/handover/archiv/handover-2026-09-28-sensory-folge194.md` (Move),
 - `docs/surveys/survey-2026-09-17-sonden-request-only.md` (Nachtrag + sha).
 
-`state/operator-gespraeche/2026-09-28-sensory.md` und `state/zustand/wartend.φ` sind
+`state/operator-gespraeche/2026-09-28-sensory.md` und `state/wartend.φ` sind
 gitignored (`/state/`) — lokal, nicht committet.

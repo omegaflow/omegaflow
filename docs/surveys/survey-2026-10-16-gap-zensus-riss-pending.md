@@ -67,7 +67,7 @@ der Wert IST 0.0.
   kuratiertes Gap-Register.
 
 ## 4 · Grenze (ehrlich, nicht geglättet)
-- Die **privaten Register** (`state/zustand/*`, `phi/pipeline/*.φ`) liegen **nicht** im öffentlichen Baum
+- Die **privaten Register** (`state/*`, `phi/pipeline/*.φ`) liegen **nicht** im öffentlichen Baum
   hier → **nicht gemessen**; `phi/` trägt nur `sources.φ`.
 - `--open`/`--orphan-docs` sind **lexikalisch** → `pending`/`offen` als Kanon kollidieren; die 410 sind
   ein Lärm-Signal, keine Aufgabenliste.

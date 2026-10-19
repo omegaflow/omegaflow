@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 288 (2026-10-09)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`,
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`,
 Mycelium, gemessen 2026-10-09T18:37Z). Diese Session konsumierte
 `handover-2026-10-09-mountain-folge287.md` (→ `archiv/`). Kein pro/max; nur
 flash (1 Rat-Runde zu `domain`/`extent`).
@@ -99,7 +99,7 @@ Wort | Datum | Quelle
 ### Flyby-Kette — Residual liegt in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** eigen (Register) · river (`flyby_ephemeris_gate`)
 - **Trigger:** ESOC-Recon-Release (Wiedervorlage 2026-11-01) oder Descope
-- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen in `sources.φ`; `odf.rs` steht, `doppler.rs` absent. σ_recon ist 1-σ-Kovarianz der ESOC-Recon-Ephemeride (`ephemeris_juice_recon.bin` 404), kein Doppler-Residual. Wahrheit: `state/zustand/wartend.φ:34`.
+- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen in `sources.φ`; `odf.rs` steht, `doppler.rs` absent. σ_recon ist 1-σ-Kovarianz der ESOC-Recon-Ephemeride (`ephemeris_juice_recon.bin` 404), kein Doppler-Residual. Wahrheit: `state/wartend.φ:34`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release (river) oder Descope-Befund für `doppler.rs`.
 

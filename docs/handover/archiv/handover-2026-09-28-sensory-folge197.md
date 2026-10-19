@@ -19,7 +19,7 @@ Messstempel) / **Blockade** / **Braucht**. Sortierung: **umsetzbar zuerst**; der
 steht pro Punkt in `Bindung`.
 
 Diese Session konsumierte `handover-2026-09-28-sensory-folge196.md` (nach `archiv/`).
-Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
+Der Stehende Pass wird zitiert, nie kopiert: `state/standing-pass.md`.
 
 Dieses Atom maß beide `eigen`-Punkte an ihre Lesekante: DEMETER (Order 18400 weiter
 `Running`, Datei-Endpoint 202) und survey-codestruktur (`omega.rs:1788` unverändert).
@@ -107,7 +107,7 @@ Punkt wird damit zugestellt, nicht in einem Survey begraben.
 ## Termin
 
 - **Europa-Clipper** | termin:2026-12-03 | Trigger: 02./03.12. | Lage (gemessen
-  2026-09-28): Dritt-Wait in `state/zustand/wartend.φ:15` (Aufnehmer sensory) |
+  2026-09-28): Dritt-Wait in `state/wartend.φ:15` (Aufnehmer sensory) |
   Braucht: Epoche ernten.
 
 ## Träger (Orphan-Faltung)
@@ -193,7 +193,7 @@ werden getragen, nie geglättet (0 honored).
   (18400 `202`, 18387 `500`). Die Dispositions-Klasse `blocked ip-blocked` (CDPP) ist damit
   zu prüfen (eher `parser-def`/Route-Gate). Der Dispositions-Eintrag der Sache steht als
   `pending` in `phi/blocked_sources.φ:81-83`; Myceliums Feder: die Klasse korrigieren.
-  Der Wait steht `state/zustand/wartend.φ:4` (Aufnehmer sensory). Origin:
+  Der Wait steht `state/wartend.φ:4` (Aufnehmer sensory). Origin:
   sensory-folge194/195/196/197.
 
 ## An River (gemessen, fremde Feder)
@@ -248,7 +248,7 @@ Aufnehmer future (wartend.φ gesetzt). Future legt sie dem Operator in einfacher
 - **MBRSC Hope/Al-Amal (VAE)** — `sdc.emiratesmarsmission.ae`: kostenloses Konto.
 
 **Eingetragen 2026-09-28 als `blocked account` in `phi/blocked_sources.φ`** +
-`state/zustand/wartend.φ` (Aufnehmer future).
+`state/wartend.φ` (Aufnehmer future).
 
 Origin: sensory-folge195.
 
@@ -272,5 +272,5 @@ Eigene Pfade dieses Atoms:
   `tools/gate/src/bin/commit_check.rs`, `AGENTS.md`,
   `docs/handover/handover-2026-09-28-sensory-folge197.md` (Fortschreibung).
 
-`state/operator-gespraeche/2026-09-28-sensory.md` und `state/zustand/wartend.φ` sind
+`state/operator-gespraeche/2026-09-28-sensory.md` und `state/wartend.φ` sind
 gitignored (`/state/`) — lokal, nicht committet.

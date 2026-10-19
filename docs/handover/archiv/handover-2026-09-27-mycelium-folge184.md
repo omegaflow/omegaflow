@@ -12,11 +12,11 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 gemacht wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** /
 **Lage** / **Blockade** / **Braucht**. Status-Tag: `eigen` | `wartend` |
 `blockiert` | `termin`; Operator-Akte leben in Futures Operator-Queue, Dritt-Waits
-in `state/zustand/wartend.φ`, nie als Linien-Punkt.
+in `state/wartend.φ`, nie als Linien-Punkt.
 
 Diese Session konsumierte `handover-2026-09-27-mycelium-folge183.md`.
 
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`)
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`)
 — zitiert, nie in dieses Register kopiert.
 
 ## Operator-Wort-Register
@@ -73,9 +73,9 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 ### Voyager 1/2 closed-loop Doppler — keine Antwort
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Antwort von `gsfc-dl-nssdca-request@mail.nasa.gov` (PSNO-00007).
-- **Lage:** (gemessen 2026-09-27 via `state/zustand/wartend.φ`) kein Eingang; Anfrage 2026-09-16 13:47 UTC.
+- **Lage:** (gemessen 2026-09-27 via `state/wartend.φ`) kein Eingang; Anfrage 2026-09-16 13:47 UTC.
 - **Blockade:** keine.
-- **Braucht:** Trigger in `state/zustand/wartend.φ` (voyager-nssdca).
+- **Braucht:** Trigger in `state/wartend.φ` (voyager-nssdca).
 
 ### termin-Punkte — re-verdict
 - **Status:** termin | **Bindung:** termin:2026-10-02 / 2026-12-02
@@ -87,7 +87,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 ### BepiColombo bc_mpo_more — Termin 2027-04-01
 - **Status:** termin | **Bindung:** termin:2027-04-01
 - **Trigger:** 2027-04-01 (Science-Phase-Beginn).
-- **Lage:** (gemessen 2026-09-27 via `state/zustand/wartend.φ`) MORE-Cruise nicht öffentlich, Freigabe April 2027; Ticket `YYM-342-97327`; Freigabe-Anfrage `phi/blocked_sources.φ:53`.
+- **Lage:** (gemessen 2026-09-27 via `state/wartend.φ`) MORE-Cruise nicht öffentlich, Freigabe April 2027; Ticket `YYM-342-97327`; Freigabe-Anfrage `phi/blocked_sources.φ:53`.
 - **Blockade:** Freigabe (dritter).
 - **Braucht:** Wiedervorlage 04/2027.
 

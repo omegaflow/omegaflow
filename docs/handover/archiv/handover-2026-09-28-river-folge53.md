@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit,
+`state/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit,
 fremde uncommittete Arbeit unangetastet.
 
 ## Operator-Wort-Register
@@ -56,7 +56,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
 ### GPU-Readback map/unmap + Lade-Membran — CI-Verifikation offen
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein ci-check-Lauf auf einem HEAD ≥ Readback-Fix, der **abschließt**.
-- **Lage:** (gemessen 2026-09-28 07:27Z via `ci_manage log 36385567226`) der ci-check-Lauf auf `302063d36` schloss **rot** ab (2 fehlende Tests, s. eigener Punkt unten); der Readback-Test selbst steht nicht unter den Fehlern. Der Push `b45550527` startete `36398092149` ci-check (pending) — der grüne Readback-Nachweis steht noch aus. Den vollen CI-Stand trägt der Stehende Pass (`state/zustand/standing-pass.md`, zitiert). Die Lade-Membran ist lokal headless grün (folge50).
+- **Lage:** (gemessen 2026-09-28 07:27Z via `ci_manage log 36385567226`) der ci-check-Lauf auf `302063d36` schloss **rot** ab (2 fehlende Tests, s. eigener Punkt unten); der Readback-Test selbst steht nicht unter den Fehlern. Der Push `b45550527` startete `36398092149` ci-check (pending) — der grüne Readback-Nachweis steht noch aus. Den vollen CI-Stand trägt der Stehende Pass (`state/standing-pass.md`, zitiert). Die Lade-Membran ist lokal headless grün (folge50).
 - **Blockade:** keine.
 - **Braucht:** `ci_manage log 36400127856` **einmal** nach Laufende (kein Polling) — Readback-Test grün = Punkt geschlossen.
 

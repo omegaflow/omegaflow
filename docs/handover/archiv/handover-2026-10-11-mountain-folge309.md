@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 309 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge308.md` (→ `archiv/`).
 flash only, kein pro/max. Operator-Trigger dieser Session: die Linien-Start-Direktive
 („Mountain in einem Pass, kein Planungstheater") — Bekanntes direkt bis zur Kante
@@ -45,7 +45,7 @@ gearbeitet, 3 begrenzte Dispatches (general ×3) + 1 Bau-Dispatch (grind-flash �
 - **Trigger:** Entwurf des Serien-Manifest-Formats
 - **Lage:** (gemessen 2026-10-11) der **ecad-Riss ist gelöst** (netloc = Quellen-Identität `ecad.eu`, origin = Distributionshost). Der Mycelium-adressierte Block gegengeprüft: `terms` aller 6 Klima-Quellen deckt die Behauptung (PD SURFRAD; non-commercial ECAD/WorldClim; CC-BY-4.0 DWD/AODN/KNMI); `ttl` 5/6 mit Compiler-`TTL_S` belegt (SURFRAD 604800 · ECAD 604800 · DWD 2592000 · WorldClim 315360000 · KNMI 86400). **AODN-Riss:** `ttl 1` (`phi/sources.φ:8`) = Datensatz-Kadenz (`aodn_compiler.rs:586`), kein fester Harvest-Refresh.
 - **Blockade:** ohne Serien-Manifest trägt jeder Block nur einen Default-Tag.
-- **Braucht:** Serien-Manifest-Format (Mountain) — die Compiler erzeugen je-Akt-Instanzen. Der CI-Wait je Block steht in `state/zustand/wartend.φ`.
+- **Braucht:** Serien-Manifest-Format (Mountain) — die Compiler erzeugen je-Akt-Instanzen. Der CI-Wait je Block steht in `state/wartend.φ`.
 
 ### PEP + Tudat — Schritt 3 (mehrere Bahnen) offen
 - **Status:** eigen (Register + Bau) | **Bindung:** eigen
@@ -92,7 +92,7 @@ gearbeitet, 3 begrenzte Dispatches (general ×3) + 1 Bau-Dispatch (grind-flash �
 ### Flyby-Kette — termin 2026-11-01
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
-- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/zustand/wartend.φ`.
+- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/wartend.φ`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 
@@ -113,7 +113,7 @@ gearbeitet, 3 begrenzte Dispatches (general ×3) + 1 Bau-Dispatch (grind-flash �
 ### iEEG — registriertes Wort maßgeblich
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein neues Operator-Wort, das den Riss über 2026-10-06 hebt
-- **Lage:** (gemessen 2026-10-11) iEEG = privates Experiment (`state/zustand/wartend.φ`), kein CDN.
+- **Lage:** (gemessen 2026-10-11) iEEG = privates Experiment (`state/wartend.φ`), kein CDN.
 - **Blockade:** keine.
 - **Braucht:** nur ein neues Operator-Wort öffnet es.
 
@@ -183,7 +183,7 @@ Der Commit ist die letzte Handlung; das Operator-Wort („mach das ab jetzt auto
   Anker ist gedriftet; echte Defekte = Klass-Ref-Verlust + ungeparster Element-Tail.
 - **Mycelium-303 addresster Block gefaltet** — te-ground-truth + VNP46A3 + open_lidar + Klima
   erledigt; Asservatenkammer-Survey als Punkt getragen.
-- Standing-Pass-Bezug: `state/zustand/standing-pass.md` (am HEAD `5247e9873`; Standard-Pass
+- Standing-Pass-Bezug: `state/standing-pass.md` (am HEAD `5247e9873`; Standard-Pass
   zitiert, nicht kopiert). Geteilter Baum: `tools/gate/src/bin/commit_check.rs` ·
   `tools/harvest/src/bin/usgs_lidar_coverage.rs` fremd modifiziert — nicht angefasst.
 - Eigene Pfade dieses Atoms: `docs/paper/gic-causal-driver.md` · `src/archivar/odf.rs` ·

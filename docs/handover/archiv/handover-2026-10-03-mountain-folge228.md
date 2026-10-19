@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 228 (2026-10-03)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-03-mountain-folge227.md` (→ `archiv/`).
 
 ## Burn: open 0.0011 · close 0.1255 · cap 0.5 Grund: blocked-sources hygiene, Swarm-DISS-Verdikt + TEC-Compiler, adressierte Blöcke gefaltet
@@ -42,7 +42,7 @@ Wort | Datum | Quelle
   `code@omegaflow.space`).
 - **Lage:** (gemessen 2026-10-03 via `sgrep -i petrel19 state/mail/mail_ledger.φ` = 0) kein
   Antwort-Beleg; GitHub-API `license: null`; Arm `ephemeris_compiler.rs` steht; Dritt-Wait
-  `state/zustand/wartend.φ` (`petrel19-license`); Verdikt-Zeile `phi/blocked_sources.φ`.
+  `state/wartend.φ` (`petrel19-license`); Verdikt-Zeile `phi/blocked_sources.φ`.
 - **Blockade:** Lizenz ungeklärt.
 - **Braucht:** Antwort abwarten (Wiedervorlage); bei Lizenz Register-Zeile in `phi/sources.φ`
   + `ephemeris_house_gate`/`flyby_anderson_probe` auf das vierte Haus erweitern

@@ -29,7 +29,7 @@ Diese Session konsumierte `handover-2026-09-26-river-folge38.md` (nach
 - **HEAD:** `66a66b9a1` == `origin/main`; Arbeitsbaum nur Fremdarbeit (mountain/sensory/mycelium).
 - **Browser:** CDP-Brücke verbunden (`browser_targets` = 2 Chrome-Executors; `chrome-devtools` antwortet).
 - **Benchmark (Star-Epoch-Fix):** `grind-flash` lieferte **1991.25** (falsch — las die Quell-Kataloge I/239/I/259); `grind-pro` korrigierte auf **2000.0** (richtig — `tycho2_compiler.rs:199-200` liest `tyc2.dat` J2000.0 roh, Supplement/tyc1/tgas werden nach J2000 propagiert). **Sieger: pro.** Register `catalog_epoch 2000.0` (`phi/sources.φ:9343`); Probe-Bins lesen ihn, `membrane-hull-probe` kompiliert wieder.
-- Shared external state: `state/zustand/external-state.md` (nicht kopiert).
+- Shared external state: `state/external-state.md` (nicht kopiert).
 
 ## Offen
 

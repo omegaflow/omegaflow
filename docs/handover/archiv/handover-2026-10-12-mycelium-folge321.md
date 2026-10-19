@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 321 (2026-10-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
-gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+gemacht wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge320.md` (→ `archiv/`). **Gebaut/gemessen
 dieses Atom:**
@@ -142,7 +142,7 @@ dieses Atom:**
 - **Trigger:** nächster `entsoe-cdn`-Lauf endet
 - **Lage:** (gemessen 2026-10-11) failure `curl status Some(22)`; geheilt
   (`-sSL` + `--write-out`).
-- **Blockade:** ENTSO-E-Token (Ticket #9473923, `state/zustand/wartend.φ:28`).
+- **Blockade:** ENTSO-E-Token (Ticket #9473923, `state/wartend.φ:28`).
 - **Braucht:** `ci_manage log <run-id>`; bei grün Register-Block; `terms`/`ttl`
   (Mountain).
 

@@ -8,7 +8,7 @@
 # Handover — Mycelium-Folge 315 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
-gemacht wurde. Es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`,
+gemacht wurde. Es gilt der **Stehende Pass** (`state/standing-pass.md`,
 zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-11-mycelium-folge314.md` (→ `archiv/`).
 
@@ -27,7 +27,7 @@ zitiert, nie kopiert). Diese Session konsumierte
 ### ENTSO-E A78 — Lauf rot; HTTP-Body-Diagnose gebaut
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** nächster `entsoe-cdn`-Lauf endet
-- **Lage:** (gemessen 2026-10-11 via `ci_manage log 38169562211`) Lauf `38169562211` **failure** — `10YFI-1--------U: fetch void — curl status Some(22)` nach 0,67 s; `read_secret` fand den Token (sonst `absent`/exit 1), der API-Aufruf antwortet also mit HTTP ≥400. Body war **unread** (curl `-f` verwarf ihn). **Gebaut dieses Atom:** `entsoe_compiler.rs::fetch` nutzt jetzt `-sSL` + `--write-out '\n%{http_code}'` und gibt bei non-2xx `HTTP <code>: <body-Anfang>` aus — der nächste Lauf nennt den Code (401 = Token, 400 = Request) statt zu raten. Der `entsoe-token`-Wait (`state/zustand/wartend.φ:28`, Ticket #9473923, „~3 Werktage") steht im Riss zur Handover-Zeile „Secret gesetzt" (Wert gesetzt, aber nicht akzeptiert); der Baum gewinnt.
+- **Lage:** (gemessen 2026-10-11 via `ci_manage log 38169562211`) Lauf `38169562211` **failure** — `10YFI-1--------U: fetch void — curl status Some(22)` nach 0,67 s; `read_secret` fand den Token (sonst `absent`/exit 1), der API-Aufruf antwortet also mit HTTP ≥400. Body war **unread** (curl `-f` verwarf ihn). **Gebaut dieses Atom:** `entsoe_compiler.rs::fetch` nutzt jetzt `-sSL` + `--write-out '\n%{http_code}'` und gibt bei non-2xx `HTTP <code>: <body-Anfang>` aus — der nächste Lauf nennt den Code (401 = Token, 400 = Request) statt zu raten. Der `entsoe-token`-Wait (`state/wartend.φ:28`, Ticket #9473923, „~3 Werktage") steht im Riss zur Handover-Zeile „Secret gesetzt" (Wert gesetzt, aber nicht akzeptiert); der Baum gewinnt.
 - **Blockade:** ENTSO-E-Token-Freigabe (Ticket #9473923).
 - **Braucht:** `ci_manage log <run-id>` nach dem nächsten Lauf; bei grün Register-Block (`url`/`origin`/`format`/`at earth`/`ttl`); `terms`/`ttl` (Mountain).
 

@@ -19,7 +19,7 @@ Messstempel) / **Blockade** / **Braucht**. Sortierung: **umsetzbar zuerst**; der
 steht pro Punkt in `Bindung`.
 
 Diese Session konsumierte `handover-2026-09-27-sensory-folge188.md` (nach `archiv/`).
-Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
+Der Stehende Pass wird zitiert, nie kopiert: `state/standing-pass.md`.
 
 ## Operator-Wort-Register (Stand 2026-09-27)
 
@@ -75,7 +75,7 @@ Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
   (gemessen 2026-09-27): die Kp-Route ist in `phi/sources.φ` **wiederhergestellt** (folge182) |
   Braucht: Epoche ernten.
 - **Europa-Clipper** | termin:2026-12-03 | Trigger: 02./03.12. | Lage (gemessen 2026-09-27):
-  Dritt-Wait in `state/zustand/wartend.φ:15` (Aufnehmer sensory) | Braucht: Epoche ernten.
+  Dritt-Wait in `state/wartend.φ:15` (Aufnehmer sensory) | Braucht: Epoche ernten.
 
 ## Träger (Orphan-Faltung)
 
@@ -149,5 +149,5 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 - `docs/handover/handover-2026-09-27-sensory-folge189.md`,
 - `docs/handover/archiv/handover-2026-09-27-sensory-folge188.md` (Move).
 
-Der Zustand-Ledger `state/zustand/external-state.md` ist gitignored (`.gitignore:137 /state/`) —
+Der Zustand-Ledger `state/external-state.md` ist gitignored (`.gitignore:137 /state/`) —
 lokal fortgeschrieben, nicht committet.

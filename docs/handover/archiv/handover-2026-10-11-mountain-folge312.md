@@ -9,14 +9,14 @@
 # Handover — Mountain-Folge 312 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge311.md` (→ `archiv/`).
 
 ## Burn: open 0.0 · close 0.14 · cap 0.25 — Grund: 1× line (flash only), kein pro/max; Taucher (2× grind-flash, 3× general) im selben Atom
 
 ## Wartend-Register (Operator-Wort 2026-10-11: „die wartend vornehmen … gegen den Baum gemessen")
 
-`state/zustand/wartend.φ` in zwei Passes gegen Baum und Netz gemessen und ausgedünnt
+`state/wartend.φ` in zwei Passes gegen Baum und Netz gemessen und ausgedünnt
 (71 → 53 → 34 Zeilen; Archive: `wartend-archiv-2026-10-11.φ`, `…-r2.φ`).
 
 **Pass 1 (gegen den Baum):** entfernt `ned-token` (`phi/sources.φ:11597`),
@@ -73,7 +73,7 @@ Dataset-IDs, CC-BY-4.0); die 12 Compiler-Zeilen tragen jetzt die gemessene Route
 - **Trigger:** Entwurf des Serien-Manifest-Formats
 - **Lage:** (gemessen 2026-10-11, unverändert) der ecad-Riss ist gelöst (netloc = Quellen-Identität); AODN-`ttl 1` = Datensatz-Kadenz, kein fester Refresh.
 - **Blockade:** ohne Serien-Manifest trägt jeder Klima-Block nur einen Default-Tag.
-- **Braucht:** Serien-Manifest-Format; der CI-Wait je Block steht in `state/zustand/wartend.φ`.
+- **Braucht:** Serien-Manifest-Format; der CI-Wait je Block steht in `state/wartend.φ`.
 
 ### MODVOLC · ITS_LIVE · MASIE — apathogene Zulassung (future-228)
 - **Status:** eigen (Register) | **Bindung:** eigen
@@ -120,7 +120,7 @@ Dataset-IDs, CC-BY-4.0); die 12 Compiler-Zeilen tragen jetzt die gemessene Route
 ### Flyby-Kette — termin 2026-11-01
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
-- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/zustand/wartend.φ`.
+- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/wartend.φ`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 
@@ -134,7 +134,7 @@ Dataset-IDs, CC-BY-4.0); die 12 Compiler-Zeilen tragen jetzt die gemessene Route
 ### iEEG — registriertes Wort maßgeblich
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein neues Operator-Wort über 2026-10-06 hinaus
-- **Lage:** (gemessen 2026-10-11) iEEG = privates Experiment (`state/zustand/wartend.φ`, `# ieeg-openneuro-backend` archiviert), kein CDN.
+- **Lage:** (gemessen 2026-10-11) iEEG = privates Experiment (`state/wartend.φ`, `# ieeg-openneuro-backend` archiviert), kein CDN.
 - **Blockade:** keine.
 - **Braucht:** nur ein neues Operator-Wort öffnet es.
 
@@ -171,13 +171,13 @@ Dataset-IDs, CC-BY-4.0); die 12 Compiler-Zeilen tragen jetzt die gemessene Route
 Origin: mountain-312 (2026-10-11).
 
 - **tuh-eeg — Residuum aus der Wartend-Bereinigung (Operator-gebunden).** Aus
-  `state/zustand/wartend.φ` entfernte `#`-Resolutionen mit offenem Rest: (a)
+  `state/wartend.φ` entfernte `#`-Resolutionen mit offenem Rest: (a)
   **tuh-eeg-eligibility** (`# … 2026-10-04`, NEDC-Antwort `mail_ledger.φ:233`):
   Weg (a) NEDC-PDF füllen/signieren/senden wieder offen = Operator-Hand; (b)
   **tuh-eeg-access** (`# … 2026-10-07`, `mail_ledger.φ:245`): SSH-Zugang live,
   Feld-Verdikt `decline no-physical-force`; Nutzung für einen Nicht-Feld-Zweck
   `operator-gebunden`. Beide gehören in die Future-Operator-Queue (das Archiv
-  `state/zustand/wartend-archiv-2026-10-11.φ` trägt den Wortlaut).
+  `state/wartend-archiv-2026-10-11.φ` trägt den Wortlaut).
 
 ## Abschluss
 

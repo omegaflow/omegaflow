@@ -19,7 +19,7 @@ Messstempel) / **Blockade** / **Braucht**. Sortierung: **umsetzbar zuerst**; der
 steht pro Punkt in `Bindung`.
 
 Diese Session konsumierte `handover-2026-09-27-sensory-folge193.md` (nach `archiv/`).
-Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
+Der Stehende Pass wird zitiert, nie kopiert: `state/standing-pass.md`.
 
 ## Operator-Wort-Register (Stand 2026-09-28)
 
@@ -85,7 +85,7 @@ Der Stehende Pass wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
 ## Termin
 
 - **Europa-Clipper** | termin:2026-12-03 | Trigger: 02./03.12. | Lage (gemessen
-  2026-09-27): Dritt-Wait in `state/zustand/wartend.φ:15` (Aufnehmer sensory) |
+  2026-09-27): Dritt-Wait in `state/wartend.φ:15` (Aufnehmer sensory) |
   Braucht: Epoche ernten.
 
 ## Träger (Orphan-Faltung)
@@ -161,7 +161,7 @@ werden getragen, nie geglättet (0 honored).
   (SPDF/CDAWeb/NCEI `pub/data/demeter/` → 404).
   Der Dispositions-Eintrag der Sache steht als `pending` in `phi/blocked_sources.φ:81-83`;
   die WAF-Route-Klasse `blocked ip-blocked` (CDPP) fehlt. Myceliums Feder: den
-  `blocked ip-blocked`-Eintrag setzen. Der Wait steht `state/zustand/wartend.φ:4`
+  `blocked ip-blocked`-Eintrag setzen. Der Wait steht `state/wartend.φ:4`
   (Aufnehmer sensory). Origin: sensory-folge194.
 
 ## Wer nicht senden darf
@@ -180,5 +180,5 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 - `docs/handover/handover-2026-09-28-sensory-folge194.md`,
 - `docs/handover/archiv/handover-2026-09-27-sensory-folge193.md` (Move).
 
-`state/operator-gespraeche/2026-09-28-sensory.md` und `state/zustand/wartend.φ` sind
+`state/operator-gespraeche/2026-09-28-sensory.md` und `state/wartend.φ` sind
 gitignored (`/state/`) — lokal, nicht committet.

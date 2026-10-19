@@ -12,11 +12,11 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** / **Lage** /
 **Blockade** / **Braucht**. Status-Tag: `wartend` | `blockiert` | `termin`;
 Operator-Akte leben in Futures Operator-Queue, Dritt-Waits in
-`state/zustand/wartend.φ`, nie als Linien-Punkt.
+`state/wartend.φ`, nie als Linien-Punkt.
 
 Diese Session konsumierte `handover-2026-09-28-mycelium-folge192.md`.
 
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`)
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`)
 — zitiert, nie in dieses Register kopiert.
 
 ## Operator-Wort-Register

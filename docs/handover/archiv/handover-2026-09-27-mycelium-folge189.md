@@ -12,11 +12,11 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 gemacht wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** /
 **Lage** / **Blockade** / **Braucht**. Status-Tag: `wartend` | `blockiert` |
 `termin`; Operator-Akte leben in Futures Operator-Queue, Dritt-Waits in
-`state/zustand/wartend.φ`, nie als Linien-Punkt.
+`state/wartend.φ`, nie als Linien-Punkt.
 
 Diese Session konsumierte `handover-2026-09-27-mycelium-folge188.md`.
 
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`)
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`)
 — zitiert, nie in dieses Register kopiert.
 
 ## Operator-Wort-Register
@@ -27,7 +27,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - Wort | 2026-09-27 | Entscheidungen nie als Liste vorlegen — jede Entscheidung braucht eine aussagekräftige Erklärung | Operator (Future-Session).
 - Wort | 2026-09-27 | D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abarbeiten | Operator (Session, Mountain).
 - Wort | 2026-09-27 | „falte alle" — die genuin-offenen Punkte der trägerlosen Docs in die Übergaben ihrer Linien falten (Aufenthalt = Eigentum) | Operator (Mycelium-Session 184).
-- Wort | 2026-09-27 | „den rest gebe ich future" — die Tafel trägt nur `eigen`; operator-gebundene Punkte → Future-Operator-Queue, Dritt-Waits → `state/zustand/wartend.φ`; die Queue wird nicht kopiert | Operator (Mycelium-Session 185).
+- Wort | 2026-09-27 | „den rest gebe ich future" — die Tafel trägt nur `eigen`; operator-gebundene Punkte → Future-Operator-Queue, Dritt-Waits → `state/wartend.φ`; die Queue wird nicht kopiert | Operator (Mycelium-Session 185).
 
 ## Offen (aufgeschlüsselt)
 
@@ -76,7 +76,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 ### browser-anbindung — MCP-Pin + MV3-Kaltstart (Träger)
 - **Status:** wartend | **Bindung:** eigen (Träger)
 - **Trigger:** Operator-Wort (MCP-Pin) / Store-Review (MV3).
-- **Lage:** (gemessen 2026-09-27 via `register_lookup --orphan-docs`, gefaltet) Chrome DevTools MCP auf eine Version pinnen (Operator-Wort, Eintrag `state/zustand/wartend.φ::chrome-devtools-mcp`); MV3-Kaltstart über eine Store-Extension (Dritter, `state/zustand/wartend.φ::browser-mv3-kaltstart`); Pfad-1 0.16.1→0.17.0 geschlossen.
+- **Lage:** (gemessen 2026-09-27 via `register_lookup --orphan-docs`, gefaltet) Chrome DevTools MCP auf eine Version pinnen (Operator-Wort, Eintrag `state/wartend.φ::chrome-devtools-mcp`); MV3-Kaltstart über eine Store-Extension (Dritter, `state/wartend.φ::browser-mv3-kaltstart`); Pfad-1 0.16.1→0.17.0 geschlossen.
 - **Blockade:** keine.
 - **Braucht:** Operator-Wort für den MCP-Pin; Store-Review-Trigger für MV3.
 
@@ -127,7 +127,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - `docs/concepts/tools-map.md` | offene Marker | nächster Schritt: `register_lookup --orphan-docs` beim nächsten Pass.
 
 ## Orphan-Docs-Faltung (Operator-Wort „falte alle", ausgeführt)
-- `register_lookup --orphan-docs` steht nach der Faltung auf **0**. Die Blöcke liegen in den Übergaben der Besitzerlinien bzw. in `state/zustand/wartend.φ`:
+- `register_lookup --orphan-docs` steht nach der Faltung auf **0**. Die Blöcke liegen in den Übergaben der Besitzerlinien bzw. in `state/wartend.φ`:
   - river-folge49: `survey-fortschritt`, `blatt-papier-beweis` (Membran-Bindung), `kybernetische-astrophysik`, `pfeiler-der-architektur`, `recherche-galileo-kadenz-reconciliation` (Träger), `auftrag-flyby2-kette` (Träger).
   - sensory-folge193: `survey-2026-09-17-sonden-request-only` (PDF→Bild-Konversion für den Vision-Leser).
   - mountain-folge190: `positive-maske` (Slab2/3D-Tomografie-Ernte), `auftrag-flyby2-kette` (`where source DSCOVR`), `survey-2026-09-17-sonden-request-only` (nativer ODF-Serien-Arm).

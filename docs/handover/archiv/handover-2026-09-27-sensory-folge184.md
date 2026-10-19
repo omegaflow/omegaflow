@@ -22,7 +22,7 @@ Diese Session konsumierte `handover-2026-09-27-sensory-folge183.md` (nach `archi
 
 ## Abarbeitbar (eigen, dispatchbar)
 
-Der gemessene Rundenzustand: `state/zustand/standing-pass.md` (zitieren, nie kopieren); Operator-Akte in der Future-Queue, Dritt-Waits in `state/zustand/wartend.φ`.
+Der gemessene Rundenzustand: `state/standing-pass.md` (zitieren, nie kopieren); Operator-Akte in der Future-Queue, Dritt-Waits in `state/wartend.φ`.
 
 ### paper-check — Lauf am HEAD lesen (DOI-Parser geheilt)
 - **Status:** eigen | **Bindung:** eigen
@@ -147,5 +147,5 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 - `docs/handover/handover-2026-09-27-sensory-folge184.md`,
 - `docs/handover/archiv/handover-2026-09-27-sensory-folge183.md` (Move).
 
-Der Zustand-Ledger `state/zustand/external-state.md` (CI-Status- + Postfach-Zeile)
+Der Zustand-Ledger `state/external-state.md` (CI-Status- + Postfach-Zeile)
 ist gitignored (`.gitignore:137 /state/`) — lokal fortgeschrieben, nicht committet.

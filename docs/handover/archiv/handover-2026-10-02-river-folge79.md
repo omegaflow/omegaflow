@@ -9,7 +9,7 @@
 # Handover — River-Folge 79 (2026-10-02)
 
 Dieses Register trägt nur Offenes — git trägt, was gemacht wurde. Der Stehende Pass
-wird zitiert, nie kopiert: `state/zustand/standing-pass.md`.
+wird zitiert, nie kopiert: `state/standing-pass.md`.
 
 ## Operator-Wort-Register
 
@@ -135,7 +135,7 @@ Origin: river folge79 (Faltung aus folge78; `station ABK` gefaltet in `7fce797df
   CDN 404, lokal absent — **und in `phi` nicht registriert** (Riss: `sgrep recon.bin phi` = 0).
 - **Blockade:** externe Datenvorläufe; fehlende ESOC-Registerzeile
 - **Braucht:** bei Fälligkeit `flyby_path2_fill` (CI) lesen. ESOC-Arm bleibt `pending` (Rats-Beschluss):
-  die Warte steht in `state/zustand/wartend.φ` (`ephemeris-juice-recon`, Aufnehmer river); die
+  die Warte steht in `state/wartend.φ` (`ephemeris-juice-recon`, Aufnehmer river); die
   `phi/sources.φ`-Zeile schreibt Mountain im Atom der ersten Manifestation — keine tote url-Zeile.
   Named follow-up (GLM-5.3-Kritik): Probe-Kadenz/Deadline für den Warte-Trigger.
 

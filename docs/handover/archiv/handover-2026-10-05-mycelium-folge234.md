@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
 wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
-(`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
+(`state/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-05-mycelium-folge233.md` (→ `archiv/`).
 
 ## Burn: open 0.0012 · close 0.0572 — session_burn (Mycelium-Session „in einem Pass starten")
@@ -137,7 +137,7 @@ Origin: mycelium-folge234. **Routed — nicht-eigen:**
 
 ## An future
 
-Origin: mycelium-folge234. **Erledigt:** NEDC TUH EEG — Genehmigung 2026-10-05 (`mail_ledger.φ:237`); die Public-Key-Zeile (`[redigiert]`, Key `~/.ssh/[redigiert]`) wurde am 2026-10-05 von der Operator-Hand an Joe Picone gesendet. Der Rest ist ein Warten auf NEDC (`state/zustand/wartend.φ` `tuh-eeg-access`).
+Origin: mycelium-folge234. **Erledigt:** NEDC TUH EEG — Genehmigung 2026-10-05 (`mail_ledger.φ:237`); die Public-Key-Zeile (`[redigiert]`, Key `~/.ssh/[redigiert]`) wurde am 2026-10-05 von der Operator-Hand an Joe Picone gesendet. Der Rest ist ein Warten auf NEDC (`state/wartend.φ` `tuh-eeg-access`).
 
 ## LOCK
 
@@ -146,4 +146,4 @@ Origin: mycelium-folge234. **Erledigt:** NEDC TUH EEG — Genehmigung 2026-10-05
 ## Abschluss
 
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`). Der Stehende Pass wird
-**nach** dem Commit am neuen HEAD neu gestempelt (`state/zustand/standing-pass.md`).
+**nach** dem Commit am neuen HEAD neu gestempelt (`state/standing-pass.md`).

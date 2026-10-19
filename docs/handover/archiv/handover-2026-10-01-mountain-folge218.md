@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 218 (2026-10-01)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). In
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). In
 diesem Atom: der `pds3_img`-Roundtrip-Fehler im Archivar gefunden und geheilt
 (Bandname > 32 Byte wurde im Pack still gekappt, der Roundtrip-Guard verwarf das
 Asset — deshalb blieb `phi/harvest.φ` `format pds3_img` `asset fehlt`). Die

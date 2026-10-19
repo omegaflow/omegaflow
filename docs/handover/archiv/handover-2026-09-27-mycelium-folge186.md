@@ -12,11 +12,11 @@ Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, wa
 gemacht wurde. Keine Rangfolge; jeder Punkt aufgeschlüsselt: **Trigger** /
 **Lage** / **Blockade** / **Braucht**. Status-Tag: `eigen` | `wartend` |
 `blockiert` | `termin`; Operator-Akte leben in Futures Operator-Queue, Dritt-Waits
-in `state/zustand/wartend.φ`, nie als Linien-Punkt.
+in `state/wartend.φ`, nie als Linien-Punkt.
 
 Diese Session konsumierte `handover-2026-09-27-mycelium-folge185.md`.
 
-Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.md`)
+Kein Standard-Pass: es gilt der **Stehende Pass** (`state/standing-pass.md`)
 — zitiert, nie in dieses Register kopiert.
 
 ## Operator-Wort-Register
@@ -31,7 +31,7 @@ Kein Standard-Pass: es gilt der **Stehende Pass** (`state/zustand/standing-pass.
 - Wort | 2026-09-27 | D5 (Orphan-Doc-Träger) nicht in die Übergabe falten — die Fakten direkt abarbeiten | Operator (Session, Mountain).
 - Wort | 2026-09-27 | RX100 war nur ein Gedanke — Quelle zurückgezogen, Workflow-Zweige entfernen | Operator (Session, Mountain).
 - Wort | 2026-09-27 | „falte alle" / „ja bitte falten" — die genuin-offenen Punkte der trägerlosen Docs in die Übergaben ihrer Linien falten (Aufenthalt = Eigentum) | Operator (Mycelium-Session 184).
-- Wort | 2026-09-27 | „den rest gebe ich future" — die Tafel trägt nur `eigen`; operator-gebundene Punkte → Future-Operator-Queue (matrix-rotor-Design-Wort), Dritt-Waits → `state/zustand/wartend.φ` (voyager-nssdca, bepicolombo-more); die Queue wird nicht kopiert | Operator (Mycelium-Session 185).
+- Wort | 2026-09-27 | „den rest gebe ich future" — die Tafel trägt nur `eigen`; operator-gebundene Punkte → Future-Operator-Queue (matrix-rotor-Design-Wort), Dritt-Waits → `state/wartend.φ` (voyager-nssdca, bepicolombo-more); die Queue wird nicht kopiert | Operator (Mycelium-Session 185).
 - Wort | 2026-09-27 | „Du kannst. Führe den … Plan aus — als `line`-Agent" — session-weiter Consent der Folge 186 (Delegation), nicht das Commit-Wort | Operator (Mycelium-Session 186).
 
 ## Offen (aufgeschlüsselt)

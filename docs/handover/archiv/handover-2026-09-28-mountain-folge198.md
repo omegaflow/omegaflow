@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert
-(`state/zustand/standing-pass.md`); gemessen wird nur, was der eigene Trigger
+(`state/standing-pass.md`); gemessen wird nur, was der eigene Trigger
 für fällig erklärt.
 
 ## Operator-Wort-Register
@@ -66,7 +66,7 @@ Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus
 - **Braucht:** CI `register_lookup --dropped` nennt die 4; dann tragen oder Bump mit gemessenem Wort im annehmenden Commit (nie stillschweigend).
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte in `state/zustand/wartend.φ:3`)
+- **Status:** wartend | **Bindung:** eigen (Warte in `state/wartend.φ:3`)
 - **Trigger:** NED-Cook-Token (`NED_BYPARAMS_TIMEOUT_TOKEN`) trifft per Mail ein.
 - **Lage:** (gemessen 2026-09-28 via `sread state/mail/mail_ledger.φ`) zwei NED-Einträge (Token-Bitte 2026-09-25/26), kein Token im Ledger.
 - **Blockade:** Token fehlt.
@@ -108,7 +108,7 @@ Du kannst. Führe den in Phase 1 vorgeschlagenen und jetzt bestätigten Plan aus
 ## Prosa-Träger (eigene)
 
 - `docs/surveys/survey-2026-09-26-membran-ladearchitektur.md` | §7: Enclosure-Vereinheitlichung gebaut (`membrane.rs:353`, `f9ea3284c`); ω-Loop-Verdict-Term → **river**; Prosa-Heimat „Presence-only loading and the jump" geschrieben (`docs/concepts/archivar-mathematikerin.md:31`).
-- `docs/concepts/blatt-papier-beweis.md` | offen: CSES `Zugang blockiert` (SSDC account/PI authorization, Trigger 2026-10-02; `state/zustand/wartend.φ:11`, Aufnehmer sensory).
+- `docs/concepts/blatt-papier-beweis.md` | offen: CSES `Zugang blockiert` (SSDC account/PI authorization, Trigger 2026-10-02; `state/wartend.φ:11`, Aufnehmer sensory).
 - `docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md` | Gegenprobe erledigt (`## Gegenprobe`); kein offener Schritt.
 
 ## An mycelium (fremde Feder — Aufenthalt beim Eigentümer)
@@ -132,7 +132,7 @@ Origin: mountain folge198.
 Origin: mountain folge198.
 
 - **NDK-Feld-Entscheidung** — welcher Skalar eines Moment-Tensor-Events in die 9 Kraft-Medien eingeht: `mw` am Centroid, `m0`, oder kein Skalar? (`src/archivar/ndk.rs` lebt; `extract()` trägt keinen `ndk`-Arm.)
-- **Sonden-Flotte CSF/Konto-gated** (CNSA Chang'e/Tianwen, ISRO PRADAN, MBRSC EMM — `state/zustand/wartend.φ`).
+- **Sonden-Flotte CSF/Konto-gated** (CNSA Chang'e/Tianwen, ISRO PRADAN, MBRSC EMM — `state/wartend.φ`).
 - **CSES-Zugang** (SSDC account/PI authorization, Trigger 2026-10-02).
 - **GIC-Einreichung** (`docs/auftrag/auftrag-gic-einreichung.md`, Operator-Hand).
 - **KARI/ISRO-Konten** — Danuri/KASI (`pda.kasi.re.kr`, Login), Chandrayaan-2/3 + MOM (`chmapbrowse.issdc.gov.in`, Login/Register), Aditya-L1: `blocked account`; Konten-Entscheid.

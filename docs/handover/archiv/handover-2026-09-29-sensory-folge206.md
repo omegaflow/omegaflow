@@ -20,7 +20,7 @@ Akteur steht pro Punkt in `Bindung`.
 
 Dieses Register konsumiert `handover-2026-09-29-sensory-folge205.md` (nach `archiv/`);
 diese Folge ist 206. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md` (Mycelium). Eigene Messung dieses Atoms:
+`state/standing-pass.md` (Mycelium). Eigene Messung dieses Atoms:
 HEAD `5d6c9c685` == `origin/main`; Arbeitsbaum trägt fremde gestagte Arbeit
 (`docs/reference/KERNEL_INDEX.md`) — nicht berührt.
 
@@ -137,7 +137,7 @@ trägerlose-Docs-Block (3 Docs) + die `--fired`-Semantik.
 
 ### regards-cnes — Order-Route / Bare-Endpoint
 - **Status:** wartend | **Bindung:** eigen
-- **Trigger:** Order 18400 abrufbar / Bare-Endpoint `/api/v1/rs-order` öffnet (≠ 403) — Beleg `state/zustand/wartend.φ:5`.
+- **Trigger:** Order 18400 abrufbar / Bare-Endpoint `/api/v1/rs-order` öffnet (≠ 403) — Beleg `state/wartend.φ:5`.
 - **Lage:** (gemessen 2026-09-29 F204) Bare-Endpoint `/api/v1/rs-order` direct 403 / Proton 403 (358 B F5-ASM-WAF), Wayback 200 ohne CDX-Snapshot; Datei-Endpoint direct **403 / 684 B** (F202 noch 202 / 0 B) — Trigger nicht gefeuert; Order-Status nur mit Token über die angemeldete SPA (`external-state.md:49`).
 - **Blockade:** F5-WAF am Bare-Endpoint + Order-Token; server-seitige CDPP-Generierung.
 - **Braucht:** dito DEMETER (Trigger einmal messen).
@@ -152,7 +152,7 @@ trägerlose-Docs-Block (3 Docs) + die `--fired`-Semantik.
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Zustellung LZ473049629CN (ETA 2026-10-02).
-- **Lage:** (gemessen 2026-09-28 F202 via `archive_search --playwright` headless über die gespeicherte Route) **kein keyless Render trägt eine Statuszeile**: chinapostaltracking.com „Search Results" leer (200), 17track 403 (Cloudflare-Interstitial), `yourzodiacsign`-iframe leer, parcelsapp „Please reload", `t.17track.net/track/restapi` GET 405 (POST-only, Turnstile+Fingerprint). Trigger weder bestätigt noch ausgeschlossen — **unmessbar keyless**; letzter Carrier-Stand 2026-09-23 (Departure Shenzhen). Die Route ist gespeichert (`state/zustand/wartend.φ:14`), nicht neu zu suchen.
+- **Lage:** (gemessen 2026-09-28 F202 via `archive_search --playwright` headless über die gespeicherte Route) **kein keyless Render trägt eine Statuszeile**: chinapostaltracking.com „Search Results" leer (200), 17track 403 (Cloudflare-Interstitial), `yourzodiacsign`-iframe leer, parcelsapp „Please reload", `t.17track.net/track/restapi` GET 405 (POST-only, Turnstile+Fingerprint). Trigger weder bestätigt noch ausgeschlossen — **unmessbar keyless**; letzter Carrier-Stand 2026-09-23 (Departure Shenzhen). Die Route ist gespeichert (`state/wartend.φ:14`), nicht neu zu suchen.
 - **Blockade:** Cloudflare-Turnstile + Fingerprint am Datenendpunkt; headless leer; `--headed` braucht ein Operator-Fenster.
 - **Braucht:** nach Zustellung `archive_search --playwright --headed "https://www.chinapostaltracking.com/package-tracking/?trackingno=LZ473049629CN"` (Fenster = Operator-Wort).
 
@@ -302,8 +302,8 @@ Eigene Pfade dieses Atoms (Commit/Push pending `/commit`):
 - `docs/handover/handover-2026-09-29-sensory-folge206.md` (neu),
   `docs/handover/archiv/handover-2026-09-29-sensory-folge205.md` (Move).
 
-`state/operator-gespraeche/2026-09-29-sensory.md`, `state/zustand/wartend.φ` und
-`state/zustand/external-state.md` sind gitignored (`/state/`) — lokal, nicht committet.
+`state/operator-gespraeche/2026-09-29-sensory.md`, `state/wartend.φ` und
+`state/external-state.md` sind gitignored (`/state/`) — lokal, nicht committet.
 Der `## An sensory`-Block aus mycelium-folge204 ist am Baum gemessen aufgelöst
 (`reference_verify.rs:332` trägt `extract_arxiv_ids` **und** `extract_dois`); die zwei
 Orphan-Docs aus F206 sind an River/Mountain geroutet; die noch nicht gefalteten

@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
 wurde. Kein Standard-Pass: es gilt der **Stehende Pass**
-(`state/zustand/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
+(`state/standing-pass.md`, zitiert, nie kopiert). Diese Session konsumierte
 `handover-2026-10-05-mycelium-folge232.md` (→ `archiv/`).
 
 ## Burn: open 0.0012 · close 0.0432 — session_burn, gemessen; Linie flash
@@ -219,4 +219,4 @@ Origin: mycelium-folge233. **Routed — nicht-eigen:**
 ## Abschluss
 
 Vor Commit/Push: das Commit-Wort des Operators (`/commit`). Der Stehende Pass wird
-**nach** dem Commit am neuen HEAD neu gestempelt (`state/zustand/standing-pass.md`).
+**nach** dem Commit am neuen HEAD neu gestempelt (`state/standing-pass.md`).

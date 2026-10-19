@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 306 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge305.md` (→ `archiv/`).
 flash only, kein pro/max. Der Operator-Trigger dieser Session: „was ist mit unseren
 ephemeriden und warum fängst du die grossen punkte immer wieder an anstatt sie fertig
@@ -96,14 +96,14 @@ zu machen" — **Schritt 1 der Ephemeriden-Kette ist jetzt gefahren, nicht neu a
 ### Flyby-Kette — Residual in ODF; σ_recon getrennt
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
-- **Lage:** (gemessen 2026-10-09, unverändert) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/zustand/wartend.φ:34`.
+- **Lage:** (gemessen 2026-10-09, unverändert) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/wartend.φ:34`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 
 ### iEEG — registriertes Wort 2026-10-06 maßgeblich
 - **Status:** eigen (Register) | **Bindung:** eigen
 - **Trigger:** ein neues Operator-Wort, das den Riss über 2026-10-06 hebt
-- **Lage:** (gemessen 2026-10-11, unverändert) iEEG = privates Experiment (`state/zustand/wartend.φ:40`), kein CDN.
+- **Lage:** (gemessen 2026-10-11, unverändert) iEEG = privates Experiment (`state/wartend.φ:40`), kein CDN.
 - **Blockade:** keine.
 - **Braucht:** kein Schritt — nur ein neues Operator-Wort öffnet es.
 

@@ -20,7 +20,7 @@ Akteur steht pro Punkt in `Bindung`.
 
 Dieses Register konsumiert `handover-2026-09-30-sensory-folge211.md` (nach `archiv/`);
 diese Folge ist 212. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md` (Mycelium folge209, @`fe35d5fd6`). Eigene Messung
+`state/standing-pass.md` (Mycelium folge209, @`fe35d5fd6`). Eigene Messung
 dieses Atoms: HEAD `01618398b` == `origin/main`, Arbeitsbaum **sauber**
 (`git status`, gemessen 2026-09-30 F212) — keine fremde uncommittete Arbeit.
 
@@ -44,9 +44,9 @@ breiter messen.
 - **Hardware/Sensoren (Stand):** Polar H10/HRM-Dual — Live-BLE HR `NotSupported`, FIT nn=0,
   Hardware-**LOCK** (Operator-Wort 2026-09-27, „erst bei Förderung"). [redacted]/DEMETER — die
   Daten/Datei verlassen das Gerät nie (Operator-Wort 2026-09-25). ox64-M2C Carrier — Route
-  gespeichert (`state/zustand/wartend.φ:14`), keyless unmessbar.
-- **Fundstellen:** `state/zustand/standing-pass.md` · `state/zustand/external-state.md` ·
-  `state/zustand/wartend.φ` · `state/zustand/ereignisse.φ` ·
+  gespeichert (`state/wartend.φ:14`), keyless unmessbar.
+- **Fundstellen:** `state/standing-pass.md` · `state/external-state.md` ·
+  `state/wartend.φ` · `state/ereignisse.φ` ·
   `state/operator-gespraeche/2026-09-30-sensory.md` · `state/sensory/archive-search-preset.txt`.
 - **Linien-Preset (`archive_search`):** privat unter `state/sensory/archive-search-preset.txt`,
   eingelesen in `.opencode/command/sensory.md` (nur der Verweis steht öffentlich, nie die Wurzeln).
@@ -172,7 +172,7 @@ breiter messen.
 ### ox64-m2c — PINE64, Carrier China Post LZ473049629CN
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Zustellung LZ473049629CN (ETA 2026-10-02).
-- **Lage:** (gemessen 2026-09-28 F202 via `archive_search --playwright` headless über die gespeicherte Route) **kein keyless Render trägt eine Statuszeile**: chinapostaltracking.com „Search Results" leer (200), 17track 403 (Cloudflare-Interstitial), `yourzodiacsign`-iframe leer, parcelsapp „Please reload", `t.17track.net/track/restapi` GET 405 (POST-only, Turnstile+Fingerprint). Trigger weder bestätigt noch ausgeschlossen — **unmessbar keyless**; letzter Carrier-Stand 2026-09-23 (Departure Shenzhen). Die Route ist gespeichert (`state/zustand/wartend.φ:14`), nicht neu zu suchen.
+- **Lage:** (gemessen 2026-09-28 F202 via `archive_search --playwright` headless über die gespeicherte Route) **kein keyless Render trägt eine Statuszeile**: chinapostaltracking.com „Search Results" leer (200), 17track 403 (Cloudflare-Interstitial), `yourzodiacsign`-iframe leer, parcelsapp „Please reload", `t.17track.net/track/restapi` GET 405 (POST-only, Turnstile+Fingerprint). Trigger weder bestätigt noch ausgeschlossen — **unmessbar keyless**; letzter Carrier-Stand 2026-09-23 (Departure Shenzhen). Die Route ist gespeichert (`state/wartend.φ:14`), nicht neu zu suchen.
 - **Blockade:** Cloudflare-Turnstile + Fingerprint am Datenendpunkt; headless leer; `--headed` braucht ein Operator-Fenster.
 - **Braucht:** nach Zustellung `archive_search --playwright --headed "https://www.chinapostaltracking.com/package-tracking/?trackingno=LZ473049629CN"` (Fenster = Operator-Wort).
 

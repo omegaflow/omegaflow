@@ -10,7 +10,7 @@
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was
 gemacht wurde. Der Stehende Pass wird zitiert, nie kopiert:
-`state/zustand/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit,
+`state/standing-pass.md`. Nur eigene Arbeit: pfad-begrenzter Commit,
 fremde uncommittete Arbeit unangetastet.
 
 Diese Session konsumierte `handover-2026-09-27-river-folge47.md` (nach `archiv/`).

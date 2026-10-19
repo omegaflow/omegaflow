@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 223 (2026-10-02)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`; die
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`; die
 zitierte Runde steht auf einem älteren HEAD, die Punkte tragen ihre eigene Messung).
 Diese Session konsumierte `handover-2026-10-02-mountain-folge222.md` (→ `archiv/`).
 Die adressierten `## An mountain`-Blöcke aus `mycelium-folge219` und `river-folge78`
@@ -76,7 +76,7 @@ Wort | Datum | Quelle
 ### future-folge165 Mail-Routen — Verdikt bzw. als überholt schließen
 - **Status:** eigen | **Bindung:** eigen
 - **Trigger:** keine.
-- **Lage:** (gemessen 2026-10-02 via `--verdict`/curl) CSES `/query.php` = SSDC-CAS-Login (`<title>Login</title>`) → Wall; DEMETER Order-API 403 → blocked account (Order 18400, `state/zustand/wartend.φ:4`); DEMETER-SPASE **offener korrigierter Pfad** `https://cnes.github.io/CDPP/CNES/NumericalData/CDPP-Archive/DEMETER/IAP/DMT_N1_1140.xml` (200) — als `origin` an `phi/blocked_sources.φ:100` gesetzt; Roh-ODF Cassini `…/titan/s34/O050/` offen (200); LISA-PF-Mirror schon registriert (`sources.φ:9347`); ShadowCam `pds.shadowcam.im-ldi.com/derived/` offen; Juno-ODF `pds-atmospheres.nmsu.edu/…/logs/…csv` offen.
+- **Lage:** (gemessen 2026-10-02 via `--verdict`/curl) CSES `/query.php` = SSDC-CAS-Login (`<title>Login</title>`) → Wall; DEMETER Order-API 403 → blocked account (Order 18400, `state/wartend.φ:4`); DEMETER-SPASE **offener korrigierter Pfad** `https://cnes.github.io/CDPP/CNES/NumericalData/CDPP-Archive/DEMETER/IAP/DMT_N1_1140.xml` (200) — als `origin` an `phi/blocked_sources.φ:100` gesetzt; Roh-ODF Cassini `…/titan/s34/O050/` offen (200); LISA-PF-Mirror schon registriert (`sources.φ:9347`); ShadowCam `pds.shadowcam.im-ldi.com/derived/` offen; Juno-ODF `pds-atmospheres.nmsu.edu/…/logs/…csv` offen.
 - **Blockade:** keine.
 - **Braucht:** die zwei offenen Cassini-/Juno-Listings als `url` nach Arm-Prüfung (Mountain); die CSES/DEMETER-Mail-Walls an Future (siehe `## An future`).
 
@@ -131,4 +131,4 @@ Origin: mountain folge223.
 Origin: mountain folge223.
 
 - **CSES `/query.php`** ist ein SSDC-CAS-Login (`<title>Login</title>`) → Wall, kein Datenkanal ohne Konto. Falls ein Konto beantragt werden soll, ist das ein per-Akt-Operator-Wort.
-- **DEMETER Order-API** `regards.cnes.fr/api/v1/rs-order` = 403 (blocked account); Order 18400 läuft, Ablauf `2026-10-05` (`state/zustand/wartend.φ:4`). Der offene SPASE-Pfad ist als `origin` in `phi/blocked_sources.φ:100` registriert; die Antwort-Frist ist ein Future-Wiedervorlage-Punkt.
+- **DEMETER Order-API** `regards.cnes.fr/api/v1/rs-order` = 403 (blocked account); Order 18400 läuft, Ablauf `2026-10-05` (`state/wartend.φ:4`). Der offene SPASE-Pfad ist als `origin` in `phi/blocked_sources.φ:100` registriert; die Antwort-Frist ist ein Future-Wiedervorlage-Punkt.

@@ -9,7 +9,7 @@
 # Handover — River-Folge 64 (2026-09-29)
 
 Dieses Register trägt nur Offenes — git trägt, was gemacht wurde. Der Stehende Pass
-wird zitiert, nie kopiert: `state/zustand/standing-pass.md`. Nur eigene Arbeit:
+wird zitiert, nie kopiert: `state/standing-pass.md`. Nur eigene Arbeit:
 pfad-begrenzter Commit; fremde uncommittete Arbeit unangetastet.
 
 ## Operator-Wort-Register
@@ -63,7 +63,7 @@ Commit-Wort (`/commit`) — pfad-begrenzter Commit + Push, das Doppel-Ask | 2026
   `compiler tools/harvest/src/bin/ersstv5_compiler.rs` + `field ersstv5_nino34_ssta`).
 - **Lage:** (gemessen 2026-09-29 River 63 via `register_lookup ersstv5`) die Quellenzeile
   steht; der Compiler existiert; der Blatt-/Paar-Zuschnitt ist operator-gebunden
-  (`state/zustand/wartend.φ:23` `blatt-zuschnitt | Operator`, Aufnehmer river).
+  (`state/wartend.φ:23` `blatt-zuschnitt | Operator`, Aufnehmer river).
 - **Blockade:** CDN-Manifestation (Mycelium) + Operator-Zuschnitt des Paares.
 - **Braucht:** Mycelium fährt `ersstv5_compiler --ci-mode` + Release-Asset; dann die
   Probe (OMNI `omni_hro_imf_bz_gsm_nt` × `ersstv5_nino34_ssta`) nach

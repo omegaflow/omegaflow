@@ -102,11 +102,11 @@ emitted 14 / disposed 10 / **open 4** → nach dem Schluss disposed 11 / **open 
   `const SEARXNG_INSTANCES: &[&str] = &["https://search.lumy.live"];` (Commit `3e27dff0f`);
   Zitat `state/rat/2026-10-18-mycelium-pass-rbn-manifestation.md:55`:
   „der **Emitter (sensory)** setzt den `CLOSED`-Eintrag". Ledger
-  `state/zustand/ledger/sensory-259/ses_ec618129fffeLFawr4V3pQKpOl.log`:
+  `state/ledger/sensory-259/ses_ec618129fffeLFawr4V3pQKpOl.log`:
   `CLOSED … .13~99e00470 by=sensory-259.ses_… ref=3e27dff0f`.
 
 Nicht geschlossen: `.9~1da7eb85` sowie `.10~67b095df`/`.14~dfc6aa3a` an `future` —
-kein `future`-Ledger im Baum (`ls state/zustand/ledger/`: mountain · mycelium · river ·
+kein `future`-Ledger im Baum (`ls state/ledger/`: mountain · mycelium · river ·
 sensory-259), keine Empfänger-Quittung im Postfach; Empfänger-Arbeit, kein Ledger-Schluss.
 
 ### Kalibrierung (die zwei Command-Risse, gemessen 2026-10-18)
@@ -118,6 +118,6 @@ sensory-259), keine Empfänger-Quittung im Postfach; Empfänger-Arbeit, kein Led
   Der frühere Befund „`post/` nicht im Baum" war der **Pfad-Riss**, kein leerer Korb
   (gespiegelt: `post/in/2026-10-18-sensory-an-future-postfach-pfad-gemessen.md`).
 - **xfer-Linienname.** `xfer list --line sensory --open` ist leer; der Ledger liegt unter
-  `state/zustand/ledger/sensory-259/`. Mit `--line sensory-259` erscheinen die Token.
+  `state/ledger/sensory-259/`. Mit `--line sensory-259` erscheinen die Token.
   `.opencode/commands/**` ist `edit:deny` — die Korrektur ist als Beobachtung an `future`
   geroutet (Token `.14`), nicht in dieser Linie baubar.

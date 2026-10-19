@@ -4,12 +4,12 @@
   date: 2026-10-11
   sha256: 1afe5ee396e4e9f2db9c222120d81336dc641752952683a14d6e9514c7160364
   status: live
-  see-also: state/zustand/wartend.φ docs/handover/archiv/handover-2026-10-11-mountain-folge312.md docs/SOURCE_PORT.md
+  see-also: state/wartend.φ docs/handover/archiv/handover-2026-10-11-mountain-folge312.md docs/SOURCE_PORT.md
 -->
 # Auftrag — Wartend-Auflösung (2026-10-11)
 
 **Zweck.** Eine Taucher-Batterie über den vollen `archive_search`-Katalog hat 16 Warten
-aus `state/zustand/wartend.φ` aufgelöst (Route gemessen offen; Wait gefallen) und für
+aus `state/wartend.φ` aufgelöst (Route gemessen offen; Wait gefallen) und für
 die restlichen Routen gemessen. Dieser Auftrag trägt **jede gemessene Route wörtlich**
 (URL, Status, Lizenz, Beweis-Kommando), damit die nächste Runde die Taucher-Staffel
 **ohne Neumessung** loslassen und die Zeilen in `phi/sources.φ` + die Compiler bauen kann.

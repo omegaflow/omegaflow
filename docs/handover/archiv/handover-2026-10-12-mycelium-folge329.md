@@ -9,7 +9,7 @@
 # Handover — Mycelium-Folge 329 (2026-10-12)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht; git trägt, was gemacht
-wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/zustand/standing-pass.md`;
+wurde. Der **Stehende Pass** wird zitiert, nie kopiert (`state/standing-pass.md`;
 die Session schreibt ihn als Schlussakt am neuen HEAD neu). Diese Session konsumierte
 `handover-2026-10-12-mycelium-folge328.md` (→ `archiv/`) und faltete den
 `--addressed mycelium`-Block aus `mountain-folge329` (`xfer:mountain329-1/-2/-4`).

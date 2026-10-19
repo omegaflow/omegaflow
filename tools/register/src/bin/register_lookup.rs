@@ -45,8 +45,8 @@ const OPEN_MARKERS: &[&str] = &[
 
 const RELEASED_MARKERS: &[&str] = &["descoped"];
 
-const ZUSTAND_PATH: &str = "state/zustand/external-state.md";
-const EREIGNISSE_PATH: &str = "state/zustand/ereignisse.\u{3c6}";
+const ZUSTAND_PATH: &str = "state/external-state.md";
+const EREIGNISSE_PATH: &str = "state/ereignisse.\u{3c6}";
 
 const LEDGER_PATH: &str = "phi/pipeline/ledger.\u{3c6}";
 const INDEX_PATH: &str = "phi/pipeline/index.\u{3c6}";
@@ -2509,7 +2509,7 @@ fn register_carrier_files() -> Vec<PathBuf> {
             }
         }
     }
-    let wartend = PathBuf::from("state/zustand/wartend.φ");
+    let wartend = PathBuf::from("state/wartend.φ");
     if wartend.is_file() {
         files.push(wartend);
     }
@@ -3672,7 +3672,7 @@ fn echo_sections(text: &str) -> String {
 
 fn ledger_disposed(root: &Path, token: &str) -> bool {
     const DISPOSED: [&str; 5] = ["FOLDED", "CLOSED", "REJECTED", "SUPERSEDED", "DROPPED"];
-    let dir = root.join("state/zustand/ledger");
+    let dir = root.join("state/ledger");
     let Ok(lines) = fs::read_dir(&dir) else {
         return false;
     };
@@ -3923,7 +3923,7 @@ struct LedgerSent {
 
 fn ledger_sent_events(root: &Path) -> Vec<LedgerSent> {
     let mut out = Vec::new();
-    let dir = root.join("state/zustand/ledger");
+    let dir = root.join("state/ledger");
     let Ok(lines) = fs::read_dir(&dir) else {
         return out;
     };
@@ -5565,7 +5565,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         let base = env::temp_dir().join(format!("rl-fired-stamp-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        let body = "# h\n\n## Offen\n\n- **ox64-m2c** (wartend) \u{2014} Trigger Zustellung LZ473049629CN; measured 2024-09-28; ETA 2024-10-20.\n\n- **enso-cut** (wartend) | (measured 2024-09-28) state/zustand/wartend.\u{3c6}:23.\n\n- **enso-zuschnitt** (wartend) (gemessen 2024-09-28) \u{2014} no render carries a status line.\n\n- **inline-trigger** (termin) \u{2014} *Trigger:* 2024-09-01.\n";
+        let body = "# h\n\n## Offen\n\n- **ox64-m2c** (wartend) \u{2014} Trigger Zustellung LZ473049629CN; measured 2024-09-28; ETA 2024-10-20.\n\n- **enso-cut** (wartend) | (measured 2024-09-28) state/wartend.\u{3c6}:23.\n\n- **enso-zuschnitt** (wartend) (gemessen 2024-09-28) \u{2014} no render carries a status line.\n\n- **inline-trigger** (termin) \u{2014} *Trigger:* 2024-09-01.\n";
         fs::write(
             base.join("docs/handover/handover-2026-09-29-mountain-folge9.md"),
             body,
@@ -5744,21 +5744,21 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         let base = env::temp_dir().join(format!("rl-addressed-fail-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        fs::create_dir_all(base.join("state/zustand/ledger/sender")).unwrap();
+        fs::create_dir_all(base.join("state/ledger/sender")).unwrap();
         fs::write(
             base.join("docs/handover/handover-2026-10-12-sender-folge331.md"),
             "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An river\n\n- settled xfer:sender.ses_a.1~deadbeef\n\n## An river\n\n- open xfer:sender.ses_a.2~cafebabe\n",
         )
         .unwrap();
         fs::write(
-            base.join("state/zustand/ledger/sender/ses_a.log"),
+            base.join("state/ledger/sender/ses_a.log"),
             "2026-10-12T11:00:00Z SENT xfer:sender.ses_a.1~deadbeef by=sender.ses_a to=river\n\
              2026-10-12T12:00:00Z CLOSED xfer:sender.ses_a.1~deadbeef by=sender.ses_a ref=abc1234\n",
         )
         .unwrap();
         assert_eq!(addressed_unsettled(&base, "river"), 1);
         fs::write(
-            base.join("state/zustand/ledger/sender/ses_a.log"),
+            base.join("state/ledger/sender/ses_a.log"),
             "2026-10-12T11:00:00Z SENT xfer:sender.ses_a.1~deadbeef by=sender.ses_a to=river\n\
              2026-10-12T12:00:00Z CLOSED xfer:sender.ses_a.1~deadbeef by=sender.ses_a ref=abc1234\n\
              2026-10-12T12:05:00Z FOLDED xfer:sender.ses_a.2~cafebabe by=sender.ses_a into=river\n",
@@ -5773,14 +5773,14 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         let base = env::temp_dir().join(format!("rl-addressed-disposed-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        fs::create_dir_all(base.join("state/zustand/ledger/sender")).unwrap();
+        fs::create_dir_all(base.join("state/ledger/sender")).unwrap();
         fs::write(
             base.join("docs/handover/handover-2026-10-12-sender-folge331.md"),
             "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An river\n\n- closed xfer:sender.ses_a.1~deadbeef\n\n## An river\n\n- still open xfer:sender.ses_a.2~cafebabe\n\n## An river\n\n- mixed xfer:sender.ses_a.3~feedface and xfer:sender.ses_a.4~0badf00d\n",
         )
         .unwrap();
         fs::write(
-            base.join("state/zustand/ledger/sender/ses_a.log"),
+            base.join("state/ledger/sender/ses_a.log"),
             "2026-10-12T11:00:00Z SENT xfer:sender.ses_a.1~deadbeef by=sender.ses_a to=river\n\
              2026-10-12T12:00:00Z CLOSED xfer:sender.ses_a.1~deadbeef by=sender.ses_a ref=abc1234\n\
              2026-10-12T11:01:00Z SENT xfer:sender.ses_a.2~cafebabe by=sender.ses_a to=river\n\
@@ -5807,14 +5807,14 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         let base = env::temp_dir().join(format!("rl-noecho-pass-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        fs::create_dir_all(base.join("state/zustand/ledger/sensory-259")).unwrap();
+        fs::create_dir_all(base.join("state/ledger/sensory-259")).unwrap();
         fs::write(
             base.join("docs/handover/handover-2026-10-14-sensory-folge259.md"),
             "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An mountain\n\n- carried xfer:sensory-259.ses_test.1~abcd1234\n",
         )
         .unwrap();
         fs::write(
-            base.join("state/zustand/ledger/sensory-259/ses_test.log"),
+            base.join("state/ledger/sensory-259/ses_test.log"),
             "2026-10-14T11:00:00Z SENT xfer:sensory-259.ses_test.1~abcd1234 by=sensory-259.ses_test to=mountain\n",
         )
         .unwrap();
@@ -5928,7 +5928,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         let base = env::temp_dir().join(format!("rl-noecho-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        fs::create_dir_all(base.join("state/zustand/ledger/future")).unwrap();
+        fs::create_dir_all(base.join("state/ledger/future")).unwrap();
         fs::write(
             base.join("docs/handover/handover-2026-10-12-future-folge242.md"),
             "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An mountain\n\n- **carried entry** carries xfer:future-242-3.\n",
@@ -5940,7 +5940,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         )
         .unwrap();
         fs::write(
-            base.join("state/zustand/ledger/future/ses_test.log"),
+            base.join("state/ledger/future/ses_test.log"),
             "2026-10-12T11:00:00Z SENT xfer:future-242-1 by=future.ses_test to=mountain\n\
              2026-10-12T11:00:01Z SENT xfer:future-242-2 by=future.ses_test to=mountain\n\
              2026-10-12T11:00:02Z SENT xfer:future-242-3 by=future.ses_test to=mountain\n\
@@ -5965,14 +5965,14 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         let base = env::temp_dir().join(format!("rl-ledger-echo-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        fs::create_dir_all(base.join("state/zustand/ledger/mountain")).unwrap();
+        fs::create_dir_all(base.join("state/ledger/mountain")).unwrap();
         fs::write(
             base.join("docs/handover/handover-2026-10-12-mountain-folge331.md"),
             "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An mycelium\n\n- **entry** carries xfer:mountain.ses_a.1~deadbeef.\n",
         )
         .unwrap();
         fs::write(
-            base.join("state/zustand/ledger/mountain/ses_a.log"),
+            base.join("state/ledger/mountain/ses_a.log"),
             "2026-10-12T11:00:00Z SENT xfer:mountain.ses_a.1~deadbeef by=mountain.ses_a to=mycelium\n\
              2026-10-12T12:00:00Z FOLDED xfer:mountain.ses_a.1~deadbeef by=mycelium.ses_b into=mycelium\n",
         )

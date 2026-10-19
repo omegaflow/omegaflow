@@ -64,9 +64,9 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge178.md`.
 #### Voyager 1/2 closed-loop Doppler — Anfrage läuft
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** Antwort von `gsfc-dl-nssdca-request@mail.nasa.gov` (PSNO-00007).
-- **Lage:** (gemessen 2026-09-27 via `state/zustand/wartend.φ:7`) Anfrage 2026-09-16 13:47 UTC gesandt; kein Eingang im Mail-Ledger (169 Zeilen).
+- **Lage:** (gemessen 2026-09-27 via `state/wartend.φ:7`) Anfrage 2026-09-16 13:47 UTC gesandt; kein Eingang im Mail-Ledger (169 Zeilen).
 - **Blockade:** keine.
-- **Braucht:** Trigger in `state/zustand/wartend.φ` (voyager-nssdca).
+- **Braucht:** Trigger in `state/wartend.φ` (voyager-nssdca).
 
 #### planeto-epncore — Manifestations-Direktiven (getragen von Mountain 2026-09-27)
 - **Status:** wartend | **Bindung:** eigen
@@ -135,7 +135,7 @@ Diese Session konsumierte `handover-2026-09-27-mycelium-folge178.md`.
 #### BepiColombo bc_mpo_more — Termin 2027-04-01
 - **Status:** termin | **Bindung:** termin:2027-04-01
 - **Trigger:** 2027-04-01 (Science-Phase-Beginn).
-- **Lage:** (gemessen 2026-09-27 via `state/zustand/wartend.φ:12`) MORE-Cruise nicht öffentlich, Freigabe April 2027; Ticket `YYM-342-97327`; Freigabe-Anfrage `phi/blocked_sources.φ:53`.
+- **Lage:** (gemessen 2026-09-27 via `state/wartend.φ:12`) MORE-Cruise nicht öffentlich, Freigabe April 2027; Ticket `YYM-342-97327`; Freigabe-Anfrage `phi/blocked_sources.φ:53`.
 - **Blockade:** Freigabe (dritter).
 - **Braucht:** Wiedervorlage 04/2027.
 

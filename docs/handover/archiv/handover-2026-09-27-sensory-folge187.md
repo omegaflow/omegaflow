@@ -75,7 +75,7 @@ runner-seitig"); die Sensory-Kopie ist gelöscht (Aufenthalt = Eigentum).
   (gemessen 2026-09-27): die Kp-Route ist in `phi/sources.φ` **wiederhergestellt** (folge182) |
   Braucht: Epoche ernten.
 - **Europa-Clipper** | termin:2026-12-03 | Trigger: 02./03.12. | Lage (gemessen 2026-09-27):
-  Dritt-Wait in `state/zustand/wartend.φ:15` (Aufnehmer sensory) | Braucht: Epoche ernten.
+  Dritt-Wait in `state/wartend.φ:15` (Aufnehmer sensory) | Braucht: Epoche ernten.
 
 ## Träger (Orphan-Faltung)
 
@@ -153,5 +153,5 @@ Eigene Pfade dieses Atoms (pfad-begrenzt committen):
 - `docs/concepts/recherche-extern-galileo-ruck-borduhr-modell.md` (B1-Marker nachgezogen, Header-sha `37058eb2…`),
 - `docs/paper/probe-front-dark-matter.md` (v11, DTIC-Volltext-Beleg, Header-sha `e9788694…`).
 
-Der Zustand-Ledger `state/zustand/external-state.md` ist gitignored (`.gitignore:137 /state/`) —
+Der Zustand-Ledger `state/external-state.md` ist gitignored (`.gitignore:137 /state/`) —
 lokal fortgeschrieben, nicht committet.

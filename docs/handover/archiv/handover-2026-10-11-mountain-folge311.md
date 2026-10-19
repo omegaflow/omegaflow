@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 311 (2026-10-11)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-11-mountain-folge310.md` (→ `archiv/`).
 flash only, kein pro/max. Operator-Trigger dieser Session: „kannst du das bitte
 fixen" (river-Commit-Gate-Blockade).
@@ -51,7 +51,7 @@ fixen" (river-Commit-Gate-Blockade).
 - **Trigger:** Entwurf des Serien-Manifest-Formats
 - **Lage:** (gemessen 2026-10-11, unverändert) der ecad-Riss ist gelöst (netloc = Quellen-Identität); AODN-`ttl 1` = Datensatz-Kadenz, kein fester Refresh.
 - **Blockade:** ohne Serien-Manifest trägt jeder Klima-Block nur einen Default-Tag.
-- **Braucht:** Serien-Manifest-Format; der CI-Wait je Block steht in `state/zustand/wartend.φ`.
+- **Braucht:** Serien-Manifest-Format; der CI-Wait je Block steht in `state/wartend.φ`.
 
 ### — gefaltet: `future-folge228` → mountain
 
@@ -125,7 +125,7 @@ fixen" (river-Commit-Gate-Blockade).
 ### Flyby-Kette — termin 2026-11-01
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
-- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/zustand/wartend.φ`.
+- **Lage:** (gemessen 2026-10-09) 157 ODF-Referenzen; `doppler.rs` absent; Wahrheit `state/wartend.φ`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 
@@ -139,7 +139,7 @@ fixen" (river-Commit-Gate-Blockade).
 ### iEEG — registriertes Wort maßgeblich
 - **Status:** wartend | **Bindung:** eigen
 - **Trigger:** ein neues Operator-Wort über 2026-10-06 hinaus
-- **Lage:** (gemessen 2026-10-11, `--fired`) iEEG = privates Experiment (`state/zustand/wartend.φ`), kein CDN.
+- **Lage:** (gemessen 2026-10-11, `--fired`) iEEG = privates Experiment (`state/wartend.φ`), kein CDN.
 - **Blockade:** keine.
 - **Braucht:** nur ein neues Operator-Wort öffnet es.
 

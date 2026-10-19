@@ -9,7 +9,7 @@
 # Handover — River-Folge 90 (2026-10-04)
 
 Dieses Register trägt nur Offenes — git trägt, was gemacht wurde. Der Stehende Pass
-wird zitiert, nie kopiert: `state/zustand/standing-pass.md` (Runde @`6b3b0bb56`).
+wird zitiert, nie kopiert: `state/standing-pass.md` (Runde @`6b3b0bb56`).
 
 ## Operator-Wort-Register
 

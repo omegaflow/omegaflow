@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 214 (2026-09-30)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der Stehende
-Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Dieses Atom: den letzten
+Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Dieses Atom: den letzten
 `dead_sources.φ`-Pending aufgelöst (LEDA → HyperLEDA-TAP deckt vr/mag), die
 Akatsuki-Dispositionsnote auf den Stand geheilt, den Ephemeriden-Placeholder-Riss gemessen
 (drei Register-URLs 404), die Holdings-Byte-Messung (Schritt 2, Holdings + Repo-`data`)
@@ -39,7 +39,7 @@ mit Zustand, auch um 3 Uhr nachts.
   `/tmp/opencode`; `archive` = `archive-root`.
 - **Mountain-Fundstellen:** `phi/`, `src/archivar`, `src/mathematikerin`, `src/gate`,
   `tools/harvest`, `tools/measure`, `tools/register`, `docs/specs`, `docs/surveys`,
-  `state/zustand`, `state/mountain`.
+  `state`, `state/mountain`.
 - **Linien-Preset (privat):** `state/mountain/archive-search-preset.txt`; `state/` immer mit
   `archive_search --root state`.
 - **Verwahrt (Operator-Wort Mountain-185):** `state/mountain-185-orphan-doc-nachzug.patch` —

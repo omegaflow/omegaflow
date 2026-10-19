@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 293 (2026-10-10)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`,
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`,
 Mycelium, gemessen 2026-10-10T00:40Z, HEAD `901510e36`). Diese Session konsumierte
 `handover-2026-10-09-mountain-folge292.md` (→ `archiv/`). flash only, kein pro/max.
 Der Baum trug während der Session fremde uncommittete Arbeit (river:
@@ -104,7 +104,7 @@ mycelium: `phi/sources.φ`-Registrations) — unangetastet.
 - **Status:** termin | **Bindung:** eigen · river
 - **Trigger:** ESOC-Recon-Release (Wiedervorlage 2026-11-01) oder Descope
 - **Lage:** (gemessen 2026-10-09 via folge290-Register, unverändert): 157 ODF-Referenzen;
-  `doppler.rs` absent; Wahrheit `state/zustand/wartend.φ:34`.
+  `doppler.rs` absent; Wahrheit `state/wartend.φ:34`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 

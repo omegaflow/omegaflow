@@ -9,7 +9,7 @@
 # Handover — River-Folge 66 (2026-09-29)
 
 Dieses Register trägt nur Offenes — git trägt, was gemacht wurde. Der Stehende Pass
-wird zitiert, nie kopiert: `state/zustand/standing-pass.md`. Nur eigene Arbeit:
+wird zitiert, nie kopiert: `state/standing-pass.md`. Nur eigene Arbeit:
 pfad-begrenzter Commit; fremde uncommittete Arbeit unangetastet.
 
 ## Operator-Wort-Register
@@ -43,8 +43,8 @@ Echo — jeder Punkt mit Zustand. Ein Punkt, der nur in `state/` lebt und hier f
 verlorener Punkt. Vier Orte: `omegaflow` (`~/projects/omegaflow` + privates Schwester-Repo `state/`),
 `omegaflow-legacy` (`archive-root/omegaflow-legacy` + Backup), `temp` (`/tmp/opencode`),
 `archive` (`archive-root`; `~/backup/{archive,provenance}/*`). Fundstellen:
-`state/zustand/standing-pass.md` · `state/zustand/external-state.md` · `state/zustand/wartend.φ` ·
-`state/zustand/ereignisse.φ` · `state/operator-gespraeche/` ·
+`state/standing-pass.md` · `state/external-state.md` · `state/wartend.φ` ·
+`state/ereignisse.φ` · `state/operator-gespraeche/` ·
 `state/river/`. Rivers Teil: `src/mathematikerin/` (Feld, TE, WGSL), `src/archivar/` (Query/Vlies),
 Membran-Pfade `main_flow`/`omega.rs`, Aktuatorik; Papiere `docs/paper/gic-causal-driver.md` u. a.;
 Konzepte `docs/concepts/*`. Linien-Preset privat `state/river/archive-search-preset.txt`

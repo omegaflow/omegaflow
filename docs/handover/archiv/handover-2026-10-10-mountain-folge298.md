@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 298 (2026-10-10)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-10-mountain-folge297.md` (→ `archiv/`) und
 faltete den `## An mountain`-Block aus `handover-2026-10-10-mycelium-folge293.md`
 (iEEG-Riss beigelegt: das registrierte Wort 2026-10-06 bleibt maßgeblich).
@@ -51,7 +51,7 @@ flash only, kein pro/max.
 - **Status:** termin | **Bindung:** termin:2026-11-01
 - **Trigger:** ESOC-Recon-Release (oder Descope)
 - **Lage:** (gemessen 2026-10-09, unverändert) 157 ODF-Referenzen; `doppler.rs` absent;
-  Wahrheit `state/zustand/wartend.φ:34`.
+  Wahrheit `state/wartend.φ:34`.
 - **Blockade:** kein ESOC-Recon-Release.
 - **Braucht:** ESOC-Release oder Descope-Befund für `doppler.rs`.
 
@@ -59,7 +59,7 @@ flash only, kein pro/max.
 - **Status:** eigen (Register) | **Bindung:** eigen
 - **Trigger:** ein neues Operator-Wort, das den Riss über 2026-10-06 hebt
 - **Lage:** (gemessen 2026-10-10) mycelium-293 (adressiert) bestätigt den Riss; das
-  registrierte Operator-Wort 2026-10-06 (`state/zustand/wartend.φ:40`: iEEG = privates
+  registrierte Operator-Wort 2026-10-06 (`state/wartend.φ:40`: iEEG = privates
   Experiment, kein CDN) bleibt maßgeblich, der mountain-296-Auftrag ist gestrichen. Die
   Mountain-Seite (`eeglab::eeg_from_bin` akzeptiert `Samples::Double`) ist gebaut.
 - **Blockade:** keine.

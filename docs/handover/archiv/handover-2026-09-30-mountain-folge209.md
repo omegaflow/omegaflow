@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 209 (2026-09-30)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der Stehende
-Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Der adressierte Block
+Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Der adressierte Block
 `mycelium-folge208` ist in diesem Atom gefaltet (Antwort unten); der Sender entfernt ihn.
 
 ## Operator-Wort-Register
@@ -40,7 +40,7 @@ mit Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29).
   `temp` = `/tmp/opencode`; `archive` = `archive-root` (+ `~/backup/{archive/provenance/cdn-sources/data}`).
 - **Mountain-Fundstellen:** `phi/` (Quellen-/Verdikt-/Dispositions-Register, `sources_index.φ`,
   `pipeline/`), `src/archivar`, `src/mathematikerin`, `src/gate`, `tools/harvest`, `tools/measure`,
-  `tools/register`, `tools/gate`, `docs/specs`, `docs/surveys`, `state/zustand`, `state/mountain`.
+  `tools/register`, `tools/gate`, `docs/specs`, `docs/surveys`, `state`, `state/mountain`.
 - **Linien-Preset (privat):** `state/mountain/archive-search-preset.txt`, eingelesen in
   `.opencode/command/mountain.md`; `state/` immer mit `archive_search --root state` messen,
   nie `sgrep` ohne `--all` über den gitignorierten Baum.
@@ -77,12 +77,12 @@ mit Zustand, auch um 3 Uhr nachts (Operator-Wort 2026-09-29).
 - **Status:** termin | **Bindung:** termin:2026-10-05
 - **Trigger:** Order-Ablauf 2026-10-05 / Datei-Endpoint 200.
 - **Lage:** (gemessen 2026-09-29) Riss `UA-Riss 403/403 vs 403/684 (orderToken)` in
-  `phi/blocked_sources.φ:92`; Träger `state/zustand/wartend.φ:4`.
+  `phi/blocked_sources.φ:92`; Träger `state/wartend.φ:4`.
 - **Blockade:** CDPP-Order.
 - **Braucht:** Order-Ablauf abwarten.
 
 ### NED ByParams — Token-Kanal
-- **Status:** wartend | **Bindung:** eigen (Warte `state/zustand/wartend.φ:3`)
+- **Status:** wartend | **Bindung:** eigen (Warte `state/wartend.φ:3`)
 - **Trigger:** `NED_BYPARAMS_TIMEOUT_TOKEN` per Mail.
 - **Lage:** (gemessen 2026-09-30) Ledger `:162/163`: Dave Cook (NED) bot den Timeout-Token an;
   Follow-up-Entwurf `state/mail/ned-bulk-redshift-followup.body.txt`; Token **nicht eingetroffen**;

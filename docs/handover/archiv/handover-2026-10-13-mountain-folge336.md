@@ -9,7 +9,7 @@
 # Handover — Mountain-Folge 336 (2026-10-13)
 
 Dieses Register trägt nur Offenes — Erledigtes wird gelöscht, git trägt es. Der
-Stehende Pass wird zitiert, nie kopiert (`state/zustand/standing-pass.md`). Diese
+Stehende Pass wird zitiert, nie kopiert (`state/standing-pass.md`). Diese
 Session konsumierte `handover-2026-10-12-mountain-folge335.md` (→
 `docs/handover/archiv/`).
 
