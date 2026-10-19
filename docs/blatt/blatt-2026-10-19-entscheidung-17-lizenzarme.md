@@ -2,7 +2,7 @@
   title: Entscheidungstabelle — die 17 lizenzgesperrten Arme
   class: blatt
   date: 2026-10-19
-  sha256: bb0d587a60f0da12feceba4a63829ff31135e255ea005c4321d8bfd7158a7f39
+  sha256: 66c14c11d6195ec869ce902da33e8e92fd96a873a6065871132cefd113d35d4b
   status: live
   see-also: phi/sources.φ tools/harvest/src/bin/ docs/surveys/survey-2026-10-09-redistribution-alternativen.md
 -->
@@ -128,6 +128,12 @@ keyless und redistribuierbar. `dhm_gauge` bleibt **B**: die Stationsdaten sind
 **kostenpflichtig** (`Hydrological_Data_Rate.pdf`: 3 USD/Jahr für Daily/Hourly flow,
 1 USD je Discharge-Messung; Zahlung nur per Cash/Bank an die Regierung), und der
 Kauf ist Zugang, kein Weitergaberecht. Die Messlücke ist trotzdem offen geschlossen.
+
+Das Antragsformular (`Hydrological_Data_Request_Form.pdf`) sagt es selbst:
+„I/We hereby declare that the data obtained for the purpose analysis **will not be
+used or distributed for any other purposes**." Also selbst nach Zahlung: keine
+Weitergabe. Ein schriftliches Nutzungsrecht, das C zu A machen würde, gibt es
+nicht — das Formular ist ein Kaufantrag mit Verwendungsbindung.
 
 ## Nachtrag 2026-10-20 (3) — `fugin`: die Google-Zusammenfassung hält nicht
 
