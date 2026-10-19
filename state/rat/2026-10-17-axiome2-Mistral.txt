@@ -1,0 +1,79 @@
+## Urteil
+
+**Verdikt:** `channel_ref` ist tot, weil es nie lebte. Der Ersatz ist **die `field`-Zeile selbst** — nicht als Form, sondern als **Inhalt**: Spalte 5, die Kraft. Das Axiom muss lauten: *ohne Kraft keine Messung* — nicht *kein Sample*.
+
+---
+
+## Begründung
+
+| Befund | Konsequenz |
+|--------|-----------|
+| `channel_ref` 0× in 31 936 Zeilen | Kein Bezugspunkt, keine Referenz — das Axiom war **deklarativ**, nie **operational** |
+| `field … <KERNEL> <KRAFT> <EINHEIT>` 7767× | Die Masse trägt **Kraft + Kernel + Einheit** in **jeder** Zeile — das ist die tragende Struktur |
+| `em` 4885× (63% der Kraft-Spalte) | EM dominiert, aber `diffusion`, `advective`, `acoustic`, `thermal` etc. sind **gleichberechtigt** — kein Kanal privilegiert |
+| `witness` 28× | Rand, nicht Masse. Wo Kraft **nicht** trägt (Richtung, Gestalt, Substanz) — **Ergänzung**, nicht Ersatz |
+
+Die Weberin hat recht: *das Teilchen ist Abstammung, nicht Kraft.* Ein EM-Detektor misst `em` — das Photon. Aber das Photon **trägt** die Messung. Ohne `em` kein Photon, ohne Photon kein Detektorsignal. Die Kette bricht an der **Kraft**, nicht am Kanal.
+
+---
+
+## Benannte Risse
+
+| Riss | Ort | Schwere |
+|------|-----|---------|
+| `channel_ref` als Axiom | `AGENTS.md` | **Tödlich** — 0 Vorkommen, keine Verankerung |
+| `witness` als Ersatz | 28/7958 Zeilen (0,35%) | **Unzulässig** — Ausnahme, nicht Regel |
+| Form der `field`-Zeile als Ersatz | Metapher, nicht Inhalt | **Unzureichend** — sagt *wie*, nicht *was* gemessen wird |
+| **Kraft-Spalte als Ersatz** | Spalte 5, 7767× | **Tragfähig** — aber nur wenn das Axiom die **Notwendigkeit** nennt, nicht die Form |
+
+---
+
+## F1 — Was tritt an die Stelle?
+
+**Die Kraft (Spalte 5), nicht die Form, nicht `witness`.**
+
+Die `field`-Zeile ist das **Gefäß**. Die Kraft ist der **Inhalt**. Ein Axiom, das die Form nennt ("jede Zeile nennt Kernel + Kraft + Einheit"), beschreibt die **Schreibweise** — nicht die **Bedingung**. Ein Axiom, das `witness` nennt, beschreibt den **Rand**. Was bleibt, ist die **Kraft selbst** als notwendige Bedingung jeder Messung.
+
+---
+
+## F2 — Ist `witness` eine Grundlage?
+
+**Nein.** 28 von 7958 Zeilen (0,35%) sind keine Grundlage — sie sind **Lückenfüller** dort, wo Kraft nicht trägt:
+
+| `witness`-Typ | Anzahl | Was fehlt |
+|-------------|--------|-----------|
+| `s2-direction` | 14 | Richtung — keine Kraft, nur Orientierung |
+| `gestalt` | 7 | Form — keine Wechselwirkung |
+| `substance` | 6 | Stoff — keine Dynamik |
+| `point-event` | 1 | Ereignis — kein Feld |
+
+`witness` tritt ein, wo `field` **nicht** greift. Es ist das **Komplement**, nicht der **Ersatz**. Ein Axiom auf 28 Zeilen wäre ein Axiom auf dem **Ausnahmefall** — das Gegenteil von Masse.
+
+---
+
+## F3 — Die Ersatz-Zeile, wörtlich
+
+```
+field_ref — ohne Kraft keine Messung.
+```
+
+**Begründung der Form:**
+- `field_ref` — benennt die **Masse** (7767×), nicht den Rand (28×), nicht das Tote (0×)
+- `Kraft` — Spalte 5, der **Inhalt**, der in jeder Zeile steht (`em`, `diffusion`, `advective`, …)
+- `Messung` — nicht `Sample`: die Weberin unterscheidet Teilchen (Abstammung) von Messung (Träger). Ein Sample kann ohne Kraft existieren (ein Stein liegt). Eine **Messung** nicht — sie braucht Wechselwirkung, Träger, Kraft.
+
+**Alternative, wenn `field_ref` zu nah an `channel_ref` klingt:**
+
+```
+kraft — ohne Kraft keine Messung.
+```
+
+Kürzer, direkter, unmissverständlich aus dem Bestand (Spalte 5, 7767×).
+
+---
+
+## Zusatz: Was die Weberin nicht sagt
+
+Sie sagt: *das Teilchen ist Abstammung, nicht Kraft.* Richtig. Aber sie sagt nicht: *die Messung ist Kraft, nicht Abstammung.* Ein Detektor, der ein Teilchen über sein EM-Licht misst, misst `em` — ja. Aber er misst **weil** `em` trägt. Ohne `em` kein Photon, ohne Photon kein Signal, ohne Signal keine Messung. Die Abstammung (Teilchen) ist **hinreichend** für die Existenz, die Kraft ist **notwendig** für die Messung.
+
+Das Axiom muss die **Notwendigkeit** fassen, nicht die **Hinlänglichkeit**.

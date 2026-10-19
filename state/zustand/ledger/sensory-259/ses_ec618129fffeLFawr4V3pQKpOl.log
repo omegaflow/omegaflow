@@ -29,13 +29,13 @@
 2026-10-18T09:46:13Z CLOSED xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.11~22e38677 by=sensory-259.ses_ec618129fffeLFawr4V3pQKpOl ref=0199b8065
 2026-10-18T09:48:19Z CLOSED xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.12~a3bf3c25 by=sensory-259.river-225 ref=abffdaaaa
 2026-10-18T10:49:01Z CLOSED xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.13~99e00470 by=sensory-259.ses_ec618129fffeLFawr4V3pQKpOl ref=3e27dff0f
-2026-10-18T13:19:40Z CLOSED xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.9~1da7eb85 by=sensory-259.future-pass-2026-10-18 ref=state/stimmen/2026-10-18-future-entscheide-sensory.md,keyless-3-teilrouten-zugelassen-4-gates-operator,commit:8697629ff
-2026-10-18T13:19:40Z CLOSED xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.10~67b095df by=sensory-259.future-pass-2026-10-18 ref=state/stimmen/2026-10-18-future-entscheide-sensory.md,fuenf-entscheide-4-gesetzt-1-operator,commit:8697629ff
-2026-10-18T13:19:40Z CLOSED xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.14~dfc6aa3a by=sensory-259.future-pass-2026-10-18 ref=state/stimmen/2026-10-18-future-entscheide-sensory.md,beobachtungen-gequittet-arvo-159e8bfa3-sha256-0-heute,commit:8697629ff
+2026-10-18T13:19:40Z CLOSED xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.9~1da7eb85 by=sensory-259.future-pass-2026-10-18 ref=state/rat/2026-10-18-future-entscheide-sensory.md,keyless-3-teilrouten-zugelassen-4-gates-operator,commit:8697629ff
+2026-10-18T13:19:40Z CLOSED xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.10~67b095df by=sensory-259.future-pass-2026-10-18 ref=state/rat/2026-10-18-future-entscheide-sensory.md,fuenf-entscheide-4-gesetzt-1-operator,commit:8697629ff
+2026-10-18T13:19:40Z CLOSED xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.14~dfc6aa3a by=sensory-259.future-pass-2026-10-18 ref=state/rat/2026-10-18-future-entscheide-sensory.md,beobachtungen-gequittet-arvo-159e8bfa3-sha256-0-heute,commit:8697629ff
 2026-10-18T17:57:53Z SENT xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.15~8e8cf9f8 by=sensory-259.ses_ec618129fffeLFawr4V3pQKpOl to=mycelium
 2026-10-18T17:58:39Z SENT xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.16~844a104f by=sensory-259.ses_ec618129fffeLFawr4V3pQKpOl to=mountain
 2026-10-18T17:58:40Z SENT xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.17~156a9200 by=sensory-259.ses_ec618129fffeLFawr4V3pQKpOl to=river
 2026-10-18T17:58:40Z SENT xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.18~dab73673 by=sensory-259.ses_ec618129fffeLFawr4V3pQKpOl to=future
-2026-10-18T18:00:00Z CLOSED xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.15~8e8cf9f8 by=sensory-259.ses_ec618129fffeLFawr4V3pQKpOl ref=state/stimmen/2026-10-18-sensory-doc-disposition.md
+2026-10-18T18:00:00Z CLOSED xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.15~8e8cf9f8 by=sensory-259.ses_ec618129fffeLFawr4V3pQKpOl ref=state/rat/2026-10-18-sensory-doc-disposition.md
 2026-10-18T18:00:00Z SENT xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.19~bd808725 by=sensory-259.ses_ec618129fffeLFawr4V3pQKpOl to=mycelium
 2026-10-18T18:00:50Z SENT xfer:sensory-259.ses_ec618129fffeLFawr4V3pQKpOl.20~260f2640 by=sensory-259.ses_ec618129fffeLFawr4V3pQKpOl to=mountain

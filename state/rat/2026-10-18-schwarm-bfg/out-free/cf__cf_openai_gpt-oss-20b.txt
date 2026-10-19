@@ -1,0 +1,5 @@
+R-b Verdikt: A — Begründung: Durch die neuen Direktiven ellipsoid + normal_gravity wird ein Parser‑Arm für skalare Referenzkonstanten geschaffen, sodass a, 1/f, GM, omega, gamma_e und gamma_p registriert werden können. Damit kann N = T/gamma0 berechnet werden, was bisher nicht möglich war. — Riss: gamma0 bleibt unregistriert bis der gfc‑Block implementiert ist.  
+
+R-f Verdikt: A — Begründung: Das Modell D=2190 ist offiziell, hat die kleinste Dateigröße und lässt sich ohne Streaming verarbeiten, wodurch die Kompilierung ohne --epoch möglich wird. Es reduziert die Komplexität und vermeidet Compilerfehler, die bei größeren Modellen auftreten. — Riss: Der Epoch‑Wert ist nicht definiert, was die Kompilierung verhindert.  
+
+R-g Verdikt: B — Begründung: Durch einen Parser‑Fix für kg/(m² s) und die Achse für Stern‑Metadaten werden die wichtigsten Restgruppen abgedeckt, ohne die Architektur unnötig zu vergrößern. Diese minimalen Änderungen decken die kritischen Fälle ab und halten die Implementierung übersichtlich. — Riss: Die FDSN‑BHZ‑Kanalidentität fehlt noch, was die korrekte Zuordnung verhindert.

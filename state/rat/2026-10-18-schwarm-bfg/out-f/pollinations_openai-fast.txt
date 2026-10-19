@@ -1,0 +1,88 @@
+**Kurz‑Checkliste**  
+| # | Thema | Empfehlung | Warum? |
+|---|-------|------------|--------|
+| 1 | **Modell/Cap** | **B – Cap 3211** (oder **A – 2190** falls Release‑Prüfung priorisiert) | 3211 liegt knapp unter dem 2 GiB‑Limit, liefert die höchste Auflösung ohne Split. 2190 ist sicher, aber 3211 ist die „größte release‑taugliche“ Variante. |
+| 2 | **Epoche** | **Kein Block** bis eine verlässliche Referenz gefunden ist. | Der Compiler verlangt `--epoch`; ohne belegte Epoche bleibt der Block unvollständig. |
+| 3 | **ttl** | `NO_CADENCE` (33 554 432 s) | Standard‑Wert, passt zu den meisten GFC‑Assets. |
+| 4 | **Bootstrap‑Reihenfolge** | **Block → Build → sha256 → Workflow → Asset** | So wird der Block als erstes registriert, danach das Asset. Asset‑Name: `gfc_3211.bin` (oder `gfc_2190.bin`). |
+| 5 | **5399 vs. 5540/5480** | **Metadaten‑Widerspruch offen lassen** | Ohne Klärung durch ICGEM/Autoren bleibt der Block mit dem Konflikt. |
+| 6 | **Unnormalisierte Modelle > 160** | **None** (keine Skalierung) | Für 3211/2190 reicht die Standard‑Repräsentation; Skalierung wäre nur bei > 160 nötig. |
+
+---
+
+### 1. Modell/Cap – Was bauen?
+
+| Option | Größe | Release‑Tauglichkeit | Kommentar |
+|--------|-------|----------------------|-----------|
+| **A – 2190** | 999 MiB | ✔ | Offizielles Teilmodell, keine Cap‑Erfindung. |
+| **B – 3211** | 1.999 GiB | ✔ | Maximale Auflösung unter 2 GiB, keine Split‑Logik nötig. |
+| **C – 5540** | 6.39 GiB | ❌ | Erfordert Split/R2, hoher Aufwand. |
+| **D – 760 / 719** | 108 MiB | ✔ | Schnell, aber sehr niedrig aufgelöst. |
+
+**Empfehlung**: **B** – wenn die höchste Auflösung gewünscht ist und die 2 GiB‑Grenze akzeptabel ist. Falls die Release‑Prüfung (z. B. für Zertifizierung) im Vordergrund steht, wähle **A**.
+
+---
+
+### 2. Epoche – Keine Belege, keine Block‑Setzung
+
+- **Problem**: XGM2019e‑Kopf, DataCite, GFZ‑Landingpage und ICGEM‑Modellzeile geben keine Referenzepoche an.
+- **Lösung**:  
+  1. **Suchen**: Durchsuche die Original‑Paper, Supplementary‑Material, oder kontaktiere die Autoren.  
+  2. **Fallback**: Falls keine Epoche gefunden wird, lasse den Block ohne `epoch`‑Feld. Der Compiler wird ihn dann als „unvollständig“ markieren, aber der Rest des Builds kann fortgesetzt werden.
+
+---
+
+### 3. ttl – Standard‑Wert
+
+- `NO_CADENCE` = 33 554 432 s (2²⁵) ist der übliche Wert für GFC‑Assets.  
+- **Feld‑Tau** bleibt `33554432.0`.  
+- **Alternative**: Falls ein kürzerer Lebenszyklus gewünscht ist, kann ein anderer Wert gewählt werden, aber das ist selten nötig.
+
+---
+
+### 4. Bootstrap‑Reihenfolge & Asset‑Name
+
+| Schritt | Zweck | Empfohlene Reihenfolge |
+|---------|-------|------------------------|
+| Block | Registriert Metadaten | 1 |
+| Build | Erstellt das Binär | 2 |
+| sha256 | Prüfsumme | 3 |
+| Workflow | Pipeline‑Trigger | 4 |
+| Asset | Endprodukt | 5 |
+
+**Asset‑Name**:  
+- Für 3211 → `gfc_3211.bin`  
+- Für 2190 → `gfc_2190.bin`  
+- Für 760 → `gfc_760.bin`  
+- Für 719 → `gfc_719.bin`  
+
+---
+
+### 5. 5399 vs. 5540/5480 – Metadaten‑Widerspruch
+
+- **5399** wird im Abstract genannt, **5480** im Dateikopf.  
+- **Handlung**:  
+  1. **Dokumentiere** den Konflikt im Block‑Kommentar.  
+  2. **Klärung**: Frage ICGEM oder die Autoren nach der beabsichtigten Grad‑Bezeichnung.  
+  3. **Fallback**: Falls keine Klärung möglich ist, setze den Block mit dem Dateikopf‑Wert (5480) und markiere den Konflikt als „offen“.
+
+---
+
+### 6. Unnormalisierte Modelle > 160
+
+- Für 2190 und 3211 liegen die Grad‑Werte unter 160, daher ist keine Skalierung nötig.  
+- **Falls** ein Modell > 160 gewählt wird, müsste `harmonic_sums` mit einer skalierenden API‑Design‑Regel gebaut werden.  
+- **Empfehlung**: Halte dich bei 2190/3211, um diese Komplexität zu vermeiden.
+
+---
+
+## Fazit
+
+- **B – Cap 3211** ist die „Goldene Mitte“: höchste Auflösung, keine Split‑Logik, unter 2 GiB.  
+- **Kein epoch‑Block** bis Beleg gefunden.  
+- **ttl** bleibt `NO_CADENCE`.  
+- **Bootstrap**: Block → Build → sha256 → Workflow → Asset (`gfc_3211.bin`).  
+- **Metadaten‑Widerspruch** offen lassen, ggf. klären.  
+- **Keine Skalierung** nötig, da Grad < 160.
+
+Wenn du dich für **A – 2190** entscheidest,

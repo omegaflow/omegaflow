@@ -1,0 +1,5 @@
+`R-b Verdikt: B — Begründung: Eigene Konstanten ermöglichen Registrierung ohne Parser-Änderungen. Die URL/Terms-Belegung ist nachgelagert lösbar. — Riss: calc.js-Lizenzierung`
+
+`R-f Verdikt: A — Begründung: D=2190 ist das offizielle Teilmodell und vermeidet Speicherprobleme. Die Epoche kann durch Volltextsuche und statischen Compiler-Pfad adressiert werden. — Riss: Diskrepanz zwischen Abstract und Datei-Tail`
+
+`R-g Verdikt: B — Begründung: Parser-Fix und Stern-Achse adressieren kritische Datenpunkte. Dies minimiert den Architekturaufwand und ermöglicht erste Nutzbarkeit. — Riss: Unvollständige Abdeckung aller Restgruppen`

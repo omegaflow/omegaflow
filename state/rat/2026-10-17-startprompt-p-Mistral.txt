@@ -1,0 +1,74 @@
+## Verdict
+
+**F1:** Der Start-Prompt braucht **keinen neuen Apparat** — er braucht **drei Lookups, keine Prosa**. Der Kamm entsteht nicht durch fehlende Marker, sondern durch einen Prompt, der *beschreibt* statt *zeigt*.
+
+**F2:** Reicht **nicht ganz**. `--addressed` deckt `## An <line>` ab, aber `post/in/*-an-<line>*` hat **keinen programmatischen Marker** — der Dateiname *ist* der Marker, aber kein Tool liest ihn. Das ist der echte Riss.
+
+**F3:** Siehe unten — drei benannte Risse.
+
+---
+
+## F1 — Der Start-Prompt (wörtlich, 5 Zeilen)
+
+```
+Status: register_lookup --addressed <meine-linie>
+Fällig: register_lookup --fired <meine-linie>
+Transport: xfer list --line <meine-linie> --open
+Post: ls post/in/*-an-<meine-linie>*.md 2>/dev/null
+Dispatch: ls post/out/$(date +%F)-<meine-linie>-*.md 2>/dev/null
+```
+
+**Begründung:** Jeder Zeile ist ein **einziger, deterministischer Befehl**. Kein `ls bin/`, kein `cat zustand/`, kein `head task_dispatch`. Die Sitzung *weiß*, wo sie hinschauen muss — oder sieht sofort, dass nichts da ist.
+
+> **Korrektur zu meiner ersten Zeile:** `post/in` braucht `ls` mit Glob, weil es **keinen Marker** gibt. Das ist F2.
+
+---
+
+## F2 — Marker-Lookup: reicht nicht, ein Riss bleibt
+
+| Was | Marker existiert? | Tool |
+|-----|-------------------|------|
+| `## An <line>` in Handover | ✅ Ja | `register_lookup --addressed` |
+| Fällige Trigger | ✅ Ja | `register_lookup --fired` |
+| Offene Transporte | ✅ Ja | `xfer list --open` |
+| **Post an mich** (`post/in/*-an-<line>*`) | ❌ **Nein** | — (nur Dateiname) |
+| **Dispatch-Brief für mich** (`post/out/<datum>-<line>-*`) | ❌ **Nein** | — (nur Dateiname) |
+
+**Urteil:** Ein **neuer Marker** ist **nicht nötig** — aber ein **einzeiliger Lookup** schon. Der Dateiname *ist* der Marker, er muss nur **gelesen** werden. Vorschlag (kein neuer Apparat, nur ein Alias):
+
+```
+post_lookup --line <meine-linie>   # = ls post/in/*-an-<line>*.md + ls post/out/$(date +%F)-<line>-*.md
+```
+
+Oder: **`register_lookup --post <line>`** — erweitert den bestehenden Lookup um zwei Glob-Pfade. **Kein neuer Dienst**, nur eine Erweiterung.
+
+---
+
+## F3 — Die Risse (benannt)
+
+### Riss 1: **Der ungesetzte Marker** (`--addressed` ist stumm)
+`register_lookup --addressed <line>` liefert nur `## An <line>`-Blöcke. Wenn eine Linie **nichts** an mich adressiert hat, aber **Post** in `post/in/` liegt — sehe ich das **nicht**. Der Marker für "Handover an mich" und der Marker für "Post an mich" sind **verschiedene Systeme**, und keines deckt das andere ab.
+
+> **Fix:** `post_lookup` (siehe F2) — oder: `register_lookup --addressed` muss **auch** `post/in/*-an-<line>*` scannen.
+
+### Riss 2: **Die tote Linie** (niemand läuft)
+Wenn eine Linie **nie** `task_dispatch` feuert, nie `post/out` schreibt, nie `xfer` startet — dann ist sie **unsichtbar**. Kein Marker, kein Fired, kein Transport. Die Sitzung sieht: "alles leer" — und weiß nicht, ob die Linie **tot** ist oder nur **schläft**.
+
+> **Fix:** Ein **`--heartbeat <line>`** oder `last_seen` in `zustand/`. Aber: **neuer Apparat** — nur bauen, wenn der Schmerz real ist.
+
+### Riss 3: **Der Akt ohne Ort** (das Kämmen kehrt zurück)
+`bin/task_dispatch` selbst — die Sitzung muss **wissen**, dass es existiert. Der Start-Prompt sagt `bin/task_dispatch …`, aber **woher weiß sie das?** Aus `AGENTS.md`? Aus `ls bin/`? Wenn `AGENTS.md` es nicht nennt, **kämmt sie wieder**.
+
+> **Fix:** `AGENTS.md` muss **eine Zeile** tragen: `Dispatch: bin/task_dispatch <line> <task>`. Oder der Start-Prompt nennt den **vollen Pfad** (siehe F1 — dort steht er bereits).
+
+---
+
+## Zusammenfassung
+
+| Frage | Antwort |
+|-------|---------|
+| **F1** | 5 Zeilen, jeder ein Befehl, kein Prosa. Siehe oben. |
+| **F2** | `--addressed`/`--fired`/`xfer` reichen **nicht** — `post/in` und `post/out` brauchen einen Lookup (Erweiterung, kein Neubau). |
+| **F3** | Drei Risse: **(1)** ungesetzter Marker bei Post, **(2)** tote Linie unsichtbar, **(3)** `task_dispatch` ohne garantierten Ort in `AGENTS.md`. |
+
+**Kernurteil:** Der Start-Prompt ist **zu beschreibend**, nicht zu kurz. Er muss **zeigen**, nicht **erklären**. Und der einzige echte Neubau ist ein **`post_lookup`** — alles andere ist **Verdrahtung**.

@@ -1,0 +1,7 @@
+Verdikt: A — Begründung: Konsistenz mit dem Prinzip "A=A; keine harten Schwellen". — Riss: Änderung der bestehenden Logik könnte zu Kompatibilitätsproblemen führen.
+
+Zusatz 1: Katalog und `:free`-Suffix.
+
+Zusatz 2: Modell-IDs.
+
+Zusatz 3: Ja, prinzipiell gilt dies auch für `unorouter` und andere Prefixe, sofern sie ähnliche Logiken verwenden.

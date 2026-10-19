@@ -1,0 +1,41 @@
+# Urteil
+
+**Drei Axiome und eine Präzisierung bleiben. `pending` und die Verbenzeile gehen raus. `channel_ref` ist als Name tot, in der Sache aber nicht.**
+
+---
+
+## F1: Axiom oder Prozess
+
+| Zeile | Urteil | Grund |
+|---|---|---|
+| `A = A` | **Axiom** | Identität der Messung, die Wurzel |
+| `ICRS/TDB — alle Körper gleich` | **Axiom**, Aspekt von A=A | ein Rahmen, keine Sonderkörper |
+| `channel_ref — ohne Kraft kein Sample` | **Axiom in der Sache**, Name falsch | siehe F2 |
+| `0 honored` | **Axiom** | eine 0 ist ein Messwert und keine Lücke |
+| `pending — der Operator schließt` | **Prozess, raus** | Zuständigkeit, keine Wahrheit über eine Messung. Ein Turn ohne sie misst nicht falsch. |
+| `messen · bauen · … · pushen` | **Prozess, raus** | Arbeitsanweisung. Sie gehört in den Workflow und nicht in die Wahrheitsdatei. |
+
+## F2: ICRS/TDB und channel_ref
+
+- **ICRS/TDB** ist ein Aspekt von `A = A`: Die Gleichheit aller Körper ist Identität unter *einem* Bezugssystem. Es bleibt eine eigene Zeile, weil es operativ ist (welcher Rahmen, welche Zeit).
+- **channel_ref ist überholt.** Der Name taucht 0× im Bestand auf, die Regel verweist also ins Leere. Die Sache fällt aber **nicht** weg. An ihre Stelle tritt die explizite **`channel`-Zeile mit sechs Achsen und Einheit**, geschärft durch die Weberin: **Gemessen wird der Träger und nicht die Sache.** Das Photon ist `em`, das Teilchen ist Abstammung.
+
+## F3: Die fünf Zeilen, wörtlich
+
+```
+A = A
+rahmen ICRS/TDB · alle körper gleich
+channel <erhaltung>:<rang>:<operator>:<charakteristik>:<medium>:<bindung> <einheit> · sonst kein sample
+miss den träger · nicht die sache
+0 bleibt 0 · nie leer füllen
+```
+
+---
+
+## Benannte Risse
+
+1. **Das Axiom verwirft 99,8 % des Bestands.** Nur 13 von 7921 Zeilen erfüllen Zeile 3. Ohne Migration macht die Regel den Bestand ungültig, statt ihn zu ordnen. Die Migration ist Prozessarbeit und gehört nicht in die Turn-Datei, muss aber existieren.
+2. **Spalte 5 ist kontaminiert.** Kernel (`inverse-square`), Nicht-Kräfte (`acoustic`, `seismic-surface`) und Müll (`X-BAND`, `ANTENNA`, `LEVEL`) stehen dort. `acoustic` und `seismic` sind Medium-Achsen, keine Kräfte. Die Sechs-Achsen-Form löst das nur, wenn die Abbildung von Altwert auf Achse einmal festgelegt wird.
+3. **`0 honored` ist mehrdeutig.** Meine Lesart: 0 ist ein gemessener Wert, kein Fehlwert. Falls etwas anderes gemeint ist, muss Zeile 5 neu formuliert werden. Bleibt sie so kryptisch, versteht sie kein Turn eindeutig.
+4. **Die drei Zeugen-Arten** (S²-Richtung, Gestalt, Presence) stehen bewusst **nicht** in der Datei. Sie bestimmen, *was* bezeugt wird, und kein Turn misst ohne sie falsch, solange Zeile 3 und 4 gelten. Sobald ein Zeuge ohne `channel` auftritt, etwa Presence, rücken sie nach.
+5. **Mit `pending` geht ein Schutz verloren.** Die Regel verhindert, dass ein Turn eine Front eigenmächtig schließt. Sie muss deshalb an einen anderen Ort wandern, etwa in den Workflow oder einen Commit-Hook, und darf nicht einfach gestrichen werden.

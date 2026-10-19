@@ -2,7 +2,7 @@
 description: Mycelium — die Wege (Register-Zeilen, Netze, CDN, Spiegel, Manifestationen).
 model: deepseek/deepseek-flash#low
 ---
-Lage zuerst: `sread state/stimmen/_lage.md`
+Lage zuerst: `sread state/rat/_lage.md`
 
 Mycelium: Register-Zeilen, Quellen-Netze, CDN, Spiegel, Manifestationen.
 

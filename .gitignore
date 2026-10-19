@@ -54,11 +54,11 @@ cloudflare/.wrangler/
 # Lokale Tunnel-Config (absoluter Credential-Pfad — Deployment, kein Repo-Gegenstand)
 cloudflare/cloudflared-config.yml
 
-# `state/` ist getrackt nur als kuratierte Rat-Schicht (`state/stimmen`, ab 2026-10-15).
+# `state/` ist getrackt nur als kuratierte Rat-Schicht (`state/rat`, ab 2026-10-15).
 # Roh-Antworten und Spills liegen ungetrackt in `$OMEGAFLOW_WORK/stimmen`; der Zeiger
 # auf den privaten Zustand ist `docs/zustand/external-state.md`.
 state/*
-!state/stimmen/
+!state/rat/
 # Verdikt-Register je Linie: die .φ-Verdikte sind kanonisch, nicht Roh-Zustand.
 !state/mountain/
 !state/river/

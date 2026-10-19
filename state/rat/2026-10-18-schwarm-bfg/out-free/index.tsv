@@ -1,0 +1,345 @@
+cf/@cf/ai4bharat/indictrans2-en-indic-1B	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/black-forest-labs/flux-2-klein-9b	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/black-forest-labs/flux-2-klein-4b	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/black-forest-labs/flux-1-schnell	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/baai/bge-small-en-v1.5	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/baai/bge-large-en-v1.5	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/bytedance/stable-diffusion-xl-lightning	LEER	verdikte=0	len=0	finish=	err=
+cf/@cf/baai/bge-reranker-base	LEER	verdikte=0	len=0	finish=	err=
+cf/@cf/black-forest-labs/flux-2-dev	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/baai/bge-m3	LEER	verdikte=0	len=0	finish=	err=
+cf/@cf/cloudflare/clef	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/cloudflare/clef-flash	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/cloudflare/clef-omni	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/deepgram/aura-2-es	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/deepgram/aura-2-en	LEER	verdikte=0	len=0	finish=	err=
+cf/@cf/deepgram/aura-1	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/deepgram/flux	LEER	verdikte=0	len=0	finish=	err=
+cf/@cf/deepgram/nova-3	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/baai/bge-base-en-v1.5	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/google/embeddinggemma-300m	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/deepseek-ai/deepseek-v4-flash-0731	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/huggingface/distilbert-sst-2-int8	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/leonardo/lucid-origin	LEER	verdikte=0	len=0	finish=	err=
+cf/@cf/deepseek-ai/deepseek-v4-pro-0813	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/leonardo/phoenix-1.0	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/lykon/dreamshaper-8-lcm	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/llava-hf/llava-1.5-7b-hf	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/meta/llama-3.2-11b-vision-instruct	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/daily-co/phonellm-mini-alpha-2	OK	verdikte=3	len=496	finish=stop	err=
+cf/@cf/google/gemma-2b-it-lora	OK	verdikte=0	len=358	finish=stop	err=
+cf/@cf/meta/llama-3.2-3b-instruct	OK	verdikte=0	len=1432	finish=stop	err=
+cf/@cf/meta/m2m100-1.2b	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/meta/llama-3.2-1b-instruct	OK	verdikte=0	len=1419	finish=stop	err=
+cf/@cf/microsoft/resnet-50	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/aisingapore/gemma-sea-lion-v4-27b-it	OK	verdikte=3	len=685	finish=stop	err=
+cf/@cf/meta/llama-guard-3-8b	OK	verdikte=0	len=6	finish=stop	err=
+cf/@cf/moonshotai/kimi-k2.6	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/moonshotai/kimi-k2.7-code	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/myshell-ai/melotts	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/moondream/moondream3.1-9B-A2B	LEER	verdikte=0	len=0	finish=stop	err=
+cf/@cf/meta/llama-3.3-70b-instruct-fp8-fast	OK	verdikte=3	len=1465	finish=stop	err=
+cf/@cf/ibm-granite/granite-4.0-h-micro	OK	verdikte=0	len=978	finish=stop	err=
+cf/@cf/openai/whisper	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/openai/whisper-large-v3-turbo	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/openai/whisper-tiny-en	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/pfnet/plamo-embedding-1b	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/pipecat-ai/smart-turn-v2	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/mistralai/mistral-small-3.1-24b-instruct	OK	verdikte=3	len=1105	finish=stop	err=
+cf/@cf/meta/llama-4-scout-17b-16e-instruct	OK	verdikte=3	len=1255	finish=stop	err=
+cf/@cf/google/gemma-7b-it-lora	OK	verdikte=0	len=613	finish=stop	err=
+cf/@cf/openai/gpt-oss-20b	OK	verdikte=3	len=1108	finish=stop	err=
+cf/@cf/qwen/qwen3-embedding-0.6b	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/runwayml/stable-diffusion-v1-5-inpainting	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/stabilityai/stable-diffusion-xl-base-1.0	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/swiss-ai/apertus-v1.5-8b	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/utter-project/eurollm-9b-it	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/qwen/qwen3-30b-a3b-fp8	OK	verdikte=3	len=562	finish=stop	err=
+cf/@cf/deepseek-ai/deepseek-r1-distill-qwen-32b	OK	verdikte=3	len=2053	finish=stop	err=
+cf/@cf/qwen/qwen2.5-coder-32b-instruct	OK	verdikte=3	len=809	finish=stop	err=
+cf/@cf/zai-org/glm-5.2	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/zai-org/glm-5.3	LEER	verdikte=0	len=0	finish=?	err=
+cf/@cf/zai-org/glm-5.3-flash	LEER	verdikte=0	len=0	finish=?	err=
+cf/Automatic Speech Recognition	LEER	verdikte=0	len=0	finish=?	err=
+cf/Dumb Pipe	LEER	verdikte=0	len=0	finish=?	err=
+cf/Image Classification	LEER	verdikte=0	len=0	finish=?	err=
+cf/Image-to-Text	LEER	verdikte=0	len=0	finish=?	err=
+cf/Text Classification	LEER	verdikte=0	len=0	finish=?	err=
+cf/Text Embeddings	LEER	verdikte=0	len=0	finish=?	err=
+cf/Text Generation	LEER	verdikte=0	len=0	finish=?	err=
+cf/Text-to-Speech	LEER	verdikte=0	len=0	finish=?	err=
+cf/Text-to-Image	LEER	verdikte=0	len=0	finish=?	err=
+groq/canopylabs/orpheus-arabic-saudi	LEER	verdikte=0	len=0	finish=?	err=The model `canopylabs/orpheus-arabic-saudi` requires terms acceptance. Please have the org admin accept the terms at https://console.groq.com/playground?model=canopylabs%2Forpheus-arabic-saudi
+cf/Translation	LEER	verdikte=0	len=0	finish=?	err=
+groq/canopylabs/orpheus-v1-english	LEER	verdikte=0	len=0	finish=?	err=The model `canopylabs/orpheus-v1-english` requires terms acceptance. Please have the org admin accept the terms at https://console.groq.com/playground?model=canopylabs%2Forpheus-v1-english
+groq/allam-2-7b	OK	verdikte=0	len=609	finish=stop	err=
+groq/whisper-large-v3	LEER	verdikte=0	len=0	finish=?	err=The model `whisper-large-v3` does not support chat completions
+groq/whisper-large-v3-turbo	LEER	verdikte=0	len=0	finish=?	err=The model `whisper-large-v3-turbo` does not support chat completions
+kenari/agnes-image-2-0-flash:free	LEER	verdikte=0	len=0	finish=	err=
+kenari/agnes-image-2-1-flash:free	LEER	verdikte=0	len=0	finish=?	err=model 'agnes-image-2-1-flash:free' is not a chat model; use /v1/images/generations instead
+kenari/agnes-image-2-5-flash:free	LEER	verdikte=0	len=0	finish=?	err=model 'agnes-image-2-5-flash:free' is not a chat model; use /v1/images/generations instead
+cf/@cf/mistral/mistral-7b-instruct-v0.2-lora	OK	verdikte=3	len=898	finish=stop	err=
+kenari/claude-fable-5	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 2,765 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/claude-haiku-5-5	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 28 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+cf/@cf/nvidia/nemotron-3-120b-a12b	OK	verdikte=3	len=9030	finish=length	err=
+kenari/claude-opus-4-7	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 1,432 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/claude-opus-4-8	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 1,432 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/claude-opus-5	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 1,352 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/claude-opus-5-5	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 1,102 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/claude-sonnet-4-6	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 855 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/claude-sonnet-5	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 343 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/claude-sonnet-5-5	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 551 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/deepseek-v4-1-flash	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 2 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/deepseek-v4-flash	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 17 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/deepseek-v4-pro	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 60 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/agnes-2-5-flash:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/gemini-3-1-flash-lite	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 80 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/gemini-3-1-flash-tts	LEER	verdikte=0	len=0	finish=?	err=model 'gemini-3-1-flash-tts' is not a chat model; use /v1/audio/speech instead
+kenari/gemini-3-1-pro	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 334 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/gemini-3-6-flash	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 81 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/gemini-3-7-flash	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 81 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/gemini-3-8-flash	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 81 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/gemini-omni-flash	LEER	verdikte=0	len=0	finish=?	err=model 'gemini-omni-flash' is not a chat model; use /v1/videos/generations instead
+kenari/gemma-4-31b-it	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 20 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+cf/@cf/openai/gpt-oss-120b	OK	verdikte=3	len=1048	finish=stop	err=
+kenari/glm-5-2	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 155 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/glm-5-3	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 155 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/glm-5-3-flash	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 2 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+cf/@cf/meta/llama-3.1-8b-instruct-fp8	OK	verdikte=3	len=1425	finish=stop	err=
+kenari/gpt-5-5	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 1,677 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/gpt-5-6-luna	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 55 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/gpt-5-6-sol	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 841 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/gpt-6-1-sol	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 551 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/gpt-6-astra	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 2,704 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/gpt-6-luna	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 23 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/deepseek-v4-1-flash:free	LEER	verdikte=0	len=0	finish=?	err=free-model daily limit reached; the counter resets at 00:00 UTC. Top up from Rp1.000 at https://kenari.id/pay to keep going, or subscribe to raise the limit
+kenari/gpt-6-sol	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 541 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/gpt-image-2	LEER	verdikte=0	len=0	finish=?	err=model 'gpt-image-2' is not a chat model; use /v1/images/generations instead
+kenari/gpt-image-2-5-flare	LEER	verdikte=0	len=0	finish=?	err=model 'gpt-image-2-5-flare' is not a chat model; use /v1/images/generations instead
+kenari/gpt-image-2-5-sunburst	LEER	verdikte=0	len=0	finish=?	err=model 'gpt-image-2-5-sunburst' is not a chat model; use /v1/images/generations instead
+kenari/gpt-oss-120b	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 9 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/gpt-oss-20b	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 7 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/grok-4-5	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 341 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/grok-4-6	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 341 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/grok-imagine-image	LEER	verdikte=0	len=0	finish=?	err=model 'grok-imagine-image' is not a chat model; use /v1/images/generations instead
+kenari/grok-4-7	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 341 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/grok-imagine-image-2-0	LEER	verdikte=0	len=0	finish=?	err=model 'grok-imagine-image-2-0' is not a chat model; use /v1/images/generations instead
+kenari/grok-imagine-image-quality	LEER	verdikte=0	len=0	finish=?	err=model 'grok-imagine-image-quality' is not a chat model; use /v1/images/generations instead
+kenari/hunyuan-image-v2.0	LEER	verdikte=0	len=0	finish=?	err=model 'hunyuan-image-v2.0' is not a chat model; use /v1/images/generations instead
+kenari/hunyuan-image-alpha	LEER	verdikte=0	len=0	finish=?	err=model 'hunyuan-image-alpha' is not a chat model; use /v1/images/generations instead
+kenari/glm-5-3-flash:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/hunyuan-image-v3.0	LEER	verdikte=0	len=0	finish=?	err=model 'hunyuan-image-v3.0' is not a chat model; use /v1/images/generations instead
+kenari/hunyuan-image-v3.0-art	LEER	verdikte=0	len=0	finish=?	err=model 'hunyuan-image-v3.0-art' is not a chat model; use /v1/images/generations instead
+kenari/agnes-3-0-flash:free	LEER	verdikte=0	len=0	finish=	err=
+kenari/hunyuan-video-art	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/hy3	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 30 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/kimi-k2-6	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 135 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/hy4-preview	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 117 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/kimi-k2-7-code	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 135 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/beam-1-0:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/kimi-k3	LEER	verdikte=0	len=0	finish=?	err=model 'kling-v3' is not a chat model; use /v1/videos/generations instead
+kenari/kling-v3	LEER	verdikte=0	len=0	finish=	err=
+kenari/kling-video-v3	LEER	verdikte=0	len=0	finish=?	err=model 'kling-video-v3' is not a chat model; use /v1/videos/generations instead
+kenari/dots-3-note-preview:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/kokoro-tts	LEER	verdikte=0	len=0	finish=?	err=model 'kokoro-tts' is not a chat model; use /v1/audio/speech instead
+kenari/glm-4-7-flash:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/mimo-v2-5-pro	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 54 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/mimo-v2-5-tts	LEER	verdikte=0	len=0	finish=?	err=model 'mimo-v2-5-tts' is not a chat model; use /v1/audio/speech instead
+kenari/mimo-v2-6-flash	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 18 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/mimo-v2-6-pro	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 54 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/minimax-m2-7	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 69 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/minimax-m2-7-highspeed	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 116 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/minimax-m3	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 69 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/minimax-speech-2-8-hd	LEER	verdikte=0	len=0	finish=?	err=model 'minimax-speech-2-8-hd' is not a chat model; use /v1/audio/speech instead
+kenari/minimax-speech-2-8-turbo	LEER	verdikte=0	len=0	finish=?	err=model 'minimax-speech-2-8-turbo' is not a chat model; use /v1/audio/speech instead
+kenari/muse-spark-1-2-contributor	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 220 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/muse-spark-1-2	LEER	verdikte=0	len=0	finish=	err=
+kenari/muse-spark-1-3-contributor	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 12 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/muse-spark-1-3	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 220 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/muse-wonder-1-0	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 946 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/nano-banana	LEER	verdikte=0	len=0	finish=?	err=model 'nano-banana' is not a chat model; use /v1/images/generations instead
+kenari/nano-banana-2	LEER	verdikte=0	len=0	finish=?	err=model 'nano-banana-2' is not a chat model; use /v1/images/generations instead
+kenari/nano-banana-2-1	LEER	verdikte=0	len=0	finish=?	err=model 'nano-banana-2-1' is not a chat model; use /v1/images/generations instead
+kenari/nano-banana-2-lite	LEER	verdikte=0	len=0	finish=?	err=model 'nano-banana-2-lite' is not a chat model; use /v1/images/generations instead
+kenari/nano-banana-pro	LEER	verdikte=0	len=0	finish=?	err=model 'nano-banana-pro' is not a chat model; use /v1/images/generations instead
+kenari/laguna-s-2-1:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/laguna-xs-2-1:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/longcat-2-5-preview:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/nemotron-3-super-120b-a12b	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 23 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/nemotron-3-ultra-550b-a55b	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 200 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/qwen-image-2.0-pro	LEER	verdikte=0	len=0	finish=?	err=model 'qwen-image-2.0-pro' is not a chat model; use /v1/images/generations instead
+kenari/qwen-image-3.0-pro	LEER	verdikte=0	len=0	finish=?	err=model 'qwen-image-3.0-pro' is not a chat model; use /v1/images/generations instead
+kenari/qwen3-7-plus	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 74 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/qwen3-8-flash	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 22 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/qwen3-8-max	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 35 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/qwen3-8-omni-flash	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 2 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/nemotron-3-nano-omni-30b-a3b-reasoning:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/seedance-2.0	LEER	verdikte=0	len=0	finish=?	err=model 'seedance-2.0' is not a chat model; use /v1/videos/generations instead
+kenari/seedance-2.0-fast	LEER	verdikte=0	len=0	finish=?	err=model 'seedance-2.0-fast' is not a chat model; use /v1/videos/generations instead
+kenari/seedance-2.5	LEER	verdikte=0	len=0	finish=?	err=model 'seedance-2.5' is not a chat model; use /v1/videos/generations instead
+kenari/nemotron-3-super-120b-a12b:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/nemotron-3-ultra-550b-a55b:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/step-3-7-flash	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 64 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/step-5-preview	LEER	verdikte=0	len=0	finish=?	err=insufficient balance: available Rp 0; this request reserves up to Rp 145 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay
+kenari/qwen3-8-omni-flash:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/veo-3.1-lite	LEER	verdikte=0	len=0	finish=?	err=model 'veo-3.1-lite' is not a chat model; use /v1/videos/generations instead
+kenari/whisper-large-v3-turbo	LEER	verdikte=0	len=0	finish=?	err=model 'whisper-large-v3-turbo' is not a chat model; use /v1/audio/transcriptions instead
+kenari/solar-mini4:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kilo/dots-studio/dots-3-note-preview:free	OK	verdikte=3	len=1166	finish=stop	err=
+cf/@cf/zai-org/glm-4.7-flash	OK	verdikte=8	len=8840	finish=length	err=
+kilo/google/lyria-3-clip-preview	LEER	verdikte=0	len=0	finish=?	err=Add credits to continue, or switch to a free model
+kilo/google/lyria-3-pro-preview	LEER	verdikte=0	len=0	finish=?	err=Add credits to continue, or switch to a free model
+cf/@cf/qwen/qwq-32b	OK	verdikte=3	len=4400	finish=stop	err=
+kilo/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free	LEER	verdikte=0	len=0	finish=?	err=Upstream error from Nvidia: ResourceExhausted: Worker local total request limit reached (58/16)
+kenari/hy3:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kenari/mimo-v2-6-flash:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+cf/@cf/google/gemma-4-26b-a4b-it	LEER	verdikte=0	len=0	finish=length	err=
+kilo/liquid/lfm-2.5-2.6b:free	OK	verdikte=9	len=9744	finish=length	err=
+kenari/space-bunny:free	LEER	verdikte=0	len=0	finish=?	err=free-model rate limit reached; slow down and retry
+kilo/kilo-auto/free	OK	verdikte=3	len=8192	finish=length	err=
+kilo/nvidia/nemotron-3.5-content-safety:free	OK	verdikte=0	len=17	finish=stop	err=
+kilo/nvidia/nemotron-3-ultra-550b-a55b:free	OK	verdikte=3	len=1361	finish=stop	err=
+kilo/poolside/laguna-s-2.1:free	OK	verdikte=3	len=739	finish=stop	err=
+kenari/step-5-preview:free	LEER	verdikte=0	len=0	finish=?	err=free-model daily limit reached; the counter resets at 00:00 UTC. Top up from Rp1.000 at https://kenari.id/pay to keep going, or subscribe to raise the limit
+kenari/nemotron-3-5-super-vl:free	LEER	verdikte=0	len=0	finish=?	err=free-model daily limit reached; the counter resets at 00:00 UTC. Top up from Rp1.000 at https://kenari.id/pay to keep going, or subscribe to raise the limit
+kilo/cohere/north-mini-code:free	OK	verdikte=3	len=1259	finish=length	err=
+kilo/openrouter/free	OK	verdikte=3	len=2020	finish=stop	err=
+llm7/DeepSeek-V4-Flash-0731	LEER	verdikte=0	len=0	finish=length	err=
+kilo/reflection/beam-free	LEER	verdikte=0	len=0	finish=length	err=
+kilo/thinkingmachines/inkling-small:free	LEER	verdikte=0	len=0	finish=?	err=Rate limit exceeded: limit_rpd/thinkingmachines/inkling-small-20260730/e27a9a6d-1451-4be4-876e-292ffcbf1e71. Daily limit reached for thinkingmachines/inkling-small:free via Thinking Machines. Credits don't affect this cap. Add your own keys in https://openrouter.ai/settings/integrations to get a boost.
+llm7/DeepSeek-V4.1-Flash	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/Inkling-Small	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/Voxtral-Mini-3B-2507	LEER	verdikte=0	len=0	finish=?	err=Model 'Voxtral-Mini-3B-2507' does not support this endpoint.
+llm7/Voxtral-Small-24B-2507	LEER	verdikte=0	len=0	finish=?	err=Model 'Voxtral-Small-24B-2507' does not support this endpoint.
+llm7/L3-8B-Lunaris-v1-Turbo	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/anthropic/claude-opus-4-6	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/anthropic/claude-opus-4-7	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/anthropic/claude-sonnet-5	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/anthropic/claude-sonnet-4-6	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/anthropic/claude-opus-4-8	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/anthropic/claude-sonnet-5-5	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/chroma-v.46-flash	LEER	verdikte=0	len=0	finish=?	err=Model 'chroma-v.46-flash' does not support chat endpoints.
+llm7/claude-fable-5	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/claude-fable-5-1	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/claude-haiku-4-5	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/claude-haiku-5-5	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/claude-opus-5	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/claude-opus-5-5	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/claude-sonnet-5	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/claude-opus-4-8	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+kilo/poolside/laguna-xs-2.1:free	LEER	verdikte=0	len=0	finish=	err=
+kilo/xingchen-agi/xing4.0-29b-a4b:free	LEER	verdikte=0	len=0	finish=?	err=Provider returned error
+llm7/claude-sonnet-4-6	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/dark-beast-krea2	LEER	verdikte=0	len=0	finish=?	err=Model 'dark-beast-krea2' does not support chat endpoints.
+llm7/deepseek-v4-flash:0731	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+kilo/nvidia/nemotron-3-super-120b-a12b:free	OK	verdikte=4	len=8554	finish=length	err=
+llm7/deepseek-v4-pro	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/gemini-3.1-flash-lite	LEER	verdikte=0	len=0	finish=	err=
+llm7/gemini-3-flash	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+cf/@cf/meta-llama/llama-2-7b-chat-hf-lora	LEER	verdikte=0	len=0	finish=?	err=
+llm7/gemini-3.6-flash-high	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/codestral-latest	LEER	verdikte=0	len=0	finish=	err=
+llm7/gemini-3.8-flash-high	LEER	verdikte=0	len=0	finish=	err=
+cf/@cf/qwen/qwen3.8-27b	OK	verdikte=4	len=7755	finish=length	err=
+llm7/gemini-omni-flash	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/gemini-4-argon	LEER	verdikte=0	len=0	finish=	err=
+llm7/glm-5.2	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/gemma4:31b	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/gpt-5.6-luna	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/gpt-5.6-terra	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/gpt-5.6-sol	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+kilo/nvidia/nemotron-3.5-super-vl:free	OK	verdikte=9	len=7956	finish=length	err=
+llm7/glm-5.3	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/gpt-6-astra	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/gpt-6-sol	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/gpt-6-luna	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/gpt-6.1-sol	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/gpt-image-2	LEER	verdikte=0	len=0	finish=?	err=Model 'gpt-image-2' does not support chat endpoints.
+llm7/gpt-image-2.5	LEER	verdikte=0	len=0	finish=?	err=Model 'gpt-image-2.5' does not support chat endpoints.
+llm7/grok-4.7	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/kimi-k2.6	LEER	verdikte=0	len=0	finish=	err=
+llm7/kimi-k2.7-code	LEER	verdikte=0	len=0	finish=?	err=Pro models require balance or an active subscription.
+llm7/jev-latest	LEER	verdikte=0	len=0	finish=?	err=Model 'kling-v3.0-turbo' does not support chat endpoints.
+llm7/kling-v3.0-turbo	LEER	verdikte=0	len=0	finish=	err=
+llm7/kimi-k3	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/llama-4-maverick	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/kling-v3.0-pro	LEER	verdikte=0	len=0	finish=?	err=Model 'kling-v3.0-pro' does not support chat endpoints.
+llm7/mistral-large-3:675b	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/mistral-Nemo-Instruct-2407	LEER	verdikte=0	len=0	finish=?	err=Rate limit exceeded. Retry after 1 seconds.
+llm7/minimax-m3	LEER	verdikte=0	len=0	finish=?	err=Rate limit exceeded. Retry after 1 seconds.
+llm7/seed-2.0-mini	LEER	verdikte=0	len=0	finish=	err=
+llm7/muse-spark-1.3	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/mistral-Small-24B-Instruct-2501	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance. Please top up your balance to continue.
+llm7/seedance-2.0	LEER	verdikte=0	len=0	finish=?	err=Model 'seedance-2.0' does not support chat endpoints.
+llm7/whisper-large-v3-turbo	LEER	verdikte=0	len=0	finish=?	err=Model 'whisper-large-v3-turbo' does not support this endpoint.
+llm7/whisper-large-v3	LEER	verdikte=0	len=0	finish=	err=
+llm7/seedance-2.0-mini	LEER	verdikte=0	len=0	finish=?	err=Model 'seedance-2.0-mini' does not support chat endpoints.
+llm7/seedance-2.0-fast	LEER	verdikte=0	len=0	finish=?	err=Model 'seedance-2.0-fast' does not support chat endpoints.
+llm7/gpt-oss:20b	OK	verdikte=3	len=1062	finish=stop	err=
+ollama/beam	LEER	verdikte=0	len=0	finish=length	err=
+ollama/clef:27b	LEER	verdikte=0	len=0	finish=?	err=clef:27b is a decision model and only supports /v1/systemone (ref: a08475c0-fa62-4593-8f78-d61ae41ae98d)
+ollama/deepseek-v4.1-flash	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: 3c4a9bf2-19f7-4f6b-a65c-db56db0cb9d1)
+ollama/gemma4:31b	OK	verdikte=3	len=888	finish=stop	err=
+ollama/deepseek-v4.1-flash:1017	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: 2988d0f3-c59a-4bfd-aac7-28f21ff93a8b)
+ollama/deepseek-v4-pro:0813	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: abccad4d-58df-4193-baaa-135876ae9796)
+ollama/glm-5.3	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: f1a6b6fa-b0ce-4542-aa75-2157b813e4d8)
+ollama/glm-5.3-flash	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: ba3f3a29-4f52-4bdf-b120-1b04130e3d4a)
+llm7/minimax-m2.7	LEER	verdikte=0	len=0	finish=	err=
+ollama/gpt-oss:120b	OK	verdikte=3	len=1243	finish=stop	err=
+ollama/gpt-oss:20b	OK	verdikte=3	len=1019	finish=stop	err=
+ollama/kimi-k2.6	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: b5a7da4a-c188-4d6e-8841-f252a2859dc7)
+ollama/kimi-k2.7-code	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: c7986ba7-c0bc-4b87-8324-93a6c39c3307)
+ollama/minimax-m2.7	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: a325c50f-9196-4537-9cb8-463ecd518aaf)
+ollama/minimax-m3	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: ffc0625a-7406-4b69-be63-490f8232013b)
+ollama/mistral-large-3:675b	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: 4812f2eb-55bb-4f51-a05c-b2810835ab58)
+ollama/mistral-large-4	LEER	verdikte=0	len=0	finish=?	err=This model is currently being rolled out and is not yet available to you. Please check back later. (ref: ea0f4afb-154f-47e0-aeb5-93184e2f0a05)
+ollama/muse-spark-open	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: 67fab513-87e5-4a77-8a9f-d98eba6779a7)
+llm7/nemotron-3-nano:30b	LEER	verdikte=0	len=0	finish=length	err=
+openrouter/google/gemma-4-26b-a4b-it:free	LEER	verdikte=0	len=0	finish=?	err=Provider returned error
+openrouter/google/gemma-4-31b-it:free	LEER	verdikte=0	len=0	finish=?	err=Provider returned error
+kilo/stealth/glyph-cluster	OK	verdikte=3	len=1210	finish=stop	err=
+openrouter/google/lyria-3-clip-preview	LEER	verdikte=0	len=0	finish=?	err=Insufficient credits. Add more using https://openrouter.ai/settings/credits
+openrouter/google/lyria-3-pro-preview	LEER	verdikte=0	len=0	finish=?	err=Insufficient credits. Add more using https://openrouter.ai/settings/credits
+openrouter/nvidia/nemotron-3-super-120b-a12b:free	LEER	verdikte=0	len=0	finish=?	err=Provider returned error
+ollama/nemotron-3-nano:30b	LEER	verdikte=0	len=0	finish=length	err=
+openrouter/dots-studio/dots-3-note-preview:free	LEER	verdikte=0	len=0	finish=	err=
+openrouter/nvidia/nemotron-3.5-content-safety:free	LEER	verdikte=0	len=0	finish=	err=
+openrouter/liquid/lfm-2.5-2.6b:free	LEER	verdikte=0	len=0	finish=	err=
+openrouter/nvidia/nemotron-3.5-super-vl:free	LEER	verdikte=0	len=0	finish=?	err=Provider returned error
+openrouter/cohere/north-mini-code:free	LEER	verdikte=0	len=0	finish=	err=
+openrouter/poolside/laguna-s-2.1:free	LEER	verdikte=0	len=0	finish=	err=
+openrouter/thinkingmachines/inkling-small:free	LEER	verdikte=0	len=0	finish=?	err=thinkingmachines/inkling-small:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps
+openrouter/thinkingmachines/inkling:free	LEER	verdikte=0	len=0	finish=?	err=thinkingmachines/inkling:free is only available on agentic harnesses. Try plugging it into a coding agent or productivity app listed on https://openrouter.ai/apps
+openrouter/openrouter/free	LEER	verdikte=0	len=0	finish=	err=
+ovh/Qwen3Guard-Gen-0.6B	OK	verdikte=0	len=29	finish=stop	err=
+ovh/Qwen3Guard-Gen-8B	OK	verdikte=0	len=29	finish=stop	err=
+ovh/nvr-tts-de-de	LEER	verdikte=0	len=0	finish=?	err=The model `nvr-tts-de-de` does not exist.
+ovh/nvr-tts-en-us	LEER	verdikte=0	len=0	finish=?	err=The model `nvr-tts-en-us` does not exist.
+ovh/nvr-tts-es-es	LEER	verdikte=0	len=0	finish=?	err=The model `nvr-tts-es-es` does not exist.
+ovh/nvr-tts-it-it	LEER	verdikte=0	len=0	finish=?	err=The model `nvr-tts-it-it` does not exist.
+ovh/stable-diffusion-xl-base-v10	LEER	verdikte=0	len=0	finish=?	err=The model `stable-diffusion-xl-base-v10` does not exist.
+ovh/whisper-large-v3	LEER	verdikte=0	len=0	finish=?	err=The model `whisper-large-v3` does not exist.
+ovh/whisper-large-v3-turbo	LEER	verdikte=0	len=0	finish=?	err=The model `whisper-large-v3-turbo` does not exist.
+pollinations/openai-fast	OK	verdikte=3	len=1108	finish=stop	err=
+llm7/GLM-5.3-Flash	LEER	verdikte=0	len=0	finish=length	err=
+zai/glm-4.5	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance or no resource package. Please recharge.
+openrouter/xingchen-agi/xing4.0-29b-a4b:free	LEER	verdikte=0	len=0	finish=?	err=Provider returned error
+zai/glm-4.5-air	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance or no resource package. Please recharge.
+zai/glm-4.6	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance or no resource package. Please recharge.
+zai/glm-4.7	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance or no resource package. Please recharge.
+zai/glm-5	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance or no resource package. Please recharge.
+zai/glm-5-turbo	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance or no resource package. Please recharge.
+openrouter/poolside/laguna-xs-2.1:free	LEER	verdikte=0	len=0	finish=	err=
+zai/glm-5.1	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance or no resource package. Please recharge.
+zai/glm-5.2	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance or no resource package. Please recharge.
+zai/glm-5.3	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance or no resource package. Please recharge.
+zai/glm-5.3-flash	LEER	verdikte=0	len=0	finish=	err=
+openrouter/nvidia/nemotron-3-ultra-550b-a55b:free	LEER	verdikte=0	len=0	finish=	err=
+zai/glm-5.3-flashx	LEER	verdikte=0	len=0	finish=?	err=Insufficient balance or no resource package. Please recharge.
+openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free	LEER	verdikte=0	len=0	finish=	err=
+ollama/nemotron-3-super	LEER	verdikte=0	len=0	finish=length	err=
+kilo/nvidia/nemotron-3.5-lightning:free	LEER	verdikte=0	len=0	finish=	err=
+ollama/nemotron-3-ultra	OK	verdikte=3	len=1156	finish=length	err=
+ollama/glm-5.2	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: 02072c5c-6c1a-48f8-8f27-e343bd8b0506)
+ollama/kimi-k3	LEER	verdikte=0	len=0	finish=?	err=This model is not in the Free plan. Pro is $20/month for $60 of usage, with no 5-hour or weekly caps: https://ollama.com/upgrade. Try gemma4:31b-cloud, which is in the Free plan. (ref: c8b98d46-44b3-4f50-add3-17c0651ad6cb)
+openrouter/nvidia/nemotron-3.5-lightning:free	LEER	verdikte=0	len=0	finish=	err=

@@ -1,0 +1,5 @@
+Verdikt: **A** — Begründung: Eindeutige Preislogik vermeidet Inkonsistenzen (z. B. `openrouter/…:free` als bezahlt). — Riss: Kein Riss, da `is_paid` bereits hart kodiert ist; Option A nutzt diese Struktur konsequent.
+
+Zusatz 1: **Katalogpreis** (0/0) ist maßgeblich, da er explizit ist. `:free`-Suffix oder Anbieterantwort sind unsicher.
+Zusatz 2: **Modell-IDs** (z. B. `paid-open`), da Routen dynamisch sein können.
+Zusatz 3: **Ja**, für alle Prefixe, um Einheitlichkeit zu wahren.

@@ -1,0 +1,23 @@
+Okay, ich muss die drei Fragen V1, V2 und V3 beantworten, jeweils mit einem Verdikt A, B, C oder D, einer Begründung in zwei Sätzen und einem Riss. 
+
+Zuerst V1: Wo soll der Live-Zustand liegen? Die Ursachen erwähnen, dass der Zustand in Prosa-Docs dupliziert ist und driftet, und es keinen Live-Zeiger gibt. Also brauchen sie einen zentralen Punkt, den alle zuerst lesen. Option A schlägt einen generierten Index vor, der Commit-Hash, Zeitstempel etc. enthält. Das würde helfen, weil es einen zentralen Ort gibt, der automatisch aktualisiert wird. B sagt Prosa-Docs mit Stand-Commit und Start-Check, aber das könnte Duplikate verursachen. C lässt Git als Zustand, aber das könnte zuviel für Sitzungen sein. D ist Status quo, was nicht hilft. Also A ist wahrscheinlich richtig. Riss könnte sein, dass Generierung komplex ist.
+
+V2: Kanonische Schwarmgröße. Die Ursachen erwähnen, dass 4 Sitze ein Fehler waren, und die 44 ist dokumentiert. Also A sagt immer 44, was passt. B ist die alte Methode aus der veralteten Anweisung. C adaptiv, aber das könnte Unsicherheit bringen. D beschränkt auf UI+Paid, was nicht passt. Also A. Riss könnte sein, dass 44 nicht immer verfügbar ist.
+
+V3: Verhindern veralteter Zitate. Ursachen: keine Staleness-Checks. A vorschlägt Start-Check mit git log und neuesten Runs. B ein Gate basierend auf Stand-Commit. C generierter Index zeigt Veraltete. D Disziplin allein. A oder B könnten gut sein. Die Ursache sagt, dass Commits älter waren, also ein Mechanismus wie B könnte effektiv sein, da es automatisch prüft. A ist auch gut, aber B könnte direkter sein. Aber die Frage ist, was die besten Optionen sind. Die Begründung für B: Es setzt ein Gate, damit alte Docs nicht zitiert werden können. Riss könnte sein, dass es technisch schwierig ist, das Gate umzusetzen.
+</think>
+
+V1 — Wo soll der Live-Zustand liegen?  
+**A: Ein generierter Live-Index (Commit-Hash, Zeitstempel, offene Fragen, letzte Runs), den jede Sitzung zuerst liest; Prosa-Docs werden Zeiger.**  
+— Begründung: Der Index vereinheitlicht den Zustand, reduziert Duplikate und erzwingt Aktualität. Prosa-Docs als Detailzeiger bleiben nützlich, ohne Driftgefahr.  
+— Riss: Generierung könnte fehleranfällig oder komplex sein, falls nicht automatisiert.  
+
+V2 — Was ist der kanonische Schwarm?  
+**A: Immer die 44 (free44-Liste); 4er-Läufe sind kein Schwarm.**  
+— Begründung: Die 44 ist dokumentiert als korrekte Größe, 4er-Läufe führten zu Instabilität (F2-Kippen). Festlegung vermeidet Missverständnisse.  
+— Riss: 44 könnte technisch nicht immer erreichbar sein, aber die Frage zielt auf den Kanon, nicht auf Ausnahmen.  
+
+V3 — Wie verhindert man veraltete Zitate?  
+**B: Gate: eine Sitzung darf keinen Zustands-Doc zitieren, dessen Stand-Commit älter ist als der letzte Commit zum Thema.**  
+— Begründung: Ein Gate erzwingt automatisch Aktualität, ohne auf Disziplin zu setzen. Prosa-Docs mit Stand-Commit ermöglichen dies technisch.  
+— Riss: Implementierung des Gattermechanismus könnte infrastrukturell anspruchsvoll sein.

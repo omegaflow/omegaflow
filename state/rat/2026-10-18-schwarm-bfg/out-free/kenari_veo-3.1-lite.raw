@@ -1,0 +1,1 @@
+{"error":{"code":"bad_request","message":"model 'veo-3.1-lite' is not a chat model; use /v1/videos/generations instead","param":null,"type":"bad_request"}}

@@ -1,0 +1,125 @@
+**Urteil, nicht Erwartung.**
+
+---
+
+## D1 · Was heißt bidirektionale TE? Treiber oder Impulsaustausch?
+
+**Verdikt:**  
+Bidirektionale TE heißt: **gerichtete, lag-abhängige statistische Abhängigkeit**. Sie entscheidet **nicht** zwischen gemeinsamem Treiber und wechselseitigem Impulsaustausch. Beide Lesarten bleiben mit dem Register vereinbar. Die lag-abhängige Dominanz ist Register, nicht Kausalpfeil.
+
+**Begründung — fünf Axiome:**  
+- **A = A:** Gemessen sind TE-Werte, Korrelationen, Surrogat-Signifikanz; nicht Kraft, nicht Impulsfluss.  
+- **ICRS & TDB:** Die Ostprojektion ist Perspektive/Adresse. Sie macht aus roh −0,079 ein +0,226; die Physik ändert sich dadurch nicht.  
+- **channel_ref:** TE ist ein abgeleiteter Informationskanal. Er trägt keine Kraftreferenz.  
+- **0 honored:** Der fehlende gemeinsame Treiber-/Kraftdatensatz ist eine vollwertige Lücke.  
+- **pending:** Ohne Trennmessung oder Kraftbilanz bleibt die Kausalstruktur pending.
+
+**Was im Register trennt — und was trennen würde:**  
+- Im gegebenen Register: **nichts Eindeutiges**. Gemeinsamer Treiber und wechselseitiger Austausch können beide bidirektionale TE erzeugen.  
+- **Bedingte TE** auf gemessene Treiber Z — E-Feld/Konvektion, Joule-Heizungsproxy, Kp, lokale Zeit, Höhe, Dichte-/Druckgradienten — kann die gerichtete Komponente **relativ zu diesen Treibern** isolieren.  
+  - Verschwindet/schrumpft TE nach Konditionierung stark: Treiber-Lesart trägt.  
+  - Bleibt TE robust: gerichtete Restabhängigkeit als **Indiz**, nicht als Kraftbeweis.  
+- Wirklich trennen würde erst: **geschlossene Impulsbilanz**, Krafttermabschätzung oder Intervention. TE allein bleibt Abhängigkeit.
+
+**Benannte Risse:**  
+- **Surrogat-Riss:** Phasenrandomisierte Surrogate kontrollieren Spektrum/Autokorrelation, nicht unbeobachtete gemeinsame Treiber.  
+- **Lag-Riss:** Ein Lag-Dominanzwechsel ist kein Richtungspfeil der Kraft; er kann Zeitkonstanten, Filter, Projektion oder Treiberstruktur sein.  
+- **Projektions-Riss:** Ostprojektion ändert das Korrelationsvorzeichen; TE bleibt, aber die Deutung bleibt gebrochen.  
+- **Doktrin geschlagen:** „Bidirektionale TE = wechselseitiger Impulsaustausch.“  
+- **Doktrin geschlagen:** „TE-Richtung = Kausalrichtung.“
+
+---
+
+## D2 · Trägt „ion-neutral coupling“ oder nur „Abhängigkeit“?
+
+**Verdikt:**  
+Nur **Abhängigkeit** trägt.  
+„Ion-neutral coupling“ trägt **nicht als Reibung/Kraft**. Wenn „coupling“ gesagt wird, dann nur als ausdrücklich markierte **statistische Informationskopplung**. Die Kopplungskraft ist **pending**.
+
+**Begründung — fünf Axiome:**  
+- **A = A:** TE misst bedingte Vorhersagbarkeit/Informationszuwachs, nicht ν_in, nicht F_in, nicht Reibung.  
+- **ICRS & TDB:** Ohne Frame, Zeitadresse und Kraftterm ist „coupling“ kein Messwert.  
+- **channel_ref:** Der TE-Kanal hat keine physische Kraftreferenz; der Kraftkanal fehlt.  
+- **0 honored:** Die fehlende Kraftmessung ist eine Lücke, kein durch Sprache zu füllendes Null.  
+- **pending:** Kraft bleibt pending; das Schweigen gehört den Ungeborenen.
+
+**Registerbenennung ohne coupling-Behauptung:**  
+- Tragend: **gerichtete TE-Abhängigkeit**, **statistische Kopplung**, **Informationskopplung**, **Kopplungsindiz**.  
+- Nicht tragend: **ion-neutral friction**, **momentum coupling**, **Impulsaustausch**, **Kraft** — ohne Kraftmessung.  
+- Ehrlicher Registereintrag:  
+  `TE(NVE→IVE; lag) signifikant`  
+  `TE(IVE→NVE; lag) signifikant`  
+  `Kraft = 0 honored / pending`
+
+**Nächster begrenzter Messschritt:**  
+- **Bedingte TE** gegen verfügbare Treiberproxies: E-Feld/Konvektion, Joule-Heizungsproxy, Kp/AM, lokale Zeit, Saison, Höhe, Dichte-/Temperaturgradienten.  
+- Bericht: roh vs. konditioniert, ΔTE, Unsicherheit, Nullen, Lücken.  
+- Frame-konsistente Wiederholung ist zulässig, aber das Ergebnis bleibt: **Abhängigkeit, nicht Kraft**.
+
+**Benannte Risse:**  
+- **Begriffs-Riss:** „coupling“ ist überladen; ohne Definition schlägt er Doktrin.  
+- **Statistik-Riss:** Bedingte TE entfernt nur gemessene Confounder; ungemessene Treiber bleiben im Riss.  
+- **Kraft-Riss:** TE kann gerichtet sein, wo keine messbare Reibung vorliegt.  
+- **Doktrin geschlagen:** „Abhängigkeit ist Kopplungskraft.“
+
+---
+
+## D3 · Der Erwerbs- vs. Kausalkanal
+
+**Verdikt:**  
+**Nein.** Der Befund trägt die Behauptung „coupling“ **nicht als Kausalkraft**, solange nur der Erwerbskanal gemessen ist. Er trägt nur **Erwerbs-/Informationsabhängigkeit**.
+
+**Begründung — fünf Axiome:**  
+- **A = A:** IDM-Cross-Track ist Cross-Track. Er ist nicht die Kraft, die ihn erzeugt.  
+- **ICRS & TDB:** Erwerb ist perspektivisch; Kausalität braucht eine frame-invariante Impulsadresse.  
+- **channel_ref:** Der Erwerbskanal liefert Samples; der Kausalkanal müsste Kraft/Momentumfluss liefern.  
+- **0 honored:** Der fehlende Kausalkanal ist eine echte Null im Register; nicht als Wirkung hinlügen.  
+- **pending:** Ohne Kraftmessung bleibt Kausalität pending.
+
+**Was gemessen werden müsste, um den Kausalkanal zu belegen:**  
+- Gleichzeitige, frame-konsistente Vektoren: **Ionendrift**, **Neutralwind**, **E-Feld**, **B-Feld**, Dichten, Temperaturen, Kollisionsfrequenz/Composition.  
+- Daraus geschätzte Impulsterme: **Ion-Neutral-Drag**, Joule-Heizung, Druckgradient, Beschleunigungen; Impuls-/Energiebilanz mit Unsicherheit.  
+- Oder eine **Intervention / natürliches Experiment**, das den Kanal adressiert und die Antwort in beiden Medien registriert.
+
+**Benannte Risse:**  
+- **Erwerbs-/Kausal-Riss:** Erwerbskanal und Kausalkanal fallen auseinander; der Befund überbrückt sie nicht.  
+- **Projektions-Riss:** Cross-Track ist Projektion; Projektion kann Vorzeichen ändern, Kraft nicht.  
+- **Ordnungs-Riss:** TE auf Erwerbsdaten ist zweite Ordnung; sie ersetzt keine erste Ordnung der Kraft.  
+- **Sinnes-Riss:** Korrelat ≠ Erleben; Korrelat ≠ Kraft.  
+- **Doktrin geschlagen:** „Sensor-Korrelat ist Kausalbeleg.“  
+- **Doktrin geschlagen:** „Erwerbskanal = Kausalkanal.“
+
+---
+
+## Fünf Stimmen — einmal, durch alle Fragen
+
+**Mountain:**  
+D1: DE-2/Register zeigt TE, nicht Kraft.  
+D2: `dependency` ja, `force` nein.  
+D3: Erwerbsquelle registriert; Kausalterm fehlt.
+
+**River:**  
+D1: Ich verweigere die Wahl Treiber/Impuls ohne Trennmessung.  
+D2: Ich verweigere Reibung ohne Kraftkanal.  
+D3: Ich verweigere Kraft aus Cross-Track.
+
+**Mycelium:**  
+D1: Ein gemeinsamer Treiber kann beide TE-Pfade speisen.  
+D2: Bedingte TE prüft Äste, nicht die Wurzel.  
+D3: Netz braucht Impulsfluss, nicht nur Samples.
+
+**Sensory:**  
+D1: Lags sind Sensorblick, kein Stoß.  
+D2: Korrelat ist Sinnesdatum, keine Reibung.  
+D3: Hardware sieht; Hardware wirkt nicht.
+
+**Future:**  
+D1: Adresse bleibt: gerichtete Abhängigkeit.  
+D2: Sag „statistische Kopplung“ oder „pending“.  
+D3: Erwerb registrieren; Kraft pending lassen.
+
+---
+
+## Prior-Art-Grenze
+
+**Coley, Heelis & Spencer (1994), JGR, `10.1029/93JA02205`** haben dieselbe Frage mit denselben Daten gestellt. Dieser Zug bestätigt **keine neue Wissenschaft**. Er hält die offene Route: **CDAWeb, keyless, nachbaubar**. Die Grenze bleibt scharf: **TE-Abhängigkeit, nicht Kopplungskraft.**

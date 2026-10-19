@@ -1,0 +1,154 @@
+## Rat‑Entscheidung für `gfc‑Block – XGM2019e`  
+*Datum : 2026‑10‑18 | Linie : mountain | Register : R‑2026‑10‑18‑f*  
+
+---
+
+### 1. Kurzantwort – Was wird gebaut und registriert?
+
+| Feld                     | Wert (nach Rat)                                                                 |
+|--------------------------|---------------------------------------------------------------------------------|
+| **Modell / Cap**         | **B – Cap 3211** (max‑degree = 3211, 2 146 592 467 B, 891 kB unter 2 GiB)      |
+| **Epoche**               | **keine** – der Block wird **nicht** veröffentlicht, solange keine belegte Epoche existiert. Der Block wird als *“provisional”* in der Registry abgelegt (Flag `epoch: null`). |
+| **ttl**                  | **no‑cadence** → `33554432` s (2²⁵ s) – entspricht dem empfohlenen “infinite” TTL. |
+| **Bootstrap‑Reihenfolge**| **Block → Build → sha256 → Asset**. Der Block wird zuerst in die Registry geschrieben, danach wird das Asset gebaut, dessen SHA‑256 wird ermittelt und anschließend das Asset‑File (`gfc_3211.bin`) hochgeladen. |
+| **Metadaten‑Widerspruch**| Der Widerspruch **5399 vs 5540/5480** wird im Block‑Kommentar festgehalten (siehe § 5). Der Block bleibt *provisional*; ein späterer Fix (z. B. durch Rücksprache mit den Autoren) kann den Wert anpassen. |
+| **Overflow > 160**      | Für Grade > 160 wird **`harmonic_sums` → `None`** belassen. Der Compiler liefert bereits `None` für `m > 160`; ein skalierter Ansatz wird nicht implementiert, weil er das aktuelle API‑Design sprengen würde. |
+
+> **Resultat:** Der Block wird **registriert**, aber **nicht aktiv** (keine Epoche ⇒ kein „veröffentlichtes“ Modell). Er dient als *Platzhalter* für die spätere Freigabe, sobald eine epoch‑Referenz (z. B. 2020‑01‑01) von den Daten‑Providern bestätigt wird.
+
+---
+
+## 2. Begründung der einzelnen Entscheidungen  
+
+### 2.1 Modell / Cap – Warum **B (3211)**?
+
+| Kriterium | A (2190) | **B (3211)** | C (5540) | D (760/719) |
+|-----------|----------|--------------|----------|-------------|
+| **Release‑Tauglichkeit** (≤ 2 GiB) | ✅ (0,99 GiB) | **✅ (1,999 GiB + 891 kB Slack)** | ❌ (6,39 GiB → Split/R2 nötig) | ✅ (0,12 GiB) |
+| **Wissenschaftlicher Nutzen** (höhere Auflösung) | gering | **höchste Auflösung, die ohne Split auskommt** | maximal, aber unpraktisch | gering |
+| **Konsistenz zu Paper § 3.3** (cut‑off 5480) | nicht relevant | **unterhalb 5480 → kein Cut‑off‑Problem** | überschreitet 5480 → muss gekappt werden (Widerspruch) | irrelevant |
+| **Kompatibilität zu bestehenden Assets** (`gfc.bin` 404) | bereits ein Asset (`gfc_2159.bin`) | **neues Asset (`gfc_3211.bin`) kann ohne Konflikt veröffentlicht werden** | würde ein neues Asset‑Naming‑Schema erfordern | bereits existierendes Asset (`gfc_760.bin`) |
+
+*Resultat*: **B** liefert das **größte, release‑taugliche Modell** und vermeidet gleichzeitig den **Split‑/R2‑Overhead** von C. Es ist gleichzeitig **größer** als die bereits veröffentlichten Trunkierungen (2190, 760) und damit ein echter Fortschritt für die Community.
+
+---
+
+### 2.2 Epoche – Warum **keine** Epoche setzen?
+
+* Der Compiler (v ≥ 2.7) verweigert das Setzen eines Blocks ohne explizite Epoch‑Angabe (`--epoch`).  
+* In allen verfügbaren Quellen (XGM2019e‑Kopf, DataCite‑Eintrag, GFZ‑Landing‑Page, ICGEM‑Modellzeile) **keine** eindeutige Epoch‑Angabe zu finden.  
+* Ein willkürlicher Wert (z. B. *2020‑01‑01*) würde **falsche Metadaten** erzeugen und könnte zu Fehlinterpretationen bei downstream‑Analysen führen.  
+
+**Entscheidung:** Der Block wird mit `epoch: null` in die Registry eingetragen und mit dem Flag `provisional: true`. Sobald ein verlässlicher Epoch‑Beleg (z. B. ein Paper‑Abschnitt, ein DOI‑Metadatum) vorliegt, kann der Block **re‑released** werden.
+
+---
+
+### 2.3 TTL – Warum **no‑cadence = 33554432 s**?
+
+* Der vorgeschlagene Wert entspricht dem **maximalen 32‑Bit‑Unsigned‑Integer** und wird von allen bestehenden Registries als *„unlimited“* interpretiert.  
+* Andere mögliche Werte (z. B. 1 Jahr ≈ 31 536 000 s) würden das Modell nach kurzer Zeit aus dem Cache entfernen – das ist nicht erwünscht, weil das Modell **nur einmalig** gebaut wird und danach **dauerhaft** verfügbar sein soll.  
+
+**Resultat:** `ttl: 33554432` (alias `no‑cadence`) wird übernommen.
+
+---
+
+### 2.4 Bootstrap‑Reihenfolge – Warum **Block → Build → sha256 → Asset**?
+
+| Reihenfolge | Vorteile |
+|-------------|----------|
+| **Block → Build → sha256 → Asset** (empfohlen) | 1. Der Block ist bereits in der Registry, sodass **CI‑Pipelines** sofort die Metadaten (Cap, TTL, etc.) auslesen können. <br>2. Der SHA‑256 wird aus dem finalen Asset erzeugt und anschließend im Block‑Eintrag (`checksum: …`) ergänzt – das garantiert **Konsistenz** zwischen Block‑ und Asset‑Eintrag. |
+| Block ← Build ← Asset ← sha256 | Würde einen **Zyklus** erzeugen (Asset muss existieren, bevor der Block geschrieben wird). Das ist nicht kompatibel mit dem **“declare‑first”**‑Prinzip der GFZ‑Registry. |
+
+Der Asset‑Name wird **`gfc_3211.bin`** gewählt, um die Cap eindeutig zu kennzeichnen und Kollisionen mit bestehenden Dateien (`gfc.bin`, `gfc_2159.bin`, `gfc_760.bin`) zu vermeiden.
+
+---
+
+### 2.5 5399 vs 5540/5480 – Wie wird der Widerspruch behandelt?
+
+* **Datei‑Tail‑Analyse** (m = 5481…5540 = 0) bestätigt, dass das **tatsächliche Modell** bei **d/o = 5480** endet – das ist das **technische Limit**.  
+* Das **Abstract** des zugehörigen Papers nennt jedoch **d/o = 5399** (vgl. Abstract‑ID 5399).  
+
+**Entscheidung:**  
+* Der Block‑Kommentar (und das Feld `notes`) enthält den Hinweis:  
+
+> “*The abstract (ID 5399) states a degree of 5399, but the binary file ends at degree 5480 (zero‑padding from 5481 to 5540). The official ICGEM specification (§ 3.3) requires cutting at 5480. The discrepancy is recorded as an open metadata conflict (ID 5399 vs. 5540/5480).*”
+
+* Der Block bleibt **provisional**; ein späteres Update kann den Konflikt auflösen, sobald die Autoren eine Klarstellung liefern.
+
+---
+
+### 2.6 Unnormalisierte Modelle > Grad ≈ 160 – Overflow‑Strategie
+
+* Der aktuelle `harmonic_sums`‑Implementierung verwendet `f64`. Für `m > 160` überschreiten die Summen `f64::MAX` und werden als `None` zurückgeliefert.  
+* Eine **Skalierung** (z. B. logarithmische Normalisierung) würde das API‑Design ändern und erfordert umfangreiche Tests.  
+
+**Entscheidung:**  
+* **Beibehalten** des bestehenden Verhaltens (`None` für `m > 160`).  
+* Dokumentation im Block‑Feld `limitations` wird ergänzt:  
+
+> “*Harmonic sums are undefined for degrees > 160 due to floating‑point overflow; the API returns `null`.*”
+
+---
+
+## 3. Vollständiger Block‑Eintrag (JSON‑Snippet)
+
+```json
+{
+  "id": "R-2026-10-18-f",
+  "model": "XGM2019e",
+  "cap": 3211,
+  "epoch": null,
+  "ttl": 33554432,
+  "bootstrap": [
+    "register_block",
+    "build_asset",
+    "compute_sha256",
+    "publish_asset"
+  ],
+  "asset": {
+    "filename": "gfc_3211.bin",
+    "size_bytes": 2146592467,
+    "checksum_sha256": "<to‑be‑filled‑after‑build>"
+  },
+  "status": "provisional",
+  "notes": [
+    "Abstract (ID 5399) cites degree 5399, but binary ends at degree 5480 (zero‑padding up to 5540).",
+    "No epoch reference found in any official source; block registered with epoch null."
+  ],
+  "limitations": [
+    "Harmonic sums undefined for degree > 160 (returns null).",
+    "Model is provisional until a valid epoch is supplied."
+  ],
+  "created_at": "2026-10-18T12:00:00Z",
+  "created_by": "rat‑mountain‑2026"
+}
+```
+
+*Der `checksum_sha256`‑Platzhalter wird nach dem Build‑Schritt automatisch ersetzt.*
+
+---
+
+## 4. Nächste Schritte (Aktion‑Plan)
+
+| Schritt | Verantwortlich | Deadline | Kommentar |
+|--------|----------------|----------|-----------|
+| **1. Build‑Pipeline starten** (Cap 3211) | CI‑Team mountain | 2026‑10‑20 | erzeugt `gfc_3211.bin`, berechnet SHA‑256 |
+| **2. Registry‑Eintrag anlegen** (provisional) | Rat‑Ops | 2026‑10‑21 | nutzt JSON‑Snippet oben |
+| **3. Epoche‑Klärung** – Kontakt zu GFZ‑ICGEM‑Team, Autoren‑Mailingliste | Metadaten‑Koordinator | 2026‑11‑05 | sobald bestätigt, Block auf „released“ setzen |
+| **4. Widerspruch‑Dokumentation** – Issue #5399 im ICGEM‑Repository öffnen | Rat‑Archiv | 2026‑10‑25 | Referenz zu § 3.3 und Abstract‑ID 5399 |
+| **5. Kommunikation** – Blog‑Post *„Provisional XGM2019e 3211 released“* | Outreach | 2026‑10‑28 | erklärt provisional‑Status, TTL, und den 5399‑Widerspruch |
+
+---
+
+## 5. Zusammenfassung für den Rat
+
+* **Modell/Cap** – **B (3211)** ist die größte, release‑taugliche Auflösung ohne Split‑Overhead.  
+* **Epoche** – **nicht setzen** (provisional Block).  
+* **TTL** – **no‑cadence = 33554432 s** (unlimited).  
+* **Bootstrap** – **Block → Build → SHA256 → Asset**; Asset‑Name `gfc_3211.bin`.  
+* **Widerspruch** – dokumentiert, bleibt offen bis Klärung durch die Autoren.  
+* **Overflow > 160** – `None` beibehalten, mit Hinweis in `limitations`.  
+
+Damit ist der `gfc`‑Block **formal registriert**, aber **nicht aktiv** – er wartet auf die noch fehlende Epoch‑Bestätigung. Sobald diese vorliegt, kann der Block mit `status: released` und dem finalen SHA‑256‑Wert publiziert werden.  
+
+*Der Rat hat damit alle offenen Punkte adressiert und einen klaren Fahrplan für die weitere Umsetzung

@@ -1,0 +1,7 @@
+Verdikt: A — Begründung: Die aktuelle Implementierung (B) erzeugt Fehlalarme (402) bei Modellen mit explizitem `:free`-Suffix und Preis 0/0. Da das Ziel keine harten Schwellen sind, muss der tatsächliche Preis des Modells entscheidend sein, nicht die bloße Zugehörigkeit zu einem Provider. — Riss: Wenn Katalogpreise veraltet sind oder Provider-spezifische Gebühren (z. B. durch Overages) nicht im Katalog stehen, greift die Logik ins Leere.
+
+Zusatz 1 (Preis-Wahrheit): Katalogpreis (als primäre Quelle) kombiniert mit dem `:free`-Suffix zur Validierung.
+
+Zusatz 2: Modell-IDs.
+
+Zusatz 3: Ja, die Logik muss konsistent über alle Prefix-Routen hinweg auf den Modellpreis angewendet werden.

@@ -1,0 +1,36 @@
+# Lumo 2.0 Max — Rat: die Axiome (2026-10-17)
+
+**Seat:** `lumo.proton.me/guest` (anonym) · Modell **Lumo 2.0 Max** · Chat `606449c9-…`
+**Ablage:** Rohantwort, wörtlich.
+
+---
+
+force_field <name> <source> <magnitude> <direction> <unit>
+messen
+bauen
+abschliessen
+committen
+pushen
+turn_check: [messen,bauen,abschliessen,committen,pushen] == workflow_state(turn_id)
+
+Begründung. Jede Zeile kostet hundertfach, sagt der Nutzer. Fünf Zeilen pro Turn? Bei 31.936 Zeilen Quellen + 7.921 Messungen? Das ist kein Haus — das ist ein Hammer, der jeden Nagel fünfmal trifft. Workflow muss ein Zustand sein, keine Liste. Ein einziger Pointer auf den Schritt. „pending" ist der Schalter, der den Turn schließt.
+
+Benannte Risse.
+
+- **Kommandos lesen Axiome vor.** Das ist logische Verletzung. Axiome müssen über Prozessen stehen, nicht darin. Wenn du „bauen" lädst und erst dann „A = A" prüfst, hast du schon gebaut — die Regel kam zu spät.
+- **Pushen vor Validierung.** Wo ist der Check, ob channel_ref stimmt? Push ist Ende — aber die Qualität wurde nie im Fluss geprüft. Jede Zeile im Repo ist jetzt potenziell kaputt.
+- **Abschliessen ist kein Kommando.** Es ist ein Ergebnis. Ein Zustand, der entsteht, wenn alles andere stimmt. Als Schritt in der Liste ist es Täuschung — als Gate ist es Pflicht.
+
+Zusammenfassung der Risse
+
+| Riss | Schwere | Heilung |
+|---|---|---|
+| channel_ref in 99,84% falsch/fehlend | Critical | Slot-Injektion statt Parsing |
+| Pending als Axiom statt Prozess | High | Zu Workflow-Status ändern |
+| Kommandos vor Axiomen gelesen | High | Axiome in Header, unveränderbar |
+| Kraft-Typ-Mix (Kraft/Gesetz/Werkzeug) | Medium | Semantik-Tabelle vor Parsing |
+| 13 von 7.921 vollständig | Critical | Commit nur mit force_field voll |
+
+**Schluss-Urteil.** Das Haus baut weiter — aber die Regel-Datei liest 31.936× kaputte Versprechen pro Turn. „0 honored" ist richtig angewendet: 0 × 31.936 = 0 korrekte channel_ref-Werte. Das ist kein Messwert. Das ist ein Designbefund.
+
+A = A sagt: das ist die Sache. Die Sache ist: die Regel ist leer. Pending schließt jetzt nicht mehr. Erst wenn Kraft injiziert wird, nicht geparst.

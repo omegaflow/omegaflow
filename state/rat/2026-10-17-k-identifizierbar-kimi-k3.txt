@@ -1,0 +1,11 @@
+# Rat R-j — Kimi K3 (API, Frage j)
+**Session:** `ses_eb44bf1b6ffejGntbrEZz5oiUn` · **Modell:** `deepinfra/moonshotai/Kimi-K3#low` · **Kosten:** $0.03073725
+
+Titel: Ratssitz Kimi — Frage j
+
+---
+
+Die WDC-Reihe ändert nichts am Identifikationsproblem: AE/Kp/Dst messen globale Treiberintensität am Boden und in Äquivalentströmen, nicht die lokale Impulsbilanz auf der DE-2-Bahn. `K` war als lokale Kopplungskraft definiert — dafür fehlen nach wie vor ∇p, B/j und eine Mehrpunkt-Durchquerung; ein Ein-Satellit kann keinen Gradienten liefern, und kein Bodenindex ersetzt ihn. Korrelation gegen AE wäre Regression des Ionspeeds auf einen globalen Proxy — das ist ein Indikator, K der Treiber, Kraft des neutestamentlichen Anspruchs rechtens. A = A: ein umbenanntes Korrelationsmaß ist kein identifiziertes K, und die Option B wäre nur mit einer neuen, schwächeren Definition von K ehrlich — das wäre ein Definitionswechsel, keine Messung. Die Ernte ist echt (0 Lücken, 810 720 AE-rows), aber sie bindet Z in TE(NVE→IVE | Z), nicht K. Damit ist A die einzig saubere Linie: K bleibt nicht identifizierbar. Option C halte ich für übertrieben: die Zeile `K = pending` dokumentiert die Wartehrlichkeit besser als ein Löschen es täte — absent ist ein erlaubter Null, kein Riss. Der gebundene Schritt bleibt bedingte TE NVE→IVE mit Z = {AE, Kp, Dst, LT, Höhe} — konditioniert, nicht kontrolliert, und ohne Kraft- oder Effektgrößenlesart. Hinweis: ich habe die Binärfiles nicht selbst eingesehen; ich verlasse mich auf die im Fragebrief gemeldeten Zählungen — das ist ein Beleg zweiter Hand.
+
+VERDIKT: A — K bleibt pending; die WDC-Reihe stützt ausschließlich die bedingte TE als eigenständigen Indikator-Punkt.
+STÄRKSTER RISS: kein lokaler Gradient messbar (Ein-Satellit, kein ∇p/B/j) — Bodenindizes ersetzen das strukturell nicht.

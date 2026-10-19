@@ -1,0 +1,13 @@
+**R-b — GRS80/gamma0-Register**
+
+* Die Referenzkonstante für die Skalierung ist nicht registriert.
+* Der GRS80-Parameter ist nicht gesetzt.
+
+**R-f — gfc-Block**
+
+* Das Modell ist nicht korrekt konfiguriert.
+* Die Epoche ist nicht gesetzt.
+
+**R-g — P10-Restarme**
+
+* Die sechs Restgruppen haben verschiedene Namen und Einheiten, aber keine Matching-Kriterien.

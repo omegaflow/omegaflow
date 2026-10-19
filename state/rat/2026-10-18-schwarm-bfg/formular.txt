@@ -1,0 +1,19 @@
+Du bist ein Ratssitz im Haus omegaflow (A = A; 0 honored: null-echt | absent | riss; keine harten Schwellen; PII bleibt im Haus).
+
+Drei offene Fragen. Antworte je Frage in genau diesem Format, deutsch, knapp, keine Fakten erfinden:
+`R-<x> Verdikt: <A|B|C|D> — Begründung: <zwei Sätze> — Riss: <stärkster Gegenbeleg oder ungemessene Größe>`
+
+## R-b — GRS80/gamma0-Register
+Defekt: phi/sources.phi hat keinen Arm für skalare Referenzkonstanten; a, 1/f, GM, omega, gamma_e, gamma_p sind gemessen, aber nicht registrierbar. N = T/gamma0 in src/archivar/gfc.rs:404 bleibt None. calc.js ist local-only (kein Lizenzhinweis); GeographicLib ist MIT-Code, kein Datensatz.
+Optionen: A neue Direktiven ellipsoid + normal_gravity (Parser-Arm in src/archivar/parse.rs; River baut, Mountain setzt). B eigener Konstanten-/Referenzblock mit url/terms (url/terms für calc.js nicht belegt). C local-only, N bleibt pending. D nur der künftige gfc-Block, a/f/omega/gamma0 bleiben unregistriert.
+Zusatz: Bleibt N bis zur Umsetzung pending — als pending-Zeile oder als Abwesenheit?
+
+## R-f — gfc-Block
+Defekt: Modell/Cap, Epoche, ttl und Bootstrap-Reihenfolge sind nicht setzbar; 5399 (Abstract) vs. 5540/5480 (Datei). Größen: D=5540 5,95 GiB (nicht release-tauglich), D=3211 2,146 GB (891 kB unter 2 GiB), D=2190 999 MB, D=760 121 MB, Cap 719 108 MB. Kein Streaming (Peak 8-21 GB). Epoche nirgends belegt; Compiler verweigert ohne --epoch. Datei-Tail: nicht-null bis m=5480; Paper sagt 5480; Abstract 5399.
+Optionen: A D=2190 (XGM2019e_2159, offizielles Teilmodell). B Cap 3211. C volles D=5540 (Split/R2). D D=760 oder Cap 719.
+Zusatz: Epoche — Volltextbeleg suchen, statischen Compiler-Pfad bauen, oder keinen Block setzen? ttl NO_CADENCE=33554432 s?
+
+## R-g — P10-Restarme
+Defekt: sechs Restgruppen haben Name und Einheit, aber keinen passenden Quantity-/Kanal-Arm: eionet_cdr_* (276, kg, tau=1a), Infraschall-Signalgrößen, Feuer-Strahlungsleistung/Bandpowers, TEC/Pseudoranges/Delay, vis_nmi/morph_sigma, Stern-Metadaten (Teff/logg/mag), FDSN-BHZ-Kanalidentität, kg/(m^2 s)-Token (Parser trennt am Leerzeichen).
+Optionen: A alle Arme bauen (größter Architektur-Akt). B kleinste sichere Teilmenge (kg/(m^2 s)-Parserfix + Stern-Metadaten-Achse). C nichts bauen, Risse führen. D je Rest ein eigenes Formular.
+Zusatz: Reicht der Parser-Fix + Stern-Achse, oder ist die FDSN-Key-Aufspaltung ebenfalls minimal nötig?

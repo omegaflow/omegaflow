@@ -1,0 +1,12 @@
+b	cf/@cf/meta/llama-3.3-70b-instruct-fp8-fast	OK	verdikte=1	len=2877	finish=stop	err=
+b	cf/@cf/openai/gpt-oss-120b	OK	verdikte=0	len=8583	finish=stop	err=
+b	ollama/gemma4:31b	OK	verdikte=1	len=2798	finish=stop	err=
+b	pollinations/openai-fast	OK	verdikte=0	len=3367	finish=length	err=
+f	cf/@cf/meta/llama-3.3-70b-instruct-fp8-fast	OK	verdikte=1	len=3036	finish=stop	err=
+f	cf/@cf/openai/gpt-oss-120b	OK	verdikte=0	len=9181	finish=length	err=
+f	ollama/gemma4:31b	OK	verdikte=1	len=3169	finish=stop	err=
+f	pollinations/openai-fast	OK	verdikte=0	len=4129	finish=length	err=
+g	cf/@cf/meta/llama-3.3-70b-instruct-fp8-fast	OK	verdikte=0	len=2976	finish=stop	err=
+g	cf/@cf/openai/gpt-oss-120b	OK	verdikte=2	len=8218	finish=stop	err=
+g	ollama/gemma4:31b	OK	verdikte=1	len=3100	finish=stop	err=
+g	pollinations/openai-fast	LEER	verdikte=0	len=0	finish=?	err=Free limit reached: 1 reply every 30 seconds per IP. Retry after 17s, or get unlimited replies with a pollen key at https://enter.pollinations.ai/?ref=classic

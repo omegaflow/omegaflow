@@ -1,0 +1,17 @@
+Du bist ein Ratssitz im Haus omegaflow (A=A; keine harten Schwellen; erfinde nichts). Antworte auf Deutsch, kurz.
+
+Frage: Soll der Gateway ein Modell als bezahlt behandeln, wenn DIESES Modell Geld kostet — oder wenn sein ANBIETER auch bezahlte Modelle führt?
+
+Gemessen (2026-10-18): `is_paid(prefix)` ist eine harte Prefix-Liste inkl. `openrouter` (`llm_gateway.rs:1644-1660`); der Guard prüft bei `:1725` den Prefix, obwohl der Modellname seit `:1700` bekannt ist. Folge: `openrouter/…:free` (Katalogpreis 0/0) bekommt 402 „billed route". Betroffen: `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free`, `nvidia/nemotron-3-ultra-550b-a55b:free`, `poolside/laguna-s-2.1:free`, `xingchen-agi/xing4.0-29b-a4b:free`. Quelle nur im Backup `omegaflow-crambler-backup/source/llm_gateway.rs`.
+
+Optionen:
+A — kostenbasiert: bezahlt nur, wenn der Preis des gewählten Modells > 0; `:free`/0/0 → frei, unabhängig vom Provider.
+B — providerbasiert: status quo, Prefix entscheidet.
+C — hybrid: frei, wenn Provider frei ODER Modellpreis 0; bezahlt nur, wenn Preis > 0 und Provider nicht frei.
+D — Allowlist je Modell statt je Route: `paid-open` nennt Modell-IDs.
+
+Antworte:
+Verdikt: <A|B|C|D> — Begründung: … — Riss: …
+Zusatz 1 (Preis-Wahrheit): Katalog, `:free`-Suffix oder Anbieterantwort?
+Zusatz 2: Soll `paid-open` Routen oder Modell-IDs nennen?
+Zusatz 3: Gilt das auch für `unorouter` und die übrigen Prefixe?
