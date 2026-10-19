@@ -1,27 +1,30 @@
 # Security & responsible use
 
-The `archive_search` tool (`tools/utils/src/bin/archive_search.rs`) is a local
-research instrument. This note names its credentialed paths and the
-responsible-use limits.
+`archive_search` (`tools/utils/src/bin/archive_search.rs` + `archive_search/`) ist ein lokales
+Recherche-Werkzeug. Diese Notiz nennt die gemessenen Zugangswege und die Grenzen.
 
-## Credentialed modes
+## Zugänge mit Schlüssel (gemessen 2026-10-19)
 
-- `--ads` reads `NASA_ADS_TOKEN`
-- `--brave` reads `BRAVE_API_KEY`
-- `--github` reads `GH_SEARCH_TOKEN` (a read-only GitHub token; the write
-  token `OMEGAFLOW_TOKEN` belongs to the CI publish path only)
-- Earthdata hosts retry with `EARTHDATA_EDL_TOKEN` (or `EARTHDATA_USER` /
-  `EARTHDATA_PASS`)
+| Modus | liest | Beleg |
+|---|---|---|
+| `--ads` | `NASA_ADS_TOKEN` | `archive_search/net.rs` |
+| `--brave` | `BRAVE_API_KEY` | `archive_search/net.rs` |
+| `--github` | `GH_SEARCH_TOKEN` (read-only) | `archive_search/net.rs` |
+| HDF5-Range-Reads (Earthdata) | `EARTHDATA_EDL_TOKEN` | `src/archivar/hdf5.rs` |
 
-## Network exits
+**Kein `EARTHDATA_USER`/`EARTHDATA_PASS`** — dieses Paar wird nirgends gelesen (0 Treffer im Code).
 
-The fetch ladder tries a direct exit, then any live Proton tunnel (`proton-wg`),
-then its SOCKS proxy. `--playwright` routes the browser through the same SOCKS
-proxy when one is up. Rotation between exits is an operator action
-(`bin/proton-wg.sh`, `bin/proton-exit.sh`), not part of the tool.
+**Nicht für die Recherche:** `OMEGAFLOW_TOKEN` gehört dem CI-Pfad (`ci_manage`, `ci_gate_register`)
+und wird von `archive_search` nie gelesen.
 
-## Limits
+## Netz-Ausgänge
 
-- Credentials live in `.secrets.local` (gitignored) and are never committed.
-- Operator-facing modes honor the double-ask before they run.
-- `--mft` reads a raw device path and is for the operator's own volumes only.
+Direkter Exit → laufender Proton-Tunnel (`proton-wg`) → dessen SOCKS-Proxy. `--playwright` nutzt
+denselben SOCKS-Proxy, wenn einer läuft. Rotation zwischen Ausgängen ist Operator-Hand
+(`bin/proton-wg.sh`, `bin/proton-exit.sh`), nicht Teil des Werkzeugs.
+
+## Grenzen
+
+- Schlüssel liegen in `.secrets.local` (gitignored) und werden nie committet.
+- PII bleibt im Haus: was ein Agent liest, geht durch den Modell-Provider — Personenbezug wird
+  deshalb nicht in Agenten-Kontext gelegt, sondern vorher redigiert.
