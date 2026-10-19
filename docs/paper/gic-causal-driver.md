@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 9f9ae1b52cf48d5b8ec18227f0e55f5e7633caaa16534998459a556b354bf9a8
+  sha256: 80a7728e545db7723c9d7e16183ee0af08044602d96662661bdcbf9895c06b2d
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
