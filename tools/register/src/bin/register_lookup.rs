@@ -14,6 +14,7 @@ const REGISTER: &[(&str, &str)] = &[
 const REGISTER_DIRS: &[(&str, &str)] = &[
     ("docs/handover", "handover"),
     ("docs/surveys", "survey"),
+    ("docs/specs", "spec"),
     ("docs/plans", "plan"),
     ("docs/auftrag", "auftrag"),
     ("docs/blatt", "blatt"),
@@ -98,11 +99,19 @@ fn marker_in_status_context(lower: &str, marker: &str) -> bool {
     let status_token = marker == "blocked";
     lower.match_indices(marker).any(|(idx, _)| {
         let before = lower[..idx].trim_end();
-        let after = &lower[idx + marker.len()..];
+        let mut after = &lower[idx + marker.len()..];
+        if marker == "offen" {
+            for suffix in ["er", "es", "en", "em", "e"] {
+                if let Some(rest) = after.strip_prefix(suffix) {
+                    after = rest;
+                    break;
+                }
+            }
+        }
         let starts_clean = before.is_empty()
             || before.chars().last().map_or(false, |c| {
                 if status_token {
-                    matches!(c, ':' | '|' | '-' | '(' | '[')
+                    matches!(c, ':' | '|' | '-' | '(' | '[' | '*' | '_')
                 } else {
                     !c.is_alphanumeric()
                 }
@@ -110,7 +119,7 @@ fn marker_in_status_context(lower: &str, marker: &str) -> bool {
         let ends_clean = after.is_empty()
             || after.chars().next().map_or(false, |c| {
                 if status_token {
-                    matches!(c, ' ' | ':' | '|' | ',' | ')' | ']')
+                    matches!(c, ' ' | ':' | '|' | ',' | ')' | ']' | '*' | '_')
                 } else {
                     !c.is_alphanumeric()
                 }
@@ -4627,6 +4636,18 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         ));
         assert!(open_marker_matches("blocked account: needs a key"));
         assert!(open_marker_matches("**Status:** blocked"));
+        assert!(open_marker_matches("**Status:** *pending*"));
+    }
+
+    #[test]
+    fn offen_matches_inflected_forms_but_not_offenbar_or_offenlegen() {
+        assert!(open_marker_matches("Offener Punkt: noch zu bauen"));
+        assert!(open_marker_matches("Offene Punkte: zwei"));
+        assert!(open_marker_matches("offenes Problem"));
+        assert!(open_marker_matches("offenen Punkt"));
+        assert!(open_marker_matches("offenem Punkt"));
+        assert!(!open_marker_matches("offenbar ist das anders"));
+        assert!(!open_marker_matches("das offenlegen der Karte"));
     }
 
     #[test]
