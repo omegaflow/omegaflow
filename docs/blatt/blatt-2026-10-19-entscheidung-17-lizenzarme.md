@@ -2,7 +2,7 @@
   title: Entscheidungstabelle — die 17 lizenzgesperrten Arme
   class: blatt
   date: 2026-10-19
-  sha256: 7f737e944faa0fbf52259f85612aa5676f881888fda445666c7af5b83f681f98
+  sha256: f6837ca072c9d8ba55dd6d94a1d01d1cf50dbd4232313235d9c2683fdba02c4a
   status: live
   see-also: phi/sources.φ tools/harvest/src/bin/ docs/surveys/survey-2026-10-09-redistribution-alternativen.md
 -->
@@ -111,3 +111,18 @@ Neubau.
 `dhm_gauge`, `exposome`, `fugin`: **keine Route gefunden** (2026-10-19). Das ist
 `absent`, nicht „existiert nicht". Nächste Hand: zweiter Pass mit Aliasen und
 Datenhalter-Namen. `exposome` bleibt declined (Katalog, keine Konzentration).
+
+## Nachtrag 2026-10-20 (2) — `dhm_gauge`: die Messung ist da, der Ort nicht
+
+Ein zweiter Pass (Zenodo/DataCite, „Nepal river discharge / hydrology streamflow")
+fand **keine offene Nepal-Reihe**. Gefunden wurde die Lücke dahinter: das Register
+trug **kein Abfluss-Feld**. Der Arm `openmeteo_flood` (`bc58013db`) schließt sie:
+
+- **keyless**, `terms CC-BY-4.0` („API data are offered under Attribution 4.0
+  International", Quelle nennt GloFAS ausdrücklich)
+- **92 Tageszeilen** gemessen (27.7 N 85.3 E, Narayani-Becken), `m3/s`
+- `format openmeteo_flood_axis_value_text`, `advective m3/s` (Kanon)
+
+Das ist **nicht** die DHM-Stationsreihe — es ist dieselbe Größe an einem Punkt,
+keyless und redistribuierbar. `dhm_gauge` bleibt damit **C** (kein Re-Host der
+Stationsdaten), aber die Messlücke ist offen zugänglich geschlossen.
