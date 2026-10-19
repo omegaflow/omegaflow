@@ -1,7 +1,0 @@
-Ich werde Ihre Fragen beantworten:
-
-`V1 Verdikt: A — Begründung: Ein generierter Live-Index ermöglicht eine einfache und schnelle Überprüfung des aktuellen Zustands und verhindert, dass Sitzungen mit veraltetem Wissen arbeiten. Prosa-Docs können als Zeiger dienen, aber ein Live-Index ist notwendig, um den aktuellen Stand zu gewährleisten. — Riss: Fehlende Akzeptanz von automatisch generierten Inhalten`
-
-`V2 Verdikt: A — Begründung: Der kanonische Schwarm sollte immer die 44 (free44-Liste) sein, da dies die dokumentierte und getestete Größe ist. 4er-Läufe sind kein Schwarm und sollten als Fehler betrachtet werden. — Riss: Mögliche Adaptivität an unterschiedliche Bedingungen`
-
-`V3 Verdikt: A — Begründung: Ein Start-of-Session-Check (git log -5 + neueste state/rat/<datum>-*) als Pflicht kann verhindern, dass Sitzungen mit veraltetem Wissen arbeiten. Dieser Check kann einfach implementiert werden und bietet eine hohe Sicherheit. — Riss: Mögliche Unverzüglichkeit bei sehr häufigen Änderungen`

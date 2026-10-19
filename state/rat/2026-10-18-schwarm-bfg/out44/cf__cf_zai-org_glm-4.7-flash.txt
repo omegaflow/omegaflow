@@ -1,5 +1,0 @@
-R-b Verdikt: A — Begründung: Die Referenzkonstanten müssen für eine korrekte Berechnung von N existieren; ein Parser-Arm ist der einzige Weg, um `ellipsoid` und `normal_gravity` in den Code zu integrieren. — Riss: `N` bleibt `None` ohne Definition von `gamma0`.
-
-R-f Verdikt: A — Begründung: Das offizielle Teilmodell D=2190 vermeidet die 5 GiB-Größe und bietet eine stabile Basis für die Berechnungen. — Riss: Die Epoche ist weiterhin nicht belegt, was die Konsistenz der Referenzdaten gefährdet.
-
-R-g Verdikt: B — Begründung: Ein minimaler Subset-Ansatz behebt den kritischen Parser-Fehler und deckt die wichtigsten Metadaten ab, ohne das gesamte System zu überlasten. — Riss: FDSN-BHZ-Kanalidentität bleibt ungemessen und könnte bei der Datenintegration zu Fehlern führen.

@@ -1,5 +1,0 @@
-V1 Verdikt: A — Begründung: Ein Live-Index als zentraler Zeiger schützt vor Drift und vereinheitlicht die Sitzungen. — Riss: Kein Mechanismus für Index-Aktualisierung (wer schreibt ihn?).
-
-V2 Verdikt: A — Begründung: Die 44 sind der gemessene Schwarm; 4er-Läufe sind Fehler. — Riss: Kein Enforcer für die Größe (z. B. GitHub Actions).
-
-V3 Verdikt: A — Begründung: Ein Start-Check erzwingt Aktualität und reduziert Zitate auf aktuelle Commits. — Riss: Sitzungen könnten den Check ignorieren.

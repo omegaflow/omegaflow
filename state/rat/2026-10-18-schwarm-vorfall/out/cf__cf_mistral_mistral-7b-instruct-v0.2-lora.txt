@@ -1,5 +1,0 @@
- V1 Verdikt: A — Begründung: Ein generierter Live-Index ist die empfehlenswerteste Lösung, da er jeder Sitzung zur Verfügung steht und Prosa-Docs als Zeiger fungieren. — Riss: Keine effiziente Methode, um Prosa-Docs zu aktualisieren, wenn Commit-Hashes verändern.
-
-V2 Verdikt: A — Begründung: Der kanonische Schwarm sollte immer die 44 Sitze umfassen, um Verwechslungen zu vermeiden und die Definition von "Schwarm" einheitlich zu halten. — Riss: Fehlende Flexibilität, wenn die Anzahl der verfügbaren Träger schwankt.
-
-V3 Verdikt: A — Begründung: Ein Start-of-Session-Check ist die empfehlenswerteste Lösung, um veraltete Zitate zu verhindern, indem man die neuesten Commits und Runs zur Verfügung stellt. — Riss: Erhöhte Komplexität und Zeitaufwand für die Sitzungen.

@@ -1,7 +1,0 @@
-
-
-R-b Verdikt: A — Begründung: Neue Direktiven ermöglichen die Registrierung fehlender Konstanten. Parser-Arm löst das Problem der skalaren Referenzkonstanten. — Riss: Kein Parser-Arm für skalare Referenzkonstanten (phi/sources.phi).  
-
-R-f Verdikt: A — Begründung: D=2190 ist release-tauglich und unter 2 GiB. Cap 3211 bleibt unklar. — Riss: D=5540 (5,95 GiB) ist nicht release-tauglich.  
-
-R-g Verdikt: B — Begründung: Parser-Fix + Stern-Achse minimieren Risiken. FDSN-Key-Aufspaltung ist nicht zwingend. — Riss: FDSN-BHZ-Kanalidentität fehlt in der Teilmenge.

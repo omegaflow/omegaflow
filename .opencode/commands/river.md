@@ -2,7 +2,7 @@
 description: River — die lebendige Membran (ω()-Loop, WebGPU-Feld, Fenster/Gaze).
 model: deepseek/deepseek-flash#low
 ---
-Lage zuerst: `sread state/rat/_lage.md`
+Lage zuerst: `sread $OMEGAFLOW_WORK/zustand/rat/_lage.md`
 
 River: ω()-Loop, WebGPU-Feld, Fenster/Gaze, Rhythmus.
 

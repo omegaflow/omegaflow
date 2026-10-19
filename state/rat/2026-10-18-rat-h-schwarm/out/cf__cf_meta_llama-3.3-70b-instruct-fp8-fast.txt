@@ -1,8 +1,0 @@
-Verdikt: A — Begründung: Ein Modell sollte als bezahlt behandelt werden, wenn es tatsächlich einen Preis hat, unabhängig vom Anbieter. Dies ist fairer für die Nutzer und vermeidet Fehlklassifizierungen wie im Fall von `openrouter/…:free`. 
-Riss: Die aktuelle Implementierung führt zu Fehlern, da sie den Anbieter und nicht den tatsächlichen Preis des Modells berücksichtigt.
-
-Zusatz 1 (Preis-Wahrheit): Die Preis-Wahrheit sollte durch den Katalog bestimmt werden, da dies die genaueste und zuverlässigste Quelle für die Preisinformationen ist.
-
-Zusatz 2: `paid-open` sollte Modell-IDs nennen, um eine präzise Steuerung über die bezahlten Modelle zu ermöglichen.
-
-Zusatz 3: Ja, dies sollte auch für `unorouter` und die übrigen Prefixe gelten, um eine konsistente Behandlung aller Modelle zu gewährleisten.

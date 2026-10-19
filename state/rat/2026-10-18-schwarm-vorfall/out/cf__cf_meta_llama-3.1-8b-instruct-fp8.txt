@@ -1,8 +1,0 @@
-V1 — Wo soll der Live-Zustand liegen?
-A: Ein generierter Live-Index (Commit-Hash, Zeitstempel, offene Fragen, letzte Runs), den jede Sitzung zuerst liest; Prosa-Docs werden Zeiger. — Begründung: Ein Index sorgt für Konsistenz und Aktualität. — Riss: Kein starker Gegenbeleg, aber Prosa-Docs sind nicht ideal für Live-Zustand.
-
-V2 — Was ist der kanonische Schwarm?
-A: Immer die 44 (free44-Liste); 4er-Läufe sind kein Schwarm. — Begründung: Die free44-Liste ist die offizielle Dokumentation. — Riss: Kein starker Gegenbeleg, aber 4er-Läufe sind offensichtlich ein Fehler.
-
-V3 — Wie verhindert man veraltete Zitate?
-A: Start-of-Session-Check (git log -5 + neueste state/rat/<datum>-*) als Pflicht. — Begründung: Ein regelmäßiger Check verhindert veraltete Zitate. — Riss: Kein starker Gegenbeleg, aber ein Mechanismus ist notwendig.

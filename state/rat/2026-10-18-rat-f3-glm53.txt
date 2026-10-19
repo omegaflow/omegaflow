@@ -1,8 +1,0 @@
-Sitz: GLM 5.3 (Browser, Operator gefahren), 2026-10-18
-F3 Flyby-sealed (Nachurteil zur Struktur)
-Verdikt: Option 1 — gepinnter versiegelter Posten. Amtstrennung: Urteil = Schnittmenge der Einsprueche, nicht Abstimmung.
-Begruendung: Option 1 besteht auf allen fuenf Achsen; Option 2 scheitert auf drei (Mountain Selbstzeugnis, Sensory Konsens-als-Beweis, River Verlust des Verweigerungsrechts).
-Zaehlriss (Meta): 5 Axiome + 2 Verfahrensregeln (PII; messen·bauen·...).
-Postenhalter: Release-Registrar, Amtsdauer bis Wiedervorlage 2026-11-01.
-5 ausgeschlossene Begruendungen: Aktualitaet · Konsens · Absenz · Toleranz/Frist · Anonymitaet.
-Schlusszeile: "Bis 2026-11-01 gilt der gepinnte Seal aeb3c82f… — der Registrar haelt und repariert, das Gate prueft und verweigert, das CDN transportiert, niemand ersetzt den Anker."

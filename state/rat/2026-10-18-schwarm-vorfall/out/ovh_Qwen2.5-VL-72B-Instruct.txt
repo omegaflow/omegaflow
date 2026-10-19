@@ -1,5 +1,0 @@
-V1 Verdikt: A — Begründung: Ein generierter Live-Index sorgt für Konsistenz und Transparenz. Prosa-Docs als Zeiger reduzieren Duplikation. — Riss: Generierung könnte zeitverzögert sein.
-
-V2 Verdikt: A — Begründung: Die 44-Träger-Liste definiert den Standard. 4er-Läufe sind inkonsistent und fehlerhaft. — Riss: Dynamische Anpassung an aktuelle Verfügbarkeit fehlt.
-
-V3 Verdikt: A — Begründung: Ein Start-of-Session-Check garantiert Aktualität. Veraltete Zitate werden vermieden. — Riss: Abhängigkeit von korrekter Ausführung des Checks.

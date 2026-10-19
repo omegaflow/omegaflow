@@ -1,1 +1,0 @@
-{"error":{"code":"bad_request","message":"model 'whisper-large-v3-turbo' is not a chat model; use /v1/audio/transcriptions instead","param":null,"type":"bad_request"}}

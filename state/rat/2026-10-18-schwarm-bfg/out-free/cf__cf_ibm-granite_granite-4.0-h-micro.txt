@@ -1,5 +1,0 @@
-R-b — GRS80/gamma0-Register: C — local-only, N bleibt pending. Begründung: Eine lokale Lösung verhindert Abhängigkeiten und ermöglicht eine zukünftige Umsetzung. Keine stärkere Riss als die fehlende Referenzkonstanten-Registrierung. Riss: Keine umfassende Lösung bis zur Umsetzung.
-
-R-f — gfc-Block: D — nur der künftige gfc-Block, a/f/omega/gamma0 bleiben unregistriert. Begründung: Die aktuellen Probleme lassen eine vollständige Umsetzung der Optionen A und C nicht zu. Die kleinste Option D ist die sicherste, da sie die unregistrierten Parameter vermeidet. Keine stärkere Riss als die fehlende Epoche und unvollständige Datei. Riss: Keine vollständige Umsetzung der Optionen A und C.
-
-R-g — P10-Restarme: B — Cap 3211. Begründung: Die kleinste sichere Teilmenge (Option B) behebt die fehlende Epoche und ermöglicht eine funktionierende Umsetzung. Keine stärkere Riss als die fehlende Epoche und unvollständige Datei. Riss: Keine vollständige Umsetzung der Optionen A und C.

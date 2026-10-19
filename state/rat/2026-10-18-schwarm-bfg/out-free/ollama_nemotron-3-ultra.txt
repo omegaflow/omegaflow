@@ -1,5 +1,0 @@
-R-b Verdikt: A — Begründung: Option A integriert die Referenzkonstanten strukturell in den Parser (River/Mountain), statt sie als Sonderfall oder Local-only zu belassen. Ein expliziter Pending-Eintrag für N schafft Nachvollziehbarkeit gegenüber stiller Abwesenheit. — Riss: Fehlende Lizenz/Terms für `calc.js` (Herleitung von `gamma0`) blockiert die formale Registrierung als zitierfähige Quelle.
-
-R-f Verdikt: A — Begründung: D=2190 (XGM2019e_2159) ist das einzige offizielle Teilmodell, liegt größenmäßig sicher unter 2 GiB und umgeht den 5399/5480-Schwanzkonflikt. Ohne Epochenbeleg bleibt der Block unsetzbar, ein statischer Compiler-Pfad ist der minimal lösbare Hebel. — Riss: Fehlender Volltextbeleg für die Epoche (Paper 5480 vs. Abstract 5399) und fehlendes Streaming (Peak 8–21 GB) bei größeren Caps.
-
-R-g Verdikt: B — Begründung: Der Parser-Fix für `kg/(m^2 s)` behebt einen harten Tokenisierungsfehler, die Stern-Metadaten-Achse (Teff/logg/mag) sind standardisierte Skalare mit hohem Nutzen bei geringem Aufwand. Die FDSN-BHZ-Aufspaltung ist ebenfalls minimal nötig für die Kanalidentität. — Riss: Die fünf übrigen Restgruppen (z. B. `eionet_cdr

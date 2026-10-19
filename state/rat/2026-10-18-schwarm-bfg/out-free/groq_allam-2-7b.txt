@@ -1,4 +1,0 @@
-## R-b — GRS80/gamma0-Register
-
-Defekt: Datei-Header "GRS80/gamma0.h" enthält keine Eigenschaften für GRS80/gamma0-Modell. Optionen: A Datei-Header aktualisieren mit Eigenschaften (größter Architektur-Akt). B Datei-Header nicht aktualisieren, sondern GRS80/gamma0-Modell separat (kleinste sichere Teilmenge). C Datei-Header aktualisieren, GRS80/gamma0-Modell nicht separat (Reicht der Parser-Fix). D Datei-Header aktualisieren, GRS80/gamma0-Modell separat (Reicht der Parser-Fix).
-Zusatz: Wird der Parser-Fix für GRS80/gamma0-Modell ausreichend, oder müssen wir einen separaten Modell-Datei für GRS80/gamma0? 

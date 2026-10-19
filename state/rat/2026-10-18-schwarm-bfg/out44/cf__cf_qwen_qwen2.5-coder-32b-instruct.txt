@@ -1,8 +1,0 @@
-## R-b — GRS80/gamma0-Register
-`R-b Verdikt: B — Begründung: Ein eigener Konstanten-/Referenzblock ermöglicht eine klare Strukturierung und Verwaltung der Daten. Die Option B bietet einen ausreichenden Ansatz ohne zusätzliche Komplexität. — Riss: Die Option A könnte zu einem übermäßig komplexen System führen, da sie zusätzliche Direktiven erfordert.`
-
-## R-f — gfc-Block
-`R-f Verdikt: A — Begründung: Das Teilmodell D=2190 (XGM2019e_2159) ist offiziell und bietet eine gute Balance zwischen Genauigkeit und Größe. Es ist praktisch für den Einsatz und leicht zu handhaben. — Riss: Die Option C bietet die höchste Genauigkeit, aber mit einer erheblichen Dateigröße und möglichen Komplexitäten bei der Handhabung.`
-
-## R-g — P10-Restarme
-`R-g Verdikt: B — Begründung: Die kleinste sichere Teilmenge umfasst den notwendigen Parser-Fix und die Stern-Metadaten-Achse, was die Funktionalität erhöht, ohne unnötige Komplexität. — Riss: Die Option A wäre ideal, aber erfordert einen größeren Aufwand und könnte zu Architekturproblemen führen.`

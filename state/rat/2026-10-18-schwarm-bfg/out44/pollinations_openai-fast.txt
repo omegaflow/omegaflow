@@ -1,5 +1,0 @@
-R-b Verdikt: A — Begründung: Durch Hinzufügen der Direktiven ellipsoid und normal_gravity werden die fehlenden Arm‑Registrierungen für die skalaren Konstanten geschaffen, sodass N = T/gamma0 berechnet werden kann. Dies löst das unmittelbare Problem der fehlenden Referenzkonstanten und ermöglicht die weitere Nutzung von phi/sources.phi. — Riss: Unregistrierter gamma0 bleibt als potenzielle Unstimmigkeit bestehen.
-
-R-f Verdikt: A — Begründung: Das Modell D=2190 (XGM2019e_2159) ist das offizielle Teilmodell, hat eine handhabbare Größe und erfüllt die Release‑Kriterien. Es vermeidet die Komplexität großer Dateien und die Notwendigkeit eines epoch‑Parameters. — Riss: Der fehlende epoch‑Parameter ist weiterhin nicht gesetzt.
-
-R-g Verdikt: B — Begründung: Durch die Implementierung des Parser‑Fixes für kg/(m² s) und die Einführung einer Stern‑Metadaten‑Achse deckt man die wichtigsten fehlenden Arms ab, ohne die Architektur zu überladen. Diese minimalistische Lösung reduziert Fehlerquellen und ist für die meisten Anwendungsfälle ausreichend. — Riss: Die Aufspaltung des FDSN‑Keys bleibt unvollständig.
