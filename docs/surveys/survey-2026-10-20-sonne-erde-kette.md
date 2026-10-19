@@ -2,7 +2,7 @@
   title: Survey — die Sonne→Erde-Kette im Haus (Bestand, gemessen 2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: e51ed4f026e5eb6d71d032e2a2a95e90e23cb567c45c316392adb5d86974f814
+  sha256: af322dbb96ac7c4904c09bdbb1bf28caee6a4ed58e5f77b9db12bac78ef966e7
   status: live
   see-also: phi/sources.φ docs/paper/gic-causal-driver.md zustand/rat/2026-10-15-rat-fragenpaket.md
 -->
@@ -19,7 +19,7 @@ eigentlich?" und die Grundlage für F2 (Frühwarnkette).
 
 | Segment | Was da ist | Felder/Größen | Kadenz (Register) | Lizenz |
 |---|---|---|---|---|
-| **Sonne** | `f107` (Sonnenflux), `goes_xrs` (Röntgen A/B), `goes_euvs` (Lyman-α), `goes_abi` (3 Bänder), `aia` (7 Kanäle), `soho_lasco_cme` (Geschwindigkeit, Breite, Winkel, Masse, Energie, Beschleunigung) | 1+2+1+3+7+6 = **20** | 1 d · 1 h · 1 a · 1 h · 1 d · 30 d | PD-USGov / CC0 |
+| **Sonne** | `f107` (Sonnenflux), `goes_xrs` (Röntgen A/B), `goes_euvs` (Lyman-α), `goes_abi` (3 Bänder), `aia` (7 Kanäle), `soho_lasco_cme` (Geschwindigkeit, Breite, Winkel, Masse, Energie, Beschleunigung), `swpc_radio_bursts` (Typ II/III: Frequenzband, Dauer, Typ) | 1+2+1+3+7+6+5 = **25** | 1 d · 1 h · 1 a · 1 h · 1 d · 30 d · Ereignis | PD-USGov / CC0 |
 | **Zwischenpunkt (L1)** | `omni2_serie` (Bx/By/Bz, Dichte, Speed, Druck, Temperatur), `omni2_serie_daily`, `omni_hro` (dieselben acht), `wind_waves` (3 Radio-/Plasma-Bänder) | 7+7+8+3 = **25** | 1 h · 1 d · 1 h · 1 d | CC0 |
 | **Magnetfeld** | `wdc_ae` (AE, AL, AU, Dst, Sym-D, Sym-H), `substorm` (SuperMAG: MLT, MLat, GLat, GLon) | **6 + 4** | 1 min (Dst 1 h) · 1 d | WDC non-commercial · SuperMAG auth |
 | **Ionosphäre** | `cdaweb_tec` (TECU), `superdarn_fitacf` (Losgeschwindigkeit), `superdarn_rawacf`, `superdarn_cpcp` | **4** | 1 d · 10 min | CC0 / CC-BY / other-attribution |
@@ -47,7 +47,7 @@ eigentlich?" und die Grundlage für F2 (Frühwarnkette).
 
 | Lücke | Befund |
 |---|---|
-| **Radioausbrüche** | kein Format, kein Compiler, kein Feld — der früheste Vorläufer fehlt |
+| **Radioausbrüche** | **verdrahtet seit 2026-10-20** (`swpc_radio_bursts`, Typ II/III; 34 Sweeps im rollierenden ~25-Tage-Fenster; PD-USGov). Offen: keine Langzeitreihe, kein 1-s-Spektrogramm |
 | **Ionosonden** | kein Feld; nur TEC und SuperDARN |
 | **Live-Sonnenwind (RTSW/DSCOVR)** | kein `rtsw`-, kein `dscovr`-Block; nur OMNI-Archiv und `wind_waves` |
 | **SuperMAG-Felder** | Compiler da, nur `substorm` registriert; **nicht redistribuierbar** (auth) |
