@@ -2,7 +2,7 @@
   title: House Rules — die Essenz (was gilt)
   class: concept
   date: 2026-10-19
-  sha256: ed4b649b1f5004bf35af406d05c1ab15486120ca866f65a57ea31946052098ca
+  sha256: bb12a16eaffc40d6b2f889497f1af677bda5e32aab02b2e71d1870fcaded7752
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md docs/granit.md docs/council.yaml
 -->
@@ -121,5 +121,8 @@ nur Offenes) · deine **Post** (dasselbe `post/`). Lies nur die Stellen, die die
   `read`/`edit`/`shell` auf den privaten Pfad `deny`; `AGENTS.md`, `opencode.json`, `.opencode/**`
   und `tools/gate/**` sind schreibgeschützt — **über `edit` UND `shell`**. Kein Web, kein Push.
   Kein Gateway, kein Provider am Haus.
+- **`opencode.json` ist lokal, nicht versioniert** (`.gitignore`, Operator-Wort 2026-10-19): die
+  Wand lebt auf der Maschine, nicht im Klon. Ein frischer Klon hat keine Schranken — wer dort
+  arbeitet, setzt sie zuerst (die Vorlage gehört ins private Haus, nie ins öffentliche Repo).
 - Werkzeuge: `archive_search` (nie webfetch/websearch) · `rg` für den schnellen Blick · `sread`
   für Fenster. Karte: `docs/concepts/tools-map.md`.
