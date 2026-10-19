@@ -1837,6 +1837,16 @@ at earth
 ttl 86400
 field vlf_awesome_narrowband_amp vlf_awesome_narrowband_amp inverse-square em db 300 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/craam-files-bucket.s3.amazonaws.com/waldo_ab.csv
+format waldo_ab
+origin https://craam-files-bucket.s3.amazonaws.com/2015/01/01/narrowband/FE/FE150101000500NAA_008A.mat
+terms PD https://registry.opendata.aws/craam-open-vlf/
+compiler tools/harvest/src/bin/waldo_ab_compiler.rs
+sha256 69906d5e844816a24785627d350126675dbde71c65cc42241179b90bf74bb035
+at earth
+ttl 86400
+field amplitude waldo_ab_amplitude_db inverse-square em db 300 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/data-argo.ifremer.fr/argo_bgc_synthetic_profile_index.txt
 terms free-open https://argo.ucsd.edu/data/
 origin https://data-argo.ifremer.fr/argo_synthetic-profile_index.txt
