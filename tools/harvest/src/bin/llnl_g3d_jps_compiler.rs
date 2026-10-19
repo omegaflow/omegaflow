@@ -8,8 +8,8 @@ use std::process::Command;
 
 const NETLOC: &str = "gs.llnl.gov";
 const UA: &str = "omegaflow-llnl-g3d-jps-compiler/1.0";
-const DEFAULT_ZIP: &str = "data/gs.llnl.gov/llnl_g3d_jps.interpolated.zip";
-const DEFAULT_OUT: &str = "data/gs.llnl.gov/LLNL_G3D_JPS.interpolated.g3d1";
+const DEFAULT_ZIP: &str = "sources/gs.llnl.gov/llnl_g3d_jps.interpolated.zip";
+const DEFAULT_OUT: &str = "sources/gs.llnl.gov/LLNL_G3D_JPS.interpolated.g3d1";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()

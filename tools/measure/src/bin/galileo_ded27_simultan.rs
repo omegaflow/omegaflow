@@ -55,7 +55,7 @@ impl Acc {
 }
 
 fn load() -> Option<(BTreeMap<(i64, i64), Vec<(f64, f64)>>, usize)> {
-    let file = File::open("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin").ok()?;
+    let file = File::open("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin").ok()?;
     let mut reader = BufReader::new(file);
     let mut magic = [0u8; 4];
     reader.read_exact(&mut magic).ok()?;

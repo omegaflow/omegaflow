@@ -138,7 +138,7 @@ fn main() {
     out.push("structure per loud run: 12 equal-time windows (window mean + internal RMS about the window mean), drift/noise split, front-20% energy share, |resid| quantiles".to_string());
 
     let anc = anchors();
-    let file = match File::open("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") {
+    let file = match File::open("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") {
         Ok(f) => f,
         Err(_) => {
             println!("resid open void");

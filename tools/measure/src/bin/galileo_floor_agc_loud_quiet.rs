@@ -145,7 +145,7 @@ fn main() {
             report = r.to_string();
         }
     }
-    let path = "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string();
+    let path = "sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string();
 
     let Ok(bytes) = fs::read(&path) else {
         eprintln!("{path}: resid bin void");

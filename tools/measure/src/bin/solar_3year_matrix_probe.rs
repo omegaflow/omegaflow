@@ -181,11 +181,11 @@ fn load_aia(year: u32) -> Vec<(f64, f64, u32)> {
     let mut all = Vec::new();
     if year == 2014 {
         for m in 1..=12 {
-            let p = format!("data/jsoc.stanford.edu/aia2014_{:02}.bin", m);
+            let p = format!("sources/jsoc.stanford.edu/aia2014_{:02}.bin", m);
             all.extend(read_aia_lines(&p));
         }
     } else {
-        let p = format!("data/jsoc.stanford.edu/aia{}_fullyear.bin", year);
+        let p = format!("sources/jsoc.stanford.edu/aia{}_fullyear.bin", year);
         all.extend(read_aia_lines(&p));
     }
     all

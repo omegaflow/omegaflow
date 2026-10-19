@@ -410,7 +410,7 @@ fn main() {
         println!("selected={}", latest.filename);
         let out = match arg_value(&args, "--out") {
             Some(o) => o,
-            None => format!("data/pradan.issdc.gov.in/{}", latest.filename),
+            None => format!("sources/pradan.issdc.gov.in/{}", latest.filename),
         };
         if let Some(parent) = Path::new(&out).parent() {
             let _ = std::fs::create_dir_all(parent);
@@ -517,7 +517,7 @@ fn main() {
     };
     let out = match arg_value(&args, "--out") {
         Some(o) => o,
-        None => format!("data/pradan.issdc.gov.in/{filename}"),
+        None => format!("sources/pradan.issdc.gov.in/{filename}"),
     };
 
     let summary = match login_fetch(&target, &out, &jar_s, &args, true, &user, &pass) {

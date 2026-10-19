@@ -5,7 +5,7 @@ use omegaflow::archivar::spatial::{
     STAR_RECORD_BYTES, parse_star_record, star_position_at, star_stride,
 };
 
-const DEFAULT_STARS: &str = "data/ssd.jpl.nasa.gov/dr3_stars.bin";
+const DEFAULT_STARS: &str = "sources/ssd.jpl.nasa.gov/dr3_stars.bin";
 const DEFAULT_CELL_PC: f64 = 50.0;
 const MIN_STARS: usize = 32;
 const PLX_STRONG_MAS: f64 = 5.0;

@@ -672,8 +672,8 @@ AIRA      61042.00  0.00121746  0.00041399  2.2444  0.0500   983.52   1.96   5.4
         assert_eq!(parse_grid_bin(&bin), Some(cells));
     }
 
-    const GRID_BIN_PATH: &str = "data/vmf.geo.tuwien.ac.at/vmf3_grid.bin";
-    const SITE_BIN_PATH: &str = "data/vmf.geo.tuwien.ac.at/vmf3_site.bin";
+    const GRID_BIN_PATH: &str = "sources/vmf.geo.tuwien.ac.at/vmf3_grid.bin";
+    const SITE_BIN_PATH: &str = "sources/vmf.geo.tuwien.ac.at/vmf3_site.bin";
     const GRID_BIN_SHA: &str = "f388b49705a006d4538ae61252de5f5064cdd1a391ca0b0585a59a2f9738bb6a";
     const SITE_BIN_SHA: &str = "92d40bf8adbf978b1a41e74219815bdebf4d170bdec8481c2b61c1e62f261058";
 

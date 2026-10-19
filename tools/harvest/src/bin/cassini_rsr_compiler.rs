@@ -236,7 +236,7 @@ fn main() {
             format!("{PREFIX}.bin")
         };
         let bin = cassini_rsr::write_series(chunk);
-        let path = format!("data/atmos.nmsu.edu/{name}");
+        let path = format!("sources/atmos.nmsu.edu/{name}");
         if std::fs::write(&path, &bin).is_err() {
             eprintln!("write {path} void");
             std::process::exit(1);

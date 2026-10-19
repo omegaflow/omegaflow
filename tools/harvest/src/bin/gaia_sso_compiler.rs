@@ -5,7 +5,7 @@ use omegaflow::gaia_sso::{
 };
 use std::process::Command;
 const CDN_RELEASE: &str = "gea.esac.esa.int";
-const DEFAULT_OUT: &str = "data/gea.esac.esa.int/gaia_sso_tno.bin";
+const DEFAULT_OUT: &str = "sources/gea.esac.esa.int/gaia_sso_tno.bin";
 
 const SELECT_COLUMNS: &str = "number_mp, epoch_utc, ra, dec, ra_error_random, dec_error_random, ra_error_systematic, dec_error_systematic";
 

@@ -25,7 +25,7 @@ fn percentile(mut v: Vec<f64>, p: f64) -> f64 {
 }
 
 fn clean(name: &str) {
-    let raw_path = format!("data/spdf.gsfc.nasa.gov/{name}_doppler.bin");
+    let raw_path = format!("sources/spdf.gsfc.nasa.gov/{name}_doppler.bin");
     let Ok(bytes) = std::fs::read(&raw_path) else {
         eprintln!("{name}: doppler bin void ({raw_path})");
         return;
@@ -202,7 +202,7 @@ fn clean(name: &str) {
         }
         out.push(clean_records[i]);
     }
-    let out_path = format!("data/spdf.gsfc.nasa.gov/{name}_doppler_clean.bin");
+    let out_path = format!("sources/spdf.gsfc.nasa.gov/{name}_doppler_clean.bin");
     let bin = write_bin(&out);
     if std::fs::write(&out_path, &bin).is_err() {
         eprintln!("{name}: write {out_path} void");

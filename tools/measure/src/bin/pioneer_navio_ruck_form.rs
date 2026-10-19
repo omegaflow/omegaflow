@@ -123,9 +123,9 @@ fn measure_form(daily: &[(f64, f64)], k: usize) -> Option<Form> {
 }
 
 fn run(name: &str) {
-    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_subkhz_daily.bin");
+    let path = format!("sources/spdf.gsfc.nasa.gov/{name}_navio_subkhz_daily.bin");
     if !std::path::Path::new(&path).exists() {
-        let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_daily.bin");
+        let path = format!("sources/spdf.gsfc.nasa.gov/{name}_navio_daily.bin");
         let Some(daily) = read_daily(&path) else {
             eprintln!("{name}: daily bin void/parse void ({path})");
             return;
@@ -306,7 +306,7 @@ fn zitter_vs_step(daily: &[(f64, f64)], center: usize) {
 }
 
 fn measure_date(name: &str, date_str: &str) {
-    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_daily.bin");
+    let path = format!("sources/spdf.gsfc.nasa.gov/{name}_navio_daily.bin");
     let Some(daily) = read_daily(&path) else {
         eprintln!("{name}: daily bin void/parse void ({path})");
         return;

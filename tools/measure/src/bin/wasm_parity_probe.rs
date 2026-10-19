@@ -32,7 +32,7 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let stars_path = match arg_value(&args, "--stars") {
         Some(p) => p,
-        None => "data/ssd.jpl.nasa.gov/dr3_stars.bin".to_string(),
+        None => "sources/ssd.jpl.nasa.gov/dr3_stars.bin".to_string(),
     };
     let epoch = match arg_f64(&args, "--epoch") {
         Some(e) => e,

@@ -11,7 +11,7 @@ const TREE_URL: &str =
     "https://api.github.com/repos/VERITAS-Observatory/VERITAS-VTSCat/git/trees/main?recursive=1";
 const RAW_BASE: &str = "https://raw.githubusercontent.com/VERITAS-Observatory/VERITAS-VTSCat/main/";
 const CDN_TAG: &str = "github.com";
-const DEFAULT_OUT: &str = "data/github.com/vtscat_flux.sky1";
+const DEFAULT_OUT: &str = "sources/github.com/vtscat_flux.sky1";
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.iter()

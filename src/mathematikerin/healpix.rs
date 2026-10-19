@@ -383,7 +383,7 @@ mod tests {
 
     #[test]
     fn gaia_source_pixel_agrees_with_position() {
-        let path = std::path::Path::new("data/dc.g-vo.org/xp_pilot_p6144.bin");
+        let path = std::path::Path::new("sources/dc.g-vo.org/xp_pilot_p6144.bin");
         let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => {

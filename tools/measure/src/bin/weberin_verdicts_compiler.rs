@@ -130,11 +130,11 @@ fn main() {
     };
     let dastcom_path = match arg_value(&args, "--dastcom") {
         Some(d) => d,
-        None => "data/ssd.jpl.nasa.gov/dastcom_asteroids.bin".to_string(),
+        None => "sources/ssd.jpl.nasa.gov/dastcom_asteroids.bin".to_string(),
     };
     let dcom5_path = match arg_value(&args, "--dcom5") {
         Some(d) => d,
-        None => "data/ssd.jpl.nasa.gov/dcom5_comets.bin".to_string(),
+        None => "sources/ssd.jpl.nasa.gov/dcom5_comets.bin".to_string(),
     };
     let out = match arg_value(&args, "--out") {
         Some(p) => p,

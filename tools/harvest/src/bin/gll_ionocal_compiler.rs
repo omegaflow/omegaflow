@@ -133,7 +133,7 @@ fn main() {
     let probe = args.iter().any(|a| a == "--probe");
     let out = match arg_value(&args, "--out") {
         Some(path) => path,
-        None => "data/pds-rings.seti.org/galileo_ionocal.bin".to_string(),
+        None => "sources/pds-rings.seti.org/galileo_ionocal.bin".to_string(),
     };
     let dir = arg_value(&args, "--dir");
 

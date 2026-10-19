@@ -266,7 +266,7 @@ fn fmt_peak(p: Option<(f64, f64, f64, f64)>) -> String {
 }
 
 fn main() {
-    let Some(pasf) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
+    let Some(pasf) = std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
         .ok()
         .and_then(|b| parse_bin(&b))
     else {

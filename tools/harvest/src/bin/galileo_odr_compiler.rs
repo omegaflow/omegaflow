@@ -248,7 +248,7 @@ fn main() {
     let probe = args.iter().any(|a| a == "--probe");
     let out = match arg_value(&args, "--out") {
         Some(path) => path,
-        None => "data/pds-ppi.igpp.ucla.edu/galileo_odr.bin".to_string(),
+        None => "sources/pds-ppi.igpp.ucla.edu/galileo_odr.bin".to_string(),
     };
     let dir = arg_value(&args, "--dir");
 

@@ -225,7 +225,7 @@ fn doppler_runs(raw: &[RawO], lsk: &omegaflow::lsk::LeapSeconds) -> Vec<Run> {
 }
 
 fn read_resid_cells() -> BTreeMap<(i64, i64, i64), CellStat> {
-    let path = "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
+    let path = "sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
     let file = match File::open(path) {
         Ok(f) => f,
         Err(_) => {
@@ -482,7 +482,7 @@ fn main() {
         );
         return;
     }
-    let path = "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
+    let path = "sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
     let file = match File::open(path) {
         Ok(f) => f,
         Err(_) => {

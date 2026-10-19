@@ -8,7 +8,7 @@ const DATA_TYPES: [u8; 2] = [2, 40];
 const NETLOC: &str = "zenodo.org";
 const COMPILER: &str = "tools/harvest/src/bin/bepicolombo_plasma_compiler.rs";
 const DEFAULT_URL: &str = "https://zenodo.org/api/records/17813314/files/SCE1_2021_HGA_MEANR4ONR6_KaTSelfCal_DST1Cal_60s_XX_KK_MT_plasmacalib.txt/content";
-const DEFAULT_OUT: &str = "data/zenodo.org/bepicolombo_plasma.bin";
+const DEFAULT_OUT: &str = "sources/zenodo.org/bepicolombo_plasma.bin";
 
 #[derive(Clone, Debug, PartialEq)]
 struct PlasmaRow {

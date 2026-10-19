@@ -346,7 +346,7 @@ fn main() {
     let persist = args.iter().any(|a| a == "--persist");
     let path = match args.iter().find(|a| !a.starts_with('-')) {
         Some(p) => p.clone(),
-        None => "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
+        None => "sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
     };
     let Some(recs) = load_records(&path) else {
         eprintln!("galileo_band_probe: {path} unreadable or not a GASR resid bin");

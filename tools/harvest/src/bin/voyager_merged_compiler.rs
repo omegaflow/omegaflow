@@ -7,11 +7,11 @@ const BASE: &str = "https://spdf.gsfc.nasa.gov/pub/data/voyager";
 const HOUSES: &[(&str, &str)] = &[
     (
         "voyager1_daily.asc",
-        "data/spdf.gsfc.nasa.gov/voyager1_merged.bin",
+        "sources/spdf.gsfc.nasa.gov/voyager1_merged.bin",
     ),
     (
         "voyager2_daily.asc",
-        "data/spdf.gsfc.nasa.gov/voyager2_merged.bin",
+        "sources/spdf.gsfc.nasa.gov/voyager2_merged.bin",
     ),
 ];
 

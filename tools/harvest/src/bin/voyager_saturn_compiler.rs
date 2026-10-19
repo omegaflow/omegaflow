@@ -127,7 +127,7 @@ fn main() {
         eprintln!("voyager_saturn: no tracking records — the series stays unwritten (0 honored)");
         return;
     }
-    let out = "data/spdf.gsfc.nasa.gov/voyager_saturn.bin";
+    let out = "sources/spdf.gsfc.nasa.gov/voyager_saturn.bin";
     std::fs::create_dir_all("data/spdf.gsfc.nasa.gov").ok();
     let bin = voyager_saturn::write_vsat_bin(&rows);
     if std::fs::write(out, &bin).is_err() {

@@ -280,7 +280,7 @@ fn report(name: &str, ts: &[f64], resid: &[f64], rx: &[i64], out_path: Option<&s
 }
 
 fn load_ephemeris(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+    let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -299,7 +299,7 @@ fn zone_predicate(probe: &str) -> Option<(f64, f64)> {
 }
 
 fn run(probe: &str, sc_body: &str, zone: bool) {
-    let path = format!("data/spdf.gsfc.nasa.gov/{probe}_navio_residuum.bin");
+    let path = format!("sources/spdf.gsfc.nasa.gov/{probe}_navio_residuum.bin");
     let Some(bytes) = std::fs::read(&path).ok() else {
         eprintln!("{probe}: residuum bin void ({path}) — 0 honored");
         return;
@@ -328,7 +328,7 @@ fn run(probe: &str, sc_body: &str, zone: bool) {
         &resid,
         &rx,
         Some(&format!(
-            "data/spdf.gsfc.nasa.gov/{probe}_navio_subkhz_daily.bin"
+            "sources/spdf.gsfc.nasa.gov/{probe}_navio_subkhz_daily.bin"
         )),
     );
 
@@ -404,7 +404,7 @@ fn run(probe: &str, sc_body: &str, zone: bool) {
         &zres,
         &zrx,
         Some(&format!(
-            "data/spdf.gsfc.nasa.gov/{probe}_navio_subkhz_zone_daily.bin"
+            "sources/spdf.gsfc.nasa.gov/{probe}_navio_subkhz_zone_daily.bin"
         )),
     );
     eprintln!(

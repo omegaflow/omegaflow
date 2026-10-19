@@ -164,11 +164,11 @@ fn main() {
     }
     let recv_path = match positional.first() {
         Some(p) => p.clone(),
-        None => "data/pds-ppi.igpp.ucla.edu/galileo_receiver.bin".to_string(),
+        None => "sources/pds-ppi.igpp.ucla.edu/galileo_receiver.bin".to_string(),
     };
     let resid_path = match positional.get(1) {
         Some(p) => p.clone(),
-        None => "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
+        None => "sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
     };
 
     let mut out: Vec<String> = Vec::new();

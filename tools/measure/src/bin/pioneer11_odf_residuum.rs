@@ -285,7 +285,7 @@ fn main() {
         eprintln!("p11-resid: dsn host declaration void");
         return;
     };
-    let podf = "data/spdf.gsfc.nasa.gov/pioneer11_odf.bin";
+    let podf = "sources/spdf.gsfc.nasa.gov/pioneer11_odf.bin";
     let Ok(bytes) = std::fs::read(podf) else {
         eprintln!("p11-resid PODF bin void ({podf})");
         return;
@@ -296,7 +296,7 @@ fn main() {
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     for body in [host, SC_BODY] {
-        let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
+        let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))
@@ -523,7 +523,7 @@ fn main() {
         }
         modeled = keep;
     }
-    let out = "data/spdf.gsfc.nasa.gov/pioneer11_residuum.bin";
+    let out = "sources/spdf.gsfc.nasa.gov/pioneer11_residuum.bin";
     let bin = write_p11r_bin(&modeled);
     if std::fs::write(out, &bin).is_err() {
         eprintln!("p11-resid write {out} void");

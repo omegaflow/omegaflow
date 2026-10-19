@@ -55,7 +55,7 @@ fn lin_fit(xs: &[f64], ys: &[f64]) -> Option<(f64, f64)> {
 }
 
 fn run(name: &str) {
-    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_subkhz_daily.bin");
+    let path = format!("sources/spdf.gsfc.nasa.gov/{name}_navio_subkhz_daily.bin");
     let Some(daily) = read_daily(&path) else {
         eprintln!("{name}: sub-kHz daily bin void/parse void ({path})");
         return;

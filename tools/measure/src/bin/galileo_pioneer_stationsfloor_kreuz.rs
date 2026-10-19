@@ -186,7 +186,7 @@ fn pioneer_floor_cells(
     cells: &mut Vec<PC>,
     census: &mut (usize, usize, usize),
 ) -> Option<(usize, f64, f64, Vec<(i64, usize, usize)>)> {
-    let path = format!("data/spdf.gsfc.nasa.gov/{probe}_navio_residuum.bin");
+    let path = format!("sources/spdf.gsfc.nasa.gov/{probe}_navio_residuum.bin");
     let bytes = std::fs::read(&path).ok()?;
     let recs = parse_p11r_bin(&bytes)?;
     let n_rec = recs.len();
@@ -391,7 +391,7 @@ fn main() {
 
     push(String::new());
     push("== S2 Galileo floor loud-day reproduction (window) ==".to_string());
-    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         push("galileo: resid bin void — 0 honored".to_string());
         return;
     };

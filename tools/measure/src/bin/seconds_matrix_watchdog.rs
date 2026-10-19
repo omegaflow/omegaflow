@@ -43,7 +43,7 @@ fn main() {
             Err(_) => "target/release/solar_seconds_matrix_probe".to_string(),
         },
     };
-    let log = PathBuf::from("data/reports/solar_seconds_matrix.log");
+    let log = PathBuf::from("sources/reports/solar_seconds_matrix.log");
     loop {
         supervise(&bin, &log);
         sleep(Duration::from_secs(RESTART_DELAY_S));

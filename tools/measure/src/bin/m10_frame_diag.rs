@@ -34,7 +34,7 @@ fn load(name: &str, explicit: Option<&str>) -> Option<(BodyEphemeris, String)> {
             Err(_) => eprintln!("{name}: explicit {path} reads void"),
         }
     }
-    let local = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+    let local = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     if let Ok(b) = std::fs::read(&local) {
         if let Some(e) = parse_bytes(&local, &b) {
             return Some((e, local));
@@ -93,10 +93,10 @@ fn tdb_of_jd(jd: f64) -> f64 {
     (jd - J2000_EPOCH) * 86400.0
 }
 
-const EPH_M10: &str = "data/ssd.jpl.nasa.gov/ephemeris_mariner10.bin";
-const EPH_MERCURY: &str = "data/ssd.jpl.nasa.gov/ephemeris_mercury.bin";
-const EPH_BARY1: &str = "data/ssd.jpl.nasa.gov/ephemeris_earth.bin";
-const EPH_BARY2: &str = "data/ssd.jpl.nasa.gov/ephemeris_sun.bin";
+const EPH_M10: &str = "sources/ssd.jpl.nasa.gov/ephemeris_mariner10.bin";
+const EPH_MERCURY: &str = "sources/ssd.jpl.nasa.gov/ephemeris_mercury.bin";
+const EPH_BARY1: &str = "sources/ssd.jpl.nasa.gov/ephemeris_earth.bin";
+const EPH_BARY2: &str = "sources/ssd.jpl.nasa.gov/ephemeris_sun.bin";
 
 fn eph_name(path: &str) -> String {
     match path.rsplit('/').next() {

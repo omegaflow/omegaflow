@@ -8,10 +8,10 @@ const DAY: f64 = 86400.0;
 const HOUR: f64 = 3600.0;
 const PERIGEE_UNIX_HMS_S: f64 = 11.0 * HOUR + 45.0 * 60.0 + 12.0;
 
-const DEFAULT_DE: &str = "data/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin";
-const DEFAULT_INPOP: &str = "data/ftp.imcce.fr/ephemeris_inpop_earth.bin";
-const DEFAULT_EPM: &str = "data/ftp.iaaras.ru/ephemeris_epm_earth.bin";
-const DEFAULT_REGISTER: &str = "data/flyby2/house-gate-2026-09-28.json";
+const DEFAULT_DE: &str = "sources/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin";
+const DEFAULT_INPOP: &str = "sources/ftp.imcce.fr/ephemeris_inpop_earth.bin";
+const DEFAULT_EPM: &str = "sources/ftp.iaaras.ru/ephemeris_epm_earth.bin";
+const DEFAULT_REGISTER: &str = "sources/flyby2/house-gate-2026-09-28.json";
 
 fn arg_str(args: &[String], flag: &str) -> Option<String> {
     args.iter()

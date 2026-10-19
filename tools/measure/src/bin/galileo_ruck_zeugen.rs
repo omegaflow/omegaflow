@@ -157,7 +157,7 @@ fn main() {
             report = r.to_string();
         }
     }
-    let path = "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
+    let path = "sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
     let Ok(bytes) = fs::read(path) else {
         eprintln!("{path}: resid bin void");
         return;
@@ -500,7 +500,7 @@ fn main() {
         &mut out,
         "== D: skyfreq (GASF) coverage of the transition window (read with the 14-field GASF parse) ==".to_string(),
     );
-    if let Ok(sb) = fs::read("data/pds-ppi.igpp.ucla.edu/galileo_skyfreq.bin") {
+    if let Ok(sb) = fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_skyfreq.bin") {
         if sb.len() >= 8 && &sb[0..4] == b"GASF" {
             let cnt = u32::from_le_bytes(sb[4..8].try_into().ok().expect("len")) as usize;
             if sb.len() == 8 + cnt * 112 {
@@ -571,11 +571,11 @@ fn main() {
     for (name, ppath) in [
         (
             "pioneer10",
-            "data/spdf.gsfc.nasa.gov/pioneer10_navio_residuum.bin",
+            "sources/spdf.gsfc.nasa.gov/pioneer10_navio_residuum.bin",
         ),
         (
             "pioneer11",
-            "data/spdf.gsfc.nasa.gov/pioneer11_navio_residuum.bin",
+            "sources/spdf.gsfc.nasa.gov/pioneer11_navio_residuum.bin",
         ),
     ] {
         rec(&mut out, format!("  --- {name} ---"));

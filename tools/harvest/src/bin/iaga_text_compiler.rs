@@ -8,7 +8,7 @@ use std::process::Command;
 
 const NETLOC: &str = "zenodo.org";
 const ZIP_URL: &str = "https://zenodo.org/api/records/10594301/files/Mag_Data.zip/content";
-const DEFAULT_OUT: &str = "data/zenodo.org/iaga_text.bin";
+const DEFAULT_OUT: &str = "sources/zenodo.org/iaga_text.bin";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()

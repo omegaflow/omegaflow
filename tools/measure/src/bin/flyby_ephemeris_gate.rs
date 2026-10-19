@@ -16,15 +16,15 @@ const DAY: f64 = 86400.0;
 const HOUR: f64 = 3600.0;
 const PERIGEE_UNIX_HMS_S: f64 = 11.0 * HOUR + 45.0 * 60.0 + 12.0;
 
-const DEFAULT_SEALED: &str = "data/ssd.jpl.nasa.gov/ephemeris_juice.bin";
-const DEFAULT_RENEWED: &str = "data/ssd.jpl.nasa.gov/ephemeris_juice_renewed.bin";
-const DEFAULT_RECON: &str = "data/ssd.jpl.nasa.gov/ephemeris_juice_recon.bin";
-const DEFAULT_EARTH: &str = "data/ssd.jpl.nasa.gov/ephemeris_earth.bin";
+const DEFAULT_SEALED: &str = "sources/ssd.jpl.nasa.gov/ephemeris_juice.bin";
+const DEFAULT_RENEWED: &str = "sources/ssd.jpl.nasa.gov/ephemeris_juice_renewed.bin";
+const DEFAULT_RECON: &str = "sources/ssd.jpl.nasa.gov/ephemeris_juice_recon.bin";
+const DEFAULT_EARTH: &str = "sources/ssd.jpl.nasa.gov/ephemeris_earth.bin";
 const DEFAULT_DE441_JUICE: &str = DEFAULT_SEALED;
-const DEFAULT_DE441_EARTH: &str = "data/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin";
+const DEFAULT_DE441_EARTH: &str = "sources/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin";
 const DEFAULT_DE442_JUICE: &str = DEFAULT_SEALED;
-const DEFAULT_DE442_EARTH: &str = "data/ssd.jpl.nasa.gov-de/ephemeris_de442_earth.bin";
-const DEFAULT_REGISTER: &str = "data/flyby2/gate-juice-2026-09-28.json";
+const DEFAULT_DE442_EARTH: &str = "sources/ssd.jpl.nasa.gov-de/ephemeris_de442_earth.bin";
+const DEFAULT_REGISTER: &str = "sources/flyby2/gate-juice-2026-09-28.json";
 
 fn arg_str(args: &[String], flag: &str) -> Option<String> {
     args.iter()

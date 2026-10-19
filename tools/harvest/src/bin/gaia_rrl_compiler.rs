@@ -6,7 +6,7 @@ const HEADER_BYTES: usize = 8;
 const RECORD_BYTES: usize = 51;
 const GAIA_TAP_SYNC: &str = "https://gea.esac.esa.int/tap-server/tap/sync";
 const CDN_RELEASE: &str = "gea.esac.esa.int";
-const DEFAULT_OUT: &str = "data/gea.esac.esa.int/gaia_rrl.bin";
+const DEFAULT_OUT: &str = "sources/gea.esac.esa.int/gaia_rrl.bin";
 const USER_AGENT: &str = "omegaflow-gaia-rrl-compiler/1.0";
 
 pub const RRL_ADQL: &str = "SELECT TOP 500 g.source_id, g.ra, g.dec, g.phot_g_mean_mag, g.parallax, g.bp_rp, v.best_class_name FROM gaiadr3.vari_classifier_result AS v JOIN gaiadr3.gaia_source AS g ON g.source_id = v.source_id WHERE v.best_class_name = 'RR'";

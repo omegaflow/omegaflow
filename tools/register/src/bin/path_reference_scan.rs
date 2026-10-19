@@ -248,7 +248,7 @@ mod tests {
         assert!(is_cross_house(
             "state/future/gic-riss-154-wunschliste-2026-10-06.md"
         ));
-        assert!(is_cross_house("data/flyby2/anderson-probe-2026-09-28.json"));
+        assert!(is_cross_house("sources/flyby2/anderson-probe-2026-09-28.json"));
         assert!(is_cross_house("privat/free-voices.md"));
         assert!(is_cross_house("~/projects/omegaflow-work/ui-seats.md"));
         assert!(!is_cross_house("docs/concepts/tools-map.md"));

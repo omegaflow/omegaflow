@@ -5,7 +5,7 @@ use std::process::Command;
 const NETLOC: &str = "tapvizier.cds.unistra.fr";
 const TAP: &str = "https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync";
 const JOIN_QUERY: &str = r#"SELECT c.recno AS crecno, c.RAJ2000 AS cra, c.DEJ2000 AS cdec, c.UD AS cud, c.LD AS cld, g.RAJ2000 AS gra, g.DEJ2000 AS gdec, g.Plx AS gplx, g.Gmag AS gmag FROM "J/A+A/431/773/charm2" AS c JOIN "I/355/gaiadr3" AS g ON DISTANCE(POINT('ICRS', c.RAJ2000, c.DEJ2000), POINT('ICRS', g.RAJ2000, g.DEJ2000)) < 2.0/3600.0 WHERE c.Method='LO' AND (c.UD > 0 OR c.LD > 0)"#;
-const DEFAULT_OUT: &str = "data/tapvizier.cds.unistra.fr/charm2_gaia.bin";
+const DEFAULT_OUT: &str = "sources/tapvizier.cds.unistra.fr/charm2_gaia.bin";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()

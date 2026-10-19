@@ -248,7 +248,7 @@ fn gather(
 }
 
 fn main() {
-    let Some(pasf) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq_6file.bin")
+    let Some(pasf) = std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq_6file.bin")
         .ok()
         .and_then(|b| parse_bin(&b))
     else {

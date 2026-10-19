@@ -17,7 +17,7 @@ use omegaflow::odp::{dsn_host, dsn_station};
 
 const PROG: &str = "witness-resid";
 
-const VMF3_GRID_PATH: &str = "data/vmf.geo.tuwien.ac.at/vmf3_grid.bin";
+const VMF3_GRID_PATH: &str = "sources/vmf.geo.tuwien.ac.at/vmf3_grid.bin";
 const TROPO_RATE_DT_S: f64 = 30.0;
 
 const TROPO_CONVENTION: &str = "the tropospheric range correction enters the modeled two-way range-rate: the VMF3 grid product (vmf3_bin, 1x1) is bilinearly interpolated at the receive station lat/lon and the observation mjd, the empirical b/c from the degree-12 SH model are added, and the one-way slant delay tau(el) = mf_h(el)*zhd + mf_w(el)*zwd is formed at the geometric elevation of the line of sight; the two-way range-rate correction is 2*d(tau)/dt, a symmetric-in-sign forward difference over TROPO_RATE_DT_S with the station held at the receive epoch (Earth rotation over 30 s is sub-metre for the delay derivative); the entry point is the line `let rate = ... + tropo_rate` in the model loop; absent grid asset, coefficients, or elevation at or below the horizon -> no tropospheric term (the geometric rate stands, 0 honored, named)";
@@ -63,15 +63,15 @@ struct Witness {
 const WITNESSES: [Witness; 2] = [
     Witness {
         body: "pioneer10_daily",
-        odf_path: "data/spdf.gsfc.nasa.gov/pioneer10_odf.bin",
-        residuum_path: "data/spdf.gsfc.nasa.gov/pioneer10_residuum.bin",
+        odf_path: "sources/spdf.gsfc.nasa.gov/pioneer10_odf.bin",
+        residuum_path: "sources/spdf.gsfc.nasa.gov/pioneer10_residuum.bin",
         tag: "w10-resid",
         parser: parse_podf_bin_bands,
     },
     Witness {
         body: "galileo_e1",
-        odf_path: "data/pds-ppi.igpp.ucla.edu/galileo_odf.bin",
-        residuum_path: "data/pds-ppi.igpp.ucla.edu/galileo_residuum.bin",
+        odf_path: "sources/pds-ppi.igpp.ucla.edu/galileo_odf.bin",
+        residuum_path: "sources/pds-ppi.igpp.ucla.edu/galileo_residuum.bin",
         tag: "gal-resid",
         parser: parse_podf_bin_bands,
     },
@@ -380,7 +380,7 @@ fn run(witness: Witness, gravitator: &str) {
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     for body in [host, sc_body, gravitator] {
-        let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
+        let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))

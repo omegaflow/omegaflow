@@ -13,7 +13,7 @@ const RUN_GAP_S: f64 = 600.0;
 const TRIO: [i64; 3] = [14, 43, 63];
 
 fn resid_path() -> String {
-    "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string()
+    "sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string()
 }
 
 fn unix_day(tdb: f64) -> i64 {

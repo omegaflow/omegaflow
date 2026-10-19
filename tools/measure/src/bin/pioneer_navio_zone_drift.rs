@@ -145,7 +145,7 @@ fn fit_three(tc: &[f64], v: &[f64]) -> (Option<f64>, Option<f64>, Option<f64>, O
 }
 
 fn run(name: &str) {
-    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_subkhz_zone_daily.bin");
+    let path = format!("sources/spdf.gsfc.nasa.gov/{name}_navio_subkhz_zone_daily.bin");
     let Some(daily) = read_zone_daily(&path) else {
         eprintln!("{name}: zone daily bin void/parse void ({path}) — 0 honored");
         return;

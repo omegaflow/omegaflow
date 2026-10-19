@@ -9,7 +9,7 @@ const NETLOC: &str = "pds-geosciences.wustl.edu";
 const LABEL_URL: &str = "https://pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001l.lbl";
 const DAT_URL: &str = "https://pds-geosciences.wustl.edu/premgn/mg_1001/vikgrav/vmar001l.dat";
 const ASSET: &str = "viking_grav_vmar001l.bin";
-const DEFAULT_OUT: &str = "data/pds-geosciences.wustl.edu/viking_grav/viking_grav_vmar001l.bin";
+const DEFAULT_OUT: &str = "sources/pds-geosciences.wustl.edu/viking_grav/viking_grav_vmar001l.bin";
 
 fn arg_value(args: &[String], key: &str) -> Option<String> {
     args.iter()

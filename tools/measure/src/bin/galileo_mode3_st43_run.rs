@@ -273,7 +273,7 @@ fn spec_scan(label: &str, ts: &[f64], vs: &[f64]) {
 fn main() {
     let path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
         Some(p) => p,
-        None => "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
+        None => "sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin".to_string(),
     };
     let bytes = fs::read(&path).expect("resid bin read");
     if bytes.len() < 8 || &bytes[0..4] != b"GASR" {

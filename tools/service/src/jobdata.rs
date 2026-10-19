@@ -262,7 +262,7 @@ pub fn ci_runs() -> Vec<CiRun> {
 
 pub fn log_hint(keys: &[String], journal: Option<&str>) -> Option<String> {
     for key in keys {
-        let exact = format!("data/reports/{}.log", key);
+        let exact = format!("sources/reports/{}.log", key);
         if let Some(line) = tail_of(Path::new(&exact)) {
             return Some(line);
         }

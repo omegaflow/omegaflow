@@ -119,7 +119,7 @@ struct PSample {
 }
 
 fn pioneer_floor_samples() -> Option<BTreeMap<(i64, i64), Vec<PSample>>> {
-    let path = "data/spdf.gsfc.nasa.gov/pioneer10_navio_residuum.bin";
+    let path = "sources/spdf.gsfc.nasa.gov/pioneer10_navio_residuum.bin";
     let bytes = std::fs::read(path).ok()?;
     let recs = parse_p11r_bin(&bytes)?;
     let mut ts = Vec::new();
@@ -271,7 +271,7 @@ fn main() {
         }
     }
 
-    let gal_path = "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
+    let gal_path = "sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
     let Ok(f) = File::open(gal_path) else {
         push("galileo resid: file void".to_string());
         return;

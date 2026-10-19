@@ -62,7 +62,7 @@ fn main() {
         eprintln!("pioneer10: dsn host declaration void");
         return;
     };
-    let path = "data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin";
+    let path = "sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin";
     let Ok(bytes) = std::fs::read(path) else {
         eprintln!("pioneer10: skyfreq bin void ({path})");
         return;
@@ -73,7 +73,7 @@ fn main() {
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     for body in [host, SC_BODY] {
-        let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
+        let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))

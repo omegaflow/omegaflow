@@ -450,7 +450,7 @@ fn run(args: &[String]) -> Result<(), String> {
             Some((order, npix)) => {
                 format!("data/{NETLOC}/hips_png_{order}_{npix}.bin")
             }
-            None => "data/alasky.cds.unistra.fr/hips_png.bin".to_string(),
+            None => "sources/alasky.cds.unistra.fr/hips_png.bin".to_string(),
         },
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");

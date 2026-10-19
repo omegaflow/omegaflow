@@ -45,7 +45,7 @@ fn main() {
     };
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => "data/atmos.nmsu.edu/juno_odf.bin".to_string(),
+        None => "sources/atmos.nmsu.edu/juno_odf.bin".to_string(),
     };
     let base = format!("https://atmos.nmsu.edu/PDS/data/{volume}/DATA/ODF/");
     let Some(lsk) = embedded_lsk() else {
