@@ -919,3 +919,14 @@ gedeckt, kein eigener Zweck; der Befund ist die Eintragung, kein Antrag, keine M
 **Kern in einem Satz:** Fünf Zeilen sind gedeckt oder verwandt, eine nicht adressierbar, **keine
 beantragt** — der offene Weg ist der wahre Weg; der bedingte Weg ist offen, nicht begründet.
 
+
+## Commits dieser Runde
+
+- `05f3fcdce` mycelium 357: close the China-NSSDC round — 1/2/3/4/6 descoped, 5 pending (no send)
+- `d93cf0de2` mycelium 357: dataset 5 is not unreachable — the record names the producers
+- `62c567033` mycelium 357: identify all six China datasets — 5 is the one primary measurement
+- `c8638ec75` mycelium 357: resolve the product-identity riss — the China sets are derivations of open NASA base data
+- `2b6e69b74` mycelium 357: the China-NSSDC seat round — 12 verdicts, the Rat verdict (no application)
+- `dac7f44fb` mycelium 357: add the approval-prospect question to the China form; register the per-dataset mirror result
+- `8eaeb6b4d` mycelium 357: the open-mirror check per China-NSSDC dataset (verified at the tree)
+- `829960666` mycelium 357: reframe both questionnaires to the purpose question ('what do we do with it')

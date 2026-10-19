@@ -1238,3 +1238,8 @@ Begründung (knapp): die Feld-Praxis fusioniert nie global-minimal (Dods/Chapman
 
 **Ein Satz, der das Blatt trägt:** Nicht die Anordnung der Stationen erzeugt die nicht-monotone Streuung — das grobe Ausbeute-Gitter erzeugt die nicht-monotone Schwelle; **eine** Messung (exakte Zählfunktion + Träger-Inklusion + punktweises Minimum über N16/N24/N31 auf fixem Präfix) schließt es. Und die Hülle, die mehr Stationen zu einem schärferen Treffer heben soll, darf nicht global-minimal sein: sie speist sich aus dem **Nachtsektor MLT 16–03**, korrelations-gewichtet, Fusions-Union — `deny global_min`.
 
+
+## Commits dieser Runde
+
+- `e5cdc9ab0` river-219: complete the placement 3-R chain — the Rat Blatt (min-threshold jump = calibration artifact; the non-nesting inference named as a non-sequitur; dbdt-min is a veto over unsigned |dB|, not the AL analogue; binding rule = sector-selected union/quorum, deny global_min) + the filled 13-seat roster + the one deciding measurement carried open
+- `b35028f18` river-219: route the placement/dispersion neighbor question through the 3 Rs — Recherche driven (all_wide: correlation-network literature, no global min-envelope), Roster formular in the 5-design with the round's 13 seats + shared open-weight, folded as a new open point; the operator drives the seats, the Rat follows

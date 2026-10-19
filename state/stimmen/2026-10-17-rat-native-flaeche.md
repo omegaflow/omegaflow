@@ -106,3 +106,7 @@ Origin: rat-2026-10-17-k
 - **Substrat prüfen, nicht übernehmen:** `session/inbox` + `form` (Transport ok, Adressierung bleibt Haus), `export/import` (nur Archiv/Fallback).
 - **Die Trennlinie ist eine Setzung, keine Messung** — vor dem nächsten Umbau `policies` und `skill` real prüfen; fällt die Setzung dort, kippt C.
 
+
+## Commits dieser Runde
+
+- `fb61725cf` stimmen: three Rat rounds (i open-state counter, j K identifiability, k native surface) + the gitignore rule that was only prose

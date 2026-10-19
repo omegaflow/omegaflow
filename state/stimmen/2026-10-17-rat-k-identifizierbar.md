@@ -111,3 +111,7 @@ Origin: rat-2026-10-17-j
 - Der Kadenz-Mismatch (Lumo) ist vor dem Bau zu beantworten: misst die bedingte TE die Kopplung oder die Auflösung der Indizes? Bis dahin bleibt der Punkt `pending`, nicht `gebaut`.
 - Grenze: kein Register-Schreibakt ohne Mountains `K`-Zeile.
 
+
+## Commits dieser Runde
+
+- `fb61725cf` stimmen: three Rat rounds (i open-state counter, j K identifiability, k native surface) + the gitignore rule that was only prose

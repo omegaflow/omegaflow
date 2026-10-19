@@ -1114,3 +1114,11 @@ Einträge — was heute Default ist, erbt morgen als Fehler.
 
 **Alle fünf Axiome gehalten; alle fünf Stimmen gehört; kein Riss geglättet.**
 
+
+## Commits dieser Runde
+
+- `635b263e6` mountain 354: the operator decides the head path — (b), the source description
+- `11e004fbd` mountain 354: fold Kimi's M4 answer — the head path is 5:5
+- `80a4bff92` mountain 354: the M4 rat verdict — a spherical-harmonic class, not a kernel
+- `9ada536ab` mountain 354: fill the M4 roster package with the seat list
+- `e78e728b6` mountain 354: prepare the M4 roster package for the spherical-harmonic kernel/field form

@@ -1137,3 +1137,11 @@ sondern ein gekacheltes BigTIFF. Die Overviews wären ggf. anzuhängen (einmalig
 **Overviews-Frage** entscheiden (annehmen ohne Overviews, oder einen COG-Schritt im CI benennen);
 (3) das **80,9-GB-Basemap** registrieren + splitten (`raw_mirror`), client-seitig per Range lesen.
 
+
+## Commits dieser Runde
+
+- `399caf2b3` mycelium 357: measure the Venera-polar head and the COG-builder gap
+- `6e5ae76d1` mycelium 357: the Venus basemap TIFF header, measured by HTTP Range
+- `599b772b8` mycelium 357: the Venus-image seat round — the Rat verdict (COG carrier, HiPS as derived view)
+- `829960666` mycelium 357: reframe both questionnaires to the purpose question ('what do we do with it')
+- `58c310a2c` mycelium 357: add the Venus-image questionnaire (operator asks the seats again)

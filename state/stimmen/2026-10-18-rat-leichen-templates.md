@@ -164,3 +164,8 @@ Origin: rat-2026-10-18-o
 Origin: rat-2026-10-18-o
 - Ledger `.17`/`.12` schließen (Quittung liegt im Postfach).
 
+
+## Commits dieser Runde
+
+- `0556c1506` rat: enforce the cost rule (paid only on operator word); mark the two overzealous paid runs
+- `f02e9166d` rat R-2026-10-18-o: Leichen, Zähler, Templates — Verdikt B (8/8), drei Schnitte sofort, Templates als Migration

@@ -239,3 +239,9 @@ gegen $0,0187 für die volle Frage an drei Sitze → **48 % günstiger**.
 2. **Eine Gabelung → ein Reasoning-Modell mit `low`** (DeepSeek/GLM), nicht die teuerste Spitze.
 3. **`#none` ist kein Schnäppchen, sondern ein Qualitätsverlust** — Kimi ohne Reasoning wählt falsch.
 
+
+## Commits dieser Runde
+
+- `2a3e57076` rat R-2026-10-18-e: correction — reasoning effort is the lever; kimi #none fails the fork, deepseek #low passes at 48% less
+- `49c92f455` rat R-2026-10-18-e: KPI nachlese — Kimi was load-bearing (bootstrap), Qwen was not; cheapest same-quality path measured
+- `1f73b482e` gate: R-2026-10-18-e — the commit-msg hook enforces a RAT-ID on architecture paths

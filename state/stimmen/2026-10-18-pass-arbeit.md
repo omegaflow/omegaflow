@@ -230,3 +230,8 @@ Origin: rat-2026-10-18-c
 - Delegierbar: Mechanik mit objektivem `done-when` (Zähler, Migration, Messung, Route).
 - Nicht delegierbar: Urteil, Priorisierung, das Schließen selbst.
 
+
+## Commits dieser Runde
+
+- `3fc764758` rat: R-2026-10-18-c closes 4/4 — a pass is a work act (Fugu A+D+C, Lumo A+B)
+- `87fd32d2c` rat: R-2026-10-18-c — a pass is a work act, not a fold (GLM A, Mistral A+C, swarm risses)

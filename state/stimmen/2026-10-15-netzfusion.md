@@ -1858,3 +1858,11 @@ die Zahl ist ehrlich, sie misst nur nicht dasselbe.
 Grund, das Netz abzuschalten — sie ist der Anker, an dem ein TE-geführtes Kleinstnetz sich messen
 lassen muss.
 
+
+## Commits dieser Runde
+
+- `e21129d5c` mycelium 355: prepare and verify the net-fusion frontier round at the tree (13 seat answers read, the min-as-conjunction confirmed at the proxy, the dH-envelope vs hourly |dB/dt| arm riss named, the verdict carried; handover folge355, the operator's session words cut)
+- `c996023ad` river-216: the seat round (12/13) and the Rat verdict — the min-envelope fusion is geschlagen (a conjunction, verified at the tree); the frozen-window/yield measurement is the next bounded step
+- `fdc547675` river-216: fix the known seat settings in the net-fusion manifest (no model placeholders)
+- `981a9886d` river-216: add the seat answer-slots (model placeholders) to the net-fusion manifest
+- `3f7939729` river-216: register the council word, prepare the net-fusion manifest (the question through the five axioms and the five voices) and record the wide research layer
