@@ -1,4 +1,12 @@
-# Rat-Anweisung — wie der Rat zu fahren ist (gemessen 2026-10-17)
+<!--
+  title: Rat-Anweisung — wie der Rat zu fahren ist
+  class: concept
+  date: 2026-10-19
+  sha256: 59bfc167952ae4df5e9e63839591c5216a06c891ef467ed4abbf26734fd3bbb7
+  status: live
+  see-also: AGENTS.md state/stimmen/2026-10-19-rat-kanon-wildwuchs-formular.md
+-->
+# Rat-Anweisung — wie der Rat zu fahren ist (gemessen 2026-10-17, Recherche-Pflicht 2026-10-19)
 
 **Wann lesen:** nur beim Fahren einer Rat-Frage — nicht in jedem Turn.
 **Wer entscheidet:** **der Operator** — welche Sitze, wann gefahren wird. Die Maschine bereitet vor.
@@ -166,17 +174,42 @@ curl -s https://api.deepinfra.com/v1/openai/chat/completions \
   > x-Qwen.json
 ```
 
-## 3b — Der freie Schwarm geht VOR die Paid-Sitze (gemessen 2026-10-18)
+## 3a — Die wissenschaftliche Recherche geht VOR jeden Sitz (Operator-Wort 2026-10-19)
 
-**Regel:** Vor jeder Rat-Runde darf ein **Schwarm freier Modelle** die Frage fahren — als
-**Riss-Generator**, nicht als Entscheider. Kosten $0, Laufzeit ~1 s je Modell.
+**Regel:** Keine Rat-Runde ohne **unabhängige, gemessene** Basis. Ein Rat, der nur die
+Hausbefunde hört, ist eine **Echokammer** — er bestätigt, was die Leitstelle ihm vorlegt.
+
+- **Werkzeug:** `archive_search <kw> --<kanal>` (Netz, gemessene Treffer). Erst
+  `bin/where <begriff>` — das Haus zuerst, dann das Netz.
+  **Gemessene Kanäle (2026-10-19, `--arxiv --count 3` liefert 3 Treffer):**
+  `--arxiv --openalex --semanticscholar --crossref --openaire --datacite --zenodo --dblp
+  --github --crates --stackexchange --sourcegraph`. **Für den Rat gesperrt:** die Websuche
+  (`--brave`, `--tavily`, `--exa`, `--duckduckgo-instant`) — sie ist keine Literaturbasis.
+- **Pflichtsektion im Formular:** `## Recherche` mit je Befund **Host/URL · Werkzeug · Datum ·
+  Zahl**. Zitiert eine Recherche nur Hausdokumente, **zählt sie nicht**.
+- **Kanal nach Thema**, nicht geraten: Doktrin/Architektur → `--arxiv --openalex
+  --semanticscholar --crossref`; Software/Werkzeug → `--github --crates --stackexchange`;
+  Daten/Sensoren → der passende Fachkanal.
+- **Reihenfolge:** Recherche → Formular (Recherche + Hausbefund + fünf Axiome) → **erst dann**
+  Schwarm, dann UI-Chats. Jeder Sitz bekommt die Messungen, nicht nur die Frage.
+
+**Grenze:** Der Schwarm misst nicht selbst. Was in der Recherche steht, ist vor dem Sitz zu
+holen — nicht danach, zur Rechtfertigung.
+
+## 3b — Der freie Schwarm geht VOR die UI-Chats und VOR die Paid-Sitze (gemessen 2026-10-18)
+
+**Regel:** Vor jeder Rat-Runde fährt ein **Schwarm freier Modelle** die Frage — als
+**Riss-Generator**, nicht als Entscheider. Dann die **UI-Chats** (Roster `ui-seats.md`, Max je
+Sitz). Paid erst, wenn Schwarm und UI uneinig sind. Kosten Schwarm $0, Laufzeit ~1 s je Modell.
 
 ```
-1. Frage steht (Formular)
+0. Wissenschaftsrecherche (archive_search) → `## Recherche` im Formular
+1. Frage steht (Formular, mit Recherche)
 2. Freier Schwarm → Risse + Mindermeinung
-3. Die Risse wandern INS Formular an die Paid-Sitze
-4. Paid entscheidet und trägt (Urteil + Autorität)
-5. Sammlung nennt BEIDES: Paid-Verdikt und Schwarm-Risse
+3. UI-Chats (Roster) → Verdikte mit Max-Einstellung
+4. Die Risse wandern INS Formular an die nächste Stufe
+5. Paid nur bei Uneinigkeit — und nur mit Operator-Ja
+6. Sammlung nennt ALLES: Recherche, Schwarm-Risse, UI-Verdikte, Paid-Urteil
 ```
 
 **Warum:** Benchmark über drei abgeschlossene Runden (`2026-10-18-schwarm-benchmark/README.md`):
