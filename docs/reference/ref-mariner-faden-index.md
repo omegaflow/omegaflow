@@ -4,7 +4,7 @@
   date: 2026-10-12
   sha256: 8d3eee8650add8f41ce6f6f54b19849e6ed9e88c197cdb665965bc7165796bde
   status: live
-  see-also: docs/plans/ref-ephemeriden-quellen-index.md docs/surveys/survey-2026-10-10-ephemeris-quellen.md
+  see-also: docs/reference/ref-ephemeriden-quellen-index.md docs/surveys/survey-2026-10-10-ephemeris-quellen.md
 -->
 # Ref — Mariner-Faden-Index (state-Bestand, Stand 2026-10-12)
 
