@@ -2,7 +2,7 @@
   title: Rat-Anweisung — wie der Rat zu fahren ist
   class: concept
   date: 2026-10-19
-  sha256: 59bfc167952ae4df5e9e63839591c5216a06c891ef467ed4abbf26734fd3bbb7
+  sha256: 6712378d1e2f42a7f26926ae8fbdb1503e6c9d11546f9f0cf330b9fa024f3110
   status: live
   see-also: AGENTS.md state/stimmen/2026-10-19-rat-kanon-wildwuchs-formular.md
 -->
@@ -201,6 +201,12 @@ holen — nicht danach, zur Rechtfertigung.
 **Regel:** Vor jeder Rat-Runde fährt ein **Schwarm freier Modelle** die Frage — als
 **Riss-Generator**, nicht als Entscheider. Dann die **UI-Chats** (Roster `ui-seats.md`, Max je
 Sitz). Paid erst, wenn Schwarm und UI uneinig sind. Kosten Schwarm $0, Laufzeit ~1 s je Modell.
+
+**Budget (Operator-Wort 2026-10-19):** **5 Sitze per Zufall** aus der frischen Alive-Liste
+(`shuf -n 5 state/zustand/llm-gateway-alive.tsv`) + **5 UI-Chats** (2 Operator / 3 Maschine).
+Die gezogene Auswahl wird **vor** dem Lauf veröffentlicht (`<datum>-rat-<thema>-auswahl.md`) —
+sonst ist der Zufall von der Auswahl nicht zu unterscheiden. Ein Sitz, der nicht urteilen kann
+(z. B. ein Guard-Modell), wird als **untauglich ausgewiesen**, nicht ersetzt.
 
 ```
 0. Wissenschaftsrecherche (archive_search) → `## Recherche` im Formular

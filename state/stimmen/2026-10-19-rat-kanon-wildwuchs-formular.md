@@ -2,7 +2,7 @@
   title: Rat-Formular — R-2026-10-19-a Kanon statt Wildwuchs
   class: sheet
   date: 2026-10-19
-  sha256: 7ebb3480801bf377b591a81db4f8efd59b12c48e3346ca9d21f0f330165c066e
+  sha256: 9749793ca6e33ad0fc25cd8341103f9b1aa8ac1817f4731b11998a66cc7f9e20
   status: live
   see-also: state/stimmen/_rat-anweisung.md
 -->
@@ -11,6 +11,8 @@
 **Datum:** 2026-10-19 · **Leitstelle:** Future · **Status:** vorbereitet, **nicht gefahren**
 **Fahrt:** freier Schwarm → UI-Chats (Roster `~/projects/omegaflow-work/ui-seats.md`) → paid nur bei Uneinigkeit.
 **Freigabe:** Operator-Ja 2026-10-19 („freier Schwarm und dann ui chats so wie schon immer festgelegt").
+**Budget:** **5 Zufalls-Sitze** aus den 13 lebenden freien Sitzen + **5 UI-Chats** (2 Operator / 3 Maschine) = 10 Stimmen, kein Paid.
+**Auswahl:** `state/stimmen/2026-10-19-rat-kanon-wildwuchs-auswahl.md` (gezogen, vorab veröffentlicht).
 
 ## Die Frage
 
