@@ -4,6 +4,7 @@
   date: 2026-09-03
   version: 3
   status: live
+  sha256: 9e62d04a767623777498400ddb0f097294563f196075a193b076f400fc613483
   see-also: AGENTS.md NOTICE
 -->
 

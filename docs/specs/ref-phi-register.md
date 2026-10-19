@@ -1,3 +1,10 @@
+<!--
+  title: phi/ — Register & Arbeitsdaten
+  class: spec
+  date: 2026-09-03
+  sha256: bf7c00eaf7c45544d63d1b0ff27ae63c1df04c2b35d3209514b043dbd68dce0b
+  status: live
+-->
 # phi/ — Register & Arbeitsdaten
 
 class: ref

@@ -1,3 +1,10 @@
+<!--
+  title: docs/ — Karte
+  class: ref
+  date: 2026-09-03
+  sha256: ad3a00bdb581b1082996348b3e3d331f7e5d203faf69faba9808cc821f8d141e
+  status: live
+-->
 # docs/ — Karte
 
 Die Ordnung folgt dem Zweck, nicht einer Klassen-Lehre. Ein Ordner trägt,

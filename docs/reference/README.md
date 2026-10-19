@@ -1,3 +1,10 @@
+<!--
+  title: Reference
+  class: ref
+  date: 2026-09-03
+  sha256: 90adb999f6d3c4486ffdc1f70e19fbdcf93a44699d50d5ed701c0a4ba461d437
+  status: live
+-->
 # Reference
 
 Externes Referenzmaterial im nativen Format (kein Header). Interne

@@ -1,3 +1,10 @@
+<!--
+  title: PCK Required Reading
+  class: ref
+  date: 2026-10-19
+  sha256: 58cd65226157032433ee6aff704982afa8bb0171e90e3f9e92c6845b4b5fdcc1
+  status: live
+-->
 PCK Required Reading
 
 [Index Page](index.html)

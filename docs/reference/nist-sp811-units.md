@@ -1,3 +1,10 @@
+<!--
+  title: NIST SP 811 — Unit Naming and API Normalization
+  class: ref
+  date: 2026-10-19
+  sha256: 9e8422943b1e70aa3d4f0548c9d3e3d06a2e34178e3c431431e7c461d5861265
+  status: live
+-->
 # NIST SP 811 — Unit Naming and API Normalization
 # Guide for the Use of the International System of Units (2008)
 # Public domain — US government work
