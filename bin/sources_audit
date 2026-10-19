@@ -1,0 +1,101 @@
+#!/bin/bash
+# sources_audit — entspricht der Ordner dem Inhalt?
+#
+# Die Werkstatt haelt zwei Speicher: `sources/` (CDN-gebunden) und
+# `experiments/` (nur lokal). Dieser Audit prueft, ob ein Ordner das enthaelt,
+# was sein Name verspricht:
+#
+#   MISMATCH  eine Textdatei unter <netloc>/ nennt eine ANDERE Quelle als den Ordner
+#   NO-URL    Binaerdatei ohne pruefbare Herkunft (kein Beleg, kein Fehler)
+#   EMPTY     0-Byte-Datei (Abruf kam leer zurueck)
+#   LOOSE     Datei direkt im Speicher-Root (keine Herkunft, kein Ordner)
+#
+# Usage:
+#   bin/sources_audit              beide Speicher
+#   bin/sources_audit sources      nur sources/
+#   bin/sources_audit experiments  nur experiments/
+#   bin/sources_audit --top 20     nur die groessten Ordner pruefen
+#   bin/sources_audit --dupes      zusaetzlich doppelte Inhalte (sha256) melden
+#
+# Exit 1, wenn MISMATCH oder LOOSE gefunden wurde (EMPTY/NO-URL sind Messungen).
+set -u
+
+W="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
+TARGET="${1:-beide}"
+TOP=0
+DUPES=0
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --top) TOP="${2:?}"; shift 2;;
+    --dupes) DUPES=1; shift;;
+    sources|experiments|beide) TARGET="$1"; shift;;
+    *) shift;;
+  esac
+done
+
+HOST_RE='^https?://([^/]+)'
+mism=0; loose=0; empty=0; nourl=0; files=0
+
+check_dir() {
+  local root="$1" dir="$2" name host found
+  name="$(basename "$dir")"
+  case "$name" in *.*) host="$name";; *) host="";; esac
+  while IFS= read -r f; do
+    files=$((files+1))
+    if [ ! -s "$f" ]; then
+      printf 'EMPTY\t%s\n' "$f"; empty=$((empty+1)); continue
+    fi
+    case "$f" in
+      *.html|*.htm|*.txt|*.csv|*.json|*.md|*.xml|*.φ|*.log)
+        # Nur eine *erklaerte* Herkunft zaehlt: `url <…>` / `origin <…>` oder "origin":"…".
+        # Irgendeine URL im Text ist Inhalt (Links, Quellenangaben), keine Herkunft.
+        found=$(grep -aoE '(^|[[:space:]])(url|origin)[[:space:]]+https?://[^/"'"'"' <>]+' "$f" 2>/dev/null | head -1 | grep -oE 'https?://[^/"'"'"' <>]+' | sed -E 's|https?://||')
+        [ -z "$found" ] && found=$(grep -aoE '"origin"[[:space:]]*:[[:space:]]*"https?://[^/"'"'"' <>]+' "$f" 2>/dev/null | head -1 | grep -oE 'https?://[^/"'"'"' <>]+' | sed -E 's|https?://||')
+        if [ -z "$found" ]; then
+          nourl=$((nourl+1))
+        elif [ -n "$host" ]; then
+          case "$found" in
+            *"$host"*|"$host"*) : ;;
+            github.com|raw.githubusercontent.com|zenodo.org|doi.org|www.w3.org|schemas.openxmlformats.org|purl.org|creativecommons.org) : ;;
+            *) printf 'MISMATCH\t%s\tnennt %s\n' "$f" "$found"; mism=$((mism+1));;
+          esac
+        fi
+        ;;
+      *) nourl=$((nourl+1));;
+    esac
+  done < "$dir"/.audit_list
+}
+
+scan_root() {
+  local root="$1" d
+  [ -d "$root" ] || return 0
+  printf '\n== %s\n' "$root"
+  # LOOSE: Dateien direkt in der Wurzel
+  while IFS= read -r f; do
+    [ -e "$f" ] || continue
+    printf 'LOOSE\t%s\n' "$f"; loose=$((loose+1))
+  done < <(find "$root" -maxdepth 1 -type f)
+  # Kandidaten: Ordner der ersten Ebene
+  local dirs
+  dirs=$(find "$root" -maxdepth 1 -mindepth 1 -type d | sort)
+  [ "$TOP" -gt 0 ] && dirs=$(du -s $dirs 2>/dev/null | sort -nr | head -"$TOP" | cut -f2-)
+  for d in $dirs; do
+    find "$d" -type f -size -2M 2>/dev/null | head -200 > "$d"/.audit_list
+    check_dir "$root" "$d"
+    rm -f "$d"/.audit_list
+  done
+}
+
+[ "$TARGET" = beide ] || [ "$TARGET" = sources ] && scan_root "$W/sources"
+[ "$TARGET" = beide ] || [ "$TARGET" = experiments ] && scan_root "$W/experiments"
+
+if [ "$DUPES" -eq 1 ]; then
+  printf '\n== doppelte Inhalte (sha256, >1 KiB)\n'
+  find "$W/sources" "$W/experiments" -type f -size +1k -print0 2>/dev/null \
+    | xargs -0 sha256sum 2>/dev/null | sort | awk '{h=$1; f=$2; if (h==p) {if(!shown){print pf; shown=1} print f} else shown=0; p=h; pf=f}'
+fi
+
+printf '\n== Bilanz: %d Dateien · MISMATCH %d · LOOSE %d · EMPTY %d · NO-URL %d\n' \
+  "$files" "$mism" "$loose" "$empty" "$nourl"
+if [ "$mism" -gt 0 ] || [ "$loose" -gt 0 ]; then exit 1; fi
+exit 0
