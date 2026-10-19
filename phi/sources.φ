@@ -3537,16 +3537,17 @@ field values.0.value.0.value hydrosphere_river_flow_cfs erfc advective cfs 8640.
 url https://github.com/omegaflow/sources/releases/download/wdc.kugi.kyoto-u.ac.jp/wdc_ae.bin
 terms wdc-kyoto-scientific-noncommercial https://wdc.kugi.kyoto-u.ac.jp/wdc/Sec3.html
 format wdc_ae
-origin https://wdc.kugi.kyoto-u.ac.jp/hapi
+origin https://wdc.kugi.kyoto-u.ac.jp/hapi/data (min_ae, min_asysym, hour_dst; 1981-01-01T00:00:00Z .. 1984-01-01T00:00:00Z)
 compiler tools/harvest/src/bin/wdc_ae_compiler.rs
+sha256 6d6b26a9253cf0f3f830e7be2789260591ecbd71f049f070d877d52483426f66
 at earth
 ttl 86400
-quantity wdc_ae_al_nt wdc_ae_al_nt inverse-square index nt 60 0.0 0.0
-quantity wdc_ae_au_nt wdc_ae_au_nt inverse-square index nt 60 0.0 0.0
-quantity wdc_ae_ae_nt wdc_ae_ae_nt inverse-square index nt 60 0.0 0.0
-quantity wdc_sym_d_nt wdc_sym_d_nt inverse-square index nt 60 0.0 0.0
-quantity wdc_sym_h_nt wdc_sym_h_nt inverse-square index nt 60 0.0 0.0
-quantity wdc_dst_nt wdc_dst_nt inverse-square index nt 3600 0.0 0.0
+field wdc_ae_al_nt wdc_ae_al_nt inverse-square em nT 60 0.0 0.0
+field wdc_ae_au_nt wdc_ae_au_nt inverse-square em nT 60 0.0 0.0
+field wdc_ae_ae_nt wdc_ae_ae_nt inverse-square em nT 60 0.0 0.0
+field wdc_sym_d_nt wdc_sym_d_nt inverse-square em nT 60 0.0 0.0
+field wdc_sym_h_nt wdc_sym_h_nt inverse-square em nT 60 0.0 0.0
+field wdc_dst_nt wdc_dst_nt inverse-square em nT 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/www.ncei.noaa.gov/igra_v2_por.bin
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
@@ -9781,6 +9782,102 @@ format fingrid_datasets
 sha256 1779eabe9aed7fff9344a49ed147df064bd8914b3759faf09af443e929084439
 at earth
 ttl 604800
+
+url https://github.com/omegaflow/sources/releases/download/data.fingrid.fi/fingrid_frequency.json
+terms per-service-terms https://data.fingrid.fi/en/instructions
+format json
+origin https://data.fingrid.fi/api/data?datasets=177&startTime=2026-10-12T00:00:00Z&endTime=2026-10-19T00:00:00Z
+compiler tools/harvest/src/bin/fingrid_compiler.rs
+sha256 13b36cbc255c2cd2221b3b4b22976c54d7fa047ff65c47518e045fca46061cbb
+at earth
+ttl 604800
+map data
+epoch startTime
+field value fingrid_frequency_hz inverse-square em Hz 60 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.fingrid.fi/fingrid_p1_flow.json
+terms per-service-terms https://data.fingrid.fi/en/instructions
+format json
+origin https://data.fingrid.fi/api/data?datasets=30&startTime=2026-10-12T00:00:00Z&endTime=2026-10-19T00:00:00Z
+compiler tools/harvest/src/bin/fingrid_compiler.rs
+sha256 16638c28452ada5913d0dfda7f82f9da6b09f736404e8ee9acc7c12b2b3e8605
+at earth
+ttl 604800
+map data
+epoch startTime
+field value fingrid_p1_north_south_mw inverse-square em MW 60 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.fingrid.fi/fingrid_flow_fi_se1.json
+terms per-service-terms https://data.fingrid.fi/en/instructions
+format json
+origin https://data.fingrid.fi/api/data?datasets=87&startTime=2026-10-12T00:00:00Z&endTime=2026-10-19T00:00:00Z
+compiler tools/harvest/src/bin/fingrid_compiler.rs
+sha256 a5785f9ddfb5c942fe6fcbf4b8231ad29b84b7e2924f3628e98fb190f38a91c3
+at earth
+ttl 604800
+map data
+epoch startTime
+field value fingrid_flow_fi_se1_mw inverse-square em MW 180 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.fingrid.fi/fingrid_flow_fi_ee.json
+terms per-service-terms https://data.fingrid.fi/en/instructions
+format json
+origin https://data.fingrid.fi/api/data?datasets=180&startTime=2026-10-12T00:00:00Z&endTime=2026-10-19T00:00:00Z
+compiler tools/harvest/src/bin/fingrid_compiler.rs
+sha256 3c3860ab3dc5bde9707ebbda81ae6ec41475f28329366a22111cea4b6012d29f
+at earth
+ttl 604800
+map data
+epoch startTime
+field value fingrid_flow_fi_ee_mw inverse-square em MW 180 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.fingrid.fi/fingrid_flow_fi_no.json
+terms per-service-terms https://data.fingrid.fi/en/instructions
+format json
+origin https://data.fingrid.fi/api/data?datasets=187&startTime=2026-10-12T00:00:00Z&endTime=2026-10-19T00:00:00Z
+compiler tools/harvest/src/bin/fingrid_compiler.rs
+sha256 c17c5b2e8a95a60a013cc734ff3f074275ed15b3d5a702bd30836a3712acd966
+at earth
+ttl 604800
+map data
+epoch startTime
+field value fingrid_flow_fi_no_mw inverse-square em MW 180 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.fingrid.fi/fingrid_production.json
+terms per-service-terms https://data.fingrid.fi/en/instructions
+format json
+origin https://data.fingrid.fi/api/data?datasets=192&startTime=2026-10-12T00:00:00Z&endTime=2026-10-19T00:00:00Z
+compiler tools/harvest/src/bin/fingrid_compiler.rs
+sha256 4e809a7879d8da76b34c334f06858b5601e15e8a0a489d3f59ef47eef177678e
+at earth
+ttl 604800
+map data
+epoch startTime
+field value fingrid_production_mw inverse-square em MW 180 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.fingrid.fi/fingrid_consumption.json
+terms per-service-terms https://data.fingrid.fi/en/instructions
+format json
+origin https://data.fingrid.fi/api/data?datasets=193&startTime=2026-10-12T00:00:00Z&endTime=2026-10-19T00:00:00Z
+compiler tools/harvest/src/bin/fingrid_compiler.rs
+sha256 4fd5e6ecda004e82b036eb02a693ca0c82a905b5a6596ebed57092723da77f60
+at earth
+ttl 604800
+map data
+epoch startTime
+field value fingrid_consumption_mw inverse-square em MW 180 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.fingrid.fi/fingrid_net_import.json
+terms per-service-terms https://data.fingrid.fi/en/instructions
+format json
+origin https://data.fingrid.fi/api/data?datasets=194&startTime=2026-10-12T00:00:00Z&endTime=2026-10-19T00:00:00Z
+compiler tools/harvest/src/bin/fingrid_compiler.rs
+sha256 1dfd2d364fe4b1ba7bb7dcaf5b0319085b669afe5c5c7cda77238340511d544b
+at earth
+ttl 604800
+map data
+epoch startTime
+field value fingrid_net_import_mw inverse-square em MW 180 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.geo.admin.ch/swisstopo_coverage.manifest
 terms free-open https://www.swisstopo.admin.ch/en/terms-of-use-free-geodata-and-geoservices

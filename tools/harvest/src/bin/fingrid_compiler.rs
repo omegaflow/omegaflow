@@ -6,7 +6,9 @@ use std::process::Command;
 
 const TAG: &str = "data.fingrid.fi";
 const DATASETS_URL: &str = "https://data.fingrid.fi/api/datasets";
+const DATA_URL: &str = "https://data.fingrid.fi/api/data";
 const KEY_NAME: &str = "FINGRID_API_KEY";
+const PAGE_SIZE: u32 = 20000;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -93,8 +95,42 @@ fn fetch(url: &str, key: &str) -> Result<Vec<u8>, String> {
     Ok(out.stdout)
 }
 
+fn fetch_retry(url: &str, key: &str) -> Result<Vec<u8>, String> {
+    for attempt in 0..6 {
+        if attempt > 0 {
+            std::thread::sleep(std::time::Duration::from_secs(3));
+        }
+        let bytes = fetch(url, key)?;
+        let text = String::from_utf8_lossy(&bytes);
+        if text.contains("\"statusCode\":429") || text.contains("Rate limit") {
+            eprintln!("{url}: rate limit, attempt {}", attempt + 1);
+            continue;
+        }
+        return Ok(bytes);
+    }
+    Err(format!("{url}: rate limit did not clear"))
+}
+
 fn dataset_count(bytes: &[u8]) -> usize {
     String::from_utf8_lossy(bytes).matches("\"id\":").count()
+}
+
+fn data_count(bytes: &[u8]) -> usize {
+    String::from_utf8_lossy(bytes)
+        .matches("\"datasetId\":")
+        .count()
+}
+
+fn write_asset(out_path: &str, bytes: &[u8]) -> Result<(), String> {
+    if let Some(parent) = Path::new(out_path).parent()
+        && !parent.as_os_str().is_empty()
+    {
+        std::fs::create_dir_all(parent).map_err(|e| format!("create parent void: {e}"))?;
+    }
+    let mut file = std::fs::File::create(out_path)
+        .map_err(|e| format!("{out_path} create returned void: {e}"))?;
+    file.write_all(bytes)
+        .map_err(|e| format!("{out_path} write returned void: {e}"))
 }
 
 fn run(args: &[String]) -> Result<(), String> {
@@ -106,19 +142,35 @@ fn run(args: &[String]) -> Result<(), String> {
         return Err(format!("{KEY_NAME} absent from .secrets.local/.env"));
     };
 
-    let bytes = fetch(DATASETS_URL, &key)?;
+    let bytes = match arg_value(args, "--dataset") {
+        Some(dataset) => {
+            let start = arg_value(args, "--start")
+                .ok_or("fingrid_compiler --dataset needs --start <isotime>")?;
+            let stop = arg_value(args, "--stop")
+                .ok_or("fingrid_compiler --dataset needs --stop <isotime>")?;
+            let url = format!(
+                "{DATA_URL}?datasets={dataset}&startTime={start}&endTime={stop}&format=json&pageSize={PAGE_SIZE}"
+            );
+            let bytes = fetch_retry(&url, &key)?;
+            let count = data_count(&bytes);
+            if count == 0 {
+                return Err(format!("{url} carries no data record"));
+            }
+            write_asset(&out_path, &bytes)?;
+            println!(
+                "{out_path}: {} bytes, {count} record(s) for dataset {dataset} ({start} .. {stop})",
+                bytes.len()
+            );
+            if ci_mode && !upload_release(TAG, &out_path) {
+                return Err(format!("{out_path}: CDN upload returned void"));
+            }
+            return Ok(());
+        }
+        None => fetch_retry(DATASETS_URL, &key)?,
+    };
     let count = dataset_count(&bytes);
 
-    if let Some(parent) = Path::new(&out_path).parent()
-        && !parent.as_os_str().is_empty()
-    {
-        std::fs::create_dir_all(parent).map_err(|e| format!("create parent void: {e}"))?;
-    }
-
-    let mut file = std::fs::File::create(&out_path)
-        .map_err(|e| format!("{out_path} create returned void: {e}"))?;
-    file.write_all(&bytes)
-        .map_err(|e| format!("{out_path} write returned void: {e}"))?;
+    write_asset(&out_path, &bytes)?;
 
     println!(
         "{out_path}: {} bytes, {count} dataset id(s) in the Fingrid ableList",
@@ -152,5 +204,16 @@ mod tests {
     #[test]
     fn an_empty_body_carries_no_dataset() {
         assert_eq!(dataset_count(b""), 0);
+    }
+
+    #[test]
+    fn the_data_count_reads_the_dataset_id_marker() {
+        let body = br#"{"data":[{"datasetId":177,"value":50.0},{"datasetId":177,"value":50.1}],"pagination":{}}"#;
+        assert_eq!(data_count(body), 2);
+    }
+
+    #[test]
+    fn an_empty_data_body_carries_no_record() {
+        assert_eq!(data_count(br#"{"message":"OK"}"#), 0);
     }
 }
