@@ -2,7 +2,7 @@
   title: Bindings — dust-maske + bathymetrie-gebco (Prosa-Preregistrierung)
   class: concept
   date: 2026-09-18
-  sha256: ccf4160140cf157e1337b0663925e6c0d2eb3b9cb8a3e6f593e5be29bea1abbc
+  sha256: 04393b87d7a3fb421f0bf63a2139d403e90acfa4bdf8f12aa803552165cb7d64
   status: live
   see-also: tools/harvest/data/dust-maske.φ
 -->
