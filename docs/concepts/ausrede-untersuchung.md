@@ -2,7 +2,7 @@
   title: Ausrede-Untersuchung — die vier Turnsätze, als Deckmantel benutzt
   class: concept
   date: 2026-10-17
-  sha256: 5207baec1796f17c0b40d777781102bb9bccf415292afeef9378aefbc1745ba1
+  sha256: 7491b4e82c01b6ee536b1801d8232ab42f933acb8690c5ea94d6d135b7af52c2
   status: live
   see-also: AGENTS.md docs/concepts/house-rules.md
 -->

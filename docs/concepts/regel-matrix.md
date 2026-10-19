@@ -2,7 +2,7 @@
   title: Regel-Matrix — wo welche Regel steht, wie wirksam, wie redundant, was sie kostet
   class: concept
   date: 2026-10-17
-  sha256: 9d830e39565483832332912733536445a88e779f20289128a7f4b8ac0272975b
+  sha256: ed643c4d18f3ad64c85ea39549581b16dd48f2a37c62646582913f56cd0f0e4a
   status: live
   see-also: AGENTS.md docs/concepts/house-rules.md docs/concepts/lageplan.md
 -->
