@@ -669,9 +669,22 @@ fn coverage(eph: &BodyEphemeris) -> (f64, f64) {
     (lo, hi)
 }
 
+fn earth_name() -> String {
+    match omegaflow::ephemeris::body_table()
+        .into_iter()
+        .find(|(id, _)| *id == 399)
+    {
+        Some((_, body)) => body.name,
+        None => {
+            eprintln!("earth absent from the NAIF table - 0 honored");
+            std::process::exit(2);
+        }
+    }
+}
+
 fn find_perigee(name: &str, jd0: f64, eph: &HashMap<String, BodyEphemeris>) -> Option<(f64, f64)> {
     let arc = eph.get(name)?;
-    let earth = eph.get("earth")?;
+    let earth = eph.get(&earth_name())?;
     let scan_lo = jd0 - 1.5;
     let scan_hi = jd0 + 1.5;
     let (arc_lo, arc_hi) = coverage(arc);
@@ -690,7 +703,7 @@ fn find_perigee(name: &str, jd0: f64, eph: &HashMap<String, BodyEphemeris>) -> O
             jd += step_jd;
             continue;
         };
-        let Some(q) = body_barycenter_position("earth", tdb, eph) else {
+        let Some(q) = body_barycenter_position(&earth_name(), tdb, eph) else {
             jd += step_jd;
             continue;
         };
@@ -1083,7 +1096,7 @@ fn main() {
     let items: Vec<(usize, SourceConfig, String)> = sources
         .iter()
         .enumerate()
-        .filter(|(_, s)| s.format == "ephemeris_binary" && s.body.as_deref() == Some("earth"))
+        .filter(|(_, s)| s.format == "ephemeris_binary" && s.body.as_deref() == Some(earth_name().as_str()))
         .map(|(idx, s)| {
             (
                 idx,
@@ -1103,7 +1116,7 @@ fn main() {
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     eph.insert("juice".to_string(), juice);
-    eph.insert("earth".to_string(), earth);
+    eph.insert(earth_name(), earth);
     let jd0 = julian_day_utc(PERIGEE_YEAR, PERIGEE_MONTH, PERIGEE_DAY);
     let Some((t_p_jd, perigee_m)) = find_perigee("juice", jd0, &eph) else {
         eprintln!("perigee scan void — the tube stays unbuilt");

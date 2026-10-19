@@ -10,7 +10,18 @@ const DEFAULT_REGISTER: &str = "data/flyby2/anderson-probe-2026-09-28.json";
 const DEFAULT_DE: &str = "data/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin";
 const DEFAULT_INPOP: &str = "data/ftp.imcce.fr/ephemeris_inpop_earth.bin";
 const DEFAULT_EPM: &str = "data/ftp.iaaras.ru/ephemeris_epm_earth.bin";
-const EARTH: &str = "earth";
+fn earth_name() -> String {
+    match omegaflow::ephemeris::body_table()
+        .into_iter()
+        .find(|(id, _)| *id == 399)
+    {
+        Some((_, body)) => body.name,
+        None => {
+            eprintln!("earth absent from the NAIF table - 0 honored");
+            std::process::exit(2);
+        }
+    }
+}
 const FIRST_ROW_REF_S: f64 = 86_400.0;
 
 fn arg_str(args: &[String], flag: &str) -> Option<String> {
@@ -103,7 +114,7 @@ fn load_house(path: &str) -> Option<HashMap<String, BodyEphemeris>> {
     let bytes = std::fs::read(path).ok()?;
     let e = parse_ephemeris_binary(&bytes)?;
     let mut map = HashMap::new();
-    map.insert(EARTH.to_string(), e);
+    map.insert(earth_name(), e);
     Some(map)
 }
 
@@ -112,8 +123,8 @@ fn pair_delta_km(
     b: &HashMap<String, BodyEphemeris>,
     t_tdb: f64,
 ) -> Option<f64> {
-    let pa = body_barycenter_position(EARTH, t_tdb, a)?;
-    let pb = body_barycenter_position(EARTH, t_tdb, b)?;
+    let pa = body_barycenter_position(&earth_name(), t_tdb, a)?;
+    let pb = body_barycenter_position(&earth_name(), t_tdb, b)?;
     let dx = pa[0] - pb[0];
     let dy = pa[1] - pb[1];
     let dz = pa[2] - pb[2];
