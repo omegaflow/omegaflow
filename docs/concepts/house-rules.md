@@ -2,7 +2,7 @@
   title: House Rules — die Essenz (was gilt)
   class: concept
   date: 2026-10-19
-  sha256: e88ab7bd2a06a5badd469cedef3ada7f74d8f8df48a2cb683d8307c7a6960924
+  sha256: 6c751187cf971247d66deba4abcfa5bccc91b3a8bda12ce1517dd1609c7a7543
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md docs/granit.md docs/council.yaml
 -->
@@ -64,6 +64,9 @@ nur Offenes) · deine **Post** (dasselbe `post/`). Lies nur die Stellen, die die
   Schwarm-Sitze (`shuf` aus der frischen Alive-Liste, Auswahl **vorher veröffentlicht**) → 5 UI-Sitze
   → paid **nur** bei Uneinigkeit und nur mit Operator-Ja. Ein untauglicher Sitz wird **ersetzt**
   und der Ersatz veröffentlicht — „untauglich ausweisen" reicht nicht.
+- **UI-Basissitze:** **Fugu (Max)** auf Sakana Chat — die Modellwahl der Seite zeigt
+  „Namazu High", der Sitz ist Fugu — und **Lumo 2.0 (Max)** auf `lumo.proton.me`.
+  Der volle Roster ist der gemessene Stand; Fugu/Lumo sind der Schnitt, kein Roster.
 - **`reasoning_effort: low`, `max_tokens` ≥ 6000.** `high`/`max` kappt die Antwort; ohne Level
   kommen abgeschnittene Verdikte.
 - **Leiter:** `free > Mistral inklusive > DeepSeek paid > Mistral paid`. DeepInfra nur für PII
