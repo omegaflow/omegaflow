@@ -2,7 +2,7 @@
   title: House Rules — die Essenz (was gilt)
   class: concept
   date: 2026-10-19
-  sha256: bb12a16eaffc40d6b2f889497f1af677bda5e32aab02b2e71d1870fcaded7752
+  sha256: 3f3db031cb85c0529ec7a4b38fda78ec7be66c72a6fb64040ae0e086352a9e97
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md docs/granit.md docs/council.yaml
 -->
@@ -33,7 +33,7 @@ nur Offenes) · deine **Post** (dasselbe `post/`). Lies nur die Stellen, die die
   kopierbaren Schritt, der ihn löst; die Übergabe ist die Bringschuld, nicht die Kür.
 - **Grenze:** commit+push = deine Hand (eigene Pfade, Englisch); **Send** und jeder
   dritt-wirksame Akt = Operator-Hand (per-Akt-Wort); Architektur/Ethik → der Rat.
-  **„Send" ist genau das — Versand, nichts sonst:** `smail --send`, ein Formular/Antrag,
+  **„Send" ist genau das — Versand, nichts sonst:** ein Formular/Antrag,
   ein CDN-Upload/Rückzug, ein Konto-/Key-Akt. Alles davor ist **Arbeit** und dein Boden.
   Die Grenze darf **nie** als Deckmantel dienen, Arbeit zu lassen.
 
