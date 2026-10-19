@@ -13,9 +13,9 @@ open_rows=$(grep -E '\*\*rat-offen|\*\*rat-konvergiert|\*\*offen\*\*|\*\*gefahre
 last_runs=$(ls -1t ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat/ 2>/dev/null | grep -E 'sammlung|verdikt|lage' | head -8 | sed 's/^/  /')
 
 work="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
-post_in=$(ls -1 "$work"/post/in/*.md 2>/dev/null | wc -l)
-post_today=$(ls -1 "$work"/post/in/"$(date +%F)"-*.md 2>/dev/null | wc -l)
-post_out=$(ls -1 "$work"/post/out/*.md 2>/dev/null | wc -l)
+post_in=$(ls -1 "$work"/post/*-an-future-*.md 2>/dev/null | wc -l)
+post_today=$(ls -1 "$work"/post/"$(date +%F)"-*-an-future-*.md 2>/dev/null | wc -l)
+post_out=$(ls -1 "$work"/post/*-future-an-*.md 2>/dev/null | wc -l)
 post_head=$(git -C "$work" rev-parse --short HEAD 2>/dev/null || echo 'kein Repo')
 post_dirty=$(git -C "$work" status --porcelain 2>/dev/null | wc -l)
 
