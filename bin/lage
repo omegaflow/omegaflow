@@ -28,7 +28,7 @@ hage() { t=$(git log -1 --format=%ct -- "$1" 2>/dev/null); [ -n "${t:-}" ] || t=
 balance=$(tail -n +2 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/gateway/balance.tsv 2>/dev/null | sed 's/^/  /')
 
 line_rows=$(for line in mountain mycelium river sensory future; do
-  h=$(git ls-files 'docs/handover/handover-*.md' 2>/dev/null | grep -v '/archiv/' | grep -E -- "-$line(-|\.)" | sort | tail -1)
+  h=$(ls -1 "$work"/handover/handover-*.md 2>/dev/null | grep -v '/archiv/' | grep -E -- "-$line(-|\.)" | sort | tail -1)
   [ -f "$h" ] || continue
   n=$(awk '/^## Offen/{f=1;next} /^## /{f=0} f{if(/^### /)h++; else if(/^- /)b++} END{if(h)print h; else print b+0}' "$h")
   b=$(awk '/^## Offen/{f=1;next} /^## /{f=0} f' "$h" | grep -ci 'braucht')
@@ -66,13 +66,13 @@ done)
   echo "- in: $post_in Briefe (heute $post_today) · out: $post_out · Postfach-Repo: \`$post_head\` · uncommitted: $post_dirty"
   echo
   echo "## Wo was liegt (Kanon — hier nachsehen, nicht suchen)"
-  echo "- Rat: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat/\` ($(ls -1 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat/*.md 2>/dev/null | grep -vcE '_lage|_rat-') Runden · Register \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat/_rat-register.md\` · Anweisung \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat/_rat-anweisung.md\` · Rohmaterial \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat/_roh/\`)"
-  echo "- Post: \`$work/post/in\` ($post_in Briefe) · \`$work/post/out\` ($post_out Dispatches) · Repo \`omegaflow/work\` (privat)"
+  echo "- Rat: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat/\` ($(ls -1 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat/*.md 2>/dev/null | grep -vcE '_lage|_rat-') Runden · Register \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat/_rat-register.md\` · Regeln \`docs/concepts/house-rules.md\` · Rohmaterial \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat/_roh/\`)"
+  echo "- Post: \`$work/post/\` ($post_in Briefe an future, $post_out Dispatches) · Repo \`omegaflow/work\` (privat)"
   echo "- Quellen (CDN-gebunden, rekonstruierbar): \`$work/sources/\` ($(ls -1 "$work/sources" 2>/dev/null | wc -l) Netlocs + content/, $(du -sh "$work/sources" 2>/dev/null | cut -f1))"
   echo "- Experimente (nur lokal): \`$work/experiments/\` ($(ls -1 "$work/experiments" 2>/dev/null | wc -l) Themen, $(du -sh "$work/experiments" 2>/dev/null | cut -f1))"
   echo "- Recherche: \`$work/recherche/funde/\` ($(find "$work/recherche/funde" -type f 2>/dev/null | wc -l) Dateien) · Flüchtiges \`$work/recherche/tmp/\`"
   echo "- Gateway-Zustand: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/gateway/\` (models, alive, balance, provenance, catalog, paid-open)"
-  echo "- Register (Herkunft): \`phi/sources.φ\` · Übergaben: \`docs/handover/\`"
+  echo "- Register (Herkunft): \`phi/sources.φ\` · Übergaben: \`$work/handover/\`"
   echo
   echo "## Rat-Fragen (offen | rat-konvergiert)"
   if [ -n "$open_rows" ]; then

@@ -8,7 +8,7 @@
 #   bin/rat_guard --grant    -> (nur Operator) den Grant für heute setzen
 set -u
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
-grant="$root/state/zustand/rat-paid-grant"
+grant="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat-paid-grant"
 
 if [ "${1:-}" = "--grant" ]; then
     mkdir -p "$(dirname "$grant")"

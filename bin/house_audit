@@ -32,7 +32,7 @@ done
 EXCL1=":(exclude)AGENTS.md"
 EXCL2=":(exclude)src/gate/commit_gate_vocab.json"
 EXCL3=":(exclude)bin/house_audit"
-EXCL4=":(exclude)docs/concepts/tool-forms.md"
+EXCL4=":(exclude)docs/concepts/archiv/tool-forms.md"
 
 # Die PII-Muster sind privat und nie getrackt: die private Wurzel (OMEGAFLOW_PRIVATE)/pii-patterns.txt ist die
 # Primaerquelle (eine Zeile, alternierte Muster). Fehlt sie, wird die pii-Klasse
