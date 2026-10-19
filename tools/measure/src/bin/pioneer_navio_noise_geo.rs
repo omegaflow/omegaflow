@@ -6,7 +6,7 @@ const DAY_S: f64 = 86400.0;
 const AU: f64 = 1.495978707e11;
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+    let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -36,7 +36,7 @@ fn run(probe: &str, sc_body: &str) {
             return;
         }
     }
-    let p = format!("data/spdf.gsfc.nasa.gov/{probe}_navio_residuum.bin");
+    let p = format!("sources/spdf.gsfc.nasa.gov/{probe}_navio_residuum.bin");
     let Ok(bytes) = std::fs::read(&p) else {
         eprintln!("{probe}: residuum void");
         return;

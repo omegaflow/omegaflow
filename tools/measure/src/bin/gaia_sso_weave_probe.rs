@@ -47,11 +47,11 @@ fn main() {
     };
     let dastcom_path = match arg_value(&args, "--dastcom") {
         Some(d) => d,
-        None => "data/ssd.jpl.nasa.gov/dastcom_asteroids.bin".to_string(),
+        None => "sources/ssd.jpl.nasa.gov/dastcom_asteroids.bin".to_string(),
     };
     let gaia_path = match arg_value(&args, "--gaia") {
         Some(d) => d,
-        None => "data/gea.esac.esa.int/gaia_sso_tno.bin".to_string(),
+        None => "sources/gea.esac.esa.int/gaia_sso_tno.bin".to_string(),
     };
     let Some(receiver_name) = arg_value(&args, "--receiver") else {
         println!(

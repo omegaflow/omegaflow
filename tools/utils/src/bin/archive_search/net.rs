@@ -3814,7 +3814,7 @@ fn load_logged_yields() -> HashMap<String, f64> {
         None => return map,
     };
     let body = match std::fs::read_to_string(
-        std::path::PathBuf::from(repo).join("state/research/queries.φ"),
+        std::path::PathBuf::from(repo).join("zustand/research/queries.φ"),
     ) {
         Ok(b) => b,
         Err(_) => return map,
@@ -4060,7 +4060,7 @@ fn log_query(mode: &str, query: &str, lines: &[String], max: usize) {
         Some(r) => std::path::PathBuf::from(r),
         None => return,
     };
-    let dir = repo.join("state/research");
+    let dir = repo.join("zustand/research");
     if std::fs::create_dir_all(&dir).is_err() {
         return;
     }

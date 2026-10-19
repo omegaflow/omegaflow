@@ -1,8 +1,8 @@
 use std::env;
 use std::fs;
 
-fn state_dir() -> std::path::PathBuf {
-    if let Ok(dir) = env::var("OMEGAFLOW_STATE") {
+fn zustand_dir() -> std::path::PathBuf {
+    if let Ok(dir) = env::var("OMEGAFLOW_ZUSTAND") {
         if !dir.is_empty() {
             return std::path::PathBuf::from(dir);
         }
@@ -42,7 +42,7 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let mut path = match env_str("OMEGAFLOW_MAIL_LEDGER") {
         Some(p) => p,
-        None => state_dir()
+        None => zustand_dir()
             .join("mail/mail_ledger.φ")
             .to_string_lossy()
             .into_owned(),

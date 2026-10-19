@@ -136,7 +136,7 @@ fn date_of(days: i64) -> String {
 
 fn load_probe_daily(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
     let key = format!("{name}_daily");
-    let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{key}.bin");
+    let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{key}.bin");
     if !std::path::Path::new(&path).exists() {
         std::fs::create_dir_all("data").ok();
         let url = format!("{}/ssd.jpl.nasa.gov/ephemeris_{key}.bin", CDN_BASE);
@@ -464,7 +464,7 @@ fn log_pair(a: &[f32], b: &[f32]) -> Option<(Vec<f32>, Vec<f32>)> {
 }
 
 fn load_arc(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+    let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     if !std::path::Path::new(&path).exists() {
         std::fs::create_dir_all("data").ok();
         let url = format!("{}/ssd.jpl.nasa.gov/ephemeris_{name}.bin", CDN_BASE);
@@ -755,7 +755,7 @@ fn main() {
                 idx,
                 s.clone(),
                 format!(
-                    "data/ssd.jpl.nasa.gov/ephemeris_{}.bin",
+                    "sources/ssd.jpl.nasa.gov/ephemeris_{}.bin",
                     s.body.as_deref().unwrap_or("")
                 ),
             )

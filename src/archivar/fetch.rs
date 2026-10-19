@@ -1503,7 +1503,7 @@ pub fn cache_root() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_CACHE") {
         return std::path::PathBuf::from(dir);
     }
-    if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+    if let Ok(dir) = std::env::var("OMEGAFLOW_ZUSTAND") {
         return std::path::PathBuf::from(dir).join("archivar_cache");
     }
     std::path::PathBuf::from("cache")
@@ -1752,26 +1752,26 @@ mod cache_root_tests {
         let state_root = std::path::PathBuf::from(state).join("archivar_cache");
 
         unsafe {
-            std::env::set_var("OMEGAFLOW_STATE", state);
+            std::env::set_var("OMEGAFLOW_ZUSTAND", state);
         }
         assert_eq!(
             cache_root(),
             state_root,
-            "the cache root honors OMEGAFLOW_STATE"
+            "the cache root honors OMEGAFLOW_ZUSTAND"
         );
 
         unsafe {
-            std::env::remove_var("OMEGAFLOW_STATE");
+            std::env::remove_var("OMEGAFLOW_ZUSTAND");
             std::env::set_var("HOME", "/home/probe");
         }
         assert_eq!(
             cache_root(),
             std::path::PathBuf::from("cache"),
-            "without OMEGAFLOW_STATE the cache root lives in the folder"
+            "without OMEGAFLOW_ZUSTAND the cache root lives in the folder"
         );
 
         unsafe {
-            std::env::set_var("OMEGAFLOW_STATE", state);
+            std::env::set_var("OMEGAFLOW_ZUSTAND", state);
         }
         let path = cache_path_for("example.com", "sample_source");
         assert_eq!(
@@ -1799,7 +1799,7 @@ mod cache_root_tests {
         let _ = std::fs::remove_file(&path);
         let _ = std::fs::remove_file(&stamp_path);
         unsafe {
-            std::env::remove_var("OMEGAFLOW_STATE");
+            std::env::remove_var("OMEGAFLOW_ZUSTAND");
         }
     }
 }

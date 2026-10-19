@@ -98,7 +98,7 @@ fn fmt_cell(te: Option<f64>, thr: Option<f64>) -> String {
 }
 
 fn load_eph(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+    let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     match std::fs::read(&p) {
         Ok(bytes) => parse_ephemeris_binary(&bytes).is_some_and(|e| {
             eph.insert(name.to_string(), e);
@@ -299,7 +299,7 @@ fn main() {
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let geom_ok = load_eph("galileo_daily", &mut eph) && load_eph("earth", &mut eph);
 
-    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };

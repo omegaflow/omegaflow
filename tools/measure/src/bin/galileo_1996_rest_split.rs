@@ -13,7 +13,7 @@ const YEAR: i64 = 1996;
 const NEAR_DAYS: i64 = 30;
 const MIN_SPEAR: usize = 8;
 const LOUD_HZ: f64 = 3.0;
-const OUT: &str = "state/reports/galileo_1996_rest_split.txt";
+const OUT: &str = "zustand/reports/galileo_1996_rest_split.txt";
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
@@ -106,7 +106,7 @@ fn fmt_o2(v: Option<f64>) -> String {
     }
 }
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+    let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
     std::fs::read(&p)
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
@@ -214,7 +214,7 @@ fn main() {
             return;
         }
     }
-    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };

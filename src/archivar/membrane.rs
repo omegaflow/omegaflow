@@ -11,15 +11,21 @@ pub fn embedded_lsk() -> Option<LeapSeconds> {
     crate::lsk::parse(NAIF_LSK_EMBEDDED)
 }
 
-pub fn state_dir() -> std::path::PathBuf {
-    if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+pub fn zustand_dir() -> std::path::PathBuf {
+    if let Ok(dir) = std::env::var("OMEGAFLOW_ZUSTAND") {
         return std::path::PathBuf::from(dir);
     }
-    std::path::PathBuf::from("state")
+    if let Ok(work) = std::env::var("OMEGAFLOW_WORK") {
+        return std::path::PathBuf::from(work).join("zustand");
+    }
+    if let Ok(home) = std::env::var("HOME") {
+        return std::path::PathBuf::from(home).join("projects/omegaflow-work/zustand");
+    }
+    std::path::PathBuf::from("zustand")
 }
 
 pub fn state_asset(rel: &str) -> std::path::PathBuf {
-    let state_candidate = state_dir().join(rel);
+    let state_candidate = zustand_dir().join(rel);
     if state_candidate.exists() {
         return state_candidate;
     }

@@ -5,7 +5,7 @@ use std::path::PathBuf;
 
 const API: &str = "https://api.github.com";
 const REPO: &str = "omegaflow/omegaflow";
-const REGISTER: &str = "state/ci-gate.φ";
+const REGISTER: &str = "zustand/ci-gate.φ";
 const REQUIRED_CHECK: &str = "subset";
 
 fn token(keys: &[&str]) -> Option<String> {

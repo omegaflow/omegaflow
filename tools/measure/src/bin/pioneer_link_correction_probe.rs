@@ -1094,7 +1094,7 @@ fn main() {
         let hint = match &omni2_path {
             Some(p) => format!("{p} carries no N1800 —"),
             None => {
-                "no omni2 bin in OMEGAFLOW_STATE cache (omni2_serie.bin or --omni2) —".to_string()
+                "no omni2 bin in OMEGAFLOW_ZUSTAND cache (omni2_serie.bin or --omni2) —".to_string()
             }
         };
         eprintln!("pioneer10 link: {hint} the plasma deduction stays empty (0 honored)");

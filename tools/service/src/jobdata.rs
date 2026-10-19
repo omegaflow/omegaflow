@@ -12,7 +12,7 @@ const JOB_KEYWORDS: [&str; 12] = [
 const CI_REPO: &str = "omegaflow/omegaflow";
 
 fn log_dirs() -> Vec<String> {
-    let mut v = vec!["data/reports".to_string(), "state/reports".to_string()];
+    let mut v = vec!["data/reports".to_string(), "zustand/reports".to_string()];
     if let Ok(tmp) = std::env::var("OMEGAFLOW_TMP") {
         v.push(tmp);
     }
@@ -268,7 +268,7 @@ pub fn log_hint(keys: &[String], journal: Option<&str>) -> Option<String> {
         }
     }
     for key in keys {
-        let exact = format!("state/reports/{}.φ", key);
+        let exact = format!("zustand/reports/{}.φ", key);
         if let Some(line) = tail_of(Path::new(&exact)) {
             return Some(line);
         }

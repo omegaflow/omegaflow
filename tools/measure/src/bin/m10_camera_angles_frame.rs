@@ -6,7 +6,7 @@ use omegaflow::archivar::{
 };
 use omegaflow::cdn::body_url;
 
-const DEFAULT_ANGLES: &str = "state/research/m10-camera-angles/camera_angles.txt";
+const DEFAULT_ANGLES: &str = "zustand/research/m10-camera-angles/camera_angles.txt";
 const J2000_EPOCH: f64 = 2451545.0;
 
 const M10_EPH: &str = "sources/ssd.jpl.nasa.gov/ephemeris_mariner10.bin";

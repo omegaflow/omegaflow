@@ -116,7 +116,7 @@ fn median(vals: &[f64]) -> Option<f64> {
 }
 
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    std::fs::read(format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin"))
+    std::fs::read(format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin"))
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
         .map(|e| eph.insert(name.to_string(), e))
@@ -158,9 +158,9 @@ fn main() {
     let report = match args.iter().position(|a| a == "--report") {
         Some(i) => match args.get(i + 1) {
             Some(p) => p.clone(),
-            None => "state/reports/galileo_ops_era_floor.txt".to_string(),
+            None => "zustand/reports/galileo_ops_era_floor.txt".to_string(),
         },
-        None => "state/reports/galileo_ops_era_floor.txt".to_string(),
+        None => "zustand/reports/galileo_ops_era_floor.txt".to_string(),
     };
 
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
@@ -171,7 +171,7 @@ fn main() {
         }
     }
 
-    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };

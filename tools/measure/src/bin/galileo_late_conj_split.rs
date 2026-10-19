@@ -45,7 +45,7 @@ fn median(vals: &[f64]) -> Option<f64> {
     Some(s[s.len() / 2])
 }
 fn load(name: &str, eph: &mut HashMap<String, BodyEphemeris>) -> bool {
-    std::fs::read(format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin"))
+    std::fs::read(format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin"))
         .ok()
         .and_then(|d| parse_ephemeris_binary(&d))
         .map(|e| {
@@ -94,7 +94,7 @@ fn main() {
     }
     let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key("earth");
 
-    let Ok(bytes) = std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
+    let Ok(bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
         return;
     };

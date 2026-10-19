@@ -613,7 +613,7 @@ fn generate_flyby_arc(command: &str, body_name: &str, jd0: f64, radius_d: f64) {
         eprintln!("  {body_name}: no granules fit");
         return;
     }
-    let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{}.bin", body_name);
+    let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{}.bin", body_name);
     write_binary(&path, body_name, &granules, &[], None);
     match std::fs::read(&path)
         .ok()
@@ -672,7 +672,7 @@ fn main() {
             if granules.is_empty() {
                 continue;
             }
-            let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{}.bin", name);
+            let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{}.bin", name);
             write_binary(&path, name, &granules, &[], gm_m3_s2);
             if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
                 eprintln!("upload: {} did not reach the CDN", path);
@@ -692,7 +692,7 @@ fn main() {
         let de_path = if std::path::Path::new("ephemeris_uranus.bin").exists() {
             "ephemeris_uranus.bin".to_string()
         } else {
-            "data/ssd.jpl.nasa.gov/ephemeris_uranus.bin".to_string()
+            "sources/ssd.jpl.nasa.gov/ephemeris_uranus.bin".to_string()
         };
         let de_bytes = match std::fs::read(&de_path) {
             Ok(b) => b,
@@ -764,7 +764,7 @@ fn main() {
                 granules.push((mid_jd, half_jd, cx, cy, cz));
             }
         }
-        let path = "data/ssd.jpl.nasa.gov/ephemeris_uranus_c.bin";
+        let path = "sources/ssd.jpl.nasa.gov/ephemeris_uranus_c.bin";
         let _ = std::fs::create_dir_all("data/ssd.jpl.nasa.gov");
         write_binary(&path, "uranus_c", &granules, &[], None);
         if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
@@ -784,7 +784,7 @@ fn main() {
         let de_path = if std::path::Path::new("ephemeris_neptune.bin").exists() {
             "ephemeris_neptune.bin".to_string()
         } else {
-            "data/ssd.jpl.nasa.gov/ephemeris_neptune.bin".to_string()
+            "sources/ssd.jpl.nasa.gov/ephemeris_neptune.bin".to_string()
         };
         let de_bytes = match std::fs::read(&de_path) {
             Ok(b) => b,
@@ -864,7 +864,7 @@ fn main() {
                 granules.push((mid_jd, half_jd, cx, cy, cz));
             }
         }
-        let path = "data/ssd.jpl.nasa.gov/ephemeris_neptune_c.bin";
+        let path = "sources/ssd.jpl.nasa.gov/ephemeris_neptune_c.bin";
         let _ = std::fs::create_dir_all("data/ssd.jpl.nasa.gov");
         write_binary(&path, "neptune_c", &granules, &[], None);
         if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
@@ -893,7 +893,7 @@ fn main() {
             if granules.is_empty() {
                 continue;
             }
-            let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{}.bin", name);
+            let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{}.bin", name);
             write_binary(&path, name, &granules, &[], gm_m3_s2);
             match std::fs::read(&path)
                 .ok()
@@ -922,7 +922,7 @@ fn main() {
             let jd0 = julian_day_utc(*y, *m, *d);
             eprintln!("  {name} (flyby {y}-{m}-{d}, window ±{radius:.0} d)");
             generate_flyby_arc(cmd, name, jd0, *radius);
-            let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
+            let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{name}.bin");
             if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
                 eprintln!("upload: {path} did not reach the CDN");
                 std::process::exit(1);
@@ -938,7 +938,7 @@ fn main() {
         if gm_m3_s2.is_none() {
             eprintln!("  {}: granules only, no Horizons GM", body_name);
         }
-        let path = format!("data/ssd.jpl.nasa.gov/ephemeris_{}.bin", body_name);
+        let path = format!("sources/ssd.jpl.nasa.gov/ephemeris_{}.bin", body_name);
         write_binary(&path, body_name, &granules, &[], gm_m3_s2);
         if ci_mode && !omegaflow::cdn::upload_release("ssd.jpl.nasa.gov-horizons", &path) {
             eprintln!("upload: {} did not reach the CDN", path);

@@ -21,7 +21,7 @@ const DOC_DIRS: [&str; 6] = [
 
 fn live_handover_carrier() -> String {
     let mut out = String::new();
-    for dir in ["docs/handover", "state/future/handover"] {
+    for dir in ["docs/handover", "zustand/future/handover"] {
         let entries = match std::fs::read_dir(dir) {
             Ok(e) => e,
             Err(_) => continue,
@@ -407,8 +407,8 @@ fn main() {
         .ok()
         .map(|s| s.trim().to_string())
         .filter(|s| !s.is_empty());
-    if let Ok(ereignisse) = std::fs::read_to_string("state/ereignisse.φ") {
-        let wartend = std::fs::read_to_string("state/wartend.φ").ok();
+    if let Ok(ereignisse) = std::fs::read_to_string("zustand/ereignisse.φ") {
+        let wartend = std::fs::read_to_string("zustand/wartend.φ").ok();
         let blocked = std::fs::read_to_string("phi/blocked_sources.φ").ok();
         match session.as_deref() {
             Some(name) => {

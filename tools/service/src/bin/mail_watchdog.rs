@@ -12,12 +12,12 @@ fn main() {
         return;
     };
     let line = report_line(epoch, &tunnel, recv_active, tunnel_active, ledger_age);
-    append_report(&state_dir().join("reports/mail_watchdog.φ"), &line);
+    append_report(&zustand_dir().join("reports/mail_watchdog.φ"), &line);
     println!("{}", line.trim_end());
 }
 
-fn state_dir() -> std::path::PathBuf {
-    if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+fn zustand_dir() -> std::path::PathBuf {
+    if let Ok(dir) = std::env::var("OMEGAFLOW_ZUSTAND") {
         return std::path::PathBuf::from(dir);
     }
     std::path::PathBuf::from("state")
@@ -53,7 +53,7 @@ fn service_active(name: &str) -> bool {
 }
 
 fn ledger_age_s() -> Option<u64> {
-    let text = std::fs::read_to_string(state_dir().join("mail/mail_ledger.φ")).ok()?;
+    let text = std::fs::read_to_string(zustand_dir().join("mail/mail_ledger.φ")).ok()?;
     let last = text.lines().last()?;
     let ts = last.split('\t').nth(1)?.parse::<u64>().ok()?;
     let now = epoch()?;

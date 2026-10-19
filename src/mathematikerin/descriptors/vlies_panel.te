@@ -1,5 +1,5 @@
 # Window graph (D2) — the conditional MCI panel on the RTSW/SWPC block.
-# Rat + max-roster verdict 2026-10-10 (state/stimmen/2026-10-10-river-window-graph-panel-rat.md):
+# Rat + max-roster verdict 2026-10-10 (state/rat/2026-10-10-river-window-graph-panel-rat.md):
 #   Δ = the coarsest measured native median_dt of the loaded channels (`scale auto`) —
 #   the resolution limit of the shared grid (C-begründet), never a causal time constant.
 #   `scale <seconds>` would declare Δ by the operator; 86400 is never the graph grid.

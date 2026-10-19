@@ -12,7 +12,7 @@ const HEIGHT_KM: f64 = 0.0;
 const CGM_URL: &str = "https://omniweb.gsfc.nasa.gov/cgi/vitmo/cgm_model.cgi";
 const SUPERMAG_URL: &str =
     "https://raw.githubusercontent.com/spacecataz/supermag/master/station_info.txt";
-const DEFAULT_OUT: &str = "state/river/gic-cgm-lat.tsv";
+const DEFAULT_OUT: &str = "zustand/river/gic-cgm-lat.tsv";
 const DEFAULT_PAUSE_MS: u64 = 150;
 const FAMILY_CHANNEL_FIELD: &str = "intermagnet_xyz_x_nt";
 
@@ -269,7 +269,7 @@ fn main() {
     if let Some(tsv) = arg_value(&args, "--from-tsv") {
         let dir = match arg_value(&args, "--emit-dir") {
             Some(v) => v,
-            None => "state/river".to_string(),
+            None => "zustand/river".to_string(),
         };
         emit_families(&tsv, &dir);
         return;

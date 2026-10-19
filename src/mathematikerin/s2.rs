@@ -168,7 +168,7 @@ pub fn astrometry_witness_dir() -> std::path::PathBuf {
     if let Ok(p) = std::env::var("OMEGAFLOW_ASTROMETRY_WITNESS_DIR") {
         return std::path::PathBuf::from(p);
     }
-    crate::archivar::state_dir().join("astrometry_witness")
+    crate::archivar::zustand_dir().join("astrometry_witness")
 }
 
 pub fn witness_fingerprint(dir: &std::path::Path) -> Option<(usize, u64)> {
@@ -415,7 +415,7 @@ pub fn sky_asset_path() -> std::path::PathBuf {
     if let Ok(p) = std::env::var("OMEGAFLOW_SKY_ASSET") {
         return std::path::PathBuf::from(p);
     }
-    let state = crate::archivar::state_dir().join("skydirections.bin");
+    let state = crate::archivar::zustand_dir().join("skydirections.bin");
     if state.exists() {
         return state;
     }

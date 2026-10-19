@@ -48,7 +48,7 @@ fn main() {
 
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
     let spk_path =
-        arg_token(&args, "--spk").unwrap_or("data/naif.jpl.nasa.gov/nep097xl-899.bsp".to_string());
+        arg_token(&args, "--spk").unwrap_or("sources/naif.jpl.nasa.gov/nep097xl-899.bsp".to_string());
 
     let inject: Option<Inject> = {
         let pos = args.iter().position(|a| a == "--calibrate-inject");
@@ -269,14 +269,14 @@ fn main() {
     }
 
     print!("{report}");
-    if let Err(e) = std::fs::create_dir_all("state/reports") {
+    if let Err(e) = std::fs::create_dir_all("zustand/reports") {
         eprintln!("neptune-center-rift: report dir stays unbuilt — {e}");
     }
-    let report_path = "state/reports/neptune_center_rift.txt";
+    let report_path = "zustand/reports/neptune_center_rift.txt";
     if let Err(e) = std::fs::write(report_path, &report) {
         eprintln!("neptune-center-rift: report write void — {e}");
     }
-    let series_path = "state/reports/neptune_center_rift_series.tsv";
+    let series_path = "zustand/reports/neptune_center_rift_series.tsv";
     let mut series = String::new();
     series.push_str("jd\tdecade\tdx_de441_inpop_km\tdy_de441_inpop_km\tdz_de441_inpop_km\tdx_de441_epm_km\tdy_de441_epm_km\tdz_de441_epm_km\tdx_inpop_epm_km\tdy_inpop_epm_km\tdz_inpop_epm_km\n");
     for i in 0..n {

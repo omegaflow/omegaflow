@@ -6,8 +6,8 @@ use std::process::Command;
 
 const PARALLAX_ABSENT_MAS: f64 = 0.0;
 
-fn state_dir() -> std::path::PathBuf {
-    if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+fn zustand_dir() -> std::path::PathBuf {
+    if let Ok(dir) = std::env::var("OMEGAFLOW_ZUSTAND") {
         return std::path::PathBuf::from(dir);
     }
     std::path::PathBuf::from("state")
@@ -19,7 +19,7 @@ fn mast_token() -> Option<String> {
             return Some(t);
         }
     }
-    let body = std::fs::read_to_string(state_dir().join(".secrets.local")).ok()?;
+    let body = std::fs::read_to_string(zustand_dir().join(".secrets.local")).ok()?;
     for line in body.lines() {
         if let Some((k, v)) = line.split_once('=') {
             if k.trim() == "MAST_TOKEN" && !v.trim().is_empty() {

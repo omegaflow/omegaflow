@@ -8013,14 +8013,14 @@ fn test_fetch_one_serves_stale_cdn_asset_when_live_voids() {
     let state = "/tmp/opencode/omegaflow_fetch_fallback_state";
     let _ = std::fs::remove_dir_all(state);
     unsafe {
-        std::env::set_var("OMEGAFLOW_STATE", state);
+        std::env::set_var("OMEGAFLOW_ZUSTAND", state);
         std::env::set_var("OMEGAFLOW_CDN_BASE", &server);
     }
     let live = format!("{}/live-void.json", server);
     let body = super::fetch_one(&live, None, &[], 60, Some(1.0e9));
     unsafe {
         std::env::remove_var("OMEGAFLOW_CDN_BASE");
-        std::env::remove_var("OMEGAFLOW_STATE");
+        std::env::remove_var("OMEGAFLOW_ZUSTAND");
     }
     handle.join().unwrap();
     assert_eq!(
@@ -8040,14 +8040,14 @@ fn test_live_only_source_skips_the_cdn_fallback_when_live_voids() {
     let state = "/tmp/opencode/omegaflow_live_only_state";
     let _ = std::fs::remove_dir_all(state);
     unsafe {
-        std::env::set_var("OMEGAFLOW_STATE", state);
+        std::env::set_var("OMEGAFLOW_ZUSTAND", state);
         std::env::set_var("OMEGAFLOW_CDN_BASE", &server);
     }
     let live = format!("{}/live-void.json", server);
     let result = super::fetch_one_with_age(&live, None, &[], 60, Some(1.0e9), true);
     unsafe {
         std::env::remove_var("OMEGAFLOW_CDN_BASE");
-        std::env::remove_var("OMEGAFLOW_STATE");
+        std::env::remove_var("OMEGAFLOW_ZUSTAND");
     }
     handle.join().unwrap();
     assert!(
@@ -8100,14 +8100,14 @@ fn test_fetch_one_with_age_carries_the_cdn_age_on_fallback() {
     let state = "/tmp/opencode/omegaflow_fetch_age_state";
     let _ = std::fs::remove_dir_all(state);
     unsafe {
-        std::env::set_var("OMEGAFLOW_STATE", state);
+        std::env::set_var("OMEGAFLOW_ZUSTAND", state);
         std::env::set_var("OMEGAFLOW_CDN_BASE", &server);
     }
     let live = format!("{}/live-void.json", server);
     let (body, age) = super::fetch_one_with_age(&live, None, &[], 60, Some(1.0e9), false).unwrap();
     unsafe {
         std::env::remove_var("OMEGAFLOW_CDN_BASE");
-        std::env::remove_var("OMEGAFLOW_STATE");
+        std::env::remove_var("OMEGAFLOW_ZUSTAND");
     }
     handle.join().unwrap();
     assert_eq!(body.as_str(), "{\"real\":true}");

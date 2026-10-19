@@ -20,7 +20,7 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
     let spk_path =
-        arg_token(&args, "--spk").unwrap_or("data/naif.jpl.nasa.gov/nep097xl-899.bsp".to_string());
+        arg_token(&args, "--spk").unwrap_or("sources/naif.jpl.nasa.gov/nep097xl-899.bsp".to_string());
 
     let c_path = format!("{eph_dir}/ssd.jpl.nasa.gov/ephemeris_neptune_c.bin");
     let b_path = format!("{eph_dir}/ssd.jpl.nasa.gov/ephemeris_neptune.bin");
