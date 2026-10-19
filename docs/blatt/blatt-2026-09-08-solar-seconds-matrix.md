@@ -2,7 +2,7 @@
   title: BLATT — Solar-24-s-Sekunden-Matrix: der 72-Paare-Flotten-Beweis (XRS→EUV)
   class: sheet
   date: 2026-09-08
-  sha256: fef80b7bf7f7629507576494fbebe25800efbe8130b2bdfa3bd89c03b3ddee54
+  sha256: 92bea81ade812a68e8faa52c5a629cd75e93f3da65e829f0d2bdb749725eab5b
   status: done
   see-also: docs/handover/archiv/handover-2026-09-09-te-atom-4.md docs/specs/spectral-oscillator.md
 -->
@@ -13,6 +13,14 @@
 
 Corpus-Anker (ein Hash über alle 72 Sonden — kein Drift, das Drift-Gate ist
 grün): Commit `b3b6a24`, Corpus `4f0bcf2c465d7c82eedb1e1ef978f33f9baf4fc952603a1fb06e20e8b67baa2e`.
+
+## Frage
+
+Treibt das harte Röntgen-Signal der Flares (GOES XRSA/XRSB) die heißen
+EUV-Bänder 131 Å und 193 Å — oder ist die gemessene Richtung ein Artefakt des
+gemeinsamen Flare-Fensters, das erst die Konditionierung auf alle AIA-Bänder
+sichtbar macht? Die Frage ist die eine, die die 72-Paare-Matrix entscheidet:
+Richtung oder Hülle.
 
 ## Die Messung
 
@@ -80,6 +88,48 @@ Flare-Signal zu der EUV-Nachleucht-Bande innerhalb des GOES-Fensters, nicht
 umgekehrt. 4 ARROW / 43 family bound / 25 still / 0 no-statement über die
 volle Matrix — die Stille der 25 Paare ist ein Befund, kein Rauschen
 (0 honored).
+
+## Benannter Riss
+
+- **Der Schätzer entscheidet mit.** Die Gegenprobe mit allen fünf AIA-Bändern
+  als Konfunden bestätigt das Vorzeichen nur im `binned`-Schätzer
+  (D|C = −3.40e-3, rev 161 gegen fwd 117); `ksg` kippt es (+6.71e-3, fwd 337
+  gegen rev 45). Der Pfeil ist XRS-konditional bestätigt, all-band-konditional
+  aber nicht schätzerrobust.
+- **Ein Fenster, ein Korpus.** 2013–2015, ein Flare-Stacking-Fenster (GOES
+  `b_flux`), 1315 Ereignisse in 2014; keine zweite unabhängige Messreihe.
+- **Kein zweiter Zeuge.** Der einzige intra-AIA-Pfeil (211→193) und die drei
+  XRS→EUV-Pfeile stehen ohne unabhängige Bestätigung; die Stille der 25 Paare
+  ist Befund, aber kein Gegentest.
+
+## Was das Verdikt widerlegen würde
+
+Messbar, mit dem vorhandenen Korpus und den vorhandenen Sonden:
+
+1. **Schätzer-Kippe auf disjunktem Korpus.** Wiederholt man
+   `corona_conditional_probe` mit dem `ksg`-Schätzer auf einem Jahr, das nicht
+   zum `binned`-Lauf gehört (z. B. 2013 oder 2015 statt 2014), und
+   D|C > 0 bei 96 s mit fwd > rev für beide XRS→{131,193}-Paare — dann ist der
+   Pfeil ein Schätzer-Artefakt, nicht eine Richtung.
+2. **Die Null trägt den Befund.** Erzeugt eine lag-verschobene oder
+   phasenrandomisierte Null auf demselben Korpus dieselben vier ARROWs (oder
+   mehr) über `fam` — dann ist die Richtung das gemeinsame Flare-Fenster, nicht
+   die Kausalität, und das Verdikt fällt auf „still".
+3. **Ein zweiter unabhängiger XRS-Kanal.** Widerspricht ein davon unabhängiger
+   harter Röntgen-Kanal (andere Detektor-Klasse, eigener Null) der Richtung
+   XRS → 131/193 bei 96–192 s, fällt der Befund für dieses Band.
+
+Nicht widerlegend: mehr Surrogate je Zelle, ein feineres Lag-Raster oder ein
+größeres GOES-Fenster — das ändert die Schärfe, nicht das Vorzeichen.
+
+## Offene Punkte
+
+- **All-band-Schätzerrobustheit** (`binned` vs `ksg`): welcher Schätzer trägt
+  bei disjunktem Korpus? — Braucht.
+- **Zweiter unabhängiger Zeuge** für XRS → 131/193 (andere Detektor-Klasse,
+  eigener Null) — Braucht.
+- Der einzige intra-AIA-Pfeil 211→193 bleibt ohne zweiten Zeugen; die Stille
+  der 25 Paare ist als Befund geführt, nicht als Prüfung — Trigger.
 
 ## Der Korpus
 
