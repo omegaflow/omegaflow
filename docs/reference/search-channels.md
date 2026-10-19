@@ -2,7 +2,7 @@
   title: Suchkanäle — gemessener Stand (2026-10-19)
   class: ref
   date: 2026-10-19
-  sha256: 0e78e3682a6ca465469c500c80af857bb5055d02c1d0c4e5c5b181797ad85e9c
+  sha256: a23fea2e0f5a3ecacd57ee7d3c006c6d83b27f5d2702585ccabffd2ff5178364
   status: live
   see-also: docs/concepts/tools-map.md docs/surveys/survey-2026-10-19-paper-forschungslage.md
 -->
@@ -41,11 +41,11 @@ Key liegt vor, Provider verweigert trotzdem:
 | `--tavily` | **432** | Plan-Limit |
 | `--searchapi` / `--serpapi` / `--consensus` | **429** | Quota |
 | `--googlecse` | **400** | „API key not valid" (Flag heisst `--googlecse`) |
+| `--gemini` | **429** | Quota |
 
 **Nachgemessen 2026-10-20** (Binary `target/release/archive_search`, sha256
 `50f002ee7b16…`, 01:27): unverändert 402/432/429/429/429/429/400. Der Zustand
 ist ein Konto-, kein Code-Problem.
-| `--gemini` | **429** | Quota |
 
 Das ist **keine Code-Arbeit**. Ein Key öffnet Zugang, keine Lizenz — und ein 402 ist kein
 leerer Treffer.
