@@ -212,7 +212,7 @@ fn flush_shard(rows: &[(f64, f64, f64)], names: &mut Vec<String>, paths: &mut Ve
         parsed.len(),
         bin.len()
     );
-    let path = format!("data/archives.esac.esa.int/{name}");
+    let path = format!("sources/archives.esac.esa.int/{name}");
     if std::fs::write(&path, &bin).is_err() {
         eprintln!("write {path} void");
         std::process::exit(1);
@@ -251,7 +251,7 @@ fn main() {
     }
 
     if names.len() == 1 {
-        let single = format!("data/archives.esac.esa.int/{PREFIX}.bin");
+        let single = format!("sources/archives.esac.esa.int/{PREFIX}.bin");
         if std::fs::rename(&paths[0], &single).is_err() {
             eprintln!("rename {} -> {single} void", paths[0]);
             std::process::exit(1);

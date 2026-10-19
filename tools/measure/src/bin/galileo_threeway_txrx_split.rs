@@ -475,7 +475,7 @@ fn main() {
 }
 
 fn floor_report(target_days: &BTreeSet<i64>) {
-    let path = "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
+    let path = "sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
     let file = match File::open(path) {
         Ok(f) => f,
         Err(_) => {

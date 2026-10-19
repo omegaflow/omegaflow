@@ -9,7 +9,7 @@ const ID: &str = "DE2_UA16S_ALL";
 const PARAMS: &str = "NACS_N2density,WATS_NVEneutralWind,WATS_NVUneutralWind,RPA_NIionDensity,RPA_IVEionDrift,RPA_IVNionDrift";
 const WINDOW_START: &str = "1981-08-06";
 const WINDOW_END: &str = "1983-02-19";
-const OUT_DEFAULT: &str = "data/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv";
+const OUT_DEFAULT: &str = "sources/cdaweb.gsfc.nasa.gov/de2_ua16s_all.csv";
 const DEFAULT_JOBS: usize = 8;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {

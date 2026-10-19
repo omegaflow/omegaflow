@@ -340,7 +340,7 @@ fn main() {
             report = r.to_string();
         }
     }
-    let path = "data/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
+    let path = "sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin";
     let Ok(bytes) = fs::read(path) else {
         eprintln!("{path}: resid bin void");
         return;

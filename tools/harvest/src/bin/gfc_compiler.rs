@@ -13,7 +13,7 @@ const NETLOC: &str = "icgem.gfz.de";
 const FORMAT: &str = "gfc";
 const COMPILER: &str = "tools/harvest/src/bin/gfc_compiler.rs";
 const DEFAULT_URL: &str = "https://icgem.gfz.de/getmodel/gfc/8e01a2aba4f291ac0638b79a390155713b70fdc9b266981023c756839c11c9b8/XGM2019e.gfc";
-const OUT_PATH: &str = "data/icgem.gfz.de/gfc.bin";
+const OUT_PATH: &str = "sources/icgem.gfz.de/gfc.bin";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()

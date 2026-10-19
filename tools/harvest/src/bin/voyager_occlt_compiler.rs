@@ -81,7 +81,7 @@ fn main() {
         .and_then(|i| args.get(i + 1))
     {
         Some(path) => path.clone(),
-        None => "data/spdf.gsfc.nasa.gov/voyager_occlt.bin".to_string(),
+        None => "sources/spdf.gsfc.nasa.gov/voyager_occlt.bin".to_string(),
     };
     let mut files: Vec<(Vec<u8>, String, u32)> = Vec::new();
     let mut medium_records = 0usize;

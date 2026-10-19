@@ -317,7 +317,7 @@ fn run(name: &str, sc_body: &str) {
         eprintln!("{name}: dsn host declaration void");
         return;
     };
-    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio.bin");
+    let path = format!("sources/spdf.gsfc.nasa.gov/{name}_navio.bin");
     let Ok(bytes) = std::fs::read(&path) else {
         eprintln!("{name}: pnav bin void ({path})");
         return;
@@ -328,7 +328,7 @@ fn run(name: &str, sc_body: &str) {
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     for body in [host, sc_body] {
-        let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
+        let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))
@@ -516,9 +516,9 @@ fn run(name: &str, sc_body: &str) {
     out_all.sort_by(|a, b| a[0].total_cmp(&b[0]));
 
     let resid_bin = if p11 {
-        "data/spdf.gsfc.nasa.gov/pioneer11_navio_residuum.bin"
+        "sources/spdf.gsfc.nasa.gov/pioneer11_navio_residuum.bin"
     } else {
-        "data/spdf.gsfc.nasa.gov/pioneer10_navio_residuum.bin"
+        "sources/spdf.gsfc.nasa.gov/pioneer10_navio_residuum.bin"
     };
     let bin = omegaflow::odf::write_p11r_bin(&out_all);
     if std::fs::write(resid_bin, &bin).is_err() {
@@ -549,9 +549,9 @@ fn run(name: &str, sc_body: &str) {
 
     let med = daily_medians(&rts, &rvs);
     let daily_bin = if p11 {
-        "data/spdf.gsfc.nasa.gov/pioneer11_navio_daily.bin"
+        "sources/spdf.gsfc.nasa.gov/pioneer11_navio_daily.bin"
     } else {
-        "data/spdf.gsfc.nasa.gov/pioneer10_navio_daily.bin"
+        "sources/spdf.gsfc.nasa.gov/pioneer10_navio_daily.bin"
     };
     let mut daily_out: Vec<[f64; 4]> = Vec::new();
     for (t, m, rms, n) in &med {

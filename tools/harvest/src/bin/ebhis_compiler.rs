@@ -7,7 +7,7 @@ const NETLOC: &str = "cdsarc.cds.unistra.fr";
 const FORMAT: &str = "ebhis_hpx_series";
 const ASSET: &str = "ebhis_hpx190.bin";
 const DEFAULT_URL: &str = "https://cdsarc.cds.unistra.fr/ftp/J/A+A/585/A41/hpx/HPX_190.fit";
-const DEFAULT_OUT: &str = "data/cdsarc.cds.unistra.fr/ebhis_hpx190.bin";
+const DEFAULT_OUT: &str = "sources/cdsarc.cds.unistra.fr/ebhis_hpx190.bin";
 
 const MAGIC: [u8; 4] = *b"EBH1";
 const N_CHANNELS: usize = 945;

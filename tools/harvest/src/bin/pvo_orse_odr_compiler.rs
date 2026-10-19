@@ -110,7 +110,7 @@ fn run_index(args: &[String]) {
     };
     let out = match arg_value(args, "--out") {
         Some(v) => v,
-        None => "data/pds-ppi.igpp.ucla.edu/pvo_orse_odr.bin".to_string(),
+        None => "sources/pds-ppi.igpp.ucla.edu/pvo_orse_odr.bin".to_string(),
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let dir = arg_value(args, "--dir");
@@ -178,7 +178,7 @@ fn run_index(args: &[String]) {
     let mut names: Vec<String> = Vec::new();
     for (ord, &(lo, hi)) in ranges.iter().enumerate() {
         let name = shard_name(SHARD_PREFIX, ord);
-        let path = format!("data/pds-ppi.igpp.ucla.edu/{name}");
+        let path = format!("sources/pds-ppi.igpp.ucla.edu/{name}");
         let bin = pack_and_verify(&entries[lo..hi], &path);
         if bin.len() > SHARD_LIMIT {
             eprintln!(
@@ -220,7 +220,7 @@ fn main() {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => "data/pds-ppi.igpp.ucla.edu/pvo_orse_odr.bin".to_string(),
+        None => "sources/pds-ppi.igpp.ucla.edu/pvo_orse_odr.bin".to_string(),
     };
     let (bytes, source) = match arg_value(&args, "--input") {
         Some(path) => match std::fs::read(&path) {

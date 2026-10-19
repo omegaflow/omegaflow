@@ -120,7 +120,7 @@ fn main() {
             }
         }
     }
-    let Some(recs) = load("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
+    let Some(recs) = load("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         println!("no resid bin");
         return;
     };

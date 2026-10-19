@@ -3,7 +3,7 @@ use omegaflow::doppler::parse_pnav_bin;
 const DAY_S: f64 = 86400.0;
 
 fn run(name: &str) {
-    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio.bin");
+    let path = format!("sources/spdf.gsfc.nasa.gov/{name}_navio.bin");
     let Some(recs) = std::fs::read(&path).ok().and_then(|d| parse_pnav_bin(&d)) else {
         eprintln!("{name}: pnav bin void ({path})");
         return;

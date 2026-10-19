@@ -317,7 +317,7 @@ fn main() {
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     let mut complete = true;
     for b in ["galileo_daily", host] {
-        let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{b}.bin");
+        let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{b}.bin");
         match std::fs::read(&p)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))
@@ -334,7 +334,7 @@ fn main() {
     if !complete {
         return;
     }
-    let bytes = match std::fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") {
+    let bytes = match std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") {
         Ok(b) => b,
         Err(_) => {
             println!("galileo_floor_elevation_burst: resid bin absent");

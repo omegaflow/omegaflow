@@ -5,7 +5,7 @@ use omegaflow::cdn::upload_release;
 const RANGE_URL: &str = "https://ssd.jpl.nasa.gov/dat/planets/vikingrange.txt";
 const DIFFERENCED_URL: &str = "https://ssd.jpl.nasa.gov/dat/planets/vikingdoppler.txt";
 const FAMILY_TAG: &str = "ssd.jpl.nasa.gov-planets";
-const OUT: &str = "data/ssd.jpl.nasa.gov/viking_lander_tracking.bin";
+const OUT: &str = "sources/ssd.jpl.nasa.gov/viking_lander_tracking.bin";
 
 fn main() {
     let ci_mode = std::env::args().any(|a| a == "--ci-mode");

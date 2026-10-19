@@ -7,7 +7,7 @@ const NETLOC: &str = "cdsarc.cds.unistra.fr";
 const FORMAT: &str = "hi4pi_hpx_series";
 const ASSET: &str = "hi4pi_hpx190.bin";
 const DEFAULT_URL: &str = "https://cdsarc.cds.unistra.fr/ftp/J/A+A/594/A116/HPX/HPX_190.fits";
-const DEFAULT_OUT: &str = "data/cdsarc.cds.unistra.fr/hi4pi_hpx190.bin";
+const DEFAULT_OUT: &str = "sources/cdsarc.cds.unistra.fr/hi4pi_hpx190.bin";
 const EXTNAME: &str = "HI4PI-HPX";
 
 const MAGIC: [u8; 4] = *b"HI41";

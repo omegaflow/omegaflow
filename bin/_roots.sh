@@ -1,12 +1,13 @@
-# Declared roots (Rat + Operator-Wort 2026-10-14; erweitert 2026-10-16).
-# Sourced by the bin/ wrappers, never a build. The public workspace holds the
-# growing untracked-public matter (data, recherche, tmp); the private register
-# repo lives OUTSIDE the public tree. All are resolved here once — a path is
-# never re-invented by a tool; a tool reads the root, never the literal.
+# Declared roots (Rat + Operator-Wort 2026-10-14; erweitert 2026-10-19).
+# Sourced by the bin/ wrappers, never a build. Die Werkstatt haelt zwei Speicher:
+# `sources/` (CDN-gebunden, rekonstruierbar) und `experiments/` (nur lokal).
+# Das private Register-Repo liegt AUSSERHALB des oeffentlichen Baums. Alle Wurzeln
+# werden hier einmal aufgeloest — kein Werkzeug erfindet einen Pfad.
 : "${OMEGAFLOW_WORK:=$HOME/projects/omegaflow-work}"
 : "${OMEGAFLOW_PRIVATE:=$HOME/projects/omegaflow-personal}"
 : "${OMEGAFLOW_TMP:=/tmp/opencode}"
 : "${OMEGAFLOW_EXPERIMENTS:=$OMEGAFLOW_WORK/experiments}"
-: "${OMEGAFLOW_CACHE:=$OMEGAFLOW_WORK/cache}"
+: "${OMEGAFLOW_SOURCES:=$OMEGAFLOW_WORK/sources}"
+: "${OMEGAFLOW_CACHE:=$OMEGAFLOW_SOURCES}"
 : "${OMEGAFLOW_SPILL_DIR:=$OMEGAFLOW_WORK/recherche/tmp/archive_search/search}"
-export OMEGAFLOW_WORK OMEGAFLOW_PRIVATE OMEGAFLOW_TMP OMEGAFLOW_EXPERIMENTS OMEGAFLOW_CACHE OMEGAFLOW_SPILL_DIR
+export OMEGAFLOW_WORK OMEGAFLOW_PRIVATE OMEGAFLOW_TMP OMEGAFLOW_EXPERIMENTS OMEGAFLOW_SOURCES OMEGAFLOW_CACHE OMEGAFLOW_SPILL_DIR

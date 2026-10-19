@@ -5,11 +5,11 @@ use omegaflow::doppler::{ANDERSON_TOWARD_EARTH, FlybyResidual, flyby_anomaly_mm_
 use omegaflow::lsk::parse as parse_lsk;
 use std::collections::HashMap;
 
-const DEFAULT_RESIDUALS: &str = "data/flyby2/anderson_residuals.tsv";
-const DEFAULT_REGISTER: &str = "data/flyby2/anderson-probe-2026-09-28.json";
-const DEFAULT_DE: &str = "data/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin";
-const DEFAULT_INPOP: &str = "data/ftp.imcce.fr/ephemeris_inpop_earth.bin";
-const DEFAULT_EPM: &str = "data/ftp.iaaras.ru/ephemeris_epm_earth.bin";
+const DEFAULT_RESIDUALS: &str = "sources/flyby2/anderson_residuals.tsv";
+const DEFAULT_REGISTER: &str = "sources/flyby2/anderson-probe-2026-09-28.json";
+const DEFAULT_DE: &str = "sources/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin";
+const DEFAULT_INPOP: &str = "sources/ftp.imcce.fr/ephemeris_inpop_earth.bin";
+const DEFAULT_EPM: &str = "sources/ftp.iaaras.ru/ephemeris_epm_earth.bin";
 fn earth_name() -> String {
     match omegaflow::ephemeris::body_table()
         .into_iter()

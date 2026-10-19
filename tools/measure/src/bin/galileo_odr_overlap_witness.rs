@@ -187,7 +187,7 @@ fn main() {
         "odr UTC days inside [1994-04-28..1995-06-28]: {odr_days_in_win}; odr UTC days on/after floor-era start 1995-11-23: {odr_days_in_floor_era}"
     ));
 
-    let Ok(bytes) = fs::read("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
+    let Ok(bytes) = fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         push("galileo resid bin void".to_string());
         let _ = fs::write(&report_path, out.join("\n") + "\n");
         return;

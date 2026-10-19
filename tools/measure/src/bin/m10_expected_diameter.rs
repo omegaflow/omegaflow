@@ -16,10 +16,10 @@ const R_MERCURY_M: f64 = 2_439_700.0;
 const FOV_NARROW_DEG: f64 = 0.42;
 const FOV_WIDE_DEG: f64 = 0.98;
 
-const VENUS_EPH: &str = "data/ssd.jpl.nasa.gov/ephemeris_venus.bin";
-const MERCURY_EPH: &str = "data/ssd.jpl.nasa.gov/ephemeris_mercury.bin";
-const MERCURY_EPH_ALT: &str = "data/ftp.imcce.fr/ephemeris_inpop_mercury.bin";
-const M10_EPH: &str = "data/ssd.jpl.nasa.gov/ephemeris_mariner10.bin";
+const VENUS_EPH: &str = "sources/ssd.jpl.nasa.gov/ephemeris_venus.bin";
+const MERCURY_EPH: &str = "sources/ssd.jpl.nasa.gov/ephemeris_mercury.bin";
+const MERCURY_EPH_ALT: &str = "sources/ftp.imcce.fr/ephemeris_inpop_mercury.bin";
+const M10_EPH: &str = "sources/ssd.jpl.nasa.gov/ephemeris_mariner10.bin";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()

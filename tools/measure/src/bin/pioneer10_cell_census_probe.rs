@@ -411,7 +411,7 @@ fn main() {
         None => Field::Resid,
     };
 
-    let pasf_bytes = match std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin") {
+    let pasf_bytes = match std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin") {
         Ok(b) => b,
         Err(_) => {
             eprintln!("PASF void — empty (0 honored)");

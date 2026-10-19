@@ -4,7 +4,7 @@ use omegaflow::cdn::upload_release;
 const NETLOC: &str = "irsa.ipac.caltech.edu";
 const DEFAULT_ASYNC_BASE: &str = "https://irsa.ipac.caltech.edu/TAP/async";
 const SRC_QUERY: &str = "SELECT TOP 5000 ra,dec,w1mpro,w2mpro,w3mpro,w4mpro,w3snr,w4snr FROM allsky_4band_p3as_psd WHERE w1mpro IS NOT NULL";
-const DEFAULT_OUT: &str = "data/irsa.ipac.caltech.edu/allwise_psd.bin";
+const DEFAULT_OUT: &str = "sources/irsa.ipac.caltech.edu/allwise_psd.bin";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()

@@ -95,7 +95,7 @@ fn main() {
         eprintln!("mariner_occlt: no records — the series stays unwritten (0 honored)");
         return;
     }
-    let out = "data/spdf.gsfc.nasa.gov/mariner_occlt.bin";
+    let out = "sources/spdf.gsfc.nasa.gov/mariner_occlt.bin";
     std::fs::create_dir_all("data/spdf.gsfc.nasa.gov").ok();
     let bin = mariner_occlt::write_mocc_bin(&rows);
     if std::fs::write(out, &bin).is_err() {

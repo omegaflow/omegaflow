@@ -26,8 +26,8 @@ fn load_ossos(path: &str) -> Vec<OssosRec> {
 }
 
 fn main() {
-    let mpcorb_path = "data/ssd.jpl.nasa.gov/mpcorb_distant.bin";
-    let ossos_path = "data/cdsarc.cds.unistra.fr/ossos_tno.bin";
+    let mpcorb_path = "sources/ssd.jpl.nasa.gov/mpcorb_distant.bin";
+    let ossos_path = "sources/cdsarc.cds.unistra.fr/ossos_tno.bin";
 
     let mpcorb_recs = load_mpcorb(mpcorb_path);
     let ossos_recs = load_ossos(ossos_path);

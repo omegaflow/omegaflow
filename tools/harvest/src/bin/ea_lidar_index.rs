@@ -443,7 +443,7 @@ fn run(args: &[String]) -> Result<(), String> {
     };
     let out = match arg_value(args, "--out").filter(|o| !o.is_empty()) {
         Some(o) => o,
-        None => format!("data/environment.data.gov.uk/{MANIFEST_NAME}"),
+        None => format!("sources/environment.data.gov.uk/{MANIFEST_NAME}"),
     };
     let out_name = match Path::new(&out).file_name().and_then(|n| n.to_str()) {
         Some(n) => n.to_string(),

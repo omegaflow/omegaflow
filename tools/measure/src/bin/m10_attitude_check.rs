@@ -5,8 +5,8 @@ use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemer
 
 const J2000_EPOCH: f64 = 2451545.0;
 const DEFAULT_ANGLES: &str = "state/research/m10-camera-angles/camera_angles.txt";
-const M10_EPH: &str = "data/ssd.jpl.nasa.gov/ephemeris_mariner10.bin";
-const MERCURY_EPH: &str = "data/ssd.jpl.nasa.gov/ephemeris_mercury.bin";
+const M10_EPH: &str = "sources/ssd.jpl.nasa.gov/ephemeris_mariner10.bin";
+const MERCURY_EPH: &str = "sources/ssd.jpl.nasa.gov/ephemeris_mercury.bin";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()

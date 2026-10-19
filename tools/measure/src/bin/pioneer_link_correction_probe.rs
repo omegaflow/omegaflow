@@ -1025,7 +1025,7 @@ fn main() {
                 .find(|p| std::path::Path::new(p).exists())
         }
     };
-    let sky = "data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin";
+    let sky = "sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin";
     let Ok(bytes) = std::fs::read(sky) else {
         eprintln!("pioneer10 link: skyfreq bin void ({sky})");
         return;
@@ -1036,7 +1036,7 @@ fn main() {
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     for body in [host, SC_BODY] {
-        let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
+        let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))
@@ -1897,7 +1897,7 @@ fn main() {
         rms_of(&resid_d) - rms_e
     );
     {
-        let pdpl_loaded = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin")
+        let pdpl_loaded = std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin")
             .ok()
             .and_then(|b| parse_pdpl(&b));
         match pdpl_loaded {
@@ -2031,7 +2031,7 @@ fn main() {
     eprintln!(
         "  a_P-scan ±8e-6 m/s² (aniso {best_aniso:.3}): residual-RMS flat {rms_lo:.3e}…{rms_hi:.3e} Hz — best a_P {best_a_p:.4e} m/s²"
     );
-    let ptl = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin")
+    let ptl = std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin")
         .ok()
         .and_then(|b| omegaflow::pioneer_telemetry::parse_bin(&b));
     match ptl {
@@ -2167,7 +2167,7 @@ fn main() {
             "  the self-test does NOT carry the anomaly: |a| sits ~{times_anomaly:.0e}× above the Pioneer anomaly ({PIONEER_ANOMALY:.3e} m/s²) — the floor remains the per-sample scatter (0 honored)"
         );
     }
-    if let Some(recs_t) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin")
+    if let Some(recs_t) = std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin")
         .ok()
         .and_then(|b| omegaflow::pioneer_telemetry::parse_bin(&b))
     {
@@ -2266,7 +2266,7 @@ fn main() {
         );
     }
     {
-        let Some(recs_te) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin")
+        let Some(recs_te) = std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_telemetry.bin")
             .ok()
             .and_then(|b| omegaflow::pioneer_telemetry::parse_bin(&b))
         else {
@@ -2777,7 +2777,7 @@ fn main() {
             );
         };
         if let Some((ts, vs)) = nav_series(
-            "data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
+            "sources/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
             t_first,
             t_last,
         ) {
@@ -2813,14 +2813,14 @@ fn main() {
             eprintln!("Deduction 18 Witness NAVIO-clean P10: file void — empty (0 honored)");
         }
         if let Some((ts, vs)) = nav_series(
-            "data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
+            "sources/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
             NAVIO_T_MIN,
             NAVIO_T_MAX,
         ) {
             witness_scan("NAVIO-clean P10 (full era 1973–2002)", &ts, &vs);
         }
         if let Some((ts, vs)) = nav_series(
-            "data/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
+            "sources/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
             NAVIO_T_MIN,
             NAVIO_T_MAX,
         ) {
@@ -2829,7 +2829,7 @@ fn main() {
             eprintln!("Deduction 18 Witness NAVIO-clean P11: file void — empty (0 honored)");
         }
         if let Some((ts, vs)) = nav_series(
-            "data/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
+            "sources/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
             t_first,
             t_last,
         ) {
@@ -3058,7 +3058,7 @@ fn main() {
     }
 
     {
-        if let Some(recs) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
+        if let Some(recs) = std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
             .ok()
             .and_then(|b| omegaflow::atdf::parse_bin(&b))
         {
@@ -3154,7 +3154,7 @@ fn main() {
     }
 
     {
-        if let Some(recs) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
+        if let Some(recs) = std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
             .ok()
             .and_then(|b| omegaflow::atdf::parse_bin(&b))
         {
@@ -3371,12 +3371,12 @@ fn main() {
             ((a * a + b * b).sqrt(), b.atan2(a))
         };
         let p10o = nav_series(
-            "data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
+            "sources/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
             t_first,
             t_last,
         );
         let p11o = nav_series(
-            "data/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
+            "sources/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
             t_first,
             t_last,
         );
@@ -3471,7 +3471,7 @@ fn main() {
     }
 
     {
-        if let Some(recs) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
+        if let Some(recs) = std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
             .ok()
             .and_then(|b| omegaflow::atdf::parse_bin(&b))
         {
@@ -3778,7 +3778,7 @@ fn main() {
     }
 
     {
-        if let Some(recs) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
+        if let Some(recs) = std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin")
             .ok()
             .and_then(|b| omegaflow::atdf::parse_bin(&b))
         {
@@ -4134,12 +4134,12 @@ fn main() {
             te
         };
         let p10o = nav_series(
-            "data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
+            "sources/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin",
             t_first,
             t_last,
         );
         let p11o = nav_series(
-            "data/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
+            "sources/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin",
             t_first,
             t_last,
         );
@@ -4940,7 +4940,7 @@ fn main() {
         }
         m
     };
-    if let Some(pdpl) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin")
+    if let Some(pdpl) = std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_doppler_clean.bin")
         .ok()
         .and_then(|b| parse_pdpl(&b))
     {
@@ -4997,10 +4997,10 @@ fn main() {
     }
 
     if let (Some(pdpl11), Some(ep11)) = (
-        std::fs::read("data/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin")
+        std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer11_doppler_clean.bin")
             .ok()
             .and_then(|b| parse_pdpl(&b)),
-        std::fs::read("data/ssd.jpl.nasa.gov/ephemeris_pioneer11_daily.bin")
+        std::fs::read("sources/ssd.jpl.nasa.gov/ephemeris_pioneer11_daily.bin")
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d)),
     ) {

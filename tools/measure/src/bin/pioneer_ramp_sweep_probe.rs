@@ -203,7 +203,7 @@ fn report_largest(name: &str, pass: &[(f64, f64)], sw: &Sweep) {
 }
 
 fn run(name: &str) {
-    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio.bin");
+    let path = format!("sources/spdf.gsfc.nasa.gov/{name}_navio.bin");
     let Ok(bytes) = std::fs::read(&path) else {
         eprintln!("{name}: pnav bin void ({path})");
         return;

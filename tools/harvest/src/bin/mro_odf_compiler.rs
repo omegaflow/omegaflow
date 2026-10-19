@@ -158,7 +158,7 @@ fn flush_shard(
         d1[0],
         bin.len()
     );
-    let path = format!("data/pds-geosciences.wustl.edu/{name}");
+    let path = format!("sources/pds-geosciences.wustl.edu/{name}");
     if std::fs::write(&path, &bin).is_err() {
         eprintln!("write {path} void");
         std::process::exit(1);
@@ -205,7 +205,7 @@ fn main() {
         flush_shard(&mut buffer, &mut uplink_bands, &mut names, &mut paths);
     }
     if names.len() == 1 {
-        let single = format!("data/pds-geosciences.wustl.edu/{PREFIX}.bin");
+        let single = format!("sources/pds-geosciences.wustl.edu/{PREFIX}.bin");
         if std::fs::rename(&paths[0], &single).is_err() {
             eprintln!("rename {} -> {single} void", paths[0]);
             std::process::exit(1);

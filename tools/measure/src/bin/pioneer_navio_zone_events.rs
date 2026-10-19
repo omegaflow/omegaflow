@@ -226,7 +226,7 @@ fn event_scan(name: &str, mts: &[f64], mvs: &[f64]) {
 }
 
 fn run(name: &str) {
-    let path = format!("data/spdf.gsfc.nasa.gov/{name}_navio_subkhz_zone_daily.bin");
+    let path = format!("sources/spdf.gsfc.nasa.gov/{name}_navio_subkhz_zone_daily.bin");
     let Some(daily) = read_zone_daily(&path) else {
         eprintln!("{name}: zone daily bin void ({path}) — 0 honored");
         return;

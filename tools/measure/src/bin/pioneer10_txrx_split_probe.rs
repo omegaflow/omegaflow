@@ -259,7 +259,7 @@ fn report_peak(label: &str, ts: &[f64], vs: &[f64]) {
 }
 
 fn main() {
-    let pasf_bytes = match std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin") {
+    let pasf_bytes = match std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq.bin") {
         Ok(b) => b,
         Err(_) => {
             eprintln!("PASF void — empty (0 honored)");
@@ -270,7 +270,7 @@ fn main() {
         eprintln!("PASF parse void");
         return;
     };
-    let pnav_bytes = match std::fs::read("data/spdf.gsfc.nasa.gov/pioneer10_navio.bin") {
+    let pnav_bytes = match std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer10_navio.bin") {
         Ok(b) => b,
         Err(_) => {
             eprintln!("PNAV void — empty (0 honored)");

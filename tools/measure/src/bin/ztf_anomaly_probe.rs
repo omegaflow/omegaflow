@@ -219,7 +219,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let path = match args.get(1) {
         Some(p) => p.clone(),
-        None => "data/irsa.ipac.caltech.edu/ztf_lightcurves.bin".to_string(),
+        None => "sources/irsa.ipac.caltech.edu/ztf_lightcurves.bin".to_string(),
     };
     let bytes = match std::fs::read(&path) {
         Ok(b) => b,

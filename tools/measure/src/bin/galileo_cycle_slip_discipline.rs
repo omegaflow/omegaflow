@@ -18,10 +18,10 @@ const MERGE_S: f64 = 60.0;
 const ADJ_S: f64 = 60.0;
 
 const CACHES: &[&str] = &[
-    "data/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5327328A.TDF",
-    "data/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5337339A.TDF",
-    "data/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5340341A.TDF",
-    "data/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_6177179A.TDF",
+    "sources/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5327328A.TDF",
+    "sources/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5337339A.TDF",
+    "sources/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5340341A.TDF",
+    "sources/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_6177179A.TDF",
 ];
 
 #[derive(Clone, Copy)]
@@ -130,7 +130,7 @@ fn tdb_of(rec: &[u8], lsk: &LeapSeconds) -> Option<f64> {
 }
 
 fn resid() -> Option<(Vec<Vec<(f64, f64, f64)>>, usize)> {
-    let file = File::open("data/pds-ppi.igpp.ucla.edu/galileo_resid.bin").ok()?;
+    let file = File::open("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin").ok()?;
     let mut reader = BufReader::new(file);
     let mut magic = [0u8; 4];
     reader.read_exact(&mut magic).ok()?;

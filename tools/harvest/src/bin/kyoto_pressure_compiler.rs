@@ -118,7 +118,7 @@ fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     let out_bin = match arg_value(&args, "--out-bin") {
         Some(v) => v,
-        None => "data/zenodo.org/kyoto_pressure.bin".to_string(),
+        None => "sources/zenodo.org/kyoto_pressure.bin".to_string(),
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
 

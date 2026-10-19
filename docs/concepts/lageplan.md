@@ -16,7 +16,7 @@ bemühen, um herauszufinden, **wo etwas liegt**. Ein Eintrag je Ort — mit dem 
 | Wurzel | was dort lebt | aufgelöst von |
 |---|---|---|
 | `~/projects/omegaflow` | das öffentliche Repo (Code, docs, state, register) | `bin/_roots.sh` |
-| `~/projects/omegaflow-work` | die Werkstatt: `post/`, `data/`, `cache/`, `recherche/`, `ui-seats.md` | `$OMEGAFLOW_WORK` |
+| `~/projects/omegaflow-work` | die Werkstatt: `post/`, `sources/`, `experiments/`, `recherche/`, `tmp/` | `$OMEGAFLOW_WORK` |
 | `~/projects/omegaflow-personal` | das private Haus (`kern.md`, `mail/`, `zustand/`, `future/handover/`) | `$OMEGAFLOW_PRIVATE` |
 | `/tmp/opencode` | Werkzeug-Ausgaben, Artefakte | `$OMEGAFLOW_TMP` |
 
@@ -28,7 +28,7 @@ bemühen, um herauszufinden, **wo etwas liegt**. Ein Eintrag je Ort — mit dem 
 |---|---|
 | `phi/sources.φ` | **das Register** — die Quelle der Wahrheit über Quellen, Blöcke, `at <anker>`, `terms`, `ttl` |
 | `state/zustand/` | der Zustand: `ereignisse.φ`, `standing-pass.md`, `external-state.md`, `wartend.φ` |
-| `state/stimmen/` | die Rat-Antworten (je Frage ein Blatt) |
+| `state/rat/` | die Rat-Antworten (je Frage ein Blatt) |
 | `state/mail/`, `state/research/`, `state/reports/` | Post-Ablage, Suchprotokolle, Berichte |
 | `docs/handover/` | die **lebenden** Übergaben (je Linie die neueste); `archiv/` = konsumiert |
 | `docs/concepts/` | **Wissen und Regeln**: `house-rules.md` (die Essenz) · `tools-map.md` (die Werkzeug-Karte) · `lageplan.md` (diese Seite) · Ethik, Architektur, Methode, Glossar · `archiv/` = Altbestand |

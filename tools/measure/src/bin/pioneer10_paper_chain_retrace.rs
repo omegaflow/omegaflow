@@ -605,7 +605,7 @@ fn main() {
         eprintln!("retrace: dsn host declaration void");
         return;
     };
-    let sky = "data/spdf.gsfc.nasa.gov/pioneer10_skyfreq_6file.bin";
+    let sky = "sources/spdf.gsfc.nasa.gov/pioneer10_skyfreq_6file.bin";
     let Ok(bytes) = std::fs::read(sky) else {
         eprintln!("retrace: 6-file skyfreq bin void ({sky})");
         return;
@@ -616,7 +616,7 @@ fn main() {
     };
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     for body in [host, SC_BODY] {
-        let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
+        let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))

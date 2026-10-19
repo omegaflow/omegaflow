@@ -222,7 +222,7 @@ fn main() {
     std::fs::create_dir_all("data/pds-geosciences.wustl.edu").ok();
     let ranges = odf::podf_shard_ranges(merged.len(), odf::PODF_SHARD_BUDGET);
     if ranges.len() == 1 {
-        let out = format!("data/pds-geosciences.wustl.edu/{PREFIX}.bin");
+        let out = format!("sources/pds-geosciences.wustl.edu/{PREFIX}.bin");
         let bin = odf::write_podf_bin_bands(&merged, &uplink_bands);
         if std::fs::write(&out, &bin).is_err() {
             eprintln!("write {out} void");
@@ -281,7 +281,7 @@ fn main() {
             d1[0],
             bin.len()
         );
-        let path = format!("data/pds-geosciences.wustl.edu/{name}");
+        let path = format!("sources/pds-geosciences.wustl.edu/{name}");
         if std::fs::write(&path, &bin).is_err() {
             eprintln!("write {path} void");
             std::process::exit(1);

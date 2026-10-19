@@ -70,11 +70,11 @@ fn main() {
     };
     let mpcorb_path = match arg_value(&args, "--mpcorb") {
         Some(d) => d,
-        None => "data/ssd.jpl.nasa.gov/mpcorb.bin".to_string(),
+        None => "sources/ssd.jpl.nasa.gov/mpcorb.bin".to_string(),
     };
     let mpcorb_distant_path = match arg_value(&args, "--mpcorb-distant") {
         Some(d) => d,
-        None => "data/ssd.jpl.nasa.gov/mpcorb_distant.bin".to_string(),
+        None => "sources/ssd.jpl.nasa.gov/mpcorb_distant.bin".to_string(),
     };
     let tol_m = match arg_value(&args, "--tol").and_then(|w| w.parse::<f64>().ok()) {
         Some(t) if t.is_finite() && t > 0.0 => t,

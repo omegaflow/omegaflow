@@ -973,9 +973,9 @@ impl TrajectoryLine {
 
     fn default_arc(self) -> &'static str {
         match self {
-            Self::Official => "data/ssd.jpl.nasa.gov/ephemeris_juice.bin",
-            Self::Renewed => "data/ssd.jpl.nasa.gov/ephemeris_juice_renewed.bin",
-            Self::Postflight => "data/ssd.jpl.nasa.gov/ephemeris_juice_postflight.bin",
+            Self::Official => "sources/ssd.jpl.nasa.gov/ephemeris_juice.bin",
+            Self::Renewed => "sources/ssd.jpl.nasa.gov/ephemeris_juice_renewed.bin",
+            Self::Postflight => "sources/ssd.jpl.nasa.gov/ephemeris_juice_postflight.bin",
         }
     }
 
@@ -1066,7 +1066,7 @@ fn main() {
         bytes.len()
     );
     let tube_path = format!(
-        "data/flyby2/tube-juice-2026-09-28{}.json",
+        "sources/flyby2/tube-juice-2026-09-28{}.json",
         line.tube_suffix()
     );
     if verdict == VerdictWord::Riss {
@@ -1101,7 +1101,7 @@ fn main() {
             (
                 idx,
                 s.clone(),
-                "data/ssd.jpl.nasa.gov/ephemeris_earth.bin".to_string(),
+                "sources/ssd.jpl.nasa.gov/ephemeris_earth.bin".to_string(),
             )
         })
         .collect();

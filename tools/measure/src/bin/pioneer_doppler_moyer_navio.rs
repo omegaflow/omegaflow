@@ -179,7 +179,7 @@ fn run(name: &str, sc_body: &str) {
         eprintln!("{name}: dsn host declaration void");
         return;
     };
-    let path = format!("data/spdf.gsfc.nasa.gov/{name}_doppler_clean.bin");
+    let path = format!("sources/spdf.gsfc.nasa.gov/{name}_doppler_clean.bin");
     let Ok(bytes) = std::fs::read(&path) else {
         eprintln!("{name}: clean bin void ({path})");
         return;
@@ -200,7 +200,7 @@ fn run(name: &str, sc_body: &str) {
 
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
     for body in [host, sc_body] {
-        let p = format!("data/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
+        let p = format!("sources/ssd.jpl.nasa.gov/ephemeris_{body}.bin");
         match std::fs::read(&p)
             .ok()
             .and_then(|d| parse_ephemeris_binary(&d))

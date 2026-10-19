@@ -109,8 +109,8 @@ fn quad_detrend(ts: &[f64], vs: &[f64], gap: f64, min_len: usize) -> (Vec<f64>, 
 }
 
 fn main() {
-    let Some(bytes) = std::fs::read("data/spdf.gsfc.nasa.gov/pioneer11_residuum.bin").ok() else {
-        eprintln!("data/spdf.gsfc.nasa.gov/pioneer11_residuum.bin void — leer (0 honored)");
+    let Some(bytes) = std::fs::read("sources/spdf.gsfc.nasa.gov/pioneer11_residuum.bin").ok() else {
+        eprintln!("sources/spdf.gsfc.nasa.gov/pioneer11_residuum.bin void — leer (0 honored)");
         return;
     };
     let Some(recs) = odf::parse_p11r_bin(&bytes) else {

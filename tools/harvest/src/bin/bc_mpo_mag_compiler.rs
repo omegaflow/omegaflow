@@ -101,7 +101,7 @@ fn main() {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => "data/psa.esa.int/bc_mpo_mag.bin".to_string(),
+        None => "sources/psa.esa.int/bc_mpo_mag.bin".to_string(),
     };
     let (bytes, source) = match arg_value(&args, "--input") {
         Some(path) => match std::fs::read(&path) {

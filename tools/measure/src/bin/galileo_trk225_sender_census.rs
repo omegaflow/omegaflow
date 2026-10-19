@@ -4,10 +4,10 @@ use std::fs;
 use omegaflow::atdf::{LOGICAL_RECORD, TKFORM, extract, field_of, strip_markers};
 
 const CACHES: &[&str] = &[
-    "data/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5327328A.TDF",
-    "data/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5337339A.TDF",
-    "data/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5340341A.TDF",
-    "data/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_6177179A.TDF",
+    "sources/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5327328A.TDF",
+    "sources/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5337339A.TDF",
+    "sources/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_5340341A.TDF",
+    "sources/pds-ppi.igpp.ucla.edu/galileo_tdf_cache_6177179A.TDF",
 ];
 
 const IDENTITY_ITEMS: &[u32] = &[9, 11, 26, 28, 64, 69, 70, 71, 92, 94, 95, 96, 98, 116];
