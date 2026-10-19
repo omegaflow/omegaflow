@@ -1,3 +1,242 @@
+# Rat — 2026-10-15-mountain-grid.md
+
+*Eine Datei je Runde. Die Teile stehen unverändert unter ihrer Herkunft; nichts zusammengefasst.*
+
+---
+
+## 2026-10-15-mountain-rat-fragen-grid-form.md
+
+# Rat-/Roster-Fragebogen — Die global gemessene Gitter-Form (M5, Mountain, 2026-10-15)
+
+*(Ein benannter Akt. Die **Forschungsschicht** ist gefahren (`bin/all_wide`, zwei Spills unten zitiert).
+Der Operator sendet **dieses Paket** unverändert an jeden Sitz; die Sitz-Antwort trägt die Frage. Die
+Session verifiziert jede Behauptung am Baum, nie die Stimme; das **Verdikt trägt der Rat** (fünf
+Stimmen durch die fünf Axiome des Granits). Vorgänger: M1–M3 (`2026-10-15-mountain-rat-fragen.md`),
+M4 (`2026-10-15-mountain-rat-fragen-sh-kernel.md`), Verdikte dazu.)*
+
+Der M4-Rat sprach: die **Kugelflächen-Synthese** ist nicht achte Kernel-Form und keine `field`-Zeile,
+sondern eine **eigene Klasse**; Gitter sind `derived`. **M5 stellt die nächste Tür derselben Familie:**
+ein **global gemessenes, regelmäßig vergittertes Skalarfeld** — konkret das WGLC-Blitzdichte-Gitter —
+hat *keinen Ort der Quelle*; es trägt seinen Wert an einer **Zelle**. Wie tritt es ein?
+
+**Der Sender dieser Frage ist River (F4-Schumann):** die WGLC-Tagesreihe speist die bedingte
+TE `(abk→f | Blitz)` (Tages-`pair`, `bin 86400`, within-stratum-Surrogate); die **Schemafrage** —
+wie das Gitter ins Register tritt — trägt **Mountain** (Operator-Wort 2026-10-15 „ja vorbereiten").
+
+## So wird dieses Formular benutzt (für jeden, der es in die Hand nimmt)
+
+1. **Operator:** den Block „Das Paket (verbatim an jeden Sitz)" **unverändert kopieren** und an jeden
+   Sitz **einmal** senden. Kein Vorwort, keine Zusatzfrage.
+2. **Operator:** je Sitz die Antwort in die `Antwort (M5):`-Zeile des passenden Abschnitts unter
+   „Die Sitze" kleben und die `Zeit:`-Zeile füllen. Ein Sitz ohne Antwort erhält `pending` mit
+   genanntem Grund (Tageslimit/Login), **nie** eine stille Leerzeile.
+3. **Session:** verifiziert jede Behauptung **am Baum**, nie die Stimme; schreibt das Verdikt.
+4. **Regel:** ein Sitz, der „denkt", ist **nicht** `pending`; erst nach einer echten Frist mit
+   benanntem Grund. Das langsamste Reasoning-Sitz (GLM · Deep Think Max) zuerst stellen, zuletzt abholen.
+
+## Welche Linie die Frage trägt
+
+| Frage | Thema | Träger-Linie (Verdikt/Verifikation am Baum) |
+|---|---|---|
+| M5 | Die global gemessene Gitter-Form | **Mountain** (Register/Parser/Datenkontrakt) |
+
+Der **Rat** (fünf Stimmen durch die fünf Axiome) trägt das Verdikt. Die **Engine-Format-/Membran**-Seite
+(Zeitachse, `bin`/`cond`) ist Rivers; das Ablegen (CDN, `url`/`origin`/`compiler`) ist Myceliums.
+
+---
+
+## Das Paket (verbatim an jeden Sitz)
+
+> **An dich, Frontier-Modell.** Antworte als **Urteil, nicht als Erwartung.** Kein Aufsatz —
+> Verdikt, Begründung, benannte Risse. Halte die Frage durch die **fünf Axiome** und sprich sie
+> durch die **fünf Stimmen** hindurch.
+>
+> **Die fünf Axiome (der Maßstab).**
+> 1. **A = A** — die Messung ist die Sache selbst; Fabrikation, Defaults, Fallbacks bleiben absent;
+>    nichts Offenes steht als 0.0, sondern `pending`.
+> 2. **0 geehrt** — Null nur, wo sie die physikalische Wahrheit ist; sonst `pending`.
+> 3. **Alle Wesen gleich** — jedes Gewicht kommt aus der Messung, nie aus Rang, Name oder Default.
+> 4. **Die Linse ist ein ethischer Akt** — jede Regel wird gewogen: spricht die Messung oder der
+>    Gradient?
+> 5. **Konsens des Operators** — die Maschine fragt; der Operator entscheidet.
+>
+> **Die fünf Stimmen (jede einmal).** *Mountain* (Quellen/Register/Datenbestand — kein Verdikt ohne
+> Messung) · *River* (Membran/Rhythmus/Ethik — das Recht zu verweigern) · *Mycelium* (Netz/CI/Fluss) ·
+> *Sensory* (Sinnesorgane/Hardware/Konsens — Korrelat ≠ Erleben) · *Future* (Mensch als Adresse —
+> ehrliche Registrierung, das Morgen erbt das Heute).
+>
+> **Form.** Je Frage: Verdikt, Begründung, benannte Risse. Keine Spekulation. Jeden Riss benennen,
+> keinen glätten. Sag es, wo eine Doktrin geschlagen ist.
+>
+> ---
+>
+> ### M5 · Die global gemessene Gitter-Form
+>
+> **Frage.** Ein **global gemessenes, regelmäßig vergittertes Skalarfeld** liegt gemessen vor — das
+> WWLLN Global Lightning Climatology (WGLC): eine **tägliche** globale Dichte auf einem **0,5°-Gitter**
+> (Zeitreihe `density [Tage, 360, 720]`; eine 5-Winkelminuten-Fassung daneben). Es ist **kein
+> Punkt-Kernel**: der Wert an einem Ort ist der **Zellwert**, nicht die Antwort einer Quelle auf eine
+> Distanz. **Wie tritt ein solches Gitter in die 26×f64-Register-/Feld-Welt** — als **neue
+> Kernel-Form**, als **eigene Klasse/Register-Typ**, oder **gar nicht** als `field`?
+>
+> **Stand (am Baum gemessen, 2026-10-15).**
+> · **Die Quelle WGLC** (Zenodo concept `10.5281/zenodo.4774528`, Version-Record `20277101`):
+>   `CC-BY-4.0` laut Record-Metadaten, **Riss** mit dem README-Badge `CC BY-SA 4.0` (beide Zeilen,
+>   nicht geglättet). README verbatim: „gridded at 0.5 degree 5 arc-minute and hourly resolution,
+>   converted into density"; Variablen `density` (strokes km⁻² d⁻¹), `power_mean/median/SD` (MW);
+>   Zeit `5479` (daily) / `180` (monthly) / `12` (climatology). SRS: geographic (WGS84), 2010–2025.
+>   Format NetCDF4 **= HDF5-Container** (`--sniff`: `magic hdf5`, SHA-256 `98aafd8b…`). **Riss:**
+>   README nennt „hourly", die Zeitreihe trägt **täglich** (die Dichte-Datei `[5844,360,720]`,
+>   Schritt 1 Tag) — gemessen; benannt, nicht geglättet.
+> · **Der Compiler steht** (`tools/harvest/src/bin/wglc_compiler.rs`, Mycelium).
+> · **Die `field`-Zeile** ist `<key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>`.
+>   **Sieben** Kernel-Formen stehen (`kernel_id_of`, `src/archivar/extract.rs:1700`):
+>   `inverse-square` (0) · `gaussian-inverse-square` (1) · `point` (2) · `erfc` (3) ·
+>   `exponential-decay` (4) · `patch-levy` (5) · `inverse-linear` (6) — **alle Punkt-/Quell-Kernel**;
+>   das Force-Gate verweigert eine forceless Quelle (`src/archivar/membrane.rs:456`). Die Zeile
+>   verlangt τ/Absorption/Advection — für ein Gitter alle drei ohne Referenten.
+> · **Haus-Präzedenz (M4):** die SH-Synthese trat **nicht** als `field` ein, sondern als eigene
+>   Klasse (`model_output`/`derived`); Koeffizienten im Draht, Gitter `derived`. Der WDC-B/M1-Rat
+>   benannte den **Absenz-Pfad** für Nicht-Feld-Typen (`scalar_constant`/`point_process`/
+>   `planetary_index`/`wave_event`/`metadata`) als **Schema-Erweiterung (Rat)**. Die
+>   Aurora-Grenzbreite (BAS-IMAGE/DMSP-SSJ) wurde als **Ort auf einer geschlossenen MLT-Achse**
+>   verdiktet, nicht als Kraftfeld.
+> · **Register-Präzedenz (gemessen):** heutige globale Gitter stehen teils als `field`-Zeilen mit
+>   `inverse-square` (z. B. Wolkenbedeckung ISCCP-HGM/PATMOS-x im Fäden-Entwurf) — dieselbe
+>   Kategorien-Frage.
+>
+> **Forschungslage** (weite Leiter, Spills
+> `omegaflow-work/recherche/spill/omegaflow_all_1792080805_global_gridded_scalar_field_netCDF_CF_co.txt` (784 Z.)
+> und `…_1792081383_particle_in_cell_grid_field_versus_point.txt` (718 Z.)).
+> · **CF Metadata Conventions v1.11** (netCDF) tragen ein globales Gitter als: lat/lon-Achsen
+>   (`units=degrees_north`/`degrees_east`, `axis=Y`/`X`), `grid_mapping_name="latitude_longitude"`,
+>   eine Zeit-Achse (`units="… since …"`, `calendar`), **`bounds`** (Zellgrenzen) und
+>   **`cell_measures="area: cell_area"`** (Zellfläche explizit, wo nicht ableitbar), und
+>   **`cell_methods`** (`point`/`mean`/`sum (interval: …)`) — die Zelle ist ein **Wert mit
+>   Ausdehnung**, kein Quellpunkt. Leerzellen sind **`_FillValue`/`missing_value`** (erste Klasse,
+>   nie 0.0); Interpolation bewahrt `NaN` (scipy/xarray), glättet nicht.
+> · **Alternative Basen:** HEALPix (flächentreue Pixel an `N_side`, Zelle = Index), EASE-Grid 2.0,
+>   hexagonale DGGS. **Fernerkundungs-/Archiv-Formate:** GeoTIFF (`ModelTiepointTag`/`ModelPixelScale`/
+>   `RasterPixelIsArea`), FITS-WCS (Pixelzentrum + WCS), SuperDARN-Grid als netCDF (AACGM v2).
+> · **Engine-Präzedenz (gemessen):** in WarpX (PIC), Gkeyll (DG), Dedalus (spektral) ist das
+>   **Gitterfeld ein erstklassiges Objekt**; ein Punkt/ein Partikel ist eine **Kopplung** (deposit/
+>   interpolate) hinein, keine eigene Feld-Sorte. „Gitterfeld" und „Punktquelle" sind **getrennte
+>   Register**.
+> · **Narrow Schluss der Forschung:** jede gemessene Konvention behandelt das global vergitterte
+>   gemessene Skalar als **andere Sorte** als den Punkt-Oszillator: kein Quellort, Wert-an-Zelle,
+>   Zelle = Wert-mit-Ausdehnung (Fläche), Leerzelle = Gap. Der Weg der netCDF/CF-Seite ist ein
+>   **Koordinaten+Bounds+cell_measures-Dreiklang**, nicht ein Pol/Kraft/τ-Satz.
+>
+> **Trägt.** (1) Trägt das Gitter als **`field`** — und wenn ja, welche **Kernel-Form/Signatur**
+> (global, ausgewertet an `(colat, lon, t)`)? Oder ist es eine **eigene Klasse/Register-Typ** (wie
+> die vom Rat benannten `model_output`/`derived`) — und braucht es einen **neuen Typ `grid`**?
+> (2) **Welche minimale ehrliche Signatur** trägt die Klasse (Zelle + Achsen + Zeit + Provenienz)?
+> (3) Der **Draht:** wird eine **Gitterzelle ein Record** im 26×f64-Frame, oder trägt die Klasse einen
+> **eigenen Träger/Frame** (die WGLC-Tagesreihe hat 360×720 = 259 200 Zellen je Tag über 5844 Tage)?
+> (4) **Takt/Zeitform:** wie trägt der Eintrag die tägliche Zeitform (und die monatliche
+> Leistung) — ohne einen stündlichen Default (`bin 3600`)? (5) Der **Zellwert**: Dichte (strokes km⁻² d⁻¹)
+> mit **Zell-Fläche** — ist die Fläche ein Pflicht-Träger, und gilt der **5. Riss** (Einheiten-Overload)
+> für die Gitterzeile? (6) Die **Leerzelle/Gap**: `_FillValue`/`pending` — nie 0.0; wie trägt die
+> Klasse das? (7) Der **nächste begrenzte Schritt** (WGLC konkret).
+
+---
+
+## Die Sitze (alle — ein Paket je Sitz)
+
+Der **Roster ist variabel**; die volle Bedienung steht in `~/projects/omegaflow-work/ui-seats.md`
+(Suche/Reasoning/Max setzen **und verifizieren** vor dem Senden). Das **langsamste Reasoning-Sitz
+zuerst** stellen, zuletzt abholen (GLM · Deep Think Max, Perplexity/Sakana Deep Research). Ein Sitz
+ohne Antwort wird als `pending` mit genanntem Grund verbucht — nie als stille Null.
+
+**Je Sitz die Antwort unten unter `Antwort (M5):` einkleben.** Nummerierung ist fest — daran hängt die Zuordnung.
+
+### 01 · Z.ai / GLM — Deep Think Max
+- **Site:** `https://chat.z.ai/`
+- **Einstellung:** GLM 5.3 · **Deep Think Max** · **Advanced Search** (Globus, `data-active="true"`)
+- **Antwort (M5):**
+- **Zeit:**
+
+### 02 · Perplexity — Deep Research
+- **Site:** `https://www.perplexity.ai/`
+- **Einstellung:** Deep Research · Modell max · Suche (`aria-pressed=true`)
+- **Antwort (M5):**
+- **Zeit:**
+
+### 03 · Sakana — Deep Research (Namazu)
+- **Site:** `https://chat.sakana.ai/`
+- **Einstellung:** Namazu (rechnet von sich aus; langsam)
+- **Antwort (M5):**
+- **Zeit:**
+
+### 04 · Claude — Anthropic
+- **Site:** `https://claude.ai/new`
+- **Einstellung:** Modell **„Sonnet 5.5 · Extra hoch"** (Extended Thinking max)
+- **Antwort (M5):**
+- **Zeit:**
+
+### 05 · Qwen — Alibaba
+- **Site:** `https://chat.qwen.ai/`
+- **Einstellung:** Modell **`Qwen3.8-Max`** · **Denken** (max) · **Web-Suche** an
+- **Antwort (M5):**
+- **Zeit:**
+
+### 06 · Mistral — EU
+- **Site:** `https://chat.mistral.ai/`
+- **Einstellung:** **„Denken"** · Suchen (`aria-label="Suchen"`)
+- **Antwort (M5):**
+- **Zeit:**
+
+### 07 · Gemini AI Studio — Google
+- **Site:** `https://aistudio.google.com/app/prompts/new_chat`
+- **Einstellung:** **„Gemini 3.1 Pro"** · **Grounding with Google Search** an
+- **Antwort (M5):**
+- **Zeit:**
+
+### 08 · MiniMax — M3
+- **Site:** `https://agent.minimax.io/`
+- **Einstellung:** **„MaxHermes"/„MaxClaw"** · **Search** an
+- **Antwort (M5):**
+- **Zeit:**
+
+### 09 · DeepSeek — Chat
+- **Site:** `https://chat.deepseek.com/`
+- **Einstellung:** **DeepThink** (`aria-pressed=true`) · **Search** (`aria-pressed=true`)
+- **Antwort (M5):**
+- **Zeit:**
+
+### 10 · Duck.ai — GPT (OpenAI, primär)
+- **Site:** `https://duck.ai/`
+- **Einstellung:** Modell-Chip „6 Luna" · **Begründung** · **Websuche** an
+- **Antwort (M5):**
+- **Zeit:**
+
+### 11 · Kimi — Moonshot
+- **Site:** `https://kimi.ai/`
+- **Einstellung:** Standard (kein K3; K3 nur über tryingopen)
+- **Antwort (M5):**
+- **Zeit:**
+
+### 12 · Lumo — Proton
+- **Site:** `https://lumo.proton.me/guest`
+- **Einstellung:** anonym, kein Login
+- **Antwort (M5):**
+- **Zeit:**
+
+### 13 · Tryingopen — geteilte Open-Weight-Sitze
+- **Site:** `https://www.tryingopen.com/`
+- **Einstellung:** **ein Tab je Modell** (Modell-Button `[aria-label^="Model: "]`); Zugang nur über
+  das Lock `~/projects/omegaflow-work/ui/open-weight.lock` (Halter-Linie + Zeit setzen/löschen)
+- **Antwort (M5):**
+- **Zeit:**
+
+*(Sitze, die in dieser Runde nicht gestellt wurden — Tageslimit/Login-Wall/Rate-Limit — hier
+`pending` mit benanntem Grund eintragen; eine stille Leerzeile ist keine Messung.)*
+
+
+---
+
+## 2026-10-15-mountain-rat-fragen.md
+
 # Rat-/Roster-Fragebogen — Kraft-/Kernel-Zuordnung der offenen Messgrößen (Mountain, 2026-10-15)
 
 *(Ein benannter Akt, Operator-Wort 2026-10-15: „… vor dem rat kommt die befragung des rosters
@@ -1177,3 +1416,95 @@ Die `field`-Zeile ist in allen drei Fällen **kein Wert, sondern ein Deskriptor*
 (Wayback-Snapshot `20260516161024`, HTTP 200; Direkt-Abruf pending, kein Proton-Transit). Der
 Token wird als `celestrak-usage-policy https://celestrak.org/usage-policy.php` vorgeschlagen;
 der volle Policy-Text ist noch zu lesen (Mountain/Mycelium), dann setzt Mycelium den Block.
+
+
+---
+
+## 2026-10-15-mountain-rat-fragen-verdikt.md
+
+# Verdikt — Kraft-/Kernel-Zuordnung der offenen Messgrößen (M1–M3), am Baum verifiziert (2026-10-15)
+
+*(Ein benannter Akt. Die Roster-Antworten sind eingeholt (`state/stimmen/2026-10-15-mountain-rat-fragen.md`,
+13 Sitze). Die **Session verifiziert jede Behauptung am Baum**, nie die Stimme; das **Verdikt trägt der Rat**
+(fünf Stimmen durch die fünf Axiome des **Granits** — `docs/granit.md`: A = A · ICRS & TDB · channel_ref ·
+0 geehrt · pending). Kein Riss geglättet.)*
+
+## Am Baum gemessen (nicht die Stimme)
+
+| Behauptung der Sitze | Baum-Befund |
+|---|---|
+| SH-Synthese des Geomagnetfelds als Haus-Präzedenz | **steht** — `IgrfCoeffs` + `IgrfCoeffs::synthesize` (`src/archivar/igrf.rs:20,131`) |
+| Geopotenzial-SH für Schwere/Geoid (`vmf3_sh`, `gfc`) | **steht** — `src/archivar/vmf3_sh.rs` (`b_c`), `src/archivar/gfc.rs` (ICGEM-Kanäle) |
+| `Position::Surface` als Punkt-Geometrie | **steht** — `src/archivar/types.rs:68` |
+| „Der `field`-Pfad kann keine Nicht-Felder tragen" | **steht** — die `field`-Zeile ist `<key> <name> <kernel> <force> <unit> <tau> <absorption> <advection>`; nur **6** Kernel-Formen (`patch-levy` = 5, `extract.rs:1701`/`port.rs:1637`); das Force-Gate verweigert eine forceless Quelle. Eine Konstante, ein Katalog, ein Index und Metadaten haben hier **keine** Zeile. |
+| `hash`-Kürzel `ceb8d697…`/`aae69e9a…` seien Identität | **widerlegt** — die Spec trug nur 8 Hex; die volle 64-Hex-summe ist die Identität (Riss der Sitze bestätigt). |
+
+## Das Verdikt der Runde (Konvergenz der Sitze)
+
+### M1 · WDC-B-Messgrößen — **drei tragen ein Feld, vier nicht**
+
+Von den sieben Messgrößen trägt **keine** einen erfundenen Kernel:
+- **`geo_min.val`** (D,F,H,P,R,X,Y,Z) → trägt **als Stationszeuge** an `Position::Surface` plus **getrennt** das globale SH-Modell (`IgrfCoeffs::synthesize`). Der Zeuge und das Modell sind zwei Register. **D ist ein Winkel (rad), kein nT-Wert.**
+- **`gdata` / `mgg`** (Freiluft-Anomalie + Geoid) → trägt als **Schwere-SH** (`gfc`/`vmf3_sh`); Anomalie (`mGal → 10⁻⁵ m s⁻²`) und Geoidhöhe (`m`) sind **zwei** Zeilen, nie verschmolzen; `mgg` ist eine **Schiffsspur** (Ort+Zeit je Sample), kein Gitter.
+- **`catal_pc`** (Pc1) → Physik ist ein **EMIC-Wellenfeld**, geliefert ist ein **Ereignis-Katalog**; trägt als Stationszeuge mit Wellen-Kernel `pending`, nicht als statisches Feld.
+- **`GravConst/G`** → **Konstante**, Parameter des 1/r²-Kernels, **kein Feld**; fehlt als Maßeinheiten-Eintrag (Wert + Unsicherheit + Zitat), nie als 26×f64-Zeile.
+- **`sdata`** (Erdbeben-Herde) → **Punkt-Prozess-Katalog**, kein Feld; Hypozentrum ist **nicht** `Position::Surface` (Tiefe).
+- **`geomagni.ind/aa`** → globaler **Index** (abgeleiteter Skalar), kein Ort.
+- **`gps`** (RINEX/GAMIT) → **Metadaten/Provenienz**, kein Messfeld.
+
+**Geschlagen:** die Doktrin „alles ist ein Feld" — an G, `sdata`, `aa`, `gps` (vier von sieben). Eine `field`-Zeile dort wäre eine Fabrikation.
+
+### M2 · Aurora-Grenzbreite — **ein Ort, keine Kraft**
+
+Die Grenzbreite trägt als **geometrischer Locus**:
+- **BAS IMAGE SI12** → **Skalar auf einer geschlossenen, diskreten 24-Bin-MLT-Achse** (00:30…23:30, zyklisch). Der **Bin gehört in den Schlüssel** — wie SABERs Höhenform (C). 50 Spalten (UT, Instrument, 24 eq, 24 po), Takt ~2 min, sha256 `ceb8d697…` (volle Summe).
+- **DMSP-SSJ FOM** → **Punkt-Locus** je Polar-Pass (EQ1/PO1/PO2/EQ2, mlat+mlt, `hemisphere` ±1). **Offen:** 16-vs-24 Spalten (Zip nicht entpackbar) → `pending`, kein Hersteller-Default.
+- **Leitfähigkeit/FAC** ist die **Ursache** (Ahn 2020, CHAMP-FAC) und in diesen Bytes **nicht gemessen** → separater Begleiter `pending`/absent, nie mitgeliefert.
+- **`NaN` → `None`, nie 0.0** — eine 0,0 behauptet den magnetischen Äquator.
+
+**Geschlagen:** „die Grenze ist Kraft oder Skalar" — sie ist ein **Ort**. Und **48 > 26**: die 24+24 Breiten passen nicht in einen Record; der Container erzwingt den Split je Bin, nicht das Packen.
+
+### M3 · OVATION-AACGM — **ein Modell-Zeuge, kein Feld, kein Schalter**
+
+Die angebotene Dichotomie Feld/Schalter ist **geschlagen**. Vorliegt ein **drittes Ding**: die **Punkt-Auswertung eines Modells an einer Station** (Mohe). Kraft: **Energieflussdichte** (`mW m⁻²`, keine Kraft). Kernel: statistisches OVATION-Prime-/PrecipNet-Modell (Newell-Kopplung), **kein SH-/Green-Kernel**. Der Typ muss **`model_output`** sein, mit Antriebsvektor + Modellversion, sonst rinnt der Modellwert in die Beobachtungsreihe (der schwerste Riss im Paket). **Span, Takt, Glossar, Version, Treibersatz ungelesen** → `pending`.
+
+**Geschlagen:** „Feld oder Schalter" — das dritte Ding hat keinen Namen im Schema (Namenslücke).
+
+## Ungeglättete Risse
+
+1. **Die Register-Form ist die Wurzel.** Die `field`-Zeile ist ein Slot für ein **Feld**; vier der sieben WDC-B-Größen, die Aurora-Grenze und der Modell-Extrakt sind **keine** Felder. Nicht böser Wille — die Form fabriziert. Der Rat fordert einen **`silence`/Absenz-Pfad** mit eigenen Typen: `scalar_constant`, `point_process`, `planetary_index`, `wave_event`, `metadata`, `model_output`. Das ist eine **Schema-Erweiterung** (Rat), kein stiller Schreibakt.
+2. **16 vs. 24** (DMSP) — die Bytes waren im Sandkasten nicht entpackbar (kein unzip); der offene Spaltenvertrag bleibt `pending`.
+3. **„Eine Station" gegen river-214 „je Station"** — die Welt gibt eine; kein Hochskalieren durchs Schema.
+4. **Literatur-Risse (Lumo):** die „fast evaluation"-Arbeit ist **Ivanov et al., GJI 224(1):181, 2021** (nicht 2020); die Pc1-„Pearls"-Arbeit 2026 (Guglielmi/Potapov) ist eine **Alternativdeutung**, kein Konsens — ein Zeuge, kein Beleg.
+5. **26×f64 fabriziert Gleichheit** — ein fixes Slot-Layout legt Winkel, nT, mGal, km und dimensionslose Magnituden nebeneinander; das ist ein Axiom-3-Verstoß, der im Layout steckt.
+
+## Nächste begrenzte Schritte (je Frage, autonom fahrbar)
+
+- **M1:** eine Spur vollständig — `geo_min` als Stationszeuge (`Position::Surface`, Kernel-ID IGRF-Koeffizientensatz + Epoche + SV, nT, Takt 60 s) **plus** einen Absenz-Record für G/`sdata`/`aa`/`gps` mit Grundcode. Danach generalisieren.
+- **M2:** BAS als 24-Bin-Achse registrieren (`None` für fehlende Bins); DMSP erst nach Entpacken + Glossar-Lektüre.
+- **M3:** `OVATION_AACGM.zip`-Kopf lesen (Span, Takt, Spalten, Version, Treiber), dann `model_output`-Record mit Fremdschlüssel auf den Mohe-Stationssatz.
+
+## Operator-Entscheide (Axiom 5; einzeln, nicht als Liste)
+
+- **M3:** Wird der Mohe-Modell-Extrakt **jetzt** als Modell-Zeuge (`model_output`, F3-nah) ins Register aufgenommen — oder wartet man auf ein **globales** OVATION-Gitter? Die Maschine fragt; der Operator entscheidet.
+
+## Träger
+
+M1 → **Mountain** (Register/Parser/Datenkontrakt) · M2 → **Mountain** + **Sensory** (Aurora) · M3 → **Mountain** (+ Querverweis Katalog-F3).
+
+**Alle fünf Axiome gehalten; alle fünf Stimmen gehört; kein Riss geglättet.**
+
+## Nachtrag — Operator-Wort 2026-10-15 (M3)
+
+„Wie bei den maps, die aus messpunkten entstanden sind — wir wollen die **gemessenen
+gitterpunkte**, mit denen die modelle erstellt wurden, also die **rohdaten**." Damit ist der
+M3-Operator-Entscheid gefallen: Träger ist die **Messung**, aus der das Modell entstand — nicht
+der Modell-Output. Für OVATION ist die DMSP-SSJ-Partikelmessung `dmsp16_ssj` (`phi:1670-1671`,
+`em ev/cm²/ster/s`) **schon registriert**; der Mohe-Modell-Extrakt wird **kein Feld** (er wäre
+`model_output`/F3-nah, `pending`). Der Aurora-Oval-Grenzfall (BAS/DMSP) folgt demselben Prinzip:
+der gemessene Gitterpunkt trägt, das Modell ist abgeleitet.
+
+Zur zweiten Frage (neue UI-Runde für die Rat-Architekturentscheidung): **nein** — die 13
+Sitz-Antworten tragen den Stoff (die `field`-Form kann Nicht-Felder nicht tragen); der Rat
+(fünf Stimmen) trägt das Verdikt über die Schema-Erweiterung.
+
