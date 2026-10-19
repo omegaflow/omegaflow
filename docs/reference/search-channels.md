@@ -2,7 +2,7 @@
   title: Suchkanäle — gemessener Stand (2026-10-19)
   class: ref
   date: 2026-10-19
-  sha256: 0aa695a87c624da48218baee9e07a38ac28a56760246ef296a36722e3d8806b1
+  sha256: 0e78e3682a6ca465469c500c80af857bb5055d02c1d0c4e5c5b181797ad85e9c
   status: live
   see-also: docs/concepts/tools-map.md docs/surveys/survey-2026-10-19-paper-forschungslage.md
 -->
@@ -33,10 +33,6 @@ Kanal wird als „geht" geführt, weil er im Hilfetext steht — nur, weil er ge
 
 ## Account-Problem, kein fehlender Arm
 
-**Nachgemessen 2026-10-20:** unverändert — `--brave` 402, `--tavily` 432,
-`--gemini` 429 (Quota), `--searchapi` 429, `--serpapi` 429, `--consensus` 429,
-`--googlecse` 400 („API key not valid"). Der Zustand ist ein Konto-, kein Code-Problem.
-
 Key liegt vor, Provider verweigert trotzdem:
 
 | Kanal | HTTP | Ursache |
@@ -44,7 +40,11 @@ Key liegt vor, Provider verweigert trotzdem:
 | `--brave` | **402** | Abrechnung/Konto |
 | `--tavily` | **432** | Plan-Limit |
 | `--searchapi` / `--serpapi` / `--consensus` | **429** | Quota |
-| `--google-cse` | **400** | ungültige Konfiguration |
+| `--googlecse` | **400** | „API key not valid" (Flag heisst `--googlecse`) |
+
+**Nachgemessen 2026-10-20** (Binary `target/release/archive_search`, sha256
+`50f002ee7b16…`, 01:27): unverändert 402/432/429/429/429/429/400. Der Zustand
+ist ein Konto-, kein Code-Problem.
 | `--gemini` | **429** | Quota |
 
 Das ist **keine Code-Arbeit**. Ein Key öffnet Zugang, keine Lizenz — und ein 402 ist kein
