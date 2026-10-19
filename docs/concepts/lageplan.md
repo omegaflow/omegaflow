@@ -2,7 +2,7 @@
   title: Lageplan — wo was liegt (eine Seite, geladen statt gesucht)
   class: concept
   date: 2026-10-19
-  sha256: ffb14b1aff9d04e3dd788d34e7bac7fc6970c698a7e360ad6ea33ee6a29ae103
+  sha256: 010231a1fce027a567370240257e44fdd76bf4f124af03982fdc89ec1826371b
   status: live
   see-also: AGENTS.md docs/concepts/house-rules.md docs/concepts/tools-map.md
 -->
@@ -69,7 +69,6 @@ Ein fünfter Ordner ist ein Fehler, kein Sonderfall. Was bleiben soll, wandert *
 - **Register:** `register_lookup` · **CI:** `ci_manage status|list|view|logs` (nie `gh run`).
 - **Ablage messen:** `bin/layout_check` · **Cache-Karte:** `bin/sources_index`.
 - **Übergabe:** `omega_sh sha <datei>` (Body ohne Kopf) · `git_safety --close` · Gates: `commit_check`, `open_points_check`.
-- **Mail:** `smail` (`--dry-run` ist die Vorgabe; der Send ist die Operator-Hand).
 
 ## Die zwei Häuser
 
