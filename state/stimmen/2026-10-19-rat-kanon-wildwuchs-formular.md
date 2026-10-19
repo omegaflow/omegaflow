@@ -2,7 +2,7 @@
   title: Rat-Formular — R-2026-10-19-a Kanon statt Wildwuchs
   class: sheet
   date: 2026-10-19
-  sha256: ad5343737db0c71ddd4a4a6a19d641f080f3cf4681ffc669c77835d38acbe37a
+  sha256: eb4aba48a78f519cd4b51491d1e07b99f609778cb8c0bf82c38e1229897068bd
   status: live
   see-also: state/stimmen/_rat-anweisung.md
 -->
@@ -33,6 +33,26 @@ in der Werkstatt ab; niemand findet sie wieder.
   oder ein Ordner, der nur durch Gate beschrieben wird?
 - **E** — **Bester Riss:** Welche Ablage macht diesen Wildwuchs *unmöglich* und kostet dabei am
   wenigsten Aufmerksamkeit? (Eine Antwort, nicht drei.)
+
+**F — die Regel-Ablage (Operator-Wort 2026-10-19).** Der Operator hat genug: „es gibt die
+`opencode.json`, die Agents, die `.md`s und das Gate — das ist mir alleine schon zu viel." Die
+Leitstelle hat darüber hinaus an einem Tag **fünf** neue Regeln an vier Orten angelegt
+(Recherche-Pflicht, Zufalls-Budget, „Ersatz statt Ausweis", Such-Wurzel `sgrep`, Gateway-Neustart)
+— jede einzeln begründet, zusammen ein Regelwald. Dieselbe Sache steht in `_rat-anweisung.md`,
+`house-rules.md`, `ui-seats.md`, dem Formular und jetzt hier.
+
+**Zwei Entscheide, je ja/nein + Riss:**
+- **F1 — Wo darf eine Regel künftig leben?** Vorschlag: **genau vier Orte** — `opencode.json`
+  (Rechte/Verbot, mechanisch) · `AGENTS.md` (sieben Zeilen, unveränderlich) · **ein** `.md`
+  (Denken/Architektur, keine Befehle) · das Gate (Messung). Neue Regeln in einem fünften Ort
+  sind **verboten**, nicht „unschön". Ist das die Grenze?
+- **F2 — Was mit den Regeln, die schon da sind?** Vorschlag: **eine Streichrunde** — jede Regel
+  muss einen der vier Orte nennen; wer keinen nennt, fällt nicht auf einen neuen Ort, sondern
+  **weg**. Zählt dabei, was eine Regel *einmal getragen* hat, oder nur, ob sie heute noch einen
+  Fehler verhindert?
+- **F3 — Werkzeug statt Regel:** Wo ein Fehler mechanisch verhinderbar ist (leerer Suchlauf,
+  Zitat ohne Datei, Start ohne Release-Profil), gehört er ins **Gate** — nie als Satz ins `.md`.
+  Gilt diese Vorrangregel (Gate vor Prosa), auch wenn das Gate mehr Bau kostet?
 
 ### Was NICHT zu entscheiden ist
 Kein Agent verschiebt oder löscht Ordner ohne Operator-Wort. `AGENTS.md` (die Wissenschaft) bleibt
@@ -67,6 +87,13 @@ allein Wildwuchs verhindert. Die Frage ist damit offen — genau darum geht sie 
 personal 24) · 2037 Doku- und 769 Datendateien · 26 Namenskollisionen · 260/275 ohne README/INDEX ·
 `work` trägt ~100 kurzlebige Läufe (`stimmen/swarm-*`, `stimmen/voice-all-*`) und ~90 Hostordner
 in `cache/` **und** `data/`.
+
+**Regelwald-Befund (gemessen 2026-10-19, Leitstelle):** dieselbe Sache an mehreren Orten, allein
+heute: Send/Operator-Hand an **5** Orten (`kern.md`, `house-rules.md`, `agent future`, `cmd future`,
+`feuer`), Rat-Pflichten an **3** (`_rat-anweisung.md`, `house-rules.md`, `ui-seats.md`), Fundsachen
+beim Lesen: `roster2_synthese.md` zitiert Rohantworten zu Google AI Studio, Claude und Qwen, die im
+Ordner **nicht existieren** — ein Befund ohne Datei, den kein Gate bemerkt. Das ist der Ist-Stand,
+über den F entscheidet.
 
 ---
 
