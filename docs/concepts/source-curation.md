@@ -54,7 +54,7 @@ Brieftext. Öffentliche Attribution bleibt: Name im Copyright, Papier-Seal,
 zitierte Autoren. Die Entscheidungsregel: **öffentliche Rolle + öffentliches Werk
 = bleibt; privater Kanal = geht.** Finanz-/Funding-Inhalte des Operators
 (Förderstrategie, Bewerbungen, finanzielle Lage, persönliche Nutzungs-/
-Kostenmuster) sind ebenso **nie getrackt**; Heimat das private Repo `omegaflow/personal`,
+Kostenmuster) sind ebenso **nie getrackt**; Heimat das private Repo `omegaflow/private`,
 auf `state/` verwurzelt: `future/` (Future-Linie: Förder-Akte, `handover/`, Register) und `mail/`
 = `state/mail/`, der kanonische Postkorb (gelesen in
 `tools/service/src/bin/smail_recv.rs`, `mail_watchdog.rs`, `mail_digest.rs`,
@@ -68,7 +68,7 @@ der Befund wird gemessen (`pii_scan`), nicht nur beschrieben.
 
 **Die Future-Übergabe ist vollständig privat (Rat + Operator-Wort, 2026-09-22).**
 `docs/handover/` trägt keine neue `future`-Folge — Futures Register (Folge-N,
-Operator-Queue, Archiv) liegt im privaten Repo `omegaflow/personal` unter
+Operator-Queue, Archiv) liegt im privaten Repo `omegaflow/private` unter
 `handover/` (gleiche Benennung, gleicher Header, gleicher `archiv/`-Move; lokal
 unter `state/`, gitignored). Öffentlich ist von Future nur die Adresse, nie der
 Inhalt. Die Alt-Übergaben folge83–90 sind aus der öffentlichen Historie getilgt
