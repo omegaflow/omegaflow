@@ -2,7 +2,7 @@
   title: Survey — die Sonne→Erde-Kette im Haus (Bestand, gemessen 2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: af322dbb96ac7c4904c09bdbb1bf28caee6a4ed58e5f77b9db12bac78ef966e7
+  sha256: 3cb5c2504befae54ecf4896ccf5030fea5b249f7cf4ea46ca24ca8f1ccb16c67
   status: live
   see-also: phi/sources.φ docs/paper/gic-causal-driver.md zustand/rat/2026-10-15-rat-fragenpaket.md
 -->
@@ -35,7 +35,7 @@ eigentlich?" und die Grundlage für F2 (Frühwarnkette).
   Divergenz yearly/quarterly.
 - Boden → Strom: die skalare Relation im Halloween-Fenster (§4.7, r = 0.9448), und
   die stündliche TE gegen die GIC-Reihe (§4.8, kein fam-clearing Treiber).
-- Boden → Strom als Kette: läuft (Vorlaufzeit + inkrementelle Fassung).
+- Boden → Strom als Kette: **gemessen** (§4.9) — trägt nicht: kein Vorlauf, Rückkanal nicht genullt, inkrementell 0/14.
 
 **Nur vorhanden (Knoten, keine gemessene Kante):**
 - Sonne → L1: die Reihen liegen, die Kante ist nicht als Zuwachs gemessen.
@@ -94,7 +94,9 @@ mit Fenster, Zahl und Ergebnis.
 | M14 | Verzögerung Z | Blatt, `bz_dbdt_delay_probe` | ABK 2024, n = 251048 | Z = 142 min, r = 0.0223 — **ohne Minute-Null**, nicht gesiegelt |
 | M15 | DE-2 Ion↔Neutral | `survey-2026-10-18-k-te-kadenz.md` | n = 23200 | 3/3 Lags pass; Mond-Konditionierung 0/36, Rückrichtung 3/36 |
 | M16 | Signal-cone-Positivkontrolle | `survey-2026-10-19-signal-cone-positivkontrolle.md` | 730 d, 90 Paare | τ = 2 d = 1.728e5 s, d/c = 8.155 min, TE 5.4413e-1 > fam 2.8826e-1 → Pfeil im Kegel (synthetisch) |
-| M17 | Boden → Strom als Kette | läuft | — | Vorlaufzeit + inkrementelle Fassung; Ergebnis offen |
+| M17 | Boden → Strom als Kette | §4.9, `gic_ground_probe` | 4 319 min; inkrementell n = 72/23 h | unbedingt **Pfeil** (Lag 5 min, TE 1.4043e-1 > fam 1.2928e-1), aber **symmetrisch** (Rückkanal ebenfalls; Verhältnis 1.01–1.12) und **lag-flach**; inkrementell **0/14**, Δ negativ → **trägt nicht**, 0 Vorlauf |
+
+**Datenfehler, benannt:** Die mehrjährigen Abisko-Reihen (`abk_dbdt_1h.bin`, `abk_dbdt_1m.bin`) tragen Zukunftsstempel (2024–2056 bzw. 2053–2055) und überlappen die GIC-Reihe deshalb nicht. Sie wurden **nicht** verwendet; der Fehler ist zu reparieren, bevor sie als Kante zählen.
 
 **Der zentrale Riss:** M2–M4 (Jahresrunden) und M5 (Quartalsrunden) widersprechen
 sich. Die Jahresrunde findet den Pfeil, die gehärtete Quartalsrunde nicht. Beide
