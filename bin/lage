@@ -19,13 +19,13 @@ post_out=$(ls -1 "$work"/post/out/*.md 2>/dev/null | wc -l)
 post_head=$(git -C "$work" rev-parse --short HEAD 2>/dev/null || echo 'kein Repo')
 post_dirty=$(git -C "$work" status --porcelain 2>/dev/null | wc -l)
 
-models=$(tail -n +2 state/zustand/gateway/models.tsv 2>/dev/null | wc -l)
-alive=$(tail -n +2 state/zustand/gateway/alive.tsv 2>/dev/null | wc -l)
-free=$(tail -n +2 state/zustand/gateway/models.tsv 2>/dev/null | awk -F'\t' '$3==0 && $4==0' | wc -l)
-unknown=$(tail -n +2 state/zustand/gateway/models.tsv 2>/dev/null | awk -F'\t' '$6==""' | wc -l)
+models=$(tail -n +2 state/gateway/models.tsv 2>/dev/null | wc -l)
+alive=$(tail -n +2 state/gateway/alive.tsv 2>/dev/null | wc -l)
+free=$(tail -n +2 state/gateway/models.tsv 2>/dev/null | awk -F'\t' '$3==0 && $4==0' | wc -l)
+unknown=$(tail -n +2 state/gateway/models.tsv 2>/dev/null | awk -F'\t' '$6==""' | wc -l)
 age() { [ -f "$1" ] && echo "$(( ( $(date +%s) - $(stat -c %Y "$1") ) / 3600 ))h" || echo '?'; }
 hage() { t=$(git log -1 --format=%ct -- "$1" 2>/dev/null); [ -n "${t:-}" ] || t=$(stat -c %Y "$1" 2>/dev/null); [ -n "${t:-}" ] && echo "$(( ( $(date +%s) - t ) / 3600 ))h" || echo '?'; }
-balance=$(tail -n +2 state/zustand/gateway/balance.tsv 2>/dev/null | sed 's/^/  /')
+balance=$(tail -n +2 state/gateway/balance.tsv 2>/dev/null | sed 's/^/  /')
 
 line_rows=$(for line in mountain mycelium river sensory future; do
   h=$(git ls-files 'docs/handover/handover-*.md' 2>/dev/null | grep -v '/archiv/' | grep -E -- "-$line(-|\.)" | sort | tail -1)
@@ -47,7 +47,7 @@ done)
   echo "HEAD \`$head_sha\`"
   echo
   echo "## Sitze / Routen (Gateway)"
-  echo "- Katalog (tsv, letzter Start: $(age state/zustand/gateway/models.tsv)): $models · frei: $free · Preis unbekannt: $unknown · lebendig: $alive ($(age state/zustand/gateway/alive.tsv) alt)"
+  echo "- Katalog (tsv, letzter Start: $(age state/gateway/models.tsv)): $models · frei: $free · Preis unbekannt: $unknown · lebendig: $alive ($(age state/gateway/alive.tsv) alt)"
   echo "- Freier Schwarm: live aus den Preis-0-Zeilen + OpenCode-free — keine feste Zahl"
   if [ -n "$balance" ]; then
     echo "- Guthaben (USD):"
@@ -64,6 +64,15 @@ done)
   echo
   echo "## Post (Arbeitsbaum \`$work\`)"
   echo "- in: $post_in Briefe (heute $post_today) · out: $post_out · Postfach-Repo: \`$post_head\` · uncommitted: $post_dirty"
+  echo
+  echo "## Wo was liegt (Kanon — hier nachsehen, nicht suchen)"
+  echo "- Rat: \`state/rat/\` ($(ls -1 state/rat/*.md 2>/dev/null | grep -vcE '_lage|_rat-') Runden · Register \`state/rat/_rat-register.md\` · Anweisung \`state/rat/_rat-anweisung.md\` · Rohmaterial \`state/rat/_roh/\`)"
+  echo "- Post: \`$work/post/in\` ($post_in Briefe) · \`$work/post/out\` ($post_out Dispatches)"
+  echo "- Quellen (CDN-gebunden, rekonstruierbar): \`$work/sources/\` ($(ls -1 "$work/sources" 2>/dev/null | wc -l) Netlocs + content/, $(du -sh "$work/sources" 2>/dev/null | cut -f1))"
+  echo "- Experimente (nur lokal): \`$work/experiments/\` ($(ls -1 "$work/experiments" 2>/dev/null | wc -l) Themen, $(du -sh "$work/experiments" 2>/dev/null | cut -f1))"
+  echo "- Recherche: \`$work/recherche/funde/\` ($(find "$work/recherche/funde" -type f 2>/dev/null | wc -l) Dateien) · Flüchtiges \`$work/recherche/tmp/\`"
+  echo "- Gateway-Zustand: \`state/gateway/\` (models, alive, balance, provenance, catalog, paid-open)"
+  echo "- Register (Herkunft): \`phi/sources.φ\` · Übergaben: \`docs/handover/\`"
   echo
   echo "## Rat-Fragen (offen | rat-konvergiert)"
   if [ -n "$open_rows" ]; then
