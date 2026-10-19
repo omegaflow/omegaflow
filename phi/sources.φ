@@ -31834,3 +31834,17 @@ sha256 c11240dca294d67c38b28dbe7e4dadb30966c763333631093fb3accff7a4359e
 on earth 27.7 85.3 1288
 ttl 86400
 field river_discharge_m3s river_discharge_m3s inverse-square advective m3/s 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/swpc_radio_bursts.bin
+terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
+format swpc_radio_bursts
+origin https://services.swpc.noaa.gov/json/edited_events.json
+compiler tools/harvest/src/bin/swpc_radio_bursts_compiler.rs
+sha256 7622114c4b8e4cd83ff2d05763e5f17311c3b54144508757912ae90244dffb66
+at sun
+ttl 300
+field swpc_radio_burst_freq_low_mhz swpc_radio_burst_freq_low_mhz inverse-square em MHz 60 0.0 0.0
+field swpc_radio_burst_freq_high_mhz swpc_radio_burst_freq_high_mhz inverse-square em MHz 60 0.0 0.0
+field swpc_radio_burst_duration_s swpc_radio_burst_duration_s inverse-square em s 60 0.0 0.0
+field swpc_radio_burst_type_code swpc_radio_burst_type_code inverse-square em 1 60 0.0 0.0
+field swpc_radio_burst_subtype_code swpc_radio_burst_subtype_code inverse-square em 1 60 0.0 0.0
