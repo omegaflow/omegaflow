@@ -1,3 +1,10 @@
+<!--
+  title: NIST SP 330 — SI Base and Derived Units
+  class: ref
+  date: 2026-10-19
+  sha256: 4825c7cd64d095090c6fe301c80b559e097e1fa3fb6b9cbbdb2cc655df240144
+  status: live
+-->
 # NIST SP 330 — SI Base and Derived Units
 # Official SI Brochure (9th edition, 2019), Tables 2–5, 7
 # Public domain — US government work

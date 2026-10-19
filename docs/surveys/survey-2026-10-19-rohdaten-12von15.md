@@ -3,6 +3,7 @@
   class: survey
   date: 2026-10-19
   status: done
+  sha256: 57cf1db6a04a8469ea0b302100894fa77a28582c7be6a48c12bdba6a7f80a952
 -->
 # Rohdaten-Inventar — 12 von 15 (Stand 2026-10-19)
 

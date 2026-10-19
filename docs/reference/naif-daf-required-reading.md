@@ -1,3 +1,10 @@
+<!--
+  title: Double Precision Array Files (DAF)
+  class: ref
+  date: 2026-10-19
+  sha256: 1e17f90237d927f1119d7da6deea6a3a528bcb9b750efaaa7f0b3f2b89caf42c
+  status: live
+-->
 Double Precision Array Files (DAF)
 
 [Index Page](index.html)

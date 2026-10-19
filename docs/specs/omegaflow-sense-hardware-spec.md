@@ -1,3 +1,10 @@
+<!--
+  title: ============================================================
+  class: spec
+  date: 2026-10-19
+  sha256: ccd11744dbc733cc5b1779322f60ae31e7742d73f972bdf836e1d7573edb8eb0
+  status: live
+-->
 # ============================================================
 # omegaflow_sense_hardware.yaml
 # STATUS: PLAN (Phase 10) — CORE BUILT. The ESP32-S3 core (MOSFET bank M1-M8,
