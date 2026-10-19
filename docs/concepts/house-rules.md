@@ -1,23 +1,25 @@
 <!--
   title: House Rules — die Essenz (was gilt)
   class: concept
-  date: 2026-10-16
-  sha256: c2d8c42ba448e53a2baf3d1b9ba0e6684e12b0c3b748596255952907aee6a31c
+  date: 2026-10-19
+  sha256: ed4b649b1f5004bf35af406d05c1ab15486120ca866f65a57ea31946052098ca
   status: live
-  see-also: AGENTS.md docs/concepts/tools-map.md
+  see-also: AGENTS.md docs/concepts/tools-map.md docs/granit.md docs/council.yaml
 -->
 # House Rules — die Essenz
 
 Hier steht nur, was **kein Gate und kein `--help`** tragen kann. Was ein Gate prüft, ist
-ausgeführt statt erzählt — sonst driftet der Text gegen das Gate. Die Volltexte liegen in
-`archiv/` (2026-10-16).
+ausgeführt statt erzählt. Seit der Streichrunde (2026-10-19, Rat R-2026-10-19-a, F2) ist dies
+die **eine** Denk-Quelle: die Rat-Anweisung ist darin aufgegangen und liegt als *gestrichen*
+im Archiv der Werkstatt (`zustand/rat/archiv/`).
 
 ## Die Linie — ein Pass
 
 **Erste Handlung — deine drei Stellen, nichts sonst:** der **Dispatch**
-(`~/projects/omegaflow-work/post/out/`, die eine Aufgabe der Leitstelle) · dein **Handover**
-(`docs/handover/`, die neueste deiner Linie, ≤ 1 KiB, nur Offenes) · deine **Post**
-(`post/in/`). Lies nur die Stellen, die die Aufgabe nennt (`sread <f> --offset --limit`).
+(`~/projects/omegaflow-work/post/`, die eine Aufgabe der Leitstelle, Name trägt die Richtung) ·
+dein **Handover** (`~/projects/omegaflow-work/handover/`, die neueste deiner Linie, ≤ 1 KiB,
+nur Offenes) · deine **Post** (dasselbe `post/`). Lies nur die Stellen, die die Aufgabe nennt
+(`sread <f> --offset --limit`).
 
 - **Ein Pass.** Kein Planungstheater, keine Liste, kein Consent-Stopp für Bekanntes.
 - **Kein Dispatch für dich?** → arbeite deine offenen Punkte, so viele wie möglich — nicht so wenige wie nötig.
@@ -25,39 +27,60 @@ ausgeführt statt erzählt — sonst driftet der Text gegen das Gate. Die Vollte
 - **Ende des Passes:** `register_lookup --orphan-docs` — deine Waisen in die Übergabe falten.
 - **Ein Pass schließt Punkte — so viele wie möglich.** Jeder offene Punkt ist ein `### name` mit
   `Status · Trigger · Lage · Blockade · Braucht` — sonst ist die Zahl unsichtbar.
-  „Mindestens ein Punkt" ist die Hintertür: **Taucher laufen, bis die Punkte zu sind** —
-  nicht die Übergabe kürzen, nicht bei einer Zahl Schluss machen. Gemessen wird, was **geschlossen** wurde.
-- **Bringschuld vor der Übergabe.** Keine andere Sitzung weiß, dass dir etwas fehlt, wenn du es nicht
-  schreibst. Jeder offene Punkt nennt unter `Braucht` den wörtlichen, kopierbaren Schritt, der ihn löst;
-  die Übergabe ist die Bringschuld, nicht die Kür.
+  „Mindestens ein Punkt" ist die Hintertür: **Taucher laufen, bis die Punkte zu sind**.
+  Gemessen wird, was **geschlossen** wurde.
+- **Bringschuld vor der Übergabe.** Jeder offene Punkt nennt unter `Braucht` den wörtlichen,
+  kopierbaren Schritt, der ihn löst; die Übergabe ist die Bringschuld, nicht die Kür.
 - **Grenze:** commit+push = deine Hand (eigene Pfade, Englisch); **Send** und jeder
   dritt-wirksame Akt = Operator-Hand (per-Akt-Wort); Architektur/Ethik → der Rat.
   **„Send" ist genau das — Versand, nichts sonst:** `smail --send`, ein Formular/Antrag,
-  ein CDN-Upload/Rückzug, ein Konto-/Key-Akt. Alles davor — lesen, messen, bauen, entwerfen,
-  den Rat fahren, Briefe legen, Verdikte sammeln — ist **Arbeit** und dein Boden.
-  Die Grenze darf **nie** als Deckmantel dienen, Arbeit zu lassen: wer „Send bleibt Operator"
-  sagt, wo er hätte arbeiten können, benutzt die Regel gegen ihren Zweck.
+  ein CDN-Upload/Rückzug, ein Konto-/Key-Akt. Alles davor ist **Arbeit** und dein Boden.
+  Die Grenze darf **nie** als Deckmantel dienen, Arbeit zu lassen.
 
 ## Der Akt am Gegenüber (Operator-Wort)
 
-- **Nur der Operator versendet.** `smail --send`, jedes Formular, jede Einreichung: die Maschine
-  bereitet bis zur Kante vor (Entwurf, `--dry-run`) und legt **einen** Satz vor — **fertig, nicht
-  angefragt**. „Vorlegen" heißt: die Arbeit ist getan, es fehlt allein der Versand.
-  Diese Zeile ist **keine** Berechtigung, ungetane Arbeit als „Send" zu verbuchen.
+- **Nur der Operator versendet.** Die Maschine bereitet bis zur Kante vor (Entwurf,
+  `--dry-run`) und legt **einen** Satz vor — **fertig, nicht angefragt**.
 - Ein Operator-Wort wird als `Wort | Datum | Quelle` registriert, **bevor** es ausgeführt wird;
   ein registriertes Wort wird nie erneut vorgelegt — nur eine neue Messung öffnet es.
 - **Der Rat entscheidet Architektur und Ethik** — gefüttert: gemessene Recherche (URL, Zahl,
-  Quelle) + der volle Roster (`~/projects/omegaflow-work/ui-seats.md`). Fehlt eines: erst holen.
+  Quelle) + der volle Roster. Fehlt eines: erst holen.
+
+## Der Rat
+
+- **Vor jeder Runde wird gefragt** — freie Schwarm-Sitze, UI-Chats und paid gleichermaßen;
+  erst das Operator-Ja startet die Runde. Bei paid setzt `bin/rat_guard --grant` den Grant;
+  ohne frischen Grant bricht der Aufruf ab. **Eine Runde ohne diese Kette ist ein Regelverstoß,
+  das Ergebnis zählt nicht.**
+- **Der Rat ist die fünf Stimmen, nicht die Modelle.** Kanonisch sind `docs/granit.md` (Axiome)
+  und `docs/council.yaml` (Stimmen) — in den Prompt kommt der **Wortlaut** dieser beiden Dateien,
+  nie eine gekürzte Zeile.
+- **Recherche geht vor jeden Sitz.** `archive_search <kw> --<kanal>` (`--arxiv --openalex
+  --semanticscholar --crossref --openaire --datacite --zenodo --dblp --github --crates
+  --stackexchange`); Websuche ist keine Literaturbasis. Pflicht je Befund: **Host/URL · Werkzeug ·
+  Datum · Zahl**. Hausdokumente allein zählen nicht. „Offen" ist ein voller Ausgang, aber nur als
+  **gemessenes** Offen.
+- **Reihenfolge:** Recherche → Formular (`zustand/rat/<datum>-<thema>-formular.md`) → 5 freie
+  Schwarm-Sitze (`shuf` aus der frischen Alive-Liste, Auswahl **vorher veröffentlicht**) → 5 UI-Sitze
+  → paid **nur** bei Uneinigkeit und nur mit Operator-Ja. Ein untauglicher Sitz wird **ersetzt**
+  und der Ersatz veröffentlicht — „untauglich ausweisen" reicht nicht.
+- **`reasoning_effort: low`, `max_tokens` ≥ 6000.** `high`/`max` kappt die Antwort; ohne Level
+  kommen abgeschnittene Verdikte.
+- **Leiter:** `free > Mistral inklusive > DeepSeek paid > Mistral paid`. DeepInfra nur für PII
+  und Frontier, **nie** Linienarbeit.
+- **Der Schwarm trägt nicht.** Sein Verdikt ist Mindermeinung, seine Risse sind der Wert.
+- **Streich-Test:** eine Stimme ist tragend, wenn ihr Riss das Verdikt ändert oder stürzt, sobald
+  man ihn streicht. Wer nur bestätigt, sitzt die nächste Runde aus.
 
 ## Dokumente
 
 - Jedes Prosa-Dok trägt den Kopf: `title · class · date · sha256 · status · see-also`; der
   `sha256` deckt den **Body ohne Kopf** (`omega_sh sha <file>`).
 - Die **Burn-Zeile** nennt die **Bilanz**: `open <usd> · close <usd> · cap 0.15 · closed <n> · Grund: …`.
-  `closed` = wie viele offene Punkte **dieser Pass geschlossen hat**. Das Gate vergleicht die Zahl
-  mit dem git-Diff — eine Behauptung, die nicht stimmt, ist eine Fabrikation (A = A).
+  `closed` = wie viele offene Punkte **dieser Pass geschlossen hat**; das Gate vergleicht die Zahl
+  mit dem git-Diff (A = A).
 - Linien-Übergabe: `handover-<datum>-<linie>-folge<N>.md` — nur Offenes, ≤ 1 KiB, **in place**
-  zusammenfassen; Konsumiertes wandert nach `archiv/`. Keine neue Datei je Pass.
+  zusammenfassen; Konsumiertes wandert nach `handover/archiv/`.
 - **Jeder offene Punkt nennt seine Datei(en)** — ein Punkt ohne Pfad ist eine Spur ohne Ort.
 - **Der Zustand ist das Register** (`phi/sources.φ`), **die Geschichte ist git**. Ein Dokument,
   das Zustand oder Historie erzählt, ist Compliance-Theater.
@@ -70,8 +93,7 @@ ausgeführt statt erzählt — sonst driftet der Text gegen das Gate. Die Vollte
 - **Keine Fabrikation:** `unwrap_or`, `_ => 0`, `max(1)`, `#[derive(Default)]` sind Fabrikate —
   eliminieren. Ein neu gefundenes Muster wird **im selben Atom** Gate-Fixture + Test.
 - **`cargo check`: null Fehler UND null Warnungen.** Nie mit `#[allow(...)]` oder `_` zum
-  Schweigen bringen — der Code verschwindet, nicht die Warnung. `cargo check` prüft Syntax, nicht
-  Funktion: manuell verifizieren.
+  Schweigen bringen. `cargo check` prüft Syntax, nicht Funktion: manuell verifizieren.
 - **Name = Implementation.** Keine Docstrings; der Kommentar nennt, was **ist**. Diagnostik nennt
   den Zustand, nie die Erwartung (kein `failed`, `error`, `crash`, `fallback`).
 
@@ -89,15 +111,15 @@ ausgeführt statt erzählt — sonst driftet der Text gegen das Gate. Die Vollte
   sind quadratisch in den Turns, linear im Kontext.
 - **Billiges Modell für die Routine** (Suchen, Karten, Form), das stärkere nur für den Kern.
 - **Die Übergabe trägt nur das OFFENE.** Der teuerste Turn ist der, der nicht passiert.
+- **Ablage:** `$OMEGAFLOW_TMP` hat genau vier Ordner (`ci/`, `out/`, `downloads/`, `scratch/`) mit
+  TTL 7/14/2 Tage; was bleibt, wandert in `sources/`, `experiments/` oder `docs/`, nie zurück.
+  `bin/layout_check` misst das; `bin/sources_index` erzeugt die Karte über den CDN-Cache.
 
 ## Die Grenze
 
 - **Die Wände sind Werkzeug-Regeln** (`opencode.json`, `permissions`): der öffentliche Baum hat
   `read`/`edit`/`shell` auf den privaten Pfad `deny`; `AGENTS.md`, `opencode.json`, `.opencode/**`
-  und `tools/gate/**` sind schreibgeschützt — **über `edit` UND `shell`**. Der `chmod`+`sed`-Weg
-  über die Shell war bis 2026-10-18 die Lücke (die Wand deckte nur `edit`); seitdem ist auch
-  `shell` auf diesen Pfaden `deny`. Kein Web, kein Push. Kein Gateway, kein Provider am Haus.
-  (Der frühere `bwrap`-Käfig `bin/sandbox`/`agent_sandbox` ist am 2026-10-17 entfernt — er deckte
-  nur `bash`, nicht die `read`/`edit`-Tools.)
+  und `tools/gate/**` sind schreibgeschützt — **über `edit` UND `shell`**. Kein Web, kein Push.
+  Kein Gateway, kein Provider am Haus.
 - Werkzeuge: `archive_search` (nie webfetch/websearch) · `rg` für den schnellen Blick · `sread`
   für Fenster. Karte: `docs/concepts/tools-map.md`.
