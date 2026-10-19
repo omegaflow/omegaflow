@@ -10,7 +10,7 @@
   surrogate: 20
   min-n: 100
   cond: gyirong_open-meteo_temperature_2m (Tagesgang-Proxi)
-  sha256: 205e31528715f3f1a424602d1ff5a7a2bbb62a746b737426cfe7b455527d9a1d
+  sha256: d179a03e3cfe80fd3a76871ac44a42bdfe11e5a3fbb6ae5f02ac9798e1fc50d0
   see-also: docs/paper/cross-screening-tibet.md docs/blatt/blatt-der-grat.md docs/handover/archiv/handover-2026-10-03-sensory-folge224.md
   status: live
 -->
@@ -206,3 +206,29 @@ gemessen (2026-09-27, Run 36278754294, 6 Serien/6 Paare, konditioniert auf
 gyirong temperature_2m): eine Zelle überlebt marginal —
 `rasuwa_temperature_2m → gyirong_precipitation` Lag 6 (cTE 0.0027 > 0.0026);
 Richtungs-Caveat wie im Kollab-Blatt (gespiegelte `TE(a→b)`-Spalte).
+
+## Was das Verdikt widerlegen würde
+
+Drei messbare Bedingungen — keine Recherche, derselbe Korpus, dasselbe Werkzeug,
+wiederholbar:
+
+1. **Ein bedingter Pfeil in den Niederschlag.** Wiederholt man
+   `cross_te_screen --dir /tmp/opencode/gyirong_te --lags 1,6,12,24
+   --surrogate 20 --min-n 100 --cond gyirong_open-meteo_temperature_2m` und es
+   erscheint mindestens ein Pfeil in `precipitation`/`rain` mit cTE über
+   mean+2σ und n ≥ 100, dann ist „kein lokaler Kanal treibt den Niederschlag
+   direkt" gefallen. Besonders die Kandidaten aus §3.3
+   (`total_column_integrated_water_vapour`, `dew_point_2m`, Lag 6): überlebt
+   einer die Konditionierung, fällt das Verdikt für diesen Kanal.
+2. **Ein zweiter, tagesgang-unabhängiger Konfund.** Ersetzt man den Proxi
+   `temperature_2m` durch einen Regressor, der den Tagesgang nicht linear trägt
+   (z. B. `surface_pressure` oder die Sonnenhöhe), und die Null in
+   `precipitation`/`rain` reproduziert sich nicht, dann war sie ein Artefakt
+   der Ein-Proxi-Konditionierung, nicht der Befund.
+3. **Die marginale Rasuwa-Zelle.** Verschwindet
+   `rasuwa_temperature_2m → gyirong_precipitation` Lag 6 (cTE 0.0027 > 0.0026)
+   unter einer zweiten Konditionierung oder in einem zweiten Fenster, fällt der
+   räumliche Kopplungsbefund; bleibt sie unter beiden, steht er.
+
+Nicht widerlegend: ein größeres Fenster mit demselben Proxi, mehr Surrogate oder
+ein anderes Lag-Raster — das ändert die Schärfe, nicht die Richtung der Aussage.

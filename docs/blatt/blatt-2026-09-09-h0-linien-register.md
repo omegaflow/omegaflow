@@ -2,7 +2,7 @@
   title: BLATT — Das H₀-Linien-Register: Wurzeln statt Zeugen
   class: sheet
   date: 2026-09-09
-  sha256: ba03fde8182f35ac943931f01dde1d1155b06bd32f59099a00336dc69f0a7845
+  sha256: 1d5930f9b77ca016b262b6eca75c41c912f84972fa95be96a39981d2b2a31a9a
   status: live
   see-also: docs/concepts/die-weberin.md docs/blatt/blatt-der-grat.md docs/concepts/ein-blatt-axiom.md
 -->
@@ -501,6 +501,35 @@ Gaia-Parallaxe, ihre π_EDR3 bleibt absent (0 honored).
 | V0482-SCO | V* V482 Sco | 4054440301294394624 | 0.960100 | 0.025053 | 0.046 | DCEP |
 | V0636-SCO | V* V636 Sco | 5952775576537356544 | 1.151073 | 0.033516 | 0.062 | absent |
 | W-GEM | V* W Gem | 3356940155020790656 | 0.972321 | 0.028200 | 0.041 | DCEP |
+
+## Was das Verdikt widerlegen würde
+
+Das Verdikt hat zwei Beine; jedes fällt an einer eigenen, messbaren Bedingung.
+
+1. **„Gemeinsame Wurzel: absent" fällt, wenn eine geteilte Kalibrierung
+   nachgewiesen wird.** Konkret: eine Zeile, deren Wurzel-Kette sowohl den
+   Schallhorizont `r_d`/θ* als auch einen der geometrischen Anker (N4258-Maser,
+   LMC-DEB, Gaia-EDR3-Parallaxe) enthält — also eine `r_d`-Kalibrierung, die
+   nicht aus CMB/BBN stammt, sondern aus der Leiter (oder umgekehrt). Dann ist
+   die Wurzel nicht absent, sondern geteilt, und die Spannung wäre kein
+   Unabhängigkeits-Riss mehr.
+2. **„Kein Schlichter" fällt, wenn ein dritter Faden die Präzision trägt.** Eine
+   neue Zeile, deren Wurzel-Kette keinen der geteilten Anker enthält und deren
+   Gesamtfehler ≤ 1.0 km/s/Mpc ist (≲1–2 %, die Schwelle des Blatts), die die
+   beiden Bäume mit > 3σ auf eine Seite zieht. Heute liegt der beste
+   Forst-Zeuge bei ±0.7 stat / ±2.3 sys (TRGB-SBF III) und teilt den
+   N4258-Anker; fällt der Anker aus seiner Kette und der Fehler unter 1.0, ist
+   das der Schlichter.
+3. **Die Asymmetrie fällt, wenn die gewogene Leiter-H₀ (73.56 ± 1.40) das
+   Reproduktions-Gate verliert** — d. h. wenn ein Parameter außerhalb 1σ des
+   publizierten Wertes liegt und die eigene Kette (Einheiten → Parser → Fit)
+   nach dem Wiegen nicht wieder schließt. Dann ist die Leiter-Wurzel nicht mehr
+   „ganz gewogen", und die Trennstufen-Karte steht auf einer zitierten statt
+   gewogenen Sprosse.
+
+Nicht widerlegend: ein weiterer Zeuge mit ±2 km/s und geteiltem Anker (das ist
+der junge Forst, s. Nachtrag), eine Verschiebung der Zentralwerte innerhalb der
+Fehler, oder eine neue Kompilation, die dieselben Zeugen zählt.
 
 ## Der Anhang
 
