@@ -1,5 +1,5 @@
 <!--
-  title: <Titel — ein Satz, kein Kürzel>
+  title: <Titel — die Bindung in einem Satz>
   class: spec
   date: <YYYY-MM-DD>
   sha256: <sha256>
@@ -8,29 +8,29 @@
 -->
 # <Titel>
 
-<Ein Absatz: was diese Spec verbindlich festlegt und was sie ausdrücklich nicht
-regelt. Eine Spec ist ein Vertrag, keine zweite Registratur.>
+**Datum:** <YYYY-MM-DD> · **Axiom:** A = A
 
-## 1. The claim
+## Problem
 
-<Die eine Behauptung, die gilt — oder der eine Befund, der die Regel erzwingt.>
+<Was ohne diese Bindung falsch läuft — gemessen oder benannt, nicht behauptet.>
 
-## 2. Method
+## Entscheid
 
-<Das Verfahren, mit dem die Behauptung geprüft wurde: Probe, Daten, Schwellen.>
+<Die Bindung in einem Absatz: was gilt, ab wann, für wen. Ein Satz, der ohne
+diesen Text nicht entscheidbar wäre.>
 
-## 3. Data
+## Invarianten
 
-<Der Datensatz, das Zeitfenster, die Kadenz, die Ausschlüsse.>
+- <Was unter allen Umständen wahr bleibt — prüfbar formuliert.>
 
-## 4. Results
+## Messung / Beleg
 
-<Was die Messung zeigt — als Tabelle oder Zahl, nicht als Prosa-Behauptung.>
+- <Messung, Ort, Zeitstempel> — <Wert>. Was nicht gemessen ist, bleibt `pending`.
 
-## 5. Prescription
+## Grenzen
 
-<Die Regel, die daraus folgt. Kopierbar, prüfbar, ohne Auslegung.>
+<Was die Bindung nicht trägt — ungeglättet. Kein Trostsatz.>
 
-## 6. Limits — measured and gated
+## Offen
 
-<Was die Spec nicht deckt; welche Grenze gemessen und welche gegatet ist.>
+- <Punkt> — <Trigger | Braucht>.
