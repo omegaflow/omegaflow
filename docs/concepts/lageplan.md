@@ -17,7 +17,7 @@ bemühen, um herauszufinden, **wo etwas liegt**. Ein Eintrag je Ort — mit dem 
 |---|---|---|
 | `~/projects/omegaflow` | das öffentliche Repo (Code, docs, state, register) | `bin/_roots.sh` |
 | `~/projects/omegaflow-work` | die Werkstatt: `post/`, `sources/`, `experiments/`, `recherche/`, `tmp/` — privates Repo `omegaflow/work` (Post, Funde, Recherche-Kanon; `sources/`, `experiments/`, `tmp/` bleiben lokal) | `$OMEGAFLOW_WORK` |
-| `~/projects/omegaflow-personal` | das private Haus (`kern.md`, `mail/`, `zustand/`, `future/handover/`) | `$OMEGAFLOW_PRIVATE` |
+| `~/projects/omegaflow-private` | das private Haus (`kern.md`, `mail/`, `zustand/`, `daten/`, `nicht-redistributierbar/`) | `$OMEGAFLOW_PRIVATE` |
 | `/tmp/opencode` | Werkzeug-Ausgaben, Artefakte | `$OMEGAFLOW_TMP` |
 
 `bin/_roots.sh` ist der Kanon der Pfade — kein Werkzeug erfindet einen Pfad.
@@ -51,7 +51,7 @@ bemühen, um herauszufinden, **wo etwas liegt**. Ein Eintrag je Ort — mit dem 
 
 - **Öffentlich** (`.`, Repo `omegaflow`): sieht Repo + Werkstatt. Das private Haus ist per
   `permissions` gesperrt (`read`/`edit`/`shell` deny auf den privaten Pfad).
-- **Privat** (`.`, Repo `omegaflow-personal`): sieht **beides** — privat und öffentlich. Einweg.
+- **Privat** (`.`, Repo `omegaflow-private`): sieht **beides** — privat und öffentlich. Einweg.
 - Kein Gateway. Die Grenze sind die Werkzeug-Regeln (`opencode.json`), nicht ein Mount-Käfig.
 
 ## Die fünf Stimmen
