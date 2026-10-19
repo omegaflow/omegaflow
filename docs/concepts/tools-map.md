@@ -396,7 +396,7 @@ die alten OLE2-Office-Binärformate (Magic `d0 cf 11 e0`) wandelt **`soffice --h
 | `register_lookup --history` | 1,03 s | 3049 Zeilen |
 | `register_lookup --compilers [--no-directive]` | — | je φ/sources.φ-Block mit `compiler`-Direktive `<binary> | <format> | <source-url> | at <anchor>` + Domain-Zusammenfassung über das Format-Präfix; `--no-directive` = Baum-Compiler (`tools/*/src/bin/*_compiler.rs`) ohne Direktive, klassifiziert `workflow`/`register:<datei>`/`variant`/`pending`/`unregistered` |
 | `register_lookup --tokens [--fail] [--noecho-fail]` | — | je Eintrag jedes `## An <line>`-Blocks `XFER <tok> echoed|unbeglichen` (Echo = Owner-`## Offen`-Token **oder** durable `FOLDED`/`CLOSED` im Ledger), `XFER-MANIFEST ok|open` bei `[manifest n=<N> root=<h8>]`, `XFER-MISSING` (kein Token), `XFER-NOECHO` (Sender hat ohne Echo gelöscht); `--noecho-fail` exit 2 nur auf MISSING/NOECHO (CI-Gate) |
-| `xfer mark/list/fold/close/manifest/migrate/coverage` | — | Transport-Token-Ledger (`state/zustand/ledger/<line>/<sess>.log`, append-only, gitignored): `mark --line <L> [--to <line|self>] "…"` mintet `<line>.<sess>.<n>~<h8>`, `fold <tok> --line <L> --into <ziel>`, `close <tok> --line <L> --ref <commit\|pfad>`, `manifest --line <L> --to <ziel> [--file <p>]` druckt `[manifest n=<N> root=<h8>]`, `migrate --line <L> [--handover <p>] [--write]` ersetzt alte `xfer:<sender>-<n>` in den `## An`-Blöcken durch verankerte Tokens (eine Spur, kein `legacy.log`), `coverage --line <L>` exit 2 solange ein Token offen |
+| `xfer mark/list/fold/close/manifest/migrate/coverage` | — | Transport-Token-Ledger (`state/ledger/<line>/<sess>.log`, append-only, gitignored): `mark --line <L> [--to <line|self>] "…"` mintet `<line>.<sess>.<n>~<h8>`, `fold <tok> --line <L> --into <ziel>`, `close <tok> --line <L> --ref <commit\|pfad>`, `manifest --line <L> --to <ziel> [--file <p>]` druckt `[manifest n=<N> root=<h8>]`, `migrate --line <L> [--handover <p>] [--write]` ersetzt alte `xfer:<sender>-<n>` in den `## An`-Blöcken durch verankerte Tokens (eine Spur, kein `legacy.log`), `coverage --line <L>` exit 2 solange ein Token offen |
 | `ci_manage status [--limit N]` | — | Live-Übersicht + aktueller Schritt je laufendem Run (ein Listen-Call + je laufendem Run ein Jobs-Call) |
 | `ci_manage jobs <run-id>...` | — | Job-Status + aktueller Schritt je Run (GH-API `/runs/<id>/jobs`); der `updated_at` von `list` ist grob |
 | `open_points_check [<handover>] [--root <dir>]` | — | billiger Baum-Abgleich (std, kein Netz/LLM): jeder in den offenen Punkten genannte Pfad wird gegen den Arbeitsbaum geprüft; `ABSENT` = stale Punkt; Default = neueste `docs/handover/*.md` |
@@ -506,9 +506,9 @@ die API-Flotte dient der **Masse/Reproduzierbarkeit**, nie dem scharfen Kanal.
    `continue` den Rest holen, ggf. mehrfach (der Operator-Hinweis 2026-10-03); für Sonnet 5.5 Search
    `arena.ai/search/direct?model_a=claude-sonnet-5-search`. Prozedur (Selektoren, Senden,
    Antwort-Lesen, Aufräumen): `docs/surveys/survey-2026-09-24-fremdmodell-bedienung.md` +
-   `state/stimmen/README.md`; Rohantworten privat nach `state/stimmen/<TS>_<site>_<slug>.md`.
+   `state/rat/README.md`; Rohantworten privat nach `state/rat/<TS>_<site>_<slug>.md`.
 2. **Masse/Reproduzierbarkeit → API-Flotte**: `bin/text_review <draft>` (Modelle in
-   `tools/measure/free_models.tsv`); `bash state/stimmen/stimme.sh <zai|gemini|mistral> <prompt.txt>`.
+   `tools/measure/free_models.tsv`); `bash state/rat/stimme.sh <zai|gemini|mistral> <prompt.txt>`.
 3. **Öffentlich messende Stimme → `voice`-Agent** (`opencode.json`): read-only, bash nur
    `./bin/archive_search_public <öffentlicher-modus> <query>` + `./bin/voice_read_full <spill>`;
    Aufruf `opencode run -m <provider/model> --agent voice`.
@@ -522,7 +522,7 @@ Grenzen / gemessene Ausfälle — **nicht** als scharfen Kanal verwenden:
 - `kimi.ai` liefert **kein K3** (schneller Modus, Kontingent schnell erschöpft); K3 nur
   `tryingopen.com`. Together liefert schwache/keine Antworten.
 - **ToS**: `claude.ai`/`kimi.ai`/`arena.ai` untersagen Automatisierung — nur mit Operator-Wort,
-  nie still; das Konto-/Sperr-Risiko trägt der Operator (Quelle: `state/stimmen/README.md`).
+  nie still; das Konto-/Sperr-Risiko trägt der Operator (Quelle: `state/rat/README.md`).
 - **Cloud-Grenze**: nur public/technische Prompts (keine `state/`-, Register- oder Secret-Daten);
   die Antwort ist Rohmaterial, nie Verdikt. Ein UI-Prompt ist ein Dritt-Akt → per-Akt-Consent.
 

@@ -136,4 +136,4 @@ Kopplung** und sind als Stör-Treiber, nie als unabhängiger Zeuge zu behandeln.
 - Kimi K3 via `tryingopen.com`: **`This site has run out of API credit`** — kein Ergebnis.
 - API-Flotte: `zai glm-4.5-flash` + `gemini-2.5-flash` (Breite, halluzinationsanfällig:
   erfundene GeoNet-/NRCan-APIs — am Baum widerlegt).
-- Rohantworten privat: `state/stimmen/2026-10-05_*`.
+- Rohantworten privat: `state/rat/2026-10-05_*`.

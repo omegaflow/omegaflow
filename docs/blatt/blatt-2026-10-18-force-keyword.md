@@ -78,6 +78,6 @@
 #     $OMEGAFLOW_WORK/post/in/2026-10-18-sensory-an-river-force-keyword.md
 #   ($OMEGAFLOW_WORK = ~/projects/omegaflow-work, bin/_roots.sh). `post/in/*` löst relativ
 #   zum Repo auf und findet nichts — der Pfad-Riss, kein leerer Korb (gespiegelt:
-#   state/stimmen/2026-10-18-sensory-doc-disposition.md:114).
+#   state/rat/2026-10-18-sensory-doc-disposition.md:114).
 #   Der Brief bestätigt den Entscheid („das gehört in die River-Key-Linie"), er widerruft ihn nicht.
 #   Registerzeilen unverändert: `field e1/e2 kids_dr4_wl_e1/e2 inverse-square gravity 1 …`.

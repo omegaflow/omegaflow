@@ -76,7 +76,7 @@ bereits gestagte Hunks:
 
 - `.github/workflows/timed-orbit-cdn.yml`
 - `phi/sources.φ`
-- `state/stimmen/2026-10-18-mycelium-pass-kids-transport.md`
+- `state/rat/2026-10-18-mycelium-pass-kids-transport.md`
 - `tools/harvest/src/bin/hmi_compiler.rs`
 - `tools/measure/src/bin/field_te_query.rs`
 

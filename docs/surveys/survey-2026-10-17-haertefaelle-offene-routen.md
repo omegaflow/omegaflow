@@ -17,7 +17,7 @@
 
 Drei offene Punkte sind als **exakte, sendbare Entwürfe** vorbereitet — **nicht gesendet, nicht
 gelöst**. Der Operator hält das Sendewort; jede Antwort ist eine Zulieferung und wird am Baum
-gemessen. Artefakt: `state/stimmen/2026-10-18-haertefaelle-anfragen.md`.
+gemessen. Artefakt: `state/rat/2026-10-18-haertefaelle-anfragen.md`.
 
 | Punkt | Kanal (gemessen) | Stand 2026-10-18 | Artefakt |
 |---|---|---|---|
@@ -284,14 +284,14 @@ connection refused. Der Register-Block `weberin_verdicts` führt EPM2021 längst
 - **RBN-Lizenz:** keine offene Lizenz, `about/terms/privacy/legal/copyright` = **404**; einziger Satz:
   „freely available for study and analysis" + Bitte um Ideen — **kein Redistributions-Grant**.
   CDN = **pending**, schriftliche Anfrage nötig. → **vorbereitet, Operator-Sendewort nötig**
-  (Webformular `reversebeacon.net/contact`, Entwurf `state/stimmen/2026-10-18-haertefaelle-anfragen.md` §1).
+  (Webformular `reversebeacon.net/contact`, Entwurf `state/rat/2026-10-18-haertefaelle-anfragen.md` §1).
 - **CEIC:** Ausländer-Zugang **nein** — `^1[3-9]\d{9}`, Name „nur Han", Provinz-Adresse, Nutzungsregel
   „中国公民都可申请"; Order → 302 `login.jsp` (Auth, nicht Geo). Email-Kanal: `dcogcd@163.com`,
   `datashare@seis.ac.cn` (ob Ausland beliefert wird: offen). **DOI-Korrektur:** `ds0001.2026`
   existiert **nicht**; die echten sind `ds0005.2026` (flow), `ds0006.2026`, `ds00001.2024` — alle
   „DOI does not exist" (2026-Charge ungemünzt); 2025er lösen auf. → **vorbereitet,
   Operator-Sendewort nötig** (Mail an `datashare@seis.ac.cn`, Cc `dcogcd@163.com`, Entwurf
-  `state/stimmen/2026-10-18-haertefaelle-anfragen.md` §2; nachgemessen 2026-10-18: 4/4 DOI 404,
+  `state/rat/2026-10-18-haertefaelle-anfragen.md` §2; nachgemessen 2026-10-18: 4/4 DOI 404,
   DataCite `prefix=10.12080` = 0).
 - **Voyager:** kein Web-Bestellpfad — `order/download/request.action` = identische **3 645-B-Soft-404**
   (md5 `de205919…`); realer Weg = **CRUSO** `gsfc-dl-nssdca-request@mail.nasa.gov`, Ermessen +
@@ -311,7 +311,7 @@ connection refused. Der Register-Block `weberin_verdicts` führt EPM2021 längst
   (`10.48733/ifjpan/oebph2`, Dosis-Tabelle). Nächstbestes: **CRaTER GCR LET-Spektren**
   `10.5281/zenodo.22883077` (CC-BY-4.0, echtes LET-Spektrum, aber **LRO/Mond**).
   → **vorbereitet, Operator-Sendewort nötig** (Mail an `hreda.info@sdc.upm.es`, Entwurf
-  `state/stimmen/2026-10-18-haertefaelle-anfragen.md` §3; nachgemessen 2026-10-18: HREDA-TAP
+  `state/rat/2026-10-18-haertefaelle-anfragen.md` §3; nachgemessen 2026-10-18: HREDA-TAP
   `v_doi_investigation` = `data_available=false` für beide, auch für die drei übrigen
   DOSIS-Investigationen).
 - **CEIC D18000:** `all_wide` über alle Arme = **kein** Voll-Mirror. Nur `7855090`/`7112529`

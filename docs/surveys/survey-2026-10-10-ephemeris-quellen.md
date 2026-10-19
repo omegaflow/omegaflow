@@ -4,7 +4,7 @@
   date: 2026-10-10
   sha256: f38576a81f8215719e4f3737408330c8f2afa1927731cb51c956f6138892960b
   status: live
-  see-also: docs/handover/archiv/handover-2026-10-10-mountain-folge299.md state/stimmen/2026-10-10_mountain_ephemeris-sources-round.md
+  see-also: docs/handover/archiv/handover-2026-10-10-mountain-folge299.md state/rat/2026-10-10_mountain_ephemeris-sources-round.md
 -->
 # Survey — Referenz-Landschaft für eigene Ephemeriden
 
@@ -14,7 +14,7 @@
 **Durchgeführt.** 2026-10-10, Mountain. Vorbereitung `archive_search --all`; Baum-Messung
 (`phi/sources.φ`); lokaler Rat + voller UI-Roster (8 Frontier-Seats + Open-Weight; Z.ai noch im
 Deep Think, Lumo Limit-Wall, Kimi Login-Wall, Open-Weight-Modellwahl blockiert → `pending`).
-Rohmaterial: `state/stimmen/2026-10-10_mountain_ephemeris-sources-round.md`.
+Rohmaterial: `state/rat/2026-10-10_mountain_ephemeris-sources-round.md`.
 
 ## Baum-Befund (vorhanden)
 Zeugen: DE / INPOP19a / EPM2021 / PETREL19 + `ephemeris_house_gate`. Rohdaten: Pioneer-10/11 Doppler-ODF,

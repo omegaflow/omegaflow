@@ -96,7 +96,7 @@ distinkt und werden nicht gemittelt; welche Ebene das Siegel trägt, benennt das
 Operator-Wort. **Gegen eine unkontrollierte
 Familien-Schranke (Ordnung 10⁻¹) zu siegeln bleibt verboten.** Die
 Intervall-Konstruktion des Punktschätzers ist benannt (Rat + UI + Open-Weight,
-2026-10-12, `state/stimmen/2026-10-12_river-bca-z-rat.md`): **kein „BCa"** —
+2026-10-12, `state/rat/2026-10-12_river-bca-z-rat.md`): **kein „BCa"** —
 der Beschleunigungsterm setzt i.i.d.-austauschbare Einheiten voraus und ist unter
 block-stationärer Abhängigkeit nicht wohlgestellt (ein „Block-BCa" trägt keine
 Theorie 2. Ordnung). Getragen wird ein **studentisiertes Moving-Block-Bootstrap

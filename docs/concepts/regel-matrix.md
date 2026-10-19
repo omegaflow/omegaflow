@@ -22,17 +22,17 @@ Sie ist die Messung; die Bereinigung ist ein eigener, begrenzter Schnitt.
 | # | Träger | Haus | Größe | Wer liest ihn? |
 |---|---|---|---|---|
 | A | `omegaflow/AGENTS.md` | public | 1795 B / 21 Z | **alle** Linien (jeder Pass) |
-| B | `omegaflow-personal/AGENTS.md` | privat | 40 B / 1 Z | Future (jeder Pass) |
-| C | `omegaflow-personal/kern.md` | privat | 991 B / 16 Z | Future (jeder Pass) |
+| B | `omegaflow-private/AGENTS.md` | privat | 40 B / 1 Z | Future (jeder Pass) |
+| C | `omegaflow-private/kern.md` | privat | 991 B / 16 Z | Future (jeder Pass) |
 | D | `omegaflow/docs/concepts/house-rules.md` | public | 5878 B / 95 Z | **alle** Linien |
-| E | `omegaflow-personal/.opencode/agent/future.md` | privat | 1324 B / 20 Z | Future (Start) |
-| F | `omegaflow-personal/.opencode/command/future.md` | privat | 614 B / 13 Z | Future (Start) |
+| E | `omegaflow-private/.opencode/agent/future.md` | privat | 1324 B / 20 Z | Future (Start) |
+| F | `omegaflow-private/.opencode/command/future.md` | privat | 614 B / 13 Z | Future (Start) |
 | G | `omegaflow/.opencode/command/future.md` | public | 617 B / 15 Z | **ungenutzt?** (agent: line) |
 | H | `omegaflow/.opencode/command/{mountain,mycelium,river,sensory}.md` | public | 287–329 B / 8 Z je | die vier Linien (Start) |
 | I | `omegaflow/.opencode/agent/{rat,taucher,council}.md` | public | 424–925 B | Rat/Taucher |
-| J | `omegaflow-personal/feuer/uebergabe-2026-10-12.md` | privat | 9217 B / 70 Z | Future (on demand) |
+| J | `omegaflow-private/feuer/uebergabe-2026-10-12.md` | privat | 9217 B / 70 Z | Future (on demand) |
 | K | `omegaflow/opencode.json` (agent-Defs) | public | — | Start aller Linien |
-| L | `omegaflow-personal/opencode.json` | privat | — | Start Futures |
+| L | `omegaflow-private/opencode.json` | privat | — | Start Futures |
 
 **Der Riss sofort sichtbar:** Es gibt **zwei** `command/future.md` (F privat, G public) — mit
 **verschiedenem** Inhalt und **verschiedener Rolle.** `G` (public) startet `agent: line` (die

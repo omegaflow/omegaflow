@@ -4,11 +4,11 @@
   date: 2026-10-10
   sha256: 98a50e0b9f5b1498f4f6da52cc522f10cf41206db878069a245690a44870e1ad
   status: live
-  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/archiv/tool-forms.md state/stimmen/2026-10-09-river-kanalzahl-frontier.md
+  see-also: docs/concepts/archivar-mathematikerin.md docs/concepts/archiv/tool-forms.md state/rat/2026-10-09-river-kanalzahl-frontier.md
 -->
 # Kanal-Ontologie — kompletter Bau
 
-Das Verdikt der Frontier-Runde (Rat + 8 Open-Weight + 5 UI, `state/stimmen/2026-10-09-river-kanalzahl-frontier.md`)
+Das Verdikt der Frontier-Runde (Rat + 8 Open-Weight + 5 UI, `state/rat/2026-10-09-river-kanalzahl-frontier.md`)
 ist einstimmig: die feste Kanalzahl 9 ist **A≠A**. Dieser Plan ist der **komplette** Umbau
 auf die A=A-Form. Kein „erster Bau" — die ganze Strecke, in Abhängigkeitsreihenfolge,
 jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begrenzter Schritt).
@@ -61,7 +61,7 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
   trägt das **Gesetz**; die **Anregung** (Quelle+Anfangsdaten) ist ein eigener Zustand. Die
   **Receiver-Schicht** (ERB/Bark) ist nicht aus `(q,𝒯,M)` ableitbar — sie ist die deklarierte
   `ReceiverAperture` oder in `M` zu absorbieren; ERB als reine Organ-Funktion. Protokoll:
-  `state/stimmen/2026-10-09-river-tonmodell-deskriptor.md` (Wissenschaft + Rat + Duck/Claude/Qwen/
+  `state/rat/2026-10-09-river-tonmodell-deskriptor.md` (Wissenschaft + Rat + Duck/Claude/Qwen/
   DeepSeek Chat/GLM-5.3/Gemini/Mistral + DeepSeek V4 Pro/GLM 5.3/Inkling/Hy4).
   **Offene Risse (Roster-Erweiterung, zu tragen):** (i) der **fehlende Instabilitäts-Quadrant**
   Re λ>0 — die vier Familien sind stabile Propagatoren (Färbung), die **Quelle/Stimme**
@@ -80,7 +80,7 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
 - **P1.1** `enum Conserved { Mass, Momentum, Energy, Charge }`.
 - **P1.2** `enum TransportOp { Flux(FluxKind), Advective, Wave, Poisson }`.
 - **P1.3** `enum Medium { Vacuum, Fluid, ElasticSolid }`, `enum Boundary { None, FreeSurface, … }`.
-- **P1.4** `struct ChannelDescriptor { conserved, role, op, pde_type, medium, domain, boundary, extent: Option<f64>, unit }` + `hash()`; `extent` trägt die M-Achse (Geometrie-Ausdehnung), `mode_wavenumbers(count)` → `k_j^M`, `mode_frequencies_hz(speed, count)` → `f_j = c·k_j/(2π)` (river-155; `None` ohne `extent`/`speed`/Propagation). **Domain-Arity (river-157, Rat-Wort river-156):** `extent` bleibt die *eine* schließende Länge für 1D-Schluss-Domänen (Line/Circle/Sphere); Mehrfachlängen liegen als Tupel im `Domain`-Enum — `Rectangle { lx, ly }`, `Shell { r_in, r_out }`, `Ellipsoid { a, b, c }` (kein zweiter `extent`, keine neue Achse). Spec-Token compound: `rectangle(Lx,Ly)` / `shell(r_in,r_out)` / `ellipsoid(a,b,c)`. Das Rechteck trägt das analytische Pythagoras-Spektrum (`k=π√((m/Lx)²+(n/Ly)²)`, Dirichlet m,n≥1, Neumann m,n≥0); Shell/Ellipsoid bleiben `None` (`pending`, transzendent/nicht separierbar). **Kugel-Sektor `l` (river-158, Rat-Wort river-156):** `Domain::Sphere { l: u32 }` trägt den Winkel-Sektor; bare Token `sphere` = `l=0`, compound `sphere(l)`; `l` bindet in `hash_into` (verschiedene Sektoren = verschiedene Identität). `(Sphere{0}, Dirichlet)` bleibt das exakte `nπ/R`; `(Sphere{l>0}, Dirichlet)` liefert `s_{l,n}/R` aus den `j_l`-Nullstellen (`spherical_bessel_j` via Rekurrenz, `spherical_bessel_zeros`). Die `(2l+1)`-Multiplizität trägt `ChannelDescriptor::mode_degeneracy()` (`Some(2l+1)` für `(Sphere{l}, Dirichlet)`, sonst `None`); `characteristic_speed(medium, params)` konstituiert `c` (Vakuum-Konstante / gemessene Fluid-Schallgeschwindigkeit / elastisch `None`); `elastic_speeds(params)` liefert das gemessene Paar `(c_p, c_s)`. **Verdikt river-158 (Rat + Frontier-Mehrheit, `state/stimmen/2026-10-09-river-elastische-polarisation.md`):** ein einzelnes `c` für elastisch ist falsch; die Feldgrößen-Achse (Druck/Dirichlet vs. Verschiebung/traction-free) ist der falsche Schnitt (das Feld ist `u`, die freie Oberfläche traction-free für beide Zweige, die RB koppeln P↔SV). Die richtige Achse ist **Modenfamilie/Branch** (spheroidal↔toroidal), `f_j` aus der gekoppelten Säkulargleichung statt `c·k/(2π)` — Ausnahme: toroidal (reines SH) = `c_s·k/2π`. **Gebaut (river-158):** `enum ModeFamily { Scalar, Spheroidal, Toroidal }` auf dem Deskriptor (Default: `ElasticSolid → Spheroidal`, sonst `Scalar`; `with_family`, im `hash`); `spherical_bessel_j_prime`, `toroidal_root_function` (`j_l(x) − x j_l'(x) = 0`), `spheroidal_det` (Saviot–Murray PRB 72, 205433 (2005) Gl. 3) + `spheroidal_root_function` (l=0 geschlossene Form `tan(ξ)/ξ = 1/(1−η²/4)`, `ξ=(c_s/c_p)η`), `elastic_toroidal_frequencies`/`elastic_spheroidal_frequencies`, Wurzel-Scan `scan_roots`/`bisect`. `mode_frequencies_hz_for_body` ist familien-bewusst (Scalar/Toroidal/Spheroidal); Toroidal voll gebaut, Spheroidal via explizite Determinante (allgemeines `l`).
+- **P1.4** `struct ChannelDescriptor { conserved, role, op, pde_type, medium, domain, boundary, extent: Option<f64>, unit }` + `hash()`; `extent` trägt die M-Achse (Geometrie-Ausdehnung), `mode_wavenumbers(count)` → `k_j^M`, `mode_frequencies_hz(speed, count)` → `f_j = c·k_j/(2π)` (river-155; `None` ohne `extent`/`speed`/Propagation). **Domain-Arity (river-157, Rat-Wort river-156):** `extent` bleibt die *eine* schließende Länge für 1D-Schluss-Domänen (Line/Circle/Sphere); Mehrfachlängen liegen als Tupel im `Domain`-Enum — `Rectangle { lx, ly }`, `Shell { r_in, r_out }`, `Ellipsoid { a, b, c }` (kein zweiter `extent`, keine neue Achse). Spec-Token compound: `rectangle(Lx,Ly)` / `shell(r_in,r_out)` / `ellipsoid(a,b,c)`. Das Rechteck trägt das analytische Pythagoras-Spektrum (`k=π√((m/Lx)²+(n/Ly)²)`, Dirichlet m,n≥1, Neumann m,n≥0); Shell/Ellipsoid bleiben `None` (`pending`, transzendent/nicht separierbar). **Kugel-Sektor `l` (river-158, Rat-Wort river-156):** `Domain::Sphere { l: u32 }` trägt den Winkel-Sektor; bare Token `sphere` = `l=0`, compound `sphere(l)`; `l` bindet in `hash_into` (verschiedene Sektoren = verschiedene Identität). `(Sphere{0}, Dirichlet)` bleibt das exakte `nπ/R`; `(Sphere{l>0}, Dirichlet)` liefert `s_{l,n}/R` aus den `j_l`-Nullstellen (`spherical_bessel_j` via Rekurrenz, `spherical_bessel_zeros`). Die `(2l+1)`-Multiplizität trägt `ChannelDescriptor::mode_degeneracy()` (`Some(2l+1)` für `(Sphere{l}, Dirichlet)`, sonst `None`); `characteristic_speed(medium, params)` konstituiert `c` (Vakuum-Konstante / gemessene Fluid-Schallgeschwindigkeit / elastisch `None`); `elastic_speeds(params)` liefert das gemessene Paar `(c_p, c_s)`. **Verdikt river-158 (Rat + Frontier-Mehrheit, `state/rat/2026-10-09-river-elastische-polarisation.md`):** ein einzelnes `c` für elastisch ist falsch; die Feldgrößen-Achse (Druck/Dirichlet vs. Verschiebung/traction-free) ist der falsche Schnitt (das Feld ist `u`, die freie Oberfläche traction-free für beide Zweige, die RB koppeln P↔SV). Die richtige Achse ist **Modenfamilie/Branch** (spheroidal↔toroidal), `f_j` aus der gekoppelten Säkulargleichung statt `c·k/(2π)` — Ausnahme: toroidal (reines SH) = `c_s·k/2π`. **Gebaut (river-158):** `enum ModeFamily { Scalar, Spheroidal, Toroidal }` auf dem Deskriptor (Default: `ElasticSolid → Spheroidal`, sonst `Scalar`; `with_family`, im `hash`); `spherical_bessel_j_prime`, `toroidal_root_function` (`j_l(x) − x j_l'(x) = 0`), `spheroidal_det` (Saviot–Murray PRB 72, 205433 (2005) Gl. 3) + `spheroidal_root_function` (l=0 geschlossene Form `tan(ξ)/ξ = 1/(1−η²/4)`, `ξ=(c_s/c_p)η`), `elastic_toroidal_frequencies`/`elastic_spheroidal_frequencies`, Wurzel-Scan `scan_roots`/`bisect`. `mode_frequencies_hz_for_body` ist familien-bewusst (Scalar/Toroidal/Spheroidal); Toroidal voll gebaut, Spheroidal via explizite Determinante (allgemeines `l`).
 - **P1.5** `fn is_admissible(q, op, medium) -> bool` — die **Zulässigkeitsrelation** (der Graph).
 - **P1.6** `enum TriState { Present, Pending, Absent }` + Übergangsregel (P7.2).
 - **P1.7** `struct ChannelRegistry { cap: usize, descs: Vec<ChannelDescriptor>, id: HashMap<u64, usize> }`;
@@ -155,7 +155,7 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
 - **P9.2** Der Record bleibt das *Gesicht* (26×f64) — die Zahl **im** Record wird zur deklarierten
   Kanalzahl; `color_index`/`force_type`-Semantik neu binden.
   - **Rat-Verdikt 2026-10-10 (fünf Stimmen, einstimmig; UI-Frontier konvergent —
-    `state/stimmen/2026-10-10-river-p92-rat.md`):** CAP und n leben **nicht** im Record —
+    `state/rat/2026-10-10-river-p92-rat.md`):** CAP und n leben **nicht** im Record —
     sie sind Frame-/Registry-Eigenschaft und liegen im Kopf (`n`, `offsets`, `schema_hash`,
     P3.1) und im Manifest. **Kein neuer Slot.** Der Record bleibt 26×f64.
   - **Nur der Kanalslot wird umgewidmet:** vom „Kanal-Index aus der festen 9er-Liste" zum
@@ -183,7 +183,7 @@ jede Phase ein bounded dispatch mit `cargo check`-Gate (Ein Dispatch = ein begre
 ### P10 — `phi`-Register: `force` → Quantity | Mechanism | Medium (Register-Physik)
 **Operator-Wort 2026-10-09 („alle Blöcke müssen korrekt sein, dafür haben wir die Wissenschaft"): die Migration läuft; jeder `field`-Block wird wissenschaftlich geprüft.** P10.1 ist gebaut und gemessen (`source_physics_lint`, 2026-10-09/10): `phi/sources.φ` = **7989 `field` · 24 `quantity` · 90 Geometrie-Kandidaten**; `em × inverse-square: 6002` (~75 %). P10.2a unten ist das **verbindliche Zielschema**; der Parser-Arm dafür (River) ist der nächste Bau, dann die Zeilen (Mountain).
 
-Gemessen 2026-10-09 (`state/stimmen/2026-10-09-river-register-physik.md`): die `force`-Spalte
+Gemessen 2026-10-09 (`state/rat/2026-10-09-river-register-physik.md`): die `force`-Spalte
 in `phi/sources.φ` (7989 `field`-Zeilen; em ~6013) trägt **Kategorie-Etiketten**, keinen
 Ausbreitungsweg. Die Idee trägt, die Materialisierung ist falsch.
 - **P10.1 (erster, autonomer Schritt — der lesende Lint):** ein **rein lesendes** Werkzeug über
@@ -193,7 +193,7 @@ Ausbreitungsweg. Die Idee trägt, die Materialisierung ist falsch.
   Geometrie-/Quellparameter (Tiefe, Distanz, Höhe, Magnitude) sowie die `em`/`electric`-Überlappung —
   die **Messung**, woher die 6088 `em` stammen. Kein Verdikt, keine Schreiboperation.
 - **P10.2a — Normalize-Schema (Rat-Entwurf 2026-10-09; verbindlich per Operator-Wort 2026-10-09, additiv).**
-  **Token-Semantik nachgeführt 2026-10-10 (Rat 5 Stimmen + UI/Open-Weight-Roster, `state/stimmen/2026-10-10-river-p10.2a-token-semantik.md`):**
+  **Token-Semantik nachgeführt 2026-10-10 (Rat 5 Stimmen + UI/Open-Weight-Roster, `state/rat/2026-10-10-river-p10.2a-token-semantik.md`):**
   der Entwurf war grammatisch unter-spezifiziert — `<kernel>` war undefiniert, obwohl der Baum zwei
   getrennte Achsen trägt (`kernel_id_of` = Numerik, `TransportOp` = Transport). Beide Kanäle
   konvergieren: **`<kernel>` = Numerik-Achse** (`kernel_id_of`: inverse-square/erf/point/…);
