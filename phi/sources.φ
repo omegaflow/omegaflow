@@ -2136,11 +2136,12 @@ at earth
 ttl 86400
 field swarm_fac_uam2 swarm_fac_uam2 inverse-square electric uA/m2 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_01.bin
+url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia_hourly.bin
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
+origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list (aia.lev1_euv_12s, DATAMEAN/T_REC, @1h, WAVELNTH 94/131/171/193/211/304/335)
+compiler tools/harvest/src/bin/aia_rs_list_compiler.rs
+sha256 92b0dd6028c2a8547558b0832bd90f7968de204508b06ee234b17d024d8007d5
 at sun
 ttl 86400
 field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
