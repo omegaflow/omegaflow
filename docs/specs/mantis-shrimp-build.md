@@ -4,12 +4,12 @@
   date: 2026-09-21
   sha256: b927281e22215420793a028ad05a57dc8cea6b05e127ed86ee2fba3c37db9dd8
   status: live
-  see-also: docs/specs/omegaflow-sense-hardware.yaml.md, docs/specs/mantis-shrimp-bom.md
+  see-also: docs/specs/omegaflow-sense-hardware-spec.md, docs/specs/mantis-shrimp-bom.md
 -->
 # Mantis-Shrimp minimal — build & assembly (CORE BUILT)
 
 Scope: the minimal Mantis-Shrimp node, i.e. the set that the single source of
-truth `docs/specs/omegaflow-sense-hardware.yaml.md` names **CORE BUILT** — the
+truth `docs/specs/omegaflow-sense-hardware-spec.md` names **CORE BUILT** — the
 ESP32-S3 core (MOSFET bank M1–M8, pan/tilt servo, I2C + TCA9548A, MAX30102
 pulse stream, USB-CDC) that lives in `firmware/radiatorium/`. This is the entry
 point before the full sense array (the remaining modules stay plan; the source
@@ -50,7 +50,7 @@ so verification against a real device is `pending` (a register duty, not a built
 
 ## 2. Wiring & pin map
 
-Copied from `omegaflow-sense-hardware.yaml.md` PART 4, including the 2026-09-13
+Copied from `omegaflow-sense-hardware-spec.md` PART 4, including the 2026-09-13
 correction (SPI display `dc` GPIO9 → GPIO13) and the DS18B20 addition (GPIO7):
 
 | Function | Pin |

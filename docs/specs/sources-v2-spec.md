@@ -645,7 +645,7 @@ measurement?
   dimensionless but physically defined ratio)
 
 **ESP32 Mantis-Shrimp Observatory — the litmus test embodied:**
-The hardware spec (`docs/specs/omegaflow-sense-hardware.yaml.md`) lists every sensory
+The hardware spec (`docs/specs/omegaflow-sense-hardware-spec.md`) lists every sensory
 channel biology has evolved. Every sensor on the ESP32 defines a physical
 measurement with an SI unit. The Force-Unit matrix converges toward complete
 coverage of ALL organism-sensible physical quantities.
