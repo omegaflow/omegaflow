@@ -439,13 +439,13 @@ fn main() {
                     blocked.as_deref(),
                     Some(name),
                 ) {
-                    eprintln!("commit_check: state/ereignisse.φ:{line}: {rule} - {feedback}");
+                    eprintln!("commit_check: zustand/ereignisse.φ:{line}: {rule} - {feedback}");
                     fail = true;
                 }
             }
             None => {
                 eprintln!(
-                    "commit_check: state/ereignisse.φ: ereignis-ohne-folge: session name missing (OMEGAFLOW_SESSION unset) - check skipped by name"
+                    "commit_check: zustand/ereignisse.φ: ereignis-ohne-folge: session name missing (OMEGAFLOW_SESSION unset) - check skipped by name"
                 );
             }
         }
