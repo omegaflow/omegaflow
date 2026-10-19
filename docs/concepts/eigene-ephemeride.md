@@ -2,7 +2,7 @@
   title: Die eigene Ephemeride — aus allen Zeugen
   class: concept
   date: 2026-10-10
-  sha256: 076c64610cb7b16bb098717a391788f9fffb288a42dda9194bb05b74926bd0c2
+  sha256: ea756c2cebbaf10405e168f4c17c2ad172ce5e920f0114d7557a3612f593e35a
   status: live
   see-also: docs/surveys/survey-2026-10-10-ephemeris-quellen.md docs/concepts/kybernetische-astrophysik.md docs/handover/archiv/handover-2026-10-10-mountain-folge301.md
 -->

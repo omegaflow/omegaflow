@@ -2,7 +2,7 @@
   title: Große Rätsel und die Maschine — Kandidaten, Werkzeuge, Maßstab
   class: survey
   date: 2026-10-13
-  sha256: 5a39d13016fc0b7c376e04e208ac1c12ea92bac90f6561194b8eaa07457f5dd0
+  sha256: ec85b894f378236ea001503ef8d95bae749f5fed8874527eaf8dd3219eb0a285
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/surveys/survey-raetsel-bestand.md docs/concepts/die-weberin.md
 -->

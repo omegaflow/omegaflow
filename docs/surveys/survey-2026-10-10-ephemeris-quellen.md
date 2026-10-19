@@ -2,7 +2,7 @@
   title: Survey — Referenz-Landschaft für eigene Ephemeriden (was noch zu ernten ist)
   class: survey
   date: 2026-10-10
-  sha256: f38576a81f8215719e4f3737408330c8f2afa1927731cb51c956f6138892960b
+  sha256: 67f4781b4382a343166ac29b29eb71aed235cd43c32a488b25bbe047e810923b
   status: live
   see-also: docs/handover/archiv/handover-2026-10-10-mountain-folge299.md state/rat/2026-10-10_mountain_ephemeris-sources-round.md
 -->

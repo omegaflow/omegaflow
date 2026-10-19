@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: b8eafe2e8d00674d9e4b77cddb4965cbb567c872d37815743a72442eb129e22a
+  sha256: e4fbbb72773d7dc7f67f66766b468cadd9ea51bbe045da3fede13114b3b2d42c
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->

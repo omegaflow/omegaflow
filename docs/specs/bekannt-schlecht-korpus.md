@@ -3,6 +3,7 @@
   class: korpus
   date: 2026-08-30
   status: live
+  sha256: 9c0ab4f428d262634dd52eda7f3adf3f9b74fc082a93d7c137b3990b86776d31
   see-also: docs/auftrag/archiv/auftrag-maschinen-audits.md
 -->
 

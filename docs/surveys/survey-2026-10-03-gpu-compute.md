@@ -2,7 +2,7 @@
   title: Survey — GPU-Rechenzeit: freie Wege und GitHub-Runner (2026-10-03)
   class: survey
   date: 2026-10-03
-  sha256: 8113b7f202c0c50dce91d783481bd423b73f6f254a6f1dfaf49b6a18df6cf844
+  sha256: 203d8f7d037761cac0c7fc31b6d0737d44dad6072c0757a5ea9bcb32ab435b19
   status: live
   see-also: docs/concepts/archiv/github-pipeline.md state/future/bewerbungen-vs-zai-export.md state/future/survey-funding-pflichtfrei.md
 -->
