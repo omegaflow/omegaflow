@@ -6,7 +6,7 @@
 -->
 # Mantis-Shrimp BOM — kuratierte Einkaufsliste (2026-09-25)
 
-Quelle: `docs/specs/omegaflow-sense-hardware.yaml.md` (100% Mantis-Shrimp Observatory).
+Quelle: `docs/specs/omegaflow-sense-hardware-spec.md` (100% Mantis-Shrimp Observatory).
 Preise = AliExpress-Trefferpreise am 2026-09-13, Ergänzungen am 2026-09-25 (können
 schwanken). Links: `https://de.aliexpress.com/item/<id>.html`. Kuratiert per
 `archive_search --playwright` (kein Login nötig zum Lesen). Die 2026-09-25-Session
