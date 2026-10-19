@@ -13538,6 +13538,47 @@ field \"Arithmetic Mean\" pm25_daily_ug_m3 gaussian-inverse-square diffusion µg
 }
 
 #[test]
+fn test_gbm_tgf_rows_read_per_row_epoch_and_position() {
+    let block = "url https://example.com/gbm_tgf.csv
+ttl 2592000
+format gbm_tgf
+origin https://fermi.gsfc.nasa.gov/ssc/data/access/gbm/tgf/gbm_tgf_catalog_offline.csv
+on earth 0 0 0
+rows
+lat_key Lat
+lon_key Lon
+epoch time
+no-cadence
+field NAI_N gbm_tgf_nai_counts inverse-square em count 31536000 0.0 0.0
+";
+    let mut body = String::from("time,OS_ID,NAI_N,Lon,Lat\n");
+    body.push_str("2016-07-31T10:28:12.789350,oTGF1,22,103.2347,-1.7498\n");
+    body.push_str("2016-07-31T19:52:40.531450,oTGF2,76,297.4903,8.4517\n");
+    let srcs = super::parse_sources(block);
+    let lsk = fixture_lsk();
+    match extract(&srcs[0], &body, 8.0e8, &lsk) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 2);
+            assert!((channels[0].0.value - 22.0).abs() < 1e-12);
+            assert!((channels[1].0.value - 76.0).abs() < 1e-12);
+            let dt = channels[1].0.epoch - channels[0].0.epoch;
+            assert!(
+                (dt - 33867.742).abs() < 1.0,
+                "the TGF rows carry their own epoch, not the run clock: {dt}"
+            );
+            match &channels[0].0.position {
+                super::Position::Surface { lat, lon, .. } => {
+                    assert!((lat + 1.7498).abs() < 1e-9);
+                    assert!((lon - 103.2347).abs() < 1e-9);
+                }
+                _ => panic!("expected per-row Surface position"),
+            }
+        }
+        _ => panic!("expected Measurements"),
+    }
+}
+
+#[test]
 fn test_sample_phase_writes_the_producer_law_for_phase_counters() {
     let mut sensor = field_fixture("cassini_tnf_ul_phase_cycles", 604800.0);
     sensor.key = "ul_phase_cycles".into();
