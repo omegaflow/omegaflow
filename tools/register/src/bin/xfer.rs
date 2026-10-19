@@ -102,9 +102,8 @@ fn ledger_matches(requested: &str, name: &str) -> bool {
             .is_some_and(|rest| rest.starts_with('-') && rest.len() > 1)
 }
 
-fn matching_ledgers(line: &str) -> Result<Vec<String>, String> {
-    let root = ledger_dir();
-    let entries = fs::read_dir(&root)
+fn matching_ledgers_in(root: &Path, line: &str) -> Result<Vec<String>, String> {
+    let entries = fs::read_dir(root)
         .map_err(|e| format!("{}: ledger root unreadable: {e}", root.display()))?;
     let mut names: Vec<String> = entries
         .filter_map(|e| e.ok())
@@ -119,8 +118,12 @@ fn matching_ledgers(line: &str) -> Result<Vec<String>, String> {
     Ok(names)
 }
 
-fn target_ledger(line: &str) -> Result<String, String> {
-    match matching_ledgers(line) {
+fn matching_ledgers(line: &str) -> Result<Vec<String>, String> {
+    matching_ledgers_in(&ledger_dir(), line)
+}
+
+fn target_ledger_in(root: &Path, line: &str) -> Result<String, String> {
+    match matching_ledgers_in(root, line) {
         Ok(mut names) if names.len() == 1 => Ok(names.remove(0)),
         Ok(names) => Err(format!(
             "line {line} is ambiguous — ledgers {}; pass the full name",
@@ -129,6 +132,10 @@ fn target_ledger(line: &str) -> Result<String, String> {
         Err(e) if e.starts_with("no ledger for line") => Ok(line.to_string()),
         Err(e) => Err(e),
     }
+}
+
+fn target_ledger(line: &str) -> Result<String, String> {
+    target_ledger_in(&ledger_dir(), line)
 }
 
 fn read_line_events(line: &str) -> Result<Vec<(String, String)>, String> {
@@ -1055,6 +1062,44 @@ mod tests {
         assert!(!ledger_matches("sensory", "sensorys"));
         assert!(!ledger_matches("sensory", "sensory-"));
         assert!(!ledger_matches("river", "riverine"));
+    }
+
+    #[test]
+    fn base_line_aggregates_pass_ledgers_and_keeps_token_namespace() {
+        let root = env::temp_dir().join(format!(
+            "xfer-prefix-{}-{}",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        for name in ["sensory-259", "sensory-260", "sensorys", "river-227"] {
+            fs::create_dir_all(root.join(name)).unwrap();
+        }
+        fs::write(root.join("sensory-261"), b"").unwrap();
+
+        assert_eq!(
+            matching_ledgers_in(&root, "sensory").unwrap(),
+            vec!["sensory-259".to_string(), "sensory-260".to_string()]
+        );
+        assert_eq!(
+            target_ledger_in(&root, "sensory-259").unwrap(),
+            "sensory-259"
+        );
+        assert_eq!(target_ledger_in(&root, "river").unwrap(), "river-227");
+
+        assert!(matching_ledgers_in(&root, "gibt-es-nicht").is_err());
+        assert_eq!(
+            target_ledger_in(&root, "gibt-es-nicht").unwrap(),
+            "gibt-es-nicht"
+        );
+
+        let err = target_ledger_in(&root, "sensory").unwrap_err();
+        assert!(err.contains("ambiguous"), "{err}");
+        assert!(err.contains("sensory-259, sensory-260"), "{err}");
+
+        fs::remove_dir_all(&root).ok();
     }
 
     #[test]
