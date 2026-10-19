@@ -1,5 +1,6 @@
 use omegaflow::archivar::hmi::MAGIC;
 use omegaflow::archivar::membrane::embedded_lsk;
+use omegaflow::archivar::{parse_json, JsonVal};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::{days_from_civil, LeapSeconds};
 use std::process::Command;
@@ -125,11 +126,154 @@ fn fits_names(html: &str) -> Vec<String> {
     names
 }
 
-fn run(args: &[String]) -> Result<(), String> {
+fn rs_list_year(start: &str) -> Option<JsonVal> {
+    let out = Command::new("curl")
+        .arg("-sSfL")
+        .arg("-m")
+        .arg("300")
+        .arg("-G")
+        .arg("--data-urlencode")
+        .arg(format!("ds=hmi.M_720s[{start}/367d@720s]"))
+        .arg("--data-urlencode")
+        .arg("op=rs_list")
+        .arg("--data-urlencode")
+        .arg("key=DATAMEAN,T_REC,CAMERA")
+        .arg("http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info")
+        .output()
+        .ok()?;
+    if !out.status.success() {
+        return None;
+    }
+    parse_json(&String::from_utf8_lossy(&out.stdout))
+}
+
+fn keyword_values(root: &JsonVal, name: &str) -> Option<Vec<String>> {
+    let JsonVal::Obj(obj) = root else {
+        return None;
+    };
+    let JsonVal::Arr(keywords) = obj.get("keywords")? else {
+        return None;
+    };
+    for kw in keywords {
+        let JsonVal::Obj(entry) = kw else {
+            continue;
+        };
+        let Some(JsonVal::Str(found)) = entry.get("name") else {
+            continue;
+        };
+        if found != name {
+            continue;
+        }
+        let JsonVal::Arr(values) = entry.get("values")? else {
+            return None;
+        };
+        return Some(
+            values
+                .iter()
+                .filter_map(|v| match v {
+                    JsonVal::Str(s) => Some(s.clone()),
+                    JsonVal::Num(n) => Some(n.to_string()),
+                    _ => None,
+                })
+                .collect(),
+        );
+    }
+    None
+}
+
+fn write_hmi(
+    records: &mut Vec<(f64, f64, u32)>,
+    out_path: &str,
+    ci_mode: bool,
+) -> Result<(), String> {
+    records.sort_by(|a, b| a.0.total_cmp(&b.0));
+    records.dedup_by(|a, b| a.0 == b.0);
+    if records.is_empty() {
+        return Err("no DATAMEAN record — the bin stays unwritten (0 honored)".into());
+    }
+    let mut buf = Vec::with_capacity(8 + records.len() * 20);
+    buf.extend_from_slice(&MAGIC);
+    buf.extend_from_slice(&(records.len() as u32).to_le_bytes());
+    for (t, v, c) in records.iter() {
+        buf.extend_from_slice(&t.to_le_bytes());
+        buf.extend_from_slice(&v.to_le_bytes());
+        buf.extend_from_slice(&c.to_le_bytes());
+    }
+    std::fs::write(out_path, &buf).map_err(|e| format!("write {out_path} returned void: {e}"))?;
+    eprintln!(
+        "hmi_compiler: {} records ({} B) -> {out_path}",
+        records.len(),
+        buf.len()
+    );
+    if ci_mode && !upload_release(TAG, out_path) {
+        return Err(format!("{out_path}: CDN upload returned void"));
+    }
+    Ok(())
+}
+
+fn run_rs_list(args: &[String]) -> Result<(), String> {
+    let from = arg_value(args, "--from").ok_or("--from YYYY-MM-DD absent — refused")?;
+    let to = arg_value(args, "--to").ok_or("--to YYYY-MM-DD absent — refused")?;
+    let out_path = arg_value(args, "--out").ok_or("--out <hmi.bin> absent — refused")?;
+    let ci_mode = args.iter().any(|a| a == "--ci-mode");
+    let lsk = embedded_lsk()
+        .ok_or("the embedded leap-second table stays unread — T_REC stays unassigned")?;
+    let (fy, fm, fd) = parse_day(&from).ok_or(format!("{from}: not a day — refused"))?;
+    let (ty, tm, td) = parse_day(&to).ok_or(format!("{to}: not a day — refused"))?;
+    let t_lo = parse_t_rec(&format!("{fy:04}.{fm:02}.{fd:02}_00:00:00_TAI"), &lsk)
+        .ok_or("--from stays unassigned")?;
+    let t_hi = parse_t_rec(&format!("{ty:04}.{tm:02}.{td:02}_23:59:59_TAI"), &lsk)
+        .ok_or("--to stays unassigned")?;
+
+    let mut records: Vec<(f64, f64, u32)> = Vec::new();
+    for year in fy..=ty {
+        let start = if year == fy {
+            format!("{fy:04}.{fm:02}.{fd:02}")
+        } else {
+            format!("{year}.01.01")
+        };
+        let Some(root) = rs_list_year(&start) else {
+            eprintln!("{year}: rs_list carries void");
+            continue;
+        };
+        let (Some(values), Some(t_recs), Some(cameras)) = (
+            keyword_values(&root, "DATAMEAN"),
+            keyword_values(&root, "T_REC"),
+            keyword_values(&root, "CAMERA"),
+        ) else {
+            eprintln!("{year}: DATAMEAN/T_REC/CAMERA absent");
+            continue;
+        };
+        let rows = values.len().min(t_recs.len()).min(cameras.len());
+        let mut kept = 0usize;
+        for i in 0..rows {
+            let Ok(value) = values[i].parse::<f64>() else {
+                continue;
+            };
+            if !value.is_finite() {
+                continue;
+            }
+            let Some(t) = parse_t_rec(&t_recs[i], &lsk) else {
+                continue;
+            };
+            let Ok(camera) = cameras[i].parse::<u32>() else {
+                continue;
+            };
+            if !(1..=3).contains(&camera) || t < t_lo || t > t_hi {
+                continue;
+            }
+            records.push((t, gauss_to_nt(value), camera));
+            kept += 1;
+        }
+        eprintln!("{year}: {rows} rows, {kept} kept");
+    }
+    write_hmi(&mut records, &out_path, ci_mode)
+}
+
+fn run_fits(args: &[String]) -> Result<(), String> {
     let day = arg_value(args, "--day")
         .ok_or("usage: hmi_compiler --day YYYY-MM-DD [--days N] --out <hmi.bin> [--ci-mode] — refused")?;
-    let out_path = arg_value(args, "--out")
-        .ok_or("--out <hmi.bin> absent — refused")?;
+    let out_path = arg_value(args, "--out").ok_or("--out <hmi.bin> absent — refused")?;
     let span: usize = arg_value(args, "--days")
         .and_then(|v| v.parse().ok())
         .unwrap_or(1);
@@ -138,7 +282,6 @@ fn run(args: &[String]) -> Result<(), String> {
         .ok_or("the embedded leap-second table stays unread — T_REC stays unassigned")?;
     let (mut y, mut m, mut d) = parse_day(&day)
         .ok_or(format!("{day}: not a day (YYYY-MM-DD) — refused"))?;
-
     if span == 0 {
         return Err("--days 0 carries no window — refused".into());
     }
@@ -184,29 +327,15 @@ fn run(args: &[String]) -> Result<(), String> {
         eprintln!("{y:04}-{m:02}-{d:02}: {} files, {kept} records", names.len());
         (y, m, d) = next_day(y, m, d);
     }
-    records.sort_by(|a, b| a.0.total_cmp(&b.0));
-    records.dedup_by(|a, b| a.0 == b.0);
-    if records.is_empty() {
-        return Err("no DATAMEAN record — the bin stays unwritten (0 honored)".into());
+    write_hmi(&mut records, &out_path, ci_mode)
+}
+
+fn run(args: &[String]) -> Result<(), String> {
+    if args.iter().any(|a| a == "--from") {
+        run_rs_list(args)
+    } else {
+        run_fits(args)
     }
-    let mut buf = Vec::with_capacity(8 + records.len() * 20);
-    buf.extend_from_slice(&MAGIC);
-    buf.extend_from_slice(&(records.len() as u32).to_le_bytes());
-    for (t, v, c) in &records {
-        buf.extend_from_slice(&t.to_le_bytes());
-        buf.extend_from_slice(&v.to_le_bytes());
-        buf.extend_from_slice(&c.to_le_bytes());
-    }
-    std::fs::write(&out_path, &buf).map_err(|e| format!("write {out_path} returned void: {e}"))?;
-    eprintln!(
-        "hmi_compiler: {} records ({} B) -> {out_path}",
-        records.len(),
-        buf.len()
-    );
-    if ci_mode && !upload_release(TAG, &out_path) {
-        return Err(format!("{out_path}: CDN upload returned void"));
-    }
-    Ok(())
 }
 
 fn main() {
@@ -245,6 +374,15 @@ mod tests {
     fn datamean_gauss_lands_in_nanotesla() {
         assert!((gauss_to_nt(-0.108827) + 10882.7).abs() < 1e-9);
         assert!((gauss_to_nt(0.21) - 21000.0).abs() < 1e-9);
+    }
+
+    #[test]
+    fn keyword_values_reads_the_three_arrays() {
+        let s = r#"{"keywords":[{"name":"DATAMEAN","values":["-0.1","MISSING"]},{"name":"T_REC","values":["2020.01.01_00:00:00_TAI","2020.01.01_00:12:00_TAI"]},{"name":"CAMERA","values":["3","3"]}]}"#;
+        let root = parse_json(s).unwrap();
+        assert_eq!(keyword_values(&root, "DATAMEAN").unwrap().len(), 2);
+        assert_eq!(keyword_values(&root, "CAMERA").unwrap()[0], "3");
+        assert!(keyword_values(&root, "NOPE").is_none());
     }
 
     #[test]
