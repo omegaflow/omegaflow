@@ -1,0 +1,10 @@
+url https://github.com/omegaflow/sources/releases/download/data.openei.org/grid_outage_events.bin
+origin https://data.openei.org/files/6458/Outage_Dataset_R1.zip
+terms CC-BY-4.0 https://data.openei.org/submissions/6458
+compiler tools/harvest/src/bin/grid_outage_event_compiler.rs
+sha256 8c309b5a5ded071ba53d1b8f7a1a56addb70ce1ddf56d4ab03c0de0c9854ff69
+format grid_outage_event
+ttl 604800
+at earth
+quantity grid_outage_duration_h grid_outage_duration_h inverse-square source-parameter h 3600 0.0 0.0
+quantity grid_outage_max_customers grid_outage_max_customers inverse-square relative count 3600 0.0 0.0

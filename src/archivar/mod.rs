@@ -102,6 +102,7 @@ pub mod gdp_drifter;
 pub mod geo;
 pub mod gfc;
 pub mod gic;
+pub mod grid_outage;
 pub mod giro_fastchar;
 pub mod gk2a_ami;
 pub mod goes;
