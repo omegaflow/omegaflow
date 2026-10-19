@@ -34,7 +34,7 @@ The integration happens exclusively through the CI pipeline (e.g. GitHub Actions
 1. **Fetch:** The CI downloads the master `.bsp` files from `ssd.jpl.nasa.gov/ftp/eph/`.
 2. **Compile:** The CI uses the `ephemeris_compiler` (with the new `--gm` and `--pck` flags from packet 2) to extract the bodies. The CI generates one `ephemeris_{body}.bin` per body (v2 format, gcount=12).
 3. **Push to CDN:** The CI pushes the generated `.bin` files as release assets to the omegaflow GitHub CDN.
-4. **Indexing:** The CI updates a `sources_index.φ` that carries all available bodies as a URL list.
+4. **Indexing:** The CI updates a `sources.φ` that carries all available bodies as a URL list.
 
 ## 3. The local symbiosis (the Enclosure Lemma)
 None of this heavy work runs on the local XPS 13 (the browser/presence window).

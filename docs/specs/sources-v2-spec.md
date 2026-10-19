@@ -47,10 +47,10 @@ A directive value may be wrapped in double quotes to carry whitespace (e.g.
   family (`stations`, `stations_*`, `fanout`, `fanout_delay`), then extract
   directives (`map`/`cmap`/`rows`/`flatten`, position keys, `hapi`, fields)
   in their dependency order.
-- `phi/dead_sources.φ`: entries sorted by `url`; one disposition line, one
+- `phi/sources.φ`: entries sorted by `url`; one disposition line, one
   `url`, one `note`; blank line between entries; no duplicates per URL.
   ONLY `dead`/`decline`/`integrated`.
-- `phi/blocked_sources.φ`: same format; `key-needed`/`parser-def` —
+- `phi/sources.φ`: same format; `key-needed`/`parser-def` —
   blocked, intended, not dead.
 
 | Directive | Tokens | Meaning |
@@ -574,7 +574,7 @@ for each block in the legacy corpus:
     on … alt: convert km → m (parser expects meters)
 
     if block has ≥1 manifesting field → write to phi/sources.φ
-    else → write to phi/dead_sources.φ (decline) / phi/blocked_sources.φ
+    else → write to phi/sources.φ (decline) / phi/sources.φ
            (key-needed / parser-def) with the reason
 ```
 
@@ -602,7 +602,7 @@ them produces nothing): `body`, `pos`, `source`, `lat_key`/`lon_key`/`alt_key`,
 3-token `field <key> <identifier>` annotation form (refused by the τ-Gate).
 `note` is thereby forbidden in `phi/sources.φ` — the gate blocks a new `note`
 there (`phi-sources-note`, `prose_violation_for`); it remains the verdict-evidence
-field only in `phi/dead_sources.φ`/`phi/blocked_sources.φ`.
+field only in `phi/sources.φ`/`phi/sources.φ`.
 `method` is consumed only by the `--gold` port converter (POST → `post_body`).
 
 Parser arms not yet carried in the §1 table (accepted by the parser; table

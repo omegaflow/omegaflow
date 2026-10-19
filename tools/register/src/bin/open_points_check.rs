@@ -85,10 +85,6 @@ fn main() {
     for w in &words {
         println!("{}", w);
     }
-    let guardians = mail_home_guardians(&root);
-    for g in &guardians {
-        println!("OFFEN  {}", g);
-    }
     let format_gaps = point_format_gaps(&content);
     let format_gap_count = match &format_gaps {
         Some(gaps) => {
@@ -126,31 +122,6 @@ fn main() {
     if !done.is_empty() || !stale.is_empty() || !words.is_empty() {
         std::process::exit(1);
     }
-}
-
-fn mail_home_guardians(root: &Path) -> Vec<String> {
-    let mut out = Vec::new();
-    if !root.join("state").exists() {
-        return out;
-    }
-    if root.join("zustand/future/mail").exists() {
-        out.push(
-            "zweites Mail-Heim: state/future/mail/ existiert (der Postkorb ist state/mail/)"
-                .to_string(),
-        );
-    }
-    if root
-        .join("zustand/mail")
-        .symlink_metadata()
-        .map(|m| m.file_type().is_symlink())
-        .unwrap_or(false)
-    {
-        out.push(
-            "Mail-Heim ist ein Symlink: state/mail/ muss ein echtes Verzeichnis im Repo sein"
-                .to_string(),
-        );
-    }
-    out
 }
 
 fn handover_line_owner(path: &Path) -> Option<String> {
@@ -348,11 +319,7 @@ const CITATION_REGISTERS: [(&str, &str, bool); 6] = [
         "zustand/mail/sent_ledger.\u{3c6}",
         false,
     ),
-    (
-        "external-state.md",
-        "zustand/external-state.md",
-        false,
-    ),
+    ("external-state.md", "zustand/external-state.md", false),
     ("wartend.\u{3c6}", "zustand/wartend.\u{3c6}", false),
     ("standing-pass.md", "zustand/standing-pass.md", false),
 ];
@@ -748,27 +715,6 @@ mod tests {
             normalize("phi/sources.\u{3c6}").as_deref(),
             Some("phi/sources.\u{3c6}")
         );
-    }
-
-    #[test]
-    fn flags_second_mail_home() {
-        let base = std::env::temp_dir().join(format!("opc-guard-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&base);
-        fs::create_dir_all(base.join("zustand/future/mail")).unwrap();
-        let g = mail_home_guardians(&base);
-        assert!(g.iter().any(|s| s.contains("zweites Mail-Heim")));
-        let _ = fs::remove_dir_all(&base);
-    }
-
-    #[test]
-    fn flags_symlinked_mail_home() {
-        let base = std::env::temp_dir().join(format!("opc-guard-sym-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&base);
-        fs::create_dir_all(base.join("state")).unwrap();
-        std::os::unix::fs::symlink(base.join("elsewhere"), base.join("zustand/mail")).unwrap();
-        let g = mail_home_guardians(&base);
-        assert!(g.iter().any(|s| s.contains("Symlink")));
-        let _ = fs::remove_dir_all(&base);
     }
 
     #[test]

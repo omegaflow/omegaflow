@@ -46,7 +46,7 @@ holdings. It is the QUEUE: each entry becomes (a) a Compiler call
 
 ```
 Harvester  →  catalog (phi/pipeline/catalog/)  →  Compiler (flat-json + block)  →  sources.φ
-                                      →  probe     (live verdict)       →  sources.φ / dead_sources.φ / blocked_sources.φ
+                                      →  probe     (live verdict)       →  sources.φ / sources.φ / sources.φ
 ```
 
 ## Naming rule

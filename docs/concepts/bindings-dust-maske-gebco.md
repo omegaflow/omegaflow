@@ -60,7 +60,7 @@ preregistration the compiler's `--mask-run` gate reads before a science run.
 Registered 2026-09-07 (die-weberin witness kinds, Council 2026-09-07). The
 committed preregistration the Gestalt-witness compiler reads before a science
 run. A non-radiating measurement declined as oscillator is not declined as
-witness: the terrain/bathymetry entries re-labelled in dead_sources.φ are
+witness: the terrain/bathymetry entries re-labelled in sources.φ are
 re-read here as witnesses for shape.
 
 ### Binding 1 — source

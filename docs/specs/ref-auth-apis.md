@@ -13,10 +13,10 @@ Gruppiert nach Daten-Mehrwert für die 9-Kräfte-Punktwolke. Basis: Register.
 **Stand 2026-09-03.** Dieses Blatt ist die **Registrierungs-/Lizenz-Sicht**: welche
 Accounts existieren, welche Keys wo liegen, welche Registrierungen eine
 CDN-Redistribution erlauben. Das verbindliche **Port-/Verdikt-Register** je Quelle
-lebt in `phi/sources.φ` (live), `phi/dead_sources.φ` (decline/dead, mit note) und
+lebt in `phi/sources.φ` (live), `phi/sources.φ` (decline/dead, mit note) und
 `phi/pipeline/ledger.φ` — dieses Blatt wird dort als `ref-auth-apis.md §E` zitiert,
 es ist nicht selbst das Verdikt-Register. Wo eine Zeile hier einen Einzel-Endpoint-
-Befund trägt, stammt er aus `phi/dead_sources.φ`.
+Befund trägt, stammt er aus `phi/sources.φ`.
 
 ## Legende
 
@@ -86,7 +86,7 @@ der CI. `BRAVE_API_KEY` bedient `archive_search --brave`.
 Ein vorhandener Key **bedeutet kein Port-Verdikt**: einige besorgte Accounts führen
 auf Quellen, die das Register als `decline` (kein Messwert, Modell, projekt-gebunden)
 oder `dead` (Endpoint weg) beurteilt hat — siehe Status-Spalten unten und
-`phi/dead_sources.φ`.
+`phi/sources.φ`.
 
 ### ❌ Entfernt (ToS verbieten Redistribution via CDN)
 
@@ -100,7 +100,7 @@ oder `dead` (Endpoint weg) beurteilt hat — siehe Status-Spalten unten und
 CMEMS_USER/CMEMS_PASS liegen noch in `.secrets.local`, die Quelle selbst ist aber
 retired (ERDDAP → NOAA/EMODnet umgestellt).
 
-### ❌ Decline (Register-Verdikt, `phi/dead_sources.φ`)
+### ❌ Decline (Register-Verdikt, `phi/sources.φ`)
 
 | Secret | API | Verdikt |
 |---|---|---|
@@ -119,24 +119,24 @@ retired (ERDDAP → NOAA/EMODnet umgestellt).
 
 ## Register-Anker: live / decline / dead je Quelle
 
-Gemessen aus `phi/sources.φ` (live), `phi/dead_sources.φ` (Verdikt), 2026-09-03.
+Gemessen aus `phi/sources.φ` (live), `phi/sources.φ` (Verdikt), 2026-09-03.
 Dies ersetzt den früheren statischen Status-Kommentar: die Verdikt-Begründung je
-Endpoint liegt in `phi/dead_sources.φ` und ist dort nachschlagbar.
+Endpoint liegt in `phi/sources.φ` und ist dort nachschlagbar.
 
 **Live in sources.φ (schon da / integriert):** Open-Meteo (Punkt-/Archiv-Stationen),
 NOAA NCDC/CDO (thermal, P09-Fanout), OpenAQ (diffusion, P09-Fanout, v3/sensors),
 TNS/WIS (em, Vollkatalog), PurpleAir (diffusion), NASA DONKI CME/FLR (em),
 frost.met.no (thermal/advective). Die ZTF-Richtungs-Transienten (ALeRCE, Lasair) sind pending — Richtung ohne Distanz, siehe §E.2 und TODO. Siehe auch §E.1.
 
-**dead (Endpoint weg, `dead_sources.φ`):** NASA-ADS-Subendpoints (`/v1/export/bibtex`),
+**dead (Endpoint weg, `sources.φ`):** NASA-ADS-Subendpoints (`/v1/export/bibtex`),
 PODAAC/NSIDC (S3-`scheme-unsupported` + DNS), GES-DISC (`404`, GLDAS = Modell),
 EIA (`timeout`), SCISAT `databace.scisat.ca` (`404`), IAEA `nucleus.iaea.org/ILIS` (`404`),
 Insight SEIS (`404`), IRSA-TAP/Scan, CEDA-CCI-SST-Browser, ICOS-meta. Live-Probe
 2026-09-03 (aus §A/B/C nachgemessen): **JSOC** `jsoc.stanford.edu` (`dead timeout`,
 curl 000 auf allen Pfaden) und **SAWS** `api.weathersa.co.za` (`dead origin-down`,
-502/521) — beide in `phi/dead_sources.φ` verbucht.
+502/521) — beide in `phi/sources.φ` verbucht.
 
-**decline (Verdikt, `dead_sources.φ`):** Copernicus CDS/ERA5 (`model-forecast`),
+**decline (Verdikt, `sources.φ`):** Copernicus CDS/ERA5 (`model-forecast`),
 Global Fishing Watch (`redistribution`), Global Forest Watch `data-api` (`derived-product`),
 Smithsonian (`no-physical-force`), PlantNet (`no-physical-force`), IUCN (`presence-catalog`),
 IllustrisTNG (`simulation`), NASA NEO (`derived-orbit-fit`), NASA Mars-Photos (`imagery`),
@@ -172,13 +172,13 @@ OpenTopography-API (`method`, 405), 511.org (`registry-premium-gzip`), arbimon/W
 | **TNS Transient** | `www.wis-tns.org/api/` + CSV-Staging | Key + User-Marker | frei | EM | integriert (Vollkatalog, csv_zip, live) | https://www.wis-tns.org/user/register |
 | **NASA DONKI** | `api.nasa.gov/DONKI/*` | Key | frei | EM | schon da (CME/FLR live; NEO/Mars-Photos decline) | https://api.nasa.gov/ |
 
-> **Entfernt aus B/C nach Register-Verdikt (Ersatz/Erklärung in `dead_sources.φ`):**
+> **Entfernt aus B/C nach Register-Verdikt (Ersatz/Erklärung in `sources.φ`):**
 > Copernicus CDS/ERA5 (`model-forecast`), Global Fishing Watch (`redistribution`),
 > NASA NEO (`derived-orbit-fit`), NASA Mars-Photos (`imagery`), Zenodo (Endpoints dead 404,
 > kein Messwert-Kanal), EIA (`timeout`/kein Messwert), **JSOC** (`dead timeout`, Live-Probe
 > 2026-09-03), **SAWS** (`dead origin-down` 502/521, Live-Probe 2026-09-03). Früher als
 > „Mittel" geführt, heute Verdikt-beschieden — nicht mehr Wunschliste, sondern
-> `phi/dead_sources.φ`.
+> `phi/sources.φ`.
 
 ## C. Nische — spezifischer Mehrwert
 
@@ -193,7 +193,7 @@ OpenTopography-API (`method`, 405), 511.org (`registry-premium-gzip`), arbimon/W
 | **Swiss OpenTransport** | `api.opentransportdata.swiss` | Key | frei | Advective | fehlt (Root 404; Port-Pfad unverifiziert) | https://opentransportdata.swiss/en/dataset/ |
 | **OpenTopography** | `portal.opentopography.org` | Demo-Key | frei | EM | erweitert (DEM30; Portal Live 200; API-Endpoints 405 method) | https://opentopography.org/ |
 
-> **Entfernt aus C nach Register-Verdikt (siehe `phi/dead_sources.φ` + Decline-Tabelle):**
+> **Entfernt aus C nach Register-Verdikt (siehe `phi/sources.φ` + Decline-Tabelle):**
 > AlphaVantage, FRED (ToS-removed / kein Messwert), PlantNet, IUCN, Smithsonian,
 > Global Forest Watch, IllustrisTNG (decline), SCISAT (`databace` dead 404),
 > 511.org (decline), Arbimon/Wildlife Insights (projekt-gebunden).
@@ -210,7 +210,7 @@ OpenTopography-API (`method`, 405), 511.org (`registry-premium-gzip`), arbimon/W
 
 ## E. Offene Registrierungen (key-needed ohne Secret)
 
-Stand 2026-08-17, nachgeprüft 2026-09-13 — aus `phi/blocked_sources.φ` (key-needed)
+Stand 2026-08-17, nachgeprüft 2026-09-13 — aus `phi/sources.φ` (key-needed)
 gegen `.secrets.local` abgeglichen. Nachgeprüft: CEDA/ICOS/MAST tragen ihre
 Secrets inzwischen (nicht mehr leer); TOAR ist descoped (redundant, s. u.).
 
@@ -219,7 +219,7 @@ Releases) manifestiert und öffentlich redistribuiert. Es kommen NUR APIs infrag
 deren Lizenz/ToS Redistribution erlauben (Public Domain, CC0, CC-BY, OGL/NLOD).
 Kommerzielle/proprietäre APIs und solche mit Redistributionsverbot sind entfernt.
 Das Urteil ist im Register vollzogen: die Hosts stehen in
-`phi/dead_sources.φ` / `phi/blocked_sources.φ` als
+`phi/sources.φ` / `phi/sources.φ` als
 `decline redistribution` / `decline no-physical-force` (mit Verdikt-Note)
 und in `phi/pipeline/interesting_domains.φ`.
 
@@ -229,14 +229,14 @@ und in `phi/pipeline/interesting_domains.φ`.
 | data.icos-cp.eu | `ICOS_USER`/`ICOS_PASS` | Login | CC-BY 4.0 | https://data.icos-cp.eu/ (cpauth.icos-cp.eu — Account vorhanden) |
 | gracedb.ligo.org | ~~`GRACEDB_TOKEN`~~ | ~~Auth~~ | offen (Alerts) | ~~https://gracedb.ligo.org/~~ — refused: Private-Events verlangt LVC/MOU-Gruppenmitgliedschaft, kein Self-Service; public superevents offen in sources.φ. |
 | mast.stsci.edu | `MAST_TOKEN` | Token | Public Domain | https://mast.stsci.edu/ (TESS/HST/JWST-Photometrie, em — Token vorhanden) |
-| toar-data.fz-juelich.de | `TOAR_USER`/`TOAR_PASS` (leer) | Login (Vollzugang) | CC-BY 4.0 | https://toar-data.fz-juelich.de/ (API v2 gemessen 10.09.: **anonym nutzbar**, Limit 5 Zeitreihen, `/database_statistics/` offen = 65,6 Mrd. Datensätze / 24.385 Stationen). **Registrierung nicht nötig** — TOAR ist die Aggregation derselben WMO-Stationsdaten, die WOUDC liefert (`atmosphere_woudc_total_ozone` integriert; Verdikt 2026-08-19 in `dead_sources.φ`). Die parallele Anfrage lief weiter: Schröder-Antwort 2026-08-25, Projektbeschreibung/CC-BY angefragt. |
+| toar-data.fz-juelich.de | `TOAR_USER`/`TOAR_PASS` (leer) | Login (Vollzugang) | CC-BY 4.0 | https://toar-data.fz-juelich.de/ (API v2 gemessen 10.09.: **anonym nutzbar**, Limit 5 Zeitreihen, `/database_statistics/` offen = 65,6 Mrd. Datensätze / 24.385 Stationen). **Registrierung nicht nötig** — TOAR ist die Aggregation derselben WMO-Stationsdaten, die WOUDC liefert (`atmosphere_woudc_total_ozone` integriert; Verdikt 2026-08-19 in `sources.φ`). Die parallele Anfrage lief weiter: Schröder-Antwort 2026-08-25, Projektbeschreibung/CC-BY angefragt. |
 
 **§E.1 — integriert (live in `phi/sources.φ`):**
 
 | Host | Secret | Quellen-Block | Was IS |
 |---|---|---|---|
 | frost.met.no | `FROST_BASIC_AUTH` | `frost_*` (air_temperature, wind_speed) | thermal (C) + advective (m/s), Stations-Fanout, Basic-Auth-Header. |
-| lasair-ztf.lsst.ac.uk | `LASAIR_TOKEN` | ZTF-Transienten (em) | SQL-SELECT mit token, gmag-Fluss (`flux_from_mag`), 24h-Fenster über `{jd_start}`. **pending**: Richtung-only ohne Distanz (blocked_sources.φ, parser-def 2026-09-05). Token bleibt genutzt von lsst_anomaly_probe. |
+| lasair-ztf.lsst.ac.uk | `LASAIR_TOKEN` | ZTF-Transienten (em) | SQL-SELECT mit token, gmag-Fluss (`flux_from_mag`), 24h-Fenster über `{jd_start}`. **pending**: Richtung-only ohne Distanz (sources.φ, parser-def 2026-09-05). Token bleibt genutzt von lsst_anomaly_probe. |
 
 > Zeilenverweise entfallen absichtlich: `phi/sources.φ` wächst; die Quellen-Blöcke
 > sind über ihren Namen adressiert, nicht über eine brüchige Zeilennummer.
@@ -359,7 +359,7 @@ Quellen in §A noch freischalten könnten.
 
 1. **Register-Stand (2026-09-03):** Dieses Blatt ist auf das Register angeglichen.
    Offene, redistributions-konforme Registrierungen warten in §A/§C auf Port;
-   Verdikt-beschiedene Quellen stehen in `phi/dead_sources.φ`, nicht mehr hier als
+   Verdikt-beschiedene Quellen stehen in `phi/sources.φ`, nicht mehr hier als
    Wunsch.
 
 2. Werte in `.secrets.local` eintragen (gitignored, keine Keys committen)

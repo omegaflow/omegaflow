@@ -536,7 +536,7 @@ fn main() {
     println!(
         "{:<14} | Block {} | {} | details entries frequency == 2695 | Sync t_sun = t − {:.3} s",
         "Radio-2695",
-        "parser-def nested-filter (phi/blocked_sources.φ) — series via harvest_radio",
+        "parser-def nested-filter (phi/sources.φ) — series via harvest_radio",
         radio_url,
         GOES_SYNC_S
     );
@@ -638,7 +638,7 @@ fn main() {
         "GOES-30d candidate NGDC netCDF: 404 on four samples (18./12./05.08., 25.07.) — no block entered."
     );
     println!(
-        "Radio cadence irregular (~4–8 samples/day); the block left sources.φ on 2026-08-21 (path 0.details.0.flux picked a station/frequency chimera — parser-def nested-filter in blocked_sources.φ); the series harvests all details entries at 2695 MHz."
+        "Radio cadence irregular (~4–8 samples/day); the block left sources.φ on 2026-08-21 (path 0.details.0.flux picked a station/frequency chimera — parser-def nested-filter in sources.φ); the series harvests all details entries at 2695 MHz."
     );
     println!("EUV lines 256/1175/1216/1335/1405 + mgii_index stay unharvested (not declared).");
     println!(

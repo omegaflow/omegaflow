@@ -478,7 +478,7 @@ fn alerce_probe() {
         return;
     };
     println!(
-        "skydirection: ALeRCE api.alerce.online/objects answered HTTP {code} with {} byte(s) — the direct-database stub is the retired surface (dead_sources.φ: Direct database access is being retired); unreachable, excluded, never a negative",
+        "skydirection: ALeRCE api.alerce.online/objects answered HTTP {code} with {} byte(s) — the direct-database stub is the retired surface (sources.φ: Direct database access is being retired); unreachable, excluded, never a negative",
         body.len()
     );
 }
