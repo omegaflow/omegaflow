@@ -205,6 +205,7 @@ pub mod quake_event;
 pub mod quakeml;
 pub mod quaoar_occlt;
 pub mod radio;
+pub mod radio_burst;
 pub mod range;
 pub mod regrid;
 pub mod rinex;
