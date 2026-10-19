@@ -2,7 +2,7 @@
   title: Entscheidungstabelle — die 17 lizenzgesperrten Arme
   class: blatt
   date: 2026-10-19
-  sha256: 66c14c11d6195ec869ce902da33e8e92fd96a873a6065871132cefd113d35d4b
+  sha256: abb6a471eb60857dd40571a5fdb49a3659dff174e1a4e0a7f4848836cb4b3a20
   status: live
   see-also: phi/sources.φ tools/harvest/src/bin/ docs/surveys/survey-2026-10-09-redistribution-alternativen.md
 -->
@@ -160,3 +160,39 @@ Drei Fehler der Zusammenfassung:
 **Ergebnis:** `fugin` bleibt **C** (off-CDN, kein Block). Kein Lizenz-Token auf
 JVO, NRO/FUGIN oder NAOJ. Der Arm ist damit nicht mehr „ungemessen" — er ist
 **gemessen ohne Weitergaberecht**.
+
+## Nachtrag 2026-10-20 (4) — der echte DHM-Endpunkt, außerhalb der Repositorien
+
+Der zweite Pass lief nicht über Zenodo/DataCite, sondern über **Common-Crawl-Index,
+Wayback-CDX und das Seiten-JavaScript des Datenhalters**. Ergebnis:
+
+| Fund | Befund |
+|---|---|
+| `https://dhm.gov.np/hydrology/hms-Single/<id>` | **200** je Station (106, 259, 4601, 5082 geprüft); die Seite trägt die Stationsdaten als JSON: `latitude`, `longitude`, `series_id`, `warning_level`, `danger_level`, `elevation` |
+| `https://dhm.gov.np/site/getRiverWatchBySeriesId` | **POST** mit CSRF-Token (Formular `SeriesId_Data`), liefert Tabelle + Chart; GET → 404 |
+| `https://dhm.gov.np/aggregated-data-series`, `/-stations.json`, `/-stations.csv` | **404** (nur noch im Wayback, Snapshot 2022-06-26) |
+| `https://hydrology.gov.np/cm/pause/api/` | **200**, aber nur die React-Hülle; das JS nennt `/api/upload` und `important_links` |
+
+Das ist der Unterschied zwischen „in elf Repositorien nicht gefunden" und „beim
+Datenhalter nachgesehen": der Pfad `/hydrology/hms-Single` (ohne `<id>`) ist 404,
+mit ID liefert er Daten. Gefunden über den Common-Crawl-Index, nicht über mein
+Gedächtnis.
+
+**Die Lizenzlage ändert das nicht:** kein Lizenztext, und die Reihe ist
+**Wasserstand**, nicht Abfluss. `dhm_gauge` bleibt **B**.
+
+## Nachtrag 2026-10-20 (5) — was die keyless Web-Engines wirklich liefern
+
+Nachlauf mit **einer** Binary (Release `01:22`, Commit `99f484ef6`):
+
+| Kanal | Ergebnis für „Nepal river discharge data" |
+|---|---|
+| `--mwmbl` | 1 Treffer (Thames Water EDM-Karte) — **nicht** Nepal |
+| `--marginalia` | 0 |
+| `--duckduckgo-instant` | 0 |
+| `--wiby` | 0 |
+
+Das ist der gemessene Grund, warum die erste Suche repository-scoped war: die
+keyless Web-Engines tragen bei Fachbegriffen fast nichts. Die Konto-Engines
+(Brave 402, Tavily 432, SearchApi/SerpApi/Consensus/Gemini 429, Google-CSE 400)
+wären die breiten — sie sind es nicht.
