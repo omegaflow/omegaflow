@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# sources_index — erzeugt die Karte über den CDN-Cache (Rat R-2026-10-19-a, E:
+# Register + erzeugter INDEX, keine READMEs je Ordner). Ein Lauf, kein LLM.
+# Die Datei ist abgeleitet und gitignored; sie wird nie von Hand gepflegt.
+set -u
+cd "$(dirname "$0")/.." || exit 1
+ROOT="${OMEGAFLOW_SOURCES:-${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/sources}"
+OUT="${1:-$ROOT/INDEX.tsv}"
+[ -d "$ROOT" ] || { echo "sources_index: $ROOT absent — nothing to index" >&2; exit 2; }
+tmp="$(mktemp "$ROOT/.INDEX.XXXXXX")"
+{
+    printf 'netloc\tpath\tbytes\n'
+    find "$ROOT" -mindepth 2 -type f ! -name 'INDEX.tsv' ! -name '.INDEX.*' -printf '%P\t%s\n' 2>/dev/null \
+        | awk -F'\t' '{n=$1; sub(/\/.*/,"",n); printf "%s\t%s\t%s\n", n, $1, $2}' \
+        | LC_ALL=C sort
+} > "$tmp" || { rm -f "$tmp"; echo "sources_index: write returned void" >&2; exit 1; }
+mv -f "$tmp" "$OUT"
+rows=$(($(wc -l < "$OUT") - 1))
+netlocs=$(tail -n +2 "$OUT" | cut -f1 | LC_ALL=C sort -u | wc -l)
+bytes=$(tail -n +2 "$OUT" | awk -F'\t' '{s+=$3} END{printf "%.1f", s/1073741824}')
+echo "sources_index: $rows files · $netlocs netlocs · ${bytes} GiB · $OUT"
