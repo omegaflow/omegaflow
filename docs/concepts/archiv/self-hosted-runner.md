@@ -2,7 +2,7 @@
   title: Self-hosted Runner (t420) — Routing, intelligente Drosselung, Grenzen
   class: concept
   date: 2026-10-10
-  sha256: c4ab09c196d53f7e99361cb049eb1ffb5981747e8029b831cb702daccb450a95
+  sha256: 03d92c47bb54b61fec4d51ad2906447cc3ce75bf742231d9a315fd881a9ace87
   status: live
   see-also: docs/concepts/github-pipeline.md bin/runner_throttle.sh .github/workflows/ci-gate.yml
 -->
