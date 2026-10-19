@@ -247,6 +247,7 @@ pub mod voyager_occlt;
 pub mod voyager_odr;
 pub mod voyager_saturn;
 pub mod vtscat;
+pub mod waldo_ab;
 pub mod weberin_fit;
 pub mod weberin_verdicts;
 pub mod win32;

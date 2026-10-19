@@ -14210,3 +14210,61 @@ fn test_body_anchor_reaches_ssb_presence_by_signal_cone() {
         "the emitted record carries the body's gravity channel_ref"
     );
 }
+
+#[test]
+fn test_waldo_ab_old_header_reaches_samples_through_the_block() {
+    use crate::archivar::waldo_ab::{HeaderOrder, decode, to_csv};
+    let bytes = include_bytes!("mat4_fixtures/waldo_ab_small_a.mat");
+    let series = decode(bytes).expect("the old-order fixture parses");
+    assert_eq!(series.meta.order, HeaderOrder::Old);
+    assert_eq!(series.meta.call_sign, "NWC");
+    assert_eq!(series.meta.frequency_hz, Some(19800.0));
+    assert_eq!(series.samples, vec![1.5, 2.5, -0.5]);
+    let csv = to_csv(&series);
+    assert!(csv.starts_with(
+        "unix,offset_s,amplitude,sample_rate_hz,frequency_hz,call_sign,station,header_order\n"
+    ));
+
+    let block = "url https://example.org/waldo_ab.csv\n\
+format csv\n\
+origin https://craam-files-bucket.s3.amazonaws.com/2015/01/01/narrowband/FE/FE150101000500NAA_008A.mat\n\
+compiler tools/harvest/src/bin/waldo_ab_compiler.rs\n\
+ttl 300\n\
+at earth\n\
+rows\n\
+field amplitude em 1 300\n";
+    let sources = parse_sources(block);
+    assert_eq!(sources.len(), 1);
+    assert_eq!(sources[0].format, "csv");
+    let lsk = crate::archivar::embedded_lsk().expect("embedded naif0012 parses");
+    let crate::archivar::ExtractResult::Measurements(channels) =
+        crate::archivar::extract(&sources[0], &csv, 0.0, &lsk)
+    else {
+        panic!("extract is not Measurements");
+    };
+    assert_eq!(channels.len(), 3);
+    assert_eq!(channels[0].0.name, "amplitude");
+    assert_eq!(channels[0].0.value, 1.5);
+    assert_eq!(channels[1].0.value, 2.5);
+    assert_eq!(channels[2].0.value, -0.5);
+}
+
+#[test]
+fn test_waldo_ab_awesome_header_is_detected() {
+    use crate::archivar::waldo_ab::{HeaderOrder, decode};
+    let old = decode(include_bytes!("mat4_fixtures/waldo_ab_small_a.mat")).expect("A parses");
+    let awesome = decode(include_bytes!("mat4_fixtures/waldo_ab_small_b.mat")).expect("B parses");
+    assert_eq!(awesome.meta.order, HeaderOrder::Awesome);
+    assert_eq!(awesome.meta.call_sign, "NWC");
+    assert_eq!(awesome.meta.station, "Allahabad");
+    assert_eq!(awesome.meta.start_unix, old.meta.start_unix);
+    assert_eq!(awesome.samples, old.samples);
+}
+
+#[test]
+fn test_waldo_ab_refuses_a_short_or_truncated_table() {
+    use crate::archivar::waldo_ab::decode;
+    let bytes = include_bytes!("mat4_fixtures/waldo_ab_small_a.mat");
+    assert!(decode(&bytes[..bytes.len() - 4]).is_err());
+    assert!(decode(b"XXXX").is_err());
+}
