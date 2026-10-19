@@ -3,6 +3,7 @@
   class: register
   date: 2026-08-31
   status: live
+  sha256: 3f09742d5e47d19919f9bbae2592d5d29b6dd9b11caed983e9602166c9122fa6
   see-also: docs/specs/bekannt-schlecht-korpus.md docs/auftrag/archiv/auftrag-maschinen-audits.md
 -->
 
@@ -50,3 +51,30 @@ Toleranzregel, ein Korpus-Lauf, dann die Zahlen.
   Doppel-Zählung). Die Korpus-Zeilen selbst sind nicht mehr nachlaufbar: die
   Original-Blätter wurden post-c94d431 durch den Kleinpass gefixt (nicht im
   Baum) — der Score misst Fixtures + den Live-Korpus.
+
+- **Lauf 5 — Nummern-Audit (R2/Z-Klasse), Blockstand vermessen (abgenommen):**
+  0 Z-Funde, 3 verpasst (die drei Korpus-Zeilen), 0 erfunden — weder die
+  Tabellen-n- noch die Nomen-Regel findet einen Z-Fund, ohne erfunden zu
+  melden (a/b); die drei Korpus-Zeilen sind zudem im Baum gefixt (c). (a)
+  `§2-Zählung ↔ Tabellen-n`: der Live-Korpus (36 Blätter, Vorgabepfad
+  `docs/paper/*.md`) trägt genau eine n-Spalte (solar-cycle-dynamo.md:354,
+  n = 189 Monate, HMI/WSO-Überlappung); die §2-Zahlen desselben Blatts sind
+  andere Serien und Körnungen — 18 Tage (l. 68), 10 Tage (l. 79), 1976
+  (l. 124), 32 Jahre (l. 136), 1986/16 %/34 Jahre (l. 139/140), 3 Zyklen
+  (l. 154), 217 Rotationen (l. 176) → 9 Treffer, 0 echte, alle in
+  solar-cycle-dynamo.md. (b) `gleiches Zähl-Nomen, zwei Werte`: 91
+  Nomen-Treffer in 26/36 Blättern; mit Qualifier-Filter („paired", „common
+  window", „per ", „each", „max" …) noch 62 in 20/36. (c) Die drei
+  Korpus-Zeilen sind im Baum gefixt und nicht mehr nachlaufbar: solar-cycle
+  313 Läufe × 36 d = 11 268 d ≈ 30,9 a gegen 1995-06-29 → 2026-03-30
+  (30,75 a), 603 Monate ≈ 50,25 a gegen WSO 1976–2026, 402 Monate ≈ 33,5 a
+  gegen BiSON 1992-01 → 2025-01 — drei Serien, drei Körnungen; signalkegel
+  trennt 79 a F10.7 und n ≈ 3824 Tage gemeinsames Fenster ausdrücklich
+  (signal-cone-audit-sheet.md:61); gic 1378 (l. 84) vs 1260 (l. 145/311) ist
+  „n paired" nach Lag-Einbettung. Kollision: R5 meldet
+  gic-causal-driver.md:84 `1378` und :145 `1260` bereits als unverankerte
+  Zählungen; R3 meldet broken-null-control.md:71/141/168 `1190/909/834` (drei
+  Fenster desselben Paars) als Doppel-Zählung (9 R3-Funde, Lauf 4). Ein
+  Z-Fund braucht die Archiv-Zählung (Records/Zeilen des Harvests) als
+  Grundwahrheit, nicht die Syntax. R2 bleibt der Archiv-File-Count
+  (`9aad4407f`); Regression 16/16 grün.
