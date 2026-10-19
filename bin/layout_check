@@ -26,6 +26,10 @@ for entry in * .[!.]*; do
     esac
 done
 
+for forbidden in state zustand post handover sources experiments recherche; do
+    [ -e "$forbidden" ] && finding "REPO_STATE_DIR\t$forbidden (gehört in die Werkstatt)"
+done
+
 for tree in docs phi src tools bin; do
     [ -d "$tree" ] || continue
     while IFS= read -r p; do
