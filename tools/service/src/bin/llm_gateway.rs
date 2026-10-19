@@ -1387,7 +1387,7 @@ fn restore_sse_event(event: &str, r: &Redactor) -> String {
 fn provenance_sink() -> String {
     match std::env::var("OMEGAFLOW_GATEWAY_LOG") {
         Ok(p) if !p.is_empty() => p,
-        _ => "state/zustand/llm-gateway-provenance.jsonl".to_string(),
+        _ => "state/zustand/gateway/provenance.jsonl".to_string(),
     }
 }
 
@@ -1667,7 +1667,7 @@ fn catalog_rows(body: &str) -> Vec<(String, Option<f64>, Option<f64>, Option<u64
 
 fn refresh_catalog(secrets: &HashMap<String, String>, auth: &str) -> HashMap<String, ModelInfo> {
     let root = repo_root();
-    let dir = format!("{root}/state/zustand/llm-gateway-catalog");
+    let dir = format!("{root}/state/zustand/gateway/catalog");
     let _ = fs::create_dir_all(&dir);
     let mut models = HashMap::new();
     for r in ROUTES {
@@ -1985,7 +1985,7 @@ fn paid_allowed(model: &str) -> bool {
             return true;
         }
     }
-    if let Ok(s) = std::fs::read_to_string(format!("{}/state/zustand/paid-open", repo_root())) {
+    if let Ok(s) = std::fs::read_to_string(format!("{}/state/zustand/gateway/paid-open", repo_root())) {
         let s = s.trim();
         if s == "1" || s.eq_ignore_ascii_case("all") {
             return true;
@@ -2032,7 +2032,7 @@ fn chat_completions(
             if is_paid(cand) && !paid_allowed(cand) {
                 last_code = 402;
                 last_body = format!(
-                    "{{\"error\":{{\"message\":\"{} is a billed model — the operator's word is required (name the model id in state/zustand/paid-open, or set OMEGAFLOW_PAID=<model-id>)\"}}}}",
+                    "{{\"error\":{{\"message\":\"{} is a billed model — the operator's word is required (name the model id in state/zustand/gateway/paid-open, or set OMEGAFLOW_PAID=<model-id>)\"}}}}",
                     cand
                 );
                 continue;
@@ -2503,8 +2503,8 @@ fn arg_value(args: &[String], flag: &str) -> Option<String> {
 
 const PROBE_TIMEOUT_SECS: u64 = 12;
 const SLOW_MS: u128 = 8000;
-const DISABLED_SESSION: &str = "state/zustand/llm-gateway-disabled.session";
-const DISABLED_PERSIST: &str = "state/zustand/llm-gateway-disabled.persist";
+const DISABLED_SESSION: &str = "state/zustand/gateway/disabled.session";
+const DISABLED_PERSIST: &str = "state/zustand/gateway/disabled.persist";
 
 fn append_disabled(path: &str, entry: &str) {
     if let Some(parent) = std::path::Path::new(path).parent() {
@@ -2646,7 +2646,7 @@ fn main() {
         let auth = load_auth_text();
         let dir = match arg_value(&args, "--out") {
             Some(d) => d,
-            None => "state/zustand/llm-gateway-catalog".to_string(),
+            None => "state/zustand/gateway/catalog".to_string(),
         };
         let _ = fs::create_dir_all(&dir);
         let provider = arg_value(&args, "--provider");
@@ -2691,7 +2691,7 @@ fn main() {
     let models = refresh_catalog(&secrets, &auth);
     eprintln!("llm_gateway: catalog {} models", models.len());
     let _ = fs::write(
-        format!("{}/state/zustand/llm-gateway-models.tsv", repo_root()),
+        format!("{}/state/zustand/gateway/models.tsv", repo_root()),
         models_tsv(&models),
     );
     let _ = MODELS.set(models);
@@ -2700,14 +2700,14 @@ fn main() {
         eprintln!("llm_gateway: balance {p} {b}");
     }
     let _ = fs::write(
-        format!("{}/state/zustand/llm-gateway-balance.tsv", repo_root()),
+        format!("{}/state/zustand/gateway/balance.tsv", repo_root()),
         balance_tsv(&balances),
     );
     {
         let secrets = secrets.clone();
         let auth = auth.clone();
         std::thread::spawn(move || {
-            let alive_path = format!("{}/state/zustand/llm-gateway-alive.tsv", repo_root());
+            let alive_path = format!("{}/state/zustand/gateway/alive.tsv", repo_root());
             let Some(models) = MODELS.get() else {
                 return;
             };
