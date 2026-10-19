@@ -37,6 +37,15 @@ for tree in docs phi src tools bin; do
     done < <(git ls-files --others --exclude-standard -- "$tree" 2>/dev/null | head -50)
 done
 
+# DOC_NO_CLASS — eine .md unter docs/ ohne `  class:` im Kopf wird benannt,
+# nicht blockiert (Messung). docs/README.md ist der Ordner-Index, kein Dokument.
+while IFS= read -r p; do
+    [ "$p" = "docs/README.md" ] && continue
+    if ! sed -n '1,20p' "$p" | grep -q '^  class:'; then
+        finding "DOC_NO_CLASS	$p"
+    fi
+done < <(find docs -type f -name '*.md' 2>/dev/null | sort)
+
 if [ -d "$TMP" ]; then
     for entry in "$TMP"/*; do
         [ -e "$entry" ] || continue
