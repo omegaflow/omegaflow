@@ -2,7 +2,7 @@
   title: Freie Alternativen für die 17 lizenzgesperrten Arme (2026-10-19)
   class: survey
   date: 2026-10-19
-  sha256: 67207dbe22249bbb870880f68c6acad9772f73070e8267812c56f6831a7c93f3
+  sha256: 839740f134892180270df213026602a837294d8569efb56a688dcc18b5ff9691
   status: live
   see-also: docs/blatt/blatt-2026-10-19-entscheidung-17-lizenzarme.md docs/reference/search-channels.md
 -->
@@ -86,3 +86,28 @@ Reader-Abruf), `tns` gab dem Browser **403** (mit Browser-UA per curl gelesen, a
 Die zwei stärksten Sätze: `ieeg` verbietet Kopieren/Verteilen ausdrücklich; `pradan_ch2`
 widerspricht sich selbst („open and free" vs. „copying prohibited") — beide Fassungen
 zitiert, keine gewählt.
+
+## Paper-Belege (2026-10-20)
+
+Geprüft wurden die Abschnitte „Data Availability / License / Copyright" der Papiere
+(nicht die Volltexte). Ergebnis: **4 · 2 · 2** — und keine einzige Freigabe.
+
+| Arm | Paper | Paper-Lizenz | Datenlizenz | Klasse |
+|---|---|---|---|---|
+| `substorm` | Gjerloev 2012 (SuperMAG) | — | Rules of the Road: „cannot be redistributed" | restriktiv |
+| `demeter` | DEMETER/CDPP | — | CDPP/SIPAD V1.1: schriftliche Zustimmung | restriktiv |
+| `ieeg` | Portal-Terms | — | Kopieren/Verteilen verboten | restriktiv |
+| `pradan_ch2` | ISRO-Disclaimer | — | non-profit, Kopie nur mit Erlaubnis | restriktiv |
+| `babamul` | arXiv 2511.00164 | CC BY 4.0 | **kein Feld** (OpenAPI-Lizenz leer) | nur Paper-Lizenz |
+| `icrf3` | Charlot et al. 2020 | CC BY 4.0 (arXiv) | Katalog ohne Lizenztext | nur Paper-Lizenz |
+| `ilrs_npt` | — | — | kein Abschnitt (Register/Login) | kein Abschnitt |
+| `tns` | — | — | kein Methodenpaper; nur „Copyright © 2015" | kein Abschnitt |
+
+**`phi/sources.φ` bleibt unverändert:** keine der belegten Datenlizenzen ist
+CC0/CC-BY/PD/ODbL; alle acht `terms`-Zeilen bleiben `auth-required`.
+
+Zwei Abweichungen von der Erwartung: für `tns` existiert **kein** A&A/ApJ-Methodenpaper
+mit Lizenzabschnitt (OpenAlex/Crossref/arXiv negativ); `ilrs_npt` hat keinen Lizenztext —
+die „EUROLAS Terms of Reference" regeln das Konsortium, nicht die Datennutzung.
+Wiley-/A&A-Volltexte waren CAPTCHA-blockiert; `substorm` wurde über einen
+Wayback-Snapshot (2024-07-24) gelesen, `icrf3` über die arXiv-Fassung plus Crossref.
