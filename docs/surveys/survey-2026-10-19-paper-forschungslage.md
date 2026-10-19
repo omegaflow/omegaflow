@@ -2,7 +2,7 @@
   title: Paper-Landschaft — 35 Papiere gegen die externe Literatur (2026-10-19)
   class: survey
   date: 2026-10-19
-  sha256: c969abfa3ba1bac838c29ea32c5bd8af6cbc596d1e74ac7e77b50c033fda5787
+  sha256: ebb9f9fa7458466eda48ed91d9e16bc92368797f3adf579c66f9b07a83856d22
   status: live
   see-also: docs/paper/ docs/concepts/te-literatur-matrix.md
 -->
