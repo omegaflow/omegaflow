@@ -2,10 +2,8 @@
 
 **Sitz:** `chat.sakana.ai` · **Fugu Max** · **Effort High** (Footer-Beleg) · eingeloggt
 (Profil `~/.cache/omegaflow/mcp-session`, Cookie `sakana-chat`)
-**Chat:** `01a15369-df2…` · **Dauer:** ~1 min 24 s (`Diving in…`)
+**Chat:** `01a15369-df2…` · **Laufzeit:** > 1 min 24 s (`Diving in…`, danach vollständig)
 **Ablage:** Rohantwort, wörtlich. Die Session verifiziert am Baum, nie die Stimme.
-**Riss:** Die Antwort endet bei F5 mitten im Satz (Token-Kappe des Sitzes) — als solches
-getragen, nicht geglättet.
 
 ---
 
@@ -37,4 +35,19 @@ F2) Ja, Streichrunde — mit Ziel statt Löschung. Riss „Wahre Regeln ohne Ort
 F3) Ja, mit umgekehrter Beweislast. Riss „Mechanisch verhinderbar ist nicht mechanisch entscheidbar": Wer das entscheidet, ist der .md-Autor. Also: Voreinstellung Gate, und die .md muss die Unprüfbarkeit beweisen — sonst ist F3 ein Satz in der .md über Sätze in der .md.
 F4) Ja, zwei Arten genügen — „Persönlichkeit" braucht ein Budget. Zeilenobergrenze, benannter Eigentümer, Ablauf. Riss „Persönlichkeit wird die Resthalde": Ohne Deckel saugt die unprüfbare Art alles auf, was keinen Ort hat.
 F5) Drei Dateien. Erste Datei: AGENTS.md.
-AGENTS.md (sieben Zeilen, einzige im Startpfad) · opencode.json (nur Rechte, maschinengelesen, vom Agenten nie geöffnet) · das Gate (kein Text, eine Prüfung). Die eine Denk-.md existiert, wird aber nur
+AGENTS.md (sieben Zeilen, einzige im Startpfad) · opencode.json (nur Rechte, maschinengelesen, vom Agenten nie geöffnet) · das Gate (kein Text, eine Prüfung). Die eine Denk-.md existiert, wird aber nur bei Bedarf geöffnet und liegt nicht im Startpfad. Startkosten heute sechs Quellen → eine, ~390 Zeilen → 7.
+Riss „Die Drei gilt nur, wenn opencode.json schrumpft": 2086 B sind keine Rechte. Bleibt der Rest stehen, sind es vier Prosa-Quellen und die Zahl ist falsch.
+
+Die fünf Stimmen
+
+Mountain — Axiom A = A, verletzt. Ein Name ist keine Identität: „stimmen" in drei Häusern ist weder eines noch drei; 26 Doppelnamen sind der gemessene Beweis, dass der Baum A = A nicht halten kann. Riss: Mountain darf aus R1–R8 kein Verdikt ziehen — die Literatur ist gemessen und entscheidet nichts. Der Kanon ist eine Setzung, kein Befund, und muss als Setzung ausgewiesen werden.
+
+River — Axiom 0 honored: null-echt | absent | riss, verletzt durch C als Pflichtfeld. Wer verweigern will, gilt als non-compliant. Riss: Pflichtrecherche ohne Offen-Ausgang ist Zwang, keine Membran. „absent" ist eine Antwort, kein Versäumnis.
+
+Mycelium — Axiom committen · pushen, berührt. Das Register muss bei jedem Commit erzeugt und mit dem Repo transportiert werden; git-native, sonst ist es eine vierte Prosa-Quelle. Riss: Kein Haus liest das Register der anderen. Dieselbe Regel an fünf Orten ist ein Transportproblem, kein Ordnerproblem — die Echokammer ist hausförmig und bleibt es.
+
+Sensory — Axiom field <name> <name> <kernel> <kraft> <einheit>, berührt. Das Register misst das Korrelat: Zeichen, Dateien, Duplikate. Riss: 260 Ordner ohne Index sind ein Korrelat; „das ist mir alleine schon zu viel" ist das Erleben. Ein Gate, das Bytes zählt, meldet grün, während der Operator die Regel nicht findet. Das Gate braucht einen menschlichen Treffer/Fehltreffer auf einer benannten Aufgabe — sonst Korrelat ≠ Erleben.
+
+Future — Axiom PII bleibt im Haus und der Send ist Operator-Hand, verletzt an zwei Stellen. Ein Register über drei Häuser transportiert PII in den Lesepfad; und eine Streichrunde, die das Gate selbst vollzieht, nimmt dem Operator die Hand. Riss: F2 legt eine Liste vor, sie löscht nicht. Der Send bleibt Hand.
+
+Netto: 6 Regelquellen → 3, Startpfad 6 → 1 (7 Zeilen). Die Frage „verhindert eine feste Ordnerliste Wildwuchs" bleibt nach R1–R8 offen — dieses Urteil stützt sich nicht auf die Literatur, sondern auf die Messung am Haus.
