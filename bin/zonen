@@ -21,7 +21,7 @@ set -u
 H="$(cd "$(dirname "$0")" && pwd)"
 ROOTS="$(cd "$H/.." && pwd)"
 WF="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
-PRIV="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-personal}"
+PRIV="${OMEGAFLOW_PRIVATE:-$HOME/projects/omegaflow-private}"
 
 DEPTH=2; MODE=katalog; SMALL=2
 while [ $# -gt 0 ]; do
