@@ -11116,6 +11116,14 @@ compiler tools/harvest/src/bin/keogram_compiler.rs
 on earth 68.358 18.823 380
 ttl 604800
 
+url https://github.com/omegaflow/sources/releases/download/space.fmi.fi/keogram_KIL.bin
+terms CC-BY-4.0 https://en.ilmatieteenlaitos.fi/open-data-licence
+format keogram
+origin https://space.fmi.fi/MIRACLE/ASC/ASC_keograms
+compiler tools/harvest/src/bin/keogram_compiler.rs
+on earth 69.05 20.78 380
+ttl 604800
+
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/mariner_occlt.bin
 format mariner_occlt
 origin https://spdf.gsfc.nasa.gov/pub/data/mariner/mariner10/celestial_mechanics_and_radio_science/red_tele_signal_data_venus_occlt/

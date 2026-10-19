@@ -10,10 +10,10 @@ on:
   workflow_dispatch:
     inputs:
       station:
-        description: FMI MIRACLE ASC keogram station (ICAO, e.g. ABK)
+        description: FMI MIRACLE ASC keogram station (ICAO; default KIL, 2026-active; ABK stays available as the historical station)
         required: false
         type: string
-        default: ABK
+        default: KIL
       start:
         description: 'window start (YYYY-MM-DD); empty = UTC yesterday'
         required: false
