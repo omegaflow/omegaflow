@@ -31171,6 +31171,9 @@ no-cadence
 
 url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
 terms per-service-terms https://lasair-ztf.lsst.ac.uk/
+format lasair_ztf
+origin https://api.lasair.lsst.ac.uk/api/query/
+compiler tools/harvest/src/bin/lasair_ztf_compiler.rs
 witness s2-direction
 record skydirection
 force em
@@ -31643,3 +31646,66 @@ sha256 25b428d1af966dea31e130c0710e8482ba616753e194981d7e22a28b754f947b
 at earth
 ttl 315360000
 field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/icgem.gfz.de/gfc.bin
+terms CC-BY-4.0 https://doi.org/10.5880/ICGEM.2019.007
+format gfc
+origin https://icgem.gfz.de/getmodel/gfc/8e01a2aba4f291ac0638b79a390155713b70fdc9b266981023c756839c11c9b8/XGM2019e.gfc
+compiler tools/harvest/src/bin/gfc_compiler.rs
+at earth
+no-cadence
+gm 3.986004415E+14
+radius 6378136.3
+norm fully_normalized
+tide zero_tide
+max_degree 5540
+field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 0 0.0 0.0 norm:fully_normalized
+field icgem_gfc_s icgem_gfc_s inverse-square gravity 1 0 0.0 0.0 norm:fully_normalized
+field icgem_gfct_c icgem_gfct_c inverse-square gravity 1 0 0.0 0.0 norm:fully_normalized
+field icgem_gfct_s icgem_gfct_s inverse-square gravity 1 0 0.0 0.0 norm:fully_normalized
+
+url https://github.com/omegaflow/sources/releases/download/nsdb.imcce.fr/nsdb.bin
+terms other-attribution https://nsdb.imcce.fr/nsdb/acknowledging.html
+format nsdb
+origin https://nsdb.imcce.fr/obspos/OBS_COLL/N/no0011.txt
+compiler tools/harvest/src/bin/nsdb_compiler.rs
+at sun
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/erddap.riddc.brown.edu/bluetopo_bathymetry.bin
+terms CC0-1.0 https://creativecommons.org/publicdomain/zero/1.0/
+format gbco
+origin https://erddap.riddc.brown.edu/erddap/griddap/bluetopo_5899_7471_de41.csv
+compiler tools/harvest/src/bin/bluetopo_compiler.rs
+witness gestalt
+record gbco
+at earth
+no-cadence
+field elev bluetopo_bathymetry_m gaussian-inverse-square geometry m 0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.ceda.ac.uk-gebco/gbco_elevation_gebco_2023.txt
+terms per-service-terms https://www.gebco.net/data-products/gridded-bathymetry/terms-of-use
+format gbco_axis_value_text
+origin https://dap.ceda.ac.uk/thredds/dodsC/bodc/gebco/global/gebco_2023/ice_surface_elevation/netcdf/GEBCO_2023_CF.nc.ascii?elevation[0:215:43199][0:431:86399]
+compiler tools/harvest/src/bin/gbco_series_compiler.rs
+at earth
+no-cadence
+field value gbco_elevation_m gaussian-inverse-square geometry m 0 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/ir.bin
+terms vizier-scientific-free https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+format ir
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
+compiler tools/harvest/src/bin/infrared_excess_compiler.rs
+at sun
+no-cadence
+
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/wglc_stroke_rate.csv
+terms CC-BY-4.0 https://zenodo.org/records/20277101
+format csv
+origin https://zenodo.org/api/records/20277101/files/wglc_timeseries_30m_daily.nc/content
+compiler tools/harvest/src/bin/wglc_compiler.rs
+at earth
+ttl 86400
+epoch 1
+field strokes_per_day wglc_strokes_per_day inverse-square em 1 86400 0.0 0.0
