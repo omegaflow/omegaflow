@@ -1,8 +1,0 @@
-V1 — Wo soll der Live-Zustand liegen?
-Verdikt: A — Begründung: Ein generierter Live-Index bietet eine zentrale und aktuelle Übersicht über den Zustand, den jede Sitzung zuerst lesen kann, um sicherzustellen, dass alle Sitzungen auf dem gleichen Stand sind. Prosa-Docs können dann als Zeiger auf diesen Index dienen, anstatt den Zustand selbst zu duplizieren und zu veralten. — Riss: Die Implementierung eines solchen Indexes könnte technische Herausforderungen mit sich bringen, wie die Integration mit bestehenden Systemen und die Gewährleistung der Aktualität.
-
-V2 — Was ist der kanonische Schwarm?
-Verdikt: A — Begründung: Die Definition des kanonischen Schwarms als immer die 44 (free44-Liste) stellt sicher, dass alle Sitzungen mit dem gleichen Verständnis des Schwarms arbeiten, was Konsistenz und Vergleichbarkeit der Ergebnisse fördert. Der 4er-Lauf wird ausdrücklich als Fehler benannt, was die Notwendigkeit einer korrekten Schwarm-Größe unterstreicht. — Riss: Es könnte Situationen geben, in denen die Anpassung der Schwarm-Größe an bestimmte Bedingungen notwendig ist, was eine flexible Definition erfordern könnte.
-
-V3 — Wie verhindert man veraltete Zitate?
-Verdikt: A — Begründung: Ein Start-of-Session-Check, der git log und die neuesten Run-Outputs überprüft, bietet eine direkte und effektive Methode, um sicherzustellen, dass jede Sitzung mit dem aktuellen Wissen beginnt. Dies verhindert das Zitieren veralteter Informationen und gewährleistet, dass alle Entscheidungen auf dem neuesten Stand sind. — Riss: Die Umsetzung eines solchen Checks könnte in der Praxis herausfordernd sein, insbesondere wenn es um die Integration in bestehende Workflows und die Gewährleistung der Compliance aller Sitzungen geht.

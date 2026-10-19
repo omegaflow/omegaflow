@@ -1,1 +1,0 @@
-{"error":{"code":"bad_request","message":"model 'minimax-speech-2-8-turbo' is not a chat model; use /v1/audio/speech instead","param":null,"type":"bad_request"}}

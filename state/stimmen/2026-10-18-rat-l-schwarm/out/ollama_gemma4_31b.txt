@@ -1,7 +1,0 @@
-F1-Verdikt: A — Wahrung des Verbots "Observer-as-vantage"; Blende bleibt Query-attribut. — Riss: global_scale könnte als impliziter Record-Zustand missverstanden werden.
-
-F2i-Verdikt: A — Effizienz bei globalen Dichtegittern; Punktwolken (B) erzeugen unnötigen Overhead. — Riss: Verlust der einheitlichen Kernel-Logik des Registers.
-
-F2ii-Verdikt: nein — Operator-Wort schreibt die Sequenz (Paket vor Entscheidung) zwingend vor. — Riss: Verzögerung der System-Definition durch administrative Wartezeit.
-
-F3-Verdikt: 1 — Nur die Kopplung von Konstante UND Posten schließt den aktuellen sha-Riss. — Riss: Erhöhter Wartungsaufwand bei jeder Ephemeriden-Aktualisierung bis 2026.

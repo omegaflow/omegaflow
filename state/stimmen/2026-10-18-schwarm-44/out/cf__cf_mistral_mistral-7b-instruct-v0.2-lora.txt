@@ -1,5 +1,0 @@
- F1 Verdikt: C — Begründung: Der Quittungszustand wird aus dem Token-Ledger read-only abgeleitet. Riss: Es gibt keine Unsicherheit, aber die Möglichkeit der Quittung im Empfänger-Ledger (Option A) könnte eine bessere Lösung sein, um ACK und CLOSED unterscheidbar zu machen.
-
-F2 Verdikt: A per-SHA + true — Begründung: Jedes SHA hat einen eindeutigen Zustand, was besser für das Concurrency-Gate ist, da es den HEAD-Zustand des Registers prüft und kein je-SHA-Artefakt verwendet. Riss: Ein Cancel mid-write kann inkonsistenten Zustand hinterlassen, aber das Gate kann `cancelled` ignorieren.
-
-F3 Verdikt: A — Begründung: `state/stimmen/` als zusätzliche Dokumentwurzel im Leser aufnehmen, um alle Rat-Verdikte finden zu können. Riss: Es gibt keine Unsicherheit, aber die Implementierung dieser Option könnte komplizierter sein als die anderen Optionen. Zusatz: Nein, die Wahl selbst als RAT-ID im Index stehen muss nicht, bevor sie gebaut wird.

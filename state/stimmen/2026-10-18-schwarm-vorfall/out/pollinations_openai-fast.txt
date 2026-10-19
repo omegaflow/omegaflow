@@ -1,5 +1,0 @@
-V1 Verdikt: A — Begründung: Ein zentraler Live‑Index liefert sofort Commit‑Hash, Zeitstempel und letzte Run‑Ergebnisse, sodass jede Sitzung mit dem aktuellsten Zustand startet. Prosa‑Docs bleiben als Referenz, werden aber nur als Zeiger genutzt, was Duplikate reduziert. Riss: Der Index muss selbst gepflegt werden; wenn er nicht synchronisiert wird, kann er veralten.
-
-V2 Verdikt: A — Begründung: Die 44‑Sammlung ist die offiziell dokumentierte Basis für Schwarm‑Operationen und wird in allen Live‑Docs referenziert. Ein 4‑er‑Lauf widerspricht der Definition und führt zu Inkonsistenzen. Riss: Es könnte Fälle geben, in denen ein kleinerer Schwarm erforderlich ist, z. B. bei Ressourcenknappheit, die nicht abgedeckt ist.
-
-V3 Verdikt: A — Begründung: Ein verpflichtender Start‑Check mit `git log` und den neuesten State‑Docs garantiert, dass jede Sitzung mit aktuellen Informationen beginnt und veraltete Referenzen vermieden werden. Die Prüfung ist automatisiert und erfordert keine manuelle Eingabe, wodurch Fehlerquellen minimiert werden. Riss: Der Check kann bei sehr schnellen Commit‑Änderungen hinterherhinken, wenn die Logs nicht sofort aktualisiert werden.

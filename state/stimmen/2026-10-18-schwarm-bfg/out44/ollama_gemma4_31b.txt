@@ -1,5 +1,0 @@
-R-b Verdikt: A — Begründung: Die Integration in den Parser ermöglicht die Registrierung der gemessenen Referenzkonstanten. N bleibt bis zur Umsetzung als Abwesenheit (null-echt) definiert. — Riss: Fehlende Lizenzklärung für calc.js.
-
-R-f Verdikt: A — Begründung: D=2190 ist das offizielle Teilmodell und passt in die Speicherlimits. Epoche wird über statischen Compiler-Pfad gelöst, ttl auf NO_CADENCE gesetzt. — Riss: Diskrepanz zwischen Abstract (5399) und Paper (5480).
-
-R-g Verdikt: B — Begründung: Der Parser-Fix und die Stern-Achse stabilisieren die kritischsten Risse ohne Architektur-Overhead. Die FDSN-Key-Aufspaltung ist für die minimale Konsistenz ebenfalls nötig. — Riss: Verbleibende sechs Restgruppen bleiben ohne Kanal-Arm.

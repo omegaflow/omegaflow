@@ -1,1 +1,0 @@
-{"error":{"code":"insufficient_balance","message":"insufficient balance: available Rp 0; this request reserves up to Rp 18 worst-case (input estimate + max_tokens x output rate). Send a shorter prompt or top up at https://kenari.id/pay","param":null,"type":"insufficient_balance"}}

@@ -1,7 +1,0 @@
- Verdict: B — Begründung: Der aktuelle Code prüft, ob das Prefix in der Liste `is_paid(prefix)` auftritt, was der aktuellen Frage entspricht, ob der Anbieter ein bezahltes Modell anbietet.
-
-Zusatz 1: Der Preis-Wahrheit sollte aus dem Katalog hergeleitet werden, da die Preise in der Regel mit den Modellen verknüpft sind.
-
-Zusatz 2: `paid-open` sollte Modell-IDs nennen, da die Preise für einzelne Modelle betrachtet werden sollen.
-
-Zusatz 3: Das gilt auch für `unorouter` und die anderen Prefixe, da die Logik für die Preisprüfung für alle Prefixe gleich ist.
