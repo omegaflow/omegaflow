@@ -19,7 +19,7 @@ printf '== register (phi/sources) ==\n'
 sgrep -i "$term" phi 2>/dev/null || true
 
 printf '== live handovers ==\n'
-sgrep -i -g 'handover-*.md' "$term" docs/handover 2>/dev/null || true
+sgrep -i -g 'handover-*.md' "$term" "$OMEGAFLOW_WORK/handover" 2>/dev/null || true
 
 printf '== spilled searches (already run) ==\n'
 if [ -n "${OMEGAFLOW_SPILL_DIR:-}" ] && [ -d "$OMEGAFLOW_SPILL_DIR" ]; then
@@ -27,7 +27,7 @@ if [ -n "${OMEGAFLOW_SPILL_DIR:-}" ] && [ -d "$OMEGAFLOW_SPILL_DIR" ]; then
 fi
 
 printf '== history (archiv) ==\n'
-sgrep -i --all -g 'handover-*.md' "$term" docs/handover/archiv 2>/dev/null || true
+sgrep -i --all -g 'handover-*.md' "$term" "$OMEGAFLOW_WORK/handover/archiv" 2>/dev/null || true
 
 printf '== docs ==\n'
 sgrep -i "$term" docs 2>/dev/null || true

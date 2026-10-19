@@ -53,7 +53,7 @@ cmd_status() {
   say "PID $pid · seit $(ps -o lstart= -p "$pid" 2>/dev/null | sed 's/^ *//') · Laufzeit $(ps -o etime= -p "$pid" 2>/dev/null | tr -d ' ')"
   say "Binary: $exe · Profil: $(profile_of "$exe")"
   [ -f "$CATALOG" ] && say "Katalog: $(basename "$CATALOG") · $(stat -c %y "$CATALOG" | cut -d. -f1) · $(( ( $(date +%s) - $(stat -c %Y "$CATALOG") ) / 3600 ))h alt"
-  say "Alive: $(tail -n +2 state/zustand/llm-gateway-alive.tsv 2>/dev/null | wc -l) Sitze"
+  say "Alive: $(tail -n +2 "${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/gateway/alive.tsv" 2>/dev/null | wc -l) Sitze"
   return 0
 }
 
