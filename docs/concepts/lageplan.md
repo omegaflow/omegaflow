@@ -16,7 +16,7 @@ bemühen, um herauszufinden, **wo etwas liegt**. Ein Eintrag je Ort — mit dem 
 | Wurzel | was dort lebt | aufgelöst von |
 |---|---|---|
 | `~/projects/omegaflow` | das öffentliche Repo (Code, docs, state, register) | `bin/_roots.sh` |
-| `~/projects/omegaflow-work` | die Werkstatt: `post/`, `sources/`, `experiments/`, `recherche/`, `tmp/` | `$OMEGAFLOW_WORK` |
+| `~/projects/omegaflow-work` | die Werkstatt: `post/`, `sources/`, `experiments/`, `recherche/`, `tmp/` — privates Repo `omegaflow/work` (Post, Funde, Recherche-Kanon; `sources/`, `experiments/`, `tmp/` bleiben lokal) | `$OMEGAFLOW_WORK` |
 | `~/projects/omegaflow-personal` | das private Haus (`kern.md`, `mail/`, `zustand/`, `future/handover/`) | `$OMEGAFLOW_PRIVATE` |
 | `/tmp/opencode` | Werkzeug-Ausgaben, Artefakte | `$OMEGAFLOW_TMP` |
 

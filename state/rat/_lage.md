@@ -1,6 +1,6 @@
-# Lage — generiert 2026-10-19T11:20:45Z
+# Lage — generiert 2026-10-19T11:25:25Z
 
-HEAD `1838d5f60`
+HEAD `e30c03230`
 
 ## Sitze / Routen (Gateway)
 - Katalog (tsv, letzter Start: 3h): 2008 · frei: 47 · Preis unbekannt: 1098 · lebendig: 13 (3h alt)
@@ -18,11 +18,11 @@ HEAD `1838d5f60`
   future     2 offen ·  2 Braucht ·  0 offene Traeger · handover-2026-10-18-future-folge1.md (Pass 1 seit 2026-10-18 · Commit 11h)
 
 ## Post (Arbeitsbaum `/home/johannes/projects/omegaflow-work`)
-- in: 51 Briefe (heute 0) · out: 90 · Postfach-Repo: `360ef87` · uncommitted: 1
+- in: 51 Briefe (heute 0) · out: 90 · Postfach-Repo: `9061bc6` · uncommitted: 0
 
 ## Wo was liegt (Kanon — hier nachsehen, nicht suchen)
 - Rat: `state/rat/` (63 Runden · Register `state/rat/_rat-register.md` · Anweisung `state/rat/_rat-anweisung.md` · Rohmaterial `state/rat/_roh/`)
-- Post: `/home/johannes/projects/omegaflow-work/post/in` (51 Briefe) · `/home/johannes/projects/omegaflow-work/post/out` (90 Dispatches)
+- Post: `/home/johannes/projects/omegaflow-work/post/in` (51 Briefe) · `/home/johannes/projects/omegaflow-work/post/out` (90 Dispatches) · Repo `omegaflow/work` (privat)
 - Quellen (CDN-gebunden, rekonstruierbar): `/home/johannes/projects/omegaflow-work/sources/` (171 Netlocs + content/, 90G)
 - Experimente (nur lokal): `/home/johannes/projects/omegaflow-work/experiments/` (8 Themen, 106M)
 - Recherche: `/home/johannes/projects/omegaflow-work/recherche/funde/` (1494 Dateien) · Flüchtiges `/home/johannes/projects/omegaflow-work/recherche/tmp/`
