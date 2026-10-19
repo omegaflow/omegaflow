@@ -891,13 +891,11 @@ pub fn reverify_mode(env: &HashMap<String, String>) -> i32 {
             ),
         });
     }
-    match std::fs::write("phi/pipeline/stage/recheck_live.φ", lines.join("\n") + "\n") {
-        Ok(_) => 0,
-        Err(e) => {
-            eprintln!("reverify: write phi/pipeline/stage/recheck_live.φ: {}", e);
-            1
-        }
+    if let Err(e) = std::fs::write("phi/pipeline/stage/recheck_live.φ", lines.join("\n") + "\n") {
+        eprintln!("reverify: write phi/pipeline/stage/recheck_live.φ: {}", e);
+        return 1;
     }
+    0
 }
 
 pub fn probe_mode(
@@ -2974,13 +2972,15 @@ fn clock_stale(clock: &HashMap<String, (f64, u32)>, url: &str, ttl: u64, now: f6
     }
 }
 
+const NO_RECORDED_FAILURES: u32 = 0;
+
 fn clock_record(clock: &mut HashMap<String, (f64, u32)>, url: &str, ok: bool) {
     let Some(now) = clock_now_unix() else {
         return;
     };
     let prev = match clock.get(url) {
         Some((_, f)) => *f,
-        None => 0,
+        None => NO_RECORDED_FAILURES,
     };
     let next = if ok {
         0

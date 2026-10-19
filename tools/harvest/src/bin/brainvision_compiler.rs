@@ -541,12 +541,13 @@ fn run(args: &[String]) -> Result<(), String> {
         let parsed = parse_bin(&bin).ok_or_else(|| {
             format!("{bin_path}: roundtrip parse void — the asset stays unverified")
         })?;
-        let n_events = match &parsed.events {
-            Some(Events::Normalized(evs)) => evs.len(),
-            Some(Events::Verbatim(_)) | None => 0,
+        let event_note = match &parsed.events {
+            Some(Events::Normalized(evs)) => format!("{} normalized events", evs.len()),
+            Some(Events::Verbatim(_)) => "verbatim events".to_string(),
+            None => "events absent".to_string(),
         };
         eprintln!(
-            "{bin_path}: {} bytes, roundtrip parses ({n_events} normalized events)",
+            "{bin_path}: {} bytes, roundtrip parses ({event_note})",
             bin.len()
         );
         staged.push(bin_path);

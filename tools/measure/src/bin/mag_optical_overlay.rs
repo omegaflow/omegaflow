@@ -664,8 +664,8 @@ fn main() {
             match onset_slot(slots, lo, hi, k) {
                 Some(i) => {
                     let lag = match optical_onset {
-                        Some(o) => (i as i64 - o as i64) * 60,
-                        None => 0,
+                        Some(o) => format!("{}", (i as i64 - o as i64) * 60),
+                        None => "absent".to_string(),
                     };
                     println!(
                         "onset {st} {} lag_s {lag}",

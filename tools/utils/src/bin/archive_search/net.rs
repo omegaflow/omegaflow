@@ -524,9 +524,10 @@ fn cdx_snapshot_lines(v: &Json) -> Vec<String> {
         Some(h) => cdx_indices(h),
         None => (0, 1, 2),
     };
-    let start = match header {
-        Some(h) if cdx_is_header(h) => 1,
-        Some(_) | None => 0,
+    let start = if header.is_some_and(cdx_is_header) {
+        1
+    } else {
+        0
     };
     for row in rows.iter().skip(start) {
         let Some(cells) = row.as_arr() else {
@@ -3813,9 +3814,7 @@ fn load_logged_yields() -> HashMap<String, f64> {
         Some(r) => r,
         None => return map,
     };
-    let body = match std::fs::read_to_string(
-        std::path::PathBuf::from(repo).join("zustand/research/queries.φ"),
-    ) {
+    let body = match std::fs::read_to_string(std::path::PathBuf::from(repo).join("queries.φ")) {
         Ok(b) => b,
         Err(_) => return map,
     };
@@ -4060,7 +4059,7 @@ fn log_query(mode: &str, query: &str, lines: &[String], max: usize) {
         Some(r) => std::path::PathBuf::from(r),
         None => return,
     };
-    let dir = repo.join("zustand/research");
+    let dir = repo.join("zustand");
     if std::fs::create_dir_all(&dir).is_err() {
         return;
     }

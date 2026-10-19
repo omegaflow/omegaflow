@@ -2,6 +2,8 @@ use crate::mathematikerin::healpix;
 use std::str::from_utf8;
 
 const FITS_ZERO_ABSENT: f64 = 0.0;
+const FITS_BINTABLE_PCOUNT_DEFAULT: usize = 0;
+const FITS_TOTVALS_ABSENT: usize = 0;
 
 #[derive(Debug)]
 pub struct FitsHeader {
@@ -159,12 +161,9 @@ impl FitsTable {
         let n_rows = header.int("NAXIS2")? as usize;
         let heap_bytes = match header.int("PCOUNT") {
             Some(v) => v as usize,
-            None => 0,
+            None => FITS_BINTABLE_PCOUNT_DEFAULT,
         };
-        let tfields = match header.int("TFIELDS") {
-            Some(v) => v as usize,
-            None => 0,
-        };
+        let tfields = header.int("TFIELDS")? as usize;
         let mut columns = Vec::new();
         let mut next_tbcol = 1usize;
         for i in 1..=tfields {
@@ -866,7 +865,7 @@ impl FitsCompressedImage {
         let datamean = header.f64("DATAMEAN");
         let totvals = match header.int("TOTVALS") {
             Some(v) => v as usize,
-            None => 0,
+            None => FITS_TOTVALS_ABSENT,
         };
         Some((
             Self {

@@ -8,6 +8,8 @@ pub const TRAILER_WORDS_PREDICT: usize = 5;
 pub const MIN_RECORD_WORDS: usize = HEADER_WORDS_ORIGINAL;
 pub const MAX_RECORD_WORDS: usize = 8192;
 
+const NO_COMPLETE_BYTES: usize = 0;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct OdrHeader {
     pub word1: u16,
@@ -109,7 +111,7 @@ pub fn record_count(bytes: &[u8]) -> usize {
 pub fn complete_bytes(bytes: &[u8]) -> usize {
     match record_spans(bytes).last() {
         Some((offset, len)) => offset + len,
-        None => 0,
+        None => NO_COMPLETE_BYTES,
     }
 }
 

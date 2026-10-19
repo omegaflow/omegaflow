@@ -19,6 +19,7 @@ const SHELF_FORCE: u8 = 0;
 const DISPERSION_S: f64 = 4.15e-3;
 const DM_SPALTE_PCCM3: f64 = 3.24;
 const FDR_LEVEL: f64 = 0.05;
+const ALL_EVENTS: usize = 0;
 
 const AIA_BANDS: [(u32, &str, f64); 7] = [
     (0, "94A", 9.4e-9),
@@ -553,7 +554,7 @@ fn main() {
     }
     let max_events: usize = match arg_value(&args, "--max-events").and_then(|s| s.parse().ok()) {
         Some(v) => v,
-        None => 0,
+        None => ALL_EVENTS,
     };
     let shelf_path = arg_value(&args, "--write-shelf");
     let checkpoint_path = arg_value(&args, "--checkpoint");

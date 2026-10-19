@@ -29,6 +29,8 @@ const TAG_MODEL_PIXEL_SCALE: u16 = 33550;
 const TAG_MODEL_TIEPOINT: u16 = 33922;
 const TAG_GEO_KEY_DIRECTORY: u16 = 34735;
 const GEO_KEY_GEOGRAPHIC_TYPE: u16 = 2048;
+const EPSG_ABSENT: u16 = 0;
+const ABSENT_GEO: (f64, f64, f64, f64) = (0.0, 0.0, 0.0, 0.0);
 
 struct Tag {
     typ: u16,
@@ -569,7 +571,7 @@ fn write_bin(path: &str, dem: &Dem) -> Result<(), String> {
         .map_err(|e| format!("write {path} returned void: {e}"))?;
     let epsg: u16 = match dem.epsg {
         Some(e) => e,
-        None => 0,
+        None => EPSG_ABSENT,
     };
     f.write_all(&(dem.width as u32).to_le_bytes())
         .and_then(|_| f.write_all(&(dem.height as u32).to_le_bytes()))
@@ -578,7 +580,10 @@ fn write_bin(path: &str, dem: &Dem) -> Result<(), String> {
     let flags = if dem.geo.is_some() { 1u8 } else { 0u8 };
     f.write_all(&[flags, 0u8])
         .map_err(|e| format!("write {path} returned void: {e}"))?;
-    let (west, north, plon, plat) = dem.geo.unwrap_or((0.0, 0.0, 0.0, 0.0));
+    let (west, north, plon, plat) = match dem.geo {
+        Some(g) => g,
+        None => ABSENT_GEO,
+    };
     for v in [west, north, plon, plat] {
         f.write_all(&v.to_le_bytes())
             .map_err(|e| format!("write {path} returned void: {e}"))?;

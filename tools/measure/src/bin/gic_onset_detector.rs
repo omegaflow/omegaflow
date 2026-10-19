@@ -7,6 +7,7 @@ const MINUTE: f64 = 60.0;
 const MIN_SEPARATION_S: f64 = 1800.0;
 const MAD_K: f64 = 6.0;
 const ROBUST_SIGMA: f64 = 1.4826;
+const NO_SURROGATES: usize = 0;
 
 #[derive(Debug, PartialEq)]
 struct Onset {
@@ -437,7 +438,7 @@ fn run_sweep(series: &[(f64, f64)], station: &str, csv: &str, args: &[String]) {
                 std::process::exit(2);
             }
         },
-        None => 0,
+        None => NO_SURROGATES,
     };
     let span = hi - lo;
     println!(

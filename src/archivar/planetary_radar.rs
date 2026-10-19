@@ -15,6 +15,7 @@ const P_ROUNDTRIP: u32 = 1 << 1;
 const P_SIGMA: u32 = 1 << 2;
 const P_FREQ: u32 = 1 << 3;
 const P_TIME_SCALE: u32 = 1 << 4;
+const TIME_SCALE_ABSENT: u32 = 0;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TimeScale {
@@ -181,7 +182,7 @@ pub fn write_bin(records: &[RadarRange]) -> Option<Vec<u8>> {
                 present |= P_TIME_SCALE;
                 s.code()
             }
-            None => 0,
+            None => TIME_SCALE_ABSENT,
         };
         out.extend_from_slice(&u32::from(r.planet).to_le_bytes());
         out.extend_from_slice(&u32::from(r.xmit_station).to_le_bytes());

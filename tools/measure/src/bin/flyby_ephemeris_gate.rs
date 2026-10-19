@@ -124,13 +124,7 @@ fn coverage_seconds(map: &HashMap<String, BodyEphemeris>) -> Option<(f64, f64)> 
     }
 }
 
-fn max_dev_km(
-    a: &Line,
-    b: &Line,
-    t_lo: f64,
-    t_hi: f64,
-    step: f64,
-) -> (Option<f64>, usize, usize) {
+fn max_dev_km(a: &Line, b: &Line, t_lo: f64, t_hi: f64, step: f64) -> (Option<f64>, usize, usize) {
     let n = ((t_hi - t_lo) / step).floor() as usize + 1;
     let mut max = 0.0f64;
     let mut void = 0usize;
@@ -368,7 +362,10 @@ fn main() {
     let de441 = load_line("de441", &de441_juice, &de441_earth);
     let de442 = load_line("de442", &de442_juice, &de442_earth);
 
-    let window_tdb = match (nominal_window, sealed.as_ref().and_then(|l| coverage_seconds(&l.bodies))) {
+    let window_tdb = match (
+        nominal_window,
+        sealed.as_ref().and_then(|l| coverage_seconds(&l.bodies)),
+    ) {
         (Some((lo, hi)), Some((slo, shi))) => {
             let wlo = lo.max(slo);
             let whi = hi.min(shi);
@@ -376,11 +373,6 @@ fn main() {
         }
         _ => None,
     };
-    let n_steps = match window_tdb {
-        Some((lo, hi)) => ((hi - lo) / step).floor() as usize + 1,
-        None => 0,
-    };
-
     let sealed_sha = file_sha(&sealed_path);
     let renewed_sha = file_sha(&renewed_path);
     let recon_sha = file_sha(&recon_path);
@@ -426,9 +418,12 @@ fn main() {
         _ => println!("perigee: pending — the civil date or the leap table carries no value"),
     }
     match window_tdb {
-        Some((lo, hi)) => println!(
-            "window: ±{window_days} d nominal, sealed arc {lo}..{hi} tdb s, step {step_hours} h, {n_steps} samples"
-        ),
+        Some((lo, hi)) => {
+            let n_steps = ((hi - lo) / step).floor() as usize + 1;
+            println!(
+                "window: ±{window_days} d nominal, sealed arc {lo}..{hi} tdb s, step {step_hours} h, {n_steps} samples"
+            )
+        }
         None => {
             println!("window: pending — the sealed arc carries no coverage to bound the window")
         }
@@ -526,7 +521,10 @@ mod tests {
 
     #[test]
     fn register_pin_reads_the_pinned_post() {
-        assert_eq!(register_pin(&snippet(PIN), SEALED_ASSET), Some(PIN.to_string()));
+        assert_eq!(
+            register_pin(&snippet(PIN), SEALED_ASSET),
+            Some(PIN.to_string())
+        );
     }
 
     #[test]

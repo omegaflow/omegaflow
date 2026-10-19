@@ -1,6 +1,7 @@
 const MAGIC: [u8; 4] = *b"fLaC";
 const BIN_MAGIC: [u8; 4] = *b"FLCS";
 const STREAMINFO_TYPE: u8 = 0;
+const NO_PREDICTION: i64 = 0;
 
 pub const COMP_PCM: u32 = 1;
 
@@ -244,7 +245,7 @@ fn decode_subframe(bits: &mut Bits, header: &SubframeHeader, out: &mut [i32]) ->
                 }
                 let res = read_rice(bits, bps as u32)? as i64;
                 let pred: i64 = match order {
-                    0 => 0,
+                    0 => NO_PREDICTION,
                     1 => warm[0],
                     2 => 2 * warm[0] - warm[1],
                     3 => 3 * warm[0] - 3 * warm[1] + warm[2],

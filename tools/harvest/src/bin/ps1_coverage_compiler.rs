@@ -21,6 +21,8 @@ const PS1_COVERAGE_TAG: &str = "ssd.jpl.nasa.gov-ps1";
 const PROBE_WORKERS: u32 = 8;
 const PLANE_WORKERS: usize = 4;
 const SUBCELL_MAX: u32 = 99;
+const SUBCELL_MIN: u32 = 0;
+const RA_GRID_ORIGIN: f64 = 0.0;
 const PROJ_SEARCH_HIGH: u32 = 9999;
 const PROJ_SOUTH_SEED: u32 = 637;
 const PROJ_NORTH_SEED: u32 = 2643;
@@ -511,7 +513,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let limit: Option<u64> = arg_value(args, "--limit").and_then(|s| s.parse().ok());
     let ra0: f64 = match f64_arg(args, "--ra0") {
         Some(v) => v,
-        None => 0.0,
+        None => RA_GRID_ORIGIN,
     };
     let dec0: f64 = match f64_arg(args, "--dec0") {
         Some(v) => v,
@@ -578,7 +580,7 @@ fn run(args: &[String]) -> Result<(), String> {
         slab_tag = ps1_slab_tag(proj_min);
         let sub_min = match u32_arg(args, "--sub-min") {
             Some(v) => v,
-            None => 0,
+            None => SUBCELL_MIN,
         };
         let sub_max = match u32_arg(args, "--sub-max") {
             Some(v) => v,

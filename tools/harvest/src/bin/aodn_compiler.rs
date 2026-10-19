@@ -18,6 +18,8 @@ const COMPILER: &str = "tools/harvest/src/bin/aodn_compiler.rs";
 const MAGIC: [u8; 4] = *b"AODN";
 const REC_BYTES: usize = 26 * 8;
 const DEFAULT_COUNT: usize = 256;
+const SURFACE_ALT: f64 = 0.0;
+const FIRST_OBSERVATION: usize = 0;
 
 struct FieldMap {
     source: &'static str,
@@ -302,7 +304,7 @@ fn observations(
                 }
                 -dv
             }
-            None => 0.0,
+            None => SURFACE_ALT,
         };
         let ii = inst.values[i];
         if !ii.is_finite() || ii < 0.0 {
@@ -424,7 +426,7 @@ fn run(args: &[String]) -> Result<(), String> {
         Some(v) => v
             .parse::<usize>()
             .map_err(|_| format!("--start '{v}' is not an index"))?,
-        None => 0,
+        None => FIRST_OBSERVATION,
     };
     let want = match arg_value(args, "--count") {
         Some(v) => v

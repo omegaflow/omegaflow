@@ -1934,6 +1934,7 @@ pub fn x_shift_surrogate(v: &[f32], rng: &mut u64) -> Vec<f32> {
 }
 
 const RESTRICTED_PERMUTATION_BINS: usize = 32;
+const NO_CONDITIONING_DIM: usize = 0;
 
 pub fn restricted_permutation_surrogate(v: &[f32], rng: &mut u64) -> Vec<f32> {
     let n = v.len();
@@ -2814,7 +2815,7 @@ pub fn transfer_entropy_embedded_ksg_conditional(
     }
     let dim_z = match emb_z.first() {
         Some(s) => s.len(),
-        None => 0,
+        None => NO_CONDITIONING_DIM,
     };
     if dim_z > 0 {
         if lags.z == 0 {

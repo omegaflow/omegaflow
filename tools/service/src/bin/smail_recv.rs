@@ -4,6 +4,8 @@ use std::time::Duration;
 
 use omegaflow::json::{JsonVal, parse_json};
 
+const NO_CONTENT_LENGTH: usize = 0;
+
 fn main() {
     let port: u16 = env_u64("OMEGAFLOW_MAIL_PORT", 1619) as u16;
     let token = env_str("OMEGAFLOW_MAIL_TOKEN", "");
@@ -121,7 +123,7 @@ fn read_request(
             Ok(n) => n,
             Err(_) => return None,
         },
-        None => 0,
+        None => NO_CONTENT_LENGTH,
     };
     let mut body = buf[header_end + 4..].to_vec();
     while body.len() < content_length {
