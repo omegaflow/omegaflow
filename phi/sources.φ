@@ -2152,591 +2152,6 @@ field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
 field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
 field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_02.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_03.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_04.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_05.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_06.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_07.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_08.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_09.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_10.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_11.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_12.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2013_fullyear.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_01.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_02.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_03.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_04.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_05.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_06.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_07.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_08.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_09.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_10.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_11.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_12.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_fullyear.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2014_lines.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_01.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_02.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_03.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_04.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_05.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_06.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_07.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_08.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_09.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_10.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_11.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_12.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia2015_fullyear.bin
-terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
-format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch
-compiler tools/harvest/src/bin/aia_compiler.rs
-at sun
-ttl 86400
-field aia_94_dn aia_94_dn inverse-square em count 86400 0.0 0.0
-field aia_131_dn aia_131_dn inverse-square em count 86400 0.0 0.0
-field aia_171_dn aia_171_dn inverse-square em count 86400 0.0 0.0
-field aia_193_dn aia_193_dn inverse-square em count 86400 0.0 0.0
-field aia_211_dn aia_211_dn inverse-square em count 86400 0.0 0.0
-field aia_304_dn aia_304_dn inverse-square em count 86400 0.0 0.0
-field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/hmi_m_720s.bin
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format hmi
@@ -14674,6 +14089,50 @@ field w50 wallaby_w50_hz inverse-square em Hz 31536000 0.0 0.0
 field dist_h wallaby_dist_mpc inverse-square geometry mpc 31536000 0.0 0.0
 field log_m_hi wallaby_log_m_hi_dex inverse-square geometry 1 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/hipass_bgc.json
+terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
+format json
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/AJ/128/16/table2
+compiler tools/harvest/src/bin/tap_compiler.rs
+sha256 e7a6ee02332f70dc05e6b03d50b6579f48ee4b6f699495bb23546f3ec1cd655d
+at sun
+no-cadence
+cmap .
+ra ra
+dec dec
+field ra hipass_ra_deg inverse-square geometry deg 31536000 0.0 0.0
+field dec hipass_dec_deg inverse-square geometry deg 31536000 0.0 0.0
+field fhi hipass_hi_flux inverse-square em Jy_km/s 31536000 0.0 0.0
+field efhi hipass_hi_flux_err inverse-square em Jy_km/s 31536000 0.0 0.0
+field w50 hipass_w50_km_s inverse-square advective km/s 31536000 0.0 0.0
+field w20 hipass_w20_km_s inverse-square advective km/s 31536000 0.0 0.0
+field vsys hipass_vsys_km_s inverse-square advective km/s 31536000 0.0 0.0
+field vlg hipass_vlg_km_s inverse-square advective km/s 31536000 0.0 0.0
+field logm hipass_log_m_hi_dex inverse-square geometry 1 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/alfalfa40.json
+terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
+format json
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/AJ/142/170/table1
+compiler tools/harvest/src/bin/tap_compiler.rs
+sha256 b92c126e625ec78fcc3217f4a218e5adf297faa492374c95c2c958fead8e1ff3
+at sun
+no-cadence
+cmap .
+ra ra
+dec dec
+field ra alfalfa40_ra_deg inverse-square geometry deg 31536000 0.0 0.0
+field dec alfalfa40_dec_deg inverse-square geometry deg 31536000 0.0 0.0
+field cz alfalfa40_cz_km_s inverse-square advective km/s 31536000 0.0 0.0
+field w50 alfalfa40_w50_km_s inverse-square advective km/s 31536000 0.0 0.0
+field ew50 alfalfa40_w50_err_km_s inverse-square advective km/s 31536000 0.0 0.0
+field si alfalfa_hi_flux inverse-square em Jy_km/s 31536000 0.0 0.0
+field esi alfalfa_hi_flux_err inverse-square em Jy_km/s 31536000 0.0 0.0
+field snr alfalfa40_snr inverse-square em 1 31536000 0.0 0.0
+field rms alfalfa40_rms_mjy inverse-square em mJy 31536000 0.0 0.0
+field dist alfalfa40_dist_mpc inverse-square geometry mpc 31536000 0.0 0.0
+field logm alfalfa40_log_m_hi_dex inverse-square geometry 1 31536000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format catalog_des_y6
@@ -14852,14 +14311,17 @@ format gbm_tgf
 origin https://fermi.gsfc.nasa.gov/ssc/data/access/gbm/tgf/gbm_tgf_catalog_offline.csv
 sha256 f75cf291b0f1d524746d7f4d3bb5bb6336a3e89e40c5649e9cf02dbee233ea07
 on earth 0 0 0
-map .
-lat Lat
-lon Lon
+rows
+lat_key Lat
+lon_key Lon
 no-cadence
 field BGO_0_N gbm_tgf_bgo0_counts inverse-square em count 31536000 0.0 0.0
 field BGO_1_N gbm_tgf_bgo1_counts inverse-square em count 31536000 0.0 0.0
 field NAI_N gbm_tgf_nai_counts inverse-square em count 31536000 0.0 0.0
 field Width_ms gbm_tgf_width_ms inverse-square em ms 31536000 0.0 0.0
+field Lat gbm_tgf_lat inverse-square geometry deg 31536000 0.0 0.0
+field Lon gbm_tgf_lon inverse-square geometry deg 31536000 0.0 0.0
+field Alt gbm_tgf_alt inverse-square geometry km 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/firms.modaps.eosdis.nasa.gov/MODIS_C6_1_Global_7d.csv
 terms PD-USGov https://sti.nasa.gov/disclaimers/
