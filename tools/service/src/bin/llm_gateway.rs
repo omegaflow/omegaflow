@@ -2715,15 +2715,6 @@ fn main() {
         let auth = auth.clone();
         std::thread::spawn(move || {
             let alive_path = format!("{}/state/zustand/llm-gateway-alive.tsv", repo_root());
-            if let Ok(meta) = fs::metadata(&alive_path) {
-                if let Ok(modified) = meta.modified() {
-                    if let Ok(elapsed) = modified.elapsed() {
-                        if elapsed.as_secs() < 86_400 {
-                            return;
-                        }
-                    }
-                }
-            }
             let Some(models) = MODELS.get() else {
                 return;
             };
