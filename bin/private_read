@@ -20,7 +20,7 @@ case "$f" in
   *) printf 'private_read: %s is outside the private house\n' "$f" >&2; exit 2 ;;
 esac
 [ -f "$f" ] || { printf 'private_read: no such file: %s\n' "$f" >&2; exit 2; }
-map="$priv/redact.map"
+map="$priv/credentials/redact.map"
 [ -f "$map" ] || map=/dev/null
 
 filter="$(mktemp)"
@@ -45,6 +45,14 @@ s/[A-Z]\{2\}[0-9]\{2\}[A-Z0-9]\{10,\}/<IBAN>/g
 s/[A-ZÄÖÜ][a-zäöüß-]\{2,\}\(straße\|str\.\|weg\|gasse\|platz\|allee\|ring\|damm\|ufer\)[[:space:]]\{0,2\}[0-9]\{1,4\}[a-z]\{0,1\}\b/<ADDR>/g
 s/[0-9]\{5\}[[:space:]]\{1,2\}[A-ZÄÖÜ][a-zäöüß-]\{2,\}/<ORT>/g
 s/\b\(Tel\|Telefon\|Mobil\|Handy\|Fax\)[[:space:]]*[:.]*[[:space:]]*[+0-9][0-9 ()/.-]\{5,\}[0-9]\b/<TEL>/g
+# Teilstrings, nicht komplette Zeichenketten (Operator-Wort 2026-10-19):
+# steht irgendwo "j.tyr", "corneli" oder "0815", ist es derselbe Name/Ort/Nick
+# und geht weg — jede Schreibvariante, jede Wortmitte, case-insensitiv.
+s/[A-Za-z0-9_.-]*tyr[a-z0-9_.-]*/<PERSON>/gI
+s/[A-Za-z0-9_.-]*johannes[a-z0-9_.-]*/<PERSON>/gI
+s/[A-Za-z0-9_.-]*corneli[a-z0-9_.-]*/<ADDR>/gI
+s/[A-Za-z0-9_.-]*dachsberg[a-z0-9_.-]*/<ORT>/gI
+s/[A-Za-z0-9_.-]*0815[a-z0-9_.-]*/<USER>/gI
 SED
 
 # ---- Stage 1: the map ----
@@ -77,7 +85,10 @@ awk -F'=' '
 ' "$map" | sort -rn | while IFS="$(printf '\t')" read -r _ real ph; do
   esc="$(printf '%s' "$real" | sed 's/[][\\.*^$/&]/\\&/g')"
   escph="$(printf '%s' "$ph" | sed 's/[\\/&]/\\&/g')"
-  printf 's/%s/%s/g\n' "$esc" "$escph" >> "$mapscript"
+  # I-Flag: case-insensitiv. Ein Schwärzer darf über-schwärzen, nie unter —
+  # Namensvarianten eines Menschen sind derselbe Name (Befund Dry-Run 2026-10-19:
+  # 14 Handovers behielten einen Handle in Kleinschreibung, weil das Sed case-sensitiv war).
+  printf 's/%s/%s/gI\n' "$esc" "$escph" >> "$mapscript"
 done
 
 stage1="$(awk '

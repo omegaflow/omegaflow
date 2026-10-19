@@ -5,6 +5,10 @@ debug/
 omegaflow.wasm
 .opencode/*
 !.opencode/commands/
+
+# Agenten-Konfiguration — Maschinenlokal (Pfade auf das private Haus, Modellwahl,
+# Cage-Regeln). Gehoert nicht in einen oeffentlichen Baum.
+/opencode.json
 *.pdb
 phi/health.json
 phi/kernels/
