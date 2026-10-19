@@ -42,6 +42,13 @@ const PE_SEGMENT_CELLS: usize = 256;
 const PE_ORDER: usize = 4;
 const PE_DELAY: usize = 1;
 const PE_RING_MAX: usize = 16;
+const PC_PLANTED_LAG: usize = 2;
+const PC_COUPLING: f64 = 0.9;
+const PC_DRIVER_AR: f64 = 0.0;
+const PC_TARGET_AR: f64 = 0.7;
+const PC_DRIVER_NOISE: f64 = 1.0;
+const PC_TARGET_NOISE: f64 = 0.3;
+const PC_SEED: u64 = 0x5052_4F42_45DB_1E01;
 
 #[derive(Clone, Copy, PartialEq)]
 enum Anchor {
@@ -169,6 +176,45 @@ fn median(vals: &mut [f64]) -> Option<f64> {
     }
     vals.sort_by(f64::total_cmp);
     Some(vals[vals.len() / 2])
+}
+
+fn pc_uniform(state: &mut u64) -> f64 {
+    let mut x = *state;
+    x ^= x >> 12;
+    x ^= x << 25;
+    x ^= x >> 27;
+    *state = x;
+    let v = x.wrapping_mul(0x2545_F491_4F6C_DD1D);
+    (v >> 11) as f64 / (1u64 << 53) as f64
+}
+
+fn pc_normal(state: &mut u64) -> f64 {
+    let u1 = pc_uniform(state).max(1e-12);
+    let u2 = pc_uniform(state);
+    (-2.0 * u1.ln()).sqrt() * (std::f64::consts::TAU * u2).cos()
+}
+
+fn planted_pair(n: usize, planted_lag: usize, seed: u64) -> (Vec<f32>, Vec<f32>) {
+    let mut state = seed | 1;
+    let mut driver = vec![0.0f64; n];
+    let mut target = vec![0.0f64; n];
+    let mut d = 0.0f64;
+    let mut x = 0.0f64;
+    for t in 0..n {
+        d = PC_DRIVER_AR * d + PC_DRIVER_NOISE * pc_normal(&mut state);
+        let lagged = if t >= planted_lag {
+            driver[t - planted_lag]
+        } else {
+            0.0
+        };
+        x = PC_TARGET_AR * x + PC_COUPLING * lagged + PC_TARGET_NOISE * pc_normal(&mut state);
+        driver[t] = d;
+        target[t] = x;
+    }
+    (
+        driver.into_iter().map(|v| v as f32).collect(),
+        target.into_iter().map(|v| v as f32).collect(),
+    )
 }
 
 fn pe_gate(driver: &[f32]) -> Option<bool> {
@@ -901,6 +947,88 @@ fn main() {
             "{:>6} → {:<6} | {} — the cone check does not stand (0 honored)",
             from, to, reason
         );
+    }
+
+    println!();
+    println!("=== Positivkontrolle — planted coupling, same run, same cone machine ===");
+    if let Some(d) = d_sun_wind {
+        let (pc_driver, pc_target) = planted_pair(n, PC_PLANTED_LAG, PC_SEED);
+        let mut pc_best: Option<(usize, f64, f64)> = None;
+        let mut pc_field: Vec<(usize, f64, f64)> = Vec::new();
+        for &lag in &LAGS {
+            let Some(te) = transfer_entropy_lag(&pc_target, &pc_driver, lag) else {
+                continue;
+            };
+            let seed = PC_SEED ^ (lag as u64).wrapping_mul(0x517C_C1B7_2722_0A95);
+            let surrs = surrogate_te_values(&pc_target, &pc_driver, lag, seed);
+            let Some(thr) = mean_plus_2sigma(&surrs) else {
+                continue;
+            };
+            pc_field.push((lag, te, thr));
+            if pc_best.map_or(true, |(_, b, _)| te > b) {
+                pc_best = Some((lag, te, thr));
+            }
+        }
+        println!(
+            "TE field: {}",
+            pc_field
+                .iter()
+                .map(|(l, te, thr)| format!("lag {l} d: TE {te:.4e} / thr {thr:.4e}"))
+                .collect::<Vec<_>>()
+                .join(" | ")
+        );
+        match pc_best {
+            Some((best_lag, te, thr)) => {
+                let tau_s = best_lag as f64 * DAY;
+                match cone_reach(FORCE_EM, 0.0, tau_s) {
+                    Some(reach) => {
+                        let holds = reach >= d;
+                        let arrow = te > fam;
+                        let pe = pe_gate(&pc_target);
+                        println!(
+                            "driver (sun) → target (wind) | planted τ {} d | measured τ {} d = {:.3e} s | TE {:.4e} | pair thr {:.4e} | fam {:.4e} | {}",
+                            PC_PLANTED_LAG,
+                            best_lag,
+                            tau_s,
+                            te,
+                            thr,
+                            fam,
+                            if arrow { "PFEIL" } else { "under fam" }
+                        );
+                        println!(
+                            "d(sun↔wind) = {:.3e} m | d/c = {:.3e} s = {:.3} min | reach(τ) = {:.3e} m | τ ≥ d/c: {} | PE gate: {} | Positivkontrolle: {}",
+                            d,
+                            d / C_LIGHT,
+                            d / C_LIGHT / 60.0,
+                            reach,
+                            if tau_s >= d / C_LIGHT { "ja" } else { "nein" },
+                            match pe {
+                                Some(true) => "PE jump (caveat)",
+                                Some(false) => "no jump",
+                                None => "no statement",
+                            },
+                            if arrow && holds && best_lag == PC_PLANTED_LAG {
+                                "BESTANDEN (Pfeil within the cone)"
+                            } else if !arrow {
+                                "NICHT BESTANDEN (no arrow)"
+                            } else if !holds {
+                                "NICHT BESTANDEN (arrow outside the cone)"
+                            } else {
+                                "NICHT BESTANDEN (measured τ ≠ planted τ)"
+                            }
+                        );
+                    }
+                    None => println!(
+                        "Positivkontrolle: the em law carries no reach — NICHT BESTANDEN (absent)"
+                    ),
+                }
+            }
+            None => println!(
+                "Positivkontrolle: no TE field — NICHT BESTANDEN (the planted pair stays unmeasured)"
+            ),
+        }
+    } else {
+        println!("Positivkontrolle: d(sun↔wind) absent — NICHT BESTANDEN (no d/c, no cone test)");
     }
 
     println!();
