@@ -69,6 +69,12 @@ if [ -d "$WORK/zustand" ]; then
     [ "$dirty" -gt 0 ] && finding "WORK_DIRTY	$dirty"
 fi
 
+for r in "PUBLIC:$PWD" "WORK:$WORK"; do
+    name="${r%%:*}"; dir="${r#*:}"
+    ahead=$(git -C "$dir" rev-list --count "@{u}..HEAD" 2>/dev/null)
+    [ -n "${ahead:-}" ] && [ "$ahead" -gt 0 ] && finding "${name}_UNPUSHED	$ahead"
+done
+
 say "layout_check: $findings finding(s) · repo top $(printf '%s' "$REPO_TOP" | wc -w) declared · tmp ${TMP} · work ${WORK}"
 if [ "$FAIL" = "1" ] && [ "$findings" -gt 0 ]; then
     exit 2
