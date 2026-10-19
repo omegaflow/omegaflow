@@ -56,16 +56,8 @@ Ein echter Riss = zwei **wahre** Zeilen, die sich nicht einigen (der bleibt). Di
 - **Echter Riss bleibt:** wo zwei Skalen **beide gemessen** vorliegen und nicht konvergieren, stehen **beide** (nie gemittelt).
 
 ## Mail an re3data (Operator-Hand)
-> **To:** `info@re3data.org` — **Subject:** Correction — r3d100011154 (China Earthquake Data Center): `dataAccess` measured gated
->
-> Hello,
->
-> Your record `r3d100011154` (China Earthquake Data Center) lists Database and Data access as *open*. Measured 2026-10-14: the gravity and GNSS datasets at `data.earthquake.cn` require login (用户登录) and an order / offline request (数据共享方式: 离线获取 / 下订单); only the station metadata is free without an account. The record's own description already notes "It is only open in the Seismological Bureau."
->
-> Suggest correcting the access fields, or noting the measured condition. Our measurements: `https://data.earthquake.cn/datashare/report.shtml?PAGEID=normalordercheck&dtid=…` (login wall), `https://data.earthquake.cn/D18000/index.html` (重力测量数据).
->
-> Thanks for maintaining the index.
 
+Der Entwurf liegt im privaten Haus: `omegaflow-private/mail/2026-10-15-re3data-korrektur.md`. Kein Mailtext im oeffentlichen Repo.
 
 ## Zwei Mails (Operator-Hand)
 1. **CEIC-Schwere** — Antrag/Anfrage an `datashare@seis.ac.cn` (国家地震科学数据中心).
