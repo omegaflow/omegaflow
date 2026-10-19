@@ -310,18 +310,18 @@ fn main() {
         "earliest trio (14/43/63) floor day: {}",
         opt_day_label(et)
     ));
-    let last_day = match last_t {
-        Some(t) => t.daycount(),
-        None => 0,
-    };
-    match et {
-        Some(d) => {
-            let gap = d + J2000_UNIX_D - last_day;
+    let last_day = last_t.as_ref().map(|t| t.daycount());
+    match (et, last_day) {
+        (Some(d), Some(last)) => {
+            let gap = d + J2000_UNIX_D - last;
             push(format!(
                 "calendar gap from last ODR day to earliest trio floor day: {gap} days"
             ));
         }
-        None => push("trio floor days: none".to_string()),
+        (Some(_), None) => {
+            push("last ODR day: absent — the calendar gap stays undetermined".to_string())
+        }
+        (None, _) => push("trio floor days: none".to_string()),
     }
 
     let trio_cells: Vec<&(i64, i64, i64, usize, f64)> =

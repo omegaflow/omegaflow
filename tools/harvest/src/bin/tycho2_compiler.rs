@@ -6,6 +6,8 @@ use std::process::Command;
 
 const STAR_RECORD_STRIDE: usize = 56;
 
+const HIP_ABSENT: i32 = 0;
+
 struct StarRow {
     hip: i32,
     ra_deg: f64,
@@ -59,7 +61,7 @@ fn load_tyc1(path: &str, map: &mut HashMap<(i32, i32, i32), SupplRow>) -> usize 
         };
         let hip: i32 = match field(b, 211, 216).and_then(|s| s.trim().parse().ok()) {
             Some(h) => h,
-            None => 0,
+            None => HIP_ABSENT,
         };
         let (Some(t1s), Some(t2s), Some(t3s)) = (field(b, 3, 6), field(b, 8, 11), field(b, 13, 14))
         else {
@@ -148,7 +150,7 @@ fn load_suppl(path: &str, map: &mut HashMap<(i32, i32, i32), SupplRow>) -> usize
         };
         let hip: i32 = match field(b, 116, 121).and_then(|s| s.trim().parse().ok()) {
             Some(h) => h,
-            None => 0,
+            None => HIP_ABSENT,
         };
         let Some(key) = tyc_key(line) else {
             continue;
@@ -191,7 +193,7 @@ fn parse_tgas_record(line: &str) -> Option<StarRow> {
     }
     let hip: i32 = match f[0].trim().parse().ok() {
         Some(h) => h,
-        None => 0,
+        None => HIP_ABSENT,
     };
     let ra = f[6].trim().parse::<f64>().ok()?;
     let dec = f[8].trim().parse::<f64>().ok()?;
@@ -236,7 +238,7 @@ fn parse_tyc2_record(
     let mut sig_pmdec = num(b, 71, 74).filter(|v| v.is_finite() && *v > 0.0);
     let mut hip: i32 = match field(b, 143, 148).and_then(|s| s.trim().parse().ok()) {
         Some(h) => h,
-        None => 0,
+        None => HIP_ABSENT,
     };
     if ra.is_none() || dec.is_none() {
         let Some(s) = suppl.get(&key).or_else(|| tyc1.get(&key)) else {
@@ -665,7 +667,7 @@ fn main() {
             }
             let hip: i32 = match field(b, 9, 14).and_then(|s| s.trim().parse().ok()) {
                 Some(h) => h,
-                None => 0,
+                None => HIP_ABSENT,
             };
             let Some(pm_ra) = num(b, 88, 95) else {
                 continue;
@@ -777,7 +779,10 @@ fn main() {
     let mut tyc1: HashMap<(i32, i32, i32), SupplRow> = HashMap::new();
     let t1 = match &tyc1_path {
         Some(p) => load_tyc1(p, &mut tyc1),
-        None => 0,
+        None => {
+            eprintln!("tyc1 file absent — 0 records loaded");
+            0
+        }
     };
     eprintln!("tyc1: {} records", t1);
     let mut suppl: HashMap<(i32, i32, i32), SupplRow> = HashMap::new();

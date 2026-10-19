@@ -135,10 +135,17 @@ fn main() {
         };
         let mut gained = 0usize;
         for item in arr {
-            let id = jpath_val(item, &id_field).map(scalar).unwrap_or_default();
-            let title = jpath_val(item, &title_field)
-                .map(scalar)
-                .unwrap_or_default();
+            let id = match jpath_val(item, &id_field).map(scalar) {
+                Some(id) => id,
+                None => {
+                    eprintln!("record without '{id_field}': skipped");
+                    continue;
+                }
+            };
+            let title = match jpath_val(item, &title_field).map(scalar) {
+                Some(title) => title,
+                None => "absent".to_string(),
+            };
             if id.is_empty() {
                 continue;
             }

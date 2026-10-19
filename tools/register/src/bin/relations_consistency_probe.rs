@@ -178,7 +178,9 @@ fn table_columns(text: &str) -> Vec<Vec<Column>> {
             rows.push(cells);
             i += 1;
         }
-        let ncols = rows.iter().map(|r| r.len()).max().unwrap_or(0);
+        let Some(ncols) = rows.iter().map(|r| r.len()).max() else {
+            continue;
+        };
         let mut cols: Vec<Column> = Vec::new();
         for j in 0..ncols {
             let mut col: Column = Vec::new();
@@ -314,10 +316,10 @@ fn main() {
     let mut total = 0usize;
     for f in &files {
         let findings = process(f);
-        let base = Path::new(f)
-            .file_name()
-            .map(|s| s.to_string_lossy().into_owned())
-            .unwrap_or_else(|| f.clone());
+        let base = match Path::new(f).file_name() {
+            Some(name) => name.to_string_lossy().into_owned(),
+            None => f.clone(),
+        };
         println!("\n## {base}");
         if findings.is_empty() {
             println!("  no steepest-step contradictions (0 honored)");

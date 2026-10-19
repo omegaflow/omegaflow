@@ -127,13 +127,23 @@ fn format_f64(x: f64) -> String {
 fn unix_of_datetime_utc(dt: &str) -> f64 {
     let parts: Vec<&str> = dt.split(['-', 'T', ':', ' ']).collect();
     if parts.len() < 5 {
-        return 0.0;
+        return f64::NAN;
     }
-    let y: i64 = parts[0].parse().unwrap_or(0);
-    let mo: i64 = parts[1].parse().unwrap_or(0);
-    let d: i64 = parts[2].parse().unwrap_or(0);
-    let h: i64 = parts[3].parse().unwrap_or(0);
-    let mi: i64 = parts[4].parse().unwrap_or(0);
+    let Ok(y) = parts[0].parse::<i64>() else {
+        return f64::NAN;
+    };
+    let Ok(mo) = parts[1].parse::<i64>() else {
+        return f64::NAN;
+    };
+    let Ok(d) = parts[2].parse::<i64>() else {
+        return f64::NAN;
+    };
+    let Ok(h) = parts[3].parse::<i64>() else {
+        return f64::NAN;
+    };
+    let Ok(mi) = parts[4].parse::<i64>() else {
+        return f64::NAN;
+    };
     let mut days = 0;
     let mut yy = 1970;
     while yy < y {
@@ -290,8 +300,30 @@ fn harvest_open_meteo(station: &Station, ws: &str, we: &str) -> Vec<Series> {
         }
     };
     let times = json_string_array(&body, "time");
-    let temp = json_value_by_key(&body, "temperature_2m").unwrap_or_default();
-    let prec = json_value_by_key(&body, "precipitation").unwrap_or_default();
+    let temp = json_value_by_key(&body, "temperature_2m");
+    let prec = json_value_by_key(&body, "precipitation");
+    let (Some(temp), Some(prec)) = (temp, prec) else {
+        return vec![
+            Series {
+                station: station.id,
+                variable: "temperature_2m",
+                window_start: ws.to_string(),
+                window_end: we.to_string(),
+                t: vec![],
+                v: vec![],
+                pending: Some("open-meteo delivered no series".into()),
+            },
+            Series {
+                station: station.id,
+                variable: "precipitation",
+                window_start: ws.to_string(),
+                window_end: we.to_string(),
+                t: vec![],
+                v: vec![],
+                pending: Some("open-meteo delivered no series".into()),
+            },
+        ];
+    };
     if times.is_empty() || temp.is_empty() {
         return vec![
             Series {

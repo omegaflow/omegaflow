@@ -111,10 +111,13 @@ fn civil_from_days(z: i64) -> (i64, i64, i64) {
 }
 
 fn today() -> String {
-    let secs = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_secs() as i64)
-        .unwrap_or(0);
+    let secs = match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) => d.as_secs() as i64,
+        Err(e) => {
+            eprintln!("system clock before UNIX_EPOCH: {e}");
+            std::process::exit(2);
+        }
+    };
     let (y, m, d) = civil_from_days(secs / 86_400);
     format!("{:04}-{:02}-{:02}", y, m, d)
 }
@@ -159,11 +162,23 @@ fn main() {
     while i < args.len() {
         match args[i].as_str() {
             "--title" => {
-                title = Some(args.get(i + 1).cloned().unwrap_or_default());
+                title = Some(match args.get(i + 1) {
+                    Some(v) => v.clone(),
+                    None => {
+                        eprintln!("--title needs a value");
+                        std::process::exit(2);
+                    }
+                });
                 i += 2;
             }
             "--date" => {
-                date = Some(args.get(i + 1).cloned().unwrap_or_default());
+                date = Some(match args.get(i + 1) {
+                    Some(v) => v.clone(),
+                    None => {
+                        eprintln!("--date needs a value");
+                        std::process::exit(2);
+                    }
+                });
                 i += 2;
             }
             other if slug.is_none() && !other.starts_with("--") => {
@@ -189,7 +204,10 @@ fn main() {
         }
     };
 
-    let title = title.unwrap_or_else(|| "Pending title".to_string());
+    let title = match title {
+        Some(t) => t,
+        None => "Pending title".to_string(),
+    };
     if title.chars().count() > 75 {
         eprintln!(
             "title is long: {} chars (gate: <= 75) — the scaffold is not written",
@@ -198,7 +216,10 @@ fn main() {
         std::process::exit(2);
     }
 
-    let date = date.unwrap_or_else(today);
+    let date = match date {
+        Some(d) => d,
+        None => today(),
+    };
 
     let body = format!("# {}\n\n## Abstract\n\n## 1. The measurement\n\n", title);
     let sha = sha256_hex(body.as_bytes());

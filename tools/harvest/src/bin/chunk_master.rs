@@ -259,8 +259,8 @@ fn fetch_band(tap: &Path, cat: &Catalog, band: &Band, out: &Path) -> Option<Vec<
             }
         };
         let shown = match &rows {
-            Some(flags) => flags.len(),
-            None => 0,
+            Some(flags) => flags.len().to_string(),
+            None => "absent".to_string(),
         };
         println!(
             "  band {} attempt {}: rc={} rows={} {}",

@@ -17,6 +17,8 @@ const IMAG_CDN_BASE: &str =
 const STATION_WORD: &str = "ABK";
 const HOUR_START_WORD: &str = "2024-01-01";
 const HOUR_END_WORD: &str = "2024-12-31";
+const ROUND_FIRST: u64 = 0;
+const PERM_FIRST: usize = 0;
 
 fn now_unix() -> Option<f64> {
     SystemTime::now()
@@ -473,7 +475,7 @@ fn main() {
         .unwrap_or(4);
     let round = match arg_after(&args, "--round").and_then(|v| v.parse::<u64>().ok()) {
         Some(r) => r,
-        None => 0,
+        None => ROUND_FIRST,
     };
     let year_arg = arg_after(&args, "--year").and_then(|v| v.parse::<i64>().ok());
     let seed_override = arg_after(&args, "--seed").and_then(|v| v.parse::<u64>().ok());
@@ -488,7 +490,7 @@ fn main() {
     let gpd = args.iter().any(|a| a == "--gpd");
     let perm_from = match arg_after(&args, "--perm-from").and_then(|v| v.parse::<usize>().ok()) {
         Some(v) => v,
-        None => 0,
+        None => PERM_FIRST,
     };
     let perm_to = arg_after(&args, "--perm-to")
         .and_then(|v| v.parse::<usize>().ok())

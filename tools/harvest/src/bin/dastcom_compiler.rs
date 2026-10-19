@@ -228,7 +228,10 @@ fn main() {
             "--probe" => {
                 let no: u32 = match args.get(i + 1).and_then(|n| n.parse::<u32>().ok()) {
                     Some(n) => n,
-                    None => 0,
+                    None => {
+                        eprintln!("--probe needs an event number");
+                        std::process::exit(2);
+                    }
                 };
                 let jd = args
                     .get(i + 2)

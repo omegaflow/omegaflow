@@ -19,6 +19,7 @@ const BUCKET: &str = "nsidc-cumulus-prod-protected";
 const PRODUCT_ROOT: &str = "ATLAS/ATL03/";
 const VERSION: &str = "007";
 const DEFAULT_OUT: &str = "data/data.nsidc.earthdatacloud.nasa.gov/icesat2_atl03.bin";
+const SKIP_FIRST: usize = 0;
 const MAGIC: [u8; 4] = *b"AT31";
 const REC_FIELDS: usize = 7;
 const REC_BYTES: usize = REC_FIELDS * 8;
@@ -767,7 +768,7 @@ fn run_harvest(args: &[String]) {
     };
     let skip = match parse_usize_arg(args, "--skip") {
         Ok(Some(n)) => n,
-        Ok(None) => 0,
+        Ok(None) => SKIP_FIRST,
         Err(m) => {
             eprintln!("icesat2-atl03: {m}");
             std::process::exit(2);

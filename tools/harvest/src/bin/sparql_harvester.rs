@@ -103,14 +103,22 @@ fn main() {
         };
         let mut gained = 0usize;
         for binding in bindings {
-            let get_val = |var: &str| -> String {
+            let get_val = |var: &str| -> Option<String> {
                 jpath_val(binding, var)
                     .and_then(|v| jpath_val(v, "value"))
                     .map(scalar)
-                    .unwrap_or_default()
             };
-            let id = get_val(&id_var);
-            let title = get_val(&title_var);
+            let id = match get_val(&id_var) {
+                Some(id) => id,
+                None => {
+                    eprintln!("binding without '{id_var}': skipped");
+                    continue;
+                }
+            };
+            let title = match get_val(&title_var) {
+                Some(title) => title,
+                None => "absent".to_string(),
+            };
             if !id.is_empty() {
                 buf.push_str(&format!("{} | {}\n", id, title));
                 gained += 1;

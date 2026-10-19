@@ -18,6 +18,7 @@ const FP_RA: &str = "r:ra";
 const FP_DEC: &str = "r:dec";
 
 const VANSIG: f64 = 3.0;
+const NO_DETECTIONS: usize = 0;
 const MAD_SIGMA_K: f64 = 1.4826;
 const N_MIN: usize = 6;
 const SPLIT_DEFAULT: f64 = 0.5;
@@ -295,7 +296,7 @@ fn parse_fp(body: &[u8]) -> Option<FpSet> {
         .map(|(b, nf)| {
             let nd = match det_per.get(&b).copied() {
                 Some(n) => n,
-                None => 0,
+                None => NO_DETECTIONS,
             };
             (b, nf, nd)
         })

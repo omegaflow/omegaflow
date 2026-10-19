@@ -2,6 +2,8 @@ use omegaflow::bison_basu::{BAND_HIGH, BAND_LOW, BAND_MID, parse_bin, write_bin}
 
 const X0: f64 = 278.596;
 const X_PER_YEAR: f64 = 61.0849;
+const DEFAULT_OUT: &str = "bison_basu.bin";
+const DEFAULT_FILE: &str = "f2.ps";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -74,8 +76,14 @@ fn units_per_hz(band: u8) -> f64 {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let out = arg_value(&args, "--out").unwrap_or_else(|| "bison_basu.bin".to_string());
-    let path = arg_value(&args, "--file").unwrap_or_else(|| "f2.ps".to_string());
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => DEFAULT_OUT.to_string(),
+    };
+    let path = match arg_value(&args, "--file") {
+        Some(v) => v,
+        None => DEFAULT_FILE.to_string(),
+    };
     let Some(body_bytes) = std::fs::read(&path).ok() else {
         eprintln!("{path}: read void — the series stays unwritten (0 honored)");
         std::process::exit(1);

@@ -118,10 +118,13 @@ fn store_asset(url: &str, root: &str, netloc: &str, name: &str, spk: bool) -> Op
         return None;
     }
     let len = match fs::metadata(&path) {
-        Ok(m) => m.len(),
-        Err(_) => 0,
+        Ok(m) => Some(m.len()),
+        Err(_) => None,
     };
-    eprintln!("manifest {}: origin verbatim, {} bytes", path, len);
+    match len {
+        Some(n) => eprintln!("manifest {}: origin verbatim, {} bytes", path, n),
+        None => eprintln!("manifest {}: origin verbatim, size absent", path),
+    }
     Some(path)
 }
 

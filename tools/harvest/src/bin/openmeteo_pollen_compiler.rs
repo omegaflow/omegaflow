@@ -45,9 +45,10 @@ fn parse_iso_unix(s: &str) -> Option<i64> {
     let mut t = clock.split(':');
     let hour: i64 = t.next()?.parse().ok()?;
     let minute: i64 = t.next()?.parse().ok()?;
-    let second: i64 = match t.next() {
-        Some(sec) => sec.split('.').next()?.parse().ok()?,
-        None => 0,
+    let second: i64 = if let Some(sec) = t.next() {
+        sec.split('.').next()?.parse().ok()?
+    } else {
+        0
     };
     Some(days * 86400 + hour * 3600 + minute * 60 + second)
 }

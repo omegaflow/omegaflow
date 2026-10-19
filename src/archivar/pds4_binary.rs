@@ -24,6 +24,9 @@ const FLAG_MISSING: u32 = 1;
 const FLAG_SP_MIN: u32 = 2;
 const FLAG_SP_MAX: u32 = 4;
 
+const START_BYTE_ABSENT: u32 = 0;
+const NBYTES_ABSENT: u32 = 0;
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct Pds4BinaryColumn {
     pub name: String,
@@ -415,13 +418,13 @@ pub fn pack(table: &Pds4BinaryTable) -> Vec<u8> {
         }
         let start_byte = match c.start_byte {
             Some(v) => v as u32,
-            None => 0,
+            None => START_BYTE_ABSENT,
         };
         bin[base + START_OFFSET..base + START_OFFSET + 4]
             .copy_from_slice(&start_byte.to_le_bytes());
         let nbytes = match c.bytes {
             Some(v) => v as u32,
-            None => 0,
+            None => NBYTES_ABSENT,
         };
         bin[base + NBYTES_OFFSET..base + NBYTES_OFFSET + 4].copy_from_slice(&nbytes.to_le_bytes());
         let mut flags = 0u32;

@@ -708,7 +708,10 @@ fn main() {
     if let Some(path) = arg_value(&args, "--peek") {
         let start = match arg_value(&args, "--start").and_then(|v| v.parse::<u32>().ok()) {
             Some(v) => v,
-            None => 0,
+            None => {
+                eprintln!("--start absent; the dump starts at offset 0");
+                0
+            }
         };
         let end = match arg_value(&args, "--end").and_then(|v| v.parse::<u32>().ok()) {
             Some(v) => v,

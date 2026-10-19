@@ -14,6 +14,8 @@ pub const FLAG_MEASLIST: u32 = 128;
 
 const HEADER_LEN: usize = 100;
 
+const TIME_N_ABSENT: usize = 0;
+
 #[derive(Clone, Debug, PartialEq)]
 pub enum Samples {
     Single(Vec<f32>),
@@ -138,7 +140,7 @@ pub fn write_bin(bin: &SnirfBin) -> Option<Vec<u8>> {
         }
     }
     let time_n: usize = match &bin.time {
-        None => 0,
+        None => TIME_N_ABSENT,
         Some(TimeBase::Series(v)) => {
             if v.len() as u64 != bin.pnts || v.iter().any(|x| !x.is_finite()) {
                 return None;

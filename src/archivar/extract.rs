@@ -2724,11 +2724,14 @@ fn base64_decode(input: &str) -> Option<Vec<u8>> {
     }
     let n = sextets.len();
     let rem = n % 4;
-    let expect_pad = match rem {
-        0 => 0,
-        2 => 2,
-        3 => 1,
-        _ => return None,
+    let expect_pad = if rem == 0 {
+        0
+    } else if rem == 2 {
+        2
+    } else if rem == 3 {
+        1
+    } else {
+        return None;
     };
     if pad != expect_pad {
         return None;
