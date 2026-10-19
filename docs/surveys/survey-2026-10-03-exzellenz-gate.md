@@ -72,7 +72,7 @@ als Ergebnisse getragen, §3.3; Unsicherheiten ausgewiesen, §3.4; Ton ruhig, §
 | `twenty-second-band-ground-chain` | 2.9 | `:262` `error` |
 | `uranus-rift-ephemerides` | 2.9 | `:36` `must`, `:13`/`:23` `error` |
 | `text-as-data-pioneer` | 2.9 | `:15`/`:43` `expected` |
-| `blatt-kreuz-screening-gyirong` | 2.8 | kein `see-also` |
+| `blatt-2026-08-30-kreuz-screening-gyirong` | 2.8 | kein `see-also` |
 | `exzellenz-konzept` | 2.7 | `:20`/`:189` „15 Papers" gegen 38 `docs/paper/*.md` (im selben Atom geheilt) |
 
 ## Träger der Verstöße (am lebenden Bestand gemessen)
@@ -83,7 +83,7 @@ als Ergebnisse getragen, §3.3; Unsicherheiten ausgewiesen, §3.4; Ton ruhig, §
   `flyby-path-2-falsification-metric-addendum` — `handover-2026-09-29-river-folge65.md:55-59`
   (Rivers Papiere) + die Flyby-Kette.
 - **Sensory:** `jwst-disequilibrium-survey` (`handover-2026-10-03-sensory-folge224.md:295`),
-  `planet-nine-kbo-residue` (descoped, `:297`), `blatt-kreuz-screening-gyirong` (`:266`),
+  `planet-nine-kbo-residue` (descoped, `:297`), `blatt-2026-08-30-kreuz-screening-gyirong` (`:266`),
   `broken-null-control` (`:299`), `causal-arrow-preregistration` (`:257`),
   `probe-front-dark-matter` (`:301`), `uranus-rift-ephemerides` (`axiom-gate-*`,
   sensory-folge168–170).

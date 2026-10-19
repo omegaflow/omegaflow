@@ -32,7 +32,7 @@ Abstract 146/200, 133 Zahlen ok, sha ok — Export-Gate grün).
 ## Pfad
 
 - see-also trägt drei lebende Pfade: `blatt-kreuz-screening-kollab.md`,
-  `blatt-kreuz-screening-gyirong.md`, `docs/paper/sturzflut-tibet-pfeil.md`
+  `blatt-2026-08-30-kreuz-screening-gyirong.md`, `docs/paper/sturzflut-tibet-pfeil.md`
   (Geschwister-Paper, Trishuli-Gauge).
 
 ## Zuordnung
