@@ -2,7 +2,7 @@
   title: FRÜHWARNSYSTEM — Präregistrierung der Vorhersage-Zelle
   class: sheet
   date: 2026-10-01
-  sha256: 37346d374cb44ec5804d2c551a83890b9e7a7de4fc9284077ce1fe7129f09948
+  sha256: 5dc0fdfdfaf0ec4ff4e936974206d4ea98e7e078e3946b60f23c0cbf1b2e614a
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/specs/broken-null-control.md
 -->
@@ -114,7 +114,7 @@ Offene Slots bis zur Versiegelung:
 
 | Feld | Zustand |
 |---|---|
-| α-Ebene | alle drei Station-Jahre **gelesen** (α = 0.05: Quantile 2.4831/2.4467/2.4433; α = 0.01: 3.0964/3.0490/3.0036); welche Ebene siegelt: Operator-Wort |
+| α-Ebene | alle drei Station-Jahre **gelesen** (α = 0.05: Quantile 2.4831/2.4467/2.4433; α = 0.01: 3.0964/3.0490/3.0036). **Operator-Wort 2026-10-20** (Weisung: die Maschine trägt die Rat-Synthese ein, R-2026-10-19-c): **0,05 ist die deklarierte operative Warnschwelle; 0,01 ist bestätigend erst nach eigener Vorregistrierung des Richtungskriteriums — bis dahin ebenfalls operativ, das Siegel bleibt pending. Zwei getrennte Dokumente. Die Zwei-Ebenen-Lesung ist als Post-hoc-Abweichung benannt (Commit `1da082eb0`, 2026-10-05).** |
 | Station X | `pending` (benannter Slot; das Papier trägt Abisko und Sodankylä) |
 | Verzögerung Z | `pending` (benannter Slot; am 1-min-Korn auflösbar — Rats-Verdikt 2026-10-05: zulässige Präzisierung (b), kein neues α, kein neues Fehlschlag-Kriterium). Deskriptiv gemessen 2026-10-05 (`bz_dbdt_delay_probe`, ABK 2024): Z = 142 min, r = 0.0223, n = 251048 — ohne kalibrierte Minute-Null, nicht gesiegelt |
 | Bz-Schwellenwert | `pending` (braucht X und α) |
