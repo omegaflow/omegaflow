@@ -2,7 +2,7 @@
   title: The causal arrow, pre-registration (Trishuli flood 2026-08-26)
   class: paper
   date: 2026-08-27
-  sha256: ab0c340032d02b83f68e3fa1ab8448d9ca3d96fc598f8c479bbf76d918ea5360
+  sha256: 512be2b41983eac7da7bb82f70276272463834022f37076955a6ea4dacd465fd
   status: live
   see-also: docs/paper/sturzflut-tibet-pfeil.md docs/concepts/der-kausalpfeil.md
 -->
@@ -123,6 +123,24 @@ messen — der Ephemeriden-Batch lieferte für alle 11 Dateien HTTP 404
 (`bin parse void`, `model incomplete: 0 of 8 planets`). Die Ephemeriden-Quelle
 des `kbo_residue_probe` ist gemessen **absent** (neuer Punkt, Träger
 `ein-blatt-papier.md`).
+
+## Nachtrag 2026-10-19 — die ko-lokale Reihe im Register
+
+Der Transport-Token `xfer:future.ses_ec618129fffeLFawr4V3pQKpOl.1~4074aed5`
+nennt die eine Lücke: eine ko-lokale Abflussreihe zur Flut vom 2026-08-26.
+Der Register-Block steht jetzt in `phi/sources.φ` (DHM Nepal, Bhotekoshi at
+Rasuwagadhi, Station 4913, `series_id` 23251; `url`/`origin`/
+`compiler`/`terms`). Offen gemessen ist dort **Pegel (m)**, 10-min; der
+Abfluss-Kanal ist als `hydrosphere_river_flow_m3s` [m³/s] deklariert, aber
+**absent** — DHM führt öffentlich nur Wasserstand, Abfluss bleibt hinter dem
+bezahlten Portal. Die Reihe bricht am Flutbeginn ab (letzter Wert 1.62 m,
+2026-08-26 02:55 UTC); der Peak ist in keiner offenen Reihe.
+
+Die externe Literatur (Acharya 2026, Daten/Code zur Flut) bestreitet die
+Regen→Abfluss-Prämisse und trägt eine Fels-Eis-Kaskade. Das Siegel wird
+nicht umgeschrieben: die Richtungshypothese und das Protokoll bleiben
+unverändert, die Prämisse steht als bestritten benannt, jede Zelle ohne
+offene Reihe bleibt `pending` (0 honored).
 
 ---
 *Sealed 2026-08-27. Verdikt-Ordnung
