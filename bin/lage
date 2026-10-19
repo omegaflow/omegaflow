@@ -5,7 +5,8 @@ set -u
 repo="${OMEGAFLOW_REPO:-$HOME/projects/omegaflow}"
 cd "$repo" || exit 1
 
-head_sha=$(git rev-parse --short HEAD 2>/dev/null || echo '?')
+head_sha=$(git rev-parse --short HEAD 2>/dev/null || echo "?")
+work_head=$(git -C "${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}" rev-parse --short HEAD 2>/dev/null || echo "?")
 ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
 open_rows=$(grep -E '\*\*rat-offen|\*\*rat-konvergiert|\*\*offen\*\*|\*\*gefahren\*\*' ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat/_rat-register.md 2>/dev/null | sed 's/^/  /' | head -25)
@@ -44,7 +45,7 @@ done)
 {
   echo "# Lage — generiert $ts"
   echo
-  echo "HEAD \`$head_sha\`"
+  echo "HEAD public \`$head_sha\` · Werkstatt \`$work_head\`"
   echo
   echo "## Sitze / Routen (Gateway)"
   echo "- Katalog (tsv, letzter Start: $(age ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/gateway/models.tsv)): $models · frei: $free · Preis unbekannt: $unknown · lebendig: $alive ($(age ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/gateway/alive.tsv) alt)"
