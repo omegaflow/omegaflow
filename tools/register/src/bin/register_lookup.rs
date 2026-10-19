@@ -12,11 +12,11 @@ const REGISTER: &[(&str, &str)] = &[
 ];
 
 const REGISTER_DIRS: &[(&str, &str)] = &[
-    ("docs/handover", "handover"),
+    ("handover", "handover"),
     ("docs/surveys", "survey"),
     ("docs/specs", "spec"),
-    ("docs/plans", "plan"),
-    ("docs/auftrag", "auftrag"),
+    ("docs/reference", "ref"),
+    ("auftrag", "auftrag"),
     ("docs/blatt", "blatt"),
     ("docs/concepts", "concept"),
     ("docs/paper", "paper"),
