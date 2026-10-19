@@ -547,7 +547,7 @@ fn main() {
 
     let omni2_path = ["omni2_serie.bin", "omni2_serie_1h.bin"]
         .iter()
-        .map(|p| omegaflow::archivar::cache_root().join(p))
+        .map(|p| omegaflow::archivar::content_dir().join(p))
         .map(|p| p.to_string_lossy().into_owned())
         .find(|p| std::path::Path::new(p).exists());
     let mut n_series: Vec<(f64, f64)> = Vec::new();

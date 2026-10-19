@@ -1,4 +1,4 @@
-use omegaflow::archivar::cache_root;
+use omegaflow::archivar::{cache_root, content_dir};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::omni2::{COMP_BZ, parse_bin as parse_omni2};
 use omegaflow::intermagnet::parse_bin as parse_dbdt_bin;
@@ -106,7 +106,7 @@ fn load_station_dbdt_1m(station: &str) -> Option<Vec<(f64, f64)>> {
     let asset = format!("{}_dbdt_1m.bin", station.to_lowercase());
     let candidates = [
         std::path::PathBuf::from(disk_cache(&asset)),
-        cache_root().join(&asset),
+        content_dir().join(&asset),
         std::path::PathBuf::from(&asset),
     ];
     for path in &candidates {

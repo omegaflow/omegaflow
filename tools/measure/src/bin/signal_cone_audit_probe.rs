@@ -83,7 +83,7 @@ fn load_bytes(kind: &str, url: &str, cache_name: &str, path: Option<String>) -> 
             }
         }
     }
-    let cache_path = omegaflow::archivar::cache_root()
+    let cache_path = omegaflow::archivar::content_dir()
         .join(format!("omegaflow_series_{cache_name}"))
         .to_string_lossy()
         .into_owned();

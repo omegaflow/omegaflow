@@ -24,7 +24,7 @@ fn year_epoch(y: i64) -> Option<f64> {
 }
 
 fn load_solar_wind() -> Option<Vec<(f64, f64, u32)>> {
-    let cache = omegaflow::archivar::cache_root()
+    let cache = omegaflow::archivar::content_dir()
         .join("omni2_serie_1h.bin")
         .to_string_lossy()
         .into_owned();
@@ -39,7 +39,7 @@ fn load_solar_wind() -> Option<Vec<(f64, f64, u32)>> {
 }
 
 fn load_indices() -> Option<Vec<(f64, f64, u32)>> {
-    let cache = omegaflow::archivar::cache_root()
+    let cache = omegaflow::archivar::content_dir()
         .join("omni2_indices.bin")
         .to_string_lossy()
         .into_owned();
