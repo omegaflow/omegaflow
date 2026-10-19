@@ -93,102 +93,122 @@ Rahmen: `docs/granit.md` (fünf Axiome) · `docs/council.yaml` (fünf Stimmen).)
 
 ---
 
-## 01 · Sakana Fugu Max
 
+## 01 · Sakana Fugu Max
 - **Site:** `https://chat.sakana.ai/`
 - **Modell/Einstellung:** Fugu Max · Effort High · eingeloggt
 - **Zeit:** 2026-10-19
 
-**Antwort:** *bereits erhoben — wörtlich in `state/stimmen/2026-10-19-rat-kanon-wildwuchs-fugu.txt` (nicht erneut eintragen).*
-
----
+**Antwort:** *bereits erhoben — wörtlich in `2026-10-19-rat-kanon-wildwuchs-fugu.txt`.*
 
 ## 02 · Lumo 2.0 Max
-
 - **Site:** `https://lumo.proton.me/guest`
 - **Modell/Einstellung:** Lumo 2.0 Max · anonym
 - **Zeit:** 2026-10-19
 
-**Antwort:** *bereits erhoben — wörtlich in `state/stimmen/2026-10-19-rat-kanon-wildwuchs-lumo.txt` (nicht erneut eintragen).*
+**Antwort:** *bereits erhoben — wörtlich in `2026-10-19-rat-kanon-wildwuchs-lumo.txt`.*
 
----
-
-## 03 · Duck.ai (GPT-6 Luna)
-
+## 03 · Duck.ai
 - **Site:** `https://duck.ai/`
 - **Modell/Einstellung:** GPT-6 Luna · Begründungsmodus
 - **Zeit:** 2026-10-19
 
-**Antwort:** *bereits erhoben — wörtlich in `state/stimmen/2026-10-19-rat-kanon-wildwuchs-duck.txt` (nicht erneut eintragen).*
+**Antwort:** *bereits erhoben — wörtlich in `2026-10-19-rat-kanon-wildwuchs-duck.txt`.*
 
----
-
-## 04 · Perplexity
-
-- **Site:** `https://www.perplexity.ai/`
-- **Modell/Einstellung:** Suche an
+## 04 · Z.ai / GLM-5.3
+- **Site:** `https://chat.z.ai/`
+- **Modell/Einstellung:** GLM-5.3 · Deep Think Max · Deep Search
 - **Zeit:**
-- **Blockade:** Login-Wand nach der zweiten Frage („Mit Google fortfahren / SSO") — nicht gefahren.
 
 **Antwort:**
 
----
-
-## 05 · Qwen 3.8-Max
-
-- **Site:** `https://chat.qwen.ai/`
-- **Modell/Einstellung:** Qwen3.8-Max · Thinking
+## 05 · Google AI Studio (Gemini 3.1 Pro)
+- **Site:** `https://aistudio.google.com/app/prompts/new_chat`
+- **Modell/Einstellung:** Gemini 3.1 Pro Preview · Grounding with Google Search
 - **Zeit:**
-- **Blockade:** Senden öffnet „Welcome to Qwen — Log in"; nicht gefahren.
 
 **Antwort:**
-
----
 
 ## 06 · Claude
-
 - **Site:** `https://claude.ai/new`
 - **Modell/Einstellung:** Sonnet 5.5 · Extra hoch
 - **Zeit:**
 
 **Antwort:**
 
----
-
 ## 07 · DeepSeek Chat
-
 - **Site:** `https://chat.deepseek.com/`
 - **Modell/Einstellung:** DeepThink + Search
 - **Zeit:**
 
 **Antwort:**
 
----
-
-## 08 · Z.ai / GLM-5.3
-
-- **Site:** `https://chat.z.ai/`
-- **Modell/Einstellung:** GLM-5.3 · Deep Think Max
+## 08 · Qwen
+- **Site:** `https://chat.qwen.ai/`
+- **Modell/Einstellung:** Qwen3.8-Max · Denken · Web-Suche
 - **Zeit:**
 
 **Antwort:**
 
----
-
 ## 09 · Mistral Vibe
-
 - **Site:** `https://chat.mistral.ai/`
 - **Modell/Einstellung:** Denken + Suche
 - **Zeit:**
 
 **Antwort:**
 
----
+## 10 · MiniMax
+- **Site:** `https://agent.minimax.io/`
+- **Modell/Einstellung:** MaxHermes / MaxClaw · Search
+- **Zeit:**
 
-## 10 · SciSpace
+**Antwort:**
 
+## 11 · Kimi
+- **Site:** `https://www.kimi.ai/`
+- **Modell/Einstellung:** Konto-Modus (kein K3 auf kimi.ai)
+- **Zeit:**
+
+**Antwort:**
+
+## 12 · Perplexity
+- **Site:** `https://www.perplexity.ai/`
+- **Modell/Einstellung:** Suche an · Modell max
+- **Zeit:**
+
+**Antwort:**
+
+## 13 · SciSpace
 - **Site:** `https://scispace.com/`
 - **Modell/Einstellung:** Search Papers
+- **Zeit:**
+
+**Antwort:**
+
+## 14 · Gemini Notebook
+- **Site:** `https://notebook.google.com/`
+- **Modell/Einstellung:** dokumentgebunden, kein freier Composer
+- **Zeit:**
+
+**Antwort:**
+
+## 15 · Open-Weight (tryingopen) — Modell: ________
+- **Site:** `https://www.tryingopen.com/`
+- **Modell/Einstellung:** (GLM 5.3 · DeepSeek V4 Pro · Qwen3.8 2.4T · Nemotron 3 Ultra · GPT-OSS 120B · Inkling)
+- **Zeit:**
+
+**Antwort:**
+
+## 16 · Nemotron 3 Ultra (NIM / open-weight-ui)
+- **Site:**
+- **Modell/Einstellung:**
+- **Zeit:**
+
+**Antwort:**
+
+## 17 · weiterer Sitz: ________
+- **Site:**
+- **Modell/Einstellung:**
 - **Zeit:**
 
 **Antwort:**
