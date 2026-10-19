@@ -1985,14 +1985,7 @@ fn paid_allowed(model: &str) -> bool {
             return true;
         }
     }
-    let work = match std::env::var("OMEGAFLOW_WORK") {
-        Ok(w) => w,
-        Err(_) => match std::env::var("HOME") {
-            Ok(h) => format!("{h}/projects/omegaflow-work"),
-            Err(_) => return false,
-        },
-    };
-    if let Ok(s) = std::fs::read_to_string(format!("{work}/post/paid/paid-open")) {
+    if let Ok(s) = std::fs::read_to_string(format!("{}/state/zustand/paid-open", repo_root())) {
         let s = s.trim();
         if s == "1" || s.eq_ignore_ascii_case("all") {
             return true;
@@ -2039,7 +2032,7 @@ fn chat_completions(
             if is_paid(cand) && !paid_allowed(cand) {
                 last_code = 402;
                 last_body = format!(
-                    "{{\"error\":{{\"message\":\"{} is a billed model — the operator's word is required (name the model id in $OMEGAFLOW_WORK/post/paid/paid-open, or set OMEGAFLOW_PAID=<model-id>)\"}}}}",
+                    "{{\"error\":{{\"message\":\"{} is a billed model — the operator's word is required (name the model id in state/zustand/paid-open, or set OMEGAFLOW_PAID=<model-id>)\"}}}}",
                     cand
                 );
                 continue;
