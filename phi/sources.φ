@@ -3534,6 +3534,17 @@ lat sourceInfo.geoLocation.geogLocation.latitude
 lon sourceInfo.geoLocation.geogLocation.longitude
 field values.0.value.0.value hydrosphere_river_flow_cfs erfc advective cfs 8640.0 0.0 0.0
 
+url https://api.waterdata.usgs.gov/ogcapi/v0/collections/field-measurements/items?limit=10000&f=json&parameter_code=62611
+terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
+origin https://api.waterdata.usgs.gov/ogcapi/v0
+format json
+ttl 86400
+at earth
+map features
+lat geometry.coordinates.1
+lon geometry.coordinates.0
+field properties.value hydrosphere_groundwater_depth_ft inverse-square geometry ft 86400 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/www.ncei.noaa.gov/igra_v2_por.bin
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 origin https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-por/
@@ -14043,6 +14054,7 @@ url https://github.com/omegaflow/sources/releases/download/alasky.cds.unistra.fr
 terms ODbL-1.0 https://alasky.cds.unistra.fr/HIPS3D/ASKAP/CDS_C_ASKAP_WALLABY-Pilot-DR2/properties
 format hips3d
 origin https://alasky.cds.unistra.fr/HIPS3D/ASKAP/CDS_C_ASKAP_WALLABY-Pilot-DR2/
+compiler tools/harvest/src/bin/hips3d_compiler.rs
 at sun
 no-cadence
 
@@ -30349,6 +30361,7 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/conicus3d_
 terms CC-BY-4.0 https://zenodo.org/records/18776222
 format tar_zst
 origin https://zenodo.org/api/records/18776222/files/lp_dataset_patched_c000_phase_metadata.tar.zst/content
+compiler tools/harvest/src/bin/tar_zst_compiler.rs
 at sun
 no-cadence
 
