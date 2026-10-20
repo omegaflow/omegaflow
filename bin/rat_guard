@@ -1,14 +1,14 @@
 #!/bin/sh
 # rat_guard — paid Rat-Sitze nur mit ausdrücklichem Operator-Grant.
 # Der Grant ist eine Datei, die NUR der Operator setzt (state/ ist gitignored, privat):
-#   state/zustand/rat-paid-grant
+#   state/state/rat-paid-grant
 # Er gilt nur für den Tag seiner Erteilung. Ohne frischen Grant bricht jeder paid-Aufruf ab.
 #
 #   bin/rat_guard            -> exit 1, wenn kein frischer Grant vorliegt (der paid-Aufruf darf nicht laufen)
 #   bin/rat_guard --grant    -> (nur Operator) den Grant für heute setzen
 set -u
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
-grant="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/rat-paid-grant"
+grant="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat-paid-grant"
 
 if [ "${1:-}" = "--grant" ]; then
     mkdir -p "$(dirname "$grant")"

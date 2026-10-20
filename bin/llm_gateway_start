@@ -18,11 +18,11 @@ set -u
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO" || exit 1
 PORT="${OMEGAFLOW_GATEWAY_PORT:-1621}"
-RUN="$REPO/state/zustand/gateway"
+RUN="$REPO/state/state/gateway"
 PIDF="$RUN/llm_gateway.pid"
 LOG="$RUN/llm_gateway.log"
 BIN="$REPO/target/release/llm_gateway"
-CATALOG="$REPO/state/zustand/llm-gateway-models.tsv"
+CATALOG="$REPO/state/state/llm-gateway-models.tsv"
 
 stamp() { date '+%Y-%m-%dT%H:%M:%S%z'; }
 say() { printf 'llm_gateway_start: %s\n' "$*"; }
@@ -53,7 +53,7 @@ cmd_status() {
   say "PID $pid · seit $(ps -o lstart= -p "$pid" 2>/dev/null | sed 's/^ *//') · Laufzeit $(ps -o etime= -p "$pid" 2>/dev/null | tr -d ' ')"
   say "Binary: $exe · Profil: $(profile_of "$exe")"
   [ -f "$CATALOG" ] && say "Katalog: $(basename "$CATALOG") · $(stat -c %y "$CATALOG" | cut -d. -f1) · $(( ( $(date +%s) - $(stat -c %Y "$CATALOG") ) / 3600 ))h alt"
-  say "Alive: $(tail -n +2 "${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/zustand/gateway/alive.tsv" 2>/dev/null | wc -l) Sitze"
+  say "Alive: $(tail -n +2 "${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/gateway/alive.tsv" 2>/dev/null | wc -l) Sitze"
   return 0
 }
 

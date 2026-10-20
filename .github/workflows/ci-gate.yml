@@ -120,7 +120,7 @@ jobs:
     - run: cargo build --release -p omegaflow-register --bin register_lookup
     - name: Key-Set-Gate — no open point dropped by this push beyond the frozen list
       run: |
-        pin=docs/zustand/dropped-legacy-baseline.txt
+        pin=docs/state/dropped-legacy-baseline.txt
         if [ ! -f "$pin" ]; then
           echo "dropped-set-gate: pending — $pin absent; seed it from the register-dropped sweep artifact" >&2
           exit 0
