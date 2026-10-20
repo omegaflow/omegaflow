@@ -1,4 +1,5 @@
 
+use omegaflow::archivar::asset_path::compiled;
 use omegaflow::archivar::inflate::zip_members;
 use omegaflow::archivar::membrane::embedded_lsk;
 use omegaflow::archivar::s2event::{
@@ -8,6 +9,7 @@ use omegaflow::cdn::upload_release;
 use omegaflow::lsk::LeapSeconds;
 
 const TAG: &str = "icecube.wisc.edu";
+const DEFAULT_OUT: &str = "amanda_7yr.s2e1";
 const MJD_UNIX_EPOCH: f64 = 40587.0;
 const DEFAULT_URL: &str = "https://icecube.wisc.edu/data-releases/20080911_AMANDA_7_Year_Data.zip";
 const MEMBER: &str = "AMANDA_7_Year_Data.txt";
@@ -125,10 +127,11 @@ fn main() {
     let out_path = match arg_value(&args, "--out") {
         Some(v) => v,
         None => {
-            eprintln!(
-                "usage: amanda_compiler --out <amanda.s2e1> [--file <zip>|--url <url>] [--ci-mode] — refused"
-            );
-            std::process::exit(2);
+            let path = compiled(TAG, DEFAULT_OUT);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
         }
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");

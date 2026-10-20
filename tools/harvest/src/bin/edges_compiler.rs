@@ -1,6 +1,8 @@
+use omegaflow::archivar::asset_path::compiled;
 use omegaflow::cdn::upload_release;
 use omegaflow::spectral::{parse_spectral_bin, write_spectral_bin};
 
+const NETLOC: &str = "loco.lab.asu.edu";
 const DEFAULT_OUT: &str = "edges.bin";
 const EDGES_EPOCH_UNIX: f64 = 1_473_292_800.0;
 
@@ -216,7 +218,7 @@ fn run(
         }
         None => return Err(format!("{out}: roundtrip parse void")),
     }
-    if ci && !upload_release("loco.lab.asu.edu", out) {
+    if ci && !upload_release(NETLOC, out) {
         return Err(format!("{out}: CDN upload returned void"));
     }
     Ok(bins.len())
@@ -244,7 +246,13 @@ fn main() {
     };
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => DEFAULT_OUT.to_string(),
+        None => {
+            let path = compiled(NETLOC, DEFAULT_OUT);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
     };
     let epoch = match arg_value(&args, "--epoch") {
         Some(v) => match v.parse::<f64>() {

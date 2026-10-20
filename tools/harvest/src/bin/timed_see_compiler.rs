@@ -1,8 +1,10 @@
+use omegaflow::archivar::asset_path::compiled;
 use omegaflow::archivar::embedded_lsk;
 use omegaflow::lsk::days_from_civil;
 use std::env;
 use std::fs;
 
+const NETLOC: &str = "lasp.colorado.edu";
 const MAGIC: [u8; 4] = *b"TSE1";
 const BASE: &str = "https://lasp.colorado.edu/data/timed_see/spwx";
 const VALUE_COLUMNS: [usize; 8] = [5, 7, 9, 11, 13, 15, 17, 19];
@@ -127,7 +129,20 @@ fn run(args: &[String]) -> Result<(), String> {
             (format!("{BASE}/{year}_TIMED_SEE_obs.dat"), Some(year))
         }
     };
-    let out = arg_value(args, "--out").ok_or_else(|| "--out <bin> is absent".to_string())?;
+    let out = match arg_value(args, "--out") {
+        Some(v) => v,
+        None => {
+            let name = match year {
+                Some(y) => format!("timed_see_{y}.bin"),
+                None => "timed_see.bin".to_string(),
+            };
+            let path = compiled(NETLOC, &name);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
+    };
     let bytes = read_source(&source)?;
     let text = String::from_utf8_lossy(&bytes);
     let lsk = embedded_lsk().ok_or_else(|| "the embedded leap seconds stay unread".to_string())?;
@@ -166,7 +181,7 @@ fn run(args: &[String]) -> Result<(), String> {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
-        println!("usage: timed_see_compiler <YYYY_TIMED_SEE_obs.dat> --out <bin> [--year 2026] [--source <path|url>]");
+        println!("usage: timed_see_compiler <YYYY_TIMED_SEE_obs.dat> [--out <bin>] [--year 2026] [--source <path|url>]");
         return;
     }
     if let Err(e) = run(&args) {

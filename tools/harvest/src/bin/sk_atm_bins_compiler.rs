@@ -1,6 +1,7 @@
 
+use omegaflow::archivar::asset_path::compiled;
 use omegaflow::archivar::inflate::{gunzip, tar_members};
-use omegaflow_harvest::table::{Table, arg_or, emit, has_flag, load_source, parse_bin, stat};
+use omegaflow_harvest::table::{Table, arg_value, emit, has_flag, load_source, parse_bin, stat};
 
 const MAGIC: [u8; 4] = *b"SKAT";
 const NETLOC: &str = "zenodo.org";
@@ -142,7 +143,16 @@ fn main() {
         stat(&src, &table);
         return;
     }
-    let out = arg_or(&args, "--out", DEFAULT_OUT);
+    let out = match arg_value(&args, "--out") {
+        Some(v) => v,
+        None => {
+            let path = compiled(NETLOC, DEFAULT_OUT);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
+    };
     if !emit(&src, &out, &table, MAGIC, NETLOC, FORMAT, COMPILER) {
         std::process::exit(1);
     }
