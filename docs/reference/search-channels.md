@@ -2,7 +2,7 @@
   title: Suchkanäle — gemessener Stand (2026-10-19)
   class: ref
   date: 2026-10-19
-  sha256: a23fea2e0f5a3ecacd57ee7d3c006c6d83b27f5d2702585ccabffd2ff5178364
+  sha256: a9f046e7987415a22671f50445da17baaa5eab1ee93f19cc8963235513e0884e
   status: live
   see-also: docs/concepts/tools-map.md docs/surveys/survey-2026-10-19-paper-forschungslage.md
 -->
@@ -83,3 +83,57 @@ Die installierte Release-Binary ist älter als der veröffentlichte Manifest-Ein
 gemessenen Codes kommen aus dem lokal gebauten Binärbaum. Sobald `tools-build`
 landet, verschwindet der Riss; bis dahin ist `bin/archive_search` für Messungen
 nicht die Wahrheit, `target/debug/archive_search` schon.
+
+## Mit Key, lebend — 2026-10-20 nachgemessen (Korrektur)
+
+Die frühere Zeile „die breiten Engines sind tot" war **falsch**. Nicht gemessen
+waren vier Key-Arme, die antworten:
+
+| Kanal | Befund | Charakter |
+|---|---|---|
+| `--serper` | **200**, Treffer mit `position` | **Google SERP** (serper.dev), nicht serpapi |
+| `--exa` | **200**, Treffer mit `url`/`title` | semantische Suche |
+| `--perplexity` | **200**, Antworttext | Antwort + Quellen |
+| `--linkup` | **200**, `url`/`title`/`description` | Web-Suche |
+
+Damit ist die Behauptung „es gibt keine breite Suche" widerlegt: `--serper` ist
+Google, `--exa` ist ein anderer Index. Beide wurden im Alternativen-Bericht
+**nicht benutzt** — der Fehler lag nicht am Konto, sondern an der Auswahl.
+
+## Browser-Route
+
+`https://html.duckduckgo.com/html/?q=…` im Browser liefert **CAPTCHA**
+(„Select all squares containing a duck"). Die Browser-Route taugt für
+**Seiten** (JS, Login, PDF), nicht als Suchmaschine. Wer breit suchen will,
+nimmt `--serper`/`--exa`, nicht den Browser.
+
+## Was die Köder-Suche damit fand
+
+| Köder | Kanal | Fund |
+|---|---|---|
+| `"bright_t31,frp,daynight"` | searxng | GitHub, Pastebin, Kaggle, EUMETSAT, pyronear |
+| `DHM Nepal river discharge data download csv` | serper | `dhm.gov.np/hydrology/river-watch`, **ICIMOD Streamflow Prediction Tool Nepal**, UN-Hydromet-Diagnostik |
+| `FUGIN Nobeyama CO survey FITS cube archive download` | exa | `jvo.nao.ac.jp/portal/nobeyama/fugin.do`, `nro-fugin.github.io/release/`, NRO-Datenrelease |
+
+## SearXNG-Rotation: gemessen, nicht erhofft (2026-10-20)
+
+Das Muster ist `https://searx.space/data/instances.json` (352 KB, 92 Instanzen,
+davon 80 `network_type: normal` mit HTTP 200). Alle 75 Kandidaten wurden gegen
+`/search?q=test&format=json` geprüft:
+
+| Befund | Anzahl |
+|---|---:|
+| **JSON, 200, `results`** | **1** (`search.lumy.live`) |
+| HTTP 200, aber **HTML** (JSON abgeschaltet) | 8 |
+| 429 (Rate-Limit, auch bei serieller Probe) | 53 |
+| 403 / 418 / 404 / 302 / 000 | 13 |
+
+**Ergebnis: Rotation über öffentliche SearXNG-Instanzen ist so nicht möglich.**
+Aktuelle Versionen liefern `format=json` nur nach ausdrücklicher Freigabe; die
+HTML-Route ist rate-limitiert oder zeigt Bot-Prüfungen. Der Arm trägt deshalb
+weiter nur `search.lumy.live` — und `OMEGAFLOW_SEARXNG` akzeptiert jetzt eine
+**kommagetrennte** Liste, damit eine eigene Instanz (mit `json` in
+`search.formats`) als Rotationskette dienen kann.
+
+Korrektur: die frühere Zeile „vier Instanzen antworten mit JSON" war falsch —
+nur eine antwortet mit JSON, die anderen mit HTML.
