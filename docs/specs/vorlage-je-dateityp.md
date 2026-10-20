@@ -2,7 +2,7 @@
   title: Vorlage je Dateityp — Kopf, Pflichtfelder, Namensform
   class: spec
   date: 2026-10-19
-  sha256: 05fe8e4004cc1dee717e7663d04a4b9684eb33d1313cca9b84b4c9da109ceabb
+  sha256: bc8394c292ccf9d11c6514b9e59bb0a9ce66d91d2f9bb6fc5fe43578162d5f9c
   status: live
   see-also: docs/concepts/house-rules.md bin/layout_check work/post/ work/handover/
 -->
@@ -14,13 +14,13 @@ Vorlage macht sichtbar, was ein Dokument trägt; sie ersetzt keine Messung und
 keine Lizenzzeile.
 
 Die Klasse steht im Kopf, nicht im Ordner: derselbe Text kann als `survey`,
-`spec`, `concept`, `blatt`, `paper` oder `auftrag` leben. Die Ablage folgt dem
+`spec`, `concept`, `blatt`, `paper` oder `project` leben. Die Ablage folgt dem
 Kanon (`layout_check`), die Klasse folgt dem Inhalt.
 
 ## 1. Markdown-Dokument (`.md`)
 
 **Ablage:** `docs/<klasse>/<slug>.md` (Klasse = Ordner: `surveys`, `specs`,
-`concepts`, `blatt`, `paper`, `auftrag`). **Handover** liegen in `handover/` und
+`concepts`, `blatt`, `paper`, `project`). **Handover** liegen in `handover/` und
 tragen denselben Kopf mit `class: handover`.
 
 **Kopf** — der erste Block der Datei, unmittelbar vor dem Titel:
@@ -28,7 +28,7 @@ tragen denselben Kopf mit `class: handover`.
 ```markdown
 <!--
   title: <Titel — ein Satz, kein Kürzel>
-  class: <survey|spec|concept|blatt|paper|auftrag|handover>
+  class: <survey|spec|concept|blatt|paper|project|handover>
   date: <YYYY-MM-DD>
   sha256: <hex — über den Body ohne diesen Kopf>
   status: <live|done|consumed|superseded|archived>
