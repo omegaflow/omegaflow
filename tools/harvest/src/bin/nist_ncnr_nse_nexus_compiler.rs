@@ -506,7 +506,7 @@ mod tests {
         a[SLOT_TAU] = 1.2e-8;
         a[SLOT_PHASE] = -0.9;
         a[SLOT_PRESENCE] = PRESENCE_FLAG_QUANTITY;
-        let bytes = frame(&[a]);
+        let bytes = frame(&[a]).expect("frame");
         assert_eq!(bytes.len(), FRAME_HEADER + REC_BYTES);
         assert_eq!(unframe(&bytes).as_deref(), Some([a].as_slice()));
     }

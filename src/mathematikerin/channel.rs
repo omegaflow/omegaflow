@@ -760,9 +760,7 @@ pub fn is_admissible(conserved: Conserved, op: TransportOp, medium: Medium) -> b
         ),
         TransportOp::Maxwell => conserved == Conserved::Energy || conserved == Conserved::Momentum,
         TransportOp::Poisson => matches!(conserved, Conserved::Mass | Conserved::Charge),
-        TransportOp::Creep => {
-            conserved == Conserved::Momentum && medium == Medium::ElasticSolid
-        }
+        TransportOp::Creep => conserved == Conserved::Momentum && medium == Medium::ElasticSolid,
     }
 }
 
@@ -3933,7 +3931,11 @@ mod tests {
             Medium::Fluid
         ));
         assert!(
-            !is_admissible(Conserved::Momentum, TransportOp::Advective, Medium::ElasticSolid),
+            !is_admissible(
+                Conserved::Momentum,
+                TransportOp::Advective,
+                Medium::ElasticSolid
+            ),
             "momentum stays outside the fluid advection law"
         );
     }

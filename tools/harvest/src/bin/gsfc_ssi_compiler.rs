@@ -146,7 +146,11 @@ fn extract(
 ) -> Result<Vec<(f64, f64, u32)>, String> {
     let nday = year.len();
     if doy.len() != nday {
-        return Err(format!("year {} / doy {} lengths disagree", nday, doy.len()));
+        return Err(format!(
+            "year {} / doy {} lengths disagree",
+            nday,
+            doy.len()
+        ));
     }
     if waves.is_empty() || nday == 0 {
         return Err("the grid stays empty".to_string());
@@ -205,8 +209,9 @@ fn run(args: &[String]) -> Result<(), String> {
     let product = match arg_value(args, "--product") {
         Some(v) => Product::of_name(&v)
             .ok_or_else(|| format!("--product {v} is not n07, susim or sorcesols"))?,
-        None => Product::of_name(&source)
-            .ok_or_else(|| format!("{source}: the product does not follow from the name — pass --product"))?,
+        None => Product::of_name(&source).ok_or_else(|| {
+            format!("{source}: the product does not follow from the name — pass --product")
+        })?,
     };
     let out = match arg_value(args, "--out") {
         Some(v) => v,
@@ -230,7 +235,12 @@ fn run(args: &[String]) -> Result<(), String> {
 
     if args.iter().any(|a| a == "--inspect") {
         println!("{source}: product {}", product.label());
-        println!("waves {}: {:?} .. {:?}", waves.len(), waves.first(), waves.last());
+        println!(
+            "waves {}: {:?} .. {:?}",
+            waves.len(),
+            waves.first(),
+            waves.last()
+        );
         let first_day = year.first().map(|v| *v as i64);
         let last_day = year.last().map(|v| *v as i64);
         println!("days {}: {:?} .. {:?}", year.len(), first_day, last_day);
@@ -271,7 +281,9 @@ fn run(args: &[String]) -> Result<(), String> {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
-        println!("usage: gsfc_ssi_compiler <n07|susim|sorcesols>.h5 [--out <bin>] [--source <path|url>] [--product n07|susim|sorcesols] [--inspect]");
+        println!(
+            "usage: gsfc_ssi_compiler <n07|susim|sorcesols>.h5 [--out <bin>] [--source <path|url>] [--product n07|susim|sorcesols] [--inspect]"
+        );
         return;
     }
     if let Err(e) = run(&args) {
@@ -291,7 +303,9 @@ mod tests {
 
     #[test]
     fn extracts_the_declared_columns_and_drops_fill() {
-        let waves = [120.5, 121.5, 122.5, 204.5, 205.5, 206.5, 279.5, 280.5, 281.5];
+        let waves = [
+            120.5, 121.5, 122.5, 204.5, 205.5, 206.5, 279.5, 280.5, 281.5,
+        ];
         let nday = 2;
         let mut irr = vec![0.0; waves.len() * nday];
         let mut fill = vec![0.0; waves.len() * nday];
@@ -304,16 +318,8 @@ mod tests {
         fill[4 * nday + 1] = 1.0;
         let year = [2003.0, 2003.0];
         let doy = [134.0, 135.0];
-        let recs = extract(
-            Product::SorceSols,
-            &waves,
-            &irr,
-            &fill,
-            &year,
-            &doy,
-            &lsk(),
-        )
-        .expect("extract");
+        let recs =
+            extract(Product::SorceSols, &waves, &irr, &fill, &year, &doy, &lsk()).expect("extract");
         assert_eq!(recs.len(), 5);
         assert_eq!(recs[0].2, 0);
         assert!((recs[0].1 - 7.4193).abs() < 1e-9);
@@ -339,16 +345,8 @@ mod tests {
         let fill = vec![0.0, 0.0];
         let year = [1999.0];
         let doy = [1.0];
-        let err = extract(
-            Product::Susim,
-            &waves,
-            &irr,
-            &fill,
-            &year,
-            &doy,
-            &lsk(),
-        )
-        .expect_err("no 205.5 bin");
+        let err = extract(Product::Susim, &waves, &irr, &fill, &year, &doy, &lsk())
+            .expect_err("no 205.5 bin");
         assert!(err.contains("no 1 nm bin"));
     }
 }

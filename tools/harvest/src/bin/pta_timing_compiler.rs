@@ -1,4 +1,3 @@
-
 use omegaflow::archivar::asset_path::compiled;
 use omegaflow::archivar::inflate::gunzip_tar_members;
 use omegaflow::cdn::upload_release;
@@ -67,7 +66,6 @@ fn flag_value<'a>(toks: &'a [&'a str], key: &str) -> Option<String> {
         .map(|w| w[1].to_string())
 }
 
-
 fn parse_par(text: &str) -> Option<Params> {
     let mut p = Params::default();
     for line in text.lines() {
@@ -100,7 +98,6 @@ fn parse_par(text: &str) -> Option<Params> {
     }
     if p.psr.is_empty() { None } else { Some(p) }
 }
-
 
 fn is_psr_token(s: &str) -> bool {
     let b = s.as_bytes();
@@ -199,9 +196,7 @@ fn parse_tim(text: &str, pta_fallback: &str) -> Vec<Row> {
         if !(30_000.0..=70_000.0).contains(&mjd) || freq_mhz <= 0.0 || uncertainty_us < 0.0 {
             continue;
         }
-        let tag = match flag_value(&toks[5..], "-pta")
-            .map(|v| normalize_tag(&v, pta_fallback))
-        {
+        let tag = match flag_value(&toks[5..], "-pta").map(|v| normalize_tag(&v, pta_fallback)) {
             Some(v) => v,
             None => pta_fallback.to_string(),
         };
@@ -218,7 +213,6 @@ fn parse_tim(text: &str, pta_fallback: &str) -> Vec<Row> {
     }
     out
 }
-
 
 fn parse_residual(text: &str, _pta: &str) -> Vec<Resid> {
     let mut residual_col = 2usize;
@@ -283,7 +277,6 @@ fn parse_residual(text: &str, _pta: &str) -> Vec<Resid> {
     }
     out
 }
-
 
 fn qmjd(mjd: f64) -> i64 {
     (mjd * 1e6).round() as i64
@@ -416,7 +409,6 @@ fn finalize(
     out
 }
 
-
 fn detect_pta(name: &str) -> Option<&'static str> {
     let n = name.to_ascii_lowercase();
     if n.contains("nanograv") {
@@ -463,7 +455,6 @@ fn open_input(args: &[String]) -> Result<(String, Box<dyn Read>), String> {
     }
     Err("usage: pta_timing_compiler (--file <release.tar.gz> | --url <url>) [--out <csv>] [--split-dir <dir>] [--pta <label>]".into())
 }
-
 
 fn csv_cell(s: &str) -> String {
     if s.contains(',') || s.contains('"') || s.contains('\n') || s.contains('\r') {
@@ -543,7 +534,6 @@ fn write_split(dir: &str, rows: &[Row], pta: &str) -> Result<(), String> {
     }
     Ok(())
 }
-
 
 fn run(args: &[String]) -> Result<(), String> {
     let (src, reader) = open_input(args)?;
@@ -706,7 +696,6 @@ fn main() {
         std::process::exit(1);
     }
 }
-
 
 #[cfg(test)]
 mod tests {

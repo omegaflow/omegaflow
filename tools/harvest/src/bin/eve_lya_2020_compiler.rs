@@ -134,12 +134,14 @@ fn parse_file(
             if sc != 0 {
                 pending += 1;
             }
-            let Some(p) = precision.and_then(|c| cell_array_f64(&table, &bytes, row, c, MEGSP_INDEX))
+            let Some(p) =
+                precision.and_then(|c| cell_array_f64(&table, &bytes, row, c, MEGSP_INDEX))
             else {
                 absent += 1;
                 continue;
             };
-            let Some(a) = accuracy.and_then(|c| cell_array_f64(&table, &bytes, row, c, MEGSP_INDEX))
+            let Some(a) =
+                accuracy.and_then(|c| cell_array_f64(&table, &bytes, row, c, MEGSP_INDEX))
             else {
                 absent += 1;
                 continue;
@@ -196,7 +198,8 @@ fn main() {
     };
     files.sort();
     let mut records: Vec<(f64, f64, u32, f32, f32)> = Vec::new();
-    let mut stats = String::from("file\ttotal\tgood\tabsent\tpending\tmax_tai_delta\ttdb_first\ttdb_last\n");
+    let mut stats =
+        String::from("file\ttotal\tgood\tabsent\tpending\tmax_tai_delta\ttdb_first\ttdb_last\n");
     let mut voids = 0usize;
     for path in &files {
         let before = records.len();
@@ -224,7 +227,10 @@ fn main() {
                     last
                 ));
                 if added != good + pending {
-                    eprintln!("{}: {} kept vs {} good + {} pending", name, added, good, pending);
+                    eprintln!(
+                        "{}: {} kept vs {} good + {} pending",
+                        name, added, good, pending
+                    );
                 }
             }
             None => {

@@ -118,7 +118,8 @@ fn main() {
     let goes = read_goes(&goes_path).expect("goes asset void");
     let goes_bins = minute_bins(&goes);
     let mut all_pairs: Vec<(f64, f64)> = Vec::new();
-    let mut report = String::from("set\teve_n\tgoes_n\tpaired\ta\tb\tr\tresid_sd\tmedian_ratio\tmean_goes\n");
+    let mut report =
+        String::from("set\teve_n\tgoes_n\tpaired\ta\tb\tr\tresid_sd\tmedian_ratio\tmean_goes\n");
     let mut eve_scaled: Vec<(f64, f64, u32)> = Vec::new();
     let mut combined_ratio = 1.0;
     for path in &eve_paths {
@@ -159,7 +160,6 @@ fn main() {
                 "{}: paired {} a {:.6} b {:.3e} r {:.6} resid {:.3e}",
                 label, n, a, b, r, sd
             );
-
         } else {
             eprintln!("{}: not enough pairs", path);
         }

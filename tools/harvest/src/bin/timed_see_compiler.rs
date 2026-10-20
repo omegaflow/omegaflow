@@ -181,7 +181,9 @@ fn run(args: &[String]) -> Result<(), String> {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
-        println!("usage: timed_see_compiler <YYYY_TIMED_SEE_obs.dat> [--out <bin>] [--year 2026] [--source <path|url>]");
+        println!(
+            "usage: timed_see_compiler <YYYY_TIMED_SEE_obs.dat> [--out <bin>] [--year 2026] [--source <path|url>]"
+        );
         return;
     }
     if let Err(e) = run(&args) {

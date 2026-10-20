@@ -1,4 +1,3 @@
-
 pub const MAGIC: [u8; 4] = *b"TZM1";
 pub const VERSION: u32 = 1;
 

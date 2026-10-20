@@ -1,4 +1,3 @@
-
 use omegaflow::archivar::inflate::tar_entries;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::archivar::tar_zst::{Member, encode};
@@ -6,8 +5,7 @@ use std::io::{BufReader, Read};
 use std::process::{Child, ChildStdout, Command, Stdio};
 
 const COMPILER: &str = "tools/harvest/src/bin/tar_zst_compiler.rs";
-const DEFAULT_URL: &str =
-    "https://zenodo.org/api/records/18776222/files/lp_dataset_patched_c000_phase_metadata.tar.zst/content";
+const DEFAULT_URL: &str = "https://zenodo.org/api/records/18776222/files/lp_dataset_patched_c000_phase_metadata.tar.zst/content";
 const DEFAULT_OUT: &str = "tar_zst_members.bin";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
@@ -115,10 +113,7 @@ fn main() {
         return;
     }
 
-    let (src, range) = match (
-        arg_value(&args, "--file"),
-        arg_value(&args, "--url"),
-    ) {
+    let (src, range) = match (arg_value(&args, "--file"), arg_value(&args, "--url")) {
         (Some(path), _) => (path, None),
         (None, url) => {
             let url = match url {
@@ -195,7 +190,11 @@ fn main() {
         "{src}: {} member(s) selected of {} header(s) scanned{}",
         members.len(),
         seen,
-        if stopped { " (limit reached, stream closed)" } else { "" }
+        if stopped {
+            " (limit reached, stream closed)"
+        } else {
+            ""
+        }
     );
     if members.is_empty() {
         eprintln!("{src}: no member collected — absent (0 honored)");
@@ -256,7 +255,11 @@ mod tests {
     fn sample_tar() -> Vec<u8> {
         let mut tar = Vec::new();
         tar.extend_from_slice(&tar_header("lp_dataset_patched/", 0, b'5'));
-        tar.extend_from_slice(&tar_header("lp_dataset_patched/06/ph012_lc2_172.npy", 5, b'0'));
+        tar.extend_from_slice(&tar_header(
+            "lp_dataset_patched/06/ph012_lc2_172.npy",
+            5,
+            b'0',
+        ));
         tar.extend_from_slice(b"abcde");
         tar.resize(tar.len().div_ceil(512) * 512, 0);
         tar.extend_from_slice(&[0u8; 1024]);
@@ -309,8 +312,14 @@ mod tests {
     #[test]
     fn member_selection_matches_exact_and_substring() {
         let filter = vec!["ph012".to_string()];
-        assert!(selected("lp_dataset_patched/06/ph012_lc2_172.npy", Some(&filter)));
-        assert!(!selected("lp_dataset_patched/06/ph020_lc1_199.npy", Some(&filter)));
+        assert!(selected(
+            "lp_dataset_patched/06/ph012_lc2_172.npy",
+            Some(&filter)
+        ));
+        assert!(!selected(
+            "lp_dataset_patched/06/ph020_lc1_199.npy",
+            Some(&filter)
+        ));
         let dirs = vec!["lp_dataset_patched/06/".to_string()];
         assert!(selected("lp_dataset_patched/06/", Some(&dirs)));
         assert!(selected("anything", None));

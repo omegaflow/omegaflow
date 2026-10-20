@@ -1,10 +1,10 @@
+use omegaflow::archivar::embedded_lsk;
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::geo::{
     COMP_GOEV_DURATION_H, COMP_GOEV_MAX_CUSTOMERS, GeoRec, MAGIC_GOEV, parse_bin, write_bin,
 };
 use omegaflow::archivar::grid_outage::{COMP_CAUSE_CLASS, cause_code, component_name};
 use omegaflow::archivar::sha256::sha256_hex;
-use omegaflow::archivar::embedded_lsk;
 use omegaflow::cdn::upload_release;
 use omegaflow::inflate::zip_members;
 use omegaflow::lsk::days_from_civil;
@@ -249,8 +249,8 @@ fn run(args: &[String]) -> Result<(), String> {
 
     let (zip_bytes, origin) = match arg_value(args, "--in").or_else(|| arg_value(args, "--input")) {
         Some(path) => {
-            let bytes = std::fs::read(&path)
-                .map_err(|e| format!("read {path} returned void: {e}"))?;
+            let bytes =
+                std::fs::read(&path).map_err(|e| format!("read {path} returned void: {e}"))?;
             (bytes, path)
         }
         None => {

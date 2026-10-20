@@ -1,4 +1,3 @@
-
 use std::path::PathBuf;
 
 pub fn work_root() -> PathBuf {
@@ -89,10 +88,7 @@ mod tests {
             std::env::set_var("OMEGAFLOW_WORK", &root);
         }
         let path = compiled("example.com", "sample.bin");
-        assert_eq!(
-            path,
-            root.join("sources/example.com/compiled/sample.bin")
-        );
+        assert_eq!(path, root.join("sources/example.com/compiled/sample.bin"));
         assert!(
             !path.parent().unwrap().exists(),
             "compiled() only names the path"

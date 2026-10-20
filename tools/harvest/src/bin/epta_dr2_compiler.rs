@@ -1,6 +1,6 @@
 use omegaflow::archivar::inflate::zip_members;
 use omegaflow::archivar::skymap::{
-    encode_rec, write_header, SkymapRecord, KIND_GENERIC, REC_BYTES,
+    KIND_GENERIC, REC_BYTES, SkymapRecord, encode_rec, write_header,
 };
 use omegaflow::cdn::upload_release;
 
@@ -116,8 +116,9 @@ fn fetch(url: &str) -> Option<Vec<u8>> {
 }
 
 fn run(args: &[String]) -> Result<(), String> {
-    let out_path = arg_value(args, "--out")
-        .ok_or("usage: epta_dr2_compiler --out <epta_dr2.sky1> [--zip <path>] [--ci-mode] — refused")?;
+    let out_path = arg_value(args, "--out").ok_or(
+        "usage: epta_dr2_compiler --out <epta_dr2.sky1> [--zip <path>] [--ci-mode] — refused",
+    )?;
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let bytes = match arg_value(args, "--zip") {
         Some(p) => std::fs::read(&p).map_err(|e| format!("read {p} returned void: {e}"))?,
@@ -132,7 +133,11 @@ fn run(args: &[String]) -> Result<(), String> {
         let Some((psr, ra, dec, tres_s)) = parse_par(text) else {
             return;
         };
-        let key = if psr.is_empty() { name.to_string() } else { psr };
+        let key = if psr.is_empty() {
+            name.to_string()
+        } else {
+            psr
+        };
         if seen.iter().any(|s| s == &key) {
             return;
         }

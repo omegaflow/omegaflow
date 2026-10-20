@@ -439,7 +439,8 @@ mod tests {
 
     #[test]
     fn records_order_by_component_then_epoch() {
-        let mut rows = vec![(3.0, 1.0, 2), (1.0, 1.0, 0), (2.0, 1.0, 0), (5.0, 1.0, 1)];
+        let mut rows: Vec<(f64, f64, u32)> =
+            vec![(3.0, 1.0, 2), (1.0, 1.0, 0), (2.0, 1.0, 0), (5.0, 1.0, 1)];
         rows.sort_by(|a, b| a.2.cmp(&b.2).then(a.0.total_cmp(&b.0)));
         assert_eq!(
             rows,
