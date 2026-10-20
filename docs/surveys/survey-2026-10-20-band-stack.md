@@ -2,7 +2,7 @@
   title: Survey — Band-Stack: Nachbarstationen unter dem Oval bündeln (2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: d6108e17a0c0b2707de55c2ab5c93db6e046c633764fed7f3715f5752de7cdab
+  sha256: affc4d7207e2eee49f8e28bd052d0836d15f97cb8dc3b7a50e0fb1d08c5afcc2
   status: done
   see-also: docs/surveys/survey-2026-10-20-sturm-komposit.md tools/measure/src/bin/band_stack_probe.rs phi/sources.φ
 -->
@@ -65,7 +65,10 @@ Bei AL = −1000 nT liegt das Band um Mitternacht bei 53°..69°, um Mittag bei
 63°..79°. Das ist eine transparente geometrische Näherung; sie ist **nicht**
 gegen Kamera-Ovalgrenzen kalibriert. Eine Stationshöhe wird nicht verwendet:
 SuperMAG schreibt `alt = 0.0` für alle 20 Stationen (20/20 nominal), eine
-Höhenkorrektur der Maske gibt es daher nicht.
+Höhenkorrektur der Maske gibt es daher nicht. **Nachtrag 2026-10-20:** Die
+Haus-Tabelle (`survey-2026-10-20-asi-stationshoehen.md`) trägt jetzt gemessene
+Höhen; die Maske wurde **nicht** damit neu gerechnet. Für die CGM-Breite ist der
+Effekt klein, für die Magnetfeldprojektion nicht — als Grenze benannt.
 
 ## Methode
 
@@ -171,8 +174,9 @@ auf Amplitudenseite.
 - **Kamera und SSUSI bleiben offen.** THEMIS/ASI liegt nur für Mai 2024 vor
   (außerhalb 2014–2023), SSUSI ist `absent`. Eine kalibrierte Ovalgrenze aus
   Bilddaten ist mit diesem Survey nicht gemessen.
-- **Höhen sind nominal.** SuperMAG schreibt `alt = 0.0`; 20/20 Stationen tragen
-  keine echte Höhe. Für eine Breitenmaske ist das tolerierbar, für eine
+- **Höhen.** SuperMAG schreibt `alt = 0.0`; die Maske nutzt diese Nominalhöhe.
+  Die Haus-Tabelle hat seit 2026-10-20 gemessene Höhen, die Maske wurde aber
+  nicht neu gerechnet. Für eine Breitenmaske tolerierbar, für eine
   Höhenkorrektur der Magnetfeldprojektion nicht.
 
 ## Reproduktion
