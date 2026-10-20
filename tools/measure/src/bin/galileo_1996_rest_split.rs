@@ -13,7 +13,7 @@ const YEAR: i64 = 1996;
 const NEAR_DAYS: i64 = 30;
 const MIN_SPEAR: usize = 8;
 const LOUD_HZ: f64 = 3.0;
-const OUT: &str = "zustand/reports/galileo_1996_rest_split.txt";
+const OUT: &str = "state/reports/galileo_1996_rest_split.txt";
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
@@ -206,9 +206,14 @@ struct PassRec {
     xs: Vec<f64>,
 }
 
+fn receiver_body() -> String {
+    std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset")
+}
+
 fn main() {
+    let body = receiver_body();
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    for b in ["galileo_daily", body.as_str()] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
             return;
@@ -248,7 +253,7 @@ fn main() {
         let t = *d as f64 * DAY_S;
         let (Some(p), Some(e)) = (
             body_barycenter_position("galileo_daily", t, &eph),
-            body_barycenter_position("earth", t, &eph),
+            body_barycenter_position(body.as_str(), t, &eph),
         ) else {
             continue;
         };

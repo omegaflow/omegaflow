@@ -6,7 +6,7 @@ use std::process::exit;
 
 use omegaflow_measure::idl_save;
 
-const DEFAULT_IN: &str = "zustand/river/themis/kapu_20240909_skymap.sav";
+const DEFAULT_IN: &str = "state/river/themis/kapu_20240909_skymap.sav";
 const DEG: f64 = 180.0 / std::f64::consts::PI;
 const DEG2RAD: f64 = std::f64::consts::PI / 180.0;
 
