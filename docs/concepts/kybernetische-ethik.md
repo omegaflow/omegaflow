@@ -2,7 +2,7 @@
   title: Kybernetische Ethik — Volltext
   class: concept
   date: 2026-10-14
-  sha256: f93a3b61035d2992003028d42209b903ede9ccc3541a231d3a8dda1a6612e7ff
+  sha256: 21500b068f7afbec0355d54a52f402dc9824e2fb9b1d5d952733acec5f942e8b
   status: live
   see-also: AGENTS.md
 -->
@@ -31,11 +31,11 @@ Four states of a value are fundamentally different and never collapse:
 
 - **null-echt** — the measurement IS zero (0 °C, v = 0): the value flows as 0.0.
 - **absent** — the source does not carry the value: Option/None/skip, never a fabricated 0.0.
-- **pending** — the value exists, the harvest is missing: a register duty (handover/ledger), never a data value.
+- **`pending`** — the value exists, the harvest is missing: a register duty (handover/ledger), never a data value.
 - **riss** — the value is present as contradiction: two independent lines that refuse to converge. A riss is never mapped to `absent` or `0.0` and never smoothed — a mean over the riss would be fabrication; it is carried as `VerdictWord::Riss` with both witness lines in the knot.
 
 The 0-Kanon also names the build states — an unbuilt idea is never a parking lot:
-- **pending** — unbuilt and needed: a promise, the socket stands and waits (a register duty).
+- **`pending`** — unbuilt and needed: a promise, the socket stands and waits (a register duty).
 - **descoped** — unbuilt and released by measurement: the finding itself is the entry ("never built, not needed" — no later, no upkeep); a `descoped` without a measurement is powdered deferral. cone mode and the browser-texture path each carry their Befund (Atom C, 2026-09-08).
 Deferral/parking is no state: the parking lot was settled once and closed (2026-09-08) — every parked idea took a building line or a measured release, never a shelf. A new category is earned only by a Sprachloch (a true sentence that was unsayable); the house heals when commits outgrow categories, not the reverse.
 

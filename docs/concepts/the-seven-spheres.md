@@ -1,7 +1,7 @@
 <!--
   title: Die sieben Sphären — die theoretischen Schnittmengen der kybernetischen Astrophysik
   class: concept
-  sha256: 810ed744d47e5ef425a47d7850dd7d5796c8524203f37aaf03395048f9e51731
+  sha256: eb47f7c9d087d40d5c4bc185a6f52d45a312563603f7235393e360c7cd7e0945
 -->
 # Die sieben Sphären — die theoretischen Schnittmengen der kybernetischen Astrophysik
 
@@ -186,7 +186,7 @@ Nulltest) und die Karten der Kopplung selbst (Plasma-Linsen,
 Phasenknoten, de-Sitter) — dort zählt die Konfidenz als gerenderte
 Eigenschaft, nicht die behauptete Entdeckung. Wer die beiden
 verwechselt, fabriziert. Die Grenze ist der Transfer-Entropie-Lens des
-Systems: 0 honored, pending, ausstehend — nie ein gefüllter Punkt, wo
+Systems: 0 honored, `pending`, `ausstehend` — nie ein gefüllter Punkt, wo
 keiner gemessen wurde.
 
 ## Der Satz

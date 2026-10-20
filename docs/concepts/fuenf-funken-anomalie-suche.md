@@ -2,7 +2,7 @@
   title: Fünf Funken der Anomalie-Suche
   class: concept
   date: 2026-09-05
-  sha256: 161681275f380540d91b05936d62d306078264762f439524ab2176c6fac55642
+  sha256: f3de156b1f1a4a16ce9b5a8ed74f760da608851bb2e81505f5d0e3176e5d3731
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/handover/archiv/handover-2026-09-09-mechanische-reste.md phi/reports/scan_coverage.φ tools/measure/src/bin/lsst_anomaly_probe.rs
 -->
@@ -33,7 +33,7 @@ Rats-Kern: das Fenster muss **disjunkt stromaufwärts** liegen (nie die ganze
 Serie — sonst misst der Dip gegen seine eigene Baseline), Skala als **MAD**
 (der gesuchte Ausreißer darf seine eigene Schwelle nicht aufblähen), Schwelle
 `mean + n·σ` mit benanntem `n` (spiegelt `DIP_SIG 3.0`), dreiwertig
-(Abweichung null-echt / absent / pending). Name = Implementation: „Residual
+(Abweichung null-echt / absent / `pending`). Name = Implementation: „Residual
 gegen eigenes Referenzfenster", nicht „unerwartet" (ein Urteil über das
 Erwartete ist A≠A). Das Fenster reitet mit (Anfang/Ende TDB, n pro Band,
 Median+MAD).

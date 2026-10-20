@@ -2,7 +2,7 @@
   title: BLATT — Trịnh Xuân Thuận als Fragesteller: Screening seiner fünf Fragen
   class: sheet
   date: 2026-09-05
-  sha256: efd5aa39f143e4a57f55185e66b0e5ccfe1d7605bd76759dd5e0b8c6fa589552
+  sha256: 8b7dcffdbe1b83119559a0f49934fa7c5e550ff2cc9635821aca99318e884f7c
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-axiom.md docs/paper/signal-cone-audit-sheet.md docs/paper/probe-front-dark-matter.md docs/auftrag/archiv/auftrag-gaia-dr4-iapetus.md
 -->
@@ -16,7 +16,7 @@ bleibt dort benannt.
 ## Die Frage des Blatts
 
 Kann Trịnh Xuân Thuận Fragesteller für das System sein — tragen seine
-offenen Fragen die Form eines Messauftrags? Das Blatt stellt seine fünf
+fünf Fragen die Form eines Messauftrags? Das Blatt stellt seine fünf
 großen Fragen — aus *Chaos and Harmony* (2000), *The Secret Melody* (1994)
 und seinem Forschungswerk zur Galaxienentwicklung und chemischen
 Zusammensetzung des Universums — einzeln durch das Tor: **trägt die Frage
@@ -146,8 +146,9 @@ bestehende (mean + 2σ, fam). Antwortet die Tabelle mit Stille, ist das
 Thuậns These — „das Universum ist ein nur-gerade-balanciertes System" —
 in den Zahlen des Systems: Stille als Harmonie, gemessen. A = A.
 
-**In Auftrag gegeben (2026-09-05):** `docs/auftrag/archiv/auftrag-der-grat.md` —
-`status: pending`, Register-Zeile im Handover-Register.
+**In Auftrag gegeben (2026-09-05):** `auftrag/archiv/auftrag-2026-09-05-der-grat.md`
+(Arbeitsbaum; Pfad am 2026-10-20 nachgezogen — der alte `docs/auftrag/…` ist mit
+`d0c9ef64d` nach `work/auftrag` gewandert). Stand dort: `status: archived`.
 
 ---
 

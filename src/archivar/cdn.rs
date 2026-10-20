@@ -160,19 +160,18 @@ fn cdn_tag_of(url: &str) -> Option<&str> {
 }
 
 fn admitted_terms(token: &str) -> bool {
-    !token.is_empty()
-        && !matches!(
-            token,
-            "no-license-stated"
-                | "all-rights-reserved"
-                | "auth-required"
-                | "registration-required"
-                | "no-redistribution"
-                | "no-license"
-                | "unclear"
-                | "unknown"
-        )
-        && !token.ends_with("-permission-required")
+    let t = token.trim().to_ascii_uppercase();
+    !t.is_empty()
+        && (t == "PD"
+            || t.starts_with("PD-")
+            || t.starts_with("CC0")
+            || t.starts_with("CC-BY")
+            || t.starts_with("OGL")
+            || t.starts_with("ETALAB")
+            || t.starts_with("PDL")
+            || t == "JP"
+            || t.starts_with("JP-")
+            || t.starts_with("OWN-WORK"))
 }
 
 fn registered_netlocs() -> &'static HashSet<String> {
@@ -731,10 +730,23 @@ mod tests {
     }
 
     #[test]
-    fn admitted_terms_refuses_the_unclear_class() {
+    fn admitted_terms_is_an_allowlist() {
         assert!(admitted_terms("CC-BY-4.0"));
+        assert!(admitted_terms("CC-BY-NC-4.0"));
+        assert!(admitted_terms("CC-BY-SA-4.0"));
         assert!(admitted_terms("PD"));
+        assert!(admitted_terms("PD-USGov"));
         assert!(admitted_terms("CC0-1.0"));
+        assert!(admitted_terms("OGL-UK-3.0"));
+        assert!(admitted_terms("etalab-2.0"));
+        assert!(admitted_terms("jp-public-data-license-1.0"));
+        assert!(admitted_terms("own-work"));
+        assert!(!admitted_terms("free-open"));
+        assert!(!admitted_terms("vizier-scientific-free"));
+        assert!(!admitted_terms("other-attribution"));
+        assert!(!admitted_terms("ODbL-1.0"));
+        assert!(!admitted_terms("per-service-terms"));
+        assert!(!admitted_terms("MIT"));
         assert!(!admitted_terms("no-license-stated"));
         assert!(!admitted_terms("all-rights-reserved"));
         assert!(!admitted_terms("auth-required"));

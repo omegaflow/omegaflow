@@ -2,7 +2,7 @@
   title: BLATT PAPIER — Kreuz-Screening im Kollab-Fenster (Trishuli 2026-08-26)
   class: sheet
   date: 2026-08-30
-  sha256: aba57be7dfb426ac7f3a150c9393c54ed3067f362727d8cc576d14720d6d3f02
+  sha256: 909e85e4c74fc16eb9fc9b7bc88ebe2e3d8214891d457931d9911182e33e34f3
   status: live
   see-also: docs/paper/sturzflut-tibet-pfeil.md docs/paper/causal-arrow-preregistration.md
 -->
@@ -267,8 +267,8 @@ Die konditioniert überlebenden räumlichen Pfeile weisen **gegenläufig**
   (G2-Grenze: instrumentelle Nichtisolierbarkeit ≠ physische Negation),
   aber für diese Messfront beantwortet: eine erneute Investigation von A
   wäre Re-Investigation derselben Negativ.
-- **Aussage B — offen (marginal, pending; danach durch §3.4 Power-Test
-  korrigiert):** der nord→süd-lag-12-Pfeil
+- **Aussage B — beantwortet (marginal gemessen, durch den Power-Test §3.4
+  entschieden):** der nord→süd-lag-12-Pfeil
   `kollab_precip → rasuwa_precip` überlebt alle drei Konditionierungen mit
   2–3 % Marge über Schwelle. Er ist als **marginal gemessen** notiert, nicht
   als harter Kausalbeleg. Die Frage zu B wurde durch mehr Power entschieden

@@ -2,7 +2,7 @@
   title: Source Curation — Der eine Pfad
   class: concept
   date: 2026-10-14
-  sha256: 125b5f3a138a3cf6d49033c48b955c6ca0bd0b75686d5d130749b34c0c639322
+  sha256: 92c83002695cd636c1f699f52652dd315d5efcab4bc2bf5d2d5fff24d32f757f
   status: live
   see-also: AGENTS.md docs/SOURCE_PORT.md
 -->
@@ -24,12 +24,17 @@ Work surface: the flat `phi/` registers. The source-port backlog (`queue/`/`stag
 registers are the queue: `register_lookup --open` surfaces the state registers
 owner-tagged (`phi/sources.φ` + `nrs_stations.φ`;
 offene Marker → mycelium, `asset fehlt` → mountain); every known open state maps to an owner (unit-tested: `tools/register/src/bin/register_lookup.rs`, `disposition_owner_maps_every_known_state` / `state_class_maps_every_register_state`).
-Harvested data that stays belongs on the local machine in the public
-workspace `$OMEGAFLOW_WORK/data/` (outside the repo since 2026-10-14; working
-copies `data/<netloc>/<datei>`) or the archivar
-`cache/`; its durable home is the CDN asset registered as a `url`-line in
-`phi/sources.φ` (the CDN-Manifestation duty below) — a kept dataset is never an
-unmanifested local file. The external archive root `archive-root` (physisch
+Harvested data that stays belongs on the local machine under
+`$OMEGAFLOW_WORK/sources/<netloc>/` (raw) and
+`$OMEGAFLOW_WORK/sources/<netloc>/compiled/` (compiled assets) — one canonical
+root, outside the code repo. `/tmp` carries only intermediates that may vanish
+after the run; `data/`, `cache/` and `tmp/` inside the code repo are not data
+homes and stay ignored. A kept dataset is never an unmanifested local file; its
+durable home is the CDN asset registered as a `url`-line in `phi/sources.φ`
+(the CDN-Manifestation duty below). CDN upload is allowlisted: PD, CC0, CC-BY,
+CC-BY-NC, CC-BY-SA, OGL, Etalab, PDL, JP, own-work; every other token needs a
+documented review (source, date, quote) before it leaves the machine. The
+external archive root `archive-root` (physisch
 heute `$HOME/archive/archive-root/`) holds only legacy material:
 `handover/` (ein Altfund, keine laufende Praxis), `bundles/`, `concept-history/`,
 `omegaflow-legacy/`, `omegaflow-legacy-backup-2026-09-02/`, `vanilla-dateidocs/`,

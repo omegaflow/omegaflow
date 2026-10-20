@@ -3,7 +3,7 @@
   class: concept
   date: 2026-08-27
   version: 1
-  sha256: 738e1cd8d94bee5de7529b0bfde69cef89117d086af592cd0c17ca1001852fd0
+  sha256: 19eada76a44d363b5f1280bae9cc1c48fbc99008817bfba7a2935a3789880214
   status: live
   see-also: docs/paper/ docs/granit.md
 -->
@@ -29,7 +29,7 @@ Maßstab hat genau fünf Quellen, eine Quelle trägt das Ganze:
    Sample.
 4. **0 honored** — was fehlt, fehlt. Eine Lücke ist eine vollwertige
    Eigenschaft; eine erfundene Null ist eine Lüge.
-5. **pending** — was noch nicht gemessen ist, bleibt pending. Das Schweigen
+5. **`pending`** — was noch nicht gemessen ist, bleibt `pending`. Das Schweigen
    gehört den Ungeborenen.
 
 Das Exzellenz-Konzept hält diese fünf als **Messlatte**. Ein Paper, das ein
@@ -88,7 +88,7 @@ nicht erledigt.
   Kaveat steht im Text, die Zahl bleibt die Zahl.
 - Was nicht gemessen ist, wird nicht als Null geliefert.
 
-### 2.5 Das Ungeborene schweigt (pending)
+### 2.5 Das Ungeborene schweigt (`pending`)
 
 - Ergebnisse, die noch nicht gemessen sind, tragen das Wort `pending`. Kein
   Ergebnis wird antizipiert, keine Lücke wird mit Vermutung gefüllt.
