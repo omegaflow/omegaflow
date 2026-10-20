@@ -473,8 +473,9 @@ impl<'a, F: FnMut(u64, u64) -> Option<Vec<u8>>> Hdf5WindowReader<'a, F> {
         self.fetches += 1;
         self.fetched_bytes = self.fetched_bytes.saturating_add(window.len() as u64);
         self.read_bytes = self.read_bytes.saturating_add(len);
-        self.cache.insert(off, window.clone());
-        Ok(window)
+        let exact = window[..len as usize].to_vec();
+        self.cache.insert(off, window);
+        Ok(exact)
     }
 
     fn read_upto(&mut self, off: u64, len: u64) -> Result<Vec<u8>, Hdf5Note> {
