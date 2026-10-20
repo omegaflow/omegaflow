@@ -2,7 +2,7 @@
   title: THEMIS-ASI-Stationshöhen — 24 Standorte, gemessen statt nominal
   class: survey
   date: 2026-10-20
-  sha256: 67118d31eadd26be10ef6d3a0779c128a865f6e226be4c461f3f29257fe302e4
+  sha256: 7366f86c7d0f73b6c82d41f2355b9fba0f3290a9651f1f344b02649eb37e81c6
   status: live
   see-also: docs/surveys/survey-2026-10-12-standort-lokalisierung-ortho-dsm.md recherche/funde/notizen/2026-10-12-themis-asi-stations.md recherche/funde/notizen/2026-10-12-calibration.md
 -->
@@ -15,11 +15,12 @@ nominal, nicht gemessen. Runde 1 (2026-10-20) hat 13 Stationen belegt und die 11
 Grenzfälle benannt. Runde 2 grenzt diese 11 mit **DTM-Suche, Copernicus GLO-30, SRTM
 und 3DEP an beiden MCGR-Koordinaten** ein.
 
-**Kurzantwort.** **23 von 24** Stationen tragen jetzt eine belegte Höhe (± ≤ 10 m).
-**WHIT bleibt `None`**: HRDEM hat dort nur DSM, das nächstgelegene DTM liegt 5.560 m
-nördlich auf einem anderen Gelände (704,74 m H statt 741,5 m H). Die 13 belegten Werte
-der Runde 1 sind **reproduziert (Δ 0,00 m)**; die PGM-Gegenprobe bleibt bei **4,38 m**
-MAD ohne FYKN/MCGR. Die zweite Runde ist damit nicht schlechter kalibriert.
+**Kurzantwort.** **24 von 24** Stationen tragen jetzt eine belegte Höhe (± ≤ 10 m).
+**WHIT** war der letzte offene Fall: HRDEM hat am Punkt nur DSM, aber die gerodete
+Anlage 0–150 m östlich liefert den lokalen Boden (Transect 739,9–741,6 m H; Punkt-DSM
+741,40). Der DSM ist dort Boden, kein Kronendach → **741,0 ± 3 m**. Die 13 belegten
+Werte der Runde 1 sind **reproduziert (Δ 0,00 m)**; die PGM-Gegenprobe bleibt bei
+**4,38 m** MAD ohne FYKN/MCGR. Die zweite Runde ist damit nicht schlechter kalibriert.
 
 ## Methode (generalisiert aus 2026-10-12, Runde 2 erweitert)
 
@@ -99,7 +100,7 @@ die Runde 1 `pending`/Obergrenze meldete.
 | RANK | −26,41 DSM | **−26,41** | HRDEM DSM 1 m; Copernicus 18,37 H | 0 m; kein DTM < 11 km | 8 | belegt (Tundra) |
 | SNAP | 418,93 DSM | **418,93** | HRDEM DSM 1 m; Copernicus 447,37 H | 0 m; kein DTM < 11 km | 10 | belegt (Mine-Pad) |
 | TALO | −20,29 DSM | **−20,29** | HRDEM DSM 1 m; Copernicus 8,29 H | 0 m; kein DTM < 11 km | 8 | belegt (Tundra) |
-| WHIT | 749,16 DSM | **None** | nur DSM; nächstes DTM 5.560 m N = 704,74 H | 5.560 m (nicht nutzbar) | — | **pending** |
+| WHIT | 749,16 DSM | **741,00** | HRDEM DSM 741,40; Boden-Transect der gerodeten Anlage 739,9–741,6 | 0 m (Punkt); nächste Rodung ~40 m | 3 | belegt |
 | GILL | 93,12 ASTER | **90,65** | Copernicus 132,53 H; SRTM 131 H | 0 m (30 m); HRDEM keine Kachel | 10 | belegt (30 m) |
 | KUUJ | 85,39 ASTER | **79,22** | Copernicus 102,83 H; SRTM 104 H | 0 m; HRDEM-DTM 2.933 m E = 76,25 (nicht genutzt) | 10 | belegt (30 m) |
 | NRSQ | 40,53 ASTER | **46,27** | Copernicus 5,74 H | 0 m; HRDEM/3DEP keine Kachel | 10 | belegt (30 m) |
@@ -143,7 +144,7 @@ bleibt der einzige echte `pending`-Fall: das DTM 5,56 km nördlich liegt 36 m ti
 | SNKQ | −28,75 | 0.0 | **−28,75** | HRDEM DTM 1 m | 56.536/−79.231 | 3 | 0,00 |
 | TALO | 0,19 | 0.0 | **−20,29** | HRDEM DSM 1 m + Copernicus | 69.541/−93.554 | 8 | −20,48 |
 | TPAS | 240,59 | 236 | **236,00** | PGM-Kopf; ASTER bestätigt | 53.994/−100.941 | 2 | −4,59 |
-| WHIT | None | 0.0 | **None** | nur DSM; DTM 5,56 km N unbrauchbar | 61.009746/−135.222545 | — | — |
+| WHIT | None | 0.0 | **741,00** | HRDEM DSM 741,40; Boden-Transect 739,9–741,6 der Rodung | 61.009746/−135.222545 | 3 | belegt |
 | YKNF | 135,06 | 0.0 | **135,06** | HRDEM DTM 1 m | 62.520/−114.313 | 3 | 0,00 |
 
 `*` PGM-Wert aus der Kalibrierung 2026-10-12, Kopf in dieser Runde nicht erneut geladen.
@@ -174,9 +175,10 @@ führt jetzt den aktuellen Standort (−154,42) und dessen 3DEP-Höhe.
 
 ## Was endgültig `pending` bleibt
 
-| Station | warum kein Punktwert |
-|---|---|
-| **WHIT** | HRDEM hat am Punkt nur DSM (741,57 m H). Das nächstgelegene DTM liegt 5.560 m nördlich bei 704,74 m H — ein anderer Hang, 36 m tiefer. Kein DTM, kein Wert; `None` bleibt. |
+**Nichts.** WHIT ist über die gerodete Anlage östlich aufgelöst: der DSM am Punkt
+(741,40 m H) liegt im lokalen Boden-Transect (739,9–741,6 m H), ist also Boden und
+kein Kronendach. Wert **741,0 ± 3 m**. Das nächstgelegene DTM (5.560 m N, 704,74 m H)
+beschreibt einen anderen Hang und bleibt ungenutzt.
 
 **Nicht mehr pending:** MCGR ist über den aktuellen PGM-Standort (ab 2017) und 3DEP
 aufgelöst; SNAP ist als Mine-Pad mit DSM + Copernicus 30 m belegt (±10). Beide sind
@@ -218,16 +220,16 @@ Die offiziellen Stationsmetadaten tragen **keine Höhe**, nur Koordinaten:
 -155.596`. Der Riss liegt im **Instrumentenkopf**, nicht in der DEM-Auswertung. Der
 Code folgt dem aktuellen Kopf; für 2013/14-Bilder gilt der Altstandort.
 
-**WHIT.** Das Orthofoto (Esri World Imagery, z17) zeigt am Punkt **Wald**; der DSM
-741,57 m ist damit Kronendach, nicht Boden. Ein DTM fehlt im Umkreis von 5.560 m.
-`None` bleibt richtig. Der nächste Weg wäre ein Bare-Earth-Modell (FABDEM) oder eine
-lokale Rodungs-/Straßenprobe — **nicht** eine weitere Stationsliste, die trägt keine
-Höhe.
+**WHIT.** Das Orthofoto (Esri World Imagery, z17) zeigt am Punkt Wald **und** 0–150 m
+östlich eine gerodete Anlage mit Gebäuden. Das HRDEM-DSM-Raster (7×7 bzw. 4×4, 1 m)
+gibt dort **739,9–741,6 m H** (Boden), am Punkt 741,40 m H. Der DSM ist also Boden,
+kein Kronendach: **741,0 ± 3 m**. Das DTM 5.560 m nördlich (704,74 m H) bleibt
+ungenutzt, weil es ein anderer Hang ist.
 
 ## Ablage
 
 - Diese Survey: `docs/surveys/survey-2026-10-20-asi-stationshoehen.md`.
-- Code: `src/archivar/themis_asi.rs` — 23 belegte Werte, WHIT `None`; Test
+- Code: `src/archivar/themis_asi.rs` — 24 belegte Werte; Test
   `station_table_carries_measured_ellipsoidal_height_and_refuses_pending` nachgezogen.
 - Quellnotizen (Werkstatt): `recherche/funde/notizen/2026-10-12-themis-asi-stations.md`
   und `recherche/funde/notizen/2026-10-12-calibration.md` — datierter Nachtrag, keine

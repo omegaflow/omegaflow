@@ -150,7 +150,7 @@ pub const STATIONS: [AsiStation; 24] = [
         code: "WHIT",
         lat_deg: 61.010,
         lon_deg: -135.223,
-        alt_m: None,
+        alt_m: Some(741.0),
     },
     AsiStation {
         code: "YKNF",
@@ -409,7 +409,7 @@ mod tests {
         assert_eq!(station("SNAP").and_then(|s| s.alt_m), Some(418.93));
         assert_eq!(station("TALO").and_then(|s| s.alt_m), Some(-20.29));
         assert_eq!(station("TPAS").and_then(|s| s.alt_m), Some(236.00));
-        assert_eq!(station("whit").and_then(|s| s.alt_m), None);
+        assert_eq!(station("whit").and_then(|s| s.alt_m), Some(741.0));
         assert_eq!(station("gbay").and_then(|s| s.alt_m), Some(41.58));
         assert!(station("zzzz").is_none());
     }
