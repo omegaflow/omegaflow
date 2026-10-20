@@ -3772,13 +3772,50 @@ fn value_bait_lines(bytes: &[u8]) -> Vec<String> {
         }
     }
     flush(&mut cur, &mut vals);
+    let chars: Vec<char> = text.chars().collect();
+    let mut pairs: Vec<String> = Vec::new();
+    for (i, ch) in chars.iter().enumerate() {
+        if *ch != '±' {
+            continue;
+        }
+        let mut a = i;
+        while a > 0 && chars[a - 1] == ' ' {
+            a -= 1;
+        }
+        while a > 0 && (chars[a - 1].is_ascii_digit() || chars[a - 1] == '.') {
+            a -= 1;
+        }
+        let mut b = i + 1;
+        while b < chars.len() && chars[b] == ' ' {
+            b += 1;
+        }
+        while b < chars.len() && (chars[b].is_ascii_digit() || chars[b] == '.') {
+            b += 1;
+        }
+        let before: String = chars[a..i].iter().collect::<String>().trim().to_string();
+        let after: String = chars[i + 1..b].iter().collect::<String>().trim().to_string();
+        let dotted = before.contains('.') || after.contains('.');
+        if !before.is_empty() && !after.is_empty() && dotted {
+            let line = format!("bait value {before}±{after}");
+            if !pairs.contains(&line) {
+                pairs.push(line);
+            }
+            if pairs.len() >= 3 {
+                break;
+            }
+        }
+    }
+
     let mut seen = std::collections::HashSet::new();
     vals.retain(|v| seen.insert(v.clone()));
-    if vals.is_empty() {
+    if vals.is_empty() && pairs.is_empty() {
         return vec!["bait absent — no distinctive number in the prefix".to_string()];
     }
     let n = vals.len();
-    let mut out = Vec::new();
+    let mut out: Vec<String> = pairs.clone();
+    if vals.is_empty() {
+        return out;
+    }
     for i in [0, n / 2, n - 1] {
         out.push(format!("bait value {}", vals[i]));
         if let Ok(f) = vals[i].parse::<f64>() {
