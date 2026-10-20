@@ -877,7 +877,9 @@ fn main() {
             channel_pending_reason(&channels[CH_D20], "D20")
         );
     }
-    println!("KDE bandwidth h sensitivity (Silverman factor sweep), pair Bz↔SST:");
+    println!(
+        "KDE bandwidth h sensitivity (Silverman factor sweep), pair Bz↔SST, lags 1–{MAX_LAG_MONTHS}:"
+    );
     println!(
         "{:>6} | {:>14} | {:>14} | {:>9}",
         "factor", "max TE(Bz→SST)", "max TE(SST→Bz)", "order"
@@ -886,7 +888,7 @@ fn main() {
     for &factor in &[0.5_f64, 0.75, 1.0, 1.5, 2.0] {
         let mut b_best: Option<f64> = None;
         let mut s_best: Option<f64> = None;
-        for &lag in &lags {
+        for &lag in lags.iter().filter(|&&l| l > 0) {
             if let Some(v) = transfer_entropy_lag_h(&sst_paired, &bz_paired, lag, factor) {
                 b_best = Some(b_best.map_or(v, |m: f64| m.max(v)));
             }
@@ -913,7 +915,7 @@ fn main() {
     }
     let stable = orders.windows(2).all(|w| w[0] == w[1]);
     println!(
-        "Bandwidth verdict: {} over {} factors (maximum over lags 0–{MAX_LAG_MONTHS}). Measured is the estimator's sensitivity to h; the surrogate threshold is not redrawn per factor — that stays the statement of the lag-sweep table above.",
+        "Bandwidth verdict: {} over {} factors (max over lags 1–{MAX_LAG_MONTHS}; this estimator's lag 0 is the same estimate as lag 1, so it is not swept twice). Measured is the estimator's sensitivity to h, not significance: the surrogate threshold is not redrawn per factor — that stays the lag-sweep table above.",
         if stable { "direction stable" } else { "direction flips with h" },
         orders.len()
     );
