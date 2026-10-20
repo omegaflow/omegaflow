@@ -6,7 +6,7 @@ use std::fs::File;
 use std::io::{BufReader, BufWriter, Read, Write};
 use std::path::{Path, PathBuf};
 
-const NETLOC: &str = "igetsftp.gfz.de";
+const NETLOC: &str = "dataservices.gfz-potsdam.de";
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()

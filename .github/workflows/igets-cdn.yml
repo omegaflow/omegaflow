@@ -19,13 +19,13 @@ jobs:
       - name: Idempotence — skip if the asset already exists on the CDN
         id: check
         run: |
-          if gh release view igetsftp.gfz.de --repo omegaflow/sources \
-             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "igets.bin"; then
+          if gh release view dataservices.gfz-potsdam.de --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -qx "igets_l1.bin"; then
             echo "present=true" >> "$GITHUB_OUTPUT"
-            echo "asset igets.bin already present — manifest skipped"
+            echo "asset igets_l1.bin already present — manifest skipped"
           else
             echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "asset igets.bin missing — compiling and manifesting"
+            echo "asset igets_l1.bin missing — compiling and manifesting"
           fi
   stations:
     needs: gate
@@ -107,4 +107,4 @@ jobs:
         run: |
           cargo run -p omegaflow-harvest --release --bin igets_merge -- \
             --in shards --stations ${{ needs.stations.outputs.count }} \
-            --out-bin igets.bin --ci-mode
+            --out-bin igets_l1.bin --ci-mode
