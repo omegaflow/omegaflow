@@ -3,6 +3,13 @@ use super::*;
 pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32)>> {
     match format {
         "rpw_efield" => crate::rpw::parse_bin(bytes),
+        "gsfc_ssi" => gsfc_ssi::parse_bin(bytes),
+        "sorce_ascii" | "sorce_sim" => sorce_ascii::parse_bin(bytes),
+        "timed_see_spwx" => timed_see::parse_bin(bytes),
+        "imp8_mag_hr" => imp8_mag::parse_series(bytes),
+        "helios_merged" => helios_merged::parse_series(bytes),
+        "amanda_7yr" => amanda::parse_series(bytes),
+        "sk_atm_bins" => sk_atm_bins::parse_series(bytes),
         "goes_xrs" => goes::parse_bin(bytes),
         "intermagnet_dbdt" => intermagnet::parse_bin(bytes),
         "omni2_serie" => omni2::parse_bin(bytes),
@@ -94,6 +101,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "pds4_img" => pds4_img::parse_series(bytes),
         "pradan_ch2" => pradan_ch2::parse_series(bytes),
         "hips_png" => hips::parse_asset(bytes),
+        "hips3d" => hips3d::parse_asset(bytes),
         "gras_2c" => gras_2c::parse_series(bytes),
         "pds4_acs_nir" => acs_nir::parse_series(bytes),
         "iris" => iris::parse_bin(bytes),
@@ -280,6 +288,9 @@ pub fn verify_records(format: &str, bytes: &[u8]) -> Option<usize> {
             Some(n)
         }
         "hips_png" => hips::parse_bin(bytes).map(|_| 1),
+        "hips3d" => hips3d::parse_bin(bytes).map(|m| m.tiles.len()),
+        "wallaby_pdr2" => wallaby::parse_bin(bytes).map(|rows| rows.len()),
+        "tar_zst" => tar_zst::parse_bin(bytes).map(|members| members.len()),
         "astrometry_series" => astrometry_series_counts(bytes).map(|(_, samples)| samples),
         "nsdb" => nsdb::parse_bin(bytes).map(|obs| obs.len()),
         "viking_grav" => pds3_table::parse_table(bytes).map(|t| t.rows.len()),
@@ -417,6 +428,9 @@ pub fn series_named(format: &str, bytes: &[u8]) -> Option<NamedSeries> {
             let name = jaxa_gpm_ku::component_name(jaxa_gpm_ku::COMP_ECHO_POWER)?.to_string();
             (vec![name], rows)
         }
+        "imp8_mag_hr" => (imp8_mag::names(), imp8_mag::parse_series(bytes)?),
+        "helios_merged" => (helios_merged::names(), helios_merged::parse_series(bytes)?),
+        "sk_atm_bins" => (sk_atm_bins::names(), sk_atm_bins::parse_series(bytes)?),
         "gras_2c" => {
             let recs = gras_2c::parse_series(bytes)?;
             let max_comp = recs.iter().map(|r| r.2).max()?;
@@ -566,6 +580,13 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
             crate::rpw::COMP_EZ => Some("rpw_e_z"),
             _ => None,
         },
+        "gsfc_ssi" => gsfc_ssi::component_name(comp),
+        "sorce_ascii" | "sorce_sim" => sorce_ascii::component_name(comp),
+        "timed_see_spwx" => timed_see::component_name(comp),
+        "imp8_mag_hr" => imp8_mag::component_name(comp),
+        "helios_merged" => helios_merged::component_name(comp),
+        "amanda_7yr" => amanda::component_name(comp),
+        "sk_atm_bins" => sk_atm_bins::component_name(comp),
         "ucar_fpi" => match comp {
             fpi_ucar::COMP_MERID => Some("fpi_mer_wind_ms"),
             fpi_ucar::COMP_ZONAL => Some("fpi_zon_wind_ms"),
@@ -709,6 +730,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         },
         "gk2a_ami" => gk2a_ami::component_name(comp),
         "hips_png" => hips::component_name(comp),
+        "hips3d" => hips3d::component_name(comp),
         "goes_abi" => goes_abi::component_name(comp),
         "mtg_li" => mtg_li::component_name(comp),
         "emm_exi_l2a" => emm_exi::component_name(comp),
@@ -4716,6 +4738,69 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         }
         return ExtractResult::Measurements(channels);
     }
+    if src.format == "wallaby_pdr2" {
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        let Some(sources) = wallaby::parse_bin(&buf) else {
+            return ExtractResult::Measurements(vec![]);
+        };
+        let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
+        if fields.is_empty() {
+            return ExtractResult::Measurements(vec![]);
+        }
+        let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
+        for s in &sources {
+            let ra = s.ra.to_radians();
+            let dec = s.dec.to_radians();
+            let (sa, ca) = ra.sin_cos();
+            let (sd, cd) = dec.sin_cos();
+            let Some(d) = s
+                .dist_h
+                .filter(|v| v.is_finite() && *v >= 0.0)
+                .map(|mpc| mpc * 1.0e6 * PARSEC_M)
+            else {
+                continue;
+            };
+            let p = [cd * ca * d, cd * sa * d, sd * d];
+            for fc in &fields {
+                let Some(value) = s.value_by_key(&fc.key) else {
+                    continue;
+                };
+                channels.push((
+                    Channel {
+                        z: 0.0,
+                        freq: s.freq,
+                        bin_width: 0.0,
+                        epoch: now,
+                        station_code: None,
+                        position: Position::StateVector {
+                            p,
+                            v: [0.0, 0.0, 0.0],
+                            track: false,
+                        },
+                        name: fc.name.clone(),
+                        value,
+                    },
+                    fc.clone(),
+                ));
+            }
+        }
+        return ExtractResult::Measurements(channels);
+    }
+    if src.format == "hips3d" {
+        let mut buf = Vec::new();
+        if let Ok(mut f) = std::fs::File::open(body) {
+            use std::io::Read;
+            f.read_to_end(&mut buf).ok();
+        }
+        if hips3d::parse_bin(&buf).is_none() {
+            return ExtractResult::Measurements(vec![]);
+        }
+        return ExtractResult::Measurements(vec![]);
+    }
     if src.format == "catalog_charm2" {
         let mut buf = Vec::new();
         if let Ok(mut f) = std::fs::File::open(body) {
@@ -8567,6 +8652,32 @@ mod fixed_width_series_tests {
         let d = nsdb::direction_unit(obs[0].ra_deg, obs[0].dec_deg).expect("a direction");
         assert!((d[0] * d[0] + d[1] * d[1] + d[2] * d[2] - 1.0).abs() < 1e-12);
         assert!(verify_records("nsdb", b"XXXX").is_none());
+    }
+
+    #[test]
+    fn tar_zst_manifests_count_members_without_the_archive() {
+        let members = vec![
+            tar_zst::Member {
+                name: "lp_dataset_patched/".into(),
+                size: 0,
+                offset: 512,
+                mtime: 0,
+                order: 0,
+                kind: b'5',
+            },
+            tar_zst::Member {
+                name: "lp_dataset_patched/06/ph012_lc2_172.npy".into(),
+                size: 131_200,
+                offset: 1024,
+                mtime: 0,
+                order: 1,
+                kind: b'0',
+            },
+        ];
+        let bin = tar_zst::encode(&members).expect("the manifest encodes");
+        assert_eq!(verify_records("tar_zst", &bin), Some(2));
+        assert!(verify_records("tar_zst", b"TZM1").is_none());
+        assert!(verify_records("tar_zst", b"ZIPT\x01\x00\x00\x00").is_none());
     }
 }
 

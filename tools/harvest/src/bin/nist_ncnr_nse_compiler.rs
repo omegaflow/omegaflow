@@ -11,6 +11,7 @@ const CATALOG_URL: &str = "https://ncnr.nist.gov/pub/ncnrdata/nse/?format=jsonld
 const MANIFEST_NAME: &str = "nist_ncnr_nse_coverage.manifest";
 const MAX_ENTRIES: usize = 10_000;
 
+#[derive(Debug)]
 struct NseSet {
     name: String,
     url: String,

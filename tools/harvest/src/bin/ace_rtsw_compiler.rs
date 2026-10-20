@@ -41,11 +41,7 @@ fn fetch_csv(id: &str, params: &str, tmin: &str, tmax: &str) -> Option<String> {
 }
 
 fn next_month(y: i64, m: i64) -> (i64, i64) {
-    if m < 12 {
-        (y, m + 1)
-    } else {
-        (y + 1, 1)
-    }
+    if m < 12 { (y, m + 1) } else { (y + 1, 1) }
 }
 
 fn parse_month(s: &str) -> Option<(i64, i64)> {
@@ -68,10 +64,7 @@ fn bucket_csv(text: &str, nvals: usize, buckets: &mut BTreeMap<String, (Vec<f64>
         else {
             continue;
         };
-        if values
-            .iter()
-            .any(|v| !v.is_finite() || v.abs() >= FILL_ABS)
-        {
+        if values.iter().any(|v| !v.is_finite() || v.abs() >= FILL_ABS) {
             continue;
         }
         let key = parts[0][..13].to_string();
@@ -186,7 +179,9 @@ fn run(args: &[String]) -> Result<(), String> {
         (y, m) = next;
     }
     if buckets.is_empty() {
-        return Err(format!("{id}: no finite hourly bucket — the asset stays unwritten"));
+        return Err(format!(
+            "{id}: no finite hourly bucket — the asset stays unwritten"
+        ));
     }
     let body = if dataset == "mfi" {
         emit_mfi(&buckets)

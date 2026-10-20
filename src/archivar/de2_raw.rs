@@ -65,11 +65,7 @@ pub fn yyddd_unix_ms(date_yyddd: i64, ut_ms: i64) -> Option<i64> {
 
 fn cell(line: &str, start: usize, end: usize) -> Option<&str> {
     let s = line.get(start..end)?;
-    if s.trim().is_empty() {
-        None
-    } else {
-        Some(s)
-    }
+    if s.trim().is_empty() { None } else { Some(s) }
 }
 
 fn num<T: std::str::FromStr>(line: &str, start: usize, end: usize) -> Option<T> {

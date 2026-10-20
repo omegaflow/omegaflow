@@ -1,6 +1,6 @@
+use omegaflow::archivar::radio_burst::{parse_bin, parse_text, write_bin};
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
-use omegaflow::archivar::radio_burst::{parse_bin, parse_text, write_bin};
 use std::process::Command;
 
 const DEFAULT_URL: &str = "https://services.swpc.noaa.gov/json/edited_events.json";

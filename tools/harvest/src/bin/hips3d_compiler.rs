@@ -93,9 +93,8 @@ fn parse_limit(args: &[String], name: &str) -> Result<Option<usize>, String> {
 }
 
 fn run(args: &[String]) -> Result<(), String> {
-    let properties_url = arg_value(args, "--properties").ok_or(
-        "--properties <url>: the HiPS3D manifest is never silent — refused",
-    )?;
+    let properties_url = arg_value(args, "--properties")
+        .ok_or("--properties <url>: the HiPS3D manifest is never silent — refused")?;
     let out_path = arg_value(args, "--out")
         .ok_or("--out <manifest path>: the manifest path is never silent — refused")?;
     let ext = match arg_value(args, "--ext") {

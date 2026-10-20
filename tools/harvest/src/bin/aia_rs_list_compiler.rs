@@ -1,11 +1,11 @@
 use omegaflow::archivar::aia::MAGIC;
 use omegaflow::archivar::membrane::embedded_lsk;
-use omegaflow::archivar::{parse_json, JsonVal};
+use omegaflow::archivar::{JsonVal, parse_json};
 use omegaflow::cdn::upload_release;
-use omegaflow::lsk::{days_from_civil, LeapSeconds};
+use omegaflow::lsk::{LeapSeconds, days_from_civil};
 use std::collections::VecDeque;
 use std::process::Command;
-use std::sync::{mpsc, Arc, Mutex};
+use std::sync::{Arc, Mutex, mpsc};
 
 const TAG: &str = "jsoc.stanford.edu";
 const BASE: &str = "http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info";
@@ -194,41 +194,43 @@ fn run(args: &[String]) -> Result<(), String> {
         let queue = Arc::clone(&queue);
         let tx = tx.clone();
         let lsk = lsk.clone();
-        handles.push(std::thread::spawn(move || loop {
-            let task = queue.lock().ok().and_then(|mut q| q.pop_front());
-            let Some((wave, comp, start)) = task else {
-                break;
-            };
-            let Some(root) = fetch_channel(&start, wave) else {
-                eprintln!("{wave} {start}: rs_list carries void");
-                continue;
-            };
-            let (Some(values), Some(t_recs)) = (
-                keyword_values(&root, "DATAMEAN"),
-                keyword_values(&root, "T_REC"),
-            ) else {
-                eprintln!("{wave} {start}: DATAMEAN/T_REC absent");
-                continue;
-            };
-            let rows = values.len().min(t_recs.len());
-            let mut batch = Vec::new();
-            for i in 0..rows {
-                let Ok(value) = values[i].parse::<f64>() else {
+        handles.push(std::thread::spawn(move || {
+            loop {
+                let task = queue.lock().ok().and_then(|mut q| q.pop_front());
+                let Some((wave, comp, start)) = task else {
+                    break;
+                };
+                let Some(root) = fetch_channel(&start, wave) else {
+                    eprintln!("{wave} {start}: rs_list carries void");
                     continue;
                 };
-                if !value.is_finite() {
-                    continue;
-                }
-                let Some(t) = parse_iso_t_rec(&t_recs[i], &lsk) else {
+                let (Some(values), Some(t_recs)) = (
+                    keyword_values(&root, "DATAMEAN"),
+                    keyword_values(&root, "T_REC"),
+                ) else {
+                    eprintln!("{wave} {start}: DATAMEAN/T_REC absent");
                     continue;
                 };
-                if t < t_lo || t > t_hi {
-                    continue;
+                let rows = values.len().min(t_recs.len());
+                let mut batch = Vec::new();
+                for i in 0..rows {
+                    let Ok(value) = values[i].parse::<f64>() else {
+                        continue;
+                    };
+                    if !value.is_finite() {
+                        continue;
+                    }
+                    let Some(t) = parse_iso_t_rec(&t_recs[i], &lsk) else {
+                        continue;
+                    };
+                    if t < t_lo || t > t_hi {
+                        continue;
+                    }
+                    batch.push((t, value, comp));
                 }
-                batch.push((t, value, comp));
-            }
-            if !batch.is_empty() {
-                tx.send(batch).ok();
+                if !batch.is_empty() {
+                    tx.send(batch).ok();
+                }
             }
         }));
     }
@@ -267,6 +269,9 @@ mod tests {
         let s = r#"{"keywords":[{"name":"DATAMEAN","values":["35.5","2.0"]},{"name":"T_REC","values":["2013-01-01T00:00:01Z","2013-01-01T01:00:01Z"]}]}"#;
         let root = parse_json(s).unwrap();
         assert_eq!(keyword_values(&root, "DATAMEAN").unwrap().len(), 2);
-        assert_eq!(keyword_values(&root, "T_REC").unwrap()[0], "2013-01-01T00:00:01Z");
+        assert_eq!(
+            keyword_values(&root, "T_REC").unwrap()[0],
+            "2013-01-01T00:00:01Z"
+        );
     }
 }

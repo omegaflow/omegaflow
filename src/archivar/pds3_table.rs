@@ -417,9 +417,7 @@ pub fn decode_rows(bytes: &[u8], meta: &TableMeta) -> Option<DecodeOutput> {
                 (Some(field), Some(data_type)) if binary => {
                     parse_binary_cell(field, data_type, c.missing_constant)
                 }
-                (Some(field), Some(data_type)) => {
-                    parse_cell(field, data_type, c.missing_constant)
-                }
+                (Some(field), Some(data_type)) => parse_cell(field, data_type, c.missing_constant),
                 _ => None,
             };
             vals.push(v);

@@ -1,4 +1,3 @@
-
 use super::fits::{FitsHeader, FitsTable};
 
 pub const MAGIC: [u8; 4] = *b"H3D1";
@@ -179,8 +178,7 @@ fn tile_plausible(tile: &Hips3DTile, order: u32, order_axis2: u32) -> bool {
     tile.order == order
         && tile.order_axis2 == order_axis2
         && spatial_npix_bound(tile.order).is_some_and(|b| tile.npix < b)
-        && axis2_npix_bound(tile.order_axis2)
-            .is_some_and(|b| (tile.npix_axis2 as u64) < b)
+        && axis2_npix_bound(tile.order_axis2).is_some_and(|b| (tile.npix_axis2 as u64) < b)
         && tile.dir == dir_of(tile.npix)
 }
 
@@ -201,7 +199,8 @@ pub fn write_bin(manifest: &Hips3DManifest) -> Option<Vec<u8>> {
             return None;
         }
     }
-    let mut out = Vec::with_capacity(HEADER_BYTES + manifest.base.len() + manifest.tiles.len() * REC_BYTES);
+    let mut out =
+        Vec::with_capacity(HEADER_BYTES + manifest.base.len() + manifest.tiles.len() * REC_BYTES);
     out.extend_from_slice(&MAGIC);
     out.push(VERSION);
     out.push(0);
@@ -226,11 +225,7 @@ pub fn write_bin(manifest: &Hips3DManifest) -> Option<Vec<u8>> {
 }
 
 pub fn parse_bin(bytes: &[u8]) -> Option<Hips3DManifest> {
-    if bytes.len() < HEADER_BYTES
-        || bytes[0..4] != MAGIC
-        || bytes[4] != VERSION
-        || bytes[5] != 0
-    {
+    if bytes.len() < HEADER_BYTES || bytes[0..4] != MAGIC || bytes[4] != VERSION || bytes[5] != 0 {
         return None;
     }
     let order = u32::from_le_bytes(bytes[8..12].try_into().ok()?);

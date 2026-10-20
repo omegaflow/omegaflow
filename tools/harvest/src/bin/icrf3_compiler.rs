@@ -6,8 +6,7 @@ const SX_URL: &str =
     "https://datacenter.iers.org/products/reference-systems/celestial/icrf3/icrf3sx.txt";
 const K_URL: &str =
     "https://datacenter.iers.org/products/reference-systems/celestial/icrf3/icrf3k.txt";
-const DDOR_URL: &str =
-    "https://deepspace.jpl.nasa.gov/dsndocs/810-005/107/catalog-fixed.txt";
+const DDOR_URL: &str = "https://deepspace.jpl.nasa.gov/dsndocs/810-005/107/catalog-fixed.txt";
 
 fn curl(url: &str) -> Option<String> {
     let out = Command::new("curl")
@@ -270,9 +269,9 @@ fn main() {
         vec![("sx", DDOR_URL)]
     } else {
         match band.as_str() {
-        "sx" => vec![("sx", SX_URL)],
-        "k" => vec![("k", K_URL)],
-        _ => vec![("sx", SX_URL), ("k", K_URL)],
+            "sx" => vec![("sx", SX_URL)],
+            "k" => vec![("k", K_URL)],
+            _ => vec![("sx", SX_URL), ("k", K_URL)],
         }
     };
 
@@ -346,7 +345,11 @@ fn main() {
         stats.defining,
         stats.skipped,
     );
-    let netloc = if ddor { "deepspace.jpl.nasa.gov" } else { "datacenter.iers.org" };
+    let netloc = if ddor {
+        "deepspace.jpl.nasa.gov"
+    } else {
+        "datacenter.iers.org"
+    };
     if ci_mode && !upload_release(netloc, &out) {
         eprintln!("upload: {} did not reach the CDN", out);
         std::process::exit(1);

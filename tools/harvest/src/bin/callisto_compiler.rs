@@ -1,7 +1,7 @@
 use omegaflow::archivar::fetch::{fetch_raw, fetch_raw_bytes};
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::callisto::{
-    BAND_COUNT, BACKGROUND_HALF_MIN, BandRecord, band_index, parse_bin, write_bin,
+    BACKGROUND_HALF_MIN, BAND_COUNT, BandRecord, band_index, parse_bin, write_bin,
 };
 use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsImage, FitsTable};
@@ -34,7 +34,6 @@ fn civil_from_days(z: i64) -> (i64, i64, i64) {
     let y = if m <= 2 { y + 1 } else { y };
     (y, m, d)
 }
-
 
 fn parse_days(s: &str) -> Option<i64> {
     let (y, rest) = s.split_once('-')?;
@@ -76,7 +75,9 @@ fn selected_files(html: &str, station: &str, ymd: &str) -> Vec<(String, String)>
         let Some((stamp, suffix)) = stem.rsplit_once('_') else {
             continue;
         };
-        let entry = best.entry(stamp.to_string()).or_insert_with(|| name.to_string());
+        let entry = best
+            .entry(stamp.to_string())
+            .or_insert_with(|| name.to_string());
         let current_suffix = entry
             .trim_end_matches(".fit.gz")
             .rsplit_once('_')
@@ -415,7 +416,12 @@ fn main() {
                     bytes.len(),
                     sha256_hex(&bytes)
                 ),
-                _ => eprintln!("{out}: {} minutes, {} B, sha256 {}", parsed.len(), bytes.len(), sha256_hex(&bytes)),
+                _ => eprintln!(
+                    "{out}: {} minutes, {} B, sha256 {}",
+                    parsed.len(),
+                    bytes.len(),
+                    sha256_hex(&bytes)
+                ),
             }
         }
         None => {

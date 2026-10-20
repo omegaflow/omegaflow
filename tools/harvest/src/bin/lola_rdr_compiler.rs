@@ -1,4 +1,4 @@
-use omegaflow::archivar::pds3_table::{decode_rows, TableColumn, TableMeta};
+use omegaflow::archivar::pds3_table::{TableColumn, TableMeta, decode_rows};
 use omegaflow::cdn::upload_release;
 use std::collections::HashMap;
 use std::fmt::Write as _;
@@ -90,9 +90,7 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
 }
 
 fn spot_is_valid(radius_mm: f64, selenoid_mm: f64, flag: u64) -> bool {
-    radius_mm > 0.0
-        && (flag & FLAG_MASK) == 0
-        && (radius_mm - selenoid_mm).abs() <= GUARD_MM
+    radius_mm > 0.0 && (flag & FLAG_MASK) == 0 && (radius_mm - selenoid_mm).abs() <= GUARD_MM
 }
 
 fn main() {
@@ -168,17 +166,15 @@ fn main() {
         .map(|(i, c)| (c.name.as_str(), i))
         .collect();
     let get = |row: &[Option<f64>], name: &str| -> Option<f64> {
-        idx.get(name)
-            .and_then(|i| row.get(*i).copied().flatten())
+        idx.get(name).and_then(|i| row.get(*i).copied().flatten())
     };
 
     let mut out = String::from("t_tt_s,spot,lat_deg,lon_deg,radius_m,selenoid_m,elevation_m\n");
     let mut valid_spots = 0usize;
     for row in &rows {
-        let (Some(raw_time), Some(selenoid)) = (
-            get(row, "TRANSMIT_TIME"),
-            get(row, "SELENOID_RADIUS"),
-        ) else {
+        let (Some(raw_time), Some(selenoid)) =
+            (get(row, "TRANSMIT_TIME"), get(row, "SELENOID_RADIUS"))
+        else {
             continue;
         };
         let raw = raw_time as u64;

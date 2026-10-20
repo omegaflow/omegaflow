@@ -129,7 +129,8 @@ impl Source {
             Ok(out.stdout)
         } else {
             let path = self.path.as_ref().ok_or("source has no path")?;
-            let mut f = File::open(path).map_err(|e| format!("{}: open void ({e})", path.display()))?;
+            let mut f =
+                File::open(path).map_err(|e| format!("{}: open void ({e})", path.display()))?;
             f.seek(SeekFrom::Start(off))
                 .map_err(|e| format!("{}: seek void ({e})", path.display()))?;
             let mut buf = vec![0u8; len];
@@ -234,8 +235,8 @@ fn member_entry(source: &Source) -> Result<Entry, String> {
     let tail_len = source.len.min(22 + 65_535) as usize;
     let tail_off = source.len - tail_len as u64;
     let tail = source.read_at(tail_off, tail_len)?;
-    let (count, cd_off, cd_size) = eocd_at(&tail)
-        .ok_or_else(|| "zip carries no end-of-central-directory".to_string())?;
+    let (count, cd_off, cd_size) =
+        eocd_at(&tail).ok_or_else(|| "zip carries no end-of-central-directory".to_string())?;
     if cd_off + cd_size > source.len {
         return Err("central directory points beyond the source".to_string());
     }
@@ -359,7 +360,10 @@ fn run(args: &[String]) -> Result<(), String> {
     let source = Source::open(&source_spec)?;
     let entry = member_entry(&source)?;
     if entry.method != 8 && entry.method != 0 {
-        return Err(format!("{}: compression method {} unread", entry.name, entry.method));
+        return Err(format!(
+            "{}: compression method {} unread",
+            entry.name, entry.method
+        ));
     }
     let start = data_offset(&source, &entry)?;
     let lsk = embedded_lsk().ok_or_else(|| "the embedded leap seconds stay unread".to_string())?;
@@ -386,7 +390,10 @@ fn run(args: &[String]) -> Result<(), String> {
     records.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.2.cmp(&b.2)));
     records.dedup_by(|a, b| a.0 == b.0 && a.2 == b.2);
     if records.is_empty() {
-        return Err(format!("{}: no records — the bin stays unwritten", entry.name));
+        return Err(format!(
+            "{}: no records — the bin stays unwritten",
+            entry.name
+        ));
     }
     let mut buf = Vec::with_capacity(8 + records.len() * 20);
     buf.extend_from_slice(&MAGIC);
@@ -410,7 +417,9 @@ fn run(args: &[String]) -> Result<(), String> {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
-        println!("usage: sorce_sim_compiler <sorce_sim_...txt.zip> [--out <bin>] [--source <path|url>]");
+        println!(
+            "usage: sorce_sim_compiler <sorce_sim_...txt.zip> [--out <bin>] [--source <path|url>]"
+        );
         return;
     }
     if let Err(e) = run(&args) {

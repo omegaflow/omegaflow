@@ -89,10 +89,7 @@ pub fn parse_bin(bytes: &[u8]) -> Option<Vec<BandRecord>> {
 }
 
 pub fn component_name(comp: u32) -> Option<&'static str> {
-    COLUMNS
-        .iter()
-        .find(|c| c.0 == comp)
-        .map(|c| c.1)
+    COLUMNS.iter().find(|c| c.0 == comp).map(|c| c.1)
 }
 
 pub fn declared_fields(tau: f64) -> Vec<FieldConfig> {
@@ -179,7 +176,17 @@ mod tests {
         let records = vec![
             BandRecord {
                 t_unix: 1_700_000_000.0,
-                bands: [Some(1.0), None, Some(3.0), None, None, None, None, None, Some(9.0)],
+                bands: [
+                    Some(1.0),
+                    None,
+                    Some(3.0),
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    Some(9.0),
+                ],
             },
             BandRecord {
                 t_unix: 1_700_000_060.0,

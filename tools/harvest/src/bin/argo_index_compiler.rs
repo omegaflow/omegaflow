@@ -170,8 +170,14 @@ fn main() {
             "  {} t={:.0} lat={} lon={} params=[{}]",
             row.file,
             row.t,
-            row.lat.map(|v| format!("{v:.3}")).or_absent("absent"),
-            row.lon.map(|v| format!("{v:.3}")).or_absent("absent"),
+            match row.lat {
+                Some(v) => format!("{v:.3}"),
+                None => String::from("absent"),
+            },
+            match row.lon {
+                Some(v) => format!("{v:.3}"),
+                None => String::from("absent"),
+            },
             row.parameters
         );
     }

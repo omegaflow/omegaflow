@@ -460,6 +460,7 @@ fn download_job(args: &[String]) -> Result<(), String> {
     retrieve_and_save(&token, &job, &out, ci_mode)
 }
 
+#[derive(Debug)]
 struct GlofasCollection {
     id: String,
     url: String,

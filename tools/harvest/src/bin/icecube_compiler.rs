@@ -1,6 +1,6 @@
 use omegaflow::archivar::membrane::embedded_lsk;
 use omegaflow::archivar::s2event::{
-    encode_rec, write_header, S2EventRecord, REC_BYTES, ROOT_NEUTRINO,
+    REC_BYTES, ROOT_NEUTRINO, S2EventRecord, encode_rec, write_header,
 };
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::LeapSeconds;
@@ -10,20 +10,8 @@ const TAG: &str = "dataverse.harvard.edu";
 const MJD_UNIX_EPOCH: f64 = 40587.0;
 
 const FILE_IDS: [u64; 14] = [
-    13597946,
-    13597981,
-    13597928,
-    13597936,
-    13597919,
-    13597943,
-    13597923,
-    13597957,
-    13597970,
-    13597929,
-    13597916,
-    13597930,
-    13597971,
-    13597931,
+    13597946, 13597981, 13597928, 13597936, 13597919, 13597943, 13597923, 13597957, 13597970,
+    13597929, 13597916, 13597930, 13597971, 13597931,
 ];
 
 #[derive(Clone, Copy)]
@@ -126,8 +114,9 @@ fn fetch(id: u64) -> Option<String> {
 }
 
 fn run(args: &[String]) -> Result<(), String> {
-    let out_path = arg_value(args, "--out")
-        .ok_or("usage: icecube_compiler --out <events.s2e1> [--in <dir|file>] [--ci-mode] — refused")?;
+    let out_path = arg_value(args, "--out").ok_or(
+        "usage: icecube_compiler --out <events.s2e1> [--in <dir|file>] [--ci-mode] — refused",
+    )?;
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let lsk = embedded_lsk()
         .ok_or("the embedded leap-second table stays unread — MJD epochs stay unassigned")?;
@@ -150,7 +139,9 @@ fn run(args: &[String]) -> Result<(), String> {
                 vec![PathBuf::from(&p)]
             };
             if files.is_empty() {
-                return Err(format!("{p}: no .tab event table — the asset stays unwritten"));
+                return Err(format!(
+                    "{p}: no .tab event table — the asset stays unwritten"
+                ));
             }
             for f in files {
                 let text = std::fs::read_to_string(&f)
@@ -210,8 +201,7 @@ fn main() {
 mod tests {
     use super::*;
 
-    const HEADER: &str =
-        "#           run         event      subevent     MJD[days]  log10(E/GeV)   AngErr[deg]       RA[deg]      Dec[deg]  Azimuth[deg]   Zenith[deg]";
+    const HEADER: &str = "#           run         event      subevent     MJD[days]  log10(E/GeV)   AngErr[deg]       RA[deg]      Dec[deg]  Azimuth[deg]   Zenith[deg]";
 
     #[test]
     fn header_maps_the_measured_columns() {

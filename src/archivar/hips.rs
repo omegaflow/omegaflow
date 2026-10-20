@@ -18,9 +18,14 @@ pub struct HipsProperties {
     pub hips_body: Option<String>,
     pub hips_order: Option<u32>,
     pub hips_order_min: Option<u32>,
+    pub hips_order_axis2: Option<u32>,
+    pub hips_order_freq: Option<u32>,
     pub hips_tile_width: Option<u32>,
+    pub hips_tile_depth: Option<u32>,
     pub hips_tile_format: Option<String>,
     pub hips_pixel_scale: Option<f64>,
+    pub hips_service_url: Option<String>,
+    pub hips_status: Option<String>,
     pub em_min: Option<f64>,
     pub em_max: Option<f64>,
     pub t_min: Option<f64>,
@@ -46,9 +51,14 @@ pub fn parse_properties(text: &str) -> Option<HipsProperties> {
         hips_body: None,
         hips_order: None,
         hips_order_min: None,
+        hips_order_axis2: None,
+        hips_order_freq: None,
         hips_tile_width: None,
+        hips_tile_depth: None,
         hips_tile_format: None,
         hips_pixel_scale: None,
+        hips_service_url: None,
+        hips_status: None,
         em_min: None,
         em_max: None,
         t_min: None,
@@ -97,8 +107,20 @@ pub fn parse_properties(text: &str) -> Option<HipsProperties> {
                 props.hips_order_min = value.parse::<u32>().ok();
                 known += 1;
             }
+            "hips_order_axis2" => {
+                props.hips_order_axis2 = value.parse::<u32>().ok();
+                known += 1;
+            }
+            "hips_order_freq" => {
+                props.hips_order_freq = value.parse::<u32>().ok();
+                known += 1;
+            }
             "hips_tile_width" => {
                 props.hips_tile_width = value.parse::<u32>().ok().filter(|w| *w > 0);
+                known += 1;
+            }
+            "hips_tile_depth" => {
+                props.hips_tile_depth = value.parse::<u32>().ok().filter(|d| *d > 0);
                 known += 1;
             }
             "hips_tile_format" => {
@@ -107,6 +129,14 @@ pub fn parse_properties(text: &str) -> Option<HipsProperties> {
             }
             "hips_pixel_scale" => {
                 props.hips_pixel_scale = positive_f64(value);
+                known += 1;
+            }
+            "hips_service_url" => {
+                props.hips_service_url = Some(value.to_string());
+                known += 1;
+            }
+            "hips_status" => {
+                props.hips_status = Some(value.to_string());
                 known += 1;
             }
             "em_min" => {
@@ -997,8 +1027,12 @@ hips_frame           = mars\n\
 hips_body            = mars\n\
 hips_order           = 7\n\
 hips_order_min       = 0\n\
+hips_order_freq      = 18\n\
 hips_tile_width      = 512\n\
+hips_tile_depth      = 16\n\
 hips_pixel_scale     = 8.946E-4\n\
+hips_service_url     = https://example.org/tree\n\
+hips_status          = public master\n\
 em_min               = 4.5e-7\n\
 em_max               = 6.9e-7\n\
 t_min                = 59519.0\n\
@@ -1010,7 +1044,15 @@ obs_title            = Tianwen-1 MoRIC true-color map of Mars\n";
         assert_eq!(props.hips_body.as_deref(), Some("mars"));
         assert_eq!(props.hips_order, Some(7));
         assert_eq!(props.hips_order_min, Some(0));
+        assert_eq!(props.hips_order_freq, Some(18));
+        assert_eq!(props.hips_order_axis2, None);
         assert_eq!(props.hips_tile_width, Some(512));
+        assert_eq!(props.hips_tile_depth, Some(16));
+        assert_eq!(
+            props.hips_service_url.as_deref(),
+            Some("https://example.org/tree")
+        );
+        assert_eq!(props.hips_status.as_deref(), Some("public master"));
         assert_eq!(props.hips_pixel_scale, Some(8.946E-4));
         assert_eq!(props.em_min, Some(4.5e-7));
         assert_eq!(props.em_max, Some(6.9e-7));

@@ -1,8 +1,8 @@
 use omegaflow::archivar::hmi::MAGIC;
 use omegaflow::archivar::membrane::embedded_lsk;
-use omegaflow::archivar::{parse_json, JsonVal};
+use omegaflow::archivar::{JsonVal, parse_json};
 use omegaflow::cdn::upload_release;
-use omegaflow::lsk::{days_from_civil, LeapSeconds};
+use omegaflow::lsk::{LeapSeconds, days_from_civil};
 use std::process::Command;
 
 const TAG: &str = "jsoc.stanford.edu";
@@ -83,7 +83,8 @@ fn gauss_to_nt(gauss: f64) -> f64 {
     gauss * 100_000.0
 }
 
-fn tai_to_tdb(tai: f64, lsk: &LeapSeconds) -> Option<f64> {    let mut utc = tai - 37.0;
+fn tai_to_tdb(tai: f64, lsk: &LeapSeconds) -> Option<f64> {
+    let mut utc = tai - 37.0;
     for _ in 0..3 {
         utc = tai - lsk.leap_at(utc)?;
     }
@@ -271,8 +272,9 @@ fn run_rs_list(args: &[String]) -> Result<(), String> {
 }
 
 fn run_fits(args: &[String]) -> Result<(), String> {
-    let day = arg_value(args, "--day")
-        .ok_or("usage: hmi_compiler --day YYYY-MM-DD [--days N] --out <hmi.bin> [--ci-mode] — refused")?;
+    let day = arg_value(args, "--day").ok_or(
+        "usage: hmi_compiler --day YYYY-MM-DD [--days N] --out <hmi.bin> [--ci-mode] — refused",
+    )?;
     let out_path = arg_value(args, "--out").ok_or("--out <hmi.bin> absent — refused")?;
     let span: usize = arg_value(args, "--days")
         .and_then(|v| v.parse().ok())
@@ -280,8 +282,8 @@ fn run_fits(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let lsk = embedded_lsk()
         .ok_or("the embedded leap-second table stays unread — T_REC stays unassigned")?;
-    let (mut y, mut m, mut d) = parse_day(&day)
-        .ok_or(format!("{day}: not a day (YYYY-MM-DD) — refused"))?;
+    let (mut y, mut m, mut d) =
+        parse_day(&day).ok_or(format!("{day}: not a day (YYYY-MM-DD) — refused"))?;
     if span == 0 {
         return Err("--days 0 carries no window — refused".into());
     }
@@ -324,7 +326,10 @@ fn run_fits(args: &[String]) -> Result<(), String> {
             records.push((t, gauss_to_nt(value), camera));
             kept += 1;
         }
-        eprintln!("{y:04}-{m:02}-{d:02}: {} files, {kept} records", names.len());
+        eprintln!(
+            "{y:04}-{m:02}-{d:02}: {} files, {kept} records",
+            names.len()
+        );
         (y, m, d) = next_day(y, m, d);
     }
     write_hmi(&mut records, &out_path, ci_mode)
@@ -355,12 +360,20 @@ mod tests {
         let head = "CAMERA  =                    3\nDATAMEAN= -0.108827\nT_REC   = '2020.01.01_00:00:00_TAI'";
         assert_eq!(fits_value(head, "CAMERA").unwrap(), "3");
         assert_eq!(fits_value(head, "DATAMEAN").unwrap(), "-0.108827");
-        assert_eq!(fits_value(head, "T_REC").unwrap(), "2020.01.01_00:00:00_TAI");
+        assert_eq!(
+            fits_value(head, "T_REC").unwrap(),
+            "2020.01.01_00:00:00_TAI"
+        );
     }
 
     #[test]
     fn missing_datamean_stays_unparsed() {
-        assert!(fits_value("DATAMEAN= MISSING", "DATAMEAN").unwrap().parse::<f64>().is_err());
+        assert!(
+            fits_value("DATAMEAN= MISSING", "DATAMEAN")
+                .unwrap()
+                .parse::<f64>()
+                .is_err()
+        );
     }
 
     #[test]
@@ -402,4 +415,3 @@ mod tests {
         assert_eq!(n[0], "hmi.M_720s.20200101_000000_TAI.fits");
     }
 }
-
