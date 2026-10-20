@@ -1,0 +1,36 @@
+name: cdn-changes
+
+concurrency:
+  group: cdn-changes
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  ledger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+      - name: Observe live sources and record changes
+        run: sh bin/ci_change_log
+      - name: Commit the change ledger
+        run: |
+          set -eu
+          git config user.name "omegaflow-ci"
+          git config user.email "ci@omegaflow.invalid"
+          if git diff --quiet -- zustand/cdn-changes.log; then
+            echo "no change"
+            exit 0
+          fi
+          git add zustand/cdn-changes.log
+          git commit -m "cdn-changes: gemessene Aenderungen [skip ci]"
+          git push
