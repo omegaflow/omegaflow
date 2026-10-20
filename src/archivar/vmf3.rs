@@ -542,8 +542,14 @@ AIRA      61042.00  0.00121746  0.00041399  2.2444  0.0500   983.52   1.96   5.4
  89.5    0.5  0.00114741  0.00069930  2.2862  0.0158\n\
  89.5    1.5  0.00114740  0.00069526  2.2861  0.0158\n";
 
-    const SITE_PATH: &str = "/tmp/opencode/2026002.vmf3_r";
-    const GRID_PATH: &str = "/tmp/opencode/VMF3_20260101.H00";
+    fn site_path() -> &'static str {
+        crate::temp_path("2026002.vmf3_r")
+    }
+
+    fn grid_path() -> &'static str {
+        crate::temp_path("VMF3_20260101.H00")
+    }
+
     const SITE_SHA: &str = "16397c37eaeaf55abcfe72b4d5a0449b08d8be3201d1e266c731f110f87c91f8";
 
     #[test]
@@ -625,8 +631,9 @@ AIRA      61042.00  0.00121746  0.00041399  2.2444  0.0500   983.52   1.96   5.4
 
     #[test]
     fn site_file_carries_the_measured_rows() {
-        let Ok(bytes) = std::fs::read(SITE_PATH) else {
-            eprintln!("site_file_carries_the_measured_rows: {SITE_PATH} absent — named skip");
+        let site_path = site_path();
+        let Ok(bytes) = std::fs::read(site_path) else {
+            eprintln!("site_file_carries_the_measured_rows: {site_path} absent — named skip");
             return;
         };
         assert_eq!(sha256_hex(&bytes), SITE_SHA);
@@ -650,8 +657,9 @@ AIRA      61042.00  0.00121746  0.00041399  2.2444  0.0500   983.52   1.96   5.4
 
     #[test]
     fn grid_file_carries_the_measured_rows() {
-        let Ok(bytes) = std::fs::read(GRID_PATH) else {
-            eprintln!("grid_file_carries_the_measured_rows: {GRID_PATH} absent — named skip");
+        let grid_path = grid_path();
+        let Ok(bytes) = std::fs::read(grid_path) else {
+            eprintln!("grid_file_carries_the_measured_rows: {grid_path} absent — named skip");
             return;
         };
         let cells = parse_grid(&bytes).expect("the grid file parses");

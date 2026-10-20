@@ -834,7 +834,7 @@ mod tests {
 
     #[test]
     fn parses_lira_when_present() {
-        let path = "/tmp/opencode/lira10s_20251231.cdf";
+        let path = crate::temp_path("lira10s_20251231.cdf");
         let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => return,
@@ -853,7 +853,7 @@ mod tests {
 
     #[test]
     fn parses_little_endian_when_present() {
-        let path = "/tmp/opencode/lira10s_20221201.cdf";
+        let path = crate::temp_path("lira10s_20221201.cdf");
         let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => return,
@@ -883,7 +883,7 @@ mod tests {
 
     #[test]
     fn parses_wind_wav_h1_2021_when_present() {
-        let path = "/tmp/opencode/wav_h1_20210101.cdf";
+        let path = crate::temp_path("wav_h1_20210101.cdf");
         let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => return,
@@ -906,7 +906,7 @@ mod tests {
 
     #[test]
     fn parses_wind_wav_h1_1994_when_present() {
-        let path = "/tmp/opencode/wav_h1_19941110.cdf";
+        let path = crate::temp_path("wav_h1_19941110.cdf");
         let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => return,
@@ -1051,7 +1051,7 @@ mod tests {
     fn extracts_athabasca_channels_when_present() {
         use crate::archivar::{Aperture, Channel, FieldConfig, LeapSeconds};
 
-        let path = "/tmp/opencode/ath.cdf";
+        let path = crate::temp_path("ath.cdf");
         let Ok(bytes) = std::fs::read(path) else {
             return;
         };

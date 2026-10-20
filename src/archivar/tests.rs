@@ -1348,9 +1348,9 @@ fn test_extract_default_epoch_is_receiver_epoch() {
 #[test]
 fn test_epoch_stamp_gate_is_receiver_time() {
     let ttl = 3600u64;
-    let path = "/tmp/opencode/omegaflow_epoch_stamp_gate_test.json";
+    let path = crate::temp_path("omegaflow_epoch_stamp_gate_test.json");
     let stamp_path = format!("{}.epoch", path);
-    let _ = std::fs::create_dir_all("/tmp/opencode");
+    let _ = std::fs::create_dir_all(crate::temp_path(""));
     let _ = std::fs::remove_file(path);
     let _ = std::fs::remove_file(&stamp_path);
     assert!(
@@ -8010,7 +8010,7 @@ fn test_fetch_one_serves_stale_cdn_asset_when_live_voids() {
         .unwrap()
         .as_secs();
     let (server, handle) = local_http_head_get(rfc1123_from_unix(now - 86400), "{\"real\":true}");
-    let state = "/tmp/opencode/omegaflow_fetch_fallback_state";
+    let state = crate::temp_path("omegaflow_fetch_fallback_state");
     let _ = std::fs::remove_dir_all(state);
     unsafe {
         std::env::set_var("OMEGAFLOW_ZUSTAND", state);
@@ -8037,7 +8037,7 @@ fn test_live_only_source_skips_the_cdn_fallback_when_live_voids() {
         .unwrap()
         .as_secs();
     let (server, handle) = local_http_head_get(rfc1123_from_unix(now - 86400), "{\"real\":true}");
-    let state = "/tmp/opencode/omegaflow_live_only_state";
+    let state = crate::temp_path("omegaflow_live_only_state");
     let _ = std::fs::remove_dir_all(state);
     unsafe {
         std::env::set_var("OMEGAFLOW_ZUSTAND", state);
@@ -8097,7 +8097,7 @@ fn test_fetch_one_with_age_carries_the_cdn_age_on_fallback() {
         .unwrap()
         .as_secs();
     let (server, handle) = local_http_head_get(rfc1123_from_unix(now - 86400), "{\"real\":true}");
-    let state = "/tmp/opencode/omegaflow_fetch_age_state";
+    let state = crate::temp_path("omegaflow_fetch_age_state");
     let _ = std::fs::remove_dir_all(state);
     unsafe {
         std::env::set_var("OMEGAFLOW_ZUSTAND", state);
@@ -8393,7 +8393,7 @@ fn test_query_admits_surface_sample_within_window() {
 
 #[test]
 fn test_wind_orbit_bin_positions_when_present() {
-    let path = "/tmp/opencode/wind_orbit_test.bin";
+    let path = crate::temp_path("wind_orbit_test.bin");
     let bytes = match std::fs::read(path) {
         Ok(b) => b,
         Err(_) => return,
@@ -11194,7 +11194,7 @@ fn gbco_asset_load_holds_gestalt_surface_threads_that_project() {
             elev: 0.0,
         },
     ];
-    let path = "/tmp/opencode/gbco_gestalt_asset_test.gbco";
+    let path = crate::temp_path("gbco_gestalt_asset_test.gbco");
     if std::fs::write(path, crate::geo::write_gbco(&recs)).is_err() {
         return;
     }
@@ -14090,7 +14090,7 @@ fn body_anchor_carries_measured_props_and_own_granule_span() {
         "extent is the measured radius"
     );
     assert!(
-        (s.channel_ref.unwrap_or(0.0) - 2.0).abs() < 1e-9,
+        (s.channel_ref.expect("channel_ref measured") - 2.0).abs() < 1e-9,
         "gravity anchor"
     );
     let want_ttl = 34.0 * 86400.0;

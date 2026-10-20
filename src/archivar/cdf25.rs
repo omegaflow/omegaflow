@@ -393,7 +393,7 @@ mod tests {
 
     #[test]
     fn parses_wind_orbit_pre_2021_when_present() {
-        let path = "/tmp/opencode/wi_or_pre_20210101.cdf";
+        let path = crate::temp_path("wi_or_pre_20210101.cdf");
         let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => return,
@@ -426,7 +426,7 @@ mod tests {
 
     #[test]
     fn parses_wind_orbit_pre_1994_26_when_present() {
-        let path = "/tmp/opencode/wi_or_pre_19941110_v02.cdf";
+        let path = crate::temp_path("wi_or_pre_19941110_v02.cdf");
         let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => return,
@@ -452,7 +452,7 @@ mod tests {
 
     #[test]
     fn parses_wind_orbit_def_1994_when_present() {
-        let path = "/tmp/opencode/wi_or_def_19941110_v02.cdf";
+        let path = crate::temp_path("wi_or_def_19941110_v02.cdf");
         let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => return,
@@ -473,7 +473,7 @@ mod tests {
 
     #[test]
     fn parses_wind_orbit_pre25_release4_when_present() {
-        let path = "/tmp/opencode/wi_or_pre_19970107_v01.cdf";
+        let path = crate::temp_path("wi_or_pre_19970107_v01.cdf");
         let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => return,
