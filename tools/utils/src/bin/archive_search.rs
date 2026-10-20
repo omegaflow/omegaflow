@@ -674,6 +674,19 @@ fn main() {
                     include_glob = Some(g.clone());
                 }
             }
+            "--values" => {
+                i += 1;
+                match args.get(i) {
+                    Some(v) => {
+                        keywords.push("values".to_string());
+                        keywords.push(v.clone());
+                    }
+                    None => {
+                        eprintln!("archive_search: --values needs a variable name");
+                        std::process::exit(2);
+                    }
+                }
+            }
             "--help" | "-h" => {
                 usage();
                 std::process::exit(0);
