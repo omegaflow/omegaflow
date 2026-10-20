@@ -317,7 +317,7 @@ while IFS= read -r line; do
             verdict="MATCH"
         fi
         matches=$((matches + 1))
-    elif [ "$near" -eq 1 ]; then
+    elif [ "$nearhit" -eq 1 ]; then
         verdict="NAH"
         nears=$((nears + 1))
     else
