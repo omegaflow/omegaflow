@@ -263,6 +263,33 @@ fn run(args: &[String]) -> Result<(), String> {
     fs::write(format!("{out}.map"), map.as_bytes()).map_err(|e| format!("{out}.map: {e}"))?;
 
     let mut edges = String::from("from\tto\trelation\n");
+    for i in 0..cols.len() {
+        for j in (i + 1)..cols.len() {
+            if cols[i].3 != cols[j].3 || cols[i].1 == cols[j].1 {
+                continue;
+            }
+            let mut seen = 0usize;
+            let mut same = true;
+            for values in rows.values() {
+                match (values[i].as_deref(), values[j].as_deref()) {
+                    (Some(a), Some(b)) if !a.is_empty() && !b.is_empty() => {
+                        seen += 1;
+                        if a != b {
+                            same = false;
+                            break;
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            if same && seen > 0 {
+                edges.push_str(&format!(
+                    "{}#{}\tmirror-of\t{}#{}\n",
+                    cols[i].1, cols[i].2, cols[j].1, cols[j].2
+                ));
+            }
+        }
+    }
     for (n, f, c, _) in &cols {
         edges.push_str(&format!("{f}#{c}\tmerge:{out}\tcontributes\n"));
         edges.push_str(&format!("merge:{out}\t{n}\tmaterializes\n"));
@@ -357,6 +384,29 @@ mod tests {
         let map = fs::read_to_string(format!("{}.map", out.display())).unwrap();
         assert!(map.contains("no-redistribution"), "{map}");
         assert!(map.contains("CC0-1.0"), "{map}");
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn weave_marks_identical_columns_as_mirror() {
+        let dir = std::env::temp_dir().join(format!("weave-m-{}", std::process::id()));
+        fs::create_dir_all(&dir).unwrap();
+        let a = dir.join("a.csv");
+        let b = dir.join("b.csv");
+        fs::write(&a, "time,flow\n1,5\n2,6\n").unwrap();
+        fs::write(&b, "time,flow\n1,5\n2,6\n").unwrap();
+        let out = dir.join("out.csv");
+        let args = vec![
+            "--on".to_string(),
+            "time".to_string(),
+            "--out".to_string(),
+            out.to_string_lossy().to_string(),
+            a.to_string_lossy().to_string(),
+            b.to_string_lossy().to_string(),
+        ];
+        run(&args).unwrap();
+        let edges = fs::read_to_string(format!("{}.edges", out.display())).unwrap();
+        assert!(edges.contains("mirror-of"), "{edges}");
         let _ = fs::remove_dir_all(&dir);
     }
 }
