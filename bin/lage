@@ -14,11 +14,6 @@ open_rows=$(grep -E '\*\*rat-offen|\*\*rat-konvergiert|\*\*offen\*\*|\*\*gefahre
 last_runs=$(ls -1t ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/ 2>/dev/null | grep -E 'sammlung|verdikt|lage' | head -8 | sed 's/^/  /')
 
 work="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
-post_in=$(ls -1 "$work"/post/*-an-future-*.md 2>/dev/null | wc -l)
-post_today=$(ls -1 "$work"/post/"$(date +%F)"-*-an-future-*.md 2>/dev/null | wc -l)
-post_out=$(ls -1 "$work"/post/*-future-an-*.md 2>/dev/null | wc -l)
-post_head=$(git -C "$work" rev-parse --short HEAD 2>/dev/null || echo 'kein Repo')
-post_dirty=$(git -C "$work" status --porcelain 2>/dev/null | wc -l)
 
 models=$(tail -n +2 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/gateway/models.tsv 2>/dev/null | wc -l)
 alive=$(tail -n +2 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/gateway/alive.tsv 2>/dev/null | wc -l)
@@ -63,12 +58,8 @@ done)
     echo "  (keine)"
   fi
   echo
-  echo "## Post (Arbeitsbaum \`$work\`)"
-  echo "- in: $post_in Briefe (heute $post_today) · out: $post_out · Postfach-Repo: \`$post_head\` · uncommitted: $post_dirty"
-  echo
   echo "## Wo was liegt (Kanon — hier nachsehen, nicht suchen)"
   echo "- Rat: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/\` ($(ls -1 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/*.md 2>/dev/null | grep -vcE '_lage|_rat-') Runden · Register \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/_rat-register.md\` · Regeln \`docs/concepts/house-rules.md\` · Rohmaterial \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/_roh/\`)"
-  echo "- Post: \`$work/post/\` ($post_in Briefe an future, $post_out Dispatches) · Repo \`omegaflow/work\` (privat)"
   echo "- Quellen (CDN-gebunden, rekonstruierbar): \`$work/sources/\` ($(ls -1 "$work/sources" 2>/dev/null | wc -l) Netlocs + content/, $(du -sh "$work/sources" 2>/dev/null | cut -f1))"
   echo "- Experimente (nur lokal): \`$work/experiments/\` ($(ls -1 "$work/experiments" 2>/dev/null | wc -l) Themen, $(du -sh "$work/experiments" 2>/dev/null | cut -f1))"
   echo "- Recherche: \`$work/research/funde/\` ($(find "$work/research/funde" -type f 2>/dev/null | wc -l) Dateien) · Flüchtiges \`$work/research/tmp/\`"
