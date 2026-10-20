@@ -37,7 +37,7 @@ cd "$root" || exit 2
 
 missing=""
 for p in $paths; do
-    if [ ! -e "$p" ] && ! git ls-files --error-unmatch -- "$p" >/dev/null 2>&1; then
+    if [ ! -e "$p" ] && ! git cat-file -e "HEAD:$p" 2>/dev/null; then
         missing="$missing $p"
     fi
 done
