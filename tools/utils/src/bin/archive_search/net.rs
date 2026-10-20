@@ -3877,6 +3877,24 @@ fn netcdf_signal_lines(bytes: &[u8], text: &str) -> Vec<String> {
     {
         out.push("netcdf decoded_value=raw*scale+offset".to_string());
     }
+    if magic && let Ok(f) = omegaflow::archivar::netcdf::NetcdfFile::parse(bytes) {
+        let mut units: Vec<String> = Vec::new();
+        for a in f.gattrs.iter().chain(f.vars.iter().flat_map(|v| v.attrs.iter())) {
+            if a.name.eq_ignore_ascii_case("units") {
+                let s = String::from_utf8_lossy(&a.raw)
+                    .trim_matches('\0')
+                    .trim()
+                    .to_string();
+                if !s.is_empty() && s.len() <= 32 && !units.contains(&s) {
+                    units.push(s);
+                }
+            }
+        }
+        if !units.is_empty() && !out.iter().any(|l| l.starts_with("netcdf units=")) {
+            out.push(format!("netcdf units={}", units.join(",")));
+        }
+        out.push(format!("netcdf dims={} vars={}", f.dims.len(), f.vars.len()));
+    }
     out
 }
 
