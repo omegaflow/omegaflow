@@ -125,22 +125,24 @@ fn parse_tform(tform: &str) -> Option<(char, usize, Option<char>)> {
         Some(i) => i.rsplit_once('(')?.0,
         None => tform,
     };
-    let bytes = inner.as_bytes();
-    let last = *bytes.last()?;
-    if bytes.len() >= 2 && (bytes[bytes.len() - 2] == b'P' || bytes[bytes.len() - 2] == b'Q') {
-        let repeat: usize = if bytes.len() >= 3 {
-            from_utf8(&bytes[..bytes.len() - 2]).ok()?.parse().ok()?
-        } else {
-            1
-        };
-        return Some((bytes[bytes.len() - 2] as char, repeat, Some(last as char)));
-    }
-    let repeat: usize = if bytes.len() == 1 {
+    let core = match inner.rfind('.') {
+        Some(dot) if inner[dot + 1..].bytes().all(|b| b.is_ascii_digit()) => &inner[..dot],
+        _ => inner,
+    };
+    let bytes = core.as_bytes();
+    let pos = bytes.iter().position(|b| b.is_ascii_alphabetic())?;
+    let code = bytes[pos] as char;
+    let repeat: usize = if pos == 0 {
         1
     } else {
-        from_utf8(&bytes[..bytes.len() - 1]).ok()?.parse().ok()?
+        from_utf8(&bytes[..pos]).ok()?.parse().ok()?
     };
-    Some((last as char, repeat, None))
+    let elem = if (code == 'P' || code == 'Q') && bytes.len() > pos + 1 {
+        Some(bytes[pos + 1] as char)
+    } else {
+        None
+    };
+    Some((code, repeat, elem))
 }
 
 impl FitsTable {
@@ -2264,5 +2266,14 @@ mod tests {
             "DST11077", "DST11078", "DST11079", "DST11083", "DST11084", "DST11085",
         ]);
         assert!(drs_series(&buf).is_none());
+    }
+
+    #[test]
+    fn a_tform_width_and_precision_do_not_hide_the_code() {
+        assert_eq!(super::parse_tform("3600D8.3"), Some(('D', 3600, None)));
+        assert_eq!(super::parse_tform("200D8.3"), Some(('D', 200, None)));
+        assert_eq!(super::parse_tform("1E"), Some(('E', 1, None)));
+        assert_eq!(super::parse_tform("8A"), Some(('A', 8, None)));
+        assert_eq!(super::parse_tform("1PB(100)"), Some(('P', 1, Some('B'))));
     }
 }

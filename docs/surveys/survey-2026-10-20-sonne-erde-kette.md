@@ -76,9 +76,9 @@ die SWPC-Ereignisse reichen bis 23:01 UT). Von den 18 beobachteten: **7 Treffer,
 verschwinden in der Minutenmitte; die 44 Alarme zeigen die RFI-Anfälligkeit.
 
 **Kante Radio → OMNI** (2020-01, 2022-01, 2024-01; 93 brauchbare Tage,
-OMNI2 1-h): stärkste Korrelation **|r| = 0.2715** (Band 175–235 MHz, Lag 0 d,
-Tagesmittel Speed). Der Block-Shift-Surrogat-Null (500 Replikate, zirkulär
-innerhalb jedes Jahres) liegt bei **95 % = 0.4172**, **p = 0.8423** →
+OMNI2 1-h): stärkste Korrelation **|r| = 0.3899** (Band 420–560 MHz, Lag 3 d,
+Tagesminimum Bz, n = 90). Der Block-Shift-Surrogat-Null (500 Replikate, zirkulär
+innerhalb jedes Jahres) liegt bei **95 % = 0.4535**, **p = 0.1497** →
 **trägt nicht**. Die Datenlage (nur drei Januar-Monate, tageszeitlich
 beschränkt, keine durchgehende Mehrjahresreihe) trägt keine stärkere Aussage;
 das ist die gemessene Grenze, kein Nullbefund über die Physik.
