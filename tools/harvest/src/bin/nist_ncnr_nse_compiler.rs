@@ -209,7 +209,7 @@ mod tests {
     }
 
     #[test]
-    fn a_page_without_hasPart_names_itself() {
+    fn a_page_without_has_part_names_itself() {
         let err = parse_sets(r#"{"@type":"Dataset"}"#).unwrap_err();
         assert!(err.contains("hasPart"));
     }
