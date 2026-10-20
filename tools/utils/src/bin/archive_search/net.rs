@@ -1928,7 +1928,11 @@ const SEARXNG_INSTANCES: &[&str] = &["https://search.lumy.live"];
 
 fn searxng_bases() -> Vec<String> {
     match std::env::var("OMEGAFLOW_SEARXNG") {
-        Ok(v) if !v.trim().is_empty() => vec![v.trim().trim_end_matches('/').to_string()],
+        Ok(v) if !v.trim().is_empty() => v
+            .split(',')
+            .map(|s| s.trim().trim_end_matches('/').to_string())
+            .filter(|s| !s.is_empty())
+            .collect(),
         _ => SEARXNG_INSTANCES.iter().map(|s| s.to_string()).collect(),
     }
 }
@@ -3741,68 +3745,47 @@ fn linkup_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
-fn magic_label(magic: crate::magic::Magic) -> &'static str {
-    match magic {
-        crate::magic::Magic::Pdf => "pdf",
-        crate::magic::Magic::Zip => "zip",
-        crate::magic::Magic::Fits => "fits",
-        crate::magic::Magic::Png => "png",
-        crate::magic::Magic::Gzip => "gzip",
-        crate::magic::Magic::Hdf5 => "hdf5",
-        crate::magic::Magic::NetCdf => "netcdf",
-        crate::magic::Magic::Cdf => "cdf3",
-        crate::magic::Magic::Tiff => "tiff",
-        crate::magic::Magic::Unrecognized => "unrecognized",
-    }
-}
-
-fn sniff_lines_from(f: &Fetch, url: &str) -> Vec<String> {
-    let bytes = f.raw.as_slice();
-    vec![
-        format!("url {}", url),
-        format!("status {}", f.status_text()),
-        format!("bytes {}", bytes.len()),
-        format!("magic {}", magic_label(crate::magic::magic_identity(bytes))),
-        if f.complete {
-            format!("sha256 {}", omegaflow::sha256::sha256_hex(bytes))
-        } else {
-            format!(
-                "sha256 partial {} (download incomplete, {} bytes)",
-                omegaflow::sha256::sha256_hex(bytes),
-                bytes.len()
-            )
-        },
-    ]
-}
-
-pub fn sniff_lines(query: &str) -> Vec<String> {
-    let mut parts = query.split_whitespace();
-    let target = match parts.next() {
-        Some(t) => t,
-        None => return vec!["absent — --sniff needs a path or URL".to_string()],
+fn bait_lines(bytes: &[u8]) -> Vec<String> {
+    let s = omegaflow::archivar::sniff::sniff(bytes);
+    let Some(header) = s.header.clone() else {
+        return vec!["bait absent — the prefix carries no header line to fish with".to_string()];
     };
-    let pattern = parts.find_map(|p| p.strip_prefix("pattern="));
-    if !target.starts_with("http://")
-        && !target.starts_with("https://")
-        && !target.starts_with("s3://")
-    {
-        return local_sniff_lines(target, pattern);
+    if header.is_empty() {
+        return vec!["bait absent — the header is empty".to_string()];
     }
-    match get(target, &[], "40") {
-        Some(f) => sniff_lines_from(&f, target),
-        None => vec!["pending — no network".to_string()],
+    let generic = [
+        "time", "date", "value", "id", "lat", "lon", "latitude", "longitude", "year",
+    ];
+    let mut rare: Vec<String> = header
+        .iter()
+        .filter(|c| !generic.contains(&c.to_ascii_lowercase().as_str()))
+        .take(3)
+        .cloned()
+        .collect();
+    if rare.is_empty() {
+        rare = header.iter().take(3).cloned().collect();
     }
-}
-
-fn local_sniff_lines(path: &str, pattern: Option<&str>) -> Vec<String> {
-    let bytes = match std::fs::read(path) {
-        Ok(b) => b,
-        Err(e) => return vec![format!("absent — {path} unreadable: {e}")],
-    };
-    let s = omegaflow::archivar::sniff::sniff(&bytes);
+    let full = header.join(",");
+    let phrases = rare
+        .iter()
+        .map(|c| format!("\"{c}\""))
+        .collect::<Vec<_>>()
+        .join(" ");
     let mut out = vec![
-        format!("path {path}"),
-        format!("bytes {}", bytes.len()),
+        format!("bait header {full}"),
+        format!("bait phrase {phrases}"),
+        format!("bait grepapp {full}"),
+        format!("bait searxng {phrases}"),
+    ];
+    if let Some(u) = s.unit.clone() {
+        out.push(format!("bait unit \"{u}\""));
+    }
+    out
+}
+
+fn sniff_struct_lines(bytes: &[u8], pattern: Option<&str>) -> Vec<String> {
+    let s = omegaflow::archivar::sniff::sniff(bytes);
+    let mut out = vec![
         format!("format {}", s.format),
         format!(
             "delimiter {}",
@@ -3844,7 +3827,7 @@ fn local_sniff_lines(path: &str, pattern: Option<&str>) -> Vec<String> {
     if let Some(hex) = pattern {
         match hex_bytes(hex) {
             Some(needle) if !needle.is_empty() => {
-                let hits = omegaflow::archivar::sniff::find_pattern(&bytes, &needle, 16);
+                let hits = omegaflow::archivar::sniff::find_pattern(bytes, &needle, 16);
                 out.push(format!(
                     "pattern {} hits {}",
                     hex,
@@ -3857,6 +3840,68 @@ fn local_sniff_lines(path: &str, pattern: Option<&str>) -> Vec<String> {
             _ => out.push(format!("pattern {hex} absent — not hex")),
         }
     }
+    out
+}
+
+fn sniff_lines_from(f: &Fetch, url: &str, pattern: Option<&str>) -> Vec<String> {
+    let bytes = f.raw.as_slice();
+    let mut out = vec![
+        format!("url {}", url),
+        format!("status {}", f.status_text()),
+        format!("bytes {}", bytes.len()),
+    ];
+    out.extend(sniff_struct_lines(bytes, pattern));
+    out.push(if f.complete {
+        format!("sha256 {}", omegaflow::sha256::sha256_hex(bytes))
+    } else {
+        format!(
+            "sha256 partial {} (download incomplete, {} bytes — fields read from the prefix)",
+            omegaflow::sha256::sha256_hex(bytes),
+            bytes.len()
+        )
+    });
+    out
+}
+
+pub fn sniff_lines(query: &str) -> Vec<String> {
+    let bait = query.split_whitespace().any(|p| p == "bait");
+    let mut parts = query.split_whitespace().filter(|p| *p != "bait");
+    let target = match parts.next() {
+        Some(t) => t,
+        None => return vec!["absent — --sniff needs a path or URL".to_string()],
+    };
+    let pattern = parts.find_map(|p| p.strip_prefix("pattern="));
+    if !target.starts_with("http://")
+        && !target.starts_with("https://")
+        && !target.starts_with("s3://")
+    {
+        let mut out = local_sniff_lines(target, pattern);
+        if bait {
+            if let Ok(bytes) = std::fs::read(target) {
+                out.extend(bait_lines(&bytes));
+            }
+        }
+        return out;
+    }
+    match get(target, &[], "40") {
+        Some(f) => {
+            let mut out = sniff_lines_from(&f, target, pattern);
+            if bait {
+                out.extend(bait_lines(f.raw.as_slice()));
+            }
+            out
+        }
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn local_sniff_lines(path: &str, pattern: Option<&str>) -> Vec<String> {
+    let bytes = match std::fs::read(path) {
+        Ok(b) => b,
+        Err(e) => return vec![format!("absent — {path} unreadable: {e}")],
+    };
+    let mut out = vec![format!("path {path}"), format!("bytes {}", bytes.len())];
+    out.extend(sniff_struct_lines(&bytes, pattern));
     out
 }
 
@@ -5577,15 +5622,15 @@ mod tests {
     #[test]
     fn sniff_lines_marks_a_partial_download() {
         let complete = lossy_fetch();
-        let lines = sniff_lines_from(&complete, "https://example.com/blob");
+        let lines = sniff_lines_from(&complete, "https://example.com/blob", None);
         let raw_sha = omegaflow::sha256::sha256_hex(&complete.raw);
-        assert_eq!(lines[4], format!("sha256 {}", raw_sha));
+        assert!(lines.iter().any(|l| *l == format!("sha256 {}", raw_sha)), "{lines:?}");
 
         let partial = partial_fetch();
-        let partial_lines = sniff_lines_from(&partial, "https://example.com/blob");
-        assert!(partial_lines[4].starts_with("sha256 partial "));
-        assert!(partial_lines[4].contains(&raw_sha));
-        assert_eq!(partial_lines[2], "bytes 4");
+        let partial_lines = sniff_lines_from(&partial, "https://example.com/blob", None);
+        assert!(partial_lines.iter().any(|l| l.starts_with("sha256 partial ")), "{partial_lines:?}");
+        assert!(partial_lines.iter().any(|l| l.contains(&raw_sha)), "{partial_lines:?}");
+        assert!(partial_lines.iter().any(|l| l == "bytes 4"), "{partial_lines:?}");
     }
 
     #[test]
@@ -5606,6 +5651,36 @@ mod tests {
     }
 
     #[test]
+    fn bait_lines_name_header_and_rare_columns() {
+        let path = std::env::temp_dir().join(format!("sniff-bait-{}", std::process::id()));
+        std::fs::write(
+            &path,
+            "time,station_id,discharge_m3s\n2026-01-01T00:00:00,1,2.5\n",
+        )
+        .unwrap();
+        let lines = sniff_lines(&format!("{} bait", path.display()));
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "bait header time,station_id,discharge_m3s"),
+            "{lines:?}"
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "bait grepapp time,station_id,discharge_m3s"),
+            "{lines:?}"
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l.contains("\"station_id\" \"discharge_m3s\"")),
+            "{lines:?}"
+        );
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
     fn local_sniff_finds_a_pattern() {
         let path = std::env::temp_dir().join(format!("sniff-pattern-{}", std::process::id()));
         std::fs::write(&path, b"HEADabcTAILabc").unwrap();
@@ -5621,11 +5696,11 @@ mod tests {
     #[test]
     fn sniff_lines_hash_and_size_read_the_raw_bytes() {
         let f = lossy_fetch();
-        let lines = sniff_lines_from(&f, "https://example.com/blob");
+        let lines = sniff_lines_from(&f, "https://example.com/blob", None);
         let raw_sha = omegaflow::sha256::sha256_hex(&f.raw);
         let body_sha = omegaflow::sha256::sha256_hex(f.body.as_bytes());
-        assert_eq!(lines[2], "bytes 4");
-        assert_eq!(lines[4], format!("sha256 {}", raw_sha));
+        assert!(lines.iter().any(|l| l == "bytes 4"), "{lines:?}");
+        assert!(lines.iter().any(|l| *l == format!("sha256 {}", raw_sha)), "{lines:?}");
         assert_ne!(lines[4], format!("sha256 {}", body_sha));
     }
 
