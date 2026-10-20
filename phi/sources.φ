@@ -32300,3 +32300,13 @@ compiler tools/harvest/src/bin/lro_trk_compiler.rs
 at earth
 ttl 604800
 field sky_frequency_hz lro_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/deepspace.jpl.nasa.gov/icrf3_ddor.json
+terms PD-USGov https://sti.nasa.gov/disclaimers/
+format icrf3
+origin https://deepspace.jpl.nasa.gov/dsndocs/810-005/107/catalog-fixed.txt
+compiler tools/harvest/src/bin/icrf3_compiler.rs
+at sun
+ttl 31536000
+field ra_deg icrf3_ra_deg inverse-square geometry deg 31536000 0.0 0.0 aperture:none
+field dec_deg icrf3_dec_deg inverse-square geometry deg 31536000 0.0 0.0 aperture:none

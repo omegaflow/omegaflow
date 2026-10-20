@@ -2,7 +2,7 @@
   title: Entscheidungstabelle — die 17 lizenzgesperrten Arme
   class: blatt
   date: 2026-10-19
-  sha256: e191fa03bc11702689bcdb929003283f9e5d0cd51aca8ec8feb120e9c53a05ea
+  sha256: 6945ca24bc7d25cd01777c37028aae1627be8f0951c0426ca421d52a3649b478
   status: live
   see-also: phi/sources.φ tools/harvest/src/bin/ docs/surveys/survey-2026-10-09-redistribution-alternativen.md
 -->
@@ -236,3 +236,35 @@ Fortschritt**. Jetzt bricht der Crawl bei `cap` ab.
 **Riss:** der ausgelieferte Asset deckt die ersten 400 Dateien (drei Tage). Die
 volle Serie baut CI; bei ~100 000 Dateien wird sie in Shards zerfallen, und der
 Block muss dann die vom Compiler gedruckten Shard-Namen tragen.
+
+## Nachtrag 2026-10-20 (8) — `icrf3` ist offen (JPL-Zwilling)
+
+Der Zwilling ist gebaut und gemessen:
+
+| | |
+|---|---|
+| Quelle | `deepspace.jpl.nasa.gov/dsndocs/810-005/107/catalog-fixed.txt` (200, 637 566 B) |
+| Produkt | `<ICRF3-SX for use with DDOR 2025>` — dasselbe `icrf3sx` |
+| Parser | `icrf3_compiler --source ddor` (Festspalten, 15 Spalten laut Dateikopf) |
+| Ergebnis | **4 063 / 4 063 Zeilen**, 1 104 101 B, 0 übersprungen |
+| Stichprobe | `2357-326` → RA 0,0849999°, Dec −32,3503° (00:00:20,4 / −32:21:01,2) ✓ |
+| Block | `terms PD-USGov`, `format icrf3`, `at sun` |
+
+Der alte CDDIS-Block bleibt fuer beide Baender (`sx` + `k`); der JPL-Zwilling
+traegt **nur SX**, aber ohne Login.
+
+## Nachtrag 2026-10-20 (9) — Zwillinge fuer SARAS, REACH, PRIZM, Baikal
+
+Diese vier sind **nicht** durch neue Arme zu oeffnen; die Messung liegt schon im
+Haus:
+
+| Blockiert | Traeger im Register | Beleg |
+|---|---|---|
+| SARAS, REACH, PRIZM (global 21 cm) | **EDGES** (`loco.lab.asu.edu/download/790` + `792`, `other-attribution`) | 2 Bloecke, live |
+| Baikal NT-200 | **ANTARES** (`free-open`, `vo.km3net.de`), **IceCube DR2**, **AMANDA** | 3 Bloecke, live |
+
+Der Fund `galileo.sese.asu.edu/edges-data/` (200) ist **Rohdaten** (145 Tages-
+dateien `*.gsh5`, `metadata/freqs[32768]`, `data/data[3,1,1946,32768]`) — nicht
+dasselbe wie die zwei `T21`-Bloecke. Das waere ein **neuer Arm** `edges_raw`;
+vorher ist zu pruefen, ob `loco.lab.asu.edu` und `galileo.sese.asu.edu` denselben
+Bestand tragen (Spiegel) oder verschiedene Produkte (Roh vs. reduziert).

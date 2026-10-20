@@ -6,6 +6,8 @@ const SX_URL: &str =
     "https://datacenter.iers.org/products/reference-systems/celestial/icrf3/icrf3sx.txt";
 const K_URL: &str =
     "https://datacenter.iers.org/products/reference-systems/celestial/icrf3/icrf3k.txt";
+const DDOR_URL: &str =
+    "https://deepspace.jpl.nasa.gov/dsndocs/810-005/107/catalog-fixed.txt";
 
 fn curl(url: &str) -> Option<String> {
     let out = Command::new("curl")
@@ -173,19 +175,80 @@ fn build_row(line: &str, band: &str, stats: &mut RowStats) -> Option<String> {
     Some(emit(&parts))
 }
 
+fn build_ddor_row(line: &str, stats: &mut RowStats) -> Option<String> {
+    let t: Vec<&str> = line.split_whitespace().collect();
+    if t.len() < 16 {
+        return None;
+    }
+    let name = t[0];
+    if !name.contains('-') && !name.contains('+') {
+        return None;
+    }
+    let h: f64 = t[3].parse().ok()?;
+    let m: f64 = t[4].parse().ok()?;
+    let s: f64 = t[5].parse().ok()?;
+    let sign = t[6];
+    if sign != "+" && sign != "-" {
+        return None;
+    }
+    let dd: f64 = t[7].parse().ok()?;
+    let dm: f64 = t[8].parse().ok()?;
+    let ds: f64 = t[9].parse().ok()?;
+    let e_ra_s: f64 = t[10].parse().ok()?;
+    let e_dec_arcsec: f64 = t[11].parse().ok()?;
+    let corr: f64 = t[12].parse().ok()?;
+    let first_mjd: f64 = t[13].parse().ok()?;
+    let last_mjd: f64 = t[14].parse().ok()?;
+    let nb_sess: u64 = t[15].parse().ok()?;
+    if !(h.is_finite() && m.is_finite() && s.is_finite()) {
+        return None;
+    }
+    stats.rows_in += 1;
+    let ra_deg = (h + m / 60.0 + s / 3600.0) * 15.0;
+    let dec_abs = dd + dm / 60.0 + ds / 3600.0;
+    let dec_deg = if sign == "-" { -dec_abs } else { dec_abs };
+    let mean_mjd = (first_mjd + last_mjd) / 2.0;
+    stats.rows_out += 1;
+    let parts: Vec<(String, String)> = vec![
+        ("name".into(), json_str(name)),
+        ("ivs".into(), json_str(t[1])),
+        ("band".into(), json_str("sx")),
+        ("defining".into(), "0".into()),
+        ("ra_deg".into(), format!("{ra_deg}")),
+        ("dec_deg".into(), format!("{dec_deg}")),
+        ("e_ra_s".into(), format!("{e_ra_s}")),
+        ("e_dec_arcsec".into(), format!("{e_dec_arcsec}")),
+        ("corr".into(), format!("{corr}")),
+        ("mean_mjd".into(), format!("{mean_mjd}")),
+        ("first_mjd".into(), format!("{first_mjd}")),
+        ("last_mjd".into(), format!("{last_mjd}")),
+        ("nb_sess".into(), format!("{nb_sess}")),
+        ("nb_del".into(), "0".into()),
+        ("nb_rat".into(), "0".into()),
+    ];
+    Some(emit(&parts))
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut out = String::from("phi/icrf3_harvest/icrf3.json");
     let mut ci_mode = false;
     let mut band = String::from("both");
+    let mut source = String::from("iers");
+    let mut out_set = false;
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
             "--out" => {
                 if let Some(v) = args.get(i + 1) {
                     out = v.clone();
+                    out_set = true;
                 }
-                i += 1;
+            }
+            "--source" => {
+                if let Some(v) = args.get(i + 1) {
+                    source = v.clone();
+                }
             }
             "--band" => {
                 if let Some(v) = args.get(i + 1) {
@@ -199,10 +262,18 @@ fn main() {
         i += 1;
     }
 
-    let wanted: Vec<(&str, &str)> = match band.as_str() {
+    let ddor = source == "ddor";
+    if ddor && !out_set {
+        out = "data/deepspace.jpl.nasa.gov/icrf3_ddor.json".to_string();
+    }
+    let wanted: Vec<(&str, &str)> = if ddor {
+        vec![("sx", DDOR_URL)]
+    } else {
+        match band.as_str() {
         "sx" => vec![("sx", SX_URL)],
         "k" => vec![("k", K_URL)],
         _ => vec![("sx", SX_URL), ("k", K_URL)],
+        }
     };
 
     let mut stats = RowStats {
@@ -221,7 +292,12 @@ fn main() {
             }
         };
         for line in body.lines() {
-            if let Some(r) = build_row(line, tag, &mut stats) {
+            let row = if ddor {
+                build_ddor_row(line, &mut stats)
+            } else {
+                build_row(line, tag, &mut stats)
+            };
+            if let Some(r) = row {
                 rows_out.push(r);
             }
         }
@@ -270,7 +346,8 @@ fn main() {
         stats.defining,
         stats.skipped,
     );
-    if ci_mode && !upload_release("datacenter.iers.org", &out) {
+    let netloc = if ddor { "deepspace.jpl.nasa.gov" } else { "datacenter.iers.org" };
+    if ci_mode && !upload_release(netloc, &out) {
         eprintln!("upload: {} did not reach the CDN", out);
         std::process::exit(1);
     }
