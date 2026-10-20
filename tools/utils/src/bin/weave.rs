@@ -79,10 +79,12 @@ fn read_table(path: &str, anchor: &str, terms: &BTreeMap<String, String>) -> Res
     };
     let header = split_line(first, delim);
     let want = norm(anchor);
-    let at = header
-        .iter()
-        .position(|h| norm(h) == want)
-        .ok_or_else(|| format!("{path}: kein Anker '{anchor}' im Kopf ({})", header.join(",")))?;
+    let at = header.iter().position(|h| norm(h) == want).ok_or_else(|| {
+        format!(
+            "{path}: kein Anker '{anchor}' im Kopf ({})",
+            header.join(",")
+        )
+    })?;
     let mut rows = Vec::new();
     for line in lines {
         let row = split_line(line, delim);
@@ -121,7 +123,9 @@ fn run(args: &[String]) -> Result<(), String> {
         .enumerate()
         .filter(|(i, a)| {
             !a.starts_with("--")
-                && args.get(i.wrapping_sub(1)).map(|p| p != "--on" && p != "--out" && p != "--terms")
+                && args
+                    .get(i.wrapping_sub(1))
+                    .map(|p| p != "--on" && p != "--out" && p != "--terms")
                     != Some(false)
         })
         .map(|(_, a)| a.clone())
@@ -151,7 +155,9 @@ fn run(args: &[String]) -> Result<(), String> {
     }
     if !excluded.is_empty() {
         for (f, t) in &excluded {
-            eprintln!("weave: WARNUNG {f} — terms '{t}' ist nicht admitiert (gemergt, aber markiert)");
+            eprintln!(
+                "weave: WARNUNG {f} — terms '{t}' ist nicht admitiert (gemergt, aber markiert)"
+            );
         }
     }
     if tables.len() < 2 {
@@ -218,7 +224,13 @@ fn run(args: &[String]) -> Result<(), String> {
         .chain(cols.iter().map(|(n, _, _, _)| n.clone()))
         .chain(std::iter::once("__conflict".to_string()))
         .collect();
-    text.push_str(&head.iter().map(|h| csv_field(h)).collect::<Vec<_>>().join(","));
+    text.push_str(
+        &head
+            .iter()
+            .map(|h| csv_field(h))
+            .collect::<Vec<_>>()
+            .join(","),
+    );
     text.push('\n');
     let mut conflict_rows = 0usize;
     for key in &order {
@@ -294,8 +306,7 @@ fn run(args: &[String]) -> Result<(), String> {
         edges.push_str(&format!("{f}#{c}\tmerge:{out}\tcontributes\n"));
         edges.push_str(&format!("merge:{out}\t{n}\tmaterializes\n"));
     }
-    fs::write(format!("{out}.edges"), edges.as_bytes())
-        .map_err(|e| format!("{out}.edges: {e}"))?;
+    fs::write(format!("{out}.edges"), edges.as_bytes()).map_err(|e| format!("{out}.edges: {e}"))?;
 
     println!(
         "weave: {} Quellen, {} Zeilen, {} Spalten + Anker -> {out} ({} Konfliktzeilen; Karte {out}.map, Kanten {out}.edges)",
