@@ -173,13 +173,13 @@ fn is_skipped(rel: &str) -> bool {
         || rel.contains("docs/reference/")
         || rel == "src/gate/commit_gate_vocab.json"
         || rel.starts_with("mail/")
-        || rel.starts_with("zustand/")
+        || rel.starts_with("state/")
         || rel == "opencode.json"
         || rel.ends_with(".stunnel.conf")
 }
 
 fn is_cross_house(target: &str) -> bool {
-    target.starts_with("zustand/")
+    target.starts_with("state/")
         || target.starts_with("data/")
         || target.starts_with("privat/")
         || target.starts_with("~/")
@@ -244,11 +244,13 @@ mod tests {
 
     #[test]
     fn cross_house_target_is_not_a_broken_reference() {
-        assert!(is_cross_house("zustand/external-state.md"));
+        assert!(is_cross_house("state/external-state.md"));
         assert!(is_cross_house(
-            "zustand/future/gic-riss-154-wunschliste-2026-10-06.md"
+            "state/future/gic-riss-154-wunschliste-2026-10-06.md"
         ));
-        assert!(is_cross_house("sources/flyby2/anderson-probe-2026-09-28.json"));
+        assert!(is_cross_house(
+            "sources/flyby2/anderson-probe-2026-09-28.json"
+        ));
         assert!(is_cross_house("privat/free-voices.md"));
         assert!(is_cross_house("~/projects/omegaflow-work/ui-seats.md"));
         assert!(!is_cross_house("docs/concepts/tools-map.md"));
@@ -257,8 +259,8 @@ mod tests {
 
     #[test]
     fn runtime_logs_and_configs_are_out_of_scope() {
-        assert!(is_skipped("zustand/ereignisse.φ"));
-        assert!(is_skipped("zustand/research/queries.φ"));
+        assert!(is_skipped("state/ereignisse.φ"));
+        assert!(is_skipped("queries.φ"));
         assert!(is_skipped("opencode.json"));
         assert!(is_skipped("bin/relay-tls.stunnel.conf"));
         assert!(!is_skipped("bin/omega_sh"));

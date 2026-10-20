@@ -30,7 +30,7 @@ fn live_handover_carrier() -> String {
     };
     let dirs = [
         "docs/handover".to_string(),
-        "zustand/future/handover".to_string(),
+        "state/future/handover".to_string(),
         format!("{work}/handover"),
     ];
     for dir in dirs {
@@ -299,6 +299,25 @@ fn claimed_closed(content: &str) -> Option<usize> {
     None
 }
 
+fn public_tree_internal(path: &str) -> bool {
+    let p = path.trim_start_matches("./");
+    p == "opencode.json"
+        || p == ".secrets.local"
+        || p.starts_with(".opencode/")
+        || [
+            "tmp/",
+            "cache/",
+            "data/",
+            "state/",
+            "sources/",
+            "experiments/",
+            "handover/",
+            "state/",
+        ]
+        .iter()
+        .any(|d| p.starts_with(d))
+}
+
 fn main() {
     let no_canon = std::env::args().skip(1).any(|a| a == "--no-canon");
     let out = Command::new("git")
@@ -316,6 +335,14 @@ fn main() {
     let mut gate = Gate::new("commit", "");
     let mut fail = false;
     let mut test_file_exempt = 0usize;
+    for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
+        if public_tree_internal(path) {
+            eprintln!(
+                "commit_check: public-tree-internal: {path} — runtime/config/temp belongs in the work tree, not the public release"
+            );
+            fail = true;
+        }
+    }
     for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
         if !path.ends_with(".rs") {
             continue;
@@ -438,13 +465,13 @@ fn main() {
                     blocked.as_deref(),
                     Some(name),
                 ) {
-                    eprintln!("commit_check: zustand/ereignisse.φ:{line}: {rule} - {feedback}");
+                    eprintln!("commit_check: state/ereignisse.φ:{line}: {rule} - {feedback}");
                     fail = true;
                 }
             }
             None => {
                 eprintln!(
-                    "commit_check: zustand/ereignisse.φ: ereignis-ohne-folge: session name missing (OMEGAFLOW_SESSION unset) - check skipped by name"
+                    "commit_check: state/ereignisse.φ: ereignis-ohne-folge: session name missing (OMEGAFLOW_SESSION unset) - check skipped by name"
                 );
             }
         }

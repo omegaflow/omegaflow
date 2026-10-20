@@ -264,7 +264,7 @@ pub fn log_hint(keys: &[String], journal: Option<&str>) -> Option<String> {
         }
     }
     for key in keys {
-        let exact = format!("zustand/{}.φ", key);
+        let exact = format!("state/{}.φ", key);
         if let Some(line) = tail_of(Path::new(&exact)) {
             return Some(line);
         }

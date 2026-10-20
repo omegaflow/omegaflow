@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::path::Path;
 
-const DEFAULT_LEGACY_PIN: &str = "zustand/dropped-legacy-baseline.txt";
+const DEFAULT_LEGACY_PIN: &str = "state/dropped-legacy-baseline.txt";
 const HEADER_PREFIX: &str = "# dropped-events v1 pin=";
 const LIVE_HANDOVER_DIR: &str = "docs/handover";
 const REGISTER_DIR: &str = "phi";
@@ -436,7 +436,7 @@ fn reformulation_corpus() -> &'static [(&'static str, &'static str, &'static str
 fn true_drop_fixture() -> (&'static str, &'static str) {
     (
         "gzip-body ohne gz -suffix kein erkennungs-",
-        "zustand/dropped-legacy-baseline.txt:33",
+        "state/dropped-legacy-baseline.txt:33",
     )
 }
 
