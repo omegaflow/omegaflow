@@ -12,6 +12,12 @@
 # Riss, der den Bau auslöste: post/in/2026-10-16-mycelium-an-river-flyby-sealed-sha-riss.md
 #   (SEALED_SHA256 aeb3c82f… vs. registrierter Harvest-Posten ohne sha256; CDN-Digest b68842c9…).
 
+## Frage
+
+Trägt der Register-Pin den Seal der Bahn — stimmen Konstante, Register und CDN-Asset
+byte-identisch überein, und meldet der Gate-Vergleich für `sealed` und `renewed`
+`placed` statt `riss`? Für `recon` ist die Frage offen, solange das Asset fehlt.
+
 # ============================================================
 # GEBAUT
 # ============================================================
@@ -63,3 +69,16 @@
 #   Die Auflage ist gebaut: Registrar benannt (CDN-Asset + Paper-Beleg), sha256 gemessen,
 #   Register ergänzt, der Gate-Vergleich liest den Pin. Die ESOC-Rekonstruktion
 #   (ephemeris_juice_recon.bin, Frist 2026-11-01) bleibt der offene Termin.
+
+## Was das Verdikt widerlegen würde
+
+- **Pin-Drift:** ein erneuter Gate-Lauf, in dem `register_pin()` für `ephemeris_juice_official.bin`
+  einen anderen sha256 als `aeb3c82f…` liefert oder `anchor_word()` `riss` statt `placed`
+  meldet — dann trägt der Register-Posten den Seal nicht.
+- **CDN-Bytes:** ein Abruf des Assets, dessen Größe nicht 106 704 B ist oder dessen
+  sha256 nicht `aeb3c82f…` entspricht — dann ist der gemessene Pin nicht mehr der Pin.
+- **Herkunft:** ein belegter Upload-Akt, der ein anderes Asset als das gepinnte auf das
+  CDN legt — dann ist der Registrar benannt, aber nicht der des Pins.
+- **`recon`:** ein vorhandenes `ephemeris_juice_recon.bin`, das im Gate nicht `pending`
+  wird, ohne dass der Anker gegen den Register-Pin geprüft ist — dann wäre der offene
+  Termin scheinbar geschlossen, ohne den Vergleich bestanden zu haben.

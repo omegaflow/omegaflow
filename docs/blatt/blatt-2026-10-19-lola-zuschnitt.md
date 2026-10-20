@@ -96,3 +96,16 @@
 #      Referenz-Asset; danach per Orbit shard-en, nicht global. 51,2 MB/Orbit.
 #   5. Reader: `LSB_UNSIGNED_INTEGER` in pds3_fixed_width ergänzen (Mycelium).
 #   6. Keine Rohwerte ohne diese Regel in den Arm.
+
+## Offene Punkte
+
+- **Bezug von `Radius_N`** — geozentrisch (Selenoid) oder auf den Referenzradius bezogen;
+  das Label sagt es nicht im Klartext. Bleibt `pending`, bis `Radius_1` am ersten Produkt
+  gegen `Selenoid_Radius` gemessen ist (erster Schritt, nicht angenommen).
+- **`LSB_UNSIGNED_INTEGER` im Reader** — die Ergänzung in `pds3_fixed_width` ist benannt,
+  aber nicht gebaut; Trigger: Mycelium-Arm, sonst bleibt der Orbit unlesbar.
+- **Orbit-Schnitt** — der erste Schnitt ist EIN Orbit (`lolardr_122590153`); ob das
+  Shard-en per Orbit über weitere Mission-Phasen ohne Regelbruch trägt, ist nicht gemessen.
+- **Abgeleitete Gitter** — `lola_gdr`/`sldem2015` bleiben benannte Alternativen; eine
+  Entscheidung, ob sie je als Messfeld geführt werden, ist `pending` und nicht Teil dieses
+  Zuschnitts.
