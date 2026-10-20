@@ -4069,6 +4069,227 @@ fn netcdf4_signal_lines(file: &omegaflow::archivar::hdf5::Hdf5File) -> Vec<Strin
     out
 }
 
+const NETCDF_VALUE_LIMIT: usize = 10;
+
+fn hdf5_type_text(datatype: &omegaflow::archivar::hdf5::Hdf5Datatype) -> String {
+    match datatype.class {
+        0 => format!(
+            "{}{}",
+            if datatype.signed { "int" } else { "uint" },
+            datatype.size * 8
+        ),
+        1 => match datatype.size {
+            4 => "float32".to_string(),
+            8 => "float64".to_string(),
+            other => format!("float{}", other * 8),
+        },
+        other => format!("class{}/{}", other, datatype.size),
+    }
+}
+
+fn hdf5_number_f64(number: &Hdf5Number) -> Option<f64> {
+    let value = match number {
+        Hdf5Number::Int(v) => *v as f64,
+        Hdf5Number::F32(v) => *v as f64,
+        Hdf5Number::F64(v) => *v,
+    };
+    value.is_finite().then_some(value)
+}
+
+fn hdf5_numbers_equal(a: &Hdf5Number, b: &Hdf5Number) -> bool {
+    match (a, b) {
+        (Hdf5Number::Int(x), Hdf5Number::Int(y)) => x == y,
+        _ => match (hdf5_number_f64(a), hdf5_number_f64(b)) {
+            (Some(x), Some(y)) => x == y,
+            _ => false,
+        },
+    }
+}
+
+fn hdf5_option_text(number: Option<&Hdf5Number>) -> String {
+    match number {
+        Some(value) => value.text(),
+        None => "absent".to_string(),
+    }
+}
+
+fn netcdf_decoded_value(
+    raw: &Hdf5Number,
+    scale: Option<&Hdf5Number>,
+    offset: Option<&Hdf5Number>,
+) -> Option<f64> {
+    let value = hdf5_number_f64(raw)?;
+    let factor = match scale {
+        Some(number) => hdf5_number_f64(number)?,
+        None => 1.0,
+    };
+    let scaled = value * factor;
+    let decoded = match offset {
+        Some(number) => scaled + hdf5_number_f64(number)?,
+        None => scaled,
+    };
+    decoded.is_finite().then_some(decoded)
+}
+
+fn netcdf_attribute_number<'a>(
+    object: &'a omegaflow::archivar::hdf5::Hdf5Object,
+    name: &str,
+) -> Option<Hdf5Number> {
+    object
+        .attrs
+        .iter()
+        .find(|a| a.name == name)
+        .and_then(hdf5_attr_number)
+}
+
+fn netcdf_unsigned(object: &omegaflow::archivar::hdf5::Hdf5Object) -> bool {
+    object
+        .attrs
+        .iter()
+        .find(|a| a.name == "_Unsigned")
+        .and_then(hdf5_text)
+        .is_some_and(|text| text.eq_ignore_ascii_case("true"))
+}
+
+fn netcdf4_value_lines(
+    file: &omegaflow::archivar::hdf5::Hdf5File,
+    variable: &str,
+    limit: usize,
+) -> Vec<String> {
+    let (object, dataspace, datatype) = match file.dataset(variable) {
+        Ok(parts) => parts,
+        Err(_) => {
+            return vec![format!(
+                "absent — the netcdf file carries no dataset {variable}"
+            )];
+        }
+    };
+    let raw = match file.read_dataset(variable) {
+        Ok(bytes) => bytes,
+        Err(_) => {
+            return vec![format!(
+                "absent — the dataset {variable} payload stays unread"
+            )];
+        }
+    };
+    if datatype.size == 0 {
+        return vec![format!(
+            "absent — the dataset {variable} carries no readable element size"
+        )];
+    }
+    let mut effective = datatype.clone();
+    if netcdf_unsigned(object) && effective.class == 0 {
+        effective.signed = false;
+    }
+    let scale = netcdf_attribute_number(object, "scale_factor");
+    let offset = netcdf_attribute_number(object, "add_offset");
+    let fill = object
+        .attrs
+        .iter()
+        .find(|a| a.name == "_FillValue")
+        .and_then(|attr| {
+            if attr.datatype.class == 0 {
+                hdf5_number(&effective, &attr.data).filter(Hdf5Number::finite)
+            } else {
+                hdf5_attr_number(attr)
+            }
+        });
+    let total: usize = dataspace
+        .dims
+        .iter()
+        .fold(1usize, |acc, dim| acc.saturating_mul(*dim as usize));
+    let dims = if dataspace.dims.is_empty() {
+        "scalar".to_string()
+    } else {
+        dataspace
+            .dims
+            .iter()
+            .map(|d| d.to_string())
+            .collect::<Vec<_>>()
+            .join("x")
+    };
+    let mut out = vec![
+        format!(
+            "netcdf values variable={} dims={} type={} order=row-major",
+            variable,
+            dims,
+            hdf5_type_text(&effective)
+        ),
+        format!(
+            "netcdf values scale={} offset={} fill={}",
+            hdf5_option_text(scale.as_ref()),
+            hdf5_option_text(offset.as_ref()),
+            hdf5_option_text(fill.as_ref())
+        ),
+    ];
+    let mut shown = 0usize;
+    let mut decoded = 0usize;
+    let mut skipped = 0usize;
+    for index in 0..total {
+        let start = index.saturating_mul(effective.size);
+        let Some(element) = raw.get(start..start + effective.size) else {
+            out.push(format!(
+                "absent — element {} lies beyond the {}-byte payload",
+                index,
+                raw.len()
+            ));
+            break;
+        };
+        let Some(number) = hdf5_number(&effective, element) else {
+            out.push(format!(
+                "absent — element {} carries no numeric {}",
+                index,
+                hdf5_type_text(&effective)
+            ));
+            break;
+        };
+        if let Some(fill_number) = fill.as_ref()
+            && hdf5_numbers_equal(&number, fill_number)
+        {
+            skipped += 1;
+            continue;
+        }
+        let Some(value) = netcdf_decoded_value(&number, scale.as_ref(), offset.as_ref()) else {
+            out.push(format!(
+                "absent — element {} decodes to no finite value",
+                index
+            ));
+            continue;
+        };
+        decoded += 1;
+        if shown < limit {
+            out.push(format!(
+                "netcdf value {} raw={} scale={} offset={} decoded={}",
+                index,
+                number.text(),
+                hdf5_option_text(scale.as_ref()),
+                hdf5_option_text(offset.as_ref()),
+                value
+            ));
+            shown += 1;
+        }
+    }
+    out.push(format!(
+        "netcdf values shown={} decoded={} skipped_fill={} total={}",
+        shown, decoded, skipped, total
+    ));
+    out
+}
+
+fn netcdf_value_lines(bytes: &[u8], variable: &str, limit: usize) -> Vec<String> {
+    if !bytes.starts_with(HDF5_MAGIC) {
+        return vec![format!(
+            "absent — {variable}: the bytes are not an HDF5/NetCDF4 container"
+        )];
+    }
+    match omegaflow::archivar::hdf5::Hdf5File::parse(bytes) {
+        Ok(file) => netcdf4_value_lines(&file, variable, limit),
+        Err(_) => vec![format!(
+            "absent — {variable}: the HDF5 container stays unread"
+        )],
+    }
+}
+
 fn netcdf_signal_lines(bytes: &[u8], text: &str) -> Vec<String> {
     if bytes.starts_with(HDF5_MAGIC) {
         if let Ok(file) = omegaflow::archivar::hdf5::Hdf5File::parse(bytes) {
@@ -4428,40 +4649,85 @@ fn sniff_lines_from(f: &Fetch, url: &str, pattern: Option<&str>) -> Vec<String> 
     out
 }
 
+struct SniffRequest<'a> {
+    target: &'a str,
+    pattern: Option<&'a str>,
+    bait: bool,
+    variable: Option<&'a str>,
+}
+
+fn sniff_request(query: &str) -> Option<SniffRequest<'_>> {
+    let mut target = None;
+    let mut pattern = None;
+    let mut bait = false;
+    let mut variable = None;
+    let mut tokens = query.split_whitespace().peekable();
+    while let Some(token) = tokens.next() {
+        match token {
+            "bait" => bait = true,
+            "values" | "--values" => {
+                if let Some(name) = tokens.peek()
+                    && *name != "bait"
+                    && !name.starts_with("pattern=")
+                    && !name.starts_with("--")
+                {
+                    variable = Some(*name);
+                    tokens.next();
+                }
+            }
+            _ => {
+                if let Some(name) = token.strip_prefix("--values=") {
+                    variable = Some(name);
+                } else if let Some(name) = token.strip_prefix("pattern=") {
+                    pattern = Some(name);
+                } else if target.is_none() {
+                    target = Some(token);
+                }
+            }
+        }
+    }
+    Some(SniffRequest {
+        target: target?,
+        pattern,
+        bait,
+        variable,
+    })
+}
+
 pub fn sniff_lines(query: &str) -> Vec<String> {
-    let bait = query.split_whitespace().any(|p| p == "bait");
-    let values = query.split_whitespace().any(|p| p == "values");
-    let mut parts = query
-        .split_whitespace()
-        .filter(|p| *p != "bait" && *p != "values");
-    let target = match parts.next() {
-        Some(t) => t,
-        None => return vec!["absent — --sniff needs a path or URL".to_string()],
+    let Some(request) = sniff_request(query) else {
+        return vec!["absent — --sniff needs a path or URL".to_string()];
     };
-    let pattern = parts.find_map(|p| p.strip_prefix("pattern="));
+    let target = request.target;
     if !target.starts_with("http://")
         && !target.starts_with("https://")
         && !target.starts_with("s3://")
     {
-        let mut out = local_sniff_lines(target, pattern);
-        if bait {
-            if let Ok(bytes) = std::fs::read(target) {
+        let mut out = local_sniff_lines(target, request.pattern);
+        if let Ok(bytes) = std::fs::read(target) {
+            if request.bait {
                 out.extend(bait_lines(&bytes));
-                if values {
+                if query.split_whitespace().any(|p| p == "values") {
                     out.extend(value_bait_lines(&bytes));
                 }
+            }
+            if let Some(variable) = request.variable {
+                out.extend(netcdf_value_lines(&bytes, variable, NETCDF_VALUE_LIMIT));
             }
         }
         return out;
     }
     match get(target, &[], "40") {
         Some(f) => {
-            let mut out = sniff_lines_from(&f, target, pattern);
-            if bait {
+            let mut out = sniff_lines_from(&f, target, request.pattern);
+            if request.bait {
                 out.extend(bait_lines(f.raw.as_slice()));
-                if values {
+                if query.split_whitespace().any(|p| p == "values") {
                     out.extend(value_bait_lines(f.raw.as_slice()));
                 }
+            }
+            if let Some(variable) = request.variable {
+                out.extend(netcdf_value_lines(f.raw.as_slice(), variable, NETCDF_VALUE_LIMIT));
             }
             out
         }
@@ -6811,6 +7077,196 @@ mod tests {
         buf.extend_from_slice(&energy_header);
         buf.extend_from_slice(&lat_header);
         buf
+    }
+
+    fn hdf5_single_dataset_fixture(
+        name: &str,
+        datatype: Vec<u8>,
+        dims: &[u64],
+        attrs: Vec<Vec<u8>>,
+        payload: &[u8],
+    ) -> Vec<u8> {
+        let root_addr = 48u64;
+        let root_len = hdf5_header(vec![hdf5_message(0x06, hdf5_link(name, 0))]).len() as u64;
+        let dataset_addr = root_addr + root_len;
+        let layout = |addr: u64| {
+            let mut data = vec![3u8, 1u8];
+            data.extend_from_slice(&addr.to_le_bytes());
+            data.extend_from_slice(&(payload.len() as u64).to_le_bytes());
+            hdf5_message(0x08, data)
+        };
+        let mut messages = vec![
+            hdf5_message(0x01, hdf5_dataspace(dims)),
+            hdf5_message(0x03, datatype.clone()),
+            layout(0),
+        ];
+        messages.extend(attrs.clone());
+        let header_len = hdf5_header(messages.clone()).len() as u64;
+        let data_addr = dataset_addr + header_len;
+        let mut typed: Vec<Vec<u8>> = vec![
+            hdf5_message(0x01, hdf5_dataspace(dims)),
+            hdf5_message(0x03, datatype),
+        ];
+        typed.push(layout(data_addr));
+        typed.extend(attrs);
+        let dataset_header = hdf5_header(typed);
+        assert_eq!(dataset_header.len() as u64, header_len);
+        let root_header = hdf5_header(vec![hdf5_message(0x06, hdf5_link(name, dataset_addr))]);
+        let mut buf = Vec::new();
+        buf.extend_from_slice(b"\x89HDF\r\n\x1a\n");
+        buf.push(2);
+        buf.push(8);
+        buf.push(8);
+        buf.push(0);
+        buf.resize(36, 0);
+        buf.extend_from_slice(&root_addr.to_le_bytes());
+        buf.extend_from_slice(&[0, 0, 0, 0]);
+        let ck = hdf5_checksum(&buf[..44]);
+        buf[44..48].copy_from_slice(&ck.to_le_bytes());
+        buf.extend_from_slice(&root_header);
+        buf.extend_from_slice(&dataset_header);
+        buf.extend_from_slice(payload);
+        buf
+    }
+
+    fn hdf5_packed_fixture() -> Vec<u8> {
+        let string = |size: u32| hdf5_datatype(3, 0, size);
+        let f32dt = || hdf5_datatype(1, 0, 4);
+        let i16dt = hdf5_datatype(0, 0x08, 2);
+        let scalar = hdf5_dataspace(&[]);
+        let attrs = vec![
+            hdf5_message(0x0c, hdf5_attribute("units", &string(1), &scalar, b"1")),
+            hdf5_message(
+                0x0c,
+                hdf5_attribute("scale_factor", &f32dt(), &scalar, &10.0f32.to_le_bytes()),
+            ),
+            hdf5_message(
+                0x0c,
+                hdf5_attribute("add_offset", &f32dt(), &scalar, &(-3.0f32).to_le_bytes()),
+            ),
+            hdf5_message(
+                0x0c,
+                hdf5_attribute("_FillValue", &i16dt, &scalar, &(-1i16).to_le_bytes()),
+            ),
+        ];
+        let payload: Vec<u8> = [-1i16, 2, 3, -1, 5]
+            .iter()
+            .flat_map(|v| v.to_le_bytes())
+            .collect();
+        hdf5_single_dataset_fixture("event_code", i16dt, &[5], attrs, &payload)
+    }
+
+    #[test]
+    fn netcdf_values_decode_packed_integers_with_scale_and_offset() {
+        let lines = netcdf_value_lines(&hdf5_packed_fixture(), "event_code", 10);
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "netcdf values variable=event_code dims=5 type=int16 order=row-major"),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().any(|l| l
+                == "netcdf value 1 raw=2 scale=10 offset=-3 decoded=17"),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().any(|l| l
+                == "netcdf value 2 raw=3 scale=10 offset=-3 decoded=27"),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().any(|l| l
+                == "netcdf value 4 raw=5 scale=10 offset=-3 decoded=47"),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().any(|l| l == "netcdf values scale=10 offset=-3 fill=-1"),
+            "{lines:?}"
+        );
+    }
+
+    #[test]
+    fn netcdf_values_drop_fill_rows_and_count_them() {
+        let lines = netcdf_value_lines(&hdf5_packed_fixture(), "event_code", 10);
+        assert!(
+            !lines.iter().any(|l| l.starts_with("netcdf value 0 ")),
+            "{lines:?}"
+        );
+        assert!(
+            !lines.iter().any(|l| l.starts_with("netcdf value 3 ")),
+            "{lines:?}"
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "netcdf values shown=3 decoded=3 skipped_fill=2 total=5"),
+            "{lines:?}"
+        );
+        let capped = netcdf_value_lines(&hdf5_packed_fixture(), "event_code", 2);
+        assert!(
+            capped
+                .iter()
+                .any(|l| l == "netcdf values shown=2 decoded=3 skipped_fill=2 total=5"),
+            "{capped:?}"
+        );
+    }
+
+    fn hdf5_unsigned_fixture() -> Vec<u8> {
+        let string = |size: u32| hdf5_datatype(3, 0, size);
+        let f32dt = || hdf5_datatype(1, 0, 4);
+        let i16dt = hdf5_datatype(0, 0x08, 2);
+        let scalar = hdf5_dataspace(&[]);
+        let attrs = vec![
+            hdf5_message(
+                0x0c,
+                hdf5_attribute("_Unsigned", &string(4), &scalar, b"true"),
+            ),
+            hdf5_message(
+                0x0c,
+                hdf5_attribute("scale_factor", &f32dt(), &scalar, &0.5f32.to_le_bytes()),
+            ),
+            hdf5_message(
+                0x0c,
+                hdf5_attribute("add_offset", &f32dt(), &scalar, &(-100.0f32).to_le_bytes()),
+            ),
+            hdf5_message(
+                0x0c,
+                hdf5_attribute("_FillValue", &i16dt, &scalar, &(-1i16).to_le_bytes()),
+            ),
+        ];
+        let payload: Vec<u8> = [-1i16, 10]
+            .iter()
+            .flat_map(|v| v.to_le_bytes())
+            .collect();
+        hdf5_single_dataset_fixture("packed_lat", i16dt, &[2], attrs, &payload)
+    }
+
+    #[test]
+    fn netcdf_values_read_unsigned_int16_with_the_signed_fill() {
+        let lines = netcdf_value_lines(&hdf5_unsigned_fixture(), "packed_lat", 10);
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "netcdf values variable=packed_lat dims=2 type=uint16 order=row-major"),
+            "{lines:?}"
+        );
+        assert!(
+            !lines.iter().any(|l| l.starts_with("netcdf value 0 ")),
+            "{lines:?}"
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "netcdf value 1 raw=10 scale=0.5 offset=-100 decoded=-95"),
+            "{lines:?}"
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "netcdf values shown=1 decoded=1 skipped_fill=1 total=2"),
+            "{lines:?}"
+        );
     }
 
     #[test]
