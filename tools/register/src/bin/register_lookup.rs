@@ -3757,9 +3757,10 @@ fn section_text(text: &str, prefix: &str) -> Option<String> {
         let heading = if let Some(h) = trimmed.strip_prefix("## ") {
             Some(h)
         } else if trimmed.starts_with("**") {
-            // Older handovers carry the section marker as a bold line
-            // (`**Offen:**`), not as an `##` heading. Both name the same section.
-            trimmed[2..].split_once("**").map(|(h, _)| h)
+            trimmed[2..]
+                .split_once("**")
+                .filter(|(h, rest)| h.ends_with(':') || rest.trim().is_empty())
+                .map(|(h, _)| h)
         } else {
             None
         };
@@ -6178,10 +6179,9 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
             "<!--\n  class: handover\n  status: live\n-->\n# H\n\n**Offen:**\n- **mycelium .4** · `xfer:…4~a4de4b8f` · offen.\n\n**Übersicht:**\n- kein weiterer Punkt.\n",
         )
         .unwrap();
-        let text = fs::read_to_string(
-            base.join("docs/handover/handover-2026-10-19-future-folge1.md"),
-        )
-        .unwrap();
+        let text =
+            fs::read_to_string(base.join("docs/handover/handover-2026-10-19-future-folge1.md"))
+                .unwrap();
         let echo = echo_sections(&text);
         assert!(echo.contains("4~a4de4b8f"), "{echo:?}");
         assert!(!echo.contains("kein weiterer Punkt"), "{echo:?}");
