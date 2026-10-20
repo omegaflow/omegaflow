@@ -5,7 +5,7 @@ use std::process::exit;
 
 use omegaflow::archivar::camera_angles::{CameraAngleFrame, parse_camera_angles};
 
-const DEFAULT_IN: &str = "zustand/research/m10-camera-angles/camera_angles.txt";
+const DEFAULT_IN: &str = "experiments/assets/m10-mdis-sonke-robinson/camera_angles.txt";
 const UNVERIFIED_RATIO: f64 = 2.0;
 
 struct Span {
