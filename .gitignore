@@ -93,3 +93,6 @@ docs/paper/export/
 
 !state/
 !state/cdn-changes.log
+
+# lokale Testfixtures (Symlink auf omegaflow-work/build/testdata)
+/src/archivar/testdata

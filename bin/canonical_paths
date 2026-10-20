@@ -1,0 +1,34 @@
+#!/bin/sh
+# Kanonische Pfade: neue Dateien nur unter den zehn Orten (plus Werkzeug-Orte).
+# Blockt neue Top-Level-Ordner, neue Root-Dateien außerhalb der Liste und
+# getracktes scratch/. Prüft nur hinzugefügte/kopierte/umbenannte Pfade.
+set -u
+allow_dirs="bin build docs experiments handover phi post projects research sources src state templates tools .github .opencode .githooks .cargo"
+allow_root="AGENTS.md opencode.json Cargo.toml Cargo.lock README.md .gitignore .gitattributes NOTICE LICENSE rust-toolchain.toml .env.example"
+fail=0
+tmp="$(mktemp)" || exit 2
+trap 'rm -f "$tmp"' 0 1 2 15
+git diff --cached --name-only --diff-filter=ACR > "$tmp"
+while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    case "$f" in
+        */*) top="${f%%/*}" ;;
+        *)   top="" ;;
+    esac
+    if [ -z "$top" ]; then
+        case " $allow_root " in
+            *" $f "*) ;;
+            *) echo "canonical_paths: neue Root-Datei außerhalb der Liste: $f" >&2; fail=1 ;;
+        esac
+    else
+        case " $allow_dirs " in
+            *" $top "*) ;;
+            *) echo "canonical_paths: neuer Top-Level-Ordner: $top ($f)" >&2; fail=1 ;;
+        esac
+        if [ "$top" = "scratch" ]; then
+            echo "canonical_paths: scratch/ ist flüchtig und wird nicht getrackt: $f" >&2
+            fail=1
+        fi
+    fi
+done < "$tmp"
+exit $fail

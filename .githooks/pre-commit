@@ -35,6 +35,10 @@ if [ -z "${OMEGAFLOW_SESSION:-}" ] && [ -f "$priv/reports/active_session.φ" ]; 
     IFS= read -r OMEGAFLOW_SESSION < "$priv/reports/active_session.φ" || OMEGAFLOW_SESSION=""
 fi
 export OMEGAFLOW_SESSION="${OMEGAFLOW_SESSION:-}"
+# Kanonische Pfade: neue Dateien nur unter den zehn Orten (plus Werkzeug-Orte).
+if [ -x "$root/bin/canonical_paths" ]; then
+    "$root/bin/canonical_paths" || exit $?
+fi
 ensure commit_check
 run commit_check || exit $?
 ensure concurrency_contract
