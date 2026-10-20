@@ -1,3 +1,31 @@
+url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DSCOVR_H0_MAG&time.min={yesterday}T00:00:00Z&time.max={today}T00:00:00Z&parameters=B1F1,B1GSE&format=json
+terms PD-USGov https://sti.nasa.gov/disclaimers/
+ttl 0
+status vorschlag
+at sun
+hapi B1F1=dscovr_mag_b1f1_nt B1GSE.0=dscovr_mag_bx_gse_nt B1GSE.1=dscovr_mag_by_gse_nt B1GSE.2=dscovr_mag_bz_gse_nt
+field dscovr_mag_b1f1_nt dscovr_mag_b1f1_nt inverse-square em nT 3600 0.0 0.0
+field dscovr_mag_bx_gse_nt dscovr_mag_bx_gse_nt inverse-square em nT 3600 0.0 0.0
+field dscovr_mag_by_gse_nt dscovr_mag_by_gse_nt inverse-square em nT 3600 0.0 0.0
+field dscovr_mag_bz_gse_nt dscovr_mag_bz_gse_nt inverse-square em nT 3600 0.0 0.0
+
+url https://geomag.usgs.gov/ws/data/?id=FRD&type=variation&format=json&elements=H,D,Z&starttime={hour_ago}&endtime={now}
+terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
+ttl 0
+status vorschlag
+format usgs_geomag_variation
+at earth
+field values.0.values usgs_geomag_frd_h_nt inverse-square em nT 60 0.0 0.0
+field values.1.values usgs_geomag_frd_d_arcmin inverse-square geometry arcmin 60 0.0 0.0
+field values.2.values usgs_geomag_frd_z_nt inverse-square em nT 60 0.0 0.0
+
+url https://meeo-s5p.s3.amazonaws.com/?list-type=2&prefix=OFFL/L2__O3_TCL/&max-keys=100
+terms Copernicus https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice
+ttl 0
+status vorschlag
+at earth
+xmlcount Contents s5p_o3_tcl_objects
+
 url https://github.com/omegaflow/sources/releases/download/thredds.aodn.org.au/aodn_temp_0_64.bin
 terms CC-BY-4.0 https://imos.org.au/conditions-of-use
 format aodn
