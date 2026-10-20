@@ -2,7 +2,7 @@
   title: Survey — Sturm-Komposit: welche Fäden sich um die Sturmonsetzeit verformen (2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: bb293a2996ba5950bcf470d5b07679b3015be5e5491bb53fc87e330f74f8bdb1
+  sha256: 022f3f7aadcbd6cc76d1bed3cde04ea9be3aeb1ddcd98d47f260b1d32c123a52
   status: live
   see-also: docs/surveys/survey-2026-10-20-netzausfall-kante.md docs/surveys/survey-2026-10-20-sonne-erde-kette.md tools/measure/src/bin/sturm_komposit_probe.rs phi/sources.φ
 -->
