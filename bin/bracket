@@ -1,0 +1,260 @@
+#!/bin/sh
+# bracket — eine Lücke in einer Zeitreihe mit den gemessenen Werten davor und
+# danach klammern. Es wird nichts interpoliert und keine Zahl erfunden: steht
+# auf einer Seite kein Wert, bleibt die Spalte offen.
+#
+#   bin/bracket <datei|url> --at <iso>
+#   bin/bracket <datei|url> --from <iso> --to <iso> [--exact]
+#
+# Eingabe: Text/CSV, je Zeile `<zeit> <wert> [<wert> ...]`; die Zeit ist Unix
+# oder ISO-8601 (Datum, optionale Uhrzeit, optional Z/±HH:MM), Trennzeichen
+# sind Leerraum und/oder Komma. Kopf- und Kommentarzeilen werden übersprungen.
+# Mehrere Wertspalten werden einzeln geklammert.
+#
+# --exact zählt für die Zeilenzahl nur Sätze im Fenster from..to; geklammert
+# wird weiterhin mit den echten Nachbarn außerhalb der Lücke.
+set -u
+
+# Zahlen sind Dezimalpunkte, unabhängig von der Locale des Aufrufers.
+LC_ALL=C
+export LC_ALL
+
+usage() {
+    echo "bracket: usage: bin/bracket <datei|url> --at <iso>" >&2
+    echo "       bin/bracket <datei|url> --from <iso> --to <iso> [--exact]" >&2
+}
+die2() { echo "bracket: $*" >&2; exit 2; }
+
+src=""
+from_raw=""
+to_raw=""
+from_set=0
+to_set=0
+at_set=0
+exact=0
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --at)
+            [ $# -ge 2 ] || die2 "--at braucht einen Zeitpunkt"
+            from_raw="$2"; to_raw="$2"; at_set=1; shift 2 ;;
+        --from)
+            [ $# -ge 2 ] || die2 "--from braucht einen Zeitpunkt"
+            from_raw="$2"; from_set=1; shift 2 ;;
+        --to)
+            [ $# -ge 2 ] || die2 "--to braucht einen Zeitpunkt"
+            to_raw="$2"; to_set=1; shift 2 ;;
+        --exact)
+            exact=1; shift ;;
+        -h|--help)
+            usage; exit 0 ;;
+        --)
+            shift
+            [ $# -eq 1 ] || die2 "genau eine Quelle erwartet"
+            [ -z "$src" ] || die2 "mehr als eine Quelle"
+            src="$1"; shift ;;
+        -*)
+            die2 "unbekannte Option: $1" ;;
+        *)
+            [ -z "$src" ] || die2 "mehr als eine Quelle: $src und $1"
+            src="$1"; shift ;;
+    esac
+done
+
+[ -n "$src" ] || { usage; exit 2; }
+
+if [ "$at_set" -eq 1 ]; then
+    if [ "$from_set" -eq 1 ] || [ "$to_set" -eq 1 ]; then
+        die2 "--at schließt --from/--to aus"
+    fi
+elif [ "$from_set" -eq 1 ] && [ "$to_set" -eq 1 ]; then
+    :
+else
+    die2 "entweder --at oder --from und --to angeben"
+fi
+
+tmp="$src"
+cleanup=0
+case "$src" in
+    http://*|https://*)
+        command -v curl >/dev/null 2>&1 || die2 "curl fehlt für den URL-Modus"
+        tmp="$(mktemp "${TMPDIR:-/tmp}/bracket.XXXXXX")" || exit 2
+        cleanup=1
+        trap 'rm -f "$tmp"' EXIT HUP INT TERM
+        curl -fsSL --max-time 30 -o "$tmp" -- "$src" || die2 "URL nicht lesbar: $src"
+        ;;
+    *)
+        [ -f "$tmp" ] && [ -r "$tmp" ] || die2 "Datei nicht lesbar: $src"
+        ;;
+esac
+
+# awk macht die eigentliche Arbeit: Zeiten werden (auch ohne gawk-mktime)
+# selbst nach UTC gerechnet, die Nachbarn streng außerhalb der Lücke gesucht.
+awk -v src="$src" -v from_raw="$from_raw" -v to_raw="$to_raw" \
+    -v exact="$exact" '
+function trim(s) {
+    gsub(/^[ \t\r\n]+/, "", s)
+    gsub(/[ \t\r\n]+$/, "", s)
+    return s
+}
+function isnum(s) {
+    return s ~ /^[-+]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][-+]?[0-9]+)?$/
+}
+# Tage seit 1970-01-01 nach Howard Hinnant (proleptischer Gregorianischer Kalender).
+function days_from_civil(y, m, d,   era, yoe, doy, doe) {
+    y -= (m <= 2)
+    era = int((y >= 0 ? y : y - 399) / 400)
+    yoe = y - era * 400
+    doy = int((153 * (m + (m > 2 ? -3 : 9)) + 2) / 5) + d - 1
+    doe = yoe * 365 + int(yoe / 4) - int(yoe / 100) + doy
+    return era * 146097 + doe - 719468
+}
+function parse_time(s,   z, sign, off, oh, om, date, clock, np, dp, nd, tp, nt, y, mo, da, h, mi, se, i) {
+    s = trim(s)
+    if (isnum(s)) return s + 0
+    tzsec = 0
+    if (s ~ /[Zz]$/) {
+        sub(/[Zz]$/, "", s)
+    } else if (match(s, /[+-][0-9][0-9]:[0-9][0-9]$/)) {
+        z = substr(s, RSTART, RLENGTH)
+        s = substr(s, 1, RSTART - 1)
+        sign = (substr(z, 1, 1) == "-") ? -1 : 1
+        gsub(/:/, "", z)
+        off = substr(z, 2) + 0
+        oh = int(off / 100)
+        om = off % 100
+        tzsec = sign * (oh * 3600 + om * 60)
+    } else if (match(s, /[+-][0-9][0-9][0-9][0-9]$/)) {
+        z = substr(s, RSTART, RLENGTH)
+        s = substr(s, 1, RSTART - 1)
+        sign = (substr(z, 1, 1) == "-") ? -1 : 1
+        off = substr(z, 2) + 0
+        oh = int(off / 100)
+        om = off % 100
+        tzsec = sign * (oh * 3600 + om * 60)
+    }
+    gsub(/[Tt]/, " ", s)
+    gsub(/[ \t]+/, " ", s)
+    np = split(s, p, " ")
+    if (np < 1 || np > 2) { perr = 1; return 0 }
+    date = p[1]
+    nd = split(date, dp, "-")
+    if (nd != 3) { perr = 1; return 0 }
+    y = dp[1] + 0; mo = dp[2] + 0; da = dp[3] + 0
+    h = 0; mi = 0; se = 0
+    if (np == 2) {
+        nt = split(p[2], tp, ":")
+        if (nt < 1 || nt > 3) { perr = 1; return 0 }
+        h = tp[1] + 0
+        if (nt >= 2) mi = tp[2] + 0
+        if (nt >= 3) se = tp[3] + 0
+    }
+    if (y < 1 || mo < 1 || mo > 12 || da < 1 || da > 31 ||
+        h < 0 || h > 23 || mi < 0 || mi > 59 || se < 0 || se >= 61) {
+        perr = 1; return 0
+    }
+    return days_from_civil(y, mo, da) * 86400 + h * 3600 + mi * 60 + se - tzsec
+}
+function fmtsec(x,   s) {
+    if (x == int(x)) return sprintf("%d", x) "s"
+    s = sprintf("%.3f", x)
+    sub(/0+$/, "", s)
+    sub(/[.]$/, "", s)
+    return s "s"
+}
+BEGIN {
+    perr = 0
+    ft = parse_time(from_raw)
+    if (perr) { printf "bracket: ungültiger Zeitpunkt: %s\n", from_raw > "/dev/stderr"; exit 2 }
+    perr = 0
+    tt = parse_time(to_raw)
+    if (perr) { printf "bracket: ungültiger Zeitpunkt: %s\n", to_raw > "/dev/stderr"; exit 2 }
+    if (tt < ft) { printf "bracket: --to liegt vor --from\n" > "/dev/stderr"; exit 2 }
+    nrows = 0
+    maxc = 0
+}
+{
+    line = $0
+    sub(/\r$/, "", line)
+    sub(/^[ \t:,]+/, "", line)
+    if (line == "" || line ~ /^#/) next
+    nf = split(line, f, /[ \t,]+/)
+    if (nf < 2) next
+    # ISO mit Leerzeichen zwischen Datum und Uhrzeit: die ersten zwei Felder
+    # gehören zusammen.
+    if (f[1] ~ /^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/ &&
+        nf >= 3 && f[2] ~ /^[0-9][0-9]:[0-9][0-9]/) {
+        ttok = f[1] " " f[2]
+        vstart = 3
+    } else {
+        ttok = f[1]
+        vstart = 2
+    }
+    perr = 0
+    t = parse_time(ttok)
+    if (perr) { perr = 0; next }
+    row = nrows + 1
+    nc = 0
+    for (j = vstart; j <= nf; j++) {
+        c = j - vstart + 1
+        if (!isnum(f[j])) continue
+        k = row SUBSEP c
+        vnum[k] = f[j] + 0
+        vraw[k] = f[j]
+        nc++
+        if (c > maxc) maxc = c
+    }
+    if (nc == 0) next
+    tval[row] = t
+    traw[row] = trim(ttok)
+    nrows = row
+}
+END {
+    if (nrows < 2) {
+        printf "bracket: zu wenige Zeilen (%d), mindestens 2 erwartet\n", nrows > "/dev/stderr"
+        exit 2
+    }
+    cnt = nrows
+    if (exact) {
+        cnt = 0
+        for (i = 1; i <= nrows; i++)
+            if (tval[i] >= ft && tval[i] <= tt) cnt++
+    }
+    printf "bracket: %s %d Zeilen, Lücke %s..%s (%s)\n", src, cnt, from_raw, to_raw, fmtsec(tt - ft)
+
+    for (c = 1; c <= maxc; c++) {
+        bi = 0; ai = 0; bt = 0; atime = 0
+        for (i = 1; i <= nrows; i++) {
+            k = i SUBSEP c
+            if (!(k in vnum)) continue
+            if (tval[i] <= ft && (bi == 0 || tval[i] >= bt)) {
+                bi = i; bt = tval[i]
+            }
+            if (tval[i] >= tt && (ai == 0 || tval[i] <= atime)) {
+                ai = i; atime = tval[i]
+            }
+        }
+        if (bi && ai) {
+            bk = bi SUBSEP c
+            ak = ai SUBSEP c
+            if (vnum[bk] <= vnum[ak]) {
+                mnraw = vraw[bk]; mxraw = vraw[ak]
+            } else {
+                mnraw = vraw[ak]; mxraw = vraw[bk]
+            }
+            printf "bracket: spalte %d: vor %s @ %s | nach %s @ %s | spanne %s..%s | Δt %s\n", \
+                c, vraw[bk], traw[bi], vraw[ak], traw[ai], mnraw, mxraw, fmtsec(atime - bt)
+            printf "bracket: spalte %d: status geklammert\n", c
+        } else if (ai) {
+            printf "bracket: spalte %d: status offen (vor fehlt)\n", c
+        } else if (bi) {
+            printf "bracket: spalte %d: status offen (nach fehlt)\n", c
+        } else {
+            printf "bracket: spalte %d: status offen (kein Wert)\n", c
+        }
+    }
+}
+' "$tmp"
+rc=$?
+[ "$cleanup" -eq 1 ] && rm -f "$tmp"
+exit "$rc"
