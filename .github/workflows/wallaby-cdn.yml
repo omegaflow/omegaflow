@@ -1,0 +1,54 @@
+# harvest: format=hips3d asset=present arm=hips3d_compiler pattern=^wallaby_pilot_dr2_hips3d\.bin$ idempotent=true timeout=240 tag=alasky.cds.unistra.fr
+
+name: wallaby-cdn
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Re-manifest even when the asset is present
+        type: boolean
+        default: false
+  schedule:
+    - cron: "23 6 * * 4"
+
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ secrets.OMEGAFLOW_TOKEN }}
+  RUSTFLAGS: -D warnings
+jobs:
+  wallaby:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+      - name: Idempotence — skip if the asset already exists on the CDN
+        id: idempotence
+        run: |
+          if [ "${{ inputs.force }}" = "true" ]; then
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "force re-manifest requested — compiling and manifesting"
+            exit 0
+          fi
+          if gh release view alasky.cds.unistra.fr --repo omegaflow/sources \
+             --json assets --jq '.assets[]?.name' 2>/dev/null | grep -q "^wallaby_pilot_dr2_hips3d.bin$"; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "asset wallaby_pilot_dr2_hips3d.bin already present — manifest skipped"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "asset wallaby_pilot_dr2_hips3d.bin missing — compiling and manifesting"
+          fi
+      - name: Compile the WALLABY HiPS3D tile manifest to the CDN
+        if: steps.idempotence.outputs.present == 'false'
+        run: |
+          cargo run --release -p omegaflow-harvest --bin hips3d_compiler -- \
+            --properties https://alasky.cds.unistra.fr/HIPS3D/ASKAP/CDS_C_ASKAP_WALLABY-Pilot-DR2/properties \
+            --out wallaby_pilot_dr2_hips3d.bin
+          gh release upload alasky.cds.unistra.fr wallaby_pilot_dr2_hips3d.bin \
+            --repo omegaflow/sources --clobber
