@@ -1,5 +1,6 @@
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DSCOVR_H0_MAG&time.min={yesterday}T00:00:00Z&time.max={today}T00:00:00Z&parameters=B1F1,B1GSE&format=json
 terms PD-USGov https://sti.nasa.gov/disclaimers/
+origin https://cdaweb.gsfc.nasa.gov/
 ttl 0
 status vorschlag
 at sun
@@ -11,6 +12,7 @@ field dscovr_mag_bz_gse_nt dscovr_mag_bz_gse_nt inverse-square em nT 3600 0.0 0.
 
 url https://geomag.usgs.gov/ws/data/?id=FRD&type=variation&format=json&elements=H,D,Z&starttime={hour_ago}&endtime={now}
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
+origin https://geomag.usgs.gov/ws/data/
 ttl 0
 status vorschlag
 format usgs_geomag_variation
