@@ -2,7 +2,7 @@
   title: Survey — die Sonne→Erde-Kette im Haus (Bestand, gemessen 2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: 0c037bcc3c59fe5a8caf13979e8aaa617be6c94b2b71d8dc06e463715152ec11
+  sha256: fce6bf4ce934a4c6667fbf96c8870858abc0acd2516cb2d3330fe5a3f1636ba5
   status: live
   see-also: phi/sources.φ docs/paper/gic-causal-driver.md zustand/rat/2026-10-15-rat-fragenpaket.md
 -->
@@ -47,12 +47,41 @@ eigentlich?" und die Grundlage für F2 (Frühwarnkette).
 
 | Lücke | Befund |
 |---|---|
-| **Radioausbrüche** | **verdrahtet seit 2026-10-20** (`swpc_radio_bursts`, Typ II/III; 34 Sweeps im rollierenden ~25-Tage-Fenster; PD-USGov). Offen: keine Langzeitreihe, kein 1-s-Spektrogramm |
-| **Ionosonden** | **Quelle gefunden (2026-10-20):** Juliusruh (`0318`), 1957–2025, **552.100 foF2-Stundenwerte**, maschinenlesbar. Lizenz **SWS-WDC**: Namensnennung, **keine kommerzielle Nutzung** ohne Vereinbarung, **Weitergabe an Kollegen erlaubt, wenn die Bedingungen mitgegeben werden** — das Haus ist NC (PolyForm), also nutzbar und weitergabefähig. CDN-Upload läuft. GIRO/DIDBase liefert von hier 504/404 |
+| **Radioausbrüche** | **verdrahtet seit 2026-10-20** (`swpc_radio_bursts`, Typ II/III; 34 Sweeps im rollierenden ~25-Tage-Fenster; PD-USGov). **Zweiter Arm seit 2026-10-20:** `callisto`/MRO, 9 Bänder 50–846 MHz, 1-min, Hintergrund per gleitendem Median; 50.328 Minuten aus 2020-01, 2022-01, 2024-01 und 2026-09-24..10-10. Lizenz: freier Zugang mit Nennung, Host-Kontakt und PI-Co-Autorenschaft (`other-attribution`) |
+| **Ionosonden** | **Quelle gefunden (2026-10-20):** Juliusruh (`0318`), 1957–2025, **552.100 foF2-Stundenwerte**, maschinenlesbar. Lizenz **SWS-WDC**: Namensnennung, **keine kommerzielle Nutzung** ohne Vereinbarung, **Weitergabe an Kollegen erlaubt, wenn die Bedingungen mitgegeben werden** — das Haus ist NC (PolyForm), also nutzbar und weitergabefähig. **CDN-Asset 200, 9.385.708 B, sha256 geprüft.** GIRO/DIDBase liefert von hier 504/404 |
 | **Live-Sonnenwind (RTSW/DSCOVR)** | kein `rtsw`-, kein `dscovr`-Block; nur OMNI-Archiv und `wind_waves` |
 | **SuperMAG-Felder** | Compiler da, nur `substorm` registriert; **nicht redistribuierbar** (auth) |
 | **Finnisches Netz** | nur der Datensatz-Katalog, keine Zeitreihe |
 | **Ausfallereignisse** | gar kein Datensatz (kein Zeit/Ort/Ursache-Träger) |
+
+**Radio, zweiter Arm — gemessen, nicht behauptet (e-CALLISTO/MRO, 2026-10-20):**
+Gewählt wurde MRO (Metsähovi, 60,2° N, 24,4° O; `on earth 60.2 24.4 0.09`),
+weil die Tagesverzeichnisse an jedem 15. Januar 2018–2026 durchgehend
+110–112 Dateien zeigen (HUMAIN: 46–49; Australia-ASSA erst ab 2020). Das Asset
+`callisto_mro.bin` (4.126.904 B, sha256 `309ebd47…c4068`) trägt **50.328
+Minuten** aus vier Fenstern: 2020-01, 2022-01, 2024-01 und 2026-09-24..10-10.
+Pro Fenster wurden die 15-min-FITS (3600×200, TIME/FREQUENCY-Tabelle) auf
+**9 Frequenzbänder 50–846 MHz** und **1-Minuten-Kadenz** reduziert; der
+Hintergrund ist ein gleitender Median (±30 min), die Einheit bleibt `digits`
+(BUNIT der Quelle). Der vorhandene FITS-Leser reichte nicht: `TFORM` wie
+`3600D8.3` (Breite/Präzision) wurde als Code `3` gelesen; `fits.rs` liest jetzt
+den ersten Buchstaben als Code.
+
+**Validierung gegen die 34 SWPC-Sweeps** (Überlappung 2026-09-24..10-10,
+Detektor z > 5 in ≥ 2 Bändern, ≥ 2 aktive Minuten): 18 Ereignisse liegen in
+MRO-Abdeckung, **16 sind unbeobachtet** (MRO deckt im Oktober ~04:30–15:45 UT,
+die SWPC-Ereignisse reichen bis 23:01 UT). Von den 18 beobachteten: **7 Treffer,
+11 Fehlschläge, 44 ungematchte Detektionen**. Die 1-min-Bandreduktion ist damit
+**kein verlässlicher Ereignis-Trigger** — Typ-III-Sweeps dauern Sekunden und
+verschwinden in der Minutenmitte; die 44 Alarme zeigen die RFI-Anfälligkeit.
+
+**Kante Radio → OMNI** (2020-01, 2022-01, 2024-01; 93 brauchbare Tage,
+OMNI2 1-h): stärkste Korrelation **|r| = 0.2715** (Band 175–235 MHz, Lag 0 d,
+Tagesmittel Speed). Der Block-Shift-Surrogat-Null (500 Replikate, zirkulär
+innerhalb jedes Jahres) liegt bei **95 % = 0.4172**, **p = 0.8423** →
+**trägt nicht**. Die Datenlage (nur drei Januar-Monate, tageszeitlich
+beschränkt, keine durchgehende Mehrjahresreihe) trägt keine stärkere Aussage;
+das ist die gemessene Grenze, kein Nullbefund über die Physik.
 
 ## Lizenzen, die die Weitergabe begrenzen
 
