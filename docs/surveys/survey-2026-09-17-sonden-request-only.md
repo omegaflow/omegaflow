@@ -2,7 +2,7 @@
   title: Survey — Sonden request-only: die vier (Stand 2026-09-17)
   class: survey
   date: 2026-09-17
-  sha256: 7951a020a979d1b0cf9df4b303a5938ee5a4af63181f1dbd0811b78d9ddbbb46
+  sha256: cab5028c57c3769f1db69598c9350190172c8b2424e2279cbc6886be03c26b7b
   status: done
   see-also: docs/surveys/survey-2026-09-16-sonden-flotte.md docs/auftrag/archiv/auftrag-sonden-rohdaten-anfrage.md phi/blocked_sources.φ
 -->
@@ -111,3 +111,24 @@ lieferte zusätzlich den Tar-sha256). Sieger `grind-flash` — flash-first best�
 Kein Wert re-deriviert; jede Abwesenheit ist `request-only`/`pending` **mit Ort**.
 Die vier bleiben offen, die fünf Anfragen laufen. Die Cassini-Präzedenz trägt für
 Mariner 10 **nicht** (kein RSS-Volume am PDS-Rings-Node).
+
+## Nachtrag 2026-10-20 — Zwilling-Suche mit Signatur, nicht mit Namen
+
+Nachgemessen mit Produkt-IDs, ODF-Headern und Datei-Signaturen. **Kein Zwilling
+öffnet eines der vier Ziele**, aber drei Belege im Text oben sind zu korrigieren:
+
+| Ziel | Befund | Konsequenz |
+|---|---|---|
+| Voyager | `PSNO-00007` ist **nicht** closed-loop-RSS, sondern „SDDPT Voyager Project Data (PDS)", Voyager 2 **Imaging Science (ISS)**, „Ready for Offline Distribution" | der Beleg oben trägt die Doppler-Aussage **nicht**; echter Teil-Zwilling bleibt nur der Saturn-Encounter (`PSPA-00049`/`PSPA-00123`, 20 TARs, Univac-1108) — Cruise/Post-Saturn bleibt request-only |
+| Viking | zwei offene JPL-SSD-Dateien: VL1 **Differenced Range** (916 920 B), VL1/VL2 **Range** (69 458 B) | Lander, prozessiert — **kein** Orbiter-RSS; `PSPG-00011` ist bei NSSDCA „Data Identified but not Received" |
+| Juno | `JNOGRV_0001` beginnt **2013-284 (11.10.2013)**, `INDEX.TAB` bestätigt | die Pre-EFB-Lücke ist exakt **09.–10.10.2013**, nicht der ganze Cruise; kein Pre-EFB-ODF in PDS/Zenodo/DataCite/JPL-SSD |
+| Mariner 10 | `ser.im-ldi.com/M10/MVM/mvm_0001.tgz` (144 349 050 B) ist eine **Namenskollision**: Imaging-EDR-Tapes `MVM_00xx`; `mvm_1001.tgz` = **404** | nicht als Radio-Science-Zwilling verwenden; offen bleibt nur `PSPA-00316` (Venus-Okkultation) |
+| CSES | offener Zwilling nur **CSES-01 MAG** (DTU, Tages-CDFs); Portale registrierungsgated | für CSES-02 (Sotgiu) **kein** Ersatz |
+
+**Lizenz:** für keinen der Kandidaten ist ein admitierter Token belegt — durchgehend
+`absent`. Der Kontrastfall Pioneer 10/11 (Zenodo, CC-BY-4.0) zeigt, dass es für
+diese Datenklasse möglich wäre.
+
+**Postfach:** 5 von 5 Anfragen (Voyager, Mariner, Viking, Cassini, Juno; gesendet
+2026-09-16) sind nach 34 Tagen **ohne Antwort**. Kein Zwilling macht eine davon
+überflüssig. CSES/Sotgiu ist keine dieser fünf (Antwort: „wait a few weeks").
