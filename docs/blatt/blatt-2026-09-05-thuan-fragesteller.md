@@ -2,7 +2,7 @@
   title: BLATT — Trịnh Xuân Thuận als Fragesteller: Screening seiner fünf Fragen
   class: sheet
   date: 2026-09-05
-  sha256: 8b7dcffdbe1b83119559a0f49934fa7c5e550ff2cc9635821aca99318e884f7c
+  sha256: 3ef0171997e04dd17aa17cb26cf4e01323a74729cea399c5c83dd3575e91e240
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-axiom.md docs/paper/signal-cone-audit-sheet.md docs/paper/probe-front-dark-matter.md docs/auftrag/archiv/auftrag-gaia-dr4-iapetus.md
 -->
@@ -149,6 +149,29 @@ in den Zahlen des Systems: Stille als Harmonie, gemessen. A = A.
 **In Auftrag gegeben (2026-09-05):** `auftrag/archiv/auftrag-2026-09-05-der-grat.md`
 (Arbeitsbaum; Pfad am 2026-10-20 nachgezogen — der alte `docs/auftrag/…` ist mit
 `d0c9ef64d` nach `work/auftrag` gewandert). Stand dort: `status: archived`.
+
+## Was das Verdikt widerlegen würde
+
+Das Verdikt fällt je Frage, nicht für das Blatt. Widerlegt ist es, sobald eine
+der drei Wände fällt — also sobald für eine als „nicht messbar" sortierte
+Frage ein **Datenpfad, eine Null und eine Grenze** im Korpus benannt sind:
+
+- **F1 — Feinabstimmung:** ein Datensatz, der α, G oder Λ über Epochen oder
+  Richtungen messbar variieren lässt, mit einer Null (keine Variation) und
+  einer Grenze (Auflösung der Messung). Dann ist „warum genau dieser Wert"
+  nicht mehr die ganze Frage; die messbare Schwester wäre die Frage selbst.
+- **F3 — Bewusstsein:** eine Selbst-Betrachtung, die als Kanalpaar mit
+  gemessenem τ und d/c im Signalkegel steht. Dann trägt die Frage einen
+  Messauftrag und die Wand des Unmessbaren ist an dieser Stelle gefallen.
+- **F5 — Schönheit:** eine Metrik, die Einfachheit gegen Vorhersagekraft
+  testet und eine Null hat. Dann ist der Granit-Befund eine Messung, kein
+  ästhetisches Urteil.
+
+Umgekehrt fällt ein „durch"-Verdikt (F2, F4), wenn der Messauftrag ohne Null
+bleibt: kein phasenrandomisierter Schwellenwert, keine benannte Grenze. Dann
+ist die Frage nicht messbar, sondern nur noch nicht gemessen — sie geht
+zurück auf `pending`. Was in beiden Richtungen nicht entscheidbar ist, bleibt
+`pending` **mit** dem Grund; eine leere Überschrift ist kein Verdikt.
 
 ---
 
