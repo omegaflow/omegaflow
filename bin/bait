@@ -1,25 +1,260 @@
 #!/bin/sh
-# bait — einen Köder aus beliebiger Quelle ziehen: Text, PDF, Bild.
+# bait — einen Köder aus beliebiger Quelle ziehen: Text, PDF, Bild, HTTPS.
 #
 #   bin/bait <datei>
+#   bin/bait --url <https-url> [--bearer <ENV> | --basic <USER_ENV>:<PASS_ENV>] \
+#            [--header "Name: $ENV" | --header "Name: Wert"]...
 #
 # Text wird gelesen; PDF über pdftotext, und wenn dort keine Textschicht liegt,
 # über pdftoppm + tesseract; Bilder direkt über tesseract. Das Ergebnis geht als
 # Prosa in `archive_search --sniff … bait`, das daraus Bezeichner, Einheiten und
 # Werte zieht. Der Fund bleibt ein Fund nur mit Sniffer-Beweis.
+#
+# Online: die Antwort liegt nur in einer mktemp-Datei (trap räumt sie ab), nie
+# in data/ oder im Repo. Ausgegeben werden ausschließlich die `bait …`-Zeilen
+# des Sniffers — kein Rohinhalt, keine Quellzeile. --bearer/--basic nennen
+# Umgebungsvariablen-Namen, nie Werte; Header-Werte werden nie ausgegeben und
+# stehen nicht in der Prozessliste (curl --config aus einer 0600-Datei).
 set -u
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 bin="$root/target/release/archive_search"
-src="${1:-}"
-tmp="$(mktemp /tmp/bait.XXXXXX.txt)"
-trap 'rm -f "$tmp"' EXIT
 
-if [ -z "$src" ] || [ ! -f "$src" ]; then
+usage() {
     echo "bait: usage: bin/bait <datei>" >&2
+    echo "       bin/bait --url <https-url> [--bearer <ENV> | --basic <USER_ENV>:<PASS_ENV>]" >&2
+    echo "                [--header \"Name: \$ENV\" | --header \"Name: Wert\"]..." >&2
+}
+
+die2() { echo "bait: $*" >&2; exit 2; }
+die3() { echo "bait: $*" >&2; exit 3; }
+
+# Ein Name, der als Umgebungsvariable taugt (und nicht als eval-Gift).
+env_name_ok() {
+    case "$1" in
+        ''|[!A-Za-z_]*|*[!A-Za-z0-9_]*) return 1 ;;
+    esac
+    return 0
+}
+
+tmp="$(mktemp /tmp/bait.XXXXXX.txt)"
+hdr="$(mktemp /tmp/bait.XXXXXX.hdr)"
+body="$(mktemp /tmp/bait.XXXXXX.body)"
+cerr="$(mktemp /tmp/bait.XXXXXX.err)"
+sec="$(mktemp /tmp/bait.XXXXXX.sec)"
+trap 'rm -f "$tmp" "$hdr" "$body" "$cerr" "$sec"' EXIT
+
+# Jeder Header-/Auth-Wert, der nicht ausgegeben werden darf. Die Liste bleibt
+# in einer 0600-Datei und wird nach dem Sniffen wörtlich geschwärzt.
+sec_add() {
+    [ -n "$1" ] || return 0
+    printf '%s\n' "$1" >>"$sec"
+}
+
+# curl-Konfiguration: Werte nie auf der Kommandozeile, Datei ist 0600.
+conf_add() {
+    esc="$(printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g')"
+    printf '%s = "%s"\n' "$2" "$esc" >>"$hdr"
+}
+
+# Header-Wert: "$ENV" wird aufgelöst, alles andere ist ein Literal.
+conf_header() {
+    name="$1"
+    value="$2"
+    case "$value" in
+        '$'*)
+            var="${value#\$}"
+            env_name_ok "$var" || die2 "--header: '$var' ist kein Umgebungsvariablen-Name"
+            val="$(printenv "$var" 2>/dev/null || true)"
+            [ -n "$val" ] || die2 "--header: Umgebungsvariable $var ist nicht gesetzt oder leer"
+            case "$val" in
+                *[![:print:]]*) die2 "--header: Wert von $var enthält Steuerzeichen" ;;
+            esac
+            ;;
+        *) val="$value" ;;
+    esac
+    sec_add "$val"
+    conf_add "$name: $val" header
+}
+
+parse_header() {
+    spec="$1"
+    case "$spec" in
+        *:*) ;;
+        *) die2 "--header erwartet \"Name: Wert\" oder \"Name: \$ENV\"" ;;
+    esac
+    name="$(printf '%s' "${spec%%:*}" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+    value="$(printf '%s' "${spec#*:}" | sed 's/^[[:space:]]*//')"
+    case "$name" in
+        ''|*[!A-Za-z0-9-]*) die2 "--header: ungültiger Header-Name" ;;
+    esac
+    case "$name$value" in
+        *[![:print:]]*) die2 "--header: Steuerzeichen im Header" ;;
+    esac
+    conf_header "$name" "$value"
+}
+
+src=""
+url=""
+auth=""
+auth_var=""
+had_header=""
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --url)
+            [ $# -ge 2 ] || die2 "--url erwartet eine URL"
+            url="$2"
+            shift 2
+            ;;
+        --bearer|--basic)
+            [ $# -ge 2 ] || die2 "$1 erwartet einen Umgebungsvariablen-Namen"
+            [ -z "$auth" ] || die2 "nur eine Authentifizierung: --bearer oder --basic"
+            auth="${1#--}"
+            auth_var="$2"
+            shift 2
+            ;;
+        --header)
+            [ $# -ge 2 ] || die2 "--header erwartet \"Name: Wert\" oder \"Name: \$ENV\""
+            parse_header "$2"
+            had_header=1
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        --)
+            shift
+            while [ $# -gt 0 ]; do
+                [ -z "$src" ] || die2 "nur eine Datei"
+                src="$1"
+                shift
+            done
+            ;;
+        -*)
+            die2 "unbekannte Option: $1"
+            ;;
+        *)
+            [ -z "$src" ] || die2 "nur eine Datei"
+            src="$1"
+            shift
+            ;;
+    esac
+done
+
+if [ -n "$url" ] && [ -n "$src" ]; then
+    die2 "entweder eine Datei oder --url, nicht beides"
+fi
+if [ -z "$url" ] && [ -z "$src" ]; then
+    usage
     exit 2
+fi
+if [ -z "$url" ] && [ -n "$auth" ]; then
+    die2 "--bearer/--basic nur zusammen mit --url"
+fi
+if [ -z "$url" ] && [ -n "$had_header" ]; then
+    die2 "--header nur zusammen mit --url"
 fi
 if [ ! -x "$bin" ]; then
     echo "bait: $bin fehlt — erst bauen" >&2
+    exit 2
+fi
+
+if [ -n "$url" ]; then
+    case "$url" in
+        https://*) ;;
+        *) die2 "--url verlangt https://" ;;
+    esac
+    case "$url" in
+        *[[:space:]]*|*[![:print:]]*) die2 "--url enthält Leerraum oder Steuerzeichen" ;;
+    esac
+    authority="${url#https://}"
+    authority="${authority%%[/?#]*}"
+    case "$authority" in
+        *@*) die2 "--url: Zugangsdaten gehören nicht in die URL, sondern in --basic" ;;
+    esac
+    host="${authority%%:*}"
+    [ -n "$host" ] || die2 "--url ohne Host"
+
+    case "$auth" in
+        bearer)
+            env_name_ok "$auth_var" || die2 "--bearer: '$auth_var' ist kein Umgebungsvariablen-Name"
+            token="$(printenv "$auth_var" 2>/dev/null || true)"
+            [ -n "$token" ] || die2 "--bearer: Umgebungsvariable $auth_var ist nicht gesetzt oder leer"
+            case "$token" in
+                *[![:print:]]*) die2 "--bearer: Wert von $auth_var enthält Steuerzeichen" ;;
+            esac
+            sec_add "$token"
+            conf_add "Authorization: Bearer $token" header
+            unset token
+            ;;
+        basic)
+            case "$auth_var" in
+                *:*) ;;
+                *) die2 "--basic erwartet <USER_ENV>:<PASS_ENV>" ;;
+            esac
+            user_var="${auth_var%%:*}"
+            pass_var="${auth_var#*:}"
+            env_name_ok "$user_var" || die2 "--basic: '$user_var' ist kein Umgebungsvariablen-Name"
+            env_name_ok "$pass_var" || die2 "--basic: '$pass_var' ist kein Umgebungsvariablen-Name"
+            user="$(printenv "$user_var" 2>/dev/null || true)"
+            pass="$(printenv "$pass_var" 2>/dev/null || true)"
+            [ -n "$user" ] || die2 "--basic: Umgebungsvariable $user_var ist nicht gesetzt oder leer"
+            [ -n "$pass" ] || die2 "--basic: Umgebungsvariable $pass_var ist nicht gesetzt oder leer"
+            case "$user$pass" in
+                *[![:print:]]*) die2 "--basic: Wert enthält Steuerzeichen" ;;
+            esac
+            sec_add "$user"
+            sec_add "$pass"
+            sec_add "$(printf '%s:%s' "$user" "$pass" | base64 2>/dev/null | tr -d '\n')"
+            conf_add "$user:$pass" user
+            unset user pass
+            ;;
+    esac
+
+    rc=0
+    code="$(curl -q -sS --max-time 120 --max-filesize 67108864 \
+        --proto '=https' --proto-redir '=https' --max-redirs 3 \
+        --config "$hdr" \
+        -o "$body" -w '%{http_code}' "$url" 2>"$cerr")" || rc=$?
+    if [ "$rc" -ne 0 ]; then
+        die3 "Abruf von $host fehlgeschlagen (curl $rc) — keine Signatur"
+    fi
+    case "$code" in
+        2[0-9][0-9]) ;;
+        *)
+            die3 "HTTP $code — keine Signatur"
+            ;;
+    esac
+    if [ ! -s "$body" ]; then
+        die3 "HTTP $code, leere Antwort — keine Signatur"
+    fi
+
+    "$bin" --sniff "$body" bait values 2>/dev/null | sed -n 's/^\[sniff\] bait /bait /p' >"$tmp"
+    if [ ! -s "$tmp" ]; then
+        die3 "keine Signatur im Abruf — nichts ausgegeben"
+    fi
+    # Selbst wenn eine Quelle Header zurückspiegelt: kein Auth-Wert im Ausgabetext.
+    awk -v secfile="$sec" '
+        BEGIN { while ((getline s < secfile) > 0) if (s != "") secret[++n] = s }
+        {
+            line = $0
+            for (i = 1; i <= n; i++) {
+                out = ""; rest = line
+                while ((p = index(rest, secret[i])) > 0) {
+                    out = out substr(rest, 1, p - 1) "[geschwärzt]"
+                    rest = substr(rest, p + length(secret[i]))
+                }
+                line = out rest
+            }
+            print line
+        }' "$tmp"
+    echo "bait: $host $(wc -c <"$body" | tr -d ' ') B gelesen, Signatur extrahiert, Rohdaten verworfen"
+    exit 0
+fi
+
+if [ ! -f "$src" ]; then
+    usage
     exit 2
 fi
 
