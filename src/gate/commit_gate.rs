@@ -204,7 +204,7 @@ fn classify_home(path: &str) -> Option<Home> {
     }
     if lower.contains("docs/handover/")
         || lower.contains("docs/surveys/")
-        || lower.contains("docs/auftrag/")
+        || lower.contains("docs/projects/")
         || lower.contains("docs/blatt/")
     {
         return Some(Home::German);
@@ -3628,7 +3628,7 @@ mod tests {
             .unwrap()
             .clone();
         let post_text = format!("{} stays", post_marker);
-        let args = tool_args("docs/auftrag/archiv/auftrag-alt.md", &post_text);
+        let args = tool_args("docs/projects/archiv/auftrag-alt.md", &post_text);
         assert!(g.check_tool_call("write", &args).is_none());
     }
 
@@ -3711,7 +3711,7 @@ mod tests {
         }
         let args = tool_args(live, "Post An future steht");
         assert!(g.check_tool_call("write", &args).is_none());
-        let args = tool_args("docs/auftrag/auftrag-x.md", "An future:");
+        let args = tool_args("docs/projects/auftrag-x.md", "An future:");
         let v = g.check_tool_call("write", &args).unwrap();
         assert_eq!(v.rule, "routing-act-home");
         assert_eq!(v.severity, Severity::Hard);
@@ -4687,7 +4687,7 @@ mod tests {
         for ok in [
             r###"{"filePath":"docs/handover/handover-2026-09-09-te-atom-4.md","newString":"# offen"}"###,
             r###"{"filePath":"docs/granit.md","newString":"## A = A"}"###,
-            r###"{"filePath":"docs/auftrag/auftrag-beispiel.md","newString":"# lose"}"###,
+            r###"{"filePath":"docs/projects/auftrag-beispiel.md","newString":"# lose"}"###,
             r##"{"filePath":"AGENTS.md","newString":"# omegaflow"}"##,
             r##"{"filePath":"README.md","newString":"# omegaflow"}"##,
             r##"{"filePath":"SECURITY.md","newString":"# responsible use"}"##,

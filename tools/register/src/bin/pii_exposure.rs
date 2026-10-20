@@ -10,13 +10,13 @@ const COMMITS: [&str; 15] = [
 ];
 
 const SENSITIVE_PATHS: [&str; 10] = [
-    "docs/auftrag/auftrag-adoption-mails.md",
-    "docs/auftrag/auftrag-rubin-data-rights-antrag.md",
-    "docs/auftrag/auftrag-igets-sftp-passwort-antrag.md",
-    "docs/auftrag/auftrag-lisa-pathfinder-psd-antrag.md",
-    "docs/auftrag/auftrag-flyby-doppler-rohdaten.md",
-    "docs/auftrag/auftrag-sonden-rohdaten-anfragen.md",
-    "docs/auftrag/gavo-dc-account-anfrage.md",
+    "docs/projects/auftrag-adoption-mails.md",
+    "docs/projects/auftrag-rubin-data-rights-antrag.md",
+    "docs/projects/auftrag-igets-sftp-passwort-antrag.md",
+    "docs/projects/auftrag-lisa-pathfinder-psd-antrag.md",
+    "docs/projects/auftrag-flyby-doppler-rohdaten.md",
+    "docs/projects/auftrag-sonden-rohdaten-anfragen.md",
+    "docs/projects/gavo-dc-account-anfrage.md",
     "docs/reference/antares-konto-2026-09-05.md",
     "docs/reference/fink-konto-2026-09-05.md",
     "docs/handover/archiv/fink-konto-2026-09-05.md",

@@ -5,7 +5,7 @@
 #   bin/automode --unclear [--limit N] [--engines "mwmbl exa"] [--arm <format>]
 #
 # Ausgabe: eine Belegzeile je Messung, zusaetzlich TSV unter
-# recherche/funde/rohausgaben/laeufe/. Es wird nichts in phi geschrieben.
+# research/funde/rohausgaben/laeufe/. Es wird nichts in phi geschrieben.
 set -u
 export LC_ALL=C
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
@@ -20,7 +20,7 @@ arm=""
 qfix=""
 outfile=""
 engines="mwmbl searxng exa"
-outdir="${OMEGAFLOW_WORK:-$root/../omegaflow-work}/recherche/funde/rohausgaben/laeufe"
+outdir="${OMEGAFLOW_WORK:-$root/../omegaflow-work}/research/funde/rohausgaben/laeufe"
 UA="Mozilla/5.0 (X11; Linux x86_64) automode"
 
 while [ $# -gt 0 ]; do
