@@ -695,6 +695,28 @@ pub fn tar_stream<R: std::io::Read>(
     }
     Ok(total)
 }
+pub fn inflate_stream<R: std::io::Read>(
+    src: R,
+    mut sink: impl FnMut(&[u8]),
+) -> Result<u64, String> {
+    let mut z = ZStream {
+        src,
+        inbuf: [0u8; 65536],
+        in_len: 0,
+        in_pos: 0,
+        eof: false,
+        bitbuf: 0,
+        nbits: 0,
+        win: Vec::new(),
+        out_len: 0,
+        crc: 0xFFFF_FFFFu32,
+        emit: &mut sink,
+    };
+    z.decode_deflate()?;
+    z.align_byte();
+    z.flush_win();
+    Ok(z.out_len)
+}
 
 struct ZStream<'a, R: std::io::Read> {
     src: R,
