@@ -2,7 +2,7 @@
   title: Was ist was — Handover, Auftrag, Survey, Fadenübersicht, Register
   class: concept
   date: 2026-10-20
-  sha256: 0a44fa8a3c7ce363d25496ad50602b10b243175d30b991aaff401f65d5ee79ae
+  sha256: 5accb86c0e0cebf57606ba222e864f49cdc18c61d2758b087a713d6fa0418b6f
   status: live
   owner: river
   ack: river 2026-10-20T18:15Z
@@ -20,8 +20,8 @@ und was erwarte ich dort?
 | Ding | Beantwortet | Wo | Größe | Wann lesen |
 |---|---|---|---|---|
 | **Handover** | Was ist offen, wer hat es, was ist der nächste Akt? | `handover/handover-<datum>-<linie>-folge<N>.md` | **≤ 1 KiB** | **bei jedem Passbeginn**, nur die eigene Linie |
-| **Fadenübersicht** | Welche Fäden gibt es — Stand, Lücke, Zugang, Owner? | Tabelle **im Auftrag**, z. B. `auftrag/…-sonne-erde-faeden.md` | eine Tabelle | wenn du einen Faden wählst |
-| **Auftrag** | Welches große Projekt — Ziel, Nicht-Ziel, Abnahme? | `auftrag/auftrag-<datum>-<thema>.md` | 1–3 Seiten | wenn du das Projekt beginnst |
+| **Fadenübersicht** | Welche Fäden gibt es — Stand, Lücke, Zugang, Owner? | Tabelle **im Auftrag**, z. B. `projects/…-sonne-erde-faeden.md` | eine Tabelle | wenn du einen Faden wählst |
+| **Auftrag** | Welches große Projekt — Ziel, Nicht-Ziel, Abnahme? | `projects/auftrag-<datum>-<thema>.md` | 1–3 Seiten | wenn du das Projekt beginnst |
 | **Survey** | Was wurde gemessen — Zahlen, Quellen, Grenzen? | `docs/surveys/survey-<datum>-<thema>.md` | 1–5 Seiten | wenn du den Faden bearbeitest |
 | **Register** | Welche Quelle ist verdrahtet — Lizenz, Compiler, Felder? | `phi/sources.φ` | eine Datei | bei Quellenarbeit |
 
