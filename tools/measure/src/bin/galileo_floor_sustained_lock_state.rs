@@ -289,7 +289,7 @@ fn episodes_on(times: &[f64], resids: &[f64], gap_s: f64) -> Vec<Episode> {
 fn main() {
     let report_path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
         Some(p) => p,
-        None => "/tmp/opencode/galileo_floor_sustained_lock_state_report.txt".to_string(),
+        None => omegaflow::temp_path("galileo_floor_sustained_lock_state_report.txt").to_string(),
     };
     let mut out: Vec<String> = Vec::new();
     out.push(

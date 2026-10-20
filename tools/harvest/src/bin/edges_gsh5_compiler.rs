@@ -138,12 +138,12 @@ fn http_read(url: &str, start: u64, len: u64) -> Result<Vec<u8>, String> {
         .checked_add(len)
         .and_then(|v| v.checked_sub(1))
         .ok_or("http range overflow")?;
-    let path = format!(
-        "/tmp/opencode/edges_gsh5_range_{}_{}_{}.bin",
+    let path = omegaflow::temp_path(&format!(
+        "edges_gsh5_range_{}_{}_{}.bin",
         std::process::id(),
         start,
         len
-    );
+    ));
     let status = Command::new("curl")
         .args([
             "-sS",

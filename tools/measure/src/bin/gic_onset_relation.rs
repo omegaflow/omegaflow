@@ -8,7 +8,9 @@ const J2000_UNIX_OFFSET: f64 = 946728000.0;
 const DAY_S: f64 = 86400.0;
 const HOUR: f64 = 3600.0;
 const PRE_S: f64 = 3600.0;
-const DEFAULT_MCON: &str = "/tmp/opencode/mcpherron_onsets.bin";
+fn default_mcon() -> &'static str {
+    omegaflow::temp_path("mcpherron_onsets.bin")
+}
 const DEFAULT_GIC: &str =
     "https://github.com/omegaflow/sources/releases/download/space.fmi.fi/fmi_gic_1min.bin";
 const DEFAULT_GIC2: &str =
@@ -258,7 +260,10 @@ fn report_series(
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let mcon_path = arg_after(&args, "--mcon").unwrap_or(DEFAULT_MCON);
+    let mcon_path = match arg_after(&args, "--mcon") {
+        Some(v) => v.to_string(),
+        None => default_mcon().to_string(),
+    };
     let gic_arg = arg_after(&args, "--gic").unwrap_or(DEFAULT_GIC);
     let gic2_arg = arg_after(&args, "--gic2").unwrap_or(DEFAULT_GIC2);
     let window_min: f64 = arg_after(&args, "--window")
@@ -270,7 +275,7 @@ fn main() {
     let window_s = window_min * 60.0;
     let control_s = control_shift_h * HOUR;
 
-    let mcon_bytes = match read_bytes(mcon_path) {
+    let mcon_bytes = match read_bytes(&mcon_path) {
         Some(b) => b,
         None => {
             println!("MCON: no bytes at {mcon_path} — the relation stays pending");

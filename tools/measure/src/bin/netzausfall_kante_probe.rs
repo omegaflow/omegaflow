@@ -446,18 +446,20 @@ fn report_family(label: &str, pred: &BTreeMap<i64, f64>, out: &BTreeMap<i64, Agg
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let outage_path =
-        arg_after(&args, "--outage").unwrap_or("/tmp/opencode/outage_kante/grid_outage_events.bin");
-    let bpa_path = arg_after(&args, "--bpa").unwrap_or("/tmp/opencode/outage_kante/bpa_gic.bin");
-    let abk_path =
-        arg_after(&args, "--abk").unwrap_or("/tmp/opencode/outage_kante/abk_dbdt_1h.bin");
-    let sod_path =
-        arg_after(&args, "--sod").unwrap_or("/tmp/opencode/outage_kante/sod_dbdt_1h.bin");
-    let nur_path =
-        arg_after(&args, "--nur").unwrap_or("/tmp/opencode/outage_kante/fmi_image_mag_nur.bin");
-    let fmi_path = arg_after(&args, "--fmi").unwrap_or("/tmp/opencode/outage_kante/fmi_gic.bin");
+    let outage_path = omegaflow::or_temp(
+        arg_after(&args, "--outage"),
+        "outage_kante/grid_outage_events.bin",
+    );
+    let bpa_path = omegaflow::or_temp(arg_after(&args, "--bpa"), "outage_kante/bpa_gic.bin");
+    let abk_path = omegaflow::or_temp(arg_after(&args, "--abk"), "outage_kante/abk_dbdt_1h.bin");
+    let sod_path = omegaflow::or_temp(arg_after(&args, "--sod"), "outage_kante/sod_dbdt_1h.bin");
+    let nur_path = omegaflow::or_temp(
+        arg_after(&args, "--nur"),
+        "outage_kante/fmi_image_mag_nur.bin",
+    );
+    let fmi_path = omegaflow::or_temp(arg_after(&args, "--fmi"), "outage_kante/fmi_gic.bin");
 
-    let Some((events, stats)) = load_outages(outage_path) else {
+    let Some((events, stats)) = load_outages(&outage_path) else {
         eprintln!("{outage_path}: grid_outage_event bin reads void — the edge stays unmeasured");
         std::process::exit(1);
     };
@@ -542,7 +544,7 @@ fn main() {
         per_station_out[i].entry(e.day).or_default().add(e);
     }
 
-    let Some(bpa_bytes) = std::fs::read(bpa_path).ok() else {
+    let Some(bpa_bytes) = std::fs::read(&bpa_path).ok() else {
         eprintln!("{bpa_path}: read void — the BPA edge stays unmeasured");
         std::process::exit(1);
     };
@@ -640,10 +642,10 @@ fn main() {
     println!();
 
     let proxies: [(&str, Option<BTreeMap<i64, f64>>); 4] = [
-        ("ABK dB/dt", load_dbdt_im(abk_path)),
-        ("SOD dB/dt", load_dbdt_im(sod_path)),
-        ("NUR dB/dt", load_geo_daily(nur_path, geo::MAGIC_IMAGE)),
-        ("FMI GIC", load_geo_daily(fmi_path, MAGIC_GIC)),
+        ("ABK dB/dt", load_dbdt_im(&abk_path)),
+        ("SOD dB/dt", load_dbdt_im(&sod_path)),
+        ("NUR dB/dt", load_geo_daily(&nur_path, geo::MAGIC_IMAGE)),
+        ("FMI GIC", load_geo_daily(&fmi_path, MAGIC_GIC)),
     ];
     for (label, series) in proxies {
         let Some(series) = series else {

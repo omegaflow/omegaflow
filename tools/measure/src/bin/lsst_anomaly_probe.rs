@@ -3929,8 +3929,8 @@ mod tests {
     #[test]
     fn periodic_natural_variable_with_achromatic_dip_stays_excluded_by_the_fap_gate() {
         let curves = synthetic_two_band_periodic(0xA1, 48, 7200.0);
-        let base_path = "/tmp/opencode/lsst_periodic_gate_test_base.bin";
-        let inj_path = "/tmp/opencode/lsst_periodic_gate_test_injected.bin";
+        let base_path = omegaflow::temp_path("lsst_periodic_gate_test_base.bin");
+        let inj_path = omegaflow::temp_path("lsst_periodic_gate_test_injected.bin");
         std::fs::write(base_path, serialize_lss1(&curves)).unwrap();
         let base_bytes = std::fs::read(base_path).unwrap();
         let inj = inject_achromatic_dip(&base_bytes, 8.0).unwrap();
@@ -3990,8 +3990,8 @@ mod tests {
     #[test]
     fn negative_control_achromatic_injection_reaches_the_dip_gate() {
         let curves = synthetic_two_band_noise(0x51, 40);
-        let base_path = "/tmp/opencode/lsst_negative_control_test_base.bin";
-        let inj_path = "/tmp/opencode/lsst_negative_control_test_injected.bin";
+        let base_path = omegaflow::temp_path("lsst_negative_control_test_base.bin");
+        let inj_path = omegaflow::temp_path("lsst_negative_control_test_injected.bin");
         std::fs::write(base_path, serialize_lss1(&curves)).unwrap();
         let (base_cands, _) = scan_lss1(base_path, true);
         assert_eq!(

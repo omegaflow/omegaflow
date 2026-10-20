@@ -334,7 +334,7 @@ fn best_cut_on(rows: &[Row]) -> Option<(BestCut, i64, i64)> {
 }
 
 fn main() {
-    let mut report = "/tmp/opencode/galileo_ruck_nachmessen_f3_report.txt".to_string();
+    let mut report = omegaflow::temp_path("galileo_ruck_nachmessen_f3_report.txt").to_string();
     for a in std::env::args().skip(1) {
         if let Some(r) = a.strip_prefix("--report=") {
             report = r.to_string();

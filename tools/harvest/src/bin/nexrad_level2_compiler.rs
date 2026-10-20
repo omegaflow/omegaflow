@@ -484,7 +484,7 @@ mod tests {
             site: Some(site),
             samples,
         };
-        let out = "/tmp/opencode/nexrad_test_asset.bin";
+        let out = omegaflow::temp_path("nexrad_test_asset.bin");
         let bytes = write_asset(&asset, out).unwrap();
         assert_eq!(bytes, HEADER_BYTES + asset.samples.len() * REC_BYTES);
         let read = std::fs::read(out).unwrap();
@@ -520,7 +520,7 @@ mod tests {
                 kind: KIND_REF,
             }],
         };
-        let out = "/tmp/opencode/nexrad_test_no_site.bin";
+        let out = omegaflow::temp_path("nexrad_test_no_site.bin");
         let bytes = write_asset(&asset, out).unwrap();
         assert_eq!(bytes, HEADER_BYTES + REC_BYTES);
         let read = std::fs::read(out).unwrap();

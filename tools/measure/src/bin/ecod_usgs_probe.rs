@@ -627,9 +627,11 @@ fn te_for(
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let outage_path =
-        arg_after(&args, "--outage").unwrap_or("/tmp/opencode/ecod_usgs/grid_outage_events.bin");
-    let dir = arg_after(&args, "--dir").unwrap_or("/tmp/opencode/ecod_usgs/iaga");
+    let outage_path = omegaflow::or_temp(
+        arg_after(&args, "--outage"),
+        "ecod_usgs/grid_outage_events.bin",
+    );
+    let dir = omegaflow::or_temp(arg_after(&args, "--dir"), "ecod_usgs/iaga");
     let draws = arg_after(&args, "--draws")
         .and_then(|v| v.parse::<usize>().ok())
         .filter(|&v| v > 0)
@@ -638,7 +640,7 @@ fn main() {
         eprintln!("embedded leap-second table stays unread");
         std::process::exit(1);
     };
-    let Some(events) = load_events(outage_path, &lsk) else {
+    let Some(events) = load_events(&outage_path, &lsk) else {
         eprintln!("{outage_path}: outage bin reads void");
         std::process::exit(1);
     };
@@ -684,7 +686,7 @@ fn main() {
     }
     let mut bmaps: Vec<BTreeMap<i64, f64>> = Vec::new();
     for (i, s) in STATIONS.iter().enumerate() {
-        let b = load_station(dir, s.code);
+        let b = load_station(&dir, s.code);
         println!(
             "| {} | {:.3} | {:.3} | {} | {} | {:.1} | {} |",
             s.code,

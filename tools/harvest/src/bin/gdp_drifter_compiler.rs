@@ -683,7 +683,7 @@ mod tests {
                 sst: None,
             },
         ];
-        let out = "/tmp/opencode/gdp_drifter_test_asset.bin";
+        let out = omegaflow::temp_path("gdp_drifter_test_asset.bin");
         let bytes = write_asset(&records, out).unwrap();
         assert_eq!(bytes, 8 + records.len() * REC_BYTES);
         let read = std::fs::read(out).unwrap();

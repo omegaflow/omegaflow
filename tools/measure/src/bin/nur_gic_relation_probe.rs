@@ -42,7 +42,8 @@ fn arg_after<'a>(args: &'a [String], flag: &str) -> Option<&'a str> {
 }
 
 fn cache_path(name: &str) -> String {
-    let dir = std::path::Path::new("/tmp/opencode/nur_gic_probe");
+    let dir_buf = omegaflow::temp_path("nur_gic_probe");
+    let dir = std::path::Path::new(&dir_buf);
     let _ = std::fs::create_dir_all(dir);
     dir.join(name).to_string_lossy().into_owned()
 }

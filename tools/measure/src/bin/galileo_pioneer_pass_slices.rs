@@ -220,7 +220,7 @@ fn fopt_rms(v: Option<f64>) -> String {
 fn main() {
     let report_path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
         Some(p) => p,
-        None => "/tmp/opencode/galileo_pioneer_pass_slices_report.txt".to_string(),
+        None => omegaflow::temp_path("galileo_pioneer_pass_slices_report.txt").to_string(),
     };
 
     let mut out: Vec<String> = Vec::new();
