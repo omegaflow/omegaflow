@@ -178,10 +178,40 @@ Physik ist das nicht.
 
 ## Kadenz-Risse
 
-Mehrere Register-Kadenzen sind **gröber als die native Auflösung**:
-`aia` 1 Tag (nativ ~12 s), `goes_euvs` 1 Jahr, `cdaweb_tec` 1 Tag, `magic_dl3`
-1 Jahr, `soho_lasco_cme` 30 Tage. Für die Vorlauf-Leiter heißt das: die Knoten
-sind da, aber die Zeitauflösung mehrerer Sonden trägt keine Minutenkante.
+Am 2026-10-20 am Erzeuger gemessen, nicht aus dem Register übernommen. Die Zahl
+im τ-Slot der `field`-Zeile ist bei allen drei Sonden **gröber als der
+Compiler-Bucket und deutlich gröber als die native Kadenz**:
+
+| Sonde | Register (τ) | Compiler-Bucket | native Kadenz | Beleg |
+|---|---|---|---|---|
+| `aia` | 86400 s | 3600 s | **12 s** | `aia_rs_list_compiler.rs` `fetch_channel()` fragt `aia.lev1_euv_12s[…/31d@1h]`; JSOC `rs_list` für 2024-05-10 liefert T_REC `11:59:23`, `11:59:35`, `11:59:47` … (Δ = 12 s) |
+| `goes_euvs` | 31536000 s | 86400 s | **60 s** (Produkt `avg1m`; 10 s in `ir10s`) | `euvs_compiler.rs` liest `geuv-l2-avg1d/`; das reale g14-`avg1m`-Jahr 2009 hat 175 680 Zeilen = 122 d × 1440 min |
+| `cdaweb_tec` | 86400 s | 900 s | **900 s** | `cdaweb_tec_compiler.rs` (Test: 96 Epochen, 71 × 73); Tages-CDF 2024-05-01: 96 Epochen; das ausgelieferte Tagesbin (2020-10-14) hat 96 Epochen, Δt = 900 s |
+
+Volumen bei nativer Kadenz (nur die im Asset getragenen Skalare, nicht die
+Rohbilder/-dateien):
+
+| Sonde | Bytes/Tag | Zeitraum | Lizenz | Entscheidung |
+|---|---|---|---|---|
+| `aia` | 1 008 000 B (7200 × 7 × 20 B) | 2010-05-20 – 2026-10-01 belegt, ~16,4 a → ~6,0 GB | CC0-1.0 | **nicht geharvestet** (>5 GB; JSOC-`rs_list`-Last) |
+| `goes_euvs` | 28 800 B (1440 × 20 B) | g14 2009-09-01 – 2020-03-04; g15 2010-03-25 – 2020-03-04 | PD-USGov | **nicht geharvestet** (Auftrag: nur berichten); Roh-NC 74–186 MB/Jahr |
+| `cdaweb_tec` | 15 922 184 B | 1995–2026, vor 2024 lückenhaft | CC0-1.0 | **umgestellt**: 2024-05 |
+
+**Umgestellt: TEC.** Das Tagesbin trug die 900 s bereits, nur der Registerwert
+stand auf 86400. Neu gebaut: `cdaweb_tec_2024_05.bin`, Fenster
+2024-05-01 00:00 – 2024-05-31 23:45 UTC (31 d, 2 976 Epochen,
+15 424 608 Records), **493 587 464 B**, sha256
+`bc88df714e60b12e960d2744dc2d73af85ec650b93ca3c222ff684c1842b9e6e`.
+Das Fenster überlappt die 2024er GIC-/Bodenreihen (M2, M4, M13) und trägt den
+Mai-2024-Sturm. Der Compiler nimmt jetzt mehrere `--file`/`--url` und schreibt
+**τ = 900**; ein einzelner Tag ist byte-identisch zum alten Lauf (gleicher
+sha256). Vorschlag liegt in `state/register/cadence.proposal.φ`, **nicht** in
+`phi/sources.φ`. Ein TEC-Jahr wären 5,81 GB und damit über dem Limit eines
+einzelnen Release-Assets (2 GiB) — deshalb ein Monat, nicht das Jahr.
+
+Offen: `aia` bleibt auf dem 1-h-Bucket, `goes_euvs` auf dem 1-d-Bucket; ihre
+τ-Zahlen sind noch nicht auf die native Kadenz gesetzt. `magic_dl3` und
+`soho_lasco_cme` wurden in diesem Lauf nicht angefasst.
 
 ## Was schon gemessen wurde (nicht nur Register)
 
