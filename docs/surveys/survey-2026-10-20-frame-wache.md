@@ -2,17 +2,17 @@
   title: Survey — Frame-Wache: ICRF3 S/X, K, X/Ka und Gaia-CRF3, selbst gezählt (2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: 570802ec664650a833d7ddbab4755d055270116f46287365a08f5eba6eb7abfb
+  sha256: 99c20d250cc2db3d8407d209f6ba86f255f4e0dbb63f2bca6ba1edc68ff56605
   status: live
   see-also: tools/measure/src/bin/frame_wache_probe.rs
 -->
 # Survey — Frame-Wache: ICRF3 S/X, K, X/Ka und Gaia-CRF3
 
-**Anlass:** Eine externe Chat-Behauptung nannte ICRF3-Zahlen (4.536/824/678
-Quellen, 600 Dreifach-Anker, 171 D×3, Median 2,86σ, 64 Quellen >5σ, 0743-006
-mit 10,3σ). Nichts davon war im Haus. Dieser Survey reproduziert die Zahlen aus
-den offiziellen Katalogen; wo die externe Zahl abweicht, gilt die eigene
-Zählung.
+**Anlass:** Ein externer Text (GLM, vom Operator als Vorlage gegeben) nannte
+ICRF3-Zahlen (4.536/824/678 Quellen, 600 Dreifach-Anker, 171 D×3, Median 2,86σ,
+64 Quellen >5σ, 0743-006 mit 10,3σ). Nichts davon war im Haus. Dieser Survey
+**zählt selbst** aus den offiziellen Katalogen; wo die Vorlage abweicht, gilt die
+eigene Messung — und die Abweichung wird benannt, nicht geglättet.
 
 **Vorzeichen-Fix vorab:** Die Deklination wird aus dem Vorzeichen des
 Grad-Tokens gelesen (`-00` ist negativ), nicht aus dem Zahlenwert `dd < 0.0`.
