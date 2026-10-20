@@ -3813,29 +3813,13 @@ fn token_echoed_in(echo: &str, token: &str) -> bool {
     })
 }
 
-fn zustand_root(root: &Path) -> PathBuf {
-    if let Ok(z) = env::var("OMEGAFLOW_ZUSTAND") {
-        if !z.trim().is_empty() {
-            return PathBuf::from(z);
-        }
-    }
-    if let Ok(w) = env::var("OMEGAFLOW_WORK") {
-        if !w.trim().is_empty() {
-            return PathBuf::from(w).join("zustand");
-        }
-    }
-    if let Ok(h) = env::var("HOME") {
-        let p = Path::new(&h).join("projects/omegaflow-work/zustand");
-        if p.is_dir() {
-            return p;
-        }
-    }
-    root.join("zustand")
+fn ledger_dir(root: &Path) -> PathBuf {
+    root.join("state/ledger")
 }
 
 fn ledger_disposed(root: &Path, token: &str) -> bool {
     const DISPOSED: [&str; 5] = ["FOLDED", "CLOSED", "REJECTED", "SUPERSEDED", "DROPPED"];
-    let dir = zustand_root(root).join("ledger");
+    let dir = ledger_dir(root);
     let Ok(lines) = fs::read_dir(&dir) else {
         return false;
     };
@@ -4087,7 +4071,7 @@ struct LedgerSent {
 
 fn ledger_sent_events(root: &Path) -> Vec<LedgerSent> {
     let mut out = Vec::new();
-    let dir = root.join("state/ledger");
+    let dir = ledger_dir(root);
     let Ok(lines) = fs::read_dir(&dir) else {
         return out;
     };
