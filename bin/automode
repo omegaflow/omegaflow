@@ -1,0 +1,220 @@
+#!/bin/sh
+# automode — ein Arm aus dem Register wird nach drei Achsen abgesucht:
+# offen/aktuell (Suche + Pruefung), historisch (Wayback exakter Pfad), live (Kopf).
+#
+#   bin/automode --unclear [--limit N] [--engines "mwmbl exa"] [--arm <format>]
+#
+# Ausgabe: eine Belegzeile je Messung, zusaetzlich TSV unter
+# recherche/funde/rohausgaben/laeufe/. Es wird nichts in phi geschrieben.
+set -u
+export LC_ALL=C
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+cd "$root" || exit 2
+
+phi="phi/sources.φ"
+[ -f "$phi" ] || { echo "automode: $phi fehlt" >&2; exit 2; }
+
+mode=""
+limit=5
+arm=""
+qfix=""
+engines="mwmbl searxng exa"
+outdir="${OMEGAFLOW_WORK:-$root/../omegaflow-work}/recherche/funde/rohausgaben/laeufe"
+UA="Mozilla/5.0 (X11; Linux x86_64) automode"
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --unclear) mode="unclear"; shift ;;
+        --arm) [ $# -ge 2 ] || exit 2; arm="$2"; shift 2 ;;
+        --limit) [ $# -ge 2 ] || exit 2; limit="$2"; shift 2 ;;
+        --query) [ $# -ge 2 ] || exit 2; qfix="$2"; shift 2 ;;
+        --engines) [ $# -ge 2 ] || exit 2; engines="$2"; shift 2 ;;
+        *) echo "automode: unerwartet: $1" >&2; exit 2 ;;
+    esac
+done
+[ -n "$mode$arm" ] || { echo "automode: --unclear oder --arm <format>" >&2; exit 2; }
+
+mkdir -p "$outdir" || exit 2
+day="$(date +%F)"
+tsv="$outdir/automode-$day-unclear.tsv"
+
+open_term() {
+    case "$1" in
+        CC0*|CC-BY*|CC_BY*|PD*|PDDL*|OGL*|ODbL*|ODC-DbCL*|Apache*|MIT|BSD*|GPL*|LGPL*|\
+        etalab*|jp-public-data*|public-domain*|USGov-disclaimer*|free-open*) return 0 ;;
+    esac
+    return 1
+}
+
+blocks() {
+    awk 'BEGIN{RS="";FS="\n"}
+    /(^|\n)url /{
+        fmt="";terms="";orig="";at="";uname="";uunit="";
+        for(i=1;i<=NF;i++){
+            if($i ~ /^format /){fmt=$i; sub(/^format /,"",fmt)}
+            else if($i ~ /^terms /){terms=$i; sub(/^terms /,"",terms)}
+            else if($i ~ /^origin /){orig=$i; sub(/^origin /,"",orig)}
+            else if($i ~ /^at /){at=$i}
+            else if($i ~ /^(quantity|field) /){
+                split($i,t," ");
+                if(uname==""){
+                    if(t[1]=="field"){uname=t[3]; start=4} else {uname=t[2]; start=3}
+                    for(j=start;j<=length(t);j++){
+                        if(t[j] ~ /^[0-9]+([.][0-9]+)?$/){uunit=t[j-1]; break}
+                    }
+                }
+            }
+        }
+        if(fmt!="") print fmt "\t" terms "\t" orig "\t" uname "\t" uunit "\t" at
+    }' "$phi"
+}
+
+query_for() {
+    q="$1"
+    printf '%s\n' "$q" |
+        sed -e 's#^https\?://##' -e 's#[?#].*$##' -e 's#[/_.%-]# #g' \
+            -e 's/\.json$//' -e 's/\.csv$//' -e 's/\.txt$//' -e 's/\.nc$//'
+}
+
+good_query() {
+    set -- $1
+    n=0; out=""
+    for w in "$@"; do
+        [ ${#w} -ge 3 ] || continue
+        case "$w" in
+            latest|data|json|csv|txt|global|v1|v2|api) continue ;;
+        esac
+        out="$out $w"; n=$((n + 1))
+        [ "$n" -ge 6 ] && break
+    done
+    printf '%s\n' "$out"
+}
+
+unit_token() {
+    u="$(printf '%s\n' "$1" | sed -e 's#/.*$##' -e 's/[^A-Za-z%].*$//')"
+    case "$u" in
+        ""|count|counts|s|sec|min|hour|day|K|C|m|km|kg|deg|n) return 0 ;;
+    esac
+    [ ${#u} -ge 3 ] || return 0
+    printf '%s\n' "$u"
+}
+
+count_snapshots() {
+    n=0; first=""; last=""
+    while IFS= read -r line; do
+        case "$line" in
+            "[wayback-timemap] url "*)
+                n=$((n + 1))
+                ts="$(printf '%s\n' "$line" | sed -n 's#.*/web/\([0-9]\{8\}\)[0-9]*/.*#\1#p')"
+                [ -n "$ts" ] || continue
+                [ -n "$first" ] || first="$ts"
+                last="$ts" ;;
+        esac
+    done
+    printf '%s %s %s\n' "$n" "$first" "$last"
+}
+
+record() {
+    printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$1" "$2" "$3" "$4" "$5" "$6" >>"$tsv"
+}
+
+: >"$tsv"
+printf 'arm\tachse\tbefund\turl\tunit\tterms\n' >>"$tsv"
+
+scanned=0; withkid=0
+
+while IFS="$(printf '\t')" read -r fmt terms orig uname uunit at; do
+    [ -n "$fmt" ] || continue
+    if [ -n "$arm" ] && [ "$arm" != "$fmt" ]; then continue; fi
+    if [ -z "$arm" ]; then
+        open_term "$terms" && continue
+    fi
+    scanned=$((scanned + 1))
+
+    echo "ARM $fmt"
+    echo "  terms=$terms"
+    echo "  origin=$orig"
+
+    if [ -n "$orig" ]; then
+        code="$(timeout 20 curl -s -o /dev/null -A "$UA" -w '%{http_code}' -L "$orig" 2>/dev/null || echo 000)"
+        size="$(timeout 20 curl -s -o /dev/null -A "$UA" -w '%{size_download}' -L "$orig" 2>/dev/null || echo 0)"
+        echo "  live: HTTP $code, $size B"
+        record "$fmt" live "$code" "$orig" "-" "$terms"
+
+        hist="$(timeout 30 ./target/release/archive_search --wayback-timemap "$orig" 2>/dev/null | count_snapshots)"
+        set -- $hist
+        echo "  historie: $1 snapshots ${2:--}..${3:--}"
+        record "$fmt" historie "$1" "$orig" "${2:--}..${3:--}" "$terms"
+    fi
+
+    ut="$(unit_token "$uunit")"
+    if [ -n "$qfix" ]; then
+        q="$qfix"
+    else
+        q="$(good_query "$(query_for "$orig")")"
+        [ -n "$ut" ] && q="$q $ut"
+    fi
+    set -- $q
+    [ $# -ge 2 ] || echo "  warnung: query zu duenn — mit --query \"...\" eine Semantik vorgeben"
+    echo "  query:$q"
+
+    tmp="$(mktemp "${TMPDIR:-/tmp}/automode.XXXXXX")" || exit 2
+    for e in $engines; do
+        timeout 60 ./target/release/archive_search "--$e" "$q" --max 6 2>/dev/null |
+            sed -n 's#^\[[a-z-]*\] url \([^[:space:]]*\).*#\1#p' >>"$tmp"
+    done
+    sort -u "$tmp" -o "$tmp"
+    n_cand="$(wc -l <"$tmp" | tr -d ' ')"
+    echo "  kandidaten: $n_cand"
+
+    found=0
+    i=0
+    : >"$tmp.new"
+    while IFS= read -r url; do
+        [ -n "$url" ] || continue
+        host="$(printf '%s\n' "$url" | sed -e 's#^https\?://##' -e 's#/.*$##')"
+        [ -n "$host" ] || continue
+        if grep -qF "$host" "$phi"; then
+            record "$fmt" offen "verworfen" "$url" "-" "host_in_phi"
+            continue
+        fi
+        printf '%s\n' "$url" >>"$tmp.new"
+    done <"$tmp"
+    mv "$tmp.new" "$tmp"
+    echo "  neue Hosts: $(wc -l <"$tmp" | tr -d ' ')"
+
+    while IFS= read -r url; do
+        [ -n "$url" ] || continue
+        i=$((i + 1))
+        [ "$i" -le 6 ] || break
+        txt="$(timeout 30 curl -s -L -A "$UA" --max-filesize 3000000 "$url" 2>/dev/null |
+            perl -0777 -pe 's#<script\b.*?</script>##gsi; s#<style\b.*?</style>##gsi; s#<[^>]*># #g' |
+            tr -s ' \n' ' \n')"
+        [ -n "$txt" ] || txt="$(timeout 30 ./target/release/archive_search --scrape "$url" 2>/dev/null | sed -n 's/.*text: //p')"
+        unit_hit="nein"
+        if [ -n "$ut" ] && printf '%s\n' "$txt" | grep -qiF -- "$ut"; then unit_hit="ja"; fi
+        lic=""
+        if [ -n "$txt" ]; then
+            lic="$(printf '%s\n' "$txt" | grep -v -E 'function\(|\{var |=>' |
+                grep -oiE '.{0,70}(CC0|CC[ -]BY[ -]?(4\.0|3\.0|SA)|Creative Commons Attribution|public domain|Open Government Licen[cs]e|ODbL|PDDL|DL-DE|Etalab).{0,70}' |
+                head -1 || true)"
+            lic="$(printf '%s\n' "$lic" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]][[:space:]]*/ /g')"
+        fi
+        verdict="verworfen"
+        if [ -n "$lic" ] && [ "$unit_hit" = "ja" ]; then verdict="KANDIDAT"
+        elif [ -n "$lic" ] || [ "$unit_hit" = "ja" ]; then verdict="PRUEFEN"; fi
+        echo "  $verdict $url  (unit=$unit_hit)"
+        [ -n "$lic" ] && echo "    terms: $(printf '%s\n' "$lic" | cut -c1-140)"
+        record "$fmt" offen "$verdict" "$url" "$unit_hit" "$(printf '%s' "$lic" | cut -c1-160)"
+        [ "$verdict" = "KANDIDAT" ] && found=$((found + 1))
+    done <"$tmp"
+    rm -f "$tmp"
+
+    [ "$found" -gt 0 ] && withkid=$((withkid + 1))
+    [ "$scanned" -ge "$limit" ] && [ -z "$arm" ] && break
+done <<EOF
+$(blocks)
+EOF
+
+echo
+echo "automode: $scanned Arme, $withkid mit Kandidat, Beleg: $tsv"
