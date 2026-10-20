@@ -14,5 +14,5 @@ grep -qE 'R-[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z]' "$msg" && exit 0
 echo "commit-msg: architecture path staged without a RAT-ID:" >&2
 printf '%s\n' "$hit" | sed 's/^/  /' >&2
 echo "  cite the verdict id as R-YYYY-MM-DD-x in the commit message" >&2
-echo "  (index: rat/entscheidungen.md; rule: R-2026-10-18-d/e)" >&2
+echo "  (entscheidungen: rat/entscheidungen.md; rule: R-2026-10-18-d/e)" >&2
 exit 1
