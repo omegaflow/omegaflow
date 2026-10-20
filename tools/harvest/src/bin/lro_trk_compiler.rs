@@ -39,8 +39,9 @@ fn collect_trk_files(
     depth: usize,
     out: &mut Vec<String>,
     visited: &mut HashSet<String>,
+    cap: usize,
 ) {
-    if depth == 0 || out.len() >= FILE_CAP {
+    if depth == 0 || out.len() >= cap {
         return;
     }
     let Some(html) = fetch_raw_bytes(seed) else {
@@ -59,7 +60,7 @@ fn collect_trk_files(
     }
     for d in dirs {
         if visited.insert(d.clone()) {
-            collect_trk_files(&d, depth - 1, out, visited);
+            collect_trk_files(&d, depth - 1, out, visited, cap);
         }
     }
 }
@@ -109,10 +110,17 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let list_mode = args.iter().any(|a| a == "--list");
+    let cap = args
+        .iter()
+        .position(|a| a == "--max-files")
+        .and_then(|i| args.get(i + 1))
+        .and_then(|v| v.parse::<usize>().ok())
+        .filter(|n| *n > 0)
+        .unwrap_or(FILE_CAP);
     let mut files: Vec<String> = Vec::new();
     let mut visited: HashSet<String> = HashSet::new();
     visited.insert(LISTING.to_string());
-    collect_trk_files(LISTING, MAX_DEPTH, &mut files, &mut visited);
+    collect_trk_files(LISTING, MAX_DEPTH, &mut files, &mut visited, cap);
     if files.is_empty() {
         eprintln!(
             "{LISTING}: no .TRK files in listing tree — the series stays unwritten (0 honored)"
@@ -120,6 +128,14 @@ fn main() {
         return;
     }
     files.sort();
+    if let Some(n) = args
+        .iter()
+        .position(|a| a == "--max-files")
+        .and_then(|i| args.get(i + 1))
+        .and_then(|v| v.parse::<usize>().ok())
+    {
+        files.truncate(n);
+    }
     if list_mode {
         eprintln!("{LISTING}: {} .TRK files", files.len());
         for name in &files {
