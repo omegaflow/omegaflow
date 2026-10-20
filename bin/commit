@@ -1,0 +1,65 @@
+#!/bin/sh
+# commit — committet ausschliesslich die genannten Pfade, ueber einen eigenen Index.
+#
+# Warum: `git commit` nimmt den ganzen Index mit. Wenn eine andere Linie Dateien
+# gestaged hat, reisen sie mit — und der Gate prueft sie mit. Dieses Skript baut
+# einen temporaeren Index aus HEAD, legt nur die genannten Pfade hinein und
+# committet diesen. Der echte Index bleibt unberuehrt.
+#
+#   bin/commit -m "nachricht" -- <pfad> [<pfad> ...]
+set -u
+
+msg=""
+paths=""
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -m|--message)
+            [ $# -ge 2 ] || { echo "commit: -m braucht eine Nachricht" >&2; exit 2; }
+            msg="$2"; shift 2 ;;
+        --)
+            shift
+            while [ $# -gt 0 ]; do
+                paths="$paths $1"; shift
+            done ;;
+        *)
+            echo "commit: unerwartet: $1 (Pfade nach --)" >&2; exit 2 ;;
+    esac
+done
+
+[ -n "$msg" ] || { echo "commit: -m \"nachricht\" fehlt" >&2; exit 2; }
+[ -n "$paths" ] || { echo "commit: keine Pfade nach --" >&2; exit 2; }
+
+root="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "commit: kein Repo" >&2; exit 2; }
+cd "$root" || exit 2
+
+missing=""
+for p in $paths; do
+    if [ ! -e "$p" ] && ! git ls-files --error-unmatch -- "$p" >/dev/null 2>&1; then
+        missing="$missing $p"
+    fi
+done
+if [ -n "$missing" ]; then
+    echo "commit: unbekannte Pfade:$missing" >&2
+    exit 2
+fi
+
+tmpidx="$(mktemp "${TMPDIR:-/tmp}/omegaflow-index.XXXXXX")" || exit 2
+trap 'rm -f "$tmpidx"' 0 1 2 15
+
+if ! GIT_INDEX_FILE="$tmpidx" git read-tree HEAD; then
+    echo "commit: read-tree HEAD fehlgeschlagen" >&2
+    exit 2
+fi
+if ! GIT_INDEX_FILE="$tmpidx" git add -A -- $paths; then
+    echo "commit: add fehlgeschlagen" >&2
+    exit 2
+fi
+if GIT_INDEX_FILE="$tmpidx" git diff --cached --quiet; then
+    echo "commit: keine Aenderung in den genannten Pfaden" >&2
+    exit 2
+fi
+
+GIT_INDEX_FILE="$tmpidx" git commit -m "$msg" || exit $?
+
+git log --oneline -1
+echo "commit: nur diese Pfade:$paths"
