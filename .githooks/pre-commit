@@ -21,8 +21,9 @@ run() {
             return $?
         fi
     done
-    echo "$1: no gate binary (target/{release,debug}/$1) — the gate is skipped; the build is a CI job" >&2
-    return 0
+    echo "$1: no gate binary (target/{release,debug}/$1) — the gate cannot run" >&2
+    echo "$1: refusing the commit; restore the gate binary (bin/.tools_ensure $1) or fix the target path" >&2
+    return 1
 }
 # commit_check's ereignis-ohne-folge gate is session-bound: it checks only the
 # account/send events whose field 1 (the opencode sessionID) matches the current
