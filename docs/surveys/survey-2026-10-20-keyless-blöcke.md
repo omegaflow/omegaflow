@@ -2,7 +2,7 @@
   title: Vier keyless Routen als Register-Vorschlag (2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: 10f10f992517747fd2407359e447fda37969bdf1c146374431bb81a0b54e168d
+  sha256: 51a324e547cbc73f8de1fb94229deab58087b94d9f21c427a2a06c52d613b84f
   status: done
   see-also: phi/sources.φ
 -->
@@ -22,9 +22,9 @@ keine Secrets, keine Massendownloads. Die Vorschlagsblöcke stehen in
 | CDAWeb HAPI DSCOVR | 200 · 1.278 B info · Datenprobe 5.516 B / 60 Zeilen | `B1F1`, `B1GSE.0..2` | `ttl 3600` | PD-USGov | **Vorschlag**, `ttl 0` |
 | MEEO Sentinel-5P S3 | 200 · 1.105 B Listing / 2 Keys | `Key`, `LastModified`, `ETag`, `Size`; NetCDF-Messfelder `absent` | `ttl 86400` (Katalog) | Copernicus (frei, Quellenangabe) | **Vorschlag**, `ttl 0` |
 | USGS Geomag FRD | 200 · 74.899 B JSON / 1.440 Minuten | `H`, `D`, `Z` (`values[].values[]`) | `ttl 60` | PD-USGov | **Vorschlag**, `ttl 0` |
-| BPA GIC | 200 · 81.976 B · 1.152 vollständige 5-min-Zeilen | 11 Stationsspalten (A) | `ttl 300` | PD-USGov (Nutzungsbedingungen ungeklärt) | **bereits aktiv** (`phi/sources.φ:337`) |
+| BPA GIC | 200 · 81.976 B · 1.152 vollständige 5-min-Zeilen | 11 Stationsspalten (A) | `ttl 300` | PD-USGov (Nutzungsbedingungen ungeklärt) | **bereits aktiv** (`bpa_gic.bin` in `phi/sources.φ`) |
 
-FIRMS ist bereits als keyless CSV-Block im Register (`phi:14346`) und wurde nur
+FIRMS ist bereits als keyless CSV-Block im Register (`MODIS_C6_1_Global_7d.csv` in `phi/sources.φ`) und wurde nur
 verifiziert, nicht dupliziert.
 
 ## DSCOVR/ACE (CDAWeb HAPI)
@@ -89,7 +89,7 @@ The Dalles OR, Lewiston ID, Kalispell MT, Monroe WA, Wilsonville OR,
 Vancouver WA, Ellensburg WA, Bothell WA, Moses Lake WA). Einheit Ampere,
 abgeleitet aus den 5-min-MW-Werten; die Datei selbst nennt keine Einheit.
 
-Der Block ist **kein Vorschlag mehr**: `phi/sources.φ:337` registriert
+Der Block ist **kein Vorschlag mehr**: `bpa_gic.bin` in `phi/sources.φ` registriert
 `bpa_gic.bin`, `format bpa_gic`, `compiler tools/harvest/src/bin/bpa_gic_compiler.rs`,
 `ttl 300` und elf `field`-Zeilen. Die Ernte ist rollierend: der Compiler liest
 `gic.txt`, schreibt `bpa_gic.bin` und lädt unter dem Release-Tag
@@ -103,7 +103,8 @@ trägt `PD-USGov`).
 Der keyless CSV-Block steht bereits als CDN-Asset in `phi/sources.φ:14346`
 (`MODIS_C6_1_Global_7d.csv`, `format csv`, `at earth`, `no-cadence`) und trägt
 **keine** `field`-Zeilen. Daneben stehen drei API-Blöcke
-(`phi:773/784/795`) mit `{FIRMS_MAP_KEY}` und `bright_ti4`/`frp`.
+die drei `api/area/csv/{FIRMS_MAP_KEY}`-Blöcke mit `{FIRMS_MAP_KEY}` und
+`bright_ti4`/`frp`.
 
 Probe mit `Range: bytes=0-4095` → **206**, 4.096 B von 5.208.942 B,
 `Last-Modified 2026-10-20T12:46:59Z`. Header:
