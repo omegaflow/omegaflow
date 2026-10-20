@@ -12,6 +12,7 @@ use std::path::Path;
 
 const BASE: &str = "https://soleil.i4ds.ch/solarradio/data/2002-20yy_Callisto";
 const CDN_TAG: &str = "soleil.i4ds.ch";
+const DEFAULT_DAY_OFFSET: i64 = 0;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -53,6 +54,10 @@ fn parse_hms(s: &str) -> Option<f64> {
     let m: f64 = p.next()?.parse().ok()?;
     let sec: f64 = p.next()?.parse().ok()?;
     Some(h * 3600.0 + m * 60.0 + sec)
+}
+
+fn day_selected(day: i64, anchor: i64, stride: i64, offset: i64) -> bool {
+    stride > 0 && (day - anchor).rem_euclid(stride) == offset.rem_euclid(stride)
 }
 
 fn selected_files(html: &str, station: &str, ymd: &str) -> Vec<(String, String)> {
@@ -200,10 +205,9 @@ fn reduce(acc: &Accum) -> Vec<BandRecord> {
                 continue;
             };
             let mut local = Vec::new();
-            for &n in &minutes {
-                if (n - m).abs() > BACKGROUND_HALF_MIN {
-                    continue;
-                }
+            let lo = minutes.partition_point(|&n| n < m - BACKGROUND_HALF_MIN);
+            let hi = minutes.partition_point(|&n| n <= m + BACKGROUND_HALF_MIN);
+            for &n in &minutes[lo..hi] {
                 if let Some(x) = values.get(&n).and_then(|r| r[b]) {
                     local.push(x);
                 }
@@ -250,6 +254,36 @@ fn main() {
         eprintln!("--stop {stop} lies before --start {start}");
         std::process::exit(2);
     }
+    let stride: i64 = match arg_value(&args, "--day-stride") {
+        Some(s) => match s.parse() {
+            Ok(v) if v >= 1 => v,
+            _ => {
+                eprintln!("--day-stride needs a positive integer");
+                std::process::exit(2);
+            }
+        },
+        None => 1,
+    };
+    let offset: i64 = match arg_value(&args, "--day-offset") {
+        Some(s) => match s.parse() {
+            Ok(v) if (0..stride).contains(&v) => v,
+            _ => {
+                eprintln!("--day-offset needs an integer in 0..{stride}");
+                std::process::exit(2);
+            }
+        },
+        None => DEFAULT_DAY_OFFSET,
+    };
+    let anchor_day = match arg_value(&args, "--day-anchor") {
+        Some(s) => match parse_days(&s) {
+            Some(d) => d,
+            None => {
+                eprintln!("--day-anchor carries no YYYY-MM-DD date");
+                std::process::exit(2);
+            }
+        },
+        None => start_day,
+    };
     let out = match arg_value(&args, "--out") {
         Some(o) => o,
         None => format!("callisto_{}.bin", station.to_ascii_lowercase()),
@@ -272,6 +306,9 @@ fn main() {
     let mut raw_bytes = 0usize;
     let mut missing_days = 0usize;
     for day in start_day..=stop_day {
+        if !day_selected(day, anchor_day, stride, offset) {
+            continue;
+        }
         let (y, m, d) = civil_from_days(day);
         let ymd = format!("{y:04}{m:02}{d:02}");
         let index_url = format!("{BASE}/{y:04}/{m:02}/{d:02}/");
@@ -388,5 +425,26 @@ fn main() {
     }
     if ci_mode && !upload_release(CDN_TAG, &out) {
         std::process::exit(1);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn stride_selection_honours_anchor_and_offset() {
+        assert!(day_selected(0, 0, 6, 0));
+        assert!(!day_selected(1, 0, 6, 0));
+        assert!(day_selected(6, 0, 6, 0));
+        assert!(day_selected(7, 0, 6, 1));
+        assert!(!day_selected(6, 0, 6, 1));
+    }
+
+    #[test]
+    fn stride_selection_works_before_the_anchor() {
+        assert!(day_selected(-6, 0, 6, 0));
+        assert!(day_selected(-1, 0, 6, 5));
+        assert!(!day_selected(-1, 0, 6, 0));
     }
 }
