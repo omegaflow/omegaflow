@@ -1,6 +1,6 @@
 use omegaflow::archivar::C_LIGHT;
 use omegaflow::archivar::{
-    BodyEphemeris, LeapSeconds, body_barycenter_position, cache_root, content_dir, embedded_lsk,
+    BodyEphemeris, LeapSeconds, body_barycenter_position, content_dir, embedded_lsk,
     fetch_raw_bytes, parse_ephemeris_binary,
 };
 use omegaflow::jwst::mjd_to_unix;
@@ -14,7 +14,6 @@ const EARTH_EPH_CDN: &str =
 
 const JD_UNIX_OFFSET: f64 = 2440587.5;
 const DAY_S: f64 = 86400.0;
-const EARTH_RADIUS_M: f64 = 6.378137e6;
 const SIDEREAL_YEAR_DAYS: f64 = 365.25;
 
 #[derive(Clone, Copy, PartialEq)]
@@ -161,10 +160,12 @@ fn fold_event(ev: &Event, lsk: &LeapSeconds, eph: &HashMap<String, BodyEphemeris
     let Some(arrival_tdb) = to_tdb_arrival(ev.day, ev.kind, ev.scale, lsk) else {
         return FoldOutcome::TimeVoid;
     };
-    let Some(earth) = body_barycenter_position("earth", arrival_tdb, eph) else {
+    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
+    let sun_key = std::env::var("OMEGAFLOW_SUN").expect("OMEGAFLOW_SUN unset");
+    let Some(earth) = body_barycenter_position(&receiver, arrival_tdb, eph) else {
         return FoldOutcome::EphemerisVoid;
     };
-    let Some(sun) = body_barycenter_position("sun", arrival_tdb, eph) else {
+    let Some(sun) = body_barycenter_position(&sun_key, arrival_tdb, eph) else {
         return FoldOutcome::EphemerisVoid;
     };
     match emitted_fold(arrival_tdb, ev.ra_deg, ev.dec_deg, earth, sun) {
@@ -361,9 +362,15 @@ fn print_term_budget() {
     let cross_s = 2.0 * single_s;
     let v_earth_mps = 2.0 * std::f64::consts::PI * AU_M / (SIDEREAL_YEAR_DAYS * DAY_S);
     let weekly_s = v_earth_mps * 7.0 * DAY_S / C_LIGHT;
-    let diurnal_ms = EARTH_RADIUS_M / C_LIGHT * 1000.0;
+    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
+    let diurnal_ms = match load_ephemeris_map()
+        .and_then(|m| m.get(&receiver)?.props.as_ref().map(|p| p.radius_m))
+    {
+        Some(radius) => format!("{:.1}", radius / C_LIGHT * 1000.0),
+        None => String::from("absent"),
+    };
     println!(
-        "TDB-Rømer coincidence probe: term budget (measured from constants) — single-sightline Rømer seasonal amplitude {single_s:.1} s (±8 min); opposite-direction pair 2 AU/c {cross_s:.1} s; Earth line-of-sight drift {weekly_s:.1} s/week; observer = geocenter (the diurnal station swing ≤ {diurnal_ms:.1} ms stays a named bound)"
+        "TDB-Rømer coincidence probe: term budget (measured from constants) — single-sightline Rømer seasonal amplitude {single_s:.1} s (±8 min); opposite-direction pair 2 AU/c {cross_s:.1} s; Earth line-of-sight drift {weekly_s:.1} s/week; observer = geocenter (the diurnal station swing ≤ {diurnal_ms} ms stays a named bound)"
     );
 }
 
@@ -386,11 +393,13 @@ fn ephemeris_cache_bytes(name: &str, url: &str) -> Option<Vec<u8>> {
 }
 
 fn load_ephemeris_map() -> Option<HashMap<String, BodyEphemeris>> {
-    let sun_b = ephemeris_cache_bytes("sun", SUN_EPH_CDN)?;
-    let earth_b = ephemeris_cache_bytes("earth", EARTH_EPH_CDN)?;
+    let sun = std::env::var("OMEGAFLOW_SUN").expect("OMEGAFLOW_SUN unset");
+    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
+    let sun_b = ephemeris_cache_bytes(&sun, SUN_EPH_CDN)?;
+    let earth_b = ephemeris_cache_bytes(&receiver, EARTH_EPH_CDN)?;
     let mut map = HashMap::new();
-    map.insert("sun".to_string(), parse_ephemeris_binary(&sun_b)?);
-    map.insert("earth".to_string(), parse_ephemeris_binary(&earth_b)?);
+    map.insert(sun, parse_ephemeris_binary(&sun_b)?);
+    map.insert(receiver, parse_ephemeris_binary(&earth_b)?);
     Some(map)
 }
 

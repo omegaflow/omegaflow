@@ -25,13 +25,6 @@ fn parse_f64(s: &str) -> Option<f64> {
     }
 }
 
-fn parse_u64(s: &str) -> Option<u64> {
-    match s.parse::<u64>() {
-        Ok(v) => Some(v),
-        Err(_) => None,
-    }
-}
-
 fn numeric_run_start(parts: &[&str]) -> Option<usize> {
     let mut end = parts.len();
     while end > 0 && parse_f64(parts[end - 1]).is_none() {

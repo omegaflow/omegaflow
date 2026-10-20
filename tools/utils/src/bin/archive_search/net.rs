@@ -3749,7 +3749,7 @@ fn value_bait_lines(bytes: &[u8]) -> Vec<String> {
     let text = String::from_utf8_lossy(bytes);
     let mut vals: Vec<String> = Vec::new();
     let mut cur = String::new();
-    let mut flush = |cur: &mut String, vals: &mut Vec<String>| {
+    let flush = |cur: &mut String, vals: &mut Vec<String>| {
         let long_enough = cur.len() >= 6 || (cur.len() >= 4 && cur.contains('.'));
         if long_enough
             && cur.chars().any(|c| c.is_ascii_digit())
