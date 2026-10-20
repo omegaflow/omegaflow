@@ -11,6 +11,10 @@
 **Datum:** 2026-10-01 · **Axiom:** A = A
 **Ordnung:** 0 honored — je Kandidat der gemessene Register-Zustand (`trägt` / `absent` / `pending`), nichts interpoliert. Der Träger nennt die Quelle:Zeile, nicht die Physik.
 
+## Frage
+
+Trägt in jeder der fünf Kanal-Klassen mindestens eine gemessene Quelle im Register — und schlägt der ENSO-Vier-Kanal-Block gegen NINO3.4 eine gerichtete Familien-Schwelle? Die Frage ist am Register-Zustand und am Block-Lauf entschieden, nicht an der Physik.
+
 ## Die fünf Kanal-Klassen
 
 - **Sonne.** RTSW trägt (`phi/sources.φ:158` `url …/rtsw_mag_1m.json`, `:164` `url …/rtsw_wind_1m.json`); OMNI trägt (`:575` `url …OMNI2_H0_MRG1HR…`, daneben `:736`/`:1377`/`:1391`). GOES trägt: XRS `:152` `url …/xrays-7-day.json` (Archiv `:812` `url` / `:814` `origin`), EUV `:417` `url …/euvs-7-day.json`. SDO trägt nicht als eigener Kanal (kein `sdo`-Treffer); AIA trägt (`:1802` `url` / `:1804` `origin https://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch`). EVE trägt (`:2362` `url` / `:2364` `origin https://lasp.colorado.edu/eve/data_access/evewebdata/products/level2`).
@@ -22,3 +26,15 @@
 ## Gemessene Nicht-Pfeile
 
 - **ENSO-Vier-Kanal-Block (Blatt I).** Kein Pfeil schlägt die Familien-Schwelle. Der Block gegen NINO3.4 (`ersstv5_nino34_ssta`) ist gemessen (`tools/measure/src/bin/enso_blatt_probe.rs`, CI-Lauf 36740119542): `fam = 2.9610e-1`, jedes gerichtete Paar still oder auf Familien-Grenze, `cTE(Bz → SST | Wnd) = 8.359e-3` unter seiner Schwelle `2.612e-2` (bedingt still). Der Block trägt keinen Pfeil (`docs/paper/gic-causal-driver.md:256-280`, §3.6).
+
+## Was das Verdikt widerlegen würde
+
+- **Register:** eine neue Messung, die `sdo`, `argos` oder `era5` als eigenen tragenden Posten in `phi/sources.φ` findet (oder deren gemessenen `absent`/`declined`-Zustand aufhebt) — dann wäre die jeweilige Klassen-Aussage falsch.
+- **ENSO-Block:** ein gerichtetes Paar im selben Block, das die Familien-Schwelle überschreitet, oder `cTE(Bz → SST | Wnd) ≥ 2.612e-2` im nachgeprüften Lauf — dann fällt „der Block trägt keinen Pfeil".
+- **Wiederholung:** ein zweiter CI-Lauf desselben Blocks, der bei gleicher Regel ein anderes `fam` oder ein schwellenüberschreitendes Paar liefert — dann ist der Einzellauf nicht der Maßstab.
+
+## Offene Punkte
+
+- **`argos` ↔ Argovis/Argo-DAC/Argo-BGC** — welcher der gemessenen Argo-Posten den Ozean-Kanal führen soll, ist nicht entschieden; Trigger: Register-Entscheid, nicht ein neuer Suchlauf.
+- **ERA5** — bleibt `declined`; ob der Open-Meteo-Archivpfad ihn ersetzt oder nur daneben steht, ist nicht gemessen.
+- **SDO ↔ AIA** — AIA trägt, SDO trägt nicht als eigener Kanal; ob damit die Sonnen-Klasse vollständig benannt ist, bleibt `pending` bis zur Register-Entscheidung.

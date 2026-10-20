@@ -52,6 +52,19 @@ jede Autokorrelation und erzeugt Falsch-Positive. Zwei tragbare Wege:
 mit p als Kovariate** (KSG-Schätzer). TE entlang p misst Informationsfluss **entlang des
 Steuerparameters**, nicht physikalische Zeit — die Aussage ist entsprechend zu lesen.
 
+## Was das Verdikt widerlegen würde
+
+- **Null-Vergleich:** ein Sweep, in dem die Index-Permutation und die autokorrelations-
+  erhaltende Null (IAAFT oder Block-Bootstrap) innerhalb der Fehlerbalken dasselbe
+  Ergebnis liefern — dann wäre die Verwerfung der Index-Permutation nicht tragend.
+- **Trend:** ein detrendeter Sweep, in dem die scheinbare Richtung unverändert bleibt —
+  dann reicht Detrenden/Konditionieren auf p nicht, und die vier Bedingungen sind zu
+  schwach formuliert.
+- **Monotonie:** ein Sweep mit Umkehrpunkt oder Sprung, in dem der gewählte Schätzer
+  dennoch ein stabiles TE(p) ohne Fensterbildung liefert — dann fällt Bedingung 1.
+- **Blocklänge:** ein Lauf, in dem eine Blocklänge ≤ Korrelationslänge die Kopplung
+  nachweislich nicht in die Null leckt — dann fällt die Blocklängen-Bedingung.
+
 ## Fehlerarten (zu detektieren)
 
 - **Scheinbare Richtung** durch gemeinsamen monotonen Trend → detrenden, CMI.
