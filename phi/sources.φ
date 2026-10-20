@@ -31847,7 +31847,7 @@ quantity grid_outage_duration_h grid_outage_duration_h inverse-square source-par
 quantity grid_outage_max_customers grid_outage_max_customers inverse-square relative count 3600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/wso.stanford.edu/wso_polar.bin
-terms free-open http://wso.stanford.edu/
+terms reviewed-2026-10-20 https://wso.stanford.edu/DataPolicy.html
 format wso_polar
 origin http://wso.stanford.edu/Polar.html
 compiler tools/harvest/src/bin/wso_polar_compiler.rs
@@ -31905,7 +31905,7 @@ field mwo_mean_blos_t mwo_mean_blos_t inverse-square em T 86400 0.0 0.0
 field mwo_mean_abs_blos_t mwo_mean_abs_blos_t inverse-square em T 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/nispdata.nso.edu/kpvt_polar.bin
-terms free-open https://nispdata.nso.edu/ftp/kpvt/synoptic/README
+terms reviewed-2026-10-20 https://nispdata.nso.edu/ftp/kpvt/synoptic/README
 format kpvt_polar
 origin https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/ (m1625f.fits-m2007f.fits, CR 1625-2007, Gauss, BSCALE 0.1, 360x180 sine-latitude)
 compiler tools/harvest/src/bin/kpvt_synoptic_compiler.rs
@@ -31982,7 +31982,7 @@ field see_133_5nm_irradiance see_133_5nm_irradiance inverse-square em w/m^2/nm 1
 field see_145_165nm_irradiance see_145_165nm_irradiance inverse-square em w/m^2/nm 180 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/hizoa.json
-terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
+terms reviewed-2026-10-20 https://cds.unistra.fr/vizier-org/licences_vizier.html
 format json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/AJ/151/52/table2
 compiler tools/harvest/src/bin/tap_compiler.rs
@@ -32059,7 +32059,7 @@ field lat helios2_heliographic_lat_deg inverse-square geometry deg 86400 0.0 0.0
 field lon helios2_heliographic_lon_deg inverse-square geometry deg 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/icecube.wisc.edu/amanda.s2e1
-terms other-attribution https://icecube.wisc.edu/data-releases/2008/09/amanda-7-year-data/
+terms reviewed-2026-10-20 https://icecube.wisc.edu/data-releases/2008/09/amanda-7-year-data/
 format amanda_7yr
 origin https://icecube.wisc.edu/data-releases/20080911_AMANDA_7_Year_Data.zip
 compiler tools/harvest/src/bin/amanda_compiler.rs
@@ -32086,7 +32086,7 @@ field cosz_lo sk_atm_cosz_lo inverse-square geometry 1 31536000 0.0 0.0
 field cosz_hi sk_atm_cosz_hi inverse-square geometry 1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/loco.lab.asu.edu/edges_790.bin
-terms other-attribution https://loco.lab.asu.edu/edges/edges-data-release/
+terms reviewed-2026-10-20 https://galileo.sese.asu.edu/edges-data/Readme.md
 format spectral
 origin https://loco.lab.asu.edu/edges/edges-data-release/
 compiler tools/harvest/src/bin/edges_compiler.rs
@@ -32096,7 +32096,7 @@ ttl 31536000
 field T21 edges_lowband_t21_k inverse-square em K 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/loco.lab.asu.edu/edges_792.bin
-terms other-attribution https://loco.lab.asu.edu/edges/edges-data-release/
+terms reviewed-2026-10-20 https://galileo.sese.asu.edu/edges-data/Readme.md
 format spectral
 origin https://loco.lab.asu.edu/edges/edges-data-release/
 compiler tools/harvest/src/bin/edges_compiler.rs
@@ -32175,7 +32175,7 @@ field ra_deg icrf3_ra_deg inverse-square geometry deg 31536000 0.0 0.0 aperture:
 field dec_deg icrf3_dec_deg inverse-square geometry deg 31536000 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/galileo.sese.asu.edu/edges_raw_spectrum_2016-250.bin
-terms other-attribution https://galileo.sese.asu.edu/edges-data/Readme.md
+terms reviewed-2026-10-20 https://galileo.sese.asu.edu/edges-data/Readme.md
 format spectral
 origin https://galileo.sese.asu.edu/edges-data/2016-250.gsh5
 compiler tools/harvest/src/bin/edges_gsh5_compiler.rs

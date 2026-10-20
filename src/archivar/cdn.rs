@@ -171,7 +171,8 @@ fn admitted_terms(token: &str) -> bool {
             || t.starts_with("PDL")
             || t == "JP"
             || t.starts_with("JP-")
-            || t.starts_with("OWN-WORK"))
+            || t.starts_with("OWN-WORK")
+            || t.starts_with("REVIEWED-"))
 }
 
 fn registered_netlocs() -> &'static HashSet<String> {
@@ -741,6 +742,7 @@ mod tests {
         assert!(admitted_terms("etalab-2.0"));
         assert!(admitted_terms("jp-public-data-license-1.0"));
         assert!(admitted_terms("own-work"));
+        assert!(admitted_terms("reviewed-2026-10-20"));
         assert!(!admitted_terms("free-open"));
         assert!(!admitted_terms("vizier-scientific-free"));
         assert!(!admitted_terms("other-attribution"));
