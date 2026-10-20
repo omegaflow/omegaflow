@@ -74,7 +74,7 @@ if [ -d target ]; then
     [ -n "${mib:-}" ] && [ "$mib" -gt 5120 ] && finding "TARGET_OVER_BUDGET	${mib}MiB	cap 5120"
 fi
 
-if [ -d "$WORK/zustand" ]; then
+if [ -d "$WORK/state" ]; then
     dirty=$(git -C "$WORK" status --porcelain 2>/dev/null | wc -l)
     [ "$dirty" -gt 0 ] && finding "WORK_DIRTY	$dirty"
 fi

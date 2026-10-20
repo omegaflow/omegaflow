@@ -1217,16 +1217,18 @@ fn cc_target(query: &str) -> String {
     cc_pattern(&target)
 }
 
-pub fn zustand_dir() -> Option<std::path::PathBuf> {
-    if let Ok(d) = std::env::var("OMEGAFLOW_ZUSTAND") {
-        return Some(std::path::PathBuf::from(d));
+pub fn log_dir() -> Option<std::path::PathBuf> {
+    if let Ok(d) = std::env::var("OMEGAFLOW_TMP") {
+        if !d.trim().is_empty() {
+            return Some(std::path::PathBuf::from(d));
+        }
     }
     if let Ok(w) = std::env::var("OMEGAFLOW_WORK") {
-        return Some(std::path::PathBuf::from(w).join("zustand"));
+        return Some(std::path::PathBuf::from(w).join("scratch"));
     }
     std::env::var("HOME")
         .ok()
-        .map(|h| std::path::PathBuf::from(h).join("projects/omegaflow-work/zustand"))
+        .map(|h| std::path::PathBuf::from(h).join("projects/omegaflow-work/scratch"))
 }
 
 fn cc_record_lines(body: &str, max: usize) -> Vec<String> {
@@ -5365,7 +5367,7 @@ fn annotate_declared(lines: &mut [String], env: &HashMap<String, String>) {
 }
 
 fn log_query(mode: &str, query: &str, lines: &[String], max: usize) {
-    let Some(dir) = zustand_dir() else {
+    let Some(dir) = log_dir() else {
         return;
     };
     if std::fs::create_dir_all(&dir).is_err() {

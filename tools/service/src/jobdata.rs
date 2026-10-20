@@ -12,7 +12,7 @@ const JOB_KEYWORDS: [&str; 12] = [
 const CI_REPO: &str = "omegaflow/omegaflow";
 
 fn log_dirs() -> Vec<String> {
-    let mut v = vec!["data/reports".to_string(), "zustand".to_string()];
+    let mut v = vec!["data/reports".to_string(), "state".to_string()];
     if let Ok(tmp) = std::env::var("OMEGAFLOW_TMP") {
         v.push(tmp);
     }

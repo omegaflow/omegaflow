@@ -964,10 +964,10 @@ fn main() {
 }
 
 fn run_stats() -> Vec<String> {
-    let Some(zustand) = net::zustand_dir() else {
-        return vec!["--stats — no zustand root; the query log stays unread".to_string()];
+    let Some(log) = net::log_dir() else {
+        return vec!["--stats — no scratch root; the query log stays unread".to_string()];
     };
-    let path = zustand.join("queries.φ");
+    let path = log.join("queries.φ");
     let body = match std::fs::read_to_string(&path) {
         Ok(b) => b,
         Err(_) => {
@@ -1052,7 +1052,7 @@ fn usage() {
         "paths:    archive_search --index [<query>...] [--path] [--kind any|file|dir] [--sort name|size|mtime]   (matches paths, not content; --path matches the full path)"
     );
     eprintln!("history:  archive_search --git <query>");
-    eprintln!("stats:    archive_search --stats   (per-arm yield from state/research/queries.φ)");
+    eprintln!("stats:    archive_search --stats   (per-arm yield from scratch/queries.φ)");
     eprintln!(
         "leads:    archive_search --leads <keyword>...   (un-curated candidate homes minus the registered hosts)"
     );

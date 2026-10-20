@@ -173,7 +173,7 @@ fn main() {
     );
 
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
-    let report_dir = arg_token(&args, "--report-dir").unwrap_or("zustand".to_string());
+    let report_dir = arg_token(&args, "--report-dir").unwrap_or("state".to_string());
     let jd0 = arg_token(&args, "--jd0")
         .and_then(|s| s.parse::<f64>().ok())
         .unwrap_or(2451545.0);

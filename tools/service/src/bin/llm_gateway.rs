@@ -1627,11 +1627,14 @@ struct ModelInfo {
 static MODELS: OnceLock<HashMap<String, ModelInfo>> = OnceLock::new();
 
 fn state_root() -> String {
-    match std::env::var("OMEGAFLOW_ZUSTAND") {
+    match std::env::var("OMEGAFLOW_STATE") {
         Ok(s) => s,
-        Err(_) => match std::env::var("OMEGAFLOW_WORK") {
-            Ok(w) => format!("{w}/zustand"),
-            Err(_) => format!("{}/state", repo_root()),
+        Err(_) => match std::env::var("OMEGAFLOW_ZUSTAND") {
+            Ok(s) => s,
+            Err(_) => match std::env::var("OMEGAFLOW_WORK") {
+                Ok(w) => format!("{w}/state"),
+                Err(_) => format!("{}/state", repo_root()),
+            },
         },
     }
 }
