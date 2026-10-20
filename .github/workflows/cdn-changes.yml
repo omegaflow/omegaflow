@@ -34,4 +34,10 @@ jobs:
             exit 0
           fi
           git commit -m "cdn-changes: gemessene Aenderungen [skip ci]"
-          git push
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            git pull --rebase --autostash
+          done
+          exit 1
