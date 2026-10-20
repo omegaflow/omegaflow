@@ -3750,7 +3750,8 @@ fn value_bait_lines(bytes: &[u8]) -> Vec<String> {
     let mut vals: Vec<String> = Vec::new();
     let mut cur = String::new();
     let mut flush = |cur: &mut String, vals: &mut Vec<String>| {
-        if cur.len() >= 6
+        let long_enough = cur.len() >= 6 || (cur.len() >= 4 && cur.contains('.'));
+        if long_enough
             && cur.chars().any(|c| c.is_ascii_digit())
             && let Ok(v) = cur.parse::<f64>()
             && v.is_finite()
@@ -4064,6 +4065,7 @@ fn bait_lines(bytes: &[u8]) -> Vec<String> {
         };
     }
     let prose = header.len() > 12
+        || (s.delimiter.is_none() && header.len() > 3)
         || header.iter().any(|c| {
             c.contains(' ')
                 || c.ends_with('.')

@@ -10,6 +10,7 @@
 # sondern nur die Prüfung. Ein Kandidat ist erst MATCH, wenn jeder angegebene Köder
 # hält; ein Wert, der nicht im Prefix steht, ist unbewiesen — nicht "nein".
 set -u
+export LC_ALL=C
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 bin="$root/target/release/archive_search"
 engine=""
@@ -83,9 +84,18 @@ if [ -n "$hex" ]; then
     esac
     [ $(( ${#hex} % 2 )) -eq 0 ] || usage
 fi
-value_hex=""
+value_num=""; value_tol=""
 if [ -n "$value" ]; then
-    value_hex="$(printf '%s' "$value" | od -A n -v -t x1 | tr -d ' \n')"
+    case "$value" in
+        *±*) value_num="${value%%±*}"; value_tol="${value##*±}" ;;
+        *)
+            value_num="$value"
+            value_tol="$(awk -v v="$value" 'BEGIN{ n=split(v,a,"."); if(n==1){print "0.5"} else { d=length(a[2]); printf "%.10g", 5*10^(-(d+1)) } }')"
+            ;;
+    esac
+    case "$value_num" in
+        ""|*[!0-9.eE+-]*) echo "find: --value ist keine Zahl: $value" >&2; exit 2 ;;
+    esac
 fi
 
 # Query aus den Suchködern: Header als zitierte Spaltennamen, Wert als Zahl.
@@ -151,6 +161,7 @@ if [ "$candidates" -eq 0 ]; then
 fi
 
 matches=0
+twins=0
 while IFS= read -r line; do
     [ -n "$line" ] || continue
     url="$(printf '%s\n' "$line" | sed -n 's/^url \([^[:space:]]*\).*/\1/p')"
@@ -203,22 +214,22 @@ while IFS= read -r line; do
     value_state=""
     value_note=""
     if [ -n "$value" ]; then
-        value_out="$("$bin" --sniff "$url" "pattern=$value_hex" 2>&1)"
-        value_line="$(printf '%s\n' "$value_out" | grep -F "pattern $value_hex hits" | head -n 1)"
-        if [ -z "$value_line" ]; then
+        body="$(curl -sSL --max-time 60 -r 0-200000 "$url" 2>/dev/null | head -c 200000)"
+        nearest="$(printf '%s' "$body" | grep -oE '[-+]?[0-9]+([.][0-9]+)?([eE][-+]?[0-9]+)?' | awk -v t="$value_num" 'BEGIN{m=-1} { d=$1-t; if(d<0)d=-d; if(m<0||d<m){m=d} } END{ if(m>=0) printf "%.10g", m }')"
+        if [ -z "$nearest" ]; then
             value_state="unbewiesen"
-            value_note="Musterzeile fehlt (Sniff pending?)"
+            value_note="keine Zahl im Prefix"
         else
-            value_hits="$(printf '%s\n' "$value_line" | sed "s/^.*pattern $value_hex hits //")"
-            if [ -n "$value_hits" ]; then
+            delta="$(awk -v d="$nearest" 'BEGIN{printf "%.6g", d}')"
+            if awk -v d="$nearest" -v tol="$value_tol" 'BEGIN{exit !(d<=tol)}'; then
                 value_state="erfüllt"
+                value_note="Delta $delta (tol $value_tol)"
             else
-                value_state="unbewiesen"
-                value_note="nicht im Prefix"
+                value_state="daneben"
+                value_note="Delta $delta > tol $value_tol"
             fi
         fi
     fi
-
     hex_state=""
     hex_note=""
     if [ -n "$hex" ]; then
@@ -244,7 +255,12 @@ while IFS= read -r line; do
     if [ -n "$hex" ] && [ "$hex_state" != erfüllt ]; then ok=0; fi
 
     if [ "$ok" -eq 1 ]; then
-        verdict="MATCH"
+        if [ -n "$header" ] && [ -n "$value" ] && [ -n "$hex" ]; then
+            verdict="ZWILLING"
+            twins=$((twins + 1))
+        else
+            verdict="MATCH"
+        fi
         matches=$((matches + 1))
     else
         verdict="kein-match"
@@ -257,4 +273,4 @@ while IFS= read -r line; do
     [ -n "$hex" ] && printf '   hex: %s%s\n' "$hex_state" "$( [ -n "$hex_note" ] && printf ' (%s)' "$hex_note" )"
 done <"$tmp/urls"
 
-printf '\nfind: %s Kandidaten, %s Treffer\n' "$candidates" "$matches"
+printf '\nfind: %s Kandidaten, %s Treffer, %s Zwillinge\n' "$candidates" "$matches" "$twins"
