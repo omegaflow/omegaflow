@@ -164,7 +164,7 @@ fn push(dir: &str, user: &str, key: &str) -> String {
         bool_field(&m, "enable_tpu", false),
         bool_field(&m, "enable_internet", true),
     );
-    let tmp = format!("/tmp/opencode/kaggle_push_{}.json", std::process::id());
+    let tmp = omegaflow::temp_path(&format!("kaggle_push_{}.json", std::process::id()));
     if let Err(e) = fs::write(&tmp, &body) {
         eprintln!("kaggle_kernel: write {tmp}: {e}");
         std::process::exit(2);

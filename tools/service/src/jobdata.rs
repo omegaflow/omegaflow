@@ -745,7 +745,7 @@ mod tests {
 
     #[test]
     fn progress_of_scans_last_line() {
-        let path = Path::new("/tmp/opencode/progress_scan_test.φ");
+        let path = Path::new(omegaflow::temp_path("progress_scan_test.φ"));
         let _ = std::fs::remove_file(path);
         std::fs::write(path, "progress 100 / 900\nprogress 250 / 900\n").ok();
         let p = progress_of(path).unwrap();

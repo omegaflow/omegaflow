@@ -188,7 +188,7 @@ fn main() {
             return;
         }
     };
-    let tmp = "/tmp/opencode/hdf5_remote_chunk.bin";
+    let tmp = omegaflow::temp_path("hdf5_remote_chunk.bin");
     let mut fetches = 0usize;
     let mut fetched = 0u64;
     let file = {
@@ -253,7 +253,7 @@ fn main() {
 
 fn fetch(url: &str, start: u64, len: u64) -> Option<Vec<u8>> {
     let end = start.checked_add(len)?.checked_sub(1)?;
-    let out = format!("/tmp/opencode/hdf5_range_{}_{}.bin", start, len);
+    let out = omegaflow::temp_path(&format!("hdf5_range_{}_{}.bin", start, len));
     let status = Command::new("curl")
         .args([
             "-sS",

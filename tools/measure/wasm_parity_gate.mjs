@@ -12,7 +12,8 @@ const pkgDir = arg("--pkg", "pkg");
 const stars = arg("--stars", "data/ssd.jpl.nasa.gov/dr3_stars.bin");
 const epoch = Number(arg("--epoch", "2000.0"));
 const now = Number(arg("--now", "8.443618e8"));
-const nativeDump = arg("--native", "/tmp/opencode/native_after.bin");
+const scratch = process.env.TMPDIR || "scratch";
+const nativeDump = arg("--native", path.join(scratch, "native_after.bin"));
 
 const require = createRequire(import.meta.url);
 const wasm = require(path.resolve(pkgDir, "omegaflow.js"));
