@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 307db296f85fc1c6ba989145280b51787318a5879405e9360aa64b971d72f0e4
+  sha256: 7cf6f41894a6dbc64a218019ed524c66ef2c9a1adb91ff9819e115d179c3cb0f
   fam-machine: post-fix
   status: live
   see-also: docs/specs/broken-null-control.md
@@ -14,13 +14,13 @@
 
 ## Abstract
 
-Geomagnetically induced currents (GIC) are driven by the induced geoelectric field; dB/dt is the proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to hourly and daily maxima of dB/dt at INTERMAGNET Abisko, with phase-randomized surrogates and a round-maximum family bound whose near-nominal AR(1) calibration does not establish family-wise control for this dependent, non-stationary design (§3.2). At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in Abisko 2024/2025 and Sodankylä 2024 (0.12670 vs 0.10557; 0.13309 vs 0.12136; 0.11695 vs 0.10571), but the arrows sit at the lag-0/1 edge bin, so no lag is resolved (§3.1, §5). The hardened quarterly witness keeps all rows family bound; density never clears it, and the daily 32-year pairs stay below. No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate. PCMCI removes the conditioned edge in 13/16 shards. The estimator's ground-truth verdict is NOT PASS on two arms: the Takens-embedded KSG arm nulls the reverse channel at strong coupling yet not its c = 0 null control, while the scalar Silverman-KDE reference does not — the riss stands.
+Geomagnetically induced currents (GIC) are driven by the induced geoelectric field; dB/dt is the proxy. Which solar-wind quantity drives it — southward Bz, speed, or density — is open sub-daily. We measure transfer entropy (TE) from L1 drivers to hourly and daily maxima of dB/dt at INTERMAGNET Abisko, with phase-randomized surrogates and a round-maximum family bound whose near-nominal AR(1) calibration does not establish family-wise control for this dependent, non-stationary design (§3.2). At the hourly grain two witnesses refuse to converge. The yearly-round witness finds Bz→dB/dt above the family bound in Abisko 2024/2025 and Sodankylä 2024 (0.12670 vs 0.10557; 0.13309 vs 0.12136; 0.11695 vs 0.10571), but the arrows sit at the lag-0/1 edge bin, so no lag is resolved (§3.1, §5). The hardened quarterly witness keeps all rows family bound; density never clears it, and the daily 32-year pairs stay below. A separate daily-minimum Bz arm over 2018–2025 clears the within-year shift null at lag 0–1, but the nine-band solar radio stage stays silent, so the chain's first edge is not closed (§4.10). No family-clearing hourly driver is established; Bz remains the leading sub-daily candidate. PCMCI removes the conditioned edge in 13/16 shards. The estimator's ground-truth verdict is NOT PASS on two arms: the Takens-embedded KSG arm nulls the reverse channel at strong coupling yet not its c = 0 null control, while the scalar Silverman-KDE reference does not — the riss stands.
 
 ## Key Points
 
 - Transfer entropy measures how much information flows from solar-wind drivers to rapid ground magnetic-field changes at two observatories.
 - The southward interplanetary magnetic field leads the yearly response but does not clear the family bound at the quarterly grain.
-- The particle-density control never clears the bound, and the daily grain is empty: no family-clearing hourly driver is established; the four derived channels (Bs, Clock, P_dyn, M_A) stay family bound in all 15 quarterly artifacts.
+- The particle-density control never clears the bound, and the 32-year daily-median grain is empty: no family-clearing hourly driver is established; the four derived channels (Bs, Clock, P_dyn, M_A) stay family bound in all 15 quarterly artifacts. A daily-minimum Bz arm over 2018–2025 does clear its within-year null at lag 0–1, but the nine-band solar radio stage stays silent, so the chain's first edge is not closed (§4.10).
 
 ## Plain Language Summary
 
@@ -723,6 +723,138 @@ lag-flat, family-clearing co-movement that does not identify a direction, plus a
 negative incremental test at an underpowered n. The rung is carried as a
 measured negative, not as a closed positive.
 
+### 4.10 The incremental chain Sun → L1 → ground (measured 2026-10-20)
+
+The direct edge L1 → ground is measured (§4.2–4.6); what is missing is the
+F2 rule: does L1 carry **above** the solar radio stage that feeds it? The
+incremental quantity is the conditional transfer entropy
+TE(L1 → G | Sun) — the information L1 adds about the daily ground dB/dt
+maximum once the Sun's radio state is known. The chain rule for conditional
+mutual information gives the joint model
+
+TE({Sun, L1} → G) = TE(Sun → G) + TE(L1 → G | Sun),
+
+so the second term is exactly the increment. We measure that term and the
+two unique parts, TE(Sun → G | L1) and TE(L1 → G | Sun), against the same
+within-year circular-shift null.
+
+**Data.** Common window 2018-01-01 → 2025-12-31 (8 years), daily grain.
+- **Ground:** `abk_dbdt_daily.tsv`, the daily maximum of the 1-min |dB/dt| at
+  Abisko (n = 2 922 days in the window). The multi-year `abk_dbdt_1h.bin` /
+  `abk_dbdt_1m.bin` carry future-dated spans (2024–2056 and 2053–2055) and
+  are not used; §4.9 names that data defect.
+- **L1:** the real OMNI2 hourly arm `omni2_serie_1h.bin` (1972–2026), Bz daily
+  minimum (≥ 12 valid hours/day, fill |Bz| < 900 nT) and Speed daily mean
+  (0 < v < 2 000 km/s).
+- **Sun:** `callisto_mro_multiyear.bin` (MRO/e-Callisto, 2018–2025), nine
+  bands 50–846 MHz. For each band the daily maximum |amplitude|; each band is
+  normalized by its median over the anchor days; Sun is the mean over the
+  nine bands of (max_abs / median)², a dimensionless band-energy index. The
+  archive observes one day every nine days: 324 Sun days, and 319 anchor days
+  after requiring ground at d−1 and d+lag and L1 at d (per year: 40, 41, 40,
+  38, 40, 40, 40, 40). The manifested SWPC radio-burst bin carries a
+  2056-09-24 → 2056-10-10 window and was not used; MRO is the only multi-year
+  Sun arm.
+
+**Method.** TE is the house KDE estimator with Silverman bandwidths, evaluated
+on the explicit target past xp = ground(d−1) and target future
+xf = ground(d+lag), driver y = Sun(d) or L1(d), conditioner c = the other
+stage. This makes the lag a calendar-day lag even though the Sun anchor grid
+is nine-day spaced; the target's own past is always the previous calendar
+day. Lags 0–3 d. Null: circular shift of the driver inside each calendar year
+(the `callisto_edge_probe` block-shift null), 500 replicates, 95th percentile;
+target and conditioner stay fixed. For the nine bands a secondary family null
+takes one maximum over 9 bands × 4 lags per surrogate (100 draws), so its 95th
+percentile pays for the band multiplicity.
+
+**Results.** L1 = Bz daily minimum. The Sun-only model is silent at every lag;
+the L1 arm is the only stage that clears its null. Δ is TE − null95, so a
+positive Δ is the amount by which the observed TE clears the 95th percentile.
+
+| model | lag | TE | null95 | Δ | p | verdict |
+|---|---:|---:|---:|---:|---:|---|
+| Sun → G | 0 d | 2.8742e-2 | 6.0509e-2 | −3.1767e-2 | — | silent |
+| Sun → G \| L1 | 0 d | 1.8686e-2 | 5.5825e-2 | −3.7139e-2 | — | silent |
+| L1 → G | 0 d | 2.8704e-1 | 1.4180e-1 | 1.4524e-1 | — | arrow |
+| **L1 → G \| Sun** | 0 d | **2.7699e-1** | 1.4398e-1 | **1.3301e-1** | **0.0020** | **traegt** |
+| Sun → G | 1 d | 3.3524e-2 | 5.6952e-2 | −2.3428e-2 | — | silent |
+| Sun → G \| L1 | 1 d | 3.2049e-2 | 6.0036e-2 | −2.7987e-2 | — | silent |
+| L1 → G | 1 d | 1.8696e-1 | 1.4909e-1 | 3.7870e-2 | — | arrow |
+| **L1 → G \| Sun** | 1 d | **1.8548e-1** | 1.5053e-1 | **3.4952e-2** | **0.0020** | **traegt** |
+| Sun → G | 2 d | 3.7107e-2 | 5.3469e-2 | −1.6362e-2 | — | silent |
+| Sun → G \| L1 | 2 d | 3.7936e-2 | 5.6730e-2 | −1.8794e-2 | — | silent |
+| L1 → G | 2 d | 1.2019e-1 | 1.4516e-1 | −2.4970e-2 | — | silent |
+| L1 → G \| Sun | 2 d | 1.2102e-1 | 1.4606e-1 | −2.5040e-2 | 0.6926 | silent |
+| Sun → G | 3 d | 3.9349e-2 | 5.5069e-2 | −1.5720e-2 | — | silent |
+| Sun → G \| L1 | 3 d | 3.8143e-2 | 5.8999e-2 | −2.0856e-2 | — | silent |
+| L1 → G | 3 d | 1.4083e-1 | 1.5963e-1 | −1.8800e-2 | — | silent |
+| L1 → G \| Sun | 3 d | 1.3962e-1 | 1.5887e-1 | −1.9249e-2 | 0.3473 | silent |
+
+The chain-rule joint at lag 0 is 2.8742e-2 + 2.7699e-1 = 3.0573e-1; at lag 1
+it is 3.3524e-2 + 1.8548e-1 = 2.1900e-1. With L1 = Speed daily mean every row
+is silent; the incremental term TE(Speed → G | Sun) is below its null at all
+four lags:
+
+| model | lag | TE | null95 | Δ | p | verdict |
+|---|---:|---:|---:|---:|---:|---|
+| Speed → G \| Sun | 0 d | 1.7024e-1 | 1.7818e-1 | −7.9445e-3 | 0.1597 | silent |
+| Speed → G \| Sun | 1 d | 1.3280e-1 | 1.7859e-1 | −4.5797e-2 | 0.9920 | silent |
+| Speed → G \| Sun | 2 d | 1.3449e-1 | 1.8185e-1 | −4.7361e-2 | 1.0000 | silent |
+| Speed → G \| Sun | 3 d | 1.4404e-1 | 1.8918e-1 | −4.5146e-2 | 0.9661 | silent |
+
+**The first edge is silent.** The Sun stage does not carry to L1 at any lag:
+TE(Sun → Bzmin) = 2.9333e-2, 4.9789e-2, 3.2511e-2, 5.1205e-2 at lags 0–3 d
+(null95 5.0027e-2, 6.1009e-2, 5.5658e-2, 6.4007e-2; p = 0.7964, 0.2335,
+0.8942, 0.3293); TE(Sun → Vmean) = 3.8788e-2, 5.6531e-2, 5.4816e-2, 5.1425e-2
+(null95 5.7920e-2, 6.8100e-2, 6.4841e-2, 6.5665e-2; p = 0.7186, 0.2575,
+0.3852, 0.5868). The nine-band family null also finds no single band: the
+observed maximum TE(band → G) is 1.2612e-1 (band 01, 50–70 MHz, lag 3 d)
+against a family null95 of 1.4212e-1 (p = 0.5842). The positive L1 increment
+is therefore L1's own daily edge, not a measured transmission of the solar
+radio signal.
+
+**Verdict.** L1 Bzmin carries incrementally over the Sun stage at lag 0 and
+lag 1: Δ = +1.3301e-1 (p = 0.0020) and +3.4952e-2 (p = 0.0020), both above
+the 95th percentile of the within-year shift null. The Sun stage itself is
+empty at this grain: neither Sun → ground nor Sun → L1 clears its null, and no
+single band clears the nine-band family null. Under F2 the "above Sun"
+condition is met for Bzmin, but the chain Sonne → L1 → Boden is **not closed**:
+the first edge is silent. Speed does not carry at any lag; its Δ is negative
+at all four lags. The result is a measured positive for L1 and a measured
+negative for the Sun stage, not a closed chain.
+
+**Riss.** (1) The MRO archive observes one day every nine days, so the Sun
+stage cannot resolve its own daily evolution; only the calendar-day lag from
+an anchor to the daily ground target is resolved. (2) n = 319 anchors
+(38–41/year); the silent Speed rows are underpowered, not proof of absence.
+(3) The ground target is the daily maximum of 1-min dB/dt and the L1 driver is
+the daily *minimum* Bz, while §4.5 used the daily *median* Bz. The §4.5
+emptiness is therefore not contradicted — the min-versus-max pairing is the
+design that §4.5 named as unmeasured — but it is also not a like-for-like
+reproduction. (4) The daily MRO maximum is not exposure-corrected for the
+varying minutes/day (364–1 140); the within-year null preserves the seasonal
+anchor geometry, not that exposure. (5) The null is the within-year circular
+shift of `callisto_edge_probe`, not the §3.2 phase-randomized family bound;
+the 95th percentile is per-cell, and the band family is controlled by the
+max-over-bands null (100 draws). (6) The TE estimator is the house KDE but
+with explicit xp/xf rather than the `transfer_entropy_lag` call of §4.5; the
+two are algebraically the same on a contiguous daily grid, while the anchor
+grid here is sparse. (7) The Sun composite is a normalized nine-band energy
+sum; a single band could in principle carry a signal that the composite
+dilutes, but the nine-band family null finds none.
+
+```
+# run from the omegaflow-work tree, where the daily ground asset lives
+./target/release/gic_incr_chain_probe \
+  --ground sources/content/bz_retro/abk_dbdt_daily.tsv \
+  --omni /tmp/opencode/gic_te/omni2_serie_1h.bin \
+  --sun /tmp/opencode/callisto_mro9/callisto_mro_multiyear.bin \
+  --start 2018-01-01 --end 2025-12-31 --n-surreps 500
+```
+
+(`tools/measure/src/bin/gic_incr_chain_probe.rs`; artifact
+`/tmp/opencode/gic_incr_500.txt`.)
+
 ## 5. Discussion
 
 **The measured driver is sub-daily — on the yearly round and the asymmetry, not
@@ -739,6 +871,11 @@ grain is empty — not for lack of data (n ≈ 3900, 32 years of stride-3 days)
 but because the daily median destroys the physical signal: a storm
 is a multi-hour southward excursion, and its daily bucket is diluted toward
 zero. The absence at the daily grain is itself the physical finding.
+§4.10 separates the design from the grain: with the daily *minimum* Bz as
+driver, the same daily target carries a Bz edge at lag 0–1 over 2018–2025
+(n = 319), while the nine-band radio stage stays silent. The §4.5 emptiness is
+therefore the median-versus-maximum mismatch named there, not an absence of
+daily information as such.
 
 **Direction and asymmetry.** The forward direction Bz → dB/dt exceeds the
 bound in every yearly hourly round (and stays below the bound in every
