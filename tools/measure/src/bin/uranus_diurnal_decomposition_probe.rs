@@ -724,7 +724,7 @@ fn main() {
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
     let spk_dir = arg_token(&args, "--spk-dir").unwrap_or("data/naif.jpl.nasa.gov".to_string());
     let spk_name = arg_token(&args, "--spk").unwrap_or("ura111.bsp".to_string());
-    let report_dir = arg_token(&args, "--report-dir").unwrap_or("zustand".to_string());
+    let report_dir = arg_token(&args, "--report-dir").unwrap_or("state".to_string());
     let cal_topo = args.iter().any(|a| a == "--calibrate-topo");
     let cal_aber = args.iter().any(|a| a == "--calibrate-aber");
     let calibrating = cal_topo || cal_aber;

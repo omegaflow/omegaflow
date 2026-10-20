@@ -278,7 +278,7 @@ fn main() {
     let tsv_path = arg_token(&args, "--tsv")
         .unwrap_or("sources/vizier.cfa.harvard.edu/camargo_uranu_j.tsv".to_string());
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
-    let report_dir = arg_token(&args, "--report-dir").unwrap_or("zustand".to_string());
+    let report_dir = arg_token(&args, "--report-dir").unwrap_or("state".to_string());
 
     let Some(lsk) = embedded_lsk() else {
         eprintln!(

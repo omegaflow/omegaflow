@@ -73,17 +73,22 @@ fn fail(msg: &str) -> ! {
 }
 
 fn zustand_dir() -> PathBuf {
+    if let Ok(d) = env::var("OMEGAFLOW_STATE") {
+        if !d.trim().is_empty() {
+            return PathBuf::from(d);
+        }
+    }
     if let Ok(d) = env::var("OMEGAFLOW_ZUSTAND") {
         if !d.trim().is_empty() {
             return PathBuf::from(d);
         }
     }
     if let Ok(w) = env::var("OMEGAFLOW_WORK") {
-        return PathBuf::from(w).join("zustand");
+        return PathBuf::from(w).join("state");
     }
     match env::var("HOME") {
-        Ok(h) => PathBuf::from(h).join("projects/omegaflow-work/zustand"),
-        Err(_) => PathBuf::from("zustand"),
+        Ok(h) => PathBuf::from(h).join("projects/omegaflow-work/state"),
+        Err(_) => PathBuf::from("state"),
     }
 }
 

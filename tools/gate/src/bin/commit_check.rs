@@ -444,13 +444,16 @@ fn main() {
         .ok()
         .map(|s| s.trim().to_string())
         .filter(|s| !s.is_empty());
-    let zustand = match std::env::var("OMEGAFLOW_ZUSTAND") {
+    let zustand = match std::env::var("OMEGAFLOW_STATE") {
         Ok(d) => std::path::PathBuf::from(d),
-        Err(_) => match std::env::var("OMEGAFLOW_WORK") {
-            Ok(w) => std::path::PathBuf::from(w).join("zustand"),
-            Err(_) => match std::env::var("HOME") {
-                Ok(h) => std::path::PathBuf::from(h).join("projects/omegaflow-work/zustand"),
-                Err(_) => std::path::PathBuf::from("zustand"),
+        Err(_) => match std::env::var("OMEGAFLOW_ZUSTAND") {
+            Ok(d) => std::path::PathBuf::from(d),
+            Err(_) => match std::env::var("OMEGAFLOW_WORK") {
+                Ok(w) => std::path::PathBuf::from(w).join("state"),
+                Err(_) => match std::env::var("HOME") {
+                    Ok(h) => std::path::PathBuf::from(h).join("projects/omegaflow-work/state"),
+                    Err(_) => std::path::PathBuf::from("state"),
+                },
             },
         },
     };

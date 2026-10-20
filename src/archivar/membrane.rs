@@ -12,16 +12,19 @@ pub fn embedded_lsk() -> Option<LeapSeconds> {
 }
 
 pub fn zustand_dir() -> std::path::PathBuf {
+    if let Ok(dir) = std::env::var("OMEGAFLOW_STATE") {
+        return std::path::PathBuf::from(dir);
+    }
     if let Ok(dir) = std::env::var("OMEGAFLOW_ZUSTAND") {
         return std::path::PathBuf::from(dir);
     }
     if let Ok(work) = std::env::var("OMEGAFLOW_WORK") {
-        return std::path::PathBuf::from(work).join("zustand");
+        return std::path::PathBuf::from(work).join("state");
     }
     if let Ok(home) = std::env::var("HOME") {
-        return std::path::PathBuf::from(home).join("projects/omegaflow-work/zustand");
+        return std::path::PathBuf::from(home).join("projects/omegaflow-work/state");
     }
-    std::path::PathBuf::from("zustand")
+    std::path::PathBuf::from("state")
 }
 
 pub fn state_asset(rel: &str) -> std::path::PathBuf {
