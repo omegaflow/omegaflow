@@ -1761,7 +1761,7 @@ mod cache_root_tests {
 
     #[test]
     fn cache_root_resolves_and_serves() {
-        let state = "/tmp/opencode/omegaflow_cache_root_state";
+        let state = crate::temp_path("omegaflow_cache_root_state");
         let state_root = std::path::PathBuf::from(state).join("archivar_cache");
 
         unsafe {

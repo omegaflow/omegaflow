@@ -59,10 +59,10 @@ mod tests {
     }
 
     fn probe_root(tag: &str) -> PathBuf {
-        PathBuf::from(format!(
-            "/tmp/opencode/asset_path_{tag}_{}",
+        PathBuf::from(crate::temp_path(&format!(
+            "asset_path_{tag}_{}",
             std::process::id()
-        ))
+        )))
     }
 
     #[test]
@@ -100,12 +100,12 @@ mod tests {
         let _lock = ENV_LOCK.lock().unwrap();
         let _guard = EnvGuard::take();
         unsafe {
-            std::env::set_var("OMEGAFLOW_WORK", "/tmp/opencode/asset_path_env");
+            std::env::set_var("OMEGAFLOW_WORK", crate::temp_path("asset_path_env"));
             std::env::set_var("HOME", "/home/probe");
         }
         assert_eq!(
             work_root(),
-            PathBuf::from("/tmp/opencode/asset_path_env"),
+            PathBuf::from(crate::temp_path("asset_path_env")),
             "OMEGAFLOW_WORK wins"
         );
 
