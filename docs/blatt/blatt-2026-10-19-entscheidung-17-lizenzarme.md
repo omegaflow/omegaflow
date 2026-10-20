@@ -2,7 +2,7 @@
   title: Entscheidungstabelle — die 17 lizenzgesperrten Arme
   class: blatt
   date: 2026-10-19
-  sha256: a3cf05561d1762bc638218e0abba7708779243140ffc5b824d6c3f84273dc008
+  sha256: 73ba16fe265d9ce3e5ef7af5c58298947ef660c46d04e05de62d209aa1d24322
   status: live
   see-also: phi/sources.φ tools/harvest/src/bin/ docs/surveys/survey-2026-10-09-redistribution-alternativen.md
 -->
@@ -18,6 +18,20 @@ declined" — keine Lizenz wurde erfunden.
 ändert weder `phi/sources.φ` noch eine Lizenzzeile und trifft keine
 Redistributions-Entscheidung. Der Operator wählt je Zeile **A**, **B** oder
 **C**; die Linie setzt danach den Register-/CDN-Schritt.
+
+## Frage
+
+Welchen der 17 lizenzgesperrten Arme trägt die Messung weiter — als
+aufgenommener Arm (**A**), als abgelehnter Arm mit gemessener offener
+Alternative (**B**) oder als local-only Zugang ohne CDN-Manifestation (**C**)?
+
+Die Frage ist je Arm entscheidbar, sobald drei Dinge **gemessen** sind: eine
+Produktzeile am HEAD (nicht nur der Arm-Name), eine `terms`-Zeile an der
+Quelle, und — für B — eine offene Alternative mit eigener Messung. Fehlt eines
+davon, bleibt der Arm `pending` mit dem fehlenden Beleg; aus dieser Tabelle
+wird kein `phi`-Block geschrieben und keine Lizenz erfunden. Was der Operator
+wählt, ist die Entscheidung; was hier steht, ist die Messlage, auf der sie
+ruht.
 
 **Optionen**
 
