@@ -2,7 +2,7 @@
   title: Suchkanäle — gemessener Stand (2026-10-19)
   class: ref
   date: 2026-10-19
-  sha256: a9f046e7987415a22671f50445da17baaa5eab1ee93f19cc8963235513e0884e
+  sha256: d73f3cac6cf89148ecaa75af9a9d21336937ffad7f18c423e181f327ae95d93e
   status: live
   see-also: docs/concepts/tools-map.md docs/surveys/survey-2026-10-19-paper-forschungslage.md
 -->
@@ -137,3 +137,29 @@ weiter nur `search.lumy.live` — und `OMEGAFLOW_SEARXNG` akzeptiert jetzt eine
 
 Korrektur: die frühere Zeile „vier Instanzen antworten mit JSON" war falsch —
 nur eine antwortet mit JSON, die anderen mit HTML.
+
+## Marginalia — Spec gelesen, Arm pfadrichtig, Dienst hängt (2026-10-20)
+
+Spec: `https://www.marginalia.nu/marginalia-search/api/` —
+
+```
+GET https://api.marginalia.nu/{key}/search/{query}?index=0&count=10
+```
+
+Key ist ein **Pfadsegment** (`public`), 503 heißt geteiltes Rate-Limit. Der Arm
+nutzt `https://api.marginalia-search.com/public/search/{query}?count=10` — dieselbe
+Pfadform, neuer Host, `index` fehlt (Default 0).
+
+**Messung:** der Such-GET antwortet auf **beiden** Hosts nicht innerhalb von 40 s;
+mit 90 s Frist kommt nach **60,17 s** ein **HTTP 504 Gateway Timeout** (167 B).
+Der Wurzel-HEAD antwortet sofort. Das ist kein 429 und kein „kein Netz",
+also läuft der Arm als **pending**, mit der ehrlichen Meldung
+„no answer within 40 s (timeout or no network)".
+
+Nachgemessen 2026-10-20: unverändert **HTTP 504** nach **60,37 s**
+(167 B); der Wurzel-Host antwortet weiter sofort, der Such-GET nicht.
+Der Arm bleibt extern blockiert, nicht ungebaut.
+
+**Lizenz:** die Ergebnisse stehen laut Spec unter **CC-BY-NC-SA 4.0** — non-commercial.
+Damit ist Marginalia auch im Erfolgsfall **kein CDN-Kanal**; eigene Keys gibt es
+per Mail an `kontakt@marginalia.nu`.

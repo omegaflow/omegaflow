@@ -1,3 +1,10 @@
+# Kanonische Datenorte: Rohdaten und Compiler-Assets liegen in
+# $OMEGAFLOW_WORK/sources/<netloc>/ (compiled/ fuer kompilierte Assets).
+# data/, cache/ und tmp/ sind keine Repo-Orte und duerfen nie gestaged werden.
+/data/
+/cache/
+/tmp/
+
 debug/
 .env
 *.log
