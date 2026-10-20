@@ -88,6 +88,32 @@ nur Offenes) · deine **Post** (dasselbe `post/`). Lies nur die Stellen, die die
 - **Der Zustand ist das Register** (`phi/sources.φ`), **die Geschichte ist git**. Ein Dokument,
   das Zustand oder Historie erzählt, ist Compliance-Theater.
 
+### Die Quittung — Dokument ist Übergabe
+
+**Dokumentiert ist nicht weitergegeben.** Ein Dokument ist erst existent, wenn es
+einen **Halter** und einen **Empfang** hat. Deshalb trägt jeder Kopf zusätzlich:
+
+```text
+owner: <linie|sitz>              # wer hütet es jetzt
+ack: <linie|sitz> <ISO-8601>     # Empfang, nicht Genehmigung (wiederholbar)
+next: <nächster Akt|Trigger>     # was es aus dem pending holt
+orphan-after: <YYYY-MM-DD>       # ohne neuen ack wird es orphan
+```
+
+- **Der erste `ack` ist der Autor.** Er hält das Dokument, bis er es übergibt.
+- **Jede Übergabe** ändert `owner` und fügt einen `ack` hinzu. Eine Zeile, kein
+  zweites Register.
+- **Die Quittung ist Empfang, nicht Genehmigung.** Der Empfänger bestätigt, dass
+  er es hat — nicht, dass er es gut findet.
+- **Ohne `ack` ist es ein Orphan.** Ein Orphan ist kein Dokument, sondern eine
+  Flaschenpost. `orphan-after` macht sichtbar, wann es kippt.
+- **Die Quittung steht im Dokument**, nicht in einem Ledger: Handover, Survey,
+  Auftrag, Blatt, Papier — alle tragen sie. Die Linie schreibt für sich selbst;
+  die Quittung ist der erste Atemzug, nicht der Nachtrag.
+- **Der Gate prüft den ersten Atemzug:** ein neues `docs/`-Dokument ohne `owner`
+  und `ack` ist kein Dokument. Bestehende Dokumente erhalten die Felder bei der
+  nächsten Berührung; kein Nachtrag in einem Rutsch.
+
 ## Code
 
 - **A = A** — der Text nennt, was **ist**. Spekulationswörter (`vermutlich`, `probably`, `likely`)
