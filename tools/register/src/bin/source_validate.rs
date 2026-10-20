@@ -440,25 +440,7 @@ fn main() {
                             &mut hard,
                             &mut soft,
                         );
-                    } else if parts.len() == 2 {
-                        push(
-                            "anchor_no_coords",
-                            format!("{tag}\t{name}\t{body}"),
-                            false,
-                            &mut findings,
-                            &mut hard,
-                            &mut soft,
-                        );
                     }
-                } else if parts.len() == 2 {
-                    push(
-                        "anchor_no_coords",
-                        format!("{tag}\t{name}\t{body}"),
-                        false,
-                        &mut findings,
-                        &mut hard,
-                        &mut soft,
-                    );
                 }
             }
             if head == "on" {
