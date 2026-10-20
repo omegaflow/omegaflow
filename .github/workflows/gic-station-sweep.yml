@@ -83,7 +83,7 @@ jobs:
         run: |
           set -euo pipefail
           fam="${{ inputs.family }}"
-          grep -v '^#' docs/zustand/gic-station-families.tsv > /tmp/part.tsv
+          grep -v '^#' docs/state/gic-station-families.tsv > /tmp/part.tsv
           if [ "$fam" = "all" ]; then
             cut -f1 /tmp/part.tsv > /tmp/fam.txt
           else

@@ -5,7 +5,7 @@ name: gic-al-network
 # gic_onset_detector (bay onsets against the McPherron list, with the
 # surrogate null). River builds the missing CI seam here (2026-10-14).
 # The station network is the declared family partition
-# (docs/zustand/gic-station-families.tsv), not a hand-typed list.
+# (docs/state/gic-station-families.tsv), not a hand-typed list.
 
 concurrency:
   group: ${{ github.workflow }}
@@ -47,7 +47,7 @@ jobs:
         run: |
           set -euo pipefail
           fam="${{ inputs.family }}"
-          grep -v '^#' docs/zustand/gic-station-families.tsv > /tmp/partition.tsv
+          grep -v '^#' docs/state/gic-station-families.tsv > /tmp/partition.tsv
           if [ "$fam" = "all" ]; then
             cut -f1 /tmp/partition.tsv > family.txt
           else

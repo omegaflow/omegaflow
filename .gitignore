@@ -8,7 +8,7 @@
 debug/
 .env
 *.log
-!state/zustand/ledger/**/*.log
+!state/state/ledger/**/*.log
 omegaflow.wasm
 .opencode/*
 !.opencode/commands/
@@ -64,7 +64,7 @@ cloudflare/cloudflared-config.yml
 
 # `state/` ist getrackt nur als kuratierte Rat-Schicht (`state/rat`, ab 2026-10-15).
 # Roh-Antworten und Spills liegen ungetrackt in `$OMEGAFLOW_WORK/stimmen`; der Zeiger
-# auf den privaten Zustand ist `docs/zustand/external-state.md`.
+# auf den privaten Zustand ist `docs/state/external-state.md`.
 state/*
 !state/rat/
 # Verdikt-Register je Linie: die .φ-Verdikte sind kanonisch, nicht Roh-Zustand.
@@ -91,5 +91,5 @@ docs/paper/export/
 # Werkzeug-Caches (nicht herunterladbar, lokal erzeugt)
 .playwright-mcp/
 
-!zustand/
-!zustand/cdn-changes.log
+!state/
+!state/cdn-changes.log

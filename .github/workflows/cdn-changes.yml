@@ -27,10 +27,10 @@ jobs:
           set -eu
           git config user.name "omegaflow-ci"
           git config user.email "ci@omegaflow.invalid"
-          if git diff --quiet -- zustand/cdn-changes.log; then
+          if git diff --quiet -- state/cdn-changes.log; then
             echo "no change"
             exit 0
           fi
-          git add zustand/cdn-changes.log
+          git add state/cdn-changes.log
           git commit -m "cdn-changes: gemessene Aenderungen [skip ci]"
           git push
