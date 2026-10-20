@@ -544,8 +544,8 @@ mod tests {
     #[test]
     fn red_star_behind_a_dust_column_is_typical_after_the_subtraction() {
         let (center_ra, center_dec) = region_center();
-        let map_path = "/tmp/opencode/db_probe_behind_dust.be19";
-        let bin_path = "/tmp/opencode/db_probe_behind_dust.bin";
+        let map_path = omegaflow::temp_path("db_probe_behind_dust.be19");
+        let bin_path = omegaflow::temp_path("db_probe_behind_dust.bin");
         write_be19(map_path, center_ra, center_dec, 0.2);
         let plx: Vec<f64> = vec![8.0, 6.5, 5.0, 4.0, 3.2, 2.6, 2.1, 1.7, 1.4, 1.1, 0.9, 0.8]
             .iter()
@@ -598,8 +598,8 @@ mod tests {
     #[test]
     fn intrinsic_red_survives_the_dust_subtraction_as_outlier() {
         let (center_ra, center_dec) = region_center();
-        let map_path = "/tmp/opencode/db_probe_intrinsic_red.be19";
-        let bin_path = "/tmp/opencode/db_probe_intrinsic_red.bin";
+        let map_path = omegaflow::temp_path("db_probe_intrinsic_red.be19");
+        let bin_path = omegaflow::temp_path("db_probe_intrinsic_red.bin");
         write_be19(map_path, center_ra, center_dec, 0.05);
         let plx: Vec<f64> = vec![8.0, 6.5, 5.0, 4.0, 3.2, 2.6, 2.1, 1.7, 1.4, 1.1, 0.9, 0.8]
             .iter()

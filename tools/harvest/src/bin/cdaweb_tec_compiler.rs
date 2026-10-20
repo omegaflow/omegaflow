@@ -363,7 +363,7 @@ mod tests {
 
     #[test]
     fn parses_cdaweb_tec_when_present() {
-        let path = "/tmp/opencode/tec.cdf";
+        let path = omegaflow::temp_path("tec.cdf");
         let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => return,

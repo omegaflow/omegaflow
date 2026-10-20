@@ -367,7 +367,7 @@ fn subset_median_level_fit(
 }
 
 fn main() {
-    let mut report = "/tmp/opencode/galileo_floor_basis_drift_report.txt".to_string();
+    let mut report = omegaflow::temp_path("galileo_floor_basis_drift_report.txt").to_string();
     for a in std::env::args().skip(1) {
         if let Some(r) = a.strip_prefix("--report=") {
             report = r.to_string();

@@ -21,7 +21,7 @@ use omegaflow::ephemeris::{
 
 fn emit(line: &str) {
     eprintln!("{}", line);
-    let path = std::path::Path::new("/tmp/opencode/ephemeris_compiler.log");
+    let path = std::path::Path::new(omegaflow::temp_path("ephemeris_compiler.log"));
     if let Some(parent) = path.parent() {
         let _ = std::fs::create_dir_all(parent);
     }

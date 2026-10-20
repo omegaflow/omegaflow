@@ -155,7 +155,7 @@ mod tests {
 
     #[test]
     fn parses_real_atr_shape() {
-        let bytes = std::fs::read("/tmp/opencode/100.atr").unwrap();
+        let bytes = std::fs::read(omegaflow::temp_path("100.atr")).unwrap();
         let series = parse_atr(&bytes, 360).unwrap();
         assert!(series.len() > 2000, "100.atr should carry >2000 beats");
         let mean_rr = series.iter().map(|(_, r)| r).sum::<f64>() / series.len() as f64;

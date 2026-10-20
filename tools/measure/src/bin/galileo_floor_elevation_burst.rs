@@ -308,7 +308,7 @@ fn episodes(
 fn main() {
     let report_path = match std::env::args().nth(1) {
         Some(p) => p,
-        None => "/tmp/opencode/galileo_floor_elevation_burst_report.txt".to_string(),
+        None => omegaflow::temp_path("galileo_floor_elevation_burst_report.txt").to_string(),
     };
     let Some(host) = dsn_host() else {
         println!("galileo_floor_elevation_burst: dsn host declaration absent");

@@ -297,7 +297,7 @@ mod tests {
 
     #[test]
     fn sample_cutout_header_dims_parse_if_present() {
-        let Ok(buf) = std::fs::read("/tmp/opencode/fink_cut.fits") else {
+        let Ok(buf) = std::fs::read(omegaflow::temp_path("fink_cut.fits")) else {
             return;
         };
         let (h, _) = FitsHeader::parse(&buf, 0).unwrap();

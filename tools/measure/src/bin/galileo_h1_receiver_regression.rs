@@ -115,7 +115,7 @@ fn fmt_p(p: Option<f64>) -> String {
 fn main() {
     let report_path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
         Some(p) => p,
-        None => "/tmp/opencode/galileo_h1_receiver_regression_report.txt".to_string(),
+        None => omegaflow::temp_path("galileo_h1_receiver_regression_report.txt").to_string(),
     };
 
     let era0 = days_from_civil(ERA0.0, ERA0.1, ERA0.2);

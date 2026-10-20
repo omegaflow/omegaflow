@@ -597,7 +597,7 @@ fn compile(args: &[String]) -> Result<(), String> {
             ));
         }
         for (k, member) in members.iter().enumerate() {
-            let fits_tmp = format!("/tmp/opencode/decaps_member_{}.fits", k);
+            let fits_tmp = omegaflow::temp_path(&format!("decaps_member_{}.fits", k));
             let (_, complete) = decode_gz_to_file(member, &fits_tmp)?;
             if !complete {
                 eprintln!("{member}: partial stream — the asset stays partial");

@@ -686,7 +686,7 @@ mod tests {
     #[test]
     fn asset_roundtrip() {
         let recs = vec![(68.0, 161.05, -10500.0), (50.0, 10.0, -30000.0)];
-        let path = "/tmp/opencode/slab2_roundtrip_test.bin";
+        let path = omegaflow::temp_path("slab2_roundtrip_test.bin");
         write_asset(path, &recs).unwrap();
         verify_asset(path, 2).unwrap();
         std::fs::remove_file(path).ok();
@@ -695,7 +695,7 @@ mod tests {
     #[test]
     fn verify_refuses_wrong_count() {
         let recs = vec![(68.0, 161.05, -10500.0)];
-        let path = "/tmp/opencode/slab2_wrongcount_test.bin";
+        let path = omegaflow::temp_path("slab2_wrongcount_test.bin");
         write_asset(path, &recs).unwrap();
         assert!(verify_asset(path, 2).is_err());
         std::fs::remove_file(path).ok();

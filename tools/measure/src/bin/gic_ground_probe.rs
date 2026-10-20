@@ -206,10 +206,12 @@ fn verdict(te: f64, thr: Option<f64>, fam: Option<f64>) -> &'static str {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let nur_path =
-        arg_after(&args, "--nur").unwrap_or("/tmp/opencode/gic_ground/fmi_image_mag_nur.bin");
-    let gic_path = arg_after(&args, "--gic").unwrap_or("/tmp/opencode/gic_ground/fmi_gic_1min.bin");
-    let omni_path = arg_after(&args, "--omni").unwrap_or("/tmp/opencode/gic_te/omni2_serie_1h.bin");
+    let nur_path = omegaflow::or_temp(
+        arg_after(&args, "--nur"),
+        "gic_ground/fmi_image_mag_nur.bin",
+    );
+    let gic_path = omegaflow::or_temp(arg_after(&args, "--gic"), "gic_ground/fmi_gic_1min.bin");
+    let omni_path = omegaflow::or_temp(arg_after(&args, "--omni"), "gic_te/omni2_serie_1h.bin");
     let start = arg_after(&args, "--start")
         .and_then(day_from_iso)
         .unwrap_or(12_354);
@@ -231,14 +233,14 @@ fn main() {
             .unwrap_or(1),
     };
 
-    let nur_bytes = match std::fs::read(nur_path) {
+    let nur_bytes = match std::fs::read(&nur_path) {
         Ok(b) => b,
         Err(e) => {
             eprintln!("NUR asset unreadable at {nur_path}: {e} — no measurement");
             std::process::exit(1);
         }
     };
-    let gic_bytes = match std::fs::read(gic_path) {
+    let gic_bytes = match std::fs::read(&gic_path) {
         Ok(b) => b,
         Err(e) => {
             eprintln!("GIC asset unreadable at {gic_path}: {e} — no measurement");
@@ -377,7 +379,7 @@ fn main() {
         return;
     }
 
-    let omni_bytes = match std::fs::read(omni_path) {
+    let omni_bytes = match std::fs::read(&omni_path) {
         Ok(b) => b,
         Err(e) => {
             eprintln!("OMNI asset unreadable at {omni_path}: {e} — incremental arm omitted");

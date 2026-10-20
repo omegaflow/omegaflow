@@ -326,9 +326,11 @@ fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let ground_path = arg_after(&args, "--ground")
         .unwrap_or("experiments/ableitungen/bz_retro/abk_dbdt_daily.tsv");
-    let omni_path = arg_after(&args, "--omni").unwrap_or("/tmp/opencode/gic_te/omni2_serie_1h.bin");
-    let sun_path = arg_after(&args, "--sun")
-        .unwrap_or("/tmp/opencode/callisto_mro9/callisto_mro_multiyear.bin");
+    let omni_path = omegaflow::or_temp(arg_after(&args, "--omni"), "gic_te/omni2_serie_1h.bin");
+    let sun_path = omegaflow::or_temp(
+        arg_after(&args, "--sun"),
+        "callisto_mro9/callisto_mro_multiyear.bin",
+    );
     let start = match arg_after(&args, "--start").and_then(day_from_iso) {
         Some(v) => v,
         None => days_from_civil(2018, 1, 1),
@@ -357,14 +359,14 @@ fn main() {
             std::process::exit(1);
         }
     };
-    let omni = match read_omni(omni_path) {
+    let omni = match read_omni(&omni_path) {
         Some(o) => o,
         None => {
             eprintln!("{omni_path}: reads void — no measurement");
             std::process::exit(1);
         }
     };
-    let sun_recs = match read_sun(sun_path) {
+    let sun_recs = match read_sun(&sun_path) {
         Some(s) => s,
         None => {
             eprintln!("{sun_path}: reads void — no measurement");

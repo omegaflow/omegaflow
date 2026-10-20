@@ -10,6 +10,26 @@ pub mod weberin;
 #[cfg(feature = "commit_gate")]
 pub use gate::{axioms, commit_gate, friction, handover, mcp, state, tool_perm};
 
+pub fn or_temp(value: Option<&str>, name: &str) -> String {
+    match value {
+        Some(v) => v.to_string(),
+        None => temp_path(name).to_string(),
+    }
+}
+
+pub fn temp_path(name: &str) -> &'static str {
+    let base = match std::env::var_os("TMPDIR") {
+        Some(v) => std::path::PathBuf::from(v),
+        None => std::path::PathBuf::from("scratch"),
+    };
+    Box::leak(
+        base.join(name)
+            .to_string_lossy()
+            .into_owned()
+            .into_boxed_str(),
+    )
+}
+
 pub use archivar::ak135;
 pub use archivar::amanda;
 pub use archivar::amon;

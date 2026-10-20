@@ -208,8 +208,8 @@ fn parse_lags(args: &[String]) -> Vec<usize> {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let gic_path = arg_after(&args, "--gic").unwrap_or("/tmp/opencode/gic_te/fmi_gic.bin");
-    let omni_path = arg_after(&args, "--omni").unwrap_or("/tmp/opencode/gic_te/omni2_serie_1h.bin");
+    let gic_path = omegaflow::or_temp(arg_after(&args, "--gic"), "gic_te/fmi_gic.bin");
+    let omni_path = omegaflow::or_temp(arg_after(&args, "--omni"), "gic_te/omni2_serie_1h.bin");
     let start = arg_after(&args, "--start")
         .and_then(day_from_iso)
         .unwrap_or(10957);
@@ -232,7 +232,7 @@ fn main() {
             .unwrap_or(1),
     };
 
-    let Some(gic_bytes) = read_asset(gic_path, GIC_URL) else {
+    let Some(gic_bytes) = read_asset(&gic_path, GIC_URL) else {
         eprintln!("fmi_gic.bin: fetch void — no measurement");
         std::process::exit(1);
     };
@@ -240,7 +240,7 @@ fn main() {
         eprintln!("fmi_gic.bin: parses void — no measurement");
         std::process::exit(1);
     };
-    let Some(omni_bytes) = read_asset(omni_path, OMNI_URL) else {
+    let Some(omni_bytes) = read_asset(&omni_path, OMNI_URL) else {
         eprintln!("omni2_serie_1h.bin: fetch void — no measurement");
         std::process::exit(1);
     };

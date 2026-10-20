@@ -270,7 +270,9 @@ fn pioneer_at<'a>(
 fn main() {
     let report_path = match std::env::args().skip(1).find(|a| !a.starts_with('-')) {
         Some(p) => p,
-        None => "/tmp/opencode/galileo_pioneer_stationsfloor_kreuz_report.txt".to_string(),
+        None => omegaflow::temp_path("galileo_pioneer_stationsfloor_kreuz_report.txt")
+            .to_string()
+            .to_string(),
     };
 
     let w0 = daycell_of(1995, 11, 23);
