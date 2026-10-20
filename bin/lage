@@ -71,7 +71,8 @@ done)
   echo "- Post: \`$work/post/\` ($post_in Briefe an future, $post_out Dispatches) · Repo \`omegaflow/work\` (privat)"
   echo "- Quellen (CDN-gebunden, rekonstruierbar): \`$work/sources/\` ($(ls -1 "$work/sources" 2>/dev/null | wc -l) Netlocs + content/, $(du -sh "$work/sources" 2>/dev/null | cut -f1))"
   echo "- Experimente (nur lokal): \`$work/experiments/\` ($(ls -1 "$work/experiments" 2>/dev/null | wc -l) Themen, $(du -sh "$work/experiments" 2>/dev/null | cut -f1))"
-  echo "- Recherche: \`$work/research/funde/\` ($(find "$work/research/funde" -type f 2>/dev/null | wc -l) Dateien) · Flüchtiges \`$work/research/tmp/\`"
+  echo "- Recherche: \`$work/research/findings/\` ($(find "$work/research/findings" -type f 2>/dev/null | wc -l) Dateien) · Index \`$work/research/index/README.md\`"
+  echo "- Quellenaufnahme: \`$work/research/findings/notes/source-admission/\` ($(find "$work/research/findings/notes/source-admission" -name '*.proposal.φ' 2>/dev/null | wc -l) offene Vorschläge für \`phi/sources.φ\`)"
   echo "- Gateway-Zustand: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/gateway/\` (models, alive, balance, provenance, catalog, paid-open)"
   echo "- Register (Herkunft): \`phi/sources.φ\` · Übergaben: \`$work/handover/\`"
   echo
