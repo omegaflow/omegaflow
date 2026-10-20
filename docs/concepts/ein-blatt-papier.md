@@ -2,7 +2,7 @@
   title: Ein Blatt Papier — das Ein-Blatt-Axiom der drei Kausalpfeile
   class: concept
   date: 2026-08-21
-  sha256: 559359fe7e8a4b58f8821560754e4a217c04aa624dc35b3730b5c78beb0be7c3
+  sha256: 5b45a293a695d97abf0ca6db9ff4ee6055de0d800d4b37b68c81f1963be7c39f
   status: live
   see-also: docs/paper/laic-arrow-direction.md docs/concepts/kybernetische-astrophysik.md docs/SOURCE_PORT.md
 -->
@@ -105,7 +105,9 @@ Zahlen stehen erst da, wenn sie gemessen sind.
   `dispersion_solar_probe.rs:13` → `LAGS = [0, 4, 8]`, `multi_force_te_probe`
   `--lags`, `enso_blatt_probe` 0…12 — das Gate ist gebaut, nicht offen),
   KDE-Bandbreiten-Sensitivität (**gemessen 2026-10-20**, `enso_blatt_probe`,
-  Silverman-Faktoren 0,5–2,0 über Lags 0–12, Maximum je Richtung:
+  Silverman-Faktoren 0,5–2,0 über Lags 1–12 (Lag 0 ist in dieser Schätzerfamilie
+  dieselbe Schätzung wie Lag 1 — `transfer_entropy` rechnet `x[t+1]` — und wird
+  nicht doppelt gezählt), Maximum je Richtung:
   TE(Bz→SST) 7,58e-1 → 3,63e-2, TE(SST→Bz) 7,76e-1 → 4,44e-2; der Schätzer
   fällt monoton mit `h`, die **Ordnung SST→Bz kippt über keinen Faktor**;
   gemessen ist die Sensitivität des Schätzers, nicht die Signifikanz je Faktor),
