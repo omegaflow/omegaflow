@@ -21,10 +21,6 @@ jobs:
       with:
         name: omegaflow-service-linux
         path: |
-          target/release/smail
-          target/release/smail_recv
-          target/release/mail_watchdog
-          target/release/mail_digest
           target/release/job_dashboard
           target/release/job_monitor
           target/release/ci_manage
