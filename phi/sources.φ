@@ -32241,3 +32241,28 @@ origin https://transmission.bpa.gov/business/operations/gic/gic.txt
 compiler tools/harvest/src/bin/bpa_gic_text_compiler.rs
 at earth
 ttl 300
+
+url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/rtsw.txt
+terms PD-USGov https://www.swpc.noaa.gov/content/disclaimer
+format text
+origin https://services.swpc.noaa.gov/json/rtsw/rtsw_wind_1m.json ; https://services.swpc.noaa.gov/json/rtsw/rtsw_mag_1m.json
+compiler tools/harvest/src/bin/swpc_rtsw_compiler.rs
+at sun
+ttl 60
+rows .
+epoch 0
+field 1 swpc_rtsw_speed_kms inverse-square advective km/s 60 0.0 0.0
+field 2 swpc_rtsw_density_n_cc gaussian-inverse-square diffusion 1/cm3 60 0.0 0.0
+field 3 swpc_rtsw_bz_gsm_nt inverse-square em nT 60 0.0 0.0
+field 4 swpc_rtsw_bt_nt inverse-square em nT 60 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/geomag.usgs.gov/observatories.txt
+terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
+format text
+origin https://geomag.usgs.gov/ws/observatories/?format=json
+compiler tools/harvest/src/bin/usgs_geomag_stations_compiler.rs
+at earth
+ttl 86400
+rows .
+lat 2
+lon 3
