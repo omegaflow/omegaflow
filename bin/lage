@@ -54,7 +54,7 @@ done)
     echo "- Guthaben (USD):"
     echo "$balance"
   fi
-  echo "- Rat-Sitze: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/entscheidungen.md\` (Index; die 17.10.-Anweisung ist nicht mehr geführt)"
+  echo "- Rat-Sitze: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/entscheidungen.md\` (Entscheidungen; die 17.10.-Anweisung ist nicht mehr geführt)"
   echo
   echo "## Offen je Linie (Handover)"
   if [ -n "$line_rows" ]; then
@@ -67,7 +67,7 @@ done)
   echo "- in: $post_in Briefe (heute $post_today) · out: $post_out · Postfach-Repo: \`$post_head\` · uncommitted: $post_dirty"
   echo
   echo "## Wo was liegt (Kanon — hier nachsehen, nicht suchen)"
-  echo "- Rat: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/\` ($(ls -1 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/*.md 2>/dev/null | grep -vcE '_lage|_rat-') Runden · Register \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/entscheidungen.md\` · Regeln \`docs/concepts/house-rules.md\` · Rohmaterial \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/_roh/\`)"
+  echo "- Rat: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/\` ($(ls -1 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/*.md 2>/dev/null | grep -vcE '_lage|entscheidungen') Runden · Register \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/entscheidungen.md\` · Regeln \`docs/concepts/house-rules.md\` · Rohmaterial \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/_roh/\`)"
   echo "- Post: \`$work/post/\` ($post_in Briefe an future, $post_out Dispatches) · Repo \`omegaflow/work\` (privat)"
   echo "- Quellen (CDN-gebunden, rekonstruierbar): \`$work/sources/\` ($(ls -1 "$work/sources" 2>/dev/null | wc -l) Netlocs + content/, $(du -sh "$work/sources" 2>/dev/null | cut -f1))"
   echo "- Experimente (nur lokal): \`$work/experiments/\` ($(ls -1 "$work/experiments" 2>/dev/null | wc -l) Themen, $(du -sh "$work/experiments" 2>/dev/null | cut -f1))"
