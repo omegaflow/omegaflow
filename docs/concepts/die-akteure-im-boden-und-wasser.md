@@ -2,7 +2,7 @@
   title: Die Akteure im Boden und Wasser — die Seismik als Multi-Akteur-Matrix (konsolidierter Plan)
   class: concept
   date: 2026-09-09
-  sha256: 5d6464cd5e555eb5fff4e0426809b45657010bc6e65426b1a894ace78159a7ce
+  sha256: 5ee687a13d55af9a3432399c481d2070c627458c5100d6cb4607315ae85d7ac9
   status: live
   see-also: docs/handover/archiv/handover-2026-09-09-tiefenphasen-flotte.md docs/concepts/der-kausalpfeil.md docs/concepts/blatt-papier-resultat.md docs/handover/archiv/handover-2026-09-09-seismische-ortung-tsunami.md
 -->
@@ -79,10 +79,10 @@ auf die Erde.
 | Seismometer (Bodenbewegung) | seismic-body/surface | Kern, steht |
 | Pegel / Tide gauge (Wasserstand) | gravity | steht (Tōhoku) |
 | DART-Boje (Tiefsee-Druck) | Wasser | registriert (`21414.dart`, `dart_tnf.bin`) |
-| Grundwasser-Brunnen (poröelastisch) | Wasser im Boden | offen (USGS) |
+| Grundwasser-Brunnen (poröelastisch) | Wasser im Boden | offen als **API-Migration**, nicht als Zugang: `waterservices.usgs.gov/nwis/gwlevels` ist abgeschaltet (301 → api-decom-fall-2025), der Nachfolger `api.waterdata.usgs.gov/ogcapi/v0/collections/field-measurements` antwortet **keyless** (gemessen 2026-10-20: HTTP 200, Parameter 62611 Tiefe bis Wasser) |
 | GNSS-Station (Bodenversatz) | em | RINEX steht |
 | Hydrophon (NRS) | akustisch im Wasser | gehalten |
-| Gravimeter | gravity | pending (IGETS-SFTP `igetsftp.gfz.de`, Zugang `IGETS_USER`/`IGETS_PASS`; Quelle+Compiler registriert) |
+| Gravimeter | gravity | Zugang **gemessen 2026-10-20**: IGETS-SFTP `igetsftp.gfz.de` antwortet mit dem Haus-Schlüssel (`IGETS_USER`/`IGETS_PASS` liegen im Secrets-Store, `IGETS2_*` ebenso) — 24 Stationen, Monatsreihen `.ggp` ab 1996 (z. B. `Wettzell/we103/Level1/1997/…`, ~1,5 MB je Monat). Offen ist nur noch die **Ernte**, nicht der Zugang |
 | Radon / Geochemie (Vorläufer) | Luft im Boden | kontestiert, `pending` |
 
 ## Die Matrix quer über die Domänen
