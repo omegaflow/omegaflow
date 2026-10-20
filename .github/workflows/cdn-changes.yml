@@ -20,6 +20,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 1
+          token: ${{ secrets.OMEGAFLOW_TOKEN }}
       - name: Observe live sources and record changes
         run: sh bin/ci_change_log
       - name: Commit the change ledger
