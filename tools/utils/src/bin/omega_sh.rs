@@ -399,10 +399,6 @@ const DENY_REPLACEMENTS: &[(&str, &str)] = &[
     ("tail-f", "no polling — tail without -f is read-only"),
     ("journalctl-f", "no polling"),
     ("--watch", "no polling"),
-    (
-        "smail--send",
-        "never from the machine — the send is the operator's hand",
-    ),
 ];
 
 fn replacement_for(pattern: &str) -> &'static str {
