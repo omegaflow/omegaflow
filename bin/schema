@@ -805,5 +805,15 @@ END {
 AWK
 )"
 
+if [ "$kind" = "json" ] && command -v jq >/dev/null 2>&1; then
+    aux="$tmp/json_aug.txt"
+    jq -r '.. | objects | select(.name? and (.name|type=="string")) | "\(.name|ascii_downcase): \(.units // .unit // "")"' "$body" >"$aux" 2>/dev/null || true
+    jq -r '.. | objects | (.units? // .unit?) | strings | "unit [\(.)]"' "$body" >>"$aux" 2>/dev/null || true
+    jq -r '.. | objects | keys[] | select(test("^[a-z][a-z0-9_]*$")) | "\(.):"' "$body" >>"$aux" 2>/dev/null || true
+    if [ -s "$aux" ]; then
+        body="$aux"
+        kind="text"
+    fi
+fi
 awk -v mode="$kind" -v src="$src" -v nbytes="$bytes" "$prog" "$body"
 exit $?
