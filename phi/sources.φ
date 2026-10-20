@@ -14083,6 +14083,7 @@ terms ODbL-1.0 https://alasky.cds.unistra.fr/HIPS3D/ASKAP/CDS_C_ASKAP_WALLABY-Pi
 format hips3d
 origin https://alasky.cds.unistra.fr/HIPS3D/ASKAP/CDS_C_ASKAP_WALLABY-Pilot-DR2/
 compiler tools/harvest/src/bin/hips3d_compiler.rs
+sha256 7672415ef2a98bc22c963a2d0683ce3faafd59830f22603d54421e99ab4334fc
 at sun
 no-cadence
 
@@ -14118,11 +14119,12 @@ field 21 bk18_p217xp217_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
 field 22 bk18_p353xp353_bb exponential-decay thermal uK^2 33554432.0 0.0 0.0
 field 23 bk18_p353xp353_bb_err exponential-decay thermal uK^2 33554432.0 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/casda.csiro.au/wallaby_pdr2_sourcecatalogue.json
-terms CC-BY-4.0 https://doi.org/10.25919/qw7w-tn96
-format json
+url https://github.com/omegaflow/sources/releases/download/casda.csiro.au/wallaby_pdr2_sourcecatalogue.bin
 origin https://doi.org/10.25919/qw7w-tn96
-sha256 45fc9aea7e290ceb76bc1058ecf2025a918c07cb184a0516534eec8c003e5d6e
+terms CC-BY-4.0 https://doi.org/10.25919/qw7w-tn96
+format wallaby_pdr2
+compiler tools/harvest/src/bin/wallaby_pdr2_compiler.rs
+sha256 48a0d3d8a26e900736c399cc62d45f8026c117c7ab0218f1e7d9decce19db627
 at sun
 no-cadence
 field ra wallaby_ra_deg inverse-square geometry deg 31536000 0.0 0.0
