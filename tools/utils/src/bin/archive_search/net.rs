@@ -4254,6 +4254,173 @@ fn hex_bytes(hex: &str) -> Option<Vec<u8>> {
     Some(out)
 }
 
+const HAPI_CATALOG: &str = "https://cdaweb.gsfc.nasa.gov/hapi/catalog";
+const HAPI_INFO: &str = "https://cdaweb.gsfc.nasa.gov/hapi/info?id=";
+const HAPI_DATA: &str = "https://cdaweb.gsfc.nasa.gov/hapi/data?id=";
+const HAPI_UNIT_CAP: usize = 6;
+
+struct HapiEntry {
+    id: String,
+    title: Option<String>,
+    start: Option<String>,
+    stop: Option<String>,
+    params: Option<usize>,
+    units: Vec<String>,
+}
+
+fn hapi_text(v: &Json, key: &str) -> Option<String> {
+    v.get(key)
+        .and_then(|x| x.as_str())
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+}
+
+fn hapi_units(parameters: &Json) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let Some(arr) = parameters.as_arr() else {
+        return out;
+    };
+    for p in arr {
+        let Some(units) = p.get("units").and_then(|u| u.as_str()) else {
+            continue;
+        };
+        let units = units.trim();
+        if units.is_empty() || out.iter().any(|u| u == units) {
+            continue;
+        }
+        out.push(units.to_string());
+        if out.len() >= HAPI_UNIT_CAP {
+            break;
+        }
+    }
+    out
+}
+
+fn hapi_entry(v: &Json) -> Option<HapiEntry> {
+    let id = hapi_text(v, "id")?;
+    let params = v.get("parameters").and_then(|p| p.as_arr());
+    let units = match v.get("parameters") {
+        Some(p) => hapi_units(p),
+        None => Vec::new(),
+    };
+    Some(HapiEntry {
+        id,
+        title: hapi_text(v, "title"),
+        start: hapi_text(v, "startDate"),
+        stop: hapi_text(v, "stopDate"),
+        params: params.map(|p| p.len()),
+        units,
+    })
+}
+
+fn hapi_matches(catalog: &Json, term: &str, max: usize) -> Vec<HapiEntry> {
+    let needle = term.to_lowercase();
+    let mut out = Vec::new();
+    let Some(rows) = catalog.get("catalog").and_then(|c| c.as_arr()) else {
+        return out;
+    };
+    for row in rows {
+        let Some(entry) = hapi_entry(row) else {
+            continue;
+        };
+        let id = entry.id.to_lowercase();
+        let title = entry.title.as_deref().unwrap_or("").to_lowercase();
+        if id.contains(&needle) || title.contains(&needle) {
+            out.push(entry);
+            if out.len() >= max {
+                break;
+            }
+        }
+    }
+    out
+}
+
+fn hapi_merge_info(entry: &mut HapiEntry, info: &Json) {
+    if entry.title.is_none() {
+        entry.title = hapi_text(info, "title");
+    }
+    if entry.start.is_none() {
+        entry.start = hapi_text(info, "startDate");
+    }
+    if entry.stop.is_none() {
+        entry.stop = hapi_text(info, "stopDate");
+    }
+    if entry.params.is_none() {
+        if let Some(params) = info.get("parameters").and_then(|p| p.as_arr()) {
+            entry.params = Some(params.len());
+        }
+    }
+    if entry.units.is_empty() {
+        entry.units = match info.get("parameters") {
+            Some(p) => hapi_units(p),
+            None => Vec::new(),
+        };
+    }
+}
+
+fn hapi_line(entry: &HapiEntry) -> String {
+    let start = entry.start.as_deref().unwrap_or("");
+    let stop = entry.stop.as_deref().unwrap_or("");
+    let params = match entry.params {
+        Some(n) => n.to_string(),
+        None => "absent".to_string(),
+    };
+    format!(
+        "url {}{}&time.min={}&time.max={}\ttitle: {}\tparams: {}\tstart: {}\tstop: {}\tunits: {}",
+        HAPI_DATA,
+        entry.id,
+        start,
+        stop,
+        entry.title.as_deref().unwrap_or(""),
+        params,
+        start,
+        stop,
+        entry.units.join(", ")
+    )
+}
+
+fn hapi_lines_from<F: FnMut(&str) -> Option<Json>>(
+    body: &str,
+    query: &str,
+    max: usize,
+    mut info: F,
+) -> Vec<String> {
+    let Some(v) = json::parse(body) else {
+        return vec!["pending — the hapi response carries no JSON".to_string()];
+    };
+    let mut entries = hapi_matches(&v, query, max);
+    if entries.is_empty() {
+        return vec![format!("absent — hapi carries no entry: {}", query)];
+    }
+    for entry in &mut entries {
+        if entry.title.is_none()
+            || entry.start.is_none()
+            || entry.stop.is_none()
+            || entry.params.is_none()
+            || entry.units.is_empty()
+        {
+            if let Some(info) = info(&entry.id) {
+                hapi_merge_info(entry, &info);
+            }
+        }
+    }
+    entries.iter().map(hapi_line).collect()
+}
+
+pub fn hapi_lines(query: &str, max: usize) -> Vec<String> {
+    match get(HAPI_CATALOG, &[], "60") {
+        Some(f) if f.status == Some(200) => hapi_lines_from(&f.body, query, max, |id| {
+            let url = format!("{}{}", HAPI_INFO, id);
+            match get(&url, &[], "30") {
+                Some(info) if info.status == Some(200) => json::parse(&info.body),
+                _ => None,
+            }
+        }),
+        Some(f) => vec![format!("pending — hapi HTTP {}", f.status_text())],
+        None => vec!["pending — no network".to_string()],
+    }
+}
+
 const QUERY_MODES: &[&str] = &[
     "openalex",
     "base",
@@ -4291,6 +4458,7 @@ const QUERY_MODES: &[&str] = &[
     "apis",
     "datacite",
     "zenodo",
+    "hapi",
     "wayback",
     "cc",
     "pubmed",
@@ -5009,6 +5177,7 @@ fn run_lines_dispatch(
         }
         "datacite" => crate::datacite::datacite_lines(query, max),
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
+        "hapi" => hapi_lines(query, max),
         "isc" => crate::isc::isc_lines(query, max),
         "base" => {
             let token = resolve_key(
@@ -5340,6 +5509,7 @@ mod tests {
             "apis",
             "datacite",
             "zenodo",
+            "hapi",
             "wayback",
             "cc",
             "pubmed",
@@ -5423,6 +5593,40 @@ mod tests {
         let mut actual = QUERY_MODES.to_vec();
         actual.sort_unstable();
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn hapi_catalog_filters_id_and_title() {
+        let body = r#"{"HAPI":"2.0","catalog":[{"id":"OMNI_HRO_1MIN","title":"OMNI 1-min HRO"},{"id":"AC_H0_MFI","title":"ACE Magnetic Field"}]}"#;
+        let v = json::parse(body).expect("json");
+        let by_id = hapi_matches(&v, "omni_hro", 10);
+        assert_eq!(by_id.len(), 1);
+        assert_eq!(by_id[0].id, "OMNI_HRO_1MIN");
+        let by_title = hapi_matches(&v, "magnetic", 10);
+        assert_eq!(by_title.len(), 1);
+        assert_eq!(by_title[0].id, "AC_H0_MFI");
+    }
+
+    #[test]
+    fn hapi_zero_hits_carries_absent() {
+        let body = r#"{"HAPI":"2.0","catalog":[{"id":"OMNI_HRO_1MIN"}]}"#;
+        let lines = hapi_lines_from(body, "no-such-dataset", 10, |_| None);
+        assert_eq!(
+            lines,
+            vec!["absent — hapi carries no entry: no-such-dataset".to_string()]
+        );
+    }
+
+    #[test]
+    fn hapi_line_carries_url_window_title_params_and_units() {
+        let body = r#"{"HAPI":"2.0","catalog":[{"id":"OMNI_HRO_1MIN","title":"OMNI 1-min HRO"}]}"#;
+        let info = r#"{"startDate":"1981-01-01T00:00:00Z","stopDate":"2026-09-30T23:59:00Z","parameters":[{"name":"Time","units":"UTC"},{"name":"BX","units":"nT"},{"name":"BY","units":"nT"},{"name":"V","units":"km/s"},{"name":"A","units":"eV"},{"name":"B","units":"keV"},{"name":"C","units":"MeV"},{"name":"D","units":"pfu"}]}"#;
+        let lines = hapi_lines_from(body, "omni", 10, |_| json::parse(info));
+        assert_eq!(lines.len(), 1);
+        assert_eq!(
+            lines[0],
+            "url https://cdaweb.gsfc.nasa.gov/hapi/data?id=OMNI_HRO_1MIN&time.min=1981-01-01T00:00:00Z&time.max=2026-09-30T23:59:00Z\ttitle: OMNI 1-min HRO\tparams: 8\tstart: 1981-01-01T00:00:00Z\tstop: 2026-09-30T23:59:00Z\tunits: UTC, nT, km/s, eV, keV, MeV"
+        );
     }
 
     #[test]
