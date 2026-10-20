@@ -9924,7 +9924,7 @@ url https://github.com/omegaflow/sources/releases/download/doi.pangaea.de/pangae
 terms CC-BY-3.0 https://creativecommons.org/licenses/by/3.0/
 origin https://doi.pangaea.de/10.1594/PANGAEA.967167?format=textfile
 format pangaea
-on earth -70.523 -8.230
+on earth -70.523 -8.230 -155
 ttl 604800
 field hydrophone_psd_db pangaea_palaoa_hydrophone_psd_db gaussian-inverse-square acoustic dB 300 0.0 0.0
 
