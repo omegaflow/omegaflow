@@ -1,0 +1,42 @@
+#!/bin/sh
+# find — Signatur suchen, Kandidaten laden, schnüffeln. Ein Aufruf statt vier.
+#
+#   bin/find "bright_t31,frp,daynight" [--engine serper|exa|searxng] [--top 3]
+#
+# Ausgabe je Kandidat: Suchzeile, dann die Sniff-Felder (Status, Größe, Format,
+# Spalten, Zeitrolle, Einheit, sha256). Der Fund ist erst ein Fund, wenn der
+# Sniffer ihn trägt.
+set -u
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+bin="$root/target/release/archive_search"
+engine="${OMEGAFLOW_FIND_ENGINE:-serper}"
+top="${OMEGAFLOW_FIND_TOP:-3}"
+query=""
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --engine) engine="${2:-serper}"; shift 2 ;;
+        --top) top="${2:-3}"; shift 2 ;;
+        *) query="$1"; shift ;;
+    esac
+done
+
+if [ -z "$query" ]; then
+    echo "find: usage: bin/find \"<signatur>\" [--engine serper|exa|searxng] [--top N]" >&2
+    exit 2
+fi
+if [ ! -x "$bin" ]; then
+    echo "find: $bin fehlt — erst bauen (cargo build --release -p omegaflow-utils --bin archive_search)" >&2
+    exit 2
+fi
+
+echo "find: engine=$engine top=$top query=$query"
+"$bin" --"$engine" "$query" 2>&1 | head -n "$top" | while IFS= read -r line; do
+    url="$(printf '%s' "$line" | sed -n 's/.*url \([^ 	]*\).*/\1/p')"
+    if [ -z "$url" ]; then
+        continue
+    fi
+    title="$(printf '%s' "$line" | sed -n 's/.*title: \([^	]*\).*/\1/p')"
+    printf '\n== %s\n   %s\n' "$url" "$title"
+    "$bin" --sniff "$url" 2>&1 | sed -n 's/^\[sniff\] /   /p' | grep -E 'status|bytes|format|delimiter|columns|time_column|unit|sha256' | head -8
+done
