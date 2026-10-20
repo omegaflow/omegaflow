@@ -180,9 +180,9 @@ fn quiet_hours(dst: &BTreeMap<i64, f64>, events: &[Event]) -> Vec<i64> {
         if v <= QUIET_DST {
             continue;
         }
-        let near = events.iter().any(|e| {
-            h >= e.onset_h - EXCLUDE_DAYS * 24 && h <= e.end_h + EXCLUDE_DAYS * 24
-        });
+        let near = events
+            .iter()
+            .any(|e| h >= e.onset_h - EXCLUDE_DAYS * 24 && h <= e.end_h + EXCLUDE_DAYS * 24);
         if !near {
             out.push(h);
         }
@@ -199,7 +199,11 @@ struct Stats {
 fn baseline(series: &BTreeMap<i64, f64>, keys: &[i64]) -> Stats {
     let mut vals: Vec<f64> = keys.iter().filter_map(|k| series.get(k).copied()).collect();
     if vals.is_empty() {
-        return Stats { mean: 0.0, sd: 0.0, n: 0 };
+        return Stats {
+            mean: 0.0,
+            sd: 0.0,
+            n: 0,
+        };
     }
     let n = vals.len();
     let mean = vals.iter().sum::<f64>() / n as f64;
@@ -231,10 +235,7 @@ fn curve_peak(rows: &[Row], idx: &[usize]) -> f64 {
     let mut best = 0.0f64;
     let mut lag = 0usize;
     while lag < (LAG_MAX - LAG_MIN + 1) as usize {
-        let mut vals: Vec<f64> = idx
-            .iter()
-            .filter_map(|&i| rows[i].values[lag])
-            .collect();
+        let mut vals: Vec<f64> = idx.iter().filter_map(|&i| rows[i].values[lag]).collect();
         if vals.is_empty() {
             lag += 1;
             continue;
@@ -248,7 +249,13 @@ fn curve_peak(rows: &[Row], idx: &[usize]) -> f64 {
     best
 }
 
-fn analyze(name: &'static str, series: &BTreeMap<i64, f64>, events: &[Event], quiet: &[i64], daily: bool) -> Option<Result> {
+fn analyze(
+    name: &'static str,
+    series: &BTreeMap<i64, f64>,
+    events: &[Event],
+    quiet: &[i64],
+    daily: bool,
+) -> Option<Result> {
     let base_keys: Vec<i64> = if daily {
         let set: BTreeSet<i64> = quiet.iter().map(|h| h.div_euclid(24)).collect();
         set.into_iter().collect()
@@ -261,11 +268,20 @@ fn analyze(name: &'static str, series: &BTreeMap<i64, f64>, events: &[Event], qu
     }
     let mut rows: Vec<Row> = Vec::new();
     for e in events {
-        let on = if daily { e.onset_h.div_euclid(24) } else { e.onset_h };
+        let on = if daily {
+            e.onset_h.div_euclid(24)
+        } else {
+            e.onset_h
+        };
         let mut values = Vec::with_capacity((LAG_MAX - LAG_MIN + 1) as usize);
         let mut present = 0usize;
         for lag in LAG_MIN..=LAG_MAX {
-            let key = on + if daily { (lag as i64).div_euclid(24) } else { lag as i64 };
+            let key = on
+                + if daily {
+                    (lag as i64).div_euclid(24)
+                } else {
+                    lag as i64
+                };
             match series.get(&key) {
                 Some(&v) => {
                     values.push(Some((v - stats.mean) / stats.sd));
@@ -285,7 +301,11 @@ fn analyze(name: &'static str, series: &BTreeMap<i64, f64>, events: &[Event], qu
     let mut med = Vec::with_capacity((LAG_MAX - LAG_MIN + 1) as usize);
     for lag in 0..(LAG_MAX - LAG_MIN + 1) as usize {
         let mut vals: Vec<f64> = rows.iter().filter_map(|r| r.values[lag]).collect();
-        med.push(if vals.is_empty() { f64::NAN } else { median(&mut vals) });
+        med.push(if vals.is_empty() {
+            f64::NAN
+        } else {
+            median(&mut vals)
+        });
     }
     let mut best = 0usize;
     for (i, v) in med.iter().enumerate() {
@@ -326,7 +346,12 @@ fn analyze(name: &'static str, series: &BTreeMap<i64, f64>, events: &[Event], qu
         for on in onsets {
             let mut values = Vec::with_capacity((LAG_MAX - LAG_MIN + 1) as usize);
             for lag in LAG_MIN..=LAG_MAX {
-                let key = on + if daily { (lag as i64).div_euclid(24) } else { lag as i64 };
+                let key = on
+                    + if daily {
+                        (lag as i64).div_euclid(24)
+                    } else {
+                        lag as i64
+                    };
                 values.push(series.get(&key).map(|&v| (v - stats.mean) / stats.sd));
             }
             null_rows.push(Row { values });
@@ -427,7 +452,10 @@ fn main() {
     println!("Window: 2014-11-02 .. 2023-12-02");
     println!("Preset threshold: Dst minimum < -50 nT (Kp substitute unused, Dst is present)");
     println!("Events: {}", events.len());
-    println!("Quiet baseline hours (Dst > -20 nT, +/-10 d around events excluded): {}", quiet.len());
+    println!(
+        "Quiet baseline hours (Dst > -20 nT, +/-10 d around events excluded): {}",
+        quiet.len()
+    );
     println!();
     println!("## Event list");
     println!();
@@ -468,7 +496,11 @@ fn main() {
             }
             series.push(("Bz", hourly_mean(bz.into_iter()), false));
             series.push(("Solar wind speed", hourly_mean(speed.into_iter()), false));
-            series.push(("Solar wind density", hourly_mean(density.into_iter()), false));
+            series.push((
+                "Solar wind density",
+                hourly_mean(density.into_iter()),
+                false,
+            ));
         } else {
             eprintln!("{omni_path}: OMNI bin parses void - solar wind absent");
         }
@@ -541,7 +573,9 @@ fn main() {
 
     println!("## Superposed Epoch (lag -24 h .. +72 h)");
     println!();
-    println!("| Thread | n events | Peak \\|z\\| | Lag [h] | Area \\|z\\| | Bootstrap 95 % | Null 95 % | over/under null |");
+    println!(
+        "| Thread | n events | Peak \\|z\\| | Lag [h] | Area \\|z\\| | Bootstrap 95 % | Null 95 % | over/under null |"
+    );
     println!("|---|---:|---:|---:|---:|---|---:|---|");
     let mut results: Vec<Result> = Vec::new();
     for (name, s, daily) in &series {
@@ -580,7 +614,9 @@ fn main() {
     println!();
     println!("## Absent");
     println!();
-    println!("- **TEC**: in the storm set 2014-11-02 .. 2023-12-02 only the native May 2024 inventory exists; absent for the window, not filled with zero.");
+    println!(
+        "- **TEC**: in the storm set 2014-11-02 .. 2023-12-02 only the native May 2024 inventory exists; absent for the window, not filled with zero."
+    );
     println!("- **Aurora (SSUSI/THEMIS)**: only May 2024 covered; absent in the storm set.");
     println!("- **Kp substitute**: not needed; Dst covers every hour of the window.");
 }

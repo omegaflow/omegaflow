@@ -1,5 +1,5 @@
-use omegaflow::callisto::{BAND_COUNT, component_name, parse_bin as parse_callisto};
 use omegaflow::archivar::radio_burst::parse_bin as parse_swpc;
+use omegaflow::callisto::{BAND_COUNT, component_name, parse_bin as parse_callisto};
 use omegaflow::lsk::days_from_civil;
 
 const DETECT_Z: f64 = 5.0;
@@ -55,7 +55,8 @@ fn parse_iso(s: &str) -> Option<f64> {
     Some((days * 86_400 + h * 3600 + mi * 60) as f64 + sec)
 }
 
-fn civil_from_days(z: i64) -> (i64, i64, i64) {    let z = z + 719468;
+fn civil_from_days(z: i64) -> (i64, i64, i64) {
+    let z = z + 719468;
     let era = if z >= 0 { z } else { z - 146096 } / 146097;
     let doe = z - era * 146097;
     let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
@@ -110,7 +111,10 @@ fn main() {
         eprintln!("no records — the validation stays unmeasured");
         std::process::exit(1);
     }
-    let first_event = events.iter().map(|e| e.t_unix).fold(f64::INFINITY, f64::min);
+    let first_event = events
+        .iter()
+        .map(|e| e.t_unix)
+        .fold(f64::INFINITY, f64::min);
     let last_event = events
         .iter()
         .map(|e| e.t_unix)
@@ -202,7 +206,9 @@ fn main() {
         }
         if peak > z_gate && n_bands >= band_min {
             match current {
-                Some((start, last)) if r.t_unix - last <= 120.0 => current = Some((start, r.t_unix)),
+                Some((start, last)) if r.t_unix - last <= 120.0 => {
+                    current = Some((start, r.t_unix))
+                }
                 Some((start, last)) => {
                     active.push((start, last));
                     current = Some((r.t_unix, r.t_unix));

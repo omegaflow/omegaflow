@@ -3,8 +3,7 @@ use omegaflow::archivar::omni2::{COMP_BZ, COMP_V1800, parse_bin as parse_omni};
 use omegaflow::callisto::{BAND_COUNT, component_name, parse_bin as parse_callisto};
 use std::collections::BTreeMap;
 
-const OMNI2_1H_CDN: &str =
-    "https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie_1h.bin";
+const OMNI2_1H_CDN: &str = "https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie_1h.bin";
 const J2000_UNIX_OFFSET: f64 = 946_728_000.0;
 const HOUR_START: f64 = 7.5;
 const HOUR_END: f64 = 13.25;
@@ -54,7 +53,6 @@ fn pearson(x: &[f64], y: &[f64]) -> Option<f64> {
 fn day_of(t: f64) -> i64 {
     (t / 86_400.0).floor() as i64
 }
-
 
 struct Rng(u64);
 impl Rng {
@@ -126,7 +124,10 @@ fn main() {
         kept_days.push(day);
     }
     if kept_days.len() < 20 {
-        eprintln!("only {} usable days — the edge stays unmeasured", kept_days.len());
+        eprintln!(
+            "only {} usable days — the edge stays unmeasured",
+            kept_days.len()
+        );
         std::process::exit(1);
     }
 

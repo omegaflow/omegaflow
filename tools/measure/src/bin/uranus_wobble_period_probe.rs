@@ -173,7 +173,7 @@ fn main() {
     );
 
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
-    let report_dir = arg_token(&args, "--report-dir").unwrap_or("zustand/reports".to_string());
+    let report_dir = arg_token(&args, "--report-dir").unwrap_or("zustand".to_string());
     let jd0 = arg_token(&args, "--jd0")
         .and_then(|s| s.parse::<f64>().ok())
         .unwrap_or(2451545.0);
@@ -203,10 +203,11 @@ fn main() {
         "uranus_c",
         &eph_dir,
     );
+    let target = std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset");
     let de = load(
         "ssd.jpl.nasa.gov",
         "ephemeris_uranus.bin",
-        "uranus",
+        &target,
         &eph_dir,
     );
 
@@ -256,7 +257,7 @@ fn main() {
                 };
                 let (Some(c), Some(b)) = (
                     body_barycenter_position("uranus_c", tdb, cm),
-                    body_barycenter_position("uranus", tdb, dm),
+                    body_barycenter_position(&target, tdb, dm),
                 ) else {
                     continue;
                 };

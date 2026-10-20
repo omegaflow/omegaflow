@@ -80,9 +80,7 @@ fn read_kp_csv(path: &str, bin_s: f64) -> BTreeMap<i64, f64> {
             continue;
         };
         if usable(v) {
-            acc.entry(bin_of(t, bin_s))
-                .or_insert(Acc::empty())
-                .add(v);
+            acc.entry(bin_of(t, bin_s)).or_insert(Acc::empty()).add(v);
         }
     }
     acc.into_iter()
@@ -420,7 +418,11 @@ fn main() {
     } else {
         bin_s
     };
-    let cond_s = if cond_arg == 0.0 { cond_default } else { cond_arg };
+    let cond_s = if cond_arg == 0.0 {
+        cond_default
+    } else {
+        cond_arg
+    };
     if !(cond_s.is_finite() && cond_s >= bin_s) {
         eprintln!("de2_conditional_te: --cond-seconds must be finite and >= --bin-seconds");
         std::process::exit(2);
@@ -476,7 +478,9 @@ fn main() {
         let earth_bin = match arg_value(&args, "--earth-bin") {
             Some(v) => v,
             None => {
-                eprintln!("de2_conditional_te: --cond lunar needs --earth-bin <ephemeris_earth.bin>");
+                eprintln!(
+                    "de2_conditional_te: --cond lunar needs --earth-bin <ephemeris_earth.bin>"
+                );
                 std::process::exit(2);
             }
         };
@@ -594,10 +598,9 @@ fn main() {
     let mut max_raw: [(f64, f64); 2] = [(f64::NEG_INFINITY, f64::NEG_INFINITY); 2];
 
     for lag in 1..=max_lag {
-        for (dir, (label, driver, target)) in
-            [("NVE->IVE", &nve, &ive), ("IVE->NVE", &ive, &nve)]
-                .into_iter()
-                .enumerate()
+        for (dir, (label, driver, target)) in [("NVE->IVE", &nve, &ive), ("IVE->NVE", &ive, &nve)]
+            .into_iter()
+            .enumerate()
         {
             let obs_cond = transfer_entropy_conditional_binned_n(driver, target, &cond, lag, bins);
             let stats_cond = conditional_te_stats_lagged_n(
@@ -697,10 +700,7 @@ mod tests {
         use std::sync::atomic::{AtomicUsize, Ordering};
         static N: AtomicUsize = AtomicUsize::new(0);
         let n = N.fetch_add(1, Ordering::SeqCst);
-        let p = std::env::temp_dir().join(format!(
-            "de2-orbit-{}-{n}.csv",
-            std::process::id()
-        ));
+        let p = std::env::temp_dir().join(format!("de2-orbit-{}-{n}.csv", std::process::id()));
         std::fs::write(
             &p,
             "1981-08-15T00:00:00.000Z,7330.0,13.0,-46.0,197.0\n\
@@ -735,9 +735,7 @@ mod tests {
     fn moon_potential_refuses_a_void_position() {
         let moon: HashMap<String, BodyEphemeris> = HashMap::new();
         let earth: HashMap<String, BodyEphemeris> = HashMap::new();
-        assert!(
-            moon_potential(0.0, 7000.0, f64::NAN, 0.0, "m", "e", &moon, &earth).is_none()
-        );
+        assert!(moon_potential(0.0, 7000.0, f64::NAN, 0.0, "m", "e", &moon, &earth).is_none());
         assert!(moon_potential(0.0, -1.0, 0.0, 0.0, "m", "e", &moon, &earth).is_none());
     }
 
@@ -752,7 +750,16 @@ mod tests {
         let (moon_name, moon) = load_ephem(&moon_bin);
         let (earth_name, earth) = load_ephem(&earth_bin);
         let t = 364_000_000.0;
-        let v = moon_potential(t, 7330.0, -46.0, 197.0, &moon_name, &earth_name, &moon, &earth);
+        let v = moon_potential(
+            t,
+            7330.0,
+            -46.0,
+            197.0,
+            &moon_name,
+            &earth_name,
+            &moon,
+            &earth,
+        );
         let Some(v) = v else {
             panic!("moon potential void with real ephemerides");
         };

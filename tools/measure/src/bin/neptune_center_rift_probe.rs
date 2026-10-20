@@ -52,8 +52,8 @@ fn main() {
     );
 
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
-    let spk_path =
-        arg_token(&args, "--spk").unwrap_or("sources/naif.jpl.nasa.gov/nep097xl-899.bsp".to_string());
+    let spk_path = arg_token(&args, "--spk")
+        .unwrap_or("sources/naif.jpl.nasa.gov/nep097xl-899.bsp".to_string());
 
     let inject: Option<Inject> = {
         let pos = args.iter().position(|a| a == "--calibrate-inject");

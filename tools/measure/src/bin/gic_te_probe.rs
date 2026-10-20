@@ -203,18 +203,13 @@ fn parse_lags(args: &[String]) -> Vec<usize> {
         .collect();
     out.sort_unstable();
     out.dedup();
-    if out.is_empty() {
-        vec![0, 1]
-    } else {
-        out
-    }
+    if out.is_empty() { vec![0, 1] } else { out }
 }
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let gic_path = arg_after(&args, "--gic").unwrap_or("/tmp/opencode/gic_te/fmi_gic.bin");
-    let omni_path = arg_after(&args, "--omni")
-        .unwrap_or("/tmp/opencode/gic_te/omni2_serie_1h.bin");
+    let omni_path = arg_after(&args, "--omni").unwrap_or("/tmp/opencode/gic_te/omni2_serie_1h.bin");
     let start = arg_after(&args, "--start")
         .and_then(day_from_iso)
         .unwrap_or(10957);
@@ -423,7 +418,9 @@ fn main() {
         .flatten()
         .map(|r| r.2)
         .filter(|v| v.is_finite())
-        .fold(None, |acc: Option<f64>, v| Some(acc.map_or(v, |m| m.max(v))));
+        .fold(None, |acc: Option<f64>, v| {
+            Some(acc.map_or(v, |m| m.max(v)))
+        });
 
     let mut rows: Vec<Row> = Vec::new();
     for (i, &(pi, li)) in jobs.iter().enumerate() {
@@ -452,7 +449,11 @@ fn main() {
     );
     println!(
         "{:<8} -> {:<8} | {:>5} | {:>12} | {:>12} | verdict",
-        "from", "to", format!("lag {unit}"), "TE", "thr"
+        "from",
+        "to",
+        format!("lag {unit}"),
+        "TE",
+        "thr"
     );
     for r in &rows {
         println!(
