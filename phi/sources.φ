@@ -31900,7 +31900,7 @@ ttl 31536000
 field pradan_ch2_cla_l1_counts pradan_ch2_cla_l1_counts inverse-square em count 31536000 0.0 0.0
 
 url https://supermag.jhuapl.edu/lib/services/?service=substorms&downloadtype=substorm_list&fmt=csv&start={start}&end={stop}&list={list}
-terms auth-required https://supermag.jhuapl.edu/lib/services/
+terms no-redistribution https://supermag.jhuapl.edu/lib/services/
 format substorm
 origin https://supermag.jhuapl.edu/lib/services/
 compiler tools/harvest/src/bin/substorm_compiler.rs
