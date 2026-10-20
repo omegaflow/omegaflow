@@ -251,43 +251,7 @@ fn main() {
             }
         }
 
-        let ttl = match field_of(&block, "ttl") {
-            Some(p) => match p.get(1) {
-                Some(v) => match parse_u64(v) {
-                    Some(n) => {
-                        if n == 0 {
-                            push(
-                                "ttl_bad",
-                                format!("{tag}\t{name}\t{v}"),
-                                true,
-                                &mut findings,
-                                &mut hard,
-                                &mut soft,
-                            );
-                            None
-                        } else {
-                            Some(n)
-                        }
-                    }
-                    None => {
-                        push(
-                            "ttl_bad",
-                            format!("{tag}\t{name}\t{v}"),
-                            true,
-                            &mut findings,
-                            &mut hard,
-                            &mut soft,
-                        );
-                        None
-                    }
-                },
-                None => None,
-            },
-            None => None,
-        };
-
         let no_cadence = field_of(&block, "no-cadence").is_some();
-        let mut max_cadence = 0.0f64;
         let mut names: BTreeSet<String> = BTreeSet::new();
 
         for line_text in &block {
@@ -349,8 +313,6 @@ fn main() {
                             &mut hard,
                             &mut soft,
                         );
-                    } else if c > max_cadence {
-                        max_cadence = c;
                     }
                 }
                 None => {
@@ -367,29 +329,6 @@ fn main() {
                         &mut soft,
                     );
                 }
-            }
-        }
-
-        if let Some(t) = ttl {
-            if !no_cadence && max_cadence > 0.0 && t <= 86400 && (t as f64) > max_cadence * 2.0 {
-                push(
-                    "ttl_above_cadence",
-                    format!("{tag}\t{name}\tttl={t}\tcadence={max_cadence}"),
-                    false,
-                    &mut findings,
-                    &mut hard,
-                    &mut soft,
-                );
-            }
-            if !no_cadence && max_cadence > 0.0 && (t as f64) < max_cadence {
-                push(
-                    "ttl_below_cadence",
-                    format!("{tag}\t{name}\tttl={t}\tcadence={max_cadence}"),
-                    true,
-                    &mut findings,
-                    &mut hard,
-                    &mut soft,
-                );
             }
         }
 
