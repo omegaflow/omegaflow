@@ -9,7 +9,7 @@ const PREFIXES: [&str; 8] = [
     "docs/",
     "phi/",
     "bin/",
-    "zustand/",
+    "state/",
     ".github/",
     "firmware/",
 ];
@@ -310,17 +310,17 @@ const CITATION_REGISTERS: [(&str, &str, bool); 6] = [
     (".secrets.local", ".secrets.local", true),
     (
         "mail_ledger.\u{3c6}",
-        "zustand/mail/mail_ledger.\u{3c6}",
+        "state/mail/mail_ledger.\u{3c6}",
         false,
     ),
     (
         "sent_ledger.\u{3c6}",
-        "zustand/mail/sent_ledger.\u{3c6}",
+        "state/mail/sent_ledger.\u{3c6}",
         false,
     ),
-    ("external-state.md", "zustand/external-state.md", false),
-    ("wartend.\u{3c6}", "zustand/wartend.\u{3c6}", false),
-    ("standing-pass.md", "zustand/standing-pass.md", false),
+    ("external-state.md", "state/external-state.md", false),
+    ("wartend.\u{3c6}", "state/wartend.\u{3c6}", false),
+    ("standing-pass.md", "state/standing-pass.md", false),
 ];
 
 fn trim_citation(token: &str) -> &str {
@@ -555,7 +555,7 @@ fn first_bold_words(line: &str) -> Vec<String> {
 }
 
 fn word_carried(root: &Path, rel: &str, content: &str) -> Vec<String> {
-    let dir = root.join("zustand/operator-gespraeche");
+    let dir = root.join("state/operator-gespraeche");
     let mut corpus: Vec<(String, usize, String)> = Vec::new();
     if let Ok(entries) = fs::read_dir(&dir) {
         for e in entries.flatten() {
@@ -690,11 +690,11 @@ mod tests {
         );
         assert_eq!(
             normalize("`state/mail/mail_ledger.φ`:").as_deref(),
-            Some("zustand/mail/mail_ledger.φ")
+            Some("state/mail/mail_ledger.φ")
         );
         assert_eq!(
-            normalize("`zustand/dropped-baseline.md`.").as_deref(),
-            Some("zustand/dropped-baseline.md")
+            normalize("`state/dropped-baseline.md`.").as_deref(),
+            Some("state/dropped-baseline.md")
         );
     }
 
@@ -795,7 +795,7 @@ mod tests {
     #[test]
     fn resolves_register_citations() {
         assert_eq!(
-            resolve_citation("zustand/.secrets.local:23").map(|c| c.0),
+            resolve_citation("state/.secrets.local:23").map(|c| c.0),
             Some(".secrets.local".to_string())
         );
         assert_eq!(
@@ -804,11 +804,11 @@ mod tests {
         );
         assert_eq!(
             resolve_citation("`state/mail/mail_ledger.\u{3c6}:191`").map(|c| c.0),
-            Some("zustand/mail/mail_ledger.\u{3c6}".to_string())
+            Some("state/mail/mail_ledger.\u{3c6}".to_string())
         );
         assert_eq!(
             resolve_citation("wartend.\u{3c6}:4.").map(|c| c.0),
-            Some("zustand/wartend.\u{3c6}".to_string())
+            Some("state/wartend.\u{3c6}".to_string())
         );
         assert!(resolve_citation("docs/paper/gic-causal-driver.md:531").is_none());
         assert!(resolve_citation("src/gate/commit_gate.rs:1804").is_none());
@@ -818,8 +818,8 @@ mod tests {
     fn flags_stale_citation_and_accepts_live_one() {
         let base = std::env::temp_dir().join(format!("opc-cite-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
-        fs::create_dir_all(base.join("zustand/mail")).unwrap();
-        fs::write(base.join("zustand/mail/mail_ledger.\u{3c6}"), "a\nb\nc\n").unwrap();
+        fs::create_dir_all(base.join("state/mail")).unwrap();
+        fs::write(base.join("state/mail/mail_ledger.\u{3c6}"), "a\nb\nc\n").unwrap();
         assert!(
             stale_citations(&base, "h.md", "siehe `state/mail/mail_ledger.\u{3c6}:2`").is_empty()
         );

@@ -62,7 +62,7 @@ fn usage() {
          xfer coverage --line <L>                             emitted vs disposed; exit 2 while any token is open\n\
          \n\
          --line falls back to OMEGAFLOW_LINE; the session id to OMEGAFLOW_SESSION, then\n\
-         zustand/active-session.φ. A missing line or session exits 2, never a fabricated id.\n\
+         state/active-session.φ. A missing line or session exits 2, never a fabricated id.\n\
          ledger: state/ledger/<line>/<sess>.log  (gitignored, append-only)"
     );
 }
@@ -179,7 +179,7 @@ fn resolve_sess_from(
             }
         }
         None => Err(
-            "no session: OMEGAFLOW_SESSION unset and zustand/active-session.φ absent".to_string(),
+            "no session: OMEGAFLOW_SESSION unset and state/active-session.φ absent".to_string(),
         ),
     }
 }

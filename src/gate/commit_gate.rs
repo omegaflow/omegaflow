@@ -1973,7 +1973,7 @@ fn check_prior_work_unread(path: &str, content: &str) -> Option<Verdict> {
 fn prior_work_unread_violations(handover: &str) -> Vec<(usize, String)> {
     let mut out = Vec::new();
     for (idx, line) in handover.lines().enumerate() {
-        if !line.contains("zustand/") {
+        if !line.contains("state/") {
             continue;
         }
         if !has_byte_size(line) {
@@ -4512,10 +4512,7 @@ mod tests {
     #[test]
     fn fp_tool_unstable_pointer_blocked() {
         let mut g = test_gate();
-        let args = tool_args(
-            "zustand/external-state.md",
-            &fx("unstable_pointer_drift"),
-        );
+        let args = tool_args("state/external-state.md", &fx("unstable_pointer_drift"));
         let v = g.check_tool_call("edit", &args).unwrap();
         assert_eq!(v.rule, "unstable-pointer");
         assert_eq!(v.severity, Severity::Hard);

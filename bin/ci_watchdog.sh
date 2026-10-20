@@ -159,7 +159,7 @@ poll_once() {
 
   # The snapshot is the watchdog's sensor buffer: a session reads this file at
   # the planning pass (no API call, no polling). The tracked CI-Status line in
-  # zustand/external-state.md (the tracked pointer) names the ledgers true
+  # state/external-state.md (the tracked pointer) names the ledgers true
   # home `state/external-state.md`; the session writes there.
   {
     printf '# CI status — %s (ci_watchdog poll, every %ss)\n' "$(date -Is)" "$POLL_S"
