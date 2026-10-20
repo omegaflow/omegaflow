@@ -94,9 +94,9 @@ pub const STATIONS: [AsiStation; 24] = [
     },
     AsiStation {
         code: "MCGR",
-        lat_deg: 62.95,
-        lon_deg: -154.42,
-        alt_m: Some(141.08),
+        lat_deg: 62.953,
+        lon_deg: -155.596,
+        alt_m: Some(115.23),
     },
     AsiStation {
         code: "NRSQ",
@@ -398,8 +398,8 @@ mod tests {
         assert_eq!(ekat.alt_m, Some(437.63));
         assert_eq!(station("ATHA").and_then(|s| s.alt_m), Some(550.22));
         assert_eq!(station("PGEO").and_then(|s| s.alt_m), Some(761.62));
-        assert_eq!(station("MCGR").and_then(|s| s.alt_m), Some(141.08));
-        assert_eq!(station("MCGR").map(|s| s.lon_deg), Some(-154.42));
+        assert_eq!(station("MCGR").and_then(|s| s.alt_m), Some(115.23));
+        assert_eq!(station("MCGR").map(|s| s.lon_deg), Some(-155.596));
         assert_eq!(station("GAKO").and_then(|s| s.alt_m), Some(601.12));
         assert_eq!(station("FYKN").and_then(|s| s.alt_m), Some(155.33));
         assert_eq!(station("SNKQ").and_then(|s| s.alt_m), Some(-28.75));
