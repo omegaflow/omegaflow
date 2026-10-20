@@ -2,7 +2,7 @@
   title: THEMIS-ASI-Stationshöhen — 24 Standorte, gemessen statt nominal
   class: survey
   date: 2026-10-20
-  sha256: 3dd76a40142fe22b3ea75a52dcd7199778ac2c0752bfc8677c316d415aee31da
+  sha256: 67118d31eadd26be10ef6d3a0779c128a865f6e226be4c461f3f29257fe302e4
   status: live
   see-also: docs/surveys/survey-2026-10-12-standort-lokalisierung-ortho-dsm.md recherche/funde/notizen/2026-10-12-themis-asi-stations.md recherche/funde/notizen/2026-10-12-calibration.md
 -->
@@ -197,6 +197,32 @@ als DSM-Fälle markiert, nicht als 1-m-DTM.
   AUGO-II-Höhe; MCGR wechselt 2017 die Koordinate; FYKN steht auf `0`.
 - **Ein DSM ist keine Stationshöhe.** Wo nur DSM vorliegt, ist die Zahl eine Obergrenze;
   sie wird hier so genannt und nicht als 1-m-DTM verkauft.
+
+## Nachtrag 2026-10-20 — was `archive_search` noch gefunden hat
+
+Die offiziellen Stationsmetadaten tragen **keine Höhe**, nur Koordinaten:
+
+- **`THEMIS_ASI_Station_List_Nov_2011.xls`** (UCLA/IGPP, H. Frey): Code, aktiv,
+  Organisation, geogr. Lat/Lon, Name, geom. Lat/Lon, Mitternacht, konjugierte
+  Koordinaten — **keine Höhenspalte**. `https://themis.igpp.ucla.edu/images/ASI/THEMIS_ASI_Station_List_Nov_2011.xls`
+- **CSA, THEMIS Technical Information**, Tabelle 1: dieselbe Tabelle, keine Höhe.
+  `https://donnees-data.asc-csa.gc.ca/.../THEMIS%20Technical%20Information.pdf`
+- **Mende et al. 2008**, Space Sci. Rev. 141, Tabelle 2: dieselbe Tabelle. Tabelle 3
+  trägt eine „altitude"-Spalte, betrifft aber nur die **EPO-Magnetometer**, nicht die ASI.
+  `https://aurora.phys.ucalgary.ca/donovan/pdfs/mende_themis_asi_ssr_2008.pdf`
+- **PGM-Kopf** (`data.phys.ucalgary.ca/.../stream0/...`): Das Feld `Geodetic altitude`
+  existiert, steht aber in **jeder** Datei auf `0.0` — Platzhalter, keine Messung.
+
+**MCGR bestätigt.** Der Kopf `20220131_0700_mcgr_themis11` schreibt
+`62.95 / -154.42`; die offizielle Liste von 2011 schreibt `62.953 / 204.404 E =
+-155.596`. Der Riss liegt im **Instrumentenkopf**, nicht in der DEM-Auswertung. Der
+Code folgt dem aktuellen Kopf; für 2013/14-Bilder gilt der Altstandort.
+
+**WHIT.** Das Orthofoto (Esri World Imagery, z17) zeigt am Punkt **Wald**; der DSM
+741,57 m ist damit Kronendach, nicht Boden. Ein DTM fehlt im Umkreis von 5.560 m.
+`None` bleibt richtig. Der nächste Weg wäre ein Bare-Earth-Modell (FABDEM) oder eine
+lokale Rodungs-/Straßenprobe — **nicht** eine weitere Stationsliste, die trägt keine
+Höhe.
 
 ## Ablage
 
