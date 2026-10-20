@@ -14,9 +14,7 @@ const OBS_ALT_M: f64 = 1810.7;
 const UNIX_JD_OFFSET: f64 = 2440587.5;
 const MAS_PER_RAD: f64 = 206_264_806.247_096_36;
 const JD_J2000: f64 = 2451545.0;
-const WGS84_A_M: f64 = 6378137.0;
-const WGS84_F: f64 = 1.0 / 298.257223563;
-const EARTH_ROT_RAD_S: f64 = 7.2921150e-5;
+
 const MIN_BIN_ROWS: usize = 8;
 const NULL_TRIALS: usize = 400;
 const RNG_SEED: u64 = 0x9E37_79B9_7F4A_7C15;
@@ -146,24 +144,46 @@ fn residual_mag(row: &Row, x: &[f64; 4]) -> Option<f64> {
     if m.is_finite() { Some(m) } else { None }
 }
 
-fn station_offset(jd_utc: f64) -> ([f64; 3], [f64; 3]) {
+fn station_offset(
+    jd_utc: f64,
+    radius_m: f64,
+    flattening: f64,
+    rotation_rad_s: f64,
+    w0_deg: f64,
+    dw_dt_deg_per_day: f64,
+) -> ([f64; 3], [f64; 3]) {
     let lr = OBS_LAT_DEG.to_radians();
     let nr = OBS_LON_DEG.to_radians();
-    let e2 = WGS84_F * (2.0 - WGS84_F);
+    let e2 = flattening * (2.0 - flattening);
     let sl = lr.sin();
-    let n = WGS84_A_M / (1.0 - e2 * sl * sl).sqrt();
+    let n = radius_m / (1.0 - e2 * sl * sl).sqrt();
     let xb = (n + OBS_ALT_M) * lr.cos() * nr.cos();
     let yb = (n + OBS_ALT_M) * lr.cos() * nr.sin();
     let zb = (n * (1.0 - e2) + OBS_ALT_M) * sl;
     let d = jd_utc - JD_J2000;
-    let t = d / 36525.0;
-    let gmst_deg =
-        280.46061837 + 360.98564736629 * d + 0.000387933 * t * t - t * t * t / 38710000.0;
-    let g = gmst_deg.to_radians();
+    let g = (w0_deg + dw_dt_deg_per_day * d).to_radians();
     let (sg, cg) = g.sin_cos();
     let pos = [xb * cg - yb * sg, xb * sg + yb * cg, zb];
-    let vel = [-pos[1] * EARTH_ROT_RAD_S, pos[0] * EARTH_ROT_RAD_S, 0.0];
+    let vel = [-pos[1] * rotation_rad_s, pos[0] * rotation_rad_s, 0.0];
     (pos, vel)
+}
+
+fn station_offset_from_map(
+    map: &HashMap<String, BodyEphemeris>,
+    jd_utc: f64,
+) -> Option<([f64; 3], [f64; 3])> {
+    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
+    let props = map.get(&receiver)?.props.as_ref()?;
+    let flattening = props.flattening?;
+    let rotation = props.omega_g.map(|(w, _)| w)?;
+    Some(station_offset(
+        jd_utc,
+        props.radius_m,
+        flattening,
+        rotation,
+        props.w0_deg,
+        props.dw_dt_deg_per_day,
+    ))
 }
 
 fn ensure_bin(path: &str, netloc: &str, asset: &str) -> Option<Vec<u8>> {
@@ -286,7 +306,12 @@ fn load_line(
     eph_dir: &str,
 ) -> Line {
     let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
-    for (name, asset) in [("earth", earth_asset), ("uranus", uranus_asset)] {
+    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
+    let target = std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset");
+    for (name, asset) in [
+        (receiver.as_str(), earth_asset),
+        (target.as_str(), uranus_asset),
+    ] {
         let path = format!("{eph_dir}/{netloc}/{asset}");
         let Some(bytes) = ensure_bin(&path, netloc, asset) else {
             println!(
@@ -361,7 +386,7 @@ fn main() {
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
     let spk_dir = arg_token(&args, "--spk-dir").unwrap_or("data/naif.jpl.nasa.gov".to_string());
     let spk_name = arg_token(&args, "--spk").unwrap_or("ura111.bsp".to_string());
-    let report_dir = arg_token(&args, "--report-dir").unwrap_or("zustand/reports".to_string());
+    let report_dir = arg_token(&args, "--report-dir").unwrap_or("zustand".to_string());
 
     let inject: Option<Inject> = {
         let pos = args.iter().position(|a| a == "--calibrate-inject");
@@ -494,7 +519,11 @@ fn main() {
                         }
                     }
                 }
-                let bary = body_barycenter_position("uranus", t, map)?;
+                let bary = body_barycenter_position(
+                    &std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset"),
+                    t,
+                    map,
+                )?;
                 let rel = spk.state(799, 7, t).ok()?;
                 Some([
                     bary[0] + rel[0] * 1000.0,
@@ -502,7 +531,11 @@ fn main() {
                     bary[2] + rel[2] * 1000.0,
                 ])
             };
-            let Some(geocenter) = body_barycenter_position("earth", tdb, map) else {
+            let Some(geocenter) = body_barycenter_position(
+                &std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset"),
+                tdb,
+                map,
+            ) else {
                 rows.push(None);
                 continue;
             };
@@ -514,7 +547,10 @@ fn main() {
                 rows.push(None);
                 continue;
             };
-            let (off, v_rot) = station_offset(o.jd_utc);
+            let Some((off, v_rot)) = station_offset_from_map(map, o.jd_utc) else {
+                rows.push(None);
+                continue;
+            };
             let sta = [
                 geocenter[0] + off[0],
                 geocenter[1] + off[1],

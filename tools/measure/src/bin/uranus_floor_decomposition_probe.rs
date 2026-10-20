@@ -14,9 +14,6 @@ const OBS_ALT_M: f64 = 1810.7;
 const UNIX_JD_OFFSET: f64 = 2440587.5;
 const MAS_PER_RAD: f64 = 206_264_806.247_096_36;
 const JD_J2000: f64 = 2451545.0;
-const WGS84_A_M: f64 = 6378137.0;
-const WGS84_F: f64 = 1.0 / 298.257223563;
-const EARTH_ROT_RAD_S: f64 = 7.2921150e-5;
 const NIGHT_GAP_D: f64 = 0.1;
 
 const SATELLITES: [(&str, i32); 5] = [
@@ -27,23 +24,30 @@ const SATELLITES: [(&str, i32); 5] = [
     ("miran_j", 705),
 ];
 
-fn station_offset(jd_utc: f64, lat_deg: f64, lon_deg: f64, alt_m: f64) -> ([f64; 3], [f64; 3]) {
+fn station_offset(
+    jd_utc: f64,
+    lat_deg: f64,
+    lon_deg: f64,
+    alt_m: f64,
+    radius_m: f64,
+    flattening: f64,
+    rotation_rad_s: f64,
+    w0_deg: f64,
+    dw_dt_deg_per_day: f64,
+) -> ([f64; 3], [f64; 3]) {
     let lr = lat_deg.to_radians();
     let nr = lon_deg.to_radians();
-    let e2 = WGS84_F * (2.0 - WGS84_F);
+    let e2 = flattening * (2.0 - flattening);
     let sl = lr.sin();
-    let n = WGS84_A_M / (1.0 - e2 * sl * sl).sqrt();
+    let n = radius_m / (1.0 - e2 * sl * sl).sqrt();
     let xb = (n + alt_m) * lr.cos() * nr.cos();
     let yb = (n + alt_m) * lr.cos() * nr.sin();
     let zb = (n * (1.0 - e2) + alt_m) * sl;
     let d = jd_utc - JD_J2000;
-    let t = d / 36525.0;
-    let gmst_deg =
-        280.46061837 + 360.98564736629 * d + 0.000387933 * t * t - t * t * t / 38710000.0;
-    let g = gmst_deg.to_radians();
+    let g = (w0_deg + dw_dt_deg_per_day * d).to_radians();
     let (sg, cg) = g.sin_cos();
     let pos = [xb * cg - yb * sg, xb * sg + yb * cg, zb];
-    let vel = [-pos[1] * EARTH_ROT_RAD_S, pos[0] * EARTH_ROT_RAD_S, 0.0];
+    let vel = [-pos[1] * rotation_rad_s, pos[0] * rotation_rad_s, 0.0];
     (pos, vel)
 }
 
@@ -334,7 +338,7 @@ fn sat_worldline(
     planet_map: &HashMap<String, BodyEphemeris>,
     t: f64,
 ) -> Option<[f64; 3]> {
-    let bary = body_barycenter_position("uranus", t, planet_map)?;
+    let bary = body_barycenter_position(&target_body(), t, planet_map)?;
     let rel = spk.state(sat.id, 7, t).ok()?;
     Some([
         bary[0] + rel[0] * 1000.0,
@@ -351,7 +355,10 @@ fn load_line(
     eph_dir: &str,
 ) -> Line {
     let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
-    for (name, asset) in [("earth", earth_asset), ("uranus", uranus_asset)] {
+    for (name, asset) in [
+        (receiver_body(), earth_asset),
+        (target_body(), uranus_asset),
+    ] {
         let path = format!("{eph_dir}/{netloc}/{asset}");
         let Some(bytes) = ensure_bin(&path, netloc, asset) else {
             println!(
@@ -461,7 +468,7 @@ fn night_split(rows: &[EpochRow], x: &[f64; 5]) -> Option<NightStats> {
     let ids = night_groups(rows);
     let n_groups = match ids.iter().max() {
         Some(m) => m + 1,
-        None => 0,
+        None => return None,
     };
     let mut sum_ra = vec![0.0; n_groups];
     let mut sum_dec = vec![0.0; n_groups];
@@ -535,6 +542,14 @@ fn dcr_amp(rows: &[EpochRow], x: &[f64; 5]) -> Option<f64> {
     if r.is_finite() { Some(r) } else { None }
 }
 
+fn target_body() -> String {
+    std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset")
+}
+
+fn receiver_body() -> String {
+    std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset")
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     println!(
@@ -546,7 +561,7 @@ fn main() {
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
     let spk_dir = arg_token(&args, "--spk-dir").unwrap_or("data/naif.jpl.nasa.gov".to_string());
     let spk_name = arg_token(&args, "--spk").unwrap_or("ura111.bsp".to_string());
-    let report_dir = arg_token(&args, "--report-dir").unwrap_or("zustand/reports".to_string());
+    let report_dir = arg_token(&args, "--report-dir").unwrap_or("state/reports".to_string());
 
     let Some(lsk) = embedded_lsk() else {
         eprintln!(
@@ -637,7 +652,20 @@ fn main() {
                 let Some(tdb) = lsk.unix_to_tdb(unix) else {
                     continue;
                 };
-                let Some(geocenter) = body_barycenter_position("earth", tdb, map) else {
+                let receiver = receiver_body();
+                let Some(geocenter) = body_barycenter_position(&receiver, tdb, map) else {
+                    skip_geo += 1;
+                    continue;
+                };
+                let Some(props) = map.get(&receiver).and_then(|e| e.props.as_ref()) else {
+                    skip_geo += 1;
+                    continue;
+                };
+                let Some(flattening) = props.flattening else {
+                    skip_geo += 1;
+                    continue;
+                };
+                let Some(rotation_rad_s) = props.omega_g.map(|(w, _)| w) else {
                     skip_geo += 1;
                     continue;
                 };
@@ -651,7 +679,17 @@ fn main() {
                     skip_fold += 1;
                     continue;
                 };
-                let (off, v_rot) = station_offset(o.jd_utc, OBS_LAT_DEG, OBS_LON_DEG, OBS_ALT_M);
+                let (off, v_rot) = station_offset(
+                    o.jd_utc,
+                    OBS_LAT_DEG,
+                    OBS_LON_DEG,
+                    OBS_ALT_M,
+                    props.radius_m,
+                    flattening,
+                    rotation_rad_s,
+                    props.w0_deg,
+                    props.dw_dt_deg_per_day,
+                );
                 let sta = [
                     geocenter[0] + off[0],
                     geocenter[1] + off[1],
