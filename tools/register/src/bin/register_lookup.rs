@@ -1893,10 +1893,12 @@ fn handover_roots(root: &Path, with_archiv: bool) -> Vec<std::path::PathBuf> {
         out.push(root.join(dir));
     }
     out.push(root.join(PRIVATE_HANDOVER_DIR));
-    if let Some(work) = work_handover_root() {
-        out.push(work.clone());
-        if with_archiv {
-            out.push(work.join("archiv"));
+    if !cfg!(test) {
+        if let Some(work) = work_handover_root() {
+            out.push(work.clone());
+            if with_archiv {
+                out.push(work.join("archiv"));
+            }
         }
     }
     out
@@ -3679,7 +3681,7 @@ fn anchored_token_at(entry: &str, i: usize) -> Option<String> {
             break;
         }
     }
-    let tok = &entry[i..j];
+    let tok = entry[i..j].trim_end_matches('.');
     let rest = tok.strip_prefix("xfer:")?;
     let (left, h8) = rest.split_once('~')?;
     if h8.len() != 8 || !h8.bytes().all(|b| b.is_ascii_hexdigit()) {
@@ -3752,7 +3754,16 @@ fn section_text(text: &str, prefix: &str) -> Option<String> {
     let mut out = String::new();
     for line in text.lines() {
         let trimmed = line.trim_start();
-        if let Some(heading) = trimmed.strip_prefix("## ") {
+        let heading = if let Some(h) = trimmed.strip_prefix("## ") {
+            Some(h)
+        } else if trimmed.starts_with("**") {
+            // Older handovers carry the section marker as a bold line
+            // (`**Offen:**`), not as an `##` heading. Both name the same section.
+            trimmed[2..].split_once("**").map(|(h, _)| h)
+        } else {
+            None
+        };
+        if let Some(heading) = heading {
             if inside {
                 break;
             }
@@ -3778,6 +3789,28 @@ fn echo_sections(text: &str) -> String {
         }
     }
     out
+}
+
+fn token_echoed_in(echo: &str, token: &str) -> bool {
+    if echo.contains(token) {
+        return true;
+    }
+    let Some(rest) = token.strip_prefix("xfer:") else {
+        return false;
+    };
+    let Some((left, h8)) = rest.rsplit_once('~') else {
+        return false;
+    };
+    let Some((_, idx)) = left.rsplit_once('.') else {
+        return false;
+    };
+    let needle = format!("{idx}~{h8}");
+    echo.match_indices(&needle).any(|(pos, _)| {
+        let before = echo[..pos].chars().next_back();
+        let after = echo[pos + needle.len()..].chars().next();
+        !before.is_some_and(|c| c.is_ascii_hexdigit())
+            && !after.is_some_and(|c| c.is_ascii_hexdigit())
+    })
 }
 
 fn zustand_root(root: &Path) -> PathBuf {
@@ -3844,7 +3877,8 @@ fn owner_has_echo(root: &Path, owner_line: &str, token: &str) -> bool {
     let Some(list) = handovers.get(owner) else {
         return false;
     };
-    list.iter().any(|h| echo_sections(&h.text).contains(token))
+    list.iter()
+        .any(|h| token_echoed_in(&echo_sections(&h.text), token))
 }
 
 fn block_manifest(block: &str) -> Option<(usize, String)> {
@@ -4142,6 +4176,9 @@ fn noecho_report(root: &Path) -> Vec<String> {
         }
         seen.push(event.token.clone());
         if owner_has_echo(root, &event.to, &event.token) {
+            continue;
+        }
+        if ledger_disposed(root, &event.token) {
             continue;
         }
         if sender_carries(root, &event.sender, &event.token) {
@@ -4585,6 +4622,20 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn iso_days_ago(days: i64) -> String {
+        let z = today_days().expect("clock") - days + 719468;
+        let era = if z >= 0 { z } else { z - 146096 } / 146097;
+        let doe = z - era * 146097;
+        let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+        let y = yoe + era * 400;
+        let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+        let mp = (5 * doy + 2) / 153;
+        let d = doy - (153 * mp + 2) / 5 + 1;
+        let m = if mp < 10 { mp + 3 } else { mp - 9 };
+        let y = if m <= 2 { y + 1 } else { y };
+        format!("{y:04}-{m:02}-{d:02}")
+    }
 
     #[test]
     fn compilers_block_parsing_reads_fields() {
@@ -5712,7 +5763,10 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         let base = env::temp_dir().join(format!("rl-fired-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        let body = "# h\n\n## Offen\n\n### vergangen\n- **Status:** wartend\n- **Trigger:** 2024-01-01\n\n### zukunft\n- **Status:** termin\n- **Trigger:** 2999-01-01\n\n### wort-punkt\n- **Status:** operator-gebunden\n- **Trigger:** Wort: /consent\n";
+        let body = format!(
+            "# h\n\n## Offen\n\n### vergangen\n- **Status:** wartend\n- **Trigger:** {}\n\n### zukunft\n- **Status:** termin\n- **Trigger:** 2999-01-01\n\n### wort-punkt\n- **Status:** operator-gebunden\n- **Trigger:** Wort: /consent\n",
+            iso_days_ago(30)
+        );
         fs::write(
             base.join("docs/handover/handover-2026-09-25-mountain-folge9.md"),
             body,
@@ -5720,7 +5774,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         .unwrap();
         let handovers = collect_live_handovers_in(&base);
         let head = "a".repeat(40);
-        let (out, fired) = fired_points(&handovers, None, Some(20000), Some(head.as_str()));
+        let (out, fired) = fired_points(&handovers, None, today_days(), Some(head.as_str()));
         assert!(
             out.iter()
                 .any(|l| l.starts_with("FIRED\t") && l.contains("vergangen")),
@@ -5751,7 +5805,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         .unwrap();
         let handovers = collect_live_handovers_in(&base);
         let head = "a".repeat(40);
-        let (out, _fired) = fired_points(&handovers, None, Some(20000), Some(head.as_str()));
+        let (out, _fired) = fired_points(&handovers, None, today_days(), Some(head.as_str()));
         assert!(!out.iter().any(|l| l.contains("warte-mail")), "{:?}", out);
         assert!(out.iter().any(|l| l.contains("mail-antwort")), "{:?}", out);
         assert!(out.iter().any(|l| l.contains("ci-lauf")), "{:?}", out);
@@ -5763,7 +5817,10 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         let base = env::temp_dir().join(format!("rl-fired-stamp-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        let body = "# h\n\n## Offen\n\n- **ox64-m2c** (wartend) \u{2014} Trigger Zustellung LZ473049629CN; measured 2024-09-28; ETA 2024-10-20.\n\n- **enso-cut** (wartend) | (measured 2024-09-28) state/wartend.\u{3c6}:23.\n\n- **enso-zuschnitt** (wartend) (gemessen 2024-09-28) \u{2014} no render carries a status line.\n\n- **inline-trigger** (termin) \u{2014} *Trigger:* 2024-09-01.\n";
+        let past = iso_days_ago(30);
+        let body = format!(
+            "# h\n\n## Offen\n\n- **ox64-m2c** (wartend) \u{2014} Trigger Zustellung LZ473049629CN; measured {past}; ETA {past}.\n\n- **enso-cut** (wartend) | (measured {past}) state/wartend.\u{3c6}:23.\n\n- **enso-zuschnitt** (wartend) (gemessen {past}) \u{2014} no render carries a status line.\n\n- **inline-trigger** (termin) \u{2014} *Trigger:* {past}.\n"
+        );
         fs::write(
             base.join("docs/handover/handover-2026-09-29-mountain-folge9.md"),
             body,
@@ -5771,7 +5828,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         .unwrap();
         let handovers = collect_live_handovers_in(&base);
         let head = "a".repeat(40);
-        let (out, fired) = fired_points(&handovers, None, Some(20000), Some(head.as_str()));
+        let (out, fired) = fired_points(&handovers, None, today_days(), Some(head.as_str()));
         assert!(
             !out.iter().any(|l| l.contains("ox64-m2c")),
             "a Lage measurement stamp must not fire: {:?}",
@@ -5802,7 +5859,10 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         let base = env::temp_dir().join(format!("rl-fired-block-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        let body = "# h\n\n## Offen\n\n### kein-trigger-feld\n- **Status:** wartend\n- **Lage:** (gemessen 2024-09-28) Trigger weder best\u{e4}tigt noch ausgeschlossen.\n\n### trigger-ohne-datum\n- **Status:** wartend\n- **Trigger:** Zustellung LZ473049629CN.\n- **Lage:** (gemessen 2024-09-28) kein Render.\n\n### vergangen\n- **Status:** termin\n- **Trigger:** 2024-09-01.\n";
+        let past = iso_days_ago(30);
+        let body = format!(
+            "# h\n\n## Offen\n\n### kein-trigger-feld\n- **Status:** wartend\n- **Lage:** (gemessen {past}) Trigger weder best\u{e4}tigt noch ausgeschlossen.\n\n### trigger-ohne-datum\n- **Status:** wartend\n- **Trigger:** Zustellung LZ473049629CN.\n- **Lage:** (gemessen {past}) kein Render.\n\n### vergangen\n- **Status:** termin\n- **Trigger:** {past}.\n"
+        );
         fs::write(
             base.join("docs/handover/handover-2026-09-29-mountain-folge9.md"),
             body,
@@ -5810,7 +5870,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         .unwrap();
         let handovers = collect_live_handovers_in(&base);
         let head = "a".repeat(40);
-        let (out, fired) = fired_points(&handovers, None, Some(20000), Some(head.as_str()));
+        let (out, fired) = fired_points(&handovers, None, today_days(), Some(head.as_str()));
         assert!(
             !out.iter().any(|l| l.contains("kein-trigger-feld")),
             "a Lage line carrying the word Trigger but no Trigger field must not fire: {:?}",
@@ -5836,7 +5896,10 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         let base = env::temp_dir().join(format!("rl-fired-inline-{}", std::process::id()));
         let _ = fs::remove_dir_all(&base);
         fs::create_dir_all(base.join("docs/handover")).unwrap();
-        let body = "# h\n\n## Offen\n\n- **paused-doctrine** \u{2014} carrier is the pause itself. *Braucht:* operator word.\n- **dated-b** \u{2014} *Status:* termin | *Trigger:* 2024-01-01.\n- **inline-lage** \u{2014} *Status:* wartend | *Bindung:* eigen | *Trigger:* hardware. *Lage:* unmeasured, absent (gemessen 2024-09-28); Wort: kein Mess-Akt jetzt.\n- **filename-trigger** \u{2014} *Status:* wartend | *Trigger:* published in `docs/paper/x-2024-09-03.md`.\n";
+        let past = iso_days_ago(30);
+        let body = format!(
+            "# h\n\n## Offen\n\n- **paused-doctrine** \u{2014} carrier is the pause itself. *Braucht:* operator word.\n- **dated-b** \u{2014} *Status:* termin | *Trigger:* {past}.\n- **inline-lage** \u{2014} *Status:* wartend | *Bindung:* eigen | *Trigger:* hardware. *Lage:* unmeasured, absent (gemessen {past}); Wort: kein Mess-Akt jetzt.\n- **filename-trigger** \u{2014} *Status:* wartend | *Trigger:* published in `docs/paper/x-{past}.md`.\n"
+        );
         fs::write(
             base.join("docs/handover/handover-2026-09-29-mountain-folge9.md"),
             body,
@@ -5844,7 +5907,7 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
         .unwrap();
         let handovers = collect_live_handovers_in(&base);
         let head = "a".repeat(40);
-        let (out, fired) = fired_points(&handovers, None, Some(20000), Some(head.as_str()));
+        let (out, fired) = fired_points(&handovers, None, today_days(), Some(head.as_str()));
         assert!(
             !out.iter().any(|l| l.contains("paused-doctrine")),
             "a sibling bullet must not inherit the next point's status/trigger: {:?}",
@@ -6115,6 +6178,67 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
             report
                 .iter()
                 .any(|l| l.starts_with("XFER\txfer:river-196-4\tunbeglichen")),
+            "{:?}",
+            report
+        );
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn bold_offen_marker_is_a_section() {
+        let base = env::temp_dir().join(format!("rl-bold-offen-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-10-19-future-folge1.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n**Offen:**\n- **mycelium .4** · `xfer:…4~a4de4b8f` · offen.\n\n**Übersicht:**\n- kein weiterer Punkt.\n",
+        )
+        .unwrap();
+        let text = fs::read_to_string(
+            base.join("docs/handover/handover-2026-10-19-future-folge1.md"),
+        )
+        .unwrap();
+        let echo = echo_sections(&text);
+        assert!(echo.contains("4~a4de4b8f"), "{echo:?}");
+        assert!(!echo.contains("kein weiterer Punkt"), "{echo:?}");
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn abbreviated_offen_echo_matches_index_and_hash() {
+        let base = env::temp_dir().join(format!("rl-abbrev-echo-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-10-20-mountain-folge327.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## An future\n\n- **entry** carries `xfer:future.ses_x.4~a4de4b8f`.\n",
+        )
+        .unwrap();
+        fs::write(
+            base.join("docs/handover/handover-2026-10-19-future-folge1.md"),
+            "<!--\n  class: handover\n  status: live\n-->\n# H\n\n## Offen\n\n- **mycelium .4** · `xfer:…4~a4de4b8f` · offen.\n",
+        )
+        .unwrap();
+        assert!(owner_has_echo(
+            &base,
+            "future",
+            "xfer:future.ses_x.4~a4de4b8f"
+        ));
+        assert!(!owner_has_echo(
+            &base,
+            "future",
+            "xfer:future.ses_x.5~a4de4b8f"
+        ));
+        assert!(!owner_has_echo(
+            &base,
+            "future",
+            "xfer:future.ses_x.4~deadbeef"
+        ));
+        let report = addressed_report_inner(&base, "future", true);
+        assert!(
+            report
+                .iter()
+                .any(|l| l.starts_with("XFER\txfer:future.ses_x.4~a4de4b8f\techoed")),
             "{:?}",
             report
         );
