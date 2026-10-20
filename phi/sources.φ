@@ -23,6 +23,7 @@ field values.2.values usgs_geomag_frd_z_nt inverse-square em nT 60 0.0 0.0
 
 url https://meeo-s5p.s3.amazonaws.com/?list-type=2&prefix=OFFL/L2__O3_TCL/&max-keys=100
 terms Copernicus https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice
+origin https://meeo-s5p.s3.amazonaws.com/?list-type=2&prefix=OFFL/L2__O3_TCL/
 ttl 0
 status vorschlag
 at earth
@@ -11399,6 +11400,7 @@ compiler tools/harvest/src/bin/superdarn_compiler.rs
 format superdarn_fitacf
 at earth
 ttl 604800
+field superdarn_fitacf_los_velocity_ms superdarn_fitacf_los_velocity_ms inverse-square advective m/s 600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/themis.ssl.berkeley.edu/themis_asi.bin
 terms free-open https://themis.ssl.berkeley.edu/roadrules.shtml
@@ -11588,7 +11590,7 @@ origin https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL_ver2/text_ver/
 format soho_lasco_cme
 compiler tools/harvest/src/bin/soho_lasco_compiler.rs
 at sun
-ttl 2592000
+ttl 86400
 field soho_lasco_cme_speed_kms soho_lasco_cme_speed_kms patch-levy advective km/s 2592000 0.0 0.0
 quantity soho_lasco_cme_width_deg soho_lasco_cme_width_deg patch-levy geometry deg 2592000 0.0 0.0
 quantity soho_lasco_cme_pa_deg soho_lasco_cme_pa_deg patch-levy geometry deg 2592000 0.0 0.0
