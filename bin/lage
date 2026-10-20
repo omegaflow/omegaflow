@@ -54,7 +54,7 @@ done)
     echo "- Guthaben (USD):"
     echo "$balance"
   fi
-  echo "- Rat-Sitze: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/_rat-anweisung.md\` (Leiter; 17.10.-Tabelle überholt)"
+  echo "- Rat-Sitze: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/_rat-register.md\` (Index; die 17.10.-Anweisung ist nicht mehr geführt)"
   echo
   echo "## Offen je Linie (Handover)"
   if [ -n "$line_rows" ]; then
