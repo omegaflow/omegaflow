@@ -2,7 +2,7 @@
   title: Vier keyless Routen als Register-Vorschlag (2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: cbb87b12692849fe369bfe15ba2a0dc95e4d9cfcccfa8f1a762de7e091c79cbe
+  sha256: 10f10f992517747fd2407359e447fda37969bdf1c146374431bb81a0b54e168d
   status: done
   see-also: phi/sources.φ
 -->
@@ -31,7 +31,7 @@ verifiziert, nicht dupliziert.
 
 `https://cdaweb.gsfc.nasa.gov/hapi/info?id=DSCOVR_H0_MAG` → **200**, 1.278 B,
 `startDate 2015-06-08T00:00:00Z`, `stopDate 2026-09-13T23:59:59Z`.
-Parameter: `Time`, `B1F1` (nT), `B1SDGSE`, `B1GSE` (nT, size 3), `B1SDGSE`,
+Parameter: `Time`, `B1F1` (nT), `B1SDF1`, `B1GSE` (nT, size 3), `B1SDGSE`,
 `B1RTN`, `B1SDRTN`, `FLAG1`.
 
 Datenprobe `time.min=2026-09-13T12:00:00Z&time.max=2026-09-13T12:00:59Z` →
