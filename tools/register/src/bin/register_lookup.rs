@@ -926,10 +926,52 @@ fn orphan_docs(root: &Path) -> Vec<String> {
     out
 }
 
-fn run_orphan_docs(root: &Path) {
+fn orphan_baseline_paths(text: &str) -> BTreeSet<String> {
+    text.lines()
+        .filter_map(|line| line.strip_prefix("ORPHAN_DOC\t"))
+        .filter_map(|rest| rest.split('\t').next())
+        .filter(|path| !path.is_empty())
+        .map(str::to_string)
+        .collect()
+}
+
+fn run_orphan_docs(root: &Path, args: &[String]) {
     let lines = orphan_docs(root);
     for line in &lines {
         println!("{}", line);
+    }
+    if let Some(path) = mode_line_filter(args, "--baseline") {
+        let text = match fs::read_to_string(path) {
+            Ok(text) => text,
+            Err(_) => {
+                eprintln!("register_lookup --orphan-docs: baseline {path} absent");
+                std::process::exit(2);
+            }
+        };
+        let baseline = orphan_baseline_paths(&text);
+        let current: BTreeSet<String> = lines
+            .iter()
+            .filter_map(|line| line.strip_prefix("ORPHAN_DOC\t"))
+            .filter_map(|rest| rest.split('\t').next())
+            .map(str::to_string)
+            .collect();
+        let (lost, new) = roster_diff(&baseline, &current);
+        for path in &lost {
+            println!("LOST\t{path}");
+        }
+        for path in &new {
+            println!("NEW\t{path}");
+        }
+        println!(
+            "register_lookup --orphan-docs --baseline: {} lost, {} new, {} live",
+            lost.len(),
+            new.len(),
+            lines.len()
+        );
+        if !lost.is_empty() {
+            std::process::exit(1);
+        }
+        return;
     }
     println!(
         "register_lookup --orphan-docs: {} orphan documents carry open markers and no live handover carrier",
@@ -3555,7 +3597,7 @@ fn run_descoped_check(_args: &[String]) {
 
 fn print_usage() -> ! {
     eprintln!(
-        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged; its `orphan` integer is the --orphan-docs set, one counter for one fact)\n       register_lookup --dropped [<line>] [--persist <n>] [--count] [--changed-since <sha>]   (open points of handover N absent from handover N+1 with no resolving commit in between; two measurements are kept apart: absence (NO-WITNESS) and the missing resolving commit (UNMEASURED = no distinctive token at all); --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved and unmeasured points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line; --dropped-unmeasured prints the absent points that carry no distinctive token, one per line; --changed-since <sha> restricts the pairs to handovers changed in the range <sha>..HEAD and the witness log to that range — the diff-scoped CI gate)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers or `status: draft` that no live handover carries; a Beleg/Braucht mention is not a carrier: ORPHAN_DOC <path> <markers>)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; a block whose every token carries a durable CLOSED/FOLDED ledger event is no longer addressed and is not listed; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --tokens [--fail] [--noecho-fail]   (per entry of every `## An <line>` transport block: XFER `<tok>` echoed|unbeglichen against the owner line's `## Offen` token echo OR a durable FOLDED/CLOSED ledger event, XFER-MANIFEST ok|open for a block carrying `[manifest n=<N> root=<h8>]`, XFER-MISSING for an entry without a token, XFER-NOECHO for a sender that dropped its block without an echo; --fail exits 2 on any unbeglichen/MISSING/MANIFEST-open/NOECHO, --noecho-fail only on MISSING/NOECHO — the CI-runtime gate)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
+        "usage: register_lookup <term>...   (queries the live register: is X already measured/registered?)\n       register_lookup --open            (digest: open points across all live prose documents + the disposition register, owner-tagged; its `orphan` integer is the --orphan-docs set, one counter for one fact)\n       register_lookup --dropped [<line>] [--persist <n>] [--count] [--changed-since <sha>]   (open points of handover N absent from handover N+1 with no resolving commit in between; two measurements are kept apart: absence (NO-WITNESS) and the missing resolving commit (UNMEASURED = no distinctive token at all); --persist <n> reports only points present in at least n consecutive handovers, default 1; --count prints the dropped integer net of commit-resolved and unmeasured points; --dropped-keys prints the canonical point-keys of the unresolved drops, one per line; --dropped-unmeasured prints the absent points that carry no distinctive token, one per line; --changed-since <sha> restricts the pairs to handovers changed in the range <sha>..HEAD and the witness log to that range — the diff-scoped CI gate)\n       register_lookup --dropped-roster [--count] [--public-only] [--baseline <datei>]   (the canonical point-key roster of the live handovers — the set form of --dropped; --count prints the distinct-key integer; --public-only skips the private handover dir so the set matches CI; --baseline compares against a stored roster and prints LOST/NEW, with --count printing the LOST integer)\n       register_lookup --orphans [--owner <line>] [--fail]   (owner-tagged open register entries no live handover of that owner names: ORPHAN_COMMITTED (in HEAD) or ORPHAN_UNCOMMITTED (working tree only); --owner restricts to one line; --fail exits 2 when the orphan count is > 0)\n       register_lookup --orphan-docs [--baseline <datei>]      (live prose documents under docs/{{surveys,specs,auftrag,blatt,concepts,paper}} carrying open markers or `status: draft` that no live handover carries; a Beleg/Braucht mention is not a carrier: ORPHAN_DOC <path> <markers>; --baseline compares the live set against a checked-in snapshot and prints LOST/NEW, exiting 1 on LOST — shrinking is committed by lowering the snapshot in the same commit)\n       register_lookup --addressed <line> [--fail]   (the `## An <line>` blocks addressed to the own line across the live handovers, sender-named; a block whose every token carries a durable CLOSED/FOLDED ledger event is no longer addressed and is not listed; never a full foreign-handover read; --fail exits 2 when an addressed block stands unbeglichen)\n       register_lookup --tokens [--fail] [--noecho-fail]   (per entry of every `## An <line>` transport block: XFER `<tok>` echoed|unbeglichen against the owner line's `## Offen` token echo OR a durable FOLDED/CLOSED ledger event, XFER-MANIFEST ok|open for a block carrying `[manifest n=<N> root=<h8>]`, XFER-MISSING for an entry without a token, XFER-NOECHO for a sender that dropped its block without an echo; --fail exits 2 on any unbeglichen/MISSING/MANIFEST-open/NOECHO, --noecho-fail only on MISSING/NOECHO — the CI-runtime gate)\n       register_lookup --stale [<line>] [--persist <n>]   (a point key present across n consecutive live handovers with an identical Lage line: STALE <line> <n> <key>; default n = 3)\n       register_lookup --fired [<line>]   (open points whose trigger is measured as arrived: an ISO date within the last year and <= today, a HEAD/sha reference != HEAD, a Wort: trigger (FIRED_MANUAL), or a ci/mail/run/lauf source token (FIRED_UNGEMESSEN))\n       register_lookup --descoped-check   (descoped handover points whose Quelle document still carries an explicit open-work marker — a `## ...offen...` heading not marked `gekl...`, `naechster Schritt`, `TODO`, `- [ ]`, or `- **Braucht:**`: descoped-widerlegt <path> <markers>)\n       register_lookup --history [--legacy <path>] [<term>]   (open points in archived + deleted documents; <term> adds git log -S over rewritten files)"
     );
     eprintln!(
         "       register_lookup --compilers   (one line per phi/sources.φ block carrying a compiler: <binary> | <format> | <source-url> | at <anchor>, then a domain/count summary over the format prefix)\n       register_lookup --compilers --no-directive   (tree compilers tools/*/src/bin/*_compiler.rs without a compiler directive: classified by measured channel workflow|register:<file>|variant|pending|unregistered)"
@@ -3738,9 +3780,29 @@ fn echo_sections(text: &str) -> String {
     out
 }
 
+fn zustand_root(root: &Path) -> PathBuf {
+    if let Ok(z) = env::var("OMEGAFLOW_ZUSTAND") {
+        if !z.trim().is_empty() {
+            return PathBuf::from(z);
+        }
+    }
+    if let Ok(w) = env::var("OMEGAFLOW_WORK") {
+        if !w.trim().is_empty() {
+            return PathBuf::from(w).join("zustand");
+        }
+    }
+    if let Ok(h) = env::var("HOME") {
+        let p = Path::new(&h).join("projects/omegaflow-work/zustand");
+        if p.is_dir() {
+            return p;
+        }
+    }
+    root.join("zustand")
+}
+
 fn ledger_disposed(root: &Path, token: &str) -> bool {
     const DISPOSED: [&str; 5] = ["FOLDED", "CLOSED", "REJECTED", "SUPERSEDED", "DROPPED"];
-    let dir = root.join("zustand/ledger");
+    let dir = zustand_root(root).join("ledger");
     let Ok(lines) = fs::read_dir(&dir) else {
         return false;
     };
@@ -4450,7 +4512,7 @@ fn main() {
         return;
     }
     if args.iter().any(|a| a == "--orphan-docs") {
-        run_orphan_docs(Path::new("."));
+        run_orphan_docs(Path::new("."), &args);
         return;
     }
     if args.iter().any(|a| a == "--tokens") {
@@ -5421,6 +5483,40 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
             lines
         );
         assert!(lines.iter().all(|l| !l.contains("carried.md")));
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn orphan_baseline_blocks_only_on_lost() {
+        let base = env::temp_dir().join(format!("rl-orphanbaseline-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("docs/specs")).unwrap();
+        let header = "<!--\n  title: t\n  class: ref\n  date: 2026-01-01\n  sha256: x\n-->\n";
+        fs::write(
+            base.join("docs/specs/offen.md"),
+            format!("{header}# o\nOffener Punkt: noch zu bauen\n"),
+        )
+        .unwrap();
+        let current: BTreeSet<String> = orphan_baseline_paths(&orphan_docs(&base).join("\n"));
+        assert!(current.contains("docs/specs/offen.md"));
+
+        let own = format!("ORPHAN_DOC\tdocs/specs/offen.md\t1\n");
+        let (lost, new) = roster_diff(&orphan_baseline_paths(&own), &current);
+        assert!(lost.is_empty() && new.is_empty());
+
+        let extra = format!("{own}ORPHAN_DOC\tdocs/specs/erfunden.md\t9\n");
+        let (lost, _) = roster_diff(&orphan_baseline_paths(&extra), &current);
+        assert_eq!(lost, vec!["docs/specs/erfunden.md".to_string()]);
+
+        let stale = "";
+        let (lost, new) = roster_diff(&orphan_baseline_paths(stale), &current);
+        assert!(lost.is_empty());
+        assert_eq!(new, vec!["docs/specs/offen.md".to_string()]);
+
+        let noisy = format!("# baseline\n{own}register_lookup --orphan-docs: 1 orphan documents\n");
+        assert_eq!(orphan_baseline_paths(&noisy).len(), 1);
+
         let _ = fs::remove_dir_all(&base);
     }
 
