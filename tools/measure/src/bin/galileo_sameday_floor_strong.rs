@@ -9,7 +9,7 @@ const MIN_CLASS: usize = 30;
 const FLOOR: i64 = -2560;
 const STRONG_MIN: i64 = -1750;
 const CONJ_ELONG_DEG: f64 = 30.0;
-const OUT: &str = "zustand/reports/galileo_sameday_floor_strong.txt";
+const OUT: &str = "state/reports/galileo_sameday_floor_strong.txt";
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
@@ -80,14 +80,19 @@ fn sign_stats(diffs: &[f64]) -> (usize, usize) {
     (pos, neg)
 }
 
+fn receiver_body() -> String {
+    std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset")
+}
+
 fn main() {
+    let body = receiver_body();
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    for b in ["galileo_daily", body.as_str()] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
         }
     }
-    let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key("earth");
+    let geom_ok = eph.contains_key("galileo_daily") && eph.contains_key(body.as_str());
 
     let Ok(bytes) = std::fs::read("sources/pds-ppi.igpp.ucla.edu/galileo_resid.bin") else {
         eprintln!("galileo: resid bin void");
@@ -186,7 +191,7 @@ fn main() {
             let t = d as f64 * DAY_S;
             match (
                 body_barycenter_position("galileo_daily", t, &eph),
-                body_barycenter_position("earth", t, &eph),
+                body_barycenter_position(body.as_str(), t, &eph),
             ) {
                 (Some(p), Some(e)) => {
                     let el = ang(sub([0.0, 0.0, 0.0], e), sub(p, e));

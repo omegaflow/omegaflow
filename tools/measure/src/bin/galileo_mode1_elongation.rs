@@ -65,9 +65,14 @@ fn fmt_o(v: Option<f64>) -> String {
     }
 }
 
+fn receiver_body() -> String {
+    std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset")
+}
+
 fn main() {
+    let body = receiver_body();
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    for b in ["galileo_daily", body.as_str()] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
             return;
@@ -123,7 +128,7 @@ fn main() {
         let t = *d as f64 * DAY_S;
         let (Some(p), Some(e)) = (
             body_barycenter_position("galileo_daily", t, &eph),
-            body_barycenter_position("earth", t, &eph),
+            body_barycenter_position(body.as_str(), t, &eph),
         ) else {
             continue;
         };
@@ -174,7 +179,7 @@ fn main() {
 
     std::fs::create_dir_all("reports").ok();
     let body = out.join("\n") + "\n";
-    match std::fs::write("zustand/reports/galileo_mode1_elongation.txt", &body) {
+    match std::fs::write("state/reports/galileo_mode1_elongation.txt", &body) {
         Ok(()) => {
             eprintln!("galileo: mode 1 elongation report written");
         }

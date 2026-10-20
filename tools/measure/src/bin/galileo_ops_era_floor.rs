@@ -153,18 +153,23 @@ fn geo_str(geo: &BTreeMap<i64, (f64, f64, f64)>, day: i64) -> String {
     }
 }
 
+fn receiver_body() -> String {
+    std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset")
+}
+
 fn main() {
+    let body = receiver_body();
     let args: Vec<String> = std::env::args().skip(1).collect();
     let report = match args.iter().position(|a| a == "--report") {
         Some(i) => match args.get(i + 1) {
             Some(p) => p.clone(),
-            None => "zustand/reports/galileo_ops_era_floor.txt".to_string(),
+            None => "state/reports/galileo_ops_era_floor.txt".to_string(),
         },
-        None => "zustand/reports/galileo_ops_era_floor.txt".to_string(),
+        None => "state/reports/galileo_ops_era_floor.txt".to_string(),
     };
 
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    for b in ["galileo_daily", body.as_str()] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
             return;
@@ -252,7 +257,7 @@ fn main() {
         let t = d as f64 * DAY_S;
         if let (Some(p), Some(e)) = (
             body_barycenter_position("galileo_daily", t, &eph),
-            body_barycenter_position("earth", t, &eph),
+            body_barycenter_position(body.as_str(), t, &eph),
         ) {
             let rp = norm(p) / AU_M;
             let re = norm(e);
@@ -675,7 +680,7 @@ fn main() {
         let t = (ud as f64 - 10957.5) * DAY_S;
         let s_geo = match (
             body_barycenter_position("galileo_daily", t, &eph),
-            body_barycenter_position("earth", t, &eph),
+            body_barycenter_position(body.as_str(), t, &eph),
         ) {
             (Some(p), Some(e)) => {
                 let rp = norm(p) / AU_M;

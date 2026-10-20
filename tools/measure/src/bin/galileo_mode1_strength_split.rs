@@ -9,7 +9,7 @@ const MIN_CELL: usize = 30;
 const AU_M: f64 = 1.495978707e11;
 const NEAR_ALPHA_DEG: f64 = 60.0;
 const ANTI_ALPHA_DEG: f64 = 120.0;
-const OUT: &str = "zustand/reports/galileo_mode1_strength_split.txt";
+const OUT: &str = "state/reports/galileo_mode1_strength_split.txt";
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
@@ -112,9 +112,14 @@ fn fmt_o(v: Option<f64>) -> String {
     }
 }
 
+fn receiver_body() -> String {
+    std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset")
+}
+
 fn main() {
+    let body = receiver_body();
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    for b in ["galileo_daily", body.as_str()] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
             return;
@@ -260,7 +265,7 @@ fn main() {
         let t = *d as f64 * DAY_S;
         match (
             body_barycenter_position("galileo_daily", t, &eph),
-            body_barycenter_position("earth", t, &eph),
+            body_barycenter_position(body.as_str(), t, &eph),
         ) {
             (Some(p), Some(e)) => {
                 let rp = norm(p);

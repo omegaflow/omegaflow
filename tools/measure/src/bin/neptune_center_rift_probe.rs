@@ -40,7 +40,12 @@ struct Inject {
     jd1: f64,
 }
 
+fn receiver_body() -> String {
+    std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset")
+}
+
 fn main() {
+    let body = receiver_body();
     let args: Vec<String> = std::env::args().skip(1).collect();
     println!(
         "Neptune center rift — the per-point version difference between the three ephemeris houses at the planet center."
@@ -93,11 +98,11 @@ fn main() {
     );
     let im = load(
         &format!("{eph_dir}/ftp.imcce.fr/ephemeris_inpop_neptune.bin"),
-        "neptune",
+        body.as_str(),
     );
     let em = load(
         &format!("{eph_dir}/ftp.iaaras.ru/ephemeris_epm_neptune.bin"),
-        "neptune",
+        body.as_str(),
     );
     let (Some(cm), Some(im), Some(em)) = (cm, im, em) else {
         eprintln!(
@@ -141,8 +146,8 @@ fn main() {
             }
         }
         let (Some(in_b), Some(ep_b)) = (
-            body_barycenter_position("neptune", tdb, &im),
-            body_barycenter_position("neptune", tdb, &em),
+            body_barycenter_position(body.as_str(), tdb, &im),
+            body_barycenter_position(body.as_str(), tdb, &em),
         ) else {
             jd += step;
             continue;
@@ -269,14 +274,14 @@ fn main() {
     }
 
     print!("{report}");
-    if let Err(e) = std::fs::create_dir_all("zustand/reports") {
+    if let Err(e) = std::fs::create_dir_all("state/reports") {
         eprintln!("neptune-center-rift: report dir stays unbuilt — {e}");
     }
-    let report_path = "zustand/reports/neptune_center_rift.txt";
+    let report_path = "state/reports/neptune_center_rift.txt";
     if let Err(e) = std::fs::write(report_path, &report) {
         eprintln!("neptune-center-rift: report write void — {e}");
     }
-    let series_path = "zustand/reports/neptune_center_rift_series.tsv";
+    let series_path = "state/reports/neptune_center_rift_series.tsv";
     let mut series = String::new();
     series.push_str("jd\tdecade\tdx_de441_inpop_km\tdy_de441_inpop_km\tdz_de441_inpop_km\tdx_de441_epm_km\tdy_de441_epm_km\tdz_de441_epm_km\tdx_inpop_epm_km\tdy_inpop_epm_km\tdz_inpop_epm_km\n");
     for i in 0..n {
