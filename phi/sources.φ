@@ -30391,14 +30391,6 @@ origin https://zenodo.org/api/records/7112529/files/datasets.rar/content
 compiler tools/harvest/src/bin/raw_mirror.rs
 no-cadence
 
-url https://github.com/omegaflow/sources/releases/download/zenodo.org/conicus3d_wl_lightcone.tar.zst
-terms CC-BY-4.0 https://zenodo.org/records/18776222
-format tar_zst
-origin https://zenodo.org/api/records/18776222/files/lp_dataset_patched_c000_phase_metadata.tar.zst/content
-compiler tools/harvest/src/bin/tar_zst_compiler.rs
-at sun
-no-cadence
-
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/dawn_linefluxes.fits
 terms CC-BY-4.0 https://zenodo.org/records/22734795
 origin https://zenodo.org/api/records/22734795/files/djapipes_default_v4.6.0.linefluxes.fits/content
