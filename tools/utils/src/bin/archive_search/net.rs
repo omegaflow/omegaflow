@@ -3893,7 +3893,188 @@ fn numeric_token(text: &str, key: &str) -> Option<f64> {
     clean.parse::<f64>().ok().filter(|v| v.is_finite())
 }
 
+const HDF5_MAGIC: &[u8] = b"\x89HDF\r\n\x1a\n";
+
+enum Hdf5Number {
+    Int(i128),
+    F32(f32),
+    F64(f64),
+}
+
+impl Hdf5Number {
+    fn text(&self) -> String {
+        match self {
+            Hdf5Number::Int(v) => v.to_string(),
+            Hdf5Number::F32(v) => format!("{v}"),
+            Hdf5Number::F64(v) => format!("{v}"),
+        }
+    }
+
+    fn finite(&self) -> bool {
+        match self {
+            Hdf5Number::Int(_) => true,
+            Hdf5Number::F32(v) => v.is_finite(),
+            Hdf5Number::F64(v) => v.is_finite(),
+        }
+    }
+
+    fn is_one(&self) -> bool {
+        match self {
+            Hdf5Number::Int(v) => *v == 1,
+            Hdf5Number::F32(v) => *v == 1.0,
+            Hdf5Number::F64(v) => *v == 1.0,
+        }
+    }
+}
+
+fn hdf5_number(
+    datatype: &omegaflow::archivar::hdf5::Hdf5Datatype,
+    data: &[u8],
+) -> Option<Hdf5Number> {
+    use omegaflow::archivar::hdf5::Endian;
+    match datatype.class {
+        0 => {
+            let b = data.get(..datatype.size)?;
+            let unsigned = match datatype.size {
+                1 => b[0] as u128,
+                2 => {
+                    let a: [u8; 2] = b.try_into().ok()?;
+                    match datatype.endian {
+                        Endian::Le => u16::from_le_bytes(a) as u128,
+                        Endian::Be => u16::from_be_bytes(a) as u128,
+                    }
+                }
+                4 => {
+                    let a: [u8; 4] = b.try_into().ok()?;
+                    match datatype.endian {
+                        Endian::Le => u32::from_le_bytes(a) as u128,
+                        Endian::Be => u32::from_be_bytes(a) as u128,
+                    }
+                }
+                8 => {
+                    let a: [u8; 8] = b.try_into().ok()?;
+                    match datatype.endian {
+                        Endian::Le => u64::from_le_bytes(a) as u128,
+                        Endian::Be => u64::from_be_bytes(a) as u128,
+                    }
+                }
+                _ => return None,
+            };
+            let value = if datatype.signed {
+                match datatype.size {
+                    1 => unsigned as u8 as i8 as i128,
+                    2 => unsigned as u16 as i16 as i128,
+                    4 => unsigned as u32 as i32 as i128,
+                    8 => unsigned as u64 as i64 as i128,
+                    _ => return None,
+                }
+            } else {
+                unsigned as i128
+            };
+            Some(Hdf5Number::Int(value))
+        }
+        1 => {
+            match datatype.size {
+                4 => omegaflow::archivar::hdf5::decode_f32(data, 0, datatype.endian)
+                    .map(Hdf5Number::F32),
+                8 => omegaflow::archivar::hdf5::decode_f64(data, 0, datatype.endian)
+                    .map(Hdf5Number::F64),
+                _ => None,
+            }
+        }
+        _ => None,
+    }
+}
+
+fn hdf5_text(attr: &omegaflow::archivar::hdf5::Hdf5Attribute) -> Option<String> {
+    if !(attr.datatype.class == 3 || (attr.datatype.class == 9 && attr.datatype.vlen_is_string)) {
+        return None;
+    }
+    let mut bytes = attr.data.clone();
+    while bytes.last().is_some_and(|b| *b == 0 || *b == b' ') {
+        bytes.pop();
+    }
+    let text = String::from_utf8(bytes).ok()?;
+    let text = text.trim().to_string();
+    if text.is_empty() { None } else { Some(text) }
+}
+
+fn hdf5_attr_number(attr: &omegaflow::archivar::hdf5::Hdf5Attribute) -> Option<Hdf5Number> {
+    hdf5_number(&attr.datatype, &attr.data).filter(Hdf5Number::finite)
+}
+
+fn netcdf4_signal_lines(file: &omegaflow::archivar::hdf5::Hdf5File) -> Vec<String> {
+    let root = match file.root() {
+        Ok(root) => root,
+        Err(_) => return Vec::new(),
+    };
+    let mut out = Vec::new();
+    let mut unique: Vec<(&str, Vec<String>)> = vec![
+        ("units", Vec::new()),
+        ("scale_factor", Vec::new()),
+        ("add_offset", Vec::new()),
+        ("_FillValue", Vec::new()),
+    ];
+    let mut decoded = false;
+    for link in &root.links {
+        if link.addr == u64::MAX {
+            continue;
+        }
+        let object = match file.resolve(&link.name) {
+            Ok(object) => object,
+            Err(_) => continue,
+        };
+        if object.dataspace.is_none() || object.datatype.is_none() {
+            continue;
+        }
+        let mut parts = Vec::new();
+        for key in ["units", "scale_factor", "add_offset", "_FillValue"] {
+            let attr = match object.attrs.iter().find(|a| a.name == key) {
+                Some(attr) => attr,
+                None => continue,
+            };
+            let value = match key {
+                "units" => hdf5_text(attr),
+                _ => hdf5_attr_number(attr).map(|n| n.text()),
+            };
+            let Some(value) = value else {
+                continue;
+            };
+            if key == "scale_factor" {
+                if let Some(number) = hdf5_attr_number(attr)
+                    && !number.is_one()
+                {
+                    decoded = true;
+                }
+            }
+            if let Some((_, seen)) = unique.iter_mut().find(|(name, _)| *name == key)
+                && !seen.contains(&value)
+            {
+                seen.push(value.clone());
+            }
+            parts.push(format!("{key}={value}"));
+        }
+        if !parts.is_empty() {
+            out.push(format!("netcdf {} {}", link.name, parts.join(" ")));
+        }
+    }
+    for (key, values) in unique {
+        if values.len() == 1 {
+            out.push(format!("netcdf {key}={}", values[0]));
+        }
+    }
+    if decoded {
+        out.push("netcdf decoded_value=raw*scale+offset".to_string());
+    }
+    out
+}
+
 fn netcdf_signal_lines(bytes: &[u8], text: &str) -> Vec<String> {
+    if bytes.starts_with(HDF5_MAGIC) {
+        if let Ok(file) = omegaflow::archivar::hdf5::Hdf5File::parse(bytes) {
+            return netcdf4_signal_lines(&file);
+        }
+    }
     let magic = bytes.starts_with(b"CDF\x01") || bytes.starts_with(b"CDF\x02");
     let numeric = ["scale_factor", "add_offset", "_FillValue"]
         .iter()
@@ -6392,6 +6573,284 @@ mod tests {
             lines
                 .iter()
                 .any(|l| l == "netcdf decoded_value=raw*scale+offset"),
+            "{lines:?}"
+        );
+    }
+
+    fn hdf5_checksum(buf: &[u8]) -> u32 {
+        fn word(buf: &[u8], off: usize) -> u32 {
+            u32::from_le_bytes(buf[off..off + 4].try_into().expect("word"))
+        }
+        let mut a: u32 = 0xdeadbeefu32.wrapping_add(buf.len() as u32);
+        let mut b: u32 = a;
+        let mut c: u32 = a;
+        let mut off = 0usize;
+        while buf.len() - off > 12 {
+            a = a.wrapping_add(word(buf, off));
+            b = b.wrapping_add(word(buf, off + 4));
+            c = c.wrapping_add(word(buf, off + 8));
+            a = a.wrapping_sub(c) ^ c.rotate_left(4);
+            c = c.wrapping_add(b);
+            b = b.wrapping_sub(a) ^ a.rotate_left(6);
+            a = a.wrapping_add(c);
+            c = c.wrapping_sub(b) ^ b.rotate_left(8);
+            b = b.wrapping_add(a);
+            a = a.wrapping_sub(c) ^ c.rotate_left(16);
+            c = c.wrapping_add(b);
+            b = b.wrapping_sub(a) ^ a.rotate_left(19);
+            a = a.wrapping_add(c);
+            c = c.wrapping_sub(b) ^ b.rotate_left(4);
+            b = b.wrapping_add(a);
+            off += 12;
+        }
+        let rest = &buf[off..];
+        let n = rest.len();
+        if n >= 12 {
+            c = c.wrapping_add((rest[11] as u32) << 24);
+        }
+        if n >= 11 {
+            c = c.wrapping_add((rest[10] as u32) << 16);
+        }
+        if n >= 10 {
+            c = c.wrapping_add((rest[9] as u32) << 8);
+        }
+        if n >= 9 {
+            c = c.wrapping_add(rest[8] as u32);
+        }
+        if n >= 8 {
+            b = b.wrapping_add((rest[7] as u32) << 24);
+        }
+        if n >= 7 {
+            b = b.wrapping_add((rest[6] as u32) << 16);
+        }
+        if n >= 6 {
+            b = b.wrapping_add((rest[5] as u32) << 8);
+        }
+        if n >= 5 {
+            b = b.wrapping_add(rest[4] as u32);
+        }
+        if n >= 4 {
+            a = a.wrapping_add((rest[3] as u32) << 24);
+        }
+        if n >= 3 {
+            a = a.wrapping_add((rest[2] as u32) << 16);
+        }
+        if n >= 2 {
+            a = a.wrapping_add((rest[1] as u32) << 8);
+        }
+        if n >= 1 {
+            a = a.wrapping_add(rest[0] as u32);
+        }
+        c ^= b;
+        c = c.wrapping_sub(b.rotate_left(14));
+        a ^= c;
+        a = a.wrapping_sub(c.rotate_left(11));
+        b ^= a;
+        b = b.wrapping_sub(a.rotate_left(25));
+        c ^= b;
+        c = c.wrapping_sub(b.rotate_left(16));
+        a ^= c;
+        a = a.wrapping_sub(c.rotate_left(4));
+        b ^= a;
+        b = b.wrapping_sub(a.rotate_left(14));
+        c ^= b;
+        c = c.wrapping_sub(b.rotate_left(24));
+        c
+    }
+
+    fn hdf5_message(typ: u8, data: Vec<u8>) -> Vec<u8> {
+        let mut m = vec![typ, data.len() as u8, (data.len() >> 8) as u8, 0];
+        m.extend_from_slice(&data);
+        m
+    }
+
+    fn hdf5_header(messages: Vec<Vec<u8>>) -> Vec<u8> {
+        let len: usize = messages.iter().map(|m| m.len()).sum();
+        let size_len = if len <= u8::MAX as usize {
+            1usize
+        } else if len <= u16::MAX as usize {
+            2usize
+        } else {
+            4usize
+        };
+        let flags = match size_len {
+            1 => 0u8,
+            2 => 1u8,
+            _ => 2u8,
+        };
+        let mut body = vec![b'O', b'H', b'D', b'R', 2, flags];
+        body.extend_from_slice(&len.to_le_bytes()[..size_len]);
+        for message in messages {
+            body.extend_from_slice(&message);
+        }
+        let ck = hdf5_checksum(&body);
+        body.extend_from_slice(&ck.to_le_bytes());
+        body
+    }
+
+    fn hdf5_dataspace(dims: &[u64]) -> Vec<u8> {
+        let mut d = vec![2u8, dims.len() as u8, 0, 0];
+        for dim in dims {
+            d.extend_from_slice(&dim.to_le_bytes());
+        }
+        d
+    }
+
+    fn hdf5_datatype(class: u8, flags: u8, size: u32) -> Vec<u8> {
+        let mut d = vec![
+            0x10 | class,
+            flags,
+            0,
+            0,
+            size as u8,
+            (size >> 8) as u8,
+            (size >> 16) as u8,
+            (size >> 24) as u8,
+        ];
+        match class {
+            0 => {
+                d.extend_from_slice(&0u16.to_le_bytes());
+                d.extend_from_slice(&((size * 8) as u16).to_le_bytes());
+            }
+            1 => {
+                d.extend_from_slice(&0u16.to_le_bytes());
+                d.extend_from_slice(&((size * 8) as u16).to_le_bytes());
+                d.extend_from_slice(&[0u8; 8]);
+            }
+            _ => {}
+        }
+        d
+    }
+
+    fn hdf5_attribute(name: &str, dt: &[u8], ds: &[u8], data: &[u8]) -> Vec<u8> {
+        let mut d = vec![1u8, 0];
+        d.extend_from_slice(&(name.len() as u16).to_le_bytes());
+        d.extend_from_slice(&(dt.len() as u16).to_le_bytes());
+        d.extend_from_slice(&(ds.len() as u16).to_le_bytes());
+        d.extend_from_slice(name.as_bytes());
+        d.resize(8 + name.len().div_ceil(8) * 8, 0);
+        d.extend_from_slice(dt);
+        d.resize(d.len().div_ceil(8) * 8, 0);
+        d.extend_from_slice(ds);
+        d.resize(d.len().div_ceil(8) * 8, 0);
+        d.extend_from_slice(data);
+        d
+    }
+
+    fn hdf5_link(name: &str, addr: u64) -> Vec<u8> {
+        let mut d = vec![0, 0, name.len() as u8];
+        d.extend_from_slice(name.as_bytes());
+        d.extend_from_slice(&addr.to_le_bytes());
+        d
+    }
+
+    fn hdf5_glm_fixture() -> Vec<u8> {
+        let string = |size: u32| hdf5_datatype(3, 0, size);
+        let f32dt = || hdf5_datatype(1, 0, 4);
+        let i16dt = || hdf5_datatype(0, 0x08, 2);
+        let scalar = hdf5_dataspace(&[]);
+        let vector = hdf5_dataspace(&[4]);
+        let energy_attrs = vec![
+            hdf5_message(0x0c, hdf5_attribute("units", &string(1), &scalar, b"J")),
+            hdf5_message(
+                0x0c,
+                hdf5_attribute("scale_factor", &f32dt(), &scalar, &0.5f32.to_le_bytes()),
+            ),
+            hdf5_message(
+                0x0c,
+                hdf5_attribute("add_offset", &f32dt(), &scalar, &(-1.25f32).to_le_bytes()),
+            ),
+            hdf5_message(
+                0x0c,
+                hdf5_attribute("_FillValue", &i16dt(), &scalar, &(-1i16).to_le_bytes()),
+            ),
+        ];
+        let lat_attrs = vec![
+            hdf5_message(
+                0x0c,
+                hdf5_attribute("units", &string(13), &scalar, b"degrees_north"),
+            ),
+            hdf5_message(
+                0x0c,
+                hdf5_attribute("scale_factor", &f32dt(), &scalar, &0.25f32.to_le_bytes()),
+            ),
+        ];
+        let mut energy_messages = vec![
+            hdf5_message(0x01, vector.clone()),
+            hdf5_message(0x03, f32dt()),
+        ];
+        energy_messages.extend(energy_attrs);
+        let mut lat_messages = vec![hdf5_message(0x01, vector), hdf5_message(0x03, f32dt())];
+        lat_messages.extend(lat_attrs);
+        let energy_header = hdf5_header(energy_messages);
+        let lat_header = hdf5_header(lat_messages);
+        let root_addr = 48u64;
+        let root_len = hdf5_header(vec![
+            hdf5_message(0x06, hdf5_link("event_energy", 0)),
+            hdf5_message(0x06, hdf5_link("event_lat", 0)),
+        ])
+        .len() as u64;
+        let energy_addr = root_addr + root_len;
+        let lat_addr = energy_addr + energy_header.len() as u64;
+        let root_header = hdf5_header(vec![
+            hdf5_message(0x06, hdf5_link("event_energy", energy_addr)),
+            hdf5_message(0x06, hdf5_link("event_lat", lat_addr)),
+        ]);
+        let mut buf = Vec::new();
+        buf.extend_from_slice(b"\x89HDF\r\n\x1a\n");
+        buf.push(2);
+        buf.push(8);
+        buf.push(8);
+        buf.push(0);
+        buf.resize(36, 0);
+        buf.extend_from_slice(&root_addr.to_le_bytes());
+        buf.extend_from_slice(&[0, 0, 0, 0]);
+        let ck = hdf5_checksum(&buf[..44]);
+        buf[44..48].copy_from_slice(&ck.to_le_bytes());
+        buf.extend_from_slice(&root_header);
+        buf.extend_from_slice(&energy_header);
+        buf.extend_from_slice(&lat_header);
+        buf
+    }
+
+    #[test]
+    fn netcdf4_attributes_are_read_from_the_hdf5_root_group() {
+        let lines = netcdf_signal_lines(&hdf5_glm_fixture(), "");
+        assert!(
+            lines.iter().any(|l| l
+                == "netcdf event_energy units=J scale_factor=0.5 add_offset=-1.25 _FillValue=-1"),
+            "{lines:?}"
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "netcdf event_lat units=degrees_north scale_factor=0.25"),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().any(|l| l == "netcdf add_offset=-1.25"),
+            "{lines:?}"
+        );
+        assert!(
+            !lines
+                .iter()
+                .any(|l| l
+                    == "netcdf event_lat units=degrees_north scale_factor=0.25 add_offset=-1.25"),
+            "{lines:?}"
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "netcdf decoded_value=raw*scale+offset"),
+            "{lines:?}"
+        );
+    }
+
+    #[test]
+    fn netcdf4_absent_attributes_stay_absent() {
+        let lines = netcdf_signal_lines(&hdf5_glm_fixture(), "");
+        assert!(
+            !lines.iter().any(|l| l == "netcdf event_lat _FillValue=0"),
             "{lines:?}"
         );
     }
