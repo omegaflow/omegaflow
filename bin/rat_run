@@ -1,0 +1,61 @@
+#!/bin/sh
+# rat_run — ein Ratssitz, ausschliesslich ueber das Gateway, ausschliesslich frei.
+#
+# Warum: am 2026-10-20 liefen fuenf Sitze ueber den Subagenten-Pfad und damit an
+# `llm_gateway` vorbei — bezahlte Modelle, ohne Operator-Wort. Dieses Skript nimmt
+# den Weg aus der Hand: es gibt nur den Gateway-Pfad, und es verweigert die
+# bezahlten Praefixe, auch wenn `paid-open` sie freigeben wuerde.
+#
+# Usage: rat_run <model-id> <prompt-datei> <out-datei>
+# Exit 0 nur, wenn das Gateway mit einem `choices`-Body antwortet.
+set -u
+
+PAID="mistral deepinfra deepseek zen nim openrouter unorouter orcarouter hf google sambanova inception"
+PORT="${OMEGAFLOW_GATEWAY_PORT:-1621}"
+
+model="${1:-}"
+prompt_file="${2:-}"
+out_file="${3:-}"
+if [ -z "$model" ] || [ -z "$prompt_file" ] || [ -z "$out_file" ]; then
+    echo "rat_run: usage: rat_run <model-id> <prompt-datei> <out-datei>" >&2
+    exit 2
+fi
+if [ ! -f "$prompt_file" ]; then
+    echo "rat_run: $prompt_file fehlt" >&2
+    exit 2
+fi
+
+prefix="${model%%/*}"
+for p in $PAID; do
+    if [ "$prefix" = "$p" ]; then
+        if ! "$(dirname "$0")/rat_guard" >/dev/null 2>&1; then
+            echo "rat_run: $model ist ein bezahlter Anbieter ($p) — der Rat faehrt nur frei" >&2
+            echo "rat_run: ein paid-Sitz verlangt das Operator-Wort: bin/rat_guard --grant" >&2
+            exit 3
+        fi
+        echo "rat_run: WARNUNG — $model ist bezahlt, gefahren wegen frischem Grant" >&2
+    fi
+done
+
+if ! command -v jq >/dev/null 2>&1; then
+    echo "rat_run: jq fehlt — der Prompt kann nicht kodiert werden" >&2
+    exit 2
+fi
+
+body="$(jq -n --arg m "$model" --rawfile p "$prompt_file" \
+    '{model: $m, messages: [{role: "user", content: $p}], max_tokens: 2000}')"
+
+if ! printf '%s' "$body" | curl -sS --max-time 300 \
+    "http://127.0.0.1:${PORT}/v1/chat/completions" \
+    -H 'Content-Type: application/json' \
+    --data-binary @- > "$out_file"; then
+    echo "rat_run: Gateway nicht erreichbar auf 127.0.0.1:$PORT" >&2
+    exit 2
+fi
+
+if ! jq -e '.choices[0].message.content' "$out_file" >/dev/null 2>&1; then
+    echo "rat_run: keine Antwort — $out_file traegt keinen choices-Body: $(head -c 200 "$out_file")" >&2
+    exit 4
+fi
+
+jq -r '.choices[0].message.content' "$out_file"
