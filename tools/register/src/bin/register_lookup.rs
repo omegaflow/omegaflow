@@ -25,7 +25,7 @@ const REGISTER_DIRS: &[(&str, &str)] = &[
 const ARCHIV_DIRS: &[&str] = &[
     "docs/handover/archiv",
     "docs/surveys/archiv",
-    "docs/auftrag/archiv",
+    "docs/projects/archiv",
     "docs/blatt/archiv",
 ];
 

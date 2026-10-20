@@ -1,6 +1,6 @@
 <!--
   title: Untersuchungsauftrag — {}
-  class: auftrag
+  class: project
   date: 2026-08-27
   status: pending
   see-also: docs/granit.md docs/

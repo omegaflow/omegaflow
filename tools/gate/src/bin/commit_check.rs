@@ -13,7 +13,7 @@ use std::process::Command;
 const DOC_DIRS: [&str; 6] = [
     "docs/surveys/",
     "docs/specs/",
-    "docs/auftrag/",
+    "docs/projects/",
     "docs/blatt/",
     "docs/concepts/",
     "docs/paper/",
