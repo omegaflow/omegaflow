@@ -171,11 +171,18 @@ fn main() {
             ok += 1;
         } else if has_flag {
             flagged += 1;
-            println!("FLAGGED\t{netloc}\t{}", bad.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(","));
+            println!(
+                "FLAGGED\t{netloc}\t{}",
+                bad.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(",")
+            );
         } else {
             unflagged += 1;
             if write_flags {
-                let bad_text = bad.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", ");
+                let bad_text = bad
+                    .iter()
+                    .map(|s| s.as_str())
+                    .collect::<Vec<_>>()
+                    .join(", ");
                 let reference = match terms_ref.get(&netloc).cloned() {
                     Some(v) => v,
                     None => String::new(),
@@ -185,7 +192,10 @@ fn main() {
                 );
                 let _ = fs::write(dir.join("TERMS.md"), body);
             }
-            println!("UNFLAGGED\t{netloc}\t{}", bad.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(","));
+            println!(
+                "UNFLAGGED\t{netloc}\t{}",
+                bad.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(",")
+            );
         }
     }
     eprintln!(
@@ -215,8 +225,7 @@ mod tests {
     #[test]
     fn netloc_from_origin_host() {
         assert_eq!(
-            netloc_of("https://example.org/file.bin", "https://data.example.org/x")
-                .as_deref(),
+            netloc_of("https://example.org/file.bin", "https://data.example.org/x").as_deref(),
             Some("example.org")
         );
     }

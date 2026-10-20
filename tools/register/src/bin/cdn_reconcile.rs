@@ -889,7 +889,10 @@ origin https://example.com/origin-only
 ";
         let urls = raw_cdn_urls(content);
         assert_eq!(urls.len(), 1);
-        assert!(urls
-            .contains("https://github.com/omegaflow/sources/releases/download/zenodo.org/a.tif"));
+        assert!(
+            urls.contains(
+                "https://github.com/omegaflow/sources/releases/download/zenodo.org/a.tif"
+            )
+        );
     }
 }

@@ -178,9 +178,9 @@ fn resolve_sess_from(
                 Ok(t.to_string())
             }
         }
-        None => Err(
-            "no session: OMEGAFLOW_SESSION unset and state/active-session.φ absent".to_string(),
-        ),
+        None => {
+            Err("no session: OMEGAFLOW_SESSION unset and state/active-session.φ absent".to_string())
+        }
     }
 }
 
