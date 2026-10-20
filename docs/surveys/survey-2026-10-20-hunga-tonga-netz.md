@@ -2,7 +2,7 @@
   title: Survey — Hunga Tonga 2022: dieselbe Front in sechs Netzen
   class: survey
   date: 2026-10-20
-  sha256: 59d1f1bd3dfcc89df90aa662659d87236f1c8528559bea26d188707dcbd99d2b
+  sha256: 8319dfa8ab3d4e0b79f9c0ad839c82c3b9d07ef95fb7d597dad0c4c43194bc4f
   status: live
   see-also: docs/paper/tonga-lamb-crosscheck.md tools/measure/src/bin/hunga_tonga_netz_probe.rs
 -->
@@ -28,7 +28,7 @@ keinen CDN-Upload. `phi/sources.φ` bleibt unberührt.
 
 | Faden | Quelle | Abdeckung | Lizenz | Kadenz | Zugang |
 |---|---|---|---|---|---|
-| Seismik | EarthScope FDSN `dataselect`, BHZ | 8 Stationen, 757–9.784 km, Jan 2022 | EarthScope/FDSN, Attribution | 40–100 Hz | HTTP 200 |
+| Seismik | EarthScope FDSN `dataselect`, BHZ | 8 Stationen, 757–9.795 km, Jan 2022 | EarthScope/FDSN, Attribution | 40–100 Hz | HTTP 200 |
 | Luftdruck | NOAA CO-OPS `air_pressure` | 5 Pazifik-Stationen, Jan 2022; Pago Pago ohne Luft | US-Government, public domain | 6 min | HTTP 200 |
 | Luftdruck (2) | Kyoto-A 1 Hz, Zenodo 8098323 | Jan 2022, 30 Tagesdateien | CC BY-NC 4.0 | 1 Hz | Hausmessung, nicht neu gezogen |
 | Infraschall | BGR IS52 PMCC, Haus-Release | 2022, Detektionsliste | Ursprung BGR, Lizenz im Quellenregister | ~300 s | HTTP 200 (6.484.088 B) |
@@ -77,41 +77,41 @@ nicht mit Null gefüllt.
 
 | Faden | Onset (UTC) | Amplitude | Lag (s) | Distanz (km) | Null |
 |---|---|---|---|---|---|
-| Seismik IU.AFI | 04:17:40 | 15.695 counts (Basis 2.464) | 175 | 830 | kein Onset |
-| Seismik II.MSVF | 04:18:20 | 60.937 counts (Basis 5.125) | 215 | 757 | kein Onset |
-| Seismik IU.SNZO | 04:24:20 | 10.538 counts (Basis 1.776) | 575 | 2.492 | kein Onset |
-| Seismik IU.NWAO | 04:44:20 | 3.374 counts (Basis 859) | 1.775 | 6.670 | kein Onset |
-| Seismik IU.COLA | 04:56:40 | 4.734 counts (Basis 661) | 2.515 | 9.784 | falscher Onset 06:01 |
-| Seismik IU.HNR | 05:32:00 | 6.445 counts (Basis 2.304) | 4.635 | 2.917 | falscher Onset 04:25:40 |
-| Seismik IU.ANMO | 04:05:00 (vor t0) | 1.286 counts (Basis 667) | −585 | 9.529 | falscher Onset 04:34:20 |
-| Seismik IU.MAJO | absent | — | — | 8.001 | kein Onset |
-| Druck Kwajalein | 07:18:00 | +2,00 hPa | 10.995 | 3.741 | 09:48, +0,30 hPa |
-| Druck Wake Island | 08:24:00 | +2,20 hPa | 14.955 | 4.843 | 10:12, +0,20 hPa |
-| Druck Kahului | 08:36:00 | +1,90 hPa | 15.675 | 5.045 | 12:42, −0,30 hPa |
-| Druck Guam Apra | 09:00:00 | +2,20 hPa | 17.115 | 5.775 | 11:12, +0,30 hPa |
-| Druck Honolulu | 08:36:00 | +1,60 hPa | 15.675 | 5.027 | 10:06, −0,30 hPa |
-| Tsunami Pago Pago | 05:30:00 | 0,42 m | 4.515 | 856 | 15:24, 0,26 m |
-| Tsunami Kwajalein | 09:30:00 | 0,15 m | 18.915 | 3.741 | 05:18, 0,25 m |
-| Tsunami Wake Island | 10:36:00 | 0,28 m | 22.875 | 4.843 | 13:48, 0,08 m |
-| Tsunami Honolulu | 12:00:00 | 0,55 m | 27.915 | 5.027 | 16:36, 0,14 m |
-| Tsunami Guam Apra | 15:18:00 | 0,28 m | 39.795 | 5.775 | 06:06, 0,13 m |
-| Tsunami Kahului | 06:00:00 | 0,39 m | 6.315 | 5.045 | 14:24, 0,24 m |
+| Seismik IU.AFI | 04:17:40 | 15.695 counts (Basis 2.464) | 175 | 831 | kein Onset |
+| Seismik II.MSVF | 04:18:20 | 60.937 counts (Basis 5.125) | 215 | 758 | kein Onset |
+| Seismik IU.SNZO | 04:24:20 | 10.538 counts (Basis 1.776) | 575 | 2.495 | kein Onset |
+| Seismik IU.NWAO | 04:44:20 | 3.374 counts (Basis 859) | 1.775 | 6.678 | kein Onset |
+| Seismik IU.COLA | 04:56:40 | 4.734 counts (Basis 661) | 2.515 | 9.795 | falscher Onset 06:01 |
+| Seismik IU.HNR | 05:32:00 | 6.445 counts (Basis 2.304) | 4.635 | 2.921 | falscher Onset 04:25:40 |
+| Seismik IU.ANMO | 04:05:00 (vor t0) | 1.286 counts (Basis 667) | −585 | 9.539 | falscher Onset 04:34:20 |
+| Seismik IU.MAJO | absent | — | — | 8.010 | kein Onset |
+| Druck Kwajalein | 07:18:00 | +2,00 hPa | 10.995 | 3.746 | 09:48, +0,30 hPa |
+| Druck Wake Island | 08:24:00 | +2,20 hPa | 14.955 | 4.848 | 10:12, +0,20 hPa |
+| Druck Kahului | 08:36:00 | +1,90 hPa | 15.675 | 5.051 | 12:42, −0,30 hPa |
+| Druck Guam Apra | 09:00:00 | +2,20 hPa | 17.115 | 5.781 | 11:12, +0,30 hPa |
+| Druck Honolulu | 08:36:00 | +1,60 hPa | 15.675 | 5.033 | 10:06, −0,30 hPa |
+| Tsunami Pago Pago | 05:30:00 | 0,42 m | 4.515 | 857 | 15:24, 0,26 m |
+| Tsunami Kwajalein | 09:30:00 | 0,15 m | 18.915 | 3.746 | 05:18, 0,25 m |
+| Tsunami Wake Island | 10:36:00 | 0,28 m | 22.875 | 4.848 | 13:48, 0,08 m |
+| Tsunami Honolulu | 12:00:00 | 0,55 m | 27.915 | 5.033 | 16:36, 0,14 m |
+| Tsunami Guam Apra | 15:18:00 | 0,28 m | 39.795 | 5.781 | 06:06, 0,13 m |
+| Tsunami Kahului | 06:00:00 | 0,39 m | 6.315 | 5.051 | 14:24, 0,24 m |
 | TEC Tonga-Zelle | 05:00:00 | −57 % (Zelle 10,7 TECU) | 2.715 | 0 (über Kopf) | kein Onset, max. +15 % |
 | GLM Vent-Cluster | 04:14:42 | 4 Blitze/20 s, 3,3·10⁻¹² J | −2 | 0–47 | kein Cluster (17 Einzelblitze) |
-| BGR IS52 | 15:30:00 | v_app 352 m/s, az −6,7° | +1.360 | 11.982 | 15:15, az-Residuum −113,1° |
+| BGR IS52 | 15:30:00 | v_app 352 m/s, az −6,7° | +1.316 | 11.995 | 15:15, az-Residuum −113,1° |
 
 Lesart der Spalte **Lag**: Sekunden nach `t0`; bei BGR Sekunden nach der
-vorhergesagten direkten Lamb-Ankunft (15:07:20 UTC), nicht nach `t0`.
+vorhergesagten direkten Lamb-Ankunft (15:08:04 UTC), nicht nach `t0`.
 
 ## Laufzeit
 
 **Seismik.** Fünf der acht Stationen tragen einen Onset mit scheinbarer
 Geschwindigkeit 3,52–4,74 km/s; der Fit durch den Ursprung im Band 2–6 km/s
-ist **3,86 km/s** (5 Stationen). Das ist das Rayleigh-Oberflächenwellenband,
-nicht die P-Phase. Der Fit über alle sieben Onsets (1,45 km/s) ist durch HNR
+ist **3,87 km/s** (5 Stationen). Das ist das Rayleigh-Oberflächenwellenband,
+nicht die P-Phase. Der Fit über alle sieben Onsets (1,46 km/s) ist durch HNR
 (0,63 km/s), den Vor-Ereignis-Treffer ANMO (−16,29 km/s) und MAJO (absent)
 verzerrt und wird nicht als Laufzeit zitiert. Der NULL-Tag liefert drei
-Treffer (HNR 04:25:40 mit 4,45 km/s, COLA 06:01, ANMO 04:34:20); einer davon
+Treffer (HNR 04:25:40 mit 4,46 km/s, COLA 06:01, ANMO 04:34:20); einer davon
 liegt im Oberflächenwellenband. Der seismische Detektor ist damit nicht
 sauber, aber die fünf Ereignis-Onsets sind untereinander konsistent.
 
@@ -140,19 +140,19 @@ ist eine ionosphärische Störung, nicht ihre erste Wellenfront.
 sind 20 s lang; die Eruption fiel in die Granule). Schwerpunkt 20–47 km vom
 Vent; das ist eine Quellort-Aussage, keine Laufzeit.
 
-**Infraschall.** Die nächste Detektion liegt 1.360 s nach der vorhergesagten
+**Infraschall.** Die nächste Detektion liegt 1.316 s nach der vorhergesagten
 direkten Lamb-Ankunft, bei 107,7° gegen 114,4° vorhergesagt (−6,7°). Die
-PMCC-Liste hat ~300-s-Raster; 1.360 s ist die nächste Detektion, keine
-matched-filter-Ankunft. Der NULL-Tag liefert eine Detektion 460 s nach der
+PMCC-Liste hat ~300-s-Raster; 1.316 s ist die nächste Detektion, keine
+matched-filter-Ankunft. Der NULL-Tag liefert eine Detektion 416 s nach der
 Vorhersage, aber bei 1,3° (−113,1° Residuum) — zeitlich nah, richtungslos.
 
 ## Verdikt
 
 **Ja, mindestens drei Phänomene.** Fünf Fäden tragen einen eigenen Onset mit
-konsistenter Laufzeit **und** radialer Richtung: Seismik (3,86 km/s), Druck
+konsistenter Laufzeit **und** radialer Richtung: Seismik (3,87 km/s), Druck
 (0,328 km/s), Tsunami (0,170 km/s), GLM (Quellcluster am Vent) und
 Infraschall (Richtung −6,7°). Die Ionosphäre trägt eine TEC-Anomalie mit
-50 % Amplitude und sauberem NULL, aber der Onset ist mit 45 min und 15-min-
+57 % Amplitude und sauberem NULL, aber der Onset ist mit 45 min und 15-min-
 Raster keine Frontmessung. Aerosol/Thermik fehlt.
 
 Das „Netz als Instrument" überträgt sich damit **auf den Quellzeitpunkt und
@@ -170,7 +170,7 @@ physikalisch lesbar; die Ausreißer sind benannt, nicht geglättet.
 - **Druck-Onset vs. Maximum.** Der Onset liegt systematisch 13–29 min vor
   der vorhergesagten Front; erst das Maximum sitzt bei +42…+208 s. Wer nur
   den Onset liest, überschätzt die Geschwindigkeit um 7 %.
-- **Tsunami Kahului.** 06:00 UTC bei 5.045 km Entfernung ergibt 0,80 km/s —
+- **Tsunami Kahului.** 06:00 UTC bei 5.051 km Entfernung ergibt 0,80 km/s —
   kein Tsunami. Der Punkt ist ein Gezeiten-/Wetterrest, kein Signal; er
   wurde nicht als Tsunami-Onset in den Fit genommen.
 - **Tsunami-Amplitude Kwajalein.** 0,15 m am Ereignistag liegen unter dem
@@ -186,7 +186,7 @@ physikalisch lesbar; die Ausreißer sind benannt, nicht geglättet.
   (4 Blitze/20 s, Schwerpunkt 27 km). Der NULL-Tag hat 17 Einzelblitze ohne
   Cluster; die Trennung läuft über die Cluster-Bedingung, nicht über die
   Gesamtzahl.
-- **BGR.** 1.360 s Abstand zur Vorhersage bei ~300-s-Detektionsraster; die
+- **BGR.** 1.316 s Abstand zur Vorhersage bei ~300-s-Detektionsraster; die
   Rohwellenform ist zugangsbeschränkt (vDEC). Der Richtungstest (−6,7° gegen
   −113,1° am NULL-Tag) ist der tragende Teil, nicht die Sekunde.
 - **Aerosol/Thermik.** Kein `MAP_KEY`, kein Copernicus-Token; beide Routen
