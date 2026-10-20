@@ -2,7 +2,7 @@
   title: Entscheidungstabelle — die 17 lizenzgesperrten Arme
   class: blatt
   date: 2026-10-19
-  sha256: abb6a471eb60857dd40571a5fdb49a3659dff174e1a4e0a7f4848836cb4b3a20
+  sha256: e191fa03bc11702689bcdb929003283f9e5d0cd51aca8ec8feb120e9c53a05ea
   status: live
   see-also: phi/sources.φ tools/harvest/src/bin/ docs/surveys/survey-2026-10-09-redistribution-alternativen.md
 -->
@@ -44,7 +44,7 @@ gemessen (Operator-Gespräch 2026-10-11).
 | 8 | `icrf3` | `datacenter.iers.org/.../icrf3sx.txt` + `icrf3k.txt` | kein Block | IERS-Terms nicht als SPDX gemessen; Produkte öffentlich | A nach terms; sonst C | **A** — IERS ist die autoritative Rahmenquelle; terms-URL nachtragen |
 | 9 | `ieeg` | `www.ieeg.org/services` (UPenn, Konto + User Agreement) | kein Block | research-only; keine Redistribution | C | **C** — klinische iEEG-Rohdaten bleiben lokal; kein CDN |
 | 10 | `ilrs_npt` | `edc.dgfi.tum.de` (ILRS Normal Points) | kein Block | terms ungemessen; ILRS-Daten sind forschungsoffen | A nach terms; sonst C | **A** — Public-Data-Route, terms-URL nachtragen |
-| 11 | `lro_trk` | `imbrium.mit.edu/LRORS/DATA/TRK/` | kein Block | terms ungemessen | A nach terms; sonst C | **C** bis terms; der LRO-Tracking-Pfad ist nicht CDN-kritisch |
+| 11 | `lro_trk` | `imbrium.mit.edu/LRORS/DATA/TRK/` | **Block, `PD-USGov-PDS`** (2026-10-20) | PDS3-Label, Archivkopie beim PDS-Knoten; Compiler geprueft an 400 Dateien (13 830 Samples, 1 548 968 B, Roundtrip parses) | A | **A** — offen, kein Login |
 | 12 | `modvolc` | `nrt3.modaps.eosdis.nasa.gov` | kein Block; `modvolc_thermal`-Compiler steht | **keine Lizenz** am HIGP-Host gemessen | B + LANCE/NRT (NASA-PD) | **B** — die LANCE-Route tragen, den lizenzlosen Arm nicht |
 | 13 | `ogimet` | `ogimet.com/cgi-bin/gsynres` | kein Block | keine offene Lizenz gemessen | B + Open-Meteo (CC-BY-4.0) / NCEI (PD) | **B** — offene Alternative ist gemessen |
 | 14 | `pradan_ch2` | `pradan.issdc.gov.in` (ISSDC-Login) | kein Block; Login-Arm | terms ungemessen; Zugang account-gebunden | C | **C** — kein Re-Host ohne terms; Chandrayaan-2 bleibt lokal |
@@ -196,3 +196,43 @@ Das ist der gemessene Grund, warum die erste Suche repository-scoped war: die
 keyless Web-Engines tragen bei Fachbegriffen fast nichts. Die Konto-Engines
 (Brave 402, Tavily 432, SearchApi/SerpApi/Consensus/Gemini 429, Google-CSE 400)
 wären die breiten — sie sind es nicht.
+
+## Nachtrag 2026-10-20 (6) — Zwillinge: die Signatur suchen, nicht den Namen
+
+Der Suchlauf nach **Datei-Signaturen** (nicht nach Arm-Namen) hat zwei Zwillinge
+gefunden:
+
+| Arm | Zwilling | Befund |
+|---|---|---|
+| `icrf3` | **`deepspace.jpl.nasa.gov/dsndocs/810-005/107/catalog-fixed.txt`** | **200, 637 566 B**, Kopfzeile „`<ICRF3-SX for use with DDOR 2025>`" — dasselbe Produkt `icrf3sx`, als DSN-Dokument 810-005, also eine **NASA-Veröffentlichung** |
+| `ilrs_npt` | `ilrs.gsfc.nasa.gov/.../npt/index.html` → CDDIS + EDC | derselbe Datenbestand, aber **dieselbe Wand**: CDDIS verlangt Earthdata-Login, EDC Login |
+
+Der JPL-Zwilling ist der erste echte Fund: `icrf3` war als `auth-required` über
+CDDIS gebunden; dieselbe ICRF3-SX-Tabelle liegt als **offenes DSN-Dokument** bei
+JPL. Was fehlt, ist kein Recht, sondern ein **Compiler für das
+Festspaltenformat** (Spalten 1–15 laut Dateikopf) — der bestehende
+`icrf3_compiler` liest das IERS-Format.
+
+Der ILRS-Zwilling bestätigt die Gegenprobe: ein Zwilling ist nur dann eine
+Öffnung, wenn er **nicht** dieselbe Zugangswand hat.
+
+## Nachtrag 2026-10-20 (7) — `lro_trk` ist offen
+
+Der Arm ist gebunden: `terms PD-USGov-PDS`, `format lro_trk`, Compiler
+`lro_trk_compiler.rs`, `at earth`, Feld `sky_frequency_hz`. Begründung: PDS3-Label,
+Archivkopie beim PDS-Knoten — kein Login, keine Konto-Wand.
+
+Gemessen mit dem neuen Deckel `--max-files`:
+
+| Lauf | Dauer | Ergebnis |
+|---|---:|---|
+| 3 Dateien | 1,9 s | 22 Samples, 2 472 B, Roundtrip parses |
+| 400 Dateien | 2 min 2 s | **13 830 Samples** (2009-06-19..21), **1 548 968 B**, Roundtrip parses |
+
+Der Deckel ist Pflicht, nicht Komfort: ohne ihn crawlt der Compiler ~7 400
+Tagesordner (≈48 min) und lädt bis zu 100 000 Dateien, **ohne eine Zeile
+Fortschritt**. Jetzt bricht der Crawl bei `cap` ab.
+
+**Riss:** der ausgelieferte Asset deckt die ersten 400 Dateien (drei Tage). Die
+volle Serie baut CI; bei ~100 000 Dateien wird sie in Shards zerfallen, und der
+Block muss dann die vom Compiler gedruckten Shard-Namen tragen.

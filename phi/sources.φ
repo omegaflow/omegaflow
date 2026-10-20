@@ -32291,3 +32291,12 @@ sha256 172eb9472f4788f22bfe3b24faad2dc0169fca680b80340e4c829201fdafc393
 at sun
 ttl 31536000
 field TRES pulsar_timing_residual_s inverse-square em s 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/imbrium.mit.edu/lro_trk.bin
+format lro_trk
+origin http://imbrium.mit.edu/LRORS/DATA/TRK/
+terms PD-USGov-PDS https://pds-geosciences.wustl.edu/missions/lro/lola.htm
+compiler tools/harvest/src/bin/lro_trk_compiler.rs
+at earth
+ttl 604800
+field sky_frequency_hz lro_sky_frequency_hz inverse-square em Hz 3600 0.0 0.0
