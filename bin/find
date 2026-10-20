@@ -1,42 +1,260 @@
 #!/bin/sh
-# find — Signatur suchen, Kandidaten laden, schnüffeln. Ein Aufruf statt vier.
+# find — mehrere Köder in einem Lauf: suchen, Kandidaten snüffeln, nur halten lassen,
+# was alle Köder trägt.
 #
-#   bin/find "bright_t31,frp,daynight" [--engine serper|exa|searxng] [--top 3]
+#   bin/find --header "time,station_id,discharge_m3s" \
+#            --value 55041.35 --hex 08e2c0d464663440 \
+#            --engine serper --top 5
 #
-# Ausgabe je Kandidat: Suchzeile, dann die Sniff-Felder (Status, Größe, Format,
-# Spalten, Zeitrolle, Einheit, sha256). Der Fund ist erst ein Fund, wenn der
-# Sniffer ihn trägt.
+# Jeder Köder ist optional, mindestens einer muss da sein. Hex ist kein Suchbegriff,
+# sondern nur die Prüfung. Ein Kandidat ist erst MATCH, wenn jeder angegebene Köder
+# hält; ein Wert, der nicht im Prefix steht, ist unbewiesen — nicht "nein".
 set -u
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 bin="$root/target/release/archive_search"
-engine="${OMEGAFLOW_FIND_ENGINE:-serper}"
-top="${OMEGAFLOW_FIND_TOP:-3}"
-query=""
+engine=""
+top=""
+header=""
+value=""
+hex=""
+
+usage() {
+    cat >&2 <<'EOF'
+find: usage: bin/find [--header "a,b,c"] [--value <zahl>] [--hex <hex>] --engine serper|exa|searxng --top N
+  mindestens ein Köder: --header, --value oder --hex
+  --header  alle Spaltennamen müssen im sniffed header stehen
+  --value   der Wert muss im Text stehen, sonst unbewiesen
+  --hex     pattern=<hex> muss Treffer melden
+EOF
+    exit 2
+}
 
 while [ $# -gt 0 ]; do
     case "$1" in
-        --engine) engine="${2:-serper}"; shift 2 ;;
-        --top) top="${2:-3}"; shift 2 ;;
-        *) query="$1"; shift ;;
+        --header) [ $# -ge 2 ] && [ -n "$2" ] || usage; header="$2"; shift 2 ;;
+        --value)  [ $# -ge 2 ] && [ -n "$2" ] || usage; value="$2"; shift 2 ;;
+        --hex)    [ $# -ge 2 ] && [ -n "$2" ] || usage; hex="$2"; shift 2 ;;
+        --engine) [ $# -ge 2 ] && [ -n "$2" ] || usage; engine="$2"; shift 2 ;;
+        --top)    [ $# -ge 2 ] && [ -n "$2" ] || usage; top="$2"; shift 2 ;;
+        *) usage ;;
     esac
 done
 
+[ -n "$engine" ] || usage
+[ -n "$top" ] || usage
+ [ -n "$header$value$hex" ] || usage
+
+if [ -z "$header" ] && [ -z "$hex" ] && [ -n "$value" ]; then
+    if [ "${#value}" -lt 6 ]; then
+        echo "find: \"$value\" ist zu kurz fuer einen Wert-Koeder (mind. 6 Zeichen)" >&2
+        exit 2
+    fi
+    echo "find: Warnung — Wert allein ist kein Beweis; ein Treffer bleibt eine Hypothese" >&2
+fi
+
+case "$engine" in
+    serper|exa|searxng) ;;
+    *) usage ;;
+esac
+case "$top" in
+    ''|*[!0-9]*) usage ;;
+esac
+[ "$top" -gt 0 ] || usage
+
+# Header in Spaltennamen ohne Kommas zerlegen; leere Spalten sind kein stiller Default.
+header_cols=""
+if [ -n "$header" ]; then
+    if ! header_cols="$(printf '%s\n' "$header" | awk -F, '{
+            for (i = 1; i <= NF; i++) {
+                gsub(/^[ \t]+|[ \t]+$/, "", $i)
+                if ($i == "") exit 1
+                printf "%s%s", (i > 1 ? " " : ""), $i
+            }
+        }')"; then
+        usage
+    fi
+fi
+
+# Hex normalisieren und prüfen; der Wert wird für die Prefix-Prüfung als Bytes gebraucht.
+hex="$(printf '%s' "$hex" | tr -d '[:space:]' | tr 'A-F' 'a-f')"
+if [ -n "$hex" ]; then
+    case "$hex" in
+        *[!0-9a-f]*) usage ;;
+    esac
+    [ $(( ${#hex} % 2 )) -eq 0 ] || usage
+fi
+value_hex=""
+if [ -n "$value" ]; then
+    value_hex="$(printf '%s' "$value" | od -A n -v -t x1 | tr -d ' \n')"
+fi
+
+# Query aus den Suchködern: Header als zitierte Spaltennamen, Wert als Zahl.
+# Hex bleibt draußen — es prüft nur.
+query=""
+for col in $header_cols; do
+    [ -n "$query" ] && query="$query "
+    query="$query\"$col\""
+done
+if [ -n "$value" ]; then
+    [ -n "$query" ] && query="$query "
+    query="$query$value"
+fi
 if [ -z "$query" ]; then
-    echo "find: usage: bin/find \"<signatur>\" [--engine serper|exa|searxng] [--top N]" >&2
+    echo "find: --hex allein liefert keinen Suchbegriff — --header oder --value nötig" >&2
     exit 2
 fi
+
 if [ ! -x "$bin" ]; then
     echo "find: $bin fehlt — erst bauen (cargo build --release -p omegaflow-utils --bin archive_search)" >&2
     exit 2
 fi
 
-echo "find: engine=$engine top=$top query=$query"
-"$bin" --"$engine" "$query" 2>&1 | head -n "$top" | while IFS= read -r line; do
-    url="$(printf '%s' "$line" | sed -n 's/.*url \([^ 	]*\).*/\1/p')"
-    if [ -z "$url" ]; then
-        continue
+tmp=""
+i=0
+while [ "$i" -lt 100 ]; do
+    tmp="${TMPDIR:-/tmp}/omegaflow-find.$$.$i"
+    if mkdir -m 700 "$tmp" 2>/dev/null; then
+        break
     fi
-    title="$(printf '%s' "$line" | sed -n 's/.*title: \([^	]*\).*/\1/p')"
-    printf '\n== %s\n   %s\n' "$url" "$title"
-    "$bin" --sniff "$url" 2>&1 | sed -n 's/^\[sniff\] /   /p' | grep -E 'status|bytes|format|delimiter|columns|time_column|unit|sha256' | head -8
+    i=$((i + 1))
 done
+if [ -z "$tmp" ] || [ ! -d "$tmp" ]; then
+    echo "find: kein temporäres Verzeichnis" >&2
+    exit 2
+fi
+trap 'rm -rf "$tmp"' 0 1 2 15
+
+search_once() {
+    "$bin" --"$engine" "$1" >"$tmp/search" 2>&1
+}
+
+search_once "$query"
+if [ "$engine" = serper ] && grep -q 'pending — Serper HTTP 400' "$tmp/search"; then
+    case "$query" in
+        *'"'*)
+            echo "find: Quotes abgelehnt, Suche ohne"
+            query="$(printf '%s' "$query" | tr -d '"' | sed 's/  */ /g; s/^ //; s/ $//')"
+            search_once "$query"
+            ;;
+    esac
+fi
+
+awk -v n="$top" '
+    /^url / || /^\[[^]]*\] url / {
+        sub(/^\[[^]]*\] /, "")
+        print
+        if (++c >= n) exit
+    }' "$tmp/search" >"$tmp/urls"
+candidates="$(wc -l <"$tmp/urls" | tr -d ' ')"
+if [ "$candidates" -eq 0 ]; then
+    sed -n '/^pending —/p; /^absent —/p' "$tmp/search" | sed 's/^/find: /'
+fi
+
+matches=0
+while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    url="$(printf '%s\n' "$line" | sed -n 's/^url \([^[:space:]]*\).*/\1/p')"
+    [ -n "$url" ] || continue
+    title="$(printf '%s\n' "$line" | awk -F'\t' '{
+            for (i = 2; i <= NF; i++) if ($i ~ /^title: /) {
+                sub(/^title: /, "", $i)
+                print $i
+                exit
+            }
+        }')"
+
+    sniff_out="$("$bin" --sniff "$url" 2>&1)"
+    header_line="$(printf '%s\n' "$sniff_out" | sed -n 's/^\(\[sniff\] \)\{0,1\}header //p' | head -n 1)"
+
+    header_state=""
+    header_note=""
+    if [ -n "$header" ]; then
+        if [ "$header_line" = absent ] || [ -z "$header_line" ]; then
+            header_state="fehlt"
+            header_note="kein header im Prefix"
+        else
+            # Der Header kann bei HTML-Seiten sehr lang werden: über stdin, nicht als argv.
+            if missing_cols="$(printf '%s\n' "$header_line" | awk -v cols="$header_cols" 'BEGIN{
+                    m = split(cols, b, " ")
+                }
+                {
+                    n = split($0, a, ",")
+                    for (i = 1; i <= n; i++) seen[a[i]] = 1
+                }
+                END {
+                    miss = ""
+                    for (i = 1; i <= m; i++)
+                        if (!(b[i] in seen)) miss = miss (miss == "" ? "" : ",") b[i]
+                    print miss
+                }')"; then
+                if [ -z "$missing_cols" ]; then
+                    header_state="erfüllt"
+                else
+                    header_state="fehlt"
+                    header_note="nicht im header: $missing_cols"
+                fi
+            else
+                header_state="unbewiesen"
+                header_note="Header nicht lesbar"
+            fi
+        fi
+    fi
+
+    value_state=""
+    value_note=""
+    if [ -n "$value" ]; then
+        value_out="$("$bin" --sniff "$url" "pattern=$value_hex" 2>&1)"
+        value_line="$(printf '%s\n' "$value_out" | grep -F "pattern $value_hex hits" | head -n 1)"
+        if [ -z "$value_line" ]; then
+            value_state="unbewiesen"
+            value_note="Musterzeile fehlt (Sniff pending?)"
+        else
+            value_hits="$(printf '%s\n' "$value_line" | sed "s/^.*pattern $value_hex hits //")"
+            if [ -n "$value_hits" ]; then
+                value_state="erfüllt"
+            else
+                value_state="unbewiesen"
+                value_note="nicht im Prefix"
+            fi
+        fi
+    fi
+
+    hex_state=""
+    hex_note=""
+    if [ -n "$hex" ]; then
+        hex_out="$("$bin" --sniff "$url" "pattern=$hex" 2>&1)"
+        hex_line="$(printf '%s\n' "$hex_out" | grep -F "pattern $hex hits" | head -n 1)"
+        if [ -z "$hex_line" ]; then
+            hex_state="unbewiesen"
+            hex_note="Musterzeile fehlt (Sniff pending?)"
+        else
+            hex_hits="$(printf '%s\n' "$hex_line" | sed "s/^.*pattern $hex hits //")"
+            if [ -n "$hex_hits" ]; then
+                hex_state="erfüllt"
+            else
+                hex_state="fehlt"
+                hex_note="0 Treffer"
+            fi
+        fi
+    fi
+
+    ok=1
+    if [ -n "$header" ] && [ "$header_state" != erfüllt ]; then ok=0; fi
+    if [ -n "$value" ] && [ "$value_state" != erfüllt ]; then ok=0; fi
+    if [ -n "$hex" ] && [ "$hex_state" != erfüllt ]; then ok=0; fi
+
+    if [ "$ok" -eq 1 ]; then
+        verdict="MATCH"
+        matches=$((matches + 1))
+    else
+        verdict="kein-match"
+    fi
+
+    printf '\n== %s %s\n' "$verdict" "$url"
+    [ -n "$title" ] && printf '   %s\n' "$title"
+    [ -n "$header" ] && printf '   header: %s%s\n' "$header_state" "$( [ -n "$header_note" ] && printf ' (%s)' "$header_note" )"
+    [ -n "$value" ] && printf '   value: %s%s\n' "$value_state" "$( [ -n "$value_note" ] && printf ' (%s)' "$value_note" )"
+    [ -n "$hex" ] && printf '   hex: %s%s\n' "$hex_state" "$( [ -n "$hex_note" ] && printf ' (%s)' "$hex_note" )"
+done <"$tmp/urls"
+
+printf '\nfind: %s Kandidaten, %s Treffer\n' "$candidates" "$matches"
