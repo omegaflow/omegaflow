@@ -167,6 +167,7 @@ fn admitted_terms(token: &str) -> bool {
                 | "all-rights-reserved"
                 | "auth-required"
                 | "registration-required"
+                | "no-redistribution"
                 | "no-license"
                 | "unclear"
                 | "unknown"
@@ -738,6 +739,7 @@ mod tests {
         assert!(!admitted_terms("all-rights-reserved"));
         assert!(!admitted_terms("auth-required"));
         assert!(!admitted_terms("registration-required"));
+        assert!(!admitted_terms("no-redistribution"));
         assert!(!admitted_terms("lasp-permission-required"));
         assert!(!admitted_terms(""));
     }
