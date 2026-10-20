@@ -1,5 +1,5 @@
 #!/bin/bash
-# lage — generiert ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/_lage.md aus git + Register + Gateway-Stand.
+# lage — generiert ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/_lage.md aus git + Register + Gateway-Stand.
 # Der Live-Index, den jede Sitzung zuerst liest. Kein Hand-Prosa, nur Abgeleitetes.
 set -u
 repo="${OMEGAFLOW_REPO:-$HOME/projects/omegaflow}"
@@ -9,9 +9,9 @@ head_sha=$(git rev-parse --short HEAD 2>/dev/null || echo "?")
 work_head=$(git -C "${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}" rev-parse --short HEAD 2>/dev/null || echo "?")
 ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
-open_rows=$(grep -E '\*\*rat-offen|\*\*rat-konvergiert|\*\*offen\*\*|\*\*gefahren\*\*' ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/_rat-register.md 2>/dev/null | sed 's/^/  /' | head -25)
+open_rows=$(grep -E '\*\*rat-offen|\*\*rat-konvergiert|\*\*offen\*\*|\*\*gefahren\*\*' ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/entscheidungen.md 2>/dev/null | sed 's/^/  /' | head -25)
 
-last_runs=$(ls -1t ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/ 2>/dev/null | grep -E 'sammlung|verdikt|lage' | head -8 | sed 's/^/  /')
+last_runs=$(ls -1t ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/ 2>/dev/null | grep -E 'sammlung|verdikt|lage' | head -8 | sed 's/^/  /')
 
 work="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
 post_in=$(ls -1 "$work"/post/*-an-future-*.md 2>/dev/null | wc -l)
@@ -54,7 +54,7 @@ done)
     echo "- Guthaben (USD):"
     echo "$balance"
   fi
-  echo "- Rat-Sitze: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/_rat-register.md\` (Index; die 17.10.-Anweisung ist nicht mehr geführt)"
+  echo "- Rat-Sitze: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/entscheidungen.md\` (Index; die 17.10.-Anweisung ist nicht mehr geführt)"
   echo
   echo "## Offen je Linie (Handover)"
   if [ -n "$line_rows" ]; then
@@ -67,7 +67,7 @@ done)
   echo "- in: $post_in Briefe (heute $post_today) · out: $post_out · Postfach-Repo: \`$post_head\` · uncommitted: $post_dirty"
   echo
   echo "## Wo was liegt (Kanon — hier nachsehen, nicht suchen)"
-  echo "- Rat: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/\` ($(ls -1 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/*.md 2>/dev/null | grep -vcE '_lage|_rat-') Runden · Register \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/_rat-register.md\` · Regeln \`docs/concepts/house-rules.md\` · Rohmaterial \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/_roh/\`)"
+  echo "- Rat: \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/\` ($(ls -1 ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/*.md 2>/dev/null | grep -vcE '_lage|_rat-') Runden · Register \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/entscheidungen.md\` · Regeln \`docs/concepts/house-rules.md\` · Rohmaterial \`${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/_roh/\`)"
   echo "- Post: \`$work/post/\` ($post_in Briefe an future, $post_out Dispatches) · Repo \`omegaflow/work\` (privat)"
   echo "- Quellen (CDN-gebunden, rekonstruierbar): \`$work/sources/\` ($(ls -1 "$work/sources" 2>/dev/null | wc -l) Netlocs + content/, $(du -sh "$work/sources" 2>/dev/null | cut -f1))"
   echo "- Experimente (nur lokal): \`$work/experiments/\` ($(ls -1 "$work/experiments" 2>/dev/null | wc -l) Themen, $(du -sh "$work/experiments" 2>/dev/null | cut -f1))"
@@ -91,6 +91,6 @@ done)
   fi
   echo
   echo "Regenerieren: \`bin/lage\`"
-} > ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/_lage.md
+} > ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/_lage.md
 
-echo "geschrieben: ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/state/rat/_lage.md (HEAD $head_sha)"
+echo "geschrieben: ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/_lage.md (HEAD $head_sha)"

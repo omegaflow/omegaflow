@@ -62,7 +62,7 @@ fi
 jq -r '.choices[0].message.content' "$out_file"
 
 work="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
-ledger="$work/state/rat/_verbrauch.tsv"
+ledger="$work/rat/_verbrauch.tsv"
 mkdir -p "$(dirname "$ledger")"
 if [ ! -f "$ledger" ]; then printf "zeit\tmodell\tversuch\n" > "$ledger"; fi
 printf "%s\t%s\t%s\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$model" "ok" >> "$ledger"
