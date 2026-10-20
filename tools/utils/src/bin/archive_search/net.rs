@@ -3796,13 +3796,287 @@ fn value_bait_lines(bytes: &[u8]) -> Vec<String> {
     out
 }
 
+const CHUNK_BYTES: usize = 4096;
+
+const BAIT_TEXT_MAX: usize = 8;
+
+const BAIT_STOP_WORDS: &[&str] = &[
+    "the", "and", "for", "with", "from", "that", "this", "these", "those", "are", "was", "were",
+    "has", "have", "had", "not", "but", "all", "any", "can", "may", "our", "their", "its", "into",
+    "than", "then", "there", "where", "which", "while", "been", "being", "also", "such", "using",
+    "used", "use", "per", "via", "of", "in", "on", "at", "by", "an", "as", "is", "be", "to", "we",
+    "it", "or", "if", "so", "no", "do", "does", "than", "most", "more", "less", "each", "both",
+    "time", "date", "value", "values", "data", "dataset", "example", "figure", "table",
+];
+
+fn ascii_view(bytes: &[u8]) -> String {
+    bytes
+        .iter()
+        .map(|b| if (0x20..0x7f).contains(b) { *b as char } else { ' ' })
+        .collect()
+}
+
+fn word_byte(b: u8) -> bool {
+    b.is_ascii_alphanumeric() || b == b'_'
+}
+
+fn word_token(text: &str, key: &str) -> Option<String> {
+    let bytes = text.as_bytes();
+    let mut from = 0usize;
+    while let Some(pos) = text[from..].find(key) {
+        let start = from + pos;
+        let end = start + key.len();
+        let before_ok = start == 0 || !word_byte(bytes[start - 1]);
+        let after_ok = end >= bytes.len() || !word_byte(bytes[end]);
+        if before_ok && after_ok {
+            let rest = text[end..].trim_start();
+            let rest = rest
+                .strip_prefix('=')
+                .or_else(|| rest.strip_prefix(':'))
+                .unwrap_or(rest)
+                .trim_start();
+            let token: String = rest
+                .chars()
+                .take_while(|c| !c.is_whitespace() && !matches!(c, ',' | ';' | ')' | ']'))
+                .collect();
+            let token = token.trim_matches(['"', '\'']).to_string();
+            if !token.is_empty() {
+                return Some(token);
+            }
+        }
+        from = end;
+    }
+    None
+}
+
+fn numeric_token(text: &str, key: &str) -> Option<f64> {
+    let token = word_token(text, key)?;
+    let clean = token.trim_end_matches(['f', 'F', 'd', 'D']);
+    clean.parse::<f64>().ok().filter(|v| v.is_finite())
+}
+
+fn netcdf_signal_lines(bytes: &[u8], text: &str) -> Vec<String> {
+    let magic = bytes.starts_with(b"CDF\x01") || bytes.starts_with(b"CDF\x02");
+    let numeric = ["scale_factor", "add_offset", "_FillValue"]
+        .iter()
+        .filter_map(|key| numeric_token(text, key).map(|v| (*key, v)))
+        .collect::<Vec<_>>();
+    if !magic && numeric.is_empty() {
+        return Vec::new();
+    }
+    let mut out = Vec::new();
+    for (key, value) in &numeric {
+        out.push(format!("netcdf {key}={value}"));
+    }
+    if let Some(units) = word_token(text, "units").filter(|u| u.len() <= 32) {
+        out.push(format!("netcdf units={units}"));
+    }
+    if let Some((_, scale)) = numeric.iter().find(|(key, _)| *key == "scale_factor")
+        && *scale != 1.0
+    {
+        out.push("netcdf decoded_value=raw*scale+offset".to_string());
+    }
+    out
+}
+
+fn fits_like(bytes: &[u8]) -> bool {
+    bytes.starts_with(b"SIMPLE  =") || bytes.starts_with(b"XTENSION") || bytes.starts_with(b"SIMPLE =")
+}
+
+fn fits_cards(bytes: &[u8]) -> Vec<(String, String)> {
+    let mut out = Vec::new();
+    if !fits_like(bytes) {
+        return out;
+    }
+    let limit = bytes.len().min(262_144);
+    let mut i = 0usize;
+    while i + 80 <= limit {
+        let card = &bytes[i..i + 80];
+        let key = String::from_utf8_lossy(&card[..8]).trim().to_string();
+        if key == "END" {
+            break;
+        }
+        let raw = String::from_utf8_lossy(&card[10..]).trim().to_string();
+        let value = match raw.strip_prefix('\'') {
+            Some(rest) => rest.split('\'').next().unwrap_or("").trim().to_string(),
+            None => raw,
+        };
+        if !key.is_empty() && !value.is_empty() {
+            out.push((key, value));
+        }
+        i += 80;
+    }
+    out
+}
+
+fn fits_signal_lines(bytes: &[u8]) -> Vec<String> {
+    let cards = fits_cards(bytes);
+    if cards.is_empty() {
+        return Vec::new();
+    }
+    let mut parts = Vec::new();
+    for key in ["BUNIT", "BSCALE", "BZERO", "NAXIS"] {
+        if let Some((_, value)) = cards.iter().find(|(k, _)| k == key) {
+            parts.push(format!("{key}={value}"));
+        }
+    }
+    let mut axis: Vec<&(String, String)> = cards
+        .iter()
+        .filter(|(k, _)| {
+            k.len() > 5 && k.starts_with("NAXIS") && k[5..].chars().all(|c| c.is_ascii_digit())
+        })
+        .collect();
+    axis.sort_by_key(|(k, _)| match k[5..].parse::<usize>() {
+        Ok(n) => n,
+        Err(_) => usize::MAX,
+    });
+    for (key, value) in axis {
+        parts.push(format!("{key}={value}"));
+    }
+    if parts.is_empty() {
+        return Vec::new();
+    }
+    vec![format!("fits {}", parts.join(" "))]
+}
+
+fn healpix_signal_lines(text: &str) -> Vec<String> {
+    let upper = text.to_ascii_uppercase();
+    let ordering = word_token(&upper, "ORDERING").filter(|v| matches!(v.as_str(), "NESTED" | "RING"));
+    let nside = word_token(&upper, "NSIDE").and_then(|v| v.parse::<u64>().ok());
+    match (ordering, nside) {
+        (None, None) => vec!["healpix absent".to_string()],
+        (ordering, nside) => {
+            let mut line = "healpix".to_string();
+            if let Some(ordering) = ordering {
+                line.push_str(&format!(" ordering={ordering}"));
+            }
+            if let Some(nside) = nside {
+                line.push_str(&format!(" nside={nside}"));
+            }
+            vec![line]
+        }
+    }
+}
+
+fn format_signal_lines(bytes: &[u8]) -> Vec<String> {
+    let sample = &bytes[..bytes.len().min(262_144)];
+    let text = ascii_view(sample);
+    let mut out = netcdf_signal_lines(sample, &text);
+    out.extend(fits_signal_lines(sample));
+    out.extend(healpix_signal_lines(&text));
+    out
+}
+
+fn chunk_hash_lines(bytes: &[u8], pattern: Option<&str>) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut seen = std::collections::HashSet::new();
+    let mut push_chunk = |start: usize, end: usize, out: &mut Vec<String>| {
+        if start >= end || end > bytes.len() || !seen.insert((start, end)) {
+            return;
+        }
+        out.push(format!(
+            "chunk {}..{} sha256 {}",
+            start,
+            end,
+            omegaflow::sha256::sha256_hex(&bytes[start..end])
+        ));
+    };
+    push_chunk(0, bytes.len().min(CHUNK_BYTES), &mut out);
+    let tail = bytes.len().saturating_sub(CHUNK_BYTES);
+    if tail > 0 {
+        push_chunk(tail, bytes.len(), &mut out);
+    }
+    if let Some(hex) = pattern
+        && let Some(needle) = hex_bytes(hex)
+        && !needle.is_empty()
+    {
+        for hit in omegaflow::archivar::sniff::find_pattern(bytes, &needle, 4) {
+            let start = hit.saturating_sub(CHUNK_BYTES / 2);
+            let end = (hit + needle.len() + CHUNK_BYTES / 2).min(bytes.len());
+            push_chunk(start, end, &mut out);
+        }
+    }
+    out
+}
+
+fn bait_text_lines(bytes: &[u8]) -> Vec<String> {
+    let sample = &bytes[..bytes.len().min(65_536)];
+    let Ok(text) = std::str::from_utf8(sample) else {
+        return Vec::new();
+    };
+    if text.contains('\0') || !text.chars().any(|c| c.is_alphabetic()) {
+        return Vec::new();
+    }
+    let mut out = Vec::new();
+    let mut seen = std::collections::HashSet::new();
+    let words: Vec<&str> = text.split_whitespace().collect();
+    for (i, raw) in words.iter().enumerate() {
+        let word = raw.trim_matches(|c: char| {
+            !c.is_alphanumeric() && !matches!(c, '_' | '[' | ']' | '/' | '^' | '*' | '·' | '°' | '%' | '-')
+        });
+        if word.is_empty() {
+            continue;
+        }
+        let lower = word.to_ascii_lowercase();
+        let identifier = word.len() >= 3
+            && word.len() <= 64
+            && word.contains('_')
+            && word.chars().next().is_some_and(|c| c.is_ascii_alphabetic())
+            && word.chars().all(|c| c.is_ascii_alphanumeric() || c == '_');
+        if identifier && !BAIT_STOP_WORDS.contains(&lower.as_str()) && seen.insert(word.to_string()) {
+            out.push(format!("bait text \"{word}\""));
+        }
+        if let Some(next) = words.get(i + 1) {
+            let unit = next.trim_matches(|c: char| matches!(c, ',' | ';' | ':' | '.' | '"' | '\'' | '(' | ')'));
+            let unit_ok = unit.starts_with('[') && unit.ends_with(']') && unit.len() > 2;
+            let word_ok = word.chars().any(|c| c.is_alphabetic())
+                && !BAIT_STOP_WORDS.contains(&lower.as_str());
+            if unit_ok && word_ok {
+                let token = format!("{word} {unit}");
+                if seen.insert(token.clone()) {
+                    out.push(format!("bait text \"{token}\""));
+                }
+            }
+        }
+        if out.len() >= BAIT_TEXT_MAX {
+            break;
+        }
+    }
+    out
+}
+
 fn bait_lines(bytes: &[u8]) -> Vec<String> {
     let s = omegaflow::archivar::sniff::sniff(bytes);
     let Some(header) = s.header.clone() else {
-        return vec!["bait absent — the prefix carries no header line to fish with".to_string()];
+        let text = bait_text_lines(bytes);
+        return if text.is_empty() {
+            vec!["bait absent — the prefix carries no header line to fish with".to_string()]
+        } else {
+            text
+        };
     };
     if header.is_empty() || header.iter().all(|c| !c.chars().any(|ch| ch.is_alphanumeric())) {
-        return vec!["bait absent — the prefix carries no header line to fish with".to_string()];
+        let text = bait_text_lines(bytes);
+        return if text.is_empty() {
+            vec!["bait absent — the prefix carries no header line to fish with".to_string()]
+        } else {
+            text
+        };
+    }
+    let prose = header.len() > 12
+        || header.iter().any(|c| {
+            c.contains(' ')
+                || c.ends_with('.')
+                || c.ends_with(':')
+                || c.ends_with(';')
+                || c.ends_with('!')
+                || c.ends_with('?')
+        });
+    if prose {
+        let text = bait_text_lines(bytes);
+        if !text.is_empty() {
+            return text;
+        }
     }
     let generic = [
         "time", "date", "value", "id", "lat", "lon", "latitude", "longitude", "year",
@@ -3875,6 +4149,7 @@ fn sniff_struct_lines(bytes: &[u8], pattern: Option<&str>) -> Vec<String> {
             }
         ),
     ];
+    out.extend(format_signal_lines(bytes));
     if let Some(hex) = pattern {
         match hex_bytes(hex) {
             Some(needle) if !needle.is_empty() => {
@@ -3891,6 +4166,7 @@ fn sniff_struct_lines(bytes: &[u8], pattern: Option<&str>) -> Vec<String> {
             _ => out.push(format!("pattern {hex} absent — not hex")),
         }
     }
+    out.extend(chunk_hash_lines(bytes, pattern));
     out
 }
 
@@ -5772,6 +6048,178 @@ mod tests {
         let lines = sniff_lines(&query);
         assert!(
             lines.iter().any(|l| l == "pattern 616263 hits 4,11"),
+            "{lines:?}"
+        );
+        let _ = std::fs::remove_file(&path);
+    }
+
+    fn fetch_of(raw: Vec<u8>) -> Fetch {
+        Fetch {
+            status: Some(200),
+            body: String::from_utf8_lossy(&raw).to_string(),
+            raw,
+            retry_after: None,
+            complete: true,
+        }
+    }
+
+    fn fits_card(key: &str, value: &str) -> Vec<u8> {
+        let mut card = vec![b' '; 80];
+        card[..key.len()].copy_from_slice(key.as_bytes());
+        card[8] = b'=';
+        card[10..10 + value.len()].copy_from_slice(value.as_bytes());
+        card
+    }
+
+    #[test]
+    fn sniff_lines_carry_head_and_tail_chunk_hashes() {
+        let raw = vec![b'a'; 10_000];
+        let f = fetch_of(raw.clone());
+        let lines = sniff_lines_from(&f, "https://example.com/blob", None);
+        let head = omegaflow::sha256::sha256_hex(&raw[..4096]);
+        let tail = omegaflow::sha256::sha256_hex(&raw[5904..]);
+        assert!(
+            lines.iter().any(|l| *l == format!("chunk 0..4096 sha256 {}", head)),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().any(|l| *l == format!("chunk 5904..10000 sha256 {}", tail)),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().filter(|l| l.starts_with("chunk ")).count() == 2,
+            "{lines:?}"
+        );
+    }
+
+    #[test]
+    fn sniff_lines_hash_the_chunk_around_a_pattern_hit() {
+        let mut raw = vec![b'x'; 12_000];
+        raw[6000..6004].copy_from_slice(b"NEED");
+        let f = fetch_of(raw.clone());
+        let lines = sniff_lines_from(&f, "https://example.com/blob", Some("4e454544"));
+        let around = omegaflow::sha256::sha256_hex(&raw[3952..8052]);
+        assert!(
+            lines
+                .iter()
+                .any(|l| *l == format!("chunk 3952..8052 sha256 {}", around)),
+            "{lines:?}"
+        );
+    }
+
+    #[test]
+    fn netcdf_scale_factor_names_the_decode() {
+        let raw =
+            b"CDF\x01\x00scale_factor = 0.01\nadd_offset = -5\n_FillValue = -9999\nunits = K\n"
+                .to_vec();
+        let f = fetch_of(raw);
+        let lines = sniff_lines_from(&f, "https://example.com/blob", None);
+        assert!(
+            lines.iter().any(|l| l == "netcdf scale_factor=0.01"),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().any(|l| l == "netcdf add_offset=-5"),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().any(|l| l == "netcdf _FillValue=-9999"),
+            "{lines:?}"
+        );
+        assert!(lines.iter().any(|l| l == "netcdf units=K"), "{lines:?}");
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "netcdf decoded_value=raw*scale+offset"),
+            "{lines:?}"
+        );
+    }
+
+    #[test]
+    fn netcdf_unit_scale_skips_the_decode_hint() {
+        let raw = b"CDF\x01 scale_factor = 1 add_offset = 0 units = 1\n".to_vec();
+        let f = fetch_of(raw);
+        let lines = sniff_lines_from(&f, "https://example.com/blob", None);
+        assert!(
+            lines.iter().any(|l| l == "netcdf scale_factor=1"),
+            "{lines:?}"
+        );
+        assert!(
+            !lines
+                .iter()
+                .any(|l| l == "netcdf decoded_value=raw*scale+offset"),
+            "{lines:?}"
+        );
+    }
+
+    #[test]
+    fn fits_cards_name_bunit_and_axes() {
+        let mut raw = fits_card("SIMPLE", "T");
+        raw.extend(fits_card("BUNIT", "'Jy'"));
+        raw.extend(fits_card("BSCALE", "1.0"));
+        raw.extend(fits_card("BZERO", "0.0"));
+        raw.extend(fits_card("NAXIS", "2"));
+        raw.extend(fits_card("NAXIS1", "1024"));
+        raw.extend(fits_card("NAXIS2", "512"));
+        raw.extend(fits_card("END", ""));
+        let f = fetch_of(raw);
+        let lines = sniff_lines_from(&f, "https://example.com/blob", None);
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "fits BUNIT=Jy BSCALE=1.0 BZERO=0.0 NAXIS=2 NAXIS1=1024 NAXIS2=512"),
+            "{lines:?}"
+        );
+    }
+
+    #[test]
+    fn healpix_names_ordering_and_nside() {
+        let raw = b"ORDERING= NESTED\nNSIDE   = 512\n".to_vec();
+        let f = fetch_of(raw);
+        let lines = sniff_lines_from(&f, "https://example.com/blob", None);
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "healpix ordering=NESTED nside=512"),
+            "{lines:?}"
+        );
+    }
+
+    #[test]
+    fn healpix_is_absent_without_ordering() {
+        let raw = b"time,value\n2026-01-01T00:00:00,1.5\n".to_vec();
+        let f = fetch_of(raw);
+        let lines = sniff_lines_from(&f, "https://example.com/blob", None);
+        assert!(lines.iter().any(|l| l == "healpix absent"), "{lines:?}");
+    }
+
+    #[test]
+    fn bait_text_fishes_identifiers_units_and_stops() {
+        let path = std::env::temp_dir().join(format!("sniff-bait-text-{}", std::process::id()));
+        std::fs::write(
+            &path,
+            "We measured station_id and discharge [m3/s] at the gauge.\n\
+             the [m] noise was removed by the pipeline before analysis.\n\
+             alpha_beta gamma_delta delta_epsilon zeta_eta theta_iota kappa_lambda mu_nu xi_omicron.\n",
+        )
+        .unwrap();
+        let lines = sniff_lines(&format!("{} bait", path.display()));
+        assert!(
+            lines.iter().any(|l| l == "bait text \"station_id\""),
+            "{lines:?}"
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "bait text \"discharge [m3/s]\""),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().all(|l| l != "bait text \"the [m]\""),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().filter(|l| l.starts_with("bait text ")).count() == 8,
             "{lines:?}"
         );
         let _ = std::fs::remove_file(&path);
