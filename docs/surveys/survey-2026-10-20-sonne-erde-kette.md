@@ -2,7 +2,7 @@
   title: Survey — die Sonne→Erde-Kette im Haus (Bestand, gemessen 2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: 0520b3ec7e2dc58b2ca72ce66321946617b0fa44f9da132f07091b93f01514e7
+  sha256: 0c037bcc3c59fe5a8caf13979e8aaa617be6c94b2b71d8dc06e463715152ec11
   status: live
   see-also: phi/sources.φ docs/paper/gic-causal-driver.md zustand/rat/2026-10-15-rat-fragenpaket.md
 -->
@@ -22,7 +22,7 @@ eigentlich?" und die Grundlage für F2 (Frühwarnkette).
 | **Sonne** | `f107` (Sonnenflux), `goes_xrs` (Röntgen A/B), `goes_euvs` (Lyman-α), `goes_abi` (3 Bänder), `aia` (7 Kanäle), `soho_lasco_cme` (Geschwindigkeit, Breite, Winkel, Masse, Energie, Beschleunigung), `swpc_radio_bursts` (Typ II/III: Frequenzband, Dauer, Typ) | 1+2+1+3+7+6+5 = **25** | 1 d · 1 h · 1 a · 1 h · 1 d · 30 d · Ereignis | PD-USGov / CC0 |
 | **Zwischenpunkt (L1)** | `omni2_serie` (Bx/By/Bz, Dichte, Speed, Druck, Temperatur), `omni2_serie_daily`, `omni_hro` (dieselben acht), `wind_waves` (3 Radio-/Plasma-Bänder) | 7+7+8+3 = **25** | 1 h · 1 d · 1 h · 1 d | CC0 |
 | **Magnetfeld** | `wdc_ae` (AE, AL, AU, Dst, Sym-D, Sym-H), `substorm` (SuperMAG: MLT, MLat, GLat, GLon) | **6 + 4** | 1 min (Dst 1 h) · 1 d | WDC non-commercial · SuperMAG auth |
-| **Ionosphäre** | `cdaweb_tec` (TECU), `superdarn_fitacf` (Losgeschwindigkeit), `superdarn_rawacf`, `superdarn_cpcp`, `sws_ionosonde` (Juliusruh, foF2) | **5** | 1 d · 10 min · 1 h | CC0 / CC-BY / **SWS-WDC (nicht offen)** |
+| **Ionosphäre** | `cdaweb_tec` (TECU), `superdarn_fitacf` (Losgeschwindigkeit), `superdarn_rawacf`, `superdarn_cpcp`, `sws_ionosonde` (Juliusruh, foF2) | **5** | 1 d · 10 min · 1 h | CC0 / CC-BY / **SWS-WDC (NC, Weitergabe mit Bedingungen)** |
 | **Aurora** | `themis_asi` (Rohbilder), `themis_asi_fodg`, `themis_asi_keogram`, `themis_asi_timed_keogram`, `keogram` (MIRACLE, 2 Blöcke), `ssusi_aurora` (Hemisphärenleistung N/S), `magic_dl3` | **3 Felder + Rohbilder** | Bildkadenz · 1 d · 1 a | free-open / CC-BY |
 | **Boden** | `intermagnet_dbdt` (ABK/SOD, 1 min + 1 h), `intermagnet_xyz_*` (Komponenten je Station), `fmi_image_mag` (NUR, 10 s), `carisma_mag` (1 s), `bc_mpo_mag`, `usgs_geomag_efield` | **~474** | 1 min / 1 h / 10 s / 1 s | **CC-BY-NC-4.0** / OGL / PD |
 | **Strom (GIC)** | `bpa_gic` (11 Punkte), `fmi_gic` (1 h), `fmi_gic_1min` (1 min), Kellerman-Knoten | **28** | 5 min · 1 h · 1 min | PD-USGov / CC-BY |
@@ -48,7 +48,7 @@ eigentlich?" und die Grundlage für F2 (Frühwarnkette).
 | Lücke | Befund |
 |---|---|
 | **Radioausbrüche** | **verdrahtet seit 2026-10-20** (`swpc_radio_bursts`, Typ II/III; 34 Sweeps im rollierenden ~25-Tage-Fenster; PD-USGov). Offen: keine Langzeitreihe, kein 1-s-Spektrogramm |
-| **Ionosonden** | **Quelle gefunden (2026-10-20):** Juliusruh (`0318`), 1957–2025, **552.100 foF2-Stundenwerte**, maschinenlesbar. Aber **Lizenz nicht offen** (SWS-WDC-Conditions: Namensnennung, keine kommerzielle Nutzung ohne Vereinbarung) → **lokal nutzbar, kein CDN, keine Weitergabe**. GIRO/DIDBase liefert von hier 504/404 |
+| **Ionosonden** | **Quelle gefunden (2026-10-20):** Juliusruh (`0318`), 1957–2025, **552.100 foF2-Stundenwerte**, maschinenlesbar. Lizenz **SWS-WDC**: Namensnennung, **keine kommerzielle Nutzung** ohne Vereinbarung, **Weitergabe an Kollegen erlaubt, wenn die Bedingungen mitgegeben werden** — das Haus ist NC (PolyForm), also nutzbar und weitergabefähig. CDN-Upload läuft. GIRO/DIDBase liefert von hier 504/404 |
 | **Live-Sonnenwind (RTSW/DSCOVR)** | kein `rtsw`-, kein `dscovr`-Block; nur OMNI-Archiv und `wind_waves` |
 | **SuperMAG-Felder** | Compiler da, nur `substorm` registriert; **nicht redistribuierbar** (auth) |
 | **Finnisches Netz** | nur der Datensatz-Katalog, keine Zeitreihe |
@@ -62,7 +62,7 @@ eigentlich?" und die Grundlage für F2 (Frühwarnkette).
 - **SuperMAG:** `auth-required`, „cannot be redistributed" (Rules of the Road) — nur
   lokal messen, nie spiegeln.
 - **Fingrid:** per-service-terms; der Katalog ist keine Lizenz für die Zeitreihen.
-- **SWS/ASWFC (Ionosonde Juliusruh):** SWS-WDC-Conditions — Namensnennung, **keine kommerzielle Nutzung** ohne schriftliche Vereinbarung. Lokal nutzbar, nicht weitergeben.
+- **SWS/ASWFC (Ionosonde Juliusruh):** SWS-WDC-Conditions — Namensnennung, **keine kommerzielle Nutzung** ohne schriftliche Vereinbarung; **Weitergabe an Kollegen erlaubt, wenn die Bedingungen mitgegeben werden**. Das Haus ist NC (PolyForm Noncommercial), also Nutzung und Weitergabe zulässig; Provider nennen (BoM/ASWFC, Daten IAP Leibniz-Institut Juliusruh).
 - **ENTSO-E:** CC-BY-4.0 — die einzige Netzreihe, die offen weitergegeben werden darf.
 
 ## Kadenz-Risse
