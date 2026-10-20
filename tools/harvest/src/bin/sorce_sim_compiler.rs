@@ -1,3 +1,4 @@
+use omegaflow::archivar::asset_path::compiled;
 use omegaflow::archivar::embedded_lsk;
 use omegaflow::inflate::inflate_stream;
 use std::env;
@@ -5,6 +6,8 @@ use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
 use std::path::PathBuf;
 
+const NETLOC: &str = "lasp.colorado.edu";
+const DEFAULT_OUT: &str = "sorce_sim.bin";
 const MAGIC: [u8; 4] = *b"SIMA";
 const TARGETS: [f64; 3] = [240.0, 300.0, 380.0];
 const EOCD: &[u8; 4] = b"PK\x05\x06";
@@ -343,7 +346,16 @@ fn run(args: &[String]) -> Result<(), String> {
     let source_spec = arg_value(args, "--source")
         .or_else(|| positional_source(args))
         .ok_or_else(|| "no source — pass the SORCE-SIM .txt.zip path or URL".to_string())?;
-    let out = arg_value(args, "--out").ok_or_else(|| "--out <bin> is absent".to_string())?;
+    let out = match arg_value(args, "--out") {
+        Some(v) => v,
+        None => {
+            let path = compiled(NETLOC, DEFAULT_OUT);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
+    };
     let source = Source::open(&source_spec)?;
     let entry = member_entry(&source)?;
     if entry.method != 8 && entry.method != 0 {
@@ -398,7 +410,7 @@ fn run(args: &[String]) -> Result<(), String> {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
-        println!("usage: sorce_sim_compiler <sorce_sim_...txt.zip> --out <bin> [--source <path|url>]");
+        println!("usage: sorce_sim_compiler <sorce_sim_...txt.zip> [--out <bin>] [--source <path|url>]");
         return;
     }
     if let Err(e) = run(&args) {

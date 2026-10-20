@@ -1,9 +1,11 @@
+use omegaflow::archivar::asset_path::compiled;
 use omegaflow::archivar::embedded_lsk;
 use omegaflow::hdf5::{Hdf5File, decode_f32};
 use omegaflow::lsk::days_from_civil;
 use std::env;
 use std::fs;
 
+const NETLOC: &str = "sbuv.gsfc.nasa.gov";
 const MAGIC: [u8; 4] = *b"GSI1";
 
 const N07_WAVELENGTHS: [f64; 3] = [205.5, 280.5, 380.5];
@@ -206,7 +208,16 @@ fn run(args: &[String]) -> Result<(), String> {
         None => Product::of_name(&source)
             .ok_or_else(|| format!("{source}: the product does not follow from the name — pass --product"))?,
     };
-    let out = arg_value(args, "--out").ok_or_else(|| "--out <bin> is absent".to_string())?;
+    let out = match arg_value(args, "--out") {
+        Some(v) => v,
+        None => {
+            let path = compiled(NETLOC, &format!("gsfc_ssi_{}.bin", product.label()));
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
+    };
 
     let bytes = read_source(&source)?;
     let file = Hdf5File::parse(&bytes).map_err(|e| format!("{source}: hdf5 void ({e:?})"))?;
@@ -260,7 +271,7 @@ fn run(args: &[String]) -> Result<(), String> {
 fn main() {
     let args: Vec<String> = env::args().skip(1).collect();
     if args.iter().any(|a| a == "--help" || a == "-h") {
-        println!("usage: gsfc_ssi_compiler <n07|susim|sorcesols>.h5 --out <bin> [--source <path|url>] [--product n07|susim|sorcesols] [--inspect]");
+        println!("usage: gsfc_ssi_compiler <n07|susim|sorcesols>.h5 [--out <bin>] [--source <path|url>] [--product n07|susim|sorcesols] [--inspect]");
         return;
     }
     if let Err(e) = run(&args) {

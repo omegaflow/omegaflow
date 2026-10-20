@@ -1,9 +1,12 @@
+use omegaflow::archivar::asset_path::{compiled, raw};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsHeader, FitsImage};
 use omegaflow::lsk::days_from_civil;
 use omegaflow::soho_eit::{parse_bin, write_bin};
 
+const NETLOC: &str = "sun.stanford.edu";
+const DEFAULT_OUT: &str = "soho_eit_195.bin";
 const FITS_BZERO_ABSENT: f64 = 0.0;
 const BASE: &str = "http://sun.stanford.edu/synop/EIT/";
 const CR_ANCHOR: i64 = 1908;
@@ -121,14 +124,17 @@ fn main() {
     let ci_mode = has_flag(&args, "--ci-mode");
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => "soho_eit_195.bin".to_string(),
+        None => {
+            let path = compiled(NETLOC, DEFAULT_OUT);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
     };
     let cache_dir = match arg_value(&args, "--cache-dir") {
         Some(v) => v,
-        None => omegaflow::archivar::cache_root()
-            .join("omegaflow_eit_cache")
-            .to_string_lossy()
-            .into_owned(),
+        None => raw(NETLOC, "cache/eit").to_string_lossy().into_owned(),
     };
     if std::fs::create_dir_all(&cache_dir).is_err() {
         eprintln!("{cache_dir}: cache dir stays uncreatable");
@@ -203,7 +209,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_release("sun.stanford.edu", &out) {
+    if ci_mode && !upload_release(NETLOC, &out) {
         std::process::exit(1);
     }
 }

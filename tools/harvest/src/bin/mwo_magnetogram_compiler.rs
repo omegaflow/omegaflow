@@ -1,3 +1,4 @@
+use omegaflow::archivar::asset_path::{compiled, raw};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::inflate::gunzip_tar_members;
 use omegaflow::cdn::upload_release;
@@ -7,6 +8,8 @@ use omegaflow::lsk::days_from_civil;
 use omegaflow::mwo_magnetogram::{Record, parse_bin, write_bin};
 use std::process::Command;
 
+const NETLOC: &str = "dataverse.harvard.edu";
+const DEFAULT_OUT: &str = "mwo_magnetogram.bin";
 const FITS_BZERO_ABSENT: f64 = 0.0;
 const DATASET: &str =
     "https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:10.7910/DVN/VQK56Z";
@@ -185,14 +188,17 @@ fn main() {
     let ci_mode = has_flag(&args, "--ci-mode");
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => "mwo_magnetogram.bin".to_string(),
+        None => {
+            let path = compiled(NETLOC, DEFAULT_OUT);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
     };
     let cache_dir = match arg_value(&args, "--cache-dir") {
         Some(v) => v,
-        None => omegaflow::archivar::cache_root()
-            .join("omegaflow_mwo_cache")
-            .to_string_lossy()
-            .into_owned(),
+        None => raw(NETLOC, "cache/mwo").to_string_lossy().into_owned(),
     };
     if std::fs::create_dir_all(&cache_dir).is_err() {
         eprintln!("{cache_dir}: cache dir stays uncreatable");
@@ -303,7 +309,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_release("dataverse.harvard.edu", &out) {
+    if ci_mode && !upload_release(NETLOC, &out) {
         std::process::exit(1);
     }
 }

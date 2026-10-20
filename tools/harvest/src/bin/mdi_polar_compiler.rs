@@ -1,4 +1,5 @@
 
+use omegaflow::archivar::asset_path::{compiled, raw};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_release;
 use omegaflow::fits::{FitsCompressedImage, FitsHeader};
@@ -6,6 +7,8 @@ use omegaflow::json::{JsonVal, jnum, parse_json};
 use omegaflow::lsk::days_from_civil;
 use omegaflow::mdi_polar::{parse_bin, write_bin};
 
+const NETLOC: &str = "jsoc.stanford.edu";
+const DEFAULT_OUT: &str = "mdi_polar.bin";
 const FITS_BZERO_ABSENT: f64 = 0.0;
 const JSOC_INFO: &str = "http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info";
 const JSOC_FETCH: &str = "http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_fetch";
@@ -296,14 +299,17 @@ fn main() {
     let ci_mode = has_flag(&args, "--ci-mode");
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => "mdi_polar.bin".to_string(),
+        None => {
+            let path = compiled(NETLOC, DEFAULT_OUT);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
     };
     let cache_dir = match arg_value(&args, "--cache-dir") {
         Some(v) => v,
-        None => omegaflow::archivar::cache_root()
-            .join("omegaflow_mdi_cache")
-            .to_string_lossy()
-            .into_owned(),
+        None => raw(NETLOC, "cache/mdi").to_string_lossy().into_owned(),
     };
     let jobs: usize = arg_value(&args, "--jobs")
         .and_then(|v| v.parse().ok())
@@ -392,7 +398,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_release("jsoc.stanford.edu", &out) {
+    if ci_mode && !upload_release(NETLOC, &out) {
         std::process::exit(1);
     }
 }

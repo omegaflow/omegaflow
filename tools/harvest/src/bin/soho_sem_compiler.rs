@@ -1,9 +1,12 @@
+use omegaflow::archivar::asset_path::compiled;
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::archivar::inflate::{gunzip, tar_members};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::days_from_civil;
 use omegaflow::soho_sem::{Record, parse_bin, write_bin};
 
+const NETLOC: &str = "spdf.gsfc.nasa.gov";
+const DEFAULT_OUT: &str = "soho_sem_daily.bin";
 const DEFAULT_URL: &str =
     "https://spdf.gsfc.nasa.gov/pub/data/soho/celias/ascii/CELIAS_SEM_daily_avg.tar.gz";
 
@@ -60,7 +63,13 @@ fn main() {
     let ci_mode = has_flag(&args, "--ci-mode");
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => "soho_sem_daily.bin".to_string(),
+        None => {
+            let path = compiled(NETLOC, DEFAULT_OUT);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
     };
     let url = match arg_value(&args, "--url") {
         Some(v) => v,
@@ -126,7 +135,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_release("spdf.gsfc.nasa.gov", &out) {
+    if ci_mode && !upload_release(NETLOC, &out) {
         std::process::exit(1);
     }
 }

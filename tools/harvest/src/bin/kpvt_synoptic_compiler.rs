@@ -1,9 +1,12 @@
 
+use omegaflow::archivar::asset_path::{compiled, raw};
 use omegaflow::archivar::fetch_raw_bytes;
 use omegaflow::cdn::upload_release;
 use omegaflow::fits::FitsImage;
 use omegaflow::kpvt_polar::{parse_bin, write_bin};
 
+const NETLOC: &str = "nispdata.nso.edu";
+const DEFAULT_OUT: &str = "kpvt_polar.bin";
 const INDEX: &str = "https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/";
 const BASE: &str = "https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/";
 const CAP_SIN: f64 = 0.866_025_403_784_438_6;
@@ -101,14 +104,17 @@ fn main() {
     let ci_mode = has_flag(&args, "--ci-mode");
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => "kpvt_polar.bin".to_string(),
+        None => {
+            let path = compiled(NETLOC, DEFAULT_OUT);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
     };
     let cache_dir = match arg_value(&args, "--cache-dir") {
         Some(v) => v,
-        None => omegaflow::archivar::cache_root()
-            .join("omegaflow_kpvt_cache")
-            .to_string_lossy()
-            .into_owned(),
+        None => raw(NETLOC, "cache/kpvt").to_string_lossy().into_owned(),
     };
     if std::fs::create_dir_all(&cache_dir).is_err() {
         eprintln!("{cache_dir}: cache dir stays uncreatable");
@@ -184,7 +190,7 @@ fn main() {
             std::process::exit(1);
         }
     }
-    if ci_mode && !upload_release("nispdata.nso.edu", &out) {
+    if ci_mode && !upload_release(NETLOC, &out) {
         std::process::exit(1);
     }
 }

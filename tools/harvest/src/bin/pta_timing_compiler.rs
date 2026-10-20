@@ -1,4 +1,5 @@
 
+use omegaflow::archivar::asset_path::compiled;
 use omegaflow::archivar::inflate::gunzip_tar_members;
 use omegaflow::cdn::upload_release;
 use std::collections::{BTreeMap, HashMap, HashSet};
@@ -655,7 +656,13 @@ fn run(args: &[String]) -> Result<(), String> {
 
     let out = match arg_value(args, "--out") {
         Some(v) => v,
-        None => DEFAULT_OUT.to_string(),
+        None => {
+            let path = compiled(DEFAULT_NETLOC, DEFAULT_OUT);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
     };
     if has_flag(args, "--stat") {
         let np = rows

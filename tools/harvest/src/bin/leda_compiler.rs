@@ -1,7 +1,9 @@
+use omegaflow::archivar::asset_path::compiled;
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Endian, Hdf5CompoundMember, Hdf5Datatype, Hdf5File, decode_f32, decode_f64};
 use omegaflow::spectral::{parse_spectral_bin, write_spectral_bin};
 
+const NETLOC: &str = "zenodo.org";
 const DEFAULT_OUT: &str = "leda.bin";
 const DEFAULT_FIELD: &str = "ant252_x";
 const LEDA_FREQ_START_HZ: f64 = 30_000_000.0;
@@ -242,7 +244,7 @@ fn run(
         }
         None => return Err(format!("{out}: roundtrip parse void")),
     }
-    if ci && !upload_release("zenodo.org", out) {
+    if ci && !upload_release(NETLOC, out) {
         return Err(format!("{out}: CDN upload returned void"));
     }
     Ok(bins.len())
@@ -275,7 +277,13 @@ fn main() {
     };
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => DEFAULT_OUT.to_string(),
+        None => {
+            let path = compiled(NETLOC, DEFAULT_OUT);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
     };
     let freq_start = match arg_value(&args, "--freq-start") {
         Some(v) => match v.parse::<f64>() {

@@ -1,4 +1,5 @@
 
+use omegaflow::archivar::asset_path::compiled;
 use omegaflow::cdn::upload_release;
 use omegaflow::hdf5::{Hdf5Datatype, Hdf5Layout, LazyHdf5, decode_f64};
 use omegaflow::spectral::{parse_spectral_bin, write_spectral_bin};
@@ -8,6 +9,7 @@ use std::fs::File;
 use std::os::unix::fs::FileExt;
 use std::process::Command;
 
+const NETLOC: &str = "galileo.sese.asu.edu";
 const DEFAULT_OUT: &str = "edges_raw_spectrum.bin";
 const DEFAULT_CHUNK: usize = 16;
 const BASE_BYTES: u64 = 1_048_576;
@@ -557,7 +559,13 @@ fn main() {
     };
     let out = match arg_value(&args, "--out") {
         Some(v) => v,
-        None => DEFAULT_OUT.to_string(),
+        None => {
+            let path = compiled(NETLOC, DEFAULT_OUT);
+            if let Some(dir) = path.parent() {
+                let _ = std::fs::create_dir_all(dir);
+            }
+            path.to_string_lossy().into_owned()
+        }
     };
     let source = match Source::open(&input) {
         Ok(s) => s,
@@ -577,7 +585,7 @@ fn main() {
         eprintln!("{msg}");
         std::process::exit(1);
     }
-    if ci && !upload_release("galileo.sese.asu.edu", &out) {
+    if ci && !upload_release(NETLOC, &out) {
         eprintln!("{out}: CDN upload returned void");
         std::process::exit(1);
     }
