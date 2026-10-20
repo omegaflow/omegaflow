@@ -73,6 +73,7 @@ if GIT_INDEX_FILE="$tmpidx" git diff --cached --quiet; then
 fi
 
 GIT_INDEX_FILE="$tmpidx" git commit -m "$msg" || exit $?
+git reset -q HEAD -- $paths 2>/dev/null || true
 
 git log --oneline -1
 echo "commit: nur diese Pfade:$paths"
