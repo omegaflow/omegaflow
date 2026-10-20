@@ -5,8 +5,9 @@
 # --fail macht daraus ein Gate (exit 2 bei Befund); ohne Flag ist es eine Messung.
 set -u
 cd "$(dirname "$0")/.." || exit 1
-TMP="${OMEGAFLOW_TMP:-/tmp/opencode}"
-WORK="${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}"
+source ./bin/_roots.sh
+TMP="$OMEGAFLOW_TMP"
+WORK="$OMEGAFLOW_WORK"
 FAIL=0
 [ "${1:-}" = "--fail" ] && FAIL=1
 findings=0
