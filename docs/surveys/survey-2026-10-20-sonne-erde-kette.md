@@ -185,7 +185,7 @@ Compiler-Bucket und deutlich gröber als die native Kadenz**:
 | Sonde | Register (τ) | Compiler-Bucket | native Kadenz | Beleg |
 |---|---|---|---|---|
 | `aia` | 86400 s | 3600 s | **12 s** | `aia_rs_list_compiler.rs` `fetch_channel()` fragt `aia.lev1_euv_12s[…/31d@1h]`; JSOC `rs_list` für 2024-05-10 liefert T_REC `11:59:23`, `11:59:35`, `11:59:47` … (Δ = 12 s) |
-| `goes_euvs` | 31536000 s | 86400 s | **60 s** (Produkt `avg1m`; 10 s in `ir10s`) | `euvs_compiler.rs` liest `geuv-l2-avg1d/`; das reale g14-`avg1m`-Jahr 2009 hat 175 680 Zeilen = 122 d × 1440 min |
+| `goes_euvs` | 31536000 s | 86400 s | **60 s** (Produkt `avg1m`) | `euvs_compiler.rs` liest `geuv-l2-avg1d/`; das reale g14-`avg1m`-Jahr 2009 hat 175 680 Zeilen = 122 d × 1440 min |
 | `cdaweb_tec` | 86400 s | 900 s | **900 s** | `cdaweb_tec_compiler.rs` (Test: 96 Epochen, 71 × 73); Tages-CDF 2024-05-01: 96 Epochen; das ausgelieferte Tagesbin (2020-10-14) hat 96 Epochen, Δt = 900 s |
 
 Volumen bei nativer Kadenz (nur die im Asset getragenen Skalare, nicht die
