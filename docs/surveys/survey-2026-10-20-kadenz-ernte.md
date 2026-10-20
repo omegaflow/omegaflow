@@ -2,7 +2,7 @@
   title: Kadenz-Ernte — drei native Bänder: EUVS 60 s, AIA 12 s, TEC 900 s
   class: survey
   date: 2026-10-20
-  sha256: 27618d8e46092d7431b4a3095a65e6629ca4e048774c63292edf0f8508fb246b
+  sha256: 592492cb276c874cf9356484d9b62decf9da0656eec169902ecad94553a960e2
   status: live
   see-also: docs/surveys/survey-2026-10-20-sonne-erde-kette.md docs/surveys/survey-2026-10-20-band-stack.md
 -->
@@ -210,6 +210,21 @@ field cdaweb_tec_tecu_pt900s cdaweb_tec_tecu_pt900s inverse-square em TECU 900 0
 - **TEC-UQR wird negativ** (min −12,9 TECU). Das ist die ungemappte
   Schrägdurchgangs-Größe; ein Null- oder Betrags-Schnitt wäre eine stille
   Glättung und wurde nicht angewandt.
-- **EVE wäre der breitere Weg, nicht der billigere:** 3,5–6,7 GB/Jahr roh und
-  `other-attribution`; GOES EUVS kostet 2,30 GB für 9,91 Jahre und ist
-  `PD-USGov`. Die EVE-Stundenreihe bleibt als zweiter Arm benannt.
+- **EVE: die 3,5–6,7 GB/Jahr waren das Spektren-Produkt (`EVS`), nicht die
+  Linien.** Das Linien-Produkt `EVL_L2B_*_008_01.fit.gz` ist **0,4 MB/Tag ≈
+  145 MB/Jahr** — billiger als GOES EUVS (2,30 GB für 9,91 Jahre). Die
+  Lizenz bleibt `other-attribution` (LASP), der Zugang ist offen.
+
+## Nachtrag — offene Fenster und Alternativen (2026-10-20, archive_search + Probe)
+
+| Fenster | Befund | Route |
+|---|---|---|
+| **EUVS 2020-04 … 2020-12** | GOES-16/17 `EXIS-L1b-SFEU` im offenen S3 erst **2021+**; NCEI `avg/2020/` nur **Jan–Mar** (GOES-15 endet 2020-03) | **SDO/EVE L2B `EVL`** bei LASP: täglich `EVL_L2B_YYYYDDD_008_01.fit.gz`, **60 s**, 1440 Zeilen, **MEGS-P Lyman-alpha 121–122 nm**; 2020-04-29 und 2020-12-31 verifiziert; **~110 MB** für Apr–Dez |
+| **EVE L2B** | Verzeichnis offen (`lasp.colorado.edu/eve/data_access/eve_data/products/level2b/`), Tagesordner 2014 und 2020 vorhanden | 0,4 MB/Tag; 2010–2020 möglich; MEGS-A fehlt nach 2014, MEGS-P/Lyman-α bleibt |
+| **AIA-Pixel** | JSOC `exportdata` = 500 | **Helioviewer `getJP2Image`** = **200**, 1,08 MB JP2 (2014-01-01, sourceId 10); ein Jahr bei 12 s ≈ **2,6 TB** → nur Cutouts/Fenster, nicht Vollscheibe |
+| **TEC Monate 4–6** | kein Quellenloch; CDFs sind tagesweise | **monatsweise** verarbeiten und anhängen; 3 Monate = 1,46 GB, 6 Monate = 2,9 GB — Streaming statt RAM |
+
+**Konsequenz:** Das fehlende halbe Jahr EUVS ist **schließbar** — mit EVE L2B
+`EVL` (~110 MB für Apr–Dez 2020), als **unabhängige Linie**, nicht als Spiegel.
+Die Cross-Kalibration läuft über die Überlappung 2010–2020 mit GOES-15. Der
+„zweite Arm" EVE ist im Linien-Produkt billig; teuer sind nur die Spektren.
