@@ -24,7 +24,7 @@ field values.2.values usgs_geomag_frd_z_nt inverse-square em nT 60 0.0 0.0
 url https://meeo-s5p.s3.amazonaws.com/?list-type=2&prefix=OFFL/L2__O3_TCL/&max-keys=100
 terms Copernicus https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice
 origin https://meeo-s5p.s3.amazonaws.com/?list-type=2&prefix=OFFL/L2__O3_TCL/
-ttl 0
+ttl 86400
 status vorschlag
 at earth
 xmlcount Contents s5p_o3_tcl_objects
