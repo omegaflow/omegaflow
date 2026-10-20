@@ -10,6 +10,8 @@ use std::collections::HashMap;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const LAIC_TAG: &str = "ssd.jpl.nasa.gov-laic";
+const NO_EVENT_LIMIT: usize = 0;
+const ZERO_SECONDS: f64 = 0.0;
 const ERA_START_S: f64 = 1388534400.0;
 const WINDOW_S: f64 = 259200.0;
 const MAX_LAG_H: usize = 72;
@@ -68,8 +70,6 @@ const DST_FINAL_TEMPLATE: &str =
 const DST_PROVISIONAL_TEMPLATE: &str =
     "https://wdc.kugi.kyoto-u.ac.jp/dst_provisional/{yyyymm}/dst{yymm}.for.request";
 const DST_MISSING: i64 = 9999;
-const WGS84_A: f64 = 6378137.0;
-const WGS84_B: f64 = 6356752.314245;
 
 const A_A0: f64 = -3.969683028665376e+01;
 const A_A1: f64 = 2.209460984245205e+02;
@@ -210,11 +210,11 @@ fn iso_to_unix(s: &str) -> Option<f64> {
     let hh: f64 = tp.next()?.parse().ok()?;
     let mm: f64 = match tp.next().and_then(|s| s.parse().ok()) {
         Some(m) => m,
-        None => 0.0,
+        None => ZERO_SECONDS,
     };
     let ss: f64 = match tp.next().and_then(|s| s.parse().ok()) {
         Some(s) => s,
-        None => 0.0,
+        None => ZERO_SECONDS,
     };
     Some(days * 86400.0 + hh * 3600.0 + mm * 60.0 + ss)
 }
@@ -514,7 +514,7 @@ fn harvest_global_rate(dir: &str, era_start: f64, era_end: f64) -> Vec<(f64, f64
     for day in first_day..=last_day {
         let c = match counts.get(&day).copied() {
             Some(v) => v,
-            None => 0,
+            None => continue,
         };
         out.push((day as f64 * 86400.0, c as f64));
     }
@@ -524,9 +524,8 @@ fn harvest_global_rate(dir: &str, era_start: f64, era_end: f64) -> Vec<(f64, f64
 
 fn geocentric_to_geodetic_lat(lat_geo: f64) -> f64 {
     let tan = lat_geo.to_radians().tan();
-    (tan * (WGS84_A / WGS84_B) * (WGS84_A / WGS84_B))
-        .atan()
-        .to_degrees()
+    let ratio = 1.0 / (1.0 - omegaflow::archivar::aacgm::WGS84_F);
+    (tan * ratio * ratio).atan().to_degrees()
 }
 
 fn champ_samples_from_zip(bytes: &[u8]) -> Vec<(f64, f64, f64, f64)> {
@@ -2402,7 +2401,7 @@ fn harvest_main(args: &[String]) {
         |name: &str| -> Option<f64> { arg_value(args, name).and_then(|v| v.parse().ok()) };
     let max_events = match usize_arg("--max-events") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let n_null = match usize_arg("--null") {
         Some(v) => v,
@@ -2422,59 +2421,59 @@ fn harvest_main(args: &[String]) {
     };
     let tec_events = match usize_arg("--tec-events") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let tec_null = match usize_arg("--tec-null") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let champ_events = match usize_arg("--champ-events") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let champ_null = match usize_arg("--champ-null") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let mseed_events = match usize_arg("--mseed-events") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let mseed_null = match usize_arg("--mseed-null") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let radon_events = match usize_arg("--radon-events") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let radon_null = match usize_arg("--radon-null") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let weather_events = match usize_arg("--weather-events") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let weather_null = match usize_arg("--weather-null") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let gps_events = match usize_arg("--gps-events") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let gps_null = match usize_arg("--gps-null") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let dst_events = match usize_arg("--dst-events") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let dst_null = match usize_arg("--dst-null") {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let now_s = match SystemTime::now().duration_since(UNIX_EPOCH) {
         Ok(d) => d.as_secs_f64(),
@@ -3079,11 +3078,11 @@ fn analyze_main(args: &[String]) {
         .unwrap_or(1.0);
     let max_events = match arg_value(args, "--max-events").and_then(|v| v.parse::<usize>().ok()) {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let max_null = match arg_value(args, "--null").and_then(|v| v.parse::<usize>().ok()) {
         Some(v) => v,
-        None => 0,
+        None => NO_EVENT_LIMIT,
     };
     let bin_path: Option<String> = match arg_value(args, "--cdn") {
         Some(name) => {
@@ -3976,10 +3975,11 @@ mod tests {
 
     #[test]
     fn mseed_steim2_decodes_real_record() {
-        let bytes = match std::fs::read("/tmp/opencode/mseed_test.mseed") {
+        let path = omegaflow::temp_path("mseed_test.mseed");
+        let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => {
-                eprintln!("mseed test skipped: /tmp/opencode/mseed_test.mseed absent");
+                eprintln!("mseed test skipped: {path} absent");
                 return;
             }
         };
@@ -4250,10 +4250,11 @@ mod tests {
 
     #[test]
     fn gim_parser_reads_real_day_file_when_present() {
-        let bytes = match std::fs::read("/tmp/opencode/gim229.gz") {
+        let path = omegaflow::temp_path("gim229.gz");
+        let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => {
-                eprintln!("gim real-file test skipped: /tmp/opencode/gim229.gz absent");
+                eprintln!("gim real-file test skipped: {path} absent");
                 return;
             }
         };
@@ -4277,10 +4278,11 @@ mod tests {
 
     #[test]
     fn gim_retro_lzw_reads_real_codg_file_when_present() {
-        let bytes = match std::fs::read("/tmp/opencode/codg0010.19i.Z") {
+        let path = omegaflow::temp_path("codg0010.19i.Z");
+        let bytes = match std::fs::read(path) {
             Ok(b) => b,
             Err(_) => {
-                eprintln!("codg retro test skipped: /tmp/opencode/codg0010.19i.Z absent");
+                eprintln!("codg retro test skipped: {path} absent");
                 return;
             }
         };

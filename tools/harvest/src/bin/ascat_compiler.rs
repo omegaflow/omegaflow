@@ -197,8 +197,17 @@ fn decode_num(raw: &[u8], off: usize, dt: &Hdf5Datatype) -> Option<f64> {
 
 struct Numbers {
     scale: f64,
-    offset: f64,
+    offset: Option<f64>,
     fill: Option<f64>,
+}
+
+impl Numbers {
+    fn apply(&self, raw: f64) -> f64 {
+        match self.offset {
+            Some(offset) => raw * self.scale + offset,
+            None => raw * self.scale,
+        }
+    }
 }
 
 fn numbers_of(obj: &Hdf5Object) -> Numbers {
@@ -206,13 +215,9 @@ fn numbers_of(obj: &Hdf5Object) -> Numbers {
         Some(v) => v,
         None => 1.0,
     };
-    let offset = match attr_number(&obj.attrs, "add_offset") {
-        Some(v) => v,
-        None => 0.0,
-    };
     Numbers {
         scale,
-        offset,
+        offset: attr_number(&obj.attrs, "add_offset"),
         fill: attr_number(&obj.attrs, "_FillValue"),
     }
 }
@@ -246,18 +251,9 @@ fn time_unit(units: &str) -> Option<(f64, f64)> {
     let days = days_from_civil(year, month, day)?;
     let time_part = since_parts.next().unwrap_or("00:00:00");
     let mut t = time_part.split(':');
-    let hh: f64 = match t.next().and_then(|v| v.parse().ok()) {
-        Some(v) => v,
-        None => 0.0,
-    };
-    let mm: f64 = match t.next().and_then(|v| v.parse().ok()) {
-        Some(v) => v,
-        None => 0.0,
-    };
-    let ss: f64 = match t.next().and_then(|v| v.parse().ok()) {
-        Some(v) => v,
-        None => 0.0,
-    };
+    let hh: f64 = t.next()?.parse().ok()?;
+    let mm: f64 = t.next()?.parse().ok()?;
+    let ss: f64 = t.next()?.parse().ok()?;
     Some((
         unit_seconds,
         days as f64 * 86400.0 + hh * 3600.0 + mm * 60.0 + ss,
@@ -481,20 +477,20 @@ fn run(args: &[String]) -> Result<(), String> {
             None => break,
         };
         let lat_v = match decode_num(&lat.raw, li * lat.dt.size, &lat.dt) {
-            Some(v) if lat_n.fill != Some(v) => Some(v * lat_n.scale + lat_n.offset),
+            Some(v) if lat_n.fill != Some(v) => Some(lat_n.apply(v)),
             _ => None,
         };
         let lon_v = match decode_num(&lon.raw, oi * lon.dt.size, &lon.dt) {
-            Some(v) if lon_n.fill != Some(v) => Some(v * lon_n.scale + lon_n.offset),
+            Some(v) if lon_n.fill != Some(v) => Some(lon_n.apply(v)),
             _ => None,
         };
         let time_v = match decode_num(&time.raw, ti * time.dt.size, &time.dt) {
-            Some(v) if time_n.fill != Some(v) => Some(v * time_n.scale + time_n.offset),
+            Some(v) if time_n.fill != Some(v) => Some(time_n.apply(v)),
             _ => None,
         };
         let speed_raw = decode_num(&speed.raw, j * speed.dt.size, &speed.dt);
         let speed_v = match speed_raw {
-            Some(v) if speed_n.fill != Some(v) => Some(v * speed_n.scale + speed_n.offset),
+            Some(v) if speed_n.fill != Some(v) => Some(speed_n.apply(v)),
             _ => None,
         };
         if let (Some(lat_v), Some(lon_v), Some(time_v), Some(speed_v)) =
@@ -523,7 +519,7 @@ fn run(args: &[String]) -> Result<(), String> {
                 if let (Some((_, dir_var)), Some(dir_n)) = (&dir, dir_n.as_ref()) {
                     let dir_raw = decode_num(&dir_var.raw, j * dir_var.dt.size, &dir_var.dt);
                     let dir_v = match dir_raw {
-                        Some(v) if dir_n.fill != Some(v) => Some(v * dir_n.scale + dir_n.offset),
+                        Some(v) if dir_n.fill != Some(v) => Some(dir_n.apply(v)),
                         _ => None,
                     };
                     if let Some(dir_v) = dir_v
@@ -665,7 +661,7 @@ mod tests {
             host_of("https://manati.star.nesdis.noaa.gov/UHR_ASCAT/x.nc"),
             Some("manati.star.nesdis.noaa.gov".to_string())
         );
-        assert_eq!(host_of("/tmp/opencode/x.nc"), None);
+        assert_eq!(host_of(omegaflow::temp_path("x.nc")), None);
     }
 
     #[test]

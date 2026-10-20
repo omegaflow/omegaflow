@@ -17,7 +17,7 @@ const NCOORD: usize = 3;
 const POLYORD: usize = 5;
 const NFLAG: usize = 2;
 const WGS84_A_KM: f64 = 6378.1370;
-const WGS84_F: f64 = 1.0 / 298.257223563;
+pub const WGS84_F: f64 = 1.0 / 298.257223563;
 
 #[derive(Clone, Debug)]
 pub struct AacgmV2 {
