@@ -3532,7 +3532,7 @@ format nexrad_level2
 origin https://unidata-nexrad-level2.s3.amazonaws.com/
 compiler tools/harvest/src/bin/nexrad_level2_compiler.rs
 at earth
-ttl 86400
+ttl 420
 quantity nexrad_level2_ref nexrad_level2_ref_dbz inverse-square scale dbz 86400 0.0 0.0
 field nexrad_level2_vel nexrad_level2_vel_ms patch-levy advective m/s 86400 0.0 0.0
 field nexrad_level2_sw nexrad_level2_sw_ms gaussian-inverse-square advective m/s 86400 0.0 0.0
@@ -10779,7 +10779,7 @@ terms PD-USGov https://sti.nasa.gov/disclaimers/
 origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_trk223_ionocal/
 compiler tools/harvest/src/bin/gll_ionocal_compiler.rs
 at earth
-ttl 604800
+ttl 2678400
 field delay_m galileo_ionocal_delay_m inverse-square em m 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_atdf.bin
