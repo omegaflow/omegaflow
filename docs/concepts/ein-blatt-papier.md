@@ -2,7 +2,7 @@
   title: Ein Blatt Papier — das Ein-Blatt-Axiom der drei Kausalpfeile
   class: concept
   date: 2026-08-21
-  sha256: 8bcbf943f4748e633afa4b545aea8027b91d4400d41010558e81c64c2720d8b3
+  sha256: 559359fe7e8a4b58f8821560754e4a217c04aa624dc35b3730b5c78beb0be7c3
   status: live
   see-also: docs/paper/laic-arrow-direction.md docs/concepts/kybernetische-astrophysik.md docs/SOURCE_PORT.md
 -->
@@ -104,8 +104,11 @@ Zahlen stehen erst da, wenn sie gemessen sind.
   `multi_force_te_probe.rs`), **Lag-Sweep ab 0** (gemessen 2026-10-20 im Code:
   `dispersion_solar_probe.rs:13` → `LAGS = [0, 4, 8]`, `multi_force_te_probe`
   `--lags`, `enso_blatt_probe` 0…12 — das Gate ist gebaut, nicht offen),
-  KDE-Bandbreiten-Sensitivität (Sweep 2026-10-20 in `enso_blatt_probe` gebaut,
-  `transfer_entropy_lag_h` mit Silverman-Faktoren 0,5–2,0),
+  KDE-Bandbreiten-Sensitivität (**gemessen 2026-10-20**, `enso_blatt_probe`,
+  Silverman-Faktoren 0,5–2,0 über Lags 0–12, Maximum je Richtung:
+  TE(Bz→SST) 7,58e-1 → 3,63e-2, TE(SST→Bz) 7,76e-1 → 4,44e-2; der Schätzer
+  fällt monoton mit `h`, die **Ordnung SST→Bz kippt über keinen Faktor**;
+  gemessen ist die Sensitivität des Schätzers, nicht die Signifikanz je Faktor),
   Fenster-Kongruenz, Nullkontrolle (mindestens ein Kanal, der keinen
   Pfeil tragen darf, läuft mit).
 - **0-Kanon:** Ausfall = fehlt (Sample übersprungen), nie 0.0. Indizes
