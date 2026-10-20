@@ -695,6 +695,194 @@ pub fn tar_stream<R: std::io::Read>(
     }
     Ok(total)
 }
+#[derive(Clone, Debug)]
+pub struct TarEntry {
+    pub name: String,
+    pub typeflag: u8,
+    pub size: u64,
+    pub data_offset: u64,
+    pub mtime: i64,
+    pub mode: u32,
+}
+
+fn tar_octal64(field: &[u8]) -> Option<u64> {
+    if field.first().is_some_and(|b| b & 0x80 != 0) {
+        let mut value = (field[0] & 0x7f) as u64;
+        for &b in &field[1..] {
+            value = value.checked_mul(256)?.checked_add(b as u64)?;
+        }
+        return Some(value);
+    }
+    let mut value = 0u64;
+    let mut any = false;
+    for &b in field {
+        if b == 0 || b == b' ' {
+            break;
+        }
+        if !(b'0'..=b'7').contains(&b) {
+            return None;
+        }
+        value = value.checked_mul(8)?.checked_add((b - b'0') as u64)?;
+        any = true;
+    }
+    if any { Some(value) } else { Some(0) }
+}
+
+fn tar_entry_name(header: &[u8; 512]) -> String {
+    let name = tar_text(&header[..100]);
+    if header[257..262] == *b"ustar" {
+        let prefix = tar_text(&header[345..500]);
+        if !prefix.is_empty() {
+            return format!("{prefix}/{name}");
+        }
+    }
+    name
+}
+
+fn read_exact_offset<R: std::io::Read>(
+    src: &mut R,
+    buf: &mut [u8],
+    offset: &mut u64,
+) -> Result<(), String> {
+    src.read_exact(buf)
+        .map_err(|e| format!("tar stream ends at offset {offset}: {e}"))?;
+    *offset += buf.len() as u64;
+    Ok(())
+}
+
+fn skip_padded<R: std::io::Read>(src: &mut R, bytes: u64, offset: &mut u64) -> Result<(), String> {
+    let mut remaining = bytes;
+    let mut buf = [0u8; 8192];
+    while remaining > 0 {
+        let take = remaining.min(buf.len() as u64) as usize;
+        let n = src
+            .read(&mut buf[..take])
+            .map_err(|e| format!("tar skip at offset {offset} returned void: {e}"))?;
+        if n == 0 {
+            return Err(format!(
+                "tar stream ends at offset {offset} inside {bytes} skipped bytes"
+            ));
+        }
+        remaining -= n as u64;
+        *offset += n as u64;
+    }
+    Ok(())
+}
+
+fn pax_field(record: &str, key: &str) -> Option<String> {
+    record
+        .strip_prefix(key)
+        .and_then(|v| v.strip_prefix('='))
+        .map(|v| v.trim_end_matches('\n').to_string())
+}
+
+fn pax_path(data: &[u8]) -> Option<(Option<String>, Option<i64>)> {
+    let text = String::from_utf8_lossy(data);
+    let mut path = None;
+    let mut mtime = None;
+    let mut rest = text.as_ref();
+    while !rest.is_empty() {
+        let space = rest.find(' ')?;
+        let len: usize = rest[..space].parse().ok()?;
+        if len == 0 || len > rest.len() {
+            return None;
+        }
+        let record = &rest[..len];
+        let body = record.get(space + 1..)?;
+        if let Some(v) = pax_field(body, "path") {
+            path = Some(v);
+        }
+        if let Some(v) = pax_field(body, "mtime") {
+            mtime = v.split('.').next().and_then(|s| s.parse().ok());
+        }
+        rest = &rest[len..];
+    }
+    Some((path, mtime))
+}
+const TAR_ABSENT_MTIME: i64 = 0;
+const TAR_ABSENT_MODE: u32 = 0;
+
+pub fn tar_entries<R: std::io::Read>(
+    mut src: R,
+    mut sink: impl FnMut(&TarEntry) -> bool,
+) -> Result<u64, String> {
+    let mut header = [0u8; 512];
+    let mut offset = 0u64;
+    let mut long_name: Option<String> = None;
+    let mut pax_name: Option<String> = None;
+    let mut pax_mtime: Option<i64> = None;
+    loop {
+        read_exact_offset(&mut src, &mut header, &mut offset)?;
+        if header.iter().all(|&b| b == 0) {
+            return Ok(offset);
+        }
+        let size = tar_octal64(&header[124..136])
+            .ok_or_else(|| format!("tar header at offset {} carries no size", offset - 512))?;
+        if size > i64::MAX as u64 {
+            return Err(format!(
+                "tar member at offset {} is too large",
+                offset - 512
+            ));
+        }
+        let typeflag = header[156];
+        let padded = size
+            .checked_add(511)
+            .ok_or("tar member size overflows the block rounding")?
+            / 512
+            * 512;
+        let mtime = match tar_octal64(&header[136..148]) {
+            Some(v) => v as i64,
+            None => TAR_ABSENT_MTIME,
+        };
+        let mode = match tar_octal64(&header[100..108]) {
+            Some(v) => v as u32,
+            None => TAR_ABSENT_MODE,
+        };
+        match typeflag {
+            b'L' | b'x' | b'g' => {
+                if size > (1 << 20) {
+                    return Err(format!(
+                        "tar metadata header at offset {} is {} B — refused",
+                        offset - 512,
+                        size
+                    ));
+                }
+                let mut data = vec![0u8; size as usize];
+                read_exact_offset(&mut src, &mut data, &mut offset)?;
+                skip_padded(&mut src, padded - size, &mut offset)?;
+                match typeflag {
+                    b'L' => long_name = Some(tar_text(&data)),
+                    b'x' => {
+                        if let Some((path, ts)) = pax_path(&data) {
+                            pax_name = path;
+                            pax_mtime = ts;
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            _ => {
+                let name = match pax_name.take().or_else(|| long_name.take()) {
+                    Some(v) => v,
+                    None => tar_entry_name(&header),
+                };
+                let entry = TarEntry {
+                    name,
+                    typeflag,
+                    size,
+                    data_offset: offset,
+                    mtime: pax_mtime.take().unwrap_or(mtime),
+                    mode,
+                };
+                if !sink(&entry) {
+                    return Ok(offset);
+                }
+                skip_padded(&mut src, padded, &mut offset)?;
+            }
+        }
+    }
+}
+
 pub fn inflate_stream<R: std::io::Read>(
     src: R,
     mut sink: impl FnMut(&[u8]),
