@@ -140,7 +140,7 @@ fn extract_paths(line: &str) -> Vec<String> {
     ];
     while i < bytes.len() {
         for c in &candidates {
-            if bytes[i..].starts_with(c.as_bytes()) {
+            if !in_url(bytes, i) && bytes[i..].starts_with(c.as_bytes()) {
                 let start = i;
                 let mut j = i + c.len();
                 while j < bytes.len() && is_path_char(bytes[j]) {
@@ -161,6 +161,18 @@ fn extract_paths(line: &str) -> Vec<String> {
 
 fn is_path_char(b: u8) -> bool {
     b.is_ascii_alphanumeric() || matches!(b, b'/' | b'.' | b'_' | b'-' | b'~')
+}
+
+fn in_url(bytes: &[u8], i: usize) -> bool {
+    let mut start = i;
+    while start > 0 && !bytes[start - 1].is_ascii_whitespace() {
+        start -= 1;
+    }
+    let mut end = i;
+    while end < bytes.len() && !bytes[end].is_ascii_whitespace() {
+        end += 1;
+    }
+    bytes[start..end].windows(3).any(|w| w == b"://")
 }
 
 fn is_path(p: &str) -> bool {
@@ -281,4 +293,35 @@ fn is_gate_path(path: &str) -> bool {
         name.as_ref(),
         "commit_gate.rs" | "axioms.rs" | "state.rs" | "friction.rs"
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::extract_paths;
+
+    #[test]
+    fn origin_url_is_not_a_local_path() {
+        assert!(
+            extract_paths(
+                "origin https://deepspace.jpl.nasa.gov/dsndocs/810-005/107/catalog-fixed.txt"
+            )
+            .is_empty()
+        );
+    }
+
+    #[test]
+    fn compiler_path_is_local() {
+        assert_eq!(
+            extract_paths("compiler tools/harvest/src/bin/icrf3_compiler.rs"),
+            vec!["tools/harvest/src/bin/icrf3_compiler.rs"]
+        );
+    }
+
+    #[test]
+    fn url_and_local_path_on_one_line() {
+        assert_eq!(
+            extract_paths("see `docs/specs/x.md` and https://host/docs/y.txt"),
+            vec!["docs/specs/x.md"]
+        );
+    }
 }
