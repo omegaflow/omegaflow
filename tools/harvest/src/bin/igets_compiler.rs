@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-const NETLOC: &str = "igetsftp.gfz.de";
+const NETLOC: &str = "dataservices.gfz-potsdam.de";
 const SFTP_HOST: &str = "sftp://igetsftp.gfz.de";
 const FILL: f64 = 999999.0;
 
