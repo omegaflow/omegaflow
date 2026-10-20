@@ -31846,7 +31846,7 @@ at earth
 quantity grid_outage_duration_h grid_outage_duration_h inverse-square source-parameter h 3600 0.0 0.0
 quantity grid_outage_max_customers grid_outage_max_customers inverse-square relative count 3600 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/wso_polar.bin
+url https://github.com/omegaflow/sources/releases/download/wso.stanford.edu/wso_polar.bin
 terms free-open http://wso.stanford.edu/
 format wso_polar
 origin http://wso.stanford.edu/Polar.html
@@ -31863,6 +31863,7 @@ terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format mdi_polar
 origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list&ds=mdi.synoptic_Mr_polfil_96m (CAR_ROT,T_OBS; exp_request protocol=fits, CR 1908-2107, BUNIT Mx/cm^2, BSCALE 0.1)
 compiler tools/harvest/src/bin/mdi_polar_compiler.rs
+sha256 b443a28188aa8034bedf03d83f6c8ad739693ce3f88e016d6a621cee61905d5e
 at sun
 ttl 2592000
 field mdi_polar_north_t mdi_polar_north_t inverse-square em T 2592000 0.0 0.0
@@ -31874,6 +31875,7 @@ terms PD-USGov https://sti.nasa.gov/disclaimers/
 format soho_eit_195
 origin http://sun.stanford.edu/synop/EIT/195A/ (CR 1911-2055, _a before CR2043/_c after, 124 of 145 maps, BUNIT counts/pixel)
 compiler tools/harvest/src/bin/soho_eit_synoptic_compiler.rs
+sha256 1da0eb2e08ef456658175ff0e8fb6874a01f54ad0ce57473558c6d39b639408a
 at sun
 ttl 2592000
 field soho_eit_195_mean soho_eit_195_mean inverse-square em count 2592000 0.0 0.0
@@ -31883,6 +31885,7 @@ terms PD-USGov https://sti.nasa.gov/disclaimers/
 format soho_sem
 origin https://spdf.gsfc.nasa.gov/pub/data/soho/celias/ascii/CELIAS_SEM_daily_avg.tar.gz (00_v4.day-26_v4.day, daily average, 1 AU)
 compiler tools/harvest/src/bin/soho_sem_compiler.rs
+sha256 367d09fc71fb8352b2b27d5c767f32ca53c5e1073bab97e8e78518097ffd1c1a
 at sun
 ttl 86400
 field soho_sem_flux_26_34_nm soho_sem_flux_26_34_nm inverse-square em ph/s/cm2 86400 0.0 0.0
@@ -31906,66 +31909,67 @@ terms free-open https://nispdata.nso.edu/ftp/kpvt/synoptic/README
 format kpvt_polar
 origin https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/ (m1625f.fits-m2007f.fits, CR 1625-2007, Gauss, BSCALE 0.1, 360x180 sine-latitude)
 compiler tools/harvest/src/bin/kpvt_synoptic_compiler.rs
+sha256 70a4153caeb20963435cc125b9904d6c272f177275d30e5a70ceddbcb2faed1d
 at sun
 ttl 2592000
 field kpvt_polar_north_t kpvt_polar_north_t inverse-square em T 2592000 0.0 0.0
 field kpvt_polar_south_t kpvt_polar_south_t inverse-square em T 2592000 0.0 0.0
 field kpvt_polar_avg_t kpvt_polar_avg_t inverse-square em T 2592000 0.0 0.0
 
-url https://sbuv.gsfc.nasa.gov/solar/compositev2/n07_v01_1nm.h5
+url https://github.com/omegaflow/sources/releases/download/sbuv.gsfc.nasa.gov/sbuv_n07.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format gsfc_ssi
 origin https://sbuv.gsfc.nasa.gov/solar/compositev2/
 compiler tools/harvest/src/bin/gsfc_ssi_compiler.rs
-sha256 bd2d9c1621e4ebd12d9d6f89da3fd761e029bd14a271036fe1665b0bb9fc5c58
+sha256 84bf034c96bdab73e980c6c948c1cd4a33873e5a1cb49a807a432f16a8f9b6d2
 at sun
 ttl 31536000
 field sbuv_n7_205nm_irradiance sbuv_n7_205nm_irradiance inverse-square em w/m^2/nm 86400 0.0 0.0
 field sbuv_n7_280nm_irradiance sbuv_n7_280nm_irradiance inverse-square em w/m^2/nm 86400 0.0 0.0
 field sbuv_n7_380nm_irradiance sbuv_n7_380nm_irradiance inverse-square em w/m^2/nm 86400 0.0 0.0
 
-url https://sbuv.gsfc.nasa.gov/solar/compositev2/susim_v22_1nm.h5
+url https://github.com/omegaflow/sources/releases/download/sbuv.gsfc.nasa.gov/susim.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format gsfc_ssi
 origin https://disc.gsfc.nasa.gov/datasets/UARSU3BS_022/summary
 compiler tools/harvest/src/bin/gsfc_ssi_compiler.rs
-sha256 04d4fb5e04b461415846653b536f620b801dcfd7587b4612853d156c5b08cd00
+sha256 7ce407bb0363781e92f9d65ca58e3cbcad7d00d9a727c8b91843e0ec4f5bc2ec
 at sun
 ttl 31536000
 field susim_121_5nm_irradiance susim_121_5nm_irradiance inverse-square em w/m^2/nm 86400 0.0 0.0
 field susim_205nm_irradiance susim_205nm_irradiance inverse-square em w/m^2/nm 86400 0.0 0.0
 field susim_280nm_irradiance susim_280nm_irradiance inverse-square em w/m^2/nm 86400 0.0 0.0
 
-url https://sbuv.gsfc.nasa.gov/solar/compositev2/sorcesols_v16_1nm.h5
+url https://github.com/omegaflow/sources/releases/download/sbuv.gsfc.nasa.gov/sorcesols.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format gsfc_ssi
 origin https://lasp.colorado.edu/data/sorce/ssi_data/solstice/fuv/txt/
 compiler tools/harvest/src/bin/gsfc_ssi_compiler.rs
-sha256 7d1839b09b4675d70c08dfd8e0d2022b035f1b5a7c715c861c13f79e9b946fd2
+sha256 51f53b3f4c9f50ade34f22c9168195cb344c747e51789fa2b82a5938a9a6c063
 at sun
 ttl 31536000
 field solstice_121_5nm_irradiance solstice_121_5nm_irradiance inverse-square em w/m^2/nm 86400 0.0 0.0
 field solstice_205nm_irradiance solstice_205nm_irradiance inverse-square em w/m^2/nm 86400 0.0 0.0
 field solstice_280nm_irradiance solstice_280nm_irradiance inverse-square em w/m^2/nm 86400 0.0 0.0
 
-url https://lasp.colorado.edu/data/sorce/ssi_data/sim/txt/sorce_sim_L3_c24h_0240nm_2413nm_20030414_20200225.txt.zip
+url https://github.com/omegaflow/sources/releases/download/lasp.colorado.edu/sorce_sim.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format sorce_ascii
 origin https://lasp.colorado.edu/data/sorce/ssi_data/sim/txt/
 compiler tools/harvest/src/bin/sorce_sim_compiler.rs
-sha256 f3245a5c1bb590019e491ee24910b9e3cee53db376d2c9712040e17a25d93033
+sha256 21b8259570963b64a997f615a04dcbe30da04981ff0cfc5b8b46086244ea47cc
 at sun
 ttl 31536000
 field sim_240nm_irradiance sim_240nm_irradiance inverse-square em w/m^2/nm 86400 0.0 0.0
 field sim_300nm_irradiance sim_300nm_irradiance inverse-square em w/m^2/nm 86400 0.0 0.0
 field sim_380nm_irradiance sim_380nm_irradiance inverse-square em w/m^2/nm 86400 0.0 0.0
 
-url https://lasp.colorado.edu/data/timed_see/spwx/2026_TIMED_SEE_obs.dat
+url https://github.com/omegaflow/sources/releases/download/lasp.colorado.edu/timed_see.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format timed_see_spwx
 origin https://lasp.colorado.edu/data/timed_see/spwx/
 compiler tools/harvest/src/bin/timed_see_compiler.rs
-sha256 d027f8c26602a87544c4a52e8619c5efabf48a1441a825502029e6c0b0b86503
+sha256 a78b00dff975995992313c6336236a65becd3e3590df8c2716777ac6ec8402b7
 at sun
 ttl 86400
 field see_euv_0_1_7nm_irradiance see_euv_0_1_7nm_irradiance inverse-square em w/m^2/nm 180 0.0 0.0
@@ -31977,12 +31981,12 @@ field see_lyman_alpha_121_5nm_irradiance see_lyman_alpha_121_5nm_irradiance inve
 field see_133_5nm_irradiance see_133_5nm_irradiance inverse-square em w/m^2/nm 180 0.0 0.0
 field see_145_165nm_irradiance see_145_165nm_irradiance inverse-square em w/m^2/nm 180 0.0 0.0
 
-url https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+*+FROM+%22J/AJ/151/52/table2%22
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/hizoa.json
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format json
 origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/AJ/151/52/table2
 compiler tools/harvest/src/bin/tap_compiler.rs
-sha256 b2a203e4546436ad679eee10292488523815cd0f179bfd19b61bead28f3a3933
+sha256 639fae506205268c339b00ff2c4b9c3a879f62ae3a2f4e4fa047091332cbaf92
 at sun
 no-cadence
 cmap .
@@ -32004,7 +32008,7 @@ terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 format imp8_mag_hr
 origin https://spdf.gsfc.nasa.gov/pub/data/imp/imp8/mag/1hr_ascii_sw/imp_mag_hr_sw1974.asc
 compiler tools/harvest/src/bin/imp8_mag_compiler.rs
-sha256 c57b6ac43961e58e563d0f0a3339cfc3292c2e7f9f7891776ec4e5a65b938dd7
+sha256 99c9f35320b310ced8b25baff00c9ec399aeba7d7f4fe3abdaa24e28f0ca1714
 at earth
 ttl 31536000
 epoch 0
@@ -32019,7 +32023,7 @@ terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 format helios_merged
 origin https://spdf.gsfc.nasa.gov/pub/data/helios/helios1/merged/helios1_daily.asc
 compiler tools/harvest/src/bin/helios_merged_compiler.rs
-sha256 aff94387c2fe378d3421d2fd23642cd110751ba478bfff882b1a5235e8ef0abe
+sha256 b49759d40d65d865c8df2d5a515b75ecfc56135e124fa38f0b5da89ecdeac35f
 at sun
 ttl 31536000
 epoch 0
@@ -32039,7 +32043,7 @@ terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 format helios_merged
 origin https://spdf.gsfc.nasa.gov/pub/data/helios/helios2/merged/helios2_daily.asc
 compiler tools/harvest/src/bin/helios_merged_compiler.rs
-sha256 e0ee71f034bf3527e8eb7914569d20b2e6c940c57b112583e43e1c59f329bd6f
+sha256 19e28ae812fe3db0bf3d61e84c47d0f87a670c5ffa2c93586d14910041b3fdba
 at sun
 ttl 31536000
 epoch 0
@@ -32054,12 +32058,12 @@ field r helios2_heliocentric_distance_au inverse-square geometry AU 86400 0.0 0.
 field lat helios2_heliographic_lat_deg inverse-square geometry deg 86400 0.0 0.0
 field lon helios2_heliographic_lon_deg inverse-square geometry deg 86400 0.0 0.0
 
-url https://icecube.wisc.edu/data-releases/20080911_AMANDA_7_Year_Data.zip
+url https://github.com/omegaflow/sources/releases/download/icecube.wisc.edu/amanda.s2e1
 terms other-attribution https://icecube.wisc.edu/data-releases/2008/09/amanda-7-year-data/
 format amanda_7yr
 origin https://icecube.wisc.edu/data-releases/20080911_AMANDA_7_Year_Data.zip
 compiler tools/harvest/src/bin/amanda_compiler.rs
-sha256 1bb175bbf8e621ab1acdfb0d562d5f97be7073619baaf2e07f6bf99e99eb96c1
+sha256 42e9a2167eea1ebafbb14573d22d2b4e480d1553afd52d92e5f864d18fde1175
 witness s2-direction
 record s2e1 sky1
 force em
@@ -32067,12 +32071,12 @@ at earth
 no-cadence
 field events amanda_ii_upgoing_events inverse-square em 1 31536000 0.0 0.0
 
-url https://zenodo.org/api/records/8401262/files/sk_atm_2023.tar.gz/content
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/sk_atm_bins.bin
 terms CC-BY-4.0 https://doi.org/10.5281/zenodo.8401262
 format sk_atm_bins
 origin https://zenodo.org/api/records/8401262/files/sk_atm_2023.tar.gz/content
 compiler tools/harvest/src/bin/sk_atm_bins_compiler.rs
-sha256 8ad6074b1d76fc52cf22f5af2b142130fd4097b122b7692e563ecc337f51f37b
+sha256 b6ae7f061528c356e13b98a5e00609e9bf3cc0021bf98559f74f0c82834bb6ad
 at earth
 no-cadence
 field count sk_atm_bin_count inverse-square em 1 31536000 0.0 0.0
@@ -32081,72 +32085,72 @@ field logp_hi sk_atm_logp_hi inverse-square geometry 1 31536000 0.0 0.0
 field cosz_lo sk_atm_cosz_lo inverse-square geometry 1 31536000 0.0 0.0
 field cosz_hi sk_atm_cosz_hi inverse-square geometry 1 31536000 0.0 0.0
 
-url https://loco.lab.asu.edu/download/790/
+url https://github.com/omegaflow/sources/releases/download/loco.lab.asu.edu/edges_790.bin
 terms other-attribution https://loco.lab.asu.edu/edges/edges-data-release/
 format spectral
 origin https://loco.lab.asu.edu/edges/edges-data-release/
 compiler tools/harvest/src/bin/edges_compiler.rs
-sha256 6eebf9cd0a73280c002f630406e6692d7408e59f37bec1aef3664ceaac1cb030
+sha256 84bd37ac23c939e762071d6e07662891028f4456cdb2668d87d0629db2afdd5a
 at earth
 ttl 31536000
 field T21 edges_lowband_t21_k inverse-square em K 31536000 0.0 0.0
 
-url https://loco.lab.asu.edu/download/792/
+url https://github.com/omegaflow/sources/releases/download/loco.lab.asu.edu/edges_792.bin
 terms other-attribution https://loco.lab.asu.edu/edges/edges-data-release/
 format spectral
 origin https://loco.lab.asu.edu/edges/edges-data-release/
 compiler tools/harvest/src/bin/edges_compiler.rs
-sha256 f5cef464e8db8d113a257f32631ce315868e023146e0be6269b4f8a15ce6e052
+sha256 f4946b1730ee7758775dd2248d2c1cebb2b405e7332c86963b44ca8e9600b68f
 at earth
 ttl 31536000
 field H2_T21 edges_lowband_t21_h2_k inverse-square em K 31536000 0.0 0.0
 
-url https://zenodo.org/api/records/400690/files/outriggers_2016-01-27_14H10M25S.h5/content
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/leda.bin
 terms CC-BY-4.0 https://doi.org/10.5281/zenodo.400690
 format spectral
 origin https://zenodo.org/records/400690
 compiler tools/harvest/src/bin/leda_compiler.rs
-sha256 4d59841e4c186330092cfafced6dd59e35add9c9e9cbc07da7f0166ecd2f11a2
+sha256 3fd58c492556c564cb44094a79ffd7c74f7ff3d5c0ee0bd9ce5cac4efa63820c
 at earth
 ttl 31536000
 field ant252_x leda_outrigger_spectral_power inverse-square em 1 31536000 0.0 0.0
 
-url https://zenodo.org/api/records/16051178/files/NANOGrav15yr_PulsarTiming_v2.1.0.tar.gz/content
+url https://github.com/omegaflow/sources/releases/download/zenodo.org/pta_nanograv.csv
 terms CC-BY-4.0 https://doi.org/10.5281/zenodo.16051178
 format csv
 origin https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
 compiler tools/harvest/src/bin/pta_timing_compiler.rs
-sha256 91476bf20d4c8baa9f5ad39c6e114b581478a5a7e269876489cafc8f62c5708f
+sha256 6359ca5577cdf4c8c3afe4339b687415abcf5f228837e88094f780dd70d903a8
 at sun
 ttl 31536000
 field NG15_RESID pulsar_timing_residual_s inverse-square em s 31536000 0.0 0.0
 
-url https://codeload.github.com/danielreardon/PPTA-DR3/tar.gz/fdbe6eb1c86d4c6cf2f1f518711e44ad1a9fd3fa
+url https://github.com/omegaflow/sources/releases/download/codeload.github.com/pta_ppta.csv
 terms CC-BY-SA-4.0 https://creativecommons.org/licenses/by-sa/4.0/
 format csv
 origin https://doi.org/10.25919/axvw-qa43
 compiler tools/harvest/src/bin/pta_timing_compiler.rs
-sha256 5bf976deea7328ff9fe320630f986909c9d11b558108b4f4f622f0dc5c8ecce8
+sha256 d2c25a70e2753e5288b7d910a66db8812e9f7da580933e6ce1f23462d1cfee57
 at sun
 ttl 31536000
 field TRES pulsar_timing_residual_s inverse-square em s 31536000 0.0 0.0
 
-url https://codeload.github.com/inpta/InPTA.DR2/tar.gz/e2806fcb2c238ec38dd80784dfcb1e6c82f54728
+url https://github.com/omegaflow/sources/releases/download/codeload.github.com/pta_inpta.csv
 terms CC-BY-4.0 https://doi.org/10.1017/pasa.2025.10066
 format csv
 origin https://github.com/inpta/InPTA.DR2
 compiler tools/harvest/src/bin/pta_timing_compiler.rs
-sha256 1c3f59e1e3c07c05ae1c37952e2125bd25d18448e4fa6b540814741517852c48
+sha256 f5e321377af4f972b43108ecae871ba78ec97495a1b174881c40acddea0deddf
 at sun
 ttl 31536000
 field TRES pulsar_timing_residual_s inverse-square em s 31536000 0.0 0.0
 
-url https://docs.datacentral.org.au/documents/52/partim.tar.gz
+url https://github.com/omegaflow/sources/releases/download/docs.datacentral.org.au/pta_mpta.csv
 terms CC-BY-4.0 https://doi.org/10.57891/j0vh-5g31
 format csv
 origin https://docs.datacentral.org.au/meerkat-pulsar-timing-array/45-year/accessing-the-data/
 compiler tools/harvest/src/bin/pta_timing_compiler.rs
-sha256 172eb9472f4788f22bfe3b24faad2dc0169fca680b80340e4c829201fdafc393
+sha256 d55137195144820057a5b65b940c762317942023b8830595651a2569ffbaec6d
 at sun
 ttl 31536000
 field TRES pulsar_timing_residual_s inverse-square em s 31536000 0.0 0.0
