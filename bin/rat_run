@@ -43,7 +43,7 @@ if ! command -v jq >/dev/null 2>&1; then
 fi
 
 body="$(jq -n --arg m "$model" --rawfile p "$prompt_file" \
-    '{model: $m, messages: [{role: "user", content: $p}], max_tokens: 2000}')"
+    '{model: $m, messages: [{role: "user", content: $p}], max_tokens: 8000}')"
 
 if ! printf '%s' "$body" | curl -sS --max-time 300 \
     "http://127.0.0.1:${PORT}/v1/chat/completions" \
@@ -54,7 +54,8 @@ if ! printf '%s' "$body" | curl -sS --max-time 300 \
 fi
 
 if ! jq -e '.choices[0].message.content' "$out_file" >/dev/null 2>&1; then
-    echo "rat_run: keine Antwort — $out_file traegt keinen choices-Body: $(head -c 200 "$out_file")" >&2
+    reason="$(jq -r '.choices[0].finish_reason // "?"' "$out_file" 2>/dev/null)"
+    echo "rat_run: keine Antwort (finish_reason=$reason) — $out_file: $(head -c 200 "$out_file")" >&2
     exit 4
 fi
 
