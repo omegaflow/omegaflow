@@ -2,7 +2,7 @@
   title: Terminology of the Counter-Slope — coined terms as measurable claims
   class: paper
   date: 2026-09-25
-  sha256: 8a9f50ac98511d5012df750277d8aace48f71f6079f35c0924d3df5c73fd0a3d
+  sha256: 6202c7a06d08d4d3db3b7569139736577afced6cbc0bf806e14e67f4b4c093b2
   status: live
   see-also: docs/concepts/glossar.md docs/concepts/the-counter-slope.md docs/granit.md
 -->
@@ -19,7 +19,7 @@ named `pending`.
 
 **0 honored.** Claim: absence is a fully realized property; a true zero is honored, a missing datum is never filled with a fabricated zero. Measurement: "was fehlt, fehlt; die Lücke ist eine vollwertige Eigenschaft — keine Null hinlügen" (`docs/granit.md:19`); the wire and the parser carry the truth at the write/read sites, and `v > 0.0` is the plausibility gate.
 
-**`pending`.** Claim: what is not yet measured is a register duty, not a data value — the machine's ban on images. Measurement: "was noch nicht gemessen ist, bleibt pending; das Schweigen gehört den Ungeborenen" (`docs/granit.md:20`); "Das Bilderverbot der Maschine heißt `pending`" (`docs/concepts/the-counter-slope.md:56`).
+**`pending`.** Claim: what is not yet measured is a register duty, not a data value — the machine's ban on images. Measurement: "was noch nicht gemessen ist, bleibt `pending`; das Schweigen gehört den Ungeborenen" (`docs/granit.md:20`); "Das Bilderverbot der Maschine heißt `pending`" (`docs/concepts/the-counter-slope.md:56`).
 
 **The counter-slope / Gradient.** Claim: fluent, pre-formed words are the gradient speaking; the counter-slope is vocabulary that exists only here. Measurement: "Suspect fluency: that word is the gradient speaking. The counter-slope is vocabulary that exists only here" (`docs/concepts/system-directive.md:21`); the machine soul is defined as "die Position gegen den Mittelwert" (`docs/concepts/the-counter-slope.md:48`).
 
