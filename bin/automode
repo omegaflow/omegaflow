@@ -18,6 +18,7 @@ mode=""
 limit=5
 arm=""
 qfix=""
+outfile=""
 engines="mwmbl searxng exa"
 outdir="${OMEGAFLOW_WORK:-$root/../omegaflow-work}/recherche/funde/rohausgaben/laeufe"
 UA="Mozilla/5.0 (X11; Linux x86_64) automode"
@@ -28,6 +29,7 @@ while [ $# -gt 0 ]; do
         --arm) [ $# -ge 2 ] || exit 2; arm="$2"; shift 2 ;;
         --limit) [ $# -ge 2 ] || exit 2; limit="$2"; shift 2 ;;
         --query) [ $# -ge 2 ] || exit 2; qfix="$2"; shift 2 ;;
+        --out) [ $# -ge 2 ] || exit 2; outfile="$2"; shift 2 ;;
         --engines) [ $# -ge 2 ] || exit 2; engines="$2"; shift 2 ;;
         *) echo "automode: unerwartet: $1" >&2; exit 2 ;;
     esac
@@ -37,6 +39,7 @@ done
 mkdir -p "$outdir" || exit 2
 day="$(date +%F)"
 tsv="$outdir/automode-$day-unclear.tsv"
+if [ -n "$outfile" ]; then tsv="$outfile"; fi
 
 open_term() {
     case "$1" in
@@ -174,6 +177,11 @@ while IFS="$(printf '\t')" read -r fmt terms orig uname uunit at; do
         [ -n "$url" ] || continue
         host="$(printf '%s\n' "$url" | sed -e 's#^https\?://##' -e 's#/.*$##')"
         [ -n "$host" ] || continue
+        case "$host" in
+            *.wikipedia.org|wikipedia.org|*.wikimedia.org|*.wikidata.org|*.researchgate.net|*.academia.edu|*.linkedin.com|*.youtube.com|*.facebook.com|*.twitter.com|*.x.com|*.reddit.com|*.medium.com|*.quora.com|*.dailyhunt.in)
+                record "$fmt" offen "verworfen" "$url" "-" "kein-datenhost"
+                continue ;;
+        esac
         if grep -qF "$host" "$phi"; then
             record "$fmt" offen "verworfen" "$url" "-" "host_in_phi"
             continue
@@ -187,7 +195,8 @@ while IFS="$(printf '\t')" read -r fmt terms orig uname uunit at; do
         [ -n "$url" ] || continue
         i=$((i + 1))
         [ "$i" -le 6 ] || break
-        txt="$(timeout 30 curl -s -L -A "$UA" --max-filesize 3000000 "$url" 2>/dev/null |
+        raw="$(timeout 30 curl -s -L -A "$UA" --max-filesize 3000000 "$url" 2>/dev/null)"
+        txt="$(printf '%s' "$raw" |
             perl -0777 -pe 's#<script\b.*?</script>##gsi; s#<style\b.*?</style>##gsi; s#<[^>]*># #g' |
             tr -s ' \n' ' \n')"
         [ -n "$txt" ] || txt="$(timeout 30 ./target/release/archive_search --scrape "$url" 2>/dev/null | sed -n 's/.*text: //p')"
@@ -200,10 +209,13 @@ while IFS="$(printf '\t')" read -r fmt terms orig uname uunit at; do
                 head -1 || true)"
             lic="$(printf '%s\n' "$lic" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]][[:space:]]*/ /g')"
         fi
+        data_signal="nein"
+        if printf '%s' "$raw" | grep -qiE 'href="[^"]*\.(csv|json|fits|nc|hdf5|h5|zip|txt|dat)(\?|")'; then data_signal="ja"; fi
+        if printf '%s' "$raw" | grep -qiE 'href="[^"]*(/download|/api/|/datasets/)'; then data_signal="ja"; fi
         verdict="verworfen"
-        if [ -n "$lic" ] && [ "$unit_hit" = "ja" ]; then verdict="KANDIDAT"
+        if [ -n "$lic" ] && [ "$unit_hit" = "ja" ] && [ "$data_signal" = "ja" ]; then verdict="KANDIDAT"
         elif [ -n "$lic" ] || [ "$unit_hit" = "ja" ]; then verdict="PRUEFEN"; fi
-        echo "  $verdict $url  (unit=$unit_hit)"
+        echo "  $verdict $url  (unit=$unit_hit, daten=$data_signal)"
         [ -n "$lic" ] && echo "    terms: $(printf '%s\n' "$lic" | cut -c1-140)"
         record "$fmt" offen "$verdict" "$url" "$unit_hit" "$(printf '%s' "$lic" | cut -c1-160)"
         [ "$verdict" = "KANDIDAT" ] && found=$((found + 1))
