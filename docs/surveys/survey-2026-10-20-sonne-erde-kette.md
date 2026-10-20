@@ -2,7 +2,7 @@
   title: Survey — die Sonne→Erde-Kette im Haus (Bestand, gemessen 2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: 086d2ff0e2ce9670d08e02000df084b64b6e6a480438bf66022be63ce5faace0
+  sha256: b36857dbd897ba2739b68fe17517a3c87c4ab0567da6644bebcf8b4613345686
   status: live
   see-also: phi/sources.φ docs/paper/gic-causal-driver.md zustand/rat/2026-10-15-rat-fragenpaket.md
 -->
@@ -26,7 +26,7 @@ eigentlich?" und die Grundlage für F2 (Frühwarnkette).
 | **Aurora** | `themis_asi` (Rohbilder), `themis_asi_fodg`, `themis_asi_keogram`, `themis_asi_timed_keogram`, `keogram` (MIRACLE, 2 Blöcke), `ssusi_aurora` (Hemisphärenleistung N/S), `magic_dl3` | **3 Felder + Rohbilder** | Bildkadenz · 1 d · 1 a | free-open / CC-BY |
 | **Boden** | `intermagnet_dbdt` (ABK/SOD, 1 min + 1 h), `intermagnet_xyz_*` (Komponenten je Station), `fmi_image_mag` (NUR, 10 s), `carisma_mag` (1 s), `bc_mpo_mag`, `usgs_geomag_efield` | **~474** | 1 min / 1 h / 10 s / 1 s | **CC-BY-NC-4.0** / OGL / PD |
 | **Strom (GIC)** | `bpa_gic` (11 Punkte), `fmi_gic` (1 h), `fmi_gic_1min` (1 min), Kellerman-Knoten | **28** | 5 min · 1 h · 1 min | PD-USGov / CC-BY |
-| **Netz** | `entsoe_unavailability` (MW, wöchentlich), `fingrid_datasets` (nur Katalog) | **1 (+0)** | 1 Woche | CC-BY / per-service |
+| **Netz** | `entsoe_unavailability` (MW, wöchentlich), `grid_outage_event` (ECOD, **167.772** eindeutige County-Ereignisse nach Dedup), `fingrid_datasets` (Katalog; die 8 Zeitreihen sind lizenzbedingt **zurückgezogen**) | 1 + 1 (+0) | 1 Woche · Ereignis | CC-BY / CC-BY / per-service |
 
 ## Was gemessen ist — und was nur liegt
 
@@ -51,7 +51,7 @@ eigentlich?" und die Grundlage für F2 (Frühwarnkette).
 | **Ionosonden** | **Quelle gefunden (2026-10-20):** Juliusruh (`0318`), 1957–2025, **552.100 foF2-Stundenwerte**, maschinenlesbar. Lizenz **SWS-WDC**: Namensnennung, **keine kommerzielle Nutzung** ohne Vereinbarung, **Weitergabe an Kollegen erlaubt, wenn die Bedingungen mitgegeben werden** — das Haus ist NC (PolyForm), also nutzbar und weitergabefähig. **CDN-Asset 200, 9.385.708 B, sha256 geprüft.** GIRO/DIDBase liefert von hier 504/404 |
 | **Live-Sonnenwind (RTSW/DSCOVR)** | kein `rtsw`-, kein `dscovr`-Block; nur OMNI-Archiv und `wind_waves` |
 | **SuperMAG-Felder** | Compiler da, nur `substorm` registriert; **nicht redistribuierbar** (auth) |
-| **Finnisches Netz** | nur der Datensatz-Katalog, keine Zeitreihe |
+| **Finnisches Netz** | 8 Zeitreihen geharvestet, **zurückgezogen** (`per-service-terms` nicht eindeutig); der Katalog bleibt |
 | **Ausfallereignisse** | gar kein Datensatz (kein Zeit/Ort/Ursache-Träger) |
 
 **Radio, zweiter Arm — gemessen, nicht behauptet (e-CALLISTO/MRO, 2026-10-20):**
@@ -240,6 +240,7 @@ mit Fenster, Zahl und Ergebnis.
 | M17 | Boden → Strom als Kette | §4.9, `gic_ground_probe` | 4 319 min; inkrementell n = 72/23 h | unbedingt **Pfeil** (Lag 5 min, TE 1.4043e-1 > fam 1.2928e-1), aber **symmetrisch** (Rückkanal ebenfalls; Verhältnis 1.01–1.12) und **lag-flach**; inkrementell **0/14**, Δ negativ → **trägt nicht**, 0 Vorlauf |
 | M18 | Funk → Sonnenwind (MRO, Mehrjahresprobe 2018–2025) | Survey, `callisto_edge_probe` | 325 Tage, n = 307 | \|r\| = 0.1509 (175–235 MHz, Lag 1 d); Block-Shift-Null 95 % = 0.2330, **p = 0.4311** → **trägt nicht**. Der erste n=90-Lauf (0.3899) reproduziert sich nicht (r = 0.0704) — Fenster-/Auswahlkorrelation |
 | M19 | MRO-Bänder vs. SWPC-Ereignisse | Survey, `callisto_swpc_validation` | 18 beobachtete Ereignisse | **7 Treffer, 11 Fehlschläge, 44 Fehlalarme** → kein verlässlicher Ereignis-Trigger |
+| M20 | Boden/Strom → Netzausfall | `survey-2026-10-20-netzausfall-kante.md` | 3.318 Tage national; BPA-räumlich 0 | bestes \|r\| = 0,0499 (ABK dB/dt), Null 0,0975, **p = 0,755** → **trägt nicht**; BPA-Paarung zeitlich leer (GIC nur 4 Tage rollierend) |
 
 **Datenfehler, benannt:** Die mehrjährigen Abisko-Reihen (`abk_dbdt_1h.bin`, `abk_dbdt_1m.bin`) tragen Zukunftsstempel (2024–2056 bzw. 2053–2055) und überlappen die GIC-Reihe deshalb nicht. Sie wurden **nicht** verwendet; der Fehler ist zu reparieren, bevor sie als Kante zählen.
 
@@ -252,7 +253,7 @@ sondern die Fenster-/Macht-Abhängigkeit selbst.
 - Sonne → L1 (Radio/Flare → Sonnenwind) als Zuwachs.
 - L1 → Magnetfeld, Magnetfeld → Ionosphäre, Ionosphäre → Aurora.
 - Aurora → Boden als Kante (F3: Schalter, nicht Vorläufer).
-- Boden → Ausfall: Datensatz da (ECOD 2014–2023, 525.045 County-Ereignisse), Kante nicht gemessen.
+- Boden → Ausfall: **gemessen** (eigener Survey `survey-2026-10-20-netzausfall-kante.md`) — BPA-Paarung zeitlich leer (GIC nur 4 Tage rollierend); nationaler Proxy **trägt nicht** (\|r\| ≤ 0,05, p ≥ 0,67). ECOD nach Dedup **167.772** eindeutige County-Ereignisse.
 
 
 
