@@ -97,6 +97,10 @@ fi
 if [ -n "$value" ]; then
     for v in $(printf '%s' "$value" | tr ',' ' '); do
         case "$v" in
+            *±*) vchk="${v%%±*}" ;;
+            *) vchk="$v" ;;
+        esac
+        case "$vchk" in
             ""|*[!0-9.eE+-]*) echo "find: --value ist keine Zahl: $v" >&2; exit 2 ;;
         esac
     done
@@ -109,7 +113,7 @@ for col in $header_cols; do
 done
 if [ -n "$value" ]; then
     [ -n "$query" ] && query="$query "
-    query="$query$(printf '%s' "$value" | tr ',' ' ')"
+    query="$query$(printf '%s' "$value" | tr ',' ' ' | sed 's/±[0-9.eE+-]*//g')"
 fi
 if [ "$pdf" -eq 1 ]; then
     query="$query filetype:pdf"
@@ -271,15 +275,18 @@ while IFS= read -r line; do
         maxdelta_s=""
         for v in $(printf '%s' "$value" | tr ',' ' '); do
             total=$((total + 1))
-            tol="$(awk -v v="$v" 'BEGIN{ n=split(v,a,"."); if(n==1){print "0.5"} else { d=length(a[2]); printf "%.10g", 5*10^(-(d+1)) } }')"
-            nearest="$(printf '%s' "$body" | grep -oE '[-+]?[0-9]+([.][0-9]+)?([eE][-+]?[0-9]+)?' | awk -v t="$v" 'BEGIN{m=-1} { d=$1-t; if(d<0)d=-d; if(m<0||d<m){m=d} } END{ if(m>=0) printf "%.10g", m }')"
+            case "$v" in
+                *±*) vnum="${v%%±*}"; tol="${v##*±}" ;;
+                *) vnum="$v"; tol="$(awk -v v="$v" 'BEGIN{ n=split(v,a,"."); if(n==1){print "0.5"} else { d=length(a[2]); printf "%.10g", 5*10^(-(d+1)) } }')" ;;
+            esac
+            nearest="$(printf '%s' "$body" | grep -oE '[-+]?[0-9]+([.][0-9]+)?([eE][-+]?[0-9]+)?' | awk -v t="$vnum" 'BEGIN{m=-1} { d=$1-t; if(d<0)d=-d; if(m<0||d<m){m=d} } END{ if(m>=0) printf "%.10g", m }')"
             if [ -z "$nearest" ]; then
                 ok_all=0
                 far_any=1
                 maxdelta_s="keine Zahl"
                 continue
             fi
-            cls="$(awk -v d="$nearest" -v tol="$tol" -v v="$v" -v spec="$near" 'BEGIN{
+            cls="$(awk -v d="$nearest" -v tol="$tol" -v v="$vnum" -v spec="$near" 'BEGIN{
                 ad=(v<0)?-v:v;
                 if (spec != "") {
                     if (spec ~ /%$/) { p=spec; sub(/%$/,"",p); nb=ad*p/100 } else { nb=spec+0 }
