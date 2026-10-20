@@ -88,7 +88,14 @@ fn zustand_dir() -> PathBuf {
 }
 
 fn ledger_dir() -> PathBuf {
-    zustand_dir().join("ledger")
+    let work = match env::var("OMEGAFLOW_WORK") {
+        Ok(w) => PathBuf::from(w),
+        Err(_) => match env::var("HOME") {
+            Ok(h) => PathBuf::from(h).join("projects/omegaflow-work"),
+            Err(_) => PathBuf::from("."),
+        },
+    };
+    work.join("state/ledger")
 }
 
 fn valid_component(s: &str) -> bool {
