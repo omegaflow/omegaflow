@@ -8,6 +8,7 @@
 debug/
 .env
 *.log
+!docs/state/cdn-changes.log
 !state/state/ledger/**/*.log
 omegaflow.wasm
 .opencode/*
