@@ -36,6 +36,15 @@ env_name_ok() {
     return 0
 }
 
+secret_get() {
+    var="$1"
+    val="$(printenv "$var" 2>/dev/null || true)"
+    if [ -z "$val" ] && [ -f "$root/.secrets.local" ]; then
+        val="$(sed -n "s/^${var}=//p" "$root/.secrets.local" | head -n 1)"
+    fi
+    printf '%s' "$val"
+}
+
 tmp="$(mktemp /tmp/bait.XXXXXX.txt)"
 hdr="$(mktemp /tmp/bait.XXXXXX.hdr)"
 body="$(mktemp /tmp/bait.XXXXXX.body)"
@@ -64,8 +73,8 @@ conf_header() {
         '$'*)
             var="${value#\$}"
             env_name_ok "$var" || die2 "--header: '$var' ist kein Umgebungsvariablen-Name"
-            val="$(printenv "$var" 2>/dev/null || true)"
-            [ -n "$val" ] || die2 "--header: Umgebungsvariable $var ist nicht gesetzt oder leer"
+            val="$(secret_get "$var")"
+            [ -n "$val" ] || die2 "--header: Umgebungsvariable $var ist weder in der Umgebung noch in .secrets.local gesetzt"
             case "$val" in
                 *[![:print:]]*) die2 "--header: Wert von $var enthält Steuerzeichen" ;;
             esac
@@ -179,8 +188,8 @@ if [ -n "$url" ]; then
     case "$auth" in
         bearer)
             env_name_ok "$auth_var" || die2 "--bearer: '$auth_var' ist kein Umgebungsvariablen-Name"
-            token="$(printenv "$auth_var" 2>/dev/null || true)"
-            [ -n "$token" ] || die2 "--bearer: Umgebungsvariable $auth_var ist nicht gesetzt oder leer"
+            token="$(secret_get "$auth_var")"
+            [ -n "$token" ] || die2 "--bearer: Umgebungsvariable $auth_var ist weder in der Umgebung noch in .secrets.local gesetzt"
             case "$token" in
                 *[![:print:]]*) die2 "--bearer: Wert von $auth_var enthält Steuerzeichen" ;;
             esac
@@ -197,10 +206,10 @@ if [ -n "$url" ]; then
             pass_var="${auth_var#*:}"
             env_name_ok "$user_var" || die2 "--basic: '$user_var' ist kein Umgebungsvariablen-Name"
             env_name_ok "$pass_var" || die2 "--basic: '$pass_var' ist kein Umgebungsvariablen-Name"
-            user="$(printenv "$user_var" 2>/dev/null || true)"
-            pass="$(printenv "$pass_var" 2>/dev/null || true)"
-            [ -n "$user" ] || die2 "--basic: Umgebungsvariable $user_var ist nicht gesetzt oder leer"
-            [ -n "$pass" ] || die2 "--basic: Umgebungsvariable $pass_var ist nicht gesetzt oder leer"
+            user="$(secret_get "$user_var")"
+            pass="$(secret_get "$pass_var")"
+            [ -n "$user" ] || die2 "--basic: Umgebungsvariable $user_var ist weder in der Umgebung noch in .secrets.local gesetzt"
+            [ -n "$pass" ] || die2 "--basic: Umgebungsvariable $pass_var ist weder in der Umgebung noch in .secrets.local gesetzt"
             case "$user$pass" in
                 *[![:print:]]*) die2 "--basic: Wert enthält Steuerzeichen" ;;
             esac
