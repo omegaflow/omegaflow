@@ -2,7 +2,7 @@
   title: Signal-cone audit — Positivkontrolle im selben Lauf (2026-10-19)
   class: survey
   date: 2026-10-19
-  sha256: 57eea4247a1a00e3a6c9d0086d7548aede6e025a9be872676b8a2323d335ed28
+  sha256: 26192cd26dc304b5107d5babcf8c43914ffa29cf2df913e56c7d0f6a564eebd1
   status: live
   see-also: docs/paper/signal-cone-audit-sheet.md docs/surveys/survey-2026-10-19-paper-landscape.md
 -->
@@ -31,6 +31,7 @@ und die Leere war deshalb nicht als Nachweis lesbar.
 - Kommando (lokal, Assets aus dem CDN `omegaflow/sources`):
 
 ```sh
+cargo build -p omegaflow-measure --release --bin signal_cone_audit_probe
 ./target/release/signal_cone_audit_probe --days 730 \
   --goes-bin /tmp/opencode/sac/goes_xrs.bin \
   --f107-bin /tmp/opencode/sac/f107_penticton.bin \
@@ -43,13 +44,16 @@ und die Leere war deshalb nicht als Nachweis lesbar.
 ```
 
 - Rohlog: `/tmp/opencode/sac/signal_cone_audit_730d.log`,
-  sha256 `3f4b2ecc7b6f4445fc501316c156a69e577b7277fa5ca69fdf9ff9e431a9a3ed`
-  (185 Zeilen, exit 0).
+  sha256 `ab8419c78916e2810f690e50ec5a5beb49ac23acce81062709c1622343fd2553`
+  (275 Zeilen, exit 0).
+- Nachlauf 2026-10-21 (release, dieselben Assets): dieselben Werte Zeile für Zeile,
+  inklusive `fam = 2,8826e-1`, `τ = 2 d`, `d/c = 4,893e2 s` und
+  `Positivkontrolle: BESTANDEN`; Log-SHA wie oben.
 - Eingaben (sha256, CDN-Assets): `goes_xrs.bin` `2a2ed6ab…` ·
   `f107_penticton.bin` `55e2ad1d…` · `omni2_serie.bin` `6dcbed64…` ·
   `goes_euvs.bin` `45b9c0ae…` · `wind_waves.bin` `fe907190…` ·
-  `wind_orbit.bin` `e30025ea…` · `ephemeris_sun.bin` `1f38fbe0…` ·
-  `ephemeris_earth.bin` `d3a59f22…`.
+  `wind_orbit.bin` `e30025ea…` · `ephemeris_sun.bin` `75010b82…` ·
+  `ephemeris_earth.bin` `4c708301…`.
 
 ## Die Positivkontrolle
 
