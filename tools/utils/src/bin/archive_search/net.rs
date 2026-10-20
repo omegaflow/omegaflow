@@ -3916,7 +3916,10 @@ fn fits_signal_lines(bytes: &[u8]) -> Vec<String> {
         return Vec::new();
     }
     let mut parts = Vec::new();
-    for key in ["BUNIT", "BSCALE", "BZERO", "NAXIS"] {
+    for key in [
+        "TELESCOP", "INSTRUME", "DETECTOR", "FILTER", "BAND", "EXPTIME", "BUNIT", "BSCALE", "BZERO",
+        "NAXIS",
+    ] {
         if let Some((_, value)) = cards.iter().find(|(k, _)| k == key) {
             parts.push(format!("{key}={value}"));
         }
