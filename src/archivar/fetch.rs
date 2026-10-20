@@ -1182,6 +1182,8 @@ pub fn live_sweep(
                 | "alerce"
                 | "catalog_tycho"
                 | "catalog_allwise_psd"
+                | "wallaby_pdr2"
+                | "hips3d"
                 | "twomass_psc"
                 | "astrometry_series"
                 | "swarm_tec"
@@ -1506,7 +1508,18 @@ pub fn cache_root() -> std::path::PathBuf {
     if let Ok(dir) = std::env::var("OMEGAFLOW_ZUSTAND") {
         return std::path::PathBuf::from(dir).join("archivar_cache");
     }
-    std::path::PathBuf::from("cache")
+    if let Ok(dir) = std::env::var("OMEGAFLOW_WORK") {
+        return std::path::PathBuf::from(dir)
+            .join("zustand")
+            .join("archivar_cache");
+    }
+    if let Ok(home) = std::env::var("HOME") {
+        return std::path::PathBuf::from(home)
+            .join(".cache")
+            .join("omegaflow")
+            .join("archivar");
+    }
+    std::env::temp_dir().join("omegaflow-archivar-cache")
 }
 
 pub fn cache_path_for(netloc: &str, name: &str) -> String {
@@ -1762,12 +1775,14 @@ mod cache_root_tests {
 
         unsafe {
             std::env::remove_var("OMEGAFLOW_ZUSTAND");
+            std::env::remove_var("OMEGAFLOW_WORK");
+            std::env::remove_var("OMEGAFLOW_CACHE");
             std::env::set_var("HOME", "/home/probe");
         }
         assert_eq!(
             cache_root(),
-            std::path::PathBuf::from("cache"),
-            "without OMEGAFLOW_ZUSTAND the cache root lives in the folder"
+            std::path::PathBuf::from("/home/probe/.cache/omegaflow/archivar"),
+            "without a work root the cache lives in the user cache, never in the repository"
         );
 
         unsafe {
