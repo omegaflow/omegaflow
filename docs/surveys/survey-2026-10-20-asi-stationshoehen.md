@@ -2,7 +2,7 @@
   title: THEMIS-ASI-Stationshöhen — 24 Standorte, gemessen statt nominal
   class: survey
   date: 2026-10-20
-  sha256: 7366f86c7d0f73b6c82d41f2355b9fba0f3290a9651f1f344b02649eb37e81c6
+  sha256: 8485105ad505f6956381daee7b4cf3d1756d3ca7593486c4ef290a388ba2817c
   status: live
   see-also: docs/surveys/survey-2026-10-12-standort-lokalisierung-ortho-dsm.md recherche/funde/notizen/2026-10-12-themis-asi-stations.md recherche/funde/notizen/2026-10-12-calibration.md
 -->
@@ -40,9 +40,11 @@ Werte der Runde 1 sind **reproduziert (Δ 0,00 m)**; die PGM-Gegenprobe bleibt b
    geführt und so benannt.
 5. **Datum.** HRDEM orthometrisch **CGVD2013**, 3DEP **NAVD88**, Copernicus **EGM2008**,
    SRTM **EGM96-nah**. `h = H + N` mit **EGM2008** (GeographicLib GeoidEval 2.5.2).
-6. **Koordinate.** PGM-Koordinate, wo präziser als Rev B. MCGR wurde zwischen 2014 und
-   2017 um 55 km versetzt: Rev B (−155,6) ist der Altstandort, der PGM-Kopf ab 2017
-   nennt −154,42. Der Code folgt dem aktuellen Standort.
+6. **Koordinate.** PGM-Koordinate, wo präziser als Rev B. **MCGR ist ein Metadatenfehler,
+   kein Umzug:** die Köpfe 2013/14/15 nennen `62,95 / −155,6 / 102 m`; ab 2016/09
+   springt der Kopf auf `62,95 / −154,42 / 0,0`. Am Altstandort steht eine Anlage
+   (McGrath), am „neuen" Punkt ist Wilderness; 3DEP gibt am Altstandort **103,66 m**
+   (PGM 102), am neuen 129,08 m. Der Code bleibt am **Altstandort −155,596**.
 
 ## Quellen und Lizenzen
 
@@ -63,7 +65,7 @@ nur Lesewerkzeug für die Copernicus-COGs, keine Datenlizenz.
 
 Vergleich der DEM-Messung mit der **PGM-Zahl**. `Δ = neu − PGM`. FYKN hat im PGM-Kopf
 `0` (nominal); dort ist die Tabellenzahl 137,15 die Referenz und die Zeile **nicht
-PGM-gedeckt**. MCGR wird in beiden Epochen getrennt geführt.
+PGM-gedeckt**. MCGR wird als **Metadatenfehler** geführt (Kopf ab 2016/09 zeigt Wilderness).
 
 | Station | PGM-Kopf | neu h (m) | Δ (m) | Befund |
 |---|---:|---:|---:|---|
@@ -71,8 +73,8 @@ PGM-gedeckt**. MCGR wird in beiden Epochen getrennt geführt.
 | EKAT | 430,77 | 437,63 | **+6,86** | DSM (Tundra), Copernicus 466,61 H bestätigt |
 | FYKN | **0** | 155,33 | +18,18 zu Tabelle 137,15 | PGM nominal; Tabelle = Flughafen, Rev-B = 2,5 km östlich |
 | GAKO | 605 | 601,12 | **−3,88** | 3DEP trifft PGM auf 4 m |
-| MCGR (Alt, 2013/14) | 102 @ −155,6 | 115,23 | +13,23 | Rev-B-Punkt; PGM 102 vs. DEM 115 → nicht verwendet |
-| MCGR (Neu, 2017+) | 0.0 @ −154,42 | 141,08 | — | 3DEP 129,08 H + N 12,00; PGM nominal |
+| MCGR | 102 @ −155,6 | 115,23 | +13,23 | Altstandort bestätigt: 3DEP 103,66 H + N 11,57; PGM 102 |
+| MCGR (Kopf ab 2016/09) | 0.0 @ −154,42 | — | — | **Metadatenfehler**: Wilderness, 3DEP 129,08; nicht verwendet |
 | PGEO | 756,26 | 761,62 | **+5,36** | HRDEM-DTM, Rev-B-Punkt |
 | PINA | 247 | 237,66 | **−9,34** | HRDEM 10 m unter PGM/Wikipedia |
 | TPAS | 236 | 236,00 | **0,00** | PGM ist die Instrumentenmessung; ASTER 235,59 bestätigt |
@@ -106,12 +108,14 @@ die Runde 1 `pending`/Obergrenze meldete.
 | NRSQ | 40,53 ASTER | **46,27** | Copernicus 5,74 H | 0 m; HRDEM/3DEP keine Kachel | 10 | belegt (30 m) |
 | TPAS | 235,59 ASTER | **236,00** | PGM-Kopf 236; ASTER 266 H → 235,59 | 0 m (Instrument) | 2 | belegt |
 | FSMI | 176,95 DTM 2 km | **176,80** | HRDEM DTM 206,18 H | **111 m N** | 3 | belegt |
-| MCGR | 115,23 Rev-B | **141,08** | 3DEP 129,08 H @ 62,95/−154,42 | 0 m (3DEP); Rev-B 55 km W | 8 | belegt (Site 2017+) |
+| MCGR | 115,23 Rev-B | **115,23** | 3DEP 103,66 H @ 62,953/−155,596 + N 11,57 | 0 m; Kopf ab 2016/09 nennt −154,42 (Wilderness) | 3 | belegt |
 
 **Was die 11 geändert hat:** FSMI war kein 2-km-Fall, sondern **111 m** (Runde 1 hatte
 den Gradoffsets falsch in Meter umgerechnet: 0,001° ≈ 111 m, nicht 1,1 km). MCGR ist
-kein Höhen-, sondern ein **Koordinatenriss**: der Kopf wechselt 2017 von −155,6 auf
-−154,42; am aktuellen Punkt liefert 3DEP 129,08 H, mit N 12,00 → **141,08 m h**. WHIT
+kein Höhen-, sondern ein **Koordinatenfehler**: die Köpfe 2013/14/15 nennen
+−155,6/102 m, ab 2016/09 −154,42/0,0. Am Altstandort steht die McGrath-Anlage
+(3DEP 103,66 m, PGM 102), am neuen Punkt ist Wilderness (3DEP 129,08 m). Der Code
+bleibt bei **−155,596 / 115,23 m**. WHIT
 bleibt der einzige echte `pending`-Fall: das DTM 5,56 km nördlich liegt 36 m tiefer
 (704,74 vs. 741,5 H) und beschreibt einen anderen Hang, nicht die Station.
 
@@ -135,7 +139,7 @@ bleibt der einzige echte `pending`-Fall: das DTM 5,56 km nördlich liegt 36 m ti
 | KAPU | 198,38 | 0.0 | **198,38** | HRDEM DTM 1 m | 49.392/−82.320 | 3 | 0,00 |
 | KIAN | 42,19 | 0.0 | **42,19** | 3DEP EPQS 5 m | 66.971/−160.438 | 10 | 0,00 |
 | KUUJ | 85,39 | 0.0 | **79,22** | Copernicus 30 m + SRTM | 58.155/−68.532 | 10 | −6,17 |
-| MCGR | 102,57 | 102 / 0.0† | **141,08** | 3DEP EPQS 5 m | 62.95/−154.42 | 8 | +38,51 |
+| MCGR | 102,57 | 102 / 0.0† | **115,23** | 3DEP EPQS 5 m | 62.953/−155.596 | 3 | +12,66 |
 | NRSQ | 40,53 | 0.0 | **46,27** | Copernicus 30 m | 61.162/−45.442 | 10 | +5,74 |
 | PGEO | 761,62 | 756,26* | **761,62** | HRDEM DTM 1 m | 53.815/−122.828 | 3 | 0,00 |
 | PINA | 237,66 | 247 | **237,66** | HRDEM DTM 1 m | 50.163/−96.066 | 3 | 0,00 |
@@ -148,8 +152,9 @@ bleibt der einzige echte `pending`-Fall: das DTM 5,56 km nördlich liegt 36 m ti
 | YKNF | 135,06 | 0.0 | **135,06** | HRDEM DTM 1 m | 62.520/−114.313 | 3 | 0,00 |
 
 `*` PGM-Wert aus der Kalibrierung 2026-10-12, Kopf in dieser Runde nicht erneut geladen.
-`†` MCGR: 102 im Kopf 2013/14 bei −155,6; `0.0` im Kopf ab 2017 bei −154,42. Der Code
-führt jetzt den aktuellen Standort (−154,42) und dessen 3DEP-Höhe.
+`†` MCGR: 102 im Kopf 2013–2015 bei −155,6; `0.0` im Kopf ab 2016/09 bei −154,42.
+Der Code führt den **Altstandort −155,596** (Anlage, 3DEP 103,66) — der neue Punkt ist
+Wilderness und damit ein Metadatenfehler.
 
 ## Befunde (gemessen, nicht geglättet)
 
@@ -213,12 +218,15 @@ Die offiziellen Stationsmetadaten tragen **keine Höhe**, nur Koordinaten:
   trägt eine „altitude"-Spalte, betrifft aber nur die **EPO-Magnetometer**, nicht die ASI.
   `https://aurora.phys.ucalgary.ca/donovan/pdfs/mende_themis_asi_ssr_2008.pdf`
 - **PGM-Kopf** (`data.phys.ucalgary.ca/.../stream0/...`): Das Feld `Geodetic altitude`
-  existiert, steht aber in **jeder** Datei auf `0.0` — Platzhalter, keine Messung.
+  existiert. **2013–2015 trägt es echte Werte** (MCGR 102 m), ab 2016/09 steht es
+  auf `0.0` — ab dann Platzhalter.
 
-**MCGR bestätigt.** Der Kopf `20220131_0700_mcgr_themis11` schreibt
-`62.95 / -154.42`; die offizielle Liste von 2011 schreibt `62.953 / 204.404 E =
--155.596`. Der Riss liegt im **Instrumentenkopf**, nicht in der DEM-Auswertung. Der
-Code folgt dem aktuellen Kopf; für 2013/14-Bilder gilt der Altstandort.
+**MCGR ist ein Metadatenfehler, kein Umzug.** Die Köpfe 2013, 2014 und 2015 schreiben
+`62.95 / -155.6 / 102 m`; ab `20160915` springt der Kopf auf `62.95 / -154.42 / 0.0`.
+Die offizielle Liste von 2011 schreibt `62.953 / 204.404 E = -155.596`. Am Altstandort
+steht die McGrath-Anlage (3DEP **103,66 m**, PGM **102 m**), am „neuen" Punkt ist
+**Wilderness** (3DEP 129,08 m, kein Gebäude, keine Straße). Der Code bleibt bei
+**−155,596 / 115,23 m** (3DEP 103,66 + EGM2008 11,57).
 
 **WHIT.** Das Orthofoto (Esri World Imagery, z17) zeigt am Punkt Wald **und** 0–150 m
 östlich eine gerodete Anlage mit Gebäuden. Das HRDEM-DSM-Raster (7×7 bzw. 4×4, 1 m)
