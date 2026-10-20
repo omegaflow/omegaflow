@@ -20,28 +20,41 @@ Kanon (`layout_check`), die Klasse folgt dem Inhalt.
 ## 1. Markdown-Dokument (`.md`)
 
 **Ablage:** `docs/<klasse>/<slug>.md` (Klasse = Ordner: `surveys`, `specs`,
-`concepts`, `blatt`, `paper`, `auftrag`).
+`concepts`, `blatt`, `paper`, `auftrag`). **Handover** liegen in `handover/` und
+tragen denselben Kopf mit `class: handover`.
 
 **Kopf** — der erste Block der Datei, unmittelbar vor dem Titel:
 
 ```markdown
 <!--
   title: <Titel — ein Satz, kein Kürzel>
-  class: <survey|spec|concept|blatt|paper|auftrag>
+  class: <survey|spec|concept|blatt|paper|auftrag|handover>
   date: <YYYY-MM-DD>
   sha256: <hex — über den Body ohne diesen Kopf>
   status: <live|done|consumed|superseded|archived>
+  owner: <linie|sitz — wer hütet es jetzt>
+  ack: <linie|sitz> <ISO-8601 — Empfang, nicht Genehmigung>
+  next: <nächster Akt|Trigger — oder none>
+  orphan-after: <YYYY-MM-DD — oder none>
   see-also: <pfad> [<pfad> …]
 -->
 ```
 
-**Pflichtfelder:** `title`, `class`, `date`, `sha256`, `status`. `see-also` ist
-Pflicht, sobald das Dokument einen Träger, eine Quelle oder ein Werkzeug nennt.
-`sha256` ist der Hash über den Body **ohne** den Kopf:
+**Pflichtfelder:** `title`, `class`, `date`, `sha256`, `status`, `owner`, `ack`.
+`next` und `orphan-after` sind Pflicht, solange `status: live` ist; bei
+`done`/`consumed`/`archived` dürfen sie `none` sein. `see-also` ist Pflicht,
+sobald das Dokument einen Träger, eine Quelle oder ein Werkzeug nennt. `sha256`
+ist der Hash über den Body **ohne** den Kopf:
 
 ```sh
 sed '/^<!--/,/^-->/d' <datei> | sha256sum
 ```
+
+**Quittung.** `owner` ist der aktuelle Halter; `ack` ist die Empfangskette
+(wiederholbar, je Übergabe eine Zeile). Der erste `ack` ist der Autor; jede
+Übergabe ändert `owner` und fügt einen `ack` hinzu. **Ohne `ack` ist das
+Dokument ein Orphan** — eine Flaschenpost, kein Dokument. Die Quittung ist
+Empfang, nicht Genehmigung: der Empfänger bestätigt, dass er es hat.
 
 **Body:** `# <Titel>` als erste Überschrift, danach die Abschnitte des Typs.
 Ein Dokument ohne Kopf ist eine Notiz, kein Dokument; ein `status: live` ohne
