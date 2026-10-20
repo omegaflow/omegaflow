@@ -6,7 +6,10 @@ use std::collections::BTreeMap;
 const OMNI2_1H_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie_1h.bin";
 const J2000_UNIX_OFFSET: f64 = 946_728_000.0;
-const MIN_MINUTES: usize = 120;
+const HOUR_START: f64 = 7.5;
+const HOUR_END: f64 = 13.25;
+const MIN_MINUTES: usize = 345;
+const MIN_OMNI_HOURS: usize = 5;
 const LAGS_DAYS: [i64; 4] = [0, 1, 2, 3];
 const SURROGATES: usize = 500;
 
@@ -88,25 +91,16 @@ fn main() {
 
     let mut per_day: BTreeMap<i64, Vec<[Option<f64>; BAND_COUNT]>> = BTreeMap::new();
     for r in &records {
-        let day = day_of(r.t_unix);
-        per_day.entry(day).or_default().push(r.bands);
-    }
-    let mut years: BTreeMap<i64, Vec<i64>> = BTreeMap::new();
-    for &day in per_day.keys() {
-        let (y, _, _) = civil_from_days(day);
-        years.entry(y).or_default().push(day);
-    }
-    let keep_years = [2020i64, 2022, 2024];
-    let mut days: Vec<i64> = Vec::new();
-    for y in keep_years {
-        if let Some(v) = years.get(&y) {
-            days.extend(v.iter().copied());
+        let ut_hour = r.t_unix.rem_euclid(86_400.0) / 3600.0;
+        if !(HOUR_START..HOUR_END).contains(&ut_hour) {
+            continue;
         }
+        per_day.entry(day_of(r.t_unix)).or_default().push(r.bands);
     }
+    let mut days: Vec<i64> = per_day.keys().copied().collect();
     days.sort_unstable();
-    days.dedup();
     if days.is_empty() {
-        eprintln!("no 2020/2022/2024 January days in the asset — unmeasured");
+        eprintln!("no radio minutes in the {HOUR_START:.0}-{HOUR_END:.0} UT window — unmeasured");
         std::process::exit(1);
     }
     let mut activity: Vec<[Option<f64>; BAND_COUNT]> = Vec::with_capacity(days.len());
@@ -124,6 +118,9 @@ fn main() {
             if let Some(m) = mean(&vals) {
                 act[b] = Some(m);
             }
+        }
+        if act.iter().any(|b| b.is_none()) {
+            continue;
         }
         activity.push(act);
         kept_days.push(day);
@@ -153,25 +150,49 @@ fn main() {
         eprintln!("OMNI 1h CDN asset reads void — the edge stays unmeasured");
         std::process::exit(1);
     };
-    let mut bz_day: BTreeMap<i64, f64> = BTreeMap::new();
-    let mut v_day: BTreeMap<i64, f64> = BTreeMap::new();
+    let mut bz_samples: BTreeMap<i64, Vec<f64>> = BTreeMap::new();
+    let mut v_samples: BTreeMap<i64, Vec<f64>> = BTreeMap::new();
     for (t, v, comp) in omni {
-        let day = day_of(t + J2000_UNIX_OFFSET);
+        let unix = t + J2000_UNIX_OFFSET;
+        let ut_hour = unix.rem_euclid(86_400.0) / 3600.0;
+        if !(HOUR_START..HOUR_END).contains(&ut_hour) {
+            continue;
+        }
+        let day = day_of(unix);
         if comp == COMP_BZ {
-            let e = bz_day.entry(day).or_insert(v);
-            if v < *e {
-                *e = v;
-            }
+            bz_samples.entry(day).or_default().push(v);
         } else if comp == COMP_V1800 {
-            v_day.entry(day).or_insert(v);
+            v_samples.entry(day).or_default().push(v);
+        }
+    }
+    let mut bz_day: BTreeMap<i64, f64> = BTreeMap::new();
+    for (day, vals) in bz_samples {
+        if vals.len() >= MIN_OMNI_HOURS {
+            bz_day.insert(day, vals.iter().copied().fold(f64::INFINITY, f64::min));
+        }
+    }
+    let mut v_day: BTreeMap<i64, f64> = BTreeMap::new();
+    for (day, vals) in v_samples {
+        if vals.len() >= MIN_OMNI_HOURS
+            && let Some(m) = mean(&vals)
+        {
+            v_day.insert(day, m);
         }
     }
 
+    let mut per_year: BTreeMap<i64, usize> = BTreeMap::new();
+    for &day in &kept_days {
+        let (y, _, _) = civil_from_days(day);
+        *per_year.entry(y).or_insert(0) += 1;
+    }
     println!(
-        "radio days {} ({}..{}), OMNI days {} / {}; lags {:?} d",
+        "radio days {} ({}..{}) in {:?} UT, {} years {:?}; OMNI days {} / {}; lags {:?} d",
         kept_days.len(),
         kept_days[0],
         kept_days[kept_days.len() - 1],
+        (HOUR_START, HOUR_END),
+        per_year.len(),
+        per_year,
         bz_day.len(),
         v_day.len(),
         LAGS_DAYS
@@ -181,6 +202,7 @@ fn main() {
     }
     let mut observed = 0.0f64;
     let mut best = String::new();
+    let mut results: Vec<(f64, String)> = Vec::new();
     for b in 0..BAND_COUNT {
         for lag in LAGS_DAYS {
             for metric in ["Bzmin", "Vmean"] {
@@ -199,19 +221,30 @@ fn main() {
                     }
                 }
                 if let Some(r) = pearson(&xs, &ys) {
+                    let label = format!(
+                        "{} lag {} d {} (n={})",
+                        component_name(b as u32).unwrap_or("?"),
+                        lag,
+                        metric,
+                        xs.len()
+                    );
+                    results.push((r, label.clone()));
                     if r.abs() > observed {
                         observed = r.abs();
-                        best = format!(
-                            "{} lag {} d {} (n={})",
-                            component_name(b as u32).unwrap_or("?"),
-                            lag,
-                            metric,
-                            xs.len()
-                        );
+                        best = label;
                     }
                 }
             }
         }
+    }
+    results.sort_by(|a, b| b.0.abs().total_cmp(&a.0.abs()));
+    for (r, label) in results.iter().take(5) {
+        println!("  r = {r:+.4}  {label}");
+    }
+    if let Some((r, label)) = results.iter().find(|(_, label)| {
+        label.contains("callisto_band_08_420_560_mhz") && label.contains("lag 3 d Bzmin")
+    }) {
+        println!("  first-run cell (band 08, lag 3 d, Bzmin): r = {r:+.4}  {label}");
     }
     if best.is_empty() {
         eprintln!("no paired radio/OMNI days — the edge stays unmeasured");
@@ -219,22 +252,19 @@ fn main() {
     }
 
     let mut rng = Rng(0x9E37_79B9_7F4A_7C15);
+    let mut year_map: BTreeMap<i64, Vec<usize>> = BTreeMap::new();
+    for (i, &day) in kept_days.iter().enumerate() {
+        let (y, _, _) = civil_from_days(day);
+        year_map.entry(y).or_default().push(i);
+    }
+    let year_idx: Vec<Vec<usize>> = year_map
+        .into_values()
+        .filter(|indices| indices.len() > 1)
+        .collect();
     let mut null = Vec::with_capacity(SURROGATES);
     for _ in 0..SURROGATES {
         let mut shifted = activity.clone();
-        for y in keep_years {
-            let idx: Vec<usize> = kept_days
-                .iter()
-                .enumerate()
-                .filter(|(_, d)| {
-                    let (yy, _, _) = civil_from_days(**d);
-                    yy == y
-                })
-                .map(|(i, _)| i)
-                .collect();
-            if idx.is_empty() {
-                continue;
-            }
+        for idx in &year_idx {
             let shift = rng.below(idx.len());
             for (k, &i) in idx.iter().enumerate() {
                 shifted[i] = activity[idx[(k + shift) % idx.len()]];

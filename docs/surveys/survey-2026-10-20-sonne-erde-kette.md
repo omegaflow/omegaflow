@@ -55,17 +55,86 @@ eigentlich?" und die Grundlage für F2 (Frühwarnkette).
 | **Ausfallereignisse** | gar kein Datensatz (kein Zeit/Ort/Ursache-Träger) |
 
 **Radio, zweiter Arm — gemessen, nicht behauptet (e-CALLISTO/MRO, 2026-10-20):**
-Gewählt wurde MRO (Metsähovi, 60,2° N, 24,4° O; `on earth 60.2 24.4 0.09`),
-weil die Tagesverzeichnisse an jedem 15. Januar 2018–2026 durchgehend
-110–112 Dateien zeigen (HUMAIN: 46–49; Australia-ASSA erst ab 2020). Das Asset
-`callisto_mro.bin` (4.126.904 B, sha256 `309ebd47…c4068`) trägt **50.328
-Minuten** aus vier Fenstern: 2020-01, 2022-01, 2024-01 und 2026-09-24..10-10.
-Pro Fenster wurden die 15-min-FITS (3600×200, TIME/FREQUENCY-Tabelle) auf
-**9 Frequenzbänder 50–846 MHz** und **1-Minuten-Kadenz** reduziert; der
-Hintergrund ist ein gleitender Median (±30 min), die Einheit ist `count`
-(Rohdigits der Quelle, unkalibriert; BUNIT `digits`). Der vorhandene FITS-Leser reichte nicht: `TFORM` wie
-`3600D8.3` (Breite/Präzision) wurde als Code `3` gelesen; `fits.rs` liest jetzt
-den ersten Buchstaben als Code.
+
+**Abdeckung, per Verzeichnis-Listing.** Raster 2016–2025, je Jahr
+Januar/April/Juli/Oktober, je 2 Tage (5./20.), 80 Tage. „Dateien/Tag“ zählt
+alle `<STATION>_<tag>_<hhmmss>_<suffix>.fit.gz`-Zeilen. MRO legt pro
+15-min-Stempel vier Suffixe ab (`_59`/`_60` Hochband 50–846 MHz,
+`_61`/`_62` Tiefband 16–90 MHz); der Compiler lädt nur den kleinsten Suffix.
+Die 110–112 MRO-Zeilen eines Januartags sind also 26–28 Stempel, nicht 110
+Beobachtungen.
+
+| Station | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | Tage | Zeilen/Tag Median (min–max) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| MRO | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 80/80 | 180 (50–304) |
+| HUMAIN | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 80/80 | 49 (17–63) |
+| HURBANOVO | 8/8 | 8/8 | 7/8 | 8/8 | 7/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 78/80 | 52 (31–62) |
+| TRIEST | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 80/80 | 104 (58–168) |
+| ROSWELL-NM | 7/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 79/80 | 159 (88–288) |
+| Australia-ASSA | 0/8 | 0/8 | 0/8 | 4/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 8/8 | 52/80 | 139 (32–249) |
+
+Die UT-Fenster sind nicht gleich: MRO beginnt zwischen 00:45 und 09:09 UT und
+endet zwischen 13:00 und 19:45 UT (Jahreszeit); HUMAIN liegt 2018–2021 bei
+04:30–15:45 UT und 2022–2025 bei 04:30–16:30 UT; HURBANOVO 03:00–18:15 UT im
+Juli und 06:45–14:30 UT im Januar; TRIEST 05:00–17:45 UT. Australia-ASSA hat
+erst ab 2019/2020 eine Reihe.
+
+**Wahl.** MRO bleibt der einzige Kandidat mit dem vollen neunbändrigen
+50–846-MHz-Bereich (FREQUENCY-Tabelle gemessen: 49,988–846,238 MHz). HUMAIN
+ist mit 80/80 und 49 Dateien/Tag leichter, deckt aber nur 45–437 MHz ab
+(Bänder 1–7 voll, Band 8 nur 420–437 MHz, Band 9 leer); HURBANOVO deckt
+45–200 MHz (5 Bänder), TRIEST 45–80 MHz (2 Bänder), Australia-ASSA nur
+52/80 Tage. Die Wahl ist daher MRO; der Preis ist das saisonale UT-Fenster,
+das die Kante unten auf ein gemeinsames Fenster schneidet.
+
+**Sniffer.** Lokal (`archive_search --sniff`) auf der gzip-Datei und auf der
+entpackten FITS-Datei gemessen:
+
+```
+[sniff] path …/MRO_20240105_072200_59.fit.gz
+[sniff] bytes 294729
+[sniff] format binary-magic
+[sniff] columns 0
+[sniff] time_column absent
+[sniff] unit absent
+[sniff] magic gzip
+
+[sniff] path …/MRO_20240105_072200_59.fit
+[sniff] bytes 760320
+[sniff] format binary-magic
+[sniff] columns 0
+[sniff] time_column absent
+[sniff] unit absent
+[sniff] magic fits
+```
+
+Auch lokal liefert der Sniffer für FITS nur `magic`, keine Spalten/Zeitrolle/
+Einheit; der Text-Pfad des Sniffers greift hier nicht. Die Felder stehen im
+FITS-Header und in der BINTABLE: `NAXIS1=3600`, `NAXIS2=200`,
+`CTYPE1='Time [UT]'`, `CDELT1=0.25` s, `CTYPE2='Frequency [MHz]'`,
+`BUNIT='digits'`, `TFORM1='3600D8.3'`, `TFORM2='200D8.3'`, Tabelle
+`TIME`/`FREQUENCY`. Der Compiler liest sie dort, nicht aus dem Sniffer. (HTTP
+liefert erwartungsgemäß dasselbe `magic gzip` plus `sha256`; der lokale Pfad
+ist nur insofern besser, als er die ganzen Bytes sieht.)
+
+**Stichprobe.** 2018-01-01..2025-12-31, jeder 9. Tag, Anker 2018-01-01,
+Offset 0: **325 Tage**. 324 Tage tragen MRO-Dateien (2021-01-03 ist leer),
+**16.855 Dateien**, **4.515.281.451 B = 4,515 GB** (13,9 MB/Tag; nur der
+kleinste Suffix). 316 Tage decken das gemeinsame Fenster **07:30–13:15 UT**
+vollständig; **310 Tage** tragen alle neun Bänder und ≥345 Minuten in diesem
+Fenster. Reduktion wie im ersten Lauf: 9 Bänder, 1-min, gleitender Median
+(±30 min). Asset `callisto_mro_multiyear.bin`: **241.763 Minuten**,
+**19.824.574 B**, sha256 `0151818f…72ab2`; CDN 200, 19.824.574 B. Bei jedem
+3. Tag wären es 13,5 GB gewesen; der 9-Tage-Schritt ist die dichteste volle
+9-Band-Stichprobe unter 5 GB. Die Rohdaten liegen nicht im Repo.
+
+**Erster Lauf (MRO, vier Fenster, 2026-10-20).** Das Asset `callisto_mro.bin`
+(4.126.904 B, sha256 `309ebd47…c4068`) trägt **50.328 Minuten** aus 2020-01,
+2022-01, 2024-01 und 2026-09-24..10-10. Pro Fenster wurden die 15-min-FITS
+(3600×200, TIME/FREQUENCY-Tabelle) auf 9 Frequenzbänder 50–846 MHz und
+1-Minuten-Kadenz reduziert; der Hintergrund ist ein gleitender Median
+(±30 min), die Einheit ist `count` (Rohdigits, BUNIT `digits`). Der FITS-Leser
+musste `TFORM` wie `3600D8.3` als ersten Buchstaben lesen, nicht als Code `3`.
 
 **Validierung gegen die 34 SWPC-Sweeps** (Überlappung 2026-09-24..10-10,
 Detektor z > 5 in ≥ 2 Bändern, ≥ 2 aktive Minuten): 18 Ereignisse liegen in
@@ -75,13 +144,26 @@ die SWPC-Ereignisse reichen bis 23:01 UT). Von den 18 beobachteten: **7 Treffer,
 **kein verlässlicher Ereignis-Trigger** — Typ-III-Sweeps dauern Sekunden und
 verschwinden in der Minutenmitte; die 44 Alarme zeigen die RFI-Anfälligkeit.
 
-**Kante Radio → OMNI** (2020-01, 2022-01, 2024-01; 93 brauchbare Tage,
-OMNI2 1-h): stärkste Korrelation **|r| = 0.3899** (Band 420–560 MHz, Lag 3 d,
-Tagesminimum Bz, n = 90). Der Block-Shift-Surrogat-Null (500 Replikate, zirkulär
-innerhalb jedes Jahres) liegt bei **95 % = 0.4535**, **p = 0.1497** →
-**trägt nicht**. Die Datenlage (nur drei Januar-Monate, tageszeitlich
-beschränkt, keine durchgehende Mehrjahresreihe) trägt keine stärkere Aussage;
-das ist die gemessene Grenze, kein Nullbefund über die Physik.
+**Kante Radio → OMNI, erster Lauf** (2020-01, 2022-01, 2024-01; 93 brauchbare
+Tage, OMNI2 1-h): stärkste Korrelation **|r| = 0.3899** (Band 420–560 MHz,
+Lag 3 d, Tagesminimum Bz, n = 90). Der Block-Shift-Surrogat-Null (500
+Replikate, zirkulär innerhalb jedes Jahres) liegt bei **95 % = 0.4535**,
+**p = 0.1497** → **trägt nicht**. Die Datenlage (drei Januar-Monate) trug
+keine stärkere Aussage; das war die gemessene Grenze des ersten Laufs.
+
+**Kante Radio → OMNI, zweiter Lauf** (2018–2025; 310 Tage mit allen neun
+Bändern, 307 mit OMNI-Bz; gemeinsames UT-Fenster 07:30–13:15, OMNI 1-h):
+stärkste Korrelation **|r| = 0.1509** (Band 175–235 MHz, Lag 1 d,
+Tagesminimum Bz, n = 307). Der Block-Shift-Null (500 Replikate, zirkulär
+innerhalb jedes Jahres) liegt bei **95 % = 0.2330**, **p = 0.4311** →
+**trägt nicht**. Die Zelle des ersten Laufs (Band 420–560 MHz, Lag 3 d,
+Bzmin) liegt im neuen Sample bei **r = 0.0704** (n = 309), ist also nicht
+reproduziert; auch die übrigen Spitzenwerte (Band 560–846 MHz, Lag 2 d,
+Vmean: r = 0.1376, n = 307) bleiben unter dem Null. Das ist die belastbare
+Messung: mit n = 307 über acht Jahre und einem festen 5,75-h-UT-Fenster
+trägt die Tageskante nicht. Die Grenze ist das Tageskorn und das kurze
+gemeinsame Fenster, nicht mehr die Stichprobengröße; ein Nullbefund über die
+Physik ist das nicht.
 
 ## Lizenzen, die die Weitergabe begrenzen
 
