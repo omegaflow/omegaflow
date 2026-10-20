@@ -2,7 +2,7 @@
   title: Survey — die Sonne→Erde-Kette im Haus (Bestand, gemessen 2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: 37f934cef2363df69bdeedc812aaece4e280c4498f7ada4fd44d8e8b5d9b01df
+  sha256: 086d2ff0e2ce9670d08e02000df084b64b6e6a480438bf66022be63ce5faace0
   status: live
   see-also: phi/sources.φ docs/paper/gic-causal-driver.md zustand/rat/2026-10-15-rat-fragenpaket.md
 -->
@@ -47,7 +47,7 @@ eigentlich?" und die Grundlage für F2 (Frühwarnkette).
 
 | Lücke | Befund |
 |---|---|
-| **Radioausbrüche** | **verdrahtet seit 2026-10-20** (`swpc_radio_bursts`, Typ II/III; 34 Sweeps im rollierenden ~25-Tage-Fenster; PD-USGov). **Zweiter Arm seit 2026-10-20:** `callisto`/MRO, 9 Bänder 50–846 MHz, 1-min, Hintergrund per gleitendem Median; 50.328 Minuten aus 2020-01, 2022-01, 2024-01 und 2026-09-24..10-10. Lizenz: freier Zugang mit Nennung, Host-Kontakt und PI-Co-Autorenschaft (`other-attribution`) |
+| **Radioausbrüche** | `swpc_radio_bursts` (Typ II/III; 34 Sweeps im rollierenden ~25-Tage-Fenster; PD-USGov) ist verdrahtet. **Zweiter Arm (e-CALLISTO/MRO) ist zurückgezogen:** Host-Kontakt vor Nutzung nicht erfüllt, kein öffentliches Mirror. Die Messungen M18/M19 stammen aus dem lokalen Bestand und bleiben gültig; die Lizenzbedingung (Nennung, Host-Kontakt, PI-Co-Autorenschaft) ist offen |
 | **Ionosonden** | **Quelle gefunden (2026-10-20):** Juliusruh (`0318`), 1957–2025, **552.100 foF2-Stundenwerte**, maschinenlesbar. Lizenz **SWS-WDC**: Namensnennung, **keine kommerzielle Nutzung** ohne Vereinbarung, **Weitergabe an Kollegen erlaubt, wenn die Bedingungen mitgegeben werden** — das Haus ist NC (PolyForm), also nutzbar und weitergabefähig. **CDN-Asset 200, 9.385.708 B, sha256 geprüft.** GIRO/DIDBase liefert von hier 504/404 |
 | **Live-Sonnenwind (RTSW/DSCOVR)** | kein `rtsw`-, kein `dscovr`-Block; nur OMNI-Archiv und `wind_waves` |
 | **SuperMAG-Felder** | Compiler da, nur `substorm` registriert; **nicht redistribuierbar** (auth) |
@@ -124,12 +124,13 @@ kleinste Suffix). 316 Tage decken das gemeinsame Fenster **07:30–13:15 UT**
 vollständig; **310 Tage** tragen alle neun Bänder und ≥345 Minuten in diesem
 Fenster. Reduktion wie im ersten Lauf: 9 Bänder, 1-min, gleitender Median
 (±30 min). Asset `callisto_mro_multiyear.bin`: **241.763 Minuten**,
-**19.824.574 B**, sha256 `0151818f…72ab2`; CDN 200, 19.824.574 B. Bei jedem
+**19.824.574 B**, sha256 `0151818f…72ab2`; **Asset zurückgezogen** — kein
+öffentliches Mirror, bis der PI antwortet; die Messung nutzt den lokalen Bestand. Bei jedem
 3. Tag wären es 13,5 GB gewesen; der 9-Tage-Schritt ist die dichteste volle
 9-Band-Stichprobe unter 5 GB. Die Rohdaten liegen nicht im Repo.
 
 **Erster Lauf (MRO, vier Fenster, 2026-10-20).** Das Asset `callisto_mro.bin`
-(4.126.904 B, sha256 `309ebd47…c4068`) trägt **50.328 Minuten** aus 2020-01,
+(4.126.904 B, sha256 `309ebd47…c4068`; **zurückgezogen**) trägt **50.328 Minuten** aus 2020-01,
 2022-01, 2024-01 und 2026-09-24..10-10. Pro Fenster wurden die 15-min-FITS
 (3600×200, TIME/FREQUENCY-Tabelle) auf 9 Frequenzbänder 50–846 MHz und
 1-Minuten-Kadenz reduziert; der Hintergrund ist ein gleitender Median
