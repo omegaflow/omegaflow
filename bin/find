@@ -60,8 +60,7 @@ if [ -z "$header" ] && [ -z "$hex" ] && [ -n "$value" ]; then
 fi
 
 case "$engine" in
-    serper|exa|searxng|zenodo|datacite|osf|figshare|dryad|pangaea|dataverse) ;;
-    *) usage ;;
+    ''|*[!a-z0-9-]*) usage ;;
 esac
 case "$top" in
     ''|*[!0-9]*) usage ;;
@@ -158,6 +157,10 @@ awk -v n="$top" '
     }' "$tmp/search" >"$tmp/urls"
 candidates="$(wc -l <"$tmp/urls" | tr -d ' ')"
 if [ "$candidates" -eq 0 ]; then
+    if grep -q 'network:  archive_search' "$tmp/search"; then
+        echo "find: unbekannte Engine '$engine' — archive_search kennt sie nicht" >&2
+        exit 2
+    fi
     sed -n '/^pending —/p; /^absent —/p' "$tmp/search" | sed 's/^/find: /'
 fi
 
