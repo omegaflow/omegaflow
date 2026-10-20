@@ -32234,4 +32234,10 @@ sha256 bc88df714e60b12e960d2744dc2d73af85ec650b93ca3c222ff684c1842b9e6e
 at earth
 ttl 86400
 field cdaweb_tec_tecu cdaweb_tec_tecu inverse-square em TECU 900 0.0 0.0
-
+url https://github.com/omegaflow/sources/releases/download/transmission.bpa.gov/bpa_gic.txt
+terms PD-USGov https://transmission.bpa.gov/business/operations/gic/gic.txt
+format text
+origin https://transmission.bpa.gov/business/operations/gic/gic.txt
+compiler tools/harvest/src/bin/bpa_gic_text_compiler.rs
+at earth
+ttl 300
