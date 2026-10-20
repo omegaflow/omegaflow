@@ -16,6 +16,7 @@ bin="$root/target/release/archive_search"
 engine=""
 top=""
 header=""
+direct=""
 fits=""
 value=""
 hex=""
@@ -38,6 +39,7 @@ while [ $# -gt 0 ]; do
     case "$1" in
         --header) [ $# -ge 2 ] && [ -n "$2" ] || usage; header="$2"; shift 2 ;;
         --fits) [ $# -ge 2 ] && [ -n "$2" ] || usage; fits="$2"; shift 2 ;;
+        --url) [ $# -ge 2 ] && [ -n "$2" ] || usage; direct="$2"; shift 2 ;;
         --value)  [ $# -ge 2 ] && [ -n "$2" ] || usage; value="$2"; shift 2 ;;
         --hex)    [ $# -ge 2 ] && [ -n "$2" ] || usage; hex="$2"; shift 2 ;;
         --context) [ $# -ge 2 ] && [ -n "$2" ] || usage; ctx="$2"; shift 2 ;;
@@ -49,7 +51,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-[ -n "$engine" ] || usage
+[ -n "$engine" ] || [ -n "$direct" ] || usage
 [ -n "$top" ] || usage
  [ -n "$header$value$hex$fits" ] || usage
 
@@ -62,7 +64,8 @@ if [ -z "$header" ] && [ -z "$hex" ] && [ -n "$value" ]; then
 fi
 
 case "$engine" in
-    ''|*[!a-z0-9-]*) usage ;;
+    '') [ -n "$direct" ] || usage ;;
+    *[!a-z0-9-]*) usage ;;
 esac
 case "$top" in
     ''|*[!0-9]*) usage ;;
@@ -111,7 +114,7 @@ fi
 if [ "$pdf" -eq 1 ]; then
     query="$query filetype:pdf"
 fi
-if [ -z "$query" ]; then
+if [ -z "$query" ] && [ -z "$direct" ]; then
     echo "find: --hex allein liefert keinen Suchbegriff — --header oder --value nötig" >&2
     exit 2
 fi
@@ -140,7 +143,11 @@ search_once() {
     "$bin" --"$engine" "$1" >"$tmp/search" 2>&1
 }
 
-search_once "$query"
+if [ -n "$direct" ]; then
+    printf "url %s\n" "$direct" >"$tmp/urls"
+else
+    search_once "$query"
+fi
 if [ "$engine" = serper ] && grep -q 'pending — Serper HTTP 400' "$tmp/search"; then
     case "$query" in
         *'"'*)
@@ -151,21 +158,24 @@ if [ "$engine" = serper ] && grep -q 'pending — Serper HTTP 400' "$tmp/search"
     esac
 fi
 
-awk -v n="$top" '
+if [ -z "$direct" ]; then
+    awk -v n="$top" '
     /^url / || /^\[[^]]*\] url / {
         sub(/^\[[^]]*\] /, "")
         print
         if (++c >= n) exit
     }' "$tmp/search" >"$tmp/urls"
-candidates="$(wc -l <"$tmp/urls" | tr -d ' ')"
-if [ "$candidates" -eq 0 ]; then
-    if grep -q 'network:  archive_search' "$tmp/search"; then
-        echo "find: unbekannte Engine '$engine' — archive_search kennt sie nicht" >&2
-        exit 2
+    candidates="$(wc -l <"$tmp/urls" | tr -d ' ')"
+    if [ "$candidates" -eq 0 ]; then
+        if grep -q 'network:  archive_search' "$tmp/search"; then
+            echo "find: unbekannte Engine '$engine' — archive_search kennt sie nicht" >&2
+            exit 2
+        fi
+        sed -n '/^pending —/p; /^absent —/p' "$tmp/search" | sed 's/^/find: /'
     fi
-    sed -n '/^pending —/p; /^absent —/p' "$tmp/search" | sed 's/^/find: /'
+else
+    candidates="$(wc -l <"$tmp/urls" | tr -d ' ')"
 fi
-
 matches=0
 twins=0
 nears=0
