@@ -21,6 +21,5 @@ jobs:
       with:
         name: omegaflow-service-linux
         path: |
-          target/release/job_dashboard
           target/release/job_monitor
           target/release/ci_manage
