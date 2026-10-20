@@ -32299,6 +32299,7 @@ terms other-attribution https://galileo.sese.asu.edu/edges-data/Readme.md
 format spectral
 origin https://galileo.sese.asu.edu/edges-data/2016-250.gsh5
 compiler tools/harvest/src/bin/edges_gsh5_compiler.rs
+sha256 eeac05935c58d04e1d2aa97b113b57739215bcb1014bebdc760622e5b6a5156f
 at earth
 ttl 31536000
 field data edges_raw_spectrum inverse-square em 1 31536000 0.0 0.0
