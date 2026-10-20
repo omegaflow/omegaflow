@@ -2,7 +2,7 @@
   title: Survey — die Sonne→Erde-Kette im Haus (Bestand, gemessen 2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: fce6bf4ce934a4c6667fbf96c8870858abc0acd2516cb2d3330fe5a3f1636ba5
+  sha256: 4beaf7c3ef81659be767edbab1c1734612954429fb465b41754e74eba76357f6
   status: live
   see-also: phi/sources.φ docs/paper/gic-causal-driver.md zustand/rat/2026-10-15-rat-fragenpaket.md
 -->
@@ -62,8 +62,8 @@ weil die Tagesverzeichnisse an jedem 15. Januar 2018–2026 durchgehend
 Minuten** aus vier Fenstern: 2020-01, 2022-01, 2024-01 und 2026-09-24..10-10.
 Pro Fenster wurden die 15-min-FITS (3600×200, TIME/FREQUENCY-Tabelle) auf
 **9 Frequenzbänder 50–846 MHz** und **1-Minuten-Kadenz** reduziert; der
-Hintergrund ist ein gleitender Median (±30 min), die Einheit bleibt `digits`
-(BUNIT der Quelle). Der vorhandene FITS-Leser reichte nicht: `TFORM` wie
+Hintergrund ist ein gleitender Median (±30 min), die Einheit ist `count`
+(Rohdigits der Quelle, unkalibriert; BUNIT `digits`). Der vorhandene FITS-Leser reichte nicht: `TFORM` wie
 `3600D8.3` (Breite/Präzision) wurde als Code `3` gelesen; `fits.rs` liest jetzt
 den ersten Buchstaben als Code.
 
@@ -125,6 +125,8 @@ mit Fenster, Zahl und Ergebnis.
 | M15 | DE-2 Ion↔Neutral | `survey-2026-10-18-k-te-kadenz.md` | n = 23200 | 3/3 Lags pass; Mond-Konditionierung 0/36, Rückrichtung 3/36 |
 | M16 | Signal-cone-Positivkontrolle | `survey-2026-10-19-signal-cone-positivkontrolle.md` | 730 d, 90 Paare | τ = 2 d = 1.728e5 s, d/c = 8.155 min, TE 5.4413e-1 > fam 2.8826e-1 → Pfeil im Kegel (synthetisch) |
 | M17 | Boden → Strom als Kette | §4.9, `gic_ground_probe` | 4 319 min; inkrementell n = 72/23 h | unbedingt **Pfeil** (Lag 5 min, TE 1.4043e-1 > fam 1.2928e-1), aber **symmetrisch** (Rückkanal ebenfalls; Verhältnis 1.01–1.12) und **lag-flach**; inkrementell **0/14**, Δ negativ → **trägt nicht**, 0 Vorlauf |
+| M18 | Funk → Sonnenwind (MRO, 9 Bänder) | Survey, `callisto_edge_probe` | 93 Tage / n = 90 | \|r\| = 0.3899 (420–560 MHz, Lag 3 d); Block-Shift-Null 95 % = 0.4535, **p = 0.1497** → **trägt nicht** |
+| M19 | MRO-Bänder vs. SWPC-Ereignisse | Survey, `callisto_swpc_validation` | 18 beobachtete Ereignisse | **7 Treffer, 11 Fehlschläge, 44 Fehlalarme** → kein verlässlicher Ereignis-Trigger |
 
 **Datenfehler, benannt:** Die mehrjährigen Abisko-Reihen (`abk_dbdt_1h.bin`, `abk_dbdt_1m.bin`) tragen Zukunftsstempel (2024–2056 bzw. 2053–2055) und überlappen die GIC-Reihe deshalb nicht. Sie wurden **nicht** verwendet; der Fehler ist zu reparieren, bevor sie als Kante zählen.
 
@@ -137,15 +139,16 @@ sondern die Fenster-/Macht-Abhängigkeit selbst.
 - Sonne → L1 (Radio/Flare → Sonnenwind) als Zuwachs.
 - L1 → Magnetfeld, Magnetfeld → Ionosphäre, Ionosphäre → Aurora.
 - Aurora → Boden als Kante (F3: Schalter, nicht Vorläufer).
-- Boden → Ausfall (kein Ausfalldatensatz).
+- Boden → Ausfall: Datensatz da (ECOD 2014–2023, 525.045 County-Ereignisse), Kante nicht gemessen.
 
 
 
-Die Kette hat **alle Knoten** außer Radio und Ausfall. Was fehlt, sind die
-**Kanten** — und bei drei Sonden die Auflösung. Die nächste Arbeit ist daher nicht
-„mehr Quellen", sondern:
+Die Kette hat **alle Knoten**; Radio (zwei Arme) und Ausfall sind seit 2026-10-20
+verdrahtet. Was fehlt, sind die **Kanten** — und bei drei Sonden die Auflösung.
+Die nächste Arbeit ist daher nicht „mehr Quellen", sondern:
 
 1. die vorhandenen Knoten auf ihre native Kadenz bringen (AIA, EUVS, TEC),
 2. die Kanten als Zuwachs mit Null messen (F2-Regel),
-3. Radio als Vorläufer und Ausfall als Endglied verdrahten,
-4. die Lizenzgrenzen (INTERMAGNET NC, SuperMAG auth) in der Ablage respektieren.
+3. die dauerhafte Mehrjahres-Funkreihe sichern (die zwei Arme sind verdrahtet;
+   die Kante trägt mit dieser Datenlage nicht),
+4. die Lizenzgrenzen (INTERMAGNET NC, SuperMAG auth, e-CALLISTO-Kontakt) in der Ablage respektieren.
