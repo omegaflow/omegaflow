@@ -2,7 +2,7 @@
   title: Datenherkunft aus Fragmenten — was die Literatur weiß (2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: 409cd0f8786bea84c8d34b2c018096e381d2e02def889740db328cc1a8d192bf
+  sha256: 590a33fc138edc48497d76d593fbdcc40199a20e1968b1f74dab7ae11f008cd1
   status: live
   see-also: docs/surveys/survey-2026-10-20-zwillinge-signatur.md docs/blatt/blatt-2026-10-19-entscheidung-17-lizenzarme.md
 -->
@@ -102,3 +102,31 @@ Bedingungen, nicht das Urteil.
 - Für **Binärdateien** entscheidet die Byte-Bedingung, nicht der Dateiname.
 - Ein **einzelner Wert** ist nie ein Beweis — er ist eine Hypothese, die an
   Struktur, Einheit und Zeit scheitern kann.
+
+## Anker-Merge: die Weberin (Prototyp `bin/weave`)
+
+Die Bedingungskette braucht keine **identische** Tabelle. Sie braucht **Anker**:
+
+- **Reihenfolge egal** — die Spalte wird ueber den normierten Kopf gefunden
+  (`Discharge [m3/s]` → `discharge`), nicht ueber die Position.
+- **Teilmengen erlaubt** — jede Quelle bringt, was sie hat; fehlende Werte
+  bleiben leer, nicht null.
+- **Kollisionen benannt** — gleiche Spaltennamen aus zwei Dateien werden zu
+  `spalte@datei`, und die Herkunft steht in `<out>.map`.
+- **Union der Zeilen** — der Anker ist der Schluessel; Quellen mit
+  disjunkten Ankern ergeben eine Vereinigung, keine Schnittmenge.
+
+`tools/utils/src/bin/weave.rs`:
+
+```
+weave --on time --out merged.csv a.csv b.csv
+→ time,temp,flow
+→ time 1: a liefert temp, b liefert flow
+→ time 3: nur b
+```
+
+Drei Tests decken die Kernfaelle (Einheiten im Kopf, Anfuehrungszeichen,
+ungleiche Reihenfolge/Teilmengen). Damit ist „aus verschiedenen Daten das
+gewuenschte Endprodukt mergen" ein Werkzeug, kein Wunsch — die Grenze bleibt:
+der Anker muss in **jeder** Quelle existieren, sonst wird die Tabelle
+uebersprungen und das wird gemeldet, nicht verschwiegen.
