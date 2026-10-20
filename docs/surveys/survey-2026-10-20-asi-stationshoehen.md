@@ -2,7 +2,7 @@
   title: THEMIS-ASI-Stationshöhen — 24 Standorte, gemessen statt nominal
   class: survey
   date: 2026-10-20
-  sha256: 8bc410246613e36fd96cc22603e55dd30c6ef292cb2ccd60472daa7781187e26
+  sha256: 832143ab49354dcaf4e6a3aedfdd0d8d9a6bf44f4e67e0d4193a335fbed086b0
   status: live
   see-also: docs/surveys/survey-2026-10-12-standort-lokalisierung-ortho-dsm.md recherche/funde/notizen/2026-10-12-themis-asi-stations.md recherche/funde/notizen/2026-10-12-calibration.md
 -->
@@ -170,6 +170,7 @@ Sie sind in der Stationsdatei als „vorläufig" zu führen, nicht als ersetzt.
 - Quellnotizen (Werkstatt): `recherche/funde/notizen/2026-10-12-themis-asi-stations.md`
   und `recherche/funde/notizen/2026-10-12-calibration.md` — dort datierter Nachtrag,
   keine Überschreibung der 2026-10-12-Werte.
-- Code `src/archivar/themis_asi.rs` bleibt in dieser Runde unverändert: die Änderungen
-  liegen teils innerhalb der Unsicherheit und brauchen das Operator-Wort (Muster
-  2026-10-12). Die Survey nennt die Kandidaten.
+- Code `src/archivar/themis_asi.rs`: **angewendet** (2026-10-20, `b215f0264`). Die 13
+  belegten Werte (±3–10 m) sind eingesetzt; die 11 Grenzfälle (Obergrenze/grob/pending)
+  behalten den alten Wert, ihre Grenze steht hier und im Test. GBAY ist von `None` auf
+  41,58 m gesetzt; WHIT bleibt `None` (nur DSM).
