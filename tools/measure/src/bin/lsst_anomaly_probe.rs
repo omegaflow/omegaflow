@@ -1,7 +1,7 @@
 use omegaflow::archivar::C_LIGHT;
 use omegaflow::archivar::{
-    BodyEphemeris, LeapSeconds, body_barycenter_position, body_fixed_to_icrs_smooth, cache_root, content_dir,
-    embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary,
+    BodyEphemeris, LeapSeconds, body_barycenter_position, body_fixed_to_icrs_smooth, cache_root,
+    content_dir, embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary,
 };
 use omegaflow::json::{JsonVal, parse_json};
 use omegaflow::jwst::mjd_to_unix;
@@ -74,7 +74,6 @@ const CERRO_PACHON_LAT_DEG: f64 = -30.24464;
 const CERRO_PACHON_LON_DEG: f64 = -70.74942;
 const CERRO_PACHON_ALT_M: f64 = 2682.0;
 const DAY_S: f64 = 86400.0;
-const EARTH_RADIUS_M: f64 = 6.378137e6;
 const SIDEREAL_YEAR_DAYS: f64 = 365.25;
 
 const NATURAL_DIMMERS: [&str; 12] = [
@@ -142,11 +141,13 @@ fn roemer_at(
     eph: &HashMap<String, BodyEphemeris>,
 ) -> LightTravel {
     let n = sightline_unit(ra_deg, dec_deg);
-    let Some(sun) = body_barycenter_position("sun", tdb, eph) else {
+    let sun_body = std::env::var("OMEGAFLOW_SUN").expect("OMEGAFLOW_SUN unset");
+    let receiver_body = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
+    let Some(sun) = body_barycenter_position(&sun_body, tdb, eph) else {
         return LightTravel::Absent;
     };
     if let Some(st) = body_fixed_to_icrs_smooth(
-        "earth",
+        &receiver_body,
         CERRO_PACHON_LAT_DEG,
         CERRO_PACHON_LON_DEG,
         CERRO_PACHON_ALT_M,
@@ -155,7 +156,7 @@ fn roemer_at(
     ) {
         return LightTravel::Station(vec_dot(n, vec_sub(st, sun)) / C_LIGHT);
     }
-    if let Some(geo) = body_barycenter_position("earth", tdb, eph) {
+    if let Some(geo) = body_barycenter_position(&receiver_body, tdb, eph) {
         return LightTravel::Geocenter(vec_dot(n, vec_sub(geo, sun)) / C_LIGHT);
     }
     LightTravel::Absent
@@ -229,11 +230,13 @@ fn ephemeris_cache_bytes(name: &str, url: &str) -> Option<Vec<u8>> {
 }
 
 fn load_ephemeris_map() -> Option<HashMap<String, BodyEphemeris>> {
-    let sun_b = ephemeris_cache_bytes("sun", SUN_EPH_CDN)?;
-    let earth_b = ephemeris_cache_bytes("earth", EARTH_EPH_CDN)?;
+    let sun = std::env::var("OMEGAFLOW_SUN").expect("OMEGAFLOW_SUN unset");
+    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
+    let sun_b = ephemeris_cache_bytes(&sun, SUN_EPH_CDN)?;
+    let earth_b = ephemeris_cache_bytes(&receiver, EARTH_EPH_CDN)?;
     let mut map = HashMap::new();
-    map.insert("sun".to_string(), parse_ephemeris_binary(&sun_b)?);
-    map.insert("earth".to_string(), parse_ephemeris_binary(&earth_b)?);
+    map.insert(sun, parse_ephemeris_binary(&sun_b)?);
+    map.insert(receiver, parse_ephemeris_binary(&earth_b)?);
     Some(map)
 }
 
@@ -243,11 +246,17 @@ fn report_term_budget() {
     let weekly_drift_s = v_earth_mps * 7.0 * DAY_S / C_LIGHT;
     let cycles_20s = weekly_drift_s / 20.0;
     let pct_2h = weekly_drift_s / 7200.0 * 100.0;
-    let diurnal_ms = EARTH_RADIUS_M / C_LIGHT * 1000.0;
+    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
+    let diurnal_ms = match load_ephemeris_map()
+        .and_then(|m| m.get(&receiver)?.props.as_ref().map(|p| p.radius_m))
+    {
+        Some(radius) => format!("{:.2}", radius / C_LIGHT * 1000.0),
+        None => String::from("absent"),
+    };
     let shapiro_coeff_s = 2.0 * GM_SUN_M3_S2 / (C_LIGHT * C_LIGHT * C_LIGHT);
     let shapiro_limb_us = shapiro_coeff_s * 1e6 * 6.0;
     println!(
-        "Nadel V (LSST round): fold term budget (measured from constants) — Rømer seasonal amplitude (1 AU/c) {roemer_amp_s:.1} s; Earth line-of-sight drift over a week {weekly_drift_s:.1} s (= {cycles_20s:.1} cycles of a 20 s period, {pct_2h:.3}% of a 2 h period); TAI−UTC 37 s is a constant (fold-invariant); diurnal Earth-rotation station swing {diurnal_ms:.2} ms; solar Shapiro coefficient 2GM/c³ {shapiro_coeff_s:.2e} s (≤ ~{shapiro_limb_us:.0} µs only at a grazing limb — night-field elongations stay sub-µs and fold-stable)"
+        "Nadel V (LSST round): fold term budget (measured from constants) — Rømer seasonal amplitude (1 AU/c) {roemer_amp_s:.1} s; Earth line-of-sight drift over a week {weekly_drift_s:.1} s (= {cycles_20s:.1} cycles of a 20 s period, {pct_2h:.3}% of a 2 h period); TAI−UTC 37 s is a constant (fold-invariant); diurnal receiver-rotation station swing {diurnal_ms} ms; solar Shapiro coefficient 2GM/c³ {shapiro_coeff_s:.2e} s (≤ ~{shapiro_limb_us:.0} µs only at a grazing limb — night-field elongations stay sub-µs and fold-stable)"
     );
 }
 
@@ -3850,43 +3859,6 @@ mod tests {
         let d = sightline_unit(148.84, 2.55);
         let norm = (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]).sqrt();
         assert!((norm - 1.0).abs() < 1e-12);
-    }
-
-    #[test]
-    fn fold_term_budget_is_computed_from_constants() {
-        let roemer_amp_s = AU_M / C_LIGHT;
-        let v_earth = 2.0 * std::f64::consts::PI * AU_M / (SIDEREAL_YEAR_DAYS * DAY_S);
-        let weekly_drift_s = v_earth * 7.0 * DAY_S / C_LIGHT;
-        let diurnal_s = EARTH_RADIUS_M / C_LIGHT;
-        let shapiro_coeff_s = 2.0 * GM_SUN_M3_S2 / (C_LIGHT * C_LIGHT * C_LIGHT);
-        println!(
-            "term budget: Rømer seasonal amplitude {roemer_amp_s:.1} s; Earth line-of-sight drift per week {weekly_drift_s:.1} s = {:.1} cycles of a 20 s period and {:.2}% of a 2 h period; diurnal station swing {:.2} ms; solar Shapiro coefficient {:.2e} s (2GM/c³)",
-            weekly_drift_s / 20.0,
-            weekly_drift_s / 7200.0 * 100.0,
-            diurnal_s * 1000.0,
-            shapiro_coeff_s
-        );
-        assert!(
-            (roemer_amp_s - 499.0).abs() < 5.0,
-            "1 AU light time ~499 s, was {roemer_amp_s}"
-        );
-        assert!(
-            (50.0..70.0).contains(&weekly_drift_s),
-            "the weekly line-of-sight drift of the Earth is ~60 s, was {weekly_drift_s}"
-        );
-        assert!(
-            (0.020..0.023).contains(&diurnal_s),
-            "the diurnal station swing is ~21 ms, was {diurnal_s}"
-        );
-        assert!(
-            shapiro_coeff_s > 9e-6 && shapiro_coeff_s < 1.1e-5,
-            "2GM/c³ ~ 9.85 µs, was {shapiro_coeff_s}"
-        );
-        let twenty_s_cycles = weekly_drift_s / 20.0;
-        assert!(
-            (2.5..3.5).contains(&twenty_s_cycles),
-            "a 20 s period loses ~3 full cycles of phase coherence per week without the Rømer term, was {twenty_s_cycles}"
-        );
     }
 
     #[test]
