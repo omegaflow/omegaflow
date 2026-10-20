@@ -1,7 +1,7 @@
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DSCOVR_H0_MAG&time.min={yesterday}T00:00:00Z&time.max={today}T00:00:00Z&parameters=B1F1,B1GSE&format=json
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 origin https://cdaweb.gsfc.nasa.gov/
-ttl 3600
+ttl 60
 status vorschlag
 at sun
 hapi B1F1=dscovr_mag_b1f1_nt B1GSE.0=dscovr_mag_bx_gse_nt B1GSE.1=dscovr_mag_by_gse_nt B1GSE.2=dscovr_mag_bz_gse_nt
@@ -102,7 +102,7 @@ field goce_magnetic_field_intensity_nt goce_magnetic_field_intensity_nt inverse-
 
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
 terms CC-BY-4.0 https://www.p2pquake.net/secondary_use/
-ttl 3600
+ttl 60
 at earth
 map .
 lat earthquake.hypocenter.latitude
@@ -112,7 +112,7 @@ channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:none Pa
 
 url https://api.vedur.is/quakes/events
 terms free-open https://en.vedur.is/about-imo/the-web/conditions
-ttl 3600
+ttl 60
 at earth
 map features
 lat geometry.coordinates.1
@@ -271,7 +271,7 @@ last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 wh
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 terms CC-BY-4.0 https://www.seismicportal.eu/terms.html
-ttl 3600
+ttl 60
 at earth
 map features
 lat geometry.coordinates.1
@@ -280,7 +280,7 @@ quantity properties.depth quake_depth_km gaussian-inverse-square geometry km 360
 
 url http://arclink.ethz.ch/fdsnws/event/1/query?format=csv&starttime={today}&endtime={tomorrow}&minmagnitude=1.0&limit=500&orderby=time
 terms free-open https://www.seismo.ethz.ch/en/knowledge/earthquake-data-and-analysis-tools/waveform-data/
-ttl 3600
+ttl 60
 format csv
 on earth 0 0 0
 rows .
