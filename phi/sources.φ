@@ -14183,6 +14183,24 @@ field rms alfalfa40_rms_mjy inverse-square em mJy 31536000 0.0 0.0
 field dist alfalfa40_dist_mpc inverse-square geometry mpc 31536000 0.0 0.0
 field logm alfalfa40_log_m_hi_dex inverse-square geometry 1 31536000 0.0 0.0
 
+url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/parkes_zoa.json
+terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
+format json
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync table=J/A+A/391/887/table1
+compiler tools/harvest/src/bin/tap_compiler.rs
+at sun
+no-cadence
+cmap .
+ra RAJ2000
+dec DEJ2000
+field ra parkes_zoa_ra_deg inverse-square geometry deg 31536000 0.0 0.0
+field dec parkes_zoa_dec_deg inverse-square geometry deg 31536000 0.0 0.0
+field FHI parkes_zoa_hi_flux inverse-square em Jy_km/s 31536000 0.0 0.0
+field V50% parkes_zoa_w50_km_s inverse-square advective km/s 31536000 0.0 0.0
+field V20% parkes_zoa_w20_km_s inverse-square advective km/s 31536000 0.0 0.0
+field HRV parkes_zoa_hrv_km_s inverse-square advective km/s 31536000 0.0 0.0
+field rms parkes_zoa_rms_mjy inverse-square em mJy 31536000 0.0 0.0
+
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/des_y6_tno.bin
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format catalog_des_y6
