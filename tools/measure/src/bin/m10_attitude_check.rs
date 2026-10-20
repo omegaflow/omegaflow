@@ -4,7 +4,7 @@ use omegaflow::archivar::camera_angles::parse_camera_angles;
 use omegaflow::archivar::{BodyEphemeris, body_barycenter_position, parse_ephemeris_binary};
 
 const J2000_EPOCH: f64 = 2451545.0;
-const DEFAULT_ANGLES: &str = "zustand/research/m10-camera-angles/camera_angles.txt";
+const DEFAULT_ANGLES: &str = "experiments/assets/m10-mdis-sonke-robinson/camera_angles.txt";
 const M10_EPH: &str = "sources/ssd.jpl.nasa.gov/ephemeris_mariner10.bin";
 const MERCURY_EPH: &str = "sources/ssd.jpl.nasa.gov/ephemeris_mercury.bin";
 
