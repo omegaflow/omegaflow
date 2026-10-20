@@ -1884,7 +1884,7 @@ pub fn marginalia_lines(query: &str, max: usize) -> Vec<String> {
             vec!["pending — Marginalia HTTP 503 (shared rate limit)".to_string()]
         }
         Some(f) => vec![format!("pending — Marginalia HTTP {}", f.status_text())],
-        None => vec!["pending — no network".to_string()],
+        None => vec!["pending — no answer within 40 s (timeout or no network)".to_string()],
     }
 }
 
@@ -3745,13 +3745,64 @@ fn linkup_results(v: &Json, max: usize) -> Vec<String> {
     out
 }
 
+fn value_bait_lines(bytes: &[u8]) -> Vec<String> {
+    let text = String::from_utf8_lossy(bytes);
+    let mut vals: Vec<String> = Vec::new();
+    let mut cur = String::new();
+    let mut flush = |cur: &mut String, vals: &mut Vec<String>| {
+        if cur.len() >= 6
+            && cur.chars().any(|c| c.is_ascii_digit())
+            && let Ok(v) = cur.parse::<f64>()
+            && v.is_finite()
+            && v != 0.0
+        {
+            vals.push(cur.clone());
+        }
+        cur.clear();
+    };
+    for ch in text.chars() {
+        if ch.is_ascii_digit() || ch == '.' || ch == '-' || ch == 'e' || ch == 'E' || ch == '+' {
+            cur.push(ch);
+        } else {
+            flush(&mut cur, &mut vals);
+        }
+        if vals.len() > 5000 {
+            break;
+        }
+    }
+    flush(&mut cur, &mut vals);
+    let mut seen = std::collections::HashSet::new();
+    vals.retain(|v| seen.insert(v.clone()));
+    if vals.is_empty() {
+        return vec!["bait absent — no distinctive number in the prefix".to_string()];
+    }
+    let n = vals.len();
+    let mut out = Vec::new();
+    for i in [0, n / 2, n - 1] {
+        out.push(format!("bait value {}", vals[i]));
+        if let Ok(f) = vals[i].parse::<f64>() {
+            out.push(format!(
+                "bait hex-f64 {}",
+                f.to_le_bytes()
+                    .iter()
+                    .map(|b| format!("{b:02x}"))
+                    .collect::<String>()
+            ));
+        }
+    }
+    let mut x = (n as u64).wrapping_mul(6364136223846793005).wrapping_add(1);
+    x = x.wrapping_mul(6364136223846793005).wrapping_add(1);
+    out.push(format!("bait value {}", vals[(x >> 33) as usize % n]));
+    out
+}
+
 fn bait_lines(bytes: &[u8]) -> Vec<String> {
     let s = omegaflow::archivar::sniff::sniff(bytes);
     let Some(header) = s.header.clone() else {
         return vec!["bait absent — the prefix carries no header line to fish with".to_string()];
     };
-    if header.is_empty() {
-        return vec!["bait absent — the header is empty".to_string()];
+    if header.is_empty() || header.iter().all(|c| !c.chars().any(|ch| ch.is_alphanumeric())) {
+        return vec!["bait absent — the prefix carries no header line to fish with".to_string()];
     }
     let generic = [
         "time", "date", "value", "id", "lat", "lon", "latitude", "longitude", "year",
@@ -3865,7 +3916,10 @@ fn sniff_lines_from(f: &Fetch, url: &str, pattern: Option<&str>) -> Vec<String> 
 
 pub fn sniff_lines(query: &str) -> Vec<String> {
     let bait = query.split_whitespace().any(|p| p == "bait");
-    let mut parts = query.split_whitespace().filter(|p| *p != "bait");
+    let values = query.split_whitespace().any(|p| p == "values");
+    let mut parts = query
+        .split_whitespace()
+        .filter(|p| *p != "bait" && *p != "values");
     let target = match parts.next() {
         Some(t) => t,
         None => return vec!["absent — --sniff needs a path or URL".to_string()],
@@ -3879,6 +3933,9 @@ pub fn sniff_lines(query: &str) -> Vec<String> {
         if bait {
             if let Ok(bytes) = std::fs::read(target) {
                 out.extend(bait_lines(&bytes));
+                if values {
+                    out.extend(value_bait_lines(&bytes));
+                }
             }
         }
         return out;
@@ -3888,6 +3945,9 @@ pub fn sniff_lines(query: &str) -> Vec<String> {
             let mut out = sniff_lines_from(&f, target, pattern);
             if bait {
                 out.extend(bait_lines(f.raw.as_slice()));
+                if values {
+                    out.extend(value_bait_lines(f.raw.as_slice()));
+                }
             }
             out
         }
@@ -5675,6 +5735,30 @@ mod tests {
             lines
                 .iter()
                 .any(|l| l.contains("\"station_id\" \"discharge_m3s\"")),
+            "{lines:?}"
+        );
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn value_bait_carries_numbers_and_float_bytes() {
+        let path = std::env::temp_dir().join(format!("sniff-values-{}", std::process::id()));
+        std::fs::write(
+            &path,
+            "t v\n0 55041.35\n1 3061447552\n2 0.0849999\n",
+        )
+        .unwrap();
+        let lines = sniff_lines(&format!("{} bait values", path.display()));
+        assert!(
+            lines.iter().any(|l| l == "bait value 55041.35"),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().any(|l| l.starts_with("bait hex-f64 ")),
+            "{lines:?}"
+        );
+        assert!(
+            lines.iter().any(|l| l == "bait value 3061447552"),
             "{lines:?}"
         );
         let _ = std::fs::remove_file(&path);
