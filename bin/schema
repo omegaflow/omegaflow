@@ -1,0 +1,809 @@
+#!/bin/sh
+# schema — eine Signatur aus einer Datenbeschreibung ziehen.
+#
+#   bin/schema <url|datei>
+#
+# Liest API-Doku, Datenwörterbuch, Schema-Tabelle oder Landing-Page und gibt
+# nur die `schema`-Zeilen aus, die sich belegen lassen:
+#
+#   schema: <quelle> <bytes> B, <n> Tabellen
+#   schema header a,b,c
+#   schema field "station_id"
+#   schema unit "m3/s"
+#   schema range "0..5000"
+#
+# HTML: <table>-Kopfzeilen, <dl>/<dt>, <code>-Spaltennamen.
+# JSON: Schlüssel in snake_case/camelCase, units/unit-Werte.
+# PDF:  pdftotext, danach die Textregeln.
+# Text: `name: type`, `name (unit)`, `name [unit]`, CSV/TSV-Kopfzeile.
+#
+# Was nicht belegt ist, wird nicht ausgegeben. Kein Rohinhalt, keine Cookies,
+# keine Zugangsdaten. Fehler gehen nach stderr und enden mit exit 3.
+set -u
+export LC_ALL=C
+
+usage() {
+    cat >&2 <<'EOF'
+schema: usage: bin/schema <url|datei|->
+  liest eine Datenbeschreibung und gibt nur schema-Zeilen aus
+EOF
+}
+
+die2() { echo "schema: $*" >&2; exit 2; }
+die3() { echo "schema: $*" >&2; exit 3; }
+
+src=""
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        -)
+            [ -z "$src" ] || die2 "genau eine Quelle"
+            src="-"
+            shift
+            ;;
+        --)
+            shift
+            [ $# -eq 1 ] || die2 "genau eine Quelle"
+            src="$1"
+            shift
+            ;;
+        -*)
+            die2 "unbekannte Option: $1"
+            ;;
+        *)
+            [ -z "$src" ] || die2 "genau eine Quelle"
+            src="$1"
+            shift
+            ;;
+    esac
+done
+[ -n "$src" ] || { usage; exit 2; }
+
+tmp="$(mktemp -d "${TMPDIR:-/tmp}/schema.XXXXXX" 2>/dev/null)" ||
+    die3 "kein temporäres Verzeichnis"
+trap 'rm -rf "$tmp"' 0 1 2 15
+body="$tmp/body"
+txt="$tmp/text"
+
+case "$src" in
+    *'
+'*|*' '*|*[![:print:]]*)
+        die2 "Quelle enthält Leerraum oder Steuerzeichen"
+        ;;
+esac
+
+is_url=0
+case "$src" in
+    http://*|https://*) is_url=1 ;;
+esac
+
+if [ "$is_url" -eq 1 ]; then
+    host="${src#*://}"
+    host="${host%%[/?#]*}"
+    host="${host%%:*}"
+    [ -n "$host" ] || die2 "URL ohne Host"
+    case "$host" in
+        *@*) die2 "Zugangsdaten gehören nicht in die URL" ;;
+    esac
+    err="$tmp/curl.err"
+    code="$(curl -q -sS -L --compressed --max-time 90 --max-filesize 67108864 \
+        --proto '=http,https' --proto-redir '=https' --max-redirs 3 \
+        -o "$body" -w '%{http_code}' "$src" 2>"$err")"
+    rc=$?
+    if [ "$rc" -ne 0 ]; then
+        die3 "kein Text (curl $rc)"
+    fi
+    case "$code" in
+        2[0-9][0-9]) ;;
+        *) die3 "HTTP $code" ;;
+    esac
+    [ -s "$body" ] || die3 "kein Text"
+elif [ "$src" = "-" ]; then
+    cat >"$body" || die3 "kein Text"
+    [ -s "$body" ] || die3 "kein Text"
+else
+    [ -f "$src" ] || die2 "keine Datei: $src"
+    [ -r "$src" ] || die3 "kein Text"
+    cp -- "$src" "$body" 2>/dev/null || die3 "kein Text"
+    [ -s "$body" ] || die3 "kein Text"
+fi
+
+bytes="$(wc -c <"$body" | tr -d ' ')"
+
+# PDF: Textschicht über pdftotext, sonst gibt es keine Signatur.
+case "$(head -c 5 "$body" 2>/dev/null)" in
+    %PDF*)
+        command -v pdftotext >/dev/null 2>&1 || die3 "kein Text"
+        pdftotext -q -layout -- "$body" "$txt" 2>/dev/null || true
+        [ -s "$txt" ] || die3 "kein Text"
+        kind="text"
+        body="$txt"
+        ;;
+    *)
+        kind="$(head -c 65536 "$body" | awk '
+            { buf = buf " " $0 }
+            END {
+                s = tolower(buf)
+                sub(/^[ \t\r\n]+/, "", s)
+                if (substr(s, 1, 1) == "{") { print "json"; exit }
+                if (substr(s, 1, 1) == "[") {
+                    rest = substr(s, 2)
+                    sub(/^[ \t\r\n]+/, "", rest)
+                    c = substr(rest, 1, 1)
+                    if (c == "\"" || c == "{" || c == "[") { print "json"; exit }
+                }
+                if (s ~ /<(!doctype|html|head|body|table|dl|div|p|pre|code|section|main|article)[ \t\r\n>]/) {
+                    print "html"; exit
+                }
+                print "text"
+            }')"
+        ;;
+esac
+
+prog="$(cat <<'AWK'
+BEGIN {
+    nb = split("m s g A K mol cd Hz N Pa J W C V F S Wb T H lm lx Bq Gy Sv kat rad sr deg degC degF arcsec arcmin mas au pc ly Jy mag eV bar atm Torr psi min h d yr ppm ppb ppt erg dyn G Oe ADU DN cts count counts beam pix pixel px L sol Wh Mearth Msun Rearth Rsun ohm ph knot knots inch inches ft second seconds sec secs minute minutes hour hours day days week weeks month months year years meter meters metre metres degree degrees percent", B, " ")
+    for (i = 1; i <= nb; i++) UBASE[B[i]] = 1
+    np = split("Y Z E P T G M k h da d c m u µ n p f a z y", P, " ")
+    for (i = 1; i <= np; i++) UPREF[P[i]] = 1
+    nw = split("see below optional required unit units default none null na text string number integer value values example type name true false yes no todo tbd unknown other misc data all any range e g ie eg etc the this that and with from for are was were has have can may not you your use used using returns return contains output input param parameter argument description format encoding version url uri http https api request response field fields column columns attribute attributes property properties", W, " ")
+    for (i = 1; i <= nw; i++) USTOP[W[i]] = 1
+    MAXH = 8; MAXF = 24; MAXU = 12; MAXR = 3
+    nh = nf = nu = nr = 0
+    ntables = 0
+}
+
+function trim(s) {
+    sub(/^[ \t\r\n\f\v]+/, "", s)
+    sub(/[ \t\r\n\f\v]+$/, "", s)
+    return s
+}
+
+function decode(s) {
+    gsub(/&nbsp;/, " ", s)
+    gsub(/&amp;/, "\\&", s)
+    gsub(/&lt;/, "<", s)
+    gsub(/&gt;/, ">", s)
+    gsub(/&quot;/, "\"", s)
+    gsub(/&#39;|&apos;|&#x27;/, "'", s)
+    gsub(/&#160;/, " ", s)
+    return s
+}
+
+# Tags entfernen, Entities auflösen, Leerraum auf ein Leerzeichen bringen.
+function clean(s) {
+    gsub(/<[^>]*>/, " ", s)
+    s = decode(s)
+    gsub(/[ \t\r\n\f\v]+/, " ", s)
+    return trim(s)
+}
+
+# Blöcke zwischen einem öffnenden Muster und einem schließenden Tag entfernen.
+function cut_between(s, openre, closetag,   lo, i, j, out) {
+    lo = tolower(s)
+    out = ""
+    while (match(lo, openre) > 0) {
+        out = out substr(s, 1, RSTART - 1)
+        j = index(substr(lo, RSTART), closetag)
+        if (j == 0) return out
+        s = substr(s, RSTART + j + length(closetag) - 1)
+        lo = tolower(s)
+    }
+    return out s
+}
+
+function snake(s) {
+    return s ~ /^[a-z][a-z0-9]*(_[a-z0-9]+)+$/
+}
+
+function camel(s) {
+    return s ~ /^[a-z][A-Za-z0-9]*[A-Z][A-Za-z0-9]*$/
+}
+
+function add_header_line(nm) {
+    nm = trim(nm)
+    if (nm == "" || (nm in HSEEN) || nh >= MAXH) return
+    nh++
+    HLIST[nh] = nm
+    HSEEN[nm] = 1
+}
+
+function add_field(nm) {
+    nm = trim(nm)
+    if (nm == "" || (nm in FSEEN) || nf >= MAXF) return
+    nf++
+    FLIST[nf] = nm
+    FSEEN[nm] = 1
+}
+
+# loose=1 erlaubt ein einzelnes Wort (z. B. "temperature (K)").
+function field_val(nm, loose) {
+    nm = trim(nm)
+    if (length(nm) < 2 || length(nm) > 64) return
+    if (nm !~ /^[A-Za-z][A-Za-z0-9_]*$/) return
+    if ((tolower(nm)) in USTOP) return
+    if (snake(nm) || camel(nm)) {
+        add_field(nm)
+        return
+    }
+    if (loose) add_field(nm)
+}
+
+function add_unit(u) {
+    u = trim(u)
+    if (u == "" || (u in USEEN) || nu >= MAXU) return
+    nu++
+    ULIST[nu] = u
+    USEEN[u] = 1
+}
+
+function add_range(a, b) {
+    a = normnum(a)
+    b = normnum(b)
+    if (a == "" || b == "") return
+    r = a ".." b
+    if ((r in RSEEN) || nr >= MAXR) return
+    nr++
+    RLIST[nr] = r
+    RSEEN[r] = 1
+}
+
+function normnum(s) {
+    s = trim(s)
+    if (substr(s, 1, 1) == "+") s = substr(s, 2)
+    if (s ~ /\./) {
+        sub(/0+$/, "", s)
+        sub(/\.$/, "", s)
+    }
+    if (s == "-0") s = "0"
+    while (s ~ /^-?0[0-9]/) sub(/^(-?)0/, "\\1", s)
+    if (s == "" || s == "-") return ""
+    return s
+}
+
+# Ein Atom wie m, m3, cm-2, s^2, eV.
+function unit_atom(t,   p, b, p2, b2) {
+    gsub(/\^/, "", t)
+    if (match(t, /[-+]?[0-9]+$/)) t = substr(t, 1, RSTART - 1)
+    if (t == "") return 0
+    if ((t) in UBASE) return 1
+    if (length(t) >= 2) {
+        p = substr(t, 1, 1)
+        b = substr(t, 2)
+        if ((p in UPREF) && (b in UBASE)) return 1
+    }
+    if (length(t) >= 3) {
+        p2 = substr(t, 1, 2)
+        b2 = substr(t, 3)
+        if ((p2 in UPREF) && (b2 in UBASE)) return 1
+    }
+    return 0
+}
+
+# Eine Einheiten-Zelle ("°C (°F)", "km/h (mph, m/s)") in Einzelteile zerlegen.
+function unit_cell(cell,   t, parts, n, i, p) {
+    scan_units(cell)
+    t = cell
+    gsub(/²/, "2", t)
+    gsub(/³/, "3", t)
+    gsub(/¹/, "1", t)
+    n = split(t, parts, /[ ,;()]+/)
+    for (i = 1; i <= n; i++) {
+        p = trim(parts[i])
+        if (is_unit(p)) add_unit(p)
+    }
+}
+
+# Nur echte Einheiten: keine Prosa, keine Platzhalter, keine Bereiche.
+function is_unit(u,   parts, n, i, t, p) {
+    u = trim(u)
+    if (u == "" || u == "1" || length(u) > 32) return 0
+    gsub(/²/, "2", u)
+    gsub(/³/, "3", u)
+    gsub(/¹/, "1", u)
+    if (u ~ /\.\./ || u ~ /[0-9]\.[0-9]/) return 0
+    if ((tolower(u)) in USTOP) return 0
+    if (u == "%" || u == "‰" || u ~ /^°[CFK]$/) return 1
+    gsub(/[ \t]+/, "*", u)
+    n = split(u, parts, /[\/·*]/)
+    if (n < 1) return 0
+    for (i = 1; i <= n; i++) {
+        t = trim(parts[i])
+        if (t == "") return 0
+        if (t == "1") continue
+        if (t !~ /^[A-Za-zµμÅΩ°‰%][A-Za-zµμÅΩ°‰%]*([-+]?[0-9]+)?$/) return 0
+        if (!unit_atom(t)) return 0
+    }
+    return 1
+}
+
+function unit_content(c,   n, ps, i, p) {
+    n = split(c, ps, /[,;|]/)
+    for (i = 1; i <= n; i++) {
+        p = trim(ps[i])
+        if (is_unit(p)) add_unit(p)
+    }
+}
+
+# Einheiten aus [...] und (...) ziehen. RSTART/RLENGTH vor dem Aufruf von
+# unit_content sichern: dessen match() würde die Spezialvariablen überschreiben.
+function scan_units(s,   t, st, ln) {
+    t = s
+    while (match(t, /\[[^][]*\]/)) {
+        st = RSTART
+        ln = RLENGTH
+        unit_content(substr(t, st + 1, ln - 2))
+        t = substr(t, st + ln)
+    }
+    t = s
+    while (match(t, /\([^()]*\)/)) {
+        st = RSTART
+        ln = RLENGTH
+        unit_content(substr(t, st + 1, ln - 2))
+        t = substr(t, st + ln)
+    }
+}
+
+function content_unitish(c,   ps, n, i, p) {
+    n = split(c, ps, /[,;|]/)
+    for (i = 1; i <= n; i++) {
+        p = trim(ps[i])
+        if (is_unit(p) || typeish(p)) return 1
+    }
+    return 0
+}
+
+# Steht in einer Klammer wirklich eine Einheit oder ein Typ?
+function bracket_has_unit(s,   t, st, ln) {
+    t = s
+    while (match(t, /\([^()]*\)/)) {
+        st = RSTART
+        ln = RLENGTH
+        if (content_unitish(substr(t, st + 1, ln - 2))) return 1
+        t = substr(t, st + ln)
+    }
+    t = s
+    while (match(t, /\[[^][]*\]/)) {
+        st = RSTART
+        ln = RLENGTH
+        if (content_unitish(substr(t, st + 1, ln - 2))) return 1
+        t = substr(t, st + ln)
+    }
+    return 0
+}
+
+# Zwei Zahlen links/rechts eines Trenners (auch mehrbyte-sicher unter LC_ALL=C).
+function try_sep(line, sep,   rest, off, k, left, right, a, b) {
+    rest = line
+    off = 0
+    while ((k = index(rest, sep)) > 0) {
+        left = substr(line, 1, off + k - 1)
+        right = substr(line, off + k + length(sep))
+        a = ""
+        b = ""
+        if (match(left, /[-+]?[0-9]+([.][0-9]+)?[ \t]*$/)) a = substr(left, RSTART, RLENGTH)
+        if (match(right, /^[ \t]*[-+]?[0-9]+([.][0-9]+)?/)) b = substr(right, RSTART, RLENGTH)
+        if (a != "" && b != "") {
+            add_range(a, b)
+            return 1
+        }
+        off += k + length(sep) - 1
+        rest = substr(line, off + 1)
+    }
+    return 0
+}
+
+# Bereich aus "a..b", "a–b", "a to b" oder "min a ... max b".
+function scan_range(line,   m, a, b, rest, st, ln, mst, mln) {
+    if (nr >= MAXR) return
+    if (try_sep(line, "..")) return
+    if (try_sep(line, "–")) return
+    if (try_sep(line, "—")) return
+    if (try_sep(line, " to ")) return
+    if (try_sep(line, " bis ")) return
+    if (match(line, /(min|minimum|least)[ \t:=-]*[-+]?[0-9]+([.][0-9]+)?/)) {
+        st = RSTART
+        ln = RLENGTH
+        m = substr(line, st, ln)
+        if (match(m, /[-+]?[0-9]+([.][0-9]+)?/)) a = substr(m, RSTART, RLENGTH)
+        rest = substr(line, st + ln)
+        if (a != "" && match(rest, /(max|maximum|highest)[ \t:=-]*[-+]?[0-9]+([.][0-9]+)?/)) {
+            mst = RSTART
+            mln = RLENGTH
+            m = substr(rest, mst, mln)
+            if (match(m, /[-+]?[0-9]+([.][0-9]+)?/)) b = substr(m, RSTART, RLENGTH)
+            if (b != "") add_range(a, b)
+        }
+    }
+}
+
+function typeish(r,   w) {
+    r = tolower(trim(r))
+    sub(/[ \t].*$/, "", r)
+    sub(/[,;.)]+$/, "", r)
+    return r ~ /^(string|integer|int|number|float|double|decimal|boolean|bool|date|datetime|timestamp|time|array|list|object|json|enum|text|uri|url|uuid|binary|bytes|byte|long|short|unsigned|signed)$/
+}
+
+# Eine Textzeile: Felder, Einheiten, Bereich.
+function scan_line(line,   p, nm, rest) {
+    if (line == "") return
+    scan_units(line)
+    scan_range(line)
+
+    p = trim(line)
+    if (p ~ /^[A-Za-z_][A-Za-z0-9_]*[ \t]*:/) {
+        nm = p
+        sub(/[ \t]*:.*$/, "", nm)
+        rest = p
+        sub(/^[^:]*:[ \t]*/, "", rest)
+        if (snake(nm) || camel(nm) || typeish(rest)) field_val(nm, 0)
+    }
+
+    if (p ~ /^[A-Za-z][A-Za-z0-9_]*[ \t]*[(\[]/) {
+        nm = p
+        sub(/[ \t]*[(\[].*$/, "", nm)
+        if (bracket_has_unit(p)) field_val(nm, 1)
+    }
+
+    # Datenwörterbuch-Zeile: station_id,number,m3/s
+    if (p ~ /^[A-Za-z][A-Za-z0-9_]*[ \t]*,/) {
+        nm = p
+        sub(/[ \t]*,.*$/, "", nm)
+        if (snake(nm) || camel(nm)) field_val(nm, 0)
+    }
+}
+
+# CSV-/TSV-Kopfzeile: >=3 Spalten, jede Spalte ein Name.
+function text_header(line,   c, t, s, d, n, parts, i, out, v, cols, ncomma, ntab, nsemi) {
+    line = trim(line)
+    if (line == "") return 0
+    if (line ~ /\.$/) return 0
+    if (line ~ /^[#>|]/) return 0
+
+    c = line; ncomma = gsub(/,/, "", c)
+    t = line; ntab = gsub(/\t/, "", t)
+    s = line; nsemi = gsub(/;/, "", s)
+    if (ncomma >= 2 && ncomma >= ntab && ncomma >= nsemi) {
+        d = ","
+    } else if (ntab >= 2) {
+        d = "\t"
+    } else if (nsemi >= 2) {
+        d = ";"
+    } else {
+        return 0
+    }
+
+    n = split(line, parts, d)
+    if (n < 3) return 0
+    out = ""
+    cols = 0
+    for (i = 1; i <= n; i++) {
+        v = trim(parts[i])
+        sub(/^"/, "", v)
+        sub(/"$/, "", v)
+        v = trim(v)
+        if (v == "" || length(v) > 64) return 0
+        if (v !~ /[A-Za-z]/) return 0
+        if (v ~ /[<>{}]/) return 0
+        gsub(/,/, " ", v)
+        out = out (out == "" ? "" : ",") v
+        cols++
+    }
+    if (cols < 3) return 0
+    add_header_line(out)
+    return 1
+}
+
+# ---------- HTML ----------
+
+function parse_table(block,   lo, pos, i, start, e, row, nrows, r, lrow, cpos, j, x, tag, gt, cs, ce, e1, e2, cell, nc, th, hdrrow, k, v, out, cols, unitcol, ul, varcol, toks, nt, ti, tv) {
+    lo = tolower(block)
+    pos = 1
+    nrows = 0
+    while ((i = index(substr(lo, pos), "<tr")) > 0) {
+        start = pos + i - 1
+        x = substr(lo, start + 3, 1)
+        if (x !~ /[ \t\r\n>\/]/) { pos = start + 3; continue }
+        e = index(substr(lo, start), "</tr>")
+        if (e > 0) {
+            row = substr(block, start, e + 4)
+            pos = start + e + 4
+        } else {
+            row = substr(block, start)
+            pos = length(block) + 1
+        }
+        nrows++
+        lrow = tolower(row)
+        cpos = 1
+        nc = 0
+        th = 0
+        while ((j = index(substr(lrow, cpos), "<t")) > 0) {
+            cs = cpos + j - 1
+            tag = substr(lrow, cs, 3)
+            if (tag != "<td" && tag != "<th") { cpos = cs + 2; continue }
+            if (tag == "<th") th = 1
+            gt = index(substr(lrow, cs), ">")
+            if (gt == 0) break
+            cs = cs + gt
+            e1 = index(substr(lrow, cs), "</td>")
+            e2 = index(substr(lrow, cs), "</th>")
+            if (e1 == 0 && e2 == 0) break
+            if (e1 == 0) { ce = e2; x = "</th>" }
+            else if (e2 == 0) { ce = e1; x = "</td>" }
+            else if (e1 < e2) { ce = e1; x = "</td>" }
+            else { ce = e2; x = "</th>" }
+            nc++
+            cell = clean(substr(row, cs, ce - 1))
+            RC[nrows, nc] = cell
+            cpos = cs + ce + 4
+        }
+        RNC[nrows] = nc
+        RTH[nrows] = th
+    }
+
+    if (nrows == 0) return
+    hdrrow = 0
+    for (r = 1; r <= nrows; r++) {
+        if (RTH[r]) { hdrrow = r; break }
+    }
+    if (hdrrow == 0) hdrrow = 1
+
+    out = ""
+    cols = 0
+    unitcol = 0
+    varcol = 0
+    for (k = 1; k <= RNC[hdrrow]; k++) {
+        v = trim(RC[hdrrow, k])
+        if (v == "") return
+        if (length(v) > 64) return
+        if (v ~ /[<>{}"]/) return
+        if (v !~ /[A-Za-z]/) return
+        ul = tolower(v)
+        if (ul == "unit" || ul == "units" || ul == "einheit" || ul == "einheiten") unitcol = k
+        if (ul == "variable" || ul == "variables" || ul == "parameter" || ul == "parameters" || ul == "field" || ul == "fields" || ul == "name" || ul == "key" || ul == "column" || ul == "attribute") varcol = k
+        gsub(/,/, " ", v)
+        out = out (out == "" ? "" : ",") v
+        cols++
+    }
+    if (cols >= 3) add_header_line(out)
+
+    # Eine ausgewiesene Einheiten-Spalte ist ein Beleg für Einheiten,
+    # auch wenn die Tabelle zu schmal für eine Kopfzeilen-Signatur ist.
+    if (unitcol > 0) {
+        for (r = hdrrow + 1; r <= nrows; r++) {
+            if (RNC[r] >= unitcol) unit_cell(RC[r, unitcol])
+        }
+    }
+
+    # Eine Variablen-Spalte ist eine Definitionsliste in Tabellenform.
+    if (varcol > 0) {
+        for (r = hdrrow + 1; r <= nrows; r++) {
+            if (RNC[r] < varcol) continue
+            nt = split(RC[r, varcol], toks, /[ \t,;]+/)
+            for (ti = 1; ti <= nt; ti++) {
+                tv = trim(toks[ti])
+                if (length(tv) < 2 || length(tv) > 64) continue
+                if (tv !~ /^[A-Za-z][A-Za-z0-9_]*$/) continue
+                if ((tolower(tv)) in USTOP) continue
+                if (snake(tv) || camel(tv)) add_field(tv)
+            }
+        }
+    }
+}
+
+function html_tables(s,   lo, pos, i, start, x, e, block) {
+    lo = tolower(s)
+    pos = 1
+    while ((i = index(substr(lo, pos), "<table")) > 0) {
+        start = pos + i - 1
+        x = substr(lo, start + 6, 1)
+        if (x !~ /[ \t\r\n>\/]/) { pos = start + 6; continue }
+        e = index(substr(lo, start), "</table>")
+        if (e > 0) {
+            block = substr(s, start, e + 7)
+            pos = start + e + 7
+        } else {
+            block = substr(s, start)
+            pos = length(s) + 1
+        }
+        ntables++
+        parse_table(block)
+        if (e == 0) break
+    }
+}
+
+function html_dls(s,   lo, pos, i, start, x, e, block, blo, dpos, j, ds, de, dt, dds, dd, nm) {
+    lo = tolower(s)
+    pos = 1
+    while ((i = index(substr(lo, pos), "<dl")) > 0) {
+        start = pos + i - 1
+        x = substr(lo, start + 3, 1)
+        if (x !~ /[ \t\r\n>\/]/) { pos = start + 3; continue }
+        e = index(substr(lo, start), "</dl>")
+        if (e > 0) {
+            block = substr(s, start, e + 4)
+            pos = start + e + 4
+        } else {
+            block = substr(s, start)
+            pos = length(s) + 1
+        }
+        blo = tolower(block)
+        dpos = 1
+        while ((j = index(substr(blo, dpos), "<dt")) > 0) {
+            ds = dpos + j - 1
+            x = substr(blo, ds + 3, 1)
+            if (x !~ /[ \t\r\n>\/]/) { dpos = ds + 3; continue }
+            de = index(substr(blo, ds), "</dt>")
+            if (de == 0) break
+            dt = clean(substr(block, ds, de + 4))
+            dpos = ds + de + 4
+            dd = ""
+            dds = index(substr(blo, dpos), "<dd")
+            if (dds > 0) {
+                ds = dpos + dds - 1
+                de = index(substr(blo, ds), "</dd>")
+                if (de > 0) dd = clean(substr(block, ds, de + 4))
+            }
+            nm = dt
+            sub(/[ \t]*[(\[:–—-].*$/, "", nm)
+            sub(/[ \t].*$/, "", nm)
+            if (snake(nm) || camel(nm)) {
+                add_field(nm)
+            } else if (bracket_has_unit(dt)) {
+                field_val(nm, 1)
+            }
+            if (dd != "") {
+                scan_units(dd)
+                scan_range(dd)
+            }
+        }
+        if (e == 0) break
+    }
+}
+
+function html_codes(s,   lo, pos, i, start, x, e, body, v) {
+    lo = tolower(s)
+    pos = 1
+    while ((i = index(substr(lo, pos), "<code")) > 0) {
+        start = pos + i - 1
+        x = substr(lo, start + 5, 1)
+        if (x !~ /[ \t\r\n>\/]/) { pos = start + 5; continue }
+        e = index(substr(lo, start), "</code>")
+        if (e == 0) break
+        body = clean(substr(s, start, e + 6))
+        pos = start + e + 6
+        if (body ~ /[ \t]/) continue
+        v = body
+        if (length(v) < 2 || length(v) > 64) continue
+        if (v !~ /^[A-Za-z][A-Za-z0-9_]*$/) continue
+        if ((tolower(v)) in USTOP) continue
+        if (snake(v) || camel(v)) add_field(v)
+    }
+}
+
+# HTML in Zeilen zerlegen, damit Textregeln je Block greifen.
+function html_text(s,   t) {
+    t = s
+    gsub(/<\/(p|div|li|tr|dt|dd|h[1-6]|section|article|table|dl|pre|code|ul|ol|header|footer|main|nav|figure|figcaption)>/, "\n", t)
+    gsub(/<br[ \t\/]*>/, "\n", t)
+    gsub(/<[^>]*>/, " ", t)
+    t = decode(t)
+    gsub(/[ \t\r\f\v]+/, " ", t)
+    gsub(/ *\n */, "\n", t)
+    return t
+}
+
+# ---------- JSON ----------
+
+function json_field_ok(k) {
+    if (length(k) < 3 || length(k) > 64) return 0
+    if (k ~ /^__/) return 0
+    if (k ~ /_units?$/) return 0
+    if ((tolower(k)) in USTOP) return 0
+    return snake(k) || camel(k)
+}
+
+function json_scan(s,   t, m, key, after, v, obj, st, ln, e) {
+    t = s
+    while (match(t, /"[A-Za-z_][A-Za-z0-9_]*"[ \t\r\n]*:/)) {
+        m = substr(t, RSTART, RLENGTH)
+        key = m
+        sub(/^"/, "", key)
+        sub(/".*$/, "", key)
+        after = substr(t, RSTART + RLENGTH)
+        if (key == "unit" || key == "units" || key ~ /_units?$/) {
+            if (match(after, /^[ \t\r\n]*"[^"]*"/)) {
+                v = substr(after, RSTART, RLENGTH)
+                sub(/^[^"]*"/, "", v)
+                sub(/"$/, "", v)
+                v = trim(v)
+                if (is_unit(v)) add_unit(v)
+            } else if (match(after, /^[ \t\r\n]*\{/)) {
+                # units-Objekt: {"temperature_2m": "°C", "wind": "km/h"}
+                obj = substr(after, RSTART)
+                e = index(obj, "}")
+                if (e > 0) obj = substr(obj, 1, e)
+                while (match(obj, /"[^"]*"[ \t\r\n]*:[ \t\r\n]*"[^"]*"/)) {
+                    st = RSTART
+                    ln = RLENGTH
+                    v = substr(obj, st, ln)
+                    sub(/^[^:]*:[ \t\r\n]*"/, "", v)
+                    sub(/"$/, "", v)
+                    v = trim(v)
+                    if (is_unit(v)) add_unit(v)
+                    obj = substr(obj, st + ln)
+                }
+            } else if (match(after, /^[ \t\r\n]*\[/)) {
+                # units-Array: ["m", "s"]
+                obj = substr(after, RSTART)
+                e = index(obj, "]")
+                if (e > 0) obj = substr(obj, 1, e)
+                while (match(obj, /"[^"]*"/)) {
+                    st = RSTART
+                    ln = RLENGTH
+                    v = trim(substr(obj, st + 1, ln - 2))
+                    if (is_unit(v)) add_unit(v)
+                    obj = substr(obj, st + ln)
+                }
+            }
+        } else if (json_field_ok(key)) {
+            add_field(key)
+        }
+        t = after
+    }
+}
+
+# ---------- Ende der Funktionen ----------
+
+{
+    buf = buf $0 "\n"
+}
+
+END {
+    if (mode == "html") {
+        s = buf
+        # Erst Skripte/Stile entfernen: dort können `<!--`-Strings stehen, die
+        # sonst bis weit hinter die Tabellen als Kommentar gelesen würden.
+        s = cut_between(s, "<script[^>]*>", "</script>")
+        s = cut_between(s, "<style[^>]*>", "</style>")
+        s = cut_between(s, "<noscript[^>]*>", "</noscript>")
+        s = cut_between(s, "<svg[^>]*>", "</svg>")
+        html_tables(s)
+        html_dls(s)
+        html_codes(s)
+        t = html_text(s)
+        n = split(t, LINES, "\n")
+        for (i = 1; i <= n; i++) scan_line(LINES[i])
+    } else if (mode == "json") {
+        json_scan(buf)
+    } else {
+        n = split(buf, LINES, "\n")
+        hdr_done = 0
+        for (i = 1; i <= n; i++) {
+            if (!hdr_done && trim(LINES[i]) != "") {
+                if (text_header(LINES[i])) ntables++
+                hdr_done = 1
+            }
+            scan_line(LINES[i])
+        }
+    }
+
+    if (nh + nf + nu + nr == 0) {
+        print "schema: keine Signatur" > "/dev/stderr"
+        exit 3
+    }
+
+    printf "schema: %s %s B, %d Tabellen\n", src, nbytes, ntables
+    for (i = 1; i <= nh; i++) printf "schema header %s\n", HLIST[i]
+    for (i = 1; i <= nf; i++) printf "schema field \"%s\"\n", FLIST[i]
+    for (i = 1; i <= nu; i++) printf "schema unit \"%s\"\n", ULIST[i]
+    for (i = 1; i <= nr; i++) printf "schema range \"%s\"\n", RLIST[i]
+}
+AWK
+)"
+
+awk -v mode="$kind" -v src="$src" -v nbytes="$bytes" "$prog" "$body"
+exit $?
