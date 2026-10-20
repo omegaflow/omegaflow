@@ -1,0 +1,82 @@
+#!/bin/sh
+# ci_change_log — beobachtet Live-Quellen aus dem Register und schreibt nur
+# Aenderungen in den Ledger. Kein Zustandsordner, keine Hashdateien: der
+# letzte Hash steht in der letzten Zeile der Quelle.
+set -u
+export LC_ALL=C
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+cd "$root" || exit 2
+
+log="zustand/cdn-changes.log"
+mkdir -p "$(dirname "$log")" || exit 2
+[ -f "$log" ] || : >"$log"
+
+list="$(mktemp "${TMPDIR:-/tmp}/cdnlist.XXXXXX")" || exit 2
+python3 - "$list" <<'PY'
+import sys, urllib.parse
+out = open(sys.argv[1], "w", encoding="utf-8")
+lines = open("phi/sources.φ", encoding="utf-8").read().split("\n")
+cur = []
+blocks = []
+for l in lines:
+    if l.strip() == "":
+        if cur:
+            blocks.append(cur)
+            cur = []
+    else:
+        cur.append(l)
+if cur:
+    blocks.append(cur)
+rows = set()
+for b in blocks:
+    ttl = None
+    origin = ""
+    fmt = ""
+    for l in b:
+        if l.startswith("ttl "):
+            try:
+                ttl = int(l.split()[1])
+            except ValueError:
+                ttl = None
+        elif l.startswith("origin "):
+            origin = l[7:].split(";")[0].strip()
+        elif l.startswith("format "):
+            fmt = l[7:].strip()
+    if not origin or ttl is None or ttl > 86400:
+        continue
+    if "{" in origin or "}" in origin or not origin.startswith("http"):
+        continue
+    host = urllib.parse.urlsplit(origin).netloc
+    if not host:
+        continue
+    rows.add((host, fmt or "index", origin))
+for host, fmt, origin in sorted(rows):
+    out.write(f"{host}\t{fmt}\t{origin}\n")
+out.close()
+PY
+
+seen=0
+changed=0
+while IFS="$(printf '\t')" read -r host fmt url; do
+    [ -n "$url" ] || continue
+    seen=$((seen + 1))
+    body="$(mktemp "${TMPDIR:-/tmp}/cdnbody.XXXXXX")" || exit 2
+    code="$(timeout 20 curl -s -L -A "omegaflow-ci-change-log" -o "$body" -w '%{http_code}' "$url" 2>/dev/null || echo 000)"
+    if [ "$code" != "200" ] && [ "$code" != "206" ]; then
+        rm -f "$body"
+        continue
+    fi
+    new="$(sha256sum "$body" | cut -d' ' -f1)"
+    rm -f "$body"
+    old="$(awk -F'\t' -v h="$host" -v f="$fmt" '$2==h && $3==f {s=$5} END{print s}' "$log")"
+    if [ -z "$old" ]; then
+        printf '%s\t%s\t%s\t-\t%s\t%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$host" "$fmt" "$new" "$url" >>"$log"
+        changed=$((changed + 1))
+    elif [ "$old" != "$new" ]; then
+        printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$host" "$fmt" "$old" "$new" "$url" >>"$log"
+        changed=$((changed + 1))
+    fi
+done <"$list"
+rm -f "$list"
+
+echo "ci_change_log: $seen sources, $changed changes"

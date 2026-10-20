@@ -90,3 +90,6 @@ docs/paper/export/
 
 # Werkzeug-Caches (nicht herunterladbar, lokal erzeugt)
 .playwright-mcp/
+
+!zustand/
+!zustand/cdn-changes.log
