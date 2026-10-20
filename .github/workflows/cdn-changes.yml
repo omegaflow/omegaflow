@@ -20,22 +20,15 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 1
-      - uses: actions/checkout@v7
-        with:
-          repository: omegaflow/work
-          path: work
-          token: ${{ secrets.OMEGAFLOW_TOKEN }}
       - name: Observe live sources and record changes
         run: sh bin/ci_change_log
-      - name: Commit the change ledger to the work tree
+      - name: Commit the change ledger
         run: |
           set -eu
-          cp state/cdn-changes.log work/state/cdn-changes.log
-          cd work
           git config user.name "omegaflow-ci"
           git config user.email "ci@omegaflow.invalid"
-          git add state/cdn-changes.log
-          if git diff --cached --quiet -- state/cdn-changes.log; then
+          git add docs/state/cdn-changes.log
+          if git diff --cached --quiet -- docs/state/cdn-changes.log; then
             echo "no change"
             exit 0
           fi

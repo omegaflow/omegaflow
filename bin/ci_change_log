@@ -7,7 +7,7 @@ export LC_ALL=C
 root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 cd "$root" || exit 2
 
-log="state/cdn-changes.log"
+log="docs/state/cdn-changes.log"
 mkdir -p "$(dirname "$log")" || exit 2
 [ -f "$log" ] || : >"$log"
 
