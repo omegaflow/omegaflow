@@ -163,7 +163,11 @@ fn sat_worldline(
     planet_map: &HashMap<String, BodyEphemeris>,
     t: f64,
 ) -> Option<[f64; 3]> {
-    let bary = body_barycenter_position("uranus", t, planet_map)?;
+    let bary = body_barycenter_position(
+        &std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset"),
+        t,
+        planet_map,
+    )?;
     let rel = spk.state(sat.id, 7, t).ok()?;
     Some([
         bary[0] + rel[0] * 1000.0,
@@ -180,7 +184,12 @@ fn load_line(
     eph_dir: &str,
 ) -> Line {
     let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
-    for (name, asset) in [("earth", earth_asset), ("uranus", uranus_asset)] {
+    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
+    let target = std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset");
+    for (name, asset) in [
+        (receiver.as_str(), earth_asset),
+        (target.as_str(), uranus_asset),
+    ] {
         let path = format!("{eph_dir}/{netloc}/{asset}");
         let Some(bytes) = ensure_bin(&path, netloc, asset) else {
             println!(
@@ -266,7 +275,7 @@ fn main() {
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
     let spk_dir = arg_token(&args, "--spk-dir").unwrap_or("data/naif.jpl.nasa.gov".to_string());
     let spk_name = arg_token(&args, "--spk").unwrap_or("ura111.bsp".to_string());
-    let report_dir = arg_token(&args, "--report-dir").unwrap_or("zustand/reports".to_string());
+    let report_dir = arg_token(&args, "--report-dir").unwrap_or("zustand".to_string());
 
     let Some(lsk) = embedded_lsk() else {
         eprintln!(
@@ -362,7 +371,11 @@ fn main() {
                 let Some(map) = line.map.as_ref() else {
                     continue;
                 };
-                let Some(station) = body_barycenter_position("earth", tdb, map) else {
+                let Some(station) = body_barycenter_position(
+                    &std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset"),
+                    tdb,
+                    map,
+                ) else {
                     continue;
                 };
                 let Some((s_em, _)) =

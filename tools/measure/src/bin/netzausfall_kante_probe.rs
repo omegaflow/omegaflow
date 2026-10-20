@@ -1,4 +1,3 @@
-
 use omegaflow::archivar::bpa_gic;
 use omegaflow::archivar::geo::{self, MAGIC_GIC, MAGIC_GOEV};
 use omegaflow::archivar::intermagnet;
@@ -22,17 +21,61 @@ struct Station {
 }
 
 const STATIONS: [Station; 11] = [
-    Station { name: "eugene_or", lat: 44.0521, lon: -123.0868 },
-    Station { name: "spokane_wa", lat: 47.6588, lon: -117.4260 },
-    Station { name: "the_dalles_or", lat: 45.5946, lon: -121.1787 },
-    Station { name: "lewiston_id", lat: 46.4166, lon: -117.0177 },
-    Station { name: "kalispell_mt", lat: 48.1916, lon: -114.3162 },
-    Station { name: "monroe_wa", lat: 47.8554, lon: -121.9707 },
-    Station { name: "wilsonville_or", lat: 45.2998, lon: -122.7737 },
-    Station { name: "vancouver_wa", lat: 45.6387, lon: -122.6615 },
-    Station { name: "ellensburg_wa", lat: 46.9965, lon: -120.5478 },
-    Station { name: "bothell_wa", lat: 47.7623, lon: -122.2054 },
-    Station { name: "moses_lake_wa", lat: 47.1301, lon: -119.2781 },
+    Station {
+        name: "eugene_or",
+        lat: 44.0521,
+        lon: -123.0868,
+    },
+    Station {
+        name: "spokane_wa",
+        lat: 47.6588,
+        lon: -117.4260,
+    },
+    Station {
+        name: "the_dalles_or",
+        lat: 45.5946,
+        lon: -121.1787,
+    },
+    Station {
+        name: "lewiston_id",
+        lat: 46.4166,
+        lon: -117.0177,
+    },
+    Station {
+        name: "kalispell_mt",
+        lat: 48.1916,
+        lon: -114.3162,
+    },
+    Station {
+        name: "monroe_wa",
+        lat: 47.8554,
+        lon: -121.9707,
+    },
+    Station {
+        name: "wilsonville_or",
+        lat: 45.2998,
+        lon: -122.7737,
+    },
+    Station {
+        name: "vancouver_wa",
+        lat: 45.6387,
+        lon: -122.6615,
+    },
+    Station {
+        name: "ellensburg_wa",
+        lat: 46.9965,
+        lon: -120.5478,
+    },
+    Station {
+        name: "bothell_wa",
+        lat: 47.7623,
+        lon: -122.2054,
+    },
+    Station {
+        name: "moses_lake_wa",
+        lat: 47.1301,
+        lon: -119.2781,
+    },
 ];
 
 #[derive(Clone, Copy, Default)]
@@ -181,9 +224,7 @@ fn load_outages(path: &str) -> Option<(Vec<Event>, OutageStats)> {
         HashMap::new();
     for r in &recs {
         let key = (r.t.to_bits(), r.lat.to_bits(), r.lon.to_bits());
-        let slot = groups
-            .entry(key)
-            .or_insert((r.t, r.lat, r.lon, None, None));
+        let slot = groups.entry(key).or_insert((r.t, r.lat, r.lon, None, None));
         match r.comp {
             GOEV_DURATION => {
                 stats.duration_recs += 1;
@@ -306,7 +347,12 @@ fn cells(pred: &BTreeMap<i64, f64>, out: &BTreeMap<i64, Agg>) -> Vec<Cell> {
                 ys.push(metric.of(y));
             }
             if let Some(r) = pearson(&xs, &ys) {
-                v.push(Cell { metric, lag, r, n: xs.len() });
+                v.push(Cell {
+                    metric,
+                    lag,
+                    r,
+                    n: xs.len(),
+                });
             }
         }
     }
@@ -328,10 +374,7 @@ fn block_shift_null(
         let (y, _, _) = civil_from_days(d);
         year_map.entry(y).or_default().push(i);
     }
-    let year_idx: Vec<Vec<usize>> = year_map
-        .into_values()
-        .filter(|idx| idx.len() > 1)
-        .collect();
+    let year_idx: Vec<Vec<usize>> = year_map.into_values().filter(|idx| idx.len() > 1).collect();
     if year_idx.is_empty() {
         return None;
     }
@@ -349,10 +392,7 @@ fn block_shift_null(
         let shifted_map: BTreeMap<i64, f64> =
             days.iter().copied().zip(shifted.iter().copied()).collect();
         let cs = cells(&shifted_map, out);
-        let mx = cs
-            .iter()
-            .map(|c| c.r.abs())
-            .fold(f64::default(), f64::max);
+        let mx = cs.iter().map(|c| c.r.abs()).fold(f64::default(), f64::max);
         null.push(mx);
     }
     null.sort_by(|a, b| a.total_cmp(b));
@@ -406,18 +446,16 @@ fn report_family(label: &str, pred: &BTreeMap<i64, f64>, out: &BTreeMap<i64, Agg
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let outage_path = arg_after(&args, "--outage")
-        .unwrap_or("/tmp/opencode/outage_kante/grid_outage_events.bin");
-    let bpa_path = arg_after(&args, "--bpa")
-        .unwrap_or("/tmp/opencode/outage_kante/bpa_gic.bin");
-    let abk_path = arg_after(&args, "--abk")
-        .unwrap_or("/tmp/opencode/outage_kante/abk_dbdt_1h.bin");
-    let sod_path = arg_after(&args, "--sod")
-        .unwrap_or("/tmp/opencode/outage_kante/sod_dbdt_1h.bin");
-    let nur_path = arg_after(&args, "--nur")
-        .unwrap_or("/tmp/opencode/outage_kante/fmi_image_mag_nur.bin");
-    let fmi_path = arg_after(&args, "--fmi")
-        .unwrap_or("/tmp/opencode/outage_kante/fmi_gic.bin");
+    let outage_path =
+        arg_after(&args, "--outage").unwrap_or("/tmp/opencode/outage_kante/grid_outage_events.bin");
+    let bpa_path = arg_after(&args, "--bpa").unwrap_or("/tmp/opencode/outage_kante/bpa_gic.bin");
+    let abk_path =
+        arg_after(&args, "--abk").unwrap_or("/tmp/opencode/outage_kante/abk_dbdt_1h.bin");
+    let sod_path =
+        arg_after(&args, "--sod").unwrap_or("/tmp/opencode/outage_kante/sod_dbdt_1h.bin");
+    let nur_path =
+        arg_after(&args, "--nur").unwrap_or("/tmp/opencode/outage_kante/fmi_image_mag_nur.bin");
+    let fmi_path = arg_after(&args, "--fmi").unwrap_or("/tmp/opencode/outage_kante/fmi_gic.bin");
 
     let Some((events, stats)) = load_outages(outage_path) else {
         eprintln!("{outage_path}: grid_outage_event bin reads void — the edge stays unmeasured");
@@ -539,10 +577,7 @@ fn main() {
     let common_max = ev_max.min(bpa_max);
     regional_pred.retain(|d, _| *d >= common_min && *d <= common_max);
 
-    println!(
-        "station pairing table (<= {:.0} km):",
-        MAX_PAIR_KM
-    );
+    println!("station pairing table (<= {:.0} km):", MAX_PAIR_KM);
     println!("  station | counties | events | best |r| | lag | metric");
     for (i, s) in STATIONS.iter().enumerate() {
         if per_station_counties[i] == 0 {

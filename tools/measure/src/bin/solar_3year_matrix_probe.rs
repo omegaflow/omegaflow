@@ -12,8 +12,7 @@ const F107_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/f107_penticton.bin";
 const OMNI2_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie.bin";
-const OMNI2_1H_CDN: &str =
-    "https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie_1h.bin";
+const OMNI2_1H_CDN: &str = "https://github.com/omegaflow/sources/releases/download/cdaweb.gsfc.nasa.gov/omni2_serie_1h.bin";
 const EUVS_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/goes_euvs.bin";
 const SURROGATE_SEED: u64 = 0x9E37_79B9_7F4A_7C15;

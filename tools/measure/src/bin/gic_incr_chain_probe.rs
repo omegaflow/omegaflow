@@ -324,8 +324,8 @@ fn fmt(v: Option<f64>) -> String {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let ground_path =
-        arg_after(&args, "--ground").unwrap_or("experiments/ableitungen/bz_retro/abk_dbdt_daily.tsv");
+    let ground_path = arg_after(&args, "--ground")
+        .unwrap_or("experiments/ableitungen/bz_retro/abk_dbdt_daily.tsv");
     let omni_path = arg_after(&args, "--omni").unwrap_or("/tmp/opencode/gic_te/omni2_serie_1h.bin");
     let sun_path = arg_after(&args, "--sun")
         .unwrap_or("/tmp/opencode/callisto_mro9/callisto_mro_multiyear.bin");

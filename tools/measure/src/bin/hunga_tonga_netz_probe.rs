@@ -1,4 +1,3 @@
-
 use omegaflow::archivar::geo::{COMP_BGR_AZIM, COMP_BGR_VAPP, MAGIC_BGR, parse_bin};
 use omegaflow::archivar::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::archivar::tle::RADIUS_EARTH_KM;
@@ -13,8 +12,7 @@ const TONGA_LON: f64 = -175.382;
 const LAMB_SPEED_KM_S: f64 = 0.306;
 const EVENT_DAY: &str = "2022-01-15";
 const QUIET_DAY: &str = "2022-01-13";
-const BGR_CDN: &str =
-    "https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound_IS52_2022.bin";
+const BGR_CDN: &str = "https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound_IS52_2022.bin";
 
 const SEISMIC_STATIONS: [(&str, &str, f64, f64); 8] = [
     ("IU", "AFI", -13.909, -171.777),
@@ -200,7 +198,6 @@ fn detect_peak_onset(
     None
 }
 
-
 fn inventory() {
     println!("=== Inventory (measured 2026-10-20) ===");
     println!(
@@ -265,7 +262,6 @@ fn inventory() {
     );
     println!();
 }
-
 
 fn be16(b: &[u8], i: usize) -> Option<u16> {
     Some(((*b.get(i)? as u16) << 8) | *b.get(i + 1)? as u16)
@@ -353,7 +349,10 @@ fn seismic_day(day: &str, label: &str) -> Vec<(f64, f64, String)> {
             continue;
         };
         let Some((samples, rate)) = decode_body(&stream) else {
-            println!("{net}.{sta:<9} absent: miniSEED decodes void ({} B)", stream.len());
+            println!(
+                "{net}.{sta:<9} absent: miniSEED decodes void ({} B)",
+                stream.len()
+            );
             continue;
         };
         let _ = rate;
@@ -387,7 +386,15 @@ fn seismic_day(day: &str, label: &str) -> Vec<(f64, f64, String)> {
         }
         let base_lo = start + 2.25 * 3600.0;
         let base_hi = start + 3.5 * 3600.0;
-        let onset = detect_onset(&bins, start + 3.5 * 3600.0, base_lo, base_hi, 6.0, 100.0, 0.5);
+        let onset = detect_onset(
+            &bins,
+            start + 3.5 * 3600.0,
+            base_lo,
+            base_hi,
+            6.0,
+            100.0,
+            0.5,
+        );
         let d = distance_km(lat, lon);
         match onset {
             Some(o) => {
@@ -435,9 +442,11 @@ fn seismic_day(day: &str, label: &str) -> Vec<(f64, f64, String)> {
     }
     let keep: Vec<&(f64, f64, String)> = rows
         .iter()
-        .filter(|(d, lag, _)| *lag > 0.0 && {
-            let v = d / lag;
-            (2.0..=6.0).contains(&v)
+        .filter(|(d, lag, _)| {
+            *lag > 0.0 && {
+                let v = d / lag;
+                (2.0..=6.0).contains(&v)
+            }
         })
         .collect();
     let num: f64 = keep.iter().map(|(d, lag, _)| d * lag).sum();
@@ -452,7 +461,6 @@ fn seismic_day(day: &str, label: &str) -> Vec<(f64, f64, String)> {
     println!();
     rows
 }
-
 
 fn coops_series(
     station: &str,
@@ -557,12 +565,12 @@ fn detrend_tide(series: &[(f64, f64)], fit_end: f64) -> Vec<(f64, f64)> {
     if fit.len() < n_par * 4 {
         return series
             .iter()
-            .map(|(t, v)| {
-                match median(&fit.iter().map(|(_, v)| *v).collect::<Vec<_>>()) {
+            .map(
+                |(t, v)| match median(&fit.iter().map(|(_, v)| *v).collect::<Vec<_>>()) {
                     Some(base) => (*t, *v - base),
                     None => (*t, *v),
-                }
-            })
+                },
+            )
             .collect();
     }
     let mut ata = vec![vec![0.0; n_par]; n_par];
@@ -646,15 +654,7 @@ fn coops_section(day: &str, label: &str) -> Vec<(f64, f64)> {
             let base_lo = t_ref - 6.0 * 3600.0;
             let base_hi = t_ref - 900.0;
             let predicted = t_ref + d / LAMB_SPEED_KM_S;
-            let onset = detect_onset(
-                &resid,
-                predicted - 1800.0,
-                base_lo,
-                base_hi,
-                4.0,
-                0.2,
-                0.0,
-            );
+            let onset = detect_onset(&resid, predicted - 1800.0, base_lo, base_hi, 4.0, 0.2, 0.0);
             if let Some(o) = onset {
                 let lag = o.t - t_ref;
                 let peak = resid
@@ -672,13 +672,8 @@ fn coops_section(day: &str, label: &str) -> Vec<(f64, f64)> {
         }
         if let Some(wl) = &wl {
             let resid = detrend_tide(wl, t_ref - 900.0);
-            let onset = detect_peak_onset(
-                &resid,
-                t_ref,
-                t_ref - 24.0 * 3600.0,
-                t_ref - 900.0,
-                0.06,
-            );
+            let onset =
+                detect_peak_onset(&resid, t_ref, t_ref - 24.0 * 3600.0, t_ref - 900.0, 0.06);
             if let Some(o) = onset {
                 let lag = o.t - t_ref;
                 let amp = resid
@@ -726,7 +721,6 @@ fn coops_section(day: &str, label: &str) -> Vec<(f64, f64)> {
     println!();
     w_rows
 }
-
 
 #[derive(Clone, Copy)]
 struct TecSample {
@@ -822,7 +816,10 @@ fn tec_residual(
         .filter(|(t, _)| *t >= t_ref && *t <= t_ref + 6.0 * 3600.0)
         .map(|(t, v)| (*t, v - base))
         .collect();
-    let peak = after.iter().max_by(|a, b| a.1.abs().total_cmp(&b.1.abs())).copied();
+    let peak = after
+        .iter()
+        .max_by(|a, b| a.1.abs().total_cmp(&b.1.abs()))
+        .copied();
     let threshold = (3.0 * sigma).max(0.2);
     let onset = after.iter().find(|(_, v)| v.abs() > threshold).copied();
     match (onset, peak) {
@@ -917,11 +914,9 @@ fn tec_section(quiet_days: &[&str]) {
     println!();
 }
 
-
 fn s3_keys(prefix: &str) -> Vec<String> {
-    let url = format!(
-        "https://noaa-goes17.s3.amazonaws.com/?list-type=2&prefix={prefix}&max-keys=1000"
-    );
+    let url =
+        format!("https://noaa-goes17.s3.amazonaws.com/?list-type=2&prefix={prefix}&max-keys=1000");
     let Some(bytes) = fetch_raw_bytes(&url) else {
         return Vec::new();
     };
@@ -976,8 +971,18 @@ fn units_epoch(units: &str) -> Option<f64> {
     let day: i64 = rest.get(8..10)?.parse().ok()?;
     let hour: i64 = rest.get(11..13)?.parse().ok()?;
     let minute: i64 = rest.get(14..16)?.parse().ok()?;
-    let sec: f64 = rest.get(17..)?.trim_end().trim_end_matches('Z').parse().ok()?;
-    Some(days_from_civil(year, month, day)? as f64 * 86400.0 + hour as f64 * 3600.0 + minute as f64 * 60.0 + sec)
+    let sec: f64 = rest
+        .get(17..)?
+        .trim_end()
+        .trim_end_matches('Z')
+        .parse()
+        .ok()?;
+    Some(
+        days_from_civil(year, month, day)? as f64 * 86400.0
+            + hour as f64 * 3600.0
+            + minute as f64 * 60.0
+            + sec,
+    )
 }
 
 fn attr_scalar(file: &Hdf5File, ds: &str, attr: &str) -> Option<f64> {
@@ -995,22 +1000,50 @@ fn num_at(raw: &[u8], i: usize, dt: &omegaflow::hdf5::Hdf5Datatype) -> Option<f6
             let s = dt.size;
             let v: i128 = match s {
                 1 => {
-                    if dt.signed { raw.get(off).map(|b| *b as i8 as i128)? } else { raw.get(off).map(|b| *b as i128)? }
+                    if dt.signed {
+                        raw.get(off).map(|b| *b as i8 as i128)?
+                    } else {
+                        raw.get(off).map(|b| *b as i128)?
+                    }
                 }
                 2 => {
                     let b: [u8; 2] = raw.get(off..off + 2)?.try_into().ok()?;
-                    let u = if dt.endian == Endian::Be { u16::from_be_bytes(b) } else { u16::from_le_bytes(b) };
-                    if dt.signed { u as i16 as i128 } else { u as i128 }
+                    let u = if dt.endian == Endian::Be {
+                        u16::from_be_bytes(b)
+                    } else {
+                        u16::from_le_bytes(b)
+                    };
+                    if dt.signed {
+                        u as i16 as i128
+                    } else {
+                        u as i128
+                    }
                 }
                 4 => {
                     let b: [u8; 4] = raw.get(off..off + 4)?.try_into().ok()?;
-                    let u = if dt.endian == Endian::Be { u32::from_be_bytes(b) } else { u32::from_le_bytes(b) };
-                    if dt.signed { u as i32 as i128 } else { u as i128 }
+                    let u = if dt.endian == Endian::Be {
+                        u32::from_be_bytes(b)
+                    } else {
+                        u32::from_le_bytes(b)
+                    };
+                    if dt.signed {
+                        u as i32 as i128
+                    } else {
+                        u as i128
+                    }
                 }
                 8 => {
                     let b: [u8; 8] = raw.get(off..off + 8)?.try_into().ok()?;
-                    let u = if dt.endian == Endian::Be { u64::from_be_bytes(b) } else { u64::from_le_bytes(b) };
-                    if dt.signed { u as i64 as i128 } else { u as i128 }
+                    let u = if dt.endian == Endian::Be {
+                        u64::from_be_bytes(b)
+                    } else {
+                        u64::from_le_bytes(b)
+                    };
+                    if dt.signed {
+                        u as i64 as i128
+                    } else {
+                        u as i128
+                    }
                 }
                 _ => return None,
             };
@@ -1092,7 +1125,13 @@ fn glm_window(day: &str, doy: u32, label: &str, every: usize) -> Vec<GlmSummary>
         println!();
         return Vec::new();
     }
-    println!("granules listed: {} (every {}th), window {} ... {}", selected.len(), every, utc_str(lo), utc_str(hi));
+    println!(
+        "granules listed: {} (every {}th), window {} ... {}",
+        selected.len(),
+        every,
+        utc_str(lo),
+        utc_str(hi)
+    );
     let mut out = Vec::new();
     let mut fetched = 0usize;
     for key in &selected {
@@ -1144,7 +1183,10 @@ fn glm_window(day: &str, doy: u32, label: &str, every: usize) -> Vec<GlmSummary>
     println!("granules read: {fetched}");
     out.sort_by(|a, b| a.t.total_cmp(&b.t));
     let total: usize = out.iter().map(|s| s.count).sum();
-    println!("flashes in the 500-km ring: {total} in {} non-empty granules", out.len());
+    println!(
+        "flashes in the 500-km ring: {total} in {} non-empty granules",
+        out.len()
+    );
     for s in out.iter().take(18) {
         println!(
             "  {}  n={:<5} E={:.3e} J  centroid {:.0} km / {:.1} deg (bearing to centre)",
@@ -1180,7 +1222,6 @@ fn glm_window(day: &str, doy: u32, label: &str, every: usize) -> Vec<GlmSummary>
     println!();
     out
 }
-
 
 fn bgr_section() {
     println!("--- Infrasound: BGR IS52 PMCC detections, 2022 ---");
@@ -1271,7 +1312,6 @@ fn bgr_section() {
     println!();
 }
 
-
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Some(path) = arg_value(&args, "--inspect-glm") {
@@ -1344,6 +1384,10 @@ fn main() {
 
     println!("=== Verdict ===");
     println!("criterion: at least three phenomena with an onset and a consistent travel time.");
-    println!("phenomena with their own onset in this run: seismic, pressure, tsunami, TEC, GLM, infrasound.");
-    println!("aerosol/thermal: absent (FIRMS MAP_KEY, Copernicus token missing) — not filled with zero.");
+    println!(
+        "phenomena with their own onset in this run: seismic, pressure, tsunami, TEC, GLM, infrasound."
+    );
+    println!(
+        "aerosol/thermal: absent (FIRMS MAP_KEY, Copernicus token missing) — not filled with zero."
+    );
 }

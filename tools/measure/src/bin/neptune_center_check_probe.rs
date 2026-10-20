@@ -19,12 +19,13 @@ fn arg_token(args: &[String], key: &str) -> Option<String> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
-    let spk_path =
-        arg_token(&args, "--spk").unwrap_or("sources/naif.jpl.nasa.gov/nep097xl-899.bsp".to_string());
+    let spk_path = arg_token(&args, "--spk")
+        .unwrap_or("sources/naif.jpl.nasa.gov/nep097xl-899.bsp".to_string());
 
     let c_path = format!("{eph_dir}/ssd.jpl.nasa.gov/ephemeris_neptune_c.bin");
     let b_path = format!("{eph_dir}/ssd.jpl.nasa.gov/ephemeris_neptune.bin");
-    let (Some(cm), Some(bm)) = (load(&c_path, "neptune_c"), load(&b_path, "neptune")) else {
+    let body = std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset");
+    let (Some(cm), Some(bm)) = (load(&c_path, "neptune_c"), load(&b_path, &body)) else {
         eprintln!("neptune-center-check: {c_path} or {b_path} reads void");
         return;
     };
@@ -50,7 +51,7 @@ fn main() {
         let tdb = (jd - 2451545.0) * 86400.0;
         let (Some(c), Some(b)) = (
             body_barycenter_position("neptune_c", tdb, &cm),
-            body_barycenter_position("neptune", tdb, &bm),
+            body_barycenter_position(&body, tdb, &bm),
         ) else {
             jd += step;
             continue;

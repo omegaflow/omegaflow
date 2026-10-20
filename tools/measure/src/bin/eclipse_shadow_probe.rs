@@ -886,6 +886,9 @@ mod tests {
         Line {
             word: "synthetic",
             map: HashMap::new(),
+            sun_key: "sun",
+            moon_key: "moon",
+            earth_key: "earth",
             sun_radius_m: Some(6.957e8),
             moon_radius_m: Some(1.7374e6),
         }

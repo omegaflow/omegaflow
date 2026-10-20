@@ -1,4 +1,3 @@
-
 use omegaflow::archivar::wdc_ae;
 use omegaflow::archivar::{JsonVal, jpath, parse_json};
 use std::collections::BTreeMap;
@@ -728,8 +727,8 @@ fn main() {
         quiet_peak_draw.push(quiet_peaks[i]);
     }
     let quiet_peak_q95 = percentile(&mut quiet_peak_draw, 0.95);
-    let det_peak = quiet_peak_q95
-        .map(|q| event_rows.iter().filter(|(_, _, s)| s.peak >= q).count());
+    let det_peak =
+        quiet_peak_q95.map(|q| event_rows.iter().filter(|(_, _, s)| s.peak >= q).count());
     let det_both = quiet_peak_q95.zip(quiet_q95).map(|(qp, qs)| {
         event_rows
             .iter()
@@ -757,15 +756,13 @@ fn main() {
             .iter()
             .map(|(_, _, s)| s.noise)
             .collect::<Vec<_>>(),
-    )
-    ;
+    );
     let peak_med = median(
         &mut event_rows
             .iter()
             .map(|(_, _, s)| s.peak)
             .collect::<Vec<_>>(),
-    )
-    ;
+    );
 
     let mut rand_snr = Vec::new();
     let mut rand_noise = Vec::new();
@@ -836,8 +833,8 @@ fn main() {
     }
     let rand_quiet_fa3 = rand_quiet_snr.iter().filter(|&&s| s >= 3.0).count();
     let rand_quiet_peak_q95 = percentile(&mut rand_quiet_peak.clone(), 0.95);
-    let rand_quiet_fa_amp = quiet_peak_q95
-        .map(|q| rand_quiet_peak.iter().filter(|&&p| p >= q).count());
+    let rand_quiet_fa_amp =
+        quiet_peak_q95.map(|q| rand_quiet_peak.iter().filter(|&&p| p >= q).count());
 
     println!("# Band stack — measurements");
     println!();
@@ -846,10 +843,7 @@ fn main() {
     println!("Stations in catalogue: {}", STATIONS.len());
     println!();
     println!("## Stack (oval mask, front alignment)");
-    println!(
-        "SNR median: {}",
-        show(median(&mut snrs.clone()), 2)
-    );
+    println!("SNR median: {}", show(median(&mut snrs.clone()), 2));
     println!("SNR q95: {}", show(stack_q95, 2));
     println!(
         "Peak |dB/dt| median: {} nT/min, noise sigma median: {} nT/min",
@@ -946,7 +940,10 @@ fn main() {
         show(quiet_peak_q95, 2),
         show(rand_quiet_fa_amp.map(|v| v as f64), 0),
         rand_quiet_snr.len(),
-        show(rand_quiet_fa_amp.and_then(|v| frac(v, rand_quiet_snr.len())), 3),
+        show(
+            rand_quiet_fa_amp.and_then(|v| frac(v, rand_quiet_snr.len())),
+            3
+        ),
         show(rand_quiet_peak_q95, 2)
     );
     println!();

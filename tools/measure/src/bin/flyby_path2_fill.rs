@@ -1096,7 +1096,9 @@ fn main() {
     let items: Vec<(usize, SourceConfig, String)> = sources
         .iter()
         .enumerate()
-        .filter(|(_, s)| s.format == "ephemeris_binary" && s.body.as_deref() == Some(earth_name().as_str()))
+        .filter(|(_, s)| {
+            s.format == "ephemeris_binary" && s.body.as_deref() == Some(earth_name().as_str())
+        })
         .map(|(idx, s)| {
             (
                 idx,

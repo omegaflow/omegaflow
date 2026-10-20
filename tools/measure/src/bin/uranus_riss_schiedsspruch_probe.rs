@@ -149,7 +149,12 @@ fn load_line(
     eph_dir: &str,
 ) -> Line {
     let mut map: HashMap<String, BodyEphemeris> = HashMap::new();
-    for (name, asset) in [("earth", earth_asset), ("uranus", uranus_asset)] {
+    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
+    let target = std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset");
+    for (name, asset) in [
+        (receiver.as_str(), earth_asset),
+        (target.as_str(), uranus_asset),
+    ] {
         let path = format!("{eph_dir}/{netloc}/{asset}");
         let Some(bytes) = ensure_bin(&path, netloc, asset) else {
             println!(
@@ -171,12 +176,24 @@ fn load_line(
 
 fn predict(line: &Line, tdb: f64) -> Option<Predict> {
     let map = line.map.as_ref()?;
-    let station = body_barycenter_position("earth", tdb, map)?;
+    let station = body_barycenter_position(
+        &std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset"),
+        tdb,
+        map,
+    )?;
     let (em, _) = light_time_worldline(station, tdb, &|t| {
-        body_barycenter_position("uranus", t, map)
+        body_barycenter_position(
+            &std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset"),
+            t,
+            map,
+        )
     })?;
     let unit = toward_unit(station, em)?;
-    let vel = body_barycenter_velocity("uranus", tdb, map)?;
+    let vel = body_barycenter_velocity(
+        &std::env::var("OMEGAFLOW_BODY").expect("OMEGAFLOW_BODY unset"),
+        tdb,
+        map,
+    )?;
     Some(Predict { unit, vel })
 }
 
@@ -261,7 +278,7 @@ fn main() {
     let tsv_path = arg_token(&args, "--tsv")
         .unwrap_or("sources/vizier.cfa.harvard.edu/camargo_uranu_j.tsv".to_string());
     let eph_dir = arg_token(&args, "--eph-dir").unwrap_or("data".to_string());
-    let report_dir = arg_token(&args, "--report-dir").unwrap_or("zustand/reports".to_string());
+    let report_dir = arg_token(&args, "--report-dir").unwrap_or("zustand".to_string());
 
     let Some(lsk) = embedded_lsk() else {
         eprintln!(

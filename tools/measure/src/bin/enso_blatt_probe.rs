@@ -7,8 +7,8 @@ use omegaflow::archivar::usgs_comcat::{COMP_RATE, parse_bin as parse_comcat_bin}
 use omegaflow::lsk::{LeapSeconds, days_from_civil};
 use omegaflow::te::{
     BLATT_N_FLOOR, BlattPairSpec, conditional_embedded_te_phase, current_commit_sha,
-    surrogate_max_phase_n, surrogate_stats_phase_n, transfer_entropy_lag,
-    transfer_entropy_lag_h, write_blatt_pair,
+    surrogate_max_phase_n, surrogate_stats_phase_n, transfer_entropy_lag, transfer_entropy_lag_h,
+    write_blatt_pair,
 };
 use std::collections::HashMap;
 
@@ -899,11 +899,7 @@ fn main() {
         let order = match (b_best, s_best) {
             (Some(b), Some(s)) => {
                 orders.push(b > s);
-                if b > s {
-                    "Bz→SST"
-                } else {
-                    "SST→Bz"
-                }
+                if b > s { "Bz→SST" } else { "SST→Bz" }
             }
             _ => "—",
         };
@@ -916,7 +912,11 @@ fn main() {
     let stable = orders.windows(2).all(|w| w[0] == w[1]);
     println!(
         "Bandwidth verdict: {} over {} factors (max over lags 1–{MAX_LAG_MONTHS}; this estimator's lag 0 is the same estimate as lag 1, so it is not swept twice). Measured is the estimator's sensitivity to h, not significance: the surrogate threshold is not redrawn per factor — that stays the lag-sweep table above.",
-        if stable { "direction stable" } else { "direction flips with h" },
+        if stable {
+            "direction stable"
+        } else {
+            "direction flips with h"
+        },
         orders.len()
     );
     println!(

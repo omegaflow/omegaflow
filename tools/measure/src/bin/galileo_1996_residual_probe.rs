@@ -9,7 +9,7 @@ const MIN_CELL: usize = 30;
 const AU_M: f64 = 1.495978707e11;
 const PASS_GAP_S: f64 = 600.0;
 const TARGET_YEAR: u32 = 1996;
-const OUT: &str = "zustand/reports/galileo_1996_residual.txt";
+const OUT: &str = "state/reports/galileo_1996_residual.txt";
 
 fn norm(v: [f64; 3]) -> f64 {
     (v[0] * v[0] + v[1] * v[1] + v[2] * v[2]).sqrt()
@@ -133,7 +133,8 @@ struct PassRow {
 
 fn main() {
     let mut eph: HashMap<String, BodyEphemeris> = HashMap::new();
-    for b in ["galileo_daily", "earth"] {
+    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
+    for b in ["galileo_daily", receiver.as_str()] {
         if !load(b, &mut eph) {
             eprintln!("galileo: {b} ephemeris bin void");
             return;
@@ -188,7 +189,7 @@ fn main() {
         let t = *d as f64 * DAY_S;
         let (Some(p), Some(e)) = (
             body_barycenter_position("galileo_daily", t, &eph),
-            body_barycenter_position("earth", t, &eph),
+            body_barycenter_position(&receiver, t, &eph),
         ) else {
             no_geom += 1;
             continue;
@@ -362,10 +363,15 @@ fn main() {
         let mut line = format!("  mode {mode}:");
         for rl in ["CONJ", "MID", "OPP"] {
             let v = regs.get(rl);
+            let med = median(v.map(|x| x.as_slice()).unwrap_or(&[]));
+            let med_text = match med {
+                Some(m) => format!("{m:6.2}"),
+                None => String::from("  —   "),
+            };
             line.push_str(&format!(
-                "  {rl} n {:>2} med {:6.2} Hz",
+                "  {rl} n {:>2} med {} Hz",
                 v.map_or(0, |x| x.len()),
-                median(v.map(|x| x.as_slice()).unwrap_or(&[])).unwrap_or(f64::NAN)
+                med_text
             ));
         }
         out.push(line);
@@ -494,17 +500,32 @@ fn main() {
             out.push(format!("      {date}  rms {rr:8.2} Hz  n {nn}"));
         }
         let rms_list: Vec<f64> = opp_vals.iter().map(|x| x.1).collect();
-        let conj_med = median(&conj_vals).unwrap_or(f64::NAN);
+        let conj_med = match median(&conj_vals) {
+            Some(v) => format!("{v:.2}"),
+            None => String::from("absent"),
+        };
+        let med_text = match median(&rms_list) {
+            Some(v) => format!("{v:.2}"),
+            None => String::from("absent"),
+        };
+        let trim1_text = match median_trim_top(&rms_list, 1) {
+            Some(v) => format!("{v:.2}"),
+            None => String::from("absent"),
+        };
+        let trim2_text = match median_trim_top(&rms_list, 2) {
+            Some(v) => format!("{v:.2}"),
+            None => String::from("absent"),
+        };
         out.push(format!(
-            "    OPP n {}  med {:.2}  med-minus-1-loudest {:.2}  med-minus-2-loudest {:.2}  max {:.2} Hz",
+            "    OPP n {}  med {}  med-minus-1-loudest {}  med-minus-2-loudest {}  max {:.2} Hz",
             rms_list.len(),
-            median(&rms_list).unwrap_or(f64::NAN),
-            median_trim_top(&rms_list, 1).unwrap_or(f64::NAN),
-            median_trim_top(&rms_list, 2).unwrap_or(f64::NAN),
+            med_text,
+            trim1_text,
+            trim2_text,
             rms_list.iter().cloned().fold(f64::NEG_INFINITY, f64::max)
         ));
         out.push(format!(
-            "    CONJ pooled n {}  med {:.2} Hz  (era-cycle reference med OPP/CONJ from A)",
+            "    CONJ pooled n {}  med {} Hz  (era-cycle reference med OPP/CONJ from A)",
             conj_vals.len(),
             conj_med
         ));
