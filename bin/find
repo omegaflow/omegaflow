@@ -16,6 +16,7 @@ bin="$root/target/release/archive_search"
 engine=""
 top=""
 header=""
+fits=""
 value=""
 hex=""
 ctx=""
@@ -24,7 +25,7 @@ pdf=0
 
 usage() {
     cat >&2 <<'EOF'
-find: usage: bin/find [--header "a,b,c"] [--value <zahl>[,<zahl>...]] [--hex <hex>] [--context "<begriff>"] [--pdf] [--near <abs|N%>] --engine <kanal> --top N
+find: usage: bin/find [--header "a,b,c"] [--value <zahl>[,<zahl>...]] [--hex <hex>] [--fits "K=V,K=V"] [--context "<begriff>"] [--pdf] [--near <abs|N%>] --engine <kanal> --top N
   mindestens ein Köder: --header, --value oder --hex
   --header  alle Spaltennamen müssen im sniffed header stehen
   --value   der Wert muss im Text stehen, sonst unbewiesen
@@ -36,6 +37,7 @@ EOF
 while [ $# -gt 0 ]; do
     case "$1" in
         --header) [ $# -ge 2 ] && [ -n "$2" ] || usage; header="$2"; shift 2 ;;
+        --fits) [ $# -ge 2 ] && [ -n "$2" ] || usage; fits="$2"; shift 2 ;;
         --value)  [ $# -ge 2 ] && [ -n "$2" ] || usage; value="$2"; shift 2 ;;
         --hex)    [ $# -ge 2 ] && [ -n "$2" ] || usage; hex="$2"; shift 2 ;;
         --context) [ $# -ge 2 ] && [ -n "$2" ] || usage; ctx="$2"; shift 2 ;;
@@ -49,7 +51,7 @@ done
 
 [ -n "$engine" ] || usage
 [ -n "$top" ] || usage
- [ -n "$header$value$hex" ] || usage
+ [ -n "$header$value$hex$fits" ] || usage
 
 if [ -z "$header" ] && [ -z "$hex" ] && [ -n "$value" ]; then
     case "$value" in
@@ -216,6 +218,26 @@ while IFS= read -r line; do
         fi
     fi
 
+    fits_state=""
+    fits_note=""
+    if [ -n "$fits" ]; then
+        fits_line="$(printf '%s\n' "$sniff_out" | sed -n 's/^\(\[sniff\] \)\{0,1\}fits //p' | head -n 1)"
+        if [ -z "$fits_line" ]; then
+            fits_state="fehlt"
+            fits_note="kein FITS-Header"
+        else
+            miss=""
+            for kv in $(printf '%s' "$fits" | tr ',' ' '); do
+                printf '%s' "$fits_line" | grep -qF -- "$kv" || miss="$miss $kv"
+            done
+            if [ -z "$miss" ]; then
+                fits_state="erfüllt"
+            else
+                fits_state="fehlt"
+                fits_note="nicht:$miss"
+            fi
+        fi
+    fi
     value_state=""
     value_note=""
     if [ -n "$value" ]; then
@@ -298,6 +320,7 @@ while IFS= read -r line; do
 
     ok=1
     if [ -n "$header" ] && [ "$header_state" != erfüllt ]; then ok=0; fi
+    if [ -n "$fits" ] && [ "$fits_state" != erfüllt ]; then ok=0; fi
     if [ -n "$value" ] && [ "$value_state" != erfüllt ]; then ok=0; fi
     if [ -n "$hex" ] && [ "$hex_state" != erfüllt ]; then ok=0; fi
 
@@ -305,6 +328,7 @@ while IFS= read -r line; do
     if [ "$ok" -eq 0 ] && [ -n "$value" ] && [ "$value_state" = "nah" ]; then
         near_ok=1
         if [ -n "$header" ] && [ "$header_state" != erfüllt ]; then near_ok=0; fi
+        if [ -n "$fits" ] && [ "$fits_state" != erfüllt ]; then near_ok=0; fi
         if [ -n "$hex" ] && [ "$hex_state" != erfüllt ]; then near_ok=0; fi
         [ "$near_ok" -eq 1 ] && nearhit=1
     fi
@@ -325,6 +349,7 @@ while IFS= read -r line; do
     fi
     [ -n "$title" ] && printf '   %s\n' "$title"
     [ -n "$header" ] && printf '   header: %s%s\n' "$header_state" "$( [ -n "$header_note" ] && printf ' (%s)' "$header_note" )"
+    [ -n "$fits" ] && printf '   fits: %s%s\n' "$fits_state" "$( [ -n "$fits_note" ] && printf ' (%s)' "$fits_note" )"
     [ -n "$value" ] && printf '   value: %s%s\n' "$value_state" "$( [ -n "$value_note" ] && printf ' (%s)' "$value_note" )"
     [ -n "$hex" ] && printf '   hex: %s%s\n' "$hex_state" "$( [ -n "$hex_note" ] && printf ' (%s)' "$hex_note" )"
 done <"$tmp/urls"
