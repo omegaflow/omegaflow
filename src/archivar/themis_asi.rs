@@ -18,13 +18,13 @@ pub const STATIONS: [AsiStation; 24] = [
         code: "ATHA",
         lat_deg: 54.714,
         lon_deg: -113.314,
-        alt_m: Some(549.82),
+        alt_m: Some(550.22),
     },
     AsiStation {
         code: "CHBG",
         lat_deg: 49.814,
         lon_deg: -74.419,
-        alt_m: Some(363.92),
+        alt_m: Some(366.53),
     },
     AsiStation {
         code: "EKAT",
@@ -36,7 +36,7 @@ pub const STATIONS: [AsiStation; 24] = [
         code: "FSIM",
         lat_deg: 61.762,
         lon_deg: -121.221,
-        alt_m: Some(154.61),
+        alt_m: Some(152.85),
     },
     AsiStation {
         code: "FSMI",
@@ -48,19 +48,19 @@ pub const STATIONS: [AsiStation; 24] = [
         code: "FYKN",
         lat_deg: 66.560,
         lon_deg: -145.214,
-        alt_m: Some(137.15),
+        alt_m: Some(155.33),
     },
     AsiStation {
         code: "GAKO",
         lat_deg: 62.407,
         lon_deg: -145.158,
-        alt_m: Some(589.72),
+        alt_m: Some(601.12),
     },
     AsiStation {
         code: "GBAY",
         lat_deg: 53.316,
         lon_deg: -60.460,
-        alt_m: None,
+        alt_m: Some(41.58),
     },
     AsiStation {
         code: "GILL",
@@ -72,19 +72,19 @@ pub const STATIONS: [AsiStation; 24] = [
         code: "INUV",
         lat_deg: 68.413,
         lon_deg: -133.770,
-        alt_m: Some(11.47),
+        alt_m: Some(8.07),
     },
     AsiStation {
         code: "KAPU",
         lat_deg: 49.392,
         lon_deg: -82.320,
-        alt_m: Some(179.94),
+        alt_m: Some(198.38),
     },
     AsiStation {
         code: "KIAN",
         lat_deg: 66.971,
         lon_deg: -160.438,
-        alt_m: Some(33.15),
+        alt_m: Some(42.19),
     },
     AsiStation {
         code: "KUUJ",
@@ -108,13 +108,13 @@ pub const STATIONS: [AsiStation; 24] = [
         code: "PGEO",
         lat_deg: 53.815,
         lon_deg: -122.828,
-        alt_m: Some(756.26),
+        alt_m: Some(761.62),
     },
     AsiStation {
         code: "PINA",
         lat_deg: 50.163,
         lon_deg: -96.066,
-        alt_m: Some(247.63),
+        alt_m: Some(237.66),
     },
     AsiStation {
         code: "RANK",
@@ -132,7 +132,7 @@ pub const STATIONS: [AsiStation; 24] = [
         code: "SNKQ",
         lat_deg: 56.536,
         lon_deg: -79.231,
-        alt_m: Some(-11.22),
+        alt_m: Some(-28.75),
     },
     AsiStation {
         code: "TALO",
@@ -156,7 +156,7 @@ pub const STATIONS: [AsiStation; 24] = [
         code: "YKNF",
         lat_deg: 62.520,
         lon_deg: -114.313,
-        alt_m: Some(179.14),
+        alt_m: Some(135.06),
     },
 ];
 
@@ -396,12 +396,14 @@ mod tests {
         let ekat = station("EKAT").expect("ekat is measured");
         assert_eq!(ekat.lon_deg, -110.6703);
         assert_eq!(ekat.alt_m, Some(430.77));
-        assert_eq!(station("ATHA").and_then(|s| s.alt_m), Some(549.82));
-        assert_eq!(station("PGEO").and_then(|s| s.alt_m), Some(756.26));
+        assert_eq!(station("ATHA").and_then(|s| s.alt_m), Some(550.22));
+        assert_eq!(station("PGEO").and_then(|s| s.alt_m), Some(761.62));
         assert_eq!(station("MCGR").and_then(|s| s.alt_m), Some(102.57));
-        assert_eq!(station("GAKO").and_then(|s| s.alt_m), Some(589.72));
+        assert_eq!(station("GAKO").and_then(|s| s.alt_m), Some(601.12));
+        assert_eq!(station("FYKN").and_then(|s| s.alt_m), Some(155.33));
+        assert_eq!(station("SNKQ").and_then(|s| s.alt_m), Some(-28.75));
         assert_eq!(station("whit").and_then(|s| s.alt_m), None);
-        assert_eq!(station("gbay").and_then(|s| s.alt_m), None);
+        assert_eq!(station("gbay").and_then(|s| s.alt_m), Some(41.58));
         assert!(station("zzzz").is_none());
     }
 }
