@@ -4075,10 +4075,7 @@ fn bait_lines(bytes: &[u8]) -> Vec<String> {
                 || c.ends_with('?')
         });
     if prose {
-        let text = bait_text_lines(bytes);
-        if !text.is_empty() {
-            return text;
-        }
+        return bait_text_lines(bytes);
     }
     let generic = [
         "time", "date", "value", "id", "lat", "lon", "latitude", "longitude", "year",

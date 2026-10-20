@@ -18,6 +18,7 @@ top=""
 header=""
 value=""
 hex=""
+ctx=""
 
 usage() {
     cat >&2 <<'EOF'
@@ -35,6 +36,7 @@ while [ $# -gt 0 ]; do
         --header) [ $# -ge 2 ] && [ -n "$2" ] || usage; header="$2"; shift 2 ;;
         --value)  [ $# -ge 2 ] && [ -n "$2" ] || usage; value="$2"; shift 2 ;;
         --hex)    [ $# -ge 2 ] && [ -n "$2" ] || usage; hex="$2"; shift 2 ;;
+        --context) [ $# -ge 2 ] && [ -n "$2" ] || usage; ctx="$2"; shift 2 ;;
         --engine) [ $# -ge 2 ] && [ -n "$2" ] || usage; engine="$2"; shift 2 ;;
         --top)    [ $# -ge 2 ] && [ -n "$2" ] || usage; top="$2"; shift 2 ;;
         *) usage ;;
@@ -46,10 +48,10 @@ done
  [ -n "$header$value$hex" ] || usage
 
 if [ -z "$header" ] && [ -z "$hex" ] && [ -n "$value" ]; then
-    if [ "${#value}" -lt 6 ]; then
-        echo "find: \"$value\" ist zu kurz fuer einen Wert-Koeder (mind. 6 Zeichen)" >&2
-        exit 2
-    fi
+    case "$value" in
+        *.*) [ "${#value}" -ge 4 ] || { echo "find: \"$value\" ist zu kurz (mind. 4 Zeichen mit Dezimalpunkt)" >&2; exit 2; } ;;
+        *) [ "${#value}" -ge 6 ] || { echo "find: \"$value\" ist zu kurz (mind. 6 Zeichen)" >&2; exit 2; } ;;
+    esac
     echo "find: Warnung — Wert allein ist kein Beweis; ein Treffer bleibt eine Hypothese" >&2
 fi
 
@@ -84,30 +86,22 @@ if [ -n "$hex" ]; then
     esac
     [ $(( ${#hex} % 2 )) -eq 0 ] || usage
 fi
-value_num=""; value_tol=""
 if [ -n "$value" ]; then
-    case "$value" in
-        *±*) value_num="${value%%±*}"; value_tol="${value##*±}" ;;
-        *)
-            value_num="$value"
-            value_tol="$(awk -v v="$value" 'BEGIN{ n=split(v,a,"."); if(n==1){print "0.5"} else { d=length(a[2]); printf "%.10g", 5*10^(-(d+1)) } }')"
-            ;;
-    esac
-    case "$value_num" in
-        ""|*[!0-9.eE+-]*) echo "find: --value ist keine Zahl: $value" >&2; exit 2 ;;
-    esac
+    for v in $(printf '%s' "$value" | tr ',' ' '); do
+        case "$v" in
+            ""|*[!0-9.eE+-]*) echo "find: --value ist keine Zahl: $v" >&2; exit 2 ;;
+        esac
+    done
 fi
-
-# Query aus den Suchködern: Header als zitierte Spaltennamen, Wert als Zahl.
 # Hex bleibt draußen — es prüft nur.
-query=""
+query="$ctx"
 for col in $header_cols; do
     [ -n "$query" ] && query="$query "
     query="$query\"$col\""
 done
 if [ -n "$value" ]; then
     [ -n "$query" ] && query="$query "
-    query="$query$value"
+    query="$query$(printf '%s' "$value" | tr ',' ' ')"
 fi
 if [ -z "$query" ]; then
     echo "find: --hex allein liefert keinen Suchbegriff — --header oder --value nötig" >&2
@@ -215,19 +209,34 @@ while IFS= read -r line; do
     value_note=""
     if [ -n "$value" ]; then
         body="$(curl -sSL --max-time 60 -r 0-200000 "$url" 2>/dev/null | head -c 200000)"
-        nearest="$(printf '%s' "$body" | grep -oE '[-+]?[0-9]+([.][0-9]+)?([eE][-+]?[0-9]+)?' | awk -v t="$value_num" 'BEGIN{m=-1} { d=$1-t; if(d<0)d=-d; if(m<0||d<m){m=d} } END{ if(m>=0) printf "%.10g", m }')"
-        if [ -z "$nearest" ]; then
-            value_state="unbewiesen"
-            value_note="keine Zahl im Prefix"
-        else
-            delta="$(awk -v d="$nearest" 'BEGIN{printf "%.6g", d}')"
-            if awk -v d="$nearest" -v tol="$value_tol" 'BEGIN{exit !(d<=tol)}'; then
-                value_state="erfüllt"
-                value_note="Delta $delta (tol $value_tol)"
-            else
-                value_state="daneben"
-                value_note="Delta $delta > tol $value_tol"
+        total=0
+        ok_all=1
+        maxdelta=0
+        maxdelta_s=""
+        for v in $(printf '%s' "$value" | tr ',' ' '); do
+            total=$((total + 1))
+            tol="$(awk -v v="$v" 'BEGIN{ n=split(v,a,"."); if(n==1){print "0.5"} else { d=length(a[2]); printf "%.10g", 5*10^(-(d+1)) } }')"
+            nearest="$(printf '%s' "$body" | grep -oE '[-+]?[0-9]+([.][0-9]+)?([eE][-+]?[0-9]+)?' | awk -v t="$v" 'BEGIN{m=-1} { d=$1-t; if(d<0)d=-d; if(m<0||d<m){m=d} } END{ if(m>=0) printf "%.10g", m }')"
+            if [ -z "$nearest" ]; then
+                ok_all=0
+                maxdelta_s="keine Zahl"
+                continue
             fi
+            if ! awk -v d="$nearest" -v tol="$tol" 'BEGIN{exit !(d<=tol)}'; then
+                ok_all=0
+            fi
+            bigger="$(awk -v d="$nearest" -v m="$maxdelta" 'BEGIN{print (d>m)?"1":"0"}')"
+            if [ "$bigger" = "1" ]; then
+                maxdelta="$nearest"
+                maxdelta_s="$(awk -v d="$nearest" 'BEGIN{printf "%.6g", d}')"
+            fi
+        done
+        if [ "$ok_all" = "1" ]; then
+            value_state="erfüllt"
+            value_note="$total/$total, max Delta $maxdelta_s"
+        else
+            value_state="daneben"
+            value_note="$total Werte, max Delta $maxdelta_s"
         fi
     fi
     hex_state=""
