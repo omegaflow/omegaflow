@@ -2,7 +2,7 @@
   title: BPA-GIC: rollierendes Fenster, Wayback-Historie und die unabhängigen Linien 1989/2024
   class: survey
   date: 2026-10-20
-  sha256: c4d6aa55828a2a69e23bbf6c0344bf6343a52b0b090975d1e075ce3023d34530
+  sha256: 1abdd2e92fe2d7d37238a5e2939aa4128960c28c31c2141ed5e4321bf282f496
   status: live
   see-also: auftrag/auftrag-2026-10-20-sonne-erde-faeden.md docs/surveys/survey-2026-10-20-netzausfall-kante.md
 -->
@@ -23,13 +23,17 @@ unabhängige Linien für dieselben Stürme.
 | Inhalt | 1.152 vollständige 5-Minuten-Zeilen, 11 Stationsspalten (A) |
 | Kopfphrase | `Transformer Geomagnetically Induced Current` |
 | Takt | `at 5-minute intervals, last 4 days` |
-| Punkt-IDs | 198901, 64096, 151750, 146807, 61160, 64101, 142578, 170797, 56848, 128265, 35738 |
+| Punkt-IDs | 155882, 64096, 151750, 146807, 61160, 64101, 142578, 170797, 56848, 128265, 35738 (Stand 2026) |
 | Zeit | `17Oct2026 23:55, Pacific Time` |
 | Quelle | `BPA SCADA system` |
 
 **Die Zeitkodierung ist der Prüfstein.** Eine Datei mit denselben IDs, aber UTC
 oder 1-Minuten-Takt, ist **nicht** dieselbe Messung — sie wäre eine andere
 Reduktion. Das ist der `NAH`-Fall.
+
+**Korrektur an der Signaturliste:** `198901` kommt in **keinem** der 20 Snapshots
+vor. Die erste Punkt-ID ist 2013/2016 `62259`, ab 2020 `155882`. Die übrigen IDs
+stimmen.
 
 ## 2. Wayback: 20 Snapshots, kein Mai 2024
 
@@ -43,6 +47,12 @@ Reduktion. Das ist der `NAH`-Fall.
 Gesichert sind damit **~80 Tage GIC über 13 Jahre**, mit Sturmfenstern 2016-12,
 2017-02, 2021-03, 2023-03, 2024-07/09/12, 2025-05, 2026-04. Das ist eine
 **Stichprobe**, kein kontinuierliches Archiv.
+
+**Ernte 2026-10-20 (ausgeführt):** 20 von 20 Snapshots geladen, je **1.159 Zeilen**;
+Kopfphrase und 5-Minuten-Takt in **allen 20** vorhanden; `sha256` je Datei unter
+`sources/web.archive.org/bpa-gic/`. Die Spalten wechseln: 2013 `Sta 1…12` (ohne
+Namen), ab 2016 Stationsnamen (Eugene, Spokane, The Dalles …), ab 2020 mit
+`155882` als erster Punkt.
 
 **Offen:** Rückdaten bei `TOT-OpInfo@bpa.gov` (steht im Dateikopf) anfragen.
 
