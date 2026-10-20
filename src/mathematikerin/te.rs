@@ -258,12 +258,55 @@ pub fn transfer_entropy_lag(x: &[f32], y: &[f32], lag: usize) -> Option<f64> {
     Some(te / m as f64)
 }
 
+pub fn transfer_entropy_h(x: &[f32], y: &[f32], factor: f64) -> Option<f64> {
+    let n = x.len();
+    if n < 8 {
+        return None;
+    }
+    let hx = silverman(x)? * factor;
+    let hy = silverman(y)? * factor;
+    let m = n - 1;
+    let mut te = 0.0;
+    for t in 0..m {
+        let xt = x[t] as f64;
+        let xt1 = x[t + 1] as f64;
+        let yt = y[t] as f64;
+        let mut k3 = 0.0;
+        for s in 0..m {
+            k3 += gaussian(xt1 - x[s + 1] as f64, hx)
+                * gaussian(xt - x[s] as f64, hx)
+                * gaussian(yt - y[s] as f64, hy);
+        }
+        let p3 = k3 / m as f64;
+        let mut k1 = 0.0;
+        for &xs in x.iter().take(n) {
+            k1 += gaussian(xt - xs as f64, hx);
+        }
+        let p1 = k1 / n as f64;
+        let mut k2xy = 0.0;
+        for s in 0..n {
+            k2xy += gaussian(xt - x[s] as f64, hx) * gaussian(yt - y[s] as f64, hy);
+        }
+        let p2xy = k2xy / n as f64;
+        let mut k2x = 0.0;
+        for s in 0..m {
+            k2x += gaussian(xt1 - x[s + 1] as f64, hx) * gaussian(xt - x[s] as f64, hx);
+        }
+        let p2x = k2x / m as f64;
+        te += ((p3 * p1) / (p2xy * p2x).max(1e-300)).ln();
+    }
+    Some(te / m as f64)
+}
+
 pub fn transfer_entropy_lag_h(x: &[f32], y: &[f32], lag: usize, factor: f64) -> Option<f64> {
     let n = x.len();
     if n < 8 {
         return None;
     }
-    let shift = if lag == 0 { 1usize } else { lag };
+    if lag == 0 {
+        return transfer_entropy_h(x, y, factor);
+    }
+    let shift = lag;
     let m = n.checked_sub(shift)?;
     if m < 8 {
         return None;
@@ -3995,6 +4038,27 @@ mod tests {
         }
         let te = transfer_entropy(&x, &y).unwrap();
         assert!(te > 0.05, "causal TE should be positive, got {}", te);
+    }
+
+    #[test]
+    fn transfer_entropy_lag_h_at_zero_matches_contemporaneous() {
+        let n = 200;
+        let mut x = vec![0f32; n];
+        let mut y = vec![0f32; n];
+        for (t, yt) in y.iter_mut().enumerate() {
+            *yt = (t as f32 * 0.7).sin();
+        }
+        for t in 0..n - 1 {
+            x[t + 1] = 0.5 * x[t] + 0.6 * y[t];
+        }
+        let direct = transfer_entropy(&x, &y).unwrap();
+        let via_h = transfer_entropy_lag_h(&x, &y, 0, 1.0).unwrap();
+        assert!(
+            (direct - via_h).abs() < 1e-12,
+            "lag 0 with factor 1.0 must equal transfer_entropy: {} vs {}",
+            direct,
+            via_h
+        );
     }
 
     #[test]
