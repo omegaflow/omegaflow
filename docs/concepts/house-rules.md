@@ -2,7 +2,7 @@
   title: House Rules — die Essenz (was gilt)
   class: concept
   date: 2026-10-19
-  sha256: 6c751187cf971247d66deba4abcfa5bccc91b3a8bda12ce1517dd1609c7a7543
+  sha256: d4dd66d02bd06a980db51bdaa5a433eb76801050fbb7e52e3812f28e0c37266f
   status: live
   see-also: AGENTS.md docs/concepts/tools-map.md docs/granit.md docs/council.yaml
 -->
@@ -113,6 +113,16 @@ orphan-after: <YYYY-MM-DD>       # ohne neuen ack wird es orphan
 - **Der Gate prüft den ersten Atemzug:** ein neues `docs/`-Dokument ohne `owner`
   und `ack` ist kein Dokument. Bestehende Dokumente erhalten die Felder bei der
   nächsten Berührung; kein Nachtrag in einem Rutsch.
+
+### Ablage — kanonisch oder flüchtig
+
+Durable Daten gehen ausschließlich an kanonische Orte: `sources/` (Rohdaten,
+Assets), `research/findings/raw/` (Belege), `state/` (Zustand), `build/`
+(Artefakte), `projects/`, `post/`, `handover/`, `experiments/`, `templates/`.
+Flüchtiges geht nach `scratch/`. **`/tmp/opencode` ist Werkzeug-Müll**, kein
+Ablageort: kein durables Artefakt bleibt dort; nach jedem Lauf wird es geleert.
+Wer etwas behalten will, verschiebt es im selben Lauf. Ein Lauf, der nur in
+`/tmp` schreibt, hat nichts abgelegt.
 
 ## Code
 
