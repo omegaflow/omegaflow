@@ -6,7 +6,8 @@
 # Start (überlebt opencode-Abstürze): setsid ./bin/matrix_watchdog.sh &
 set -u
 cd "$(dirname "$0")/.." || exit 1
-LOG="${MATRIX_LOG:-/tmp/opencode/omegaflow_matrix.log}"
+source ./bin/_roots.sh
+LOG="${MATRIX_LOG:-$OMEGAFLOW_TMP/omegaflow_matrix.log}"
 STATION="${MATRIX_STATION:-41001}"
 while true; do
   if ! pgrep -x omegaflow >/dev/null; then

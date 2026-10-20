@@ -10,11 +10,12 @@
 # --once; without an argument the script loops itself.
 set -u
 cd "$(dirname "$0")/.." || exit 1
-LOG="${CI_WATCHDOG_LOG:-${OMEGAFLOW_TMP:-/tmp/opencode}/ci/ci_watchdog.log}"
-SEEN="${CI_WATCHDOG_SEEN:-${OMEGAFLOW_TMP:-/tmp/opencode}/ci/ci_watchdog.seen}"
+source ./bin/_roots.sh
+LOG="${CI_WATCHDOG_LOG:-$OMEGAFLOW_TMP/ci/ci_watchdog.log}"
+SEEN="${CI_WATCHDOG_SEEN:-$OMEGAFLOW_TMP/ci/ci_watchdog.seen}"
 POLL_S="${CI_WATCHDOG_POLL:-3840}"
 CI="${CI_MANAGE:-./bin/ci_manage}"
-SNAP="${CI_WATCHDOG_SNAPSHOT:-/tmp/opencode/ci_status.md}"
+SNAP="${CI_WATCHDOG_SNAPSHOT:-$OMEGAFLOW_TMP/ci_status.md}"
 UNITSRC="$PWD/bin"
 UNITDIR="$HOME/.config/systemd/user"
 mkdir -p "$(dirname "$LOG")"
