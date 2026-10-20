@@ -7,7 +7,8 @@ use omegaflow::archivar::usgs_comcat::{COMP_RATE, parse_bin as parse_comcat_bin}
 use omegaflow::lsk::{LeapSeconds, days_from_civil};
 use omegaflow::te::{
     BLATT_N_FLOOR, BlattPairSpec, conditional_embedded_te_phase, current_commit_sha,
-    surrogate_max_phase_n, surrogate_stats_phase_n, transfer_entropy_lag, write_blatt_pair,
+    surrogate_max_phase_n, surrogate_stats_phase_n, transfer_entropy_lag,
+    transfer_entropy_lag_h, write_blatt_pair,
 };
 use std::collections::HashMap;
 
@@ -876,7 +877,46 @@ fn main() {
             channel_pending_reason(&channels[CH_D20], "D20")
         );
     }
-    println!("KDE bandwidth h sensitivity (Silverman factor sweep): pending.");
+    println!("KDE bandwidth h sensitivity (Silverman factor sweep), pair Bz↔SST:");
+    println!(
+        "{:>6} | {:>14} | {:>14} | {:>9}",
+        "factor", "max TE(Bz→SST)", "max TE(SST→Bz)", "order"
+    );
+    let mut orders: Vec<bool> = Vec::new();
+    for &factor in &[0.5_f64, 0.75, 1.0, 1.5, 2.0] {
+        let mut b_best: Option<f64> = None;
+        let mut s_best: Option<f64> = None;
+        for &lag in &lags {
+            if let Some(v) = transfer_entropy_lag_h(&sst_paired, &bz_paired, lag, factor) {
+                b_best = Some(b_best.map_or(v, |m: f64| m.max(v)));
+            }
+            if let Some(v) = transfer_entropy_lag_h(&bz_paired, &sst_paired, lag, factor) {
+                s_best = Some(s_best.map_or(v, |m: f64| m.max(v)));
+            }
+        }
+        let order = match (b_best, s_best) {
+            (Some(b), Some(s)) => {
+                orders.push(b > s);
+                if b > s {
+                    "Bz→SST"
+                } else {
+                    "SST→Bz"
+                }
+            }
+            _ => "—",
+        };
+        println!(
+            "{factor:>6.2} | {} | {} | {order:>9}",
+            fmt_opt(b_best),
+            fmt_opt(s_best)
+        );
+    }
+    let stable = orders.windows(2).all(|w| w[0] == w[1]);
+    println!(
+        "Bandwidth verdict: {} over {} factors (maximum over lags 0–{MAX_LAG_MONTHS}). Measured is the estimator's sensitivity to h; the surrogate threshold is not redrawn per factor — that stays the statement of the lag-sweep table above.",
+        if stable { "direction stable" } else { "direction flips with h" },
+        orders.len()
+    );
     println!(
         "The area mean over the ±5° box is equal-weight (cos-lat variation < 0.4% over the box)."
     );
