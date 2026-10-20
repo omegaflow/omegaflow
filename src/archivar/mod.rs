@@ -39,6 +39,7 @@ pub mod bsp_reader;
 pub mod bzip2;
 pub mod camera_angles;
 pub mod carisma_mag;
+pub mod callisto;
 pub mod cassini_rsr;
 pub mod ccor;
 pub mod cdaweb_roti;

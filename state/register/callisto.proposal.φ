@@ -1,0 +1,17 @@
+url https://github.com/omegaflow/sources/releases/download/soleil.i4ds.ch/callisto_mro.bin
+terms other-attribution https://www.e-callisto.org/Data/data.html
+format callisto
+origin https://soleil.i4ds.ch/solarradio/data/2002-20yy_Callisto/
+compiler tools/harvest/src/bin/callisto_compiler.rs
+sha256 309ebd47f2cbada1dbed2da49f3a68a740294de2371a43de19af26afb4bc4068
+on earth 60.2 24.4 0.09
+ttl 604800
+field callisto_band_01_50_70_mhz callisto_band_01_50_70_mhz inverse-square em digits 60 0.0 0.0
+field callisto_band_02_70_95_mhz callisto_band_02_70_95_mhz inverse-square em digits 60 0.0 0.0
+field callisto_band_03_95_130_mhz callisto_band_03_95_130_mhz inverse-square em digits 60 0.0 0.0
+field callisto_band_04_130_175_mhz callisto_band_04_130_175_mhz inverse-square em digits 60 0.0 0.0
+field callisto_band_05_175_235_mhz callisto_band_05_175_235_mhz inverse-square em digits 60 0.0 0.0
+field callisto_band_06_235_315_mhz callisto_band_06_235_315_mhz inverse-square em digits 60 0.0 0.0
+field callisto_band_07_315_420_mhz callisto_band_07_315_420_mhz inverse-square em digits 60 0.0 0.0
+field callisto_band_08_420_560_mhz callisto_band_08_420_560_mhz inverse-square em digits 60 0.0 0.0
+field callisto_band_09_560_846_mhz callisto_band_09_560_846_mhz inverse-square em digits 60 0.0 0.0

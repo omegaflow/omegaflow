@@ -26,6 +26,7 @@ pub use archivar::bpc;
 pub use archivar::brainvision;
 pub use archivar::bsp_reader;
 pub use archivar::carisma_mag;
+pub use archivar::callisto;
 pub use archivar::cdaweb_roti;
 pub use archivar::cdaweb_tec;
 pub use archivar::cdf;
