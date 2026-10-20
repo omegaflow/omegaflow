@@ -1,7 +1,7 @@
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DSCOVR_H0_MAG&time.min={yesterday}T00:00:00Z&time.max={today}T00:00:00Z&parameters=B1F1,B1GSE&format=json
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 origin https://cdaweb.gsfc.nasa.gov/
-ttl 0
+ttl 3600
 status vorschlag
 at sun
 hapi B1F1=dscovr_mag_b1f1_nt B1GSE.0=dscovr_mag_bx_gse_nt B1GSE.1=dscovr_mag_by_gse_nt B1GSE.2=dscovr_mag_bz_gse_nt
@@ -13,7 +13,7 @@ field dscovr_mag_bz_gse_nt dscovr_mag_bz_gse_nt inverse-square em nT 3600 0.0 0.
 url https://geomag.usgs.gov/ws/data/?id=FRD&type=variation&format=json&elements=H,D,Z&starttime={hour_ago}&endtime={now}
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 origin https://geomag.usgs.gov/ws/data/
-ttl 0
+ttl 60
 status vorschlag
 format usgs_geomag_variation
 at earth
@@ -102,7 +102,7 @@ field goce_magnetic_field_intensity_nt goce_magnetic_field_intensity_nt inverse-
 
 url https://api.p2pquake.net/v2/jma/quake?limit=100&order=-1
 terms CC-BY-4.0 https://www.p2pquake.net/secondary_use/
-ttl 30
+ttl 3600
 at earth
 map .
 lat earthquake.hypocenter.latitude
@@ -112,7 +112,7 @@ channel energy:primary:wave:hyperbolic:elastic-solid:unspecified:none Pa
 
 url https://api.vedur.is/quakes/events
 terms free-open https://en.vedur.is/about-imo/the-web/conditions
-ttl 30
+ttl 3600
 at earth
 map features
 lat geometry.coordinates.1
@@ -271,7 +271,7 @@ last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 wh
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 terms CC-BY-4.0 https://www.seismicportal.eu/terms.html
-ttl 60
+ttl 3600
 at earth
 map features
 lat geometry.coordinates.1
@@ -280,7 +280,7 @@ quantity properties.depth quake_depth_km gaussian-inverse-square geometry km 360
 
 url http://arclink.ethz.ch/fdsnws/event/1/query?format=csv&starttime={today}&endtime={tomorrow}&minmagnitude=1.0&limit=500&orderby=time
 terms free-open https://www.seismo.ethz.ch/en/knowledge/earthquake-data-and-analysis-tools/waveform-data/
-ttl 300
+ttl 3600
 format csv
 on earth 0 0 0
 rows .
@@ -490,7 +490,7 @@ last items.value hydrosphere_river_stage_m inverse-square geometry m 900.0 0.0 0
 
 url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
 terms dl-de-by-2.0 https://www.imis.bfs.de/
-ttl 900
+ttl 3600
 at earth
 map features
 lat geometry.coordinates.1
@@ -949,7 +949,7 @@ url https://github.com/omegaflow/sources/releases/download/cpc.ncep.noaa.gov/qbo
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 origin https://www.cpc.ncep.noaa.gov/data/indices/qbo.u30.index
 compiler tools/harvest/src/bin/qbo_compiler.rs
-ttl 3600
+ttl 2592000
 format text
 on earth 1.35 103.99 0
 rows .
@@ -960,7 +960,7 @@ field 3 qbo_30hpa_ms patch-levy advective m/s 2592000.0 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/d20_thermocline.csv
 origin https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyIso.csv ; https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyIso.csv
 compiler tools/harvest/src/bin/d20_compiler.rs
-ttl 3600
+ttl 86400
 format text
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 on earth 0.0 -120.0 0
@@ -973,7 +973,7 @@ url https://github.com/omegaflow/sources/releases/download/data.pmel.noaa.gov/ta
 origin https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDyW.csv ; https://coastwatch.pfeg.noaa.gov/erddap/tabledap/pmelTaoDyW.csv
 compiler tools/harvest/src/bin/tao_wnd_compiler.rs
 sha256 b7719c89710e0701ccf31ad0c70ebabe0510a845ec707acaa56c521b395bb892
-ttl 3600
+ttl 86400
 format text
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 on earth 0.0 -120.0 0
@@ -1219,7 +1219,7 @@ field 0.temperature exosphere_ace_temp_k inverse-square thermal K 360.0 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/solar_regions.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-ttl 3600
+ttl 86400
 at sun
 map .
 lat latitude
@@ -2228,7 +2228,7 @@ format spectral
 origin procedure: NCEI solar spectral irradiance monthly netCDF (SSI), host ncei.noaa.gov
 compiler tools/harvest/src/bin/spectral_compiler.rs
 on earth 19.82 -155.47 4142.6
-ttl 86400
+ttl 2628000
 field irradiance spectral_irradiance_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/noaa-nesdis-swfo-ccor-1-pds.s3.amazonaws.com/ccor1_intensity_20250201.bin
@@ -10006,7 +10006,7 @@ origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync
 compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
 sha256 e9c75a3639143198d881733c28ae34384938f92b39078831cbb07912d77dbf9e
 at sun
-ttl 604800
+ttl 2628000
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/figshare.com/eaglei_2014.bin
@@ -10035,7 +10035,7 @@ format xp_spectra
 origin https://dc.g-vo.org/tap/sync
 compiler tools/harvest/src/bin/gaia_xp_compiler.rs
 at sun
-ttl 604800
+ttl 2628000
 field flux gaia_xp_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/geofon.gfz-potsdam.de/fdsn_event.bin
@@ -11371,7 +11371,7 @@ origin https://mast.stsci.edu/api/v0.1/Download/file
 compiler tools/harvest/src/bin/jwst_spectra_compiler.rs
 sha256 fb18192418cec56b5ff736f215e7c78572f2124e4f9460bada7e107f0bcc5535
 at sun
-ttl 604800
+ttl 2628000
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/radio.bin
@@ -11475,7 +11475,7 @@ origin https://zenodo.org/records/15472354
 compiler tools/harvest/src/bin/ceers_spectra_compiler.rs
 sha256 47937dec2184a870337462d5220285485c99306e838f3fb88e6f90dd1324438d
 at sun
-ttl 604800
+ttl 2628000
 field flux jwst_spectra_flux_W_m2_Hz inverse-square em W/m2/Hz 2628000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/DustStormDatabaseEXI_MY36_V1.xlsx
@@ -11590,7 +11590,7 @@ origin https://cdaw.gsfc.nasa.gov/CME_list/UNIVERSAL_ver2/text_ver/
 format soho_lasco_cme
 compiler tools/harvest/src/bin/soho_lasco_compiler.rs
 at sun
-ttl 86400
+ttl 2592000
 field soho_lasco_cme_speed_kms soho_lasco_cme_speed_kms patch-levy advective km/s 2592000 0.0 0.0
 quantity soho_lasco_cme_width_deg soho_lasco_cme_width_deg patch-levy geometry deg 2592000 0.0 0.0
 quantity soho_lasco_cme_pa_deg soho_lasco_cme_pa_deg patch-levy geometry deg 2592000 0.0 0.0
