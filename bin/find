@@ -19,10 +19,12 @@ header=""
 value=""
 hex=""
 ctx=""
+near=""
+pdf=0
 
 usage() {
     cat >&2 <<'EOF'
-find: usage: bin/find [--header "a,b,c"] [--value <zahl>] [--hex <hex>] --engine serper|exa|searxng --top N
+find: usage: bin/find [--header "a,b,c"] [--value <zahl>[,<zahl>...]] [--hex <hex>] [--context "<begriff>"] [--pdf] [--near <abs|N%>] --engine <kanal> --top N
   mindestens ein Köder: --header, --value oder --hex
   --header  alle Spaltennamen müssen im sniffed header stehen
   --value   der Wert muss im Text stehen, sonst unbewiesen
@@ -37,6 +39,8 @@ while [ $# -gt 0 ]; do
         --value)  [ $# -ge 2 ] && [ -n "$2" ] || usage; value="$2"; shift 2 ;;
         --hex)    [ $# -ge 2 ] && [ -n "$2" ] || usage; hex="$2"; shift 2 ;;
         --context) [ $# -ge 2 ] && [ -n "$2" ] || usage; ctx="$2"; shift 2 ;;
+        --near) [ $# -ge 2 ] && [ -n "$2" ] || usage; near="$2"; shift 2 ;;
+        --pdf) pdf=1; shift ;;
         --engine) [ $# -ge 2 ] && [ -n "$2" ] || usage; engine="$2"; shift 2 ;;
         --top)    [ $# -ge 2 ] && [ -n "$2" ] || usage; top="$2"; shift 2 ;;
         *) usage ;;
@@ -56,7 +60,7 @@ if [ -z "$header" ] && [ -z "$hex" ] && [ -n "$value" ]; then
 fi
 
 case "$engine" in
-    serper|exa|searxng) ;;
+    serper|exa|searxng|zenodo|datacite|osf|figshare|dryad|pangaea|dataverse) ;;
     *) usage ;;
 esac
 case "$top" in
@@ -102,6 +106,9 @@ done
 if [ -n "$value" ]; then
     [ -n "$query" ] && query="$query "
     query="$query$(printf '%s' "$value" | tr ',' ' ')"
+fi
+if [ "$pdf" -eq 1 ]; then
+    query="$query filetype:pdf"
 fi
 if [ -z "$query" ]; then
     echo "find: --hex allein liefert keinen Suchbegriff — --header oder --value nötig" >&2
@@ -156,6 +163,7 @@ fi
 
 matches=0
 twins=0
+nears=0
 while IFS= read -r line; do
     [ -n "$line" ] || continue
     url="$(printf '%s\n' "$line" | sed -n 's/^url \([^[:space:]]*\).*/\1/p')"
@@ -208,9 +216,22 @@ while IFS= read -r line; do
     value_state=""
     value_note=""
     if [ -n "$value" ]; then
-        body="$(curl -sSL --max-time 60 -r 0-200000 "$url" 2>/dev/null | head -c 200000)"
+        body="$(curl -sSL --max-time 90 "$url" 2>/dev/null | head -c 30000000)"
+        case "$body" in
+            %PDF*)
+                if command -v pdftotext >/dev/null 2>&1; then
+                    printf '%s' "$body" > "$tmp/cand.pdf"
+                    pdftotext -q "$tmp/cand.pdf" "$tmp/cand.txt" 2>/dev/null
+                    if [ -s "$tmp/cand.txt" ]; then
+                        body="$(cat "$tmp/cand.txt")"
+                    fi
+                fi
+                ;;
+        esac
         total=0
         ok_all=1
+        far_any=0
+        near_any=0
         maxdelta=0
         maxdelta_s=""
         for v in $(printf '%s' "$value" | tr ',' ' '); do
@@ -219,12 +240,23 @@ while IFS= read -r line; do
             nearest="$(printf '%s' "$body" | grep -oE '[-+]?[0-9]+([.][0-9]+)?([eE][-+]?[0-9]+)?' | awk -v t="$v" 'BEGIN{m=-1} { d=$1-t; if(d<0)d=-d; if(m<0||d<m){m=d} } END{ if(m>=0) printf "%.10g", m }')"
             if [ -z "$nearest" ]; then
                 ok_all=0
+                far_any=1
                 maxdelta_s="keine Zahl"
                 continue
             fi
-            if ! awk -v d="$nearest" -v tol="$tol" 'BEGIN{exit !(d<=tol)}'; then
+            cls="$(awk -v d="$nearest" -v tol="$tol" -v v="$v" -v spec="$near" 'BEGIN{
+                ad=(v<0)?-v:v;
+                if (spec != "") {
+                    if (spec ~ /%$/) { p=spec; sub(/%$/,"",p); nb=ad*p/100 } else { nb=spec+0 }
+                } else {
+                    nb=20*tol; if (0.01*ad>nb) nb=0.01*ad
+                }
+                if (d<=tol) print 1; else if (ad>0 && d<=nb) print 2; else print 3 }')"
+            if [ "$cls" != "1" ]; then
                 ok_all=0
             fi
+            [ "$cls" = "2" ] && near_any=1
+            [ "$cls" = "3" ] && far_any=1
             bigger="$(awk -v d="$nearest" -v m="$maxdelta" 'BEGIN{print (d>m)?"1":"0"}')"
             if [ "$bigger" = "1" ]; then
                 maxdelta="$nearest"
@@ -234,6 +266,9 @@ while IFS= read -r line; do
         if [ "$ok_all" = "1" ]; then
             value_state="erfüllt"
             value_note="$total/$total, max Delta $maxdelta_s"
+        elif [ "$far_any" = "0" ] && [ "$near_any" = "1" ]; then
+            value_state="nah"
+            value_note="max Delta $maxdelta_s — anderes Werkzeug/Messpunkt denkbar"
         else
             value_state="daneben"
             value_note="$total Werte, max Delta $maxdelta_s"
@@ -263,6 +298,14 @@ while IFS= read -r line; do
     if [ -n "$value" ] && [ "$value_state" != erfüllt ]; then ok=0; fi
     if [ -n "$hex" ] && [ "$hex_state" != erfüllt ]; then ok=0; fi
 
+    nearhit=0
+    if [ "$ok" -eq 0 ] && [ -n "$value" ] && [ "$value_state" = "nah" ]; then
+        near_ok=1
+        if [ -n "$header" ] && [ "$header_state" != erfüllt ]; then near_ok=0; fi
+        if [ -n "$hex" ] && [ "$hex_state" != erfüllt ]; then near_ok=0; fi
+        [ "$near_ok" -eq 1 ] && nearhit=1
+    fi
+
     if [ "$ok" -eq 1 ]; then
         if [ -n "$header" ] && [ -n "$value" ] && [ -n "$hex" ]; then
             verdict="ZWILLING"
@@ -271,15 +314,16 @@ while IFS= read -r line; do
             verdict="MATCH"
         fi
         matches=$((matches + 1))
+    elif [ "$near" -eq 1 ]; then
+        verdict="NAH"
+        nears=$((nears + 1))
     else
         verdict="kein-match"
     fi
-
-    printf '\n== %s %s\n' "$verdict" "$url"
     [ -n "$title" ] && printf '   %s\n' "$title"
     [ -n "$header" ] && printf '   header: %s%s\n' "$header_state" "$( [ -n "$header_note" ] && printf ' (%s)' "$header_note" )"
     [ -n "$value" ] && printf '   value: %s%s\n' "$value_state" "$( [ -n "$value_note" ] && printf ' (%s)' "$value_note" )"
     [ -n "$hex" ] && printf '   hex: %s%s\n' "$hex_state" "$( [ -n "$hex_note" ] && printf ' (%s)' "$hex_note" )"
 done <"$tmp/urls"
 
-printf '\nfind: %s Kandidaten, %s Treffer, %s Zwillinge\n' "$candidates" "$matches" "$twins"
+printf '\nfind: %s Kandidaten, %s Treffer, %s Zwillinge, %s nah\n' "$candidates" "$matches" "$twins" "$nears"
