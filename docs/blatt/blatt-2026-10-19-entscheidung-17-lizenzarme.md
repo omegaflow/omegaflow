@@ -2,7 +2,7 @@
   title: Entscheidungstabelle — die 17 lizenzgesperrten Arme
   class: blatt
   date: 2026-10-19
-  sha256: 6945ca24bc7d25cd01777c37028aae1627be8f0951c0426ca421d52a3649b478
+  sha256: a3cf05561d1762bc638218e0abba7708779243140ffc5b824d6c3f84273dc008
   status: live
   see-also: phi/sources.φ tools/harvest/src/bin/ docs/surveys/survey-2026-10-09-redistribution-alternativen.md
 -->
@@ -48,7 +48,7 @@ gemessen (Operator-Gespräch 2026-10-11).
 | 12 | `modvolc` | `nrt3.modaps.eosdis.nasa.gov` | kein Block; `modvolc_thermal`-Compiler steht | **keine Lizenz** am HIGP-Host gemessen | B + LANCE/NRT (NASA-PD) | **B** — die LANCE-Route tragen, den lizenzlosen Arm nicht |
 | 13 | `ogimet` | `ogimet.com/cgi-bin/gsynres` | kein Block | keine offene Lizenz gemessen | B + Open-Meteo (CC-BY-4.0) / NCEI (PD) | **B** — offene Alternative ist gemessen |
 | 14 | `pradan_ch2` | `pradan.issdc.gov.in` (ISSDC-Login) | kein Block; Login-Arm | terms ungemessen; Zugang account-gebunden | C | **C** — kein Re-Host ohne terms; Chandrayaan-2 bleibt lokal |
-| 15 | `substorm` | `supermag.jhuapl.edu/lib/services/` | kein Block; SuperMAG-Konto existiert | Terms ungemessen; Account-Zugang | C | **C** — Account ist kein Redistributionsrecht |
+| 15 | `substorm` | `supermag.jhuapl.edu/lib/services/` | **Block, `terms no-redistribution`** (2026-10-20) | **keyless**: `list=newell` liefert CSV (200, 3 439 B); Redistribution untersagt | C | **C** — Zugang frei, Weitergabe nicht |
 | 16 | `tns` | `wis-tns.org` (Konto/UA) | kein Block; `TNS_API_KEY`/`TNS_UA` | terms ungemessen; Weitergabe unklar | C | **C** — öffentliche Objektlisten nur nach terms-Klärung; kein CDN |
 | 17 | `wwlln` | `wwlln.net/climate/th_yr/data/WWLLN_th_2025.nc.zip` | **declined commercial** (UW-Copyright) | kein Redistributionsrecht | B + GOES GLM (PD) | **B** — GLM trägt die Blitz-Messung bereits |
 
