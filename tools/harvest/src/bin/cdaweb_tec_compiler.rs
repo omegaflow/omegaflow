@@ -9,12 +9,21 @@ const NETLOC: &str = "cdaweb.gsfc.nasa.gov";
 const OUT_PATH: &str = "cdaweb_tec.bin";
 const COMPILER: &str = "tools/harvest/src/bin/cdaweb_tec_compiler.rs";
 const TTL_S: f64 = 86400.0;
+const CADENCE_S: f64 = 900.0;
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
         .position(|a| a == name)
         .and_then(|i| args.get(i + 1))
         .cloned()
+}
+
+fn arg_values(args: &[String], name: &str) -> Vec<String> {
+    args.iter()
+        .enumerate()
+        .filter(|(_, a)| *a == name)
+        .filter_map(|(i, _)| args.get(i + 1).cloned())
+        .collect()
 }
 
 fn type_name(t: u32) -> &'static str {
@@ -121,8 +130,7 @@ fn support_values(file: &CdfFile, bytes: &[u8], name: &str) -> Option<Vec<f64>> 
     Some(records.swap_remove(0).1)
 }
 
-fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
-    let label = source.unwrap_or(out);
+fn collect(bytes: &[u8], label: &str, records: &mut Vec<[f64; FIELDS]>) {
     let file = match CdfFile::parse(bytes) {
         Ok(f) => f,
         Err(note) => {
@@ -168,7 +176,6 @@ fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
     }
     let per = lat_vals.len() * n_lon;
 
-    let mut records: Vec<[f64; FIELDS]> = Vec::new();
     let mut skipped_epochs = 0usize;
     for (rec, vals) in &tec_records {
         let Some(&t) = epoch.get(rec) else {
@@ -195,7 +202,17 @@ fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
             }
         }
     }
+    eprintln!(
+        "{label}: {} epochs kept, {} skipped, {} grid points ({} lat x {} lon)",
+        tec_records.len() - skipped_epochs,
+        skipped_epochs,
+        per,
+        lat_vals.len(),
+        n_lon
+    );
+}
 
+fn finish(mut records: Vec<[f64; FIELDS]>, out: &str, origin: Option<&str>) {
     if records.is_empty() {
         eprintln!("no records — the bin stays unwritten (0 honored)");
         std::process::exit(1);
@@ -223,20 +240,12 @@ fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
     let t_min = records[0][3];
     let t_max = records[records.len() - 1][3];
     eprintln!(
-        "{out}: {} records ({} epoch(s) skipped), TEC [{}, {}] TECU, t [{}, {}] unix",
+        "{out}: {} records, TEC [{}, {}] TECU, t [{}, {}] unix",
         records.len(),
-        skipped_epochs,
         v_min,
         v_max,
         t_min,
         t_max
-    );
-    eprintln!(
-        "  {} grid points ({} lat x {} lon) x {} epochs",
-        per,
-        lat_vals.len(),
-        n_lon,
-        tec_records.len() - skipped_epochs
     );
     eprintln!(
         "  records {} bytes, sha256 {}",
@@ -265,7 +274,7 @@ fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
         None => out.to_string(),
     };
     println!("url https://github.com/omegaflow/sources/releases/download/{NETLOC}/{out_name}");
-    if let Some(src) = source {
+    if let Some(src) = origin {
         println!("origin {src}");
     }
     println!("compiler {COMPILER}");
@@ -276,23 +285,10 @@ fn emit(bytes: &[u8], out: &str, source: Option<&str>) {
     println!("cmap .");
     println!("lat lat");
     println!("lon lon");
-    println!("field cdaweb_tec_tecu cdaweb_tec_tecu inverse-square em TECU 86400 0.0 0.0");
-}
-
-fn compile_file(path: &str, out: &str) {
-    let Ok(bytes) = std::fs::read(path) else {
-        eprintln!("{path}: the file stays unread");
-        std::process::exit(1);
-    };
-    emit(&bytes, out, None);
-}
-
-fn compile_url(url: &str, out: &str) {
-    let Some(bytes) = fetch_raw_bytes(url) else {
-        eprintln!("{url}: the CDF stays unfetched");
-        std::process::exit(1);
-    };
-    emit(&bytes, out, Some(url));
+    println!(
+        "field cdaweb_tec_tecu cdaweb_tec_tecu inverse-square em TECU {} 0.0 0.0",
+        CADENCE_S as u64
+    );
 }
 
 fn main() {
@@ -306,16 +302,36 @@ fn main() {
         Some(v) => v,
         None => OUT_PATH.to_string(),
     };
-    if let Some(url) = arg_value(&args, "--url") {
-        compile_url(&url, &out);
-    } else if let Some(path) = arg_value(&args, "--file") {
-        compile_file(&path, &out);
-    } else {
+    let files = arg_values(&args, "--file");
+    let urls = arg_values(&args, "--url");
+    if files.is_empty() && urls.is_empty() {
         eprintln!(
-            "usage: cdaweb_tec_compiler --probe <cdf> | --file <cdf> | --url <cdf-url> [--out <bin>] [--ci-mode]"
+            "usage: cdaweb_tec_compiler --probe <cdf> | (--file <cdf> | --url <cdf-url>)... [--out <bin>] [--ci-mode]"
         );
         std::process::exit(2);
     }
+    let mut records: Vec<[f64; FIELDS]> = Vec::new();
+    for path in &files {
+        let Ok(bytes) = std::fs::read(path) else {
+            eprintln!("{path}: the file stays unread");
+            std::process::exit(1);
+        };
+        collect(&bytes, path, &mut records);
+    }
+    for url in &urls {
+        let Some(bytes) = fetch_raw_bytes(url) else {
+            eprintln!("{url}: the CDF stays unfetched");
+            std::process::exit(1);
+        };
+        collect(&bytes, url, &mut records);
+    }
+    let origin = if files.len() + urls.len() > 1 {
+        urls.first()
+            .map(|u| u.rsplit_once('/').map(|(dir, _)| dir).unwrap_or(u.as_str()))
+    } else {
+        urls.first().map(String::as_str)
+    };
+    finish(records, &out, origin);
     if ci_mode && !upload_release(NETLOC, &out) {
         std::process::exit(1);
     }
