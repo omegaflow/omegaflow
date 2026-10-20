@@ -1,5 +1,5 @@
 #!/bin/bash
-# lage — generiert ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/_lage.md aus git + Register + Gateway-Stand.
+# lage — gibt den Stand auf stdout aus (keine gespeicherte Lage-Datei).
 # Der Live-Index, den jede Sitzung zuerst liest. Kein Hand-Prosa, nur Abgeleitetes.
 set -u
 repo="${OMEGAFLOW_REPO:-$HOME/projects/omegaflow}"
@@ -91,6 +91,5 @@ done)
   fi
   echo
   echo "Regenerieren: \`bin/lage\`"
-} > ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/_lage.md
+}
 
-echo "geschrieben: ${OMEGAFLOW_WORK:-$HOME/projects/omegaflow-work}/rat/_lage.md (HEAD $head_sha)"
