@@ -2,7 +2,7 @@
   title: Ein Blatt Papier — das Ein-Blatt-Axiom der drei Kausalpfeile
   class: concept
   date: 2026-08-21
-  sha256: 6a51a57ca4dd389b50209c69db4e9b2b9df27131a75f3abf89f20984622025fd
+  sha256: 8bcbf943f4748e633afa4b545aea8027b91d4400d41010558e81c64c2720d8b3
   status: live
   see-also: docs/paper/laic-arrow-direction.md docs/concepts/kybernetische-astrophysik.md docs/SOURCE_PORT.md
 -->
@@ -101,8 +101,11 @@ Zahlen stehen erst da, wenn sie gemessen sind.
 - **Mess-Gates** (je Blatt): n ≥ 30 je Paar (Unterbestimmtheit = keine
   Aussage, keine Fabrikation), Mehrfachvergleichskorrektur über die
   Kanalpaare (`benjamini_hochberg` in `dispersion_solar_probe.rs` +
-  `multi_force_te_probe.rs`), Lag-Sweep statt
-  lag 0 (offen), KDE-Bandbreiten-Sensitivität (offen),
+  `multi_force_te_probe.rs`), **Lag-Sweep ab 0** (gemessen 2026-10-20 im Code:
+  `dispersion_solar_probe.rs:13` → `LAGS = [0, 4, 8]`, `multi_force_te_probe`
+  `--lags`, `enso_blatt_probe` 0…12 — das Gate ist gebaut, nicht offen),
+  KDE-Bandbreiten-Sensitivität (Sweep 2026-10-20 in `enso_blatt_probe` gebaut,
+  `transfer_entropy_lag_h` mit Silverman-Faktoren 0,5–2,0),
   Fenster-Kongruenz, Nullkontrolle (mindestens ein Kanal, der keinen
   Pfeil tragen darf, läuft mit).
 - **0-Kanon:** Ausfall = fehlt (Sample übersprungen), nie 0.0. Indizes
