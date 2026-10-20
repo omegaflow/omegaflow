@@ -2,7 +2,7 @@
   title: Survey — Hunga Tonga 2022: dieselbe Front in sechs Netzen
   class: survey
   date: 2026-10-20
-  sha256: 8319dfa8ab3d4e0b79f9c0ad839c82c3b9d07ef95fb7d597dad0c4c43194bc4f
+  sha256: c39b5a2794fc705de10893a08e9bbf593e2447e106d5968989e54caec62e99bd
   status: live
   see-also: docs/paper/tonga-lamb-crosscheck.md tools/measure/src/bin/hunga_tonga_netz_probe.rs
 -->
