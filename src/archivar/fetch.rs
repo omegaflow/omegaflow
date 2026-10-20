@@ -1445,7 +1445,6 @@ pub fn fetch_one_with_age(
                         if let Some(n) = now {
                             write_epoch_stamp(&cache_path, n);
                         }
-                        record_content_change(&cache_path, &cdn_body);
                     }
                     Err(_) => {
                         eprintln!("cache {}: write void — refetch next cycle", cache_path)
@@ -1482,7 +1481,6 @@ pub fn fetch_one_with_age(
                     if let Some(n) = now {
                         write_epoch_stamp(&cache_path, n);
                     }
-                    record_content_change(&cache_path, &r);
                 }
                 Err(_) => {
                     eprintln!("cache {}: write void — refetch next cycle", cache_path)
@@ -1569,34 +1567,6 @@ pub fn read_epoch_stamp(path: &str) -> Option<f64> {
     std::fs::read_to_string(stamp_path)
         .ok()
         .and_then(|t| t.trim().parse::<f64>().ok())
-}
-
-fn record_content_change(path: &str, body: &str) {
-    let digest = crate::archivar::sha256::sha256_hex(body.as_bytes());
-    let sha_path = format!("{path}.sha");
-    let previous = std::fs::read_to_string(&sha_path).ok();
-    if previous.as_deref() == Some(digest.as_str()) {
-        return;
-    }
-    if std::fs::write(&sha_path, &digest).is_err() {
-        return;
-    }
-    let stamp = match std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH) {
-        Ok(d) => d.as_secs_f64(),
-        Err(_) => return,
-    };
-    let log = cache_root().join("changes.log");
-    if let Some(parent) = log.parent() {
-        let _ = std::fs::create_dir_all(parent);
-    }
-    if let Ok(mut f) = std::fs::OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(&log)
-    {
-        use std::io::Write;
-        let _ = writeln!(f, "{stamp}\t{path}");
-    }
 }
 
 pub fn write_epoch_stamp(path: &str, epoch: f64) {
