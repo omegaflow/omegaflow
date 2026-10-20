@@ -1,0 +1,64 @@
+#!/bin/sh
+# bait — einen Köder aus beliebiger Quelle ziehen: Text, PDF, Bild.
+#
+#   bin/bait <datei>
+#
+# Text wird gelesen; PDF über pdftotext, und wenn dort keine Textschicht liegt,
+# über pdftoppm + tesseract; Bilder direkt über tesseract. Das Ergebnis geht als
+# Prosa in `archive_search --sniff … bait`, das daraus Bezeichner, Einheiten und
+# Werte zieht. Der Fund bleibt ein Fund nur mit Sniffer-Beweis.
+set -u
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+bin="$root/target/release/archive_search"
+src="${1:-}"
+tmp="$(mktemp /tmp/bait.XXXXXX.txt)"
+trap 'rm -f "$tmp"' EXIT
+
+if [ -z "$src" ] || [ ! -f "$src" ]; then
+    echo "bait: usage: bin/bait <datei>" >&2
+    exit 2
+fi
+if [ ! -x "$bin" ]; then
+    echo "bait: $bin fehlt — erst bauen" >&2
+    exit 2
+fi
+
+mime="$(file -b --mime-type -- "$src" 2>/dev/null || echo unknown)"
+case "$mime" in
+    application/pdf)
+        if command -v pdftotext >/dev/null 2>&1; then
+            pdftotext -q -- "$src" "$tmp" 2>/dev/null || true
+        fi
+        if [ ! -s "$tmp" ]; then
+            if command -v pdftoppm >/dev/null 2>&1 && command -v tesseract >/dev/null 2>&1; then
+                pdftoppm -r 200 -png -f 1 -l 1 -- "$src" /tmp/bait_page >/dev/null 2>&1 || true
+                page="$(ls /tmp/bait_page*.png 2>/dev/null | head -1)"
+                if [ -n "$page" ]; then
+                    tesseract "$page" "$tmp" >/dev/null 2>&1 || true
+                    mv "$tmp.txt" "$tmp" 2>/dev/null || true
+                    rm -f "$page"
+                fi
+            fi
+        fi
+        ;;
+    image/*)
+        if command -v tesseract >/dev/null 2>&1; then
+            tesseract "$src" "$tmp" >/dev/null 2>&1 || true
+            mv "$tmp.txt" "$tmp" 2>/dev/null || true
+        else
+            echo "bait: tesseract fehlt — Bild bleibt unlesbar" >&2
+            exit 2
+        fi
+        ;;
+    *)
+        cp -- "$src" "$tmp"
+        ;;
+esac
+
+if [ ! -s "$tmp" ]; then
+    echo "bait: $src traegt keinen lesbaren Text (mime $mime)" >&2
+    exit 3
+fi
+
+echo "bait: $src ($mime, $(wc -c < "$tmp") B Text)"
+"$bin" --sniff "$tmp" bait values 2>&1 | sed -n 's/^\[sniff\] bait /bait /p'
