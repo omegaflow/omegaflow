@@ -2,7 +2,7 @@
   title: Fünf Funken der Anomalie-Suche
   class: concept
   date: 2026-09-05
-  sha256: f3de156b1f1a4a16ce9b5a8ed74f760da608851bb2e81505f5d0e3176e5d3731
+  sha256: 3e3a31377b603e2045e23521150a1763d3d84404525e9717c17a7055699c97cf
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/handover/archiv/handover-2026-09-09-mechanische-reste.md phi/reports/scan_coverage.φ tools/measure/src/bin/lsst_anomaly_probe.rs
 -->
@@ -10,8 +10,9 @@
 
 Selbsttragend. Dieses Konzept trägt die erweiterte Anomalie-Taxonomie der
 Nadel-V-Himmelssuche (`lsst_anomaly_probe`, tools/measure) und die fünf
-Funken, die aus der Verdrahtung abfallen. Status ehrlich: **ungebaut** —
-Ideen, keine Entscheidungen. Der Anker der Suche ist der Commit `e76e66f`
+Funken, die aus der Verdrahtung abfallen. Status ehrlich: **vier von fünf
+gemessen** (2026-10-21) — Funke 1, 3, 4 und 5 tragen je einen Survey mit
+Zahl; Funke 2 (TE zwischen Quellen) bleibt ungebaut. Der Anker der Suche ist der Commit `e76e66f`
 (AllWISE-W1-W2-AGN-Witness in die natural-class-Gate). Die Gate entfernt das
 *bekannt* Natürliche (vier unabhängige Zeugen: optische Klasse, intrinsische
 Farbe, Variabilität, Mid-IR); was sie lässt, heißt „keiner bekannten

@@ -2,7 +2,7 @@
   title: Vermessung aller Aufträge — 11 live, 47 geschlossen, 5 wiederaufgenommen (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: cf5a00fbb7ebb2d83831051c48c23ad47313d11eb76cea149952cce5cb1b7f46
+  sha256: 4d321ad8e246a04f4e7be557192bd1f12f05d035d384af21ecf1641696416886
   status: live
   owner: future
   ack: future 2026-10-21T11:40Z
@@ -34,7 +34,7 @@ nicht, dass der Auftrag abgeschlossen ist. Drei zentrale Zahlen bleiben
 | aktuell | **11** |
 | veraltet | **0** |
 | archiviert, geschlossen | **47** |
-| wiederaufgenommen | **5** |
+| wiederaufgenommen | **5** (1 geliefert, 1 teilweise, 3 offen) |
 | archiviert, offen ohne Abschluss | **0** |
 | zitierte Pfade, die nicht mehr existieren (live) | **12 von 45** (nun im Nachtrag benannt) |
 
@@ -49,10 +49,10 @@ nicht, dass der Auftrag abgeschlossen ist. Drei zentrale Zahlen bleiben
 | m10 | mountain | Kamera 194.640 B, 811 Posen | sha `0a65df59`, 811 `C1C2C3`, JD 1974-03-29…1975-03-17; ISIS-Run success; ENC/ALL_RES 404; G2 (84 Frames/33 Fits) ohne Artefakt | **aktuell** (G2 unprüfbar) | camera-sha + `C1C2C3` = 811 |
 | quasare | mountain | 303 D Rahmen, 1,13σ/1,52σ | 7 Produzenten-Artefakte vorhanden; Schließung mountain offen | **aktuell** | Schließung durch Owner, nicht Produzent |
 | sonne-erde | river | Matrix führt jeden Faden | MRO 276/77.276.657 B; EVE 275/108.203.177 B; ASI 24/24; IGETS 200; ttl-Aussage **invertiert** (560 mit, nicht ohne origin); schedule-Läufe existieren | **aktuell** (Nachtrag 2026-10-21) | IGETS 200 **und** `grep -c '^ttl '` = 1182, Zeile korrigiert |
-| vlies | future | 210 Zellen, 15 Kanäle | 14/15 Arme; 112 silent, 36 floor, 62 `alignment pending`; `ozzy` absent | **aktuell** (nach Korrektur) | nächster Lauf 15/15, 0 `alignment pending` |
+| vlies | future | 210 Zellen, 15 Kanäle | 14/15 Arme; 112 silent, 36 floor, 62 `alignment pending`; `ozzy` `pending` (nicht gebaut) | **aktuell** (nach Korrektur) | nächster Lauf 15/15, 0 `alignment pending` |
 | wartend | mycelium | 16 Warten aufgelöst | 22 Warten in `wartend.φ`; 16/16 A-Keys geschlossen; A17/A18-Zeilen falsch; inpop-Lizenz geschlossen | **aktuell** (Nachtrag 2026-10-21) | A17-Compiler + `gruan` je 1 Treffer |
 | archiv-wiederaufnahme | future | 5 offene Archivfälle | 47 geschlossen belegt; 5 wiederaufgenommen (flyby2, maschinen-audits, bio-kanal, stellar-xuv, phantom-island) | **neu** (2026-10-21) | je Fall ein Gate, siehe Auftrag |
-| bau-der-arme | future | 13 Bau-Punkte | 13 gebaut; Lizenztexte gemessen (auth-required); offen: 5 measure-Teile | **neu** (2026-10-21) | `archive_search`-Tests + fünf Funken-Protokolle |
+| bau-der-arme | future | 13 Bau-Punkte | 13 gebaut; Lizenztexte gemessen; 4 von 5 Funken gemessen; offen: Funke 2 (TE) | **neu** (2026-10-21) | `archive_search`-Tests + Funke-2-Protokoll |
 
 ## Die sechs Deltas im Einzelnen
 
@@ -96,10 +96,10 @@ Ein Marker ist ein **Fund, kein Urteil** — Wörter in Tabellenköpfen zählen 
 | Fall | Linie | offen | Gate |
 |---|---|---|---|
 | `2026-08-30-flyby2-addendum` | mountain | Frist verpasst, σ-Metrik `pending` | `rg 'superseded as the scoring instance'` = 0 |
-| `2026-08-30-maschinen-audits` | mycelium | Nummern-Audit fehlt | Binary läuft über `docs/blatt/` |
-| `2026-09-05-bio-kanal-zeugen` | future | O2/O3 nicht gemessen | Survey **oder** benanntes `pending` |
-| `2026-09-05-extern-stellar-aktivitaet-xuv-co` | future | 30 Wirte ohne XUV/C-O-Tabelle | 30 Zeilen **oder** 30 Lücken |
-| `2026-09-05-phantom-island-williston-bc` | river | Ort/Zeit/Quelle `pending` | belegt **oder** `pending` mit Grund |
+| `2026-08-30-maschinen-audits` | mycelium | **Werkzeug geliefert 2026-10-21** — `number_audit`, 28 Befunde = neue `pending` | `survey-2026-10-21-nummern-audit.md` |
+| `2026-09-05-bio-kanal-zeugen` | future | O2/O3 nicht gemessen | gemessen oder `absent` belegt; `pending` zählt nicht |
+| `2026-09-05-extern-stellar-aktivitaet-xuv-co` | future | 30 Wirte ohne XUV/C-O-Tabelle | 30 gemessene Werte oder `absent` je Stern; `pending` zählt nicht |
+| `2026-09-05-phantom-island-williston-bc` | river | **geliefert, nicht geschlossen 2026-10-21** — Koordinaten `pending` | `survey-2026-10-21-phantom-island.md` |
 
 ### Alle 52
 
@@ -179,7 +179,7 @@ Ein Marker ist ein **Fund, kein Urteil** — Wörter in Tabellenköpfen zählen 
 ## Nächster Akt
 
 1. Die fünf Wiederaufnahmen abarbeiten (`projects/archiv-wiederaufnahme.md`);
-   je Fall ein Gate, kein `pending` ohne Grund.
+   je Fall ein Gate; ein begründetes `pending` ist kein Abschluss.
 2. Die sechs Nachtrags-Gates fahren (bias, ephemerides, flyby, gic, sonne-erde,
    wartend) — sie stehen in den Aufträgen.
 3. Erst danach entscheiden, ob ein Fall ins Archiv zurück darf.
