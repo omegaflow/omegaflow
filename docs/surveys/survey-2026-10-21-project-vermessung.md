@@ -2,7 +2,7 @@
   title: Vermessung aller Aufträge — 11 live, 47 geschlossen, 5 wiederaufgenommen (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: ab50909a35598ddc036763715f5ee7b3273ba5db8ee4db3a643f21b143fa0dc6
+  sha256: cf5a00fbb7ebb2d83831051c48c23ad47313d11eb76cea149952cce5cb1b7f46
   status: live
   owner: future
   ack: future 2026-10-21T11:40Z
@@ -97,9 +97,9 @@ Ein Marker ist ein **Fund, kein Urteil** — Wörter in Tabellenköpfen zählen 
 |---|---|---|---|
 | `2026-08-30-flyby2-addendum` | mountain | Frist verpasst, σ-Metrik `pending` | `rg 'superseded as the scoring instance'` = 0 |
 | `2026-08-30-maschinen-audits` | mycelium | Nummern-Audit fehlt | Binary läuft über `docs/blatt/` |
-| `2026-09-05-bio-kanal-zeugen` | future | O2/O3 nicht gemessen | Survey **oder** benanntes `absent` |
+| `2026-09-05-bio-kanal-zeugen` | future | O2/O3 nicht gemessen | Survey **oder** benanntes `pending` |
 | `2026-09-05-extern-stellar-aktivitaet-xuv-co` | future | 30 Wirte ohne XUV/C-O-Tabelle | 30 Zeilen **oder** 30 Lücken |
-| `2026-09-05-phantom-island-williston-bc` | river | Ort/Zeit/Quelle `pending` | belegt **oder** `absent` |
+| `2026-09-05-phantom-island-williston-bc` | river | Ort/Zeit/Quelle `pending` | belegt **oder** `pending` mit Grund |
 
 ### Alle 52
 
