@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: c5958a5bebee27c32ce5ebad82844e48eeef389920d51efb2b301e146187c25b
+  sha256: 247547f6a54003466d15a848d7d694e02814286727b8af610304d025329c9008
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/archiv/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
 -->
@@ -24,10 +24,10 @@ fabriziert.
 - **pending** — was noch nicht gemessen ist, bleibt pending; das Schweigen gehört den Ungeborenen. · `docs/granit.md:20`
 - **pending ⇒ offen, offen ⇏ pending** — `pending` ist die benannte Form der Offenheit, nicht ihr ganzer Umfang. Es gibt offene Fragen ohne `pending` (stille Lücke) und gelieferte, aber nicht geschlossene Aufträge. Geschlossen wird nur vom Operator. · Operator-Regel 2026-10-21
 - **0-Kanon** — die vier Zustände `null-echt` (fließt als 0), `absent` (Option/None), `pending` (Registerpflicht), `riss` (Widerspruch) kollabieren nie. · `AGENTS.md`
-- **Zwei Messzustände** — `pending` (nicht gemessen) und `gemessen` (Wert). `null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**, keine eigenen Nicht-Mess-Zustände. `offen` ist die Aufgabenebene, nicht der Messzustand.
+- **Zwei Messzustände** — `pending` (nicht gemessen, mit Grund-Tag `nicht_gemessen | nicht_nachgewiesen | nicht_berichtet | nicht_zugänglich`) und `gemessen` (Wert). `zensiert`, `null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**, keine eigenen Nicht-Mess-Zustände. `offen` ist die Aufgabenebene, nicht der Messzustand.
 - **descoped** — **kein Zustand.** Faktisch gibt es kein `descoped`. Wer „nicht im Fokus" meint, schreibt **`LOCK` + registriertes Operator-Wort + Grund**; wer „nein" meint, `declined`; wer auf etwas wartet, `wartend`; wer nicht gemessen hat, `pending`. Das Wort ist als Status **abgeschafft**.
 - **LOCK** — der fünfte Status-Tag: „vertagt / aus dem Fokus" **nur** mit registriertem Operator-Wort und Grund. Ein LOCK ohne Wort ist ein Parkplatz, kein Status. LOCK ist **kein** Abschluss und **kein** Gate; es hält den Punkt sichtbar, bis das Wort ihn löst. · `docs/concepts/archiv/house-rules-voll-2026-10-16.md:65-67`
-- **Autolock** — alles, was **weder in `work` noch in `public`** etwas zu suchen hat, sondern **`private`** gehört, und alles, was **rechtlich gelockt** ist (Lizenz, Vertrag, Weitergabeverbot, personenbezogene Daten). Es trägt **LOCK** unter dem stehenden Operator-Wort, ohne Einzelwort. Kein `descoped`, kein Abschluss, kein Gate. Nicht-personenbezogene, frei zugängliche technische Quellen (z. B. `demeter`) sind davon **nicht** gedeckt.
+- **Autolock** — **kein eigener Tag**: `LOCK` mit dem Grund `privat` oder `rechtlich`. Gegründet auf die Ablage (weder `work` noch `public`, sondern `private`) oder eine Rechtsbindung (Lizenz, Vertrag, Weitergabeverbot, personenbezogene Daten). Kein `descoped`, kein Abschluss, kein Gate. Frei zugängliche technische Quellen (z. B. `demeter`) sind **nicht** gedeckt.
 - **declined** — ein **klares Nein**: die Sache wird abgelehnt (Lizenz, Zugang, Frage, Quelle), mit Owner, Datum und Grund. Eine Entscheidung, kein Messzustand. „Never built, not needed" ist `declined` (oder `null-echt`, wenn die Nutzlosigkeit gemessen ist), **nicht** `descoped`. Ohne diese Angaben ist der Fall `pending`; `descoped` macht kein Gate grün.
 - **wartend** — eine offene Messung, die auf einen äußeren Trigger wartet (Antwort, Zugang, Termin, Lieferung). Sie gehört nach `state/wartend.φ` mit Owner und Trigger — **nicht** in `descoped`. „Extern blockiert" ist `wartend`, nicht aufgegeben.
 - **ICRS & TDB** — alle Körper sind gleich; die Raumzeit trägt die Adresse, nicht die Perspektive. · `docs/granit.md:17`, `docs/specs/eraen.md:18-23`

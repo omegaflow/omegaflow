@@ -2,7 +2,7 @@
   title: Messzustände — zwei Achsen: was wissen wir, was tun wir (2026-10-21)
   class: concept
   date: 2026-10-21
-  sha256: 2ca266d33df5a1d11de19185fab5ab77998fd199845ade9edd0e44d46e8fd8c0
+  sha256: 1b43d1d37595894b0e1af4a4bb3cb839905f11fd422695cc83d6adff1edf2050
   status: live
   owner: future
   ack: future 2026-10-21T13:40Z
@@ -21,15 +21,17 @@ als weiches Nein. Dieses Blatt trennt die Achsen.
 
 Es gibt **zwei** Zustände:
 
-- **`pending`** — nicht gemessen. Der Default für jede Lücke.
+- **`pending`** — nicht gemessen. Der Default; trägt einen **Grund-Tag**:
+  `nicht_gemessen | nicht_nachgewiesen | nicht_berichtet | nicht_zugänglich`.
 - **`gemessen`** — eine Messung liegt vor.
 
-`null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**, keine
-eigenen Nicht-Mess-Zustände:
+`zensiert`, `null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**,
+keine eigenen Nicht-Mess-Zustände:
 
 | Qualifier | Bedeutung | Bedingung |
 |---|---|---|
-| `null-echt` | der Wert ist 0 | 0 über n gemessen |
+| `zensiert` | Obergrenze `< L_D` | gemessen, aber unter der Nachweisgrenze; nie 0 |
+| `null-echt` | der Wert ist 0 | 0 über n gemessen; PDF schließt 0 ein |
 | `absent` | die Sache existiert nicht | Nicht-Existenz belegt; **selten** |
 | `riss` | Widerspruch | vergleichbar **und** Kettenfehler ausgeschlossen **und** Daten verschieden |
 
@@ -51,9 +53,12 @@ Diese Tags sind **orthogonal** zum Messzustand. Ein Punkt kann `pending` **und**
 |---|---|---|
 | `offen` | Aufgabe | Aufgabenebene, kein Messzustand |
 | `wartend` | äußerer Trigger fehlt | benannter Trigger; gehört nach `state/wartend.φ` |
-| `LOCK` | Operator hat vertagt | registriertes Operator-Wort + Grund; ohne Wort: Parkplatz |
+| `LOCK` | Operator hat vertagt | Operator-Wort + Grund; ohne Wort: Parkplatz |
 | `declined` | klares Nein | benannte Entscheidung mit Owner/Datum/Grund |
-| `Autolock` | privat / rechtlich gelockt | gehört nach `private` oder ist lizenz-/vertragsgebunden |
+
+**Autolock ist kein eigener Tag.** Er ist `LOCK` mit dem Grund `privat` oder
+`rechtlich`: die Ablage (`private`) und die Rechtsbindung sind der Grund, nicht
+der Zustand.
 
 **`descoped` gibt es nicht.** Es war nie ein Zustand. „Nicht im Fokus" ist
 `pending`; „nein" ist `declined`; „wartet" ist `wartend`. Wer aus dem Fokus
@@ -81,6 +86,6 @@ privat/vertagt, nicht abgelehnt.
   sehen nicht offen aus und müssen benannt werden.
 - **Geliefert ≠ geschlossen.** Ein Auftrag kann geliefert sein und ein
   `pending` tragen; geschlossen wird er vom Operator.
-- **Autolock** ist orts-/rechtsbasiert, nicht personenbasiert: `private` oder
-  rechtlich gelockt. Ein frei zugänglicher technischer Zugang (`demeter`) ist
-  kein Autolock.
+- **Autolock ist kein Tag, sondern ein LOCK-Grund:** `private` oder rechtlich
+  gelockt (Lizenz, Vertrag, Weitergabe). Ein frei zugänglicher technischer
+  Zugang (`demeter`) ist kein Autolock.
