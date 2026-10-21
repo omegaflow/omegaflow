@@ -250,6 +250,8 @@ mod web;
 mod wikidata;
 #[path = "archive_search/zenodo.rs"]
 mod zenodo;
+#[path = "archive_search/youcom.rs"]
+mod youcom;
 
 use crate::json::Json;
 use std::collections::{HashMap, HashSet};
@@ -406,6 +408,7 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--datacite" => Some(Mode::Net("datacite")),
         "--sniff" => Some(Mode::Net("sniff")),
         "--zenodo" => Some(Mode::Net("zenodo")),
+        "--youcom" => Some(Mode::Net("youcom")),
         "--hapi" => Some(Mode::Net("hapi")),
         "--isc" => Some(Mode::Net("isc")),
         "--base" => Some(Mode::Net("base")),
@@ -2358,7 +2361,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--gbooks|--google-books|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--youcom|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--gbooks|--google-books|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -2605,6 +2608,9 @@ fn usage() {
     );
     eprintln!(
         "  --hn        Hacker News via Algolia (hn.algolia.com/api/v1), keyless; url + title/author/points/comments/date"
+    );
+    eprintln!(
+        "  --youcom    You.com Search API (ydc-index.io/v1/search, POST), YOUCOM_API_KEY; url + title/description/date"
     );
     eprintln!(
         "  --openverse Openverse media search (api.openverse.org/v1/images), keyless; url + title/creator/license/source/media"
