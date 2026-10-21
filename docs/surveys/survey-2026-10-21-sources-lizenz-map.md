@@ -2,7 +2,7 @@
   title: Sources-Lizenzmap — NC ist frei, 55 von 63 LOCK lösen sich (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: c45785c8e7ff9530aaa0d2909cd235f6d39486ff814fca5de12a38f81c8c79f5
+  sha256: da70f866b8ec3cb5e948cc9ea418d21b7adb49d777283185e35cd3b9c238a650
   status: live
   owner: future
   ack: future 2026-10-21T15:45Z
@@ -109,7 +109,7 @@ und REGARDS nicht.
 | UCalgary | „openly and freely available … acknowledge and cite“ | `attribution` — frei |
 | AGRAV/BGI | frei für nicht-kommerzielle Forschung, kein Verkauf | `bgi-nc` — frei |
 | Copernicus | free, full and open access | `copernicus-attribution` — frei |
-| CSES | „open data“ nach Registrierung; **keine** Redistributionslizenz (SSDC bittet nur um Acknowledgment) | `pending` — nicht frei, offen |
+| CSES | „open data“ nach Registrierung; **keine** Redistributionslizenz (SSDC bittet nur um Acknowledgment) | Block entfernt → `state/wartend.φ` (`cses-open-data`) |
 
 **CDN:** `srd62_suprastrom.bin` (NIST) und `kcdc_kascade.bin` (KCDC) entfernt;
 `srd62-cdn.yml` und `kcdc-cdn.yml` gelöscht. NAOJ/SuperMAG/REGARDS hatten
@@ -123,10 +123,13 @@ keine CDN-Assets.
 - Keine `unknown`/`no-license`/`regards-pending`-Platzhalter mehr.
 - Die zwei `format reference`-Stubs (esdb/stp) tragen jetzt den gemessenen
   `wdcb-nc`-Term, keine Notiz.
+- `origin`-Prosa (187 Zeilen: Klammern/`procedure:`) aus dem Register gezogen
+  → `survey-2026-10-21-origin-prosa.md`; im Register bleibt nur die URL.
 - `source_validate`: 0 hard, 291 soft (unverändert).
 
 **Status:** Von den ursprünglichen 63 LOCK-Termen sind 56 frei, 7 LOCK
 (REGARDS jetzt gemessen). Die offenen unclear Terme sind gemessen: 5 neue
-LOCK, 1 `pending` (CSES — Registrierung ist keine Redistributionslizenz),
-0 `unknown`, 0 `no-license`, 0 `reviewed-2026-10-20`. CDN bereinigt
+LOCK, CSES → `wartend` (`cses-open-data`, Block entfernt; Registrierung ist
+keine Redistributionslizenz), 0 `unknown`, 0 `no-license`,
+0 `reviewed-2026-10-20`. CDN bereinigt
 (IEEG 120 → 0, NIST/KCDC entfernt), Guard aktiv.
