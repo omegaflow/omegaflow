@@ -10,6 +10,8 @@ mod cache;
 mod dedupe;
 #[path = "archive_search/fallback.rs"]
 mod fallback;
+#[path = "archive_search/filters.rs"]
+mod filters;
 #[path = "archive_search/artic.rs"]
 mod artic;
 #[path = "archive_search/arxiv_src.rs"]
@@ -573,6 +575,7 @@ fn main() {
     let mut allow_empty = false;
     let mut cache_clear = false;
     let mut cache_stats = false;
+    let mut filter_set = filters::Filters::default();
 
     let mut i = 0;
     while i < args.len() {
@@ -658,6 +661,51 @@ fn main() {
             "--cache-stats" => cache_stats = true,
             "--dedupe" => net::set_all_dedupe(true),
             "--no-dedupe" => net::set_all_dedupe(false),
+            "--since" => {
+                i += 1;
+                match args.get(i).and_then(|value| filters::parse_since(value)) {
+                    Some(date) => filter_set.since = Some(date),
+                    None => {
+                        eprintln!("archive_search: --since needs YYYY or YYYY-MM-DD");
+                        std::process::exit(2);
+                    }
+                }
+            }
+            "--until" => {
+                i += 1;
+                match args.get(i).and_then(|value| filters::parse_until(value)) {
+                    Some(date) => filter_set.until = Some(date),
+                    None => {
+                        eprintln!("archive_search: --until needs YYYY or YYYY-MM-DD");
+                        std::process::exit(2);
+                    }
+                }
+            }
+            "--type" => {
+                i += 1;
+                match args.get(i) {
+                    Some(kind) if !kind.trim().is_empty() => {
+                        filter_set.kind = Some(kind.trim().to_ascii_lowercase())
+                    }
+                    _ => {
+                        eprintln!("archive_search: --type needs article|preprint|dataset|book|thesis|...");
+                        std::process::exit(2);
+                    }
+                }
+            }
+            "--language" => {
+                i += 1;
+                match args.get(i) {
+                    Some(code) if filters::valid_language(code) => {
+                        filter_set.language = Some(code.to_ascii_lowercase())
+                    }
+                    _ => {
+                        eprintln!("archive_search: --language needs an ISO 639-1 code (two letters)");
+                        std::process::exit(2);
+                    }
+                }
+            }
+            "--explain" => filters::set_explain(true),
             "--jobs" => {
                 i += 1;
                 match args.get(i).and_then(|s| s.parse::<usize>().ok()) {
@@ -801,6 +849,14 @@ fn main() {
         }
         i += 1;
     }
+
+    if let (Some(since), Some(until)) = (&filter_set.since, &filter_set.until) {
+        if since > until {
+            eprintln!("archive_search: --since {since} lies after --until {until}");
+            std::process::exit(2);
+        }
+    }
+    filters::set(filter_set);
 
     if modes.is_empty() {
         if cache_clear {
@@ -2048,6 +2104,9 @@ fn usage() {
     );
     eprintln!(
         "all:      --all [--stop <n>] [--jobs <n>] [--dedupe|--no-dedupe] [--group astro|literature|web|data|all]   (dedupe on by default; --jobs default 4; rank order stays fixed)"
+    );
+    eprintln!(
+        "filters:  [--since YYYY[-MM-DD]] [--until YYYY[-MM-DD]] [--type <kind>] [--language <iso-639-1>] [--explain]   (openalex/crossref/semanticscholar/arxiv/pubmed/europepmc/ads carry them; --explain names every unsupported arm)"
     );
     eprintln!();
     eprintln!(
