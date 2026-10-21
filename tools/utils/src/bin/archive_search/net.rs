@@ -5295,10 +5295,50 @@ pub fn keyword_mode_count() -> usize {
 }
 
 const DEFAULT_ALL_STOP: usize = 20;
+const DEFAULT_ALL_JOBS: usize = 4;
 static ALL_STOP: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+static ALL_JOBS: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+static ALL_DEDUPE: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(true);
+static ALL_GROUP: Mutex<String> = Mutex::new(String::new());
 
 pub fn set_all_stop(n: usize) {
     ALL_STOP.store(n, std::sync::atomic::Ordering::Relaxed);
+}
+
+pub fn set_all_jobs(n: usize) {
+    ALL_JOBS.store(n, std::sync::atomic::Ordering::Relaxed);
+}
+
+pub fn set_all_dedupe(on: bool) {
+    ALL_DEDUPE.store(on, std::sync::atomic::Ordering::Relaxed);
+}
+
+pub fn set_all_group(name: &str) {
+    if let Ok(mut group) = ALL_GROUP.lock() {
+        *group = name.to_string();
+    }
+}
+
+fn all_jobs() -> usize {
+    match ALL_JOBS.load(std::sync::atomic::Ordering::Relaxed) {
+        0 => DEFAULT_ALL_JOBS,
+        n => n,
+    }
+}
+
+fn all_dedupe() -> bool {
+    ALL_DEDUPE.load(std::sync::atomic::Ordering::Relaxed)
+}
+
+fn all_group() -> String {
+    match ALL_GROUP.lock() {
+        Ok(group) => group.clone(),
+        Err(_) => String::new(),
+    }
+}
+
+pub fn group_allows(mode: &str) -> bool {
+    crate::groups::allows(mode, &all_group())
 }
 
 fn all_stop_override() -> Option<usize> {
@@ -5392,8 +5432,6 @@ fn builtin_yield(mode: &str) -> f64 {
 }
 
 fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<String> {
-    let mut out = Vec::new();
-    let mut full = Vec::new();
     let stop_threshold = resolve_stop_threshold(
         all_stop_override(),
         std::env::var("OMEGAFLOW_ALL_STOP").ok().as_deref(),
@@ -5403,61 +5441,91 @@ fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<Stri
         0 => stop_threshold,
         c => c,
     };
+    let group = all_group();
+    let jobs = all_jobs();
+    let dedupe = all_dedupe();
 
     let logged = load_logged_yields();
     let rank = |m: &str| match logged.get(m) {
         Some(y) => *y,
         None => builtin_yield(m),
     };
-    let mut modes: Vec<&str> = QUERY_MODES
-        .iter()
-        .copied()
-        .filter(|m| !PARAMETER_MODES.contains(m))
-        .collect();
+    let mut modes: Vec<String> = crate::groups::filter(
+        QUERY_MODES
+            .iter()
+            .copied()
+            .filter(|m| !PARAMETER_MODES.contains(m)),
+        &group,
+    )
+    .into_iter()
+    .map(str::to_string)
+    .collect();
     modes.sort_by(|a, b| {
         rank(b)
             .partial_cmp(&rank(a))
             .unwrap_or(std::cmp::Ordering::Equal)
     });
 
+    let mut out = Vec::new();
+    let group_note = if group.is_empty() || group == "all" {
+        String::new()
+    } else {
+        format!("; group {group}")
+    };
     out.push(format!(
-        "=== coverage: {} keyword modes ranked by measured yield; {} parameter-arm(s) held (need endpoint=/server=): {} — stop at {stop_threshold} result lines (--stop <n> raises it; OMEGAFLOW_ALL_STOP overrides) ===",
+        "=== coverage: {} keyword modes ranked by measured yield{}; {} parameter-arm(s) held (need endpoint=/server=): {} — stop at {stop_threshold} result lines (--stop <n> raises it; OMEGAFLOW_ALL_STOP overrides) ===",
         modes.len(),
+        group_note,
         PARAMETER_MODES.len(),
         PARAMETER_MODES.join(" ")
     ));
 
+    let total = modes.len();
     let mut accumulated = 0usize;
     let mut ran = 0usize;
     let mut stopped = false;
-    for mode in modes {
-        if ran >= min_arms && accumulated >= stop_threshold {
-            stopped = true;
-            break;
-        }
-        let lines = run_lines_max(mode, query, env, None, max);
+    let results = crate::pool::run_ranked(
+        &modes,
+        jobs,
+        |mode| run_lines_max(mode, query, env, None, max),
+        |_mode, lines| {
+            accumulated += lines
+                .iter()
+                .filter(|l| l.contains("] url "))
+                .count()
+                .min(arm_cap);
+            ran += 1;
+            if ran >= min_arms && accumulated >= stop_threshold && ran < total {
+                stopped = true;
+                false
+            } else {
+                true
+            }
+        },
+    );
+
+    for (mode, lines) in &results {
         let n = lines.len();
-        accumulated += lines
-            .iter()
-            .filter(|l| l.contains("] url "))
-            .count()
-            .min(arm_cap);
-        ran += 1;
-        full.push(format!("=== {} ({}) ===", mode, n));
-        full.extend(lines.iter().cloned());
         out.push(format!(
             "=== {} ({} lines; preview {}) ===",
             mode,
             n,
             n.min(5)
         ));
-        out.extend(lines.into_iter().take(5));
+        out.extend(lines.iter().take(5).cloned());
     }
     if stopped {
         out.push(format!(
             "=== stop: {accumulated} result line(s) ≥ {stop_threshold} after {ran} arm(s) — the remaining arms are held (pass --stop <n> or raise OMEGAFLOW_ALL_STOP to widen) ==="
         ));
     }
+
+    let mut full = Vec::new();
+    for (mode, lines) in &results {
+        full.push(format!("=== {} ({}) ===", mode, lines.len()));
+        full.extend(lines.iter().cloned());
+    }
+    let full = crate::dedupe::apply(&full, dedupe);
     if let Some(path) = write_full(query, &full) {
         out.push(format!(
             "full: {} lines -> {}  [read the full file to its end — the previewed 5 per source are not the result]",
@@ -5465,7 +5533,7 @@ fn all_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<Stri
             path
         ));
     }
-    out
+    crate::dedupe::apply(&out, dedupe)
 }
 
 fn spill_base(env_dir: Option<std::ffi::OsString>) -> std::path::PathBuf {
