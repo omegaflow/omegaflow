@@ -256,31 +256,36 @@ pub fn frame_motion(
             lon,
             alt,
             ..
-        } => match (spd, hdg) {
-            (Some(s), Some(h)) if s > 0.0 => surface_motion(SurfaceMotionParams {
-                body_name,
-                lat: *lat,
-                lon: *lon,
-                alt: *alt,
-                speed: s,
-                track: h,
-                vrate: 0.0,
-                t,
-                eph,
-            }),
-            _ => {
-                if eph.get(body_name).and_then(|e| e.props.as_ref()).is_some() {
-                    Some(Motion::Surface {
-                        body_name: body_name.clone(),
-                        lat: *lat,
-                        lon: *lon,
-                        alt: *alt,
-                    })
-                } else {
-                    None
+        } => {
+            let Some(alt) = *alt else {
+                return None;
+            };
+            match (spd, hdg) {
+                (Some(s), Some(h)) if s > 0.0 => surface_motion(SurfaceMotionParams {
+                    body_name,
+                    lat: *lat,
+                    lon: *lon,
+                    alt,
+                    speed: s,
+                    track: h,
+                    vrate: 0.0,
+                    t,
+                    eph,
+                }),
+                _ => {
+                    if eph.get(body_name).and_then(|e| e.props.as_ref()).is_some() {
+                        Some(Motion::Surface {
+                            body_name: body_name.clone(),
+                            lat: *lat,
+                            lon: *lon,
+                            alt,
+                        })
+                    } else {
+                        None
+                    }
                 }
             }
-        },
+        }
         Frame::Barycenter {
             body_name, scale, ..
         } => {
