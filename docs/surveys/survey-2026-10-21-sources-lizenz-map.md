@@ -2,7 +2,7 @@
   title: Sources-Lizenzmap — NC ist frei, 55 von 63 LOCK lösen sich (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 68efc1e40cc23bf9a29ec293fa6580f3e4b1a127d668a54eea4765254d9f0a61
+  sha256: 4e5360559db08e7330566b4d98f903f0e450e0d4987fa05c93a37e9d373b994a
   status: live
   owner: future
   ack: future 2026-10-21T15:45Z
@@ -83,7 +83,7 @@ und REGARDS nicht.
 
 ## CDN-Entfernung (2026-10-21)
 
-- **IEEG:** 120 `*_ieeg.bin` auf `openneuro.org` — Entfernung läuft.
+- **IEEG:** 120 `*_ieeg.bin` auf `openneuro.org` entfernt (nachher: 0).
 - **Lasair:** `skydirections.bin` entfernt; `skydirection-cdn.yml` ohne
   Lasair-Arm.
 - **CDDIS:** frei, Assets bleiben.
@@ -91,4 +91,4 @@ und REGARDS nicht.
 - **`openneuro-cdn.yml`:** Guard entfernt `*_ieeg.bin` nach dem Upload.
 
 **Status:** 56 frei, 6 LOCK, 1 pending; Register-Edit geschrieben; CDN für
-IEEG/Lasair bereinigt, Guard aktiv.
+IEEG/Lasair bereinigt (IEEG 120 → 0, Lasair 0), Guard aktiv.
