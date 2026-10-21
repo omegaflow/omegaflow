@@ -2,7 +2,7 @@
   title: Survey — Gaia DR4 Vorbereitung: 12-Quellen-Dry-Run mit Eigenbewegung und Parallaxe (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 3006ae727bfa09118a6db0aa67ed8363ebe762711b30729216e4f2e365295a55
+  sha256: 4bd5bab398497fd619c639c94902f4d24555ad9905aed1f2f39a7eb3e74c0983
   status: live
   see-also: docs/surveys/survey-2026-10-19-rohdaten-12von15.md docs/surveys/survey-2026-10-20-frame-wache.md projects/quasare.md tools/measure/src/bin/gaia_dr4_probe.rs
 -->
@@ -81,15 +81,30 @@ Anker-Datensatz. Die 512 Anker und die 88 ohne Gaia-Zuordnung bleiben offen.
   Qualitätsfilter) zeigen, dass die Zeitreihen echte Epochenastrometrie sind —
   kein Mittelwert.
 
+## 512-Anker-Matching (vorbereitet 2026-10-21)
+
+Die 512 Gaia-IDs der ICRF-Anker liegen aus der Frame-Wache:
+`sources/cdsarc.cds.unistra.fr/gaia_crf3_icrf3_positions.csv` (512 Zeilen,
+`Source,RA_ICRS,DE_ICRS,…`). `gaia_dr4_probe --anchors <csv>` matcht die
+DR4-Quellen über die Position (2″-Fenster) und hängt die exakte Anker-ID an
+den Fit. Getestet:
+
+- synthetischer Anker auf Quelle 2 → `anchor synthetic` (1/1),
+- die echten 512 Anker gegen die 12 Vorabquellen → **0/12** (erwartet: die
+  Vorabquellen sind keine ICRF-Anker).
+
+Damit ist der Anker-Pfad für den 2.12. gebaut; es fehlt nur die DR4-Epochen-
+datei für die 512.
+
 ## Was für den 2.12. noch fehlt
 
 1. **Exakte 64-bit-`source_id`.** Der generische VOTable-Reader legt `long` als
-   f64 ab; für das Matchen der 512 Anker braucht der DR4-Lauf einen
-   ID-exakten Parser (oder ein Positions-Matching).
+   f64 ab. Das Positions-Matching umgeht die Rundung für den Fit; für die
+   Archivierung der Anker-IDs bleibt ein ID-exakter Parser nötig.
 2. **Scan-Winkel-Konvention.** Die Vorzeichen von `pm_ra`/`pm_dec` sind aus
    `scan_pos_angle` übernommen, aber noch nicht gegen DR3/DR4-PMs geprüft.
-3. **Die 512 Anker.** Der TAP/Archive-Pfad für die Anker-IDs ist noch nicht
-   gebaut; die 12 Quellen sind der Methodenbeweis.
+3. **Die 512 Anker.** Der Anker-Katalog und das Positions-Matching stehen; der
+   TAP/Archive-Pfad für die DR4-Epochen der 512 fehlt noch.
 4. **Die 88 ohne Gaia.** Bleiben die zweite Lücke; DR4 kann sie nur schließen,
    wenn der Crossmatch sie enthält.
 
@@ -99,7 +114,8 @@ Anker-Datensatz. Die 512 Anker und die 88 ohne Gaia-Zuordnung bleiben offen.
 unzip -o dr4_prerelease.zip
 cargo build --release -p omegaflow-measure --bin gaia_dr4_probe
 ./target/release/gaia_dr4_probe \
-  --xml GAIA_DR4_PRERELEASE_EPOCH_ASTROMETRY_RAW.xml
+  --xml GAIA_DR4_PRERELEASE_EPOCH_ASTROMETRY_RAW.xml \
+  --anchors ../omegaflow-work/sources/cdsarc.cds.unistra.fr/gaia_crf3_icrf3_positions.csv
 ```
 
 ## Ablage

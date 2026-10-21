@@ -180,8 +180,55 @@ fn fit_pm4(ts: &[f64], al: &[f64], pa: &[f64], pf: &[f64]) -> Option<(f64, f64, 
     Some((pm_ra, pm_dec, plx, rms.sqrt()))
 }
 
+struct Anchor {
+    id: String,
+    ra: f64,
+    dec: f64,
+}
+
+fn read_anchors(path: &str) -> Vec<Anchor> {
+    let Ok(text) = std::fs::read_to_string(path) else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    for (i, line) in text.lines().enumerate() {
+        if i == 0 || line.trim().is_empty() {
+            continue;
+        }
+        let cols: Vec<&str> = line.split(',').collect();
+        if cols.len() < 3 {
+            continue;
+        }
+        let id = cols[0].trim().trim_matches('"').to_string();
+        let (Ok(ra), Ok(dec)) = (
+            cols[1].trim().parse::<f64>(),
+            cols[2].trim().parse::<f64>(),
+        ) else {
+            continue;
+        };
+        out.push(Anchor { id, ra, dec });
+    }
+    out
+}
+
+fn sep_arcsec(ra1: f64, dec1: f64, ra2: f64, dec2: f64) -> f64 {
+    let (ra1, dec1, ra2, dec2) = (
+        ra1.to_radians(),
+        dec1.to_radians(),
+        ra2.to_radians(),
+        dec2.to_radians(),
+    );
+    let a = ((dec1 - dec2) / 2.0).sin().powi(2)
+        + dec1.cos() * dec2.cos() * ((ra1 - ra2) / 2.0).sin().powi(2);
+    2.0 * a.sqrt().asin().to_degrees() * 3600.0
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    let anchors = match arg_value(&args, "--anchors") {
+        Some(path) => read_anchors(&path),
+        None => Vec::new(),
+    };
     let Some(path) = arg_value(&args, "--xml") else {
         eprintln!("usage: gaia_dr4_probe --xml <GAIA_DR4_PRERELEASE_EPOCH_ASTROMETRY_RAW.xml>");
         std::process::exit(2);
@@ -230,6 +277,7 @@ fn main() {
     }
 
     println!("sources {}", groups.len());
+    let mut matched = 0usize;
     for (key, epochs) in &groups {
         let ts: Vec<f64> = epochs.iter().map(|(t, _, _, _)| *t).collect();
         let al: Vec<f64> = epochs.iter().map(|(_, a, _, _)| *a).collect();
@@ -250,6 +298,27 @@ fn main() {
             Some(id) => format!("{id:.0}"),
             None => "n/a".to_string(),
         };
+        let anchor_id = if anchors.is_empty() {
+            None
+        } else {
+            let ra = key.0 as f64 / 1e6;
+            let dec = key.1 as f64 / 1e6;
+            let mut best: Option<(f64, &Anchor)> = None;
+            for anchor in &anchors {
+                let s = sep_arcsec(ra, dec, anchor.ra, anchor.dec);
+                if s <= 2.0 && best.map(|(b, _)| s < b).unwrap_or(true) {
+                    best = Some((s, anchor));
+                }
+            }
+            best.map(|(_, a)| a.id.clone())
+        };
+        if anchor_id.is_some() {
+            matched += 1;
+        }
+        let anchor_text = match &anchor_id {
+            Some(id) => format!("anchor {id}"),
+            None => "anchor -".to_string(),
+        };
         let Some((pm_ra, pm_dec, plx, rms)) = fit else {
             println!(
                 "source_id {id_text} ra0 {:.6} dec0 {:.6} | fit absent",
@@ -263,7 +332,7 @@ fn main() {
             None => "n/a".to_string(),
         };
         println!(
-            "source_id {id_text} ra0 {:.6} dec0 {:.6} | epochs {} | span {:.2} a | pm_ra {:+.4} mas/a | pm_dec {:+.4} mas/a | plx {} | rms {:.3} mas",
+            "source_id {id_text} ra0 {:.6} dec0 {:.6} | epochs {} | span {:.2} a | pm_ra {:+.4} mas/a | pm_dec {:+.4} mas/a | plx {} | rms {:.3} mas | {anchor_text}",
             key.0 as f64 / 1e6,
             key.1 as f64 / 1e6,
             epochs.len(),
@@ -274,4 +343,5 @@ fn main() {
             rms
         );
     }
+    println!("anchor matches {matched}/{}", groups.len());
 }
