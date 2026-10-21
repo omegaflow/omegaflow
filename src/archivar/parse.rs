@@ -138,7 +138,6 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_geomag_lat: Option<f64> = None;
     let mut cur_weberin_role: Option<WeberinRole> = None;
     let mut cur_fanout_delay: u64 = 0;
-    let mut cur_frame: Option<Frame> = None;
     let mut cur_anchor: Option<Anchor> = None;
     let mut cur_sha256: Option<String> = None;
     let mut cur_window: Option<(f64, f64)> = None;
@@ -151,7 +150,6 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 if cur_format == "kernel_text"
                     || cur_format == "reference"
                     || cur_format == "fp01"
-                    || cur_frame.is_some()
                     || cur_anchor.is_some()
                     || !cur_extracts.is_empty()
                     || !cur_channels.is_empty()
@@ -167,10 +165,10 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         sources.push(SourceConfig {
                             ttl: cur_ttl,
                             url: std::mem::take(&mut cur_url),
-                            frame: match &cur_frame {
-                                Some(f) => f.clone(),
-                                None => Frame::Manifest,
-                            },
+                            frame: cur_anchor
+                                .as_ref()
+                                .map(frame_from_anchor)
+                                .unwrap_or(Frame::Manifest),
                             anchor: cur_anchor.clone(),
                             model_kind: cur_model_kind.or_else(|| source_model_kind(&cur_format)),
                             format: std::mem::take(&mut cur_format),
@@ -306,7 +304,6 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_geomag_lat = None;
                 cur_weberin_role = None;
                 cur_fanout_delay = 0;
-                cur_frame = None;
                 cur_anchor = None;
                 cur_sha256 = None;
                 cur_window = None;
@@ -430,10 +427,6 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     }
                 }
                 cur_body = Some(body.clone());
-                cur_frame = Some(Frame::Barycenter {
-                    body_name: body,
-                    scale: 1.0,
-                });
             }
             "on" if parts.len() >= 2 => {
                 if cur_anchor.is_some() {
@@ -458,38 +451,35 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             continue;
                         }
                     };
-                    let lat = anchor.attrs.get("lat").and_then(|v| v.parse::<f64>().ok());
-                    let lon = anchor.attrs.get("lon").and_then(|v| v.parse::<f64>().ok());
-                    let alt = match anchor.attrs.get("alt").map(String::as_str) {
-                        Some("absent" | "pending") | None => None,
-                        Some(v) => match v.parse::<f64>() {
-                            Ok(v) => Some(v),
-                            Err(_) => {
-                                report_anomaly(
-                                    "Invalid Syntax",
-                                    &cur_url,
-                                    &format!("on alt non-numeric: {}", line),
-                                );
-                                continue;
-                            }
-                        },
-                    };
-                    let (Some(lat), Some(lon)) = (lat, lon) else {
+                    let lat_ok = anchor
+                        .attrs
+                        .get("lat")
+                        .is_some_and(|v| v.parse::<f64>().is_ok());
+                    let lon_ok = anchor
+                        .attrs
+                        .get("lon")
+                        .is_some_and(|v| v.parse::<f64>().is_ok());
+                    if !lat_ok || !lon_ok {
                         report_anomaly(
                             "Invalid Syntax",
                             &cur_url,
                             &format!("on lat/lon non-numeric: {}", line),
                         );
                         continue;
-                    };
+                    }
+                    if let Some(value) = anchor.attrs.get("alt").map(String::as_str)
+                        && !matches!(value, "absent" | "pending")
+                        && value.parse::<f64>().is_err()
+                    {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("on alt non-numeric: {}", line),
+                        );
+                        continue;
+                    }
                     cur_anchor = Some(anchor);
                     cur_body = Some(body.clone());
-                    cur_frame = Some(Frame::Surface {
-                        body_name: body,
-                        lat,
-                        lon,
-                        alt,
-                    });
                 } else {
                     if parts.len() < 4 {
                         report_anomaly(
@@ -521,27 +511,29 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             continue;
                         }
                     };
-                    let alt: Option<f64> = match parts.get(4).copied() {
-                        Some("absent" | "pending") => None,
-                        Some(s) => match s.parse() {
-                            Ok(v) => Some(v),
-                            Err(_) => {
-                                report_anomaly(
-                                    "Invalid Syntax",
-                                    &cur_url,
-                                    &format!("on alt non-numeric: {}", line),
-                                );
-                                continue;
-                            }
-                        },
-                        None => None,
-                    };
+                    let alt_token = parts.get(4).copied();
+                    if let Some(value) = alt_token
+                        && !matches!(value, "absent" | "pending")
+                        && value.parse::<f64>().is_err()
+                    {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("on alt non-numeric: {}", line),
+                        );
+                        continue;
+                    }
                     let mut attrs = BTreeMap::new();
                     attrs.insert("lat".to_string(), lat.to_string());
                     attrs.insert("lon".to_string(), lon.to_string());
-                    if let Some(alt) = alt {
-                        attrs.insert("alt".to_string(), alt.to_string());
-                    }
+                    attrs.insert(
+                        "alt".to_string(),
+                        match alt_token {
+                            Some("pending") => "pending".to_string(),
+                            Some("absent") | None => "absent".to_string(),
+                            Some(value) => value.to_string(),
+                        },
+                    );
                     cur_anchor = Some(Anchor {
                         kind: AnchorKind::On,
                         body: Some(body.clone()),
@@ -549,12 +541,6 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         legacy: true,
                     });
                     cur_body = Some(body.clone());
-                    cur_frame = Some(Frame::Surface {
-                        body_name: body,
-                        lat,
-                        lon,
-                        alt,
-                    });
                 }
             }
             "global" | "coverage" | "orbit" | "query" | "track" | "sky" | "absent" => {
@@ -667,10 +653,11 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     depth_key: String::new(),
                     depth_scale: 1.0,
                     name: parts[1].to_string(),
-                    frame_body: cur_frame
-                        .as_ref()
-                        .map(frame_body_name)
-                        .filter(|s| !s.is_empty()),
+                    frame_body: cur_anchor.as_ref().and_then(|anchor| {
+                        let frame = frame_from_anchor(anchor);
+                        let body = frame_body_name(&frame).to_string();
+                        (!body.is_empty()).then_some(body)
+                    }),
                 });
             }
             "rows" => {
@@ -2858,6 +2845,41 @@ fn require_attr<'a>(attrs: &'a BTreeMap<String, String>, key: &str) -> Result<&'
         .ok_or_else(|| format!("missing {}", key))
 }
 
+fn frame_from_anchor(anchor: &Anchor) -> Frame {
+    match anchor.kind {
+        AnchorKind::At => anchor
+            .body
+            .as_ref()
+            .map(|body| Frame::Barycenter {
+                body_name: body.clone(),
+                scale: 1.0,
+            })
+            .unwrap_or(Frame::Manifest),
+        AnchorKind::On => {
+            let Some(body) = anchor.body.as_ref() else {
+                return Frame::Manifest;
+            };
+            let Some(lat) = anchor.attrs.get("lat").and_then(|v| v.parse::<f64>().ok()) else {
+                return Frame::Manifest;
+            };
+            let Some(lon) = anchor.attrs.get("lon").and_then(|v| v.parse::<f64>().ok()) else {
+                return Frame::Manifest;
+            };
+            let alt = match anchor.attrs.get("alt").map(String::as_str) {
+                Some("absent" | "pending") | None => None,
+                Some(v) => v.parse::<f64>().ok(),
+            };
+            Frame::Surface {
+                body_name: body.clone(),
+                lat,
+                lon,
+                alt,
+            }
+        }
+        _ => Frame::Manifest,
+    }
+}
+
 fn parse_anchor_directive(
     kind: AnchorKind,
     parts: &[&str],
@@ -2878,10 +2900,15 @@ fn parse_anchor_directive(
         return Err("body absent".to_string());
     }
     match kind {
-        AnchorKind::At => {}
+        AnchorKind::At => {
+            if !legacy {
+                require_attr(&attrs, "frame")?;
+            }
+        }
         AnchorKind::On => {
             require_attr(&attrs, "lat")?;
             require_attr(&attrs, "lon")?;
+            require_attr(&attrs, "alt")?;
         }
         AnchorKind::Global => {
             require_attr(&attrs, "method")?;
@@ -2891,7 +2918,9 @@ fn parse_anchor_directive(
                 return Err("bbox or footprint absent".to_string());
             }
         }
-        AnchorKind::Orbit => {}
+        AnchorKind::Orbit => {
+            require_attr(&attrs, "frame")?;
+        }
         AnchorKind::Query | AnchorKind::Track => {
             for key in ["lat_key", "lon_key", "alt_key", "time_key"] {
                 require_attr(&attrs, key)?;
@@ -4436,6 +4465,13 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         let anchor = old_on[0].anchor.as_ref().expect("old on anchor");
         assert_eq!(anchor.kind, AnchorKind::On);
         assert!(anchor.legacy);
+        assert_eq!(anchor.attrs.get("alt").map(String::as_str), Some("30"));
+
+        let old_on_absent = parse_sources(
+            "url https://example.invalid/b2\nformat text\nttl 60\non earth 10 20 absent\n",
+        );
+        let anchor = old_on_absent[0].anchor.as_ref().expect("old on absent");
+        assert_eq!(anchor.attrs.get("alt").map(String::as_str), Some("absent"));
 
         let new_on = parse_sources(
             "url https://example.invalid/c\nformat text\nttl 60\n\
@@ -4445,6 +4481,15 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         assert_eq!(anchor.kind, AnchorKind::On);
         assert!(!anchor.legacy);
         assert!(matches!(new_on[0].frame, Frame::Surface { alt: None, .. }));
+    }
+
+    #[test]
+    fn anchor_required_attributes_are_not_invented() {
+        assert!(parse_anchor_directive(AnchorKind::Orbit, &["orbit", "iss"], false).is_err());
+        assert!(
+            parse_anchor_directive(AnchorKind::At, &["at", "sun", "frame=icrs"], false).is_ok()
+        );
+        assert!(parse_anchor_directive(AnchorKind::At, &["at", "sun", "other=x"], false).is_err());
     }
 
     #[test]
