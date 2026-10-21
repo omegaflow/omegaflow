@@ -190,7 +190,7 @@ mod matrix_record_tests {
             body_name: "earth".to_string(),
             lat: 34.7,
             lon: -72.4,
-            alt: 0.0,
+            alt: Some(0.0),
         }
     }
 
@@ -366,7 +366,7 @@ mod matrix_rebuild_tests {
             body_name: "earth".to_string(),
             lat: 34.7,
             lon: -72.4,
-            alt: 0.0,
+            alt: Some(0.0),
         }
     }
 
@@ -430,7 +430,7 @@ mod matrix_rebuild_tests {
             body_name: "earth".to_string(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         };
         let t0 = 21600.0 * 5.0;
         let mut channels = Vec::new();

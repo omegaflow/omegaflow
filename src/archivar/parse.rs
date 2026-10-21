@@ -426,9 +426,10 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         continue;
                     }
                 };
-                let alt: f64 = match parts.get(4) {
+                let alt: Option<f64> = match parts.get(4).copied() {
+                    Some("absent" | "pending") => None,
                     Some(s) => match s.parse() {
-                        Ok(v) => v,
+                        Ok(v) => Some(v),
                         Err(_) => {
                             report_anomaly(
                                 "Invalid Syntax",
@@ -438,14 +439,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             continue;
                         }
                     },
-                    None => {
-                        report_anomaly(
-                            "Invalid Syntax",
-                            &cur_url,
-                            &format!("on without alt refused — declare alt: {}", line),
-                        );
-                        continue;
-                    }
+                    None => None,
                 };
                 cur_frame = Some(Frame::Surface {
                     body_name: body,
@@ -2978,6 +2972,49 @@ mod tests {
             TauSource::Pending,
             "the 9-token form is migration input; it must not claim a measured tau"
         );
+    }
+
+    #[test]
+    fn on_without_alt_declares_no_measured_height() {
+        let content = "url https://example.org/x\nttl 60\non earth 0 0\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
+        let s = load_sources_from(content);
+        assert_eq!(s.len(), 1, "on without alt parses");
+        match &s[0].frame {
+            Frame::Surface { lat, lon, alt, .. } => {
+                assert_eq!(*lat, 0.0);
+                assert_eq!(*lon, 0.0);
+                assert_eq!(*alt, None, "no alt token is no height, never 0 m");
+            }
+            _ => panic!("expected a Surface frame"),
+        }
+    }
+
+    #[test]
+    fn on_absent_alt_declares_no_measured_height() {
+        for token in ["absent", "pending"] {
+            let content = format!(
+                "url https://example.org/x\nttl 60\non earth 0 0 {token}\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n"
+            );
+            let s = load_sources_from(&content);
+            assert_eq!(s.len(), 1, "on {token} parses");
+            match &s[0].frame {
+                Frame::Surface { alt, .. } => {
+                    assert_eq!(*alt, None, "{token} is no height, never 0 m");
+                }
+                _ => panic!("expected a Surface frame"),
+            }
+        }
+    }
+
+    #[test]
+    fn on_with_alt_keeps_the_measured_height() {
+        let content = "url https://example.org/x\nttl 60\non earth 0 0 5\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
+        let s = load_sources_from(content);
+        assert_eq!(s.len(), 1);
+        match &s[0].frame {
+            Frame::Surface { alt, .. } => assert_eq!(*alt, Some(5.0)),
+            _ => panic!("expected a Surface frame"),
+        }
     }
 
     #[test]
