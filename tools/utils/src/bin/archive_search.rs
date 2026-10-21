@@ -297,7 +297,12 @@ const SNIPPET_CHARS: usize = 200;
 struct State {
     scanned: u64,
     matched: u64,
-    results: Vec<(PathBuf, usize, Vec<String>)>,
+    results: Vec<(PathBuf, usize, usize, Vec<String>)>,
+}
+
+struct Fuzzy {
+    distance: usize,
+    tokens: Vec<String>,
 }
 
 struct PlainResult {
@@ -574,6 +579,9 @@ fn main() {
     let mut skip = 0usize;
     let mut binary = false;
     let mut content = false;
+    let mut fuzzy = false;
+    let mut fuzzy_distance = 1usize;
+    let mut git_history = false;
     let mut kind = index::Kind::Any;
     let mut sort = index::Sort::Name;
     let mut keywords: Vec<String> = Vec::new();
@@ -910,6 +918,21 @@ fn main() {
             }
             "--binary" => binary = true,
             "--content" => content = true,
+            "--git-history" => {
+                modes.push(Mode::Git);
+                git_history = true;
+            }
+            "--fuzzy" => fuzzy = true,
+            "--fuzzy-distance" => {
+                i += 1;
+                match args.get(i).and_then(|s| s.parse::<usize>().ok()) {
+                    Some(n) if n == 1 || n == 2 => fuzzy_distance = n,
+                    _ => {
+                        eprintln!("archive_search: --fuzzy-distance needs 1 or 2");
+                        std::process::exit(2);
+                    }
+                }
+            }
             "--count" => count_only = true,
             "--case" => case_sensitive = true,
             "--path" => path_match = true,
@@ -1079,6 +1102,7 @@ fn main() {
         modes.push(Mode::Plain);
     }
     let format = machine.unwrap_or(output::Format::Text);
+    let fuzzy_distance = if fuzzy { Some(fuzzy_distance) } else { None };
     let mut sink = output::Sink::new(format, allow_empty);
     let multi = modes.len() > 1;
     for mode in modes {
@@ -1124,6 +1148,7 @@ fn main() {
                             case_sensitive,
                             count_only,
                             include_glob.as_deref(),
+                            fuzzy_distance,
                         );
                     }
                 } else {
@@ -1138,6 +1163,7 @@ fn main() {
                         case_sensitive,
                         count_only,
                         include_glob.as_deref(),
+                        fuzzy_distance,
                     );
                 }
             }
@@ -1165,7 +1191,11 @@ fn main() {
                     None => PathBuf::from("."),
                 };
                 let query = keywords.join(" ");
-                let lines = git::run_lines(&repo, &query);
+                let lines = if git_history {
+                    git::history_lines(&repo, &query)
+                } else {
+                    git::run_lines(&repo, &query)
+                };
                 emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Verdict => {
@@ -2320,7 +2350,7 @@ fn usage() {
     eprintln!("archive_search — the divers' research tool (content, paths, NTFS, network modes)");
     eprintln!();
     eprintln!(
-        "content:  archive_search <keyword>... [--root <dir>]... [--lines <n>] [--files <n>] [--max-mb <n>] [--skip <n>] [--binary] [--count] [--case] [--include <glob>]"
+        "content:  archive_search <keyword>... [--root <dir>]... [--lines <n>] [--files <n>] [--max-mb <n>] [--skip <n>] [--binary] [--count] [--case] [--include <glob>] [--fuzzy [--fuzzy-distance <n>]]"
     );
     eprintln!("  --root <dir>  search root, repeatable (default $HOME)");
     eprintln!("  --lines <n>   hit lines shown per file (default 2)");
@@ -2334,6 +2364,9 @@ fn usage() {
     eprintln!("  --count       print 'n files, m hits for: …' only");
     eprintln!("  --case        case-sensitive (default case-insensitive)");
     eprintln!("  --include <glob>  only files whose name matches the glob (e.g. '*.rs')");
+    eprintln!(
+        "  --fuzzy       token-wise typo tolerance (distance 1 for tokens >=5 characters; --fuzzy-distance 2 for tokens >=9; short tokens, numbers and hex stay exact)"
+    );
     eprintln!();
     eprintln!(
         "output:   --jsonl|--csv|--bibtex|--ris [--allow-empty]   (machine-readable hits; exit 0 = hit, 3 = only pending/absent, 2 = usage)"
@@ -2369,7 +2402,7 @@ fn usage() {
     eprintln!(
         "paths:    archive_search --index [<query>...] [--path] [--kind any|file|dir] [--sort name|size|mtime]   (matches paths, not content; --path matches the full path)"
     );
-    eprintln!("history:  archive_search --git <query>");
+    eprintln!("history:  archive_search --git <query>   (content via git grep; --git-history adds git log -S, capped)");
     eprintln!("stats:    archive_search --stats   (per-arm yield from scratch/queries.φ)");
     eprintln!(
         "leads:    archive_search --leads <keyword>...   (un-curated candidate homes minus the registered hosts)"
@@ -3125,6 +3158,32 @@ fn collect_plain(
     case_sensitive: bool,
     include: Option<&str>,
 ) -> PlainResult {
+    collect_plain_fuzzy(
+        roots_given,
+        keywords,
+        lines_per_file,
+        max_files,
+        max_mb,
+        skip,
+        include_binary,
+        case_sensitive,
+        include,
+        None,
+    )
+}
+
+fn collect_plain_fuzzy(
+    roots_given: &[String],
+    keywords: &[String],
+    lines_per_file: usize,
+    max_files: usize,
+    max_mb: u64,
+    skip: usize,
+    include_binary: bool,
+    case_sensitive: bool,
+    include: Option<&str>,
+    fuzzy_distance: Option<usize>,
+) -> PlainResult {
     let mut roots: Vec<String> = Vec::new();
     if roots_given.is_empty() {
         match env::var("HOME") {
@@ -3146,6 +3205,7 @@ fn collect_plain(
         matched: 0,
         results: Vec::new(),
     };
+    let fuzzy = fuzzy_distance.map(|distance| Fuzzy::new(&needle, distance, case_sensitive));
     for root in &roots {
         walk(
             Path::new(root),
@@ -3155,13 +3215,14 @@ fn collect_plain(
             include_binary,
             case_sensitive,
             include,
+            fuzzy.as_ref(),
             &mut state,
         );
     }
-    state.results.sort_by(|a, b| b.1.cmp(&a.1));
-    let hits: u64 = state.results.iter().map(|r| r.1 as u64).sum();
+    state.results.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| b.2.cmp(&a.2)));
+    let hits: u64 = state.results.iter().map(|r| r.2 as u64).sum();
     let mut lines = Vec::new();
-    for (path, _count, hits_lines) in state.results.iter().skip(skip).take(max_files) {
+    for (path, _exact, _total, hits_lines) in state.results.iter().skip(skip).take(max_files) {
         lines.push(path.display().to_string());
         for line in hits_lines {
             lines.push(format!("  {}", line));
@@ -3186,8 +3247,9 @@ fn run_plain(
     case_sensitive: bool,
     count_only: bool,
     include: Option<&str>,
+    fuzzy_distance: Option<usize>,
 ) {
-    let result = collect_plain(
+    let result = collect_plain_fuzzy(
         roots_given,
         keywords,
         lines_per_file,
@@ -3197,6 +3259,7 @@ fn run_plain(
         include_binary,
         case_sensitive,
         include,
+        fuzzy_distance,
     );
     if count_only {
         out!(
@@ -3754,6 +3817,7 @@ fn walk(
     include_binary: bool,
     case_sensitive: bool,
     include: Option<&str>,
+    fuzzy: Option<&Fuzzy>,
     state: &mut State,
 ) {
     let entries = match fs::read_dir(dir) {
@@ -3782,6 +3846,7 @@ fn walk(
                 include_binary,
                 case_sensitive,
                 include,
+                fuzzy,
                 state,
             );
         } else {
@@ -3791,16 +3856,17 @@ fn walk(
                 }
             }
             state.scanned += 1;
-            if let Some((count, hits)) = search_file(
+            if let Some((exact, total, hits)) = search_file(
                 &path,
                 needle,
                 lines_per_file,
                 max_mb,
                 include_binary,
                 case_sensitive,
+                fuzzy,
             ) {
                 state.matched += 1;
-                state.results.push((path, count, hits));
+                state.results.push((path, exact, total, hits));
             }
         }
     }
@@ -3813,7 +3879,8 @@ fn search_file(
     max_mb: u64,
     include_binary: bool,
     case_sensitive: bool,
-) -> Option<(usize, Vec<String>)> {
+    fuzzy: Option<&Fuzzy>,
+) -> Option<(usize, usize, Vec<String>)> {
     let Ok(meta) = fs::metadata(path) else {
         return None;
     };
@@ -3825,25 +3892,43 @@ fn search_file(
         Some(t) => t,
         None => return None,
     };
-    let mut count = 0usize;
-    let mut hits: Vec<String> = Vec::new();
+    let mut exact = 0usize;
+    let mut total = 0usize;
+    let mut exact_hits: Vec<String> = Vec::new();
+    let mut fuzzy_hits: Vec<String> = Vec::new();
     for (idx, line) in text.lines().enumerate() {
-        if !line_matches(line, needle, case_sensitive) {
+        if line_matches(line, needle, case_sensitive) {
+            exact += 1;
+            total += 1;
+            if exact_hits.len() < max_lines {
+                exact_hits.push(format!(
+                    "{}: {}",
+                    idx + 1,
+                    truncate(line.trim(), SNIPPET_CHARS)
+                ));
+            }
             continue;
         }
-        count += 1;
-        if hits.len() < max_lines {
-            hits.push(format!(
-                "{}: {}",
-                idx + 1,
-                truncate(line.trim(), SNIPPET_CHARS)
-            ));
+        if let Some(f) = fuzzy {
+            if line_fuzzy_matches(line, f, case_sensitive) {
+                total += 1;
+                if fuzzy_hits.len() < max_lines {
+                    fuzzy_hits.push(format!(
+                        "{}: {}",
+                        idx + 1,
+                        truncate(line.trim(), SNIPPET_CHARS)
+                    ));
+                }
+            }
         }
     }
-    if count == 0 {
+    if total == 0 {
         None
     } else {
-        Some((count, hits))
+        let mut hits = exact_hits;
+        hits.extend(fuzzy_hits);
+        hits.truncate(max_lines);
+        Some((exact, total, hits))
     }
 }
 
@@ -3854,6 +3939,90 @@ fn line_matches(line: &str, needle: &[String], case_sensitive: bool) -> bool {
         let lower = line.to_lowercase();
         needle.iter().any(|n| lower.contains(&n.to_lowercase()))
     }
+}
+
+impl Fuzzy {
+    fn new(needle: &[String], distance: usize, case_sensitive: bool) -> Fuzzy {
+        let mut tokens: Vec<String> = Vec::new();
+        for item in needle {
+            for token in words(item, case_sensitive) {
+                if fuzzy_token_ok(&token) && !tokens.contains(&token) {
+                    tokens.push(token);
+                }
+            }
+        }
+        Fuzzy { distance, tokens }
+    }
+}
+
+fn words(text: &str, case_sensitive: bool) -> Vec<String> {
+    text.split(|c: char| !c.is_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .map(|w| {
+            if case_sensitive {
+                w.to_string()
+            } else {
+                w.to_lowercase()
+            }
+        })
+        .collect()
+}
+
+fn fuzzy_token_ok(token: &str) -> bool {
+    let chars: Vec<char> = token.chars().collect();
+    if chars.len() < 5 {
+        return false;
+    }
+    if chars.iter().any(|c| c.is_ascii_digit()) {
+        return false;
+    }
+    !(chars.len() >= 8 && chars.iter().all(|c| c.is_ascii_hexdigit()))
+}
+
+fn line_fuzzy_matches(line: &str, fuzzy: &Fuzzy, case_sensitive: bool) -> bool {
+    words(line, case_sensitive)
+        .iter()
+        .filter(|w| fuzzy_token_ok(w))
+        .any(|w| {
+            fuzzy
+                .tokens
+                .iter()
+                .any(|q| fuzzy_token_hit(w, q, fuzzy.distance))
+        })
+}
+
+fn fuzzy_token_hit(token: &str, query: &str, distance: usize) -> bool {
+    let token_chars: Vec<char> = token.chars().collect();
+    let query_chars: Vec<char> = query.chars().collect();
+    let shorter = token_chars.len().min(query_chars.len());
+    if shorter < 5 || token_chars.len().abs_diff(query_chars.len()) > distance {
+        return false;
+    }
+    let max = if distance >= 2 && shorter >= 9 { 2 } else { 1 };
+    osa_distance(&query_chars, &token_chars, max) <= max
+}
+
+fn osa_distance(a: &[char], b: &[char], max: usize) -> usize {
+    if a.len().abs_diff(b.len()) > max {
+        return max + 1;
+    }
+    let mut prev_prev = vec![0usize; b.len() + 1];
+    let mut prev: Vec<usize> = (0..=b.len()).collect();
+    let mut cur = vec![0usize; b.len() + 1];
+    for i in 1..=a.len() {
+        cur[0] = i;
+        for j in 1..=b.len() {
+            let cost = if a[i - 1] == b[j - 1] { 0 } else { 1 };
+            let mut value = (prev[j] + 1).min(cur[j - 1] + 1).min(prev[j - 1] + cost);
+            if i > 1 && j > 1 && a[i - 1] == b[j - 2] && a[i - 2] == b[j - 1] {
+                value = value.min(prev_prev[j - 2] + 1);
+            }
+            cur[j] = value;
+        }
+        std::mem::swap(&mut prev_prev, &mut prev);
+        std::mem::swap(&mut prev, &mut cur);
+    }
+    prev[b.len()]
 }
 
 fn glob_match(name: &str, glob: &str) -> bool {
@@ -3938,6 +4107,91 @@ mod tests {
     }
 
     #[test]
+    fn fuzzy_matches_a_typo_for_long_tokens() {
+        let needle = vec!["pending".to_string()];
+        let fuzzy = Fuzzy::new(&needle, 1, false);
+        assert!(line_fuzzy_matches("status: pendng", &fuzzy, false));
+        assert!(line_fuzzy_matches("PENDNG alert", &fuzzy, false));
+        assert!(!line_fuzzy_matches("status: done", &fuzzy, false));
+    }
+
+    #[test]
+    fn fuzzy_ignores_short_tokens_numbers_and_hex() {
+        assert!(!fuzzy_token_ok("cat"));
+        assert!(!fuzzy_token_ok("12345"));
+        assert!(!fuzzy_token_ok("deadbeef"));
+        assert!(!fuzzy_token_ok("freq1"));
+        assert!(fuzzy_token_ok("pending"));
+        let needle = vec![
+            "cat".to_string(),
+            "12345".to_string(),
+            "deadbeef".to_string(),
+        ];
+        let fuzzy = Fuzzy::new(&needle, 2, false);
+        assert!(fuzzy.tokens.is_empty());
+        assert!(!line_fuzzy_matches("cxt 12346 deadbeee", &fuzzy, false));
+    }
+
+    #[test]
+    fn fuzzy_distance_two_needs_the_flag_and_long_tokens() {
+        let needle = vec!["pendingly".to_string()];
+        let one = Fuzzy::new(&needle, 1, false);
+        let two = Fuzzy::new(&needle, 2, false);
+        assert!(!line_fuzzy_matches("pandangly", &one, false));
+        assert!(line_fuzzy_matches("pandangly", &two, false));
+        assert!(!fuzzy_token_hit("abcdefgh", "abcdefxy", 2));
+        assert!(fuzzy_token_hit("abcdefghi", "abcdefgxy", 2));
+    }
+
+    #[test]
+    fn fuzzy_honors_the_case_flag() {
+        let exact = Fuzzy::new(&vec!["Pending".to_string()], 1, true);
+        assert!(!line_fuzzy_matches("PENDNG alert", &exact, true));
+        let folded = Fuzzy::new(&vec!["Pending".to_string()], 1, false);
+        assert!(line_fuzzy_matches("PENDNG alert", &folded, false));
+    }
+
+    #[test]
+    fn fuzzy_ranking_puts_exact_hits_first() {
+        let path = std::env::temp_dir().join(format!("archive_fuzzy_rank_{}.txt", std::process::id()));
+        fs::write(&path, "the pendng state\npending now\n").unwrap();
+        let needle = vec!["pending".to_string()];
+        let fuzzy = Fuzzy::new(&needle, 1, false);
+        let (exact, total, hits) =
+            search_file(&path, &needle, 1, 100, false, false, Some(&fuzzy)).unwrap();
+        assert_eq!(exact, 1);
+        assert_eq!(total, 2);
+        assert_eq!(hits.len(), 1);
+        assert!(hits[0].contains("pending now"));
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn fuzzy_ranks_exact_files_before_fuzzy_files() {
+        let dir = std::env::temp_dir().join(format!("archive_fuzzy_files_{}", std::process::id()));
+        let _ = fs::create_dir_all(&dir);
+        fs::write(dir.join("a.txt"), "the pendng state\n").unwrap();
+        fs::write(dir.join("b.txt"), "pending now\n").unwrap();
+        let roots = vec![dir.display().to_string()];
+        let keywords = vec!["pending".to_string()];
+        let result = collect_plain_fuzzy(&roots, &keywords, 2, 40, 100, 0, false, false, None, Some(1));
+        assert_eq!(result.matched, 2);
+        assert_eq!(result.hits, 2);
+        assert!(result.lines[0].ends_with("b.txt"));
+        assert!(result.lines.iter().any(|l| l.ends_with("a.txt")));
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn fuzzy_off_keeps_the_exact_search() {
+        let path = std::env::temp_dir().join(format!("archive_fuzzy_off_{}.txt", std::process::id()));
+        fs::write(&path, "status: pendng\n").unwrap();
+        let needle = vec!["pending".to_string()];
+        assert!(search_file(&path, &needle, 2, 100, false, false, None).is_none());
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
     fn include_glob_matches_file_names() {
         assert!(glob_match("foo.rs", "*.rs"));
         assert!(!glob_match("foo.toml", "*.rs"));
@@ -3961,7 +4215,10 @@ mod tests {
         )
         .unwrap();
         let needle = vec!["icecube".to_string()];
-        let (count, hits) = search_file(&path, &needle, 2, 100, false, false).unwrap();
+        let (count, hits) = {
+            let (_, total, hits) = search_file(&path, &needle, 2, 100, false, false, None).unwrap();
+            (total, hits)
+        };
         assert_eq!(count, 2);
         assert_eq!(hits.len(), 2);
         assert!(hits[0].contains("ICECUBE"));
@@ -3974,8 +4231,8 @@ mod tests {
         let path = dir.join(format!("archive_search_bin_{}.dat", std::process::id()));
         fs::write(&path, [0x41, 0x00, 0x42]).unwrap();
         let needle = vec!["a".to_string()];
-        assert!(search_file(&path, &needle, 2, 100, false, false).is_none());
-        assert!(search_file(&path, &needle, 2, 100, true, false).is_some());
+        assert!(search_file(&path, &needle, 2, 100, false, false, None).is_none());
+        assert!(search_file(&path, &needle, 2, 100, true, false, None).is_some());
         let _ = fs::remove_file(&path);
     }
 
@@ -3986,7 +4243,10 @@ mod tests {
         let path = dir.join(format!("archive_search_rel_{}.txt", std::process::id()));
         fs::write(&path, &body).unwrap();
         let needle = vec!["needle".to_string()];
-        let (count, hits) = search_file(&path, &needle, 2, 100, false, false).unwrap();
+        let (count, hits) = {
+            let (_, total, hits) = search_file(&path, &needle, 2, 100, false, false, None).unwrap();
+            (total, hits)
+        };
         assert_eq!(count, 50);
         assert_eq!(hits.len(), 2);
         let _ = fs::remove_file(&path);
