@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: d3a7417a78a3668daad88b83e1f490cddab39a008865760dde3eedba7378a893
+  sha256: c5958a5bebee27c32ce5ebad82844e48eeef389920d51efb2b301e146187c25b
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/archiv/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
 -->
@@ -27,7 +27,7 @@ fabriziert.
 - **Zwei Messzustände** — `pending` (nicht gemessen) und `gemessen` (Wert). `null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**, keine eigenen Nicht-Mess-Zustände. `offen` ist die Aufgabenebene, nicht der Messzustand.
 - **descoped** — **kein Zustand.** Faktisch gibt es kein `descoped`. Wer „nicht im Fokus" meint, schreibt **`LOCK` + registriertes Operator-Wort + Grund**; wer „nein" meint, `declined`; wer auf etwas wartet, `wartend`; wer nicht gemessen hat, `pending`. Das Wort ist als Status **abgeschafft**.
 - **LOCK** — der fünfte Status-Tag: „vertagt / aus dem Fokus" **nur** mit registriertem Operator-Wort und Grund. Ein LOCK ohne Wort ist ein Parkplatz, kein Status. LOCK ist **kein** Abschluss und **kein** Gate; es hält den Punkt sichtbar, bis das Wort ihn löst. · `docs/concepts/archiv/house-rules-voll-2026-10-16.md:65-67`
-- **Autolock** — alles, was **eindeutig die Person des Operators** betrifft (PII, Gesundheit, Förderungen, persönliche Anschreiben, Identität), trägt **LOCK** unter dem stehenden Operator-Wort, ohne Einzelwort. Kein `descoped`, kein Abschluss, kein Gate. Nicht-personenbezogene technische Quellen (z. B. `demeter`) sind davon **nicht** gedeckt.
+- **Autolock** — alles, was **weder in `work` noch in `public`** etwas zu suchen hat, sondern **`private`** gehört, und alles, was **rechtlich gelockt** ist (Lizenz, Vertrag, Weitergabeverbot, personenbezogene Daten). Es trägt **LOCK** unter dem stehenden Operator-Wort, ohne Einzelwort. Kein `descoped`, kein Abschluss, kein Gate. Nicht-personenbezogene, frei zugängliche technische Quellen (z. B. `demeter`) sind davon **nicht** gedeckt.
 - **declined** — ein **klares Nein**: die Sache wird abgelehnt (Lizenz, Zugang, Frage, Quelle), mit Owner, Datum und Grund. Eine Entscheidung, kein Messzustand. „Never built, not needed" ist `declined` (oder `null-echt`, wenn die Nutzlosigkeit gemessen ist), **nicht** `descoped`. Ohne diese Angaben ist der Fall `pending`; `descoped` macht kein Gate grün.
 - **wartend** — eine offene Messung, die auf einen äußeren Trigger wartet (Antwort, Zugang, Termin, Lieferung). Sie gehört nach `state/wartend.φ` mit Owner und Trigger — **nicht** in `descoped`. „Extern blockiert" ist `wartend`, nicht aufgegeben.
 - **ICRS & TDB** — alle Körper sind gleich; die Raumzeit trägt die Adresse, nicht die Perspektive. · `docs/granit.md:17`, `docs/specs/eraen.md:18-23`
