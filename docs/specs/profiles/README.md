@@ -1,3 +1,15 @@
+<!--
+  title: Profile — Format und Ablage
+  class: spec
+  date: 2026-10-21
+  sha256: ef5618bfe56f0b038ba8fdb4c1e9eeee5ba44c871126d33579e04a3345b198bd
+  status: live
+  owner: future
+  ack: future 2026-10-21T13:20Z
+  next: none
+  orphan-after: none
+  see-also: docs/specs/vorlage-je-dateityp.md
+-->
 # Profile
 
 Ein Profil bündelt wiederkehrende Suchparameter als JSON. Die Dateien liegen
