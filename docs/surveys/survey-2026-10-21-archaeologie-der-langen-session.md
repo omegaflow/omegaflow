@@ -2,7 +2,7 @@
   title: Survey — Archäologie der langen Session: was gemessen ist und was offen blieb (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 3f8b65f043a7a871775f22d10572c6ed9e2834c4fb51fd45f110867e1c833c51
+  sha256: fd956e828b0d4ab352a407b7b791835a5a7a573b3602c602abe3e87f03071f36
   status: live
   see-also: docs/surveys/survey-2026-10-20-frame-wache.md docs/surveys/survey-2026-10-20-planet-nine-netz.md docs/surveys/survey-2026-10-20-hunga-tonga-netz.md docs/surveys/survey-2026-10-20-sturm-komposit.md docs/surveys/survey-2026-10-20-asi-stationshoehen.md docs/concepts/die-weberin.md
 -->
@@ -18,6 +18,10 @@ abweichen, gilt die Datei; die Abweichung wird benannt, nicht geglättet.
 (Planet Neun, Hunga Tonga, Quasare/ICRF3, Mond, Sturm) und der **Ernte** (Sonne-Erde,
 Aurora, e-CALLISTO). Der rote Faden ist die Frage, ob der Rahmen selbst trägt — und
 die Antwort ist messbar geworden.
+
+**Neben der Weberin.** Die Weberin beschreibt die **Anordnung** (Kette, Schuss, Vlies);
+diese Archäologie beschreibt den **gemessenen Bestand** dieser Anordnung. Sie ersetzt
+kein Konzept und keine Messung; sie sagt, was davon fertig ist und was nicht.
 
 ## 1. Die Landkarte
 
@@ -133,7 +137,9 @@ einer anderen Metrik oder einem anderen Katalogstand; die eigene Messung steht.
 ## 5. Der Stein im Wasser
 
 Das Bild ist präzise: `field_te_query` ist der Stein, die Paar-Matrix misst, welche
-Kanäle antworten und mit welcher Verzögerung. Der gemessene Stand:
+Kanäle antworten und mit welcher Verzögerung. Die „verschiedenen Steine" sind die
+verschiedenen Kanäle und Datensätze, in die derselbe Sucher geworfen wird — nicht
+verschiedene Werkzeuge. Der gemessene Stand:
 
 - **7 Kanäle am Draht**, **8 probe-gelesen**, **5 declined/descoped**.
 - **Vlies-Matrix 2026-10-11:** 15/15 Arme, 210/210 Zellen. Die `n=0`-Zellen sind
