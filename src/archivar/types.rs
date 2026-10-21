@@ -527,6 +527,7 @@ pub struct SourceConfig {
     pub ttl: u64,
     pub url: String,
     pub origin: Option<String>,
+    pub compiler: Option<String>,
     pub terms: Option<String>,
     pub band: Option<String>,
     pub footprint: Option<String>,
