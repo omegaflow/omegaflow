@@ -144,6 +144,8 @@ mod open_meteo;
 mod openaire;
 #[path = "archive_search/openalex.rs"]
 mod openalex;
+#[path = "archive_search/output.rs"]
+mod output;
 #[path = "archive_search/opencitations.rs"]
 mod opencitations;
 #[path = "archive_search/openfda.rs"]
@@ -561,6 +563,8 @@ fn main() {
     let mut path_match = false;
     let mut include_glob: Option<String> = None;
     let mut headed = false;
+    let mut machine: Option<output::Format> = None;
+    let mut allow_empty = false;
 
     let mut i = 0;
     while i < args.len() {
@@ -636,6 +640,11 @@ fn main() {
                 }
             }
             "--headed" => headed = true,
+            "--jsonl" => select_format(&mut machine, output::Format::Jsonl),
+            "--csv" => select_format(&mut machine, output::Format::Csv),
+            "--bibtex" => select_format(&mut machine, output::Format::Bibtex),
+            "--ris" => select_format(&mut machine, output::Format::Ris),
+            "--allow-empty" => allow_empty = true,
             "--stop" => {
                 i += 1;
                 if let Some(n) = args.get(i).and_then(|s| s.parse().ok()) {
@@ -759,6 +768,8 @@ fn main() {
     if modes.is_empty() {
         modes.push(Mode::Plain);
     }
+    let format = machine.unwrap_or(output::Format::Text);
+    let mut sink = output::Sink::new(format, allow_empty);
     let multi = modes.len() > 1;
     for mode in modes {
         if multi {
@@ -831,11 +842,11 @@ fn main() {
                 };
                 let lines =
                     ntfs::run_lines(Path::new(&device), &keywords, max_files, max_mb, content);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Index => {
                 let lines = run_index(&roots, &keywords, max_files, kind, sort, path_match);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Serve => run_serve(serve_addr.clone(), &roots, mft_path.clone()),
             Mode::Git => {
@@ -845,7 +856,7 @@ fn main() {
                 };
                 let query = keywords.join(" ");
                 let lines = git::run_lines(&repo, &query);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Verdict => {
                 let url = match &verdict_url {
@@ -856,7 +867,7 @@ fn main() {
                     }
                 };
                 let lines = net::verdict_lines(&url);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Jina => {
                 let url = match &jina_input {
@@ -867,7 +878,7 @@ fn main() {
                     }
                 };
                 let lines = jina::jina_lines(&url);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Playwright => {
                 let input = match &playwright_input {
@@ -878,7 +889,7 @@ fn main() {
                     }
                 };
                 let lines = playwright::run_lines(&input, headed);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::PdfImage => {
                 let input = match &pdf_input {
@@ -889,7 +900,7 @@ fn main() {
                     }
                 };
                 let lines = run_pdf_image(&input, pdf_out.as_deref());
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::PdfText => {
                 let input = match &pdf_input {
@@ -900,7 +911,7 @@ fn main() {
                     }
                 };
                 let lines = run_pdf_text(&input);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::ArxivSrc => {
                 let input = match &arxiv_input {
@@ -911,11 +922,11 @@ fn main() {
                     }
                 };
                 let lines = arxiv_src::run_lines(&input, pdf_out.as_deref());
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Oai => {
                 let lines = oai::arxiv_oai_lines(oai_input.as_deref(), oai_pages);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Consensus => {
                 let query = keywords.join(" ");
@@ -943,32 +954,32 @@ fn main() {
                         )]
                     }
                 };
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Lasair => {
                 let query = keywords.join(" ");
                 let lines = lasair::lasair_lines(&query);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Perplexity => {
                 let query = keywords.join(" ");
                 let lines = perplexity::perplexity_lines(&query);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Lpf => {
                 let query = keywords.join(" ");
                 let lines = lpf::lpf_lines(&query);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Gosat => {
                 let query = keywords.join(" ");
                 let lines = gosat::gosat_lines(&query);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Alerce => {
                 let query = keywords.join(" ");
                 let lines = alerce_lines(&query, max_results);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Fink => {
                 let query = keywords.join(" ");
@@ -977,35 +988,35 @@ fn main() {
                     None => env::vars().collect(),
                 };
                 let lines = fink_lines(&query, &env_map, max_results);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Dust => {
                 let query = keywords.join(" ");
                 let lines = dust_lines(&query);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::GoesLive => {
                 let query = keywords.join(" ");
                 let lines = goes_live_lines(&query, max_results);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Live => {
                 let query = keywords.join(" ");
                 let lines = live_lines(&query, max_results);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Antares => {
                 let query = keywords.join(" ");
                 let lines = antares_lines(&query, max_results);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::FourGet => {
                 let query = keywords.join(" ");
                 let lines = four_get_lines(&query, max_results);
-                print_lines(&lines);
+                sink.emit(&lines, mode.label());
             }
             Mode::Stats => {
-                print_lines(&run_stats());
+                sink.emit(&run_stats(), mode.label());
             }
             Mode::Net(name) => {
                 let env_map = match find_repo_root() {
@@ -1039,7 +1050,7 @@ fn main() {
                             pdf_out.as_deref(),
                             max_results,
                         );
-                        print_lines(&lines);
+                        sink.emit(&lines, mode.label());
                         if name == "all" {
                             print_anomaly_all(query, &env_map, max_results);
                         }
@@ -1048,13 +1059,26 @@ fn main() {
                     let query = keywords.join(" ");
                     let lines =
                         net::run_lines_max(name, &query, &env_map, pdf_out.as_deref(), max_results);
-                    print_lines(&lines);
+                    sink.emit(&lines, mode.label());
                     if name == "all" {
                         print_anomaly_all(&query, &env_map, max_results);
                     }
                 }
             }
         }
+    }
+    if format != output::Format::Text {
+        std::process::exit(sink.finish());
+    }
+}
+
+fn select_format(slot: &mut Option<output::Format>, next: output::Format) {
+    match slot {
+        Some(existing) if *existing != next => {
+            eprintln!("archive_search: choose one of --jsonl, --csv, --bibtex, --ris");
+            std::process::exit(2);
+        }
+        _ => *slot = Some(next),
     }
 }
 
@@ -1946,6 +1970,10 @@ fn usage() {
     eprintln!("  --include <glob>  only files whose name matches the glob (e.g. '*.rs')");
     eprintln!();
     eprintln!(
+        "output:   --jsonl|--csv|--bibtex|--ris [--allow-empty]   (machine-readable hits; exit 0 = hit, 3 = only pending/absent, 2 = usage)"
+    );
+    eprintln!();
+    eprintln!(
         "paths:    archive_search --index [<query>...] [--path] [--kind any|file|dir] [--sort name|size|mtime]   (matches paths, not content; --path matches the full path)"
     );
     eprintln!("history:  archive_search --git <query>");
@@ -2542,12 +2570,6 @@ fn goes_live_lines(query: &str, max: usize) -> Vec<String> {
         ));
     }
     out
-}
-
-fn print_lines(lines: &[String]) {
-    for line in lines {
-        out!("{}", line);
-    }
 }
 
 fn run_pdf_image(input: &str, out_dir: Option<&str>) -> Vec<String> {
