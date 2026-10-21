@@ -312,6 +312,7 @@ enum Mode {
     Antares,
     FourGet,
     GoesLive,
+    Live,
     Stats,
     Net(&'static str),
 }
@@ -466,6 +467,7 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--antares" => Some(Mode::Antares),
         "--4get" => Some(Mode::FourGet),
         "--goes-live" => Some(Mode::GoesLive),
+        "--live" => Some(Mode::Live),
         _ => None,
     }
 }
@@ -497,6 +499,7 @@ impl Mode {
             Mode::Antares => "antares",
             Mode::FourGet => "4get",
             Mode::GoesLive => "goes-live",
+            Mode::Live => "live",
             Mode::Stats => "stats",
             Mode::Net(name) => name,
         }
@@ -958,6 +961,11 @@ fn main() {
             Mode::GoesLive => {
                 let query = keywords.join(" ");
                 let lines = goes_live_lines(&query, max_results);
+                print_lines(&lines);
+            }
+            Mode::Live => {
+                let query = keywords.join(" ");
+                let lines = live_lines(&query, max_results);
                 print_lines(&lines);
             }
             Mode::Antares => {
@@ -2303,6 +2311,95 @@ fn goes_keys(body: &str) -> Vec<&str> {
         };
         out.push(&after[..end]);
         rest = &after[end + 6..];
+    }
+    out
+}
+
+fn live_tag<'a>(chunk: &'a str, name: &str) -> Option<&'a str> {
+    let open = format!("<{name}>");
+    let close = format!("</{name}>");
+    let start = chunk.find(&open)? + open.len();
+    let rest = &chunk[start..];
+    let end = rest.find(&close)?;
+    Some(&rest[..end])
+}
+
+fn s3_objects(body: &str) -> Vec<(String, String, Option<u64>)> {
+    let mut out = Vec::new();
+    let mut rest = body;
+    while let Some(start) = rest.find("<Contents>") {
+        let after = &rest[start + 10..];
+        let Some(end) = after.find("</Contents>") else {
+            break;
+        };
+        let chunk = &after[..end];
+        if let Some(key) = live_tag(chunk, "Key") {
+            let modified = match live_tag(chunk, "LastModified") {
+                Some(v) => v.to_string(),
+                None => String::new(),
+            };
+            let size = live_tag(chunk, "Size").and_then(|v| v.parse::<u64>().ok());
+            out.push((key.to_string(), modified, size));
+        }
+        rest = &after[end + 11..];
+    }
+    out
+}
+
+fn html_links(body: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut rest = body;
+    while let Some(start) = rest.find("href=\"") {
+        let after = &rest[start + 6..];
+        let Some(end) = after.find('"') else {
+            break;
+        };
+        let link = &after[..end];
+        if !link.starts_with('?') && !link.starts_with('#') && link != "../" {
+            out.push(link.to_string());
+        }
+        rest = &after[end + 1..];
+    }
+    out
+}
+
+fn live_lines(url: &str, max: usize) -> Vec<String> {
+    let Some(fetch) = net::get(url, &[], "60") else {
+        return vec![format!("absent — {url}: no response")];
+    };
+    if fetch.status != Some(200) {
+        return vec![format!("absent — {url}: HTTP {}", fetch.status_text())];
+    }
+    let base = match url.split('?').next() {
+        Some(v) => v.trim_end_matches('/'),
+        None => return vec![format!("absent — {url}: no base")],
+    };
+    let mut out = Vec::new();
+    if fetch.body.contains("<Contents>") {
+        let mut objects = s3_objects(&fetch.body);
+        objects.sort_by(|a, b| a.1.cmp(&b.1).then(a.0.cmp(&b.0)));
+        for (key, modified, size) in objects.into_iter().rev().take(max) {
+            let size_text = match size {
+                Some(v) => format!("{v}"),
+                None => "absent".to_string(),
+            };
+            out.push(format!(
+                "url {base}/{key}\ttitle: {key}\tdescription: last_modified={modified} size={size_text}"
+            ));
+        }
+        return out;
+    }
+    let mut links = html_links(&fetch.body);
+    links.sort();
+    for link in links.into_iter().rev().take(max) {
+        let object = if link.starts_with("http://") || link.starts_with("https://") {
+            link
+        } else {
+            format!("{base}/{}", link.trim_start_matches('/'))
+        };
+        out.push(format!(
+            "url {object}\ttitle: {object}\tdescription: live index {base}"
+        ));
     }
     out
 }
@@ -3790,5 +3887,20 @@ mod tests {
         let lines = goes_live_lines("g18 XYZ", 3);
         assert_eq!(lines.len(), 1);
         assert!(lines[0].starts_with("absent — unknown product"));
+    }
+
+    #[test]
+    fn s3_objects_read_key_time_and_size() {
+        let body = "<ListBucketResult><Contents><Key>a.nc</Key><LastModified>2026-10-21T05:00:00Z</LastModified><Size>12</Size></Contents><Contents><Key>b.nc</Key><LastModified>2026-10-21T05:10:00Z</LastModified><Size>34</Size></Contents></ListBucketResult>";
+        let objects = s3_objects(body);
+        assert_eq!(objects.len(), 2);
+        assert_eq!(objects[0].0, "a.nc");
+        assert_eq!(objects[1].2, Some(34));
+    }
+
+    #[test]
+    fn html_links_skip_navigation() {
+        let body = "<a href=\"../\">up</a><a href=\"?C=N\">sort</a><a href=\"2026/294/\">day</a>";
+        assert_eq!(html_links(body), vec!["2026/294/"]);
     }
 }
