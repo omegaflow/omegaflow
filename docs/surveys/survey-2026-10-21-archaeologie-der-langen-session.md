@@ -2,7 +2,7 @@
   title: Survey — Archäologie der langen Session: was gemessen ist und was offen blieb (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 321a0bd8c559761f4fe86817a5a82399ef18bff59548863d5ee9065a3ab5fe61
+  sha256: dac923cf0fef7f6f81ee36ecffdc2c341387eba2e59b9ea767aac91cc0f603de
   status: live
   see-also: docs/surveys/survey-2026-10-20-frame-wache.md docs/surveys/survey-2026-10-20-planet-nine-netz.md docs/surveys/survey-2026-10-20-hunga-tonga-netz.md docs/surveys/survey-2026-10-20-sturm-komposit.md docs/surveys/survey-2026-10-20-asi-stationshoehen.md docs/concepts/die-weberin.md
 -->
@@ -100,6 +100,10 @@ einer anderen Metrik oder einem anderen Katalogstand; die eigene Messung steht.
   optisch-radio Verschiebung, nicht den Ursprung.
 - **Epochenversatz.** Gaia ist Epoche 2016, Radio überwiegend 1990er; eine
   QSO-Eigenbewegung ist nicht modelliert (Grenze 0,1 mas über 25 Jahre).
+- **Gaia DR4** offiziell **2026-12-02**; die Vorabveröffentlichung mit **12
+  Quellen** (`gaia-dr4-prerelease-epoch-astrometry_2026-06-26.zip`, 625.651 B,
+  sha256 `07f0e8d9…35fa0b`) ist live und erlaubt den Methoden-Dry-Run, nicht die
+  512-Anker-Korrektur.
 - **Die 303 D-Quellen** (D in S/X) sind als Ensemble gefittet (2026-10-21): **193**
   mit K-Position, **176** mit X/Ka-Position; Rotation S/X–K max **1,13σ**
   (chi2/dof 1,2), S/X–X/Ka max **1,52σ** (chi2/dof 7,7) → **Placed**. Die
@@ -230,7 +234,8 @@ redundant; die eigentliche Arbeit war die Höhen- und Metadatenprüfung:
 
 1. **`ozzy`** — die negative Engine fehlt; ohne sie bleibt die Matrix unvollständig.
 2. **Alles-gegen-alles-Matrix** — die volle Paar-Matrix und die netz-weite strenge Null.
-3. **Rahmen-Wache** — Gaia DR4, Eigenbewegung, 88 Anker ohne Gaia.
+3. **Rahmen-Wache** — Gaia DR4 (offiziell 2026-12-02; 12-Quellen-Vorab live),
+   Eigenbewegung, 88 Anker ohne Gaia.
 4. **Planet Neun** — LSST/MPC-Abdeckung, Bias-Gewichte.
 5. **Hunga Tonga** — AER_AI-Pixel am Vent, TEC mit höherer Kadenz, besserer
    Seismik-Detektor.
