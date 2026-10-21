@@ -3,7 +3,7 @@
   class: survey
   date: 2026-10-19
   status: done
-  sha256: 57cf1db6a04a8469ea0b302100894fa77a28582c7be6a48c12bdba6a7f80a952
+  sha256: f5b10e2c494278f6e6f8effd74a348f83200fe152a6e5852f023c11b8a51d947
 -->
 # Rohdaten-Inventar — 12 von 15 (Stand 2026-10-19)
 
@@ -21,7 +21,7 @@ Datei sind in der Session selbst berechnet, außer wo „Agent" steht.
 | 2 | noirlab-gaia-dr4 | `raw.githubusercontent.com/sefffal/Octofitter.jl/main/docs/src/gaia4_epoch_astrometry.csv` | CSV | 133502 | `34ab4046b2d26a554da1bfb7ab160991bb9f8967f8c427de52217f17428018f9` | 10-Feld-Kopf byte-identisch |
 | 2b | noirlab-gaia-dr4 | `…/gaia_bh3_epoch_astrometry.csv` | CSV | 79311 | `532a4a19b1c5eb16fb45d2de875e84fd1bdeeb70d8fa18228c446105f4ab6d2b` | dito |
 | 2c | noirlab-gaia-dr4 | `…/hd114762_epoch_astrometry.csv` | CSV | 109551 | `fcbbd20947cb44043d9a2475010c0d9270fa3191c6138e5870dc5f787462a671` | dito |
-| 2d | noirlab-gaia-dr4 | `anonftp.cosmos.esa.int/…/gaia-dr4-prerelease-epoch-astrometry_2026-06-26.zip` | ZIP/VOTable | 625651 | (Agent) | amtlich; Zeitspalte dort `obs_time_tcb`, nicht `epoch` |
+| 2d | noirlab-gaia-dr4 | `https://anonftp.cosmos.esa.int/pub/GAIA_PUBLIC_DATA/Gaia_DR4/dr4-prerelease/gaia-dr4-prerelease-epoch-astrometry_2026-06-26.zip` | ZIP/VOTable | 625651 | `07f0e8d9ac97a29ea376a0c7242de3124d2a08ad72aba0958d6575d94d35fa0b` | amtlich; Zeitspalte dort `obs_time_tcb`, nicht `epoch`; sha 2026-10-21 selbst gemessen (ZIP-Magic, 12 Quellen) |
 | 3 | schumann-serie | `zenodo.org/api/records/15225820/files/NiNo_SR_params_2024.csv` | CSV | 454417 | `3183a14fafba0762f91522dfdddf356fa2609b86797d6512aefc2104bf7b0272` | = Repo-Hash; 7 835 Zeilen; **Lizenzwiderspruch** (CC-BY-4.0 vs. „only with the authors' permission") |
 | 4 | voyager-uranus-neptun | `spdf…/voyager2/merged/vy2_1986.asc` | ASCII | 2820720 | `5f2cfbf761d0a6f413d62bc6eb3a32a7eea2ef7b1e154073e454351eef4504c0` | Uranus-Tag 24 geprüft |
 | 4b | voyager-uranus-neptun | `spdf…/voyager2/merged/vy2_1989.asc` | ASCII | 2820720 | `bd82a73885a3adbec0ed808a35d912457fa36017bbacddce440baa6fce086b2d` | Neptun-Tag 230 geprüft; Mirror `nssdcftp` byte-gleich |

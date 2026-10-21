@@ -2,7 +2,7 @@
   title: Survey — Frame-Wache: ICRF3 S/X, K, X/Ka und Gaia-CRF3, selbst gezählt (2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: e653326c6b46c2204eb62b1fc3a393d915dfeab39801f6844ac685021e75dfe4
+  sha256: f5bf10f5218d2c154c49caa32ad80e9990ecf7fad1055d07d92360bd9efb3b1d
   status: live
   see-also: tools/measure/src/bin/frame_wache_probe.rs
 -->
@@ -180,13 +180,17 @@ Gaia-Zuordnung; die Gaia-Aussage gilt für 512 Quellen, nicht für den ganzen
 Schnitt. Gaia-Positionen sind Epoche 2016; die Radio-Positionen sind
 Epochenmittel, überwiegend 1990er. Eine QSO-Eigenbewegung wird nicht
 modelliert (Größenordnung 0,1 mas über 25 Jahre, als Grenze notiert).
+**Gaia DR4** ist für **2026-12-02** angekündigt; die Vorabveröffentlichung
+(12 Quellen, `gaia-dr4-prerelease-epoch-astrometry_2026-06-26.zip`, 625.651 B,
+sha256 `07f0e8d9…35fa0b`) ist live und erlaubt den Methoden-Dry-Run. Die
+512-Anker-Korrektur wartet auf die offizielle DR4.
 
 ## Wache als Vorschlag
 
 **Trigger** (jeder einzeln):
 
 1. neue ICRF-Version oder Update von `icrf3sx/k/xka` (Hash-Abweichung),
-2. neue Gaia-Datenfreigabe (DR4) oder neue Gaia-CRF,
+2. neue Gaia-Datenfreigabe (DR4, offiziell 2026-12-02; Vorab 2026-06/2026-10-21 geprüft) oder neue Gaia-CRF,
 3. vor Phase 1 eines Papiers, das den ICRS/Rahmen berührt,
 4. Abweichung eines der fünf sha256 in der Provenienz.
 
