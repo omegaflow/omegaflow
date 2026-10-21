@@ -9902,6 +9902,7 @@ url https://github.com/omegaflow/sources/releases/download/dataservices.gfz-pots
 terms CC-BY-4.0 https://dataservices.gfz-potsdam.de/igets/
 origin sftp://igetsftp.gfz.de
 compiler tools/harvest/src/bin/igets_compiler.rs
+sha256 f1e7026e7c70a5f718ebe6569d98148848d72c46c96606a0d34f6ed023ce6ee5
 format igets
 ttl 604800
 at earth
