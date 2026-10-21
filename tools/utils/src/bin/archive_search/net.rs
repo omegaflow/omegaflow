@@ -5341,6 +5341,7 @@ const QUERY_MODES: &[&str] = &[
     "apis",
     "datacite",
     "zenodo",
+    "youcom",
     "hapi",
     "wayback",
     "cc",
@@ -6163,6 +6164,7 @@ fn run_lines_dispatch(
         }
         "datacite" => crate::datacite::datacite_lines(query, max),
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
+        "youcom" => crate::youcom::youcom_lines(query, max),
         "hapi" => hapi_lines(query, max),
         "isc" => crate::isc::isc_lines(query, max),
         "base" => {
@@ -6530,6 +6532,7 @@ mod tests {
             "apis",
             "datacite",
             "zenodo",
+            "youcom",
             "hapi",
             "wayback",
             "cc",
