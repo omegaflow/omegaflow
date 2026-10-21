@@ -23,14 +23,18 @@ hex=""
 ctx=""
 near=""
 pdf=0
+jsonl=""
+terms_spec=""
 
 usage() {
     cat >&2 <<'EOF'
-find: usage: bin/find [--header "a,b,c"] [--value <zahl>[,<zahl>...]] [--hex <hex>] [--fits "K=V,K=V"] [--context "<begriff>"] [--pdf] [--near <abs|N%>] --engine <kanal> --top N
+find: usage: bin/find [--header "a,b,c"] [--value <zahl>[,<zahl>...]] [--hex <hex>] [--fits "K=V,K=V"] [--context "<begriff>"] [--pdf] [--near <abs|N%>] [--jsonl <datei>] [--terms <datei=token,...>] --engine <kanal> --top N
   mindestens ein Köder: --header, --value oder --hex
   --header  alle Spaltennamen müssen im sniffed header stehen
   --value   der Wert muss im Text stehen, sonst unbewiesen
   --hex     pattern=<hex> muss Treffer melden
+  --jsonl   je Kandidat eine JSON-Zeile (url, title, Zustände, verdict, terms)
+  --terms   datei=token; ohne Angabe steht in der JSONL "unset"
 EOF
     exit 2
 }
@@ -45,6 +49,8 @@ while [ $# -gt 0 ]; do
         --context) [ $# -ge 2 ] && [ -n "$2" ] || usage; ctx="$2"; shift 2 ;;
         --near) [ $# -ge 2 ] && [ -n "$2" ] || usage; near="$2"; shift 2 ;;
         --pdf) pdf=1; shift ;;
+        --jsonl) [ $# -ge 2 ] && [ -n "$2" ] || usage; jsonl="$2"; shift 2 ;;
+        --terms) [ $# -ge 2 ] && [ -n "$2" ] || usage; terms_spec="$2"; shift 2 ;;
         --engine) [ $# -ge 2 ] && [ -n "$2" ] || usage; engine="$2"; shift 2 ;;
         --top)    [ $# -ge 2 ] && [ -n "$2" ] || usage; top="$2"; shift 2 ;;
         *) usage ;;
@@ -71,6 +77,15 @@ case "$top" in
     ''|*[!0-9]*) usage ;;
 esac
 [ "$top" -gt 0 ] || usage
+
+if [ -n "$terms_spec" ]; then
+    for pair in $(printf '%s' "$terms_spec" | tr ',' ' '); do
+        case "$pair" in
+            *=*) ;;
+            *) echo "find: --terms: '$pair' ist nicht datei=token" >&2; exit 2 ;;
+        esac
+    done
+fi
 
 # Header in Spaltennamen ohne Kommas zerlegen; leere Spalten sind kein stiller Default.
 header_cols=""
@@ -142,6 +157,34 @@ if [ -z "$tmp" ] || [ ! -d "$tmp" ]; then
     exit 2
 fi
 trap 'rm -rf "$tmp"' 0 1 2 15
+
+if [ -n "$jsonl" ]; then
+    if ! : >"$jsonl"; then
+        echo "find: --jsonl $jsonl ist nicht schreibbar" >&2
+        exit 2
+    fi
+fi
+
+json_escape() {
+    printf '%s' "$1" | tr '\n\r\t' '   ' | sed 's/\\/\\\\/g; s/"/\\"/g'
+}
+
+term_for_url() {
+    if [ -z "$terms_spec" ]; then
+        printf 'unset'
+        return
+    fi
+    printf '%s\n' "$terms_spec" | tr ',' '\n' | awk -F= -v want="$1" '
+        $0 != "" {
+            k = $1
+            v = $0
+            sub(/^[^=]*=/, "", v)
+            gsub(/^[ \t]+|[ \t]+$/, "", k)
+            gsub(/^[ \t]+|[ \t]+$/, "", v)
+            if (k == want) { print v; found = 1; exit }
+        }
+        END { if (!found) print "unset" }'
+}
 
 search_once() {
     "$bin" --"$engine" "$1" >"$tmp/search" 2>&1
@@ -363,6 +406,17 @@ while IFS= read -r line; do
         nears=$((nears + 1))
     else
         verdict="kein-match"
+    fi
+    if [ -n "$jsonl" ]; then
+        printf '{"url":"%s","title":"%s","header_state":"%s","value_state":"%s","hex_state":"%s","fits_state":"%s","verdict":"%s","terms":"%s"}\n' \
+            "$(json_escape "$url")" \
+            "$(json_escape "$title")" \
+            "$(json_escape "$header_state")" \
+            "$(json_escape "$value_state")" \
+            "$(json_escape "$hex_state")" \
+            "$(json_escape "$fits_state")" \
+            "$(json_escape "$verdict")" \
+            "$(json_escape "$(term_for_url "$url")")" >>"$jsonl"
     fi
     [ -n "$title" ] && printf '   %s\n' "$title"
     [ -n "$header" ] && printf '   header: %s%s\n' "$header_state" "$( [ -n "$header_note" ] && printf ' (%s)' "$header_note" )"

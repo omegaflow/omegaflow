@@ -10,7 +10,8 @@ use omegaflow::lsk::LeapSeconds;
 use omegaflow::netcdf::{NetcdfFile, NetcdfFormat, NetcdfType, directory_links, nc4_group};
 
 const NETLOC: &str = "data.cosmic.ucar.edu";
-const ROOT: &str = "https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt";
+const ROOT_COSMIC2: &str = "https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt";
+const ROOT_COSMIC1: &str = "https://data.cosmic.ucar.edu/gnss-ro/cosmic1/postProc";
 const HDF5_MAGIC: [u8; 8] = [0x89, b'H', b'D', b'F', 0x0d, 0x0a, 0x1a, 0x0a];
 
 const LEVEL2_PRODUCTS: [&str; 5] = ["atmPrf", "avnPrf", "bfrPrf", "echPrf", "wetPf2"];
@@ -19,7 +20,111 @@ const LEVEL3_PRODUCTS: [&str; 16] = [
     "bubJsn02", "bubML1", "bubML102", "bubMU1", "bubMU102", "bubMap", "bubMap02",
 ];
 
+const COSMIC1_LEVEL1A_PRODUCTS: [&str; 2] = ["leoAtt", "podCrx"];
+const COSMIC1_LEVEL1B_PRODUCTS: [&str; 7] = [
+    "atmPhs", "gpsBit", "ionPhs", "leoClk", "leoOrb", "podTec", "scnLv1",
+];
+const COSMIC1_LEVEL2_PRODUCTS: [&str; 7] = [
+    "atmPrf", "bfrPrf", "echPrf", "eraPrf", "gfsPrf", "ionPrf", "wetPrf",
+];
+
 const PROFILE_VARS: [&str; 5] = ["MSL_alt", "Ref", "Temp", "Dry_Temp", "Pres"];
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Mission {
+    Cosmic1,
+    Cosmic2,
+}
+
+impl Mission {
+    fn parse(text: &str) -> Option<Self> {
+        match text {
+            "cosmic1" | "cosmic-1" | "c1" => Some(Self::Cosmic1),
+            "cosmic2" | "cosmic-2" | "c2" => Some(Self::Cosmic2),
+            _ => None,
+        }
+    }
+
+    fn name(self) -> &'static str {
+        match self {
+            Self::Cosmic1 => "cosmic1",
+            Self::Cosmic2 => "cosmic2",
+        }
+    }
+
+    fn root(self) -> &'static str {
+        match self {
+            Self::Cosmic1 => ROOT_COSMIC1,
+            Self::Cosmic2 => ROOT_COSMIC2,
+        }
+    }
+
+    fn levels(self) -> &'static [&'static str] {
+        match self {
+            Self::Cosmic1 => &["level1a", "level1b", "level2"],
+            Self::Cosmic2 => &["level2", "level3"],
+        }
+    }
+
+    fn products(self, level: &str) -> &'static [&'static str] {
+        match (self, level) {
+            (Self::Cosmic1, "level1a") => &COSMIC1_LEVEL1A_PRODUCTS,
+            (Self::Cosmic1, "level1b") => &COSMIC1_LEVEL1B_PRODUCTS,
+            (Self::Cosmic1, "level2") => &COSMIC1_LEVEL2_PRODUCTS,
+            (Self::Cosmic2, "level2") => &LEVEL2_PRODUCTS,
+            (Self::Cosmic2, "level3") => &LEVEL3_PRODUCTS,
+            _ => &[],
+        }
+    }
+
+    fn default_product(self, level: &str) -> Option<&'static str> {
+        match (self, level) {
+            (Self::Cosmic1, "level2") => Some("wetPrf"),
+            (Self::Cosmic1, "level1b") => Some("atmPhs"),
+            (Self::Cosmic1, "level1a") => Some("podCrx"),
+            (Self::Cosmic2, "level2") => Some("wetPf2"),
+            (Self::Cosmic2, "level3") => Some("bubJL1"),
+            _ => None,
+        }
+    }
+
+    fn tarball_url(self, level: &str, product: &str, year: u32, doy: u32) -> Option<String> {
+        if !self.levels().contains(&level) || !self.products(level).contains(&product) {
+            return None;
+        }
+        let root = self.root();
+        Some(match self {
+            Self::Cosmic1 => {
+                format!("{root}/{level}/{year}/{doy:03}/{product}_postProc_{year}_{doy:03}.tar.gz")
+            }
+            Self::Cosmic2 if level == "level3" => format!(
+                "{root}/{level}/{year}/{doy:03}/{product}/{product}_nrt_{year}_{doy:03}.tar.gz"
+            ),
+            Self::Cosmic2 => {
+                format!("{root}/{level}/{year}/{doy:03}/{product}_nrt_{year}_{doy:03}.tar.gz")
+            }
+        })
+    }
+}
+
+fn load_lsk(path: Option<&str>) -> Option<LeapSeconds> {
+    match path {
+        Some(p) => {
+            let text = std::fs::read_to_string(p).ok()?;
+            omegaflow::lsk::parse(&text)
+        }
+        None => embedded_lsk(),
+    }
+}
+
+fn mission_of(args: &[String]) -> Result<Mission, String> {
+    match arg_value(args, "--mission") {
+        Some(v) => {
+            Mission::parse(&v).ok_or_else(|| format!("--mission {v}: unknown (cosmic1|cosmic2)"))
+        }
+        None => Ok(Mission::Cosmic2),
+    }
+}
 
 fn arg_value(args: &[String], name: &str) -> Option<String> {
     args.iter()
@@ -37,35 +142,35 @@ fn fetch_text(url: &str) -> Option<String> {
     String::from_utf8(bytes).ok()
 }
 
-fn level2_tarball_url(product: &str, year: u32, doy: u32) -> String {
-    format!("{ROOT}/level2/{year}/{doy:03}/{product}_nrt_{year}_{doy:03}.tar.gz")
-}
-
-fn level3_tarball_url(product: &str, year: u32, doy: u32) -> String {
-    format!("{ROOT}/level3/{year}/{doy:03}/{product}/{product}_nrt_{year}_{doy:03}.tar.gz")
-}
-
-fn naming_scheme() {
-    eprintln!("COSMIC-2 NRT tree ({ROOT}):");
-    eprintln!(
-        "  level2/{{year}}/{{doy:03}}/ carries the radio-occultation profiles as daily tarballs ({{product}} in {:?}):",
-        LEVEL2_PRODUCTS
-    );
-    eprintln!(
-        "    {{product}}_nrt_{{year}}_{{doy:03}}.tar.gz  (example {})",
-        level2_tarball_url("wetPf2", 2026, 251)
-    );
-    eprintln!(
-        "  level3/{{year}}/{{doy:03}}/{{product}}/ carries ionosphere-scintillation JSON tarballs ({{product}} in {:?}):",
-        LEVEL3_PRODUCTS
-    );
-    eprintln!(
-        "    {{product}}_nrt_{{year}}_{{doy:03}}.tar.gz  (example {})",
-        level3_tarball_url("bubJL1", 2026, 251)
-    );
-    eprintln!(
-        "  granule: {{product}}_{{sat}}.{{year}}.{{doy}}.{{hh}}.{{mm}}.{{occ}}_{{year}}.{{secs}}_nc"
-    );
+fn naming_scheme(mission: Mission) {
+    eprintln!("{} tree ({}):", mission.name(), mission.root());
+    for level in mission.levels() {
+        eprintln!(
+            "  {level}/{{year}}/{{doy:03}}/ carries daily tarballs (products {:?}):",
+            mission.products(level)
+        );
+        let example = mission
+            .default_product(level)
+            .and_then(|p| mission.tarball_url(level, p, 2026, 251));
+        if let Some(url) = example {
+            eprintln!("    {url}");
+        }
+    }
+    match mission {
+        Mission::Cosmic1 => {
+            eprintln!(
+                "  granule: {{product}}_{{sat}}.{{year}}.{{doy}}.{{hh}}.{{mm}}.{{occ}}_{{year}}.{{secs}}_nc"
+            );
+            eprintln!(
+                "  level1b netCDF: atmPhs, ionPhs, podTec, scnLv1; level1b SP3/CLK/text: leoOrb, leoClk, gpsBit; level1a: leoAtt (text), podCrx (raw .crx.gz, not netCDF)"
+            );
+        }
+        Mission::Cosmic2 => {
+            eprintln!(
+                "  granule: {{product}}_{{sat}}.{{year}}.{{doy}}.{{hh}}.{{mm}}.{{occ}}_{{year}}.{{secs}}_nc"
+            );
+        }
+    }
 }
 
 fn list_links(body: &str) -> Vec<String> {
@@ -76,16 +181,23 @@ fn list_links(body: &str) -> Vec<String> {
 }
 
 fn run_list(args: &[String]) -> Result<(), String> {
-    naming_scheme();
+    let mission = mission_of(args)?;
+    naming_scheme(mission);
     let year = arg_value(args, "--year").and_then(|v| v.parse::<u32>().ok());
     let doy = arg_value(args, "--doy").and_then(|v| v.parse::<u32>().ok());
-    for level in ["level2", "level3"] {
+    let only_level = arg_value(args, "--level");
+    for level in mission.levels() {
+        if let Some(want) = &only_level {
+            if want != level {
+                continue;
+            }
+        }
         let index_url = match year {
             Some(y) => match doy {
-                Some(d) => format!("{ROOT}/{level}/{y}/{d:03}/"),
-                None => format!("{ROOT}/{level}/{y}/"),
+                Some(d) => format!("{}/{level}/{y}/{d:03}/", mission.root()),
+                None => format!("{}/{level}/{y}/", mission.root()),
             },
-            None => format!("{ROOT}/{level}/"),
+            None => format!("{}/{level}/", mission.root()),
         };
         match fetch_text(&index_url) {
             Some(body) => {
@@ -98,6 +210,42 @@ fn run_list(args: &[String]) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+fn tarball_arg(args: &[String], mission: Mission) -> Result<Option<String>, String> {
+    if let Some(path) = arg_value(args, "--tarball") {
+        return Ok(Some(path));
+    }
+    let year = arg_value(args, "--year").and_then(|v| v.parse::<u32>().ok());
+    let doy = arg_value(args, "--doy").and_then(|v| v.parse::<u32>().ok());
+    let (Some(year), Some(doy)) = (year, doy) else {
+        return Ok(None);
+    };
+    if !(1..=366).contains(&doy) {
+        return Err(format!("--doy {doy}: outside 1..=366"));
+    }
+    let level = match arg_value(args, "--level") {
+        Some(v) => v,
+        None => "level2".to_string(),
+    };
+    let product = match arg_value(args, "--product") {
+        Some(p) => p,
+        None => mission
+            .default_product(&level)
+            .ok_or_else(|| format!("{level}: no default product for {}", mission.name()))?
+            .to_string(),
+    };
+    mission
+        .tarball_url(&level, &product, year, doy)
+        .map(Some)
+        .ok_or_else(|| {
+            format!(
+                "{} {level} {product}: not in the measured tree (levels {:?}, products {:?})",
+                mission.name(),
+                mission.levels(),
+                mission.products(&level)
+            )
+        })
 }
 
 fn tar_octal(field: &[u8]) -> Option<usize> {
@@ -475,6 +623,37 @@ fn probe_granule(bytes: &[u8], name: &str) {
     eprintln!("{name}: unknown byte stream — neither CDF nor HDF5");
 }
 
+fn nc3_units(nc: &NetcdfFile, name: &str) -> Option<String> {
+    nc.var(name)
+        .and_then(|v| v.attrs.iter().find(|a| a.name == "units"))
+        .and_then(|a| nc.attr_text(a))
+}
+
+fn h5_units(file: &Hdf5File, name: &str) -> Option<String> {
+    file.attribute(name, "units").map(|a| {
+        String::from_utf8_lossy(&a.data)
+            .trim_end_matches('\0')
+            .to_string()
+    })
+}
+
+fn canonical_units(comp: u32, unit: Option<&str>, vals: Vec<f64>) -> Vec<f64> {
+    if comp != COMP_COSMIC_TEMP {
+        return vals;
+    }
+    let Some(unit) = unit else {
+        return vals;
+    };
+    let u = unit.trim().to_ascii_lowercase();
+    if u == "c" || u.starts_with("deg c") || u.starts_with("degree") || u.contains("celsius") {
+        return vals
+            .into_iter()
+            .map(|v| if v.is_finite() { v + 273.15 } else { v })
+            .collect();
+    }
+    vals
+}
+
 fn harvest_granule(
     bytes: &[u8],
     name: &str,
@@ -482,7 +661,7 @@ fn harvest_granule(
     var_names: &[&str],
     lsk: &LeapSeconds,
 ) -> Vec<GeoRec> {
-    let (lat, lon, alt, val) = if bytes.starts_with(b"CDF") {
+    let (lat, lon, alt, val, unit) = if bytes.starts_with(b"CDF") {
         let Ok(nc) = NetcdfFile::parse(bytes) else {
             return Vec::new();
         };
@@ -490,10 +669,13 @@ fn harvest_granule(
         let Some(alt) = nc3_var(&nc, bytes, "MSL_alt") else {
             return Vec::new();
         };
-        let Some(val) = var_names.iter().find_map(|n| nc3_var(&nc, bytes, n)) else {
+        let Some((val, unit)) = var_names
+            .iter()
+            .find_map(|n| nc3_var(&nc, bytes, n).map(|v| (v, nc3_units(&nc, n))))
+        else {
             return Vec::new();
         };
-        (lat, lon, alt, val)
+        (lat, lon, alt, val, unit)
     } else if bytes.starts_with(&HDF5_MAGIC) {
         let Ok(file) = Hdf5File::parse(bytes) else {
             return Vec::new();
@@ -502,13 +684,17 @@ fn harvest_granule(
         let Some(alt) = h5_var(&file, "MSL_alt") else {
             return Vec::new();
         };
-        let Some(val) = var_names.iter().find_map(|n| h5_var(&file, n)) else {
+        let Some((val, unit)) = var_names
+            .iter()
+            .find_map(|n| h5_var(&file, n).map(|v| (v, h5_units(&file, n))))
+        else {
             return Vec::new();
         };
-        (lat, lon, alt, val)
+        (lat, lon, alt, val, unit)
     } else {
         return Vec::new();
     };
+    let val = canonical_units(comp, unit.as_deref(), val);
     let (Some(lat), Some(lon), Some(t_unix)) = (lat, lon, granule_time(name)) else {
         return Vec::new();
     };
@@ -542,13 +728,16 @@ fn harvest_granule(
 }
 
 fn run_probe(args: &[String]) -> Result<(), String> {
+    let mission = mission_of(args)?;
     if let Some(path) = arg_value(args, "--granule") {
         let bytes = std::fs::read(&path).map_err(|e| format!("read {path} returned void: {e}"))?;
         probe_granule(&bytes, &path);
         return Ok(());
     }
-    let tarball = arg_value(args, "--tarball")
-        .ok_or_else(|| "cosmic_ro_compiler: --probe needs --granule or --tarball".to_string())?;
+    let tarball = tarball_arg(args, mission)?.ok_or_else(|| {
+        "cosmic_ro_compiler: --probe needs --granule, --tarball or --year/--doy".to_string()
+    })?;
+    eprintln!("{}: {tarball}", mission.name());
     let max = arg_usize(args, "--max-granules").unwrap_or(1);
     let tar = load_tar(&tarball)?;
     let members = tar_members(&tar);
@@ -565,6 +754,7 @@ fn run_probe(args: &[String]) -> Result<(), String> {
 }
 
 fn run_out_bin(args: &[String]) -> Result<(), String> {
+    let mission = mission_of(args)?;
     let var = match arg_value(args, "--var") {
         Some(v) => v,
         None => "Ref".to_string(),
@@ -573,11 +763,15 @@ fn run_out_bin(args: &[String]) -> Result<(), String> {
         .ok_or_else(|| format!("--var {var}: unknown profile variable (Ref|Temp|Pres)"))?;
     let out_path = match arg_value(args, "--out") {
         Some(v) => v,
-        None => format!("data/{NETLOC}/cosmic_ro_{}.bin", var.to_lowercase()),
+        None => format!(
+            "data/{NETLOC}/{}_ro_{}.bin",
+            mission.name(),
+            var.to_lowercase()
+        ),
     };
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
     let max = arg_usize(args, "--max-granules");
-    let Some(lsk) = embedded_lsk() else {
+    let Some(lsk) = load_lsk(arg_value(args, "--lsk").as_deref()) else {
         return Err("naif0012 table void — the TDB epoch stays void (no fabricated epoch)".into());
     };
 
@@ -585,7 +779,8 @@ fn run_out_bin(args: &[String]) -> Result<(), String> {
     if let Some(path) = arg_value(args, "--granule") {
         let bytes = std::fs::read(&path).map_err(|e| format!("read {path} returned void: {e}"))?;
         records = harvest_granule(&bytes, &path, comp, &var_names, &lsk);
-    } else if let Some(tarball) = arg_value(args, "--tarball") {
+    } else if let Some(tarball) = tarball_arg(args, mission)? {
+        eprintln!("{}: {tarball}", mission.name());
         let tar = load_tar(&tarball)?;
         let members = tar_members(&tar);
         let mut read = 0usize;
@@ -647,11 +842,19 @@ fn run_out_bin(args: &[String]) -> Result<(), String> {
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
-        eprintln!("usage: cosmic_ro_compiler <mode>");
-        eprintln!("  --list [--year YYYY] [--doy DDD]");
-        eprintln!("  --probe --granule <file.nc> | --tarball <url|file.tar.gz> [--max-granules N]");
+        eprintln!("usage: cosmic_ro_compiler <mode> [--mission cosmic1|cosmic2]");
+        eprintln!("  --list [--level <level>] [--year YYYY] [--doy DDD]");
         eprintln!(
-            "  --out-bin --tarball <url|file.tar.gz> [--granule <file.nc>] [--var Ref|Temp|Pres] [--out <path>] [--max-granules N] [--ci-mode]"
+            "  --probe --granule <file.nc> | (--tarball <url|file.tar.gz> | --year YYYY --doy DDD [--level <level> --product <name>]) [--max-granules N]"
+        );
+        eprintln!(
+            "  --out-bin (--tarball <url|file.tar.gz> | --granule <file.nc> | --year YYYY --doy DDD [--level <level> --product <name>]) [--var Ref|Temp|Pres] [--out <path>] [--lsk <naif0012.tls>] [--max-granules N] [--ci-mode]"
+        );
+        eprintln!(
+            "  cosmic1: level1a (leoAtt,podCrx), level1b (atmPhs,gpsBit,ionPhs,leoClk,leoOrb,podTec,scnLv1), level2 (atmPrf,bfrPrf,echPrf,eraPrf,gfsPrf,ionPrf,wetPrf)"
+        );
+        eprintln!(
+            "  cosmic2: level2 (atmPrf,avnPrf,bfrPrf,echPrf,wetPf2), level3 (ionosphere scintillation)"
         );
         std::process::exit(1);
     }
@@ -701,14 +904,58 @@ mod tests {
 
     #[test]
     fn tarball_urls_carry_year_and_padded_doy() {
+        let m = Mission::Cosmic2;
         assert_eq!(
-            level2_tarball_url("wetPf2", 2026, 251),
+            m.tarball_url("level2", "wetPf2", 2026, 251).unwrap(),
             "https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level2/2026/251/wetPf2_nrt_2026_251.tar.gz"
         );
         assert_eq!(
-            level3_tarball_url("bubJL1", 2026, 251),
+            m.tarball_url("level3", "bubJL1", 2026, 251).unwrap(),
             "https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt/level3/2026/251/bubJL1/bubJL1_nrt_2026_251.tar.gz"
         );
+    }
+
+    #[test]
+    fn cosmic1_url_template_covers_all_three_levels() {
+        let m = Mission::Cosmic1;
+        assert_eq!(
+            m.tarball_url("level2", "wetPrf", 2014, 121).unwrap(),
+            "https://data.cosmic.ucar.edu/gnss-ro/cosmic1/postProc/level2/2014/121/wetPrf_postProc_2014_121.tar.gz"
+        );
+        assert_eq!(
+            m.tarball_url("level1b", "atmPhs", 2014, 121).unwrap(),
+            "https://data.cosmic.ucar.edu/gnss-ro/cosmic1/postProc/level1b/2014/121/atmPhs_postProc_2014_121.tar.gz"
+        );
+        assert_eq!(
+            m.tarball_url("level1a", "podCrx", 2014, 121).unwrap(),
+            "https://data.cosmic.ucar.edu/gnss-ro/cosmic1/postProc/level1a/2014/121/podCrx_postProc_2014_121.tar.gz"
+        );
+        assert_eq!(m.tarball_url("level3", "bubJL1", 2014, 121), None);
+    }
+
+    #[test]
+    fn mission_aliases_select_the_measured_tree() {
+        assert_eq!(Mission::parse("cosmic1"), Some(Mission::Cosmic1));
+        assert_eq!(Mission::parse("cosmic-1"), Some(Mission::Cosmic1));
+        assert_eq!(Mission::parse("cosmic2"), Some(Mission::Cosmic2));
+        assert_eq!(Mission::parse("cosmic9"), None);
+        assert_eq!(
+            Mission::Cosmic1.products("level2"),
+            &COSMIC1_LEVEL2_PRODUCTS
+        );
+    }
+
+    #[test]
+    fn canonical_units_pair_cosmic1_celsius_with_the_kelvin_field() {
+        let c = canonical_units(COMP_COSMIC_TEMP, Some("C"), vec![0.0, -48.5]);
+        assert!((c[0] - 273.15).abs() < 1e-12);
+        assert!((c[1] - 224.65).abs() < 1e-12);
+        let k = canonical_units(COMP_COSMIC_TEMP, Some("K"), vec![273.15]);
+        assert_eq!(k, vec![273.15]);
+        let absent = canonical_units(COMP_COSMIC_TEMP, None, vec![12.0]);
+        assert_eq!(absent, vec![12.0]);
+        let refr = canonical_units(COMP_COSMIC_REFRACT, Some("N"), vec![300.0]);
+        assert_eq!(refr, vec![300.0]);
     }
 
     #[test]
@@ -757,10 +1004,10 @@ mod tests {
             tdb > t_unix - j2000 - 1.0 && tdb < t_unix - j2000 + 100.0,
             "the occultation TDB lands in the J2000 domain, was {tdb}"
         );
-        assert!(
-            lsk.unix_to_tdb(-40_000_000.0).is_none(),
-            "pre-1972 the leap table reads void — no fabricated epoch"
-        );
+        let pre_1972 = lsk
+            .unix_to_tdb(-40_000_000.0)
+            .expect("the Delta T polynomial anchors pre-1972 epochs");
+        assert!(pre_1972.is_finite(), "pre-1972 stays a measured epoch");
     }
 
     #[test]
@@ -797,5 +1044,18 @@ mod tests {
         assert_eq!(alt.len(), temp.len());
         let (n, _, _) = stats(&temp);
         assert!(n > 0, "temperature levels stay unread");
+        let lsk = embedded_lsk().expect("embedded naif0012 parses");
+        let recs = harvest_granule(
+            &bytes,
+            "wetPrf_C001.2014.121.00.02.G27_2014.2860_nc",
+            COMP_COSMIC_TEMP,
+            &["Temp"],
+            &lsk,
+        );
+        assert!(!recs.is_empty(), "the profile harvest stays empty");
+        assert!(
+            recs.iter().all(|r| (200.0..=320.0).contains(&r.val)),
+            "Temp header unit C must reach the K field as kelvin"
+        );
     }
 }

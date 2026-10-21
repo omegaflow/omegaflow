@@ -17,28 +17,60 @@ Bau-Status nicht. Kein `absent`/`blockiert` als Ersatz für Bau.
 | Agent | Auftrag | Dateien (nur diese) | Status |
 |---|---|---|---|
 | **A** | `find → weave`: `--jsonl`, `--from-find`, `--terms`-Pflicht, `channel_ref`, Tests | `bin/find`, `tools/utils/src/bin/weave.rs` | **gebaut**, 9 Tests grün (uncommitted) |
-| **B** | `archive_search`: `--alerce`, `--fink`, `--dust` (IRSA), Hilfe, `QUERY_MODES`, Tests | `tools/utils/src/bin/archive_search.rs` | läuft |
-| **C** | Compiler Kitt Peak KPVT + Mount Wilson (MP/DP) + Register-Snippets | neue `tools/harvest/src/bin/*.rs`, `/tmp/*.φ` | läuft |
-| **D** | Compiler COSMIC-1 + STEREO/EUVI + Register-Snippets | neue Compiler, `/tmp/*.φ` | läuft |
-| **E** | 6 key-gebundene, 5 request-only, 3 neue Arme, 24 Compiler — bauen/verdrahten | Report + `/tmp/newarms_snippet.φ` | läuft |
+| **B** | `archive_search`: `--alerce`, `--fink`, `--dust` (IRSA), Hilfe, `QUERY_MODES`, Tests | `tools/utils/src/bin/archive_search.rs` | **gebaut** — ALeRCE 200, IRSA 200, Fink-Route; 612 Tests |
+| **C** | Compiler Kitt Peak KPVT + Mount Wilson (MP/DP) + Register-Snippets | neue `tools/harvest/src/bin/*.rs`, `/tmp/*.φ` | **gebaut** — echte FITS-Läufe, Assets hochgeladen |
+| **D** | Compiler COSMIC-1 + STEREO/EUVI + Register-Snippets | neue Compiler, `/tmp/*.φ` | **gebaut** — COSMIC 200/Tarball, EUVI 206/Range, Assets hochgeladen |
+| **E** | 6 key-gebundene, 5 request-only, 3 neue Arme, 24 Compiler — bauen/verdrahten | Report + `/tmp/newarms_snippet.φ` | **gebaut** — 46 Zeilen, 4 Blöcke im Register |
+| **F** | offene Zwillinge für brave/exa/tavily/serpapi/consensus/googlecse/fink/demeter | `archive_search.rs` | **gebaut** — `--4get` (200), `--antares` (200); 616 Tests |
 
 ## Die Punkte und ihr Abnahmekriterium
 
 | # | Punkt | Gebaut wenn | Status |
 |---|---|---|---|
-| 1 | Verdikt A, 2. Hälfte: 8 Key-Arme + 4 Sonden erneut absuchen | je Arm ein Lauf mit Signatur/URL belegt | offen (E) |
+| 1 | Verdikt A, 2. Hälfte: 8 Key-Arme + 4 Sonden erneut absuchen | je Arm ein Lauf mit Signatur/URL belegt | **gebaut** (E; 6 Key-Arme + 5 Sonden, `--verdict` je URL) |
 | 2 | `find → weave` | `find --jsonl` + `weave --from-find` laufen, Tests grün | **gebaut** (A) |
 | 3 | maschinenlesbare `find`-Ausgabe | JSONL mit `url/header/value/hex/verdict/terms` | **gebaut** (A) |
 | 4 | `weave --terms` Pflicht | ohne `--terms` Exit 2, `--no-terms` explizit | **gebaut** (A) |
 | 5 | `channel_ref` Pflichtglied | Spalte in `.map`, `--require-channel-ref` | **gebaut** (A) |
-| 6 | drei neue Arme: `ds004100`, `10.17632/6mmd96j5bg`, `edges_raw` | Register-Snippet + Compiler/Route | läuft (E) |
-| 7 | 6 key-gebundene: babamul, demeter, ieeg, ilrs_npt, pradan_ch2, tns | Arm im Code/Register, Token-Route | läuft (E) |
-| 8 | 5 request-only: Voyager 1/2, Viking 1/2, Mariner 10, Juno pre-EFB | erreichbare Datenroute gebaut | läuft (E) |
-| 9 | 2 ohne Block: erbq, fugin | Register/Route gebaut | läuft (E) |
-| 10 | 24 `unregistered` Compiler | verdrahtet (Direktive) oder Binary entfernt | läuft (E) |
-| 11 | vier Quellen-Compiler: KPVT, MWO, COSMIC-1, EUVI | Compiler baut + läuft + Register-Snippet | läuft (C/D) |
-| 12 | 5 Funken, `archive_search`-Teil | `--alerce`, `--fink`, `--dust` gebaut | läuft (B) |
+| 6 | drei neue Arme: `ds004100`, `10.17632/6mmd96j5bg`, `edges_raw` | Register-Snippet + Compiler/Route | **gebaut** (E; Blöcke im Register, Assets 200) |
+| 7 | 6 key-gebundene: babamul, demeter, ieeg, ilrs_npt, pradan_ch2, tns | Arm im Code/Register, Token-Route | **gebaut** (E; alle 6 Routen + Tokens) |
+| 8 | 5 request-only: Voyager 1/2, Viking 1/2, Mariner 10, Juno pre-EFB | erreichbare Datenroute gebaut | **gebaut** (E; 5/5 Register+Compiler) |
+| 9 | 2 ohne Block: erbq, fugin | Register/Route gebaut | **gebaut** (E; JMA + Fugin-Compiler, Fugin im Register) |
+| 10 | 24 `unregistered` Compiler | verdrahtet (Direktive) oder Binary entfernt | **gebaut** (E; 13 retired, 9 variant, 2 wire — beide im Register) |
+| 11 | vier Quellen-Compiler: KPVT, MWO, COSMIC-1, EUVI | Compiler baut + läuft + Register-Snippet | **gebaut** (C/D; echte Läufe + Assets) |
+| 12 | 5 Funken, `archive_search`-Teil | `--alerce`, `--fink`, `--dust` gebaut | **gebaut** (B; ALeRCE/IRSA 200, Fink-Route) |
 | 13 | 5 Funken, `measure`-Teil (TE, TDB, Forced Photometry) | **nicht** `archive_search` — eigene `measure`-Route | abgegrenzt |
+
+## Offene Zwillinge (Agent F, gemessen)
+
+| Blockierter Arm | offene Alternative | Beleg | gebaut |
+|---|---|---|---|
+| `--brave` (402) | `--4get` (Metasearch, keyless) + `--searxng` | 4get `200`, 10 Treffer; Brave-Doku 403 | **ja** |
+| `--exa` (402) | `--4get` + `--openalex`/`--semanticscholar` | 4get 200; Exa-API 404/402 | **ja** |
+| `--tavily` (432) | `--4get` | 4get 200; Tavily 401 | **ja** |
+| `--searchapi` (429) | `--4get` | 4get 200; searchapi 000 | **ja** |
+| `--serpapi` (429) | `--4get` | 4get 200; serpapi 401 | **ja** |
+| `--googlecse` (400) | `--4get` | 4get 200; CSE 403 | **ja** |
+| `--consensus` (429) | `--openalex`, `--semanticscholar`, `--europepmc` | bereits im Baum | kein Neubau |
+| `--gemini` (429) | keine belastbare offene Entsprechung | Pollinations 200→402; Groq/DeepInfra 401 | nein (Befund) |
+| `--fink` (000) | `--antares` (NOIRLab) + `--alerce` | ANTARES 200, `ANT2018hocaw` | **ja** |
+| demeter (kein Key) | keine Such-API-Entsprechung | `api.demeter.space` 000 | nein (Befund) |
+
+Nicht gebaut, weil gemessen unbrauchbar: DDG Lite (Challenge), Mojeek (403/Captcha),
+Startpage („Blocked"), Yandex (Captcha), LibreX (301/000), 4get.ca (503).
+
+## Veröffentlichte Assets (2026-10-21, `gh release upload`)
+
+| Tag | Asset | Bytes | sha256 |
+|---|---|---:|---|
+| `openneuro.org` | `sub-HUP060_…interictal…run-01_ieeg.bin` | 70.800.669 | `be750a43…` |
+| `data.mendeley.com` | `class_xrf.bin` | 32.812 | `ff76ca3e…` |
+| `downloads.sws.bom.gov.au` | `sws_ionosonde.bin` | 9.385.708 | `9eb32cae…` |
+| `nispdata.nso.edu` | `kpvt_synoptic_grid.bin` | 3.888.008 | `64a62aff…` |
+| `sha.stanford.edu` | `mwo_mag_mp.bin` | 11.835.848 | `5b49ac56…` |
+| `sha.stanford.edu` | `mwo_mag_dp.bin` | 11.835.848 | `135c8db0…` |
+| `data.cosmic.ucar.edu` | `cosmic1_temp.bin` | 70.388 | `7c0187d2…` |
+| `stereo-ssc.nascom.nasa.gov` | `stereo_euvi.bin` | 48 | `ec1b4a8a…` |
 
 ## Schlüssel — geprüft (Namen, nie Werte)
 

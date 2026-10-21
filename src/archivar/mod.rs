@@ -80,6 +80,7 @@ pub mod emm_exi;
 pub mod emodnet_hfr;
 pub mod emtf;
 pub mod ephemeris;
+pub mod euvi;
 pub mod euvs;
 pub mod eve;
 pub mod exclude;
