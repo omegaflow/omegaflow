@@ -130,6 +130,7 @@
   <button id="resetStates" type="button">Status zurücksetzen</button>
   <label class="hidebox"><input type="checkbox" id="hidePaid" checked> kostenpflichtige aus</label>
   <label class="hidebox"><input type="checkbox" id="hideWorking" checked> bereits funktionierend aus</label>
+  <label class="hidebox"><input type="checkbox" id="hideCard" checked> Kreditkarte nötig aus</label>
   <span class="count" id="count"></span>
   <span class="legend">
     <span class="badge b-ok">200</span>
@@ -144,9 +145,10 @@
   <code>offen → registriert → authentifiziert → declined → offen</code>.
   Gespeichert wird lokal im Browser (<code>localStorage</code>), nicht im Repo.
   <br>
-  <strong>Standardansicht:</strong> kostenpflichtige Dienste und Dienste mit bereits
-  funktionierendem Key sind ausgeblendet (Toggles oben). Sichtbar bleibt, was gratis
-  ist und noch keinen funktionierenden Key hat.
+  <strong>Standardansicht:</strong> kostenpflichtige Dienste, Dienste mit bereits
+  funktionierendem Key und Dienste, deren Signup eine Kreditkarte verlangt, sind
+  ausgeblendet (Toggles oben). Sichtbar bleibt, was gratis ist, ohne Karte
+  auskommt und noch keinen funktionierenden Key hat.
 </div>
 
 <div class="note">
@@ -290,6 +292,7 @@
   var reset = document.getElementById('resetStates');
   var hidePaid = document.getElementById('hidePaid');
   var hideWorking = document.getElementById('hideWorking');
+  var hideCard = document.getElementById('hideCard');
   // Kommerzielle/vertragsgebundene Dienste: kostenpflichtig für den Regelbetrieb.
   var PAID = [
     'Mojeek', 'Yandex Search API', 'Brave Search', 'Exa', 'Tavily', 'Serper',
@@ -306,6 +309,11 @@
     'NASA ADS', 'AlphaXiv', 'BASE', 'Firecrawl', 'Linkup', 'Serper',
     'Perplexity Sonar', 'Scopus (Elsevier)', 'Shodan', 'GitHub',
     'Semantic Scholar', 'PipesHub'
+  ];
+  // Signup verlangt eine Kreditkarte (auch für den Free-Tier/Test).
+  var CARD = [
+    'Yandex Search API', 'Perplexity Sonar', 'Kagi', 'You.com',
+    'Bright Data', 'Shodan', 'Telnyx Web Search', 'Parallel AI'
   ];
   var tables = Array.prototype.slice.call(document.querySelectorAll('.tablewrap table'));
 
@@ -380,10 +388,13 @@
   PAID.forEach(function (n) { paidSet[n] = true; });
   var workSet = {};
   WORKING.forEach(function (n) { workSet[n] = true; });
+  var cardSet = {};
+  CARD.forEach(function (n) { cardSet[n] = true; });
   rows.forEach(function (row) {
     var name = providerKey(row);
     if (paidSet[name]) row.setAttribute('data-paid', '1');
     if (workSet[name]) row.setAttribute('data-working', '1');
+    if (cardSet[name]) row.setAttribute('data-card', '1');
   });
 
   function rowText(row) {
@@ -398,6 +409,7 @@
     var visible = 0;
     var paidHidden = 0;
     var workHidden = 0;
+    var cardHidden = 0;
     rows.forEach(function (row) {
       var textHit = !q || rowText(row).indexOf(q) !== -1;
       var box = row.querySelector('.statebox');
@@ -405,13 +417,16 @@
       var stateHit = want === 'alle' || st === want;
       var isPaid = row.getAttribute('data-paid') === '1';
       var isWorking = row.getAttribute('data-working') === '1';
+      var isCard = row.getAttribute('data-card') === '1';
       var paidOut = hidePaid.checked && isPaid;
       var workOut = hideWorking.checked && isWorking;
-      var hit = textHit && stateHit && !paidOut && !workOut;
+      var cardOut = hideCard.checked && isCard;
+      var hit = textHit && stateHit && !paidOut && !workOut && !cardOut;
       row.classList.toggle('hidden', !hit);
       if (hit) visible++;
       if (paidOut) paidHidden++;
       if (workOut) workHidden++;
+      if (cardOut) cardHidden++;
     });
     sections.forEach(function (el, i) {
       if (el.tagName === 'H2') {
@@ -427,6 +442,7 @@
     var hidden = [];
     if (paidHidden) hidden.push(paidHidden + ' kostenpflichtig');
     if (workHidden) hidden.push(workHidden + ' bereits funktionierend');
+    if (cardHidden) hidden.push(cardHidden + ' Kreditkarte nötig');
     if (hidden.length) text += ' · ausgeblendet: ' + hidden.join(', ');
     count.textContent = text;
   }
@@ -435,6 +451,7 @@
   stateFilter.addEventListener('change', apply);
   hidePaid.addEventListener('change', apply);
   hideWorking.addEventListener('change', apply);
+  hideCard.addEventListener('change', apply);
   reset.addEventListener('click', function () {
     if (!window.confirm('Alle eigenen Statusmarkierungen zurücksetzen?')) return;
     rows.forEach(function (row) {
