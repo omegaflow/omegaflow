@@ -5342,6 +5342,10 @@ const QUERY_MODES: &[&str] = &[
     "datacite",
     "zenodo",
     "youcom",
+    "youmcp",
+    "examcp",
+    "earthmcp",
+    "mcp",
     "hapi",
     "wayback",
     "cc",
@@ -5425,12 +5429,23 @@ const QUERY_MODES: &[&str] = &[
     "geonames",
 ];
 
-const PARAMETER_MODES: &[&str] = &["tap", "sparql", "oai-pmh", "stac", "erddap"];
+const PARAMETER_MODES: &[&str] = &["tap", "sparql", "oai-pmh", "stac", "erddap", "mcp"];
 
-const BROWSE_MODES: &[&str] = &["re3data", "copernicus", "vires", "nssdc-auth", "ssdc-auth"];
+const BROWSE_MODES: &[&str] = &[
+    "re3data",
+    "copernicus",
+    "vires",
+    "nssdc-auth",
+    "ssdc-auth",
+    "youcom-balance",
+];
 
 pub fn is_auth_mode(mode: &str) -> bool {
     matches!(mode, "nssdc-auth" | "ssdc-auth")
+}
+
+pub fn is_browse_mode(mode: &str) -> bool {
+    BROWSE_MODES.contains(&mode)
 }
 
 pub fn keyword_mode_count() -> usize {
@@ -5735,7 +5750,7 @@ pub fn run_lines_max(
     let started = Instant::now();
     trace_reset();
     let cache_key = crate::filters::cache_query(query);
-    if mode != "all" && !is_auth_mode(mode) {
+    if mode != "all" && mode != "youcom-balance" && !is_auth_mode(mode) {
         if let Some(mut lines) = crate::cache::load(mode, &cache_key, max) {
             let (status, retry_after, _net_cached) = trace_take();
             crate::report::observe(
@@ -5754,7 +5769,7 @@ pub fn run_lines_max(
     let mut lines = run_lines_dispatch(mode, query, env, out, max);
     let (status, retry_after, net_cached) = trace_take();
     annotate_declared(&mut lines, env);
-    if mode != "all" && !is_auth_mode(mode) {
+    if mode != "all" && mode != "youcom-balance" && !is_auth_mode(mode) {
         lines = crate::fallback::apply(mode, query, lines, max);
         crate::cache::store(mode, &cache_key, max, &lines);
         log_query(mode, query, &lines, max);
@@ -6165,6 +6180,11 @@ fn run_lines_dispatch(
         "datacite" => crate::datacite::datacite_lines(query, max),
         "zenodo" => crate::zenodo::zenodo_lines(query, max),
         "youcom" => crate::youcom::youcom_lines(query, max),
+        "youmcp" => crate::mcp::youmcp_lines(query, max),
+        "examcp" => crate::mcp::examcp_lines(query, max),
+        "earthmcp" => crate::mcp::earthmcp_lines(query, max),
+        "mcp" => crate::mcp::mcp_lines(query, max),
+        "youcom-balance" => crate::youcom::balance_lines(),
         "hapi" => hapi_lines(query, max),
         "isc" => crate::isc::isc_lines(query, max),
         "base" => {
@@ -6533,6 +6553,10 @@ mod tests {
             "datacite",
             "zenodo",
             "youcom",
+            "youmcp",
+            "examcp",
+            "earthmcp",
+            "mcp",
             "hapi",
             "wayback",
             "cc",
