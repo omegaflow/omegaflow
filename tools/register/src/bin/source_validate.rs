@@ -46,6 +46,9 @@ fn numeric_run_start(parts: &[&str]) -> Option<usize> {
 fn tail_unit_cadence<'a>(parts: &[&'a str]) -> Option<(&'a str, Option<&'a str>)> {
     let idx = numeric_run_start(parts)?;
     let unit = parts[idx];
+    if matches!(unit, "measured" | "derived" | "pending") && idx >= 2 {
+        return Some((parts[idx - 2], Some(parts[idx - 1])));
+    }
     let next = parts.get(idx + 1).copied();
     let numeric_unit = next == Some("1")
         && (force_id_of(unit).is_some()
