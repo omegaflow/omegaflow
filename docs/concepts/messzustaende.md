@@ -2,7 +2,7 @@
   title: Messzustände — zwei Achsen: was wissen wir, was tun wir (2026-10-21)
   class: concept
   date: 2026-10-21
-  sha256: 1b43d1d37595894b0e1af4a4bb3cb839905f11fd422695cc83d6adff1edf2050
+  sha256: 60b32ea2faf27ade00b4aafa2f98fce2b9b184200c39dff6ff0b13a341d2d40a
   status: live
   owner: future
   ack: future 2026-10-21T13:40Z
@@ -25,12 +25,12 @@ Es gibt **zwei** Zustände:
   `nicht_gemessen | nicht_nachgewiesen | nicht_berichtet | nicht_zugänglich`.
 - **`gemessen`** — eine Messung liegt vor.
 
-`zensiert`, `null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**,
+`obergrenze`, `null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**,
 keine eigenen Nicht-Mess-Zustände:
 
 | Qualifier | Bedeutung | Bedingung |
 |---|---|---|
-| `zensiert` | Obergrenze `< L_D` | gemessen, aber unter der Nachweisgrenze; nie 0 |
+| `obergrenze` (alias `zensiert`) | Obergrenze `< L_D` | gemessen, aber unter der Nachweisgrenze; nie 0 |
 | `null-echt` | der Wert ist 0 | 0 über n gemessen; PDF schließt 0 ein |
 | `absent` | die Sache existiert nicht | Nicht-Existenz belegt; **selten** |
 | `riss` | Widerspruch | vergleichbar **und** Kettenfehler ausgeschlossen **und** Daten verschieden |

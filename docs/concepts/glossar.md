@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: 247547f6a54003466d15a848d7d694e02814286727b8af610304d025329c9008
+  sha256: d2139b1fc90f91efbb5c218e56bc50104a1e4a4b47506e61f2115c528f98265a
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/archiv/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
 -->
@@ -24,7 +24,7 @@ fabriziert.
 - **pending** — was noch nicht gemessen ist, bleibt pending; das Schweigen gehört den Ungeborenen. · `docs/granit.md:20`
 - **pending ⇒ offen, offen ⇏ pending** — `pending` ist die benannte Form der Offenheit, nicht ihr ganzer Umfang. Es gibt offene Fragen ohne `pending` (stille Lücke) und gelieferte, aber nicht geschlossene Aufträge. Geschlossen wird nur vom Operator. · Operator-Regel 2026-10-21
 - **0-Kanon** — die vier Zustände `null-echt` (fließt als 0), `absent` (Option/None), `pending` (Registerpflicht), `riss` (Widerspruch) kollabieren nie. · `AGENTS.md`
-- **Zwei Messzustände** — `pending` (nicht gemessen, mit Grund-Tag `nicht_gemessen | nicht_nachgewiesen | nicht_berichtet | nicht_zugänglich`) und `gemessen` (Wert). `zensiert`, `null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**, keine eigenen Nicht-Mess-Zustände. `offen` ist die Aufgabenebene, nicht der Messzustand.
+- **Zwei Messzustände** — `pending` (nicht gemessen, mit Grund-Tag `nicht_gemessen | nicht_nachgewiesen | nicht_berichtet | nicht_zugänglich`) und `gemessen` (Wert). `obergrenze` (alias `zensiert`), `null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**, keine eigenen Nicht-Mess-Zustände. `offen` ist die Aufgabenebene, nicht der Messzustand.
 - **descoped** — **kein Zustand.** Faktisch gibt es kein `descoped`. Wer „nicht im Fokus" meint, schreibt **`LOCK` + registriertes Operator-Wort + Grund**; wer „nein" meint, `declined`; wer auf etwas wartet, `wartend`; wer nicht gemessen hat, `pending`. Das Wort ist als Status **abgeschafft**.
 - **LOCK** — der fünfte Status-Tag: „vertagt / aus dem Fokus" **nur** mit registriertem Operator-Wort und Grund. Ein LOCK ohne Wort ist ein Parkplatz, kein Status. LOCK ist **kein** Abschluss und **kein** Gate; es hält den Punkt sichtbar, bis das Wort ihn löst. · `docs/concepts/archiv/house-rules-voll-2026-10-16.md:65-67`
 - **Autolock** — **kein eigener Tag**: `LOCK` mit dem Grund `privat` oder `rechtlich`. Gegründet auf die Ablage (weder `work` noch `public`, sondern `private`) oder eine Rechtsbindung (Lizenz, Vertrag, Weitergabeverbot, personenbezogene Daten). Kein `descoped`, kein Abschluss, kein Gate. Frei zugängliche technische Quellen (z. B. `demeter`) sind **nicht** gedeckt.
