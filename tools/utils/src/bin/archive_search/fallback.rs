@@ -4,8 +4,6 @@ const BLOCKED: &[&str] = &[
     "tavily",
     "searchapi",
     "serpapi",
-    "consensus",
-    "gemini",
     "googlecse",
 ];
 
@@ -68,5 +66,9 @@ mod tests {
     fn ignores_a_mode_outside_the_map() {
         let lines = vec!["pending — openalex HTTP 429".to_string()];
         assert_eq!(block_status("openalex", &lines), None);
+        let consensus = vec!["pending — Consensus HTTP 429".to_string()];
+        assert_eq!(block_status("consensus", &consensus), None);
+        let gemini = vec!["pending — gemini HTTP 429".to_string()];
+        assert_eq!(block_status("gemini", &gemini), None);
     }
 }
