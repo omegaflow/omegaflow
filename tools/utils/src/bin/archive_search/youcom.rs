@@ -2,7 +2,55 @@ use crate::json;
 use std::process::Command;
 
 const ENDPOINT: &str = "https://ydc-index.io/v1/search";
+const BALANCE_ENDPOINT: &str = "https://api.you.com/v1/billing/account_balance";
 const KEY: &str = "YOUCOM_API_KEY";
+
+pub fn balance_lines() -> Vec<String> {
+    let Some(key) = crate::token::secret(KEY) else {
+        return vec![format!("pending — {KEY} absent from .secrets.local/.env")];
+    };
+    let out = Command::new("curl")
+        .args(["-sS", "--max-time", "20", BALANCE_ENDPOINT, "-H"])
+        .arg(format!("X-API-Key: {key}"))
+        .args(["-w", "\n%{http_code}"])
+        .output()
+        .ok();
+    let Some(out) = out else {
+        return vec!["pending — no network".to_string()];
+    };
+    let stdout = out.stdout;
+    let Some(idx) = stdout.iter().rposition(|&b| b == b'\n') else {
+        return vec!["pending — you.com balance response carries no status".to_string()];
+    };
+    let status = String::from_utf8_lossy(&stdout[idx + 1..])
+        .trim()
+        .parse::<i32>()
+        .ok();
+    let body = String::from_utf8_lossy(&stdout[..idx]).to_string();
+    match status {
+        Some(200) => match parse_balance(&body) {
+            Some(lines) => lines,
+            None => vec!["pending — you.com balance response carries no balance".to_string()],
+        },
+        Some(402) => vec!["pending — You.com HTTP 402 (prepaid credit balance depleted)".to_string()],
+        Some(code) => vec![format!("pending — You.com balance HTTP {code}")],
+        None => vec!["pending — you.com balance status unreadable".to_string()],
+    }
+}
+
+fn parse_balance(body: &str) -> Option<Vec<String>> {
+    let v = json::parse(body)?;
+    let raw = v
+        .get("data")?
+        .get("attributes")?
+        .get("balance")?
+        .as_scalar_string()?;
+    let cents = raw.parse::<f64>().ok()?;
+    Some(vec![
+        format!("balance_cents: {raw}"),
+        format!("balance_usd: {:.2}", cents / 100.0),
+    ])
+}
 
 pub fn youcom_lines(query: &str, max: usize) -> Vec<String> {
     let Some(key) = crate::token::secret(KEY) else {
@@ -161,5 +209,17 @@ mod tests {
     #[test]
     fn escapes_the_query() {
         assert_eq!(escape("a \"b\"\\c\n"), "a \\\"b\\\"\\\\c ");
+    }
+
+    #[test]
+    fn reads_the_balance_in_cents() {
+        let body = r#"{"data":{"type":"account","id":"x","attributes":{"balance":10000}}}"#;
+        assert_eq!(
+            parse_balance(body),
+            Some(vec![
+                "balance_cents: 10000".to_string(),
+                "balance_usd: 100.00".to_string(),
+            ])
+        );
     }
 }

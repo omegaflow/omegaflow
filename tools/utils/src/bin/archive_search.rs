@@ -252,6 +252,8 @@ mod wikidata;
 mod zenodo;
 #[path = "archive_search/youcom.rs"]
 mod youcom;
+#[path = "archive_search/mcp.rs"]
+mod mcp;
 
 use crate::json::Json;
 use std::collections::{HashMap, HashSet};
@@ -409,6 +411,11 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--sniff" => Some(Mode::Net("sniff")),
         "--zenodo" => Some(Mode::Net("zenodo")),
         "--youcom" => Some(Mode::Net("youcom")),
+        "--youmcp" => Some(Mode::Net("youmcp")),
+        "--examcp" => Some(Mode::Net("examcp")),
+        "--earthmcp" => Some(Mode::Net("earthmcp")),
+        "--mcp" => Some(Mode::Net("mcp")),
+        "--youcom-balance" => Some(Mode::Net("youcom-balance")),
         "--hapi" => Some(Mode::Net("hapi")),
         "--isc" => Some(Mode::Net("isc")),
         "--base" => Some(Mode::Net("base")),
@@ -1324,6 +1331,7 @@ fn main() {
                 token_cmd::refresh_env(&mut env_map);
                 if keywords.is_empty()
                     && !net::is_auth_mode(name)
+                    && !net::is_browse_mode(name)
                     && !std::io::stdin().is_terminal()
                 {
                     let stdin = std::io::stdin();
@@ -2361,7 +2369,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--youcom|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--gbooks|--google-books|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--youcom|--youmcp|--examcp|--earthmcp|--mcp|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--gbooks|--google-books|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -2611,6 +2619,21 @@ fn usage() {
     );
     eprintln!(
         "  --youcom    You.com Search API (ydc-index.io/v1/search, POST), YOUCOM_API_KEY; url + title/description/date"
+    );
+    eprintln!(
+        "  --youmcp    You.com MCP free profile (api.you.com/mcp?profile=free), keyless; you-search"
+    );
+    eprintln!(
+        "  --examcp    Exa MCP (mcp.exa.ai/mcp), keyless; web_search_exa, text blocks -> url/title/date"
+    );
+    eprintln!(
+        "  --earthmcp  NASA Earthdata MCP (cmr.earthdata.nasa.gov/mcp/v1), keyless; get_collections over CMR"
+    );
+    eprintln!(
+        "  --mcp       any MCP search server: endpoint=<url> tool=<name> [query_arg=query] [count_arg=count] <query>"
+    );
+    eprintln!(
+        "  --youcom-balance  You.com prepaid credit balance (api.you.com/v1/billing/account_balance); cents + USD"
     );
     eprintln!(
         "  --openverse Openverse media search (api.openverse.org/v1/images), keyless; url + title/creator/license/source/media"
