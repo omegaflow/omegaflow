@@ -5235,6 +5235,9 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         let Frame::Surface { lat, lon, alt, .. } = &src.frame else {
             return ExtractResult::Measurements(vec![]);
         };
+        let Some(alt) = *alt else {
+            return ExtractResult::Measurements(vec![]);
+        };
         let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
         for (unix, value) in crate::archivar::geo::parse_axis_value_text(body) {
             let Some(epoch) = lsk.unix_to_tdb(unix) else {
@@ -5251,7 +5254,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         body_name: frame_body_name(&src.frame),
                         lat: *lat,
                         lon: *lon,
-                        alt: *alt,
+                        alt,
                     },
                     name: fc.name.clone(),
                     value,
@@ -5265,6 +5268,9 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         let Frame::Surface { alt, .. } = &src.frame else {
             return ExtractResult::Measurements(vec![]);
         };
+        let Some(alt) = *alt else {
+            return ExtractResult::Measurements(vec![]);
+        };
         let fields: Vec<FieldConfig> = src.extracts.iter().flat_map(extract_fields).collect();
         let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
         for row in crate::archivar::geo::parse_kc2g_stations(body) {
@@ -5275,7 +5281,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 body_name: frame_body_name(&src.frame),
                 lat: row.lat,
                 lon: row.lon,
-                alt: *alt,
+                alt,
             };
             for fc in &fields {
                 let Some((_, value)) = row.values.iter().find(|(k, _)| k == &fc.key) else {
@@ -5358,9 +5364,12 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         let Frame::Surface { lat, lon, alt, .. } = &src.frame else {
             return ExtractResult::Measurements(vec![]);
         };
+        let Some(alt) = *alt else {
+            return ExtractResult::Measurements(vec![]);
+        };
         let (station_lat, station_lon, station_alt) = match (station.lat, station.lon) {
-            (Some(station_lat), Some(station_lon)) => (station_lat, station_lon, *alt),
-            _ => (*lat, *lon, *alt),
+            (Some(station_lat), Some(station_lon)) => (station_lat, station_lon, alt),
+            _ => (*lat, *lon, alt),
         };
         let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
         for (unix, value) in station.series {
@@ -5404,6 +5413,9 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         let Frame::Surface { lat, lon, alt, .. } = &src.frame else {
             return ExtractResult::Measurements(vec![]);
         };
+        let Some(alt) = *alt else {
+            return ExtractResult::Measurements(vec![]);
+        };
         let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
         for (unix, value) in print.series("UT1_UNIX", &fc.key) {
             let Some(epoch) = lsk.unix_to_tdb(unix) else {
@@ -5420,7 +5432,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         body_name: frame_body_name(&src.frame),
                         lat: *lat,
                         lon: *lon,
-                        alt: *alt,
+                        alt,
                     },
                     name: fc.name.clone(),
                     value,
@@ -6367,12 +6379,21 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             } => {
                 let text: &str = packed_text.as_deref().unwrap_or(body);
                 let position = match &src.frame {
-                    Frame::Surface { lat, lon, alt, .. } => Position::Surface {
-                        body_name: frame_body_name(&src.frame),
-                        lat: *lat,
-                        lon: *lon,
-                        alt: *alt,
-                    },
+                    Frame::Surface { lat, lon, alt, .. } => {
+                        let Some(alt) = *alt else {
+                            eprintln!(
+                                "rows in {} — frame declares no measured alt, rows skipped",
+                                src.url
+                            );
+                            continue;
+                        };
+                        Position::Surface {
+                            body_name: frame_body_name(&src.frame),
+                            lat: *lat,
+                            lon: *lon,
+                            alt,
+                        }
+                    }
                     Frame::Barycenter { body_name, scale } => Position::Barycenter {
                         body_name: body_name.clone(),
                         scale: *scale,
@@ -6534,11 +6555,14 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     let Frame::Surface { alt, .. } = &src.frame else {
                         return None;
                     };
+                    let Some(alt) = *alt else {
+                        return None;
+                    };
                     Some(Position::Surface {
                         body_name: frame_body_name(&src.frame),
                         lat,
                         lon,
-                        alt: *alt,
+                        alt,
                     })
                 };
                 let row_vals = |line: &str| -> (Option<f64>, Vec<(usize, f64)>, Option<Position>) {

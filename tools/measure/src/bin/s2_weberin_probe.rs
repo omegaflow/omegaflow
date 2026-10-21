@@ -80,7 +80,10 @@ fn main() {
                 lat,
                 lon,
                 alt,
-            } => Some((body_name.clone(), *lat, *lon, *alt)),
+            } => {
+                let alt = (*alt)?;
+                Some((body_name.clone(), *lat, *lon, alt))
+            }
             Frame::Barycenter { .. } | Frame::Manifest => None,
         })
         .collect();
@@ -155,6 +158,16 @@ fn main() {
     let mut sun_d: Option<f64> = None;
     let mut sun_r: Option<f64> = None;
     let mut sun_alpha: Option<f64> = None;
+    let sun_name = body_names
+        .iter()
+        .filter_map(|name| {
+            eph.get(name)
+                .and_then(|body| body.props.as_ref())
+                .map(|props| (name, props.radius_m))
+        })
+        .filter(|(_, radius)| radius.is_finite() && *radius > 0.0)
+        .max_by(|a, b| a.1.total_cmp(&b.1))
+        .map(|(name, _)| name.clone());
     for name in &body_names {
         let Some(eph_body) = eph.get(name) else {
             continue;
@@ -167,7 +180,7 @@ fn main() {
             continue;
         };
         let d = norm3(p);
-        if name == "sun" {
+        if sun_name.as_deref() == Some(name.as_str()) {
             sun_d = Some(d);
             sun_r = Some(r);
             if r.is_finite() && r > 0.0 && d > r {
@@ -221,27 +234,23 @@ fn main() {
             body_live += 1;
         }
     }
-    let mut n_e = 0usize;
     let mut silent_stations = 0usize;
     for (body, lat, lon, alt) in &stations {
-        match S2Osc::from_station(body, *lat, *lon, *alt, tdb, &eph) {
-            Some(_) => {
-                if body == "earth" {
-                    n_e += 1;
-                }
-            }
-            None => silent_stations += 1,
+        if S2Osc::from_station(body, *lat, *lon, *alt, tdb, &eph).is_none() {
+            silent_stations += 1;
         }
     }
     let station_live = stations.len() - silent_stations;
     let n_live = body_live + station_live;
-    let earth_d = eph
-        .get("earth")
-        .and_then(|_| body_barycenter_position("earth", tdb, &eph))
+    let receiver_body = stations.first().map(|s| s.0.as_str());
+    let earth_d = receiver_body
+        .and_then(|body| {
+            eph.get(body)
+                .and_then(|_| body_barycenter_position(body, tdb, &eph))
+        })
         .map(norm3);
-    let earth_r = eph
-        .get("earth")
-        .and_then(|e| e.props.as_ref())
+    let earth_r = receiver_body
+        .and_then(|body| eph.get(body).and_then(|e| e.props.as_ref()))
         .map(|p| p.radius_m);
     println!();
     println!(
@@ -251,12 +260,12 @@ fn main() {
         (Some(d), Some(r)) if r.is_finite() && r > 0.0 && d > r => {
             let theta = (r / d).asin();
             let f_e = if n_live > 0 {
-                format!("{:.6}", (n_e as f64 + 1.0) / n_live as f64)
+                format!("{:.6}", (station_live as f64 + 1.0) / n_live as f64)
             } else {
                 "absent".to_string()
             };
             println!(
-                "   {n_e} station(s) + 1 earth body fold within theta_max = {theta:.6e} rad = {:.4} deg of the earth direction (kernel pi/64 ~ {:.1} deg) - the earth stack carries f_E = {f_e} of the shell sum-omega.",
+                "   {station_live} station(s) + 1 earth body fold within theta_max = {theta:.6e} rad = {:.4} deg of the earth direction (kernel pi/64 ~ {:.1} deg) - the earth stack carries f_E = {f_e} of the shell sum-omega.",
                 theta.to_degrees(),
                 PI_OVER_64.to_degrees()
             );
