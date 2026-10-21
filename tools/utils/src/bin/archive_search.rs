@@ -4,6 +4,8 @@ mod alphafold;
 mod alphaxiv;
 #[path = "archive_search/arcgis.rs"]
 mod arcgis;
+#[path = "archive_search/artic.rs"]
+mod artic;
 #[path = "archive_search/arxiv_src.rs"]
 mod arxiv_src;
 #[path = "archive_search/awmf.rs"]
@@ -76,6 +78,8 @@ mod geonames;
 mod git;
 #[path = "archive_search/go.rs"]
 mod go;
+#[path = "archive_search/hn.rs"]
+mod hn;
 #[path = "archive_search/googlecse.rs"]
 mod googlecse;
 #[path = "archive_search/gosat.rs"]
@@ -116,6 +120,8 @@ mod ned;
 mod net;
 #[path = "archive_search/nominatim.rs"]
 mod nominatim;
+#[path = "archive_search/nasa_images.rs"]
+mod nasa_images;
 #[path = "archive_search/nssdc.rs"]
 mod nssdc;
 #[path = "archive_search/ntfs.rs"]
@@ -136,6 +142,8 @@ mod opencitations;
 mod openfda;
 #[path = "archive_search/openlibrary.rs"]
 mod openlibrary;
+#[path = "archive_search/openverse.rs"]
+mod openverse;
 #[path = "archive_search/opensn.rs"]
 mod opensn;
 #[path = "archive_search/orcid.rs"]
@@ -446,6 +454,10 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--dryad" => Some(Mode::Net("dryad")),
         "--frbcat" => Some(Mode::Net("frbcat")),
         "--go" => Some(Mode::Net("go")),
+        "--hn" => Some(Mode::Net("hn")),
+        "--openverse" => Some(Mode::Net("openverse")),
+        "--nasa-images" => Some(Mode::Net("nasa-images")),
+        "--artic" => Some(Mode::Net("artic")),
         "--unpaywall" => Some(Mode::Net("unpaywall")),
         "--reactome" => Some(Mode::Net("reactome")),
         "--interpro" => Some(Mode::Net("interpro")),
@@ -1932,7 +1944,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -2167,6 +2179,18 @@ fn usage() {
     );
     eprintln!(
         "  --duckduckgo-instant DuckDuckGo Instant Answer (api.duckduckgo.com), keyless; answer/abstract + related-topic url/title"
+    );
+    eprintln!(
+        "  --hn        Hacker News via Algolia (hn.algolia.com/api/v1), keyless; url + title/author/points/comments/date"
+    );
+    eprintln!(
+        "  --openverse Openverse media search (api.openverse.org/v1/images), keyless; url + title/creator/license/source/media"
+    );
+    eprintln!(
+        "  --nasa-images NASA Image and Video Library (images-api.nasa.gov), keyless; url + title/description/date/center/media"
+    );
+    eprintln!(
+        "  --artic     Art Institute of Chicago (api.artic.edu/api/v1/artworks), keyless; url + title/artist/date/department"
     );
     eprintln!(
         "  --tavily    Tavily Search API (api.tavily.com), TAVILY_API_KEY; url + title/score/text"
