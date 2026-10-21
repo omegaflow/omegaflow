@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Such-APIs — Registrierung und Keys · omegaflow</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --panel2: #1d212a; --line: #2a3040;
+    --text: #e6e9ef; --muted: #9aa3b2; --accent: #8ab4ff;
+    --ok: #2f9e6b; --okbg: #123527; --warn: #c9942f; --warnbg: #3a2d10;
+    --bad: #c0504d; --badbg: #3a1a1a; --info: #4f7fbf; --infobg: #16263a;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f7f9; --panel: #ffffff; --panel2: #f0f2f5; --line: #d9dee7;
+      --text: #171a21; --muted: #5b6472; --accent: #1f5fbf;
+      --ok: #1f7a4f; --okbg: #dff3e8; --warn: #8a6210; --warnbg: #fbf0d2;
+      --bad: #a33a37; --badbg: #fbe1e0; --info: #2b5f9e; --infobg: #e2edf9;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  main { max-width: 1180px; margin: 0 auto; padding: 40px 24px 80px; }
+  header h1 { font-size: 1.9rem; margin: 0 0 6px; letter-spacing: -.02em; }
+  header p { color: var(--muted); margin: 4px 0; max-width: 78ch; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .toolbar {
+    position: sticky; top: 0; z-index: 5; display: flex; gap: 12px; flex-wrap: wrap;
+    align-items: center; padding: 14px 0; margin: 22px 0 8px;
+    background: linear-gradient(var(--bg) 78%, transparent);
+  }
+  #filter {
+    flex: 1 1 320px; min-width: 240px; padding: 11px 14px;
+    border: 1px solid var(--line); border-radius: 9px;
+    background: var(--panel); color: var(--text); font-size: 15px;
+  }
+  #filter:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .count { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .legend { display: flex; gap: 10px; flex-wrap: wrap; color: var(--muted); font-size: 13px; }
+  h2 { font-size: 1.2rem; margin: 38px 0 10px; padding-bottom: 7px; border-bottom: 1px solid var(--line); }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 10px 13px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+  th { background: var(--panel2); color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: var(--panel2); }
+  td.name { font-weight: 600; white-space: nowrap; }
+  td.url { word-break: break-all; }
+  .sub { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 99px;
+    font-size: 12px; font-weight: 600; white-space: nowrap; border: 1px solid transparent;
+  }
+  .b-ok { color: var(--ok); background: var(--okbg); border-color: color-mix(in srgb, var(--ok) 35%, transparent); }
+  .b-info { color: var(--info); background: var(--infobg); border-color: color-mix(in srgb, var(--info) 35%, transparent); }
+  .b-warn { color: var(--warn); background: var(--warnbg); border-color: color-mix(in srgb, var(--warn) 40%, transparent); }
+  .b-bad { color: var(--bad); background: var(--badbg); border-color: color-mix(in srgb, var(--bad) 40%, transparent); }
+  .type { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin: 14px 0 4px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .card h3 { margin: 0 0 4px; font-size: 15px; }
+  .card code { color: var(--accent); font-size: 13px; }
+  .card p { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+  .note { background: var(--panel); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 12px 16px; color: var(--muted); margin: 18px 0; }
+  .hidden { display: none !important; }
+  footer { margin-top: 48px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; }
+  @media print {
+    :root { --bg: #fff; --panel: #fff; --panel2: #f4f4f4; --text: #000; --muted: #444; --line: #bbb; }
+    .toolbar { display: none; }
+    main { max-width: none; padding: 0; }
+    a { color: #000; }
+  }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Such-APIs — Registrierung und Keys</h1>
+  <p>Stand <strong>2026-10-21</strong>. Gemessen mit <code>curl -sL -o /dev/null -w '%{http_code}'</code> und Browser-User-Agent.</p>
+  <p><strong>403/429</strong> heißt erreichbar, aber Bot-Schutz — kein toter Host. <strong>000/404/410</strong> heißt tot, eingestellt oder falsche Route.</p>
+</header>
+
+<div class="toolbar">
+  <input id="filter" type="search" placeholder="Filtern nach Anbieter, URL, Typ …" autocomplete="off" aria-label="Tabelle filtern">
+  <span class="count" id="count"></span>
+  <span class="legend">
+    <span class="badge b-ok">200</span>
+    <span class="badge b-info">202/203/307</span>
+    <span class="badge b-warn">403/429 Bot</span>
+    <span class="badge b-bad">000/404/410 tot</span>
+  </span>
+</div>
+
+<div class="note">
+  <strong>Neu gebaut und live (keyless):</strong> <code>--hn</code>, <code>--openverse</code>, <code>--nasa-images</code>, <code>--artic</code>.
+  Alle vier antworten mit 200; <code>archive_search --all</code> nimmt sie automatisch mit.
+</div>
+
+<div class="cards">
+  <div class="card"><h3>Hacker News</h3><code>--hn</code><p>hn.algolia.com/api/v1/search · 200</p></div>
+  <div class="card"><h3>Openverse</h3><code>--openverse</code><p>api.openverse.org/v1/images · 200</p></div>
+  <div class="card"><h3>NASA Images</h3><code>--nasa-images</code><p>images-api.nasa.gov/search · 200</p></div>
+  <div class="card"><h3>Art Institute Chicago</h3><code>--artic</code><p>api.artic.edu/api/v1/artworks · 200</p></div>
+</div>
+
+<h2>Web- und SERP-Suche</h2>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Anbieter</th><th>Registrierung / Key</th><th>Typ</th><th>Messwert</th></tr></thead>
+<tbody>
+<tr><td class="name">Mojeek</td><td class="url"><a href="https://www.mojeek.com/services/search/web-search-api/" target="_blank" rel="noopener">mojeek.com/services/search/web-search-api</a><span class="sub">Search API + Site Search API; Key per Plan</span></td><td class="type">Vertrag</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Yandex Search API</td><td class="url"><a href="https://console.yandex.cloud/" target="_blank" rel="noopener">console.yandex.cloud</a><span class="sub">Service-Account + IAM-Key · Doku: <a href="https://yandex.cloud/en/docs/search-api/" target="_blank" rel="noopener">yandex.cloud/en/docs/search-api</a></span></td><td class="type">Vertrag</td><td><span class="badge b-info">307</span></td></tr>
+<tr><td class="name">Brave Search</td><td class="url"><a href="https://api.search.brave.com/app/keys" target="_blank" rel="noopener">api.search.brave.com/app/keys</a><span class="sub">Dashboard, Gratis-Tier</span></td><td class="type">Key</td><td><span class="badge b-warn">403 Bot</span></td></tr>
+<tr><td class="name">Exa</td><td class="url"><a href="https://dashboard.exa.ai/api-keys" target="_blank" rel="noopener">dashboard.exa.ai/api-keys</a></td><td class="type">Key</td><td><span class="badge b-warn">429 Bot</span></td></tr>
+<tr><td class="name">Tavily</td><td class="url"><a href="https://app.tavily.com/home" target="_blank" rel="noopener">app.tavily.com/home</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Serper <span class="sub">auch Serper Scholar</span></td><td class="url"><a href="https://serper.dev/" target="_blank" rel="noopener">serper.dev</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">SerpAPI</td><td class="url"><a href="https://serpapi.com/manage-api-key" target="_blank" rel="noopener">serpapi.com/manage-api-key</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">SearchApi</td><td class="url"><a href="https://www.searchapi.io/" target="_blank" rel="noopener">searchapi.io</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Firecrawl</td><td class="url"><a href="https://www.firecrawl.dev/app/api-keys" target="_blank" rel="noopener">firecrawl.dev/app/api-keys</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Linkup</td><td class="url"><a href="https://app.linkup.so/" target="_blank" rel="noopener">app.linkup.so</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Consensus</td><td class="url"><a href="https://consensus.app/" target="_blank" rel="noopener">consensus.app</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Perplexity Sonar</td><td class="url"><a href="https://www.perplexity.ai/settings/api" target="_blank" rel="noopener">perplexity.ai/settings/api</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Gemini</td><td class="url"><a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com/app/apikey</a><span class="sub">Login nötig; vorhandener Key erkannt, aber 429 Quota</span></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Google CSE</td><td class="url"><a href="https://programmablesearchengine.google.com/" target="_blank" rel="noopener">programmablesearchengine.google.com</a><span class="sub">+ <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">console.cloud.google.com/apis/credentials</a></span></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Kagi</td><td class="url"><a href="https://kagi.com/settings?p=api" target="_blank" rel="noopener">kagi.com/settings?p=api</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">You.com</td><td class="url"><a href="https://api.you.com/" target="_blank" rel="noopener">api.you.com</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Naver</td><td class="url"><a href="https://developers.naver.com/apps/#/register" target="_blank" rel="noopener">developers.naver.com/apps/#/register</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Wolfram Alpha</td><td class="url"><a href="https://developer.wolframalpha.com/access" target="_blank" rel="noopener">developer.wolframalpha.com/access</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Diffbot</td><td class="url"><a href="https://www.diffbot.com/dev/home/" target="_blank" rel="noopener">diffbot.com/dev/home</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Telnyx Web Search</td><td class="url"><a href="https://portal.telnyx.com/" target="_blank" rel="noopener">portal.telnyx.com</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">StepFun</td><td class="url"><a href="https://platform.stepfun.com/" target="_blank" rel="noopener">platform.stepfun.com</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Parallel AI</td><td class="url"><a href="https://parallel.ai/" target="_blank" rel="noopener">parallel.ai</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">TinyFish</td><td class="url"><a href="https://www.tinyfish.ai/" target="_blank" rel="noopener">tinyfish.ai</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Bright Data</td><td class="url"><a href="https://brightdata.com/" target="_blank" rel="noopener">brightdata.com</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Olostep</td><td class="url"><a href="https://www.olostep.com/" target="_blank" rel="noopener">olostep.com</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Microsoft Graph</td><td class="url"><a href="https://entra.microsoft.com/" target="_blank" rel="noopener">entra.microsoft.com</a></td><td class="type">OAuth</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">PipesHub</td><td class="url">self-hosted</td><td class="type">kein Key</td><td><span class="badge b-info">—</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Wissenschaft und Bibliothek</h2>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Anbieter</th><th>Registrierung / Key</th><th>Typ</th><th>Messwert</th></tr></thead>
+<tbody>
+<tr><td class="name">Scopus (Elsevier)</td><td class="url"><a href="https://dev.elsevier.com/apikey/manage" target="_blank" rel="noopener">dev.elsevier.com/apikey/manage</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">NASA ADS</td><td class="url"><a href="https://ui.adsabs.harvard.edu/user/settings/token" target="_blank" rel="noopener">ui.adsabs.harvard.edu/user/settings/token</a></td><td class="type">Key</td><td><span class="badge b-info">202</span></td></tr>
+<tr><td class="name">CORE</td><td class="url"><a href="https://core.ac.uk/services/api" target="_blank" rel="noopener">core.ac.uk/services/api</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">BASE</td><td class="url"><a href="https://www.base-search.net/about/en/contact.php" target="_blank" rel="noopener">base-search.net/about/en/contact.php</a><span class="sub">Zugang per Antrag</span></td><td class="type">Antrag</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Mendeley</td><td class="url"><a href="https://dev.mendeley.com/myapps.html" target="_blank" rel="noopener">dev.mendeley.com/myapps.html</a></td><td class="type">OAuth</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Springer Nature</td><td class="url"><a href="https://dev.springernature.com/" target="_blank" rel="noopener">dev.springernature.com</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Clarivate WoS</td><td class="url"><a href="https://developer.clarivate.com/apis/wos" target="_blank" rel="noopener">developer.clarivate.com/apis/wos</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Dimensions</td><td class="url"><a href="https://www.dimensions.ai/api/" target="_blank" rel="noopener">dimensions.ai/api</a><span class="sub">Vertrag</span></td><td class="type">Vertrag</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">IEEE Xplore</td><td class="url"><a href="https://developer.ieee.org/" target="_blank" rel="noopener">developer.ieee.org</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">ACM Digital Library</td><td class="url"><a href="https://developer.acm.org" target="_blank" rel="noopener">developer.acm.org</a><span class="sub">TCP tot; <a href="https://dl.acm.org/" target="_blank" rel="noopener">dl.acm.org</a> 403; nur institutionell</span></td><td class="type">tot/institutionell</td><td><span class="badge b-bad">000</span></td></tr>
+<tr><td class="name">Lens.org</td><td class="url"><a href="https://www.lens.org/" target="_blank" rel="noopener">lens.org</a><span class="sub">API-Zugang nur im Account, Doku hinter Login</span></td><td class="type">Vertrag</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Semantic Scholar</td><td class="url"><a href="https://www.semanticscholar.org/product/api" target="_blank" rel="noopener">semanticscholar.org/product/api</a></td><td class="type">Key-Antrag</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Europeana</td><td class="url"><a href="https://www.europeana.eu/en/apis" target="_blank" rel="noopener">europeana.eu/en/apis</a></td><td class="type">Key-Antrag</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">DPLA</td><td class="url"><a href="https://dp.la/" target="_blank" rel="noopener">dp.la</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">NYPL</td><td class="url"><a href="https://api.repo.nypl.org/" target="_blank" rel="noopener">api.repo.nypl.org</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Harvard Art Museums</td><td class="url"><a href="https://harvardartmuseums.org/collections/api" target="_blank" rel="noopener">harvardartmuseums.org/collections/api</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Rijksmuseum</td><td class="url"><a href="https://data.rijksmuseum.nl/" target="_blank" rel="noopener">data.rijksmuseum.nl</a></td><td class="type">Key-Antrag</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Smithsonian / US-Gov</td><td class="url"><a href="https://api.data.gov/signup/" target="_blank" rel="noopener">api.data.gov/signup</a><span class="sub">ein Key für viele Behörden-APIs</span></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Code und Infrastruktur</h2>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Anbieter</th><th>Registrierung / Key</th><th>Typ</th><th>Messwert</th></tr></thead>
+<tbody>
+<tr><td class="name">GitHub</td><td class="url"><a href="https://github.com/settings/tokens" target="_blank" rel="noopener">github.com/settings/tokens</a></td><td class="type">Key/PAT</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">GitLab</td><td class="url"><a href="https://gitlab.com/-/user_settings/personal_access_tokens" target="_blank" rel="noopener">gitlab.com/-/user_settings/personal_access_tokens</a></td><td class="type">Key/PAT</td><td><span class="badge b-warn">403 Bot</span></td></tr>
+<tr><td class="name">Azure DevOps</td><td class="url"><a href="https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate" target="_blank" rel="noopener">learn.microsoft.com · PAT-Doku</a><span class="sub"><a href="https://aex.dev.azure.com/" target="_blank" rel="noopener">aex.dev.azure.com</a></span></td><td class="type">Key/PAT</td><td><span class="badge b-info">200/203</span></td></tr>
+<tr><td class="name">Shodan</td><td class="url"><a href="https://account.shodan.io/" target="_blank" rel="noopener">account.shodan.io</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">OpenCellID</td><td class="url"><a href="https://opencellid.org/" target="_blank" rel="noopener">opencellid.org</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Global Fishing Watch</td><td class="url"><a href="https://globalfishingwatch.org/our-apis/" target="_blank" rel="noopener">globalfishingwatch.org/our-apis</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">AlphaXiv</td><td class="url"><a href="https://www.alphaxiv.org/" target="_blank" rel="noopener">alphaxiv.org</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Marginalia</td><td class="url"><a href="https://search.marginalia.nu/" target="_blank" rel="noopener">search.marginalia.nu</a></td><td class="type">Key/Instanz</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">MCP360 Google Scholar</td><td class="url"><a href="https://www.mcp360.ai/" target="_blank" rel="noopener">mcp360.ai</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Patlytics Patent Search</td><td class="url"><a href="https://patlytics.ai/" target="_blank" rel="noopener">patlytics.ai</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Bohrium Scholar</td><td class="url"><a href="https://bohrium.dp.tech/" target="_blank" rel="noopener">bohrium.dp.tech</a></td><td class="type">Key</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">ZoomInfo</td><td class="url"><a href="https://www.zoominfo.com/" target="_blank" rel="noopener">zoominfo.com</a></td><td class="type">OAuth/Enterprise</td><td><span class="badge b-ok">200</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>Ohne Registrierung</h2>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Quelle</th><th>Endpoint / Zugang</th><th>Typ</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td class="name">OpenAlex</td><td class="url">api.openalex.org</td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Crossref</td><td class="url">api.crossref.org</td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">DataCite</td><td class="url">api.datacite.org</td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Zenodo</td><td class="url">zenodo.org/api</td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">arXiv</td><td class="url">export.arxiv.org/api/query · OAI</td><td class="type">keyless</td><td><span class="badge b-warn">429 Rate</span></td></tr>
+<tr><td class="name">Europe PMC</td><td class="url">www.ebi.ac.uk/europepmc/webservices/rest</td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">PubMed</td><td class="url">eutils.ncbi.nlm.nih.gov</td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Hacker News</td><td class="url">hn.algolia.com/api/v1/search · <code>--hn</code></td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Openverse</td><td class="url">api.openverse.org/v1/images · <code>--openverse</code></td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">NASA Images</td><td class="url">images-api.nasa.gov/search · <code>--nasa-images</code></td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Art Institute Chicago</td><td class="url">api.artic.edu/api/v1/artworks · <code>--artic</code></td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Wikipedia</td><td class="url">*.wikipedia.org/w/api.php</td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Library of Congress</td><td class="url">loc.gov/search · fo=json</td><td class="type">keyless</td><td><span class="badge b-warn">403 Bot</span></td></tr>
+<tr><td class="name">Internet Archive</td><td class="url">archive.org/advancedsearch.php</td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">StackExchange</td><td class="url">api.stackexchange.com</td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">GitHub-Suche</td><td class="url">api.github.com/search · rate-limited ohne Token</td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+<tr><td class="name">Fink / ALeRCE / ANTARES / IRSA</td><td class="url">Broker- und Dust-Abfragen in <code>archive_search</code></td><td class="type">keyless</td><td><span class="badge b-ok">200</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="note">
+  <strong>API-Directory:</strong> <code>archive_search --apis "&lt;begriff&gt;"</code> durchsucht apis.io/apis.guru und findet die lange Liste darüber hinaus — ACM, GitLab, Azure DevOps, DSpace/CRIS, Serper Scholar, MCP360, Patlytics, Bohrium, ZoomInfo, PoetryDB.
+</div>
+
+<footer>
+  Quelle: <code>docs/reference/such-api-registrierung.md</code> · omegaflow · Commit <code>16a2b3a66</code> · erzeugt 2026-10-21.
+</footer>
+</main>
+
+<script>
+(function () {
+  var input = document.getElementById('filter');
+  var count = document.getElementById('count');
+  var rows = Array.prototype.slice.call(document.querySelectorAll('tbody tr'));
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main > h2, main > .tablewrap'));
+
+  function apply() {
+    var q = input.value.trim().toLowerCase();
+    var visible = 0;
+    rows.forEach(function (row) {
+      var hit = !q || row.textContent.toLowerCase().indexOf(q) !== -1;
+      row.classList.toggle('hidden', !hit);
+      if (hit) visible++;
+    });
+    // hide a table (and its heading) when every row is filtered out
+    sections.forEach(function (el, i) {
+      if (el.tagName === 'H2') {
+        var table = sections[i + 1];
+        if (table) {
+          var any = table.querySelectorAll('tbody tr:not(.hidden)').length > 0;
+          el.classList.toggle('hidden', !any);
+          table.classList.toggle('hidden', !any);
+        }
+      }
+    });
+    count.textContent = visible + ' von ' + rows.length + ' Einträgen';
+  }
+
+  input.addEventListener('input', apply);
+  apply();
+})();
+</script>
+</body>
+</html>
