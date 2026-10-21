@@ -92,13 +92,34 @@ Status im Dokument: **„ungebaut — Ideen, keine Entscheidungen"**.
 | `--searchapi` / `--serpapi` / `--consensus` | **429** (Quota) |
 | `--googlecse` | **400** (Key ungültig) |
 | `--gemini` | **429** (Quota) |
-| `--dblp` | JS-gated, **pending** |
+| `--dblp` | **Cloudflare 202** (Anubis); Fallback auf OpenAlex mit `via: openalex (dblp fallback)`; live |
+| `--lasair` | **gebaut 2026-10-21**: ZTF-IDs gehen an `lasair-ztf.lsst.ac.uk` mit `LASAIR_TOKEN`, LSST-IDs an `api.lasair.lsst.ac.uk` mit `LASAIR_LSST_TOKEN`; live `objectId ZTF20acigmel` |
+| `--arxiv` | API **429** (Edge), nach Retry-Ladder wieder 200; bei anhaltendem 429 fällt der Arm auf die HTML-Suche `arxiv.org/search` zurück (`via: arxiv-html`) |
 | `--marginalia` | **gebaut 2026-10-21**: HTML-Route `old-search.marginalia.nu` mit Cookie-Jar und `sst`-Gate; live 200, 3 Treffer |
 | Mojeek | **Captcha**, 0 organische Treffer — bewusst verworfen |
 | Google Books | Arm existiert **nicht**, Tagesquota 429 — erst bauen, wenn gebraucht |
 | `--hn`, `--openverse`, `--nasa-images`, `--artic` | **gebaut 2026-10-21**: keyless, alle live 200 |
 
-## 7. Neben der Session beschlossen, nicht gebaut
+## 7. Parameter-Arme, gemessen 2026-10-21
+
+| Arm | Aufruf | Messwert |
+|---|---|---|
+| `--tap` | `endpoint=https://dc.g-vo.org/tap SELECT TOP 2 * FROM rr.resource` | **200**, Zeilen; `/tap` wird zu `/tap/sync`, `columns` gelesen |
+| `--sparql` | `endpoint=https://query.wikidata.org/sparql SELECT ?item WHERE { ?item wdt:P31 wd:Q5 } LIMIT 2` | **200**, Zeilen |
+| `--oai-pmh` | `endpoint=https://export.arxiv.org/oai2 set=cs` | **200**, Records |
+| `--stac` | `endpoint=https://earth-search.aws.element84.com/v1 collection=sentinel-2-l2a bbox=-180,-90,180,90 datetime=2026-10-01/2026-10-02` | **200**, Items; reine Datumsangaben werden zu RFC3339 normalisiert |
+| `--erddap` | `server=https://coastwatch.pfeg.noaa.gov/erddap searchFor=solar` | **200**, Datasets; `/erddap` wird nicht mehr verdoppelt |
+
+`--all` hält sie weiterhin zurück, weil sie ohne `endpoint=`/`server=` nicht
+sinnvoll sind. Sie sind gebaut und einzeln gemessen.
+
+**BASE-Gate:** `base_gate()` ist nicht mehr inert, wenn `OMEGAFLOW_TMP` fehlt;
+es fällt auf `temp_dir()/omegaflow` zurück. Damit gilt der 1,1-s-Abstand und
+der Lock systemweit immer.
+
+
+
+## 8. Neben der Session beschlossen, nicht gebaut
 
 - `docs/concepts/ausrede-untersuchung.md`: die Brücke „gemessen + Weg
   vorhanden" ist **nicht gebaut**.

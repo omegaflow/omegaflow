@@ -56,6 +56,8 @@ mod ensembl;
 mod entrez;
 #[path = "archive_search/erddap.rs"]
 mod erddap;
+#[path = "archive_search/europeana.rs"]
+mod europeana;
 #[path = "archive_search/europepmc.rs"]
 mod europepmc;
 #[path = "archive_search/exoplanet_archive.rs"]
@@ -192,6 +194,8 @@ mod semanticscholar;
 mod server;
 #[path = "archive_search/simbad.rs"]
 mod simbad;
+#[path = "archive_search/smithsonian.rs"]
+mod smithsonian;
 #[path = "archive_search/sourcegraph.rs"]
 mod sourcegraph;
 #[path = "archive_search/sparql.rs"]
@@ -384,6 +388,8 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--openalex" => Some(Mode::Net("openalex")),
         "--pubmed" => Some(Mode::Net("pubmed")),
         "--europepmc" => Some(Mode::Net("europepmc")),
+        "--europeana" => Some(Mode::Net("europeana")),
+        "--smithsonian" => Some(Mode::Net("smithsonian")),
         "--psychporta" => Some(Mode::Net("psychporta")),
         "--awmf" => Some(Mode::Net("awmf")),
         "--cochrane" => Some(Mode::Net("cochrane")),
@@ -1944,7 +1950,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -1960,6 +1966,12 @@ fn usage() {
     );
     eprintln!(
         "  --base      BASE — Bielefeld Academic Search Engine (~400M open documents, api.base-search.net), JSON with BASE_API_KEY; url + title/authors/year/doi"
+    );
+    eprintln!(
+        "  --europeana Europeana search (api.europeana.eu/record/v2), EUROPEANA_API_KEY; url + title/provider/type/rights"
+    );
+    eprintln!(
+        "  --smithsonian Smithsonian Open Access (api.si.edu/openaccess), USGOV_API_KEY; url + title/unit/type"
     );
     eprintln!(
         "  --searxng   SearXNG meta-search (instance from $OMEGAFLOW_SEARXNG, else public JSON instances; keyless); url + title/content/engine"

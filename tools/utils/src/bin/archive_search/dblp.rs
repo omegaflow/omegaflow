@@ -19,7 +19,19 @@ pub fn dblp_lines(query: &str, max: usize) -> Vec<String> {
             }
             None => vec!["pending — the dblp response carries no JSON".to_string()],
         },
-        Some(f) => vec![format!("pending — dblp HTTP {}", f.status_text())],
+        Some(f) => {
+            let mut out = crate::openalex::openalex_lines(query, max);
+            if out.iter().any(|l| l.starts_with("url ")) {
+                for line in &mut out {
+                    if line.starts_with("url ") {
+                        line.push_str("\tvia: openalex (dblp fallback)");
+                    }
+                }
+                out
+            } else {
+                vec![format!("pending — dblp HTTP {}", f.status_text())]
+            }
+        }
         None => vec!["pending — no network".to_string()],
     }
 }

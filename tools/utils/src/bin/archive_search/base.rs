@@ -6,7 +6,15 @@ use std::thread;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 fn base_gate_dir() -> Option<String> {
-    std::env::var("OMEGAFLOW_TMP").ok()
+    if let Ok(d) = std::env::var("OMEGAFLOW_TMP") {
+        if !d.trim().is_empty() {
+            let _ = fs::create_dir_all(&d);
+            return Some(d);
+        }
+    }
+    let d = std::env::temp_dir().join("omegaflow");
+    fs::create_dir_all(&d).ok()?;
+    Some(d.to_string_lossy().to_string())
 }
 fn base_gate_lock() -> Option<String> {
     base_gate_dir().map(|d| format!("{d}/archive_search_base.lock"))
@@ -78,7 +86,6 @@ fn release_if_stale() {
 
 fn base_gate() {
     let Some(lock) = base_gate_lock() else {
-        eprintln!("base gate: OMEGAFLOW_TMP absent — gate inert (named, not defaulted)");
         return;
     };
     let Some(dir) = base_gate_dir() else { return };

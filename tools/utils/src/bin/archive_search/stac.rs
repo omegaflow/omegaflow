@@ -32,7 +32,7 @@ pub fn stac_lines(query: &str, max: usize) -> Vec<String> {
         url.push_str(&format!("&bbox={}", urlencode(bbox)));
     }
     if !datetime.is_empty() {
-        url.push_str(&format!("&datetime={}", urlencode(datetime)));
+        url.push_str(&format!("&datetime={}", urlencode(&stac_datetime(datetime))));
     }
     match get(&url, &[], "60") {
         Some(f) if f.status == Some(200) => {
@@ -49,6 +49,21 @@ pub fn stac_lines(query: &str, max: usize) -> Vec<String> {
         Some(f) => vec![format!("pending — stac HTTP {}", f.status_text())],
         None => vec!["pending — no network".to_string()],
     }
+}
+
+fn stac_datetime(value: &str) -> String {
+    value
+        .split('/')
+        .map(|part| {
+            let p = part.trim();
+            if p.len() == 10 && p.as_bytes().get(4) == Some(&b'-') {
+                format!("{p}T00:00:00Z")
+            } else {
+                p.to_string()
+            }
+        })
+        .collect::<Vec<_>>()
+        .join("/")
 }
 
 fn str_at(v: &json::Json, key: &str) -> String {
@@ -140,6 +155,18 @@ mod tests {
                 "url https://x/collections/c/items/A\tcollection: c\tid: A\tdatetime: t"
                     .to_string()
             ]
+        );
+    }
+
+    #[test]
+    fn date_only_bounds_become_rfc3339() {
+        assert_eq!(
+            stac_datetime("2026-10-01/2026-10-02"),
+            "2026-10-01T00:00:00Z/2026-10-02T00:00:00Z"
+        );
+        assert_eq!(
+            stac_datetime("2026-10-01T12:00:00Z/.."),
+            "2026-10-01T12:00:00Z/.."
         );
     }
 

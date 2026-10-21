@@ -15,7 +15,7 @@ pub fn tap_lines(query: &str, max: usize) -> Vec<String> {
     }
     let url = format!(
         "{}?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY={}",
-        endpoint.trim_end_matches('?'),
+        tap_sync_url(endpoint),
         urlencode(adql)
     );
     match get(&url, &[], "60") {
@@ -32,6 +32,17 @@ pub fn tap_lines(query: &str, max: usize) -> Vec<String> {
         }
         Some(f) => vec![format!("pending — tap HTTP {}", f.status_text())],
         None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn tap_sync_url(endpoint: &str) -> String {
+    let e = endpoint.trim().trim_end_matches('?').trim_end_matches('/');
+    if e.ends_with("/sync") {
+        e.to_string()
+    } else if e.ends_with("/tap") {
+        format!("{e}/sync")
+    } else {
+        e.to_string()
     }
 }
 
@@ -94,7 +105,13 @@ fn parse_tap(v: &json::Json, max: usize) -> Vec<String> {
             .iter()
             .filter_map(|c| c.get("name").and_then(|n| n.as_str()))
             .collect(),
-        None => Vec::new(),
+        None => match v.get("columns").and_then(|m| m.as_arr()) {
+            Some(m) => m
+                .iter()
+                .filter_map(|c| c.get("name").and_then(|n| n.as_str()))
+                .collect(),
+            None => Vec::new(),
+        },
     };
     let Some(rows) = v.get("data").and_then(|d| d.as_arr()) else {
         return Vec::new();
@@ -108,6 +125,36 @@ fn parse_tap(v: &json::Json, max: usize) -> Vec<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn tap_endpoint_gets_the_sync_path() {
+        assert_eq!(
+            tap_sync_url("https://dc.g-vo.org/tap"),
+            "https://dc.g-vo.org/tap/sync"
+        );
+        assert_eq!(
+            tap_sync_url("https://dc.g-vo.org/tap/"),
+            "https://dc.g-vo.org/tap/sync"
+        );
+        assert_eq!(
+            tap_sync_url("https://gea.esac.esa.int/tap-server/tap/sync"),
+            "https://gea.esac.esa.int/tap-server/tap/sync"
+        );
+        assert_eq!(
+            tap_sync_url("https://example.org/tap-server/tap"),
+            "https://example.org/tap-server/tap/sync"
+        );
+    }
+
+    #[test]
+    fn reads_columns_and_rows_from_a_gavo_response() {
+        let body = r#"{"columns":[{"name":"ivoid"},{"name":"short_name"}],"data":[["ivo://x","X"]]}"#;
+        let v = json::parse(body).unwrap();
+        assert_eq!(
+            parse_tap(&v, 10),
+            vec!["row ivoid=ivo://x short_name=X".to_string()]
+        );
+    }
 
     #[test]
     fn reads_metadata_and_rows() {
