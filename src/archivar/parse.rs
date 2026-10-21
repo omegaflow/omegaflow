@@ -4446,6 +4446,19 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     }
 
     #[test]
+    fn query_anchor_projects_a_body_frame() {
+        let sources = parse_sources(
+            "url https://example.invalid/query\nformat text\nttl 60\n\
+             query earth frame=body lat_key=lat lon_key=lon alt_key=alt time_key=time\n",
+        );
+        assert_eq!(sources.len(), 1);
+        assert!(matches!(
+            sources[0].frame(),
+            Frame::Body { ref body_name } if body_name == "earth"
+        ));
+    }
+
+    #[test]
     fn anchor_required_attributes_are_not_invented() {
         assert!(parse_anchor_directive(AnchorKind::Orbit, &["orbit", "iss"], false).is_err());
         assert!(

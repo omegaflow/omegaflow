@@ -540,6 +540,14 @@ impl Anchor {
                     scale: 1.0,
                 })
                 .unwrap_or(Frame::Manifest),
+            AnchorKind::Query | AnchorKind::Track | AnchorKind::Coverage | AnchorKind::Global => {
+                self.body
+                    .as_ref()
+                    .map(|body| Frame::Body {
+                        body_name: body.clone(),
+                    })
+                    .unwrap_or(Frame::Manifest)
+            }
             AnchorKind::On => {
                 let Some(body) = self.body.as_ref() else {
                     return Frame::Manifest;
@@ -577,6 +585,9 @@ pub enum Frame {
     Barycenter {
         body_name: String,
         scale: f64,
+    },
+    Body {
+        body_name: String,
     },
     Manifest,
 }
@@ -735,7 +746,9 @@ pub type SampleRecord = (
 
 pub fn frame_body_name(frame: &Frame) -> String {
     match frame {
-        Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => body_name.clone(),
+        Frame::Surface { body_name, .. }
+        | Frame::Barycenter { body_name, .. }
+        | Frame::Body { body_name } => body_name.clone(),
         Frame::Manifest => String::new(),
     }
 }

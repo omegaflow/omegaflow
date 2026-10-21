@@ -1745,7 +1745,7 @@ pub fn url_is_fanout(url: &str) -> bool {
 pub fn frame_anchor(frame: &Frame) -> Option<(f64, f64)> {
     match frame {
         Frame::Surface { lat, lon, .. } => Some((*lat, *lon)),
-        _ => None,
+        Frame::Barycenter { .. } | Frame::Body { .. } | Frame::Manifest => None,
     }
 }
 
