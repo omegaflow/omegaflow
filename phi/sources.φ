@@ -1490,7 +1490,7 @@ url https://geofon.gfz.de/fdsnws/station/1/query?level=station&format=text&netwo
 terms CC-BY-4.0 https://geofon.gfz.de/eqinfo/faq/
 ttl 86400
 format text
-query earth frame=body lat_key=2 lon_key=3 alt_key=absent time_key=pending
+query earth frame=body lat_key=2 lon_key=3 alt_key=4 time_key=pending
 rows .
 lat 2
 lon 3
@@ -7720,7 +7720,7 @@ url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=t
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 ttl 86400
 format text
-query earth frame=body lat_key=2 lon_key=3 alt_key=absent time_key=pending
+query earth frame=body lat_key=2 lon_key=3 alt_key=4 time_key=pending
 rows .
 lat 2
 lon 3
@@ -7730,7 +7730,7 @@ url https://service.earthscope.org/fdsnws/station/1/query?level=station&format=t
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 ttl 86400
 format text
-query earth frame=body lat_key=2 lon_key=3 alt_key=absent time_key=pending
+query earth frame=body lat_key=2 lon_key=3 alt_key=4 time_key=pending
 rows .
 lat 2
 lon 3
@@ -9346,7 +9346,7 @@ ttl 604800
 url https://data-argo.ifremer.fr/dac/aoml/1901614/1901614_Sprof.nc
 terms argo-free https://data-argo.ifremer.fr/
 ttl 604800
-track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
+track earth frame=body lat_key=LATITUDE lon_key=LONGITUDE alt_key=PRES time_key=JULD
 format netcdf
 profile .
 lat LATITUDE
@@ -9362,7 +9362,7 @@ field PH_IN_SITU_TOTAL argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
 url https://data-argo.ifremer.fr/dac/aoml/1901614/profiles/BR1901614_022.nc
 terms argo-free https://data-argo.ifremer.fr/
 ttl 604800
-track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
+track earth frame=body lat_key=LATITUDE lon_key=LONGITUDE alt_key=PRES time_key=JULD
 format netcdf
 profile .
 lat LATITUDE
@@ -9378,7 +9378,7 @@ field PH_IN_SITU_TOTAL argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
 url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
 terms argo-free https://data-argo.ifremer.fr/
 ttl 604800
-track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
+track earth frame=body lat_key=LATITUDE lon_key=LONGITUDE alt_key=PRES time_key=JULD
 format netcdf
 profile .
 lat LATITUDE
@@ -9436,7 +9436,7 @@ field flux_detection_total euclid_detection_flux inverse-square em uJy 604800 0.
 url https://erddap.marine.ie/erddap/tabledap/smartbay_obs_ctd_sbe16.json?time,temperature,conductivity,salinity,depth,latitude,longitude&time%3E%3Dnow-60days
 terms CC-BY-4.0 https://erddap.marine.ie/erddap/legal.html
 ttl 604800
-query earth frame=body lat_key=5 lon_key=6 alt_key=4 time_key=pending
+query earth frame=body lat_key=5 lon_key=6 alt_key=4 time_key=0
 map table.rows
 lat 5
 lon 6
@@ -9697,7 +9697,7 @@ format argo_bgc
 origin https://data-argo.ifremer.fr/argo_bio-profile_index.txt.gz
 compiler tools/harvest/src/bin/argo_bgc_profile_compiler.rs
 sha256 7b6e18a062eb32ce2bd4022eb23421f056d84762e189cb9caae664786a369215
-track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
+track earth frame=body lat_key=LATITUDE lon_key=LONGITUDE alt_key=absent time_key=JULD
 ttl 604800
 field argo_dac_bgc_doxy_umol_kg argo_dac_bgc_doxy_umol_kg erfc diffusion micromole/kg 604800 0.0 0.0
 field argo_dac_bgc_nitrate_umol_kg argo_dac_bgc_nitrate_umol_kg erfc diffusion micromole/kg 604800 0.0 0.0
@@ -10026,7 +10026,7 @@ terms PD-USGov https://sti.nasa.gov/disclaimers/
 format iss_lis
 origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/isslis_v3_fin__3/
 compiler tools/harvest/src/bin/iss_lis_compiler.rs
-query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
+query earth frame=body lat_key=lightning_flash_lat lon_key=lightning_flash_lon alt_key=absent time_key=lightning_flash_TAI93_time
 ttl 604800
 field iss_lis_flash_radiance_uj_sr_m2_um iss_lis_flash_radiance_uj_sr_m2_um inverse-square em uJ/sr/m2/um 3600 0.0 0.0
 
@@ -10035,7 +10035,7 @@ terms PD-USGov https://sti.nasa.gov/disclaimers/
 format lis_otd
 origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/otdlip__1/
 compiler tools/harvest/src/bin/lis_otd_compiler.rs
-query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
+query earth frame=body lat_key=cent[0] lon_key=cent[1] alt_key=absent time_key=TAI93
 ttl 604800
 quantity rad lis_otd_flash_radiance_uj_sr inverse-square intensity uj/sr 3600 0.0 0.0
 
@@ -10045,7 +10045,7 @@ format trmm_lis
 origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/lislip__4/
 compiler tools/harvest/src/bin/trmm_lis_compiler.rs
 sha256 4df26cafde3c392fc99831797c9392e1f155e821716cd63db467847e9e654534
-query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
+query earth frame=body lat_key=lightning_flash_lat lon_key=lightning_flash_lon alt_key=absent time_key=lightning_flash_TAI93_time
 ttl 604800
 field trmm_lis_flash_radiance_uj_sr_m2_um trmm_lis_flash_radiance_uj_sr_m2_um inverse-square em uJ/sr/m2/um 3600 0.0 0.0
 
@@ -10376,7 +10376,7 @@ format glm_l2
 origin https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/
 compiler tools/harvest/src/bin/glm_l2_compiler.rs
 sha256 1c4d89f0eb907db1a456e4adc346d77b0973562ab1f2091cba2b8aec0d866213
-query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
+query earth frame=body lat_key=flash_lat lon_key=flash_lon alt_key=absent time_key=flash_time_offset_of_first_event
 ttl 604800
 field glm_l2_flash_radiant_energy_j glm_l2_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
 
@@ -10422,7 +10422,7 @@ ttl 604800
 format noaa_wod
 origin https://noaa-wod-pds.s3.amazonaws.com/{year}/wod_{instrument}_{year}.nc
 compiler tools/harvest/src/bin/wod_compiler.rs
-track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
+track earth frame=body lat_key=lat lon_key=lon alt_key=depth time_key=time
 field wod_temperature_degc wod_temperature_degc exponential-decay thermal degree_C 604800 0.0 0.0
 field wod_salinity_psu wod_salinity_psu gaussian-inverse-square diffusion psu 604800 0.0 0.0
 field wod_oxygen_ml_l wod_oxygen_ml_l gaussian-inverse-square diffusion ml/l 604800 0.0 0.0
@@ -12240,7 +12240,7 @@ format losc
 origin https://gwosc.org/eventapi/json/GWTC-1-confident/GW150914/v3/H-H1_GWOSC_4KHZ_R1-1126259447-32.hdf5
 compiler tools/harvest/src/bin/losc_compiler.rs
 sha256 155df05741d0e79b11d228dd41f91b6c303a9dde82aea01fcd5bb953449beb14
-coverage earth frame=body footprint=pending
+at earth frame=body
 ttl 31536000
 quantity losc_strain losc_strain point relative 1 31536000 0.0 0.0
 
@@ -14338,7 +14338,7 @@ format gbm_tgf
 origin https://fermi.gsfc.nasa.gov/ssc/data/access/gbm/tgf/gbm_tgf_catalog_offline.csv
 compiler tools/harvest/src/bin/gbm_tgf_compiler.rs
 sha256 e63f68df674d1979ab45ff000bb5eb3a043965ecf7a9fdba6170fa0867f64503
-query earth frame=body lat_key=pending lon_key=pending alt_key=absent time_key=time
+query earth frame=body lat_key=Lat lon_key=Lon alt_key=absent time_key=time
 rows
 lat_key Lat
 lon_key Lon
