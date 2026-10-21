@@ -92,3 +92,43 @@ Pixelzahl.**
 `dhm_gauge` (kostenpflichtig), `fugin` (NAOJ-Copyright); keylose Web-Engines
 dünn (Mwmbl 1 Treffer, Marginalia 504, SearXNG 1/75 JSON); bezahlte Arme
 402/432/429/400 (Konto, nicht Code).
+
+## „Je seltener, desto goldener" — und die Grenze (Schumann)
+
+Das Prinzip steht **als Suchhebel** im Baum, nicht als Wahrheitsregel:
+
+- `docs/concepts/fuenf-funken-anomalie-suche.md`: „Der seltene Wert ist nicht
+  ein Teil, sondern die **Verdrahtung**" — mehrere Broker, TDB-Uhr,
+  Transfer-Entropie als eine Kette; die Anomalie-Taxonomie macht das Seltene
+  zum **Kandidaten**, nie zum Urteil (Klasse 3 bleibt „benannt und ungebaut").
+- `docs/surveys/survey-2026-10-14-gewebe-faeden.md`: „Die seltenen Gesetze sind
+  die Nadeln" — die Seltenheit entscheidet, wo man sucht, nicht was wahr ist.
+- `bin/find` kennt **ZWILLING** und **NAH** als gemessene Abstände; einen
+  Zahlenwert „Rarität" gibt es nicht. `weave` trägt keine `rarity`-Spalte.
+
+**Beispiel Schumann.** Der Registerblock (`phi/sources.φ:1126`) ist genau so
+ein seltener Fund:
+
+```
+url …/zenodo.org/resonance_schumann.csv
+terms CC-BY-4.0 https://zenodo.org/records/15225820
+origin …/NiNo_SR_params_2024.csv/content
+harvest raw_zenodo
+format csv
+sha256 3183a14f…  ttl 3600  at earth
+field freq1 resonance_schumann_f1_hz …
+field freq2 resonance_schumann_f2_hz …
+field freq3 resonance_schumann_f3_hz …
+```
+
+- **selten:** nur **ein** Jahrgang (2024) auf Zenodo, **eine** Quelle,
+  7.835 Zeilen, 454.417 B — keine 2023/2025-Geschwister gefunden.
+- **golden:** die einzige maschinenlesbare 3-Moden-Reihe (f1/f2/f3 +
+  Amplituden), deshalb im Register und nicht nur im Paper.
+- **Grenze:** der Zenodo-Record deklariert `cc-by-4.0`, die Beschreibung sagt
+  dagegen „use … only with the authors' permission". Die Seltenheit macht den
+  Fund wertvoll, nicht die Lizenz klar — der strengste Term regelt.
+
+Damit ist die Regel präzise: **selten erhöht den Suchwert, nicht den
+Beweiswert.** Ein seltener Wert bleibt ein Sample; er wird nicht dadurch
+wahrer, dass es ihn nur einmal gibt (A = A).
