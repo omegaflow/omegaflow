@@ -1,7 +1,7 @@
 <!--
   title: sources.φ — Canonical Format Specification
   class: concept
-  sha256: ed571097b0e374672eaf102aada498f0d26a0dbc6601efe49e7cc7b60f74b07a
+  sha256: e9ff9d8b74e300d91bc01fc09eba9c5fc758a0dd86a86516175799ac2d8d5854
 -->
 # sources.φ — Canonical Format Specification
 
@@ -37,8 +37,9 @@ A directive value may be wrapped in double quotes to carry whitespace (e.g.
 
 ### 1.0 File-level rules (canonical form of the φ files)
 
-- Blocks are sorted by their `ttl` value (ascending — the ω() fetch cadence
-  order), then alphabetically by their `url` line (case-insensitive).
+- Blocks are sorted by their `ttl` value (ascending — the ω() fetch cadence is
+  derived as `ttl/Φ`; `ttl` itself is the provider update interval, not our
+  polling interval), then alphabetically by their `url` line (case-insensitive).
 - No comment lines. The φ file carries directives only — knowledge lives in
   the private handover register (`~/projects/omegaflow-work/handover/`), not in docstrings.
 - One blank line between blocks; single trailing newline.
@@ -56,7 +57,7 @@ A directive value may be wrapped in double quotes to carry whitespace (e.g.
 | Directive | Tokens | Meaning |
 |-----------|--------|---------|
 | `url <u>` | 2 | API endpoint. Starts the block. Template variables: see "URL template variables" |
-| `ttl <s>` | 2 | Fetch interval in seconds. Fetch fires at ttl/Φ. Retention ttl×2⁶. |
+| `ttl <s>` | 2 | **Provider data update interval** in seconds — how often the provider makes new data available for this block. Our fetch cadence is derived: fetch fires at `ttl/Φ`; retention is `ttl×2⁶`. A fixed historical range or a source that never adds data uses `no-cadence`, never a short `ttl`. If the provider interval is unknown, the block is `pending`; do not encode our polling interval as `ttl`. |
 | `at <body>` | 2 | Barycentric frame of the named body (scale fixed 1.0). Also sets the block's body. |
 | `on <body> <lat> <lon> [alt]` | 4–5 | Surface point (WGCCRE rotation). alt in **meters**, optional (default 0 = surface datum). |
 | `format <f>` | 2 | `json` (default) \| `ephemeris_binary` \| `universal` (auto-detect) \| free text (rows/text extracts parse CSV/text bodies regardless) |
@@ -137,7 +138,7 @@ Any remaining `{MARKER}` resolves from the environment (`.env` /
 the price of manifestation: no τ, no oscillator. Estimation when the process
 itself does not declare one:
 - explicit knowledge of the process → use it
-- rapidly changing data (ISS position, live weather) → ttl/10
+- rapidly changing data (ISS position, live weather) → ttl/10, with `ttl` = provider update interval
 - stable data (star catalogs, geology) → ttl
 
 ## 2. Force-Unit Registry (grows with every API fetch)
