@@ -20,10 +20,25 @@ pub fn core_lines(query: &str, max: usize) -> Vec<String> {
                 out
             }
         }
-        Some(f) if f.status == Some(401) || f.status == Some(403) => vec![
-            "pending — core refuses the request; the keyless search runs at 1 batch / 5 requests per 10 s, CORE_API_KEY raises it"
-                .to_string(),
-        ],
+        Some(f) if f.status == Some(401) || f.status == Some(403) => {
+            match get(&url, &[], "40") {
+                Some(g) if g.status == Some(200) => {
+                    let mut out = parse_core(&g.body);
+                    if out.is_empty() {
+                        vec![format!("absent — core carries no entry: {}", query)]
+                    } else {
+                        for line in &mut out {
+                            line.push_str("\tvia: core keyless (key refused)");
+                        }
+                        out
+                    }
+                }
+                _ => vec![
+                    "pending — core refuses the request; the keyless search runs at 1 batch / 5 requests per 10 s, CORE_API_KEY raises it"
+                        .to_string(),
+                ],
+            }
+        }
         Some(f) => vec![format!("pending — core HTTP {}", f.status_text())],
         None => vec!["pending — no network".to_string()],
     }

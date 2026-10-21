@@ -95,6 +95,7 @@ Status im Dokument: **„ungebaut — Ideen, keine Entscheidungen"**.
 | `--dblp` | **Cloudflare 202** (Anubis); Fallback auf OpenAlex mit `via: openalex (dblp fallback)`; live |
 | `--lasair` | **gebaut 2026-10-21**: ZTF-IDs gehen an `lasair-ztf.lsst.ac.uk` mit `LASAIR_TOKEN`, LSST-IDs an `api.lasair.lsst.ac.uk` mit `LASAIR_LSST_TOKEN`; live `objectId ZTF20acigmel` |
 | `--arxiv` | API **429** (Edge), nach Retry-Ladder wieder 200; bei anhaltendem 429 fällt der Arm auf die HTML-Suche `arxiv.org/search` zurück (`via: arxiv-html`) |
+| `--core` | **Key wird abgelehnt (403), keyless aber 200**: der Arm wiederholt ohne Key und labelt `via: core keyless (key refused)` |
 | `--marginalia` | **gebaut 2026-10-21**: HTML-Route `old-search.marginalia.nu` mit Cookie-Jar und `sst`-Gate; live 200, 3 Treffer |
 | Mojeek | **Captcha**, 0 organische Treffer — bewusst verworfen |
 | Google Books | Arm existiert **nicht**, Tagesquota 429 — erst bauen, wenn gebraucht |

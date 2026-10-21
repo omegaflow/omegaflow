@@ -107,7 +107,7 @@ Die HTML-Seite blendet standardmäßig zwei Gruppen aus (per Toggle wieder sicht
   kostenpflichtig. Der Filter wirkt auch, wenn man „kostenpflichtige aus“ abwählt.
 
 Sichtbar bleiben 16 freie Dienste ohne Kreditkarte und ohne funktionierenden
-Key: Naver, Microsoft Graph, CORE (Key abgelehnt, 403), Mendeley,
+Key: Naver, Microsoft Graph, CORE (Key abgelehnt, keyless 200), Mendeley,
 Springer Nature, Europeana, DPLA, NYPL, Harvard Art Museums, Rijksmuseum,
 api.data.gov, GitLab, Azure DevOps, OpenCellID, Global Fishing Watch
 (404 Route), Marginalia (haengt).
