@@ -2,7 +2,7 @@
   title: Survey — Hunga Tonga 2022: dieselbe Front in sechs Netzen
   class: survey
   date: 2026-10-20
-  sha256: c39b5a2794fc705de10893a08e9bbf593e2447e106d5968989e54caec62e99bd
+  sha256: 73040a0bef975f0835e6aa73ee0ec02f4d6b87da6f52a9f35bfd58521007e27c
   status: live
   see-also: docs/paper/tonga-lamb-crosscheck.md tools/measure/src/bin/hunga_tonga_netz_probe.rs
 -->
@@ -35,13 +35,17 @@ keinen CDN-Upload. `phi/sources.φ` bleibt unberührt.
 | Tsunami | NOAA CO-OPS `water_level`, MSL | 6 Pazifik-Stationen, Jan 2022 | US-Government, public domain | 6 min | HTTP 200 |
 | Ionosphäre | CDAWeb HAPI `GPS_TEC15MIN_IGS` | globale 71×73-Karte, Jan 2022 | NASA SPDF / IGS, Attribution | 15 min | HTTP 200 |
 | Blitz | NOAA GOES-17 `GLM-L2-LCFA`, AWS S3 | 2022-01-15 und 01-13, je 226 Granulen 03:45–05:00 | NOAA Open Data, public domain | 20 s | HTTP 200 |
-| Aerosol/Thermik | NASA FIRMS API | Jan 2022 vorhanden | NASA | Tag/Orbit | **absent**: HTTP 400, `Invalid MAP_KEY` |
-| Aerosol/Thermik | Copernicus TROPOMI `AER_AI` | Jan 2022 im Katalog (z. B. `S5P_RPRO_L2__AER_AI_20220115T200153`) | Copernicus | Orbit | **absent**: HTTP 401, `Token not found` |
+| Aerosol/Thermik | **GOES-17 ABI FDCF/AODF**, AWS S3 | Vollbild, Jan 2022 | NOAA | 10 min | **keyless** (HTTP 200) |
+| Aerosol/Thermik | **TROPOMI `AER_AI`**, MEEO S3 `meeo-s5p` | 2022-01-15, 14 Orbits | ESA/Copernicus | Orbit | **keyless** (HTTP 200, 175 MB) |
+| Aerosol/Thermik | NASA FIRMS API | Jan 2022 vorhanden | NASA | Tag/Orbit | **Route absent**: HTTP 400, `Invalid MAP_KEY` — Daten nicht absent |
+| Aerosol/Thermik | Copernicus TROPOMI OData | Jan 2022 im Katalog (z. B. `S5P_RPRO_L2__AER_AI_20220115T200153`) | Copernicus | Orbit | **Route absent**: HTTP 401, `Token not found` — Daten nicht absent |
 
 Die TROPOMI-Produkte sind im öffentlichen Katalog gelistet (`Online: true`), der
-Download verlangt aber einen Copernicus-Token. FIRMS verlangt einen
-`MAP_KEY`. Beide Fäden bleiben damit für diesen Lauf **absent**; sie werden
-nicht mit Null gefüllt.
+Download über Copernicus OData verlangt einen Token; FIRMS verlangt einen `MAP_KEY`.
+**Das ist ein Zugangsbefund, kein Datenbefund.** Beide Fäden sind keyless erreichbar:
+GOES-17 ABI FDCF/AODF auf `noaa-goes17.s3.amazonaws.com` und TROPOMI `AER_AI` auf
+`meeo-s5p.s3.amazonaws.com` (siehe Nachtrag). Der erste Lauf hatte nur die
+API-Routen geprüft und daraus `absent` gemacht — das war zu kurz.
 
 ## Methode
 
@@ -153,13 +157,56 @@ konsistenter Laufzeit **und** radialer Richtung: Seismik (3,87 km/s), Druck
 (0,328 km/s), Tsunami (0,170 km/s), GLM (Quellcluster am Vent) und
 Infraschall (Richtung −6,7°). Die Ionosphäre trägt eine TEC-Anomalie mit
 57 % Amplitude und sauberem NULL, aber der Onset ist mit 45 min und 15-min-
-Raster keine Frontmessung. Aerosol/Thermik fehlt.
+Raster keine Frontmessung. **Aerosol/Thermik ist nicht mehr absent:** GOES-17
+FDCF misst am Ereignistag 17 Feuerpixel und 2.833 MW maximales FRP gegen 8 und
+138 MW am NULL-Tag; die Vent-Lokalisierung der Pixel steht noch aus.
 
 Das „Netz als Instrument" überträgt sich damit **auf den Quellzeitpunkt und
 die Geometrie**, nicht auf eine gemeinsame Geschwindigkeit. Jeder Faden
 besteht seinen eigenen Test: elastisch 3,9 km/s, atmosphärisch 0,33 km/s,
 ozeanisch 0,17 km/s. Die Abweichungen (Druck +7 %, Tsunami −15 %) sind
 physikalisch lesbar; die Ausreißer sind benannt, nicht geglättet.
+
+## Nachtrag 2026-10-21 — Aerosol/Thermik war nicht absent
+
+Der erste Lauf prüfte nur die API-Routen (FIRMS `MAP_KEY`, Copernicus Token) und
+machte daraus `absent`. Die Daten selbst liegen keyless. Gemessen mit GOES-17
+ABI FDCF (`noaa-goes17.s3.amazonaws.com/ABI-L2-FDCF/...`), Vollbild-Skalare:
+
+| Lauf (UTC) | Feuerpixel | max FRP (MW) | max Fire-T (K) |
+|---|---:|---:|---:|
+| 2022-01-15 04:00–04:09 | 14 | 2.759,860 | 1.134,167 |
+| **2022-01-15 04:10–04:19 (t0)** | **17** | **2.833,355** | **1.213,368** |
+| 2022-01-15 04:20–04:29 | 19 | 2.670,716 | 2.330,347 |
+| 2022-01-15 04:30–04:39 | 14 | 2.360,856 | 1.438,945 |
+| **NULL 2022-01-13 04:10–04:19** | **8** | **137,625** | **483,284** |
+
+Der Ereignistag liegt im Maximum um Faktor **20** über dem NULL-Tag (FRP) und
+um Faktor **2,5** bei der Feuer-Temperatur. Das ist ein gemessener thermischer
+Kontrast, kein Nullwert.
+
+**Terms-Riss.** Der FDCF-Header trägt den String
+`license = Unclassified data. Access is restricted to approved users only.`
+Der AWS-Bucket liefert die Datei dennoch keyless. Das ist ein **Terms**-Befund,
+kein Zugangsbefund — vor einer Register-Zeile muss die NOAA-Open-Data-Policy
+gegen diesen Header-String gemessen werden, nicht angenommen.
+
+**Aerosol, zweite Linie.** GOES-17 ABI AODF (keyless, 550 nm):
+`max_aod550_sea` = **0,20845** (04:10) und **0,21505** (04:20) am Ereignistag
+gegen **0,19078** am NULL-Tag; `std_dev` 0,036 / 0,035 gegen 0,018. Der
+AOD-Kontrast ist schwach und das Produkt ist ein Vollbild-Tagesmittel — er trägt
+die Thermik, nicht die Plume-Karte.
+
+**TROPOMI AER_AI, dritte Linie.** Keyless auf MEEO S3:
+`https://meeo-s5p.s3.amazonaws.com/OFFL/L2__AER_AI/2022/01/15/S5P_OFFL_L2__AER_AI_20220115T044821_20220115T062952_22059_02_020301_20220116T183749.nc`
+— HTTP 200, **175.219.152 B**, HDF5/NetCDF4, 14 Orbits am 2022-01-15. Die
+Pixel-Extraktion am Vent (Lat/Lon-Index) steht noch aus; der Orbit 22059 deckt
+04:48–06:29 UTC, also die erste Stunde nach t0.
+
+**Grenze.** Die FDCF-Zahlen sind **Vollbild-Skalare**, keine vent-lokalisierte
+Aussage. Der GLM-Cluster um 04:14:42 und die Zeitlage stützen die Zuordnung,
+aber erst die Pixel-Maske (`Mask`/`Power` am Vent-Index) macht daraus eine
+Ortsaussage. Das ist der nächste Schnitt, kein `absent`.
 
 ## Was quer liegt
 
@@ -189,8 +236,10 @@ physikalisch lesbar; die Ausreißer sind benannt, nicht geglättet.
 - **BGR.** 1.316 s Abstand zur Vorhersage bei ~300-s-Detektionsraster; die
   Rohwellenform ist zugangsbeschränkt (vDEC). Der Richtungstest (−6,7° gegen
   −113,1° am NULL-Tag) ist der tragende Teil, nicht die Sekunde.
-- **Aerosol/Thermik.** Kein `MAP_KEY`, kein Copernicus-Token; beide Routen
-  sind gemessen absent. Dieser Faden fehlt und wird nicht ersetzt.
+- **Aerosol/Thermik.** Die API-Routen verlangten `MAP_KEY`/Token; die Daten
+  liegen keyless auf NOAA-AWS (GOES-17 FDCF/AODF) und MEEO-S3 (TROPOMI AER_AI).
+  Die Thermik ist gemessen (17 Pixel, 2.833 MW gegen 8/138 MW am NULL-Tag), die
+  Vent-Lokalisierung und die AER_AI-Pixel-Extraktion stehen noch aus.
 
 ## Reproduktion
 
@@ -202,3 +251,14 @@ cargo build --release -p omegaflow-measure --bin hunga_tonga_netz_probe
 Laufzeit ~2 min (226 GLM-Granulen je Tag, 16 Seismik-Fenster, 24 CO-OPS-
 Reihen über zwei Tage, 5 TEC-Tage). Die Rohdaten bleiben zur Laufzeit; dieser Commit trägt
 nur Probe und Survey.
+
+Die keyless Aerosol-/Thermik-Routen (Nachtrag):
+
+```sh
+curl -O https://noaa-goes17.s3.amazonaws.com/ABI-L2-FDCF/2022/015/04/OR_ABI-L2-FDCF-M6_G17_s20220150410320_e20220150419387_c20220150419494.nc
+curl -O https://noaa-goes17.s3.amazonaws.com/ABI-L2-AODF/2022/015/04/OR_ABI-L2-AODF-M6_G17_s20220150410320_e20220150419387_c20220150421190.nc
+curl -O https://meeo-s5p.s3.amazonaws.com/OFFL/L2__AER_AI/2022/01/15/S5P_OFFL_L2__AER_AI_20220115T044821_20220115T062952_22059_02_020301_20220116T183749.nc
+```
+
+`hunga_tonga_netz_probe` liest die FDCF-Ereignis- und NULL-Datei und gibt die
+Vollbild-Skalare aus; die AER_AI-Pixel-Extraktion ist noch nicht verdrahtet.
