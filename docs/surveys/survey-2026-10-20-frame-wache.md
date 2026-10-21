@@ -2,7 +2,7 @@
   title: Survey — Frame-Wache: ICRF3 S/X, K, X/Ka und Gaia-CRF3, selbst gezählt (2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: 99c20d250cc2db3d8407d209f6ba86f255f4e0dbb63f2bca6ba1edc68ff56605
+  sha256: e653326c6b46c2204eb62b1fc3a393d915dfeab39801f6844ac685021e75dfe4
   status: live
   see-also: tools/measure/src/bin/frame_wache_probe.rs
 -->
@@ -50,6 +50,9 @@ Gaia-CRF3-Zuordnung (85,3 %), 88 nicht.
 | ICRF3 X/Ka-Quellen | **678** |
 | Dreifach-Schnitt | **600** |
 | davon D in allen drei Bändern | **171** |
+| D in S/X (breitere Rahmen-Ebene) | **303** |
+| davon mit K-Position | **193** |
+| davon mit X/Ka-Position | **176** |
 | S/X–X/Ka Median-σ (2D, korreliert) | **2,930** |
 | S/X–X/Ka >5σ | **111** |
 | 0743-006 σ (S/X–X/Ka) | **17,02** |
@@ -147,6 +150,22 @@ Alle Komponenten liegen unter 3σ; es gibt **keinen** Rahmen-Riß. Die
 klein oder die Quellen tragen echte Struktur. Das ist ein Struktur-Befund,
 kein Rahmen-Befund.
 
+### 303 D in S/X — die breitere Rahmen-Ebene (gemessen 2026-10-21)
+
+Der D3-Fit nutzt nur die 171 Quellen, die in **allen drei** Bändern D tragen.
+Die breitere Menge „D in S/X" umfasst **303** Quellen. Davon haben **193** eine
+K-Position und **176** eine X/Ka-Position. Der Rotationsfit über diese Mengen:
+
+| Paar | n | ωx | ωy | ωz | \|ω\| | chi2/dof | Urteil |
+|---|---:|---:|---:|---:|---:|---:|---|
+| S/X – K | 193 | +0,008 ± 0,010 | +0,008 ± 0,011 | +0,008 ± 0,007 | 0,014 | 1,2 | Placed |
+| S/X – X/Ka | 176 | +0,032 ± 0,025 | +0,019 ± 0,025 | −0,028 ± 0,018 | 0,046 | 7,7 | Placed |
+
+Alle Komponenten liegen unter **2σ**; die Rahmen-Ebene bleibt **Placed**.
+`chi2/dof = 7,7` beim S/X–X/Ka-Paar bestätigt den Struktur-Befund: Die formalen
+Fehler tragen die Streuung nicht. Die **110** D-in-S/X-Quellen ohne K-Position
+und **127** ohne X/Ka-Position sind eine benannte Abdeckungslücke, kein Riss.
+
 ## Unabhängigkeit (benannt, nicht behauptet)
 
 S/X, K und X/Ka sind VLBI-Messungen, häufig mit denselben Teleskopen,
@@ -174,7 +193,7 @@ modelliert (Größenordnung 0,1 mas über 25 Jahre, als Grenze notiert).
 **Probe je Trigger:** neu laden, Größe/Status/sha messen, Köpfe gegen
 Datenzeilen prüfen (4.536/824/678), Vorzeichen-Fix anwenden, Dreifach-Schnitt
 und D3 zählen, Median und >5σ je Paar, Struktur-Liste, Rahmen-Rotation über
-D3, Gaia-Abdeckung und Gaia-Rotation.
+D3 **und über die 303 D in S/X**, Gaia-Abdeckung und Gaia-Rotation.
 
 **Urteil:** Placed ≤3σ; Beobachten 3–5σ; Riß >5σ **nur auf Rahmen-Ebene**
 (Ensemble der definierenden Quellen). Einzelquellen >5σ bleiben
@@ -182,7 +201,7 @@ Struktur-Kandidaten und lösen keinen Riß aus.
 
 **Tagebuch-Zeile:**
 
-`2026-10-20 frame-wache: ICRF3 4536/824/678; triple 600; D3 171; S/X–X/Ka median 2,93σ, >5 111; Rahmenrotation max 2,0σ -> Placed; Gaia 512/600, median 2,18σ; kein Riß, Struktur offen.`
+`2026-10-20 frame-wache: ICRF3 4536/824/678; triple 600; D3 171; S/X–X/Ka median 2,93σ, >5 111; Rahmenrotation max 2,0σ -> Placed; 303-D: n 193 (K) / 176 (X/Ka), max 1,5σ, chi2/dof 7,7 -> Placed; Gaia 512/600, median 2,18σ; kein Riß, Struktur offen.`
 
 ## Was quer liegt
 
@@ -193,6 +212,9 @@ Struktur-Kandidaten und lösen keinen Riß aus.
   extern genannte 10,3σ bleibt unerklärt.
 - 88 Dreifach-Anker ohne Gaia-CRF3-Zuordnung sind eine benannte Lücke; die
   Gaia-Linie deckt 85,3 % des Schnitts.
+- Die 303-D-Rahmenrotation deckt nur **193** (K) bzw. **176** (X/Ka) der 303
+  Quellen; 110 bzw. 127 haben dort keine Position. Das ist eine
+  Abdeckungslücke, kein Riss.
 - Die `chi2/dof`-Werte der Rahmen-Fits (bis 7,9) zeigen, dass die formalen
   Fehlerbalken die Streuung nicht tragen. Eine echte Rahmen-Aussage mit
   Fehlerbalken braucht eine Skalierung oder ein robusteres Schätzverfahren;
