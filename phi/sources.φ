@@ -1367,12 +1367,6 @@ lat 5
 lon 6
 field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion µg/m3 86400.0 pending 0.0 0.0
 
-url https://arxiv.org/e-print/2012.08534
-terms arXiv-nonexclusive-distrib-1.0 http://arxiv.org/licenses/nonexclusive-distrib/1.0/
-format reference
-sha256 bc86e4e424dbda6c3fb17a0f5141090c9ed59be2ad0665fddddce07d9a2085e7
-ttl 86400
-
 url https://cddis.nasa.gov/archive/gnss/data/daily/{year}/brdc/BRDC00IGS_R_{year}{yday}0000_01D_MN.rnx.gz
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 ttl 86400
