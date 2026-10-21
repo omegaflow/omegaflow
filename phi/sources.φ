@@ -113,14 +113,14 @@ url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={h
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 ttl 60
 live
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 geojson mag 0.0 seismic_magnitude_mw seismic_depth_km 6.0 0.0 0.0
 mag_type_key magType
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=quakeml&producttype=moment-tensor&starttime={week_ago}&includeallmagnitudes=true
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 ttl 60
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 format quakeml
 quakeml usgs_mt_m0_nm usgs_mt_mww 6.0 0.0 0.0
 
@@ -186,7 +186,7 @@ terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format fdsn_waveform
 origin https://service.earthscope.org/fdsnws/dataselect/1/query
 compiler tools/harvest/src/bin/fdsn_waveform_compiler.rs
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 ttl 60
 field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0
 
@@ -273,7 +273,7 @@ field wind_spd_kmh atmosphere_bom_wind_speed_kmh patch-levy advective km/h 30.0 
 url https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,relative_humidity_2m,dew_point_2m,surface_pressure,wind_speed_10m
 terms CC-BY-4.0 https://open-meteo.com/en/licence
 ttl 300
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=absent time_key=pending
 map current
 field temperature_2m open_meteo_air_temp_c gaussian-inverse-square thermal C 30.0 0.0 0.0
 field relative_humidity_2m open_meteo_relative_humidity_pct gaussian-inverse-square diffusion % 30.0 0.0 0.0
@@ -698,7 +698,7 @@ field themis_gmag_z_nt themis_gmag_z_nt inverse-square em nT 3600 0.0 0.0
 url https://cdaweb.gsfc.nasa.gov/hapi/data?id=TIMED_L2A_SABER&time.min={week_ago}T00:00:00Z&time.max={now}Z&parameters=tpgpaltitude,ktemp&format=json
 terms CC0-1.0 https://spdf.gsfc.nasa.gov/data_use_policy.html
 ttl 3600
-on earth 0 0 0
+track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 hapi tpgpaltitude.<i>=saber_tpgpaltitude ktemp.<i>=saber_ktemp
 field saber_ktemp saber_ktemp inverse-square thermal K 68 0.0 0.0
 quantity saber_tpgpaltitude saber_tpgpaltitude inverse-square geometry km 68 0.0 0.0
@@ -847,7 +847,7 @@ origin https://api.opensensemap.org/boxes?bbox=7.5,47.5,8.5,48.5&phenomenon=Temp
 terms PDDL-1.0 https://sensebox.de/de/opensensemap.html
 compiler tools/harvest/src/bin/opensensemap_compiler.rs
 sha256 f5a043b1a9c53461b00d55aea7b357416ad647c1931621981cbca6717767cfbe
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 ttl 3600
 field temp opensensemap_temperature_c exponential-decay thermal C 3600 0.0 0.0
 
@@ -993,7 +993,7 @@ terms CC-BY-NC-SA-4.0 https://giro.uml.edu/didbase/RulesOfTheRoad.html
 format giro_fastchar
 origin https://lgdc.uml.edu/fastchar/getbest
 compiler tools/harvest/src/bin/giro_fastchar_compiler.rs
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 ttl 3600
 field fof2_mhz giro_fastchar_fof2_mhz inverse-square em MHz 3600 0.0 0.0
 field cs giro_fastchar_cs inverse-square em % 3600 0.0 0.0
@@ -1013,7 +1013,7 @@ terms noaa-nodd-open https://noaa-gk2a-pds.s3.amazonaws.com/AMI/L1B/FD/
 format gk2a_ami
 origin https://noaa-gk2a-pds.s3.amazonaws.com/AMI/L1B/FD/
 compiler tools/harvest/src/bin/gk2a_ami_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 3600
 field rad gk2a_ami_radiance inverse-square em W/m2/sr 3600 0.0 0.0
 
@@ -1022,7 +1022,7 @@ terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format goes_abi
 origin https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/
 compiler tools/harvest/src/bin/goes16_abi_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 3600
 field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
 
@@ -1031,7 +1031,7 @@ terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format goes_abi
 origin https://noaa-goes18.s3.amazonaws.com/ABI-L1b-RadC/
 compiler tools/harvest/src/bin/goes18_abi_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 3600
 field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
 
@@ -1040,7 +1040,7 @@ terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format goes_abi
 origin https://noaa-goes19.s3.amazonaws.com/ABI-L1b-RadC/
 compiler tools/harvest/src/bin/goes_abi_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 3600
 field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
 
@@ -1049,7 +1049,7 @@ terms free-open https://registry.opendata.aws/noaa-himawari/
 format himawari_hsd
 origin https://noaa-himawari9.s3.amazonaws.com/AHI-L1b-FLDK/
 compiler tools/harvest/src/bin/himawari_hsd_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 3600
 field rad himawari_ahi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
 
@@ -1058,7 +1058,7 @@ terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format gdp_drifter
 origin https://noaa-oar-hourly-gdp-pds.s3.amazonaws.com/latest/gdp-v2.01.1.zarr
 compiler tools/harvest/src/bin/gdp_drifter_compiler.rs
-on earth 0 0 0
+track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 ttl 3600
 field sst gdp_drifter_sst_k exponential-decay thermal K 360.0 0.0 0.0
 
@@ -1360,7 +1360,7 @@ url https://aqs.epa.gov/aqsweb/airdata/daily_88101_2025.zip
 terms PD https://www.epa.gov/outdoor-air-quality-data/do-i-need-request-permission-use-monitoring-data-and-graphics-airdata
 ttl 86400
 format csv_zip
-on earth 0 0 0
+query earth frame=body lat_key=5 lon_key=6 alt_key=absent time_key=11
 rows
 epoch 11
 lat 5
@@ -1458,7 +1458,7 @@ field 3 hydrosphere_pco2_mooring_uatm gaussian-inverse-square diffusion uatm 864
 url https://data.pmel.noaa.gov/pmel/erddap/tabledap/pmelTaoDySst.json?time,T_25,station&time%3E=max(time)-7days
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 86400
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 field table.rows.-1.1 hydrosphere_tao_t25_c exponential-decay thermal C 8640.0 0.0 0.0
 
 url https://dataverse.harvard.edu/api/access/datafile/3424724
@@ -1547,7 +1547,7 @@ format epa_aqs_pm25
 origin https://aqs.epa.gov/aqsweb/airdata/daily_88101_2024.zip
 terms PD https://www.epa.gov/outdoor-air-quality-data/do-i-need-request-permission-use-monitoring-data-and-graphics-airdata
 compiler tools/harvest/src/bin/epa_aqs_compiler.rs
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 ttl 86400
 field epa_aqs_pm25_ug_m3 epa_aqs_pm25_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 0.0 0.0
 
@@ -1556,7 +1556,7 @@ format epa_aqs_voc
 origin https://aqs.epa.gov/aqsweb/airdata/daily_VOCS_2024.zip
 terms PD https://www.epa.gov/outdoor-air-quality-data/do-i-need-request-permission-use-monitoring-data-and-graphics-airdata
 compiler tools/harvest/src/bin/epa_aqs_compiler.rs
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 ttl 86400
 field epa_aqs_voc_42153 epa_aqs_voc_42153 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
 field epa_aqs_voc_43000 epa_aqs_voc_43000 gaussian-inverse-square diffusion ppbC 86400.0 0.0 0.0
@@ -1696,7 +1696,7 @@ terms PD-USGov https://sti.nasa.gov/disclaimers/
 format swot_l2_lr_ssh
 origin https://archive.podaac.earthdata.nasa.gov
 compiler tools/harvest/src/bin/swot_l2_lr_ssh_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 86400
 quantity swot_l2_lr_ssh_ssha swot_l2_lr_ssh_ssha_m inverse-square geometry m 86400 0.0 0.0
 
@@ -1823,7 +1823,7 @@ format hfrnet_rtv
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 origin https://coastwatch.pfeg.noaa.gov/erddap/griddap/ucsdHfrW1_Lon0360
 compiler tools/harvest/src/bin/hfrnet_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 86400
 field water_u hfrnet_rtv_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
 field water_v hfrnet_rtv_northward_m_s patch-levy advective m/s 21600 0.0 0.0
@@ -1863,7 +1863,7 @@ terms CC-BY-4.0 https://artefacts.ceda.ac.uk/licences/specific_licences/esacci_s
 format esacci_sst_l4_cdr3
 origin https://dap.ceda.ac.uk/neodc/eocis/data/global_and_regional/sea_surface_temperature/CDR_v3/Analysis/L4/v3.0.1
 compiler tools/harvest/src/bin/esacci_sst_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 86400
 field esacci_sst_l4_cdr3 esacci_sst_l4_cdr3 exponential-decay thermal K 86400 0.0 0.0
 
@@ -1883,7 +1883,7 @@ format black_marble_vnp46a3_nightlight
 origin https://data.laadsdaac.earthdatacloud.nasa.gov/prod-lads/VNP46A3/
 compiler tools/harvest/src/bin/vnp46a3_compiler.rs
 header Authorization {EARTHDATA_EDL_TOKEN}
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 86400
 field vnp46a3_nightlight_nw_cm2_sr vnp46a3_nightlight_nw_cm2_sr inverse-square em nW/cm2/sr 86400 0.0 0.0
 
@@ -1913,7 +1913,7 @@ terms CC-BY-4.0 https://erddap.emodnet-physics.eu/erddap/legal.html
 format emodnet_hfr
 origin https://erddap.emodnet-physics.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-NAdr-Total
 compiler tools/harvest/src/bin/emodnet_hfr_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 86400
 field EWCT emodnet_hfr_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
 field NSCT emodnet_hfr_northward_m_s patch-levy advective m/s 21600 0.0 0.0
@@ -2177,7 +2177,7 @@ terms PD-USGov https://manati.star.nesdis.noaa.gov/UHR_ASCAT/UHR_ASCATB/
 format ascat_wind
 origin https://manati.star.nesdis.noaa.gov/UHR_ASCAT/UHR_ASCATB/
 compiler tools/harvest/src/bin/ascat_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 86400
 field ascat_wind_speed_m_s ascat_wind_speed_m_s patch-levy advective m/s 86400 0.0 0.0
 field ascat_wind_direction_deg ascat_wind_direction_deg patch-levy advective deg 86400 0.0 0.0
@@ -2188,7 +2188,7 @@ format noaa_cdo_ghcnd_tmax
 origin https://www.ncdc.noaa.gov/cdo-web/api/v2/data
 compiler tools/harvest/src/bin/noaa_cdo_compiler.rs
 ttl 86400
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 field noaa_cdo_tmax_c noaa_cdo_tmax_c exponential-decay thermal C 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/spectra.bin
@@ -3546,7 +3546,7 @@ terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 origin https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-por/
 format igra_zip
 ttl 86400
-on earth 0 0 0
+track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 field igra_air_pressure_hpa igra_air_pressure_hpa patch-levy advective hPa 8640.0 0.0 0.0
 field igra_air_temp_c igra_air_temp_c exponential-decay thermal C 8640.0 0.0 0.0
 field igra_wind_speed_ms igra_wind_speed_ms patch-levy advective m/s 8640.0 0.0 0.0
@@ -7688,7 +7688,7 @@ field soles.0.min_gts_temp cosmos_mars_ground_min_temp_c exponential-decay therm
 url https://mesonet.agron.iastate.edu/json/raob.py?station=OAX&ts={yesterday_nodashes}0000
 terms PD https://mesonet.agron.iastate.edu/disclaimer.php
 ttl 86400
-on earth 0 0 0
+track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 last profiles.0.profile.tmpc radiosonde_temperature_c exponential-decay thermal C 8640.0 0.0 0.0
 last profiles.0.profile.dwpc radiosonde_dewpoint_c exponential-decay thermal C 8640.0 0.0 0.0
 last profiles.0.profile.pres radiosonde_pressure_hpa gaussian-inverse-square acoustic hPa 8640.0 0.0 0.0
@@ -7821,7 +7821,7 @@ quantity m0 gcmt_scalar_moment_nm gaussian-inverse-square source-parameter N·m 
 url https://www.ncei.noaa.gov/data/integrated-global-radiosonde-archive/access/data-y2d/{station}-data-beg{year}.txt.zip
 format igra_zip
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth 0 0 0
+track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 ttl 86400
 field igra_air_pressure_hpa igra_air_pressure_hpa patch-levy advective hPa 8640.0 0.0 0.0
 field igra_air_temp_c igra_air_temp_c exponential-decay thermal C 8640.0 0.0 0.0
@@ -9346,7 +9346,7 @@ ttl 604800
 url https://data-argo.ifremer.fr/dac/aoml/1901614/1901614_Sprof.nc
 terms argo-free https://data-argo.ifremer.fr/
 ttl 604800
-on earth 0 0 0
+track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 format netcdf
 profile .
 lat LATITUDE
@@ -9362,7 +9362,7 @@ field PH_IN_SITU_TOTAL argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
 url https://data-argo.ifremer.fr/dac/aoml/1901614/profiles/BR1901614_022.nc
 terms argo-free https://data-argo.ifremer.fr/
 ttl 604800
-on earth 0 0 0
+track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 format netcdf
 profile .
 lat LATITUDE
@@ -9378,7 +9378,7 @@ field PH_IN_SITU_TOTAL argo_dac_bgc_ph_total erfc diffusion 1 604800 0.0 0.0
 url https://data-argo.ifremer.fr/dac/aoml/1901843/profiles/R1901843_357.nc
 terms argo-free https://data-argo.ifremer.fr/
 ttl 604800
-on earth 0 0 0
+track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 format netcdf
 profile .
 lat LATITUDE
@@ -9697,7 +9697,7 @@ format argo_bgc
 origin https://data-argo.ifremer.fr/argo_bio-profile_index.txt.gz
 compiler tools/harvest/src/bin/argo_bgc_profile_compiler.rs
 sha256 7b6e18a062eb32ce2bd4022eb23421f056d84762e189cb9caae664786a369215
-on earth 0 0 0
+track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 ttl 604800
 field argo_dac_bgc_doxy_umol_kg argo_dac_bgc_doxy_umol_kg erfc diffusion micromole/kg 604800 0.0 0.0
 field argo_dac_bgc_nitrate_umol_kg argo_dac_bgc_nitrate_umol_kg erfc diffusion micromole/kg 604800 0.0 0.0
@@ -9811,7 +9811,7 @@ terms PD-USGov https://sti.nasa.gov/disclaimers/
 format gedi_l2a
 origin https://s3.us-west-2.amazonaws.com/lp-prod-protected
 compiler tools/harvest/src/bin/gedi_l2a_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 604800
 quantity gedi_l2a_rh98 gedi_l2a_rh98_m inverse-square geometry m 604800 0.0 0.0
 
@@ -9820,7 +9820,7 @@ terms PD-USGov https://sti.nasa.gov/disclaimers/
 format icesat2_atl03
 origin https://s3.us-west-2.amazonaws.com/nsidc-cumulus-prod-protected
 compiler tools/harvest/src/bin/icesat2_atl03_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 604800
 quantity icesat2_atl03_h_ph icesat2_atl03_h_ph_m inverse-square geometry m 604800 0.0 0.0
 
@@ -9986,7 +9986,7 @@ format superdarn_rawacf
 origin https://www.frdr-dfdr.ca/repo/dataset/1af34c0f-9a8c-44db-9328-d122a95cbeeb
 compiler tools/harvest/src/bin/superdarn_rawacf_compiler.rs
 sha256 6f60033e51e8bfb21e02e8389988e6e60460b015b91d31b746c6a56bc2d8a0ba
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 604800
 field superdarn_rawacf_lag0_power_db superdarn_rawacf_lag0_power_db inverse-square em dB 600 0.0 0.0
 
@@ -10017,7 +10017,7 @@ format glm_l1b
 origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/glml1bflash__1/
 compiler tools/harvest/src/bin/glm_l1b_compiler.rs
 sha256 a7311a5321130fc5727417d4fe873e5a3f2397bad3c91ab0abcf611789484072
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 604800
 field glm_l1b_flash_radiant_energy_j glm_l1b_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
 
@@ -10026,7 +10026,7 @@ terms PD-USGov https://sti.nasa.gov/disclaimers/
 format iss_lis
 origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/isslis_v3_fin__3/
 compiler tools/harvest/src/bin/iss_lis_compiler.rs
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 ttl 604800
 field iss_lis_flash_radiance_uj_sr_m2_um iss_lis_flash_radiance_uj_sr_m2_um inverse-square em uJ/sr/m2/um 3600 0.0 0.0
 
@@ -10035,7 +10035,7 @@ terms PD-USGov https://sti.nasa.gov/disclaimers/
 format lis_otd
 origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/otdlip__1/
 compiler tools/harvest/src/bin/lis_otd_compiler.rs
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 ttl 604800
 quantity rad lis_otd_flash_radiance_uj_sr inverse-square intensity uj/sr 3600 0.0 0.0
 
@@ -10045,7 +10045,7 @@ format trmm_lis
 origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/lislip__4/
 compiler tools/harvest/src/bin/trmm_lis_compiler.rs
 sha256 4df26cafde3c392fc99831797c9392e1f155e821716cd63db467847e9e654534
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 ttl 604800
 field trmm_lis_flash_radiance_uj_sr_m2_um trmm_lis_flash_radiance_uj_sr_m2_um inverse-square em uJ/sr/m2/um 3600 0.0 0.0
 
@@ -10376,7 +10376,7 @@ format glm_l2
 origin https://noaa-goes18.s3.amazonaws.com/GLM-L2-LCFA/
 compiler tools/harvest/src/bin/glm_l2_compiler.rs
 sha256 1c4d89f0eb907db1a456e4adc346d77b0973562ab1f2091cba2b8aec0d866213
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 ttl 604800
 field glm_l2_flash_radiant_energy_j glm_l2_flash_radiant_energy_j inverse-square em J 3600 0.0 0.0
 
@@ -10422,7 +10422,7 @@ ttl 604800
 format noaa_wod
 origin https://noaa-wod-pds.s3.amazonaws.com/{year}/wod_{instrument}_{year}.nc
 compiler tools/harvest/src/bin/wod_compiler.rs
-on earth 0 0 0
+track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 field wod_temperature_degc wod_temperature_degc exponential-decay thermal degree_C 604800 0.0 0.0
 field wod_salinity_psu wod_salinity_psu gaussian-inverse-square diffusion psu 604800 0.0 0.0
 field wod_oxygen_ml_l wod_oxygen_ml_l gaussian-inverse-square diffusion ml/l 604800 0.0 0.0
@@ -10999,7 +10999,7 @@ terms gosat-data-policy https://product.gosat-gw.nies.go.jp/
 format gosat_tanso3
 origin https://product.gosat-gw.nies.go.jp
 compiler tools/harvest/src/bin/gosat_tanso3_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 604800
 field gosat_tanso3_radiance_focus_band1_w_m2_sr_um gosat_tanso3_radiance_focus_band1_w_m2_sr_um inverse-square em W/m2/sr/um 3600 0.0 0.0
 field gosat_tanso3_radiance_focus_band2_w_m2_sr_um gosat_tanso3_radiance_focus_band2_w_m2_sr_um inverse-square em W/m2/sr/um 3600 0.0 0.0
@@ -11563,7 +11563,7 @@ format ersstv5_nino34
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 origin https://coastwatch.pfeg.noaa.gov/erddap/griddap/nceiErsstv5
 compiler tools/harvest/src/bin/ersstv5_compiler.rs
-on earth 0 0 0
+global earth frame=body method=aggregate
 ttl 2592000
 field ersstv5_nino34 ersstv5_nino34_ssta exponential-decay thermal C 2592000 0.0 0.0
 
@@ -11591,7 +11591,7 @@ terms non-commercial-government-licence-2.0 https://www.metoffice.gov.uk/hadobs/
 format hadisst_sst
 origin https://www.metoffice.gov.uk/hadobs/hadisst/data/HadISST_sst.nc.gz
 compiler tools/harvest/src/bin/hadisst_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 2592000
 field hadisst_sst hadisst_sst exponential-decay thermal C 2592000 0.0 0.0
 
@@ -12105,7 +12105,7 @@ format gistemp_aod550_axis_value_text
 origin https://data.giss.nasa.gov/modelforce/strataer/data/tau_reff_Sato-Lacis.nc
 compiler tools/harvest/src/bin/gistemp_aod_compiler.rs
 sha256 1ba4e901a84731edd543d6de6a5f30920ddb746652e5f8fa05efed557036bde6
-on earth 0 0 0
+global earth frame=body method=aggregate
 ttl 31536000
 field gistemp_aod550 gistemp_aod550_aod550 exponential-decay em 1 31536000 0.0 0.0
 
@@ -12240,7 +12240,7 @@ format losc
 origin https://gwosc.org/eventapi/json/GWTC-1-confident/GW150914/v3/H-H1_GWOSC_4KHZ_R1-1126259447-32.hdf5
 compiler tools/harvest/src/bin/losc_compiler.rs
 sha256 155df05741d0e79b11d228dd41f91b6c303a9dde82aea01fcd5bb953449beb14
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 31536000
 quantity losc_strain losc_strain point relative 1 31536000 0.0 0.0
 
@@ -12344,7 +12344,7 @@ terms CC-BY-4.0 https://jeodpp.jrc.ec.europa.eu/
 format ghsl_built_s
 origin https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss/V1-0/GHS_BUILT_S_E2020_GLOBE_R2023A_4326_3ss_V1_0.zip
 compiler tools/harvest/src/bin/ghsl_compiler.rs
-on earth 0 0 0
+coverage earth frame=body footprint=pending
 ttl 31536000
 quantity ghsl_built_surface_m2 ghsl_built_surface_m2 point area m2 31536000 0.0 0.0
 
@@ -12377,7 +12377,7 @@ format osha_cehd_si_axis_value_text
 origin https://www.osha.gov/sites/default/files/healthsamples.zip
 terms PD-USGov https://www.osha.gov/opengov/health-samples
 compiler tools/harvest/src/bin/osha_cehd_compiler.rs
-on earth 0 0 0
+global earth frame=body method=aggregate
 ttl 31536000
 field osha_mass_concentration osha_mass_concentration inverse-square diffusion kg/m3 31536000 0.0 0.0
 field osha_mass osha_mass inverse-square diffusion kg 31536000 0.0 0.0
@@ -14203,7 +14203,7 @@ terms eida-data-policy https://www.orfeus-eu.org/data/eida/acknowledgements/
 origin http://ceein.infp.ro/fdsnws/dataselect/1/query
 format ceein_infrasound
 compiler tools/harvest/src/bin/ceein_infrasound_compiler.rs
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 no-cadence
 field ceein_infrasound_pressure_pa ceein_infrasound_pressure_pa inverse-square acoustic pa 300 0.0 0.0
 
@@ -14298,7 +14298,7 @@ terms CC-BY-NC-SA-4.0 https://doi.org/10.25928/bgrseis_bbhf-ifsd
 format bgr_infrasound
 origin https://download.bgr.de/bgr/geophysik/Infrasound_hf_product/netCDF/BGR_infrasound_hf_product.zip
 compiler tools/harvest/src/bin/bgr_infrasound_compiler.rs
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
 no-cadence
 quantity bgr_infrasound_back_azimuth_deg bgr_infrasound_back_azimuth_deg inverse-square geometry deg 300 0.0 0.0
 field bgr_infrasound_apparent_velocity_ms bgr_infrasound_apparent_velocity_ms inverse-square acoustic m/s 300 0.0 0.0
@@ -14338,7 +14338,7 @@ format gbm_tgf
 origin https://fermi.gsfc.nasa.gov/ssc/data/access/gbm/tgf/gbm_tgf_catalog_offline.csv
 compiler tools/harvest/src/bin/gbm_tgf_compiler.rs
 sha256 e63f68df674d1979ab45ff000bb5eb3a043965ecf7a9fdba6170fa0867f64503
-on earth 0 0 0
+query earth frame=body lat_key=pending lon_key=pending alt_key=absent time_key=time
 rows
 lat_key Lat
 lon_key Lon
