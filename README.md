@@ -4,7 +4,7 @@
 
 A = A.
 
-Time is a coordinate: omegaflow rests as a free line in the 4D block (ICRS/J2000), with no past,
+Time is a coordinate: omegaflow rests as a free line in the 4D block (ICRS/TDB), with no past,
 present, or future privileged. A std-only Rust core (the *Archivar*) loads stars and bodies from
 catalogued ephemerides into that frame. A WebGPU/WGSL compute pipeline (the *Mathematikerin*)
 evaluates the field. A binary φ(x,y,z,t) protocol (26 × f64 per record) carries it between them.
@@ -15,8 +15,8 @@ browser — WebGPU/WGSL and vanilla JavaScript, not Rust. Sensors and open sourc
 sources (APIs, ephemerides, connected sensors, CDN) ⇌ Archivar (Rust, std-only) ⇌ Mathematikerin (WebGPU WGSL) ⇌ silicon membranes
 ```
 
-A measured zero is a value; an absent value stays absent and renders black. No default fills a
-physical gap — and that discipline is enforced in code, not in prose: a commit gate refuses
+A measured zero is a value; an absent value stays absent and renders black; an unmeasured value
+stays pending. No default fills a physical gap — and that discipline is enforced in code, not in prose: a commit gate refuses
 unbacked state claims and speculation vocabulary (`src/gate/`).
 
 ![omegaflow — the sun](docs/assets/omegaflow_sun.png)
