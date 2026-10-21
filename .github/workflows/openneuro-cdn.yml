@@ -50,3 +50,9 @@ jobs:
         run: |
           cargo run -p omegaflow-harvest --release --bin openneuro_compiler -- \
             --ci-mode --dataset "${{ inputs.dataset }}" ${{ steps.filters.outputs.args }}
+      - name: No IEEG assets on the CDN
+        run: |
+          gh release view openneuro.org --repo omegaflow/sources --json assets \
+            --jq '.assets[].name' | grep '_ieeg.bin' | while read -r a; do
+              gh release delete-asset openneuro.org "$a" --repo omegaflow/sources --yes
+            done || true
