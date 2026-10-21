@@ -668,6 +668,19 @@ passes the managed challenge) or the per-host API/mirror; `--playwright
 --headed` (a persistent profile under `~/.cache/omegaflow/playwright-profile`)
 is the browser path for a display.
 
+## Die Köder-Kette — `bait` → `find` → `weave` (2026-10-21)
+
+| Schritt | Aufruf | Zweck |
+|---|---|---|
+| Köder aus Prosa/Specs | `bin/bait <datei>` · `bin/bait --url <https>` | Text/PDF/Bild/**FITS-Header**; nur `bait …`-Zeilen (Header, Wert, Einheit, `hex-f64`) |
+| Kette | `bin/find --header "a,b" --value <zahl> --hex <hex> --fits "K=V" --near <abs\|N%> --engine <kanal> --top N` | suchen → jeden Kandidaten sniffen → **MATCH / ZWILLING / NAH / kein-match** |
+| Merge | `bin/weave --on <anker> --out <datei> [--terms datei=token] <t1> <t2> …` | Anker-Merge, `__conflict`-Spalte, `.map`-Herkunftskarte, `.edges`-DAG |
+| Kandidaten | `bin/leads_merge` | Leads gegen `phi/sources.φ` deduplizieren |
+
+Details und die gemessene Lücke (`find` → `weave` ist nicht verkettet):
+`docs/reference/koeder-kette.md`; die Bedingungen je Datenform:
+`docs/reference/koeder-formen.md`.
+
 ## Local tools — the self-contained path
 
 The project's own tools live on `PATH` (via `~/.local/bin`, built from
