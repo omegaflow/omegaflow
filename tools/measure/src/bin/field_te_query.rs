@@ -984,7 +984,9 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
             ));
         }
         let Some((_, fdr_q, _)) = &matrix_fdr else {
-            return Err(format!("panel '{label}' carries no FDR matrix — q is absent"));
+            return Err(format!(
+                "panel '{label}' carries no FDR matrix — q is absent"
+            ));
         };
         let fdr_q = *fdr_q;
         Some(PanelSpec {
@@ -6402,6 +6404,7 @@ mod tests {
             origin: None,
             compiler: None,
             terms: None,
+            medium: None,
             band: None,
             footprint: None,
             rights_identifier: None,

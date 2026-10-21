@@ -108,6 +108,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_origin: Option<String> = None;
     let mut cur_compiler: Option<String> = None;
     let mut cur_terms: Option<String> = None;
+    let mut cur_medium: Option<MediumLine> = None;
     let mut cur_band: Option<String> = None;
     let mut cur_footprint: Option<String> = None;
     let mut cur_witness: Option<String> = None;
@@ -176,6 +177,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             origin: cur_origin.clone(),
                             compiler: cur_compiler.clone(),
                             terms: cur_terms.clone(),
+                            medium: cur_medium.clone(),
                             band: cur_band.clone(),
                             footprint: cur_footprint.clone(),
                             witness: cur_witness.clone(),
@@ -272,6 +274,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_origin = None;
                 cur_compiler = None;
                 cur_terms = None;
+                cur_medium = None;
                 cur_band = None;
                 cur_footprint = None;
                 cur_witness = None;
@@ -353,6 +356,16 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_rights_scheme = parts.get(2).map(|s| s.to_string());
                 cur_rights_uri = parts.get(3).map(|s| s.to_string());
             }
+            "medium" => match parse_medium_line(&parts) {
+                Ok(medium) => cur_medium = Some(medium),
+                Err(e) => {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("medium {}: {}", e, line),
+                    );
+                }
+            },
             "ttl" if parts.len() >= 2 => {
                 if let Ok(v) = parts[1].parse::<u64>() {
                     cur_ttl = v;
@@ -2694,6 +2707,60 @@ pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
     lsk.unix_to_tdb(unix as f64)
 }
 
+fn parse_medium_value(token: &str) -> Option<MediumValue> {
+    match token {
+        "absent" => Some(MediumValue::Absent),
+        "pending" => Some(MediumValue::Pending),
+        _ => token
+            .parse::<f64>()
+            .ok()
+            .filter(|v| v.is_finite() && *v >= 0.0)
+            .map(MediumValue::Measured),
+    }
+}
+
+fn parse_medium_line(parts: &[&str]) -> Result<MediumLine, String> {
+    let mut absorption: Option<(MediumValue, Option<String>)> = None;
+    let mut advection: Option<(MediumValue, Option<String>)> = None;
+    let mut i = 1;
+    while i < parts.len() {
+        let (key, value) = parts[i]
+            .split_once('=')
+            .ok_or_else(|| format!("token '{}' carries no key=value", parts[i]))?;
+        let parsed =
+            parse_medium_value(value).ok_or_else(|| format!("invalid value '{}'", value))?;
+        let mut unit: Option<String> = None;
+        if let Some(next) = parts.get(i + 1)
+            && !next.contains('=')
+        {
+            unit = Some((*next).to_string());
+            i += 1;
+        }
+        if matches!(parsed, MediumValue::Measured(_)) && unit.is_none() {
+            return Err(format!("{} requires a unit", key));
+        }
+        let slot = match key {
+            "absorption" => &mut absorption,
+            "advection" => &mut advection,
+            _ => return Err(format!("unknown medium key '{}'", key)),
+        };
+        if slot.is_some() {
+            return Err(format!("duplicate {}", key));
+        }
+        *slot = Some((parsed, unit));
+        i += 1;
+    }
+    let (absorption, absorption_unit) =
+        absorption.ok_or_else(|| "absorption absent".to_string())?;
+    let (advection, advection_unit) = advection.ok_or_else(|| "advection absent".to_string())?;
+    Ok(MediumLine {
+        absorption,
+        absorption_unit,
+        advection,
+        advection_unit,
+    })
+}
+
 pub fn parse_field_config(parts: &[&str]) -> Option<(u8, Option<u8>, f64, f64, f64)> {
     let kernel = kernel_id_of(parts[3])?;
     let channel_ref = match force_id_of(parts[4]) {
@@ -2891,6 +2958,7 @@ mod tests {
             origin: None,
             compiler: None,
             terms: None,
+            medium: None,
             band: None,
             footprint: None,
             witness: None,
@@ -4131,6 +4199,20 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         );
         assert_eq!(sources.len(), 1);
         assert!(sources[0].head.is_none());
+    }
+
+    #[test]
+    fn medium_line_reads_numeric_units_and_states() {
+        let sources = parse_sources(
+            "url https://example.invalid/medium\nformat text\nttl 60\non earth 0 0 0\n\
+             medium absorption=0.25 1/m advection=pending\n",
+        );
+        assert_eq!(sources.len(), 1);
+        let medium = sources[0].medium.as_ref().expect("medium line");
+        assert_eq!(medium.absorption, MediumValue::Measured(0.25));
+        assert_eq!(medium.absorption_unit.as_deref(), Some("1/m"));
+        assert_eq!(medium.advection, MediumValue::Pending);
+        assert_eq!(medium.advection_unit, None);
     }
 
     #[test]
