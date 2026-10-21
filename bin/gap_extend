@@ -18,6 +18,8 @@ gap_extend: usage: bin/gap_extend <serie> --from <iso> --to <iso> --source <arm>
   --unit        erwartete Einheit; sonst die Einheit, die --sniff in <serie> findet
   --cadence     Kadenz in Sekunden; sonst die gemessene Kadenz aus bracket
   --live        nur der neueste Zeitpunkt des Live-Arms (nur mit live|goes-live)
+  --anchors     Anker-TSV (time value sigma confidence source); Band ist Bait, nie Ergebnis
+  --safety      Sicherheitsfaktor fuer das Ankerband (Default 1)
   --out         neue Datei; <serie> bleibt unverändert, vorhandene --out wird nicht überschrieben
   Kandidaten werden in Rangfolge gesnifft; nach 45 s endet die Suche als pending (offene Kandidaten bleiben ungeprüft)
   es wird nichts interpoliert: nur gemessene Zeilen außerhalb des vorhandenen Bereichs
@@ -37,6 +39,8 @@ source=""
 query=""
 unit=""
 cadence=""
+anchors=""
+safety=""
 live=0
 out=""
 
@@ -60,6 +64,12 @@ while [ $# -gt 0 ]; do
         --cadence)
             [ $# -ge 2 ] && [ -n "$2" ] || usage
             cadence="$2"; shift 2 ;;
+        --anchors)
+            [ $# -ge 2 ] && [ -n "$2" ] || usage
+            anchors="$2"; shift 2 ;;
+        --safety)
+            [ $# -ge 2 ] && [ -n "$2" ] || usage
+            safety="$2"; shift 2 ;;
         --out)
             [ $# -ge 2 ] && [ -n "$2" ] || usage
             out="$2"; shift 2 ;;
@@ -106,6 +116,16 @@ if [ -n "$cadence" ]; then
     awk -v c="$cadence" 'BEGIN { exit !(c ~ /^[0-9]+([.][0-9]+)?$/ && c + 0 > 0) }' ||
         die2 "--cadence braucht positive Sekunden: $cadence"
 fi
+
+if [ -n "$anchors" ]; then
+    [ -f "$anchors" ] && [ -r "$anchors" ] || die2 "--anchors nicht lesbar: $anchors"
+    [ -x "$root/bin/anchor_check" ] || die2 "$root/bin/anchor_check fehlt"
+fi
+if [ -n "$safety" ]; then
+    awk -v s="$safety" 'BEGIN { exit !(s ~ /^[0-9]+([.][0-9]+)?$/ && s + 0 > 0) }' ||
+        die2 "--safety braucht eine positive Zahl: $safety"
+fi
+[ -n "$safety" ] || safety=1
 
 if [ -n "$out" ]; then
     [ "$out" = "$serie" ] && die2 "--out ist die Serie selbst: $out"
@@ -598,10 +618,30 @@ n_early="$(info_get early "$tmpdir/cinfo")"
 n_late="$(info_get late "$tmpdir/cinfo")"
 n_new=$((n_early + n_late))
 
+: > "$tmpdir/early.lines"
+: > "$tmpdir/late.lines"
 [ -s "$tmpdir/early.tsv" ] &&
     sort -n -k1,1 "$tmpdir/early.tsv" | cut -f2- > "$tmpdir/early.lines"
 [ -s "$tmpdir/late.tsv" ] &&
     sort -n -k1,1 "$tmpdir/late.tsv" | cut -f2- > "$tmpdir/late.lines"
+
+if [ -n "$anchors" ]; then
+    cat "$tmpdir/early.lines" "$tmpdir/late.lines" > "$tmpdir/anchor.cand"
+    if [ -s "$tmpdir/anchor.cand" ]; then
+        if ! "$root/bin/anchor_check" "$tmpdir/anchor.cand" --anchors "$anchors" \
+            --safety "$safety" --format tsv > "$tmpdir/anchor.out" 2> "$tmpdir/anchor.err"; then
+            pending "Ankerprüfung: $(head -n 1 "$tmpdir/anchor.err")"
+        fi
+        bad="$(awk -F'\t' 'NR > 1 && $9 != "inside" { n++ } END { print n + 0 }' "$tmpdir/anchor.out")"
+        if [ "${bad:-0}" -gt 0 ]; then
+            pending "Ankerband: $bad Kandidatenzeile(n) outside/pending (safety $safety)"
+        fi
+    fi
+fi
+
+n_early="$(wc -l < "$tmpdir/early.lines" | tr -d ' ')"
+n_late="$(wc -l < "$tmpdir/late.lines" | tr -d ' ')"
+n_new=$((n_early + n_late))
 
 ensure_nl() {
     [ -s "$1" ] || return 0
@@ -641,6 +681,8 @@ mapfile="${target}.map"
     printf 'sha256\t%s\n' "$cand_sha"
     printf 'unit\t%s\n' "${cand_unit:-absent}"
     printf 'header\t%s\n' "${cand_header:-absent}"
+    printf 'anchors\t%s\n' "${anchors:-absent}"
+    printf 'safety\t%s\n' "$safety"
     printf 'cadence\t%s\n' "$cad"
     printf 'window\t%s\t%s\n' "$from" "$to"
     printf 'series_range\t%s\t%s\n' "$sfirst_raw" "$slast_raw"
