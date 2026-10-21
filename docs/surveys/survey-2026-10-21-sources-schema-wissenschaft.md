@@ -2,8 +2,8 @@
   title: Wissenschaftliche Fundierung des sources-Schemas (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 0f2d99db64967f18cdc7c2b14b8ad2fbd6944adc943d1f18d2bb5613b71ca337
-  status: live
+  sha256: 857aa6b37bb4a38d3793ec35669f3801857845855ac2307320504f54a739a137
+  status: draft
   see-also: docs/surveys/survey-2026-10-21-sources-schema-archaeologie.md docs/specs/livefeed-gate.md docs/specs/iau-2000-eop.md
 -->
 # Wissenschaftliche Fundierung des sources-Schemas
@@ -137,7 +137,26 @@ welcher Zustand gemeint ist.
 - Die **Messzustands-Achsen** — die sind mit v3 bereits entschieden; sie
   werden hier nur referenziert, nicht neu geöffnet.
 
-## 6. Referenzen
+## 6. Prüfstand der Primärquellen (2026-10-21)
+
+Die erste Fassung war eine Synthese aus dem Baum und Trainingswissen. Dieser
+Stand ist gemessen:
+
+| Quelle | geöffnet | Befund |
+|---|---|---|
+| CF Conventions 1.11 | **ja** | §7.3 `cell_methods`; §9.5 `coordinates`; §7.1 `bounds`; §5.6 `grid_mapping` |
+| IVOA ObsCore 1.1 (2017-05-09) | **ja** | `s_ra`, `s_dec`, `s_fov`, `t_min`, `t_max` |
+| IERS Conventions 2010 | nein | nur Navigation; Chapter 1/TN36 nicht extrahiert |
+| IAU 2000 B1.3 | nein | IAU-URL 404; nicht geöffnet |
+| FITS WCS Paper II | nein | nur Landing-Page; `RADESYS`/`EQUINOX` nicht primär geprüft |
+| HAPI 3.0 | nein | nicht geöffnet |
+| W3C PROV / UDUNITS-2 | nein | nicht geöffnet |
+
+**Folge:** Die Aussagen zu ICRS/BCRS, TDB, WGS84/ITRF, WGCCRE und FITS/WCS
+sind in dieser Datei noch **nicht** primär belegt; sie stehen als
+Prüfauftrag. Der Rat wird erst nach dem vollständigen Prüfstand gefragt.
+
+## 7. Referenzen
 
 - IAU 2000 Resolution B1.3 (ICRS/BCRS); IERS Conventions 2010; SOFA.
 - IAU 2006 (TDB/TT); IERS Leap Seconds; SPICE LSK.
