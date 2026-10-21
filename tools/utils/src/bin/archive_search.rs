@@ -2224,6 +2224,9 @@ fn usage() {
         "  --goes-live <g18|g19> [FDCF|AODF|GLM]   (NOAA GOES ABI/GLM live: latest S3 object of today per product, keyless; url + key + cadence)"
     );
     eprintln!(
+        "  --live      <listing-url>   (any S3 ListObjectsV2 XML or HTML directory index: newest object/link, keyless; url + last_modified/size)"
+    );
+    eprintln!(
         "  --antares   <ztf|ant id|key=value|free text>   (ANTARES ZTF broker, api.antares.noirlab.edu/v2/loci, keyless; the open twin of the blocked Fink arm; url + title/description from locus_id/ztf_object_id/ra/dec/alerts)"
     );
     eprintln!(
