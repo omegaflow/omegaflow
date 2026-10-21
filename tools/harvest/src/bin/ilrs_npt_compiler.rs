@@ -1,3 +1,5 @@
+use omegaflow::archivar::fetch_raw_bytes_headers;
+use omegaflow::archivar::load_env;
 use omegaflow::archivar::lsk::days_from_civil;
 use omegaflow::archivar::sha256::sha256_hex;
 use omegaflow::cdn::upload_release;
@@ -493,10 +495,51 @@ fn arg_value(args: &[String], name: &str) -> Option<String> {
         .cloned()
 }
 
+fn fetch_crd(url: &str) -> Result<String, String> {
+    let env = load_env();
+    let mut headers: Vec<(String, String)> = Vec::new();
+    if let Some(token) = env.get("EARTHDATA_EDL_TOKEN").filter(|v| !v.is_empty()) {
+        headers.push(("Authorization".to_string(), format!("Bearer {token}")));
+    }
+    let bytes = fetch_raw_bytes_headers(url, &headers)
+        .ok_or_else(|| format!("{url}: fetch void — the CRD stays unread"))?;
+    let name = url
+        .split(['?', '#'])
+        .next()
+        .unwrap_or(url)
+        .rsplit('/')
+        .next()
+        .filter(|s| !s.is_empty())
+        .unwrap_or("ilrs_npt.crd");
+    let path = std::path::Path::new("data")
+        .join(NETLOC)
+        .join("fetch")
+        .join(name);
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent)
+            .map_err(|e| format!("create {} void: {e}", parent.display()))?;
+    }
+    std::fs::write(&path, &bytes).map_err(|e| format!("{}: write void ({e})", path.display()))?;
+    Ok(path.to_string_lossy().into_owned())
+}
+
 fn run(args: &[String]) -> Result<(), String> {
     let ci_mode = args.iter().any(|a| a == "--ci-mode");
-    let input = arg_value(args, "--input")
-        .ok_or_else(|| "--input <crd.txt|.npt> absent — the file stays unread".to_string())?;
+    let input = match (arg_value(args, "--input"), arg_value(args, "--url")) {
+        (Some(_), Some(_)) => {
+            return Err(
+                "--input and --url both present — exactly one source is the contract".to_string(),
+            );
+        }
+        (Some(path), None) => path,
+        (None, Some(url)) => fetch_crd(&url)?,
+        (None, None) => {
+            return Err(
+                "--input <crd.txt|.npt> or --url <https> absent — the file stays unread"
+                    .to_string(),
+            );
+        }
+    };
     let out = match arg_value(args, "--out") {
         Some(p) if !p.is_empty() => p,
         _ => format!("data/{NETLOC}/{FORMAT}.bin"),
@@ -602,7 +645,7 @@ fn main() {
     }
     if args.is_empty() || args.iter().any(|a| a == "--help" || a == "-h") {
         eprintln!(
-            "usage: ilrs_npt_compiler --input <crd.npt> [--out <file.bin>] [--ci-mode] | --selftest"
+            "usage: ilrs_npt_compiler --input <crd.npt> | --url <https> [--out <file.bin>] [--ci-mode] | --selftest"
         );
         std::process::exit(2);
     }

@@ -2,11 +2,16 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::Path;
 
-fn arg_value(args: &[String], name: &str) -> Option<String> {
-    args.iter()
-        .position(|a| a == name)
-        .and_then(|i| args.get(i + 1))
+use omegaflow::archivar::json::{JsonVal, parse_json};
+
+fn take_value(args: &[String], i: &mut usize) -> Result<String, String> {
+    let flag = args[*i].clone();
+    let value = args
+        .get(*i + 1)
         .cloned()
+        .ok_or_else(|| format!("{flag}: value missing"))?;
+    *i += 2;
+    Ok(value)
 }
 
 fn split_line(line: &str, delim: char) -> Vec<String> {
@@ -56,15 +61,37 @@ fn admitted(token: &str) -> bool {
         && !token.ends_with("-permission-required")
 }
 
+fn parse_map(spec: &str, flag: &str) -> Result<BTreeMap<String, String>, String> {
+    let mut map: BTreeMap<String, String> = BTreeMap::new();
+    for pair in spec.split(',').filter(|p| !p.trim().is_empty()) {
+        let Some((key, value)) = pair.split_once('=') else {
+            return Err(format!("{flag}: '{pair}' is not file=value"));
+        };
+        let key = key.trim();
+        let value = value.trim();
+        if key.is_empty() || value.is_empty() {
+            return Err(format!("{flag}: '{pair}' hat einen leeren Teil"));
+        }
+        map.insert(key.to_string(), value.to_string());
+    }
+    Ok(map)
+}
+
 struct Table {
     file: String,
     header: Vec<String>,
     rows: Vec<Vec<String>>,
     anchor: usize,
     terms: String,
+    channel_ref: String,
 }
 
-fn read_table(path: &str, anchor: &str, terms: &BTreeMap<String, String>) -> Result<Table, String> {
+fn read_table(
+    path: &str,
+    anchor: &str,
+    terms: &BTreeMap<String, String>,
+    channels: &BTreeMap<String, String>,
+) -> Result<Table, String> {
     let text = fs::read_to_string(path).map_err(|e| format!("{path}: {e}"))?;
     let mut lines = text
         .lines()
@@ -97,12 +124,82 @@ fn read_table(path: &str, anchor: &str, terms: &BTreeMap<String, String>) -> Res
         Some(t) => t.clone(),
         None => "unset".to_string(),
     };
+    let channel_ref = match channels.get(path) {
+        Some(c) => c.clone(),
+        None => "absent".to_string(),
+    };
     Ok(Table {
         file: path.to_string(),
         header,
         rows,
         anchor: at,
         terms: term,
+        channel_ref,
+    })
+}
+
+const FIND_COLUMNS: [&str; 8] = [
+    "url",
+    "title",
+    "header_state",
+    "value_state",
+    "hex_state",
+    "fits_state",
+    "verdict",
+    "terms",
+];
+
+fn json_scalar(value: &JsonVal) -> String {
+    match value {
+        JsonVal::Str(s) => s.clone(),
+        JsonVal::Num(n) => format!("{n}"),
+        JsonVal::Bool(b) => b.to_string(),
+        JsonVal::Null => String::new(),
+        _ => String::new(),
+    }
+}
+
+fn read_find(
+    path: &str,
+    terms: &BTreeMap<String, String>,
+    channels: &BTreeMap<String, String>,
+) -> Result<Table, String> {
+    let text = fs::read_to_string(path).map_err(|e| format!("{path}: {e}"))?;
+    let mut rows = Vec::new();
+    for (n, line) in text.lines().enumerate() {
+        if line.trim().is_empty() {
+            continue;
+        }
+        let Some(JsonVal::Obj(obj)) = parse_json(line) else {
+            return Err(format!("{path}:{}: no JSON line", n + 1));
+        };
+        let row: Vec<String> = FIND_COLUMNS
+            .iter()
+            .map(|col| match obj.get(*col) {
+                Some(v) => Ok(json_scalar(v)),
+                None => Err(format!("{path}:{}: column '{col}' absent", n + 1)),
+            })
+            .collect::<Result<Vec<_>, String>>()?;
+        if row[0].is_empty() {
+            continue;
+        }
+        rows.push(row);
+    }
+    let term = match terms.get(path) {
+        Some(t) => t.clone(),
+        None => "unset".to_string(),
+    };
+    let channel_ref = match channels.get(path) {
+        Some(c) => c.clone(),
+        None => "absent".to_string(),
+    };
+    Ok(Table {
+        file: path.to_string(),
+        header: FIND_COLUMNS.iter().map(|c| c.to_string()).collect(),
+        rows,
+        anchor: 0,
+        terms: term,
+        channel_ref,
     })
 }
 
@@ -114,40 +211,88 @@ fn csv_field(v: &str) -> String {
     }
 }
 
-fn run(args: &[String]) -> Result<(), String> {
-    let anchor = arg_value(args, "--on").ok_or("--on <spalte> fehlt")?;
-    let out = arg_value(args, "--out").ok_or("--out <datei> fehlt")?;
-    let terms_spec = arg_value(args, "--terms");
-    let files: Vec<String> = args
-        .iter()
-        .enumerate()
-        .filter(|(i, a)| {
-            !a.starts_with("--")
-                && args
-                    .get(i.wrapping_sub(1))
-                    .map(|p| p != "--on" && p != "--out" && p != "--terms")
-                    != Some(false)
-        })
-        .map(|(_, a)| a.clone())
-        .collect();
-    if files.len() < 2 {
-        return Err("weave braucht mindestens zwei Tabellen".to_string());
-    }
+enum Source {
+    Csv(String),
+    Find(String),
+}
 
-    let mut terms: BTreeMap<String, String> = BTreeMap::new();
-    if let Some(spec) = &terms_spec {
-        for pair in spec.split(',').filter(|p| !p.trim().is_empty()) {
-            let Some((f, t)) = pair.split_once('=') else {
-                return Err(format!("--terms: '{pair}' ist nicht datei=token"));
-            };
-            terms.insert(f.trim().to_string(), t.trim().to_string());
+fn run(args: &[String]) -> Result<(), String> {
+    let mut anchor_arg: Option<String> = None;
+    let mut out: Option<String> = None;
+    let mut terms_spec: Option<String> = None;
+    let mut channel_spec: Option<String> = None;
+    let mut no_terms = false;
+    let mut require_channel_ref = false;
+    let mut sources: Vec<Source> = Vec::new();
+
+    let mut i = 0;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--on" => anchor_arg = Some(take_value(args, &mut i)?),
+            "--out" => out = Some(take_value(args, &mut i)?),
+            "--terms" => terms_spec = Some(take_value(args, &mut i)?),
+            "--channel-ref" => channel_spec = Some(take_value(args, &mut i)?),
+            "--from-find" => sources.push(Source::Find(take_value(args, &mut i)?)),
+            "--no-terms" => {
+                no_terms = true;
+                i += 1;
+            }
+            "--require-channel-ref" => {
+                require_channel_ref = true;
+                i += 1;
+            }
+            a if a.starts_with("--") => return Err(format!("unknown option '{a}'")),
+            a => {
+                sources.push(Source::Csv(a.to_string()));
+                i += 1;
+            }
         }
     }
 
+    let out = out.ok_or("--out <file> missing")?;
+    if terms_spec.is_some() && no_terms {
+        return Err("--terms and --no-terms are mutually exclusive".to_string());
+    }
+    if terms_spec.is_none() && !no_terms {
+        return Err(
+            "--terms <file=token,...> missing; without a licence pass --no-terms explicitly (writes unset)"
+                .to_string(),
+        );
+    }
+    if sources.is_empty() {
+        return Err("weave needs at least one source".to_string());
+    }
+    let has_find = sources.iter().any(|s| matches!(s, Source::Find(_)));
+    if !has_find && sources.len() < 2 {
+        return Err("weave braucht mindestens zwei Tabellen".to_string());
+    }
+    let anchor = match &anchor_arg {
+        Some(a) => a.clone(),
+        None if has_find => "url".to_string(),
+        None => return Err("--on <column> missing".to_string()),
+    };
+    if has_find && norm(&anchor) != "url" {
+        return Err(format!(
+            "--from-find uses the anchor 'url'; --on '{anchor}' is not compatible"
+        ));
+    }
+
+    let terms = match &terms_spec {
+        Some(spec) => parse_map(spec, "--terms")?,
+        None => BTreeMap::new(),
+    };
+    let channels = match &channel_spec {
+        Some(spec) => parse_map(spec, "--channel-ref")?,
+        None => BTreeMap::new(),
+    };
+
     let mut tables: Vec<Table> = Vec::new();
     let mut excluded: Vec<(String, String)> = Vec::new();
-    for f in &files {
-        let t = read_table(f, &anchor, &terms)?;
+    for source in &sources {
+        let t = match source {
+            Source::Csv(path) => read_table(path, &anchor, &terms, &channels)?,
+            Source::Find(path) => read_find(path, &terms, &channels)?,
+        };
         if terms_spec.is_some() && !admitted(&t.terms) {
             excluded.push((t.file.clone(), t.terms.clone()));
         }
@@ -160,8 +305,18 @@ fn run(args: &[String]) -> Result<(), String> {
             );
         }
     }
-    if tables.len() < 2 {
-        return Err("weave braucht mindestens zwei Tabellen".to_string());
+    if require_channel_ref {
+        let absent: Vec<&str> = tables
+            .iter()
+            .filter(|t| t.channel_ref == "absent")
+            .map(|t| t.file.as_str())
+            .collect();
+        if !absent.is_empty() {
+            return Err(format!(
+                "--require-channel-ref: channel_ref missing (absent) for {}",
+                absent.join(", ")
+            ));
+        }
     }
 
     let mut cols: Vec<(String, String, String, String)> = Vec::new();
@@ -263,14 +418,12 @@ fn run(args: &[String]) -> Result<(), String> {
     }
     fs::write(&out, text.as_bytes()).map_err(|e| format!("{out}: {e}"))?;
 
-    let mut map = String::from("out_column\tsource_file\tsource_column\tterms\n");
+    let mut map = String::from("out_column\tsource_file\tsource_column\tterms\tchannel_ref\n");
     for (n, f, c, _) in &cols {
-        let t = tables
-            .iter()
-            .find(|t| &t.file == f)
-            .map(|t| t.terms.as_str())
-            .unwrap_or("unset");
-        map.push_str(&format!("{n}\t{f}\t{c}\t{t}\n"));
+        let t = tables.iter().find(|t| &t.file == f);
+        let terms = t.map(|t| t.terms.as_str()).unwrap_or("unset");
+        let channel_ref = t.map(|t| t.channel_ref.as_str()).unwrap_or("absent");
+        map.push_str(&format!("{n}\t{f}\t{c}\t{terms}\t{channel_ref}\n"));
     }
     fs::write(format!("{out}.map"), map.as_bytes()).map_err(|e| format!("{out}.map: {e}"))?;
 
@@ -330,6 +483,21 @@ fn main() {
 mod tests {
     use super::*;
 
+    fn scratch(name: &str) -> std::path::PathBuf {
+        let base = std::env::var("TMPDIR").unwrap_or_else(|_| "/tmp".to_string());
+        let dir = std::path::PathBuf::from(base)
+            .join("scratch")
+            .join(format!("weave-{name}-{}", std::process::id()));
+        fs::create_dir_all(&dir).unwrap();
+        dir
+    }
+
+    macro_rules! args {
+        ($($item:expr),* $(,)?) => {
+            vec![$($item.to_string()),*]
+        };
+    }
+
     #[test]
     fn norm_strips_units_and_case() {
         assert_eq!(norm("Discharge [m3/s]"), "discharge");
@@ -346,20 +514,20 @@ mod tests {
 
     #[test]
     fn weave_marks_conflicts_instead_of_overwriting() {
-        let dir = std::env::temp_dir().join(format!("weave-c-{}", std::process::id()));
-        fs::create_dir_all(&dir).unwrap();
+        let dir = scratch("c");
         let a = dir.join("a.csv");
         let b = dir.join("b.csv");
         fs::write(&a, "time,flow\n1,5\n2,6\n").unwrap();
         fs::write(&b, "time,flow\n1,7\n3,8\n").unwrap();
         let out = dir.join("out.csv");
-        let args = vec![
-            "--on".to_string(),
-            "time".to_string(),
-            "--out".to_string(),
-            out.to_string_lossy().to_string(),
-            a.to_string_lossy().to_string(),
-            b.to_string_lossy().to_string(),
+        let args = args![
+            "--on",
+            "time",
+            "--out",
+            out.to_string_lossy(),
+            "--no-terms",
+            a.to_string_lossy(),
+            b.to_string_lossy(),
         ];
         run(&args).unwrap();
         let text = fs::read_to_string(&out).unwrap();
@@ -373,23 +541,22 @@ mod tests {
 
     #[test]
     fn weave_marks_non_admitted_terms_but_merges() {
-        let dir = std::env::temp_dir().join(format!("weave-t-{}", std::process::id()));
-        fs::create_dir_all(&dir).unwrap();
+        let dir = scratch("t");
         let a = dir.join("a.csv");
         let b = dir.join("b.csv");
         fs::write(&a, "time,v\n1,5\n").unwrap();
         fs::write(&b, "time,v\n1,6\n").unwrap();
         let out = dir.join("out.csv");
         let spec = format!("{}=CC0-1.0,{}=no-redistribution", a.display(), b.display());
-        let args = vec![
-            "--on".to_string(),
-            "time".to_string(),
-            "--out".to_string(),
-            out.to_string_lossy().to_string(),
-            "--terms".to_string(),
-            spec,
-            a.to_string_lossy().to_string(),
-            b.to_string_lossy().to_string(),
+        let args = args![
+            "--on",
+            "time",
+            "--out",
+            out.to_string_lossy(),
+            "--terms",
+            spec.as_str(),
+            a.to_string_lossy(),
+            b.to_string_lossy(),
         ];
         run(&args).unwrap();
         let map = fs::read_to_string(format!("{}.map", out.display())).unwrap();
@@ -400,24 +567,157 @@ mod tests {
 
     #[test]
     fn weave_marks_identical_columns_as_mirror() {
-        let dir = std::env::temp_dir().join(format!("weave-m-{}", std::process::id()));
-        fs::create_dir_all(&dir).unwrap();
+        let dir = scratch("m");
         let a = dir.join("a.csv");
         let b = dir.join("b.csv");
         fs::write(&a, "time,flow\n1,5\n2,6\n").unwrap();
         fs::write(&b, "time,flow\n1,5\n2,6\n").unwrap();
         let out = dir.join("out.csv");
-        let args = vec![
-            "--on".to_string(),
-            "time".to_string(),
-            "--out".to_string(),
-            out.to_string_lossy().to_string(),
-            a.to_string_lossy().to_string(),
-            b.to_string_lossy().to_string(),
+        let args = args![
+            "--on",
+            "time",
+            "--out",
+            out.to_string_lossy(),
+            "--no-terms",
+            a.to_string_lossy(),
+            b.to_string_lossy(),
         ];
         run(&args).unwrap();
         let edges = fs::read_to_string(format!("{}.edges", out.display())).unwrap();
         assert!(edges.contains("mirror-of"), "{edges}");
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn weave_reads_find_jsonl_as_table() {
+        let dir = scratch("find");
+        let jsonl = dir.join("find.jsonl");
+        fs::write(
+            &jsonl,
+            concat!(
+                r#"{"url":"https://example.org/1","title":"One","header_state":"erfüllt","value_state":"erfüllt","hex_state":"","fits_state":"","verdict":"MATCH","terms":"CC0-1.0"}"#,
+                "\n",
+                r#"{"url":"https://example.org/2","title":"Two","header_state":"fehlt","value_state":"","hex_state":"","fits_state":"","verdict":"kein-match","terms":"unset"}"#,
+                "\n"
+            ),
+        )
+        .unwrap();
+        let out = dir.join("out.csv");
+        let args = args![
+            "--from-find",
+            jsonl.to_string_lossy(),
+            "--out",
+            out.to_string_lossy(),
+            "--no-terms",
+        ];
+        run(&args).unwrap();
+        let text = fs::read_to_string(&out).unwrap();
+        let mut lines = text.lines();
+        let head = lines.next().unwrap();
+        assert!(head.starts_with("url,title,header_state"), "{head}");
+        assert!(head.ends_with("__conflict"), "{head}");
+        assert_eq!(lines.count(), 2);
+        let map = fs::read_to_string(format!("{}.map", out.display())).unwrap();
+        assert!(map.starts_with("out_column\tsource_file\tsource_column\tterms\tchannel_ref"));
+        assert!(map.contains("\tabsent"), "{map}");
+        let edges = fs::read_to_string(format!("{}.edges", out.display())).unwrap();
+        assert!(edges.contains("contributes"), "{edges}");
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn weave_from_find_marks_conflicts() {
+        let dir = scratch("find-conflict");
+        let a = dir.join("a.jsonl");
+        let b = dir.join("b.jsonl");
+        fs::write(
+            &a,
+            r#"{"url":"https://example.org/1","title":"One","header_state":"erfüllt","value_state":"","hex_state":"","fits_state":"","verdict":"MATCH","terms":"unset"}"#,
+        )
+        .unwrap();
+        fs::write(
+            &b,
+            r#"{"url":"https://example.org/1","title":"Other","header_state":"fehlt","value_state":"","hex_state":"","fits_state":"","verdict":"MATCH","terms":"unset"}"#,
+        )
+        .unwrap();
+        let out = dir.join("out.csv");
+        let args = args![
+            "--from-find",
+            a.to_string_lossy(),
+            "--from-find",
+            b.to_string_lossy(),
+            "--out",
+            out.to_string_lossy(),
+            "--no-terms",
+        ];
+        run(&args).unwrap();
+        let text = fs::read_to_string(&out).unwrap();
+        let row = text.lines().nth(1).unwrap();
+        assert!(row.contains("title:"), "{row}");
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn weave_requires_terms_unless_no_terms() {
+        let dir = scratch("terms-required");
+        let a = dir.join("a.csv");
+        let b = dir.join("b.csv");
+        fs::write(&a, "time,v\n1,5\n").unwrap();
+        fs::write(&b, "time,v\n1,6\n").unwrap();
+        let out = dir.join("out.csv");
+        let args = args![
+            "--on",
+            "time",
+            "--out",
+            out.to_string_lossy(),
+            a.to_string_lossy(),
+            b.to_string_lossy(),
+        ];
+        let err = run(&args).unwrap_err();
+        assert!(err.contains("--terms"), "{err}");
+        assert!(!out.exists());
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn weave_map_carries_channel_ref_and_can_require_it() {
+        let dir = scratch("channel");
+        let a = dir.join("a.csv");
+        let b = dir.join("b.csv");
+        fs::write(&a, "time,v\n1,5\n").unwrap();
+        fs::write(&b, "time,v\n1,6\n").unwrap();
+        let out = dir.join("out.csv");
+        let spec = format!("{}=antenna-1,{}=gain-2", a.display(), b.display());
+        let args = args![
+            "--on",
+            "time",
+            "--out",
+            out.to_string_lossy(),
+            "--no-terms",
+            "--channel-ref",
+            spec.as_str(),
+            a.to_string_lossy(),
+            b.to_string_lossy(),
+        ];
+        run(&args).unwrap();
+        let map = fs::read_to_string(format!("{}.map", out.display())).unwrap();
+        assert!(map.contains("antenna-1"), "{map}");
+        assert!(map.contains("gain-2"), "{map}");
+
+        let out2 = dir.join("out2.csv");
+        let args = args![
+            "--on",
+            "time",
+            "--out",
+            out2.to_string_lossy(),
+            "--no-terms",
+            "--require-channel-ref",
+            a.to_string_lossy(),
+            b.to_string_lossy(),
+        ];
+        let err = run(&args).unwrap_err();
+        assert!(err.contains("channel_ref"), "{err}");
+        assert!(!out2.exists());
         let _ = fs::remove_dir_all(&dir);
     }
 }

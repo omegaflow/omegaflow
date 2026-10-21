@@ -137,6 +137,7 @@ pub fn series_parse_bin(format: &str, bytes: &[u8]) -> Option<Vec<(f64, f64, u32
         "soho_sem" => soho_sem::parse_series(bytes),
         "mwo_magnetogram" => mwo_magnetogram::parse_series(bytes),
         "goes_euvs" => euvs::parse_bin(bytes),
+        "euvi" => euvi::parse_bin(bytes),
         "aia" => aia::parse_bin(bytes),
         "hmi" => hmi::parse_bin(bytes),
         "eve" => eve::parse_bin(bytes),
@@ -657,6 +658,7 @@ pub fn series_component_name(format: &str, comp: u32) -> Option<&'static str> {
         "soho_sem" => soho_sem::component_name(comp),
         "mwo_magnetogram" => mwo_magnetogram::component_name(comp),
         "goes_euvs" => euvs::component_name(comp),
+        "euvi" => euvi::component_name(comp),
         "mitdb" => match comp {
             mitdb::COMP_MLII => Some("mitdb_mlii"),
             mitdb::COMP_V1 => Some("mitdb_v1"),
@@ -1384,6 +1386,18 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
             _ => None,
         },
         "grid_outage_event" => crate::archivar::grid_outage::component_name(comp),
+        "kpvt_synoptic_grid" => match comp {
+            crate::geo::COMP_KPVT_MAP_VALUE => Some("kpvt_synoptic_value"),
+            _ => None,
+        },
+        "mwo_mag_mp" => match comp {
+            crate::geo::COMP_MWO_MP_BLOS => Some("mwo_mp_blos_t"),
+            _ => None,
+        },
+        "mwo_mag_dp" => match comp {
+            crate::geo::COMP_MWO_DP_VLOS => Some("mwo_dp_vlos_ms"),
+            _ => None,
+        },
         "ascat_wind" => match comp {
             crate::geo::COMP_ASCAT_WSPD => Some("ascat_wind_speed_m_s"),
             crate::geo::COMP_ASCAT_WDIR => Some("ascat_wind_direction_deg"),

@@ -32283,3 +32283,98 @@ ttl 86400
 rows .
 lat 2
 lon 3
+
+
+url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-HUP060_ses-presurgery_task-interictal_acq-seeg_run-01_ieeg.bin
+terms CC0-1.0 https://openneuro.org/datasets/ds004100
+format openneuro_eeg
+origin https://openneuro.org/crn/graphql (dataset ds004100, snapshot latest)
+compiler tools/harvest/src/bin/openneuro_compiler.rs
+sha256 be750a43ffd4508f330841730b3f8558afc93737e2d2489ba64dea4c8f9ed64c
+at earth
+ttl 86400
+
+url https://github.com/omegaflow/sources/releases/download/data.mendeley.com/class_xrf.bin
+terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
+format class_xrf
+origin https://data.mendeley.com/public-files/datasets/6mmd96j5bg/files/4e692227-06b1-4c81-87c4-fcba8cf25c24/file_downloaded
+compiler tools/harvest/src/bin/class_xrf_compiler.rs
+sha256 ff76ca3ed08bbd63959e086976e4d8adbd747a5e847585b1e2dfa6c36d56cfc6
+at moon
+ttl 31536000
+field energy_ev class_ch2_energy_ev inverse-square em eV 31536000 0.0 0.0
+field counts class_ch2_counts inverse-square em count 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/downloads.sws.bom.gov.au/sws_ionosonde.bin
+terms SWS-WDC https://www.sws.bom.gov.au/World_Data_Centre/1/7
+format sws_ionosonde
+origin https://downloads.sws.bom.gov.au/wdc/iondata/de/juliusruh/0318.00/031800.25.gz
+compiler tools/harvest/src/bin/sws_ionosonde_compiler.rs
+sha256 9eb32cae8ff47383a5fb9b14f8d2e9a543809de773a72fd05150e626b05e6397
+at earth
+ttl 3600
+field fof2_mhz sws_fof2_mhz inverse-square em MHz 3600 0.0 0.0
+
+url https://jvo.nao.ac.jp/portal/nobeyama/fugin.do
+terms naoj-copyright https://www.nao.ac.jp/en/terms/copyright.html
+format sky1
+origin https://jvo.nao.ac.jp/portal/nobeyama/fugin.do
+compiler tools/harvest/src/bin/fugin_skymap_compiler.rs
+at sun
+ttl 31536000
+field fugin_moment0_k_ms fugin_moment0_k_ms inverse-square em K.m/s 31536000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/nispdata.nso.edu/kpvt_synoptic_grid.bin
+terms reviewed-2026-10-20 https://nispdata.nso.edu/ftp/kpvt/synoptic/README
+format kpvt_synoptic_grid
+origin https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/ (m<CR>f.fits, one 360x180 map per Carrington rotation, row 1 = south pole / row 180 = north pole, BSCALE 0.1; BUNIT absent in header, value kept in unit 1)
+compiler tools/harvest/src/bin/kpvt_synoptic_grid_compiler.rs
+sha256 64a62affef017682b8c11f38e04aae32c1d09687b5a640382f14985009e99351
+at sun
+ttl 2592000
+field kpvt_synoptic_value kpvt_synoptic_value inverse-square em 1 2592000 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sha.stanford.edu/mwo_mag_mp.bin
+terms CC0-1.0 https://doi.org/10.7910/DVN/VQK56Z
+format mwo_mag_mp
+origin http://sha.stanford.edu/mwo/msmtest4/data_YYYY.MM/data/ (MP00_*.fits magnetograms, 150 ft tower, BUNIT GAUSS, BSCALE 0.1, BLANK -32768 = absent, CARROT/CENLON/B0 in header)
+compiler tools/harvest/src/bin/mwo_mag_compiler.rs
+sha256 5b49ac565c83ab14eea28703a59f96e9a917baa53d0cc313fd803892ce5be0a1
+at sun
+ttl 86400
+field mwo_mp_blos_t mwo_mp_blos_t inverse-square em T 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/sha.stanford.edu/mwo_mag_dp.bin
+terms CC0-1.0 https://doi.org/10.7910/DVN/VQK56Z
+format mwo_mag_dp
+origin http://sha.stanford.edu/mwo/msmtest4/data_YYYY.MM/data/ (DP00_*.fits dopplergrams, 150 ft tower, BUNIT KM/SEC, BSCALE 0.1, BLANK -32768 = absent, CARROT/CENLON/B0 in header)
+compiler tools/harvest/src/bin/mwo_mag_compiler.rs
+sha256 135c8db0f7c09eeead08b40bc65650b7c93565b4a59fcf0d7281d906c9637c58
+at sun
+ttl 86400
+field mwo_dp_vlos_ms mwo_dp_vlos_ms inverse-square advective m/s 86400 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/data.cosmic.ucar.edu/cosmic1_temp.bin
+terms CC-BY-4.0 https://www.ucar.edu/terms-of-use/data
+format cosmic_ro
+origin procedure: https://data.cosmic.ucar.edu/gnss-ro/cosmic1/postProc/level2/{YYYY}/{DDD}/wetPrf_postProc_{YYYY}_{DDD}.tar.gz (measured 2014/121: netCDF-3 CDF-1, vars MSL_alt/Ref/Temp/Pres, Temp header unit C converted to K)
+compiler tools/harvest/src/bin/cosmic_ro_compiler.rs
+sha256 7c0187d28d64627dbc2c2861d6d44572cea514eec1869dd4a46acfe0a5d5c9ee
+at earth
+ttl 604800
+quantity cosmic_ro_refractivity_n_units cosmic_ro_refractivity_n_units inverse-square scale n-units 604800 0.0 0.0
+field cosmic_ro_temperature_k cosmic_ro_temperature_k inverse-square thermal K 604800 0.0 0.0
+field cosmic_ro_pressure_hpa cosmic_ro_pressure_hpa inverse-square acoustic hPa 604800 0.0 0.0
+
+url https://github.com/omegaflow/sources/releases/download/stereo-ssc.nascom.nasa.gov/stereo_euvi.bin
+terms PD-USGov https://sti.nasa.gov/disclaimers/
+format euvi
+origin https://stereo-ssc.nascom.nasa.gov/pub/ins_data/secchi/L0_YMD/a/img/euvi/{YYYY}/{MM}/{DD}/ (measured 2011/04/17 n4euA/n7euA: DATE-OBS, WAVELNTH 171/195/284/304, BUNIT DN, mean over finite pixels excluding BLANK)
+compiler tools/harvest/src/bin/euvi_compiler.rs
+sha256 ec1b4a8a141fcd766a9a36bf224a9ba8d43e6b5e82548e7d8f0dc1f0d1212e44
+at sun
+ttl 2592000
+field stereo_euvi_171_mean stereo_euvi_171_mean inverse-square em 1 2592000 0.0 0.0
+field stereo_euvi_195_mean stereo_euvi_195_mean inverse-square em 1 2592000 0.0 0.0
+field stereo_euvi_284_mean stereo_euvi_284_mean inverse-square em 1 2592000 0.0 0.0
+field stereo_euvi_304_mean stereo_euvi_304_mean inverse-square em 1 2592000 0.0 0.0

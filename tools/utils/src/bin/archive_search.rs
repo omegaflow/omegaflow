@@ -215,6 +215,7 @@ mod wikidata;
 #[path = "archive_search/zenodo.rs"]
 mod zenodo;
 
+use crate::json::Json;
 use std::collections::{HashMap, HashSet};
 use std::env;
 use std::fs;
@@ -305,9 +306,16 @@ enum Mode {
     Perplexity,
     Lpf,
     Gosat,
+    Alerce,
+    Fink,
+    Dust,
+    Antares,
+    FourGet,
     Stats,
     Net(&'static str),
 }
+
+const ANOMALY_QUERY_MODES: &[&str] = &["alerce", "fink", "dust", "antares", "4get"];
 
 fn flag_mode(arg: &str) -> Option<Mode> {
     match arg {
@@ -451,6 +459,11 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--nssdc-auth" => Some(Mode::Net("nssdc-auth")),
         "--ssdc-auth" => Some(Mode::Net("ssdc-auth")),
         "--gosat" => Some(Mode::Gosat),
+        "--alerce" => Some(Mode::Alerce),
+        "--fink" => Some(Mode::Fink),
+        "--dust" => Some(Mode::Dust),
+        "--antares" => Some(Mode::Antares),
+        "--4get" => Some(Mode::FourGet),
         _ => None,
     }
 }
@@ -476,6 +489,11 @@ impl Mode {
             Mode::Perplexity => "perplexity",
             Mode::Lpf => "lpf",
             Mode::Gosat => "gosat",
+            Mode::Alerce => "alerce",
+            Mode::Fink => "fink",
+            Mode::Dust => "dust",
+            Mode::Antares => "antares",
+            Mode::FourGet => "4get",
             Mode::Stats => "stats",
             Mode::Net(name) => name,
         }
@@ -915,6 +933,35 @@ fn main() {
                 let lines = gosat::gosat_lines(&query);
                 print_lines(&lines);
             }
+            Mode::Alerce => {
+                let query = keywords.join(" ");
+                let lines = alerce_lines(&query, max_results);
+                print_lines(&lines);
+            }
+            Mode::Fink => {
+                let query = keywords.join(" ");
+                let env_map = match find_repo_root() {
+                    Some(repo) => secrets::load_env(&repo),
+                    None => env::vars().collect(),
+                };
+                let lines = fink_lines(&query, &env_map, max_results);
+                print_lines(&lines);
+            }
+            Mode::Dust => {
+                let query = keywords.join(" ");
+                let lines = dust_lines(&query);
+                print_lines(&lines);
+            }
+            Mode::Antares => {
+                let query = keywords.join(" ");
+                let lines = antares_lines(&query, max_results);
+                print_lines(&lines);
+            }
+            Mode::FourGet => {
+                let query = keywords.join(" ");
+                let lines = four_get_lines(&query, max_results);
+                print_lines(&lines);
+            }
             Mode::Stats => {
                 print_lines(&run_stats());
             }
@@ -951,14 +998,802 @@ fn main() {
                             max_results,
                         );
                         print_lines(&lines);
+                        if name == "all" {
+                            print_anomaly_all(query, &env_map, max_results);
+                        }
                     }
                 } else {
                     let query = keywords.join(" ");
                     let lines =
                         net::run_lines_max(name, &query, &env_map, pdf_out.as_deref(), max_results);
                     print_lines(&lines);
+                    if name == "all" {
+                        print_anomaly_all(&query, &env_map, max_results);
+                    }
                 }
             }
+        }
+    }
+}
+
+const ALERCE_ENDPOINT: &str = "https://api.alerce.online/ztf/v1/objects/";
+const ALERCE_OBJECT_URL: &str = "https://alerce.online/object/";
+const FINK_ENDPOINT: &str = "https://api.fink-portal.org/api/v1";
+const FINK_OBJECT_URL: &str = "https://fink-portal.org/";
+const IRSA_DUST_ENDPOINT: &str = "https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust";
+const FINK_TOKEN_KEY: &str = "FINK_TOKEN";
+
+#[derive(Debug, Clone, PartialEq)]
+enum AlerceQuery {
+    Oid(String),
+    Cone {
+        ra: String,
+        dec: String,
+        radius: Option<String>,
+    },
+    Filter(String),
+}
+
+fn scalar(v: Option<&Json>) -> Option<String> {
+    match v? {
+        Json::Str(s) if !s.trim().is_empty() => Some(s.trim().to_string()),
+        Json::Num(n) if n.is_finite() => Some(format!("{n}")),
+        Json::Bool(b) => Some(b.to_string()),
+        _ => None,
+    }
+}
+
+fn fetch_status(f: &net::Fetch) -> String {
+    if f.status == Some(0) {
+        "0 (no answer within 40 s)".to_string()
+    } else {
+        f.status_text()
+    }
+}
+
+fn cone_tokens(query: &str) -> Option<(String, String, Option<String>)> {
+    let cleaned = query
+        .trim()
+        .trim_matches(|c| c == '(' || c == ')' || c == '[' || c == ']');
+    let tokens: Vec<&str> = cleaned
+        .split(|c: char| c == ',' || c.is_whitespace())
+        .filter(|t| !t.is_empty())
+        .collect();
+    if tokens.len() != 2 && tokens.len() != 3 {
+        return None;
+    }
+    let ra: f64 = tokens[0].parse().ok()?;
+    let dec: f64 = tokens[1].parse().ok()?;
+    if !ra.is_finite() || !dec.is_finite() || !(0.0..=360.0).contains(&ra) {
+        return None;
+    }
+    if !(-90.0..=90.0).contains(&dec) {
+        return None;
+    }
+    let radius = match tokens.get(2) {
+        Some(raw) => {
+            let r: f64 = raw.parse().ok()?;
+            if !r.is_finite() || r <= 0.0 {
+                return None;
+            }
+            Some(raw.to_string())
+        }
+        None => None,
+    };
+    Some((tokens[0].to_string(), tokens[1].to_string(), radius))
+}
+
+fn filter_or_class(raw: &str) -> AlerceQuery {
+    let raw = raw.trim().trim_start_matches('?');
+    if raw.contains('=') {
+        AlerceQuery::Filter(raw.to_string())
+    } else {
+        AlerceQuery::Filter(format!("class={}", net::urlencode(raw)))
+    }
+}
+
+fn parse_alerce_query(query: &str) -> Option<AlerceQuery> {
+    let query = query.trim();
+    if query.is_empty() {
+        return None;
+    }
+    if let Some((ra, dec, radius)) = cone_tokens(query) {
+        return Some(AlerceQuery::Cone { ra, dec, radius });
+    }
+    if query.contains(',') {
+        return None;
+    }
+    if !query.contains('=') && query.starts_with("ZTF") {
+        return Some(AlerceQuery::Oid(query.to_string()));
+    }
+    Some(filter_or_class(query))
+}
+
+fn alerce_url(query: &AlerceQuery, max: usize) -> String {
+    let page_size = max.clamp(1, 100);
+    match query {
+        AlerceQuery::Oid(oid) => format!(
+            "{}?oid={}&page_size={}",
+            ALERCE_ENDPOINT,
+            net::urlencode(oid),
+            page_size
+        ),
+        AlerceQuery::Cone { ra, dec, radius } => {
+            let mut url = format!(
+                "{}?ra={}&dec={}",
+                ALERCE_ENDPOINT,
+                net::urlencode(ra),
+                net::urlencode(dec)
+            );
+            if let Some(r) = radius {
+                url.push_str(&format!("&radius={}", net::urlencode(r)));
+            }
+            url.push_str(&format!("&page_size={page_size}"));
+            url
+        }
+        AlerceQuery::Filter(filter) => {
+            format!("{}?{}&page_size={}", ALERCE_ENDPOINT, filter, page_size)
+        }
+    }
+}
+
+fn alerce_items(v: &Json) -> Vec<&Json> {
+    if let Some(items) = v.as_arr() {
+        return items.iter().collect();
+    }
+    match v.get("items").and_then(|items| items.as_arr()) {
+        Some(items) => items.iter().collect(),
+        None => Vec::new(),
+    }
+}
+
+fn alerce_object_line(obj: &Json) -> Option<String> {
+    let oid = scalar(obj.get("oid"))?;
+    let mut line = format!("url {}{}", ALERCE_OBJECT_URL, net::urlencode(&oid));
+    line.push_str(&format!("\ttitle: {}", oid));
+    let mut fields: Vec<String> = Vec::new();
+    for (key, label) in [
+        ("class", "class"),
+        ("probability", "probability"),
+        ("ndet", "ndet"),
+        ("ndethist", "ndethist"),
+        ("meanra", "ra"),
+        ("meandec", "dec"),
+        ("firstmjd", "firstmjd"),
+        ("lastmjd", "lastmjd"),
+    ] {
+        if let Some(value) = scalar(obj.get(key)) {
+            fields.push(format!("{label}={value}"));
+        }
+    }
+    if fields.is_empty() {
+        return None;
+    }
+    line.push_str(&format!("\tdescription: {}", fields.join(" · ")));
+    Some(line)
+}
+
+fn alerce_lines(query: &str, max: usize) -> Vec<String> {
+    let Some(parsed) = parse_alerce_query(query) else {
+        return vec![
+            "absent — alerce carries no query (use <oid>, <ra,dec[,radius]> or oid=/class=...)"
+                .to_string(),
+        ];
+    };
+    let url = alerce_url(&parsed, max);
+    match net::get(&url, &[], "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let lines: Vec<String> = alerce_items(&v)
+                    .into_iter()
+                    .filter_map(alerce_object_line)
+                    .collect();
+                if lines.is_empty() {
+                    vec![format!(
+                        "absent — alerce carries no object for {} ({})",
+                        query.trim(),
+                        url
+                    )]
+                } else {
+                    lines.into_iter().take(max).collect()
+                }
+            }
+            None => vec![format!(
+                "pending — the alerce response carries no JSON (HTTP 200, {})",
+                url
+            )],
+        },
+        Some(f) => vec![format!(
+            "pending — alerce HTTP {} ({})",
+            fetch_status(&f),
+            url
+        )],
+        None => vec![format!("pending — alerce no answer ({})", url)],
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+enum FinkQuery {
+    Oid(String),
+    Cone {
+        ra: String,
+        dec: String,
+        radius: Option<String>,
+    },
+    Class(String),
+}
+
+fn parse_fink_query(query: &str) -> Option<FinkQuery> {
+    let query = query.trim();
+    if query.is_empty() {
+        return None;
+    }
+    if let Some((ra, dec, radius)) = cone_tokens(query) {
+        return Some(FinkQuery::Cone { ra, dec, radius });
+    }
+    if query.contains(',') {
+        return None;
+    }
+    if let Some(eq) = query.find('=') {
+        let key = query[..eq].trim().to_ascii_lowercase();
+        let value = query[eq + 1..].trim();
+        if value.is_empty() {
+            return None;
+        }
+        return Some(match key.as_str() {
+            "oid" | "objectid" | "object_id" => FinkQuery::Oid(value.to_string()),
+            "class" => FinkQuery::Class(value.to_string()),
+            _ => FinkQuery::Class(query.to_string()),
+        });
+    }
+    if query.starts_with("ZTF") {
+        Some(FinkQuery::Oid(query.to_string()))
+    } else {
+        Some(FinkQuery::Class(query.to_string()))
+    }
+}
+
+fn fink_body(query: &FinkQuery, max: usize) -> String {
+    let n = max.clamp(1, 100);
+    let columns = "i:objectId,d:ra,d:dec,cl:classification,rf:firstmjd";
+    match query {
+        FinkQuery::Cone { ra, dec, radius } => {
+            let mut body = format!(
+                "{{\"ra\":{},\"dec\":{},\"n\":{},\"columns\":\"{}\"",
+                ra, dec, n, columns
+            );
+            if let Some(r) = radius {
+                body.push_str(&format!(",\"radius\":{r}"));
+            }
+            body.push('}');
+            body
+        }
+        FinkQuery::Class(class) => format!(
+            "{{\"class\":\"{}\",\"n\":{},\"columns\":\"{}\"}}",
+            net::json_escape(class),
+            n,
+            columns
+        ),
+        FinkQuery::Oid(oid) => format!(
+            "{{\"objectId\":\"{}\",\"n\":{},\"columns\":\"{}\"}}",
+            net::json_escape(oid),
+            n,
+            columns
+        ),
+    }
+}
+
+fn fink_url(query: &FinkQuery) -> String {
+    match query {
+        FinkQuery::Oid(oid) => format!("{}/object/{}", FINK_ENDPOINT, net::urlencode(oid)),
+        _ => format!("{}/objects", FINK_ENDPOINT),
+    }
+}
+
+fn fink_items(v: &Json) -> Vec<&Json> {
+    if let Some(items) = v.as_arr() {
+        return items.iter().collect();
+    }
+    match v.get("items").and_then(|items| items.as_arr()) {
+        Some(items) => items.iter().collect(),
+        None => Vec::new(),
+    }
+}
+
+fn first_scalar(obj: &Json, keys: &[&str]) -> Option<String> {
+    keys.iter().find_map(|key| scalar(obj.get(key)))
+}
+
+fn fink_object_line(obj: &Json) -> Option<String> {
+    let oid = first_scalar(obj, &["objectId", "i:objectId", "object_id"])?;
+    let url = match first_scalar(obj, &["url", "l:url"]).filter(|u| u.starts_with("http")) {
+        Some(u) => u,
+        None => format!("{}{}", FINK_OBJECT_URL, net::urlencode(&oid)),
+    };
+    let mut line = format!("url {}", url);
+    line.push_str(&format!("\ttitle: {}", oid));
+    let mut fields: Vec<String> = Vec::new();
+    for (label, keys) in [
+        (
+            "class",
+            &["classification", "cl:classification", "class"][..],
+        ),
+        ("ra", &["ra", "d:ra", "meanra"][..]),
+        ("dec", &["dec", "d:dec", "meandec"][..]),
+        ("firstmjd", &["firstmjd", "rf:firstmjd"][..]),
+        ("lastmjd", &["lastmjd"][..]),
+        ("ndet", &["ndet", "n:ndet"][..]),
+    ] {
+        if let Some(value) = first_scalar(obj, keys) {
+            fields.push(format!("{label}={value}"));
+        }
+    }
+    if fields.is_empty() {
+        return None;
+    }
+    line.push_str(&format!("\tdescription: {}", fields.join(" · ")));
+    Some(line)
+}
+
+fn fink_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<String> {
+    let Some(parsed) = parse_fink_query(query) else {
+        return vec![
+            "absent — fink carries no query (use <oid>, <ra,dec[,radius]> or class=<name>)"
+                .to_string(),
+        ];
+    };
+    let token = match secrets::resolve_key(
+        env.get(FINK_TOKEN_KEY).map(String::as_str).unwrap_or(""),
+        env,
+    ) {
+        secrets::Secret::Value(token) => Some(token),
+        secrets::Secret::Absent(_) => None,
+    };
+    let mut headers: Vec<String> = Vec::new();
+    if let Some(token) = &token {
+        headers.push(format!("Authorization: Bearer {token}"));
+    }
+    let refs: Vec<&str> = headers.iter().map(String::as_str).collect();
+    let url = fink_url(&parsed);
+    let fetched = match &parsed {
+        FinkQuery::Oid(_) => net::get(&url, &refs, "40"),
+        _ => net::post(&url, &fink_body(&parsed, max), &refs, "40"),
+    };
+    match fetched {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let lines: Vec<String> = fink_items(&v)
+                    .into_iter()
+                    .filter_map(fink_object_line)
+                    .collect();
+                if lines.is_empty() {
+                    vec![format!(
+                        "absent — fink carries no object for {} ({})",
+                        query.trim(),
+                        url
+                    )]
+                } else {
+                    lines.into_iter().take(max).collect()
+                }
+            }
+            None => vec![format!(
+                "pending — the fink response carries no JSON (HTTP 200, {})",
+                url
+            )],
+        },
+        Some(f) => {
+            let access = if f.status == Some(401) || f.status == Some(403) {
+                if token.is_some() {
+                    " (access: FINK_TOKEN rejected)"
+                } else {
+                    " (access: set FINK_TOKEN in .secrets.local or .env)"
+                }
+            } else {
+                ""
+            };
+            vec![format!(
+                "pending — fink HTTP {}{} ({})",
+                fetch_status(&f),
+                access,
+                url
+            )]
+        }
+        None => vec![format!("pending — fink no answer ({})", url)],
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+struct DustCoord {
+    ra: f64,
+    dec: f64,
+}
+
+fn parse_dust_query(query: &str) -> Result<DustCoord, String> {
+    let cleaned = query
+        .trim()
+        .trim_matches(|c| c == '(' || c == ')' || c == '[' || c == ']');
+    let tokens: Vec<&str> = cleaned
+        .split(|c: char| c == ',' || c.is_whitespace())
+        .filter(|t| !t.is_empty())
+        .collect();
+    if tokens.len() != 2 {
+        return Err(format!("expected <ra,dec>, got {:?}", query.trim()));
+    }
+    let ra: f64 = tokens[0]
+        .parse()
+        .map_err(|_| format!("ra is not a number: {}", tokens[0]))?;
+    let dec: f64 = tokens[1]
+        .parse()
+        .map_err(|_| format!("dec is not a number: {}", tokens[1]))?;
+    if !ra.is_finite() || !(0.0..=360.0).contains(&ra) {
+        return Err(format!("ra outside 0..360: {ra}"));
+    }
+    if !dec.is_finite() || !(-90.0..=90.0).contains(&dec) {
+        return Err(format!("dec outside -90..90: {dec}"));
+    }
+    Ok(DustCoord { ra, dec })
+}
+
+fn dust_url(coord: &DustCoord) -> String {
+    format!(
+        "{}?locstr={}&coordsys=equ%20J2000",
+        IRSA_DUST_ENDPOINT,
+        net::urlencode(&format!("{},{}", coord.ra, coord.dec))
+    )
+}
+
+fn xml_tag(body: &str, tag: &str) -> Option<String> {
+    let open = format!("<{tag}>");
+    let close = format!("</{tag}>");
+    let start = body.find(&open)? + open.len();
+    let end = start + body[start..].find(&close)?;
+    Some(body[start..end].trim().to_string())
+}
+
+fn dust_quantity(raw: &str) -> Option<(String, String)> {
+    let raw = raw.trim();
+    if raw.is_empty() {
+        return None;
+    }
+    match raw.find('(') {
+        Some(i) => {
+            let value = raw[..i].trim();
+            let unit = raw[i + 1..].trim().trim_end_matches(')').trim();
+            if value.is_empty() {
+                None
+            } else {
+                Some((
+                    value.to_string(),
+                    if unit.is_empty() {
+                        "mag".to_string()
+                    } else {
+                        unit.to_string()
+                    },
+                ))
+            }
+        }
+        None => Some((raw.to_string(), "mag".to_string())),
+    }
+}
+
+fn dust_line(body: &str, url: &str, coord: &DustCoord) -> Result<String, String> {
+    if !body.contains("status=\"ok\"") {
+        return Err("the IRSA DUST response carries no ok status".to_string());
+    }
+    let sfd_raw = xml_tag(body, "refPixelValueSFD")
+        .ok_or_else(|| "the IRSA DUST response carries no SFD refPixelValue".to_string())?;
+    let (sfd, unit) =
+        dust_quantity(&sfd_raw).ok_or_else(|| "the IRSA DUST SFD value is empty".to_string())?;
+    let mut fields = vec![format!("SFD E(B-V)={} {}", sfd, unit)];
+    if let Some(raw) = xml_tag(body, "refPixelValueSandF") {
+        if let Some((value, value_unit)) = dust_quantity(&raw) {
+            fields.push(format!("Planck/SandF={} {}", value, value_unit));
+        }
+    }
+    if let Some(raw) = xml_tag(body, "meanValueSFD") {
+        if let Some((value, value_unit)) = dust_quantity(&raw) {
+            fields.push(format!("mean SFD={} {}", value, value_unit));
+        }
+    }
+    if let Some(coords) = xml_tag(body, "refCoordinate") {
+        fields.push(format!(
+            "refCoordinate={}",
+            coords.split_whitespace().collect::<Vec<_>>().join(" ")
+        ));
+    }
+    fields.push("source: IRSA DUST (SFD/Planck)".to_string());
+    Ok(format!(
+        "url {}\ttitle: E(B-V) at {},{}\tdescription: {}",
+        url,
+        coord.ra,
+        coord.dec,
+        fields.join(" · ")
+    ))
+}
+
+fn dust_lines(query: &str) -> Vec<String> {
+    let coord = match parse_dust_query(query) {
+        Ok(coord) => coord,
+        Err(reason) => return vec![format!("absent — dust query: {reason}")],
+    };
+    let url = dust_url(&coord);
+    match net::get(&url, &[], "40") {
+        Some(f) if f.status == Some(200) => match dust_line(&f.body, &url, &coord) {
+            Ok(line) => vec![line],
+            Err(reason) => vec![format!("pending — {reason} (HTTP 200, {url})")],
+        },
+        Some(f) => vec![format!(
+            "pending — IRSA DUST HTTP {} ({})",
+            fetch_status(&f),
+            url
+        )],
+        None => vec![format!("pending — IRSA DUST no answer ({})", url)],
+    }
+}
+
+const FOURGET_INSTANCES: &[&str] = &["https://4get.sudovanilla.org"];
+const FOURGET_SCRAPERS: &[&str] = &["", "yandex", "startpage", "brave", "mojeek", "yahoo"];
+
+fn fourget_bases() -> Vec<String> {
+    match std::env::var("OMEGAFLOW_4GET") {
+        Ok(v) if !v.trim().is_empty() => v
+            .split(',')
+            .map(|s| s.trim().trim_end_matches('/').to_string())
+            .filter(|s| !s.is_empty())
+            .collect(),
+        _ => FOURGET_INSTANCES.iter().map(|s| s.to_string()).collect(),
+    }
+}
+
+fn collapse_ws(s: &str) -> String {
+    s.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
+fn fourget_url(base: &str, scraper: &str, query: &str) -> String {
+    let mut url = format!("{}/api/v1/web?s={}", base, net::urlencode(query));
+    if !scraper.is_empty() {
+        url.push_str(&format!("&scraper={}", net::urlencode(scraper)));
+    }
+    url
+}
+
+fn fourget_results(v: &Json, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let Some(results) = v.get("web").and_then(|r| r.as_arr()) else {
+        return out;
+    };
+    for r in results {
+        let link = r.get("url").and_then(|u| u.as_str()).unwrap_or("");
+        if link.is_empty() {
+            continue;
+        }
+        let title = collapse_ws(r.get("title").and_then(|t| t.as_str()).unwrap_or(""));
+        let description = collapse_ws(r.get("description").and_then(|d| d.as_str()).unwrap_or(""));
+        let mut line = format!("url {}\ttitle: {}", link, title);
+        if !description.is_empty() {
+            line.push_str(&format!("\tdescription: {}", description));
+        }
+        line.push_str("\tsource: 4get");
+        out.push(line);
+        if out.len() >= max {
+            break;
+        }
+    }
+    out
+}
+
+fn four_get_lines(query: &str, max: usize) -> Vec<String> {
+    let query = query.trim();
+    if query.is_empty() {
+        return vec!["absent — 4get carries no query".to_string()];
+    }
+    let headers = [
+        "-H",
+        "Accept: application/json",
+        "-H",
+        "User-Agent: omegaflow-archive-search",
+    ];
+    let mut last = "pending — no 4get instance answered".to_string();
+    let mut absent = false;
+    for base in fourget_bases() {
+        for scraper in FOURGET_SCRAPERS {
+            let url = fourget_url(&base, scraper, query);
+            match net::get(&url, &headers, "40") {
+                Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+                    Some(v) => {
+                        let out = fourget_results(&v, max);
+                        if !out.is_empty() {
+                            return out;
+                        }
+                        if let Some(status) = v.get("status").and_then(|s| s.as_str()) {
+                            if !status.eq_ignore_ascii_case("ok") {
+                                last = format!("pending — {} ({})", status, url);
+                                continue;
+                            }
+                        }
+                        absent = true;
+                    }
+                    None => {
+                        last = format!("pending — {} carries no JSON", base);
+                    }
+                },
+                Some(f) => {
+                    last = format!("pending — {} HTTP {}", base, f.status_text());
+                }
+                None => {
+                    last = format!("pending — no network to {}", base);
+                }
+            }
+        }
+    }
+    if absent {
+        last = format!("absent — 4get carries no entry: {}", query);
+    }
+    vec![last]
+}
+
+const ANTARES_ENDPOINT: &str = "https://api.antares.noirlab.edu/v2/loci";
+const ANTARES_LOCUS_URL: &str = "https://antares.noirlab.edu/locus/";
+
+fn parse_antares_query(query: &str) -> Option<String> {
+    let query = query.trim();
+    if query.is_empty() {
+        return None;
+    }
+    if let Some(eq) = query.find('=') {
+        let key = query[..eq].trim().to_ascii_lowercase();
+        let value = query[eq + 1..].trim();
+        if value.is_empty() {
+            return None;
+        }
+        return Some(match key.as_str() {
+            "oid" | "objectid" | "object_id" => value.to_string(),
+            _ => query.to_string(),
+        });
+    }
+    Some(query.to_string())
+}
+
+fn antares_body(query: &str) -> String {
+    format!(
+        "{{\"query\":{{\"query_string\":{{\"query\":\"{}\"}}}}}}",
+        net::json_escape(query)
+    )
+}
+
+fn antares_url(query: &str, max: usize) -> String {
+    let n = max.clamp(1, 100);
+    format!(
+        "{}?limit={}&elasticsearch_query={}",
+        ANTARES_ENDPOINT,
+        n,
+        net::urlencode(&antares_body(query))
+    )
+}
+
+fn antares_items(v: &Json) -> Vec<&Json> {
+    match v.get("data").and_then(|d| d.as_arr()) {
+        Some(items) => items.iter().collect(),
+        None => Vec::new(),
+    }
+}
+
+fn antares_locus(item: &Json) -> Option<&Json> {
+    item.get("locus")
+        .or_else(|| item.get("attributes").and_then(|a| a.get("locus")))
+}
+
+fn antares_object_line(locus: &Json) -> Option<String> {
+    let id = scalar(locus.get("locus_id"))?;
+    let mut line = format!("url {}{}", ANTARES_LOCUS_URL, net::urlencode(&id));
+    line.push_str(&format!("\ttitle: {}", id));
+    let props = locus.get("properties");
+    let mut fields: Vec<String> = Vec::new();
+    for (label, value) in [
+        (
+            "ztf_object_id",
+            props.and_then(|p| scalar(p.get("ztf_object_id"))),
+        ),
+        ("ra", scalar(locus.get("ra"))),
+        ("dec", scalar(locus.get("dec"))),
+        (
+            "num_alerts",
+            props.and_then(|p| scalar(p.get("num_alerts"))),
+        ),
+        (
+            "newest_mag",
+            props.and_then(|p| scalar(p.get("newest_alert_magnitude"))),
+        ),
+        (
+            "newest_mjd",
+            props.and_then(|p| scalar(p.get("newest_alert_observation_time"))),
+        ),
+        ("anomaly", props.and_then(|p| scalar(p.get("anomaly_type")))),
+    ] {
+        if let Some(value) = value {
+            fields.push(format!("{label}={value}"));
+        }
+    }
+    if fields.is_empty() {
+        return None;
+    }
+    line.push_str(&format!("\tdescription: {}", fields.join(" · ")));
+    Some(line)
+}
+
+fn antares_lines(query: &str, max: usize) -> Vec<String> {
+    let Some(parsed) = parse_antares_query(query) else {
+        return vec![
+            "absent — antares carries no query (use <ztf|ant id>, key=value or free text)"
+                .to_string(),
+        ];
+    };
+    let url = antares_url(&parsed, max);
+    let headers = [
+        "-H",
+        "Accept: application/json",
+        "-H",
+        "User-Agent: omegaflow-archive-search",
+    ];
+    match net::get(&url, &headers, "40") {
+        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
+            Some(v) => {
+                let lines: Vec<String> = antares_items(&v)
+                    .into_iter()
+                    .filter_map(antares_locus)
+                    .filter_map(antares_object_line)
+                    .collect();
+                if lines.is_empty() {
+                    vec![format!(
+                        "absent — antares carries no locus for {} ({})",
+                        query.trim(),
+                        url
+                    )]
+                } else {
+                    lines.into_iter().take(max).collect()
+                }
+            }
+            None => vec![format!(
+                "pending — the antares response carries no JSON (HTTP 200, {})",
+                url
+            )],
+        },
+        Some(f) => vec![format!(
+            "pending — antares HTTP {} ({})",
+            fetch_status(&f),
+            url
+        )],
+        None => vec![format!("pending — antares no answer ({})", url)],
+    }
+}
+
+fn anomaly_lines(
+    name: &str,
+    query: &str,
+    env: &HashMap<String, String>,
+    max: usize,
+) -> Vec<String> {
+    match name {
+        "alerce" => alerce_lines(query, max),
+        "fink" => fink_lines(query, env, max),
+        "dust" => dust_lines(query),
+        "antares" => antares_lines(query, max),
+        "4get" => four_get_lines(query, max),
+        _ => vec![format!("absent — unknown anomaly arm: {name}")],
+    }
+}
+
+fn print_anomaly_all(query: &str, env: &HashMap<String, String>, max: usize) {
+    for name in ANOMALY_QUERY_MODES {
+        let lines = anomaly_lines(name, query, env, max);
+        out!(
+            "=== {} ({} lines; preview {}) ===",
+            name,
+            lines.len(),
+            lines.len().min(5)
+        );
+        for line in lines.iter().take(5) {
+            out!("{}", line);
         }
     }
 }
@@ -1061,7 +1896,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -1361,6 +2196,21 @@ fn usage() {
         "  --gosat     <product> [<start> <end>]   (GOSAT-GW TANSO-3 product search, cookie-authed via GOSAT_GW_MAIL/GOSAT_GW_PASS; default product GWT3F_L1B, default last 30 days)"
     );
     eprintln!(
+        "  --alerce    <oid|ra,dec[,radius]|class=...>   (ALeRCE ZTF broker, api.alerce.online/ztf/v1/objects/, keyless; url + title/description from oid/class/ra/dec/probability/ndet/MJD)"
+    );
+    eprintln!(
+        "  --fink      <oid|ra,dec[,radius]|class=...>   (Fink broker, api.fink-portal.org/api/v1, keyless with optional FINK_TOKEN as Bearer from .secrets.local/.env; url + title/description from objectId/class/ra/dec/MJD)"
+    );
+    eprintln!(
+        "  --dust      <ra,dec>   (IRSA DUST/SFD reddening map, keyless; url + title/description with E(B-V) in mag, Planck/SandF and the refCoordinate)"
+    );
+    eprintln!(
+        "  --antares   <ztf|ant id|key=value|free text>   (ANTARES ZTF broker, api.antares.noirlab.edu/v2/loci, keyless; the open twin of the blocked Fink arm; url + title/description from locus_id/ztf_object_id/ra/dec/alerts)"
+    );
+    eprintln!(
+        "  --4get      <query>   (4get keyless metasearch, api/v1/web with JSON; the open twin of the paid keyword arms — Brave/Exa/Tavily/SerpAPI/SearchAPI/Google CSE; falls through its open scrapers, OMEGAFLOW_4GET names other instances comma-separated)"
+    );
+    eprintln!(
         "  --lpf       <start> <end> [hdu]   (LISA Pathfinder DRS availability from the HEASARC selector, start/end as MJD or ISO; default hdu=SCI_SCIENCE_1Hz; binary body is measured, never printed)"
     );
     eprintln!(
@@ -1376,8 +2226,8 @@ fn usage() {
         "  --ssdc-auth <service>  (SSDC Apereo CAS login via SSDC_USER/SSDC_PASS, service=<service-url>; reports the HTTP, ticket and resulting page — never the secret)"
     );
     eprintln!(
-        "  --all [--stop <n>]  the query through every keyword search mode, parameter arms held ({} calls — the last move, never the first; --brave is excluded while its quota is spent). The ladder holds at 20 result lines; --stop raises that (400 pulls the held dataset arms — base, datacite, re3data, pangaea, figshare, crossref, github, ia-search, sourcegraph, jina, exa, linkup; OMEGAFLOW_ALL_STOP overrides)",
-        net::keyword_mode_count()
+        "  --all [--stop <n>]  the query through every keyword search mode plus the anomaly arms --alerce/--fink/--dust/--antares/--4get, parameter arms held ({} calls — the last move, never the first; --brave is excluded while its quota is spent). The ladder holds at 20 result lines; --stop raises that (400 pulls the held dataset arms — base, datacite, re3data, pangaea, figshare, crossref, github, ia-search, sourcegraph, jina, exa, linkup; OMEGAFLOW_ALL_STOP overrides)",
+        net::keyword_mode_count() + ANOMALY_QUERY_MODES.len()
     );
     eprintln!();
     eprintln!(
@@ -2516,5 +3366,284 @@ mod tests {
         assert_eq!(lines.len(), 1);
         assert!(lines[0].starts_with("pending — no text layer in "));
         let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn anomaly_flags_parse_into_their_modes() {
+        assert_eq!(flag_mode("--alerce"), Some(Mode::Alerce));
+        assert_eq!(flag_mode("--fink"), Some(Mode::Fink));
+        assert_eq!(flag_mode("--dust"), Some(Mode::Dust));
+        assert_eq!(flag_mode("--antares"), Some(Mode::Antares));
+        assert_eq!(flag_mode("--4get"), Some(Mode::FourGet));
+        assert_eq!(
+            ANOMALY_QUERY_MODES,
+            &["alerce", "fink", "dust", "antares", "4get"]
+        );
+    }
+
+    #[test]
+    fn fourget_url_names_the_instance_and_scraper() {
+        assert_eq!(
+            fourget_url("https://4get.example", "", "SN Ia"),
+            "https://4get.example/api/v1/web?s=SN%20Ia"
+        );
+        assert_eq!(
+            fourget_url("https://4get.example", "yandex", "supernova"),
+            "https://4get.example/api/v1/web?s=supernova&scraper=yandex"
+        );
+    }
+
+    #[test]
+    fn fourget_web_items_become_url_title_description_lines() {
+        let body = r#"{"status":"ok","web":[{"title":"Supernova - Wikipedia","description":"A supernova is a powerful explosion.","url":"https://en.wikipedia.org/wiki/Supernova"}]}"#;
+        let v = json::parse(body).unwrap();
+        let lines = fourget_results(&v, 5);
+        assert_eq!(lines.len(), 1);
+        assert!(lines[0].starts_with("url https://en.wikipedia.org/wiki/Supernova"));
+        assert!(lines[0].contains("\ttitle: Supernova - Wikipedia"));
+        assert!(lines[0].contains("description: A supernova is a powerful explosion."));
+        assert!(lines[0].contains("source: 4get"));
+        assert!(fourget_results(&json::parse(r#"{"status":"no"}"#).unwrap(), 5).is_empty());
+    }
+
+    #[test]
+    fn antares_query_body_and_url_use_the_v2_loci_route() {
+        assert_eq!(
+            parse_antares_query("ZTF18abukavn"),
+            Some("ZTF18abukavn".to_string())
+        );
+        assert_eq!(
+            parse_antares_query("oid=ANT2018hocaw"),
+            Some("ANT2018hocaw".to_string())
+        );
+        assert_eq!(parse_antares_query("   "), None);
+        assert_eq!(
+            antares_body("ZTF18abukavn"),
+            r#"{"query":{"query_string":{"query":"ZTF18abukavn"}}}"#
+        );
+        assert_eq!(
+            antares_url("ZTF18abukavn", 2),
+            "https://api.antares.noirlab.edu/v2/loci?limit=2&elasticsearch_query=%7B%22query%22%3A%7B%22query_string%22%3A%7B%22query%22%3A%22ZTF18abukavn%22%7D%7D%7D"
+        );
+    }
+
+    #[test]
+    fn antares_locus_becomes_url_title_description_lines() {
+        let body = r#"{"data":[{"locus":{"locus_id":"ANT2018hocaw","ra":37.28,"dec":9.25,"properties":{"ztf_object_id":"ZTF18abukavn","num_alerts":14,"newest_alert_magnitude":19.45,"newest_alert_observation_time":59461.47,"anomaly_type":"TBD"}}}]}"#;
+        let v = json::parse(body).unwrap();
+        let lines: Vec<String> = antares_items(&v)
+            .into_iter()
+            .filter_map(antares_locus)
+            .filter_map(antares_object_line)
+            .collect();
+        assert_eq!(lines.len(), 1);
+        assert!(lines[0].starts_with("url https://antares.noirlab.edu/locus/ANT2018hocaw"));
+        assert!(lines[0].contains("\ttitle: ANT2018hocaw"));
+        assert!(lines[0].contains("ztf_object_id=ZTF18abukavn"));
+        assert!(lines[0].contains("ra=37.28"));
+        assert!(lines[0].contains("num_alerts=14"));
+        assert!(lines[0].contains("anomaly=TBD"));
+    }
+
+    #[test]
+    fn alerce_query_reads_oid_cone_and_filter() {
+        assert_eq!(
+            parse_alerce_query("ZTF17aaaaaak"),
+            Some(AlerceQuery::Oid("ZTF17aaaaaak".to_string()))
+        );
+        assert_eq!(
+            parse_alerce_query("148.84,2.55"),
+            Some(AlerceQuery::Cone {
+                ra: "148.84".to_string(),
+                dec: "2.55".to_string(),
+                radius: None,
+            })
+        );
+        assert_eq!(
+            parse_alerce_query("148.84 2.55 30"),
+            Some(AlerceQuery::Cone {
+                ra: "148.84".to_string(),
+                dec: "2.55".to_string(),
+                radius: Some("30".to_string()),
+            })
+        );
+        assert_eq!(
+            parse_alerce_query("SNIa"),
+            Some(AlerceQuery::Filter("class=SNIa".to_string()))
+        );
+        assert_eq!(
+            parse_alerce_query("class=AGN&page_size=2"),
+            Some(AlerceQuery::Filter("class=AGN&page_size=2".to_string()))
+        );
+        assert_eq!(parse_alerce_query("   "), None);
+        assert_eq!(parse_alerce_query("400,2.55"), None);
+    }
+
+    #[test]
+    fn alerce_url_carries_the_documented_filters() {
+        assert_eq!(
+            alerce_url(&AlerceQuery::Oid("ZTF17aaaaaak".to_string()), 25),
+            "https://api.alerce.online/ztf/v1/objects/?oid=ZTF17aaaaaak&page_size=25"
+        );
+        assert_eq!(
+            alerce_url(
+                &AlerceQuery::Cone {
+                    ra: "148.84".to_string(),
+                    dec: "2.55".to_string(),
+                    radius: None,
+                },
+                5
+            ),
+            "https://api.alerce.online/ztf/v1/objects/?ra=148.84&dec=2.55&page_size=5"
+        );
+        assert_eq!(
+            alerce_url(
+                &AlerceQuery::Cone {
+                    ra: "148.84".to_string(),
+                    dec: "2.55".to_string(),
+                    radius: Some("60".to_string()),
+                },
+                5
+            ),
+            "https://api.alerce.online/ztf/v1/objects/?ra=148.84&dec=2.55&radius=60&page_size=5"
+        );
+        assert_eq!(
+            alerce_url(&AlerceQuery::Filter("class=SN%20Ia".to_string()), 3),
+            "https://api.alerce.online/ztf/v1/objects/?class=SN%20Ia&page_size=3"
+        );
+    }
+
+    #[test]
+    fn alerce_items_become_url_title_description_lines() {
+        let body = r#"{"items":[{"oid":"ZTF17aaaaaak","class":"SNIa","probability":0.99,"ndet":1,"ndethist":"4","meanra":148.84,"meandec":2.55,"firstmjd":61229.4,"lastmjd":61229.5}]}"#;
+        let v = json::parse(body).unwrap();
+        let lines: Vec<String> = alerce_items(&v)
+            .into_iter()
+            .filter_map(alerce_object_line)
+            .collect();
+        assert_eq!(lines.len(), 1);
+        assert!(lines[0].starts_with("url https://alerce.online/object/ZTF17aaaaaak"));
+        assert!(lines[0].contains("\ttitle: ZTF17aaaaaak"));
+        assert!(lines[0].contains("class=SNIa"));
+        assert!(lines[0].contains("probability=0.99"));
+        assert!(lines[0].contains("ra=148.84"));
+        assert!(lines[0].contains("ndethist=4"));
+    }
+
+    #[test]
+    fn fink_query_reads_oid_cone_and_class() {
+        assert_eq!(
+            parse_fink_query("ZTF20acigmel"),
+            Some(FinkQuery::Oid("ZTF20acigmel".to_string()))
+        );
+        assert_eq!(
+            parse_fink_query("148.84,2.55"),
+            Some(FinkQuery::Cone {
+                ra: "148.84".to_string(),
+                dec: "2.55".to_string(),
+                radius: None,
+            })
+        );
+        assert_eq!(
+            parse_fink_query("class=AGN"),
+            Some(FinkQuery::Class("AGN".to_string()))
+        );
+        assert_eq!(
+            parse_fink_query("SNIa"),
+            Some(FinkQuery::Class("SNIa".to_string()))
+        );
+        assert_eq!(parse_fink_query(""), None);
+    }
+
+    #[test]
+    fn fink_body_and_url_name_the_real_route() {
+        assert_eq!(
+            fink_url(&FinkQuery::Oid("ZTF20acigmel".to_string())),
+            "https://api.fink-portal.org/api/v1/object/ZTF20acigmel"
+        );
+        assert_eq!(
+            fink_url(&FinkQuery::Class("SN Ia".to_string())),
+            "https://api.fink-portal.org/api/v1/objects"
+        );
+        let body = fink_body(&FinkQuery::Class("SN Ia".to_string()), 2);
+        assert!(body.contains("\"class\":\"SN Ia\""));
+        assert!(body.contains("\"n\":2"));
+        assert!(body.contains("i:objectId"));
+    }
+
+    #[test]
+    fn fink_items_become_url_title_description_lines() {
+        let body = r#"[{"i:objectId":"ZTF20acigmel","d:ra":10.1,"d:dec":-2.3,"cl:classification":"SN Ia","rf:firstmjd":59000.1}]"#;
+        let v = json::parse(body).unwrap();
+        let lines: Vec<String> = fink_items(&v)
+            .into_iter()
+            .filter_map(fink_object_line)
+            .collect();
+        assert_eq!(lines.len(), 1);
+        assert!(lines[0].starts_with("url https://fink-portal.org/ZTF20acigmel"));
+        assert!(lines[0].contains("\ttitle: ZTF20acigmel"));
+        assert!(lines[0].contains("class=SN Ia"));
+        assert!(lines[0].contains("ra=10.1"));
+    }
+
+    #[test]
+    fn dust_query_accepts_comma_and_space_and_rejects_out_of_range() {
+        assert_eq!(
+            parse_dust_query("148.84,2.55"),
+            Ok(DustCoord {
+                ra: 148.84,
+                dec: 2.55
+            })
+        );
+        assert_eq!(
+            parse_dust_query("148.84 2.55"),
+            Ok(DustCoord {
+                ra: 148.84,
+                dec: 2.55
+            })
+        );
+        assert!(parse_dust_query("400,2.55").is_err());
+        assert!(parse_dust_query("148.84,91").is_err());
+        assert!(parse_dust_query("148.84").is_err());
+    }
+
+    #[test]
+    fn dust_url_is_the_irsa_dust_route() {
+        let coord = DustCoord {
+            ra: 148.84,
+            dec: 2.55,
+        };
+        assert_eq!(
+            dust_url(&coord),
+            "https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust?locstr=148.84%2C2.55&coordsys=equ%20J2000"
+        );
+    }
+
+    #[test]
+    fn dust_xml_becomes_ebv_with_unit_and_source() {
+        let body = r#"<?xml version="1.0"?>
+<results status="ok">
+  <result><statistics>
+    <refPixelValueSandF> 0.0308 (mag) </refPixelValueSandF>
+    <refPixelValueSFD> 0.0358 (mag) </refPixelValueSFD>
+    <refCoordinate> 148.840000 2.550000 equ J2000 </refCoordinate>
+    <meanValueSFD> 0.0370 (mag) </meanValueSFD>
+  </statistics></result>
+</results>"#;
+        let coord = DustCoord {
+            ra: 148.84,
+            dec: 2.55,
+        };
+        let line = dust_line(body, "https://example.org/dust", &coord).unwrap();
+        assert!(line.starts_with("url https://example.org/dust\ttitle: E(B-V) at 148.84,2.55"));
+        assert!(line.contains("SFD E(B-V)=0.0358 mag"));
+        assert!(line.contains("Planck/SandF=0.0308 mag"));
+        assert!(line.contains("source: IRSA DUST (SFD/Planck)"));
+    }
+
+    #[test]
+    fn dust_line_refuses_an_ok_less_response() {
+        let coord = DustCoord { ra: 1.0, dec: 2.0 };
+        assert!(dust_line("<results status=\"error\"></results>", "u", &coord).is_err());
     }
 }

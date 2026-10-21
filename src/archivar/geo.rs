@@ -60,6 +60,8 @@ pub const MAGIC_EIONET_CDR: [u8; 4] = *b"ECD1";
 pub const MAGIC_HADISST: [u8; 4] = *b"HIS1";
 pub const MAGIC_EAGLEI: [u8; 4] = *b"EGL1";
 pub const MAGIC_GOEV: [u8; 4] = *b"GOEV";
+pub const MAGIC_KPVT_MAP: [u8; 4] = *b"KPM1";
+pub const MAGIC_MWO_MAP: [u8; 4] = *b"MWM1";
 
 pub const REC_BYTES: usize = 60;
 pub const GBCO_REC_BYTES: usize = 24;
@@ -259,6 +261,14 @@ pub const COMP_GOEV_DURATION_H: u32 = 1;
 pub const COMP_GOEV_MAX_CUSTOMERS: u32 = 2;
 pub const COMP_GOEV_MAX: u32 = 3;
 
+pub const COMP_KPVT_MAP_VALUE: u32 = 1;
+pub const COMP_KPVT_MAP_MAX: u32 = 1;
+
+pub const COMP_MWO_MP_BLOS: u32 = 1;
+pub const COMP_MWO_MP_MAX: u32 = 1;
+pub const COMP_MWO_DP_VLOS: u32 = 1;
+pub const COMP_MWO_DP_MAX: u32 = 1;
+
 pub const COMP_ASCAT_WSPD: u32 = 1;
 pub const COMP_ASCAT_WDIR: u32 = 2;
 pub const COMP_ASCAT_MAX: u32 = 2;
@@ -370,6 +380,9 @@ pub fn magic_of(format: &str) -> Option<[u8; 4]> {
         "eionet_cdr" => Some(MAGIC_EIONET_CDR),
         "eaglei_outage" => Some(MAGIC_EAGLEI),
         "grid_outage_event" => Some(MAGIC_GOEV),
+        "kpvt_synoptic_grid" => Some(MAGIC_KPVT_MAP),
+        "mwo_mag_mp" => Some(MAGIC_MWO_MAP),
+        "mwo_mag_dp" => Some(MAGIC_MWO_MAP),
         _ => None,
     }
 }
@@ -435,6 +448,9 @@ pub fn comp_max(format: &str) -> Option<u32> {
         "eionet_cdr" => Some(crate::archivar::eionet_cdr::COMP_MAX),
         "eaglei_outage" => Some(COMP_EAGLEI_MAX),
         "grid_outage_event" => Some(COMP_GOEV_MAX),
+        "kpvt_synoptic_grid" => Some(COMP_KPVT_MAP_MAX),
+        "mwo_mag_mp" => Some(COMP_MWO_MP_MAX),
+        "mwo_mag_dp" => Some(COMP_MWO_DP_MAX),
         _ => None,
     }
 }
