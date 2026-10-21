@@ -4886,16 +4886,27 @@ fn bait_lines(bytes: &[u8]) -> Vec<String> {
             text
         };
     }
-    let prose = header.len() > 12
-        || (s.delimiter.is_none() && header.len() > 3)
-        || header.iter().any(|c| {
-            c.contains(' ')
-                || c.ends_with('.')
-                || c.ends_with(':')
-                || c.ends_with(';')
-                || c.ends_with('!')
-                || c.ends_with('?')
+    let field_like = header.len() >= 2
+        && header.iter().all(|c| {
+            !c.is_empty()
+                && c.chars()
+                    .all(|ch| ch.is_alphanumeric() || ch == '_' || ch == '-')
         });
+    let prose = match s.delimiter {
+        None if field_like => false,
+        _ => {
+            header.len() > 12
+                || (s.delimiter.is_none() && header.len() > 3)
+                || header.iter().any(|c| {
+                    c.contains(' ')
+                        || c.ends_with('.')
+                        || c.ends_with(':')
+                        || c.ends_with(';')
+                        || c.ends_with('!')
+                        || c.ends_with('?')
+                })
+        }
+    };
     if prose {
         return bait_text_lines(bytes);
     }
@@ -7409,6 +7420,83 @@ mod tests {
             lines
                 .iter()
                 .any(|l| l.contains("\"station_id\" \"discharge_m3s\"")),
+            "{lines:?}"
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "bait searxng \"station_id\" \"discharge_m3s\""),
+            "{lines:?}"
+        );
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn bait_lines_fixed_width_header_without_delimiter() {
+        let path = std::env::temp_dir().join(format!("sniff-bait-fixed-{}", std::process::id()));
+        let row = |tau: &str, f1: &str, f2: &str, time: &str, file: &str| {
+            format!("{:<12}{:<12}{:<12}{:<12}{:<8}\n", tau, f1, f2, time, file)
+        };
+        let mut body = row("tau", "FREQ1", "FREQ2", "time", "file");
+        body.push_str(&row(
+            "4.07840",
+            "50.00000",
+            "50.00000",
+            "436.60518",
+            "28560",
+        ));
+        body.push_str(&row(
+            "12.10306",
+            "148.38000",
+            "148.38000",
+            "436.25477",
+            "28561",
+        ));
+        std::fs::write(&path, body).unwrap();
+        let lines = sniff_lines(&format!("{} bait", path.display()));
+        assert!(lines.iter().any(|l| l == "format fixed"), "{lines:?}");
+        assert!(lines.iter().any(|l| l == "delimiter absent"), "{lines:?}");
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "bait header tau,FREQ1,FREQ2,time,file"),
+            "{lines:?}"
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "bait phrase \"tau\" \"FREQ1\" \"FREQ2\""),
+            "{lines:?}"
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "bait grepapp tau,FREQ1,FREQ2,time,file"),
+            "{lines:?}"
+        );
+        assert!(
+            lines
+                .iter()
+                .any(|l| l == "bait searxng \"tau\" \"FREQ1\" \"FREQ2\""),
+            "{lines:?}"
+        );
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn bait_lines_prose_header_stays_text() {
+        let path = std::env::temp_dir().join(format!("sniff-bait-prose-{}", std::process::id()));
+        std::fs::write(
+            &path,
+            "We measured the discharge at the gauge, the value is mean.\n1 2 3 4 5 6 7 8 9 10 11\n",
+        )
+        .unwrap();
+        let lines = sniff_lines(&format!("{} bait", path.display()));
+        assert!(
+            lines.iter().all(|l| !l.starts_with("bait header ")
+                && !l.starts_with("bait phrase ")
+                && !l.starts_with("bait grepapp ")
+                && !l.starts_with("bait searxng ")),
             "{lines:?}"
         );
         let _ = std::fs::remove_file(&path);
