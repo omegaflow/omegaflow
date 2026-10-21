@@ -1,0 +1,19 @@
+#!/bin/sh
+# weave — Anker-Merge über Tabellen: `--on` ist die Ankerspalte, `--out` die
+# Ausgabe, `--terms datei=token` markiert nicht-admittierte Lizenzen. Konflikte
+# bleiben als Spalte stehen, der DAG und die Herkunftskarte wandern mit.
+set -u
+self="$0"
+while [ -h "$self" ]; do
+    d="$(CDPATH= cd -- "$(dirname -- "$self")" && pwd)"
+    self="$(readlink "$self")"
+    case "$self" in /*) ;; *) self="$d/$self" ;; esac
+done
+root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
+"$root/bin/.tools_ensure" weave
+bin="$root/target/release/weave"
+if [ ! -x "$bin" ]; then
+    echo "weave: pending — no release installed; the build belongs to CI (tools-build)" >&2
+    exit 2
+fi
+exec "$bin" "$@"
