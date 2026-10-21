@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: d7821f212902d77f7c3f7f4fffeeb8036a32ab15f9a5b40ea1886a8bbf08fc8b
+  sha256: c3ac7ef6d972878004dcda0cfade91338bc9fc95275680477538b8e277ee0345
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/archiv/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
 -->
@@ -89,8 +89,8 @@ fabriziert.
 
 ## Kybernautik — Rollen, Stimmen, Raumzeit
 
-- **Granit** — die eine Grundsatz-Quelle (7 Sätze: A = A · ICRS & TDB · channel_ref · 0 honored · pending · Der Operator schließt · manifestiert, nicht nur lokal); das Gate liest genau diese Datei. · `docs/granit.md:10-22`
-- **Die fünf Axiome** — A = A · ICRS & TDB · channel_ref · 0 honored · pending; jede Architektur-/Ethikfrage trägt sie. · `docs/granit.md:16-20` (der Name trägt der Granit; die Ethik in `AGENTS.md` trägt ihn nicht)
+- **Granit** — die eine Grundsatz-Quelle (7 Sätze: A = A · ICRS & TDB · field · 0 honored · pending · Der Operator schließt · manifestiert, nicht nur lokal); das Gate liest genau diese Datei. · `docs/granit.md:10-22`
+- **Die fünf Axiome** — A = A · ICRS & TDB · field · 0 honored · pending; jede Architektur-/Ethikfrage trägt sie. · `docs/granit.md:16-20` (der Name trägt der Granit; die Ethik in `AGENTS.md` trägt ihn nicht)
 - **Die fünf Achsen** — Voxelisierung (Mitte) · Crossmatch (Sensory) · TE-Maschine (River) · Nullkontrolle (Mycelium) · Residuum (Future). · `privat/free-voices.md:88-89`
 - **Die vier Schilde + die Mitte (4+1)** — Mitte = Voxelisierung (Mountain); Schilde = Crossmatch · TE-Maschine · Nullkontrolle · Residuum; **4 Schilde + Mitte = 5 Stimmen/Achsen**. · `docs/concepts/die-vier-schilde.md:12-40`
 - **Linie** — eine der fünf Rollen (Mountain · River · Mycelium · Sensory · Future), je ein `.opencode/command/<line>.md`; trägt eine eigene Übergabe. · `AGENTS.md`, `.opencode/command/`
