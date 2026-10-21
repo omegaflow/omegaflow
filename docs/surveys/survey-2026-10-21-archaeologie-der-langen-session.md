@@ -2,7 +2,7 @@
   title: Survey — Archäologie der langen Session: was gemessen ist und was offen blieb (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: fd956e828b0d4ab352a407b7b791835a5a7a573b3602c602abe3e87f03071f36
+  sha256: 758ac5b9d62e4b4eafd963edab730da2c49c3a0e35635a371f86c20236148696
   status: live
   see-also: docs/surveys/survey-2026-10-20-frame-wache.md docs/surveys/survey-2026-10-20-planet-nine-netz.md docs/surveys/survey-2026-10-20-hunga-tonga-netz.md docs/surveys/survey-2026-10-20-sturm-komposit.md docs/surveys/survey-2026-10-20-asi-stationshoehen.md docs/concepts/die-weberin.md
 -->
@@ -30,7 +30,7 @@ kein Konzept und keine Messung; sie sagt, was davon fertig ist und was nicht.
 | **ICRS/Frame-Wache** | **gemessen** | 4.536/824/678 Quellen; 600 Dreifach-Anker; 171 D×3; Median 2,930σ; Rahmenrotation < 3σ → **Placed** | `survey-2026-10-20-frame-wache.md` | Gaia DR4, Eigenbewegung, 88 Anker ohne Gaia, 303-D-Ensemble |
 | **Quasare/H₀** | Quellen geprüft, eigene Wägung offen | H0LiCOW 73,3; TDCOSMO 67,4/71,6; D/H geprüft | `projects/quasare.md` | Zeitverzögerung nachrechnen, `r_d`, Mass-Sheet |
 | **Planet Neun** | **gemessen** | 44 P9-Objekte, 21 in der Bande; Ω z=3,60, aber Bandrotation p=0,905 → **kein robuster Überschuss** | `survey-2026-10-20-planet-nine-netz.md` | LSST/MPC absent, Bias-Gewichte, 10 benannte Risse |
-| **Hunga Tonga** | **gemessen** | 6 Netze; Seismik 3,87 km/s; Druck 0,328; Tsunami 0,170; TEC −57 %; GLM-Cluster | `survey-2026-10-20-hunga-tonga-netz.md` | Aerosol/Thermik absent (Keys), TEC 15-min, Seismik-Detektor |
+| **Hunga Tonga** | **gemessen** | 6 Netze; Seismik 3,87 km/s; Druck 0,328; Tsunami 0,170; TEC −57 %; GLM-Cluster | `survey-2026-10-20-hunga-tonga-netz.md` | Thermik am Vent gemessen absent (FDCF Fill, FIRMS 0); Aerosol keyless (AODF/AER_AI); TEC 15-min |
 | **Stein im Wasser** | Matrix gebaut+gemessen | 15/15 Arme, 210/210 Zellen; Newell→OMNI still (TE 4,5969e-3, p 1,0) | `survey-2026-10-05-stoerungs-experiment-fehlende-faeden.md` | `ozzy` fehlt; Alles-gegen-alles nicht gefahren; Transitivität Konzept |
 | **Mond-Faden** | gebaut+gemessen | bins 3: NVE→IVE 0/36, IVE→NVE 3/36 (MAX-NULL ja); roh 6/36 | `survey-2026-10-18-mond-faden.md` | 5-Kond-Baseline vs. +lunar getrennt; keine Mond-Aussage |
 | **Signal-cone** | **gemessen** | τ=2 d, d/c=8,155 min, Positivkontrolle **BESTANDEN** | `survey-2026-10-19-signal-cone-positivkontrolle.md` | Kontrolle synthetisch; reale Tabelle leer |
@@ -130,9 +130,11 @@ einer anderen Metrik oder einem anderen Katalogstand; die eigene Messung steht.
 - **Infraschall:** BGR IS52, Richtung −6,7° gegen −113,1° am NULL-Tag.
 - **Verdikt:** mindestens drei Phänomene; das „Netz als Instrument" überträgt sich auf
   **Quellzeit und Geometrie**, nicht auf eine gemeinsame Geschwindigkeit.
-- **Offen:** Aerosol/Thermik ist **absent** (FIRMS `MAP_KEY` 400, TROPOMI 401), nicht
-  null. Der Seismik-Detektor hat drei NULL-Treffer; Kahului ist kein Tsunami-Onset;
-  der BGR-Abstand ist 1.316 s bei ~300-s-Raster.
+- **Aerosol/Thermik:** Die Route ist da; am Vent ist die Thermik **gemessen absent**
+  (FDCF `Mask=150`, FIRMS VIIRS 0 Detektionen im 0,5°-Fenster). Die 17
+  Vollbild-Pixel sind global, nicht Hunga Tonga. Aerosol: AODF/AER_AI keyless,
+  AER_AI-Pixel-Extraktion offen. Der Seismik-Detektor hat drei NULL-Treffer;
+  Kahului ist kein Tsunami-Onset; der BGR-Abstand ist 1.316 s bei ~300-s-Raster.
 
 ## 5. Der Stein im Wasser
 
@@ -228,7 +230,7 @@ redundant; die eigentliche Arbeit war die Höhen- und Metadatenprüfung:
 2. **Alles-gegen-alles-Matrix** — die volle Paar-Matrix und die netz-weite strenge Null.
 3. **Rahmen-Wache** — 303-D-Ensemble, Gaia DR4, Eigenbewegung, 88 Anker ohne Gaia.
 4. **Planet Neun** — LSST/MPC-Abdeckung, Bias-Gewichte.
-5. **Hunga Tonga** — Aerosol/Thermik (Keys), TEC mit höherer Kadenz, besserer
+5. **Hunga Tonga** — AER_AI-Pixel am Vent, TEC mit höherer Kadenz, besserer
    Seismik-Detektor.
 6. **Mond** — 5-Kond-Baseline vs. +lunar getrennt.
 7. **e-CALLISTO/OVRO** — `lower_band.cfg`, Kalibrierpunkt.
@@ -272,6 +274,7 @@ Frame-Wache liegen unter `sources/<netloc>/`, die Provenienz in
 - **`ozzy`:** die negative Engine bauen, bevor die Matrix als Unabhängigkeitstest gilt.
 - **Planet Neun:** LSST/MPC-Abdeckung nachziehen; ohne sie bleibt die Bande eine
   Himmelsdichte-Aussage.
-- **Hunga Tonga:** Aerosol/Thermik mit echtem Key nachholen; TEC-Kadenz erhöhen.
+- **Hunga Tonga:** AER_AI-Pixel am Vent extrahieren; keyed Zwillinge (XAERDT, OMPS,
+  FIRMS) nutzen; TEC-Kadenz erhöhen.
 - **Mond:** 5-Kond-Baseline gegen dieselbe Baseline + lunar.
 - **e-CALLISTO/OVRO:** Achse und Kalibrierpunkt belegen.

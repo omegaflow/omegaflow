@@ -2,7 +2,7 @@
   title: Survey — Hunga Tonga 2022: dieselbe Front in sechs Netzen
   class: survey
   date: 2026-10-20
-  sha256: 73040a0bef975f0835e6aa73ee0ec02f4d6b87da6f52a9f35bfd58521007e27c
+  sha256: 0b9bade896a30246133c11246ca8a9a78a64c9c2ddf185c15a053024c399aa49
   status: live
   see-also: docs/paper/tonga-lamb-crosscheck.md tools/measure/src/bin/hunga_tonga_netz_probe.rs
 -->
@@ -37,8 +37,8 @@ keinen CDN-Upload. `phi/sources.φ` bleibt unberührt.
 | Blitz | NOAA GOES-17 `GLM-L2-LCFA`, AWS S3 | 2022-01-15 und 01-13, je 226 Granulen 03:45–05:00 | NOAA Open Data, public domain | 20 s | HTTP 200 |
 | Aerosol/Thermik | **GOES-17 ABI FDCF/AODF**, AWS S3 | Vollbild, Jan 2022 | NOAA | 10 min | **keyless** (HTTP 200) |
 | Aerosol/Thermik | **TROPOMI `AER_AI`**, MEEO S3 `meeo-s5p` | 2022-01-15, 14 Orbits | ESA/Copernicus | Orbit | **keyless** (HTTP 200, 175 MB) |
-| Aerosol/Thermik | NASA FIRMS API | Jan 2022 vorhanden | NASA | Tag/Orbit | **Route absent**: HTTP 400, `Invalid MAP_KEY` — Daten nicht absent |
-| Aerosol/Thermik | Copernicus TROPOMI OData | Jan 2022 im Katalog (z. B. `S5P_RPRO_L2__AER_AI_20220115T200153`) | Copernicus | Orbit | **Route absent**: HTTP 401, `Token not found` — Daten nicht absent |
+| Aerosol/Thermik | NASA FIRMS API | Jan 2022 vorhanden | NASA | Tag/Orbit | **Key fehlt**: HTTP 400, `Invalid MAP_KEY` — Route keyed, Daten nicht absent |
+| Aerosol/Thermik | Copernicus TROPOMI OData | Jan 2022 im Katalog (z. B. `S5P_RPRO_L2__AER_AI_20220115T200153`) | Copernicus | Orbit | **Key fehlt**: HTTP 401, `Token not found` — Route keyed, Daten nicht absent |
 
 Die TROPOMI-Produkte sind im öffentlichen Katalog gelistet (`Online: true`), der
 Download über Copernicus OData verlangt einen Token; FIRMS verlangt einen `MAP_KEY`.
@@ -157,9 +157,10 @@ konsistenter Laufzeit **und** radialer Richtung: Seismik (3,87 km/s), Druck
 (0,328 km/s), Tsunami (0,170 km/s), GLM (Quellcluster am Vent) und
 Infraschall (Richtung −6,7°). Die Ionosphäre trägt eine TEC-Anomalie mit
 57 % Amplitude und sauberem NULL, aber der Onset ist mit 45 min und 15-min-
-Raster keine Frontmessung. **Aerosol/Thermik ist nicht mehr absent:** GOES-17
-FDCF misst am Ereignistag 17 Feuerpixel und 2.833 MW maximales FRP gegen 8 und
-138 MW am NULL-Tag; die Vent-Lokalisierung der Pixel steht noch aus.
+Raster keine Frontmessung. **Thermik am Vent ist gemessen absent:** FDCF
+liefert am Vent Fill (`Mask=150`), FIRMS VIIRS keine Detektion im 0,5°-Fenster;
+die 17 Vollbild-Pixel sind global, nicht Hunga Tonga. Aerosol bleibt über
+AODF/AER_AI offen.
 
 Das „Netz als Instrument" überträgt sich damit **auf den Quellzeitpunkt und
 die Geometrie**, nicht auf eine gemeinsame Geschwindigkeit. Jeder Faden
@@ -181,9 +182,20 @@ ABI FDCF (`noaa-goes17.s3.amazonaws.com/ABI-L2-FDCF/...`), Vollbild-Skalare:
 | 2022-01-15 04:30–04:39 | 14 | 2.360,856 | 1.438,945 |
 | **NULL 2022-01-13 04:10–04:19** | **8** | **137,625** | **483,284** |
 
-Der Ereignistag liegt im Maximum um Faktor **20** über dem NULL-Tag (FRP) und
-um Faktor **2,5** bei der Feuer-Temperatur. Das ist ein gemessener thermischer
-Kontrast, kein Nullwert.
+**Ortsprüfung (2026-10-21).** Der ABI-Fixed-Grid-Index des Vents ist
+`x=4832, y=3977` (Scanwinkel `x=0,11873`, `y=−0,07086`; der Index liegt
+innerhalb des Vollbilds). An diesem Pixel liefert FDCF an **beiden** Tagen
+`Mask=150`, `Power=−9` (Fill), `Temp=4000 K` (Fill) — **kein Retrieval**.
+Der keyed FIRMS-Zwilling (`VIIRS_SNPP_SP`, `FIRMS_MAP_KEY` im Haus) liefert
+am Ereignis- und NULL-Tag **keine Detektion im 0,5°-Fenster**. Die 17
+Vollbild-Pixel sind damit **nicht** Hunga Tonga; der Kontrast ist global,
+nicht am Vent.
+
+**Thermik-Verdikt.** Am Vent ist die Thermik in FDCF und VIIRS **gemessen
+absent** — nicht wegen eines fehlenden Keys, sondern weil die Produkte dort
+nichts tragen. Das ist die belastbare Form von `absent`: Route geprüft,
+Schlüssel geprüft, Pixel geprüft. Der Vollbild-Kontrast bleibt als globale
+Feuerstatistik stehen, nicht als Vulkan-Signal.
 
 **Terms-Riss.** Der FDCF-Header trägt den String
 `license = Unclassified data. Access is restricted to approved users only.`
@@ -203,10 +215,74 @@ die Thermik, nicht die Plume-Karte.
 Pixel-Extraktion am Vent (Lat/Lon-Index) steht noch aus; der Orbit 22059 deckt
 04:48–06:29 UTC, also die erste Stunde nach t0.
 
-**Grenze.** Die FDCF-Zahlen sind **Vollbild-Skalare**, keine vent-lokalisierte
-Aussage. Der GLM-Cluster um 04:14:42 und die Zeitlage stützen die Zuordnung,
-aber erst die Pixel-Maske (`Mask`/`Power` am Vent-Index) macht daraus eine
-Ortsaussage. Das ist der nächste Schnitt, kein `absent`.
+**Grenze.** Die Thermik-Aussage ist jetzt vent-lokal (FDCF-Pixel + FIRMS-Fenster).
+Die **Aerosol**-Pixel-Extraktion am Vent (TROPOMI AER_AI, Lat/Lon-Index) steht
+noch aus; sie ist der nächste Schnitt, nicht `absent`. Die AODF-Zahlen bleiben
+Vollbild-Tagesmittel und tragen die Thermik nicht.
+
+## Werkzeuge, Specs und Zwillinge (gemessen 2026-10-21)
+
+Gefunden mit `archive_search` (kein neuer Suchindex): `--cmr` für die
+NASA-Kollektionen, `--mwmbl` für offene Produktseiten, `--verdict` für den
+Dreistufen-Zugang, `--sniff` für Magic-Bytes. Alle folgenden Zeilen sind
+gemessen, nicht aus einer Produktliste abgeschrieben.
+
+| Zweck | Werkzeug / Produkt | Route | Messung |
+|---|---|---|---|
+| Thermal/Fire | **GOES-17 ABI FDCF** | `noaa-goes17.s3.amazonaws.com` | 200, 2,25 MB, HDF5 |
+| Aerosol (NOAA) | **GOES-17 ABI AODF** | dieselbe AWS-Bucket | 200, 9,5–13 MB, HDF5 |
+| Aerosol (NASA DT) | **GOES-17 XAERDT_L2_ABI_G17** (Dark Target, 10 km) | CMR `C2859265967-LAADS` | Konzept 200; Daten keyed (Earthdata) — **Zugang, nicht absent** |
+| Aerosol UV | **TROPOMI AER_AI L2** | `meeo-s5p.s3.amazonaws.com` | 200, 175.219.152 B, HDF5 |
+| Aerosol UV (L3) | **S5P OFFL_L3_AER_AI** | Earth Engine `COPERNICUS_S5P_OFFL_L3_AER_AI` | 200, 109.271 B |
+| Aerosol UV (Spiegel) | **TEMIS ABSAAI** | `temis.nl/airpollution/absaai/` | 200, 70.324 B |
+| Aerosol UV (unabhängig) | **OMPS NPP/N20 UVAI** | CMR `C1564538427-GES_DISC` | Konzept 200; Daten keyed (Earthdata) — **Zugang, nicht absent** |
+| Thermal-Zwilling | **MODIS/VIIRS Active Fire** | FIRMS `…Global_7d.csv` | 200, 4,9 MB (7 d); Historie keyed — **Zugang, nicht absent** |
+| Spec/Guide | **GOES-17 FDCF Produktseite** | Earth Engine `NOAA_GOES_17_FDCF` | 200, 111.991 B |
+
+### Livestreams (gemessen 2026-10-21, ~05:20Z)
+
+Die historischen Hunga-Tonga-Dateien liegen in denselben Buckets wie die
+aktuellen. Für eine stehende Wache ist deshalb gemessen, welche Routen **live**
+sind — nicht nur archiviert:
+
+| Produkt | Route | Letztes Objekt (UTC) | Kadenz | Status |
+|---|---|---|---|---|
+| **GOES-18 ABI FDCF** | `noaa-goes18` | `2026/294/05/…s20262940500216…` · 05:10:18 | 10 min | **live** |
+| **GOES-18 ABI AODF** | `noaa-goes18` | `…s20262940500216…` · 05:12:56 | 10 min | **live** |
+| **GOES-18 GLM** | `noaa-goes18` | `…s20262940518400…` · 05:19:18 | 20 s | **live** |
+| **GOES-19 ABI FDCF** | `noaa-goes19` | `…s20262940500213…` · 05:10:11 | 10 min | **live** |
+| **GOES-19 ABI AODF** | `noaa-goes19` | `…s20262940500213…` · 05:14:11 | 10 min | **live** |
+| **GOES-19 GLM** | `noaa-goes19` | `…s20262940519000…` · 05:19:30 | 20 s | **live** |
+| **FIRMS MODIS 7d** | `firms.modaps…Global_7d.csv` | `Last-Modified` 04:45:36 | rollierend | **live** |
+| **FIRMS VIIRS 7d** | `…SUOMI_VIIRS_C2_Global_7d.csv` | `Last-Modified` 04:47:19 | rollierend | **live** |
+| **TROPOMI NRTI AER_AI** | `meeo-s5p` `NRTI/L2__AER_AI/` | `…20261021T001254…` · 01:30:21 | 5 min, ~1 h Latenz | **live** |
+| **TEMIS ABSAAI** | `temis.nl` | HTTP 200, kein `Last-Modified` | täglich | live, Latenz ungemessen |
+| **OMPS NRT UVAI** | CMR `NPP_NMMIEAI_L2_NRT` | NRT-Kollektion | ~3 h | keyed, live |
+
+**AODF ist tageslichtabhängig.** Der Live-Lauf 05:00–05:09Z liefert
+`max_aod550_sea=None`; um 05:00Z ist es über dem GOES-West-Disk Nacht. Ein
+Tageslauf (z. B. 18:00Z) trägt den Wert.
+
+**Wichtig für die Wache:** GOES-17 ist der historische Hunga-Tonga-Satellit
+(2022), nicht der heutige Live-Satellit. Die aktuelle Westlinie ist **GOES-18**,
+die Ostlinie **GOES-19**. Eine stehende Thermik-Wache muss auf G18/G19 zeigen;
+die 2022er-Dateien bleiben der Fallbeweis.
+
+**Keyed ist kein Ausschluss.** Ein Schlüssel ist ein Zugangsweg, kein Datenmangel.
+Ob er im Haus liegt, entscheidet `bin/secrets_keys`; die Route bleibt gültig, auch
+wenn sie nicht keyless ist. XAERDT, OMPS und die FIRMS-Historie sind damit
+vollwertige zweite Linien — sie sind **keyed**, nicht `absent`.
+
+**Was das für die Messung heißt.** Die Thermik hat einen echten Zwilling auf
+demselben Instrument (AODF) und einen unabhängigen Algorithmus (XAERDT); das
+Aerosol hat mit TROPOMI AER_AI, TEMIS und OMPS drei unabhängige UV-Linien.
+Damit ist die Hunga-Tonga-Front nicht auf einen einzelnen Sensor gestellt.
+
+**Was nicht trägt.** Die geratenen ATBD-PDF-URLs unter
+`goes-r.gov/products/ATBDs/baseline/…` antworten mit HTTP 200, aber `--sniff`
+findet **keine PDF-Magic** und `--pdf-text` keinen Textlayer — das sind
+Fehlseiten, keine Specs. Sie werden hier nicht zitiert. Verifiziert sind die
+Produktseiten (Earth Engine, CMR); die ATBD-PDFs bleiben `unmeasured`.
 
 ## Was quer liegt
 
@@ -238,8 +314,8 @@ Ortsaussage. Das ist der nächste Schnitt, kein `absent`.
   −113,1° am NULL-Tag) ist der tragende Teil, nicht die Sekunde.
 - **Aerosol/Thermik.** Die API-Routen verlangten `MAP_KEY`/Token; die Daten
   liegen keyless auf NOAA-AWS (GOES-17 FDCF/AODF) und MEEO-S3 (TROPOMI AER_AI).
-  Die Thermik ist gemessen (17 Pixel, 2.833 MW gegen 8/138 MW am NULL-Tag), die
-  Vent-Lokalisierung und die AER_AI-Pixel-Extraktion stehen noch aus.
+  Die Thermik ist am Vent **gemessen absent** (FDCF Fill, FIRMS 0 Detektionen);
+  die AER_AI-Pixel-Extraktion steht noch aus.
 
 ## Reproduktion
 
@@ -261,4 +337,6 @@ curl -O https://meeo-s5p.s3.amazonaws.com/OFFL/L2__AER_AI/2022/01/15/S5P_OFFL_L2
 ```
 
 `hunga_tonga_netz_probe` liest die FDCF-Ereignis- und NULL-Datei und gibt die
-Vollbild-Skalare aus; die AER_AI-Pixel-Extraktion ist noch nicht verdrahtet.
+Vollbild-Skalare und den Vent-Pixel aus; `--live` listet das neueste
+GOES-18-Objekt des Tages und misst FDCF/AODF. Die AER_AI-Pixel-Extraktion ist
+noch nicht verdrahtet.

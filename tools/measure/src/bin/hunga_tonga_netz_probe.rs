@@ -1,3 +1,4 @@
+use omegaflow::archivar::fetch::{load_env, resolve_secret};
 use omegaflow::archivar::geo::{COMP_BGR_AZIM, COMP_BGR_VAPP, MAGIC_BGR, parse_bin};
 use omegaflow::archivar::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::archivar::tle::RADIUS_EARTH_KM;
@@ -1314,6 +1315,67 @@ fn bgr_section() {
     println!();
 }
 
+fn nearest_index(values: &[f64], target: f64) -> Option<usize> {
+    let mut best = 0usize;
+    let mut best_d = f64::INFINITY;
+    for (i, v) in values.iter().enumerate() {
+        let d = (v - target).abs();
+        if d < best_d {
+            best_d = d;
+            best = i;
+        }
+    }
+    Some(best)
+}
+
+fn goes_vent_pixel(file: &Hdf5File) -> Option<String> {
+    let h = attr_scalar(file, "goes_imager_projection", "perspective_point_height")?;
+    let lon0 = attr_scalar(
+        file,
+        "goes_imager_projection",
+        "longitude_of_projection_origin",
+    )?;
+    let a = attr_scalar(file, "goes_imager_projection", "semi_major_axis")?;
+    let b = attr_scalar(file, "goes_imager_projection", "semi_minor_axis")?;
+    let lat = TONGA_LAT.to_radians();
+    let dlon = (TONGA_LON - lon0).to_radians();
+    let e2 = 1.0 - (b * b) / (a * a);
+    let n = a / (1.0 - e2 * lat.sin() * lat.sin()).sqrt();
+    let x = n * lat.cos() * dlon.cos();
+    let y = n * lat.cos() * dlon.sin();
+    let z = n * (1.0 - e2) * lat.sin();
+    let rho = ((h - x) * (h - x) + y * y).sqrt();
+    let x_scan = (-y).atan2(h - x);
+    let y_scan = (z / rho).atan();
+    let xs = dataset_scaled(file, "x");
+    let ys = dataset_scaled(file, "y");
+    let xi = nearest_index(&xs, x_scan)?;
+    let yi = nearest_index(&ys, y_scan)?;
+    let (mask_raw, mask_dt, dims) = {
+        let (_, ds, dt) = file.dataset("Mask").ok()?;
+        (file.read_dataset("Mask").ok()?, dt, ds.dims.clone())
+    };
+    let nx = dims.get(1).copied().unwrap_or(1) as usize;
+    let idx = yi * nx + xi;
+    let mask = num_at(&mask_raw, idx, &mask_dt)?;
+    let (power_raw, power_dt) = {
+        let (_, _, dt) = file.dataset("Power").ok()?;
+        (file.read_dataset("Power").ok()?, dt)
+    };
+    let power = num_at(&power_raw, idx, &power_dt)?;
+    let (temp_raw, temp_dt) = {
+        let (_, _, dt) = file.dataset("Temp").ok()?;
+        (file.read_dataset("Temp").ok()?, dt)
+    };
+    let temp = num_at(&temp_raw, idx, &temp_dt)?;
+    let t_scale = attr_scalar(file, "Temp", "scale_factor").unwrap_or(1.0);
+    let t_offset = attr_scalar(file, "Temp", "add_offset").unwrap_or(0.0);
+    Some(format!(
+        "vent x_idx={xi} y_idx={yi} mask={mask} FRP_MW={power} fire_T_K={}",
+        temp * t_scale + t_offset
+    ))
+}
+
 fn goes_thermal_section() {
     println!("--- Aerosol/Thermik: GOES-17 ABI, keyless AWS S3 ---");
     for (label, url) in [
@@ -1338,6 +1400,10 @@ fn goes_thermal_section() {
             .first()
             .copied();
         println!("{label}: fires={count:?} max_FRP_MW={frp:?} max_fire_T_K={temp:?} (full disk)");
+        match goes_vent_pixel(&file) {
+            Some(s) => println!("{label}: {s}"),
+            None => println!("{label}: vent pixel absent (projection/mask unread)"),
+        }
     }
     println!(
         "note: full-disk scalars; TROPOMI AER_AI is keyless on MEEO S3, pixel extraction near the vent pending."
@@ -1345,8 +1411,111 @@ fn goes_thermal_section() {
     println!();
 }
 
+const FIRMS_AREA: &str = "https://firms.modaps.eosdis.nasa.gov/api/area/csv/{FIRMS_MAP_KEY}/VIIRS_SNPP_SP/-180,-25,-170,-15/1/";
+
+fn firms_section() {
+    println!("--- Thermal twin: FIRMS VIIRS_SNPP_SP (keyed, key in house) ---");
+    let env = load_env();
+    for day in [EVENT_DAY, QUIET_DAY] {
+        let url = resolve_secret(&format!("{FIRMS_AREA}{day}"), &env);
+        let Some(bytes) = fetch_raw_bytes(&url) else {
+            println!("FIRMS {day}: fetch void");
+            continue;
+        };
+        let text = String::from_utf8_lossy(&bytes);
+        let mut n = 0usize;
+        let mut max_frp = 0.0f64;
+        let mut max_bright = 0.0f64;
+        for line in text.lines().skip(1) {
+            let cols: Vec<&str> = line.split(',').collect();
+            if cols.len() < 13 {
+                continue;
+            }
+            let lat: f64 = cols[0].parse().unwrap_or(999.0);
+            let lon: f64 = cols[1].parse().unwrap_or(999.0);
+            if (lat - TONGA_LAT).abs() > 0.5 || (lon - TONGA_LON).abs() > 0.5 {
+                continue;
+            }
+            n += 1;
+            max_frp = max_frp.max(cols[12].parse().unwrap_or(0.0));
+            max_bright = max_bright.max(cols[2].parse().unwrap_or(0.0));
+        }
+        if n == 0 {
+            println!(
+                "FIRMS {day}: no detection within 0.5 deg; first line: {}",
+                text.lines().next().unwrap_or("<empty>")
+            );
+        } else {
+            println!(
+                "FIRMS {day}: detections_near_vent={n} max_FRP_MW={max_frp:.3} max_brightness_K={max_bright:.3}"
+            );
+        }
+    }
+    println!();
+}
+
+fn latest_key(bucket: &str, product: &str) -> Option<String> {
+    let secs = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .ok()?
+        .as_secs() as i64;
+    let days = secs / 86400;
+    let Some((year, _month, _day)) = civil_from_days(days) else {
+        return None;
+    };
+    let doy = days - days_from_civil(year as i64, 1, 1)? + 1;
+    let url = format!(
+        "https://{bucket}.s3.amazonaws.com/?list-type=2&prefix={product}/{year:04}/{doy:03}/&max-keys=1000"
+    );
+    let bytes = fetch_raw_bytes(&url)?;
+    let text = String::from_utf8_lossy(&bytes);
+    let mut last = None;
+    for chunk in text.split("<Key>").skip(1) {
+        if let Some(key) = chunk.split("</Key>").next() {
+            last = Some(key.to_string());
+        }
+    }
+    last
+}
+
+fn live_section() {
+    println!("--- Live: GOES-18 ABI (AWS S3), latest object of today ---");
+    for (label, product) in [("FDCF", "ABI-L2-FDCF"), ("AODF", "ABI-L2-AODF")] {
+        let Some(key) = latest_key("noaa-goes18", product) else {
+            println!("{label}: no key today");
+            continue;
+        };
+        let url = format!("https://noaa-goes18.s3.amazonaws.com/{key}");
+        let Some(bytes) = fetch_raw_bytes(&url) else {
+            println!("{label}: fetch void for {key}");
+            continue;
+        };
+        let Ok(file) = Hdf5File::parse(&bytes) else {
+            println!("{label}: HDF5 unread for {key}");
+            continue;
+        };
+        if label == "FDCF" {
+            let count = dataset_scaled(&file, "total_number_of_pixels_with_fires_detected")
+                .first()
+                .copied();
+            let frp = dataset_scaled(&file, "maximum_fire_radiative_power")
+                .first()
+                .copied();
+            println!("{label}: {key} fires={count:?} max_FRP_MW={frp:?}");
+        } else {
+            let aod = dataset_scaled(&file, "max_aod550_sea").first().copied();
+            println!("{label}: {key} max_aod550_sea={aod:?}");
+        }
+    }
+    println!();
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    if has(&args, "--live") {
+        live_section();
+        return;
+    }
     if let Some(path) = arg_value(&args, "--inspect-glm") {
         let Ok(bytes) = std::fs::read(&path) else {
             println!("{path}: unreadable");
@@ -1416,6 +1585,8 @@ fn main() {
     bgr_section();
 
     goes_thermal_section();
+
+    firms_section();
 
     println!("=== Verdict ===");
     println!("criterion: at least three phenomena with an onset and a consistent travel time.");
