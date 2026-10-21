@@ -1,6 +1,6 @@
 <!--
   title: Suchkanäle — gemessener Stand (2026-10-19)
-  class: ref
+  class: concept
   date: 2026-10-19
   sha256: d73f3cac6cf89148ecaa75af9a9d21336937ffad7f18c423e181f327ae95d93e
   status: live

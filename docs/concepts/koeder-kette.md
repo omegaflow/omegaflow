@@ -1,9 +1,9 @@
 <!--
   title: Die Köder-Kette — Archäologie (2026-10-21)
-  class: ref
+  class: concept
   date: 2026-10-21
   status: live
-  see-also: docs/reference/koeder-formen.md docs/reference/search-channels.md docs/concepts/tools-map.md
+  see-also: docs/concepts/koeder-formen.md docs/concepts/search-channels.md docs/concepts/tools-map.md
 -->
 # Die Köder-Kette — Archäologie
 
@@ -64,7 +64,7 @@ Spalte und Lizenz; `.edges` trägt `from → to: contributes|materializes` plus
    nicht aus dem Quelltext kannte, fand es nicht. Seit 2026-10-21 gibt es
    `bin/weave` und `bin/leads_merge`.
 3. **Die Formen-/Köder-Analyse lag nur in der gelöschten Ratsdatei.** Geborgen
-   als `docs/reference/koeder-formen.md`; ohne das wären die Bedingungen
+   als `docs/concepts/koeder-formen.md`; ohne das wären die Bedingungen
    (Signal/Anker/blind je Form) nirgends festgehalten.
 4. **`find` hat kein `--sniff`-Ergebnis als Datei.** Es schreibt nur stdout; ein
    `.map`/`.edges` wie `weave` entsteht nicht. Wer die Kette fahren will, muss

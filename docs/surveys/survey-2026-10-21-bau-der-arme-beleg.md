@@ -1,12 +1,12 @@
 <!--
-  title: Bauauftrag — die offenen Arme zu Ende bauen (2026-10-21)
-  class: ref
+  title: Beleg — Bau der offenen Arme (2026-10-21)
+  class: survey
   date: 2026-10-21
-  sha256: 30245d564e914b404961e510df4a82dab81765fa24c438a74ff48e62bce00c50
+  sha256: 5b01e1314c1ce9f12c05f56c85e0a70e20cb41662d20758cd415ee98f5ab210d
   status: live
-  see-also: docs/reference/offen-ungebaut.md docs/reference/koeder-kette.md
+  see-also: docs/surveys/survey-2026-10-21-offen-ungebaut.md docs/concepts/koeder-kette.md
 -->
-# Bauauftrag — die offenen Arme zu Ende bauen
+# Beleg — Bau der offenen Arme
 
 > **Kanonischer Auftrag:** `projects/bau-der-arme.md`. Dieses Blatt trägt die
 > Staffel, die Assets und die Key-Prüfung als Beleg.

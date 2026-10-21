@@ -4,7 +4,7 @@
   date: 2026-10-19
   sha256: 839740f134892180270df213026602a837294d8569efb56a688dcc18b5ff9691
   status: live
-  see-also: docs/blatt/blatt-2026-10-19-entscheidung-17-lizenzarme.md docs/reference/search-channels.md
+  see-also: docs/blatt/blatt-2026-10-19-entscheidung-17-lizenzarme.md docs/concepts/search-channels.md
 -->
 # Freie Alternativen für die 17 lizenzgesperrten Arme
 

@@ -1,9 +1,9 @@
 <!--
   title: Köder und Datenformen — was die Herkunft trägt (2026-10-21)
-  class: ref
+  class: concept
   date: 2026-10-21
   status: live
-  see-also: docs/reference/search-channels.md docs/surveys/survey-2026-10-20-datenherkunft-forensik.md
+  see-also: docs/concepts/search-channels.md docs/surveys/survey-2026-10-20-datenherkunft-forensik.md
 -->
 # Köder und Datenformen — was die Herkunft trägt
 
