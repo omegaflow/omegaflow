@@ -1861,69 +1861,147 @@ fn mwmbl_results(v: &Json, max: usize) -> Vec<String> {
 }
 
 pub fn marginalia_lines(query: &str, max: usize) -> Vec<String> {
-    let url = format!(
-        "https://api.marginalia-search.com/public/search/{}?count=10",
+    let base = format!(
+        "https://old-search.marginalia.nu/search?query={}",
         urlencode(query)
     );
-    let headers = [
-        "-H",
-        "Accept: application/json",
-        "-H",
-        "User-Agent: omegaflow-archive-search",
-    ];
-    match get(&url, &headers, "40") {
-        Some(f) if f.status == Some(200) => match json::parse(&f.body) {
-            Some(v) => {
-                let mut out = marginalia_results(&v, max);
-                if out.is_empty() {
-                    out.push(format!("absent — Marginalia carries no entry: {}", query));
-                }
-                out
-            }
-            None => vec!["pending — the Marginalia response carries no JSON".to_string()],
-        },
-        Some(f) if f.status == Some(503) => {
-            vec!["pending — Marginalia HTTP 503 (shared rate limit)".to_string()]
-        }
-        Some(f) => vec![format!("pending — Marginalia HTTP {}", f.status_text())],
-        None => vec!["pending — no answer within 40 s (timeout or no network)".to_string()],
-    }
-}
-
-fn marginalia_quality(r: &Json) -> String {
-    match r.get("quality") {
-        Some(Json::Str(s)) => s.clone(),
-        Some(Json::Num(n)) if n.is_finite() => format!("{n}"),
-        _ => String::new(),
-    }
-}
-
-fn marginalia_results(v: &Json, max: usize) -> Vec<String> {
-    let mut out = Vec::new();
-    let Some(results) = v.get("results").and_then(|r| r.as_arr()) else {
-        return out;
+    let jar = std::env::temp_dir().join(format!(
+        "omegaflow-marginalia-{}.jar",
+        std::process::id()
+    ));
+    let jar = jar.to_string_lossy().to_string();
+    let first = match marginalia_curl(&base, &jar) {
+        Some(r) => r,
+        None => return vec!["pending — Marginalia: no answer (timeout or no network)".to_string()],
     };
-    for r in results {
-        let link = r.get("url").and_then(|u| u.as_str()).unwrap_or("");
-        if link.is_empty() {
-            continue;
+    let (status, mut body) = first;
+    if body.contains("Wait For A Moment") {
+        let Some(sst) = marginalia_sst(&body) else {
+            let _ = std::fs::remove_file(&jar);
+            return vec!["pending — Marginalia: the wait page carries no sst token".to_string()];
+        };
+        std::thread::sleep(Duration::from_millis(1300));
+        match marginalia_curl(&format!("{base}&{sst}"), &jar) {
+            Some((_, second)) => body = second,
+            None => {
+                let _ = std::fs::remove_file(&jar);
+                return vec!["pending — Marginalia: no answer after the wait".to_string()];
+            }
         }
-        let title = flatten(r.get("title").and_then(|t| t.as_str()).unwrap_or(""));
-        let description = flatten(r.get("description").and_then(|d| d.as_str()).unwrap_or(""));
-        let quality = marginalia_quality(r);
-        let mut line = format!("url {}\ttitle: {}", link, title);
-        if !quality.is_empty() {
-            line.push_str(&format!("\tquality: {}", quality));
-        }
-        if !description.is_empty() {
-            line.push_str(&format!("\tdescription: {}", description));
-        }
-        out.push(line);
-        if out.len() >= max {
-            break;
-        }
+    }
+    let _ = std::fs::remove_file(&jar);
+    if body.contains("Wait For A Moment") {
+        return vec!["pending — Marginalia: bot wait did not clear".to_string()];
+    }
+    if status != 200 {
+        return vec![format!("pending — Marginalia HTTP {status}")];
+    }
+    let mut out = marginalia_html_results(&body, max);
+    if out.is_empty() {
+        out.push(format!("absent — Marginalia carries no entry: {}", query));
     }
     out
+}
+
+fn marginalia_curl(url: &str, jar: &str) -> Option<(i32, String)> {
+    let out = Command::new("curl")
+        .args([
+            "-sL",
+            "--compressed",
+            "--max-time",
+            "40",
+            "-A",
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131 Safari/537.36",
+            "-c",
+            jar,
+            "-b",
+            jar,
+            "-o",
+            "-",
+            "-w",
+            "\n%{http_code}",
+        ])
+        .arg(url)
+        .output()
+        .ok()?;
+    let stdout = out.stdout;
+    let idx = stdout.iter().rposition(|&b| b == b'\n')?;
+    let status = String::from_utf8_lossy(&stdout[idx + 1..])
+        .trim()
+        .parse::<i32>()
+        .ok()?;
+    let body = String::from_utf8_lossy(&stdout[..idx]).to_string();
+    Some((status, body))
+}
+
+fn marginalia_sst(body: &str) -> Option<String> {
+    let pos = body.find("sst=")?;
+    let rest = &body[pos..];
+    let end = rest
+        .find(|c: char| !(c.is_ascii_alphanumeric() || c == '=' || c == '-' || c == '_'))
+        .unwrap_or(rest.len());
+    Some(rest[..end].to_string())
+}
+
+fn marginalia_attr<'a>(card: &'a str, class: &str) -> Option<&'a str> {
+    let pos = card.find(class)?;
+    let rest = &card[pos..];
+    let href = rest.find("href=\"")? + 6;
+    let rest = &rest[href..];
+    let end = rest.find('"')?;
+    Some(&rest[..end])
+}
+
+fn marginalia_text(card: &str, marker: &str, close: &str) -> String {
+    let Some(pos) = card.find(marker) else {
+        return String::new();
+    };
+    let rest = &card[pos..];
+    let Some(tag_end) = rest.find('>') else {
+        return String::new();
+    };
+    let rest = &rest[tag_end + 1..];
+    let end = rest.find(close).unwrap_or(rest.len());
+    flatten(&unescape_html(&strip_tags(&rest[..end])))
+}
+
+fn marginalia_html_results(body: &str, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut rest = body;
+    while let Some(pos) = rest.find("class=\"card search-result\"") {
+        rest = &rest[pos..];
+        let end = rest.find("</section>").unwrap_or(rest.len());
+        let card = &rest[..end];
+        if let Some(link) = marginalia_attr(card, "class=\"url\"") {
+            let url = if link.starts_with("http") {
+                link.to_string()
+            } else {
+                format!("https://old-search.marginalia.nu{link}")
+            };
+            let title = marginalia_text(card, "class=\"title\"", "</a>");
+            let description = marginalia_text(card, "<p class=\"description\">", "</p>");
+            let mut line = format!("url {url}\ttitle: {title}");
+            if !description.is_empty() {
+                line.push_str(&format!("\tdescription: {description}"));
+            }
+            out.push(line);
+            if out.len() >= max {
+                break;
+            }
+        }
+        rest = &rest[end..];
+    }
+    out
+}
+
+fn unescape_html(s: &str) -> String {
+    s.replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", "\"")
+        .replace("&#39;", "'")
+        .replace("&#x27;", "'")
+        .replace("&nbsp;", " ")
 }
 
 const SEARXNG_INSTANCES: &[&str] = &["https://search.lumy.live"];
@@ -6291,31 +6369,25 @@ mod tests {
     }
 
     #[test]
-    fn marginalia_results_carry_url_title_description_quality() {
-        let body = r#"{
-            "license":"CC-BY-NC-SA 4.0",
-            "query":"interplanetary scintillation",
-            "page":1,
-            "pages":1,
-            "results":[
-                {"url":"https://en.wikipedia.org/wiki/Interplanetary_scintillation",
-                 "title":"Interplanetary scintillation",
-                 "description":"In astronomy, interplanetary scintillation",
-                 "quality":0.75},
-                {"url":"","title":"no url","description":"x","quality":"0.1"},
-                {"url":"https://example.org/b","title":"B","description":"text","quality":"high"}
-            ]
-        }"#;
-        let v = json::parse(body).expect("json");
-        let lines = marginalia_results(&v, 10);
+    fn marginalia_html_cards_carry_url_title_and_description() {
+        let body = r#"<section data-ms-rank="5" class="card search-result" >
+<div class="url"><a rel="nofollow external" href="https://example.org/a">https://example.org/a</a></div>
+<h2> <a tabindex="-1" class="title" rel="nofollow external" href="https://example.org/a">A &amp; B</a> </h2>
+<p class="description">Some <b>text</b>.</p>
+</section>
+<section class="card search-result">
+<div class="url"><a href="/site/example.org">/site</a></div>
+<h2><a class="title" href="/site">Local</a></h2>
+</section>"#;
+        let lines = marginalia_html_results(body, 10);
         assert_eq!(lines.len(), 2);
         assert_eq!(
             lines[0],
-            "url https://en.wikipedia.org/wiki/Interplanetary_scintillation\ttitle: Interplanetary scintillation\tquality: 0.75\tdescription: In astronomy, interplanetary scintillation"
+            "url https://example.org/a\ttitle: A & B\tdescription: Some text."
         );
         assert_eq!(
             lines[1],
-            "url https://example.org/b\ttitle: B\tquality: high\tdescription: text"
+            "url https://old-search.marginalia.nu/site/example.org\ttitle: Local"
         );
     }
 

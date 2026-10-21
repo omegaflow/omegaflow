@@ -93,9 +93,10 @@ Status im Dokument: **„ungebaut — Ideen, keine Entscheidungen"**.
 | `--googlecse` | **400** (Key ungültig) |
 | `--gemini` | **429** (Quota) |
 | `--dblp` | JS-gated, **pending** |
-| `--marginalia` | **504** nach 60 s (Dienst, nicht Arm) |
+| `--marginalia` | **gebaut 2026-10-21**: HTML-Route `old-search.marginalia.nu` mit Cookie-Jar und `sst`-Gate; live 200, 3 Treffer |
 | Mojeek | **Captcha**, 0 organische Treffer — bewusst verworfen |
 | Google Books | Arm existiert **nicht**, Tagesquota 429 — erst bauen, wenn gebraucht |
+| `--hn`, `--openverse`, `--nasa-images`, `--artic` | **gebaut 2026-10-21**: keyless, alle live 200 |
 
 ## 7. Neben der Session beschlossen, nicht gebaut
 
