@@ -2,6 +2,7 @@
   title: Geplant und nicht gebaut — die Köder-/Arm-Session (2026-10-21)
   class: ref
   date: 2026-10-21
+  sha256: 3190684db55091b4273617e5133d1d20c6463b673423cb7171564ec31f9b42c0
   status: superseded
   see-also: docs/reference/koeder-kette.md docs/reference/koeder-formen.md docs/reference/search-channels.md
 -->
