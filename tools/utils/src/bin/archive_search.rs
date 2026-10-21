@@ -76,6 +76,8 @@ mod frbcat;
 mod gaia;
 #[path = "archive_search/gbif.rs"]
 mod gbif;
+#[path = "archive_search/gbooks.rs"]
+mod gbooks;
 #[path = "archive_search/gemini.rs"]
 mod gemini;
 #[path = "archive_search/geonames.rs"]
@@ -448,6 +450,8 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--nominatim" => Some(Mode::Net("nominatim")),
         "--open-meteo" => Some(Mode::Net("open-meteo")),
         "--gbif" => Some(Mode::Net("gbif")),
+        "--gbooks" => Some(Mode::Net("gbooks")),
+        "--google-books" => Some(Mode::Net("gbooks")),
         "--fdsn" => Some(Mode::Net("fdsn")),
         "--dataone" => Some(Mode::Net("dataone")),
         "--huggingface" => Some(Mode::Net("huggingface")),
@@ -1954,7 +1958,7 @@ fn usage() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--gbooks|--google-books|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -2116,6 +2120,9 @@ fn usage() {
         "  --gbif      GBIF species search (api.gbif.org/v1/species/search), keyless; gbif species url + scientific_name/rank/status"
     );
     eprintln!(
+        "  --gbooks    Google Books (googleapis.com/books/v1/volumes), keyless or GOOGLE_BOOKS_API_KEY; url + title/authors/year/publisher/isbn/pages/categories; 429 falls back to Open Library"
+    );
+    eprintln!(
         "  --fdsn      FDSN station search (service.iris.edu/fdsnws/station/1, text table), keyless; network/station/lat/lon (no JSON on this service)"
     );
     eprintln!(
@@ -2125,7 +2132,7 @@ fn usage() {
         "  --huggingface HuggingFace datasets API (huggingface.co/api/datasets), keyless; dataset url + author/downloads"
     );
     eprintln!(
-        "  --dblp      DBLP publication search (dblp.org/search/publ/api), keyless; url + title/venue/year (currently JS-gated: pending)"
+        "  --dblp      DBLP publication search (dblp.org/search/publ/api), keyless; url + title/venue/year; OMEGAFLOW_DBLP_MIRROR=<base> for a mirror, otherwise OpenAlex fallback with venue (202/Anubis)"
     );
     eprintln!(
         "  --orcid     ORCID researcher search (pub.orcid.org/v3.0/expanded-search, Accept: application/json), keyless; orcid url + name/institution"
