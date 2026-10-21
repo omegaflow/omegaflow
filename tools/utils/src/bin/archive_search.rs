@@ -311,6 +311,7 @@ enum Mode {
     Dust,
     Antares,
     FourGet,
+    GoesLive,
     Stats,
     Net(&'static str),
 }
@@ -464,6 +465,7 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--dust" => Some(Mode::Dust),
         "--antares" => Some(Mode::Antares),
         "--4get" => Some(Mode::FourGet),
+        "--goes-live" => Some(Mode::GoesLive),
         _ => None,
     }
 }
@@ -494,6 +496,7 @@ impl Mode {
             Mode::Dust => "dust",
             Mode::Antares => "antares",
             Mode::FourGet => "4get",
+            Mode::GoesLive => "goes-live",
             Mode::Stats => "stats",
             Mode::Net(name) => name,
         }
@@ -950,6 +953,11 @@ fn main() {
             Mode::Dust => {
                 let query = keywords.join(" ");
                 let lines = dust_lines(&query);
+                print_lines(&lines);
+            }
+            Mode::GoesLive => {
+                let query = keywords.join(" ");
+                let lines = goes_live_lines(&query, max_results);
                 print_lines(&lines);
             }
             Mode::Antares => {
@@ -2205,6 +2213,9 @@ fn usage() {
         "  --dust      <ra,dec>   (IRSA DUST/SFD reddening map, keyless; url + title/description with E(B-V) in mag, Planck/SandF and the refCoordinate)"
     );
     eprintln!(
+        "  --goes-live <g18|g19> [FDCF|AODF|GLM]   (NOAA GOES ABI/GLM live: latest S3 object of today per product, keyless; url + key + cadence)"
+    );
+    eprintln!(
         "  --antares   <ztf|ant id|key=value|free text>   (ANTARES ZTF broker, api.antares.noirlab.edu/v2/loci, keyless; the open twin of the blocked Fink arm; url + title/description from locus_id/ztf_object_id/ra/dec/alerts)"
     );
     eprintln!(
@@ -2258,6 +2269,112 @@ fn usage() {
     eprintln!(
         "limits:   read-only. No writes, no sends, no uploads; the tool never closes a front (that is the operator)."
     );
+}
+
+fn today_ymd() -> Option<(i32, u32, u32)> {
+    let today = net::today();
+    let mut it = today.split('-');
+    let y: i32 = it.next()?.parse().ok()?;
+    let m: u32 = it.next()?.parse().ok()?;
+    let d: u32 = it.next()?.parse().ok()?;
+    Some((y, m, d))
+}
+
+fn day_of_year(y: i32, m: u32, d: u32) -> Option<u32> {
+    const CUM: [u32; 12] = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    if !(1..=12).contains(&m) || d == 0 || d > 31 {
+        return None;
+    }
+    let leap = (y % 4 == 0 && y % 100 != 0) || y % 400 == 0;
+    let mut doy = CUM[(m - 1) as usize] + d;
+    if leap && m > 2 {
+        doy += 1;
+    }
+    Some(doy)
+}
+
+fn goes_keys(body: &str) -> Vec<&str> {
+    let mut out = Vec::new();
+    let mut rest = body;
+    while let Some(start) = rest.find("<Key>") {
+        let after = &rest[start + 5..];
+        let Some(end) = after.find("</Key>") else {
+            break;
+        };
+        out.push(&after[..end]);
+        rest = &after[end + 6..];
+    }
+    out
+}
+
+fn goes_live_lines(query: &str, max: usize) -> Vec<String> {
+    let mut parts = query.split_whitespace();
+    let sat = match parts.next() {
+        Some(s) => s.to_ascii_lowercase(),
+        None => {
+            return vec![
+                "absent — --goes-live needs g18|g19 and an optional FDCF|AODF|GLM".to_string(),
+            ];
+        }
+    };
+    let bucket = match sat.as_str() {
+        "g18" | "goes18" => "noaa-goes18",
+        "g19" | "goes19" => "noaa-goes19",
+        _ => return vec![format!("absent — unknown satellite {sat}; use g18 or g19")],
+    };
+    let product = parts.next().map(|s| s.to_ascii_uppercase());
+    let products: Vec<(&str, &str, &str)> = match product.as_deref() {
+        Some("FDCF") => vec![("FDCF", "ABI-L2-FDCF", "10 min")],
+        Some("AODF") => vec![("AODF", "ABI-L2-AODF", "10 min")],
+        Some("GLM") => vec![("GLM", "GLM-L2-LCFA", "20 s")],
+        Some(other) => {
+            return vec![format!(
+                "absent — unknown product {other}; use FDCF, AODF or GLM"
+            )];
+        }
+        None => vec![
+            ("FDCF", "ABI-L2-FDCF", "10 min"),
+            ("AODF", "ABI-L2-AODF", "10 min"),
+            ("GLM", "GLM-L2-LCFA", "20 s"),
+        ],
+    };
+    let (year, month, day) = match today_ymd() {
+        Some(v) => v,
+        None => return vec!["absent — today unread".to_string()],
+    };
+    let doy = match day_of_year(year, month, day) {
+        Some(v) => v,
+        None => return vec!["absent — day of year unread".to_string()],
+    };
+    let mut out = Vec::new();
+    for (label, prefix, cadence) in products {
+        if out.len() >= max {
+            break;
+        }
+        let url = format!(
+            "https://{bucket}.s3.amazonaws.com/?list-type=2&prefix={prefix}/{year}/{doy:03}/&max-keys=1000"
+        );
+        let Some(fetch) = net::get(&url, &[], "30") else {
+            out.push(format!("absent — {label}: list void"));
+            continue;
+        };
+        if fetch.status != Some(200) {
+            out.push(format!(
+                "absent — {label}: list HTTP {}",
+                fetch.status_text()
+            ));
+            continue;
+        }
+        let keys = goes_keys(&fetch.body);
+        let Some(key) = keys.into_iter().max() else {
+            out.push(format!("absent — {label}: no key for {year}/{doy:03}"));
+            continue;
+        };
+        out.push(format!(
+            "url https://{bucket}.s3.amazonaws.com/{key}\ttitle: {sat} {label} latest\tdescription: key={key} cadence={cadence}"
+        ));
+    }
+    out
 }
 
 fn print_lines(lines: &[String]) {
@@ -3645,5 +3762,33 @@ mod tests {
     fn dust_line_refuses_an_ok_less_response() {
         let coord = DustCoord { ra: 1.0, dec: 2.0 };
         assert!(dust_line("<results status=\"error\"></results>", "u", &coord).is_err());
+    }
+
+    #[test]
+    fn goes_day_of_year_handles_leap() {
+        assert_eq!(day_of_year(2024, 3, 1), Some(61));
+        assert_eq!(day_of_year(2023, 3, 1), Some(60));
+        assert_eq!(day_of_year(2024, 12, 31), Some(366));
+        assert_eq!(day_of_year(2024, 13, 1), None);
+    }
+
+    #[test]
+    fn goes_keys_read_the_listing() {
+        let body = "<ListBucketResult><Contents><Key>a</Key></Contents><Contents><Key>b</Key></Contents></ListBucketResult>";
+        assert_eq!(goes_keys(body), vec!["a", "b"]);
+    }
+
+    #[test]
+    fn goes_live_rejects_unknown_satellite() {
+        let lines = goes_live_lines("g99 FDCF", 3);
+        assert_eq!(lines.len(), 1);
+        assert!(lines[0].starts_with("absent — unknown satellite"));
+    }
+
+    #[test]
+    fn goes_live_rejects_unknown_product() {
+        let lines = goes_live_lines("g18 XYZ", 3);
+        assert_eq!(lines.len(), 1);
+        assert!(lines[0].starts_with("absent — unknown product"));
     }
 }

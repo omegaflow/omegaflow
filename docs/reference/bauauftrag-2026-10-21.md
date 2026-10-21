@@ -59,6 +59,15 @@ Bau-Status nicht. Kein `absent`/`blockiert` als Ersatz für Bau.
 Nicht gebaut, weil gemessen unbrauchbar: DDG Lite (Challenge), Mojeek (403/Captcha),
 Startpage („Blocked"), Yandex (Captcha), LibreX (301/000), 4get.ca (503).
 
+## Live-Arme (GOES / Hunga Tonga)
+
+`--goes-live <g18|g19> [FDCF|AODF|GLM]` ist der allgemeine Live-Arm: er listet
+das neueste NOAA-S3-Objekt des Tages je Produkt (keyless) und gibt URL, Key und
+Kadenz aus. Die Hunga-Tonga-Probe
+(`tools/measure/src/bin/hunga_tonga_netz_probe.rs`) bleibt der fachliche
+Konsument; die S3-Listung selbst gehört nicht mehr in einen Einzel-Probe-Silo.
+`--live` dort kann den Arm aufrufen.
+
 ## Veröffentlichte Assets (2026-10-21, `gh release upload`)
 
 | Tag | Asset | Bytes | sha256 |
