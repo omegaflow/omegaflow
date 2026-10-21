@@ -1799,12 +1799,19 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     Some("measured") => TauSource::Measured,
                     Some("derived") => TauSource::Derived,
                     Some("pending") => TauSource::Pending,
-                    _ => TauSource::Pending,
+                    _ => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!(
+                                "field {} carries no tau_src (measured|derived|pending)",
+                                parts[1]
+                            ),
+                        );
+                        continue;
+                    }
                 };
-                let (abs_index, adv_index, extras_start) = match parts.get(7).copied() {
-                    Some("measured" | "derived" | "pending") => (8, 9, 10),
-                    _ => (7, 8, 9),
-                };
+                let (abs_index, adv_index, extras_start) = (8, 9, 10);
                 let absorption: f64 = match parts.get(abs_index).map(|s| s.parse()) {
                     Some(Ok(v)) => v,
                     Some(Err(_)) => continue,
@@ -2891,16 +2898,20 @@ pub fn parse_field_config(parts: &[&str]) -> Option<(u8, Option<u8>, f64, f64, f
         Ok(v) if v > 0.0 => v,
         _ => return None,
     };
-    let absorption: f64 = if parts.len() > 7 {
-        match parts[7].parse() {
+    let (abs_index, adv_index) = match parts.get(7).copied() {
+        Some("measured" | "derived" | "pending") => (8, 9),
+        _ => (7, 8),
+    };
+    let absorption: f64 = if parts.len() > abs_index {
+        match parts[abs_index].parse() {
             Ok(v) => v,
             Err(_) => return None,
         }
     } else {
         SLOT_ABSENT
     };
-    let advection: f64 = if parts.len() > 8 {
-        match parts[8].parse() {
+    let advection: f64 = if parts.len() > adv_index {
+        match parts[adv_index].parse() {
             Ok(v) => v,
             Err(_) => return None,
         }
@@ -3140,8 +3151,8 @@ mod tests {
     }
 
     #[test]
-    fn field_nine_token_is_legacy_pending() {
-        let content = "url https://example.org/x\nttl 60\nat sun frame=barycenter\nfield v v inverse-square em W/m2 60 0.0 0.0\n";
+    fn field_explicit_pending_is_carried() {
+        let content = "url https://example.org/x\nttl 60\nat sun frame=barycenter\nfield v v inverse-square em W/m2 60 pending 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1);
         let field = s[0]
@@ -3155,7 +3166,7 @@ mod tests {
         assert_eq!(
             field.tau_src,
             TauSource::Pending,
-            "the 9-token form is migration input; it must not claim a measured tau"
+            "an explicit pending tau must not claim a measured tau"
         );
     }
 
@@ -3204,7 +3215,7 @@ mod tests {
 
     #[test]
     fn compiler_directive_is_read_into_source_config() {
-        let content = "url https://example.org/x\nttl 60\nat sun frame=barycenter\ncompiler tools/harvest/src/bin/x.rs\nfield v v inverse-square em W/m2 60 0.0 0.0\n";
+        let content = "url https://example.org/x\nttl 60\nat sun frame=barycenter\ncompiler tools/harvest/src/bin/x.rs\nfield v v inverse-square em W/m2 60 pending 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1);
         assert_eq!(
@@ -3352,7 +3363,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             vec![(Some(1), "Pa".to_string())],
             "seismic-body keeps channel 1 untouched"
         );
-        let advective = format!("{head}field probe probe patch-levy advective m/s 60 0.0 0.0\n");
+        let advective = format!("{head}field probe probe patch-levy advective m/s 60 pending 0.0 0.0\n");
         let adv_desc = descriptor_from_axes(
             "primary",
             "mass",
@@ -3904,7 +3915,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             "absent advection must not read as 0.0"
         );
 
-        let full = split_directive("field x y inverse-square em nT 3600 0.0 0.0");
+        let full = split_directive("field x y inverse-square em nT 3600 pending 0.0 0.0");
         let (_, _, _, absorption, advection) = parse_field_config(&full).unwrap();
         assert_eq!(absorption, 0.0, "a declared 0.0 stays the measured value");
         assert_eq!(advection, 0.0, "a declared 0.0 stays the measured value");
@@ -3960,7 +3971,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         );
 
         let kind_as_force = "url https://example.com/q.bin\nttl 604800\n\
-                             field qkey qname inverse-square mass kg 3600 0.0 0.0\n";
+                             field qkey qname inverse-square mass kg 3600 pending 0.0 0.0\n";
         assert_eq!(
             field_of(kind_as_force),
             None,
@@ -4421,7 +4432,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         let matching = parse_sources(
             "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n\
              gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\nmax_degree 10\n\
-             field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 0.0 0.0 norm:fully_normalized\n",
+             field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 pending 0.0 0.0 norm:fully_normalized\n",
         );
         assert_eq!(matching.len(), 1);
         assert!(matching[0].head.is_some());
@@ -4434,7 +4445,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         let contradicting = parse_sources(
             "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n\
              gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\nmax_degree 10\n\
-             field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 0.0 0.0 norm:unnormalized\n",
+             field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 pending 0.0 0.0 norm:unnormalized\n",
         );
         assert_eq!(contradicting.len(), 1);
         assert!(
