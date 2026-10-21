@@ -4,15 +4,21 @@
 # auf einer Seite kein Wert, bleibt die Spalte offen.
 #
 #   bin/bracket <datei|url> --at <iso>
-#   bin/bracket <datei|url> --from <iso> --to <iso> [--exact]
+#   bin/bracket <datei|url> --from <iso> --to <iso> [--exact | --expect]
 #
 # Eingabe: Text/CSV, je Zeile `<zeit> <wert> [<wert> ...]`; die Zeit ist Unix
 # oder ISO-8601 (Datum, optionale Uhrzeit, optional Z/±HH:MM), Trennzeichen
 # sind Leerraum und/oder Komma. Kopf- und Kommentarzeilen werden übersprungen.
 # Mehrere Wertspalten werden einzeln geklammert.
 #
-# --exact zählt für die Zeilenzahl nur Sätze im Fenster from..to; geklammert
-# wird weiterhin mit den echten Nachbarn außerhalb der Lücke.
+# --exact zählt für die Zeilenzahl nur Sätze im halboffenen Fenster [from, to)
+# und nennt zusätzlich erwartet/vorhanden/fehlend. Geklammert wird weiterhin
+# mit den echten Nachbarn außerhalb der Lücke. Die Kadenz ist der Median der
+# echten Zeitabstände, bevorzugt aus Nachbarn außerhalb des Fensters, sonst
+# aus der ganzen Datei. Ohne bestimmbare Kadenz: `erwartet absent`.
+#
+# --expect gibt nur die Erwartung aus, ohne Spaltenklammer. In die Lücke wird
+# kein Wert gesetzt und nichts interpoliert.
 set -u
 
 # Zahlen sind Dezimalpunkte, unabhängig von der Locale des Aufrufers.
@@ -21,7 +27,7 @@ export LC_ALL
 
 usage() {
     echo "bracket: usage: bin/bracket <datei|url> --at <iso>" >&2
-    echo "       bin/bracket <datei|url> --from <iso> --to <iso> [--exact]" >&2
+    echo "       bin/bracket <datei|url> --from <iso> --to <iso> [--exact | --expect]" >&2
 }
 die2() { echo "bracket: $*" >&2; exit 2; }
 
@@ -32,6 +38,7 @@ from_set=0
 to_set=0
 at_set=0
 exact=0
+expect=0
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -46,6 +53,8 @@ while [ $# -gt 0 ]; do
             to_raw="$2"; to_set=1; shift 2 ;;
         --exact)
             exact=1; shift ;;
+        --expect)
+            expect=1; shift ;;
         -h|--help)
             usage; exit 0 ;;
         --)
@@ -73,6 +82,10 @@ else
     die2 "entweder --at oder --from und --to angeben"
 fi
 
+if [ "$expect" -eq 1 ] && [ "$at_set" -eq 1 ]; then
+    die2 "--expect braucht --from und --to"
+fi
+
 tmp="$src"
 cleanup=0
 case "$src" in
@@ -91,7 +104,7 @@ esac
 # awk macht die eigentliche Arbeit: Zeiten werden (auch ohne gawk-mktime)
 # selbst nach UTC gerechnet, die Nachbarn streng außerhalb der Lücke gesucht.
 awk -v src="$src" -v from_raw="$from_raw" -v to_raw="$to_raw" \
-    -v exact="$exact" '
+    -v exact="$exact" -v expect="$expect" -v at_set="$at_set" '
 function trim(s) {
     gsub(/^[ \t\r\n]+/, "", s)
     gsub(/[ \t\r\n]+$/, "", s)
@@ -162,6 +175,31 @@ function fmtsec(x,   s) {
     sub(/[.]$/, "", s)
     return s "s"
 }
+function median_gap(   n, i, j, x, d) {
+    n = 0
+    for (i = 1; i < nrows; i++) {
+        d = tval[i + 1] - tval[i]
+        if (d <= 0) continue
+        if (tval[i + 1] <= ft || tval[i] >= tt) {
+            n++; gap[n] = d
+        }
+    }
+    if (n == 0) {
+        for (i = 1; i < nrows; i++) {
+            d = tval[i + 1] - tval[i]
+            if (d <= 0) continue
+            n++; gap[n] = d
+        }
+    }
+    if (n == 0) return 0
+    for (i = 2; i <= n; i++) {
+        x = gap[i]; j = i - 1
+        while (j >= 1 && gap[j] > x) { gap[j + 1] = gap[j]; j-- }
+        gap[j + 1] = x
+    }
+    if (n % 2 == 1) return gap[(n + 1) / 2]
+    return (gap[n / 2] + gap[n / 2 + 1]) / 2
+}
 BEGIN {
     perr = 0
     ft = parse_time(from_raw)
@@ -215,12 +253,41 @@ END {
         exit 2
     }
     cnt = nrows
-    if (exact) {
+    if (exact || expect) {
         cnt = 0
-        for (i = 1; i <= nrows; i++)
-            if (tval[i] >= ft && tval[i] <= tt) cnt++
+        if (at_set) {
+            for (i = 1; i <= nrows; i++)
+                if (tval[i] == ft) cnt++
+        } else {
+            for (i = 1; i <= nrows; i++)
+                if (tval[i] >= ft && tval[i] < tt) cnt++
+        }
+    }
+    cad = 0
+    en = 0
+    if ((exact || expect) && !at_set) {
+        cad = median_gap()
+        if (cad > 0) {
+            en = int((tt - ft) / cad + 0.000001)
+            if (en < 0) en = 0
+        }
+    }
+    if (expect) {
+        if (cad <= 0)
+            printf "bracket: erwartet absent\n"
+        else
+            printf "bracket: erwartet %d (kadenz %s), vorhanden %d, fehlend %d\n", \
+                en, fmtsec(cad), cnt, en - cnt
+        exit 0
     }
     printf "bracket: %s %d Zeilen, Lücke %s..%s (%s)\n", src, cnt, from_raw, to_raw, fmtsec(tt - ft)
+    if (exact && !at_set) {
+        if (cad <= 0)
+            printf "bracket: erwartet absent\n"
+        else
+            printf "bracket: erwartet %d (kadenz %s), vorhanden %d, fehlend %d\n", \
+                en, fmtsec(cad), cnt, en - cnt
+    }
 
     for (c = 1; c <= maxc; c++) {
         bi = 0; ai = 0; bt = 0; atime = 0
