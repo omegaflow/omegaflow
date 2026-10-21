@@ -184,6 +184,8 @@ mod perplexity;
 mod playwright;
 #[path = "archive_search/pool.rs"]
 mod pool;
+#[path = "archive_search/profile.rs"]
+mod profile;
 #[path = "archive_search/psychporta.rs"]
 mod psychporta;
 #[path = "archive_search/pubchem.rs"]
@@ -514,6 +516,10 @@ fn flag_mode(arg: &str) -> Option<Mode> {
     }
 }
 
+fn arm_mode(name: &str) -> Option<Mode> {
+    flag_mode(&format!("--{name}"))
+}
+
 impl Mode {
     fn label(self) -> &'static str {
         match self {
@@ -588,6 +594,16 @@ fn main() {
     let mut report_path: Option<String> = None;
     let mut timings = false;
     let mut proxy: Option<String> = None;
+    let mut profile_arg: Option<String> = None;
+    let mut list_profiles = false;
+    let mut cli_group: Option<String> = None;
+    let mut since_set = false;
+    let mut until_set = false;
+    let mut type_set = false;
+    let mut language_set = false;
+    let mut max_set = false;
+    let mut stop_set = false;
+    let mut stop_cli_value: Option<usize> = None;
 
     let mut i = 0;
     while i < args.len() {
@@ -638,6 +654,19 @@ fn main() {
                     }
                 }
             }
+            "--profile" => {
+                i += 1;
+                match args.get(i) {
+                    Some(path) if !path.starts_with('-') && !path.trim().is_empty() => {
+                        profile_arg = Some(path.clone())
+                    }
+                    _ => {
+                        eprintln!("archive_search: --profile needs a file or a profile name");
+                        std::process::exit(2);
+                    }
+                }
+            }
+            "--list-profiles" => list_profiles = true,
             "--playwright" => {
                 i += 1;
                 if let Some(u) = args.get(i) {
@@ -686,7 +715,10 @@ fn main() {
             "--since" => {
                 i += 1;
                 match args.get(i).and_then(|value| filters::parse_since(value)) {
-                    Some(date) => filter_set.since = Some(date),
+                    Some(date) => {
+                        filter_set.since = Some(date);
+                        since_set = true;
+                    }
                     None => {
                         eprintln!("archive_search: --since needs YYYY or YYYY-MM-DD");
                         std::process::exit(2);
@@ -696,7 +728,10 @@ fn main() {
             "--until" => {
                 i += 1;
                 match args.get(i).and_then(|value| filters::parse_until(value)) {
-                    Some(date) => filter_set.until = Some(date),
+                    Some(date) => {
+                        filter_set.until = Some(date);
+                        until_set = true;
+                    }
                     None => {
                         eprintln!("archive_search: --until needs YYYY or YYYY-MM-DD");
                         std::process::exit(2);
@@ -707,7 +742,8 @@ fn main() {
                 i += 1;
                 match args.get(i) {
                     Some(kind) if !kind.trim().is_empty() => {
-                        filter_set.kind = Some(kind.trim().to_ascii_lowercase())
+                        filter_set.kind = Some(kind.trim().to_ascii_lowercase());
+                        type_set = true;
                     }
                     _ => {
                         eprintln!("archive_search: --type needs article|preprint|dataset|book|thesis|...");
@@ -719,7 +755,8 @@ fn main() {
                 i += 1;
                 match args.get(i) {
                     Some(code) if filters::valid_language(code) => {
-                        filter_set.language = Some(code.to_ascii_lowercase())
+                        filter_set.language = Some(code.to_ascii_lowercase());
+                        language_set = true;
                     }
                     _ => {
                         eprintln!("archive_search: --language needs an ISO 639-1 code (two letters)");
@@ -765,7 +802,10 @@ fn main() {
             "--group" => {
                 i += 1;
                 match args.get(i) {
-                    Some(name) if groups::valid(name) => net::set_all_group(name),
+                    Some(name) if groups::valid(name) => {
+                        cli_group = Some(name.clone());
+                        net::set_all_group(name);
+                    }
                     Some(name) => {
                         eprintln!("archive_search: unknown group {name} (astro|literature|web|data|all)");
                         std::process::exit(2);
@@ -778,7 +818,9 @@ fn main() {
             }
             "--stop" => {
                 i += 1;
+                stop_set = true;
                 if let Some(n) = args.get(i).and_then(|s| s.parse().ok()) {
+                    stop_cli_value = Some(n);
                     net::set_all_stop(n);
                 }
             }
@@ -843,6 +885,7 @@ fn main() {
             }
             "--max" => {
                 i += 1;
+                max_set = true;
                 if let Some(n) = args.get(i).and_then(|s| s.parse().ok()) {
                     max_results = n;
                 }
@@ -896,6 +939,79 @@ fn main() {
         i += 1;
     }
 
+    let profile = match profile_arg.as_deref() {
+        Some(arg) => match profile::load(arg) {
+            Ok(profile) => Some(profile),
+            Err(err) => {
+                eprintln!("archive_search: profile {err}");
+                std::process::exit(2);
+            }
+        },
+        None => None,
+    };
+    if list_profiles {
+        match profile::list() {
+            Ok(items) => {
+                for (name, item) in items {
+                    let arms = match &item.arms {
+                        Some(arms) => arms.len().to_string(),
+                        None => "-".to_string(),
+                    };
+                    let max = match item.max {
+                        Some(max) => max.to_string(),
+                        None => "-".to_string(),
+                    };
+                    let stop = match item.stop {
+                        Some(stop) => stop.to_string(),
+                        None => "-".to_string(),
+                    };
+                    out!(
+                        "{}  group={}  arms={}  max={}  stop={}",
+                        name,
+                        item.group.as_deref().unwrap_or("-"),
+                        arms,
+                        max,
+                        stop
+                    );
+                }
+            }
+            Err(err) => {
+                eprintln!("archive_search: profiles {err}");
+                std::process::exit(2);
+            }
+        }
+        return;
+    }
+    if let Some(item) = &profile {
+        let cli = profile::Defaults {
+            group: cli_group.clone(),
+            since: if since_set { filter_set.since.clone() } else { None },
+            until: if until_set { filter_set.until.clone() } else { None },
+            kind: if type_set { filter_set.kind.clone() } else { None },
+            language: if language_set {
+                filter_set.language.clone()
+            } else {
+                None
+            },
+            max: if max_set { Some(max_results) } else { None },
+            stop: if stop_set { stop_cli_value } else { None },
+        };
+        let effective = profile::merge(cli, item);
+        if let Some(group) = &effective.group {
+            net::set_all_group(group);
+        }
+        if let Some(max) = effective.max {
+            max_results = max;
+        }
+        if let Some(stop) = effective.stop {
+            net::set_all_stop(stop);
+        }
+        filter_set.since = effective.since;
+        filter_set.until = effective.until;
+        filter_set.kind = effective.kind;
+        filter_set.language = effective.language;
+    }
+
     if let Some(selected) = net::select_proxy(
         proxy.as_deref(),
         env::var("OMEGAFLOW_PROXY").ok().as_deref(),
@@ -914,6 +1030,25 @@ fn main() {
         }
     }
     filters::set(filter_set);
+
+    if modes.is_empty() {
+        if let Some(item) = &profile {
+            if let Some(arms) = &item.arms {
+                for arm in arms {
+                    match arm_mode(arm) {
+                        Some(mode) => modes.push(mode),
+                        None => {
+                            let name = item.name.as_deref().unwrap_or("profile");
+                            eprintln!(
+                                "archive_search: profile {name} names unknown arm {arm}"
+                            );
+                            std::process::exit(2);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     if modes.is_empty() {
         if cache_clear {
@@ -2205,6 +2340,9 @@ fn usage() {
     );
     eprintln!(
         "refresh:  OMEGAFLOW_<KEY>_CMD   (the command writes the key to stdout, cached for the process and never printed; e.g. OMEGAFLOW_CORE_API_KEY_CMD)"
+    );
+    eprintln!(
+        "profile:  --profile <name|file> [--list-profiles]   (JSON defaults for group, arms, since, until, type, language, max, stop; explicit flags win)"
     );
     eprintln!();
     eprintln!(
