@@ -2,7 +2,7 @@
   title: Sources-Lizenzmap — NC ist frei, 55 von 63 LOCK lösen sich (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: cd15be2d51614ecd02a85231cfba5efb9fdae24acf088937b07311a1c342b927
+  sha256: 68efc1e40cc23bf9a29ec293fa6580f3e4b1a127d668a54eea4765254d9f0a61
   status: live
   owner: future
   ack: future 2026-10-21T15:45Z
@@ -57,22 +57,38 @@ und REGARDS nicht.
   `naoj-copyright`, `10.11575/AFYX-M516`, `reviewed-2026-10-20` (8 —
   **Prüfdatum, kein Term**).
 
-## Die Ersetzungen (Vorschlag, noch nicht geschrieben)
+## Die Ersetzungen (geschrieben 2026-10-21)
 
 - `per-service-terms` → die gemessene Lizenz je Block (`PD-USGov` für
-  IRSA/ExoFOP/Census/SSD, `gebco-terms`, `attribution` für DC.g-vo/ORNL).
+  IRSA/ExoFOP/Census/SSD, `gebco-terms`, `attribution` für DC.g-vo/ORNL,
+  `dlr-license`, `fingrid-open`).
 - `vires-esa-data-terms` → `vires-esa-attribution`.
 - `wdcb-sep-policy` → `wdcb-nc` (NC, frei für uns).
 - `reviewed-2026-10-20` → `stand`-Feld, nicht `terms`; die echte Lizenz aus
   dem Block nachziehen.
 - Die 22 Unbekannten: messen, dann ersetzen oder `LOCK` (nur auth-gated).
 
-## CDN-Regel
+## Browser-Messung der 6 LOCK (2026-10-21)
 
-- **frei:** CDN-Asset erlaubt, Lizenz + Attribution im Block.
-- **LOCK(auth):** **kein** CDN-Asset; `url` = Live-API (nicht auth) oder
-  **Domain** (auth-gated). Kein Release-Upload.
+| Quelle | Browser-Befund | Zugang |
+|---|---|---|
+| IEEG | App ohne Termseite; frühere Browser-Messung: Registrierungs-Terms mit Kopier-/Verteilverbot | **LOCK** |
+| PRADAN | „Copyright © 2020-2025 ISTRAC. All Rights Reserved." + Login | **LOCK** |
+| TNS | 403 Forbidden, keine Lizenz | **LOCK** |
+| Babamul | kein Lizenztext | **LOCK** |
+| ILRS/EDC | Login/Register, keine Lizenz | **LOCK** |
+| Lasair | Copyright Edinburgh/QUB, „all rights reserved" | **LOCK** |
+| CDDIS | Earthdata „full and open sharing" | **frei** |
+| REGARDS | keine Termseite messbar | **pending** |
 
-**Status:** Map gemessen; der Register-Edit läuft in Chargen mit
-`source_validate` + `register_sort`. Die 7 auth-LOCK sind die einzigen, die
-`LOCK` behalten.
+## CDN-Entfernung (2026-10-21)
+
+- **IEEG:** 120 `*_ieeg.bin` auf `openneuro.org` — Entfernung läuft.
+- **Lasair:** `skydirections.bin` entfernt; `skydirection-cdn.yml` ohne
+  Lasair-Arm.
+- **CDDIS:** frei, Assets bleiben.
+- **PRADAN/TNS/Babamul/ILRS:** keine CDN-Assets, keine dedizierten Jobs.
+- **`openneuro-cdn.yml`:** Guard entfernt `*_ieeg.bin` nach dem Upload.
+
+**Status:** 56 frei, 6 LOCK, 1 pending; Register-Edit geschrieben; CDN für
+IEEG/Lasair bereinigt, Guard aktiv.
