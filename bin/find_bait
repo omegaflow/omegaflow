@@ -1,0 +1,203 @@
+#!/bin/sh
+set -u
+export LC_ALL=C
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+bait="$root/bin/bait"
+find="$root/bin/find"
+bin="$root/target/release/archive_search"
+
+usage() {
+    cat >&2 <<'EOF'
+find_bait: usage: bin/find_bait <datei> --engine <kanal> --top N [--near <abs|N%>] [--pdf] [--header "a,b,c"] [--fits "K=V,K=V"] [--url <ziel>]
+  <datei>       Köderquelle; header/value/hex kommen aus bin/bait
+  --engine      Suchkanal für bin/find (Pflicht, kein Default)
+  --top N       max. N Kandidaten (Pflicht, kein Default)
+  --header      Spaltenkopf überschreiben, wenn der Sniffer keinen findet
+  --near        Toleranz, unverändert an bin/find
+  --pdf         PDF-Suche, unverändert an bin/find
+  --fits        FITS-Schlüssel, unverändert an bin/find
+  --url         direkter Kandidat statt Suche, unverändert an bin/find
+EOF
+    exit 2
+}
+
+die2() { echo "find_bait: $*" >&2; exit 2; }
+die3() { echo "find_bait: $*" >&2; exit 3; }
+
+src=""
+engine=""
+top=""
+near=""
+header_opt=""
+fits=""
+pdf=0
+direct=""
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --engine) [ $# -ge 2 ] && [ -n "$2" ] || usage; engine="$2"; shift 2 ;;
+        --top) [ $# -ge 2 ] && [ -n "$2" ] || usage; top="$2"; shift 2 ;;
+        --near) [ $# -ge 2 ] && [ -n "$2" ] || usage; near="$2"; shift 2 ;;
+        --header) [ $# -ge 2 ] && [ -n "$2" ] || usage; header_opt="$2"; shift 2 ;;
+        --fits) [ $# -ge 2 ] && [ -n "$2" ] || usage; fits="$2"; shift 2 ;;
+        --url) [ $# -ge 2 ] && [ -n "$2" ] || usage; direct="$2"; shift 2 ;;
+        --pdf) pdf=1; shift ;;
+        -h|--help) usage ;;
+        --)
+            shift
+            while [ $# -gt 0 ]; do
+                [ -z "$src" ] || die2 "nur eine Datei"
+                src="$1"
+                shift
+            done
+            ;;
+        -*) die2 "unbekannte Option: $1" ;;
+        *) [ -z "$src" ] || die2 "nur eine Datei"; src="$1"; shift ;;
+    esac
+done
+
+[ -n "$src" ] || usage
+[ -n "$engine" ] || [ -n "$direct" ] || die2 "fehlt: --engine <kanal> (oder --url <ziel>)"
+[ -n "$top" ] || die2 "fehlt: --top N"
+case "$top" in
+    ''|*[!0-9]*) usage ;;
+esac
+[ "$top" -gt 0 ] || usage
+[ -f "$src" ] && [ -r "$src" ] || die2 "Datei nicht lesbar: $src"
+[ -x "$bait" ] || die2 "$bait fehlt"
+[ -x "$find" ] || die2 "$find fehlt"
+[ -x "$bin" ] || die2 "$bin fehlt — erst bauen (cargo build --release -p omegaflow-utils --bin archive_search)"
+
+err="$(mktemp "${TMPDIR:-/tmp}/find_bait.XXXXXX.err")"
+trap 'rm -f "$err"' EXIT
+out="$("$bait" "$src" 2>"$err")"
+rc=$?
+if [ "$rc" -ne 0 ]; then
+    cat "$err" >&2
+    die3 "bait konnte aus $src keinen Köder ziehen (rc $rc)"
+fi
+
+parsed="$(printf '%s\n' "$out" | awk '
+    function score(v, key,    i, d, dot, isexp, s, iv) {
+        d = 0
+        for (i = 1; i <= length(key); i++)
+            if (substr(key, i, 1) ~ /[0-9]/) d++
+        dot = index(key, ".") > 0
+        isexp = index(key, "e") > 0 || index(key, "E") > 0
+        s = d * 10 + length(key)
+        if (dot) s += 15
+        if (!dot) {
+            s -= 40
+            iv = key + 0
+            if (iv >= 1900 && iv <= 2100) s -= 60
+        }
+        if (index(v, "±") > 0) s += 5
+        if (isexp) s -= 20
+        return s
+    }
+    /^bait header / { if (!have_header) { header = substr($0, 13); have_header = 1 } next }
+    /^bait unit / {
+        if (unit == "") {
+            u = substr($0, 11)
+            gsub(/^"|"$/, "", u)
+            unit = u
+        }
+        next
+    }
+    /^bait fits / { if (fits == "") fits = substr($0, 11); next }
+    /^bait hex-f64 / {
+        h = substr($0, 14)
+        gsub(/[ \t]/, "", h)
+        if (last != "" && hex[kidx[last]] == "") hex[kidx[last]] = h
+        next
+    }
+    /^bait value / {
+        v = substr($0, 12)
+        key = v
+        sub(/±.*/, "", key)
+        if (!(key in kidx)) {
+            nv++
+            val[nv] = v
+            keyof[nv] = key
+            kidx[key] = nv
+            hex[nv] = ""
+        }
+        last = key
+        next
+    }
+    END {
+        best = -999999
+        for (i = 1; i <= nv; i++) {
+            s = score(val[i], keyof[i])
+            if (s > best) { best = s; chosen = val[i]; chosenkey = keyof[i] }
+        }
+        print "header\t" header
+        print "unit\t" unit
+        print "fits\t" fits
+        print "value\t" chosen
+        print "hex\t" (chosen == "" ? "" : hex[kidx[chosenkey]])
+    }')"
+
+header="$(printf '%s\n' "$parsed" | sed -n 's/^header\t//p')"
+unit="$(printf '%s\n' "$parsed" | sed -n 's/^unit\t//p')"
+fits_sniffed="$(printf '%s\n' "$parsed" | sed -n 's/^fits\t//p')"
+value="$(printf '%s\n' "$parsed" | sed -n 's/^value\t//p')"
+hex="$(printf '%s\n' "$parsed" | sed -n 's/^hex\t//p')"
+
+[ -n "$fits" ] || fits="$fits_sniffed"
+
+header_from="sniff"
+if [ -n "$header_opt" ]; then
+    header="$header_opt"
+    header_from="--header"
+fi
+
+if [ -z "$header" ]; then
+    die3 "kein header — $src trägt keinen Spaltenkopf (fixed-width ohne Header?); mit --header \"a,b,c\" setzen"
+fi
+
+ncols="$(printf '%s\n' "$header" | awk -F, '{
+        for (i = 1; i <= NF; i++) {
+            c = $i
+            gsub(/^[ \t]+|[ \t]+$/, "", c)
+            if (c == "") exit 1
+        }
+        print NF
+    }')" || die3 "header unbrauchbar (leere Spalte): $header"
+
+hex_ok=0
+if [ -n "$hex" ]; then
+    hex_out="$("$bin" --sniff "$src" "pattern=$hex" 2>&1)"
+    hits="$(printf '%s\n' "$hex_out" | sed -n "s/^\(\[sniff\] \)\{0,1\}pattern $hex hits //p" | head -n 1)"
+    if [ -n "$hits" ]; then
+        hex_ok=1
+    fi
+fi
+
+printf 'find_bait: %s → header %s Spalten (%s)' "$src" "$ncols" "$header_from" >&2
+if [ -n "$value" ]; then
+    printf ', value %s' "$value" >&2
+else
+    printf ', value absent (nur header)' >&2
+fi
+if [ -n "$hex" ]; then
+    if [ "$hex_ok" -eq 1 ]; then
+        printf ', hex geprüft' >&2
+    else
+        printf ', hex nicht im lokalen Prefix (kein --hex)' >&2
+    fi
+fi
+[ -n "$unit" ] && printf ', unit %s' "$unit" >&2
+printf '\n' >&2
+
+set -- --header "$header"
+[ -n "$value" ] && set -- "$@" --value "$value"
+[ "$hex_ok" -eq 1 ] && set -- "$@" --hex "$hex"
+[ -n "$fits" ] && set -- "$@" --fits "$fits"
+[ -n "$near" ] && set -- "$@" --near "$near"
+[ "$pdf" -eq 1 ] && set -- "$@" --pdf
+[ -n "$engine" ] && set -- "$@" --engine "$engine"
+[ -n "$direct" ] && set -- "$@" --url "$direct"
+set -- "$@" --top "$top"
+
+exec "$find" "$@"
