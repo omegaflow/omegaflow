@@ -7,6 +7,14 @@
 -->
 # Geplant und nicht gebaut
 
+> **Nachtrag 2026-10-21:** Der Bauauftrag mit Staffel, Abnahmekriterien und
+> Key-Prüfung steht in `docs/reference/bauauftrag-2026-10-21.md`. Die Zeile
+> „Key-gebunden" unten war falsch: `bin/secrets_keys` listet **190 Key-Namen
+> mit Wert**, darunter `BABAMUL_API_TOKEN`, `IEEG_USER/PASS`,
+> `PRADAN_USER/PASS`, `TNS_API_KEY`, `IRSA_USER/PASS`, `EARTHDATA_EDL_TOKEN`
+> und `LASAIR_LSST_TOKEN`. Die 402/429/400 der Sucharme sind Konto/Quota,
+> keine fehlenden Schlüssel.
+
 **Frage:** Was wurde in der Session, die die vielen Such-Arme und die
 Köder-Kette gebaut hat, **geplant und nicht zu Ende gebaut** — und was ist
 stattdessen passiert? Gemessen an den Dokumenten und Commits, nicht an der
