@@ -2,7 +2,7 @@
   title: Survey — Riss-Alternativen: fünf Taucher, offene Ersatzwege (2026-10-15)
   class: survey
   date: 2026-10-15
-  sha256: 5a742c74099e6c33c37b0990cd36c6e966208d4aa4183d6fd39424cd76475b01
+  sha256: ceaa379d1d4b9a5995b75aaa22abd2120a010b809f92f90664e73535dedadb45
   status: live
   see-also: phi/sources.φ docs/concepts/source-curation.md docs/handover/archiv/handover-2026-10-15-mountain-folge351.md docs/surveys/survey-2026-10-15-ketten-quellen-harter-lauf.md
 -->
@@ -44,7 +44,8 @@ Zeilen gemessen am 2026-10-15; keine Zahl kopiert.
   charge without any restriction"* (`bgi.obs-mip.fr`). **Kein Doppel-Register.**
 - Regionale offene Ergänzung: Zenodo `10.5281/zenodo.11212541` (NE-China-Schwere,
   CC-BY-4.0), Figshare `10.6084/m9.figshare.20073575` (CC-BY-4.0).
-- Der gated CGrav/CEIC bleibt als `riss`/`pending` benannt (keine Notwendigkeit).
+- Der gated CGrav/CEIC bleibt als `pending` benannt (Zugang gated, keine zwei
+  vergleichbaren Messungen; kein `riss` — keine Notwendigkeit).
 
 ## 4 · MOSWOC-Kp (restricted) → **GFZ-Kp ist der offene Primär-Ursprung**
 - **Alternative:** **GFZ Potsdam** (der Produzent): JSON `https://kp.gfz.de/app/json/?start=…&end=…&index=Kp&status=def,nowcast`, def. WDC-Archiv
@@ -97,7 +98,7 @@ Zeilen gemessen am 2026-10-15; keine Zahl kopiert.
 
 ## Register-Stand / was der Baum noch braucht
 
-- **Neu zu registrieren (offen):** ICGEM-GOCE-Schwere (`10.5880/ICGEM.2019.004`),
+- **Neu zu registrieren (`pending`, nicht `absent`):** ICGEM-GOCE-Schwere (`10.5880/ICGEM.2019.004`),
   NSDB (`nsdb.imcce.fr`), BAS-IMAGE-Boundaries (OGL v3), DMSP-SSJ
   (`10.5281/zenodo.3373812`); je Blockform (Mycelium `url`/`origin`/`compiler`) +
   Mountain-`terms`.

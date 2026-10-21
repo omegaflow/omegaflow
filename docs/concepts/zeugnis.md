@@ -2,7 +2,7 @@
   title: ZEUGNIS — die Identitäts-Röhre: die Zeugin und ihre Zeugen
   class: concept
   date: 2026-09-06
-  sha256: 5a9aaa36aeb6f0fe1db49b208128fa8e72438a2aac32a6f4d97ed82b38f57e8a
+  sha256: 4ce5f469fe6be03d1f3ac1336f1eb9103be1f688fd1c87a532251441b5c9aa70
   status: live
   see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/archiv/remove-bias.md docs/concepts/archivar-mathematikerin.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md
 -->
@@ -314,8 +314,9 @@ hier skizziert ist, auf dem Sinn, der sie bereits trägt.
 - **Entfernungs-Bereiche** aus der Parallax-Reichweite (die c/π-Grenze der
   Tafel) und der Redshift-Domäne (§6) — nicht aus einem Rundungs-Wert.
 - Ein unbekannter Schwellenwert ist nie ein erfundener Schnitt — und nach
-  der Disziplin-Änderung (Handover Abschnitt F) auch kein `pending`: er
-  ist `absent`, bis seine Messung gebaut ist. Abschnitt 14 folgt dem.
+  der Disziplin-Änderung (Handover Abschnitt F) auch keine Vertagung: er
+  ist `pending`, bis seine Messung gebaut ist (`absent` nur, wenn die
+  Nicht-Existenz belegt ist; Status-Audit 2026-10-21). Abschnitt 14 folgt dem.
 
 ## 12. Name = Implementation — die Rollen und ihre gebauten Entsprechungen
 
@@ -361,8 +362,9 @@ vollwertige Messung — in beiden Formen des Schweigens (§7) getrennt benannt.
   nie Namens-Zusammenführung ohne Winkel-Beweis.
 - Keine probability als Label: der Posterior bleibt Posterior.
 - Kein Schweigen verschmolzen: `absent` und ehrliche Leere sind zwei Worte.
-- Kein `pending`, kein Deferral (Handover Abschnitt F, bindend): ein
-  fehlender Wert ist `absent` — ein vollständiger Befund. Der Mechanismus
+- Kein Deferral (Handover Abschnitt F, bindend): ein fehlender Wert ist
+  `pending`, solange die Nicht-Existenz nicht belegt ist; `absent` nur bei
+  belegter Nicht-Existenz — ein vollständiger Befund. Der Mechanismus
   wird komplett gebaut, nie als "größere Stufe" vertagt.
 
 ## 14. Die Bau-Linie — alles wird gebaut, nichts wird vertagt
@@ -383,12 +385,13 @@ Bau-Linie, jede Stufe benannt, jede komplett zu bauen:
    Staubmaske gebaut ist.
 3. Die GW-/Neutrino-/CR-Skymap-Routen als Zeugen der neun Sinne — die
    Routen werden gebaut; wo der Teilchen-Kanal in der Force-Registry noch
-   keinen Namen trägt, ist der Wert `absent` bis der Name gebaut ist.
+   keinen Namen trägt, ist der Wert `pending` bis der Name gebaut ist.
 4. Der CDN-Manifestations-Weg des Vlieses — gebaut (`vlies-density-cdn.yml`).
 
 Zwischen den Stufen gibt es keine "benannt offen"-Wartezone. Wo eine Stufe
-noch nicht gebaut ist, ist ihr Wert `absent` — und ein `absent` ist ein
-vollständiger Befund, keine Lücke, keine Schuld.
+noch nicht gebaut ist, ist ihr Wert `pending` — der Wert existiert, die
+Ernte fehlt; `absent` nur, wo die Quelle den Wert nicht trägt. Keine Lücke,
+keine Schuld.
 
 ## 15. Was die ZEUGNIS trägt
 

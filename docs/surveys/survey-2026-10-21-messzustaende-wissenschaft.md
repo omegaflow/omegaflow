@@ -2,7 +2,7 @@
   title: Messzustände in Wissenschaft und Forschung — was null-echt, pending, absent und riss tragen (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: c5a5ed77a17d02b850a4c3574274523d0d2ddc2887a7841a7ec83662b5a033be
+  sha256: c5504f2a80a93ff8d9e8cea1904c98685f8c6d91a4959414b6dbd2aeb5744504
   status: live
   owner: future
   ack: future 2026-10-21T14:05Z
@@ -22,7 +22,7 @@ erkenntnistheorie,open-science,astronomie}.md`.
 
 ## 1 · Metrologie — „0 ist ein Wert, kein Zustand"
 
-- **`null-echt`** = gemessene 0, deren PDF die 0 einschließt und die eine
+- **`null-echt`** = gemessene 0 über n (n genannt), deren PDF die 0 einschließt und die eine
   dokumentierte „kompatibel mit 0"-Regel erfüllt (α berichtet). Exakt 0 ist bei
   kontinuierlichen Größen nicht beweisbar; bei Zählgrößen ist „0 Ereignisse"
   exakt (VIM 2.9/2.10/2.11; GUM D.3.5).
@@ -89,7 +89,7 @@ Modell, Systematik.
 | Zustand | Wissenschaftliche Bedingung | Hausregel |
 |---|---|---|
 | `pending` | nicht gemessen; `< L_D`; gemessen-nicht-berichtet; berichtet-nicht-zugänglich | Default; drei Formen |
-| `null-echt` | gemessen 0, PDF schließt 0 ein, α berichtet | Qualifier von `gemessen` |
+| `null-echt` | gemessen 0 über n, PDF schließt 0 ein, α berichtet | Qualifier von `gemessen` |
 | `absent` | Reichweite L + Power + Prior + positiver Nicht-Existenz-Beleg | selten; nie aus „nichts gefunden" |
 | `riss` | Vergleichbarkeit + Kettenausschluss + überlebt Budget-Revision | Qualifier von `gemessen` |
 | `declined` | unsere Entscheidung mit Owner/Datum/Grund | Achse 2 |

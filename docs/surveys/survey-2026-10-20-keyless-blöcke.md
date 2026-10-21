@@ -2,7 +2,7 @@
   title: Vier keyless Routen als Register-Vorschlag (2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: 51a324e547cbc73f8de1fb94229deab58087b94d9f21c427a2a06c52d613b84f
+  sha256: 1c3895efa083cdbee5b236d02ff4aa2d84436d9e2da15d2b38dbf96e4a84fbe3
   status: done
   see-also: phi/sources.φ
 -->
@@ -116,7 +116,7 @@ erste Zeile `2026-10-13 00:37`. Die ganze Datei wurde nicht geladen.
 - DSCOVR/ACE enden 2026-09-13 bzw. 2026-10-03; ein rollierender Block läuft
   heute ins Leere (1201). Die Route ist ein Archiv.
 - MEEO listet nur ein Teilarchiv 2018–2022; die NetCDF-Messfelder bleiben
-  `absent`, bis ein Objekt-Fetch/Compiler gebaut ist.
+  `pending` (nicht `absent`), bis ein Objekt-Fetch/Compiler gebaut ist.
 - USGS liefert die Werte, aber spaltenorientiert; ohne Format-Arm bleibt der
   direkte JSON-Block parser-def.
 - BPA ist bereits gebaut, aber nicht versioniert; das 4-Tage-Fenster ist keine

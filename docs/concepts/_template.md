@@ -22,8 +22,9 @@ Keine Behauptung ohne Messung; der Riss wird benannt, nicht geglättet.>
 
 ## Der Riss
 
-<Was zwischen Messung und Behauptung offen bleibt. Was fehlt, wird als `absent`
-oder `pending` benannt — nie als 0 erfunden.>
+<Was zwischen Messung und Behauptung offen bleibt. Was nicht gemessen ist, wird
+als `pending` geführt; `absent` nur, wo die Nicht-Existenz belegt ist — nie als
+0 erfunden.>
 
 ## Was daraus folgt
 

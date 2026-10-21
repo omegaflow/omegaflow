@@ -2,7 +2,7 @@
   title: Survey — Gap-Zensus 2026-10-16 (riss · pending · ungemessen)
   class: survey
   date: 2026-10-16
-  sha256: ec4b465fe812c14a6a5e36b0134e5ed5138f57ae35289b7e646c09e33e8af39c
+  sha256: 765fc095471bbab2d271789739c517c703b4eb36fcae4923600ab3326b424f46
   status: done
 -->
 # Survey — Gap-Zensus 2026-10-16: riss · pending · ungemessen
@@ -13,8 +13,14 @@ ehrlich, ungeglättet, jede Stelle benannt?
 **Begriffe** (0-Kanon, `docs/concepts/kybernetische-ethik.md:35`). `riss` = zwei unabhängige Linien,
 die sich weigern zu konvergieren — nie auf `absent`/`0.0` gemappt, nie gemittelt, als
 `VerdictWord::Riss` mit **beiden** Zeugen geknotet. `pending` = der Wert existiert, die Ernte fehlt
-(Register-Pflicht). `ungemessen` = nicht gemessen. `absent` = kein Wert (Option/None). `null-echt` =
-der Wert IST 0.0.
+(Register-Pflicht). `ungemessen` = nicht gemessen. `absent` = Nicht-Existenz belegt (Option/None).
+`null-echt` = der Wert IST 0.0, **0 über n gemessen**.
+
+**Nachtrag 2026-10-21 (Status-Audit).** Die Liste unten ist ein **Kandidaten-Register**, kein
+Riss-Urteil. Nach dem Dreischritt (Vergleichbarkeit · Kettenfehler ausgeschlossen · Daten wirklich
+verschieden) hat der Riss-Zensus (`survey-2026-10-21-riss-zensus-nach-test.md`) **0 Datenrisse**
+gefunden; neun Fälle sind `pending`, einer ist ein Begriffsriss. Die Einträge bleiben als
+Verdacht stehen, bis der Operator sie schließt.
 
 ## 1 · Register-Stand (die Maschine, `phi/`)
 `phi/sources.φ` (1,7 MB) trägt: **`pending` 1** (Z. 893, ion-neutral-friction rate), **`ausstehend`
@@ -22,7 +28,7 @@ der Wert IST 0.0.
 (ledger/index/witnesses/nrs/probes/ereignisse): **0 offen**. → Das Register ist nahezu geschlossen;
 **die Risse und Pendings liegen in der Prosa**, nicht in `phi`.
 
-## 2 · Riss-Register (Widerspruch, beide Zeugen benannt)
+## 2 · Riss-Kandidaten (Dreischritt offen)
 - **GIC-Kausaltreiber** (`docs/paper/gic-causal-driver.md`): zwei Zeugen konvergieren am Stundengrain
   nicht — yearly-round findet Bz→dB/dt über der Familien-Schranke, hardened-quarterly hält alle Zeilen
   darunter; die Pfeile sitzen am Lag-0/1-Rand, **kein Lag aufgelöst**; Estimator-Ground-Truth **NOT

@@ -1,7 +1,7 @@
 <!--
   title: Die sieben Sphären — die theoretischen Schnittmengen der kybernetischen Astrophysik
   class: concept
-  sha256: eb47f7c9d087d40d5c4bc185a6f52d45a312563603f7235393e360c7cd7e0945
+  sha256: 440f297eb0e461ec29beb9b89c31f2987360a3ebccfbd7f0cc9ffe3de712e9c5
 -->
 # Die sieben Sphären — die theoretischen Schnittmengen der kybernetischen Astrophysik
 
@@ -151,8 +151,8 @@ die Reinheit der Null beweist die Reinheit des Vakuums.**
   `EAR-A-3-RDR-OCCULTATIONS-V12.0` (`data/occlist.lbl`, 58 Spalten) trägt
   **keine** Δz-/vertical-/altitude-Spalte — nur X/Y-Koordinaten; auch der
   Nachfolger `smallbodiesoccultations 4.0` trägt kein Δz. Die Δz-Linie ist aus
-  diesem Katalog **absent**; sie braucht eine
-  Spektrum-/Lichtkurven-Quelle.
+  **beiden** geprüften Katalogen **absent** (n = 2: PDS V12.0, smallbodies
+  occultations 4.0); sie braucht eine Spektrum-/Lichtkurven-Quelle.
 
 ## Die Schnittmengen-Topologie
 
