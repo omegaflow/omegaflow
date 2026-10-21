@@ -320,6 +320,54 @@ fn test_extract_window_filters_by_epoch() {
 }
 
 #[test]
+fn test_surface_frame_without_alt_emits_no_sample() {
+    let mut src = source_fixture(
+        "nasa_power_t2m_axis_value_text",
+        vec![Extract::Field(field_fixture("t2m", 60.0))],
+    );
+    src.frame = Frame::Surface {
+        body_name: "earth".into(),
+        lat: 0.0,
+        lon: 0.0,
+        alt: None,
+    };
+    match extract(&src, "1700000000 285.1\n", 8.0e8, &fixture_lsk()) {
+        ExtractResult::Measurements(channels) => assert!(
+            channels.is_empty(),
+            "absent alt is no height — no sample may be manifested at 0 m"
+        ),
+        ExtractResult::WithEphemeris(channels, _) => assert!(
+            channels.is_empty(),
+            "absent alt is no height — no sample may be manifested at 0 m"
+        ),
+    }
+}
+
+#[test]
+fn test_surface_frame_with_alt_emits_the_measured_height() {
+    let mut src = source_fixture(
+        "nasa_power_t2m_axis_value_text",
+        vec![Extract::Field(field_fixture("t2m", 60.0))],
+    );
+    src.frame = Frame::Surface {
+        body_name: "earth".into(),
+        lat: 0.0,
+        lon: 0.0,
+        alt: Some(1234.0),
+    };
+    match extract(&src, "1700000000 285.1\n", 8.0e8, &fixture_lsk()) {
+        ExtractResult::Measurements(channels) => {
+            assert_eq!(channels.len(), 1);
+            match &channels[0].0.position {
+                super::Position::Surface { alt, .. } => assert_eq!(*alt, 1234.0),
+                _ => panic!("expected a Surface position"),
+            }
+        }
+        ExtractResult::WithEphemeris(..) => panic!("extract must be Measurements"),
+    }
+}
+
+#[test]
 fn test_first_where_picks_first_matching_row() {
     let mut fc = field_fixture("euv304_first", 60.0);
     fc.key = "value".into();
@@ -1101,7 +1149,7 @@ fn test_render_source_url_substitutions() {
             body_name: "body_test".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: "json".into(),
         channels: Vec::new(),
@@ -1393,7 +1441,7 @@ fn test_post_body_rendering() {
             body_name: "body_test".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: "json".into(),
         channels: Vec::new(),
@@ -1477,7 +1525,7 @@ fn test_csv_zip_post_body_resolves_secret() {
             body_name: "body_test".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: "csv_zip".into(),
         channels: Vec::new(),
@@ -4236,7 +4284,7 @@ fn test_parse_station_entries() {
             body_name: "earth".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: "json".into(),
         channels: Vec::new(),
@@ -4306,7 +4354,7 @@ fn test_parse_station_entries_flatten_filter() {
             body_name: "earth".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: "json".into(),
         channels: Vec::new(),
@@ -5396,7 +5444,7 @@ fn test_erddap_argo_map_extract() {
             body_name: "body_test".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: "json".into(),
         channels: Vec::new(),
@@ -6131,7 +6179,7 @@ fn test_anchor_body_agnostic() {
         body_name: "mars".into(),
         lat: 0.0,
         lon: 0.0,
-        alt: 0.0,
+        alt: Some(0.0),
     };
     let src = super::SourceConfig {
         ttl: 3600,
@@ -6306,7 +6354,7 @@ fn test_anchor_applies_declared_unit() {
         body_name: "mars".into(),
         lat: 0.0,
         lon: 0.0,
-        alt: 0.0,
+        alt: Some(0.0),
     };
     let src = super::SourceConfig {
         ttl: 3600,
@@ -8379,7 +8427,7 @@ fn test_query_admits_surface_sample_within_window() {
         body_name: "earth".into(),
         lat: 0.0,
         lon: 0.0,
-        alt: 0.0,
+        alt: Some(0.0),
     };
     let sample = super::anchor(
         &channel,
@@ -8863,7 +8911,7 @@ fn test_diagnose_no_samples() {
             body_name: "earth".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: "json".into(),
         channels: Vec::new(),
@@ -8995,7 +9043,7 @@ fn test_ci_body_verdict() {
             body_name: "earth".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: format.into(),
         channels: Vec::new(),
@@ -9335,7 +9383,7 @@ fn test_map_vel_unit_and_tau_key_override() {
             body_name: "earth".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: "json".into(),
         channels: Vec::new(),
@@ -9468,7 +9516,7 @@ fn test_parse_spectral_block() {
             assert_eq!(body_name, "earth");
             assert!((*lat - 19.82).abs() < 1e-12);
             assert!((*lon + 155.47).abs() < 1e-12);
-            assert_eq!(*alt, 0.0);
+            assert_eq!(*alt, Some(0.0));
         }
         other => {
             let _ = other;
@@ -9616,7 +9664,7 @@ fn test_fold_directive_parse_and_extract() {
             body_name: "earth".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: "json".into(),
         channels: Vec::new(),
@@ -10124,7 +10172,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
             body_name: "earth".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: "json".into(),
         channels: Vec::new(),
@@ -10333,7 +10381,7 @@ fn test_map_lat_sign_lon_sign() {
             body_name: "earth".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: "json".into(),
         channels: Vec::new(),
@@ -10462,7 +10510,7 @@ fn test_mag_type_gating() {
             body_name: "earth".into(),
             lat: 0.0,
             lon: 0.0,
-            alt: 0.0,
+            alt: Some(0.0),
         },
         format: "json".into(),
         channels: Vec::new(),

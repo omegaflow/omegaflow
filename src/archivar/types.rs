@@ -497,7 +497,7 @@ pub enum Frame {
         body_name: String,
         lat: f64,
         lon: f64,
-        alt: f64,
+        alt: Option<f64>,
     },
     Barycenter {
         body_name: String,

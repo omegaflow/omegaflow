@@ -190,7 +190,10 @@ pub fn raw_presence_gate(
             alt,
             body_name,
         } => {
-            let p = body_fixed_to_icrs(body_name, *lat, *lon, *alt, ctx.now, ctx.body_ephemerides)?;
+            let Some(alt) = *alt else {
+                return None;
+            };
+            let p = body_fixed_to_icrs(body_name, *lat, *lon, alt, ctx.now, ctx.body_ephemerides)?;
             (p[0], p[1], p[2])
         }
         Frame::Barycenter { body_name, scale } => {
@@ -2337,12 +2340,22 @@ pub fn main_flow() {
                             lat,
                             lon,
                             alt,
-                        } => Motion::Surface {
-                            body_name: body_name.clone(),
-                            lat: *lat,
-                            lon: *lon,
-                            alt: *alt,
-                        },
+                        } => {
+                            let Some(alt) = *alt else {
+                                eprintln!(
+                                    "spectral {}: frame carries no measured alt — the bin stays unmanifested",
+                                    url
+                                );
+                                let _ = ftx.send(empty(true));
+                                return;
+                            };
+                            Motion::Surface {
+                                body_name: body_name.clone(),
+                                lat: *lat,
+                                lon: *lon,
+                                alt,
+                            }
+                        }
                         Frame::Barycenter { body_name, scale } => Motion::Barycenter {
                             body_name: body_name.clone(),
                             scale: *scale,
@@ -2629,12 +2642,22 @@ pub fn main_flow() {
                             lat,
                             lon,
                             alt,
-                        } => Motion::Surface {
-                            body_name: body_name.clone(),
-                            lat: *lat,
-                            lon: *lon,
-                            alt: *alt,
-                        },
+                        } => {
+                            let Some(alt) = *alt else {
+                                eprintln!(
+                                    "emtf_impedance {}: frame carries no measured alt — the bin stays unmanifested",
+                                    url
+                                );
+                                let _ = ftx.send(empty(true));
+                                return;
+                            };
+                            Motion::Surface {
+                                body_name: body_name.clone(),
+                                lat: *lat,
+                                lon: *lon,
+                                alt,
+                            }
+                        }
                         Frame::Barycenter { body_name, scale } => Motion::Barycenter {
                             body_name: body_name.clone(),
                             scale: *scale,
@@ -2813,12 +2836,22 @@ pub fn main_flow() {
                             lat,
                             lon,
                             alt,
-                        } => Some(Motion::Surface {
-                            body_name: body_name.clone(),
-                            lat: *lat,
-                            lon: *lon,
-                            alt: *alt,
-                        }),
+                        } => {
+                            let Some(alt) = *alt else {
+                                eprintln!(
+                                    "jwst_spectra {}: frame carries no measured alt — the records stay unmanifested",
+                                    url
+                                );
+                                let _ = ftx.send(empty(true));
+                                return;
+                            };
+                            Some(Motion::Surface {
+                                body_name: body_name.clone(),
+                                lat: *lat,
+                                lon: *lon,
+                                alt,
+                            })
+                        }
                         Frame::Barycenter { body_name, scale } => Some(Motion::Barycenter {
                             body_name: body_name.clone(),
                             scale: *scale,
@@ -3474,12 +3507,23 @@ pub fn main_flow() {
                                 lat,
                                 lon,
                                 alt,
-                            } => Position::Surface {
-                                body_name: body_name.clone(),
-                                lat: *lat,
-                                lon: *lon,
-                                alt: *alt,
-                            },
+                            } => {
+                                let Some(alt) = *alt else {
+                                    eprintln!(
+                                        "{} {}: frame carries no measured alt — the bin stays unmanifested",
+                                        fmt,
+                                        source_name(&url)
+                                    );
+                                    let _ = ftx.send(empty(true));
+                                    return;
+                                };
+                                Position::Surface {
+                                    body_name: body_name.clone(),
+                                    lat: *lat,
+                                    lon: *lon,
+                                    alt,
+                                }
+                            }
                             Frame::Barycenter { body_name, scale } => Position::Barycenter {
                                 body_name: body_name.clone(),
                                 scale: *scale,
@@ -3582,12 +3626,23 @@ pub fn main_flow() {
                             lat,
                             lon,
                             alt,
-                        } => Position::Surface {
-                            body_name: body_name.clone(),
-                            lat: *lat,
-                            lon: *lon,
-                            alt: *alt,
-                        },
+                        } => {
+                            let Some(alt) = *alt else {
+                                eprintln!(
+                                    "{} {}: frame carries no measured alt — the records stay unmanifested",
+                                    fmt,
+                                    source_name(&url)
+                                );
+                                let _ = ftx.send(empty(true));
+                                return;
+                            };
+                            Position::Surface {
+                                body_name: body_name.clone(),
+                                lat: *lat,
+                                lon: *lon,
+                                alt,
+                            }
+                        }
                         Frame::Barycenter { body_name, scale } => Position::Barycenter {
                             body_name: body_name.clone(),
                             scale: *scale,
@@ -6146,11 +6201,14 @@ pub fn main_flow() {
                     alt,
                     body_name,
                 } => {
+                    let Some(alt) = *alt else {
+                        continue;
+                    };
                     if let Some(p) = body_fixed_to_icrs(
                         body_name,
                         *lat,
                         *lon,
-                        *alt,
+                        alt,
                         now,
                         &archive.body_ephemerides,
                     ) {
