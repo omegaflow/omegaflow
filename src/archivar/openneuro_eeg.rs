@@ -368,6 +368,7 @@ pub fn emit_channels(
             kernel,
             channel_ref: Some(channel_ref),
             tau,
+            tau_src: crate::archivar::types::TauSource::Measured,
             absorption: 0.0,
             advection: 0.0,
             unit: "V".to_string(),

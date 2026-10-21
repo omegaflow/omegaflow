@@ -1469,6 +1469,7 @@ pub fn main_flow() {
                     kernel: bs.kernel,
                     channel_ref: Some(bs.channel_ref),
                     tau: effective_tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
                     absorption: 0.0,
                     advection: 0.0,
                     unit: bs.unit.clone(),

@@ -118,6 +118,7 @@ pub fn declared_fields_for(format: &str, tau: f64) -> Vec<FieldConfig> {
             kernel,
             channel_ref: Some(channel_ref),
             tau,
+            tau_src: crate::archivar::types::TauSource::Measured,
             absorption: 0.0,
             advection: 0.0,
             unit: UNIT.to_string(),

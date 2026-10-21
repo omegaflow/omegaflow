@@ -380,6 +380,32 @@ impl Default for ReceiverAperture {
     }
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TauSource {
+    Measured,
+    Derived,
+    Pending,
+}
+
+impl TauSource {
+    pub fn parse(token: &str) -> Option<Self> {
+        match token {
+            "measured" => Some(Self::Measured),
+            "derived" => Some(Self::Derived),
+            "pending" => Some(Self::Pending),
+            _ => None,
+        }
+    }
+
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Measured => "measured",
+            Self::Derived => "derived",
+            Self::Pending => "pending",
+        }
+    }
+}
+
 #[derive(Clone)]
 pub struct FieldConfig {
     pub key: String,
@@ -388,6 +414,7 @@ pub struct FieldConfig {
     pub kernel: u8,
     pub channel_ref: Option<u8>,
     pub tau: f64,
+    pub tau_src: TauSource,
     pub absorption: f64,
     pub advection: f64,
     pub unit: String,
