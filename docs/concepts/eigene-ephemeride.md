@@ -2,7 +2,7 @@
   title: Die eigene Ephemeride — aus allen Zeugen
   class: concept
   date: 2026-10-10
-  sha256: ea756c2cebbaf10405e168f4c17c2ad172ce5e920f0114d7557a3612f593e35a
+  sha256: 385c2ca543c8f1d59bb0b297d66e5daf5cae02e989526d2cf7f8eb5676d3605c
   status: live
   see-also: docs/surveys/survey-2026-10-10-ephemeris-quellen.md docs/concepts/kybernetische-astrophysik.md docs/handover/archiv/handover-2026-10-10-mountain-folge301.md
 -->
@@ -90,19 +90,9 @@ ungemessener Superlativ (A = A).
 
 ## Die Kette (Reihenfolge)
 
-- **Schritt 0 — Operator/Kalibration:** Zeit → Station → Rahmen → Lichtzeit → Medien.
-- **Schritt 1 — eine Bahn, kein Fit:** Pioneer 10 durch die Kette, Residuum gegen
-  DE440. Antwort: „Rechnet unser Operator richtig?" (Baum: `observer.rs`-Kern
-  `two_way_doppler`, Lichtzeit-Iteration + Solar-Shapiro ist gebaut,
-  `handover-2026-10-10-mountain-folge301.md:23`). Der Roster-Riss zu Schritt 1:
-  Pioneer ist event-arm = der richtige Test, zugleich unrepräsentativ; Merkur/Venus
-  mit Radar+VEX-Ranging ist die saubere Alternative (DeepSeek, Z.ai).
-- **Schritt 2 — Residuum verhören:** drei Lesarten — Kette falsch / Modell trägt Rest
-  (der Fund) / Beobachtung trägt Artefakt.
-- **Schritt 3 — mehrere Bahnen:** der Operator auf allen Zeugen, gegen alle Häuser.
-- **Schritt 4 — der Fit** (Least-Squares über alle Daten).
-- **Schritt 5 — die eigene Ephemeride** aus allen Zeugen.
-- **Schritt 6 — die eigene AU → H₀-Kreuz-Zeuge** (`pending`, Rat: Kette über Jahre).
+Der Fahrplan steht kanonisch in `projects/ephemerides.md`, Abschnitt
+„Fahrplan (Kette, 2026-10-21)" — hier bleibt nur der Verweis. Grund: ein
+Auftrag, ein Ort; dieses Blatt ist das Concept, nicht der Auftrag.
 
 ## Architektur
 

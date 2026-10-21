@@ -3,7 +3,7 @@
   class: concept
   date: 2026-10-07
   sha256: 0975a4464e5a104fe6c0b49a8dc5609bb3ab44ed9c24b8acc5753df74ca3e3c4
-  status: done
+  status: archived
   see-also: docs/surveys/survey-2026-10-06-agnostik-llm-verdikt.md docs/handover/archiv/handover-2026-10-07-river-folge127.md
 -->
 

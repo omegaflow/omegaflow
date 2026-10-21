@@ -2,7 +2,7 @@
   title: Wo Aufträge sich verstecken — 3.730 Dateien durchsucht (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: f594351f15e1a75cb2f4d07b494fef9a8bf37b28417cd71075aeb02bbd9cf144
+  sha256: 6cc9e30f6067f9bf2d466709684e7dacb7124844ee5c91ef9cd7323c9f37b9c1
   status: live
   owner: future
   ack: future 2026-10-21T12:30Z
@@ -46,26 +46,24 @@ Einzelurteile unten sind gelesen; die Zählungen sind strukturell.
 | davon **neue** Aufträge | **0** |
 | davon Projekt-Control (geborgen) | **3** |
 
-## Die zwei versteckten Aufträge
+## Die zwei versteckten Aufträge — jetzt kanonisch
 
-1. **`docs/reference/bauauftrag-2026-10-21.md`** (`class: ref`) — ein echter
-   Bauauftrag: 13 Punkte, Staffel A–F, je Punkt ein Abnahmekriterium, Status
-   „gebaut". Er steht nicht in `projects/`, sondern in `reference/`. Das ist
-   der größte Fund: die Arbeit ist getan, der Auftrag hat keinen Ort.
-2. **`docs/concepts/eigene-ephemeride.md`** (`class: concept`) — trägt die
-   **„Kette (Reihenfolge)"**: sieben Schritte von der Kalibration bis zur
-   eigenen AU/H₀-Kreuz-Zeuge. Das ist der Fahrplan von
-   `projects/ephemerides.md`, abgelegt als Concept.
+1. **Bau:** kanonisch `projects/bau-der-arme.md`. Die zwei Belege
+   `docs/reference/bauauftrag-2026-10-21.md` (Staffel, Assets, Keys) und
+   `docs/reference/offen-ungebaut.md` (Messdetails, jetzt `status: superseded`)
+   tragen nur noch Beweise und verweisen nach oben.
+2. **Ephemeriden-Fahrplan:** kanonisch in `projects/ephemerides.md`, Abschnitt
+   „Fahrplan (Kette, 2026-10-21)". Das Concept
+   `docs/concepts/eigene-ephemeride.md` trägt nur den Verweis.
 
-## Die drei Register / Control-Dateien
+## Die drei Register / Control-Dateien — kanonisch
 
-- **`docs/reference/offen-ungebaut.md`** — „Geplant und nicht gebaut", sechs
-  Abschnitte. Ein Auftrags-Register, kein eigener Auftrag.
-- **`docs/surveys/survey-2026-10-17-haertefaelle-offene-routen.md`** — drei
-  **sendefertige** Anfragen (RBN, CEIC, DOSIS-3D) plus Alternativrouten.
-  Eine operative Aufgabe, die auf das Operator-Sendewort wartet.
-- **`docs/concepts/remove-bias.md`** (`status: done`) — WP0–WP13, der
-  abgeschlossene Bias-Tilgungsplan. Ein fertiger Auftrag im Concept-Gewand.
+- **Bau-Register:** `projects/bau-der-arme.md` (oben). `offen-ungebaut.md` ist
+  Beleg, nicht Register.
+- **Offene Anfragen:** `state/wartend.φ` — `rbn-lizenz`, `ceic-d18000`,
+  `dosis-3d`. Der Survey `haertefaelle-offene-routen.md` trägt die Entwürfe.
+- **Abgeschlossener Plan:** `docs/concepts/archiv/remove-bias.md`
+  (`status: archived`) — WP0–WP13, nicht mehr im Live-Baum der Concepts.
 
 ## Was auffällt, aber kein Auftrag ist
 
@@ -99,24 +97,22 @@ Einzelurteile unten sind gelesen; die Zählungen sind strukturell.
 
 ## Was quer liegt
 
-- **Der Bauauftrag ist der blinde Fleck.** Er hat 13 Abnahmekriterien und
-  steht in `reference/`, während die Aufträge in `projects/` liegen. Wer ihn
-  sucht, sucht am falschen Ort.
-- **Drei offene Register parallel:** Handover-`## Offen`, `register_lookup
-  --open`, `offen-ungebaut.md` — plus das gelöschte `offen-alle-linien.md`.
-  Vier Zähler für dieselbe Sache.
+- **Der Bauauftrag war der blinde Fleck.** Er hatte 13 Abnahmekriterien und
+  stand in `reference/`; jetzt liegt er als `projects/bau-der-arme.md` am
+  kanonischen Ort.
+- **Offene Register:** Handover-`## Offen`, `register_lookup --open` und das
+  Bau-Register. Das ist jetzt im Auftrag konsolidiert; die Belege tragen nur
+  noch Messdetails.
 - **Handovers verstecken kaum Aufträge.** 14 von 1.547 tragen ein
   Auftrags-Heading, und alle sind Spuren. Die Handover sind Trail, nicht Ort.
 - **Löschen hat nichts verloren.** Alle 1.891 gelöschten Docs sind über Git
   erreichbar; die drei Control-Dateien sind namentlich geborgen.
 
-## Nächster Akt
+## Erledigt (2026-10-21)
 
-1. `bauauftrag-2026-10-21.md` nach `projects/` (Owner: mycelium, Produzent:
-   mountain/river) — oder als Träger in den Mycelium-Handover.
-2. Die „Kette (Reihenfolge)" aus `eigene-ephemeride.md` in
-   `projects/ephemerides.md` als Fahrplan führen.
-3. Die drei sendfertigen Anfragen aus `haertefaelle-offene-routen.md` nach
-   `state/wartend.φ` (Owner: future, Operator-Sendewort).
-4. `remove-bias.md` als abgeschlossenen Auftrag archivieren, nicht als Concept
-   führen.
+1. Bau kanonisch: `projects/bau-der-arme.md`; beide Belege verweisen dorthin.
+2. Fahrplan kanonisch in `projects/ephemerides.md`; das Concept verweist.
+3. Anfragen kanonisch in `state/wartend.φ` (`rbn-lizenz`, `ceic-d18000`,
+   `dosis-3d`).
+4. `remove-bias.md` → `docs/concepts/archiv/`, `status: archived`.
+5. Offen bleibt nur die **Abarbeitung**, nicht der Ort.
