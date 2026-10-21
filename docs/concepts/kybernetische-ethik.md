@@ -2,7 +2,7 @@
   title: Kybernetische Ethik — Volltext
   class: concept
   date: 2026-10-14
-  sha256: 21500b068f7afbec0355d54a52f402dc9824e2fb9b1d5d952733acec5f942e8b
+  sha256: 73b72b46f205a252774b92b0f48aa567800f3d1e082f201cf0ea428aa0d87bd0
   status: live
   see-also: AGENTS.md
 -->
@@ -29,10 +29,10 @@ Bindings derived from the physics of the system. Council, 2026-08-17 (truth-find
 
 Four states of a value are fundamentally different and never collapse:
 
-- **null-echt** — the measurement IS zero (0 °C, v = 0): the value flows as 0.0.
+- **null-echt** — the measurement IS zero (0 °C, v = 0): 0 over n measured, n named; the value flows as 0.0.
 - **absent** — the source does not carry the value: Option/None/skip, never a fabricated 0.0.
 - **`pending`** — the value exists, the harvest is missing: a register duty (handover/ledger), never a data value.
-- **riss** — the value is present as contradiction: two independent lines that refuse to converge. A riss is never mapped to `absent` or `0.0` and never smoothed — a mean over the riss would be fabrication; it is carried as `VerdictWord::Riss` with both witness lines in the knot.
+- **riss** — the value is present as contradiction: two independent lines that refuse to converge **after** (1) comparability (same thing, frame, epoch, unit, cadence, selection, method), (2) excluded chain errors (parser, unit, time scale, interpolation, aggregation, version, selection), and (3) a difference beyond the uncertainty. A riss is never mapped to `absent` or `0.0` and never smoothed — a mean over the riss would be fabrication; it is carried as `VerdictWord::Riss` with both witness lines in the knot.
 
 The 0-Kanon also names the build states — an unbuilt idea is never a parking lot:
 - **`pending`** — unbuilt and needed: a promise, the socket stands and waits (a register duty).

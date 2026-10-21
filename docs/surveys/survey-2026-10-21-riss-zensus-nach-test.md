@@ -2,7 +2,7 @@
   title: Riss-Zensus nach dem Test — zehn Cluster, ein Begriffsriss, kein Datenriss (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 9804de4853a367ffc55b7242ce0a030b377ac894e552e248edb6d457ecad2bb9
+  sha256: eb2c7c6a7c8778609ab1f120d557ec049e9822a5535dc907c4dfc0120676377e
   status: live
   owner: future
   ack: future 2026-10-21T13:10Z
@@ -87,4 +87,5 @@ verschiedene Modelle, keine verschiedenen Messungen derselben Sache.
 1. Die neun `pending`-Fälle je auf ihren Kettenfehler prüfen (Parser, Einheit,
    Transport, Estimator, Kalibrierung) — erst dann darf „Riss" wieder stehen.
 2. Die Kanal-Ontologie als **Begriffsriss** führen, nicht als Datenriss.
-3. Die 104 Dokumente itemweise prüfen; bis dahin bleiben sie Kandidaten.
+3. Die 104 Dokumente itemweise prüfen (`pending`, offen ohne Token); bis dahin
+   bleiben sie Kandidaten.

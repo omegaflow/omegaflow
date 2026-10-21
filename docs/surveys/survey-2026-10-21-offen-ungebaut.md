@@ -2,7 +2,7 @@
   title: Geplant und nicht gebaut — die Köder-/Arm-Session (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: d0169c451010be9f3cc6734207a1e6d87fb447bfbf2914e0c5e8f7e2338d7a55
+  sha256: e0b4d42fd6c3eb88bb470e34d2197d43a10e737751b0ec1c9ad920548a60789b
   status: superseded
   see-also: docs/concepts/koeder-kette.md docs/concepts/koeder-formen.md docs/concepts/search-channels.md
 -->
@@ -38,6 +38,9 @@ absuchen**.*
 | `bait values`, `weave`, Herkunftskarte ausbauen | **gebaut** (`df464c33a`, `75f6a51fd`, `110f297d6`) |
 | danach die acht Key-Arme + vier Sonden erneut mit Signatur absuchen | **nicht gebaut** |
 
+Beide „nicht gebaut"-Zeilen sind `pending` (nicht gemessen), nicht `absent`;
+der Audit 2026-10-21 führt sie als stille Lücke ohne eigenes `pending`-Token.
+
 Dazu das gemessene Offen der Runde:
 
 | Gruppe | Arme | Stand |
@@ -70,6 +73,9 @@ Status im Dokument: **„ungebaut — Ideen, keine Entscheidungen"**.
 | 4 Farbfeld-Baseline mit Staub-Abzug | **ungebaut** (Teile im Regal) |
 | 5 Gleichzeitigkeit auf der TDB-Uhr | **ungebaut** (Rechnung auf bestehender Kette) |
 | Klasse 3 (Anomalie als Beziehung) | **benannt und ungebaut** |
+
+**Status (Audit 2026-10-21):** alle fünf Funken und Klasse 3 sind `pending`
+(nicht gemessen), nicht `absent` — die Ideen existieren, die Ernte/der Bau fehlt.
 
 ## 4. Die zwölf Quellen (2026-10-21)
 
@@ -186,16 +192,26 @@ Gezählt in den nicht archivierten Dateien (`git grep`, ohne `**/archiv/**`):
 | `riss` | 22 | 30 |
 | `pending` | 148 | 318 |
 
-**Befund 1:** `absent` wird für „nicht gebaut“ benutzt (u.a. dieser Survey §8).
-Das ist `pending`, solange die Sache nicht als nicht existent belegt ist.
+**Nachmessung 2026-10-21** (`git grep -l`, docs ohne `**/archiv/**`; work
+`*.md` ohne `research/models/raw/**`): main **16 / 98 / 38 / 159**,
+work **12 / 73 / 30 / 116** für `null-echt` / `absent` / `riss` / `pending`.
+Die work-`riss`-Zahl 30 ist reproduzierbar; die main-Zahl 22 nicht (heute 38
+Dokumente). Die Tabelle oben bleibt als Session-Stand stehen; die neue
+Messung steht im Status-Audit `survey-2026-10-21-status-audit.md`.
+
+**Befund 1:** `absent` wird für „nicht gebaut“ benutzt (`docs/concepts/zeugnis.md`
+§11/§13/§14, `docs/concepts/_template.md`, `docs/surveys/survey-2026-10-20-keyless-blöcke.md`).
+Das ist `pending`, solange die Sache nicht als nicht existent belegt ist. (Die frühere
+Selbstangabe „u.a. dieser Survey §8“ war falsch: §8 sagt das Gegenteil.)
 
 **Befund 2:** `null-echt` nennt nicht immer n. Ohne n ist die Null nicht
 gemessen, sondern behauptet.
 
-**Befund 3 — Riss-Inflation:** 22/30 Dateien führen `riss`. Der Unterschied
-verschiedener Modelle/Quellen (DE/INPOP/EPM), verschiedener Skalen (UTC/TAI)
-oder verschiedener Kadenzen (1m/1h, r 0,9388) ist **kein** Riss; ungeprüft ist
-er `pending`. Ein Riss bleibt nur nach den drei Schritten.
+**Befund 3 — Riss-Inflation:** `riss` steht in 30 work-Dateien (reproduzierbar)
+und 38 main-Dokumenten (nachgemessen; die frühere Zahl 22 ist es nicht). Der
+Unterschied verschiedener Modelle/Quellen (DE/INPOP/EPM), verschiedener Skalen
+(UTC/TAI) oder verschiedener Kadenzen (1m/1h, r 0,9388) ist **kein** Riss;
+ungeprüft ist er `pending`. Ein Riss bleibt nur nach den drei Schritten.
 
 **Befund 4 — stille Lücke:** Offenheit ohne benanntes `pending` ist per grep
 nicht zählbar und die gefährlichste Form. Punkt I sucht sie in den offenen

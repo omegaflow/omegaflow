@@ -70,7 +70,8 @@ Pixelzahl.**
 1. **`channel_ref` fehlt als Pflichtglied** — ohne Kraft (Antenne, Gain,
    Bandpass) kein Sample; „eine genealogische Karte ohne Geologie".
 2. **Der Konflikt gewinnt** — gleicher Anker, verschiedene Werte: beide bleiben,
-   markiert (`conflict`, `riss: null-echt`), nie überschrieben.
+   markiert (`conflict`; `riss` nur nach den drei Schritten, sonst `pending`
+   mit Verdacht), nie überschrieben.
 3. **Der strengste Lizenzterm regelt** — `no-redistribution` bleibt Verweis,
    nicht Kopie; CC-BY-Attribution wandert in die Herkunftskarte.
 4. **`0 honored` gilt auch für den Köder** — eine API, die über Lücken
@@ -85,6 +86,9 @@ Pixelzahl.**
 - **Sichtbarkeit:** „manifestiert" kollidiert mit `no-redistribution`; das
   Merge-Produkt bleibt unauditierbar.
 - **Verifikationsgrad fehlt:** Vertrauen ist binär gerendert, nicht gestuft.
+
+Nach dem Status-Audit 2026-10-21 sind diese fünf **`pending`-Kandidaten**
+(Verdacht), keine Datenrisse: keiner hat den Dreischritt bestanden.
 
 ## Gemessenes Offen (Stand der Runde)
 

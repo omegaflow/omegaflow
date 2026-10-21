@@ -2,7 +2,7 @@
   title: DIE WEBERIN — das Vlies: Kette der Weltlinien, Schuss der Beziehungen
   class: concept
   date: 2026-09-16
-  sha256: e7414e449f0d8059b3559159fd9a3c787fbafe69dc047d5341e34b0d67284010
+  sha256: 1a2fddff0286ac803952949bb77db375c830553e505aa09f8394fc6bb34921ec
   status: draft
   see-also: docs/concepts/archivar-mathematikerin.md docs/specs/eraen.md docs/handover/archiv/handover-2026-09-06-s2-scanner-nadel.md docs/concepts/blatt-papier-resultat.md docs/concepts/archiv/docs-naming.md
 -->
@@ -264,8 +264,10 @@ gemessen 2026-09-16 (Proben seit commit ccf28cd9, 2026-09-07):
    schon fließenden fanout-Ringen, ohne neues Netz; erster gemessener Punkt:
    Station ABK (68.358 N 18.823 E), 2026-09-15 — INTERMAGNET-Boden
    53710.2 nT gegen SWARM-Überflug 44908.5 nT (1.98° Versatz, 01:28:43Z),
-   Abweichung 8801.7 nT über der Toleranz 836.2 nT: ein Riss, der sichtbar
-   bleibt.
+   Abweichung 8801.7 nT über der Toleranz 836.2 nT. Das bleibt `pending` mit
+   Verdacht: Bodenmagnetometer und Satelliten-Überflug bei 1,98° Versatz sind
+   Instrument, Höhe und Auswahl nach nicht dieselbe Messung — kein `riss`
+   ohne Kettenausschluss.
 3. Die topozentrische Kopplung: **gebaut** — `topocentric_coupling_probe`
    (Römer-Fold vom Stationspunkt, Stations-Parallaxe zwischen Stationen als
    unabhängige Sichtlinien, 7 Tests). Die Live-S²-Integration („ein Bild"):
@@ -295,8 +297,10 @@ gemessen 2026-09-16 (Proben seit commit ccf28cd9, 2026-09-07):
    absent, Körper/Station/geliehen, 16 Tests), Kern `src/weberin.rs`; der
    CI-Lauf fehlte und wird in diesem Atom ergänzt (Workflow
    `riss-knoten.yml`). Die Hubble-Spannung (Planck ≈ 67 gegen die
-   Entfernungsleiter ≈ 73, ~5σ) bleibt die Illustration des Risses —
-   benennbar heute, messbar erst, wenn beide Linien im Bestand einziehen.
+   Entfernungsleiter ≈ 73, ~5σ) bleibt die Illustration — sie ist `pending`
+   mit Verdacht (zwei Ketten, verschiedene Kalibrierung und Auswahl; kein
+   Datenriss), benennbar heute, messbar erst, wenn beide Linien im Bestand
+   einziehen.
 9. Der geliehene Sinn: **gebaut** — `tools/measure/src/weberin/borrowed_sense.rs`
    + `nadel_gate.rs`, live in `lsst_anomaly_probe.rs`; der
    Broker-Klassifikator tritt als Zeuge für Gestalt in die

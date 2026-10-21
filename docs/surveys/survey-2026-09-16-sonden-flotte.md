@@ -2,7 +2,7 @@
   title: Survey — Sonden-Flotte (Stand 2026-09-16)
   class: survey
   date: 2026-09-16
-  sha256: 1bf94eeab3785367aa07ec70f0aa967899e0f94b8bb376a3ea6ba5b20571212e
+  sha256: d8ad1c2c5777c16f4ac4ae21ca2bec891d4f7000420c18fc26023ee55c630cfa
   status: done
   see-also: phi/sources.φ phi/blocked_sources.φ docs/surveys/survey-2026-09-16-fremde-parser-sammlungen.md
 -->
@@ -160,7 +160,7 @@ Ungemessenes heißt so.
 | Spektr-R/RadioAstron | VLBI-Roh | `asc.rssi.ru/radioastron/` | Portal 200; `opendata.*` tot |
 | Venera-Doppler/Tracking | — | — | **kein öffentlicher Bestand** (request-only, IKI/NSSDC) |
 | Luna 1–24, Mars 2–7, Zond 3/5–8 | — | — | kein öffentlicher Roh-Korpus gemessen; request-only |
-| Mars-96 | — | — | **null-echt** (keine Daten existierten; Startfehler 1996) |
+| Mars-96 | — | — | **`absent`** (keine Daten existierten; Startfehler 1996 — Nicht-Existenz belegt, keine gemessene 0) |
 
 ### Welt-Zensus (Portal | gemessen | im Haus?)
 
