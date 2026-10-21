@@ -461,7 +461,7 @@ fn main() {
         let is_cdn = s
             .url
             .starts_with("https://github.com/omegaflow/sources/releases/download/");
-        let name = if s.format == "reference" || is_cdn {
+        let name = if is_cdn {
             reference_name_from_url(&s.url)
         } else {
             match manifest.get(&s.url) {

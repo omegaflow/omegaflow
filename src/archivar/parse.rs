@@ -148,7 +148,6 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
         () => {
             if active && cur_ttl > 0 && !cur_url.is_empty() {
                 if cur_format == "kernel_text"
-                    || cur_format == "reference"
                     || cur_format == "fp01"
                     || cur_anchor.is_some()
                     || !cur_extracts.is_empty()
@@ -3375,7 +3374,8 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             vec![(Some(1), "Pa".to_string())],
             "seismic-body keeps channel 1 untouched"
         );
-        let advective = format!("{head}field probe probe patch-levy advective m/s 60 pending 0.0 0.0\n");
+        let advective =
+            format!("{head}field probe probe patch-levy advective m/s 60 pending 0.0 0.0\n");
         let adv_desc = descriptor_from_axes(
             "primary",
             "mass",
@@ -3826,7 +3826,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     }
 
     #[test]
-    fn every_cdn_source_carries_its_origin_and_producer_or_is_a_reference() {
+    fn every_cdn_source_carries_its_origin_and_producer() {
         let content = std::fs::read_to_string("phi/sources.φ").expect("phi/sources.φ reads");
         let mut missing: Vec<String> = Vec::new();
         let mut url = String::new();

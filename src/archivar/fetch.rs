@@ -1199,7 +1199,6 @@ pub fn live_sweep(
                 | "wind_waves"
                 | "gong_modes"
                 | "spk"
-                | "reference"
                 | "tar_gz_yaml"
                 | "flac"
         ) {

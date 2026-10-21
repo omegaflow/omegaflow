@@ -256,6 +256,17 @@ fn main() {
                 Some(h) => *h,
                 None => continue,
             };
+            if head == "format" && parts.get(1) == Some(&"reference") {
+                push(
+                    "reference_not_source",
+                    format!("{tag}\t{name}"),
+                    true,
+                    &mut findings,
+                    &mut hard,
+                    &mut soft,
+                );
+                continue;
+            }
             if matches!(
                 head,
                 "first" | "last" | "lastrow" | "path" | "deep" | "regex" | "objlast"

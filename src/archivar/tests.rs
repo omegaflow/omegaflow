@@ -2052,19 +2052,14 @@ field flux_detection_total euclid_detection_flux inverse-square em uJy 604800 pe
 }
 
 #[test]
-fn test_parse_reference_seat_holds() {
+fn test_parse_reference_seat_is_refused() {
     let phi = "url https://arxiv.org/e-print/2012.08534\n\
 format reference\n\
 sha256 bc86e4e424dbda6c3fb17a0f5141090c9ed59be2ad0665fddddce07d9a2085e7\n\
 ttl 86400\n";
-    let sources = parse_sources(phi);
-    assert_eq!(sources.len(), 1);
-    assert_eq!(sources[0].format, "reference");
-    assert!(matches!(sources[0].frame(), Frame::Manifest));
-    assert!(sources[0].extracts.is_empty());
-    assert_eq!(
-        sources[0].sha256.as_deref(),
-        Some("bc86e4e424dbda6c3fb17a0f5141090c9ed59be2ad0665fddddce07d9a2085e7")
+    assert!(
+        parse_sources(phi).is_empty(),
+        "a field-less reference is not a measurement source"
     );
 }
 
@@ -2101,14 +2096,14 @@ lon lon\n";
 }
 
 #[test]
-fn test_parse_reference_without_sha256_still_seats() {
+fn test_parse_reference_without_sha256_is_refused() {
     let phi = "url https://example.com/dataset.csv\n\
 format reference\n\
 ttl 86400\n";
-    let sources = parse_sources(phi);
-    assert_eq!(sources.len(), 1);
-    assert_eq!(sources[0].format, "reference");
-    assert_eq!(sources[0].sha256, None);
+    assert!(
+        parse_sources(phi).is_empty(),
+        "a field-less reference is refused even without a sha pin"
+    );
 }
 
 #[test]
