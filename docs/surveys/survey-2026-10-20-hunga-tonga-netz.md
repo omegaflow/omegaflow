@@ -2,7 +2,7 @@
   title: Survey — Hunga Tonga 2022: dieselbe Front in sechs Netzen
   class: survey
   date: 2026-10-20
-  sha256: 0b9bade896a30246133c11246ca8a9a78a64c9c2ddf185c15a053024c399aa49
+  sha256: a1e82e995353779875645f927976d634470b8d380817f2f85ae2a3d867f88d13
   status: live
   see-also: docs/paper/tonga-lamb-crosscheck.md tools/measure/src/bin/hunga_tonga_netz_probe.rs
 -->
@@ -157,10 +157,9 @@ konsistenter Laufzeit **und** radialer Richtung: Seismik (3,87 km/s), Druck
 (0,328 km/s), Tsunami (0,170 km/s), GLM (Quellcluster am Vent) und
 Infraschall (Richtung −6,7°). Die Ionosphäre trägt eine TEC-Anomalie mit
 57 % Amplitude und sauberem NULL, aber der Onset ist mit 45 min und 15-min-
-Raster keine Frontmessung. **Thermik am Vent ist gemessen absent:** FDCF
-liefert am Vent Fill (`Mask=150`), FIRMS VIIRS keine Detektion im 0,5°-Fenster;
-die 17 Vollbild-Pixel sind global, nicht Hunga Tonga. Aerosol bleibt über
-AODF/AER_AI offen.
+Raster keine Frontmessung. **FDCF/VIIRS flaggen am Vent kein Feuer**; die
+C07-Rohhelligkeit ist offen — der Thermik-Befund bleibt damit vorläufig, nicht
+`absent`. Aerosol bleibt über AODF/AER_AI offen.
 
 Das „Netz als Instrument" überträgt sich damit **auf den Quellzeitpunkt und
 die Geometrie**, nicht auf eine gemeinsame Geschwindigkeit. Jeder Faden
@@ -191,11 +190,11 @@ am Ereignis- und NULL-Tag **keine Detektion im 0,5°-Fenster**. Die 17
 Vollbild-Pixel sind damit **nicht** Hunga Tonga; der Kontrast ist global,
 nicht am Vent.
 
-**Thermik-Verdikt.** Am Vent ist die Thermik in FDCF und VIIRS **gemessen
-absent** — nicht wegen eines fehlenden Keys, sondern weil die Produkte dort
-nichts tragen. Das ist die belastbare Form von `absent`: Route geprüft,
-Schlüssel geprüft, Pixel geprüft. Der Vollbild-Kontrast bleibt als globale
-Feuerstatistik stehen, nicht als Vulkan-Signal.
+**Thermik-Befund.** Am Vent flaggen FDCF und VIIRS **kein Feuer** — das ist ein
+Befund des Feuer-Produkts, keine physikalische Absenz. Die **C07-Rohhelligkeit**
+(3,9 µm) am Vent ist noch nicht sauber ausgewertet; der erste Lauf las die
+CMI-Datei mit einem Filter, der am Vent `None` lieferte. Die Thermik bleibt
+damit **offen**, nicht `absent`.
 
 **Terms-Riss.** Der FDCF-Header trägt den String
 `license = Unclassified data. Access is restricted to approved users only.`
