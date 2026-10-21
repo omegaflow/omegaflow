@@ -2,7 +2,7 @@
   title: Survey — Archäologie der langen Session: was gemessen ist und was offen blieb (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 758ac5b9d62e4b4eafd963edab730da2c49c3a0e35635a371f86c20236148696
+  sha256: 321a0bd8c559761f4fe86817a5a82399ef18bff59548863d5ee9065a3ab5fe61
   status: live
   see-also: docs/surveys/survey-2026-10-20-frame-wache.md docs/surveys/survey-2026-10-20-planet-nine-netz.md docs/surveys/survey-2026-10-20-hunga-tonga-netz.md docs/surveys/survey-2026-10-20-sturm-komposit.md docs/surveys/survey-2026-10-20-asi-stationshoehen.md docs/concepts/die-weberin.md
 -->
@@ -27,7 +27,7 @@ kein Konzept und keine Messung; sie sagt, was davon fertig ist und was nicht.
 
 | Thema | Status | gemessene Kernzahl | Ort | offen |
 |---|---|---|---|---|
-| **ICRS/Frame-Wache** | **gemessen** | 4.536/824/678 Quellen; 600 Dreifach-Anker; 171 D×3; Median 2,930σ; Rahmenrotation < 3σ → **Placed** | `survey-2026-10-20-frame-wache.md` | Gaia DR4, Eigenbewegung, 88 Anker ohne Gaia, 303-D-Ensemble |
+| **ICRS/Frame-Wache** | **gemessen** | 4.536/824/678 Quellen; 600 Dreifach-Anker; 171 D×3; 303 D in S/X (193 K / 176 X/Ka); Median 2,930σ; Rahmenrotation < 2σ → **Placed** | `survey-2026-10-20-frame-wache.md` | Gaia DR4, Eigenbewegung, 88 Anker ohne Gaia |
 | **Quasare/H₀** | Quellen geprüft, eigene Wägung offen | H0LiCOW 73,3; TDCOSMO 67,4/71,6; D/H geprüft | `projects/quasare.md` | Zeitverzögerung nachrechnen, `r_d`, Mass-Sheet |
 | **Planet Neun** | **gemessen** | 44 P9-Objekte, 21 in der Bande; Ω z=3,60, aber Bandrotation p=0,905 → **kein robuster Überschuss** | `survey-2026-10-20-planet-nine-netz.md` | LSST/MPC absent, Bias-Gewichte, 10 benannte Risse |
 | **Hunga Tonga** | **gemessen** | 6 Netze; Seismik 3,87 km/s; Druck 0,328; Tsunami 0,170; TEC −57 %; GLM-Cluster | `survey-2026-10-20-hunga-tonga-netz.md` | Thermik am Vent gemessen absent (FDCF Fill, FIRMS 0); Aerosol keyless (AODF/AER_AI); TEC 15-min |
@@ -100,8 +100,10 @@ einer anderen Metrik oder einem anderen Katalogstand; die eigene Messung steht.
   optisch-radio Verschiebung, nicht den Ursprung.
 - **Epochenversatz.** Gaia ist Epoche 2016, Radio überwiegend 1990er; eine
   QSO-Eigenbewegung ist nicht modelliert (Grenze 0,1 mas über 25 Jahre).
-- **Die 303 D-Quellen** (D in S/X) sind noch nicht als Ensemble gefittet; gemessen ist
-  die Rotation über die 171 D×3. Das ist die nächste Ausbaustufe, nicht ein Riss.
+- **Die 303 D-Quellen** (D in S/X) sind als Ensemble gefittet (2026-10-21): **193**
+  mit K-Position, **176** mit X/Ka-Position; Rotation S/X–K max **1,13σ**
+  (chi2/dof 1,2), S/X–X/Ka max **1,52σ** (chi2/dof 7,7) → **Placed**. Die
+  110/127 Quellen ohne K/X/Ka-Position sind eine benannte Abdeckungslücke.
 
 ## 3. Planet Neun — die Bande trägt nicht
 
@@ -216,7 +218,7 @@ redundant; die eigentliche Arbeit war die Höhen- und Metadatenprüfung:
 
 **Zu Ende (mit Messung, Datum, Datei):**
 
-1. ICRS-Anker-Wache — 600/171, Rotation < 3σ, Placed (`2026-10-20`).
+1. ICRS-Rahmen-Wache — 600/171 plus 303 D in S/X (193 K / 176 X/Ka), Rotation < 2σ, Placed (`2026-10-20/21`).
 2. Planet Neun — kein robuster Überschuss, 10 Risse benannt (`2026-10-20`).
 3. Hunga Tonga — sechs Netze, drei+ Phänomene (`2026-10-20`).
 4. Aurora/ASI-Höhen — 24/24, MCGR-Fehler benannt (`2026-10-20`).
@@ -228,7 +230,7 @@ redundant; die eigentliche Arbeit war die Höhen- und Metadatenprüfung:
 
 1. **`ozzy`** — die negative Engine fehlt; ohne sie bleibt die Matrix unvollständig.
 2. **Alles-gegen-alles-Matrix** — die volle Paar-Matrix und die netz-weite strenge Null.
-3. **Rahmen-Wache** — 303-D-Ensemble, Gaia DR4, Eigenbewegung, 88 Anker ohne Gaia.
+3. **Rahmen-Wache** — Gaia DR4, Eigenbewegung, 88 Anker ohne Gaia.
 4. **Planet Neun** — LSST/MPC-Abdeckung, Bias-Gewichte.
 5. **Hunga Tonga** — AER_AI-Pixel am Vent, TEC mit höherer Kadenz, besserer
    Seismik-Detektor.
@@ -270,7 +272,8 @@ Frame-Wache liegen unter `sources/<netloc>/`, die Provenienz in
 
 ## Offen
 
-- **Rahmen-Ebene:** 303-D-Ensemble und Gaia-DR4 als unabhängige optische Linie.
+- **Rahmen-Ebene:** Gaia-DR4 als unabhängige optische Linie; die 303-D-Rotation ist
+  gemessen (Placed).
 - **`ozzy`:** die negative Engine bauen, bevor die Matrix als Unabhängigkeitstest gilt.
 - **Planet Neun:** LSST/MPC-Abdeckung nachziehen; ohne sie bleibt die Bande eine
   Himmelsdichte-Aussage.

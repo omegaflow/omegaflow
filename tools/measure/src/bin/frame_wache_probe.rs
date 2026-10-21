@@ -706,6 +706,44 @@ fn main() {
         );
     }
 
+    println!("\n== Frame suspicion (ensemble of D in S/X, 303)");
+    let d_sx: Vec<String> = sx
+        .iter()
+        .filter(|(_, s)| s.defining)
+        .map(|(n, _)| n.clone())
+        .collect();
+    println!("D in S/X: {}", d_sx.len());
+    for (label, b) in [("S/X - K", &k), ("S/X - X/Ka", &xka)] {
+        let names: Vec<String> = d_sx
+            .iter()
+            .filter(|n| b.contains_key(*n))
+            .cloned()
+            .collect();
+        let r = fit_rotation(&names, &sx, b);
+        let worst = (0..3)
+            .map(|i| {
+                if r.sigma_mas[i] > 0.0 {
+                    (r.omega_mas[i] / r.sigma_mas[i]).abs()
+                } else {
+                    0.0
+                }
+            })
+            .fold(0.0f64, f64::max);
+        println!(
+            "{label}: n {} | omega [{:+.3} {:+.3} {:+.3}] mas | sigma [{:.3} {:.3} {:.3}] | max {:.2} sigma | chi2/dof {:.1} -> {}",
+            r.n,
+            r.omega_mas[0],
+            r.omega_mas[1],
+            r.omega_mas[2],
+            r.sigma_mas[0],
+            r.sigma_mas[1],
+            r.sigma_mas[2],
+            worst,
+            r.chi2_dof,
+            verdikt(&r)
+        );
+    }
+
     println!("\n== Limits");
     println!(
         "S/X and K/X/Ka share telescopes and source structure: the triple intersection is a consistency test,"
