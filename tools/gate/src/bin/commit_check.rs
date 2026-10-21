@@ -499,11 +499,17 @@ fn main() {
             }
         }
         if path == "phi/sources.φ" {
-            for (line, message) in unbacked_mirror_violations(&added) {
+            let full = Command::new("git")
+                .args(["show", ":phi/sources.φ"])
+                .output()
+                .expect("git");
+            let full_text = String::from_utf8_lossy(&full.stdout).to_string();
+            let full_lines: Vec<&str> = full_text.lines().collect();
+            for (line, message) in unbacked_mirror_violations(&full_lines) {
                 eprintln!("commit_check: phi/sources.φ:{line}: unbacked_mirror - {message}");
                 fail = true;
             }
-            for (line, message) in ingest_terms_absent_violations(&added) {
+            for (line, message) in ingest_terms_absent_violations(&full_lines) {
                 eprintln!("commit_check: phi/sources.φ:{line}: ingest-terms-absent - {message}");
                 fail = true;
             }
