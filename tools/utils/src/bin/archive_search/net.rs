@@ -158,9 +158,66 @@ impl Exit {
         match self {
             Exit::Direct => "direct".to_string(),
             Exit::Iface(name) => name.clone(),
-            Exit::Socks(url) => url.clone(),
+            Exit::Socks(url) => proxy_label(url),
         }
     }
+}
+
+const PROXY_ENV: &str = "OMEGAFLOW_PROXY";
+
+static PROXY: OnceLock<String> = OnceLock::new();
+
+pub(crate) fn valid_proxy(url: &str) -> bool {
+    let trimmed = url.trim();
+    if trimmed.chars().any(char::is_whitespace) {
+        return false;
+    }
+    let Some((scheme, rest)) = trimmed.split_once("://") else {
+        return false;
+    };
+    if !matches!(scheme, "http" | "https" | "socks5" | "socks5h") {
+        return false;
+    }
+    let authority = rest.split(['/', '?', '#']).next().unwrap_or("");
+    !authority.is_empty() && !authority.starts_with(':')
+}
+
+pub(crate) fn select_proxy(cli: Option<&str>, env: Option<&str>) -> Option<String> {
+    let clean = |value: &str| {
+        let trimmed = value.trim();
+        if trimmed.is_empty() {
+            None
+        } else {
+            Some(trimmed.to_string())
+        }
+    };
+    cli.and_then(clean).or_else(|| env.and_then(clean))
+}
+
+pub fn set_proxy(url: &str) {
+    let _ = PROXY.set(url.trim().to_string());
+}
+
+fn configured_proxy() -> Option<String> {
+    PROXY.get().cloned().or_else(|| {
+        select_proxy(None, std::env::var(PROXY_ENV).ok().as_deref())
+    })
+}
+
+fn proxy_label(url: &str) -> String {
+    let Some((scheme, rest)) = url.split_once("://") else {
+        return "proxy".to_string();
+    };
+    let authority = rest.split(['/', '?', '#']).next().unwrap_or(rest);
+    let host = authority.rsplit_once('@').map_or(authority, |(_, host)| host);
+    format!("{scheme}://{host}")
+}
+
+fn proxy_failure_line(url: &str) -> String {
+    format!(
+        "proxy: {} gives no answer — the direct route stays unused",
+        proxy_label(url)
+    )
 }
 
 fn get_once(url: &str, extra: &[&str], timeout: &str, exit: &Exit) -> Option<Fetch> {
@@ -286,8 +343,8 @@ pub(crate) fn socks_proxy() -> Option<String> {
     socks_addr().map(|addr| format!("socks5://{addr}"))
 }
 
-fn exits() -> Vec<Exit> {
-    let mut out = vec![Exit::Direct];
+fn detected_proxies() -> Vec<Exit> {
+    let mut out = Vec::new();
     for name in proton_interfaces() {
         out.push(Exit::Iface(name));
     }
@@ -295,6 +352,21 @@ fn exits() -> Vec<Exit> {
         out.push(Exit::Socks(socks));
     }
     out
+}
+
+fn ladder(proxy: Option<String>, proxies: Vec<Exit>) -> Vec<Exit> {
+    match proxy {
+        Some(url) => vec![Exit::Socks(url)],
+        None => {
+            let mut out = vec![Exit::Direct];
+            out.extend(proxies);
+            out
+        }
+    }
+}
+
+fn exits() -> Vec<Exit> {
+    ladder(configured_proxy(), detected_proxies())
 }
 
 fn is_block(status: Option<i32>) -> bool {
@@ -442,6 +514,15 @@ pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
                     return finish_get(url, &host, Some(retried));
                 }
             }
+        }
+    }
+    if let Some(proxy) = configured_proxy() {
+        let failed = match &result {
+            None => true,
+            Some(f) => f.status == Some(0),
+        };
+        if failed {
+            eprintln!("{}", proxy_failure_line(&proxy));
         }
     }
     finish_get(url, &host, result)
@@ -7066,6 +7147,91 @@ mod tests {
         });
         assert_eq!(result.unwrap().status, Some(404));
         assert_eq!(calls.get(), 1);
+    }
+
+    #[test]
+    fn proxy_priority_is_flag_then_environment_then_detection() {
+        assert_eq!(
+            select_proxy(
+                Some("socks5h://127.0.0.1:9050"),
+                Some("http://127.0.0.1:8080")
+            )
+            .as_deref(),
+            Some("socks5h://127.0.0.1:9050")
+        );
+        assert_eq!(
+            select_proxy(None, Some("http://127.0.0.1:8080")).as_deref(),
+            Some("http://127.0.0.1:8080")
+        );
+        assert_eq!(select_proxy(Some("  "), Some("")), None);
+        assert_eq!(select_proxy(None, None), None);
+    }
+
+    #[test]
+    fn explicit_proxy_replaces_direct_and_the_proton_ladder() {
+        let detected = vec![
+            Exit::Iface("proton0".to_string()),
+            Exit::Socks("socks5h://127.0.0.1:25344".to_string()),
+        ];
+        let explicit = ladder(Some("http://127.0.0.1:8080".to_string()), detected.clone());
+        assert_eq!(explicit.len(), 1);
+        assert_eq!(explicit[0].label(), "http://127.0.0.1:8080");
+        assert!(!explicit.iter().any(|exit| matches!(exit, Exit::Direct)));
+
+        let automatic = ladder(None, detected);
+        assert!(matches!(automatic.first(), Some(Exit::Direct)));
+        assert_eq!(automatic.len(), 3);
+    }
+
+    #[test]
+    fn proxy_schemes_are_http_https_socks5_and_socks5h() {
+        assert!(valid_proxy("http://127.0.0.1:8080"));
+        assert!(valid_proxy("https://proxy.example:8443"));
+        assert!(valid_proxy("socks5://127.0.0.1:9050"));
+        assert!(valid_proxy("socks5h://127.0.0.1:9050"));
+        assert!(!valid_proxy("socks4://127.0.0.1:9050"));
+        assert!(!valid_proxy("ftp://127.0.0.1:21"));
+        assert!(!valid_proxy("127.0.0.1:9050"));
+        assert!(!valid_proxy("socks5://"));
+        assert!(!valid_proxy("socks5://:9050"));
+        assert!(!valid_proxy("socks5://127.0.0.1 :9050"));
+    }
+
+    #[test]
+    fn proxy_credentials_stay_out_of_the_label() {
+        assert_eq!(
+            proxy_label("socks5h://user:pass@127.0.0.1:9050"),
+            "socks5h://127.0.0.1:9050"
+        );
+        assert_eq!(
+            Exit::Socks("http://user:pass@proxy.example:8080".to_string()).label(),
+            "http://proxy.example:8080"
+        );
+        let line = proxy_failure_line("socks5h://user:pass@127.0.0.1:1");
+        assert!(line.contains("socks5h://127.0.0.1:1"));
+        assert!(!line.contains("user"));
+        assert!(!line.contains("pass"));
+    }
+
+    #[test]
+    fn the_selected_proxy_reaches_the_curl_arguments() {
+        let transport = Exit::Socks("socks5h://127.0.0.1:1".to_string()).transport_args();
+        assert_eq!(
+            transport,
+            vec![
+                "--proxy".to_string(),
+                "socks5h://127.0.0.1:1".to_string()
+            ]
+        );
+        let args = curl_args("https://api.openalex.org/works", &[], "30", &transport);
+        let at = args
+            .iter()
+            .position(|arg| arg == "--proxy")
+            .expect("the proxy flag reaches curl");
+        assert_eq!(
+            args.get(at + 1).map(String::as_str),
+            Some("socks5h://127.0.0.1:1")
+        );
     }
 
     #[test]

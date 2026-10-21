@@ -8,6 +8,9 @@ pub fn set_secrets(env: HashMap<String, String>) {
 }
 
 pub(crate) fn secret(name: &str) -> Option<String> {
+    if crate::token_cmd::configured(name).is_some() {
+        return crate::token_cmd::cached(name);
+    }
     if let Some(map) = SECRETS.get() {
         if let Some(value) = map.get(name) {
             if !value.is_empty() {

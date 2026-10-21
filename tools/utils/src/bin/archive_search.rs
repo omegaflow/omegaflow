@@ -230,6 +230,8 @@ mod supermag;
 mod tap;
 #[path = "archive_search/token.rs"]
 mod token;
+#[path = "archive_search/token_cmd.rs"]
+mod token_cmd;
 #[path = "archive_search/uniprot.rs"]
 mod uniprot;
 #[path = "archive_search/unpaywall.rs"]
@@ -585,6 +587,7 @@ fn main() {
     let mut fulltext_used = 0usize;
     let mut report_path: Option<String> = None;
     let mut timings = false;
+    let mut proxy: Option<String> = None;
 
     let mut i = 0;
     while i < args.len() {
@@ -623,6 +626,16 @@ fn main() {
                 i += 1;
                 if let Some(p) = args.get(i) {
                     net::set_ca_bundle(p);
+                }
+            }
+            "--proxy" => {
+                i += 1;
+                match args.get(i) {
+                    Some(url) => proxy = Some(url.clone()),
+                    None => {
+                        eprintln!("archive_search: --proxy needs a url");
+                        std::process::exit(2);
+                    }
                 }
             }
             "--playwright" => {
@@ -883,6 +896,17 @@ fn main() {
         i += 1;
     }
 
+    if let Some(selected) = net::select_proxy(
+        proxy.as_deref(),
+        env::var("OMEGAFLOW_PROXY").ok().as_deref(),
+    ) {
+        if !net::valid_proxy(&selected) {
+            eprintln!("archive_search: proxy needs http://, https://, socks5:// or socks5h://");
+            std::process::exit(2);
+        }
+        net::set_proxy(&selected);
+    }
+
     if let (Some(since), Some(until)) = (&filter_set.since, &filter_set.until) {
         if since > until {
             eprintln!("archive_search: --since {since} lies after --until {until}");
@@ -1064,10 +1088,11 @@ fn main() {
             }
             Mode::Consensus => {
                 let query = keywords.join(" ");
-                let env_map = match find_repo_root() {
+                let mut env_map = match find_repo_root() {
                     Some(repo) => secrets::load_env(&repo),
                     None => env::vars().collect(),
                 };
+                token_cmd::refresh_env(&mut env_map);
                 let key = secrets::resolve_key(
                     env_map
                         .get("CONSENSUS_API_KEY")
@@ -1117,10 +1142,11 @@ fn main() {
             }
             Mode::Fink => {
                 let query = keywords.join(" ");
-                let env_map = match find_repo_root() {
+                let mut env_map = match find_repo_root() {
                     Some(repo) => secrets::load_env(&repo),
                     None => env::vars().collect(),
                 };
+                token_cmd::refresh_env(&mut env_map);
                 let lines = fink_lines(&query, &env_map, max_results);
                 emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
@@ -1153,10 +1179,11 @@ fn main() {
                 sink.emit(&run_stats(), mode.label());
             }
             Mode::Net(name) => {
-                let env_map = match find_repo_root() {
+                let mut env_map = match find_repo_root() {
                     Some(repo) => secrets::load_env(&repo),
                     None => env::vars().collect(),
                 };
+                token_cmd::refresh_env(&mut env_map);
                 if keywords.is_empty()
                     && !net::is_auth_mode(name)
                     && !std::io::stdin().is_terminal()
@@ -2173,6 +2200,12 @@ fn usage() {
     eprintln!(
         "observe:  [--report <path>] [--timings]   (per-arm JSON report; timing table on stderr, results stay on stdout)"
     );
+    eprintln!(
+        "proxy:    --proxy <http|https|socks5|socks5h url> or OMEGAFLOW_PROXY   (the flag wins over the environment, both win over auto-proton; an explicit proxy replaces the ladder — no direct fallback, failures stay `pending — no network`)"
+    );
+    eprintln!(
+        "refresh:  OMEGAFLOW_<KEY>_CMD   (the command writes the key to stdout, cached for the process and never printed; e.g. OMEGAFLOW_CORE_API_KEY_CMD)"
+    );
     eprintln!();
     eprintln!(
         "paths:    archive_search --index [<query>...] [--path] [--kind any|file|dir] [--sort name|size|mtime]   (matches paths, not content; --path matches the full path)"
@@ -2571,7 +2604,7 @@ fn usage() {
         "keys:     every mode names its key above ('keyless' = none). Keys are read from .secrets.local in the repo root (gitignored), never from the command line and never printed. A missing key yields `pending — <KEY> absent from .secrets.local`, not an empty result."
     );
     eprintln!(
-        "exits:    direct -> live proton tunnel (proton-wg) -> its SOCKS proxy; --playwright uses the same SOCKS when one is up. Rotation is operator hand (bin/proton-wg.sh, bin/proton-exit.sh)."
+        "exits:    direct -> live proton tunnel (proton-wg) -> its SOCKS proxy; --playwright uses the same SOCKS when one is up. An explicit --proxy/OMEGAFLOW_PROXY replaces that ladder. Rotation is operator hand (bin/proton-wg.sh, bin/proton-exit.sh)."
     );
     eprintln!(
         "limits:   read-only. No writes, no sends, no uploads; the tool never closes a front (that is the operator)."
@@ -3288,7 +3321,8 @@ fn run_serve(addr: Option<String>, roots_given: &[String], mft_path: Option<Stri
         Some(a) => a,
         None => "127.0.0.1:1789".to_string(),
     };
-    let env_map = secrets::load_env(&repo);
+    let mut env_map = secrets::load_env(&repo);
+    token_cmd::refresh_env(&mut env_map);
     let roots: Vec<PathBuf> = if roots_given.is_empty() {
         vec![repo.clone()]
     } else {
