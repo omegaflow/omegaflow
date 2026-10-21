@@ -61,12 +61,15 @@ Startpage („Blocked"), Yandex (Captcha), LibreX (301/000), 4get.ca (503).
 
 ## Live-Arme (GOES / Hunga Tonga)
 
-`--goes-live <g18|g19> [FDCF|AODF|GLM]` ist der allgemeine Live-Arm: er listet
-das neueste NOAA-S3-Objekt des Tages je Produkt (keyless) und gibt URL, Key und
-Kadenz aus. Die Hunga-Tonga-Probe
-(`tools/measure/src/bin/hunga_tonga_netz_probe.rs`) bleibt der fachliche
-Konsument; die S3-Listung selbst gehört nicht mehr in einen Einzel-Probe-Silo.
-`--live` dort kann den Arm aufrufen.
+`--live <listing-url>` ist der allgemeine Arm: er liest **jede** S3-ListObjectsV2-
+XML oder jeden HTML-Verzeichnisindex und gibt das neueste Objekt aus (Key,
+LastModified, Size; keyless). `--goes-live <g18|g19> [FDCF|AODF|GLM]` baut
+daraus nur die G18/G19-URL — ein Preset, kein Sonderfall. Live gemessen:
+S3 FDCF `05:40:14Z` / 1.172.966 B; KPVT-Index `m2007f.fits`.
+
+Die Hunga-Tonga-Probe (`tools/measure/src/bin/hunga_tonga_netz_probe.rs`)
+bleibt der fachliche Konsument; die S3-Listung selbst gehört nicht mehr in
+einen Einzel-Probe-Silo. `--live` dort kann den Arm aufrufen.
 
 ## Veröffentlichte Assets (2026-10-21, `gh release upload`)
 
