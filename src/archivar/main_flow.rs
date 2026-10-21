@@ -1305,6 +1305,9 @@ pub fn main_flow() {
         {
             let mut still_pending: Vec<(Channel, FieldConfig, u32)> = Vec::new();
             for (channel, sensor, idx) in archive.pending_channels.drain(..) {
+                if sensor.tau_src == crate::archivar::types::TauSource::Pending {
+                    continue;
+                }
                 let src = &archive.sources[idx as usize];
                 match anchor(
                     &channel,
@@ -1414,7 +1417,7 @@ pub fn main_flow() {
                         Position::StateVector { .. } => false,
                         Position::Electrode { .. } => false,
                     };
-                    if eph_missing {
+                    if eph_missing && sensor.tau_src != crate::archivar::types::TauSource::Pending {
                         dropped_channels.push((
                             channel.clone(),
                             sensor.clone(),
