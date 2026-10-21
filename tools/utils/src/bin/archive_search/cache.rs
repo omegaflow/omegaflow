@@ -43,11 +43,11 @@ fn path_for(mode: &str, query: &str, max: usize) -> Option<PathBuf> {
     Some(cache_dir()?.join(format!("{mode}-{:016x}.json", fnv1a(&key))))
 }
 
-fn now() -> u64 {
+fn now() -> Option<u64> {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
+        .ok()
         .map(|d| d.as_secs())
-        .unwrap_or(0)
 }
 
 pub fn load(mode: &str, query: &str, max: usize) -> Option<Vec<String>> {
@@ -58,7 +58,8 @@ pub fn load(mode: &str, query: &str, max: usize) -> Option<Vec<String>> {
     let text = fs::read_to_string(&path).ok()?;
     let v = json::parse(&text)?;
     let ts = v.get("ts")?.as_scalar_string()?.parse::<u64>().ok()?;
-    if now().saturating_sub(ts) > ttl_secs() {
+    let current = now()?;
+    if current.saturating_sub(ts) > ttl_secs() {
         let _ = fs::remove_file(&path);
         return None;
     }
@@ -82,9 +83,12 @@ pub fn store(mode: &str, query: &str, max: usize, lines: &[String]) {
     let Some(path) = path_for(mode, query, max) else {
         return;
     };
+    let Some(ts) = now() else {
+        return;
+    };
     let body = format!(
         "{{\"ts\":{},\"lines\":[{}]}}",
-        now(),
+        ts,
         lines
             .iter()
             .map(|l| format!("\"{}\"", escape(l)))
