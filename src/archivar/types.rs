@@ -526,7 +526,6 @@ pub struct Anchor {
     pub kind: AnchorKind,
     pub body: Option<String>,
     pub attrs: BTreeMap<String, String>,
-    pub legacy: bool,
 }
 
 impl Anchor {

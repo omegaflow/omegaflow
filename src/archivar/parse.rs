@@ -415,7 +415,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     continue;
                 }
                 let body = parts[1].to_string();
-                match parse_anchor_directive(AnchorKind::At, &parts, parts.len() == 2) {
+                match parse_anchor_directive(AnchorKind::At, &parts) {
                     Ok(anchor) => cur_anchor = Some(anchor),
                     Err(e) => {
                         report_anomaly("Invalid Syntax", &cur_url, &format!("at {}: {}", e, line));
@@ -434,110 +434,42 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     continue;
                 }
                 let body = parts[1].to_string();
-                let keyed = parts.iter().skip(2).any(|p| p.contains('='));
-                if keyed {
-                    let anchor = match parse_anchor_directive(AnchorKind::On, &parts, false) {
-                        Ok(anchor) => anchor,
-                        Err(e) => {
-                            report_anomaly(
-                                "Invalid Syntax",
-                                &cur_url,
-                                &format!("on {}: {}", e, line),
-                            );
-                            continue;
-                        }
-                    };
-                    let lat_ok = anchor
-                        .attrs
-                        .get("lat")
-                        .is_some_and(|v| v.parse::<f64>().is_ok());
-                    let lon_ok = anchor
-                        .attrs
-                        .get("lon")
-                        .is_some_and(|v| v.parse::<f64>().is_ok());
-                    if !lat_ok || !lon_ok {
-                        report_anomaly(
-                            "Invalid Syntax",
-                            &cur_url,
-                            &format!("on lat/lon non-numeric: {}", line),
-                        );
+                let anchor = match parse_anchor_directive(AnchorKind::On, &parts) {
+                    Ok(anchor) => anchor,
+                    Err(e) => {
+                        report_anomaly("Invalid Syntax", &cur_url, &format!("on {}: {}", e, line));
                         continue;
                     }
-                    if let Some(value) = anchor.attrs.get("alt").map(String::as_str)
-                        && !matches!(value, "absent" | "pending")
-                        && value.parse::<f64>().is_err()
-                    {
-                        report_anomaly(
-                            "Invalid Syntax",
-                            &cur_url,
-                            &format!("on alt non-numeric: {}", line),
-                        );
-                        continue;
-                    }
-                    cur_anchor = Some(anchor);
-                    cur_body = Some(body.clone());
-                } else {
-                    if parts.len() < 4 {
-                        report_anomaly(
-                            "Invalid Syntax",
-                            &cur_url,
-                            &format!("on needs <body> <lat> <lon> [alt]: {}", line),
-                        );
-                        continue;
-                    }
-                    let lat: f64 = match parts[2].parse() {
-                        Ok(v) => v,
-                        Err(_) => {
-                            report_anomaly(
-                                "Invalid Syntax",
-                                &cur_url,
-                                &format!("on lat non-numeric: {}", line),
-                            );
-                            continue;
-                        }
-                    };
-                    let lon: f64 = match parts[3].parse() {
-                        Ok(v) => v,
-                        Err(_) => {
-                            report_anomaly(
-                                "Invalid Syntax",
-                                &cur_url,
-                                &format!("on lon non-numeric: {}", line),
-                            );
-                            continue;
-                        }
-                    };
-                    let alt_token = parts.get(4).copied();
-                    if let Some(value) = alt_token
-                        && !matches!(value, "absent" | "pending")
-                        && value.parse::<f64>().is_err()
-                    {
-                        report_anomaly(
-                            "Invalid Syntax",
-                            &cur_url,
-                            &format!("on alt non-numeric: {}", line),
-                        );
-                        continue;
-                    }
-                    let mut attrs = BTreeMap::new();
-                    attrs.insert("lat".to_string(), lat.to_string());
-                    attrs.insert("lon".to_string(), lon.to_string());
-                    attrs.insert(
-                        "alt".to_string(),
-                        match alt_token {
-                            Some("pending") => "pending".to_string(),
-                            Some("absent") | None => "absent".to_string(),
-                            Some(value) => value.to_string(),
-                        },
+                };
+                let lat_ok = anchor
+                    .attrs
+                    .get("lat")
+                    .is_some_and(|v| v.parse::<f64>().is_ok());
+                let lon_ok = anchor
+                    .attrs
+                    .get("lon")
+                    .is_some_and(|v| v.parse::<f64>().is_ok());
+                if !lat_ok || !lon_ok {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("on lat/lon non-numeric: {}", line),
                     );
-                    cur_anchor = Some(Anchor {
-                        kind: AnchorKind::On,
-                        body: Some(body.clone()),
-                        attrs,
-                        legacy: true,
-                    });
-                    cur_body = Some(body.clone());
+                    continue;
                 }
+                if let Some(value) = anchor.attrs.get("alt").map(String::as_str)
+                    && !matches!(value, "absent" | "pending")
+                    && value.parse::<f64>().is_err()
+                {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("on alt non-numeric: {}", line),
+                    );
+                    continue;
+                }
+                cur_anchor = Some(anchor);
+                cur_body = Some(body.clone());
             }
             "global" | "coverage" | "orbit" | "query" | "track" | "sky" | "absent" => {
                 if cur_anchor.is_some() {
@@ -557,7 +489,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     "sky" => AnchorKind::Sky,
                     _ => AnchorKind::Absent,
                 };
-                match parse_anchor_directive(kind, &parts, false) {
+                match parse_anchor_directive(kind, &parts) {
                     Ok(anchor) => {
                         if let Some(body) = &anchor.body {
                             cur_body = Some(body.clone());
@@ -2840,11 +2772,7 @@ fn require_attr<'a>(attrs: &'a BTreeMap<String, String>, key: &str) -> Result<&'
         .ok_or_else(|| format!("missing {}", key))
 }
 
-fn parse_anchor_directive(
-    kind: AnchorKind,
-    parts: &[&str],
-    legacy: bool,
-) -> Result<Anchor, String> {
+fn parse_anchor_directive(kind: AnchorKind, parts: &[&str]) -> Result<Anchor, String> {
     let (body, attrs) = parse_anchor_attrs(parts, 1)?;
     if matches!(
         kind,
@@ -2861,9 +2789,7 @@ fn parse_anchor_directive(
     }
     match kind {
         AnchorKind::At => {
-            if !legacy {
-                require_attr(&attrs, "frame")?;
-            }
+            require_attr(&attrs, "frame")?;
         }
         AnchorKind::On => {
             require_attr(&attrs, "lat")?;
@@ -2895,12 +2821,7 @@ fn parse_anchor_directive(
             require_attr(&attrs, "reason")?;
         }
     }
-    Ok(Anchor {
-        kind,
-        body,
-        attrs,
-        legacy,
-    })
+    Ok(Anchor { kind, body, attrs })
 }
 
 fn parse_medium_value(token: &str) -> Option<MediumValue> {
@@ -3203,7 +3124,7 @@ mod tests {
 
     #[test]
     fn field_ten_token_reads_tau_src() {
-        let content = "url https://example.org/x\nttl 60\nat sun\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
+        let content = "url https://example.org/x\nttl 60\nat sun frame=barycenter\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1);
         let field = s[0]
@@ -3220,7 +3141,7 @@ mod tests {
 
     #[test]
     fn field_nine_token_is_legacy_pending() {
-        let content = "url https://example.org/x\nttl 60\nat sun\nfield v v inverse-square em W/m2 60 0.0 0.0\n";
+        let content = "url https://example.org/x\nttl 60\nat sun frame=barycenter\nfield v v inverse-square em W/m2 60 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1);
         let field = s[0]
@@ -3240,7 +3161,7 @@ mod tests {
 
     #[test]
     fn on_without_alt_declares_no_measured_height() {
-        let content = "url https://example.org/x\nttl 60\non earth 0 0\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
+        let content = "url https://example.org/x\nttl 60\non earth frame=body lat=0 lon=0 alt=absent\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1, "on without alt parses");
         match &s[0].frame() {
@@ -3257,7 +3178,7 @@ mod tests {
     fn on_absent_alt_declares_no_measured_height() {
         for token in ["absent", "pending"] {
             let content = format!(
-                "url https://example.org/x\nttl 60\non earth 0 0 {token}\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n"
+                "url https://example.org/x\nttl 60\non earth frame=body lat=0 lon=0 alt={token}\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n"
             );
             let s = load_sources_from(&content);
             assert_eq!(s.len(), 1, "on {token} parses");
@@ -3272,7 +3193,7 @@ mod tests {
 
     #[test]
     fn on_with_alt_keeps_the_measured_height() {
-        let content = "url https://example.org/x\nttl 60\non earth 0 0 5\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
+        let content = "url https://example.org/x\nttl 60\non earth frame=body lat=0 lon=0 alt=5\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1);
         match &s[0].frame() {
@@ -3283,7 +3204,7 @@ mod tests {
 
     #[test]
     fn compiler_directive_is_read_into_source_config() {
-        let content = "url https://example.org/x\nttl 60\nat sun\ncompiler tools/harvest/src/bin/x.rs\nfield v v inverse-square em W/m2 60 0.0 0.0\n";
+        let content = "url https://example.org/x\nttl 60\nat sun frame=barycenter\ncompiler tools/harvest/src/bin/x.rs\nfield v v inverse-square em W/m2 60 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1);
         assert_eq!(
@@ -3346,7 +3267,7 @@ mod tests {
 
     #[test]
     fn a_channel_coupling_layer_resolves_the_register_aliases() {
-        let content = "url https://example.com/champ\nttl 600\nat earth\n\
+        let content = "url https://example.com/champ\nttl 600\nat earth frame=barycenter\n\
 channel charge:primary:flux-ohm:parabolic:plasma:line:dirichlet kg/m^3 alias champ_ion charge -1\n\
 channel mass:primary:flux-fick:parabolic:fluid:unspecified:none kg/m^3 alias champ_neutral\n\
 constraint quasi-neutral ionosphere_qn region ionosphere\n\
@@ -3370,7 +3291,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn a_descriptor_field_line_resolves_to_its_registered_channel() {
-        let content = "url https://example.com/x\nttl 600\nat sun\nfield probe probe primary energy flux-fourier parabolic fluid none exponential-decay K 60.0 0.0 0.0\n";
+        let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield probe probe primary energy flux-fourier parabolic fluid none exponential-decay K 60.0 0.0 0.0\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 1);
         let field = sources[0]
@@ -3405,7 +3326,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
                 })
                 .unwrap_or_default()
         };
-        let head = "url https://example.com/x\nttl 600\nat earth\n";
+        let head = "url https://example.com/x\nttl 600\nat earth frame=barycenter\n";
         let campaign = format!(
             "{head}field cmonoc_campaign_velocity cmonoc_campaign_velocity_mm_yr primary momentum creep elliptic elastic-solid none gaussian-inverse-square mm/yr 31536000 0.0 0.0\n"
         );
@@ -3456,7 +3377,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn a_descriptor_field_line_without_a_registered_channel_is_refused() {
-        let content = "url https://example.com/x\nttl 600\nat sun\nfield probe probe primary momentum flux-newton-viscous mixed fluid none patch-levy m/s 60.0 0.0 0.0\n";
+        let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield probe probe primary momentum flux-newton-viscous mixed fluid none patch-levy m/s 60.0 0.0 0.0\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 1);
         assert!(
@@ -3470,7 +3391,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn p10_2a_target_grammar_parses() {
-        let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm bz maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 1);
         let field = sources[0]
@@ -3489,7 +3410,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         );
         assert_eq!(field.unit, "V/m");
 
-        let invalid = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz bogus elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let invalid = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm bz bogus elliptic vacuum em primary V/m 60.0 inverse-square\n";
         let skipped = parse_sources(invalid);
         assert!(
             skipped[0]
@@ -3499,7 +3420,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             "an unknown operator is skipped, never defaulted"
         );
 
-        let unresolved = "url https://example.com/x\nttl 600\nat sun\nfield x xyzzy maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let unresolved = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield x xyzzy maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
         let pending = parse_sources(unresolved);
         assert!(
             pending[0]
@@ -3512,7 +3433,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn a_force_descriptor_separates_the_quantity_name_from_the_channel_key() {
-        let content = "url https://example.com/g.bin\nttl 604800\nat earth\n\
+        let content = "url https://example.com/g.bin\nttl 604800\nat earth frame=barycenter\n\
                        field gravity agrav_gravity_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n";
         let field = parse_sources(content)[0]
             .extracts
@@ -3537,7 +3458,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn the_descriptor_conserved_token_is_not_derived_from_the_quantity_name() {
-        let content = "url https://example.com/g.bin\nttl 604800\nat earth\n\
+        let content = "url https://example.com/g.bin\nttl 604800\nat earth frame=barycenter\n\
                        field gravityz temperature primary mass poisson elliptic vacuum none inverse-square m/s2 60 0.0 0.0\n";
         let field = parse_sources(content)[0]
             .extracts
@@ -3556,7 +3477,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn the_seven_gravity_fields_keep_their_keys_names_and_units() {
-        let content = "url https://example.com/g.bin\nttl 604800\nat earth\n\
+        let content = "url https://example.com/g.bin\nttl 604800\nat earth frame=barycenter\n\
                        field gravity agrav_gravity_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n\
                        field igets_gravity_nm_s2 igets_gravity_nm_s2 primary mass poisson elliptic vacuum none inverse-square nm/s2 86400 0.0 0.0\n\
                        field gx lpf_drs_dg_x_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n\
@@ -3594,9 +3515,9 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn the_two_wave_fields_stay_two_descriptor_fields() {
-        let content = "url https://example.com/geofon.bin\nttl 60\nat earth\n\
+        let content = "url https://example.com/geofon.bin\nttl 60\nat earth frame=barycenter\n\
                        field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0\n\
-                       url https://example.com/earthscope.bin\nttl 60\nat earth\n\
+                       url https://example.com/earthscope.bin\nttl 60\nat earth frame=barycenter\n\
                        field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0\n";
         let sources = parse_sources(content);
         let fields: Vec<FieldConfig> = sources
@@ -3622,7 +3543,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn p10_2a_interaction_absent_form_parses() {
-        let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum primary V/m 60.0 inverse-square\n";
+        let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm bz maxwell elliptic vacuum primary V/m 60.0 inverse-square\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 1);
         let field = sources[0]
@@ -3643,7 +3564,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn p10_2a_bogus_interaction_refused() {
-        let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum bogus primary V/m 60.0 inverse-square\n";
+        let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm bz maxwell elliptic vacuum bogus primary V/m 60.0 inverse-square\n";
         let sources = parse_sources(content);
         assert!(
             sources[0]
@@ -3656,7 +3577,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn p10_2a_declared_interaction_must_match_the_derived_one() {
-        let contradiction = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum gravity primary V/m 60.0 inverse-square\n";
+        let contradiction = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm bz maxwell elliptic vacuum gravity primary V/m 60.0 inverse-square\n";
         let refused = parse_sources(contradiction);
         assert!(
             refused[0]
@@ -3666,7 +3587,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             "a declared interaction contradicting the mechanism is refused, never smoothed"
         );
 
-        let matching = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let matching = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm bz maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
         let flows = parse_sources(matching);
         assert!(
             flows[0]
@@ -3679,7 +3600,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn volume_frame_body_declared_and_refused_when_absent() {
-        let declared = "url https://cdn.example/x/AFRP.volume.bin\nformat volume\nat earth\nttl 604800\nvolume v v\n";
+        let declared = "url https://cdn.example/x/AFRP.volume.bin\nformat volume\nat earth frame=barycenter\nttl 604800\nvolume v v\n";
         let with = parse_sources(declared);
         let body = with[0].extracts.iter().find_map(|e| match e {
             Extract::Volume { frame_body, .. } => Some(frame_body.clone()),
@@ -3699,8 +3620,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn cgm_lat_directive_is_carried() {
-        let declared =
-            "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\ncgm_lat 40.5\n";
+        let declared = "url https://x/y.bin\nformat volume\nat earth frame=barycenter\nttl 604800\nvolume v v\ncgm_lat 40.5\n";
         let with = parse_sources(declared);
         assert_eq!(with[0].cgm_lat, Some(40.5));
         assert_eq!(with[0].cgm_source, None);
@@ -3708,7 +3628,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn rows_accepts_lat_key_and_lon_key_as_the_named_column_spelling() {
-        let declared = "url https://x/y.csv\nformat gbm_tgf\non earth 0 0 0\nrows\nlat_key Lat\nlon_key Lon\nno-cadence\n";
+        let declared = "url https://x/y.csv\nformat gbm_tgf\non earth frame=body lat=0 lon=0 alt=0\nrows\nlat_key Lat\nlon_key Lon\nno-cadence\n";
         let sources = parse_sources(declared);
         match &sources[0].extracts[0] {
             Extract::Rows {
@@ -3723,7 +3643,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn cgm_source_directive_is_carried_and_orthogonal_to_cgm_lat() {
-        let declared = "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\ncgm_lat 11.23\ncgm_source bgs-quasi-dipole\n";
+        let declared = "url https://x/y.bin\nformat volume\nat earth frame=barycenter\nttl 604800\nvolume v v\ncgm_lat 11.23\ncgm_source bgs-quasi-dipole\n";
         let with = parse_sources(declared);
         assert_eq!(with[0].cgm_lat, Some(11.23));
         assert_eq!(with[0].cgm_source.as_deref(), Some("bgs-quasi-dipole"));
@@ -3731,7 +3651,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn rights_triple_is_carried_and_absent_without_directive() {
-        let declared = "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\nrights CC-BY-4.0 SPDX https://spdx.org/licenses/CC-BY-4.0.html\n";
+        let declared = "url https://x/y.bin\nformat volume\nat earth frame=barycenter\nttl 604800\nvolume v v\nrights CC-BY-4.0 SPDX https://spdx.org/licenses/CC-BY-4.0.html\n";
         let with = parse_sources(declared);
         assert_eq!(with[0].rights_identifier.as_deref(), Some("CC-BY-4.0"));
         assert_eq!(with[0].rights_scheme.as_deref(), Some("SPDX"));
@@ -3740,14 +3660,15 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             Some("https://spdx.org/licenses/CC-BY-4.0.html")
         );
 
-        let absent =
-            parse_sources("url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\n");
+        let absent = parse_sources(
+            "url https://x/y.bin\nformat volume\nat earth frame=barycenter\nttl 604800\nvolume v v\n",
+        );
         assert_eq!(absent[0].rights_identifier, None);
         assert_eq!(absent[0].rights_scheme, None);
         assert_eq!(absent[0].rights_uri, None);
 
         let partial = parse_sources(
-            "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\nrights NONE\n",
+            "url https://x/y.bin\nformat volume\nat earth frame=barycenter\nttl 604800\nvolume v v\nrights NONE\n",
         );
         assert_eq!(partial[0].rights_identifier.as_deref(), Some("NONE"));
         assert_eq!(partial[0].rights_scheme, None);
@@ -3778,8 +3699,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn no_cadence_keeps_a_static_source_active() {
-        let content =
-            "url https://example.com/static.bin\nformat ephemeris_binary\nat moon\nno-cadence\n";
+        let content = "url https://example.com/static.bin\nformat ephemeris_binary\nat moon frame=barycenter\nno-cadence\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 1);
         assert_eq!(sources[0].ttl, NO_CADENCE);
@@ -3787,7 +3707,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn a_source_without_ttl_or_no_cadence_is_inactive() {
-        let content = "url https://example.com/static.bin\nformat ephemeris_binary\nat moon\n";
+        let content = "url https://example.com/static.bin\nformat ephemeris_binary\nat moon frame=barycenter\n";
         assert!(parse_sources(content).is_empty());
     }
 
@@ -3808,24 +3728,22 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn range_directive_with_zero_or_negative_step_stays_unrecorded() {
-        let zero =
-            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 0\nat sun\nttl 604800\n";
-        let negative = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 -0.15\nat sun\nttl 604800\n";
+        let zero = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 0\nat sun frame=barycenter\nttl 604800\n";
+        let negative = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 -0.15\nat sun frame=barycenter\nttl 604800\n";
         assert_eq!(parse_sources(zero)[0].range, None);
         assert_eq!(parse_sources(negative)[0].range, None);
     }
 
     #[test]
     fn range_directive_with_void_arity_stays_unrecorded() {
-        let content =
-            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0\nat sun\nttl 604800\n";
+        let content = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0\nat sun frame=barycenter\nttl 604800\n";
         assert_eq!(parse_sources(content)[0].range, None);
     }
 
     #[test]
     fn range_directive_resets_at_the_next_url() {
-        let content = "url https://example.com/a.bin\nformat gras_2c\nrange 300.0 0.15\nat mars\n\
-                       ttl 604800\nurl https://example.com/b.bin\nformat gras_2c\nat mars\n\
+        let content = "url https://example.com/a.bin\nformat gras_2c\nrange 300.0 0.15\nat mars frame=barycenter\n\
+                       ttl 604800\nurl https://example.com/b.bin\nformat gras_2c\nat mars frame=barycenter\n\
                        ttl 604800\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 2);
@@ -4348,7 +4266,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     #[test]
     fn an_explicit_model_kind_directive_overrides_the_format_derivation() {
         let sources = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\nmodel_kind time_variable\n",
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\nmodel_kind time_variable\n",
         );
         assert_eq!(sources.len(), 1);
         assert_eq!(sources[0].model_kind, Some(ModelKind::TimeVariable));
@@ -4356,8 +4274,9 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn a_model_kind_falls_back_to_the_format_when_undeclared() {
-        let sources =
-            parse_sources("url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n");
+        let sources = parse_sources(
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n",
+        );
         assert_eq!(sources.len(), 1);
         assert_eq!(sources[0].model_kind, Some(ModelKind::Static));
     }
@@ -4365,7 +4284,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     #[test]
     fn the_model_head_directives_assemble_the_head() {
         let sources = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n\
              gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\ntide zero_tide\nmax_degree 2190\n",
         );
         assert_eq!(sources.len(), 1);
@@ -4380,7 +4299,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     #[test]
     fn an_unmeasured_norm_leaves_the_head_absent() {
         let sources = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n\
              gm 3.9E14\nradius 6371000\nnorm schmidt\nmax_degree 2190\n",
         );
         assert_eq!(sources.len(), 1);
@@ -4390,7 +4309,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     #[test]
     fn a_partial_model_head_stays_absent() {
         let sources = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n\
              gm 3.9E14\nnorm fully_normalized\n",
         );
         assert_eq!(sources.len(), 1);
@@ -4400,7 +4319,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     #[test]
     fn medium_line_reads_numeric_units_and_states() {
         let sources = parse_sources(
-            "url https://example.invalid/medium\nformat text\nttl 60\non earth 0 0 0\n\
+            "url https://example.invalid/medium\nformat text\nttl 60\non earth frame=body lat=0 lon=0 alt=0\n\
              medium absorption=0.25 1/m advection=pending\n",
         );
         assert_eq!(sources.len(), 1);
@@ -4412,35 +4331,34 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     }
 
     #[test]
-    fn anchors_are_one_truth_and_old_forms_are_legacy() {
-        let old_at = parse_sources("url https://example.invalid/a\nformat text\nttl 60\nat sun\n");
-        let anchor = old_at[0].anchor.as_ref().expect("old at anchor");
-        assert_eq!(anchor.kind, AnchorKind::At);
-        assert!(anchor.legacy);
-
-        let old_on = parse_sources(
-            "url https://example.invalid/b\nformat text\nttl 60\non earth 10 20 30\n",
+    fn anchors_are_one_truth() {
+        let at = parse_sources(
+            "url https://example.invalid/a\nformat text\nttl 60\nat sun frame=barycenter\n",
         );
-        let anchor = old_on[0].anchor.as_ref().expect("old on anchor");
+        let anchor = at[0].anchor.as_ref().expect("at anchor");
+        assert_eq!(anchor.kind, AnchorKind::At);
+
+        let on = parse_sources(
+            "url https://example.invalid/b\nformat text\nttl 60\non earth frame=body lat=10 lon=20 alt=30\n",
+        );
+        let anchor = on[0].anchor.as_ref().expect("on anchor");
         assert_eq!(anchor.kind, AnchorKind::On);
-        assert!(anchor.legacy);
         assert_eq!(anchor.attrs.get("alt").map(String::as_str), Some("30"));
 
-        let old_on_absent = parse_sources(
-            "url https://example.invalid/b2\nformat text\nttl 60\non earth 10 20 absent\n",
+        let on_absent = parse_sources(
+            "url https://example.invalid/b2\nformat text\nttl 60\non earth frame=body lat=10 lon=20 alt=absent\n",
         );
-        let anchor = old_on_absent[0].anchor.as_ref().expect("old on absent");
+        let anchor = on_absent[0].anchor.as_ref().expect("on absent");
         assert_eq!(anchor.attrs.get("alt").map(String::as_str), Some("absent"));
 
-        let new_on = parse_sources(
+        let on_none = parse_sources(
             "url https://example.invalid/c\nformat text\nttl 60\n\
              on mars frame=body lat=1 lon=2 alt=absent datum=IAU_2015 epoch=2000-01-01T12:00:00\n",
         );
-        let anchor = new_on[0].anchor.as_ref().expect("new on anchor");
+        let anchor = on_none[0].anchor.as_ref().expect("on none");
         assert_eq!(anchor.kind, AnchorKind::On);
-        assert!(!anchor.legacy);
         assert!(matches!(
-            new_on[0].frame(),
+            on_none[0].frame(),
             Frame::Surface { alt: None, .. }
         ));
     }
@@ -4460,11 +4378,9 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn anchor_required_attributes_are_not_invented() {
-        assert!(parse_anchor_directive(AnchorKind::Orbit, &["orbit", "iss"], false).is_err());
-        assert!(
-            parse_anchor_directive(AnchorKind::At, &["at", "sun", "frame=icrs"], false).is_ok()
-        );
-        assert!(parse_anchor_directive(AnchorKind::At, &["at", "sun", "other=x"], false).is_err());
+        assert!(parse_anchor_directive(AnchorKind::Orbit, &["orbit", "iss"]).is_err());
+        assert!(parse_anchor_directive(AnchorKind::At, &["at", "sun", "frame=icrs"]).is_ok());
+        assert!(parse_anchor_directive(AnchorKind::At, &["at", "sun", "other=x"]).is_err());
     }
 
     #[test]
@@ -4497,14 +4413,13 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             assert_eq!(sources.len(), 1, "{line}");
             let anchor = sources[0].anchor.as_ref().expect("anchor");
             assert_eq!(anchor.kind, kind, "{line}");
-            assert!(!anchor.legacy, "{line}");
         }
     }
 
     #[test]
     fn a_field_norm_token_must_agree_with_the_source_head() {
         let matching = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n\
              gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\nmax_degree 10\n\
              field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 0.0 0.0 norm:fully_normalized\n",
         );
@@ -4517,7 +4432,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
                 .any(|e| matches!(e, Extract::Field(_)))
         );
         let contradicting = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n\
              gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\nmax_degree 10\n\
              field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 0.0 0.0 norm:unnormalized\n",
         );
