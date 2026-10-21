@@ -769,9 +769,14 @@ fn arxiv_query(text: &str) -> String {
 }
 
 fn arxiv_url(text: &str, refine: &[(String, String)], max: usize, start: usize) -> String {
+    let mut search = arxiv_query(text);
+    if let Some(range) = crate::filters::arxiv_submitted_range(&crate::filters::current()) {
+        search.push_str("%20AND%20");
+        search.push_str(&urlencode(&range));
+    }
     let mut url = format!(
         "https://export.arxiv.org/api/query?search_query={}&start={}&max_results={}",
-        arxiv_query(text),
+        search,
         start,
         arxiv_window(max)
     );
@@ -969,6 +974,10 @@ fn ads_url(text: &str, refine: &[(String, String)], max: usize, start: usize) ->
         url.push_str(key);
         url.push('=');
         url.push_str(&urlencode(value));
+    }
+    for clause in crate::filters::ads_fq(&crate::filters::current()) {
+        url.push_str("&fq=");
+        url.push_str(&urlencode(&clause));
     }
     url
 }
@@ -5589,8 +5598,10 @@ pub fn run_lines_max(
     out: Option<&str>,
     max: usize,
 ) -> Vec<String> {
+    let cache_key = crate::filters::cache_query(query);
     if mode != "all" && !is_auth_mode(mode) {
-        if let Some(lines) = crate::cache::load(mode, query, max) {
+        if let Some(mut lines) = crate::cache::load(mode, &cache_key, max) {
+            crate::filters::explain_into(&mut lines, mode);
             log_query(mode, query, &lines, max);
             return lines;
         }
@@ -5599,9 +5610,10 @@ pub fn run_lines_max(
     annotate_declared(&mut lines, env);
     if mode != "all" && !is_auth_mode(mode) {
         lines = crate::fallback::apply(mode, query, lines, max);
-        crate::cache::store(mode, query, max, &lines);
+        crate::cache::store(mode, &cache_key, max, &lines);
         log_query(mode, query, &lines, max);
     }
+    crate::filters::explain_into(&mut lines, mode);
     lines
 }
 
@@ -5700,6 +5712,8 @@ fn run_lines_dispatch(
     if !BROWSE_MODES.contains(&mode) && query.trim().is_empty() {
         return vec![format!("usage — archive_search --{mode} <query>")];
     }
+    let decorated = crate::filters::decorate(mode, query);
+    let query = decorated.as_str();
     let lines = match mode {
         "arxiv" => arxiv_lines(query, max),
         "ads" => {
