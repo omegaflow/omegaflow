@@ -16,6 +16,8 @@ const QUIET_DAY: &str = "2022-01-13";
 const BGR_CDN: &str = "https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound_IS52_2022.bin";
 const EVENT_FDCF: &str = "https://noaa-goes17.s3.amazonaws.com/ABI-L2-FDCF/2022/015/04/OR_ABI-L2-FDCF-M6_G17_s20220150410320_e20220150419387_c20220150419494.nc";
 const NULL_FDCF: &str = "https://noaa-goes17.s3.amazonaws.com/ABI-L2-FDCF/2022/013/04/OR_ABI-L2-FDCF-M6_G17_s20220130410320_e20220130419387_c20220130419504.nc";
+const EVENT_C07: &str = "https://noaa-goes17.s3.amazonaws.com/ABI-L2-CMIPF/2022/015/04/OR_ABI-L2-CMIPF-M6C07_G17_s20220150410320_e20220150419398_c20220150419449.nc";
+const NULL_C07: &str = "https://noaa-goes17.s3.amazonaws.com/ABI-L2-CMIPF/2022/013/04/OR_ABI-L2-CMIPF-M6C07_G17_s20220130410320_e20220130419397_c20220130419464.nc";
 
 const SEISMIC_STATIONS: [(&str, &str, f64, f64); 8] = [
     ("IU", "AFI", -13.909, -171.777),
@@ -1328,7 +1330,7 @@ fn nearest_index(values: &[f64], target: f64) -> Option<usize> {
     Some(best)
 }
 
-fn goes_vent_pixel(file: &Hdf5File) -> Option<String> {
+fn goes_index(file: &Hdf5File, lat_deg: f64, lon_deg: f64) -> Option<(usize, usize, usize, usize)> {
     let h = attr_scalar(file, "goes_imager_projection", "perspective_point_height")?;
     let lon0 = attr_scalar(
         file,
@@ -1337,8 +1339,8 @@ fn goes_vent_pixel(file: &Hdf5File) -> Option<String> {
     )?;
     let a = attr_scalar(file, "goes_imager_projection", "semi_major_axis")?;
     let b = attr_scalar(file, "goes_imager_projection", "semi_minor_axis")?;
-    let lat = TONGA_LAT.to_radians();
-    let dlon = (TONGA_LON - lon0).to_radians();
+    let lat = lat_deg.to_radians();
+    let dlon = (lon_deg - lon0).to_radians();
     let e2 = 1.0 - (b * b) / (a * a);
     let n = a / (1.0 - e2 * lat.sin() * lat.sin()).sqrt();
     let x = n * lat.cos() * dlon.cos();
@@ -1351,29 +1353,108 @@ fn goes_vent_pixel(file: &Hdf5File) -> Option<String> {
     let ys = dataset_scaled(file, "y");
     let xi = nearest_index(&xs, x_scan)?;
     let yi = nearest_index(&ys, y_scan)?;
-    let (mask_raw, mask_dt, dims) = {
-        let (_, ds, dt) = file.dataset("Mask").ok()?;
-        (file.read_dataset("Mask").ok()?, dt, ds.dims.clone())
+    let dims = {
+        let (_, ds, _) = file.dataset("Mask").ok()?;
+        ds.dims.clone()
     };
     let nx = dims.get(1).copied().unwrap_or(1) as usize;
-    let idx = yi * nx + xi;
-    let mask = num_at(&mask_raw, idx, &mask_dt)?;
-    let (power_raw, power_dt) = {
-        let (_, _, dt) = file.dataset("Power").ok()?;
-        (file.read_dataset("Power").ok()?, dt)
-    };
-    let power = num_at(&power_raw, idx, &power_dt)?;
-    let (temp_raw, temp_dt) = {
-        let (_, _, dt) = file.dataset("Temp").ok()?;
-        (file.read_dataset("Temp").ok()?, dt)
-    };
-    let temp = num_at(&temp_raw, idx, &temp_dt)?;
-    let t_scale = attr_scalar(file, "Temp", "scale_factor").unwrap_or(1.0);
-    let t_offset = attr_scalar(file, "Temp", "add_offset").unwrap_or(0.0);
+    Some((xi, yi, yi * nx + xi, nx))
+}
+
+fn raw_scaled_at(file: &Hdf5File, name: &str, idx: usize) -> Option<f64> {
+    let (_, _, dt) = file.dataset(name).ok()?;
+    let raw = file.read_dataset(name).ok()?;
+    let v = num_at(&raw, idx, &dt)?;
+    let scale = attr_scalar(file, name, "scale_factor").unwrap_or(1.0);
+    let offset = attr_scalar(file, name, "add_offset");
+    Some(match offset {
+        Some(offset) => v * scale + offset,
+        None => v * scale,
+    })
+}
+
+fn goes_vent_pixel(file: &Hdf5File) -> Option<String> {
+    let (xi, yi, idx, _) = goes_index(file, TONGA_LAT, TONGA_LON)?;
+    let mask = raw_scaled_at(file, "Mask", idx)?;
+    let power = raw_scaled_at(file, "Power", idx)?;
+    let temp = raw_scaled_at(file, "Temp", idx)?;
     Some(format!(
-        "vent x_idx={xi} y_idx={yi} mask={mask} FRP_MW={power} fire_T_K={}",
-        temp * t_scale + t_offset
+        "vent x_idx={xi} y_idx={yi} mask={mask} FRP_MW={power} fire_T_K={temp}"
     ))
+}
+
+fn c07_vent(file: &Hdf5File) -> Option<String> {
+    let (xi, yi, _idx, nx) = goes_index(file, TONGA_LAT, TONGA_LON)?;
+    let (_, _, dt) = file.dataset("CMI").ok()?;
+    let raw = file.read_dataset("CMI").ok()?;
+    let scale = attr_scalar(file, "CMI", "scale_factor").unwrap_or(1.0);
+    let offset = attr_scalar(file, "CMI", "add_offset");
+    let val = |x: isize, y: isize| -> Option<f64> {
+        if x < 0 || y < 0 {
+            return None;
+        }
+        let i = (y as usize) * nx + (x as usize);
+        let raw_v = num_at(&raw, i, &dt)?;
+        let v = match offset {
+            Some(offset) => raw_v * scale + offset,
+            None => raw_v * scale,
+        };
+        if (100.0..1000.0).contains(&v) {
+            Some(v)
+        } else {
+            None
+        }
+    };
+    let center = val(xi as isize, yi as isize)?;
+    let mut ring = Vec::new();
+    let mut max = center;
+    let mut mdx = 0isize;
+    let mut mdy = 0isize;
+    for dy in -5..=5 {
+        for dx in -5..=5 {
+            if dx == 0 && dy == 0 {
+                continue;
+            }
+            if let Some(v) = val(xi as isize + dx, yi as isize + dy) {
+                ring.push(v);
+                if v > max {
+                    max = v;
+                    mdx = dx;
+                    mdy = dy;
+                }
+            }
+        }
+    }
+    let mean = if ring.is_empty() {
+        f64::NAN
+    } else {
+        ring.iter().sum::<f64>() / ring.len() as f64
+    };
+    Some(format!(
+        "C07 vent={center:.3} K | ring_mean={mean:.3} K | box_max={max:.3} K at dx={mdx} dy={mdy}"
+    ))
+}
+
+fn c07_section() {
+    println!("--- GOES-17 ABI C07 (3.9 um) at the vent, event vs NULL ---");
+    for (label, url) in [
+        ("event 2022-01-15 04:10-04:19", EVENT_C07),
+        ("NULL  2022-01-13 04:10-04:19", NULL_C07),
+    ] {
+        let Some(bytes) = fetch_raw_bytes(url) else {
+            println!("{label}: fetch void");
+            continue;
+        };
+        let Ok(file) = Hdf5File::parse(&bytes) else {
+            println!("{label}: HDF5 unread");
+            continue;
+        };
+        match c07_vent(&file) {
+            Some(s) => println!("{label}: {s}"),
+            None => println!("{label}: C07 vent absent (fill or index unread)"),
+        }
+    }
+    println!();
 }
 
 fn goes_thermal_section() {
@@ -1437,8 +1518,12 @@ fn firms_section() {
                 continue;
             }
             n += 1;
-            max_frp = max_frp.max(cols[12].parse().unwrap_or(0.0));
-            max_bright = max_bright.max(cols[2].parse().unwrap_or(0.0));
+            if let Ok(v) = cols[12].parse::<f64>() {
+                max_frp = max_frp.max(v);
+            }
+            if let Ok(v) = cols[2].parse::<f64>() {
+                max_bright = max_bright.max(v);
+            }
         }
         if n == 0 {
             println!(
@@ -1510,10 +1595,50 @@ fn live_section() {
     println!();
 }
 
+fn point_section(path: &str, lat: f64, lon: f64) {
+    let Ok(bytes) = std::fs::read(path) else {
+        println!("{path}: unreadable");
+        return;
+    };
+    let Ok(file) = Hdf5File::parse(&bytes) else {
+        println!("{path}: HDF5 unparsed");
+        return;
+    };
+    match goes_index(&file, lat, lon) {
+        Some((xi, yi, idx, _)) => {
+            let mask = raw_scaled_at(&file, "Mask", idx);
+            let power = raw_scaled_at(&file, "Power", idx);
+            let temp = raw_scaled_at(&file, "Temp", idx);
+            let cmi = raw_scaled_at(&file, "CMI", idx);
+            println!(
+                "{path} lat={lat} lon={lon}: x_idx={xi} y_idx={yi} mask={mask:?} FRP_MW={power:?} fire_T_K={temp:?} CMI={cmi:?}"
+            );
+        }
+        None => println!("{path} lat={lat} lon={lon}: index absent"),
+    }
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    if let (Some(point), Some(path)) = (
+        arg_value(&args, "--point"),
+        arg_value(&args, "--file"),
+    ) {
+        let parts: Vec<f64> = point
+            .split(',')
+            .filter_map(|s| s.trim().parse().ok())
+            .collect();
+        if parts.len() == 2 {
+            point_section(&path, parts[0], parts[1]);
+            return;
+        }
+    }
     if has(&args, "--live") {
         live_section();
+        return;
+    }
+    if has(&args, "--c07") {
+        c07_section();
         return;
     }
     if let Some(path) = arg_value(&args, "--inspect-glm") {

@@ -1,16 +1,3 @@
-//! Gaia DR4 epoch-astrometry dry run.
-//!
-//! Reads the ESA DR4 prerelease VOTable (12 sources, June 2026) and fits a
-//! linear proper-motion model to the along-scan / cross-scan centroid
-//! positions. This is the method that will be applied to the 512 ICRF anchors
-//! when the official DR4 lands (2026-12-02).
-//!
-//! Usage:
-//!   gaia_dr4_probe --xml <GAIA_DR4_PRERELEASE_EPOCH_ASTROMETRY_RAW.xml>
-//!
-//! The fit is deliberately simple: slope of centroid position vs time, with
-//! the residual RMS printed. No attitude, calibration, or along/cross-to-RA/Dec
-//! rotation is applied. Those belong to the full DR4 pass, not this dry run.
 
 use omegaflow::archivar::{JsonVal, jnum, votable_to_json};
 use std::collections::BTreeMap;
@@ -213,8 +200,6 @@ fn main() {
     println!("file {path}");
     println!("rows {}", rows.len());
 
-    // Group by (ra0, dec0) — exact enough for 12 distinct sources and immune to
-    // the f64 rounding of the 64-bit source_id in the generic VOTable reader.
     let mut groups: BTreeMap<(i64, i64), Vec<(f64, f64, f64, f64)>> = BTreeMap::new();
     let mut ids: BTreeMap<(i64, i64), f64> = BTreeMap::new();
     for row in &rows {
@@ -230,14 +215,15 @@ fn main() {
         let times = nums(field(row, "obs_time_tcb"));
         let al = nums(field(row, "centroid_pos_al"));
         let pa = nums(field(row, "scan_pos_angle"));
-        let pf = jnum(row, "parallax_factor_al").unwrap_or(0.0);
+        let Some(pf) = jnum(row, "parallax_factor_al") else {
+            continue;
+        };
         let used = bools(field(row, "used_by_agis_al"));
         let entry = groups.entry(key).or_default();
         for i in 0..times.len().min(al.len()).min(pa.len()) {
             if !used.is_empty() && i < used.len() && !used[i] {
                 continue;
             }
-            // ns since the VOTable time origin; the origin cancels in a slope.
             let years = times[i] / 1e9 / 86400.0 / 365.25;
             entry.push((years, al[i], pa[i], pf));
         }
@@ -255,27 +241,36 @@ fn main() {
                 (lo.min(*t), hi.max(*t))
             });
         let use_plx = pf.iter().any(|p| p.abs() > 1e-9);
-        let (pm_ra, pm_dec, plx, rms) = if use_plx {
-            match fit_pm4(&ts, &al, &pa, &pf) {
-                Some((a, d, p, r)) => (a, d, Some(p), r),
-                None => (f64::NAN, f64::NAN, None, f64::NAN),
-            }
+        let fit: Option<(f64, f64, Option<f64>, f64)> = if use_plx {
+            fit_pm4(&ts, &al, &pa, &pf).map(|(a, d, p, r)| (a, d, Some(p), r))
         } else {
-            match fit_pm(&ts, &al, &pa) {
-                Some((a, d, r)) => (a, d, None, r),
-                None => (f64::NAN, f64::NAN, None, f64::NAN),
-            }
+            fit_pm(&ts, &al, &pa).map(|(a, d, r)| (a, d, None, r))
+        };
+        let id_text = match ids.get(key) {
+            Some(id) => format!("{id:.0}"),
+            None => "n/a".to_string(),
+        };
+        let Some((pm_ra, pm_dec, plx, rms)) = fit else {
+            println!(
+                "source_id {id_text} ra0 {:.6} dec0 {:.6} | fit absent",
+                key.0 as f64 / 1e6,
+                key.1 as f64 / 1e6
+            );
+            continue;
+        };
+        let plx_text = match plx {
+            Some(p) => format!("{p:+.4} mas"),
+            None => "n/a".to_string(),
         };
         println!(
-            "source_id {:.0} ra0 {:.6} dec0 {:.6} | epochs {} | span {:.2} a | pm_ra {:+.4} mas/a | pm_dec {:+.4} mas/a | plx {} | rms {:.3} mas",
-            ids.get(key).copied().unwrap_or(f64::NAN),
+            "source_id {id_text} ra0 {:.6} dec0 {:.6} | epochs {} | span {:.2} a | pm_ra {:+.4} mas/a | pm_dec {:+.4} mas/a | plx {} | rms {:.3} mas",
             key.0 as f64 / 1e6,
             key.1 as f64 / 1e6,
             epochs.len(),
             span.1 - span.0,
             pm_ra,
             pm_dec,
-            plx.map(|p| format!("{p:+.4} mas")).unwrap_or_else(|| "n/a".into()),
+            plx_text,
             rms
         );
     }
