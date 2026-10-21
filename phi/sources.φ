@@ -31222,7 +31222,7 @@ force em
 no-cadence
 
 url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
-terms auth-required https://lasair-ztf.lsst.ac.uk/
+terms lasair-copyright https://lasair-ztf.lsst.ac.uk/
 format lasair_ztf
 origin https://api.lasair.lsst.ac.uk/api/query/
 compiler tools/harvest/src/bin/lasair_ztf_compiler.rs
@@ -31784,7 +31784,7 @@ field hydrosphere_river_stage_m hydrosphere_river_stage_m inverse-square geometr
 field hydrosphere_river_flow_m3s hydrosphere_river_flow_m3s erfc advective m3/s 600.0 0.0 0.0
 
 url https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
-terms auth-required https://babamul.caltech.edu/
+terms babamul-no-license https://babamul.caltech.edu/
 header Authorization Bearer {BABAMUL_API_TOKEN}
 format sky1
 origin https://babamul.caltech.edu/api/babamul/surveys/ZTF/alerts
@@ -31794,7 +31794,7 @@ ttl 3600
 field babamul_alert_magnitude babamul_alert_magnitude gaussian-inverse-square source-parameter mag 3600 0.0 0.0
 
 url https://regards.cnes.fr
-terms auth-required https://www.cdpp.eu/index.php/licence-sipad
+terms regards-pending https://www.cdpp.eu/index.php/licence-sipad
 format demeter_isl
 origin https://regards.cnes.fr
 compiler tools/harvest/src/bin/demeter_compiler.rs
@@ -31807,7 +31807,7 @@ field demeter_isl_float_potential demeter_isl_float_potential inverse-square ele
 field demeter_isl_ion_velocity demeter_isl_ion_velocity inverse-square advective m/s 86400 0.0 0.0
 
 url https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/
-terms auth-required https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/
+terms PD-USGov https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/
 header Authorization {EARTHDATA_EDL_TOKEN}
 format icrf3
 origin https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/ (Earthdata; compiler reads the same ICRF3 product from https://datacenter.iers.org/products/reference-systems/celestial/icrf3/)
@@ -31818,7 +31818,7 @@ field ra_deg icrf3_ra_deg inverse-square geometry deg 31536000 0.0 0.0 aperture:
 field dec_deg icrf3_dec_deg inverse-square geometry deg 31536000 0.0 0.0 aperture:none
 
 url https://www.ieeg.org/services
-terms auth-required https://www.ieeg.org/services
+terms ieeg-terms https://www.ieeg.org/services
 format openneuro_eeg
 origin https://www.ieeg.org/services
 compiler tools/harvest/src/bin/ieeg_compiler.rs
@@ -31827,7 +31827,7 @@ ttl 86400
 field ieeg_voltage_v ieeg_voltage_v inverse-square electric V 86400 0.0 0.0
 
 url https://edc.dgfi.tum.de/en/data/npt/
-terms auth-required https://edc.dgfi.tum.de/en/data/npt/
+terms ilrs-no-license https://edc.dgfi.tum.de/en/data/npt/
 format ilrs_npt
 origin https://edc.dgfi.tum.de/en/data/npt/
 compiler tools/harvest/src/bin/ilrs_npt_compiler.rs
@@ -31838,7 +31838,7 @@ field bin_rms_ps ilrs_npt_bin_rms_ps inverse-square geometry ps 86400 0.0 0.0 ap
 field return_rate_pct ilrs_npt_return_rate_pct inverse-square em % 86400 0.0 0.0 aperture:none
 
 url https://pradan.issdc.gov.in
-terms auth-required https://pradan.issdc.gov.in
+terms pradan-terms https://pradan.issdc.gov.in
 format pradan_ch2
 origin https://pradan.issdc.gov.in
 compiler tools/harvest/src/bin/pradan_ch2_compiler.rs
@@ -31859,7 +31859,7 @@ field substorm_glon_deg substorm_glon_deg inverse-square geometry deg 86400 0.0 
 field substorm_glat_deg substorm_glat_deg inverse-square geometry deg 86400 0.0 0.0
 
 url https://www.wis-tns.org/api/get/search
-terms auth-required https://www.wis-tns.org/
+terms tns-copyright https://www.wis-tns.org/
 format tns
 origin https://www.wis-tns.org/api/get/search
 compiler tools/harvest/src/bin/tns_compiler.rs
