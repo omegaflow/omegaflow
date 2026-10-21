@@ -362,12 +362,113 @@ fn main() {
                         &mut soft,
                     );
                 }
-                if let Some(extra) = parts.get(2) {
-                    if parse_f64(extra).is_none() {
+                if !parts.get(2).is_some_and(|p| p.starts_with("frame=")) {
+                    push(
+                        "anchor_frame",
+                        format!("{tag}\t{name}\t-"),
+                        true,
+                        &mut findings,
+                        &mut hard,
+                        &mut soft,
+                    );
+                }
+            }
+            if head == "on" {
+                anchor_seen = true;
+                let body = match parts.get(1) {
+                    Some(b) => *b,
+                    None => {
                         push(
                             "anchor_body",
-                            format!("{tag}\t{name}\t{extra}"),
+                            format!("{tag}\t{name}\t-"),
                             true,
+                            &mut findings,
+                            &mut hard,
+                            &mut soft,
+                        );
+                        continue;
+                    }
+                };
+                let ok = !body.is_empty()
+                    && body
+                        .chars()
+                        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_');
+                if !ok {
+                    push(
+                        "anchor_body",
+                        format!("{tag}\t{name}\t{body}"),
+                        true,
+                        &mut findings,
+                        &mut hard,
+                        &mut soft,
+                    );
+                }
+                let attr = |key: &str| {
+                    parts[2..]
+                        .iter()
+                        .filter_map(|p| p.split_once('='))
+                        .find(|(k, _)| *k == key)
+                        .map(|(_, v)| v)
+                };
+                if attr("frame").is_none() {
+                    push(
+                        "anchor_frame",
+                        format!("{tag}\t{name}\t-"),
+                        true,
+                        &mut findings,
+                        &mut hard,
+                        &mut soft,
+                    );
+                }
+                let lat = attr("lat").and_then(parse_f64);
+                let lon = attr("lon").and_then(parse_f64);
+                let elev = attr("alt").and_then(|v| {
+                    if v == "absent" || v == "pending" {
+                        None
+                    } else {
+                        parse_f64(v)
+                    }
+                });
+                if let Some(a) = lat {
+                    if a < -90.0 || a > 90.0 {
+                        push(
+                            "anchor_range",
+                            format!("{tag}\t{name}\tlat={a}"),
+                            true,
+                            &mut findings,
+                            &mut hard,
+                            &mut soft,
+                        );
+                    }
+                }
+                if let Some(o) = lon {
+                    if o < -180.0 || o > 360.0 {
+                        push(
+                            "anchor_range",
+                            format!("{tag}\t{name}\tlon={o}"),
+                            true,
+                            &mut findings,
+                            &mut hard,
+                            &mut soft,
+                        );
+                    }
+                }
+                if let Some(e) = elev {
+                    if e < -500.0 || e > 1.0e9 {
+                        push(
+                            "anchor_range",
+                            format!("{tag}\t{name}\telev={e}"),
+                            true,
+                            &mut findings,
+                            &mut hard,
+                            &mut soft,
+                        );
+                    }
+                    if e == 0.0 && lat == Some(0.0) && lon == Some(0.0) {
+                        push(
+                            "elev_zero",
+                            format!("{tag}\t{name}\tlat=0\tlon=0"),
+                            false,
                             &mut findings,
                             &mut hard,
                             &mut soft,
@@ -375,76 +476,11 @@ fn main() {
                     }
                 }
             }
-            if head == "on" {
+            if matches!(
+                head,
+                "query" | "track" | "coverage" | "global" | "orbit" | "sky" | "absent"
+            ) {
                 anchor_seen = true;
-                if parts.len() != 5 {
-                    push(
-                        "anchor_arity",
-                        format!("{tag}\t{name}\t{}", parts.len()),
-                        true,
-                        &mut findings,
-                        &mut hard,
-                        &mut soft,
-                    );
-                    continue;
-                }
-                let lat = parse_f64(parts[2]);
-                let lon = parse_f64(parts[3]);
-                let elev = parse_f64(parts[4]);
-                match (lat, lon, elev) {
-                    (Some(a), Some(o), Some(e)) => {
-                        if a < -90.0 || a > 90.0 {
-                            push(
-                                "anchor_range",
-                                format!("{tag}\t{name}\tlat={a}"),
-                                true,
-                                &mut findings,
-                                &mut hard,
-                                &mut soft,
-                            );
-                        }
-                        if o < -180.0 || o > 360.0 {
-                            push(
-                                "anchor_range",
-                                format!("{tag}\t{name}\tlon={o}"),
-                                true,
-                                &mut findings,
-                                &mut hard,
-                                &mut soft,
-                            );
-                        }
-                        if e < -500.0 || e > 1.0e9 {
-                            push(
-                                "anchor_range",
-                                format!("{tag}\t{name}\telev={e}"),
-                                true,
-                                &mut findings,
-                                &mut hard,
-                                &mut soft,
-                            );
-                        }
-                        if e == 0.0 && a == 0.0 && o == 0.0 {
-                            push(
-                                "elev_zero",
-                                format!("{tag}\t{name}\tlat={a}\tlon={o}"),
-                                false,
-                                &mut findings,
-                                &mut hard,
-                                &mut soft,
-                            );
-                        }
-                    }
-                    _ => {
-                        push(
-                            "anchor_range",
-                            format!("{tag}\t{name}\tnon-numeric"),
-                            true,
-                            &mut findings,
-                            &mut hard,
-                            &mut soft,
-                        );
-                    }
-                }
             }
             if head == "gate" {
                 if parts.len() != 4 {
