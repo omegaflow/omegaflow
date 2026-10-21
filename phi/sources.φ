@@ -9874,7 +9874,7 @@ terms CC-BY-3.0 https://creativecommons.org/licenses/by/3.0/
 origin https://doi.pangaea.de/10.1594/PANGAEA.758961?format=textfile
 compiler tools/harvest/src/bin/pangaea_harvester.rs
 ttl 604800
-query earth frame=body lat_key=lat lon_key=lon alt_key=absent time_key=date_time
+query earth frame=body lat_key=lat lon_key=lon alt_key=absent time_key=pending
 map .
 lat lat
 lon lon
