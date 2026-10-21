@@ -11,7 +11,7 @@ use std::sync::OnceLock;
 const PROTOCOL: &str = "2025-03-26";
 const VERSION: &str = "0.1.0";
 
-const SEARCH_SCHEMA: &str = r#"{"type":"object","properties":{"query":{"type":"string","description":"Search terms or an archive identifier"},"source":{"type":"string","description":"One arm, e.g. simbad, vizier, mast, gaia, ned, ads, arxiv, openalex. Use 'all' for fan-out."},"group":{"type":"string","enum":["astro","literature","web","data"],"description":"Arm group; only used with source=all"},"limit":{"type":"integer","minimum":1,"maximum":50,"default":5},"since":{"type":"string","description":"Start date, YYYY or YYYY-MM-DD"},"until":{"type":"string","description":"End date, YYYY or YYYY-MM-DD"},"jobs":{"type":"integer","minimum":1,"maximum":16,"default":4}},"required":["query"]}"#;
+const SEARCH_SCHEMA: &str = r#"{"type":"object","properties":{"query":{"type":"string","description":"Search terms or an archive identifier"},"source":{"type":"string","description":"One arm, e.g. simbad, vizier, mast, gaia, ned, ads, arxiv, openalex. Use 'all' for fan-out."},"group":{"type":"string","enum":["astro","literature","web","data"],"description":"Arm group; only used with source=all"},"limit":{"type":"integer","minimum":1,"maximum":50,"default":5},"since":{"type":"string","description":"Start date, YYYY or YYYY-MM-DD"},"until":{"type":"string","description":"End date, YYYY or YYYY-MM-DD"},"jobs":{"type":"integer","minimum":1,"maximum":16,"default":4},"sniff":{"type":"boolean","default":false,"description":"Check the top result URLs with archive_search --sniff (status, format, magic, header). Adds one HTTP request per checked URL."},"sniff_limit":{"type":"integer","minimum":1,"maximum":5,"default":3,"description":"How many top URLs to sniff when sniff=true"}},"required":["query"]}"#;
 
 const SOURCES_SCHEMA: &str = r#"{"type":"object","properties":{"group":{"type":"string","enum":["astro","literature","web","data"],"description":"Only list arms in this group"}}}"#;
 
@@ -147,6 +147,12 @@ fn search_call(params: &json::Json) -> String {
         .and_then(as_usize)
         .unwrap_or(4)
         .clamp(1, 16);
+    let sniff = matches!(arguments.get("sniff"), Some(json::Json::Bool(true)));
+    let sniff_limit = arguments
+        .get("sniff_limit")
+        .and_then(as_usize)
+        .unwrap_or(3)
+        .clamp(1, 5);
     let since = arguments.get("since").and_then(|s| s.as_str());
     let until = arguments.get("until").and_then(|s| s.as_str());
     if !source.is_empty() && source != "all" {
@@ -162,7 +168,14 @@ fn search_call(params: &json::Json) -> String {
     };
     match run_archive(&args) {
         Ok(text) if text.trim().is_empty() => content_result("pending — no result lines", false),
-        Ok(text) => content_result(&text, false),
+        Ok(text) => {
+            let text = if sniff {
+                add_sniffs(&text, sniff_limit)
+            } else {
+                text
+            };
+            content_result(&text, false)
+        }
         Err(message) => content_result(&message, true),
     }
 }
@@ -252,8 +265,58 @@ fn source_rows() -> Result<Vec<(String, String)>, String> {
     .clone()
 }
 
-fn run_archive(args: &[String]) -> Result<String, String> {
+fn add_sniffs(text: &str, limit: usize) -> String {
+    let urls = result_urls(text);
+    if urls.is_empty() {
+        return text.to_string();
+    }
+    let mut out = text.to_string();
+    out.push_str("\n--- sniff ---");
+    for url in urls.into_iter().take(limit) {
+        match run_sniff(&url) {
+            Ok(lines) => {
+                out.push('\n');
+                out.push_str(lines.trim());
+            }
+            Err(message) => {
+                out.push_str("\n[sniff] pending — ");
+                out.push_str(&message);
+            }
+        }
+    }
+    out
+}
+
+fn result_urls(text: &str) -> Vec<String> {
+    let mut urls: Vec<String> = Vec::new();
+    for line in text.lines() {
+        let Some(rest) = line.strip_prefix("url ") else {
+            continue;
+        };
+        let url = rest.split('\t').next().unwrap_or(rest).trim();
+        if url.starts_with("http") && !urls.iter().any(|seen| seen == url) {
+            urls.push(url.to_string());
+        }
+    }
+    urls
+}
+
+fn run_sniff(url: &str) -> Result<String, String> {
     let bin = archive_search_bin();
+    let out = Command::new(&bin)
+        .arg("--sniff")
+        .arg(url)
+        .output()
+        .map_err(|e| format!("cannot run {}: {e}", bin.display()))?;
+    let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    if stdout.is_empty() {
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        return Err(first_line(stderr.trim()).to_string());
+    }
+    Ok(stdout)
+}
+
+fn run_archive(args: &[String]) -> Result<String, String> {    let bin = archive_search_bin();
     let out = Command::new(&bin)
         .args(args)
         .output()
@@ -400,8 +463,16 @@ mod tests {
     }
 
     #[test]
-    fn strips_the_archive_prefix() {
+    fn collects_unique_result_urls() {
+        let text = "url https://example.org/a\ttitle: A\nurl https://example.org/a\ttitle: A\nurl https://example.org/b\ttitle: B";
         assert_eq!(
+            result_urls(text),
+            vec!["https://example.org/a", "https://example.org/b"]
+        );
+    }
+
+    #[test]
+    fn strips_the_archive_prefix() {        assert_eq!(
             strip_prefix("[simbad] url https://example.org/a\n[simbad] pending — x"),
             "url https://example.org/a\npending — x"
         );
