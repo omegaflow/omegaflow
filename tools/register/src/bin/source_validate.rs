@@ -278,6 +278,23 @@ fn main() {
             if head != "field" && head != "quantity" {
                 continue;
             }
+            let standard_field =
+                head == "quantity" || (head == "field" && kernel_id_of(parts[3]).is_some());
+            if standard_field
+                && !matches!(
+                    parts.get(7).copied(),
+                    Some("measured" | "derived" | "pending")
+                )
+            {
+                push(
+                    "field_tau_src_missing",
+                    format!("{tag}\t{name}\t{}", parts.len()),
+                    true,
+                    &mut findings,
+                    &mut hard,
+                    &mut soft,
+                );
+            }
             let fname = field_name(&parts);
             if !names.insert(fname.clone()) {
                 push(
