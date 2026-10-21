@@ -203,40 +203,40 @@ url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
 on earth frame=body lat=0.0 lon=-75.2 alt=35786023
-last flux radiation_proton_flux_differential inverse-square em pfu/mev 6.0 0.0 0.0
+last flux radiation_proton_flux_differential inverse-square em pfu/mev 6.0 pending 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
 on earth frame=body lat=0.0 lon=-75.2 alt=35786023
-last flux radiation_electron_flux_2mev inverse-square em pfu 6.0 0.0 0.0
+last flux radiation_electron_flux_2mev inverse-square em pfu 6.0 pending 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
 on earth frame=body lat=0.0 lon=-75.2 alt=35786023
-last flux radiation_proton_flux_integral inverse-square em pfu 6.0 0.0 0.0
+last flux radiation_proton_flux_integral inverse-square em pfu 6.0 pending 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
 on earth frame=body lat=0.0 lon=-75.2 alt=35786023
-last Hp magnetosphere_hp_nt inverse-square em nT 6.0 0.0 0.0
-last He magnetosphere_he_nt inverse-square em nT 6.0 0.0 0.0
-last total magnetosphere_bt_nt inverse-square em nT 6.0 0.0 0.0
+last Hp magnetosphere_hp_nt inverse-square em nT 6.0 pending 0.0 0.0
+last He magnetosphere_he_nt inverse-square em nT 6.0 pending 0.0 0.0
+last total magnetosphere_bt_nt inverse-square em nT 6.0 pending 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
 on earth frame=body lat=0.0 lon=-75.2 alt=35786023
-last max_xrlong solar_flare_xray_intensity inverse-square em W/m2 6.0 0.0 0.0
+last max_xrlong solar_flare_xray_intensity inverse-square em W/m2 6.0 pending 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 60
 at sun frame=barycenter
-last flux noaa_goes_xray_flux_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.05-0.4nm
-last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 0.0 0.0 where energy 0.1-0.8nm
+last flux noaa_goes_xray_flux_w_m2 inverse-square em wm2_1au 6.0 pending 0.0 0.0 where energy 0.05-0.4nm
+last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 pending 0.0 0.0 where energy 0.1-0.8nm
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 terms CC-BY-4.0 https://www.seismicportal.eu/terms.html
@@ -289,7 +289,7 @@ map .
 lat latitude
 lon longitude
 epoch captured_at
-last value safecast_cpm inverse-square em cpm 3600 0.0 0.0 where unit cpm
+last value safecast_cpm inverse-square em cpm 3600 pending 0.0 0.0 where unit cpm
 
 url https://aviationweather.gov/api/data/metar?ids=EDDF,EDDM,EGLL,KJFK,RJTT&format=json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
@@ -357,7 +357,7 @@ url https://gracedb.ligo.org/api/superevents/?limit=10
 terms ligo-public https://gracedb.ligo.org/
 ttl 300
 at earth frame=barycenter
-last superevents.far gravity_wave_far inverse-square gravity 1 300 0.0 0.0
+last superevents.far gravity_wave_far inverse-square gravity 1 300 pending 0.0 0.0
 
 url https://seismic-api.science.unimelb.edu.au/three-day-quakes
 terms CC-BY-4.0 https://seiscomp.science.unimelb.edu.au/
@@ -381,12 +381,12 @@ url https://www.ndbc.noaa.gov/data/realtime2/51003.txt
 ttl 300
 format csv
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-lastrow WDIR hydrosphere_buoy_51003_wind_dir patch-levy advective deg 60 0.0 0.0
-lastrow WSPD hydrosphere_buoy_51003_wind_speed patch-levy advective m/s 60 0.0 0.0
-lastrow WVHT hydrosphere_buoy_51003_wave_height gaussian-inverse-square acoustic m 10 0.0 0.0
-lastrow DPD hydrosphere_buoy_51003_dominant_period gaussian-inverse-square acoustic s 21600 0.0 0.0
-lastrow PRES hydrosphere_buoy_51003_pressure gaussian-inverse-square acoustic hPa 21600 0.0 0.0
-lastrow WTMP hydrosphere_buoy_51003_water_temp exponential-decay thermal C 3600 0.0 0.0
+lastrow WDIR hydrosphere_buoy_51003_wind_dir patch-levy advective deg 60 pending 0.0 0.0
+lastrow WSPD hydrosphere_buoy_51003_wind_speed patch-levy advective m/s 60 pending 0.0 0.0
+lastrow WVHT hydrosphere_buoy_51003_wave_height gaussian-inverse-square acoustic m 10 pending 0.0 0.0
+lastrow DPD hydrosphere_buoy_51003_dominant_period gaussian-inverse-square acoustic s 21600 pending 0.0 0.0
+lastrow PRES hydrosphere_buoy_51003_pressure gaussian-inverse-square acoustic hPa 21600 pending 0.0 0.0
+lastrow WTMP hydrosphere_buoy_51003_water_temp exponential-decay thermal C 3600 pending 0.0 0.0
 
 url https://www.nhc.noaa.gov/CurrentStorms.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
@@ -435,14 +435,14 @@ url https://services.swpc.noaa.gov/json/f107_cm_flux.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 600
 at sun frame=barycenter
-first flux solar_f107_flux_sfu inverse-square em sfu 3600.0 0.0 0.0 where frequency 2800
+first flux solar_f107_flux_sfu inverse-square em sfu 3600.0 pending 0.0 0.0 where frequency 2800
 
 url https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 600
 at sun frame=barycenter
-last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 304
-last value solar_euv_flux_284_wm2 inverse-square em wm2_1au 60.0 0.0 0.0 where line 284
+last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 pending 0.0 0.0 where line 304
+last value solar_euv_flux_284_wm2 inverse-square em wm2_1au 60.0 pending 0.0 0.0 where line 284
 
 url https://environment.data.gov.uk/flood-monitoring/id/stations/{station}/readings.json?_limit=1
 terms OGL-UK-3.0 http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
@@ -455,7 +455,7 @@ stations_lat lat
 stations_lon long
 fanout 40
 fanout_center receiver
-last items.value hydrosphere_river_stage_m inverse-square geometry m 900.0 0.0 0.0
+last items.value hydrosphere_river_stage_m inverse-square geometry m 900.0 pending 0.0 0.0
 
 url https://www.imis.bfs.de/ogc/opendata/ows?service=WFS&version=1.1.0&request=GetFeature&typeName=opendata:odlinfo_odl_1h_latest&outputFormat=application/json&count=2000
 terms dl-de-by-2.0 https://www.imis.bfs.de/
@@ -555,13 +555,13 @@ url https://api.meteo.lt/v1/stations/vilniaus-ams/observations/latest
 terms CC-BY-SA-4.0 https://api.meteo.lt/
 ttl 3600
 on earth frame=body lat=54.625992 lon=25.107064 alt=0
-last observations.airTemperature meteo_lt_air_temp_c exponential-decay thermal C 3600 0.0 0.0
-last observations.windSpeed meteo_lt_wind_speed_ms patch-levy advective m/s 3600 0.0 0.0
-last observations.windGust meteo_lt_wind_gust_ms patch-levy advective m/s 3600 0.0 0.0
-last observations.windDirection meteo_lt_wind_direction_deg patch-levy advective deg 3600 0.0 0.0
-last observations.seaLevelPressure meteo_lt_pressure_hpa patch-levy advective hPa 3600 0.0 0.0
-last observations.relativeHumidity meteo_lt_rel_humidity_pct gaussian-inverse-square diffusion % 3600 0.0 0.0
-last observations.precipitation meteo_lt_precipitation_mm gaussian-inverse-square acoustic mm 3600 0.0 0.0
+last observations.airTemperature meteo_lt_air_temp_c exponential-decay thermal C 3600 pending 0.0 0.0
+last observations.windSpeed meteo_lt_wind_speed_ms patch-levy advective m/s 3600 pending 0.0 0.0
+last observations.windGust meteo_lt_wind_gust_ms patch-levy advective m/s 3600 pending 0.0 0.0
+last observations.windDirection meteo_lt_wind_direction_deg patch-levy advective deg 3600 pending 0.0 0.0
+last observations.seaLevelPressure meteo_lt_pressure_hpa patch-levy advective hPa 3600 pending 0.0 0.0
+last observations.relativeHumidity meteo_lt_rel_humidity_pct gaussian-inverse-square diffusion % 3600 pending 0.0 0.0
+last observations.precipitation meteo_lt_precipitation_mm gaussian-inverse-square acoustic mm 3600 pending 0.0 0.0
 
 url https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={station}&product=water_level&datum=MLLW&time_zone=gmt&units=metric&format=json&date=latest&application=omegaflow
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
@@ -575,7 +575,7 @@ stations_lon lng
 fanout 40
 fanout_center receiver
 fanout_delay 10
-last data.v hydrosphere_tide_water_level_m inverse-square geometry m 3600 0.0 0.0
+last data.v hydrosphere_tide_water_level_m inverse-square geometry m 3600 pending 0.0 0.0
 
 url https://aviationweather.gov/api/data/pirep?id=KJFK&distance=2000&format=json&age=6
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
@@ -815,7 +815,7 @@ stations_lat geometry.coordinates.1
 stations_lon geometry.coordinates.0
 fanout 40
 fanout_center receiver
-first data.0.observations.value frost_air_temperature_c gaussian-inverse-square thermal C 3600 0.0 0.0
+first data.0.observations.value frost_air_temperature_c gaussian-inverse-square thermal C 3600 pending 0.0 0.0
 
 url https://frost.met.no/observations/v0.jsonld?sources={station}&referencetime=latest&elements=wind_speed&timeoffsets=default&levels=default
 terms free-open https://data.met.no/DataPolicy
@@ -829,7 +829,7 @@ stations_lat geometry.coordinates.1
 stations_lon geometry.coordinates.0
 fanout 40
 fanout_center receiver
-first data.0.observations.value frost_wind_speed_ms gaussian-inverse-square advective m/s 3600 0.0 0.0
+first data.0.observations.value frost_wind_speed_ms gaussian-inverse-square advective m/s 3600 pending 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/air-quality-api.open-meteo.com/openmeteo_birch_pollen.txt
 format openmeteo_pollen_axis_value_text
@@ -1140,7 +1140,7 @@ url https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR?startDate={week_ago}&endDa
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 ttl 3600
 at sun frame=barycenter
-regex classType":"X([0-9.]+) solar_flare_x_class_latest inverse-square em 1e-4W/m2 3600 0.0 0.0
+regex classType":"X([0-9.]+) solar_flare_x_class_latest inverse-square em 1e-4W/m2 3600 pending 0.0 0.0
 
 url https://maps.sensor.community/data/v2/data.json
 terms ODC-DbCL-1.0 https://maps.sensor.community/
@@ -1242,7 +1242,7 @@ stations_lat latitude
 stations_lon longitude
 fanout 50
 fanout_center receiver
-last results.value noaa_ghcnd_tmax_c erfc thermal C 3600 0.0 0.0
+last results.value noaa_ghcnd_tmax_c erfc thermal C 3600 pending 0.0 0.0
 
 url https://www.nmdb.eu/nest/draw_graph.php?wget=1&stations%5B%5D=OULU&output=ascii&tabchoice=ori&dtype=corr_for_efficiency&date_choice=last&last_days=7&tresolution=60&yunits=0
 terms nmdb-non-commercial https://www.nmdb.eu/
@@ -1275,7 +1275,7 @@ url https://kp.gfz.de/app/json/?start={today}T00:00:00Z&end={tomorrow}T00:00:00Z
 terms CC-BY-4.0 https://kp.gfz.de/
 ttl 10800
 on earth frame=body lat=52.07 lon=12.68 alt=0
-last Kp magnetosphere_kp_3h gaussian-inverse-square em 1 86400 0.0 0.0
+last Kp magnetosphere_kp_3h gaussian-inverse-square em 1 86400 pending 0.0 0.0
 
 url https://api.openaq.org/v3/sensors/{station}/measurements?limit=1&datetime_from={yesterday}T00:00:00Z
 terms CC-BY-4.0 https://docs.openaq.org/resources/licenses
@@ -1294,7 +1294,7 @@ stations_lon coordinates.longitude
 fanout 25
 fanout_center receiver
 fanout_delay 20
-last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 0.0 0.0
+last results.value openaq_pm25_ugm3 gaussian-inverse-square diffusion µg/m3 3600 pending 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/dd.weather.gc.ca/eccc_gdps_15km.grib2
 terms OGL-Canada-2.0 https://open.canada.ca/en/open-government-licence-canada
@@ -1472,8 +1472,8 @@ terms free-open https://erddap.dataexplorer.oceanobservatories.org/erddap/legal.
 ttl 86400
 format csv
 on earth frame=body lat=46.05 lon=-125.0 alt=0
-lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm gaussian-inverse-square diffusion uatm 8640.0 0.0 0.0
-lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal C 8640.0 0.0 0.0
+lastrow surface_partial_pressure_of_carbon_dioxide_in_sea_water hydrosphere_pco2_ooi_uatm gaussian-inverse-square diffusion uatm 8640.0 pending 0.0 0.0
+lastrow sea_surface_temperature hydrosphere_sst_ooi_c exponential-decay thermal C 8640.0 pending 0.0 0.0
 
 url https://erddap.hfrnode.eu/erddap/griddap/EUHFR_NRTcurrent_HFR-ICATMAR-Total_v3.json?EWCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D,NSCT%5B(last)%5D%5B0%5D%5B0:111%5D%5B0:91%5D
 terms CC-BY-4.0 https://erddap.hfrnode.eu/erddap/legal.html
@@ -3571,21 +3571,21 @@ ttl 86400
 format csv
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 on earth frame=body lat=19.5362 lon=-155.5763 alt=0
-lastrow average atmosphere_ch4_ppb_global gaussian-inverse-square diffusion ppb 8640.0 0.0 0.0
+lastrow average atmosphere_ch4_ppb_global gaussian-inverse-square diffusion ppb 8640.0 pending 0.0 0.0
 
 url https://gml.noaa.gov/webdata/ccgg/trends/n2o/n2o_mm_gl.txt
 ttl 86400
 format csv
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 on earth frame=body lat=19.5362 lon=-155.5763 alt=0
-lastrow average atmosphere_n2o_ppb_global gaussian-inverse-square diffusion ppb 8640.0 0.0 0.0
+lastrow average atmosphere_n2o_ppb_global gaussian-inverse-square diffusion ppb 8640.0 pending 0.0 0.0
 
 url https://gml.noaa.gov/webdata/ccgg/trends/sf6/sf6_mm_gl.txt
 ttl 86400
 format csv
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 on earth frame=body lat=19.5362 lon=-155.5763 alt=0
-lastrow average atmosphere_sf6_ppt_global gaussian-inverse-square diffusion ppt 8640.0 0.0 0.0
+lastrow average atmosphere_sf6_ppt_global gaussian-inverse-square diffusion ppt 8640.0 pending 0.0 0.0
 
 url https://hfradar.ioos.us/erddap/tabledap/BML_BML1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 terms free-open https://hfradar.ioos.us/erddap/legal.html
@@ -7689,9 +7689,9 @@ url https://mesonet.agron.iastate.edu/json/raob.py?station=OAX&ts={yesterday_nod
 terms PD https://mesonet.agron.iastate.edu/disclaimer.php
 ttl 86400
 track earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
-last profiles.0.profile.tmpc radiosonde_temperature_c exponential-decay thermal C 8640.0 0.0 0.0
-last profiles.0.profile.dwpc radiosonde_dewpoint_c exponential-decay thermal C 8640.0 0.0 0.0
-last profiles.0.profile.pres radiosonde_pressure_hpa gaussian-inverse-square acoustic hPa 8640.0 0.0 0.0
+last profiles.0.profile.tmpc radiosonde_temperature_c exponential-decay thermal C 8640.0 pending 0.0 0.0
+last profiles.0.profile.dwpc radiosonde_dewpoint_c exponential-decay thermal C 8640.0 pending 0.0 0.0
+last profiles.0.profile.pres radiosonde_pressure_hpa gaussian-inverse-square acoustic hPa 8640.0 pending 0.0 0.0
 
 url https://ned.ipac.caltech.edu/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+2000+ra,dec,z,prefname,type_key,n_spectra+FROM+NEDTAP.objdir+WHERE+z+%3E+0
 terms other-attribution https://ned.ipac.caltech.edu/
@@ -9320,7 +9320,7 @@ url https://air-quality-api.open-meteo.com/v1/air-quality?latitude=19.5&longitud
 terms CC-BY-4.0 https://open-meteo.com/en/licence
 ttl 604800
 on earth frame=body lat=19.48 lon=-155.6 alt=0
-path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm gaussian-inverse-square diffusion ppm 86400 0.0 0.0
+path current.carbon_dioxide atmosphere_co2_mauna_loa_ppm gaussian-inverse-square diffusion ppm 86400 pending 0.0 0.0
 
 url https://archives.esac.esa.int/hsa/whsa-tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+5000+ra,dec,flux+FROM+hsa.pacs_point_source_070+WHERE+flux+IS+NOT+NULL
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
@@ -11226,7 +11226,7 @@ origin https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=433&phys-par=1
 format json
 ttl 604800
 at sun frame=barycenter
-last phys_par.0.value asteroid_abs_mag inverse-square em mag 604800 0.0 0.0
+last phys_par.0.value asteroid_abs_mag inverse-square em mag 604800 pending 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/ssd-api.jpl.nasa.gov/kbo_elements.json
 origin https://ssd-api.jpl.nasa.gov/sbdb_query.api ; https://www.minorplanetcenter.net/iau/MPCORB/Distant.txt
@@ -11542,8 +11542,8 @@ format tar_gz_yaml
 header Authorization {EARTHDATA_EDL_TOKEN}
 ttl 2592000
 at earth frame=barycenter
-last KBR1B.range_rate gracefo_kbr_range_rate_m_s inverse-square geometry m/s 86400 0.0 0.0
-last KBR1B.range_accl gracefo_kbr_range_accl_m_s2 inverse-square geometry m/s2 86400 0.0 0.0
+last KBR1B.range_rate gracefo_kbr_range_rate_m_s inverse-square geometry m/s 86400 pending 0.0 0.0
+last KBR1B.range_accl gracefo_kbr_range_accl_m_s2 inverse-square geometry m/s2 86400 pending 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/cdaw.gsfc.nasa.gov/soho_lasco_cme.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
