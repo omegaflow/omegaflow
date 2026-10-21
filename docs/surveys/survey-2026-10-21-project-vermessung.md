@@ -2,7 +2,7 @@
   title: Vermessung aller Aufträge — 11 live, 47 geschlossen, 5 wiederaufgenommen (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 22253f5c9e9b6bac43cf278afe882c0de5962d556c3ea3bc1c5fdba778dd1116
+  sha256: ab50909a35598ddc036763715f5ee7b3273ba5db8ee4db3a643f21b143fa0dc6
   status: live
   owner: future
   ack: future 2026-10-21T11:40Z
@@ -52,7 +52,7 @@ nicht, dass der Auftrag abgeschlossen ist. Drei zentrale Zahlen bleiben
 | vlies | future | 210 Zellen, 15 Kanäle | 14/15 Arme; 112 silent, 36 floor, 62 `alignment pending`; `ozzy` absent | **aktuell** (nach Korrektur) | nächster Lauf 15/15, 0 `alignment pending` |
 | wartend | mycelium | 16 Warten aufgelöst | 22 Warten in `wartend.φ`; 16/16 A-Keys geschlossen; A17/A18-Zeilen falsch; inpop-Lizenz geschlossen | **aktuell** (Nachtrag 2026-10-21) | A17-Compiler + `gruan` je 1 Treffer |
 | archiv-wiederaufnahme | future | 5 offene Archivfälle | 47 geschlossen belegt; 5 wiederaufgenommen (flyby2, maschinen-audits, bio-kanal, stellar-xuv, phantom-island) | **neu** (2026-10-21) | je Fall ein Gate, siehe Auftrag |
-| bau-der-arme | future | 13 Bau-Punkte | 13 gebaut; offen: 5 measure-Teile, 5 Lizenztexte | **neu** (2026-10-21) | `archive_search`-Tests + `register_lookup --compilers` |
+| bau-der-arme | future | 13 Bau-Punkte | 13 gebaut; Lizenztexte gemessen (auth-required); offen: 5 measure-Teile | **neu** (2026-10-21) | `archive_search`-Tests + fünf Funken-Protokolle |
 
 ## Die sechs Deltas im Einzelnen
 
