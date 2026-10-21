@@ -684,7 +684,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
-                    tau_src: crate::archivar::types::TauSource::Measured,
+                    tau_src: tau_src_of(&parts),
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -711,7 +711,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
-                    tau_src: crate::archivar::types::TauSource::Measured,
+                    tau_src: tau_src_of(&parts),
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -734,7 +734,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: 0,
                     channel_ref: Some(0),
                     tau: 0.0,
-                    tau_src: crate::archivar::types::TauSource::Measured,
+                    tau_src: tau_src_of(&parts),
                     absorption: 0.0,
                     advection: 0.0,
                     unit: String::new(),
@@ -756,7 +756,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
-                    tau_src: crate::archivar::types::TauSource::Measured,
+                    tau_src: tau_src_of(&parts),
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -790,7 +790,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
-                    tau_src: crate::archivar::types::TauSource::Measured,
+                    tau_src: tau_src_of(&parts),
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -865,7 +865,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
-                    tau_src: crate::archivar::types::TauSource::Measured,
+                    tau_src: tau_src_of(&parts),
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -888,7 +888,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
-                    tau_src: crate::archivar::types::TauSource::Measured,
+                    tau_src: tau_src_of(&parts),
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -911,7 +911,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
-                    tau_src: crate::archivar::types::TauSource::Measured,
+                    tau_src: tau_src_of(&parts),
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -2885,6 +2885,15 @@ fn parse_medium_line(parts: &[&str]) -> Result<MediumLine, String> {
     })
 }
 
+fn tau_src_of(parts: &[&str]) -> TauSource {
+    match parts.get(7).copied() {
+        Some("measured") => TauSource::Measured,
+        Some("derived") => TauSource::Derived,
+        Some("pending") => TauSource::Pending,
+        _ => TauSource::Pending,
+    }
+}
+
 pub fn parse_field_config(parts: &[&str]) -> Option<(u8, Option<u8>, f64, f64, f64)> {
     let kernel = kernel_id_of(parts[3])?;
     let channel_ref = match force_id_of(parts[4]) {
@@ -2900,7 +2909,9 @@ pub fn parse_field_config(parts: &[&str]) -> Option<(u8, Option<u8>, f64, f64, f
     };
     let (abs_index, adv_index) = match parts.get(7).copied() {
         Some("measured" | "derived" | "pending") => (8, 9),
-        _ => (7, 8),
+        None => (7, 8),
+        Some(_) if parts.len() <= 8 => (7, 8),
+        Some(_) => return None,
     };
     let absorption: f64 = if parts.len() > abs_index {
         match parts[abs_index].parse() {
@@ -2924,17 +2935,17 @@ pub fn parse_field_config(parts: &[&str]) -> Option<(u8, Option<u8>, f64, f64, f
 pub struct WhereRefused;
 
 pub fn parse_where(parts: &[&str]) -> Result<Option<(String, String)>, WhereRefused> {
-    if parts.len() < 10 || parts[9] != "where" {
+    let Some(at) = parts.iter().position(|p| *p == "where") else {
         return Ok(None);
-    }
-    if parts.len() != 12 {
+    };
+    if parts.len() != at + 3 {
         eprintln!(
             "where refused at {}: the filter clause carries exactly `where <key> <value>`",
             parts.get(1).copied().unwrap_or("?")
         );
         return Err(WhereRefused);
     }
-    Ok(Some((parts[10].to_string(), parts[11].to_string())))
+    Ok(Some((parts[at + 1].to_string(), parts[at + 2].to_string())))
 }
 
 pub fn load_sources_from(content: &str) -> Vec<SourceConfig> {
@@ -3990,7 +4001,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             })
         };
         let geometry = "url https://example.com/g.bin\nttl 604800\n\
-                        last items.value river_stage inverse-square geometry m 900.0 0.0 0.0\n";
+                        last items.value river_stage inverse-square geometry m 900.0 pending 0.0 0.0\n";
         let fc = last_of(geometry).expect("a last selector with a geometry kind flows");
         assert_eq!(
             fc.channel_ref, None,
@@ -3999,7 +4010,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         assert_eq!(fc.unit, "m", "the geometry unit stays free");
 
         let source_parameter = "url https://example.com/g.bin\nttl 604800\n\
-                                last mass planet_mass inverse-square source-parameter M_earth 60 0.0 0.0\n";
+                                last mass planet_mass inverse-square source-parameter M_earth 60 pending 0.0 0.0\n";
         assert_eq!(
             last_of(source_parameter).and_then(|f| f.channel_ref),
             None,
@@ -4007,7 +4018,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         );
 
         let still_a_force = "url https://example.com/g.bin\nttl 604800\n\
-                             last data.v tide_height inverse-square gravity m 3600 0.0 0.0\n";
+                             last data.v tide_height inverse-square gravity m 3600 pending 0.0 0.0\n";
         assert_eq!(
             last_of(still_a_force).and_then(|f| f.channel_ref),
             Some(2),

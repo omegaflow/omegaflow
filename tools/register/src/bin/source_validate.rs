@@ -256,6 +256,25 @@ fn main() {
                 Some(h) => *h,
                 None => continue,
             };
+            if matches!(
+                head,
+                "first" | "last" | "lastrow" | "path" | "deep" | "regex" | "objlast"
+            ) {
+                if !matches!(
+                    parts.get(7).copied(),
+                    Some("measured" | "derived" | "pending")
+                ) {
+                    push(
+                        "field_tau_src_missing",
+                        format!("{tag}\t{name}\t{}", parts.len()),
+                        true,
+                        &mut findings,
+                        &mut hard,
+                        &mut soft,
+                    );
+                }
+                continue;
+            }
             if head != "field" && head != "quantity" {
                 continue;
             }
