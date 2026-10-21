@@ -2,7 +2,7 @@
   title: Suchkanäle — gemessener Stand (2026-10-19)
   class: concept
   date: 2026-10-19
-  sha256: d73f3cac6cf89148ecaa75af9a9d21336937ffad7f18c423e181f327ae95d93e
+  sha256: ad5afa2a89cbbe881a704d96ba8f537d47f2f4fedc73bbf9d9fbb57fa065a68e
   status: live
   see-also: docs/concepts/tools-map.md docs/surveys/survey-2026-10-19-paper-forschungslage.md
 -->
@@ -153,8 +153,9 @@ Pfadform, neuer Host, `index` fehlt (Default 0).
 **Messung:** der Such-GET antwortet auf **beiden** Hosts nicht innerhalb von 40 s;
 mit 90 s Frist kommt nach **60,17 s** ein **HTTP 504 Gateway Timeout** (167 B).
 Der Wurzel-HEAD antwortet sofort. Das ist kein 429 und kein „kein Netz",
-also läuft der Arm als **pending**, mit der ehrlichen Meldung
-„no answer within 40 s (timeout or no network)".
+also ist der Befund **riss**: das Label „nicht gebaut“ widerspricht der
+Messung HTTP 504; der Arm ist gebaut, der Dienst antwortet nicht. Die Meldung
+lautet „no answer within 40 s (timeout or no network)".
 
 Nachgemessen 2026-10-20: unverändert **HTTP 504** nach **60,37 s**
 (167 B); der Wurzel-Host antwortet weiter sofort, der Such-GET nicht.

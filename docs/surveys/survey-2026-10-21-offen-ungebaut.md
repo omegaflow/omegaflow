@@ -2,7 +2,7 @@
   title: Geplant und nicht gebaut — die Köder-/Arm-Session (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 3190684db55091b4273617e5133d1d20c6463b673423cb7171564ec31f9b42c0
+  sha256: 89b14f33de3e531b8a1fb3fdfab5217ba586c8363e57e3ed874aa716b3dac398
   status: superseded
   see-also: docs/concepts/koeder-kette.md docs/concepts/koeder-formen.md docs/concepts/search-channels.md
 -->
@@ -131,8 +131,8 @@ der Lock systemweit immer.
   vorhanden" ist **nicht gebaut**.
 - `docs/concepts/die-akteure-im-boden-und-wasser.md`: **W-Phase-M9** —
   entschieden, **nicht gebaut**.
-- `docs/concepts/zeugnis.md`: was nicht gebaut ist, ist `absent` — die
-  Nullstände sind registriert, nicht gefüllt.
+- `docs/concepts/zeugnis.md`: nicht Gebautes ist `pending` — der Auftrag bleibt
+  offen; `absent` wäre erst belegt, wenn die Sache nicht existiert.
 
 ## 9. Cache, Fallback, SearXNG, Madrigal (2026-10-21)
 
@@ -143,10 +143,11 @@ der Lock systemweit immer.
 
 **Fallback:** Brave, Exa, Tavily, SearchApi, SerpApi und Google CSE fallen bei
 400/402/403/429/432 auf `--4get` zurück, mit `via: 4get (<mode> <status>)`.
-Consensus und Gemini bleiben bewusst `pending`: 4get liefert dort Webseiten,
-keine Literatur-Synthese und keine LLM-Antwort. Gemessen: `--brave` liefert
-4get-Treffer mit `via: 4get (brave 402)`; ohne 4get-Treffer bleibt das
-benannte `pending`.
+Consensus und Gemini bleiben bewusst `riss`: Key vorhanden, API antwortet 429 —
+beide Seiten gemessen. 4get liefert dort Webseiten, keine Literatur-Synthese
+und keine LLM-Antwort. Gemessen: `--brave` liefert 4get-Treffer mit
+`via: 4get (brave 402)`; ohne 4get-Treffer bleibt der `riss` benannt.
+Der Code druckt für diese zwei noch `pending`; Punkt I im Auftrag gleicht das an.
 
 **SearXNG:** `searx.space/data/instances.json` hatte 92 Instanzen; 40 mit
 `network_type=normal` und HTTP 200 getestet. Ergebnis: 29×429, 5×403, 1×418,
@@ -164,6 +165,36 @@ gestrichen (Flag bleibt), damit `--all` den toten Aufruf nicht mehr macht.
 Instrument (Ionosonde/Radar) gebraucht wird.
 
 
+
+## 10. Status-Audit (2026-10-21)
+
+Regel: `null-echt` = gemessen, 0 über n; `absent` = belegt, dass die Sache
+nicht existiert; `riss` = Widerspruch, beide Seiten belegt; `pending` = nicht
+gemessen, Auftrag offen.
+
+Gezählt in den nicht archivierten Dateien (`git grep`, ohne `**/archiv/**`):
+
+| Zustand | Dateien main | Dateien work |
+|---|---:|---:|
+| `null-echt` | 13 | 18 |
+| `absent` | 96 | 250 |
+| `riss` | 22 | 30 |
+| `pending` | 148 | 318 |
+
+**Hauptbefund:** `pending` wird für **gemessene HTTP-Blocks** benutzt — 178
+Stellen im Code (`pending — … HTTP 4xx/5xx`) und 3 in Docs. Nach der Regel ist
+das `riss` (Label vs. Messung) oder eine gemessene Zeile mit HTTP-Status, nicht
+`pending`.
+
+**Zweiter Befund:** `absent` wird für „nicht gebaut“ benutzt (u.a. dieser
+Survey §8). Das ist `pending`, solange die Sache nicht als nicht existent
+belegt ist.
+
+**Dritter Befund:** `null-echt` nennt nicht immer n; `riss` ist meist sauber
+(both sides). Die zwei Vokabulare — 0-Kanon (`glossar.md`) und Messstatus —
+werden gemischt.
+
+Konsequenz: Punkt I im Auftrag `projects/archive-search-faehigkeiten.md`.
 
 ## Was stattdessen passierte
 
