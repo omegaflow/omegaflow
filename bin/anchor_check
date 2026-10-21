@@ -1,0 +1,448 @@
+#!/bin/sh
+set -u
+
+LC_ALL=C
+export LC_ALL
+
+usage() {
+    cat >&2 <<'EOF'
+anchor_check: usage: bin/anchor_check <candidate> --anchors <file> --safety <s> [--format tsv|json]
+  <candidate>  measured candidate rows: <time> <value>; time ISO-8601 or Unix epoch
+  --anchors    anchor TSV: time, value, sigma, confidence, source
+  --safety     multiplicative margin s > 0; band = value +/- s*sigma
+  --format     tsv (default) or json
+  --selftest   run offline fixture checks
+  a candidate row is checked against every anchor at the same time
+  anchors, sigma, band and score are bait/search filters, never a measured result
+  state outside and state pending are not accepted results; no anchor value is
+  written as a result and no value is interpolated
+EOF
+    exit "${1:-2}"
+}
+
+die2() { printf 'anchor_check: %s\n' "$*" >&2; exit 2; }
+
+selftest() {
+    td="$(mktemp -d "${TMPDIR:-/tmp}/anchor_check.XXXXXX")" || die2 "cannot create temp directory"
+    trap 'rm -rf "$td"' EXIT HUP INT TERM
+    ok=0
+    bad=0
+    pass() { ok=$((ok + 1)); }
+    fail() { bad=$((bad + 1)); printf 'selftest: FAIL %s\n' "$*"; }
+    eq() { if [ "$2" = "$3" ]; then pass; else fail "$1: expected [$3], got [$2]"; fi; }
+    field() { printf '%s\n' "$1" | cut -f "$2"; }
+    row() { printf '%s\n' "$1" | sed -n "$2p"; }
+
+    printf 'time\tvalue\tsigma\tconfidence\tsource\n' > "$td/anchors.tsv"
+    printf '2024-05-10T12:00:00Z\t7.83\t0.05\t1.0\tspice:hard\n' >> "$td/anchors.tsv"
+    printf '2024-05-10T13:00:00Z\t20.4\t1.0\t0.6\tattitude:soft\n' >> "$td/anchors.tsv"
+    printf 'time\tvalue\n2024-05-10T12:00:00Z\t7.84\n' > "$td/cand_inside.tsv"
+    printf 'time\tvalue\n2024-05-10T12:00:00Z\t8.50\n' > "$td/cand_outside.tsv"
+    printf 'time\tvalue\n2024-05-10T13:00:00Z\t21.3\n' > "$td/cand_soft.tsv"
+    printf 'time\tvalue\n2024-05-10T14:00:00Z\t7.83\n' > "$td/cand_time.tsv"
+    printf '1715342400\t7.83\t0.05\t1\tunix:hard\n' > "$td/anchors_unix.tsv"
+    printf '2024-05-10 12:00:00,7.84\n' > "$td/cand_space.csv"
+    printf 'time\tvalue\tsigma\tconfidence\tsource\n' > "$td/anchors_none.tsv"
+    printf 'time\tvalue\tsigma\tconfidence\tsource\n2024-05-10T12:00:00Z\t7.83\t0\t1\tspice:x\n' > "$td/anchors_sigma.tsv"
+    printf 'time\tvalue\tsigma\tconfidence\tsource\n2024-05-10T12:00:00Z\t7.83\t0.05\t1.5\tspice:x\n' > "$td/anchors_conf.tsv"
+    printf 'time\tvalue\tsigma\tconfidence\tsource\n2024-05-10T12:00:00Z\t7.83\t0.05\t1\t\n' > "$td/anchors_src.tsv"
+    printf 'time\tvalue\n2024-05-10T12:00:00Z\tnan?7\n' > "$td/cand_bad.tsv"
+    printf 'time\tvalue\n' > "$td/cand_empty.tsv"
+
+    out="$("$0" "$td/cand_inside.tsv" --anchors "$td/anchors.tsv" --safety 1 2>"$td/run.err")"
+    eq "header" "$(row "$out" 1)" "$(printf 'time\tvalue\tanchor_time\tanchor_value\tsigma\tconfidence\tband_low\tband_high\tstate\tscore\tsource')"
+    eq "inside.rows" "$(printf '%s\n' "$out" | wc -l | tr -d ' ')" "2"
+    l2="$(row "$out" 2)"
+    eq "inside.time" "$(field "$l2" 1)" "2024-05-10T12:00:00Z"
+    eq "inside.value" "$(field "$l2" 2)" "7.84"
+    eq "inside.anchor_time" "$(field "$l2" 3)" "2024-05-10T12:00:00Z"
+    eq "inside.anchor_value" "$(field "$l2" 4)" "7.83"
+    eq "inside.sigma" "$(field "$l2" 5)" "0.05"
+    eq "inside.confidence" "$(field "$l2" 6)" "1.0"
+    eq "inside.low" "$(field "$l2" 7)" "7.78"
+    eq "inside.high" "$(field "$l2" 8)" "7.88"
+    eq "inside.state" "$(field "$l2" 9)" "inside"
+    eq "inside.score" "$(field "$l2" 10)" "0.8"
+    eq "inside.source" "$(field "$l2" 11)" "spice:hard"
+
+    out2="$("$0" "$td/cand_inside.tsv" --anchors "$td/anchors.tsv" --safety 2 2>"$td/run2.err")"
+    l2="$(row "$out2" 2)"
+    eq "safety2.low" "$(field "$l2" 7)" "7.73"
+    eq "safety2.high" "$(field "$l2" 8)" "7.93"
+    out3="$("$0" "$td/cand_inside.tsv" --anchors "$td/anchors.tsv" --safety 3 2>"$td/run3.err")"
+    l2="$(row "$out3" 2)"
+    eq "safety3.low" "$(field "$l2" 7)" "7.68"
+    eq "safety3.high" "$(field "$l2" 8)" "7.98"
+    eq "safety3.state" "$(field "$l2" 9)" "inside"
+
+    outo="$("$0" "$td/cand_outside.tsv" --anchors "$td/anchors.tsv" --safety 1 2>"$td/runo.err")"
+    l2="$(row "$outo" 2)"
+    eq "outside.state" "$(field "$l2" 9)" "outside"
+    eq "outside.score" "$(field "$l2" 10)" "0"
+    eq "outside.value" "$(field "$l2" 2)" "8.50"
+    eq "outside.anchor_value" "$(field "$l2" 4)" "7.83"
+
+    outs="$("$0" "$td/cand_soft.tsv" --anchors "$td/anchors.tsv" --safety 1 2>"$td/runs.err")"
+    l2="$(row "$outs" 2)"
+    eq "soft.state" "$(field "$l2" 9)" "inside"
+    eq "soft.confidence" "$(field "$l2" 6)" "0.6"
+    eq "soft.score" "$(field "$l2" 10)" "0.06"
+    eq "soft.source" "$(field "$l2" 11)" "attitude:soft"
+
+    outt="$("$0" "$td/cand_time.tsv" --anchors "$td/anchors.tsv" --safety 1 2>"$td/runt.err")"
+    l2="$(row "$outt" 2)"
+    eq "pending.state" "$(field "$l2" 9)" "pending"
+    eq "pending.value" "$(field "$l2" 2)" "7.83"
+    eq "pending.anchor_time" "$(field "$l2" 3)" ""
+    eq "pending.sigma" "$(field "$l2" 5)" ""
+    eq "pending.band_low" "$(field "$l2" 7)" ""
+    eq "pending.score" "$(field "$l2" 10)" ""
+    eq "pending.source" "$(field "$l2" 11)" ""
+    eq "pending.fields" "$(printf '%s' "$l2" | awk -F'\t' '{print NF}')" "11"
+
+    outu="$("$0" "$td/cand_space.csv" --anchors "$td/anchors_unix.tsv" --safety 1 2>"$td/runu.err")"
+    eq "unix.state" "$(field "$(row "$outu" 2)" 9)" "inside"
+    eq "unix.anchor_time" "$(field "$(row "$outu" 2)" 3)" "1715342400"
+
+    "$0" "$td/cand_inside.tsv" --anchors "$td/anchors_none.tsv" --safety 1 >"$td/none.out" 2>"$td/none.err"
+    eq "noanchor.rc" "$?" "3"
+    if grep -q 'pending' "$td/none.err"; then pass; else fail "noanchor.message"; fi
+
+    "$0" "$td/cand_inside.tsv" --anchors "$td/anchors_sigma.tsv" --safety 1 >"$td/sigma.out" 2>"$td/sigma.err"
+    eq "sigma.rc" "$?" "2"
+    if grep -q 'sigma' "$td/sigma.err"; then pass; else fail "sigma.message"; fi
+
+    "$0" "$td/cand_inside.tsv" --anchors "$td/anchors_conf.tsv" --safety 1 >"$td/conf.out" 2>"$td/conf.err"
+    eq "conf.rc" "$?" "2"
+    if grep -q 'confidence' "$td/conf.err"; then pass; else fail "conf.message"; fi
+
+    "$0" "$td/cand_inside.tsv" --anchors "$td/anchors_src.tsv" --safety 1 >"$td/src.out" 2>"$td/src.err"
+    eq "source.rc" "$?" "2"
+    if grep -q 'source' "$td/src.err"; then pass; else fail "source.message"; fi
+
+    "$0" "$td/cand_bad.tsv" --anchors "$td/anchors.tsv" --safety 1 >"$td/bad.out" 2>"$td/bad.err"
+    eq "badcand.rc" "$?" "2"
+    if grep -q 'not numeric' "$td/bad.err"; then pass; else fail "badcand.message"; fi
+
+    "$0" "$td/cand_empty.tsv" --anchors "$td/anchors.tsv" --safety 1 >"$td/empty.out" 2>"$td/empty.err"
+    eq "emptycand.rc" "$?" "2"
+
+    "$0" "$td/cand_inside.tsv" --anchors "$td/anchors.tsv" --safety 0 >"$td/safety.out" 2>"$td/safety.err"
+    eq "safety.rc" "$?" "2"
+
+    "$0" "$td/cand_inside.tsv" --anchors "$td/anchors.tsv" --safety 1 --format xml >"$td/fmt.out" 2>"$td/fmt.err"
+    eq "format.rc" "$?" "2"
+
+    jout="$("$0" "$td/cand_inside.tsv" --anchors "$td/anchors.tsv" --safety 1 --format json 2>"$td/json.err")"
+    if command -v jq >/dev/null 2>&1; then
+        if printf '%s' "$jout" | jq -e 'type == "array" and length == 1 and .[0].state == "inside" and .[0].source == "spice:hard" and .[0].value == 7.84 and .[0].band_low == 7.78 and .[0].score == 0.8' >/dev/null 2>&1; then
+            pass
+        else
+            fail "json.row"
+        fi
+    else
+        case "$jout" in
+            \[*'"state":"inside"'*\]*) pass ;;
+            *) fail "json.shape" ;;
+        esac
+    fi
+
+    jp="$("$0" "$td/cand_time.tsv" --anchors "$td/anchors.tsv" --safety 1 --format json 2>"$td/jsonp.err")"
+    if command -v jq >/dev/null 2>&1; then
+        if printf '%s' "$jp" | jq -e 'length == 1 and .[0].state == "pending" and .[0].anchor_time == null and .[0].score == null and .[0].source == null' >/dev/null 2>&1; then
+            pass
+        else
+            fail "json.pending"
+        fi
+    else
+        case "$jp" in
+            *'"state":"pending"'*'"score":null'*) pass ;;
+            *) fail "json.pending.shape" ;;
+        esac
+    fi
+
+    printf 'selftest: %d/%d passed\n' "$ok" "$((ok + bad))"
+    [ "$bad" -eq 0 ] || exit 1
+    exit 0
+}
+
+candidate=""
+anchors=""
+safety=""
+format="tsv"
+selftest_flag=0
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --anchors)
+            [ $# -ge 2 ] || usage
+            anchors="$2"; shift 2 ;;
+        --safety)
+            [ $# -ge 2 ] || usage
+            safety="$2"; shift 2 ;;
+        --format)
+            [ $# -ge 2 ] || usage
+            format="$2"; shift 2 ;;
+        --selftest)
+            selftest_flag=1; shift ;;
+        -h|--help)
+            usage 0 ;;
+        --)
+            shift
+            [ $# -eq 1 ] || die2 "-- expects exactly one candidate"
+            [ -z "$candidate" ] || die2 "more than one candidate: $candidate and $1"
+            candidate="$1"; shift ;;
+        -*)
+            die2 "unknown option: $1" ;;
+        *)
+            [ -z "$candidate" ] || die2 "more than one candidate: $candidate and $1"
+            candidate="$1"; shift ;;
+    esac
+done
+
+if [ "$selftest_flag" -eq 1 ]; then
+    [ -z "$candidate" ] && [ -z "$anchors" ] && [ -z "$safety" ] && [ "$format" = "tsv" ] ||
+        die2 "--selftest takes no other arguments"
+    selftest
+    exit $?
+fi
+
+[ -n "$candidate" ] || usage
+[ -n "$anchors" ] || die2 "missing --anchors <file>"
+[ -n "$safety" ] || die2 "missing --safety <s>"
+case "$format" in
+    tsv|json) ;;
+    *) die2 "unknown --format: $format (tsv|json)" ;;
+esac
+[ -f "$candidate" ] && [ -r "$candidate" ] || die2 "candidate not readable: $candidate"
+[ -f "$anchors" ] && [ -r "$anchors" ] || die2 "anchors not readable: $anchors"
+awk -v s="$safety" 'BEGIN { exit !(s ~ /^[-+]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][-+]?[0-9]+)?$/ && s + 0 > 0) }' ||
+    die2 "--safety needs a positive number: $safety"
+
+awk -v ANCHORS="$anchors" -v CAND="$candidate" -v SAFETY="$safety" -v FORMAT="$format" '
+function trim(s) {
+    gsub(/^[ \t\r\n]+/, "", s)
+    gsub(/[ \t\r\n]+$/, "", s)
+    return s
+}
+function isnum(s) {
+    return s ~ /^[-+]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][-+]?[0-9]+)?$/
+}
+function isdate(s) {
+    return s ~ /^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/
+}
+function days_in_month(y, m) {
+    if (m == 2) return ((y % 4 == 0 && y % 100 != 0) || y % 400 == 0) ? 29 : 28
+    if (m == 4 || m == 6 || m == 9 || m == 11) return 30
+    return 31
+}
+function days_from_civil(y, m, d,   era, yoe, doy, doe) {
+    y -= (m <= 2)
+    era = int((y >= 0 ? y : y - 399) / 400)
+    yoe = y - era * 400
+    doy = int((153 * (m + (m > 2 ? -3 : 9)) + 2) / 5) + d - 1
+    doe = yoe * 365 + int(yoe / 4) - int(yoe / 100) + doy
+    return era * 146097 + doe - 719468
+}
+function parse_time(s,   z, sign, off, oh, om, np, p, dp, nd, tp, nt, y, mo, da, h, mi, se) {
+    s = trim(s)
+    perr = 0
+    tzsec = 0
+    if (isnum(s)) return s + 0
+    if (s ~ /[Zz]$/) {
+        sub(/[Zz]$/, "", s)
+    } else if (match(s, /[+-][0-9][0-9]:[0-9][0-9]$/)) {
+        z = substr(s, RSTART, RLENGTH)
+        s = substr(s, 1, RSTART - 1)
+        sign = (substr(z, 1, 1) == "-") ? -1 : 1
+        gsub(/:/, "", z)
+        off = substr(z, 2) + 0
+        oh = int(off / 100)
+        om = off % 100
+        if (oh > 23 || om > 59) { perr = 1; return 0 }
+        tzsec = sign * (oh * 3600 + om * 60)
+    } else if (match(s, /[+-][0-9][0-9][0-9][0-9]$/)) {
+        z = substr(s, RSTART, RLENGTH)
+        s = substr(s, 1, RSTART - 1)
+        sign = (substr(z, 1, 1) == "-") ? -1 : 1
+        off = substr(z, 2) + 0
+        oh = int(off / 100)
+        om = off % 100
+        if (oh > 23 || om > 59) { perr = 1; return 0 }
+        tzsec = sign * (oh * 3600 + om * 60)
+    }
+    gsub(/[Tt]/, " ", s)
+    gsub(/[ \t]+/, " ", s)
+    np = split(s, p, " ")
+    if (np < 1 || np > 2) { perr = 1; return 0 }
+    nd = split(p[1], dp, "-")
+    if (nd != 3) { perr = 1; return 0 }
+    y = dp[1] + 0
+    mo = dp[2] + 0
+    da = dp[3] + 0
+    if (y < 1 || mo < 1 || mo > 12 || da < 1 || da > days_in_month(y, mo)) { perr = 1; return 0 }
+    h = 0
+    mi = 0
+    se = 0
+    if (np == 2) {
+        nt = split(p[2], tp, ":")
+        if (nt < 1 || nt > 3) { perr = 1; return 0 }
+        h = tp[1] + 0
+        if (nt >= 2) mi = tp[2] + 0
+        if (nt >= 3) se = tp[3] + 0
+    }
+    if (h < 0 || h > 23 || mi < 0 || mi > 59 || se < 0 || se >= 61) { perr = 1; return 0 }
+    return days_from_civil(y, mo, da) * 86400 + h * 3600 + mi * 60 + se - tzsec
+}
+function jesc(s,   r, i, c) {
+    r = ""
+    for (i = 1; i <= length(s); i++) {
+        c = substr(s, i, 1)
+        if (c == "\\") r = r "\\\\"
+        else if (c == "\"") r = r "\\\""
+        else if (c == "\t") r = r "\\t"
+        else if (c == "\r") r = r "\\r"
+        else if (c == "\n") r = r "\\n"
+        else r = r c
+    }
+    return r
+}
+function aerr(n, msg) {
+    printf "anchor_check: anchor line %d: %s\n", n, msg > "/dev/stderr"
+    exit 2
+}
+function cerr(n, msg) {
+    printf "anchor_check: candidate line %d: %s\n", n, msg > "/dev/stderr"
+    exit 2
+}
+BEGIN {
+    safety = SAFETY + 0
+    an = 0
+    aline = 0
+    afirst = 0
+    while ((getline ln < ANCHORS) > 0) {
+        aline++
+        sub(/\r$/, "", ln)
+        if (ln ~ /^[ \t]*$/ || ln ~ /^[ \t]*#/) continue
+        if (index(ln, "\t") > 0) nf = split(ln, f, "\t")
+        else nf = split(ln, f, /[ ,]+/)
+        for (i = 1; i <= nf; i++) f[i] = trim(f[i])
+        if (afirst == 0) {
+            afirst = 1
+            if (tolower(f[1]) == "time" && tolower(f[2]) == "value") continue
+        }
+        if (nf != 5) aerr(aline, "expected 5 fields, got " nf)
+        if (f[1] == "") aerr(aline, "empty time")
+        t = parse_time(f[1])
+        if (perr) aerr(aline, "bad time: " f[1])
+        if (!isnum(f[2])) aerr(aline, "value is not numeric: " f[2])
+        if (!isnum(f[3])) aerr(aline, "sigma is not numeric: " f[3])
+        if ((f[3] + 0) <= 0) aerr(aline, "sigma must be > 0: " f[3])
+        if (!isnum(f[4])) aerr(aline, "confidence is not numeric: " f[4])
+        if ((f[4] + 0) < 0 || (f[4] + 0) > 1) aerr(aline, "confidence must be within 0..1: " f[4])
+        if (f[5] == "") aerr(aline, "empty source")
+        an++
+        atim[an] = f[1]
+        avalr[an] = f[2]
+        aval[an] = f[2] + 0
+        asigr[an] = f[3]
+        asig[an] = f[3] + 0
+        aconr[an] = f[4]
+        acon[an] = f[4] + 0
+        asrc[an] = f[5]
+        key = sprintf("%.6f", t)
+        if (key in bucket) bucket[key] = bucket[key] " " an
+        else bucket[key] = an
+    }
+    close(ANCHORS)
+    if (an == 0) {
+        printf "anchor_check: pending - no anchor rows in %s\n", ANCHORS > "/dev/stderr"
+        exit 3
+    }
+    cn = 0
+    cline = 0
+    cfirst = 0
+    while ((getline ln < CAND) > 0) {
+        cline++
+        sub(/\r$/, "", ln)
+        if (ln ~ /^[ \t]*$/ || ln ~ /^[ \t]*#/) continue
+        hastab = (index(ln, "\t") > 0)
+        if (hastab) nf = split(ln, f, "\t")
+        else nf = split(ln, f, /[ ,]+/)
+        for (i = 1; i <= nf; i++) f[i] = trim(f[i])
+        if (cfirst == 0) {
+            cfirst = 1
+            if (tolower(f[1]) == "time" && tolower(f[2]) == "value") continue
+        }
+        if (hastab) {
+            if (nf < 2) cerr(cline, "expected time and value")
+            ttok = f[1]
+            vtok = f[2]
+        } else {
+            ttok = f[1]
+            vi = 2
+            if (isdate(f[1]) && f[2] ~ /^[0-9][0-9]:[0-9][0-9]/ && nf >= 3) {
+                ttok = f[1] " " f[2]
+                vi = 3
+            }
+            if (nf < vi) cerr(cline, "expected time and value")
+            vtok = f[vi]
+        }
+        t = parse_time(ttok)
+        if (perr) cerr(cline, "bad time: " ttok)
+        if (!isnum(vtok)) cerr(cline, "value is not numeric: " vtok)
+        cn++
+        ctim[cn] = ttok
+        cvalr[cn] = vtok
+        cval[cn] = vtok + 0
+        cts[cn] = t
+    }
+    close(CAND)
+    if (cn == 0) {
+        printf "anchor_check: candidate has no data row: %s\n", CAND > "/dev/stderr"
+        exit 2
+    }
+    pad = "\t\t\t\t\t\t"
+    if (FORMAT == "json") print "["
+    else printf "time\tvalue\tanchor_time\tanchor_value\tsigma\tconfidence\tband_low\tband_high\tstate\tscore\tsource\n"
+    nrow = 0
+    for (i = 1; i <= cn; i++) {
+        key = sprintf("%.6f", cts[i])
+        if (!(key in bucket)) {
+            nrow++
+            if (FORMAT == "json") {
+                if (nrow > 1) printf ",\n"
+                printf "{\"time\":\"%s\",\"value\":%s,\"anchor_time\":null,\"anchor_value\":null,\"sigma\":null,\"confidence\":null,\"band_low\":null,\"band_high\":null,\"state\":\"pending\",\"score\":null,\"source\":null}", jesc(ctim[i]), sprintf("%.15g", cval[i])
+            } else {
+                printf "%s\t%s%s\tpending\t\t\n", ctim[i], cvalr[i], pad
+            }
+            continue
+        }
+        nb = split(bucket[key], idx, " ")
+        for (j = 1; j <= nb; j++) {
+            k = idx[j] + 0
+            low = aval[k] - safety * asig[k]
+            high = aval[k] + safety * asig[k]
+            if (cval[i] >= low && cval[i] <= high) {
+                state = "inside"
+                d = (cval[i] - aval[k]) / (safety * asig[k])
+                if (d < 0) d = -d
+                sc = acon[k] * (1 - d)
+                if (sc < 0) sc = 0
+            } else {
+                state = "outside"
+                sc = 0
+            }
+            nrow++
+            if (FORMAT == "json") {
+                if (nrow > 1) printf ",\n"
+                printf "{\"time\":\"%s\",\"value\":%s,\"anchor_time\":\"%s\",\"anchor_value\":%s,\"sigma\":%s,\"confidence\":%s,\"band_low\":%s,\"band_high\":%s,\"state\":\"%s\",\"score\":%s,\"source\":\"%s\"}", jesc(ctim[i]), sprintf("%.15g", cval[i]), jesc(atim[k]), sprintf("%.15g", aval[k]), sprintf("%.15g", asig[k]), sprintf("%.15g", acon[k]), sprintf("%.12g", low), sprintf("%.12g", high), state, sprintf("%.6g", sc), jesc(asrc[k])
+            } else {
+                printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", ctim[i], cvalr[i], atim[k], avalr[k], asigr[k], aconr[k], sprintf("%.12g", low), sprintf("%.12g", high), state, sprintf("%.6g", sc), asrc[k]
+            }
+        }
+    }
+    if (FORMAT == "json") printf "\n]\n"
+    exit 0
+}
+' </dev/null
