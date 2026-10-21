@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
 use crate::mathematikerin::channel::{
@@ -137,6 +139,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_weberin_role: Option<WeberinRole> = None;
     let mut cur_fanout_delay: u64 = 0;
     let mut cur_frame: Option<Frame> = None;
+    let mut cur_anchor: Option<Anchor> = None;
     let mut cur_sha256: Option<String> = None;
     let mut cur_window: Option<(f64, f64)> = None;
     let mut cur_live_only = false;
@@ -149,6 +152,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     || cur_format == "reference"
                     || cur_format == "fp01"
                     || cur_frame.is_some()
+                    || cur_anchor.is_some()
                     || !cur_extracts.is_empty()
                     || !cur_channels.is_empty()
                     || cur_witness.is_some()
@@ -167,6 +171,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                                 Some(f) => f.clone(),
                                 None => Frame::Manifest,
                             },
+                            anchor: cur_anchor.clone(),
                             model_kind: cur_model_kind.or_else(|| source_model_kind(&cur_format)),
                             format: std::mem::take(&mut cur_format),
                             extracts: std::mem::take(&mut cur_extracts),
@@ -302,6 +307,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_weberin_role = None;
                 cur_fanout_delay = 0;
                 cur_frame = None;
+                cur_anchor = None;
                 cur_sha256 = None;
                 cur_window = None;
                 cur_live_only = false;
@@ -407,66 +413,183 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 );
             }
             "at" if parts.len() >= 2 => {
+                if cur_anchor.is_some() {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("second anchor refused: {}", line),
+                    );
+                    continue;
+                }
                 let body = parts[1].to_string();
+                match parse_anchor_directive(AnchorKind::At, &parts, parts.len() == 2) {
+                    Ok(anchor) => cur_anchor = Some(anchor),
+                    Err(e) => {
+                        report_anomaly("Invalid Syntax", &cur_url, &format!("at {}: {}", e, line));
+                        continue;
+                    }
+                }
                 cur_body = Some(body.clone());
                 cur_frame = Some(Frame::Barycenter {
                     body_name: body,
                     scale: 1.0,
                 });
             }
-            "on" if parts.len() >= 4 => {
+            "on" if parts.len() >= 2 => {
+                if cur_anchor.is_some() {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("second anchor refused: {}", line),
+                    );
+                    continue;
+                }
                 let body = parts[1].to_string();
-                cur_body = Some(body.clone());
-                let lat: f64 = match parts[2].parse() {
-                    Ok(v) => v,
-                    Err(_) => {
+                let keyed = parts.iter().skip(2).any(|p| p.contains('='));
+                if keyed {
+                    let anchor = match parse_anchor_directive(AnchorKind::On, &parts, false) {
+                        Ok(anchor) => anchor,
+                        Err(e) => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("on {}: {}", e, line),
+                            );
+                            continue;
+                        }
+                    };
+                    let lat = anchor.attrs.get("lat").and_then(|v| v.parse::<f64>().ok());
+                    let lon = anchor.attrs.get("lon").and_then(|v| v.parse::<f64>().ok());
+                    let alt = match anchor.attrs.get("alt").map(String::as_str) {
+                        Some("absent" | "pending") | None => None,
+                        Some(v) => match v.parse::<f64>() {
+                            Ok(v) => Some(v),
+                            Err(_) => {
+                                report_anomaly(
+                                    "Invalid Syntax",
+                                    &cur_url,
+                                    &format!("on alt non-numeric: {}", line),
+                                );
+                                continue;
+                            }
+                        },
+                    };
+                    let (Some(lat), Some(lon)) = (lat, lon) else {
                         report_anomaly(
                             "Invalid Syntax",
                             &cur_url,
-                            &format!("on lat non-numeric: {}", line),
+                            &format!("on lat/lon non-numeric: {}", line),
                         );
                         continue;
-                    }
-                };
-                let lon: f64 = match parts[3].parse() {
-                    Ok(v) => v,
-                    Err(_) => {
+                    };
+                    cur_anchor = Some(anchor);
+                    cur_body = Some(body.clone());
+                    cur_frame = Some(Frame::Surface {
+                        body_name: body,
+                        lat,
+                        lon,
+                        alt,
+                    });
+                } else {
+                    if parts.len() < 4 {
                         report_anomaly(
                             "Invalid Syntax",
                             &cur_url,
-                            &format!("on lon non-numeric: {}", line),
+                            &format!("on needs <body> <lat> <lon> [alt]: {}", line),
                         );
                         continue;
                     }
-                };
-                let alt: Option<f64> = match parts.get(4).copied() {
-                    Some("absent" | "pending") => None,
-                    Some(s) => match s.parse() {
-                        Ok(v) => Some(v),
+                    let lat: f64 = match parts[2].parse() {
+                        Ok(v) => v,
                         Err(_) => {
                             report_anomaly(
                                 "Invalid Syntax",
                                 &cur_url,
-                                &format!("on alt non-numeric: {}", line),
+                                &format!("on lat non-numeric: {}", line),
                             );
                             continue;
                         }
-                    },
-                    None => None,
-                };
-                cur_frame = Some(Frame::Surface {
-                    body_name: body,
-                    lat,
-                    lon,
-                    alt,
-                });
+                    };
+                    let lon: f64 = match parts[3].parse() {
+                        Ok(v) => v,
+                        Err(_) => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("on lon non-numeric: {}", line),
+                            );
+                            continue;
+                        }
+                    };
+                    let alt: Option<f64> = match parts.get(4).copied() {
+                        Some("absent" | "pending") => None,
+                        Some(s) => match s.parse() {
+                            Ok(v) => Some(v),
+                            Err(_) => {
+                                report_anomaly(
+                                    "Invalid Syntax",
+                                    &cur_url,
+                                    &format!("on alt non-numeric: {}", line),
+                                );
+                                continue;
+                            }
+                        },
+                        None => None,
+                    };
+                    let mut attrs = BTreeMap::new();
+                    attrs.insert("lat".to_string(), lat.to_string());
+                    attrs.insert("lon".to_string(), lon.to_string());
+                    if let Some(alt) = alt {
+                        attrs.insert("alt".to_string(), alt.to_string());
+                    }
+                    cur_anchor = Some(Anchor {
+                        kind: AnchorKind::On,
+                        body: Some(body.clone()),
+                        attrs,
+                        legacy: true,
+                    });
+                    cur_body = Some(body.clone());
+                    cur_frame = Some(Frame::Surface {
+                        body_name: body,
+                        lat,
+                        lon,
+                        alt,
+                    });
+                }
             }
-            "on" => {
-                report_anomaly(
-                    "Invalid Syntax",
-                    &cur_url,
-                    &format!("on needs <body> <lat> <lon> [alt]: {}", line),
-                );
+            "global" | "coverage" | "orbit" | "query" | "track" | "sky" | "absent" => {
+                if cur_anchor.is_some() {
+                    report_anomaly(
+                        "Invalid Syntax",
+                        &cur_url,
+                        &format!("second anchor refused: {}", line),
+                    );
+                    continue;
+                }
+                let kind = match parts[0] {
+                    "global" => AnchorKind::Global,
+                    "coverage" => AnchorKind::Coverage,
+                    "orbit" => AnchorKind::Orbit,
+                    "query" => AnchorKind::Query,
+                    "track" => AnchorKind::Track,
+                    "sky" => AnchorKind::Sky,
+                    _ => AnchorKind::Absent,
+                };
+                match parse_anchor_directive(kind, &parts, false) {
+                    Ok(anchor) => {
+                        if let Some(body) = &anchor.body {
+                            cur_body = Some(body.clone());
+                        }
+                        cur_anchor = Some(anchor);
+                    }
+                    Err(e) => {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("{} {}: {}", parts[0], e, line),
+                        );
+                    }
+                }
             }
             "map" if parts.len() >= 2 => {
                 cur_extracts.push(Extract::Map {
@@ -2707,6 +2830,90 @@ pub fn parse_iso_tdb(s: &str, lsk: &LeapSeconds) -> Option<f64> {
     lsk.unix_to_tdb(unix as f64)
 }
 
+fn parse_anchor_attrs(
+    parts: &[&str],
+    start: usize,
+) -> Result<(Option<String>, BTreeMap<String, String>), String> {
+    let mut body: Option<String> = None;
+    let mut attrs = BTreeMap::new();
+    for token in parts.iter().skip(start) {
+        if let Some((key, value)) = token.split_once('=') {
+            if key.is_empty() || value.is_empty() {
+                return Err(format!("invalid attribute '{}'", token));
+            }
+            attrs.insert(key.to_string(), value.to_string());
+        } else if body.is_none() {
+            body = Some((*token).to_string());
+        } else {
+            return Err(format!("extra token '{}'", token));
+        }
+    }
+    Ok((body, attrs))
+}
+
+fn require_attr<'a>(attrs: &'a BTreeMap<String, String>, key: &str) -> Result<&'a str, String> {
+    attrs
+        .get(key)
+        .map(String::as_str)
+        .ok_or_else(|| format!("missing {}", key))
+}
+
+fn parse_anchor_directive(
+    kind: AnchorKind,
+    parts: &[&str],
+    legacy: bool,
+) -> Result<Anchor, String> {
+    let (body, attrs) = parse_anchor_attrs(parts, 1)?;
+    if matches!(
+        kind,
+        AnchorKind::At
+            | AnchorKind::On
+            | AnchorKind::Global
+            | AnchorKind::Coverage
+            | AnchorKind::Orbit
+            | AnchorKind::Query
+            | AnchorKind::Track
+    ) && body.is_none()
+    {
+        return Err("body absent".to_string());
+    }
+    match kind {
+        AnchorKind::At => {}
+        AnchorKind::On => {
+            require_attr(&attrs, "lat")?;
+            require_attr(&attrs, "lon")?;
+        }
+        AnchorKind::Global => {
+            require_attr(&attrs, "method")?;
+        }
+        AnchorKind::Coverage => {
+            if !attrs.contains_key("bbox") && !attrs.contains_key("footprint") {
+                return Err("bbox or footprint absent".to_string());
+            }
+        }
+        AnchorKind::Orbit => {}
+        AnchorKind::Query | AnchorKind::Track => {
+            for key in ["lat_key", "lon_key", "alt_key", "time_key"] {
+                require_attr(&attrs, key)?;
+            }
+        }
+        AnchorKind::Sky => {
+            for key in ["ra_key", "dec_key", "epoch"] {
+                require_attr(&attrs, key)?;
+            }
+        }
+        AnchorKind::Absent => {
+            require_attr(&attrs, "reason")?;
+        }
+    }
+    Ok(Anchor {
+        kind,
+        body,
+        attrs,
+        legacy,
+    })
+}
+
 fn parse_medium_value(token: &str) -> Option<MediumValue> {
     match token {
         "absent" => Some(MediumValue::Absent),
@@ -2959,6 +3166,7 @@ mod tests {
             compiler: None,
             terms: None,
             medium: None,
+            anchor: None,
             band: None,
             footprint: None,
             witness: None,
@@ -4213,6 +4421,64 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         assert_eq!(medium.absorption_unit.as_deref(), Some("1/m"));
         assert_eq!(medium.advection, MediumValue::Pending);
         assert_eq!(medium.advection_unit, None);
+    }
+
+    #[test]
+    fn anchors_are_one_truth_and_old_forms_are_legacy() {
+        let old_at = parse_sources("url https://example.invalid/a\nformat text\nttl 60\nat sun\n");
+        let anchor = old_at[0].anchor.as_ref().expect("old at anchor");
+        assert_eq!(anchor.kind, AnchorKind::At);
+        assert!(anchor.legacy);
+
+        let old_on = parse_sources(
+            "url https://example.invalid/b\nformat text\nttl 60\non earth 10 20 30\n",
+        );
+        let anchor = old_on[0].anchor.as_ref().expect("old on anchor");
+        assert_eq!(anchor.kind, AnchorKind::On);
+        assert!(anchor.legacy);
+
+        let new_on = parse_sources(
+            "url https://example.invalid/c\nformat text\nttl 60\n\
+             on mars frame=body lat=1 lon=2 alt=absent datum=IAU_2015 epoch=2000-01-01T12:00:00\n",
+        );
+        let anchor = new_on[0].anchor.as_ref().expect("new on anchor");
+        assert_eq!(anchor.kind, AnchorKind::On);
+        assert!(!anchor.legacy);
+        assert!(matches!(new_on[0].frame, Frame::Surface { alt: None, .. }));
+    }
+
+    #[test]
+    fn every_v3_anchor_directive_is_parsed() {
+        let cases = [
+            ("global earth frame=body method=mean", AnchorKind::Global),
+            (
+                "coverage earth frame=body bbox=1,2,3,4",
+                AnchorKind::Coverage,
+            ),
+            ("orbit iss frame=icrs alt=400000", AnchorKind::Orbit),
+            (
+                "query earth frame=body lat_key=lat lon_key=lon alt_key=alt time_key=t",
+                AnchorKind::Query,
+            ),
+            (
+                "track buoy frame=body lat_key=lat lon_key=lon alt_key=alt time_key=t",
+                AnchorKind::Track,
+            ),
+            (
+                "sky frame=icrs ra_key=ra dec_key=dec epoch=J2000",
+                AnchorKind::Sky,
+            ),
+            ("absent reason=no-open-data", AnchorKind::Absent),
+        ];
+        for (line, kind) in cases {
+            let content =
+                format!("url https://example.invalid/{kind:?}\nformat text\nttl 60\n{line}\n");
+            let sources = parse_sources(&content);
+            assert_eq!(sources.len(), 1, "{line}");
+            let anchor = sources[0].anchor.as_ref().expect("anchor");
+            assert_eq!(anchor.kind, kind, "{line}");
+            assert!(!anchor.legacy, "{line}");
+        }
     }
 
     #[test]

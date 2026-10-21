@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use super::*;
 use crate::mathematikerin::channel::ChannelDescriptor;
 
@@ -506,6 +508,27 @@ pub struct BrowserSensor {
     pub unit: String,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum AnchorKind {
+    At,
+    On,
+    Global,
+    Coverage,
+    Orbit,
+    Query,
+    Track,
+    Sky,
+    Absent,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct Anchor {
+    pub kind: AnchorKind,
+    pub body: Option<String>,
+    pub attrs: BTreeMap<String, String>,
+    pub legacy: bool,
+}
+
 #[derive(Clone)]
 pub enum Frame {
     Surface {
@@ -579,6 +602,7 @@ pub struct SourceConfig {
     pub rights_scheme: Option<String>,
     pub rights_uri: Option<String>,
     pub frame: Frame,
+    pub anchor: Option<Anchor>,
     pub format: String,
     pub model_kind: Option<ModelKind>,
     pub head: Option<ModelHead>,
