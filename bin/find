@@ -25,16 +25,20 @@ near=""
 pdf=0
 jsonl=""
 terms_spec=""
+raw_links=1
 
 usage() {
     cat >&2 <<'EOF'
-find: usage: bin/find [--header "a,b,c"] [--value <zahl>[,<zahl>...]] [--hex <hex>] [--fits "K=V,K=V"] [--context "<begriff>"] [--pdf] [--near <abs|N%>] [--jsonl <datei>] [--terms <datei=token,...>] --engine <kanal> --top N
+find: usage: bin/find [--header "a,b,c"] [--value <zahl>[,<zahl>...]] [--hex <hex>] [--fits "K=V,K=V"] [--context "<begriff>"] [--pdf] [--near <abs|N%>] [--jsonl <datei>] [--terms <datei=token,...>] [--raw-links|--no-raw-links] --engine <kanal> --top N
   mindestens ein Köder: --header, --value oder --hex
-  --header  alle Spaltennamen müssen im sniffed header stehen
-  --value   der Wert muss im Text stehen, sonst unbewiesen
-  --hex     pattern=<hex> muss Treffer melden
-  --jsonl   je Kandidat eine JSON-Zeile (url, title, Zustände, verdict, terms)
-  --terms   datei=token; ohne Angabe steht in der JSONL "unset"
+  --header      alle Spaltennamen müssen im sniffed header stehen
+  --value       der Wert muss im Text stehen, sonst unbewiesen
+  --hex         pattern=<hex> muss Treffer melden
+  --jsonl       je Kandidat eine JSON-Zeile (url, title, Zustände, verdict, terms)
+  --terms       datei=token; ohne Angabe steht in der JSONL "unset"
+  --raw-links   aus HTML-Seiten Rohdaten-Links ziehen (Default an), eine Ebene, max. 20 Links
+  --no-raw-links  nur die Kandidaten selbst snüffeln
+  --top N       max. N Kandidaten und max. N Roh-Link-Sniffs je Seite
 EOF
     exit 2
 }
@@ -51,6 +55,8 @@ while [ $# -gt 0 ]; do
         --pdf) pdf=1; shift ;;
         --jsonl) [ $# -ge 2 ] && [ -n "$2" ] || usage; jsonl="$2"; shift 2 ;;
         --terms) [ $# -ge 2 ] && [ -n "$2" ] || usage; terms_spec="$2"; shift 2 ;;
+        --raw-links) raw_links=1; shift ;;
+        --no-raw-links) raw_links=0; shift ;;
         --engine) [ $# -ge 2 ] && [ -n "$2" ] || usage; engine="$2"; shift 2 ;;
         --top)    [ $# -ge 2 ] && [ -n "$2" ] || usage; top="$2"; shift 2 ;;
         *) usage ;;
@@ -186,6 +192,123 @@ term_for_url() {
         END { if (!found) print "unset" }'
 }
 
+extract_links() {
+    : >"$2"
+    meta="$(curl -sSL --compressed --max-time 60 --max-filesize 12000000 \
+        -o "$tmp/raw-page" -w '%{http_code}\t%{content_type}\t%{url_effective}' "$1" 2>/dev/null)" || return 0
+    [ -s "$tmp/raw-page" ] || return 0
+    code="$(printf '%s\t' "$meta" | cut -f1)"
+    ctype="$(printf '%s\t' "$meta" | cut -f2)"
+    eff="$(printf '%s\t' "$meta" | cut -f3)"
+    case "$code" in
+        2*|000) ;;
+        *) return 0 ;;
+    esac
+    case "$ctype" in
+        *html*|*HTML*) ;;
+        '')
+            head -c 2048 "$tmp/raw-page" | grep -qi '<html\|<!doctype html' || return 0
+            ;;
+        *) return 0 ;;
+    esac
+    [ -n "$eff" ] || eff="$1"
+    awk -v base="$eff" -v effective="$1" '
+    BEGIN { sq = sprintf("%c", 39) }
+    function isdata(u,  lu) {
+        lu = tolower(u)
+        if (lu ~ /\.(csv|tsv|dat|fits|fit|nc|nc4|h5|hdf5|zip|gz|bz2|xz|parquet|json|jsonl|txt)([?#]|$)/) return 1
+        if (lu ~ /download/ || lu ~ /\/api\// || lu ~ /[?&]format=/ || lu ~ /[?&]file=/) return 1
+        return 0
+    }
+    function resolve(base, link,  scheme, rest, host, path, full, q, k, n, parts, stack, sp, j, res) {
+        if (link ~ /^[A-Za-z][A-Za-z0-9+.-]*:/) return link
+        sub(/#.*/, "", base)
+        scheme = substr(base, 1, index(base, "://") - 1)
+        rest = substr(base, index(base, "://") + 3)
+        k = index(rest, "/")
+        if (k == 0) { host = rest; path = "/" } else { host = substr(rest, 1, k - 1); path = substr(rest, k) }
+        sub(/[?#].*/, "", path)
+        if (substr(link, 1, 2) == "//") return scheme ":" link
+        if (substr(link, 1, 1) == "?") return scheme "://" host path link
+        if (substr(link, 1, 1) == "/") full = link
+        else {
+            if (substr(path, length(path)) != "/") sub(/\/[^\/]*$/, "/", path)
+            full = path "/" link
+        }
+        q = ""
+        k = index(full, "?")
+        if (k > 0) { q = substr(full, k); full = substr(full, 1, k - 1) }
+        n = split(full, parts, "/")
+        sp = 0
+        for (j = 1; j <= n; j++) {
+            if (parts[j] == "" || parts[j] == ".") continue
+            if (parts[j] == "..") { if (sp > 0) sp--; continue }
+            stack[++sp] = parts[j]
+        }
+        res = scheme "://" host
+        for (j = 1; j <= sp; j++) res = res "/" stack[j]
+        if (sp == 0) res = res "/"
+        return res q
+    }
+    function add(raw,  v, url, lu) {
+        v = raw
+        gsub(/&amp;/, "\\&", v)
+        gsub(/\\\//, "/", v); sub(/[.,;]+$/, "", v)
+        gsub(/^[ \t]+|[ \t]+$/, "", v)
+        if (v == "" || v ~ /^#/) return
+        if (tolower(v) ~ /^(javascript|mailto|data|tel):/) return
+        url = resolve(base, v)
+        if (url == base || url == effective) return
+        if (!isdata(url)) return
+        if (url in seen) return
+        seen[url] = 1
+        lu = tolower(url)
+        if (lu ~ /\.(csv|tsv|dat|fits|fit|nc|nc4|h5|hdf5|zip|gz|bz2|xz|parquet|json|jsonl)([?#]|$)/) e1[++n1] = url
+        else if (lu ~ /\.txt([?#]|$)/) e3[++n3] = url
+        else e2[++n2] = url
+    }
+    {
+        line = $0
+        low = tolower(line)
+        p = 1
+        while (p <= length(line)) {
+            rest = substr(low, p)
+            a = index(rest, "href=")
+            b = index(rest, "src=")
+            if (a == 0 && b == 0) break
+            if (a == 0) start = p + b - 1 + 4
+            else if (b == 0 || a < b) start = p + a - 1 + 5
+            else start = p + b - 1 + 4
+            while (substr(line, start, 1) == " " || substr(line, start, 1) == "\t") start++
+            c = substr(line, start, 1)
+            if (c == "\"" || c == sq) {
+                e = index(substr(line, start + 1), c)
+                if (e == 0) break
+                add(substr(line, start + 1, e - 1))
+                p = start + e + 1
+            } else {
+                v = substr(line, start)
+                sub(/[ \t>].*/, "", v)
+                add(v)
+                p = start + length(v) + 1
+            }
+        }
+        p = 1
+        while (p <= length(line)) {
+            rest = substr(line, p)
+            if (!match(rest, /[hH][tT][tT][pP][sS]?:\/\/[^"<> ()]+/)) break
+            add(substr(rest, RSTART, RLENGTH))
+            p = p + RSTART + RLENGTH - 1
+        }
+    }
+    END {
+        c = 0
+        for (i = 1; i <= n1 && c < 20; i++) { print e1[i]; c++ }
+        for (i = 1; i <= n2 && c < 20; i++) { print e2[i]; c++ }
+        for (i = 1; i <= n3 && c < 20; i++) { print e3[i]; c++ }
+    }' "$tmp/raw-page" >"$2"
+}
+
 search_once() {
     "$bin" --"$engine" "$1" >"$tmp/search" 2>&1
 }
@@ -226,27 +349,21 @@ fi
 matches=0
 twins=0
 nears=0
-while IFS= read -r line; do
-    [ -n "$line" ] || continue
-    url="$(printf '%s\n' "$line" | sed -n 's/^url \([^[:space:]]*\).*/\1/p')"
-    [ -n "$url" ] || continue
-    title="$(printf '%s\n' "$line" | awk -F'\t' '{
-            for (i = 2; i <= NF; i++) if ($i ~ /^title: /) {
-                sub(/^title: /, "", $i)
-                print $i
-                exit
-            }
-        }')"
+raws=0
 
-    sniff_out="$("$bin" --sniff "$url" 2>&1)"
+probe_url() {
+    purl="$1"
+    sniff_out="$("$bin" --sniff "$purl" 2>&1)"
     header_line="$(printf '%s\n' "$sniff_out" | sed -n 's/^\(\[sniff\] \)\{0,1\}header //p' | head -n 1)"
+    bom="$(printf '\357\273\277')"
+    header_line="${header_line#"$bom"}"
 
-    header_state=""
-    header_note=""
+    st_header=""
+    st_header_note=""
     if [ -n "$header" ]; then
         if [ "$header_line" = absent ] || [ -z "$header_line" ]; then
-            header_state="fehlt"
-            header_note="kein header im Prefix"
+            st_header="fehlt"
+            st_header_note="kein header im Prefix"
         else
             # Der Header kann bei HTML-Seiten sehr lang werden: über stdin, nicht als argv.
             if missing_cols="$(printf '%s\n' "$header_line" | awk -v cols="$header_cols" 'BEGIN{
@@ -263,42 +380,42 @@ while IFS= read -r line; do
                     print miss
                 }')"; then
                 if [ -z "$missing_cols" ]; then
-                    header_state="erfüllt"
+                    st_header="erfüllt"
                 else
-                    header_state="fehlt"
-                    header_note="nicht im header: $missing_cols"
+                    st_header="fehlt"
+                    st_header_note="nicht im header: $missing_cols"
                 fi
             else
-                header_state="unbewiesen"
-                header_note="Header nicht lesbar"
+                st_header="unbewiesen"
+                st_header_note="Header nicht lesbar"
             fi
         fi
     fi
 
-    fits_state=""
-    fits_note=""
+    st_fits=""
+    st_fits_note=""
     if [ -n "$fits" ]; then
         fits_line="$(printf '%s\n' "$sniff_out" | sed -n 's/^\(\[sniff\] \)\{0,1\}fits //p' | head -n 1)"
         if [ -z "$fits_line" ]; then
-            fits_state="fehlt"
-            fits_note="kein FITS-Header"
+            st_fits="fehlt"
+            st_fits_note="kein FITS-Header"
         else
             miss=""
             for kv in $(printf '%s' "$fits" | tr ',' ' '); do
                 printf '%s' "$fits_line" | grep -qF -- "$kv" || miss="$miss $kv"
             done
             if [ -z "$miss" ]; then
-                fits_state="erfüllt"
+                st_fits="erfüllt"
             else
-                fits_state="fehlt"
-                fits_note="nicht:$miss"
+                st_fits="fehlt"
+                st_fits_note="nicht:$miss"
             fi
         fi
     fi
-    value_state=""
-    value_note=""
+    st_value=""
+    st_value_note=""
     if [ -n "$value" ]; then
-        body="$(curl -sSL --max-time 90 "$url" 2>/dev/null | head -c 30000000)"
+        body="$(curl -sSL --max-time 90 "$purl" 2>/dev/null | head -c 30000000)"
         case "$body" in
             %PDF*)
                 if command -v pdftotext >/dev/null 2>&1; then
@@ -349,51 +466,58 @@ while IFS= read -r line; do
             fi
         done
         if [ "$ok_all" = "1" ]; then
-            value_state="erfüllt"
-            value_note="$total/$total, max Delta $maxdelta_s"
+            st_value="erfüllt"
+            st_value_note="$total/$total, max Delta $maxdelta_s"
         elif [ "$far_any" = "0" ] && [ "$near_any" = "1" ]; then
-            value_state="nah"
-            value_note="max Delta $maxdelta_s — anderes Werkzeug/Messpunkt denkbar"
+            st_value="nah"
+            st_value_note="max Delta $maxdelta_s — anderes Werkzeug/Messpunkt denkbar"
         else
-            value_state="daneben"
-            value_note="$total Werte, max Delta $maxdelta_s"
+            st_value="daneben"
+            st_value_note="$total Werte, max Delta $maxdelta_s"
         fi
     fi
-    hex_state=""
-    hex_note=""
+    st_hex=""
+    st_hex_note=""
     if [ -n "$hex" ]; then
-        hex_out="$("$bin" --sniff "$url" "pattern=$hex" 2>&1)"
+        hex_out="$("$bin" --sniff "$purl" "pattern=$hex" 2>&1)"
         hex_line="$(printf '%s\n' "$hex_out" | grep -F "pattern $hex hits" | head -n 1)"
         if [ -z "$hex_line" ]; then
-            hex_state="unbewiesen"
-            hex_note="Musterzeile fehlt (Sniff pending?)"
+            st_hex="unbewiesen"
+            st_hex_note="Musterzeile fehlt (Sniff pending?)"
         else
             hex_hits="$(printf '%s\n' "$hex_line" | sed "s/^.*pattern $hex hits //")"
             if [ -n "$hex_hits" ]; then
-                hex_state="erfüllt"
+                st_hex="erfüllt"
             else
-                hex_state="fehlt"
-                hex_note="0 Treffer"
+                st_hex="fehlt"
+                st_hex_note="0 Treffer"
             fi
         fi
     fi
 
-    ok=1
-    if [ -n "$header" ] && [ "$header_state" != erfüllt ]; then ok=0; fi
-    if [ -n "$fits" ] && [ "$fits_state" != erfüllt ]; then ok=0; fi
-    if [ -n "$value" ] && [ "$value_state" != erfüllt ]; then ok=0; fi
-    if [ -n "$hex" ] && [ "$hex_state" != erfüllt ]; then ok=0; fi
+    st_ok=1
+    if [ -n "$header" ] && [ "$st_header" != erfüllt ]; then st_ok=0; fi
+    if [ -n "$fits" ] && [ "$st_fits" != erfüllt ]; then st_ok=0; fi
+    if [ -n "$value" ] && [ "$st_value" != erfüllt ]; then st_ok=0; fi
+    if [ -n "$hex" ] && [ "$st_hex" != erfüllt ]; then st_ok=0; fi
 
-    nearhit=0
-    if [ "$ok" -eq 0 ] && [ -n "$value" ] && [ "$value_state" = "nah" ]; then
+    st_near=0
+    if [ "$st_ok" -eq 0 ] && [ -n "$value" ] && [ "$st_value" = "nah" ]; then
         near_ok=1
-        if [ -n "$header" ] && [ "$header_state" != erfüllt ]; then near_ok=0; fi
-        if [ -n "$fits" ] && [ "$fits_state" != erfüllt ]; then near_ok=0; fi
-        if [ -n "$hex" ] && [ "$hex_state" != erfüllt ]; then near_ok=0; fi
-        [ "$near_ok" -eq 1 ] && nearhit=1
+        if [ -n "$header" ] && [ "$st_header" != erfüllt ]; then near_ok=0; fi
+        if [ -n "$fits" ] && [ "$st_fits" != erfüllt ]; then near_ok=0; fi
+        if [ -n "$hex" ] && [ "$st_hex" != erfüllt ]; then near_ok=0; fi
+        [ "$near_ok" -eq 1 ] && st_near=1
     fi
+}
 
-    if [ "$ok" -eq 1 ]; then
+emit_result() {
+    eurl="$1"
+    etitle="$2"
+    eind="$3"
+    elabel="$4"
+    verdict=""
+    if [ "$st_ok" -eq 1 ]; then
         if [ -n "$header" ] && [ -n "$value" ] && [ -n "$hex" ]; then
             verdict="ZWILLING"
             twins=$((twins + 1))
@@ -401,7 +525,7 @@ while IFS= read -r line; do
             verdict="MATCH"
         fi
         matches=$((matches + 1))
-    elif [ "$nearhit" -eq 1 ]; then
+    elif [ "$st_near" -eq 1 ]; then
         verdict="NAH"
         nears=$((nears + 1))
     else
@@ -409,20 +533,56 @@ while IFS= read -r line; do
     fi
     if [ -n "$jsonl" ]; then
         printf '{"url":"%s","title":"%s","header_state":"%s","value_state":"%s","hex_state":"%s","fits_state":"%s","verdict":"%s","terms":"%s"}\n' \
-            "$(json_escape "$url")" \
-            "$(json_escape "$title")" \
-            "$(json_escape "$header_state")" \
-            "$(json_escape "$value_state")" \
-            "$(json_escape "$hex_state")" \
-            "$(json_escape "$fits_state")" \
+            "$(json_escape "$eurl")" \
+            "$(json_escape "$etitle")" \
+            "$(json_escape "$st_header")" \
+            "$(json_escape "$st_value")" \
+            "$(json_escape "$st_hex")" \
+            "$(json_escape "$st_fits")" \
             "$(json_escape "$verdict")" \
-            "$(json_escape "$(term_for_url "$url")")" >>"$jsonl"
+            "$(json_escape "$(term_for_url "$eurl")")" >>"$jsonl"
     fi
-    [ -n "$title" ] && printf '   %s\n' "$title"
-    [ -n "$header" ] && printf '   header: %s%s\n' "$header_state" "$( [ -n "$header_note" ] && printf ' (%s)' "$header_note" )"
-    [ -n "$fits" ] && printf '   fits: %s%s\n' "$fits_state" "$( [ -n "$fits_note" ] && printf ' (%s)' "$fits_note" )"
-    [ -n "$value" ] && printf '   value: %s%s\n' "$value_state" "$( [ -n "$value_note" ] && printf ' (%s)' "$value_note" )"
-    [ -n "$hex" ] && printf '   hex: %s%s\n' "$hex_state" "$( [ -n "$hex_note" ] && printf ' (%s)' "$hex_note" )"
+    [ -n "$elabel" ] && printf '%s%s: %s\n' "$eind" "$elabel" "$eurl"
+    [ -n "$etitle" ] && printf '%s%s\n' "$eind" "$etitle"
+    [ -n "$header" ] && printf '%sheader: %s%s\n' "$eind" "$st_header" "$( [ -n "$st_header_note" ] && printf ' (%s)' "$st_header_note" )"
+    [ -n "$fits" ] && printf '%sfits: %s%s\n' "$eind" "$st_fits" "$( [ -n "$st_fits_note" ] && printf ' (%s)' "$st_fits_note" )"
+    [ -n "$value" ] && printf '%svalue: %s%s\n' "$eind" "$st_value" "$( [ -n "$st_value_note" ] && printf ' (%s)' "$st_value_note" )"
+    [ -n "$hex" ] && printf '%shex: %s%s\n' "$eind" "$st_hex" "$( [ -n "$st_hex_note" ] && printf ' (%s)' "$st_hex_note" )"
+}
+
+: >"$tmp/sniffed"
+while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    url="$(printf '%s\n' "$line" | sed -n 's/^url \([^[:space:]]*\).*/\1/p')"
+    [ -n "$url" ] || continue
+    title="$(printf '%s\n' "$line" | awk -F'\t' '{
+            for (i = 2; i <= NF; i++) if ($i ~ /^title: /) {
+                sub(/^title: /, "", $i)
+                print $i
+                exit
+            }
+        }')"
+
+    probe_url "$url"
+    emit_result "$url" "$title" "   " ""
+
+    if [ "$raw_links" -eq 1 ] && [ "$st_ok" -eq 0 ]; then
+        extract_links "$url" "$tmp/links"
+        if [ ! -s "$tmp/links" ]; then
+            printf '      raw: absent — keine Rohdaten-Links auf der Seite\n'
+        fi
+        raw_i=0
+        while IFS= read -r lurl; do
+            [ -n "$lurl" ] || continue
+            [ "$raw_i" -lt "$top" ] || break
+            if grep -Fxq -- "$lurl" "$tmp/sniffed"; then continue; fi
+            printf '%s\n' "$lurl" >>"$tmp/sniffed"
+            raw_i=$((raw_i + 1))
+            raws=$((raws + 1))
+            probe_url "$lurl"
+            emit_result "$lurl" "" "      " "raw"
+        done <"$tmp/links"
+    fi
 done <"$tmp/urls"
 
-printf '\nfind: %s Kandidaten, %s Treffer, %s Zwillinge, %s nah\n' "$candidates" "$matches" "$twins" "$nears"
+printf '\nfind: %s Kandidaten, %s Roh-Links, %s Treffer, %s Zwillinge, %s nah\n' "$candidates" "$raws" "$matches" "$twins" "$nears"
