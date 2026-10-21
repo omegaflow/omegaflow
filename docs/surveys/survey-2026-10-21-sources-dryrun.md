@@ -2,7 +2,7 @@
   title: Sources-Dryrun — v3 auf phi/sources.φ, ohne Schreiben (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 5ea65ab9c2406f4581d6b4c024c7c1cd1659ab7205bf8714f4ef070d9478ba1b
+  sha256: 3897f8e251abf34cecc76e8ad437624451f385a2c8d1ee70aed36dfd314ede76
   status: live
   owner: future
   ack: future 2026-10-21T15:20Z
@@ -32,14 +32,14 @@ Achse 2: `auth-required` → `wartend`, `status vorschlag` → `offen`, sonst
 | Lebenszyklus | `offen` | **2.853** |
 | Lebenszyklus | `wartend` (`auth-required`) | **7** |
 | Lebenszyklus | `declined` | **0** |
-| Zugang | `frei` | **2.286** |
-| Zugang | `LOCK(rechtlich)` | **461** |
+| Zugang | `frei` | **2.684** |
+| Zugang | `LOCK(rechtlich)` | **63** |
 | Zugang | **unbekannt** | **113** |
 
-**Die 461 LOCK** sind fast vollständig `CC-BY-NC-4.0` (374) und
-`CC-BY-NC-3.0-IGO` (24) plus `per-service-terms` (36), `vires` (12), `wdcb` (8)
-und `auth-required` (7). Das ist die nicht-kommerzielle/Weitergabe-Schranke —
-**Zugang, nicht Lebenszyklus**.
+**Die 63 LOCK** sind `per-service-terms` (36), `vires` (12), `wdcb` (8) und
+`auth-required` (7). Die 398 `CC-BY-NC` sind **frei** — wir sind NC; NC ist eine
+Nutzungsbedingung (Attribution, nicht-kommerziell), die wir erfüllen, **kein**
+Zugangslock. Der Lock ist **Weitergabe/Consent**, nicht Kommerz.
 
 **Die 7 `auth-required`** sind der einzige echte `wartend`-Fall im Register
 (babamul, ieeg, pradan, tns, …). `declined` kommt **0×** vor — die Ablehnungen
@@ -57,7 +57,11 @@ liegen offenbar in einer separaten Ablage, nicht in `sources.φ`.
 
 ## Was der Dryrun zeigt
 
-1. **Achse 3 ist die große Achse:** 461 LOCK + 113 unbekannt gegen 2.286 frei.
+0. **Korrektur: NC ist kein Lock.** Der erste Lauf zählte `CC-BY-NC` als
+   restriktiv. Das war falsch — wir sind NC. NC-kompatible Terme sind `frei`
+   (mit Attribution); der Lock beginnt bei `auth-required`, `no-redistribution`,
+   `per-service` oder fehlender Lizenz.
+1. **Achse 3 ist die große Achse:** 63 LOCK + 113 unbekannt gegen 2.684 frei.
    Genau hier hat v2 `auth-required` mit `declined` vermischt.
 2. **Achse 1 ist überwiegend `pending`:** 1.674 Blöcke ohne `sha256` — der
    Register steht, die Messung fehlt.
