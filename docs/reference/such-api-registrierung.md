@@ -98,19 +98,18 @@ Die HTML-Seite blendet standardmäßig zwei Gruppen aus (per Toggle wieder sicht
   You.com, Wolfram, Diffbot, Telnyx, StepFun, Parallel, TinyFish, Bright Data,
   Olostep, Scopus, Clarivate, Dimensions, IEEE, ACM, Lens, Shodan, MCP360,
   Patlytics, Bohrium, ZoomInfo.
-- **bereits funktionierend** (12, am 2026-10-21 mit Treffern gemessen): ADS,
-  AlphaXiv, BASE, Firecrawl, Linkup, Serper, Perplexity, Scopus, Shodan,
+- **bereits funktionierend** (13, am 2026-10-21 mit Treffern gemessen): ADS,
+  AlphaXiv, BASE, CORE, Firecrawl, Linkup, Serper, Perplexity, Scopus, Shodan,
   GitHub, Semantic Scholar, PipesHub.
 - **Kreditkarte im Signup** (10): Google CSE, Gemini, Yandex, Perplexity,
   Kagi, You.com, Bright Data, Shodan, Telnyx, Parallel AI. Google verlangt für
   das Cloud-Projekt eine Karte; Yandex und die übrigen sind ohnehin
   kostenpflichtig. Der Filter wirkt auch, wenn man „kostenpflichtige aus“ abwählt.
 
-Sichtbar bleiben 16 freie Dienste ohne Kreditkarte und ohne funktionierenden
-Key: Naver, Microsoft Graph, CORE (Key abgelehnt, keyless 200), Mendeley,
-Springer Nature, Europeana, DPLA, NYPL, Harvard Art Museums, Rijksmuseum,
-api.data.gov, GitLab, Azure DevOps, OpenCellID, Global Fishing Watch
-(404 Route), Marginalia (haengt).
+Sichtbar bleiben 15 freie Dienste ohne Kreditkarte und ohne funktionierenden
+Key: Naver, Microsoft Graph, Mendeley, Springer Nature, Europeana, DPLA, NYPL,
+Harvard Art Museums, Rijksmuseum, api.data.gov, GitLab, Azure DevOps,
+OpenCellID, Global Fishing Watch (404 Route), Marginalia (haengt).
 
 Die Keyless-Sektion bleibt sichtbar: sie braucht keine Registrierung.
 
