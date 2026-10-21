@@ -2,12 +2,18 @@ use crate::json::{self, Json};
 use crate::secrets::Secret;
 use std::process::Command;
 
-const LASAIR_TOKEN_KEY: &str = "LASAIR_LSST_TOKEN";
+const LASAIR_LSST_TOKEN_KEY: &str = "LASAIR_LSST_TOKEN";
+const LASAIR_ZTF_TOKEN_KEY: &str = "LASAIR_TOKEN";
 const LASAIR_SOCKS: &str = "socks5h://127.0.0.1:25344";
 
 pub fn object_url(object_id: &str) -> String {
+    let host = if object_id.trim_start().starts_with("ZTF") {
+        "https://lasair-ztf.lsst.ac.uk"
+    } else {
+        "https://api.lasair.lsst.ac.uk"
+    };
     format!(
-        "https://api.lasair.lsst.ac.uk/api/object/?objectId={}&format=json",
+        "{host}/api/object/?objectId={}&format=json",
         crate::net::urlencode(object_id)
     )
 }
@@ -169,6 +175,13 @@ fn object_line(v: &Json) -> Option<String> {
     }
 }
 
+fn token_from(env: &std::collections::HashMap<String, String>, key: &str) -> Option<String> {
+    match crate::secrets::resolve_key(env.get(key).map(String::as_str).unwrap_or(""), env) {
+        Secret::Value(t) => Some(t),
+        Secret::Absent(_) => None,
+    }
+}
+
 pub fn lasair_lines(query: &str) -> Vec<String> {
     let object_id = query.trim();
     if object_id.is_empty() {
@@ -178,15 +191,22 @@ pub fn lasair_lines(query: &str) -> Vec<String> {
         Some(repo) => crate::secrets::load_env(&repo),
         None => std::env::vars().collect(),
     };
-    let token = match crate::secrets::resolve_key(
-        env.get(LASAIR_TOKEN_KEY).map(String::as_str).unwrap_or(""),
-        &env,
-    ) {
-        Secret::Value(t) => t,
-        Secret::Absent(_) => {
+    let ztf = object_id.trim_start().starts_with("ZTF");
+    let primary = if ztf {
+        LASAIR_ZTF_TOKEN_KEY
+    } else {
+        LASAIR_LSST_TOKEN_KEY
+    };
+    let fallback = if ztf {
+        LASAIR_LSST_TOKEN_KEY
+    } else {
+        LASAIR_ZTF_TOKEN_KEY
+    };
+    let token = match token_from(&env, primary).or_else(|| token_from(&env, fallback)) {
+        Some(t) => t,
+        None => {
             return vec![format!(
-                "pending — {} absent from .secrets.local/.env",
-                LASAIR_TOKEN_KEY
+                "pending — {primary} and {fallback} absent from .secrets.local/.env"
             )];
         }
     };
@@ -222,6 +242,14 @@ mod tests {
         assert_eq!(
             object_url("313998569858662581"),
             "https://api.lasair.lsst.ac.uk/api/object/?objectId=313998569858662581&format=json"
+        );
+    }
+
+    #[test]
+    fn object_url_routes_ztf_ids_to_the_ztf_host() {
+        assert_eq!(
+            object_url("ZTF20acigmel"),
+            "https://lasair-ztf.lsst.ac.uk/api/object/?objectId=ZTF20acigmel&format=json"
         );
     }
 

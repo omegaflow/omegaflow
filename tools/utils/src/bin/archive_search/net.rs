@@ -756,6 +756,82 @@ fn arxiv_url(text: &str, refine: &[(String, String)], max: usize, start: usize) 
     url
 }
 
+fn arxiv_html_lines(query: &str, max: usize) -> Vec<String> {
+    let size = max.clamp(1, 50);
+    let url = format!(
+        "https://arxiv.org/search/?query={}&searchtype=all&size={}",
+        urlencode(query),
+        size
+    );
+    let out = Command::new("curl")
+        .args([
+            "-sL",
+            "--compressed",
+            "--max-time",
+            "30",
+            "-A",
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131 Safari/537.36",
+            "-H",
+            "Accept: text/html",
+            "-o",
+            "-",
+            "-w",
+            "\n%{http_code}",
+        ])
+        .arg(&url)
+        .output()
+        .ok();
+    let Some(out) = out else {
+        return Vec::new();
+    };
+    let stdout = out.stdout;
+    let Some(idx) = stdout.iter().rposition(|&b| b == b'\n') else {
+        return Vec::new();
+    };
+    let status = String::from_utf8_lossy(&stdout[idx + 1..])
+        .trim()
+        .parse::<i32>()
+        .ok();
+    if status != Some(200) {
+        return Vec::new();
+    }
+    parse_arxiv_html(&String::from_utf8_lossy(&stdout[..idx]), max)
+}
+
+fn parse_arxiv_html(body: &str, max: usize) -> Vec<String> {
+    let mut out = Vec::new();
+    let mut rest = body;
+    while let Some(pos) = rest.find("<li class=\"arxiv-result\"") {
+        rest = &rest[pos..];
+        let end = rest.find("</li>").unwrap_or(rest.len());
+        let block = &rest[..end];
+        let url = match html_attr_after(block, "class=\"list-title") {
+            Some(url) => url.to_string(),
+            None => String::new(),
+        };
+        if !url.is_empty() {
+            let title = html_text_after(block, "class=\"title is-5", "</p>");
+            let authors = html_text_after(block, "class=\"authors\"", "</p>");
+            let authors = authors
+                .strip_prefix("Authors:")
+                .unwrap_or(&authors)
+                .trim()
+                .to_string();
+            let mut line = format!("url {url}\ttitle: {title}");
+            if !authors.is_empty() {
+                line.push_str(&format!("\tauthors: {authors}"));
+            }
+            line.push_str("\tvia: arxiv-html (api 429)");
+            out.push(line);
+            if out.len() >= max {
+                break;
+            }
+        }
+        rest = &rest[end..];
+    }
+    out
+}
+
 pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
     let (text, refine) = crate::refine::split_refine(query, &["sortBy", "sortOrder"]);
     let headers = [
@@ -800,17 +876,24 @@ pub fn arxiv_lines(query: &str, max: usize) -> Vec<String> {
                     )],
                     false,
                 ),
-                Some(f) if f.status == Some(429) => (
-                    vec![format!(
-                        "pending — arxiv HTTP 429 (edge rate limit; {}, the block outlasted the {}-second retry ladder) — the OAI route is `--arxiv-oai`",
-                        match f.retry_after {
-                            Some(s) => format!("Retry-After: {}s", s),
-                            None => "no Retry-After header".to_string(),
-                        },
-                        RATE_LIMIT_BACKOFF_SECS * (RATE_LIMIT_ATTEMPTS as u64 - 1)
-                    )],
-                    false,
-                ),
+                Some(f) if f.status == Some(429) => {
+                    let out = arxiv_html_lines(&text, max);
+                    if out.is_empty() {
+                        (
+                            vec![format!(
+                                "pending — arxiv HTTP 429 (edge rate limit; {}, the block outlasted the {}-second retry ladder) and the HTML search also carries nothing",
+                                match f.retry_after {
+                                    Some(s) => format!("Retry-After: {}s", s),
+                                    None => "no Retry-After header".to_string(),
+                                },
+                                RATE_LIMIT_BACKOFF_SECS * (RATE_LIMIT_ATTEMPTS as u64 - 1)
+                            )],
+                            false,
+                        )
+                    } else {
+                        (out, false)
+                    }
+                }
                 Some(f) => (
                     vec![format!("pending — arxiv HTTP {}", f.status_text())],
                     false,
@@ -1943,7 +2026,7 @@ fn marginalia_sst(body: &str) -> Option<String> {
     Some(rest[..end].to_string())
 }
 
-fn marginalia_attr<'a>(card: &'a str, class: &str) -> Option<&'a str> {
+fn html_attr_after<'a>(card: &'a str, class: &str) -> Option<&'a str> {
     let pos = card.find(class)?;
     let rest = &card[pos..];
     let href = rest.find("href=\"")? + 6;
@@ -1952,7 +2035,7 @@ fn marginalia_attr<'a>(card: &'a str, class: &str) -> Option<&'a str> {
     Some(&rest[..end])
 }
 
-fn marginalia_text(card: &str, marker: &str, close: &str) -> String {
+fn html_text_after(card: &str, marker: &str, close: &str) -> String {
     let Some(pos) = card.find(marker) else {
         return String::new();
     };
@@ -1972,14 +2055,14 @@ fn marginalia_html_results(body: &str, max: usize) -> Vec<String> {
         rest = &rest[pos..];
         let end = rest.find("</section>").unwrap_or(rest.len());
         let card = &rest[..end];
-        if let Some(link) = marginalia_attr(card, "class=\"url\"") {
+        if let Some(link) = html_attr_after(card, "class=\"url\"") {
             let url = if link.starts_with("http") {
                 link.to_string()
             } else {
                 format!("https://old-search.marginalia.nu{link}")
             };
-            let title = marginalia_text(card, "class=\"title\"", "</a>");
-            let description = marginalia_text(card, "<p class=\"description\">", "</p>");
+            let title = html_text_after(card, "class=\"title\"", "</a>");
+            let description = html_text_after(card, "<p class=\"description\">", "</p>");
             let mut line = format!("url {url}\ttitle: {title}");
             if !description.is_empty() {
                 line.push_str(&format!("\tdescription: {description}"));
@@ -5093,6 +5176,8 @@ const QUERY_MODES: &[&str] = &[
     "cc",
     "pubmed",
     "europepmc",
+    "europeana",
+    "smithsonian",
     "psychporta",
     "awmf",
     "cochrane",
@@ -5825,6 +5910,32 @@ fn run_lines_dispatch(
         "openalex" => crate::openalex::openalex_lines(query, max),
         "pubmed" => crate::pubmed::pubmed_lines(query, max),
         "europepmc" => crate::europepmc::europepmc_lines(query, max),
+        "europeana" => {
+            let token = resolve_key(
+                env.get("EUROPEANA_API_KEY").map(String::as_str).unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => crate::europeana::europeana_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("EUROPEANA_API_KEY", marker)
+                )],
+            }
+        }
+        "smithsonian" => {
+            let token = resolve_key(
+                env.get("USGOV_API_KEY").map(String::as_str).unwrap_or(""),
+                env,
+            );
+            match token {
+                Secret::Value(t) => crate::smithsonian::smithsonian_lines(query, &t, max),
+                Secret::Absent(marker) => vec![format!(
+                    "pending — {} absent from .secrets.local/.env",
+                    token_key("USGOV_API_KEY", marker)
+                )],
+            }
+        }
         "psychporta" => crate::psychporta::psychporta_lines(query, max),
         "awmf" => crate::awmf::awmf_lines(query, max),
         "cochrane" => crate::cochrane::cochrane_lines(query, max),
@@ -6152,6 +6263,8 @@ mod tests {
             "cc",
             "pubmed",
             "europepmc",
+            "europeana",
+            "smithsonian",
             "psychporta",
             "awmf",
             "cochrane",
@@ -6605,6 +6718,32 @@ mod tests {
         assert_eq!(
             parsed[0].pdf.as_deref(),
             Some("http://arxiv.org/pdf/2401.01234v1")
+        );
+    }
+
+    #[test]
+    fn arxiv_html_fallback_reads_result_cards() {
+        let body = r#"<ol class="results">
+<li class="arxiv-result">
+  <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2610.28274">arXiv:2610.28274</a></p>
+  <div class="tags"><span class="tag">astro-ph.SR</span></div>
+  <p class="title is-5 mathjax">The Effect of Field Line <span class="search-hit">Solar</span> Wind</p>
+  <p class="authors"><span>Authors:</span> <a href="/x">Satabdwa Majumdar</a>, <a href="/y">Pete Riley</a></p>
+</li>
+<li class="arxiv-result">
+  <p class="list-title is-inline-block"><a href="https://arxiv.org/abs/2601.00001">arXiv:2601.00001</a></p>
+  <p class="title is-5 mathjax">Second</p>
+</li>
+</ol>"#;
+        let lines = parse_arxiv_html(body, 10);
+        assert_eq!(lines.len(), 2);
+        assert_eq!(
+            lines[0],
+            "url https://arxiv.org/abs/2610.28274\ttitle: The Effect of Field Line Solar Wind\tauthors: Satabdwa Majumdar, Pete Riley\tvia: arxiv-html (api 429)"
+        );
+        assert_eq!(
+            lines[1],
+            "url https://arxiv.org/abs/2601.00001\ttitle: Second\tvia: arxiv-html (api 429)"
         );
     }
 

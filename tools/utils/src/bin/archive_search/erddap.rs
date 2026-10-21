@@ -22,9 +22,9 @@ pub fn erddap_lines(query: &str, max: usize) -> Vec<String> {
                 .to_string(),
         ];
     }
-    let base = server.trim_end_matches('/');
+    let base = erddap_base(server);
     let url = format!(
-        "{}/erddap/search/advanced.json?searchFor={}&itemsPerPage={}&page=1",
+        "{}/search/advanced.json?searchFor={}&itemsPerPage={}&page=1",
         base,
         urlencode(searchfor),
         page
@@ -43,6 +43,15 @@ pub fn erddap_lines(query: &str, max: usize) -> Vec<String> {
         }
         Some(f) => vec![format!("pending — erddap HTTP {}", f.status_text())],
         None => vec!["pending — no network".to_string()],
+    }
+}
+
+fn erddap_base(server: &str) -> String {
+    let base = server.trim().trim_end_matches('/');
+    if base.ends_with("/erddap") {
+        base.to_string()
+    } else {
+        format!("{base}/erddap")
     }
 }
 
@@ -134,6 +143,22 @@ mod tests {
         let body = r#"{"table":{"columnNames":["griddap","tabledap","Dataset ID"],"rows":[["https://s/griddap/A","https://s/tabledap/A","A"]]}}"#;
         let v = json::parse(body).unwrap();
         assert!(parse_erddap(&v, 10)[0].contains("tabledap/A"));
+    }
+
+    #[test]
+    fn server_base_never_doubles_erddap() {
+        assert_eq!(
+            erddap_base("https://coastwatch.pfeg.noaa.gov/erddap"),
+            "https://coastwatch.pfeg.noaa.gov/erddap"
+        );
+        assert_eq!(
+            erddap_base("https://coastwatch.pfeg.noaa.gov/erddap/"),
+            "https://coastwatch.pfeg.noaa.gov/erddap"
+        );
+        assert_eq!(
+            erddap_base("https://example.org"),
+            "https://example.org/erddap"
+        );
     }
 
     #[test]
