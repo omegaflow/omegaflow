@@ -101,6 +101,9 @@ Die HTML-Seite blendet standardmäßig zwei Gruppen aus (per Toggle wieder sicht
 - **bereits funktionierend** (12, am 2026-10-21 mit Treffern gemessen): ADS,
   AlphaXiv, BASE, Firecrawl, Linkup, Serper, Perplexity, Scopus, Shodan,
   GitHub, Semantic Scholar, PipesHub.
+- **Kreditkarte im Signup** (8): Yandex, Perplexity, Kagi, You.com, Bright Data,
+  Shodan, Telnyx, Parallel AI. Alle sind ohnehin kostenpflichtig; der Filter
+  wirkt, wenn man „kostenpflichtige aus“ abwählt.
 
 Sichtbar bleiben 18 freie Dienste ohne funktionierenden Key: Gemini (Key da,
 429 Quota), Google CSE (Key ungueltig, 400), Naver, Microsoft Graph, CORE
