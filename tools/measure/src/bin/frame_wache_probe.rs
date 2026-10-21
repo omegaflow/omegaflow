@@ -626,6 +626,27 @@ fn main() {
                     verdikt(&r)
                 );
             }
+            if let Some(path) = arg_value(&args, "--missing-out") {
+                let missing: Vec<&String> = triple
+                    .iter()
+                    .filter(|n| !gaia.positions.contains_key(*n))
+                    .collect();
+                let mut out = String::from("iers,ra_deg,dec_deg\n");
+                for name in &missing {
+                    if let Some(src) = sx.get(*name) {
+                        out.push_str(&format!(
+                            "{},{:.9},{:.9}\n",
+                            src.iers, src.ra_deg, src.dec_deg
+                        ));
+                    }
+                }
+                match std::fs::write(&path, out) {
+                    Ok(()) => {
+                        println!("missing Gaia anchors: {} -> {}", missing.len(), path)
+                    }
+                    Err(e) => println!("missing-out {path}: {e}"),
+                }
+            }
         } else {
             println!("gcrf3xm absent or unreadable: {}", gz.display());
         }

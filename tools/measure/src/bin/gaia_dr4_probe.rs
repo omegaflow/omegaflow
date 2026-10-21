@@ -229,6 +229,21 @@ fn main() {
         Some(path) => read_anchors(&path),
         None => Vec::new(),
     };
+    if let Some(path) = arg_value(&args, "--tap-query") {
+        let query_anchors = read_anchors(&path);
+        println!("-- anchors {}", query_anchors.len());
+        for chunk in query_anchors.chunks(100) {
+            let ids = chunk
+                .iter()
+                .map(|a| a.id.as_str())
+                .collect::<Vec<_>>()
+                .join(",");
+            println!(
+                "SELECT source_id, transit_id, ra0, dec0, obs_time_tcb, scan_pos_angle, centroid_pos_al, parallax_factor_al, used_by_agis_al FROM gaiadr4.epoch_astrometry WHERE source_id IN ({ids})"
+            );
+        }
+        return;
+    }
     let Some(path) = arg_value(&args, "--xml") else {
         eprintln!("usage: gaia_dr4_probe --xml <GAIA_DR4_PRERELEASE_EPOCH_ASTROMETRY_RAW.xml>");
         std::process::exit(2);

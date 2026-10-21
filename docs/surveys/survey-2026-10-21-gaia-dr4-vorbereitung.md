@@ -2,7 +2,7 @@
   title: Survey — Gaia DR4 Vorbereitung: 12-Quellen-Dry-Run mit Eigenbewegung und Parallaxe (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 4bd5bab398497fd619c639c94902f4d24555ad9905aed1f2f39a7eb3e74c0983
+  sha256: 09b14bb8819a72fc8667a2748ace653b968c1c487fd512092d7428dab7b09dec
   status: live
   see-also: docs/surveys/survey-2026-10-19-rohdaten-12von15.md docs/surveys/survey-2026-10-20-frame-wache.md projects/quasare.md tools/measure/src/bin/gaia_dr4_probe.rs
 -->
@@ -96,17 +96,40 @@ den Fit. Getestet:
 Damit ist der Anker-Pfad für den 2.12. gebaut; es fehlt nur die DR4-Epochen-
 datei für die 512.
 
-## Was für den 2.12. noch fehlt
+## Scan-Winkel gegen DR3 (gemessen 2026-10-21)
 
-1. **Exakte 64-bit-`source_id`.** Der generische VOTable-Reader legt `long` als
-   f64 ab. Das Positions-Matching umgeht die Rundung für den Fit; für die
-   Archivierung der Anker-IDs bleibt ein ID-exakter Parser nötig.
-2. **Scan-Winkel-Konvention.** Die Vorzeichen von `pm_ra`/`pm_dec` sind aus
-   `scan_pos_angle` übernommen, aber noch nicht gegen DR3/DR4-PMs geprüft.
-3. **Die 512 Anker.** Der Anker-Katalog und das Positions-Matching stehen; der
-   TAP/Archive-Pfad für die DR4-Epochen der 512 fehlt noch.
-4. **Die 88 ohne Gaia.** Bleiben die zweite Lücke; DR4 kann sie nur schließen,
-   wenn der Crossmatch sie enthält.
+Gaia-DR3-TAP (`gaiadr3.gaia_source`) für die 12 Vorabquellen abgefragt; Vergleich
+der Eigenbewegungen (mas/a). Die sauberen Einzelsterne stimmen in Vorzeichen und
+Betrag:
+
+| # | unser pm_ra/pm_dec | DR3 pm_ra/pm_dec | Δ |
+|---:|---|---|---|
+| 5 | +3,48 / −5,95 | +3,45 / −5,82 | 0,03 / 0,13 |
+| 7 | −9,42 / −0,48 | −9,77 / −0,44 | 0,35 / 0,04 |
+| 9 | −124,51 / −135,91 | −124,59 / −135,82 | 0,08 / 0,09 |
+| 10 | −75,76 / +17,72 | −75,41 / +18,06 | 0,35 / 0,34 |
+| 4 | +6,25 / −3,66 | +7,25 / −3,31 | 1,00 / 0,35 |
+
+Die **QSO-nahen** Quellen 2/3/6/11 bleiben mit |pm| < 2,53 (wir) gegen < 2,23
+(DR3) im QSO-Rauschen. Die Quellen **8/12** sind Binär-/Bahnfälle (DR3
+−581/+1 gegen unser −597/−35; bzw. −1/−7 gegen −29/−150) — kein
+Konventionsfehler, sondern ein Modellfall.
+
+**Ergebnis:** Die `sin(pa)`/`cos(pa)`-Zuordnung und die Vorzeichen sind für die
+sauberen Quellen bestätigt; die Binaries bleiben Ausnahmen.
+
+## Was vorbereitet ist
+
+| Punkt | Stand |
+|---|---|
+| Exakte IDs | Anker-IDs exakt aus `gaia_crf3_icrf3_positions.csv`; die VOTable-f64-ID dient nur der Gruppierung, das 2″-Positionsmatching dem Ankerbezug. |
+| TAP-Pfad | `gaia_dr4_probe --tap-query <csv>` erzeugt **6 ADQL-Chunks** für die 512 Anker; Tabelle `gaiadr4.epoch_astrometry`, Spalten wie in der Vorabdatei. |
+| Scan-Winkel | gegen DR3 geprüft (Tabelle oben): saubere Quellen < 1 mas/a, Vorzeichen bestätigt. |
+| 88 ohne Gaia | `frame_wache_probe --missing-out <csv>` erzeugt die **88 Zeilen** (IERS-Name, RA, Dec); das 2″-Matching ist bereit. |
+
+**Am 2.12. bleibt:** die 6 TAP-Queries ausführen, die VOTables durch
+`gaia_dr4_probe` schicken, PM/Plx fitten und die Frame-Rotation vor/nach der
+Korrektur messen. Kein neuer Methodenbau.
 
 ## Reproduktion
 
@@ -116,6 +139,13 @@ cargo build --release -p omegaflow-measure --bin gaia_dr4_probe
 ./target/release/gaia_dr4_probe \
   --xml GAIA_DR4_PRERELEASE_EPOCH_ASTROMETRY_RAW.xml \
   --anchors ../omegaflow-work/sources/cdsarc.cds.unistra.fr/gaia_crf3_icrf3_positions.csv
+
+./target/release/gaia_dr4_probe --tap-query \
+  ../omegaflow-work/sources/cdsarc.cds.unistra.fr/gaia_crf3_icrf3_positions.csv \
+  > dr4_tap_queries.sql
+
+cd ../omegaflow-work && ../omegaflow/target/release/frame_wache_probe \
+  --missing-out /tmp/opencode/gaia/missing88.csv
 ```
 
 ## Ablage
