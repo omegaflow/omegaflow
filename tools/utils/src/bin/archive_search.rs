@@ -76,6 +76,8 @@ mod fdsn;
 mod figshare;
 #[path = "archive_search/frbcat.rs"]
 mod frbcat;
+#[path = "archive_search/fulltext.rs"]
+mod fulltext;
 #[path = "archive_search/gaia.rs"]
 mod gaia;
 #[path = "archive_search/gbif.rs"]
@@ -576,6 +578,9 @@ fn main() {
     let mut cache_clear = false;
     let mut cache_stats = false;
     let mut filter_set = filters::Filters::default();
+    let mut fulltext_on = false;
+    let mut fulltext_limit = fulltext::DEFAULT_LIMIT;
+    let mut fulltext_used = 0usize;
 
     let mut i = 0;
     while i < args.len() {
@@ -701,6 +706,17 @@ fn main() {
                     }
                     _ => {
                         eprintln!("archive_search: --language needs an ISO 639-1 code (two letters)");
+                        std::process::exit(2);
+                    }
+                }
+            }
+            "--fulltext" => fulltext_on = true,
+            "--fulltext-limit" => {
+                i += 1;
+                match args.get(i).and_then(|s| s.parse::<usize>().ok()) {
+                    Some(n) => fulltext_limit = n,
+                    None => {
+                        eprintln!("archive_search: --fulltext-limit needs a count");
                         std::process::exit(2);
                     }
                 }
@@ -943,11 +959,11 @@ fn main() {
                 };
                 let lines =
                     ntfs::run_lines(Path::new(&device), &keywords, max_files, max_mb, content);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Index => {
                 let lines = run_index(&roots, &keywords, max_files, kind, sort, path_match);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Serve => run_serve(serve_addr.clone(), &roots, mft_path.clone()),
             Mode::Git => {
@@ -957,7 +973,7 @@ fn main() {
                 };
                 let query = keywords.join(" ");
                 let lines = git::run_lines(&repo, &query);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Verdict => {
                 let url = match &verdict_url {
@@ -968,7 +984,7 @@ fn main() {
                     }
                 };
                 let lines = net::verdict_lines(&url);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Jina => {
                 let url = match &jina_input {
@@ -979,7 +995,7 @@ fn main() {
                     }
                 };
                 let lines = jina::jina_lines(&url);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Playwright => {
                 let input = match &playwright_input {
@@ -990,7 +1006,7 @@ fn main() {
                     }
                 };
                 let lines = playwright::run_lines(&input, headed);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::PdfImage => {
                 let input = match &pdf_input {
@@ -1001,7 +1017,7 @@ fn main() {
                     }
                 };
                 let lines = run_pdf_image(&input, pdf_out.as_deref());
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::PdfText => {
                 let input = match &pdf_input {
@@ -1012,7 +1028,7 @@ fn main() {
                     }
                 };
                 let lines = run_pdf_text(&input);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::ArxivSrc => {
                 let input = match &arxiv_input {
@@ -1023,11 +1039,11 @@ fn main() {
                     }
                 };
                 let lines = arxiv_src::run_lines(&input, pdf_out.as_deref());
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Oai => {
                 let lines = oai::arxiv_oai_lines(oai_input.as_deref(), oai_pages);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Consensus => {
                 let query = keywords.join(" ");
@@ -1055,32 +1071,32 @@ fn main() {
                         )]
                     }
                 };
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Lasair => {
                 let query = keywords.join(" ");
                 let lines = lasair::lasair_lines(&query);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Perplexity => {
                 let query = keywords.join(" ");
                 let lines = perplexity::perplexity_lines(&query);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Lpf => {
                 let query = keywords.join(" ");
                 let lines = lpf::lpf_lines(&query);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Gosat => {
                 let query = keywords.join(" ");
                 let lines = gosat::gosat_lines(&query);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Alerce => {
                 let query = keywords.join(" ");
                 let lines = alerce_lines(&query, max_results);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Fink => {
                 let query = keywords.join(" ");
@@ -1089,32 +1105,32 @@ fn main() {
                     None => env::vars().collect(),
                 };
                 let lines = fink_lines(&query, &env_map, max_results);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Dust => {
                 let query = keywords.join(" ");
                 let lines = dust_lines(&query);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::GoesLive => {
                 let query = keywords.join(" ");
                 let lines = goes_live_lines(&query, max_results);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Live => {
                 let query = keywords.join(" ");
                 let lines = live_lines(&query, max_results);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Antares => {
                 let query = keywords.join(" ");
                 let lines = antares_lines(&query, max_results);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::FourGet => {
                 let query = keywords.join(" ");
                 let lines = four_get_lines(&query, max_results);
-                sink.emit(&lines, mode.label());
+                emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
             }
             Mode::Stats => {
                 sink.emit(&run_stats(), mode.label());
@@ -1151,7 +1167,7 @@ fn main() {
                             pdf_out.as_deref(),
                             max_results,
                         );
-                        sink.emit(&lines, mode.label());
+                        emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
                         if name == "all" {
                             print_anomaly_all(query, &env_map, max_results);
                         }
@@ -1160,7 +1176,7 @@ fn main() {
                     let query = keywords.join(" ");
                     let lines =
                         net::run_lines_max(name, &query, &env_map, pdf_out.as_deref(), max_results);
-                    sink.emit(&lines, mode.label());
+                    emit_hits(&mut sink, lines, mode.label(), fulltext_on, fulltext_limit, &mut fulltext_used);
                     if name == "all" {
                         print_anomaly_all(&query, &env_map, max_results);
                     }
@@ -1194,6 +1210,18 @@ fn print_cache_clear() {
         std::process::exit(2);
     };
     out!("cache cleared: {} file(s), {} byte(s) — {}", files, bytes, dir.display());
+}
+
+fn emit_hits(
+    sink: &mut output::Sink,
+    mut lines: Vec<String>,
+    mode: &str,
+    fulltext_on: bool,
+    fulltext_limit: usize,
+    fulltext_used: &mut usize,
+) {
+    fulltext::run_budget(fulltext_on, &mut lines, fulltext_limit, fulltext_used);
+    sink.emit(&lines, mode);
 }
 
 fn select_format(slot: &mut Option<output::Format>, next: output::Format) {
@@ -2107,6 +2135,9 @@ fn usage() {
     );
     eprintln!(
         "filters:  [--since YYYY[-MM-DD]] [--until YYYY[-MM-DD]] [--type <kind>] [--language <iso-639-1>] [--explain]   (openalex/crossref/semanticscholar/arxiv/pubmed/europepmc/ads carry them; --explain names every unsupported arm)"
+    );
+    eprintln!(
+        "fulltext: [--fulltext] [--fulltext-limit <n>]   (adds pdf:/fulltext: to hits with a DOI via Unpaywall and OpenAlex; default off, limit 5)"
     );
     eprintln!();
     eprintln!(
