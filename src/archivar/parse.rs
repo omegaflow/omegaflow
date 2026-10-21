@@ -1301,30 +1301,31 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         continue;
                     }
                 };
-                let absorption: f64 = match parts[7].parse() {
+                let tau_src = tau_src_of(&parts);
+                let absorption: f64 = match parts[8].parse() {
                     Ok(v) => v,
                     Err(_) => continue,
                 };
-                let advection: f64 = match parts[8].parse() {
+                let advection: f64 = match parts[9].parse() {
                     Ok(v) => v,
                     Err(_) => continue,
                 };
                 let mut freq = crate::spectral::SPECTRAL_NO_BAND;
                 let mut bin_width = crate::spectral::SPECTRAL_NO_BAND;
                 let mut band_declared = false;
-                if parts.len() > 9 {
-                    if parts[9] != "band" {
+                if parts.len() > 10 {
+                    if parts[10] != "band" {
                         report_anomaly(
                             "Invalid Syntax",
                             &cur_url,
                             &format!(
                                 "quantity {} carries an unknown trailing token \"{}\": {}",
-                                parts[1], parts[9], line
+                                parts[1], parts[10], line
                             ),
                         );
                         continue;
                     }
-                    if parts.len() < 13 || parts[11] != "pivot" {
+                    if parts.len() < 14 || parts[12] != "pivot" {
                         report_anomaly(
                             "Invalid Syntax",
                             &cur_url,
@@ -1335,7 +1336,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         );
                         continue;
                     }
-                    let lam_m = match parse_wavelength_m(parts[12]) {
+                    let lam_m = match parse_wavelength_m(parts[13]) {
                         Some(m) => m,
                         None => {
                             report_anomaly(
@@ -1343,7 +1344,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                                 &cur_url,
                                 &format!(
                                     "quantity {} pivot wavelength \"{}\" unmeasurable: {}",
-                                    parts[1], parts[12], line
+                                    parts[1], parts[13], line
                                 ),
                             );
                             continue;
@@ -1351,8 +1352,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     };
                     freq = C_LIGHT / lam_m;
                     band_declared = true;
-                    if parts.len() > 13 {
-                        if parts[13] != "edges" || parts.len() < 15 {
+                    if parts.len() > 14 {
+                        if parts[14] != "edges" || parts.len() < 16 {
                             report_anomaly(
                                 "Invalid Syntax",
                                 &cur_url,
@@ -1363,7 +1364,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             );
                             continue;
                         }
-                        match parse_wavelength_range_m(parts[14]) {
+                        match parse_wavelength_range_m(parts[15]) {
                             Some((lo_m, hi_m)) => {
                                 bin_width = (C_LIGHT / lo_m - C_LIGHT / hi_m).abs();
                             }
@@ -1373,7 +1374,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                                     &cur_url,
                                     &format!(
                                         "quantity {} edges \"{}\" unmeasurable: {}",
-                                        parts[1], parts[14], line
+                                        parts[1], parts[15], line
                                     ),
                                 );
                                 continue;
@@ -1399,14 +1400,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: if band_declared {
-                        Some(parts[10].to_string())
+                        Some(parts[11].to_string())
                     } else {
                         None
                     },
                     kernel: k,
                     channel_ref: None,
                     tau,
-                    tau_src: TauSource::Measured,
+                    tau_src,
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -3970,11 +3971,11 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         };
 
         let valid = "url https://example.com/q.bin\nttl 604800\n\
-                     quantity qkey qname inverse-square mass kg 3600 0.0 0.0\n";
+                     quantity qkey qname inverse-square mass kg 3600 pending 0.0 0.0\n";
         assert_eq!(field_of(valid), None);
 
         let force_as_kind = "url https://example.com/q.bin\nttl 604800\n\
-                             quantity qkey qname inverse-square em kg 3600 0.0 0.0\n";
+                             quantity qkey qname inverse-square em kg 3600 pending 0.0 0.0\n";
         assert_eq!(
             field_of(force_as_kind),
             None,
@@ -4080,7 +4081,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             })
         };
         let q = "url https://example.com/q.bin\nttl 604800\n\
-                 quantity qkey qname inverse-square index nt 60 0.0 0.0\n";
+                 quantity qkey qname inverse-square index nt 60 pending 0.0 0.0\n";
         let fc = field_of(q).expect("a magnetic index quantity in nT flows as a quantity");
         assert_eq!(fc.channel_ref, None, "a derived index stays outside Σω");
     }
@@ -4096,7 +4097,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             })
         };
         let geometry = "url https://example.com/q.bin\nttl 604800\n\
-                        quantity tide_ft tide_ft inverse-square geometry ft 3600 0.0 0.0\n";
+                        quantity tide_ft tide_ft inverse-square geometry ft 3600 pending 0.0 0.0\n";
         let fc = field_of(geometry).expect("a geometry quantity flows");
         assert_eq!(fc.channel_ref, None);
         assert_eq!(
@@ -4105,7 +4106,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         );
 
         let source_parameter = "url https://example.com/q.bin\nttl 604800\n\
-                                quantity planet_mass planet_mass inverse-square source-parameter M_earth 60 0.0 0.0\n";
+                                quantity planet_mass planet_mass inverse-square source-parameter M_earth 60 pending 0.0 0.0\n";
         assert_eq!(
             field_of(source_parameter).and_then(|f| f.channel_ref),
             None,
@@ -4125,14 +4126,14 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         };
 
         let bandless = "url https://example.com/q.bin\nttl 604800\n\
-                        quantity flux_g g_flux inverse-square scale nmgy 31536000 0.0 0.0\n";
+                        quantity flux_g g_flux inverse-square scale nmgy 31536000 pending 0.0 0.0\n";
         assert!(
             field_of(bandless).is_none(),
             "a photometric scale nmgy quantity without a band reference is refused, never a 0.0 band"
         );
 
         let with_band = "url https://example.com/q.bin\nttl 604800\n\
-                         quantity flux_g g_flux inverse-square scale nmgy 31536000 0.0 0.0 band DECam_g pivot 4808.49angstrom edges 3900-5600angstrom\n";
+                         quantity flux_g g_flux inverse-square scale nmgy 31536000 pending 0.0 0.0 band DECam_g pivot 4808.49angstrom edges 3900-5600angstrom\n";
         let fc = field_of(with_band).expect("the band-declared photometric quantity flows");
         assert!(
             fc.freq > 0.0,
