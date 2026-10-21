@@ -437,7 +437,7 @@ fn main() {
                     _ => {
                         push(
                             "anchor_range",
-                            format!("{tag}\t{name}\tnicht-numerisch"),
+                            format!("{tag}\t{name}\tnon-numeric"),
                             true,
                             &mut findings,
                             &mut hard,
