@@ -2193,6 +2193,7 @@ field noaa_cdo_tmax_c noaa_cdo_tmax_c exponential-decay thermal C 86400 pending 
 
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/spectra.bin
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
+origin https://www.ncei.noaa.gov/data/solar-spectral-irradiance/access/standard-resolution/monthly/
 format spectral
 compiler tools/harvest/src/bin/spectral_compiler.rs
 on earth frame=body lat=19.82 lon=-155.47 alt=4142.6
@@ -3422,6 +3423,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin
 format ephemeris_de441
 terms PD-USGov https://ssd.jpl.nasa.gov/
+origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de441.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 sha256 ad4c8cb05a5375cb553779f55f011cd96c679e7a110a26ca253676410c396d58
 at earth frame=barycenter
@@ -3430,6 +3432,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de441_moon.bin
 format ephemeris_de441
 terms PD-USGov https://ssd.jpl.nasa.gov/
+origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de441.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 sha256 7cfb8971757d6a3fcc121854748f86989c331df1447efaa984661a0eba65e8eb
 at moon frame=barycenter
@@ -3438,6 +3441,7 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de441_sun.bin
 format ephemeris_de441
 terms PD-USGov https://ssd.jpl.nasa.gov/
+origin https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de441.bsp
 compiler tools/harvest/src/bin/de_compiler.rs
 sha256 e682d727beb4d6afc2c3dcaa7720796751b02a1613b6f78c6e8187bf566b84c2
 at sun frame=barycenter
@@ -11215,6 +11219,7 @@ quantity angle_b voyager_saturn_angle_b inverse-square geometry rad 604800 0.0 0
 url https://github.com/omegaflow/sources/releases/download/ssb/ssb_field.bin
 format ssb_field
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
+origin https://github.com/omegaflow/omegaflow
 compiler tools/measure/src/bin/ssb_field_bake.rs
 sha256 a3e6b4be8687661fc81dcbe81dc5ee1de54ec1c8c85a7b2225328d4742356dd2
 at sun frame=barycenter
@@ -14194,6 +14199,7 @@ field bin_width_hz frb_chime_bin_width_hz inverse-square em Hz 604800 pending 0.
 
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/ossos_tno.bin
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
+origin https://www.ossos-survey.org/
 format catalog_ossos
 compiler tools/harvest/src/bin/ossos_compiler.rs
 at sun frame=barycenter
@@ -26469,6 +26475,7 @@ field Z_WAVE cses_scm_ulf_z_nt inverse-square em nT 86400 pending 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/sentinel1euwest.blob.core.windows.net/s1_sar_diff.bin
 terms free-open https://www.copernicus.eu/en/access-data/copyright-and-licences
+origin https://planetarycomputer.microsoft.com/api/stac/v1
 compiler tools/harvest/src/bin/s1_sar_compiler.rs
 format s1_sar
 at earth frame=barycenter
@@ -26836,6 +26843,7 @@ no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_official.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
+origin https://ssd.jpl.nasa.gov/ftp/eph/
 format ephemeris_binary
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 aeb3c82ff3de672116ff7f8c28592d97ea05c5e78b8f652521d2cf3cae57488a
@@ -27230,6 +27238,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_cassini.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at cassini frame=barycenter
 no-cadence
@@ -27237,6 +27246,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_europa_clipper.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at europa_clipper frame=barycenter
 no-cadence
@@ -27244,6 +27254,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e1.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at galileo frame=barycenter
 no-cadence
@@ -27251,6 +27262,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e2.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at galileo frame=barycenter
 no-cadence
@@ -27258,6 +27270,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_halley.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at halley frame=barycenter
 no-cadence
@@ -27273,6 +27286,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_messenger.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at messenger frame=barycenter
 no-cadence
@@ -27280,6 +27294,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_near.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at near frame=barycenter
 no-cadence
@@ -27314,6 +27329,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_rosetta.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at rosetta frame=barycenter
 no-cadence
