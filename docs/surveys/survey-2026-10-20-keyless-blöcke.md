@@ -2,7 +2,7 @@
   title: Vier keyless Routen als Register-Vorschlag (2026-10-20)
   class: survey
   date: 2026-10-20
-  sha256: 1c3895efa083cdbee5b236d02ff4aa2d84436d9e2da15d2b38dbf96e4a84fbe3
+  sha256: 69da0613f0b70e28b31e2b4e67a84cd1e699f25ea2d92024d97b5eb55bbddba0
   status: done
   see-also: phi/sources.φ
 -->
@@ -133,3 +133,11 @@ erste Zeile `2026-10-13 00:37`. Die ganze Datei wurde nicht geladen.
    ein `field`-Block entsteht.
 4. BPA: Asset-Versionierung (Zeitstempel im Namen oder Release pro Lauf)
    entscheiden, sonst bleibt die Historie bei vier Tagen.
+
+## Nachtrag 2026-10-21 — Vorschläge verlassen das Register
+
+`status vorschlag` war ein Marker ohne Parserarm und gehört nicht in
+`phi/sources.φ`. Die drei DSCOVR/USGS/MEEO-Blöcke wurden aus dem Register
+entfernt und als `dscovr-hapi`, `usgs-geomag-frd`, `meeo-s5p-o3` nach
+`state/wartend.φ` überführt (Aufnehmer `mycelium`; Trigger: Operator-Wort
+bzw. eigener Compiler/Objekt-Fetch). Die Messungen oben bleiben der Beleg.
