@@ -334,6 +334,24 @@ static RATE_GATE: OnceLock<Mutex<RateGate>> = OnceLock::new();
 
 pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
     let host = url_host(url);
+    if let Some((status, retry_after)) = crate::cache::load_http_error(url) {
+        return Some(Fetch {
+            status: Some(status),
+            body: String::new(),
+            raw: Vec::new(),
+            retry_after,
+            complete: false,
+        });
+    }
+    if let Some(secs) = crate::cache::breaker_open(&host) {
+        return Some(Fetch {
+            status: Some(403),
+            body: String::new(),
+            raw: Vec::new(),
+            retry_after: Some(secs),
+            complete: false,
+        });
+    }
     let gate = RATE_GATE.get_or_init(|| Mutex::new(RateGate::new()));
     let ladder = exits();
     let result = first_answer(&ladder, |exit| {
@@ -370,9 +388,19 @@ pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
                 }
                 let retried = first_answer(&ladder, |exit| get_once(url, &merged, timeout, exit));
                 if let Some(retried) = retried {
-                    return Some(retried);
+                    return finish_get(url, &host, Some(retried));
                 }
             }
+        }
+    }
+    finish_get(url, &host, result)
+}
+
+fn finish_get(url: &str, host: &str, result: Option<Fetch>) -> Option<Fetch> {
+    crate::cache::breaker_record(host, result.as_ref().and_then(|f| f.status));
+    if let Some(f) = &result {
+        if let Some(status) = f.status {
+            crate::cache::store_http_error(url, status, f.retry_after);
         }
     }
     result
