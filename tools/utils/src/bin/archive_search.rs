@@ -606,6 +606,7 @@ fn main() {
     let mut proxy: Option<String> = None;
     let mut profile_arg: Option<String> = None;
     let mut list_profiles = false;
+    let mut list_sources = false;
     let mut cli_group: Option<String> = None;
     let mut since_set = false;
     let mut until_set = false;
@@ -677,6 +678,7 @@ fn main() {
                 }
             }
             "--list-profiles" => list_profiles = true,
+            "--list-sources" => list_sources = true,
             "--playwright" => {
                 i += 1;
                 if let Some(u) = args.get(i) {
@@ -947,6 +949,11 @@ fn main() {
             }
         }
         i += 1;
+    }
+
+    if list_sources {
+        out!("{}", net::sources_text());
+        return;
     }
 
     let profile = match profile_arg.as_deref() {
@@ -2354,6 +2361,9 @@ fn usage() {
     );
     eprintln!(
         "profile:  --profile <name|file> [--list-profiles]   (JSON defaults for group, arms, since, until, type, language, max, stop; explicit flags win)"
+    );
+    eprintln!(
+        "sources:  --list-sources   (keyword arms as `name<TAB>groups`, for MCP routing)"
     );
     eprintln!();
     eprintln!(
