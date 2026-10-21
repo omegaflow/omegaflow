@@ -154,6 +154,22 @@ fn oa_pdf_line(work: &json::Json) -> Option<String> {
         .map(str::to_string)
 }
 
+fn venue_line(work: &json::Json) -> Option<String> {
+    work.get("primary_location")
+        .and_then(|l| l.get("source"))
+        .and_then(|s| s.get("display_name"))
+        .and_then(|v| v.as_str())
+        .filter(|s| !s.is_empty())
+        .map(str::to_string)
+        .or_else(|| {
+            work.get("host_venue")
+                .and_then(|v| v.get("display_name"))
+                .and_then(|v| v.as_str())
+                .filter(|s| !s.is_empty())
+                .map(str::to_string)
+        })
+}
+
 fn parse_openalex(body: &str) -> Vec<String> {
     let mut out = Vec::new();
     let Some(v) = json::parse(body) else {
@@ -172,6 +188,9 @@ fn parse_openalex(body: &str) -> Vec<String> {
         }
         if let Some(title) = field(work, "title") {
             line.push_str(&format!("\ttitle: {}", title));
+        }
+        if let Some(venue) = venue_line(work) {
+            line.push_str(&format!("\tvenue: {}", venue));
         }
         if let Some(year) = work
             .get("publication_year")
@@ -209,6 +228,15 @@ mod tests {
         assert_eq!(
             parse_openalex(body),
             vec!["url https://openalex.org/W123\tdoi: https://doi.org/10.1234/abc\ttitle: A measured field\tyear: 2020\tcites: 123".to_string()]
+        );
+    }
+
+    #[test]
+    fn reads_the_primary_venue() {
+        let body = r#"{"results":[{"id":"https://openalex.org/W1","title":"T","primary_location":{"source":{"display_name":"Journal of Solar Wind"}}}]}"#;
+        assert_eq!(
+            parse_openalex(body),
+            vec!["url https://openalex.org/W1\ttitle: T\tvenue: Journal of Solar Wind".to_string()]
         );
     }
 

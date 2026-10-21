@@ -2,8 +2,13 @@ use crate::json;
 use crate::net::{get, urlencode};
 
 pub fn dblp_lines(query: &str, max: usize) -> Vec<String> {
+    let base = match std::env::var("OMEGAFLOW_DBLP_MIRROR") {
+        Ok(v) if !v.trim().is_empty() => v.trim().trim_end_matches('/').to_string(),
+        _ => "https://dblp.org".to_string(),
+    };
     let url = format!(
-        "https://dblp.org/search/publ/api?q={}&format=json&h={}",
+        "{}/search/publ/api?q={}&format=json&h={}",
+        base,
         urlencode(query),
         max
     );
@@ -24,7 +29,10 @@ pub fn dblp_lines(query: &str, max: usize) -> Vec<String> {
             if out.iter().any(|l| l.starts_with("url ")) {
                 for line in &mut out {
                     if line.starts_with("url ") {
-                        line.push_str("\tvia: openalex (dblp fallback)");
+                        line.push_str(&format!(
+                            "\tvia: openalex (dblp {}, venue)",
+                            f.status_text()
+                        ));
                     }
                 }
                 out

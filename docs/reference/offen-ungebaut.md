@@ -97,13 +97,13 @@ Status im Dokument: **„ungebaut — Ideen, keine Entscheidungen"**.
 | `--searchapi` / `--serpapi` / `--consensus` | **429** (Quota) |
 | `--googlecse` | **400** (Key ungültig) |
 | `--gemini` | **429** (Quota) |
-| `--dblp` | **Cloudflare 202** (Anubis); Fallback auf OpenAlex mit `via: openalex (dblp fallback)`; live |
+| `--dblp` | **Cloudflare 202** (Anubis); `OMEGAFLOW_DBLP_MIRROR=<base>` für einen Mirror, sonst OpenAlex-Fallback **mit `venue`** (`via: openalex (dblp 202, venue)`); live |
 | `--lasair` | **gebaut 2026-10-21**: ZTF-IDs gehen an `lasair-ztf.lsst.ac.uk` mit `LASAIR_TOKEN`, LSST-IDs an `api.lasair.lsst.ac.uk` mit `LASAIR_LSST_TOKEN`; live `objectId ZTF20acigmel` |
 | `--arxiv` | API **429** (Edge), nach Retry-Ladder wieder 200; bei anhaltendem 429 fällt der Arm auf die HTML-Suche `arxiv.org/search` zurück (`via: arxiv-html`) |
 | `--core` | **Key funktioniert (200, 1000 Calls/Tag)**; bei 401/403 fällt der Arm auf die keyless Route zurück und labelt `via: core keyless (key refused)` |
 | `--marginalia` | **gebaut 2026-10-21**: HTML-Route `old-search.marginalia.nu` mit Cookie-Jar und `sst`-Gate; live 200, 3 Treffer |
 | Mojeek | **Captcha**, 0 organische Treffer — bewusst verworfen |
-| Google Books | Arm existiert **nicht**, Tagesquota 429 — erst bauen, wenn gebraucht |
+| Google Books | **gebaut 2026-10-21**: `--gbooks`/`--google-books`; API 429 → Open Library mit `via: openlibrary (gbooks 429)` |
 | `--hn`, `--openverse`, `--nasa-images`, `--artic` | **gebaut 2026-10-21**: keyless, alle live 200 |
 
 ## 7. Parameter-Arme, gemessen 2026-10-21
