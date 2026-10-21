@@ -266,6 +266,7 @@ node https://cdn.example/tile- 0 0 0 5 5 5
         kernel: 0,
         channel_ref: Some(0),
         tau: 0.0,
+        tau_src: crate::archivar::types::TauSource::Measured,
         absorption: 0.0,
         advection: 0.0,
         unit: String::new(),

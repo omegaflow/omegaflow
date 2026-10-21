@@ -640,6 +640,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -666,6 +667,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -688,6 +690,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: 0,
                     channel_ref: Some(0),
                     tau: 0.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
                     absorption: 0.0,
                     advection: 0.0,
                     unit: String::new(),
@@ -709,6 +712,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -742,6 +746,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -816,6 +821,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -838,6 +844,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -860,6 +867,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: f,
                     tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -1025,6 +1033,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: Some(f),
                     tau,
+                    tau_src: TauSource::Pending,
                     absorption: 0.0,
                     advection: 0.0,
                     unit: parts[3].to_string(),
@@ -1088,6 +1097,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     },
                     channel_ref: Some(f),
                     tau,
+                    tau_src: TauSource::Pending,
                     absorption: 0.0,
                     advection: 0.0,
                     unit: parts[3].to_string(),
@@ -1352,6 +1362,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: None,
                     tau,
+                    tau_src: TauSource::Measured,
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -1513,6 +1524,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: Some(f),
                     tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
                     absorption,
                     advection,
                     unit: parts[i + 1].to_string(),
@@ -1694,6 +1706,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: Some(f),
                     tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
                     absorption,
                     advection,
                     unit: parts[unit_idx].to_string(),
@@ -1738,13 +1751,25 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         continue;
                     }
                 };
-                let absorption: f64 = match parts[7].parse() {
-                    Ok(v) => v,
-                    Err(_) => continue,
+                let tau_src = match parts.get(7).copied() {
+                    Some("measured") => TauSource::Measured,
+                    Some("derived") => TauSource::Derived,
+                    Some("pending") => TauSource::Pending,
+                    _ => TauSource::Pending,
                 };
-                let advection: f64 = match parts[8].parse() {
-                    Ok(v) => v,
-                    Err(_) => continue,
+                let (abs_index, adv_index, extras_start) = match parts.get(7).copied() {
+                    Some("measured" | "derived" | "pending") => (8, 9, 10),
+                    _ => (7, 8, 9),
+                };
+                let absorption: f64 = match parts.get(abs_index).map(|s| s.parse()) {
+                    Some(Ok(v)) => v,
+                    Some(Err(_)) => continue,
+                    None => SLOT_ABSENT,
+                };
+                let advection: f64 = match parts.get(adv_index).map(|s| s.parse()) {
+                    Some(Ok(v)) => v,
+                    Some(Err(_)) => continue,
+                    None => SLOT_ABSENT,
                 };
                 let mut freq = crate::spectral::SPECTRAL_NO_BAND;
                 let mut bin_width = crate::spectral::SPECTRAL_NO_BAND;
@@ -1813,7 +1838,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 let extras: Vec<f64> = parts
                     .iter()
                     .enumerate()
-                    .filter(|(i, _)| *i >= 9 && Some(*i) != aperture_idx)
+                    .filter(|(i, _)| *i >= extras_start && Some(*i) != aperture_idx)
                     .filter_map(|(_, s)| s.parse::<f64>().ok())
                     .filter(|v| v.is_finite() && *v > 0.0)
                     .collect();
@@ -1831,6 +1856,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     channel_ref: Some(f),
 
                     tau,
+                    tau_src,
                     absorption,
                     advection,
                     unit: parts[5].to_string(),
@@ -2170,6 +2196,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     kernel: k,
                     channel_ref: Some(f),
                     tau,
+                    tau_src: TauSource::Pending,
                     absorption: 0.0,
                     advection: 0.0,
                     unit,
@@ -2914,6 +2941,43 @@ mod tests {
             geomag_lat: None,
             weberin_role: None,
         }
+    }
+
+    #[test]
+    fn field_ten_token_reads_tau_src() {
+        let content = "url https://example.org/x\nttl 60\nat sun\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
+        let s = load_sources_from(content);
+        assert_eq!(s.len(), 1);
+        let field = s[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(f) => Some(f),
+                _ => None,
+            })
+            .expect("one field");
+        assert_eq!(field.tau_src, TauSource::Measured);
+        assert_eq!(field.tau, 60.0);
+    }
+
+    #[test]
+    fn field_nine_token_is_legacy_pending() {
+        let content = "url https://example.org/x\nttl 60\nat sun\nfield v v inverse-square em W/m2 60 0.0 0.0\n";
+        let s = load_sources_from(content);
+        assert_eq!(s.len(), 1);
+        let field = s[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(f) => Some(f),
+                _ => None,
+            })
+            .expect("one field");
+        assert_eq!(
+            field.tau_src,
+            TauSource::Pending,
+            "the 9-token form is migration input; it must not claim a measured tau"
+        );
     }
 
     #[test]
