@@ -565,6 +565,8 @@ fn main() {
     let mut headed = false;
     let mut machine: Option<output::Format> = None;
     let mut allow_empty = false;
+    let mut cache_clear = false;
+    let mut cache_stats = false;
 
     let mut i = 0;
     while i < args.len() {
@@ -645,6 +647,9 @@ fn main() {
             "--bibtex" => select_format(&mut machine, output::Format::Bibtex),
             "--ris" => select_format(&mut machine, output::Format::Ris),
             "--allow-empty" => allow_empty = true,
+            "--no-cache" => cache::disable(),
+            "--cache-clear" => cache_clear = true,
+            "--cache-stats" => cache_stats = true,
             "--stop" => {
                 i += 1;
                 if let Some(n) = args.get(i).and_then(|s| s.parse().ok()) {
@@ -766,6 +771,14 @@ fn main() {
     }
 
     if modes.is_empty() {
+        if cache_clear {
+            print_cache_clear();
+            return;
+        }
+        if cache_stats {
+            print_cache_stats();
+            return;
+        }
         modes.push(Mode::Plain);
     }
     let format = machine.unwrap_or(output::Format::Text);
@@ -1070,6 +1083,29 @@ fn main() {
     if format != output::Format::Text {
         std::process::exit(sink.finish());
     }
+}
+
+fn print_cache_stats() {
+    let Some(stats) = cache::stats() else {
+        eprintln!("archive_search: no cache directory (set HOME or OMEGAFLOW_CACHE_DIR)");
+        std::process::exit(2);
+    };
+    out!("cache: {}", stats.dir.display());
+    out!("hits: {}", stats.hits);
+    out!("misses: {}", stats.misses);
+    out!("bytes: {}", stats.bytes);
+    out!("blocked hosts: {}", stats.blocked.len());
+    for (host, secs) in stats.blocked {
+        out!("  {host} {secs}s");
+    }
+}
+
+fn print_cache_clear() {
+    let Some((dir, files, bytes)) = cache::clear() else {
+        eprintln!("archive_search: no cache directory (set HOME or OMEGAFLOW_CACHE_DIR)");
+        std::process::exit(2);
+    };
+    out!("cache cleared: {} file(s), {} byte(s) — {}", files, bytes, dir.display());
 }
 
 fn select_format(slot: &mut Option<output::Format>, next: output::Format) {
@@ -1971,6 +2007,9 @@ fn usage() {
     eprintln!();
     eprintln!(
         "output:   --jsonl|--csv|--bibtex|--ris [--allow-empty]   (machine-readable hits; exit 0 = hit, 3 = only pending/absent, 2 = usage)"
+    );
+    eprintln!(
+        "cache:    [--no-cache] [--cache-stats] [--cache-clear]   (success 3600 s, absent 3600 s, blocking HTTP 400/402/403/429/432 300 s; a host with 3 failures rests 600 s)"
     );
     eprintln!();
     eprintln!(
