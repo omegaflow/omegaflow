@@ -351,6 +351,7 @@ fn main() {
             compiler: None,
             terms: None,
             medium: None,
+            anchor: None,
             band: None,
             footprint: None,
             rights_identifier: None,
