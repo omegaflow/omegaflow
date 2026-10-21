@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: f931bd0827c7f4c4f9e1cb8e766450aa5fe1c15199f1fb5ea9ee14e3c35b142b
+  sha256: 7d9a8a4f4c1af52288cb467a2385ced02aeb292db0b5646efd11880cb836851c
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/archiv/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
 -->
@@ -25,7 +25,8 @@ fabriziert.
 - **pending ⇒ offen, offen ⇏ pending** — `pending` ist die benannte Form der Offenheit, nicht ihr ganzer Umfang. Es gibt offene Fragen ohne `pending` (stille Lücke) und gelieferte, aber nicht geschlossene Aufträge. Geschlossen wird nur vom Operator. · Operator-Regel 2026-10-21
 - **0-Kanon** — die vier Zustände `null-echt` (fließt als 0), `absent` (Option/None), `pending` (Registerpflicht), `riss` (Widerspruch) kollabieren nie. · `AGENTS.md`
 - **Zwei Messzustände** — `pending` (nicht gemessen) und `gemessen` (Wert). `null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**, keine eigenen Nicht-Mess-Zustände. `offen` ist die Aufgabenebene, nicht der Messzustand.
-- **descoped** — eine **Entscheidung**, kein Messzustand: nur mit Owner/Operator, Datum, Grund und dem, was aufgegeben wird. Nur wenn die Messung **unmöglich**, **nicht unsere Frage**, **ausdrücklich zurückgezogen** oder **gemessen als „nicht gebraucht"** ist — **nicht**, weil sie schwer, teuer oder gerade nicht zugänglich ist. Echte `descoped` sind sehr selten; der Regelfall für „extern blockiert" ist `wartend`. Ohne diese Angaben ist der Fall `pending`; `descoped` macht kein Gate grün.
+- **descoped** — **Fokus/Scope**, kein Nein und kein Messzustand: die Sache ist gerade nicht im Fokus; sie bleibt offen (`pending`), kann zurückkommen und macht kein Gate grün. `descoped` ist **nicht** `declined`.
+- **declined** — ein **klares Nein**: die Sache wird abgelehnt (Lizenz, Zugang, Frage, Quelle), mit Owner, Datum und Grund. Eine Entscheidung, kein Messzustand. „Never built, not needed" ist `declined` (oder `null-echt`, wenn die Nutzlosigkeit gemessen ist), **nicht** `descoped`. Ohne diese Angaben ist der Fall `pending`; `descoped` macht kein Gate grün.
 - **wartend** — eine offene Messung, die auf einen äußeren Trigger wartet (Antwort, Zugang, Termin, Lieferung). Sie gehört nach `state/wartend.φ` mit Owner und Trigger — **nicht** in `descoped`. „Extern blockiert" ist `wartend`, nicht aufgegeben.
 - **ICRS & TDB** — alle Körper sind gleich; die Raumzeit trägt die Adresse, nicht die Perspektive. · `docs/granit.md:17`, `docs/specs/eraen.md:18-23`
 - **De-Zentrierung** — der teuerste Schnitt: ECEF→ICRS, JD2000→TDB, Anthropomachinozentrismus→Alle Wesen gleich; alles Spätere steht auf dieser Umgrabung. · `docs/specs/eraen.md:14-23`
