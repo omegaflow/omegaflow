@@ -1034,7 +1034,7 @@ fn main() {
 
 const ALERCE_ENDPOINT: &str = "https://api.alerce.online/ztf/v1/objects/";
 const ALERCE_OBJECT_URL: &str = "https://alerce.online/object/";
-const FINK_ENDPOINT: &str = "https://api.fink-portal.org/api/v1";
+const FINK_ENDPOINT: &str = "https://api.ztf.fink-portal.org/api/v1";
 const FINK_OBJECT_URL: &str = "https://fink-portal.org/";
 const IRSA_DUST_ENDPOINT: &str = "https://irsa.ipac.caltech.edu/cgi-bin/DUST/nph-dust";
 const FINK_TOKEN_KEY: &str = "FINK_TOKEN";
@@ -1301,7 +1301,9 @@ fn fink_body(query: &FinkQuery, max: usize) -> String {
 
 fn fink_url(query: &FinkQuery) -> String {
     match query {
-        FinkQuery::Oid(oid) => format!("{}/object/{}", FINK_ENDPOINT, net::urlencode(oid)),
+        FinkQuery::Oid(oid) => {
+            format!("{}/objects?objectId={}", FINK_ENDPOINT, net::urlencode(oid))
+        }
         _ => format!("{}/objects", FINK_ENDPOINT),
     }
 }
@@ -1320,8 +1322,14 @@ fn first_scalar(obj: &Json, keys: &[&str]) -> Option<String> {
     keys.iter().find_map(|key| scalar(obj.get(key)))
 }
 
-fn fink_object_line(obj: &Json) -> Option<String> {
-    let oid = first_scalar(obj, &["objectId", "i:objectId", "object_id"])?;
+fn fink_object_line(obj: &Json, fallback: Option<&str>) -> Option<String> {
+    let oid = match first_scalar(obj, &["objectId", "i:objectId", "object_id"]) {
+        Some(v) => v,
+        None => match fallback {
+            Some(v) => v.to_string(),
+            None => return None,
+        },
+    };
     let url = match first_scalar(obj, &["url", "l:url"]).filter(|u| u.starts_with("http")) {
         Some(u) => u,
         None => format!("{}{}", FINK_OBJECT_URL, net::urlencode(&oid)),
@@ -1332,13 +1340,21 @@ fn fink_object_line(obj: &Json) -> Option<String> {
     for (label, keys) in [
         (
             "class",
-            &["classification", "cl:classification", "class"][..],
+            &[
+                "classification",
+                "cl:classification",
+                "v:classification",
+                "class",
+            ][..],
         ),
-        ("ra", &["ra", "d:ra", "meanra"][..]),
-        ("dec", &["dec", "d:dec", "meandec"][..]),
-        ("firstmjd", &["firstmjd", "rf:firstmjd"][..]),
-        ("lastmjd", &["lastmjd"][..]),
-        ("ndet", &["ndet", "n:ndet"][..]),
+        ("ra", &["ra", "d:ra", "i:ra", "meanra"][..]),
+        ("dec", &["dec", "d:dec", "i:dec", "meandec"][..]),
+        (
+            "firstmjd",
+            &["firstmjd", "rf:firstmjd", "i:jdstarthist"][..],
+        ),
+        ("lastmjd", &["lastmjd", "i:jd"][..]),
+        ("ndet", &["ndet", "n:ndet", "i:nalerthist"][..]),
     ] {
         if let Some(value) = first_scalar(obj, keys) {
             fields.push(format!("{label}={value}"));
@@ -1378,9 +1394,13 @@ fn fink_lines(query: &str, env: &HashMap<String, String>, max: usize) -> Vec<Str
     match fetched {
         Some(f) if f.status == Some(200) => match json::parse(&f.body) {
             Some(v) => {
+                let fallback = match &parsed {
+                    FinkQuery::Oid(oid) => Some(oid.as_str()),
+                    _ => None,
+                };
                 let lines: Vec<String> = fink_items(&v)
                     .into_iter()
-                    .filter_map(fink_object_line)
+                    .filter_map(|o| fink_object_line(o, fallback))
                     .collect();
                 if lines.is_empty() {
                     vec![format!(
@@ -2215,7 +2235,7 @@ fn usage() {
         "  --alerce    <oid|ra,dec[,radius]|class=...>   (ALeRCE ZTF broker, api.alerce.online/ztf/v1/objects/, keyless; url + title/description from oid/class/ra/dec/probability/ndet/MJD)"
     );
     eprintln!(
-        "  --fink      <oid|ra,dec[,radius]|class=...>   (Fink broker, api.fink-portal.org/api/v1, keyless with optional FINK_TOKEN as Bearer from .secrets.local/.env; url + title/description from objectId/class/ra/dec/MJD)"
+        "  --fink      <oid|ra,dec[,radius]|class=...>   (Fink broker, api.ztf.fink-portal.org/api/v1, keyless with optional FINK_TOKEN as Bearer from .secrets.local/.env; url + title/description from objectId/class/ra/dec/MJD)"
     );
     eprintln!(
         "  --dust      <ra,dec>   (IRSA DUST/SFD reddening map, keyless; url + title/description with E(B-V) in mag, Planck/SandF and the refCoordinate)"
@@ -3776,11 +3796,11 @@ mod tests {
     fn fink_body_and_url_name_the_real_route() {
         assert_eq!(
             fink_url(&FinkQuery::Oid("ZTF20acigmel".to_string())),
-            "https://api.fink-portal.org/api/v1/object/ZTF20acigmel"
+            "https://api.ztf.fink-portal.org/api/v1/objects?objectId=ZTF20acigmel"
         );
         assert_eq!(
             fink_url(&FinkQuery::Class("SN Ia".to_string())),
-            "https://api.fink-portal.org/api/v1/objects"
+            "https://api.ztf.fink-portal.org/api/v1/objects"
         );
         let body = fink_body(&FinkQuery::Class("SN Ia".to_string()), 2);
         assert!(body.contains("\"class\":\"SN Ia\""));
@@ -3794,7 +3814,7 @@ mod tests {
         let v = json::parse(body).unwrap();
         let lines: Vec<String> = fink_items(&v)
             .into_iter()
-            .filter_map(fink_object_line)
+            .filter_map(|o| fink_object_line(o, None))
             .collect();
         assert_eq!(lines.len(), 1);
         assert!(lines[0].starts_with("url https://fink-portal.org/ZTF20acigmel"));
