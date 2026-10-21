@@ -6,6 +6,8 @@ mod alphaxiv;
 mod arcgis;
 #[path = "archive_search/cache.rs"]
 mod cache;
+#[path = "archive_search/dedupe.rs"]
+mod dedupe;
 #[path = "archive_search/fallback.rs"]
 mod fallback;
 #[path = "archive_search/artic.rs"]
@@ -76,6 +78,8 @@ mod frbcat;
 mod gaia;
 #[path = "archive_search/gbif.rs"]
 mod gbif;
+#[path = "archive_search/groups.rs"]
+mod groups;
 #[path = "archive_search/gbooks.rs"]
 mod gbooks;
 #[path = "archive_search/gemini.rs"]
@@ -174,6 +178,8 @@ mod pdf;
 mod perplexity;
 #[path = "archive_search/playwright.rs"]
 mod playwright;
+#[path = "archive_search/pool.rs"]
+mod pool;
 #[path = "archive_search/psychporta.rs"]
 mod psychporta;
 #[path = "archive_search/pubchem.rs"]
@@ -650,6 +656,32 @@ fn main() {
             "--no-cache" => cache::disable(),
             "--cache-clear" => cache_clear = true,
             "--cache-stats" => cache_stats = true,
+            "--dedupe" => net::set_all_dedupe(true),
+            "--no-dedupe" => net::set_all_dedupe(false),
+            "--jobs" => {
+                i += 1;
+                match args.get(i).and_then(|s| s.parse::<usize>().ok()) {
+                    Some(n) if n > 0 => net::set_all_jobs(n),
+                    _ => {
+                        eprintln!("archive_search: --jobs needs a positive count");
+                        std::process::exit(2);
+                    }
+                }
+            }
+            "--group" => {
+                i += 1;
+                match args.get(i) {
+                    Some(name) if groups::valid(name) => net::set_all_group(name),
+                    Some(name) => {
+                        eprintln!("archive_search: unknown group {name} (astro|literature|web|data|all)");
+                        std::process::exit(2);
+                    }
+                    None => {
+                        eprintln!("archive_search: --group needs astro|literature|web|data|all");
+                        std::process::exit(2);
+                    }
+                }
+            }
             "--stop" => {
                 i += 1;
                 if let Some(n) = args.get(i).and_then(|s| s.parse().ok()) {
@@ -1907,6 +1939,9 @@ fn anomaly_lines(
 
 fn print_anomaly_all(query: &str, env: &HashMap<String, String>, max: usize) {
     for name in ANOMALY_QUERY_MODES {
+        if !net::group_allows(name) {
+            continue;
+        }
         let lines = anomaly_lines(name, query, env, max);
         out!(
             "=== {} ({} lines; preview {}) ===",
@@ -2010,6 +2045,9 @@ fn usage() {
     );
     eprintln!(
         "cache:    [--no-cache] [--cache-stats] [--cache-clear]   (success 3600 s, absent 3600 s, blocking HTTP 400/402/403/429/432 300 s; a host with 3 failures rests 600 s)"
+    );
+    eprintln!(
+        "all:      --all [--stop <n>] [--jobs <n>] [--dedupe|--no-dedupe] [--group astro|literature|web|data|all]   (dedupe on by default; --jobs default 4; rank order stays fixed)"
     );
     eprintln!();
     eprintln!(
