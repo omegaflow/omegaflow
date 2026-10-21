@@ -108,7 +108,6 @@ Das Prinzip steht **als Suchhebel** im Baum, nicht als Wahrheitsregel:
 
 **Beispiel Schumann.** Der Registerblock (`phi/sources.φ:1126`) ist genau so
 ein seltener Fund:
-
 ```
 url …/zenodo.org/resonance_schumann.csv
 terms CC-BY-4.0 https://zenodo.org/records/15225820
@@ -128,6 +127,14 @@ field freq3 resonance_schumann_f3_hz …
 - **Grenze:** der Zenodo-Record deklariert `cc-by-4.0`, die Beschreibung sagt
   dagegen „use … only with the authors' permission". Die Seltenheit macht den
   Fund wertvoll, nicht die Lizenz klar — der strengste Term regelt.
+
+**Schon gebaut, nicht nur geplant.** `c044cedc1` führt `bait` an einem
+Schumann-Bild vor (`value 7.83`, `hex-f64`) und bringt `ZWILLING`/`NAH` in
+`find`; `75f6a51fd` setzt das **Rat-Verdikt B** in `weave` um (Konflikt, DAG,
+Herkunftskarte). Die Runde, aus der das B-Verdikt kam, ist die gelöschte
+`weberin-koeder`-Datei — der Plan lebte in den Commits weiter, auch als die
+Datei fiel. Was **nicht** geplant war, ist ein Zahlenwert „Rarität": `find`
+misst Nähe, nicht Seltenheit.
 
 Damit ist die Regel präzise: **selten erhöht den Suchwert, nicht den
 Beweiswert.** Ein seltener Wert bleibt ein Sample; er wird nicht dadurch
