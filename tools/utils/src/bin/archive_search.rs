@@ -196,6 +196,8 @@ mod re3data;
 mod reactome;
 #[path = "archive_search/refine.rs"]
 mod refine;
+#[path = "archive_search/report.rs"]
+mod report;
 #[path = "archive_search/ror.rs"]
 mod ror;
 #[path = "archive_search/scholexplorer.rs"]
@@ -581,6 +583,8 @@ fn main() {
     let mut fulltext_on = false;
     let mut fulltext_limit = fulltext::DEFAULT_LIMIT;
     let mut fulltext_used = 0usize;
+    let mut report_path: Option<String> = None;
+    let mut timings = false;
 
     let mut i = 0;
     while i < args.len() {
@@ -722,6 +726,19 @@ fn main() {
                 }
             }
             "--explain" => filters::set_explain(true),
+            "--report" => {
+                i += 1;
+                match args.get(i) {
+                    Some(path) if !path.trim().is_empty() && !path.starts_with('-') => {
+                        report_path = Some(path.clone())
+                    }
+                    _ => {
+                        eprintln!("archive_search: --report needs a path");
+                        std::process::exit(2);
+                    }
+                }
+            }
+            "--timings" => timings = true,
             "--jobs" => {
                 i += 1;
                 match args.get(i).and_then(|s| s.parse::<usize>().ok()) {
@@ -1184,8 +1201,22 @@ fn main() {
             }
         }
     }
-    if format != output::Format::Text {
-        std::process::exit(sink.finish());
+    let machine_code = if format != output::Format::Text {
+        Some(sink.finish())
+    } else {
+        None
+    };
+    if let Some(path) = report_path.as_deref() {
+        if let Err(err) = report::write(path) {
+            eprintln!("archive_search: cannot write report {path}: {err}");
+            std::process::exit(2);
+        }
+    }
+    if timings {
+        report::print_timings();
+    }
+    if let Some(code) = machine_code {
+        std::process::exit(code);
     }
 }
 
@@ -2138,6 +2169,9 @@ fn usage() {
     );
     eprintln!(
         "fulltext: [--fulltext] [--fulltext-limit <n>]   (adds pdf:/fulltext: to hits with a DOI via Unpaywall and OpenAlex; default off, limit 5)"
+    );
+    eprintln!(
+        "observe:  [--report <path>] [--timings]   (per-arm JSON report; timing table on stderr, results stay on stdout)"
     );
     eprintln!();
     eprintln!(

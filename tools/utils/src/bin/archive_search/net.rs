@@ -1,5 +1,6 @@
 use crate::json::{self, Json};
 use crate::secrets::{Secret, resolve_key};
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::net::{SocketAddr, TcpStream};
 use std::process::Command;
@@ -21,6 +22,52 @@ impl Fetch {
             None => "absent".to_string(),
         }
     }
+}
+
+struct ArmTrace {
+    status: Option<i32>,
+    retry_after: Option<u64>,
+    cached: bool,
+}
+
+impl ArmTrace {
+    fn empty() -> Self {
+        ArmTrace {
+            status: None,
+            retry_after: None,
+            cached: false,
+        }
+    }
+}
+
+thread_local! {
+    static ARM_TRACE: RefCell<ArmTrace> = RefCell::new(ArmTrace::empty());
+}
+
+fn trace_reset() {
+    ARM_TRACE.with(|trace| *trace.borrow_mut() = ArmTrace::empty());
+}
+
+fn trace_note(fetch: &Fetch, cached: bool) {
+    ARM_TRACE.with(|trace| {
+        let mut trace = trace.borrow_mut();
+        if let Some(status) = fetch.status {
+            trace.status = Some(status);
+        }
+        if fetch.retry_after.is_some() {
+            trace.retry_after = fetch.retry_after;
+        }
+        if cached {
+            trace.cached = true;
+        }
+    });
+}
+
+fn trace_take() -> (Option<i32>, Option<u64>, bool) {
+    ARM_TRACE.with(|trace| {
+        let trace = std::mem::replace(&mut *trace.borrow_mut(), ArmTrace::empty());
+        (trace.status, trace.retry_after, trace.cached)
+    })
 }
 
 static CA_BUNDLE: OnceLock<String> = OnceLock::new();
@@ -335,22 +382,26 @@ static RATE_GATE: OnceLock<Mutex<RateGate>> = OnceLock::new();
 pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
     let host = url_host(url);
     if let Some((status, retry_after)) = crate::cache::load_http_error(url) {
-        return Some(Fetch {
+        let fetch = Fetch {
             status: Some(status),
             body: String::new(),
             raw: Vec::new(),
             retry_after,
             complete: false,
-        });
+        };
+        trace_note(&fetch, true);
+        return Some(fetch);
     }
     if let Some(secs) = crate::cache::breaker_open(&host) {
-        return Some(Fetch {
+        let fetch = Fetch {
             status: Some(403),
             body: String::new(),
             raw: Vec::new(),
             retry_after: Some(secs),
             complete: false,
-        });
+        };
+        trace_note(&fetch, true);
+        return Some(fetch);
     }
     let gate = RATE_GATE.get_or_init(|| Mutex::new(RateGate::new()));
     let ladder = exits();
@@ -399,6 +450,7 @@ pub(crate) fn get(url: &str, extra: &[&str], timeout: &str) -> Option<Fetch> {
 fn finish_get(url: &str, host: &str, result: Option<Fetch>) -> Option<Fetch> {
     crate::cache::breaker_record(host, result.as_ref().and_then(|f| f.status));
     if let Some(f) = &result {
+        trace_note(f, false);
         if let Some(status) = f.status {
             crate::cache::store_http_error(url, status, f.retry_after);
         }
@@ -5598,15 +5650,27 @@ pub fn run_lines_max(
     out: Option<&str>,
     max: usize,
 ) -> Vec<String> {
+    let started = Instant::now();
+    trace_reset();
     let cache_key = crate::filters::cache_query(query);
     if mode != "all" && !is_auth_mode(mode) {
         if let Some(mut lines) = crate::cache::load(mode, &cache_key, max) {
+            let (status, retry_after, _net_cached) = trace_take();
+            crate::report::observe(
+                mode,
+                started.elapsed().as_millis() as u64,
+                &lines,
+                true,
+                status,
+                retry_after,
+            );
             crate::filters::explain_into(&mut lines, mode);
             log_query(mode, query, &lines, max);
             return lines;
         }
     }
     let mut lines = run_lines_dispatch(mode, query, env, out, max);
+    let (status, retry_after, net_cached) = trace_take();
     annotate_declared(&mut lines, env);
     if mode != "all" && !is_auth_mode(mode) {
         lines = crate::fallback::apply(mode, query, lines, max);
@@ -5614,6 +5678,14 @@ pub fn run_lines_max(
         log_query(mode, query, &lines, max);
     }
     crate::filters::explain_into(&mut lines, mode);
+    crate::report::observe(
+        mode,
+        started.elapsed().as_millis() as u64,
+        &lines,
+        net_cached,
+        status,
+        retry_after,
+    );
     lines
 }
 
