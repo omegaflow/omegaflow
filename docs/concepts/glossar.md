@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: 4cbff15ae39b690dbcc90fa35e658324790b4a025cd81850122f56ecace54942
+  sha256: b0cd215e4d4293c57a313e9c916f7060ea0d8b6b3bbefca70db62bbdc779f22a
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/archiv/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
 -->
@@ -24,9 +24,9 @@ fabriziert.
 - **pending** — was noch nicht gemessen ist, bleibt pending; das Schweigen gehört den Ungeborenen. · `docs/granit.md:20`
 - **pending ⇒ offen, offen ⇏ pending** — `pending` ist die benannte Form der Offenheit, nicht ihr ganzer Umfang. Es gibt offene Fragen ohne `pending` (stille Lücke) und gelieferte, aber nicht geschlossene Aufträge. Geschlossen wird nur vom Operator. · Operator-Regel 2026-10-21
 - **0-Kanon** — die vier Zustände `null-echt` (0 über n gemessen, n genannt), `absent` (Option/None), `pending` (Registerpflicht), `riss` (Widerspruch nach dem Dreischritt) kollabieren nie. · `AGENTS.md`
-- **Zwei Messzustände** — `pending` (nicht gemessen, mit Grund-Tag `nicht_gemessen | nicht_nachgewiesen | nicht_berichtet | nicht_zugänglich`) und `gemessen` (Wert). `obergrenze` (alias `zensiert`), `null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**, keine eigenen Nicht-Mess-Zustände. `offen` ist die Aufgabenebene, nicht der Messzustand.
-- **descoped** — **kein Zustand.** Faktisch gibt es kein `descoped`. Wer „nicht im Fokus" meint, schreibt **`LOCK` + registriertes Operator-Wort + Grund**; wer „nein" meint, `declined`; wer auf etwas wartet, `wartend`; wer nicht gemessen hat, `pending`. Das Wort ist als Status **abgeschafft**.
-- **LOCK** — der fünfte Status-Tag: „vertagt / aus dem Fokus" **nur** mit registriertem Operator-Wort und Grund. Ein LOCK ohne Wort ist ein Parkplatz, kein Status. LOCK ist **kein** Abschluss und **kein** Gate; es hält den Punkt sichtbar, bis das Wort ihn löst. · `docs/concepts/archiv/house-rules-voll-2026-10-16.md:65-67`
+- **Drei Achsen (v3)** — **Messzustand** (`pending` | `gemessen` mit `obergrenze`/`null-echt`/`absent`/`riss`), **Lebenszyklus** (`offen`/`wartend`/`declined`), **Zugang** (`frei`/`LOCK`). `nicht_verfügbar` gibt es nicht; `descoped` ist abgeschafft; gesperrte Messwerte bleiben `gemessen` und werden als `versiegelt` projiziert. Kanonisch: `docs/concepts/messzustaende-v3.md`.
+- **descoped** — **kein Zustand.** Faktisch gibt es kein `descoped`. Wer „nicht im Fokus" meint, schreibt **`wartend` mit Operator-Wort als Trigger**; wer „nein" meint, `declined`; wer auf etwas wartet, `wartend`; wer nicht gemessen hat, `pending`. Das Wort ist als Status **abgeschafft**.
+- **LOCK** — **Achse 3 (Zugang)**, kein Lebenszyklus-Tag: gesperrt, mit registriertem Operator-Wort und Grund `privat`/`rechtlich`. Ein LOCK ohne Wort ist ein Parkplatz, kein Status. LOCK ist **kein** Abschluss und **kein** Gate; gesperrte Messwerte bleiben `gemessen` und werden als `versiegelt` projiziert. „Vertagt / aus dem Fokus" ist `wartend` mit Operator-Wort als Trigger. · `docs/concepts/archiv/house-rules-voll-2026-10-16.md:65-67`
 - **Autolock** — **kein eigener Tag**: `LOCK` mit dem Grund `privat` oder `rechtlich`. Gegründet auf die Ablage (weder `work` noch `public`, sondern `private`) oder eine Rechtsbindung (Lizenz, Vertrag, Weitergabeverbot, personenbezogene Daten). Kein `descoped`, kein Abschluss, kein Gate. Frei zugängliche technische Quellen (z. B. `demeter`) sind **nicht** gedeckt.
 - **declined** — ein **klares Nein**: die Sache wird abgelehnt (Lizenz, Zugang, Frage, Quelle), mit Owner, Datum und Grund. Eine Entscheidung, kein Messzustand. „Never built, not needed" ist `declined` (oder `null-echt`, wenn die Nutzlosigkeit gemessen ist), **nicht** `descoped`. Ohne diese Angaben ist der Fall `pending`; `descoped` macht kein Gate grün.
 - **wartend** — eine offene Messung, die auf einen äußeren Trigger wartet (Antwort, Zugang, Termin, Lieferung). Sie gehört nach `state/wartend.φ` mit Owner und Trigger — **nicht** in `descoped`. „Extern blockiert" ist `wartend`, nicht aufgegeben.

@@ -2,8 +2,8 @@
   title: Messzustände — zwei Achsen: was wissen wir, was tun wir (2026-10-21)
   class: concept
   date: 2026-10-21
-  sha256: 60b32ea2faf27ade00b4aafa2f98fce2b9b184200c39dff6ff0b13a341d2d40a
-  status: live
+  sha256: d92a1c0befd6f60d0ee6a2840ebc711d5ece2a7861f477e6fdc4b1fb7c66596d
+  status: superseded
   owner: future
   ack: future 2026-10-21T13:40Z
   next: Wissenschafts-Survey, dann Rat der 13
@@ -11,6 +11,10 @@
   see-also: docs/concepts/glossar.md docs/granit.md docs/surveys/survey-2026-10-21-riss-zensus-nach-test.md
 -->
 # Messzustände — zwei Achsen: was wissen wir, was tun wir
+
+> **Abgelöst (2026-10-21):** kanonisch ist **v3** —
+> `docs/concepts/messzustaende-v3.md` (drei Achsen: Messzustand, Lebenszyklus,
+> Zugang). Dieses Blatt bleibt als v2-Historie.
 
 **Das Problem.** Wir haben `pending`, `absent`, `riss`, `descoped`, `declined`,
 `wartend` und `LOCK` jahrelang in einen Topf geworfen. Daraus wurden
