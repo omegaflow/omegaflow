@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: 99e717abaffd1b0ed0e22fbf94adc2d7f758f3fec53e0fb8ce578fc0722ed678
+  sha256: 2e63cc944ca93c33b4f4e5857e93b7ecd835a2866b4c30ce035fa07c7d231c80
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/archiv/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
 -->
@@ -24,7 +24,8 @@ fabriziert.
 - **pending** — was noch nicht gemessen ist, bleibt pending; das Schweigen gehört den Ungeborenen. · `docs/granit.md:20`
 - **pending ⇒ offen, offen ⇏ pending** — `pending` ist die benannte Form der Offenheit, nicht ihr ganzer Umfang. Es gibt offene Fragen ohne `pending` (stille Lücke) und gelieferte, aber nicht geschlossene Aufträge. Geschlossen wird nur vom Operator. · Operator-Regel 2026-10-21
 - **0-Kanon** — die vier Zustände `null-echt` (fließt als 0), `absent` (Option/None), `pending` (Registerpflicht), `riss` (Widerspruch) kollabieren nie. · `AGENTS.md`
-- **Zwei Messzustände** — `pending` (nicht gemessen) und `gemessen` (Wert). `null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**, keine eigenen Nicht-Mess-Zustände. `descoped` ist eine Entscheidung, kein Messzustand; `offen` ist die Aufgabenebene, nicht der Messzustand.
+- **Zwei Messzustände** — `pending` (nicht gemessen) und `gemessen` (Wert). `null-echt`, `absent` und `riss` sind **Qualifier von `gemessen`**, keine eigenen Nicht-Mess-Zustände. `offen` ist die Aufgabenebene, nicht der Messzustand.
+- **descoped** — eine **Entscheidung**, kein Messzustand: nur mit Owner/Operator, Datum, Grund und dem, was aufgegeben wird. Nur wenn die Messung unmöglich, nicht unsere Frage oder ausdrücklich zurückgezogen ist — **nicht**, weil sie schwer, teuer oder gerade nicht zugänglich ist. Ohne diese Angaben ist der Fall `pending`, nicht `descoped`; `descoped` macht kein Gate grün.
 - **ICRS & TDB** — alle Körper sind gleich; die Raumzeit trägt die Adresse, nicht die Perspektive. · `docs/granit.md:17`, `docs/specs/eraen.md:18-23`
 - **De-Zentrierung** — der teuerste Schnitt: ECEF→ICRS, JD2000→TDB, Anthropomachinozentrismus→Alle Wesen gleich; alles Spätere steht auf dieser Umgrabung. · `docs/specs/eraen.md:14-23`
 - **Alle Wesen gleich** — jeder Körper, jede Quelle, jedes Molekül, jedes Universum ist Peer; kein Beobachterprivileg. · `docs/specs/eraen.md:22-23`, `AGENTS.md`
