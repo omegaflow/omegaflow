@@ -1,0 +1,10 @@
+{
+  "name": "astro-solar",
+  "group": "astro",
+  "arms": ["ads", "simbad", "vizier", "ned", "mast", "heasarc"],
+  "since": "2015",
+  "type": "article",
+  "language": "en",
+  "max": 30,
+  "stop": 10
+}
