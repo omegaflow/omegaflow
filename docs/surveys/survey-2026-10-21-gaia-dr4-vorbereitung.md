@@ -2,7 +2,7 @@
   title: Survey — Gaia DR4 Vorbereitung: 12-Quellen-Dry-Run mit Eigenbewegung und Parallaxe (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 09b14bb8819a72fc8667a2748ace653b968c1c487fd512092d7428dab7b09dec
+  sha256: 956375ae99dc0e6bfd6a486365921e96f6fbe846e211be610406347ebc7353f7
   status: live
   see-also: docs/surveys/survey-2026-10-19-rohdaten-12von15.md docs/surveys/survey-2026-10-20-frame-wache.md projects/quasare.md tools/measure/src/bin/gaia_dr4_probe.rs
 -->
@@ -96,6 +96,26 @@ den Fit. Getestet:
 Damit ist der Anker-Pfad für den 2.12. gebaut; es fehlt nur die DR4-Epochen-
 datei für die 512.
 
+**Join für den 2.12. (gebaut 2026-10-21):** `frame_wache_probe --gaia-map-out <csv>`
+schreibt **512 Zeilen** `iers,gaia_source_id,ra,dec` (getestet: 513 Zeilen inkl.
+Kopf; z. B. `0002-478 → 4978016560925910400`). Damit lässt sich die
+DR4-PM-Summary (Gaia-ID) auf die ICRF-Namen der Frame-Wache abbilden; die
+Rotation vor/nach der PM-Korrektur ist dann ein Join + Neu-Fit, kein neuer
+Methodenbau.
+
+## Fit-Summary (gebaut 2026-10-21)
+
+`--summary-out <csv>` schreibt pro Quelle eine maschinenlesbare Zeile:
+`anchor, source_id, ra0, dec0, epochs, span_a, pm_ra, pm_dec, plx, rms`.
+Auf der 12-Quellen-Vorabdatei: **12 Zeilen + Kopf**; der synthetische Anker
+erscheint in der `anchor`-Spalte, die übrigen bleiben leer. Die Spalten
+`pm_ra`, `pm_dec`, `plx` sind Zahlen ohne Einheit (mas/a bzw. mas), `n/a` nur
+wo der Fit fehlt.
+
+Am 2.12. werden die sechs VOTables einzeln durch den Probe geschickt und die
+sechs Summaries ohne Kopfzeile zu einer Anker-Tabelle verkettet. Damit ist der
+Weg **TAP → VOTable → Fit → CSV** geschlossen, nicht nur beschrieben.
+
 ## Scan-Winkel gegen DR3 (gemessen 2026-10-21)
 
 Gaia-DR3-TAP (`gaiadr3.gaia_source`) für die 12 Vorabquellen abgefragt; Vergleich
@@ -123,6 +143,7 @@ sauberen Quellen bestätigt; die Binaries bleiben Ausnahmen.
 | Punkt | Stand |
 |---|---|
 | Exakte IDs | Anker-IDs exakt aus `gaia_crf3_icrf3_positions.csv`; die VOTable-f64-ID dient nur der Gruppierung, das 2″-Positionsmatching dem Ankerbezug. |
+| Anker-Map | `frame_wache_probe --gaia-map-out`: **512 Zeilen** IERS↔Gaia (getestet: `0002-478 → 4978016560925910400`); der Join für die PM-Korrektur. |
 | TAP-Pfad | `gaia_dr4_probe --tap-query <csv>` erzeugt **6 ADQL-Chunks** für die 512 Anker; Tabelle `gaiadr4.epoch_astrometry`, Spalten wie in der Vorabdatei. |
 | Scan-Winkel | gegen DR3 geprüft (Tabelle oben): saubere Quellen < 1 mas/a, Vorzeichen bestätigt. |
 | 88 ohne Gaia | `frame_wache_probe --missing-out <csv>` erzeugt die **88 Zeilen** (IERS-Name, RA, Dec); das 2″-Matching ist bereit. |
@@ -138,7 +159,8 @@ unzip -o dr4_prerelease.zip
 cargo build --release -p omegaflow-measure --bin gaia_dr4_probe
 ./target/release/gaia_dr4_probe \
   --xml GAIA_DR4_PRERELEASE_EPOCH_ASTROMETRY_RAW.xml \
-  --anchors ../omegaflow-work/sources/cdsarc.cds.unistra.fr/gaia_crf3_icrf3_positions.csv
+  --anchors ../omegaflow-work/sources/cdsarc.cds.unistra.fr/gaia_crf3_icrf3_positions.csv \
+  --summary-out dr4_summary.csv
 
 ./target/release/gaia_dr4_probe --tap-query \
   ../omegaflow-work/sources/cdsarc.cds.unistra.fr/gaia_crf3_icrf3_positions.csv \
