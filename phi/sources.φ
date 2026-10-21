@@ -2,7 +2,7 @@ url https://cdaweb.gsfc.nasa.gov/hapi/data?id=DSCOVR_H0_MAG&time.min={yesterday}
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 origin https://cdaweb.gsfc.nasa.gov/
 ttl 60
-status vorschlag
+status proposed
 at sun
 hapi B1F1=dscovr_mag_b1f1_nt B1GSE.0=dscovr_mag_bx_gse_nt B1GSE.1=dscovr_mag_by_gse_nt B1GSE.2=dscovr_mag_bz_gse_nt
 field dscovr_mag_b1f1_nt dscovr_mag_b1f1_nt inverse-square em nT 3600 0.0 0.0
@@ -14,7 +14,7 @@ url https://geomag.usgs.gov/ws/data/?id=FRD&type=variation&format=json&elements=
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 origin https://geomag.usgs.gov/ws/data/
 ttl 60
-status vorschlag
+status proposed
 format usgs_geomag_variation
 at earth
 field values.0.values usgs_geomag_frd_h_nt inverse-square em nT 60 0.0 0.0
@@ -25,7 +25,7 @@ url https://meeo-s5p.s3.amazonaws.com/?list-type=2&prefix=OFFL/L2__O3_TCL/&max-k
 terms copernicus-attribution https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice
 origin https://meeo-s5p.s3.amazonaws.com/?list-type=2&prefix=OFFL/L2__O3_TCL/
 ttl 86400
-status vorschlag
+status proposed
 at earth
 xmlcount Contents s5p_o3_tcl_objects
 
