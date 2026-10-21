@@ -84,7 +84,7 @@ fn main() {
                 let alt = (*alt)?;
                 Some((body_name.clone(), *lat, *lon, alt))
             }
-            Frame::Barycenter { .. } | Frame::Manifest => None,
+            Frame::Barycenter { .. } | Frame::Body { .. } | Frame::Manifest => None,
         })
         .collect();
     stations.sort_by(|a, b| {

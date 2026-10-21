@@ -6398,7 +6398,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         body_name: body_name.clone(),
                         scale: *scale,
                     },
-                    Frame::Manifest => Position::Source,
+                    Frame::Body { .. } | Frame::Manifest => Position::Source,
                 };
                 let csv_mode =
                     src.format == "csv" || src.format == "csv_zip" || src.format == "csv_gz";

@@ -753,7 +753,7 @@ pub fn probe_one(src: &SourceConfig, params: ProbeParams<'_>) -> (bool, String) 
         Frame::Barycenter { body_name, scale } => {
             block.push_str(&format!("at {} {}\n", body_name, scale));
         }
-        Frame::Manifest => {}
+        Frame::Body { .. } | Frame::Manifest => {}
     }
     if let Some(p) = parsed {
         let mut fields = String::new();

@@ -298,7 +298,7 @@ pub fn frame_motion(
                 None
             }
         }
-        Frame::Manifest => None,
+        Frame::Body { .. } | Frame::Manifest => None,
     }
 }
 
@@ -495,7 +495,7 @@ pub fn anchor_velocity(
         Frame::Surface { body_name, .. } => body_barycenter_velocity(body_name, now, eph),
         Frame::Barycenter { body_name, scale } => body_barycenter_velocity(body_name, now, eph)
             .map(|[x, y, z]| [x * scale, y * scale, z * scale]),
-        Frame::Manifest => None,
+        Frame::Body { .. } | Frame::Manifest => None,
     }
 }
 

@@ -93,7 +93,7 @@ fn anchor_from_frame(frame: Frame) -> Option<Anchor> {
             attrs: BTreeMap::new(),
             legacy: false,
         }),
-        Frame::Manifest => None,
+        Frame::Body { .. } | Frame::Manifest => None,
     }
 }
 
