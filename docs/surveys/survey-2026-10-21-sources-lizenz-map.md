@@ -2,7 +2,7 @@
   title: Sources-Lizenzmap — NC ist frei, 55 von 63 LOCK lösen sich (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 42ceaa2438df948b125e89cdf8a4a53cc532a24089c17a9a69a702f9381a33cd
+  sha256: cd15be2d51614ecd02a85231cfba5efb9fdae24acf088937b07311a1c342b927
   status: live
   owner: future
   ack: future 2026-10-21T15:45Z
@@ -10,12 +10,12 @@
   orphan-after: none
   see-also: docs/surveys/survey-2026-10-21-sources-dryrun.md docs/concepts/messzustaende-v3.md
 -->
-# Sources-Lizenzmap — NC ist frei, 55 von 63 LOCK lösen sich
+# Sources-Lizenzmap — NC ist frei, 56 von 63 LOCK lösen sich — 6 LOCK, 1 pending
 
-**Regel.** Kein `unknown`/`LOCK` auf dem CDN. Jede Lizenz wird gemessen; `LOCK`
-nur für **auth-gated**, dann zeigt der Eintrag auf die **Live-API** (nicht
-auth) oder die **Domain** (auth-gated), nie auf ein CDN-Asset. Wir sind **NC**:
-NC-kompatible Lizenzen sind `frei` (Attribution).
+**Regel.** Kein `unknown`/`LOCK` auf dem CDN. Jede Lizenz wird gemessen.
+**Auth ist kein Lock:** ein Login/Token ist eine Route. `LOCK` nur, wenn die
+Lizenz die freie Weitergabe verbietet oder keine Lizenz vorliegt. Wir sind
+**NC**: NC-kompatible Lizenzen sind `frei` (Attribution).
 
 ## Gemessen (HTTP 200, Termseite gelesen)
 
@@ -30,11 +30,14 @@ NC-kompatible Lizenzen sind `frei` (Attribution).
 | `per-service-terms` | `openenergyhub.ornl.gov` (1) | open, attribution | **frei** |
 | `vires-esa-data-terms` | `vires.services` (12) | attribution (4×) | **frei** |
 | `wdcb-sep-policy` | `wdcb.ru/sep/policy.html` (8) | non-commercial + open data | **frei** (NC) |
-| `auth-required` | IEEG, PRADAN, CDPP, TNS, Lasair, CDDIS, Babamul (8) | Login/Token, keine freie Route gemessen | **LOCK** |
+| `PD-USGov` | CDDIS (Earthdata) | full and open sharing | **frei** |
+| `ieeg-terms`, `pradan-terms`, `tns-copyright`, `babamul-no-license`, `ilrs-no-license`, `lasair-copyright` | IEEG, PRADAN, TNS, Babamul, ILRS, Lasair (6) | Kopier-/Weitergabeverbot oder keine Lizenz | **LOCK** |
+| `regards-pending` | REGARDS/CNES (1) | Lizenz nicht gemessen | **pending** |
 
-**Ergebnis:** von **63 LOCK** sind **55 frei** (Attribution/NC) und **8
-auth-gated**. Die 55 werden auf ihre gemessene Lizenz gezogen; die 8 bleiben
-`LOCK(rechtlich)` und verlieren jedes CDN-Asset.
+**Ergebnis:** von **63 LOCK** sind **56 frei** (Attribution/NC, inkl. CDDIS),
+**6 LOCK** (Lizenz verbietet Weitergabe oder fehlt) und **1 pending**
+(REGARDS, ungemessen). Die 56 dürfen aufs CDN (mit Attribution); die 6 LOCK
+und REGARDS nicht.
 
 ## Die 113 Unbekannten
 
