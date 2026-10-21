@@ -92,7 +92,7 @@ pub fn build_rinex_channels(
         RinexFileType::Observation => {
             let body_name = match src.body.as_deref() {
                 Some(b) if !b.is_empty() => b.to_string(),
-                _ => frame_body_name(&src.frame),
+                _ => frame_body_name(&src.frame()),
             };
             let position = eph
                 .get(&body_name)

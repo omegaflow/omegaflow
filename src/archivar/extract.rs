@@ -4978,7 +4978,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             aperture: Aperture::None,
         };
         let mut channels: Vec<(Channel, FieldConfig)> = Vec::new();
-        let frame_name = frame_body_name(&src.frame);
+        let frame_name = frame_body_name(&src.frame());
         for r in crate::archivar::arpansa::parse_uv_xml(body) {
             let Some((lat, lon)) = crate::archivar::arpansa::station_coords(&r.id) else {
                 continue;
@@ -5038,7 +5038,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     continue;
                 };
                 let position = Position::Surface {
-                    body_name: frame_body_name(&src.frame),
+                    body_name: frame_body_name(&src.frame()),
                     lat: s.lat,
                     lon: s.lon,
                     alt,
@@ -5195,7 +5195,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 continue;
             }
             let position = Position::Surface {
-                body_name: frame_body_name(&src.frame),
+                body_name: frame_body_name(&src.frame()),
                 lat: ev.centroid_lat,
                 lon: ev.centroid_lon,
                 alt: 0.0,
@@ -5232,7 +5232,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         let Some(Extract::Field(fc)) = src.extracts.first() else {
             return ExtractResult::Measurements(vec![]);
         };
-        let Frame::Surface { lat, lon, alt, .. } = &src.frame else {
+        let Frame::Surface { lat, lon, alt, .. } = &src.frame() else {
             return ExtractResult::Measurements(vec![]);
         };
         let Some(alt) = *alt else {
@@ -5251,7 +5251,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     epoch,
                     station_code: None,
                     position: Position::Surface {
-                        body_name: frame_body_name(&src.frame),
+                        body_name: frame_body_name(&src.frame()),
                         lat: *lat,
                         lon: *lon,
                         alt,
@@ -5265,7 +5265,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         return ExtractResult::Measurements(channels);
     }
     if src.format == "kc2g_stations" {
-        let Frame::Surface { alt, .. } = &src.frame else {
+        let Frame::Surface { alt, .. } = &src.frame() else {
             return ExtractResult::Measurements(vec![]);
         };
         let Some(alt) = *alt else {
@@ -5278,7 +5278,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 continue;
             };
             let position = Position::Surface {
-                body_name: frame_body_name(&src.frame),
+                body_name: frame_body_name(&src.frame()),
                 lat: row.lat,
                 lon: row.lon,
                 alt,
@@ -5334,7 +5334,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     epoch,
                     station_code: None,
                     position: Position::Surface {
-                        body_name: frame_body_name(&src.frame),
+                        body_name: frame_body_name(&src.frame()),
                         lat,
                         lon,
                         alt: 0.0,
@@ -5361,7 +5361,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         let Some(Extract::Field(fc)) = src.extracts.first() else {
             return ExtractResult::Measurements(vec![]);
         };
-        let Frame::Surface { lat, lon, alt, .. } = &src.frame else {
+        let Frame::Surface { lat, lon, alt, .. } = &src.frame() else {
             return ExtractResult::Measurements(vec![]);
         };
         let Some(alt) = *alt else {
@@ -5384,7 +5384,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     epoch,
                     station_code: None,
                     position: Position::Surface {
-                        body_name: frame_body_name(&src.frame),
+                        body_name: frame_body_name(&src.frame()),
                         lat: station_lat,
                         lon: station_lon,
                         alt: station_alt,
@@ -5410,7 +5410,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
         let Some(Extract::Field(fc)) = src.extracts.first() else {
             return ExtractResult::Measurements(vec![]);
         };
-        let Frame::Surface { lat, lon, alt, .. } = &src.frame else {
+        let Frame::Surface { lat, lon, alt, .. } = &src.frame() else {
             return ExtractResult::Measurements(vec![]);
         };
         let Some(alt) = *alt else {
@@ -5429,7 +5429,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     epoch,
                     station_code: None,
                     position: Position::Surface {
-                        body_name: frame_body_name(&src.frame),
+                        body_name: frame_body_name(&src.frame()),
                         lat: *lat,
                         lon: *lon,
                         alt,
@@ -5755,7 +5755,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     };
                                     if let (Some(sp), Some(tr)) = (speed, track) {
                                         Position::SurfaceFlow {
-                                            body_name: frame_body_name(&src.frame),
+                                            body_name: frame_body_name(&src.frame()),
                                             lat: lat_val,
                                             lon: lon_val,
                                             alt: al,
@@ -5765,14 +5765,14 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         }
                                     } else {
                                         Position::Surface {
-                                            body_name: frame_body_name(&src.frame),
+                                            body_name: frame_body_name(&src.frame()),
                                             lat: lat_val,
                                             lon: lon_val,
                                             alt: al,
                                         }
                                     }
                                 }
-                                (_, _, _) => match &src.frame {
+                                (_, _, _) => match &src.frame() {
                                     crate::archivar::Frame::Barycenter { body_name, scale } => {
                                         Position::Barycenter {
                                             body_name: body_name.clone(),
@@ -5955,7 +5955,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         continue;
                                     }
                                     let position = Position::Surface {
-                                        body_name: frame_body_name(&src.frame),
+                                        body_name: frame_body_name(&src.frame()),
                                         lat: la,
                                         lon: lo,
                                         alt: -p * pressure_scale,
@@ -6002,11 +6002,11 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     };
                     for v in rows {
                         let body_name = if body_key.is_empty() {
-                            frame_body_name(&src.frame)
+                            frame_body_name(&src.frame())
                         } else {
                             match jstr(v, body_key) {
                                 Some(s) if !s.trim().is_empty() => s.trim().to_ascii_lowercase(),
-                                _ => frame_body_name(&src.frame),
+                                _ => frame_body_name(&src.frame()),
                             }
                         };
                         let lon = region_midpoint(v, lon_min_key, lon_max_key, s_region_key, 0);
@@ -6126,7 +6126,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         };
                         for (lon, lat, z) in vertices {
                             let position = Position::Surface {
-                                body_name: frame_body_name(&src.frame),
+                                body_name: frame_body_name(&src.frame()),
                                 lat,
                                 lon,
                                 alt: match z {
@@ -6269,7 +6269,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         epoch,
                                         station_code: None,
                                         position: Position::Surface {
-                                            body_name: frame_body_name(&src.frame),
+                                            body_name: frame_body_name(&src.frame()),
                                             lat: *lat,
                                             lon: *lon,
                                             alt,
@@ -6378,7 +6378,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 name_prefix,
             } => {
                 let text: &str = packed_text.as_deref().unwrap_or(body);
-                let position = match &src.frame {
+                let position = match &src.frame() {
                     Frame::Surface { lat, lon, alt, .. } => {
                         let Some(alt) = *alt else {
                             eprintln!(
@@ -6388,7 +6388,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             continue;
                         };
                         Position::Surface {
-                            body_name: frame_body_name(&src.frame),
+                            body_name: frame_body_name(&src.frame()),
                             lat: *lat,
                             lon: *lon,
                             alt,
@@ -6552,14 +6552,14 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                     if !lat.is_finite() || !lon.is_finite() {
                         return None;
                     }
-                    let Frame::Surface { alt, .. } = &src.frame else {
+                    let Frame::Surface { alt, .. } = &src.frame() else {
                         return None;
                     };
                     let Some(alt) = *alt else {
                         return None;
                     };
                     Some(Position::Surface {
-                        body_name: frame_body_name(&src.frame),
+                        body_name: frame_body_name(&src.frame()),
                         lat,
                         lon,
                         alt,
@@ -7115,7 +7115,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         epoch: now,
                                         station_code: None,
                                         position: Position::Surface {
-                                            body_name: frame_body_name(&src.frame),
+                                            body_name: frame_body_name(&src.frame()),
                                             lat: ela,
                                             lon: elo,
                                             alt: -ed * 1000.0,
@@ -7148,7 +7148,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         epoch: now,
                                         station_code: None,
                                         position: Position::Surface {
-                                            body_name: frame_body_name(&src.frame),
+                                            body_name: frame_body_name(&src.frame()),
                                             lat: ela,
                                             lon: elo,
                                             alt: -ed * 1000.0,
@@ -7190,7 +7190,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             continue;
                         };
                         let position = Position::Surface {
-                            body_name: frame_body_name(&src.frame),
+                            body_name: frame_body_name(&src.frame()),
                             lat: ev.lat,
                             lon: ev.lon,
                             alt: 0.0,
@@ -7316,7 +7316,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         .iter()
                         .any(|(_, name)| matches!(name.as_str(), "@lat" | "@lon" | "@alt"));
                     if pos_feed {
-                        let body_name = frame_body_name(&src.frame);
+                        let body_name = frame_body_name(&src.frame());
                         let lat_idx = pairs
                             .iter()
                             .find(|entry| entry.1 == "@lat")

@@ -6411,7 +6411,6 @@ mod tests {
             rights_identifier: None,
             rights_scheme: None,
             rights_uri: None,
-            frame: omegaflow::archivar::Frame::Manifest,
             head: None,
             format: "text".into(),
             extracts: vec![Extract::Field(field)],

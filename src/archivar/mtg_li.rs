@@ -351,7 +351,7 @@ pub fn build_channels(
         eph,
         receiver_aperture,
     } = *q;
-    let body_name = frame_body_name(&src.frame);
+    let body_name = frame_body_name(&src.frame());
     let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
     let fields: Vec<&FieldConfig> = src
         .extracts
