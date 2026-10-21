@@ -49,8 +49,8 @@ Einzelurteile unten sind gelesen; die Zählungen sind strukturell.
 ## Die zwei versteckten Aufträge — jetzt kanonisch
 
 1. **Bau:** kanonisch `projects/bau-der-arme.md`. Die zwei Belege
-   `docs/reference/bauauftrag-2026-10-21.md` (Staffel, Assets, Keys) und
-   `docs/reference/offen-ungebaut.md` (Messdetails, jetzt `status: superseded`)
+   `docs/surveys/survey-2026-10-21-bau-der-arme-beleg.md` (Staffel, Assets, Keys) und
+   `docs/surveys/survey-2026-10-21-offen-ungebaut.md` (Messdetails, jetzt `status: superseded`)
    tragen nur noch Beweise und verweisen nach oben.
 2. **Ephemeriden-Fahrplan:** kanonisch in `projects/ephemerides.md`, Abschnitt
    „Fahrplan (Kette, 2026-10-21)". Das Concept

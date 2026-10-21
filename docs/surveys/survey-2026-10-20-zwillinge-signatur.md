@@ -4,7 +4,7 @@
   date: 2026-10-20
   sha256: 7dc663bfd3230fa7cd29f81658d266aa1feb680c8f1d49cb3d10c425d3f4bdd7
   status: live
-  see-also: docs/blatt/blatt-2026-10-19-entscheidung-17-lizenzarme.md docs/reference/search-channels.md
+  see-also: docs/blatt/blatt-2026-10-19-entscheidung-17-lizenzarme.md docs/concepts/search-channels.md
 -->
 # Zwillinge per Signatur — acht key-gebundene Arme
 

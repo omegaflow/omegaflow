@@ -678,8 +678,8 @@ is the browser path for a display.
 | Kandidaten | `bin/leads_merge` | Leads gegen `phi/sources.φ` deduplizieren |
 
 Details und die gemessene Lücke (`find` → `weave` ist nicht verkettet):
-`docs/reference/koeder-kette.md`; die Bedingungen je Datenform:
-`docs/reference/koeder-formen.md`.
+`docs/concepts/koeder-kette.md`; die Bedingungen je Datenform:
+`docs/concepts/koeder-formen.md`.
 
 ## Local tools — the self-contained path
 

@@ -1,10 +1,10 @@
 <!--
   title: Geplant und nicht gebaut — die Köder-/Arm-Session (2026-10-21)
-  class: ref
+  class: survey
   date: 2026-10-21
   sha256: 3190684db55091b4273617e5133d1d20c6463b673423cb7171564ec31f9b42c0
   status: superseded
-  see-also: docs/reference/koeder-kette.md docs/reference/koeder-formen.md docs/reference/search-channels.md
+  see-also: docs/concepts/koeder-kette.md docs/concepts/koeder-formen.md docs/concepts/search-channels.md
 -->
 # Geplant und nicht gebaut
 
@@ -13,7 +13,7 @@
 > überholt: der Bau ist gelaufen, der Nachtrag oben sagt es schon.
 
 > **Nachtrag 2026-10-21:** Der Bauauftrag mit Staffel, Abnahmekriterien und
-> Key-Prüfung steht in `docs/reference/bauauftrag-2026-10-21.md`. Die Zeile
+> Key-Prüfung steht in `docs/surveys/survey-2026-10-21-bau-der-arme-beleg.md`. Die Zeile
 > „Key-gebunden" unten war falsch: `bin/secrets_keys` listet **190 Key-Namen
 > mit Wert**, darunter `BABAMUL_API_TOKEN`, `IEEG_USER/PASS`,
 > `PRADAN_USER/PASS`, `TNS_API_KEY`, `IRSA_USER/PASS`, `EARTHDATA_EDL_TOKEN`
