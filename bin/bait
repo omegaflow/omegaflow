@@ -222,7 +222,7 @@ if [ -n "$url" ]; then
     esac
 
     rc=0
-    code="$(curl -q -sS --max-time 120 --max-filesize 67108864 \
+    code="$(curl -q -sS -L --max-time 120 --max-filesize 67108864 \
         --proto '=https' --proto-redir '=https' --max-redirs 3 \
         --config "$hdr" \
         -o "$body" -w '%{http_code}' "$url" 2>"$cerr")" || rc=$?
@@ -283,6 +283,14 @@ case "$mime" in
                     rm -f "$page"
                 fi
             fi
+        fi
+        ;;
+    image/fits|application/fits)
+        if command -v fold >/dev/null 2>&1; then
+            dd if="$src" bs=2880 count=8 2>/dev/null | fold -w 80 >"$tmp" || true
+        else
+            echo "bait: fold fehlt — FITS-Header bleibt unlesbar" >&2
+            exit 2
         fi
         ;;
     image/*)
