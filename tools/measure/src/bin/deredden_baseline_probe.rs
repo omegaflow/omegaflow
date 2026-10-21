@@ -27,11 +27,10 @@ fn arg_usize(args: &[String], name: &str) -> Option<usize> {
 }
 
 fn type_of(bp_rp: f64) -> String {
-    let t = match dwarf_color_type(bp_rp) {
-        Some((t, _)) => t,
-        None => f64::NAN,
-    };
-    type_label(t)
+    match dwarf_color_type(bp_rp) {
+        Some((t, _)) => type_label(t),
+        None => "out-of-sequence".to_string(),
+    }
 }
 
 #[derive(Clone, Copy, PartialEq, Debug)]
@@ -120,6 +119,323 @@ struct ScoredMember {
 struct AbsentMember {
     star_idx: usize,
     reason: &'static str,
+}
+
+struct PlanckPoint {
+    ra: f64,
+    dec: f64,
+    av: f64,
+}
+
+fn find_bytes(hay: &[u8], needle: &[u8]) -> Option<usize> {
+    if needle.is_empty() || hay.len() < needle.len() {
+        return None;
+    }
+    hay.windows(needle.len()).position(|w| w == needle)
+}
+
+fn json_number(chunk: &[u8], key: &str) -> Option<f64> {
+    let pat = format!("\"{key}\":");
+    let pos = find_bytes(chunk, pat.as_bytes())? + pat.len();
+    let rest = &chunk[pos..];
+    let end = rest
+        .iter()
+        .position(|b| *b == b',' || *b == b'}')
+        .unwrap_or(rest.len());
+    std::str::from_utf8(&rest[..end])
+        .ok()?
+        .trim()
+        .parse::<f64>()
+        .ok()
+        .filter(|v| v.is_finite())
+}
+
+fn load_planck_points(path: &str) -> Result<Vec<PlanckPoint>, String> {
+    let bytes = std::fs::read(path).map_err(|e| format!("read {path} returned void: {e}"))?;
+    let mut out: Vec<PlanckPoint> = Vec::new();
+    let mut start: Option<usize> = None;
+    for (i, b) in bytes.iter().enumerate() {
+        match *b {
+            b'{' => start = Some(i),
+            b'}' => {
+                if let Some(s) = start.take() {
+                    let chunk = &bytes[s..=i];
+                    if let (Some(ra), Some(dec), Some(av)) = (
+                        json_number(chunk, "ra"),
+                        json_number(chunk, "dec"),
+                        json_number(chunk, "av_rq"),
+                    ) {
+                        if ra >= 0.0 && ra <= 360.0 && dec >= -90.0 && dec <= 90.0 {
+                            out.push(PlanckPoint { ra, dec, av });
+                        }
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+    if out.is_empty() {
+        return Err(format!(
+            "{path}: no RA/Dec/av_rq cell survives the parse — the map stays unread"
+        ));
+    }
+    Ok(out)
+}
+
+fn scan_planck_field(
+    points: &[PlanckPoint],
+    idx: &StarIndex,
+    center_ra: f64,
+    center_dec: f64,
+    radius_deg: f64,
+    n_sigma: f64,
+    min_neighbors: usize,
+) -> Result<FieldReport, String> {
+    let cone: Vec<&PlanckPoint> = points
+        .iter()
+        .filter(|p| {
+            omegaflow_measure::weberin::deredden::ang_sep_arcsec(p.ra, p.dec, center_ra, center_dec)
+                <= radius_deg * 3600.0
+        })
+        .collect();
+    if cone.is_empty() {
+        return Err(format!(
+            "the field {radius_deg:.2} deg around ra {center_ra:.5} dec {center_dec:.5} carries no dust cell — the map stays silent here"
+        ));
+    }
+    let found = idx.within(center_ra, center_dec, radius_deg);
+    let mut absent: Vec<AbsentMember> = Vec::new();
+    let mut raw: Vec<RawMember> = Vec::new();
+    for (k, sep) in &found {
+        let s = &idx.stars[*k];
+        if !s.color_index.is_finite() {
+            absent.push(AbsentMember {
+                star_idx: *k,
+                reason: "no finite color",
+            });
+            continue;
+        }
+        let mut best: Option<(f64, &PlanckPoint)> = None;
+        for p in &cone {
+            let ang = omegaflow_measure::weberin::deredden::ang_sep_arcsec(
+                s.ra_deg, s.dec_deg, p.ra, p.dec,
+            );
+            if best.map(|(b, _)| ang < b).unwrap_or(true) {
+                best = Some((ang, p));
+            }
+        }
+        let Some((sep_cell, p)) = best else {
+            absent.push(AbsentMember {
+                star_idx: *k,
+                reason: "no dust cell in the field",
+            });
+            continue;
+        };
+        if sep_cell > 0.2 * 3600.0 {
+            absent.push(AbsentMember {
+                star_idx: *k,
+                reason: "nearest dust cell lies farther than 0.2 deg",
+            });
+            continue;
+        }
+        let av = p.av;
+        if !(av.is_finite() && av >= 0.0) {
+            absent.push(AbsentMember {
+                star_idx: *k,
+                reason: "A_V refused (non-finite or negative)",
+            });
+            continue;
+        }
+        let e_bprp = av / WANG_GBP_FACTOR;
+        let bp_rp0 = s.color_index - e_bprp;
+        if !bp_rp0.is_finite() {
+            absent.push(AbsentMember {
+                star_idx: *k,
+                reason: "the intrinsic color stays non-finite",
+            });
+            continue;
+        }
+        raw.push(RawMember {
+            star_idx: *k,
+            sep_center_arcsec: *sep,
+            observed_bp_rp: s.color_index,
+            av,
+            e_bprp,
+            bp_rp0,
+            d_pc: 1000.0 / s.plx_mas,
+        });
+    }
+    let measured = raw.len();
+    let mut members: Vec<ScoredMember> = Vec::with_capacity(measured);
+    for i in 0..measured {
+        let m = &raw[i];
+        let neighbors = measured - 1;
+        if measured <= min_neighbors {
+            members.push(ScoredMember {
+                star_idx: m.star_idx,
+                sep_center_arcsec: m.sep_center_arcsec,
+                observed_bp_rp: m.observed_bp_rp,
+                av: m.av,
+                e_bprp: m.e_bprp,
+                bp_rp0: m.bp_rp0,
+                d_pc: m.d_pc,
+                neighbors,
+                baseline_median: None,
+                baseline_sigma: None,
+                verdict: VerdictWord::Pending,
+            });
+            continue;
+        }
+        let others: Vec<f64> = (0..measured)
+            .filter(|j| *j != i)
+            .map(|j| raw[j].bp_rp0)
+            .collect();
+        let center = median_of(&others);
+        let scale = center.and_then(|c| mad_sigma_about(&others, c));
+        let verdict = match (center, scale) {
+            (Some(c), Some(s)) => {
+                if outside_threshold(m.bp_rp0, c, s, n_sigma) {
+                    VerdictWord::Outlier
+                } else {
+                    VerdictWord::Typical
+                }
+            }
+            _ => VerdictWord::Pending,
+        };
+        members.push(ScoredMember {
+            star_idx: m.star_idx,
+            sep_center_arcsec: m.sep_center_arcsec,
+            observed_bp_rp: m.observed_bp_rp,
+            av: m.av,
+            e_bprp: m.e_bprp,
+            bp_rp0: m.bp_rp0,
+            d_pc: m.d_pc,
+            neighbors,
+            baseline_median: center,
+            baseline_sigma: scale,
+            verdict,
+        });
+    }
+    Ok(FieldReport { members, absent })
+}
+
+fn print_planck_report(
+    report: &FieldReport,
+    points: &[PlanckPoint],
+    idx: &StarIndex,
+    center_ra: f64,
+    center_dec: f64,
+    radius_deg: f64,
+    n_sigma: f64,
+    min_neighbors: usize,
+) {
+    let cone: Vec<&PlanckPoint> = points
+        .iter()
+        .filter(|p| {
+            omegaflow_measure::weberin::deredden::ang_sep_arcsec(p.ra, p.dec, center_ra, center_dec)
+                <= radius_deg * 3600.0
+        })
+        .collect();
+    let mut ebv: Vec<f64> = cone.iter().map(|p| p.av / 3.1).collect();
+    ebv.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+    println!("=== deredden_baseline_probe — the local intrinsic color field, dust subtracted ===");
+    println!(
+        "dust map: Planck DL07 A_V (2D, nside 512) via phi/sources.φ, A_V = 3.1 E(B-V) — the column is the whole line of sight, not truncated at a parallax distance"
+    );
+    println!("extinction law: E(BP-RP) = A_V/{WANG_GBP_FACTOR} — Wang & Chen 2019 (ApJ 877, 116)");
+    let observed: Vec<f64> = report.members.iter().map(|m| m.observed_bp_rp).collect();
+    let intrinsic: Vec<f64> = report.members.iter().map(|m| m.bp_rp0).collect();
+    let show = |v: Option<f64>| v.map_or_else(|| "pending".to_string(), |x| format!("{x:.4}"));
+    println!(
+        "field {radius_deg:.2} deg around ra {center_ra:.5} dec {center_dec:.5}; {} dust cell(s) in the cone, E(B-V) range {}..{}, median {}; observed-color baseline median {}, the local intrinsic baseline median {}; threshold median +/- {n_sigma}·MAD-sigma, a member's own color never enters its own window",
+        cone.len(),
+        show(ebv.first().copied()),
+        show(ebv.last().copied()),
+        show(median_of(&ebv)),
+        show(median_of(&observed)),
+        show(median_of(&intrinsic)),
+    );
+    if report.members.is_empty() {
+        println!(
+            "the region carries no measured intrinsic color — {} source(s) in the cone stay pending (0 honored); the local field baseline stays unmeasured",
+            report.absent.len()
+        );
+        for a in &report.absent {
+            let s = &idx.stars[a.star_idx];
+            println!(
+                "---- dr3[{}] ra {:.6} dec {:.6}: absent ({})",
+                a.star_idx, s.ra_deg, s.dec_deg, a.reason
+            );
+        }
+        return;
+    }
+    for m in &report.members {
+        let s = &idx.stars[m.star_idx];
+        println!(
+            "---- dr3[{}] ra {:.6} dec {:.6} | center sep {:.1} arcsec | plx {:.3} mas",
+            m.star_idx, s.ra_deg, s.dec_deg, m.sep_center_arcsec, s.plx_mas
+        );
+        println!(
+            "    dust column: A_V {:.3} mag -> E(B-V) {:.3} mag, E(BP-RP) {:.3} mag",
+            m.av,
+            m.av / 3.1,
+            m.e_bprp
+        );
+        println!(
+            "    color: observed BP-RP {:.3} ({}) -> intrinsic BP-RP0 {:.3} ({})",
+            m.observed_bp_rp,
+            type_of(m.observed_bp_rp),
+            m.bp_rp0,
+            type_of(m.bp_rp0)
+        );
+        match (m.baseline_median, m.baseline_sigma) {
+            (Some(c), Some(sg)) => {
+                let dev = m.bp_rp0 - c;
+                let sig = if sg > 0.0 { dev / sg } else { 0.0 };
+                let side = if dev > 0.0 { "above" } else { "below" };
+                println!(
+                    "    local baseline over the other {} measured member(s): median {c:.3}, MAD-sigma {sg:.3} | BP-RP0 sits {:.2} sigma {side} the median -> {}",
+                    m.neighbors,
+                    sig,
+                    m.verdict.word()
+                );
+            }
+            _ => {
+                println!(
+                    "    local baseline stays pending: the other measured members ({}) lie below the {min_neighbors}-member neighborhood floor -> {}",
+                    m.neighbors,
+                    m.verdict.word()
+                );
+            }
+        }
+    }
+    for a in &report.absent {
+        let s = &idx.stars[a.star_idx];
+        println!(
+            "---- dr3[{}] ra {:.6} dec {:.6}: absent ({})",
+            a.star_idx, s.ra_deg, s.dec_deg, a.reason
+        );
+    }
+    let outliers = report
+        .members
+        .iter()
+        .filter(|m| m.verdict == VerdictWord::Outlier)
+        .count();
+    let typical = report
+        .members
+        .iter()
+        .filter(|m| m.verdict == VerdictWord::Typical)
+        .count();
+    let pending = report
+        .members
+        .iter()
+        .filter(|m| m.verdict == VerdictWord::Pending)
+        .count();
+    println!(
+        "field verdict: {outliers} color outlier candidate(s) survive the dust subtraction; {typical} typical; {pending} pending; {} absent — over {} cone source(s) at ra {center_ra:.5} dec {center_dec:.5}",
+        report.absent.len(),
+        report.members.len() + report.absent.len()
+    );
 }
 
 struct FieldReport {
@@ -247,16 +563,12 @@ fn scan_field(
 
 fn usage() {
     println!(
-        "usage: deredden_baseline_probe --map <bayestar.be19> --stars <dr3_stars.bin> --ra <deg> --dec <deg> [--radius <deg=0.25>] [--n-sigma <3.0>] [--min-neighbors <8>]"
+        "usage: deredden_baseline_probe (--map <bayestar.be19> | --dust-json <planck_av.json>) --stars <dr3_stars.bin> --ra <deg> --dec <deg> [--radius <deg=0.25>] [--n-sigma <3.0>] [--min-neighbors <8>]"
     );
 }
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let Some(map_path) = arg_value(&args, "--map") else {
-        usage();
-        return;
-    };
     let Some(stars_path) = arg_value(&args, "--stars") else {
         usage();
         return;
@@ -299,6 +611,40 @@ fn main() {
     let idx = build_star_index(&star_bytes);
     eprintln!("catalog: {} stars indexed", idx.stars.len());
 
+    if let Some(dust_path) = arg_value(&args, "--dust-json") {
+        let points = match load_planck_points(&dust_path) {
+            Ok(p) => p,
+            Err(e) => {
+                eprintln!("{e}");
+                return;
+            }
+        };
+        eprintln!("dust map: {} cells loaded", points.len());
+        let report =
+            match scan_planck_field(&points, &idx, ra, dec, radius_deg, n_sigma, min_neighbors) {
+                Ok(r) => r,
+                Err(e) => {
+                    eprintln!("{e}");
+                    return;
+                }
+            };
+        print_planck_report(
+            &report,
+            &points,
+            &idx,
+            ra,
+            dec,
+            radius_deg,
+            n_sigma,
+            min_neighbors,
+        );
+        return;
+    }
+
+    let Some(map_path) = arg_value(&args, "--map") else {
+        usage();
+        return;
+    };
     let report = match scan_field(&map_path, &idx, ra, dec, radius_deg, n_sigma, min_neighbors) {
         Ok(r) => r,
         Err(e) => {

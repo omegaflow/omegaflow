@@ -609,6 +609,531 @@ fn run_position(p: &Position) -> usize {
     print_verdict_line(&lines)
 }
 
+
+const FINK_ZTF_OBJECTS: &str = "https://api.ztf.fink-portal.org/api/v1/objects";
+const FINK_LSST_OBJECTS: &str = "https://api.lsst.fink-portal.org/api/v1/objects";
+const LASAIR_ZTF_OBJECT: &str = "https://lasair-ztf.lsst.ac.uk/api/object/";
+const LASAIR_LSST_OBJECT: &str = "https://api.lasair.lsst.ac.uk/api/object/";
+const ALERCE_ZTF_OBJECTS: &str = "https://api.alerce.online/ztf/v1/objects/";
+const OBJECT_ROWS: usize = 100;
+
+struct ObjectLine {
+    broker: &'static str,
+    status: String,
+    hits: usize,
+    ids: Vec<String>,
+    latest_mjd: Option<f64>,
+    note: String,
+    answered: bool,
+    refused: bool,
+}
+
+#[derive(Debug, PartialEq)]
+enum ObjectParse {
+    Hits {
+        rows: usize,
+        ids: Vec<String>,
+        latest_mjd: Option<f64>,
+    },
+    Empty {
+        latest_mjd: Option<f64>,
+        recognized: bool,
+    },
+    Unresolved {
+        note: String,
+    },
+}
+
+fn is_ztf(id: &str) -> bool {
+    id.trim_start().starts_with("ZTF")
+}
+
+fn url_encode(raw: &str) -> String {
+    let mut out = String::with_capacity(raw.len());
+    for b in raw.bytes() {
+        match b {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                out.push(b as char)
+            }
+            _ => out.push_str(&format!("%{b:02X}")),
+        }
+    }
+    out
+}
+
+fn id_text(v: Option<&JsonVal>) -> Option<String> {
+    match v? {
+        JsonVal::Str(s) if !s.trim().is_empty() => Some(s.trim().to_string()),
+        JsonVal::Num(n) if n.is_finite() => Some(if n.fract() == 0.0 {
+            format!("{n:.0}")
+        } else {
+            format!("{n}")
+        }),
+        _ => None,
+    }
+}
+
+fn row_id(v: &JsonVal, keys: &[&str]) -> Option<String> {
+    let JsonVal::Obj(m) = v else {
+        return None;
+    };
+    keys.iter().find_map(|k| id_text(m.get(*k)))
+}
+
+fn find_named_id(v: &JsonVal, keys: &[&str], depth: usize) -> Option<String> {
+    if depth > 4 {
+        return None;
+    }
+    match v {
+        JsonVal::Obj(m) => {
+            for k in keys {
+                if let Some(id) = id_text(m.get(*k)) {
+                    return Some(id);
+                }
+            }
+            m.values()
+                .find_map(|child| find_named_id(child, keys, depth + 1))
+        }
+        JsonVal::Arr(a) => a
+            .iter()
+            .find_map(|child| find_named_id(child, keys, depth + 1)),
+        _ => None,
+    }
+}
+
+fn num_of(v: &JsonVal) -> Option<f64> {
+    match v {
+        JsonVal::Num(n) if n.is_finite() => Some(*n),
+        JsonVal::Str(s) => s.trim().parse::<f64>().ok().filter(|n| n.is_finite()),
+        _ => None,
+    }
+}
+
+fn mjd_value(key: &str, v: &JsonVal) -> Option<f64> {
+    let n = num_of(v)?;
+    let k = key.to_ascii_lowercase();
+    if k.contains("mjd") {
+        return Some(n);
+    }
+    if k.starts_with("i:jd") || k.ends_with("jd") {
+        return Some(if n > 2_400_000.0 { n - 2_400_000.5 } else { n });
+    }
+    None
+}
+
+fn latest_mjd(v: &JsonVal) -> Option<f64> {
+    match v {
+        JsonVal::Obj(m) => {
+            let mut best = None;
+            for (k, child) in m {
+                if let Some(n) = mjd_value(k, child) {
+                    best = Some(best.map_or(n, |b: f64| b.max(n)));
+                }
+                if let Some(n) = latest_mjd(child) {
+                    best = Some(best.map_or(n, |b: f64| b.max(n)));
+                }
+            }
+            best
+        }
+        JsonVal::Arr(a) => a.iter().filter_map(latest_mjd).reduce(f64::max),
+        _ => None,
+    }
+}
+
+fn parse_body(body: &[u8]) -> Option<JsonVal> {
+    let text = std::str::from_utf8(body).ok()?;
+    parse_json(text)
+}
+
+fn parse_fink_object(body: &[u8], id: &str) -> ObjectParse {
+    let Some(root) = parse_body(body) else {
+        return ObjectParse::Unresolved {
+            note: "HTTP 200, but the body is not JSON".to_string(),
+        };
+    };
+    let rows = match &root {
+        JsonVal::Arr(rows) => rows.as_slice(),
+        JsonVal::Obj(m) => match m.get("items") {
+            Some(JsonVal::Arr(rows)) => rows.as_slice(),
+            _ => {
+                return ObjectParse::Unresolved {
+                    note: "HTTP 200, but no row array under items".to_string(),
+                };
+            }
+        },
+        _ => {
+            return ObjectParse::Unresolved {
+                note: "HTTP 200, but the root is neither rows nor an items object".to_string(),
+            };
+        }
+    };
+    let mut hits = 0usize;
+    let mut ids: Vec<String> = Vec::new();
+    let mut recognized = false;
+    for row in rows {
+        if let Some(rid) = row_id(
+            row,
+            &["i:objectId", "objectId", "d:objectId", "diaObjectId"],
+        ) {
+            recognized = true;
+            if rid == id {
+                hits += 1;
+                if !ids.contains(&rid) {
+                    ids.push(rid);
+                }
+            }
+        }
+    }
+    if hits > 0 {
+        ObjectParse::Hits {
+            rows: hits,
+            ids,
+            latest_mjd: latest_mjd(&root),
+        }
+    } else {
+        ObjectParse::Empty {
+            latest_mjd: latest_mjd(&root),
+            recognized,
+        }
+    }
+}
+
+fn parse_alerce_object(body: &[u8], id: &str) -> ObjectParse {
+    let Some(root) = parse_body(body) else {
+        return ObjectParse::Unresolved {
+            note: "HTTP 200, but the body is not JSON".to_string(),
+        };
+    };
+    let JsonVal::Obj(m) = &root else {
+        return ObjectParse::Unresolved {
+            note: "HTTP 200, but the root is not an items object".to_string(),
+        };
+    };
+    let Some(JsonVal::Arr(rows)) = m.get("items") else {
+        return ObjectParse::Unresolved {
+            note: "HTTP 200, but no items array".to_string(),
+        };
+    };
+    let mut hits = 0usize;
+    let mut ids: Vec<String> = Vec::new();
+    let mut recognized = false;
+    for row in rows {
+        if let Some(rid) = row_id(row, &["oid", "objectId", "diaObjectId"]) {
+            recognized = true;
+            if rid == id {
+                hits += 1;
+                if !ids.contains(&rid) {
+                    ids.push(rid);
+                }
+            }
+        }
+    }
+    if hits > 0 {
+        ObjectParse::Hits {
+            rows: hits,
+            ids,
+            latest_mjd: latest_mjd(&root),
+        }
+    } else {
+        ObjectParse::Empty {
+            latest_mjd: latest_mjd(&root),
+            recognized,
+        }
+    }
+}
+
+fn parse_lasair_object(body: &[u8], id: &str) -> ObjectParse {
+    let Some(root) = parse_body(body) else {
+        return ObjectParse::Unresolved {
+            note: "HTTP 200, but the body is not JSON".to_string(),
+        };
+    };
+    let Some(rid) = find_named_id(
+        &root,
+        &["objectId", "objectid", "diaObjectId", "oid", "object_id"],
+        0,
+    ) else {
+        return ObjectParse::Unresolved {
+            note: "HTTP 200, but no object id field in the body".to_string(),
+        };
+    };
+    if rid == id {
+        ObjectParse::Hits {
+            rows: 1,
+            ids: vec![rid],
+            latest_mjd: latest_mjd(&root),
+        }
+    } else {
+        ObjectParse::Empty {
+            latest_mjd: latest_mjd(&root),
+            recognized: true,
+        }
+    }
+}
+
+fn curl_get_header(url: &str, auth: Option<String>) -> Option<(String, Vec<u8>)> {
+    let mut cmd = Command::new("curl");
+    cmd.args([
+        "-sS",
+        "-g",
+        "--compressed",
+        "-m",
+        "40",
+        "-A",
+        UA,
+        "-o",
+        "-",
+        "-w",
+        "\n%{http_code}",
+    ]);
+    if let Some(header) = auth {
+        cmd.arg("-H").arg(header);
+    }
+    cmd.arg(url);
+    let out = cmd.output().ok()?;
+    let stdout = out.stdout;
+    let idx = stdout.iter().rposition(|&b| b == b'\n')?;
+    let code = String::from_utf8_lossy(&stdout[idx + 1..])
+        .trim()
+        .to_string();
+    Some((code, stdout[..idx].to_vec()))
+}
+
+fn detail_of(body: &[u8]) -> Option<String> {
+    let root = parse_body(body)?;
+    let JsonVal::Obj(m) = root else {
+        return None;
+    };
+    ["detail", "message", "error"]
+        .iter()
+        .find_map(|k| id_text(m.get(*k)))
+}
+
+fn object_line(
+    broker: &'static str,
+    fetch: Option<(String, Vec<u8>)>,
+    parse: impl Fn(&[u8], &str) -> ObjectParse,
+    id: &str,
+) -> ObjectLine {
+    let Some((status, body)) = fetch else {
+        return ObjectLine {
+            broker,
+            status: "000".to_string(),
+            hits: 0,
+            ids: Vec::new(),
+            latest_mjd: None,
+            note: "no answer (network stall) — no statement about absence".to_string(),
+            answered: false,
+            refused: false,
+        };
+    };
+    if status != "200" {
+        let detail = match detail_of(&body) {
+            Some(d) => format!(": {d}"),
+            None => String::new(),
+        };
+        let refused = status == "401" || status == "403";
+        let note = if refused {
+            format!(
+                "HTTP {status}{detail} — access refused (a finding, not an absence); token/key check, no hit asserted"
+            )
+        } else {
+            format!("HTTP {status}{detail} — no clean membership read, no hit asserted")
+        };
+        return ObjectLine {
+            broker,
+            status,
+            hits: 0,
+            ids: Vec::new(),
+            latest_mjd: None,
+            note,
+            answered: true,
+            refused,
+        };
+    }
+    match parse(&body, id) {
+        ObjectParse::Hits {
+            rows,
+            ids,
+            latest_mjd,
+        } => ObjectLine {
+            broker,
+            status,
+            hits: rows,
+            ids,
+            latest_mjd,
+            note: format!("{rows} row(s) carry the requested object id"),
+            answered: true,
+            refused: false,
+        },
+        ObjectParse::Empty {
+            latest_mjd,
+            recognized: true,
+        } => ObjectLine {
+            broker,
+            status,
+            hits: 0,
+            ids: Vec::new(),
+            latest_mjd,
+            note: "HTTP 200, rows read, none carries the requested id (0 honored)".to_string(),
+            answered: true,
+            refused: false,
+        },
+        ObjectParse::Empty {
+            latest_mjd,
+            recognized: false,
+        } => ObjectLine {
+            broker,
+            status,
+            hits: 0,
+            ids: Vec::new(),
+            latest_mjd,
+            note: "HTTP 200, but no recognizable object id in the rows — pending, not absent"
+                .to_string(),
+            answered: true,
+            refused: false,
+        },
+        ObjectParse::Unresolved { note } => ObjectLine {
+            broker,
+            status,
+            hits: 0,
+            ids: Vec::new(),
+            latest_mjd: None,
+            note: format!("{note} — pending, not absent"),
+            answered: true,
+            refused: false,
+        },
+    }
+}
+
+fn fink_object_line(id: &str) -> ObjectLine {
+    let base = if is_ztf(id) {
+        FINK_ZTF_OBJECTS
+    } else {
+        FINK_LSST_OBJECTS
+    };
+    let url = format!("{base}?objectId={}&n={OBJECT_ROWS}", url_encode(id.trim()));
+    let auth = token_from("FINK_TOKEN").map(|t| format!("Authorization: Bearer {t}"));
+    object_line("fink", curl_get_header(&url, auth), parse_fink_object, id)
+}
+
+fn lasair_object_line(id: &str) -> ObjectLine {
+    let ztf = is_ztf(id);
+    let base = if ztf {
+        LASAIR_ZTF_OBJECT
+    } else {
+        LASAIR_LSST_OBJECT
+    };
+    let primary = if ztf {
+        "LASAIR_TOKEN"
+    } else {
+        "LASAIR_LSST_TOKEN"
+    };
+    let fallback = if ztf {
+        "LASAIR_LSST_TOKEN"
+    } else {
+        "LASAIR_TOKEN"
+    };
+    let token = token_from(primary).or_else(|| token_from(fallback));
+    let auth = token.as_ref().map(|t| format!("Authorization: Token {t}"));
+    let url = format!("{base}?objectId={}&format=json", url_encode(id.trim()));
+    let mut line = object_line(
+        "lasair",
+        curl_get_header(&url, auth),
+        parse_lasair_object,
+        id,
+    );
+    if token.is_none() {
+        line.note = format!("{primary} absent (env or .secrets.local) — {}", line.note);
+    }
+    line
+}
+
+fn alerce_object_line(id: &str) -> ObjectLine {
+    let url = format!(
+        "{ALERCE_ZTF_OBJECTS}?oid={}&page_size={OBJECT_ROWS}",
+        url_encode(id.trim())
+    );
+    object_line(
+        "alerce",
+        curl_get_header(&url, None),
+        parse_alerce_object,
+        id,
+    )
+}
+
+fn fmt_mjd(mjd: Option<f64>) -> String {
+    match mjd {
+        Some(m) => format!("MJD {m:.4}"),
+        None => "—".to_string(),
+    }
+}
+
+fn object_difference(id: &str) -> usize {
+    let measured_at = utc_now();
+    let lines = vec![
+        fink_object_line(id),
+        lasair_object_line(id),
+        alerce_object_line(id),
+    ];
+    println!();
+    println!(
+        "object {} — measured {} — Fink / Lasair / ALeRCE asked independently",
+        id.trim(),
+        measured_at
+    );
+    println!();
+    println!("| Broker | Status | Treffer | Objekt-ID |");
+    println!("|---|---:|---:|---|");
+    for l in &lines {
+        let ids = if l.ids.is_empty() {
+            "—".to_string()
+        } else {
+            l.ids.join(", ")
+        };
+        println!("| {} | {} | {} | {} |", l.broker, l.status, l.hits, ids);
+    }
+    println!();
+    println!("Timestamps (query {measured_at} UTC):");
+    for l in &lines {
+        println!("- {}: {} — {}", l.broker, fmt_mjd(l.latest_mjd), l.note);
+    }
+    let answered = lines.iter().filter(|l| l.answered).count();
+    let seeing = lines.iter().filter(|l| l.hits > 0).count();
+    let refused = lines.iter().filter(|l| l.refused).count();
+    println!();
+    println!(
+        "answering brokers: {answered}/{}; object seen by: {seeing}/{}; refused (401/403): {refused}; no answer: {}",
+        lines.len(),
+        lines.len(),
+        lines.iter().filter(|l| !l.answered).count()
+    );
+    if seeing >= VERDICT_BROKER_MIN {
+        println!(
+            "the object survives the broker boundary: {seeing} independent broker(s) carry it (>= {VERDICT_BROKER_MIN})"
+        );
+    } else if seeing == 1 {
+        println!(
+            "the broker-difference verdict stays pending: only 1 broker carries the object, and a refusal is not an absence"
+        );
+    } else {
+        println!(
+            "the broker-difference verdict stays pending: no broker asserts a hit; refusals and stalls are not negatives"
+        );
+    }
+    seeing
+}
+
+fn utc_now() -> String {
+    let Ok(out) = Command::new("date")
+        .args(["-u", "+%Y-%m-%dT%H:%M:%SZ"])
+        .output()
+    else {
+        return "unknown".to_string();
+    };
+    String::from_utf8_lossy(&out.stdout).trim().to_string()
+}
+
 fn usage() {
     eprintln!(
         "broker_difference_probe — Funke 3, the broker-difference verdict: an event in several\n\
@@ -619,9 +1144,15 @@ fn usage() {
          \x20 broker is named absent/pending and EXCLUDED from the verdict — never a 'not present'.\n\
          verdict per position (three-valued): sky (>= 2 reachable brokers present) | pipeline\n\
          \x20 (exactly 1 reachable broker present, another reachable broker read nothing) | pending.\n\
-         one or more positions or diaObjectId(s):\n\
+         Object mode (one object, three brokers, no cone):\n\
+         \x20 broker_difference_probe <objectId> [<objectId> ...]\n\
+         \x20 broker_difference_probe --object <objectId> [--object <objectId> ...]\n\
+         \x20   prints Broker | Status | Treffer | Objekt-ID and the query/last-detection\n\
+         \x20   timestamps; routes: Fink /api/v1/objects, Lasair /api/object, ALeRCE\n\
+         \x20   /ztf/v1/objects. A 401/403 is reported as a finding, never as absence.\n\
+         Cone mode (position or placed diaObjectId):\n\
          \x20 broker_difference_probe --pos <ra>,<dec> [--pos <ra>,<dec> ...]\n\
-         \x20 broker_difference_probe --object <diaObjectId> [--object <diaObjectId> ...]\n\
+         \x20 broker_difference_probe --place <diaObjectId> [--place <diaObjectId> ...]\n\
          \x20   a diaObjectId is placed through Fink /api/v1/sources (ra/dec), then cone-searched.\n\
          Lasair: a direct cone read of 000 (or a stall) is retried once through the proton0\n\
          \x20 tunnel interface (measured 2026-09-06: direct 000, tunnel HTTP 200) and the tunnel\n\
@@ -636,6 +1167,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut pos_list: Vec<(f64, f64)> = Vec::new();
     let mut object_list: Vec<String> = Vec::new();
+    let mut place_list: Vec<String> = Vec::new();
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
@@ -665,18 +1197,30 @@ fn main() {
                     i += 1;
                 }
             }
-            _ => {
-                usage();
-                return;
+            "--place" => {
+                if let Some(id) = args.get(i + 1) {
+                    place_list.push(id.clone());
+                    i += 1;
+                }
+            }
+            other => {
+                if other.starts_with('-') {
+                    usage();
+                    return;
+                }
+                object_list.push(other.to_string());
             }
         }
         i += 1;
     }
-    if pos_list.is_empty() && object_list.is_empty() {
+    if pos_list.is_empty() && object_list.is_empty() && place_list.is_empty() {
         usage();
         return;
     }
     let mut hits_total = 0usize;
+    for id in &object_list {
+        hits_total += object_difference(id);
+    }
     for (k, (ra, dec)) in pos_list.iter().enumerate() {
         hits_total += run_position(&Position {
             ra: *ra,
@@ -684,7 +1228,7 @@ fn main() {
             label: format!("p{}", k + 1),
         });
     }
-    for id in &object_list {
+    for id in &place_list {
         match resolve_object(id) {
             Some((ra, dec, code, _)) => {
                 println!(
@@ -704,7 +1248,7 @@ fn main() {
         }
     }
     println!(
-        "broker-difference survey: {hits_total} present read(s) across the probed position(s); every verdict is honest — pending where fewer than {VERDICT_BROKER_MIN} brokers answer, never a fabricated sky or pipeline"
+        "broker-difference survey: {hits_total} present read(s) across the probed object(s) and position(s); every verdict is honest — pending where fewer than {VERDICT_BROKER_MIN} brokers answer, never a fabricated sky or pipeline"
     );
 }
 
@@ -961,5 +1505,126 @@ mod tests {
         assert_eq!(line.read, Read::Absent);
         assert!(line.note.contains("proton0 tunnel carried the 200"));
         assert!(line.note.contains("0 honored"));
+    }
+}
+
+#[cfg(test)]
+mod object_tests {
+    use super::*;
+
+    const FINK_BODY: &[u8] = br#"[
+        {"i:objectId":"ZTF20acigmel","i:jd":2459136.6757755,"i:ra":335.0084},
+        {"i:objectId":"ZTF20acigmel","i:jd":2459136.7137037,"i:ra":335.0084}
+    ]"#;
+    const ALERCE_BODY: &[u8] = br#"{"total":null,"items":[
+        {"oid":"ZTF20acigmel","lastmjd":59136.213703699876,"ndet":4}
+    ]}"#;
+    const LASAIR_BODY: &[u8] = br#"{"objectId":"ZTF20acigmel","objectData":{"ra":335.0084,"decl":-2.8403,"lastMjd":59136.2137}}"#;
+
+    #[test]
+    fn fink_object_counts_only_rows_with_the_requested_id() {
+        match parse_fink_object(FINK_BODY, "ZTF20acigmel") {
+            ObjectParse::Hits {
+                rows,
+                ids,
+                latest_mjd,
+            } => {
+                assert_eq!(rows, 2);
+                assert_eq!(ids, vec!["ZTF20acigmel".to_string()]);
+                assert!((latest_mjd.unwrap() - 59136.2137).abs() < 1e-3);
+            }
+            other => panic!("expected hits, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn fink_object_with_another_id_is_empty_but_recognized() {
+        match parse_fink_object(FINK_BODY, "ZTF00other") {
+            ObjectParse::Empty {
+                latest_mjd,
+                recognized: true,
+            } => assert!((latest_mjd.unwrap() - 59136.2137).abs() < 1e-3),
+            other => panic!("expected an empty recognized read, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn fink_rows_without_an_id_stay_pending_not_absent() {
+        match parse_fink_object(br#"[{"i:ra":1.0}]"#, "ZTF20acigmel") {
+            ObjectParse::Empty {
+                recognized: false, ..
+            } => {}
+            other => panic!("expected an unrecognized empty read, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn alerce_object_reads_the_items_array() {
+        match parse_alerce_object(ALERCE_BODY, "ZTF20acigmel") {
+            ObjectParse::Hits {
+                rows,
+                ids,
+                latest_mjd,
+            } => {
+                assert_eq!(rows, 1);
+                assert_eq!(ids, vec!["ZTF20acigmel".to_string()]);
+                assert!((latest_mjd.unwrap() - 59136.2137).abs() < 1e-3);
+            }
+            other => panic!("expected hits, got {other:?}"),
+        }
+        assert!(matches!(
+            parse_alerce_object(br#"{"items":[]}"#, "ZTF20acigmel"),
+            ObjectParse::Empty {
+                recognized: false,
+                ..
+            }
+        ));
+    }
+
+    #[test]
+    fn lasair_object_reads_the_wrapped_object_id() {
+        match parse_lasair_object(LASAIR_BODY, "ZTF20acigmel") {
+            ObjectParse::Hits { rows, ids, .. } => {
+                assert_eq!(rows, 1);
+                assert_eq!(ids, vec!["ZTF20acigmel".to_string()]);
+            }
+            other => panic!("expected hits, got {other:?}"),
+        }
+        assert!(matches!(
+            parse_lasair_object(br#"{"objectId":"ZTF00other"}"#, "ZTF20acigmel"),
+            ObjectParse::Empty {
+                recognized: true,
+                ..
+            }
+        ));
+    }
+
+    #[test]
+    fn a_401_is_a_refused_finding_with_zero_hits() {
+        let line = object_line(
+            "lasair",
+            Some((
+                "401".to_string(),
+                br#"{"detail":"Authentication credentials were not provided."}"#.to_vec(),
+            )),
+            parse_lasair_object,
+            "ZTF20acigmel",
+        );
+        assert_eq!(line.hits, 0);
+        assert!(line.answered);
+        assert!(line.refused);
+        assert!(line.note.contains("HTTP 401"));
+        assert!(line.note.contains("access refused"));
+        assert!(!line.note.contains("absent"));
+    }
+
+    #[test]
+    fn a_stall_is_no_answer_and_not_a_negative() {
+        let line = object_line("fink", None, parse_fink_object, "ZTF20acigmel");
+        assert_eq!(line.status, "000");
+        assert!(!line.answered);
+        assert!(!line.refused);
+        assert_eq!(line.hits, 0);
+        assert!(line.note.contains("no statement about absence"));
     }
 }
