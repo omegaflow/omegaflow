@@ -48,6 +48,21 @@ fn nums(value: Option<&JsonVal>) -> Vec<f64> {
     }
 }
 
+fn bools(value: Option<&JsonVal>) -> Vec<bool> {
+    match value {
+        Some(JsonVal::Arr(items)) => items
+            .iter()
+            .filter_map(|v| match v {
+                JsonVal::Bool(b) => Some(*b),
+                JsonVal::Num(n) => Some(*n != 0.0),
+                _ => None,
+            })
+            .collect(),
+        Some(JsonVal::Bool(b)) => vec![*b],
+        _ => Vec::new(),
+    }
+}
+
 fn solve3(mut a: [[f64; 3]; 3], mut b: [f64; 3]) -> Option<[f64; 3]> {
     for col in 0..3 {
         let mut pivot = col;
@@ -113,6 +128,71 @@ fn fit_pm(ts: &[f64], al: &[f64], pa: &[f64]) -> Option<(f64, f64, f64)> {
     Some((pm_ra, pm_dec, rms.sqrt()))
 }
 
+fn solve4(mut a: [[f64; 4]; 4], mut b: [f64; 4]) -> Option<[f64; 4]> {
+    for col in 0..4 {
+        let mut pivot = col;
+        for row in col + 1..4 {
+            if a[row][col].abs() > a[pivot][col].abs() {
+                pivot = row;
+            }
+        }
+        if a[pivot][col].abs() < 1e-18 {
+            return None;
+        }
+        a.swap(col, pivot);
+        b.swap(col, pivot);
+        let d = a[col][col];
+        for k in col..4 {
+            a[col][k] /= d;
+        }
+        b[col] /= d;
+        for row in 0..4 {
+            if row == col {
+                continue;
+            }
+            let f = a[row][col];
+            for k in col..4 {
+                a[row][k] -= f * a[col][k];
+            }
+            b[row] -= f * b[col];
+        }
+    }
+    Some(b)
+}
+
+fn fit_pm4(ts: &[f64], al: &[f64], pa: &[f64], pf: &[f64]) -> Option<(f64, f64, f64, f64)> {
+    let n = ts.len().min(al.len()).min(pa.len()).min(pf.len());
+    if n < 4 {
+        return None;
+    }
+    let mt = ts[..n].iter().sum::<f64>() / n as f64;
+    let mut ata = [[0.0f64; 4]; 4];
+    let mut atb = [0.0f64; 4];
+    for i in 0..n {
+        let dt = ts[i] - mt;
+        let p = pa[i].to_radians();
+        let row = [dt * p.sin(), dt * p.cos(), pf[i], 1.0];
+        for r in 0..4 {
+            atb[r] += row[r] * al[i];
+            for c in 0..4 {
+                ata[r][c] += row[r] * row[c];
+            }
+        }
+    }
+    let [pm_ra, pm_dec, plx, c] = solve4(ata, atb)?;
+    let rms = (0..n)
+        .map(|i| {
+            let dt = ts[i] - mt;
+            let p = pa[i].to_radians();
+            let model = pm_ra * dt * p.sin() + pm_dec * dt * p.cos() + plx * pf[i] + c;
+            let r = al[i] - model;
+            r * r
+        })
+        .sum::<f64>()
+        / n as f64;
+    Some((pm_ra, pm_dec, plx, rms.sqrt()))
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let Some(path) = arg_value(&args, "--xml") else {
@@ -135,7 +215,7 @@ fn main() {
 
     // Group by (ra0, dec0) — exact enough for 12 distinct sources and immune to
     // the f64 rounding of the 64-bit source_id in the generic VOTable reader.
-    let mut groups: BTreeMap<(i64, i64), Vec<(f64, f64, f64)>> = BTreeMap::new();
+    let mut groups: BTreeMap<(i64, i64), Vec<(f64, f64, f64, f64)>> = BTreeMap::new();
     let mut ids: BTreeMap<(i64, i64), f64> = BTreeMap::new();
     for row in &rows {
         let ra0 = jnum(row, "ra0");
@@ -150,28 +230,44 @@ fn main() {
         let times = nums(field(row, "obs_time_tcb"));
         let al = nums(field(row, "centroid_pos_al"));
         let pa = nums(field(row, "scan_pos_angle"));
+        let pf = jnum(row, "parallax_factor_al").unwrap_or(0.0);
+        let used = bools(field(row, "used_by_agis_al"));
         let entry = groups.entry(key).or_default();
         for i in 0..times.len().min(al.len()).min(pa.len()) {
+            if !used.is_empty() && i < used.len() && !used[i] {
+                continue;
+            }
             // ns since the VOTable time origin; the origin cancels in a slope.
             let years = times[i] / 1e9 / 86400.0 / 365.25;
-            entry.push((years, al[i], pa[i]));
+            entry.push((years, al[i], pa[i], pf));
         }
     }
 
     println!("sources {}", groups.len());
     for (key, epochs) in &groups {
-        let ts: Vec<f64> = epochs.iter().map(|(t, _, _)| *t).collect();
-        let al: Vec<f64> = epochs.iter().map(|(_, a, _)| *a).collect();
-        let pa: Vec<f64> = epochs.iter().map(|(_, _, p)| *p).collect();
+        let ts: Vec<f64> = epochs.iter().map(|(t, _, _, _)| *t).collect();
+        let al: Vec<f64> = epochs.iter().map(|(_, a, _, _)| *a).collect();
+        let pa: Vec<f64> = epochs.iter().map(|(_, _, p, _)| *p).collect();
+        let pf: Vec<f64> = epochs.iter().map(|(_, _, _, f)| *f).collect();
         let span = ts
             .iter()
             .fold((f64::INFINITY, f64::NEG_INFINITY), |(lo, hi), t| {
                 (lo.min(*t), hi.max(*t))
             });
-        let (pm_ra, pm_dec, rms) =
-            fit_pm(&ts, &al, &pa).unwrap_or((f64::NAN, f64::NAN, f64::NAN));
+        let use_plx = pf.iter().any(|p| p.abs() > 1e-9);
+        let (pm_ra, pm_dec, plx, rms) = if use_plx {
+            match fit_pm4(&ts, &al, &pa, &pf) {
+                Some((a, d, p, r)) => (a, d, Some(p), r),
+                None => (f64::NAN, f64::NAN, None, f64::NAN),
+            }
+        } else {
+            match fit_pm(&ts, &al, &pa) {
+                Some((a, d, r)) => (a, d, None, r),
+                None => (f64::NAN, f64::NAN, None, f64::NAN),
+            }
+        };
         println!(
-            "source_id {:.0} ra0 {:.6} dec0 {:.6} | epochs {} | span {:.2} a | pm_ra {:+.4} mas/a | pm_dec {:+.4} mas/a | rms {:.3} mas",
+            "source_id {:.0} ra0 {:.6} dec0 {:.6} | epochs {} | span {:.2} a | pm_ra {:+.4} mas/a | pm_dec {:+.4} mas/a | plx {} | rms {:.3} mas",
             ids.get(key).copied().unwrap_or(f64::NAN),
             key.0 as f64 / 1e6,
             key.1 as f64 / 1e6,
@@ -179,6 +275,7 @@ fn main() {
             span.1 - span.0,
             pm_ra,
             pm_dec,
+            plx.map(|p| format!("{p:+.4} mas")).unwrap_or_else(|| "n/a".into()),
             rms
         );
     }
