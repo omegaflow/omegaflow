@@ -112,6 +112,9 @@ fn ledger_matches(requested: &str, name: &str) -> bool {
         || name
             .strip_prefix(requested)
             .is_some_and(|rest| rest.starts_with('-') && rest.len() > 1)
+        || requested
+            .strip_prefix(name)
+            .is_some_and(|rest| rest.starts_with('-') && rest.len() > 1)
 }
 
 fn matching_ledgers_in(root: &Path, line: &str) -> Result<Vec<String>, String> {
@@ -509,7 +512,10 @@ fn cmd_transition(args: &[String], state: &str) -> i32 {
         Ok(n) => n,
         Err(e) => fail(&e),
     };
-    if !ledgers.iter().any(|n| n == &parsed.line) {
+    if !ledgers
+        .iter()
+        .any(|n| ledger_matches(&parsed.line, n) || ledger_matches(n, &parsed.line))
+    {
         fail(&format!(
             "{}: token line {} has no ledger under --line {} (ledgers: {})",
             state.to_lowercase(),
