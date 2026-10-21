@@ -40,7 +40,7 @@ ttl 1
 field aodn_temperature aodn_temperature exponential-decay thermal K 1 0.0 0.0
 
 url https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=F&format=json
-terms vires-esa-data-terms https://vires.services/
+terms vires-esa-attribution https://vires.services/
 ttl 4
 at earth
 hapi F=cryosat_magnetic_field_intensity_nt
@@ -55,7 +55,7 @@ hapi absorption=ucalgary_riometer_absorption_db
 field ucalgary_riometer_absorption_db ucalgary_riometer_absorption_db inverse-square em dB 5 0.0 0.0
 
 url https://vires.services/hapi/data?id=GF_OPER_NE__KBR_2F&start=2024-11-17T20:00:00Z&stop=2024-11-17T20:59:59Z&parameters=Distance,Absolute_Ne&format=json
-terms vires-esa-data-terms https://vires.services/
+terms vires-esa-attribution https://vires.services/
 ttl 5
 at earth
 hapi Distance=gracefo_kbr_inter_satellite_distance_m Absolute_Ne=gracefo_kbr_absolute_electron_density_m3
@@ -64,7 +64,7 @@ channel mass:primary:poisson:elliptic:vacuum:unspecified:none m/s^2
 field gracefo_kbr_absolute_electron_density_m3 gracefo_kbr_absolute_electron_density_m3 inverse-square em 1/m3 5 0.0 0.0
 
 url https://vires.services/hapi/data?id=CH_OPER_DNS_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=density&format=json
-terms vires-esa-data-terms https://vires.services/
+terms vires-esa-attribution https://vires.services/
 ttl 10
 at earth
 hapi density=champ_thermosphere_density_kgm3
@@ -72,14 +72,14 @@ field champ_thermosphere_density_kgm3 champ_thermosphere_density_kgm3 gaussian-i
 channel mass:primary:flux-fick:parabolic:fluid:unspecified:none kg/m^3
 
 url https://vires.services/hapi/data?id=CH_OPER_TEC_TMS_2F&start=2010-09-03T20:00:00Z&stop=2010-09-03T20:59:59Z&parameters=Absolute_VTEC&format=json
-terms vires-esa-data-terms https://vires.services/
+terms vires-esa-attribution https://vires.services/
 ttl 10
 at earth
 hapi Absolute_VTEC=champ_absolute_vertical_tec_tecu
 field champ_absolute_vertical_tec_tecu champ_absolute_vertical_tec_tecu inverse-square em TECU 10 0.0 0.0
 
 url https://vires.services/hapi/data?id=CH_OPER_WND_ACC_2_&start=2009-06-01T00:00:00Z&stop=2009-06-01T00:59:59Z&parameters=crosswind&format=json
-terms vires-esa-data-terms https://vires.services/
+terms vires-esa-attribution https://vires.services/
 ttl 10
 at earth
 hapi crosswind=champ_thermosphere_crosswind_ms
@@ -87,14 +87,14 @@ field champ_thermosphere_crosswind_ms champ_thermosphere_crosswind_ms gaussian-i
 channel mass:primary:advective:advective:fluid:unspecified:none kg/(m^2 s)
 
 url https://vires.services/hapi/data?id=GR_OPER_DNS1ACC_2_&start=2017-10-31T20:00:00Z&stop=2017-10-31T20:59:59Z&parameters=density&format=json
-terms vires-esa-data-terms https://vires.services/
+terms vires-esa-attribution https://vires.services/
 ttl 10
 at earth
 hapi density=grace_thermosphere_density_kgm3
 field grace_thermosphere_density_kgm3 grace_thermosphere_density_kgm3 gaussian-inverse-square diffusion kg/m3 10 0.0 0.0
 
 url https://vires.services/hapi/data?id=GO_MAG_ACAL_CORR&start=2013-09-30T00:00:00Z&stop=2013-09-30T00:59:59Z&parameters=F&format=json
-terms vires-esa-data-terms https://vires.services/
+terms vires-esa-attribution https://vires.services/
 ttl 16
 at earth
 hapi F=goce_magnetic_field_intensity_nt
@@ -156,7 +156,7 @@ format quakeml
 quakeml usgs_mt_m0_nm usgs_mt_mww 6.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.impc.dlr.de/impc_roti.bin
-terms per-service-terms https://data.impc.dlr.de/service/license-agreement
+terms dlr-license https://data.impc.dlr.de/service/license-agreement
 format impc_roti
 origin https://data.impc.dlr.de/roti/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL/latest/DLR_GNSS_GCG_L3_ROTI-MAX_NC_GLOBAL_latest_D.json
 compiler tools/harvest/src/bin/impc_roti_compiler.rs
@@ -1950,7 +1950,7 @@ field EWCT emodnet_hfr_eastward_m_s patch-levy advective m/s 21600 0.0 0.0
 field NSCT emodnet_hfr_northward_m_s patch-levy advective m/s 21600 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/exofop_toi.bin
-terms per-service-terms https://exofop.ipac.caltech.edu/tess/pcp.php
+terms PD-USGov https://exofop.ipac.caltech.edu/tess/pcp.php
 format exofop_toi
 origin https://exofop.ipac.caltech.edu/tess/download_toi.php?sort=toi&output=pipe
 compiler tools/harvest/src/bin/exofop_compiler.rs
@@ -7688,7 +7688,7 @@ field magnetosphere_total_field_nt magnetosphere_total_field_nt inverse-square e
 
 url https://irsa.ipac.caltech.edu/data/Planck/release_3/ancillary-data/cosmoparams/COM_CosmoParams_base-plikHM-TTTEEE-lowl-lowE_R3.00.zip
 format reference
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 sha256 52cf6793f14e250ffc1436ce7f6fe6d92f6a066c433ec9efc66e4178f3d45a1f
 ttl 86400
 
@@ -7799,14 +7799,14 @@ at earth
 ttl 86400
 
 url https://vires.services/hapi/data?id=CH_ME_MAG_LR_3&start=2010-09-17T20:00:00Z&stop=2010-09-17T20:59:59Z&parameters=F&format=json
-terms vires-esa-data-terms https://vires.services/
+terms vires-esa-attribution https://vires.services/
 ttl 86400
 at earth
 hapi F=champ_magnetic_field_intensity_nt
 field champ_magnetic_field_intensity_nt champ_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
 
 url https://vires.services/hapi/data?id=SW_FAST_EFIA_LP_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=N_ion,T_elec,Vs&format=json
-terms vires-esa-data-terms https://vires.services/
+terms vires-esa-attribution https://vires.services/
 ttl 86400
 at earth
 hapi N_ion=swarm_ion_density_cm3 T_elec=swarm_electron_temp_k Vs=swarm_spacecraft_potential_v
@@ -7815,7 +7815,7 @@ field swarm_electron_temp_k swarm_electron_temp_k exponential-decay thermal K 86
 field swarm_spacecraft_potential_v swarm_spacecraft_potential_v inverse-square electric V 86400 0.0 0.0
 
 url https://vires.services/hapi/data?id=SW_FAST_FACATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=IRC,FAC&format=json
-terms vires-esa-data-terms https://vires.services/
+terms vires-esa-attribution https://vires.services/
 ttl 86400
 at earth
 hapi IRC=swarm_ionospheric_radial_current_uam2 FAC=swarm_field_aligned_current_uam2
@@ -7823,14 +7823,14 @@ field swarm_ionospheric_radial_current_uam2 swarm_ionospheric_radial_current_uam
 field swarm_field_aligned_current_uam2 swarm_field_aligned_current_uam2 inverse-square electric uA/m2 86400 0.0 0.0
 
 url https://vires.services/hapi/data?id=SW_FAST_MAGA_LR_1B&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=F&format=json
-terms vires-esa-data-terms https://vires.services/
+terms vires-esa-attribution https://vires.services/
 ttl 86400
 at earth
 hapi F=swarm_magnetic_field_intensity_nt
 field swarm_magnetic_field_intensity_nt swarm_magnetic_field_intensity_nt inverse-square em nT 86400 0.0 0.0
 
 url https://vires.services/hapi/data?id=SW_FAST_TECATMS_2F&start={yesterday}T12:00:00Z&stop={yesterday}T13:00:00Z&parameters=Absolute_VTEC&format=json
-terms vires-esa-data-terms https://vires.services/
+terms vires-esa-attribution https://vires.services/
 ttl 86400
 at earth
 hapi Absolute_VTEC=swarm_absolute_vertical_tec_tecu
@@ -9441,7 +9441,7 @@ quantity teff galah_dr3_effective_temp_k erfc source-parameter K 604800 0.0 0.0
 field rv_galah galah_dr3_radial_velocity_kms gaussian-inverse-square advective km/s 604800 0.0 0.0
 
 url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,flux_dens_blue,flux_dens_red+FROM+ohmaser.masers+WHERE+flux_dens_red+IS+NOT+NULL
-terms per-service-terms https://dc.g-vo.org/
+terms attribution https://dc.g-vo.org/
 ttl 604800
 at sun
 cmap .
@@ -9451,7 +9451,7 @@ field flux_dens_red ohmaser_flux_red_jy inverse-square em Jy 604800 0.0 0.0
 field flux_dens_blue ohmaser_flux_blue_jy inverse-square em Jy 604800 0.0 0.0
 
 url https://dc.g-vo.org/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+TOP+3000+raj2000,dej2000,rv,teff_k,Jmag,parallax+FROM+rave.main+WHERE+parallax+IS+NOT+NULL
-terms per-service-terms https://dc.g-vo.org/
+terms attribution https://dc.g-vo.org/
 ttl 604800
 at sun
 cmap .
@@ -9803,7 +9803,7 @@ quantity emtf_zyy_im emtf_zyy_im inverse-square impedance ohm 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.fingrid.fi/fingrid_datasets.bin
 origin https://data.fingrid.fi/api/datasets
-terms per-service-terms https://data.fingrid.fi/en/instructions
+terms fingrid-open https://data.fingrid.fi/en/instructions
 compiler tools/harvest/src/bin/fingrid_compiler.rs
 format fingrid_datasets
 sha256 1779eabe9aed7fff9344a49ed147df064bd8914b3759faf09af443e929084439
@@ -9965,7 +9965,7 @@ at earth
 ttl 604800
 
 url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/magnetar_flat.json
-terms per-service-terms https://exofop.ipac.caltech.edu/tess/pcp.php
+terms PD-USGov https://exofop.ipac.caltech.edu/tess/pcp.php
 origin https://www.physics.mcgill.ca/~pulsar/magnetar/TabO1.csv
 compiler tools/harvest/src/bin/sexagesimal_compiler.rs
 ttl 604800
@@ -9979,7 +9979,7 @@ z z
 field pb magnetar_period_s gaussian-inverse-square em s 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/tess_lightcurves.bin
-terms per-service-terms https://exofop.ipac.caltech.edu/tess/pcp.php
+terms PD-USGov https://exofop.ipac.caltech.edu/tess/pcp.php
 origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync (pscomppars) ; https://mast.stsci.edu/api/v0/invoke
 compiler tools/harvest/src/bin/tess_compiler.rs
 format lightcurve
@@ -9987,7 +9987,7 @@ ttl 604800
 at sun
 
 url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/tevcat_flat.json
-terms per-service-terms https://exofop.ipac.caltech.edu/tess/pcp.php
+terms PD-USGov https://exofop.ipac.caltech.edu/tess/pcp.php
 origin https://tevcat2.tevcat.org/api/sources ; https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 compiler tools/harvest/src/bin/sexagesimal_compiler.rs
 ttl 604800
@@ -10195,7 +10195,7 @@ field gz lpf_drs_dg_z_ms2 primary mass poisson elliptic vacuum none inverse-squa
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/cmb_planck_smica_n64.json
 origin https://irsa.ipac.caltech.edu/data/Planck/release_3/all-sky-maps/maps/component-maps/cmb/COM_CMB_IQU-smica_2048_R3.00_full.fits
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 compiler tools/harvest/src/bin/cmb_planck_compiler.rs
 ttl 604800
 at sun
@@ -10207,7 +10207,7 @@ field T cmb_planck_smica_T gaussian-inverse-square thermal K 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/planck_dust_av_rq_n512.json
 origin https://irsa.ipac.caltech.edu/data/Planck/release_2/all-sky-maps/maps/component-maps/foregrounds/COM_CompMap_Dust-DL07-AvMaps_2048_R2.00.fits
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 compiler tools/harvest/src/bin/dust_map_compiler.rs
 ttl 604800
 at sun
@@ -10220,7 +10220,7 @@ quantity av_rq planck_dust_av_rq_mag gaussian-inverse-square source-parameter ma
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/planck_psz2_sz_mmf3.json
 origin https://irsa.ipac.caltech.edu/TAP/sync (ADQL planck.com_pccs2_sz_mmf3 name,ra,dec,snr; redshift crossmatch planck.com_pccs2_sz_union)
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 compiler tools/harvest/src/bin/planck_psz2_compiler.rs
 sha256 12fb5a1d079b6bc7af617336de2070da55f5e2e1af033383358c3310aed12c49
 ttl 604800
@@ -10235,7 +10235,7 @@ url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu
 origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves (Katalog dr3_stars.bin)
 compiler tools/harvest/src/bin/ztf_lightcurves_compiler.rs
 format lightcurve
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 ttl 604800
 at sun
 
@@ -10243,7 +10243,7 @@ url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu
 origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves (cone ra=210 dec=+30)
 compiler tools/harvest/src/bin/ztf_lightcurves_compiler.rs
 format lightcurve
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 ttl 604800
 at sun
 
@@ -10499,7 +10499,7 @@ field las_classification las_classification erfc diffusion 1 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/openenergyhub.ornl.gov/oe417.bin
 origin https://openenergyhub.ornl.gov/api/records/1.0/download/?dataset=oe-417-annual-summaries&format=csv
-terms per-service-terms https://openenergyhub.ornl.gov/terms/terms-and-conditions/
+terms attribution https://openenergyhub.ornl.gov/terms/terms-and-conditions/
 compiler tools/harvest/src/bin/oe417_compiler.rs
 sha256 282bc3a1cdc173d9031bd82f966f5adcd75e316c642ac7e6b92ffe68e9e5e848
 format oe417
@@ -11273,7 +11273,7 @@ origin https://ssd-api.jpl.nasa.gov/sbdb_query.api ; https://www.minorplanetcent
 compiler tools/harvest/src/bin/kbo_compiler.rs
 ttl 604800
 format json
-terms per-service-terms https://ssd-api.jpl.nasa.gov/
+terms PD-USGov https://ssd-api.jpl.nasa.gov/
 at sun
 keplermap data a e i
 om om
@@ -12193,13 +12193,13 @@ field decaps_dr2_rv_km_s decaps_dr2_rv_km_s gaussian-inverse-square advective km
 quantity decaps_dr2_g_mag decaps_dr2_g_mag inverse-square source-parameter mag 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/dc.g-vo.org/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_raj2000_dej2000_flux_dens_blue_flux_dens_red_FROM_ohmaser.masers_WHERE_flux_dens_red_IS_NOT_NULL.json
-terms per-service-terms https://dc.g-vo.org
+terms attribution https://dc.g-vo.org
 format reference
 origin https://dc.g-vo.org
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/dc.g-vo.org/tap-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_raj2000_dej2000_rv_teff_k_Jmag_parallax_FROM_rave.main_WHERE_parallax_IS_NOT_NULL.json
-terms per-service-terms https://dc.g-vo.org
+terms attribution https://dc.g-vo.org
 format reference
 origin https://dc.g-vo.org
 ttl 31536000
@@ -12296,25 +12296,25 @@ field hess_dl3 hess_dl3 inverse-square em tev 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/TAP-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_name_ra_dec_b1_b2_a_c_d_e_FROM_msxc6_WHERE_a_IS_NOT_NULL.json
 format reference
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 origin https://irsa.ipac.caltech.edu/TAP/sync
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/TAP-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_objname_ra_dec_flux65_flux90_flux140_flux160_FROM_akari_fis_WHERE_flux90_IS_NOT_NULL.json
 format reference
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 origin https://irsa.ipac.caltech.edu/TAP/sync
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/TAP-sync-REQUEST-doQuery-LANG-ADQL-FORMAT-json-QUERY-SELECT_TOP_3000_ra_dec_fnu_12_fnu_25_fnu_60_fnu_100_FROM_irasfsc_WHERE_fnu_60_IS_NOT_NULL.json
 format reference
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 origin https://irsa.ipac.caltech.edu/TAP/sync
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/allwise_psd.bin
 format catalog_allwise_psd
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 origin https://irsa.ipac.caltech.edu/TAP/async (ADQL allsky_4band_p3as_psd, TOP 5000)
 compiler tools/harvest/src/bin/allwise_tap_compiler.rs
 ttl 31536000
@@ -12331,25 +12331,25 @@ field w4snr allwise_w4_snr inverse-square em 1 31536000 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/nph-dust.json
 format reference
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/nph-query.json
 format reference
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/sync.json
 format reference
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves
 ttl 31536000
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/twomass_psc.bin
 format twomass_psc
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 origin https://irsa.ipac.caltech.edu/2MASS/download/allsky/
 compiler tools/harvest/src/bin/twomass_compiler.rs
 sha256 8448b0bb6afb18ae720a9dcf78ee69f636cbbd33bf1bb669a1d0dbecf4364d92
@@ -12516,7 +12516,7 @@ ttl 31536000
 
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+iraspsc+WHERE+fnu_12+IS+NOT+NULL
 format tap
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 ttl 31536000
 at sun
 cmap .
@@ -13985,7 +13985,7 @@ sha256 1f2dc8aa18d44e8575b3920ec7af3cafd9e6d98f53b3e24a390635f68b078309
 no-cadence
 
 url http://www.wdcb.ru/sep/
-terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+terms wdcb-nc http://www.wdcb.ru/sep/policy.html
 format reference
 sha256 55ed81c6222363aaed1c080486e43a4ea2f48a073ceaf371f55963c0f0640291
 no-cadence
@@ -13998,7 +13998,7 @@ force em
 no-cadence
 
 url https://api.opentopodata.org/v1/gebco2020?locations=<lat>,<lng>
-terms per-service-terms https://www.gebco.net/data-products/gridded-bathymetry/terms-of-use
+terms gebco-terms https://www.gebco.net/data-products/gridded-bathymetry/terms-of-use
 witness gestalt
 record gbco
 no-cadence
@@ -14037,13 +14037,13 @@ record gl30
 no-cadence
 
 url https://dap.ceda.ac.uk/thredds/dodsC/bodc/gebco/global/gebco_2023/ice_surface_elevation/netcdf/GEBCO_2023_CF.nc.ascii?elevation[0:215:43199][0:431:86399]
-terms per-service-terms https://www.gebco.net/data-products/gridded-bathymetry/terms-of-use
+terms gebco-terms https://www.gebco.net/data-products/gridded-bathymetry/terms-of-use
 witness gestalt
 record gbco
 no-cadence
 
 url https://dap.ceda.ac.uk/thredds/dodsC/bodc/gebco/global/gebco_2026/ice_surface_elevation/netcdf/GEBCO_2026.nc.ascii?elevation[0:215:43199][0:431:86399]
-terms per-service-terms https://www.gebco.net/data-products/gridded-bathymetry/terms-of-use
+terms gebco-terms https://www.gebco.net/data-products/gridded-bathymetry/terms-of-use
 witness gestalt
 record gbco
 no-cadence
@@ -14561,7 +14561,7 @@ no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/2mass_binary.fp01
 origin https://irsa.ipac.caltech.edu/TAP/sync
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 format fp01
 compiler tools/harvest/src/bin/2mass_binary_compiler.rs
 band j h ks
@@ -14570,7 +14570,7 @@ no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/allwise_coverage.fp01
 origin https://irsa.ipac.caltech.edu/ibe/data/wise/allwise/p3am_cdd/
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 format fp01
 compiler tools/harvest/src/bin/wise_coverage_combiner.rs
 band w1 w2 w3 w4
@@ -14578,7 +14578,7 @@ footprint allwise_coverage.fp01
 no-cadence
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/ztf_objects_dr24.json
-terms per-service-terms https://irsa.ipac.caltech.edu/data_use_terms.html
+terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 origin https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+ztf.ztf_objects_dr24
 format tap
 at sun
@@ -30180,7 +30180,7 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 c252fd358d4e61ca98a5dbfd096ff2ff2df3a1e9eb1db7bf9a86b011e1bad067
 at earth
 no-cadence
-terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+terms wdcb-nc http://www.wdcb.ru/sep/policy.html
 
 url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat002.dat
 origin http://www.wdcb.ru/sep/seismology/catalogues/cat002.dat
@@ -30188,7 +30188,7 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 e352bf3eb858353ca7a83b349ddc99b166fda13636613b5e57f52c2dc4c12274
 at earth
 no-cadence
-terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+terms wdcb-nc http://www.wdcb.ru/sep/policy.html
 
 url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat003.gz
 origin http://www.wdcb.ru/sep/seismology/catalogues/cat003.gz
@@ -30196,7 +30196,7 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 96eb8bf017514656ccd0e2d289f1eb9fed95b46a64c15f8a6a9f4da9e9354d2c
 at earth
 no-cadence
-terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+terms wdcb-nc http://www.wdcb.ru/sep/policy.html
 
 url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat004.dat
 origin http://www.wdcb.ru/sep/seismology/catalogues/cat004.dat
@@ -30204,7 +30204,7 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 7a7dc9c2a2778bb046e769102bc5f3877214a28b49a0ea1e320bdc8e7805a100
 at earth
 no-cadence
-terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+terms wdcb-nc http://www.wdcb.ru/sep/policy.html
 
 url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat005.dat
 origin http://www.wdcb.ru/sep/seismology/catalogues/cat005.dat
@@ -30212,7 +30212,7 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 d583e01ae4b6ba31a74a2302ba2ce2ef20669049b9a725e3524e04ff203de9be
 at earth
 no-cadence
-terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+terms wdcb-nc http://www.wdcb.ru/sep/policy.html
 
 url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat006.dat
 origin http://www.wdcb.ru/sep/seismology/catalogues/cat006.dat
@@ -30220,7 +30220,7 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 984eae9e53984fe757d2755a7aa081ae9dc77e2adef9d76f7e78c1508623d21b
 at earth
 no-cadence
-terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+terms wdcb-nc http://www.wdcb.ru/sep/policy.html
 
 url https://github.com/omegaflow/sources/releases/download/www.wdcb.ru/cat007.dat
 origin http://www.wdcb.ru/sep/seismology/catalogues/cat007.dat
@@ -30228,10 +30228,10 @@ compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 a6721f52eca4fe09ae7f3a746539e105438d220f7d5e79fa2deb877def4903aa
 at earth
 no-cadence
-terms wdcb-sep-policy http://www.wdcb.ru/sep/policy.html
+terms wdcb-nc http://www.wdcb.ru/sep/policy.html
 
 url https://github.com/omegaflow/sources/releases/download/www2.census.gov/zcta_gazetteer.bin
-terms per-service-terms https://www.census.gov/data/developers/about/terms-of-service.html
+terms PD-USGov https://www.census.gov/data/developers/about/terms-of-service.html
 origin https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_Gaz_zcta_national.zip
 compiler tools/harvest/src/bin/zcta_gazetteer_compiler.rs
 format zcta_gazetteer
@@ -31222,7 +31222,7 @@ force em
 no-cadence
 
 url https://lasair-ztf.lsst.ac.uk/api/query/?selected=objectId,ramean,decmean,gmag&tables=objects&conditions=jdmax%3E{jd_start}&limit=1000&token={LASAIR_TOKEN}
-terms per-service-terms https://lasair-ztf.lsst.ac.uk/
+terms auth-required https://lasair-ztf.lsst.ac.uk/
 format lasair_ztf
 origin https://api.lasair.lsst.ac.uk/api/query/
 compiler tools/harvest/src/bin/lasair_ztf_compiler.rs
@@ -31736,7 +31736,7 @@ no-cadence
 field elev bluetopo_bathymetry_m gaussian-inverse-square geometry m 0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/data.ceda.ac.uk-gebco/gbco_elevation_gebco_2023.txt
-terms per-service-terms https://www.gebco.net/data-products/gridded-bathymetry/terms-of-use
+terms gebco-terms https://www.gebco.net/data-products/gridded-bathymetry/terms-of-use
 format gbco_axis_value_text
 origin https://dap.ceda.ac.uk/thredds/dodsC/bodc/gebco/global/gebco_2023/ice_surface_elevation/netcdf/GEBCO_2023_CF.nc.ascii?elevation[0:215:43199][0:431:86399]
 compiler tools/harvest/src/bin/gbco_series_compiler.rs
@@ -32284,7 +32284,6 @@ rows .
 lat 2
 lon 3
 
-
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-HUP060_ses-presurgery_task-interictal_acq-seeg_run-01_ieeg.bin
 terms CC0-1.0 https://openneuro.org/datasets/ds004100
 format openneuro_eeg
@@ -32378,3 +32377,4 @@ field stereo_euvi_171_mean stereo_euvi_171_mean inverse-square em 1 2592000 0.0 
 field stereo_euvi_195_mean stereo_euvi_195_mean inverse-square em 1 2592000 0.0 0.0
 field stereo_euvi_284_mean stereo_euvi_284_mean inverse-square em 1 2592000 0.0 0.0
 field stereo_euvi_304_mean stereo_euvi_304_mean inverse-square em 1 2592000 0.0 0.0
+
