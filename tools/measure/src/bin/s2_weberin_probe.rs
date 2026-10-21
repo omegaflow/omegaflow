@@ -74,7 +74,7 @@ fn main() {
 
     let mut stations: Vec<(String, f64, f64, f64)> = sources
         .iter()
-        .filter_map(|s| match &s.frame {
+        .filter_map(|s| match &s.frame() {
             Frame::Surface {
                 body_name,
                 lat,

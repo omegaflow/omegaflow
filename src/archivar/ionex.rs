@@ -222,7 +222,7 @@ pub fn build_channels(
     let Some((map, epoch)) = best else {
         return Vec::new();
     };
-    let body = frame_body_name(&src.frame);
+    let body = frame_body_name(&src.frame());
     let alt = map.alt_km * 1000.0;
     let mut channels = Vec::with_capacity(map.grid.cells.len());
     for (idx, tec) in map.grid.cells.iter().enumerate() {
