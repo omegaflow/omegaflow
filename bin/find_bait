@@ -194,6 +194,7 @@ set -- --header "$header"
 [ -n "$value" ] && set -- "$@" --value "$value"
 [ "$hex_ok" -eq 1 ] && set -- "$@" --hex "$hex"
 [ -n "$fits" ] && set -- "$@" --fits "$fits"
+[ -n "$unit" ] && set -- "$@" --unit "$unit"
 [ -n "$near" ] && set -- "$@" --near "$near"
 [ "$pdf" -eq 1 ] && set -- "$@" --pdf
 [ -n "$engine" ] && set -- "$@" --engine "$engine"

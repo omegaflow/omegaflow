@@ -1,0 +1,82 @@
+#!/bin/sh
+set -u
+export LC_ALL=C
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+schema="$root/bin/schema"
+find="$root/bin/find"
+
+usage() {
+    cat >&2 <<'EOF'
+find_schema: usage: bin/find_schema <url|file> --engine <arm> --top N [--unit <unit>] [--near <abs|N%>] [--url <ziel>]
+  <url|file>    data description or landing page read by bin/schema
+  --engine      search arm passed to bin/find
+  --top N       max candidates passed to bin/find
+  --unit        override the schema unit (the schema line is the default)
+  --near        tolerance passed to bin/find
+  --url         direct candidate passed to bin/find
+EOF
+    exit 2
+}
+
+die2() { printf 'find_schema: %s\n' "$*" >&2; exit 2; }
+die3() { printf 'find_schema: pending — %s\n' "$*" >&2; exit 3; }
+
+src=""
+engine=""
+top=""
+unit=""
+near=""
+direct=""
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --engine) [ $# -ge 2 ] && [ -n "$2" ] || usage; engine="$2"; shift 2 ;;
+        --top) [ $# -ge 2 ] && [ -n "$2" ] || usage; top="$2"; shift 2 ;;
+        --unit) [ $# -ge 2 ] && [ -n "$2" ] || usage; unit="$2"; shift 2 ;;
+        --near) [ $# -ge 2 ] && [ -n "$2" ] || usage; near="$2"; shift 2 ;;
+        --url) [ $# -ge 2 ] && [ -n "$2" ] || usage; direct="$2"; shift 2 ;;
+        -h|--help) usage ;;
+        --)
+            shift
+            [ $# -eq 1 ] || die2 "expected one source"
+            [ -z "$src" ] || die2 "more than one source"
+            src="$1"; shift ;;
+        -*) die2 "unknown option: $1" ;;
+        *) [ -z "$src" ] || die2 "more than one source: $src and $1"; src="$1"; shift ;;
+    esac
+done
+
+[ -n "$src" ] || usage
+[ -n "$engine" ] || [ -n "$direct" ] || die2 "missing --engine <arm> (or --url <target>)"
+[ -n "$top" ] || die2 "missing --top N"
+case "$top" in ''|*[!0-9]*) usage ;; esac
+[ "$top" -gt 0 ] || usage
+[ -x "$schema" ] || die2 "$schema is missing"
+[ -x "$find" ] || die2 "$find is missing"
+
+err="$(mktemp "${TMPDIR:-/tmp}/find_schema.XXXXXX.err")"
+trap 'rm -f "$err"' EXIT
+sout="$("$schema" "$src" 2>"$err")"
+rc=$?
+if [ "$rc" -ne 0 ]; then
+    msg="$(head -n 1 "$err")"
+    die3 "schema could not read $src (rc $rc): ${msg:-no detail}"
+fi
+
+header="$(printf '%s\n' "$sout" | sed -n 's/^schema header //p' | head -n 1)"
+if [ -z "$header" ]; then
+    header="$(printf '%s\n' "$sout" | sed -n 's/^schema field "\(.*\)"$/\1/p' | paste -sd, -)"
+fi
+[ -z "$unit" ] && unit="$(printf '%s\n' "$sout" | sed -n 's/^schema unit "\(.*\)"$/\1/p' | head -n 1)"
+[ -n "$header" ] || die3 "no header or field lines for $src"
+
+set -- --header "$header"
+[ -n "$unit" ] && set -- "$@" --unit "$unit"
+[ -n "$near" ] && set -- "$@" --near "$near"
+[ -n "$direct" ] && set -- "$@" --url "$direct"
+[ -n "$engine" ] && set -- "$@" --engine "$engine"
+set -- "$@" --top "$top"
+
+printf 'find_schema: header %s\n' "$header" >&2
+[ -n "$unit" ] && printf 'find_schema: unit %s\n' "$unit" >&2
+exec "$find" "$@"

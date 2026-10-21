@@ -18,6 +18,7 @@ top=""
 header=""
 direct=""
 fits=""
+unit=""
 value=""
 hex=""
 ctx=""
@@ -29,9 +30,10 @@ raw_links=1
 
 usage() {
     cat >&2 <<'EOF'
-find: usage: bin/find [--header "a,b,c"] [--value <zahl>[,<zahl>...]] [--hex <hex>] [--fits "K=V,K=V"] [--context "<begriff>"] [--pdf] [--near <abs|N%>] [--jsonl <datei>] [--terms <datei=token,...>] [--raw-links|--no-raw-links] --engine <kanal> --top N
+find: usage: bin/find [--header "a,b,c"] [--value <zahl>[,<zahl>...]] [--hex <hex>] [--fits "K=V,K=V"] [--unit <einheit>] [--context "<begriff>"] [--pdf] [--near <abs|N%>] [--jsonl <datei>] [--terms <datei=token,...>] [--raw-links|--no-raw-links] --engine <kanal> --top N
   mindestens ein Köder: --header, --value oder --hex
   --header      alle Spaltennamen müssen im sniffed header stehen
+  --unit        die gesniffte Einheit muss passen (normalisiert)
   --value       der Wert muss im Text stehen, sonst unbewiesen
   --hex         pattern=<hex> muss Treffer melden
   --jsonl       je Kandidat eine JSON-Zeile (url, title, Zustände, verdict, terms)
@@ -47,6 +49,7 @@ while [ $# -gt 0 ]; do
     case "$1" in
         --header) [ $# -ge 2 ] && [ -n "$2" ] || usage; header="$2"; shift 2 ;;
         --fits) [ $# -ge 2 ] && [ -n "$2" ] || usage; fits="$2"; shift 2 ;;
+        --unit) [ $# -ge 2 ] && [ -n "$2" ] || usage; unit="$2"; shift 2 ;;
         --url) [ $# -ge 2 ] && [ -n "$2" ] || usage; direct="$2"; shift 2 ;;
         --value)  [ $# -ge 2 ] && [ -n "$2" ] || usage; value="$2"; shift 2 ;;
         --hex)    [ $# -ge 2 ] && [ -n "$2" ] || usage; hex="$2"; shift 2 ;;
@@ -65,7 +68,7 @@ done
 
 [ -n "$engine" ] || [ -n "$direct" ] || usage
 [ -n "$top" ] || usage
- [ -n "$header$value$hex$fits" ] || usage
+ [ -n "$header$value$hex$fits$unit" ] || usage
 
 if [ -z "$header" ] && [ -z "$hex" ] && [ -n "$value" ]; then
     case "$value" in
@@ -170,6 +173,10 @@ if [ -n "$jsonl" ]; then
         exit 2
     fi
 fi
+
+unorm() {
+    printf '%s' "$1" | tr 'A-Z' 'a-z' | tr -d '[:space:]'
+}
 
 json_escape() {
     printf '%s' "$1" | tr '\n\r\t' '   ' | sed 's/\\/\\\\/g; s/"/\\"/g'
@@ -412,6 +419,20 @@ probe_url() {
             fi
         fi
     fi
+    st_unit=""
+    st_unit_note=""
+    if [ -n "$unit" ]; then
+        unit_line="$(printf '%s\n' "$sniff_out" | sed -n 's/^\(\[sniff\] \)\{0,1\}unit //p' | head -n 1)"
+        if [ -z "$unit_line" ] || [ "$unit_line" = "absent" ]; then
+            st_unit="fehlt"
+            st_unit_note="keine unit im Prefix"
+        elif [ "$(unorm "$unit_line")" = "$(unorm "$unit")" ]; then
+            st_unit="erfüllt"
+        else
+            st_unit="daneben"
+            st_unit_note="unit $unit_line != $unit"
+        fi
+    fi
     st_value=""
     st_value_note=""
     if [ -n "$value" ]; then
@@ -498,6 +519,7 @@ probe_url() {
     st_ok=1
     if [ -n "$header" ] && [ "$st_header" != erfüllt ]; then st_ok=0; fi
     if [ -n "$fits" ] && [ "$st_fits" != erfüllt ]; then st_ok=0; fi
+    if [ -n "$unit" ] && [ "$st_unit" != erfüllt ]; then st_ok=0; fi
     if [ -n "$value" ] && [ "$st_value" != erfüllt ]; then st_ok=0; fi
     if [ -n "$hex" ] && [ "$st_hex" != erfüllt ]; then st_ok=0; fi
 
@@ -506,6 +528,7 @@ probe_url() {
         near_ok=1
         if [ -n "$header" ] && [ "$st_header" != erfüllt ]; then near_ok=0; fi
         if [ -n "$fits" ] && [ "$st_fits" != erfüllt ]; then near_ok=0; fi
+        if [ -n "$unit" ] && [ "$st_unit" != erfüllt ]; then near_ok=0; fi
         if [ -n "$hex" ] && [ "$st_hex" != erfüllt ]; then near_ok=0; fi
         [ "$near_ok" -eq 1 ] && st_near=1
     fi
@@ -532,13 +555,14 @@ emit_result() {
         verdict="kein-match"
     fi
     if [ -n "$jsonl" ]; then
-        printf '{"url":"%s","title":"%s","header_state":"%s","value_state":"%s","hex_state":"%s","fits_state":"%s","verdict":"%s","terms":"%s"}\n' \
+        printf '{"url":"%s","title":"%s","header_state":"%s","value_state":"%s","hex_state":"%s","fits_state":"%s","unit_state":"%s","verdict":"%s","terms":"%s"}\n' \
             "$(json_escape "$eurl")" \
             "$(json_escape "$etitle")" \
             "$(json_escape "$st_header")" \
             "$(json_escape "$st_value")" \
             "$(json_escape "$st_hex")" \
             "$(json_escape "$st_fits")" \
+            "$(json_escape "$st_unit")" \
             "$(json_escape "$verdict")" \
             "$(json_escape "$(term_for_url "$eurl")")" >>"$jsonl"
     fi
@@ -546,6 +570,7 @@ emit_result() {
     [ -n "$etitle" ] && printf '%s%s\n' "$eind" "$etitle"
     [ -n "$header" ] && printf '%sheader: %s%s\n' "$eind" "$st_header" "$( [ -n "$st_header_note" ] && printf ' (%s)' "$st_header_note" )"
     [ -n "$fits" ] && printf '%sfits: %s%s\n' "$eind" "$st_fits" "$( [ -n "$st_fits_note" ] && printf ' (%s)' "$st_fits_note" )"
+    [ -n "$unit" ] && printf '%sunit: %s%s\n' "$eind" "$st_unit" "$( [ -n "$st_unit_note" ] && printf ' (%s)' "$st_unit_note" )"
     [ -n "$value" ] && printf '%svalue: %s%s\n' "$eind" "$st_value" "$( [ -n "$st_value_note" ] && printf ' (%s)' "$st_value_note" )"
     [ -n "$hex" ] && printf '%shex: %s%s\n' "$eind" "$st_hex" "$( [ -n "$st_hex_note" ] && printf ' (%s)' "$st_hex_note" )"
 }
