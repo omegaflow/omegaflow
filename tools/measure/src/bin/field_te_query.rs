@@ -6335,7 +6335,7 @@ mod tests {
             kernel: 0,
             channel_ref: None,
             tau: 0.0,
-            tau_src: crate::archivar::types::TauSource::Measured,
+            tau_src: omegaflow::archivar::TauSource::Measured,
             absorption: 0.0,
             advection: 0.0,
             unit: String::new(),
