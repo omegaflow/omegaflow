@@ -174,6 +174,16 @@ fn members(group: Group) -> &'static [&'static str] {
     }
 }
 
+pub fn names_for(mode: &str) -> Vec<&'static str> {
+    let mut names = Vec::new();
+    for name in ["astro", "literature", "web", "data"] {
+        if allows(mode, name) {
+            names.push(name);
+        }
+    }
+    names
+}
+
 pub fn allows(mode: &str, name: &str) -> bool {
     match parse(name) {
         Some(Group::All) => true,

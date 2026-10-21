@@ -5452,6 +5452,23 @@ pub fn keyword_mode_count() -> usize {
     QUERY_MODES.len() - PARAMETER_MODES.len()
 }
 
+pub fn sources_text() -> String {
+    QUERY_MODES
+        .iter()
+        .filter(|mode| !PARAMETER_MODES.contains(mode))
+        .map(|mode| {
+            let groups = crate::groups::names_for(mode);
+            let groups = if groups.is_empty() {
+                "-".to_string()
+            } else {
+                groups.join(",")
+            };
+            format!("{mode}\t{groups}")
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
 const DEFAULT_ALL_STOP: usize = 20;
 const DEFAULT_ALL_JOBS: usize = 4;
 static ALL_STOP: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
@@ -6507,6 +6524,15 @@ mod tests {
     fn wiki_hit_without_title_carries_no_line() {
         let hit = json::parse(r#"{"snippet":"body"}"#).expect("json");
         assert_eq!(wiki_hit_line(&hit), None);
+    }
+
+    #[test]
+    fn sources_text_names_groups_and_hides_parameter_arms() {
+        let text = sources_text();
+        assert!(text.lines().any(|line| line == "simbad\tastro"));
+        assert!(text.lines().any(|line| line == "openalex\tliterature"));
+        assert!(!text.lines().any(|line| line.starts_with("mcp\t")));
+        assert!(!text.lines().any(|line| line.starts_with("tap\t")));
     }
 
     #[test]
