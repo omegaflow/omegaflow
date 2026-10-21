@@ -89,6 +89,27 @@ Die vier neuen keyless Arme in `archive_search` sind:
 | Bohrium Scholar | https://bohrium.dp.tech/ | 200 |
 | ZoomInfo | https://www.zoominfo.com/ | 200, Enterprise/OAuth |
 
+## Standardansicht: kostenlos und noch ohne funktionierenden Key
+
+Die HTML-Seite blendet standardmäßig zwei Gruppen aus (per Toggle wieder sichtbar):
+
+- **kostenpflichtig/vertragsgebunden** (33): Mojeek, Yandex, Brave, Exa, Tavily,
+  Serper, SerpAPI, SearchApi, Firecrawl, Linkup, Consensus, Perplexity, Kagi,
+  You.com, Wolfram, Diffbot, Telnyx, StepFun, Parallel, TinyFish, Bright Data,
+  Olostep, Scopus, Clarivate, Dimensions, IEEE, ACM, Lens, Shodan, MCP360,
+  Patlytics, Bohrium, ZoomInfo.
+- **bereits funktionierend** (12, am 2026-10-21 mit Treffern gemessen): ADS,
+  AlphaXiv, BASE, Firecrawl, Linkup, Serper, Perplexity, Scopus, Shodan,
+  GitHub, Semantic Scholar, PipesHub.
+
+Sichtbar bleiben 18 freie Dienste ohne funktionierenden Key: Gemini (Key da,
+429 Quota), Google CSE (Key ungueltig, 400), Naver, Microsoft Graph, CORE
+(Key abgelehnt, 403), Mendeley, Springer Nature, Europeana, DPLA, NYPL,
+Harvard Art Museums, Rijksmuseum, api.data.gov, GitLab, Azure DevOps,
+OpenCellID, Global Fishing Watch (404 Route), Marginalia (haengt).
+
+Die Keyless-Sektion bleibt sichtbar: sie braucht keine Registrierung.
+
 ## Ohne Registrierung
 
 OpenAlex, Crossref, DataCite, Zenodo, arXiv, Europe PMC, PubMed,
