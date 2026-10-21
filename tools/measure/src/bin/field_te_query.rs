@@ -983,10 +983,10 @@ fn parse_descriptor(text: &str) -> Result<Descriptor, String> {
                 "panel '{label}' carries no stage2 mci — the panel is the window graph"
             ));
         }
-        let fdr_q = match &matrix_fdr {
-            Some((_, q, _)) => *q,
-            None => 0.05,
+        let Some((_, fdr_q, _)) = &matrix_fdr else {
+            return Err(format!("panel '{label}' carries no FDR matrix — q is absent"));
         };
+        let fdr_q = *fdr_q;
         Some(PanelSpec {
             label,
             channels,
@@ -6335,6 +6335,7 @@ mod tests {
             kernel: 0,
             channel_ref: None,
             tau: 0.0,
+            tau_src: omegaflow::archivar::TauSource::Measured,
             absorption: 0.0,
             advection: 0.0,
             unit: String::new(),
@@ -6399,6 +6400,7 @@ mod tests {
             ttl: 3600,
             url: "https://example.com/x".into(),
             origin: None,
+            compiler: None,
             terms: None,
             band: None,
             footprint: None,
