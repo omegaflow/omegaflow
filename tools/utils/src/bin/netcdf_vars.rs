@@ -1,6 +1,4 @@
-use omegaflow::hdf5::{
-    Endian, Hdf5Attribute, Hdf5Datatype, Hdf5File, Hdf5Note, Hdf5Object,
-};
+use omegaflow::hdf5::{Endian, Hdf5Attribute, Hdf5Datatype, Hdf5File, Hdf5Note, Hdf5Object};
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom, Write};
@@ -101,8 +99,8 @@ fn skip_space(bytes: &[u8]) -> usize {
 }
 
 fn attr_text(attr: &Hdf5Attribute) -> Option<String> {
-    let text_like = attr.datatype.class == 3
-        || (attr.datatype.class == 9 && attr.datatype.vlen_is_string);
+    let text_like =
+        attr.datatype.class == 3 || (attr.datatype.class == 9 && attr.datatype.vlen_is_string);
     if !text_like || attr.data.is_empty() {
         return None;
     }
@@ -244,11 +242,7 @@ fn object_unsigned(obj: &Hdf5Object) -> bool {
 
 fn dtype_text(dt: &Hdf5Datatype) -> String {
     match dt.class {
-        0 => format!(
-            "{}{}",
-            if dt.signed { "int" } else { "uint" },
-            dt.size * 8
-        ),
+        0 => format!("{}{}", if dt.signed { "int" } else { "uint" }, dt.size * 8),
         1 => format!("float{}", dt.size * 8),
         3 => "string".to_string(),
         4 => format!("bitfield{}", dt.size * 8),
@@ -349,7 +343,9 @@ fn collect_rows(file: &Hdf5File) -> Result<Vec<Row>, Hdf5Note> {
             stack.push(format!("{}/{}", path, link.name));
         }
     }
-    rows.sort_by(|a, b| (a.group.as_str(), a.variable.as_str()).cmp(&(b.group.as_str(), b.variable.as_str())));
+    rows.sort_by(|a, b| {
+        (a.group.as_str(), a.variable.as_str()).cmp(&(b.group.as_str(), b.variable.as_str()))
+    });
     Ok(rows)
 }
 
@@ -573,7 +569,10 @@ impl RemoteReader {
         if off >= self.size || len == 0 {
             return None;
         }
-        let want = len.max(FETCH_WINDOW).min(self.size - off).min(MAX_RANGE_BYTES);
+        let want = len
+            .max(FETCH_WINDOW)
+            .min(self.size - off)
+            .min(MAX_RANGE_BYTES);
         let end = off + want - 1;
         let out = Command::new("curl")
             .args([
@@ -634,8 +633,8 @@ fn probe(url: &str) -> Result<u64, String> {
     {
         if out.status.success() {
             let headers = String::from_utf8_lossy(&out.stdout);
-            if let Some(size) = header_value(&headers, "content-length")
-                .and_then(|v| v.parse::<u64>().ok())
+            if let Some(size) =
+                header_value(&headers, "content-length").and_then(|v| v.parse::<u64>().ok())
             {
                 if size > 0 {
                     return Ok(size);
@@ -706,7 +705,10 @@ impl LocalReader {
         if off >= self.size || len == 0 {
             return None;
         }
-        let want = len.max(FETCH_WINDOW).min(self.size - off).min(MAX_RANGE_BYTES);
+        let want = len
+            .max(FETCH_WINDOW)
+            .min(self.size - off)
+            .min(MAX_RANGE_BYTES);
         let mut buf = vec![0u8; want as usize];
         self.file.seek(SeekFrom::Start(off)).ok()?;
         self.file.read_exact(&mut buf).ok()?;
@@ -726,16 +728,16 @@ impl LocalReader {
     }
 }
 
-fn read_rows(
-    target: &str,
-) -> Result<(Vec<Row>, String), String> {
+fn read_rows(target: &str) -> Result<(Vec<Row>, String), String> {
     if is_url(target) {
         let mut reader = RemoteReader::open(target)?;
         let base_len = BASE_BYTES.min(reader.size);
-        let base = reader.fetch(0, base_len).ok_or_else(|| match &reader.last_error {
-            Some(error) => error.clone(),
-            None => "first range request failed".to_string(),
-        })?;
+        let base = reader
+            .fetch(0, base_len)
+            .ok_or_else(|| match &reader.last_error {
+                Some(error) => error.clone(),
+                None => "first range request failed".to_string(),
+            })?;
         let rows = {
             let file = Hdf5File::parse_fetch(&base, |off, len| reader.fetch(off, len))
                 .map_err(|note| range_failure(&reader, &note))?;
@@ -1168,10 +1170,7 @@ mod tests {
         assert!(err.contains("file:"), "{err}");
         let rows = tsv_rows(&out);
         assert_eq!(rows.len(), 4);
-        let sst = rows
-            .iter()
-            .find(|row| row[0] == "sst")
-            .expect("sst row");
+        let sst = rows.iter().find(|row| row[0] == "sst").expect("sst row");
         assert_eq!(sst.len(), 10);
         assert_eq!(sst[1], "/");
         assert_eq!(sst[3], "float32");
