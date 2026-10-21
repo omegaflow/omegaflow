@@ -1020,7 +1020,7 @@ field rad gk2a_ami_radiance inverse-square em W/m2/sr 3600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/noaa-goes16.s3.amazonaws.com/goes16_abi.bin
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format goes_abi
-origin procedure: fetch https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/ then goes16_abi_compiler
+origin https://noaa-goes16.s3.amazonaws.com/ABI-L1b-RadC/
 compiler tools/harvest/src/bin/goes16_abi_compiler.rs
 on earth 0 0 0
 ttl 3600
@@ -1029,7 +1029,7 @@ field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/noaa-goes18.s3.amazonaws.com/goes18_abi.bin
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format goes_abi
-origin procedure: fetch https://noaa-goes18.s3.amazonaws.com/ABI-L1b-RadC/ then goes18_abi_compiler
+origin https://noaa-goes18.s3.amazonaws.com/ABI-L1b-RadC/
 compiler tools/harvest/src/bin/goes18_abi_compiler.rs
 on earth 0 0 0
 ttl 3600
@@ -1038,7 +1038,7 @@ field rad goes_abi_radiance inverse-square em W/m2/sr/um 3600 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/noaa-goes19.s3.amazonaws.com/goes_abi_rad.bin
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format goes_abi
-origin procedure: fetch https://noaa-goes19.s3.amazonaws.com/ABI-L1b-RadC/ then goes_abi_compiler
+origin https://noaa-goes19.s3.amazonaws.com/ABI-L1b-RadC/
 compiler tools/harvest/src/bin/goes_abi_compiler.rs
 on earth 0 0 0
 ttl 3600
@@ -1264,7 +1264,7 @@ field 1 cosmic_neutron_flux_oulu gaussian-inverse-square em 1 3600.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/celestrak.org/timed_orbit.bin
 format orbit_bin
-origin https://tle.ivanstanojevic.me/api/tle/26998 (CelesTrak GP mirror; upstream gp.php?CATNR=26998)
+origin https://tle.ivanstanojevic.me/api/tle/26998
 terms free-open https://celestrak.org/usage-policy.php
 compiler tools/harvest/src/bin/timed_tle_compiler.rs
 sha256 31b3f9b3374931ff8ae4e22f07ea8f6dd442d04739bde0377be332e49ab2b2e9
@@ -2149,7 +2149,7 @@ field swarm_fac_uam2 swarm_fac_uam2 inverse-square electric uA/m2 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/aia_hourly.bin
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format aia
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list (aia.lev1_euv_12s, DATAMEAN/T_REC, @1h, WAVELNTH 94/131/171/193/211/304/335)
+origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list
 compiler tools/harvest/src/bin/aia_rs_list_compiler.rs
 sha256 92b0dd6028c2a8547558b0832bd90f7968de204508b06ee234b17d024d8007d5
 at sun
@@ -2165,7 +2165,7 @@ field aia_335_dn aia_335_dn inverse-square em count 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/hmi_m_720s.bin
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format hmi
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list&ds=hmi.M_720s (DATAMEAN,T_REC,CAMERA)
+origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list&ds=hmi.M_720s
 compiler tools/harvest/src/bin/hmi_compiler.rs
 sha256 08f0fd9fb28007899d931bac7a49342a1e078d8781202b46971da68e568c7fbd
 at sun
@@ -2194,7 +2194,6 @@ field noaa_cdo_tmax_c noaa_cdo_tmax_c exponential-decay thermal C 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/ncei.noaa.gov/spectra.bin
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 format spectral
-origin procedure: NCEI solar spectral irradiance monthly netCDF (SSI), host ncei.noaa.gov
 compiler tools/harvest/src/bin/spectral_compiler.rs
 on earth 19.82 -155.47 4142.6
 ttl 2628000
@@ -3423,7 +3422,6 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de441_earth.bin
 format ephemeris_de441
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: fetch naif de441_part-1.bsp + de441_part-2.bsp then de_compiler
 compiler tools/harvest/src/bin/de_compiler.rs
 sha256 ad4c8cb05a5375cb553779f55f011cd96c679e7a110a26ca253676410c396d58
 at earth
@@ -3432,7 +3430,6 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de441_moon.bin
 format ephemeris_de441
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: fetch naif de441_part-1.bsp + de441_part-2.bsp then de_compiler
 compiler tools/harvest/src/bin/de_compiler.rs
 sha256 7cfb8971757d6a3fcc121854748f86989c331df1447efaa984661a0eba65e8eb
 at moon
@@ -3441,7 +3438,6 @@ ttl 86400
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-de/ephemeris_de441_sun.bin
 format ephemeris_de441
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: fetch naif de441_part-1.bsp + de441_part-2.bsp then de_compiler
 compiler tools/harvest/src/bin/de_compiler.rs
 sha256 e682d727beb4d6afc2c3dcaa7720796751b02a1613b6f78c6e8187bf566b84c2
 at sun
@@ -7815,11 +7811,6 @@ terms OGL-Canada-2.0 https://open.canada.ca/en/open-government-licence-canada
 at earth
 ttl 86400
 
-url https://www.cseslimadou.it/public-data-download/
-terms pending https://www.cseslimadou.it/public-data-download/
-at earth
-ttl 86400
-
 url https://www.ldeo.columbia.edu/~gcmt/projects/CMT/catalog/jan76_dec25.ndk
 terms columbia-research-noncommercial https://www.ldeo.columbia.edu/chrr/terms_of_use.html
 format ndk
@@ -9602,7 +9593,7 @@ ttl 604800
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassini_odf.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format cassini_odf
-origin procedure: https://atmos.nmsu.edu/pdsd/archive/data/ (Live-Listing co-ss-rss-1-* Volumes /odf/)
+origin https://atmos.nmsu.edu/pdsd/archive/data/
 compiler tools/harvest/src/bin/cassini_odf_compiler.rs
 sha256 12d9357f4ba3cf5475a041fd4b385e75bf078250403b2a19fad01b673a1b8db3
 at earth
@@ -9612,7 +9603,7 @@ field observable_hz cassini_odf_observable_hz inverse-square em hz 604800 0.0 0.
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassini_rsr.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format cassini_rsr
-origin procedure: https://atmos.nmsu.edu/pdsd/archive/data/ (Live-Listing co-ss-rss-1-* Volumes /rsr/)
+origin https://atmos.nmsu.edu/pdsd/archive/data/
 compiler tools/harvest/src/bin/cassini_rsr_compiler.rs
 sha256 f908832767be5c17b754665a50b32e6f1579c0b686380871e3fe29b99f05a7e8
 at earth
@@ -9623,7 +9614,7 @@ field q_count cassini_rsr_q_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/cassini_tnf.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format cassini_tnf
-origin procedure: https://atmos.nmsu.edu/pdsd/archive/data/ (Live-Listing co-s-rss-1-* Volumes)
+origin https://atmos.nmsu.edu/pdsd/archive/data/
 compiler tools/harvest/src/bin/cassini_tnf_compiler.rs
 sha256 b8d0dc527febf16bd1c3d2172d5e83acd921e39f142efa0a2204983faf129ab6
 at earth
@@ -9643,7 +9634,7 @@ field observable_hz juno_ocru_odf_observable_hz inverse-square em Hz 604800 0.0 
 url https://github.com/omegaflow/sources/releases/download/atmos.nmsu.edu/juno_odf.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format juno_odf
-origin procedure: https://atmos.nmsu.edu/PDS/data/<volume>/DATA/ODF/ (Live-Listing, default volume jnogrv_1001)
+origin https://atmos.nmsu.edu/PDS/data/<volume>/DATA/ODF/
 compiler tools/harvest/src/bin/juno_odf_compiler.rs
 at earth
 ttl 604800
@@ -9725,7 +9716,7 @@ ttl 604800
 url https://github.com/omegaflow/sources/releases/download/data.cosmic.ucar.edu/cosmic_ro_temp.bin
 terms CC-BY-4.0 https://www.ucar.edu/terms-of-use/data
 format cosmic_ro
-origin procedure: dynamic date-path listing under https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt
+origin https://data.cosmic.ucar.edu/gnss-ro/cosmic2/nrt
 compiler tools/harvest/src/bin/cosmic_ro_compiler.rs
 sha256 94ad682adbd08edd10a2a127a050fea2287b557a98e74a334cc222c1dcbbe98b
 at earth
@@ -9757,7 +9748,7 @@ field lrs_start_step START_STEP gaussian-inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/emtf_usarray_cao01_2010.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format emtf_impedance
-origin https://doi.org/10.17611/DP/EMTF/USARRAY/TA (EarthScope USArray MT impedance)
+origin https://doi.org/10.17611/DP/EMTF/USARRAY/TA
 compiler tools/harvest/src/bin/emtf_compiler.rs
 at earth
 ttl 604800
@@ -9949,7 +9940,7 @@ field pb magnetar_period_s gaussian-inverse-square em s 604800 0.0 0.0 aperture:
 
 url https://github.com/omegaflow/sources/releases/download/exofop.ipac.caltech.edu/tess_lightcurves.bin
 terms PD-USGov https://exofop.ipac.caltech.edu/tess/pcp.php
-origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync (pscomppars) ; https://mast.stsci.edu/api/v0/invoke
+origin https://exoplanetarchive.ipac.caltech.edu/TAP/sync + https://mast.stsci.edu/api/v0/invoke
 compiler tools/harvest/src/bin/tess_compiler.rs
 format lightcurve
 ttl 604800
@@ -10051,7 +10042,7 @@ quantity rad lis_otd_flash_radiance_uj_sr inverse-square intensity uj/sr 3600 0.
 url https://github.com/omegaflow/sources/releases/download/ghrc.nasa.gov/trmm_lis.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format trmm_lis
-origin procedure: fetch https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/lislip__4/ then trmm_lis_compiler
+origin https://data.ghrc.earthdata.nasa.gov/ghrcw-protected/lislip__4/
 compiler tools/harvest/src/bin/trmm_lis_compiler.rs
 sha256 4df26cafde3c392fc99831797c9392e1f155e821716cd63db467847e9e654534
 on earth 0 0 0
@@ -10188,7 +10179,7 @@ dist_scale 3.085677581e16
 quantity av_rq planck_dust_av_rq_mag gaussian-inverse-square source-parameter mag 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/planck_psz2_sz_mmf3.json
-origin https://irsa.ipac.caltech.edu/TAP/sync (ADQL planck.com_pccs2_sz_mmf3 name,ra,dec,snr; redshift crossmatch planck.com_pccs2_sz_union)
+origin https://irsa.ipac.caltech.edu/TAP/sync
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
 compiler tools/harvest/src/bin/planck_psz2_compiler.rs
 sha256 12fb5a1d079b6bc7af617336de2070da55f5e2e1af033383358c3310aed12c49
@@ -10201,7 +10192,7 @@ z z
 field snr planck_psz2_snr inverse-square em 1 604800 0.0 0.0 aperture:none
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/ztf_lightcurves.bin
-origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves (Katalog dr3_stars.bin)
+origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves
 compiler tools/harvest/src/bin/ztf_lightcurves_compiler.rs
 format lightcurve
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
@@ -10209,7 +10200,7 @@ ttl 604800
 at sun
 
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/ztf_lightcurves_fresh.bin
-origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves (cone ra=210 dec=+30)
+origin https://irsa.ipac.caltech.edu/cgi-bin/ZTF/nph_light_curves
 compiler tools/harvest/src/bin/ztf_lightcurves_compiler.rs
 format lightcurve
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
@@ -10429,7 +10420,7 @@ url https://github.com/omegaflow/sources/releases/download/noaa-wod-pds.s3.amazo
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 604800
 format noaa_wod
-origin procedure: https://noaa-wod-pds.s3.amazonaws.com/{year}/wod_{instrument}_{year}.nc
+origin https://noaa-wod-pds.s3.amazonaws.com/{year}/wod_{instrument}_{year}.nc
 compiler tools/harvest/src/bin/wod_compiler.rs
 on earth 0 0 0
 field wod_temperature_degc wod_temperature_degc exponential-decay thermal degree_C 604800 0.0 0.0
@@ -10755,7 +10746,7 @@ field delay_m galileo_ionocal_delay_m inverse-square em m 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_atdf.bin
 format gll_rss_atdf
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_trk225_atdf/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_trk225_atdf/
 compiler tools/harvest/src/bin/gll_rss_atdf_compiler.rs
 sha256 b762373c76ff4d125eadd46ba07da9d86802beff3a61af3ebcf83bc0100b8d0a
 at earth
@@ -10765,7 +10756,7 @@ field sky_frequency_hz gll_rss_atdf_sky_frequency_hz inverse-square em Hz 3600 0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_atdf_x.bin
 format gll_rss_atdf_x
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_trk225_atdf/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_trk225_atdf/
 compiler tools/harvest/src/bin/gll_rss_atdf_compiler.rs
 sha256 e63bc3ea412eadc37250a5342a569fc452f72c6b05754eba3420a2d3f18c0459
 at earth
@@ -10775,7 +10766,7 @@ field sky_frequency_hz gll_rss_atdf_x_sky_frequency_hz inverse-square em Hz 3600
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.000
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 776929d9cea53ace51e0e41c23a4056cdfe07729a4ba2caf4c53af903320e7a8
 at earth
@@ -10788,7 +10779,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.001
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 72480c0ae1c5f962bb89fcf5b6e98c9f031102ddc3df4b525de1f5f99a72175c
 at earth
@@ -10801,7 +10792,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.002
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 4632aab8c7cb4ecf2b8dad2d84bdeb2a673b0ec486099dee18b623d57449548a
 at earth
@@ -10814,7 +10805,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.003
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 49d27f24df5a9daec1494ada57f0c6faf661c0a20f8558ea709e1a7295e93950
 at earth
@@ -10827,7 +10818,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.004
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 ea9483fd77647a7e781f5f5ad35a8a7b6e75dbea20997e59985ddf2673937b2b
 at earth
@@ -10840,7 +10831,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.005
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 7db9e670f452d9b548342ff8adcf8c0712a52b5e2f6682ed59fa186992a1723a
 at earth
@@ -10853,7 +10844,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.006
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 22421a02a4d6c0e8003af760201b7d5890350e034e2835e768802357d80462f7
 at earth
@@ -10866,7 +10857,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.007
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 acb84af30237ab94dff5e05508eb815d0a3f36af20ab7ec5e8761e7b91253ad0
 at earth
@@ -10879,7 +10870,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.008
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 0c29303d95cec32fb7c2903f1b3d7a94d1b364b9d820cb0b97b625c80a3dcaac
 at earth
@@ -10892,7 +10883,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.009
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 04e99a5ee1afd81b811b955ca95f7aee3337aa2a25daf2520c190d0172d92500
 at earth
@@ -10905,7 +10896,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.010
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 fe0a6c60f88c06c8b053c56a40e2e2ba52ad9e2a886edd6a50e4573d3e972c57
 at earth
@@ -10918,7 +10909,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.011
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 e4d1f9eca0a2e401de2bd688a51a80fea6c342e2b8d206730dbbd4bdf8385e2e
 at earth
@@ -10931,7 +10922,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_odr.bin.012
 format galileo_odr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_rsc_11_11_odr/
 compiler tools/harvest/src/bin/gll_rss_odr_compiler.rs
 sha256 8326bb80a0064038a6a7a4f643a82e71cbd5b451052c045bee58dc2b488cc404
 at earth
@@ -10944,7 +10935,7 @@ field ad4 galileo_odr_ad4_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_rsr.bin
 format cassini_rsr
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_0159_sci/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_0159_sci/
 compiler tools/harvest/src/bin/gll_rss_rsr_compiler.rs
 sha256 baee1a81dd52124fb8d72edb74c8d84ab8ef7fe0e3a8713d895de3ca9ae3a480
 at earth
@@ -10955,7 +10946,7 @@ field q_count cassini_rsr_q_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-rings.seti.org/gll_rss_tnf.bin
 format cassini_tnf
 terms PD-USGov https://sti.nasa.gov/disclaimers/
-origin procedure: https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_trk234_trknav/ (Live-Listing subdirectories)
+origin https://pds-rings.seti.org/pds4/bundles/gll.rss/gll.rss.raw/data_trk234_trknav/
 compiler tools/harvest/src/bin/gll_rss_tnf_compiler.rs
 sha256 0edf5ab2238ada54a9742727fc65756d52b3679cf3114d69e5b9b9b7abc6454c
 at earth
@@ -11006,7 +10997,7 @@ ttl 604800
 url https://github.com/omegaflow/sources/releases/download/product.gosat-gw.nies.go.jp/gosat_tanso3.manifest
 terms gosat-data-policy https://product.gosat-gw.nies.go.jp/
 format gosat_tanso3
-origin procedure: fetch https://product.gosat-gw.nies.go.jp then gosat_tanso3_compiler (per-month shards gosat_tanso3_<year>-<month>.bin; the manifest lists the shards)
+origin https://product.gosat-gw.nies.go.jp
 compiler tools/harvest/src/bin/gosat_tanso3_compiler.rs
 on earth 0 0 0
 ttl 604800
@@ -11070,7 +11061,7 @@ quantity gmag rave_gmag gaussian-inverse-square source-parameter mag 604800 0.0 
 url https://github.com/omegaflow/sources/releases/download/sdc-serv.usask.ca/superdarn_fitacf.bin
 terms free-open https://sdc-serv.usask.ca/
 format superdarn_fitacf
-origin https://sdc-serv.usask.ca/data/ — fetch {Y}/{M}/{file} then superdarn_fitacf_compiler
+origin https://sdc-serv.usask.ca/data/
 compiler tools/harvest/src/bin/superdarn_fitacf_compiler.rs
 sha256 c5e1238a08c310363545ff94085a95ac1ab5ec44974de2dd70b57aa4b0b1d0b7
 at earth
@@ -11223,7 +11214,6 @@ quantity angle_b voyager_saturn_angle_b inverse-square geometry rad 604800 0.0 0
 url https://github.com/omegaflow/sources/releases/download/ssb/ssb_field.bin
 format ssb_field
 terms CC-BY-NC-3.0-IGO https://www.cosmos.esa.int/web/esdc/terms-and-conditions
-origin procedure: enclosure query at the resting presence (the SSB origin) over the measured star hull (catalog_tycho)
 compiler tools/measure/src/bin/ssb_field_bake.rs
 sha256 a3e6b4be8687661fc81dcbe81dc5ee1de54ec1c8c85a7b2225328d4742356dd2
 at sun
@@ -11383,7 +11373,7 @@ ttl 604800
 url https://github.com/omegaflow/sources/releases/download/tnmaccess.nationalmap.gov/coverage_tnm.manifest
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 format coverage_manifest
-origin https://tnmaccess.nationalmap.gov/api/v1/products?datasets=Lidar%20Point%20Cloud%20(LPC)
+origin https://tnmaccess.nationalmap.gov/api/v1/products?datasets=Lidar%20Point%20Cloud%20
 compiler tools/harvest/src/bin/coverage.rs
 at earth
 ttl 604800
@@ -11410,7 +11400,7 @@ field transmission_unavailability entsoe_transmission_unavailability_mw inverse-
 url https://github.com/omegaflow/sources/releases/download/usgs-lidar-public.s3.amazonaws.com/las_brooks_camp_2012.bin
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 format las
-origin procedure: fetch https://usgs-lidar-public.s3.amazonaws.com/AK_BrooksCamp_2012/ept-data/0-0-0-0.laz then las_compiler
+origin https://usgs-lidar-public.s3.amazonaws.com/AK_BrooksCamp_2012/ept-data/0-0-0-0.laz
 compiler tools/harvest/src/bin/las_compiler.rs
 at earth
 ttl 604800
@@ -11431,7 +11421,7 @@ ttl 604800
 url https://github.com/omegaflow/sources/releases/download/waterqualitydata.us/wqp_result.csv.zip
 terms other-attribution https://www.waterqualitydata.us/portal_userguide/
 format wqp_result
-origin https://www.waterqualitydata.us/data/Result/search?statecode=US:19&startDateLo=01-01-2020&startDateHi=12-31-2020&characteristicName=Temperature%2C%20water&characteristicName=pH&characteristicName=Dissolved%20oxygen%20(DO)&characteristicName=Specific%20conductance&characteristicName=Nitrate&characteristicName=Ammonia&characteristicName=Orthophosphate&characteristicName=Chloride&characteristicName=Atrazine&characteristicName=Metolachlor&mimeType=csv&zip=yes
+origin https://www.waterqualitydata.us/data/Result/search?statecode=US:19&startDateLo=01-01-2020&startDateHi=12-31-2020&characteristicName=Temperature%2C%20water&characteristicName=pH&characteristicName=Dissolved%20oxygen%20
 compiler tools/harvest/src/bin/wqp_result_compiler.rs
 sha256 97b6707bfc574959c1f40188d9c8045f719e03d554c4d3e196756cf26a496fd6
 at earth
@@ -11538,7 +11528,7 @@ field sc_flux xmm_4xmm_flux_ergcm2s inverse-square em erg/cm2/s 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg/modis_lst_cmg_8day.manifest
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format modis_lst_cmg
-origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/ then modis_lst_cmg_compiler (per-granule shards modis_lst_cmg_8day_<granuleUR>.bin in the year tag data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-8day-<year>; the series manifest lists the shards)
+origin https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C2.061/
 compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
 at earth
 ttl 691200
@@ -11580,7 +11570,7 @@ field ersstv5_nino34 ersstv5_nino34_ssta exponential-decay thermal C 2592000 0.0
 url https://github.com/omegaflow/sources/releases/download/data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg/modis_lst_cmg_monthly.manifest
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format modis_lst_cmg
-origin procedure: fetch https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/ then modis_lst_cmg_compiler (per-granule shards modis_lst_cmg_monthly_<granuleUR>.bin in the year tag data.lpdaac.earthdatacloud.nasa.gov-modis_lst_cmg-monthly-<year>; the series manifest lists the shards)
+origin https://data.lpdaac.earthdatacloud.nasa.gov/lp-prod-protected/MOD11C3.061/
 compiler tools/harvest/src/bin/modis_lst_cmg_compiler.rs
 at earth
 ttl 2592000
@@ -12032,7 +12022,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/AFRP20-MASK-3D.r0.0-n4c.volume.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
-origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
+origin https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc
 compiler tools/utils/src/bin/volume_builder.rs
 at earth
 sha256 0e1c632fa49ddab28647205324a5c6f7558ebf71e0898048f2c8b5b56b6edee8
@@ -12041,7 +12031,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/AFRP22-MASK-3D.r0.0-n4c.volume.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
-origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
+origin https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc
 compiler tools/utils/src/bin/volume_builder.rs
 at earth
 sha256 5d3f2d304365364cd99c45817bb9bda4e89582baf20d874db3c64b64735de1a7
@@ -12050,7 +12040,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/BBNAP19-MASK-3D.r0.0-n4c.volume.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
-origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
+origin https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc
 compiler tools/utils/src/bin/volume_builder.rs
 at earth
 sha256 88f3552d574b2f8117a3c9f5e913f223ae34c1a1535c25a7014f264dcd38a0e3
@@ -12059,7 +12049,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/CAP22-MASK-5deg-3D.r0.0-n4c.volume.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
-origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
+origin https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc
 compiler tools/utils/src/bin/volume_builder.rs
 at earth
 sha256 46a7b7e8c2aa348f2b47c05d0e2492589d42052de1c74cf76fcb37397bde980c
@@ -12068,7 +12058,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUMP_kmps.r0.0-n4c.volume.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
-origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
+origin https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc
 compiler tools/utils/src/bin/volume_builder.rs
 at earth
 sha256 797151fab00f3619ec59ba5a3455bb115d8590041f4eef27d064db1a1a234a40
@@ -12077,7 +12067,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUMS_kmps.r0.0-n4c.volume.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
-origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
+origin https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc
 compiler tools/utils/src/bin/volume_builder.rs
 at earth
 sha256 15dc651057e21b8ae8bb9758fe942290c5f81b71e90669af46fba408c2a999a8
@@ -12086,7 +12076,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/GYPSUM_percent.r0.0-n4c.volume.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
-origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
+origin https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc
 compiler tools/utils/src/bin/volume_builder.rs
 at earth
 sha256 f34444584aa993e7b2eceecbb1dbc3dd1dfed4c1b83a20abca22883f7dfe4bcb
@@ -12095,7 +12085,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/data.earthscope.org/TX2019slab_percent.r0.0-n4c.volume.bin
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 format volume
-origin procedure: fetch https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc then volume_builder
+origin https://data.earthscope.org/archive/seismology/products/emc/netcdf/<name>.r0.0-n4c.nc
 compiler tools/utils/src/bin/volume_builder.rs
 at earth
 sha256 a3fe6dc3a049ed4717bea420f59f781cd238af895d9bd5d729fd7a3cc82587fa
@@ -12149,7 +12139,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/dataverse.harvard.edu/decaps_dr2_stars.bin
 terms CC0-1.0 https://doi.org/10.7910/DVN/K88GFI
 format decaps_dr2_stars
-origin https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI (110 decaps_stars_batch_*.fits.gz)
+origin https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/K88GFI
 compiler tools/harvest/src/bin/decaps_dr2_compiler.rs
 at sun
 ttl 31536000
@@ -12284,7 +12274,7 @@ ttl 31536000
 url https://github.com/omegaflow/sources/releases/download/irsa.ipac.caltech.edu/allwise_psd.bin
 format catalog_allwise_psd
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
-origin https://irsa.ipac.caltech.edu/TAP/async (ADQL allsky_4band_p3as_psd, TOP 5000)
+origin https://irsa.ipac.caltech.edu/TAP/async
 compiler tools/harvest/src/bin/allwise_tap_compiler.rs
 ttl 31536000
 at sun
@@ -14204,7 +14194,6 @@ field bin_width_hz frb_chime_bin_width_hz inverse-square em Hz 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/cdsarc.cds.unistra.fr/ossos_tno.bin
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format catalog_ossos
-origin procedure: fixed-width t3char.dat (CDS J/ApJS/236/18), CDN tag cdsarc.cds.unistra.fr
 compiler tools/harvest/src/bin/ossos_compiler.rs
 at sun
 no-cadence
@@ -14270,7 +14259,7 @@ field vco_rs_signal_level_xband "SIGNAL LEVEL X-BAND" inverse-square em 1 335544
 field vco_rs_sigma_signal_level_xband "SIGMA SIGNAL LEVEL X-BAND" inverse-square em 1 33554432.0 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/datalab.noirlab.edu/des_dr2_coverage.fp01
-origin https://datalab.noirlab.edu/tap/sync (table des_dr2.coverage)
+origin https://datalab.noirlab.edu/tap/sync
 terms CC-BY-4.0 https://datalab.noirlab.edu/about/disclaimers
 format fp01
 compiler tools/harvest/src/bin/des_coverage_compiler.rs
@@ -18747,7 +18736,7 @@ field ul_phase_cycles messenger_tnf_ul_phase_cycles inverse-square em cycle 6048
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/pvo_orse_odr_s0.bin
 format pvo_orse
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/PVO-V-ORSE-1-ODR-OPENLOOP--V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/PVO-V-ORSE-1-ODR-OPENLOOP--V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/pvo_orse_odr_compiler.rs
 at earth
 no-cadence
@@ -18773,7 +18762,7 @@ field sky_frequency_x_hz ulysses_sky_frequency_x_hz inverse-square em Hz 3600 0.
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s0.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18782,7 +18771,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s1.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18791,7 +18780,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s10.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18800,7 +18789,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s11.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18809,7 +18798,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s12.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18818,7 +18807,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s13.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18827,7 +18816,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s2.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18836,7 +18825,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s3.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18845,7 +18834,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s4.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18854,7 +18843,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s5.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18863,7 +18852,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s6.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18872,7 +18861,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s7.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18881,7 +18870,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s8.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -18890,7 +18879,7 @@ field sample voyager_odr_sample_count inverse-square em count 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/pds-ppi.igpp.ucla.edu/voyager_odr_s9.bin
 format voyager_odr
 terms PD-USGov-PDS https://pds-ppi.igpp.ucla.edu/
-origin procedure: INDEX.TAB https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
+origin https://pds-ppi.igpp.ucla.edu/data/VG2-S-RSS-1-ROCC-V1.0/INDEX/INDEX.TAB
 compiler tools/harvest/src/bin/voyager_odr_compiler.rs
 at earth
 no-cadence
@@ -26431,7 +26420,7 @@ quantity RANGE hay_lidar_range inverse-square geometry km 604800 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_efd.bin
 terms CC0-1.0 https://doi.org/10.57760/sciencedb.06921
 format cses_efd
-origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b54 (EFD_ULF_L2_028981; dataset 10.57760/sciencedb.06921, CC0)
+origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b54
 compiler tools/harvest/src/bin/cses_efd_compiler.rs
 sha256 8d7fd66d48128a11a91ef19da9daa1ed99b704c5441ea692ee84efe183784ba6
 at earth
@@ -26443,7 +26432,7 @@ field Z_WAVE cses_efd_ulf_ez_v_m inverse-square electric V/m 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_hpm.bin
 terms CC0-1.0 https://doi.org/10.57760/sciencedb.06921
 format cses_hpm
-origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b52 (CSES_HPM_FG2_0028981; dataset 10.57760/sciencedb.06921, CC0)
+origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b52
 compiler tools/harvest/src/bin/cses_hpm_compiler.rs
 sha256 a6870b12d9b439b627b78009e180e2a932d5b766778e14fd7cbf20a9cf0e0172
 at earth
@@ -26455,7 +26444,7 @@ field FG2_Z cses_hpm_fg2_z_nt inverse-square em nT 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_lap.bin
 terms CC0-1.0 https://doi.org/10.57760/sciencedb.06921
 format cses_lap
-origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b50 (CSES_01_LAP_1_L02_A3_028981; dataset 10.57760/sciencedb.06921)
+origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b50
 compiler tools/harvest/src/bin/cses_lap_compiler.rs
 sha256 8ad1b259cdd2a3edff1a667a8d7bd8567aed1ef8f2b6af7b52fdb5f098875138
 at earth
@@ -26468,7 +26457,7 @@ field UF cses_lap_uf_v inverse-square electric V 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/scidb.cn/cses_scm.bin
 terms CC0-1.0 https://doi.org/10.57760/sciencedb.06921
 format cses_scm
-origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b55 (SCM_ULF_L1_0028981; dataset 10.57760/sciencedb.06921, CC0)
+origin https://download.scidb.cn/download?fileId=6398427cbae2f1393c118b55
 compiler tools/harvest/src/bin/cses_scm_compiler.rs
 sha256 c1fed9fa9e1fd2bfad2ec2f35209ee0c8b3dacc3a986b71d9f7fa8f1856f9545
 at earth
@@ -26479,7 +26468,6 @@ field Z_WAVE cses_scm_ulf_z_nt inverse-square em nT 86400 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/sentinel1euwest.blob.core.windows.net/s1_sar_diff.bin
 terms free-open https://www.copernicus.eu/en/access-data/copyright-and-licences
-origin procedure: Sentinel-1 GRD post-vs-pre SAR difference via s1_sar_compiler
 compiler tools/harvest/src/bin/s1_sar_compiler.rs
 format s1_sar
 at earth
@@ -26567,7 +26555,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_adrastea.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at adrastea
 no-cadence
@@ -26575,7 +26563,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_amalthea.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at amalthea
 no-cadence
@@ -26583,7 +26571,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_apophis.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at apophis
 no-cadence
@@ -26591,7 +26579,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ariel.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at ariel
 no-cadence
@@ -26599,7 +26587,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at atlas
 no-cadence
@@ -26607,7 +26595,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_atlas_3i.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at atlas_3i
 no-cadence
@@ -26615,7 +26603,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_bennu.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at bennu
 no-cadence
@@ -26623,7 +26611,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_callisto.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at callisto
 no-cadence
@@ -26639,7 +26627,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ceres.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at ceres
 no-cadence
@@ -26647,7 +26635,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_charon.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at charon
 no-cadence
@@ -26655,7 +26643,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_deimos.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at deimos
 no-cadence
@@ -26663,7 +26651,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_despina.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at despina
 no-cadence
@@ -26671,7 +26659,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_dione.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at dione
 no-cadence
@@ -26679,7 +26667,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_earth.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at earth
 no-cadence
@@ -26687,7 +26675,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_enceladus.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at enceladus
 no-cadence
@@ -26695,7 +26683,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_encke.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at encke
 no-cadence
@@ -26703,7 +26691,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_epimetheus.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at epimetheus
 no-cadence
@@ -26711,7 +26699,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_eris.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at eris
 no-cadence
@@ -26719,7 +26707,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_eros.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at eros
 no-cadence
@@ -26727,7 +26715,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_europa.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at europa
 no-cadence
@@ -26735,7 +26723,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_galatea.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at galatea
 no-cadence
@@ -26751,7 +26739,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_ganymede.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at ganymede
 no-cadence
@@ -26759,7 +26747,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_haumea.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at haumea
 no-cadence
@@ -26767,7 +26755,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_helene.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at helene
 no-cadence
@@ -26775,7 +26763,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_himalia.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at himalia
 no-cadence
@@ -26783,7 +26771,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hydra.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at hydra
 no-cadence
@@ -26791,7 +26779,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_hyperion.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at hyperion
 no-cadence
@@ -26799,7 +26787,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iapetus.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at iapetus
 no-cadence
@@ -26807,7 +26795,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_io.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at io
 no-cadence
@@ -26815,7 +26803,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_iss.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at iss
 no-cadence
@@ -26823,7 +26811,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_janus.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at janus
 no-cadence
@@ -26831,7 +26819,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 sha256 b68842c95c0bd66c3fff18c837cb7cbdeae28165890bb8c10e75356ddd2a015a
 at juice
@@ -26840,7 +26828,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_cog.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at juice_cog
 no-cadence
@@ -26848,7 +26836,6 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juice_official.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: sealed official JUICE arc — recursive SPK/PCK flatten from the archived sources index (juice-arc-restore, run 37165635404)
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 aeb3c82ff3de672116ff7f8c28592d97ea05c5e78b8f652521d2cf3cae57488a
 at juice
@@ -26857,7 +26844,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at juno
 no-cadence
@@ -26865,7 +26852,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_juno_asteroid.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at juno_asteroid
 no-cadence
@@ -26873,7 +26860,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jupiter.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at jupiter
 no-cadence
@@ -26881,7 +26868,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_jwst.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at jwst
 no-cadence
@@ -26889,7 +26876,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_kerberos.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at kerberos
 no-cadence
@@ -26897,7 +26884,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_larissa.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at larissa
 no-cadence
@@ -26905,7 +26892,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_makemake.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at makemake
 no-cadence
@@ -26922,7 +26909,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mars.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at mars
 no-cadence
@@ -26930,7 +26917,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mercury.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at mercury
 no-cadence
@@ -26946,7 +26933,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_metis.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at metis
 no-cadence
@@ -26954,7 +26941,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_mimas.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at mimas
 no-cadence
@@ -26962,7 +26949,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_miranda.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at miranda
 no-cadence
@@ -26970,7 +26957,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_moon.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at moon
 no-cadence
@@ -26978,7 +26965,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_naiad.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at naiad
 no-cadence
@@ -26994,7 +26981,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at neptune
 no-cadence
@@ -27002,7 +26989,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_neptune_c.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at neptune_c
 no-cadence
@@ -27010,7 +26997,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nereid.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at nereid
 no-cadence
@@ -27018,7 +27005,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_nix.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at nix
 no-cadence
@@ -27026,7 +27013,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_oberon.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at oberon
 no-cadence
@@ -27034,7 +27021,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pallas.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at pallas
 no-cadence
@@ -27042,7 +27029,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pandora.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at pandora
 no-cadence
@@ -27050,7 +27037,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_parker_solar_probe.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at parker_solar_probe
 no-cadence
@@ -27058,7 +27045,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phobos.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at phobos
 no-cadence
@@ -27066,7 +27053,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_phoebe.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at phoebe
 no-cadence
@@ -27074,7 +27061,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_pluto.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at pluto
 no-cadence
@@ -27082,7 +27069,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_prometheus.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at prometheus
 no-cadence
@@ -27090,7 +27077,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_proteus.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at proteus
 no-cadence
@@ -27098,7 +27085,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_rhea.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at rhea
 no-cadence
@@ -27106,7 +27093,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_saturn.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at saturn
 no-cadence
@@ -27114,7 +27101,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_solar_orbiter.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at solar_orbiter
 no-cadence
@@ -27122,7 +27109,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_styx.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at styx
 no-cadence
@@ -27130,7 +27117,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_sun.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at sun
 no-cadence
@@ -27138,7 +27125,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_tethys.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at tethys
 no-cadence
@@ -27146,7 +27133,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thalassa.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at thalassa
 no-cadence
@@ -27154,7 +27141,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_thebe.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at thebe
 no-cadence
@@ -27162,7 +27149,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titan.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at titan
 no-cadence
@@ -27170,7 +27157,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_titania.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at titania
 no-cadence
@@ -27178,7 +27165,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_triton.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at triton
 no-cadence
@@ -27186,7 +27173,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_umbriel.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at umbriel
 no-cadence
@@ -27194,7 +27181,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at uranus
 no-cadence
@@ -27202,7 +27189,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_uranus_c.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at uranus_c
 no-cadence
@@ -27210,7 +27197,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_venus.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at venus
 no-cadence
@@ -27218,7 +27205,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-ephemeris/ephemeris_vesta.bin
 terms PD-USGov https://ssd.jpl.nasa.gov/
 format ephemeris_binary
-origin procedure: recursive SPK/PCK harvest from https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
+origin https://ssd.jpl.nasa.gov/ftp/ + https://naif.jpl.nasa.gov/pub/
 compiler tools/harvest/src/bin/ephemeris_compiler.rs
 at vesta
 no-cadence
@@ -27242,7 +27229,6 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_cassini.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1999-08-18)
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at cassini
 no-cadence
@@ -27250,7 +27236,6 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_europa_clipper.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2026-12-03)
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at europa_clipper
 no-cadence
@@ -27258,7 +27243,6 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e1.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1990-12-08)
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at galileo
 no-cadence
@@ -27266,7 +27250,6 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_galileo_e2.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1992-12-08)
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at galileo
 no-cadence
@@ -27274,7 +27257,6 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_halley.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons vectors via horizons_compiler
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at halley
 no-cadence
@@ -27282,7 +27264,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_itokawa.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons stable-arc vectors via horizons_compiler (https://ssd.jpl.nasa.gov/api/horizons.api)
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at itokawa
 no-cadence
@@ -27290,7 +27272,6 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_messenger.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2005-08-02)
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at messenger
 no-cadence
@@ -27298,7 +27279,6 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_near.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 1998-01-23)
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at near
 no-cadence
@@ -27306,7 +27286,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_new_horizons_long.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 sha256 28568e3cadc1a864ac54c5b06cdc9267eeded9b45b9452f0be3bd369d63e9e16
 at new_horizons
@@ -27315,7 +27295,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer10_daily.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons daily-raster arcs via horizons_compiler --daily (https://ssd.jpl.nasa.gov/api/horizons.api)
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 sha256 bd86242fe2d4bd1f7d4ab3a8e9a7a9ccbd43db82b01ef46a3325d16c5dc768a4
 at pioneer10_daily
@@ -27324,7 +27304,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_pioneer11_daily.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons daily-raster arcs via horizons_compiler --daily (https://ssd.jpl.nasa.gov/api/horizons.api)
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 sha256 7ea383fda24450d8f490e15c3e6aa37a38626f01b118bd8cfd0cfa13d7506063
 at pioneer11_daily
@@ -27333,7 +27313,6 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_rosetta.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons vectors via horizons_compiler (flyby epoch 2005-03-04)
 compiler tools/harvest/src/bin/horizons_compiler.rs
 at rosetta
 no-cadence
@@ -27341,7 +27320,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager1_long.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 sha256 459a3912612ae43c7bdbb453c638375c25f09a08a14810133424e0982ae8b7bf
 at voyager1
@@ -27350,7 +27329,7 @@ no-cadence
 url https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov-horizons/ephemeris_voyager2_long.bin
 format ephemeris_binary
 terms PD-USGov https://ssd.jpl.nasa.gov/
-origin procedure: JPL Horizons long-arc vectors via horizons_compiler --long (https://ssd.jpl.nasa.gov/api/horizons.api)
+origin https://ssd.jpl.nasa.gov/api/horizons.api
 compiler tools/harvest/src/bin/horizons_compiler.rs
 sha256 8d716add977f245f207f2467962b5c55d86566858855adef37995f7f5d9a9682
 at voyager2
@@ -27827,7 +27806,7 @@ field flux chandra_csc_flux_ergcm2_s gaussian-inverse-square em erg/cm2/s 604800
 url https://github.com/omegaflow/sources/releases/download/tapvizier.cds.unistra.fr/charm2_gaia.bin
 terms vizier-scientific-free https://cds.unistra.fr/vizier-org/licences_vizier.html
 format catalog_charm2
-origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync (ADQL J/A+A/431/773/charm2 JOIN I/355/gaiadr3, DISTANCE < 2")
+origin https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync
 compiler tools/harvest/src/bin/charm2_compiler.rs
 at sun
 no-cadence
@@ -30075,7 +30054,7 @@ terms CC-BY-NC-4.0 http://creativecommons.org/licenses/by-nc/4.0/deed.ru
 url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlass_tap_component.bin
 terms cadc-open https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/
 format catalog_vlass_tap_component
-origin https://ws-uv.canfar.net/youcat/sync (TAP ADQL, --kind component)
+origin https://ws-uv.canfar.net/youcat/sync
 compiler tools/harvest/src/bin/vlass_tap_compiler.rs
 no-cadence
 at sun
@@ -30088,7 +30067,7 @@ field Peak_flux vlass_component_peak_flux_mjy inverse-square em mJy 604800 0.0 0
 url https://github.com/omegaflow/sources/releases/download/ws-uv.canfar.net/vlass_tap_source.bin
 terms cadc-open https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/
 format catalog_vlass_tap_source
-origin https://ws-uv.canfar.net/youcat/sync (TAP ADQL, --kind source)
+origin https://ws-uv.canfar.net/youcat/sync
 compiler tools/harvest/src/bin/vlass_tap_compiler.rs
 no-cadence
 at sun
@@ -30119,7 +30098,7 @@ quantity gsras_teleseismic_catalog_magnitude gsras_teleseismic_catalog_magnitude
 url https://github.com/omegaflow/sources/releases/download/www.kari.re.kr/ephemeris_kplo.bin
 terms kari-public-release https://www.kari.re.kr/kpds/search/dirviewer/download/KPLO/KPLO/PublicRelease/kernels/spice_kernels/spk/
 format ephemeris_binary
-origin procedure: SPK/DAF harvest from https://www.kari.re.kr/kpds/search/dirviewer/download/KPLO/KPLO/PublicRelease/kernels/spice_kernels/spk/
+origin https://www.kari.re.kr/kpds/search/dirviewer/download/KPLO/KPLO/PublicRelease/kernels/spice_kernels/spk/
 compiler tools/harvest/src/bin/kplo_spice_compiler.rs
 at kplo
 no-cadence
@@ -31745,7 +31724,7 @@ field hmi_polar_avg_t hmi_polar_avg_t inverse-square em T 2592000 0.0 0.0
 url https://dhm.gov.np/hydrology/hms-Single/4913
 terms DHM-open https://dhm.gov.np/pages/about-us
 format dhm_gauge
-origin https://dhm.gov.np/hydrology/hms-Single/4913 (Bhotekoshi at Rasuwagadhi, Trishuli system; open series is stage only, discharge m3/s absent — xfer:future.ses_ec618129fffeLFawr4V3pQKpOl.1~4074aed5)
+origin https://dhm.gov.np/hydrology/hms-Single/4913
 compiler tools/harvest/src/bin/dhm_gauge_compiler.rs
 on earth 28.271297 85.377649 0.0
 ttl 600
@@ -31779,7 +31758,7 @@ url https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/
 terms PD-USGov https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/
 header Authorization {EARTHDATA_EDL_TOKEN}
 format icrf3
-origin https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/ (Earthdata; compiler reads the same ICRF3 product from https://datacenter.iers.org/products/reference-systems/celestial/icrf3/)
+origin https://cddis.nasa.gov/archive/vlbi/ivsproducts/crf/ + https://datacenter.iers.org/products/reference-systems/celestial/icrf3/
 compiler tools/harvest/src/bin/icrf3_compiler.rs
 at sun
 ttl 31536000
@@ -31888,7 +31867,7 @@ field wso_polar_avg_t wso_polar_avg_t inverse-square em T 2592000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/jsoc.stanford.edu/mdi_polar.bin
 terms CC0-1.0 http://jsoc.stanford.edu/JSOC_Data_Policy.html
 format mdi_polar
-origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list&ds=mdi.synoptic_Mr_polfil_96m (CAR_ROT,T_OBS; exp_request protocol=fits, CR 1908-2107, BUNIT Mx/cm^2, BSCALE 0.1)
+origin http://jsoc.stanford.edu/cgi-bin/ajax/jsoc_info?op=rs_list&ds=mdi.synoptic_Mr_polfil_96m
 compiler tools/harvest/src/bin/mdi_polar_compiler.rs
 sha256 b443a28188aa8034bedf03d83f6c8ad739693ce3f88e016d6a621cee61905d5e
 at sun
@@ -31900,7 +31879,7 @@ field mdi_polar_avg_t mdi_polar_avg_t inverse-square em T 2592000 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/sun.stanford.edu/soho_eit_195.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format soho_eit_195
-origin http://sun.stanford.edu/synop/EIT/195A/ (CR 1911-2055, _a before CR2043/_c after, 124 of 145 maps, BUNIT counts/pixel)
+origin http://sun.stanford.edu/synop/EIT/195A/
 compiler tools/harvest/src/bin/soho_eit_synoptic_compiler.rs
 sha256 1da0eb2e08ef456658175ff0e8fb6874a01f54ad0ce57473558c6d39b639408a
 at sun
@@ -31910,7 +31889,7 @@ field soho_eit_195_mean soho_eit_195_mean inverse-square em count 2592000 0.0 0.
 url https://github.com/omegaflow/sources/releases/download/spdf.gsfc.nasa.gov/soho_sem_daily.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format soho_sem
-origin https://spdf.gsfc.nasa.gov/pub/data/soho/celias/ascii/CELIAS_SEM_daily_avg.tar.gz (00_v4.day-26_v4.day, daily average, 1 AU)
+origin https://spdf.gsfc.nasa.gov/pub/data/soho/celias/ascii/CELIAS_SEM_daily_avg.tar.gz
 compiler tools/harvest/src/bin/soho_sem_compiler.rs
 sha256 367d09fc71fb8352b2b27d5c767f32ca53c5e1073bab97e8e78518097ffd1c1a
 at sun
@@ -31924,7 +31903,7 @@ quantity soho_sem_ch3_count_rate soho_sem_ch3_count_rate inverse-square em count
 url https://github.com/omegaflow/sources/releases/download/dataverse.harvard.edu/mwo_magnetogram.bin
 terms CC0-1.0 https://doi.org/10.7910/DVN/VQK56Z
 format mwo_magnetogram
-origin https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:10.7910/DVN/VQK56Z (MWO_1967.tar.gz-MWO_2013.tar.gz, 150-ft Tower FITS, BUNIT GAUSS, BSCALE 0.1)
+origin https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId=doi:10.7910/DVN/VQK56Z
 compiler tools/harvest/src/bin/mwo_magnetogram_compiler.rs
 at sun
 ttl 86400
@@ -31934,7 +31913,7 @@ field mwo_mean_abs_blos_t mwo_mean_abs_blos_t inverse-square em T 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/nispdata.nso.edu/kpvt_polar.bin
 terms attribution https://nispdata.nso.edu/ftp/kpvt/synoptic/README
 format kpvt_polar
-origin https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/ (m1625f.fits-m2007f.fits, CR 1625-2007, Gauss, BSCALE 0.1, 360x180 sine-latitude)
+origin https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/
 compiler tools/harvest/src/bin/kpvt_synoptic_compiler.rs
 sha256 70a4153caeb20963435cc125b9904d6c272f177275d30e5a70ceddbcb2faed1d
 at sun
@@ -32256,7 +32235,7 @@ lon 3
 url https://github.com/omegaflow/sources/releases/download/openneuro.org/sub-HUP060_ses-presurgery_task-interictal_acq-seeg_run-01_ieeg.bin
 terms CC0-1.0 https://openneuro.org/datasets/ds004100
 format openneuro_eeg
-origin https://openneuro.org/crn/graphql (dataset ds004100, snapshot latest)
+origin https://openneuro.org/crn/graphql
 compiler tools/harvest/src/bin/openneuro_compiler.rs
 sha256 be750a43ffd4508f330841730b3f8558afc93737e2d2489ba64dea4c8f9ed64c
 at earth
@@ -32295,7 +32274,7 @@ field fugin_moment0_k_ms fugin_moment0_k_ms inverse-square em K.m/s 31536000 0.0
 url https://github.com/omegaflow/sources/releases/download/nispdata.nso.edu/kpvt_synoptic_grid.bin
 terms attribution https://nispdata.nso.edu/ftp/kpvt/synoptic/README
 format kpvt_synoptic_grid
-origin https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/ (m<CR>f.fits, one 360x180 map per Carrington rotation, row 1 = south pole / row 180 = north pole, BSCALE 0.1; BUNIT absent in header, value kept in unit 1)
+origin https://nispdata.nso.edu/ftp/kpvt/synoptic/mag/
 compiler tools/harvest/src/bin/kpvt_synoptic_grid_compiler.rs
 sha256 64a62affef017682b8c11f38e04aae32c1d09687b5a640382f14985009e99351
 at sun
@@ -32305,7 +32284,7 @@ field kpvt_synoptic_value kpvt_synoptic_value inverse-square em 1 2592000 0.0 0.
 url https://github.com/omegaflow/sources/releases/download/sha.stanford.edu/mwo_mag_mp.bin
 terms CC0-1.0 https://doi.org/10.7910/DVN/VQK56Z
 format mwo_mag_mp
-origin http://sha.stanford.edu/mwo/msmtest4/data_YYYY.MM/data/ (MP00_*.fits magnetograms, 150 ft tower, BUNIT GAUSS, BSCALE 0.1, BLANK -32768 = absent, CARROT/CENLON/B0 in header)
+origin http://sha.stanford.edu/mwo/msmtest4/data_YYYY.MM/data/
 compiler tools/harvest/src/bin/mwo_mag_compiler.rs
 sha256 5b49ac565c83ab14eea28703a59f96e9a917baa53d0cc313fd803892ce5be0a1
 at sun
@@ -32315,7 +32294,7 @@ field mwo_mp_blos_t mwo_mp_blos_t inverse-square em T 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/sha.stanford.edu/mwo_mag_dp.bin
 terms CC0-1.0 https://doi.org/10.7910/DVN/VQK56Z
 format mwo_mag_dp
-origin http://sha.stanford.edu/mwo/msmtest4/data_YYYY.MM/data/ (DP00_*.fits dopplergrams, 150 ft tower, BUNIT KM/SEC, BSCALE 0.1, BLANK -32768 = absent, CARROT/CENLON/B0 in header)
+origin http://sha.stanford.edu/mwo/msmtest4/data_YYYY.MM/data/
 compiler tools/harvest/src/bin/mwo_mag_compiler.rs
 sha256 135c8db0f7c09eeead08b40bc65650b7c93565b4a59fcf0d7281d906c9637c58
 at sun
@@ -32325,7 +32304,7 @@ field mwo_dp_vlos_ms mwo_dp_vlos_ms inverse-square advective m/s 86400 0.0 0.0
 url https://github.com/omegaflow/sources/releases/download/data.cosmic.ucar.edu/cosmic1_temp.bin
 terms CC-BY-4.0 https://www.ucar.edu/terms-of-use/data
 format cosmic_ro
-origin procedure: https://data.cosmic.ucar.edu/gnss-ro/cosmic1/postProc/level2/{YYYY}/{DDD}/wetPrf_postProc_{YYYY}_{DDD}.tar.gz (measured 2014/121: netCDF-3 CDF-1, vars MSL_alt/Ref/Temp/Pres, Temp header unit C converted to K)
+origin https://data.cosmic.ucar.edu/gnss-ro/cosmic1/postProc/level2/{YYYY}/{DDD}/wetPrf_postProc_{YYYY}_{DDD}.tar.gz
 compiler tools/harvest/src/bin/cosmic_ro_compiler.rs
 sha256 7c0187d28d64627dbc2c2861d6d44572cea514eec1869dd4a46acfe0a5d5c9ee
 at earth
@@ -32337,7 +32316,7 @@ field cosmic_ro_pressure_hpa cosmic_ro_pressure_hpa inverse-square acoustic hPa 
 url https://github.com/omegaflow/sources/releases/download/stereo-ssc.nascom.nasa.gov/stereo_euvi.bin
 terms PD-USGov https://sti.nasa.gov/disclaimers/
 format euvi
-origin https://stereo-ssc.nascom.nasa.gov/pub/ins_data/secchi/L0_YMD/a/img/euvi/{YYYY}/{MM}/{DD}/ (measured 2011/04/17 n4euA/n7euA: DATE-OBS, WAVELNTH 171/195/284/304, BUNIT DN, mean over finite pixels excluding BLANK)
+origin https://stereo-ssc.nascom.nasa.gov/pub/ins_data/secchi/L0_YMD/a/img/euvi/{YYYY}/{MM}/{DD}/
 compiler tools/harvest/src/bin/euvi_compiler.rs
 sha256 ec1b4a8a141fcd766a9a36bf224a9ba8d43e6b5e82548e7d8f0dc1f0d1212e44
 at sun
@@ -32346,4 +32325,3 @@ field stereo_euvi_171_mean stereo_euvi_171_mean inverse-square em 1 2592000 0.0 
 field stereo_euvi_195_mean stereo_euvi_195_mean inverse-square em 1 2592000 0.0 0.0
 field stereo_euvi_284_mean stereo_euvi_284_mean inverse-square em 1 2592000 0.0 0.0
 field stereo_euvi_304_mean stereo_euvi_304_mean inverse-square em 1 2592000 0.0 0.0
-
