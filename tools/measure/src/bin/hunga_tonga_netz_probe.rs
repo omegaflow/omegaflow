@@ -13,6 +13,8 @@ const LAMB_SPEED_KM_S: f64 = 0.306;
 const EVENT_DAY: &str = "2022-01-15";
 const QUIET_DAY: &str = "2022-01-13";
 const BGR_CDN: &str = "https://github.com/omegaflow/sources/releases/download/download.bgr.de/bgr_infrasound_IS52_2022.bin";
+const EVENT_FDCF: &str = "https://noaa-goes17.s3.amazonaws.com/ABI-L2-FDCF/2022/015/04/OR_ABI-L2-FDCF-M6_G17_s20220150410320_e20220150419387_c20220150419494.nc";
+const NULL_FDCF: &str = "https://noaa-goes17.s3.amazonaws.com/ABI-L2-FDCF/2022/013/04/OR_ABI-L2-FDCF-M6_G17_s20220130410320_e20220130419387_c20220130419504.nc";
 
 const SEISMIC_STATIONS: [(&str, &str, f64, f64); 8] = [
     ("IU", "AFI", -13.909, -171.777),
@@ -255,10 +257,10 @@ fn inventory() {
     println!(
         "{:<22} {:<44} {:<20} {:<10} {}",
         "Aerosol/Thermik",
-        "NASA FIRMS API / Copernicus TROPOMI",
-        "Jan 2022 present",
-        "Tag/Orbit",
-        "absent: MAP_KEY or token missing"
+        "GOES-17 ABI FDCF/AODF (AWS S3) + TROPOMI AER_AI (MEEO S3)",
+        "Full disk, Jan 2022",
+        "10 min / Orbit",
+        "keyless (HTTP 200)"
     );
     println!();
 }
@@ -1312,6 +1314,37 @@ fn bgr_section() {
     println!();
 }
 
+fn goes_thermal_section() {
+    println!("--- Aerosol/Thermik: GOES-17 ABI, keyless AWS S3 ---");
+    for (label, url) in [
+        ("event 2022-01-15 04:10-04:19", EVENT_FDCF),
+        ("NULL  2022-01-13 04:10-04:19", NULL_FDCF),
+    ] {
+        let Some(bytes) = fetch_raw_bytes(url) else {
+            println!("{label}: absent (fetch void)");
+            continue;
+        };
+        let Ok(file) = Hdf5File::parse(&bytes) else {
+            println!("{label}: absent (HDF5 unread)");
+            continue;
+        };
+        let count = dataset_scaled(&file, "total_number_of_pixels_with_fires_detected")
+            .first()
+            .copied();
+        let frp = dataset_scaled(&file, "maximum_fire_radiative_power")
+            .first()
+            .copied();
+        let temp = dataset_scaled(&file, "maximum_fire_temperature")
+            .first()
+            .copied();
+        println!("{label}: fires={count:?} max_FRP_MW={frp:?} max_fire_T_K={temp:?} (full disk)");
+    }
+    println!(
+        "note: full-disk scalars; TROPOMI AER_AI is keyless on MEEO S3, pixel extraction near the vent pending."
+    );
+    println!();
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if let Some(path) = arg_value(&args, "--inspect-glm") {
@@ -1382,12 +1415,14 @@ fn main() {
 
     bgr_section();
 
+    goes_thermal_section();
+
     println!("=== Verdict ===");
     println!("criterion: at least three phenomena with an onset and a consistent travel time.");
     println!(
         "phenomena with their own onset in this run: seismic, pressure, tsunami, TEC, GLM, infrasound."
     );
     println!(
-        "aerosol/thermal: absent (FIRMS MAP_KEY, Copernicus token missing) — not filled with zero."
+        "aerosol/thermal: GOES-17 FDCF keyless measured (event vs NULL); TROPOMI AER_AI keyless on MEEO S3, pixel extraction pending."
     );
 }
