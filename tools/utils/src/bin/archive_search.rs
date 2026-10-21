@@ -4,6 +4,10 @@ mod alphafold;
 mod alphaxiv;
 #[path = "archive_search/arcgis.rs"]
 mod arcgis;
+#[path = "archive_search/cache.rs"]
+mod cache;
+#[path = "archive_search/fallback.rs"]
+mod fallback;
 #[path = "archive_search/artic.rs"]
 mod artic;
 #[path = "archive_search/arxiv_src.rs"]

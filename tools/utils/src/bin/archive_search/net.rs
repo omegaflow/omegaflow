@@ -5207,7 +5207,6 @@ const QUERY_MODES: &[&str] = &[
     "perplexity",
     "gemini",
     "wikidata",
-    "googlecse",
     "ckan",
     "cmr",
     "dataeuropa",
@@ -5493,9 +5492,17 @@ pub fn run_lines_max(
     out: Option<&str>,
     max: usize,
 ) -> Vec<String> {
+    if mode != "all" && !is_auth_mode(mode) {
+        if let Some(lines) = crate::cache::load(mode, query, max) {
+            log_query(mode, query, &lines, max);
+            return lines;
+        }
+    }
     let mut lines = run_lines_dispatch(mode, query, env, out, max);
     annotate_declared(&mut lines, env);
-    if mode != "all" {
+    if mode != "all" && !is_auth_mode(mode) {
+        lines = crate::fallback::apply(mode, query, lines, max);
+        crate::cache::store(mode, query, max, &lines);
         log_query(mode, query, &lines, max);
     }
     lines
@@ -6294,7 +6301,6 @@ mod tests {
             "perplexity",
             "gemini",
             "wikidata",
-            "googlecse",
             "ckan",
             "cmr",
             "dataeuropa",

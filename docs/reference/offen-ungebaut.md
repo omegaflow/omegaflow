@@ -129,6 +129,35 @@ der Lock systemweit immer.
 - `docs/concepts/zeugnis.md`: was nicht gebaut ist, ist `absent` — die
   Nullstände sind registriert, nicht gefüllt.
 
+## 9. Cache, Fallback, SearXNG, Madrigal (2026-10-21)
+
+**Cache:** `run_lines_max` cached pro Arm/Query/max unter
+`~/.cache/omegaflow/archive_search` (JSON, TTL 3600 s; `OMEGAFLOW_CACHE_TTL`,
+`OMEGAFLOW_CACHE_DIR`, `OMEGAFLOW_NO_CACHE`). Gemessen: `--brave` 3,06 s →
+0,008 s beim zweiten Lauf. `pending`/`absent` werden nicht gecacht.
+
+**Fallback:** Brave, Exa, Tavily, SearchApi, SerpApi, Consensus, Gemini,
+Google CSE fallen bei 400/402/403/429/432 auf `--4get` zurück, mit
+`via: 4get (<mode> <status>)`. Gemessen: `--brave` liefert 4get-Treffer mit
+`via: 4get (brave 402)`; ohne 4get-Treffer bleibt das benannte `pending`.
+
+**SearXNG:** `searx.space/data/instances.json` hatte 92 Instanzen; 40 mit
+`network_type=normal` und HTTP 200 getestet. Ergebnis: 29×429, 5×403, 1×418,
+5×200 — aber alle fünf 200er sind Anubis-/Bot-Wände, keine JSON-API. Keine
+neue Instanz; `search.lumy.live` bleibt die eine, die trägt (200, 50 Treffer).
+
+**429/402:** Brave 402 und Exa 402 = Billing; Tavily 432 = Plan-Limit;
+SearchApi/SerpApi/Consensus/Gemini 429 = Quota; Google CSE 400 = Key ungültig.
+Kein kurzes Retry-Fenster, das trägt. Google CSE ist aus `QUERY_MODES`
+gestrichen (Flag bleibt), damit `--all` den toten Aufruf nicht mehr macht.
+
+**Madrigal:** `https://madrigal.iap-kborn.de` ist ein Madrigal-Datenportal
+(Experimente, Dateien, CGI-Zugriff), keine Such-API. Es gehört als Quelle in
+`measure`/Ernte, nicht in `archive_search`; erst aufnehmen, wenn ein konkretes
+Instrument (Ionosonde/Radar) gebraucht wird.
+
+
+
 ## Was stattdessen passierte
 
 Gebaut wurden in derselben Session: `sniff` (Bait/Wert/NetCDF/FITS/HEALPix),

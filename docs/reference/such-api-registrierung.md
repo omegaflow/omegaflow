@@ -34,7 +34,6 @@ Die vier neuen keyless Arme in `archive_search` sind:
 | Consensus | https://consensus.app/ | 200 |
 | Perplexity Sonar | https://www.perplexity.ai/settings/api | 200 |
 | Gemini | https://aistudio.google.com/app/apikey | 200, Login; Key da, 429 Quota |
-| Google CSE | https://programmablesearchengine.google.com/ und https://console.cloud.google.com/apis/credentials | 200 |
 | Kagi | https://kagi.com/settings?p=api | 200 |
 | You.com | https://api.you.com/ | 200 |
 | Naver | https://developers.naver.com/apps/#/register | 200 |
@@ -101,7 +100,7 @@ Die HTML-Seite blendet standardmäßig zwei Gruppen aus (per Toggle wieder sicht
 - **bereits funktionierend** (13, am 2026-10-21 mit Treffern gemessen): ADS,
   AlphaXiv, BASE, CORE, Firecrawl, Linkup, Serper, Perplexity, Scopus, Shodan,
   GitHub, Semantic Scholar, PipesHub.
-- **Kreditkarte im Signup** (10): Google CSE, Gemini, Yandex, Perplexity,
+- **Kreditkarte im Signup** (9): Gemini, Yandex, Perplexity,
   Kagi, You.com, Bright Data, Shodan, Telnyx, Parallel AI. Google verlangt für
   das Cloud-Projekt eine Karte; Yandex und die übrigen sind ohnehin
   kostenpflichtig. Der Filter wirkt auch, wenn man „kostenpflichtige aus“ abwählt.
