@@ -673,11 +673,12 @@ is the browser path for a display.
 | Schritt | Aufruf | Zweck |
 |---|---|---|
 | Köder aus Prosa/Specs | `bin/bait <datei>` · `bin/bait --url <https>` | Text/PDF/Bild/**FITS-Header**; nur `bait …`-Zeilen (Header, Wert, Einheit, `hex-f64`) |
-| Kette | `bin/find --header "a,b" --value <zahl> --hex <hex> --fits "K=V" --near <abs\|N%> --engine <kanal> --top N` | suchen → jeden Kandidaten sniffen → **MATCH / ZWILLING / NAH / kein-match** |
-| Merge | `bin/weave --on <anker> --out <datei> [--terms datei=token] <t1> <t2> …` | Anker-Merge, `__conflict`-Spalte, `.map`-Herkunftskarte, `.edges`-DAG |
+| Kette | `bin/find --header "a,b" --value <zahl> --hex <hex> --fits "K=V" --near <abs\|N%> --engine <kanal> --top N [--jsonl <datei>]` | suchen → jeden Kandidaten sniffen → **MATCH / ZWILLING / NAH / kein-match**; `--jsonl` für den Merge |
+| Merge | `bin/weave --on <anker> --out <datei> --from-find <jsonl> [--terms datei=token \| --no-terms] <t1> …` | Anker-Merge, `__conflict`-Spalte, `.map`-Herkunftskarte, `.edges`-DAG |
+| Schema | `bin/schema <url\|datei>` | API-/Datenbeschreibung → `schema header/field/unit/range` (HTML/JSON/PDF/Text) |
 | Kandidaten | `bin/leads_merge` | Leads gegen `phi/sources.φ` deduplizieren |
 
-Details und die gemessene Lücke (`find` → `weave` ist nicht verkettet):
+Details und die gebaute Kette (`find --jsonl` → `weave --from-find`):
 `docs/concepts/koeder-kette.md`; die Bedingungen je Datenform:
 `docs/concepts/koeder-formen.md`.
 

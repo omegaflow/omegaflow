@@ -53,12 +53,14 @@ weave: 2 Quellen, 3 Zeilen, 2 Spalten + Anker -> /tmp/merged.csv
 Spalte und Lizenz; `.edges` trägt `from → to: contributes|materializes` plus
 `mirror-of` für dieselbe Sache an zwei Orten.
 
-## Die Lücke, die blieb
+## Die Lücke, die blieb — und was davon gebaut ist
 
-1. **`find` und `weave` sind nicht verkettet.** `find` endet mit Textzeilen und
-   Urteilen; `weave` beginnt bei Tabellen. Es gibt keinen Aufruf, der die
-   Treffer eines `find`-Laufs direkt als Tabellen an `weave` übergibt. Das ist
-   die eigentliche „halbe Strecke": beide Enden sind gebaut, der Übergang fehlt.
+1. **`find --jsonl` → `weave --from-find` ist gebaut.** `find` schreibt je
+   Kandidat eine JSON-Zeile; `weave --from-find <datei> --out <datei>`
+   merged über den Anker `url`. Gemessen 2026-10-21:
+   `find: 1 Kandidat, 1 Roh-Link, 1 Treffer` → `weave: 1 Quelle, 2 Zeilen,
+   7 Spalten + Anker` (mit `--no-terms`). Die frühere Aussage „nicht
+   verkettet“ war Doku-Drift.
 2. **`weave` war unsichtbar.** Es lag in `target/release/weave`, hatte keinen
    `bin/`-Wrapper und keinen Eintrag in `docs/concepts/tools-map.md`; wer es
    nicht aus dem Quelltext kannte, fand es nicht. Seit 2026-10-21 gibt es
@@ -66,15 +68,6 @@ Spalte und Lizenz; `.edges` trägt `from → to: contributes|materializes` plus
 3. **Die Formen-/Köder-Analyse lag nur in der gelöschten Ratsdatei.** Geborgen
    als `docs/concepts/koeder-formen.md`; ohne das wären die Bedingungen
    (Signal/Anker/blind je Form) nirgends festgehalten.
-4. **`find` hat kein `--sniff`-Ergebnis als Datei.** Es schreibt nur stdout; ein
-   `.map`/`.edges` wie `weave` entsteht nicht. Wer die Kette fahren will, muss
-   die Ausgabe selbst weiterreichen.
-5. **`weave` prüft `--terms` nur, wenn es angegeben ist.** Ohne `--terms` steht
-   in der Karte `unset` — die Lizenz ist dann nicht Teil des Merges.
-
-## Nächster Schritt (nicht gebaut)
-
-Ein `find … --weave <out>` oder ein `weave --from-find <jsonl>`: `find` schreibt
-je Kandidat eine Zeile mit `url`, `header`, `value`, `hex`, `verdict`, `terms`;
-`weave` liest sie als Tabellen und merged über `url`/`id`. Bis dahin bleibt die
-Kette ein Werkzeugkasten, kein Fließband.
+4. **`weave` prüft `--terms` nur, wenn es angegeben ist.** Ohne `--terms` und
+   ohne `--no-terms` bricht es ab; mit `--no-terms` steht in der Karte `unset`
+   — die Lizenz ist dann nicht Teil des Merges.
