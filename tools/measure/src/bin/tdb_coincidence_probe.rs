@@ -1,12 +1,20 @@
 use omegaflow::archivar::C_LIGHT;
 use omegaflow::archivar::{
-    BodyEphemeris, LeapSeconds, body_barycenter_position, content_dir, embedded_lsk,
-    fetch_raw_bytes, parse_ephemeris_binary,
+    BodyEphemeris, J2000_UNIX_OFFSET, LeapSeconds, body_barycenter_position, content_dir,
+    embedded_lsk, fetch_raw_bytes, parse_ephemeris_binary,
 };
 use omegaflow::jwst::mjd_to_unix;
 use omegaflow::kepler::AU_M;
 use std::collections::HashMap;
 
+fn eph_key(path: &str) -> &str {
+    let stem = path.rsplit('/').next().unwrap_or(path);
+    stem.strip_prefix("ephemeris_")
+        .and_then(|s| s.strip_suffix(".bin"))
+        .unwrap_or("")
+}
+const SUN_EPH_LOCAL: &str = "sources/ssd.jpl.nasa.gov/ephemeris_sun.bin";
+const EARTH_EPH_LOCAL: &str = "sources/ssd.jpl.nasa.gov/ephemeris_earth.bin";
 const SUN_EPH_CDN: &str =
     "https://github.com/omegaflow/sources/releases/download/ssd.jpl.nasa.gov/ephemeris_sun.bin";
 const EARTH_EPH_CDN: &str =
@@ -107,7 +115,7 @@ fn vec_dot(a: [f64; 3], b: [f64; 3]) -> f64 {
     a[0] * b[0] + a[1] * b[1] + a[2] * b[2]
 }
 
-fn to_tdb_arrival(day: f64, kind: TimeKind, scale: TimeScale, lsk: &LeapSeconds) -> Option<f64> {
+fn to_utc_unix(day: f64, kind: TimeKind, scale: TimeScale, lsk: &LeapSeconds) -> Option<f64> {
     if !day.is_finite() {
         return None;
     }
@@ -116,12 +124,20 @@ fn to_tdb_arrival(day: f64, kind: TimeKind, scale: TimeScale, lsk: &LeapSeconds)
         TimeKind::Jd => (day - JD_UNIX_OFFSET) * DAY_S,
     };
     match scale {
-        TimeScale::Utc => lsk.unix_to_tdb(unix),
-        TimeScale::Tai => {
-            let tai_minus_utc = lsk.leap_at(unix)?;
-            lsk.unix_to_tdb(unix - tai_minus_utc)
-        }
+        TimeScale::Utc => Some(unix),
+        TimeScale::Tai => Some(unix - lsk.leap_at(unix)?),
     }
+}
+
+fn to_tdb_arrival(day: f64, kind: TimeKind, scale: TimeScale, lsk: &LeapSeconds) -> Option<f64> {
+    let unix_utc = to_utc_unix(day, kind, scale, lsk)?;
+    lsk.unix_to_tdb(unix_utc)
+}
+
+fn tdb_minus_utc_s(day: f64, kind: TimeKind, scale: TimeScale, lsk: &LeapSeconds) -> Option<f64> {
+    let unix_utc = to_utc_unix(day, kind, scale, lsk)?;
+    let tdb = lsk.unix_to_tdb(unix_utc)?;
+    Some(tdb - (unix_utc - J2000_UNIX_OFFSET))
 }
 
 fn roemer_term_s(
@@ -160,12 +176,10 @@ fn fold_event(ev: &Event, lsk: &LeapSeconds, eph: &HashMap<String, BodyEphemeris
     let Some(arrival_tdb) = to_tdb_arrival(ev.day, ev.kind, ev.scale, lsk) else {
         return FoldOutcome::TimeVoid;
     };
-    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
-    let sun_key = std::env::var("OMEGAFLOW_SUN").expect("OMEGAFLOW_SUN unset");
-    let Some(earth) = body_barycenter_position(&receiver, arrival_tdb, eph) else {
+    let Some(earth) = body_barycenter_position(eph_key(EARTH_EPH_LOCAL), arrival_tdb, eph) else {
         return FoldOutcome::EphemerisVoid;
     };
-    let Some(sun) = body_barycenter_position(&sun_key, arrival_tdb, eph) else {
+    let Some(sun) = body_barycenter_position(eph_key(SUN_EPH_LOCAL), arrival_tdb, eph) else {
         return FoldOutcome::EphemerisVoid;
     };
     match emitted_fold(arrival_tdb, ev.ra_deg, ev.dec_deg, earth, sun) {
@@ -306,6 +320,16 @@ fn report_pair(
         scale_token(b.scale),
         b.day
     );
+    for (label, ev) in [("A", a), ("B", b)] {
+        match tdb_minus_utc_s(ev.day, ev.kind, ev.scale, lsk) {
+            Some(offset) => println!(
+                "  time scale {label}: TDB − UTC = {:+.6} s ({:+.3} ms) at its epoch",
+                offset,
+                offset * 1000.0
+            ),
+            None => println!("  time scale {label}: TDB − UTC = absent (leap table void at its epoch)"),
+        }
+    }
     for (label, fold) in [("A", &an.fold_a), ("B", &an.fold_b)] {
         match fold {
             Some(f) => println!(
@@ -331,8 +355,9 @@ fn report_pair(
     }
     if let (Some(c), Some(n)) = (an.corrected_s, an.naive_s) {
         println!(
-            "  honest sharpening (corrected minus naive) = {:.6} s",
-            c - n
+            "  honest sharpening (corrected minus naive) = {:.6} s ({:.3} ms)",
+            c - n,
+            (c - n) * 1000.0
         );
     }
     match decide(an.corrected_s, window_s) {
@@ -357,14 +382,14 @@ fn report_pair(
     }
 }
 
-fn print_term_budget() {
+fn print_term_budget(eph: &HashMap<String, BodyEphemeris>) {
     let single_s = AU_M / C_LIGHT;
     let cross_s = 2.0 * single_s;
     let v_earth_mps = 2.0 * std::f64::consts::PI * AU_M / (SIDEREAL_YEAR_DAYS * DAY_S);
     let weekly_s = v_earth_mps * 7.0 * DAY_S / C_LIGHT;
-    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
-    let diurnal_ms = match load_ephemeris_map()
-        .and_then(|m| m.get(&receiver)?.props.as_ref().map(|p| p.radius_m))
+    let diurnal_ms = match eph
+        .get(eph_key(EARTH_EPH_LOCAL))
+        .and_then(|b| b.props.as_ref().map(|p| p.radius_m))
     {
         Some(radius) => format!("{:.1}", radius / C_LIGHT * 1000.0),
         None => String::from("absent"),
@@ -374,7 +399,10 @@ fn print_term_budget() {
     );
 }
 
-fn ephemeris_cache_bytes(name: &str, url: &str) -> Option<Vec<u8>> {
+fn ephemeris_cache_bytes(name: &str, local: &str, url: &str) -> Option<Vec<u8>> {
+    if let Ok(b) = std::fs::read(local) {
+        return Some(b);
+    }
     let path = content_dir().join(format!("lsst_roemer_{name}.bin"));
     if let Ok(b) = std::fs::read(&path) {
         return Some(b);
@@ -393,13 +421,11 @@ fn ephemeris_cache_bytes(name: &str, url: &str) -> Option<Vec<u8>> {
 }
 
 fn load_ephemeris_map() -> Option<HashMap<String, BodyEphemeris>> {
-    let sun = std::env::var("OMEGAFLOW_SUN").expect("OMEGAFLOW_SUN unset");
-    let receiver = std::env::var("OMEGAFLOW_RECEIVER").expect("OMEGAFLOW_RECEIVER unset");
-    let sun_b = ephemeris_cache_bytes(&sun, SUN_EPH_CDN)?;
-    let earth_b = ephemeris_cache_bytes(&receiver, EARTH_EPH_CDN)?;
+    let sun_b = ephemeris_cache_bytes(eph_key(SUN_EPH_LOCAL), SUN_EPH_LOCAL, SUN_EPH_CDN)?;
+    let earth_b = ephemeris_cache_bytes(eph_key(EARTH_EPH_LOCAL), EARTH_EPH_LOCAL, EARTH_EPH_CDN)?;
     let mut map = HashMap::new();
-    map.insert(sun, parse_ephemeris_binary(&sun_b)?);
-    map.insert(receiver, parse_ephemeris_binary(&earth_b)?);
+    map.insert(eph_key(SUN_EPH_LOCAL).to_string(), parse_ephemeris_binary(&sun_b)?);
+    map.insert(eph_key(EARTH_EPH_LOCAL).to_string(), parse_ephemeris_binary(&earth_b)?);
     Some(map)
 }
 
@@ -506,7 +532,6 @@ fn main() {
         );
         return;
     };
-    print_term_budget();
     let eph = match load_ephemeris_map() {
         Some(map) => map,
         None => {
@@ -516,6 +541,7 @@ fn main() {
             HashMap::new()
         }
     };
+    print_term_budget(&eph);
     let window_s = arg_f64(&args, "--window-s");
     if let Some(path) = arg_token(&args, "--file") {
         run_file(&path, window_s, &lsk, &eph);
@@ -671,9 +697,15 @@ mod tests {
             (tdb_utc - tdb_tai).abs() < 1e-6,
             "the same physical instant folds identically from utc and tai raw clocks, was {tdb_utc} vs {tdb_tai}"
         );
+        let pre_leap = to_tdb_arrival(30000.0, TimeKind::Mjd, TimeScale::Utc, &lsk)
+            .expect("a pre-leap epoch folds through the library's delta-T fallback");
         assert!(
-            to_tdb_arrival(30000.0, TimeKind::Mjd, TimeScale::Utc, &lsk).is_none(),
-            "a pre-1972 epoch leaves the leap table void — no fabricated TDB"
+            pre_leap.is_finite(),
+            "the pre-leap TDB arrival is finite, was {pre_leap}"
+        );
+        assert!(
+            lsk.leap_at(mjd_to_unix(30000.0)).is_none(),
+            "no leap-second entry exists before 1972 — the fallback names its own model"
         );
     }
 
@@ -715,7 +747,7 @@ mod tests {
         let a = Event {
             ra_deg: 0.0,
             dec_deg: 0.0,
-            day: 30000.0,
+            day: f64::NAN,
             kind: TimeKind::Mjd,
             scale: TimeScale::Utc,
         };
