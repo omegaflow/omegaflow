@@ -106,6 +106,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
     let mut cur_body: Option<String> = None;
     let mut cur_post_body: Option<String> = None;
     let mut cur_origin: Option<String> = None;
+    let mut cur_compiler: Option<String> = None;
     let mut cur_terms: Option<String> = None;
     let mut cur_band: Option<String> = None;
     let mut cur_footprint: Option<String> = None;
@@ -173,6 +174,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             post_body: cur_post_body.clone(),
                             target: cur_target.clone(),
                             origin: cur_origin.clone(),
+                            compiler: cur_compiler.clone(),
                             terms: cur_terms.clone(),
                             band: cur_band.clone(),
                             footprint: cur_footprint.clone(),
@@ -268,6 +270,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 cur_body = None;
                 cur_post_body = None;
                 cur_origin = None;
+                cur_compiler = None;
                 cur_terms = None;
                 cur_band = None;
                 cur_footprint = None;
@@ -304,6 +307,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
             "origin" => {
                 let rest = line.strip_prefix("origin").unwrap_or("").trim();
                 cur_origin = if rest.is_empty() {
+                    None
+                } else {
+                    Some(rest.to_string())
+                };
+            }
+            "compiler" => {
+                let rest = line.strip_prefix("compiler").unwrap_or("").trim();
+                cur_compiler = if rest.is_empty() {
                     None
                 } else {
                     Some(rest.to_string())
@@ -1438,14 +1449,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         Ok(v) => v,
                         Err(_) => continue,
                     },
-                    None => 0.0,
+                    None => SLOT_ABSENT,
                 };
                 let advection: f64 = match parts.get(i + 4) {
                     Some(s) => match s.parse() {
                         Ok(v) => v,
                         Err(_) => continue,
                     },
-                    None => 0.0,
+                    None => SLOT_ABSENT,
                 };
                 let desc = match descriptor_from_axes(
                     parts[3], parts[4], parts[5], parts[6], parts[7], parts[8], unit,
@@ -2857,6 +2868,7 @@ mod tests {
             ttl: 604800,
             url: url.into(),
             origin: None,
+            compiler: None,
             terms: None,
             band: None,
             footprint: None,
@@ -2902,6 +2914,18 @@ mod tests {
             geomag_lat: None,
             weberin_role: None,
         }
+    }
+
+    #[test]
+    fn compiler_directive_is_read_into_source_config() {
+        let content = "url https://example.org/x\nttl 60\nat sun\ncompiler tools/harvest/src/bin/x.rs\nfield v v inverse-square em W/m2 60 0.0 0.0\n";
+        let s = load_sources_from(content);
+        assert_eq!(s.len(), 1);
+        assert_eq!(
+            s[0].compiler.as_deref(),
+            Some("tools/harvest/src/bin/x.rs"),
+            "compiler must be read, not silently ignored"
+        );
     }
 
     const URL_A: &str = "https://cdn.example/x/odyssey_odf_t700000000_800000000.bin";
