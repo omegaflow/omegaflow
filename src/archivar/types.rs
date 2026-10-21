@@ -424,6 +424,21 @@ pub struct FieldConfig {
     pub aperture: Aperture,
 }
 
+#[derive(Clone, Debug, PartialEq)]
+pub enum MediumValue {
+    Absent,
+    Pending,
+    Measured(f64),
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct MediumLine {
+    pub absorption: MediumValue,
+    pub absorption_unit: Option<String>,
+    pub advection: MediumValue,
+    pub advection_unit: Option<String>,
+}
+
 pub const SLOT_ABSENT: f64 = -1.0;
 
 pub const PRESENCE_FLAG_PHASE: f64 = 1.0;
@@ -556,6 +571,7 @@ pub struct SourceConfig {
     pub origin: Option<String>,
     pub compiler: Option<String>,
     pub terms: Option<String>,
+    pub medium: Option<MediumLine>,
     pub band: Option<String>,
     pub footprint: Option<String>,
     pub witness: Option<String>,

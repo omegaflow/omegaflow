@@ -135,6 +135,7 @@ fn pds3_label_column_joins_the_field_line_by_source_key() {
 
 fn source_fixture(format: &str, extracts: Vec<Extract>) -> SourceConfig {
     SourceConfig {
+        medium: None,
         ttl: 3600,
         url: "https://example.com/x".into(),
         origin: None,
@@ -1137,6 +1138,7 @@ fn full_fixture_lsk() -> super::LeapSeconds {
 #[test]
 fn test_render_source_url_substitutions() {
     let src = SourceConfig {
+        medium: None,
         ttl: 100,
         url: "https://example.com?sstr={target}&from={catalog}".into(),
         origin: None,
@@ -1429,6 +1431,7 @@ fn test_epoch_stamp_gate_is_receiver_time() {
 #[test]
 fn test_post_body_rendering() {
     let src = SourceConfig {
+        medium: None,
         ttl: 100,
         url: "https://earth-search.aws.element84.com/v0/search".into(),
         origin: None,
@@ -1512,6 +1515,7 @@ fn test_post_body_rendering() {
 #[test]
 fn test_csv_zip_post_body_resolves_secret() {
     let src = SourceConfig {
+        medium: None,
         ttl: 100,
         url: "https://www.wis-tns.org/system/files/tns_public_objects/tns_public_objects.csv.zip"
             .into(),
@@ -1643,6 +1647,7 @@ fn test_csv_to_json_nul_separated() {
 #[test]
 fn test_celestial_map_redshift_distance() {
     let src = SourceConfig {
+        medium: None,
         ttl: 100,
         url: "https://example.com/x".into(),
         origin: None,
@@ -1760,6 +1765,7 @@ fn test_extract_csv_zip_end_to_end() {
     let path = std::env::temp_dir().join("omegaflow_test_tns.zip");
     std::fs::write(&path, &zip).unwrap();
     let src = SourceConfig {
+        medium: None,
         ttl: 100,
         url: "https://example.com/x".into(),
         origin: None,
@@ -2093,6 +2099,7 @@ field temp temp_c\n";
 fn test_extract_cmap_dist_scale_kpc() {
     let json = r#"[{"ra":0.0,"dec":0.0,"dist_kpc":1.0,"H":5.5}]"#;
     let src = SourceConfig {
+        medium: None,
         ttl: 604800,
         url: "https://example.com/x".into(),
         origin: None,
@@ -2203,6 +2210,7 @@ fn test_extract_cmap_epoch_mjd_converts_to_tdb() {
     let mjd = 59107.72385694459;
     let json = format!(r#"[{{"ra":0.0,"dec":0.0,"dist_pc":10.0,"epochmean":{mjd},"H":5.5}}]"#);
     let src = SourceConfig {
+        medium: None,
         ttl: 604800,
         url: "https://example.com/x".into(),
         origin: None,
@@ -2308,6 +2316,7 @@ fn test_extract_cmap_epoch_mjd_converts_to_tdb() {
 fn test_extract_cmap_dist_without_scale_is_absent() {
     let json = r#"[{"ra":0.0,"dec":0.0,"dist_kpc":1.0,"H":5.5}]"#;
     let src = SourceConfig {
+        medium: None,
         ttl: 604800,
         url: "https://example.com/x".into(),
         origin: None,
@@ -2410,6 +2419,7 @@ fn test_extract_cmap_dist_without_scale_is_absent() {
 fn test_extract_cmap_rv_without_scale_is_absent() {
     let json = r#"[{"ra":0.0,"dec":0.0,"plx":100.0,"rv":50.0,"H":5.5}]"#;
     let src = SourceConfig {
+        medium: None,
         ttl: 604800,
         url: "https://example.com/x".into(),
         origin: None,
@@ -2520,6 +2530,7 @@ fn test_extract_cmap_pm_radvel_plx() {
     let json =
         r#"[{"ra":0.0,"dec":0.0,"plx":100.0,"pmra":1000.0,"pmdec":2000.0,"rv":50.0,"H":5.5}]"#;
     let src = SourceConfig {
+        medium: None,
         ttl: 604800,
         url: "https://example.com/x".into(),
         origin: None,
@@ -2662,6 +2673,7 @@ fn test_empty_data_anomaly() {
 fn test_extract_cmap_no_distance_skipped() {
     let json = r#"[{"ra":0.0,"dec":0.0,"H":5.5}]"#;
     let src = SourceConfig {
+        medium: None,
         ttl: 604800,
         url: "https://example.com/x".into(),
         origin: None,
@@ -2761,6 +2773,7 @@ fn test_extract_cmap_no_distance_skipped() {
 fn test_extract_cmap_null_dist_skipped() {
     let json = r#"[{"ra":0.0,"dec":0.0,"dist_pc":null,"H":5.5}]"#;
     let src = SourceConfig {
+        medium: None,
         ttl: 604800,
         url: "https://example.com/x".into(),
         origin: None,
@@ -3065,6 +3078,7 @@ fn test_extract_cmap_csv_dist_scale_mpc() {
 331061,456-013,0.01042,15.87222,0.00875,15.88167,6007,260,45,1.13,0.09,6.5,2.40,85.2,9.29,1,I,\"\"\n\
 331405,\"\",0.01375,26.01639,0.01458,26.01389,10409,315,8,2.62,0.09,16.1,2.05,143.8,10.11,1,I,\"\"\n";
     let src = SourceConfig {
+        medium: None,
         ttl: 604800,
         url: "https://example.com/x".into(),
         origin: None,
@@ -4272,6 +4286,7 @@ fn test_parse_station_entries() {
     )
     .unwrap();
     let src = SourceConfig {
+        medium: None,
         ttl: 300,
         url: "https://example.com/x".into(),
         origin: None,
@@ -4342,6 +4357,7 @@ fn test_parse_station_entries_flatten_filter() {
     )
     .unwrap();
     let src = SourceConfig {
+        medium: None,
         ttl: 300,
         url: "https://example.com/x".into(),
         origin: None,
@@ -5432,6 +5448,7 @@ fn test_backlog_batches_verify() {
 #[test]
 fn test_erddap_argo_map_extract() {
     let src = SourceConfig {
+        medium: None,
         ttl: 43200,
         url: "https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.json".into(),
         origin: None,
@@ -6182,6 +6199,7 @@ fn test_anchor_body_agnostic() {
         alt: Some(0.0),
     };
     let src = super::SourceConfig {
+        medium: None,
         ttl: 3600,
         url: "https://example.com".into(),
         origin: None,
@@ -6357,6 +6375,7 @@ fn test_anchor_applies_declared_unit() {
         alt: Some(0.0),
     };
     let src = super::SourceConfig {
+        medium: None,
         ttl: 3600,
         url: "https://example.com".into(),
         origin: None,
@@ -8932,6 +8951,7 @@ fn transpose_qbo_table(body: &str) -> String {
 #[test]
 fn test_diagnose_no_samples() {
     let base = super::SourceConfig {
+        medium: None,
         ttl: 60,
         url: "https://example.com/q".into(),
         origin: None,
@@ -9064,6 +9084,7 @@ fn test_diagnose_no_samples() {
 #[test]
 fn test_ci_body_verdict() {
     let make = |format: &str| super::SourceConfig {
+        medium: None,
         ttl: 60,
         url: "https://example.com/q".into(),
         origin: None,
@@ -9290,6 +9311,7 @@ fn test_refusal_ledger_dedup_and_reload() {
 #[test]
 fn test_map_single_object_alt_scale_epoch_default() {
     let src = super::SourceConfig {
+        medium: None,
         ttl: 10,
         url: "https://api.wheretheiss.at/v1/satellites/25544".into(),
         origin: None,
@@ -9404,6 +9426,7 @@ fn test_map_single_object_alt_scale_epoch_default() {
 #[test]
 fn test_map_vel_unit_and_tau_key_override() {
     let src = super::SourceConfig {
+        medium: None,
         ttl: 10,
         url: "https://example.org/flow".into(),
         origin: None,
@@ -9685,6 +9708,7 @@ fn test_fold_directive_parse_and_extract() {
     assert!(rsrcs[0].extracts.is_empty());
 
     let src = super::SourceConfig {
+        medium: None,
         ttl: 10,
         url: "https://example.org/f".into(),
         origin: None,
@@ -9845,6 +9869,7 @@ fn test_keplermap_elements_to_icrs() {
         }
     }
     let mk_src = |a_key: &str, ma_key: &str, q_key: &str, tp_key: &str| super::SourceConfig {
+        medium: None,
         ttl: 10,
         url: "https://example.org/k".into(),
         origin: None,
@@ -10193,6 +10218,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
     assert_eq!(srcs.len(), 1);
 
     let src = super::SourceConfig {
+        medium: None,
         ttl: 10,
         url: "https://example.org/f".into(),
         origin: None,
@@ -10299,6 +10325,7 @@ fn test_field_in_nested_port_and_flatten_generic() {
 #[test]
 fn test_flux_from_mag_manifests() {
     let src = super::SourceConfig {
+        medium: None,
         ttl: 10,
         url: "https://example.org/cat".into(),
         origin: None,
@@ -10402,6 +10429,7 @@ fn test_flux_from_mag_manifests() {
 #[test]
 fn test_map_lat_sign_lon_sign() {
     let src = SourceConfig {
+        medium: None,
         ttl: 3600,
         url: "https://example.com/fireball".into(),
         origin: None,
@@ -10531,6 +10559,7 @@ fn test_mag_type_gating() {
     assert!(!is_moment_magnitude("Mj"));
 
     let src = super::SourceConfig {
+        medium: None,
         ttl: 60,
         url: "https://example.org/quake".into(),
         origin: None,
@@ -12256,6 +12285,7 @@ fn fits_format_extracts_last_row() {
         aperture: super::Aperture::None,
     };
     let src = SourceConfig {
+        medium: None,
         ttl: 604800,
         url: "https://example.com/x.fits".into(),
         origin: None,
