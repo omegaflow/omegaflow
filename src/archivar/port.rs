@@ -738,7 +738,7 @@ pub fn probe_one(src: &SourceConfig, params: ProbeParams<'_>) -> (bool, String) 
     } else {
         block.push_str(&format!("ttl {}\n", ttl));
     }
-    match &src.frame {
+    match &src.frame() {
         Frame::Surface {
             body_name,
             lat,
@@ -3442,7 +3442,7 @@ pub fn probe_fanout(
         return;
     };
     let stations_url = if url_has_template(stations_url) {
-        match ci_probe_render(stations_url, frame_anchor(&src.frame), env) {
+        match ci_probe_render(stations_url, frame_anchor(&src.frame()), env) {
             Some(u) => u,
             None => {
                 *pending += 1;
@@ -3507,7 +3507,7 @@ pub fn probe_template(
     reachable: &mut usize,
     dead: &mut usize,
 ) {
-    let anchor = frame_anchor(&src.frame);
+    let anchor = frame_anchor(&src.frame());
     let probe_url = match ci_probe_render(&src.url, anchor, env) {
         Some(u) => u,
         None => return,

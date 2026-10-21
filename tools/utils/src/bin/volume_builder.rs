@@ -3,7 +3,7 @@ use std::env;
 use std::fs;
 
 use omegaflow::archivar::channels::build_netcdf4_volume;
-use omegaflow::archivar::types::{Extract, Frame, SourceConfig};
+use omegaflow::archivar::types::{Extract, SourceConfig};
 use omegaflow::hdf5::{Endian, Hdf5File, decode_f32, decode_f64};
 use omegaflow::volume::{Axis, AxisKind, Volume};
 
@@ -357,7 +357,6 @@ fn main() {
             rights_identifier: None,
             rights_scheme: None,
             rights_uri: None,
-            frame: Frame::Manifest,
             fanout_center: None,
             format: "volume_netcdf".to_string(),
             extracts: vec![Extract::Volume {

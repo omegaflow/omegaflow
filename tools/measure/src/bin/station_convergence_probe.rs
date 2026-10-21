@@ -174,7 +174,7 @@ fn source_carries(src: &SourceConfig, field: &str) -> bool {
 fn register_station_point(sources: &[SourceConfig]) -> Option<(f64, f64)> {
     for src in sources {
         if source_carries(src, "intermagnet_xyz_x_nt") {
-            if let omegaflow::archivar::Frame::Surface { lat, lon, .. } = src.frame {
+            if let omegaflow::archivar::Frame::Surface { lat, lon, .. } = src.frame() {
                 return Some((lat, lon));
             }
         }
@@ -482,8 +482,8 @@ fn encounter(
         .filter(|r| (r.t - enc_t).abs() <= SWARM_SIGMA_WINDOW_S)
         .map(|r| r.f)
         .collect();
-    let ground_sigma = std(&g_win).unwrap_or(f64::NAN);
-    let swarm_sigma = std(&s_win).unwrap_or(f64::NAN);
+    let ground_sigma = std(&g_win)?;
+    let swarm_sigma = std(&s_win)?;
     Some(Encounter {
         epoch: enc_t,
         distance_deg: dist,
