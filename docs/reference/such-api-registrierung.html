@@ -67,11 +67,42 @@
   .card code { color: var(--accent); font-size: 13px; }
   .card p { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
   .note { background: var(--panel); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 12px 16px; color: var(--muted); margin: 18px 0; }
+  #stateFilter {
+    padding: 11px 12px; border: 1px solid var(--line); border-radius: 9px;
+    background: var(--panel); color: var(--text); font-size: 14px;
+  }
+  #resetStates {
+    padding: 11px 14px; border: 1px solid var(--line); border-radius: 9px;
+    background: var(--panel); color: var(--muted); font-size: 14px; cursor: pointer;
+  }
+  #resetStates:hover { color: var(--text); border-color: var(--accent); }
+  .state-h, .statecell { white-space: nowrap; }
+  .statebox { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+  .statebox input {
+    appearance: none; -webkit-appearance: none; width: 16px; height: 16px; margin: 0;
+    border: 1.5px solid var(--muted); border-radius: 4px; background: transparent;
+    position: relative; cursor: pointer; flex: 0 0 auto;
+  }
+  .statebox input:checked { background: var(--ok); border-color: var(--ok); }
+  .statebox input:checked::after {
+    content: ""; position: absolute; left: 4px; top: 1px; width: 5px; height: 9px;
+    border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
+  .statebox[data-state="declined"] input { border-color: var(--bad); background: var(--badbg); }
+  .statebox[data-state="declined"] input::after {
+    content: ""; position: absolute; left: 3px; top: 6px; width: 8px; height: 2px;
+    background: var(--bad); border: 0; transform: none;
+  }
+  .slabel { font-size: 12px; color: var(--muted); min-width: 96px; }
+  .statebox[data-state="registriert"] .slabel { color: var(--info); font-weight: 600; }
+  .statebox[data-state="authentifiziert"] .slabel { color: var(--ok); font-weight: 600; }
+  .statebox[data-state="declined"] .slabel { color: var(--bad); font-weight: 600; text-decoration: line-through; }
   .hidden { display: none !important; }
   footer { margin-top: 48px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; }
   @media print {
     :root { --bg: #fff; --panel: #fff; --panel2: #f4f4f4; --text: #000; --muted: #444; --line: #bbb; }
     .toolbar { display: none; }
+    .state-h, .statecell { display: none; }
     main { max-width: none; padding: 0; }
     a { color: #000; }
   }
@@ -87,6 +118,14 @@
 
 <div class="toolbar">
   <input id="filter" type="search" placeholder="Filtern nach Anbieter, URL, Typ …" autocomplete="off" aria-label="Tabelle filtern">
+  <select id="stateFilter" aria-label="Nach eigenem Status filtern">
+    <option value="alle">Status: alle</option>
+    <option value="offen">offen</option>
+    <option value="registriert">registriert</option>
+    <option value="authentifiziert">authentifiziert</option>
+    <option value="declined">declined</option>
+  </select>
+  <button id="resetStates" type="button">Status zurücksetzen</button>
   <span class="count" id="count"></span>
   <span class="legend">
     <span class="badge b-ok">200</span>
@@ -94,6 +133,12 @@
     <span class="badge b-warn">403/429 Bot</span>
     <span class="badge b-bad">000/404/410 tot</span>
   </span>
+</div>
+
+<div class="note">
+  <strong>Eigener Status pro Zeile:</strong> Die Checkbox springt bei jedem Klick
+  <code>offen → registriert → authentifiziert → declined → offen</code>.
+  Gespeichert wird lokal im Browser (<code>localStorage</code>), nicht im Repo.
 </div>
 
 <div class="note">
@@ -229,20 +274,101 @@
 
 <script>
 (function () {
+  var STATES = ['offen', 'registriert', 'authentifiziert', 'declined'];
+  var STORE = 'omegaflow:such-api:state:';
   var input = document.getElementById('filter');
+  var stateFilter = document.getElementById('stateFilter');
   var count = document.getElementById('count');
+  var reset = document.getElementById('resetStates');
+  var tables = Array.prototype.slice.call(document.querySelectorAll('.tablewrap table'));
+
+  function providerKey(row) {
+    var cell = row.querySelector('td.name');
+    if (!cell) return '';
+    var first = cell.firstChild;
+    var name = first && first.nodeType === 3 ? first.nodeValue : cell.textContent;
+    return name.trim();
+  }
+
+  function stateOf(name) {
+    try {
+      var v = localStorage.getItem(STORE + name);
+      return STATES.indexOf(v) > 0 ? v : 'offen';
+    } catch (e) { return 'offen'; }
+  }
+
+  function save(name, state) {
+    try { localStorage.setItem(STORE + name, state); } catch (e) {}
+  }
+
+  function paint(box, cb, label, state) {
+    box.setAttribute('data-state', state);
+    cb.checked = state === 'registriert' || state === 'authentifiziert';
+    label.textContent = state;
+    cb.setAttribute('aria-label', 'Eigener Status: ' + state);
+  }
+
+  tables.forEach(function (table) {
+    var headRow = table.querySelector('thead tr');
+    if (headRow && !headRow.querySelector('.state-h')) {
+      var th = document.createElement('th');
+      th.className = 'state-h';
+      th.textContent = 'Mein Status';
+      headRow.appendChild(th);
+    }
+    Array.prototype.forEach.call(table.querySelectorAll('tbody tr'), function (row) {
+      if (row.querySelector('.statecell')) return;
+      var name = providerKey(row);
+      var td = document.createElement('td');
+      td.className = 'statecell';
+      var box = document.createElement('label');
+      box.className = 'statebox';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      var label = document.createElement('span');
+      label.className = 'slabel';
+      paint(box, cb, label, stateOf(name));
+      cb.addEventListener('click', function (e) {
+        e.preventDefault();
+        var cur = box.getAttribute('data-state');
+        var next = STATES[(STATES.indexOf(cur) + 1) % STATES.length];
+        save(name, next);
+        // the browser restores the pre-click checkedness after canceling the
+        // default action, so paint one tick later — the data-state is the truth
+        setTimeout(function () {
+          paint(box, cb, label, next);
+          apply();
+        }, 0);
+      });
+      box.appendChild(cb);
+      box.appendChild(label);
+      td.appendChild(box);
+      row.appendChild(td);
+    });
+  });
+
   var rows = Array.prototype.slice.call(document.querySelectorAll('tbody tr'));
   var sections = Array.prototype.slice.call(document.querySelectorAll('main > h2, main > .tablewrap'));
 
+  function rowText(row) {
+    return Array.prototype.map.call(row.cells, function (cell) {
+      return cell.classList.contains('statecell') ? '' : cell.textContent;
+    }).join(' ').toLowerCase();
+  }
+
   function apply() {
     var q = input.value.trim().toLowerCase();
+    var want = stateFilter.value;
     var visible = 0;
     rows.forEach(function (row) {
-      var hit = !q || row.textContent.toLowerCase().indexOf(q) !== -1;
+      var textHit = !q || rowText(row).indexOf(q) !== -1;
+      var box = row.querySelector('.statebox');
+      var st = box ? box.getAttribute('data-state') : '';
+      var stateHit = want === 'alle' || st === want;
+      var hit = textHit && stateHit;
       row.classList.toggle('hidden', !hit);
       if (hit) visible++;
     });
-    // hide a table (and its heading) when every row is filtered out
     sections.forEach(function (el, i) {
       if (el.tagName === 'H2') {
         var table = sections[i + 1];
@@ -257,6 +383,19 @@
   }
 
   input.addEventListener('input', apply);
+  stateFilter.addEventListener('change', apply);
+  reset.addEventListener('click', function () {
+    if (!window.confirm('Alle eigenen Statusmarkierungen zurücksetzen?')) return;
+    rows.forEach(function (row) {
+      var box = row.querySelector('.statebox');
+      if (!box) return;
+      var cb = box.querySelector('input');
+      var label = box.querySelector('.slabel');
+      paint(box, cb, label, 'offen');
+      save(providerKey(row), 'offen');
+    });
+    apply();
+  });
   apply();
 })();
 </script>
