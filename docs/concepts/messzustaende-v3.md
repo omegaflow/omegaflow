@@ -3,10 +3,10 @@
   class: concept
   date: 2026-10-21
   sha256: f67e324afee26c32bcfb42f908c9b54f36d1d2e605162e6f6cd3ce1821d2f96e
-  status: draft
+  status: live
   owner: future
   ack: future 2026-10-21T14:40Z
-  next: Test am Bestand — Felder mit 0 oder ≥2 Zellen je Achse
+  next: explizite Felder `zustand`/`lebenszyklus`/`zugang` im Register; dann voller Bestand
   orphan-after: none
   see-also: docs/concepts/messzustaende.md rat/2026-10-21-rat-messzustaende-v2.md
 -->
