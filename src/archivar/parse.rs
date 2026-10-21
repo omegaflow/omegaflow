@@ -165,10 +165,6 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         sources.push(SourceConfig {
                             ttl: cur_ttl,
                             url: std::mem::take(&mut cur_url),
-                            frame: cur_anchor
-                                .as_ref()
-                                .map(frame_from_anchor)
-                                .unwrap_or(Frame::Manifest),
                             anchor: cur_anchor.clone(),
                             model_kind: cur_model_kind.or_else(|| source_model_kind(&cur_format)),
                             format: std::mem::take(&mut cur_format),
@@ -654,8 +650,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     depth_scale: 1.0,
                     name: parts[1].to_string(),
                     frame_body: cur_anchor.as_ref().and_then(|anchor| {
-                        let frame = frame_from_anchor(anchor);
-                        let body = frame_body_name(&frame).to_string();
+                        let body = frame_body_name(&anchor.frame()).to_string();
                         (!body.is_empty()).then_some(body)
                     }),
                 });
@@ -2845,41 +2840,6 @@ fn require_attr<'a>(attrs: &'a BTreeMap<String, String>, key: &str) -> Result<&'
         .ok_or_else(|| format!("missing {}", key))
 }
 
-fn frame_from_anchor(anchor: &Anchor) -> Frame {
-    match anchor.kind {
-        AnchorKind::At => anchor
-            .body
-            .as_ref()
-            .map(|body| Frame::Barycenter {
-                body_name: body.clone(),
-                scale: 1.0,
-            })
-            .unwrap_or(Frame::Manifest),
-        AnchorKind::On => {
-            let Some(body) = anchor.body.as_ref() else {
-                return Frame::Manifest;
-            };
-            let Some(lat) = anchor.attrs.get("lat").and_then(|v| v.parse::<f64>().ok()) else {
-                return Frame::Manifest;
-            };
-            let Some(lon) = anchor.attrs.get("lon").and_then(|v| v.parse::<f64>().ok()) else {
-                return Frame::Manifest;
-            };
-            let alt = match anchor.attrs.get("alt").map(String::as_str) {
-                Some("absent" | "pending") | None => None,
-                Some(v) => v.parse::<f64>().ok(),
-            };
-            Frame::Surface {
-                body_name: body.clone(),
-                lat,
-                lon,
-                alt,
-            }
-        }
-        _ => Frame::Manifest,
-    }
-}
-
 fn parse_anchor_directive(
     kind: AnchorKind,
     parts: &[&str],
@@ -3202,7 +3162,6 @@ mod tests {
             rights_identifier: None,
             rights_scheme: None,
             rights_uri: None,
-            frame: Frame::Manifest,
             model_kind: source_model_kind(format),
             head: None,
             format: format.into(),
@@ -3284,7 +3243,7 @@ mod tests {
         let content = "url https://example.org/x\nttl 60\non earth 0 0\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1, "on without alt parses");
-        match &s[0].frame {
+        match &s[0].frame() {
             Frame::Surface { lat, lon, alt, .. } => {
                 assert_eq!(*lat, 0.0);
                 assert_eq!(*lon, 0.0);
@@ -3302,7 +3261,7 @@ mod tests {
             );
             let s = load_sources_from(&content);
             assert_eq!(s.len(), 1, "on {token} parses");
-            match &s[0].frame {
+            match &s[0].frame() {
                 Frame::Surface { alt, .. } => {
                     assert_eq!(*alt, None, "{token} is no height, never 0 m");
                 }
@@ -3316,7 +3275,7 @@ mod tests {
         let content = "url https://example.org/x\nttl 60\non earth 0 0 5\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1);
-        match &s[0].frame {
+        match &s[0].frame() {
             Frame::Surface { alt, .. } => assert_eq!(*alt, Some(5.0)),
             _ => panic!("expected a Surface frame"),
         }
@@ -4480,7 +4439,10 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         let anchor = new_on[0].anchor.as_ref().expect("new on anchor");
         assert_eq!(anchor.kind, AnchorKind::On);
         assert!(!anchor.legacy);
-        assert!(matches!(new_on[0].frame, Frame::Surface { alt: None, .. }));
+        assert!(matches!(
+            new_on[0].frame(),
+            Frame::Surface { alt: None, .. }
+        ));
     }
 
     #[test]

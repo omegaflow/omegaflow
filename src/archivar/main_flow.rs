@@ -183,7 +183,7 @@ pub fn raw_presence_gate(
         }
         return None;
     };
-    let pos = match &sources[i].frame {
+    let pos = match &sources[i].frame() {
         Frame::Surface {
             lat,
             lon,
@@ -202,13 +202,13 @@ pub fn raw_presence_gate(
         }
         Frame::Manifest => return None,
     };
-    let anchor_body = frame_body_name(&sources[i].frame);
+    let anchor_body = frame_body_name(&sources[i].frame());
     let body_props = ctx
         .body_ephemerides
         .get(anchor_body.as_str())
         .and_then(|e| e.props.as_ref());
     let body_radius = body_props?.radius_m;
-    let v_anchor = anchor_velocity(&sources[i].frame, ctx.now, ctx.body_ephemerides);
+    let v_anchor = anchor_velocity(&sources[i].frame(), ctx.now, ctx.body_ephemerides);
     if presence_gate(&presences, pos, r, body_radius, v_anchor, ctx.median_fetch) {
         Some(pos)
     } else {
@@ -417,7 +417,7 @@ pub fn anchor_uses(sources: &[SourceConfig]) -> std::collections::HashMap<String
         ) {
             continue;
         }
-        match &s.frame {
+        match &s.frame() {
             Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
                 *uses.entry(body_name.clone()).or_insert(0) += 1;
             }
@@ -1317,7 +1317,7 @@ pub fn main_flow() {
                     &sensor,
                     src.ttl as f64,
                     Some(idx),
-                    Some(&src.frame),
+                    Some(&src.frame()),
                     None,
                     &archive.body_ephemerides,
                 ) {
@@ -1378,7 +1378,7 @@ pub fn main_flow() {
                 archive.spectral.push(hash);
             }
             let src = &archive.sources[res.source_idx];
-            let _ = machine_tx.send((src.frame.clone(), src.model_kind, res.channels.clone()));
+            let _ = machine_tx.send((src.frame().clone(), src.model_kind, res.channels.clone()));
             for (channel, sensor) in &res.channels {
                 let track_origin = matches!(channel.position, Position::Source)
                     || matches!(channel.position, Position::StateVector { track: true, .. });
@@ -1387,7 +1387,7 @@ pub fn main_flow() {
                     sensor,
                     src.ttl as f64,
                     Some(res.source_idx as u32),
-                    Some(&src.frame),
+                    Some(&src.frame()),
                     if track_origin {
                         archive.origins.get_mut(&(res.source_idx as u32))
                     } else {
@@ -1408,7 +1408,7 @@ pub fn main_flow() {
                             .get(body_name.as_str())
                             .and_then(|e| e.props.as_ref())
                             .is_none(),
-                        Position::Source => match &src.frame {
+                        Position::Source => match &src.frame() {
                             Frame::Surface { body_name, .. }
                             | Frame::Barycenter { body_name, .. } => archive
                                 .body_ephemerides
@@ -1837,7 +1837,7 @@ pub fn main_flow() {
                 let lsk_c = lsk.clone();
                 let body_radius = archive
                     .body_ephemerides
-                    .get(frame_body_name(&src_clone.frame).as_str())
+                    .get(frame_body_name(&src_clone.frame()).as_str())
                     .and_then(|e| e.props.as_ref())
                     .map(|p| p.radius_m);
                 let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
@@ -1951,7 +1951,7 @@ pub fn main_flow() {
                 let lsk_c = lsk.clone();
                 let body_radius = archive
                     .body_ephemerides
-                    .get(frame_body_name(&src_clone.frame).as_str())
+                    .get(frame_body_name(&src_clone.frame()).as_str())
                     .and_then(|e| e.props.as_ref())
                     .map(|p| p.radius_m);
                 let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
@@ -2337,7 +2337,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let motion = match &src.frame {
+                    let motion = match &src.frame() {
                         Frame::Surface {
                             body_name,
                             lat,
@@ -2639,7 +2639,7 @@ pub fn main_flow() {
                             return;
                         }
                     };
-                    let motion = match &src.frame {
+                    let motion = match &src.frame() {
                         Frame::Surface {
                             body_name,
                             lat,
@@ -2833,7 +2833,7 @@ pub fn main_flow() {
                         return;
                     }
                     let total = specs.len();
-                    let anchor = match &src.frame {
+                    let anchor = match &src.frame() {
                         Frame::Surface {
                             body_name,
                             lat,
@@ -3504,7 +3504,7 @@ pub fn main_flow() {
                             let _ = ftx.send(empty(true));
                             return;
                         };
-                        let position = match &src.frame {
+                        let position = match &src.frame() {
                             Frame::Surface {
                                 body_name,
                                 lat,
@@ -3623,7 +3623,7 @@ pub fn main_flow() {
                         let _ = ftx.send(empty(true));
                         return;
                     };
-                    let position = match &src.frame {
+                    let position = match &src.frame() {
                         Frame::Surface {
                             body_name,
                             lat,
@@ -3971,7 +3971,7 @@ pub fn main_flow() {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
                 let fmt = archive.sources[i].format.clone();
-                let body_name = frame_body_name(&src.frame);
+                let body_name = frame_body_name(&src.frame());
                 let held = archive.stations.clone();
                 let gestalt_held = archive.gestalt_surface_threads.clone();
                 begin_fetch(&mut archive.origins, i as u32, now);
@@ -4063,7 +4063,7 @@ pub fn main_flow() {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
                 let fmt = archive.sources[i].format.clone();
-                let body_name = frame_body_name(&src.frame);
+                let body_name = frame_body_name(&src.frame());
                 let held = archive.stations.clone();
                 let gestalt_held = archive.gestalt_surface_threads.clone();
                 begin_fetch(&mut archive.origins, i as u32, now);
@@ -4155,7 +4155,7 @@ pub fn main_flow() {
                 let url = archive.sources[i].url.clone();
                 let src = archive.sources[i].clone();
                 let fmt = archive.sources[i].format.clone();
-                let body_name = frame_body_name(&src.frame);
+                let body_name = frame_body_name(&src.frame());
                 let held = archive.stations.clone();
                 let gestalt_held = archive.gestalt_surface_threads.clone();
                 begin_fetch(&mut archive.origins, i as u32, now);
@@ -4315,7 +4315,7 @@ pub fn main_flow() {
                 let src = archive.sources[i].clone();
                 let fmt = archive.sources[i].format.clone();
                 let held = archive.volumes.clone();
-                let vol_frame_body = Some(frame_body_name(&src.frame)).filter(|s| !s.is_empty());
+                let vol_frame_body = Some(frame_body_name(&src.frame())).filter(|s| !s.is_empty());
                 begin_fetch(&mut archive.origins, i as u32, now);
                 let ftx = fetch_tx.clone();
                 let src_idx = i;
@@ -4506,7 +4506,7 @@ pub fn main_flow() {
                 let receiver_aperture = archive.receiver_aperture.clone();
                 let body_radius = archive
                     .body_ephemerides
-                    .get(frame_body_name(&src.frame).as_str())
+                    .get(frame_body_name(&src.frame()).as_str())
                     .and_then(|e| e.props.as_ref())
                     .map(|p| p.radius_m);
                 let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
@@ -4579,7 +4579,7 @@ pub fn main_flow() {
                         let _ = ftx.send(empty(true));
                         return;
                     }
-                    let body_name = frame_body_name(&src.frame);
+                    let body_name = frame_body_name(&src.frame());
                     let body_medium = eph_arc
                         .get(body_name.as_str())
                         .and_then(|e| e.medium.as_ref());
@@ -4674,7 +4674,7 @@ pub fn main_flow() {
                 let receiver_aperture = archive.receiver_aperture.clone();
                 let body_radius = archive
                     .body_ephemerides
-                    .get(frame_body_name(&src.frame).as_str())
+                    .get(frame_body_name(&src.frame()).as_str())
                     .and_then(|e| e.props.as_ref())
                     .map(|p| p.radius_m);
                 let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
@@ -4745,7 +4745,7 @@ pub fn main_flow() {
                         let _ = ftx.send(empty(true));
                         return;
                     }
-                    let body_name = frame_body_name(&src.frame);
+                    let body_name = frame_body_name(&src.frame());
                     let body_medium = eph_arc
                         .get(body_name.as_str())
                         .and_then(|e| e.medium.as_ref());
@@ -4759,7 +4759,7 @@ pub fn main_flow() {
                             continue;
                         };
                         let mut keep = true;
-                        if let Some(motion) = frame_motion(&src.frame, None, None, t, &eph_arc)
+                        if let Some(motion) = frame_motion(&src.frame(), None, None, t, &eph_arc)
                             && let Some((anchor_vmax, anchor_amax, _)) =
                                 law_bounds(&motion, t, 0.0, &eph_arc)
                         {
@@ -5202,7 +5202,7 @@ pub fn main_flow() {
                 let receiver_aperture = archive.receiver_aperture.clone();
                 let body_radius = archive
                     .body_ephemerides
-                    .get(frame_body_name(&src.frame).as_str())
+                    .get(frame_body_name(&src.frame()).as_str())
                     .and_then(|e| e.props.as_ref())
                     .map(|p| p.radius_m);
                 let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
@@ -5264,7 +5264,7 @@ pub fn main_flow() {
                         let _ = ftx.send(empty(true));
                         return;
                     };
-                    let body_name = frame_body_name(&src.frame);
+                    let body_name = frame_body_name(&src.frame());
                     let body_medium = eph_arc
                         .get(body_name.as_str())
                         .and_then(|e| e.medium.as_ref());
@@ -6197,7 +6197,7 @@ pub fn main_flow() {
                 }
                 continue;
             };
-            let pos = match &archive.sources[i].frame {
+            let pos = match &archive.sources[i].frame() {
                 Frame::Surface {
                     lat,
                     lon,
@@ -6232,7 +6232,7 @@ pub fn main_flow() {
                 Frame::Manifest => continue,
             };
             let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
-            let anchor_body = frame_body_name(&archive.sources[i].frame);
+            let anchor_body = frame_body_name(&archive.sources[i].frame());
             let body_props = archive
                 .body_ephemerides
                 .get(anchor_body.as_str())
@@ -6242,7 +6242,7 @@ pub fn main_flow() {
                 None => f64::NAN,
             };
             let v_anchor =
-                anchor_velocity(&archive.sources[i].frame, now, &archive.body_ephemerides);
+                anchor_velocity(&archive.sources[i].frame(), now, &archive.body_ephemerides);
             if !presence_gate(&presences, pos, r, body_radius, v_anchor, median_fetch) {
                 continue;
             }

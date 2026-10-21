@@ -118,7 +118,7 @@ pub fn fanout_fetch(
         refusal_ledger,
     } = ctx;
     let mut channels = Vec::new();
-    let body_name = frame_body_name(&src.frame);
+    let body_name = frame_body_name(&src.frame());
     let center_kind = match src.fanout_center {
         Some(c) => c,
         None => {
@@ -150,7 +150,7 @@ pub fn fanout_fetch(
     };
     let sort_center = match center_kind {
         QueryCenter::Receiver => icrs_to_body_surface(ux, uy, uz, now, &body_name, eph),
-        QueryCenter::Anchor => match &src.frame {
+        QueryCenter::Anchor => match &src.frame() {
             Frame::Surface { lat, lon, .. } => Some((*lat, *lon)),
             _ => None,
         },
@@ -324,7 +324,7 @@ pub fn build_netcdf_channels(
             return Vec::new();
         }
     };
-    let body_name = frame_body_name(&src.frame);
+    let body_name = frame_body_name(&src.frame());
     let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
     let mut channels = Vec::new();
     for ext in &src.extracts {
@@ -497,7 +497,7 @@ pub fn build_netcdf4_channels(
             return Vec::new();
         }
     };
-    let body_name = frame_body_name(&src.frame);
+    let body_name = frame_body_name(&src.frame());
     let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
     let mut channels = Vec::new();
     for ext in &src.extracts {
@@ -860,7 +860,7 @@ pub fn build_opendap_channels(
         eph,
         receiver_aperture,
     } = *q;
-    let body_name = frame_body_name(&src.frame);
+    let body_name = frame_body_name(&src.frame());
     let body_medium = eph.get(body_name.as_str()).and_then(|e| e.medium.as_ref());
     let mut channels = Vec::new();
     for ext in &src.extracts {
@@ -1265,7 +1265,7 @@ pub fn build_ionex_channels(
         }
     }
     if let Some((epoch, alt, pts)) = best {
-        let body = frame_body_name(&src.frame);
+        let body = frame_body_name(&src.frame());
         for (lat, lon, tec) in pts {
             channels.push((
                 Channel {

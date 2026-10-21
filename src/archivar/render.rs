@@ -113,10 +113,10 @@ pub fn render_url(template: &str, body_name: &str, ctx: RenderCtx<'_>) -> Option
     }
 
     if let Some((lat, lon)) = icrs_to_body_surface(x, y, z, tdb, body_name, eph) {
-        let radius_m = match eph.get(body_name).and_then(|e| e.props.as_ref()) {
-            Some(p) => p.radius_m,
-            None => 0.0,
-        };
+        let radius_m = eph
+            .get(body_name)
+            .and_then(|e| e.props.as_ref())
+            .map(|p| p.radius_m)?;
         let lat_str = format!("{:.6}", lat);
         let lon_str = format!("{:.6}", lon);
         url = url
@@ -171,7 +171,7 @@ pub fn render_source_url(
     let RenderCtx {
         x, y, z, tdb, eph, ..
     } = ctx;
-    let mut url = render_url(&src.url, &frame_body_name(&src.frame), ctx)?;
+    let mut url = render_url(&src.url, &frame_body_name(&src.frame()), ctx)?;
     if let Some(ref t) = src.target {
         url = url.replace("{target}", t);
     }
@@ -231,7 +231,7 @@ pub fn render_source_url(
         };
         if !stations.is_empty() {
             let (lat, lon) =
-                match icrs_to_body_surface(x, y, z, tdb, &frame_body_name(&src.frame), eph) {
+                match icrs_to_body_surface(x, y, z, tdb, &frame_body_name(&src.frame()), eph) {
                     Some(ll) => ll,
                     None => return Some(url),
                 };
@@ -252,7 +252,7 @@ pub fn render_source_url(
 
 pub fn render_source_body(src: &SourceConfig, ctx: RenderCtx<'_>) -> Option<String> {
     let tmpl = src.post_body.as_ref()?;
-    let mut body = render_url(tmpl, &frame_body_name(&src.frame), ctx)?;
+    let mut body = render_url(tmpl, &frame_body_name(&src.frame()), ctx)?;
     if let Some(ref t) = src.target {
         body = body.replace("{target}", t);
     }

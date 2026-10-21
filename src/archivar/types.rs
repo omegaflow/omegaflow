@@ -529,6 +529,43 @@ pub struct Anchor {
     pub legacy: bool,
 }
 
+impl Anchor {
+    pub fn frame(&self) -> Frame {
+        match self.kind {
+            AnchorKind::At => self
+                .body
+                .as_ref()
+                .map(|body| Frame::Barycenter {
+                    body_name: body.clone(),
+                    scale: 1.0,
+                })
+                .unwrap_or(Frame::Manifest),
+            AnchorKind::On => {
+                let Some(body) = self.body.as_ref() else {
+                    return Frame::Manifest;
+                };
+                let Some(lat) = self.attrs.get("lat").and_then(|v| v.parse::<f64>().ok()) else {
+                    return Frame::Manifest;
+                };
+                let Some(lon) = self.attrs.get("lon").and_then(|v| v.parse::<f64>().ok()) else {
+                    return Frame::Manifest;
+                };
+                let alt = match self.attrs.get("alt").map(String::as_str) {
+                    Some("absent" | "pending") | None => None,
+                    Some(v) => v.parse::<f64>().ok(),
+                };
+                Frame::Surface {
+                    body_name: body.clone(),
+                    lat,
+                    lon,
+                    alt,
+                }
+            }
+            _ => Frame::Manifest,
+        }
+    }
+}
+
 #[derive(Clone)]
 pub enum Frame {
     Surface {
@@ -601,7 +638,6 @@ pub struct SourceConfig {
     pub rights_identifier: Option<String>,
     pub rights_scheme: Option<String>,
     pub rights_uri: Option<String>,
-    pub frame: Frame,
     pub anchor: Option<Anchor>,
     pub format: String,
     pub model_kind: Option<ModelKind>,
@@ -639,6 +675,15 @@ pub struct SourceConfig {
     pub cgm_source: Option<String>,
     pub geomag_lat: Option<f64>,
     pub weberin_role: Option<WeberinRole>,
+}
+
+impl SourceConfig {
+    pub fn frame(&self) -> Frame {
+        self.anchor
+            .as_ref()
+            .map(Anchor::frame)
+            .unwrap_or(Frame::Manifest)
+    }
 }
 
 pub const J2000_EPOCH: f64 = 2451545.0;
