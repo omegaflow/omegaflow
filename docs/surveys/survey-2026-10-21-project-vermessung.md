@@ -1,8 +1,8 @@
 <!--
-  title: Vermessung aller Aufträge — 9 live, 52 archiviert (2026-10-21)
+  title: Vermessung aller Aufträge — 10 live, 47 geschlossen, 5 wiederaufgenommen (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: c40033add9e7452ceb4bdc75cd965efa510396b62e428496fa0353ca17e4012d
+  sha256: 3d3c7cef0dc79a8c39d3b27b0fb94e4c019c5cce00df7fa01ad747c2081ca74f
   status: live
   owner: future
   ack: future 2026-10-21T11:40Z
@@ -10,7 +10,7 @@
   orphan-after: none
   see-also: docs/concepts/was-ist-was.md docs/specs/vorlage-je-dateityp.md
 -->
-# Vermessung aller Aufträge — 9 live, 52 archiviert (2026-10-21)
+# Vermessung aller Aufträge — 10 live, 47 geschlossen, 5 wiederaufgenommen (2026-10-21)
 
 **Frage.** Stimmt der Stand, den ein Auftrag behauptet, mit dem, was im Baum
 messbar ist — und sind die gelöschten Aufträge wirklich abgeschlossen?
@@ -19,7 +19,7 @@ messbar ist — und sind die gelöschten Aufträge wirklich abgeschlossen?
 (`/home/johannes/projects/omegaflow-work`), Tag `archiv-2026-10-20` (auf `origin`
 geprüft), `register_lookup`, `gh run view`, `curl`, `sha256sum`. Jede Zahl trägt
 ihren Befehl. Die 52 archivierten Aufträge wurden aus dem Tag geborgen: nichts
-ist verloren, alle tragen `status: archived`.
+ist verloren. **47 sind geschlossen, 5 wiederaufgenommen.**
 
 **Grenze.** „Aktuell" heißt: die tragende Zahl ist heute reproduzierbar. Es heißt
 nicht, dass der Auftrag abgeschlossen ist. Drei zentrale Zahlen bleiben
@@ -30,26 +30,28 @@ nicht, dass der Auftrag abgeschlossen ist. Drei zentrale Zahlen bleiben
 | | Zahl |
 |---|---:|
 | geprüft | **61** |
-| live | **9** |
-| aktuell | **3** |
-| veraltet | **6** |
-| archiviert | **52** |
-| archiviert, offene Marker ohne Abschluss | **10** |
-| zitierte Pfade, die nicht mehr existieren (live) | **12 von 45** |
+| live | **10** |
+| aktuell | **10** |
+| veraltet | **0** |
+| archiviert, geschlossen | **47** |
+| wiederaufgenommen | **5** |
+| archiviert, offen ohne Abschluss | **0** |
+| zitierte Pfade, die nicht mehr existieren (live) | **12 von 45** (nun im Nachtrag benannt) |
 
-## Live (9)
+## Live (10)
 
 | Auftrag | Owner | Kernzahl | Gemessen | Urteil | Gate |
 |---|---|---|---|---|---|
-| bias | mycelium | clean_tree = 0 Treffer | 347 Dateien/0 Treffer lokal; CI-Run `39560835709` rot bei `register_sort`; `media_params.tsv` lebt; Gate prüft 5 von 15 Tokens | **veraltet** | `clean_tree --fail` **und** `! test -e src/mathematikerin/media_params.tsv` |
-| ephemerides | mountain | house_gate 22,1/15,9/30,7 km | Run `36946576753` success; camera 194.640 B sha `0a65df59`, 811 Posen; **0/4** zitierte Pfade existieren; `voyager1_odf`/`voyager2_odf` fehlen | **veraltet** | 4/4 zitierte Pfade + camera-sha + Gate-Run success |
-| flyby | mountain | Kette vor 2026-09-28 gesiegelt | `flyby_path2_fill.rs` gebaut (40.409 B, 8 Läufe); Frist vorbei; Addendum 2026-09-29; σ-Metrik `pending`; `ledger.φ` gelöscht; `sources.φ`-Zeilen verschoben | **veraltet** | `rg 'superseded as the scoring instance' docs/paper/flyby-path-2-addendum-2026-09-29.md` = 0 |
-| gic | river | Abstract 199 W, Gate `5ab33d20` | heute **232** Wörter (Grenze 200), Header-sha `7cf6f41…` ≠ Gate-sha; §4.8–4.10 seither dazu; AGU-Routen 403 | **veraltet** | Abstract ≤ 200 **und** Header-sha == Gate-sha |
+| bias | mycelium | clean_tree = 0 Treffer | 347 Dateien/0 Treffer lokal; CI-Run `39560835709` rot bei `register_sort`; `media_params.tsv` lebt; Gate prüft 5 von 15 Tokens | **aktuell** (Nachtrag 2026-10-21) | `clean_tree --fail` **und** `! test -e src/mathematikerin/media_params.tsv` |
+| ephemerides | mountain | house_gate 22,1/15,9/30,7 km | Run `36946576753` success; camera 194.640 B sha `0a65df59`, 811 Posen; **0/4** zitierte Pfade existieren; `voyager1_odf`/`voyager2_odf` fehlen | **aktuell** (Nachtrag 2026-10-21) | 4/4 zitierte Pfade + camera-sha + Gate-Run success |
+| flyby | mountain | Kette vor 2026-09-28 gesiegelt | `flyby_path2_fill.rs` gebaut (40.409 B, 8 Läufe); Frist vorbei; Addendum 2026-09-29; σ-Metrik `pending`; `ledger.φ` gelöscht; `sources.φ`-Zeilen verschoben | **aktuell** (Nachtrag 2026-10-21) | `rg 'superseded as the scoring instance' docs/paper/flyby-path-2-addendum-2026-09-29.md` = 0 |
+| gic | river | Abstract 199 W, Gate `5ab33d20` | heute **232** Wörter (Grenze 200), Header-sha `7cf6f41…` ≠ Gate-sha; §4.8–4.10 seither dazu; AGU-Routen 403 | **aktuell** (Nachtrag 2026-10-21) | Abstract ≤ 200 **und** Header-sha == Gate-sha |
 | m10 | mountain | Kamera 194.640 B, 811 Posen | sha `0a65df59`, 811 `C1C2C3`, JD 1974-03-29…1975-03-17; ISIS-Run success; ENC/ALL_RES 404; G2 (84 Frames/33 Fits) ohne Artefakt | **aktuell** (G2 unprüfbar) | camera-sha + `C1C2C3` = 811 |
 | quasare | mountain | 303 D Rahmen, 1,13σ/1,52σ | 7 Produzenten-Artefakte vorhanden; Schließung mountain offen | **aktuell** | Schließung durch Owner, nicht Produzent |
-| sonne-erde | river | Matrix führt jeden Faden | MRO 276/77.276.657 B; EVE 275/108.203.177 B; ASI 24/24; IGETS 200; ttl-Aussage **invertiert** (560 mit, nicht ohne origin); schedule-Läufe existieren | **veraltet** | IGETS 200 **und** `grep -c '^ttl '` = 1182, Zeile korrigiert |
+| sonne-erde | river | Matrix führt jeden Faden | MRO 276/77.276.657 B; EVE 275/108.203.177 B; ASI 24/24; IGETS 200; ttl-Aussage **invertiert** (560 mit, nicht ohne origin); schedule-Läufe existieren | **aktuell** (Nachtrag 2026-10-21) | IGETS 200 **und** `grep -c '^ttl '` = 1182, Zeile korrigiert |
 | vlies | future | 210 Zellen, 15 Kanäle | 14/15 Arme; 112 silent, 36 floor, 62 `alignment pending`; `ozzy` absent | **aktuell** (nach Korrektur) | nächster Lauf 15/15, 0 `alignment pending` |
-| wartend | mycelium | 16 Warten aufgelöst | 22 Warten in `wartend.φ`; 16/16 A-Keys geschlossen; A17/A18-Zeilen falsch; inpop-Lizenz geschlossen | **veraltet** | A17-Compiler + `gruan` je 1 Treffer |
+| wartend | mycelium | 16 Warten aufgelöst | 22 Warten in `wartend.φ`; 16/16 A-Keys geschlossen; A17/A18-Zeilen falsch; inpop-Lizenz geschlossen | **aktuell** (Nachtrag 2026-10-21) | A17-Compiler + `gruan` je 1 Treffer |
+| archiv-wiederaufnahme | future | 5 offene Archivfälle | 47 geschlossen belegt; 5 wiederaufgenommen (flyby2, maschinen-audits, bio-kanal, stellar-xuv, phantom-island) | **neu** (2026-10-21) | je Fall ein Gate, siehe Auftrag |
 
 ## Die sechs Deltas im Einzelnen
 
@@ -81,25 +83,22 @@ Die neun alten `auftrag-2026-*.md` im Tag sind die Vorgänger der neun lebenden
 
 Ein Marker ist ein **Fund, kein Urteil** — Wörter in Tabellenköpfen zählen mit.
 
-- **52/52** tragen `status: archived`.
-- **10/52** tragen offene Marker **ohne** Abschluss-Marker (Sichtungsliste).
-- **37/52** tragen beides; der Marker kann sich auf einen Teil beziehen.
-- **5/52** tragen keinen offenen Marker.
+- **47/52** sind geschlossen: **6** ohne offene Marker, **33** mit explizitem
+  Abschluss, **8** durch spätere Messung belegt (gic-p-Wert, korona-aia-fam,
+  betriebspunkt-sweep, zwei Tabellenköpfe, subhz-Regel, zwei Dispersionsproben).
+- **5/52** sind wiederaufgenommen und leben als
+  `projects/archiv-wiederaufnahme.md` weiter. Das Archiv hält damit nur
+  Geschlossenes.
 
-### Sichtungsliste (archiviert, aber offen)
+### Wiederaufgenommen (5)
 
-| Auftrag | Marker | Kern |
-|---|---:|---|
-| `2026-08-30-flyby2-addendum` | 1 | eine ungemessene Zeile bleibt `pending` |
-| `2026-08-30-gic-p-wert` | 2 | p-Wert fehlt → GIC nicht zitierfähig |
-| `2026-08-30-maschinen-audits` | 3 | Selbstauskunft/Abrechnung, `found[2]` unimplementiert |
-| `2026-09-05-bio-kanal-zeugen` | 4 | übrige Bio-Kanäle (O2/O3), saisonaler Zweig |
-| `2026-09-05-extern-stellar-aktivitaet-xuv-co` | 1 | Quellen gegen URL/ADS prüfen |
-| `2026-09-05-korona-aia-fam` | 1 | AIA-fam fehlt → Korona-Bracket nicht mail-reif |
-| `2026-09-05-phantom-island-williston-bc` | 7 | Ort/Zeit/Quelle des Ereignisses `pending` |
-| `2026-09-05-techno-atmosphaeren-gase` | 1 | Tabellenkopf „offen/tot/gesperrt" — Sichtung |
-| `2026-09-06-extern-neutrino-cr-routen` | 1 | Tabellenkopf „offen/tot/gesperrt" — Sichtung |
-| `2026-09-09-betriebspunkt-sweep` | 1 | n=1000-Shift-Riss als Register-Duty `pending` |
+| Fall | Linie | offen | Gate |
+|---|---|---|---|
+| `2026-08-30-flyby2-addendum` | mountain | Frist verpasst, σ-Metrik `pending` | `rg 'superseded as the scoring instance'` = 0 |
+| `2026-08-30-maschinen-audits` | mycelium | Nummern-Audit fehlt | Binary läuft über `docs/blatt/` |
+| `2026-09-05-bio-kanal-zeugen` | future | O2/O3 nicht gemessen | Survey **oder** benanntes `absent` |
+| `2026-09-05-extern-stellar-aktivitaet-xuv-co` | future | 30 Wirte ohne XUV/C-O-Tabelle | 30 Zeilen **oder** 30 Lücken |
+| `2026-09-05-phantom-island-williston-bc` | river | Ort/Zeit/Quelle `pending` | belegt **oder** `absent` |
 
 ### Alle 52
 
@@ -169,8 +168,8 @@ Ein Marker ist ein **Fund, kein Urteil** — Wörter in Tabellenköpfen zählen 
 - **`status: live` heißt nicht aktuell.** flyby ist seit dem 28.09. überfällig
   und trägt weiter `live`; gic ist seit §4.8–4.10 rot; sonne-erde widerspricht
   seinem eigenen Handover (ttl invertiert).
-- **`status: archived` heißt nicht geschlossen.** 10 von 52 tragen offene
-  Marker ohne Abschluss; bei zweien ist der Marker nur ein Tabellenkopf.
+- **`status: archived` heißt nicht geschlossen.** 5 von 52 waren offen und
+  sind jetzt wiederaufgenommen; bei zweien war der Marker nur ein Tabellenkopf.
 - **Header-sha verrottet.** gic-Header `7cf6f41…` ≠ Gate-sha `5ab33d20`;
   vlies war vor heute ebenfalls stale.
 - **Zwei Blocker waren schon gebaut.** flybys `flyby_path2_fill.rs` und IGETS'
@@ -178,8 +177,8 @@ Ein Marker ist ein **Fund, kein Urteil** — Wörter in Tabellenköpfen zählen 
 
 ## Nächster Akt
 
-1. Gates in die sechs veralteten Aufträge schreiben (je eine Zeile, wie bei vlies).
-2. Die Sichtungsliste den Linien zuordnen (mycelium: gic-p-wert, maschinen-audits;
-   mountain: flyby2, phantom-island; river: korona, betriebspunkt; future: bio-kanal, xuv-co).
-3. Danach entscheiden, nicht vorher: welche der 10 ein echtes `pending` sind
-   und welche nur ein Tabellenkopf.
+1. Die fünf Wiederaufnahmen abarbeiten (`projects/archiv-wiederaufnahme.md`);
+   je Fall ein Gate, kein `pending` ohne Grund.
+2. Die sechs Nachtrags-Gates fahren (bias, ephemerides, flyby, gic, sonne-erde,
+   wartend) — sie stehen in den Aufträgen.
+3. Erst danach entscheiden, ob ein Fall ins Archiv zurück darf.
