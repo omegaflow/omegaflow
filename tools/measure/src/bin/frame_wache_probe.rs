@@ -647,6 +647,22 @@ fn main() {
                     Err(e) => println!("missing-out {path}: {e}"),
                 }
             }
+            if let Some(path) = arg_value(&args, "--gaia-map-out") {
+                let mut out = String::from("iers,gaia_source_id,ra_deg,dec_deg\n");
+                for name in &triple {
+                    let (Some(id), Some(src)) = (gaia.ids.get(name), sx.get(name)) else {
+                        continue;
+                    };
+                    out.push_str(&format!(
+                        "{},{},{:.9},{:.9}\n",
+                        src.iers, id, src.ra_deg, src.dec_deg
+                    ));
+                }
+                match std::fs::write(&path, out) {
+                    Ok(()) => println!("Gaia anchor map -> {path}"),
+                    Err(e) => println!("gaia-map-out {path}: {e}"),
+                }
+            }
         } else {
             println!("gcrf3xm absent or unreadable: {}", gz.display());
         }
