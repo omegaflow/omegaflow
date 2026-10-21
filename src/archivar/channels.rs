@@ -1402,7 +1402,7 @@ pub fn anchor(
     mut origin_state: Option<&mut OriginState>,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<Sample> {
-    if sensor.tau <= 0.0 {
+    if sensor.tau <= 0.0 || sensor.tau_src == crate::archivar::types::TauSource::Pending {
         return None;
     }
     let motion = match &channel.position {

@@ -6455,6 +6455,39 @@ fn test_anchor_applies_declared_unit() {
 }
 
 #[test]
+fn pending_tau_source_does_not_anchor() {
+    use std::collections::HashMap;
+
+    let channel = super::Channel {
+        z: 0.0,
+        freq: 0.0,
+        bin_width: 0.0,
+        epoch: 0.0,
+        station_code: None,
+        position: super::Position::StateVector {
+            p: [1.0, 0.0, 0.0],
+            v: [0.0, 1.0, 0.0],
+            track: false,
+        },
+        name: "pending_tau".into(),
+        value: 1.0,
+    };
+    let mut sensor = field_fixture("pending_tau", 60.0);
+    sensor.unit = String::new();
+    let eph = HashMap::new();
+
+    assert!(
+        super::anchor(&channel, &sensor, 3600.0, None, None, None, &eph).is_some(),
+        "measured tau must still anchor"
+    );
+    sensor.tau_src = crate::archivar::types::TauSource::Pending;
+    assert!(
+        super::anchor(&channel, &sensor, 3600.0, None, None, None, &eph).is_none(),
+        "pending tau must not anchor an oscillator"
+    );
+}
+
+#[test]
 fn test_last_form_captures_unit() {
     let content = "url https://example.com/mag.json\nttl 60\nat sun\nlast bz_gsm imf_bz inverse-square em nT 6.0 0.0 0.0 where satellite 18\n";
     let sources = parse_sources(content);
