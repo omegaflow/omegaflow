@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: a5c76d548598160a3edea16465afe36cc4947830b0ed13e059146a45708a7693
+  sha256: 3b8c1bb3e7034cecb0ef35e345555e1efe1bc4b91eb1081d458cae97d38f4330
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/archiv/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
 -->
@@ -22,6 +22,7 @@ fabriziert.
 - **A = A** — eine Messung ist die Messung der Sache selbst; die Landkarte wird nie mit dem Territorium verwechselt. · `docs/granit.md:16`
 - **0 honored** — was fehlt, fehlt; die Lücke ist eine vollwertige Eigenschaft, in die keine Null hineingelogen wird. · `docs/granit.md:19`
 - **pending** — was noch nicht gemessen ist, bleibt pending; das Schweigen gehört den Ungeborenen. · `docs/granit.md:20`
+- **pending ⇒ offen, offen ⇏ pending** — `pending` ist die benannte Form der Offenheit, nicht ihr ganzer Umfang. Es gibt offene Fragen ohne `pending` (stille Lücke) und gelieferte, aber nicht geschlossene Aufträge. Geschlossen wird nur vom Operator. · Operator-Regel 2026-10-21
 - **0-Kanon** — die vier Zustände `null-echt` (fließt als 0), `absent` (Option/None), `pending` (Registerpflicht), `riss` (Widerspruch) kollabieren nie. · `AGENTS.md`
 - **ICRS & TDB** — alle Körper sind gleich; die Raumzeit trägt die Adresse, nicht die Perspektive. · `docs/granit.md:17`, `docs/specs/eraen.md:18-23`
 - **De-Zentrierung** — der teuerste Schnitt: ECEF→ICRS, JD2000→TDB, Anthropomachinozentrismus→Alle Wesen gleich; alles Spätere steht auf dieser Umgrabung. · `docs/specs/eraen.md:14-23`

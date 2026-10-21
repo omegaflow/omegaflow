@@ -2,7 +2,7 @@
   title: Geplant und nicht gebaut — die Köder-/Arm-Session (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 89b14f33de3e531b8a1fb3fdfab5217ba586c8363e57e3ed874aa716b3dac398
+  sha256: d0169c451010be9f3cc6734207a1e6d87fb447bfbf2914e0c5e8f7e2338d7a55
   status: superseded
   see-also: docs/concepts/koeder-kette.md docs/concepts/koeder-formen.md docs/concepts/search-channels.md
 -->
@@ -143,11 +143,12 @@ der Lock systemweit immer.
 
 **Fallback:** Brave, Exa, Tavily, SearchApi, SerpApi und Google CSE fallen bei
 400/402/403/429/432 auf `--4get` zurück, mit `via: 4get (<mode> <status>)`.
-Consensus und Gemini bleiben bewusst `riss`: Key vorhanden, API antwortet 429 —
-beide Seiten gemessen. 4get liefert dort Webseiten, keine Literatur-Synthese
-und keine LLM-Antwort. Gemessen: `--brave` liefert 4get-Treffer mit
-`via: 4get (brave 402)`; ohne 4get-Treffer bleibt der `riss` benannt.
-Der Code druckt für diese zwei noch `pending`; Punkt I im Auftrag gleicht das an.
+Consensus und Gemini bleiben `pending`: Key vorhanden, API antwortet 429 —
+nicht gemessen, also offen. Kein `riss`: es fehlen zwei vergleichbare
+Messungen derselben Sache. 4get liefert dort Webseiten, keine
+Literatur-Synthese und keine LLM-Antwort. Gemessen: `--brave` liefert
+4get-Treffer mit `via: 4get (brave 402)`; ohne 4get-Treffer bleibt das
+benannte `pending`.
 
 **SearXNG:** `searx.space/data/instances.json` hatte 92 Instanzen; 40 mit
 `network_type=normal` und HTTP 200 getestet. Ergebnis: 29×429, 5×403, 1×418,
@@ -168,9 +169,13 @@ Instrument (Ionosonde/Radar) gebraucht wird.
 
 ## 10. Status-Audit (2026-10-21)
 
-Regel: `null-echt` = gemessen, 0 über n; `absent` = belegt, dass die Sache
-nicht existiert; `riss` = Widerspruch, beide Seiten belegt; `pending` = nicht
-gemessen, Auftrag offen.
+Regel: `null-echt` = gemessen, 0 über n; `absent` = Nicht-Existenz belegt;
+`riss` = zwei **vergleichbare** Messungen derselben Sache, die sich nach
+Ausschluss von Kettenfehlern (Parser, Einheit, Epoche, Rahmen, Interpolation,
+Auswahl) **wirklich** widersprechen; `pending` = nicht gemessen. Der Default
+für einen Widerspruch ist `pending` mit dem Verdacht im Text, nicht `riss`.
+`pending ⇒ offen`; `offen ⇏ pending` — es gibt Offenheit ohne benanntes
+`pending`.
 
 Gezählt in den nicht archivierten Dateien (`git grep`, ohne `**/archiv/**`):
 
@@ -181,18 +186,29 @@ Gezählt in den nicht archivierten Dateien (`git grep`, ohne `**/archiv/**`):
 | `riss` | 22 | 30 |
 | `pending` | 148 | 318 |
 
-**Hauptbefund:** `pending` wird für **gemessene HTTP-Blocks** benutzt — 178
-Stellen im Code (`pending — … HTTP 4xx/5xx`) und 3 in Docs. Nach der Regel ist
-das `riss` (Label vs. Messung) oder eine gemessene Zeile mit HTTP-Status, nicht
-`pending`.
+**Befund 1:** `absent` wird für „nicht gebaut“ benutzt (u.a. dieser Survey §8).
+Das ist `pending`, solange die Sache nicht als nicht existent belegt ist.
 
-**Zweiter Befund:** `absent` wird für „nicht gebaut“ benutzt (u.a. dieser
-Survey §8). Das ist `pending`, solange die Sache nicht als nicht existent
-belegt ist.
+**Befund 2:** `null-echt` nennt nicht immer n. Ohne n ist die Null nicht
+gemessen, sondern behauptet.
 
-**Dritter Befund:** `null-echt` nennt nicht immer n; `riss` ist meist sauber
-(both sides). Die zwei Vokabulare — 0-Kanon (`glossar.md`) und Messstatus —
-werden gemischt.
+**Befund 3 — Riss-Inflation:** 22/30 Dateien führen `riss`. Der Unterschied
+verschiedener Modelle/Quellen (DE/INPOP/EPM), verschiedener Skalen (UTC/TAI)
+oder verschiedener Kadenzen (1m/1h, r 0,9388) ist **kein** Riss; ungeprüft ist
+er `pending`. Ein Riss bleibt nur nach den drei Schritten.
+
+**Befund 4 — stille Lücke:** Offenheit ohne benanntes `pending` ist per grep
+nicht zählbar und die gefährlichste Form. Punkt I sucht sie in den offenen
+Aufträgen und benennt sie.
+
+**Befund 5 — geliefert, nicht geschlossen:** `phantom-island` hat vier Felder
+geliefert und trägt trotzdem ein `pending` (exakte Koordinaten). Der Auftrag
+ist geliefert, aber offen; geschlossen wird er nur vom Operator.
+
+**Befund 6 — HTTP-Blocks:** Die 178 Code-Meldungen `pending — … HTTP 4xx/5xx`
+sind **korrekt**: nicht gemessen, also `pending`; der HTTP-Status ist der
+Verdacht im Text. Kein `riss`, weil keine zwei vergleichbaren Messungen
+vorliegen.
 
 Konsequenz: Punkt I im Auftrag `projects/archive-search-faehigkeiten.md`.
 
