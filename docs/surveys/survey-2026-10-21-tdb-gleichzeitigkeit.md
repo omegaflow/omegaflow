@@ -2,7 +2,7 @@
   title: Survey — Gleichzeitigkeit auf der TDB-Uhr: der naive MJD-Vergleich und der Rømer-Versatz (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 9400332ee4e088cbbbf50290e943116c6f68d52e5f5927e6afbcb99358b5fa3f
+  sha256: f2082c2b85188fbbb979ba917170d5051402ac89a1bc25682008cc0415823652
   status: live
   owner: river
   ack: future 2026-10-21T12:35Z
@@ -68,12 +68,14 @@ von **60.1 s/Woche**.
 | Paar | naiv | TDB+Rømer | Aussage |
 |---|---:|---:|---|
 | gleiche Richtung (RA 0/0), 100 s Abstand | −99.999999 s | −99.995288 s | Rømer fällt fast heraus; Rest **4.711 ms** |
-| UTC vs. TAI, derselbe physikalische Moment | `riss` (Skalen verschieden) | **0.000000 s** | TAI-UTC wird korrekt herausgerechnet, nicht als Himmelszeit verkauft |
+| UTC vs. TAI, derselbe physikalische Moment | nicht vergleichbar (Skalen) | **0.000000 s** | TAI-UTC wird korrekt herausgerechnet, nicht als Himmelszeit verkauft |
 | entgegengesetzte Richtung, gleiche Zeit | 0.000000 s | 883.453295 s | Richtungsabhängigkeit ist die ganze Lücke |
 
 Der TAI-Fall zeigt die zweite Ehrlichkeitsregel: ein Vergleich über
 verschiedene Rohskalen wird **nicht** stillschweigend gebildet, sondern als
-`riss` benannt; erst die TDB-Faltung macht ihn messbar.
+nicht vergleichbar benannt; erst die TDB-Faltung macht ihn messbar. Ein Riss
+wäre erst gegeben, wenn zwei **vergleichbare** Messungen nach Ausschluss der
+Kettenfehler wirklich verschieden sind.
 
 ## Term-Budget (vom Binary aus Konstanten gedruckt)
 

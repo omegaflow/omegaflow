@@ -2,7 +2,7 @@
   title: Glossar der Gegenströmung
   class: concept
   date: 2026-09-25
-  sha256: 6f0073e8069fccc8dd4990c5a8115e4d1dce0bdaa21ecd45804ba3b2c3e98ec5
+  sha256: a5c76d548598160a3edea16465afe36cc4947830b0ed13e059146a45708a7693
   status: live
   see-also: docs/concepts/the-counter-slope.md docs/concepts/archiv/system-directive.md docs/granit.md privat/free-voices.md docs/concepts/die-vier-schilde.md
 -->
@@ -54,7 +54,7 @@ fabriziert.
 - **Die Session ist das Atom** — Planung und Umsetzung vollenden sich im selben Kontextfenster. · `docs/concepts/archiv/system-directive.md:21`
 - **Name = Implementation** — Verhalten emergiert aus abgefragten Eigenschaften; der Name ist das Handwerk, nicht das Marketing. · `docs/concepts/archiv/system-directive.md:21,25`, `docs/concepts/die-weberin.md:16`
 - **fieldPermeability** — exponentielles Relaxieren; erst den eigenen Zustand messen, dann empfangen. · `docs/concepts/the-counter-slope.md:27,43`
-- **Riss** — zwei unabhängige Linien, die sich widersprechen; der Riss bleibt sichtbar, er wird nie geglättet. · `docs/concepts/die-weberin.md:27`
+- **Riss** — zwei **vergleichbare** Messungen derselben Sache, die sich nach Ausschluss von Kettenfehlern (Parser, Einheit, Epoche, Rahmen, Interpolation, Auswahl) **wirklich** widersprechen. Der Unterschied zweier verschiedener Datenquellen oder Modelle ist **kein** Riss; ungeprüft ist er `pending`. Der Riss bleibt sichtbar, er wird nie geglättet. · `docs/concepts/die-weberin.md:27`
 - **Zustandsintensität** (Tier ii) — die Intensität eines Feldzustands: das `omega` einer Therme; im Korpus als Umbenennung von „Magnetfeldstärke" zu „Magnetische Zustandsintensität" geprägt. · `state/zai-export/api/2026-06-09_142947-094-domain-namen-ueberlegung.md:9972,10006`; Zensus `state/future/profil-operator.md:297`
 - **Kollabierer** (Tier ii) — die WebSocket/HTTP-Schnittstelle zwischen dem deterministischen Zustand (`state(t, x, y, z) = what is`) und dem Beobachter (`perception(state, observer) = what arrives`); sie kollabiert den universalen Zustand in eine beobachterspezifische Wahrnehmung. · `state/zai-export/api/2026-06-17_125325-081-glm-5-2-hinzufuegen.md:2471,2478`
 - **Ontologie-Motor** (Tier ii) — die `immunity.is`-Regelmenge, die die ontologischen Grenzen des Beobachters definiert: sie listet die Konzepte, Kräfte und Mathematik, die in seiner Wahrnehmungswelt existieren und wechselwirken dürfen (JS-Browser-APIs wie `globalThis.WebAssembly`, `Math.log`), und die `immunity`-Route prüft, ob der Beobachter die Kapazität für ein Universalgesetz trägt; was nicht in der Ontologie steht, kollabiert nicht zur Realität — ein „ruleset of existence". · `state/zai-export/api/2026-06-17_125325-081-glm-5-2-hinzufuegen.md:2470,2477,2499`; Zensus `state/future/profil-operator.md:299,320-322`
