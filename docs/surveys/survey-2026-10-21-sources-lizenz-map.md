@@ -2,7 +2,7 @@
   title: Sources-Lizenzmap — NC ist frei, 55 von 63 LOCK lösen sich (2026-10-21)
   class: survey
   date: 2026-10-21
-  sha256: 4e5360559db08e7330566b4d98f903f0e450e0d4987fa05c93a37e9d373b994a
+  sha256: 9a30c44ab4d556cd8df673bd8fe7d6bc6b83ef323a4a094eb496a9108d0b2e90
   status: live
   owner: future
   ack: future 2026-10-21T15:45Z
@@ -79,7 +79,7 @@ und REGARDS nicht.
 | ILRS/EDC | Login/Register, keine Lizenz | **LOCK** |
 | Lasair | Copyright Edinburgh/QUB, „all rights reserved" | **LOCK** |
 | CDDIS | Earthdata „full and open sharing" | **frei** |
-| REGARDS | keine Termseite messbar | **pending** |
+| REGARDS | CDPP-SIPAD: Weitergabe an Dritte nur mit schriftlicher Zustimmung | **LOCK** |
 
 ## CDN-Entfernung (2026-10-21)
 
@@ -90,5 +90,42 @@ und REGARDS nicht.
 - **PRADAN/TNS/Babamul/ILRS:** keine CDN-Assets, keine dedizierten Jobs.
 - **`openneuro-cdn.yml`:** Guard entfernt `*_ieeg.bin` nach dem Upload.
 
-**Status:** 56 frei, 6 LOCK, 1 pending; Register-Edit geschrieben; CDN für
-IEEG/Lasair bereinigt (IEEG 120 → 0, Lasair 0), Guard aktiv.
+## Zweite Messrunde — die letzten unclear Terme (2026-10-21)
+
+| Term | Befund | Gemessen als |
+|---|---|---|
+| NIST SRD (`no-license`) | „copyrighted … All rights reserved … may not be reproduced“ | `nist-srd-copyright` — **LOCK** |
+| KCDC (`kcdc-eula`) | EULA: personal, non-transferable, non-commercial; kein Kopieren/Weitergeben | `kcdc-eula` — **LOCK** |
+| REGARDS (`regards-pending`) | CDPP-SIPAD: Weitergabe an Dritte nur mit schriftlicher Zustimmung | `cdpp-sipad-licence` — **LOCK** |
+| NAOJ (`naoj-copyright`) | freie Nutzung nur im Rahmen des jap. Urheberrechts (privat/educ./News), keine öffentliche Weitergabe | `naoj-copyright` — **LOCK** |
+| SuperMAG (`no-redistribution`) | „cannot be redistributed“ | `no-redistribution` — **LOCK** |
+| WDCB esdb/stp (`unknown`) | WDC for SEP: frei für wissenschaftliche/educ./nicht-kommerzielle Nutzung, Zitat | `wdcb-nc` — frei |
+| WSO | Notify + acknowledge | `attribution` — frei |
+| NISP ×2 | NSO acknowledgment | `attribution` — frei |
+| VizieR | wissenschaftlich frei, kommerziell je Herkunft | `vizier-scientific-free` — frei |
+| IceCube/AMANDA | „Please cite“ | `attribution` — frei |
+| EDGES ×3 | Zitatpflicht | `attribution` — frei |
+| Dataverse ×2 | Datensatz-Lizenz CC0 1.0 | `CC0-1.0` — frei |
+| UCalgary | „openly and freely available … acknowledge and cite“ | `attribution` — frei |
+| AGRAV/BGI | frei für nicht-kommerzielle Forschung, kein Verkauf | `bgi-nc` — frei |
+| Copernicus | free, full and open access | `copernicus-attribution` — frei |
+| CSES | open data after registration | `open-data-policy-registration` — frei |
+
+**CDN:** `srd62_suprastrom.bin` (NIST) und `kcdc_kascade.bin` (KCDC) entfernt;
+`srd62-cdn.yml` und `kcdc-cdn.yml` gelöscht. NAOJ/SuperMAG/REGARDS hatten
+keine CDN-Assets.
+
+## Register-Hygiene (Notizenhalde-Check)
+
+- 0 Kommentarzeilen, 0 Prosa-Zeilen, 0 doppelte `url`-Blöcke.
+- `terms` enthält nur noch Lizenzen/Policies; das Datum `reviewed-2026-10-20`
+  (8 Blöcke) ist ersetzt.
+- Keine `unknown`/`no-license`/`regards-pending`-Platzhalter mehr.
+- Die zwei `format reference`-Stubs (esdb/stp) tragen jetzt den gemessenen
+  `wdcb-nc`-Term, keine Notiz.
+- `source_validate`: 0 hard, 291 soft (unverändert).
+
+**Status:** Von den ursprünglichen 63 LOCK-Termen sind 56 frei, 7 LOCK
+(REGARDS jetzt gemessen). Die offenen unclear Terme sind gemessen: 5 neue
+LOCK, 0 `unknown`, 0 `no-license`, 0 `reviewed-2026-10-20`. CDN bereinigt
+(IEEG 120 → 0, NIST/KCDC entfernt), Guard aktiv.
