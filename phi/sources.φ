@@ -123,14 +123,14 @@ quantity properties.mag geosphere_quake_magnitude erfc source-parameter Mw 6.0 p
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={hour_ago}&latitude={lat}&longitude={lon}&maxradiuskm=500&minmagnitude=2.0
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
 live
-query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
+query earth frame=body lat_key=geometry.coordinates.1 lon_key=geometry.coordinates.0 alt_key=geometry.coordinates.2 time_key=properties.time
 ttl 60
 geojson mag 0.0 seismic_magnitude_mw seismic_depth_km 6.0 0.0 0.0
 mag_type_key magType
 
 url https://earthquake.usgs.gov/fdsnws/event/1/query?format=quakeml&producttype=moment-tensor&starttime={week_ago}&includeallmagnitudes=true
 terms PD-USGov https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits
-query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
+query earth frame=body lat_key=event.origin.latitude.value lon_key=event.origin.longitude.value alt_key=event.origin.depth.value time_key=event.origin.time.value
 ttl 60
 format quakeml
 quakeml usgs_mt_m0_nm usgs_mt_mww 6.0 0.0 0.0
@@ -196,7 +196,7 @@ url https://github.com/omegaflow/sources/releases/download/service.earthscope.or
 terms CC-BY-4.0 https://www.earthscope.org/sponsored-open-data/
 origin https://service.earthscope.org/fdsnws/dataselect/1/query
 compiler tools/harvest/src/bin/fdsn_waveform_compiler.rs
-query earth frame=body lat_key=pending lon_key=pending alt_key=pending time_key=pending
+query earth frame=body lat_key=lat lon_key=lon alt_key=alt time_key=t
 ttl 60
 format fdsn_waveform
 field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0
