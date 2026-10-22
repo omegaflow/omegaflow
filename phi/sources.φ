@@ -1206,11 +1206,11 @@ field 0.bt exosphere_ace_bt_nt nT source_key=bt alt_offset=0
 
 url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-at earth frame=barycenter distance_au=0.99
+at earth frame=barycenter distance_au=0.99 time_key=time_tag time_scale=UTC
 ttl 3600
-field 0.speed exosphere_ace_speed_kms inverse-square advective km/s 360.0 pending 0.0 0.0
-field 0.dens exosphere_ace_dens_ncc inverse-square em 1/cm3 360.0 pending 0.0 0.0
-field 0.temperature exosphere_ace_temp_k inverse-square thermal K 360.0 pending 0.0 0.0
+field 0.speed exosphere_ace_speed_kms km/s source_key=speed alt_offset=0
+field 0.dens exosphere_ace_dens_ncc 1/cm3 source_key=dens alt_offset=0
+field 0.temperature exosphere_ace_temp_k K source_key=temperature alt_offset=0
 
 url https://ssd-api.jpl.nasa.gov/fireball.api?limit=200&sort=-date
 terms PD-USGov https://ssd.jpl.nasa.gov/
