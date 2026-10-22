@@ -3673,13 +3673,9 @@ lastrow average atmosphere_sf6_ppt_global gaussian-inverse-square diffusion ppt 
 
 url https://hfradar.ioos.us/erddap/tabledap/BML_BML1.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 terms free-open https://hfradar.ioos.us/erddap/legal.html
-query earth frame=body lat_key=2 lon_key=1 alt_key=absent time_key=0
+query earth frame=body lat_key=2 lon_key=1 alt_ref=0 datum=sea_surface time_key=0 time_scale=UTC
 ttl 86400
-map table.rows
-lat 2
-lon 1
-epoch 0
-field 3 hfradar_radial_velocity_BML_BML1_cm_s inverse-square advective cm/s 21600 pending 0.0 0.0
+field VELO radial_sea_water_velocity_toward_instrument cm/s source_column=3 alt_offset=0 alt_min_offset=-2.5 alt_max_offset=0
 
 url https://hfradar.ioos.us/erddap/tabledap/BML_BMLR.json?time,longitude,latitude,VELO&time%3E=max(time)-2days
 terms free-open https://hfradar.ioos.us/erddap/legal.html
