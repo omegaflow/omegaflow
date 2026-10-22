@@ -2480,22 +2480,27 @@ fn strip_inline_code(line: &str) -> String {
 }
 
 fn marker_in_status_context(lower: &str, marker: &str) -> bool {
-    if marker != "blocked" {
-        return lower.contains(marker);
-    }
     lower.match_indices(marker).any(|(idx, _)| {
         let before = lower[..idx].trim_end();
-        let after = &lower[idx + marker.len()..];
+        let mut after = &lower[idx + marker.len()..];
+        if marker == "offen" {
+            for suffix in ["er", "es", "en", "em", "e"] {
+                if let Some(rest) = after.strip_prefix(suffix) {
+                    after = rest;
+                    break;
+                }
+            }
+        }
         let starts_clean = before.is_empty()
-            || matches!(
-                before.chars().last(),
-                Some(':') | Some('|') | Some('-') | Some('(') | Some('[')
-            );
+            || before
+                .chars()
+                .last()
+                .is_some_and(|c| !c.is_alphanumeric());
         let ends_clean = after.is_empty()
-            || matches!(
-                after.chars().next(),
-                Some(' ') | Some(':') | Some('|') | Some(',') | Some(')') | Some(']')
-            );
+            || after
+                .chars()
+                .next()
+                .is_some_and(|c| !c.is_alphanumeric());
         starts_clean && ends_clean
     })
 }
