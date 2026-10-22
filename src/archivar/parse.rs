@@ -3135,11 +3135,9 @@ fn finish_source_block(
             "line {line}: time_parts needs five or six non-empty keys (Y,M,D,h,m[,s])"
         ));
     }
-    if matches!(&position, SourcePosition::Moving { .. })
-        && (builder.alt_key.is_none() || builder.time_key.is_none())
-    {
+    if matches!(&position, SourcePosition::Moving { .. }) && builder.time_key.is_none() {
         return Err(format!(
-            "line {line}: moving block needs alt_key and time_key"
+            "line {line}: moving block needs time_key and one of alt_ref/alt_key"
         ));
     }
     let datum = builder.datum.ok_or_else(|| format!("line {line}: datum absent"))?;
@@ -3276,6 +3274,7 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 }
                 let mut lat_key = None;
                 let mut lon_key = None;
+                let mut alt_ref = None;
                 let mut alt_key = None;
                 let mut time_key = None;
                 let mut datum = None;
@@ -3291,7 +3290,15 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                     match key {
                         "lat_key" => lat_key = Some(value.to_string()),
                         "lon_key" => lon_key = Some(value.to_string()),
-                        "alt_key" => alt_key = Some(value.to_string()),
+                        "alt_ref" => alt_ref = value.parse::<f64>().ok(),
+                        "alt_key" => {
+                            if value == "absent" || value == "pending" {
+                                return Err(format!(
+                                    "line {line_no}: alt_key carries the sentinel {value}; use alt_ref"
+                                ));
+                            }
+                            alt_key = Some(value.to_string())
+                        }
                         "time_key" => time_key = Some(value.to_string()),
                         "datum" => datum = Some(value.to_string()),
                         "time_scale" => time_scale = Some(value.to_string()),
@@ -3302,15 +3309,21 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 if !has_frame {
                     return Err(format!("line {line_no}: {head} needs frame="));
                 }
-                let (Some(lat_key), Some(lon_key), Some(alt_key), Some(time_key)) =
-                    (lat_key, lon_key, alt_key, time_key)
+                let (Some(lat_key), Some(lon_key), Some(time_key)) =
+                    (lat_key, lon_key, time_key)
                 else {
                     return Err(format!(
-                        "line {line_no}: {head} needs lat_key, lon_key, alt_key and time_key"
+                        "line {line_no}: {head} needs lat_key, lon_key and time_key"
                     ));
                 };
+                if alt_ref.is_some() == alt_key.is_some() {
+                    return Err(format!(
+                        "line {line_no}: {head} needs exactly one of alt_ref/alt_key"
+                    ));
+                }
                 builder.position = Some(SourcePosition::Moving { lat_key, lon_key });
-                builder.alt_key = Some(alt_key);
+                builder.alt_ref = alt_ref;
+                builder.alt_key = alt_key;
                 builder.time_key = Some(time_key);
                 builder.datum = datum;
                 builder.time_scale = time_scale;
@@ -3319,6 +3332,8 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 let key = parts[1].to_string();
                 let name = parts[2].to_string();
                 let unit = parts[3].to_string();
+                let mut source_column = None;
+                let mut source_key = None;
                 let mut alt_offset = None;
                 let mut alt_min_offset = None;
                 let mut alt_max_offset = None;
@@ -3326,16 +3341,38 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                     let Some((key, value)) = token.split_once('=') else {
                         return Err(format!("line {line_no}: field token {token} carries no key=value"));
                     };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: field attribute {key} is empty"));
+                    }
+                    if value == "absent" || value == "pending" {
+                        return Err(format!(
+                            "line {line_no}: field attribute {key} carries the sentinel {value}"
+                        ));
+                    }
                     let parsed = value
                         .parse::<f64>()
                         .ok()
                         .filter(|v| v.is_finite());
                     match key {
+                        "source_column" => {
+                            source_column = value.parse::<usize>().ok();
+                            if source_column.is_none() {
+                                return Err(format!(
+                                    "line {line_no}: source_column {value} is not a column"
+                                ));
+                            }
+                        }
+                        "source_key" => source_key = Some(value.to_string()),
                         "alt_offset" => alt_offset = parsed,
                         "alt_min_offset" => alt_min_offset = parsed,
                         "alt_max_offset" => alt_max_offset = parsed,
                         _ => return Err(format!("line {line_no}: unknown field attribute {key}")),
                     }
+                }
+                if source_column.is_some() == source_key.is_some() {
+                    return Err(format!(
+                        "line {line_no}: exactly one of source_column/source_key required"
+                    ));
                 }
                 let alt_offset =
                     alt_offset.ok_or_else(|| format!("line {line_no}: alt_offset absent"))?;
@@ -3353,6 +3390,8 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                     key,
                     name,
                     unit,
+                    source_column,
+                    source_key,
                     alt_offset,
                     alt_min_offset,
                     alt_max_offset,
@@ -3424,6 +3463,17 @@ pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>>
             {
                 errors.push(at(format!("field {} has an empty key/name/unit", field.key)));
             }
+            if field.source_column.is_some() == field.source_key.is_some() {
+                errors.push(at(format!(
+                    "field {} needs exactly one of source_column/source_key",
+                    field.key
+                )));
+            }
+            if let Some(source_key) = &field.source_key
+                && source_key.trim().is_empty()
+            {
+                errors.push(at(format!("field {} has an empty source_key", field.key)));
+            }
             if !field.alt_offset.is_finite() {
                 errors.push(at(format!("field {} has a non-finite alt_offset", field.key)));
             }
@@ -3464,8 +3514,8 @@ mod tests {
 terms PD-USGov https://example.org/terms\n\
 ttl 60\n\
 on earth frame=body lat=19.5 lon=-155.6 alt_ref=0 datum=sea_surface time=2026-10-22T00:00:00Z time_scale=UTC\n\
-field WSPD wind_speed m/s alt_offset=4.0\n\
-field WTMP water_temp C alt_offset=-0.6\n";
+field WSPD wind_speed m/s source_column=4 alt_offset=4.0\n\
+field WTMP water_temp C source_column=14 alt_offset=-0.6\n";
         let blocks = parse_source_blocks(content).expect("source block parses");
         assert_eq!(blocks.len(), 1);
         assert_eq!(blocks[0].fields.len(), 2);
@@ -3482,14 +3532,15 @@ field WTMP water_temp C alt_offset=-0.6\n";
 terms CC-BY-4.0 https://example.org/terms\n\
 ttl 60\n\
 on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface time=2026-10-22T00:00:00Z time_scale=UTC\n\
-field u current m/s alt_offset=0 alt_min_offset=0 alt_max_offset=2.5\n";
+field u current m/s source_column=3 alt_offset=0.0 alt_min_offset=-2.5 alt_max_offset=0.0\n";
         let blocks = parse_source_blocks(layer).expect("layer parses");
-        assert_eq!(blocks[0].fields[0].alt_min_offset, Some(0.0));
-        assert_eq!(blocks[0].fields[0].alt_max_offset, Some(2.5));
+        assert_eq!(blocks[0].fields[0].source_column, Some(3));
+        assert_eq!(blocks[0].fields[0].alt_min_offset, Some(-2.5));
+        assert_eq!(blocks[0].fields[0].alt_max_offset, Some(0.0));
 
-        let partial = layer.replace(" alt_max_offset=2.5", "");
+        let partial = layer.replace(" alt_max_offset=0.0", "");
         assert!(parse_source_blocks(&partial).is_err());
-        let pending = layer.replace("alt_offset=0", "alt_offset=pending");
+        let pending = layer.replace("alt_offset=0.0", "alt_offset=pending");
         assert!(parse_source_blocks(&pending).is_err());
     }
 
@@ -3500,7 +3551,7 @@ field u current m/s alt_offset=0 alt_min_offset=0 alt_max_offset=2.5\n";
             "terms CC-BY-4.0 https://example.org/terms\n",
             "ttl 60\n",
             "on earth frame=body lat=1 lon=2 alt_ref=0 datum=msl time=2026-10-22T00:00:00Z time_scale=UTC\n",
-            "field absorption_db absorption dB alt_offset=0\n",
+            "field absorption_db absorption dB source_column=1 alt_offset=0\n",
         );
         let blocks = parse_source_blocks(content).expect("published absorption is a field");
         assert_eq!(blocks[0].fields[0].key, "absorption_db");
@@ -3518,7 +3569,7 @@ field u current m/s alt_offset=0 alt_min_offset=0 alt_max_offset=2.5\n";
             "ttl 60\n",
             "on earth frame=body lat=19.5 lon=-155.6 alt_ref=0 datum=sea_surface",
             " time_parts=YY,MM,DD,hh,mm time_scale=UTC\n",
-            "field WSPD wind_speed m/s alt_offset=4.0\n",
+            "field WSPD wind_speed m/s source_column=4 alt_offset=4.0\n",
         );
         let blocks = parse_source_blocks(content).expect("five-part time parses");
         let parts = blocks[0].time_parts.as_ref().expect("time_parts");
@@ -3553,13 +3604,13 @@ field u current m/s alt_offset=0 alt_min_offset=0 alt_max_offset=2.5\n";
             "ttl 60\n",
             "on earth frame=body lat=1 lon=2 alt_ref=0 datum=msl",
             " time=2026-10-22T00:00:00Z time_scale=UTC\n",
-            "field air air C alt_offset=2.0\n",
+            "field air air C source_column=1 alt_offset=2.0\n",
             "url https://example.org/mixed\n",
             "terms CC-BY-4.0 https://example.org/terms\n",
             "ttl 60\n",
             "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
             " time=2026-10-22T00:00:00Z time_scale=UTC\n",
-            "field water water C alt_offset=0.0\n",
+            "field water water C source_column=2 alt_offset=0.0\n",
         );
         let blocks = parse_source_blocks(content).expect("same URL may carry two datums");
         assert_eq!(blocks.len(), 2);
@@ -3582,7 +3633,7 @@ field u current m/s alt_offset=0 alt_min_offset=0 alt_max_offset=2.5\n";
             "ttl 60\n",
             "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
             " time=2026-10-22T00:00:00Z time_scale=UTC\n",
-            "field water water C alt_offset=-0.6 alt_min_offset=-2.5 alt_max_offset=0.0\n",
+            "field water water C source_column=1 alt_offset=-0.6 alt_min_offset=-2.5 alt_max_offset=0.0\n",
         );
         let blocks = parse_source_blocks(content).expect("signed layer parses");
         assert!(validate_source_blocks(&blocks).is_ok());
@@ -3606,7 +3657,7 @@ field u current m/s alt_offset=0 alt_min_offset=0 alt_max_offset=2.5\n";
             "terms CC-BY-4.0 https://example.org/terms\n",
             "ttl 60\n",
             "query earth frame=body lat_key=lat lon_key=lon alt_key=height time_key=t datum=ellipsoid time_scale=UTC\n",
-            "field u current m/s alt_offset=0\n",
+            "field u current m/s source_column=3 alt_offset=0\n",
         );
         let blocks = parse_source_blocks(content).expect("moving block parses");
         assert!(matches!(
@@ -3619,12 +3670,53 @@ field u current m/s alt_offset=0 alt_min_offset=0 alt_max_offset=2.5\n";
     }
 
     #[test]
+    fn moving_platform_accepts_fixed_alt_ref_without_invented_key() {
+        let content = concat!(
+            "url https://example.org/hfradar\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "query earth frame=body lat_key=LAT lon_key=LON alt_ref=0",
+            " time_key=T datum=sea_surface time_scale=UTC\n",
+            "field VELO radial_velocity m/s source_column=3 alt_offset=0.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("moving block with fixed alt_ref");
+        assert_eq!(blocks[0].alt_ref, Some(0.0));
+        assert_eq!(blocks[0].alt_key, None);
+        assert!(validate_source_blocks(&blocks).is_ok());
+
+        let sentinel = content.replace("alt_ref=0", "alt_key=absent");
+        assert!(parse_source_blocks(&sentinel).is_err());
+    }
+
+    #[test]
+    fn source_field_keeps_column_or_key() {
+        let content = concat!(
+            "url https://example.org/hfradar-wave\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field MWHT wave_height m source_column=3 alt_offset=0.0\n",
+            "field MWPD mean_period s source_key=MWPD alt_offset=0.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("column and key fields parse");
+        assert_eq!(blocks[0].fields[0].source_column, Some(3));
+        assert_eq!(blocks[0].fields[0].source_key, None);
+        assert_eq!(blocks[0].fields[1].source_column, None);
+        assert_eq!(blocks[0].fields[1].source_key.as_deref(), Some("MWPD"));
+        assert!(validate_source_blocks(&blocks).is_ok());
+
+        let missing = content.replace(" source_column=3", "");
+        assert!(parse_source_blocks(&missing).is_err());
+    }
+
+    #[test]
     fn source_blocks_refuse_two_reference_forms() {
         let content = "url https://example.org/x\n\
 terms CC-BY-4.0 https://example.org/terms\n\
 ttl 60\n\
 on earth frame=body lat=1 lon=2 alt_ref=0 alt_key=height datum=msl time=epoch time_key=t time_scale=UTC\n\
-field u u m/s alt_offset=0\n";
+field u u m/s source_column=1 alt_offset=0\n";
         assert!(parse_source_blocks(content).is_err());
     }
     use crate::mathematikerin::channel::{CouplingKind, DensityKind};

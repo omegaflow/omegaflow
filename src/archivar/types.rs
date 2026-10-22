@@ -637,6 +637,8 @@ pub struct SourceField {
     pub key: String,
     pub name: String,
     pub unit: String,
+    pub source_column: Option<usize>,
+    pub source_key: Option<String>,
     pub alt_offset: f64,
     pub alt_min_offset: Option<f64>,
     pub alt_max_offset: Option<f64>,
