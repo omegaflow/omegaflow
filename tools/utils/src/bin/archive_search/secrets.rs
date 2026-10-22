@@ -2,8 +2,50 @@ use std::collections::HashMap;
 
 pub fn load_env(root: &std::path::Path) -> HashMap<String, String> {
     let mut env: HashMap<String, String> = HashMap::new();
-    for name in [".env", ".secrets.local"] {
-        if let Ok(text) = std::fs::read_to_string(root.join(name)) {
+    let mut files: Vec<std::path::PathBuf> = Vec::new();
+    if let Ok(path) = std::env::var("OMEGAFLOW_SECRETS_FILE")
+        && !path.trim().is_empty()
+    {
+        files.push(std::path::PathBuf::from(path));
+    } else {
+        for name in [".env", ".secrets.local"] {
+            let path = root.join(name);
+            if path.exists() {
+                files.push(path);
+            }
+        }
+        if files.is_empty()
+            && let Some(main) = parent_repo_root(root)
+        {
+            for name in [".env", ".secrets.local"] {
+                let path = main.join(name);
+                if path.exists() {
+                    files.push(path);
+                }
+            }
+        }
+        if files.is_empty() {
+            let private = match std::env::var("OMEGAFLOW_PRIVATE") {
+                Ok(path) if !path.trim().is_empty() => path,
+                _ => match std::env::var("HOME") {
+                    Ok(home) if !home.trim().is_empty() => {
+                        format!("{home}/projects/omegaflow-private")
+                    }
+                    _ => String::new(),
+                },
+            };
+            if !private.is_empty() {
+                for name in [".env", ".secrets.local"] {
+                    let path = std::path::Path::new(&private).join(name);
+                    if path.exists() {
+                        files.push(path);
+                    }
+                }
+            }
+        }
+    }
+    for path in files {
+        if let Ok(text) = std::fs::read_to_string(path) {
             for line in text.lines() {
                 let line = line.trim();
                 if line.is_empty() || line.starts_with('#') {
@@ -29,6 +71,14 @@ pub fn load_env(root: &std::path::Path) -> HashMap<String, String> {
         env.insert(k, v);
     }
     env
+}
+
+fn parent_repo_root(root: &std::path::Path) -> Option<std::path::PathBuf> {
+    let marker = std::fs::read_to_string(root.join(".git")).ok()?;
+    let gitdir = marker.trim().strip_prefix("gitdir:")?.trim();
+    let text = gitdir.to_string_lossy();
+    let cut = text.find("/.git/")?;
+    Some(std::path::PathBuf::from(&text[..cut]))
 }
 
 pub fn resolve_secret(template: &str, env: &HashMap<String, String>) -> String {

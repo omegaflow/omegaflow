@@ -2365,8 +2365,8 @@ fn usage() {
     eprintln!("       archive_search --searxng \"query\"");
     eprintln!("  3  keyed fallback; serial only, never the first move");
     eprintln!("       archive_search --base \"query\"       (BASE_API_KEY; 1.1 s spacing enforced)");
-    eprintln!("       archive_search --youcom \"query\"     (last fallback; prepaid credit)");
     eprintln!("  --perplexity/--gemini/other keyed routes: only if 1–3 stayed empty");
+    eprintln!("  --youcom/--youmcp are excluded from the source-discovery ladder.");
     eprintln!();
     eprintln!("  Do not start with --all or --jobs >1. --all fans out over many arms;");
     eprintln!("  it is a last move, not a search default. On HTTP 429/Retry-After stop");
@@ -2393,8 +2393,12 @@ fn usage() {
     eprintln!("  --europepmc, --pangaea, --fdsn, --github, --grepapp, --openlibrary.");
     eprintln!("  --list-sources prints every arm and its groups; --help-all prints the");
     eprintln!("  full per-arm reference (endpoint, key, fields).");
+    eprintln!("  Key scope: Z_AI_API_KEY is the OpenCode provider key; archive_search");
+    eprintln!("  does not use it. Named keys come from .secrets.local (repo root),");
+    eprintln!("  OMEGAFLOW_SECRETS_FILE, the private-house fallback, or OMEGAFLOW_<KEY>_CMD.");
+    eprintln!("  ydc-server/you-discover is an agent/skill finder, not web search.");
     eprintln!("  Keyless meta: --4get --mwmbl --marginalia --searxng --wiby --ia-search.");
-    eprintln!("  Keyed fallback: --base, --youcom, --perplexity, --gemini, --brave,");
+    eprintln!("  Keyed fallback: --base, --perplexity, --gemini, --brave,");
     eprintln!("  --exa, --tavily, --serper, --firecrawl, --searchapi, --serpapi.");
     eprintln!("  --all [--stop <n>] [--jobs <n>] [--dedupe|--no-dedupe] [--group ...]");
     eprintln!("      fan-out; keep --jobs 1 when any keyed route is present.");
@@ -2744,10 +2748,10 @@ fn usage_full() {
         "  --hn        Hacker News via Algolia (hn.algolia.com/api/v1), keyless; url + title/author/points/comments/date"
     );
     eprintln!(
-        "  --youcom    You.com Search API (ydc-index.io/v1/search, POST), YOUCOM_API_KEY; url + title/description/date"
+        "  --youcom    You.com Search API (ydc-index.io/v1/search, POST), YOUCOM_API_KEY; url + title/description/date — excluded from the source-discovery ladder"
     );
     eprintln!(
-        "  --youmcp    You.com MCP free profile (api.you.com/mcp?profile=free), keyless; you-search"
+        "  --youmcp    You.com MCP free profile (api.you.com/mcp?profile=free), keyless; you-search — excluded from the source-discovery ladder"
     );
     eprintln!(
         "  --examcp    Exa MCP (mcp.exa.ai/mcp), keyless; web_search_exa, text blocks -> url/title/date"
