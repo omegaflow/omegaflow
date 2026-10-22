@@ -146,7 +146,7 @@ fn agents_growth_violations(now: usize, head: Option<usize>) -> Vec<String> {
     violations
 }
 
-const HANDOVER_CAP: usize = 1024;
+const HANDOVER_CAP: usize = 1536;
 
 fn header_status_live(content: &str) -> bool {
     let (Some(open), Some(close)) = (content.find("<!--"), content.find("-->")) else {
@@ -171,12 +171,12 @@ fn handover_cap_violation(path: &str, content: &str) -> Option<String> {
     if !name.starts_with("handover-") || !name.ends_with(".md") {
         return None;
     }
-    if !header_status_live(content) || handover_measured_len(content) <= HANDOVER_CAP {
+    if !header_status_live(content) || content.len() <= HANDOVER_CAP {
         return None;
     }
     Some(format!(
-        "handover-cap: {path} is {} B (cap {HANDOVER_CAP}, without `## Offen`) — the open grows, the history does not. The fix is not to cut the text: close the open. The history is git. (operator word 2026-10-16)",
-        handover_measured_len(content)
+        "handover-cap: {path} is {} B (cap {HANDOVER_CAP}, including `## Offen`) — open points live in the letter, not in a sidecar; close points, do not externalize them. The history is git.",
+        content.len()
     ))
 }
 
@@ -216,21 +216,6 @@ fn count_open_points(content: &str) -> usize {
         }
     }
     if hashes > 0 { hashes } else { bullets }
-}
-
-fn handover_measured_len(content: &str) -> usize {
-    let mut in_offen = false;
-    let mut n = 0usize;
-    for seg in content.split_inclusive('\n') {
-        let t = seg.trim_start();
-        if let Some(rest) = t.strip_prefix("## ") {
-            in_offen = rest.trim().to_lowercase().starts_with("offen");
-        }
-        if !in_offen {
-            n += seg.len();
-        }
-    }
-    n
 }
 
 fn open_points_without_braucht(content: &str) -> Vec<String> {
@@ -316,6 +301,131 @@ fn public_tree_internal(path: &str) -> bool {
         ]
         .iter()
         .any(|d| p.starts_with(d))
+}
+
+fn work_root() -> Option<std::path::PathBuf> {
+    if let Ok(path) = std::env::var("OMEGAFLOW_WORK")
+        && !path.trim().is_empty()
+    {
+        return Some(std::path::PathBuf::from(path));
+    }
+    let home = std::env::var("HOME").ok()?;
+    Some(std::path::PathBuf::from(home).join("projects/omegaflow-work"))
+}
+
+fn handover_owner_loose(path: &str) -> Option<String> {
+    let name = std::path::Path::new(path).file_name()?.to_string_lossy();
+    let stem = name.strip_suffix(".md")?;
+    let rest = stem.strip_prefix("handover-")?;
+    if rest.len() < 12 || rest.as_bytes().get(10) != Some(&b'-') {
+        return None;
+    }
+    let tail = &rest[11..];
+    let owner = tail.rsplit_once("-folge").map_or(tail, |(owner, _)| owner);
+    if owner.is_empty() { None } else { Some(owner.to_string()) }
+}
+
+fn handover_duplicate_lines() -> Vec<String> {
+    let Some(work) = work_root() else {
+        return Vec::new();
+    };
+    let dirs = [
+        std::path::PathBuf::from("docs/handover"),
+        std::path::PathBuf::from("state/future/handover"),
+        work.join("handover"),
+    ];
+    let mut counts: std::collections::BTreeMap<String, Vec<String>> =
+        std::collections::BTreeMap::new();
+    for dir in dirs {
+        let Ok(entries) = std::fs::read_dir(dir) else {
+            continue;
+        };
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if !path.is_file() {
+                continue;
+            }
+            let raw = path.to_string_lossy().to_string();
+            if raw.contains("/archiv/") || !raw.ends_with(".md") {
+                continue;
+            }
+            let Some(owner) = handover_owner_loose(&raw) else {
+                continue;
+            };
+            let Some(name) = path.file_name() else {
+                continue;
+            };
+            counts
+                .entry(owner)
+                .or_default()
+                .push(name.to_string_lossy().to_string());
+        }
+    }
+    counts
+        .into_iter()
+        .filter(|(_, files)| files.len() > 1)
+        .map(|(owner, files)| {
+            format!(
+                "handover-one-per-line: {owner} has {} live letters: {}",
+                files.len(),
+                files.join(", ")
+            )
+        })
+        .collect()
+}
+
+fn post_pair(path: &str) -> Option<(String, String)> {
+    let name = std::path::Path::new(path).file_name()?.to_string_lossy();
+    let stem = name.strip_suffix(".md")?;
+    let rest = stem.get(11..)?;
+    let (from, tail) = rest.split_once("-an-")?;
+    let to = tail.split('-').next()?;
+    if from.is_empty() || to.is_empty() {
+        return None;
+    }
+    Some((from.to_string(), to.to_string()))
+}
+
+fn post_duplicate_pairs() -> Vec<String> {
+    let Some(work) = work_root() else {
+        return Vec::new();
+    };
+    let Ok(entries) = std::fs::read_dir(work.join("post")) else {
+        return Vec::new();
+    };
+    let mut counts: std::collections::BTreeMap<String, Vec<String>> =
+        std::collections::BTreeMap::new();
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if !path.is_file() {
+            continue;
+        }
+        let raw = path.to_string_lossy().to_string();
+        if !raw.ends_with(".md") {
+            continue;
+        }
+        let Some((from, to)) = post_pair(&raw) else {
+            continue;
+        };
+        let Some(name) = path.file_name() else {
+            continue;
+        };
+        counts
+            .entry(format!("{from}->{to}"))
+            .or_default()
+            .push(name.to_string_lossy().to_string());
+    }
+    counts
+        .into_iter()
+        .filter(|(_, files)| files.len() > 1)
+        .map(|(pair, files)| {
+            format!(
+                "post-one-per-line-pair: {pair} has {} letters: {}",
+                files.len(),
+                files.join(", ")
+            )
+        })
+        .collect()
 }
 
 fn main() {
@@ -628,6 +738,7 @@ fn main() {
         };
         if let Some(message) = handover_cap_violation(path, &content) {
             eprintln!("commit_check: {message}");
+            fail = true;
         }
         for missing in open_points_without_braucht(&content) {
             eprintln!(
@@ -688,6 +799,14 @@ fn main() {
             );
             fail = true;
         }
+    }
+    for message in handover_duplicate_lines() {
+        eprintln!("commit_check: {message}");
+        fail = true;
+    }
+    for message in post_duplicate_pairs() {
+        eprintln!("commit_check: {message}");
+        fail = true;
     }
     let mut handover_lines: Vec<String> = Vec::new();
     for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
@@ -783,7 +902,7 @@ mod tests {
         assert_eq!(
             handover_cap_violation(live_path, &big),
             Some(format!(
-                "handover-cap: {live_path} is {} B (cap {HANDOVER_CAP}, without `## Offen`) — the open grows, the history does not. The fix is not to cut the text: close the open. The history is git. (operator word 2026-10-16)",
+                "handover-cap: {live_path} is {} B (cap {HANDOVER_CAP}, including `## Offen`) — open points live in the letter, not in a sidecar; close points, do not externalize them. The history is git.",
                 big.len()
             ))
         );
@@ -804,7 +923,29 @@ mod tests {
             "x".repeat(HANDOVER_CAP - header.len() - 1),
             "y".repeat(HANDOVER_CAP)
         );
-        assert_eq!(handover_cap_violation(live_path, &with_offen), None);
+        assert!(handover_cap_violation(live_path, &with_offen).is_some());
+    }
+
+    #[test]
+    fn handover_owner_reads_folge_and_plain_names() {
+        assert_eq!(
+            handover_owner_loose("handover/handover-2026-10-22-mycelium-folge367.md"),
+            Some("mycelium".to_string())
+        );
+        assert_eq!(
+            handover_owner_loose("handover/handover-2026-10-22-future.md"),
+            Some("future".to_string())
+        );
+        assert_eq!(handover_owner_loose("handover/readme.md"), None);
+    }
+
+    #[test]
+    fn post_pair_reads_sender_and_receiver() {
+        assert_eq!(
+            post_pair("post/2026-10-22-future-an-mycelium-setze-die-route.md"),
+            Some(("future".to_string(), "mycelium".to_string()))
+        );
+        assert_eq!(post_pair("post/not-a-post.md"), None);
     }
 
     #[test]
