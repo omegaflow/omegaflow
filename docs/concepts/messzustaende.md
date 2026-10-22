@@ -8,7 +8,7 @@
   ack: future 2026-10-21T13:40Z
   next: Wissenschafts-Survey, dann Rat der 13
   orphan-after: none
-  see-also: docs/concepts/glossar.md docs/granit.md docs/surveys/survey-2026-10-21-riss-zensus-nach-test.md
+  see-also: docs/concepts/glossar.md docs/granit.md survey-2026-10-21-riss-zensus-nach-test
 -->
 # Messzustände — zwei Achsen: was wissen wir, was tun wir
 

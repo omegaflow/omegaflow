@@ -4,7 +4,7 @@
   date: 2026-10-10
   sha256: 385c2ca543c8f1d59bb0b297d66e5daf5cae02e989526d2cf7f8eb5676d3605c
   status: live
-  see-also: docs/surveys/survey-2026-10-10-ephemeris-quellen.md docs/concepts/kybernetische-astrophysik.md docs/handover/archiv/handover-2026-10-10-mountain-folge301.md
+  see-also: survey-2026-10-10-ephemeris-quellen docs/concepts/kybernetische-astrophysik.md docs/handover/archiv/handover-2026-10-10-mountain-folge301.md
 -->
 # Die eigene Ephemeride — aus allen Zeugen
 
@@ -16,7 +16,7 @@ Kreuz-Zeugen in der H₀-Spannung gewinnen?
 Dieses Konzept destilliert das EPH-Gespräch (Desktop `EPH`, 2026-10-10) gegen den
 Baum, den Rat und den vollen Roster. Rohmaterial:
 `state/rat/2026-10-10_sensory_eigene-ephemeride-round.md`; Referenz-Landschaft:
-`docs/surveys/survey-2026-10-10-ephemeris-quellen.md`.
+`survey-2026-10-10-ephemeris-quellen`.
 
 ## Die These des EPH-Gesprächs
 

@@ -103,7 +103,7 @@ blob `1a0da547` + `constants.js` blob `95f9c949`, last carrying commit
    (`get_expose`/`exposureBoost`), `window_median_extent`, window-as-center
    stay dead.
 4. **Aperture binding** — per channel since River 139/140 (Rat + 11 voices,
-   `docs/surveys/survey-2026-10-08-sonnen-render-archaeologie.md` §5): the layer
+   `survey-2026-10-08-sonnen-render-archaeologie` §5): the layer
    confusion is repaired — `field_permeability: [f32; 9]` relaxes per tick and
    per channel (`src/mathematikerin/omega.rs`; the TE branch applies the
    field-level target to every channel, the self-series branch uses each

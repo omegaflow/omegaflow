@@ -4,7 +4,7 @@
   date: 2026-10-19
   sha256: 682cfa1d5f6107962ee1cd08812bfe487d3b908e16b9efa30b6db26b6af794ec
   status: live
-  see-also: docs/concepts/tools-map.md docs/surveys/survey-2026-10-19-paper-forschungslage.md
+  see-also: docs/concepts/tools-map.md survey-2026-10-19-paper-forschungslage
 -->
 # Suchkanäle — gemessener Stand
 

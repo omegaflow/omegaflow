@@ -6,7 +6,7 @@
   status: live
 -->
 # Force-Keyword — River-Entscheid zu sensory-259 `.12~a3bf3c25` (2026-10-18)
-# Linie River · Grundlage docs/surveys/survey-2026-10-15-tauchbefunde-acht-faeden.md:156-168
+# Linie River · Grundlage survey-2026-10-15-tauchbefunde-acht-faeden:156-168
 #   (Faden 4, KIDS DR4.1 WL, Kanal-Entwurf) und state/mountain/2026-10-15-acht-faeden-verdicts.φ:46-53
 #   (Shear-Verdikt: `gravity` bestätigt 2/5, Kernel pending).
 # Priorität der Zeilen: Post fehlt (post/in nicht im Baum) · Trigger = addressed-Block · Transfer = Token .12.

@@ -2,9 +2,9 @@
   title: sources.φ v3 — Entwurf v0.3
   class: concept
   date: 2026-10-21
-  sha256: b865486b69ba0b50ac7e50b4f67a74ecd2e23dd450ec75deaad74da9cd60b87a
+  sha256: 2954f00412decb8d7666e3d8c75ea049cd54ae27aa0643f5c76361e7a8666b6b
   status: draft
-  see-also: rat/2026-10-21-rat-sources-schema.md docs/concepts/model-eignung.md docs/surveys/survey-2026-10-21-sources-schema-archaeologie.md
+  see-also: rat/2026-10-21-rat-sources-schema.md docs/concepts/model-eignung.md survey-2026-10-21-sources-schema-archaeologie
 -->
 # sources.φ v3 — Entwurf v0.3
 
@@ -171,5 +171,5 @@ Offen ist nur noch die Umsetzung: Parser v3 → Spec v3 → Validator → CI.
 
 - `rat/2026-10-21-rat-sources-schema.md`: v0.1, drei Kritiken, Flash-Messung.
 - `docs/concepts/model-eignung.md`: Autoren-/Kritiker-Rollen und Efforts.
-- `docs/surveys/survey-2026-10-21-sources-schema-archaeologie.md`,
+- `survey-2026-10-21-sources-schema-archaeologie`,
   `...-wissenschaft.md`: Baum- und Wissenschaftskontext.

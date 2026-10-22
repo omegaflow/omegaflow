@@ -445,7 +445,7 @@ Maschine nie.
 ## Browser-Anbindung — die vier Pfade (Rat 2026-09-20: nicht konsolidieren; Pfad 4 registriert 2026-09-23)
 
 Vier Pfade sind vier Identitäten (A = A), je mit gemessener Rolle. Messung + Verdikte:
-`docs/surveys/survey-2026-09-20-browser-anbindung.md`, Messnachtrag 2026-09-23.
+`survey-2026-09-20-browser-anbindung`, Messnachtrag 2026-09-23.
 
 | Pfad | Natur | Rolle | Eintritt |
 |---|---|---|---|
@@ -505,7 +505,7 @@ die API-Flotte dient der **Masse/Reproduzierbarkeit**, nie dem scharfen Kanal.
    `tryingopen.com`** — die Ausgabe ist auf **~4000 Zeichen** begrenzt: mit `Weiter`/
    `continue` den Rest holen, ggf. mehrfach (der Operator-Hinweis 2026-10-03); für Sonnet 5.5 Search
    `arena.ai/search/direct?model_a=claude-sonnet-5-search`. Prozedur (Selektoren, Senden,
-   Antwort-Lesen, Aufräumen): `docs/surveys/survey-2026-09-24-fremdmodell-bedienung.md` +
+   Antwort-Lesen, Aufräumen): `survey-2026-09-24-fremdmodell-bedienung` +
    `state/rat/README.md`; Rohantworten privat nach `state/rat/<TS>_<site>_<slug>.md`.
 2. **Masse/Reproduzierbarkeit → API-Flotte**: `bin/text_review <draft>` (Modelle in
    `tools/measure/free_models.tsv`); `bash state/rat/stimme.sh <zai|gemini|mistral> <prompt.txt>`.

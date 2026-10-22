@@ -2,9 +2,9 @@
   title: Modelleignung für die Quellenarbeit
   class: concept
   date: 2026-10-21
-  sha256: 724b5f560c477542a0919ad67e5cd9410e1c5eddfb090ceb0f252348c2a52a0a
+  sha256: 26cdcf47bf0b949a576276b66e6b5c2e0e42fabea59b9a3c6969f8b8b6fc4a82
   status: live
-  see-also: rat/2026-10-21-rat-sources-schema.md docs/concepts/messzustaende-v3.md docs/surveys/survey-2026-10-21-sources-schema-archaeologie.md
+  see-also: rat/2026-10-21-rat-sources-schema.md docs/concepts/messzustaende-v3.md survey-2026-10-21-sources-schema-archaeologie
 -->
 # Modelleignung für die Quellenarbeit
 
@@ -81,5 +81,5 @@ deepseek-flash.variants`): `low` → `reasoningEffort:"low"`, `mid` → `"medium
 
 - `rat/2026-10-21-rat-sources-schema.md`: Messungen, Kritikrunden,
   Reasoning-Matrix, GLM-Ausfall.
-- `docs/surveys/survey-2026-10-21-sources-schema-archaeologie.md`,
+- `survey-2026-10-21-sources-schema-archaeologie`,
   `...-wissenschaft.md`: der Baum- und Wissenschaftskontext.

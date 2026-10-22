@@ -3,7 +3,7 @@
   class: concept
   date: 2026-10-21
   status: live
-  see-also: docs/concepts/search-channels.md docs/surveys/survey-2026-10-20-datenherkunft-forensik.md
+  see-also: docs/concepts/search-channels.md survey-2026-10-20-datenherkunft-forensik
 -->
 # Köder und Datenformen — was die Herkunft trägt
 
@@ -105,7 +105,7 @@ Das Prinzip steht **als Suchhebel** im Baum, nicht als Wahrheitsregel:
   ein Teil, sondern die **Verdrahtung**" — mehrere Broker, TDB-Uhr,
   Transfer-Entropie als eine Kette; die Anomalie-Taxonomie macht das Seltene
   zum **Kandidaten**, nie zum Urteil (Klasse 3 bleibt „benannt und ungebaut").
-- `docs/surveys/survey-2026-10-14-gewebe-faeden.md`: „Die seltenen Gesetze sind
+- `survey-2026-10-14-gewebe-faeden`: „Die seltenen Gesetze sind
   die Nadeln" — die Seltenheit entscheidet, wo man sucht, nicht was wahr ist.
 - `bin/find` kennt **ZWILLING** und **NAH** als gemessene Abstände; einen
   Zahlenwert „Rarität" gibt es nicht. `weave` trägt keine `rarity`-Spalte.

@@ -3,7 +3,7 @@
   class: concept
   date: 2026-08-27
   version: 1
-  sha256: 19eada76a44d363b5f1280bae9cc1c48fbc99008817bfba7a2935a3789880214
+  sha256: d77f48b89aa6252b6615463d4722cd2bab51b590a3cccdeef574d4a16e00bc05
   status: live
   see-also: docs/paper/ docs/granit.md
 -->
@@ -187,7 +187,7 @@ sondern die Einheit: **omegaflow ist der Standard, und das Gate vollendet ihn
 gegen die externen Goldstandards**, damit er von der Welt erkannt wird.
 
 Der Befund ist der Befund: das Gate-Survey
-`docs/surveys/survey-2026-10-03-exzellenz-gate.md` nennt die Papers, die den
+`survey-2026-10-03-exzellenz-gate` nennt die Papers, die den
 Maßstab tragen, und die Verstöße (gemessen 2026-10-03). Das Exzellenz-Konzept ist der laufende Maßstab, der diese
 Korrektur institutionalisiert.
 

@@ -4,7 +4,7 @@
   date: 2026-10-19
   sha256: 73ba16fe265d9ce3e5ef7af5c58298947ef660c46d04e05de62d209aa1d24322
   status: live
-  see-also: phi/sources.φ tools/harvest/src/bin/ docs/surveys/survey-2026-10-09-redistribution-alternativen.md
+  see-also: phi/sources.φ tools/harvest/src/bin/ survey-2026-10-09-redistribution-alternativen
 -->
 # Entscheidungstabelle — die 17 lizenzgesperrten Arme
 
