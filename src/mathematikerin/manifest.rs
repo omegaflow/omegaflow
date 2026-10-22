@@ -1,4 +1,5 @@
 use crate::archivar::kernel_id_of;
+use std::collections::BTreeMap;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ModelTauSource {
@@ -24,6 +25,7 @@ pub enum ModelGap {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ModelRefusal {
+    Unselected { source_ref: String },
     ForeignSource { selected: String, asked: String },
     Gaps(Vec<ModelGap>),
 }
@@ -218,6 +220,40 @@ impl ManifestSelection {
     }
 }
 
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct Manifest {
+    selections: BTreeMap<String, ManifestSelection>,
+}
+
+impl Manifest {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    pub fn add(&mut self, selection: ManifestSelection) -> Result<(), String> {
+        let source_ref = selection.source_ref().to_string();
+        if self.selections.contains_key(&source_ref) {
+            return Err(format!("duplicate manifest selection: {source_ref}"));
+        }
+        self.selections.insert(source_ref, selection);
+        Ok(())
+    }
+
+    pub fn resolve(&self, source_ref: &str) -> Result<ManifestModel, ModelRefusal> {
+        if let Some(selection) = self.selections.get(source_ref) {
+            return selection.resolve();
+        }
+        if let Some((url, _)) = source_ref.rsplit_once('#')
+            && let Some(selection) = self.selections.get(url)
+        {
+            return selection.resolve();
+        }
+        Err(ModelRefusal::Unselected {
+            source_ref: source_ref.to_string(),
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -342,6 +378,51 @@ mod tests {
         let model = m.resolve().expect("a chosen zero resolves");
         assert_eq!(model.absorption(), 0.0);
         assert_eq!(model.advection(), 0.0);
+    }
+
+    #[test]
+    fn a_manifest_resolves_a_field_through_a_whole_source_selection() {
+        let selection = ManifestSelection::new(
+            "https://example.org/data.csv",
+            ManifestIntent::Science,
+        )
+        .expect("select")
+        .with_kernel("inverse-square")
+        .expect("kernel")
+        .with_model_tau(60.0, ModelTauSource::Chosen)
+        .expect("tau")
+        .with_model_absorption(0.0)
+        .expect("absorption")
+        .with_model_advection(0.0)
+        .expect("advection");
+        let mut manifest = Manifest::new();
+        manifest.add(selection).expect("add");
+        let model = manifest
+            .resolve("https://example.org/data.csv#flux")
+            .expect("whole-source selection covers the field");
+        assert_eq!(model.kernel(), 0);
+        assert_eq!(model.tau(), 60.0);
+    }
+
+    #[test]
+    fn an_unselected_field_is_not_a_zero_model() {
+        let manifest = Manifest::new();
+        assert!(matches!(
+            manifest.resolve("https://example.org/data.csv#flux"),
+            Err(ModelRefusal::Unselected { .. })
+        ));
+    }
+
+    #[test]
+    fn a_duplicate_manifest_selection_is_refused() {
+        let selection = ManifestSelection::new(
+            "https://example.org/data.csv#flux",
+            ManifestIntent::Science,
+        )
+        .expect("select");
+        let mut manifest = Manifest::new();
+        manifest.add(selection.clone()).expect("first");
+        assert!(manifest.add(selection).is_err());
     }
 
     #[test]
