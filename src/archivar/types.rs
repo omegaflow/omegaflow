@@ -2,7 +2,9 @@ use std::collections::BTreeMap;
 
 use super::*;
 use crate::mathematikerin::channel::ChannelDescriptor;
-use crate::mathematikerin::manifest::{ManifestModel, ManifestSelection, ModelRefusal};
+use crate::mathematikerin::manifest::{
+    Manifest, ManifestModel, ManifestSelection, ModelRefusal,
+};
 
 pub trait Radiator: Send + Sync {
     fn accept(&mut self, field: Arc<Buffer>);
@@ -457,7 +459,15 @@ impl FieldConfig {
         channel_ref: Option<u8>,
     ) -> Result<Self, ModelRefusal> {
         let model = field.selected_model(block, selection)?;
-        Ok(Self {
+        Ok(Self::from_model(field, &model, channel_ref))
+    }
+
+    pub fn from_model(
+        field: &SourceField,
+        model: &ManifestModel,
+        channel_ref: Option<u8>,
+    ) -> Self {
+        Self {
             key: field.key.clone(),
             name: field.name.clone(),
             band_id: None,
@@ -474,7 +484,7 @@ impl FieldConfig {
             bin_width: crate::spectral::SPECTRAL_NO_BAND,
             fold: None,
             aperture: Aperture::None,
-        })
+        }
     }
 }
 
@@ -738,6 +748,23 @@ pub struct SourceBlock {
 impl SourceBlock {
     pub fn field(&self, key: &str) -> Option<&SourceField> {
         self.fields.iter().find(|field| field.key == key)
+    }
+
+    pub fn runtime_fields<F>(
+        &self,
+        manifest: &Manifest,
+        channel_for: F,
+    ) -> Result<Vec<FieldConfig>, ModelRefusal>
+    where
+        F: Fn(&SourceField) -> Option<u8>,
+    {
+        self.fields
+            .iter()
+            .map(|field| {
+                let model = manifest.resolve(&field.source_ref(self))?;
+                Ok(FieldConfig::from_model(field, &model, channel_for(field)))
+            })
+            .collect()
     }
 }
 
@@ -1035,5 +1062,41 @@ mod source_block_model_tests {
         assert_eq!(model.advection, 400.0);
         assert_eq!(field_config.channel_ref, Some(7));
         assert_eq!(field_config.key, "flux");
+    }
+
+    #[test]
+    fn a_block_builds_runtime_fields_only_through_the_manifest() {
+        let block = block();
+        let mut manifest = Manifest::new();
+        for key in ["flux", "temp"] {
+            manifest
+                .add(
+                    ManifestSelection::new(
+                        format!("https://example.org/data.csv#{key}"),
+                        ManifestIntent::Science,
+                    )
+                    .expect("select")
+                    .with_kernel("inverse-square")
+                    .expect("kernel")
+                    .with_model_tau(60.0, crate::mathematikerin::manifest::ModelTauSource::Chosen)
+                    .expect("tau")
+                    .with_model_absorption(0.0)
+                    .expect("absorption")
+                    .with_model_advection(0.0)
+                    .expect("advection"),
+                )
+                .expect("add");
+        }
+        let fields = block
+            .runtime_fields(&manifest, |_| Some(1))
+            .expect("all fields resolve");
+        assert_eq!(fields.len(), 2);
+        assert_eq!(fields[0].model.as_ref().expect("model").tau, 60.0);
+
+        let incomplete = Manifest::new();
+        assert!(matches!(
+            block.runtime_fields(&incomplete, |_| None),
+            Err(ModelRefusal::Unselected { .. })
+        ));
     }
 }
