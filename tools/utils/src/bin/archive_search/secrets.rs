@@ -76,9 +76,8 @@ pub fn load_env(root: &std::path::Path) -> HashMap<String, String> {
 fn parent_repo_root(root: &std::path::Path) -> Option<std::path::PathBuf> {
     let marker = std::fs::read_to_string(root.join(".git")).ok()?;
     let gitdir = marker.trim().strip_prefix("gitdir:")?.trim();
-    let text = gitdir.to_string_lossy();
-    let cut = text.find("/.git/")?;
-    Some(std::path::PathBuf::from(&text[..cut]))
+    let cut = gitdir.find("/.git/")?;
+    Some(std::path::PathBuf::from(&gitdir[..cut]))
 }
 
 pub fn resolve_secret(template: &str, env: &HashMap<String, String>) -> String {
