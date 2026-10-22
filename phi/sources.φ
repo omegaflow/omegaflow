@@ -243,12 +243,12 @@ ttl 60
 last flux radiation_proton_flux_integral inverse-square em pfu 6.0 pending 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
-terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=0.0 lon=-75.2 alt=35786023
+terms PD-USGov https://www.weather.gov/disclaimer
+on earth frame=body lat=0.0 lon=-75.2 alt_ref=35786023 datum=WGS84 time_key=time_tag time_scale=UTC
 ttl 60
-last Hp magnetosphere_hp_nt inverse-square em nT 6.0 pending 0.0 0.0
-last He magnetosphere_he_nt inverse-square em nT 6.0 pending 0.0 0.0
-last total magnetosphere_bt_nt inverse-square em nT 6.0 pending 0.0 0.0
+field Hp magnetosphere_hp_nt nT source_key=Hp alt_offset=0
+field He magnetosphere_he_nt nT source_key=He alt_offset=0
+field total magnetosphere_bt_nt nT source_key=total alt_offset=0
 
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
