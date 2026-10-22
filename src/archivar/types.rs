@@ -387,6 +387,7 @@ impl Default for ReceiverAperture {
 pub enum TauSource {
     Measured,
     Pending,
+    Model,
 }
 
 impl TauSource {
@@ -402,8 +403,18 @@ impl TauSource {
         match self {
             Self::Measured => "measured",
             Self::Pending => "pending",
+            Self::Model => "model",
         }
     }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct FieldModel {
+    pub kernel: u8,
+    pub tau: f64,
+    pub tau_src: TauSource,
+    pub absorption: f64,
+    pub advection: f64,
 }
 
 #[derive(Clone)]
@@ -411,17 +422,60 @@ pub struct FieldConfig {
     pub key: String,
     pub name: String,
     pub band_id: Option<String>,
-    pub kernel: u8,
+    pub model: Option<FieldModel>,
     pub channel_ref: Option<u8>,
-    pub tau: f64,
-    pub tau_src: TauSource,
-    pub absorption: f64,
-    pub advection: f64,
     pub unit: String,
     pub freq: f64,
     pub bin_width: f64,
     pub fold: Option<(u8, String)>,
     pub aperture: Aperture,
+}
+
+impl std::ops::Deref for FieldConfig {
+    type Target = FieldModel;
+
+    fn deref(&self) -> &Self::Target {
+        self.model
+            .as_ref()
+            .expect("FieldConfig carries no model; callers must refuse absent model")
+    }
+}
+
+impl std::ops::DerefMut for FieldConfig {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.model
+            .as_mut()
+            .expect("FieldConfig carries no model; callers must refuse absent model")
+    }
+}
+
+impl FieldConfig {
+    pub fn from_evidence(
+        block: &SourceBlock,
+        field: &SourceField,
+        selection: &ManifestSelection,
+        channel_ref: Option<u8>,
+    ) -> Result<Self, ModelRefusal> {
+        let model = field.selected_model(block, selection)?;
+        Ok(Self {
+            key: field.key.clone(),
+            name: field.name.clone(),
+            band_id: None,
+            model: Some(FieldModel {
+                kernel: model.kernel(),
+                tau: model.tau(),
+                tau_src: TauSource::Model,
+                absorption: model.absorption(),
+                advection: model.advection(),
+            }),
+            channel_ref,
+            unit: field.unit.clone(),
+            freq: crate::spectral::SPECTRAL_NO_BAND,
+            bin_width: crate::spectral::SPECTRAL_NO_BAND,
+            fold: None,
+            aperture: Aperture::None,
+        })
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -838,10 +892,7 @@ mod source_block_model_tests {
             terms: "CC-BY-4.0 https://example.org/terms".to_string(),
             origin: None,
             ttl: 60,
-            position: SourcePosition::Fixed {
-                lat: 1.0,
-                lon: 2.0,
-            },
+            position: SourcePosition::Fixed { lat: 1.0, lon: 2.0 },
             alt_ref: Some(0.0),
             alt_key: None,
             datum: "msl".to_string(),
@@ -878,7 +929,10 @@ mod source_block_model_tests {
     fn field_pointer_joins_url_and_key() {
         let block = block();
         let field = block.field("flux").expect("flux is declared");
-        assert_eq!(field.source_ref(&block), "https://example.org/data.csv#flux");
+        assert_eq!(
+            field.source_ref(&block),
+            "https://example.org/data.csv#flux"
+        );
         assert!(block.field("absent").is_none());
     }
 
@@ -886,11 +940,9 @@ mod source_block_model_tests {
     fn a_field_without_a_selection_reports_gaps_not_zeroes() {
         let block = block();
         let field = block.field("flux").expect("flux is declared");
-        let bare = ManifestSelection::new(
-            "https://example.org/data.csv#flux",
-            ManifestIntent::Science,
-        )
-        .expect("select");
+        let bare =
+            ManifestSelection::new("https://example.org/data.csv#flux", ManifestIntent::Science)
+                .expect("select");
         match field.selected_model(&block, &bare) {
             Err(ModelRefusal::Gaps(gaps)) => assert_eq!(
                 gaps,
@@ -914,7 +966,10 @@ mod source_block_model_tests {
                 .expect("select")
                 .with_kernel("inverse-square")
                 .expect("kernel")
-                .with_model_tau(60.0, crate::mathematikerin::manifest::ModelTauSource::Chosen)
+                .with_model_tau(
+                    60.0,
+                    crate::mathematikerin::manifest::ModelTauSource::Chosen,
+                )
                 .expect("tau")
                 .with_model_absorption(0.0)
                 .expect("absorption")
@@ -930,24 +985,55 @@ mod source_block_model_tests {
     fn a_complete_selection_supplies_the_model() {
         let block = block();
         let field = block.field("flux").expect("flux is declared");
-        let chosen = ManifestSelection::new(
-            "https://example.org/data.csv#flux",
-            ManifestIntent::Science,
-        )
-        .expect("select")
-        .with_kernel("inverse-square")
-        .expect("kernel")
-        .with_model_tau(60.0, crate::mathematikerin::manifest::ModelTauSource::Chosen)
-        .expect("tau")
-        .with_model_absorption(0.25)
-        .expect("absorption")
-        .with_model_advection(400.0)
-        .expect("advection");
+        let chosen =
+            ManifestSelection::new("https://example.org/data.csv#flux", ManifestIntent::Science)
+                .expect("select")
+                .with_kernel("inverse-square")
+                .expect("kernel")
+                .with_model_tau(
+                    60.0,
+                    crate::mathematikerin::manifest::ModelTauSource::Chosen,
+                )
+                .expect("tau")
+                .with_model_absorption(0.25)
+                .expect("absorption")
+                .with_model_advection(400.0)
+                .expect("advection");
         let model = field.selected_model(&block, &chosen).expect("model");
         assert_eq!(model.kernel(), 0);
         assert_eq!(model.tau(), 60.0);
         assert_eq!(model.absorption(), 0.25);
         assert_eq!(model.advection(), 400.0);
         assert_eq!(field.alt_offset, 2.0, "evidence stays evidence");
+    }
+
+    #[test]
+    fn from_evidence_builds_a_runtime_field_only_from_a_complete_selection() {
+        let block = block();
+        let field = block.field("flux").expect("flux is declared");
+        let chosen =
+            ManifestSelection::new("https://example.org/data.csv#flux", ManifestIntent::Science)
+                .expect("select")
+                .with_kernel("inverse-square")
+                .expect("kernel")
+                .with_model_tau(
+                    60.0,
+                    crate::mathematikerin::manifest::ModelTauSource::Chosen,
+                )
+                .expect("tau")
+                .with_model_absorption(0.25)
+                .expect("absorption")
+                .with_model_advection(400.0)
+                .expect("advection");
+        let field_config =
+            FieldConfig::from_evidence(&block, field, &chosen, Some(7)).expect("runtime field");
+        let model = field_config.model.expect("model");
+        assert_eq!(model.kernel, 0);
+        assert_eq!(model.tau, 60.0);
+        assert_eq!(model.tau_src, TauSource::Model);
+        assert_eq!(model.absorption, 0.25);
+        assert_eq!(model.advection, 400.0);
+        assert_eq!(field_config.channel_ref, Some(7));
+        assert_eq!(field_config.key, "flux");
     }
 }

@@ -680,12 +680,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: tau_src_of(&parts),
+                        absorption: absorption,
+                        advection: advection,
+                    }),
                     channel_ref: f,
-                    tau,
-                    tau_src: tau_src_of(&parts),
-                    absorption,
-                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -707,12 +709,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: tau_src_of(&parts),
+                        absorption: absorption,
+                        advection: advection,
+                    }),
                     channel_ref: f,
-                    tau,
-                    tau_src: tau_src_of(&parts),
-                    absorption,
-                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -730,12 +734,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         parts[1].to_string()
                     },
                     band_id: None,
-                    kernel: 0,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: 0,
+                        tau: 0.0,
+                        tau_src: tau_src_of(&parts),
+                        absorption: SLOT_ABSENT,
+                        advection: SLOT_ABSENT,
+                    }),
                     channel_ref: Some(0),
-                    tau: 0.0,
-                    tau_src: tau_src_of(&parts),
-                    absorption: SLOT_ABSENT,
-                    advection: SLOT_ABSENT,
                     unit: String::new(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -752,12 +758,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: tau_src_of(&parts),
+                        absorption: absorption,
+                        advection: advection,
+                    }),
                     channel_ref: f,
-                    tau,
-                    tau_src: tau_src_of(&parts),
-                    absorption,
-                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -786,12 +794,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: tau_src_of(&parts),
+                        absorption: absorption,
+                        advection: advection,
+                    }),
                     channel_ref: f,
-                    tau,
-                    tau_src: tau_src_of(&parts),
-                    absorption,
-                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -861,12 +871,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: tau_src_of(&parts),
+                        absorption: absorption,
+                        advection: advection,
+                    }),
                     channel_ref: f,
-                    tau,
-                    tau_src: tau_src_of(&parts),
-                    absorption,
-                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -884,12 +896,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: tau_src_of(&parts),
+                        absorption: absorption,
+                        advection: advection,
+                    }),
                     channel_ref: f,
-                    tau,
-                    tau_src: tau_src_of(&parts),
-                    absorption,
-                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -907,12 +921,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: tau_src_of(&parts),
+                        absorption: absorption,
+                        advection: advection,
+                    }),
                     channel_ref: f,
-                    tau,
-                    tau_src: tau_src_of(&parts),
-                    absorption,
-                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1073,12 +1089,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[1].to_string(),
                     band_id: None,
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: TauSource::Pending,
+                        absorption: SLOT_ABSENT,
+                        advection: SLOT_ABSENT,
+                    }),
                     channel_ref: Some(f),
-                    tau,
-                    tau_src: TauSource::Pending,
-                    absorption: SLOT_ABSENT,
-                    advection: SLOT_ABSENT,
                     unit: parts[3].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1134,15 +1152,17 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[1].to_string(),
                     band_id: None,
-                    kernel: match kernel_id_for_force(f) {
-                        Some(k) => k,
-                        None => continue,
-                    },
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: match kernel_id_for_force(f) {
+                            Some(k) => k,
+                            None => continue,
+                        },
+                        tau: tau,
+                        tau_src: TauSource::Pending,
+                        absorption: SLOT_ABSENT,
+                        advection: SLOT_ABSENT,
+                    }),
                     channel_ref: Some(f),
-                    tau,
-                    tau_src: TauSource::Pending,
-                    absorption: SLOT_ABSENT,
-                    advection: SLOT_ABSENT,
                     unit: parts[3].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1403,12 +1423,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     } else {
                         None
                     },
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: tau_src,
+                        absorption: absorption,
+                        advection: advection,
+                    }),
                     channel_ref: None,
-                    tau,
-                    tau_src,
-                    absorption,
-                    advection,
                     unit: parts[5].to_string(),
                     freq,
                     bin_width,
@@ -1565,12 +1587,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: crate::archivar::types::TauSource::Measured,
+                        absorption: absorption,
+                        advection: advection,
+                    }),
                     channel_ref: Some(f),
-                    tau,
-                    tau_src: crate::archivar::types::TauSource::Measured,
-                    absorption,
-                    advection,
                     unit: parts[i + 1].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1747,12 +1771,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: crate::archivar::types::TauSource::Measured,
+                        absorption: absorption,
+                        advection: advection,
+                    }),
                     channel_ref: Some(f),
-                    tau,
-                    tau_src: crate::archivar::types::TauSource::Measured,
-                    absorption,
-                    advection,
                     unit: parts[unit_idx].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1802,10 +1828,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         report_anomaly(
                             "Invalid Syntax",
                             &cur_url,
-                            &format!(
-                                "field {} carries no tau_src (measured|pending)",
-                                parts[1]
-                            ),
+                            &format!("field {} carries no tau_src (measured|pending)", parts[1]),
                         );
                         continue;
                     }
@@ -1902,13 +1925,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: tau_src,
+                        absorption: absorption,
+                        advection: advection,
+                    }),
                     channel_ref: Some(f),
-
-                    tau,
-                    tau_src,
-                    absorption,
-                    advection,
                     unit: parts[5].to_string(),
                     freq,
                     bin_width,
@@ -2243,12 +2267,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[2].to_string(),
                     name: format!("fold_{}_{}_{}", parts[1], parts[2], parts[3]),
                     band_id: None,
-                    kernel: k,
+                    model: Some(crate::archivar::FieldModel {
+                        kernel: k,
+                        tau: tau,
+                        tau_src: TauSource::Pending,
+                        absorption: SLOT_ABSENT,
+                        advection: SLOT_ABSENT,
+                    }),
                     channel_ref: Some(f),
-                    tau,
-                    tau_src: TauSource::Pending,
-                    absorption: SLOT_ABSENT,
-                    advection: SLOT_ABSENT,
                     unit,
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -3099,13 +3125,16 @@ struct SourceBlockBuilder {
     fields: Vec<SourceField>,
 }
 
-fn finish_source_block(
-    builder: SourceBlockBuilder,
-    line: usize,
-) -> Result<SourceBlock, String> {
-    let url = builder.url.ok_or_else(|| format!("line {line}: url absent"))?;
-    let terms = builder.terms.ok_or_else(|| format!("line {line}: terms absent"))?;
-    let ttl = builder.ttl.ok_or_else(|| format!("line {line}: ttl absent"))?;
+fn finish_source_block(builder: SourceBlockBuilder, line: usize) -> Result<SourceBlock, String> {
+    let url = builder
+        .url
+        .ok_or_else(|| format!("line {line}: url absent"))?;
+    let terms = builder
+        .terms
+        .ok_or_else(|| format!("line {line}: terms absent"))?;
+    let ttl = builder
+        .ttl
+        .ok_or_else(|| format!("line {line}: ttl absent"))?;
     if ttl == 0 {
         return Err(format!("line {line}: ttl must be positive"));
     }
@@ -3118,7 +3147,9 @@ fn finish_source_block(
         return Err(format!("line {line}: lat/lon outside range"));
     }
     if builder.alt_ref.is_some() == builder.alt_key.is_some() {
-        return Err(format!("line {line}: exactly one of alt_ref/alt_key required"));
+        return Err(format!(
+            "line {line}: exactly one of alt_ref/alt_key required"
+        ));
     }
     let time_refs = usize::from(builder.time.is_some())
         + usize::from(builder.time_key.is_some())
@@ -3140,7 +3171,9 @@ fn finish_source_block(
             "line {line}: moving block needs time_key and one of alt_ref/alt_key"
         ));
     }
-    let datum = builder.datum.ok_or_else(|| format!("line {line}: datum absent"))?;
+    let datum = builder
+        .datum
+        .ok_or_else(|| format!("line {line}: datum absent"))?;
     let time_scale = builder
         .time_scale
         .ok_or_else(|| format!("line {line}: time_scale absent"))?;
@@ -3228,7 +3261,9 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 let mut has_frame = false;
                 for token in &parts[2..] {
                     let Some((key, value)) = token.split_once('=') else {
-                        return Err(format!("line {line_no}: on token {token} carries no key=value"));
+                        return Err(format!(
+                            "line {line_no}: on token {token} carries no key=value"
+                        ));
                     };
                     if value.is_empty() {
                         return Err(format!("line {line_no}: on attribute {key} is empty"));
@@ -3270,7 +3305,9 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
             }
             "query" | "track" if parts.len() >= 2 => {
                 if parts[1].contains('=') {
-                    return Err(format!("line {line_no}: {head} needs a body before attributes"));
+                    return Err(format!(
+                        "line {line_no}: {head} needs a body before attributes"
+                    ));
                 }
                 let mut lat_key = None;
                 let mut lon_key = None;
@@ -3282,7 +3319,9 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 let mut has_frame = false;
                 for token in &parts[2..] {
                     let Some((key, value)) = token.split_once('=') else {
-                        return Err(format!("line {line_no}: {head} token {token} carries no key=value"));
+                        return Err(format!(
+                            "line {line_no}: {head} token {token} carries no key=value"
+                        ));
                     };
                     if value.is_empty() {
                         return Err(format!("line {line_no}: {head} attribute {key} is empty"));
@@ -3309,8 +3348,7 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 if !has_frame {
                     return Err(format!("line {line_no}: {head} needs frame="));
                 }
-                let (Some(lat_key), Some(lon_key), Some(time_key)) =
-                    (lat_key, lon_key, time_key)
+                let (Some(lat_key), Some(lon_key), Some(time_key)) = (lat_key, lon_key, time_key)
                 else {
                     return Err(format!(
                         "line {line_no}: {head} needs lat_key, lon_key and time_key"
@@ -3339,7 +3377,9 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 let mut alt_max_offset = None;
                 for token in &parts[4..] {
                     let Some((key, value)) = token.split_once('=') else {
-                        return Err(format!("line {line_no}: field token {token} carries no key=value"));
+                        return Err(format!(
+                            "line {line_no}: field token {token} carries no key=value"
+                        ));
                     };
                     if value.is_empty() {
                         return Err(format!("line {line_no}: field attribute {key} is empty"));
@@ -3349,10 +3389,7 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                             "line {line_no}: field attribute {key} carries the sentinel {value}"
                         ));
                     }
-                    let parsed = value
-                        .parse::<f64>()
-                        .ok()
-                        .filter(|v| v.is_finite());
+                    let parsed = value.parse::<f64>().ok().filter(|v| v.is_finite());
                     match key {
                         "source_column" => {
                             source_column = value.parse::<usize>().ok();
@@ -3447,7 +3484,9 @@ pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>>
             + usize::from(block.time_key.is_some())
             + usize::from(block.time_parts.is_some());
         if time_refs != 1 {
-            errors.push(at("exactly one of time/time_key/time_parts required".to_string()));
+            errors.push(at(
+                "exactly one of time/time_key/time_parts required".to_string()
+            ));
         }
         if let Some(parts) = &block.time_parts
             && (!(5..=6).contains(&parts.len()) || parts.iter().any(|part| part.trim().is_empty()))
@@ -3459,9 +3498,14 @@ pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>>
         }
         let seen = fields_by_url.entry(block.url.clone()).or_default();
         for field in &block.fields {
-            if field.key.trim().is_empty() || field.name.trim().is_empty() || field.unit.trim().is_empty()
+            if field.key.trim().is_empty()
+                || field.name.trim().is_empty()
+                || field.unit.trim().is_empty()
             {
-                errors.push(at(format!("field {} has an empty key/name/unit", field.key)));
+                errors.push(at(format!(
+                    "field {} has an empty key/name/unit",
+                    field.key
+                )));
             }
             if field.source_column.is_some() == field.source_key.is_some() {
                 errors.push(at(format!(
@@ -3475,7 +3519,10 @@ pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>>
                 errors.push(at(format!("field {} has an empty source_key", field.key)));
             }
             if !field.alt_offset.is_finite() {
-                errors.push(at(format!("field {} has a non-finite alt_offset", field.key)));
+                errors.push(at(format!(
+                    "field {} has a non-finite alt_offset",
+                    field.key
+                )));
             }
             if field.alt_min_offset.is_some() != field.alt_max_offset.is_some() {
                 errors.push(at(format!(
@@ -3501,7 +3548,11 @@ pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>>
             }
         }
     }
-    if errors.is_empty() { Ok(()) } else { Err(errors) }
+    if errors.is_empty() {
+        Ok(())
+    } else {
+        Err(errors)
+    }
 }
 
 #[cfg(test)]
@@ -3621,7 +3672,8 @@ field u current m/s source_column=3 alt_offset=0.0 alt_min_offset=-2.5 alt_max_o
         assert!(validate_source_blocks(&blocks).is_ok());
 
         let ambiguous = content.replace("field water water", "field air air");
-        let blocks = parse_source_blocks(&ambiguous).expect("duplicate keys parse, then fail validation");
+        let blocks =
+            parse_source_blocks(&ambiguous).expect("duplicate keys parse, then fail validation");
         assert!(validate_source_blocks(&blocks).is_err());
     }
 
@@ -3638,7 +3690,10 @@ field u current m/s source_column=3 alt_offset=0.0 alt_min_offset=-2.5 alt_max_o
         let blocks = parse_source_blocks(content).expect("signed layer parses");
         assert!(validate_source_blocks(&blocks).is_ok());
 
-        let flat = content.replace("alt_min_offset=-2.5 alt_max_offset=0.0", "alt_min_offset=0 alt_max_offset=0");
+        let flat = content.replace(
+            "alt_min_offset=-2.5 alt_max_offset=0.0",
+            "alt_min_offset=0 alt_max_offset=0",
+        );
         assert!(parse_source_blocks(&flat).is_err());
 
         let mut blocks = blocks;
