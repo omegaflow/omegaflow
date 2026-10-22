@@ -745,6 +745,11 @@ pub struct SourceBlock {
     pub fields: Vec<SourceField>,
 }
 
+pub struct RuntimeSource {
+    pub block: SourceBlock,
+    pub fields: Vec<FieldConfig>,
+}
+
 impl SourceBlock {
     pub fn field(&self, key: &str) -> Option<&SourceField> {
         self.fields.iter().find(|field| field.key == key)

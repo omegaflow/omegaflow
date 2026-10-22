@@ -180,6 +180,60 @@ struct BlockReport {
     hard: usize,
 }
 
+fn new_block_text(block: &[&str]) -> Option<String> {
+    let is_new = block.iter().any(|line| {
+        let parts: Vec<&str> = line.split_whitespace().collect();
+        parts.first() == Some(&"field") && line.contains("alt_offset=")
+    });
+    if !is_new {
+        return None;
+    }
+    let mut out = String::new();
+    for line in block {
+        let parts: Vec<&str> = line.split_whitespace().collect();
+        let Some(head) = parts.first() else {
+            continue;
+        };
+        if matches!(
+            *head,
+            "url" | "terms" | "origin" | "ttl" | "on" | "query" | "track" | "field"
+        ) {
+            out.push_str(line.trim());
+            out.push('\n');
+        }
+    }
+    Some(out)
+}
+
+fn source_model_directives(block: &[&str]) -> Vec<String> {
+    let mut out = Vec::new();
+    for line in block {
+        let parts: Vec<&str> = line.split_whitespace().collect();
+        let Some(head) = parts.first() else {
+            continue;
+        };
+        if matches!(
+            *head,
+            "kernel"
+                | "tau"
+                | "tau_src"
+                | "absorption"
+                | "advection"
+                | "medium"
+                | "fold"
+                | "gate"
+                | "flux_from_mag"
+                | "cgm_lat"
+                | "cgm_source"
+                | "geomag_lat"
+                | "tide"
+        ) {
+            out.push((*head).to_string());
+        }
+    }
+    out
+}
+
 fn validate_blocks(content: &str) -> BlockReport {
     let mut report = BlockReport {
         findings: BTreeMap::new(),
@@ -280,6 +334,36 @@ fn main() {
 
     for (line, block) in blocks(&content) {
         let (name, tag) = label(&block, line);
+
+        if let Some(source_text) = new_block_text(&block) {
+            let report = validate_blocks(&source_text);
+            for (rule, keys) in report.findings {
+                for key in keys {
+                    push(&rule, key, true, &mut findings, &mut hard, &mut soft);
+                }
+            }
+            for head in source_model_directives(&block) {
+                push(
+                    "source_model_field",
+                    format!("{tag}\t{name}\t{head}"),
+                    true,
+                    &mut findings,
+                    &mut hard,
+                    &mut soft,
+                );
+            }
+            if field_of(&block, "format").and_then(|p| p.get(1).copied()) == Some("reference") {
+                push(
+                    "reference_not_source",
+                    format!("{tag}\t{name}"),
+                    true,
+                    &mut findings,
+                    &mut hard,
+                    &mut soft,
+                );
+            }
+            continue;
+        }
 
         if field_of(&block, "url").is_some() && field_of(&block, "terms").is_none() {
             push(
@@ -809,6 +893,27 @@ mod tests {
             report.findings
         );
         assert!(report.hard >= 1);
+    }
+
+    #[test]
+    fn new_block_metadata_is_ignored_but_model_directives_are_hard() {
+        let with_metadata = format!(
+            "{}format csv\nsha256 {}\n",
+            BLOCK,
+            "a".repeat(64)
+        );
+        let block: Vec<&str> = with_metadata.lines().collect();
+        let text = new_block_text(&block).expect("new block");
+        let report = validate_blocks(&text);
+        assert_eq!(report.hard, 0, "{:?}", report.findings);
+        assert!(!report.findings.contains_key("source_model_field"));
+
+        let mut content = String::from(BLOCK);
+        content.push_str("kernel 1\n");
+        let block: Vec<&str> = content.lines().collect();
+        let text = new_block_text(&block).expect("new block");
+        assert!(!text.contains("kernel"), "metadata is not passed to the parser");
+        assert_eq!(source_model_directives(&block), vec!["kernel".to_string()]);
     }
 
     #[test]
