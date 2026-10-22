@@ -3815,11 +3815,24 @@ fn field_tau(src: &SourceConfig, key: &str, body: &str) -> Option<f64> {
     if let Some(secs) = derive_ttl(&src.url, body, &HashMap::new()) {
         return Some(secs as f64);
     }
-    if let Some(tau) = src.extracts.iter().find_map(|ext| match ext {
-        Extract::Field(fc) if fc.key == key && fc.tau.is_finite() && fc.tau > 0.0 => Some(fc.tau),
-        _ => None,
-    }) {
-        return Some(tau);
+    let mut declared = false;
+    for ext in &src.extracts {
+        let Extract::Field(fc) = ext else {
+            continue;
+        };
+        if fc.key != key {
+            continue;
+        }
+        declared = true;
+        if let Some(model) = fc.model.as_ref()
+            && model.tau.is_finite()
+            && model.tau > 0.0
+        {
+            return Some(model.tau);
+        }
+    }
+    if declared {
+        return None;
     }
     let (_, _, tau) = probe_classify(key);
     if tau.is_finite() && tau > 0.0 {
@@ -4180,7 +4193,11 @@ fn hapi_size_elements(size: &JsonVal) -> Option<usize> {
 
 fn hapi_family_field<'a>(extracts: &'a [Extract], name: &str) -> Option<&'a FieldConfig> {
     extracts.iter().find_map(|ext| match ext {
-        Extract::Field(fc) if fc.name == name && fc.tau > 0.0 => Some(fc),
+        Extract::Field(fc)
+            if fc.name == name && fc.model.as_ref().is_some_and(|model| model.tau > 0.0) =>
+        {
+            Some(fc)
+        }
         _ => None,
     })
 }
@@ -4636,7 +4653,10 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 continue;
             };
             let mut record_fc = fc.clone();
-            record_fc.tau = tau;
+            let Some(model) = record_fc.model.as_mut() else {
+                continue;
+            };
+            model.tau = tau;
             channels.push((
                 Channel {
                     z: 0.0,
@@ -5870,7 +5890,10 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     eff_fc.unit.clear();
                                 }
                                 if let Some(t) = row_tau {
-                                    eff_fc.tau = t;
+                                    let Some(model) = eff_fc.model.as_mut() else {
+                                        continue;
+                                    };
+                                    model.tau = t;
                                 }
                                 channels.push((
                                     Channel {
@@ -6731,7 +6754,10 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                             let (_, _, fc) = col_fcs[fi];
                             let mut eff_fc = (*fc).clone();
                             if let Some(t) = row_tau {
-                                eff_fc.tau = t;
+                                let Some(model) = eff_fc.model.as_mut() else {
+                                    continue;
+                                };
+                                model.tau = t;
                             }
                             channels.push((
                                 Channel {
@@ -7058,7 +7084,10 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                 eff_fc.unit.clear();
                             }
                             if let Some(t) = row_tau {
-                                eff_fc.tau = t;
+                                let Some(model) = eff_fc.model.as_mut() else {
+                                    continue;
+                                };
+                                model.tau = t;
                             }
                             channels.push((
                                 Channel {
@@ -7475,7 +7504,9 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 | Extract::Path(fc)
                 | Extract::Deep(fc)
                 | Extract::Regex(fc) => {
-                    if fc.name == *name && fc.tau > 0.0 {
+                    if fc.name == *name
+                        && fc.model.as_ref().is_some_and(|model| model.tau > 0.0)
+                    {
                         Some(fc)
                     } else {
                         None
@@ -8718,11 +8749,11 @@ mod fixed_width_series_tests {
             Some(crate::force::force_id_of("em").unwrap())
         );
         assert_eq!(
-            fields[0].kernel,
+            fields[0].model.as_ref().expect("model").kernel,
             crate::archivar::kernel_id_of("inverse-square").unwrap()
         );
         assert_eq!(fields[0].unit, gras_2c::GATE_UNIT);
-        assert_eq!(fields[0].tau, 604800.0);
+        assert_eq!(fields[0].model.as_ref().expect("model").tau, 604800.0);
         assert_eq!(fields[0].freq, spectral::SPECTRAL_NO_BAND);
         assert_eq!(fields[0].bin_width, spectral::SPECTRAL_NO_BAND);
         let joined: Vec<&str> = named
@@ -8758,7 +8789,10 @@ mod fixed_width_series_tests {
         assert_eq!(fields.len(), acs_nir::ROW_DATA_COUNT);
         assert_eq!(fields[0].name, "acs_nir_bin_0000");
         assert_eq!(fields[0].unit, acs_nir::UNIT);
-        assert_eq!(fields[0].tau, acs_nir::TAU_INTEGRATION_S);
+        assert_eq!(
+            fields[0].model.as_ref().expect("model").tau,
+            acs_nir::TAU_INTEGRATION_S
+        );
         let joined: Vec<&str> = named
             .rows
             .iter()
@@ -9299,7 +9333,7 @@ mod themis_asi_bin_tests {
         assert_eq!(fields.len(), themis_asi::TKDG_ROW_COUNT);
         assert_eq!(fields[3].key, "themis_asi_timed_keogram_row_0003");
         assert_eq!(fields[3].unit, themis_asi::UNIT);
-        assert_eq!(fields[3].tau, 60.0);
+        assert_eq!(fields[3].model.as_ref().expect("model").tau, 60.0);
         assert_eq!(fields[3].aperture, Aperture::None);
         assert_eq!(fields[3].freq, spectral::SPECTRAL_NO_BAND);
     }

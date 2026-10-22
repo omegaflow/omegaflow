@@ -1402,7 +1402,8 @@ pub fn anchor(
     mut origin_state: Option<&mut OriginState>,
     eph: &HashMap<String, BodyEphemeris>,
 ) -> Option<Sample> {
-    if sensor.tau <= 0.0 || sensor.tau_src == crate::archivar::types::TauSource::Pending {
+    let model = sensor.model.as_ref()?;
+    if model.tau <= 0.0 || model.tau_src == crate::archivar::types::TauSource::Pending {
         return None;
     }
     let motion = match &channel.position {
@@ -1498,7 +1499,7 @@ pub fn anchor(
     let body_eph = motion.anchor_body().and_then(|name| eph.get(name));
     let body_medium = body_eph.and_then(|e| e.medium.as_ref());
     let channel_ref = sensor.channel_ref?;
-    let extent = medium_reach(channel_ref, sensor.tau, body_medium, sensor.advection)?;
+    let extent = medium_reach(channel_ref, model.tau, body_medium, model.advection)?;
     if !extent.is_finite() {
         return None;
     }
@@ -1510,11 +1511,11 @@ pub fn anchor(
         epoch: channel.epoch,
         ttl: source_ttl,
         extent,
-        tau: sensor.tau,
-        kernel_id: sensor.kernel as f64,
+        tau: model.tau,
+        kernel_id: model.kernel as f64,
         channel_ref: Some(channel_ref as f64),
-        absorption: absorption_for_force(channel_ref, sensor.absorption),
-        advection: sensor.advection,
+        absorption: absorption_for_force(channel_ref, model.absorption),
+        advection: model.advection,
         anchor_vmax,
         anchor_amax,
         anchor_p0,

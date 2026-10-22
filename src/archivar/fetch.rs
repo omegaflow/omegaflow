@@ -607,11 +607,14 @@ pub fn record_in_enclosure(
     let Some(channel_ref) = fc.channel_ref else {
         return true;
     };
+    let Some(model) = fc.model.as_ref() else {
+        return true;
+    };
     if crate::mathematikerin::channel::descriptor_for_channel_ref(channel_ref).is_none() {
         return true;
     }
-    let Some(front) = medium_reach(channel_ref, age, medium, fc.advection)
-        .or_else(|| signal_reach(channel_ref as f64, fc.advection, age, fc.freq, fc.bin_width))
+    let Some(front) = medium_reach(channel_ref, age, medium, model.advection)
+        .or_else(|| signal_reach(channel_ref as f64, model.advection, age, fc.freq, fc.bin_width))
     else {
         return false;
     };

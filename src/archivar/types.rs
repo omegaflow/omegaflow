@@ -433,24 +433,6 @@ pub struct FieldConfig {
     pub aperture: Aperture,
 }
 
-impl std::ops::Deref for FieldConfig {
-    type Target = FieldModel;
-
-    fn deref(&self) -> &Self::Target {
-        self.model
-            .as_ref()
-            .expect("FieldConfig carries no model; callers must refuse absent model")
-    }
-}
-
-impl std::ops::DerefMut for FieldConfig {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        self.model
-            .as_mut()
-            .expect("FieldConfig carries no model; callers must refuse absent model")
-    }
-}
-
 impl FieldConfig {
     pub fn from_evidence(
         block: &SourceBlock,
@@ -535,19 +517,17 @@ pub fn wire_channel_ref(channel_ref: Option<f64>) -> f64 {
 
 impl FieldConfig {
     pub fn absorption_measured(&self) -> Option<f64> {
-        if self.absorption == SLOT_ABSENT {
-            None
-        } else {
-            Some(self.absorption)
-        }
+        self.model
+            .as_ref()
+            .map(|model| model.absorption)
+            .filter(|absorption| *absorption != SLOT_ABSENT)
     }
 
     pub fn advection_measured(&self) -> Option<f64> {
-        if self.advection == SLOT_ABSENT {
-            None
-        } else {
-            Some(self.advection)
-        }
+        self.model
+            .as_ref()
+            .map(|model| model.advection)
+            .filter(|advection| *advection != SLOT_ABSENT)
     }
 }
 

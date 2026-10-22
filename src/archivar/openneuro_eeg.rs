@@ -536,7 +536,7 @@ mod tests {
                 Position::Barycenter { body_name, .. } if body_name == "earth"
             ));
             assert_eq!(fc.channel_ref, Some(6));
-            assert_eq!(fc.kernel, 1);
+            assert_eq!(fc.model.as_ref().expect("model").kernel, 1);
             assert_eq!(fc.unit, "V");
             assert_eq!(fc.key, channel.name);
             assert!(channel.station_code.is_some());

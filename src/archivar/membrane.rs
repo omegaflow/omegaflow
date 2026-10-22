@@ -471,10 +471,13 @@ pub fn enclosure_rho(vmax: f64, amax: f64, dt: f64, pad: f64) -> f64 {
 pub fn dispatch_reach(fields: &[FieldConfig], src_ttl: f64) -> Option<f64> {
     let mut reach: Option<f64> = None;
     for fc in fields {
+        let Some(model) = fc.model.as_ref() else {
+            continue;
+        };
         if let Some(rr) = fc.channel_ref.and_then(|channel_ref| {
             signal_reach(
                 channel_ref as f64,
-                fc.advection,
+                model.advection,
                 src_ttl * 64.0,
                 fc.freq,
                 fc.bin_width,

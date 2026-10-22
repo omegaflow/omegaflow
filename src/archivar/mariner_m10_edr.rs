@@ -133,7 +133,7 @@ mod tests {
         assert_eq!(fields[0].name, "mariner_m10_edr_col_0000");
         assert_eq!(fields[1].name, "mariner_m10_edr_col_0001");
         assert_eq!(fields[0].unit, UNIT);
-        assert_eq!(fields[0].tau, 60.0);
+        assert_eq!(fields[0].model.as_ref().expect("model").tau, 60.0);
         assert_eq!(fields[0].freq, crate::archivar::spectral::SPECTRAL_NO_BAND);
         assert_eq!(
             fields[0].bin_width,

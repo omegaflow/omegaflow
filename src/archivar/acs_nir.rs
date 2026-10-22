@@ -179,18 +179,19 @@ mod tests {
             fields[0].channel_ref,
             Some(crate::force::force_id_of("em").unwrap())
         );
+        let model = fields[0].model.as_ref().expect("model");
         assert_eq!(
-            fields[0].kernel,
+            model.kernel,
             crate::archivar::extract::kernel_id_of("inverse-square").unwrap()
         );
         assert_eq!(fields[0].unit, UNIT);
-        assert_eq!(fields[0].tau, TAU_INTEGRATION_S);
+        assert_eq!(model.tau, TAU_INTEGRATION_S);
         assert_eq!(fields[0].freq, crate::archivar::spectral::SPECTRAL_NO_BAND);
         assert_eq!(
             fields[0].bin_width,
             crate::archivar::spectral::SPECTRAL_NO_BAND
         );
-        assert_eq!(fields[0].absorption, 0.0);
-        assert_eq!(fields[0].advection, 0.0);
+        assert_eq!(model.absorption, 0.0);
+        assert_eq!(model.advection, 0.0);
     }
 }

@@ -1311,7 +1311,10 @@ pub fn main_flow() {
         {
             let mut still_pending: Vec<(Channel, FieldConfig, u32)> = Vec::new();
             for (channel, sensor, idx) in archive.pending_channels.drain(..) {
-                if sensor.tau_src == crate::archivar::types::TauSource::Pending {
+                let Some(model) = sensor.model.as_ref() else {
+                    continue;
+                };
+                if model.tau_src == crate::archivar::types::TauSource::Pending {
                     continue;
                 }
                 let src = &archive.sources[idx as usize];
@@ -1424,7 +1427,12 @@ pub fn main_flow() {
                         Position::StateVector { .. } => false,
                         Position::Electrode { .. } => false,
                     };
-                    if eph_missing && sensor.tau_src != crate::archivar::types::TauSource::Pending {
+                    if eph_missing
+                        && sensor
+                            .model
+                            .as_ref()
+                            .is_some_and(|model| model.tau_src != crate::archivar::types::TauSource::Pending)
+                    {
                         dropped_channels.push((
                             channel.clone(),
                             sensor.clone(),
@@ -2386,16 +2394,24 @@ pub fn main_flow() {
                             return;
                         }
                     };
+                    let Some(model) = field.model.as_ref() else {
+                        eprintln!(
+                            "spectral {}: field carries no model — the bin stays unmanifested",
+                            url
+                        );
+                        let _ = ftx.send(empty(true));
+                        return;
+                    };
                     let hash = SpectralHash {
                         name: field.name.clone(),
                         motion,
                         epoch,
                         ttl: src_ttl as f64,
-                        tau: field.tau,
-                        kernel_id: field.kernel as f64,
+                        tau: model.tau,
+                        kernel_id: model.kernel as f64,
                         channel_ref: wire_channel_ref(field.channel_ref.map(|c| c as f64)),
-                        absorption: field.absorption,
-                        advection: field.advection,
+                        absorption: model.absorption,
+                        advection: model.advection,
                         redshift: 0.0,
                         z_kind: 0,
                         bins,
@@ -2503,6 +2519,14 @@ pub fn main_flow() {
                             return;
                         }
                     };
+                    let Some(model) = field.model.as_ref() else {
+                        eprintln!(
+                            "xp_spectra {}: field carries no model — the bin stays unmanifested",
+                            url
+                        );
+                        let _ = ftx.send(empty(true));
+                        return;
+                    };
                     let mut sent = 0usize;
                     for star in stars {
                         if star.plx_mas <= 0.0 {
@@ -2528,11 +2552,11 @@ pub fn main_flow() {
                             motion: Motion::Spherical { rec },
                             epoch,
                             ttl: src_ttl as f64,
-                            tau: field.tau,
-                            kernel_id: field.kernel as f64,
+                            tau: model.tau,
+                            kernel_id: model.kernel as f64,
                             channel_ref: wire_channel_ref(field.channel_ref.map(|c| c as f64)),
-                            absorption: field.absorption,
-                            advection: field.advection,
+                            absorption: model.absorption,
+                            advection: model.advection,
                             redshift: 0.0,
                             z_kind: 0,
                             bins: star.bins,
@@ -2712,6 +2736,13 @@ pub fn main_flow() {
                                 continue;
                             }
                         };
+                        let Some(model) = field.model.as_ref() else {
+                            eprintln!(
+                                "emtf_impedance {}: {} carries no model — component skipped",
+                                url, component
+                            );
+                            continue;
+                        };
                         let bins = crate::archivar::emtf::component_bins(&bin, comp);
                         if bins.is_empty() {
                             continue;
@@ -2721,11 +2752,11 @@ pub fn main_flow() {
                             motion: motion.clone(),
                             epoch,
                             ttl: src_ttl as f64,
-                            tau: field.tau,
-                            kernel_id: field.kernel as f64,
+                            tau: model.tau,
+                            kernel_id: model.kernel as f64,
                             channel_ref: wire_channel_ref(field.channel_ref.map(|c| c as f64)),
-                            absorption: field.absorption,
-                            advection: field.advection,
+                            absorption: model.absorption,
+                            advection: model.advection,
                             redshift: 0.0,
                             z_kind: 0,
                             bins,
@@ -2830,6 +2861,14 @@ pub fn main_flow() {
                             return;
                         }
                     };
+                    let Some(model) = field.model.as_ref() else {
+                        eprintln!(
+                            "jwst_spectra {}: field carries no model — the records stay unmanifested",
+                            url
+                        );
+                        let _ = ftx.send(empty(true));
+                        return;
+                    };
                     if specs.is_empty() {
                         eprintln!("jwst_spectra {}: bin carries no records", url);
                         let _ = ftx.send(empty(true));
@@ -2894,11 +2933,11 @@ pub fn main_flow() {
                             motion,
                             epoch: spec.epoch_tdb,
                             ttl: src_ttl as f64,
-                            tau: field.tau,
-                            kernel_id: field.kernel as f64,
+                            tau: model.tau,
+                            kernel_id: model.kernel as f64,
                             channel_ref: wire_channel_ref(field.channel_ref.map(|c| c as f64)),
-                            absorption: field.absorption,
-                            advection: field.advection,
+                            absorption: model.absorption,
+                            advection: model.advection,
                             redshift: spec.redshift,
                             z_kind: spec.z_kind,
                             bins: spec.bins,

@@ -2053,7 +2053,7 @@ field flux_detection_total euclid_detection_flux inverse-square em uJy 604800 pe
             assert_eq!(fields[0].name, "euclid_detection_flux");
             assert_eq!(fields[0].unit, "uJy");
             assert_eq!(fields[0].channel_ref, Some(0));
-            assert_eq!(fields[0].kernel, 0);
+            assert_eq!(fields[0].model.as_ref().expect("model").kernel, 0);
         }
         _ => panic!("expected CelestialMap extract"),
     }
@@ -6613,7 +6613,8 @@ fn pending_tau_source_does_not_anchor() {
         super::anchor(&channel, &sensor, 3600.0, None, None, None, &eph).is_some(),
         "measured tau must still anchor"
     );
-    sensor.tau_src = crate::archivar::types::TauSource::Pending;
+    sensor.model.as_mut().expect("model").tau_src =
+        crate::archivar::types::TauSource::Pending;
     assert!(
         super::anchor(&channel, &sensor, 3600.0, None, None, None, &eph).is_none(),
         "pending tau must not anchor an oscillator"
@@ -7522,11 +7523,11 @@ fn test_extract_fields_reads_quakeml_events() {
     let fields = super::extract_fields(&ext);
     assert_eq!(fields.len(), 2);
     assert_eq!(fields[0].name, "usgs_mt_m0_nm");
-    assert_eq!(fields[0].kernel, 1);
+    assert_eq!(fields[0].model.as_ref().expect("model").kernel, 1);
     assert_eq!(fields[0].channel_ref, Some(1));
     assert_eq!(fields[0].unit, "N m");
     assert_eq!(fields[1].name, "usgs_mt_mww");
-    assert_eq!(fields[1].kernel, 3);
+    assert_eq!(fields[1].model.as_ref().expect("model").kernel, 3);
     assert_eq!(fields[1].channel_ref, Some(5));
     assert_eq!(fields[1].unit, "Mw");
     assert!(
@@ -7587,7 +7588,7 @@ fn test_quakeml_events_emit_m0_and_mww_at_epicenter_epoch() {
             assert_eq!(m0.name, "usgs_mt_m0_nm");
             assert_eq!(m0.value, 5.39e20);
             assert_eq!(fc0.unit, "N m");
-            assert_eq!(fc0.kernel, 1);
+            assert_eq!(fc0.model.as_ref().expect("model").kernel, 1);
             assert_eq!(fc0.channel_ref, Some(1));
             assert!((m0.z - 10.0).abs() < 1e-9);
             let expected = lsk.unix_to_tdb(1675646254.342).unwrap();
@@ -7610,7 +7611,7 @@ fn test_quakeml_events_emit_m0_and_mww_at_epicenter_epoch() {
             assert_eq!(mww.name, "usgs_mt_mww");
             assert!((mww.value - 7.8).abs() < 1e-9);
             assert_eq!(fc1.unit, "Mw");
-            assert_eq!(fc1.kernel, 3);
+            assert_eq!(fc1.model.as_ref().expect("model").kernel, 3);
             assert_eq!(fc1.channel_ref, Some(5));
             assert!((mww.epoch - expected).abs() < 1e-6);
         }
@@ -7683,7 +7684,7 @@ fn test_arpansa_uv_xml_emits_station_channels() {
             assert_eq!(v[1].0.name, "Alice Springs");
             assert_eq!(v[1].0.value, 7.8);
             assert_eq!(v[0].1.channel_ref, Some(0));
-            assert_eq!(v[0].1.kernel, 0);
+            assert_eq!(v[0].1.model.as_ref().expect("model").kernel, 0);
             assert_eq!(v[0].1.unit, "UVI");
             assert!(matches!(
                 &v[0].0.position,
@@ -7786,7 +7787,7 @@ fn test_extract_igra_zip_emits_level_measurements() {
                 .expect("pressure channel");
             assert_eq!(press.0.value, 1035.74);
             assert_eq!(press.1.channel_ref, Some(7));
-            assert_eq!(press.1.kernel, 5);
+            assert_eq!(press.1.model.as_ref().expect("model").kernel, 5);
             assert_eq!(press.1.unit, "hPa");
             let temp = v
                 .iter()
@@ -7794,7 +7795,7 @@ fn test_extract_igra_zip_emits_level_measurements() {
                 .expect("temperature channel");
             assert_eq!(temp.0.value, -25.4);
             assert_eq!(temp.1.channel_ref, Some(5));
-            assert_eq!(temp.1.kernel, 4);
+            assert_eq!(temp.1.model.as_ref().expect("model").kernel, 4);
             assert_eq!(temp.1.unit, "C");
             if let super::Position::Surface { lat, lon, alt, .. } = &press.0.position {
                 assert!((lat - 71.2889).abs() < 1e-9);
@@ -7909,7 +7910,7 @@ fn test_extract_fugin_cube_emits_state_vector_channels() {
                 .find(|(c, _)| (c.value - 3900.0).abs() < 1e-9)
                 .expect("center channel");
             assert_eq!(center.1.channel_ref, Some(0));
-            assert_eq!(center.1.kernel, 0);
+            assert_eq!(center.1.model.as_ref().expect("model").kernel, 0);
             assert_eq!(center.1.unit, "K m/s");
             assert_eq!(center.0.name, "fugin_moment0");
             let (ra_exp, dec_exp) = crate::mathematikerin::healpix::galactic_to_icrs(
@@ -9491,7 +9492,7 @@ fn test_map_single_object_alt_scale_epoch_default() {
             let (ch, fc) = &v[0];
             assert_eq!(ch.epoch, now);
             assert_eq!(ch.value, 27528.0);
-            assert_eq!(fc.tau, 1.0);
+            assert_eq!(fc.model.as_ref().expect("model").tau, 1.0);
             match &ch.position {
                 super::Position::Surface { lat, lon, alt, .. } => {
                     assert!((lat - -47.75).abs() < 1e-9);
@@ -9625,7 +9626,7 @@ fn test_map_vel_unit_and_tau_key_override() {
                 }
                 other => panic!("expected SurfaceFlow, got {:?}", other),
             }
-            assert!((fc0.tau - 60.0).abs() < 1e-9);
+            assert!((fc0.model.as_ref().expect("model").tau - 60.0).abs() < 1e-9);
             let (ch1, fc1) = &v[1];
             match &ch1.position {
                 super::Position::SurfaceFlow { speed, vrate, .. } => {
@@ -9634,7 +9635,7 @@ fn test_map_vel_unit_and_tau_key_override() {
                 }
                 other => panic!("expected SurfaceFlow, got {:?}", other),
             }
-            assert!((fc1.tau - 7.0).abs() < 1e-9);
+            assert!((fc1.model.as_ref().expect("model").tau - 7.0).abs() < 1e-9);
         }
         _ => panic!("extract variant unexpected"),
     }
@@ -9667,9 +9668,10 @@ fn test_parse_spectral_block() {
         super::Extract::Field(fc) => {
             assert_eq!(fc.name, "spectral_irradiance_W_m2_Hz");
             assert_eq!(fc.unit, "W/m2/Hz");
-            assert!((fc.tau - 2628000.0).abs() < 1e-9);
+            let model = fc.model.as_ref().expect("model");
+            assert!((model.tau - 2628000.0).abs() < 1e-9);
             assert_eq!(fc.channel_ref, Some(0));
-            assert_eq!(fc.kernel as u32, 0);
+            assert_eq!(model.kernel as u32, 0);
         }
         other => {
             let _ = other;
@@ -9701,8 +9703,9 @@ fn test_parse_sky1_cdn_asset_block() {
                 assert_eq!(fc.name, name);
                 assert_eq!(fc.unit, unit);
                 assert_eq!(fc.channel_ref, Some(0));
-                assert_eq!(fc.kernel as u32, 0);
-                assert!((fc.tau - 31536000.0).abs() < 1e-9);
+                let model = fc.model.as_ref().expect("model");
+                assert_eq!(model.kernel as u32, 0);
+                assert!((model.tau - 31536000.0).abs() < 1e-9);
             }
             other => {
                 let _ = other;
@@ -9783,7 +9786,7 @@ fn test_fold_directive_parse_and_extract() {
     assert_eq!(fields[0].name, "fold_mean_nh_sh");
     assert!(matches!(&fields[0].fold, Some((1, b)) if b == "sh"));
     assert!(matches!(&fields[1].fold, Some((2, b)) if b == "sh"));
-    assert!((fields[0].tau - 100.0).abs() < 1e-12);
+    assert!((fields[0].model.as_ref().expect("model").tau - 100.0).abs() < 1e-12);
     assert_eq!(fields[0].unit, "ppm");
     let refused = "url https://example.org/f\nttl 3600\nformat json\nat sun frame=barycenter\nfold mean a b em mag 100\n";
     let rsrcs = super::parse_sources(refused);
@@ -12240,7 +12243,7 @@ fn galileo_odr_register_field_matches_component_name() {
         panic!("the galileo_odr block carries a field line");
     };
     assert_eq!(fc.channel_ref, Some(0));
-    assert_eq!(fc.kernel, 0);
+    assert_eq!(fc.model.as_ref().expect("model").kernel, 0);
     assert_eq!(fc.unit, "count");
 }
 
@@ -13630,7 +13633,7 @@ field 16 pm25_daily_ug_m3 gaussian-inverse-square diffusion ug/m3 86400.0 pendin
             assert_eq!(channels.len(), 2);
             for (c, fc) in &channels {
                 assert_eq!(fc.channel_ref, Some(3));
-                assert_eq!(fc.tau, 86400.0);
+                assert_eq!(fc.model.as_ref().expect("model").tau, 86400.0);
                 match &c.position {
                     super::Position::Surface { lat, lon, alt, .. } => {
                         assert!((lat - 30.497478).abs() < 1e-9);
@@ -13752,7 +13755,7 @@ fn test_epa_aqs_source_registered() {
             assert_eq!(fields.len(), 1);
             assert_eq!(fields[0].key, "16");
             assert_eq!(fields[0].channel_ref, Some(3));
-            assert_eq!(fields[0].tau, 86400.0);
+            assert_eq!(fields[0].model.as_ref().expect("model").tau, 86400.0);
         }
         _ => panic!("expected Rows extract"),
     }
@@ -13777,7 +13780,7 @@ field \"Arithmetic Mean\" pm25_daily_ug_m3 gaussian-inverse-square diffusion µg
             assert_eq!(fields.len(), 1);
             assert_eq!(fields[0].key, "Arithmetic Mean");
             assert_eq!(fields[0].channel_ref, Some(3));
-            assert_eq!(fields[0].tau, 86400.0);
+            assert_eq!(fields[0].model.as_ref().expect("model").tau, 86400.0);
         }
         _ => panic!("expected Rows extract"),
     }

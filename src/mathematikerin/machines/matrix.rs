@@ -678,13 +678,16 @@ impl MatrixMachine {
             let Some(channel_ref) = sensor.channel_ref else {
                 continue;
             };
+            let Some(model) = sensor.model.as_ref() else {
+                continue;
+            };
             let meta = NameMeta {
                 anchor,
                 channel_ref,
-                kernel: sensor.kernel,
-                tau: sensor.tau,
+                kernel: model.kernel,
+                tau: model.tau,
                 epoch: channel.epoch,
-                advection: sensor.advection,
+                advection: model.advection,
                 station_code: channel.station_code.clone(),
             };
             self.metas.insert(channel.name.clone(), meta);

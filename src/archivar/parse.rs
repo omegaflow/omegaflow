@@ -3933,8 +3933,8 @@ field u u m/s source_column=1 alt_offset=0\n";
                 _ => None,
             })
             .expect("one field");
-        assert_eq!(field.tau_src, TauSource::Measured);
-        assert_eq!(field.tau, 60.0);
+        assert_eq!(field.model.as_ref().expect("model").tau_src, TauSource::Measured);
+        assert_eq!(field.model.as_ref().expect("model").tau, 60.0);
     }
 
     #[test]
@@ -3951,7 +3951,7 @@ field u u m/s source_column=1 alt_offset=0\n";
             })
             .expect("one field");
         assert_eq!(
-            field.tau_src,
+            field.model.as_ref().expect("model").tau_src,
             TauSource::Pending,
             "an explicit pending tau must not claim a measured tau"
         );
@@ -4201,7 +4201,11 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
                 _ => None,
             })
             .expect("the P10.2a target line is admitted");
-        assert_eq!(field.kernel, 0, "inverse-square is kernel 0");
+        assert_eq!(
+            field.model.as_ref().expect("model").kernel,
+            0,
+            "inverse-square is kernel 0"
+        );
         assert_eq!(
             field.channel_ref,
             Some(6),
@@ -4243,8 +4247,9 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             .expect("the short field form is admitted");
         assert_eq!(field.absorption_measured(), None);
         assert_eq!(field.advection_measured(), None);
+        let model = field.model.as_ref().expect("model");
         assert_eq!(
-            presence_flags(None, field.absorption, field.advection, SLOT_ABSENT),
+            presence_flags(None, model.absorption, model.advection, SLOT_ABSENT),
             0.0,
             "an undeclared slot carries no presence flag"
         );
@@ -4272,7 +4277,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         );
         assert_eq!(field.channel_ref, Some(2), "Poisson/mass/vacuum is gravity");
         assert_eq!(field.unit, "m/s2", "the measured unit stays untouched");
-        assert_eq!(field.kernel, 0);
+        assert_eq!(field.model.as_ref().expect("model").kernel, 0);
     }
 
     #[test]
@@ -5030,9 +5035,10 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             })
             .expect("the descriptor field with a spaced unit flows");
         assert_eq!(fc.unit, "kg/(m^2 s)");
-        assert_eq!(fc.tau, 3600.0, "the unit does not swallow tau");
-        assert_eq!(fc.absorption, 0.0);
-        assert_eq!(fc.advection, 0.0);
+        let model = fc.model.as_ref().expect("model");
+        assert_eq!(model.tau, 3600.0, "the unit does not swallow tau");
+        assert_eq!(model.absorption, 0.0);
+        assert_eq!(model.advection, 0.0);
         assert_eq!(
             fc.channel_ref,
             Some(4),
