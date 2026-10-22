@@ -79,7 +79,8 @@ pub const COMP_SDARN_V: u32 = 1;
 pub const COMP_SDARN_POWER: u32 = 2;
 
 pub const COMP_FDSN_BHZ: u32 = 1;
-pub const COMP_FDSN_MAX: u32 = 1;
+pub const COMP_FDSN_BDF: u32 = 2;
+pub const COMP_FDSN_MAX: u32 = 2;
 
 pub const COMP_CEIN_BDF: u32 = 1;
 pub const COMP_CEIN_MAX: u32 = 1;

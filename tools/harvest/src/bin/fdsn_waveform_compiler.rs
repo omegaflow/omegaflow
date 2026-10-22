@@ -1,5 +1,7 @@
 use omegaflow::archivar::fetch::civil_date;
-use omegaflow::archivar::geo::{COMP_FDSN_BHZ, GeoRec, MAGIC_FDSN, parse_bin, write_bin};
+use omegaflow::archivar::geo::{
+    COMP_FDSN_BDF, COMP_FDSN_BHZ, GeoRec, MAGIC_FDSN, parse_bin, write_bin,
+};
 use omegaflow::cdn::upload_release;
 use omegaflow::lsk::parse as parse_lsk;
 use std::collections::HashMap;
@@ -762,7 +764,7 @@ fn main() {
         None => None,
     };
     if let Some(ref mut f) = fh {
-        let _ = f.write_all(b"#unit=m/s for velocity channels - m/s = counts * (1/InstrumentSensitivity) at ScaleFreq; the scalar seed sensitivity, not a full deconvolution\n");
+        let _ = f.write_all(b"#unit=m/s for velocity channels, Pa for infrasound pressure channels - value = counts * (1/InstrumentSensitivity) at ScaleFreq; the scalar seed sensitivity, not a full deconvolution\n");
         let _ =
             f.write_all(b"#unit=counts where the channel response is absent - never fabricated\n");
         let _ = f.write_all(b"#station|lat|lon|channel|unix_t|sample|unit\n");
@@ -875,8 +877,13 @@ fn main() {
         let t0 = decoded[0].0;
         let resp = load_response(station_route, &mut responses, net, sta, &cha_hdr, &loc_hdr);
         let row = resp.row_at(t0);
+        let want_unit = if cha_hdr == "BDF" { "pa" } else { "m/s" };
         let gain = match row {
-            Some(rw) if rw.units == "m/s" && rw.scale.is_finite() && rw.scale > 0.0 => {
+            Some(rw)
+                if rw.units.eq_ignore_ascii_case(want_unit)
+                    && rw.scale.is_finite()
+                    && rw.scale > 0.0 =>
+            {
                 Some(1.0 / rw.scale)
             }
             _ => None,
@@ -888,11 +895,12 @@ fn main() {
             Some(e) if e.is_finite() => Some(e),
             _ => None,
         };
-        let comp = if cha_hdr == "BHZ" {
-            Some(COMP_FDSN_BHZ)
-        } else {
-            None
+        let comp = match cha_hdr.as_str() {
+            "BHZ" => Some(COMP_FDSN_BHZ),
+            "BDF" => Some(COMP_FDSN_BDF),
+            _ => None,
         };
+        let sample_unit = if cha_hdr == "BDF" { "Pa" } else { "m/s" };
         if emit_bin_path.is_some() {
             if gain.is_some() && comp.is_none() {
                 channel_unmapped_records += 1;
@@ -905,7 +913,11 @@ fn main() {
         for (t, v) in &decoded {
             let si = gain.map(|g| *v * g);
             let val = si.unwrap_or(*v);
-            let unit = if si.is_some() { "m/s" } else { "counts" };
+            let unit = if si.is_some() {
+                sample_unit
+            } else {
+                "counts"
+            };
             if si.is_none() {
                 counts_samples += 1;
             }
@@ -1005,7 +1017,7 @@ fn main() {
         );
     }
     eprintln!(
-        "fdsnwf: {} samples decoded, {} rows joined & written ({} in m/s, {} in counts)",
+        "fdsnwf: {} samples decoded, {} rows joined & written ({} in SI units, {} in counts)",
         samples_total,
         rows_written,
         rows_written - counts_samples,

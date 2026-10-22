@@ -1070,6 +1070,7 @@ pub fn geo_series_component_name(format: &str, comp: u32) -> Option<&'static str
         },
         "fdsn_waveform" => match comp {
             crate::geo::COMP_FDSN_BHZ => Some("fdsn_waveform_bhz_ms"),
+            crate::geo::COMP_FDSN_BDF => Some("fdsn_waveform_bdf_pa"),
             _ => None,
         },
         "ceein_infrasound" => match comp {
