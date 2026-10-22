@@ -77,6 +77,7 @@ pub fn parse_manifest(content: &str) -> Result<Vec<ManifestConfig>, String> {
     let mut out = Vec::new();
     let mut seen = BTreeSet::new();
     let mut current: Option<ManifestConfig> = None;
+    let mut last_rank = 0u8;
 
     for (line_no, raw) in content.lines().enumerate() {
         let line_no = line_no + 1;
@@ -113,12 +114,29 @@ pub fn parse_manifest(content: &str) -> Result<Vec<ManifestConfig>, String> {
                 advection: None,
                 intent: None,
             });
+            last_rank = 0;
             continue;
         }
 
         let Some(block) = current.as_mut() else {
             return Err(format!("line {line_no}: {head} outside a manifest block"));
         };
+
+        let rank = match head {
+            "anchor_ref" => 1,
+            "kernel" => 2,
+            "tau" => 3,
+            "absorption" => 4,
+            "advection" => 5,
+            "intent" => 6,
+            _ => return Err(format!("line {line_no}: unread manifest directive {head}")),
+        };
+        if rank < last_rank {
+            return Err(format!(
+                "line {line_no}: manifest directives out of order at {head}"
+            ));
+        }
+        last_rank = rank;
 
         match head {
             "anchor_ref" if parts.len() == 2 => block.anchor_ref = parts[1].to_string(),
@@ -257,6 +275,12 @@ intent test\n";
         assert!(parse_manifest(no_kernel).is_err());
         let no_intent = "manifest a b\nanchor_ref x\nkernel inverse-square\ntau 1 chosen\n";
         assert!(parse_manifest(no_intent).is_err());
+    }
+
+    #[test]
+    fn out_of_order_is_refused() {
+        let text = "manifest a b\ntau 1 chosen\nanchor_ref x\nkernel inverse-square\nintent test\n";
+        assert!(parse_manifest(text).is_err());
     }
 
     #[test]

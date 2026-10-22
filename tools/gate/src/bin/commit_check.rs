@@ -499,11 +499,22 @@ fn main() {
             }
         }
         if path == "phi/sources.φ" {
-            for (line, message) in unbacked_mirror_violations(&added) {
+            let full = match std::fs::read_to_string("phi/sources.φ") {
+                Ok(content) => content,
+                Err(_) => String::new(),
+            };
+            let known = match Command::new("git")
+                .args(["show", "HEAD:phi/sources.φ"])
+                .output()
+            {
+                Ok(out) => String::from_utf8_lossy(&out.stdout).to_string(),
+                Err(_) => String::new(),
+            };
+            for (line, message) in unbacked_mirror_violations(&added, &full, &known) {
                 eprintln!("commit_check: phi/sources.φ:{line}: unbacked_mirror - {message}");
                 fail = true;
             }
-            for (line, message) in ingest_terms_absent_violations(&added) {
+            for (line, message) in ingest_terms_absent_violations(&added, &full, &known) {
                 eprintln!("commit_check: phi/sources.φ:{line}: ingest-terms-absent - {message}");
                 fail = true;
             }

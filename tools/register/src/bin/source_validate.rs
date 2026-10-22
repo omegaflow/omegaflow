@@ -25,6 +25,32 @@ fn parse_f64(s: &str) -> Option<f64> {
     }
 }
 
+fn directive_rank(head: &str) -> Option<u8> {
+    match head {
+        "url" => Some(1),
+        "terms" | "origin" | "compiler" | "sha256" | "witness" | "record" | "harvest" | "live" => {
+            Some(2)
+        }
+        "at" | "on" | "global" | "coverage" | "query" | "track" | "sky" => Some(3),
+        "ttl" | "no-cadence" => Some(4),
+        "format" | "header" | "post_body" | "body" | "force" | "range" | "band" | "footprint"
+        | "norm" | "max_degree" | "gm" | "radius" | "tide" => Some(5),
+        "station" | "stations" | "stations_path" | "stations_lon" | "stations_lat"
+        | "stations_id" | "stations_filter" | "stations_flatten" | "fanout" | "fanout_center"
+        | "fanout_delay" => Some(6),
+        "map" | "cmap" | "rows" | "keplermap" | "geojson" | "quakeml" | "lat" | "lon" | "alt"
+        | "epoch" | "ra" | "dec" | "dist" | "plx" | "pmra" | "pmdec" | "radvel" | "z"
+        | "z_key" | "rv_scale" | "dist_scale" | "catalog_epoch" | "hapi" | "hapi_fill" | "field"
+        | "quantity" | "first" | "last" | "lastrow" | "path" | "deep" | "objlast" | "regex"
+        | "tau_key" | "ma" | "om" | "w" | "lat_key" | "lon_key" | "lat_sign" | "lon_sign"
+        | "mag_type_key" | "epoch_scale" | "gate" | "prefix" | "bin" | "profile" | "fold"
+        | "cgm_lat" | "cgm_source" | "flux_from_mag" | "abs_mag_from" => Some(7),
+        "channel" | "coupling" | "constraint" => Some(8),
+        "medium" => Some(9),
+        _ => None,
+    }
+}
+
 fn numeric_run_start(parts: &[&str]) -> Option<usize> {
     let mut end = parts.len();
     while end > 0 && parse_f64(parts[end - 1]).is_none() {
@@ -249,6 +275,7 @@ fn main() {
 
         let no_cadence = field_of(&block, "no-cadence").is_some();
         let mut names: BTreeSet<String> = BTreeSet::new();
+        let mut last_rank = 0u8;
 
         for line_text in &block {
             let parts: Vec<&str> = line_text.split_whitespace().collect();
@@ -266,6 +293,32 @@ fn main() {
                     &mut soft,
                 );
                 continue;
+            }
+            match directive_rank(head) {
+                Some(rank) => {
+                    if rank < last_rank {
+                        push(
+                            "directive_order",
+                            format!("{tag}\t{name}\t{head}"),
+                            true,
+                            &mut findings,
+                            &mut hard,
+                            &mut soft,
+                        );
+                    }
+                    last_rank = rank;
+                }
+                None => {
+                    push(
+                        "directive_order_unknown",
+                        format!("{tag}\t{name}\t{head}"),
+                        true,
+                        &mut findings,
+                        &mut hard,
+                        &mut soft,
+                    );
+                    continue;
+                }
             }
             if matches!(
                 head,
