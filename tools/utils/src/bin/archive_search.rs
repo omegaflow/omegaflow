@@ -959,6 +959,10 @@ fn main() {
                 usage();
                 std::process::exit(0);
             }
+            "--help-all" => {
+                usage_full();
+                std::process::exit(0);
+            }
             other => {
                 if let Some(m) = flag_mode(other) {
                     modes.push(m);
@@ -2347,7 +2351,86 @@ fn run_stats() -> Vec<String> {
 }
 
 fn usage() {
-    eprintln!("archive_search — the divers' research tool (content, paths, NTFS, network modes)");
+    eprintln!("archive_search — read-only research tool (content, paths, NTFS, network)");
+    eprintln!();
+    eprintln!("START HERE — direct source first, one route at a time");
+    eprintln!("  1  direct/official source, keyless");
+    eprintln!("       archive_search --wayback-available <url>");
+    eprintln!("       archive_search --jina <url>");
+    eprintln!("       archive_search --verdict <url>");
+    eprintln!("  2  keyless meta-search, if the source carries no search");
+    eprintln!("       archive_search --4get \"query\"");
+    eprintln!("       archive_search --mwmbl \"query\"");
+    eprintln!("       archive_search --marginalia \"query\"");
+    eprintln!("       archive_search --searxng \"query\"");
+    eprintln!("  3  keyed fallback; serial only, never the first move");
+    eprintln!("       archive_search --base \"query\"       (BASE_API_KEY; 1.1 s spacing enforced)");
+    eprintln!("       archive_search --youcom \"query\"     (last fallback; prepaid credit)");
+    eprintln!("  --perplexity/--gemini/other keyed routes: only if 1–3 stayed empty");
+    eprintln!();
+    eprintln!("  Do not start with --all or --jobs >1. --all fans out over many arms;");
+    eprintln!("  it is a last move, not a search default. On HTTP 429/Retry-After stop");
+    eprintln!("  the route; do not retry it in parallel. Keys live in .secrets.local,");
+    eprintln!("  never on the command line; a missing key is `pending — <KEY> absent`.");
+    eprintln!();
+    eprintln!("LOCAL CONTENT");
+    eprintln!("  archive_search <keyword>... [--root <dir>]... [--include <glob>]");
+    eprintln!("      [--lines <n>] [--files <n>] [--max-mb <n>] [--skip <n>]");
+    eprintln!("      [--binary] [--count] [--case] [--fuzzy [--fuzzy-distance 1|2]]");
+    eprintln!("  --root <dir>      repeatable; default $HOME");
+    eprintln!("  --lines <n>       hit lines per file (default 2); --files <n> default 40");
+    eprintln!("  --max <n>         network results per source (default 25)");
+    eprintln!("  --count           print counts only; --binary includes binaries");
+    eprintln!();
+    eprintln!("OTHER LOCALS");
+    eprintln!("  --index [query] [--path] [--kind any|file|dir] [--sort name|size|mtime]");
+    eprintln!("  --git <query> [--git-history]        content via git grep; -S is capped");
+    eprintln!("  --mft <device> [query] [--content]   NTFS file table (live repo is not NTFS)");
+    eprintln!("  --stats | --leads <keyword>... | --list-sources | --list-profiles");
+    eprintln!();
+    eprintln!("NETWORK SOURCES");
+    eprintln!("  One arm per call, e.g. --arxiv, --crossref, --openalex, --pubmed,");
+    eprintln!("  --europepmc, --pangaea, --fdsn, --github, --grepapp, --openlibrary.");
+    eprintln!("  --list-sources prints every arm and its groups; --help-all prints the");
+    eprintln!("  full per-arm reference (endpoint, key, fields).");
+    eprintln!("  Keyless meta: --4get --mwmbl --marginalia --searxng --wiby --ia-search.");
+    eprintln!("  Keyed fallback: --base, --youcom, --perplexity, --gemini, --brave,");
+    eprintln!("  --exa, --tavily, --serper, --firecrawl, --searchapi, --serpapi.");
+    eprintln!("  --all [--stop <n>] [--jobs <n>] [--dedupe|--no-dedupe] [--group ...]");
+    eprintln!("      fan-out; keep --jobs 1 when any keyed route is present.");
+    eprintln!();
+    eprintln!("MODIFIERS");
+    eprintln!("  output:   --jsonl|--csv|--bibtex|--ris [--allow-empty]");
+    eprintln!("  cache:    [--no-cache] [--cache-stats] [--cache-clear]");
+    eprintln!("  filters:  [--since YYYY[-MM-DD]] [--until YYYY[-MM-DD]] [--type <kind>]");
+    eprintln!("            [--language <iso639-1>] [--explain]");
+    eprintln!("  fulltext: [--fulltext] [--fulltext-limit <n>]");
+    eprintln!("  observe:  [--report <path>] [--timings]");
+    eprintln!("  profile:  [--profile <name|file>]");
+    eprintln!("  proxy:    [--proxy <url>] or OMEGAFLOW_PROXY");
+    eprintln!("  page:     --jina <url> | --playwright <url|query> [--headed]");
+    eprintln!("  files:    --pdf-text <file|url> | --pdf-image <file|url> [--out <dir>]");
+    eprintln!("            --arxiv-src <id|url> [--out <dir>] | --sniff");
+    eprintln!("  serve:    --serve [addr] (read-only display)");
+    eprintln!();
+    eprintln!("EXAMPLES");
+    eprintln!("  archive_search \"51003\" --root research --include '*.md'");
+    eprintln!("  archive_search --wayback-available https://www.ndbc.noaa.gov/station_page.php?station=51003");
+    eprintln!("  archive_search --4get \"NDBC 51003 station metadata\"");
+    eprintln!("  archive_search --base \"NDBC 51003\"");
+    eprintln!();
+    eprintln!("HELP");
+    eprintln!("  --help       this page");
+    eprintln!("  --help-all   full source reference (all arms, keys, endpoints)");
+    eprintln!();
+    eprintln!("EXITS  0 = hit, 3 = only pending/absent, 2 = usage/argument error");
+}
+
+fn usage_full() {
+    eprintln!("archive_search — full source reference (read --help for the search ladder first)");
+    eprintln!();
+    eprintln!("  Keyless direct sources first; keyless meta-search second; keyed fallback");
+    eprintln!("  last, serial and rate-limited. --all is a fan-out, not a default.");
     eprintln!();
     eprintln!(
         "content:  archive_search <keyword>... [--root <dir>]... [--lines <n>] [--files <n>] [--max-mb <n>] [--skip <n>] [--binary] [--count] [--case] [--include <glob>] [--fuzzy [--fuzzy-distance <n>]]"
