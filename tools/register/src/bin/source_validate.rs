@@ -196,7 +196,7 @@ fn new_block_text(block: &[&str]) -> Option<String> {
         };
         if matches!(
             *head,
-            "url" | "terms" | "origin" | "ttl" | "on" | "query" | "track" | "field"
+            "url" | "terms" | "origin" | "ttl" | "on" | "at" | "query" | "track" | "field"
         ) {
             out.push_str(line.trim());
             out.push('\n');
