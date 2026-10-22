@@ -1797,14 +1797,13 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 };
                 let tau_src = match parts.get(7).copied() {
                     Some("measured") => TauSource::Measured,
-                    Some("derived") => TauSource::Derived,
                     Some("pending") => TauSource::Pending,
                     _ => {
                         report_anomaly(
                             "Invalid Syntax",
                             &cur_url,
                             &format!(
-                                "field {} carries no tau_src (measured|derived|pending)",
+                                "field {} carries no tau_src (measured|pending)",
                                 parts[1]
                             ),
                         );
@@ -2888,7 +2887,6 @@ fn parse_medium_line(parts: &[&str]) -> Result<MediumLine, String> {
 fn tau_src_of(parts: &[&str]) -> TauSource {
     match parts.get(7).copied() {
         Some("measured") => TauSource::Measured,
-        Some("derived") => TauSource::Derived,
         Some("pending") => TauSource::Pending,
         _ => TauSource::Pending,
     }
@@ -2908,7 +2906,7 @@ pub fn parse_field_config(parts: &[&str]) -> Option<(u8, Option<u8>, f64, f64, f
         _ => return None,
     };
     let (abs_index, adv_index) = match parts.get(7).copied() {
-        Some("measured" | "derived" | "pending") => (8, 9),
+        Some("measured" | "pending") => (8, 9),
         None => (7, 8),
         Some(_) if parts.len() <= 8 => (7, 8),
         Some(_) => return None,
@@ -3910,6 +3908,19 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         assert!(
             missing.is_empty(),
             "the register declares no channel directive for these live force tags: {missing:?}"
+        );
+    }
+
+    #[test]
+    fn source_tau_derived_is_refused() {
+        let content = "url https://example.org/x\nttl 60\nat sun frame=barycenter\nfield v v inverse-square em W/m2 60 derived 0.0 0.0\n";
+        let sources = parse_sources(content);
+        assert!(
+            sources
+                .iter()
+                .flat_map(|source| source.extracts.iter())
+                .all(|extract| !matches!(extract, Extract::Field(_))),
+            "derived is a manifest state, not a source field"
         );
     }
 
