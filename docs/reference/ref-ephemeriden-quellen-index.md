@@ -4,7 +4,7 @@
   date: 2026-10-12
   sha256: 4cd7617be4ff50f8476ad240ad4c234bcc850c625a59a87b98bbe7efba6fbd87
   status: live
-  see-also: docs/reference/ref-mariner-faden-index.md survey-2026-10-10-ephemeris-quellen
+  see-also: docs/reference/ref-mariner-faden-index.md survey-ephemeriden
 -->
 # Ref — Ephemeriden-Quellen-Index (8 Ziele, gemessen 2026-10-12)
 

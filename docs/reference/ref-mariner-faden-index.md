@@ -2,9 +2,9 @@
   title: Ref — Mariner-Faden-Index (state-Bestand, Stand 2026-10-12)
   class: ref
   date: 2026-10-12
-  sha256: cea7394f7fc0b835102524d48f11655af6b663adfae49ab873c4af1dbcf9695d
+  sha256: 6536f4ef1fe86cf1fa2ed65b339f179f0669b6f1b377b46171c7c02b23eafa5f
   status: live
-  see-also: docs/reference/ref-ephemeriden-quellen-index.md survey-2026-10-10-ephemeris-quellen
+  see-also: docs/reference/ref-ephemeriden-quellen-index.md survey-ephemeriden
 -->
 # Ref — Mariner-Faden-Index (state-Bestand, Stand 2026-10-12)
 
@@ -35,7 +35,7 @@ gesucht wird. Die genannten `recherche/`-Pfade sind der lokale (private) Recherc
 
 ## Ephemeriden-Umfeld (lokale Rohrecherche)
 - `recherche/scratch/_dumps-2026-10-12/tmp-archive-opencode/eph-1-llr … eph-8-pvo` — je ~250–270 Zeilen Rohsuche.
-- Roster-Runde: `state/rat/2026-10-10_mountain_ephemeris-sources-round.md` → `survey-2026-10-10-ephemeris-quellen`.
+- Roster-Runde: `state/rat/2026-10-10_mountain_ephemeris-sources-round.md` → `survey-ephemeriden`.
 
 ## Generierte Karte (nicht kuratiert)
 - `recherche/research-map.md` (vom `state_cartograph` erzeugt) — Vollbestand; nur über lokale Lesewerkzeuge sichtbar.
