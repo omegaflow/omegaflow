@@ -3146,7 +3146,9 @@ fn finish_source_block(builder: SourceBlockBuilder, line: usize) -> Result<Sourc
     {
         return Err(format!("line {line}: lat/lon outside range"));
     }
-    if builder.alt_ref.is_some() == builder.alt_key.is_some() {
+    if !matches!(position, SourcePosition::At { .. })
+        && builder.alt_ref.is_some() == builder.alt_key.is_some()
+    {
         return Err(format!(
             "line {line}: exactly one of alt_ref/alt_key required"
         ));
@@ -3171,9 +3173,11 @@ fn finish_source_block(builder: SourceBlockBuilder, line: usize) -> Result<Sourc
             "line {line}: moving block needs time_key and one of alt_ref/alt_key"
         ));
     }
-    let datum = builder
-        .datum
-        .ok_or_else(|| format!("line {line}: datum absent"))?;
+    let datum = match (&position, builder.datum) {
+        (SourcePosition::At { frame, .. }, None) => frame.clone(),
+        (_, Some(datum)) => datum,
+        (_, None) => return Err(format!("line {line}: datum absent")),
+    };
     let time_scale = builder
         .time_scale
         .ok_or_else(|| format!("line {line}: time_scale absent"))?;
@@ -3244,6 +3248,58 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                         .parse::<u64>()
                         .map_err(|_| format!("line {line_no}: ttl unreadable"))?,
                 );
+            }
+            "at" if parts.len() >= 2 => {
+                if parts[1].contains('=') {
+                    return Err(format!("line {line_no}: at needs a body before attributes"));
+                }
+                let body = parts[1].to_string();
+                let mut frame = None;
+                let mut distance_au = None;
+                let mut time = None;
+                let mut time_key = None;
+                let mut time_parts = None;
+                let mut time_scale = None;
+                for token in &parts[2..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!(
+                            "line {line_no}: at token {token} carries no key=value"
+                        ));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: at attribute {key} is empty"));
+                    }
+                    match key {
+                        "frame" => frame = Some(value.to_string()),
+                        "distance_au" => {
+                            distance_au = Some(value.parse::<f64>().map_err(|_| {
+                                format!("line {line_no}: distance_au {value} is not a number")
+                            })?)
+                        }
+                        "time" => time = Some(value.to_string()),
+                        "time_key" => time_key = Some(value.to_string()),
+                        "time_parts" => {
+                            time_parts = Some(
+                                value
+                                    .split(',')
+                                    .map(|part| part.trim().to_string())
+                                    .collect::<Vec<_>>(),
+                            )
+                        }
+                        "time_scale" => time_scale = Some(value.to_string()),
+                        _ => return Err(format!("line {line_no}: unknown at attribute {key}")),
+                    }
+                }
+                let frame = frame.ok_or_else(|| format!("line {line_no}: at needs frame="))?;
+                builder.position = Some(SourcePosition::At {
+                    body,
+                    frame,
+                    distance_au,
+                });
+                builder.time = time;
+                builder.time_key = time_key;
+                builder.time_parts = time_parts;
+                builder.time_scale = time_scale;
             }
             "on" if parts.len() >= 2 => {
                 if parts[1].contains('=') {
@@ -3476,8 +3532,15 @@ pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>>
                     errors.push(at("moving position needs lat_key and lon_key".to_string()));
                 }
             }
+            SourcePosition::At { body, frame, .. } => {
+                if body.trim().is_empty() || frame.trim().is_empty() {
+                    errors.push(at("body-frame position needs body and frame".to_string()));
+                }
+            }
         }
-        if block.alt_ref.is_some() == block.alt_key.is_some() {
+        if !matches!(&block.position, SourcePosition::At { .. })
+            && block.alt_ref.is_some() == block.alt_key.is_some()
+        {
             errors.push(at("exactly one of alt_ref/alt_key required".to_string()));
         }
         let time_refs = usize::from(block.time.is_some())
@@ -3722,6 +3785,26 @@ field u current m/s source_column=3 alt_offset=0.0 alt_min_offset=-2.5 alt_max_o
 
         let field_datum = content.replace("alt_offset=-0.6", "alt_offset=-0.6 datum=msl");
         assert!(parse_source_blocks(&field_datum).is_err());
+    }
+
+    #[test]
+    fn source_blocks_accept_body_frame_position() {
+        let content = concat!(
+            "url https://example.org/ace\n",
+            "terms PD-USGov https://example.org/terms\n",
+            "at earth frame=barycenter distance_au=0.99 time_key=time_tag time_scale=UTC\n",
+            "ttl 3600\n",
+            "field 0.gsm_bx bx nT source_key=gsm_bx alt_offset=0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("body-frame block parses");
+        assert!(matches!(
+            &blocks[0].position,
+            SourcePosition::At { body, frame, distance_au }
+                if body == "earth" && frame == "barycenter" && *distance_au == Some(0.99)
+        ));
+        assert_eq!(blocks[0].datum, "barycenter");
+        assert_eq!(blocks[0].time_key.as_deref(), Some("time_tag"));
+        assert_eq!(blocks[0].fields[0].source_key.as_deref(), Some("gsm_bx"));
     }
 
     #[test]
