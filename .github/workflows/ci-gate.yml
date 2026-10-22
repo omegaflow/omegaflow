@@ -2,6 +2,10 @@ name: ci-gate
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'phi/**'
+      - 'bin/source_branch_guard'
   push:
     paths:
       - 'src/**'
@@ -152,6 +156,25 @@ jobs:
           "health: dropped-gate returned void" \
           "dropped-gate failed on ${{ github.sha }}" \
           health
+
+  source-branch-guard:
+    # A source branch is a proposal, not the register. Refuse a PR that
+    # regresses resolved blocks to `pending`, deletes blocks, or bends anchors
+    # to what the parser currently carries. (Measured 2026-10-22 on
+    # river-sources: 992 regressed, 681 deleted, 687 anchor rewrites.)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+    - name: Fetch the base branch
+      run: |
+        git fetch origin "${{ github.base_ref }}"
+        git branch -f base FETCH_HEAD
+    - name: Source branch guard
+      run: bin/source_branch_guard base HEAD
 
   register:
     runs-on: ubuntu-latest

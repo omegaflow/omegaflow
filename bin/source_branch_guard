@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# source_branch_guard — refuse a branch that bends phi/sources.φ to the parser.
+#
+# usage: bin/source_branch_guard [<base-ref>] [<head-ref>]
+#        defaults: base=main head=HEAD
+#
+# Hard failures (exit 2):
+#   REGRESSED   a block resolved on base became `pending` on head
+#   DELETED     a block on base is missing on head
+#   ANCHOR      head replaced an anchor with `at earth frame=barycenter`
+#               or `on earth 0 0 0` where base carried another anchor
+#   NO-WITNESS  a new/changed block carries field lines but no `witness`
+#
+# The history is git; the branch is a proposal, not the register.
+set -euo pipefail
+
+base=${1:-main}
+head=${2:-HEAD}
+src="phi/sources.φ"
+
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+git show "$base:$src" >"$tmp/base" 2>/dev/null || {
+  echo "source_branch_guard: $base:$src is unreadable" >&2
+  exit 2
+}
+git show "$head:$src" >"$tmp/head" 2>/dev/null || {
+  echo "source_branch_guard: $head:$src is unreadable" >&2
+  exit 2
+}
+
+# url  fields  pending  witness  anchor
+emit() {
+  awk '
+    function flush() {
+      if (url != "") printf "%s\t%d\t%d\t%d\t%s\n", url, fields, pend, wit, anchor
+    }
+    /^url / { flush(); url=$2; fields=0; pend=0; wit=0; anchor=""; next }
+    /^witness / { wit=1 }
+    /^(field|quantity|first|last|lastrow) / {
+      fields++
+      if ($0 ~ /[[:space:]]pending[[:space:]]/) pend++
+    }
+    /^(at|query|track|global|coverage|orbit|sky|on|absent)([[:space:]]|$)/ {
+      if (anchor == "") anchor=$0
+    }
+    END { flush() }
+  ' "$1"
+}
+
+emit "$tmp/base" | sort >"$tmp/b.tsv"
+emit "$tmp/head" | sort >"$tmp/h.tsv"
+
+awk -F'\t' -v base="$base" -v head="$head" '
+  NR==FNR { bf[$1]=$2; bp[$1]=$3; ba[$1]=$5; inbase[$1]=1; next }
+  {
+    url=$1; hf=$2; hp=$3; hw=$4; ha=$5; inhead[url]=1
+    if (!(url in inbase)) {
+      if (hf > 0 && hw == 0)
+        printf "NO-WITNESS\t%s\tnew block, %d field line(s), no witness\n", url, hf
+      next
+    }
+    if (bp[url] == 0 && hp > 0)
+      printf "REGRESSED\t%s\tresolved -> %d pending line(s)\n", url, hp
+    if ((hf != bf[url]) && hf > 0 && hw == 0)
+      printf "NO-WITNESS\t%s\t%d -> %d field line(s), no witness\n", url, bf[url], hf
+    if (ha ~ /^(at earth frame=barycenter|on earth 0 0 0)$/ && ba[url] != "" && ha != ba[url])
+      printf "ANCHOR\t%s\t\"%s\" -> \"%s\"\n", url, ba[url], ha
+  }
+  END {
+    for (url in inbase)
+      if (!(url in inhead))
+        printf "DELETED\t%s\tblock present on %s, missing on %s\n", url, base, head
+  }
+' "$tmp/b.tsv" "$tmp/h.tsv" >"$tmp/findings"
+
+hard=$(grep -cE '^(REGRESSED|DELETED|ANCHOR)\b' "$tmp/findings" || true)
+soft=$(grep -cE '^NO-WITNESS\b' "$tmp/findings" || true)
+
+printf "source_branch_guard: %s -> %s\n" "$base" "$head"
+printf "  blocks:   %s %d, %s %d\n" "$base" "$(wc -l <"$tmp/b.tsv")" "$head" "$(wc -l <"$tmp/h.tsv")"
+printf "  hard:     %d (regressed/deleted/anchor)\n" "$hard"
+printf "  warnings: %d (new or changed block without witness)\n" "$soft"
+
+if [ "$hard" -gt 0 ] || [ "$soft" -gt 0 ]; then
+  sort -k1,1 -k2,2 "$tmp/findings" | sed 's/^/  /'
+fi
+if [ "$hard" -gt 0 ]; then
+  exit 2
+fi
+echo "  clean: no regression, no deletion, no anchor bend"
