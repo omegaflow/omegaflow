@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
@@ -3094,6 +3094,7 @@ struct SourceBlockBuilder {
     datum: Option<String>,
     time: Option<String>,
     time_key: Option<String>,
+    time_parts: Option<Vec<String>>,
     time_scale: Option<String>,
     fields: Vec<SourceField>,
 }
@@ -3119,8 +3120,20 @@ fn finish_source_block(
     if builder.alt_ref.is_some() == builder.alt_key.is_some() {
         return Err(format!("line {line}: exactly one of alt_ref/alt_key required"));
     }
-    if builder.time.is_some() == builder.time_key.is_some() {
-        return Err(format!("line {line}: exactly one of time/time_key required"));
+    let time_refs = usize::from(builder.time.is_some())
+        + usize::from(builder.time_key.is_some())
+        + usize::from(builder.time_parts.is_some());
+    if time_refs != 1 {
+        return Err(format!(
+            "line {line}: exactly one of time/time_key/time_parts required"
+        ));
+    }
+    if let Some(parts) = &builder.time_parts
+        && (!(5..=6).contains(&parts.len()) || parts.iter().any(|part| part.is_empty()))
+    {
+        return Err(format!(
+            "line {line}: time_parts needs five or six non-empty keys (Y,M,D,h,m[,s])"
+        ));
     }
     if matches!(&position, SourcePosition::Moving { .. })
         && (builder.alt_key.is_none() || builder.time_key.is_none())
@@ -3147,6 +3160,7 @@ fn finish_source_block(
         datum,
         time: builder.time,
         time_key: builder.time_key,
+        time_parts: builder.time_parts,
         time_scale,
         fields: builder.fields,
     })
@@ -3181,6 +3195,7 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 datum: None,
                 time: None,
                 time_key: None,
+                time_parts: None,
                 time_scale: None,
                 fields: Vec::new(),
             });
@@ -3210,6 +3225,7 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 let mut datum = None;
                 let mut time = None;
                 let mut time_key = None;
+                let mut time_parts = None;
                 let mut time_scale = None;
                 let mut has_frame = false;
                 for token in &parts[2..] {
@@ -3227,6 +3243,14 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                         "datum" => datum = Some(value.to_string()),
                         "time" => time = Some(value.to_string()),
                         "time_key" => time_key = Some(value.to_string()),
+                        "time_parts" => {
+                            time_parts = Some(
+                                value
+                                    .split(',')
+                                    .map(|part| part.trim().to_string())
+                                    .collect::<Vec<_>>(),
+                            )
+                        }
                         "time_scale" => time_scale = Some(value.to_string()),
                         "frame" => has_frame = true,
                         _ => return Err(format!("line {line_no}: unknown on attribute {key}")),
@@ -3243,6 +3267,7 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 builder.datum = datum;
                 builder.time = time;
                 builder.time_key = time_key;
+                builder.time_parts = time_parts;
                 builder.time_scale = time_scale;
             }
             "query" | "track" if parts.len() >= 2 => {
@@ -3320,9 +3345,9 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                     ));
                 }
                 if let (Some(min), Some(max)) = (alt_min_offset, alt_max_offset)
-                    && min > max
+                    && min >= max
                 {
-                    return Err(format!("line {line_no}: layer min exceeds max"));
+                    return Err(format!("line {line_no}: layer min must be below max"));
                 }
                 builder.fields.push(SourceField {
                     key,
@@ -3340,6 +3365,93 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
         out.push(finish_source_block(builder, content.lines().count())?);
     }
     Ok(out)
+}
+
+pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>> {
+    let mut errors = Vec::new();
+    let mut fields_by_url: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for (index, block) in blocks.iter().enumerate() {
+        let at = |message: String| format!("block {}: {message}", index + 1);
+        if block.url.trim().is_empty() {
+            errors.push(at("url is empty".to_string()));
+        }
+        if block.terms.trim().is_empty() {
+            errors.push(at("terms is empty".to_string()));
+        }
+        if block.ttl == 0 {
+            errors.push(at("ttl must be positive".to_string()));
+        }
+        if block.datum.trim().is_empty() {
+            errors.push(at("datum is empty".to_string()));
+        }
+        if block.time_scale.trim().is_empty() {
+            errors.push(at("time_scale is empty".to_string()));
+        }
+        match &block.position {
+            SourcePosition::Fixed { lat, lon } => {
+                if !lat.is_finite() || !lon.is_finite() {
+                    errors.push(at("lat/lon must be finite".to_string()));
+                } else if !(-90.0..=90.0).contains(lat) || !(-180.0..=360.0).contains(lon) {
+                    errors.push(at("lat/lon outside range".to_string()));
+                }
+            }
+            SourcePosition::Moving { lat_key, lon_key } => {
+                if lat_key.trim().is_empty() || lon_key.trim().is_empty() {
+                    errors.push(at("moving position needs lat_key and lon_key".to_string()));
+                }
+            }
+        }
+        if block.alt_ref.is_some() == block.alt_key.is_some() {
+            errors.push(at("exactly one of alt_ref/alt_key required".to_string()));
+        }
+        let time_refs = usize::from(block.time.is_some())
+            + usize::from(block.time_key.is_some())
+            + usize::from(block.time_parts.is_some());
+        if time_refs != 1 {
+            errors.push(at("exactly one of time/time_key/time_parts required".to_string()));
+        }
+        if let Some(parts) = &block.time_parts
+            && (!(5..=6).contains(&parts.len()) || parts.iter().any(|part| part.trim().is_empty()))
+        {
+            errors.push(at("time_parts needs five or six non-empty keys".to_string()));
+        }
+        if block.fields.is_empty() {
+            errors.push(at("fields are empty".to_string()));
+        }
+        let seen = fields_by_url.entry(block.url.clone()).or_default();
+        for field in &block.fields {
+            if field.key.trim().is_empty() || field.name.trim().is_empty() || field.unit.trim().is_empty()
+            {
+                errors.push(at(format!("field {} has an empty key/name/unit", field.key)));
+            }
+            if !field.alt_offset.is_finite() {
+                errors.push(at(format!("field {} has a non-finite alt_offset", field.key)));
+            }
+            if field.alt_min_offset.is_some() != field.alt_max_offset.is_some() {
+                errors.push(at(format!(
+                    "field {} needs both alt_min_offset and alt_max_offset",
+                    field.key
+                )));
+            }
+            if let (Some(min), Some(max)) = (field.alt_min_offset, field.alt_max_offset) {
+                if !min.is_finite() || !max.is_finite() {
+                    errors.push(at(format!("field {} has a non-finite layer", field.key)));
+                } else if min >= max {
+                    errors.push(at(format!(
+                        "field {} layer min must be below max (got {min} .. {max})",
+                        field.key
+                    )));
+                }
+            }
+            if !seen.insert(field.key.clone()) {
+                errors.push(at(format!(
+                    "field key {} appears twice for the same URL; url#field would be ambiguous",
+                    field.key
+                )));
+            }
+        }
+    }
+    if errors.is_empty() { Ok(()) } else { Err(errors) }
 }
 
 #[cfg(test)]
@@ -3396,6 +3508,95 @@ field u current m/s alt_offset=0 alt_min_offset=0 alt_max_offset=2.5\n";
 
         let medium_slot = content.replace("field absorption_db", "medium absorption_db");
         assert!(parse_source_blocks(&medium_slot).is_err());
+    }
+
+    #[test]
+    fn source_blocks_accept_five_part_time_without_century_guess() {
+        let content = concat!(
+            "url https://example.org/ndbc/51003.txt\n",
+            "terms PD-USGov https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=19.5 lon=-155.6 alt_ref=0 datum=sea_surface",
+            " time_parts=YY,MM,DD,hh,mm time_scale=UTC\n",
+            "field WSPD wind_speed m/s alt_offset=4.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("five-part time parses");
+        let parts = blocks[0].time_parts.as_ref().expect("time_parts");
+        assert_eq!(
+            parts,
+            &vec![
+                "YY".to_string(),
+                "MM".to_string(),
+                "DD".to_string(),
+                "hh".to_string(),
+                "mm".to_string(),
+            ]
+        );
+        assert!(blocks[0].time.is_none());
+        assert!(blocks[0].time_key.is_none());
+
+        let short = content.replace("YY,MM,DD,hh,mm", "YY,MM,DD,hh");
+        assert!(parse_source_blocks(&short).is_err());
+        let two_forms = content.replace("time_scale=UTC", "time_scale=UTC time_key=timestamp");
+        assert!(parse_source_blocks(&two_forms).is_err());
+
+        let dart = content.replace("YY,MM,DD,hh,mm", "YY,MM,DD,hh,mm,ss");
+        let blocks = parse_source_blocks(&dart).expect("DART seconds are explicit");
+        assert_eq!(blocks[0].time_parts.as_ref().map(Vec::len), Some(6));
+    }
+
+    #[test]
+    fn source_blocks_allow_one_url_with_two_datums() {
+        let content = concat!(
+            "url https://example.org/mixed\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=msl",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field air air C alt_offset=2.0\n",
+            "url https://example.org/mixed\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field water water C alt_offset=0.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("same URL may carry two datums");
+        assert_eq!(blocks.len(), 2);
+        assert_eq!(blocks[0].url, blocks[1].url);
+        assert_eq!(blocks[0].datum, "msl");
+        assert_eq!(blocks[1].datum, "sea_surface");
+        assert_ne!(blocks[0].fields[0].key, blocks[1].fields[0].key);
+        assert!(validate_source_blocks(&blocks).is_ok());
+
+        let ambiguous = content.replace("field water water", "field air air");
+        let blocks = parse_source_blocks(&ambiguous).expect("duplicate keys parse, then fail validation");
+        assert!(validate_source_blocks(&blocks).is_err());
+    }
+
+    #[test]
+    fn source_blocks_keep_block_datum_and_signed_layer_offsets() {
+        let content = concat!(
+            "url https://example.org/water\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field water water C alt_offset=-0.6 alt_min_offset=-2.5 alt_max_offset=0.0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("signed layer parses");
+        assert!(validate_source_blocks(&blocks).is_ok());
+
+        let flat = content.replace("alt_min_offset=-2.5 alt_max_offset=0.0", "alt_min_offset=0 alt_max_offset=0");
+        assert!(parse_source_blocks(&flat).is_err());
+
+        let mut blocks = blocks;
+        blocks[0].fields[0].alt_min_offset = Some(0.0);
+        blocks[0].fields[0].alt_max_offset = Some(0.0);
+        assert!(validate_source_blocks(&blocks).is_err());
+
+        let field_datum = content.replace("alt_offset=-0.6", "alt_offset=-0.6 datum=msl");
+        assert!(parse_source_blocks(&field_datum).is_err());
     }
 
     #[test]

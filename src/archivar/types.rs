@@ -659,6 +659,7 @@ pub struct SourceBlock {
     pub datum: String,
     pub time: Option<String>,
     pub time_key: Option<String>,
+    pub time_parts: Option<Vec<String>>,
     pub time_scale: String,
     pub fields: Vec<SourceField>,
 }
