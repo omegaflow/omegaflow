@@ -3083,9 +3083,349 @@ fn interaction_or_role<'a>(
     }
 }
 
+struct SourceBlockBuilder {
+    url: Option<String>,
+    terms: Option<String>,
+    origin: Option<String>,
+    ttl: Option<u64>,
+    position: Option<SourcePosition>,
+    alt_ref: Option<f64>,
+    alt_key: Option<String>,
+    datum: Option<String>,
+    time: Option<String>,
+    time_key: Option<String>,
+    time_scale: Option<String>,
+    fields: Vec<SourceField>,
+}
+
+fn finish_source_block(
+    builder: SourceBlockBuilder,
+    line: usize,
+) -> Result<SourceBlock, String> {
+    let url = builder.url.ok_or_else(|| format!("line {line}: url absent"))?;
+    let terms = builder.terms.ok_or_else(|| format!("line {line}: terms absent"))?;
+    let ttl = builder.ttl.ok_or_else(|| format!("line {line}: ttl absent"))?;
+    if ttl == 0 {
+        return Err(format!("line {line}: ttl must be positive"));
+    }
+    let position = builder
+        .position
+        .ok_or_else(|| format!("line {line}: block position absent"))?;
+    if let SourcePosition::Fixed { lat, lon } = &position
+        && (!(-90.0..=90.0).contains(lat) || !(-180.0..=360.0).contains(lon))
+    {
+        return Err(format!("line {line}: lat/lon outside range"));
+    }
+    if builder.alt_ref.is_some() == builder.alt_key.is_some() {
+        return Err(format!("line {line}: exactly one of alt_ref/alt_key required"));
+    }
+    if builder.time.is_some() == builder.time_key.is_some() {
+        return Err(format!("line {line}: exactly one of time/time_key required"));
+    }
+    if matches!(&position, SourcePosition::Moving { .. })
+        && (builder.alt_key.is_none() || builder.time_key.is_none())
+    {
+        return Err(format!(
+            "line {line}: moving block needs alt_key and time_key"
+        ));
+    }
+    let datum = builder.datum.ok_or_else(|| format!("line {line}: datum absent"))?;
+    let time_scale = builder
+        .time_scale
+        .ok_or_else(|| format!("line {line}: time_scale absent"))?;
+    if builder.fields.is_empty() {
+        return Err(format!("line {line}: fields absent"));
+    }
+    Ok(SourceBlock {
+        url,
+        terms,
+        origin: builder.origin,
+        ttl,
+        position,
+        alt_ref: builder.alt_ref,
+        alt_key: builder.alt_key,
+        datum,
+        time: builder.time,
+        time_key: builder.time_key,
+        time_scale,
+        fields: builder.fields,
+    })
+}
+
+pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
+    let mut out = Vec::new();
+    let mut current: Option<SourceBlockBuilder> = None;
+    for (index, raw) in content.lines().enumerate() {
+        let line = raw.split('#').next().unwrap_or("").trim();
+        if line.is_empty() {
+            continue;
+        }
+        let line_no = index + 1;
+        let parts: Vec<&str> = line.split_whitespace().collect();
+        let head = parts.first().copied().unwrap_or("");
+        if head == "url" {
+            if let Some(builder) = current.take() {
+                out.push(finish_source_block(builder, line_no - 1)?);
+            }
+            if parts.len() != 2 {
+                return Err(format!("line {line_no}: url needs one value"));
+            }
+            current = Some(SourceBlockBuilder {
+                url: Some(parts[1].to_string()),
+                terms: None,
+                origin: None,
+                ttl: None,
+                position: None,
+                alt_ref: None,
+                alt_key: None,
+                datum: None,
+                time: None,
+                time_key: None,
+                time_scale: None,
+                fields: Vec::new(),
+            });
+            continue;
+        }
+        let Some(builder) = current.as_mut() else {
+            return Err(format!("line {line_no}: {head} outside a source block"));
+        };
+        match head {
+            "terms" if parts.len() >= 2 => builder.terms = Some(parts[1..].join(" ")),
+            "origin" if parts.len() == 2 => builder.origin = Some(parts[1].to_string()),
+            "ttl" if parts.len() == 2 => {
+                builder.ttl = Some(
+                    parts[1]
+                        .parse::<u64>()
+                        .map_err(|_| format!("line {line_no}: ttl unreadable"))?,
+                );
+            }
+            "on" if parts.len() >= 2 => {
+                if parts[1].contains('=') {
+                    return Err(format!("line {line_no}: on needs a body before attributes"));
+                }
+                let mut lat = None;
+                let mut lon = None;
+                let mut alt_ref = None;
+                let mut alt_key = None;
+                let mut datum = None;
+                let mut time = None;
+                let mut time_key = None;
+                let mut time_scale = None;
+                let mut has_frame = false;
+                for token in &parts[2..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!("line {line_no}: on token {token} carries no key=value"));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: on attribute {key} is empty"));
+                    }
+                    match key {
+                        "lat" => lat = value.parse::<f64>().ok(),
+                        "lon" => lon = value.parse::<f64>().ok(),
+                        "alt_ref" => alt_ref = value.parse::<f64>().ok(),
+                        "alt_key" => alt_key = Some(value.to_string()),
+                        "datum" => datum = Some(value.to_string()),
+                        "time" => time = Some(value.to_string()),
+                        "time_key" => time_key = Some(value.to_string()),
+                        "time_scale" => time_scale = Some(value.to_string()),
+                        "frame" => has_frame = true,
+                        _ => return Err(format!("line {line_no}: unknown on attribute {key}")),
+                    }
+                }
+                if !has_frame {
+                    return Err(format!("line {line_no}: on needs frame="));
+                }
+                if let (Some(lat), Some(lon)) = (lat, lon) {
+                    builder.position = Some(SourcePosition::Fixed { lat, lon });
+                }
+                builder.alt_ref = alt_ref;
+                builder.alt_key = alt_key;
+                builder.datum = datum;
+                builder.time = time;
+                builder.time_key = time_key;
+                builder.time_scale = time_scale;
+            }
+            "query" | "track" if parts.len() >= 2 => {
+                if parts[1].contains('=') {
+                    return Err(format!("line {line_no}: {head} needs a body before attributes"));
+                }
+                let mut lat_key = None;
+                let mut lon_key = None;
+                let mut alt_key = None;
+                let mut time_key = None;
+                let mut datum = None;
+                let mut time_scale = None;
+                let mut has_frame = false;
+                for token in &parts[2..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!("line {line_no}: {head} token {token} carries no key=value"));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: {head} attribute {key} is empty"));
+                    }
+                    match key {
+                        "lat_key" => lat_key = Some(value.to_string()),
+                        "lon_key" => lon_key = Some(value.to_string()),
+                        "alt_key" => alt_key = Some(value.to_string()),
+                        "time_key" => time_key = Some(value.to_string()),
+                        "datum" => datum = Some(value.to_string()),
+                        "time_scale" => time_scale = Some(value.to_string()),
+                        "frame" => has_frame = true,
+                        _ => return Err(format!("line {line_no}: unknown {head} attribute {key}")),
+                    }
+                }
+                if !has_frame {
+                    return Err(format!("line {line_no}: {head} needs frame="));
+                }
+                let (Some(lat_key), Some(lon_key), Some(alt_key), Some(time_key)) =
+                    (lat_key, lon_key, alt_key, time_key)
+                else {
+                    return Err(format!(
+                        "line {line_no}: {head} needs lat_key, lon_key, alt_key and time_key"
+                    ));
+                };
+                builder.position = Some(SourcePosition::Moving { lat_key, lon_key });
+                builder.alt_key = Some(alt_key);
+                builder.time_key = Some(time_key);
+                builder.datum = datum;
+                builder.time_scale = time_scale;
+            }
+            "field" if parts.len() >= 5 => {
+                let key = parts[1].to_string();
+                let name = parts[2].to_string();
+                let unit = parts[3].to_string();
+                let mut alt_offset = None;
+                let mut alt_min_offset = None;
+                let mut alt_max_offset = None;
+                for token in &parts[4..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!("line {line_no}: field token {token} carries no key=value"));
+                    };
+                    let parsed = value
+                        .parse::<f64>()
+                        .ok()
+                        .filter(|v| v.is_finite());
+                    match key {
+                        "alt_offset" => alt_offset = parsed,
+                        "alt_min_offset" => alt_min_offset = parsed,
+                        "alt_max_offset" => alt_max_offset = parsed,
+                        _ => return Err(format!("line {line_no}: unknown field attribute {key}")),
+                    }
+                }
+                let alt_offset =
+                    alt_offset.ok_or_else(|| format!("line {line_no}: alt_offset absent"))?;
+                if alt_min_offset.is_some() != alt_max_offset.is_some() {
+                    return Err(format!(
+                        "line {line_no}: layer needs both alt_min_offset and alt_max_offset"
+                    ));
+                }
+                if let (Some(min), Some(max)) = (alt_min_offset, alt_max_offset)
+                    && min > max
+                {
+                    return Err(format!("line {line_no}: layer min exceeds max"));
+                }
+                builder.fields.push(SourceField {
+                    key,
+                    name,
+                    unit,
+                    alt_offset,
+                    alt_min_offset,
+                    alt_max_offset,
+                });
+            }
+            _ => return Err(format!("line {line_no}: unread source directive {head}")),
+        }
+    }
+    if let Some(builder) = current {
+        out.push(finish_source_block(builder, content.lines().count())?);
+    }
+    Ok(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn source_blocks_require_reference_and_field_offset() {
+        let content = "url https://example.org/ndbc/51003.txt\n\
+terms PD-USGov https://example.org/terms\n\
+ttl 60\n\
+on earth frame=body lat=19.5 lon=-155.6 alt_ref=0 datum=sea_surface time=2026-10-22T00:00:00Z time_scale=UTC\n\
+field WSPD wind_speed m/s alt_offset=4.0\n\
+field WTMP water_temp C alt_offset=-0.6\n";
+        let blocks = parse_source_blocks(content).expect("source block parses");
+        assert_eq!(blocks.len(), 1);
+        assert_eq!(blocks[0].fields.len(), 2);
+        assert_eq!(blocks[0].fields[0].alt_offset, 4.0);
+        assert_eq!(blocks[0].fields[1].alt_offset, -0.6);
+
+        let missing_offset = content.replace(" alt_offset=4.0", "");
+        assert!(parse_source_blocks(&missing_offset).is_err());
+    }
+
+    #[test]
+    fn source_blocks_accept_layer_offsets_and_refuse_nominal_midpoint() {
+        let layer = "url https://example.org/hfradar\n\
+terms CC-BY-4.0 https://example.org/terms\n\
+ttl 60\n\
+on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface time=2026-10-22T00:00:00Z time_scale=UTC\n\
+field u current m/s alt_offset=0 alt_min_offset=0 alt_max_offset=2.5\n";
+        let blocks = parse_source_blocks(layer).expect("layer parses");
+        assert_eq!(blocks[0].fields[0].alt_min_offset, Some(0.0));
+        assert_eq!(blocks[0].fields[0].alt_max_offset, Some(2.5));
+
+        let partial = layer.replace(" alt_max_offset=2.5", "");
+        assert!(parse_source_blocks(&partial).is_err());
+        let pending = layer.replace("alt_offset=0", "alt_offset=pending");
+        assert!(parse_source_blocks(&pending).is_err());
+    }
+
+    #[test]
+    fn published_absorption_is_a_field_not_a_medium_slot() {
+        let content = concat!(
+            "url https://example.org/riometer\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=msl time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field absorption_db absorption dB alt_offset=0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("published absorption is a field");
+        assert_eq!(blocks[0].fields[0].key, "absorption_db");
+        assert_eq!(blocks[0].fields[0].unit, "dB");
+
+        let medium_slot = content.replace("field absorption_db", "medium absorption_db");
+        assert!(parse_source_blocks(&medium_slot).is_err());
+    }
+
+    #[test]
+    fn source_blocks_accept_moving_platform_keys() {
+        let content = concat!(
+            "url https://example.org/track\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "query earth frame=body lat_key=lat lon_key=lon alt_key=height time_key=t datum=ellipsoid time_scale=UTC\n",
+            "field u current m/s alt_offset=0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("moving block parses");
+        assert!(matches!(
+            &blocks[0].position,
+            SourcePosition::Moving { lat_key, lon_key }
+                if lat_key == "lat" && lon_key == "lon"
+        ));
+        assert_eq!(blocks[0].alt_key.as_deref(), Some("height"));
+        assert_eq!(blocks[0].time_key.as_deref(), Some("t"));
+    }
+
+    #[test]
+    fn source_blocks_refuse_two_reference_forms() {
+        let content = "url https://example.org/x\n\
+terms CC-BY-4.0 https://example.org/terms\n\
+ttl 60\n\
+on earth frame=body lat=1 lon=2 alt_ref=0 alt_key=height datum=msl time=epoch time_key=t time_scale=UTC\n\
+field u u m/s alt_offset=0\n";
+        assert!(parse_source_blocks(content).is_err());
+    }
     use crate::mathematikerin::channel::{CouplingKind, DensityKind};
 
     fn shard(url: &str, format: &str) -> SourceConfig {

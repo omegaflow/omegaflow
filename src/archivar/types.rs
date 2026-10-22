@@ -631,6 +631,38 @@ pub struct ModelHead {
     pub max_degree: u32,
 }
 
+#[derive(Clone, Debug, PartialEq)]
+pub struct SourceField {
+    pub key: String,
+    pub name: String,
+    pub unit: String,
+    pub alt_offset: f64,
+    pub alt_min_offset: Option<f64>,
+    pub alt_max_offset: Option<f64>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum SourcePosition {
+    Fixed { lat: f64, lon: f64 },
+    Moving { lat_key: String, lon_key: String },
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct SourceBlock {
+    pub url: String,
+    pub terms: String,
+    pub origin: Option<String>,
+    pub ttl: u64,
+    pub position: SourcePosition,
+    pub alt_ref: Option<f64>,
+    pub alt_key: Option<String>,
+    pub datum: String,
+    pub time: Option<String>,
+    pub time_key: Option<String>,
+    pub time_scale: String,
+    pub fields: Vec<SourceField>,
+}
+
 #[derive(Clone)]
 pub struct SourceConfig {
     pub ttl: u64,
