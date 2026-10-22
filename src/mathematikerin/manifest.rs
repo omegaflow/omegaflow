@@ -1,6 +1,14 @@
 use crate::archivar::kernel_id_of;
 use std::collections::BTreeSet;
 
+pub const MANIFEST_PATH: &str = "src/mathematikerin/manifest.phi";
+
+pub fn load_manifest(path: &str) -> Result<Vec<ManifestConfig>, String> {
+    let content = std::fs::read_to_string(path)
+        .map_err(|error| format!("{path}: manifest unreadable: {error}"))?;
+    parse_manifest(&content)
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ManifestTauSource {
     Measured,

@@ -1,0 +1,3 @@
+# Membrane manifest: chosen field manifestation, not source data.
+# No entry means: data-only source, not rendered.
+# Entries are added only when a field is actually manifested.
