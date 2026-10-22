@@ -5,7 +5,7 @@
   sha256: 1db738ab5840b204edeb1d0626457bb4f83e87ebd210bc8f073f1b35f9e7a6fd
   fam-round-machine: pre-fix (verdict fam-governed, value unprinted)
   status: live
-  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/der-kausalpfeil.md docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
+  see-also: kybernetische-astrophysik der-kausalpfeil docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
 # The signal cone audit — the light cone carries no violation (Nadel Ⅶ)
 

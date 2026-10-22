@@ -4,7 +4,7 @@
   date: 2026-09-12
   sha256: 3cdbb22c8db1eacae43be11e4d33e5a0ec8c1bb5e69ff3499837637f6d66bbc4
   status: live
-  see-also: docs/concepts/die-akteure-im-boden-und-wasser.md
+  see-also: die-akteure-im-boden-und-wasser
 -->
 # The echo depth — pP/sP depth phases across a 16-event fleet
 

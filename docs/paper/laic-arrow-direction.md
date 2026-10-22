@@ -5,7 +5,7 @@
   version: 4
   sha256: 7b426162bba7957c8a61ad2105885a6a4dfb60e00576a71d3c2d37bcccfdea02
   status: live
-  see-also: docs/concepts/blatt-papier-resultat.md
+  see-also: blatt-papier-resultat
 -->
 # The Blatt: the direction of lithosphere-atmosphere-ionosphere coupling
 

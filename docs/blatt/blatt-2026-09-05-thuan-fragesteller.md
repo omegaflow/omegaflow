@@ -4,7 +4,7 @@
   date: 2026-09-05
   sha256: 3ef0171997e04dd17aa17cb26cf4e01323a74729cea399c5c83dd3575e91e240
   status: live
-  see-also: docs/concepts/kybernetische-astrophysik.md docs/concepts/ein-blatt-axiom.md docs/paper/signal-cone-audit-sheet.md docs/paper/probe-front-dark-matter.md docs/auftrag/archiv/auftrag-gaia-dr4-iapetus.md
+  see-also: kybernetische-astrophysik ein-blatt-axiom docs/paper/signal-cone-audit-sheet.md docs/paper/probe-front-dark-matter.md docs/auftrag/archiv/auftrag-gaia-dr4-iapetus.md
 -->
 # BLATT — Trịnh Xuân Thuận als Fragesteller: Screening seiner fünf Fragen
 

@@ -5,7 +5,7 @@
   sha256: 0a5f2c7860eb2f35584e4233dbbd0284831a329058a0dc34278dc220bfd40914
   fam-machine: pre-fix
   status: live
-  see-also: docs/paper/dark-flow-sheet-8.md docs/concepts/ein-blatt-axiom.md
+  see-also: docs/paper/dark-flow-sheet-8.md ein-blatt-axiom
 -->
 # The Big Bang Echo (Nadel Ⅻ) — does the seed carry the structure?
 

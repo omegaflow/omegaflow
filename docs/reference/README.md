@@ -2,13 +2,13 @@
   title: Reference
   class: ref
   date: 2026-09-03
-  sha256: 90adb999f6d3c4486ffdc1f70e19fbdcf93a44699d50d5ed701c0a4ba461d437
+  sha256: 403a6e4e315ab77d0db6e55875121cfa45ea36129f31c2478633ceb311b3235c
   status: live
 -->
 # Reference
 
 Externes Referenzmaterial im nativen Format (kein Header). Interne
-omegaflow-Specs liegen unter `docs/concepts/` (`binary-protocol.md`,
+omegaflow-Specs liegen unter `research/concepts/` (`binary-protocol.md`,
 `force-system.md`, `constants.md`, `time.md`, `url-templates.md`,
 `broken-null-control.md`, `te-literatur-matrix.md`,
 `gpu-watchdog-device-loss.md`); der generierte Kernel-Index unter

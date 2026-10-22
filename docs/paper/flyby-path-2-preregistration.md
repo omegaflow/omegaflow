@@ -4,7 +4,7 @@
   date: 2026-08-22
   sha256: 0ed15f81d839c5710954e803354d4d29aa2f48b94c803094ea4ca1887a327002
   status: live
-  see-also: docs/paper/flyby-path-1-cold-cases.md docs/concepts/der-paradigmenwechsel.md docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
+  see-also: docs/paper/flyby-path-1-cold-cases.md der-paradigmenwechsel docs/handover/archiv/handover-2026-09-09-mechanische-reste.md
 -->
 # The flyby proof, Path 2 — the pre-registration (Operation Ⅵ)
 

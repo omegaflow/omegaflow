@@ -4,7 +4,7 @@
   date: 2026-09-09
   sha256: 1d5930f9b77ca016b262b6eca75c41c912f84972fa95be96a39981d2b2a31a9a
   status: live
-  see-also: docs/concepts/die-weberin.md docs/blatt/blatt-der-grat.md docs/concepts/ein-blatt-axiom.md
+  see-also: die-weberin docs/blatt/blatt-der-grat.md ein-blatt-axiom
 -->
 # BLATT — Das H₀-Linien-Register: Wurzeln statt Zeugen
 

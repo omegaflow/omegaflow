@@ -5,7 +5,7 @@
   sha256: 5d79ff5bbb4cf6fefca786b9e0db147fbb01c8ec684665595906e18fd2fd7a95
   fam-machine: pre-fix
   status: live
-  see-also: docs/concepts/ein-blatt-axiom.md docs/concepts/kybernetische-astrophysik.md
+  see-also: ein-blatt-axiom kybernetische-astrophysik
 -->
 # The Dark Flow (Nadel Ⅷ) — does the local universe move coherently?
 

@@ -4,7 +4,7 @@
   date: 2026-10-01
   sha256: 5dc0fdfdfaf0ec4ff4e936974206d4ea98e7e078e3946b60f23c0cbf1b2e614a
   status: unsealed
-  see-also: docs/paper/gic-causal-driver.md docs/specs/broken-null-control.md
+  see-also: docs/paper/gic-causal-driver.md broken-null-control
 -->
 # FRÜHWARNSYSTEM — Präregistrierung der Vorhersage-Zelle
 

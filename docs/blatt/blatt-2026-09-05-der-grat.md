@@ -4,7 +4,7 @@
   date: 2026-09-05
   sha256: d7b28783e0ac3d71ffebdcde4bce8b70ed3554a89b211b7cd454165f3da01a33
   status: live
-  see-also: docs/auftrag/archiv/auftrag-der-grat.md docs/blatt/blatt-thuan-fragesteller.md docs/concepts/ein-blatt-axiom.md
+  see-also: docs/auftrag/archiv/auftrag-der-grat.md docs/blatt/blatt-thuan-fragesteller.md ein-blatt-axiom
 -->
 # BLATT — Der Grat: Zufall/Notwendigkeit-Bilanz über 10 Systeme
 

@@ -2,7 +2,7 @@
   title: Source-Port: Der eine Pfad
   class: concept
   date: 2026-10-11
-  sha256: 65248a72eb00bf8bcedbcb346a5893150be520dbc95290d4c5d1f99c20e57e83
+  sha256: dc49a96420a9905bed018be9ad8b259f03c4d77e1e2f8ab129210fe8d23e5d8b
   status: live
   see-also: docs/README.md AGENTS.md phi/sources.φ
 -->
@@ -41,7 +41,7 @@ kein weiteres.
 | `src/archivar/testdata/` | Test-Fixtures (8 Verzeichnisse: twomass, ncei_ssi, ncei_goes_xrs, noaa_goes16, noaa_gk2a, noaa_wod, cosmic_wetprf, celestrak_eop). |
 | `tools/harvest/data/` | Werkzeug-Eingaben: `asteroid/` (gm + diameters), `nrs_stations.φ`, `dust-maske.φ`. |
 | `tools/register/data/bands.φ` · `tools/measure/data/scan_coverage.φ` · `tools/utils/data/library.φ` | Werkzeug-Eingaben je Konsument. |
-| `docs/specs/sources-v2-spec.md` | Die Kontroll-Spec (Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln). |
+| `sources-v2-spec` | Die Kontroll-Spec (Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln). |
 | `archive-root/` | Externes Archiv (Legacy): `handover/`, `bundles/`, `concept-history/`, `omegaflow-legacy/`, `omegaflow-legacy-backup-2026-09-02/`, `vanilla-dateidocs/`, `commit_rewrite-2026-09-06/`. |
 
 **Descoped (2026-10-11, am Datenträger absent):** `phi/pipeline/queue/`,
@@ -157,17 +157,17 @@ dist/dist_scale/z`.
 
 | Dokument | Rolle | Status |
 |----------|-------|--------|
-| `docs/specs/sources-v2-spec.md` | Kanonische Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln | bindend |
-| `docs/specs/force-system.md` | 9 Kraftkanäle, IDs, Ausbreitungsgeschwindigkeiten | bindend |
-| `docs/specs/url-templates.md` | Template-Variablen (Spatial/Temporal) | bindend |
-| `docs/specs/constants.md` | Φ, c, Konstanten | bindend |
-| `docs/specs/time.md` | Zeit-/Epoch-Handling | nachschlagen |
-| `docs/specs/si-units.md` | Force-Unit-Matrix (SUPERSEDED als Kontrolle, physische Referenz) | nachschlagen |
+| `sources-v2-spec` | Kanonische Grammatik, τ-Gate, Force-Unit-Registry, File-Regeln | bindend |
+| `force-system` | 9 Kraftkanäle, IDs, Ausbreitungsgeschwindigkeiten | bindend |
+| `url-templates` | Template-Variablen (Spatial/Temporal) | bindend |
+| `constants` | Φ, c, Konstanten | bindend |
+| `time` | Zeit-/Epoch-Handling | nachschlagen |
+| `si-units` | Force-Unit-Matrix (SUPERSEDED als Kontrolle, physische Referenz) | nachschlagen |
 | `docs/reference/NIST_SP330_tables.md`, `NIST_SP811_units.md`, `ucum-essence.xml` | Unit-Identität (BIPM/UCUM) | nachschlagen |
-| `docs/concepts/parser-magic.md` | Parser-Intelligenz + offene Lücken (P05/P07/P08) | nachschlagen |
+| `parser-magic` | Parser-Intelligenz + offene Lücken (P05/P07/P08) | nachschlagen |
 | `docs/reference/naif_body_ids.tsv` | Bodynamen für Frames | nachschlagen |
-| `docs/specs/domain-coverage.md` | Host-Manifest der Grind-Wellen | nachschlagen |
-| `docs/specs/parser-evaluation-matrix.md` | 4-Token-Behauptung (widerspricht P01) | SUPERSEDED |
+| `domain-coverage` | Host-Manifest der Grind-Wellen | nachschlagen |
+| `parser-evaluation-matrix` | 4-Token-Behauptung (widerspricht P01) | SUPERSEDED |
 
 ## 8. Oszillator-Gate + τ + Klassifikation
 
@@ -203,7 +203,7 @@ geschrieben — die drei Dispositions-Register sind 2026-10-11 entfernt.
 
 **Weberin-Eignung — die vierte Prüfung (Operator-Wort 2026-10-02).** Nach
 `force`/τ/Klassifikation wird jede Quelle zusätzlich auf die *komplette*
-Weberin-Eignung geprüft (`docs/concepts/die-weberin.md` §3/§4/§8). Vier Punkte,
+Weberin-Eignung geprüft (`die-weberin` §3/§4/§8). Vier Punkte,
 je benannt, vor jedem `url`/`compiler`-Eintrag:
 
 1. **Linien-/Zeugen-Art** — trägt die Quelle eine physikalische Kraft oder einen
@@ -325,7 +325,7 @@ Recherche-Stand nennt (Alternativen geprüft, Fund: keine).
   `lat/lon/alt/epoch`, `field/field_in/…` → 9-Token-`field`, `last_row`→`lastrow`
   usw. **Er fiel**: `source`, `method`, `body` (POST), `pos`, unbekannte
   Direktiven. Die Grammatik-Fakten der 9-Token-`field`-Form bleiben lebend und
-  stehen in §6 + `docs/specs/sources-v2-spec.md`; der Konverter-Pfad selbst ist
+  stehen in §6 + `sources-v2-spec`; der Konverter-Pfad selbst ist
   absent.
 - **Session 2026-08-19 — Teleskop-Endpoints (Wayback + curl verifiziert,
   volle Log §13):** `nhsa.esac.esa.int` tot → Herschel-Archiv lebt unter

@@ -4,7 +4,7 @@
   date: 2026-09-12
   sha256: 2afc99841934869d49f9afb50ef945ef36505d0b388e8564de0a310642436a1a
   status: live
-  see-also: docs/specs/broken-null-control.md
+  see-also: broken-null-control
 -->
 # Broken null control — the phase-randomized surrogate gate
 

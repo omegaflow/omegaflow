@@ -5,7 +5,7 @@
   sha256: 7cf6f41894a6dbc64a218019ed524c66ef2c9a1adb91ff9819e115d179c3cb0f
   fam-machine: post-fix
   status: live
-  see-also: docs/specs/broken-null-control.md
+  see-also: broken-null-control
 -->
 
 # The directional driver of geomagnetically induced currents

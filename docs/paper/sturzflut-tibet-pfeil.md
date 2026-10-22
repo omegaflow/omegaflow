@@ -4,7 +4,7 @@
   date: 2026-08-27
   sha256: cf7195a2dbeadc75a8ef19f2d3f3d958a49482cb822989b965294b37374893db
   status: pending
-  see-also: docs/concepts/der-kausalpfeil.md docs/specs/livefeed-gate.md
+  see-also: der-kausalpfeil livefeed-gate
 -->
 
 # BLATT PAPIER — Kausalpfeil der Sturzflut in Tibet

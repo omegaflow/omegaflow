@@ -4,7 +4,7 @@
   date: 2026-10-02
   sha256: a6b7d13c0a7b212049fe67d3a1beaa0451f00dc8ed4cbdb2f6557925c61a3062
   status: live
-  see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-1-cold-cases.md docs/concepts/der-paradigmenwechsel.md docs/concepts/blatt-papier-resultat.md
+  see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-1-cold-cases.md der-paradigmenwechsel blatt-papier-resultat
 -->
 # The flyby proof, Path 2 — the falsification metric (addendum)
 

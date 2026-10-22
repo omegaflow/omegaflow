@@ -6,7 +6,7 @@
   sha256: cbf24039218de72ca028b5d1d82291a288648cef1903efd781addf3fd6ae5afa
   fam-machine: pre-fix (EVE-2011); AIA-2014 fam post-fix; EVE bandwidth cross-check (h×0.5–3.0) 2026-09-05; AIA three-year matrix (2013/14/15) post-fix; conditional measurement (GOES/335/94 confounders, lag-aware residual null) 2026-09-07; full 5-confounder conditioning (all bands, binned vs ksg) 2026-09-16
   status: live
-  see-also: docs/surveys/survey-ein-blatt-korona-heizung.md docs/specs/broken-null-control.md
+  see-also: docs/surveys/survey-ein-blatt-korona-heizung.md broken-null-control
 -->
 
 # The energy ladder of the corona: transfer entropy across eleven lines

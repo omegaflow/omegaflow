@@ -44,9 +44,9 @@ Or open [omegaflow.space/membrane.html](https://omegaflow.space/membrane.html) i
 
 ## Documentation
 
-- [`docs/concepts/archivar-mathematikerin.md`](docs/concepts/archivar-mathematikerin.md) — the wire/GPU/force data contract
-- [`docs/concepts/kybernetische-astrophysik.md`](docs/concepts/kybernetische-astrophysik.md) — the physics
-- [`docs/concepts/kybernaut-native-methodology.md`](docs/concepts/kybernaut-native-methodology.md) — the method
+- `docs/concepts/archivar-mathematikerin.md` — the wire/GPU/force data contract
+- `docs/concepts/kybernetische-astrophysik.md` — the physics
+- `docs/concepts/kybernaut-native-methodology.md` — the method
 - [`docs/paper/`](docs/paper/) — preregistrations and results
 
 ## License
