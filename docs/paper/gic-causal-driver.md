@@ -2,7 +2,7 @@
   title: The directional driver of geomagnetically induced currents
   class: paper
   date: 2026-10-01
-  sha256: 7cf6f41894a6dbc64a218019ed524c66ef2c9a1adb91ff9819e115d179c3cb0f
+  sha256: 221718763011337d0d4ed2570c88b60783ad5cc86dcbe3534983a4d43cf8085d
   fam-machine: post-fix
   status: live
   see-also: broken-null-control
@@ -513,7 +513,7 @@ on maxima inflates r; Kimi: n_eff < 72 through autocorrelation). Concretely:
   instants; lag and coincidence are not tested.
 - **The measurement chain is not independent**: the Mäntsälä GIC is a
   two-magnetometer difference (one over the pipeline and NUR), so NUR appears in
-  both channels; how strongly this drives r stays pending.
+  both channels; how strongly this drives r remains unmeasured.
 - **Not out-of-sample**: the 72 h window overlaps Juusola's fit window, so their
   coefficients are no independent test; and the 72 hourly values are not
   independent (a common storm envelope; log-normal; few hours dominate).
@@ -1236,14 +1236,14 @@ one-minute data (minute grain, https://services.swpc.noaa.gov/) and OMNI2
 https://cdaweb.gsfc.nasa.gov/); the ground magnetic field is INTERMAGNET
 one-minute X/Y/Z at Abisko and Sodankylä, served by the BGS GIN HAPI
 (https://imag-data.bgs.ac.uk/). The harvested working copies used here are
-archived in the omegaflow repository; a citable repository DOI is pending.
+archived in the omegaflow repository; a citable repository DOI is not yet assigned.
 
 ### Software Availability
 
 The instrument, probes and register live in the omegaflow repository
 (https://github.com/omegaflow/omegaflow; `src/mathematikerin/te.rs` — canonical
 scalar estimator, untouched; `tools/measure/src/bin/bz_retro_probe.rs`,
-`tools/measure/src/bin/bz_blatt_probe.rs`). A citable software DOI is pending.
+`tools/measure/src/bin/bz_blatt_probe.rs`). A citable software DOI is not yet assigned.
 All reported values are machine-measured. All bibliographic entries above were
 checked against the Crossref registry on 2026-08-22.
 

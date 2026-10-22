@@ -2,7 +2,7 @@
   title: No Arrow Beyond the Family Bound: Planet Nine limits in the Kuiper Belt
   class: paper
   date: 2026-08-22
-  sha256: e7a13bbccca80826d3f80386dcd6d2c65f9ed2b9bd7fca6b09b91adaabc1e07e
+  sha256: a11659927d7d253a6bc15e7cf55e41ec48d038f31b494f12373357fa46bf7f94
   fam-machine: pre-fix
   see-also: docs/surveys/survey-raetsel-bestand.md docs/handover/archiv/handover-2026-10-03-sensory-folge224.md
   status: live
@@ -64,7 +64,7 @@ classical 38 ≤ a ≤ 50 and e < 0.24; scattered e ≥ 0.3; ETNO a ≥ 250; rem
 `uebrig`. Counts: classical 2884, scattered 1666, übrig 662, 7:4 635, 3:2 614,
 5:3 212, 2:1 211, 5:2 137, ETNO 84, 4:3 75 — the family sum is 7180, the
 catalogue total (the `uebrig` remainder is a residual partition, and the
-count is exhaustive over the catalogue, not pending). The P9 selection
+count is exhaustive over the catalogue, not assumed). The P9 selection
 (a ≥ 250 AU, q = a(1−e) ≥ 30 AU) holds n = 44 objects.
 
 **2.2 Probe arcs.** Reconstructed cruise trajectories (Horizons state vectors,

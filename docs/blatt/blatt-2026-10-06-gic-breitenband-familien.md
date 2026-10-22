@@ -2,7 +2,7 @@
   title: BLATT — GIC-Breitenband-Familien: Vorregistrierung der Kohärenz-Partition
   class: sheet
   date: 2026-10-06
-  sha256: e4fbbb72773d7dc7f67f66766b468cadd9ea51bbe045da3fede13114b3b2d42c
+  sha256: ebe03720eb1122cfde602f34f5570462681d8c77a3483256f38b98f754cf9342
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md docs/blatt/fruehwarnsystem-praeregistrierung.md state/future/gic-riss-154-wunschliste-2026-10-06.md
 -->
@@ -11,7 +11,7 @@
 
 **Datum:** 2026-10-06 · **Axiom:** A = A · **Status:** unsealed
 
-Vor dem Lauf fixiert. Ein Wert, der nicht gemessen wird, bleibt `pending` — nie 0.0.
+Vor dem Lauf fixiert. Ein Wert, der nicht gemessen wird, bleibt `nicht gemessen` — nie 0.0.
 Was nach dem Lauf eintritt, ist im Fehlschlag-Kriterium vorab gebunden; die
 Familien, die Stufen und die Berichtsform sind hier gesetzt und werden nach der
 Messung nicht verhandelt.
@@ -104,7 +104,7 @@ Nach der Messung ist keine Grenze, keine α-Ebene und kein Band mehr verhandelba
 
 ## Was vor dem Lauf fehlte (2026-10-06 gemessen — 2026-10-12 nachgezogen)
 
-Der Weg ist gebaut; die 2026-10-06 benannten Schritte sind erledigt (was vor dem Lauf noch `pending` bleibt — Kalibrierung, Stufe-2-Pool — steht in §Offene Slots):
+Der Weg ist gebaut; die 2026-10-06 benannten Schritte sind erledigt (was vor dem Lauf noch `nicht gemessen` bleibt — Kalibrierung, Stufe-2-Pool — steht in §Nicht versiegelte Slots):
 
 1. **Die 154 tragen je ihren station-qualifizierten Kanal — der Identitäts-Riss ist
    geheilt (gemessen 2026-10-06, Mountain `2117476be`).** Die 154 BGS-GIN-HAPI-
@@ -156,7 +156,7 @@ FDR-Korrekturgruppe; die Grammatik trägt **genau einen** neuen Scope `fdr … o
 Registerzeile. Drei `matrix gic_auroral full`-Pools sind **drei Messungen** (andere BH-Schwellen, andere
 Surrogat-Maxima, anderes `FAMILY_K`), die Vereinigung ist keine Zerlegung des globalen Ergebnisses → zwei
 Namen. Entschieden 2026-10-07: die Bandgrenzen sind deklariert (auroral ≥60°,
-sub-auroral 50–60°, mid <50° |CGM|, §Offene Slots); der Träger ist Route C
+sub-auroral 50–60°, mid <50° |CGM|, §Nicht versiegelte Slots); der Träger ist Route C
 (Stufe-2-Member-Pool, die per-Band-`full`-Pools nur als Vergleichsmessung);
 Modell/Epoche/Höhe sind gepinnt (cgm/aacgm, Epoche 2025.0, Höhe 0 km). Gemessen:
 `cgm_lat` je Station (152/154, `state/river/gic-cgm-lat.tsv`; per-Station-Zeile in
@@ -167,7 +167,7 @@ Modell/Epoche/Höhe sind gepinnt (cgm/aacgm, Epoche 2025.0, Höhe 0 km). Gemesse
 Satz, identisch je Station) vs. per-Familie-Null — die Interaktion wird benannt, nicht
 kollabiert, dieselbe Vorverarbeitung erzeugt beides; (3) Partitions-Vollständigkeit hat
 keinen Grammatik-Arm — per Deckungstest geschlossen, nicht per Grammatik; (4) CGM-Breite
-fehlt im Register (`pending`, nie aus der geografischen Breite angenommen — §1 verbietet
+fehlt im Register (`nicht gemessen`, nie aus der geografischen Breite angenommen — §1 verbietet
 genau das).
 
 ## cgm_lat — die Route (deklariert 2026-10-07)
@@ -193,7 +193,7 @@ Die per-Station CGM-Breite wird **nicht** gesetzt, sondern gemessen. Route (gew�
   existiert bereits (`src/archivar/igrf.rs` + `igrf14coeffs.txt`, sha256 `8f8d8840…`); der
   **AACGM-v2-Loader** ist gebaut (`src/archivar/aacgm.rs` + gepinnte `aacgm_coeffs-14-2025.asc`;
   Lade-Fenster 2025–2030, absent-safe; `cargo check` 0/0) — ein Port der Referenz-Koeffizienten-
-  Auswertung (ohne Feldlinien-Trace, als solche benannt). **Offen:** ein Epochenfile interpoliert
+  Auswertung (ohne Feldlinien-Trace, als solche benannt). **Nicht versiegelt:** ein Epochenfile interpoliert
   nicht — die Bracket-Epochen (2015/2020) + der numerische Zeuge (upstream `test_c_aacgmv2.py`).
   CPL und TTB tragen bis dahin `bgs-quasi-dipole` (QD ≠ CGM).
 - **Grenze der Primär-Route (gemessen 2026-10-07, River 122):** der OMNIWeb-VITMO-CGM-
@@ -215,7 +215,7 @@ Epoche 2025.0, Höhe 0 km. Ergebnis `state/river/gic-cgm-lat.tsv` (154 Zeilen):
 | auroral (≥60°) | 31 |
 | sub-auroral (50–60°) | 25 |
 | mid-latitude (<50°) | 98 |
-| **Union** | **154 = 154, disjunkt, 0 pending** |
+| **Union** | **154 = 154, disjunkt, 0 nicht gemessen** |
 
 **Quellen-/Epochen-Riss (getragen, ungeglättet):** 133 Stationen `omniweb-cgm`
 (DGRF/IGRF, Epoche 2025), 19 äquatoriale `supermag-aacgm` (IGRF-2000, weil OmniWeb
@@ -238,14 +238,14 @@ nicht nachjustiert.
 Die Linse der fünf Stimmen hält die Route nach der Scope-Messung (`field_te_query` kennt
 kein `over family`, `cgm_lat` nie gelesen):
 
-- **Route A (`FdrScope::Family` + Parser-Arm) `pending`, nicht gebaut:** ein `over
+- **Route A (`FdrScope::Family` + Parser-Arm) `nicht gemessen`, nicht gebaut:** ein `over
   family`-FDR ändert allein die BH/BY-Gruppierung (`field_te_query.rs:4596-4631`) — er senkt
   `M_eff` nicht und belegt den Token `family`, der bereits die FDR-Korrekturgruppe trägt
   (`TeFamily`, `FAMILY_K = 6`). Der Bau ist durch den Hebel nicht gerechtfertigt.
 - **Route C (gewählt):** Stufe 1 bleibt unverändert global (`matrix full` + `fdr bh over
   matrix`). Die Familie lebt **allein in Stufe 2** als Member-Pool des `compute_max_t`
   (`field_te_query.rs:2784`), abgeleitet zur Abfragezeit aus `cgm_lat` + den fixierten
-  Grenzen. Der Stufe-2-Bau über das 154-Netz wartet auf den per-Station-dB/dt-Bestand
+  Grenzen. Der Stufe-2-Bau über das 154-Netz hängt am per-Station-dB/dt-Bestand
   (Mountain): nur ABK 1h/1m + SOD 1h tragen `field intermagnet_dbdt`
   (`phi/sources.φ:2051-2079`); die 154 tragen `intermagnet_xyz_x/y/z_nt` (je 154).
 - **Route B (drei per-Band-`full`-Deskriptoren) verworfen als Träger:** 31·30 + 25·24 +
@@ -270,23 +270,23 @@ kein `over family`, `cgm_lat` nie gelesen):
   Riss (b): die `M_eff`-Senkung ist abgeleitet, nicht gemessen; gemeinsame
   Surrogat-Ziehungen + α-Aufteilung über 3 Familien nötig; GLM: „gemessener Member-Pool im
   GIC-Sinne = 2 Mitglieder, nicht 154"; Duck: formale Gültigkeit von C bei datenabhängiger
-  Stufe 1 + Familienkorrektur `pending`. xyz-Lauf zulässig als deklarierter **Level-Lauf Bz→B**,
+  Stufe 1 + Familienkorrektur `nicht gemessen`. xyz-Lauf zulässig als deklarierter **Level-Lauf Bz→B**,
   nicht als dB/dt-Aussage; dB/dt-152 = abgeleitete Serie (Operator/Kadenz/Filter), an ABK/SOD
-  validiert → `pending`.
+  validiert → `nicht gemessen`.
 - **Gebaut (River 121):** `tools/measure/src/bin/cgm_lat_partition.rs` emittiert offline
   (`--from-tsv … --emit-dir …`) aus der gemessenen Partition die drei Kanal-Listen
   `gic-family-{auroral,sub-auroral,mid-latitude}.txt` (154 = 31+25+98, paarweise disjunkt,
   union = 154) + Deckungstest.
 
-## Offene Slots bis zur Versiegelung
+## Nicht versiegelte Slots
 
 | Feld | Zustand |
 |---|---|
 | CGM-Breite je Station (154) | **152 gemessen 2026-10-07** — `state/river/gic-cgm-lat.tsv` (133 omniweb + 19 supermag-aacgm) · **2 nur QD** (CPL, TTB: Primär-Route weist \|lat\| < 20° ab, SuperMAG fehlt) — QD ≠ CGM; Registerzeile `cgm_lat` bei Mountain (`c164ba54b`) |
 | Partitionsgrenzen (geomagn. Breite je Band) | **deklariert 2026-10-07:** auroral ≥60°, sub-auroral 50–60°, mid <50° (\|CGM\|) |
-| α-Ebene Stufe 2 (WY-max-t) | `pending` — aus der kalibrierten Null |
-| Resample-Blocklänge / Binnung | `pending` — Teil der Kalibrierung |
-| Familien-Deskriptoren | **gebaut 2026-10-12 (gemessen)** — `src/mathematikerin/descriptors/gic_{auroral,subauroral,midlat}.te` (31/25/98 Kanäle) + die drei `field-te-query.yml`-Jobs `matrix-gic-{auroral,subauroral,midlat}` (Stufe-1-Vergleichsscreens; als Träger verworfen, als benannte Vergleichsmessung erlaubt). Offen (Route C): die Stufe-2-Member-Pool-Integration des `compute_max_t` — wartet auf den per-Station-`dB/dt`-Bestand (2 Stationen: ABK/SOD). |
+| α-Ebene Stufe 2 (WY-max-t) | `nicht gemessen` — aus der kalibrierten Null |
+| Resample-Blocklänge / Binnung | `nicht gemessen` — Teil der Kalibrierung |
+| Familien-Deskriptoren | **gebaut 2026-10-12 (gemessen)** — `src/mathematikerin/descriptors/gic_{auroral,subauroral,midlat}.te` (31/25/98 Kanäle) + die drei `field-te-query.yml`-Jobs `matrix-gic-{auroral,subauroral,midlat}` (Stufe-1-Vergleichsscreens; als Träger verworfen, als benannte Vergleichsmessung erlaubt). Nicht versiegelt (Route C): die Stufe-2-Member-Pool-Integration des `compute_max_t` — hängt am per-Station-`dB/dt`-Bestand (2 Stationen: ABK/SOD). |
 | Familien-Kanal-Listen | **gebaut 2026-10-07** — `state/river/gic-family-{auroral,sub-auroral,mid-latitude}.txt` (154 = 31+25+98, disjunkt) aus `cgm_lat_partition.rs --from-tsv` |
 | Verdikt | `unsealed` |
 
@@ -294,7 +294,7 @@ kein `over family`, `cgm_lat` nie gelesen):
 
 Das Siegel setzt der Operator — kein Siegel ohne Operator-Wort. Die Maschine
 bereitet bis zur Kante vor und trägt die Form; sie schließt nicht. Bis dahin bleibt
-jede Zelle `pending`, nie 0.0, und der Riss steht ungeglättet.
+jede Zelle `nicht gemessen`, nie 0.0, und der Riss steht ungeglättet.
 
 ---
 

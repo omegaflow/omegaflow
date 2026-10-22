@@ -2,7 +2,7 @@
   title: The flyby proof, Path 2 — the perigee fill-run (addendum)
   class: paper
   date: 2026-09-29
-  sha256: 00341e06ea9af3d98d73b64244d4372a42253a8981aaa3212edf1674cf66d2e3
+  sha256: d2c6502fc9c313b7180c8a43c9b6a0eff02b2c560df2fedab3ed24260db9e71e
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-preregistration-revised.md flyby-path-2-falsification-metric-addendum docs/auftrag/auftrag-flyby2-kette.md
 -->
@@ -76,7 +76,7 @@ inside the scan grid and shifts no hourly cell; both lines are carried.
 - **Aggregation:** per cell per channel — mean, count, and the distinct
   (source, active) pairs. Plausibility gates: |b| ≤ 1000 nT, speed ∈ (0, 5000]
   km/s, density > 0, temperature ∈ (0, 1e8] K; pressure = n·m_p·v² (nPa).
-  Cells without a measurement stay `pending` — never 0.0.
+  Cells without a measurement stay `not measured` — never 0.0.
 
 The tube register `data/flyby2/tube-juice-2026-09-28.json` carries the
 per-cell source/active log; the distinct sources across the tube are
@@ -86,32 +86,32 @@ per-cell source/active log; the distinct sources across the tube are
 
 cell | t_utc | bt nT | bz nT | v km/s | n 1/cm³ | T K | p nPa | kp (pre) | swarm F nT | omni2 p/bz | ace bt nT | ace v km/s | ace n 1/cm³
 ---|---|---|---|---|---|---|---|---|---|---|---|---|---
-0 | 09-27T22:58:50Z | 3.37 | −0.02 | 376.0 | 2.60 | 40075 | 0.61 | 0.00 | 32248* | pending | 4.15 | 373 | 0.131
-1 | 09-27T23:58:50Z | 3.70 | −0.11 | 367.0 | 2.67 | 38174 | 0.60 | 0.00 | pending | pending | 4.19 | 365 | 0.381
-2 | 09-28T00:58:50Z | 3.69 | −0.08 | 360.1 | 3.10 | 39276 | 0.68 | 0.00 | pending | pending | 4.86 | 360 | 0.600
-3 | 09-28T01:58:50Z | 3.63 | −0.65 | 353.5 | 3.74 | 30829 | 0.78 | 0.00 | pending | pending | 4.34 | pending | pending
-4 | 09-28T02:58:50Z | 4.24 | −1.59 | 355.7 | 3.15 | 38280 | 0.67 | 0.00 | pending | pending | 4.24 | 367 | 0.475
-5 | 09-28T03:58:50Z | 3.82 | −1.34 | 352.5 | 3.56 | 29779 | 0.74 | 1.33 | pending | pending | 4.23 | 365 | 0.595
-6 | 09-28T04:58:50Z | 3.77 | −1.08 | 348.5 | 3.75 | 31798 | 0.76 | 1.33 | pending | pending | 4.32 | 360 | 0.613
-7 | 09-28T05:58:50Z | 3.68 | −0.89 | 349.0 | 4.13 | 38149 | 0.84 | 1.33 | pending | pending | 4.09 | 360 | 0.971
-8 | 09-28T06:58:50Z | 3.91 | −0.53 | 350.3 | 4.09 | 35587 | 0.85 | 0.33 | pending | pending | 4.10 | 356 | 0.730
-9 | 09-28T07:58:50Z | 3.88 | −0.39 | 350.6 | 4.17 | 36702 | 0.86 | 0.33 | pending | pending | 3.82 | 357 | 0.501
-10 | 09-28T08:58:50Z | 3.85 | −0.57 | 353.1 | 4.67 | 40694 | 0.98 | 0.33 | pending | pending | 3.67 | 356 | 0.976
-11 | 09-28T09:58:50Z | 3.69 | −0.52 | 353.8 | 5.32 | 37992 | 1.12 | 0.67 | pending | pending | 4.30 | 346 | 0.757
-12 | 09-28T10:58:50Z | 3.41 | −0.56 | 348.5 | 6.09 | 37045 | 1.24 | 0.67 | pending | pending | 4.50 | 349 | 0.844
-13 | 09-28T11:58:50Z (perigee marker) | 4.09 | −0.05 | 344.7 | 5.43 | 40693 | 1.08 | 0.67 | pending | pending | 3.86 | 340 | 0.665
-14 | 09-28T12:58:50Z | 4.29 | 0.57 | 341.2 | 5.19 | 40998 | 1.01 | 0.67 | pending | pending | 4.46 | pending | pending
-15 | 09-28T13:58:50Z | 3.29 | −0.64 | 342.4 | 6.67 | 30396 | 1.32 | 0.67 | pending | pending | 4.71 | 332 | 1.911
-16 | 09-28T14:58:50Z | 4.14 | −1.10 | 335.3 | 5.87 | 36721 | 1.11 | 0.67 | 34705 | pending | pending | pending | pending
-17 | 09-28T15:58:50Z | 4.42 | −0.90 | 329.6 | 5.42 | 39043 | 0.99 | 0.67 | 35531 | pending | 4.26 | 342 | 1.249
-18 | 09-28T16:58:50Z | 4.23 | −1.29 | 330.5 | 5.55 | 36622 | 1.01 | 0.67 | 44203 | pending | 4.19 | 335 | 1.460
-19 | 09-28T17:58:50Z | 3.78 | −1.30 | 330.5 | 5.74 | 36122 | 1.05 | 0.67 | 36096 | pending | 4.01 | 346 | 0.938
-20 | 09-28T18:58:50Z | 3.49 | −1.17 | 330.2 | 6.38 | 32550 | 1.18 | 1.33 | 38713 | pending | 3.66 | 343 | 1.094
-21 | 09-28T19:58:50Z | 3.75 | −1.48 | 330.0 | 2.07 | 53613 | 0.37 | 1.33 | 39081 | pending | 3.41 | 334 | 0.944
-22 | 09-28T20:58:50Z | 3.81 | −1.43 | 326.5 | 2.29 | 47586 | 0.40 | 1.33 | 36263 | pending | 3.37 | 335 | 1.099
-23 | 09-28T21:58:50Z | 3.58 | −0.68 | 325.4 | 2.40 | 43107 | 0.42 | 0.67 | 36159 | pending | 2.64 | 338 | 1.577
-24 | 09-28T22:58:50Z | 3.35 | −0.68 | 329.4 | 2.44 | 46740 | 0.44 | 0.67 | 34294 | pending | 3.44 | 337 | 1.321
-25 | 09-28T23:58:50Z | 3.28 | −1.02 | 330.9 | 2.71 | 49780 | 0.50 | 0.67 | 39627 | pending | 3.94 | 337 | 1.665
+0 | 09-27T22:58:50Z | 3.37 | −0.02 | 376.0 | 2.60 | 40075 | 0.61 | 0.00 | 32248* | not measured | 4.15 | 373 | 0.131
+1 | 09-27T23:58:50Z | 3.70 | −0.11 | 367.0 | 2.67 | 38174 | 0.60 | 0.00 | not measured | not measured | 4.19 | 365 | 0.381
+2 | 09-28T00:58:50Z | 3.69 | −0.08 | 360.1 | 3.10 | 39276 | 0.68 | 0.00 | not measured | not measured | 4.86 | 360 | 0.600
+3 | 09-28T01:58:50Z | 3.63 | −0.65 | 353.5 | 3.74 | 30829 | 0.78 | 0.00 | not measured | not measured | 4.34 | not measured | not measured
+4 | 09-28T02:58:50Z | 4.24 | −1.59 | 355.7 | 3.15 | 38280 | 0.67 | 0.00 | not measured | not measured | 4.24 | 367 | 0.475
+5 | 09-28T03:58:50Z | 3.82 | −1.34 | 352.5 | 3.56 | 29779 | 0.74 | 1.33 | not measured | not measured | 4.23 | 365 | 0.595
+6 | 09-28T04:58:50Z | 3.77 | −1.08 | 348.5 | 3.75 | 31798 | 0.76 | 1.33 | not measured | not measured | 4.32 | 360 | 0.613
+7 | 09-28T05:58:50Z | 3.68 | −0.89 | 349.0 | 4.13 | 38149 | 0.84 | 1.33 | not measured | not measured | 4.09 | 360 | 0.971
+8 | 09-28T06:58:50Z | 3.91 | −0.53 | 350.3 | 4.09 | 35587 | 0.85 | 0.33 | not measured | not measured | 4.10 | 356 | 0.730
+9 | 09-28T07:58:50Z | 3.88 | −0.39 | 350.6 | 4.17 | 36702 | 0.86 | 0.33 | not measured | not measured | 3.82 | 357 | 0.501
+10 | 09-28T08:58:50Z | 3.85 | −0.57 | 353.1 | 4.67 | 40694 | 0.98 | 0.33 | not measured | not measured | 3.67 | 356 | 0.976
+11 | 09-28T09:58:50Z | 3.69 | −0.52 | 353.8 | 5.32 | 37992 | 1.12 | 0.67 | not measured | not measured | 4.30 | 346 | 0.757
+12 | 09-28T10:58:50Z | 3.41 | −0.56 | 348.5 | 6.09 | 37045 | 1.24 | 0.67 | not measured | not measured | 4.50 | 349 | 0.844
+13 | 09-28T11:58:50Z (perigee marker) | 4.09 | −0.05 | 344.7 | 5.43 | 40693 | 1.08 | 0.67 | not measured | not measured | 3.86 | 340 | 0.665
+14 | 09-28T12:58:50Z | 4.29 | 0.57 | 341.2 | 5.19 | 40998 | 1.01 | 0.67 | not measured | not measured | 4.46 | not measured | not measured
+15 | 09-28T13:58:50Z | 3.29 | −0.64 | 342.4 | 6.67 | 30396 | 1.32 | 0.67 | not measured | not measured | 4.71 | 332 | 1.911
+16 | 09-28T14:58:50Z | 4.14 | −1.10 | 335.3 | 5.87 | 36721 | 1.11 | 0.67 | 34705 | not measured | not measured | not measured | not measured
+17 | 09-28T15:58:50Z | 4.42 | −0.90 | 329.6 | 5.42 | 39043 | 0.99 | 0.67 | 35531 | not measured | 4.26 | 342 | 1.249
+18 | 09-28T16:58:50Z | 4.23 | −1.29 | 330.5 | 5.55 | 36622 | 1.01 | 0.67 | 44203 | not measured | 4.19 | 335 | 1.460
+19 | 09-28T17:58:50Z | 3.78 | −1.30 | 330.5 | 5.74 | 36122 | 1.05 | 0.67 | 36096 | not measured | 4.01 | 346 | 0.938
+20 | 09-28T18:58:50Z | 3.49 | −1.17 | 330.2 | 6.38 | 32550 | 1.18 | 1.33 | 38713 | not measured | 3.66 | 343 | 1.094
+21 | 09-28T19:58:50Z | 3.75 | −1.48 | 330.0 | 2.07 | 53613 | 0.37 | 1.33 | 39081 | not measured | 3.41 | 334 | 0.944
+22 | 09-28T20:58:50Z | 3.81 | −1.43 | 326.5 | 2.29 | 47586 | 0.40 | 1.33 | 36263 | not measured | 3.37 | 335 | 1.099
+23 | 09-28T21:58:50Z | 3.58 | −0.68 | 325.4 | 2.40 | 43107 | 0.42 | 0.67 | 36159 | not measured | 2.64 | 338 | 1.577
+24 | 09-28T22:58:50Z | 3.35 | −0.68 | 329.4 | 2.44 | 46740 | 0.44 | 0.67 | 34294 | not measured | 3.44 | 337 | 1.321
+25 | 09-28T23:58:50Z | 3.28 | −1.02 | 330.9 | 2.71 | 49780 | 0.50 | 0.67 | 39627 | not measured | 3.94 | 337 | 1.665
 
 \* cell 0 swarm: the fill crossed the Swarm-latency gate mid-run (the bin's
 gate slice [t0, now − 86400 s], a few tens of seconds at run time). The HAPI
@@ -121,15 +121,15 @@ mean 32 893 nT; the register's 32 248 nT is the first slice of it.
 Cells 16–25 in the chain above are the re-measured Swarm supplement of
 2026-09-30 (the HAPI stopDate advanced; see the Swarm section); the value is the
 direct HAPI-window mean, not the bin register (the register's cell 25 stays
-`pending` — its fetch stop is the start of cell 25 — and its cells 16–24 agree
+`not measured` — its fetch stop is the start of cell 25 — and its cells 16–24 agree
 within 6 nT, named, never smoothed).
 
 Measured features (fact level): bz southward through the tube except cell 14;
 density peak 6.67 cm⁻³ at cell 15 (13:58:50Z); pressure peak 1.32 nPa there;
 speed declines from 376 to ~326 km/s across the tube. The plasma-pressure
 gradient channel of the seal is carried as the pressure series here; its
-per-cell gradient derives from these cells and stays `pending` where a
-neighbor is `pending` (the chain, not a fabricated gradient).
+per-cell gradient derives from these cells and stays `not measured` where a
+neighbor is `not measured` (the chain, not a fabricated gradient).
 
 ## Kp (GFZ, def + nowcast)
 
@@ -154,7 +154,7 @@ values when GFZ releases them. Re-measured 2026-09-30 (`kp.gfz.de`): the
 - HAPI info (measured 2026-09-28T22:52Z): startDate 2026-03-28T08:09:2x,
   stopDate **2026-09-28T14:50:1x** — the latency is ~8 h, not the 24 h the
   fill bin assumes (`SWARM_LATENCY_S = 86400`).
-- The bin's register therefore left cells 1–25 `pending` at that run (its fixed
+- The bin's register therefore left cells 1–25 `not measured` at that run (its fixed
   gate opens progressively over the next 24 h; cell 0 filled partially).
 - The addendum fills the served window from the raw mirror (54 300 1-s
   samples, 09-27T23:45:00 → 09-28T14:50:1x), mean F per cell.
@@ -184,16 +184,16 @@ healed (register cell 25 filled 2026-10-03), never smoothed.
 
 `data/cdaweb.gsfc.nasa.gov/omni2-20260926-20260929.csv`: HAPI 2.0 code 1201
 "OK - no data for time range" — the ~6 d merged-1-h lag (measured 09-23)
-leaves every tube cell `pending`. Verification cells fill ~4–6 d later.
+leaves every tube cell `not measured`. Verification cells fill ~4–6 d later.
 
 ## ACE (1-h, verification)
 
 Cells 0–22 carry the 1-h mag/swepam means at their own times (no transit —
 bin convention). Re-measured 2026-09-30: cells 23–25 now fill from the 1-h
-files; cells 3 (bt/speed/density), 14 (speed/density) and 16 stay `pending`
+files; cells 3 (bt/speed/density), 14 (speed/density) and 16 stay `not measured`
 (gaps/lag in the 1-h files).
 
-## The σ-metric — superseded as the scoring instance, `pending`
+## The σ-metric — superseded as the scoring instance, `not measured`
 
 The falsification metric (RMS (measured − pre-registered)/σ, threshold fam,
 `flyby-path-2-falsification-metric-addendum.md`) was superseded as the scoring
@@ -201,14 +201,14 @@ instance by the revised Blatt (`flyby-path-2-preregistration-revised.md`,
 2026-09-27): the field chain recorded here is the **descriptive /
 verification channel**. The live rule is Δ ≤ δ + 3·σ_recon with
 δ = 0.16847323696971178 km (measured, DE441 vs DE442, `flyby_ephemeris_gate`,
-built `d310d5888`) and Δ, σ_recon **`pending`** — the post-flyby
+built `d310d5888`) and Δ, σ_recon **`not measured`** — the post-flyby
 reconstruction (SPK + 1-σ covariance) is not published;
 `data/ssd.jpl.nasa.gov/ephemeris_juice_recon.bin` is absent (measured
 2026-09-28). No in-situ JUICE field measurement exists yet, so the σ-metric
-is not applied — it is `pending` with the named trigger (the published
+is not applied — it is `not measured` with the named trigger (the published
 reconstruction), never a number. Agreement remains silence.
 
-## Cells left pending — the complete list with reasons
+## Cells left unmeasured — the complete list with reasons
 
 - omni2_pressure / omni2_bz, all 26 cells — HAPI 1201 (no data, ~6 d lag;
   re-measured 2026-09-30).
@@ -295,7 +295,7 @@ The OMNI2 merged-1-h HAPI URL (OMNI2_H0_MRG1HR, 2026-09-26..29) returned
 **HTTP 200** (33 251 B) — the earlier 1201 "no data for time range" lag is
 healed. The first fill (`flyby_path2_fill -- --flyby juice`) placed the
 trajectory **official** (arc `aeb3c82f…`, sha-verified) but left every RTSW cell
-and `omni2_bz` `pending`: run without `--snapshots`, the loader reaches only the
+and `omni2_bz` `not measured`: run without `--snapshots`, the loader reaches only the
 live SWPC URL, whose 24-h retention no longer holds the window. The frozen
 mirrors (`data/services.swpc.noaa.gov/rtsw_{mag,wind}_1m-*.json`) carry it; the
 re-run with `--snapshots data/services.swpc.noaa.gov` filled all 26 cells
@@ -304,7 +304,7 @@ re-run with `--snapshots data/services.swpc.noaa.gov` filled all 26 cells
 
 Measured register state per channel (n of 26 cells filled):
 
-| channel | filled | pending |
+| channel | filled | not measured |
 |---|---|---|
 | `rtsw_bt` `rtsw_bz` `rtsw_speed` `rtsw_density` `rtsw_temperature` `rtsw_pressure` | 26 | 0 |
 | `omni2_bz` | 0 | 26 |
@@ -329,7 +329,7 @@ cell | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 
 `omni2_bz` is **absent in the source**: the OMNI2_H0_MRG1HR response carries
 `BX_GSE1800`/`BY_GSM1800`/`BZ_GSM1800` as the fill sentinel `999.9` across the
 whole window (only `Pressure1800` carries values) — no B measurement, so the
-channel stays `pending` (never 0.0). kp `status=def` is **released**: GFZ returns
+channel stays `not measured` (never 0.0). kp `status=def` is **released**: GFZ returns
 **HTTP 200** with all intervals `def` (measured 2026-10-08), and the register
 carries the 26 def kp values. `omni2_pressure` per cell (nPa, cell 0→25):
 
@@ -337,7 +337,7 @@ cell | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 
 ---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---
 `omni2_pressure` nPa | 0.83 | 0.82 | 0.84 | 0.81 | 0.92 | 1.10 | 1.10 | 1.19 | 1.32 | 1.46 | 1.46 | 1.40 | 1.55 | 1.62 | 1.53 | 1.55 | 1.52 | 1.36 | 1.47 | 1.29 | 1.29 | 1.23 | 1.26 | 1.28 | 1.35 | 1.42
 
-No value is smoothed; a cell without a measurement stays `pending` — never 0.0.
+No value is smoothed; a cell without a measurement stays `not measured` — never 0.0.
 
 ## Next steps
 

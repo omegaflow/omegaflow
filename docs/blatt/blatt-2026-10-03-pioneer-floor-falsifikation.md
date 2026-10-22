@@ -2,7 +2,7 @@
   title: Voranmelde-Blatt — Pioneer-Floor-Falsifikation (Familie Station×Ära×Form)
   class: sheet
   date: 2026-10-03
-  sha256: 6a54aac471e7a72614b94c72102f509efc79629c1c860695ed94559af565b605
+  sha256: b409553f5be91f5a7b9195776b451812ff8b526cc091f465de73bc37f34805cc
   status: live
   see-also: docs/paper/probe-front-dark-matter.md docs/handover/archiv/handover-2026-10-02-river-folge82.md docs/handover/archiv/handover-2026-10-02-mountain-folge226.md phi/sources.φ
 -->
@@ -102,7 +102,7 @@ Glättung).
 Der Lauf ist **gelaufen**: `workflow_dispatch` **`37111508656`**, `success`, 19m25s
 (2026-10-03, `pioneer-floor.yml`). Das Wort lag seit 2026-10-02 („ja voranmelde und
 dann lauf in ci", river-folge82); die Bindung ist erfüllt — **hier ist kein
-Operator-Wort mehr offen**. Offen ist die Auswertung, nicht die Freigabe.
+Operator-Wort mehr nötig**. Nicht entschieden ist die Auswertung, nicht die Freigabe.
 
 ## Was das Verdikt widerlegen würde
 
@@ -128,9 +128,9 @@ Der Lauf fuhr Corpus → `pioneer_navio_residuum` → `pioneer_navio_negative_fu
 **Verdikt:** das dritte Kriteriums-Bein (Drei-Form-Test > 2× Null-p95) trägt für keine
 Sonde — der Drift ist nicht aufgelöst. Damit **keine Entscheidung am Floor** (0 honored),
 wie im ehrlichen Prior benannt. Die Beine 1–2 (family-geräumte Zelle, zeichengleiche
-Heliozentrik) sind aus diesem Output nicht entschieden und bleiben offen.
+Heliozentrik) sind aus diesem Output nicht entschieden und bleiben nicht entschieden.
 
-## Offene Punkte
+## Nicht entschieden
 
 1. **„GIC §3.2" entfalten** — die Referenz im Baum unentfaltet (river-folge82:76);
    vor einem erneuten Lauf aus der Quelle belegen oder `unverified` tragen.

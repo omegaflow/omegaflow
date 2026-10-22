@@ -3,7 +3,7 @@
   class: paper
   date: 2026-08-21
   version: 4
-  sha256: 7b426162bba7957c8a61ad2105885a6a4dfb60e00576a71d3c2d37bcccfdea02
+  sha256: 3d6da2217d2ffc55332e590048e397208b0a2469c3ba37062c5015293354a129
   status: live
   see-also: blatt-papier-resultat
 -->
@@ -121,7 +121,7 @@ most recent events, main cell full era):
   against threshold +1.33e-1).
 - FAC stack: underdetermined — Swarm A+B+C cover
   8–26 of 144 cells per window; 12/60 event windows reach m ≥ 30
-  (30-min cells) → no statement. Measured, not pending: the
+  (30-min cells) → no statement. Measured, not assumed: the
   FAC channel carries no judgement with this instrument.
 - KDE h: the series scaling is not an h-sensitivity — Silverman
   adapts, TE(k·x, k·y) = TE(x, y); the probe confirms it
@@ -223,7 +223,7 @@ CI workflow `laic_cdn.yml` harvests + compiles + uploads monthly.
   `phi/pipeline/research/agent_output/cses_kanal_2026-08-22.φ`): portal
   leos.ac.cn re-measured 2026-09-16 — stage1 direct 000, stage2 Proton 000,
   stage3 Wayback 503/no snapshot; the Jina-reader route 422 (host
-  unreachable; the login-gated SPA stays pending). The
+  unreachable; the login-gated SPA stays inaccessible). The
   Zhangheng-1 holding lives at data.earthquake.cn (96 TB, 2019–2023;
   no registered DOI in the global handle register), portal re-measured
   2026-09-16 HTTP 200 (51 065 B), but the data route is offline procurement

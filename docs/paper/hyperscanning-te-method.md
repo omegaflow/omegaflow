@@ -2,7 +2,7 @@
   title: Hyperscanning EEG Triads — Two-Level Transfer-Entropy with FWER Control
   class: paper
   date: 2026-10-06
-  sha256: c051ba6782c9d8291c90918e496cce9963043701ee517338d77e1923802e4f49
+  sha256: cc4a6a60aa8f2625c511d493fccc450df0fe52db1b96fa29a8fd87b1d0ce3cc5
   status: live
   see-also: docs/paper/hyperscanning-te-preregistration.md, .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/archiv/handover-2026-10-05-sensory-folge234.md
 -->
@@ -317,7 +317,7 @@ line, in both directions (`FAMILY-MAX SURVIVOR`):
 
 The third single-channel survivor `pair-02@Cz R→L` TE `6.5198e-1` falls below the joint
 p95 and is masked to a `PER-CELL SURVIVOR` (confirmed at p99 `4.9826e-1`). 93 per-cell
-nominees, 88 confirmed, 0 pending. 0 honored: the observed max `7.0851e-1` is
+nominees, 88 confirmed, 0 unmeasured. 0 honored: the observed max `7.0851e-1` is
 numerically the same line as the single-channel run (`pair-18@Cz`), not an added
 channel — the joint screen's own expression is the raised p95 that drops `pair-02`.
 
@@ -338,7 +338,7 @@ is broken with the same observed max `7.0851e-1` and the same three family-max s
 §9.3 (`pair-02@Cz R→L` `6.5198e-1`, `pair-18@Cz L→R` `7.0597e-1`, `pair-18@Cz R→L`
 `7.0851e-1`). The coherent-phase family-max p95 `6.3126e-1` is **lower** than the `phase` p95
 `6.5144e-1`: the shared-phase null preserves the linear cross-structure and is therefore a
-stricter line, and all three survivors clear it. 53 per-cell nominees, 51 confirmed, 0 pending
+stricter line, and all three survivors clear it. 53 per-cell nominees, 51 confirmed, 0 unmeasured
 (`pair-26@Cz R→L` and `pair-27@Cz R→L` `NOT-CONFIRMED`). The `coherent-phase` blind-band
 probe reports no bin of 401 outside the surrogate envelope (driver A and target B) and the
 `coherent-per-cell-FP gate` carries 0 of 20 measurable survivors — the null is neither blind

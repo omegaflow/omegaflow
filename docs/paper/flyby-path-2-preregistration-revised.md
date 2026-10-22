@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-27
   version: 2
-  sha256: 1ac301dc95afc43f461c63218585e006ce3aa733f49144d2fbe9dae9c105ee83
+  sha256: 605bf45a587d58493d752a9fd454cc3fcafc35f9f476360ad296c29221b575b5
   status: live
   see-also: docs/paper/flyby-path-2-preregistration.md flyby-path-2-falsification-metric-addendum docs/auftrag/auftrag-flyby2-kette.md
 -->
@@ -28,7 +28,7 @@ orbit against the sealed arc, with a threshold that does not depend on the flyby
 outcome — the rift between two independent JPL ephemeris editions (DE441 vs.
 DE442) at the perigee, plus the published 1-σ position uncertainty. The
 prediction: **the sealed trajectory is not refuted** — falsified iff the measured
-deviation exceeds the edition rift by more than 3σ. Result: `pending — scored
+deviation exceeds the edition rift by more than 3σ. Result: `not measured — scored
 after the perigee 2026-09-28`.
 
 ## Data

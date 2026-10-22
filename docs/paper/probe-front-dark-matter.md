@@ -3,7 +3,7 @@
   class: paper
   date: 2026-09-15
   version: 11
-  sha256: aedc3294722e6bb14571ac50f6025b2d70c205b4925690d2c4e46525a3c42e6c
+  sha256: c0a607de2b4b445ad2d277fc5c55d83f0391069878b464ba1794237f472e2101
   fam-machine: pre-fix
   status: live
   see-also: docs/paper/planet-nine-kbo-residue.md docs/paper/flyby-path-1-cold-cases.md
@@ -333,7 +333,7 @@ the Syntonisation 1983 series (TDA PR 42-72 [12]) is located but graphical-only
 are located in NTRS (six, 19830027104 with a text layer naming the DSN 1985
 timing requirement; the 1985 items are image-only in NTRS — the API declares them `METADATA_ONLY` with `downloads: []`
 (`--playwright`, 2026-09-27) — and their embedded image is not liftable
-(`--pdf-image` → pending); their full text is reachable as the DTIC proceedings scan
+(`--pdf-image` → not measured); their full text is reachable as the DTIC proceedings scan
 `ADA149163` (archive.org, OCR text layer, `--sniff`/`--pdf-text`, 2026-09-27) whose
 full text names neither `MDA` nor `resolver` nor `Mark IV`; 19860018816 carries an NTRS API text layer, its full
 text searched and naming no MDA/resolver term; 1982/1986/87 carry no NTRS entry); the sliding-
@@ -372,13 +372,13 @@ description was sought in the Mark IV-A Tracking System 1986 (TDA PR 42-85, NTRS
 2026-09-27) whose full text names neither `MDA` nor `resolver`; the legacy scan
 and the 1985 PTTI scans are image-only — declared `METADATA_ONLY` with empty `downloads` in the
 NTRS API (`--playwright`, 2026-09-27) — and lift no embedded image
-(`--pdf-image` → pending); the origin stays open (0 honored).
+(`--pdf-image` → not measured); the origin stays open (0 honored).
 
 **The numbered deduction map (complete).** The §5.4 narrative above steps through the deduction chain only partially by number (0/0b and 7–10, 16–20, 22–24, 26, 27, 29–31 individually); this map enumerates every Deduktion head that the historical `link_deduction_probe` tool-comment documents (0, 0b, and 1–40), in numerical order, as the complete chain per that tool's own documentation. The numbers 11–15, 21, 25, and 28 carry no head in the tool comment and are not narrated individually in this paper; they are not fabricated here (0 honored). Deduction 16 is not a head in the tool comment but is narrated individually in §5.4 above; it is repeated here, marked, from this paper's own narration. Each line states what that step measures or excludes.
 
 Beyond the tool-comment chain the paper's own post-Front-C reductions continue the
 numbering gaplessly: Deduction 41 = the continuous-drift form test (§5.6,
-`pioneer_navio_drift`); Deduction 42 = the geometric vector test, pending (not
+`pioneer_navio_drift`); Deduction 42 = the geometric vector test, not measured (not
 buildable on these data — Rat verdict); Deduction 43 = the Iess external S-band
 radio-noise calibration (the floor is reduction, not physics); Deduction 44 = the
 quiet-zone drift (§5.6, `pioneer_navio_zone_drift`).

@@ -2,7 +2,7 @@
   title: Hyperscanning EEG Triads — A Two-Level Transfer-Entropy Pre-registration
   class: paper
   date: 2026-10-05
-  sha256: fd354d4064ce380044be458591e060d00721f37f52aa32999e50ae9445c9d35c
+  sha256: 1c1cec2af05ce789a9f08f501289e29e4143edf7e95ab944d11c629677eb8c10
   status: live
   see-also: .github/workflows/hyperscanning-te.yml, tools/measure/src/bin/hyperscanning_group_te.rs, src/mathematikerin/te.rs, docs/handover/archiv/handover-2026-10-05-sensory-folge232.md
 -->
@@ -336,7 +336,7 @@ line, in both directions (`FAMILY-MAX SURVIVOR`):
 
 The third single-channel survivor `pair-02@Cz R→L` TE `6.5198e-1` falls below the joint
 p95 and is masked to a `PER-CELL SURVIVOR` (confirmed at p99 `4.9826e-1`). 93 per-cell
-nominees, 88 confirmed, 0 pending. 0 honored: the observed max `7.0851e-1` is numerically
+nominees, 88 confirmed, 0 unmeasured. 0 honored: the observed max `7.0851e-1` is numerically
 the same line as the single-channel run (`pair-18@Cz`), not an added channel — the joint
 screen's own expression is the raised p95 that drops `pair-02`.
 

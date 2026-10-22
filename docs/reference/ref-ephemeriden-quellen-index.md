@@ -2,7 +2,7 @@
   title: Ref — Ephemeriden-Quellen-Index (8 Ziele, gemessen 2026-10-12)
   class: ref
   date: 2026-10-12
-  sha256: 1a8973b3a7e687cb6cfd00d1b4fba118b3b44724a9979433fce56d967f7d2a99
+  sha256: 4cd7617be4ff50f8476ad240ad4c234bcc850c625a59a87b98bbe7efba6fbd87
   status: live
   see-also: docs/reference/ref-mariner-faden-index.md survey-2026-10-10-ephemeris-quellen
 -->
@@ -34,9 +34,9 @@ Messung (HTTP-Status, Lizenz-String, Datei/Größe, ID-Auflösung). Zur lokalen 
 - **JPL** `https://ssd.jpl.nasa.gov/planets/obs_data.html` — erreichbar; „Spacecraft VLBI"-Sektion (Magellan, Venus Express, Phobos, MGS, Odyssey, MRO, Galileo). **Keine** Nutzungs-/Lizenz-/PD-Aussage auf der Seite; die verlinkte JPL-„Image Policy" betrifft nur Bilder/Video. Datenlizenz: **unbestimmt**.
 - **CDDIS** `https://cddis.nasa.gov/archive/vlbi` — 302 auf **Earthdata-Login**; Inhalt nicht anonym lesbar.
 
-## Mariner 5 / 9 — request-only (IDs korrigiert)
-- **Mariner 5:** NSSDCA **`PSCM-00001`** „Doppler Radio Tracking Data" — request-only. Analyse-Paper: NTRS `19760022055` (NASA-CR-148482).
-- **Mariner 9:** `71-051A-00E` ist **kein** gültiger NSSDCA-Dataset (NSSDCA absent); gültig: **`PSPG-00238`** (Primary Mission Doppler) und **`PSPG-00313`** (Complete Mission Doppler+Range), beide request-only.
+## Mariner 5 / 9 — nur auf Anfrage (IDs korrigiert)
+- **Mariner 5:** NSSDCA **`PSCM-00001`** „Doppler Radio Tracking Data" — nur auf Anfrage. Analyse-Paper: NTRS `19760022055` (NASA-CR-148482).
+- **Mariner 9:** `71-051A-00E` ist **kein** gültiger NSSDCA-Dataset (NSSDCA absent); gültig: **`PSPG-00238`** (Primary Mission Doppler) und **`PSPG-00313`** (Complete Mission Doppler+Range), beide nur auf Anfrage.
 
 ## NTRS `19900020832` — ein Findmittel, kein Dataset
 - „Data catalog series … Volume 1B: Descriptions of data sets from planetary and heliocentric spacecraft and investigations" (1987) — NTRS-**Citation**; NSSDCA trägt keine Collection `19900020832`.

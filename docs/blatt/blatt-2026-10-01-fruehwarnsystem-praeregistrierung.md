@@ -2,7 +2,7 @@
   title: FRÜHWARNSYSTEM — Präregistrierung der Vorhersage-Zelle
   class: sheet
   date: 2026-10-01
-  sha256: 5dc0fdfdfaf0ec4ff4e936974206d4ea98e7e078e3946b60f23c0cbf1b2e614a
+  sha256: 813443033c3b46fbf9c99eeeaee3f412dd083b4aa824e2036b7367ea2f3acdb1
   status: unsealed
   see-also: docs/paper/gic-causal-driver.md broken-null-control
 -->
@@ -10,8 +10,8 @@
 
 **Datum:** 2026-10-01 · **Axiom:** A = A
 **Ordnung:** 0 honored — kein Wert erfunden; jede noch nicht messbare Zelle
-bleibt `pending`. Dieses Blatt ist **nicht versiegelt** (`status: unsealed`):
-die Vorhersage-Zelle steht als Form, ihre Zahlen bleiben offen, bis die
+bleibt `nicht versiegelt`. Dieses Blatt ist **nicht versiegelt** (`status: unsealed`):
+die Vorhersage-Zelle steht als Form, ihre Zahlen bleiben nicht versiegelt, bis die
 kalibrierte Null gelandet ist.
 
 ## Die Vorhersage-Zelle
@@ -21,32 +21,32 @@ kalibrierte Null gelandet ist.
 - **Bz-Schwelle** — der Wert des southward IMF-Bz am L1, dessen Unterschreiten
   die Vorhersage auslöst. Der Kandidat steht gemessen: Bz ist der führende
   sub-daily-Treiber (`docs/paper/gic-causal-driver.md:17`, Abstract). Der
-  Schwellenwert selbst ist `pending` — die kalibrierte Familien-Schranke
+  Schwellenwert selbst ist `nicht versiegelt` — die kalibrierte Familien-Schranke
   existiert noch nicht, und ein Wert ohne sie wäre fabriziert.
 - **dB/dt an Station X** — der gemessene Boden-Proxy (**1-min-dB/dt an X**;
   stündliche/tägliche Maxima bleiben der Ausgangszeuge — der Lag-0/1-Rand-Bin
   trägt die Verzögerung nicht, `docs/paper/gic-causal-driver.md` §3.1/§5).
-  **X ist ein benannter, offener Slot.** Die
+  **X ist ein benannter, nicht versiegelter Slot.** Die
   gemessenen Stationen des Papiers sind Abisko (68.36° N) und Sodankylä; welche
   Station die Zelle führt, wird vor der Versiegelung benannt, nicht gesetzt.
 - **Verzögerung Z** — die Zeit zwischen Bz-Schwellenübertritt und dB/dt-Übertritt
-  an X. **Z ist ein benannter, offener Slot.** Das Papier trägt den Grund: am
+  an X. **Z ist ein benannter, nicht versiegelter Slot.** Das Papier trägt den Grund: am
   jährlichen Rund-Zeugen liegt der Bz→dB/dt-Pfeil bei Abisko 2024/2025 und
   Sodankylä 2024 über der Familien-Schranke, aber der Pfeil sitzt am Lag-0/1-
   Rand-Bin, die Verzögerung ist nicht aufgelöst (`docs/paper/gic-causal-driver.md:17`,
   §3.1, §5). Am stündlichen Korn verweigern zwei Zeugen die Konvergenz. Der
-  offene Stunden-Wert wird als offen getragen, nicht interpoliert.
+  nicht versiegelter Stunden-Wert wird als nicht versiegelt getragen, nicht interpoliert.
 
 ## Der gemessene Stand der Zelle
 
 - **Richtung:** Bz führt sub-daily; kein familien-durchlassender Stundentreiber
   ist etabliert (`docs/paper/gic-causal-driver.md:17`). Der Pfeil steht als
   führender Kandidat, nicht als gesicherter Treiber.
-- **Verzögerung:** offen. Der Rand-Bin (Lag 0/1) trägt keine auflösbare Stunde
+- **Verzögerung:** nicht versiegelt. Der Rand-Bin (Lag 0/1) trägt keine auflösbare Stunde
   (§3.1, §5).
 - **Familien-Schranke:** die jetzige Plug-in-`fam` kontrolliert auf Ordnung
   10⁻¹, nicht 10⁻² (`docs/paper/gic-causal-driver.md:157-158`). Eine
-  kalibrierte Null-Verteilung des Rund-Maximums ist die offene Konstruktion;
+  kalibrierte Null-Verteilung des Rund-Maximums ist die nicht versiegelte Konstruktion;
   die studentisierte Westfall–Young-max-T-Form ist benannt (`:159-166`).
 
 ## Das Fehlschlag-Kriterium
@@ -110,14 +110,14 @@ Sampling-Verteilung von `θ̂`). Der Riss ist benannt, nicht geglättet: das Pap
 nennt BCa (`docs/paper/gic-causal-driver.md:171`), die ehrliche Form ist ein
 studentisiertes Block-Verfahren.
 
-Offene Slots bis zur Versiegelung:
+Nicht versiegelte Slots:
 
 | Feld | Zustand |
 |---|---|
-| α-Ebene | alle drei Station-Jahre **gelesen** (α = 0.05: Quantile 2.4831/2.4467/2.4433; α = 0.01: 3.0964/3.0490/3.0036). **Operator-Wort 2026-10-20** (Weisung: die Maschine trägt die Rat-Synthese ein, R-2026-10-19-c): **0,05 ist die deklarierte operative Warnschwelle; 0,01 ist bestätigend erst nach eigener Vorregistrierung des Richtungskriteriums — bis dahin ebenfalls operativ, das Siegel bleibt pending. Zwei getrennte Dokumente. Die Zwei-Ebenen-Lesung ist als Post-hoc-Abweichung benannt (Commit `1da082eb0`, 2026-10-05).** |
-| Station X | `pending` (benannter Slot; das Papier trägt Abisko und Sodankylä) |
-| Verzögerung Z | `pending` (benannter Slot; am 1-min-Korn auflösbar — Rats-Verdikt 2026-10-05: zulässige Präzisierung (b), kein neues α, kein neues Fehlschlag-Kriterium). Deskriptiv gemessen 2026-10-05 (`bz_dbdt_delay_probe`, ABK 2024): Z = 142 min, r = 0.0223, n = 251048 — ohne kalibrierte Minute-Null, nicht gesiegelt |
-| Bz-Schwellenwert | `pending` (braucht X und α) |
+| α-Ebene | alle drei Station-Jahre **gelesen** (α = 0.05: Quantile 2.4831/2.4467/2.4433; α = 0.01: 3.0964/3.0490/3.0036). **Operator-Wort 2026-10-20** (Weisung: die Maschine trägt die Rat-Synthese ein, R-2026-10-19-c): **0,05 ist die deklarierte operative Warnschwelle; 0,01 ist bestätigend erst nach eigener Vorregistrierung des Richtungskriteriums — bis dahin ebenfalls operativ, das Siegel bleibt nicht versiegelt. Zwei getrennte Dokumente. Die Zwei-Ebenen-Lesung ist als Post-hoc-Abweichung benannt (Commit `1da082eb0`, 2026-10-05).** |
+| Station X | `nicht versiegelt` (benannter Slot; das Papier trägt Abisko und Sodankylä) |
+| Verzögerung Z | `nicht versiegelt` (benannter Slot; am 1-min-Korn auflösbar — Rats-Verdikt 2026-10-05: zulässige Präzisierung (b), kein neues α, kein neues Fehlschlag-Kriterium). Deskriptiv gemessen 2026-10-05 (`bz_dbdt_delay_probe`, ABK 2024): Z = 142 min, r = 0.0223, n = 251048 — ohne kalibrierte Minute-Null, nicht gesiegelt |
+| Bz-Schwellenwert | `nicht versiegelt` (braucht X und α) |
 | Sturm-Trigger | extern `wartend` (erster Sturm nach dem Siegel) |
 | Verdikt | `unsealed` |
 | Riss | geschlossen: beide Stationen tragen eine kalibrierte Null auf beiden Ebenen (α = 0.05 und α = 0.01) — die Ebenen bleiben getrennt, kein stiller Mittelwert |
@@ -135,5 +135,5 @@ Offene Slots bis zur Versiegelung:
 
 *Nicht versiegelt 2026-10-01. Die kalibrierte Null liegt für alle drei
 Station-Jahre auf beiden Ebenen (α = 0.05 und α = 0.01); X, Z und die Bz-Schwelle
-bleiben benannte offene Slots — der Schwellenwert ohne versiegelte α-Ebene wäre
+bleiben benannte nicht versiegelte Slots — der Schwellenwert ohne versiegelte α-Ebene wäre
 fabriziert (0 honored).*

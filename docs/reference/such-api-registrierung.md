@@ -1,7 +1,7 @@
 # Such-APIs: Registrierung und Key-Seiten
 
 Aufbereitete HTML-Seite: [`such-api-registrierung.html`](such-api-registrierung.html).
-Sie hat pro Zeile eine Status-Checkbox (`offen → registriert → authentifiziert →
+Sie hat pro Zeile eine Status-Checkbox (`neu → registriert → authentifiziert →
 declined`), die den eigenen Stand lokal im Browser (`localStorage`) merkt.
 
 Gemessen 2026-10-21 mit `curl -sL -o /dev/null -w '%{http_code}'` und

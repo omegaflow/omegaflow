@@ -2,7 +2,7 @@
   title: The fresh-area achromatic dip scan over forced photometry (Nadel V)
   class: paper
   date: 2026-09-06
-  sha256: 7563c1c7d74c9a62f5ac7bc756e0bb17fd5918e95fde88135dd8dee526435019
+  sha256: adbb543bb24622ddcbe09d8d8af7e829e4be2439cef7e95ad2c8ad45a70d0721
   status: live
   see-also: kybernetische-astrophysik docs/handover/archiv/handover-2026-09-09-mechanische-reste.md tools/measure/src/bin/lsst_anomaly_probe.rs tools/measure/src/bin/ztf_anomaly_probe.rs
 -->
@@ -46,5 +46,5 @@ The quantitative limit over the fresh area: no unexplained achromatic non-period
 
 0 unexcluded candidates on the fresh-area surface (0 honored). The silence is the measured response of the field through a working gate, not a defect and not a closed door. The exclusion filter, not the gate, is what the surviving dips meet, and every survivor so far is a catalogued natural dimmer.
 
-The claim is bounded: a quantitative limit over the freshly measured objects, not a galaxy census. The surfaces that would widen the reach are named: the credentialed alert streams (Fink Kafka, ANTARES Key+Secret by e-mail) and the Rubin science platform, none of which holds a consumer credential in `.secrets.local` today. A variable-rich positive-control cone (genuine RR Lyrae and eclipsing binaries with LSST multiband series) remains the pending next control, and the IR-excess axis at 10-60 μm of the Nadel V design is a separate measurement, untouched here.
+The claim is bounded: a quantitative limit over the freshly measured objects, not a galaxy census. The surfaces that would widen the reach are named: the credentialed alert streams (Fink Kafka, ANTARES Key+Secret by e-mail) and the Rubin science platform, none of which holds a consumer credential in `.secrets.local` today. A variable-rich positive-control cone (genuine RR Lyrae and eclipsing binaries with LSST multiband series) remains the next unmeasured control, and the IR-excess axis at 10-60 μm of the Nadel V design is a separate measurement, untouched here.
 

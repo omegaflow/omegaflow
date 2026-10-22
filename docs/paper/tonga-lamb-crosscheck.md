@@ -2,7 +2,7 @@
   title: Hunga Tonga 2022 — the Lamb wave measured cross-medium
   class: paper
   date: 2026-09-17
-  sha256: 77cb47ad6899d858a68203f0467d688c51934d5415053048fc6bec436fb2d6d4
+  sha256: aafd22c2973603a577f5edbb56f080524ac5ecece352e535aad57fdccb0c0201
   status: live
   see-also: docs/handover/archiv/handover-2026-09-17-forschung-folge58.md
 -->
@@ -217,7 +217,7 @@ predicted, residual −6.7°; vapp 352 m/s → slowness 2.84 s/km vs Lamb 3.27 s
 the 1360 s residual is the PMCC grid's nearest detection, not a matched-filter
 arrival. The global-extrema method of Handover 54 stays struck.
 
-## 6. Named pending
+## 6. Named unmeasured
 
 - **BGR matched-filter arrival.** The PMCC detection list runs on a ~300 s grid;
   a sub-300 s arrival estimate is not recoverable from it. The raw waveform is
