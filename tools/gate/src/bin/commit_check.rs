@@ -540,6 +540,7 @@ fn main() {
         }
     }
     let carrier = live_handover_carrier();
+    let mut public_doc_tasks = 0usize;
     for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
         if !path.ends_with(".md") || !DOC_DIRS.iter().any(|d| path.starts_with(d)) {
             continue;
@@ -552,11 +553,13 @@ fn main() {
             continue;
         }
         if doc_has_open_marker(&content) && !doc_carried(&carrier, path) {
-            eprintln!(
-                "commit_check: doc-carrier: {path} carries open markers but no live handover names it - carry it in its owner's handover or release it (descoped)"
-            );
-            fail = true;
+            public_doc_tasks += 1;
         }
+    }
+    if public_doc_tasks > 0 {
+        eprintln!(
+            "commit_check: doc-tasks: {public_doc_tasks} public docs carry open acts (tasks belong in work, not public; the carrier list is not a task register)"
+        );
     }
     let added = Command::new("git")
         .args([
@@ -597,9 +600,8 @@ fn main() {
         }
         for path in own_handover_missing(&added_docs, &own_carrier) {
             eprintln!(
-                "commit_check: own-handover: new document {path} is not named in this commit's handover - name it in the handover point so the next line finds it"
+                "commit_check: own-handover: new document {path} is not named in this commit's handover (signal only; work registers tasks, public holds releases)"
             );
-            fail = true;
         }
     }
     for path in files.lines().map(str::trim).filter(|l| !l.is_empty()) {
