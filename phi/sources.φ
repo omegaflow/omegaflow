@@ -2155,39 +2155,6 @@ ttl 86400
 format jaxa_gpm_ku
 field jaxa_gpm_ku_echo_power_w jaxa_gpm_ku_echo_power_w inverse-square em W 86400 pending 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/abk_dbdt_1h.bin
-terms CC-BY-NC-4.0 https://intermagnet.org/data_conditions.html
-origin https://imag-data.bgs.ac.uk/GIN_V1/hapi/data
-compiler tools/harvest/src/bin/intermagnet_dbdt_compiler.rs
-on earth frame=body lat=68.358 lon=18.823 alt=380
-ttl 86400
-format intermagnet_dbdt
-station ABK
-cgm_lat 65.83
-field abk_dbdt_pt1h intermagnet_dbdt inverse-square em nT 3600 pending 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/abk_dbdt_1m.bin
-terms CC-BY-NC-4.0 https://intermagnet.org/data_conditions.html
-origin https://imag-data.bgs.ac.uk/GIN_V1/hapi/data
-compiler tools/harvest/src/bin/intermagnet_dbdt_compiler.rs
-on earth frame=body lat=68.358 lon=18.823 alt=380
-ttl 86400
-format intermagnet_dbdt
-station ABK
-cgm_lat 65.83
-field abk_dbdt_pt1m intermagnet_dbdt inverse-square em nT 60 pending 0.0 0.0
-
-url https://github.com/omegaflow/sources/releases/download/imag-data.bgs.ac.uk/sod_dbdt_1h.bin
-terms CC-BY-NC-4.0 https://intermagnet.org/data_conditions.html
-origin https://imag-data.bgs.ac.uk/GIN_V1/hapi/data
-compiler tools/harvest/src/bin/intermagnet_dbdt_compiler.rs
-on earth frame=body lat=67.37 lon=26.63 alt=178
-ttl 86400
-format intermagnet_dbdt
-station SOD
-cgm_lat 64.60
-field sod_dbdt_pt1h intermagnet_dbdt inverse-square em nT 3600 pending 0.0 0.0
-
 url https://github.com/omegaflow/sources/releases/download/isdc-data.gfz.de/swarm_fac.bin
 terms CC-BY-4.0
 origin https://isdc-data.gfz.de/swarm/OPER/Level2/FAC_TMS/Sat_AC/small_scale/SW_OPER_FAC_TMS_2F_20201201T000000_20201201T235959_0402.cdf
