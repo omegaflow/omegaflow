@@ -462,6 +462,21 @@ impl FieldConfig {
         Ok(Self::from_model(field, &model, channel_ref))
     }
 
+    pub fn from_evidence_only(field: &SourceField, channel_ref: Option<u8>) -> Self {
+        Self {
+            key: field.key.clone(),
+            name: field.name.clone(),
+            band_id: None,
+            model: None,
+            channel_ref,
+            unit: field.unit.clone(),
+            freq: crate::spectral::SPECTRAL_NO_BAND,
+            bin_width: crate::spectral::SPECTRAL_NO_BAND,
+            fold: None,
+            aperture: Aperture::None,
+        }
+    }
+
     pub fn from_model(
         field: &SourceField,
         model: &ManifestModel,
@@ -753,6 +768,16 @@ pub struct RuntimeSource {
 impl SourceBlock {
     pub fn field(&self, key: &str) -> Option<&SourceField> {
         self.fields.iter().find(|field| field.key == key)
+    }
+
+    pub fn evidence_fields<F>(&self, channel_for: F) -> Vec<FieldConfig>
+    where
+        F: Fn(&SourceField) -> Option<u8>,
+    {
+        self.fields
+            .iter()
+            .map(|field| FieldConfig::from_evidence_only(field, channel_for(field)))
+            .collect()
     }
 
     pub fn runtime_fields<F>(

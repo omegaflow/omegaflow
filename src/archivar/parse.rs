@@ -3555,6 +3555,22 @@ pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>>
     }
 }
 
+pub fn parse_source_evidence<F>(
+    content: &str,
+    channel_for: F,
+) -> Result<Vec<RuntimeSource>, String>
+where
+    F: Fn(&SourceField) -> Option<u8>,
+{
+    let blocks = parse_source_blocks(content)?;
+    let mut out = Vec::with_capacity(blocks.len());
+    for block in blocks {
+        let fields = block.evidence_fields(|field| channel_for(field));
+        out.push(RuntimeSource { block, fields });
+    }
+    Ok(out)
+}
+
 pub fn parse_source_runtime<F>(
     content: &str,
     manifest: &crate::mathematikerin::manifest::Manifest,
@@ -3782,6 +3798,23 @@ field u current m/s source_column=3 alt_offset=0.0 alt_min_offset=-2.5 alt_max_o
 
         let missing = content.replace(" source_column=3", "");
         assert!(parse_source_blocks(&missing).is_err());
+    }
+
+    #[test]
+    fn source_evidence_loads_without_a_manifest_and_carries_no_model() {
+        let content = concat!(
+            "url https://example.org/evidence\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "ttl 60\n",
+            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=msl",
+            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+            "field flux flux W/m^2 source_column=1 alt_offset=0\n",
+        );
+        let sources = parse_source_evidence(content, |_| None).expect("evidence");
+        assert_eq!(sources.len(), 1);
+        assert_eq!(sources[0].fields.len(), 1);
+        assert!(sources[0].fields[0].model.is_none());
+        assert_eq!(sources[0].fields[0].unit, "W/m^2");
     }
 
     #[test]
