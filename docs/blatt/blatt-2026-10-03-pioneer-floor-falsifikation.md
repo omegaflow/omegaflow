@@ -2,7 +2,7 @@
   title: Voranmelde-Blatt — Pioneer-Floor-Falsifikation (Familie Station×Ära×Form)
   class: sheet
   date: 2026-10-03
-  sha256: 5bb1696b0acd87f45f26950de2df3be7db2afa4067c5f07835d3d352d47607fe
+  sha256: 6a54aac471e7a72614b94c72102f509efc79629c1c860695ed94559af565b605
   status: live
   see-also: docs/paper/probe-front-dark-matter.md docs/handover/archiv/handover-2026-10-02-river-folge82.md docs/handover/archiv/handover-2026-10-02-mountain-folge226.md phi/sources.φ
 -->
@@ -99,10 +99,10 @@ Glättung).
 
 ## Lauf
 
-Der Lauf ist **Operator-Wort-gebunden** (Wort „ja voranmelde und dann lauf in ci",
-2026-10-02, river-folge82). Dieses Blatt ist die Voraussetzung; ohne Blatt kein Lauf.
-Vorgesehener Ort: CI (`pioneer-floor.yml` oder der vorhandene Probe-Workflow), nie die
-Operator-Maschine.
+Der Lauf ist **gelaufen**: `workflow_dispatch` **`37111508656`**, `success`, 19m25s
+(2026-10-03, `pioneer-floor.yml`). Das Wort lag seit 2026-10-02 („ja voranmelde und
+dann lauf in ci", river-folge82); die Bindung ist erfüllt — **hier ist kein
+Operator-Wort mehr offen**. Offen ist die Auswertung, nicht die Freigabe.
 
 ## Was das Verdikt widerlegen würde
 
