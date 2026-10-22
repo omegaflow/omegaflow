@@ -5,7 +5,7 @@
   sha256: e42e2b7ae98e49f26a305aa48787f870fa9f8f83800dbc5407ffa735d2ed6997
   fam-machine: post-fix
   status: live
-  see-also: docs/paper/corona-heating-ladder.md
+  see-also: corona-heating-ladder
 -->
 
 # The solar-cycle dynamo: transfer entropy to the activity index

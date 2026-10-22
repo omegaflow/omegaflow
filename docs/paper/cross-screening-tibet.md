@@ -2,9 +2,9 @@
   title: Cross-screening the Kollab window and the Gyirong series
   class: paper
   date: 2026-09-12
-  sha256: 23c4c3543892ae21263ef5f6d148fe4318c7cb43ee56325110522786033e832c
+  sha256: c123be2854f252c82162d46e89b620e3ed0e4b22226ab9c3b1853c2800f0637c
   status: live
-  see-also: docs/blatt/blatt-kreuz-screening-gyirong.md docs/paper/sturzflut-tibet-pfeil.md
+  see-also: docs/blatt/blatt-kreuz-screening-gyirong.md sturzflut-tibet-pfeil
 -->
 
 # Cross-screening the Kollab window and the Gyirong series
@@ -46,7 +46,7 @@ Limits and pendings, named not assumed:
 - Conditioning removes the linear component aligned with the proxy; a residual synoptic confound (the moisture/pressure Lag-6 band) is not excluded by a single-proxy conditioning.
 - n = 240 for the 10-day Kollab window; longer series harden the surrogate thresholds (n = 1392 in the power update).
 - The Kollab blatt register line is closed (2026-09-12): the three conditioned cTE values are measured (0.1983 > 0.1815, 0.1602 > 0.1568, 0.1584 > 0.1538); the marginal rasuwa→kollab Lag 6 hit of the full-lag re-run (0.2099 > 0.2097) is named.
-- Data are Open-Meteo archive-api model/reanalysis output, not in-situ observations; the co-local Trishuli gauge is the sibling measurement (`docs/paper/sturzflut-tibet-pfeil.md`).
+- Data are Open-Meteo archive-api model/reanalysis output, not in-situ observations; the co-local Trishuli gauge is the sibling measurement (`sturzflut-tibet-pfeil`).
 
 ## Re-run mit gesetztem Konditionierungssatz (2026-09-27, Run 36278754294)
 

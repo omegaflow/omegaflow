@@ -2,7 +2,7 @@
   title: BLATT — Der Grat: Zufall/Notwendigkeit-Bilanz über 10 Systeme
   class: sheet
   date: 2026-09-05
-  sha256: d7b28783e0ac3d71ffebdcde4bce8b70ed3554a89b211b7cd454165f3da01a33
+  sha256: b63077dc9f15f36e05401b2762dac341aff557d59fded21344d00ff01095649a
   status: live
   see-also: docs/auftrag/archiv/auftrag-der-grat.md docs/blatt/blatt-thuan-fragesteller.md ein-blatt-axiom
 -->
@@ -107,7 +107,7 @@ Rat-Korrektur Pegel→Regen (Richtungsfehler aus `te_pair_probe`-gespiegelten
 Spalten), die echte Niederschlag→Pegel-Richtung ist bei Lag 24 TE 0.223
 unter der Schwelle, und keine Vorwärts-Orientierung übersteht die
 Konditionierung auf den geteilten synoptischen Treiber
-(die Konditionierungsläufe: `docs/paper/sturzflut-tibet-pfeil.md` §3.5) — die Zeile gehört der Stille.
+(die Konditionierungsläufe: `sturzflut-tibet-pfeil` §3.5) — die Zeile gehört der Stille.
 Ein weiteres Screening (Gyirong) misst nur gegenläufig einen die
 Konditionierung überlebenden Pfeil (Regen blockt Einstrahlung), während
 seine eigentliche Frage Stille bleibt. Sieben Fronten — LAIC, Kollab,
@@ -162,7 +162,7 @@ Kanäle ist.
   Argument = Quelle). Die echte Vorwärts-Richtung ist bei Lag 24 TE 0.223
   unter der Schwelle und fällt unter der Konditionierung auf den geteilten
   synoptischen Treiber (drei Proxies, Residuen-Surrogat —
-  `docs/paper/sturzflut-tibet-pfeil.md` §3.5); kurze Lags 1–6 h sind
+  `sturzflut-tibet-pfeil` §3.5); kurze Lags 1–6 h sind
   unbedingt signifikant, aber nicht isolierbar. Gemessen ist Pegel (m) im
   Vor-Flut-Fenster, nicht Abfluss (m³/s) — der Flut-Peak selbst wurde nie
   aufgezeichnet.

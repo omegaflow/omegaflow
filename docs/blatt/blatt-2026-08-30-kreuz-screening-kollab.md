@@ -4,7 +4,7 @@
   date: 2026-08-30
   sha256: 909e85e4c74fc16eb9fc9b7bc88ebe2e3d8214891d457931d9911182e33e34f3
   status: live
-  see-also: docs/paper/sturzflut-tibet-pfeil.md docs/paper/causal-arrow-preregistration.md
+  see-also: sturzflut-tibet-pfeil causal-arrow-preregistration
 -->
 
 > **Richtungskorrektur (registriert):** Die Pfeilrichtung folgt der

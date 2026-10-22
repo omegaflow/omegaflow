@@ -4,7 +4,7 @@
   date: 2026-10-02
   sha256: 61a174ba3d0721070ff7bb30d65a3bcaffb96b20d8e455791365f68e57109a01
   status: live
-  see-also: data/flyby2/anderson-probe-2026-09-28.json data/flyby2/house-gate-2026-09-28.json docs/paper/flyby-path-2-falsification-metric-addendum.md docs/paper/flyby-path-2-preregistration.md docs/handover/archiv/handover-2026-10-01-mountain-folge217.md
+  see-also: data/flyby2/anderson-probe-2026-09-28.json data/flyby2/house-gate-2026-09-28.json flyby-path-2-falsification-metric-addendum docs/paper/flyby-path-2-preregistration.md docs/handover/archiv/handover-2026-10-01-mountain-folge217.md
 -->
 # Rats-Blatt — Anderson-Flyby-Klasse: Sechs-Zeilen-Verdikt, Haus-Riss
 

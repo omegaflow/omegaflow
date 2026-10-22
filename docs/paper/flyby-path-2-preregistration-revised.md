@@ -5,7 +5,7 @@
   version: 2
   sha256: 1ac301dc95afc43f461c63218585e006ce3aa733f49144d2fbe9dae9c105ee83
   status: live
-  see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/auftrag/auftrag-flyby2-kette.md
+  see-also: docs/paper/flyby-path-2-preregistration.md flyby-path-2-falsification-metric-addendum docs/auftrag/auftrag-flyby2-kette.md
 -->
 # Flyby-Path-2 — the pre-registered JUICE Earth-flyby prediction (revised)
 

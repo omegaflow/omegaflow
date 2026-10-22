@@ -4,7 +4,7 @@
   date: 2026-09-29
   sha256: 00341e06ea9af3d98d73b64244d4372a42253a8981aaa3212edf1674cf66d2e3
   status: live
-  see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-preregistration-revised.md docs/paper/flyby-path-2-falsification-metric-addendum.md docs/auftrag/auftrag-flyby2-kette.md
+  see-also: docs/paper/flyby-path-2-preregistration.md docs/paper/flyby-path-2-preregistration-revised.md flyby-path-2-falsification-metric-addendum docs/auftrag/auftrag-flyby2-kette.md
 -->
 # The flyby proof, Path 2 — the perigee fill-run (addendum)
 
