@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 
 use super::*;
 use crate::mathematikerin::channel::ChannelDescriptor;
+use crate::mathematikerin::manifest::{ManifestModel, ManifestSelection, ModelRefusal};
 
 pub trait Radiator: Send + Sync {
     fn accept(&mut self, field: Arc<Buffer>);
@@ -641,6 +642,20 @@ pub struct SourceField {
     pub alt_max_offset: Option<f64>,
 }
 
+impl SourceField {
+    pub fn source_ref(&self, block: &SourceBlock) -> String {
+        format!("{}#{}", block.url, self.key)
+    }
+
+    pub fn selected_model(
+        &self,
+        block: &SourceBlock,
+        selection: &ManifestSelection,
+    ) -> Result<ManifestModel, ModelRefusal> {
+        selection.resolve_for(&self.source_ref(block))
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub enum SourcePosition {
     Fixed { lat: f64, lon: f64 },
@@ -662,6 +677,12 @@ pub struct SourceBlock {
     pub time_parts: Option<Vec<String>>,
     pub time_scale: String,
     pub fields: Vec<SourceField>,
+}
+
+impl SourceBlock {
+    pub fn field(&self, key: &str) -> Option<&SourceField> {
+        self.fields.iter().find(|field| field.key == key)
+    }
 }
 
 #[derive(Clone)]
@@ -799,5 +820,128 @@ mod model_kind_tests {
     #[test]
     fn an_unknown_format_carries_no_guessed_kind() {
         assert_eq!(source_model_kind("ephemeris_binary"), None);
+    }
+}
+
+#[cfg(test)]
+mod source_block_model_tests {
+    use super::*;
+    use crate::mathematikerin::manifest::{
+        ManifestIntent, ManifestSelection, ModelGap, ModelRefusal,
+    };
+
+    fn block() -> SourceBlock {
+        SourceBlock {
+            url: "https://example.org/data.csv".to_string(),
+            terms: "CC-BY-4.0 https://example.org/terms".to_string(),
+            origin: None,
+            ttl: 60,
+            position: SourcePosition::Fixed {
+                lat: 1.0,
+                lon: 2.0,
+            },
+            alt_ref: Some(0.0),
+            alt_key: None,
+            datum: "msl".to_string(),
+            time: Some("2026-10-22T00:00:00Z".to_string()),
+            time_key: None,
+            time_parts: None,
+            time_scale: "UTC".to_string(),
+            fields: vec![
+                SourceField {
+                    key: "flux".to_string(),
+                    name: "flux".to_string(),
+                    unit: "W/m^2".to_string(),
+                    alt_offset: 2.0,
+                    alt_min_offset: None,
+                    alt_max_offset: None,
+                },
+                SourceField {
+                    key: "temp".to_string(),
+                    name: "temperature".to_string(),
+                    unit: "K".to_string(),
+                    alt_offset: 2.0,
+                    alt_min_offset: None,
+                    alt_max_offset: None,
+                },
+            ],
+        }
+    }
+
+    #[test]
+    fn field_pointer_joins_url_and_key() {
+        let block = block();
+        let field = block.field("flux").expect("flux is declared");
+        assert_eq!(field.source_ref(&block), "https://example.org/data.csv#flux");
+        assert!(block.field("absent").is_none());
+    }
+
+    #[test]
+    fn a_field_without_a_selection_reports_gaps_not_zeroes() {
+        let block = block();
+        let field = block.field("flux").expect("flux is declared");
+        let bare = ManifestSelection::new(
+            "https://example.org/data.csv#flux",
+            ManifestIntent::Science,
+        )
+        .expect("select");
+        match field.selected_model(&block, &bare) {
+            Err(ModelRefusal::Gaps(gaps)) => assert_eq!(
+                gaps,
+                vec![
+                    ModelGap::Kernel,
+                    ModelGap::Tau,
+                    ModelGap::Absorption,
+                    ModelGap::Advection,
+                ]
+            ),
+            other => panic!("absence must be a gap, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn another_fields_selection_does_not_leak_onto_this_field() {
+        let block = block();
+        let field = block.field("flux").expect("flux is declared");
+        let other =
+            ManifestSelection::new("https://example.org/data.csv#temp", ManifestIntent::Science)
+                .expect("select")
+                .with_kernel("inverse-square")
+                .expect("kernel")
+                .with_model_tau(60.0, crate::mathematikerin::manifest::ModelTauSource::Chosen)
+                .expect("tau")
+                .with_model_absorption(0.0)
+                .expect("absorption")
+                .with_model_advection(0.0)
+                .expect("advection");
+        assert!(matches!(
+            field.selected_model(&block, &other),
+            Err(ModelRefusal::ForeignSource { .. })
+        ));
+    }
+
+    #[test]
+    fn a_complete_selection_supplies_the_model() {
+        let block = block();
+        let field = block.field("flux").expect("flux is declared");
+        let chosen = ManifestSelection::new(
+            "https://example.org/data.csv#flux",
+            ManifestIntent::Science,
+        )
+        .expect("select")
+        .with_kernel("inverse-square")
+        .expect("kernel")
+        .with_model_tau(60.0, crate::mathematikerin::manifest::ModelTauSource::Chosen)
+        .expect("tau")
+        .with_model_absorption(0.25)
+        .expect("absorption")
+        .with_model_advection(400.0)
+        .expect("advection");
+        let model = field.selected_model(&block, &chosen).expect("model");
+        assert_eq!(model.kernel(), 0);
+        assert_eq!(model.tau(), 60.0);
+        assert_eq!(model.absorption(), 0.25);
+        assert_eq!(model.advection(), 400.0);
+        assert_eq!(field.alt_offset, 2.0, "evidence stays evidence");
     }
 }

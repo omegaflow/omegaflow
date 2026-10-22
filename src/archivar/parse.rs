@@ -734,8 +734,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     channel_ref: Some(0),
                     tau: 0.0,
                     tau_src: tau_src_of(&parts),
-                    absorption: 0.0,
-                    advection: 0.0,
+                    absorption: SLOT_ABSENT,
+                    advection: SLOT_ABSENT,
                     unit: String::new(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1077,8 +1077,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     channel_ref: Some(f),
                     tau,
                     tau_src: TauSource::Pending,
-                    absorption: 0.0,
-                    advection: 0.0,
+                    absorption: SLOT_ABSENT,
+                    advection: SLOT_ABSENT,
                     unit: parts[3].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1141,8 +1141,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     channel_ref: Some(f),
                     tau,
                     tau_src: TauSource::Pending,
-                    absorption: 0.0,
-                    advection: 0.0,
+                    absorption: SLOT_ABSENT,
+                    advection: SLOT_ABSENT,
                     unit: parts[3].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -2247,8 +2247,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     channel_ref: Some(f),
                     tau,
                     tau_src: TauSource::Pending,
-                    absorption: 0.0,
-                    advection: 0.0,
+                    absorption: SLOT_ABSENT,
+                    advection: SLOT_ABSENT,
                     unit,
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -3990,6 +3990,26 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
                 .iter()
                 .all(|e| !matches!(e, Extract::Field(_))),
             "a quantity that resolves to no conserved quantity is pending, never defaulted"
+        );
+    }
+
+    #[test]
+    fn a_field_without_absorption_tokens_claims_no_absorption() {
+        let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm em V/m 60 inverse-square\n";
+        let field = parse_sources(content)[0]
+            .extracts
+            .iter()
+            .find_map(|e| match e {
+                Extract::Field(fc) => Some(fc.clone()),
+                _ => None,
+            })
+            .expect("the short field form is admitted");
+        assert_eq!(field.absorption_measured(), None);
+        assert_eq!(field.advection_measured(), None);
+        assert_eq!(
+            presence_flags(None, field.absorption, field.advection, SLOT_ABSENT),
+            0.0,
+            "an undeclared slot carries no presence flag"
         );
     }
 

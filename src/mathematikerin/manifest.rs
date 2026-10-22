@@ -14,6 +14,51 @@ pub enum ManifestIntent {
     Test,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ModelGap {
+    Kernel,
+    Tau,
+    Absorption,
+    Advection,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ModelRefusal {
+    ForeignSource { selected: String, asked: String },
+    Gaps(Vec<ModelGap>),
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ManifestModel {
+    kernel: u8,
+    tau: f64,
+    tau_src: ModelTauSource,
+    absorption: f64,
+    advection: f64,
+}
+
+impl ManifestModel {
+    pub fn kernel(&self) -> u8 {
+        self.kernel
+    }
+
+    pub fn tau(&self) -> f64 {
+        self.tau
+    }
+
+    pub fn tau_src(&self) -> ModelTauSource {
+        self.tau_src
+    }
+
+    pub fn absorption(&self) -> f64 {
+        self.absorption
+    }
+
+    pub fn advection(&self) -> f64 {
+        self.advection
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct ManifestSelection {
     source_ref: String,
@@ -62,6 +107,82 @@ impl ManifestSelection {
 
     pub fn intent(&self) -> ManifestIntent {
         self.intent
+    }
+
+    pub fn kernel(&self) -> Option<u8> {
+        self.kernel
+    }
+
+    pub fn model_tau(&self) -> Option<f64> {
+        self.model_tau
+    }
+
+    pub fn model_tau_src(&self) -> Option<ModelTauSource> {
+        self.model_tau_src
+    }
+
+    pub fn model_absorption(&self) -> Option<f64> {
+        self.model_absorption
+    }
+
+    pub fn model_advection(&self) -> Option<f64> {
+        self.model_advection
+    }
+
+    pub fn covers(&self, source_ref: &str) -> bool {
+        match self.source_ref.split_once('#') {
+            Some(_) => self.source_ref == source_ref,
+            None => match source_ref.split_once('#') {
+                Some((url, _)) => url == self.source_ref,
+                None => source_ref == self.source_ref,
+            },
+        }
+    }
+
+    pub fn resolve(&self) -> Result<ManifestModel, ModelRefusal> {
+        match (
+            self.kernel,
+            self.model_tau,
+            self.model_tau_src,
+            self.model_absorption,
+            self.model_advection,
+        ) {
+            (Some(kernel), Some(tau), Some(tau_src), Some(absorption), Some(advection)) => {
+                Ok(ManifestModel {
+                    kernel,
+                    tau,
+                    tau_src,
+                    absorption,
+                    advection,
+                })
+            }
+            _ => {
+                let mut gaps = Vec::new();
+                if self.kernel.is_none() {
+                    gaps.push(ModelGap::Kernel);
+                }
+                if self.model_tau.is_none() || self.model_tau_src.is_none() {
+                    gaps.push(ModelGap::Tau);
+                }
+                if self.model_absorption.is_none() {
+                    gaps.push(ModelGap::Absorption);
+                }
+                if self.model_advection.is_none() {
+                    gaps.push(ModelGap::Advection);
+                }
+                Err(ModelRefusal::Gaps(gaps))
+            }
+        }
+    }
+
+    pub fn resolve_for(&self, source_ref: &str) -> Result<ManifestModel, ModelRefusal> {
+        if !self.covers(source_ref) {
+            return Err(ModelRefusal::ForeignSource {
+                selected: self.source_ref.clone(),
+                asked: source_ref.to_string(),
+            });
+        }
+        self.resolve()
     }
 
     pub fn with_kernel(mut self, name: &str) -> Result<Self, String> {
@@ -148,5 +269,96 @@ mod tests {
             .expect("select");
         assert!(base.clone().with_model_tau(0.0, ModelTauSource::Chosen).is_err());
         assert!(base.with_model_tau(f64::NAN, ModelTauSource::Chosen).is_err());
+    }
+
+    #[test]
+    fn an_unselected_model_reports_gaps_not_zeroes() {
+        let m = ManifestSelection::new("https://example.org/data.csv#x", ManifestIntent::Science)
+            .expect("select");
+        assert_eq!(m.kernel(), None);
+        assert_eq!(m.model_tau(), None);
+        assert_eq!(m.model_absorption(), None);
+        assert_eq!(m.model_advection(), None);
+        assert_eq!(
+            m.resolve(),
+            Err(ModelRefusal::Gaps(vec![
+                ModelGap::Kernel,
+                ModelGap::Tau,
+                ModelGap::Absorption,
+                ModelGap::Advection,
+            ]))
+        );
+    }
+
+    #[test]
+    fn a_partial_model_names_the_missing_choice() {
+        let m = ManifestSelection::new("https://example.org/data.csv#x", ManifestIntent::Science)
+            .expect("select")
+            .with_kernel("inverse-square")
+            .expect("kernel")
+            .with_model_tau(60.0, ModelTauSource::Default)
+            .expect("tau");
+        assert_eq!(
+            m.resolve(),
+            Err(ModelRefusal::Gaps(vec![
+                ModelGap::Absorption,
+                ModelGap::Advection,
+            ]))
+        );
+    }
+
+    #[test]
+    fn a_complete_model_carries_the_selected_values() {
+        let m = ManifestSelection::new("https://example.org/data.csv#x", ManifestIntent::Science)
+            .expect("select")
+            .with_kernel("inverse-square")
+            .expect("kernel")
+            .with_model_tau(60.0, ModelTauSource::Chosen)
+            .expect("tau")
+            .with_model_absorption(0.25)
+            .expect("absorption")
+            .with_model_advection(400.0)
+            .expect("advection");
+        let model = m.resolve().expect("complete selection resolves");
+        assert_eq!(model.kernel(), 0);
+        assert_eq!(model.tau(), 60.0);
+        assert_eq!(model.tau_src(), ModelTauSource::Chosen);
+        assert_eq!(model.absorption(), 0.25);
+        assert_eq!(model.advection(), 400.0);
+    }
+
+    #[test]
+    fn a_supplied_zero_is_a_choice_while_absence_stays_a_gap() {
+        let m = ManifestSelection::new("https://example.org/data.csv#x", ManifestIntent::Art)
+            .expect("select")
+            .with_kernel("inverse-square")
+            .expect("kernel")
+            .with_model_tau(1.0, ModelTauSource::Chosen)
+            .expect("tau")
+            .with_model_absorption(0.0)
+            .expect("absorption")
+            .with_model_advection(0.0)
+            .expect("advection");
+        let model = m.resolve().expect("a chosen zero resolves");
+        assert_eq!(model.absorption(), 0.0);
+        assert_eq!(model.advection(), 0.0);
+    }
+
+    #[test]
+    fn a_selection_covers_only_its_own_source_ref() {
+        let field = ManifestSelection::new("https://example.org/data.csv#x", ManifestIntent::Science)
+            .expect("select");
+        assert!(field.covers("https://example.org/data.csv#x"));
+        assert!(!field.covers("https://example.org/data.csv#y"));
+        assert!(matches!(
+            field.resolve_for("https://example.org/data.csv#y"),
+            Err(ModelRefusal::ForeignSource { .. })
+        ));
+
+        let whole = ManifestSelection::new("https://example.org/data.csv", ManifestIntent::Science)
+            .expect("select");
+        assert!(whole.covers("https://example.org/data.csv#x"));
+        assert!(whole.covers("https://example.org/data.csv"));
+        assert!(!whole.covers("https://example.org/other.csv#x"));
     }
 }

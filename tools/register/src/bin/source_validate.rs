@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::process::exit;
 
-use omegaflow::archivar::kernel_id_of;
+use omegaflow::archivar::{kernel_id_of, parse_source_blocks, validate_source_blocks};
 use omegaflow::mathematikerin::force::{force_id_of, quantity_kind_of};
 
 const DEFAULT_PATH: &str = "phi/sources.φ";
@@ -175,9 +175,41 @@ fn label(block: &[&str], line: usize) -> (String, String) {
     (name, line.to_string())
 }
 
+struct BlockReport {
+    findings: BTreeMap<String, BTreeSet<String>>,
+    hard: usize,
+}
+
+fn validate_blocks(content: &str) -> BlockReport {
+    let mut report = BlockReport {
+        findings: BTreeMap::new(),
+        hard: 0,
+    };
+    let push = |rule: &str, key: String, report: &mut BlockReport| {
+        if report.findings.entry(rule.to_string()).or_default().insert(key) {
+            report.hard += 1;
+        }
+    };
+    match parse_source_blocks(content) {
+        Err(reason) => push("source_block_parse", reason, &mut report),
+        Ok(blocks) if blocks.is_empty() => {
+            push("source_block_parse", "no source block found".to_string(), &mut report)
+        }
+        Ok(blocks) => {
+            if let Err(errors) = validate_source_blocks(&blocks) {
+                for error in errors {
+                    push("source_block", error, &mut report);
+                }
+            }
+        }
+    }
+    report
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let mut path = DEFAULT_PATH.to_string();
+    let mut blocks_mode = false;
     let mut ctx = Ctx {
         fail: false,
         warnings: false,
@@ -194,6 +226,7 @@ fn main() {
             }
             "--fail" => ctx.fail = true,
             "--warnings" => ctx.warnings = true,
+            "--blocks" => blocks_mode = true,
             _ => {}
         }
         i += 1;
@@ -205,6 +238,24 @@ fn main() {
             exit(2);
         }
     };
+
+    if blocks_mode {
+        let report = validate_blocks(&content);
+        for (rule, keys) in &report.findings {
+            for key in keys {
+                println!("{rule}\t{key}");
+            }
+        }
+        eprintln!(
+            "source_validate: {} findings ({} hard, 0 soft)",
+            report.findings.values().map(|v| v.len()).sum::<usize>(),
+            report.hard
+        );
+        if ctx.fail && report.hard > 0 {
+            exit(2);
+        }
+        return;
+    }
 
     let mut findings: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
     let mut hard = 0usize;
@@ -699,5 +750,71 @@ fn main() {
     );
     if ctx.fail && hard > 0 {
         exit(2);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const BLOCK: &str = concat!(
+        "url https://example.org/ndbc/51003.txt\n",
+        "terms PD-USGov https://example.org/terms\n",
+        "ttl 60\n",
+        "on earth frame=body lat=19.5 lon=-155.6 alt_ref=0 datum=sea_surface",
+        " time=2026-10-22T00:00:00Z time_scale=UTC\n",
+        "field WSPD wind_speed m/s alt_offset=4.0\n",
+        "field ATMP air_temp C alt_offset=3.0 alt_min_offset=0.0 alt_max_offset=5.0\n",
+    );
+
+    #[test]
+    fn a_source_block_with_fields_validates_without_findings() {
+        let report = validate_blocks(BLOCK);
+        assert_eq!(report.hard, 0, "{:?}", report.findings);
+        assert!(report.findings.is_empty());
+    }
+
+    #[test]
+    fn an_ambiguous_url_field_key_is_a_hard_source_block_finding() {
+        let duplicated = BLOCK.replace("field ATMP air_temp", "field WSPD air_temp");
+        let report = validate_blocks(&duplicated);
+        assert!(
+            report.findings.contains_key("source_block"),
+            "{:?}",
+            report.findings
+        );
+        assert!(report.hard >= 1);
+    }
+
+    #[test]
+    fn a_field_without_alt_offset_is_a_hard_parse_finding() {
+        let report = validate_blocks(&BLOCK.replace(" alt_offset=4.0", ""));
+        assert!(
+            report.findings.contains_key("source_block_parse"),
+            "{:?}",
+            report.findings
+        );
+        assert!(report.hard >= 1);
+    }
+
+    #[test]
+    fn a_layer_with_min_not_below_max_is_a_hard_parse_finding() {
+        let report = validate_blocks(&BLOCK.replace(
+            "alt_min_offset=0.0 alt_max_offset=5.0",
+            "alt_min_offset=5.0 alt_max_offset=5.0",
+        ));
+        assert!(
+            report.findings.contains_key("source_block_parse"),
+            "{:?}",
+            report.findings
+        );
+        assert!(report.hard >= 1);
+    }
+
+    #[test]
+    fn an_empty_register_is_a_hard_finding() {
+        let report = validate_blocks("");
+        assert!(report.findings.contains_key("source_block_parse"));
+        assert_eq!(report.hard, 1);
     }
 }
