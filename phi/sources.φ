@@ -1197,12 +1197,12 @@ field properties.detected_energy glm_bolide_radiant_energy_j inverse-square em J
 
 url https://services.swpc.noaa.gov/json/ace/mag/ace_mag_1h.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-at earth frame=barycenter distance_au=0.99
+at earth frame=barycenter distance_au=0.99 time_key=time_tag time_scale=UTC
 ttl 3600
-field 0.gsm_bx exosphere_ace_bx_gsm_nt inverse-square em nT 360.0 pending 0.0 0.0
-field 0.gsm_by exosphere_ace_by_gsm_nt inverse-square em nT 360.0 pending 0.0 0.0
-field 0.gsm_bz exosphere_ace_bz_gsm_nt inverse-square em nT 360.0 pending 0.0 0.0
-field 0.bt exosphere_ace_bt_nt inverse-square em nT 360.0 pending 0.0 0.0
+field 0.gsm_bx exosphere_ace_bx_gsm_nt nT source_key=gsm_bx alt_offset=0
+field 0.gsm_by exosphere_ace_by_gsm_nt nT source_key=gsm_by alt_offset=0
+field 0.gsm_bz exosphere_ace_bz_gsm_nt nT source_key=gsm_bz alt_offset=0
+field 0.bt exosphere_ace_bt_nt nT source_key=bt alt_offset=0
 
 url https://services.swpc.noaa.gov/json/ace/swepam/ace_swepam_1h.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
