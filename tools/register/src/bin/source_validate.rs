@@ -763,8 +763,8 @@ mod tests {
         "ttl 60\n",
         "on earth frame=body lat=19.5 lon=-155.6 alt_ref=0 datum=sea_surface",
         " time=2026-10-22T00:00:00Z time_scale=UTC\n",
-        "field WSPD wind_speed m/s alt_offset=4.0\n",
-        "field ATMP air_temp C alt_offset=3.0 alt_min_offset=0.0 alt_max_offset=5.0\n",
+        "field WSPD wind_speed m/s source_column=4 alt_offset=4.0\n",
+        "field ATMP air_temp C source_column=5 alt_offset=3.0 alt_min_offset=0.0 alt_max_offset=5.0\n",
     );
 
     #[test]
