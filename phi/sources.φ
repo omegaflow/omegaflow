@@ -329,24 +329,20 @@ lon location.longitude
 field sensordatavalues.0.value air_pm10_ugm3 gaussian-inverse-square diffusion ug/m3 30 pending 0.0 0.0
 field sensordatavalues.1.value air_pm25_ugm3 gaussian-inverse-square diffusion ug/m3 30 pending 0.0 0.0
 
-url https://github.com/omegaflow/sources/releases/download/ndbc.noaa.gov/ndbc_46092.txt
-terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-origin https://www.ndbc.noaa.gov/data/realtime2/46092.txt
-at earth frame=barycenter
+url https://www.ndbc.noaa.gov/data/realtime2/46092.txt
+terms PD-USGov https://www.weather.gov/disclaimer
 ttl 300
-format csv
-rows
-epoch YY MM DD hh mm
-field WSPD ndbc_46092_wind_speed_ms gaussian-inverse-square advective m/s 30 pending 0.0 0.0
-field GST ndbc_46092_gust_ms gaussian-inverse-square advective m/s 30 pending 0.0 0.0
-field WDIR ndbc_46092_wind_dir_deg gaussian-inverse-square advective deg 30 pending 0.0 0.0
-field WVHT ndbc_46092_wave_height_m gaussian-inverse-square acoustic m 30 pending 0.0 0.0
-field DPD ndbc_46092_dominant_period_s gaussian-inverse-square acoustic s 30 pending 0.0 0.0
-field APD ndbc_46092_average_period_s gaussian-inverse-square acoustic s 30 pending 0.0 0.0
-field MWD ndbc_46092_mean_wave_dir_deg gaussian-inverse-square acoustic deg 30 pending 0.0 0.0
-field PRES ndbc_46092_pressure_hpa gaussian-inverse-square advective hPa 30 pending 0.0 0.0
-field ATMP ndbc_46092_air_temp_c exponential-decay thermal C 30 pending 0.0 0.0
-field WTMP ndbc_46092_water_temp_c exponential-decay thermal C 30 pending 0.0 0.0
+on earth frame=body lat=36.751 lon=-122.029 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4
+field WSPD wind_speed m/s source_column=6 alt_offset=4
+field GST wind_gust_speed m/s source_column=7 alt_offset=4
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3
+field WTMP sea_water_temperature C source_column=14 alt_offset=-0.6
 
 url https://github.com/omegaflow/sources/releases/download/services.swpc.noaa.gov/swpc_radio_bursts.bin
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
@@ -416,13 +412,19 @@ field values.0.value.0.value hydrosphere_river_flow_cfs erfc advective cfs 30.0 
 url https://www.ndbc.noaa.gov/data/realtime2/51003.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 300
-format csv
-lastrow WDIR hydrosphere_buoy_51003_wind_dir patch-levy advective deg 60 pending 0.0 0.0
-lastrow WSPD hydrosphere_buoy_51003_wind_speed patch-levy advective m/s 60 pending 0.0 0.0
-lastrow WVHT hydrosphere_buoy_51003_wave_height gaussian-inverse-square acoustic m 10 pending 0.0 0.0
-lastrow DPD hydrosphere_buoy_51003_dominant_period gaussian-inverse-square acoustic s 21600 pending 0.0 0.0
-lastrow PRES hydrosphere_buoy_51003_pressure gaussian-inverse-square acoustic hPa 21600 pending 0.0 0.0
-lastrow WTMP hydrosphere_buoy_51003_water_temp exponential-decay thermal C 3600 pending 0.0 0.0
+on earth frame=body lat=19.151 lon=-160.617 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.nhc.noaa.gov/CurrentStorms.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
@@ -516,15 +518,10 @@ last items.value hydrosphere_river_stage_m inverse-square geometry m 900.0 pendi
 
 url https://www.ndbc.noaa.gov/data/realtime2/21414.dart
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=48.977 lon=178.199 alt=0
 ttl 900
-rows
-epoch YY MM DD hh mm
-bin 900
-prefix ndbc_dart_21414
-gate T 1 2
-gate HEIGHT 0 9999
-quantity HEIGHT ndbc_dart_21414_height_m inverse-square geometry m 900 pending 0.0 0.0
+on earth frame=body lat=48.977 lon=178.199 alt_ref=-5425 datum=msl time_parts=YY,MM,DD,hh,mm,ss time_scale=UTC
+field T bpr_water_temperature C source_column=6 alt_offset=0
+field HEIGHT water_column_height m source_column=7 alt_offset=0
 
 url https://data.oceannetworks.ca/api/scalardata?method=getByLocation&token={OCEANNETWORKS_TOKEN}&locationCode={station}&deviceCategoryCode=CTD&dateFrom=-PT1H&outputFormat=Object&sensorCategoryCodes=conductivity
 terms onc-open https://data.oceannetworks.ca/
@@ -7922,1446 +7919,547 @@ field igra_dewpoint_c igra_dewpoint_c exponential-decay thermal C 8640.0 pending
 
 url https://www.ndbc.noaa.gov/data/realtime2/15006.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=-6 lon=-10 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_15006
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=-6 lon=-10 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4
+field WSPD wind_speed m/s source_column=6 alt_offset=4
+field GST wind_gust_speed m/s source_column=7 alt_offset=4
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3
 
-url https://www.ndbc.noaa.gov/data/realtime2/41001.txt
-terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=34.7 lon=-72.4 alt=0
-ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/41002.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=31.743 lon=-74.955 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41002
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=31.743 lon=-74.955 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/41010.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=28.86 lon=-78.478 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41010
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=28.860 lon=-78.478 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.2
+field WSPD wind_speed m/s source_column=6 alt_offset=3.2
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.2
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=2.8
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
+field DEWP dew_point_temperature C source_column=15 alt_offset=2.8
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/41043.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=21.09 lon=-64.864 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41043
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=21.090 lon=-64.864 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/41049.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=27.505 lon=-62.271 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41049
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=27.505 lon=-62.271 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/42001.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=25.90 lon=-89.67 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_42001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=25.922 lon=-89.638 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/42002.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=25.16 lon=-94.42 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_42002
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=25.950 lon=-93.78 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/42036.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=28.50 lon=-84.52 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_42036
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=28.500 lon=-84.505 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/42055.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=22.14 lon=-91.39 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_42055
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=22.140 lon=-94.112 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/44009.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=38.46 lon=-74.70 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_44009
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=38.460 lon=-74.692 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/44013.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=42.35 lon=-70.69 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_44013
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=42.346 lon=-70.651 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.2
+field WSPD wind_speed m/s source_column=6 alt_offset=3.2
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.2
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=2.8
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
+field DEWP dew_point_temperature C source_column=15 alt_offset=2.8
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/45001.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=48.061 lon=-87.793 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=48.061 lon=-87.793 alt_ref=183 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.2
+field WSPD wind_speed m/s source_column=6 alt_offset=3.2
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.2
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=-183
+field ATMP air_temperature C source_column=13 alt_offset=2.8
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
+field PTDY pressure_tendency hPa source_column=17 alt_offset=-183
 
 url https://www.ndbc.noaa.gov/data/realtime2/45161.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=43.185 lon=-86.354 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45161
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=43.185 lon=-86.354 alt_ref=176 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=2.3
+field WSPD wind_speed m/s source_column=6 alt_offset=2.3
+field GST wind_gust_speed m/s source_column=7 alt_offset=2.3
+field PRES sea_level_pressure hPa source_column=12 alt_offset=-176
+field ATMP air_temperature C source_column=13 alt_offset=2.3
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1
+field PTDY pressure_tendency hPa source_column=17 alt_offset=-176
 
 url https://www.ndbc.noaa.gov/data/realtime2/45178.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=44.603 lon=-73.394 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45178
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=44.603 lon=-73.394 alt_ref=30 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=1
+field WSPD wind_speed m/s source_column=6 alt_offset=1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=-30
+field ATMP air_temperature C source_column=13 alt_offset=1
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1
+field PTDY pressure_tendency hPa source_column=17 alt_offset=-30
 
 url https://www.ndbc.noaa.gov/data/realtime2/45186.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=42.368 lon=-87.795 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45186
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=42.368 lon=-87.795 alt_ref=176 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=1.5
+field WSPD wind_speed m/s source_column=6 alt_offset=1.5
+field GST wind_gust_speed m/s source_column=7 alt_offset=1.5
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=-176
+field ATMP air_temperature C source_column=13 alt_offset=1
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1
+field PTDY pressure_tendency hPa source_column=17 alt_offset=-176
 
 url https://www.ndbc.noaa.gov/data/realtime2/45207.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=41.731 lon=-81.367 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45207
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=41.731 lon=-81.367 alt_ref=174 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46001.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=56.30 lon=-148.17 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=56.296 lon=-148.027 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46002.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=42.67 lon=-124.82 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46002
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=42.560 lon=-130.523 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46005.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=46.06 lon=-124.96 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46005
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=46.147 lon=-131.077 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
-url https://www.ndbc.noaa.gov/data/realtime2/46012.txt
-terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=37.36 lon=-122.88 alt=0
-ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46012
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/realtime2/46022.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=40.74 lon=-124.54 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46022
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=40.716 lon=-124.54 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46025.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=33.75 lon=-119.20 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46025
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=33.765 lon=-119.077 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46026.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=37.75 lon=-122.84 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46026
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=37.750 lon=-122.838 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46029.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=46.12 lon=-124.51 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46029
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=46.148 lon=-124.508 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.2
+field WSPD wind_speed m/s source_column=6 alt_offset=3.2
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.2
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=2.8
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46035.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=57.034 lon=-177.468 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46035
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=57.034 lon=-177.468 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 
 url https://www.ndbc.noaa.gov/data/realtime2/46047.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=32.42 lon=-119.53 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46047
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=32.418 lon=-119.535 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46053.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=34.26 lon=-119.86 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46053
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=34.246 lon=-119.842 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46054.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=34.27 lon=-120.68 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46054
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=34.274 lon=-120.468 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46059.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=38.07 lon=-124.03 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46059
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=38.067 lon=-129.895 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46069.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=33.66 lon=-120.20 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46069
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=33.657 lon=-120.227 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46071.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=51.035 lon=179.808 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46071
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=51.035 lon=179.808 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46075.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=53.93 lon=-160.763 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46075
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=53.930 lon=-160.763 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/46086.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=32.49 lon=-118.02 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46086
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=32.504 lon=-118.029 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.2
+field WSPD wind_speed m/s source_column=6 alt_offset=3.2
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.2
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=2.8
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
+field DEWP dew_point_temperature C source_column=15 alt_offset=2.8
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/51000.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=23.52 lon=-153.82 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_51000
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=23.534 lon=-153.752 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/51001.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=24.44 lon=-162.00 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_51001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=24.475 lon=-162.03 alt_ref=0 datum=sea_surface time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/realtime2/51004.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=17.56 lon=-152.39 alt=0
 ttl 86400
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_51004
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=17.504 lon=-152.197 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
+field PTDY pressure_tendency hPa source_column=17 alt_offset=0
 
 
 
@@ -12852,1419 +11950,530 @@ field sigma_b imp8_imf_sigma_bmag_nt inverse-square em nT 3600 pending 0.0 0.0
 
 url https://www.ndbc.noaa.gov/data/dart/{prev_Mon}/21414.txt
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=48.977 lon=178.199 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 900
-prefix ndbc_dart_21414
-gate T 1 2
-gate HEIGHT 0 9999
-quantity HEIGHT ndbc_dart_21414_height_m inverse-square geometry m 900 pending 0.0 0.0
+on earth frame=body lat=48.977 lon=178.199 alt_ref=-5425 datum=msl time_parts=YY,MM,DD,hh,mm,ss time_scale=UTC
+field T bpr_water_temperature C source_column=6 alt_offset=0
+field HEIGHT water_column_height m source_column=7 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41001h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=34.7 lon=-72.4 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=34.738 lon=-72.503 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41002h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=31.743 lon=-74.955 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41002
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=31.743 lon=-74.955 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41010h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=28.86 lon=-78.478 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41010
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=28.860 lon=-78.478 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.2
+field WSPD wind_speed m/s source_column=6 alt_offset=3.2
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.2
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=2.8
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
+field DEWP dew_point_temperature C source_column=15 alt_offset=2.8
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41043h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=21.09 lon=-64.864 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41043
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=21.090 lon=-64.864 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/41049h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=27.505 lon=-62.271 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_41049
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=27.505 lon=-62.271 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42001h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=25.90 lon=-89.67 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_42001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=25.922 lon=-89.638 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42002h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=25.16 lon=-94.42 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_42002
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=25.950 lon=-93.78 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42036h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=28.50 lon=-84.52 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_42036
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=28.500 lon=-84.505 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42055h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=22.14 lon=-91.39 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_42055
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=22.140 lon=-94.112 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/44009h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=38.46 lon=-74.70 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_44009
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=38.460 lon=-74.692 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/44013h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=42.35 lon=-70.69 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_44013
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=42.346 lon=-70.651 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.2
+field WSPD wind_speed m/s source_column=6 alt_offset=3.2
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.2
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=2.8
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
+field DEWP dew_point_temperature C source_column=15 alt_offset=2.8
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45001h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=48.061 lon=-87.793 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=48.061 lon=-87.793 alt_ref=183 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.2
+field WSPD wind_speed m/s source_column=6 alt_offset=3.2
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.2
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=-183
+field ATMP air_temperature C source_column=13 alt_offset=2.8
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45161h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=43.185 lon=-86.354 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45161
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=43.185 lon=-86.354 alt_ref=176 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=2.3
+field WSPD wind_speed m/s source_column=6 alt_offset=2.3
+field GST wind_gust_speed m/s source_column=7 alt_offset=2.3
+field PRES sea_level_pressure hPa source_column=12 alt_offset=-176
+field ATMP air_temperature C source_column=13 alt_offset=2.3
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45178h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=44.603 lon=-73.394 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45178
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=44.603 lon=-73.394 alt_ref=30 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=1
+field WSPD wind_speed m/s source_column=6 alt_offset=1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=-30
+field ATMP air_temperature C source_column=13 alt_offset=1
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45186h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=42.368 lon=-87.795 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45186
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=42.368 lon=-87.795 alt_ref=176 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=1.5
+field WSPD wind_speed m/s source_column=6 alt_offset=1.5
+field GST wind_gust_speed m/s source_column=7 alt_offset=1.5
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=-176
+field ATMP air_temperature C source_column=13 alt_offset=1
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/45207h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=41.731 lon=-81.367 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_45207
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=41.731 lon=-81.367 alt_ref=174 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46001h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=56.30 lon=-148.17 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=56.296 lon=-148.027 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46002h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=42.67 lon=-124.82 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46002
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=42.560 lon=-130.523 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46005h2024.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=46.06 lon=-124.96 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46005
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=46.147 lon=-131.077 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
-url https://www.ndbc.noaa.gov/data/historical/stdmet/46012h2023.txt.gz
-terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=37.36 lon=-122.88 alt=0
-ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46012
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46022h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=40.74 lon=-124.54 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46022
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=40.716 lon=-124.54 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46025h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=33.75 lon=-119.20 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46025
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=33.765 lon=-119.077 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46026h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=37.75 lon=-122.84 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46026
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=37.750 lon=-122.838 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46029h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=46.12 lon=-124.51 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46029
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=46.148 lon=-124.508 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.2
+field WSPD wind_speed m/s source_column=6 alt_offset=3.2
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.2
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=2.8
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46035h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=57.034 lon=-177.468 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46035
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=57.034 lon=-177.468 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46047h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=32.42 lon=-119.53 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46047
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=32.418 lon=-119.535 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46053h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=34.26 lon=-119.86 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46053
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=34.246 lon=-119.842 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46054h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=34.27 lon=-120.68 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46054
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=34.274 lon=-120.468 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46059h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=38.07 lon=-124.03 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46059
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=38.067 lon=-129.895 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46069h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=33.66 lon=-120.20 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46069
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=33.657 lon=-120.227 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46071h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=51.035 lon=179.808 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46071
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=51.035 lon=179.808 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46075h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=53.93 lon=-160.763 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46075
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=53.930 lon=-160.763 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46086h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=32.49 lon=-118.02 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_46086
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=32.504 lon=-118.029 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.2
+field WSPD wind_speed m/s source_column=6 alt_offset=3.2
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.2
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=2.8
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
+field DEWP dew_point_temperature C source_column=15 alt_offset=2.8
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/51000h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=23.52 lon=-153.82 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_51000
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=23.534 lon=-153.752 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
+field WSPD wind_speed m/s source_column=6 alt_offset=4.1
+field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.7
+field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/51001h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=24.44 lon=-162.00 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_51001
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=24.475 lon=-162.03 alt_ref=0 datum=sea_surface time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/51004h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=17.56 lon=-152.39 alt=0
 ttl 31536000
-rows
-epoch YY MM DD hh mm
-bin 21600
-prefix ndbc_51004
-gate WSPD 0 99
-gate GST 0 99
-gate WVHT 0 99
-gate DPD 0 99
-gate APD 0 99
-gate PRES 0 9999
-gate PTDY -99 99
-gate ATMP -100 900
-gate WTMP -100 900
-gate DEWP -100 900
-gate TIDE -99 99
-gate VIS 0 99
-gate WDIR -1.0001 1.0001
-gate MWD -1.0001 1.0001
-field WSPD wspd_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field GST gst_m_s inverse-square advective m/s 21600 pending 0.0 0.0
-field WVHT wvht_m inverse-square acoustic m 21600 pending 0.0 0.0
-field DPD dpd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field APD apd_s inverse-square acoustic s 21600 pending 0.0 0.0
-field PRES pres_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field PTDY ptdy_hpa inverse-square acoustic hPa 21600 pending 0.0 0.0
-field ATMP atmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field WTMP wtmp_c inverse-square thermal C 21600 pending 0.0 0.0
-field DEWP dewp_c inverse-square thermal C 21600 pending 0.0 0.0
-quantity TIDE tide_ft inverse-square geometry ft 21600 pending 0.0 0.0
-field VIS vis_nmi inverse-square em nmi 21600 pending 0.0 0.0
-fold sin_deg WDIR WDIR inverse-square advective 1 21600
-fold cos_deg WDIR WDIR inverse-square advective 1 21600
-fold sin_deg MWD MWD inverse-square advective 1 21600
-fold cos_deg MWD MWD inverse-square advective 1 21600
+on earth frame=body lat=17.504 lon=-152.197 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
+field WSPD wind_speed m/s source_column=6 alt_offset=3.8
+field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
+field WVHT significant_wave_height m source_column=8 alt_offset=0
+field DPD dominant_wave_period s source_column=9 alt_offset=0
+field APD average_wave_period s source_column=10 alt_offset=0
+field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field ATMP air_temperature C source_column=13 alt_offset=3.4
+field WTMP sea_water_temperature C source_column=14 alt_offset=-2
+field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
 
 
 
