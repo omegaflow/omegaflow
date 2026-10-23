@@ -10624,10 +10624,10 @@ terms CC-BY-4.0 https://doi.org/10.5281/zenodo.16051178
 origin https://nanograv.org/science/data/15-year-pulsar-timing-array-data-release
 compiler tools/harvest/src/bin/pta_timing_compiler.rs
 sha256 6359ca5577cdf4c8c3afe4339b687415abcf5f228837e88094f780dd70d903a8
-at sun frame=barycenter
 ttl 31536000
 format csv
-field NG15_RESID pulsar_timing_residual_s inverse-square em s 31536000 pending 0.0 0.0
+at sun frame=barycenter time_key=mjd time_scale=UTC
+field NG15_RESID pulsar_timing_residual us source_column=6 alt_offset=0.0
 
 url https://irsa.ipac.caltech.edu/TAP/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+TOP+5000+ra,dec,fnu_12,fnu_25,fnu_60,fnu_100+FROM+iraspsc+WHERE+fnu_12+IS+NOT+NULL
 terms PD-USGov https://irsa.ipac.caltech.edu/data_use_terms.html
@@ -23353,9 +23353,11 @@ origin https://zenodo.org/api/records/10673982/files/2018-11_RBN.gz/content
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 cd84e1b7501d590e31790654af9771c2039655c57d4f46d71125ae4074c7c5a4
 harvest raw_zenodo
-at earth frame=barycenter
 no-cadence
 format csv_gz
+at earth frame=barycenter time_key=col0 time_scale=UTC
+field freq spot_frequency Hz source_column=12 alt_offset=0.0
+field  snr spot_snr dB source_column=13 alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/2018-12_RBN.gz
 terms CC-BY-4.0 https://zenodo.org/records/10673982
@@ -23363,9 +23365,11 @@ origin https://zenodo.org/api/records/10673982/files/2018-12_RBN.gz/content
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 ea29631ca1512380b09eb6ddf4d11e46a0e2be0693d5f0dffbf91c391e119ee5
 harvest raw_zenodo
-at earth frame=barycenter
 no-cadence
 format csv_gz
+at earth frame=barycenter time_key=col0 time_scale=UTC
+field freq spot_frequency Hz source_column=12 alt_offset=0.0
+field  snr spot_snr dB source_column=13 alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-01_RBN.gz
 terms CC-BY-4.0 https://zenodo.org/records/10673982
@@ -23373,9 +23377,11 @@ origin https://zenodo.org/api/records/10673982/files/2019-01_RBN.gz/content
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 ead2a38ca371fca9c621c113f02d7fc538a72a86ff04d2c91b1b5cc7f801ece1
 harvest raw_zenodo
-at earth frame=barycenter
 no-cadence
 format csv_gz
+at earth frame=barycenter time_key=col0 time_scale=UTC
+field freq spot_frequency Hz source_column=12 alt_offset=0.0
+field  snr spot_snr dB source_column=13 alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-02_RBN.gz
 terms CC-BY-4.0 https://zenodo.org/records/10673982
@@ -23383,9 +23389,11 @@ origin https://zenodo.org/api/records/10673982/files/2019-02_RBN.gz/content
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 38bb438edba63806796132df8187832c140aef9392f7443aed971e11359b2daf
 harvest raw_zenodo
-at earth frame=barycenter
 no-cadence
 format csv_gz
+at earth frame=barycenter time_key=col0 time_scale=UTC
+field freq spot_frequency Hz source_column=12 alt_offset=0.0
+field  snr spot_snr dB source_column=13 alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-03_RBN.gz
 terms CC-BY-4.0 https://zenodo.org/records/10673982
@@ -23393,9 +23401,11 @@ origin https://zenodo.org/api/records/10673982/files/2019-03_RBN.gz/content
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 75267f67b944107327d413f10bb60e8fa8f3585b62dfcbe58600222ca45ed6de
 harvest raw_zenodo
-at earth frame=barycenter
 no-cadence
 format csv_gz
+at earth frame=barycenter time_key=col0 time_scale=UTC
+field freq spot_frequency Hz source_column=12 alt_offset=0.0
+field  snr spot_snr dB source_column=13 alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-04_RBN.gz
 terms CC-BY-4.0 https://zenodo.org/records/10673982
@@ -23403,9 +23413,11 @@ origin https://zenodo.org/api/records/10673982/files/2019-04_RBN.gz/content
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 cbfcc88dd6c5d41e296b529bb1da0ea098f021d678afd7a4009dbd364950077e
 harvest raw_zenodo
-at earth frame=barycenter
 no-cadence
 format csv_gz
+at earth frame=barycenter time_key=col0 time_scale=UTC
+field freq spot_frequency Hz source_column=12 alt_offset=0.0
+field  snr spot_snr dB source_column=13 alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/2019-05_RBN.gz
 terms CC-BY-4.0 https://zenodo.org/records/10673982
@@ -23413,9 +23425,11 @@ origin https://zenodo.org/api/records/10673982/files/2019-05_RBN.gz/content
 compiler tools/harvest/src/bin/raw_mirror.rs
 sha256 52f3d812a486f77038895bc902fedeb4ce8c2ed3219e76e238d08db83eada8ab
 harvest raw_zenodo
-at earth frame=barycenter
 no-cadence
 format csv_gz
+at earth frame=barycenter time_key=col0 time_scale=UTC
+field freq spot_frequency Hz source_column=12 alt_offset=0.0
+field  snr spot_snr dB source_column=13 alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/alerce_features.parquet
 terms CC-BY-4.0 https://zenodo.org/records/11123894
@@ -23430,10 +23444,10 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/ampere_fac
 terms CC0-1.0 https://zenodo.org/records/22345897
 origin https://zenodo.org/api/records/22345897/files/ampere.202309.v2.k060_m08.north.grd.zip/content
 compiler tools/harvest/src/bin/ampere_fac_compiler.rs
-at earth frame=barycenter
 no-cadence
 format ampere_fac
-field ampere_fac_uam2 ampere_fac_uam2 inverse-square electric uA/m2 86400 pending 0.0 0.0
+at earth frame=barycenter time_key=t time_scale=UTC
+field ampere_fac_uam2 field_aligned_current_density uA/m2 source_column=5 alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/BC430.tar.gz
 terms CC-BY-4.0 https://zenodo.org/records/3558850
@@ -24125,9 +24139,14 @@ terms CC-BY-4.0 https://zenodo.org/records/22711679
 origin https://zenodo.org/api/records/22711679/files/CorrOnsFiles.zip/content
 compiler tools/harvest/src/bin/mcpherron_compiler.rs
 sha256 441df5f8c59ad57962d81cc82814a0d36c7770f827b4d1893b31425f035cc3f1
-at earth frame=barycenter
 no-cadence
 format mcon_event
+at earth frame=barycenter time_key=jd_utc time_scale=UTC
+field mcon_sml_nt sml_index nT source_key=mcon_sml_nt alt_offset=0.0
+field  mcon_amplitude_nt bay_amplitude nT source_key=mcon_amplitude_nt alt_offset=0.0
+field  mcon_bay_decrease_nt bay_decrease nT source_key=mcon_bay_decrease_nt alt_offset=0.0
+field  mcon_bay_duration_min bay_duration min source_key=mcon_bay_duration_min alt_offset=0.0
+field  mcon_bay_width_min bay_width min source_key=mcon_bay_width_min alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/mirage_v2.0.0.zip
 terms MIT https://zenodo.org/records/21990891
@@ -24189,9 +24208,12 @@ terms CC-BY-4.0 https://zenodo.org/records/21185812
 origin https://zenodo.org/api/records/21185812/files/Quaoar_paper.zip/content
 compiler tools/harvest/src/bin/quaoar_occlt_compiler.rs
 sha256 2ee3cb25d55f74931d5f72a9de9f3ff6ba8d9763a5a2862091dca585bf7bac23
-at earth frame=barycenter
 no-cadence
 format quaoar_occlt
+at earth frame=barycenter time_key=tdb time_scale=UTC
+field flux normalized_flux 1 source_column=2 alt_offset=0.0
+field  model light_curve_model 1 source_column=2 alt_offset=0.0
+field  ghost sky_region_flux 1 source_column=2 alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/rixs_spin_OD1_0p33_0.txt
 terms CC-BY-4.0 https://zenodo.org/records/7286412
@@ -24252,10 +24274,10 @@ url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_
 terms CC-BY-4.0 https://zenodo.org/records/10374021
 origin https://zenodo.org/api/records/10374021/files/20160311.north.map2/content
 compiler tools/harvest/src/bin/superdarn_cpcp_compiler.rs
-at earth frame=barycenter
 no-cadence
 format superdarn_cpcp
-field superdarn_cpcp_pot_drop superdarn_cpcp_pot_drop inverse-square electric kV 86400 pending 0.0 0.0
+at earth frame=barycenter time_key=t time_scale=UTC
+field superdarn_cpcp_pot_drop cross_polar_cap_potential kV source_key=pot.drop alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/superdarn_cpcp_nc.bin
 terms CC-BY-4.0 https://creativecommons.org/licenses/by/4.0/
@@ -24272,6 +24294,10 @@ origin https://zenodo.org/api/records/14281664/files/UNCOVER_DR4_SPS_catalog.fit
 compiler tools/harvest/src/bin/raw_mirror.rs
 no-cadence
 format fits
+sky frame=icrs ra_key=ra dec_key=dec epoch=J2000
+field z_spec spectroscopic_redshift 1 source_key=z_spec alt_offset=0.0
+field  z_50 photometric_redshift_p50 1 source_key=z_50 alt_offset=0.0
+field  mstar_50 stellar_mass_p50 log_Msol source_key=mstar_50 alt_offset=0.0
 
 url https://github.com/omegaflow/sources/releases/download/zenodo.org/Venus_Arecibo_1988_Global_440m_v1.tif
 terms CC-BY-4.0 https://zenodo.org/records/18176179
@@ -24747,4 +24773,3 @@ at earth frame=barycenter
 ttl 315360000
 format worldclim
 field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 pending 0.0 0.0
-
