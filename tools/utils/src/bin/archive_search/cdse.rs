@@ -51,11 +51,13 @@ pub fn cdse_lines(query: &str, max: usize) -> Vec<String> {
     let needle = query.trim().replace('\'', "''");
     let mut url = format!("{PRODUCTS}?$top={top}");
     if !needle.is_empty() {
-        let filter = format!("$filter=contains(Name,'{needle}')");
-        url.push('&');
-        url.push_str(&encode(&filter));
+        url.push_str(&format!("&$filter=contains(Name,'{}')", encode(&needle)));
     }
-    match get(&url, &extra, "60") {
+    let mut fetched = get(&url, &[], "60");
+    if matches!(fetched.as_ref().and_then(|f| f.status), Some(401) | Some(403)) && !extra.is_empty() {
+        fetched = get(&url, &extra, "60");
+    }
+    match fetched {
         Some(f) if f.status == Some(200) => {
             let Some(v) = json::parse(&f.body) else {
                 return vec!["pending — the CDSE OData response carries no JSON".to_string()];
