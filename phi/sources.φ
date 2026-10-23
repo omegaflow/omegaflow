@@ -10757,7 +10757,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -10773,7 +10773,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -10789,7 +10789,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=1.8
 field ATMP air_temperature C source_column=13 alt_offset=2.8
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
 field DEWP dew_point_temperature C source_column=15 alt_offset=2.8
@@ -10805,7 +10805,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -10821,7 +10821,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -10837,7 +10837,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -10845,7 +10845,7 @@ field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 url https://www.ndbc.noaa.gov/data/historical/stdmet/42002h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
-on earth frame=body lat=25.950 lon=-93.78 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+on earth frame=body lat=25.950 lon=-93.780 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
 field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
 field WSPD wind_speed m/s source_column=6 alt_offset=4.1
 field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
@@ -10853,7 +10853,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -10869,7 +10869,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.4
 field ATMP air_temperature C source_column=13 alt_offset=3.4
 field WTMP sea_water_temperature C source_column=14 alt_offset=-2
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
@@ -10885,7 +10885,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -10897,7 +10897,7 @@ on earth frame=body lat=38.460 lon=-74.692 alt_ref=0 datum=msl time_parts=YY,MM,
 field WDIR wind_from_direction deg source_column=5 alt_offset=3.8
 field WSPD wind_speed m/s source_column=6 alt_offset=3.8
 field GST wind_gust_speed m/s source_column=7 alt_offset=3.8
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.4
 field ATMP air_temperature C source_column=13 alt_offset=3.4
 field WTMP sea_water_temperature C source_column=14 alt_offset=-2
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
@@ -10913,7 +10913,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=1.8
 field ATMP air_temperature C source_column=13 alt_offset=2.8
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
 field DEWP dew_point_temperature C source_column=15 alt_offset=2.8
@@ -10929,7 +10929,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=-183
+field PRES sea_level_pressure hPa source_column=12 alt_offset=1.8
 field ATMP air_temperature C source_column=13 alt_offset=2.8
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
 
@@ -10950,9 +10950,7 @@ ttl 31536000
 on earth frame=body lat=44.603 lon=-73.394 alt_ref=30 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
 field WDIR wind_from_direction deg source_column=5 alt_offset=1
 field WSPD wind_speed m/s source_column=6 alt_offset=1
-field WVHT significant_wave_height m source_column=8 alt_offset=0
-field DPD dominant_wave_period s source_column=9 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=-30
+field PRES sea_level_pressure hPa source_column=12 alt_offset=1
 field ATMP air_temperature C source_column=13 alt_offset=1
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1
 
@@ -10976,7 +10974,6 @@ ttl 31536000
 on earth frame=body lat=41.731 lon=-81.367 alt_ref=174 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
 field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
-field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46001h{prev_year}.txt.gz
@@ -10990,7 +10987,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -11006,7 +11003,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -11030,7 +11027,7 @@ field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46022h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
-on earth frame=body lat=40.716 lon=-124.54 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
+on earth frame=body lat=40.716 lon=-124.540 alt_ref=0 datum=msl time_parts=YY,MM,DD,hh,mm time_scale=UTC
 field WDIR wind_from_direction deg source_column=5 alt_offset=4.1
 field WSPD wind_speed m/s source_column=6 alt_offset=4.1
 field GST wind_gust_speed m/s source_column=7 alt_offset=4.1
@@ -11038,7 +11035,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 
@@ -11053,7 +11050,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.4
 field ATMP air_temperature C source_column=13 alt_offset=3.4
 field WTMP sea_water_temperature C source_column=14 alt_offset=-2
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
@@ -11069,7 +11066,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46029h{prev_year}.txt.gz
@@ -11083,7 +11080,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=1.8
 field ATMP air_temperature C source_column=13 alt_offset=2.8
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
 
@@ -11111,7 +11108,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -11127,7 +11124,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -11143,7 +11140,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.4
 field WTMP sea_water_temperature C source_column=14 alt_offset=-2
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46059h{prev_year}.txt.gz
@@ -11157,7 +11154,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.4
 field ATMP air_temperature C source_column=13 alt_offset=3.4
 field WTMP sea_water_temperature C source_column=14 alt_offset=-2
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
@@ -11173,7 +11170,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -11189,8 +11186,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
-field ATMP air_temperature C source_column=13 alt_offset=3.4
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.4
 field WTMP sea_water_temperature C source_column=14 alt_offset=-2
 
 url https://www.ndbc.noaa.gov/data/historical/stdmet/46075h{prev_year}.txt.gz
@@ -11204,7 +11200,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.4
 field ATMP air_temperature C source_column=13 alt_offset=3.4
 field WTMP sea_water_temperature C source_column=14 alt_offset=-2
 
@@ -11219,7 +11215,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=1.8
 field ATMP air_temperature C source_column=13 alt_offset=2.8
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.1
 field DEWP dew_point_temperature C source_column=15 alt_offset=2.8
@@ -11235,7 +11231,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.7
 field ATMP air_temperature C source_column=13 alt_offset=3.7
 field WTMP sea_water_temperature C source_column=14 alt_offset=-1.5
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
@@ -11243,7 +11239,7 @@ field DEWP dew_point_temperature C source_column=15 alt_offset=3.7
 url https://www.ndbc.noaa.gov/data/historical/stdmet/51001h{prev_year}.txt.gz
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
 ttl 31536000
-on earth frame=body lat=24.475 lon=-162.03 alt_ref=0 datum=sea_surface time_parts=YY,MM,DD,hh,mm time_scale=UTC
+on earth frame=body lat=24.475 lon=-162.030 alt_ref=0 datum=sea_surface time_parts=YY,MM,DD,hh,mm time_scale=UTC
 field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
@@ -11260,7 +11256,7 @@ field WVHT significant_wave_height m source_column=8 alt_offset=0
 field DPD dominant_wave_period s source_column=9 alt_offset=0
 field APD average_wave_period s source_column=10 alt_offset=0
 field MWD mean_wave_from_direction deg source_column=11 alt_offset=0
-field PRES sea_level_pressure hPa source_column=12 alt_offset=0
+field PRES sea_level_pressure hPa source_column=12 alt_offset=2.4
 field ATMP air_temperature C source_column=13 alt_offset=3.4
 field WTMP sea_water_temperature C source_column=14 alt_offset=-2
 field DEWP dew_point_temperature C source_column=15 alt_offset=3.4
@@ -24885,4 +24881,3 @@ at earth frame=barycenter
 ttl 315360000
 format worldclim
 field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 pending 0.0 0.0
-
