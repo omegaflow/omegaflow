@@ -642,14 +642,12 @@ pub fn catalog_sample_in_enclosure(
         key: sample.name.clone(),
         name: sample.name.clone(),
         band_id: None,
-        model: Some(crate::archivar::FieldModel {
-            kernel: sample.kernel_id as u8,
-            tau: sample.tau,
-            tau_src: crate::archivar::types::TauSource::Measured,
-            absorption: sample.absorption,
-            advection: sample.advection,
-        }),
+        kernel: sample.kernel_id as u8,
         channel_ref: sample.channel_ref.map(|c| c as u8),
+        tau: sample.tau,
+        tau_src: crate::archivar::types::TauSource::Measured,
+        absorption: sample.absorption,
+        advection: sample.advection,
         unit: String::new(),
         freq: sample.freq,
         bin_width: sample.bin_width,
@@ -687,14 +685,12 @@ pub fn body_in_enclosure(
         key: String::new(),
         name: String::new(),
         band_id: None,
-        model: Some(crate::archivar::FieldModel {
-            kernel: 0,
-            tau: f64::INFINITY,
-            tau_src: crate::archivar::types::TauSource::Measured,
-            absorption: 0.0,
-            advection: 0.0,
-        }),
+        kernel: 0,
         channel_ref: Some(2),
+        tau: f64::INFINITY,
+        tau_src: crate::archivar::types::TauSource::Measured,
+        absorption: 0.0,
+        advection: 0.0,
         unit: String::new(),
         freq: 0.0,
         bin_width: 0.0,
@@ -1203,6 +1199,7 @@ pub fn live_sweep(
                 | "wind_waves"
                 | "gong_modes"
                 | "spk"
+                | "reference"
                 | "tar_gz_yaml"
                 | "flac"
         ) {
@@ -1910,7 +1907,7 @@ pub fn url_is_fanout(url: &str) -> bool {
 pub fn frame_anchor(frame: &Frame) -> Option<(f64, f64)> {
     match frame {
         Frame::Surface { lat, lon, .. } => Some((*lat, *lon)),
-        Frame::Barycenter { .. } | Frame::Body { .. } | Frame::Manifest => None,
+        _ => None,
     }
 }
 

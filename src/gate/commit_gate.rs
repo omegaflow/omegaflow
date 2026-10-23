@@ -2379,41 +2379,7 @@ pub fn prose_violation_for(path: &str, line: &str) -> Option<&'static str> {
 
 const BODY_DATA_NETLOCS: [&str; 3] = ["openneuro.org", "physionet.org", "ieeg.org"];
 
-fn full_block_basis(full: &str, url: &str) -> (bool, bool) {
-    let mut in_block = false;
-    let mut basis = false;
-    let mut terms = false;
-    for line in full.lines() {
-        if line.starts_with("url ") {
-            if in_block {
-                break;
-            }
-            in_block = line == url;
-            continue;
-        }
-        if !in_block {
-            continue;
-        }
-        if line.starts_with("origin ") {
-            basis = true;
-        }
-        if line.starts_with("terms ") {
-            basis = true;
-            terms = true;
-        }
-    }
-    (basis, terms)
-}
-
-fn contains_url(text: &str, url: &str) -> bool {
-    text.lines().any(|line| line == url)
-}
-
-pub fn unbacked_mirror_violations(
-    added: &[&str],
-    full: &str,
-    known: &str,
-) -> Vec<(usize, String)> {
+pub fn unbacked_mirror_violations(added: &[&str]) -> Vec<(usize, String)> {
     let mut out = Vec::new();
     let mut i = 0;
     while i < added.len() {
@@ -2423,21 +2389,7 @@ pub fn unbacked_mirror_violations(
             i += 1;
             continue;
         }
-        let url = added[i].strip_prefix("url ").unwrap_or("");
-        if !known.is_empty() && contains_url(known, &added[i]) {
-            i += 1;
-            continue;
-        }
         let body_data = BODY_DATA_NETLOCS.iter().any(|n| added[i].contains(n));
-        let (full_basis, full_terms) = if full.is_empty() {
-            (false, false)
-        } else {
-            full_block_basis(full, url)
-        };
-        if full_basis && (!body_data || full_terms) {
-            i += 1;
-            continue;
-        }
         let mut has_basis = false;
         let mut has_terms = false;
         let mut j = i + 1;
@@ -2463,41 +2415,11 @@ pub fn unbacked_mirror_violations(
     out
 }
 
-fn full_block_has_terms(full: &str, url: &str) -> bool {
-    let mut in_block = false;
-    for line in full.lines() {
-        if line.starts_with("url ") {
-            if in_block {
-                break;
-            }
-            in_block = line == url;
-            continue;
-        }
-        if in_block && line.starts_with("terms ") {
-            return true;
-        }
-    }
-    false
-}
-
-pub fn ingest_terms_absent_violations(
-    added: &[&str],
-    full: &str,
-    known: &str,
-) -> Vec<(usize, String)> {
+pub fn ingest_terms_absent_violations(added: &[&str]) -> Vec<(usize, String)> {
     let mut out = Vec::new();
     let mut i = 0;
     while i < added.len() {
         if !added[i].starts_with("url ") {
-            i += 1;
-            continue;
-        }
-        let url = added[i].strip_prefix("url ").unwrap_or("");
-        if !known.is_empty() && contains_url(known, &added[i]) {
-            i += 1;
-            continue;
-        }
-        if !full.is_empty() && full_block_has_terms(full, url) {
             i += 1;
             continue;
         }
@@ -5119,28 +5041,28 @@ mod tests {
     #[test]
     fn fp_unbacked_mirror_requires_basis() {
         let bare = ["url https://github.com/omegaflow/sources/releases/download/tag/a.bin"];
-        assert_eq!(unbacked_mirror_violations(&bare, "", "").len(), 1);
+        assert_eq!(unbacked_mirror_violations(&bare).len(), 1);
         let origin = [
             "url https://github.com/omegaflow/sources/releases/download/tag/a.bin",
             "origin https://example.org/x",
         ];
-        assert!(unbacked_mirror_violations(&origin, "", "").is_empty());
+        assert!(unbacked_mirror_violations(&origin).is_empty());
         let terms = [
             "url https://github.com/omegaflow/sources/releases/download/tag/b.bin",
             "terms CC BY-NC-SA",
         ];
-        assert!(unbacked_mirror_violations(&terms, "", "").is_empty());
+        assert!(unbacked_mirror_violations(&terms).is_empty());
         let body_bare = [
             "url https://github.com/omegaflow/sources/releases/download/openneuro.org/x.bin",
             "origin https://openneuro.org/crn/graphql",
         ];
-        assert_eq!(unbacked_mirror_violations(&body_bare, "", "").len(), 1);
+        assert_eq!(unbacked_mirror_violations(&body_bare).len(), 1);
         let body_ok = [
             "url https://github.com/omegaflow/sources/releases/download/openneuro.org/x.bin",
             "origin https://openneuro.org/crn/graphql",
             "terms CC0 https://openneuro.org/datasets/ds005034",
         ];
-        assert!(unbacked_mirror_violations(&body_ok, "", "").is_empty());
+        assert!(unbacked_mirror_violations(&body_ok).is_empty());
     }
 
     #[test]
@@ -5150,19 +5072,19 @@ mod tests {
             "format cdf",
             "witness presence",
         ];
-        assert_eq!(ingest_terms_absent_violations(&ingest_bare, "", "").len(), 1);
+        assert_eq!(ingest_terms_absent_violations(&ingest_bare).len(), 1);
         let ingest_terms = [
             "url https://example.org/x.cdf",
             "terms erg-sc-rules-of-the-road https://example.org/licence",
             "format cdf",
         ];
-        assert!(ingest_terms_absent_violations(&ingest_terms, "", "").is_empty());
+        assert!(ingest_terms_absent_violations(&ingest_terms).is_empty());
         let field_bare = [
             "url https://example.org/y",
             "hapi ktemp=ktemp",
             "field ktemp ktemp inverse-square thermal k 3600 0.0 0.0",
         ];
-        assert_eq!(ingest_terms_absent_violations(&field_bare, "", "").len(), 1);
+        assert_eq!(ingest_terms_absent_violations(&field_bare).len(), 1);
         let reference = [
             "url https://data.hawc-observatory.org/datasets/3hwc-survey/3HWC.yaml",
             "witness s2-direction",
@@ -5170,7 +5092,7 @@ mod tests {
             "force em",
             "no-cadence",
         ];
-        assert!(ingest_terms_absent_violations(&reference, "", "").is_empty());
+        assert!(ingest_terms_absent_violations(&reference).is_empty());
     }
 
     #[test]

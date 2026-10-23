@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 
 use super::*;
 use crate::force::{QuantityKind, quantity_kind_id, quantity_kind_of};
@@ -148,6 +148,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
         () => {
             if active && cur_ttl > 0 && !cur_url.is_empty() {
                 if cur_format == "kernel_text"
+                    || cur_format == "reference"
                     || cur_format == "fp01"
                     || cur_anchor.is_some()
                     || !cur_extracts.is_empty()
@@ -414,7 +415,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     continue;
                 }
                 let body = parts[1].to_string();
-                match parse_anchor_directive(AnchorKind::At, &parts) {
+                match parse_anchor_directive(AnchorKind::At, &parts, parts.len() == 2) {
                     Ok(anchor) => cur_anchor = Some(anchor),
                     Err(e) => {
                         report_anomaly("Invalid Syntax", &cur_url, &format!("at {}: {}", e, line));
@@ -433,42 +434,110 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     continue;
                 }
                 let body = parts[1].to_string();
-                let anchor = match parse_anchor_directive(AnchorKind::On, &parts) {
-                    Ok(anchor) => anchor,
-                    Err(e) => {
-                        report_anomaly("Invalid Syntax", &cur_url, &format!("on {}: {}", e, line));
+                let keyed = parts.iter().skip(2).any(|p| p.contains('='));
+                if keyed {
+                    let anchor = match parse_anchor_directive(AnchorKind::On, &parts, false) {
+                        Ok(anchor) => anchor,
+                        Err(e) => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("on {}: {}", e, line),
+                            );
+                            continue;
+                        }
+                    };
+                    let lat_ok = anchor
+                        .attrs
+                        .get("lat")
+                        .is_some_and(|v| v.parse::<f64>().is_ok());
+                    let lon_ok = anchor
+                        .attrs
+                        .get("lon")
+                        .is_some_and(|v| v.parse::<f64>().is_ok());
+                    if !lat_ok || !lon_ok {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("on lat/lon non-numeric: {}", line),
+                        );
                         continue;
                     }
-                };
-                let lat_ok = anchor
-                    .attrs
-                    .get("lat")
-                    .is_some_and(|v| v.parse::<f64>().is_ok());
-                let lon_ok = anchor
-                    .attrs
-                    .get("lon")
-                    .is_some_and(|v| v.parse::<f64>().is_ok());
-                if !lat_ok || !lon_ok {
-                    report_anomaly(
-                        "Invalid Syntax",
-                        &cur_url,
-                        &format!("on lat/lon non-numeric: {}", line),
+                    if let Some(value) = anchor.attrs.get("alt").map(String::as_str)
+                        && !matches!(value, "absent" | "pending")
+                        && value.parse::<f64>().is_err()
+                    {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("on alt non-numeric: {}", line),
+                        );
+                        continue;
+                    }
+                    cur_anchor = Some(anchor);
+                    cur_body = Some(body.clone());
+                } else {
+                    if parts.len() < 4 {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("on needs <body> <lat> <lon> [alt]: {}", line),
+                        );
+                        continue;
+                    }
+                    let lat: f64 = match parts[2].parse() {
+                        Ok(v) => v,
+                        Err(_) => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("on lat non-numeric: {}", line),
+                            );
+                            continue;
+                        }
+                    };
+                    let lon: f64 = match parts[3].parse() {
+                        Ok(v) => v,
+                        Err(_) => {
+                            report_anomaly(
+                                "Invalid Syntax",
+                                &cur_url,
+                                &format!("on lon non-numeric: {}", line),
+                            );
+                            continue;
+                        }
+                    };
+                    let alt_token = parts.get(4).copied();
+                    if let Some(value) = alt_token
+                        && !matches!(value, "absent" | "pending")
+                        && value.parse::<f64>().is_err()
+                    {
+                        report_anomaly(
+                            "Invalid Syntax",
+                            &cur_url,
+                            &format!("on alt non-numeric: {}", line),
+                        );
+                        continue;
+                    }
+                    let mut attrs = BTreeMap::new();
+                    attrs.insert("lat".to_string(), lat.to_string());
+                    attrs.insert("lon".to_string(), lon.to_string());
+                    attrs.insert(
+                        "alt".to_string(),
+                        match alt_token {
+                            Some("pending") => "pending".to_string(),
+                            Some("absent") | None => "absent".to_string(),
+                            Some(value) => value.to_string(),
+                        },
                     );
-                    continue;
+                    cur_anchor = Some(Anchor {
+                        kind: AnchorKind::On,
+                        body: Some(body.clone()),
+                        attrs,
+                        legacy: true,
+                    });
+                    cur_body = Some(body.clone());
                 }
-                if let Some(value) = anchor.attrs.get("alt").map(String::as_str)
-                    && !matches!(value, "absent" | "pending")
-                    && value.parse::<f64>().is_err()
-                {
-                    report_anomaly(
-                        "Invalid Syntax",
-                        &cur_url,
-                        &format!("on alt non-numeric: {}", line),
-                    );
-                    continue;
-                }
-                cur_anchor = Some(anchor);
-                cur_body = Some(body.clone());
             }
             "global" | "coverage" | "orbit" | "query" | "track" | "sky" | "absent" => {
                 if cur_anchor.is_some() {
@@ -488,7 +557,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     "sky" => AnchorKind::Sky,
                     _ => AnchorKind::Absent,
                 };
-                match parse_anchor_directive(kind, &parts) {
+                match parse_anchor_directive(kind, &parts, false) {
                     Ok(anchor) => {
                         if let Some(body) = &anchor.body {
                             cur_body = Some(body.clone());
@@ -680,14 +749,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: tau_src_of(&parts),
-                        absorption: absorption,
-                        advection: advection,
-                    }),
+                    kernel: k,
                     channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -709,14 +776,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: tau_src_of(&parts),
-                        absorption: absorption,
-                        advection: advection,
-                    }),
+                    kernel: k,
                     channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -734,14 +799,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         parts[1].to_string()
                     },
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: 0,
-                        tau: 0.0,
-                        tau_src: tau_src_of(&parts),
-                        absorption: SLOT_ABSENT,
-                        advection: SLOT_ABSENT,
-                    }),
+                    kernel: 0,
                     channel_ref: Some(0),
+                    tau: 0.0,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
                     unit: String::new(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -758,14 +821,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: tau_src_of(&parts),
-                        absorption: absorption,
-                        advection: advection,
-                    }),
+                    kernel: k,
                     channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -794,14 +855,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: tau_src_of(&parts),
-                        absorption: absorption,
-                        advection: advection,
-                    }),
+                    kernel: k,
                     channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -871,14 +930,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: tau_src_of(&parts),
-                        absorption: absorption,
-                        advection: advection,
-                    }),
+                    kernel: k,
                     channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -896,14 +953,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: tau_src_of(&parts),
-                        absorption: absorption,
-                        advection: advection,
-                    }),
+                    kernel: k,
                     channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -921,14 +976,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: tau_src_of(&parts),
-                        absorption: absorption,
-                        advection: advection,
-                    }),
+                    kernel: k,
                     channel_ref: f,
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
                     unit: parts[5].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1089,14 +1142,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[1].to_string(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: TauSource::Pending,
-                        absorption: SLOT_ABSENT,
-                        advection: SLOT_ABSENT,
-                    }),
+                    kernel: k,
                     channel_ref: Some(f),
+                    tau,
+                    tau_src: TauSource::Pending,
+                    absorption: 0.0,
+                    advection: 0.0,
                     unit: parts[3].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1152,17 +1203,15 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[1].to_string(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: match kernel_id_for_force(f) {
-                            Some(k) => k,
-                            None => continue,
-                        },
-                        tau: tau,
-                        tau_src: TauSource::Pending,
-                        absorption: SLOT_ABSENT,
-                        advection: SLOT_ABSENT,
-                    }),
+                    kernel: match kernel_id_for_force(f) {
+                        Some(k) => k,
+                        None => continue,
+                    },
                     channel_ref: Some(f),
+                    tau,
+                    tau_src: TauSource::Pending,
+                    absorption: 0.0,
+                    advection: 0.0,
                     unit: parts[3].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1320,31 +1369,30 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         continue;
                     }
                 };
-                let tau_src = tau_src_of(&parts);
-                let absorption: f64 = match parts[8].parse() {
+                let absorption: f64 = match parts[7].parse() {
                     Ok(v) => v,
                     Err(_) => continue,
                 };
-                let advection: f64 = match parts[9].parse() {
+                let advection: f64 = match parts[8].parse() {
                     Ok(v) => v,
                     Err(_) => continue,
                 };
                 let mut freq = crate::spectral::SPECTRAL_NO_BAND;
                 let mut bin_width = crate::spectral::SPECTRAL_NO_BAND;
                 let mut band_declared = false;
-                if parts.len() > 10 {
-                    if parts[10] != "band" {
+                if parts.len() > 9 {
+                    if parts[9] != "band" {
                         report_anomaly(
                             "Invalid Syntax",
                             &cur_url,
                             &format!(
                                 "quantity {} carries an unknown trailing token \"{}\": {}",
-                                parts[1], parts[10], line
+                                parts[1], parts[9], line
                             ),
                         );
                         continue;
                     }
-                    if parts.len() < 14 || parts[12] != "pivot" {
+                    if parts.len() < 13 || parts[11] != "pivot" {
                         report_anomaly(
                             "Invalid Syntax",
                             &cur_url,
@@ -1355,7 +1403,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                         );
                         continue;
                     }
-                    let lam_m = match parse_wavelength_m(parts[13]) {
+                    let lam_m = match parse_wavelength_m(parts[12]) {
                         Some(m) => m,
                         None => {
                             report_anomaly(
@@ -1363,7 +1411,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                                 &cur_url,
                                 &format!(
                                     "quantity {} pivot wavelength \"{}\" unmeasurable: {}",
-                                    parts[1], parts[13], line
+                                    parts[1], parts[12], line
                                 ),
                             );
                             continue;
@@ -1371,8 +1419,8 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     };
                     freq = C_LIGHT / lam_m;
                     band_declared = true;
-                    if parts.len() > 14 {
-                        if parts[14] != "edges" || parts.len() < 16 {
+                    if parts.len() > 13 {
+                        if parts[13] != "edges" || parts.len() < 15 {
                             report_anomaly(
                                 "Invalid Syntax",
                                 &cur_url,
@@ -1383,7 +1431,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                             );
                             continue;
                         }
-                        match parse_wavelength_range_m(parts[15]) {
+                        match parse_wavelength_range_m(parts[14]) {
                             Some((lo_m, hi_m)) => {
                                 bin_width = (C_LIGHT / lo_m - C_LIGHT / hi_m).abs();
                             }
@@ -1393,7 +1441,7 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                                     &cur_url,
                                     &format!(
                                         "quantity {} edges \"{}\" unmeasurable: {}",
-                                        parts[1], parts[15], line
+                                        parts[1], parts[14], line
                                     ),
                                 );
                                 continue;
@@ -1419,18 +1467,16 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: if band_declared {
-                        Some(parts[11].to_string())
+                        Some(parts[10].to_string())
                     } else {
                         None
                     },
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: tau_src,
-                        absorption: absorption,
-                        advection: advection,
-                    }),
+                    kernel: k,
                     channel_ref: None,
+                    tau,
+                    tau_src: TauSource::Measured,
+                    absorption,
+                    advection,
                     unit: parts[5].to_string(),
                     freq,
                     bin_width,
@@ -1587,14 +1633,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: crate::archivar::types::TauSource::Measured,
-                        absorption: absorption,
-                        advection: advection,
-                    }),
+                    kernel: k,
                     channel_ref: Some(f),
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
                     unit: parts[i + 1].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1771,14 +1815,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: crate::archivar::types::TauSource::Measured,
-                        absorption: absorption,
-                        advection: advection,
-                    }),
+                    kernel: k,
                     channel_ref: Some(f),
+                    tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption,
+                    advection,
                     unit: parts[unit_idx].to_string(),
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1823,17 +1865,14 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                 };
                 let tau_src = match parts.get(7).copied() {
                     Some("measured") => TauSource::Measured,
+                    Some("derived") => TauSource::Derived,
                     Some("pending") => TauSource::Pending,
-                    _ => {
-                        report_anomaly(
-                            "Invalid Syntax",
-                            &cur_url,
-                            &format!("field {} carries no tau_src (measured|pending)", parts[1]),
-                        );
-                        continue;
-                    }
+                    _ => TauSource::Pending,
                 };
-                let (abs_index, adv_index, extras_start) = (8, 9, 10);
+                let (abs_index, adv_index, extras_start) = match parts.get(7).copied() {
+                    Some("measured" | "derived" | "pending") => (8, 9, 10),
+                    _ => (7, 8, 9),
+                };
                 let absorption: f64 = match parts.get(abs_index).map(|s| s.parse()) {
                     Some(Ok(v)) => v,
                     Some(Err(_)) => continue,
@@ -1925,14 +1964,13 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[1].to_string(),
                     name: parts[2].to_string(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: tau_src,
-                        absorption: absorption,
-                        advection: advection,
-                    }),
+                    kernel: k,
                     channel_ref: Some(f),
+
+                    tau,
+                    tau_src,
+                    absorption,
+                    advection,
                     unit: parts[5].to_string(),
                     freq,
                     bin_width,
@@ -2267,14 +2305,12 @@ pub fn parse_sources(content: &str) -> Vec<SourceConfig> {
                     key: parts[2].to_string(),
                     name: format!("fold_{}_{}_{}", parts[1], parts[2], parts[3]),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: k,
-                        tau: tau,
-                        tau_src: TauSource::Pending,
-                        absorption: SLOT_ABSENT,
-                        advection: SLOT_ABSENT,
-                    }),
+                    kernel: k,
                     channel_ref: Some(f),
+                    tau,
+                    tau_src: TauSource::Pending,
+                    absorption: 0.0,
+                    advection: 0.0,
                     unit,
                     freq: crate::spectral::SPECTRAL_NO_BAND,
                     bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -2804,7 +2840,11 @@ fn require_attr<'a>(attrs: &'a BTreeMap<String, String>, key: &str) -> Result<&'
         .ok_or_else(|| format!("missing {}", key))
 }
 
-fn parse_anchor_directive(kind: AnchorKind, parts: &[&str]) -> Result<Anchor, String> {
+fn parse_anchor_directive(
+    kind: AnchorKind,
+    parts: &[&str],
+    legacy: bool,
+) -> Result<Anchor, String> {
     let (body, attrs) = parse_anchor_attrs(parts, 1)?;
     if matches!(
         kind,
@@ -2821,7 +2861,9 @@ fn parse_anchor_directive(kind: AnchorKind, parts: &[&str]) -> Result<Anchor, St
     }
     match kind {
         AnchorKind::At => {
-            require_attr(&attrs, "frame")?;
+            if !legacy {
+                require_attr(&attrs, "frame")?;
+            }
         }
         AnchorKind::On => {
             require_attr(&attrs, "lat")?;
@@ -2853,7 +2895,12 @@ fn parse_anchor_directive(kind: AnchorKind, parts: &[&str]) -> Result<Anchor, St
             require_attr(&attrs, "reason")?;
         }
     }
-    Ok(Anchor { kind, body, attrs })
+    Ok(Anchor {
+        kind,
+        body,
+        attrs,
+        legacy,
+    })
 }
 
 fn parse_medium_value(token: &str) -> Option<MediumValue> {
@@ -2910,14 +2957,6 @@ fn parse_medium_line(parts: &[&str]) -> Result<MediumLine, String> {
     })
 }
 
-fn tau_src_of(parts: &[&str]) -> TauSource {
-    match parts.get(7).copied() {
-        Some("measured") => TauSource::Measured,
-        Some("pending") => TauSource::Pending,
-        _ => TauSource::Pending,
-    }
-}
-
 pub fn parse_field_config(parts: &[&str]) -> Option<(u8, Option<u8>, f64, f64, f64)> {
     let kernel = kernel_id_of(parts[3])?;
     let channel_ref = match force_id_of(parts[4]) {
@@ -2931,22 +2970,16 @@ pub fn parse_field_config(parts: &[&str]) -> Option<(u8, Option<u8>, f64, f64, f
         Ok(v) if v > 0.0 => v,
         _ => return None,
     };
-    let (abs_index, adv_index) = match parts.get(7).copied() {
-        Some("measured" | "pending") => (8, 9),
-        None => (7, 8),
-        Some(_) if parts.len() <= 8 => (7, 8),
-        Some(_) => return None,
-    };
-    let absorption: f64 = if parts.len() > abs_index {
-        match parts[abs_index].parse() {
+    let absorption: f64 = if parts.len() > 7 {
+        match parts[7].parse() {
             Ok(v) => v,
             Err(_) => return None,
         }
     } else {
         SLOT_ABSENT
     };
-    let advection: f64 = if parts.len() > adv_index {
-        match parts[adv_index].parse() {
+    let advection: f64 = if parts.len() > 8 {
+        match parts[8].parse() {
             Ok(v) => v,
             Err(_) => return None,
         }
@@ -2959,17 +2992,17 @@ pub fn parse_field_config(parts: &[&str]) -> Option<(u8, Option<u8>, f64, f64, f
 pub struct WhereRefused;
 
 pub fn parse_where(parts: &[&str]) -> Result<Option<(String, String)>, WhereRefused> {
-    let Some(at) = parts.iter().position(|p| *p == "where") else {
+    if parts.len() < 10 || parts[9] != "where" {
         return Ok(None);
-    };
-    if parts.len() != at + 3 {
+    }
+    if parts.len() != 12 {
         eprintln!(
             "where refused at {}: the filter clause carries exactly `where <key> <value>`",
             parts.get(1).copied().unwrap_or("?")
         );
         return Err(WhereRefused);
     }
-    Ok(Some((parts[at + 1].to_string(), parts[at + 2].to_string())))
+    Ok(Some((parts[10].to_string(), parts[11].to_string())))
 }
 
 pub fn load_sources_from(content: &str) -> Vec<SourceConfig> {
@@ -3109,932 +3142,9 @@ fn interaction_or_role<'a>(
     }
 }
 
-struct SourceBlockBuilder {
-    url: Option<String>,
-    terms: Option<String>,
-    origin: Option<String>,
-    ttl: Option<u64>,
-    position: Option<SourcePosition>,
-    alt_ref: Option<f64>,
-    alt_key: Option<String>,
-    datum: Option<String>,
-    time: Option<String>,
-    time_key: Option<String>,
-    time_parts: Option<Vec<String>>,
-    time_scale: Option<String>,
-    fields: Vec<SourceField>,
-}
-
-fn finish_source_block(builder: SourceBlockBuilder, line: usize) -> Result<SourceBlock, String> {
-    let url = builder
-        .url
-        .ok_or_else(|| format!("line {line}: url absent"))?;
-    let terms = builder
-        .terms
-        .ok_or_else(|| format!("line {line}: terms absent"))?;
-    let ttl = builder
-        .ttl
-        .ok_or_else(|| format!("line {line}: ttl absent"))?;
-    if ttl == 0 {
-        return Err(format!("line {line}: ttl must be positive"));
-    }
-    let position = builder
-        .position
-        .ok_or_else(|| format!("line {line}: block position absent"))?;
-    if let SourcePosition::Fixed { lat, lon } = &position
-        && (!(-90.0..=90.0).contains(lat) || !(-180.0..=360.0).contains(lon))
-    {
-        return Err(format!("line {line}: lat/lon outside range"));
-    }
-    if !matches!(
-        position,
-        SourcePosition::At { .. } | SourcePosition::Sky { .. }
-    ) && builder.alt_ref.is_some() == builder.alt_key.is_some()
-    {
-        return Err(format!(
-            "line {line}: exactly one of alt_ref/alt_key required"
-        ));
-    }
-    let time_refs = usize::from(builder.time.is_some())
-        + usize::from(builder.time_key.is_some())
-        + usize::from(builder.time_parts.is_some());
-    let sky = matches!(position, SourcePosition::Sky { .. });
-    if time_refs != 1 && !(sky && time_refs == 0) {
-        return Err(format!(
-            "line {line}: exactly one of time/time_key/time_parts required"
-        ));
-    }
-    if let Some(parts) = &builder.time_parts
-        && (!(5..=6).contains(&parts.len()) || parts.iter().any(|part| part.is_empty()))
-    {
-        return Err(format!(
-            "line {line}: time_parts needs five or six non-empty keys (Y,M,D,h,m[,s])"
-        ));
-    }
-    if matches!(&position, SourcePosition::Moving { .. }) && builder.time_key.is_none() {
-        return Err(format!(
-            "line {line}: moving block needs time_key and one of alt_ref/alt_key"
-        ));
-    }
-    let datum = match (&position, builder.datum) {
-        (SourcePosition::At { frame, .. }, None) => frame.clone(),
-        (SourcePosition::Sky { frame, epoch, .. }, None) => format!("{frame} {epoch}"),
-        (_, Some(datum)) => datum,
-        (_, None) => return Err(format!("line {line}: datum absent")),
-    };
-    let time_scale = match builder.time_scale {
-        Some(scale) => scale,
-        None if sky => String::new(),
-        None => return Err(format!("line {line}: time_scale absent")),
-    };
-    if builder.fields.is_empty() {
-        return Err(format!("line {line}: fields absent"));
-    }
-    Ok(SourceBlock {
-        url,
-        terms,
-        origin: builder.origin,
-        ttl,
-        position,
-        alt_ref: builder.alt_ref,
-        alt_key: builder.alt_key,
-        datum,
-        time: builder.time,
-        time_key: builder.time_key,
-        time_parts: builder.time_parts,
-        time_scale,
-        fields: builder.fields,
-    })
-}
-
-pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
-    let mut out = Vec::new();
-    let mut current: Option<SourceBlockBuilder> = None;
-    for (index, raw) in content.lines().enumerate() {
-        let line = raw.split('#').next().unwrap_or("").trim();
-        if line.is_empty() {
-            continue;
-        }
-        let line_no = index + 1;
-        let parts: Vec<&str> = line.split_whitespace().collect();
-        let head = parts.first().copied().unwrap_or("");
-        if head == "url" {
-            if let Some(builder) = current.take() {
-                out.push(finish_source_block(builder, line_no - 1)?);
-            }
-            if parts.len() != 2 {
-                return Err(format!("line {line_no}: url needs one value"));
-            }
-            current = Some(SourceBlockBuilder {
-                url: Some(parts[1].to_string()),
-                terms: None,
-                origin: None,
-                ttl: None,
-                position: None,
-                alt_ref: None,
-                alt_key: None,
-                datum: None,
-                time: None,
-                time_key: None,
-                time_parts: None,
-                time_scale: None,
-                fields: Vec::new(),
-            });
-            continue;
-        }
-        let Some(builder) = current.as_mut() else {
-            return Err(format!("line {line_no}: {head} outside a source block"));
-        };
-        match head {
-            "terms" if parts.len() >= 2 => builder.terms = Some(parts[1..].join(" ")),
-            "origin" if parts.len() >= 2 => builder.origin = Some(parts[1..].join(" ")),
-            "ttl" if parts.len() == 2 => {
-                builder.ttl = Some(
-                    parts[1]
-                        .parse::<u64>()
-                        .map_err(|_| format!("line {line_no}: ttl unreadable"))?,
-                );
-            }
-            "no-cadence" => builder.ttl = Some(NO_CADENCE),
-            "at" if parts.len() >= 2 => {
-                if parts[1].contains('=') {
-                    return Err(format!("line {line_no}: at needs a body before attributes"));
-                }
-                let body = parts[1].to_string();
-                let mut frame = None;
-                let mut distance_au = None;
-                let mut time = None;
-                let mut time_key = None;
-                let mut time_parts = None;
-                let mut time_scale = None;
-                for token in &parts[2..] {
-                    let Some((key, value)) = token.split_once('=') else {
-                        return Err(format!(
-                            "line {line_no}: at token {token} carries no key=value"
-                        ));
-                    };
-                    if value.is_empty() {
-                        return Err(format!("line {line_no}: at attribute {key} is empty"));
-                    }
-                    match key {
-                        "frame" => frame = Some(value.to_string()),
-                        "distance_au" => {
-                            distance_au = Some(value.parse::<f64>().map_err(|_| {
-                                format!("line {line_no}: distance_au {value} is not a number")
-                            })?)
-                        }
-                        "time" => time = Some(value.to_string()),
-                        "time_key" => time_key = Some(value.to_string()),
-                        "time_parts" => {
-                            time_parts = Some(
-                                value
-                                    .split(',')
-                                    .map(|part| part.trim().to_string())
-                                    .collect::<Vec<_>>(),
-                            )
-                        }
-                        "time_scale" => time_scale = Some(value.to_string()),
-                        _ => return Err(format!("line {line_no}: unknown at attribute {key}")),
-                    }
-                }
-                let frame = frame.ok_or_else(|| format!("line {line_no}: at needs frame="))?;
-                builder.position = Some(SourcePosition::At {
-                    body,
-                    frame,
-                    distance_au,
-                });
-                builder.time = time;
-                builder.time_key = time_key;
-                builder.time_parts = time_parts;
-                builder.time_scale = time_scale;
-            }
-            "sky" => {
-                let mut frame = None;
-                let mut ra_key = None;
-                let mut dec_key = None;
-                let mut epoch = None;
-                let mut plx_key = None;
-                let mut dist_key = None;
-                for token in &parts[1..] {
-                    let Some((key, value)) = token.split_once('=') else {
-                        return Err(format!(
-                            "line {line_no}: sky token {token} carries no key=value"
-                        ));
-                    };
-                    if value.is_empty() {
-                        return Err(format!("line {line_no}: sky attribute {key} is empty"));
-                    }
-                    match key {
-                        "frame" => frame = Some(value.to_string()),
-                        "ra_key" => ra_key = Some(value.to_string()),
-                        "dec_key" => dec_key = Some(value.to_string()),
-                        "epoch" => epoch = Some(value.to_string()),
-                        "plx_key" => plx_key = Some(value.to_string()),
-                        "dist_key" => dist_key = Some(value.to_string()),
-                        _ => return Err(format!("line {line_no}: unknown sky attribute {key}")),
-                    }
-                }
-                let (Some(ra_key), Some(dec_key), Some(epoch)) = (ra_key, dec_key, epoch) else {
-                    return Err(format!(
-                        "line {line_no}: sky needs ra_key, dec_key and epoch"
-                    ));
-                };
-                let frame = frame.ok_or_else(|| format!("line {line_no}: sky needs frame="))?;
-                builder.position = Some(SourcePosition::Sky {
-                    frame,
-                    ra_key,
-                    dec_key,
-                    epoch,
-                    plx_key,
-                    dist_key,
-                });
-            }
-            "on" if parts.len() >= 2 => {
-                if parts[1].contains('=') {
-                    return Err(format!("line {line_no}: on needs a body before attributes"));
-                }
-                let mut lat = None;
-                let mut lon = None;
-                let mut alt_ref = None;
-                let mut alt_key = None;
-                let mut datum = None;
-                let mut time = None;
-                let mut time_key = None;
-                let mut time_parts = None;
-                let mut time_scale = None;
-                let mut has_frame = false;
-                for token in &parts[2..] {
-                    let Some((key, value)) = token.split_once('=') else {
-                        return Err(format!(
-                            "line {line_no}: on token {token} carries no key=value"
-                        ));
-                    };
-                    if value.is_empty() {
-                        return Err(format!("line {line_no}: on attribute {key} is empty"));
-                    }
-                    match key {
-                        "lat" => lat = value.parse::<f64>().ok(),
-                        "lon" => lon = value.parse::<f64>().ok(),
-                        "alt" | "alt_ref" => alt_ref = value.parse::<f64>().ok(),
-                        "alt_key" => alt_key = Some(value.to_string()),
-                        "datum" => datum = Some(value.to_string()),
-                        "time" => time = Some(value.to_string()),
-                        "time_key" => time_key = Some(value.to_string()),
-                        "time_parts" => {
-                            time_parts = Some(
-                                value
-                                    .split(',')
-                                    .map(|part| part.trim().to_string())
-                                    .collect::<Vec<_>>(),
-                            )
-                        }
-                        "time_scale" => time_scale = Some(value.to_string()),
-                        "frame" => has_frame = true,
-                        _ => return Err(format!("line {line_no}: unknown on attribute {key}")),
-                    }
-                }
-                if !has_frame {
-                    return Err(format!("line {line_no}: on needs frame="));
-                }
-                if let (Some(lat), Some(lon)) = (lat, lon) {
-                    builder.position = Some(SourcePosition::Fixed { lat, lon });
-                }
-                builder.alt_ref = alt_ref;
-                builder.alt_key = alt_key;
-                builder.datum = datum;
-                builder.time = time;
-                builder.time_key = time_key;
-                builder.time_parts = time_parts;
-                builder.time_scale = time_scale;
-            }
-            "query" | "track" if parts.len() >= 2 => {
-                if parts[1].contains('=') {
-                    return Err(format!(
-                        "line {line_no}: {head} needs a body before attributes"
-                    ));
-                }
-                let mut lat_key = None;
-                let mut lon_key = None;
-                let mut alt_ref = None;
-                let mut alt_key = None;
-                let mut time_key = None;
-                let mut datum = None;
-                let mut time_scale = None;
-                let mut has_frame = false;
-                for token in &parts[2..] {
-                    let Some((key, value)) = token.split_once('=') else {
-                        return Err(format!(
-                            "line {line_no}: {head} token {token} carries no key=value"
-                        ));
-                    };
-                    if value.is_empty() {
-                        return Err(format!("line {line_no}: {head} attribute {key} is empty"));
-                    }
-                    match key {
-                        "lat_key" => lat_key = Some(value.to_string()),
-                        "lon_key" => lon_key = Some(value.to_string()),
-                        "alt_ref" => alt_ref = value.parse::<f64>().ok(),
-                        "alt_key" => {
-                            if value == "absent" || value == "pending" {
-                                return Err(format!(
-                                    "line {line_no}: alt_key carries the sentinel {value}; use alt_ref"
-                                ));
-                            }
-                            alt_key = Some(value.to_string())
-                        }
-                        "time_key" => time_key = Some(value.to_string()),
-                        "datum" => datum = Some(value.to_string()),
-                        "time_scale" => time_scale = Some(value.to_string()),
-                        "frame" => has_frame = true,
-                        _ => return Err(format!("line {line_no}: unknown {head} attribute {key}")),
-                    }
-                }
-                if !has_frame {
-                    return Err(format!("line {line_no}: {head} needs frame="));
-                }
-                let (Some(lat_key), Some(lon_key), Some(time_key)) = (lat_key, lon_key, time_key)
-                else {
-                    return Err(format!(
-                        "line {line_no}: {head} needs lat_key, lon_key and time_key"
-                    ));
-                };
-                if alt_ref.is_some() == alt_key.is_some() {
-                    return Err(format!(
-                        "line {line_no}: {head} needs exactly one of alt_ref/alt_key"
-                    ));
-                }
-                builder.position = Some(SourcePosition::Moving { lat_key, lon_key });
-                builder.alt_ref = alt_ref;
-                builder.alt_key = alt_key;
-                builder.time_key = Some(time_key);
-                builder.datum = datum;
-                builder.time_scale = time_scale;
-            }
-            "field" | "first" | "last" | "lastrow" | "quantity" if parts.len() >= 5 => {
-                let extract = match head {
-                    "first" => SourceExtract::First,
-                    "last" => SourceExtract::Last,
-                    "lastrow" => SourceExtract::LastRow,
-                    "quantity" => SourceExtract::Quantity,
-                    _ => SourceExtract::Field,
-                };
-                let key = parts[1].to_string();
-                let name = parts[2].to_string();
-                let unit = parts[3].to_string();
-                let mut source_column = None;
-                let mut source_key = None;
-                let mut alt_offset = None;
-                let mut alt_min_offset = None;
-                let mut alt_max_offset = None;
-                let mut where_clause = None;
-                let mut idx = 4usize;
-                while idx < parts.len() {
-                    if parts[idx] == "where" {
-                        where_clause = Some(parts[idx + 1..].join(" "));
-                        break;
-                    }
-                    let token = parts[idx];
-                    let Some((key, value)) = token.split_once('=') else {
-                        return Err(format!(
-                            "line {line_no}: {head} token {token} carries no key=value"
-                        ));
-                    };
-                    if value.is_empty() {
-                        return Err(format!("line {line_no}: {head} attribute {key} is empty"));
-                    }
-                    if value == "absent" || value == "pending" {
-                        return Err(format!(
-                            "line {line_no}: {head} attribute {key} carries the sentinel {value}"
-                        ));
-                    }
-                    let parsed = value.parse::<f64>().ok().filter(|v| v.is_finite());
-                    match key {
-                        "source_column" => {
-                            source_column = value.parse::<usize>().ok();
-                            if source_column.is_none() {
-                                return Err(format!(
-                                    "line {line_no}: source_column {value} is not a column"
-                                ));
-                            }
-                        }
-                        "source_key" => source_key = Some(value.to_string()),
-                        "alt_offset" => alt_offset = parsed,
-                        "alt_min_offset" => alt_min_offset = parsed,
-                        "alt_max_offset" => alt_max_offset = parsed,
-                        _ => return Err(format!("line {line_no}: unknown {head} attribute {key}")),
-                    }
-                    idx += 1;
-                }
-                if source_column.is_some() == source_key.is_some() {
-                    return Err(format!(
-                        "line {line_no}: exactly one of source_column/source_key required"
-                    ));
-                }
-                let alt_offset =
-                    alt_offset.ok_or_else(|| format!("line {line_no}: alt_offset absent"))?;
-                if alt_min_offset.is_some() != alt_max_offset.is_some() {
-                    return Err(format!(
-                        "line {line_no}: layer needs both alt_min_offset and alt_max_offset"
-                    ));
-                }
-                if let (Some(min), Some(max)) = (alt_min_offset, alt_max_offset)
-                    && min >= max
-                {
-                    return Err(format!("line {line_no}: layer min must be below max"));
-                }
-                builder.fields.push(SourceField {
-                    key,
-                    name,
-                    unit,
-                    extract,
-                    where_clause,
-                    source_column,
-                    source_key,
-                    alt_offset,
-                    alt_min_offset,
-                    alt_max_offset,
-                });
-            }
-            _ => return Err(format!("line {line_no}: unread source directive {head}")),
-        }
-    }
-    if let Some(builder) = current {
-        out.push(finish_source_block(builder, content.lines().count())?);
-    }
-    Ok(out)
-}
-
-pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>> {
-    let mut errors = Vec::new();
-    let mut fields_by_url: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
-    for (index, block) in blocks.iter().enumerate() {
-        let at = |message: String| format!("block {}: {message}", index + 1);
-        if block.url.trim().is_empty() {
-            errors.push(at("url is empty".to_string()));
-        }
-        if block.terms.trim().is_empty() {
-            errors.push(at("terms is empty".to_string()));
-        }
-        if block.ttl == 0 {
-            errors.push(at("ttl must be positive".to_string()));
-        }
-        if block.datum.trim().is_empty() {
-            errors.push(at("datum is empty".to_string()));
-        }
-        if block.time_scale.trim().is_empty()
-            && !matches!(&block.position, SourcePosition::Sky { .. })
-        {
-            errors.push(at("time_scale is empty".to_string()));
-        }
-        match &block.position {
-            SourcePosition::Fixed { lat, lon } => {
-                if !lat.is_finite() || !lon.is_finite() {
-                    errors.push(at("lat/lon must be finite".to_string()));
-                } else if !(-90.0..=90.0).contains(lat) || !(-180.0..=360.0).contains(lon) {
-                    errors.push(at("lat/lon outside range".to_string()));
-                }
-            }
-            SourcePosition::Moving { lat_key, lon_key } => {
-                if lat_key.trim().is_empty() || lon_key.trim().is_empty() {
-                    errors.push(at("moving position needs lat_key and lon_key".to_string()));
-                }
-            }
-            SourcePosition::At { body, frame, .. } => {
-                if body.trim().is_empty() || frame.trim().is_empty() {
-                    errors.push(at("body-frame position needs body and frame".to_string()));
-                }
-            }
-            SourcePosition::Sky {
-                frame,
-                ra_key,
-                dec_key,
-                epoch,
-                ..
-            } => {
-                if frame.trim().is_empty()
-                    || ra_key.trim().is_empty()
-                    || dec_key.trim().is_empty()
-                    || epoch.trim().is_empty()
-                {
-                    errors.push(at("sky position needs frame, ra_key, dec_key and epoch".to_string()));
-                }
-            }
-        }
-        if !matches!(
-            &block.position,
-            SourcePosition::At { .. } | SourcePosition::Sky { .. }
-        ) && block.alt_ref.is_some() == block.alt_key.is_some()
-        {
-            errors.push(at("exactly one of alt_ref/alt_key required".to_string()));
-        }
-        let time_refs = usize::from(block.time.is_some())
-            + usize::from(block.time_key.is_some())
-            + usize::from(block.time_parts.is_some());
-        let sky = matches!(&block.position, SourcePosition::Sky { .. });
-        if time_refs != 1 && !(sky && time_refs == 0) {
-            errors.push(at(
-                "exactly one of time/time_key/time_parts required".to_string()
-            ));
-        }
-        if let Some(parts) = &block.time_parts
-            && (!(5..=6).contains(&parts.len()) || parts.iter().any(|part| part.trim().is_empty()))
-        {
-            errors.push(at("time_parts needs five or six non-empty keys".to_string()));
-        }
-        if block.fields.is_empty() {
-            errors.push(at("fields are empty".to_string()));
-        }
-        let seen = fields_by_url.entry(block.url.clone()).or_default();
-        for field in &block.fields {
-            if field.key.trim().is_empty()
-                || field.name.trim().is_empty()
-                || field.unit.trim().is_empty()
-            {
-                errors.push(at(format!(
-                    "field {} has an empty key/name/unit",
-                    field.key
-                )));
-            }
-            if field.source_column.is_some() == field.source_key.is_some() {
-                errors.push(at(format!(
-                    "field {} needs exactly one of source_column/source_key",
-                    field.key
-                )));
-            }
-            if let Some(source_key) = &field.source_key
-                && source_key.trim().is_empty()
-            {
-                errors.push(at(format!("field {} has an empty source_key", field.key)));
-            }
-            if !field.alt_offset.is_finite() {
-                errors.push(at(format!(
-                    "field {} has a non-finite alt_offset",
-                    field.key
-                )));
-            }
-            if field.alt_min_offset.is_some() != field.alt_max_offset.is_some() {
-                errors.push(at(format!(
-                    "field {} needs both alt_min_offset and alt_max_offset",
-                    field.key
-                )));
-            }
-            if let (Some(min), Some(max)) = (field.alt_min_offset, field.alt_max_offset) {
-                if !min.is_finite() || !max.is_finite() {
-                    errors.push(at(format!("field {} has a non-finite layer", field.key)));
-                } else if min >= max {
-                    errors.push(at(format!(
-                        "field {} layer min must be below max (got {min} .. {max})",
-                        field.key
-                    )));
-                }
-            }
-            if !seen.insert(field.key.clone()) {
-                errors.push(at(format!(
-                    "field key {} appears twice for the same URL; url#field would be ambiguous",
-                    field.key
-                )));
-            }
-        }
-    }
-    if errors.is_empty() {
-        Ok(())
-    } else {
-        Err(errors)
-    }
-}
-
-pub fn parse_source_runtime<F>(
-    content: &str,
-    manifest: &crate::mathematikerin::manifest::Manifest,
-    channel_for: F,
-) -> Result<Vec<RuntimeSource>, String>
-where
-    F: Fn(&SourceField) -> Option<u8>,
-{
-    let blocks = parse_source_blocks(content)?;
-    let mut out = Vec::with_capacity(blocks.len());
-    for block in blocks {
-        let fields = block
-            .runtime_fields(manifest, |field| channel_for(field))
-            .map_err(|refusal| format!("{}#runtime: {refusal:?}", block.url))?;
-        out.push(RuntimeSource { block, fields });
-    }
-    Ok(out)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn source_blocks_require_reference_and_field_offset() {
-        let content = "url https://example.org/ndbc/51003.txt\n\
-terms PD-USGov https://example.org/terms\n\
-ttl 60\n\
-on earth frame=body lat=19.5 lon=-155.6 alt_ref=0 datum=sea_surface time=2026-10-22T00:00:00Z time_scale=UTC\n\
-field WSPD wind_speed m/s source_column=4 alt_offset=4.0\n\
-field WTMP water_temp C source_column=14 alt_offset=-0.6\n";
-        let blocks = parse_source_blocks(content).expect("source block parses");
-        assert_eq!(blocks.len(), 1);
-        assert_eq!(blocks[0].fields.len(), 2);
-        assert_eq!(blocks[0].fields[0].alt_offset, 4.0);
-        assert_eq!(blocks[0].fields[1].alt_offset, -0.6);
-
-        let missing_offset = content.replace(" alt_offset=4.0", "");
-        assert!(parse_source_blocks(&missing_offset).is_err());
-    }
-
-    #[test]
-    fn source_blocks_accept_layer_offsets_and_refuse_nominal_midpoint() {
-        let layer = "url https://example.org/hfradar\n\
-terms CC-BY-4.0 https://example.org/terms\n\
-ttl 60\n\
-on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface time=2026-10-22T00:00:00Z time_scale=UTC\n\
-field u current m/s source_column=3 alt_offset=0.0 alt_min_offset=-2.5 alt_max_offset=0.0\n";
-        let blocks = parse_source_blocks(layer).expect("layer parses");
-        assert_eq!(blocks[0].fields[0].source_column, Some(3));
-        assert_eq!(blocks[0].fields[0].alt_min_offset, Some(-2.5));
-        assert_eq!(blocks[0].fields[0].alt_max_offset, Some(0.0));
-
-        let partial = layer.replace(" alt_max_offset=0.0", "");
-        assert!(parse_source_blocks(&partial).is_err());
-        let pending = layer.replace("alt_offset=0.0", "alt_offset=pending");
-        assert!(parse_source_blocks(&pending).is_err());
-    }
-
-    #[test]
-    fn published_absorption_is_a_field_not_a_medium_slot() {
-        let content = concat!(
-            "url https://example.org/riometer\n",
-            "terms CC-BY-4.0 https://example.org/terms\n",
-            "ttl 60\n",
-            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=msl time=2026-10-22T00:00:00Z time_scale=UTC\n",
-            "field absorption_db absorption dB source_column=1 alt_offset=0\n",
-        );
-        let blocks = parse_source_blocks(content).expect("published absorption is a field");
-        assert_eq!(blocks[0].fields[0].key, "absorption_db");
-        assert_eq!(blocks[0].fields[0].unit, "dB");
-
-        let medium_slot = content.replace("field absorption_db", "medium absorption_db");
-        assert!(parse_source_blocks(&medium_slot).is_err());
-    }
-
-    #[test]
-    fn source_blocks_accept_five_part_time_without_century_guess() {
-        let content = concat!(
-            "url https://example.org/ndbc/51003.txt\n",
-            "terms PD-USGov https://example.org/terms\n",
-            "ttl 60\n",
-            "on earth frame=body lat=19.5 lon=-155.6 alt_ref=0 datum=sea_surface",
-            " time_parts=YY,MM,DD,hh,mm time_scale=UTC\n",
-            "field WSPD wind_speed m/s source_column=4 alt_offset=4.0\n",
-        );
-        let blocks = parse_source_blocks(content).expect("five-part time parses");
-        let parts = blocks[0].time_parts.as_ref().expect("time_parts");
-        assert_eq!(
-            parts,
-            &vec![
-                "YY".to_string(),
-                "MM".to_string(),
-                "DD".to_string(),
-                "hh".to_string(),
-                "mm".to_string(),
-            ]
-        );
-        assert!(blocks[0].time.is_none());
-        assert!(blocks[0].time_key.is_none());
-
-        let short = content.replace("YY,MM,DD,hh,mm", "YY,MM,DD,hh");
-        assert!(parse_source_blocks(&short).is_err());
-        let two_forms = content.replace("time_scale=UTC", "time_scale=UTC time_key=timestamp");
-        assert!(parse_source_blocks(&two_forms).is_err());
-
-        let dart = content.replace("YY,MM,DD,hh,mm", "YY,MM,DD,hh,mm,ss");
-        let blocks = parse_source_blocks(&dart).expect("DART seconds are explicit");
-        assert_eq!(blocks[0].time_parts.as_ref().map(Vec::len), Some(6));
-    }
-
-    #[test]
-    fn source_blocks_allow_one_url_with_two_datums() {
-        let content = concat!(
-            "url https://example.org/mixed\n",
-            "terms CC-BY-4.0 https://example.org/terms\n",
-            "ttl 60\n",
-            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=msl",
-            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
-            "field air air C source_column=1 alt_offset=2.0\n",
-            "url https://example.org/mixed\n",
-            "terms CC-BY-4.0 https://example.org/terms\n",
-            "ttl 60\n",
-            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
-            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
-            "field water water C source_column=2 alt_offset=0.0\n",
-        );
-        let blocks = parse_source_blocks(content).expect("same URL may carry two datums");
-        assert_eq!(blocks.len(), 2);
-        assert_eq!(blocks[0].url, blocks[1].url);
-        assert_eq!(blocks[0].datum, "msl");
-        assert_eq!(blocks[1].datum, "sea_surface");
-        assert_ne!(blocks[0].fields[0].key, blocks[1].fields[0].key);
-        assert!(validate_source_blocks(&blocks).is_ok());
-
-        let ambiguous = content.replace("field water water", "field air air");
-        let blocks =
-            parse_source_blocks(&ambiguous).expect("duplicate keys parse, then fail validation");
-        assert!(validate_source_blocks(&blocks).is_err());
-    }
-
-    #[test]
-    fn source_blocks_keep_block_datum_and_signed_layer_offsets() {
-        let content = concat!(
-            "url https://example.org/water\n",
-            "terms CC-BY-4.0 https://example.org/terms\n",
-            "ttl 60\n",
-            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
-            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
-            "field water water C source_column=1 alt_offset=-0.6 alt_min_offset=-2.5 alt_max_offset=0.0\n",
-        );
-        let blocks = parse_source_blocks(content).expect("signed layer parses");
-        assert!(validate_source_blocks(&blocks).is_ok());
-
-        let flat = content.replace(
-            "alt_min_offset=-2.5 alt_max_offset=0.0",
-            "alt_min_offset=0 alt_max_offset=0",
-        );
-        assert!(parse_source_blocks(&flat).is_err());
-
-        let mut blocks = blocks;
-        blocks[0].fields[0].alt_min_offset = Some(0.0);
-        blocks[0].fields[0].alt_max_offset = Some(0.0);
-        assert!(validate_source_blocks(&blocks).is_err());
-
-        let field_datum = content.replace("alt_offset=-0.6", "alt_offset=-0.6 datum=msl");
-        assert!(parse_source_blocks(&field_datum).is_err());
-    }
-
-    #[test]
-    fn source_blocks_accept_body_frame_position() {
-        let content = concat!(
-            "url https://example.org/ace\n",
-            "terms PD-USGov https://example.org/terms\n",
-            "at earth frame=barycenter distance_au=0.99 time_key=time_tag time_scale=UTC\n",
-            "ttl 3600\n",
-            "field 0.gsm_bx bx nT source_key=gsm_bx alt_offset=0\n",
-        );
-        let blocks = parse_source_blocks(content).expect("body-frame block parses");
-        assert!(matches!(
-            &blocks[0].position,
-            SourcePosition::At { body, frame, distance_au }
-                if body == "earth" && frame == "barycenter" && *distance_au == Some(0.99)
-        ));
-        assert_eq!(blocks[0].datum, "barycenter");
-        assert_eq!(blocks[0].time_key.as_deref(), Some("time_tag"));
-        assert_eq!(blocks[0].fields[0].source_key.as_deref(), Some("gsm_bx"));
-    }
-
-    #[test]
-    fn source_blocks_accept_sky_position_without_time() {
-        let content = concat!(
-            "url https://example.org/cat\n",
-            "terms CC-BY-4.0 https://example.org/terms\n",
-            "sky frame=icrs ra_key=RAJ2000 dec_key=DEJ2000 epoch=J2000\n",
-            "ttl 604800\n",
-            "field ra ra deg source_key=RAJ2000 alt_offset=0\n",
-        );
-        let blocks = parse_source_blocks(content).expect("sky block parses");
-        assert!(matches!(
-            &blocks[0].position,
-            SourcePosition::Sky { ra_key, dec_key, epoch, .. }
-                if ra_key == "RAJ2000" && dec_key == "DEJ2000" && epoch == "J2000"
-        ));
-        assert_eq!(blocks[0].datum, "icrs J2000");
-    }
-
-    #[test]
-    fn source_blocks_accept_last_with_where() {
-        let content = concat!(
-            "url https://example.org/x\n",
-            "terms CC-BY-4.0 https://example.org/terms\n",
-            "at sun frame=barycenter time_key=time_tag time_scale=UTC\n",
-            "ttl 60\n",
-            "last flux f wm2 source_key=flux alt_offset=0 where energy 0.05-0.4nm\n",
-        );
-        let blocks = parse_source_blocks(content).expect("last block parses");
-        assert_eq!(blocks[0].fields[0].extract, SourceExtract::Last);
-        assert_eq!(
-            blocks[0].fields[0].where_clause.as_deref(),
-            Some("energy 0.05-0.4nm")
-        );
-        assert_eq!(blocks[0].fields[0].source_key.as_deref(), Some("flux"));
-    }
-
-    #[test]
-    fn source_blocks_accept_moving_platform_keys() {
-        let content = concat!(
-            "url https://example.org/track\n",
-            "terms CC-BY-4.0 https://example.org/terms\n",
-            "ttl 60\n",
-            "query earth frame=body lat_key=lat lon_key=lon alt_key=height time_key=t datum=ellipsoid time_scale=UTC\n",
-            "field u current m/s source_column=3 alt_offset=0\n",
-        );
-        let blocks = parse_source_blocks(content).expect("moving block parses");
-        assert!(matches!(
-            &blocks[0].position,
-            SourcePosition::Moving { lat_key, lon_key }
-                if lat_key == "lat" && lon_key == "lon"
-        ));
-        assert_eq!(blocks[0].alt_key.as_deref(), Some("height"));
-        assert_eq!(blocks[0].time_key.as_deref(), Some("t"));
-    }
-
-    #[test]
-    fn moving_platform_accepts_fixed_alt_ref_without_invented_key() {
-        let content = concat!(
-            "url https://example.org/hfradar\n",
-            "terms CC-BY-4.0 https://example.org/terms\n",
-            "ttl 60\n",
-            "query earth frame=body lat_key=LAT lon_key=LON alt_ref=0",
-            " time_key=T datum=sea_surface time_scale=UTC\n",
-            "field VELO radial_velocity m/s source_column=3 alt_offset=0.0\n",
-        );
-        let blocks = parse_source_blocks(content).expect("moving block with fixed alt_ref");
-        assert_eq!(blocks[0].alt_ref, Some(0.0));
-        assert_eq!(blocks[0].alt_key, None);
-        assert!(validate_source_blocks(&blocks).is_ok());
-
-        let sentinel = content.replace("alt_ref=0", "alt_key=absent");
-        assert!(parse_source_blocks(&sentinel).is_err());
-    }
-
-    #[test]
-    fn source_field_keeps_column_or_key() {
-        let content = concat!(
-            "url https://example.org/hfradar-wave\n",
-            "terms CC-BY-4.0 https://example.org/terms\n",
-            "ttl 60\n",
-            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=sea_surface",
-            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
-            "field MWHT wave_height m source_column=3 alt_offset=0.0\n",
-            "field MWPD mean_period s source_key=MWPD alt_offset=0.0\n",
-        );
-        let blocks = parse_source_blocks(content).expect("column and key fields parse");
-        assert_eq!(blocks[0].fields[0].source_column, Some(3));
-        assert_eq!(blocks[0].fields[0].source_key, None);
-        assert_eq!(blocks[0].fields[1].source_column, None);
-        assert_eq!(blocks[0].fields[1].source_key.as_deref(), Some("MWPD"));
-        assert!(validate_source_blocks(&blocks).is_ok());
-
-        let missing = content.replace(" source_column=3", "");
-        assert!(parse_source_blocks(&missing).is_err());
-    }
-
-    #[test]
-    fn source_runtime_needs_a_manifest_and_uses_its_model() {
-        let content = concat!(
-            "url https://example.org/runtime\n",
-            "terms CC-BY-4.0 https://example.org/terms\n",
-            "ttl 60\n",
-            "on earth frame=body lat=1 lon=2 alt_ref=0 datum=msl",
-            " time=2026-10-22T00:00:00Z time_scale=UTC\n",
-            "field flux flux W/m^2 source_column=1 alt_offset=0\n",
-        );
-        let selection =
-            crate::mathematikerin::manifest::ManifestSelection::new(
-                "https://example.org/runtime#flux",
-                crate::mathematikerin::manifest::ManifestIntent::Science,
-            )
-            .expect("select")
-            .with_kernel("inverse-square")
-            .expect("kernel")
-            .with_model_tau(
-                60.0,
-                crate::mathematikerin::manifest::ModelTauSource::Chosen,
-            )
-            .expect("tau")
-            .with_model_absorption(0.0)
-            .expect("absorption")
-            .with_model_advection(0.0)
-            .expect("advection");
-        let mut manifest = crate::mathematikerin::manifest::Manifest::new();
-        manifest.add(selection).expect("add");
-        let sources = parse_source_runtime(content, &manifest, |_| Some(1)).expect("runtime");
-        assert_eq!(sources.len(), 1);
-        assert_eq!(sources[0].fields.len(), 1);
-        assert_eq!(sources[0].fields[0].model.as_ref().expect("model").tau, 60.0);
-
-        let empty = crate::mathematikerin::manifest::Manifest::new();
-        assert!(parse_source_runtime(content, &empty, |_| None).is_err());
-    }
-
-    #[test]
-    fn source_blocks_refuse_two_reference_forms() {
-        let content = "url https://example.org/x\n\
-terms CC-BY-4.0 https://example.org/terms\n\
-ttl 60\n\
-on earth frame=body lat=1 lon=2 alt_ref=0 alt_key=height datum=msl time=epoch time_key=t time_scale=UTC\n\
-field u u m/s source_column=1 alt_offset=0\n";
-        assert!(parse_source_blocks(content).is_err());
-    }
     use crate::mathematikerin::channel::{CouplingKind, DensityKind};
 
     fn shard(url: &str, format: &str) -> SourceConfig {
@@ -4093,7 +3203,7 @@ field u u m/s source_column=1 alt_offset=0\n";
 
     #[test]
     fn field_ten_token_reads_tau_src() {
-        let content = "url https://example.org/x\nttl 60\nat sun frame=barycenter\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
+        let content = "url https://example.org/x\nttl 60\nat sun\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1);
         let field = s[0]
@@ -4109,8 +3219,8 @@ field u u m/s source_column=1 alt_offset=0\n";
     }
 
     #[test]
-    fn field_explicit_pending_is_carried() {
-        let content = "url https://example.org/x\nttl 60\nat sun frame=barycenter\nfield v v inverse-square em W/m2 60 pending 0.0 0.0\n";
+    fn field_nine_token_is_legacy_pending() {
+        let content = "url https://example.org/x\nttl 60\nat sun\nfield v v inverse-square em W/m2 60 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1);
         let field = s[0]
@@ -4124,13 +3234,13 @@ field u u m/s source_column=1 alt_offset=0\n";
         assert_eq!(
             field.tau_src,
             TauSource::Pending,
-            "an explicit pending tau must not claim a measured tau"
+            "the 9-token form is migration input; it must not claim a measured tau"
         );
     }
 
     #[test]
     fn on_without_alt_declares_no_measured_height() {
-        let content = "url https://example.org/x\nttl 60\non earth frame=body lat=0 lon=0 alt=absent\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
+        let content = "url https://example.org/x\nttl 60\non earth 0 0\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1, "on without alt parses");
         match &s[0].frame() {
@@ -4147,7 +3257,7 @@ field u u m/s source_column=1 alt_offset=0\n";
     fn on_absent_alt_declares_no_measured_height() {
         for token in ["absent", "pending"] {
             let content = format!(
-                "url https://example.org/x\nttl 60\non earth frame=body lat=0 lon=0 alt={token}\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n"
+                "url https://example.org/x\nttl 60\non earth 0 0 {token}\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n"
             );
             let s = load_sources_from(&content);
             assert_eq!(s.len(), 1, "on {token} parses");
@@ -4162,7 +3272,7 @@ field u u m/s source_column=1 alt_offset=0\n";
 
     #[test]
     fn on_with_alt_keeps_the_measured_height() {
-        let content = "url https://example.org/x\nttl 60\non earth frame=body lat=0 lon=0 alt=5\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
+        let content = "url https://example.org/x\nttl 60\non earth 0 0 5\nfield v v inverse-square em W/m2 60 measured 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1);
         match &s[0].frame() {
@@ -4173,7 +3283,7 @@ field u u m/s source_column=1 alt_offset=0\n";
 
     #[test]
     fn compiler_directive_is_read_into_source_config() {
-        let content = "url https://example.org/x\nttl 60\nat sun frame=barycenter\ncompiler tools/harvest/src/bin/x.rs\nfield v v inverse-square em W/m2 60 pending 0.0 0.0\n";
+        let content = "url https://example.org/x\nttl 60\nat sun\ncompiler tools/harvest/src/bin/x.rs\nfield v v inverse-square em W/m2 60 0.0 0.0\n";
         let s = load_sources_from(content);
         assert_eq!(s.len(), 1);
         assert_eq!(
@@ -4236,7 +3346,7 @@ field u u m/s source_column=1 alt_offset=0\n";
 
     #[test]
     fn a_channel_coupling_layer_resolves_the_register_aliases() {
-        let content = "url https://example.com/champ\nttl 600\nat earth frame=barycenter\n\
+        let content = "url https://example.com/champ\nttl 600\nat earth\n\
 channel charge:primary:flux-ohm:parabolic:plasma:line:dirichlet kg/m^3 alias champ_ion charge -1\n\
 channel mass:primary:flux-fick:parabolic:fluid:unspecified:none kg/m^3 alias champ_neutral\n\
 constraint quasi-neutral ionosphere_qn region ionosphere\n\
@@ -4260,7 +3370,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn a_descriptor_field_line_resolves_to_its_registered_channel() {
-        let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield probe probe primary energy flux-fourier parabolic fluid none exponential-decay K 60.0 0.0 0.0\n";
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield probe probe primary energy flux-fourier parabolic fluid none exponential-decay K 60.0 0.0 0.0\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 1);
         let field = sources[0]
@@ -4295,7 +3405,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
                 })
                 .unwrap_or_default()
         };
-        let head = "url https://example.com/x\nttl 600\nat earth frame=barycenter\n";
+        let head = "url https://example.com/x\nttl 600\nat earth\n";
         let campaign = format!(
             "{head}field cmonoc_campaign_velocity cmonoc_campaign_velocity_mm_yr primary momentum creep elliptic elastic-solid none gaussian-inverse-square mm/yr 31536000 0.0 0.0\n"
         );
@@ -4321,8 +3431,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             vec![(Some(1), "Pa".to_string())],
             "seismic-body keeps channel 1 untouched"
         );
-        let advective =
-            format!("{head}field probe probe patch-levy advective m/s 60 pending 0.0 0.0\n");
+        let advective = format!("{head}field probe probe patch-levy advective m/s 60 0.0 0.0\n");
         let adv_desc = descriptor_from_axes(
             "primary",
             "mass",
@@ -4347,7 +3456,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn a_descriptor_field_line_without_a_registered_channel_is_refused() {
-        let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield probe probe primary momentum flux-newton-viscous mixed fluid none patch-levy m/s 60.0 0.0 0.0\n";
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield probe probe primary momentum flux-newton-viscous mixed fluid none patch-levy m/s 60.0 0.0 0.0\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 1);
         assert!(
@@ -4361,7 +3470,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn p10_2a_target_grammar_parses() {
-        let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm bz maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 1);
         let field = sources[0]
@@ -4380,7 +3489,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         );
         assert_eq!(field.unit, "V/m");
 
-        let invalid = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm bz bogus elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let invalid = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz bogus elliptic vacuum em primary V/m 60.0 inverse-square\n";
         let skipped = parse_sources(invalid);
         assert!(
             skipped[0]
@@ -4390,7 +3499,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             "an unknown operator is skipped, never defaulted"
         );
 
-        let unresolved = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield x xyzzy maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let unresolved = "url https://example.com/x\nttl 600\nat sun\nfield x xyzzy maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
         let pending = parse_sources(unresolved);
         assert!(
             pending[0]
@@ -4402,28 +3511,8 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     }
 
     #[test]
-    fn a_field_without_absorption_tokens_claims_no_absorption() {
-        let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm em V/m 60 inverse-square\n";
-        let field = parse_sources(content)[0]
-            .extracts
-            .iter()
-            .find_map(|e| match e {
-                Extract::Field(fc) => Some(fc.clone()),
-                _ => None,
-            })
-            .expect("the short field form is admitted");
-        assert_eq!(field.absorption_measured(), None);
-        assert_eq!(field.advection_measured(), None);
-        assert_eq!(
-            presence_flags(None, field.absorption, field.advection, SLOT_ABSENT),
-            0.0,
-            "an undeclared slot carries no presence flag"
-        );
-    }
-
-    #[test]
     fn a_force_descriptor_separates_the_quantity_name_from_the_channel_key() {
-        let content = "url https://example.com/g.bin\nttl 604800\nat earth frame=barycenter\n\
+        let content = "url https://example.com/g.bin\nttl 604800\nat earth\n\
                        field gravity agrav_gravity_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n";
         let field = parse_sources(content)[0]
             .extracts
@@ -4448,7 +3537,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn the_descriptor_conserved_token_is_not_derived_from_the_quantity_name() {
-        let content = "url https://example.com/g.bin\nttl 604800\nat earth frame=barycenter\n\
+        let content = "url https://example.com/g.bin\nttl 604800\nat earth\n\
                        field gravityz temperature primary mass poisson elliptic vacuum none inverse-square m/s2 60 0.0 0.0\n";
         let field = parse_sources(content)[0]
             .extracts
@@ -4467,7 +3556,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn the_seven_gravity_fields_keep_their_keys_names_and_units() {
-        let content = "url https://example.com/g.bin\nttl 604800\nat earth frame=barycenter\n\
+        let content = "url https://example.com/g.bin\nttl 604800\nat earth\n\
                        field gravity agrav_gravity_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n\
                        field igets_gravity_nm_s2 igets_gravity_nm_s2 primary mass poisson elliptic vacuum none inverse-square nm/s2 86400 0.0 0.0\n\
                        field gx lpf_drs_dg_x_ms2 primary mass poisson elliptic vacuum none inverse-square m/s2 604800 0.0 0.0\n\
@@ -4505,9 +3594,9 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn the_two_wave_fields_stay_two_descriptor_fields() {
-        let content = "url https://example.com/geofon.bin\nttl 60\nat earth frame=barycenter\n\
+        let content = "url https://example.com/geofon.bin\nttl 60\nat earth\n\
                        field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0\n\
-                       url https://example.com/earthscope.bin\nttl 60\nat earth frame=barycenter\n\
+                       url https://example.com/earthscope.bin\nttl 60\nat earth\n\
                        field fdsn_waveform_bhz_ms fdsn_waveform_bhz_ms primary energy wave hyperbolic elastic-solid free-surface erfc m/s 60.0 0.0 0.0\n";
         let sources = parse_sources(content);
         let fields: Vec<FieldConfig> = sources
@@ -4533,7 +3622,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn p10_2a_interaction_absent_form_parses() {
-        let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm bz maxwell elliptic vacuum primary V/m 60.0 inverse-square\n";
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum primary V/m 60.0 inverse-square\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 1);
         let field = sources[0]
@@ -4554,7 +3643,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn p10_2a_bogus_interaction_refused() {
-        let content = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm bz maxwell elliptic vacuum bogus primary V/m 60.0 inverse-square\n";
+        let content = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum bogus primary V/m 60.0 inverse-square\n";
         let sources = parse_sources(content);
         assert!(
             sources[0]
@@ -4567,7 +3656,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn p10_2a_declared_interaction_must_match_the_derived_one() {
-        let contradiction = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm bz maxwell elliptic vacuum gravity primary V/m 60.0 inverse-square\n";
+        let contradiction = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum gravity primary V/m 60.0 inverse-square\n";
         let refused = parse_sources(contradiction);
         assert!(
             refused[0]
@@ -4577,7 +3666,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             "a declared interaction contradicting the mechanism is refused, never smoothed"
         );
 
-        let matching = "url https://example.com/x\nttl 600\nat sun frame=barycenter\nfield bz_gsm bz maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
+        let matching = "url https://example.com/x\nttl 600\nat sun\nfield bz_gsm bz maxwell elliptic vacuum em primary V/m 60.0 inverse-square\n";
         let flows = parse_sources(matching);
         assert!(
             flows[0]
@@ -4590,7 +3679,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn volume_frame_body_declared_and_refused_when_absent() {
-        let declared = "url https://cdn.example/x/AFRP.volume.bin\nformat volume\nat earth frame=barycenter\nttl 604800\nvolume v v\n";
+        let declared = "url https://cdn.example/x/AFRP.volume.bin\nformat volume\nat earth\nttl 604800\nvolume v v\n";
         let with = parse_sources(declared);
         let body = with[0].extracts.iter().find_map(|e| match e {
             Extract::Volume { frame_body, .. } => Some(frame_body.clone()),
@@ -4610,7 +3699,8 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn cgm_lat_directive_is_carried() {
-        let declared = "url https://x/y.bin\nformat volume\nat earth frame=barycenter\nttl 604800\nvolume v v\ncgm_lat 40.5\n";
+        let declared =
+            "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\ncgm_lat 40.5\n";
         let with = parse_sources(declared);
         assert_eq!(with[0].cgm_lat, Some(40.5));
         assert_eq!(with[0].cgm_source, None);
@@ -4618,7 +3708,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn rows_accepts_lat_key_and_lon_key_as_the_named_column_spelling() {
-        let declared = "url https://x/y.csv\nformat gbm_tgf\non earth frame=body lat=0 lon=0 alt=0\nrows\nlat_key Lat\nlon_key Lon\nno-cadence\n";
+        let declared = "url https://x/y.csv\nformat gbm_tgf\non earth 0 0 0\nrows\nlat_key Lat\nlon_key Lon\nno-cadence\n";
         let sources = parse_sources(declared);
         match &sources[0].extracts[0] {
             Extract::Rows {
@@ -4633,7 +3723,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn cgm_source_directive_is_carried_and_orthogonal_to_cgm_lat() {
-        let declared = "url https://x/y.bin\nformat volume\nat earth frame=barycenter\nttl 604800\nvolume v v\ncgm_lat 11.23\ncgm_source bgs-quasi-dipole\n";
+        let declared = "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\ncgm_lat 11.23\ncgm_source bgs-quasi-dipole\n";
         let with = parse_sources(declared);
         assert_eq!(with[0].cgm_lat, Some(11.23));
         assert_eq!(with[0].cgm_source.as_deref(), Some("bgs-quasi-dipole"));
@@ -4641,7 +3731,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn rights_triple_is_carried_and_absent_without_directive() {
-        let declared = "url https://x/y.bin\nformat volume\nat earth frame=barycenter\nttl 604800\nvolume v v\nrights CC-BY-4.0 SPDX https://spdx.org/licenses/CC-BY-4.0.html\n";
+        let declared = "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\nrights CC-BY-4.0 SPDX https://spdx.org/licenses/CC-BY-4.0.html\n";
         let with = parse_sources(declared);
         assert_eq!(with[0].rights_identifier.as_deref(), Some("CC-BY-4.0"));
         assert_eq!(with[0].rights_scheme.as_deref(), Some("SPDX"));
@@ -4650,15 +3740,14 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             Some("https://spdx.org/licenses/CC-BY-4.0.html")
         );
 
-        let absent = parse_sources(
-            "url https://x/y.bin\nformat volume\nat earth frame=barycenter\nttl 604800\nvolume v v\n",
-        );
+        let absent =
+            parse_sources("url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\n");
         assert_eq!(absent[0].rights_identifier, None);
         assert_eq!(absent[0].rights_scheme, None);
         assert_eq!(absent[0].rights_uri, None);
 
         let partial = parse_sources(
-            "url https://x/y.bin\nformat volume\nat earth frame=barycenter\nttl 604800\nvolume v v\nrights NONE\n",
+            "url https://x/y.bin\nformat volume\nat earth\nttl 604800\nvolume v v\nrights NONE\n",
         );
         assert_eq!(partial[0].rights_identifier.as_deref(), Some("NONE"));
         assert_eq!(partial[0].rights_scheme, None);
@@ -4689,7 +3778,8 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn no_cadence_keeps_a_static_source_active() {
-        let content = "url https://example.com/static.bin\nformat ephemeris_binary\nat moon frame=barycenter\nno-cadence\n";
+        let content =
+            "url https://example.com/static.bin\nformat ephemeris_binary\nat moon\nno-cadence\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 1);
         assert_eq!(sources[0].ttl, NO_CADENCE);
@@ -4697,7 +3787,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn a_source_without_ttl_or_no_cadence_is_inactive() {
-        let content = "url https://example.com/static.bin\nformat ephemeris_binary\nat moon frame=barycenter\n";
+        let content = "url https://example.com/static.bin\nformat ephemeris_binary\nat moon\n";
         assert!(parse_sources(content).is_empty());
     }
 
@@ -4718,22 +3808,24 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn range_directive_with_zero_or_negative_step_stays_unrecorded() {
-        let zero = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 0\nat sun frame=barycenter\nttl 604800\n";
-        let negative = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 -0.15\nat sun frame=barycenter\nttl 604800\n";
+        let zero =
+            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 0\nat sun\nttl 604800\n";
+        let negative = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0 -0.15\nat sun\nttl 604800\n";
         assert_eq!(parse_sources(zero)[0].range, None);
         assert_eq!(parse_sources(negative)[0].range, None);
     }
 
     #[test]
     fn range_directive_with_void_arity_stays_unrecorded() {
-        let content = "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0\nat sun frame=barycenter\nttl 604800\n";
+        let content =
+            "url https://example.com/gate.bin\nformat gras_2c\nrange 300.0\nat sun\nttl 604800\n";
         assert_eq!(parse_sources(content)[0].range, None);
     }
 
     #[test]
     fn range_directive_resets_at_the_next_url() {
-        let content = "url https://example.com/a.bin\nformat gras_2c\nrange 300.0 0.15\nat mars frame=barycenter\n\
-                       ttl 604800\nurl https://example.com/b.bin\nformat gras_2c\nat mars frame=barycenter\n\
+        let content = "url https://example.com/a.bin\nformat gras_2c\nrange 300.0 0.15\nat mars\n\
+                       ttl 604800\nurl https://example.com/b.bin\nformat gras_2c\nat mars\n\
                        ttl 604800\n";
         let sources = parse_sources(content);
         assert_eq!(sources.len(), 2);
@@ -4793,7 +3885,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     }
 
     #[test]
-    fn every_cdn_source_carries_its_origin_and_producer() {
+    fn every_cdn_source_carries_its_origin_and_producer_or_is_a_reference() {
         let content = std::fs::read_to_string("phi/sources.φ").expect("phi/sources.φ reads");
         let mut missing: Vec<String> = Vec::new();
         let mut url = String::new();
@@ -4881,19 +3973,6 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     }
 
     #[test]
-    fn source_tau_derived_is_refused() {
-        let content = "url https://example.org/x\nttl 60\nat sun frame=barycenter\nfield v v inverse-square em W/m2 60 derived 0.0 0.0\n";
-        let sources = parse_sources(content);
-        assert!(
-            sources
-                .iter()
-                .flat_map(|source| source.extracts.iter())
-                .all(|extract| !matches!(extract, Extract::Field(_))),
-            "derived is a manifest state, not a source field"
-        );
-    }
-
-    #[test]
     fn field_without_absorption_advection_declares_absent_not_zero() {
         let short = split_directive("field x y inverse-square em nT 3600");
         let (_, _, tau, absorption, advection) = parse_field_config(&short).unwrap();
@@ -4907,7 +3986,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             "absent advection must not read as 0.0"
         );
 
-        let full = split_directive("field x y inverse-square em nT 3600 pending 0.0 0.0");
+        let full = split_directive("field x y inverse-square em nT 3600 0.0 0.0");
         let (_, _, _, absorption, advection) = parse_field_config(&full).unwrap();
         assert_eq!(absorption, 0.0, "a declared 0.0 stays the measured value");
         assert_eq!(advection, 0.0, "a declared 0.0 stays the measured value");
@@ -4951,11 +4030,11 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         };
 
         let valid = "url https://example.com/q.bin\nttl 604800\n\
-                     quantity qkey qname inverse-square mass kg 3600 pending 0.0 0.0\n";
+                     quantity qkey qname inverse-square mass kg 3600 0.0 0.0\n";
         assert_eq!(field_of(valid), None);
 
         let force_as_kind = "url https://example.com/q.bin\nttl 604800\n\
-                             quantity qkey qname inverse-square em kg 3600 pending 0.0 0.0\n";
+                             quantity qkey qname inverse-square em kg 3600 0.0 0.0\n";
         assert_eq!(
             field_of(force_as_kind),
             None,
@@ -4963,7 +4042,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         );
 
         let kind_as_force = "url https://example.com/q.bin\nttl 604800\n\
-                             field qkey qname inverse-square mass kg 3600 pending 0.0 0.0\n";
+                             field qkey qname inverse-square mass kg 3600 0.0 0.0\n";
         assert_eq!(
             field_of(kind_as_force),
             None,
@@ -4982,7 +4061,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             })
         };
         let geometry = "url https://example.com/g.bin\nttl 604800\n\
-                        last items.value river_stage inverse-square geometry m 900.0 pending 0.0 0.0\n";
+                        last items.value river_stage inverse-square geometry m 900.0 0.0 0.0\n";
         let fc = last_of(geometry).expect("a last selector with a geometry kind flows");
         assert_eq!(
             fc.channel_ref, None,
@@ -4991,7 +4070,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         assert_eq!(fc.unit, "m", "the geometry unit stays free");
 
         let source_parameter = "url https://example.com/g.bin\nttl 604800\n\
-                                last mass planet_mass inverse-square source-parameter M_earth 60 pending 0.0 0.0\n";
+                                last mass planet_mass inverse-square source-parameter M_earth 60 0.0 0.0\n";
         assert_eq!(
             last_of(source_parameter).and_then(|f| f.channel_ref),
             None,
@@ -4999,7 +4078,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         );
 
         let still_a_force = "url https://example.com/g.bin\nttl 604800\n\
-                             last data.v tide_height inverse-square gravity m 3600 pending 0.0 0.0\n";
+                             last data.v tide_height inverse-square gravity m 3600 0.0 0.0\n";
         assert_eq!(
             last_of(still_a_force).and_then(|f| f.channel_ref),
             Some(2),
@@ -5061,7 +4140,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             })
         };
         let q = "url https://example.com/q.bin\nttl 604800\n\
-                 quantity qkey qname inverse-square index nt 60 pending 0.0 0.0\n";
+                 quantity qkey qname inverse-square index nt 60 0.0 0.0\n";
         let fc = field_of(q).expect("a magnetic index quantity in nT flows as a quantity");
         assert_eq!(fc.channel_ref, None, "a derived index stays outside Σω");
     }
@@ -5077,7 +4156,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             })
         };
         let geometry = "url https://example.com/q.bin\nttl 604800\n\
-                        quantity tide_ft tide_ft inverse-square geometry ft 3600 pending 0.0 0.0\n";
+                        quantity tide_ft tide_ft inverse-square geometry ft 3600 0.0 0.0\n";
         let fc = field_of(geometry).expect("a geometry quantity flows");
         assert_eq!(fc.channel_ref, None);
         assert_eq!(
@@ -5086,7 +4165,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         );
 
         let source_parameter = "url https://example.com/q.bin\nttl 604800\n\
-                                quantity planet_mass planet_mass inverse-square source-parameter M_earth 60 pending 0.0 0.0\n";
+                                quantity planet_mass planet_mass inverse-square source-parameter M_earth 60 0.0 0.0\n";
         assert_eq!(
             field_of(source_parameter).and_then(|f| f.channel_ref),
             None,
@@ -5106,14 +4185,14 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
         };
 
         let bandless = "url https://example.com/q.bin\nttl 604800\n\
-                        quantity flux_g g_flux inverse-square scale nmgy 31536000 pending 0.0 0.0\n";
+                        quantity flux_g g_flux inverse-square scale nmgy 31536000 0.0 0.0\n";
         assert!(
             field_of(bandless).is_none(),
             "a photometric scale nmgy quantity without a band reference is refused, never a 0.0 band"
         );
 
         let with_band = "url https://example.com/q.bin\nttl 604800\n\
-                         quantity flux_g g_flux inverse-square scale nmgy 31536000 pending 0.0 0.0 band DECam_g pivot 4808.49angstrom edges 3900-5600angstrom\n";
+                         quantity flux_g g_flux inverse-square scale nmgy 31536000 0.0 0.0 band DECam_g pivot 4808.49angstrom edges 3900-5600angstrom\n";
         let fc = field_of(with_band).expect("the band-declared photometric quantity flows");
         assert!(
             fc.freq > 0.0,
@@ -5269,7 +4348,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     #[test]
     fn an_explicit_model_kind_directive_overrides_the_format_derivation() {
         let sources = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\nmodel_kind time_variable\n",
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\nmodel_kind time_variable\n",
         );
         assert_eq!(sources.len(), 1);
         assert_eq!(sources[0].model_kind, Some(ModelKind::TimeVariable));
@@ -5277,9 +4356,8 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
 
     #[test]
     fn a_model_kind_falls_back_to_the_format_when_undeclared() {
-        let sources = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n",
-        );
+        let sources =
+            parse_sources("url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n");
         assert_eq!(sources.len(), 1);
         assert_eq!(sources[0].model_kind, Some(ModelKind::Static));
     }
@@ -5287,7 +4365,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     #[test]
     fn the_model_head_directives_assemble_the_head() {
         let sources = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n\
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
              gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\ntide zero_tide\nmax_degree 2190\n",
         );
         assert_eq!(sources.len(), 1);
@@ -5302,7 +4380,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     #[test]
     fn an_unmeasured_norm_leaves_the_head_absent() {
         let sources = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n\
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
              gm 3.9E14\nradius 6371000\nnorm schmidt\nmax_degree 2190\n",
         );
         assert_eq!(sources.len(), 1);
@@ -5312,7 +4390,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     #[test]
     fn a_partial_model_head_stays_absent() {
         let sources = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n\
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
              gm 3.9E14\nnorm fully_normalized\n",
         );
         assert_eq!(sources.len(), 1);
@@ -5322,7 +4400,7 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     #[test]
     fn medium_line_reads_numeric_units_and_states() {
         let sources = parse_sources(
-            "url https://example.invalid/medium\nformat text\nttl 60\non earth frame=body lat=0 lon=0 alt=0\n\
+            "url https://example.invalid/medium\nformat text\nttl 60\non earth 0 0 0\n\
              medium absorption=0.25 1/m advection=pending\n",
         );
         assert_eq!(sources.len(), 1);
@@ -5334,56 +4412,46 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
     }
 
     #[test]
-    fn anchors_are_one_truth() {
-        let at = parse_sources(
-            "url https://example.invalid/a\nformat text\nttl 60\nat sun frame=barycenter\n",
-        );
-        let anchor = at[0].anchor.as_ref().expect("at anchor");
+    fn anchors_are_one_truth_and_old_forms_are_legacy() {
+        let old_at = parse_sources("url https://example.invalid/a\nformat text\nttl 60\nat sun\n");
+        let anchor = old_at[0].anchor.as_ref().expect("old at anchor");
         assert_eq!(anchor.kind, AnchorKind::At);
+        assert!(anchor.legacy);
 
-        let on = parse_sources(
-            "url https://example.invalid/b\nformat text\nttl 60\non earth frame=body lat=10 lon=20 alt=30\n",
+        let old_on = parse_sources(
+            "url https://example.invalid/b\nformat text\nttl 60\non earth 10 20 30\n",
         );
-        let anchor = on[0].anchor.as_ref().expect("on anchor");
+        let anchor = old_on[0].anchor.as_ref().expect("old on anchor");
         assert_eq!(anchor.kind, AnchorKind::On);
+        assert!(anchor.legacy);
         assert_eq!(anchor.attrs.get("alt").map(String::as_str), Some("30"));
 
-        let on_absent = parse_sources(
-            "url https://example.invalid/b2\nformat text\nttl 60\non earth frame=body lat=10 lon=20 alt=absent\n",
+        let old_on_absent = parse_sources(
+            "url https://example.invalid/b2\nformat text\nttl 60\non earth 10 20 absent\n",
         );
-        let anchor = on_absent[0].anchor.as_ref().expect("on absent");
+        let anchor = old_on_absent[0].anchor.as_ref().expect("old on absent");
         assert_eq!(anchor.attrs.get("alt").map(String::as_str), Some("absent"));
 
-        let on_none = parse_sources(
+        let new_on = parse_sources(
             "url https://example.invalid/c\nformat text\nttl 60\n\
              on mars frame=body lat=1 lon=2 alt=absent datum=IAU_2015 epoch=2000-01-01T12:00:00\n",
         );
-        let anchor = on_none[0].anchor.as_ref().expect("on none");
+        let anchor = new_on[0].anchor.as_ref().expect("new on anchor");
         assert_eq!(anchor.kind, AnchorKind::On);
+        assert!(!anchor.legacy);
         assert!(matches!(
-            on_none[0].frame(),
+            new_on[0].frame(),
             Frame::Surface { alt: None, .. }
         ));
     }
 
     #[test]
-    fn query_anchor_projects_a_body_frame() {
-        let sources = parse_sources(
-            "url https://example.invalid/query\nformat text\nttl 60\n\
-             query earth frame=body lat_key=lat lon_key=lon alt_key=alt time_key=time\n",
-        );
-        assert_eq!(sources.len(), 1);
-        assert!(matches!(
-            sources[0].frame(),
-            Frame::Body { ref body_name } if body_name == "earth"
-        ));
-    }
-
-    #[test]
     fn anchor_required_attributes_are_not_invented() {
-        assert!(parse_anchor_directive(AnchorKind::Orbit, &["orbit", "iss"]).is_err());
-        assert!(parse_anchor_directive(AnchorKind::At, &["at", "sun", "frame=icrs"]).is_ok());
-        assert!(parse_anchor_directive(AnchorKind::At, &["at", "sun", "other=x"]).is_err());
+        assert!(parse_anchor_directive(AnchorKind::Orbit, &["orbit", "iss"], false).is_err());
+        assert!(
+            parse_anchor_directive(AnchorKind::At, &["at", "sun", "frame=icrs"], false).is_ok()
+        );
+        assert!(parse_anchor_directive(AnchorKind::At, &["at", "sun", "other=x"], false).is_err());
     }
 
     #[test]
@@ -5416,15 +4484,16 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
             assert_eq!(sources.len(), 1, "{line}");
             let anchor = sources[0].anchor.as_ref().expect("anchor");
             assert_eq!(anchor.kind, kind, "{line}");
+            assert!(!anchor.legacy, "{line}");
         }
     }
 
     #[test]
     fn a_field_norm_token_must_agree_with_the_source_head() {
         let matching = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n\
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
              gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\nmax_degree 10\n\
-             field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 pending 0.0 0.0 norm:fully_normalized\n",
+             field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 0.0 0.0 norm:fully_normalized\n",
         );
         assert_eq!(matching.len(), 1);
         assert!(matching[0].head.is_some());
@@ -5435,9 +4504,9 @@ coupling ion-neutral-friction from champ_ion to champ_neutral rate pending densi
                 .any(|e| matches!(e, Extract::Field(_)))
         );
         let contradicting = parse_sources(
-            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth frame=barycenter\n\
+            "url https://example.invalid/g.bin\nformat gfc\nttl 86400\nat earth\n\
              gm 3.986004415E+14\nradius 6378136.3\nnorm fully_normalized\nmax_degree 10\n\
-             field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 pending 0.0 0.0 norm:unnormalized\n",
+             field icgem_gfc_c icgem_gfc_c inverse-square gravity 1 86400 0.0 0.0 norm:unnormalized\n",
         );
         assert_eq!(contradicting.len(), 1);
         assert!(

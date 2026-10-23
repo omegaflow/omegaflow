@@ -15,7 +15,6 @@ pub mod equilibrium;
 pub mod force;
 pub mod healpix;
 pub mod ksg_k;
-pub mod manifest;
 pub mod least_squares;
 #[cfg(not(target_arch = "wasm32"))]
 pub mod machines;

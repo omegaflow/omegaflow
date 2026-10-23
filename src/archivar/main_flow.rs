@@ -200,7 +200,7 @@ pub fn raw_presence_gate(
             let bp = body_barycenter_position(body_name, ctx.now, ctx.body_ephemerides)?;
             (bp[0] * scale, bp[1] * scale, bp[2] * scale)
         }
-        Frame::Body { .. } | Frame::Manifest => return None,
+        Frame::Manifest => return None,
     };
     let anchor_body = frame_body_name(&sources[i].frame());
     let body_props = ctx
@@ -419,9 +419,6 @@ pub fn anchor_uses(sources: &[SourceConfig]) -> std::collections::HashMap<String
         }
         match &s.frame() {
             Frame::Surface { body_name, .. } | Frame::Barycenter { body_name, .. } => {
-                *uses.entry(body_name.clone()).or_insert(0) += 1;
-            }
-            Frame::Body { body_name } => {
                 *uses.entry(body_name.clone()).or_insert(0) += 1;
             }
             Frame::Manifest => {}
@@ -1413,8 +1410,7 @@ pub fn main_flow() {
                             .is_none(),
                         Position::Source => match &src.frame() {
                             Frame::Surface { body_name, .. }
-                            | Frame::Barycenter { body_name, .. }
-                            | Frame::Body { body_name } => archive
+                            | Frame::Barycenter { body_name, .. } => archive
                                 .body_ephemerides
                                 .get(body_name.as_str())
                                 .and_then(|e| e.props.as_ref())
@@ -1476,14 +1472,12 @@ pub fn main_flow() {
                     key: bs.key.clone(),
                     name: bs.key.clone(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: bs.kernel,
-                        tau: effective_tau,
-                        tau_src: crate::archivar::types::TauSource::Measured,
-                        absorption: 0.0,
-                        advection: 0.0,
-                    }),
+                    kernel: bs.kernel,
                     channel_ref: Some(bs.channel_ref),
+                    tau: effective_tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: 0.0,
+                    advection: 0.0,
                     unit: bs.unit.clone(),
                     freq: 0.0,
                     bin_width: 0.0,
@@ -1540,6 +1534,9 @@ pub fn main_flow() {
                 continue;
             }
             if archive.sources[i].format == "kernel_text" {
+                continue;
+            }
+            if archive.sources[i].format == "reference" {
                 continue;
             }
             if archive.origins.values().filter(|o| o.in_flight).count() >= FETCH_BUDGET {
@@ -2366,7 +2363,7 @@ pub fn main_flow() {
                             body_name: body_name.clone(),
                             scale: *scale,
                         },
-                        Frame::Body { .. } | Frame::Manifest => {
+                        Frame::Manifest => {
                             eprintln!(
                                 "spectral {}: frameless — the block declares no position",
                                 url
@@ -2668,7 +2665,7 @@ pub fn main_flow() {
                             body_name: body_name.clone(),
                             scale: *scale,
                         },
-                        Frame::Body { .. } | Frame::Manifest => {
+                        Frame::Manifest => {
                             eprintln!(
                                 "emtf_impedance {}: frameless — the block declares no position",
                                 url
@@ -2862,7 +2859,7 @@ pub fn main_flow() {
                             body_name: body_name.clone(),
                             scale: *scale,
                         }),
-                        Frame::Body { .. } | Frame::Manifest => None,
+                        Frame::Manifest => None,
                     };
                     let mut named_skips = 0usize;
                     for spec in specs {
@@ -3534,7 +3531,7 @@ pub fn main_flow() {
                                 body_name: body_name.clone(),
                                 scale: *scale,
                             },
-                            Frame::Body { .. } | Frame::Manifest => Position::Source,
+                            Frame::Manifest => Position::Source,
                         };
                         let channels = crate::archivar::openneuro_eeg::emit_channels(
                             &bin,
@@ -3653,7 +3650,7 @@ pub fn main_flow() {
                             body_name: body_name.clone(),
                             scale: *scale,
                         },
-                        Frame::Body { .. } | Frame::Manifest => Position::Source,
+                        Frame::Manifest => Position::Source,
                     };
                     let channels = crate::archivar::extract::edf_emit_channels(
                         &bytes,
@@ -6232,7 +6229,7 @@ pub fn main_flow() {
                         continue;
                     }
                 }
-                Frame::Body { .. } | Frame::Manifest => continue,
+                Frame::Manifest => continue,
             };
             let presences: Vec<PresenceSample> = archive.presence.values().cloned().collect();
             let anchor_body = frame_body_name(&archive.sources[i].frame());

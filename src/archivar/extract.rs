@@ -1855,14 +1855,12 @@ pub fn edf_emit_channels_with_electrodes(
             key: name.clone(),
             name: name.clone(),
             band_id: None,
-            model: Some(crate::archivar::FieldModel {
-                kernel: kernel,
-                tau: tau,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
-            }),
+            kernel,
             channel_ref: Some(channel_ref),
+            tau,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
             unit: unit.to_string(),
             freq: crate::spectral::SPECTRAL_NO_BAND,
             bin_width: crate::spectral::SPECTRAL_NO_BAND,
@@ -1948,14 +1946,12 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     key: outputs[0].clone(),
                     name: outputs[0].clone(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: 0,
-                        tau: *tau,
-                        tau_src: crate::archivar::types::TauSource::Measured,
-                        absorption: *absorption,
-                        advection: *advection,
-                    }),
+                    kernel: 0,
                     channel_ref: Some(1),
+                    tau: *tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: *absorption,
+                    advection: *advection,
                     unit: "Mw".to_string(),
                     freq: 0.0,
                     bin_width: 0.0,
@@ -1966,14 +1962,12 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     key: outputs[1].clone(),
                     name: outputs[1].clone(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: 0,
-                        tau: *tau,
-                        tau_src: crate::archivar::types::TauSource::Measured,
-                        absorption: *absorption,
-                        advection: *advection,
-                    }),
+                    kernel: 0,
                     channel_ref: Some(1),
+                    tau: *tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: *absorption,
+                    advection: *advection,
                     unit: String::new(),
                     freq: 0.0,
                     bin_width: 0.0,
@@ -1996,14 +1990,12 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     key: outputs[0].clone(),
                     name: outputs[0].clone(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: 1,
-                        tau: *tau,
-                        tau_src: crate::archivar::types::TauSource::Measured,
-                        absorption: *absorption,
-                        advection: *advection,
-                    }),
+                    kernel: 1,
                     channel_ref: Some(1),
+                    tau: *tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: *absorption,
+                    advection: *advection,
                     unit: "N m".to_string(),
                     freq: 0.0,
                     bin_width: 0.0,
@@ -2014,14 +2006,12 @@ pub fn extract_fields(ext: &Extract) -> Vec<FieldConfig> {
                     key: outputs[1].clone(),
                     name: outputs[1].clone(),
                     band_id: None,
-                    model: Some(crate::archivar::FieldModel {
-                        kernel: 3,
-                        tau: *tau,
-                        tau_src: crate::archivar::types::TauSource::Measured,
-                        absorption: *absorption,
-                        advection: *advection,
-                    }),
+                    kernel: 3,
                     channel_ref: Some(5),
+                    tau: *tau,
+                    tau_src: crate::archivar::types::TauSource::Measured,
+                    absorption: *absorption,
+                    advection: *advection,
                     unit: "Mw".to_string(),
                     freq: 0.0,
                     bin_width: 0.0,
@@ -2285,14 +2275,12 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 key: "val".into(),
                 name: "val".into(),
                 band_id: None,
-                model: Some(crate::archivar::FieldModel {
-                    kernel: 0,
-                    tau: 0.0,
-                    tau_src: crate::archivar::types::TauSource::Measured,
-                    absorption: 0.0,
-                    advection: 0.0,
-                }),
+                kernel: 0,
                 channel_ref: Some(0),
+                tau: 0.0,
+                tau_src: crate::archivar::types::TauSource::Measured,
+                absorption: 0.0,
+                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -2305,14 +2293,12 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 key: "extent".into(),
                 name: "extent".into(),
                 band_id: None,
-                model: Some(crate::archivar::FieldModel {
-                    kernel: 0,
-                    tau: 0.0,
-                    tau_src: crate::archivar::types::TauSource::Measured,
-                    absorption: 0.0,
-                    advection: 0.0,
-                }),
+                kernel: 0,
                 channel_ref: Some(0),
+                tau: 0.0,
+                tau_src: crate::archivar::types::TauSource::Measured,
+                absorption: 0.0,
+                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -2325,14 +2311,12 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 key: "tau".into(),
                 name: "tau".into(),
                 band_id: None,
-                model: Some(crate::archivar::FieldModel {
-                    kernel: 0,
-                    tau: 0.0,
-                    tau_src: crate::archivar::types::TauSource::Measured,
-                    absorption: 0.0,
-                    advection: 0.0,
-                }),
+                kernel: 0,
                 channel_ref: Some(0),
+                tau: 0.0,
+                tau_src: crate::archivar::types::TauSource::Measured,
+                absorption: 0.0,
+                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -2369,14 +2353,12 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 key: "val".into(),
                 name: "val".into(),
                 band_id: None,
-                model: Some(crate::archivar::FieldModel {
-                    kernel: 0,
-                    tau: 0.0,
-                    tau_src: crate::archivar::types::TauSource::Measured,
-                    absorption: 0.0,
-                    advection: 0.0,
-                }),
+                kernel: 0,
                 channel_ref: Some(0),
+                tau: 0.0,
+                tau_src: crate::archivar::types::TauSource::Measured,
+                absorption: 0.0,
+                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -2389,14 +2371,12 @@ pub fn universal_auto_detect(j: &JsonVal) -> Vec<Extract> {
                 key: "extent".into(),
                 name: "extent".into(),
                 band_id: None,
-                model: Some(crate::archivar::FieldModel {
-                    kernel: 0,
-                    tau: 0.0,
-                    tau_src: crate::archivar::types::TauSource::Measured,
-                    absorption: 0.0,
-                    advection: 0.0,
-                }),
+                kernel: 0,
                 channel_ref: Some(0),
+                tau: 0.0,
+                tau_src: crate::archivar::types::TauSource::Measured,
+                absorption: 0.0,
+                advection: 0.0,
                 unit: String::new(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -4986,14 +4966,12 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             key: "uv_index".to_string(),
             name: "uv_index".to_string(),
             band_id: None,
-            model: Some(crate::archivar::FieldModel {
-                kernel: 0,
-                tau: tau,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
-            }),
+            kernel: 0,
             channel_ref: Some(0),
+            tau,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
             unit: "UVI".to_string(),
             freq: 0.0,
             bin_width: 0.0,
@@ -5041,14 +5019,12 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                 key: name.to_string(),
                 name: name.to_string(),
                 band_id: None,
-                model: Some(crate::archivar::FieldModel {
-                    kernel: kernel,
-                    tau: tau,
-                    tau_src: crate::archivar::types::TauSource::Measured,
-                    absorption: 0.0,
-                    advection: 0.0,
-                }),
+                kernel,
                 channel_ref: Some(channel_ref),
+                tau,
+                tau_src: crate::archivar::types::TauSource::Measured,
+                absorption: 0.0,
+                advection: 0.0,
                 unit: unit.to_string(),
                 freq: 0.0,
                 bin_width: 0.0,
@@ -5115,14 +5091,12 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
             key: "fugin_moment0".to_string(),
             name: "fugin_moment0".to_string(),
             band_id: None,
-            model: Some(crate::archivar::FieldModel {
-                kernel: 0,
-                tau: tau,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
-            }),
+            kernel: 0,
             channel_ref: Some(0),
+            tau,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
             unit: "K m/s".to_string(),
             freq: 0.0,
             bin_width: 0.0,
@@ -6425,7 +6399,7 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                         body_name: body_name.clone(),
                         scale: *scale,
                     },
-                    Frame::Body { .. } | Frame::Manifest => Position::Source,
+                    Frame::Manifest => Position::Source,
                 };
                 let csv_mode =
                     src.format == "csv" || src.format == "csv_zip" || src.format == "csv_gz";
@@ -7154,14 +7128,12 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         key: outputs[0].clone(),
                                         name: outputs[0].clone(),
                                         band_id: None,
-                                        model: Some(crate::archivar::FieldModel {
-                                            kernel: 0,
-                                            tau: *tau,
-                                            tau_src: crate::archivar::types::TauSource::Measured,
-                                            absorption: *absorption,
-                                            advection: *advection,
-                                        }),
+                                        kernel: 0,
                                         channel_ref: Some(1),
+                                        tau: *tau,
+                                        tau_src: crate::archivar::types::TauSource::Measured,
+                                        absorption: *absorption,
+                                        advection: *advection,
                                         unit: "Mw".to_string(),
                                         freq: 0.0,
                                         bin_width: 0.0,
@@ -7189,14 +7161,12 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                         key: outputs[1].clone(),
                                         name: outputs[1].clone(),
                                         band_id: None,
-                                        model: Some(crate::archivar::FieldModel {
-                                            kernel: 0,
-                                            tau: *tau,
-                                            tau_src: crate::archivar::types::TauSource::Measured,
-                                            absorption: *absorption,
-                                            advection: *advection,
-                                        }),
+                                        kernel: 0,
                                         channel_ref: Some(1),
+                                        tau: *tau,
+                                        tau_src: crate::archivar::types::TauSource::Measured,
+                                        absorption: *absorption,
+                                        advection: *advection,
                                         unit: String::new(),
                                         freq: 0.0,
                                         bin_width: 0.0,
@@ -7242,14 +7212,12 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     key: outputs[0].clone(),
                                     name: outputs[0].clone(),
                                     band_id: None,
-                                    model: Some(crate::archivar::FieldModel {
-                                        kernel: 1,
-                                        tau: *tau,
-                                        tau_src: crate::archivar::types::TauSource::Measured,
-                                        absorption: *absorption,
-                                        advection: *advection,
-                                    }),
+                                    kernel: 1,
                                     channel_ref: Some(1),
+                                    tau: *tau,
+                                    tau_src: crate::archivar::types::TauSource::Measured,
+                                    absorption: *absorption,
+                                    advection: *advection,
                                     unit: "N m".to_string(),
                                     freq: 0.0,
                                     bin_width: 0.0,
@@ -7278,14 +7246,12 @@ fn extract_raw(src: &SourceConfig, body: &str, now: f64, lsk: &LeapSeconds) -> E
                                     key: outputs[1].clone(),
                                     name: outputs[1].clone(),
                                     band_id: None,
-                                    model: Some(crate::archivar::FieldModel {
-                                        kernel: 3,
-                                        tau: *tau,
-                                        tau_src: crate::archivar::types::TauSource::Measured,
-                                        absorption: *absorption,
-                                        advection: *advection,
-                                    }),
+                                    kernel: 3,
                                     channel_ref: Some(5),
+                                    tau: *tau,
+                                    tau_src: crate::archivar::types::TauSource::Measured,
+                                    absorption: *absorption,
+                                    advection: *advection,
                                     unit: "Mw".to_string(),
                                     freq: 0.0,
                                     bin_width: 0.0,
@@ -7804,95 +7770,6 @@ pub fn extract_series(src: &SourceConfig, body: &str, lsk: &LeapSeconds) -> Vec<
         }
     }
     out
-}
-
-#[cfg(test)]
-mod hapi_vector_tests {
-    use super::*;
-
-    fn field(name: &str) -> FieldConfig {
-        FieldConfig {
-            key: name.to_string(),
-            name: name.to_string(),
-            band_id: None,
-            model: Some(crate::archivar::FieldModel {
-                kernel: 0,
-                tau: 60.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
-            }),
-            channel_ref: Some(1),
-            unit: "nT".to_string(),
-            freq: 0.0,
-            bin_width: 0.0,
-            fold: None,
-            aperture: Aperture::None,
-        }
-    }
-
-    #[test]
-    fn hapi_xyzf_splits_the_vector_array_into_components() {
-        let names = [
-            "intermagnet_xyz_x_nt",
-            "intermagnet_xyz_y_nt",
-            "intermagnet_xyz_z_nt",
-            "magnetosphere_total_field_nt",
-        ];
-        let extracts: Vec<Extract> = names.iter().map(|name| Extract::Field(field(name))).collect();
-        let pairs: Vec<(String, String)> = vec![
-            ("Field_Vector.0".into(), names[0].into()),
-            ("Field_Vector.1".into(), names[1].into()),
-            ("Field_Vector.2".into(), names[2].into()),
-            ("Field_Magnitude".into(), names[3].into()),
-        ];
-        let mut col = HashMap::new();
-        col.insert("Field_Vector".to_string(), 1usize);
-        col.insert("Field_Magnitude".to_string(), 2usize);
-        let mut size_of = HashMap::new();
-        size_of.insert("Field_Vector".to_string(), 3usize);
-        let mut fill_of = HashMap::new();
-        fill_of.insert("Field_Vector".to_string(), 99999.0);
-        fill_of.insert("Field_Magnitude".to_string(), 99999.0);
-        let ctx = HapiRowCtx {
-            col: &col,
-            fill_of: &fill_of,
-            size_of: &size_of,
-            lat_idx: None,
-            lon_idx: None,
-            alt_idx: None,
-            body_name: "earth",
-        };
-        let row = vec![
-            JsonVal::Str("2026-10-22T00:00:00Z".to_string()),
-            JsonVal::Arr(vec![JsonVal::Num(1.0), JsonVal::Num(2.0), JsonVal::Num(3.0)]),
-            JsonVal::Num(10.0),
-        ];
-        let mut channels = Vec::new();
-        hapi_emit_row(&row, &pairs, &extracts, &ctx, 123.0, &mut channels);
-        let values: HashMap<&str, f64> = channels
-            .iter()
-            .map(|(channel, _)| (channel.name.as_str(), channel.value))
-            .collect();
-        assert_eq!(values[names[0]], 1.0);
-        assert_eq!(values[names[1]], 2.0);
-        assert_eq!(values[names[2]], 3.0);
-        assert_eq!(values[names[3]], 10.0);
-
-        let filled = vec![
-            JsonVal::Str("2026-10-22T00:00:00Z".to_string()),
-            JsonVal::Arr(vec![
-                JsonVal::Num(99999.0),
-                JsonVal::Num(2.0),
-                JsonVal::Num(3.0),
-            ]),
-            JsonVal::Num(99999.0),
-        ];
-        let mut channels = Vec::new();
-        hapi_emit_row(&filled, &pairs, &extracts, &ctx, 123.0, &mut channels);
-        assert!(channels.iter().all(|(channel, _)| channel.name != names[0]));
-        assert!(channels.iter().all(|(channel, _)| channel.name != names[3]));
-    }
 }
 
 #[cfg(test)]
@@ -9041,14 +8918,12 @@ mod blinkverse_frb_tests {
             key: name.to_string(),
             name: name.to_string(),
             band_id: None,
-            model: Some(crate::archivar::FieldModel {
-                kernel: 0,
-                tau: 604800.0,
-                tau_src: crate::archivar::types::TauSource::Measured,
-                absorption: 0.0,
-                advection: 0.0,
-            }),
+            kernel: 0,
             channel_ref: Some(0),
+            tau: 604800.0,
+            tau_src: crate::archivar::types::TauSource::Measured,
+            absorption: 0.0,
+            advection: 0.0,
             unit: "deg".to_string(),
             freq: 0.0,
             bin_width: 0.0,
