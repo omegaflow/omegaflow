@@ -499,6 +499,7 @@ struct AnalyzeOpts {
     emax: f64,
     tmax: f64,
     dt: f64,
+    smooth: usize,
     out: String,
 }
 
@@ -515,9 +516,21 @@ fn analyze(on_path: &str, o: &AnalyzeOpts) -> Result<(), String> {
         }
     }
     let sub: Vec<f64> = on.s.iter().zip(&bg).map(|(s, b)| s - b).collect();
-    let mut sub_csv = String::from("E_meV,S_sub\n");
-    for (e, s) in on.e.iter().zip(&sub) {
-        sub_csv.push_str(&format!("{:.6},{:.6e}\n", e, s));
+    let sm: Vec<f64> = if o.smooth > 1 {
+        let h = o.smooth / 2;
+        (0..sub.len())
+            .map(|i| {
+                let a = i.saturating_sub(h);
+                let b = (i + h + 1).min(sub.len());
+                sub[a..b].iter().sum::<f64>() / (b - a) as f64
+            })
+            .collect()
+    } else {
+        sub.clone()
+    };
+    let mut sub_csv = String::from("E_meV,S_sub,S_smooth\n");
+    for i in 0..on.e.len() {
+        sub_csv.push_str(&format!("{:.6},{:.6e},{:.6e}\n", on.e[i], sub[i], sm[i]));
     }
     std::fs::write(format!("{}_sub.csv", o.out), sub_csv).map_err(|e| format!("write sub: {e}"))?;
 
@@ -532,10 +545,10 @@ fn analyze(on_path: &str, o: &AnalyzeOpts) -> Result<(), String> {
     let mut centroid = 0.0;
     let mut peak_i = idx[0];
     for &i in &idx {
-        let v = sub[i].max(0.0);
+        let v = sm[i].max(0.0);
         integral += v * step;
         centroid += v * on.e[i] * step;
-        if sub[i] > sub[peak_i] {
+        if sm[i] > sm[peak_i] {
             peak_i = i;
         }
     }
@@ -544,18 +557,18 @@ fn analyze(on_path: &str, o: &AnalyzeOpts) -> Result<(), String> {
     }
     centroid /= integral;
     let peak = on.e[peak_i];
-    let half = sub[peak_i] / 2.0;
+    let half = sm[peak_i] / 2.0;
     let mut l = peak_i;
-    while l > idx[0] && sub[l] > half {
+    while l > idx[0] && sm[l] > half {
         l -= 1;
     }
     let mut r = peak_i;
-    while r < idx[idx.len() - 1] && sub[r] > half {
+    while r < idx[idx.len() - 1] && sm[r] > half {
         r += 1;
     }
     let interp = |i0: usize, i1: usize| -> f64 {
-        let s0 = sub[i0];
-        let s1 = sub[i1];
+        let s0 = sm[i0];
+        let s1 = sm[i1];
         if s1 == s0 {
             on.e[i0]
         } else {
@@ -574,7 +587,7 @@ fn analyze(on_path: &str, o: &AnalyzeOpts) -> Result<(), String> {
     };
     let fwhm = (right - left).max(0.0);
 
-    let norm: f64 = idx.iter().map(|&i| sub[i].max(0.0)).sum();
+    let norm: f64 = idx.iter().map(|&i| sm[i].max(0.0)).sum();
     let hbar = 0.6582119569;
     let mut iqt = String::from("t_ps,I_norm\n");
     let n_t = (o.tmax / o.dt).floor() as usize + 1;
@@ -583,7 +596,7 @@ fn analyze(on_path: &str, o: &AnalyzeOpts) -> Result<(), String> {
         let t = k as f64 * o.dt;
         let mut re = 0.0;
         for &i in &idx {
-            re += sub[i].max(0.0) * (on.e[i] * t / hbar).cos();
+            re += sm[i].max(0.0) * (on.e[i] * t / hbar).cos();
         }
         let val = re / norm;
         if (t - 1.0).abs() < o.dt / 2.0 {
@@ -694,6 +707,7 @@ fn run(args: &[String]) -> Result<(), String> {
             let mut emax = 6.0f64;
             let mut tmax = 10.0f64;
             let mut dt = 0.02f64;
+            let mut smooth = 0usize;
             let mut out: Option<String> = None;
             let mut i = 2;
             while i < args.len() {
@@ -718,6 +732,10 @@ fn run(args: &[String]) -> Result<(), String> {
                         dt = args[i + 1].parse().map_err(|_| "bad --dt".to_string())?;
                         i += 2;
                     }
+                    "--smooth" if i + 1 < args.len() => {
+                        smooth = args[i + 1].parse().map_err(|_| "bad --smooth".to_string())?;
+                        i += 2;
+                    }
                     "--out" if i + 1 < args.len() => {
                         out = Some(args[i + 1].clone());
                         i += 2;
@@ -734,11 +752,12 @@ fn run(args: &[String]) -> Result<(), String> {
                     emax,
                     tmax,
                     dt,
+                    smooth,
                     out,
                 },
             )
         }
-        _ => Err("usage:\n  sqw_image meta <file.sqw>\n  sqw_image cut <file.sqw> [--q H,K,L] [--window N] [--out CSV]\n  sqw_image pixels <file.sqw> [--q H,K,L] [--dq D] [--emin E] [--emax E] [--ebins N] [--limit N] [--out CSV]\n  sqw_image analyze <on.csv> [--bg off.csv ...] [--emin E] [--emax E] [--tmax T] [--dt D] --out <prefix>".into()),
+        _ => Err("usage:\n  sqw_image meta <file.sqw>\n  sqw_image cut <file.sqw> [--q H,K,L] [--window N] [--out CSV]\n  sqw_image pixels <file.sqw> [--q H,K,L] [--dq D] [--emin E] [--emax E] [--ebins N] [--limit N] [--out CSV]\n  sqw_image analyze <on.csv> [--bg off.csv ...] [--emin E] [--emax E] [--tmax T] [--dt D] [--smooth N] --out <prefix>".into()),
     }
 }
 
