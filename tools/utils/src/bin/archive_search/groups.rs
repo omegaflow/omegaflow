@@ -107,6 +107,7 @@ const DATA: &[&str] = &[
     "cmr",
     "cod",
     "copernicus",
+    "cdse",
     "dataeuropa",
     "datacite",
     "dataone",
