@@ -7396,7 +7396,7 @@ cadence live
 
     #[test]
     fn panel_with_a_declared_scale_records_the_width() {
-        let text = "panel p\nchannels a,b\nscale 3600\nstage2 mci\ncadence live\n";
+        let text = "panel p\nchannels a,b\nscale 3600\nstage2 mci\nfdr bh 0.05 over matrix\ncadence live\n";
         let desc = parse_descriptor(text).expect("a panel parses");
         assert_eq!(desc.panel.unwrap().scale_s, Some(3600.0));
     }
