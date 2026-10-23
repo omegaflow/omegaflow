@@ -118,8 +118,7 @@ mod interpro;
 mod isc;
 #[path = "archive_search/jina.rs"]
 mod jina;
-#[path = "archive_search/json.rs"]
-mod json;
+use omegaflow_utils::json;
 #[path = "archive_search/lasair.rs"]
 mod lasair;
 #[path = "archive_search/lpf.rs"]

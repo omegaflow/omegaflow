@@ -133,8 +133,6 @@ struct Onset {
     t: f64,
     value: f64,
     base: f64,
-    #[allow(dead_code)]
-    sigma: f64,
 }
 
 fn detect_onset(
@@ -159,7 +157,6 @@ fn detect_onset(
                 t: *t,
                 value: *v,
                 base: med,
-                sigma,
             });
         }
     }
@@ -196,7 +193,6 @@ fn detect_peak_onset(
                 t: *t,
                 value: *v,
                 base: med,
-                sigma,
             });
         }
     }

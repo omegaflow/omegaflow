@@ -1,6 +1,5 @@
-#[path = "archive_search/json.rs"]
-#[allow(dead_code)]
-mod json;
+use omegaflow_utils::json;
+
 
 use std::env;
 use std::io::{self, BufRead, Write};
