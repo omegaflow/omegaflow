@@ -15,6 +15,11 @@ root="$(CDPATH= cd -- "$(dirname -- "$self")/.." && pwd)"
 term="${1:?usage: where <term>}"
 cd "$root" || exit 2
 
+printf '== reference (archive-search, lokal) ==\n'
+if [ -d "$OMEGAFLOW_WORK/research/archive-search/reference" ]; then
+    grep -rI -i -m1 -- "$term" "$OMEGAFLOW_WORK/research/archive-search/reference" 2>/dev/null | cut -c1-240 | head -20
+fi
+
 printf '== register (phi/sources) ==\n'
 sgrep -i "$term" phi 2>/dev/null || true
 
