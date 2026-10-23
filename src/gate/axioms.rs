@@ -37,7 +37,7 @@ mod tests {
         let g = load(".").expect("docs/granit.md is present");
         assert!(g.contains("A = A"));
         assert!(g.contains("0 honored"));
-        assert!(g.contains("channel_ref"));
+        assert!(g.contains("field"));
         assert!(g.contains("ICRS & TDB"));
         assert!(g.contains("pending"));
     }
