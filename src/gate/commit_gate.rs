@@ -286,6 +286,90 @@ fn code_before_comment(line: &str) -> &str {
     }
 }
 
+fn raw_string_open(b: &[u8], i: usize) -> Option<(usize, usize)> {
+    let mut j = i;
+    if j < b.len() && b[j] == b'b' {
+        j += 1;
+    }
+    if j >= b.len() || b[j] != b'r' {
+        return None;
+    }
+    j += 1;
+    let mut hashes = 0usize;
+    while j < b.len() && b[j] == b'#' {
+        hashes += 1;
+        j += 1;
+    }
+    if j < b.len() && b[j] == b'"' {
+        Some((j + 1, hashes))
+    } else {
+        None
+    }
+}
+
+fn line_comment_start(line: &str) -> Option<usize> {
+    let b = line.as_bytes();
+    let mut i = 0usize;
+    while i < b.len() {
+        if b[i] == b'/' && i + 1 < b.len() && b[i + 1] == b'/' {
+            if i > 0 && b[i - 1] == b':' {
+                i += 2;
+                continue;
+            }
+            return Some(i);
+        }
+        if let Some((mut j, hashes)) = raw_string_open(b, i) {
+            while j < b.len() {
+                if b[j] == b'"' {
+                    let end = j + 1 + hashes;
+                    if end <= b.len() && b[j + 1..end].iter().all(|&c| c == b'#') {
+                        j = end;
+                        break;
+                    }
+                }
+                j += 1;
+            }
+            i = j.max(i + 1);
+            continue;
+        }
+        match b[i] {
+            b'"' => {
+                i += 1;
+                while i < b.len() {
+                    match b[i] {
+                        b'\\' => i += 2,
+                        b'"' => {
+                            i += 1;
+                            break;
+                        }
+                        _ => i += 1,
+                    }
+                }
+            }
+            b'\'' => {
+                let is_char = i + 2 < b.len() && (b[i + 2] == b'\'' || b[i + 1] == b'\\');
+                if is_char {
+                    i += 1;
+                    while i < b.len() {
+                        match b[i] {
+                            b'\\' => i += 2,
+                            b'\'' => {
+                                i += 1;
+                                break;
+                            }
+                            _ => i += 1,
+                        }
+                    }
+                } else {
+                    i += 1;
+                }
+            }
+            _ => i += 1,
+        }
+    }
+    None
+}
+
 fn brace_delta(line: &str) -> i32 {
     let mut depth = 0i32;
     for ch in code_before_comment(line).chars() {
@@ -1083,13 +1167,13 @@ impl Gate {
         if let Some(v) = check_handover_dupe(&path, &content) {
             return Some(v);
         }
-        if let Some(v) = check_handover_burn(&path, &content) {
-            return Some(v);
-        }
         if let Some(v) = check_addressed_origin(&path, &content) {
             return Some(v);
         }
         if let Some(v) = check_transport_token_absent(&path, &content) {
+            return Some(v);
+        }
+        if let Some(v) = check_handover_burn(&path, &content) {
             return Some(v);
         }
         if let Some(v) = check_prior_work_unread(&path, &content) {
@@ -1108,17 +1192,17 @@ impl Gate {
             }
         }
         for (line_idx, line) in content.lines().enumerate() {
-            let t = line.trim_start();
-            if t.starts_with("//") {
+            if let Some(pos) = line_comment_start(line) {
                 return Some(Verdict {
                     severity: Severity::Hard,
                     rule: "comment".to_string(),
                     line: line_idx + 1,
                     feedback: "code is self-documenting — comments are dead. Remove the line."
                         .to_string(),
-                    quote: clip(t, 80),
+                    quote: clip(&line[pos..], 80),
                 });
             }
+            let t = line.trim_start();
             if t.starts_with("field") {
                 if let Some((force, unit)) = field_line_force_unit(t) {
                     if let Some(id) = force_id_of(&force) {
@@ -1156,20 +1240,6 @@ impl Gate {
             let prod = test_regions_stripped(&content);
             let lower = prod.to_lowercase();
             let v = vocab();
-            let german_char_idx = v.german_chars.iter().find_map(|c| prod.find(*c));
-            let german_word_idx = v
-                .german_function_words
-                .iter()
-                .find_map(|w| word_index(&lower, w));
-            if let Some(idx) = german_char_idx.or(german_word_idx) {
-                return Some(Verdict {
-                    severity: Severity::Hard,
-                    rule: "german-in-code".to_string(),
-                    line: line_of(&prod, idx),
-                    feedback: "the code speaks English — German is the counter-slope of the register and the philosophy, not of code".to_string(),
-                    quote: clip(&prod, 90),
-                });
-            }
             let zf_idx = vocab()
                 .zero_fabrication
                 .iter()
@@ -1194,6 +1264,20 @@ impl Gate {
                         quote: clip(&prod, 90),
                     });
                 }
+            }
+            let german_char_idx = v.german_chars.iter().find_map(|c| prod.find(*c));
+            let german_word_idx = v
+                .german_function_words
+                .iter()
+                .find_map(|w| word_index(&lower, w));
+            if let Some(idx) = german_char_idx.or(german_word_idx) {
+                return Some(Verdict {
+                    severity: Severity::Hard,
+                    rule: "german-in-code".to_string(),
+                    line: line_of(&prod, idx),
+                    feedback: "the code speaks English — German is the counter-slope of the register and the philosophy, not of code".to_string(),
+                    quote: clip(&prod, 90),
+                });
             }
             for word in &vocab().template_slang {
                 if let Some(idx) = lower.find(word.as_str()) {
@@ -1235,7 +1319,7 @@ impl Gate {
             if let Some(v) = self.check_serial_priority(&content) {
                 return Some(v);
             }
-            if path.starts_with("docs/") && path.ends_with(".md") {
+            if path.ends_with(".md") {
                 for marker in &vocab().unstable_pointer {
                     if let Some(idx) = content.find(marker.as_str()) {
                         return Some(Verdict {
@@ -1246,6 +1330,18 @@ impl Gate {
                             quote: clip(&content, 90),
                         });
                     }
+                }
+            }
+            let prod = test_regions_stripped(&content);
+            for (marker, hint) in &vocab().fabrication {
+                if let Some(idx) = prod.find(marker.as_str()) {
+                    return Some(Verdict {
+                        severity: Severity::Hard,
+                        rule: "fabrication".to_string(),
+                        line: line_of(&prod, idx),
+                        feedback: hint.clone(),
+                        quote: clip(&prod, 90),
+                    });
                 }
             }
             if let Some(home) = classify_home(&path) {
@@ -1800,16 +1896,19 @@ fn burn_reason_after(body: &str, cap_pos: usize) -> bool {
 }
 
 pub fn check_handover_burn(path: &str, content: &str) -> Option<Verdict> {
+    if path.contains("/archiv/") {
+        return None;
+    }
     handover_line_owner(path)?;
     for (idx, line) in content.lines().enumerate() {
         let trimmed = line.trim_start();
-        if !trimmed.starts_with("## Burn") {
+        let body = if let Some(rest) = trimmed.strip_prefix("## Burn") {
+            rest.trim_start_matches(':').trim()
+        } else if let Some(rest) = trimmed.strip_prefix("**Burn:**") {
+            rest.trim()
+        } else {
             continue;
-        }
-        let body = trimmed
-            .trim_start_matches("## Burn")
-            .trim_start_matches(':')
-            .trim();
+        };
         let mut open: Option<f64> = None;
         let mut close: Option<f64> = None;
         let mut cap: Option<f64> = None;
@@ -2689,7 +2788,7 @@ fn word_present(lower: &str, word: &str) -> bool {
 }
 
 fn word_index(lower: &str, word: &str) -> Option<usize> {
-    let w = word.to_lowercase();
+    let w = word.trim().to_lowercase();
     let mut start = 0;
     while let Some(rel) = lower[start..].find(&w) {
         let pos = start + rel;
@@ -3431,6 +3530,29 @@ mod tests {
     }
 
     #[test]
+    fn fp_tool_trailing_comment() {
+        let mut g = test_gate();
+        let args = tool_args("src/x.rs", "let x = 1; // why\n");
+        let v = g.check_tool_call("edit", &args).unwrap();
+        assert_eq!(v.rule, "comment");
+        assert_eq!(v.line, 1);
+    }
+
+    #[test]
+    fn fn_tool_url_is_not_a_comment() {
+        let mut g = test_gate();
+        let args = tool_args("src/x.rs", "let u = \"https://example.org\";\n");
+        assert!(g.check_tool_call("edit", &args).is_none());
+    }
+
+    #[test]
+    fn fn_tool_raw_string_with_slashes_is_not_a_comment() {
+        let mut g = test_gate();
+        let args = tool_args("src/x.rs", "let u = r#\"https://example.org/x\"#;\n");
+        assert!(g.check_tool_call("edit", &args).is_none());
+    }
+
+    #[test]
     fn fp_tool_german_in_code() {
         let mut g = test_gate();
         let args = tool_args("src/x.rs", &fx("german_code"));
@@ -3637,15 +3759,15 @@ mod tests {
         let clean = [
             (
                 "docs/handover/handover-2026-09-22-future-folge84.md",
-                "the future line carries the point",
+                "the future line carries the point\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean",
             ),
             (
                 "docs/handover/handover-2026-09-22-river-folge1.md",
-                "/river_go switches the agent",
+                "/river_go switches the agent\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean",
             ),
             (
                 "docs/handover/handover-2026-09-22-mycelium-folge2.md",
-                "linie:sensory takes over",
+                "linie:sensory takes over\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean",
             ),
         ];
         for (path, text) in clean {
@@ -3706,9 +3828,13 @@ mod tests {
         }
         for marker in &vocab().routing_act_home {
             let args = tool_args("docs/handover/archiv/handover-2026-09-18-x.md", marker);
-            assert!(g.check_tool_call("write", &args).is_none());
+            assert!(
+                g.check_tool_call("write", &args).is_none(),
+                "{:?}",
+                g.check_tool_call("write", &args).map(|v| v.rule)
+            );
         }
-        let args = tool_args(live, "Post An future steht");
+        let args = tool_args(live, "Post An future steht\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean");
         assert!(g.check_tool_call("write", &args).is_none());
         let args = tool_args("docs/projects/auftrag-x.md", "An future:");
         let v = g.check_tool_call("write", &args).unwrap();
@@ -3732,7 +3858,7 @@ mod tests {
         }
         let args = tool_args(
             "docs/handover/handover-2026-09-24-river-folge5.md",
-            "a point",
+            "a point\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean",
         );
         assert!(g.check_tool_call("write", &args).is_none());
     }
@@ -3760,12 +3886,12 @@ mod tests {
         let mut g = test_gate();
         let own = tool_args(
             "docs/handover/handover-2026-09-24-river-folge5.md",
-            "- **Bindung:** linie:river",
+            "- **Bindung:** linie:river\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean",
         );
         assert!(g.check_tool_call("write", &own).is_none());
         let eigen = tool_args(
             "docs/handover/handover-2026-09-24-river-folge5.md",
-            "- **Status:** eigen | **Bindung:** eigen",
+            "- **Status:** eigen | **Bindung:** eigen\n\n**Burn:** open 0.0 · close 0.0 · cap 0.15 · Grund: clean",
         );
         assert!(g.check_tool_call("write", &eigen).is_none());
         let archived = tool_args(
@@ -3965,7 +4091,11 @@ mod tests {
             "docs/handover/handover-2026-09-28-sensory-folge197.md",
             &fx("addressed_origin_clean"),
         );
-        assert!(g.check_tool_call("write", &args).is_none());
+        assert!(
+            g.check_tool_call("write", &args).is_none(),
+            "{:?}",
+            g.check_tool_call("write", &args).map(|v| v.rule)
+        );
     }
 
     #[test]
