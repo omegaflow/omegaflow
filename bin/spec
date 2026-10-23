@@ -1,0 +1,54 @@
+#!/bin/sh
+# spec — Quellensuche nach der Messung, nicht nach dem Namen.
+# usage: bin/spec --quantity "ELF magnetic field" [--band "0.001-30 Hz"] \
+#                 [--unit nT] [--cadence "10 min"] [--instrument "induction coil"] \
+#                 [--arms youmcp] [--top 8]
+set -u
+export LC_ALL=C
+root="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+bin="$root/target/release/archive_search"
+
+usage() {
+    cat >&2 <<'EOF'
+spec: usage: bin/spec --quantity "<messgroesse>" [--band "<band>"] [--unit "<einheit>"]
+           [--cadence "<kadenz>"] [--instrument "<instrumentenklasse>"]
+           [--arms youmcp,datacite,zenodo] [--top N]
+  Sucht die Messung, nicht den Markennamen. Ein Arm je Aufruf, seriell.
+EOF
+    exit 2
+}
+
+quantity=""; band=""; unit=""; cadence=""; instrument=""; arms="youmcp"; top=8
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --quantity) [ $# -ge 2 ] || usage; quantity="$2"; shift 2 ;;
+        --band) [ $# -ge 2 ] || usage; band="$2"; shift 2 ;;
+        --unit) [ $# -ge 2 ] || usage; unit="$2"; shift 2 ;;
+        --cadence) [ $# -ge 2 ] || usage; cadence="$2"; shift 2 ;;
+        --instrument) [ $# -ge 2 ] || usage; instrument="$2"; shift 2 ;;
+        --arms) [ $# -ge 2 ] || usage; arms="$2"; shift 2 ;;
+        --top) [ $# -ge 2 ] || usage; top="$2"; shift 2 ;;
+        *) usage ;;
+    esac
+done
+[ -n "$quantity" ] || usage
+[ -x "$bin" ] || { echo "spec: $bin fehlt — Release bauen (CI)" >&2; exit 2; }
+
+q1="$quantity"
+[ -n "$instrument" ] && q1="$q1 $instrument"
+[ -n "$band" ] && q1="$q1 $band"
+
+q2="$quantity spectra dataset"
+[ -n "$band" ] && q2="$q2 $band"
+[ -n "$cadence" ] && q2="$q2 $cadence"
+
+q3="$quantity"
+[ -n "$band" ] && q3="$q3 $band"
+[ -n "$unit" ] && q3="$q3 $unit"
+
+for arm in $(printf '%s' "$arms" | tr ',' ' '); do
+    for q in "$q1" "$q2" "$q3"; do
+        printf '== %s · %s ==\n' "$arm" "$q" >&2
+        "$bin" --"$arm" "$q" 2>&1 | head -n "$top"
+    done
+done
