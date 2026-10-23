@@ -217,7 +217,10 @@ fn main() {
     let bscale = header.f64("BSCALE").unwrap_or(1.0);
     let bzero = match header.f64("BZERO") {
         Some(v) => v,
-        None => return None,
+        None => {
+            eprintln!("{source}: BZERO absent — the KPVT map carries BSCALE/BZERO");
+            std::process::exit(1);
+        }
     };
     let blank = header
         .int("BLANK")
