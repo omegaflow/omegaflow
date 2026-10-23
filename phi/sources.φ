@@ -8,12 +8,13 @@ at earth
 ttl 1
 field aodn_temperature aodn_temperature exponential-decay thermal K 1 0.0 0.0
 
-url https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=Latitude,Longitude,Radius,F&format=json
+url https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=F&format=json
 terms vires-esa-attribution https://vires.services/
 ttl 4
+at earth
 hapi F=cryosat_magnetic_field_intensity_nt
-track earth frame=body lat_key=Latitude lon_key=Longitude alt_key=Radius time_key=Timestamp datum=earth_center time_scale=UTC
-field cryosat_magnetic_field_intensity_nt cryosat_magnetic_field_intensity_nt nT source_key=F alt_offset=0.0
+field cryosat_magnetic_field_intensity_nt cryosat_magnetic_field_intensity_nt inverse-square em nT 4 0.0 0.0
+channel energy:primary:maxwell:mixed:vacuum:unspecified:none V/m
 
 url https://api.phys.ucalgary.ca/hapi/data?id=NORSTAR_RIOMETER_K2@CHUR&start={week_ago}&stop={now}&format=csv
 terms attribution https://data.phys.ucalgary.ca/data/how_to_cite.html
