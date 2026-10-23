@@ -3146,8 +3146,10 @@ fn finish_source_block(builder: SourceBlockBuilder, line: usize) -> Result<Sourc
     {
         return Err(format!("line {line}: lat/lon outside range"));
     }
-    if !matches!(position, SourcePosition::At { .. })
-        && builder.alt_ref.is_some() == builder.alt_key.is_some()
+    if !matches!(
+        position,
+        SourcePosition::At { .. } | SourcePosition::Sky { .. }
+    ) && builder.alt_ref.is_some() == builder.alt_key.is_some()
     {
         return Err(format!(
             "line {line}: exactly one of alt_ref/alt_key required"
@@ -3156,7 +3158,8 @@ fn finish_source_block(builder: SourceBlockBuilder, line: usize) -> Result<Sourc
     let time_refs = usize::from(builder.time.is_some())
         + usize::from(builder.time_key.is_some())
         + usize::from(builder.time_parts.is_some());
-    if time_refs != 1 {
+    let sky = matches!(position, SourcePosition::Sky { .. });
+    if time_refs != 1 && !(sky && time_refs == 0) {
         return Err(format!(
             "line {line}: exactly one of time/time_key/time_parts required"
         ));
@@ -3175,12 +3178,15 @@ fn finish_source_block(builder: SourceBlockBuilder, line: usize) -> Result<Sourc
     }
     let datum = match (&position, builder.datum) {
         (SourcePosition::At { frame, .. }, None) => frame.clone(),
+        (SourcePosition::Sky { frame, epoch, .. }, None) => format!("{frame} {epoch}"),
         (_, Some(datum)) => datum,
         (_, None) => return Err(format!("line {line}: datum absent")),
     };
-    let time_scale = builder
-        .time_scale
-        .ok_or_else(|| format!("line {line}: time_scale absent"))?;
+    let time_scale = match builder.time_scale {
+        Some(scale) => scale,
+        None if sky => String::new(),
+        None => return Err(format!("line {line}: time_scale absent")),
+    };
     if builder.fields.is_empty() {
         return Err(format!("line {line}: fields absent"));
     }
@@ -3241,7 +3247,7 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
         };
         match head {
             "terms" if parts.len() >= 2 => builder.terms = Some(parts[1..].join(" ")),
-            "origin" if parts.len() == 2 => builder.origin = Some(parts[1].to_string()),
+            "origin" if parts.len() >= 2 => builder.origin = Some(parts[1..].join(" ")),
             "ttl" if parts.len() == 2 => {
                 builder.ttl = Some(
                     parts[1]
@@ -3249,6 +3255,7 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                         .map_err(|_| format!("line {line_no}: ttl unreadable"))?,
                 );
             }
+            "no-cadence" => builder.ttl = Some(NO_CADENCE),
             "at" if parts.len() >= 2 => {
                 if parts[1].contains('=') {
                     return Err(format!("line {line_no}: at needs a body before attributes"));
@@ -3300,6 +3307,47 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 builder.time_key = time_key;
                 builder.time_parts = time_parts;
                 builder.time_scale = time_scale;
+            }
+            "sky" => {
+                let mut frame = None;
+                let mut ra_key = None;
+                let mut dec_key = None;
+                let mut epoch = None;
+                let mut plx_key = None;
+                let mut dist_key = None;
+                for token in &parts[1..] {
+                    let Some((key, value)) = token.split_once('=') else {
+                        return Err(format!(
+                            "line {line_no}: sky token {token} carries no key=value"
+                        ));
+                    };
+                    if value.is_empty() {
+                        return Err(format!("line {line_no}: sky attribute {key} is empty"));
+                    }
+                    match key {
+                        "frame" => frame = Some(value.to_string()),
+                        "ra_key" => ra_key = Some(value.to_string()),
+                        "dec_key" => dec_key = Some(value.to_string()),
+                        "epoch" => epoch = Some(value.to_string()),
+                        "plx_key" => plx_key = Some(value.to_string()),
+                        "dist_key" => dist_key = Some(value.to_string()),
+                        _ => return Err(format!("line {line_no}: unknown sky attribute {key}")),
+                    }
+                }
+                let (Some(ra_key), Some(dec_key), Some(epoch)) = (ra_key, dec_key, epoch) else {
+                    return Err(format!(
+                        "line {line_no}: sky needs ra_key, dec_key and epoch"
+                    ));
+                };
+                let frame = frame.ok_or_else(|| format!("line {line_no}: sky needs frame="))?;
+                builder.position = Some(SourcePosition::Sky {
+                    frame,
+                    ra_key,
+                    dec_key,
+                    epoch,
+                    plx_key,
+                    dist_key,
+                });
             }
             "on" if parts.len() >= 2 => {
                 if parts[1].contains('=') {
@@ -3533,7 +3581,9 @@ pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>>
         if block.datum.trim().is_empty() {
             errors.push(at("datum is empty".to_string()));
         }
-        if block.time_scale.trim().is_empty() {
+        if block.time_scale.trim().is_empty()
+            && !matches!(&block.position, SourcePosition::Sky { .. })
+        {
             errors.push(at("time_scale is empty".to_string()));
         }
         match &block.position {
@@ -3554,16 +3604,34 @@ pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>>
                     errors.push(at("body-frame position needs body and frame".to_string()));
                 }
             }
+            SourcePosition::Sky {
+                frame,
+                ra_key,
+                dec_key,
+                epoch,
+                ..
+            } => {
+                if frame.trim().is_empty()
+                    || ra_key.trim().is_empty()
+                    || dec_key.trim().is_empty()
+                    || epoch.trim().is_empty()
+                {
+                    errors.push(at("sky position needs frame, ra_key, dec_key and epoch".to_string()));
+                }
+            }
         }
-        if !matches!(&block.position, SourcePosition::At { .. })
-            && block.alt_ref.is_some() == block.alt_key.is_some()
+        if !matches!(
+            &block.position,
+            SourcePosition::At { .. } | SourcePosition::Sky { .. }
+        ) && block.alt_ref.is_some() == block.alt_key.is_some()
         {
             errors.push(at("exactly one of alt_ref/alt_key required".to_string()));
         }
         let time_refs = usize::from(block.time.is_some())
             + usize::from(block.time_key.is_some())
             + usize::from(block.time_parts.is_some());
-        if time_refs != 1 {
+        let sky = matches!(&block.position, SourcePosition::Sky { .. });
+        if time_refs != 1 && !(sky && time_refs == 0) {
             errors.push(at(
                 "exactly one of time/time_key/time_parts required".to_string()
             ));
@@ -3822,6 +3890,24 @@ field u current m/s source_column=3 alt_offset=0.0 alt_min_offset=-2.5 alt_max_o
         assert_eq!(blocks[0].datum, "barycenter");
         assert_eq!(blocks[0].time_key.as_deref(), Some("time_tag"));
         assert_eq!(blocks[0].fields[0].source_key.as_deref(), Some("gsm_bx"));
+    }
+
+    #[test]
+    fn source_blocks_accept_sky_position_without_time() {
+        let content = concat!(
+            "url https://example.org/cat\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "sky frame=icrs ra_key=RAJ2000 dec_key=DEJ2000 epoch=J2000\n",
+            "ttl 604800\n",
+            "field ra ra deg source_key=RAJ2000 alt_offset=0\n",
+        );
+        let blocks = parse_source_blocks(content).expect("sky block parses");
+        assert!(matches!(
+            &blocks[0].position,
+            SourcePosition::Sky { ra_key, dec_key, epoch, .. }
+                if ra_key == "RAJ2000" && dec_key == "DEJ2000" && epoch == "J2000"
+        ));
+        assert_eq!(blocks[0].datum, "icrs J2000");
     }
 
     #[test]

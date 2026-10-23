@@ -743,6 +743,14 @@ pub enum SourcePosition {
         frame: String,
         distance_au: Option<f64>,
     },
+    Sky {
+        frame: String,
+        ra_key: String,
+        dec_key: String,
+        epoch: String,
+        plx_key: Option<String>,
+        dist_key: Option<String>,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq)]
