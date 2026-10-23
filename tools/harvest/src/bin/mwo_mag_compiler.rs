@@ -359,7 +359,10 @@ fn main() {
     .max(1.0);
     let b0 = match header.f64("B0") {
         Some(v) => v,
-        None => return None,
+        None => {
+            eprintln!("{source}: B0 absent — the magnetogram needs the solar B angle");
+            std::process::exit(1);
+        }
     };
     let Some(cenlon) = header
         .f64("CENLON")
