@@ -14,4 +14,42 @@ if [ ! -x "$bin" ]; then
     echo "sfetch: pending — no release installed; the build belongs to CI (tools-build)" >&2
     exit 2
 fi
-exec "$bin" "$@"
+
+. "$root/bin/_roots.sh"
+
+# Der Index über den CDN-Cache bleibt aktuell: ein erfolgreicher Fetch, der in
+# sources/ schreibt, hängt seine Zeile an — kein Vollscan vor der nächsten Suche.
+out=""
+url=""
+prev=""
+for a in "$@"; do
+    case "$prev" in
+        -o|--output) out="$a" ;;
+    esac
+    case "$a" in
+        --output=*) out="${a#--output=}" ;;
+        -O|--remote-name) out="remote-name" ;;
+        http://*|https://*) url="$a" ;;
+    esac
+    prev="$a"
+done
+
+"$bin" "$@"
+rc=$?
+if [ "$rc" -eq 0 ] && [ -n "$url" ]; then
+    if [ "$out" = "remote-name" ]; then
+        out="$(printf '%s' "${url%%\?*}" | sed 's|/$||; s|.*/||')"
+    fi
+    if [ -n "$out" ] && [ -f "$out" ]; then
+        abs="$(realpath -m -- "$out" 2>/dev/null || printf '%s' "$out")"
+        case "$abs" in
+            "$OMEGAFLOW_SOURCES"/*)
+                rel="${abs#"$OMEGAFLOW_SOURCES"/}"
+                idx="$OMEGAFLOW_SOURCES/INDEX.tsv"
+                [ -f "$idx" ] || printf 'netloc\tpath\tbytes\n' > "$idx"
+                printf '%s\t%s\t%s\n' "${rel%%/*}" "$rel" "$(stat -c %s -- "$abs" 2>/dev/null || echo 0)" >> "$idx"
+                ;;
+        esac
+    fi
+fi
+exit "$rc"

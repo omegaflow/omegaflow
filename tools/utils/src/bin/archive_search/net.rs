@@ -5010,6 +5010,26 @@ fn sniff_struct_lines(bytes: &[u8], pattern: Option<&str>) -> Vec<String> {
     out
 }
 
+fn store_sniff_body(url: &str, f: &Fetch) -> Option<std::path::PathBuf> {
+    let bytes = f.raw.as_slice();
+    if bytes.is_empty() || bytes.len() > 32 * 1024 * 1024 {
+        return None;
+    }
+    let dir = spill_dir().join("sniff");
+    std::fs::create_dir_all(&dir).ok()?;
+    let hash = omegaflow::sha256::sha256_hex(bytes);
+    let stem = &hash[..16];
+    let path = dir.join(format!("{stem}.body"));
+    if !path.exists() {
+        std::fs::write(&path, bytes).ok()?;
+    }
+    let url_path = dir.join(format!("{stem}.url"));
+    if !url_path.exists() {
+        let _ = std::fs::write(&url_path, format!("{url}\n"));
+    }
+    Some(path)
+}
+
 fn sniff_lines_from(f: &Fetch, url: &str, pattern: Option<&str>) -> Vec<String> {
     let bytes = f.raw.as_slice();
     let mut out = vec![
@@ -5100,6 +5120,7 @@ pub fn sniff_lines(query: &str) -> Vec<String> {
     }
     match get(target, &[], "40") {
         Some(f) => {
+            store_sniff_body(target, &f);
             let mut out = sniff_lines_from(&f, target, request.pattern);
             if request.bait {
                 out.extend(bait_lines(f.raw.as_slice()));

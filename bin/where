@@ -37,6 +37,12 @@ else
     printf '  (kein INDEX.tsv — bin/sources_index laufen lassen)\n'
 fi
 
+printf '== scratch (unfertige Funde) ==\n'
+if [ -n "${OMEGAFLOW_TMP:-}" ] && [ -d "$OMEGAFLOW_TMP" ]; then
+    fd -H -t f "$term" "$OMEGAFLOW_TMP" 2>/dev/null | head -20
+    timeout 15 grep -rI -i -m1 -- "$term" "$OMEGAFLOW_TMP" 2>/dev/null | head -20 || true
+fi
+
 printf '== history (archiv) ==\n'
 sgrep -i --all -g 'handover-*.md' "$term" "$OMEGAFLOW_WORK/handover/archiv" 2>/dev/null || true
 
