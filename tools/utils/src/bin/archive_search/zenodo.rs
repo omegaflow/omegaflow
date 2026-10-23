@@ -2,12 +2,37 @@ use crate::json;
 use crate::net::{get, urlencode};
 
 pub fn zenodo_lines(query: &str, max: usize) -> Vec<String> {
+    let phrase_q = phrase(query);
+    let mut attempts = vec![phrase_q.clone()];
+    if phrase_q != query {
+        attempts.push(query.to_string());
+    }
+    for q in attempts {
+        let out = zenodo_pages(&q, max);
+        if !out.is_empty() {
+            return out;
+        }
+    }
+    vec![format!("absent — zenodo carries no entry: {}", query)]
+}
+
+fn phrase(query: &str) -> String {
+    let t = query.trim().replace('"', "");
+    if t.split_whitespace().count() > 1 {
+        format!("\"{}\"", t)
+    } else {
+        t
+    }
+}
+
+fn zenodo_pages(query: &str, max: usize) -> Vec<String> {
+    let per_page = page_size(max);
     let mut total: Option<usize> = None;
     let (mut lines, stop) = crate::paged::follow_pages(crate::paged::DEFAULT_PAGE_BUDGET, |page| {
         let url = format!(
             "https://zenodo.org/api/records?q={}&size={}&page={}",
             urlencode(query),
-            max,
+            per_page,
             page + 1
         );
         match get(&url, &[], "40") {
@@ -23,7 +48,7 @@ pub fn zenodo_lines(query: &str, max: usize) -> Vec<String> {
                         total = total_n;
                     }
                     let has_more = match total_n {
-                        Some(n) => (page + 1) * max < n,
+                        Some(n) => (page + 1) * per_page < n,
                         None => false,
                     };
                     (out, has_more)
@@ -41,14 +66,13 @@ pub fn zenodo_lines(query: &str, max: usize) -> Vec<String> {
         }
     });
     if lines.is_empty() {
-        vec![format!("absent — zenodo carries no entry: {}", query)]
-    } else {
-        lines.push(format!("end: {}", stop.label()));
-        if let Some(n) = total {
-            lines.push(format!("total: {}", n));
-        }
-        lines
+        return lines;
     }
+    lines.push(format!("end: {}", stop.label()));
+    if let Some(n) = total {
+        lines.push(format!("total: {}", n));
+    }
+    lines
 }
 
 fn first_file(hit: &json::Json) -> Option<String> {
@@ -112,6 +136,10 @@ fn abstract_field(metadata: &json::Json) -> Option<String> {
     } else {
         Some(collapsed)
     }
+}
+
+fn page_size(max: usize) -> usize {
+    max.clamp(1, 25)
 }
 
 fn parse_zenodo(body: &str) -> Vec<String> {
@@ -178,6 +206,20 @@ fn parse_zenodo(body: &str) -> Vec<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn page_size_caps_at_the_zenodo_maximum() {
+        assert_eq!(page_size(0), 1);
+        assert_eq!(page_size(8), 8);
+        assert_eq!(page_size(50), 25);
+    }
+
+    #[test]
+    fn phrase_quotes_multiword_queries_and_strips_quotes() {
+        assert_eq!(phrase("Schumann"), "Schumann");
+        assert_eq!(phrase("Schumann resonance"), "\"Schumann resonance\"");
+        assert_eq!(phrase("\"ELF\" field"), "\"ELF field\"");
+    }
 
     #[test]
     fn reads_doi_title_date_license_and_file() {

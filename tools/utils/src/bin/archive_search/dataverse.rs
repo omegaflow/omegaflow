@@ -1,7 +1,7 @@
 use crate::json;
 use crate::net::{get, urlencode};
 
-const DEFAULT_HOST: &str = "entrepot.recherche.data.gouv.fr";
+const DEFAULT_HOST: &str = "dataverse.harvard.edu";
 
 pub fn dataverse_lines(query: &str, max: usize) -> Vec<String> {
     let (text, refine) = crate::refine::split_refine(query, &["host"]);

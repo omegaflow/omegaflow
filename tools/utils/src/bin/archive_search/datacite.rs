@@ -2,28 +2,37 @@ use crate::json;
 use crate::net::{get, urlencode};
 
 pub fn datacite_lines(query: &str, max: usize) -> Vec<String> {
+    if let Ok(out) = datacite_fetch(&title_query(query), max)
+        && !out.is_empty()
+    {
+        return out;
+    }
+    match datacite_fetch(query, max) {
+        Ok(out) if !out.is_empty() => out,
+        Ok(_) => vec![format!("absent — datacite carries no entry: {}", query)],
+        Err(e) => vec![format!("pending — datacite HTTP {}", e)],
+    }
+}
+
+fn title_query(text: &str) -> String {
+    let t = text.trim().replace('"', "");
+    if t.split_whitespace().count() > 1 {
+        format!("titles.title:\"{}\"", t)
+    } else {
+        format!("titles.title:{}", t)
+    }
+}
+
+fn datacite_fetch(q: &str, max: usize) -> Result<Vec<String>, String> {
     let url = format!(
         "https://api.datacite.org/dois?query={}&page[size]={}",
-        urlencode(query),
+        urlencode(q),
         max
     );
     match get(&url, &[], "40") {
-        Some(f) if f.status == Some(200) => {
-            let out = parse_datacite(&f.body);
-            if out.is_empty() {
-                vec![format!("absent — datacite carries no entry: {}", query)]
-            } else {
-                out
-            }
-        }
-        Some(f) => {
-            let code = match f.status {
-                Some(s) => s.to_string(),
-                None => "absent".to_string(),
-            };
-            vec![format!("pending — datacite HTTP {}", code)]
-        }
-        None => vec!["pending — no network".to_string()],
+        Some(f) if f.status == Some(200) => Ok(parse_datacite(&f.body)),
+        Some(f) => Err(f.status_text()),
+        None => Err("no network".to_string()),
     }
 }
 
@@ -160,6 +169,16 @@ fn parse_datacite(body: &str) -> Vec<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn title_query_targets_the_title_field_and_quotes_phrases() {
+        assert_eq!(title_query("Schumann"), "titles.title:Schumann");
+        assert_eq!(
+            title_query("Schumann resonance"),
+            "titles.title:\"Schumann resonance\""
+        );
+        assert_eq!(title_query("\"ELF\""), "titles.title:ELF");
+    }
 
     #[test]
     fn reads_the_entry_fields() {
