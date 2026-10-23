@@ -359,7 +359,129 @@ fn is_closed_status(status: &str) -> bool {
 }
 
 fn is_open_status(status: &str) -> bool {
-    status == "draft"
+    matches!(status, "draft" | "pending" | "unsealed")
+}
+
+const OPEN_STATES: &[&str] = &[
+    "offen",
+    "pending",
+    "wartet",
+    "wartend",
+    "ausstehend",
+    "blocked",
+    "request-only",
+];
+
+fn line_is_open_act(lines: &[&str], idx: usize) -> bool {
+    let trimmed = lines[idx].trim_start();
+    if trimmed.starts_with('|') {
+        return false;
+    }
+    let head = normalize_marker_head(trimmed);
+    if head.is_empty() {
+        return false;
+    }
+    if trimmed.starts_with('#') {
+        return marker_at_start(&head) && section_has_content(lines, idx);
+    }
+    marker_at_start(&head) || status_field_is_open(&head)
+}
+
+fn normalize_marker_head(line: &str) -> String {
+    let mut s = line.trim();
+    loop {
+        let before = s;
+        s = s
+            .trim_start_matches(['#', '-', '*', '+', '>', '|', '_', '`'])
+            .trim_start();
+        let digits = s.chars().take_while(|c| c.is_ascii_digit()).count();
+        if digits > 0 {
+            let rest = &s[digits..];
+            if rest.starts_with('.') || rest.starts_with(')') {
+                s = rest[1..].trim_start();
+            }
+        }
+        if s == before {
+            break;
+        }
+    }
+    s.to_lowercase()
+}
+
+fn marker_at_start(head: &str) -> bool {
+    for marker in OPEN_MARKERS {
+        let Some(rest) = head.strip_prefix(marker) else {
+            continue;
+        };
+        let rest = if *marker == "offen" {
+            rest.trim_start_matches(['e', 'r', 's', 'n', 'm'])
+        } else {
+            rest
+        };
+        if rest.is_empty() {
+            return true;
+        }
+        if let Some(c) = rest.chars().next() {
+            if matches!(c, ' ' | ':' | '.' | '(' | ')' | '\u{2014}' | '-') {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+fn status_field_is_open(head: &str) -> bool {
+    const FIELDS: &[&str] = &[
+        "status:",
+        "zustand:",
+        "offen:",
+        "n\u{e4}chster schritt:",
+        "naechster schritt:",
+        "wiedervorlage:",
+    ];
+    for field in FIELDS {
+        let Some(pos) = head.find(field) else {
+            continue;
+        };
+        let before = head[..pos].trim_end_matches(['*', '_', ' ']);
+        if !before.is_empty() && !before.ends_with('|') && !before.ends_with(';') {
+            continue;
+        }
+        let value = head[pos + field.len()..].trim_start_matches(['*', '_', ' ']);
+        if field.ends_with("offen:")
+            || field.ends_with("schritt:")
+            || field.ends_with("wiedervorlage:")
+        {
+            return !value.is_empty();
+        }
+        if OPEN_STATES.iter().any(|state| {
+            value == *state
+                || value.starts_with(&format!("{state} "))
+                || value.starts_with(&format!("{state}:"))
+                || value.starts_with(&format!("{state}|"))
+        }) {
+            return true;
+        }
+    }
+    false
+}
+
+fn section_has_content(lines: &[&str], idx: usize) -> bool {
+    let level = lines[idx].chars().take_while(|c| *c == '#').count();
+    for line in &lines[idx + 1..] {
+        let text = line.trim();
+        if text.starts_with('#') {
+            let level_here = text.chars().take_while(|c| *c == '#').count();
+            if level_here <= level {
+                break;
+            }
+            continue;
+        }
+        if !text.is_empty() {
+            return true;
+        }
+    }
+    false
 }
 
 fn scan_markers(
@@ -399,8 +521,39 @@ fn scan_doc_markers(
     status: &str,
     open_out: &mut Vec<String>,
     released_out: &mut Vec<String>,
+    term_out: &mut Vec<String>,
 ) {
-    scan_markers(text, path, "OPEN", open_out, released_out);
+    let header_lines = header_line_count(text);
+    let lines: Vec<&str> = text.lines().collect();
+    for (idx, line) in lines.iter().enumerate() {
+        if idx < header_lines {
+            continue;
+        }
+        if released_marker_matches(line) {
+            released_out.push(format!(
+                "RELEASED\t{}:{}\t{}",
+                path,
+                idx + 1,
+                snippet(line, 160)
+            ));
+        } else if open_marker_matches(line) {
+            if line_is_open_act(&lines, idx) {
+                open_out.push(format!(
+                    "OPEN\t{}:{}\t{}",
+                    path,
+                    idx + 1,
+                    snippet(line, 160)
+                ));
+            } else {
+                term_out.push(format!(
+                    "TERM\t{}:{}\t{}",
+                    path,
+                    idx + 1,
+                    snippet(line, 160)
+                ));
+            }
+        }
+    }
     if is_open_status(status) {
         open_out.push(format!("OPEN\t{}:1\tstatus: {}", path, status));
     }
@@ -879,8 +1032,13 @@ fn doc_carried(carrier: &str, path: &str) -> bool {
 }
 
 fn orphan_docs(root: &Path) -> Vec<String> {
+    orphan_docs_full(root).0
+}
+
+fn orphan_docs_full(root: &Path) -> (Vec<String>, Vec<String>) {
     let carrier = live_handover_carrier_text(root);
     let mut out: Vec<String> = Vec::new();
+    let mut terms_out: Vec<String> = Vec::new();
     for (dir, _) in REGISTER_DIRS {
         if *dir == "docs/handover" {
             continue;
@@ -913,17 +1071,34 @@ fn orphan_docs(root: &Path) -> Vec<String> {
                 .to_string();
             let mut opens: Vec<String> = Vec::new();
             let mut released: Vec<String> = Vec::new();
-            scan_doc_markers(&text, &path_str, &status, &mut opens, &mut released);
-            if opens.is_empty() {
-                continue;
-            }
-            if !doc_carried(&carrier, &path_str) {
-                out.push(format!("ORPHAN_DOC\t{}\t{}", path_str, opens.len()));
+            let mut terms: Vec<String> = Vec::new();
+            scan_doc_markers(
+                &text,
+                &path_str,
+                &status,
+                &mut opens,
+                &mut released,
+                &mut terms,
+            );
+            let carried = doc_carried(&carrier, &path_str);
+            if !opens.is_empty() {
+                if !carried {
+                    out.push(format!("ORPHAN_DOC\t{}\t{}", path_str, opens.len()));
+                }
+            } else if !terms.is_empty() {
+                let state = if carried { "carried" } else { "uncarried" };
+                terms_out.push(format!(
+                    "TERM_ONLY_DOC\t{}\t{}\t{}",
+                    path_str,
+                    terms.len(),
+                    state
+                ));
             }
         }
     }
     out.sort();
-    out
+    terms_out.sort();
+    (out, terms_out)
 }
 
 fn orphan_baseline_paths(text: &str) -> BTreeSet<String> {
@@ -936,8 +1111,11 @@ fn orphan_baseline_paths(text: &str) -> BTreeSet<String> {
 }
 
 fn run_orphan_docs(root: &Path, args: &[String]) {
-    let lines = orphan_docs(root);
+    let (lines, terms) = orphan_docs_full(root);
     for line in &lines {
+        println!("{}", line);
+    }
+    for line in &terms {
         println!("{}", line);
     }
     if let Some(path) = mode_line_filter(args, "--baseline") {
@@ -974,8 +1152,9 @@ fn run_orphan_docs(root: &Path, args: &[String]) {
         return;
     }
     println!(
-        "register_lookup --orphan-docs: {} orphan documents carry open markers and no live handover carrier",
-        lines.len()
+        "register_lookup --orphan-docs: {} orphan documents carry open acts and no live handover carrier; {} documents mention offen/pending only in prose (TERM_ONLY_DOC, not counted)",
+        lines.len(),
+        terms.len()
     );
 }
 
@@ -1383,6 +1562,7 @@ fn run_open() {
     let mut docs: Vec<String> = Vec::new();
     let mut opens: Vec<String> = Vec::new();
     let mut released: Vec<String> = Vec::new();
+    let mut terms: Vec<String> = Vec::new();
     let mut unverifiable: Vec<String> = Vec::new();
     let mut dups: Vec<String> = Vec::new();
     let mut class_counts: Vec<(String, usize)> = Vec::new();
@@ -1433,7 +1613,14 @@ fn run_open() {
                 class, date, status, path_str
             ));
             bump_class(&mut class_counts, &class);
-            scan_doc_markers(&text, &path_str, &status, &mut opens, &mut released);
+            scan_doc_markers(
+                &text,
+                &path_str,
+                &status,
+                &mut opens,
+                &mut released,
+                &mut terms,
+            );
         }
     }
 
@@ -1460,6 +1647,9 @@ fn run_open() {
         println!("{}", line);
     }
     for line in &opens {
+        println!("{}", line);
+    }
+    for line in &terms {
         println!("{}", line);
     }
     let (orphan_lines, orphan_summary) = orphan_report(Path::new("."));
@@ -1552,10 +1742,11 @@ fn run_open() {
         .map(|(c, n)| format!("{} {}", c, n))
         .collect();
     println!(
-        "register_lookup --open: {} docs, {} future, {} open lines, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} orphan, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, nrs {} open, probes {} open, ereignisse {} open, {} candidates ({} disposed), {} orphan entries",
+        "register_lookup --open: {} docs, {} future, {} open acts, {} term mentions, {} released lines, {} duplicates, {} unverifiable, {} zustand due, {} orphan, {} disposition [{}], pipeline: ledger {} open, index {} open, sources {} open, witnesses {} open, nrs {} open, probes {} open, ereignisse {} open, {} candidates ({} disposed), {} orphan entries",
         docs.len(),
         future_lines.len(),
         opens.len(),
+        terms.len(),
         released.len(),
         dups.len(),
         unverifiable.len(),
@@ -5574,6 +5765,52 @@ compiler tools/measure/src/bin/weberin_verdicts_compiler.rs
                 .any(|l| l.starts_with("ORPHAN_DOC\tdocs/concepts/entwurf.md\t1")),
             "{:?}",
             lines
+        );
+        let _ = fs::remove_dir_all(&base);
+    }
+
+    #[test]
+    fn prose_and_table_mentions_are_terms_not_acts() {
+        let base = env::temp_dir().join(format!("rl-terms-{}", std::process::id()));
+        let _ = fs::remove_dir_all(&base);
+        fs::create_dir_all(base.join("docs/handover")).unwrap();
+        fs::create_dir_all(base.join("docs/specs")).unwrap();
+        let header = "<!--\n  title: t\n  class: ref\n  date: 2026-01-01\n  sha256: x\n-->\n";
+        fs::write(
+            base.join("docs/specs/prosa.md"),
+            format!("{header}# p\nZellen ohne Messung bleiben `pending` — nie 0.\n| a | pending |\n\n## Offen\n\n## Naechstes\nText.\n"),
+        )
+        .unwrap();
+        fs::write(
+            base.join("docs/specs/akt.md"),
+            format!("{header}# a\n- **Offen:** die Mail senden.\n"),
+        )
+        .unwrap();
+        fs::write(
+            base.join("docs/specs/status.md"),
+            format!("{header}# s\n- **Status:** wartend | **Bindung:** eigen\n"),
+        )
+        .unwrap();
+        let (acts, terms) = orphan_docs_full(&base);
+        assert!(
+            acts.iter()
+                .any(|l| l.starts_with("ORPHAN_DOC\tdocs/specs/akt.md\t1")),
+            "{:?}",
+            acts
+        );
+        assert!(
+            acts.iter()
+                .any(|l| l.starts_with("ORPHAN_DOC\tdocs/specs/status.md\t1")),
+            "{:?}",
+            acts
+        );
+        assert!(acts.iter().all(|l| !l.contains("prosa.md")), "{:?}", acts);
+        assert!(
+            terms
+                .iter()
+                .any(|l| l.starts_with("TERM_ONLY_DOC\tdocs/specs/prosa.md\t2")),
+            "{:?}",
+            terms
         );
         let _ = fs::remove_dir_all(&base);
     }
