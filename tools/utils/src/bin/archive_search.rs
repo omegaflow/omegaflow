@@ -40,6 +40,8 @@ mod cod;
 mod consensus;
 #[path = "archive_search/copernicus.rs"]
 mod copernicus;
+#[path = "archive_search/cdse.rs"]
+mod cdse;
 #[path = "archive_search/core.rs"]
 mod core_api;
 #[path = "archive_search/datacite.rs"]
@@ -466,6 +468,7 @@ fn flag_mode(arg: &str) -> Option<Mode> {
         "--dataverse" => Some(Mode::Net("dataverse")),
         "--sparql" => Some(Mode::Net("sparql")),
         "--copernicus" => Some(Mode::Net("copernicus")),
+        "--cdse" => Some(Mode::Net("cdse")),
         "--vires" => Some(Mode::Net("vires")),
         "--oai-pmh" => Some(Mode::Net("oai-pmh")),
         "--stac" => Some(Mode::Net("stac")),
@@ -2500,7 +2503,7 @@ fn usage_full() {
     );
     eprintln!();
     eprintln!(
-        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--youcom|--youmcp|--examcp|--earthmcp|--mcp|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--gbooks|--google-books|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
+        "network:  archive_search --arxiv|--arxiv-oai|--ads|--ntrs|--wayback|--cc|--wayback-available|--wayback-timemap|--crossref|--wiki|--duckduckgo-instant|--hn|--youcom|--youmcp|--examcp|--earthmcp|--mcp|--openverse|--nasa-images|--artic|--github|--crates|--brave|--mwmbl|--marginalia|--searxng|--jina|--tavily|--exa|--consensus|--lasair|--perplexity|--gemini|--wikidata|--googlecse|--ckan|--cmr|--dataeuropa|--dryad|--opensn|--frbcat|--tap|--pangaea|--re3data|--seanoe|--arcgis|--dataverse|--sparql|--copernicus|--cdse|--vires|--oai-pmh|--stac|--erddap|--openaire|--figshare|--simbad|--vizier|--exoplanet-archive|--ned|--mast|--gaia|--horizons|--overpass|--nominatim|--open-meteo|--gbif|--gbooks|--google-books|--fdsn|--dataone|--huggingface|--dblp|--orcid|--ror|--opencitations|--grepapp|--scholexplorer|--mendeley|--usgs|--scopus|--geonames|--linkup|--serper|--firecrawl|--searchapi|--serpapi|--oeis|--hal|--wiby|--ia-search|--ngmdb|--rss-bridge|--kiwix|--scrape|--shodan|--opencellid|--gfw|--oapen|--regtap|--apis|--datacite|--zenodo|--hapi|--isc|--base|--openalex|--pubmed|--europepmc|--europeana|--smithsonian|--psychporta|--awmf|--cochrane|--cod|--biomodels|--core|--materialsproject|--semanticscholar|--clinicaltrials|--openfda|--pubchem|--uniprot|--pdb|--chembl|--ensembl|--entrez|--ena|--doaj|--osf|--openlibrary|--stackexchange|--sourcegraph|--go|--unpaywall|--reactome|--interpro|--alphafold|--alphaxiv|--alphaxiv-researchers|--supermag|--lpf|--gosat|--alerce|--fink|--dust|--heasarc|--nssdc|--nssdca|--nssdc-auth|--ssdc-auth <query> [--cacert <pem>]"
     );
     eprintln!(
         "  --arxiv-oai [set] [--pages <n>]  arXiv OAI-PMH bulk harvest (ListRecords + resumptionToken to completion; set = optional setSpec filter; --pages caps the page count, one page proves the parse) — emits the catalog record format `identifier | title`"
@@ -2608,7 +2611,7 @@ fn usage_full() {
         "  --sparql    Generic SPARQL query: `--sparql \"endpoint=<url> SELECT ...\"`, keyless; rows as var=value"
     );
     eprintln!(
-        "  --copernicus Copernicus CDS/CAMS collection filter (catalogue v1 STAC), keyless; url + title/description (substring filter)"
+        "  --copernicus Copernicus CDS/CAMS collection filter (catalogue v1 STAC), keyless; url + title/description (substring filter)\n  --cdse      Copernicus Data Space OData Products (basic auth CDSE_USER/CDSE_PASS or OMEGAFLOW_CDSE_USER_CMD/OMEGAFLOW_CDSE_PASS_CMD); url + name/collection/size/download"
     );
     eprintln!(
         "  --vires     VirES HAPI dataset catalog filter (vires.services/hapi), keyless; dataset url (substring filter)"
