@@ -4,7 +4,7 @@ format aodn
 origin https://thredds.aodn.org.au/thredds/dodsC/IMOS/ANMN/NRS/NRSMAI/aggregated_timeseries/IMOS_ANMN-NRS_TZ_20080411_NRSMAI_FV01_TEMP-aggregated-timeseries_END-20260421_C-20260919.nc
 compiler tools/harvest/src/bin/aodn_compiler.rs
 sha256 01516b2b85374afe65c7769eed6e89a22840956811e4f879e7ddf274c4974543
-at earth
+on earth -42.5911 148.2256 0
 ttl 1
 field aodn_temperature aodn_temperature exponential-decay thermal K 1 0.0 0.0
 
