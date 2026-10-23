@@ -44,6 +44,7 @@ pub fn write_bin(records: &[BandRecord]) -> Vec<u8> {
         }
         buf.extend_from_slice(&present.to_le_bytes());
         for v in r.bands {
+            #[allow(clippy::manual_unwrap_or)]
             let encoded = match v {
                 Some(x) => x,
                 None => f64::NAN,

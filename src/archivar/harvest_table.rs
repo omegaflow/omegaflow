@@ -66,7 +66,7 @@ where
 {
     let mut out = Vec::new();
     for row in &table.rows {
-        let Some(t) = row.first().copied().flatten().and_then(|epoch| t_of(epoch)) else {
+        let Some(t) = row.first().copied().flatten().and_then(&t_of) else {
             continue;
         };
         for (j, value) in row.iter().enumerate().skip(1) {
