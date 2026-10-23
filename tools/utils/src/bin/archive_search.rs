@@ -2356,7 +2356,17 @@ fn run_stats() -> Vec<String> {
 fn usage() {
     eprintln!("archive_search — read-only research tool (content, paths, NTFS, network)");
     eprintln!();
-    eprintln!("START HERE — direct source first, one route at a time");
+    eprintln!("START HERE — spec first, then the source; one route at a time");
+    eprintln!("  SPEC FIRST — the measurement leads to the source.");
+    eprintln!("  Write quantity · band+unit · cadence+method · instrument class before the brand.");
+    eprintln!("  The brand is a fifth term, secondary — often the worst synonym.");
+    eprintln!("    bin/spec --quantity \"ELF magnetic field\" --band \"0.001-30 Hz\" --unit nT \\");
+    eprintln!("             --cadence \"10 min\" --instrument \"induction coil\" \\");
+    eprintln!("             --arms datacite,zenodo,figshare,dataverse");
+    eprintln!("  Data arms: --datacite --zenodo --figshare --dataverse");
+    eprintln!("  Web arms:  --youmcp --searxng   ·   Schema bait: bin/find --header");
+    eprintln!("  Check: licence in the browser; axes match; partial coverage = name the gap, never smooth it.");
+    eprintln!();
     eprintln!("  1  direct/official source, keyless");
     eprintln!("       archive_search --wayback-available <url>");
     eprintln!("       archive_search --jina <url>");
