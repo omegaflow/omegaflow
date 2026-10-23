@@ -183,7 +183,10 @@ struct BlockReport {
 fn new_block_text(block: &[&str]) -> Option<String> {
     let is_new = block.iter().any(|line| {
         let parts: Vec<&str> = line.split_whitespace().collect();
-        parts.first() == Some(&"field") && line.contains("alt_offset=")
+        matches!(
+            parts.first(),
+            Some(&"field" | &"first" | &"last" | &"lastrow" | &"quantity")
+        ) && line.contains("alt_offset=")
     });
     if !is_new {
         return None;
@@ -196,7 +199,19 @@ fn new_block_text(block: &[&str]) -> Option<String> {
         };
         if matches!(
             *head,
-            "url" | "terms" | "origin" | "ttl" | "on" | "at" | "query" | "track" | "field"
+            "url"
+                | "terms"
+                | "origin"
+                | "ttl"
+                | "on"
+                | "at"
+                | "query"
+                | "track"
+                | "field"
+                | "first"
+                | "last"
+                | "lastrow"
+                | "quantity"
         ) {
             out.push_str(line.trim());
             out.push('\n');

@@ -3327,7 +3327,7 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                     match key {
                         "lat" => lat = value.parse::<f64>().ok(),
                         "lon" => lon = value.parse::<f64>().ok(),
-                        "alt_ref" => alt_ref = value.parse::<f64>().ok(),
+                        "alt" | "alt_ref" => alt_ref = value.parse::<f64>().ok(),
                         "alt_key" => alt_key = Some(value.to_string()),
                         "datum" => datum = Some(value.to_string()),
                         "time" => time = Some(value.to_string()),
@@ -3422,7 +3422,14 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 builder.datum = datum;
                 builder.time_scale = time_scale;
             }
-            "field" if parts.len() >= 5 => {
+            "field" | "first" | "last" | "lastrow" | "quantity" if parts.len() >= 5 => {
+                let extract = match head {
+                    "first" => SourceExtract::First,
+                    "last" => SourceExtract::Last,
+                    "lastrow" => SourceExtract::LastRow,
+                    "quantity" => SourceExtract::Quantity,
+                    _ => SourceExtract::Field,
+                };
                 let key = parts[1].to_string();
                 let name = parts[2].to_string();
                 let unit = parts[3].to_string();
@@ -3431,18 +3438,25 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                 let mut alt_offset = None;
                 let mut alt_min_offset = None;
                 let mut alt_max_offset = None;
-                for token in &parts[4..] {
+                let mut where_clause = None;
+                let mut idx = 4usize;
+                while idx < parts.len() {
+                    if parts[idx] == "where" {
+                        where_clause = Some(parts[idx + 1..].join(" "));
+                        break;
+                    }
+                    let token = parts[idx];
                     let Some((key, value)) = token.split_once('=') else {
                         return Err(format!(
-                            "line {line_no}: field token {token} carries no key=value"
+                            "line {line_no}: {head} token {token} carries no key=value"
                         ));
                     };
                     if value.is_empty() {
-                        return Err(format!("line {line_no}: field attribute {key} is empty"));
+                        return Err(format!("line {line_no}: {head} attribute {key} is empty"));
                     }
                     if value == "absent" || value == "pending" {
                         return Err(format!(
-                            "line {line_no}: field attribute {key} carries the sentinel {value}"
+                            "line {line_no}: {head} attribute {key} carries the sentinel {value}"
                         ));
                     }
                     let parsed = value.parse::<f64>().ok().filter(|v| v.is_finite());
@@ -3459,8 +3473,9 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                         "alt_offset" => alt_offset = parsed,
                         "alt_min_offset" => alt_min_offset = parsed,
                         "alt_max_offset" => alt_max_offset = parsed,
-                        _ => return Err(format!("line {line_no}: unknown field attribute {key}")),
+                        _ => return Err(format!("line {line_no}: unknown {head} attribute {key}")),
                     }
+                    idx += 1;
                 }
                 if source_column.is_some() == source_key.is_some() {
                     return Err(format!(
@@ -3483,6 +3498,8 @@ pub fn parse_source_blocks(content: &str) -> Result<Vec<SourceBlock>, String> {
                     key,
                     name,
                     unit,
+                    extract,
+                    where_clause,
                     source_column,
                     source_key,
                     alt_offset,
@@ -3805,6 +3822,24 @@ field u current m/s source_column=3 alt_offset=0.0 alt_min_offset=-2.5 alt_max_o
         assert_eq!(blocks[0].datum, "barycenter");
         assert_eq!(blocks[0].time_key.as_deref(), Some("time_tag"));
         assert_eq!(blocks[0].fields[0].source_key.as_deref(), Some("gsm_bx"));
+    }
+
+    #[test]
+    fn source_blocks_accept_last_with_where() {
+        let content = concat!(
+            "url https://example.org/x\n",
+            "terms CC-BY-4.0 https://example.org/terms\n",
+            "at sun frame=barycenter time_key=time_tag time_scale=UTC\n",
+            "ttl 60\n",
+            "last flux f wm2 source_key=flux alt_offset=0 where energy 0.05-0.4nm\n",
+        );
+        let blocks = parse_source_blocks(content).expect("last block parses");
+        assert_eq!(blocks[0].fields[0].extract, SourceExtract::Last);
+        assert_eq!(
+            blocks[0].fields[0].where_clause.as_deref(),
+            Some("energy 0.05-0.4nm")
+        );
+        assert_eq!(blocks[0].fields[0].source_key.as_deref(), Some("flux"));
     }
 
     #[test]

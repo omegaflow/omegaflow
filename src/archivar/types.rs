@@ -696,11 +696,23 @@ pub struct ModelHead {
     pub max_degree: u32,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+pub enum SourceExtract {
+    #[default]
+    Field,
+    First,
+    Last,
+    LastRow,
+    Quantity,
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct SourceField {
     pub key: String,
     pub name: String,
     pub unit: String,
+    pub extract: SourceExtract,
+    pub where_clause: Option<String>,
     pub source_column: Option<usize>,
     pub source_key: Option<String>,
     pub alt_offset: f64,
@@ -942,6 +954,8 @@ mod source_block_model_tests {
                     key: "flux".to_string(),
                     name: "flux".to_string(),
                     unit: "W/m^2".to_string(),
+                    extract: SourceExtract::Field,
+                    where_clause: None,
                     source_column: Some(1),
                     source_key: None,
                     alt_offset: 2.0,
@@ -952,6 +966,8 @@ mod source_block_model_tests {
                     key: "temp".to_string(),
                     name: "temperature".to_string(),
                     unit: "K".to_string(),
+                    extract: SourceExtract::Field,
+                    where_clause: None,
                     source_column: Some(2),
                     source_key: None,
                     alt_offset: 2.0,
