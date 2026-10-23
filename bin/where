@@ -24,7 +24,7 @@ sgrep -i -g 'handover-*.md' "$term" "$OMEGAFLOW_WORK/handover" 2>/dev/null || tr
 printf '== spilled searches (already run) ==\n'
 if [ -n "${OMEGAFLOW_SPILL_DIR:-}" ] && [ -d "$OMEGAFLOW_SPILL_DIR" ]; then
     fd -H -t f "$term" "$OMEGAFLOW_SPILL_DIR" 2>/dev/null || true
-    grep -rI -i -- "$term" "$OMEGAFLOW_SPILL_DIR" 2>/dev/null | head -40 || true
+    grep -rI -i -m1 -- "$term" "$OMEGAFLOW_SPILL_DIR" 2>/dev/null | cut -c1-240 | head -40 || true
 fi
 
 printf '== sources cache (INDEX.tsv) ==\n'
@@ -40,7 +40,7 @@ fi
 printf '== scratch (unfertige Funde) ==\n'
 if [ -n "${OMEGAFLOW_TMP:-}" ] && [ -d "$OMEGAFLOW_TMP" ]; then
     fd -H -t f "$term" "$OMEGAFLOW_TMP" 2>/dev/null | head -20
-    timeout 15 grep -rI -i -m1 -- "$term" "$OMEGAFLOW_TMP" 2>/dev/null | head -20 || true
+    timeout 15 grep -rI -i -m1 -- "$term" "$OMEGAFLOW_TMP" 2>/dev/null | cut -c1-240 | head -20 || true
 fi
 
 printf '== history (archiv) ==\n'
