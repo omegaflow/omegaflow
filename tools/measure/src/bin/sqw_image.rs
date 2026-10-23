@@ -459,6 +459,153 @@ fn pixels(path: &str, o: &PixelOpts) -> Result<(), String> {
     Ok(())
 }
 
+struct Spectrum {
+    e: Vec<f64>,
+    s: Vec<f64>,
+}
+
+fn read_spectrum(path: &str) -> Result<Spectrum, String> {
+    let text = std::fs::read_to_string(path).map_err(|e| format!("read {path}: {e}"))?;
+    let mut lines = text.lines().filter(|l| !l.trim().is_empty());
+    let header = lines.next().ok_or_else(|| format!("{path}: empty"))?;
+    let cols: Vec<&str> = header.split(',').collect();
+    let ie = cols
+        .iter()
+        .position(|c| *c == "E_meV")
+        .ok_or_else(|| format!("{path}: no E_meV column"))?;
+    let is = cols
+        .iter()
+        .position(|c| *c == "S" || *c == "S_mean")
+        .ok_or_else(|| format!("{path}: no S/S_mean column"))?;
+    let mut e = Vec::new();
+    let mut s = Vec::new();
+    for line in lines {
+        let f: Vec<&str> = line.split(',').collect();
+        if f.len() <= ie.max(is) {
+            continue;
+        }
+        e.push(f[ie].parse().map_err(|_| format!("{path}: bad E {line}"))?);
+        s.push(f[is].parse().map_err(|_| format!("{path}: bad S {line}"))?);
+    }
+    if e.is_empty() {
+        return Err(format!("{path}: no rows"));
+    }
+    Ok(Spectrum { e, s })
+}
+
+struct AnalyzeOpts {
+    bgs: Vec<String>,
+    emin: f64,
+    emax: f64,
+    tmax: f64,
+    dt: f64,
+    out: String,
+}
+
+fn analyze(on_path: &str, o: &AnalyzeOpts) -> Result<(), String> {
+    let on = read_spectrum(on_path)?;
+    let mut bg = vec![0.0f64; on.e.len()];
+    for p in &o.bgs {
+        let b = read_spectrum(p)?;
+        if b.e.len() != on.e.len() {
+            return Err(format!("{p}: grid differs from {on_path}"));
+        }
+        for (i, v) in bg.iter_mut().enumerate() {
+            *v += b.s[i] / o.bgs.len() as f64;
+        }
+    }
+    let sub: Vec<f64> = on.s.iter().zip(&bg).map(|(s, b)| s - b).collect();
+    let mut sub_csv = String::from("E_meV,S_sub\n");
+    for (e, s) in on.e.iter().zip(&sub) {
+        sub_csv.push_str(&format!("{:.6},{:.6e}\n", e, s));
+    }
+    std::fs::write(format!("{}_sub.csv", o.out), sub_csv).map_err(|e| format!("write sub: {e}"))?;
+
+    let idx: Vec<usize> = (0..on.e.len())
+        .filter(|&i| on.e[i] >= o.emin && on.e[i] <= o.emax)
+        .collect();
+    if idx.len() < 3 {
+        return Err("energy window has fewer than 3 bins".into());
+    }
+    let step = (on.e[idx[idx.len() - 1]] - on.e[idx[0]]) / (idx.len() - 1) as f64;
+    let mut integral = 0.0;
+    let mut centroid = 0.0;
+    let mut peak_i = idx[0];
+    for &i in &idx {
+        let v = sub[i].max(0.0);
+        integral += v * step;
+        centroid += v * on.e[i] * step;
+        if sub[i] > sub[peak_i] {
+            peak_i = i;
+        }
+    }
+    if integral == 0.0 {
+        return Err("background-subtracted integral is zero".into());
+    }
+    centroid /= integral;
+    let peak = on.e[peak_i];
+    let half = sub[peak_i] / 2.0;
+    let mut l = peak_i;
+    while l > idx[0] && sub[l] > half {
+        l -= 1;
+    }
+    let mut r = peak_i;
+    while r < idx[idx.len() - 1] && sub[r] > half {
+        r += 1;
+    }
+    let interp = |i0: usize, i1: usize| -> f64 {
+        let s0 = sub[i0];
+        let s1 = sub[i1];
+        if s1 == s0 {
+            on.e[i0]
+        } else {
+            on.e[i0] + (half - s0) * (on.e[i1] - on.e[i0]) / (s1 - s0)
+        }
+    };
+    let left = if l == peak_i {
+        on.e[peak_i]
+    } else {
+        interp(l, l + 1)
+    };
+    let right = if r == peak_i {
+        on.e[peak_i]
+    } else {
+        interp(r - 1, r)
+    };
+    let fwhm = (right - left).max(0.0);
+
+    let norm: f64 = idx.iter().map(|&i| sub[i].max(0.0)).sum();
+    let hbar = 0.6582119569;
+    let mut iqt = String::from("t_ps,I_norm\n");
+    let n_t = (o.tmax / o.dt).floor() as usize + 1;
+    let mut i1 = 0.0;
+    for k in 0..n_t {
+        let t = k as f64 * o.dt;
+        let mut re = 0.0;
+        for &i in &idx {
+            re += sub[i].max(0.0) * (on.e[i] * t / hbar).cos();
+        }
+        let val = re / norm;
+        if (t - 1.0).abs() < o.dt / 2.0 {
+            i1 = val;
+        }
+        iqt.push_str(&format!("{:.4},{:.6}\n", t, val));
+    }
+    std::fs::write(format!("{}_iqt.csv", o.out), iqt).map_err(|e| format!("write iqt: {e}"))?;
+
+    println!(
+        "{{\"integral\":{:.6e},\"centroid\":{:.5},\"peak\":{:.5},\"fwhm\":{:.5},\"hwhm\":{:.5},\"i1ps\":{:.6},\"bins\":{}}}",
+        integral,
+        centroid,
+        peak,
+        fwhm,
+        fwhm / 2.0,
+        i1,
+        idx.len()
+    );
+    Ok(())
+}
+
 fn run(args: &[String]) -> Result<(), String> {
     match args.first().map(String::as_str) {
         Some("meta") if args.len() == 2 => meta_json(&args[1]),
@@ -541,7 +688,57 @@ fn run(args: &[String]) -> Result<(), String> {
                 },
             )
         }
-        _ => Err("usage:\n  sqw_image meta <file.sqw>\n  sqw_image cut <file.sqw> [--q H,K,L] [--window N] [--out CSV]\n  sqw_image pixels <file.sqw> [--q H,K,L] [--dq D] [--emin E] [--emax E] [--ebins N] [--limit N] [--out CSV]".into()),
+        Some("analyze") if args.len() >= 2 => {
+            let mut bgs = Vec::new();
+            let mut emin = 0.0f64;
+            let mut emax = 6.0f64;
+            let mut tmax = 10.0f64;
+            let mut dt = 0.02f64;
+            let mut out: Option<String> = None;
+            let mut i = 2;
+            while i < args.len() {
+                match args[i].as_str() {
+                    "--bg" if i + 1 < args.len() => {
+                        bgs.push(args[i + 1].clone());
+                        i += 2;
+                    }
+                    "--emin" if i + 1 < args.len() => {
+                        emin = args[i + 1].parse().map_err(|_| "bad --emin".to_string())?;
+                        i += 2;
+                    }
+                    "--emax" if i + 1 < args.len() => {
+                        emax = args[i + 1].parse().map_err(|_| "bad --emax".to_string())?;
+                        i += 2;
+                    }
+                    "--tmax" if i + 1 < args.len() => {
+                        tmax = args[i + 1].parse().map_err(|_| "bad --tmax".to_string())?;
+                        i += 2;
+                    }
+                    "--dt" if i + 1 < args.len() => {
+                        dt = args[i + 1].parse().map_err(|_| "bad --dt".to_string())?;
+                        i += 2;
+                    }
+                    "--out" if i + 1 < args.len() => {
+                        out = Some(args[i + 1].clone());
+                        i += 2;
+                    }
+                    other => return Err(format!("unknown argument: {other}")),
+                }
+            }
+            let out = out.ok_or("analyze needs --out <prefix>")?;
+            analyze(
+                &args[1],
+                &AnalyzeOpts {
+                    bgs,
+                    emin,
+                    emax,
+                    tmax,
+                    dt,
+                    out,
+                },
+            )
+        }
+        _ => Err("usage:\n  sqw_image meta <file.sqw>\n  sqw_image cut <file.sqw> [--q H,K,L] [--window N] [--out CSV]\n  sqw_image pixels <file.sqw> [--q H,K,L] [--dq D] [--emin E] [--emax E] [--ebins N] [--limit N] [--out CSV]\n  sqw_image analyze <on.csv> [--bg off.csv ...] [--emin E] [--emax E] [--tmax T] [--dt D] --out <prefix>".into()),
     }
 }
 
