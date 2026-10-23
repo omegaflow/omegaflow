@@ -219,7 +219,7 @@ fn register_json(
     let mut s = String::new();
     s.push_str("{\n");
     s.push_str("  \"gate\": \"ephemeris_house_gate\",\n");
-    s.push_str("  \"body\": \""); // body line below keeps the field order stable
+    s.push_str("  \"body\": \"");
     s.push_str(body);
     s.push_str("\",\n");
     s.push_str(&format!("  \"epoch\": \"{epoch}\",\n"));

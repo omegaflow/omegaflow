@@ -165,7 +165,7 @@ fn decode_records(
 }
 
 fn parse_definition(bytes: &[u8], pos: &mut usize, header: u8) -> Option<DefMessage> {
-    *pos += 1; // reserved byte
+    *pos += 1;
     let arch = match bytes.get(*pos)? {
         0 => Endian::Little,
         1 => Endian::Big,
@@ -199,7 +199,7 @@ fn parse_definition(bytes: &[u8], pos: &mut usize, header: u8) -> Option<DefMess
             *pos += 1;
             let size = *bytes.get(*pos)?;
             *pos += 1;
-            *pos += 1; // developer data index
+            *pos += 1;
             dev_fields.push(FieldDef {
                 num,
                 size,
@@ -333,8 +333,8 @@ mod tests {
     fn definition(local: u8, global: u16, fields: &[(u8, u8, u8)]) -> Vec<u8> {
         let mut d = Vec::new();
         d.push(0x40 | (local & 0x0F));
-        d.push(0x00); // reserved
-        d.push(0x00); // little-endian architecture
+        d.push(0x00);
+        d.push(0x00);
         d.extend_from_slice(&global.to_le_bytes());
         d.push(fields.len() as u8);
         for &(num, size, base_type) in fields {
@@ -361,10 +361,10 @@ mod tests {
 
     fn make_fit(records: &[u8]) -> Vec<u8> {
         let mut f = vec![
-            0x0C, // header size 12
-            0x10, // protocol 1.0
-            0x00, // profile version low
-            0x00, // profile version high
+            0x0C,
+            0x10,
+            0x00,
+            0x00,
         ];
         f.extend_from_slice(&(records.len() as u32).to_le_bytes());
         f.extend_from_slice(b".FIT");
@@ -414,7 +414,7 @@ mod tests {
     #[test]
     fn record_temperature_sint8_is_signed() {
         let mut records = definition(0, MESG_RECORD, &[(FIELD_RECORD_TEMPERATURE, 1, BASE_SINT8)]);
-        records.extend(data(0, &[0xFB])); // -5
+        records.extend(data(0, &[0xFB]));
         let out = parse_fit(&make_fit(&records)).expect("valid fit");
         assert!(out.iter().any(|(k, v, _)| k == "temperature" && *v == -5.0));
     }
@@ -422,7 +422,7 @@ mod tests {
     #[test]
     fn record_temperature_invalid_sentinel_is_absent() {
         let mut records = definition(0, MESG_RECORD, &[(FIELD_RECORD_TEMPERATURE, 1, BASE_SINT8)]);
-        records.extend(data(0, &[0x7F])); // sint8 invalid
+        records.extend(data(0, &[0x7F]));
         let out = parse_fit(&make_fit(&records)).expect("valid fit");
         assert!(out.is_empty());
     }
@@ -556,7 +556,7 @@ mod tests {
         let mut records = definition(0, MESG_RECORD, &[(FIELD_RECORD_TEMPERATURE, 1, BASE_SINT8)]);
         records.extend(data(0, &[23]));
         let mut file = make_fit(&records);
-        let idx = file.len() - 4; // a record byte, before the trailing 2 CRC bytes
+        let idx = file.len() - 4;
         file[idx] ^= 0xFF;
         assert_eq!(parse_fit(&file), None);
     }

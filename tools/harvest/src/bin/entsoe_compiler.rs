@@ -929,19 +929,19 @@ mod tests {
     #[test]
     fn zip_local_header_returns_the_stored_payload() {
         const STORED_ZIP: &[u8] = &[
-            0x50, 0x4b, 0x03, 0x04, // local file header
-            0x14, 0x00, // version needed
-            0x00, 0x00, // flags
-            0x00, 0x00, // method 0 = stored
-            0x00, 0x00, // modification time
-            0x00, 0x00, // modification date
-            0x00, 0x00, 0x00, 0x00, // crc32
-            0x05, 0x00, 0x00, 0x00, // compressed size
-            0x05, 0x00, 0x00, 0x00, // uncompressed size
-            0x05, 0x00, // filename length
-            0x00, 0x00, // extra length
-            b'a', b'.', b'x', b'm', b'l', // filename
-            b'h', b'e', b'l', b'l', b'o', // payload
+            0x50, 0x4b, 0x03, 0x04,
+            0x14, 0x00,
+            0x00, 0x00,
+            0x00, 0x00,
+            0x00, 0x00,
+            0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x05, 0x00, 0x00, 0x00,
+            0x05, 0x00, 0x00, 0x00,
+            0x05, 0x00,
+            0x00, 0x00,
+            b'a', b'.', b'x', b'm', b'l',
+            b'h', b'e', b'l', b'l', b'o',
         ];
         assert_eq!(zip_entries(STORED_ZIP), vec![b"hello".to_vec()]);
         assert_eq!(xml_from_response(STORED_ZIP).as_deref(), Some("hello"));

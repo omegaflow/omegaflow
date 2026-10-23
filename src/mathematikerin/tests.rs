@@ -1868,9 +1868,9 @@ fn em_aperture_flux_bit_scales_and_kernel_proxy_does_not() {
     };
 
     let flux_bit = crate::archivar::PRESENCE_FLAG_FLUX;
-    let scaled = probe_em(&mut app, 1.0, flux_bit); // bit set, z = 1 -> 1/(1+1)^2
-    let proxy_riss = probe_em(&mut app, 1.0, 0.0); // bit clear, kernel_id 1, z = 1
-    let plain = probe_em(&mut app, 0.0, 0.0); // bit clear, no redshift
+    let scaled = probe_em(&mut app, 1.0, flux_bit);
+    let proxy_riss = probe_em(&mut app, 1.0, 0.0);
+    let plain = probe_em(&mut app, 0.0, 0.0);
 
     assert!(
         scaled > 0.0 && proxy_riss > 0.0,

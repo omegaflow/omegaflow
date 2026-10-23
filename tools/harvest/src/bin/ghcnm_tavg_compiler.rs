@@ -15,7 +15,7 @@ const VALUE_AT: usize = 19;
 const VALUE_STRIDE: usize = 8;
 const VALUE_WIDTH: usize = 5;
 const VALUE_COLS: usize = 12;
-const LINE_BYTES: usize = VALUE_AT + VALUE_COLS * VALUE_STRIDE; // 115
+const LINE_BYTES: usize = VALUE_AT + VALUE_COLS * VALUE_STRIDE;
 const MISSING: i64 = -9999;
 
 fn month_names() -> Vec<String> {

@@ -16,39 +16,20 @@ struct TestPoint {
 
 fn kc_to_naif(kc: i32) -> Option<i32> {
     match kc {
-        1 => Some(1),    // mercury barycenter
-        2 => Some(2),    // venus barycenter
-        3 => Some(3),    // earth-moon barycenter
-        4 => Some(4),    // mars barycenter
-        5 => Some(5),    // jupiter barycenter
-        6 => Some(6),    // saturn barycenter
-        7 => Some(7),    // uranus barycenter
-        8 => Some(8),    // neptune barycenter
-        9 => Some(9),    // pluto barycenter
-        10 => Some(301), // moon
-        11 => Some(10),  // sun
-        12 => Some(0),   // solar-system barycenter
-        13 => Some(399), // earth geocenter
+        1 => Some(1),
+        2 => Some(2),
+        3 => Some(3),
+        4 => Some(4),
+        5 => Some(5),
+        6 => Some(6),
+        7 => Some(7),
+        8 => Some(8),
+        9 => Some(9),
+        10 => Some(301),
+        11 => Some(10),
+        12 => Some(0),
+        13 => Some(399),
         _ => None,
-    }
-}
-
-fn kc_name(kc: i32) -> &'static str {
-    match kc {
-        1 => "mercury",
-        2 => "venus",
-        3 => "emb",
-        4 => "mars",
-        5 => "jupiter",
-        6 => "saturn",
-        7 => "uranus",
-        8 => "neptune",
-        9 => "pluto",
-        10 => "moon",
-        11 => "sun",
-        12 => "ssb",
-        13 => "earth",
-        _ => "unknown",
     }
 }
 
@@ -243,17 +224,17 @@ fn main() {
     for (kc, st) in &stats {
         println!(
             "  {:<7} points {:>5} skipped {:>4} | max |pos| {:.3e} m (jed {:.1}, {}-wrt-{}) | max |vel| {:.3e} mm/s (jed {:.1}, {}-wrt-{})",
-            kc_name(*kc),
+            *kc,
             st.count,
             st.skipped,
             st.max_pos_diff_m,
             st.max_pos_jed,
-            kc_name(st.max_pos_kc_target),
-            kc_name(st.max_pos_kc_center),
+            st.max_pos_kc_target,
+            st.max_pos_kc_center,
             st.max_vel_diff_mm_s,
             st.max_vel_jed,
-            kc_name(st.max_vel_kc_target),
-            kc_name(st.max_vel_kc_center),
+            st.max_vel_kc_target,
+            st.max_vel_kc_center,
         );
     }
     println!();

@@ -249,10 +249,10 @@ mod tests {
     #[test]
     fn polar_means_uses_only_the_cap_rows() {
         let values = [
-            100i16, 100, 100, 100, // south cap
-            999, 999, 999, 999, // equator
-            999, 999, 999, 999, // equator
-            200, 200, 200, 200, // north cap
+            100i16, 100, 100, 100,
+            999, 999, 999, 999,
+            999, 999, 999, 999,
+            200, 200, 200, 200,
         ];
         let bytes = fits_fixture(&values, 4, 4);
         let (north, south) = polar_means(&bytes).unwrap();

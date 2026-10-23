@@ -563,8 +563,8 @@ STAID, SOUID,    DATE,   TX, Q_TX\n\
         assert_eq!(rows.len(), 4);
         assert_eq!(rows[0].value, Some(2.5 + 273.15));
         assert_eq!(rows[1].value, Some(3.7 + 273.15));
-        assert_eq!(rows[2].value, None); // -9999 / qc 9
-        assert_eq!(rows[3].value, Some(-1.9 + 273.15)); // qc 1 suspect kept
+        assert_eq!(rows[2].value, None);
+        assert_eq!(rows[3].value, Some(-1.9 + 273.15));
         let d0 = days_from_civil(1882, 1, 1).unwrap() as f64 * SECS_PER_DAY;
         assert_eq!(rows[0].epoch_unix, d0);
     }
@@ -625,7 +625,7 @@ STAID, SOUID,    DATE,   TX, Q_TX\n\
         out.extend_from_slice(b"PK\x03\x04");
         out.extend_from_slice(&10u16.to_le_bytes());
         out.extend_from_slice(&0u16.to_le_bytes());
-        out.extend_from_slice(&0u16.to_le_bytes()); // stored
+        out.extend_from_slice(&0u16.to_le_bytes());
         out.extend_from_slice(&0u16.to_le_bytes());
         out.extend_from_slice(&0u16.to_le_bytes());
         out.extend_from_slice(&0u32.to_le_bytes());

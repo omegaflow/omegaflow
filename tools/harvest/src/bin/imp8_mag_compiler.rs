@@ -11,11 +11,11 @@ const DEFAULT_URL: &str =
 const DEFAULT_OUT: &str = "imp8_mag_hr.bin";
 
 const WIDTHS: [usize; 23] = [
-    4, 4, 3, 4, // year, doy, hour, npoints
-    6, 6, 6, 6, 6, // X/Y/Z GSE, Y/Z GSM
-    6, 6, 6, 6, // |B|, |avg B|, lat, lon
-    6, 6, 6, 6, 6, // Bx/By/Bz GSE, By/Bz GSM
-    6, 6, 6, 6, 6, // sigma |B|, sigma B, sigma Bx/By/Bz
+    4, 4, 3, 4,
+    6, 6, 6, 6, 6,
+    6, 6, 6, 6,
+    6, 6, 6, 6, 6,
+    6, 6, 6, 6, 6,
 ];
 
 const NAMES: [&str; 24] = [
@@ -135,10 +135,10 @@ pub fn parse_text(text: &str) -> Option<Table> {
         row[3] = Some(hour as f64);
         row[4] = integer(raw[3], 900).map(|v| v as f64);
         let maxima = [
-            100.0, 100.0, 100.0, 100.0, 100.0, // GSE/GSM positions
-            900.0, 900.0, 900.0, 900.0, // |B|, |avg B|, lat, lon
-            900.0, 900.0, 900.0, 900.0, 900.0, // B components
-            900.0, 900.0, 900.0, 900.0, 900.0, // sigmas
+            100.0, 100.0, 100.0, 100.0, 100.0,
+            900.0, 900.0, 900.0, 900.0,
+            900.0, 900.0, 900.0, 900.0, 900.0,
+            900.0, 900.0, 900.0, 900.0, 900.0,
         ];
         for (i, max) in maxima.iter().enumerate() {
             row[5 + i] = number(raw[4 + i], *max);

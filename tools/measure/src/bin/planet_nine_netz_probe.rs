@@ -649,7 +649,7 @@ fn main() {
                 .collect()
         })
         .collect();
-    let stats = stats_by_mode[2].clone(); // joint null is the rank-list reference
+    let stats = stats_by_mode[2].clone();
     for t in 0..7 {
         let (m, s) = stats[t];
         let z_at = |mode: usize| {

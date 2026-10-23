@@ -567,7 +567,7 @@ mod tests {
             reference_type: 0,
             vlen_is_string: false,
         };
-        let raw = [0x00u8, 0x80]; // 0x8000 = 32768 as u16, -32768 as i16
+        let raw = [0x00u8, 0x80];
         assert_eq!(decode_count(&raw, 0, &dt, true), Some(32768));
         assert_eq!(decode_count(&raw, 0, &dt, false), Some(-32768));
         dt.signed = false;
@@ -594,8 +594,8 @@ mod tests {
         let mut raw = Vec::new();
         raw.extend_from_slice(&10u16.to_le_bytes());
         raw.extend_from_slice(&20u16.to_le_bytes());
-        raw.extend_from_slice(&65535u16.to_le_bytes()); // fill
-        raw.extend_from_slice(&5000u16.to_le_bytes()); // out of range
+        raw.extend_from_slice(&65535u16.to_le_bytes());
+        raw.extend_from_slice(&5000u16.to_le_bytes());
         let (sum, _, min, max, valid) = stats_of(
             &raw,
             &dt,

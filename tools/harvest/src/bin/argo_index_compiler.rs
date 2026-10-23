@@ -214,10 +214,10 @@ aoml/1900722/profiles/SD1900722_002.nc,20061101064423,-40.390,73.528,I,846,AO,PR
     fn parameters_are_declared_but_never_measured() {
         let rows = parse_index(HEAD).unwrap();
         let d = declared(&rows);
-        assert_eq!(d[0].2, 2); // TEMP
-        assert_eq!(d[1].2, 2); // PSAL
-        assert_eq!(d[2].2, 2); // DOXY
-        assert_eq!(d[3].2, 0); // CHLA absent
+        assert_eq!(d[0].2, 2);
+        assert_eq!(d[1].2, 2);
+        assert_eq!(d[2].2, 2);
+        assert_eq!(d[3].2, 0);
         assert!(rows.iter().all(|r| !r.parameters.is_empty()));
     }
 

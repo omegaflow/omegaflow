@@ -11,13 +11,13 @@ const DEFAULT_URL: &str =
 const DEFAULT_OUT: &str = "helios_merged.bin";
 
 const WIDTHS: [usize; 31] = [
-    4, 4, 3, 5, // year, doy, hour, Carrington rotation
-    7, 7, 7, 7, // r, HGI lat, HGI lon, Earth-Sun-SC angle
-    9, 9, 9, 9, 9, 9, 9, // BX/BY/BZ SSE, BR/BT/BN RTN, |B|
-    7, 7, 7, // speed, elevation, azimuth
-    6, 9, // density, temperature
-    11, 11, 11, 11, // E6 4-13, 13-27, 27-37, 37-51 MeV
-    10, 10, 10, 10, 10, 10, 10, // E7 3.4-6.05 ... 135.2-206.5 MeV
+    4, 4, 3, 5,
+    7, 7, 7, 7,
+    9, 9, 9, 9, 9, 9, 9,
+    7, 7, 7,
+    6, 9,
+    11, 11, 11, 11,
+    10, 10, 10, 10, 10, 10, 10,
 ];
 
 const NAMES: [&str; 32] = [
@@ -148,30 +148,30 @@ pub fn parse_text(text: &str) -> Option<Table> {
             99.0,
             900.0,
             900.0,
-            900.0, // r, HGI lat/lon, ESS angle
             900.0,
             900.0,
             900.0,
             900.0,
             900.0,
             900.0,
-            900.0, // B components
+            900.0,
+            900.0,
             3000.0,
             900.0,
-            900.0, // speed, elevation, azimuth
             900.0,
-            2_000_000.0, // density, temperature
-            9000.0,
-            9000.0,
-            9000.0,
-            9000.0, // E6
-            9000.0,
+            900.0,
+            2_000_000.0,
             9000.0,
             9000.0,
             9000.0,
             9000.0,
             9000.0,
-            9000.0, // E7
+            9000.0,
+            9000.0,
+            9000.0,
+            9000.0,
+            9000.0,
+            9000.0,
         ];
         for (i, max) in maxima.iter().enumerate() {
             row[5 + i] = number(raw[4 + i], *max);

@@ -1,10 +1,10 @@
 pub const MAGIC: [u8; 4] = *b"root";
 
-const K_BYTE_COUNT_MASK: u32 = 0x4000_0000; // TBuffer::kByteCountMask
-const K_BYTE_COUNT_V_MASK: i16 = 0x4000; // kByteCountVMask: high bit of the first Version_t short
-const K_NEW_CLASS_TAG: u32 = 0xffff_ffff; // TBuffer::kNewClassTag
-const K_CLASS_MASK: u32 = 0x8000_0000; // TBuffer::kClassMask, ORed onto a class reference tag
-const K_MAP_OFFSET: u32 = 2; // TBuffer::kMapOffset, the first two map entries are reserved
+const K_BYTE_COUNT_MASK: u32 = 0x4000_0000;
+const K_BYTE_COUNT_V_MASK: i16 = 0x4000;
+const K_NEW_CLASS_TAG: u32 = 0xffff_ffff;
+const K_CLASS_MASK: u32 = 0x8000_0000;
+const K_MAP_OFFSET: u32 = 2;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct RootHeader {

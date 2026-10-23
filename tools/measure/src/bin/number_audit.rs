@@ -330,7 +330,7 @@ fn analyze_text(text: &str) -> Report {
     let lines: Vec<&str> = text.lines().collect();
     let mut table_flags = vec![false; lines.len()];
     let mut abstract_flags = vec![false; lines.len()];
-    let mut table_groups: Vec<usize> = Vec::new(); // Datenzeilen je Tabelle
+    let mut table_groups: Vec<usize> = Vec::new();
     let mut table_totals: Vec<usize> = Vec::new();
 
     let mut in_comment = false;

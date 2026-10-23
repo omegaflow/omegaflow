@@ -1035,7 +1035,7 @@ mod tests {
         assert!((out[1].0.value - 4.0 / (cal1 * cal1)).abs() < 1e-30);
 
         let mut off = HashMap::new();
-        off.insert(0u32, vec![5.0]); // below the curve support → flagged, not extrapolated
+        off.insert(0u32, vec![5.0]);
         let mut none: Vec<(Channel, FieldConfig)> = Vec::new();
         push_cdf_field(
             &fc,

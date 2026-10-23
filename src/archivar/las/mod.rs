@@ -684,7 +684,7 @@ mod tests {
         rec[4..8].copy_from_slice(&2000i32.to_le_bytes());
         rec[8..12].copy_from_slice(&3000i32.to_le_bytes());
         rec[12..14].copy_from_slice(&42u16.to_le_bytes());
-        rec[14] = 0x1b; // return 3 of 3 (0b011 << 3 | 0b011)
+        rec[14] = 0x1b;
         rec[15] = 2;
         let mut bytes = synthetic_header(0, 2);
         bytes.extend_from_slice(&rec);
@@ -764,7 +764,7 @@ mod tests {
         rec[0..4].copy_from_slice(&0i32.to_le_bytes());
         rec[4..8].copy_from_slice(&0i32.to_le_bytes());
         rec[8..12].copy_from_slice(&0i32.to_le_bytes());
-        rec[14] = 0x31; // return 1 of 3 (0b0011 << 4 | 0b0001)
+        rec[14] = 0x31;
         rec[16] = 5;
         rec[22..30].copy_from_slice(&99.0f64.to_le_bytes());
         let mut bytes = synthetic_header(6, 1);

@@ -10,7 +10,7 @@ const ODF_DIR: &str = "DATA/LEVEL1A/CLOSED_LOOP/IFMS/";
 const ODF_SUBDIRS: &[&str] = &["AG1", "AG2", "DP1", "DP2"];
 const WORKERS: usize = 1 << 3;
 const PREFIX: &str = "rosetta_odf";
-const RECORD_BYTES: usize = 24; // 3 × f64 per IFMS AGC sample, 8-byte series header
+const RECORD_BYTES: usize = 24;
 
 fn fetch_listing(dir: &str) -> Option<Vec<u8>> {
     match http_code(dir, &[]) {
