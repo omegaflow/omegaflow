@@ -1338,6 +1338,10 @@ fn load_field_across_sources(
             continue;
         }
         match aggregation_correlation(&loaded[fine_idx].2, &loaded[k].2, coarse_dt) {
+            Some(r) if declared_same => println!(
+                "  aggregation '{name}' — {} median_dt {fine_dt:.0}s vs {} median_dt {coarse_dt:.0}s (overlap corr {r:.4}); declared same witness — finer carried, coarser as agg",
+                loaded[fine_idx].0, loaded[k].0
+            ),
             Some(r) if r >= AGGREGATION_IDENTITY_CORR => {}
             Some(r) => {
                 return Err(format!(
@@ -4482,6 +4486,7 @@ struct MatrixCellOutcome {
     pass: bool,
     res_pair: Option<(f64, f64)>,
     alignment_absent: bool,
+    alignment_reason: Option<String>,
     rungs: Vec<ScaleRung>,
     ladder: Vec<RungMeasurement>,
 }
@@ -5201,6 +5206,7 @@ fn run_pair_matrix(
                 floor: true,
                 res_pair: None,
                 alignment_absent: false,
+                    alignment_reason: None,
                 pass: false,
                 rungs: Vec::new(),
                 ladder: Vec::new(),
@@ -5219,6 +5225,7 @@ fn run_pair_matrix(
                 floor: true,
                 res_pair: None,
                 alignment_absent: false,
+                    alignment_reason: None,
                 pass: false,
                 rungs: Vec::new(),
                 ladder: Vec::new(),
@@ -5247,6 +5254,7 @@ fn run_pair_matrix(
                 floor: true,
                 res_pair: None,
                 alignment_absent: false,
+                    alignment_reason: None,
                 pass: false,
                 rungs: Vec::new(),
                 ladder: Vec::new(),
@@ -5271,7 +5279,7 @@ fn run_pair_matrix(
         };
         let (cell_columns, grid, grid_dt) = match align_many(&req_arms, desc.seasonal, pair_bin) {
             Ok(a) => a,
-            Err(_reason) => {
+            Err(reason) => {
                 outcomes.push(MatrixCellOutcome {
                     id,
                     cond_n,
@@ -5283,6 +5291,7 @@ fn run_pair_matrix(
                     floor: true,
                     res_pair: None,
                     alignment_absent: true,
+                    alignment_reason: Some(reason),
                     pass: false,
                     rungs: Vec::new(),
                     ladder: Vec::new(),
@@ -5307,6 +5316,7 @@ fn run_pair_matrix(
                     floor: true,
                     res_pair: Some((td, tt)),
                     alignment_absent: false,
+                    alignment_reason: None,
                     pass: false,
                     rungs: rungs.clone(),
                     ladder: Vec::new(),
@@ -5328,6 +5338,7 @@ fn run_pair_matrix(
                 floor: true,
                 res_pair: None,
                 alignment_absent: false,
+                    alignment_reason: None,
                 pass: false,
                 rungs: rungs.clone(),
                 ladder: Vec::new(),
@@ -5346,6 +5357,7 @@ fn run_pair_matrix(
                 floor: true,
                 res_pair: None,
                 alignment_absent: false,
+                    alignment_reason: None,
                 pass: false,
                 rungs: rungs.clone(),
                 ladder: Vec::new(),
@@ -5397,6 +5409,7 @@ fn run_pair_matrix(
                     floor: false,
                     res_pair: None,
                     alignment_absent: false,
+                    alignment_reason: None,
                     pass: false,
                     rungs: rungs.clone(),
                     ladder: ladder.clone(),
@@ -5414,6 +5427,7 @@ fn run_pair_matrix(
                     floor: true,
                     res_pair: None,
                     alignment_absent: false,
+                    alignment_reason: None,
                     pass: false,
                     rungs: rungs.clone(),
                     ladder: ladder.clone(),
@@ -5513,15 +5527,18 @@ fn run_pair_matrix(
             None => "absent".to_string(),
         };
         let word = if o.alignment_absent {
-            "alignment pending"
+            match &o.alignment_reason {
+                Some(r) => format!("alignment pending — {r}"),
+                None => "alignment pending".to_string(),
+            }
         } else if o.res_pair.is_some() {
-            "resolution pending"
+            "resolution pending".to_string()
         } else if o.floor {
-            "floor (p = 1)"
+            "floor (p = 1)".to_string()
         } else if o.pass {
-            "arrow (fdr pass)"
+            "arrow (fdr pass)".to_string()
         } else {
-            "silent"
+            "silent".to_string()
         };
         let res = match o.res_pair {
             Some((a, b)) => format!("{a:.0}x{b:.0}"),
@@ -5819,6 +5836,7 @@ mod pairwise_orientation_tests {
             pass: false,
             res_pair: None,
             alignment_absent: false,
+                    alignment_reason: None,
             rungs: Vec::new(),
             ladder,
         }

@@ -7,6 +7,9 @@
 #   tao_wnd_zonal_m_s        TAO zonal wind      (field_te_query.rs:3207)
 #   omni_imf_bz_gsm_nt       OMNI2 IMF Bz        :622
 #   intermagnet_dbdt         ABK |dB/dt|         :1856
+#     Auflösung: der 60-s-Witness ist die Reihe; 1 h ist `max`-Aggregat derselben
+#     PT1M-Quelle (Compiler, 2026-10-23) — ein abgeleiteter Knoten, kein zweiter
+#     Quellenknoten. Der Lader nimmt die feinste Auflösung, die gröbere läuft als `agg`.
 #   magnetosphere_imf_bz_nt  RTSW/SWPC Bz        :176
 #   magnetosphere_imf_bt_nt  RTSW/SWPC Bt        :175
 #   solar_wind_speed_km_s    RTSW/SWPC speed     :181
