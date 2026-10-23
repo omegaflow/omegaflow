@@ -351,3 +351,4 @@ pub(crate) use std::sync::{Mutex, mpsc};
 pub(crate) use std::thread;
 pub(crate) use std::time::{SystemTime, UNIX_EPOCH};
 pub mod tle;
+pub mod trisp_nse;
