@@ -25444,3 +25444,10 @@ field stereo_euvi_171_mean stereo_euvi_171_mean inverse-square em 1 2592000 0.0 
 field stereo_euvi_195_mean stereo_euvi_195_mean inverse-square em 1 2592000 0.0 0.0
 field stereo_euvi_284_mean stereo_euvi_284_mean inverse-square em 1 2592000 0.0 0.0
 field stereo_euvi_304_mean stereo_euvi_304_mean inverse-square em 1 2592000 0.0 0.0
+url https://github.com/omegaflow/sources/releases/download/archives.esac.esa.int/giotto_mag_8s_halley.bin
+origin https://archives.esac.esa.int/psa/ftp/GIOTTO/MAG/GIO-C-MAG-4-RDR-8SEC-HALLEY-V1.0/DATA/MAG00001.TAB
+compiler tools/harvest/src/bin/raw_mirror.rs
+sha256 08c46d1e0831d8c60e78e51127baae0fad1c032d1f92bb16f998f3f7ce5fa639
+at halley
+no-cadence
+terms PD-USGov https://sti.nasa.gov/disclaimers/
