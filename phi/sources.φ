@@ -252,9 +252,9 @@ field total magnetosphere_bt_nt nT source_key=total alt_offset=0
 
 url https://services.swpc.noaa.gov/json/goes/primary/xray-flares-7-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=0.0 lon=-75.2 alt=35786023
+at sun frame=barycenter time_key=time_tag time_scale=UTC
 ttl 60
-last max_xrlong solar_flare_xray_intensity inverse-square em W/m2 6.0 pending 0.0 0.0
+last solar_flare_xray_intensity solar_flare_xray_intensity W/m2 source_key=max_xrlong alt_offset=0
 
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
@@ -492,9 +492,9 @@ field ch2@freq_vlf athabasca_vlf_ew_v2_hz inverse-square em V^2/Hz 600 pending 0
 
 url https://services.swpc.noaa.gov/json/f107_cm_flux.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-at sun frame=barycenter
+at sun frame=barycenter time_key=time_tag time_scale=UTC
 ttl 600
-first flux solar_f107_flux_sfu inverse-square em sfu 3600.0 pending 0.0 0.0 where frequency 2800
+first solar_f107_flux_sfu solar_f107_flux_sfu sfu source_key=flux alt_offset=0 where frequency 2800
 
 url https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
