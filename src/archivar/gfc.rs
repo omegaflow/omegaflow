@@ -683,28 +683,39 @@ pub fn fully_normalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
     p
 }
 
-#[allow(clippy::needless_range_loop)] // p[n][m] index-arithmetic recurrences; m/n are grid indices
 pub fn unnormalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
     let costh = theta.cos();
     let sinth = theta.sin();
     let mut p = vec![vec![0.0f64; nmax + 1]; nmax + 1];
     p[0][0] = 1.0;
     let zonal = zonal_column(nmax, theta);
-    for n in 1..=nmax {
-        p[n][0] = zonal[n].to_f64();
+    for (row, z) in p.iter_mut().skip(1).zip(zonal.iter().skip(1)) {
+        row[0] = z.to_f64();
     }
-    for m in 1..=nmax {
-        p[m][m] = (2.0 * m as f64 - 1.0) * sinth * p[m - 1][m - 1];
+    let mut diag = vec![0.0f64; nmax + 1];
+    diag[0] = 1.0;
+    let mut prev = 1.0;
+    for (m, d) in diag.iter_mut().enumerate().skip(1) {
+        *d = (2.0 * m as f64 - 1.0) * sinth * prev;
+        prev = *d;
+    }
+    for (m, row) in p.iter_mut().enumerate().skip(1) {
+        row[m] = diag[m];
+    }
+    for (r, row) in p.iter_mut().enumerate().skip(2) {
+        let m = r - 1;
+        row[m] = (2.0 * m as f64 + 1.0) * costh * diag[m];
     }
     for m in 1..nmax {
-        p[m + 1][m] = (2.0 * m as f64 + 1.0) * costh * p[m][m];
-    }
-    for m in 1..nmax {
-        for n in (m + 2)..=nmax {
+        let mf = m as f64;
+        let mut prev2 = p[m][m];
+        let mut prev1 = p[m + 1][m];
+        for (n, row) in p.iter_mut().enumerate().take(nmax + 1).skip(m + 2) {
             let nf = n as f64;
-            let mf = m as f64;
-            p[n][m] = ((2.0 * nf - 1.0) * costh * p[n - 1][m] - (nf + mf - 1.0) * p[n - 2][m])
-                / (nf - mf);
+            let v = ((2.0 * nf - 1.0) * costh * prev1 - (nf + mf - 1.0) * prev2) / (nf - mf);
+            row[m] = v;
+            prev2 = prev1;
+            prev1 = v;
         }
     }
     p

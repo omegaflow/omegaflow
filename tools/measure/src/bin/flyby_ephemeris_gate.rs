@@ -232,15 +232,15 @@ fn f64_json(v: f64) -> String {
     format!("{v}")
 }
 
-#[allow(clippy::too_many_arguments)]
-fn register_json(
+#[derive(Clone, Copy)]
+struct RegisterJson<'a> {
     window_days: f64,
     step_hours: f64,
-    sealed_sha: Option<&str>,
-    sealed_pin: Option<&str>,
-    anchor: &str,
-    renewed_sha: Option<&str>,
-    recon_sha: Option<&str>,
+    sealed_sha: Option<&'a str>,
+    sealed_pin: Option<&'a str>,
+    anchor: &'a str,
+    renewed_sha: Option<&'a str>,
+    recon_sha: Option<&'a str>,
     delta_sealed: Option<f64>,
     delta_renewed: Option<f64>,
     edition_rift: Option<f64>,
@@ -249,7 +249,26 @@ fn register_json(
     verdict_sealed: Option<bool>,
     verdict_renewed: Option<bool>,
     riss: bool,
-) -> String {
+}
+
+fn register_json(r: &RegisterJson) -> String {
+    let RegisterJson {
+        window_days,
+        step_hours,
+        sealed_sha,
+        sealed_pin,
+        anchor,
+        renewed_sha,
+        recon_sha,
+        delta_sealed,
+        delta_renewed,
+        edition_rift,
+        sigma_recon,
+        threshold,
+        verdict_sealed,
+        verdict_renewed,
+        riss,
+    } = *r;
     let mut s = String::new();
     s.push_str("{\n");
     s.push_str("  \"gate\": \"flyby_ephemeris_gate\",\n");
@@ -473,14 +492,14 @@ fn main() {
     println!("verdict renewed: {}", word_label(verdict_renewed));
     println!("riss: {riss}");
 
-    let json = register_json(
+    let json = register_json(&RegisterJson {
         window_days,
         step_hours,
-        sealed_sha.as_deref(),
-        sealed_pin.as_deref(),
+        sealed_sha: sealed_sha.as_deref(),
+        sealed_pin: sealed_pin.as_deref(),
         anchor,
-        renewed_sha.as_deref(),
-        recon_sha.as_deref(),
+        renewed_sha: renewed_sha.as_deref(),
+        recon_sha: recon_sha.as_deref(),
         delta_sealed,
         delta_renewed,
         edition_rift,
@@ -489,7 +508,7 @@ fn main() {
         verdict_sealed,
         verdict_renewed,
         riss,
-    );
+    });
     if let Some(parent) = std::path::Path::new(&register_path).parent() {
         std::fs::create_dir_all(parent).ok();
     }
