@@ -9,6 +9,15 @@ name: cdn-manifest
 # `refresh: true` bypasses the idempotence skip — a source with a ttl or a schedule
 # (a live snapshot, a series) must re-harvest although its asset name is present.
 on:
+  # Dispatchable too: the reconcile/verification runs call this workflow by name,
+  # and a reusable-only workflow answers a dispatch with HTTP 422. The same
+  # `harvests` JSON array is the only input.
+  workflow_dispatch:
+    inputs:
+      harvests:
+        description: 'JSON array of {bin, netloc, asset, crate?, args?, sharded?, prefix?, timeout?, refresh?}'
+        required: true
+        type: string
   workflow_call:
     inputs:
       harvests:
