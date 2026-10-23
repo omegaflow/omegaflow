@@ -623,7 +623,6 @@ fn scaled_by_pow2(mut x: f64, mut e: i32) -> f64 {
 
 pub const GFC_LEGENDRE_RECURRENCE: &str = "fully_normalized_legendre runs column by column over m with a mantissa/exponent pair (scaled_by_pow2); the sectorial seed Pbar_mm ~ m^(1/4) * sin^m(theta) falls below f64 around m ~ 2155 at 45 deg, and a quantised subnormal seed would be amplified by the forward recurrence in n (measured 1.3e21 at degree 3211, 2.3e271 at 5540); the column is rescaled so the returned values underflow only where the true function itself is below f64. The m = 0 column is the exception: it uses the unnormalised recurrence with integer coefficients, P_n = ((2n-1) x P_{n-1} - (n-1) P_{n-2})/n, in double-double arithmetic with x = cos(theta) carried as hi+lo via the half-angle identity, then multiplies by sqrt(2n+1) (measured 2026-10-18: at 0 deg/5540 the normalised-coefficient recurrence drifted to 8.167e-10 in the addition theorem, the integer f64 form to 2.2e-16. At 0.001 deg/5540 the integer f64 form still drifted to 1.7e-10 in Pbar_n0 and 3.4e-10 in the addition theorem because rounding cos(theta) to f64 loses 1e-17 of the 1.5e-10 distance from 1, amplified by dP/dx ~ n/sin(theta); the double-double form brings Pbar_n0 to 2.8e-17 and the zonal addition to 2.2e-16 at 0 deg; at 0.001 deg the full addition theorem is 6.7e-12 because the m >= 1 columns still use the rounded cosine, with unnormalised_legendre sharing the same zonal column)";
 
-#[allow(clippy::needless_range_loop)]
 pub fn fully_normalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
     let costh = theta.cos();
     let sinth = theta.sin();
@@ -659,7 +658,7 @@ pub fn fully_normalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
         }
         let mut q1 = (2.0 * mf + 3.0).sqrt() * costh * q;
         p[m + 1][m] = scaled_by_pow2(q1, exp);
-        for n in (m + 2)..=nmax {
+        for (n, row) in p.iter_mut().enumerate().take(nmax + 1).skip(m + 2) {
             let nf = n as f64;
             let a = (((2.0 * nf - 1.0) * (2.0 * nf + 1.0)) / ((nf - mf) * (nf + mf))).sqrt();
             let b = (((2.0 * nf + 1.0) * (nf + mf - 1.0) * (nf - mf - 1.0))
@@ -676,7 +675,7 @@ pub fn fully_normalized_legendre(nmax: usize, theta: f64) -> Vec<Vec<f64>> {
                 q2 *= two_pow_500;
                 exp -= 500;
             }
-            p[n][m] = scaled_by_pow2(q2, exp);
+            row[m] = scaled_by_pow2(q2, exp);
             q = q1;
             q1 = q2;
         }
