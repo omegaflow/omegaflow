@@ -80,6 +80,7 @@ fn write_fetched(path: &str, bytes: &[u8], source_url: &str) {
         eprintln!("sfetch: {} writes not: {e}", path);
         std::process::exit(2);
     }
+    index_fetched(path, bytes);
     if source_url.is_empty() {
         return;
     }
@@ -87,6 +88,50 @@ fn write_fetched(path: &str, bytes: &[u8], source_url: &str) {
     if let Err(e) = fs::write(&src, format!("{source_url}\n")) {
         eprintln!("provenance {src}: sidecar void — {e}");
     }
+}
+
+fn index_fetched(path: &str, bytes: &[u8]) {
+    let root = match env::var("OMEGAFLOW_SOURCES") {
+        Ok(r) => r,
+        Err(_) => match env::var("OMEGAFLOW_WORK") {
+            Ok(w) => format!("{w}/sources"),
+            Err(_) => return,
+        },
+    };
+    let root = match fs::canonicalize(&root) {
+        Ok(p) => p,
+        Err(_) => std::path::PathBuf::from(&root),
+    };
+    let abs = match fs::canonicalize(path) {
+        Ok(p) => p,
+        Err(_) => return,
+    };
+    let rel = match abs.strip_prefix(&root) {
+        Ok(r) => r.to_string_lossy().into_owned(),
+        Err(_) => return,
+    };
+    let Some(netloc) = rel.split('/').next() else {
+        return;
+    };
+    if rel == "INDEX.tsv" || !rel.contains('/') {
+        return;
+    }
+    let idx = root.join("INDEX.tsv");
+    let existing = match fs::read_to_string(&idx) {
+        Ok(s) => s,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => String::new(),
+        Err(_) => return,
+    };
+    if existing.contains(&format!("\t{rel}\t{}", bytes.len())) {
+        return;
+    }
+    let Ok(mut file) = fs::OpenOptions::new().create(true).append(true).open(&idx) else {
+        return;
+    };
+    if existing.is_empty() {
+        let _ = file.write_all(b"netloc\tpath\tbytes\n");
+    }
+    let _ = file.write_all(format!("{netloc}\t{rel}\t{}\n", bytes.len()).as_bytes());
 }
 
 fn is_markup(body: &str) -> bool {
