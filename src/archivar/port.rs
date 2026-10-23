@@ -590,7 +590,7 @@ fn hapi_live_measure(url: &str, env: &HashMap<String, String>) -> PortMeasure {
         unit: None,
         tau: None,
     };
-    let Some(info_url) = hapi_cadence_url(url) else {
+    let Some(info_url) = hapi_info_url(url) else {
         return void;
     };
     let info_url = resolve_secret(&info_url, env);
@@ -1262,7 +1262,7 @@ fn find_cadence_seconds(val: &JsonVal) -> Option<u64> {
     }
 }
 
-fn hapi_cadence_url(url: &str) -> Option<String> {
+pub(crate) fn hapi_info_url(url: &str) -> Option<String> {
     let after = url
         .strip_prefix("https://")
         .or_else(|| url.strip_prefix("http://"))?;
@@ -1271,9 +1271,8 @@ fn hapi_cadence_url(url: &str) -> Option<String> {
         Some((p, q)) => (p, q),
         None => (route, ""),
     };
-    if !path.contains("hapi/") {
-        return None;
-    }
+    let hapi = path.find("hapi/")?;
+    let prefix = &path[..hapi];
     let id = query
         .split('&')
         .find_map(|p| p.strip_prefix("id="))
@@ -1283,11 +1282,11 @@ fn hapi_cadence_url(url: &str) -> Option<String> {
     } else {
         "http://"
     };
-    Some(format!("{}{}/hapi/info?id={}", base, netloc, id))
+    Some(format!("{}{}/{}hapi/info?id={}", base, netloc, prefix, id))
 }
 
 fn hapi_cadence_ttl(url: &str, env: &HashMap<String, String>) -> Option<u64> {
-    let info_url = resolve_secret(&hapi_cadence_url(url)?, env);
+    let info_url = resolve_secret(&hapi_info_url(url)?, env);
     let body = fetch_raw_probe(&info_url, None, &[])?;
     let parsed = parse_json(&body)?;
     find_cadence_seconds(&parsed)
@@ -1344,7 +1343,7 @@ fn hapi_meta_for(
     env: &HashMap<String, String>,
 ) -> Option<Vec<HapiMetaParam>> {
     hapi_meta_params(parsed).or_else(|| {
-        let info_url = resolve_secret(&hapi_cadence_url(url)?, env);
+        let info_url = resolve_secret(&hapi_info_url(url)?, env);
         let info_body = fetch_raw_probe(&info_url, None, &[])?;
         let info_json = parse_json(&info_body)?;
         hapi_meta_params(&info_json)
