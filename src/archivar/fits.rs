@@ -651,6 +651,10 @@ impl FitsImage {
         ))
     }
 
+    pub fn pixel_value(&self, raw: i64) -> Option<f64> {
+        Some(raw as f64 * self.bscale + self.bzero)
+    }
+
     pub fn value_f64(&self, buf: &[u8], idx: [usize; 3]) -> Option<f64> {
         if idx[0] >= self.dims[0] || idx[1] >= self.dims[1] || idx[2] >= self.dims[2] {
             return None;
