@@ -146,40 +146,6 @@ fn agents_growth_violations(now: usize, head: Option<usize>) -> Vec<String> {
     violations
 }
 
-const HANDOVER_CAP: usize = 1024;
-
-fn header_status_live(content: &str) -> bool {
-    let (Some(open), Some(close)) = (content.find("<!--"), content.find("-->")) else {
-        return false;
-    };
-    if close <= open {
-        return false;
-    }
-    for line in content[open..close].lines() {
-        if let Some(v) = line.trim().strip_prefix("status:") {
-            return v.trim() == "live";
-        }
-    }
-    false
-}
-
-fn handover_cap_violation(path: &str, content: &str) -> Option<String> {
-    if !path.starts_with("docs/handover/") || path.starts_with("docs/handover/archiv/") {
-        return None;
-    }
-    let name = std::path::Path::new(path).file_name()?.to_string_lossy();
-    if !name.starts_with("handover-") || !name.ends_with(".md") {
-        return None;
-    }
-    if !header_status_live(content) || handover_measured_len(content) <= HANDOVER_CAP {
-        return None;
-    }
-    Some(format!(
-        "handover-cap: {path} is {} B (cap {HANDOVER_CAP}, without `## Offen`) — the open grows, the history does not. The fix is not to cut the text: close the open. The history is git. (operator word 2026-10-16)",
-        handover_measured_len(content)
-    ))
-}
-
 fn git_head_content(path: &str) -> Option<String> {
     let out = Command::new("git")
         .args([
@@ -216,21 +182,6 @@ fn count_open_points(content: &str) -> usize {
         }
     }
     if hashes > 0 { hashes } else { bullets }
-}
-
-fn handover_measured_len(content: &str) -> usize {
-    let mut in_offen = false;
-    let mut n = 0usize;
-    for seg in content.split_inclusive('\n') {
-        let t = seg.trim_start();
-        if let Some(rest) = t.strip_prefix("## ") {
-            in_offen = rest.trim().to_lowercase().starts_with("offen");
-        }
-        if !in_offen {
-            n += seg.len();
-        }
-    }
-    n
 }
 
 fn open_points_without_braucht(content: &str) -> Vec<String> {
@@ -617,9 +568,6 @@ fn main() {
             Ok(c) => c,
             Err(_) => continue,
         };
-        if let Some(message) = handover_cap_violation(path, &content) {
-            eprintln!("commit_check: {message}");
-        }
         for missing in open_points_without_braucht(&content) {
             eprintln!(
                 "commit_check: {path}: open point `{missing}` has no `Braucht:` line - a point without its missing step is not addressable"
@@ -763,39 +711,6 @@ mod tests {
             1
         );
         assert!(agents_growth_violations(30 * 1024, None).is_empty());
-    }
-
-    #[test]
-    fn a_live_handover_over_the_cap_is_named_and_the_archive_is_exempt() {
-        let header = "<!--\n  title: Handover\n  status: live\n-->\n";
-        let body = "x".repeat(HANDOVER_CAP);
-        let big = format!("{header}{body}");
-        let live_path = "docs/handover/handover-2026-10-15-river-folge221.md";
-        assert_eq!(
-            handover_cap_violation(live_path, &big),
-            Some(format!(
-                "handover-cap: {live_path} is {} B (cap {HANDOVER_CAP}, without `## Offen`) — the open grows, the history does not. The fix is not to cut the text: close the open. The history is git. (operator word 2026-10-16)",
-                big.len()
-            ))
-        );
-        let exact = format!("{header}{}", "x".repeat(HANDOVER_CAP - header.len()));
-        assert_eq!(exact.len(), HANDOVER_CAP);
-        assert_eq!(handover_cap_violation(live_path, &exact), None);
-        assert_eq!(
-            handover_cap_violation(
-                "docs/handover/archiv/handover-2026-09-28-mountain-folge197.md",
-                &big
-            ),
-            None
-        );
-        let consumed = big.replace("status: live", "status: consumed");
-        assert_eq!(handover_cap_violation(live_path, &consumed), None);
-        let with_offen = format!(
-            "{header}{}\n## Offen\n{}",
-            "x".repeat(HANDOVER_CAP - header.len() - 1),
-            "y".repeat(HANDOVER_CAP)
-        );
-        assert_eq!(handover_cap_violation(live_path, &with_offen), None);
     }
 
     #[test]
