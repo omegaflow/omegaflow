@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::path::Path;
 
-const DEFAULT_LEGACY_PIN: &str = "state/dropped-legacy-baseline.txt";
+const DEFAULT_LEGACY_PIN: &str = "docs/state/dropped-legacy-baseline.txt";
 const HEADER_PREFIX: &str = "# dropped-events v1 pin=";
 const LIVE_HANDOVER_DIR: &str = "docs/handover";
 const REGISTER_DIR: &str = "phi";
