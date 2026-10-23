@@ -71,6 +71,8 @@ state/*
 # Verdikt-Register je Linie: die .φ-Verdikte sind kanonisch, nicht Roh-Zustand.
 !state/mountain/
 !state/river/
+# The dropped-gate baseline is a curated gate artifact (like state/rat), not raw state.
+!state/dropped-legacy-baseline.txt
 
 # Login-/Konto-Prüflisten (persönlich — nie ins Repo)
 markiert.csv

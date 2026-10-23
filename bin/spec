@@ -12,13 +12,14 @@ usage() {
     cat >&2 <<'EOF'
 spec: usage: bin/spec --quantity "<messgroesse>" [--band "<band>"] [--unit "<einheit>"]
            [--cadence "<kadenz>"] [--instrument "<instrumentenklasse>"]
-           [--arms youmcp,datacite,zenodo] [--top N]
-  Sucht die Messung, nicht den Markennamen. Ein Arm je Aufruf, seriell.
+           [--arms youmcp,datacite,zenodo] [--without "A B"] [--top N]
+  Sucht die Messung, nicht den Markennamen. --without schliesst bekannte Marken
+  aus (erste Runde Pflicht: sonst prueft man nur Bekanntes). Ein Arm je Aufruf.
 EOF
     exit 2
 }
 
-quantity=""; band=""; unit=""; cadence=""; instrument=""; arms="youmcp"; top=8
+quantity=""; band=""; unit=""; cadence=""; instrument=""; arms="youmcp"; without=""; top=8
 while [ $# -gt 0 ]; do
     case "$1" in
         --quantity) [ $# -ge 2 ] || usage; quantity="$2"; shift 2 ;;
@@ -27,11 +28,14 @@ while [ $# -gt 0 ]; do
         --cadence) [ $# -ge 2 ] || usage; cadence="$2"; shift 2 ;;
         --instrument) [ $# -ge 2 ] || usage; instrument="$2"; shift 2 ;;
         --arms) [ $# -ge 2 ] || usage; arms="$2"; shift 2 ;;
+        --without) [ $# -ge 2 ] || usage; without="$2"; shift 2 ;;
         --top) [ $# -ge 2 ] || usage; top="$2"; shift 2 ;;
         *) usage ;;
     esac
 done
 [ -n "$quantity" ] || usage
+neg=""
+for b in $without; do neg="$neg -$b"; done
 [ -x "$bin" ] || { echo "spec: $bin fehlt — Release bauen (CI)" >&2; exit 2; }
 
 q1="$quantity"
@@ -47,7 +51,7 @@ q3="$quantity"
 [ -n "$unit" ] && q3="$q3 $unit"
 
 for arm in $(printf '%s' "$arms" | tr ',' ' '); do
-    for q in "$q1" "$q2" "$q3"; do
+    for q in "$q1$neg" "$q2$neg" "$q3$neg"; do
         printf '== %s · %s ==\n' "$arm" "$q" >&2
         "$bin" --"$arm" "$q" 2>&1 | head -n "$top"
     done
