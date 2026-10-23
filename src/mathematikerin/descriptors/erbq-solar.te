@@ -2,13 +2,15 @@
 # driver: solar-wind IMF Bz, omni_hro_imf_bz_gsm_nt (phi/sources.φ:760, CDN omni_hro_1min.bin, 60 s)
 # target: point-event witness point-event#1 (Tohoku seismicity, phi/witnesses.φ:156-160)
 # the sparse point-event train is counted per declared bin; an empty bin stays pending, never 0.0
-# 2026-10-03 descoped as a TE test (gemessen): (1) the sparse train drops empty bins, which
+# 2026-10-03 declined as evidence (2026-10-23): the sparse train drops empty bins, which
 # conditions on the outcome; (2) the phase-randomized null preserves no Omori clustering;
 # (3) measured n = 1 with no alignment (field-te-query 37120826017). The arm stays as an
 # exercise fixture; the identifiable design (event-triggered average, Omori-preserving circular
 # driver shift with a guard band, matched-control on declustered mainshocks) is a new
 # pre-registered query form — origin `docs/handover/archiv/handover-2026-10-03-river-folge85.md:216-220`
 # + `state/rat/2026-09-30_laic-design-frage_nemotron.txt` (not the Weberin survey).
+# Literatur null-dominant (Qin 2014; Vargas 2012; Arnaut 2024); strongest positive Marchitelli
+# 2020 (proton density, 1 d). Befund: research/surveys/survey-2026-10-23-solarwind-seismik.md.
 pair erbq-solar
 register witnesses
 driver omni_hro_imf_bz_gsm_nt
