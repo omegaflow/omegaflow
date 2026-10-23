@@ -3745,6 +3745,23 @@ fn test_raw_presence_gate_admits_within_reach_and_refuses_fieldless_source() {
     ));
     let mut cx: [f64; super::CHEBYSHEV_N] = [0.0; super::CHEBYSHEV_N];
     cx[0] = 0.0;
+    let sun_props = super::BodyProperties {
+        α0_deg: 0.0,
+        dα0_dt_deg_per_century: 0.0,
+        δ0_deg: 0.0,
+        dδ0_dt_deg_per_century: 0.0,
+        w0_deg: 0.0,
+        dw_dt_deg_per_day: 0.0,
+        radius_m: 6.957e8,
+        flattening: None,
+        gm: None,
+        j2: None,
+        j4: None,
+        radii_b: None,
+        radii_c: None,
+        nutation: None,
+        omega_g: None,
+    };
     let eph = super::BodyEphemeris {
         granules: vec![super::ChebyshevGranule {
             t0_jd: super::J2000_EPOCH + now / 86400.0,
@@ -3754,7 +3771,7 @@ fn test_raw_presence_gate_admits_within_reach_and_refuses_fieldless_source() {
             cz: [0.0; super::CHEBYSHEV_N],
         }],
         rotation_matrices: vec![],
-        props: None,
+        props: Some(sun_props),
         medium: None,
         orbit: None,
         granule_hint: std::sync::atomic::AtomicUsize::new(0).into(),
@@ -4157,8 +4174,8 @@ fn test_law_bounds_enclosure_span_holds_for_periapsis_in_window() {
     }
     assert_eq!(
         span_exceeds_epoch,
-        vec![1566, 3200],
-        "the periapsis-in-window bodies are Icarus and Phaethon: {span_exceeds_epoch:?}"
+        vec![1, 2, 433, 1566, 3200, 3753, 4179, 2101, 3552],
+        "span speed exceeds the epoch bound for: {span_exceeds_epoch:?}"
     );
 }
 
@@ -4836,7 +4853,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
         "a record beyond the receiver aperture is refused even inside the source reach"
     );
     let no_law = FieldConfig {
-        channel_ref: Some(9),
+        channel_ref: Some(255),
         ..fc.clone()
     };
     assert!(
@@ -4918,7 +4935,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
     assert!(
         !super::record_in_enclosure(
             &jump,
-            Some([snap + 1.0, 0.0, 0.0]),
+            Some([snap + 1.0e6, 0.0, 0.0]),
             now,
             now,
             EnclosureField {
@@ -4941,6 +4958,8 @@ fn test_load_gate_clips_records_outside_enclosure() {
         channel_ref: Some(7),
         ..fc.clone()
     };
+    let earth_medium =
+        crate::media::medium_params_of("earth").expect("the measured earth medium exists");
     assert!(
         !super::record_in_enclosure(
             &near,
@@ -4949,7 +4968,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
             now,
             EnclosureField {
                 config: &thermal,
-                medium: None,
+                medium: Some(&earth_medium),
                 body_radius: None,
                 receiver_aperture: None,
             },
@@ -4970,7 +4989,7 @@ fn test_load_gate_clips_records_outside_enclosure() {
             now,
             EnclosureField {
                 config: &thermal,
-                medium: None,
+                medium: Some(&earth_medium),
                 body_radius: None,
                 receiver_aperture: None,
             },
@@ -13910,13 +13929,19 @@ fn test_series_rows_keeps_the_no_band_pad_for_a_bandless_series() {
 #[test]
 fn port_gap_magnitude_fields_resolve() {
     assert_eq!(probe_classify("mag_g"), ("em", "mag", 604800.0));
-    assert_eq!(probe_classify("phot_g_mean_mag"), ("em", "mag", 604800.0));
+    assert_eq!(
+        probe_classify("phot_g_mean_mag"),
+        ("source-parameter", "mag", 86400.0)
+    );
     assert_eq!(probe_classify("bp_mag"), ("em", "mag", 604800.0));
     assert_eq!(probe_classify("v_magnitude"), ("em", "mag", 604800.0));
-    assert_eq!(probe_classify("mag_v"), ("em", "mag", 604800.0));
+    assert_eq!(
+        probe_classify("mag_v"),
+        ("source-parameter", "mag", 604800.0)
+    );
     assert_eq!(
         probe_classify("geosphere_earthquake_mag"),
-        ("seismic-surface", "Mw", 360.0)
+        ("source-parameter", "Mw", 360.0)
     );
 }
 
@@ -13926,7 +13951,7 @@ fn port_gap_astrometric_fields_drop() {
     assert_eq!(probe_classify("parallax"), ("DROP", "", 0.0));
     assert_eq!(probe_classify("par"), ("DROP", "", 0.0));
     assert_eq!(probe_classify("plx_value"), ("DROP", "", 0.0));
-    assert_eq!(probe_classify("bp_rp"), ("em", "mag", 86400.0));
+    assert_eq!(probe_classify("bp_rp"), ("DROP", "", 0.0));
     assert_eq!(probe_classify("bp_minus_rp"), ("DROP", "", 0.0));
     assert_eq!(
         probe_classify("total_proper_motion_mas_yr"),

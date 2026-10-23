@@ -1709,7 +1709,18 @@ pub fn probe_classify_for_block<'a>(
             return (force, unit, tau);
         }
     }
-    let (force, unit, tau) = probe_classify_raw(key);
+    let raw = probe_classify_raw(key);
+    if raw.0 == "DROP" {
+        return raw;
+    }
+    if let Some((force, unit, tau)) = register_quantity_map().get(key).copied() {
+        let generic_short = key.chars().count() <= 4;
+        let conflict = block_force.is_some() && block_force != Some(force);
+        if !generic_short || !conflict {
+            return (force, unit, tau);
+        }
+    }
+    let (force, unit, tau) = raw;
     if force == "DROP" || force == "UNCERTAIN" {
         return (force, unit, tau);
     }
@@ -1793,31 +1804,60 @@ fn register_tokens(line: &str) -> Vec<&str> {
     out
 }
 
-fn register_field_map() -> &'static HashMap<String, (&'static str, &'static str, f64)> {
-    static MAP: OnceLock<HashMap<String, (&'static str, &'static str, f64)>> = OnceLock::new();
-    MAP.get_or_init(|| {
-        let mut map: HashMap<String, (&'static str, &'static str, f64)> = HashMap::new();
-        let mut names: Vec<(&'static str, &'static str, &'static str, f64)> = Vec::new();
+struct RegisterMaps {
+    fields: HashMap<String, (&'static str, &'static str, f64)>,
+    quantities: HashMap<String, (&'static str, &'static str, f64)>,
+}
+
+fn register_maps() -> &'static RegisterMaps {
+    static MAPS: OnceLock<RegisterMaps> = OnceLock::new();
+    MAPS.get_or_init(|| {
+        let mut field_names: HashMap<String, (&'static str, &'static str, f64)> = HashMap::new();
+        let mut field_columns: HashMap<String, (&'static str, &'static str, f64)> = HashMap::new();
+        let mut quantities: HashMap<String, (&'static str, &'static str, f64)> = HashMap::new();
         for line in include_str!("../../phi/sources.φ").lines() {
             let p: Vec<&str> = register_tokens(line);
-            match p.first().copied() {
-                Some("field" | "first" | "last" | "lastrow") if p.len() >= 7 => {
-                    if let Ok(tau) = p[6].parse::<f64>()
-                        && tau.is_finite()
-                        && tau > 0.0
-                    {
-                        map.insert(p[1].to_string(), (p[4], p[5], tau));
-                        names.push((p[2], p[4], p[5], tau));
-                    }
+            let Some(head) = p.first().copied() else {
+                continue;
+            };
+            if p.len() < 7 {
+                continue;
+            }
+            let Ok(tau) = p[6].parse::<f64>() else {
+                continue;
+            };
+            if !tau.is_finite() || tau <= 0.0 {
+                continue;
+            }
+            let entry = (p[4], p[5], tau);
+            match head {
+                "field" | "first" | "last" | "lastrow" => {
+                    field_names.entry(p[2].to_string()).or_insert(entry);
+                    field_columns.insert(p[1].to_string(), entry);
+                }
+                "quantity" => {
+                    quantities.entry(p[1].to_string()).or_insert(entry);
+                    quantities.entry(p[2].to_string()).or_insert(entry);
                 }
                 _ => {}
             }
         }
-        for (name, force, unit, tau) in names {
-            map.entry(name.to_string()).or_insert((force, unit, tau));
+        for (key, value) in field_columns {
+            field_names.entry(key).or_insert(value);
         }
-        map
+        RegisterMaps {
+            fields: field_names,
+            quantities,
+        }
     })
+}
+
+fn register_field_map() -> &'static HashMap<String, (&'static str, &'static str, f64)> {
+    &register_maps().fields
+}
+
+fn register_quantity_map() -> &'static HashMap<String, (&'static str, &'static str, f64)> {
+    &register_maps().quantities
 }
 
 fn port_drop_key(kl: &str) -> bool {
@@ -3985,7 +4025,7 @@ mod probe_classify_tests {
         assert_eq!(probe_classify("dpd_s"), ("acoustic", "s", 21600.0));
         assert_eq!(probe_classify("apd_s"), ("acoustic", "s", 21600.0));
         assert_eq!(probe_classify("ptdy_hpa"), ("acoustic", "hPa", 21600.0));
-        assert_eq!(probe_classify("tide_ft"), ("gravity", "m", 3600.0));
+        assert_eq!(probe_classify("tide_ft"), ("geometry", "ft", 21600.0));
         assert_eq!(
             probe_classify("hydrosphere_ndbc_buoy_dominant_period"),
             ("acoustic", "s", 21600.0)
@@ -4023,7 +4063,10 @@ mod probe_classify_tests {
             probe_classify("solo_rpw_e_rms_vm"),
             ("electric", "V/m", 3600.0)
         );
-        assert_eq!(probe_classify("rave_teff_k"), ("thermal", "K", 604800.0));
+        assert_eq!(
+            probe_classify("rave_teff_k"),
+            ("source-parameter", "K", 604800.0)
+        );
         assert_eq!(
             probe_classify("goes_abi_radiance"),
             ("em", "W/m2/sr/um", 3600.0)
@@ -4060,12 +4103,12 @@ mod probe_classify_tests {
             ("em", "cycle", 604800.0)
         );
         assert_eq!(probe_classify("l1"), ("em", "cycle", 604800.0));
-        assert_eq!(probe_classify("angle_a"), ("em", "rad", 604800.0));
-        assert_eq!(probe_classify("las_x_icrs_m"), ("em", "m", 86400.0));
-        assert_eq!(probe_classify("las_z_icrs_m"), ("em", "m", 86400.0));
+        assert_eq!(probe_classify("angle_a"), ("geometry", "rad", 604800.0));
+        assert_eq!(probe_classify("las_x_icrs_m"), ("geometry", "m", 86400.0));
+        assert_eq!(probe_classify("las_z_icrs_m"), ("geometry", "m", 86400.0));
         assert_eq!(
             probe_classify("kcdc_grande_x_core_m"),
-            ("em", "m", 604800.0)
+            ("geometry", "m", 604800.0)
         );
         assert_eq!(
             probe_classify("kcdc_grande_shower_age"),
@@ -4081,7 +4124,7 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("wds_separation_arcsec"),
-            ("em", "arcsec", 604800.0)
+            ("geometry", "arcsec", 604800.0)
         );
     }
 
@@ -4089,15 +4132,15 @@ mod probe_classify_tests {
     fn arrival_direction_is_acoustic_deg() {
         assert_eq!(
             probe_classify("bgr_infrasound_back_azimuth_deg"),
-            ("acoustic", "deg", 300.0)
+            ("geometry", "deg", 300.0)
         );
         assert_eq!(
             probe_classify("kcdc_kascade_zenith_deg"),
-            ("acoustic", "deg", 604800.0)
+            ("geometry", "deg", 604800.0)
         );
         assert_eq!(
             probe_classify("kcdc_grande_azimuth_deg"),
-            ("acoustic", "deg", 604800.0)
+            ("geometry", "deg", 604800.0)
         );
     }
 
@@ -4125,7 +4168,7 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("cosmic_ro_refractivity_n_units"),
-            ("em", "N-units", 604800.0)
+            ("scale", "n-units", 604800.0)
         );
         assert_eq!(probe_classify("0.speed"), ("advective", "km/s", 360.0));
         assert_eq!(
@@ -4143,7 +4186,7 @@ mod probe_classify_tests {
     fn infrasound_and_lidar_physical_components_classify() {
         assert_eq!(
             probe_classify("bgr_infrasound_back_azimuth_deg"),
-            ("acoustic", "deg", 300.0)
+            ("geometry", "deg", 300.0)
         );
         assert_eq!(
             probe_classify("bgr_infrasound_rms_amplitude_pa"),
@@ -4154,16 +4197,25 @@ mod probe_classify_tests {
 
     #[test]
     fn stellar_and_seismic_magnitude_part_ways() {
-        assert_eq!(probe_classify("comet_h_mag"), ("em", "mag", 604800.0));
-        assert_eq!(probe_classify("wd_vmag"), ("em", "mag", 604800.0));
-        assert_eq!(probe_classify("wds_primary_mag"), ("em", "mag", 604800.0));
+        assert_eq!(
+            probe_classify("comet_h_mag"),
+            ("source-parameter", "mag", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("wd_vmag"),
+            ("source-parameter", "mag", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("wds_primary_mag"),
+            ("source-parameter", "mag", 604800.0)
+        );
         assert_eq!(
             probe_classify("alerce_ztf_detection_magpsf"),
-            ("em", "mag", 3600.0)
+            ("source-parameter", "mag", 3600.0)
         );
         assert_eq!(
             probe_classify("geosphere_earthquake_mag"),
-            ("seismic-surface", "Mw", 360.0)
+            ("source-parameter", "Mw", 360.0)
         );
     }
 
@@ -4193,7 +4245,7 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("ndbc_dart_21414_height_m"),
-            ("gravity", "m", 3600.0)
+            ("geometry", "m", 900.0)
         );
     }
 
@@ -4217,10 +4269,13 @@ mod probe_classify_tests {
             ("em", "eV", 604800.0)
         );
         assert_eq!(probe_classify("mars_dust_cdod"), ("em", "1", 86400.0));
-        assert_eq!(probe_classify("extinction_rv"), ("em", "1", 604800.0));
+        assert_eq!(
+            probe_classify("extinction_rv"),
+            ("source-parameter", "1", 604800.0)
+        );
         assert_eq!(
             probe_classify("extinction_ebv_mag"),
-            ("em", "mag", 604800.0)
+            ("source-parameter", "mag", 604800.0)
         );
         assert_eq!(
             probe_classify("geosphere_fireball_radiated_energy_e10j"),
@@ -4241,13 +4296,16 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("planet_mass"),
-            ("gravity", "M_earth", 604800.0)
+            ("source-parameter", "M_earth", 604800.0)
         );
         assert_eq!(
             probe_classify("cb_primary_mass"),
-            ("gravity", "M_sun", 604800.0)
+            ("source-parameter", "M_sun", 604800.0)
         );
-        assert_eq!(probe_classify("corot_logg"), ("gravity", "logg", 604800.0));
+        assert_eq!(
+            probe_classify("corot_logg"),
+            ("source-parameter", "logg", 604800.0)
+        );
     }
 
     #[test]
@@ -4262,7 +4320,7 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify("icesat2_atl03_h_ph_m"),
-            ("em", "m", 604800.0)
+            ("geometry", "m", 604800.0)
         );
         assert_eq!(
             probe_classify("noaa_keo_psal_psu"),
@@ -4356,8 +4414,14 @@ mod probe_classify_tests {
             ("advective", "cm/s", 21600.0)
         );
         assert_eq!(probe_classify("magnetar_period_s"), ("em", "s", 604800.0));
-        assert_eq!(probe_classify("gcvs_period_d"), ("em", "d", 604800.0));
-        assert_eq!(probe_classify("pulsar_period_s"), ("em", "s", 604800.0));
+        assert_eq!(
+            probe_classify("gcvs_period_d"),
+            ("source-parameter", "d", 604800.0)
+        );
+        assert_eq!(
+            probe_classify("pulsar_period_s"),
+            ("source-parameter", "s", 604800.0)
+        );
         assert_eq!(probe_classify("frb_scatter_ms"), ("em", "ms", 604800.0));
         assert_eq!(
             probe_classify("gracefo_kbr_range_rate_m_s"),
@@ -4379,7 +4443,13 @@ mod probe_classify_tests {
         for line in register.lines() {
             let p: Vec<&str> = super::register_tokens(line);
             match p.first().copied() {
-                Some("field" | "first" | "last" | "lastrow") if p.len() >= 6 => {
+                Some("field" | "first" | "last" | "lastrow") if p.len() >= 7 => {
+                    let Ok(tau) = p[6].parse::<f64>() else {
+                        continue;
+                    };
+                    if tau <= 0.0 || crate::archivar::extract::kernel_id_of(p[3]).is_none() {
+                        continue;
+                    }
                     pairs
                         .entry(p[1].to_string())
                         .or_default()
@@ -4486,8 +4556,8 @@ mod probe_classify_tests {
     #[test]
     fn generic_short_register_name_needs_force_agreement() {
         assert_eq!(
-            probe_classify_for_block("sep", Some("em")),
-            ("em", "arcsec", 604800.0)
+            probe_classify_for_block("sep", Some("geometry")),
+            ("geometry", "arcsec", 604800.0)
         );
         assert_eq!(
             probe_classify_for_block("sep", Some("thermal")).0,
@@ -4495,7 +4565,7 @@ mod probe_classify_tests {
         );
         assert_eq!(
             probe_classify_for_block("wds_separation_arcsec", Some("thermal")),
-            ("em", "arcsec", 604800.0)
+            ("geometry", "arcsec", 604800.0)
         );
     }
 }

@@ -5,6 +5,8 @@ pub const VERSION: u8 = 1;
 pub const HEADER_BYTES: usize = 12;
 pub const REC_BYTES: usize = 7 * 8;
 
+const ABSENT: f64 = f64::NAN;
+
 pub const KEYS: [&str; 7] = ["ra", "dec", "freq", "w20", "w50", "dist_h", "log_m_hi"];
 pub const COMP_NAMES: [&str; 7] = [
     "wallaby_ra_deg",
@@ -125,10 +127,10 @@ pub fn write_bin(sources: &[WallabySource]) -> Option<Vec<u8>> {
         out.extend_from_slice(&s.ra.to_le_bytes());
         out.extend_from_slice(&s.dec.to_le_bytes());
         out.extend_from_slice(&s.freq.to_le_bytes());
-        out.extend_from_slice(&s.w20?.to_le_bytes());
-        out.extend_from_slice(&s.w50?.to_le_bytes());
-        out.extend_from_slice(&s.dist_h?.to_le_bytes());
-        out.extend_from_slice(&s.log_m_hi?.to_le_bytes());
+        out.extend_from_slice(&s.w20.unwrap_or(ABSENT).to_le_bytes());
+        out.extend_from_slice(&s.w50.unwrap_or(ABSENT).to_le_bytes());
+        out.extend_from_slice(&s.dist_h.unwrap_or(ABSENT).to_le_bytes());
+        out.extend_from_slice(&s.log_m_hi.unwrap_or(ABSENT).to_le_bytes());
     }
     Some(out)
 }
