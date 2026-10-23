@@ -1,0 +1,24 @@
+#!/bin/sh
+# Shell wrapper: setzt TMPDIR auf den kanonischen flüchtigen Ort.
+fallback="${TMPDIR:-/tmp}"
+root="$(cd "$(dirname "$0")/.." && pwd)"
+tmp="$root/scratch"
+if mkdir -p "$tmp" 2>/dev/null && [ -w "$tmp" ]; then
+    TMPDIR="$tmp"
+else
+    TMPDIR="$fallback"
+fi
+export TMPDIR
+
+cmd="$*"
+case "$cmd" in
+    *"commit"*)
+        if printf '%s\n' "$cmd" | grep -Eq 'git([[:space:]]+-[Cc][[:space:]]+[^[:space:]]+)*[[:space:]]+commit([[:space:]]+[^;&|]*)?[[:space:]]+-[A-Za-z]*n[A-Za-z]*([[:space:]]|$)' \
+            || printf '%s\n' "$cmd" | grep -Eq 'git([[:space:]]+-[Cc][[:space:]]+[^[:space:]]+)*[[:space:]]+commit[^;&|]*--no-verify'; then
+            echo "blocked: git commit with -n/--no-verify (hooks are not optional)" >&2
+            exit 2
+        fi
+        ;;
+esac
+
+exec /bin/bash "$@"

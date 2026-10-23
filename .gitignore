@@ -93,3 +93,6 @@ docs/paper/export/
 
 # lokale Testfixtures (Symlink auf omegaflow-work/build/testdata)
 /src/archivar/testdata
+
+# flüchtiger TMPDIR des Shell-Wrappers (bin/shell) — lokal, nie Repo-Gegenstand
+/scratch/
