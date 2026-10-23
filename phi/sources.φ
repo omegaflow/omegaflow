@@ -8,11 +8,10 @@ ttl 1
 format aodn
 field aodn_temperature aodn_temperature exponential-decay thermal K 1 pending 0.0 0.0
 
-url https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=F&format=json
+url https://vires.services/hapi/data?id=CS_OPER_MAG&start=2026-07-31T00:00:00Z&stop=2026-07-31T23:59:59Z&parameters=Latitude,Longitude,Radius,F&format=json
 terms vires-esa-attribution https://vires.services/
 ttl 4
 hapi F=cryosat_magnetic_field_intensity_nt
-channel energy:primary:maxwell:mixed:vacuum:unspecified:none V/m
 track earth frame=body lat_key=Latitude lon_key=Longitude alt_key=Radius time_key=Timestamp datum=earth_center time_scale=UTC
 field cryosat_magnetic_field_intensity_nt cryosat_magnetic_field_intensity_nt nT source_key=F alt_offset=0.0
 
@@ -226,9 +225,9 @@ quantity properties.mag geosphere_ga_mag_today erfc source-parameter Mw 6.0 pend
 
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-at earth frame=barycenter time_key=time_tag time_scale=UTC
+on earth frame=body lat=0.0 lon=-75.2 alt=35786023
 ttl 60
-last radiation_proton_flux_differential radiation_proton_flux_differential pfu/mev source_key=flux alt_offset=0
+last flux radiation_proton_flux_differential inverse-square em pfu/mev 6.0 pending 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
@@ -238,9 +237,9 @@ last radiation_electron_flux_2mev radiation_electron_flux_2mev pfu source_key=fl
 
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-at earth frame=barycenter time_key=time_tag time_scale=UTC
+on earth frame=body lat=0.0 lon=-75.2 alt=35786023
 ttl 60
-last radiation_proton_flux_integral radiation_proton_flux_integral pfu source_key=flux alt_offset=0
+last flux radiation_proton_flux_integral inverse-square em pfu 6.0 pending 0.0 0.0
 
 url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
 terms PD-USGov https://www.weather.gov/disclaimer
@@ -24886,4 +24885,3 @@ at earth frame=barycenter
 ttl 315360000
 format worldclim
 field worldclim_tavg worldclim_tavg exponential-decay thermal K 2592000 pending 0.0 0.0
-
