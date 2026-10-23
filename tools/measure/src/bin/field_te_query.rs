@@ -2371,41 +2371,97 @@ fn run_spectral_query(name_arg: &str, witnesses: &[WitnessRecord]) -> i32 {
 
 fn load_text_rows(src: &SourceConfig, fc: &FieldConfig, bytes: &[u8]) -> Option<Vec<(f64, f64)>> {
     let lsk = embedded_lsk()?;
-    let (epoch_col, field_key) = src.extracts.iter().find_map(|e| match e {
+    let (epoch_cols, field_key) = src.extracts.iter().find_map(|e| match e {
         Extract::Rows {
             fields, epoch_cols, ..
         } if fields.iter().any(|f| field_matches(f, None, &fc.name)) => {
-            let epoch = match epoch_cols
-                .first()
-                .and_then(|c| c.trim().parse::<usize>().ok())
-            {
-                Some(v) => v,
-                None => {
-                    eprintln!(
-                        "text rows for '{}': no epoch column named, column 0 stands in",
-                        fc.name
-                    );
-                    0
-                }
-            };
             let key = fc.key.trim().parse::<usize>().ok()?;
-            Some((epoch, key))
+            Some((epoch_cols.clone(), key))
         }
         _ => None,
     })?;
     let text = String::from_utf8_lossy(bytes);
-    let mut out = Vec::new();
-    for line in text.lines() {
-        let line = line.trim();
-        if line.is_empty() || line.starts_with('#') {
-            continue;
+    let lines: Vec<&str> = text
+        .lines()
+        .map(|l| l.trim())
+        .filter(|l| !l.is_empty() && !l.starts_with('#'))
+        .collect();
+    let header: Vec<&str> = match lines.first() {
+        Some(l) => l
+            .split(',')
+            .map(|c| c.trim().trim_matches('"'))
+            .collect::<Vec<&str>>(),
+        None => Vec::new(),
+    };
+    let resolve = |tok: &str| -> Option<usize> {
+        if let Ok(i) = tok.trim().parse::<usize>() {
+            return Some(i);
         }
+        header
+            .iter()
+            .position(|h| h.eq_ignore_ascii_case(tok.trim()))
+    };
+    let (single, single_resolved) = if epoch_cols.len() <= 2 {
+        match resolve(&epoch_cols[0]) {
+            Some(i) => (Some(i), true),
+            None => {
+                eprintln!(
+                    "text rows for '{}': no epoch column named, column 0 stands in",
+                    fc.name
+                );
+                (Some(0), false)
+            }
+        }
+    } else {
+        (None, false)
+    };
+    let multi: Vec<Option<usize>> = epoch_cols
+        .iter()
+        .enumerate()
+        .map(|(k, c)| {
+            if k >= 3 && c.trim() == "0" {
+                None
+            } else {
+                resolve(c)
+            }
+        })
+        .collect();
+    let uses_names = epoch_cols
+        .iter()
+        .any(|c| c.trim().parse::<usize>().is_err());
+    let has_header = uses_names
+        && (single_resolved
+            || (epoch_cols.len() >= 3 && multi.iter().take(3).all(|i| i.is_some())));
+    let mut out = Vec::new();
+    'row: for line in lines.iter().skip(if has_header { 1 } else { 0 }) {
         let cols: Vec<&str> = line.split(',').map(|c| c.trim()).collect();
-        let Some(epoch_s) = cols.get(epoch_col) else {
-            continue;
-        };
-        let Some(unix) = parse_epoch(epoch_s) else {
-            continue;
+        let unix = if epoch_cols.len() >= 3 {
+            let mut n = [0i64; 6];
+            for (k, idx) in multi.iter().enumerate().take(6) {
+                let Some(i) = idx else { continue };
+                let Some(v) = cols.get(*i).and_then(|s| s.trim().parse::<i64>().ok()) else {
+                    continue 'row;
+                };
+                n[k] = v;
+            }
+            let Some(days) = days_from_civil(n[0], n[1], n[2]) else {
+                continue;
+            };
+            days as f64 * 86_400.0
+                + n[3] as f64 * 3_600.0
+                + n[4] as f64 * 60.0
+                + n[5] as f64
+        } else {
+            let Some(i) = single else {
+                continue;
+            };
+            let Some(s) = cols.get(i) else {
+                continue;
+            };
+            let Some(u) = parse_epoch(s) else {
+                continue;
+            };
+            u
         };
         let Some(t) = lsk.unix_to_tdb(unix) else {
             continue;
@@ -2528,12 +2584,21 @@ fn load_field(
         source_is_hapi(src) && matches!(src.format.as_str(), "" | "json" | "universal");
     let bytes = fetch_body_for_source(&url, &src.headers, expect_json)?;
     if let Some(rows) = series_rows(&src.format, &bytes) {
+        let unix_epoch = src.format == "intermagnet_dbdt";
+        let lsk = embedded_lsk();
         let mut out = Vec::new();
         for r in &rows {
             if series_component_name(&src.format, r.comp) == Some(fc.name.as_str())
                 && r.value.is_finite()
             {
-                out.push((r.t, r.value));
+                let t = if unix_epoch {
+                    lsk.as_ref()
+                        .and_then(|l| l.unix_to_tdb(r.t))
+                        .unwrap_or(r.t)
+                } else {
+                    r.t
+                };
+                out.push((t, r.value));
             }
         }
         if out.is_empty() {
@@ -4713,7 +4778,7 @@ fn align_many(
                     })
                     .collect();
                 return Err(format!(
-                    "bin window carries no overlap between the arms (windows: {})",
+                    "bin window carries no overlap between the arms (windows, TDB s since J2000: {})",
                     windows.join(" | ")
                 ));
             }
@@ -6383,6 +6448,37 @@ mod tests {
             fold: None,
             aperture: omegaflow::archivar::Aperture::None,
         }
+    }
+
+    #[test]
+    fn text_rows_compose_year_month_day() {
+        let mut fc = field_cfg("qbo_30hpa_ms");
+        fc.key = "3".to_string();
+        let mut src = source_cfg(fc.clone(), None);
+        src.extracts = vec![Extract::Rows {
+            last_line: false,
+            lat_key: String::new(),
+            lon_key: String::new(),
+            fields: vec![fc.clone()],
+            tau_key: String::new(),
+            epoch_cols: ["year", "month", "day", "0", "0"]
+                .iter()
+                .map(|s| s.to_string())
+                .collect(),
+            gates: Vec::new(),
+            bin_s: 0,
+            name_prefix: String::new(),
+        }];
+        let bytes = b"year,month,day,qbo_30hpa_ms\n1979,1,1,1.85\n1979,2,1,4.11\n";
+        let series = load_text_rows(&src, &fc, bytes).expect("series");
+        assert_eq!(series.len(), 2, "the header row must be skipped");
+        assert_eq!(series[0].1, 1.85);
+        assert_eq!(series[1].1, 4.11);
+        let span = series[1].0 - series[0].0;
+        assert!(
+            (span - 31.0 * 86_400.0).abs() < 1.0,
+            "1979-01-01 to 1979-02-01 must be 31 days, got {span}"
+        );
     }
 
     #[test]
