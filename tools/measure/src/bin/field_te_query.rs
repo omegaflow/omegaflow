@@ -1362,8 +1362,13 @@ fn load_field_across_sources(
         Some(d) => format!("{d:.0}"),
         None => "pending".to_string(),
     };
+    let t0 = series.iter().map(|p| p.0).fold(f64::INFINITY, f64::min);
+    let t1 = series
+        .iter()
+        .map(|p| p.0)
+        .fold(f64::NEG_INFINITY, f64::max);
     println!(
-        "  witness {witness} | '{name}' | median_dt {dt}s | n {} (finest of {} gleichartige registrations)",
+        "  witness {witness} | '{name}' | median_dt {dt}s | n {} | window {t0:.0}..{t1:.0} (finest of {} gleichartige registrations)",
         series.len(),
         cadences.len()
     );
@@ -4696,7 +4701,21 @@ fn align_many(
                 end = end.min(a1);
             }
             if !(end > start) {
-                return Err("bin window carries no overlap between the arms".into());
+                let windows: Vec<String> = arms
+                    .iter()
+                    .map(|a| {
+                        let lo = a.iter().map(|p| p.0).fold(f64::INFINITY, f64::min);
+                        let hi = a
+                            .iter()
+                            .map(|p| p.0)
+                            .fold(f64::NEG_INFINITY, f64::max);
+                        format!("{lo:.0}..{hi:.0}")
+                    })
+                    .collect();
+                return Err(format!(
+                    "bin window carries no overlap between the arms (windows: {})",
+                    windows.join(" | ")
+                ));
             }
             let n = ((end - start) / step).ceil() as usize;
             if n == 0 {
