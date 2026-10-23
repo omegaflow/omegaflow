@@ -72,7 +72,7 @@ if GIT_INDEX_FILE="$tmpidx" git diff --cached --quiet; then
     exit 2
 fi
 
-GIT_INDEX_FILE="$tmpidx" git commit -m "$msg" || exit $?
+OMEGAFLOW_COMMIT_OK=1 GIT_INDEX_FILE="$tmpidx" git commit -m "$msg" || exit $?
 git reset -q HEAD -- $paths 2>/dev/null || true
 
 git log --oneline -1
