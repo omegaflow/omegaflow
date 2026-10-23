@@ -10423,7 +10423,7 @@ field "CROSS POWER INTENSITY (REAL)" minirf_cross_real inverse-square em 1 60480
 field "CROSS POWER INTENSITY (IMAGINARY)" minirf_cross_imag inverse-square em 1 604800 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds4_fits_ce1_mrm.fits
-terms PD-USGov https://sti.nasa.gov/disclaimers/
+terms no-license https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/
 format pds4_fits
 origin https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/data/ce1_mrm.fits
 compiler tools/harvest/src/bin/pds4_fits_compiler.rs
@@ -10435,7 +10435,7 @@ field ce1_mrm_t3 t3 gaussian-inverse-square thermal K 2 0.0 0.0
 field ce1_mrm_t4 t4 gaussian-inverse-square thermal K 2 0.0 0.0
 
 url https://github.com/omegaflow/sources/releases/download/pds-geosciences.wustl.edu/pds4_fits_ce2_mrm.fits
-terms PD-USGov https://sti.nasa.gov/disclaimers/
+terms no-license https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/
 format pds4_fits
 origin https://pds-geosciences.wustl.edu/Lunar/urn-nasa-pds-chang_e_microwave_processed/data/ce2_mrm.fits
 compiler tools/harvest/src/bin/pds4_fits_compiler.rs
@@ -25977,7 +25977,7 @@ field "F15PSSO" pds3_mischa_f15_pso inverse-square em nT/Hz**1/2 604800 0.0 0.0 
 
 url https://github.com/omegaflow/sources/releases/download/pds-smallbodies.astro.umd.edu/pds3_fixed_width_krfm.bin
 format pds3_fixed_width
-terms PD-USGov https://sti.nasa.gov/disclaimers/
+terms no-license https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/
 origin https://pds-smallbodies.astro.umd.edu/holdings/phb2-m-krfm-3-photometry-v1.0/data/krfm.dat
 compiler tools/harvest/src/bin/pds3_fixed_width_compiler.rs
 sha256 69e20d261157fc2a74c48de8fec6b774a948d33930ca782c19dc261ed228fd54
