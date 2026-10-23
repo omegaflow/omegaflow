@@ -1438,7 +1438,13 @@ impl OmegaLoop {
             info.name, info.backend, info.device_type, info.driver_info
         );
         let (device, queue) = match pollster::block_on(
-            adapter.request_device(&wgpu::DeviceDescriptor::default(), None),
+            adapter.request_device(
+                &wgpu::DeviceDescriptor {
+                    required_limits: adapter.limits(),
+                    ..Default::default()
+                },
+                None,
+            ),
         ) {
             Ok(dq) => dq,
             Err(e) => {
@@ -1586,7 +1592,7 @@ impl OmegaLoop {
         let coupling_rows = coupling_descriptor_rows(self.couplings.as_ref());
         let coupling_buf = device.create_buffer(&wgpu::BufferDescriptor {
             label: None,
-            size: (coupling_rows.len() * 4).max(4) as u64,
+            size: (coupling_rows.len() * 4).max(16) as u64,
             usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
