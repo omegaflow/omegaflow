@@ -226,21 +226,21 @@ quantity properties.mag geosphere_ga_mag_today erfc source-parameter Mw 6.0 pend
 
 url https://services.swpc.noaa.gov/json/goes/primary/differential-protons-1-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=0.0 lon=-75.2 alt=35786023
+at earth frame=barycenter time_key=time_tag time_scale=UTC
 ttl 60
-last flux radiation_proton_flux_differential inverse-square em pfu/mev 6.0 pending 0.0 0.0
+last radiation_proton_flux_differential radiation_proton_flux_differential pfu/mev source_key=flux alt_offset=0
 
 url https://services.swpc.noaa.gov/json/goes/primary/integral-electrons-1-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=0.0 lon=-75.2 alt=35786023
+at earth frame=barycenter time_key=time_tag time_scale=UTC
 ttl 60
-last flux radiation_electron_flux_2mev inverse-square em pfu 6.0 pending 0.0 0.0
+last radiation_electron_flux_2mev radiation_electron_flux_2mev pfu source_key=flux alt_offset=0
 
 url https://services.swpc.noaa.gov/json/goes/primary/integral-protons-1-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-on earth frame=body lat=0.0 lon=-75.2 alt=35786023
+at earth frame=barycenter time_key=time_tag time_scale=UTC
 ttl 60
-last flux radiation_proton_flux_integral inverse-square em pfu 6.0 pending 0.0 0.0
+last radiation_proton_flux_integral radiation_proton_flux_integral pfu source_key=flux alt_offset=0
 
 url https://services.swpc.noaa.gov/json/goes/primary/magnetometers-1-day.json
 terms PD-USGov https://www.weather.gov/disclaimer
@@ -258,10 +258,10 @@ last max_xrlong solar_flare_xray_intensity inverse-square em W/m2 6.0 pending 0.
 
 url https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-at sun frame=barycenter
+at sun frame=barycenter time_key=time_tag time_scale=UTC
 ttl 60
-last flux noaa_goes_xray_flux_w_m2 inverse-square em wm2_1au 6.0 pending 0.0 0.0 where energy 0.05-0.4nm
-last flux noaa_goes_xray_flux_long_w_m2 inverse-square em wm2_1au 6.0 pending 0.0 0.0 where energy 0.1-0.8nm
+last noaa_goes_xray_flux_w_m2 noaa_goes_xray_flux_w_m2 wm2_1au source_key=flux alt_offset=0 where energy 0.05-0.4nm
+last noaa_goes_xray_flux_long_w_m2 noaa_goes_xray_flux_long_w_m2 wm2_1au source_key=flux alt_offset=0 where energy 0.1-0.8nm
 
 url https://www.seismicportal.eu/fdsnws/event/1/query?format=json&limit=100&minmagnitude=2.5&orderby=time&start={today}T00:00:00
 terms CC-BY-4.0 https://www.seismicportal.eu/terms.html
@@ -498,10 +498,10 @@ first flux solar_f107_flux_sfu inverse-square em sfu 3600.0 pending 0.0 0.0 wher
 
 url https://services.swpc.noaa.gov/json/goes/primary/euvs-7-day.json
 terms PD-USGov https://gml.noaa.gov/about/disclaimer.html
-at sun frame=barycenter
+at sun frame=barycenter time_key=time_tag time_scale=UTC
 ttl 600
-last value solar_euv_flux_304_wm2 inverse-square em wm2_1au 60.0 pending 0.0 0.0 where line 304
-last value solar_euv_flux_284_wm2 inverse-square em wm2_1au 60.0 pending 0.0 0.0 where line 284
+last solar_euv_flux_304_wm2 solar_euv_flux_304_wm2 wm2_1au source_key=value alt_offset=0 where line 304
+last solar_euv_flux_284_wm2 solar_euv_flux_284_wm2 wm2_1au source_key=value alt_offset=0 where line 284
 
 url https://environment.data.gov.uk/flood-monitoring/id/stations/{station}/readings.json?_limit=1
 terms OGL-UK-3.0 http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
