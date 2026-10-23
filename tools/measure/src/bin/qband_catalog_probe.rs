@@ -164,7 +164,11 @@ fn parse_icrf(text: &str) -> Vec<Icrf> {
             Some(v) => *v,
             None => continue,
         };
-        let dec_sign = if dec_token.starts_with('-') { -1.0 } else { 1.0 };
+        let dec_sign = if dec_token.starts_with('-') {
+            -1.0
+        } else {
+            1.0
+        };
         let (Some(dd), Some(dm), Some(ds)) = (
             dec_token.parse::<f64>().ok(),
             t.get(i + 1).and_then(|v| v.parse::<f64>().ok()),
@@ -433,10 +437,26 @@ fn main() {
     println!("cache root: {} | offline {}", root.display(), offline);
 
     println!("\n== Channels (measured)");
-    let icrf_fetch = fetch(&ICRF3_SX_URL, &root.join("hpiers.obspm.fr/icrf3sx.txt"), offline);
-    let page_fetch = fetch(&QCAL1_PAGE_URL, &root.join("astrogeo.org/qcal1.html"), offline);
-    let t1_fetch = fetch(&QCAL1_T1_URL, &root.join("astrogeo.org/qcal1_datafile1.txt"), offline);
-    let t2_fetch = fetch(&QCAL1_T2_URL, &root.join("astrogeo.org/qcal1_datafile2.txt"), offline);
+    let icrf_fetch = fetch(
+        &ICRF3_SX_URL,
+        &root.join("hpiers.obspm.fr/icrf3sx.txt"),
+        offline,
+    );
+    let page_fetch = fetch(
+        &QCAL1_PAGE_URL,
+        &root.join("astrogeo.org/qcal1.html"),
+        offline,
+    );
+    let t1_fetch = fetch(
+        &QCAL1_T1_URL,
+        &root.join("astrogeo.org/qcal1_datafile1.txt"),
+        offline,
+    );
+    let t2_fetch = fetch(
+        &QCAL1_T2_URL,
+        &root.join("astrogeo.org/qcal1_datafile2.txt"),
+        offline,
+    );
     let q3_fetch = fetch(
         &tap_csv_url(QCAL1_T3),
         &root.join("tapvizier.cds.unistra.fr/qcal1_table3.csv"),
@@ -545,7 +565,11 @@ fn main() {
         let t = parse_csv(&String::from_utf8_lossy(&f.body));
         print_table("QCAL-1 table4 (VizieR)", &t, declared_q4);
         let srcs = source_rows(&t);
-        coverage_rows.push(coverage("QCAL-1 table4 (33 first-VLBI positions)", &srcs, &icrf));
+        coverage_rows.push(coverage(
+            "QCAL-1 table4 (33 first-VLBI positions)",
+            &srcs,
+            &icrf,
+        ));
         catalog_tables.push(("QCAL-1 table4".to_string(), t, 33));
     } else {
         println!("QCAL-1 table4 (VizieR): absent/unreadable — columns and rows not measurable");
@@ -611,7 +635,11 @@ fn main() {
         let html = String::from_utf8_lossy(&f.body);
         println!(
             "\nQCAL-1 page: format {} | catalog links {} | raw FITS links {}",
-            if html.contains("<HTML") { "HTML" } else { "unknown" },
+            if html.contains("<HTML") {
+                "HTML"
+            } else {
+                "unknown"
+            },
             html.matches("datafile1.txt").count(),
             html.matches(".fits").count() + html.matches(".FITS").count()
         );
@@ -626,7 +654,9 @@ fn main() {
     }
 
     println!("\n== Coverage against ICRF3 S/X (nearest neighbour, tolerance 1.5 arcsec)");
-    println!("catalog | rows | matched | matched D | fraction | median sep [mas] | >5 mas | max sep [mas]");
+    println!(
+        "catalog | rows | matched | matched D | fraction | median sep [mas] | >5 mas | max sep [mas]"
+    );
     for c in &coverage_rows {
         println!(
             "{} | {} | {} | {} | {} | {} | {} | {}",
@@ -717,7 +747,9 @@ fn main() {
     }
 
     if let Some(path) = out_path {
-        let mut tsv = String::from("catalog\tsource\tra_deg\tdec_deg\tnearest_icrf\tiers\tdefining\tsep_mas\n");
+        let mut tsv = String::from(
+            "catalog\tsource\tra_deg\tdec_deg\tnearest_icrf\tiers\tdefining\tsep_mas\n",
+        );
         for (label, t, _) in &catalog_tables {
             for (name, ra, dec) in source_rows(t) {
                 let hit = nearest(ra, dec, &icrf);

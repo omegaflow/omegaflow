@@ -3649,7 +3649,9 @@ pub fn validate_source_blocks(blocks: &[SourceBlock]) -> Result<(), Vec<String>>
                     || dec_key.trim().is_empty()
                     || epoch.trim().is_empty()
                 {
-                    errors.push(at("sky position needs frame, ra_key, dec_key and epoch".to_string()));
+                    errors.push(at(
+                        "sky position needs frame, ra_key, dec_key and epoch".to_string()
+                    ));
                 }
             }
         }

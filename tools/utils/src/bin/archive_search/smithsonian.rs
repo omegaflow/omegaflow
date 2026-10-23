@@ -44,9 +44,7 @@ fn parse_smithsonian(body: &str) -> Vec<String> {
         let link = row
             .get("content")
             .and_then(|c| c.get("descriptiveNonRepeating"))
-            .and_then(|d| {
-                text(d.get("record_link")).or_else(|| text(d.get("guid")))
-            });
+            .and_then(|d| text(d.get("record_link")).or_else(|| text(d.get("guid"))));
         let Some(url) = link else {
             continue;
         };

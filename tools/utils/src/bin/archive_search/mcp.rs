@@ -4,10 +4,8 @@ use std::process::Command;
 const PROTOCOL: &str = "2025-03-26";
 
 pub fn mcp_lines(query: &str, max: usize) -> Vec<String> {
-    let (text, refine) = crate::refine::split_refine(
-        query,
-        &["endpoint", "tool", "query_arg", "count_arg"],
-    );
+    let (text, refine) =
+        crate::refine::split_refine(query, &["endpoint", "tool", "query_arg", "count_arg"]);
     let Some(endpoint) = crate::refine::value_of(&refine, "endpoint") else {
         return vec![
             "pending — no endpoint: pass `endpoint=<mcp-url> tool=<name> [query_arg=query] [count_arg=count] <query>`"
@@ -73,7 +71,10 @@ fn call(
         return vec!["pending — no network".to_string()];
     };
     if first.status != Some(200) {
-        return vec![format!("pending — mcp initialize HTTP {}", status_text(first.status))];
+        return vec![format!(
+            "pending — mcp initialize HTTP {}",
+            status_text(first.status)
+        )];
     }
     let mut headers: Vec<(String, String)> = Vec::new();
     if let Some(session) = &first.session {
@@ -91,7 +92,10 @@ fn call(
         return vec!["pending — no answer from mcp tools/call".to_string()];
     };
     if second.status != Some(200) {
-        return vec![format!("pending — mcp tools/call HTTP {}", status_text(second.status))];
+        return vec![format!(
+            "pending — mcp tools/call HTTP {}",
+            status_text(second.status)
+        )];
     }
     let Some(v) = jsonrpc(&second.body) else {
         return vec!["pending — mcp response carries no JSON-RPC".to_string()];
@@ -318,9 +322,7 @@ fn json_results(v: &json::Json, max: usize) -> Vec<String> {
                         collection
                             .get("concept_id")
                             .and_then(|c| c.as_str())
-                            .map(|id| {
-                                format!("https://search.earthdata.nasa.gov/search?q={id}")
-                            })
+                            .map(|id| format!("https://search.earthdata.nasa.gov/search?q={id}"))
                     });
                 let Some(url) = url else {
                     continue;
@@ -426,7 +428,9 @@ fn push_text(
 fn parse_urls(text: &str, max: usize) -> Vec<String> {
     let mut out: Vec<String> = Vec::new();
     for token in text.split(|c: char| c.is_whitespace() || c == ')' || c == ']' || c == '"') {
-        let url = token.trim_start_matches('(').trim_end_matches(['.', ',', ';']);
+        let url = token
+            .trim_start_matches('(')
+            .trim_end_matches(['.', ',', ';']);
         if !url.starts_with("http") || out.iter().any(|u| u == url) {
             continue;
         }
@@ -464,7 +468,10 @@ mod tests {
         let text = r#"{"results":{"web":[{"url":"https://example.org/a","title":"A","page_age":"2026-10-01T00:00:00","contents":{"highlights":["one two"]}}]}}"#;
         assert_eq!(
             parse_content(text, 10),
-            vec!["url https://example.org/a\ttitle: A\tdescription: one two\tdate: 2026-10-01".to_string()]
+            vec![
+                "url https://example.org/a\ttitle: A\tdescription: one two\tdate: 2026-10-01"
+                    .to_string()
+            ]
         );
     }
 
@@ -499,7 +506,10 @@ mod tests {
     fn falls_back_to_bare_urls() {
         assert_eq!(
             parse_urls("see https://example.org/a and https://example.org/b", 10),
-            vec!["url https://example.org/a".to_string(), "url https://example.org/b".to_string()]
+            vec![
+                "url https://example.org/a".to_string(),
+                "url https://example.org/b".to_string()
+            ]
         );
     }
 

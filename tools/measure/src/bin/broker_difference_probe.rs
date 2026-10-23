@@ -609,7 +609,6 @@ fn run_position(p: &Position) -> usize {
     print_verdict_line(&lines)
 }
 
-
 const FINK_ZTF_OBJECTS: &str = "https://api.ztf.fink-portal.org/api/v1/objects";
 const FINK_LSST_OBJECTS: &str = "https://api.lsst.fink-portal.org/api/v1/objects";
 const LASAIR_ZTF_OBJECT: &str = "https://lasair-ztf.lsst.ac.uk/api/object/";

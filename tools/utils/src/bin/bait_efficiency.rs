@@ -243,7 +243,9 @@ fn parse_tolerance(value: &str) -> Result<Tolerance, String> {
             .parse()
             .map_err(|_| format!("tolerance is not a number: {value}"))?;
         if !parsed.is_finite() || parsed < 0.0 {
-            return Err(format!("tolerance must be finite and non-negative: {value}"));
+            return Err(format!(
+                "tolerance must be finite and non-negative: {value}"
+            ));
         }
         if parsed == 0.0 {
             return Ok(Tolerance::Exact);
@@ -254,7 +256,9 @@ fn parse_tolerance(value: &str) -> Result<Tolerance, String> {
         .parse()
         .map_err(|_| format!("tolerance is not a number: {value}"))?;
     if !parsed.is_finite() || parsed < 0.0 {
-        return Err(format!("tolerance must be finite and non-negative: {value}"));
+        return Err(format!(
+            "tolerance must be finite and non-negative: {value}"
+        ));
     }
     if parsed == 0.0 {
         return Ok(Tolerance::Exact);
@@ -263,7 +267,9 @@ fn parse_tolerance(value: &str) -> Result<Tolerance, String> {
 }
 
 fn print_help() {
-    eprintln!("bait_efficiency — measure value count, significant digits and value spacing against a local corpus");
+    eprintln!(
+        "bait_efficiency — measure value count, significant digits and value spacing against a local corpus"
+    );
     eprintln!();
     eprintln!("usage:");
     eprintln!("  bait_efficiency --root <dir>... [--digits 1,2,3] [--max-k <n>]");
@@ -271,30 +277,56 @@ fn print_help() {
     eprintln!();
     eprintln!("arguments:");
     eprintln!("  --root <dir>       corpus root; repeatable, files are read recursively");
-    eprintln!("  --digits <d>       comma list of significant digits, 1..={MAX_DIGITS} (default {DEFAULT_DIGITS})");
+    eprintln!(
+        "  --digits <d>       comma list of significant digits, 1..={MAX_DIGITS} (default {DEFAULT_DIGITS})"
+    );
     eprintln!("  --max-k <n>        largest k, checked for k=1..n (default {DEFAULT_MAX_K})");
-    eprintln!("  --targets <n>      at most n target datasets, evenly spread over the sorted corpus (default {DEFAULT_TARGETS})");
-    eprintln!("  --tolerance <t>    absolute tolerance or percent, e.g. 0.5 or 5% (default {DEFAULT_TOLERANCE}); percent is relative to max(|candidate|,|target|)");
+    eprintln!(
+        "  --targets <n>      at most n target datasets, evenly spread over the sorted corpus (default {DEFAULT_TARGETS})"
+    );
+    eprintln!(
+        "  --tolerance <t>    absolute tolerance or percent, e.g. 0.5 or 5% (default {DEFAULT_TOLERANCE}); percent is relative to max(|candidate|,|target|)"
+    );
     eprintln!("  --format <f>       tsv or json (default tsv)");
     eprintln!("  -h|--help          this help");
     eprintln!();
     eprintln!("measurement:");
-    eprintln!("  a dataset is a text file with a recognized format (csv/tsv/fixed) and at least two numeric values.");
+    eprintln!(
+        "  a dataset is a text file with a recognized format (csv/tsv/fixed) and at least two numeric values."
+    );
     eprintln!("  values are rounded to d significant digits; duplicates collapse.");
     eprintln!("  example: 7.83 at d=2 is 7.8; 55041.35 at d=5 is 55041.");
-    eprintln!("  for a target, the first k distinct rounded values are the baits; the target itself is not a candidate.");
-    eprintln!("  a candidate hits when all k baits are in its rounded values (exact or within tolerance).");
-    eprintln!("  unique counts targets without a false hit; hit_rate = unique/targets; false_matches counts all candidate hits.");
-    eprintln!("  k_min_95/k_min_99 is the smallest k with hit_rate >= 0.95 or >= 0.99; otherwise pending.");
-    eprintln!("  gap_min/gap_median are the smallest and median relative gaps between adjacent bait values of a target,");
-    eprintln!("  relative to the larger absolute value of the pair; at k=1 there is no gap and output is pending.");
-    eprintln!("  files above {DEFAULT_MAX_MB} MiB are not read; .git and node_modules are skipped.");
+    eprintln!(
+        "  for a target, the first k distinct rounded values are the baits; the target itself is not a candidate."
+    );
+    eprintln!(
+        "  a candidate hits when all k baits are in its rounded values (exact or within tolerance)."
+    );
+    eprintln!(
+        "  unique counts targets without a false hit; hit_rate = unique/targets; false_matches counts all candidate hits."
+    );
+    eprintln!(
+        "  k_min_95/k_min_99 is the smallest k with hit_rate >= 0.95 or >= 0.99; otherwise pending."
+    );
+    eprintln!(
+        "  gap_min/gap_median are the smallest and median relative gaps between adjacent bait values of a target,"
+    );
+    eprintln!(
+        "  relative to the larger absolute value of the pair; at k=1 there is no gap and output is pending."
+    );
+    eprintln!(
+        "  files above {DEFAULT_MAX_MB} MiB are not read; .git and node_modules are skipped."
+    );
     eprintln!("  no interpolation; missing data stays pending, never a silent zero.");
     eprintln!();
     eprintln!("tsv output:");
-    eprintln!("  digits  k  targets  unique  false_matches  k_min_95  k_min_99  hit_rate  gap_min  gap_median");
+    eprintln!(
+        "  digits  k  targets  unique  false_matches  k_min_95  k_min_99  hit_rate  gap_min  gap_median"
+    );
     eprintln!("json output:");
-    eprintln!("  {{\"tool\",\"datasets\",\"target_count\",\"max_k\",\"tolerance\",\"rows\":[{{...}}]}}");
+    eprintln!(
+        "  {{\"tool\",\"datasets\",\"target_count\",\"max_k\",\"tolerance\",\"rows\":[{{...}}]}}"
+    );
 }
 
 fn collect_files(roots: &[String]) -> Result<Vec<(String, PathBuf)>, String> {
@@ -443,11 +475,7 @@ fn parse_number(field: &str) -> Option<f64> {
         return None;
     }
     let value: f64 = token.parse().ok()?;
-    if value.is_finite() {
-        Some(value)
-    } else {
-        None
-    }
+    if value.is_finite() { Some(value) } else { None }
 }
 
 fn select_targets(count: usize, wanted: usize) -> Vec<usize> {
@@ -515,11 +543,8 @@ fn contains_all(
         .iter()
         .zip(probe_values.iter())
         .all(|(target_key, &target_value)| {
-            candidate
-                .keys
-                .iter()
-                .zip(candidate.values.iter())
-                .any(|(candidate_key, &candidate_value)| {
+            candidate.keys.iter().zip(candidate.values.iter()).any(
+                |(candidate_key, &candidate_value)| {
                     within(
                         candidate_key,
                         candidate_value,
@@ -527,7 +552,8 @@ fn contains_all(
                         target_value,
                         tolerance,
                     )
-                })
+                },
+            )
         })
 }
 
@@ -774,11 +800,7 @@ mod tests {
 
     fn fixture_dir() -> PathBuf {
         let seq = SEQ.fetch_add(1, Ordering::SeqCst);
-        let dir = env::temp_dir().join(format!(
-            "bait_efficiency_{}_{}",
-            std::process::id(),
-            seq
-        ));
+        let dir = env::temp_dir().join(format!("bait_efficiency_{}_{}", std::process::id(), seq));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir).unwrap();
         dir
@@ -787,11 +809,26 @@ mod tests {
     fn write_fixture() -> PathBuf {
         let dir = fixture_dir();
         let datasets = [
-            ("a.csv", "10.10,120.20,2300.30,34000.40\n10.20,122.20,2330.30,34040.40\n"),
-            ("b.csv", "11.40,210.30,3200.40,43000.50\n12.40,212.30,3230.40,43040.50\n"),
-            ("c.csv", "50.10,520.20,6300.30,74000.40\n51.10,522.20,6330.30,74040.40\n"),
-            ("d.csv", "60.10,620.20,7300.30,84000.40\n61.10,622.20,7330.30,84040.40\n"),
-            ("e.csv", "70.10,720.20,8300.30,94000.40\n71.10,722.20,8330.30,94040.40\n"),
+            (
+                "a.csv",
+                "10.10,120.20,2300.30,34000.40\n10.20,122.20,2330.30,34040.40\n",
+            ),
+            (
+                "b.csv",
+                "11.40,210.30,3200.40,43000.50\n12.40,212.30,3230.40,43040.50\n",
+            ),
+            (
+                "c.csv",
+                "50.10,520.20,6300.30,74000.40\n51.10,522.20,6330.30,74040.40\n",
+            ),
+            (
+                "d.csv",
+                "60.10,620.20,7300.30,84000.40\n61.10,622.20,7330.30,84040.40\n",
+            ),
+            (
+                "e.csv",
+                "70.10,720.20,8300.30,94000.40\n71.10,722.20,8330.30,94040.40\n",
+            ),
         ];
         for (name, rows) in datasets {
             let content = format!("v1,v2,v3,v4\n{rows}");
@@ -820,10 +857,7 @@ mod tests {
             ]
         };
         for (name, values) in datasets {
-            let content = format!(
-                "v1,v2,v3\n{},{},{}\n",
-                values[0], values[1], values[2]
-            );
+            let content = format!("v1,v2,v3\n{},{},{}\n", values[0], values[1], values[2]);
             fs::write(dir.join(name), content).unwrap();
         }
         dir
@@ -861,9 +895,7 @@ mod tests {
         assert_eq!(row_at(&report, 1, 1).k_min_95, Some(2));
         assert_eq!(row_at(&report, 2, 1).k_min_95, Some(1));
         assert_eq!(row_at(&report, 3, 1).k_min_95, Some(1));
-        assert!(
-            row_at(&report, 1, 1).k_min_95.unwrap() > row_at(&report, 2, 1).k_min_95.unwrap()
-        );
+        assert!(row_at(&report, 1, 1).k_min_95.unwrap() > row_at(&report, 2, 1).k_min_95.unwrap());
     }
 
     #[test]
@@ -884,9 +916,7 @@ mod tests {
         let wide_median = row_at(&wide, 3, 2).gap_median.unwrap();
         assert!(wide_gap > close_gap);
         assert!(wide_median > close_median);
-        assert!(
-            row_at(&wide, 3, 1).k_min_95.unwrap() < row_at(&close, 3, 1).k_min_95.unwrap()
-        );
+        assert!(row_at(&wide, 3, 1).k_min_95.unwrap() < row_at(&close, 3, 1).k_min_95.unwrap());
     }
 
     #[test]
@@ -1002,12 +1032,46 @@ mod tests {
         assert_eq!(options.digits, vec![1, 3]);
         assert_eq!(options.max_k, 5);
         assert_eq!(options.targets, 7);
-        assert!(matches!(options.tolerance, Tolerance::Percent(value) if (value - 0.05).abs() < 1e-12));
+        assert!(
+            matches!(options.tolerance, Tolerance::Percent(value) if (value - 0.05).abs() < 1e-12)
+        );
         assert!(matches!(options.format, Format::Json));
         assert!(parse_args(&["--root".to_string()]).is_err());
-        assert!(parse_args(&["--root".to_string(), "/x".to_string(), "--max-k".to_string(), "0".to_string()]).is_err());
-        assert!(parse_args(&["--root".to_string(), "/x".to_string(), "--tolerance".to_string(), "-1".to_string()]).is_err());
-        assert!(parse_args(&["--root".to_string(), "/x".to_string(), "--digits".to_string(), "16".to_string()]).is_err());
-        assert!(parse_args(&["--root".to_string(), "/x".to_string(), "--resolutions".to_string(), "1".to_string()]).is_err());
+        assert!(
+            parse_args(&[
+                "--root".to_string(),
+                "/x".to_string(),
+                "--max-k".to_string(),
+                "0".to_string()
+            ])
+            .is_err()
+        );
+        assert!(
+            parse_args(&[
+                "--root".to_string(),
+                "/x".to_string(),
+                "--tolerance".to_string(),
+                "-1".to_string()
+            ])
+            .is_err()
+        );
+        assert!(
+            parse_args(&[
+                "--root".to_string(),
+                "/x".to_string(),
+                "--digits".to_string(),
+                "16".to_string()
+            ])
+            .is_err()
+        );
+        assert!(
+            parse_args(&[
+                "--root".to_string(),
+                "/x".to_string(),
+                "--resolutions".to_string(),
+                "1".to_string()
+            ])
+            .is_err()
+        );
     }
 }

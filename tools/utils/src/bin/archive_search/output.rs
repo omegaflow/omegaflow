@@ -100,11 +100,7 @@ impl Sink {
 }
 
 pub fn exit_code(hits: usize, allow_empty: bool) -> i32 {
-    if hits > 0 || allow_empty {
-        0
-    } else {
-        3
-    }
+    if hits > 0 || allow_empty { 0 } else { 3 }
 }
 
 fn parse_hit(line: &str, default_mode: &str) -> Option<Hit> {
@@ -347,8 +343,7 @@ mod tests {
 
     #[test]
     fn a_line_without_a_prefix_takes_the_default_mode() {
-        let hit = parse_hit("url https://example.org/a\ttitle: A study", "crossref")
-            .expect("hit");
+        let hit = parse_hit("url https://example.org/a\ttitle: A study", "crossref").expect("hit");
         assert_eq!(hit.mode, "crossref");
         assert_eq!(hit.field(&["title"]), Some("A study"));
     }
@@ -368,10 +363,7 @@ mod tests {
             csv_line(&hit),
             "openalex,https://example.org/a,\"A, \"\"quoted\"\" study\",,2020,\"Doe, Jane\",,,"
         );
-        assert_eq!(
-            CSV_HEADER,
-            "mode,url,title,doi,year,authors,venue,pdf,via"
-        );
+        assert_eq!(CSV_HEADER, "mode,url,title,doi,year,authors,venue,pdf,via");
     }
 
     #[test]

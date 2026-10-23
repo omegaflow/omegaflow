@@ -54,7 +54,11 @@ pub fn cdse_lines(query: &str, max: usize) -> Vec<String> {
         url.push_str(&format!("&$filter=contains(Name,'{}')", encode(&needle)));
     }
     let mut fetched = get(&url, &[], "60");
-    if matches!(fetched.as_ref().and_then(|f| f.status), Some(401) | Some(403)) && !extra.is_empty() {
+    if matches!(
+        fetched.as_ref().and_then(|f| f.status),
+        Some(401) | Some(403)
+    ) && !extra.is_empty()
+    {
         fetched = get(&url, &extra, "60");
     }
     match fetched {
@@ -83,7 +87,11 @@ fn parse_cdse(v: &json::Json, max: usize) -> Vec<String> {
         return out;
     };
     for item in items {
-        let Some(id) = item.get("Id").and_then(|id| id.as_str()).filter(|s| !s.is_empty()) else {
+        let Some(id) = item
+            .get("Id")
+            .and_then(|id| id.as_str())
+            .filter(|s| !s.is_empty())
+        else {
             continue;
         };
         let mut line = format!("url {PRODUCTS}({id})");
@@ -103,7 +111,10 @@ fn parse_cdse(v: &json::Json, max: usize) -> Vec<String> {
         {
             line.push_str(&format!("\tsize: {size}"));
         }
-        if let Some(online) = item.get("Online").and_then(|online| online.as_scalar_string()) {
+        if let Some(online) = item
+            .get("Online")
+            .and_then(|online| online.as_scalar_string())
+        {
             line.push_str(&format!("\tonline: {online}"));
         }
         line.push_str(&format!("\tdownload: {DOWNLOAD}({id})/$value"));
@@ -134,11 +145,15 @@ mod tests {
         let v = json::parse(body).unwrap();
         let out = parse_cdse(&v, 10);
         assert_eq!(out.len(), 1);
-        assert!(out[0].contains("url https://catalogue.dataspace.copernicus.eu/odata/v1/Products(abc)"));
+        assert!(
+            out[0].contains("url https://catalogue.dataspace.copernicus.eu/odata/v1/Products(abc)")
+        );
         assert!(out[0].contains("name: S5P O3"));
         assert!(out[0].contains("collection: SENTINEL-5P"));
         assert!(out[0].contains("size: 123"));
-        assert!(out[0].contains("download: https://download.dataspace.copernicus.eu/odata/v1/Products(abc)/$value"));
+        assert!(out[0].contains(
+            "download: https://download.dataspace.copernicus.eu/odata/v1/Products(abc)/$value"
+        ));
     }
 
     #[test]

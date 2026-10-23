@@ -188,11 +188,7 @@ fn read_lines(v: &json::Json) -> Option<Vec<String>> {
         .iter()
         .filter_map(|l| l.as_str().map(str::to_string))
         .collect::<Vec<_>>();
-    if lines.is_empty() {
-        None
-    } else {
-        Some(lines)
-    }
+    if lines.is_empty() { None } else { Some(lines) }
 }
 
 fn load_at(dir: &Path, mode: &str, query: &str, max: usize, now: u64) -> Option<Vec<String>> {
@@ -571,13 +567,7 @@ fn http_path(dir: &Path, url: &str) -> PathBuf {
     dir.join(format!("http-{:016x}.json", fnv1a(&http_key(url))))
 }
 
-fn store_http_in(
-    dir: &Path,
-    url: &str,
-    status: i32,
-    retry_after: Option<u64>,
-    now: u64,
-) {
+fn store_http_in(dir: &Path, url: &str, status: i32, retry_after: Option<u64>, now: u64) {
     let retry = match retry_after {
         Some(r) => r.to_string(),
         None => "null".to_string(),
@@ -632,11 +622,8 @@ mod tests {
 
     fn temp_dir() -> PathBuf {
         let n = TEMP_COUNTER.fetch_add(1, Ordering::Relaxed);
-        let dir = std::env::temp_dir().join(format!(
-            "omegaflow-cache-test-{}-{}",
-            std::process::id(),
-            n
-        ));
+        let dir =
+            std::env::temp_dir().join(format!("omegaflow-cache-test-{}-{}", std::process::id(), n));
         let _ = fs::remove_dir_all(&dir);
         fs::create_dir_all(&dir).unwrap();
         dir
@@ -679,21 +666,21 @@ mod tests {
     #[test]
     fn other_pending_and_usage_are_not_cached() {
         assert_eq!(classify(&["pending — no network".to_string()]), None);
+        assert_eq!(classify(&["pending — Brave HTTP 500".to_string()]), None);
+        assert_eq!(classify(&["pending — Brave HTTP 404".to_string()]), None);
         assert_eq!(
-            classify(&["pending — Brave HTTP 500".to_string()]),
+            classify(&["usage — archive_search --brave <query>".to_string()]),
             None
         );
-        assert_eq!(
-            classify(&["pending — Brave HTTP 404".to_string()]),
-            None
-        );
-        assert_eq!(classify(&["usage — archive_search --brave <query>".to_string()]), None);
         assert_eq!(classify(&["note: filter unsupported".to_string()]), None);
     }
 
     #[test]
     fn absent_and_results_are_cached() {
-        assert_eq!(classify(&["absent — crossref carries no entry: x".to_string()]), Some(Kind::Absent));
+        assert_eq!(
+            classify(&["absent — crossref carries no entry: x".to_string()]),
+            Some(Kind::Absent)
+        );
         assert_eq!(
             classify(&["[brave] url https://x\ttitle: x".to_string()]),
             Some(Kind::Ok)
@@ -719,7 +706,10 @@ mod tests {
             .flatten()
             .map(|e| e.file_name().to_string_lossy().to_string())
             .collect();
-        assert_eq!(names, vec![path.file_name().unwrap().to_string_lossy().to_string()]);
+        assert_eq!(
+            names,
+            vec![path.file_name().unwrap().to_string_lossy().to_string()]
+        );
         assert_eq!(load_at(&dir, "brave", "solar wind", 10, 1000), Some(body));
         let _ = fs::remove_dir_all(&dir);
     }
@@ -798,7 +788,10 @@ mod tests {
     fn http_error_cache_hits_negative_status_only() {
         let dir = temp_dir();
         store_http_in(&dir, "https://x.test/q", 402, Some(5), 1000);
-        assert_eq!(load_http_in(&dir, "https://x.test/q", 1000), Some((402, Some(5))));
+        assert_eq!(
+            load_http_in(&dir, "https://x.test/q", 1000),
+            Some((402, Some(5)))
+        );
         assert_eq!(load_http_in(&dir, "https://x.test/q", 1301), None);
         store_http_in(&dir, "https://x.test/q", 500, None, 1000);
         assert_eq!(load_http_in(&dir, "https://x.test/q", 1000), None);

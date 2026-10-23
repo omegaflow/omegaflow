@@ -12,7 +12,10 @@ fn block_status(mode: &str, lines: &[String]) -> Option<String> {
         return None;
     }
     let first = lines.first()?;
-    let body = first.split_once("] ").map(|(_, body)| body).unwrap_or(first);
+    let body = first
+        .split_once("] ")
+        .map(|(_, body)| body)
+        .unwrap_or(first);
     if !body.starts_with("pending") {
         return None;
     }

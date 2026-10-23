@@ -229,12 +229,10 @@ fn parse_cone(body: &str) -> Vec<Ps1Object> {
         if cells.is_empty() {
             continue;
         }
-        let text_at = |name: &str| -> Option<String> {
-            get(name).and_then(|i| cells.get(i)).cloned()
-        };
-        let num_at = |name: &str| -> Option<f64> {
-            text_at(name).and_then(|v| v.parse::<f64>().ok())
-        };
+        let text_at =
+            |name: &str| -> Option<String> { get(name).and_then(|i| cells.get(i)).cloned() };
+        let num_at =
+            |name: &str| -> Option<f64> { text_at(name).and_then(|v| v.parse::<f64>().ok()) };
         let mut o = Ps1Object {
             obj_name: match text_at("objName") {
                 Some(value) => value,
@@ -448,18 +446,13 @@ fn main() {
     }
 
     if !has_flag(&args, "--no-strip-sample") {
-        let sample_url = format!(
-            "{STRIP_BASE}/hlsp_ps1-strm_ps1_gpc1_p01-p05_multi_v1_cat.csv.gz"
-        );
+        let sample_url = format!("{STRIP_BASE}/hlsp_ps1-strm_ps1_gpc1_p01-p05_multi_v1_cat.csv.gz");
         match strip_sample(&sample_url) {
             Some(s) => {
                 println!("strip_sample_rows\t{}", s.rows);
                 println!("strip_sample_fields\t{}", s.fields);
-                let classes: Vec<String> = s
-                    .classes
-                    .iter()
-                    .map(|(k, v)| format!("{k}={v}"))
-                    .collect();
+                let classes: Vec<String> =
+                    s.classes.iter().map(|(k, v)| format!("{k}={v}")).collect();
                 println!("strip_sample_classes\t{}", classes.join(","));
             }
             None => {
@@ -531,10 +524,7 @@ fn main() {
     let matched: Vec<&Match> = matches.iter().filter(|m| m.object.is_some()).collect();
     let in_fp: Vec<&Match> = matches.iter().filter(|m| m.in_footprint).collect();
     let matched_in_fp = in_fp.iter().filter(|m| m.object.is_some()).count();
-    let seps: Vec<f64> = matched
-        .iter()
-        .filter_map(|m| m.sep_mas)
-        .collect();
+    let seps: Vec<f64> = matched.iter().filter_map(|m| m.sep_mas).collect();
     let ra_errs: Vec<f64> = matched
         .iter()
         .filter_map(|m| m.object.as_ref())
@@ -558,9 +548,16 @@ fn main() {
     println!("offset_median_mas\t{}", fmt_opt(median(&seps), 3));
     println!("offset_rms_mas\t{}", fmt_opt(rms(&seps), 3));
     println!("offset_p95_mas\t{}", fmt_opt(percentile(&seps, 0.95), 3));
-    println!("offset_max_mas\t{}", fmt_opt(seps.iter().copied().reduce(f64::max), 3));
+    println!(
+        "offset_max_mas\t{}",
+        fmt_opt(seps.iter().copied().reduce(f64::max), 3)
+    );
     let core_cut_mas = 500.0;
-    let core: Vec<f64> = seps.iter().copied().filter(|s| *s <= core_cut_mas).collect();
+    let core: Vec<f64> = seps
+        .iter()
+        .copied()
+        .filter(|s| *s <= core_cut_mas)
+        .collect();
     let suspect = seps.len() - core.len();
     println!("core_cut_mas\t{core_cut_mas:.1}");
     println!("core_matched\t{}", core.len());

@@ -17,7 +17,10 @@ pub fn gbooks_lines(query: &str, max: usize) -> Vec<String> {
         Some(f) if f.status == Some(200) => {
             let lines = parse_gbooks(&f.body);
             if lines.is_empty() {
-                vec![format!("absent — Google Books carries no volume: {}", query)]
+                vec![format!(
+                    "absent — Google Books carries no volume: {}",
+                    query
+                )]
             } else {
                 lines
             }
@@ -27,10 +30,7 @@ pub fn gbooks_lines(query: &str, max: usize) -> Vec<String> {
             if alt.iter().any(|l| l.starts_with("url ")) {
                 for line in &mut alt {
                     if line.starts_with("url ") {
-                        line.push_str(&format!(
-                            "\tvia: openlibrary (gbooks {})",
-                            f.status_text()
-                        ));
+                        line.push_str(&format!("\tvia: openlibrary (gbooks {})", f.status_text()));
                     }
                 }
                 alt
@@ -56,7 +56,11 @@ fn authors(info: &json::Json) -> Option<String> {
     let list = info.get("authors")?.as_arr()?;
     let names: Vec<String> = list
         .iter()
-        .filter_map(|a| a.as_str().filter(|s| !s.trim().is_empty()).map(str::to_string))
+        .filter_map(|a| {
+            a.as_str()
+                .filter(|s| !s.trim().is_empty())
+                .map(str::to_string)
+        })
         .collect();
     if names.is_empty() {
         None

@@ -1363,10 +1363,7 @@ fn load_field_across_sources(
         None => "pending".to_string(),
     };
     let t0 = series.iter().map(|p| p.0).fold(f64::INFINITY, f64::min);
-    let t1 = series
-        .iter()
-        .map(|p| p.0)
-        .fold(f64::NEG_INFINITY, f64::max);
+    let t1 = series.iter().map(|p| p.0).fold(f64::NEG_INFINITY, f64::max);
     println!(
         "  witness {witness} | '{name}' | median_dt {dt}s | n {} | window {t0:.0}..{t1:.0} (finest of {} gleichartige registrations)",
         series.len(),
@@ -2447,10 +2444,7 @@ fn load_text_rows(src: &SourceConfig, fc: &FieldConfig, bytes: &[u8]) -> Option<
             let Some(days) = days_from_civil(n[0], n[1], n[2]) else {
                 continue;
             };
-            days as f64 * 86_400.0
-                + n[3] as f64 * 3_600.0
-                + n[4] as f64 * 60.0
-                + n[5] as f64
+            days as f64 * 86_400.0 + n[3] as f64 * 3_600.0 + n[4] as f64 * 60.0 + n[5] as f64
         } else {
             let Some(i) = single else {
                 continue;
@@ -2592,9 +2586,7 @@ fn load_field(
                 && r.value.is_finite()
             {
                 let t = if unix_epoch {
-                    lsk.as_ref()
-                        .and_then(|l| l.unix_to_tdb(r.t))
-                        .unwrap_or(r.t)
+                    lsk.as_ref().and_then(|l| l.unix_to_tdb(r.t)).unwrap_or(r.t)
                 } else {
                     r.t
                 };
@@ -4770,10 +4762,7 @@ fn align_many(
                     .iter()
                     .map(|a| {
                         let lo = a.iter().map(|p| p.0).fold(f64::INFINITY, f64::min);
-                        let hi = a
-                            .iter()
-                            .map(|p| p.0)
-                            .fold(f64::NEG_INFINITY, f64::max);
+                        let hi = a.iter().map(|p| p.0).fold(f64::NEG_INFINITY, f64::max);
                         format!("{lo:.0}..{hi:.0}")
                     })
                     .collect();
@@ -5290,7 +5279,7 @@ fn run_pair_matrix(
                 floor: true,
                 res_pair: None,
                 alignment_absent: false,
-                    alignment_reason: None,
+                alignment_reason: None,
                 pass: false,
                 rungs: Vec::new(),
                 ladder: Vec::new(),
@@ -5309,7 +5298,7 @@ fn run_pair_matrix(
                 floor: true,
                 res_pair: None,
                 alignment_absent: false,
-                    alignment_reason: None,
+                alignment_reason: None,
                 pass: false,
                 rungs: Vec::new(),
                 ladder: Vec::new(),
@@ -5338,7 +5327,7 @@ fn run_pair_matrix(
                 floor: true,
                 res_pair: None,
                 alignment_absent: false,
-                    alignment_reason: None,
+                alignment_reason: None,
                 pass: false,
                 rungs: Vec::new(),
                 ladder: Vec::new(),
@@ -5422,7 +5411,7 @@ fn run_pair_matrix(
                 floor: true,
                 res_pair: None,
                 alignment_absent: false,
-                    alignment_reason: None,
+                alignment_reason: None,
                 pass: false,
                 rungs: rungs.clone(),
                 ladder: Vec::new(),
@@ -5441,7 +5430,7 @@ fn run_pair_matrix(
                 floor: true,
                 res_pair: None,
                 alignment_absent: false,
-                    alignment_reason: None,
+                alignment_reason: None,
                 pass: false,
                 rungs: rungs.clone(),
                 ladder: Vec::new(),
@@ -5920,7 +5909,7 @@ mod pairwise_orientation_tests {
             pass: false,
             res_pair: None,
             alignment_absent: false,
-                    alignment_reason: None,
+            alignment_reason: None,
             rungs: Vec::new(),
             ladder,
         }

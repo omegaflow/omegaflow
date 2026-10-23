@@ -69,7 +69,10 @@ fn result_line(body: &str) -> bool {
 }
 
 fn results_of(lines: &[String]) -> usize {
-    lines.iter().filter(|line| result_line(body_of(line))).count()
+    lines
+        .iter()
+        .filter(|line| result_line(body_of(line)))
+        .count()
 }
 
 fn status_of(cached: bool, http: Option<i32>, lines: &[String]) -> String {
@@ -215,7 +218,10 @@ mod tests {
         }
         assert_eq!(row.get("mode").and_then(|v| v.as_str()), Some("brave"));
         assert_eq!(row.get("status").and_then(|v| v.as_str()), Some("402"));
-        assert_eq!(row.get("ms").and_then(|v| v.as_scalar_string()), Some("42".to_string()));
+        assert_eq!(
+            row.get("ms").and_then(|v| v.as_scalar_string()),
+            Some("42".to_string())
+        );
         assert_eq!(
             row.get("results").and_then(|v| v.as_scalar_string()),
             Some("1".to_string())
@@ -245,10 +251,7 @@ mod tests {
         let parsed = json::parse(&json(&[arm])).expect("valid json");
         let row = &parsed.as_arr().expect("array")[0];
         assert_eq!(row.get("status").and_then(|v| v.as_str()), Some("cache"));
-        assert_eq!(
-            row.get("cached"),
-            Some(&json::Json::Bool(true))
-        );
+        assert_eq!(row.get("cached"), Some(&json::Json::Bool(true)));
         assert_eq!(row.get("retry_after"), Some(&json::Json::Null));
     }
 
@@ -315,7 +318,10 @@ mod tests {
             via: vec!["4get (brave 402)".to_string()],
         };
         let table = timing_lines(&[arm]);
-        assert_eq!(table[0], "mode\tstatus\tms\tresults\tcached\tretry_after\tvia");
+        assert_eq!(
+            table[0],
+            "mode\tstatus\tms\tresults\tcached\tretry_after\tvia"
+        );
         assert!(table[1].contains("brave\t402\t12\t0\tno\t3\t4get (brave 402)"));
         assert_eq!(table.len(), 2);
     }

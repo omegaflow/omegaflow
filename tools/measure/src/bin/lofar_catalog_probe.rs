@@ -35,7 +35,9 @@ const CATALOGS: [Catalog; 3] = [
         dat_url: Some("https://cdsarc.cds.unistra.fr/ftp/J/A+A/673/A165/lolss1s.dat.gz"),
         readme_url: "https://cdsarc.cds.unistra.fr/ftp/J/A+A/673/A165/ReadMe",
         count_sql: "SELECT COUNT(*) AS n FROM \"J/A+A/673/A165/lolss1s\"",
-        stats_sql: Some("SELECT AVG(e_RAJ2000) AS avg_e_ra, AVG(e_DEJ2000) AS avg_e_de, MAX(e_RAJ2000) AS max_e_ra FROM \"J/A+A/673/A165/lolss1s\""),
+        stats_sql: Some(
+            "SELECT AVG(e_RAJ2000) AS avg_e_ra, AVG(e_DEJ2000) AS avg_e_de, MAX(e_RAJ2000) AS max_e_ra FROM \"J/A+A/673/A165/lolss1s\"",
+        ),
     },
     Catalog {
         label: "LoTSS-DR3-ILTJ",
@@ -43,7 +45,9 @@ const CATALOGS: [Catalog; 3] = [
         dat_url: None,
         readme_url: "https://cdsarc.cds.unistra.fr/ftp/J/A+A/707/A198/ReadMe",
         count_sql: "SELECT COUNT(*) AS n FROM \"J/A+A/707/A198/lotssdr3\"",
-        stats_sql: Some("SELECT AVG(e_RAJ2000) AS avg_e_ra, AVG(e_DEJ2000) AS avg_e_de FROM \"J/A+A/707/A198/lotssdr3\""),
+        stats_sql: Some(
+            "SELECT AVG(e_RAJ2000) AS avg_e_ra, AVG(e_DEJ2000) AS avg_e_de FROM \"J/A+A/707/A198/lotssdr3\"",
+        ),
     },
 ];
 
@@ -79,7 +83,9 @@ fn curl_get(url: &str) -> Option<Fetched> {
     }
     let stdout = out.stdout;
     let idx = stdout.iter().rposition(|&b| b == b'\n')?;
-    let meta = String::from_utf8_lossy(&stdout[idx + 1..]).trim().to_string();
+    let meta = String::from_utf8_lossy(&stdout[idx + 1..])
+        .trim()
+        .to_string();
     let mut fields = meta.split('\t');
     let status = fields.next().unwrap_or("absent").to_string();
     let content_type = fields.next().unwrap_or("absent").to_string();
@@ -185,7 +191,10 @@ fn probe_catalog(catalog: &Catalog) -> bool {
         "catalog={} table={} vizier={}",
         catalog.label,
         catalog.table,
-        format!("https://vizier.cds.unistra.fr/viz-bin/VizieR?-source={}", catalog.table)
+        format!(
+            "https://vizier.cds.unistra.fr/viz-bin/VizieR?-source={}",
+            catalog.table
+        )
     );
 
     let columns_query = format!("SELECT TOP 1 * FROM \"{}\"", catalog.table);
@@ -228,10 +237,7 @@ fn probe_catalog(catalog: &Catalog) -> bool {
                 None => Vec::new(),
             };
             if header.is_empty() {
-                println!(
-                    "catalog={} count_http=200 count=absent",
-                    catalog.label
-                );
+                println!("catalog={} count_http=200 count=absent", catalog.label);
                 machine_readable = false;
             } else {
                 for (index, name) in header.iter().enumerate() {
@@ -252,7 +258,10 @@ fn probe_catalog(catalog: &Catalog) -> bool {
             machine_readable = false;
         }
         None => {
-            println!("catalog={} count_http=absent count=unreadable", catalog.label);
+            println!(
+                "catalog={} count_http=absent count=unreadable",
+                catalog.label
+            );
             machine_readable = false;
         }
     }
@@ -262,9 +271,9 @@ fn probe_catalog(catalog: &Catalog) -> bool {
             Some(fetched) if fetched.status == "200" => {
                 let rows = csv_rows(&fetched.body);
                 let header = match rows.first() {
-                Some(row) => row.clone(),
-                None => Vec::new(),
-            };
+                    Some(row) => row.clone(),
+                    None => Vec::new(),
+                };
                 for (index, name) in header.iter().enumerate() {
                     println!(
                         "catalog={} {}={}",
@@ -281,7 +290,10 @@ fn probe_catalog(catalog: &Catalog) -> bool {
                 );
             }
             None => {
-                println!("catalog={} stats_http=absent stats=unreadable", catalog.label);
+                println!(
+                    "catalog={} stats_http=absent stats=unreadable",
+                    catalog.label
+                );
             }
         }
     }
@@ -349,12 +361,7 @@ fn probe_named_catalog(query: &str, label: &str) {
                 None => Vec::new(),
             };
             if let Some(name) = header.first() {
-                println!(
-                    "search={} {}={}",
-                    label,
-                    name,
-                    row_value(&rows, 0)
-                );
+                println!("search={} {}={}", label, name, row_value(&rows, 0));
             } else {
                 println!("search={} result=unreadable", label);
             }

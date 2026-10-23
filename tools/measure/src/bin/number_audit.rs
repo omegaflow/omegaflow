@@ -1,4 +1,3 @@
-
 use std::collections::{BTreeMap, BTreeSet};
 use std::env;
 use std::fs;
@@ -293,18 +292,25 @@ fn is_abstract_section(section: &str) -> bool {
 fn is_data_section(section: &str) -> bool {
     let s = section.to_lowercase();
     s.starts_with("2")
-        && (s.starts_with("2.")
-            || s.starts_with("2 ")
-            || s.contains("daten")
-            || s.contains("data"))
+        && (s.starts_with("2.") || s.starts_with("2 ") || s.contains("daten") || s.contains("data"))
         || s.contains("daten")
 }
 
 fn is_identifier_line(line: &str) -> bool {
     let low = line.to_lowercase();
     [
-        "arxiv", "docs/", "state/", "http", "sha256", "commit", ".md", ".rs", "doi",
-        "jd ", "register:", "`",
+        "arxiv",
+        "docs/",
+        "state/",
+        "http",
+        "sha256",
+        "commit",
+        ".md",
+        ".rs",
+        "doi",
+        "jd ",
+        "register:",
+        "`",
     ]
     .iter()
     .any(|k| low.contains(k))
@@ -549,10 +555,7 @@ fn analyze_text(text: &str) -> Report {
                     main_table_n.map_or_else(|| "pending".to_string(), |n| n.to_string())
                 )
             };
-            rep.findings.push(Finding {
-                rule: 2,
-                text,
-            });
+            rep.findings.push(Finding { rule: 2, text });
         }
     }
 
@@ -596,7 +599,10 @@ fn analyze_text(text: &str) -> Report {
     }
     let mut by_label: BTreeMap<String, Vec<Row>> = BTreeMap::new();
     for r in rows {
-        by_label.entry(r.label.clone()).or_insert_with(Vec::new).push(r);
+        by_label
+            .entry(r.label.clone())
+            .or_insert_with(Vec::new)
+            .push(r);
     }
     let mut r3_reported: BTreeSet<String> = BTreeSet::new();
     for (label, group) in &by_label {
@@ -668,10 +674,7 @@ fn analyze_text(text: &str) -> Report {
                 comma.len()
             )
         };
-        rep.findings.push(Finding {
-            rule: 4,
-            text,
-        });
+        rep.findings.push(Finding { rule: 4, text });
     }
 
     rep.nums = nums;
@@ -679,7 +682,11 @@ fn analyze_text(text: &str) -> Report {
 }
 
 fn find_blatt_dir(args: &[String]) -> (PathBuf, String) {
-    let explicit: Vec<PathBuf> = args.iter().filter(|a| !a.starts_with('-')).map(PathBuf::from).collect();
+    let explicit: Vec<PathBuf> = args
+        .iter()
+        .filter(|a| !a.starts_with('-'))
+        .map(PathBuf::from)
+        .collect();
     if !explicit.is_empty() {
         let p = explicit[0].clone();
         return (p, "Argument".to_string());
@@ -713,7 +720,9 @@ fn main() {
     };
     files.sort();
 
-    println!("=== number audit — std-only (R1 anchor, R2 table n, R3 double count, R4 comma locale) ===");
+    println!(
+        "=== number audit — std-only (R1 anchor, R2 table n, R3 double count, R4 comma locale) ==="
+    );
     println!("sheet directory: {} ({origin})", dir.display());
     if files.is_empty() {
         println!("No sheet readable — the audit measures nothing (0 honored).");
@@ -751,7 +760,8 @@ fn main() {
             "  numbers: {} · tables: {} (main n = {}, total data rows = {})",
             rep.nums.len(),
             rep.table_count,
-            rep.main_table_n.map_or_else(|| "pending".to_string(), |n| n.to_string()),
+            rep.main_table_n
+                .map_or_else(|| "pending".to_string(), |n| n.to_string()),
             rep.data_rows
         );
         if rep.nums.is_empty() {
@@ -811,14 +821,16 @@ mod tests {
 
     #[test]
     fn r2_fires_on_mismatch() {
-        let text = "# T\n\n## 2. Daten\nN = 7\n\n## Tabelle\n| a | b |\n|---|---|\n| x | 1 |\n| y | 2 |\n";
+        let text =
+            "# T\n\n## 2. Daten\nN = 7\n\n## Tabelle\n| a | b |\n|---|---|\n| x | 1 |\n| y | 2 |\n";
         let rep = analyze_text(text);
         assert!(rep.findings.iter().any(|f| f.rule == 2));
     }
 
     #[test]
     fn r2_silent_on_match() {
-        let text = "# T\n\n## 2. Daten\nN = 2\n\n## Tabelle\n| a | b |\n|---|---|\n| x | 1 |\n| y | 2 |\n";
+        let text =
+            "# T\n\n## 2. Daten\nN = 2\n\n## Tabelle\n| a | b |\n|---|---|\n| x | 1 |\n| y | 2 |\n";
         let rep = analyze_text(text);
         assert!(!rep.findings.iter().any(|f| f.rule == 2));
     }

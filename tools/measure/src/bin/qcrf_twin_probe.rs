@@ -504,7 +504,10 @@ fn main() {
             .unwrap_or(40),
         None => 40,
     };
-    let only = args.iter().position(|a| a == "--only").and_then(|i| args.get(i + 1));
+    let only = args
+        .iter()
+        .position(|a| a == "--only")
+        .and_then(|i| args.get(i + 1));
     let mut answered = 0usize;
     let mut absent = 0usize;
     for target in TARGETS {

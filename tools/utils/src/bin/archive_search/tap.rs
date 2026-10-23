@@ -148,7 +148,8 @@ mod tests {
 
     #[test]
     fn reads_columns_and_rows_from_a_gavo_response() {
-        let body = r#"{"columns":[{"name":"ivoid"},{"name":"short_name"}],"data":[["ivo://x","X"]]}"#;
+        let body =
+            r#"{"columns":[{"name":"ivoid"},{"name":"short_name"}],"data":[["ivo://x","X"]]}"#;
         let v = json::parse(body).unwrap();
         assert_eq!(
             parse_tap(&v, 10),

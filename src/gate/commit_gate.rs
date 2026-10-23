@@ -2491,16 +2491,10 @@ fn marker_in_status_context(lower: &str, marker: &str) -> bool {
                 }
             }
         }
-        let starts_clean = before.is_empty()
-            || before
-                .chars()
-                .last()
-                .is_some_and(|c| !c.is_alphanumeric());
-        let ends_clean = after.is_empty()
-            || after
-                .chars()
-                .next()
-                .is_some_and(|c| !c.is_alphanumeric());
+        let starts_clean =
+            before.is_empty() || before.chars().last().is_some_and(|c| !c.is_alphanumeric());
+        let ends_clean =
+            after.is_empty() || after.chars().next().is_some_and(|c| !c.is_alphanumeric());
         starts_clean && ends_clean
     })
 }

@@ -913,11 +913,7 @@ fn main() {
         for (t, v) in &decoded {
             let si = gain.map(|g| *v * g);
             let val = si.unwrap_or(*v);
-            let unit = if si.is_some() {
-                sample_unit
-            } else {
-                "counts"
-            };
+            let unit = if si.is_some() { sample_unit } else { "counts" };
             if si.is_none() {
                 counts_samples += 1;
             }

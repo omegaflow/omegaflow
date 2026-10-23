@@ -16,12 +16,7 @@ enum Run {
     TimedOut,
 }
 
-fn run_command(
-    repo: &Path,
-    program: &str,
-    args: &[&str],
-    timeout: Option<Duration>,
-) -> Run {
+fn run_command(repo: &Path, program: &str, args: &[&str], timeout: Option<Duration>) -> Run {
     let mut child = match Command::new(program)
         .current_dir(repo)
         .args(args)

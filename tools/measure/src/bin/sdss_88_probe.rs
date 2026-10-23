@@ -63,8 +63,7 @@ fn parse_anchor(line: &str, lineno: usize) -> Result<Anchor, String> {
 }
 
 fn load_anchors(path: &Path) -> Result<Vec<Anchor>, String> {
-    let text = fs::read_to_string(path)
-        .map_err(|e| format!("read {}: {e}", path.display()))?;
+    let text = fs::read_to_string(path).map_err(|e| format!("read {}: {e}", path.display()))?;
     let mut out = Vec::new();
     for (i, raw) in text.lines().enumerate() {
         let line = raw.trim_end_matches('\r');
@@ -105,7 +104,13 @@ fn raw_name(index: usize, anchor: &Anchor, suffix: &str) -> String {
     let safe: String = anchor
         .iers
         .chars()
-        .map(|c| if c.is_ascii_alphanumeric() || c == '-' || c == '+' || c == '.' { c } else { '_' })
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '-' || c == '+' || c == '.' {
+                c
+            } else {
+                '_'
+            }
+        })
         .collect();
     format!("{:03}_{safe}{suffix}.tsv", index + 1)
 }
@@ -140,12 +145,10 @@ fn read_response(
     if let Some(dir) = raw_dir {
         let path = dir.join(raw_name(index, anchor, suffix));
         if path.is_file() {
-            return fs::read_to_string(&path)
-                .map_err(|e| format!("read {}: {e}", path.display()));
+            return fs::read_to_string(&path).map_err(|e| format!("read {}: {e}", path.display()));
         }
         let text = fetch_url(url)?;
-        fs::write(&path, text.as_bytes())
-            .map_err(|e| format!("write {}: {e}", path.display()))?;
+        fs::write(&path, text.as_bytes()).map_err(|e| format!("write {}: {e}", path.display()))?;
         return Ok(text);
     }
     fetch_url(url)
@@ -170,7 +173,12 @@ fn data_lines(text: &str) -> Vec<(&str, usize)> {
         if trimmed.starts_with('-') {
             continue;
         }
-        if trimmed.chars().next().map(|c| c.is_ascii_digit()).unwrap_or(false) {
+        if trimmed
+            .chars()
+            .next()
+            .map(|c| c.is_ascii_digit())
+            .unwrap_or(false)
+        {
             out.push((line, i));
         }
     }
@@ -182,7 +190,10 @@ fn parse_candidates(text: &str, anchor: &Anchor) -> Result<Vec<Candidate>, Strin
     for (line, lineno) in data_lines(text) {
         let f = parse_tsv_line(line);
         if f.len() < 6 {
-            return Err(format!("candidate row {lineno}: expected 6 columns, got {}", f.len()));
+            return Err(format!(
+                "candidate row {lineno}: expected 6 columns, got {}",
+                f.len()
+            ));
         }
         let ra_deg: f64 = f[2]
             .parse()
@@ -256,8 +267,7 @@ fn run() -> Result<(), String> {
     let out_path = arg_value(&args, "--out").map(PathBuf::from);
     let raw_dir = arg_value(&args, "--raw-dir").map(PathBuf::from);
     if let Some(dir) = raw_dir.as_deref() {
-        fs::create_dir_all(dir)
-            .map_err(|e| format!("create {}: {e}", dir.display()))?;
+        fs::create_dir_all(dir).map_err(|e| format!("create {}: {e}", dir.display()))?;
     }
     let footprint_arcmin: Option<f64> = match arg_value(&args, "--footprint-arcmin") {
         Some(v) => Some(v.parse().map_err(|e| format!("--footprint-arcmin: {e}"))?),
@@ -292,7 +302,11 @@ fn run() -> Result<(), String> {
         let cands = parse_candidates(&text, anchor)?;
         let best = cands
             .iter()
-            .min_by(|a, b| a.sep_arcsec.partial_cmp(&b.sep_arcsec).unwrap_or(std::cmp::Ordering::Equal))
+            .min_by(|a, b| {
+                a.sep_arcsec
+                    .partial_cmp(&b.sep_arcsec)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            })
             .cloned();
         let (footprint_n, footprint_nearest) = match footprint_arcmin {
             Some(arcmin) => {
@@ -366,7 +380,14 @@ fn run() -> Result<(), String> {
         Some(v) => println!("max_sep_arcsec: {v:.4}"),
         None => println!("max_sep_arcsec: n/a"),
     }
-    println!("unmatched_iers: {}", unmatched.iter().map(|m| m.anchor.iers.as_str()).collect::<Vec<_>>().join(" "));
+    println!(
+        "unmatched_iers: {}",
+        unmatched
+            .iter()
+            .map(|m| m.anchor.iers.as_str())
+            .collect::<Vec<_>>()
+            .join(" ")
+    );
 
     if let Some(arcmin) = footprint_arcmin {
         let covered: Vec<&Match> = matches
@@ -421,17 +442,11 @@ fn run() -> Result<(), String> {
                 )),
                 None => text.push_str(&format!(
                     "{},{:.9},{:.9},{},{},{},,,,,,,\n",
-                    m.anchor.iers,
-                    m.anchor.ra_deg,
-                    m.anchor.dec_deg,
-                    m.n_cand,
-                    footprint,
-                    nearest
+                    m.anchor.iers, m.anchor.ra_deg, m.anchor.dec_deg, m.n_cand, footprint, nearest
                 )),
             }
         }
-        fs::write(&path, text.as_bytes())
-            .map_err(|e| format!("write {}: {e}", path.display()))?;
+        fs::write(&path, text.as_bytes()).map_err(|e| format!("write {}: {e}", path.display()))?;
         println!("out: {}", path.display());
     }
 

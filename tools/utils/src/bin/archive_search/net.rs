@@ -199,9 +199,10 @@ pub fn set_proxy(url: &str) {
 }
 
 fn configured_proxy() -> Option<String> {
-    PROXY.get().cloned().or_else(|| {
-        select_proxy(None, std::env::var(PROXY_ENV).ok().as_deref())
-    })
+    PROXY
+        .get()
+        .cloned()
+        .or_else(|| select_proxy(None, std::env::var(PROXY_ENV).ok().as_deref()))
 }
 
 fn proxy_label(url: &str) -> String {
@@ -209,7 +210,9 @@ fn proxy_label(url: &str) -> String {
         return "proxy".to_string();
     };
     let authority = rest.split(['/', '?', '#']).next().unwrap_or(rest);
-    let host = authority.rsplit_once('@').map_or(authority, |(_, host)| host);
+    let host = authority
+        .rsplit_once('@')
+        .map_or(authority, |(_, host)| host);
     format!("{scheme}://{host}")
 }
 
@@ -2118,10 +2121,7 @@ pub fn marginalia_lines(query: &str, max: usize) -> Vec<String> {
         "https://old-search.marginalia.nu/search?query={}",
         urlencode(query)
     );
-    let jar = std::env::temp_dir().join(format!(
-        "omegaflow-marginalia-{}.jar",
-        std::process::id()
-    ));
+    let jar = std::env::temp_dir().join(format!("omegaflow-marginalia-{}.jar", std::process::id()));
     let jar = jar.to_string_lossy().to_string();
     let first = match marginalia_curl(&base, &jar) {
         Some(r) => r,
@@ -6256,7 +6256,9 @@ fn run_lines_dispatch(
         "europepmc" => crate::europepmc::europepmc_lines(query, max),
         "europeana" => {
             let token = resolve_key(
-                env.get("EUROPEANA_API_KEY").map(String::as_str).unwrap_or(""),
+                env.get("EUROPEANA_API_KEY")
+                    .map(String::as_str)
+                    .unwrap_or(""),
                 env,
             );
             match token {
@@ -7307,10 +7309,7 @@ mod tests {
         let transport = Exit::Socks("socks5h://127.0.0.1:1".to_string()).transport_args();
         assert_eq!(
             transport,
-            vec![
-                "--proxy".to_string(),
-                "socks5h://127.0.0.1:1".to_string()
-            ]
+            vec!["--proxy".to_string(), "socks5h://127.0.0.1:1".to_string()]
         );
         let args = curl_args("https://api.openalex.org/works", &[], "30", &transport);
         let at = args

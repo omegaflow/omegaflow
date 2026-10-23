@@ -32,7 +32,9 @@ pub fn balance_lines() -> Vec<String> {
             Some(lines) => lines,
             None => vec!["pending — you.com balance response carries no balance".to_string()],
         },
-        Some(402) => vec!["pending — You.com HTTP 402 (prepaid credit balance depleted)".to_string()],
+        Some(402) => {
+            vec!["pending — You.com HTTP 402 (prepaid credit balance depleted)".to_string()]
+        }
         Some(code) => vec![format!("pending — You.com balance HTTP {code}")],
         None => vec!["pending — you.com balance status unreadable".to_string()],
     }
@@ -57,10 +59,7 @@ pub fn youcom_lines(query: &str, max: usize) -> Vec<String> {
         return vec![format!("pending — {KEY} absent from .secrets.local/.env")];
     };
     let count = max.clamp(1, 100);
-    let body = format!(
-        "{{\"query\":\"{}\",\"count\":{count}}}",
-        escape(query)
-    );
+    let body = format!("{{\"query\":\"{}\",\"count\":{count}}}", escape(query));
     let out = Command::new("curl")
         .args([
             "-sS",
@@ -98,7 +97,9 @@ pub fn youcom_lines(query: &str, max: usize) -> Vec<String> {
                 lines
             }
         }
-        Some(402) => vec!["pending — You.com HTTP 402 (prepaid credit balance depleted)".to_string()],
+        Some(402) => {
+            vec!["pending — You.com HTTP 402 (prepaid credit balance depleted)".to_string()]
+        }
         Some(code) => vec![format!("pending — You.com HTTP {code}")],
         None => vec!["pending — you.com status unreadable".to_string()],
     }
@@ -195,7 +196,8 @@ mod tests {
         assert_eq!(
             parse_youcom(body),
             vec![
-                "url https://example.org/a\ttitle: A\tdescription: one two\tdate: 2026-10-01".to_string(),
+                "url https://example.org/a\ttitle: A\tdescription: one two\tdate: 2026-10-01"
+                    .to_string(),
                 "url https://example.org/b\ttitle: B\tdescription: plain".to_string(),
             ]
         );

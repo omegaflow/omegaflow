@@ -1620,10 +1620,7 @@ fn point_section(path: &str, lat: f64, lon: f64) {
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    if let (Some(point), Some(path)) = (
-        arg_value(&args, "--point"),
-        arg_value(&args, "--file"),
-    ) {
+    if let (Some(point), Some(path)) = (arg_value(&args, "--point"), arg_value(&args, "--file")) {
         let parts: Vec<f64> = point
             .split(',')
             .filter_map(|s| s.trim().parse().ok())

@@ -32,7 +32,10 @@ pub fn stac_lines(query: &str, max: usize) -> Vec<String> {
         url.push_str(&format!("&bbox={}", urlencode(bbox)));
     }
     if !datetime.is_empty() {
-        url.push_str(&format!("&datetime={}", urlencode(&stac_datetime(datetime))));
+        url.push_str(&format!(
+            "&datetime={}",
+            urlencode(&stac_datetime(datetime))
+        ));
     }
     match get(&url, &[], "60") {
         Some(f) if f.status == Some(200) => {

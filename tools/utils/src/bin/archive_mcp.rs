@@ -316,7 +316,8 @@ fn run_sniff(url: &str) -> Result<String, String> {
     Ok(stdout)
 }
 
-fn run_archive(args: &[String]) -> Result<String, String> {    let bin = archive_search_bin();
+fn run_archive(args: &[String]) -> Result<String, String> {
+    let bin = archive_search_bin();
     let out = Command::new(&bin)
         .args(args)
         .output()
@@ -436,18 +437,8 @@ mod tests {
         assert_eq!(
             build_args("all", "astro", "Sirius", 5, Some("2020"), None, 2).unwrap(),
             vec![
-                "--all",
-                "--group",
-                "astro",
-                "--jobs",
-                "2",
-                "--stop",
-                "5",
-                "Sirius",
-                "--max",
-                "5",
-                "--since",
-                "2020"
+                "--all", "--group", "astro", "--jobs", "2", "--stop", "5", "Sirius", "--max", "5",
+                "--since", "2020"
             ]
         );
     }
@@ -472,7 +463,8 @@ mod tests {
     }
 
     #[test]
-    fn strips_the_archive_prefix() {        assert_eq!(
+    fn strips_the_archive_prefix() {
+        assert_eq!(
             strip_prefix("[simbad] url https://example.org/a\n[simbad] pending — x"),
             "url https://example.org/a\npending — x"
         );

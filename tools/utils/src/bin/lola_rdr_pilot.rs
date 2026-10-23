@@ -211,9 +211,12 @@ fn produce(config: &Config) -> Result<String, (i32, String)> {
         .map_err(|e| (3, format!("pending — label read void: {e}")))?;
     let mut label = parse_label(&label_text).map_err(|e| (3, format!("pending — {e}")))?;
     let mut structure_source: Option<String> = None;
-    if label.columns.is_empty() && let Some(structure) = label.structure.clone() {
-        let (columns, source) = load_structure(&config.label_source, &structure, label.record_bytes)
-            .map_err(|e| (3, format!("pending — {e}")))?;
+    if label.columns.is_empty()
+        && let Some(structure) = label.structure.clone()
+    {
+        let (columns, source) =
+            load_structure(&config.label_source, &structure, label.record_bytes)
+                .map_err(|e| (3, format!("pending — {e}")))?;
         label.columns = columns;
         structure_source = Some(source);
     }
@@ -231,8 +234,8 @@ fn produce(config: &Config) -> Result<String, (i32, String)> {
     let prefix = read_prefix(&dat, prefix_bytes)
         .map_err(|e| (3, format!("pending — data read void: {e}")))?;
     let digest = sha256_hex(&prefix);
-    let (text, time_source) = render(&label, &prefix, &dat, config.format)
-        .map_err(|e| (3, format!("pending — {e}")))?;
+    let (text, time_source) =
+        render(&label, &prefix, &dat, config.format).map_err(|e| (3, format!("pending — {e}")))?;
     let start_time = label.start_time.as_deref().unwrap_or("absent");
     let structure = structure_source.as_deref().unwrap_or("absent");
     eprintln!(
@@ -558,9 +561,11 @@ fn parse_objects(text: &str) -> Result<Parsed, String> {
                             .map_err(|_| format!("COLUMN_NUMBER is not an integer: {value}"))?;
                         put(&mut draft.number, number, "COLUMN_NUMBER")?;
                     }
-                    "DATA_TYPE" => {
-                        put(&mut draft.data_type, value.to_ascii_uppercase(), "DATA_TYPE")?
-                    }
+                    "DATA_TYPE" => put(
+                        &mut draft.data_type,
+                        value.to_ascii_uppercase(),
+                        "DATA_TYPE",
+                    )?,
                     "START_BYTE" => {
                         let number = value
                             .parse::<u64>()
@@ -586,9 +591,11 @@ fn parse_objects(text: &str) -> Result<Parsed, String> {
                         put(&mut draft.item_bytes, number, "ITEM_BYTES")?;
                     }
                     "UNIT" if !value.is_empty() => put(&mut draft.unit, value, "UNIT")?,
-                    "MISSING_CONSTANT" => {
-                        put(&mut draft.missing, parse_missing(&value)?, "MISSING_CONSTANT")?
-                    }
+                    "MISSING_CONSTANT" => put(
+                        &mut draft.missing,
+                        parse_missing(&value)?,
+                        "MISSING_CONSTANT",
+                    )?,
                     _ => {}
                 }
             }
@@ -713,8 +720,14 @@ fn validate_columns(columns: &mut Vec<Column>, record_bytes: u64) -> Result<(), 
     let mut previous_end = 0u64;
     for column in columns {
         match column.data_type.as_str() {
-            "ASCII_INTEGER" | "ASCII_REAL" | "CHARACTER" | "IEEE_REAL" | "UNSIGNED_INTEGER"
-            | "SIGNED_INTEGER" | "LSB_INTEGER" | "LSB_UNSIGNED_INTEGER" => {}
+            "ASCII_INTEGER"
+            | "ASCII_REAL"
+            | "CHARACTER"
+            | "IEEE_REAL"
+            | "UNSIGNED_INTEGER"
+            | "SIGNED_INTEGER"
+            | "LSB_INTEGER"
+            | "LSB_UNSIGNED_INTEGER" => {}
             other => {
                 return Err(format!(
                     "column {} carries unsupported DATA_TYPE {other}",
@@ -970,7 +983,10 @@ impl Cell {
         if !part.number {
             return None;
         }
-        part.text.parse::<f64>().ok().filter(|value| value.is_finite())
+        part.text
+            .parse::<f64>()
+            .ok()
+            .filter(|value| value.is_finite())
     }
 }
 
@@ -1480,14 +1496,7 @@ END\n";
     fn range_stub_fetches_fmt_and_only_the_requested_prefix() {
         let (_, _, data) = fmt_fixture("range");
         let (url, seen) = serve(FMT_LABEL.to_string(), FMT.to_string(), data.clone(), 3);
-        let out = run_output(&args(&[
-            &url,
-            "--records",
-            "1",
-            "--format",
-            "csv",
-        ]))
-        .unwrap();
+        let out = run_output(&args(&[&url, "--records", "1", "--format", "csv"])).unwrap();
         assert_eq!(seen.lock().unwrap().as_slice(), ["bytes=0-255"]);
         assert!(out.starts_with("time,record,TRANSMIT_TIME,LASER_ENERGY[NANOJOULES],FLAG"));
         assert!(out.contains(&sha256_hex(&data[..256])));
@@ -1554,26 +1563,12 @@ OBJECT = COLUMN\n COLUMN_NUMBER = 2\n NAME = B\n DATA_TYPE = LSB_INTEGER\n START
     #[test]
     fn record_bounds_are_usage_errors() {
         let (label, _, _) = fixture("bounds");
-        let zero = run_output(&args(&[
-            label.to_str().unwrap(),
-            "--records",
-            "0",
-        ]))
-        .unwrap_err();
+        let zero = run_output(&args(&[label.to_str().unwrap(), "--records", "0"])).unwrap_err();
         assert_eq!(zero.0, 2);
-        let over = run_output(&args(&[
-            label.to_str().unwrap(),
-            "--records",
-            "10001",
-        ]))
-        .unwrap_err();
+        let over = run_output(&args(&[label.to_str().unwrap(), "--records", "10001"])).unwrap_err();
         assert_eq!(over.0, 2);
-        let negative = run_output(&args(&[
-            label.to_str().unwrap(),
-            "--records",
-            "-1",
-        ]))
-        .unwrap_err();
+        let negative =
+            run_output(&args(&[label.to_str().unwrap(), "--records", "-1"])).unwrap_err();
         assert_eq!(negative.0, 2);
     }
 

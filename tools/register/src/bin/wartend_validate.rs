@@ -69,8 +69,15 @@ fn main() {
         }
         if let Some(z) = f.get("zustand") {
             if !z.is_empty()
-                && !["pending", "gemessen", "obergrenze", "null-echt", "absent", "riss"]
-                    .contains(&z.as_str())
+                && ![
+                    "pending",
+                    "gemessen",
+                    "obergrenze",
+                    "null-echt",
+                    "absent",
+                    "riss",
+                ]
+                .contains(&z.as_str())
             {
                 findings.push(("zustand_unbekannt".to_string(), z.clone()));
                 hard += 1;

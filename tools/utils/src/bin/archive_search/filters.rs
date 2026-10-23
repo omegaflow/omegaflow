@@ -1,5 +1,5 @@
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Mutex;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Filters {
@@ -314,10 +314,7 @@ pub fn decorate_with(filters: &Filters, mode: &str, query: &str) -> String {
 }
 
 fn merge_key(query: &str, key: &str, addition: &str) -> String {
-    let mut parts: Vec<String> = query
-        .split_whitespace()
-        .map(str::to_string)
-        .collect();
+    let mut parts: Vec<String> = query.split_whitespace().map(str::to_string).collect();
     let needle = format!("{}=", key);
     match parts.iter().position(|part| part.starts_with(&needle)) {
         Some(index) => {
@@ -331,7 +328,10 @@ fn merge_key(query: &str, key: &str, addition: &str) -> String {
 
 fn add_if_absent(query: &str, key: &str, value: &str) -> String {
     let needle = format!("{}=", key);
-    if query.split_whitespace().any(|part| part.starts_with(&needle)) {
+    if query
+        .split_whitespace()
+        .any(|part| part.starts_with(&needle))
+    {
         return query.to_string();
     }
     if query.trim().is_empty() {
@@ -521,8 +521,10 @@ mod tests {
             decorate_with(&thesis, "semanticscholar", "solar wind"),
             "solar wind year=2020-"
         );
-        assert!(explain_lines_with(&thesis, true, "semanticscholar")
-            .contains(&"note: type filter unsupported by semanticscholar".to_string()));
+        assert!(
+            explain_lines_with(&thesis, true, "semanticscholar")
+                .contains(&"note: type filter unsupported by semanticscholar".to_string())
+        );
     }
 
     #[test]
@@ -536,8 +538,10 @@ mod tests {
             ..Filters::default()
         };
         assert_eq!(arxiv_submitted_range(&open_end), None);
-        assert!(explain_lines_with(&open_end, true, "arxiv")
-            .contains(&"note: date filter unsupported by arxiv".to_string()));
+        assert!(
+            explain_lines_with(&open_end, true, "arxiv")
+                .contains(&"note: date filter unsupported by arxiv".to_string())
+        );
     }
 
     #[test]
@@ -598,7 +602,10 @@ mod tests {
     #[test]
     fn a_partial_arm_names_only_the_unsupported_part() {
         let notes = explain_lines_with(&filters(), true, "crossref");
-        assert_eq!(notes, vec!["note: language filter unsupported by crossref".to_string()]);
+        assert_eq!(
+            notes,
+            vec!["note: language filter unsupported by crossref".to_string()]
+        );
     }
 
     #[test]

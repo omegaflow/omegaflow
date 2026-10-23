@@ -327,7 +327,9 @@ fn report_pair(
                 offset,
                 offset * 1000.0
             ),
-            None => println!("  time scale {label}: TDB − UTC = absent (leap table void at its epoch)"),
+            None => {
+                println!("  time scale {label}: TDB − UTC = absent (leap table void at its epoch)")
+            }
         }
     }
     for (label, fold) in [("A", &an.fold_a), ("B", &an.fold_b)] {
@@ -424,8 +426,14 @@ fn load_ephemeris_map() -> Option<HashMap<String, BodyEphemeris>> {
     let sun_b = ephemeris_cache_bytes(eph_key(SUN_EPH_LOCAL), SUN_EPH_LOCAL, SUN_EPH_CDN)?;
     let earth_b = ephemeris_cache_bytes(eph_key(EARTH_EPH_LOCAL), EARTH_EPH_LOCAL, EARTH_EPH_CDN)?;
     let mut map = HashMap::new();
-    map.insert(eph_key(SUN_EPH_LOCAL).to_string(), parse_ephemeris_binary(&sun_b)?);
-    map.insert(eph_key(EARTH_EPH_LOCAL).to_string(), parse_ephemeris_binary(&earth_b)?);
+    map.insert(
+        eph_key(SUN_EPH_LOCAL).to_string(),
+        parse_ephemeris_binary(&sun_b)?,
+    );
+    map.insert(
+        eph_key(EARTH_EPH_LOCAL).to_string(),
+        parse_ephemeris_binary(&earth_b)?,
+    );
     Some(map)
 }
 

@@ -200,9 +200,7 @@ fn usage() {
     eprintln!(
         "  --match <file>   sniff a file and compare it with the corpus; candidates at score {MATCH_FLOOR}; excludes --signatures"
     );
-    eprintln!(
-        "  --max-mb <n>     do not read files larger than n MiB (default {DEFAULT_MAX_MB})"
-    );
+    eprintln!("  --max-mb <n>     do not read files larger than n MiB (default {DEFAULT_MAX_MB})");
     eprintln!("  -h|--help        this help");
     eprintln!("output:");
     eprintln!("  tsv: column, files, formats, first_file — sort files desc, column asc");
@@ -228,9 +226,7 @@ fn usage() {
     eprintln!(
         "  only text files with a recognized header are read; .git and node_modules are skipped."
     );
-    eprintln!(
-        "  files starting with {{ or [ (JSON) carry no columns."
-    );
+    eprintln!("  files starting with {{ or [ (JSON) carry no columns.");
 }
 
 fn run(opts: &Options) -> Result<String, String> {
@@ -516,19 +512,9 @@ fn render_match(
         if candidate_key == match_key {
             continue;
         }
-        let shared: Vec<String> = match_columns
-            .intersection(&file.columns)
-            .cloned()
-            .collect();
-        let missing: Vec<String> = match_columns
-            .difference(&file.columns)
-            .cloned()
-            .collect();
-        let extra: Vec<String> = file
-            .columns
-            .difference(&match_columns)
-            .cloned()
-            .collect();
+        let shared: Vec<String> = match_columns.intersection(&file.columns).cloned().collect();
+        let missing: Vec<String> = match_columns.difference(&file.columns).cloned().collect();
+        let extra: Vec<String> = file.columns.difference(&match_columns).cloned().collect();
         let score = weighted_jaccard(&match_columns, &file.columns);
         if score < MATCH_FLOOR {
             continue;
@@ -600,7 +586,11 @@ fn weighted_jaccard(a: &BTreeSet<String>, b: &BTreeSet<String>) -> f64 {
             intersection += w;
         }
     }
-    if union == 0.0 { 0.0 } else { intersection / union }
+    if union == 0.0 {
+        0.0
+    } else {
+        intersection / union
+    }
 }
 
 fn join_or_dash(columns: &[String]) -> String {
@@ -692,8 +682,17 @@ mod tests {
     #[test]
     fn repeated_roots_and_format_parse() {
         let o = run_args(&[
-            "--root", "a", "--root", "b", "--min-files", "3", "--format", "json", "--signatures",
-            "--max-mb", "8",
+            "--root",
+            "a",
+            "--root",
+            "b",
+            "--min-files",
+            "3",
+            "--format",
+            "json",
+            "--signatures",
+            "--max-mb",
+            "8",
         ]);
         assert_eq!(o.roots, vec!["a".to_string(), "b".to_string()]);
         assert_eq!(o.min_files, 3);
@@ -716,10 +715,7 @@ mod tests {
             &base.join("a.csv"),
             "Time;Value_eff\n2020-01-01;1.5\n2020-01-02;2.5\n",
         );
-        write(
-            &base.join("sub/b.csv"),
-            " time ,VALUE_err\n0,1.0\n1,2.0\n",
-        );
+        write(&base.join("sub/b.csv"), " time ,VALUE_err\n0,1.0\n1,2.0\n");
         write(
             &base.join("sub/c.csv"),
             "TIME,value_err,extra\n0,1.0,7\n1,2.0,8\n",
@@ -769,7 +765,10 @@ mod tests {
         let base = temp_root("minfiles");
         write(&base.join("a.csv"), "time,value\n0,1\n1,2\n");
         write(&base.join("b.csv"), "time,other\n0,1\n1,2\n");
-        write(&base.join("c.csv"), "plain prose line\nanother prose line\n");
+        write(
+            &base.join("c.csv"),
+            "plain prose line\nanother prose line\n",
+        );
         let o = run_args(&["--root", &base.to_string_lossy(), "--min-files", "2"]);
         let rows = tsv_rows(&run(&o).expect("run"));
         assert_eq!(
@@ -878,10 +877,7 @@ mod tests {
             &base.join("twin.csv"),
             "temp,flux,time\n1.0,2.0,3.0\n2.0,3.0,4.0\n",
         );
-        write(
-            &base.join("other.csv"),
-            "alpha,beta,gamma\n1,2,3\n4,5,6\n",
-        );
+        write(&base.join("other.csv"), "alpha,beta,gamma\n1,2,3\n4,5,6\n");
         let probe = base.join("probe.csv");
         write(
             &probe,
@@ -934,7 +930,10 @@ mod tests {
     #[test]
     fn match_json_keeps_arrays_and_numeric_score() {
         let base = temp_root("match_json");
-        write(&base.join("twin.csv"), "temp,flux,time\n1.0,2.0,3.0\n2.0,3.0,4.0\n");
+        write(
+            &base.join("twin.csv"),
+            "temp,flux,time\n1.0,2.0,3.0\n2.0,3.0,4.0\n",
+        );
         let probe = base.join("probe.csv");
         write(
             &probe,

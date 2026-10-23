@@ -656,8 +656,14 @@ impl SourceField {
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum SourcePosition {
-    Fixed { lat: f64, lon: f64 },
-    Moving { lat_key: String, lon_key: String },
+    Fixed {
+        lat: f64,
+        lon: f64,
+    },
+    Moving {
+        lat_key: String,
+        lon_key: String,
+    },
     At {
         body: String,
         frame: String,
