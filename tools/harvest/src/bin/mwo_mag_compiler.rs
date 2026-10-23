@@ -318,7 +318,10 @@ fn main() {
     };
     let bzero = match header.f64("BZERO") {
         Some(v) => v,
-        None => return None,
+        None => {
+            eprintln!("{source}: BZERO absent — the MWO magnetogram carries BSCALE/BZERO");
+            std::process::exit(1);
+        }
     };
     let blank = header
         .int("BLANK")
